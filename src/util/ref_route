@@ -1,0 +1,6 @@
+#!/bin/sh
+sudo route del 224.5.23.1 > /dev/null 2>&1
+if [ -n "$1" ]; then
+    sudo route add 224.5.23.1 $1
+fi
+

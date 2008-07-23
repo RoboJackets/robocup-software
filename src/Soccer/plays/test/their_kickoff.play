@@ -1,0 +1,11 @@
+NAME "Their kickoff"
+REQUIRE their_kickoff
+
+ROLE @1
+    move pos=(0, 1)
+ROLE @2
+    move pos=(-0.25, 1)
+ROLE @3
+    move pos=(0.25, 1)
+ROLE @4
+    move pos=(1, 1.5)

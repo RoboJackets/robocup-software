@@ -1,0 +1,49 @@
+<html>
+
+<head>
+<link rel="stylesheet" type="text/css" href="style.css">
+<title>RoboJackets - RoboCup: common</title> <!-- fixme: doc title-->
+</head>
+
+<body>
+<h1>RoboJackets - RoboCup</h1>
+
+<h2>common</h2>
+
+<p>
+To use anything in common just include the provided <em>CMakeLists.txt</em> in 
+your <em>CMakeLists.txt</em> file. If you wish to use one of the particular 
+libraries set the appropriate variable to 'true' in your <em>CMakeLists.txt</em> file.
+</p>
+
+<h3>Files</h3>
+<dl>
+<dt>Sizes.h</dt>
+<dd>Various object sizes (field, ball, robot, etc...) all in stnadard units</dd>
+
+<dt>Team.h</dt>
+<dd>The <em>Team</em> enum with Yellow and Blue items. Used to distinguish team 
+which team we are receiving/sending packets from/to.</dd>
+</dl>
+
+<h3>Libraries</h3>
+<h4>Geometry</h4>
+<p>
+<code>set (USE_GEOMETRY true)</code> to activate <br>
+<code>${GEOMETRY}</code> variable in the target_link_libraries to use
+</p>
+<p>
+Library with basic geometry classes. Look at header files for interface documentation.
+</p>
+
+<h4>Packet</h4>
+<p>
+<code>set (USE_PACKET true)</code> to activate <br>
+<code>${PACKET}</code> variable in the target_link_libraries to use
+</p>
+<p>
+Library for interprocess communication.
+</p>
+
+</body>
+</html> 

@@ -1,0 +1,24 @@
+//run this play during stoppage in the game
+//keep 500mm from ball
+
+Name "stop"
+
+REQUIRE stopped
+
+PREFER stopped:50.0
+
+DONE !stopped
+
+//NO_RESTART
+
+ROLE @def1
+	assistant_goalie
+	
+ROLE @for0
+	forward
+	
+ROLE @for1
+	forward
+	
+ROLE @for2
+	forward

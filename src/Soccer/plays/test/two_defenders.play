@@ -1,0 +1,7 @@
+NAME "Two Assistant Goalies"
+
+ROLE @def1
+    assistant_goalie
+    
+ROLE @def2
+    assistant_goalie

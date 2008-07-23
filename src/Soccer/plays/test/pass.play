@@ -1,0 +1,10 @@
+NAME "pass test"
+
+//NO_RESTART
+
+ROLE @first
+    pass to=@second
+
+ROLE @second
+    move pos=@second face=@first
+    receive

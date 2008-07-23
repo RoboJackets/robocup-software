@@ -1,0 +1,63 @@
+Release information and news:
+-----------------------------
+
+-- 2.0.0: THE release, ready for distribution. Documentation is still
+   missing, but will eventually be completed.
+
+-- (various RCs): many interface changes
+
+-- 2.0.0-rc6:
+   Yes, more changes. We are waiting for one last big change before the
+   release of 2.0.0 so this may be the last RC.
+
+-- 2.0.0-rc5:
+   More interface changes, PIO support, cleanup and fixes.
+
+-- 2.0.0-rc4:
+   Intermediate release that includes a.o. the new capture API, better
+   support for AVT cameras, conversion functions that work on the new
+   video buffer struct, etc...
+
+-- 2.0.0-rc3:
+   The major addition of this version is the compatibility with Mac OSX
+   (Yeah!) There's a bunch of fixes and additions here and there too.
+
+-- 2.0.0-rc2:
+   Fixed serious problems in the camera detection
+
+-- 2.0.0-rc1:
+   This is the first RC release. Enjoy or send bug reports to the list.
+
+-- 2.0.0-pre7:
+   Many significant changes.
+
+-- 2.0.0-pre6:
+   Don't package anything before a final release (or at least a release
+   candidate), _please_. These PRE versions have an API that will change
+   and are not suitable for packages. This should be the last PRE release.
+   If there is no problem with it we will switch to release candidates (RC)
+   soon.
+
+-- 2.0.0-pre5:
+   The development continues... Besides bug fixes, the most notable
+   improvement is the capture structure that is now hidden in the camera
+   struct.
+
+-- 2.0.0-pre4:
+   bug fixes
+
+-- 2.0.0-pre3:
+   This release appears to be fully functional. It can be used but has not
+   been extensively tested.
+
+-- 2.0.0-pre2:
+   Same warning as pre1
+
+-- 2.0.0-pre1:
+   A lot of changes, see the changelog for more details. This version breaks
+   almost all compatibility with the main trunk. Known not to work properly.
+   You have been warned ;-) This is just a CVS snapshot of the Version_2_0
+   branch.
+
+(Older news about versions 0.x and 1.x of the library can be found in the
+respective 0.x and 1.x packages)

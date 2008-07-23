@@ -1,0 +1,11 @@
+NAME "Shooting and Passing Challenge Obstacles"
+//http://small-size.informatik.uni-bremen.de/robocup2008:technical_challenges
+
+ROLE @1
+    move pos=(0, 0.1) face=(0, 1)
+ROLE @2
+    move pos=(1, 1)
+ROLE @3
+    move pos=(-1.5, 1.25)
+ROLE @4
+    move pos=(0.25, 2.2)

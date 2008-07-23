@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=SSLRefBox
+GenericName=Referee Box
+Comment=RoboCup Small Size League
+Exec=sslrefbox
+Terminal=true
+Categories=GTK;GTK;Game;

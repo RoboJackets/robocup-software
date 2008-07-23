@@ -1,0 +1,8 @@
+NAME "mark test"
+
+NO_RESTART
+OPPONENT @opp near_ball
+
+ROLE @defender
+//    move pos=(0,1) face=@opp
+    mark opp=@opp

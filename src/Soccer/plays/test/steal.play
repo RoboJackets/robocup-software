@@ -1,0 +1,6 @@
+Name "steal ball test"
+
+OPPONENT @opp near_ball
+
+Role @stealer
+	steal opp=@opp

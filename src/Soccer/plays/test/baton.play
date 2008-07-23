@@ -1,0 +1,12 @@
+NAME "baton test"
+//test passing of the baton
+
+//NO_RESTART
+
+ROLE @one
+    kicker pos=(0,0)
+    move pos=(0,3.0)
+    
+ROLE @two
+	move pos=(0,3.0)
+	kicker pos=(0,0)

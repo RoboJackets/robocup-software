@@ -1,0 +1,6 @@
+NAME "Kicker Calibration"
+
+//NO_RESTART
+
+ROLE @kicker
+    kicker pos=(-1,1) strength=100

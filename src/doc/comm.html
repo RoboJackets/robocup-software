@@ -1,0 +1,41 @@
+<html>
+
+<head>
+<link rel="stylesheet" type="text/css" href="style.css">
+<title>RoboJackets - RoboCup: Comm</title> <!-- fixme: doc title-->
+</head>
+
+<body>
+<h1>RoboJackets - RoboCup</h1>
+<h2>Comm</h2>
+<p>
+The purpose of Comm is to provide the communication between the host system and 
+the base station. Comm uses the radio limitations and speeds to throttle 
+packets if nessesary. Its packet format also limits the number of robots that can 
+be communicated to at any given time.
+</p>
+<p>
+Comm operates independently of a team and listens for robot control commands from 
+both teams. It determines which robots to control based on a hardcoded mapping for 
+each team where only one team can be assigned to a robot at a particular hardware ID.
+</p>
+<p>
+Comm also handles the mapping of software robot ID's to hardware ID's as well as 
+the mapping of software motors to hardware motors.
+</p>
+
+<h3>Running</h3>
+<p>
+The only command line argument to Comm is the serial port to use for communication 
+with the base station.
+</p>
+
+<h3>Packets Used</h3>
+<p>
+Comm accepts <a href="">CommData</a> packets which it then uses to send commands to the robots 
+through the base station. It also creates and sends out <a href="">RobotData</a> packets which 
+come on the reverse channel back to the host from the robots.
+</p>
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+NAME "dribble ball"
+//dribble the ball between two points
+
+NO_RESTART
+
+ROLE @drib
+    dribbler pos1=(1, 1) pos2=(-1,1)

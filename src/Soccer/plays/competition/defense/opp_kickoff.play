@@ -1,0 +1,28 @@
+// setup play for opponent kickoff
+//forwards should cover two forward opponents
+
+Name "Opp Kickoff"
+
+REQUIRE kickoff, setup, !our_action
+
+PREFER kickoff:1.0, setup:1.0
+
+NO_RESTART
+
+DONE !setup, stopped
+
+OPPONENT @handlerOp near_ball
+OPPONENT @forwardOp1 near_goal
+OPPONENT @forwardOp2 near_goal
+
+ROLE @def1
+	assistant_goalie
+	
+ROLE @def2
+	assistant_goalie
+	
+ROLE @for1
+	forward opp=@forwardOp1
+	
+ROLE @for2
+	forward opp=@forwardOp2

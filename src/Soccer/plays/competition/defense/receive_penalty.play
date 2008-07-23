@@ -1,0 +1,18 @@
+Name "Receive Penalty Kick"
+
+REQUIRE penalty, !our_action
+
+DONE !penalty
+
+//NO_RESTART
+
+OPPONENT @striker near_ball
+
+ROLE @1
+	move pos=(-1.5, 1) face=(0,0)
+ROLE @1
+	move pos=(-1.5, 1.5) face=(0,0)
+ROLE @1
+	move pos=(1.5, 1) face=(0,0)
+ROLE @1
+	move pos=(1.5, 1.5) face=(0,0)

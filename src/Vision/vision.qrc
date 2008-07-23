@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/main_icon" >
+        <file>horus.png</file>
+    </qresource>
+</RCC>

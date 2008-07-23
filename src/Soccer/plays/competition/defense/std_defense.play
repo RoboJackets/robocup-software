@@ -1,0 +1,23 @@
+Name "Standard Defense"
+
+NO_RESTART
+
+REQUIRE running
+
+OPPONENT @opp1 near_goal
+OPPONENT @opp2 near_goal
+
+DONE stopped
+
+Role @def1
+	assistant_goalie
+	
+Role @def2
+	assistant_goalie
+	
+Role @def3
+	forward opp=@opp1
+
+Role @def4
+	forward opp=@opp2
+	

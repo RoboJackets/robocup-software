@@ -1,0 +1,12 @@
+Name "forward test"
+
+REQUIRE setup
+
+Role @for1
+	forward
+	
+Role @for2
+	forward
+	
+Role @for3
+	forward

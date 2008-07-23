@@ -1,0 +1,25 @@
+NAME "movement test w/ 4 robots"
+
+ROLE @r1
+    move pos=(1, 0.5) threshold=0.1 face=(0, 1.5)
+    move pos=(1, 2.5) threshold=0.1 face=(0, 1.5)
+    move pos=(-1, 2.5) threshold=0.1 face=(0, 1.5)
+    move pos=(-1, 0.5) threshold=0.1 face=(0, 1.5)
+    
+ROLE @r2    
+    move pos=(1, 2.5) threshold=0.1 face=(0, 1.5)
+    move pos=(-1, 2.5) threshold=0.1 face=(0, 1.5)
+    move pos=(-1, 0.5) threshold=0.1 face=(0, 1.5)
+    move pos=(1, 0.5) threshold=0.1 face=(0, 1.5)
+    
+ROLE @r3
+    move pos=(-1, 2.5) threshold=0.1 face=(0, 1.5)
+    move pos=(-1, 0.5) threshold=0.1 face=(0, 1.5)
+    move pos=(1, 0.5) threshold=0.1 face=(0, 1.5)
+    move pos=(1, 2.5) threshold=0.1 face=(0, 1.5)
+
+ROLE @r4
+    move pos=(-1, 0.5) threshold=0.1 face=(0, 1.5)
+    move pos=(1, 0.5) threshold=0.1 face=(0, 1.5)
+    move pos=(1, 2.5) threshold=0.1 face=(0, 1.5)
+    move pos=(-1, 2.5) threshold=0.1 face=(0, 1.5)

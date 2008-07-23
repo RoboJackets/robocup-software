@@ -1,0 +1,12 @@
+NAME "Handler & Forward Test"
+
+NO_RESTART
+
+ROLE @handler
+    handler
+    
+ROLE @forward
+    forward
+    
+Role @defender
+	assistant_goalie

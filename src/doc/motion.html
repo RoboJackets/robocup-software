@@ -1,0 +1,66 @@
+<html>
+
+<head>
+<link rel="stylesheet" type="text/css" href="style.css">
+<title>RoboJackets - RoboCup:Motion</title> <!-- fixme: doc title-->
+</head>
+
+<body>
+<h1>RoboJackets - RoboCup</h1>
+<h2>Motion</h2>
+<p>
+Motion's purpose is the provide the lowest level software control of a robot's 
+position and orientation for a particular team. This also includes path planning 
+from source to destination and the appropriate rules following for gameplay states.
+</p>
+<p>
+Motion has no concept of any particular state from one command to the next. All 
+it knows and uses are the current dynamics of the robot and field and the requested 
+destination position and orientation. An optional style flag can be set to indicate 
+the preferred style of travel (fast or accurate). Beyond these things, any other 
+process has no influence over motion.
+</p>
+
+<h3>Path Planner</h3>
+<p>
+The link between actual robot motion control (PID loops and such) and the path 
+planner is through an abstract Path Planner interface. Any particular path planner 
+can be used/tried as long as its output is of the required form. The path planner 
+interface also provides motion with a way to setup basic avoidance zones. This is 
+how motion gives cues to the path planner about which areas of the field to avoid 
+during certain game states, and follow the rules.
+</p>
+<p>
+The Path Planner must output two things:
+<ul>
+<li>distance remaining <strong>along</strong> the path (in standard units)</li>
+<li>direction to travel (2d unit vector in team space)</li>
+</ul>
+</p>
+<p>
+This information is then used by motion in the control loops to create motor speeds 
+and move the robot. A distance remaining of 0 will cause no motion to occur and 
+will bring the robot to a hault. A direction of &lt;0,0&gt; will also have the same 
+effect reguardless of distance remaining.
+</p>
+<h4>Interface (from PathPlanner.hpp)</h4>
+<dl>
+<dt>PPOut</dt><dd>data structure for the Path Planner output.</dd>
+<dt>plan</dt><dd>Method called by motion to plan a path. Returns <em>PPOut</em>.
+ And takes in a robot ID, a destination, and a style of travel.</dd>
+</dl>
+<p>
+Motion will call plan for each robot and provide a destination. The path planner 
+then plans the path and return the expected output. Motion will then use that 
+information to control the robot. Any path planner that adheres to this interface 
+can be used.
+
+<p><center><small>A good path planning reference: 
+<a href="http://planning.cs.uiuc.edu/">http://planning.cs.uiuc.edu/</a></small></center></p>
+
+<h3>SPP - Simple Path Planner</h3>
+This is the path planner currently being used by the system.
+<strong>** TODO: document **</strong>
+
+</body>
+</html>
