@@ -1,0 +1,43 @@
+<packet name="FullTest" uid="0"> <!--uid is used to create the port-->
+	
+	<!-- this creates a new custom type from include -->
+	<!-- file must be specified -->
+	<type file="Geometry/Point2d.hpp" name="Point2d" namespace="Geometry" />
+	
+	<enum name="Skill">
+		<item name="Skill1" />
+		<item name="Skill2" />
+	</enum>
+	
+	<!-- create a new custom internal type -->
+	<!-- no file specified -->
+	<type name="Robot">
+		
+		<type name="InsideRobot">
+			
+			<enum name="InnerEnum">
+				<item name="IESkill1" />
+				<item name="IESkill2" />
+			</enum>
+			
+			<int name="testInt" value="2" />
+		</type>
+		
+		<bool name="valid" value="false" />
+		
+		<Point2d name="pos" /> <!--value is omitted, default used -->
+	
+		<Skill name="skill" />
+		
+	</type>
+	
+	<Robot name="robots" qty="5" /> <!--if qty = * a vector is used, if omitted, no array -->
+	<Robot name="single" />
+	<InsideRobot name="insideRobot" />
+	
+	<InnerEnum name="insideEnum" />
+	
+	<int name="vec" qty="*" />
+	<uint64_t name="timestamp" />
+	
+</packet>

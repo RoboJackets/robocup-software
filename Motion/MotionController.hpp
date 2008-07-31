@@ -8,11 +8,12 @@
 #include <QMutexLocker>
 
 #include <Packet/IO.hpp>
-#include <Packet/VisionData.hpp>
-#include <Packet/MotionCmd.hpp>
-#include <Packet/Ref.hpp>
-#include <Packet/LogMotion.hpp>
-#include <Packet/CommData.hpp>
+
+#include <VisionData>
+#include <MotionCmd>
+#include <Ref>
+#include <LogMotion>
+#include <CommData>
 
 #include <Geometry/Point2d.hpp>
 

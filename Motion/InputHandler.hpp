@@ -5,7 +5,8 @@
 #include <QWaitCondition>
 #include <QVector>
 
-#include <Packet/CommData.hpp>
+#include <CommData>
+
 #include <Geometry/Point2d.hpp>
 
 #include "ConfigFile.hpp"

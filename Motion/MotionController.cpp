@@ -7,8 +7,6 @@
 #include <QMutexLocker>
 
 #include <Packet/PacketSender.hpp>
-#include <Packet/CommData.hpp>
-#include <Packet/LogMotion.hpp>
 #include <Packet/PacketReceiver.hpp>
 
 #include <Geometry/Point2d.hpp>
@@ -186,7 +184,7 @@ void MotionController::run()
 	{
 		//set all robots to false
 		//robots must be turned on each loop interval
-		_commData.invalidate();
+		_commData = CommData();
 
 		//get new packets and call the handlers
 		//this processes all new packets first

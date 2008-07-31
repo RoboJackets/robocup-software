@@ -1,0 +1,27 @@
+<packet name="VisionData" uid="4">
+	
+	<type name="Point2d" namespace="Geometry" file="Geometry/Point2d.hpp" />
+	
+	<type name="Ball">
+		<Point2d name="pos" />
+		<Point2d name="vel" />
+		
+		<bool name="valid" />
+	</type>
+	
+	<type name="Robot">
+		<Point2d name="pos" />
+		<Point2d name="vel" />
+		
+		<float name="theta" />
+		
+		<bool name="valid" />
+	</type>
+	
+	<uint64_t name="timestamp" />
+	
+	<Ball name="ball" />
+	<Robot name="self" qty="5" />
+	<Robot name="opp" qty="5" />
+	
+</packet>

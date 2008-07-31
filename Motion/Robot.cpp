@@ -197,7 +197,7 @@ void Robot::genMotor(VelocityCmd velCmd)
 		
 		_motors[i] += change;
 		
-		_comm.motor[i] = (int8_t)(_motors[i]);
+		_comm.motors[i] = (int8_t)(_motors[i]);
 	}
 }
 

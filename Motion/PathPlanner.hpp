@@ -1,7 +1,7 @@
 #ifndef PATHPLANNER_HPP_
 #define PATHPLANNER_HPP_
 
-#include <Packet/VisionData.hpp>
+#include <VisionData>
 
 #include <Geometry/Point2d.hpp>
 #include <Geometry/Circle2d.hpp>

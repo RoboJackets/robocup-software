@@ -1,0 +1,14 @@
+<packet name="SimCmd" uid="6">
+	
+	<type name="Point2d" namespace="Geometry" file="Geometry/Point2d.hpp" />
+	
+	<!-- if true the position will be set -->
+	<bool name="setBallPos" />
+	
+	<!-- ball position in world space -->
+	<Point2d name="ballPos" />
+	
+	<!-- ball velocity -->
+	<Point2d name="ballVel" />
+	
+</packet>

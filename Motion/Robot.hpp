@@ -1,10 +1,10 @@
 #ifndef ROBOT_HPP_
 #define ROBOT_HPP_
 
-#include <Packet/MotionCmd.hpp>
-#include <Packet/VisionData.hpp>
-#include <Packet/CommData.hpp>
-#include <Packet/LogMotion.hpp>
+#include <MotionCmd>
+#include <VisionData>
+#include <CommData>
+#include <LogMotion>
 
 #include "ConfigFile.hpp"
 #include "Pid.hpp"

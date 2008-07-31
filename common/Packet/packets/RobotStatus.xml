@@ -1,0 +1,19 @@
+<packet name="RobotStatus" uid="3">
+	
+	<type name="Robot">
+		
+		<float name="battery" />
+		
+		<uint8_t name="rssi" />
+		
+		<bool name="charged" />
+		
+		<bool name="ballPresent" />
+		
+	</type>
+	
+	<Robot name="robots" qty="5" />
+	
+	<uint64_t name="timestamp" />
+	
+</packet>

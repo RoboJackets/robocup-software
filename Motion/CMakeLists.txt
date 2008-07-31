@@ -1,11 +1,15 @@
 project (motion)
 
+cmake_minimum_required(VERSION 2.6)
+
 add_definitions (-Werror -Wall -O2 -funroll-loops)
 add_definitions (-DQT_NO_KEYWORDS)
 
 set (USE_PACKET true)
 set (USE_GEOMETRY true)
 include ("../common/CMakeLists.txt")
+
+include_directories (${PROJECT_BINARY_DIR})
 
 set (QT_USE_QTGUI false)
 set (QT_USE_QTNETWORK true)
@@ -47,6 +51,7 @@ qt4_add_resources ( RC_SRCS
 	)
 
 add_executable (${PROJECT_NAME} ${SRCS} ${MOC_SRCS} ${UI_HDRS}) 
+add_dependencies (${PROJECT_NAME} GeneratePackets)
 
 #FIND_PACKAGE prepared QT_LIBRARIES variable for us:
 target_link_libraries (${PROJECT_NAME} ${QT_LIBRARIES} ${PACKET} ${GEOMETRY})

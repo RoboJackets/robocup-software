@@ -100,7 +100,7 @@ Packet::CommData::Robot InputHandler::genRobotData()
 	
 	for (unsigned int i=0; i<4; ++i)
 	{
-		r.motor[i] = int8_t(scale * motors[i]);
+		r.motors[i] = int8_t(scale * motors[i]);
 	}
 	
 	if (_controller->b7())
