@@ -1,10 +1,7 @@
 ## RoboCup Astyle Config ##
 
 #indent with spaces
-indent=spaces=4
-
-#convert tabs to spaces
-convert-tabs
+indent=tab=4
 
 #break brackets from previous line
 brackets=break
