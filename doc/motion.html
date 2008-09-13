@@ -21,6 +21,41 @@ the preferred style of travel (fast or accurate). Beyond these things, any other
 process has no influence over motion.
 </p>
 
+<h3>Config</h3>
+
+<p>
+At run-time Motion reads in an xml configfile passed to via the command line. This config 
+file has the PID parameters for the position and angle PID loops and for the orientation
+of the axels of the robot. The later is included to make it possible to configure motion
+for the 2008 or the 2009 robots. Below is an example of a config file.
+</p>
+
+<blockquote>
+
+<PRE>
+&lt;!-- Motion XML File --&gt
+&lt;motion&gt;
+	&lt;pid name="(PID Type)"&gt;
+		&lt;p value=... /&gt;
+		&lt;i value=... /&gt;
+		&lt;d value=".." /&gt;
+		&lt;windup value="..." /&gt;
+	&lt;/pid&gt;
+
+	&lt;axels&gt;
+		&lt;axel x="..." y="..." /&gt;
+		...
+	&lt;/axels&gt;
+&lt;/motion&gt;
+</PRE>
+</blockquote>
+
+<p>
+The config files are located in a folder called config in the Motion folder. The class ConfigFile 
+is what actually parses the XML file. Please see <a href="configfile.html">ConfigFile</a> for more informaiton.
+
+</p>
+
 <h3>Path Planner</h3>
 <p>
 The link between actual robot motion control (PID loops and such) and the path 
@@ -62,5 +97,15 @@ can be used.
 This is the path planner currently being used by the system.
 <strong>** TODO: document **</strong>
 
+<h3>Classes/Files</h3>
+<dl>
+<dt><a href="motion_main.html">main.cpp</a></dt><dd>The main file for the executable. Handles cmd line arguments.</dd>
+<dt><a href="motioncontroller.html">MotionController</a></dt><dd>The main Motion class</dd>
+<dt><a href="pathplanner.html">PathPlanner</a></dt><dd>Path Planner interface class. All path planners must be derived from this class</dd>
+<dt><a href="PID.html">PID</a></dt><dd>PID controller implementation</dd>
+<dt><a href="robot.html">Robot</a></dt><dd>Motion's implemenation of a robot</dd>
+<dt><a href="simplepathplanner.html">SimplePathPlanner</a></dt><dd>Simple Path Planner</dd>
+<dt><a href="configfile.html">ConfigFile</a></dt><dd>Parses the XML config file</dd>
+</dl>
 </body>
 </html>

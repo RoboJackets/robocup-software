@@ -1,0 +1,37 @@
+<html>
+
+<head>
+<link rel="stylesheet" type="text/css" href="style.css">
+<title>RoboJackets - RoboCup Motion:main.cpp</title> <!-- fixme: doc title-->
+</head>
+
+<body>
+<h1>RoboJackets - RoboCup</h1>
+<h2>main.cpp</h2>
+
+<p>
+The standard main file for handling cmd line arguments and starting the program. Below is its usage.
+<br>
+Usage: [-b] [-y] [-a] &lt;config file&gt;
+<br>
+-b: enable blue team control.
+<br>
+-y: enable yellow team control.
+<br>
+-a: default to auto mode when a controller is plugged in.
+<br>
+You can only run motion for either the blue or the yellow team.
+<br>
+
+<dl>
+<dt> void usage(const char* prog) </dt>
+<dd> Usage function. Is called for either incorrect cmd line input or with the -h flag</dd>
+
+<dt> int main(int argc, char *argv[])</dt>
+<dd> Creates a new QCoreApplication, processes cmd line input, creates a new ConfigFile object and loads. Also, creates a MotionController for either the yellow or blue team and starts it.
+</dd>
+</dl>
+</p>
+
+</body>
+</html>

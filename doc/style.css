@@ -1,5 +1,11 @@
 /** style sheet for rj-rc doc */
 
+blockquote {
+     padding: 10px 10px 10px 10px;
+     border: solid 1px #cccccc;
+     background-color: #FFFFFF;
+}
+
 html {
     margin: 0px;
     padding: 0px;

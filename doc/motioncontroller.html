@@ -1,0 +1,124 @@
+<html>
+
+<head>
+<link rel="stylesheet" type="text/css" href="style.css">
+<title>RoboJackets - RoboCup Motion:MotionController Class</title> <!-- fixme: doc title-->
+</head>
+
+<body>
+<h1>RoboJackets - RoboCup</h1>
+<h2>MotionController</h2>
+
+<p>
+MotionController is the main class for Motion does the work of handling the control state (auto or manual); recieving and processing new Vision, Ref, and MotionCmd data; sending Comm and Log data; and the various states that Motion can be in.
+</p>
+
+<h3>Member Functions</h3>
+<h4>Public</h4>
+<dl>
+
+<dt> MotionController(Team t, ConfigFile& cfg, bool autoOn) </dt>
+<dd> Default constructor for MotionController. By default, Motion is running in auto mode for the yellow team. The ref object for Motion is also running by default. This is okay as the referee defaults to halt.  The constructor initializes the robots, creates a new InputHandler for the joypad, and connects the InputHandler::playPauseButton() and InputHandler::manualAutoButton() signals to the MotionController::playPause() and MotionController::autoMan() slots respectively. If there indeed is a joypad attached Motion runs in manual mode, else it remains in auto. Each robot by default uses the simplePathPlanner. </dd>
+<br>
+<dt> ~MotionController() </dt>
+<dd> The default destructor for motion sets the state of Motion to not running and then waits until. Any InputHandler object that is active is deleted along with the robot objects</dd>
+
+</dd>
+</dl>
+
+<h4>Protected Q_SLOTS</h4>
+<dl>
+<dt> void playPause() </dt>
+<dd> This slot is connected to the playPauseButton() signal in InputHandler. That function handles the presses of the play/pause button on the joypad. When called this function toggles _runState, which can either be Running or Stopped.
+</dd>
+
+<br>
+
+<dt> void autoMan() </dt>
+<dd> This slot is connected to the manualAutoButton() signal in InputHandler. That function handles the presses of the auto/manual button on the joypad. When called this function toggles _controlState, which can either be Auto or Manual.
+</dd>
+
+<br>
+
+<dt> void visionDataHandler(const VisionData* data) </dt>
+<dd> This function is called when there is a new vision data packet. It copies over the "raw" vision data _visionData and sets _newVision to true. Please see Packet::VisionData for more informtion
+</dd>
+
+<br>
+
+<dt> void motionCmdHandler(const MotionCmd* data) </dt>
+<dd> This function is called at a set rate with command data packets. It copies over the motion cmds to _commands only if there is actual data. Each of the robots' valid flags in _commands is set to false. Please see Packet::MotionCmd for more informtion
+</dd>
+
+<br>
+
+<dt> void refHandler(const Packet::Ref* data) </dt>
+<dd> This function is called when there is a new ref data packets. It copies over the referee cmds to _ref. Please see Packet::Ref for more informtion
+</dd>
+</dl>
+
+<h4>Protected</h4>
+<dl>
+<dt> void run() </dt>
+<dd> This function is called after main when the program is running. It first sets up the packetSender, sender for Comm and Logger data and the packetReceiver, packRecv for Vision, MotionCmd, and Ref data. Inside its main loop there is handling for the various states that Motion can be in, and also calls to the recieve function for packRecv and the send function for sender. The states of Motion are dependent on _controlState, _newVision, _runState, and _input. Below are the combinations and what happens for each. Remember Motion can be in several states at once.
+
+<h5>_controlState == Auto && _running</h5>
+<br>
+All "No" zones for the pathPlanner are cleared and all the opponent obstacles are removed. New ones will be determined.
+<h5>_controlState == Auto && _newVision</h5>
+<br>
+procRef() is called. Some states in Ref depend on the ball's position. Please see Packet::Ref for more information.
+<h5>_runState == Running && _controlState == Auto && _newVision </h5>
+<br>
+The MotionCmds stored in _commands are processed by _robots[i], which is an array of Robot. Each Robot object has its own set of PID loops and pathPlanner which are processed at the time their proc() function is called. The sender object also sends the Logger and CommData data.
+<h5>_runState == Running && _controlState == Manual && _input</h5>
+In manual mode the robots PID loops are cleared and the process sleeps for a few ms to maintain a stable update rate for CommData. CommData can only be sent at a certain rate and that rate can not change. Data is then sent to Comm. Note that currently only one controller can be handled. And in there is no support for a mixed mode.
+<br>
+<h5>_runState == !Running</h5>
+The robots stop.
+</dd>
+
+<br>
+<dt> void procRef() </dt>
+<dd> Handles the various Ref states that require the robots to avoid certain areas of the field..
+</dd>
+</dl>
+
+<h3>Data Members</h3>
+<h4>Private</h4>
+
+<dl>
+<dt> enum ControlMode </dt>
+<dd>
+Manual or Auto
+</dd>
+
+<dt> enum RunMode </dt>
+<dd>
+Running or Stopped
+</dd>
+
+<dt> Team _team </dt>
+<dd>
+Our Current Team
+</dd>
+
+<dt> ControlMode _controlState </dt>
+<dt> RunMode _runState</dt>
+<dt> InputHandler* _input </dt>
+<dd> Input device handler (Logitech) </dd>
+
+<dt> Packet::LogMotion _logData </dt>
+<dt> Packet::CommData _commData </dt>
+<dt> bool _running </dt>
+<dd> Thread state </dd>
+<dt> Robot* _robots[5] </dt>
+<dt> Packet::VisionData _visionData </dt>
+<dt> Packet::MotionCmd _commands </dt>
+<dt> Packet::Ref _ref </dt>
+<dt> bool _newVision </dt>
+<dt> ConfigFile& _cfg </dt>
+
+</dl>
+</body>
+</html>
