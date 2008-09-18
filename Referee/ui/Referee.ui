@@ -1,0 +1,67 @@
+<ui version="4.0" >
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>331</width>
+    <height>644</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Small Size Referee</string>
+  </property>
+  <property name="windowIcon" >
+   <iconset resource="resource.qrc" >
+    <normaloff>:/images/whistle.gif</normaloff>:/images/whistle.gif</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>34</y>
+     <width>331</width>
+     <height>583</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>331</width>
+     <height>34</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile" >
+    <property name="windowTitle" >
+     <string>Small Size Referee</string>
+    </property>
+    <property name="windowIcon" >
+     <iconset resource="resource.qrc" >
+      <normaloff>:/images/whistle.gif</normaloff>:/images/whistle.gif</iconset>
+    </property>
+    <property name="title" >
+     <string>File</string>
+    </property>
+   </widget>
+   <addaction name="menuFile" />
+  </widget>
+  <widget class="QStatusBar" name="statusbar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>617</y>
+     <width>331</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+ </widget>
+ <resources>
+  <include location="resource.qrc" />
+ </resources>
+ <connections/>
+</ui>
