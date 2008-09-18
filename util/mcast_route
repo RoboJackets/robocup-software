@@ -1,6 +1,0 @@
-#!/bin/sh
-sudo route del -net 224.0.0.0 netmask 240.0.0.0 > /dev/null 2>&1
-if [ -n "$1" ]; then
-    sudo route add -net 224.0.0.0 netmask 240.0.0.0 $1
-fi
-

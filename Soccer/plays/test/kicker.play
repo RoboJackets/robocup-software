@@ -1,7 +1,0 @@
-NAME "Kicker Test"
-
-//NO_RESTART
-
-ROLE @kicker
-    kick pos=(0,0)
-    

@@ -1,7 +1,0 @@
-NAME "orient"
-//change orientation around ball
-
-NO_RESTART
-
-ROLE @orient
-    orient

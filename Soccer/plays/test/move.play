@@ -1,5 +1,0 @@
-NAME "movement test"
-
-ROLE @moving
-    move pos=(1, 1.5) threshold=0.02 face=(0,0)
-    move pos=(-1, 1.5) threshold=0.02 face=(0,0)

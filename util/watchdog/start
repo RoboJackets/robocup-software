@@ -1,6 +1,0 @@
-#!/bin/sh
-killall boa
-killall watchdog
-boa -c www
-cd ../..
-./util/watchdog/cpp/watchdog util/watchdog/cpp/config.xml &

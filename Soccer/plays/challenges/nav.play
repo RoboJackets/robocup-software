@@ -1,8 +1,0 @@
-NAME "Navigation Challenge"
-//http://small-size.informatik.uni-bremen.de/robocup2008:technical_challenges
-
-ROLE @1
-	move pos=(-0.4, 0.45) threshold=0.2
-    move pos=(0.4, 0.45) threshold=0.2
-    move pos=(0.4, 5.65) threshold=0.2
-    move pos=(-0.4, 5.65) threshold=0.2
