@@ -1,4 +1,5 @@
 project (soccsim)
+cmake_minimum_required(VERSION 2.6)
 
 # default project build flags
 add_definitions (-Werror -Wall)
@@ -7,8 +8,9 @@ add_definitions (-Werror -Wall)
 include ("../common/CMakeLists.txt")
 
 # PhysX Setup
-set (PHYSX_SDK_PATH /usr/include/PhysX/v2.8.1/SDKs)
-set (PHYSX_LIB_PATH /usr/lib/PhysX/v2.8.1)
+set (PHYSX_VERSION 2.8.1)
+set (PHYSX_SDK_PATH /usr/include/PhysX/v${PHYSX_VERSION}/SDKs)
+set (PHYSX_LIB_PATH /usr/lib/PhysX/v${PHYSX_VERSION})
 
 # Required includes for PhysX
 include_directories (${PHYSX_SDK_PATH}/Physics/include/)
@@ -25,8 +27,6 @@ add_definitions (-DLINUX)
 
 # disable fluids, otherwise PhysX doesn't work in linux
 add_definitions (-DNX_DISABLE_FLUIDS)
-
-set (PHYSX_LIBRARIES NxCooking PhysXLoader pthread dl)
 
 # setup QT
 add_definitions (-DQT_NO_KEYWORDS)
@@ -56,8 +56,6 @@ if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
 	message (STATUS "Cross Compiling to 32 bit mode")
 endif ()
 
-#link_directories (/usr/lib32)
-
 add_executable (${PROJECT_NAME}
 	main.cpp
 	Viewer.cpp
@@ -82,4 +80,4 @@ if (DEFINED PHYSX_LINK_FLAGS)
 	set_target_properties (${PROJECT_NAME} PROPERTIES LINK_FLAGS ${PHYSX_LINK_FLAGS})
 endif ()
 
-target_link_libraries (${PROJECT_NAME} ${PHYSX_LIBRARIES} QtOpenGL QtCore)#${QT_LIBRARIES})
+target_link_libraries (${PROJECT_NAME} NxCooking PhysXLoader pthread dl QtOpenGL QtCore)
