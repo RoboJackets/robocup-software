@@ -34,7 +34,7 @@ qt4_wrap_cpp (MOC_SRCS
 	
 # this will run UIC on the .ui files
 qt4_wrap_ui ( UI_HDRS
-	ui/Referee.ui
+	ui/MainRef.ui
 )
 	
 # include any Qt resource files

@@ -1,10 +1,10 @@
 #ifndef REFEREE_HPP
 #define REFEREE_HPP
 
-#include <ui_Referee.h>
+#include <ui_MainRef.h>
 #include <QTimer>
 
-class Referee : public QMainWindow, Ui::MainWindow
+class Referee : public QMainWindow, Ui_MainWindow
 {
 	Q_OBJECT;
 
