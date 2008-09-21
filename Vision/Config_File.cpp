@@ -59,7 +59,7 @@ bool read_param(QDomElement element, QString name, int &value)
 			printf("Bad int value for %s: \"%s\"\n", name.toAscii().constData(), text.toAscii().constData());
 		}
 	}
-
+    
 	return false;
 }
 

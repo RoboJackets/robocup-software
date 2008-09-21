@@ -7,9 +7,6 @@
 #include <QImage>
 #include <QTime>
 
-// This thread gets frames from the current camera and passes
-// them to windows and the vision processing code.
-
 class Image;
 class Image_Texture;
 
@@ -23,6 +20,8 @@ namespace Vision
     class Process;
 };
 
+/** The Camera Thread class grabs frames from the current camera
+ * and passes them to windows and vision processing */
 class Camera_Thread: public QThread
 {
     Q_OBJECT

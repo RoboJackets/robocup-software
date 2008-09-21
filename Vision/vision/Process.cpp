@@ -10,6 +10,7 @@
 #include <boost/foreach.hpp>
 
 using namespace boost;
+using namespace std;
 
 Vision::Processor::~Processor()
 {
@@ -50,7 +51,7 @@ Vision::Process::Process(Camera_Thread *camera_thread)
     blue_id = new Offset3_ID(this, Blue, Vector_ID::Strive);
     processors.push_back(blue_id);
 
-    yellow_id = new Vector_ID(this, Yellow, Vector_ID::GaTech);
+    yellow_id = new Vector_ID(this, Yellow, Vector_ID::CMU);
     //yellow_id = new Offset3_ID(this, Yellow, Offset3_ID::ZJUNlict);
     processors.push_back(yellow_id);
 }
@@ -88,5 +89,17 @@ void Vision::Process::run()
     BOOST_FOREACH(Processor *p, processors)
     {
         p->run();
+    }
+    
+    //TODO make identifier (change span/groups to a sane robot structure)
+    
+    //send stuff out here!!
+    list<Group*> yellows = spanner[Yellow]->groups();
+    
+    BOOST_FOREACH(Group *g, yellows)
+    {
+        printf("%d :: %f %f %f\n", g->id, g->center.x, g->center.y, g->direction);
+        
+        //TODO check direction_valid
     }
 }
