@@ -1,0 +1,536 @@
+<ui version="4.0" >
+ <class>Camera_Window</class>
+ <widget class="QWidget" name="Camera_Window" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>948</width>
+    <height>523</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Camera</string>
+  </property>
+  <property name="windowIcon" >
+   <iconset resource="vision.qrc" >:/main_icon/horus.png</iconset>
+  </property>
+  <layout class="QHBoxLayout" >
+   <item>
+    <widget class="QSplitter" name="splitter" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <widget class="QWidget" native="1" name="widget" >
+      <layout class="QVBoxLayout" >
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QTabWidget" name="tabWidget" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Expanding" hsizetype="Minimum" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="currentIndex" >
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="color_tab" >
+          <attribute name="title" >
+           <string>Colors</string>
+          </attribute>
+          <layout class="QGridLayout" >
+           <item row="0" column="0" colspan="2" >
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
+              <widget class="QLabel" name="label_2" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Preferred" hsizetype="Minimum" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text" >
+                <string>&amp;Edit color:</string>
+               </property>
+               <property name="buddy" >
+                <cstring>edit_color</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1" >
+              <widget class="QComboBox" name="edit_color" />
+             </item>
+             <item row="1" column="1" >
+              <widget class="QPushButton" name="clear_color" >
+               <property name="text" >
+                <string>Clear Color</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="1" column="0" colspan="2" >
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
+              <widget class="QCheckBox" name="show_camera" >
+               <property name="text" >
+                <string>Show C&amp;amera</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1" >
+              <widget class="QCheckBox" name="show_span_detail" >
+               <property name="text" >
+                <string>Show Spa&amp;ns</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0" >
+              <widget class="QCheckBox" name="show_colorseg" >
+               <property name="text" >
+                <string>Show &amp;Colorseg</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1" >
+              <widget class="QCheckBox" name="show_groups" >
+               <property name="text" >
+                <string>Show &amp;Groups</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" >
+              <widget class="QCheckBox" name="show_reports" >
+               <property name="text" >
+                <string>Show &amp;Reports</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item row="2" column="0" colspan="2" >
+            <widget class="QTableView" name="color_table" >
+             <property name="sizePolicy" >
+              <sizepolicy vsizetype="Expanding" hsizetype="Minimum" >
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="0" >
+            <widget class="QPushButton" name="load_config" >
+             <property name="text" >
+              <string>&amp;Load Config...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1" >
+            <widget class="QPushButton" name="save_config" >
+             <property name="text" >
+              <string>&amp;Save Config...</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0" >
+            <widget class="QPushButton" name="show_colorspace" >
+             <property name="text" >
+              <string>C&amp;olorspace</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1" >
+            <widget class="QPushButton" name="show_patterns" >
+             <property name="text" >
+              <string>&amp;Patterns</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="camera_tab" >
+          <attribute name="title" >
+           <string>Camera</string>
+          </attribute>
+         </widget>
+         <widget class="QWidget" name="params_tab" >
+          <attribute name="title" >
+           <string>Parameters</string>
+          </attribute>
+          <layout class="QVBoxLayout" >
+           <item>
+            <widget class="QGroupBox" name="groupBox" >
+             <property name="title" >
+              <string>Spanner</string>
+             </property>
+             <layout class="QGridLayout" >
+              <item row="1" column="0" >
+               <widget class="QLabel" name="label" >
+                <property name="text" >
+                 <string>Max gap:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1" >
+               <widget class="QSpinBox" name="max_gap" />
+              </item>
+              <item row="2" column="0" >
+               <widget class="QLabel" name="label_3" >
+                <property name="text" >
+                 <string>Min span pixels:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1" >
+               <widget class="QSpinBox" name="min_span_pixels" >
+                <property name="minimum" >
+                 <number>1</number>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0" >
+               <widget class="QLabel" name="label_4" >
+                <property name="text" >
+                 <string>Min group width:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1" >
+               <widget class="QSpinBox" name="min_group_width" />
+              </item>
+              <item row="4" column="0" >
+               <widget class="QLabel" name="label_5" >
+                <property name="text" >
+                 <string>Max group width:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1" >
+               <widget class="QSpinBox" name="max_group_width" />
+              </item>
+              <item row="5" column="0" >
+               <widget class="QLabel" name="label_6" >
+                <property name="text" >
+                 <string>Min group height:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1" >
+               <widget class="QSpinBox" name="min_group_height" />
+              </item>
+              <item row="6" column="0" >
+               <widget class="QLabel" name="label_7" >
+                <property name="text" >
+                 <string>Max group height:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="1" >
+               <widget class="QSpinBox" name="max_group_height" />
+              </item>
+              <item row="7" column="0" >
+               <widget class="QLabel" name="label_8" >
+                <property name="text" >
+                 <string>Min aspect:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="1" >
+               <widget class="QDoubleSpinBox" name="min_aspect" >
+                <property name="singleStep" >
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="0" >
+               <widget class="QLabel" name="label_9" >
+                <property name="text" >
+                 <string>Max aspect:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="1" >
+               <widget class="QDoubleSpinBox" name="max_aspect" >
+                <property name="singleStep" >
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0" >
+               <widget class="QLabel" name="label_11" >
+                <property name="text" >
+                 <string>Color:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1" >
+               <widget class="QComboBox" name="spanner_color" />
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_2" >
+             <property name="title" >
+              <string>View</string>
+             </property>
+             <layout class="QGridLayout" >
+              <item row="0" column="0" >
+               <widget class="QLabel" name="label_10" >
+                <property name="text" >
+                 <string>Robot diameter (m):</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1" >
+               <widget class="QDoubleSpinBox" name="robot_diameter" >
+                <property name="decimals" >
+                 <number>3</number>
+                </property>
+                <property name="minimum" >
+                 <double>0.000000000000000</double>
+                </property>
+                <property name="maximum" >
+                 <double>1.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="transform_tab" >
+          <attribute name="title" >
+           <string>Transform</string>
+          </attribute>
+          <layout class="QVBoxLayout" >
+           <item>
+            <layout class="QHBoxLayout" >
+             <item>
+              <widget class="QLabel" name="label_15" >
+               <property name="text" >
+                <string>Setup:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="setup_type" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <item>
+                <property name="text" >
+                 <string>&lt;none></string>
+                </property>
+               </item>
+               <item>
+                <property name="text" >
+                 <string>Distortion</string>
+                </property>
+               </item>
+               <item>
+                <property name="text" >
+                 <string>Transform Robots</string>
+                </property>
+               </item>
+               <item>
+                <property name="text" >
+                 <string>Transform Ball</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" >
+             <item>
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="setup_ok" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>OK</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="setup_cancel" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>Cancel</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_12" >
+             <property name="text" >
+              <string>Reference points:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTableView" name="ref_table" >
+             <property name="selectionMode" >
+              <enum>QAbstractItemView::SingleSelection</enum>
+             </property>
+             <property name="selectionBehavior" >
+              <enum>QAbstractItemView::SelectRows</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
+              <widget class="QLabel" name="label_16" >
+               <property name="text" >
+                <string>Undistorted:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1" >
+              <widget class="QLabel" name="und_pos" >
+               <property name="text" >
+                <string>x,y</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0" >
+              <widget class="QLabel" name="label_14" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text" >
+                <string>Robot:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1" >
+              <widget class="QLabel" name="robot_pos" >
+               <property name="text" >
+                <string>x,y</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" >
+              <widget class="QLabel" name="label_13" >
+               <property name="text" >
+                <string>Ball:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1" >
+              <widget class="QLabel" name="ball_pos" >
+               <property name="text" >
+                <string>x,y</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="status" >
+         <property name="text" >
+          <string>Status</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="GL_Camera_View" native="1" name="view" >
+      <property name="sizePolicy" >
+       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize" >
+       <size>
+        <width>640</width>
+        <height>480</height>
+       </size>
+      </property>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>GL_Camera_View</class>
+   <extends>QWidget</extends>
+   <header>../GL_Camera_View.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="vision.qrc" />
+ </resources>
+ <connections/>
+</ui>
