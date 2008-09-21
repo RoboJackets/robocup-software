@@ -1,7 +1,7 @@
 #ifndef CAMERA__PROSOLICA_HPP
 #define CAMERA__PROSOLICA_HPP
 
-#include "Base.h"
+#include "../Base.h"
 #include <PvApi.h>
 
 #include <QMutex>
@@ -15,11 +15,11 @@ namespace Camera
 			/** create a new prosilica camera with the uid specified */
 			Prosilica(unsigned int uid);
 			virtual ~Prosilica();
-			
+
 			virtual void open();
 			virtual void close();
 			virtual bool is_open();
-			
+
 			virtual QWidget *configuration();
 			virtual QSize size();
 			virtual const Image *read_frame();
@@ -28,10 +28,10 @@ namespace Camera
 			static void init();
 			/** cleaup after using the prosilica library */
 			static void destroy();
-		
+
         private:
             static void callback(tPvFrame *frame);
-            
+
 			//true once the PvInitialize method has been called
 			static bool _pvInitialized;
 
@@ -43,11 +43,11 @@ namespace Camera
 			//frame for image data
             static const int Num_Frames = 2;
 			tPvFrame _frame[Num_Frames];
-            
+
             // Protects the frames and current frame pointer.
             QMutex _mutex;
             QWaitCondition _frameAvailable;
-            
+
             tPvFrame *_nextFrame;
 
 			tPvUint32 _imageWidth;

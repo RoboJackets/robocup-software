@@ -4,7 +4,7 @@
 // This camera generates a black frame for testing the vision framework.
 // read_frame does not block.
 
-#include "Base.h"
+#include "../Base.h"
 
 namespace Camera
 {
@@ -12,7 +12,7 @@ namespace Camera
     {
     public:
         Dummy();
-        
+
         virtual QString name();
         virtual void open();
         virtual void close();
@@ -20,7 +20,7 @@ namespace Camera
         virtual QWidget *configuration();
         virtual QSize size();
         virtual const Image *read_frame();
-    
+
     protected:
         Image _frame;
         QSize _size;

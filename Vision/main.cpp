@@ -1,9 +1,9 @@
 #include "Camera_Thread.h"
 #include "Config_File.h"
 #include "Camera_Window.h"
-#include "vision/Process.h"
-#include "vision/Sender.h"
 #include "main.hpp"
+
+#include "vision/Process.h"
 
 #include <QApplication>
 #include <signal.h>
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 		printf("Name one or more configuration files on the command line.\n");
 		return 1;
 	}
-	
+
 	// Library initialization
     glutInit(&argc, argv);
     QApplication *app = new QApplication(argc, argv);
@@ -60,28 +60,29 @@ int main(int argc, char *argv[])
             }
         }
     }
-    
+
     // Bail if we couldn't set up any cameras
     if (Camera_Thread::camera_threads().empty())
     {
     	printf("No cameras configured\n");
     	return 1;
     }
-    
-    // Set up the sender
-    Vision::Process::sender = new Vision::Sender();
-    
-    // Main loop
+
+    // Main gui event loop
+    // blocks
     app->exec();
-    
+
     // Exit normally
     Camera_Thread::stop_all();
-    
-    BOOST_FOREACH(Config_File *config, configs)
+
+    //cleanup config files
+    //configs must not be used after this
+    BOOST_FOREACH(Config_File* config, configs)
     {
-    	delete config->window();
+    	//delete config->window();
+    	delete config;
     }
-    
+
     printf("\n");
 
     return 0;

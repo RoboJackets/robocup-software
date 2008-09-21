@@ -1,11 +1,11 @@
 #include "Transform.h"
-#include "Tracker.h"
 #include "Distortion.h"
 #include "../Config_File.h"
 
 #include <QStringList>
 #include <assert.h>
 #include <math.h>
+
 #include <Geometry/Segment.hpp>
 #include <boost/foreach.hpp>
 
@@ -18,7 +18,7 @@ Vision::Transform::Transform()
 	world_point[0] = Geometry::Point2d(0, 0);
     world_point[1] = Geometry::Point2d(1, 0);
     world_point[2] = Geometry::Point2d(0, 1);
-    
+
 	matrix.loadIdentity();
 }
 
@@ -44,7 +44,7 @@ bool Vision::Transform::calculate_matrix(Distortion *distortion)
 		distortion->undistort(image_point[1]),
 		distortion->undistort(image_point[2])
 	};
-	
+
 	f[0] = image[0].x;
 	f[1] = image[0].y;
 	f[2] = 1;
@@ -64,15 +64,15 @@ bool Vision::Transform::calculate_matrix(Distortion *distortion)
 	w[6] = world_point[2].x;
 	w[7] = world_point[2].y;
 	w[8] = 1;
-	
+
 	bool invertible = false;
 	f.computeInverseSafely(&f_inv, &invertible);
-	
+
 	if (invertible)
 	{
 		matrix = w * f_inv;
 	}
-	
+
 	return invertible;
 }
 
@@ -102,7 +102,7 @@ void Vision::Transform::save(QDomElement element)
 	for (int i = 0; i < 9; ++i)
 	{
 		text += QString::number(matrix[i]);
-		
+
 		if ((i % 3) == 2)
 		{
 			text += '\n';

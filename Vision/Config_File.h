@@ -35,28 +35,39 @@ bool read_param(QDomElement element, QString name, int &value);
 class Config_File
 {
 public:
+	/** load configuration from file */
     Config_File(QString filename);
+    ~Config_File();
     
+    /** load a config file from @filename */
     void load(QString filename = QString());
+    
+    /** save a config file to @filename */
     void save(QString filename = QString());
     
     Camera_Thread *camera_thread() const { return _camera_thread; }
     Camera_Window *window() const { return _win; }
-    
+
+    /** return the filename of the config file */
     const QString &filename() const { return _filename; }
     
 protected:
+	/** config filename */
     QString _filename;
+    
+    /** config file xml document */
     QDomDocument _document;
     
     Camera_Thread *_camera_thread;
+
+    /** configuration window */
     Camera_Window *_win;
     
     // Cameras
     // Only one of these will be non-null.
-    Camera::DCam *_dcam;
-    Camera::File *_video;
-    Camera::Prosilica *_prosilica;
+    Camera::DCam* _dcam;
+    Camera::File* _video;
+    Camera::Prosilica* _prosilica;
     
     // Returns the named element child of the given node.
     // If no such element exists, one is created.

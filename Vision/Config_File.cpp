@@ -1,8 +1,10 @@
 #include "Config_File.h"
-#include "camera/DCam.h"
-#include "camera/Prosilica.hpp"
-#include "camera/DCam_Config.h"
-#include "camera/File.h"
+
+#include "camera/dcam/DCam.h"
+#include "camera/dcam/DCam_Config.h"
+#include "camera/prosilica/Prosilica.hpp"
+#include "camera/file/File.h"
+
 #include "Camera_Thread.h"
 #include "Transform_Setup.h"
 #include "vision/Process.h"
@@ -31,13 +33,13 @@ bool read_param(QDomElement element, QString name, float &value)
 		if (ok)
 		{
 			value = x;
-			
+
 			return true;
 		} else {
 			printf("Bad float value for %s: \"%s\"\n", name.toAscii().constData(), text.toAscii().constData());
 		}
 	}
-	
+
 	return false;
 }
 
@@ -51,13 +53,13 @@ bool read_param(QDomElement element, QString name, int &value)
 		if (ok)
 		{
 			value = x;
-			
+
 			return true;
 		} else {
 			printf("Bad int value for %s: \"%s\"\n", name.toAscii().constData(), text.toAscii().constData());
 		}
 	}
-	
+
 	return false;
 }
 
@@ -69,8 +71,13 @@ Config_File::Config_File(QString filename)
 	_video = 0;
 	_camera_thread = 0;
 	_win = 0;
-	
+
     load(filename);
+}
+
+Config_File::~Config_File()
+{
+	delete _win;
 }
 
 void Config_File::load(QString filename)
@@ -124,9 +131,9 @@ void Config_File::save(QString filename)
 	{
 		_filename = filename;
 	}
-	
+
 	QDomElement root = _document.documentElement();
-	
+
 	// Update DCam features
 	if (_dcam)
 	{
@@ -139,7 +146,7 @@ void Config_File::save(QString filename)
 	QDomElement distortion_element = child_element(root, "distortion");
 	remove_children(distortion_element);
 	_camera_thread->process->distortion->save(distortion_element);
-	
+
 	// Update transformations
 	QDomElement ball_transform_element = child_element(root, "ball_transform");
 	remove_children(ball_transform_element);
@@ -148,7 +155,7 @@ void Config_File::save(QString filename)
 	QDomElement robot_transform_element = child_element(root, "robot_transform");
 	remove_children(robot_transform_element);
 	_camera_thread->process->robot_transform->save(robot_transform_element);
-	
+
 	// Update reference points
 	QDomElement ref_element = child_element(root, "ref_points");
 	remove_children(ref_element);
@@ -158,28 +165,28 @@ void Config_File::save(QString filename)
 		ref_element.appendChild(point_element);
 
 		const Geometry::Point2d &point = _camera_thread->process->ball_transform->world_point[i];
-		
+
 		point_element.setAttribute("x", point.x);
 		point_element.setAttribute("y", point.y);
 	}
-	
+
 	// Update spanners
 	save_spanners(root);
-	
+
 	// Update colorseg
 	QDomElement colorseg_element = child_element(root, "colorseg");
 	remove_children(colorseg_element);
 	_camera_thread->process->colorseg->save(colorseg_element);
-	
+
     QFile file(_filename);
     if (!file.open(QIODevice::WriteOnly))
     {
     	throw runtime_error(str(format("Can't write to %s") % _filename.toStdString()));
     }
-    
+
     QTextStream ts(&file);
     _document.save(ts, 4);
-    
+
     file.close();
 }
 
@@ -191,7 +198,7 @@ QDomElement Config_File::child_element(QDomNode node, QString name)
 		child = _document.createElement(name);
 		node.appendChild(child);
 	}
-	
+
 	return child;
 }
 
@@ -211,7 +218,7 @@ void Config_File::save_spanners(QDomElement root)
 	{
 		root.removeChild(element);
 	}
-	
+
 	for (int i = 0; i < Vision::Num_Colors; ++i)
 	{
 		element = _document.createElement("spanner");
@@ -230,14 +237,14 @@ void Config_File::load_dcam(QDomElement &element)
 	        missing_attr(element, "name");
 	        return;
 	    }
-	    
+
 	    QDomAttr guid_attr = element.attributeNode("guid");
 	    if (guid_attr.isNull())
 	    {
 	        missing_attr(element, "guid");
 	        return;
 	    }
-	
+
 	    bool ok = false;
 	    QString guid_text = guid_attr.value();
 	    uint64_t guid = guid_text.toULongLong(&ok, 16);
@@ -247,7 +254,7 @@ void Config_File::load_dcam(QDomElement &element)
 	        printf("Invalid guid \"%s\"\n", guid_text.toAscii().constData());
 	        return;
 	    }
-	    
+
 	    _dcam = new Camera::DCam(guid);
 	    _dcam->name(name_attr.value());
 	    try
@@ -259,10 +266,10 @@ void Config_File::load_dcam(QDomElement &element)
 	        printf("Failed to open camera %016llx: %s\n", (unsigned long long)guid, ex.what());
 	        return;
 	    }
-	    
+
 	    start_camera(_dcam);
 	}
-    
+
     for (QDomElement child = element.firstChildElement(); !child.isNull(); child = child.nextSiblingElement())
     {
         if (child.tagName() == "features")
@@ -285,14 +292,14 @@ void Config_File::load_prosilica(QDomElement &element)
 			missing_attr(element, "name");
 			return;
 		}
-	    
+
 		QDomAttr uid_attr = element.attributeNode("uid");
 		if (uid_attr.isNull())
 		{
 			missing_attr(element, "uid");
 			return;
 		}
-	
+
 		bool ok = false;
 		QString uid_text = uid_attr.value();
 		unsigned int uid = uid_text.toUInt(&ok, 10);
@@ -344,14 +351,14 @@ void Config_File::load_video(QDomElement &element)
             missing_attr(element, "name");
             return;
         }
-        
+
 	    QDomAttr file_attr = element.attributeNode("file");
 	    if (file_attr.isNull())
 	    {
 	        missing_attr(element, "file");
 	        return;
 	    }
-	    
+
 	    //FIXME - Relative to config file path
 	    Camera::File *cam = new Camera::File(file_attr.value().toAscii().constData());
         cam->name(name_attr.value());
@@ -364,7 +371,7 @@ void Config_File::load_video(QDomElement &element)
 	        error_prefix(element);
 	        printf("%s\n", ex.what());
 	    }
-	    
+
 	    start_camera(cam);
 	}
 
@@ -432,14 +439,14 @@ void Config_File::load_camera_common(QDomElement &element)
 	    		        missing_attr(child, "x");
 	    		        return;
 	    		    }
-	    		    
+
 	    		    QDomAttr y_attr = child.attributeNode("y");
 	    		    if (y_attr.isNull())
 	    		    {
 	    		        missing_attr(child, "y");
 	    		        return;
 	    		    }
-	    		    
+
 	    		    bool ok = false;
 	    		    float x = x_attr.value().toFloat(&ok);
 	    		    if (!ok)
@@ -447,20 +454,20 @@ void Config_File::load_camera_common(QDomElement &element)
 	    		    	printf("Invalid x coordinate\n");
 	    		    	continue;
 	    		    }
-	    		    
+
 	    		    float y = y_attr.value().toFloat(&ok);
 	    		    if (!ok)
 	    		    {
 	    		    	printf("Invalid y coordinate\n");
 	    		    	continue;
 	    		    }
-	    		    
+
 	    		    _camera_thread->process->ball_transform->world_point[n].x = x;
 	    		    _camera_thread->process->ball_transform->world_point[n].y = y;
 
 	    		    _camera_thread->process->robot_transform->world_point[n].x = x;
 	    		    _camera_thread->process->robot_transform->world_point[n].y = y;
-	    			
+
 	    			++n;
 	    		} else {
 	    			error_prefix(element);
@@ -472,7 +479,7 @@ void Config_File::load_camera_common(QDomElement &element)
 	    }
 
 	    _win->ui.ref_table->resizeColumnsToContents();
-	    
+
 	    if (n != 3)
 	    {
 			error_prefix(element);
@@ -508,9 +515,9 @@ void Config_File::start_camera(Camera::Base *cam)
     _camera_thread->camera(cam);
     _camera_thread->update_time(33);
     _camera_thread->start();
-    
+
     _camera_thread->process = new Vision::Process(_camera_thread);
-    
+
     _win = new Camera_Window(this);
     _win->show();
 }

@@ -1,4 +1,5 @@
 set(PROJECT vision)
+cmake_minimum_required(VERSION 2.6)
 
 if (${UNIX})
 	add_definitions(-D_LINUX)
@@ -23,26 +24,37 @@ set(SRCS
     Pattern_Window.cpp Pattern_View.cpp
     Colorspace_Window.cpp Colorspace_View.cpp
     
-    camera/Dummy.cpp camera/File.cpp camera/File_Control.cpp camera/DCam.cpp
-    camera/DCam_Config.cpp
-    camera/Prosilica.cpp 
-    camera/AttrBase.cpp
-    camera/AttrCommand.cpp 
-    camera/AttrEnum.cpp 
-    camera/AttrFloat.cpp 
-    camera/AttrString.cpp 
-    camera/AttrUint32.cpp
+    camera/test/Dummy.cpp 
+    
+    camera/file/File.cpp
+    camera/file/File_Control.cpp
+    
+    camera/dcam/DCam.cpp
+    camera/dcam/DCam_Config.cpp
+    
+    camera/prosilica/Prosilica.cpp 
+    camera/prosilica/AttrBase.cpp
+    camera/prosilica/AttrCommand.cpp 
+    camera/prosilica/AttrEnum.cpp 
+    camera/prosilica/AttrFloat.cpp 
+    camera/prosilica/AttrString.cpp 
+    camera/prosilica/AttrUint32.cpp
     
     vision/Colors.cpp
-    vision/Colorseg.cpp vision/Spanner.cpp vision/Tracker.cpp vision/Process.cpp
-    vision/Dot_ID.cpp vision/Vector_ID.cpp vision/Offset3_ID.cpp vision/Sender.cpp
-    vision/Transform.cpp vision/Distortion.cpp
+    vision/Colorseg.cpp
+    vision/Spanner.cpp
+    vision/Process.cpp
+    vision/Dot_ID.cpp
+    vision/Vector_ID.cpp
+    vision/Offset3_ID.cpp
+    vision/Transform.cpp
+    vision/Distortion.cpp
 )
 
 set(UIS
-    camera_window.ui
-    colorspace_window.ui
-    pattern_window.ui
+    ui/camera_window.ui
+    ui/colorspace_window.ui
+    ui/pattern_window.ui
     camera/file_control.ui
 )
 
@@ -62,7 +74,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include(${QT_USE_FILE})
 qt4_automoc(${SRCS})
 qt4_wrap_ui(UIHS ${UIS})
-qt4_add_resources(RC_SRCS vision.qrc)
+qt4_add_resources(RC_SRCS ui/vision.qrc)
 
 set (prosilica_dir ${PROJECT_SOURCE_DIR}/camera/prosilica_lib)
 include_directories(${prosilica_dir}/include)
