@@ -6,6 +6,7 @@
 #   Externals (for Point2d)
 #   Support use of inner classes from any scope where they're available
 #   Strings
+#   Initial values
 
 from xml.dom.minidom import *
 
@@ -62,6 +63,9 @@ class Generator:
         pass
 
 class CppGenerator(Generator):
+    # This writes out a single file, but is not combined because all the
+    # bodies are at the end.
+    
     headerGuard = '_TEST_HPP_'
     
     def properType(self, type):
@@ -88,11 +92,16 @@ class CppGenerator(Generator):
         self.indent()
         self.write('public:')
         self.write()
+        self.primitiveMembers = []
     
     def declareMember(self, node):
-        type = self.properType(node.getAttribute('type'))
+        type = node.getAttribute('type')
+        cType = self.properType(type)
         name = node.getAttribute('name')
-        self.write(type + ' ' + name + ';')
+        self.write(cType + ' ' + name + ';')
+        
+        if type in primitives:
+            self.primitiveMembers.append(name)
     
     def declareArray(self, node):
         type = self.properType(node.getAttribute('type'))
@@ -101,15 +110,21 @@ class CppGenerator(Generator):
         self.write('std::vector<' + type + '> ' + name + ';')
     
     def declareStructEnd(self, node):
-        self.write()
-        self.write('void write(Serialization::Buffer &buf);')
-        self.write('void read(const Serialization::Buffer &buf);')
+        if self.primitiveMembers:
+            # Default constructor
+            name = node.getAttribute('typename')
+            self.write()
+            self.write(name + '()')
+            self.write('{')
+            self.indent()
+            for name in self.primitiveMembers:
+                self.write(name + ' = 0;')
+            self.unindent()
+            self.write('}')
+        
         self.unindent()
         self.write('};')
         self.write()
-    
-    def declareEnd(self):
-        self.write('#endif // ' + self.headerGuard)
     
     ########
     # Body
@@ -121,41 +136,24 @@ class CppGenerator(Generator):
             name = parent.getAttribute('typename') + '::' + name
             parent = parent.parentNode
         
-        self.write('void ' + name + '::write(Serialization::Buffer &buf)')
+        self.write('template<typename B>')
+        self.write('void operator&(B &buf, ' + name + ' &obj)')
         self.write('{')
         self.indent()
     
-    def writeBodyMember(self, node, indexed):
-        type = node.getAttribute('type')
-        name = node.getAttribute('name')
-        if indexed:
-            name += '[i]'
-        
-        if type in primitives:
-            self.write('buf.write(' + name + ');')
-        else:
-            self.write(name + '.write(buf);')
-        
     def bodyMember(self, node):
         type = node.getAttribute('type')
         name = node.getAttribute('name')
         
-        if node.nodeName == 'member':
-            self.writeBodyMember(node, False)
-        elif node.nodeName == 'array':
-            type = node.getAttribute('type')
-            name = node.getAttribute('name')
-            sizetype = self.sizetype(node)
-            
-            if type in primitives:
-                self.write('buf.writePrimitiveArray<' + sizetype + '_t>(' + name + ');')
-            else:
-                self.write('buf.writeClassArray<' + sizetype + '_t>(' + name + ');')
+        self.write('buf & obj.' + name + ';')
         
     def bodyStructEnd(self, node):
         self.unindent()
         self.write('}')
         self.write()
+    
+    def bodyEnd(self):
+        self.write('#endif // ' + self.headerGuard)
     
 class PythonGenerator(Generator):
     combined = True
@@ -244,10 +242,12 @@ class PythonGenerator(Generator):
     
 ########
 
+memberTags = ['member', 'array']
+
 def structBody(node):
     gen.bodyStructBegin(node)
     for child in node.childNodes:
-        if child.nodeType == node.ELEMENT_NODE:
+        if child.nodeType == node.ELEMENT_NODE and child.nodeName in memberTags:
             gen.bodyMember(child)
     gen.bodyStructEnd(node)
 

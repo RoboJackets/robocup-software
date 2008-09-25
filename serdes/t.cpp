@@ -1,42 +1,33 @@
 #include <stdio.h>
 
-class Ser
-{
-public:
-    void operator&(int i)
-    {
-        printf("int %d\n", i);
-    }
-};
+#include "test.hpp"
 
-class Thing
+void Serialization::WriteBuffer::operator&(uint8_t x)
 {
-public:
-    class Inner
-    {
-    public:
-    };
-    
-    Inner i;
-};
-
-void serdes(Ser &buf, Thing::Inner &i)
-{
-    printf("Thing::Inner\n");
+    printf("uint8_t %d\n", x);
 }
 
-void serdes(Ser &buf, Thing &t)
+void Serialization::WriteBuffer::operator&(uint32_t x)
 {
-    printf("Thing\n");
-    serdes(buf, t.i);
+    printf("uint32_t %d\n", x);
+}
+
+void Serialization::WriteBuffer::operator&(uint64_t x)
+{
+    printf("uint64_t %lld\n", x);
+}
+
+void Serialization::WriteBuffer::operator&(float x)
+{
+    printf("float %f\n", x);
 }
 
 int main()
 {
-    Ser buf;
+    Serialization::WriteBuffer buf;
     
-    Thing t;
-    serdes(buf, t);
+    LogFrame f;
+    buf & f;
     
     return 0;
 }
