@@ -1,0 +1,27 @@
+<struct typename="LogFrame">
+    <struct typename="Point2d">
+        <member type="float" name="x"/>
+        <member type="float" name="y"/>
+    </struct>
+    
+    <struct typename="Color">
+        <member type="uint8" name="r"/>
+        <member type="uint8" name="g"/>
+        <member type="uint8" name="b"/>
+    </struct>
+    
+    <struct typename="DebugLine">
+        <array size="2" type="Point2d" name="pt"/>
+        <member type="Color" name="color"/>
+    </struct>
+    
+    <struct typename="Robot">
+        <member type="Point2d" name="pos"/>
+        <member type="Point2d" name="vel"/>
+        <array type="Point2d" name="path"/>
+    </struct>
+    
+    <member type="uint64" name="timestamp"/>
+    <array size="5" type="Robot" name="robots"/>
+    <array type="DebugLine" name="debugLines"/>
+</struct>
