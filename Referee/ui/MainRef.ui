@@ -6,30 +6,22 @@
     <x>0</x>
     <y>0</y>
     <width>694</width>
-    <height>693</height>
+    <height>646</height>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>MainWindow</string>
+   <string>Small Size League -- Referee Program</string>
   </property>
   <widget class="QWidget" name="centralwidget" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>26</y>
-     <width>694</width>
-     <height>644</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_3" >
+   <layout class="QHBoxLayout" >
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_19" >
+     <layout class="QVBoxLayout" >
       <item>
        <widget class="QGroupBox" name="GameControlGroupBox" >
         <property name="title" >
          <string>Game Control</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout" >
+        <layout class="QVBoxLayout" >
          <item>
           <widget class="QPushButton" name="StartTimeButton" >
            <property name="text" >
@@ -66,20 +58,20 @@
         <property name="title" >
          <string>Game State</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_6" >
+        <layout class="QVBoxLayout" >
          <item>
           <widget class="QGroupBox" name="TimeElapsedGroup" >
            <property name="title" >
             <string>Time Elapsed</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_2" >
+           <layout class="QVBoxLayout" >
             <item>
              <widget class="QLabel" name="TimeElapsedText" >
               <property name="text" >
-               <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:22pt;">0:00&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+               <string>0:00.0</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
               </property>
              </widget>
             </item>
@@ -91,14 +83,14 @@ p, li { white-space: pre-wrap; }
            <property name="title" >
             <string>Time Remaining</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_3" >
+           <layout class="QVBoxLayout" >
             <item>
              <widget class="QLabel" name="TimeRemainingText" >
               <property name="text" >
-               <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Sans Serif'; font-size:9pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-size:22pt;">15:00&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+               <string>5:00.0</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
               </property>
              </widget>
             </item>
@@ -110,7 +102,7 @@ p, li { white-space: pre-wrap; }
            <property name="title" >
             <string>Period</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_4" >
+           <layout class="QVBoxLayout" >
             <item>
              <widget class="QLabel" name="PeriodText" >
               <property name="text" >
@@ -132,7 +124,7 @@ p, li { white-space: pre-wrap; }
            <property name="title" >
             <string>Game Status</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_5" >
+           <layout class="QVBoxLayout" >
             <item>
              <widget class="QLabel" name="GameStatusText" >
               <property name="text" >
@@ -155,9 +147,9 @@ p, li { white-space: pre-wrap; }
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_17" >
+     <layout class="QVBoxLayout" >
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_7" >
+       <layout class="QVBoxLayout" >
         <item>
          <widget class="QLabel" name="BlueScoreText" >
           <property name="text" >
@@ -180,7 +172,7 @@ p, li { white-space: pre-wrap; }
            <bool>false</bool>
           </property>
           <property name="styleSheet" >
-           <string notr="true" >background: #5959AB;</string>
+           <string>background: #5959AB;</string>
           </property>
           <property name="frameShape" >
            <enum>QFrame::StyledPanel</enum>
@@ -191,7 +183,7 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout" >
+         <layout class="QHBoxLayout" >
           <item>
            <widget class="QPushButton" name="BlueGoalButton" >
             <property name="text" >
@@ -215,7 +207,7 @@ p, li { white-space: pre-wrap; }
         <property name="title" >
          <string>Blue Team Control</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_15" >
+        <layout class="QVBoxLayout" >
          <item>
           <widget class="QPushButton" name="BlueTimeOutButton" >
            <property name="text" >
@@ -228,11 +220,14 @@ p, li { white-space: pre-wrap; }
            <property name="title" >
             <string>Time Remaining</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_11" >
+           <layout class="QVBoxLayout" >
             <item>
              <widget class="QLabel" name="TimeRemainingBlueText" >
               <property name="text" >
                <string>10:00</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
               </property>
              </widget>
             </item>
@@ -244,11 +239,14 @@ p, li { white-space: pre-wrap; }
            <property name="title" >
             <string>Time Outs Left</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_12" >
+           <layout class="QVBoxLayout" >
             <item>
              <widget class="QLabel" name="BlueTimeOutsLeftText" >
               <property name="text" >
                <string>4</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
               </property>
              </widget>
             </item>
@@ -292,11 +290,11 @@ p, li { white-space: pre-wrap; }
            <property name="title" >
             <string>Penalty Cards</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_9" >
+           <layout class="QVBoxLayout" >
             <item>
              <widget class="QPushButton" name="BlueYellowCardButton" >
               <property name="styleSheet" >
-               <string notr="true" >background: #FFFF00;
+               <string>background: #FFFF00;
 </string>
               </property>
               <property name="text" >
@@ -307,7 +305,7 @@ p, li { white-space: pre-wrap; }
             <item>
              <widget class="QPushButton" name="BlueRedCardButton" >
               <property name="styleSheet" >
-               <string notr="true" >background: #E80202;</string>
+               <string>background: #E80202;</string>
               </property>
               <property name="text" >
                <string>Red Card</string>
@@ -323,9 +321,9 @@ p, li { white-space: pre-wrap; }
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_18" >
+     <layout class="QVBoxLayout" >
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_8" >
+       <layout class="QVBoxLayout" >
         <item>
          <widget class="QLabel" name="YellowScoreText" >
           <property name="text" >
@@ -348,7 +346,7 @@ p, li { white-space: pre-wrap; }
            <bool>false</bool>
           </property>
           <property name="styleSheet" >
-           <string notr="true" >background: #FFFF90;</string>
+           <string>background: #FFFF90;</string>
           </property>
           <property name="frameShape" >
            <enum>QFrame::StyledPanel</enum>
@@ -359,7 +357,7 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2" >
+         <layout class="QHBoxLayout" >
           <item>
            <widget class="QPushButton" name="YellowGoalButton" >
             <property name="text" >
@@ -383,9 +381,9 @@ p, li { white-space: pre-wrap; }
         <property name="title" >
          <string>Yellow Team Control</string>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_16" >
+        <layout class="QVBoxLayout" >
          <item>
-          <widget class="QPushButton" name="YellowTeamTimeOutButton" >
+          <widget class="QPushButton" name="YellowTimeOutButton" >
            <property name="text" >
             <string>Time Out</string>
            </property>
@@ -396,11 +394,14 @@ p, li { white-space: pre-wrap; }
            <property name="title" >
             <string>Time Remaining</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_13" >
+           <layout class="QVBoxLayout" >
             <item>
              <widget class="QLabel" name="TimeRemainingYellowText" >
               <property name="text" >
                <string>10:00</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
               </property>
              </widget>
             </item>
@@ -412,11 +413,17 @@ p, li { white-space: pre-wrap; }
            <property name="title" >
             <string>Time Outs Left</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_14" >
+           <property name="alignment" >
+            <set>Qt::AlignCenter</set>
+           </property>
+           <layout class="QVBoxLayout" >
             <item>
              <widget class="QLabel" name="YellowTimeOutsLeftText" >
               <property name="text" >
                <string>4</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignCenter</set>
               </property>
              </widget>
             </item>
@@ -460,11 +467,11 @@ p, li { white-space: pre-wrap; }
            <property name="title" >
             <string>Penalty Cards</string>
            </property>
-           <layout class="QVBoxLayout" name="verticalLayout_10" >
+           <layout class="QVBoxLayout" >
             <item>
              <widget class="QPushButton" name="YellowYellowCardButton" >
               <property name="styleSheet" >
-               <string notr="true" >background: #FFFF00;
+               <string>background: #FFFF00;
 </string>
               </property>
               <property name="text" >
@@ -475,7 +482,7 @@ p, li { white-space: pre-wrap; }
             <item>
              <widget class="QPushButton" name="YellowRedCardButton" >
               <property name="styleSheet" >
-               <string notr="true" >background: #E80202;</string>
+               <string>background: #E80202;</string>
               </property>
               <property name="text" >
                <string>Red Card</string>
@@ -492,23 +499,14 @@ p, li { white-space: pre-wrap; }
     </item>
    </layout>
   </widget>
-  <widget class="QStatusBar" name="statusbar" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>670</y>
-     <width>694</width>
-     <height>23</height>
-    </rect>
-   </property>
-  </widget>
+  <widget class="QStatusBar" name="statusbar" />
   <widget class="QMenuBar" name="menuBar" >
    <property name="geometry" >
     <rect>
      <x>0</x>
      <y>0</y>
      <width>694</width>
-     <height>26</height>
+     <height>30</height>
     </rect>
    </property>
   </widget>
