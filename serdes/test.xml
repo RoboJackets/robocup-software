@@ -21,7 +21,17 @@
         <array type="Point2d" name="path"/>
     </struct>
     
+    <constant type="uint32" name="Test" value="1234"/>
+    
+    <enum type="uint8" typename="TestEnum">
+        <constant name="A"/>
+        <constant name="B"/>
+    </enum>
+    
     <member type="uint64" name="timestamp"/>
     <array size="5" type="Robot" name="robots"/>
     <array type="DebugLine" name="debugLines"/>
+    <array type="int32" name="intArray" sizetype="uint8"/>
+    <member type="TestEnum" name="eee"/>
+    <array type="TestEnum" name="ea" size="3"/>
 </struct>

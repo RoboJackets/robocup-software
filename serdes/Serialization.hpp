@@ -20,10 +20,12 @@ namespace Serialization
         void operator&(float value);
         void operator&(double value);
         
-        template<typename T>
-        void operator&(std::vector<T> &x)
+        template<typename S, typename T>
+        void arrayVariable(std::vector<T> &x)
         {
-            *this & x.size();
+            *this & (S)x.size();
+            // Always use unsigned int here so at least the loop
+            // works correctly if sizetype is too small.
             for (unsigned int i = 0; i < x.size(); ++i)
             {
                 *this & x[i];
@@ -31,7 +33,7 @@ namespace Serialization
         }
         
         template<typename T, unsigned int N>
-        void operator&(T (&x)[N])
+        void arrayFixed(T (&x)[N])
         {
             for (unsigned int i = 0; i < N; ++i)
             {
@@ -54,20 +56,20 @@ namespace Serialization
         void operator&(float value);
         void operator&(double value);
         
-        template<typename T>
-        void operator&(std::vector<T> &x)
+        template<typename S, typename T>
+        void arrayVariable(std::vector<T> &x)
         {
-            unsigned int size;
+            S size;
             *this & size;
             x.resize(size);
-            for (unsigned int i = 0; i < size; ++i)
+            for (S i = 0; i < size; ++i)
             {
                 *this & x[i];
             }
         }
         
         template<typename T, unsigned int N>
-        void operator&(T (&x)[N])
+        void arrayFixed(T (&x)[N])
         {
             for (unsigned int i = 0; i < N; ++i)
             {
