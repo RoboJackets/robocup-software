@@ -8,13 +8,13 @@ else (${UNIX})
 #add_definitions(-D_LINUX)
 endif (${UNIX})
 
-if (CMAKE_SIZEOF_VOID_P EQUAL 4)
-	add_definitions(-D_x86)
-	set (prosilica_lib_dir x86)
-else (CMAKE_SIZEOF_VOID_P EQUAL 8)
+if (CMAKE_SIZEOF_VOID_P EQUAL 8)
 	add_definitions(-D_x64)
 	set (prosilica_lib_dir x64)
-endif (CMAKE_SIZEOF_VOID_P EQUAL 4)
+else ()
+	add_definitions(-D_x86)
+	set (prosilica_lib_dir x86)
+endif ()
 
 set(SRCS
     main.cpp
