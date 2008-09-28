@@ -345,6 +345,8 @@ class PythonGenerator(Generator):
 
 def usage():
     print 'Usage: ' + sys.argv[0] + ' <-c|-p> <input.xml>'
+    print '\t-c c++ output'
+    print '\t-p python output'
     sys.exit(1)
 
 gen = None
