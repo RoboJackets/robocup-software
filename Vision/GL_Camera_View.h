@@ -10,6 +10,8 @@
 #include <QTime>
 #include <vector>
 
+#include "vision/Process.h"
+
 class Camera_Thread;
 class Camera_Window;
 class Setup_Mode;
@@ -18,7 +20,6 @@ class Transform_Setup;
 
 namespace Vision
 {
-    class Process;
     class Calibration_Line;
 }
 

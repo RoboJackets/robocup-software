@@ -1,8 +1,8 @@
 #ifndef _DOT_ID_H_
 #define _DOT_ID_H_
 
-#include "Process.h"
-#include "Spanner.h"
+#include "../Process.h"
+#include "../Spanner.h"
 
 #include <Geometry/Point2d.hpp>
 

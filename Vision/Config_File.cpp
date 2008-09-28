@@ -516,8 +516,6 @@ void Config_File::start_camera(Camera::Base *cam)
     _camera_thread->update_time(33);
     _camera_thread->start();
 
-    _camera_thread->process = new Vision::Process(_camera_thread);
-
     _win = new Camera_Window(this);
     _win->show();
 }

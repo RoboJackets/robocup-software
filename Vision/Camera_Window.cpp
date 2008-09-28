@@ -3,14 +3,15 @@
 #include "Transform_Setup.h"
 #include "Config_File.h"
 #include "Colorspace_Window.h"
-#include "Pattern_Window.h"
 #include "camera/Base.h"
+
 #include "vision/Process.h"
 #include "vision/Colorseg.h"
-#include "vision/Dot_ID.h"
-#include "vision/Vector_ID.h"
 #include "vision/Distortion.h"
 #include "vision/Transform.h"
+
+//#include "vision/identification/Dot_ID.h"
+//#include "vision/identification/Vector_ID.h"
 
 #include <QFileDialog>
 #include <QHeaderView>
@@ -338,16 +339,6 @@ void Camera_Window::on_show_colorspace_clicked()
     }
     
     _colorspace_window->show();
-}
-
-void Camera_Window::on_show_patterns_clicked()
-{
-    if (!_pattern_window)
-    {
-        _pattern_window = new Pattern_Window(this);
-    }
-    
-    _pattern_window->show();
 }
 
 void Camera_Window::on_view_mouse_moved(int x, int y)

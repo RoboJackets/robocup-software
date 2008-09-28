@@ -43,7 +43,6 @@ protected slots:
     void on_show_span_detail_toggled(bool state);
     void on_show_reports_toggled(bool state);
     void on_show_colorspace_clicked();
-    void on_show_patterns_clicked();
     void on_view_mouse_moved(int x, int y);
     void on_save_config_clicked();
     void on_load_config_clicked();

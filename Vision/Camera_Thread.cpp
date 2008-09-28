@@ -40,13 +40,14 @@ Camera_Thread::Camera_Thread()
     _update_time = 33;
     _running = false;
     _paused = false;
-    process = 0;
     _frame = 0;
     _frame_count = 0;
     _frame_ms = 0;
     _can_redraw = true;
     
     _camera_threads.push_back(this);
+    
+    process = new Vision::Process();
 }
 
 Camera_Thread::~Camera_Thread()
@@ -251,11 +252,8 @@ void Camera_Thread::run()
         int minimum_time = _update_time;
         mutex.unlock();
         
-        // Call vision processing
-        if (process)
-        {
-            process->run();
-        }
+        //TODO call vision process here
+        
         struct timeval t2;
         gettimeofday(&t2, 0);
         

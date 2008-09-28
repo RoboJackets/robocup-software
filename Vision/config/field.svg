@@ -16,9 +16,9 @@
    version="1.0"
    sodipodi:docname="field.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   inkscape:export-filename="/home/shtylman/projects/robocup/trunk/Vision/config/field.png"
-   inkscape:export-xdpi="90"
-   inkscape:export-ydpi="90">
+   inkscape:export-filename="field.png"
+   inkscape:export-xdpi="34.597881"
+   inkscape:export-ydpi="34.597881">
   <defs
      id="defs4">
     <inkscape:perspective
@@ -39,17 +39,17 @@
      objecttolerance="10"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.47973944"
-     inkscape:cx="978.91989"
-     inkscape:cy="829.62315"
+     inkscape:zoom="0.39811349"
+     inkscape:cx="1169.2913"
+     inkscape:cy="832.67712"
      inkscape:document-units="cm"
      inkscape:current-layer="layer1"
      showgrid="false"
      units="cm"
-     inkscape:window-width="1680"
-     inkscape:window-height="1008"
+     inkscape:window-width="1440"
+     inkscape:window-height="851"
      inkscape:window-x="0"
-     inkscape:window-y="25" />
+     inkscape:window-y="0" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -66,19 +66,19 @@
      inkscape:groupmode="layer"
      id="layer1">
     <rect
-       style="fill:#00a003;fill-rule:evenodd;stroke:#ffffff;stroke-width:17.71653543000000042;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;fill-opacity:1"
+       style="fill:#00a003;fill-rule:evenodd;stroke:#ffffff;stroke-width:3.54330709;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;fill-opacity:1"
        id="rect2383"
        width="2160.4089"
        height="1487.1803"
        x="89.087044"
        y="89.086952" />
     <path
-       style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:17.95702744;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 1160.5533,97.024946 L 1160.5533,1582.255"
+       style="fill:none;fill-rule:evenodd;stroke:#ffffff;stroke-width:3.54101491;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 1160.5533,91.854378 L 1160.5533,1575.1635"
        id="path3155" />
     <path
        sodipodi:type="arc"
-       style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:30.02868271;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:6.00573655;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path3157"
        sodipodi:cx="1202.8572"
        sodipodi:cy="845.35425"
@@ -1468,5 +1468,19 @@
          style="fill:#d60067;fill-opacity:1;stroke:none"
          sodipodi:type="arc" />
     </g>
+    <rect
+       style="fill:#ecff12;fill-opacity:1;stroke:none;stroke-width:3.39038134;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect3330"
+       width="67.475761"
+       height="244.64111"
+       x="21.180847"
+       y="710.35651" />
+    <rect
+       style="fill:#2c00d3;fill-opacity:1;stroke:none;stroke-width:3.39038134;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect3334"
+       width="67.475761"
+       height="244.64111"
+       x="2250.7144"
+       y="710.35651" />
   </g>
 </svg>

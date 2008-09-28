@@ -2,7 +2,6 @@
 #define _VISION__COLORSEG_H_
 
 #include "Colors.h"
-#include "Process.h"
 #include "../Camera_Thread.h"
 
 #include <QImage>
@@ -13,10 +12,10 @@ class Image;
 
 namespace Vision
 {
-	class Colorseg: public Processor
+	class Colorseg
 	{
 		public:
-			Colorseg(Camera_Thread *camera_thread);
+			Colorseg();
 			~Colorseg();
 
 			void run();
@@ -26,7 +25,7 @@ namespace Vision
 			{
 				return _output;
 			}
-
+			
 			uint8_t &lut(QRgb in);
 
 			// Changes all instances of (from) in the LUT to (to).
@@ -66,7 +65,8 @@ namespace Vision
 			static const int green_shift = 8 - green_bits + blue_shift;
 			static const int red_shift = 8 - red_bits + green_shift;
 
-			static const int lut_size = 1 << (red_bits + green_bits + blue_bits);
+			static const int lut_size = 1
+			        << (red_bits + green_bits + blue_bits);
 
 			// Converts a pixel from an original RGB32 image to a quanztized pixel
 			// which is an index in the LUT.
@@ -76,10 +76,9 @@ namespace Vision
 				        | ((pixel & green_mask) >> green_shift) | ((pixel
 				        & blue_mask) >> blue_shift);
 			}
-
+			
 			uint8_t _lut[lut_size];
-
-			Camera_Thread *_camera_thread;
+			
 			QImage _output;
 	};
 }

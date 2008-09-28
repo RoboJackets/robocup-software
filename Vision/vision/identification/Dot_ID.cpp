@@ -1,5 +1,5 @@
 #include "Dot_ID.h"
-#include "Spanner.h"
+#include "../Spanner.h"
 
 #include <math.h>
 #include <vector>
@@ -164,14 +164,11 @@ bool Vision::Dot_ID::match_color_sequence(const Color_Sequence &seq) const
 
 void Vision::Dot_ID::set_report(Group *center_group, const Pattern &pattern, const Geometry::Point2d &center, const Geometry::Point2d &facing)
 {
-    center_group->report_center = center + pattern.center_offset;
     center_group->id = find_id(pattern);
-    center_group->direction = fix_angle(facing.angle() * 180.0 / M_PI + pattern.angle_offset);
 }
 
 void Vision::Dot_ID::set_report(Group *center_group, const Pattern &pattern, int id, const Geometry::Point2d &center, const Geometry::Point2d &facing)
 {
-    center_group->report_center = center + pattern.center_offset;
     center_group->id = id;
-    center_group->direction = fix_angle(facing.angle() * 180.0 / M_PI + pattern.angle_offset);
+    //center_group->direction = fix_angle(facing.angle() * 180.0 / M_PI + pattern.angle_offset);
 }

@@ -3,18 +3,21 @@ cmake_minimum_required(VERSION 2.6)
 
 if (${UNIX})
 	add_definitions(-D_LINUX)
-else ()
-#not _LINUX...who cares
-#add_definitions(-D_LINUX)
 endif ()
 
 set(SRCS
     main.cpp
-    Config_File.cpp Camera_Thread.cpp Camera_Window.cpp
-    GL_Camera_View.cpp Image.cpp Image_Texture.cpp
-    Setup_Mode.cpp Distortion_Setup.cpp Transform_Setup.cpp
-    Pattern_Window.cpp Pattern_View.cpp
-    Colorspace_Window.cpp Colorspace_View.cpp
+    Config_File.cpp
+    Camera_Thread.cpp
+    Camera_Window.cpp
+    GL_Camera_View.cpp
+    Image.cpp
+    Image_Texture.cpp
+    Setup_Mode.cpp
+    Distortion_Setup.cpp
+    Transform_Setup.cpp
+    Colorspace_Window.cpp
+    Colorspace_View.cpp
     
     camera/test/Dummy.cpp 
     
@@ -36,11 +39,12 @@ set(SRCS
     vision/Colorseg.cpp
     vision/Spanner.cpp
     vision/Process.cpp
-    vision/Dot_ID.cpp
-    vision/Vector_ID.cpp
-    vision/Offset3_ID.cpp
     vision/Transform.cpp
     vision/Distortion.cpp
+    
+    vision/identification/Dot_ID.cpp
+    vision/identification/Vector_ID.cpp
+    vision/identification/Offset3_ID.cpp
 )
 
 set(UIS
@@ -76,7 +80,7 @@ else ()
 	set (prosilica_lib_dir x86)
 endif ()
 
-set (prosilica_dir ${PROJECT_SOURCE_DIR}/camera/prosilica_lib)
+set (prosilica_dir ${PROJECT_SOURCE_DIR}/lib/prosilica)
 include_directories(${prosilica_dir}/include)
 link_directories(${prosilica_dir}/lib/${prosilica_lib_dir}/4.1/)
 

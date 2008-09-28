@@ -18,7 +18,6 @@ Vision::Group::Group()
     num_pixels = 0;
     good_pixels = 0;
     id = -1;
-    direction = -1000;
 
     min_x = max_x = -1;
     min_y = max_y = -1;
@@ -122,7 +121,6 @@ void Vision::Spanner::run()
 
         // Undistort and transform to world space
     	group->center = transform->transform(distortion->undistort(group->raw_center));
-        group->report_center = group->center;
 
         // Add this group to the list
         _groups.push_back(group);

@@ -8,10 +8,8 @@
 using namespace std;
 using namespace boost;
 
-Vision::Colorseg::Colorseg(Camera_Thread *camera_thread)
+Vision::Colorseg::Colorseg()
 {
-    _camera_thread = camera_thread;
-    
     memset(_lut, 0, lut_size);
     
 #if 0
@@ -102,7 +100,8 @@ void Vision::Colorseg::save(QDomElement element)
 
 void Vision::Colorseg::run()
 {
-    run(_camera_thread->frame());
+	//TODO fixme
+    //run(_camera_thread->frame());
 }
 
 void Vision::Colorseg::run(const Image *frame)

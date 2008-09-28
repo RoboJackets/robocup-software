@@ -3,10 +3,10 @@
 
 #include "GL_Camera_View.h"
 #include "Setup_Mode.h"
+#include "vision/Process.h"
 
 namespace Vision
 {
-	class Process;
 	class Calibration_Line;
 	class Transform;
 }
