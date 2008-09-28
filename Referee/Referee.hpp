@@ -13,36 +13,47 @@ class Referee : public QMainWindow, Ui_MainWindow
 		~Referee();
 
 
-		///Variables that describe the game state
+		/** Variables that describe the game state
+		*
+		*	0 - Pregame
+		*	1 - First Half
+		*	2 - Half Time
+		*	3 - Second Half
+		*	4 - First Overtime
+		*	5 - Second Overtime */
+		int currPeriod;
+		/*
+		typedef enum
+		{
+			preGame,
+			firstHalf,
+			halfTime,
+			secondHalf,
+			firstOvertime,
+			secondOvertime
+		} currPeriod;
+		*/
 
-		///0 - Pregame
-		///1 - First Half
-		///2 - Half Time
-		///3 - Second Half
-		///4 - First Overtime
-		///5 - Second Overtime
-		int CurrentPeriod;
+		/** Current milliseconds */
+		int currMilliseconds;
 
-		///Current milliseconds
-		int CurrentMilliseconds;
+		/** Maximum milliseconds in current period of game play */
+		int maxMilliseconds;
 
-		///Maximum milliseconds in current period of game play
-		int MaxMilliseconds;
-
-		///Current game state (0 - Halted, 1 - In progress, 2 - timeout)
-		int CurrentGameState;		
+		/** Current game state (0 - Halted, 1 - In progress, 2 - timeout) */
+		int currGameState;		
 		
-		///Variables to hold the amount of goals
-		int BlueGoals;
-		int YellowGoals;
+		/** Variables to hold the amount of goals */
+		int blueGoals;
+		int yellowGoals;
 
-		///Variables to hold timeouts for both teams
-		int YellowTimeOuts;
-		int BlueTimeOuts;
+		/** Variables to hold timeouts for both teams */
+		int yellowTimeOuts;
+		int blueTimeOuts;
 
-		///Variable to hold current time out time
-		int CurrentBlueTimeOutTimer;
-		int CurrentYellowTimeOutTimer;
+		/** Variable to hold current time out time */
+		int currBlueTimeOutTimer;
+		int currYellowTimeOutTimer;
 
 
 
@@ -50,12 +61,12 @@ class Referee : public QMainWindow, Ui_MainWindow
 		/** send latest ref info */
 		void TxSend();
 		
-		///Send game update info
-		void GameUpdate();
+		/** Send game update info */
+		void gameUpdate();
 
 		///Update timers
-		void BlueTimeOutUpdate();
-		void YellowTimeOutUpdate();
+		void blueTimeOutUpdate();
+		void yellowTimeOutUpdate();
 		
 		///Generate functions for all our button presses.
 
@@ -88,15 +99,15 @@ class Referee : public QMainWindow, Ui_MainWindow
 		void on_StopGameButton_clicked();
 
 		///Functions to update handling the game timer
-		void UpdateTimeElapsed();
-		void UpdateTimeRemaining();
+		void updateTimeElapsed();
+		void updateTimeRemaining();
 
 		///Functions to start and stop game timer.
-		void StartGameTimer();
-		void StopGameTimer();
+		void startGameTimer();
+		void stopGameTimer();
 
 		///Functions to change goals
-		void IncrementBlueGoals();
+		void incrementBlueGoals();
 		void IncrementYellowGoals();
 		void DecrementBlueGoals();
 		void DecrementYellowGoals();
@@ -111,8 +122,8 @@ class Referee : public QMainWindow, Ui_MainWindow
 		void UpdatePeriodLabels();
 
 		///Function to update the time out time labels
-		void UpdateBlueTimeOutRemaining();
-		void UpdateYellowTimeOutRemaining();
+		void updateBlueTimeOutRemaining();
+		void updateYellowTimeOutRemaining();
 
 		///Function to update times out left label
 		void UpdateBlueTimeOutLabels();
@@ -120,41 +131,37 @@ class Referee : public QMainWindow, Ui_MainWindow
 
 	private:
 		QTimer _txTimer;
-		QTimer GameTimer;
-		QTimer BlueTimeOutTimer;
-		QTimer YellowTimeOutTimer;
+		QTimer _gameTimer;
+		QTimer _blueTimeOutTimer;
+		QTimer _yellowTimeOutTimer;
 
 		///Number of referee packets to transmit in 1 second
-		static const int Hz = 10;
+		static const int _hz = 10;
 
 		//Number of game updates to happen in 1 second
-		static const int GameHz = 10;
+		static const int _gameHz = 10;
 
 		///Number of MILLISECONDS in pregame interval
-		static const int PreGameMsecs=5*60*1000;
+		static const int _preGameMsecs=5*60*1000;
 		
 		///Number of MILLISECONDs in first half
-		static const int FirstHalfMsecs=15*60*1000;
+		static const int _firstHalfMsecs=15*60*1000;
 
 		///Number of MILLISECONDS in second half
-		static const int SecondHalfMsecs=15*60*1000;
+		static const int _secondHalfMsecs=15*60*1000;
 
 		///Number of MILLISECONDS in half time
-		static const int HalfTimeMsecs=5*60*1000;
+		static const int _halfTimeMsecs=5*60*1000;
 
 		///Number of MILLISECONDS in first overtime
-		static const int FirstOvertimeMsecs=3*60*1000;
+		static const int _firstOvertimeMsecs=3*60*1000;
 
 		///Number of MILLISECONDS in second overtime
-		static const int SecondOvertimeMsecs=3*60*1000;
+		static const int _secondOvertimeMsecs=3*60*1000;
 
 		///Number of MILLISECONDS in each time out
-		static const int TimeOutMsecs=10*60*1000;
-
-	
-
+		static const int _timeOutMsecs=10*60*1000;
 
 };
-
 
 #endif // REFEREE_HPP

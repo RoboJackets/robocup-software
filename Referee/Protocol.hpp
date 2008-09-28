@@ -3,4 +3,4 @@
 
 
 
-#endif // PROTOCOL_HPP
+#endif /*PROTOCOL_HPP_*/

@@ -6,38 +6,38 @@ Referee::Referee() :
 {
 	setupUi(this);
 
-	//Initialize game variables
-	Referee::CurrentPeriod=0;
-	Referee::CurrentGameState=0;
-	Referee::CurrentMilliseconds=0;
-	Referee::MaxMilliseconds=Referee::PreGameMsecs;
+	/** Initialize game variables */
+	Referee::currPeriod=0;
+	Referee::currGameState=0;
+	Referee::currMilliseconds=0;
+	Referee::maxMilliseconds=Referee::_preGameMsecs;
 
-	///Initialize goals 
-	Referee::BlueGoals=0;
-	Referee::YellowGoals=0;
+	/** Initialize goals */ 
+	Referee::blueGoals=0;
+	Referee::yellowGoals=0;
 
-	///Initialize current time out timers
-	Referee::CurrentBlueTimeOutTimer=0;
-	Referee::CurrentYellowTimeOutTimer=0;
+	/** Initialize current time out timers */
+	Referee::currBlueTimeOutTimer=0;
+	Referee::currYellowTimeOutTimer=0;
 
-	//Initialize amount of time outs left
-	Referee::BlueTimeOuts=4;
-	Referee::YellowTimeOuts=4;
+	/** Initialize amount of time outs left */
+	Referee::blueTimeOuts=4;
+	Referee::yellowTimeOuts=4;
 
-	///connect to timer for sending ref packets out
+	/** connect to timer for sending ref packets out */
 	connect(&_txTimer, SIGNAL(timeout()), SLOT(TxSend()));
 
-	///Connect to the timer that keeps track of the game state.
-	connect(&GameTimer, SIGNAL(timeout()), SLOT(GameUpdate()));
+	/** Connect to the timer that keeps track of the game state. */
+	connect(&_gameTimer, SIGNAL(timeout()), SLOT(gameUpdate()));
 
-	///Connect to the timer that controls blue team's time outs
-	connect(&YellowTimeOutTimer, SIGNAL(timeout()), SLOT(YellowTimeOutUpdate()));
+	/** Connect to the timer that controls blue team's time outs */
+	connect(&_yellowTimeOutTimer, SIGNAL(timeout()), SLOT(yellowTimeOutUpdate()));
 
-	///Connect to the timer that controls yellow team's time outs
-	connect(&BlueTimeOutTimer, SIGNAL(timeout()), SLOT(BlueTimeOutUpdate()));
+	/** Connect to the timer that controls yellow team's time outs */
+	connect(&_blueTimeOutTimer, SIGNAL(timeout()), SLOT(blueTimeOutUpdate()));
 
-	//setup transmit timer
-	_txTimer.start(1000/Referee::Hz);
+	/** setup transmit timer */
+	_txTimer.start(1000/Referee::_hz);
 
 }
 
@@ -46,36 +46,36 @@ Referee::~Referee()
 	
 }
 
-///This is the function that is called when the game timer times out.  This is executed several times per second, based on the value of Hz.
+///This is the function that is called when the game timer times out.  This is executed several times per second, based on the value of _hz.
 void Referee::TxSend()
 {
 
 }
 
 ///This function updates the timers for time outs
-void Referee::BlueTimeOutUpdate()
+void Referee::blueTimeOutUpdate()
 {
 	///Check to see if current time exceeds max time possible in current period.
-	if(Referee::CurrentBlueTimeOutTimer >= Referee::TimeOutMsecs) {
+	if(Referee::currBlueTimeOutTimer >= Referee::_timeOutMsecs) {
 
 		///Stop game timer, set the gamestate to halted and increment the game period.
-		BlueTimeOutTimer.stop();
-		Referee::StartGameTimer();
+		_blueTimeOutTimer.stop();
+		Referee::startGameTimer();
 		///Reset the timer if there are still time outs left.
-		if(BlueTimeOuts>=1) {
-			CurrentBlueTimeOutTimer=0;
-			Referee::UpdateBlueTimeOutRemaining();
+		if(blueTimeOuts>=1) {
+			currBlueTimeOutTimer=0;
+			Referee::updateBlueTimeOutRemaining();
 			Referee::UpdateBlueTimeOutLabels();
 		}
 	
 	} else {
 		///Increment the timer if the game if time is still left.
-		Referee::CurrentBlueTimeOutTimer+=100;
+		Referee::currBlueTimeOutTimer+=100;
 		//DEBUG
-		//printf("Current milliseconds: %d\n", Referee::CurrentBlueTimeOutTimer);
+		//printf("Current milliseconds: %d\n", Referee::currBlueTimeOutTimer);
 
 		///Update our labels.
-		Referee::UpdateBlueTimeOutRemaining();
+		Referee::updateBlueTimeOutRemaining();
 		Referee::UpdateBlueTimeOutLabels();
 	}
 
@@ -83,31 +83,31 @@ void Referee::BlueTimeOutUpdate()
 }
 
 ///This function updats the timers for time outs
-void Referee::YellowTimeOutUpdate()
+void Referee::yellowTimeOutUpdate()
 {
 
 }
 
 
 ///This function updates the labels of the game timers when the game is being played.
-void Referee::GameUpdate()
+void Referee::gameUpdate()
 {
 	///Check to see if current time exceeds max time possible in current period.
-	if(Referee::CurrentMilliseconds >= Referee::MaxMilliseconds) {
+	if(Referee::currMilliseconds >= Referee::maxMilliseconds) {
 
 		///Stop game timer, set the gamestate to halted and increment the game period.
-		Referee::StopGameTimer();
+		Referee::stopGameTimer();
 		Referee::IncrementCurrentPeriod();
 
 	} else {
 		///Increment the timer if the game if time is still left.
-		Referee::CurrentMilliseconds+=100;
+		Referee::currMilliseconds+=100;
 		//DEBUG
-		//printf("Current milliseconds: %d\n", Referee::CurrentMilliseconds);
+		//printf("Current milliseconds: %d\n", Referee::currMilliseconds);
 
 		//Update our labels.
-		Referee::UpdateTimeElapsed();
-		Referee::UpdateTimeRemaining();
+		Referee::updateTimeElapsed();
+		Referee::updateTimeRemaining();
 	}
 
 }
@@ -131,12 +131,12 @@ void Referee::on_BlueTimeOutButton_clicked()
 {
 
 	///Make sure blue timer is not active
-	if(BlueTimeOutTimer.timerId() == -1) {
+	if(_blueTimeOutTimer.timerId() == -1) {
 		///Make sure there are enough time outs, that another time out clock isn't running, and that the game is playing
-		if( (BlueTimeOuts >= 1) && (YellowTimeOutTimer.timerId()==-1) && (CurrentGameState==1)) {
-			BlueTimeOutTimer.start(100);
-			Referee::StopGameTimer();
-			Referee::BlueTimeOuts--;
+		if( (blueTimeOuts >= 1) && (_yellowTimeOutTimer.timerId()==-1) && (currGameState==1)) {
+			_blueTimeOutTimer.start(100);
+			Referee::stopGameTimer();
+			Referee::blueTimeOuts--;
 			Referee::UpdateBlueTimeOutLabels();
 		}
 	}
@@ -253,13 +253,13 @@ printf("Debug.\n");
 ///Start of game buttons code
 void Referee::on_StartTimeButton_clicked()
 {
-	Referee::StartGameTimer();
+	Referee::startGameTimer();
 
 }
 
 void Referee::on_StopTimeButton_clicked()
 {
-	Referee::StopGameTimer();
+	Referee::stopGameTimer();
 
 }
 
@@ -278,13 +278,13 @@ printf("Debug.\n");
 }
 
 ///This function updates the Time Elapsed button inside the GUI.
-void Referee::UpdateTimeElapsed()
+void Referee::updateTimeElapsed()
 {
 	//Create a buffer string for our sprintf
 	char buf[256];
-	
+
 	//Convert milliseconds to minutes, seconds and tenths of seconds
-	int milliseconds=Referee::CurrentMilliseconds;
+	int milliseconds=Referee::currMilliseconds;
 
 	//Find Minutes
 	int minutes=floor(milliseconds/(60*1000));
@@ -314,13 +314,13 @@ void Referee::UpdateTimeElapsed()
 }
 
 ///This function updates the Time Remaining button inside the GUI.
-void Referee::UpdateTimeRemaining()
+void Referee::updateTimeRemaining()
 {
 	//Create a buffer string for our sprintf
 	char buf[256];
 	
 	//Convert milliseconds to minutes, seconds and tenths of seconds
-	int milliseconds=Referee::MaxMilliseconds - Referee::CurrentMilliseconds;
+	int milliseconds=Referee::maxMilliseconds - Referee::currMilliseconds;
 
 	//Find Minutes
 	int minutes=floor(milliseconds/(60*1000));
@@ -348,13 +348,13 @@ void Referee::UpdateTimeRemaining()
 
 }
 
-void Referee::UpdateBlueTimeOutRemaining()
+void Referee::updateBlueTimeOutRemaining()
 {
 	//Create a buffer string for our sprintf
 	char buf[256];
 	
 	//Convert milliseconds to minutes, seconds and tenths of seconds
-	int milliseconds=Referee::TimeOutMsecs - Referee::CurrentBlueTimeOutTimer;
+	int milliseconds=Referee::_timeOutMsecs - Referee::currBlueTimeOutTimer;
 
 	//Find Minutes
 	int minutes=floor(milliseconds/(60*1000));
@@ -383,32 +383,32 @@ void Referee::UpdateBlueTimeOutRemaining()
 
 }
 
-void Referee::UpdateYellowTimeOutRemaining()
+void Referee::updateYellowTimeOutRemaining()
 {
 
 }
 
-void Referee::StopGameTimer()
+void Referee::stopGameTimer()
 {
 	///The timer has AIDS.  Stop it from reproducing.
-	GameTimer.stop();
-	Referee::CurrentGameState=0;
+	_gameTimer.stop();
+	Referee::currGameState=0;
 }
 
-void Referee::StartGameTimer()
+void Referee::startGameTimer()
 {
-	if(GameTimer.timerId() == -1) {
+	if(_gameTimer.timerId() == -1) {
 		//Start the timer if it hasn't been started yet.
-		GameTimer.start(100);
+		_gameTimer.start(100);
 		///MAKE SURE YOU CHANGE THIS!!!!
-		CurrentGameState=1;
+		currGameState=1;
 	} else {
 		///Re-start the timer if it has already been started.
-		GameTimer.start();
+		_gameTimer.start();
 	}
 }
 
-void Referee::IncrementBlueGoals()
+void Referee::incrementBlueGoals()
 {
 
 }
@@ -430,53 +430,53 @@ void Referee::DecrementYellowGoals()
 
 void Referee::IncrementCurrentPeriod()
 {
-	switch(Referee::CurrentPeriod) {
+	switch(Referee::currPeriod) {
 		case 0:
-			Referee::CurrentPeriod++;
-			Referee::CurrentMilliseconds=0;
-			Referee::MaxMilliseconds=FirstHalfMsecs;
+			Referee::currPeriod++;
+			Referee::currMilliseconds=0;
+			Referee::maxMilliseconds=_firstHalfMsecs;
 			Referee::ResetTimeLabels();
 			Referee::UpdatePeriodLabels();
 			break;
 		case 1:
-			Referee::CurrentPeriod++;
-			Referee::CurrentMilliseconds=0;
-			Referee::MaxMilliseconds=HalfTimeMsecs;
+			Referee::currPeriod++;
+			Referee::currMilliseconds=0;
+			Referee::maxMilliseconds=_halfTimeMsecs;
 			Referee::ResetTimeLabels();
 			Referee::UpdatePeriodLabels();
 			break;
 		case 2:
-			Referee::CurrentPeriod++;
-			Referee::CurrentMilliseconds=0;
-			Referee::MaxMilliseconds=SecondHalfMsecs;
+			Referee::currPeriod++;
+			Referee::currMilliseconds=0;
+			Referee::maxMilliseconds=_secondHalfMsecs;
 			Referee::ResetTimeLabels();
 			Referee::UpdatePeriodLabels();
 			break;
 		case 3:
-			Referee::CurrentPeriod++;
-			Referee::CurrentMilliseconds=0;
-			Referee::MaxMilliseconds=FirstOvertimeMsecs;
+			Referee::currPeriod++;
+			Referee::currMilliseconds=0;
+			Referee::maxMilliseconds=_firstOvertimeMsecs;
 			Referee::ResetTimeLabels();
 			Referee::UpdatePeriodLabels();
 			break;
 		case 4:
-			Referee::CurrentPeriod++;
-			Referee::CurrentMilliseconds=0;
-			Referee::MaxMilliseconds=SecondOvertimeMsecs;
+			Referee::currPeriod++;
+			Referee::currMilliseconds=0;
+			Referee::maxMilliseconds=_secondOvertimeMsecs;
 			Referee::ResetTimeLabels();
 			Referee::UpdatePeriodLabels();
 			break;
 		case 5:
-			Referee::CurrentPeriod=0;
-			Referee::CurrentMilliseconds=0;
-			Referee::MaxMilliseconds=PreGameMsecs;
+			Referee::currPeriod=0;
+			Referee::currMilliseconds=0;
+			Referee::maxMilliseconds=_preGameMsecs;
 			Referee::ResetTimeLabels();
 			Referee::UpdatePeriodLabels();
 			break;
 		default:
-			Referee::CurrentPeriod=0;
-			Referee::CurrentMilliseconds=0;
-			Referee::MaxMilliseconds=PreGameMsecs;
+			Referee::currPeriod=0;
+			Referee::currMilliseconds=0;
+			Referee::maxMilliseconds=_preGameMsecs;
 			Referee::ResetTimeLabels();
 			Referee::UpdatePeriodLabels();
 			break;
@@ -485,14 +485,14 @@ void Referee::IncrementCurrentPeriod()
 
 void Referee::ResetTimeLabels()
 {
-	Referee::UpdateTimeElapsed();
-	Referee::UpdateTimeRemaining();
+	Referee::updateTimeElapsed();
+	Referee::updateTimeRemaining();
 	Referee::UpdatePeriodLabels();
 }
 
 void Referee::UpdatePeriodLabels()
 {
-	switch(Referee::CurrentPeriod) {
+	switch(Referee::currPeriod) {
 		case 0:
 			PeriodText->setText("Pre-Game");
 			break;
@@ -521,7 +521,7 @@ void Referee::UpdateBlueTimeOutLabels()
 {
 	///Update blue time out labels.
 	char buf[16];
-	snprintf(buf, 8, "%d", BlueTimeOuts);
+	snprintf(buf, 8, "%d", blueTimeOuts);
 	BlueTimeOutsLeftText->setText(buf);
 }
 
