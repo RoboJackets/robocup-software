@@ -19,7 +19,7 @@ class VisionData
 		class Robot
 		{
 			public:
-				Robot() : x(0), y(0), theta(0) {}
+				Robot() : theta(0), id(-1) {}
 				
 				/** global position */
 				Point pos;
@@ -34,13 +34,13 @@ class VisionData
 		class Ball
 		{
 			public:
-				Ball() : x(0), y(0) {}
+				Ball() {}
 				
 				/** global position */
 				Point pos;
 		};
 		
-		VisionData();
+		VisionData() : timestamp(0) {}
 		
 	private:
 		

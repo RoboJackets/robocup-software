@@ -27,7 +27,7 @@ Vision::Colorseg::~Colorseg()
 {
 }
 
-uint8_t &Vision::Colorseg::lut(QRgb in)
+uint8_t& Vision::Colorseg::lut(QRgb in)
 {
     uint32_t in_value = *(const uint32_t *)&in;
     return _lut[quantize(in_value)];
@@ -96,12 +96,6 @@ void Vision::Colorseg::save(QDomElement element)
 	}
 	
 	element.appendChild(element.ownerDocument().createTextNode(text));
-}
-
-void Vision::Colorseg::run()
-{
-	//TODO fixme
-    //run(_camera_thread->frame());
 }
 
 void Vision::Colorseg::run(const Image *frame)

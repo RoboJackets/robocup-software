@@ -17,16 +17,15 @@ namespace Vision
 		public:
 			Colorseg();
 			~Colorseg();
-
-			void run();
+			
 			void run(const Image *frame);
 
-			const QImage &output() const
+			const QImage& output() const
 			{
 				return _output;
 			}
 			
-			uint8_t &lut(QRgb in);
+			uint8_t& lut(QRgb in);
 
 			// Changes all instances of (from) in the LUT to (to).
 			void change_lut(uint8_t from, uint8_t to);

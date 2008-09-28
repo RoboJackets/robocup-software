@@ -9,8 +9,9 @@
 
 using namespace boost;
 using namespace std;
+using namespace Vision;
 
-Vision::Process::Process()
+Process::Process()
 {
 	distortion = new Distortion();
 	ball_transform = new Transform();
@@ -37,21 +38,26 @@ Vision::Process::Process()
     //yellow_id = new Offset3_ID(this, Yellow, Offset3_ID::ZJUNlict);
 }
 
-Vision::Process::~Process()
+Process::~Process()
 {
     delete distortion;
     delete ball_transform;
     delete robot_transform;
 }
 
-void Vision::Process::robot_radius(float r)
+void Process::robot_radius(float r)
 {
     QMutexLocker ml(&mutex);
     _robot_radius = r;
 }
 
-float Vision::Process::robot_radius() const
+float Process::robot_radius() const
 {
     QMutexLocker ml(&mutex);
     return _robot_radius;
+}
+
+void Process::proc(const Image* img, VisionData& data)
+{
+	colorseg->run(img);
 }
