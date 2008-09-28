@@ -1,14 +1,12 @@
 #include "Viewer.hpp"
 
-Viewer::Viewer(QWidget* parent) :
-	QGLWidget(parent)
+Viewer::Viewer(Env* env, QWidget* parent) :
+	QGLWidget(parent), _env(env)
 {
 	this->setFixedSize(800, 600);
 	
 	connect(&_repaint, SIGNAL(timeout()), this, SLOT(updateGL()));
 	_repaint.start(30);
-
-	env.start();
 }
 
 Viewer::~Viewer()
@@ -86,13 +84,7 @@ void Viewer::resizeGL(int w, int h)
 void Viewer::paintGL()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	env.step();
-	
-	//force the entities to redraw themselves
-	//env.redraw();
-	
-	renderData(env.dbgRenderable());
+	renderData(_env->dbgRenderable());
 }
 
 void Viewer::renderData(const NxDebugRenderable& data) const

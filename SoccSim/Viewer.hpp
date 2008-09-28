@@ -12,7 +12,7 @@ class Viewer : public QGLWidget
 {
 	/// methods ///
 	public:
-		Viewer(QWidget* parent = 0);
+		Viewer(Env* env, QWidget* parent = 0);
 		~Viewer();
 		
 	protected:
@@ -29,7 +29,7 @@ class Viewer : public QGLWidget
 		/** Timer for repainting the field display */
 		QTimer _repaint;
 
-		Env env;
+		Env* _env;
 };
 
 #endif

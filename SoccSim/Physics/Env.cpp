@@ -29,8 +29,8 @@ Env::Env()
 		//_physicsSDK->setParameter(NX_VISUALIZE_BODY_LIN_VELOCITY, 1.0f);
 		
 		_physicsSDK->setParameter(NX_VISUALIZE_JOINT_WORLD_AXES, 1.0f);
-		_physicsSDK->setParameter(NX_VISUALIZE_JOINT_LOCAL_AXES, 1.0f);
-		_physicsSDK->setParameter(NX_VISUALIZE_JOINT_LIMITS, 1.0f);
+		//_physicsSDK->setParameter(NX_VISUALIZE_JOINT_LOCAL_AXES, 1.0f);
+		//_physicsSDK->setParameter(NX_VISUALIZE_JOINT_LIMITS, 1.0f);
 		
 		_physicsSDK->setParameter(NX_SKIN_WIDTH, 0.0005f); //depth of the two skins
 	}
@@ -70,13 +70,12 @@ Env::Env()
 	
 	//new environment created
 	++_refCount;
+	
+	connect(&_step, SIGNAL(timeout()), this, SLOT(step()));
 }
 
 Env::~Env()
 {
-	//_scene->releaseActor(*actor);
-	//actor = 0;
-	
 	if (_scene)
 	{
 	    _physicsSDK->releaseScene(*_scene);
@@ -96,29 +95,20 @@ const NxDebugRenderable& Env::dbgRenderable() const
 	return *_scene->getDebugRenderable();
 }
 
-void Env::redraw() const
-{
-    Q_FOREACH(Entity* e, _entities)
-    {
-        e->paint();
-    }
-}
-
 void Env::step()
 {
 	_scene->simulate(1.0/60.0);
 	_scene->flushStream();
 
-	//render the scene
-	//const NxDebugRenderable *dbgRenderable=gScene->getDebugRenderable();
-	//renderData(dbgRenderable);
-
 	//can use old data here
 
 	_scene->fetchResults(NX_RIGID_BODY_FINISHED, true);
+	
+	//send data out
 }
 
-void Env::run()
+void Env::start()
 {
-    
+	_step.start(30);
 }
+

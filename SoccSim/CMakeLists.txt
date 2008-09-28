@@ -38,6 +38,7 @@ include_directories(${PROJECT_BINARY_DIR})
 include ( ${QT_USE_FILE} )
 
 qt4_wrap_cpp ( MOC_SRCS
+	Physics/Env.hpp
 	)
 	
 # this will run UIC on the .ui files
@@ -59,6 +60,7 @@ endif ()
 add_executable (${PROJECT_NAME}
 	main.cpp
 	Viewer.cpp
+	Vision.cpp
 	
 	## environment
 	Physics/Env.cpp
@@ -68,7 +70,7 @@ add_executable (${PROJECT_NAME}
 	Physics/Robot.cpp
 	Physics/MemoryStream.cpp
 	
-	${SRCS} ${MOC_SRCS} ${UI_HDRS} ${NxuStream2SRC}
+	${MOC_SRCS} ${UI_HDRS} ${NxuStream2SRC}
 )
 
 # if physx had flags to set, set them

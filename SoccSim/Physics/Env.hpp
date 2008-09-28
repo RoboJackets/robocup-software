@@ -3,13 +3,15 @@
 
 #include <NxPhysics.h>
 
-#include <QThread>
 #include <QVector>
+#include <QTimer>
 
 class Entity;
 
-class Env : public QThread
+class Env : public QObject
 {
+	Q_OBJECT;
+	
 	public:
 		Env();
 		~Env();
@@ -17,12 +19,10 @@ class Env : public QThread
 		/** return the debug renderable for the environment */
 		const NxDebugRenderable& dbgRenderable() const;
 		
-		void redraw() const;
+		void start();
 		
+	private Q_SLOTS:
 		void step();
-		
-	protected:
-	    virtual void run();
 		
 	public:
 	    /** the global physics sdk for every environment */
@@ -37,6 +37,8 @@ class Env : public QThread
 		
 		/** all of the created entities for the environment */
 		QVector<Entity*> _entities;
+		
+		QTimer _step;
 };
 
 #endif /* _ENV_HPP */

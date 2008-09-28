@@ -4,13 +4,22 @@
 #include <stdio.h>
 
 #include "Viewer.hpp"
+#include "Physics/Env.hpp"
 
 int main(int argc, char* argv[])
 {
 	QApplication app(argc, argv);
-
-	Viewer win;
-	win.setVisible(true);
 	
-	return app.exec();
+	Env* env = new Env();
+	env->start();
+	
+	Viewer win(env);
+	win.setVisible(true);
+
+	int ret = app.exec();
+	
+	//cleanup
+	delete env;
+	
+	return ret;
 }
