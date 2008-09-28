@@ -3,17 +3,9 @@ cmake_minimum_required(VERSION 2.6)
 
 if (${UNIX})
 	add_definitions(-D_LINUX)
-else (${UNIX})
+else ()
 #not _LINUX...who cares
 #add_definitions(-D_LINUX)
-endif (${UNIX})
-
-if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-	add_definitions(-D_x64)
-	set (prosilica_lib_dir x64)
-else ()
-	add_definitions(-D_x86)
-	set (prosilica_lib_dir x86)
 endif ()
 
 set(SRCS
@@ -75,6 +67,14 @@ include(${QT_USE_FILE})
 qt4_automoc(${SRCS})
 qt4_wrap_ui(UIHS ${UIS})
 qt4_add_resources(RC_SRCS ui/vision.qrc)
+
+if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
+	add_definitions(-D_x64)
+	set (prosilica_lib_dir x64)
+else ()
+	add_definitions(-D_x86)
+	set (prosilica_lib_dir x86)
+endif ()
 
 set (prosilica_dir ${PROJECT_SOURCE_DIR}/camera/prosilica_lib)
 include_directories(${prosilica_dir}/include)
