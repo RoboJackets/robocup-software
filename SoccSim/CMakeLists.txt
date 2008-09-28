@@ -71,10 +71,6 @@ add_executable (${PROJECT_NAME}
 	${SRCS} ${MOC_SRCS} ${UI_HDRS} ${NxuStream2SRC}
 )
 
-#make symbolic links to libraries in lib32
-#ln -s libQtOpenGL.so.4 libQtOpenGL.so
-#ln -s libQtCore.so.4 libQtCore.so
-
 # if physx had flags to set, set them
 if (DEFINED PHYSX_LINK_FLAGS)
 	set_target_properties (${PROJECT_NAME} PROPERTIES LINK_FLAGS ${PHYSX_LINK_FLAGS})
