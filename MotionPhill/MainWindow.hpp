@@ -2,7 +2,7 @@
 #define MAIN_WINDOW_HPP
 
 #include <QMainWindow>
-#include <ui_QtGuiExample.h>
+#include <ui_PhillMotion.h>
 
 class MainWindow : public QMainWindow, Ui::MainWindow
 {
@@ -11,14 +11,14 @@ class MainWindow : public QMainWindow, Ui::MainWindow
 	public:
 		MainWindow();
 		~MainWindow();
-		
+
 	public Q_SLOTS:
 		//shorthand method for creating a slot
 		//on_<object>_<slot>
 		void on_button1_clicked();
-		
+
 		void button2Click();
-		
+
 	private:
 };
 
