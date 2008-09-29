@@ -24,14 +24,17 @@
     <constant type="uint32" name="Test" value="1234"/>
     
     <enum type="uint8" typename="TestEnum">
-        <constant name="A"/>
+        <constant name="A" value="3"/>
         <constant name="B"/>
     </enum>
     
-    <member type="uint64" name="timestamp"/>
+    <member type="uint64" name="timestamp" value="1"/>
     <array size="5" type="Robot" name="robots"/>
     <array type="DebugLine" name="debugLines"/>
     <array type="int32" name="intArray" sizetype="uint8"/>
-    <member type="TestEnum" name="eee"/>
-    <array type="TestEnum" name="ea" size="3"/>
+    <array type="int32" name="moreInts" size="2" sizetype="uint8" value="5"/>
+    <member type="TestEnum" name="e_single" value="B"/>
+    <array type="TestEnum" name="e_array" size="3"/>
+    <array type="TestEnum" name="e_array_var"/>
+    <member type="string" name="someText"/>
 </struct>

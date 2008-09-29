@@ -1,12 +1,13 @@
 #!/usr/bin/python
 
 # TODO:
-#   Support code and real API
-#   Enums (Python, read/write with type)
 #   Externals (for Point2d)
+
 #   Strings
-#   Initial values
 #   Support use of inner classes from any scope where they're available
+#   Support code and real API
+#   Enums: Correct type in C++, initialization
+#   Initial values
 
 import sys
 from xml.dom.minidom import *
@@ -252,11 +253,13 @@ class PythonGenerator(Generator):
         type = self.realType(node)
         
         name = node.getAttribute('name')
-        if type in primitives:
-            default = '0'
-        else:
-            default = type + '()'
-        self.write('self.' + name + ' = ' + default)
+        value = node.getAttribute('value')
+        if value == '':
+            if type in primitives:
+                value = '0'
+            else:
+                value = type + '()'
+        self.write('self.' + name + ' = ' + value)
     
     def declareArray(self, node):
         if not self.init:
@@ -390,9 +393,9 @@ def declareEnum(node):
             type = 'uint32'
         enumTypes[node.getAttribute('typename')] = type
         
-        valueAttr = node.getAttribute('value')
+        valueAttr = child.getAttribute('value')
         if valueAttr != '':
-            value = int(self.enumValue)
+            value = int(valueAttr)
         gen.declareEnumItem(child, value)
         value += 1
     gen.declareEnumEnd(node)
