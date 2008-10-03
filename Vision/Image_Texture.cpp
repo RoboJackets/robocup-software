@@ -64,21 +64,24 @@ void Image_Texture::update(int width, int height, const void *data)
         throw runtime_error("No format - can't use an Image_Texture created with the default constructor");
     }
 
-    glBindTexture(GL_TEXTURE_2D, _id);
+	
+    glBindTexture(GL_TEXTURE_RECTANGLE_ARB, _id);
 
     if (!_inited)
     {
-	    glTexImage2D(GL_TEXTURE_2D, 0, _internal_format, width, height,
+	    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, _internal_format, width, height,
 			 0, _format, GL_UNSIGNED_BYTE, data);
-	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    } else {
-	    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, width, height, _format,
-			    GL_UNSIGNED_BYTE, data);
-    }
+	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	}
+	else
+	{
+		glTexSubImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, 0, 0, width, height, _format,
+			GL_UNSIGNED_BYTE, data);
+	}
 }
 
 void Image_Texture::use()
 {
-	glBindTexture(GL_TEXTURE_2D, _id);
+	glBindTexture(GL_TEXTURE_RECTANGLE_ARB, _id); //GL_TEXTURE_2D
 }

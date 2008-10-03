@@ -155,14 +155,14 @@ void GL_Camera_View::full_rect()
     glBegin(GL_POLYGON);
         glTexCoord2f(0, 0);
         glVertex2i(0, 0);
-
-        glTexCoord2f(1, 0);
+		
+        glTexCoord2f(_frame_width, 0);
         glVertex2i(_frame_width, 0);
 
-        glTexCoord2f(1, 1);
+        glTexCoord2f(_frame_width, _frame_height);
         glVertex2i(_frame_width, _frame_height);
 
-        glTexCoord2f(0, 1);
+		glTexCoord2f(0, _frame_height);
         glVertex2i(0, _frame_height);
     glEnd();
 }
@@ -237,7 +237,9 @@ void GL_Camera_View::initializeGL()
     colorseg_tex.generate();
 
     glEnable(GL_TEXTURE_2D);
-    //glEnable(GL_TEXTURE_RECTANGLE_ARB);
+
+    //http://www.opengl.org/registry/specs/ARB/texture_rectangle.txt
+    glEnable(GL_TEXTURE_RECTANGLE_ARB);
 
     // Blank texture
     vector<uint8_t> blank(4 * 4, 255);
