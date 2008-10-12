@@ -24,16 +24,18 @@ namespace Serialization
     class WriteBuffer
     {
     public:
-        void operator&(uint8_t value);
-        void operator&(int8_t value);
-        void operator&(uint16_t value);
-        void operator&(int16_t value);
-        void operator&(uint32_t value);
-        void operator&(int32_t value);
-        void operator&(uint64_t value);
-        void operator&(int64_t value);
-        void operator&(float value);
-        void operator&(double value);
+        virtual ~WriteBuffer() {}
+        
+        virtual void writeByte(uint8_t value) = 0;
+        
+        template<typename T>
+        void operator&(const T &value)
+        {
+            for (unsigned int i = 0; i < sizeof(T); ++i)
+            {
+                writeByte(((uint8_t *)&value)[i]);
+            }
+        }
         
         void operator&(const std::string &value)
         {
@@ -48,7 +50,7 @@ namespace Serialization
         void arrayVariable(std::vector<T> &x)
         {
             *this & (S)x.size();
-            // Always use unsigned int here so at least the loop
+            // Always use unsigned int here so the loop
             // works correctly if sizetype is too small.
             for (unsigned int i = 0; i < x.size(); ++i)
             {
@@ -69,7 +71,7 @@ namespace Serialization
         void arrayVariableCast(std::vector<T> &x)
         {
             *this & (S)x.size();
-            // Always use unsigned int here so at least the loop
+            // Always use unsigned int here so the loop
             // works correctly if sizetype is too small.
             for (unsigned int i = 0; i < x.size(); ++i)
             {
@@ -90,16 +92,18 @@ namespace Serialization
     class ReadBuffer
     {
     public:
-        void operator&(uint8_t value);
-        void operator&(int8_t value);
-        void operator&(uint16_t value);
-        void operator&(int16_t value);
-        void operator&(uint32_t value);
-        void operator&(int32_t value);
-        void operator&(uint64_t value);
-        void operator&(int64_t value);
-        void operator&(float value);
-        void operator&(double value);
+        virtual ~ReadBuffer() {}
+        
+        virtual uint8_t readByte() = 0;
+        
+        template<typename T>
+        void operator&(const T &value)
+        {
+            for (unsigned int i = 0; i < sizeof(T); ++i)
+            {
+                ((uint8_t *)&value)[i] = readByte();
+            }
+        }
         
         void operator&(std::string &value)
         {
@@ -108,7 +112,7 @@ namespace Serialization
             value.resize(size);
             for (unsigned int i = 0; i  < value.size(); ++i)
             {
-                *this & (int8_t)value[i];
+                *this & (int8_t &)value[i];
             }
         }
         
@@ -145,7 +149,7 @@ namespace Serialization
             }
         }
         
-        template<typename T, typename C, unsigned int N>
+        template<typename C, typename T, unsigned int N>
         void arrayFixedCast(T (&x)[N])
         {
             for (unsigned int i = 0; i < N; ++i)
@@ -153,6 +157,36 @@ namespace Serialization
                 *this & (C)x[i];
             }
         }
+    };
+    
+    class FileBuffer: public WriteBuffer, public ReadBuffer
+    {
+    public:
+        FileBuffer(FILE *fp)
+        {
+            _fp = fp;
+        }
+        
+        ~FileBuffer()
+        {
+            if (_fp)
+            {
+                fclose(_fp);
+            }
+        }
+        
+        virtual void writeByte(uint8_t value)
+        {
+            fputc(value, _fp);
+        }
+    
+        virtual uint8_t readByte()
+        {
+            return fgetc(_fp);
+        }
+    
+    protected:
+        FILE *_fp;
     };
 }
 

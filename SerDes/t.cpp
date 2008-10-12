@@ -1,40 +1,26 @@
 #include <stdio.h>
 
+namespace Geometry
+{
+    class Point2d
+    {
+    public:
+        Point2d()
+        {
+            x = 1;
+            y = 2;
+        }
+        
+        float x, y;
+    };
+};
+
 #include "test.hpp"
-
-void Serialization::WriteBuffer::operator&(uint8_t x)
-{
-    printf("uint8_t %d\n", x);
-}
-
-void Serialization::WriteBuffer::operator&(int8_t x)
-{
-    printf("int8_t %d\n", x);
-}
-
-void Serialization::WriteBuffer::operator&(int32_t x)
-{
-    printf("int32_t %d\n", x);
-}
-
-void Serialization::WriteBuffer::operator&(uint32_t x)
-{
-    printf("uint32_t %d\n", x);
-}
-
-void Serialization::WriteBuffer::operator&(uint64_t x)
-{
-    printf("uint64_t %lld\n", x);
-}
-
-void Serialization::WriteBuffer::operator&(float x)
-{
-    printf("float %f\n", x);
-}
 
 int main()
 {
-    Serialization::WriteBuffer buf;
+    FILE *fp = fopen("packet.bin", "w+b");
+    Serialization::FileBuffer fb(fp);
     
     LogFrame f;
     f.intArray.push_back(5);
@@ -42,7 +28,19 @@ int main()
     f.intArray.push_back(6);
     f.e_array_var.push_back(LogFrame::B);
     f.someText = "abc";
-    buf & f;
+    Serialization::WriteBuffer &out = fb;
+    out & f;
+    
+    fseek(fp, SEEK_SET, 0);
+    LogFrame r;
+    Serialization::ReadBuffer &in = fb;
+    in & r;
+    printf("intArray: %d items\n", r.intArray.size());
+    for (unsigned int i = 0; i < r.intArray.size(); ++i)
+    {
+        printf("    %d: %d\n", i, r.intArray[i]);
+    }
+    printf("Text: \"%s\"\n", r.someText.c_str());
     
     return 0;
 }

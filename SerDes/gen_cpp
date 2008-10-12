@@ -38,7 +38,7 @@ def fullName(node):
     while parent != None and parent.nodeType == parent.ELEMENT_NODE:
         name = parent.getAttribute('typename') + '::' + name
         parent = parent.parentNode
-    return name
+    return cType(name)
 
 class ChildrenByName:
     def __init__(self, node, name):
@@ -91,6 +91,7 @@ write()
 allEnumTypes = {}
 def declareStruct(node):
     className = node.getAttribute('typename')
+    thisFullName = fullName(node)
     write('class ' + className)
     write('{')
     write('public:')
@@ -98,7 +99,20 @@ def declareStruct(node):
     
     # Structures
     for child in ChildrenByName(node, 'struct'):
-        declareStruct(child)
+        ext = child.getAttribute('external_cpp')
+        if ext == '':
+            declareStruct(child)
+        else:
+            childName = child.getAttribute('typename')
+            childFullName = fullName(child)
+            # FIXME - This breaks enums in externals.  This is probably OK since there
+            #         is no guarantee that the values would be the same as in the XML.
+            allEnumTypes[childFullName] = {}
+            allEnumTypes[ext] = {}
+            # FIXME - This kinda flattens the containment hierarchy.
+            #         Fixing this is tricky.
+            typeMap[childName] = ext
+            typeMap[childFullName] = ext
     
     # Constants
     done = False
