@@ -94,6 +94,7 @@ def declareStruct(node):
     thisFullName = fullName(node)
     write('class ' + className)
     write('{')
+    indent()
     write('public:')
     indent()
     
@@ -227,6 +228,7 @@ def declareStruct(node):
         unindent()
         write('}')
     
+    unindent()
     unindent()
     write('};')
     write('')
