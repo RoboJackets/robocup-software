@@ -35,10 +35,10 @@ int main()
     LogFrame r;
     Serialization::ReadBuffer &in = fb;
     in & r;
-    printf("intArray: %d items\n", r.intArray.size());
+    printf("intArray: %d items\n", (int)r.intArray.size());
     for (unsigned int i = 0; i < r.intArray.size(); ++i)
     {
-        printf("    %d: %d\n", i, r.intArray[i]);
+        printf("\t%d: %d\n", i, r.intArray[i]);
     }
     printf("Text: \"%s\"\n", r.someText.c_str());
     
