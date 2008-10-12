@@ -7,8 +7,10 @@ Referee::Referee() :
 	setupUi(this);
 
 	/** Initialize game variables */
-	Referee::currPeriod=0;
-	Referee::currGameState=0;
+	Referee::currPeriod = FirstHalf;
+	
+	//currPeriod = 0;
+	currGameState=0;
 	Referee::currMilliseconds=0;
 	Referee::maxMilliseconds=Referee::_preGameMsecs;
 
@@ -25,7 +27,7 @@ Referee::Referee() :
 	Referee::yellowTimeOuts=4;
 
 	/** connect to timer for sending ref packets out */
-	connect(&_txTimer, SIGNAL(timeout()), SLOT(TxSend()));
+	connect(&_txTimer, SIGNAL(timeout()), SLOT(txSend()));
 
 	/** Connect to the timer that keeps track of the game state. */
 	connect(&_gameTimer, SIGNAL(timeout()), SLOT(gameUpdate()));
@@ -47,7 +49,7 @@ Referee::~Referee()
 }
 
 ///This is the function that is called when the game timer times out.  This is executed several times per second, based on the value of _hz.
-void Referee::TxSend()
+void Referee::txSend()
 {
 
 }
@@ -65,7 +67,7 @@ void Referee::blueTimeOutUpdate()
 		if(blueTimeOuts>=1) {
 			currBlueTimeOutTimer=0;
 			Referee::updateBlueTimeOutRemaining();
-			Referee::UpdateBlueTimeOutLabels();
+			Referee::updateBlueTimeOutLabels();
 		}
 	
 	} else {
@@ -76,7 +78,7 @@ void Referee::blueTimeOutUpdate()
 
 		///Update our labels.
 		Referee::updateBlueTimeOutRemaining();
-		Referee::UpdateBlueTimeOutLabels();
+		Referee::updateBlueTimeOutLabels();
 	}
 
 
@@ -97,7 +99,7 @@ void Referee::gameUpdate()
 
 		///Stop game timer, set the gamestate to halted and increment the game period.
 		Referee::stopGameTimer();
-		Referee::IncrementCurrentPeriod();
+		Referee::incrementCurrentPeriod();
 
 	} else {
 		///Increment the timer if the game if time is still left.
@@ -137,7 +139,7 @@ void Referee::on_BlueTimeOutButton_clicked()
 			_blueTimeOutTimer.start(100);
 			Referee::stopGameTimer();
 			Referee::blueTimeOuts--;
-			Referee::UpdateBlueTimeOutLabels();
+			Referee::updateBlueTimeOutLabels();
 		}
 	}
 }
@@ -413,84 +415,84 @@ void Referee::incrementBlueGoals()
 
 }
 
-void Referee::IncrementYellowGoals()
+void Referee::incrementYellowGoals()
 {
 
 }
 
-void Referee::DecrementBlueGoals()
+void Referee::decrementBlueGoals()
 {
 
 }
 
-void Referee::DecrementYellowGoals()
+void Referee::decrementYellowGoals()
 {
 
 }
 
-void Referee::IncrementCurrentPeriod()
+void Referee::incrementCurrentPeriod()
 {
 	switch(Referee::currPeriod) {
 		case 0:
-			Referee::currPeriod++;
+			static_cast<Period>(Referee::currPeriod + 1);
 			Referee::currMilliseconds=0;
 			Referee::maxMilliseconds=_firstHalfMsecs;
-			Referee::ResetTimeLabels();
-			Referee::UpdatePeriodLabels();
+			Referee::resetTimeLabels();
+			Referee::updatePeriodLabels();
 			break;
 		case 1:
-			Referee::currPeriod++;
+			static_cast<Period>(Referee::currPeriod + 1);
 			Referee::currMilliseconds=0;
 			Referee::maxMilliseconds=_halfTimeMsecs;
-			Referee::ResetTimeLabels();
-			Referee::UpdatePeriodLabels();
+			Referee::resetTimeLabels();
+			Referee::updatePeriodLabels();
 			break;
 		case 2:
-			Referee::currPeriod++;
+			static_cast<Period>(Referee::currPeriod + 1);
 			Referee::currMilliseconds=0;
 			Referee::maxMilliseconds=_secondHalfMsecs;
-			Referee::ResetTimeLabels();
-			Referee::UpdatePeriodLabels();
+			Referee::resetTimeLabels();
+			Referee::updatePeriodLabels();
 			break;
 		case 3:
-			Referee::currPeriod++;
+			static_cast<Period>(Referee::currPeriod + 1);
 			Referee::currMilliseconds=0;
 			Referee::maxMilliseconds=_firstOvertimeMsecs;
-			Referee::ResetTimeLabels();
-			Referee::UpdatePeriodLabels();
+			Referee::resetTimeLabels();
+			Referee::updatePeriodLabels();
 			break;
 		case 4:
-			Referee::currPeriod++;
+			static_cast<Period>(Referee::currPeriod + 1);
 			Referee::currMilliseconds=0;
 			Referee::maxMilliseconds=_secondOvertimeMsecs;
-			Referee::ResetTimeLabels();
-			Referee::UpdatePeriodLabels();
+			Referee::resetTimeLabels();
+			Referee::updatePeriodLabels();
 			break;
 		case 5:
-			Referee::currPeriod=0;
+			Referee::currPeriod=PreGame;
 			Referee::currMilliseconds=0;
 			Referee::maxMilliseconds=_preGameMsecs;
-			Referee::ResetTimeLabels();
-			Referee::UpdatePeriodLabels();
+			Referee::resetTimeLabels();
+			Referee::updatePeriodLabels();
 			break;
 		default:
-			Referee::currPeriod=0;
+			Referee::currPeriod=PreGame;
 			Referee::currMilliseconds=0;
 			Referee::maxMilliseconds=_preGameMsecs;
-			Referee::ResetTimeLabels();
-			Referee::UpdatePeriodLabels();
+			Referee::resetTimeLabels();
+			Referee::updatePeriodLabels();
 			break;
 	}
 }
 
-void Referee::ResetTimeLabels()
+void Referee::resetTimeLabels()
 {
 	Referee::updateTimeElapsed();
 	Referee::updateTimeRemaining();
-	Referee::UpdatePeriodLabels();
+	Referee::updatePeriodLabels();
 }
 
-void Referee::UpdatePeriodLabels()
+void Referee::updatePeriodLabels()
 {
 	switch(Referee::currPeriod) {
 		case 0:
@@ -517,7 +519,7 @@ void Referee::UpdatePeriodLabels()
 	}
 }
 
-void Referee::UpdateBlueTimeOutLabels()
+void Referee::updateBlueTimeOutLabels()
 {
 	///Update blue time out labels.
 	char buf[16];
@@ -525,7 +527,7 @@ void Referee::UpdateBlueTimeOutLabels()
 	BlueTimeOutsLeftText->setText(buf);
 }
 
-void Referee::UpdateYellowTimeOutLabels()
+void Referee::updateYellowTimeOutLabels()
 {
 
 }

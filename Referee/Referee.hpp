@@ -21,18 +21,20 @@ class Referee : public QMainWindow, Ui_MainWindow
 		*	3 - Second Half
 		*	4 - First Overtime
 		*	5 - Second Overtime */
-		int currPeriod;
-		/*
+		//int currPeriod;
+		
 		typedef enum
 		{
-			preGame,
-			firstHalf,
-			halfTime,
-			secondHalf,
-			firstOvertime,
-			secondOvertime
-		} currPeriod;
-		*/
+			PreGame,
+			FirstHalf,
+			HalfTime,
+			SecondHalf,
+			FirstOvertime,
+			SecondOvertime
+		} Period;
+		
+		/** Current game period */
+		Period currPeriod;
 
 		/** Current milliseconds */
 		int currMilliseconds;
@@ -59,7 +61,7 @@ class Referee : public QMainWindow, Ui_MainWindow
 
 	private Q_SLOTS:
 		/** send latest ref info */
-		void TxSend();
+		void txSend();
 		
 		/** Send game update info */
 		void gameUpdate();
@@ -108,26 +110,26 @@ class Referee : public QMainWindow, Ui_MainWindow
 
 		///Functions to change goals
 		void incrementBlueGoals();
-		void IncrementYellowGoals();
-		void DecrementBlueGoals();
-		void DecrementYellowGoals();
+		void incrementYellowGoals();
+		void decrementBlueGoals();
+		void decrementYellowGoals();
 
 		//Functions to increment current period
-		void IncrementCurrentPeriod();
+		void incrementCurrentPeriod();
 
 		///Function to reset game time labels
-		void ResetTimeLabels();
+		void resetTimeLabels();
 
 		///Function to change the label of what period it is.
-		void UpdatePeriodLabels();
+		void updatePeriodLabels();
 
 		///Function to update the time out time labels
 		void updateBlueTimeOutRemaining();
 		void updateYellowTimeOutRemaining();
 
 		///Function to update times out left label
-		void UpdateBlueTimeOutLabels();
-		void UpdateYellowTimeOutLabels();
+		void updateBlueTimeOutLabels();
+		void updateYellowTimeOutLabels();
 
 	private:
 		QTimer _txTimer;
