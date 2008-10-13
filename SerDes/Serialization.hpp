@@ -36,18 +36,19 @@ namespace Serialization
         void operator&(int32_t value) { add(value); }
         void operator&(uint64_t value) { add(value); }
         void operator&(int64_t value) { add(value); }
+        void operator&(float &value) { add(value); }
+        void operator&(double &value) { add(value); }
         
         template<typename T>
-        void add(const T &value)
+        void add(T &value)
         {
-            printf("add %d\n", sizeof(T));
             for (unsigned int i = 0; i < sizeof(T); ++i)
             {
                 writeByte(((uint8_t *)&value)[i]);
             }
         }
         
-        void operator&(const std::string &value)
+        void operator&(std::string &value)
         {
             *this & value.size();
             for (unsigned int i = 0; i  < value.size(); ++i)
@@ -57,7 +58,7 @@ namespace Serialization
         }
         
         template<typename S, typename T>
-        void arrayVariable(const std::vector<T> &x)
+        void arrayVariable(std::vector<T> &x)
         {
             *this & (S)x.size();
             // Always use unsigned int here so the loop
@@ -69,7 +70,7 @@ namespace Serialization
         }
         
         template<typename T, unsigned int N>
-        void arrayFixed(const T (&x)[N])
+        void arrayFixed(T (&x)[N])
         {
             for (unsigned int i = 0; i < N; ++i)
             {
@@ -78,7 +79,7 @@ namespace Serialization
         }
         
         template<typename S, typename C, typename T>
-        void arrayVariableCast(const std::vector<T> &x)
+        void arrayVariableCast(std::vector<T> &x)
         {
             *this & (S)x.size();
             // Always use unsigned int here so the loop
@@ -90,7 +91,7 @@ namespace Serialization
         }
         
         template<typename C, typename T, unsigned int N>
-        void arrayFixedCast(const T (&x)[N])
+        void arrayFixedCast(T (&x)[N])
         {
             for (unsigned int i = 0; i < N; ++i)
             {
@@ -106,14 +107,16 @@ namespace Serialization
         
         virtual uint8_t readByte() = 0;
         
-        void operator&(uint8_t value) { read(value); }
-        void operator&(int8_t value) { read(value); }
-        void operator&(uint16_t value) { read(value); }
-        void operator&(int16_t value) { read(value); }
-        void operator&(uint32_t value) { read(value); }
-        void operator&(int32_t value) { read(value); }
-        void operator&(uint64_t value) { read(value); }
-        void operator&(int64_t value) { read(value); }
+        void operator&(uint8_t &value) { read(value); }
+        void operator&(int8_t &value) { read(value); }
+        void operator&(uint16_t &value) { read(value); }
+        void operator&(int16_t &value) { read(value); }
+        void operator&(uint32_t &value) { read(value); }
+        void operator&(int32_t &value) { read(value); }
+        void operator&(uint64_t &value) { read(value); }
+        void operator&(int64_t &value) { read(value); }
+        void operator&(float &value) { read(value); }
+        void operator&(double &value) { read(value); }
         
         template<typename T>
         void read(T &value)
@@ -164,7 +167,7 @@ namespace Serialization
             x.resize(size);
             for (S i = 0; i < size; ++i)
             {
-                *this & (C)x[i];
+                *this & (C &)x[i];
             }
         }
         
@@ -173,7 +176,7 @@ namespace Serialization
         {
             for (unsigned int i = 0; i < N; ++i)
             {
-                *this & (C)x[i];
+                *this & (C &)x[i];
             }
         }
     };

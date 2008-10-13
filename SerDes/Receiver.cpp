@@ -7,8 +7,10 @@
 
 using namespace std;
 
-Receiver::Receiver(uint16_t port)
+Receiver::Receiver(uint16_t port, unsigned int size)
 {
+    _size = size;
+    
     _socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (_socket < 0)
     {

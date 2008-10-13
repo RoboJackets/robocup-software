@@ -12,7 +12,7 @@ clean:
 t:	$(OBJS)
 	$(CXX) $(LDFLAGS) $(OBJS) -o $@
 
-%.hpp:	%.xml gen_cpp Serialization.hpp
+%.hpp:	%.xml gen_cpp
 	./gen_cpp $< > $@
 
-t.o: test.hpp Sender.hpp Receiver.hpp
+t.o: test.hpp Sender.hpp Receiver.hpp Serialization.hpp

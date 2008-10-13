@@ -274,8 +274,11 @@ for node in dom.getElementsByTagName('struct'):
                     write('buf.template arrayFixedCast<' + storageType + '>(obj.' + name + ');')
                 else:
                     write('buf.arrayFixed(obj.' + name + ');')
+        elif dataType in enumTypes:
+            # Single enum
+            write('buf & (' + cType(enumTypes[dataType]) + ' &)obj.' + name + ';')
         else:
-            # Single object
+            # Single object, not enum
             write('buf & obj.' + name + ';')
         
     unindent()

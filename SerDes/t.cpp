@@ -22,33 +22,22 @@ namespace Geometry
 
 #include "test.hpp"
 
+pthread_cond_t ready = PTHREAD_COND_INITIALIZER;
+
 void *receive_thread(void *arg)
 {
-    Receiver r(1234);
-    
-    Serialization::MemoryBuffer fb;
-    fb.data.resize(1024);
-    r.receive(fb.data);
-#if 1
-    printf("%d: ", fb.data.size());
-    for (unsigned int i = 0; i < fb.data.size(); ++i)
-    {
-        printf("%02x ", fb.data[i]);
-    }
-    printf("\n");
-#endif
+    Receiver r(1234, 1024);
+    pthread_cond_signal(&ready);
     
     LogFrame f;
-    Serialization::ReadBuffer &in = fb;
-    in & f;
-#if 0
+    r.receive(f);
+    
     printf("intArray: %d items\n", (int)f.intArray.size());
     for (unsigned int i = 0; i < f.intArray.size(); ++i)
     {
         printf("\t%d: %d\n", i, f.intArray[i]);
     }
     printf("Text: \"%s\"\n", f.someText.c_str());
-#endif
     
     return 0;
 }
@@ -58,20 +47,21 @@ int main()
     pthread_t t;
     pthread_create(&t, 0, receive_thread, 0);
     
+    pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;
+    pthread_mutex_lock(&m);
+    pthread_cond_wait(&ready, &m);
+    
     Sender s("localhost", 1234);
     
     LogFrame f;
-//    f.intArray.push_back(5);
-//    f.intArray.push_back(7);
-//    f.intArray.push_back(6);
-//    f.e_array_var.push_back(LogFrame::B);
-//    f.someText = "abc";
+    f.intArray.push_back(5);
+    f.intArray.push_back(7);
+    f.intArray.push_back(6);
+    f.e_array_var.push_back(LogFrame::B);
+    f.someText = "abc";
     s.send(f);
     
-    Serialization::MemoryBuffer fb;
-    Serialization::WriteBuffer &out = fb;
-    out & f;
-    printf("ser %d\n", fb.data.size());
+    pthread_join(t, 0);
     
     return 0;
 }
