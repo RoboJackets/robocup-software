@@ -1,5 +1,10 @@
 #include <stdio.h>
 
+#include "Sender.hpp"
+#include "Receiver.hpp"
+
+using namespace std;
+
 namespace Geometry
 {
     class Point2d
@@ -17,30 +22,56 @@ namespace Geometry
 
 #include "test.hpp"
 
-int main()
+void *receive_thread(void *arg)
 {
-    FILE *fp = fopen("packet.bin", "w+b");
-    Serialization::FileBuffer fb(fp);
+    Receiver r(1234);
+    
+    Serialization::MemoryBuffer fb;
+    fb.data.resize(1024);
+    r.receive(fb.data);
+#if 1
+    printf("%d: ", fb.data.size());
+    for (unsigned int i = 0; i < fb.data.size(); ++i)
+    {
+        printf("%02x ", fb.data[i]);
+    }
+    printf("\n");
+#endif
     
     LogFrame f;
-    f.intArray.push_back(5);
-    f.intArray.push_back(7);
-    f.intArray.push_back(6);
-    f.e_array_var.push_back(LogFrame::B);
-    f.someText = "abc";
+    Serialization::ReadBuffer &in = fb;
+    in & f;
+#if 0
+    printf("intArray: %d items\n", (int)f.intArray.size());
+    for (unsigned int i = 0; i < f.intArray.size(); ++i)
+    {
+        printf("\t%d: %d\n", i, f.intArray[i]);
+    }
+    printf("Text: \"%s\"\n", f.someText.c_str());
+#endif
+    
+    return 0;
+}
+
+int main()
+{
+    pthread_t t;
+    pthread_create(&t, 0, receive_thread, 0);
+    
+    Sender s("localhost", 1234);
+    
+    LogFrame f;
+//    f.intArray.push_back(5);
+//    f.intArray.push_back(7);
+//    f.intArray.push_back(6);
+//    f.e_array_var.push_back(LogFrame::B);
+//    f.someText = "abc";
+    s.send(f);
+    
+    Serialization::MemoryBuffer fb;
     Serialization::WriteBuffer &out = fb;
     out & f;
-    
-    fseek(fp, SEEK_SET, 0);
-    LogFrame r;
-    Serialization::ReadBuffer &in = fb;
-    in & r;
-    printf("intArray: %d items\n", (int)r.intArray.size());
-    for (unsigned int i = 0; i < r.intArray.size(); ++i)
-    {
-        printf("\t%d: %d\n", i, r.intArray[i]);
-    }
-    printf("Text: \"%s\"\n", r.someText.c_str());
+    printf("ser %d\n", fb.data.size());
     
     return 0;
 }

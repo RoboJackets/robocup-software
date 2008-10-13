@@ -28,9 +28,19 @@ namespace Serialization
         
         virtual void writeByte(uint8_t value) = 0;
         
+        void operator&(uint8_t value) { add(value); }
+        void operator&(int8_t value) { add(value); }
+        void operator&(uint16_t value) { add(value); }
+        void operator&(int16_t value) { add(value); }
+        void operator&(uint32_t value) { add(value); }
+        void operator&(int32_t value) { add(value); }
+        void operator&(uint64_t value) { add(value); }
+        void operator&(int64_t value) { add(value); }
+        
         template<typename T>
-        void operator&(const T &value)
+        void add(const T &value)
         {
+            printf("add %d\n", sizeof(T));
             for (unsigned int i = 0; i < sizeof(T); ++i)
             {
                 writeByte(((uint8_t *)&value)[i]);
@@ -47,7 +57,7 @@ namespace Serialization
         }
         
         template<typename S, typename T>
-        void arrayVariable(std::vector<T> &x)
+        void arrayVariable(const std::vector<T> &x)
         {
             *this & (S)x.size();
             // Always use unsigned int here so the loop
@@ -59,7 +69,7 @@ namespace Serialization
         }
         
         template<typename T, unsigned int N>
-        void arrayFixed(T (&x)[N])
+        void arrayFixed(const T (&x)[N])
         {
             for (unsigned int i = 0; i < N; ++i)
             {
@@ -68,7 +78,7 @@ namespace Serialization
         }
         
         template<typename S, typename C, typename T>
-        void arrayVariableCast(std::vector<T> &x)
+        void arrayVariableCast(const std::vector<T> &x)
         {
             *this & (S)x.size();
             // Always use unsigned int here so the loop
@@ -80,7 +90,7 @@ namespace Serialization
         }
         
         template<typename C, typename T, unsigned int N>
-        void arrayFixedCast(T (&x)[N])
+        void arrayFixedCast(const T (&x)[N])
         {
             for (unsigned int i = 0; i < N; ++i)
             {
@@ -96,8 +106,17 @@ namespace Serialization
         
         virtual uint8_t readByte() = 0;
         
+        void operator&(uint8_t value) { read(value); }
+        void operator&(int8_t value) { read(value); }
+        void operator&(uint16_t value) { read(value); }
+        void operator&(int16_t value) { read(value); }
+        void operator&(uint32_t value) { read(value); }
+        void operator&(int32_t value) { read(value); }
+        void operator&(uint64_t value) { read(value); }
+        void operator&(int64_t value) { read(value); }
+        
         template<typename T>
-        void operator&(const T &value)
+        void read(T &value)
         {
             for (unsigned int i = 0; i < sizeof(T); ++i)
             {
@@ -187,6 +206,38 @@ namespace Serialization
     
     protected:
         FILE *_fp;
+    };
+
+    class MemoryBuffer: public WriteBuffer, public ReadBuffer
+    {
+    public:
+        MemoryBuffer()
+        {
+            _readPos = 0;
+        }
+        
+        void rewind()
+        {
+            _readPos = 0;
+        }
+        
+        virtual void writeByte(uint8_t value)
+        {
+            data.push_back(value);
+        }
+        
+        virtual uint8_t readByte()
+        {
+            if (_readPos >= data.size())
+            {
+                return 0;
+            } else {
+                return data[_readPos++];
+            }
+        }
+        
+        std::vector<uint8_t> data;
+        unsigned int _readPos;
     };
 }
 
