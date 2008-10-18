@@ -87,6 +87,30 @@ void Referee::blueTimeOutUpdate()
 ///This function updats the timers for time outs
 void Referee::yellowTimeOutUpdate()
 {
+	///Check to see if current time exceeds max time possible in current period.
+	if(Referee::currYellowTimeOutTimer >= Referee::_timeOutMsecs) {
+
+		///Stop game timer, set the gamestate to halted and increment the game period.
+		_yellowTimeOutTimer.stop();
+		Referee::startGameTimer();
+		///Reset the timer if there are still time outs left.
+		if(yellowTimeOuts>=1) {
+			currYellowTimeOutTimer=0;
+			Referee::updateYellowTimeOutRemaining();
+			Referee::updateYellowTimeOutLabels();
+		}
+	
+	} else {
+		///Increment the timer if the game if time is still left.
+		Referee::currYellowTimeOutTimer+=100;
+		//DEBUG
+		//printf("Current milliseconds: %d\n", Referee::currYellowTimeOutTimer);
+
+		///Update our labels.
+		Referee::updateYellowTimeOutRemaining();
+		Referee::updateYellowTimeOutLabels();
+	}
+
 
 }
 
@@ -205,7 +229,17 @@ printf("Debug.\n");
 void Referee::on_YellowTimeOutButton_clicked()
 {
 
-printf("Debug.\n");
+	///Make sure yello timer is not active
+	if(_yellowTimeOutTimer.timerId() == -1) {
+		///Make sure there are enough time outs, that another time out clock isn't running, and that the game is playing
+		if( (yellowTimeOuts >= 1) && (_blueTimeOutTimer.timerId()==-1) && (currGameState==1)) {
+			_yellowTimeOutTimer.start(100);
+			Referee::stopGameTimer();
+			Referee::yellowTimeOuts--;
+			Referee::updateYellowTimeOutLabels();
+		}
+	}
+//printf("Debug.\n");
 
 }
 
@@ -387,7 +421,35 @@ void Referee::updateBlueTimeOutRemaining()
 
 void Referee::updateYellowTimeOutRemaining()
 {
+	//Create a buffer string for our sprintf
+	char buf[256];
+	
+	//Convert milliseconds to minutes, seconds and tenths of seconds
+	int milliseconds=Referee::_timeOutMsecs - Referee::currYellowTimeOutTimer;
 
+	//Find Minutes
+	int minutes=floor(milliseconds/(60*1000));
+	milliseconds = milliseconds - (minutes*60*1000);
+
+	//Find seconds
+	int seconds=floor(milliseconds/(1000));
+	milliseconds = milliseconds - (seconds*1000);
+
+	//Find tenths
+	int tenths = floor(milliseconds/(100));
+	
+	//Format string for use in label.
+	if(seconds > 10) {
+		snprintf(buf, 100, "%d:%d.%d", minutes, seconds, tenths);
+	} else {
+		snprintf(buf, 100, "%d:0%d.%d", minutes, seconds, tenths);
+	}
+
+	//Put string into label
+	TimeRemainingYellowText->setText(buf);
+
+	//DEBUG
+	//printf("Time Remaining: %s\n", buf);
 }
 
 void Referee::stopGameTimer()
@@ -529,6 +591,9 @@ void Referee::updateBlueTimeOutLabels()
 
 void Referee::updateYellowTimeOutLabels()
 {
-
+	///Update yellow time out labels.
+	char buf[16];
+	snprintf(buf, 8, "%d", yellowTimeOuts);
+	YellowTimeOutsLeftText->setText(buf);
 }
 
