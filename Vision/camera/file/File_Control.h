@@ -16,7 +16,7 @@ namespace Camera
     public:
         File_Control(File *file, QWidget *parent = 0);
     
-    protected slots:
+    protected Q_SLOTS:
         void restart();
         void play();
         void step();

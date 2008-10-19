@@ -10,7 +10,7 @@ class VisionData
 		class Point
 		{
 			public:
-				Point() : x(0), y(0) {}
+				Point(float ax = 0, float ay = 0) : x(ax), y(ay) {}
 				
 				float x;
 				float y;
@@ -34,15 +34,13 @@ class VisionData
 		class Ball
 		{
 			public:
-				Ball() {}
+				Ball(float x = 0, float y = 0) : pos(x,y) {}
 				
 				/** global position */
 				Point pos;
 		};
 		
 		VisionData() : timestamp(0) {}
-		
-	private:
 		
 		std::vector<Ball> balls;
 		

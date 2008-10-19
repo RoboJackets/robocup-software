@@ -40,16 +40,16 @@
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
      inkscape:zoom="0.39811349"
-     inkscape:cx="1169.2913"
+     inkscape:cx="735.99777"
      inkscape:cy="832.67712"
      inkscape:document-units="cm"
      inkscape:current-layer="layer1"
      showgrid="false"
      units="cm"
-     inkscape:window-width="1440"
-     inkscape:window-height="851"
+     inkscape:window-width="1280"
+     inkscape:window-height="751"
      inkscape:window-x="0"
-     inkscape:window-y="0" />
+     inkscape:window-y="27" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -1482,5 +1482,15 @@
        height="244.64111"
        x="2250.7144"
        y="710.35651" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#ff9900;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="path2798"
+       sodipodi:cx="-119.31271"
+       sodipodi:cy="825.1416"
+       sodipodi:rx="36.421776"
+       sodipodi:ry="36.421776"
+       d="M -82.890938,825.1416 A 36.421776,36.421776 0 1 1 -155.73449,825.1416 A 36.421776,36.421776 0 1 1 -82.890938,825.1416 z"
+       transform="matrix(0.2063311,0,0,0.2063311,1069.1287,651.53889)" />
   </g>
 </svg>

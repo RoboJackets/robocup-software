@@ -17,7 +17,7 @@ public:
 protected:
     char buf[256];
 
-protected slots:
+protected Q_SLOTS:
     void change();
 };
 

@@ -100,7 +100,7 @@ public:
                 view->group_flags[row] = checked;
             }
             
-            emit dataChanged(index, index);
+            dataChanged(index, index);
             
             return true;
         } else {

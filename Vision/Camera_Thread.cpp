@@ -87,7 +87,7 @@ void Camera_Thread::camera(Camera::Base *cam)
 	ml.relock();
 	_frame = new_frame;
 	_frame_size = QSize(_frame->width(), _frame->height());
-	emit camera_changed(_camera);
+	camera_changed(_camera);
 }
 
 int Camera_Thread::update_time() const
@@ -168,7 +168,7 @@ bool Camera_Thread::event(QEvent *e)
 {
 	if (e->type() == Frame_Event::Type)
 	{
-		emit new_frame();
+		new_frame();
 
 		_can_redraw = true;
 		

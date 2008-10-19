@@ -16,7 +16,6 @@ namespace Camera
 {
 	class Base;
 }
-;
 
 /** The Camera Thread class grabs frames from the current camera
  * and passes them to windows and vision processing */
@@ -81,7 +80,7 @@ class Camera_Thread: public QThread
 		// Protects state for this thread so the GUI can change parameters.
 		mutable QMutex mutex;
 
-		signals:
+	Q_SIGNALS:
 		void camera_changed(Camera::Base *camera);
 		void new_frame();
 

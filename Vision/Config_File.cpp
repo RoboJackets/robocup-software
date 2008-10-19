@@ -510,12 +510,12 @@ void Config_File::missing_attr(const QDomElement &element, const char *name)
 }
 
 void Config_File::start_camera(Camera::Base *cam)
-{
+{	
     _camera_thread = new Camera_Thread();
     _camera_thread->camera(cam);
     _camera_thread->update_time(33);
     _camera_thread->start();
 
     _win = new Camera_Window(this);
-    _win->show();
+    _win->showMaximized();
 }

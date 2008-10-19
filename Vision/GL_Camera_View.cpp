@@ -236,17 +236,16 @@ void GL_Camera_View::initializeGL()
     input_tex.generate();
     colorseg_tex.generate();
 
-    glEnable(GL_TEXTURE_2D);
-
-    //http://www.opengl.org/registry/specs/ARB/texture_rectangle.txt
+	//http://www.opengl.org/registry/specs/ARB/texture_rectangle.txt
+	//all textures must be created with this as a texture target
     glEnable(GL_TEXTURE_RECTANGLE_ARB);
 
     // Blank texture
     vector<uint8_t> blank(4 * 4, 255);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &blank[0]);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glBindTexture(GL_TEXTURE_RECTANGLE_ARB, 0);
+    glTexImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, 4, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, &blank[0]);
+    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_RECTANGLE_ARB, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
@@ -346,7 +345,7 @@ void GL_Camera_View::paintGL()
     }
 
     // Solid white texture
-    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_RECTANGLE_ARB, 0);
 
     // Spans and groups
     if (show_groups || show_span_detail)
@@ -458,7 +457,7 @@ void GL_Camera_View::mouseMoveEvent(QMouseEvent *e)
         mouse_edit_color(pos, e->buttons());
     }
 
-    emit mouse_moved((int)pos.x, (int)pos.y);
+    mouse_moved((int)pos.x, (int)pos.y);
 }
 
 void GL_Camera_View::wheelEvent(QWheelEvent *e)

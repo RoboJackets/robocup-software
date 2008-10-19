@@ -62,17 +62,17 @@ public:
     Transform_Setup *robot_transform_setup;
     Transform_Setup *ball_transform_setup;
 
-signals:
+Q_SIGNALS:
     // (x, y) is the position in the frame, not in the widget (not zoomed)
     void mouse_moved(int x, int y);
 
     void colorseg_changed(QRgb color);
 
-public slots:
+public Q_SLOTS:
     void setup_ok();
     void setup_cancel();
 
-protected slots:
+protected Q_SLOTS:
     void setup_type_changed(int n);
 
 protected:

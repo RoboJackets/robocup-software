@@ -12,7 +12,7 @@ class AttrCommand: public QPushButton, public AttrBase
 public:
     AttrCommand(tPvHandle cam, const char *name);
 
-protected slots:
+protected Q_SLOTS:
     void run();
 };
 

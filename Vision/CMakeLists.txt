@@ -1,6 +1,8 @@
 set(PROJECT vision)
 cmake_minimum_required(VERSION 2.6)
 
+add_definitions(-DQT_NO_KEYWORDS)
+
 if (${UNIX})
 	add_definitions(-D_LINUX)
 endif ()
@@ -19,7 +21,7 @@ set(SRCS
     Colorspace_Window.cpp
     Colorspace_View.cpp
     
-    camera/test/Dummy.cpp 
+    camera/dummy/Dummy.cpp 
     
     camera/file/File.cpp
     camera/file/File_Control.cpp
@@ -85,28 +87,18 @@ include_directories(${prosilica_dir}/include)
 link_directories(${prosilica_dir}/lib/${prosilica_lib_dir}/4.1/)
 
 add_executable(${PROJECT} ${SRCS} ${UIHS} ${RC_SRCS})
-target_link_libraries(${PROJECT} ${QT_LIBRARIES})
 
 find_package(PkgConfig REQUIRED)
 pkg_search_module(LIBAVFORMAT REQUIRED libavformat)
 include_directories(${LIBAVFORMAT_INCLUDE_DIRS})
 link_directories(${LIBAVFORMAT_LIBRARY_DIRS})
-target_link_libraries(${PROJECT} ${LIBAVFORMAT_LIBRARIES})
 
 find_package(GLUT REQUIRED)
 include_directories(${GLUT_INCLUDE_DIR})
+
+target_link_libraries(${PROJECT} ${QT_LIBRARIES})
+target_link_libraries(${PROJECT} ${LIBAVFORMAT_LIBRARIES})
 target_link_libraries(${PROJECT} ${GLUT_LIBRARIES})
-
-target_link_libraries(${PROJECT} dc1394 PvAPI)
-
-add_custom_target(run ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT}
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-	VERBATIM)
-add_dependencies(run ${PROJECT})
-
-add_custom_target(run_video ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT} config/video.xml
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    VERBATIM)
-add_dependencies(run_video ${PROJECT})
-
-target_link_libraries(${PROJECT} ${PACKET} ${GEOMETRY})
+target_link_libraries(${PROJECT} PvAPI)
+target_link_libraries(${PROJECT} dc1394)
+target_link_libraries(${PROJECT} ${GEOMETRY_LIBRARY} ${PACKET_LIBRARY})

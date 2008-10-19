@@ -4,6 +4,11 @@
 #include <QMutex>
 #include <list>
 
+#include <SerDes/Sender.hpp>
+
+#include <Geometry/Point2d.hpp>
+#include <Vision.hpp>
+
 #include "../Image.h"
 #include "Colors.h"
 #include "../VisionData.hpp"
@@ -38,10 +43,21 @@ namespace Vision
 			Transform *ball_transform;
 			Transform *robot_transform;
 
-		protected:
+		private:
+			uint64_t timestamp() const;
+			
+		private:
+			
 			mutable QMutex mutex;
 			
 			float _robot_radius;
+			
+			Sender _sender;
+			Packet::Vision _visionPacket;
+			
+			unsigned int _procID;
+			
+			static unsigned int _nextID;
 	};
 }
 ;

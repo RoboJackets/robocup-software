@@ -14,7 +14,7 @@ public:
 
     void reset();
     
-protected slots:
+protected Q_SLOTS:
     void change();
 };
 

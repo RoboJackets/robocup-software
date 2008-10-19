@@ -34,7 +34,7 @@ public:
 
     Ui_Camera_Window ui;
 
-protected slots:
+protected Q_SLOTS:
     void on_edit_color_currentIndexChanged(int n);
     void on_spanner_color_currentIndexChanged(int n);
     void on_show_camera_toggled(bool state);
