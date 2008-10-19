@@ -21,12 +21,18 @@ namespace Constants
         const float Border = .25f;
         
         const float LineWidth = 0.01f;
+        
+        const float GoalWidth = .7f;
+        const float GoalDepth = .2;
+        const float GoalHeight = .2f;
     }
     
     namespace Floor
     {
         const float Length = Field::Length + 2.0 * Field::Border;
         const float Width = Field::Width + 2.0 * Field::Border;
+        
+        const float Aspect = Width/Length;
     }
     
     namespace Robot

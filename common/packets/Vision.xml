@@ -1,0 +1,3 @@
+<struct typename="Vision">
+    <member type="uint64" name="timestamp" value="1"/>
+</struct>

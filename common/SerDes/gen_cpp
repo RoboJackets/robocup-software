@@ -1,0 +1,288 @@
+#!/usr/bin/python
+
+import sys
+from xml.dom.minidom import *
+
+primitives = ['float', 'double']
+
+typeMap = {'string': 'std::string'}
+
+# Add int* and uint* to primitives and typeMap
+for i in ['8', '16', '32', '64']:
+    typename = 'int' + i
+    typeMap[typename] = typename + '_t'
+    typeMap['u' + typename] = 'u' + typename + '_t'
+    primitives.append(typename)
+    primitives.append('u' + typename)
+
+indentLevel = 0
+indentString = ''
+
+def indent():
+    global indentLevel
+    indentLevel += 1
+def unindent():
+    global indentLevel
+    indentLevel -= 1
+def write(str = ''):
+    print ' ' * (indentLevel * 4) + str
+
+def cType(dataType):
+    if dataType in typeMap:
+        return typeMap[dataType]
+    return dataType
+
+def fullName(node):
+    name = node.getAttribute('typename')
+    parent = node.parentNode
+    while parent != None and parent.nodeType == parent.ELEMENT_NODE:
+        name = parent.getAttribute('typename') + '::' + name
+        parent = parent.parentNode
+    return cType(name)
+
+class ChildrenByName:
+    def __init__(self, node, name):
+        self.node = node.firstChild
+        if type(name) == type(''):
+            self.name = [name]
+        else:
+            self.name = name
+    
+    def __iter__(self):
+        return self
+    
+    def next(self):
+        while self.node != None:
+            ret = self.node
+            self.node = self.node.nextSibling
+            
+            if ret.nodeType == Node.ELEMENT_NODE and ret.nodeName in self.name:
+                return ret
+            
+        raise StopIteration
+
+########
+
+if len(sys.argv) != 2:
+    print 'Usage: ' + sys.argv[0] + ' <input.xml>'
+    sys.exit(1)
+
+filename = sys.argv[1]
+dom = parse(filename)
+root = dom.firstChild
+
+if root.nodeType != Node.ELEMENT_NODE or root.nodeName != 'struct':
+    #FIXME - stderr
+    print 'Root tag must be struct'
+    sys.exit(1)
+
+# Header
+headerGuard = '_' + root.getAttribute('typename').upper() + '_HPP_'
+write('#ifndef ' + headerGuard)
+write('#define ' + headerGuard)
+write()
+write('#include <vector>')
+write('#include <Serialization.hpp>')
+write('#include <string>')
+write()
+
+# First pass: Declarations
+allEnumTypes = {}
+def declareStruct(node):
+    className = node.getAttribute('typename')
+    thisFullName = fullName(node)
+    write('class ' + className)
+    write('{')
+    indent()
+    write('public:')
+    indent()
+    
+    # Structures
+    for child in ChildrenByName(node, 'struct'):
+        ext = child.getAttribute('external_cpp')
+        if ext == '':
+            declareStruct(child)
+        else:
+            childName = child.getAttribute('typename')
+            childFullName = fullName(child)
+            # FIXME - This breaks enums in externals.  This is probably OK since there
+            #         is no guarantee that the values would be the same as in the XML.
+            allEnumTypes[childFullName] = {}
+            allEnumTypes[ext] = {}
+            # FIXME - This kinda flattens the containment hierarchy.
+            #         Fixing this is tricky.
+            typeMap[childName] = ext
+            typeMap[childFullName] = ext
+    
+    # Constants
+    done = False
+    for child in ChildrenByName(node, 'constant'):
+        dataType = child.getAttribute('type')
+        name = child.getAttribute('name')
+        value = child.getAttribute('value')
+        write('static const ' + cType(dataType) + ' ' + name + ' = ' + value + ';')
+        done = True
+    if done:
+        write('')
+    
+    # Enums
+    enumTypes = {}
+    enumDefault = {}
+    for child in ChildrenByName(node, 'enum'):
+        enumName = child.getAttribute('typename')
+        dataType = child.getAttribute('type')
+        if dataType == '':
+            dataType = 'uint32'
+        enumTypes[enumName] = dataType
+        
+        write('typedef enum')
+        write('{')
+        indent()
+        
+        value = 0
+        lastLine = ''
+        for item in ChildrenByName(child, 'constant'):
+            name = item.getAttribute('name')
+            valueAttr = item.getAttribute('value')
+            if valueAttr != '':
+                value = int(valueAttr)
+            
+            # Store the first value as the default
+            if lastLine == '':
+                enumDefault[enumName] = name
+            
+            # Write the last line with a comma and store this one.
+            # If this is the last one, it will be written later without a comma.
+            if lastLine != '':
+                write(lastLine + ',')
+            lastLine = name + ' = ' + str(value)
+            
+            # Go to the next value
+            value += 1
+        
+        # Write the last line without a comma
+        if lastLine != '':
+            write(lastLine)
+            
+        unindent()
+        write('} ' + enumName + ';')
+        write()
+    
+    # Members (single and arrays)
+    # These must be done together to preserve order.
+    needConstructor = False
+    for child in ChildrenByName(node, ['member', 'array']):
+        if child.nodeName == 'member':
+            dataType = child.getAttribute('type')
+            name = child.getAttribute('name')
+            write(cType(dataType) + ' ' + name + ';')
+            needConstructor |= (dataType in primitives) or (dataType in enumTypes)
+        elif child.nodeName == 'array':
+            dataType = child.getAttribute('type')
+            name = child.getAttribute('name')
+            size = child.getAttribute('size')
+            if size == '':
+                # Variable size
+                write('std::vector<' + cType(dataType) + '> ' + name + ';')
+            else:
+                # Fixed size
+                write(cType(dataType) + ' ' + name + '[' + size + '];')
+                needConstructor |= (dataType in primitives) or (dataType in enumTypes)
+    
+    # Constructor
+    if needConstructor:
+        write('')
+        write(className + '()')
+        write('{')
+        indent()
+        for child in ChildrenByName(node, ['member', 'array']):
+            dataType = child.getAttribute('type')
+            isEnum = dataType in enumTypes
+            if (dataType in primitives) or isEnum:
+                name = child.getAttribute('name')
+                value = child.getAttribute('value')
+                if value == '':
+                    if isEnum:
+                        value = enumDefault[dataType]
+                    else:
+                        value = '0';
+                
+                if child.nodeName == 'member':
+                    # Single member
+                    write(name + ' = ' + value + ';');
+                else:
+                    # Array
+                    size = child.getAttribute('size')
+                    if size != '':
+                        # Fixed-size array
+                        write('for (int i = 0; i < ' + size + '; ++i)')
+                        write('{')
+                        indent()
+                        if name == 'i':
+                            name = 'this->i'
+                        write(name + '[i] = ' + value + ';')
+                        unindent()
+                        write('}')
+            
+        unindent()
+        write('}')
+    
+    unindent()
+    unindent()
+    write('};')
+    write('')
+    
+    allEnumTypes[fullName(node)] = enumTypes
+
+declareStruct(root)
+
+# Second pass: Serialization bodies
+for node in dom.getElementsByTagName('struct'):
+    className = fullName(node)
+        
+    write('template<typename B>')
+    write('void operator&(B &buf, ' + className + ' &obj)')
+    write('{')
+    indent()
+    
+    enumTypes = allEnumTypes[className]
+    
+    for child in ChildrenByName(node, ['member', 'array']):
+        dataType = child.getAttribute('type')
+        name = child.getAttribute('name')
+        
+        if child.nodeName == 'array':
+            # Array
+            size = child.getAttribute('size')
+            if size == '':
+                # Variable size
+                sizetype = child.getAttribute('sizetype')
+                if sizetype == '':
+                    sizetype = 'uint32'
+                sizetype = cType(sizetype)
+                
+                if dataType in enumTypes:
+                    storageType = cType(enumTypes[dataType])
+                    write('buf.template arrayVariableCast<' + sizetype + ', ' + storageType + '>(obj.' + name + ');')
+                else:
+                    write('buf.template arrayVariable<' + sizetype + '>(obj.' + name + ');')
+            else:
+                # Fixed size
+                if dataType in enumTypes:
+                    storageType = cType(enumTypes[dataType])
+                    write('buf.template arrayFixedCast<' + storageType + '>(obj.' + name + ');')
+                else:
+                    write('buf.arrayFixed(obj.' + name + ');')
+        elif dataType in enumTypes:
+            # Single enum
+            write('buf & (' + cType(enumTypes[dataType]) + ' &)obj.' + name + ';')
+        else:
+            # Single object, not enum
+            write('buf & obj.' + name + ';')
+        
+    unindent()
+    write('}')
+    write()
+
+# Trailer
+write('#endif // ' + headerGuard)

@@ -1,0 +1,40 @@
+<struct typename="LogFrame">
+    <struct typename="Point2d"  external_cpp="Geometry::Point2d">
+        <member type="float" name="x"/>
+        <member type="float" name="y"/>
+    </struct>
+    
+    <struct typename="Color">
+        <member type="uint8" name="r"/>
+        <member type="uint8" name="g"/>
+        <member type="uint8" name="b"/>
+    </struct>
+    
+    <struct typename="DebugLine">
+        <array size="2" type="Point2d" name="pt"/>
+        <member type="Color" name="color"/>
+    </struct>
+    
+    <struct typename="Robot">
+        <member type="Point2d" name="pos"/>
+        <member type="Point2d" name="vel"/>
+        <array type="Point2d" name="path"/>
+    </struct>
+    
+    <constant type="uint32" name="Test" value="1234"/>
+    
+    <enum type="uint8" typename="TestEnum">
+        <constant name="A" value="3"/>
+        <constant name="B"/>
+    </enum>
+    
+    <member type="uint64" name="timestamp" value="1"/>
+    <array size="5" type="Robot" name="robots"/>
+    <array type="DebugLine" name="debugLines"/>
+    <array type="int32" name="intArray" sizetype="uint8"/>
+    <array type="int32" name="moreInts" size="2" sizetype="uint8" value="5"/>
+    <member type="TestEnum" name="e_single" value="B"/>
+    <array type="TestEnum" name="e_array" size="3"/>
+    <array type="TestEnum" name="e_array_var"/>
+    <member type="string" name="someText"/>
+</struct>
