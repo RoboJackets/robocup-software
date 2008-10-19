@@ -77,8 +77,7 @@ if root.nodeType != Node.ELEMENT_NODE or root.nodeName != 'struct':
     sys.exit(1)
 
 # Header
-basename = filename.strip('.xml').upper()
-headerGuard = '_' + basename + '_HPP_'
+headerGuard = '_' + root.getAttribute('typename').upper() + '_HPP_'
 write('#ifndef ' + headerGuard)
 write('#define ' + headerGuard)
 write()

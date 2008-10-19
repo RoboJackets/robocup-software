@@ -50,7 +50,7 @@ namespace Serialization
         
         void operator&(std::string &value)
         {
-            *this & value.size();
+            *this & (uint32_t)value.size();
             for (unsigned int i = 0; i  < value.size(); ++i)
             {
                 *this & (int8_t)value[i];
@@ -129,7 +129,7 @@ namespace Serialization
         
         void operator&(std::string &value)
         {
-            unsigned int size;
+            uint32_t size;
             *this & size;
             value.resize(size);
             for (unsigned int i = 0; i  < value.size(); ++i)

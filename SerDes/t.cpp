@@ -22,12 +22,16 @@ namespace Geometry
 
 #include "test.hpp"
 
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t ready = PTHREAD_COND_INITIALIZER;
 
 void *receive_thread(void *arg)
 {
     Receiver r(1234, 1024);
+    
+    pthread_mutex_lock(&mutex);
     pthread_cond_signal(&ready);
+    pthread_mutex_unlock(&mutex);
     
     LogFrame f;
     r.receive(f);
@@ -45,11 +49,9 @@ void *receive_thread(void *arg)
 int main()
 {
     pthread_t t;
+    pthread_mutex_lock(&mutex);
     pthread_create(&t, 0, receive_thread, 0);
-    
-    pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;
-    pthread_mutex_lock(&m);
-    pthread_cond_wait(&ready, &m);
+    pthread_cond_wait(&ready, &mutex);
     
     Sender s("localhost", 1234);
     
