@@ -51,7 +51,7 @@ namespace Geometry
 			
 			/** the radius */
 			float _radius;
-	}  __attribute__((__packed__));
+	};
 };
 
 #endif //_circle2d_h

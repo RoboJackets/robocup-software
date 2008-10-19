@@ -16,6 +16,8 @@ macro (prepend_list aList aString)
 endmacro(prepend_list)
 
 if (USE_PACKET)
+	include_directories(${common_include_dir}/SerDes)
+
     SET(libpacket_SRCS
         SerDes/Receiver.cpp
 		SerDes/Sender.cpp
@@ -38,7 +40,8 @@ if (USE_PACKET)
         
         add_custom_command(OUTPUT ${header}
                 COMMAND ${common_include_dir}/SerDes/gen_cpp ${xmlFile} > ${header}
-                DEPENDS ${xmlFile}
+                DEPENDS ${xmlFile} ${common_include_dir}/SerDes/gen_cpp
+				
                 VERBATIM
         )
         

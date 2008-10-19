@@ -86,6 +86,10 @@ write('#include <Serialization.hpp>')
 write('#include <string>')
 write()
 
+write('namespace Packet')
+write('{')
+indent()
+
 # First pass: Declarations
 allEnumTypes = {}
 def declareStruct(node):
@@ -282,7 +286,10 @@ for node in dom.getElementsByTagName('struct'):
         
     unindent()
     write('}')
-    write()
+
+unindent()
+write('}')
+write()
 
 # Trailer
 write('#endif // ' + headerGuard)

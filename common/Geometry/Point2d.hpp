@@ -211,7 +211,7 @@ namespace Geometry
 			
 			/** the y coordinate */
 			float y;
-	} __attribute__((__packed__));
+	};
 };
 
 #endif
