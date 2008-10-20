@@ -15,7 +15,7 @@ using namespace Vision;
 unsigned int Process::_nextID = 0;
 
 Process::Process() :
-	_sender("localhost", 1234), _procID(_nextID++)
+	_sender("224.1.2.3", 1234), _procID(_nextID++)
 {
 	distortion = new Distortion();
 	ball_transform = new Transform();

@@ -52,7 +52,7 @@ namespace Vision
 			
 			float _robot_radius;
 			
-			Sender _sender;
+			Serialization::Sender _sender;
 			Packet::Vision _visionPacket;
 			
 			unsigned int _procID;

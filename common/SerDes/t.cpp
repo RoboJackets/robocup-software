@@ -27,13 +27,13 @@ pthread_cond_t ready = PTHREAD_COND_INITIALIZER;
 
 void *receive_thread(void *arg)
 {
-    Receiver r(1234, 1024);
+    Serialization::Receiver r("224.1.2.3", 1234, 1024);
     
     pthread_mutex_lock(&mutex);
     pthread_cond_signal(&ready);
     pthread_mutex_unlock(&mutex);
     
-    LogFrame f;
+    Packet::LogFrame f;
     r.receive(f);
     
     printf("intArray: %d items\n", (int)f.intArray.size());
@@ -53,13 +53,13 @@ int main()
     pthread_create(&t, 0, receive_thread, 0);
     pthread_cond_wait(&ready, &mutex);
     
-    Sender s("localhost", 1234);
+    Serialization::Sender s("224.1.2.3", 1234);
     
-    LogFrame f;
+    Packet::LogFrame f;
     f.intArray.push_back(5);
     f.intArray.push_back(7);
     f.intArray.push_back(6);
-    f.e_array_var.push_back(LogFrame::B);
+    f.e_array_var.push_back(Packet::LogFrame::B);
     f.someText = "abc";
     s.send(f);
     

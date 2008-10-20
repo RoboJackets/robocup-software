@@ -3,33 +3,47 @@
 
 #include <vector>
 
-#include "Serialization.hpp"
+#include <Serialization.hpp>
 
-class Receiver
+namespace Serialization
 {
-public:
-    Receiver(uint16_t port, unsigned int size);
-    ~Receiver();
-
-    template<typename T>
-    void receive(T &packet)
+    class Receiver
     {
-        _buf.data.resize(_size);
-        receive(_buf.data);
+    public:
+        Receiver(uint16_t port, unsigned int size = 65536)
+        {
+            setup(0, port, size);
+        }
         
-        Serialization::ReadBuffer &reader = _buf;
-        reader & (T &)packet;
-    }
+        Receiver(const char *addr, uint16_t port, unsigned int size = 65536)
+        {
+            setup(addr, port, size);
+        }
+        
+        ~Receiver();
     
-    void receive(std::vector<uint8_t> &data);
-
-protected:
-    int _socket;
+        template<typename T>
+        void receive(T &packet)
+        {
+            _buf.data.resize(_size);
+            receive(_buf.data);
+            
+            ReadBuffer &reader = _buf;
+            reader & (T &)packet;
+        }
+        
+        void receive(std::vector<uint8_t> &data);
     
-    // Maximum packet size
-    unsigned int _size;
-    
-    Serialization::MemoryBuffer _buf;
-};
+    protected:
+        void setup(const char *addr, uint16_t port, unsigned int size);
+        
+        int _socket;
+        
+        // Maximum packet size
+        unsigned int _size;
+        
+        MemoryBuffer _buf;
+    };
+}
 
 #endif // _RECEIVER_HPP_

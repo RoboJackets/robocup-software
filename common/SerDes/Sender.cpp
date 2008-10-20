@@ -1,14 +1,14 @@
 #include <netdb.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
+#include <errno.h>
 
 #include <stdexcept>
 
-#include "Sender.hpp"
+#include <Sender.hpp>
 
 using namespace std;
 
-Sender::Sender(const char *addr, uint16_t port)
+Serialization::Sender::Sender(const char *addr, uint16_t port)
 {
     _socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (_socket < 0)
@@ -31,15 +31,14 @@ Sender::Sender(const char *addr, uint16_t port)
         throw runtime_error("Can't lookup destination address");
     }
     
-    sin.sin_port = htons(port);
-    memcpy(&sin.sin_addr.s_addr, ent->h_addr_list[0], 4);
-    if (connect(_socket, (struct sockaddr *)&sin, sizeof(sin)))
-    {
-        throw runtime_error("Can't connect");
-    }
+    // Can't use connect() because it doesn't work if there are no network
+    // interfaces except lo, even though sendto would not fail.
+    _dest.sin_family = AF_INET;
+    _dest.sin_port = htons(port);
+    memcpy(&_dest.sin_addr.s_addr, ent->h_addr_list[0], 4);
 }
 
-Sender::~Sender()
+Serialization::Sender::~Sender()
 {
     if (_socket)
     {
@@ -47,10 +46,10 @@ Sender::~Sender()
     }
 }
 
-void Sender::send(const uint8_t *data, unsigned int len)
+void Serialization::Sender::send(const uint8_t *data, unsigned int len)
 {
-    if (::send(_socket, data, len, 0) != (int)len)
+    if (::sendto(_socket, data, len, 0, (struct sockaddr *)&_dest, sizeof(_dest)) != (int)len)
     {
-        throw runtime_error("Send failed");
+        throw runtime_error(strerror(errno));
     }
 }

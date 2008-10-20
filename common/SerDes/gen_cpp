@@ -38,7 +38,7 @@ def fullName(node):
     while parent != None and parent.nodeType == parent.ELEMENT_NODE:
         name = parent.getAttribute('typename') + '::' + name
         parent = parent.parentNode
-    return cType(name)
+    return cType('Packet::' + name)
 
 class ChildrenByName:
     def __init__(self, node, name):
@@ -239,6 +239,8 @@ def declareStruct(node):
     allEnumTypes[fullName(node)] = enumTypes
 
 declareStruct(root)
+unindent()
+write('}')
 
 # Second pass: Serialization bodies
 for node in dom.getElementsByTagName('struct'):
@@ -287,8 +289,6 @@ for node in dom.getElementsByTagName('struct'):
     unindent()
     write('}')
 
-unindent()
-write('}')
 write()
 
 # Trailer
