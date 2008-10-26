@@ -78,4 +78,4 @@ if (DEFINED PHYSX_LINK_FLAGS)
 	set_target_properties (${PROJECT_NAME} PROPERTIES LINK_FLAGS ${PHYSX_LINK_FLAGS})
 endif ()
 
-target_link_libraries (${PROJECT_NAME} NxCooking PhysXLoader pthread dl QtOpenGL QtCore)
+target_link_libraries (${PROJECT_NAME} NxCooking PhysXLoader pthread dl glut QtOpenGL QtCore)
