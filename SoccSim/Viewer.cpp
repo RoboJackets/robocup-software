@@ -16,32 +16,8 @@ Viewer::~Viewer()
 
 void Viewer::initializeGL()
 {
-#if 0
-	float light0_pos[] = {0, 0, 3, 1};
-
-	const float am = .6;
-	float ambient[] = {am, am, am, 1};
-
-	glLightfv(GL_LIGHT0, GL_POSITION, light0_pos);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-
-	glEnable(GL_LIGHT0);
-
-	glEnable(GL_LIGHTING);
-#endif
-
 	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_COLOR_MATERIAL);
-
-	//glEnable(GL_VERTEX_ARRAY);
-	//glEnable(GL_NORMAL_ARRAY);
-
-	//glShadeModel(GL_SMOOTH);
-    glEnable(GL_LINE_SMOOTH);
-	//glEnable(GL_POLYGON_SMOOTH);
-
-	//glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_LINE_SMOOTH);
 }
 
 void Viewer::resizeGL(int w, int h)
@@ -50,6 +26,9 @@ void Viewer::resizeGL(int w, int h)
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
+	
+	//glOrtho(-5, 5, -3, 3, -1, 1);
+	
 	gluPerspective(60.0, w / h, 1, 1000);
 
 	glMatrixMode(GL_MODELVIEW);
@@ -57,28 +36,9 @@ void Viewer::resizeGL(int w, int h)
 
 	//eyeXYZ, targetXYZ, upXYZ
 	//gluLookAt(-1, -1, 1, 0, 0, 0, 0, 0, 1);
-	gluLookAt(.7, .7, .7, 0, 0, 0, 0, 0, 1);
-	
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_LINE_SMOOTH);
-	
-	//glEnable(GL_POLYGON_SMOOTH);
-	//glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	
-#if 0
-    float light0_pos[] = {0, 0, 3, 1};
-
-    const float am = .1;
-    float ambient[] = {am, am, am, 1};
-
-    glLightfv(GL_LIGHT0, GL_POSITION, light0_pos);
-    glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
-    glEnable(GL_LIGHT0);
-    
-    glEnable(GL_LIGHTING);
-#endif
-
+	gluLookAt(-5, -5, 5, 0, 0, 0, 0, 0, 1);
+	//gluLookAt(0, 0, 2, 0, 0, 0, 0, 0, 1);
+	//gluLookAt(.7, .7, .7, 0, 0, 0, 0, 0, 1);
 }
 
 void Viewer::paintGL()

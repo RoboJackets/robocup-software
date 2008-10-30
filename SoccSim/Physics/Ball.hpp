@@ -3,17 +3,15 @@
 
 #include "Entity.hpp"
 
-class Ball : public Entity
+class Ball: public Entity
 {
-    public:
-        Ball(NxScene& scene);
-        ~Ball();
-        
-        virtual void paint() const;
-        
-    private:
-        /** glu graphics object for the ball */
-        GLUquadric* _quadric;
+	public:
+		Ball(NxScene& scene);
+		~Ball();
+
+		void position(float x, float y);
+		
+	private:
 };
 
 #endif /* _BALL_HPP */

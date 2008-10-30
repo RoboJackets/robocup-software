@@ -16,12 +16,11 @@ Env::Env()
 	    _physicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION);
 		if(!_physicsSDK)
 		{
-			printf("Wrong SDK DLL version\n");
-			
+			printf("Wrong SDK DLL version\n");			
 			//TODO throw exception
 		}
 		
-		NxReal myScale = 1.0f;
+		NxReal myScale = 0.5f;
 		_physicsSDK->setParameter(NX_VISUALIZATION_SCALE, myScale);
 		//gPhysicsSDK->setParameter(NX_VISUALIZE_WORLD_AXES, 2.0f);
 		_physicsSDK->setParameter(NX_VISUALIZE_COLLISION_SHAPES, 1.0f);
@@ -47,11 +46,9 @@ Env::Env()
 
 	//setup the bounds for the scene, use field bounds
 	//TODO field bounds
-#if 1
 	NxBounds3 bounds;
 	bounds.set(-10, -10, 0, 10, 10, 10); //minx,y,z, maxx,y,z
 	sceneDesc.maxBounds = &bounds;
-#endif
 
 	_scene = _physicsSDK->createScene(sceneDesc);
 	if (!_scene)
@@ -60,16 +57,28 @@ Env::Env()
 		//TODO throw exception
 	}
 	
-	//creates a new ball in the scene
-	_entities.append(new Ball(*_scene));
+	//always add the field
 	_entities.append(new Field(*_scene));
-	_entities.append(new Robot(*_scene));
 	
 	//NxActor** actors = _scene->getActors();
 	//NxU32 actorCount = _scene->getNbActors();
 	
 	//new environment created
 	++_refCount;
+	
+	try
+	{
+		inputHandler = new InputHandler();
+		
+		printf("Using /dev/input/js0 for input.\n");
+		//start handling controller input
+		inputHandler->start();
+	}
+	catch (std::runtime_error err)
+	{
+		printf("No input controller.\n");
+		inputHandler = 0;
+	}
 	
 	connect(&_step, SIGNAL(timeout()), this, SLOT(step()));
 }
@@ -97,6 +106,20 @@ const NxDebugRenderable& Env::dbgRenderable() const
 
 void Env::step()
 {
+#if 0
+	if (inputHandler)
+	{
+		Packet::CommData::Robot data = inputHandler->genRobotData();
+		
+		for (int i=0 ; i<4 ; ++i)
+		{
+			_robots[0]->vels[i] = data.motor[i];
+		}
+		
+		_robots[0]->step();
+	}
+#endif
+
 	_scene->simulate(1.0/60.0);
 	_scene->flushStream();
 
@@ -112,3 +135,24 @@ void Env::start()
 	_step.start(30);
 }
 
+void Env::addBall(float x, float y)
+{
+	//TODO lock mutex
+	Ball* b = new Ball(*_scene);
+	b->position(x, y);
+	
+	_entities.append(b);
+	
+	printf("New Ball: %f %f\n", x, y);
+}
+
+void Env::addRobot(int id, float x, float y)
+{
+	Robot* r = new Robot(*_scene);
+	r->position(x, y);
+	
+	_entities.append(r);
+	_robots.append(r);
+	
+	printf("New Robot: %d : %f %f\n", id, x, y);
+}

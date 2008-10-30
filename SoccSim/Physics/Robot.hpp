@@ -9,7 +9,13 @@ class Robot : public Entity
         Robot(NxScene& scene);
         ~Robot();
         
-        virtual void paint() const;
+		void step();
+		
+		/** set position of the robot */
+		void position(float x, float y);
+		
+		//FIXME
+		int8_t vels[4];
         
     private:
         void initRoller();
@@ -27,6 +33,7 @@ class Robot : public Entity
         NxActor* _kicker;
         
         NxActor* _wheels[4];
+		NxRevoluteJoint* _motors[4];
         
         /** center of roller from ground */
         const static float RollerHeight = .03;

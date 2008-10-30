@@ -9,7 +9,6 @@ class Field : public Entity
         Field(NxScene& scene);
         ~Field();
         
-        void paint() const;
     private:
 };
 

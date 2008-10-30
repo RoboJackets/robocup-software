@@ -6,7 +6,10 @@
 #include <QVector>
 #include <QTimer>
 
+#include "../InputHandler.hpp"
+
 class Entity;
+class Robot;
 
 class Env : public QObject
 {
@@ -20,6 +23,9 @@ class Env : public QObject
 		const NxDebugRenderable& dbgRenderable() const;
 		
 		void start();
+		
+		void addBall(float x, float y);
+		void addRobot(int id, float x, float y);
 		
 	private Q_SLOTS:
 		void step();
@@ -38,7 +44,12 @@ class Env : public QObject
 		/** all of the created entities for the environment */
 		QVector<Entity*> _entities;
 		
+		//temp
+		QVector<Robot*> _robots;
+		
 		QTimer _step;
+		
+		InputHandler* inputHandler;
 };
 
 #endif /* _ENV_HPP */

@@ -5,6 +5,7 @@
 
 #include "Viewer.hpp"
 #include "Physics/Env.hpp"
+#include "Config.hpp"
 
 int main(int argc, char* argv[])
 {
@@ -13,11 +14,13 @@ int main(int argc, char* argv[])
 	Env* env = new Env();
 	env->start();
 	
+	Config cfg("../config/sample.xml", env);
+
 	Viewer win(env);
 	win.setVisible(true);
-
-	int ret = app.exec();
 	
+	int ret = app.exec();
+
 	//cleanup
 	delete env;
 	

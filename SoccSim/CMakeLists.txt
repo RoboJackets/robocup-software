@@ -32,6 +32,7 @@ add_definitions (-DNX_DISABLE_FLUIDS)
 add_definitions (-DQT_NO_KEYWORDS)
 set (QT_USE_QTNETWORK true)
 set (QT_USE_QTOPENGL true)
+set (QT_USE_QTXML true)
 find_package ( Qt4 REQUIRED )
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${PROJECT_BINARY_DIR})
@@ -39,6 +40,7 @@ include ( ${QT_USE_FILE} )
 
 qt4_wrap_cpp ( MOC_SRCS
 	Physics/Env.hpp
+	InputHandler.hpp
 	)
 	
 # this will run UIC on the .ui files
@@ -61,6 +63,9 @@ add_executable (${PROJECT_NAME}
 	main.cpp
 	Viewer.cpp
 	Vision.cpp
+	JoystickInput.cpp
+	InputHandler.cpp
+	Config.cpp
 	
 	## environment
 	Physics/Env.cpp
@@ -78,4 +83,4 @@ if (DEFINED PHYSX_LINK_FLAGS)
 	set_target_properties (${PROJECT_NAME} PROPERTIES LINK_FLAGS ${PHYSX_LINK_FLAGS})
 endif ()
 
-target_link_libraries (${PROJECT_NAME} NxCooking PhysXLoader pthread dl glut QtOpenGL QtCore)
+target_link_libraries (${PROJECT_NAME} NxCooking PhysXLoader pthread dl ${QT_LIBRARIES})

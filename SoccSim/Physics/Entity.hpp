@@ -12,14 +12,12 @@ class Entity
         Entity(NxScene& scene);
         virtual ~Entity();
         
-        /** draw the entity */
-        virtual void paint() const = 0;
-        
 	private:
 	    Entity& operator &= (Entity&);
-	    
+
 	protected:
 	    NxScene& _scene;
+	    
 	    /** the primary actor for the entity */
 	    NxActor* _actor;
 };
