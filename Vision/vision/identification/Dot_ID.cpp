@@ -165,6 +165,14 @@ bool Vision::Dot_ID::match_color_sequence(const Color_Sequence &seq) const
 void Vision::Dot_ID::set_report(Group *center_group, const Pattern &pattern, const Geometry::Point2d &center, const Geometry::Point2d &facing)
 {
     center_group->id = find_id(pattern);
+    
+    Identifier::Robot r;
+	r.id = center_group->id;
+	r.x = center.x;
+	r.y = center.y;
+	r.angle = facing.angle();
+	
+	_robots.push_back(r);
 }
 
 void Vision::Dot_ID::set_report(Group *center_group, const Pattern &pattern, int id, const Geometry::Point2d &center, const Geometry::Point2d &facing)

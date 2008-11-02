@@ -108,7 +108,6 @@ namespace Vision
 				return _color;
 			}
 			
-			
 			// Returns a reference to the group list.
 			// May only be used in the vision thread or with the mutex locked.
 			//
@@ -122,14 +121,12 @@ namespace Vision
 				return _groups;
 			}
 			
-			
 			// Returns a reference to the span list.
 			// May only be used in the vision thread or with the mutex locked.
 			const std::list<Span *> spans() const
 			{
 				return _all_spans;
 			}
-			
 			
 			// Lens distortion parameters
 			Distortion *distortion;

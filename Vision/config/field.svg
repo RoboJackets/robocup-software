@@ -39,17 +39,17 @@
      objecttolerance="10"
      inkscape:pageopacity="1"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.39811349"
-     inkscape:cx="735.99777"
+     inkscape:zoom="0.32605675"
+     inkscape:cx="1169.2913"
      inkscape:cy="832.67712"
      inkscape:document-units="cm"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer2"
      showgrid="false"
      units="cm"
      inkscape:window-width="1280"
-     inkscape:window-height="751"
+     inkscape:window-height="743"
      inkscape:window-x="0"
-     inkscape:window-y="27" />
+     inkscape:window-y="0" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -64,9 +64,11 @@
   <g
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     sodipodi:insensitive="true"
+     style="display:inline">
     <rect
-       style="fill:#00a003;fill-rule:evenodd;stroke:#ffffff;stroke-width:3.54330709;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none;fill-opacity:1"
+       style="fill:#00a003;fill-opacity:1;fill-rule:evenodd;stroke:#ffffff;stroke-width:3.54330707;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect2383"
        width="2160.4089"
        height="1487.1803"
@@ -78,7 +80,7 @@
        id="path3155" />
     <path
        sodipodi:type="arc"
-       style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:6.00573655;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:6.00573635;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path3157"
        sodipodi:cx="1202.8572"
        sodipodi:cy="845.35425"
@@ -1492,5 +1494,65 @@
        sodipodi:ry="36.421776"
        d="M -82.890938,825.1416 A 36.421776,36.421776 0 1 1 -155.73449,825.1416 A 36.421776,36.421776 0 1 1 -82.890938,825.1416 z"
        transform="matrix(0.2063311,0,0,0.2063311,1069.1287,651.53889)" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="text">
+    <text
+       xml:space="preserve"
+       style="font-size:100px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="1105.1637"
+       y="855.68048"
+       id="text2801"><tspan
+         sodipodi:role="line"
+         id="tspan2803"
+         x="1105.1637"
+         y="855.68048"
+         style="font-size:30px">( 0 , 0 )</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:100px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="1104.8767"
+       y="140.35011"
+       id="text2805"><tspan
+         sodipodi:role="line"
+         id="tspan2807"
+         x="1104.8767"
+         y="140.35011"
+         style="font-size:30px">( 0 , 2.1 )</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:100px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="117.05936"
+       y="138.21623"
+       id="text2809"><tspan
+         sodipodi:role="line"
+         id="tspan2811"
+         x="117.05936"
+         y="138.21623"
+         style="font-size:30px">( -3.05 , 2.1 )</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:100px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="2029.6152"
+       y="138.21623"
+       id="text2813"><tspan
+         sodipodi:role="line"
+         x="2029.6152"
+         y="138.21623"
+         style="font-size:30px"
+         id="tspan2817">( 3.05 , 2.1 )</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:100px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       x="2034.9055"
+       y="1552.0806"
+       id="text2821"><tspan
+         sodipodi:role="line"
+         x="2034.9055"
+         y="1552.0806"
+         style="font-size:30px"
+         id="tspan2823">( 3.05 , -2.1 )</tspan></text>
   </g>
 </svg>

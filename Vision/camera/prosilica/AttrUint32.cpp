@@ -1,4 +1,5 @@
 #include "AttrUint32.moc"
+#include <limits.h>
 
 AttrUint32::AttrUint32(tPvHandle cam, const char *name): AttrBase(cam, name)
 {

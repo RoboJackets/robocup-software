@@ -18,7 +18,6 @@ namespace Vision
 						angle = a;
 					}
 					
-					
 					// Dot indices
 					unsigned int i0, i1;
 
@@ -32,8 +31,8 @@ namespace Vision
 			}
 			
 			Vector_Pattern(float a, const Geometry::Point2d &c,
-			        const std::vector<Color_Sequence> &s, const std::vector<
-			                Pair> &p) :
+			        const std::vector<Color_Sequence> &s, 
+			        const std::vector<Pair> &p) :
 				Pattern(a, c, s), pairs(p)
 			{
 				min_dots = 0;
@@ -60,17 +59,18 @@ namespace Vision
 	class Vector_ID: public Dot_ID
 	{
 		public:
-			Vector_ID(Process *process, Color center_color,
-			        const Vector_Pattern &pattern);
-
+			Vector_ID(Vector_Pattern pattern);
+			Vector_ID(Process *process, Color center_color, const Vector_Pattern pattern);
+			
 			virtual void run();
-
-			static Vector_Pattern ZJUNlict, Botnia, Strive, CMU, GaTech_Old,
-			        GaTech, Unknown2, BSmart, PlasmaZ;
-			static Vector_Pattern Robodragons, Khainui, Nav;
-
-		protected:
-			const Vector_Pattern &_pattern;
+			
+			/** load configuration from a document element */
+			static Vector_ID* load(QDomElement element, Process* process, Color center);
+			
+		protected:	
+			/** dot pattern */
+			const Vector_Pattern _pattern;
+			
 			bool _reverse_angle;
 
 			void identify(Group *center_group);

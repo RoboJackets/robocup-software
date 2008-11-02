@@ -1,201 +1,96 @@
 #include "Vector_ID.h"
 
+#include <QDomElement>
+#include <QDebug>
 #include <boost/foreach.hpp>
-#include <boost/assign/list_of.hpp>
 
 using namespace boost;
-using namespace boost::assign;
+using namespace Vision;
 
-namespace Vision
-{
-    Vector_Pattern Vector_ID::Nav = Vector_Pattern(0, Geometry::Point2d(0, 0),
-        // Colors
-        list_of
-        (Colors(Pink, Pink, Pink))
-        (Colors(Pink, Green, Pink))
-        (Colors(Pink, Pink, Green))
-        (Colors(Pink, Green, Green)),
-        
-        // Pairs
-        list_of
-        (Vector_Pattern::Pair(0, 1, -90))
-        );
-
-    Vector_Pattern Vector_ID::ZJUNlict = Vector_Pattern(0, Geometry::Point2d(0, 0),
-        // Colors
-        list_of
-        (Colors(Pink, Green, Green))
-//        (Colors(Green, Pink, Pink))
-        (Colors(Pink, Pink, Green))
-        (Colors(Green, Pink, Green))
-        (Colors(Green, Green, Pink)),
-        
-        // Pairs
-        list_of
-        (Vector_Pattern::Pair(0, 1, -90))
-        );
-
-    Vector_Pattern Vector_ID::Botnia = Vector_Pattern(0, Geometry::Point2d(0, 0),
-        // Colors
-        list_of
-        (Colors(Pink, Pink, Green))
-        (Colors(Green, Green, Pink))
-        (Colors(Green, Pink, Green))
-        (Colors(Pink, Green, Pink))
-        (Colors(Pink, Green, Green)),
-        
-        // Pairs
-        list_of
-        (Vector_Pattern::Pair(0, 1, -90))
-        );
-
-    Vector_Pattern Vector_ID::BSmart = Vector_Pattern(0, Geometry::Point2d(0, 0),
-        // Colors
-        list_of
-        (Colors(White, Pink, Green))
-        (Colors(Pink, White, Green))
-        (Colors(Green, Pink, White))
-        (Colors(Pink, Green, White))
-        (Colors(Pink, Pink, White)),
-        
-        // Pairs
-        list_of
-        (Vector_Pattern::Pair(0, 1, -45))
-        );
-    
-    Vector_Pattern Vector_ID::Strive = Vector_Pattern(0, Geometry::Point2d(0, 0),
-        // Colors
-        list_of
-        (Colors(Pink, Pink, Pink))
-        (Colors(Pink, Green, Pink))
-        (Colors(Pink, Green, Green))
-        (Colors(Green, Green, Pink))
-        (Colors(Pink, Pink, Green)),
-        
-        // Pairs
-        list_of
-        (Vector_Pattern::Pair(0, 1, -90))
-        );
-
-    Vector_Pattern Vector_ID::CMU = Vector_Pattern(0, Geometry::Point2d(0, 0),
-        // Colors
-        list_of
-        (Colors(Green, Green, Green, Green))
-        (Colors(Pink, Green, Green, Green))
-        (Colors(Green, Pink, Green, Green))
-        (Colors(Pink, Green, Pink, Green))
-        (Colors(Green, Pink, Green, Pink)),
-        
-        // Pairs
-        list_of
-        (Vector_Pattern::Pair(0, 1, -90))
-        (Vector_Pattern::Pair(3, 2, -90))
-        );
-    
-    Vector_Pattern Vector_ID::Robodragons = Vector_Pattern(0, Geometry::Point2d(0, 0),
-        // Colors
-        list_of
-        (Colors(Green, Green, Green, Green))
-        (Colors(Green, Green, Green, White))
-        (Colors(Green, Green, White, Green))
-        (Colors(Green, White, Green, White))
-        (Colors(White, Green, White, Green)),
-        
-        // Pairs
-        list_of
-        (Vector_Pattern::Pair(0, 1, -90))
-        (Vector_Pattern::Pair(3, 2, -90))
-        );
-    
-    Vector_Pattern Vector_ID::Khainui = Vector_Pattern(0, Geometry::Point2d(0, 0),
-        // Colors
-        list_of
-        (Colors(Green, Green, Green, Green))
-        (Colors(Pink, Green, Green, Green))
-        (Colors(Green, Pink, Green, Green))
-        (Colors(Green, Green, Pink, Green))
-        (Colors(Green, Green, Green, Pink)),
-        
-        // Pairs
-        list_of
-        (Vector_Pattern::Pair(0, 1, -90))
-        (Vector_Pattern::Pair(3, 2, -90))
-        );
-    
-    Vector_Pattern Vector_ID::GaTech_Old = Vector_Pattern(0, Geometry::Point2d(0, 0),
-        // Colors
-        list_of
-        (Colors(Pink, Pink, Pink, Pink))
-        (Colors(Pink, Pink, Pink, Green))
-        (Colors(Pink, Pink, Green, Green))
-        (Colors(Green, Green, Green, Pink))
-        (Colors(Green, Green, Green, Green)),
-        
-        // Pairs
-        list_of
-        (Vector_Pattern::Pair(0, 1, -90))
-        (Vector_Pattern::Pair(3, 2, -90))
-        );
-
-    Vector_Pattern Vector_ID::GaTech = Vector_Pattern(180, Geometry::Point2d(0, 0),
-        // Colors
-        list_of
-        (Colors(Green, Green, Green, Green))
-        (Colors(Green, Green, Pink, Green))
-        (Colors(Pink, Pink, Green, Green))
-        (Colors(Green, Pink, Pink, Pink))
-        (Colors(Pink, Pink, Pink, Pink)),
-        
-        // Pairs
-        list_of
-        (Vector_Pattern::Pair(0, 1, -90))
-        (Vector_Pattern::Pair(3, 2, -90))
-        );
-
-    Vector_Pattern Vector_ID::Unknown2 = Vector_Pattern(0, Geometry::Point2d(0, 0),
-        // Colors
-        list_of
-        (Colors(Green, Green, Green, Green))
-        (Colors(Green, Green, Pink, Green))
-        (Colors(Pink, Green, Green, Green))
-        (Colors(Green, Green, Green, Pink))
-        (Colors(Green, Pink, Green, Pink)),
-        
-        // Pairs
-        list_of
-        (Vector_Pattern::Pair(0, 1, -90))
-        (Vector_Pattern::Pair(3, 2, -90))
-        );
-
-    Vector_Pattern Vector_ID::PlasmaZ = Vector_Pattern(0, Geometry::Point2d(0, 0),
-        // Colors
-        list_of
-        (Colors(Pink, Green, Green))
-        (Colors(Green, Green, Pink))
-        (Colors(Pink, Green, Pink))
-        (Colors(Green, Green, Green))
-        (Colors(Green, Pink, Green)),
-        
-        // Pairs
-        list_of
-        (Vector_Pattern::Pair(0, 1, -90))
-        );
-}
-
-Vision::Vector_ID::Vector_ID(Process *process, Color center_color, const Vector_Pattern &pattern):
+Vector_ID::Vector_ID(Process *process, Color center_color, const Vector_Pattern pattern):
     Dot_ID(process, center_color), _pattern(pattern)
 {
 }
 
-void Vision::Vector_ID::run()
+Vector_ID* Vector_ID::load(QDomElement element, Process* process, Color center)
 {
+	QDomElement child = element.firstChildElement();
+	
+	std::vector<Vector_Pattern::Pair> pairs;
+	std::vector<Color_Sequence> sequences;
+	
+	while (!child.isNull())
+	{
+		QString tname = child.tagName();
+		if (tname == "vectors")
+		{
+			QDomElement vec = child.firstChildElement();
+			//make pairs
+			while (!vec.isNull())
+			{
+				bool ok = true;
+				int first = vec.attribute("start").toInt(&ok);
+				int end = vec.attribute("end").toInt(&ok);
+				float angle = vec.attribute("angle").toFloat(&ok);
+				
+				pairs.push_back(Vector_Pattern::Pair(first, end, angle));
+				
+				vec = vec.nextSiblingElement();
+			}
+		}
+		else if (tname == "shells")
+		{
+			QDomElement shell = child.firstChildElement();
+			
+			while (!shell.isNull())
+			{
+				Color_Sequence colors;
+				QDomElement color = shell.firstChildElement();
+				
+				while (!color.isNull())
+				{
+					QString col = color.attribute("value");
+					Color c = Green;
+					
+					if (col == "pink")
+					{
+						c = Pink;
+					}
+					else if (col == "white")
+					{
+						c = White;
+					}
+						
+					colors.push_back(c);
+					color = color.nextSiblingElement();
+				}
+				
+				sequences.push_back(colors);
+				
+				shell = shell.nextSiblingElement();
+			}
+		}
+		
+		child = child.nextSiblingElement();
+	}
+	
+	Vector_Pattern pat(0, Geometry::Point2d(0,0), sequences, pairs);
+	Vector_ID* vecid = new Vector_ID(process, center, pat);
+	
+	return vecid;
+}
+
+void Vector_ID::run()
+{
+	_robots.clear();
+	
     BOOST_FOREACH(Group *center_group, spanner[_center_color]->groups())
     {
         identify(center_group);
     }
 }
 
-void Vision::Vector_ID::identify(Group *center_group)
+void Vector_ID::identify(Group *center_group)
 {
     collect(center_group);
     remove_center();

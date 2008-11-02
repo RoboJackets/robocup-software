@@ -6,9 +6,9 @@
 #include <QMutex>
 #include <sys/time.h>
 
-typedef struct AVFormatContext;
-typedef struct AVCodecContext;
-typedef struct AVFrame;
+typedef struct AVFormatContext AVFormatContext;
+typedef struct AVCodecContext AVCodecContext;
+typedef struct AVFrame AVFrame;
 typedef struct SwsContext SwsContext;
 
 namespace Camera

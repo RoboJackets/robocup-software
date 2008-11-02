@@ -47,6 +47,7 @@ set(SRCS
     vision/identification/Dot_ID.cpp
     vision/identification/Vector_ID.cpp
     vision/identification/Offset3_ID.cpp
+    vision/identification/Identifier.cpp
 )
 
 set(UIS
@@ -97,8 +98,9 @@ find_package(GLUT REQUIRED)
 include_directories(${GLUT_INCLUDE_DIR})
 
 target_link_libraries(${PROJECT} ${QT_LIBRARIES})
-target_link_libraries(${PROJECT} ${LIBAVFORMAT_LIBRARIES})
 target_link_libraries(${PROJECT} ${GLUT_LIBRARIES})
+target_link_libraries(${PROJECT} ${LIBAVFORMAT_LIBRARIES})
+target_link_libraries(${PROJECT} swscale)
 target_link_libraries(${PROJECT} PvAPI)
 target_link_libraries(${PROJECT} dc1394)
 target_link_libraries(${PROJECT} ${GEOMETRY_LIBRARY} ${PACKET_LIBRARY})

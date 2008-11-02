@@ -9,9 +9,10 @@
 #include <Geometry/Point2d.hpp>
 #include <Vision.hpp>
 
-#include "../Image.h"
 #include "Colors.h"
+#include "../Image.h"
 #include "../VisionData.hpp"
+#include "identification/Identifier.hpp"
 
 class Camera_Thread;
 
@@ -37,7 +38,9 @@ namespace Vision
 			
 			Colorseg* colorseg;
 			Spanner* spanner[Num_Colors];
-			//Processor *blue_id, *yellow_id;
+			
+			Identifier* blueId;
+			Identifier* yellowId;
 			
 			Distortion *distortion;
 			Transform *ball_transform;

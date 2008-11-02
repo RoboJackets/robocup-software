@@ -3,6 +3,7 @@
 #include "Spanner.h"
 #include "Transform.h"
 #include "Distortion.h"
+#include "identification/Vector_ID.h"
 
 #include <sys/time.h>
 #include <QMutexLocker>
@@ -36,6 +37,7 @@ Process::Process() :
         }
     }
 
+    blueId = Identifier::load("../config/teams/RoboJackets.xml", this, Blue);
     //blue_id = new Offset3_ID(this, Blue, Vector_ID::Strive);
     //yellow_id = new Vector_ID(this, Yellow, Vector_ID::CMU);
     //yellow_id = new Offset3_ID(this, Yellow, Offset3_ID::ZJUNlict);
@@ -80,17 +82,25 @@ void Process::proc(const Image* img, VisionData& data)
 	{
 		Group* g = *iter;
 		data.balls.push_back(VisionData::Ball(g->center.x, g->center.y));
+		//printf("%f %f\n", g->center.x, g->center.y);
 	}
 	
-	//get all groups from spanners
+	blueId->run();
 	
-	//pass groups info into identifier
+	const std::vector<Identifier::Robot>& blue = blueId->robots();
+	for (unsigned int i=0 ; i<blue.size() ; ++i)
+	{
+		const Identifier::Robot& r = blue[i];
+		//printf("%d :: %f %f %f\n", r.id, r.x, r.y, r.angle);
+		
+		Packet::Vision::Robot rb;
+		rb.shell = r.id;
+		rb.angle = r.angle;
+		rb.pos = Geometry::Point2d(r.x,r.y);
+		
+		_visionPacket.blue.push_back(rb);
+	}
 	
-	//get identified robots from identifier
-	
-	//groups with orange color are ball directly
-	
-	//populate vision packet
 	_visionPacket.timestamp = timestamp();
 	_visionPacket.camera = _procID;
 	

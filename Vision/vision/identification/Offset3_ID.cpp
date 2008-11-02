@@ -11,7 +11,7 @@ namespace Vision
 {
 }
 
-Vision::Offset3_ID::Offset3_ID(Process *process, Color center_color, const Vector_Pattern &pattern):
+Vision::Offset3_ID::Offset3_ID(Process *process, Color center_color, const Vector_Pattern pattern):
     Vector_ID(process, center_color, pattern)
 {
 }
