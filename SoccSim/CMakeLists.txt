@@ -59,16 +59,39 @@ if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
 	message (STATUS "Cross Compiling to 32 bit mode")
 	message (STATUS "run: 'make linkfix' as root to make required symlinks if needed")
 	
+	add_custom_command(OUTPUT "/usr/lib32/libQtOpenGL.so"
+		COMMAND ln ARGS -s libQtOpenGL.so.4 /usr/lib32/libQtOpenGL.so )
+		
+	add_custom_command(OUTPUT "/usr/lib32/libQtGui.so"
+		COMMAND ln ARGS -s libQtGui.so.4 /usr/lib32/libQtGui.so )
+		
+	add_custom_command(OUTPUT "/usr/lib32/libQtXml.so"
+		COMMAND ln ARGS -s libQtXml.so.4 /usr/lib32/libQtXml.so )
+		
+	add_custom_command(OUTPUT "/usr/lib32/libQtNetwork.so"
+		COMMAND ln ARGS -s libQtNetwork.so.4 /usr/lib32/libQtNetwork.so )
+		
+	add_custom_command(OUTPUT "/usr/lib32/libGLU.so"
+		COMMAND ln ARGS -s libGLU.so.4 /usr/lib32/libGLU.so )
+		
+	add_custom_command(OUTPUT "/usr/lib32/libGL.so"
+		COMMAND ln ARGS -s libGL.so.4 /usr/lib32/libGL.so )
+		
+	add_custom_command(OUTPUT "/usr/lib32/libX11.so"
+		COMMAND ln ARGS -s libX11.so.6 /usr/lib32/libX11.so )
+		
+	add_custom_command(OUTPUT "/usr/lib32/libXext.so"		
+		COMMAND ln ARGS -s libXext.so.6 /usr/lib32/libXext.so )
+	
 	add_custom_target(linkfix
-		COMMAND ln -s libQtOpenGL.so.4 /usr/lib32/libQtOpenGL.so
-		COMMAND ln -s libQtCore.so.4 /usr/lib32/libQtCore.so
-		COMMAND ln -s libQtGui.so.4 /usr/lib32/libQtGui.so
-		COMMAND ln -s libQtXml.so.4 /usr/lib32/libQtXml.so
-		COMMAND ln -s libQtNetwork.so.4 /usr/lib32/libQtNetwork.so
-		COMMAND ln -s libGLU.so.1 /usr/lib32/libGLU.so
-		COMMAND ln -s libGL.so.1 /usr/lib32/libGL.so
-		COMMAND ln -s libXext.so.6 /usr/lib32/libXext.so
-		COMMAND ln -s libX11.so.6 /usr/lib32/libX11.so 
+		DEPENDS /usr/lib32/libQtOpenGL.so
+				/usr/lib32/libQtGui.so
+				/usr/lib32/libQtNetwork.so
+				/usr/lib32/libQtXml.so
+				/usr/lib32/libGLU.so
+				/usr/lib32/libGL.so
+				/usr/lib32/libX11.so
+				/usr/lib32/libXext.so
 	)
 endif ()
 
