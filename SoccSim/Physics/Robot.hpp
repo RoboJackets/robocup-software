@@ -8,33 +8,33 @@ class Robot : public Entity
     public:
         Robot(NxScene& scene);
         ~Robot();
-        
-		void step();
-		
-		/** set position of the robot */
-		void position(float x, float y);
-		
-		//FIXME
-		int8_t vels[4];
-        
+
+	void step();
+
+	/** set position of the robot */
+	void position(float x, float y);
+
+	//FIXME
+	int8_t vels[4];
+
     private:
         void initRoller();
         void initKicker();
         void initWheels();
-        
-        static NxConvexMesh* cylinder(const float length, const float radius, 
+
+        static NxConvexMesh* cylinder(const float length, const float radius,
                 const unsigned int sides);
-        
+
     private:
         /** the roller actor */
         NxActor* _roller;
-        
+
         /** the kicker actor */
         NxActor* _kicker;
-        
+
         NxActor* _wheels[4];
-		NxRevoluteJoint* _motors[4];
-        
+	NxRevoluteJoint* _motors[4];
+
         /** center of roller from ground */
         const static float RollerHeight = .03;
         /** center of roller from center of robot */
@@ -43,7 +43,7 @@ class Robot : public Entity
         const static float RollerLength = .07;
         /** radius of the roller */
         const static float RollerRadius = .01;
-        
+
         /** width of the kicker face */
         const static float KickerFaceWidth = .05;
         /** height of the kicker face */

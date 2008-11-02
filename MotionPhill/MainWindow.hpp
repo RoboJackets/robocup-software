@@ -2,24 +2,24 @@
 #define MAIN_WINDOW_HPP
 
 #include <QMainWindow>
-#include <ui_PhillMotion.h>
+#include <QMouseEvent>
+#include <ui_motion.h>
+#include <Sizes.h>
+
+#include "FieldDisplay.hpp"
 
 class MainWindow : public QMainWindow, Ui::MainWindow
 {
 	Q_OBJECT;
 
 	public:
-		MainWindow();
-		~MainWindow();
-
-	public Q_SLOTS:
-		//shorthand method for creating a slot
-		//on_<object>_<slot>
-		void on_button1_clicked();
-
-		void button2Click();
-
+	    MainWindow(Team team);
+	    ~MainWindow();
+        public Q_SLOTS:
+            void cursorPosition(float x, float y, float wx, float wy, QMouseEvent me);
 	private:
+            Ui::MainWindow ui;
+
 };
 
 #endif // MAIN_WINDOW_HPP

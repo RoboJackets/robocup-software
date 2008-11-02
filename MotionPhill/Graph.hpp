@@ -3,24 +3,25 @@
 
 #include <QWidget>
 #include <QPaintEvent>
+#include <QPainter>
 
 class Graph : public QWidget
 {
+    Q_OBJECT;
     public:
 	Graph(QWidget* parent = 0);
 	~Graph();
 
+    public:
         //Paints a set of vectors onto the graph
 	void paintEvent(QPaintEvent* pe);
+	int gridSpacingX;
+        int gridSpacingY;
 
     private:
-	//position of the object
-	float _pos;
-        int gridSpacing;
-        int xMax;
-        int xMin;
-        int yMax;
-        int yMin;
+        int _width;
+        int _height;
+
 };
 
 #endif

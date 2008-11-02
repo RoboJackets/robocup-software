@@ -4,7 +4,7 @@ Viewer::Viewer(Env* env, QWidget* parent) :
 	QGLWidget(parent), _env(env)
 {
 	this->setFixedSize(800, 600);
-	
+
 	connect(&_repaint, SIGNAL(timeout()), this, SLOT(updateGL()));
 	_repaint.start(30);
 }
@@ -26,16 +26,16 @@ void Viewer::resizeGL(int w, int h)
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	
+
 	//glOrtho(-5, 5, -3, 3, -1, 1);
-	
+
 	gluPerspective(60.0, w / h, 1, 1000);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
 	//eyeXYZ, targetXYZ, upXYZ
-	//gluLookAt(-1, -1, 1, 0, 0, 0, 0, 0, 1);
+	//gluLookAt(-1, -1, -1, 0, 0, 0, 0, 0, 1);
 	gluLookAt(-5, -5, 5, 0, 0, 0, 0, 0, 1);
 	//gluLookAt(0, 0, 2, 0, 0, 0, 0, 0, 1);
 	//gluLookAt(.7, .7, .7, 0, 0, 0, 0, 0, 1);
@@ -50,7 +50,7 @@ void Viewer::paintGL()
 void Viewer::renderData(const NxDebugRenderable& data) const
 {
 	glLineWidth(1.0f);
-    // Render points
+        // Render points
 	{
 		NxU32 NbPoints = data.getNbPoints();
 		const NxDebugPoint* Points = data.getPoints();

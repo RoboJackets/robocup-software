@@ -52,17 +52,16 @@ Robot::Robot(NxScene& scene) :
 
 	_wheels[0] = _wheels[1] = _wheels[2] = _wheels[3] = 0;
 	_motors[0] = _motors[1] = _motors[2] = _motors[3] = 0;
-	
-	
+
+
 #if (ROLLER)
 	initRoller();
 #endif
-	
-	
+
 #if (KICKER)
 	initKicker();
 #endif
-	
+
 	initWheels();
 }
 
@@ -79,7 +78,6 @@ void Robot::initRoller()
 {
 	NxBodyDesc bodyDesc;
 	bodyDesc.mass = 0.01f; //TODO fixme
-
 	NxConvexShapeDesc shapeDesc;
 	shapeDesc.meshData = cylinder(Robot::RollerLength, Robot::RollerRadius, 20);
 
@@ -109,7 +107,7 @@ void Robot::initRoller()
 
 	//setup a joint to the roller
 	NxRevoluteJointDesc revDesc;
-	
+
 	revDesc.actor[0] = _actor;
 	revDesc.actor[1] = _roller;
 
@@ -132,7 +130,6 @@ void Robot::initKicker()
 	NxBoxShapeDesc shapeDesc;
 	shapeDesc.dimensions.set(Robot::KickerLength / 2.0, Robot::KickerFaceWidth
 	        / 2.0, Robot::KickerFaceHeight / 2.0f);
-
 	NxActorDesc actorDesc;
 	actorDesc.shapes.pushBack(&shapeDesc);
 	actorDesc.body = &bodyDesc;
@@ -149,7 +146,7 @@ void Robot::initKicker()
 	_kicker = _scene.createActor(actorDesc);
 
 	NxD6JointDesc kickJointDesc;
-	
+
 	kickJointDesc.actor[0] = _actor;
 	kickJointDesc.actor[1] = _kicker;
 
@@ -169,7 +166,7 @@ void Robot::initKicker()
 	kickJointDesc.linearLimit.restitution = 0;
 
 	float kickVel = .75 / 255.0 * 50.0;
-	
+
 	kickJointDesc.maxForce = 10.0f;
 	kickJointDesc.driveLinearVelocity = NxVec3(kickVel, 0, 0);
 
@@ -187,12 +184,11 @@ void Robot::initWheels()
 	loc[1] = NxVec3(1, -1, 0);
 	loc[2] = NxVec3(-1, -1, 0);
 	loc[3] = NxVec3(-1, 1, 0);
-	
+
 	for (int i = 0; i < 4; ++i)
 	{
 		loc[i].x *= .055;
 		loc[i].y *= .055;
-
 		NxBodyDesc bodyDesc;
 		bodyDesc.mass = 5.0f;
 
@@ -224,7 +220,7 @@ void Robot::initWheels()
 		actorDesc.body = &bodyDesc;
 
 		NxVec3 eulerAngle = NxVec3(90, 0, 45);
-		
+
 		if (i % 2 == 0)
 		{
 			eulerAngle.z = -eulerAngle.z;
@@ -237,7 +233,7 @@ void Robot::initWheels()
 		q3.fromAngleAxis(eulerAngle.z, NxVec3(0, 0, 1));
 
 		NxQuat q;
-		
+
 		q = q3 * q2 * q1; // Use global axes
 
 		actorDesc.globalPose.M.fromQuat(q);
@@ -250,16 +246,16 @@ void Robot::initWheels()
 		}
 
 		_wheels[i] = _scene.createActor(actorDesc);
-		
+
 		if (_kicker)
 		{
 			_scene.setActorPairFlags(*_wheels[i], *_kicker, NX_IGNORE_PAIR);
 		}
-		
+
 		//_scene.setActorPairFlags(*_wheels[i], *_actor, NX_IGNORE_PAIR);
-		
+
 		NxRevoluteJointDesc revDesc;
-		
+
 		revDesc.actor[0] = _actor;
 		revDesc.actor[1] = _wheels[i];
 
@@ -273,7 +269,7 @@ void Robot::initWheels()
 
 		revDesc.motor.velTarget = 0;
 		revDesc.flags |= NX_RJF_MOTOR_ENABLED;
-		
+
 		_motors[i] = (NxRevoluteJoint *) _scene.createJoint(revDesc);
 	}
 }
@@ -286,10 +282,10 @@ void Robot::step()
 		{
 			NxMotorDesc motorDesc;
 			_motors[i]->getMotor(motorDesc);
-	
+
 			motorDesc.velTarget = 100.0f * vels[i] / 255.0f;
 			printf("%f\n", motorDesc.velTarget);
-			
+
 			_motors[i]->setMotor(motorDesc);
 		}
 	}
@@ -304,11 +300,11 @@ NxConvexMesh* Robot::cylinder(const float length, const float radius,
 
 	const NxU32 vertCount = (sides + 1) * 2;
 	const unsigned int offset = vertCount / 2;
-	
+
 	NxVec3 cyl[vertCount];
-	
+
 	const float increment = 2 * M_PI / sides;
-	
+
 	float rad = 0;
 	float x = 0;
 	float y = 0;
@@ -334,30 +330,29 @@ NxConvexMesh* Robot::cylinder(const float length, const float radius,
 	//MemoryWriteBuffer buf;
 	MemoryStream buff;
 	bool status = gCooking->NxCookConvexMesh(convexDesc, buff);
-	
+
 	if (!status)
 	{
 		printf("cooking failed\n");
 		return 0;
 	}
-	
-	return Env::_physicsSDK->createConvexMesh(buff);
 
+	return Env::_physicsSDK->createConvexMesh(buff);
 }
 
 void Robot::position(float x, float y)
 {
 	NxVec3 newPos(x, y, Constants::Robot::Height/2.0);
 	NxVec3 delta = newPos - _actor->getGlobalPosition();
-	
+
 	for (int i=0 ; i<4 ; ++i)
 	{
 		NxVec3 wp = _wheels[i]->getGlobalPosition();
 		wp.x += delta.x;
 		wp.y += delta.y;
-		
+
 		_wheels[i]->setGlobalPosition(wp);
 	}
-	
+
 	_actor->setGlobalPosition(newPos);
 }

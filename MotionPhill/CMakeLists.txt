@@ -1,4 +1,4 @@
-project (PhillMotion)
+project (motion)
 cmake_minimum_required(VERSION 2.6)
 
 # always use all warnings and warnings as errors
@@ -6,10 +6,15 @@ add_definitions (-Werror -Wall)
 
 # disables use of lowercase slot/signals keywords
 # instead use Q_SLOTS/Q_SIGNALS
-add_definitions (-DQT_NO_KEYWORDS)
+#add_definitions (-DQT_NO_KEYWORDS)
 
 # include binary directory for Qt generated files
 include_directories (${PROJECT_BINARY_DIR})
+
+#uncomment to link to all the stuff in common
+set (USE_PACKET true)
+set (USE_GEOMETRY true)
+include ("../common/CMakeLists.txt")
 
 # uncomment to disable the qt gui classes
 # useful for command line only applications
@@ -30,11 +35,12 @@ include ( ${QT_USE_FILE} )
 # needed for any headers that use signals/slots
 qt4_wrap_cpp (MOC_SRCS
 	MainWindow.hpp
+        FieldDisplay.hpp
 )
 
 # this will run UIC on the .ui files
 qt4_wrap_ui ( UI_HDRS
-	ui/PhillMotion.ui
+	ui/motion.ui
 )
 
 # include any Qt resource files
@@ -45,10 +51,12 @@ qt4_add_resources ( RC_SRCS
 set (SRCS
 	main.cpp
 	MainWindow.cpp
+        FieldDisplay.cpp
+        Graphikos/Field.cpp
 )
 
 # tell cmake to create an executable
-add_executable (phillMotion ${SRCS} ${MOC_SRCS} ${UI_HDRS})
+add_executable (motion ${SRCS} ${MOC_SRCS} ${UI_HDRS})
 
 # link against qt libraries
-target_link_libraries (phillMotion ${QT_LIBRARIES})
+target_link_libraries (motion ${QT_LIBRARIES})
