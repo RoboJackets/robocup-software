@@ -2,6 +2,7 @@
 
 #include <unistd.h>
 #include <fcntl.h>
+#include <string.h>
 
 JoystickInput::JoystickInput(const char* filename)
 {
