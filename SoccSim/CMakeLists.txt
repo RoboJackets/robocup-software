@@ -57,6 +57,19 @@ if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
 	add_definitions(-m32)
 	set (PHYSX_LINK_FLAGS -m32)
 	message (STATUS "Cross Compiling to 32 bit mode")
+	message (STATUS "run: 'make linkfix' as root to make required symlinks if needed")
+	
+	add_custom_target(linkfix
+		COMMAND ln -s libQtOpenGL.so.4 /usr/lib32/libQtOpenGL.so
+		COMMAND ln -s libQtCore.so.4 /usr/lib32/libQtCore.so
+		COMMAND ln -s libQtGui.so.4 /usr/lib32/libQtGui.so
+		COMMAND ln -s libQtXml.so.4 /usr/lib32/libQtXml.so
+		COMMAND ln -s libQtNetwork.so.4 /usr/lib32/libQtNetwork.so
+		COMMAND ln -s libGLU.so.1 /usr/lib32/libGLU.so
+		COMMAND ln -s libGL.so.1 /usr/lib32/libGL.so
+		COMMAND ln -s libXext.so.6 /usr/lib32/libXext.so
+		COMMAND ln -s libX11.so.6 /usr/lib32/libX11.so 
+	)
 endif ()
 
 add_executable (${PROJECT_NAME}
