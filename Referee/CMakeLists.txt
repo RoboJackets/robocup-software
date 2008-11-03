@@ -30,6 +30,8 @@ include ( ${QT_USE_FILE} )
 # needed for any headers that use signals/slots
 qt4_wrap_cpp (MOC_SRCS
 	Referee.hpp
+        Commands.hpp
+ 	Serial.hpp
 )
 	
 # this will run UIC on the .ui files
@@ -46,6 +48,7 @@ qt4_add_resources ( RC_SRCS
 set (SRCS
 	main.cpp
 	Referee.cpp
+	Serial.cpp
 )
 
 # tell cmake to create an executable
