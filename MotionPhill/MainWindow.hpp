@@ -4,7 +4,6 @@
 #include <QMainWindow>
 #include <QMouseEvent>
 #include <ui_motion.h>
-#include <Sizes.h>
 
 #include "FieldDisplay.hpp"
 

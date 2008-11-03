@@ -1,15 +1,13 @@
 #include "FieldDisplay.hpp"
-
 #include <QPainter>
-
-/*FIXME - Change to use Constants.hpp instead of Sizes.h.*/
-#include <Sizes.h>
+#include <Constants.hpp>
 #include <Team.h>
 #include <ui_motion.h>
 #include "Graphikos/Field.hpp"
 #include "MainWindow.hpp"
 
 using namespace Graphikos;
+using namespace Constants;
 
 FieldDisplay::FieldDisplay(QWidget *parent) :
 	QWidget(parent), _team(Blue)
@@ -38,21 +36,21 @@ void FieldDisplay::paintEvent(QPaintEvent* event)
 {
 	QPainter painter(this);
 	painter.setRenderHint(QPainter::Antialiasing);
-	painter.scale(width()/FLOOR_LENGTH, -height()/FLOOR_WIDTH);
+	painter.scale(width()/Floor::Length, -height()/Floor::Width);
 
 	//draw field from center
-	painter.translate(FLOOR_LENGTH/2.0, -FLOOR_WIDTH/2.0);
-	Field::paint(painter);
+	painter.translate(Floor::Length/2.0, -Floor::Width/2.0);
+	Graphikos::Field::paint(painter);
 
 	//now move to team space and draw everything else
 	if (_team == Yellow)
 	{
-		painter.translate(-FIELD_LENGTH/2.0f, 0);
+		painter.translate(-Constants::Field::Length/2.0f, 0);
 		painter.rotate(-90);
 	}
 	else
 	{
-		painter.translate(FIELD_LENGTH/2.0f, 0);
+		painter.translate(Constants::Field::Length/2.0f, 0);
 		painter.rotate(90);
 	}
 
@@ -68,12 +66,12 @@ void FieldDisplay::paintEvent(QPaintEvent* event)
 void FieldDisplay::resizeEvent(QResizeEvent* event)
 {
         int w = event->size().width();
-	int h = int(w * FEILD_ASPECT);
+	int h = int(w * Floor::Aspect);
 
 	if (h > event->size().height())
 	{
 		h = event->size().height();
-		w = int(h/FEILD_ASPECT);
+		w = int(h/Floor::Aspect);
 	}
 
 	this->resize(w,h);
@@ -82,24 +80,24 @@ void FieldDisplay::resizeEvent(QResizeEvent* event)
 
 void FieldDisplay::mouseReleaseEvent(QMouseEvent* me)
 {
-      	float wx = me->x() * FLOOR_LENGTH / width();
-	float wy = me->y() * FLOOR_WIDTH / height();
+      	float wx = me->x() * Floor::Length / width();
+	float wy = me->y() * Floor::Width / height();
 
-	wx -= FLOOR_LENGTH/2.0f;
-	wy = FLOOR_WIDTH/2.0f - wy;
+	wx -= Floor::Length/2.0f;
+	wy = Floor::Width/2.0f - wy;
 
-	float x = me->y() * FLOOR_WIDTH / height();
-	float y = me->x() * FLOOR_LENGTH / width();
+	float x = me->y() * Floor::Width / height();
+	float y = me->x() * Floor::Length / width();
 
 	if (_team == Yellow)
 	{
-		x -= FLOOR_WIDTH/2.0f;
-		y -= FIELD_DEADSPACE;
+		x -= Floor::Width/2.0f;
+		y -= Constants::Field::Border;
 	}
 	else
 	{
-		y = FLOOR_LENGTH - y - FIELD_DEADSPACE;
-		x = FLOOR_WIDTH/2.0f - x;
+		y = Floor::Length - y - Constants::Field::Border;
+		x = Floor::Width/2.0f - x;
 	}
         newPosition(x, y, wx, wy, *me);
 }
