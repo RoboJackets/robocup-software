@@ -88,13 +88,17 @@ write()
 
 have_includes = False
 def emitIncludes(node):
+    global have_includes
     for child in ChildrenByName(node, 'struct'):
-        inc = child.getAttribute('external_cpp')
+        inc = child.getAttribute('include_cpp')
         if inc != '':
+            have_includes = True
             write('#include <' + inc + '>')
         emitIncludes(child)
 
 emitIncludes(root)
+if have_includes:
+    write()
 
 write('namespace Packet')
 write('{')
