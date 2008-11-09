@@ -1,5 +1,5 @@
 <struct typename="Thing">
-    <struct typename="Point2d" external_cpp="Geometry::Point2d" external_python="Geometry.Point2d">
+    <struct typename="Point2d" external_cpp="Geometry::Point2d" include_cpp="Geometry/Point2d.hpp" external_python="Geometry.Point2d">
         <member type="float" name="x"/>
         <member type="float" name="y"/>
     </struct>

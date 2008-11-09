@@ -86,6 +86,16 @@ write('#include <Serialization.hpp>')
 write('#include <string>')
 write()
 
+have_includes = False
+def emitIncludes(node):
+    for child in ChildrenByName(node, 'struct'):
+        inc = child.getAttribute('external_cpp')
+        if inc != '':
+            write('#include <' + inc + '>')
+        emitIncludes(child)
+
+emitIncludes(root)
+
 write('namespace Packet')
 write('{')
 indent()
