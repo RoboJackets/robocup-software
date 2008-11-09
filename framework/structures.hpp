@@ -4,33 +4,33 @@
 #include <map>
 using namespace std;
 
-/* 
+/*
  * Structures for passing information through framework
  */
 
 typedef struct {
   double px;
-  double py; 
+  double py;
   double ptheta;
 } robot_p;
 
 typedef struct {
   double px;
-  double py; 
+  double py;
   double ptheta;
   double vx;
-  double vy; 
+  double vy;
   double vtheta;
 } robot_pv;
 
 typedef struct {
   double px;
-  double py; 
+  double py;
 } ball_p;
 
 typedef struct {
   double px;
-  double py; 
+  double py;
   double vx;
   double vy;
 } ball_pv;
@@ -46,15 +46,16 @@ typedef struct {
 } state_pv;
 
 typedef struct {
-  double vx; 
-  double vy;
-  double vtheta;
+  int motors[4];
 } robot_control;
 
-//TODO: Replace with real command structure
-typedef int command;
-typedef map<int, command> command_set;
+typedef struct {
+    robot_pv robotPos;
+    int kickStrength;
+    int dribblerSpeed;
+} command;
 
+typedef map<int, command> command_set;
 
 typedef map<int, robot_control> robot_control_set;
 

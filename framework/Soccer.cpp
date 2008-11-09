@@ -8,7 +8,7 @@ Soccer::Soccer()
 }
 
 //Link to modules
-void Soccer::setMot(Motion *)
+void Soccer::setMot(Motion *m)
 {
 
 }

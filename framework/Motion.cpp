@@ -19,7 +19,6 @@ void  Motion::setRadio(Radio *rad)
 
 }
 
-
 void Motion::updateFromSoccer(state_pv * world, command_set * cmd)
 {
   //Process data from world model and commands

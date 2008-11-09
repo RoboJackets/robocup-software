@@ -18,17 +18,16 @@ public:
   void setRadio(Radio *rad);
 
   //updates
-  
+
   void updateFromSoccer(const command_set *);
 
 private:
-  
+
   //links
   const WorldModel * wm;
 
   //main control structure
   const robot_control_set controls;
-  
 
 };
 
