@@ -2,6 +2,7 @@
 #define _STRUCTURES_HPP
 
 #include <map>
+using namespace std;
 
 /* 
  * Structures for passing information through framework
@@ -35,13 +36,13 @@ typedef struct {
 } ball_pv;
 
 typedef struct {
-  Map<int, robot_p> robots;
-  Map<int, ball_p> balls;
+  map<int, robot_p> robots;
+  map<int, ball_p> balls;
 } state_p;
 
 typedef struct {
-  Map<int, robot_pv> robots;
-  Map<int, ball_pv> balls;
+  map<int, robot_pv> robots;
+  map<int, ball_pv> balls;
 } state_pv;
 
 typedef struct {
@@ -52,10 +53,10 @@ typedef struct {
 
 //TODO: Replace with real command structure
 typedef int command;
-typedef Map<int, command> command_set;
+typedef map<int, command> command_set;
 
 
-typedef Map<int, robot_control> robot_control_set;
+typedef map<int, robot_control> robot_control_set;
 
 
 

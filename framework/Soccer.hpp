@@ -23,6 +23,6 @@ private:
   //links
   Motion * mot;
 
-}
+};
 
 #endif //_SOCCER_HPP_

@@ -16,7 +16,6 @@ public:
 
   //Links to other modules:
   void setSoc(Soccer *);
-  void setMot(Motion *);
 
   //Update due to inputs
   void updateFromInput(const state_p *);

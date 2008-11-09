@@ -2,6 +2,8 @@
 #define _MOTION_HPP_
 
 #include "structures.hpp"
+#include "WorldModel.hpp"
+#include "Radio.hpp"
 
 class Motion
 {
@@ -12,21 +14,22 @@ public:
   Motion();
 
   //Link to modules
-  void setWM(WorldModel *);
+  void setWM(WorldModel *wm);
+  void setRadio(Radio *rad);
 
   //updates
+  
   void updateFromSoccer(const command_set *);
-  void updateFromWorldModel(const state_pv *);
 
 private:
   
   //links
-  WorldModel * wm;
+  const WorldModel * wm;
 
   //main control structure
   const robot_control_set controls;
   
 
-}
+};
 
 #endif //_MOTION_HPP_

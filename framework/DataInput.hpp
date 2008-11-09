@@ -23,7 +23,7 @@ public:
 private:
 
   //link to world module
-  WorldModule * wm;
+  WorldModel * wm;
 
 
 };
