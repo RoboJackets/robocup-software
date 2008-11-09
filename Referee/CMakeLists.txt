@@ -32,6 +32,7 @@ qt4_wrap_cpp (MOC_SRCS
 	Referee.hpp
         Commands.hpp
  	Serial.hpp
+	UDP_Broadcast.hpp
 )
 	
 # this will run UIC on the .ui files
