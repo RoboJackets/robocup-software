@@ -9,8 +9,6 @@
 #include <QMutexLocker>
 #include <boost/foreach.hpp>
 
-#include <Network.hpp>
-
 using namespace boost;
 using namespace std;
 using namespace Vision;
@@ -18,7 +16,7 @@ using namespace Vision;
 unsigned int Process::_nextID = 0;
 
 Process::Process() :
-	_sender(Network::Address, Network::Vision), _procID(_nextID++)
+	_sender("226.0.0.1", 1337), _procID(_nextID++)
 {
 	distortion = new Distortion();
 	ball_transform = new Transform();
@@ -114,15 +112,12 @@ void Process::proc(const Image* img)
 		_visionPacket.blue.push_back(rb);
 	}
 	
-	printf("blue count: %d\n", _visionPacket.blue.size());
+	//printf("blue count: %d\n", _visionPacket.blue.size());
 	
 	_visionPacket.timestamp = timestamp();
 	_visionPacket.camera = _procID;
 	
 	_sender.send(_visionPacket);
-	
-	//TODO remove
-	sleep(1);
 }
 
 uint64_t Process::timestamp() const

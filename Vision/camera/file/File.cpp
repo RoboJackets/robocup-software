@@ -99,7 +99,7 @@ void Camera::File::open()
     
     // Framerate
     frame_period_us = 1000000 * codec_ctx->time_base.num / codec_ctx->time_base.den;
-    frame_period_us = 0;
+    
     printf("Frame period: %dus\n", frame_period_us);
     
     // Set up the input frame
