@@ -2,7 +2,27 @@ project (QtGuiExample)
 cmake_minimum_required(VERSION 2.6)
 
 # always use all warnings and warnings as errors
-add_definitions (-Werror -Wall)
+add_definitions (-Werror -Wall )
+add_definitions (-g `pkg-config gtkmm-2.4 --cflags`)
+
+INCLUDE(FindPkgConfig)
+PKG_CHECK_MODULES(GTKMM gtkmm-2.4)
+
+IF(GTKMM_FOUND)
+	SET(K3D_GTKMM_INCLUDE_DIRS
+		${GTKMM_INCLUDE_DIRS}
+		)
+
+	SET(K3D_GTKMM_LIB_DIRS
+		${GTKMM_LIBRARY_DIRS}
+		)
+
+	SET(K3D_GTKMM_LIBS
+		${GTKMM_LIBRARIES}
+		)
+
+	SET(K3D_GTKMM_FOUND 1)
+ENDIF(GTKMM_FOUND)
 
 # disables use of lowercase slot/signals keywords
 # instead use Q_SLOTS/Q_SIGNALS
@@ -23,6 +43,7 @@ include_directories (${PROJECT_BINARY_DIR})
 
 # this command finds the Qt4 libraries and sets all required variables
 find_package ( Qt4 REQUIRED )
+
 # include the Qt file with macros and constants defined
 include ( ${QT_USE_FILE} )
 
@@ -50,10 +71,15 @@ set (SRCS
 	main.cpp
 	Referee.cpp
 	Serial.cpp
+	UDP_Broadcast.cpp
 )
+
+include_directories( ${GTKMM_INCLUDE_DIRS}  )
+link_directories( ${GTKMM_LIBRARY_DIRS}  )
 
 # tell cmake to create an executable
 add_executable (sslreferee ${SRCS} ${MOC_SRCS} ${UI_HDRS} ${RC_SRCS})
 
 # link against qt libraries
-target_link_libraries (sslreferee ${QT_LIBRARIES})
+target_link_libraries (sslreferee ${GTKMM_LIBRARIES} ${QT_LIBRARIES})
+
