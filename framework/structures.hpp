@@ -58,10 +58,4 @@ typedef struct {
 typedef map<int, command> command_set;
 
 typedef map<int, robot_control> robot_control_set;
-
-
-
-
-
-
 #endif //_STRUCTURES_HPP

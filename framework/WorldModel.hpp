@@ -2,33 +2,31 @@
 #define _WORLD_MODEL_HPP_
 
 #include "structures.hpp"
-
 #include "Soccer.hpp"
-#include "Motion.hpp"
 
 class WorldModel
 {
 
-public:
+    public:
 
-  //Generic Constructor
-  WorldModel();
+	//Generic Constructor
+	WorldModel();
 
-  //Links to other modules:
-  void setSoc(Soccer *);
+	//Links to other modules:
+	void setSoc(Soccer *);
 
-  //Update due to inputs
-  void updateFromInput(const state_p *);
-  void updateFromMotion(const robot_control_set *);
+	//Update due to inputs
+	void updateFromInput(const state_p *);
+	void updateFromMotion(const robot_control_set *);
 
-private:
+    private:
 
-  //Links to subscribers
-  Soccer * soc;
-  Motion * mot;
+	//Links to subscribers
+	Soccer * soc;
+	Motion * mot;
 
-  //primary data structure
-  const state_pv model;
+	//primary data structure
+	const state_pv model;
 
 };
 

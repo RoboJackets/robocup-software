@@ -2,32 +2,32 @@
 #define _MOTION_HPP_
 
 #include "structures.hpp"
-#include "WorldModel.hpp"
 #include "Radio.hpp"
+
 
 class Motion
 {
 
-public:
+    public:
 
-  //Generic Constructor
-  Motion();
+	//Generic Constructor
+	Motion();
 
-  //Link to modules
-  void setWM(WorldModel *wm);
-  void setRadio(Radio *rad);
+	//Link to modules
+	//void setWM(WorldModel *);
+	void setRadio(Radio *rad);
 
-  //updates
+	//updates
 
-  void updateFromSoccer(const command_set *);
+	void updateFromSoccer(const command_set *);
 
-private:
+    private:
 
-  //links
-  const WorldModel * wm;
+	//links
+	//const WorldModel *wm;
 
-  //main control structure
-  const robot_control_set controls;
+	//main control structure
+	const robot_control_set controls;
 
 };
 

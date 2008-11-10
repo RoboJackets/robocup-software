@@ -8,18 +8,20 @@ Motion::Motion()
 
 }
 
+/*
 //Link to modules
-void Motion::setWM(WorldModel * world)
+void Motion::setWM(WorldModel *)
 {
-  this->wm = world;
+    this->wm = world;
 }
+*/
 
 void  Motion::setRadio(Radio *rad)
 {
 
 }
 
-void Motion::updateFromSoccer(state_pv * world, command_set * cmd)
+void Motion::updateFromSoccer(const command_set * cmd)
 {
   //Process data from world model and commands
 

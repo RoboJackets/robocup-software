@@ -19,7 +19,7 @@ public:
   void update(const state_pv *);
 
 private:
-  
+
   //links
   Motion * mot;
 

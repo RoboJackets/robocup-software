@@ -16,32 +16,31 @@ using namespace std;
 #include "Motion.hpp"
 #include "Radio.hpp"
 
-int main()
+int main(int argc,char* argv[])
 {
+    //Create Modules
+    cout << "Creating Modules..." << endl;
+    DataInput in;
+    WorldModel wm;
+    Soccer soc;
+    Motion mot;
+    Radio radio;
+    cout << "Modules Created!" << endl;
 
-  //Create Modules
-  cout << "Creating Modules..." << endl;
-  DataInput in();
-  WorldModel wm();
-  Soccer soc();
-  Motion mot();
-  Radio radio();
-  cout << "Modules Created!" << endl;
+    //Link modules
+    in.setWM(&wm); //input drives world model
+    wm.setSoc(&soc); //world model drives soccer
+    soc.setMot(&mot); //soccer drives commands to motion
+    //mot.setWM(&wm); //motion feeds back controls to world model
+    mot.setRadio(&radio); //send controls to radio
 
-  //Link modules
-  in.setWM(&wm); //input drives world model
-  wm.setSoc(&soc); //world model drives soccer
-  soc.setMot(&mot); //soccer drives commands to motion
-  mot.setWM(&wm); //motion feeds back controls to world model
-  mot.setRadio(&radio); //send controls to radio
-  
-  cout << "Modules Connected!" << endl;
+    cout << "Modules Connected!" << endl;
 
-  //initialize/start connection to vision/simulator
-  radio.init();
-  in.init();
+    //initialize/start connection to vision/simulator
+    radio.init();
+    in.init();
 
-  
-  //Finish
-  return 0;
+
+    //Finish
+    return 0;
 }
