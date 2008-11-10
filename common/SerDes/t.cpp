@@ -27,7 +27,7 @@ pthread_cond_t ready = PTHREAD_COND_INITIALIZER;
 
 void *receive_thread(void *arg)
 {
-    Serialization::Receiver r("224.1.2.3", 1234, 1024);
+    Serialization::Receiver r("226.0.0.1", 1234, 1024);
     
     pthread_mutex_lock(&mutex);
     pthread_cond_signal(&ready);
@@ -53,7 +53,7 @@ int main()
     pthread_create(&t, 0, receive_thread, 0);
     pthread_cond_wait(&ready, &mutex);
     
-    Serialization::Sender s("224.1.2.3", 1234);
+    Serialization::Sender s("226.0.0.1", 1234);
     
     Packet::LogFrame f;
     f.intArray.push_back(5);

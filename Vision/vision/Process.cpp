@@ -9,6 +9,8 @@
 #include <QMutexLocker>
 #include <boost/foreach.hpp>
 
+#include <Network.hpp>
+
 using namespace boost;
 using namespace std;
 using namespace Vision;
@@ -16,7 +18,7 @@ using namespace Vision;
 unsigned int Process::_nextID = 0;
 
 Process::Process() :
-	_sender("224.1.2.3", 1234), _procID(_nextID++)
+	_sender(Network::Address, Network::Vision), _procID(_nextID++)
 {
 	distortion = new Distortion();
 	ball_transform = new Transform();
@@ -63,7 +65,7 @@ float Process::robot_radius() const
 }
 
 //data is assumed to be cleaned before this method
-void Process::proc(const Image* img, VisionData& data)
+void Process::proc(const Image* img)
 {
 	colorseg->run(img);
 	
@@ -77,12 +79,19 @@ void Process::proc(const Image* img, VisionData& data)
 		groups[i] = spanner[i]->groups();
 	}
 	
+	_visionPacket = Packet::Vision();
+	
 	std::list<Group*> balls = groups[Orange];
 	for (std::list<Group*>::iterator iter = balls.begin() ; iter != balls.end() ; ++iter)
 	{
 		Group* g = *iter;
-		data.balls.push_back(VisionData::Ball(g->center.x, g->center.y));
-		//printf("%f %f\n", g->center.x, g->center.y);
+		//data.balls.push_back(VisionData::Ball(g->center.x, g->center.y));
+		Packet::Vision::Ball ball;
+		ball.pos.x = g->center.x;
+		ball.pos.y = g->center.y;
+		_visionPacket.balls.push_back(ball);
+		
+		//printf("%f %f\n", ball.pos.x, ball.pos.y);
 	}
 	
 	blueId->run();
@@ -91,20 +100,29 @@ void Process::proc(const Image* img, VisionData& data)
 	for (unsigned int i=0 ; i<blue.size() ; ++i)
 	{
 		const Identifier::Robot& r = blue[i];
-		//printf("%d :: %f %f %f\n", r.id, r.x, r.y, r.angle);
 		
 		Packet::Vision::Robot rb;
 		rb.shell = r.id;
 		rb.angle = r.angle;
 		rb.pos = Geometry::Point2d(r.x,r.y);
 		
+		if (i==1)
+		{
+			//printf("%f %f %f\n", rb.pos.x, rb.pos.y, rb.angle);
+		}
+		
 		_visionPacket.blue.push_back(rb);
 	}
+	
+	printf("blue count: %d\n", _visionPacket.blue.size());
 	
 	_visionPacket.timestamp = timestamp();
 	_visionPacket.camera = _procID;
 	
 	_sender.send(_visionPacket);
+	
+	//TODO remove
+	sleep(1);
 }
 
 uint64_t Process::timestamp() const

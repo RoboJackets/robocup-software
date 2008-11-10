@@ -11,7 +11,6 @@
 
 #include "Colors.h"
 #include "../Image.h"
-#include "../VisionData.hpp"
 #include "identification/Identifier.hpp"
 
 class Camera_Thread;
@@ -31,7 +30,7 @@ namespace Vision
 			
 			// The image format will always be an RGB32 format
 			// (4 bytes per pixel: BB GG RR xx)
-			void proc(const Image* img, VisionData& data);
+			void proc(const Image* img);
 			
 			void robot_radius(float r);
 			float robot_radius() const;

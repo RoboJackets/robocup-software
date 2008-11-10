@@ -13,8 +13,6 @@
 #include <boost/foreach.hpp>
 #include <sys/time.h>
 
-#include "VisionData.hpp"
-
 using namespace std;
 using namespace boost;
 
@@ -188,9 +186,6 @@ unsigned int delta_us(const struct timeval &t0, const struct timeval &t1)
 void Camera_Thread::run()
 {
 	setTerminationEnabled(true);
-
-	VisionData visionData;
-	
 	
 	// The last time new_frame was emitted
 	QTime last_update_time = QTime::currentTime();
@@ -263,8 +258,10 @@ void Camera_Thread::run()
 		int minimum_time = _update_time;
 		mutex.unlock();
 
-		visionData = VisionData();
-		process->proc(_frame, visionData);
+		//visionData = VisionData();
+		//process->proc(_frame, visionData);
+		//TODO change to pass reference to outgoing vision data
+		process->proc(_frame);
 
 		struct timeval t2;
 		gettimeofday(&t2, 0);

@@ -15,6 +15,17 @@ macro (prepend_list aList aString)
     set (${aList} ${temp_list})
 endmacro(prepend_list)
 
+if (USE_QT)
+	add_definitions (-DQT_NO_KEYWORDS)
+	set (QT_USE_QTNETWORK true)
+	set (QT_USE_QTOPENGL true)
+	set (QT_USE_QTXML true)
+	find_package ( Qt4 REQUIRED )
+	include_directories(${PROJECT_SOURCE_DIR})
+	include_directories(${PROJECT_BINARY_DIR})
+	include ( ${QT_USE_FILE} )
+endif(USE_QT)
+
 if (USE_PACKET)
 	include_directories(${common_include_dir}/SerDes)
 
@@ -32,6 +43,7 @@ if (USE_PACKET)
 	
 	set (Packets
 		Vision
+		RadioTx
 	)
 	
 	foreach (packet ${Packets})
@@ -55,6 +67,7 @@ if (USE_PACKET)
 	
 	add_dependencies (packet GeneratePackets)
     set (PACKET_LIBRARY packet)
+	
 endif(USE_PACKET)
  
 if (USE_GEOMETRY)

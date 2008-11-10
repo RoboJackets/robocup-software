@@ -1,5 +1,5 @@
 <struct typename="Vision">
-	<struct typename="Point2d" external_cpp="Geometry::Point2d" external_python="Geometry.Point2d">
+	<struct typename="Point2d" include_cpp="Geometry/Point2d.hpp" external_cpp="Geometry::Point2d" external_python="Geometry.Point2d">
         <member type="float" name="x"/>
         <member type="float" name="y"/>
     </struct>
@@ -14,10 +14,10 @@
 		<member type="Point2d" name="pos" />
 	</struct>
     
-    <member type="uint64" name="timestamp" value="1" />
-    <member type="uint8" name="camera" value="0" />
+    <member type="uint64" name="timestamp" />
+    <member type="uint8" name="camera" />
     
-    <array type="Robot" name="balls" />
+    <array type="Ball" name="balls" />
     
     <array type="Robot" name="blue" />
     <array type="Robot" name="yellow" />

@@ -240,6 +240,8 @@ namespace Serialization
         }
         
         std::vector<uint8_t> data;
+
+    protected:
         unsigned int _readPos;
     };
 }
