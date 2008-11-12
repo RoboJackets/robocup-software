@@ -6,6 +6,7 @@
 #include <ui_motion.h>
 
 #include "FieldDisplay.hpp"
+#include "RobotPath.hpp"
 
 class MainWindow : public QMainWindow, Ui::MainWindow
 {
@@ -18,6 +19,8 @@ class MainWindow : public QMainWindow, Ui::MainWindow
             void cursorPosition(float x, float y, float wx, float wy, QMouseEvent me);
 	private:
             Ui::MainWindow ui;
+
+            RobotPath rp;
 
 };
 

@@ -53,6 +53,7 @@ set (SRCS
 	MainWindow.cpp
         FieldDisplay.cpp
         Graphikos/Field.cpp
+        RobotPath.cpp
 )
 
 # tell cmake to create an executable

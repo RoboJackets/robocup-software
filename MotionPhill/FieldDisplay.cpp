@@ -32,6 +32,10 @@ void FieldDisplay::setTeam(Team& t)
     _team = t;
 }
 
+void FieldDisplay::setRobotPath(RobotPath &rp)
+{
+    _rp = rp;
+}
 void FieldDisplay::paintEvent(QPaintEvent* event)
 {
 	QPainter painter(this);
@@ -61,6 +65,8 @@ void FieldDisplay::paintEvent(QPaintEvent* event)
 		lp->display(painter, _team);
 	}
         */
+
+        FieldDisplay::_rp.display(painter);
 }
 
 void FieldDisplay::resizeEvent(QResizeEvent* event)

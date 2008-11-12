@@ -3,7 +3,9 @@
 #include <ui_motion.h>
 #include <QMouseEvent>
 #include <QString>
+#include <QPointF>
 #include "FieldDisplay.hpp"
+#include "RobotPath.hpp"
 
 MainWindow::MainWindow(Team team)
 	   :QMainWindow()
@@ -11,6 +13,9 @@ MainWindow::MainWindow(Team team)
         setupUi(this);
         field->setTeam(team);
         connect(field,SIGNAL(newPosition(float, float, float, float, QMouseEvent)),this,SLOT(cursorPosition(float, float, float, float, QMouseEvent)));
+
+        MainWindow::rp.setPath(QPointF(2,2),QPointF(2,2),QPointF(0,6));
+        field->setRobotPath(rp);
 }
 
 MainWindow::~MainWindow()

@@ -8,6 +8,8 @@
 #include <Geometry/Point2d.hpp>
 #include <Team.h>
 
+#include "RobotPath.hpp"
+
 class FieldDisplay: public QWidget
 {
 	Q_OBJECT;
@@ -15,6 +17,7 @@ class FieldDisplay: public QWidget
 	public:
 		FieldDisplay(QWidget *parent = 0);
                 void setTeam(Team& t);
+                void setRobotPath(RobotPath &rp);
 
 	Q_SIGNALS:
 		void newPosition(float x, float y, float wx, float wy, QMouseEvent me);
@@ -25,8 +28,8 @@ class FieldDisplay: public QWidget
 		void mouseReleaseEvent(QMouseEvent* me);
 
         private:
-
                 Team _team;
+                RobotPath _rp;
 
 };
 
