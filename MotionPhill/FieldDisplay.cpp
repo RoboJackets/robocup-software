@@ -1,5 +1,6 @@
 #include "FieldDisplay.hpp"
 #include <QPainter>
+#include <QPointF>
 #include <Constants.hpp>
 #include <Team.h>
 #include <ui_motion.h>
@@ -36,6 +37,7 @@ void FieldDisplay::setRobotPath(RobotPath &rp)
 {
     _rp = rp;
 }
+
 void FieldDisplay::paintEvent(QPaintEvent* event)
 {
 	QPainter painter(this);
@@ -65,7 +67,6 @@ void FieldDisplay::paintEvent(QPaintEvent* event)
 		lp->display(painter, _team);
 	}
         */
-
         FieldDisplay::_rp.display(painter);
 }
 
@@ -106,4 +107,32 @@ void FieldDisplay::mouseReleaseEvent(QMouseEvent* me)
 		x = Floor::Width/2.0f - x;
 	}
         newPosition(x, y, wx, wy, *me);
+}
+
+void FieldDisplay::mousePressEvent(QMouseEvent* me)
+{
+    QPointF mousePos;
+    float wx = me->x() * Floor::Length / width();
+    float wy = me->y() * Floor::Width / height();
+
+    wx -= Floor::Length/2.0f;
+    wy = Floor::Width/2.0f - wy;
+
+    float x = me->y() * Floor::Width / height();
+    float y = me->x() * Floor::Length / width();
+
+    if (_team == Yellow)
+    {
+	    x -= Floor::Width/2.0f;
+	    y -= Constants::Field::Border;
+    }
+    else
+    {
+	    y = Floor::Length - y - Constants::Field::Border;
+	    x = Floor::Width/2.0f - x;
+    }
+    mousePos.setX(x);
+    mousePos.setY(y);
+
+    _rp.setPath(QPointF(2,2),QPointF(2,2),mousePos);
 }

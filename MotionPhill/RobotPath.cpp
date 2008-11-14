@@ -28,7 +28,6 @@ void RobotPath::display(QPainter& p)
             path.cubicTo(_c1, _c2, _endpoint);
 
     }
-
     p.drawPath(path);
 }
 

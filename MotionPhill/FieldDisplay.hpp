@@ -26,6 +26,7 @@ class FieldDisplay: public QWidget
 		void paintEvent(QPaintEvent* pe);
 		void resizeEvent(QResizeEvent* re);
 		void mouseReleaseEvent(QMouseEvent* me);
+                void mousePressEvent(QMouseEvent* me);
 
         private:
                 Team _team;
