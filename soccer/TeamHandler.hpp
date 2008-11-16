@@ -10,7 +10,6 @@
 #include <Geometry/TransformMatrix.hpp>
 #include <Vision.hpp>
 
-#include "SystemState.hpp"
 #include "framework/Module.hpp"
 
 /** handles processing for a team */

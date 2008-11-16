@@ -5,15 +5,46 @@ get_filename_component(common_include_dir ${CMAKE_CURRENT_LIST_FILE} PATH)
 #message( STATUS ${common_include_dir})
 include_directories(${common_include_dir})
 
-macro (prepend_list aList aString)
-    set (temp_list)
-    
-    foreach (list_item ${${aList}})
-        list(APPEND temp_list ${aString}/${list_item})
-    endforeach(list_item)
-    
-    set (${aList} ${temp_list})
-endmacro(prepend_list)
+if (NOT TARGET GeneratePackets)
+	macro (prepend_list aList aString)
+	    set (temp_list)
+	    
+	    foreach (list_item ${${aList}})
+	        list(APPEND temp_list ${aString}/${list_item})
+	    endforeach(list_item)
+	    
+	    set (${aList} ${temp_list})
+	endmacro(prepend_list)
+	
+	set (PacketDir ${common_include_dir}/packets)
+	set (Packets
+		Vision
+		RadioTx
+		#RadioRx
+		#SSLRef
+		LocVision
+		LogFrame
+	)
+	
+	foreach (packet ${Packets})
+	    set (xmlFile ${PacketDir}/${packet}.xml)
+	    set (header ${packet}.hpp)
+	    
+	    add_custom_command(OUTPUT ${header}
+	            COMMAND ${common_include_dir}/SerDes/gen_cpp ${xmlFile} > ${header}
+	            DEPENDS ${xmlFile} ${common_include_dir}/SerDes/gen_cpp
+				
+	            VERBATIM
+	    )
+	    
+	    list (APPEND PacketHeaders ${PROJECT_BINARY_DIR}/${header})
+	endforeach()
+	
+	add_custom_target(GeneratePackets
+	    DEPENDS ${PacketHeaders}
+	    VERBATIM
+	)
+endif()
 
 if (USE_QT)
 	add_definitions (-DQT_NO_KEYWORDS)
@@ -55,41 +86,12 @@ if (USE_FRAMEWORK AND NOT TARGET framework)
     message( STATUS "Using the Framework library") 
     
     add_library (framework ${framework_SRCS})
+    add_dependencies (framework GeneratePackets)
     set (FRAMEWORK_LIBRARY framework)
 endif()
 
 if (USE_NETWORK AND NOT TARGET network)
 	include_directories(${common_include_dir}/SerDes)
-	
-	set (PacketDir ${common_include_dir}/packets)
-	
-	set (Packets
-		Vision
-		RadioTx
-		#RadioRx
-		#SSLRef
-		LocVision
-		LogFrame
-	)
-	
-	foreach (packet ${Packets})
-        set (xmlFile ${PacketDir}/${packet}.xml)
-        set (header ${packet}.hpp)
-        
-        add_custom_command(OUTPUT ${header}
-                COMMAND ${common_include_dir}/SerDes/gen_cpp ${xmlFile} > ${header}
-                DEPENDS ${xmlFile} ${common_include_dir}/SerDes/gen_cpp
-				
-                VERBATIM
-        )
-        
-        list (APPEND PacketHeaders ${PROJECT_BINARY_DIR}/${header})
-	endforeach()
-	
-	add_custom_target(GeneratePackets
-        DEPENDS ${PacketHeaders}
-        VERBATIM
-	)
 	
 	set (network_srcs
 		Sender.cpp
@@ -100,7 +102,6 @@ if (USE_NETWORK AND NOT TARGET network)
     message( STATUS "Using the Network library") 
     
     add_library (network ${network_srcs})
-    
     add_dependencies (network GeneratePackets)
     set (NETWORK_LIBRARY network)
     

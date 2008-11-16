@@ -1,7 +1,6 @@
 #ifndef SYSTEMSTATE_HPP_
 #define SYSTEMSTATE_HPP_
 
-#include <LocVision.hpp>
 #include <LogFrame.hpp>
 
 /** The system state is an aggregate data structure for storing current system 
