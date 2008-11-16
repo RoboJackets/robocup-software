@@ -6,6 +6,13 @@
 
 #include "MainWindow.hpp"
 
+void usage(const char* prog)
+{
+	printf("usage: %s <-y|-b> [-c <config file>]\n", prog);
+	printf("\t-y: run as the yellow team\n");
+	printf("\t-b: run as the blue team\n");
+}
+
 int main (int argc, char* argv[])
 {
 	QApplication app(argc, argv);
@@ -28,7 +35,8 @@ int main (int argc, char* argv[])
 	
 	if (team == UnknownTeam)
 	{
-		printf("Can't have an unknown team\n");
+		usage(argv[0]);
+		printf("Error: No team specified\n");
 		return 0;
 	}
 	

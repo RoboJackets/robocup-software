@@ -14,13 +14,16 @@ namespace Log
 		
 		public:
 			TreeModel();
-		
+			
 		protected Q_SLOTS:
 			void frame(Packet::LogFrame* frame);
 			
 		private:
 			QStandardItem* _timestamp;
 			QStandardItem* _vision;
+			
+			QStandardItem* _self;
+			QStandardItem* _opp;
 	};
 }
 

@@ -87,7 +87,7 @@ void TeamHandler::visionHandler(const Packet::Vision* packet)
 	
 	Q_FOREACH (const Packet::Vision::Robot& raw , packet->blue)
 	{
-		Packet::LocVision::Robot r;
+		Packet::Vision::Robot r;
 		
 		r.shell = raw.shell;
 		r.pos = _teamTrans * raw.pos;
@@ -96,17 +96,17 @@ void TeamHandler::visionHandler(const Packet::Vision* packet)
 		
 		if (_team == Blue)
 		{
-			_state.vision.self.push_back(r);
+			_state.allSelf.push_back(r);
 		}
 		else
 		{
-			_state.vision.opp.push_back(r);
+			_state.allOpp.push_back(r);
 		}
 	}
 
 	Q_FOREACH (const Packet::Vision::Robot& raw , packet->yellow)
 	{
-		Packet::LocVision::Robot r;
+		Packet::Vision::Robot r;
 		
 		r.shell = raw.shell;
 		r.pos = _teamTrans * raw.pos;
@@ -115,19 +115,19 @@ void TeamHandler::visionHandler(const Packet::Vision* packet)
 		
 		if (_team == Yellow)
 		{
-			_state.vision.self.push_back(r);
+			_state.allSelf.push_back(r);
 		}
 		else
 		{
-			_state.vision.opp.push_back(r);
+			_state.allOpp.push_back(r);
 		}
 	}
 
 	Q_FOREACH (const Packet::Vision::Ball& raw , packet->balls)
 	{
-		Packet::LocVision::Ball b;
+		Packet::Vision::Ball b;
 		b.pos = _teamTrans * raw.pos;
-		_state.vision.balls.push_back(b);
+		_state.allBalls.push_back(b);
 	}
 	
 	//trigger system
@@ -135,7 +135,7 @@ void TeamHandler::visionHandler(const Packet::Vision* packet)
 	{
 		//timestamp of vision is the timestamp of the camera image
 		//TODO change to timestamp of writing the log file?
-		_state.vision.timestamp = packet->timestamp;
+		_state.timestamp = packet->timestamp;
 		_trigger = true;
 	}
 	

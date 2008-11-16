@@ -36,6 +36,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	QPainter painter(this);
 	
 	painter.setRenderHint(QPainter::Antialiasing);
+	//painter.setRenderHint(QPainter::SmoothPixmapTransform);
 	painter.scale(width()/Floor::Length, -height()/Floor::Width);
 	
 	// world space
@@ -49,17 +50,17 @@ void FieldView::paintEvent(QPaintEvent* event)
 	
 	if (_frame)
 	{
-		Q_FOREACH(const Packet::LocVision::Robot& r, _frame->vision.self)
+		Q_FOREACH(const Packet::Vision::Robot& r, _frame->allSelf)
 		{
 			drawRobot(painter, _team, r.shell, r.pos, r.angle);
 		}
 		
-		Q_FOREACH(const Packet::LocVision::Robot& r, _frame->vision.opp)
+		Q_FOREACH(const Packet::Vision::Robot& r, _frame->allOpp)
 		{
 			drawRobot(painter, opponentTeam(_team), r.shell, r.pos, r.angle);
 		}
 		
-		Q_FOREACH(const Packet::LocVision::Ball& b, _frame->vision.balls)
+		Q_FOREACH(const Packet::Vision::Ball& b, _frame->allBalls)
 		{
 			drawBall(painter, b.pos);
 		}

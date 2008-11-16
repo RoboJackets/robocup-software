@@ -22,7 +22,6 @@ if (NOT TARGET GeneratePackets)
 		RadioTx
 		#RadioRx
 		#SSLRef
-		LocVision
 		LogFrame
 	)
 	

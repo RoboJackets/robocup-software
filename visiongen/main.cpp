@@ -40,7 +40,12 @@ class VisionSender : public QThread
 				
 			Packet::Vision packet;
 			packet.camera = _id;
-			packet.blue.push_back(Packet::Vision::Robot());
+			
+			Packet::Vision::Robot r = Packet::Vision::Robot();
+			r.pos.x = -2;
+			r.pos.y = 0;
+			
+			packet.blue.push_back(r);
 	
 			const int msecs = (int)(1000/_fps);
 			
@@ -60,8 +65,19 @@ class VisionSender : public QThread
 				}
 				
 				r.shell = _id;
+				
+#if 1
 				r.pos.x = _sx + cos(rad);
 				r.pos.y = _sy + sin(rad);
+#else
+				r.pos.x += .1; 
+				r.pos.y = 0;
+				
+				if (r.pos.x >= 2)
+				{
+					r.pos.x = -2;
+				}
+#endif
 				r.angle = 45.0f * _id;
 				
 				sender.send(packet);

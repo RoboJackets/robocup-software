@@ -12,7 +12,7 @@ class WorldModel : public Module
 		virtual void run();
 		
 	private:
-		SystemState::WorldModelOut _old;
+		//SystemState::WorldModelOut _old;
 };
 
 #endif /* WORLDMODEL_HPP_ */

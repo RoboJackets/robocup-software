@@ -128,7 +128,7 @@ void LogControl::fetchFrame()
 			if (_logFile->hasNextFrame())
 			{
 				_frame = _logFile->readNext();
-				_lastTimestamp = _frame.vision.timestamp;
+				_lastTimestamp = _frame.timestamp;
 				
 				//immediately call because signal happens at start
 				fetchFrame();
@@ -176,9 +176,9 @@ void LogControl::fetchFrame()
 		
 		if (!_live)
 		{
-			int64_t diff = _frame.vision.timestamp - _lastTimestamp;
+			int64_t diff = _frame.timestamp - _lastTimestamp;
 			int msec = abs((int)(_msecMult * diff / 1000));
-			_lastTimestamp = _frame.vision.timestamp;
+			_lastTimestamp = _frame.timestamp;
 			
 			_fetchTimer.start(msec);
 		}

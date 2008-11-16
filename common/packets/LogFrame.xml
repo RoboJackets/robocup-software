@@ -1,23 +1,46 @@
 <struct typename="LogFrame">
 	<struct typename="Vision" include_cpp="Vision.hpp" external_cpp="Packet::Vision" external_python="Packet.Vision" />
-	<struct typename="LocVision" include_cpp="LocVision.hpp" external_cpp="Packet::LocVision" external_python="Packet.LocVision" />
 	<struct typename="Point2d" include_cpp="Geometry/Point2d.hpp" external_cpp="Geometry::Point2d" external_python="Geometry.Point2d" />
 	
-	<struct typename="WorldModelOut">
-		<struct typename="Robot">
-			<member type="uint8" name="shell" />
-			<member type="Point2d" name="pos" />
-			<member type="Point2d" name="vel" />
-			<member type="float" name="angle" />
-			
-			<member type="bool" name="valid" value="false" />
-		</struct>
+	<!-- post process robot information -->
+	<struct typename="Robot">
+		<!-- shell id, used for debug -->
+		<member type="uint8" name="shell" />
 		
-		<array size="5" type="Robot" name="robots"/>
+		<!-- position of the robot -->
+		<member type="Point2d" name="pos" />
+		
+		<!-- velocity of the robot -->
+		<member type="Point2d" name="vel" />
+		
+		<!-- angle of the robot (+- 180 degrees -->
+		<member type="float" name="angle" />
+		
+		<!-- if true, this robot is active for use -->
+		<member type="bool" name="valid" value="false" />
 	</struct>
 	
-	<array type="Packet::Vision" name="rawVision" />
-	<member type="Packet::LocVision" name="vision" />
+	<!-- post processed ball information -->
+	<struct typename="Ball">
+		<member type="Point2d" name="pos" />
+		<member type="Point2d" name="vel" />
+	</struct>
 	
-	<member type="WorldModelOut" name="worldModelOut" />
+	<!-- unprocessed vision, in team space -->
+	<array type="Packet::Vision" name="rawVision" />
+	
+	<!-- timestamp of the vision packet that clocked the system -->
+	<member type="uint64" name="timestamp" />
+	
+	<!-- list of all elements located from vision frames -->
+	<array type="Vision::Robot" name="allSelf"/>
+	<array type="Vision::Robot" name="allOpp"/>
+	<array type="Vision::Ball" name="allBalls" />
+	
+	<!-- array of robots for the system, index is player id -->
+	<array size="5" type="Robot" name="self"/>
+	<array size="5" type="Robot" name="opp"/>
+	
+	<!-- gameplay ball -->
+	<array type="Ball" name="ball" />
 </struct>

@@ -12,6 +12,7 @@ void WorldModel::run()
 {
 	//calculate velocities for now
 	
+	/*
 	SystemState::WorldModelOut& state = _state->worldModelOut;
 	
 	Q_FOREACH (const Packet::LocVision::Robot& r, _state->vision.self)
@@ -32,4 +33,5 @@ void WorldModel::run()
 	}
 	
 	_old = state;
+	*/
 }

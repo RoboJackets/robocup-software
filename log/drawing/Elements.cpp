@@ -2,7 +2,6 @@
 
 #include <Constants.hpp>
 
-//#include <QPainterPath>
 #include <QColor>
 #include <QRectF>
 #include <QLineF>
@@ -16,10 +15,9 @@ void drawField(QPainter& p)
 	//reset to center
 	p.translate(-Floor::Length/2.0, -Floor::Width/2.0);
 	
-	QPainterPath floor;
-	floor.addRect(0, 0, Floor::Length, Floor::Width);
-	
-	p.fillPath(floor, QColor(0,100,0));
+	p.setPen(Qt::transparent);
+	p.setBrush(QColor(0,85,0));
+	p.drawRect(QRectF(0, 0, Floor::Length, Floor::Width));		
 	
 	p.translate(Field::Border, Field::Border);
 	
@@ -34,7 +32,7 @@ void drawField(QPainter& p)
 	p.translate(Field::Length/2.0, Field::Width/2.0);
 	
 	//centerline
-	p.drawLine(QLineF(0, Field::Width/2,0, -Floor::Width/2.0));
+	p.drawLine(QLineF(0, Field::Width/2,0, -Field::Width/2.0));
 	
 	//center circle
 	p.drawEllipse(QRectF(-Field::ArcRadius, -Field::ArcRadius, 

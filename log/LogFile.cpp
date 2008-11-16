@@ -38,7 +38,7 @@ void LogFile::write(Packet::LogFrame& frame)
 	_buf.data.resize(0);
 	
 	Serialization::WriteBuffer& writer = _buf;
-	writer & frame.vision;
+	writer & frame;
 	
 	FrameSizeType size = _buf.data.size();
 	
@@ -70,7 +70,7 @@ Packet::LogFrame LogFile::readNext()
 	_stream->readRawData((char*)&_buf.data[0], size);
 
 	Serialization::ReadBuffer &reader = _buf;
-	reader & frame.vision;
+	reader & frame;
 	
 	_nextPos = _file.pos() + sizeof(FrameSizeType);
 	
@@ -105,7 +105,7 @@ Packet::LogFrame LogFile::readPrev()
 	_stream->readRawData((char*)&_buf.data[0], size);
 
 	Serialization::ReadBuffer &reader = _buf;
-	reader & frame.vision;
+	reader & frame;
 	
 	_prevPos -= size + 2 * sizeof(FrameSizeType);
 	
@@ -144,7 +144,7 @@ Packet::LogFrame LogFile::readLast()
 	_stream->readRawData((char*)&_buf.data[0], size);
 
 	Serialization::ReadBuffer &reader = _buf;
-	reader & frame.vision;
+	reader & frame;
 	
 	return frame;
 }
