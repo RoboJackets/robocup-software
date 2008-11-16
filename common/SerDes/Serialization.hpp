@@ -36,8 +36,14 @@ namespace Serialization
         void operator&(int32_t value) { add(value); }
         void operator&(uint64_t value) { add(value); }
         void operator&(int64_t value) { add(value); }
-        void operator&(float &value) { add(value); }
-        void operator&(double &value) { add(value); }
+        void operator&(float value) { add(value); }
+        void operator&(double value) { add(value); }
+
+        void operator&(bool value)
+        {
+            uint8_t x = value ? 1 : 0;
+            add(x);
+        }
         
         template<typename T>
         void add(T &value)
@@ -118,6 +124,13 @@ namespace Serialization
         void operator&(float &value) { read(value); }
         void operator&(double &value) { read(value); }
         
+        void operator&(bool &value)
+        {
+            uint8_t x;
+            read(x);
+            value = (x != 0);
+        }
+ 
         template<typename T>
         void read(T &value)
         {

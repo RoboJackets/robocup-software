@@ -3,7 +3,7 @@
 import sys
 from xml.dom.minidom import *
 
-primitives = ['float', 'double']
+primitives = ['bool', 'float', 'double']
 
 typeMap = {'string': 'std::string'}
 
@@ -222,12 +222,14 @@ def declareStruct(node):
                 if value == '':
                     if isEnum:
                         value = enumDefault[dataType]
+                    elif dataType == 'bool':
+                        value = 'false'
                     else:
-                        value = '0';
+                        value = '0'
                 
                 if child.nodeName == 'member':
                     # Single member
-                    write(name + ' = ' + value + ';');
+                    write(name + ' = ' + value + ';')
                 else:
                     # Array
                     size = child.getAttribute('size')

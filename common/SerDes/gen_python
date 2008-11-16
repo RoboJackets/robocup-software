@@ -3,8 +3,8 @@
 import sys
 from xml.dom.minidom import *
 
-primitives = ['float', 'double']
-externals = {'string':'string'}
+primitives = ['bool', 'float', 'double']
+externals = {'string':'string', 'bool':'bool'}
 
 # Add int* and uint* to primitives and typeMap
 for i in ['8', '16', '32', '64']:
@@ -189,6 +189,8 @@ def emitStruct(node):
             if value == '':
                 if isEnum:
                     value = 'self.' + enumDefault[dataType]
+                elif dataType == 'bool':
+                    value = 'false'
                 elif isExternal:
                     value = externals[dataType] + '()'
                 else:
@@ -199,7 +201,7 @@ def emitStruct(node):
             self_name = 'self.' + name
             if child.nodeName == 'member':
                 # Single member
-                line = self_name + ' = ' + value;
+                line = self_name + ' = ' + value
             else:
                 # Array
                 size = child.getAttribute('size')

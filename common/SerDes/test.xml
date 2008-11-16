@@ -37,4 +37,6 @@
     <array type="TestEnum" name="e_array" size="3"/>
     <array type="TestEnum" name="e_array_var"/>
     <member type="string" name="someText"/>
+    <member type="bool" name="flag" value="true"/>
+    <member type="bool" name="flag_default"/>
 </struct>

@@ -42,6 +42,7 @@ void *receive_thread(void *arg)
         printf("\t%d: %d\n", i, f.intArray[i]);
     }
     printf("Text: \"%s\"\n", f.someText.c_str());
+    printf("Bools: %d %d\n", f.flag, f.flag_default);
     
     return 0;
 }
