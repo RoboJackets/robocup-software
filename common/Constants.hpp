@@ -16,8 +16,8 @@ namespace Constants
 
     namespace Field
     {
-        const float Length = 6.1f;
-        const float Width = 4.2f;
+        const float Length = 6.05f;
+        const float Width = 4.05f;
         const float Border = .25f;
 
         const float LineWidth = 0.01f;
@@ -32,6 +32,12 @@ namespace Constants
 
         /** Radius of the goal arcs */
         const float ArcRadius = .5f;
+        
+        /** diameter of the center circle */
+        const float CenterDiameter = ArcRadius * 2.0f;
+        
+        /** flat area for defence markings */
+        const float GoalFlat = .35f;
     }
 
     namespace Floor

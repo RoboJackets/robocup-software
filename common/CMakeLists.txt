@@ -25,25 +25,51 @@ if (USE_QT)
 	include_directories(${PROJECT_BINARY_DIR})
 	include ( ${QT_USE_FILE} )
 endif(USE_QT)
+ 
+if (USE_GEOMETRY AND NOT TARGET geometry)
+    SET(libgeometry_SRCS 
+        Point2d.cpp 
+        Circle2d.cpp 
+        Line2d.cpp 
+        Rect.cpp 
+        Segment.cpp 
+        TransformMatrix.cpp
+	)
 
-if (USE_PACKET)
+    prepend_list(libgeometry_SRCS "Geometry/")
+    prepend_list(libgeometry_SRCS ${common_include_dir})
+    message( STATUS "Using the Geometry library") 
+    
+    add_library (geometry ${libgeometry_SRCS})
+    
+    set (GEOMETRY_LIBRARY geometry)
+endif()
+
+if (USE_FRAMEWORK AND NOT TARGET framework)
+    SET(framework_SRCS 
+        Module.cpp
+	)
+
+    prepend_list(framework_SRCS "framework/")
+    prepend_list(framework_SRCS ${common_include_dir})
+    message( STATUS "Using the Framework library") 
+    
+    add_library (framework ${framework_SRCS})
+    set (FRAMEWORK_LIBRARY framework)
+endif()
+
+if (USE_NETWORK AND NOT TARGET network)
 	include_directories(${common_include_dir}/SerDes)
-
-    SET(libpacket_SRCS
-        SerDes/Receiver.cpp
-		SerDes/Sender.cpp
-        )
-        
-    prepend_list(libpacket_SRCS ${common_include_dir})
-    message( STATUS "Using the Packet library") 
-    
-    add_library (packet ${libpacket_SRCS} ${common_MOC_SRCS}) 
-    
+	
 	set (PacketDir ${common_include_dir}/packets)
 	
 	set (Packets
 		Vision
 		RadioTx
+		#RadioRx
+		#SSLRef
+		LocVision
+		LogFrame
 	)
 	
 	foreach (packet ${Packets})
@@ -65,26 +91,17 @@ if (USE_PACKET)
         VERBATIM
 	)
 	
-	add_dependencies (packet GeneratePackets)
-    set (PACKET_LIBRARY packet)
-	
-endif(USE_PACKET)
- 
-if (USE_GEOMETRY)
-    SET(libgeometry_SRCS 
-        Point2d.cpp 
-        Circle2d.cpp 
-        Line2d.cpp 
-        Rect.cpp 
-        Segment.cpp 
-        TransformMatrix.cpp
+	set (network_srcs
+		Sender.cpp
+		Receiver.cpp
 	)
 
-    prepend_list(libgeometry_SRCS "Geometry/")
-    prepend_list(libgeometry_SRCS ${common_include_dir})
-    message( STATUS "Using the Geometry library") 
+    prepend_list(network_srcs "${common_include_dir}/Network/")
+    message( STATUS "Using the Network library") 
     
-    add_library (geometry ${libgeometry_SRCS} ${common_MOC_SRCS})
+    add_library (network ${network_srcs})
     
-    set (GEOMETRY_LIBRARY geometry)
-endif(USE_GEOMETRY)
+    add_dependencies (network GeneratePackets)
+    set (NETWORK_LIBRARY network)
+    
+endif()

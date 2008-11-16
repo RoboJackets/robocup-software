@@ -261,7 +261,18 @@ write('}')
 # Second pass: Serialization bodies
 for node in dom.getElementsByTagName('struct'):
     className = fullName(node)
-        
+      
+    #don't generate serialization code for struct without bodies
+    if not node.hasChildNodes():
+    	continue;
+    
+    guard = '_' + className + '_SERDES'
+    guard = guard.upper();
+    guard = guard.replace('::', '_')
+    
+    write('#ifndef ' + guard)
+    write('#define ' + guard)
+    
     write('template<typename B>')
     write('void operator&(B &buf, ' + className + ' &obj)')
     write('{')
@@ -304,6 +315,9 @@ for node in dom.getElementsByTagName('struct'):
         
     unindent()
     write('}')
+    
+    write('#endif')
+    write()
 
 write()
 

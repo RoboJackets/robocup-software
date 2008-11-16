@@ -1,0 +1,23 @@
+<struct typename="LogFrame">
+	<struct typename="Vision" include_cpp="Vision.hpp" external_cpp="Packet::Vision" external_python="Packet.Vision" />
+	<struct typename="LocVision" include_cpp="LocVision.hpp" external_cpp="Packet::LocVision" external_python="Packet.LocVision" />
+	<struct typename="Point2d" include_cpp="Geometry/Point2d.hpp" external_cpp="Geometry::Point2d" external_python="Geometry.Point2d" />
+	
+	<struct typename="WorldModelOut">
+		<struct typename="Robot">
+			<member type="uint8" name="shell" />
+			<member type="Point2d" name="pos" />
+			<member type="Point2d" name="vel" />
+			<member type="float" name="angle" />
+			
+			<member type="bool" name="valid" value="false" />
+		</struct>
+		
+		<array size="5" type="Robot" name="robots"/>
+	</struct>
+	
+	<array type="Packet::Vision" name="rawVision" />
+	<member type="Packet::LocVision" name="vision" />
+	
+	<member type="WorldModelOut" name="worldModelOut" />
+</struct>

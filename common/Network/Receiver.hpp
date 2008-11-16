@@ -2,10 +2,9 @@
 #define _RECEIVER_HPP_
 
 #include <vector>
+#include <Serialization.hpp>
 
-#include "Serialization.hpp"
-
-namespace Serialization
+namespace Network
 {
 	class Receiver
 	{
@@ -14,13 +13,15 @@ namespace Serialization
 			{
 				setup(0, port, size);
 			}
-			
-			Receiver(const char *addr, uint16_t port, unsigned int size = 65536)
+
+			Receiver(const char* addr, uint16_t port, unsigned int size = 65536)
 			{
 				setup(addr, port, size);
 			}
-			
+
 			~Receiver();
+			
+			int fileDescriptor() const { return _socket; }
 
 			template<typename T>
 			void receive(T &packet)
@@ -29,10 +30,10 @@ namespace Serialization
 				_buf.rewind();
 				receive(_buf.data);
 
-				ReadBuffer &reader = _buf;
+				Serialization::ReadBuffer &reader = _buf;
 				reader & (T &) packet;
 			}
-			
+
 			void receive(std::vector<uint8_t> &data);
 
 		protected:
@@ -43,7 +44,7 @@ namespace Serialization
 			// Maximum packet size
 			unsigned int _size;
 
-			MemoryBuffer _buf;
+			Serialization::MemoryBuffer _buf;
 	};
 }
 
