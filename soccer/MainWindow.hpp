@@ -6,11 +6,12 @@
 #include <QPushButton>
 
 #include <Team.h>
-#include <FieldView.hpp>
-#include <LogFile.hpp>
-#include <LogControl.hpp>
-#include <TreeView.hpp>
-#include <TreeModel.hpp>
+
+#include <log/FieldView.hpp>
+#include <log/LogFile.hpp>
+#include <log/LogControl.hpp>
+#include <log/TreeView.hpp>
+#include <log/TreeModel.hpp>
 
 #include "TeamHandler.hpp"
 

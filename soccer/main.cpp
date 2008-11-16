@@ -4,10 +4,6 @@
 
 #include <Team.h>
 
-#include <JogDial.hpp>
-#include <LogFile.hpp>
-#include <LogFrame.hpp>
-
 #include "MainWindow.hpp"
 
 int main (int argc, char* argv[])

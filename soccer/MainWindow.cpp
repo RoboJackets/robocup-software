@@ -3,8 +3,7 @@
 #include <QHBoxLayout>
 #include <QGridLayout>
 
-#include "module/WorldModel.hpp"
-#include "module/LogModule.hpp"
+#include "module/modules.hpp"
 
 MainWindow::MainWindow(Team t) :
 	QMainWindow(), _team(t), _handler(t), _logFile(0)
@@ -60,11 +59,13 @@ MainWindow::~MainWindow()
 void MainWindow::setupModules()
 {
 	WorldModel* wm = new WorldModel();
+	Motion* motion = new Motion();
 	
 	LogModule* lm = new LogModule();
 	lm->setLogFile(_logFile);
 	
 	//add the modules....ORDER MATTERS!!
 	_handler.addModule(wm);
+	_handler.addModule(motion);
 	_handler.addModule(lm);
 }

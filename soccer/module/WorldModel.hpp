@@ -1,7 +1,7 @@
 #ifndef WORLDMODEL_HPP_
 #define WORLDMODEL_HPP_
 
-#include "framework/Module.hpp"
+#include <framework/Module.hpp>
 
 /** process raw vision data and creates system sanitized data */
 class WorldModel : public Module

@@ -3,9 +3,8 @@
 
 #include <QMutex>
 
-#include "framework/Module.hpp"
-
-#include <LogFile.hpp>
+#include <framework/Module.hpp>
+#include <log/LogFile.hpp>
 
 /** logs the system state to a file */
 class LogModule : public Module
