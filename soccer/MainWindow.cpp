@@ -5,6 +5,8 @@
 
 #include "module/modules.hpp"
 
+using namespace Log;
+
 MainWindow::MainWindow(Team t) :
 	QMainWindow(), _team(t), _handler(t), _logFile(0)
 {
@@ -59,9 +61,9 @@ MainWindow::~MainWindow()
 void MainWindow::setupModules()
 {
 	WorldModel* wm = new WorldModel();
-	Motion* motion = new Motion();
+	Motion::Controller* motion = new Motion::Controller();
 	
-	LogModule* lm = new LogModule();
+	Log::LogModule* lm = new Log::LogModule();
 	lm->setLogFile(_logFile);
 	
 	//add the modules....ORDER MATTERS!!

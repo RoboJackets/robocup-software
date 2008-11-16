@@ -23,7 +23,8 @@ set (SRCS
 	FieldView.cpp
 	TreeModel.cpp
 	TreeView.cpp
-		
+	LogModule.cpp	
+	
 	drawing/Elements.cpp
 )
 

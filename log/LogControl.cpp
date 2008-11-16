@@ -9,6 +9,8 @@
 #include "LogFile.hpp"
 #include "JogDial.hpp"
 
+using namespace Log;
+
 LogControl::LogControl(QWidget* parent) :
 	QWidget(parent), _logFile(0), _lastTimestamp(0)
 {

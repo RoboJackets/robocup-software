@@ -3,6 +3,8 @@
 
 #include <QHeaderView>
 
+using namespace Log;
+
 TreeView::TreeView(QWidget* parent) :
 	QTreeView(parent)
 {

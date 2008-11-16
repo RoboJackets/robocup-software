@@ -3,12 +3,15 @@
 
 #include <QTreeView>
 
-class TreeView : public QTreeView
+namespace Log
 {
-	public:
-		TreeView(QWidget* parent = 0);
-		
-	private:
-};
+	class TreeView : public QTreeView
+	{
+		public:
+			TreeView(QWidget* parent = 0);
+			
+		private:
+	};
+}
 
 #endif /* TREEVIEW_HPP_ */

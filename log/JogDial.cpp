@@ -4,6 +4,8 @@
 #include <math.h>
 #include <QPainter>
 
+using namespace Log;
+
 JogDial::JogDial(QWidget* parent) :
 	QWidget(parent)
 {

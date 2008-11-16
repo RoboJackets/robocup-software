@@ -6,19 +6,22 @@
 
 #include <LogFrame.hpp>
 
-class TreeModel : public QStandardItemModel
+namespace Log
 {
-	Q_OBJECT;
-	
-	public:
-		TreeModel();
-	
-	protected Q_SLOTS:
-		void frame(Packet::LogFrame* frame);
+	class TreeModel : public QStandardItemModel
+	{
+		Q_OBJECT;
 		
-	private:
-		QStandardItem* _timestamp;
-		QStandardItem* _vision;
-};
+		public:
+			TreeModel();
+		
+		protected Q_SLOTS:
+			void frame(Packet::LogFrame* frame);
+			
+		private:
+			QStandardItem* _timestamp;
+			QStandardItem* _vision;
+	};
+}
 
 #endif /* TREEMODEL_HPP_ */

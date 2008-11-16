@@ -30,12 +30,12 @@ class MainWindow : public QMainWindow
 		
 		TeamHandler _handler;
 		
-		FieldView* _fieldView;
-		LogControl* _logControl;
-		TreeView* _treeView;
-		TreeModel* _treeModel;
+		Log::FieldView* _fieldView;
+		Log::LogControl* _logControl;
+		Log::TreeView* _treeView;
+		Log::TreeModel* _treeModel;
 		
-		LogFile* _logFile;
+		Log::LogFile* _logFile;
 };
 
 #endif /* MAINWINDOW_HPP_ */

@@ -26,7 +26,6 @@ set (SRCS
 	MainWindow.cpp
 	
 	module/WorldModel.cpp
-	module/LogModule.cpp
 )
 
 set (exec soccer)

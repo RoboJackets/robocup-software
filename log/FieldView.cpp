@@ -7,6 +7,7 @@
 #include "drawing/Elements.hpp"
 
 using namespace Constants;
+using namespace Log;
 
 FieldView::FieldView(Team t, QWidget* parent) :
 	QGLWidget(parent), _team(t)

@@ -2,6 +2,8 @@
 
 #include <LogFrame.hpp>
 
+using namespace Log;
+
 TreeModel::TreeModel()
 {
 	_timestamp = new QStandardItem();

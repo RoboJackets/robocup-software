@@ -1,5 +1,7 @@
 #include "LogModule.hpp"
 
+using namespace Log;
+
 LogModule::LogModule() :
 	Module("Log Module")
 {

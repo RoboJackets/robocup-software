@@ -3,6 +3,8 @@
 #include <QTime>
 #include <QMutexLocker>
 
+using namespace Log;
+
 LogFile::LogFile(QString filename) :
 	_file(filename)
 {

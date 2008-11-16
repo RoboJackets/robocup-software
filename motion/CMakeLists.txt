@@ -14,7 +14,7 @@ qt4_wrap_cpp ( MOC_SRCS
 )
 
 set (SRCS
-	Motion.cpp
+	Controller.cpp
 )
 
 add_library (motion ${SRCS} ${MOC_SRCS})
