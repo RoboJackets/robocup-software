@@ -54,6 +54,8 @@ qt4_wrap_cpp (MOC_SRCS
         Commands.hpp
  	Serial.hpp
 	UDP_Broadcast.hpp
+	GameControl.hpp
+	GameInfo.hpp
 )
 	
 # this will run UIC on the .ui files
@@ -72,6 +74,8 @@ set (SRCS
 	Referee.cpp
 	Serial.cpp
 	UDP_Broadcast.cpp
+	GameControl.cpp
+	GameInfo.cpp
 )
 
 include_directories( ${GTKMM_INCLUDE_DIRS}  )

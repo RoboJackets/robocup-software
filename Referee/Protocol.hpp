@@ -1,6 +1,6 @@
-#ifndef PROTOCOL_HPP
-#define PROTOCOL_HPP
+#ifndef _PROTOCOL_HPP
+#define _PROTOCOL_HPP
 
 
 
-#endif /*PROTOCOL_HPP_*/
+#endif /*_PROTOCOL_HPP_*/
