@@ -1,5 +1,5 @@
-#ifndef SERIAL_HPP
-#define SERIAL_HPP
+#ifndef _SERIAL_HPP
+#define _SERIAL_HPP
 
 #include <cstdlib>
 #include <cstdio>
@@ -45,4 +45,4 @@ class Serial
   	
 };
 
-#endif /*SERIAL_HPP_*/
+#endif /*_SERIAL_HPP*/

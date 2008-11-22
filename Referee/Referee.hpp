@@ -1,5 +1,5 @@
-#ifndef REFEREE_HPP
-#define REFEREE_HPP
+#ifndef _REFEREE_HPP
+#define _REFEREE_HPP
 
 #include <ui_MainRef.h>
 #include <QTimer>
@@ -166,4 +166,4 @@ class Referee : public QMainWindow, Ui_MainWindow
 
 };
 
-#endif // REFEREE_HPP
+#endif /* _REFEREE_HPP */

@@ -28,7 +28,7 @@ const speed_t BaudRates[BAUD_RATES][2] = {
 };
 
 
-/// SERIAL CLASS ///
+/// Serial Class ///
 
 Serial::Serial(){
 	_fileDescriptor=0;
