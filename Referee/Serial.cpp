@@ -115,7 +115,7 @@ int Serial::readByte(void)
 }
 
 
- /** This function convert from raw baud rate to teh appropriate baud flag */
+ /** This function convert from raw baud rate to the appropriate baud flag */
 speed_t Serial::baudRateToFlag(unsigned int speed)
 {
   int i;
