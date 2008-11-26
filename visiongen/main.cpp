@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <stdlib.h>
+#include <vector>
 
 #include <QThread>
 
@@ -44,8 +45,6 @@ class VisionSender : public QThread
 			Packet::Vision::Robot r = Packet::Vision::Robot();
 			r.pos.x = -2;
 			r.pos.y = 0;
-			
-			packet.blue.push_back(r);
 	
 			const int msecs = (int)(1000/_fps);
 			
@@ -54,8 +53,23 @@ class VisionSender : public QThread
 			//loop and send out robot positions
 			while (true)
 			{
+				//clear all previous
+				packet.blue.clear();
+				packet.yellow.clear();
+				packet.balls.clear();
+				
+				//send sync
 				packet.timestamp = timestamp();
-				Packet::Vision::Robot& r = packet.blue[0];
+				packet.sync = true;
+				sender.send(packet);
+				
+				//fake vision processing
+				QThread::msleep(5);
+				
+				//send real data
+				packet.sync = false;
+				packet.timestamp = timestamp();
+				packet.blue.push_back(r);
 			
 				rad += .025;
 				
@@ -80,10 +94,12 @@ class VisionSender : public QThread
 #endif
 				r.angle = 45.0f * _id;
 				
+				//send vision data
 				sender.send(packet);
 				
-				//printf("[%d] %lld :: Pos: %.3f %.3f\n", _id, packet.timestamp, r.pos.x, r.pos.y);
+				printf("[%d] %lld :: Pos: %.3f %.3f\n", _id, packet.timestamp, r.pos.x, r.pos.y);
 				
+				//camera pause
 				QThread::msleep(msecs);
 			}
 		}
@@ -108,12 +124,12 @@ int main(int argc, const char* argv[])
 		return 0;
 	}
 	
-	int cameras = atoi(argv[1]);
+	int numCameras = atoi(argv[1]);
 	unsigned int fps = atoi(argv[2]);
 	
-	if (cameras < 1)
+	if (numCameras < 1)
 	{
-		cameras = 1; 
+		numCameras = 1; 
 	}
 	
 	float x = 2.0f;
@@ -121,28 +137,34 @@ int main(int argc, const char* argv[])
 	
 	float inc = 4.0f;
 	
-	if (cameras > 1)
+	if (numCameras > 1)
 	{
-		inc /= (cameras-1);
+		inc /= (numCameras - 1);
 	}
 	
-	VisionSender sender1(x, y, fps);
-	sender1.start();
+	std::vector<VisionSender*> cameras;
 	
-	for (int i=1 ; i<cameras ; ++i)
+	for (int i=0 ; i<numCameras ; ++i)
 	{
-		usleep(12340);
-		
+		cameras.push_back(new VisionSender(x, y, fps));
 		x -= inc;
-		VisionSender* sender = new VisionSender(x, y, fps);
-		sender->start();
 	}
 	
 	printf("---------------------------------------------------------\n");
-	
 	printf("Sending data...\n");
+	
+	int msecs = (int)(1000/fps);
+	
+	for (unsigned int i=0 ; i<cameras.size() ; ++i)
+	{
+		cameras[i]->start();
 		
-	sender1.wait();
+		//delay until start of next camera
+		msecs = msecs * .5; 
+		usleep(1000 * msecs);
+	}
+		
+	cameras[0]->wait();
 	
 	return 0;
 }
