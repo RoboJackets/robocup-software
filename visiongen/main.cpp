@@ -100,7 +100,7 @@ class VisionSender : public QThread
 				printf("[%d] %lld :: Pos: %.3f %.3f\n", _id, packet.timestamp, r.pos.x, r.pos.y);
 				
 				//camera pause
-				QThread::msleep(msecs);
+				QThread::msleep(msecs - 5);
 			}
 		}
 		
@@ -160,7 +160,7 @@ int main(int argc, const char* argv[])
 		cameras[i]->start();
 		
 		//delay until start of next camera
-		msecs = msecs * .5; 
+		msecs *= .45; 
 		usleep(1000 * msecs);
 	}
 		

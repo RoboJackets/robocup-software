@@ -50,20 +50,16 @@ void FieldView::paintEvent(QPaintEvent* event)
 	
 	if (_frame)
 	{
-		Q_FOREACH(const Packet::Vision::Robot& r, _frame->allSelf)
+		for (unsigned int i=0 ; i<5 ; ++i)
 		{
-			drawRobot(painter, _team, r.shell, r.pos, r.angle);
+			const Packet::LogFrame::Robot& s = _frame->self[i];
+			const Packet::LogFrame::Robot& o = _frame->opp[i];
+			
+			drawRobot(painter, _team, s.shell, s.pos, s.angle);
+			drawRobot(painter, _team, o.shell, o.pos, o.angle);
 		}
 		
-		Q_FOREACH(const Packet::Vision::Robot& r, _frame->allOpp)
-		{
-			drawRobot(painter, opponentTeam(_team), r.shell, r.pos, r.angle);
-		}
-		
-		Q_FOREACH(const Packet::Vision::Ball& b, _frame->allBalls)
-		{
-			drawBall(painter, b.pos);
-		}
+		drawBall(painter,_frame->ball.pos);
 	}
 }
 

@@ -1,5 +1,5 @@
-#ifndef TEAMHANDLER_HPP_
-#define TEAMHANDLER_HPP_
+#ifndef PROCESSOR_HPP
+#define PROCESSOR_HPP
 
 #include <QThread>
 #include <QMutex>
@@ -13,11 +13,11 @@
 #include "framework/Module.hpp"
 
 /** handles processing for a team */
-class TeamHandler : public QThread
+class Processor : public QThread
 {	
 	public:
-		TeamHandler(Team t);
-		~TeamHandler();
+		Processor(Team t);
+		~Processor();
 		
 		//add a process to the queue
 		//process are executed in the order they are placed
@@ -35,14 +35,15 @@ class TeamHandler : public QThread
 	private:
 		/** clip angle to +/- 180 */
 		static void trim(float& angle);
-
+		/** convert all coords to team space */
+		void toTeamSpace(Packet::Vision& vision);
+		
 	/// members ///
 	private:
 		bool _running;
 		
-		/** system is clocked by one camera only, 
-		 * the first camera packet received is the one that will do the clocking */
-		int _camTrigId;
+		/** trigger camera id, triggers syncronous processing */
+		int _triggerId;
 		
 		/** if true, the system should run */
 		bool _trigger;
@@ -62,4 +63,4 @@ class TeamHandler : public QThread
 		
 };
 
-#endif /* TEAMHANDLER_HPP_ */
+#endif // PROCESSOR_HPP

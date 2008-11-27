@@ -16,6 +16,7 @@
     
     <member type="uint64" name="timestamp" />
     <member type="uint8" name="camera" />
+	<member type="bool" name="sync" value="false" />
     
     <array type="Ball" name="balls" />
     

@@ -13,7 +13,7 @@
 #include <log/TreeView.hpp>
 #include <log/TreeModel.hpp>
 
-#include "TeamHandler.hpp"
+#include "Processor.hpp"
 
 class MainWindow : public QMainWindow
 {
@@ -28,7 +28,7 @@ class MainWindow : public QMainWindow
 	private:
 		Team _team;
 		
-		TeamHandler _handler;
+		Processor _processor;
 		
 		Log::FieldView* _fieldView;
 		Log::LogControl* _logControl;

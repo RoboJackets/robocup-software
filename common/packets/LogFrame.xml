@@ -32,15 +32,10 @@
 	<!-- timestamp of the vision packet that clocked the system -->
 	<member type="uint64" name="timestamp" />
 	
-	<!-- list of all elements located from vision frames -->
-	<array type="Vision::Robot" name="allSelf"/>
-	<array type="Vision::Robot" name="allOpp"/>
-	<array type="Vision::Ball" name="allBalls" />
-	
 	<!-- array of robots for the system, index is player id -->
 	<array size="5" type="Robot" name="self"/>
 	<array size="5" type="Robot" name="opp"/>
 	
 	<!-- gameplay ball -->
-	<array type="Ball" name="ball" />
+	<member type="Ball" name="ball" />
 </struct>

@@ -8,7 +8,7 @@
 using namespace Log;
 
 MainWindow::MainWindow(Team t) :
-	QMainWindow(), _team(t), _handler(t), _logFile(0)
+	QMainWindow(), _team(t), _processor(t), _logFile(0)
 {
 	QWidget* central = new QWidget();
 	this->setCentralWidget(central);
@@ -30,7 +30,7 @@ MainWindow::MainWindow(Team t) :
 	layout->addWidget(_treeView, 0, 1, 2, 1);
 	
 	//start control thread
-	_handler.start();
+	_processor.start();
 	
 	_logFile = new LogFile(LogFile::genFilename());
 	
@@ -46,8 +46,8 @@ MainWindow::~MainWindow()
 	//remove the log file from the things that use it
 	_logControl->setLogFile(0);
 	
-	_handler.terminate();
-	_handler.wait();
+	_processor.terminate();
+	_processor.wait();
 	
 	//cleanup modules
 	
@@ -67,7 +67,7 @@ void MainWindow::setupModules()
 	lm->setLogFile(_logFile);
 	
 	//add the modules....ORDER MATTERS!!
-	_handler.addModule(wm);
-	_handler.addModule(motion);
-	_handler.addModule(lm);
+	_processor.addModule(wm);
+	_processor.addModule(motion);
+	_processor.addModule(lm);
 }

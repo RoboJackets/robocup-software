@@ -35,8 +35,8 @@ int main (int argc, char* argv[])
 	
 	if (team == UnknownTeam)
 	{
-		usage(argv[0]);
 		printf("Error: No team specified\n");
+		usage(argv[0]);
 		return 0;
 	}
 	

@@ -22,7 +22,7 @@ qt4_wrap_cpp ( MOC_SRCS
 
 set (SRCS
 	main.cpp
-	TeamHandler.cpp
+	Processor.cpp
 	MainWindow.cpp
 	
 	module/WorldModel.cpp
