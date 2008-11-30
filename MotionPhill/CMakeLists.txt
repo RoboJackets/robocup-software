@@ -12,9 +12,10 @@ add_definitions (-Werror -Wall)
 include_directories (${PROJECT_BINARY_DIR})
 
 #uncomment to link to all the stuff in common
-set (USE_PACKET true)
+set (USE_NETWORK true)
 set (USE_GEOMETRY true)
-include ("../common/CMakeLists.txt")
+set (USE_FRAMEWORK true)
+include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
 
 # uncomment to disable the qt gui classes
 # useful for command line only applications
@@ -25,6 +26,8 @@ include ("../common/CMakeLists.txt")
 
 # uncomment to enable Qt opengl classes
 # set (QT_USE_QTOPENGL true)
+
+set (QT_USE_QTXML true)
 
 # this command finds the Qt4 libraries and sets all required variables
 find_package ( Qt4 REQUIRED )
@@ -54,10 +57,16 @@ set (SRCS
         FieldDisplay.cpp
         Graphikos/Field.cpp
         RobotPath.cpp
+        Motion.cpp
+        Robot.cpp
+        Pid.cpp
+        ConfigFile.cpp
 )
 
 # tell cmake to create an executable
 add_executable (motion ${SRCS} ${MOC_SRCS} ${UI_HDRS})
 
 # link against qt libraries
-target_link_libraries (motion ${QT_LIBRARIES})
+target_link_libraries (motion ${QT_LIBRARIES} ${GEOMETRY_LIBRARY} ${NETWORK_LIBRARY})
+
+target_link_libraries(motion ${FRAMEWORK_LIBRARY})

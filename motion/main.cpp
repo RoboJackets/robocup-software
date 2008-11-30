@@ -5,7 +5,7 @@
 
 #include <Team.h>
 
-#include "MainWindow.hpp"
+#include "Controller.hpp"
 
 void usage(const char* prog)
 {
@@ -19,7 +19,7 @@ int main (int argc, char* argv[])
 	QApplication app(argc, argv);
 
 	Team team = UnknownTeam;
-        QString cfgFile = "";
+        QString cfgFile = "Hello";
 
 	for (int i=0 ; i<argc; ++i)
 	{
@@ -33,9 +33,12 @@ int main (int argc, char* argv[])
 	    {
 		team = Blue;
 	    }
-	    else if(strcmp(var, "-c") == 0)
+	    else
 	    {
-                cfgFile = argv[i+1];
+		if (cfgFile != "")
+		{
+		    cfgFile = argv[i];
+		}
 	    }
 	}
 
@@ -46,8 +49,7 @@ int main (int argc, char* argv[])
 		return 0;
 	}
 
-	MainWindow win(team, cfgFile);
-	win.showMaximized();
-
-	return app.exec();
+        Motion::Controller* motion = new Motion::Controller(cfgFile);
+        motion->run();
+	return 0;
 }
