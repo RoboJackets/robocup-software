@@ -66,13 +66,13 @@ class Referee : public QMainWindow, Ui_MainWindow
 		/** Send game update info */
 		void gameUpdate();
 
-		///Update timers
+		/** Update timers */
 		void blueTimeOutUpdate();
 		void yellowTimeOutUpdate();
 		
-		///Generate functions for all our button presses.
+		///Generate functions for all our button presses///
 
-		///Blue team's buttons
+		/** Blue team's buttons */
 		void on_BlueGoalButton_clicked();
 		void on_MinusBlueButton_clicked();
 		void on_BlueTimeOutButton_clicked();
@@ -83,7 +83,7 @@ class Referee : public QMainWindow, Ui_MainWindow
 		void on_BlueYellowCardButton_clicked();
 		void on_BlueRedCardButton_clicked();
 
-		///Yellow team's buttons
+		/** Yellow team's buttons */
 		void on_YellowGoalButton_clicked();
 		void on_MinusYellowButton_clicked();
 		void on_YellowTimeOutButton_clicked();
@@ -94,40 +94,40 @@ class Referee : public QMainWindow, Ui_MainWindow
 		void on_YellowYellowCardButton_clicked();
 		void on_YellowRedCardButton_clicked();
 
-		///Game buttons
+		/** Game buttons */
 		void on_StartTimeButton_clicked();
 		void on_StopTimeButton_clicked();
 		void on_StartGameButton_clicked();
 		void on_StopGameButton_clicked();
 
-		///Functions to update handling the game timer
+		/** Functions to update handling the game timer */
 		void updateTimeElapsed();
 		void updateTimeRemaining();
 
-		///Functions to start and stop game timer.
+		/** Functions to start and stop game timer */
 		void startGameTimer();
 		void stopGameTimer();
 
-		///Functions to change goals
+		/** Functions to change goals */
 		void incrementBlueGoals();
 		void incrementYellowGoals();
 		void decrementBlueGoals();
 		void decrementYellowGoals();
 
-		//Functions to increment current period
+		/** Functions to increment current period */
 		void incrementCurrentPeriod();
 
-		///Function to reset game time labels
+		/** Function to reset game time labels */
 		void resetTimeLabels();
 
-		///Function to change the label of what period it is.
+		/** Function to change the label of what period it is */
 		void updatePeriodLabels();
 
-		///Function to update the time out time labels
+		/** Function to update the time out time labels */
 		void updateBlueTimeOutRemaining();
 		void updateYellowTimeOutRemaining();
 
-		///Function to update times out left label
+		/** Function to update times out left label */
 		void updateBlueTimeOutLabels();
 		void updateYellowTimeOutLabels();
 
@@ -137,31 +137,31 @@ class Referee : public QMainWindow, Ui_MainWindow
 		QTimer _blueTimeOutTimer;
 		QTimer _yellowTimeOutTimer;
 
-		///Number of referee packets to transmit in 1 second
+		/** Number of referee packets to transmit in 1 second */
 		static const int _hz = 10;
 
-		//Number of game updates to happen in 1 second
+		/** Number of game updates to happen in 1 second */
 		static const int _gameHz = 10;
 
-		///Number of MILLISECONDS in pregame interval
+		/** Number of MILLISECONDS in pregame interval */
 		static const int _preGameMsecs=5*60*1000;
 		
-		///Number of MILLISECONDs in first half
+		/** Number of MILLISECONDs in first half */
 		static const int _firstHalfMsecs=15*60*1000;
 
-		///Number of MILLISECONDS in second half
+		/** Number of MILLISECONDS in second half */
 		static const int _secondHalfMsecs=15*60*1000;
 
-		///Number of MILLISECONDS in half time
+		/** Number of MILLISECONDS in half time */
 		static const int _halfTimeMsecs=5*60*1000;
 
-		///Number of MILLISECONDS in first overtime
+		/** Number of MILLISECONDS in first overtime */
 		static const int _firstOvertimeMsecs=3*60*1000;
 
-		///Number of MILLISECONDS in second overtime
+		/** Number of MILLISECONDS in second overtime */
 		static const int _secondOvertimeMsecs=3*60*1000;
 
-		///Number of MILLISECONDS in each time out
+		/** Number of MILLISECONDS in each time out */
 		static const int _timeOutMsecs=10*60*1000;
 
 };
