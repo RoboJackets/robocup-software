@@ -1,5 +1,8 @@
-#include "Referee.hpp"
 #include <math.h>
+#include "Referee.hpp"
+#include "Serial.hpp"
+#include "GameInfo.hpp"
+#include "GameControl.hpp"
 
 Referee::Referee() :
 	QMainWindow()
@@ -40,6 +43,9 @@ Referee::Referee() :
 
 	/** setup transmit timer */
 	_txTimer.start(1000/Referee::_hz);
+	
+	// Testing
+	//GameControl gameControl;
 
 }
 
@@ -245,8 +251,10 @@ void Referee::on_YellowTimeOutButton_clicked()
 
 void Referee::on_YellowPenaltyButton_clicked()
 {
-
-printf("Debug.\n");
+    
+	printf("Debug.\n");
+	printf("Debug - Yellow Penalty testing.\n");
+	//gameControl.setPenalty(Yellow);
 
 }
 

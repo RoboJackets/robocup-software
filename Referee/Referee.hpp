@@ -3,6 +3,7 @@
 
 #include <ui_MainRef.h>
 #include <QTimer>
+#include "GameControl.hpp"
 
 class Referee : public QMainWindow, Ui_MainWindow
 {

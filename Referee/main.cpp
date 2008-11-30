@@ -9,5 +9,6 @@ int main(int argc,char* argv[])
 	Referee win;
 	win.show();
 	
+	
 	return application.exec();
 } 
