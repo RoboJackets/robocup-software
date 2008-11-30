@@ -150,11 +150,16 @@ class  GameControl {
 	/// types ///
 	public:
 		struct GameStatePacket{
-			char cmd;                      // current referee command
-			unsigned char cmd_counter;     // increments each time new command is set
-			unsigned char goals_blue;      // current score for blue team
-			unsigned char goals_yellow;    // current score for yellow team
-			unsigned short time_remaining; // seconds remaining for current game stage
+			/** current referee command */
+			char refereeCommand;
+			/** increments each time new command is set */
+			unsigned char commandCounter;  
+			/** current score for blue team */
+			unsigned char blueTeamScore; 
+			/** current score for yellow team */
+			unsigned char yellowTeamScore;
+			/** seconds remaining for current game stage */
+			unsigned short timeRemaining; 
 		};
 
 	/// methods ///
@@ -239,8 +244,8 @@ class  GameControl {
         bool readFile(const char *fileName);
         
         /** log commands, send them over serial and change game state */    
-        void sendCommand(const char cmd, const char *msg);
-        void ethernetSendCommand(const char cmd, const unsigned int counter);
+        void sendCommand(const char refereeCommand, const char *msg);
+        void ethernetSendCommand(const char refereeCommand, const unsigned int counter);
         char *concatTeam(char *msg, const char *msgPart, Team team);
 		
 		/// members ///

@@ -118,30 +118,30 @@ void GameControl::print(FILE *f)
 /** Send Commands
  *  log commands, send them over serial and change game state
  *  increment command counter */
-void GameControl::sendCommand(const char cmd, const char *msg)
+void GameControl::sendCommand(const char refereeCommand, const char *msg)
 {
-    _lastCommand = cmd;
+    _lastCommand = refereeCommand;
     _lastCommandCounter++;
 
-    ethernetSendCommand(cmd, _lastCommandCounter);
+    ethernetSendCommand(refereeCommand, _lastCommandCounter);
     
     if (_hasSerial)
     {
-    	_gameInfo.writeLog("Sending %c: %s", cmd, msg);
-        _serial.writeByte(cmd);
+    	_gameInfo.writeLog("Sending %c: %s", refereeCommand, msg);
+        _serial.writeByte(refereeCommand);
     }
 }
 
 
 /** send command to ethernet clients */
-void GameControl::ethernetSendCommand(const char cmd, const unsigned int counter)
+void GameControl::ethernetSendCommand(const char refereeCommand, const unsigned int counter)
 {
     GameStatePacket packet;
-    packet.cmd          = cmd;
-    packet.cmd_counter  = _lastCommandCounter & 0xFF;
-    packet.goals_blue   = _gameInfo.game.goals[Blue  ] & 0xFF;
-    packet.goals_yellow = _gameInfo.game.goals[Yellow] & 0xFF;
-    packet.time_remaining = htons((int)floor(_gameInfo.timeRemaining()));
+    packet.refereeCommand = refereeCommand;
+    packet.commandCounter = _lastCommandCounter & 0xFF;
+    packet.blueTeamScore = _gameInfo.game.goals[Blue  ] & 0xFF;
+    packet.yellowTeamScore = _gameInfo.game.goals[Yellow] & 0xFF;
+    packet.timeRemaining = htons((int)floor(_gameInfo.timeRemaining()));
 
     try
     {
