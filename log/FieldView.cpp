@@ -55,11 +55,21 @@ void FieldView::paintEvent(QPaintEvent* event)
 			const Packet::LogFrame::Robot& s = _frame->self[i];
 			const Packet::LogFrame::Robot& o = _frame->opp[i];
 			
-			drawRobot(painter, _team, s.shell, s.pos, s.angle);
-			drawRobot(painter, _team, o.shell, o.pos, o.angle);
+			if (s.valid)
+			{
+				drawRobot(painter, _team, s.shell, s.pos, s.angle);
+			}
+			
+			if (o.valid)
+			{
+				drawRobot(painter, _team, o.shell, o.pos, o.angle);
+			}
 		}
 		
-		drawBall(painter,_frame->ball.pos);
+		if (_frame->ball.valid)
+		{
+			drawBall(painter,_frame->ball.pos);
+		}
 	}
 }
 

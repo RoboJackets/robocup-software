@@ -24,6 +24,8 @@
 	<struct typename="Ball">
 		<member type="Point2d" name="pos" />
 		<member type="Point2d" name="vel" />
+		
+		<member type="bool" name="valid" value="false" />
 	</struct>
 	
 	<!-- unprocessed vision, in team space -->

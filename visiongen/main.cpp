@@ -69,7 +69,6 @@ class VisionSender : public QThread
 				//send real data
 				packet.sync = false;
 				packet.timestamp = timestamp();
-				packet.blue.push_back(r);
 			
 				rad += .025;
 				
@@ -93,6 +92,8 @@ class VisionSender : public QThread
 				}
 #endif
 				r.angle = 45.0f * _id;
+				
+				packet.blue.push_back(r);
 				
 				//send vision data
 				sender.send(packet);

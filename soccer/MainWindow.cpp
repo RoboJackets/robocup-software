@@ -7,7 +7,6 @@
 
 using namespace Log;
 
-
 MainWindow::MainWindow(Team t, QString filename) :
         QMainWindow(), _team(t), _processor(t), _logFile(0), _configFile(filename)
 {
@@ -62,7 +61,9 @@ MainWindow::~MainWindow()
 void MainWindow::setupModules()
 {
 	WorldModel* wm = new WorldModel();
+	
 	Motion::Controller* motion = new Motion::Controller(_configFile);
+	
 	Log::LogModule* lm = new Log::LogModule();
 	lm->setLogFile(_logFile);
 

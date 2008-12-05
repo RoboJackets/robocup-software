@@ -10,28 +10,20 @@ WorldModel::WorldModel() :
 
 void WorldModel::run()
 {
-	//calculate velocities for now
-	
-	/*
-	SystemState::WorldModelOut& state = _state->worldModelOut;
-	
-	Q_FOREACH (const Packet::LocVision::Robot& r, _state->vision.self)
+	Q_FOREACH(const Packet::Vision& vision, _state->rawVision)
 	{
-		SystemState::WorldModelOut::Robot& rb = state.robots[r.shell % 5];
-		rb.valid = true;
-		rb.pos = r.pos;
-	}
-	
-	for (unsigned int i=0 ; i<5 ; ++i)
-	{
-		state.robots[i].vel = state.robots[i].pos - _old.robots[i].pos;
-		
-		if (i == 0)
+		if (!vision.sync)
 		{
-			printf("speed: %f\n", state.robots[i].vel.mag());
+			//index is the id
+			Q_FOREACH (const Packet::Vision::Robot& r, vision.blue)
+			{
+				Packet::LogFrame::Robot& rb = _state->self[r.shell % 5];
+				rb.shell = r.shell;
+				rb.valid = true;
+				
+				rb.pos = r.pos;
+				rb.angle = r.angle;
+			}
 		}
 	}
-	
-	_old = state;
-	*/
 }

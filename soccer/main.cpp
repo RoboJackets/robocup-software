@@ -27,15 +27,15 @@ int main (int argc, char* argv[])
 
 	    if (strcmp(var, "-y") == 0)
 	    {
-		team = Yellow;
+	    	team = Yellow;
 	    }
 	    else if (strcmp(var, "-b") == 0)
 	    {
-		team = Blue;
+	    	team = Blue;
 	    }
 	    else if(strcmp(var, "-c") == 0)
 	    {
-                cfgFile = argv[i+1];
+	    	cfgFile = argv[i+1];
 	    }
 	}
 
