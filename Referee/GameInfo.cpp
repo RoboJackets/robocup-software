@@ -1,6 +1,10 @@
 #include <ostream>
 #include "GameInfo.hpp"
 
+GameInfo::~GameInfo(){
+
+}
+
 const char* strGameState[] = {
     "HALTED",
     "STOPPED",

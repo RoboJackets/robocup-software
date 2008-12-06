@@ -10,7 +10,7 @@ class Referee : public QMainWindow, Ui_MainWindow
 	Q_OBJECT;
 
 	public:
-		Referee();
+		Referee(GameControl &gc);
 		~Referee();
 
 
@@ -57,7 +57,10 @@ class Referee : public QMainWindow, Ui_MainWindow
 		/** Variable to hold current time out time */
 		int currBlueTimeOutTimer;
 		int currYellowTimeOutTimer;
-
+		
+	protected:
+		/** Non GUI Elements */
+		GameControl gameControl;
 
 
 	private Q_SLOTS:

@@ -13,6 +13,68 @@
 #include "Serial.hpp"
 #include "UDP_Broadcast.hpp"
 
+GameControl::GameControl(){
+	
+	const char *logFileName = "gamecontrol.log";
+	bool restart = false;
+	
+	/** HALT */
+    _lastCommand = 'H';
+    _lastCommandCounter = 0;
+    
+    /** set enabled to true */
+    _enabled = true;
+    
+    /** will be set to true if found */
+    _hasSerial = false;
+    
+    /** default serial device */
+    _serialDevice = (char *)"/dev/ttyS0";
+
+
+    /** default multicast address */
+    _multicastAddress = "224.5.29.1";
+    
+    /** default multicast port */
+    _multicastPort = 10001;
+    
+    try {
+        _broadcast.setDestination(_multicastAddress, _multicastPort);
+    }
+    catch (UDP_Broadcast::IOError& e)
+    {
+        std::cerr << "Broadcast: " << e.what() << std::endl;
+    }
+    
+    /** open the serial port */
+    fprintf(stderr, "Opening Serial Connection on device %s ...\n", _serialDevice);
+    if (!_serial.open(_serialDevice, COMM_BAUD_RATE)) {
+        fprintf(stderr, "ERROR: Cannot open serial connection..\n");
+        //return (false);
+    } else {
+        _hasSerial = true;
+    }
+    
+    /** intialize the timer */
+    _gameInfo.resetTimer();
+    _tLast = getCurrentTime();
+    
+    
+    if (!_gameInfo.openLog(logFileName)) {
+        fprintf(stderr, "ERROR: Cannot open log file %s..\n", logFileName);
+        //return (false);
+    } 
+
+    /** restart from saved state */
+   if (restart) {
+        _gameInfo.load(_saveName);
+   }
+       
+}
+
+GameControl::~GameControl(){
+
+}
 
 /** initialization */
 bool GameControl::init(const char *configFileName, const char *logFileName, bool restart) 
@@ -132,7 +194,6 @@ void GameControl::sendCommand(const char refereeCommand, const char *msg)
     }
 }
 
-
 /** send command to ethernet clients */
 void GameControl::ethernetSendCommand(const char refereeCommand, const unsigned int counter)
 {
@@ -219,7 +280,6 @@ void GameControl::stepTime()
     /** repeat last command (if someone missed it) */
     ethernetSendCommand(_lastCommand, _lastCommandCounter);
 }
-
 
 
 /** configuration
@@ -377,7 +437,6 @@ bool GameControl::beginPenaltyShootout()
     sendCommand(COMM_FIRST_HALF, "Begin Penalty shootout");
     return (true);
 }
-
 
 /** game control commands */
 bool GameControl::setHalt()

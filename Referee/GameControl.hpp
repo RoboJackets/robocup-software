@@ -164,6 +164,9 @@ class  GameControl {
 
 	/// methods ///
 	public:
+		GameControl();
+		~GameControl();
+		
 		/** initializes and sets up everything */
 		bool init(const char *configFileName, const char *logFileName, bool restart = false);
 

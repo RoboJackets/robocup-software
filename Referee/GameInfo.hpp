@@ -127,12 +127,13 @@ class GameInfo {
 		GameData game;
 		FILE *logfile;
 
+		
 		GameInfo() {
 			printf("Gameinfo\n");
 			memset(&game, 0, sizeof(game));
 			game.start = time(NULL);
 			game.time = getCurrentTime();
-		}
+		} 
 		~GameInfo();
 
 		bool openLog(const char *fileName) {

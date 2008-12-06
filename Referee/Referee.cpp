@@ -1,12 +1,11 @@
 #include <math.h>
 #include "Referee.hpp"
-#include "Serial.hpp"
-#include "GameInfo.hpp"
-#include "GameControl.hpp"
 
-Referee::Referee() :
+
+Referee::Referee(GameControl &gc) :
 	QMainWindow()
 {
+	
 	setupUi(this);
 
 	/** Initialize game variables */
@@ -44,8 +43,6 @@ Referee::Referee() :
 	/** setup transmit timer */
 	_txTimer.start(1000/Referee::_hz);
 	
-	// Testing
-	//GameControl gameControl;
 
 }
 
@@ -147,15 +144,17 @@ void Referee::gameUpdate()
 ///Start of blue buttons code
 void Referee::on_BlueGoalButton_clicked()
 {
-
-printf("Debug.\n");
+	bool result;
+	printf("Debug - Testing Blue Goal .\n");
+	result = gameControl.goalScored(Blue);
 
 }
 
 void Referee::on_MinusBlueButton_clicked()
 {
-
-printf("Debug.\n");
+	bool result;
+	printf("Debug - Testing Blue Goal minus.\n");
+	result = gameControl.removeGoal(Blue);
 
 }
 
@@ -177,42 +176,49 @@ void Referee::on_BlueTimeOutButton_clicked()
 void Referee::on_BluePenaltyButton_clicked()
 {
 
-printf("Debug.\n");
+	//printf("Debug.\n");
+	printf("Debug - Blue Penalty testing.\n");
+	gameControl.setPenalty(Blue);
 
 }
 
 void Referee::on_BlueKickOffButton_clicked()
 {
-
-printf("Debug.\n");
+	bool result;
+	printf("Debug.\n");
+	result = gameControl.setKickoff(Blue);
 
 }
 
 void Referee:: on_BlueFreeKickButton_clicked()
 {
-
-printf("Debug.\n");
+	bool result;
+	printf("Debug.\n");
+	result = gameControl.setDirect(Blue);
 
 }
 
 void Referee::on_BlueIndirectButton_clicked()
 {
-
-printf("Debug.\n");
+	bool result;
+	printf("Debug.\n");
+	result = gameControl.setIndirect(Blue);
 
 }
 
 void Referee::on_BlueYellowCardButton_clicked()
 {
-
-printf("Debug.\n");
+	bool result;
+	printf("Debug.\n");
+	result = gameControl.awardYellowCard(Blue);
 
 }
 
 void Referee::on_BlueRedCardButton_clicked()
 {
-
-printf("Debug.\n");
+	bool result;
+	printf("Debug.\n");
+	result = gameControl.awardRedCard(Blue);
 
 }
 
@@ -220,15 +226,17 @@ printf("Debug.\n");
 
 void Referee::on_YellowGoalButton_clicked()
 {
-
-printf("Debug.\n");
+	bool result;
+	printf("Debug - Testing Yellow Goal .\n");
+	result = gameControl.goalScored(Yellow);
 
 }
 
 void Referee::on_MinusYellowButton_clicked()
 {
-
-printf("Debug.\n");
+	bool result;
+	printf("Debug - Testing Yellow Goal minus.\n");
+	result = gameControl.removeGoal(Yellow);
 
 }
 
@@ -251,45 +259,50 @@ void Referee::on_YellowTimeOutButton_clicked()
 
 void Referee::on_YellowPenaltyButton_clicked()
 {
-    
-	printf("Debug.\n");
+    bool result;
 	printf("Debug - Yellow Penalty testing.\n");
-	//gameControl.setPenalty(Yellow);
+	result = gameControl.setPenalty(Yellow);
+	printf("Testing Set Penalty: %s\n", result ? "true" : "false");
 
 }
 
 void Referee::on_YellowKickOffButton_clicked()
 {
-
-printf("Debug.\n");
+	bool result;
+	printf("Debug.\n");
+	result = gameControl.setKickoff(Yellow);
 
 }
 
 void Referee::on_YellowFreeKickButton_clicked()
 {
-
-printf("Debug.\n");
+    bool result;
+	printf("Debug - Yellow Freekick testing.\n");
+	result = gameControl.setDirect(Yellow);
 
 }
 
 void Referee::on_YellowIndirectButton_clicked()
 {
-
-printf("Debug.\n");
-
+	bool result;
+	printf("Debug.\n");
+	result = gameControl.setIndirect(Yellow);
+	
 }
 
 void Referee::on_YellowYellowCardButton_clicked()
 {
-
-printf("Debug.\n");
+	bool result;
+	printf("Debug.\n");
+	result = gameControl.awardYellowCard(Yellow);
 
 }
 
 void Referee::on_YellowRedCardButton_clicked()
 {
-
-printf("Debug.\n");
+	bool result;
+	printf("Debug.\n");
+	result = gameControl.awardRedCard(Yellow);
 
 }
 
