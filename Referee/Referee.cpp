@@ -60,6 +60,8 @@ void Referee::txSend()
 ///This function updates the timers for time outs
 void Referee::blueTimeOutUpdate()
 {
+	printf("Debug - Testing blueTimeOutUpdate .\n");
+	
 	///Check to see if current time exceeds max time possible in current period.
 	if(Referee::currBlueTimeOutTimer >= Referee::_timeOutMsecs) {
 
@@ -90,6 +92,8 @@ void Referee::blueTimeOutUpdate()
 ///This function updats the timers for time outs
 void Referee::yellowTimeOutUpdate()
 {
+	printf("Debug - Testing yellowTimeOutUpdate .\n");
+	
 	///Check to see if current time exceeds max time possible in current period.
 	if(Referee::currYellowTimeOutTimer >= Referee::_timeOutMsecs) {
 
@@ -117,10 +121,13 @@ void Referee::yellowTimeOutUpdate()
 
 }
 
-
 ///This function updates the labels of the game timers when the game is being played.
 void Referee::gameUpdate()
 {
+	printf("Debug - Testing gameUpdate .\n");
+	
+	
+	
 	///Check to see if current time exceeds max time possible in current period.
 	if(Referee::currMilliseconds >= Referee::maxMilliseconds) {
 
@@ -145,7 +152,7 @@ void Referee::gameUpdate()
 void Referee::on_BlueGoalButton_clicked()
 {
 	bool result;
-	printf("Debug - Testing Blue Goal .\n");
+	printf("Debug - Blue Goal.\n");
 	result = gameControl.goalScored(Blue);
 
 }
@@ -153,13 +160,17 @@ void Referee::on_BlueGoalButton_clicked()
 void Referee::on_MinusBlueButton_clicked()
 {
 	bool result;
-	printf("Debug - Testing Blue Goal minus.\n");
+	printf("Debug - Blue Goal Minus.\n");
 	result = gameControl.removeGoal(Blue);
 
 }
 
 void Referee::on_BlueTimeOutButton_clicked()
 {
+	
+	bool result;
+	printf("Debug - Blue Time Out.\n");
+	result = gameControl.beginTimeout(Blue);
 
 	///Make sure blue timer is not active
 	if(_blueTimeOutTimer.timerId() == -1) {
@@ -177,7 +188,7 @@ void Referee::on_BluePenaltyButton_clicked()
 {
 
 	//printf("Debug.\n");
-	printf("Debug - Blue Penalty testing.\n");
+	printf("Debug - Blue Penalty.\n");
 	gameControl.setPenalty(Blue);
 
 }
@@ -185,7 +196,7 @@ void Referee::on_BluePenaltyButton_clicked()
 void Referee::on_BlueKickOffButton_clicked()
 {
 	bool result;
-	printf("Debug.\n");
+	printf("Debug - Blue Kickoff.\n");
 	result = gameControl.setKickoff(Blue);
 
 }
@@ -193,7 +204,7 @@ void Referee::on_BlueKickOffButton_clicked()
 void Referee:: on_BlueFreeKickButton_clicked()
 {
 	bool result;
-	printf("Debug.\n");
+	printf("Debug - Blue Free Kick.\n");
 	result = gameControl.setDirect(Blue);
 
 }
@@ -201,7 +212,7 @@ void Referee:: on_BlueFreeKickButton_clicked()
 void Referee::on_BlueIndirectButton_clicked()
 {
 	bool result;
-	printf("Debug.\n");
+	printf("Debug - Blue Indirect.\n");
 	result = gameControl.setIndirect(Blue);
 
 }
@@ -209,7 +220,7 @@ void Referee::on_BlueIndirectButton_clicked()
 void Referee::on_BlueYellowCardButton_clicked()
 {
 	bool result;
-	printf("Debug.\n");
+	printf("Debug - Blue Yellow Card.\n");
 	result = gameControl.awardYellowCard(Blue);
 
 }
@@ -217,17 +228,17 @@ void Referee::on_BlueYellowCardButton_clicked()
 void Referee::on_BlueRedCardButton_clicked()
 {
 	bool result;
-	printf("Debug.\n");
+	printf("Debug - Blue Red Card.\n");
 	result = gameControl.awardRedCard(Blue);
 
 }
 
-///Start of yellow buttons code
+/// Start of yellow buttons code ///
 
 void Referee::on_YellowGoalButton_clicked()
 {
 	bool result;
-	printf("Debug - Testing Yellow Goal .\n");
+	printf("Debug - Yellow Goal .\n");
 	result = gameControl.goalScored(Yellow);
 
 }
@@ -235,13 +246,16 @@ void Referee::on_YellowGoalButton_clicked()
 void Referee::on_MinusYellowButton_clicked()
 {
 	bool result;
-	printf("Debug - Testing Yellow Goal minus.\n");
+	printf("Debug - Yellow Goal Minus.\n");
 	result = gameControl.removeGoal(Yellow);
 
 }
 
 void Referee::on_YellowTimeOutButton_clicked()
 {
+	bool result;
+	printf("Debug - Yellow Time Out.\n");
+	result = gameControl.beginTimeout(Yellow);
 
 	///Make sure yello timer is not active
 	if(_yellowTimeOutTimer.timerId() == -1) {
@@ -260,16 +274,16 @@ void Referee::on_YellowTimeOutButton_clicked()
 void Referee::on_YellowPenaltyButton_clicked()
 {
     bool result;
-	printf("Debug - Yellow Penalty testing.\n");
+	printf("Debug - Yellow Penalty.\n");
 	result = gameControl.setPenalty(Yellow);
-	printf("Testing Set Penalty: %s\n", result ? "true" : "false");
+	//printf("Testing Set Penalty: %s\n", result ? "true" : "false");
 
 }
 
 void Referee::on_YellowKickOffButton_clicked()
 {
 	bool result;
-	printf("Debug.\n");
+	printf("Debug - Yellow Kickoff.\n");
 	result = gameControl.setKickoff(Yellow);
 
 }
@@ -277,7 +291,7 @@ void Referee::on_YellowKickOffButton_clicked()
 void Referee::on_YellowFreeKickButton_clicked()
 {
     bool result;
-	printf("Debug - Yellow Freekick testing.\n");
+	printf("Debug - Yellow Freekick.\n");
 	result = gameControl.setDirect(Yellow);
 
 }
@@ -285,7 +299,7 @@ void Referee::on_YellowFreeKickButton_clicked()
 void Referee::on_YellowIndirectButton_clicked()
 {
 	bool result;
-	printf("Debug.\n");
+	printf("Debug - Yellow Indirect.\n");
 	result = gameControl.setIndirect(Yellow);
 	
 }
@@ -293,7 +307,7 @@ void Referee::on_YellowIndirectButton_clicked()
 void Referee::on_YellowYellowCardButton_clicked()
 {
 	bool result;
-	printf("Debug.\n");
+	printf("Debug - Yellow Yellow Card.\n");
 	result = gameControl.awardYellowCard(Yellow);
 
 }
@@ -301,36 +315,49 @@ void Referee::on_YellowYellowCardButton_clicked()
 void Referee::on_YellowRedCardButton_clicked()
 {
 	bool result;
-	printf("Debug.\n");
+	printf("Debug - Yellow Red Card.\n");
 	result = gameControl.awardRedCard(Yellow);
 
 }
-
 
 ///Start of game buttons code
 void Referee::on_StartTimeButton_clicked()
 {
 	Referee::startGameTimer();
+	
+	bool result;
+	printf("Debug - Start Time.\n");
+	result = gameControl.setReady();
 
 }
 
 void Referee::on_StopTimeButton_clicked()
 {
 	Referee::stopGameTimer();
+	
+	bool result;
+	printf("Debug - Stop Time.\n");
+	result = gameControl.setHalt();
 
 }
 
 void Referee::on_StartGameButton_clicked()
 {
 
-printf("Debug.\n");
+	//printf("Debug.\n");
+	bool result;
+	printf("Debug - Start Game.\n");
+	result = gameControl.setStart();
 
 }
 
 void Referee::on_StopGameButton_clicked()
 {
 
-printf("Debug.\n");
+	//printf("Debug.\n");
+	bool result;
+	printf("Debug - Stop Game.\n");
+	result = gameControl.setStop();
 
 }
 
