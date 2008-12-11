@@ -57,6 +57,7 @@ class Referee : public QMainWindow, Ui_MainWindow
 		/** Variable to hold current time out time */
 		int currBlueTimeOutTimer;
 		int currYellowTimeOutTimer;
+	
 		
 	protected:
 		/** Non GUI Elements */
@@ -73,6 +74,9 @@ class Referee : public QMainWindow, Ui_MainWindow
 		/** Update timers */
 		void blueTimeOutUpdate();
 		void yellowTimeOutUpdate();
+		
+		/** idle() slot */
+		void idle();
 		
 		///Generate functions for all our button presses///
 
@@ -140,6 +144,10 @@ class Referee : public QMainWindow, Ui_MainWindow
 		QTimer _gameTimer;
 		QTimer _blueTimeOutTimer;
 		QTimer _yellowTimeOutTimer;
+		QTimer _idleTimer;
+		
+		/** function */
+		void setActiveWidgets(const EnableState &es);
 
 		/** Number of referee packets to transmit in 1 second */
 		static const int _hz = 10;

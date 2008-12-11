@@ -39,10 +39,19 @@ Referee::Referee(GameControl &gc) :
 
 	/** Connect to the timer that controls yellow team's time outs */
 	connect(&_blueTimeOutTimer, SIGNAL(timeout()), SLOT(blueTimeOutUpdate()));
+	
+	/** Connect to the timer that handles idle time processing */
+	connect(&_idleTimer, SIGNAL(timeout()), SLOT(idle()));
 
 	/** setup transmit timer */
 	_txTimer.start(1000/Referee::_hz);
 	
+	// For testing only - remove when finished
+	//BluePenaltyButton->setEnabled(false);
+	//BluePenaltyButton->setDisabled(true);
+	//BlueYellowCardButton->setText("Mitch");
+	//TimeRemainingYellowText->setText("Mitch");
+	//_idleTimer.start(1000);
 
 }
 
@@ -325,9 +334,10 @@ void Referee::on_StartTimeButton_clicked()
 {
 	Referee::startGameTimer();
 	
-	bool result;
+	// temporarily commented out
+	//bool result;
 	printf("Debug - Start Time.\n");
-	result = gameControl.setReady();
+	//result = gameControl.setReady();
 
 }
 
@@ -335,29 +345,30 @@ void Referee::on_StopTimeButton_clicked()
 {
 	Referee::stopGameTimer();
 	
-	bool result;
+	// temporarily commented out
+	//bool result;
 	printf("Debug - Stop Time.\n");
-	result = gameControl.setHalt();
+	//result = gameControl.setHalt();
 
 }
 
 void Referee::on_StartGameButton_clicked()
 {
-
+	// temporarily commented out
 	//printf("Debug.\n");
-	bool result;
+	//bool result;
 	printf("Debug - Start Game.\n");
-	result = gameControl.setStart();
+	//result = gameControl.setStart();
 
 }
 
 void Referee::on_StopGameButton_clicked()
 {
-
+    // temporarily commented out
 	//printf("Debug.\n");
-	bool result;
+	//bool result;
 	printf("Debug - Stop Game.\n");
-	result = gameControl.setStop();
+	//result = gameControl.setStop();
 
 }
 
@@ -645,3 +656,116 @@ void Referee::updateYellowTimeOutLabels()
 	YellowTimeOutsLeftText->setText(buf);
 }
 
+void Referee::setActiveWidgets(const EnableState &es)
+{
+	// Test
+	printf("Debug - Inside setActiveWidgets.\n");
+	
+	/** Game Control Buttons */
+	StartTimeButton->setEnabled(es.ready);
+	StopTimeButton->setEnabled(es.halt);
+	StartGameButton->setEnabled(es.start);
+	StopGameButton->setEnabled(es.stop);
+	
+	/** Yellow Team Buttons*/
+	YellowGoalButton->setEnabled(es.goal[Yellow]);
+	MinusYellowButton->setEnabled(es.subgoal[Yellow]);
+	YellowTimeOutButton->setEnabled(es.timeout[Yellow]);
+	YellowPenaltyButton->setEnabled(es.penalty[Yellow]);
+	YellowKickOffButton->setEnabled(es.kickoff[Yellow]);
+	YellowFreeKickButton->setEnabled(es.direct[Yellow]);
+	YellowIndirectButton->setEnabled(es.indirect[Yellow]);
+	YellowYellowCardButton->setEnabled(es.cards);
+	YellowRedCardButton->setEnabled(es.cards);
+	
+	/** Blue Team Buttons*/
+	BlueGoalButton->setEnabled(es.goal[Blue]);
+	MinusBlueButton->setEnabled(es.subgoal[Blue]);
+	BlueTimeOutButton->setEnabled(es.timeout[Blue]);
+	BluePenaltyButton->setEnabled(es.penalty[Blue]);
+	BlueKickOffButton->setEnabled(es.kickoff[Blue]);
+	BlueFreeKickButton->setEnabled(es.direct[Blue]);
+	BlueIndirectButton->setEnabled(es.indirect[Blue]);
+	BlueYellowCardButton->setEnabled(es.cards);
+	BlueRedCardButton->setEnabled(es.cards);
+	
+}
+
+void Referee::idle()
+{
+	   //Test
+	   printf("Debug - Inside idle().\n");
+	   
+	   // First get new time step
+	   gameControl.stepTime();
+	   char str[1024];
+	   GameInfo gi = gameControl.getGameInfo();
+	   
+	   // Update the Gui
+	   GameStatusText->setText(gi.getStateString());
+
+	   /** deprecated */
+	   //teamname_blue.set_text( gi.game.teamNames[Blue] );
+	   //teamname_yellow.set_text( gi.game.teamNames[Yellow] );
+	   
+
+	   if (gi.game.stage == PENALTY_SHOOTOUT) {
+	      // Needs extra handling.
+	      sprintf(str, "%2i", gi.game.goals[Yellow]);
+	      YellowScoreText->setText(str);
+	      sprintf(str, "%2i", gi.game.goals[Blue]);
+	      BlueScoreText->setText(str);
+
+	      sprintf(str, "Penalties:\n %i - %i\n", gi.game.penaltyGoals[Yellow], gi.game.penaltyGoals[Blue]);
+	      //time_label.set_text( str );
+	   } else {
+	      sprintf(str, "%2i", gi.game.goals[Yellow]);
+	      YellowScoreText->setText(str);
+	      sprintf(str, "%2i", gi.game.goals[Blue]);
+	      BlueScoreText->setText(str);
+
+	      sprintf(str, "%s\n%2i:%04.1f\n%2i:%04.1f", 
+	              gi.getStageString(),
+	              DISP_MIN(gi.timeTaken()),
+	              DISP_SEC(gi.timeTaken()),
+	              DISP_MIN(gi.timeRemaining()), 
+	              DISP_SEC(gi.timeRemaining()));
+	      //time_label.set_text( str );
+	   }
+	   
+	   sprintf(str, "%i", gi.nrTimeouts(Yellow) );
+	   YellowTimeOutsLeftText->setText(str);
+	   sprintf(str, "%i", gi.nrTimeouts(Blue) );
+	   BlueTimeOutsLeftText->setText(str);
+	   
+	   sprintf(str, "%2i:%04.1f",DISP_MIN(gi.timeoutRemaining(Yellow)),DISP_SEC(gi.timeoutRemaining(Yellow)));
+	   TimeRemainingYellowText->setText(str);
+
+	   if (gi.penaltyTimeRemaining(Yellow) > 0) {
+	     sprintf(str, "%2i:%04.1f",DISP_MIN(gi.penaltyTimeRemaining(Yellow)),DISP_SEC(gi.penaltyTimeRemaining(Yellow)));
+	     YellowYellowCardButton->setText(str);
+	     YellowYellowCardButton->setEnabled(false);
+	   }
+	   else {
+		   YellowYellowCardButton->setText("Yellow Card"); 
+		   YellowYellowCardButton->setEnabled(true);
+	   }
+	       
+	   sprintf(str, "%2i:%04.1f",DISP_MIN(gi.timeoutRemaining(Blue)),DISP_SEC(gi.timeoutRemaining(Blue)));
+	   TimeRemainingBlueText->setText(str);
+
+	   if (gi.penaltyTimeRemaining(Blue) > 0) {
+	     sprintf(str, "%2i:%04.1f",DISP_MIN(gi.penaltyTimeRemaining(Blue)),DISP_SEC(gi.penaltyTimeRemaining(Blue)));
+	     BlueYellowCardButton->setText(str);
+	     BlueYellowCardButton->setEnabled(false);
+	   }
+	   else {
+		 BlueYellowCardButton->setText("Yellow Card");
+		 BlueYellowCardButton->setEnabled(true);
+	   }
+	   
+	   setActiveWidgets(gameControl.getEnableState());
+	   
+	   usleep(50000);
+	   
+}

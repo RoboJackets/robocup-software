@@ -14,61 +14,6 @@
 #include "UDP_Broadcast.hpp"
 
 GameControl::GameControl(){
-	
-	const char *logFileName = "gamecontrol.log";
-	bool restart = false;
-	
-	/** HALT */
-    _lastCommand = 'H';
-    _lastCommandCounter = 0;
-    
-    /** set enabled to true */
-    _enabled = true;
-    
-    /** will be set to true if found */
-    _hasSerial = false;
-    
-    /** default serial device */
-    _serialDevice = (char *)"/dev/ttyS0";
-
-
-    /** default multicast address */
-    _multicastAddress = "224.5.29.1";
-    
-    /** default multicast port */
-    _multicastPort = 10001;
-    
-    try {
-        _broadcast.setDestination(_multicastAddress, _multicastPort);
-    }
-    catch (UDP_Broadcast::IOError& e)
-    {
-        std::cerr << "Broadcast: " << e.what() << std::endl;
-    }
-    
-    /** open the serial port */
-    fprintf(stderr, "Opening Serial Connection on device %s ...\n", _serialDevice);
-    if (!_serial.open(_serialDevice, COMM_BAUD_RATE)) {
-        fprintf(stderr, "ERROR: Cannot open serial connection..\n");
-        //return (false);
-    } else {
-        _hasSerial = true;
-    }
-    
-    /** intialize the timer */
-    _gameInfo.resetTimer();
-    _tLast = getCurrentTime();
-    
-    
-    if (!_gameInfo.openLog(logFileName)) {
-        fprintf(stderr, "ERROR: Cannot open log file %s..\n", logFileName);
-        //return (false);
-    } 
-
-    /** restart from saved state */
-   if (restart) {
-        _gameInfo.load(_saveName);
-   }
        
 }
 
@@ -116,15 +61,15 @@ bool GameControl::init(const char *configFileName, const char *logFileName, bool
     {
         std::cerr << "Broadcast: " << e.what() << std::endl;
     }
-
-    /** for testing */
+    
+    // a little user output
     print();
 
     /** open the serial port */
     fprintf(stderr, "Opening Serial Connection on device %s ...\n", _serialDevice);
     if (!_serial.open(_serialDevice, COMM_BAUD_RATE)) {
         fprintf(stderr, "ERROR: Cannot open serial connection..\n");
-        //return (false);
+        //return (false);  // temporarily commented out
     } else {
         _hasSerial = true;
     }
@@ -156,7 +101,7 @@ void GameControl::close()
 void GameControl::print(FILE *f) 
 {
     fprintf(f, "Game Settings\n");
-    fprintf(f, "\t\timeLimits : First Half %i:%02i\n", 
+    fprintf(f, "\ttimeLimits : First Half %i:%02i\n", 
     		DISP_MIN(_gameInfo.game.timeLimits[FIRST_HALF]), 
     		(int)DISP_SEC(_gameInfo.game.timeLimits[FIRST_HALF]));
     fprintf(f, "\t\tHalf time %i:%02i\n",
@@ -490,7 +435,7 @@ bool GameControl::setStart()
     } else {
         /**    if (!_gameInfo.isTimeout() && _gameInfo.isStopped()) { */
         if (!_gameInfo.isTimeout()) {
-            sendCommand(COMM_START, "STarting robots");
+            sendCommand(COMM_START, "Starting robots");
             _gameInfo.setRunning();
       
             /** progress into the first half upon the start signal */
