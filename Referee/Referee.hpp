@@ -75,7 +75,7 @@ class Referee : public QMainWindow, Ui_MainWindow
 		void blueTimeOutUpdate();
 		void yellowTimeOutUpdate();
 		
-		/** idle() slot */
+		/** slot for idle processing */
 		void idle();
 		
 		///Generate functions for all our button presses///
@@ -107,6 +107,7 @@ class Referee : public QMainWindow, Ui_MainWindow
 		void on_StopTimeButton_clicked();
 		void on_StartGameButton_clicked();
 		void on_StopGameButton_clicked();
+		void on_CancelButton_clicked();
 
 		/** Functions to update handling the game timer */
 		void updateTimeElapsed();

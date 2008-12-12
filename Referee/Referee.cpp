@@ -372,6 +372,16 @@ void Referee::on_StopGameButton_clicked()
 
 }
 
+void Referee::on_CancelButton_clicked()
+{
+    // temporarily commented out
+	//printf("Debug.\n");
+	//bool result;
+	printf("Debug - Cancel.\n");
+	//result = gameControl.setCancel();
+
+}
+
 ///This function updates the Time Elapsed button inside the GUI.
 void Referee::updateTimeElapsed()
 {
@@ -666,6 +676,7 @@ void Referee::setActiveWidgets(const EnableState &es)
 	StopTimeButton->setEnabled(es.halt);
 	StartGameButton->setEnabled(es.start);
 	StopGameButton->setEnabled(es.stop);
+	CancelButton->setEnabled(es.cancel);
 	
 	/** Yellow Team Buttons*/
 	YellowGoalButton->setEnabled(es.goal[Yellow]);
