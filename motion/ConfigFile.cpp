@@ -28,7 +28,6 @@ void ConfigFile::load() throw (std::runtime_error)
 		throw std::runtime_error("Unable to open config file.");
 	}
 
-
 // 	QStringList lines;
 // 	if (configFile.open(QIODevice::ReadOnly)) {
 // 	    QTextStream stream( &configFile );

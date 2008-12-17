@@ -1,8 +1,10 @@
 #ifndef ROBOT_HPP_
 #define ROBOT_HPP_
 
+#include <Team.h>
 #include "ConfigFile.hpp"
 #include "Pid.hpp"
+#include "framework/Module.hpp"
 
 class Robot
 {
@@ -24,6 +26,8 @@ class Robot
 	public:
 		Robot(ConfigFile::RobotCfg cfg);
 		~Robot();
+
+                void setSystemState(SystemState* state);
 
 		/** Process the command for a robot and prepare output */
 		void proc();
@@ -53,6 +57,13 @@ class Robot
 		Pid* _anglePID;
 
 		float* _motors;
+
+
+                /** team we are running as */
+		Team _team;
+
+                /** SystemState **/
+                SystemState* _state;
 
                 /*
 		PathPlanner* _pathPlanner;

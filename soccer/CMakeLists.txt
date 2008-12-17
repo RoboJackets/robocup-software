@@ -24,7 +24,7 @@ set (SRCS
 	main.cpp
 	Processor.cpp
 	MainWindow.cpp
-	
+
 	module/WorldModel.cpp
 )
 

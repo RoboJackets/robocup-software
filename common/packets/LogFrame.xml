@@ -1,43 +1,54 @@
 <struct typename="LogFrame">
 	<struct typename="Vision" include_cpp="Vision.hpp" external_cpp="Packet::Vision" external_python="Packet.Vision" />
 	<struct typename="Point2d" include_cpp="Geometry/Point2d.hpp" external_cpp="Geometry::Point2d" external_python="Geometry.Point2d" />
-	
+	<struct typename="RadioTx" include_cpp="RadioTx.hpp" external_cpp="Packet::RadioTx" external_python="Packet.RadioTx"/>
+
 	<!-- post process robot information -->
 	<struct typename="Robot">
 		<!-- shell id, used for debug -->
 		<member type="uint8" name="shell" />
-		
+
 		<!-- position of the robot -->
 		<member type="Point2d" name="pos" />
-		
+
 		<!-- velocity of the robot -->
 		<member type="Point2d" name="vel" />
-		
+
+		<!-- commanded position of the robot -->
+		<member type="Point2d" name="cmdPos" />
+
+		<!-- commanded velocity of the robot -->
+		<member type="Point2d" name="cmdVel" />
+
 		<!-- angle of the robot (+- 180 degrees -->
 		<member type="float" name="angle" />
-		
+
 		<!-- if true, this robot is active for use -->
 		<member type="bool" name="valid" value="false" />
 	</struct>
-	
+
 	<!-- post processed ball information -->
 	<struct typename="Ball">
 		<member type="Point2d" name="pos" />
 		<member type="Point2d" name="vel" />
-		
+
 		<member type="bool" name="valid" value="false" />
 	</struct>
-	
+
 	<!-- unprocessed vision, in team space -->
 	<array type="Packet::Vision" name="rawVision" />
-	
+
 	<!-- timestamp of the vision packet that clocked the system -->
 	<member type="uint64" name="timestamp" />
-	
+
+	<!-- Commands to the robots -->
+	<member type="RadioTx" name="radioCmd" />
+
+
 	<!-- array of robots for the system, index is player id -->
 	<array size="5" type="Robot" name="self"/>
 	<array size="5" type="Robot" name="opp"/>
-	
+
 	<!-- gameplay ball -->
 	<member type="Ball" name="ball" />
 </struct>

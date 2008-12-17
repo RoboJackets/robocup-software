@@ -13,7 +13,7 @@ InputHandler::InputHandler() :
 	_controller = new Gamepad("/dev/input/js0");
     _roller = 0;
     _rid = 0;
-	
+
 	_axels.push_back(Point2d(1,-1));
 	_axels.push_back(Point2d(-1,-1));
 	_axels.push_back(Point2d(-1,1));

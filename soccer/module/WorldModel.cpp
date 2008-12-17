@@ -5,7 +5,7 @@
 WorldModel::WorldModel() :
 	Module("World Model")
 {
-	
+
 }
 
 void WorldModel::run()
@@ -20,7 +20,7 @@ void WorldModel::run()
 				Packet::LogFrame::Robot& rb = _state->self[r.shell % 5];
 				rb.shell = r.shell;
 				rb.valid = true;
-				
+
 				rb.pos = r.pos;
 				rb.angle = r.angle;
 			}

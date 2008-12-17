@@ -1,40 +1,65 @@
 #include "Robot.hpp"
 
 #include <Geometry/Point2d.hpp>
+#include <Team.h>
+#include "ConfigFile.hpp"
+#include "Pid.hpp"
+#include "framework/Module.hpp"
 
 using namespace Geometry;
 
 Robot::Robot(ConfigFile::RobotCfg cfg):
-	_id(cfg.id)
+    _id(cfg.id)
 {
-	_axels = cfg.axels;
-	_motors = new float[_axels.size()];
+    _axels = cfg.axels;
+    _motors = new float[_axels.size()];
 
-	//clear initial motor values
-	for (unsigned int i=0 ; i<4 ; ++i)
-	{
-		_motors[i] = 0;
-	}
+    //clear initial motor values
+    for (unsigned int i=0 ; i<4 ; ++i)
+    {
+	    _motors[i] = 0;
+    }
 
-	ConfigFile::PidInfo pos = cfg.posPid;
-	ConfigFile::PidInfo angle = cfg.anglePid;
+    ConfigFile::PidInfo pos = cfg.posPid;
+    ConfigFile::PidInfo angle = cfg.anglePid;
 
-	_posPID = new Pid(pos.p, pos.i, pos.d, pos.windup);
-	_anglePID = new Pid(angle.p, angle.i, angle.d, angle.windup);
+    _posPID = new Pid(pos.p, pos.i, pos.d, pos.windup);
+    _anglePID = new Pid(angle.p, angle.i, angle.d, angle.windup);
 
-	//_pathPlanner = 0;
+    //_pathPlanner = 0;
 }
 
 Robot::~Robot()
 {
-	delete _posPID;
-	delete _anglePID;
+    delete _posPID;
+    delete _anglePID;
 
-	delete[] _motors;
+    delete[] _motors;
 }
+
+void Robot::setSystemState(SystemState* state)
+{
+    _state = state;
+}
+
 
 void Robot::proc()
 {
+    float currAngle;
+    Geometry::Point2d currPos;
+    Geometry::Point2d currVel;
+    VelocityCmd velCmd;
+
+    if(_state->self[_id].valid)
+    {
+        currPos = _state->self[_id].pos;
+        currVel = _state->self[_id].vel;
+        currAngle = _state->self[_id].angle;
+
+        velCmd.vel = _state->self[_id].cmdVel;
+
+        genMotor(velCmd);
+    }
     /*
 	if (_self.valid)
 	{
@@ -141,63 +166,64 @@ void Robot::proc()
 
 void Robot::genMotor(VelocityCmd velCmd)
 {
-	//clip the maximum spin velocity
-	const float clip = 150;
-	if (velCmd.w > clip)
+    //clip the maximum spin velocity
+    const float clip = 150;
+    if (velCmd.w > clip)
+    {
+	velCmd.w = clip;
+    }
+    else if (velCmd.w < -clip)
+    {
+	velCmd.w = -clip;
+    }
+
+    float max = 0;
+    float mTemp[_axels.size()];
+    float scale = 1;
+
+    int i=0;
+    Q_FOREACH(Geometry::Point2d axel, _axels)
+    {
+	//TODO - need to give the robots thier position info
+	//axel.rotate(Point2d(0,0), _self.theta);
+
+	//velocity in direction of wheel
+	float v = axel.perpCW().dot(velCmd.vel);
+	v += velCmd.w;
+
+	//if greater than old max, set as max
+	if (fabs(v) > max)
 	{
-		velCmd.w = clip;
-	}
-	else if (velCmd.w < -clip)
-	{
-		velCmd.w = -clip;
-	}
-
-	float max = 0;
-	float mTemp[_axels.size()];
-	float scale = 1;
-
-	int i=0;
-	Q_FOREACH(Geometry::Point2d axel, _axels)
-	{
-                //TODO - need to give the robots thier position info
-		//axel.rotate(Point2d(0,0), _self.theta);
-
-		//velocity in direction of wheel
-		float v = axel.perpCW().dot(velCmd.vel);
-		v += velCmd.w;
-
-		//if greater than old max, set as max
-		if (fabs(v) > max)
-		{
-			max = fabs(v);
-		}
-
-		mTemp[i++] = v;
+		max = fabs(v);
 	}
 
-	const float mMax = velCmd.maxWheelSpeed;
+	mTemp[i++] = v;
+    }
 
-	if (max > mMax)
+    const float mMax = velCmd.maxWheelSpeed;
+
+    if (max > mMax)
+    {
+	scale = mMax/max;
+    }
+
+    for (unsigned int i=0; i<4; ++i)
+    {
+	const float req = mTemp[i] * scale;
+
+	float change = req - _motors[i];
+
+	const float mChange = 10.0;
+	if (fabs(change) > mChange)
 	{
-		scale = mMax/max;
+		change = mChange/change * fabs(change);
 	}
 
-	for (unsigned int i=0; i<4; ++i)
-	{
-		const float req = mTemp[i] * scale;
+	_motors[i] += change;
 
-		float change = req - _motors[i];
-
-		const float mChange = 10.0;
-		if (fabs(change) > mChange)
-		{
-			change = mChange/change * fabs(change);
-		}
-
-		_motors[i] += change;
-
-		//_comm.motor[i] = (int8_t)(_motors[i]);
-	}
+        _state->radioCmd.robots[_id].motors[i] = (int8_t)(_motors[i]);;
+        //_comm.motor[i] = (int8_t)(_motors[i]);
+    }
 }
 
 void Robot::clearPid()

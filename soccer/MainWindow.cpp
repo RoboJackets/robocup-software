@@ -4,6 +4,7 @@
 #include <QGridLayout>
 
 #include "module/modules.hpp"
+#include "Gamepad.hpp"
 
 using namespace Log;
 
@@ -34,7 +35,7 @@ MainWindow::MainWindow(Team t, QString filename) :
 
 	_logFile = new LogFile(LogFile::genFilename());
 
-	setupModules();
+        setupModules();
 
 	_logControl->setLogFile(_logFile);
 	connect(_logControl, SIGNAL(newFrame(Packet::LogFrame*)), _fieldView, SLOT(frame(Packet::LogFrame*)));
@@ -61,9 +62,9 @@ MainWindow::~MainWindow()
 void MainWindow::setupModules()
 {
 	WorldModel* wm = new WorldModel();
-	
+
 	Motion::Controller* motion = new Motion::Controller(_configFile);
-	
+
 	Log::LogModule* lm = new Log::LogModule();
 	lm->setLogFile(_logFile);
 
