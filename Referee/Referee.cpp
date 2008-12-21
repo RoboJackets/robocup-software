@@ -1,4 +1,5 @@
 #include <math.h>
+#include <qfont.h>
 #include "Referee.hpp"
 
 
@@ -182,15 +183,15 @@ void Referee::on_BlueTimeOutButton_clicked()
 	result = gameControl.beginTimeout(Blue);
 
 	///Make sure blue timer is not active
-	if(_blueTimeOutTimer.timerId() == -1) {
-		///Make sure there are enough time outs, that another time out clock isn't running, and that the game is playing
-		if( (blueTimeOuts >= 1) && (_yellowTimeOutTimer.timerId()==-1) && (currGameState==1)) {
-			_blueTimeOutTimer.start(100);
-			Referee::stopGameTimer();
-			Referee::blueTimeOuts--;
-			Referee::updateBlueTimeOutLabels();
-		}
-	}
+//	if(_blueTimeOutTimer.timerId() == -1) {
+//		///Make sure there are enough time outs, that another time out clock isn't running, and that the game is playing
+//		if( (blueTimeOuts >= 1) && (_yellowTimeOutTimer.timerId()==-1) && (currGameState==1)) {
+//			_blueTimeOutTimer.start(100);
+//			Referee::stopGameTimer();
+//			Referee::blueTimeOuts--;
+//			Referee::updateBlueTimeOutLabels();
+//		}
+//	}
 }
 
 void Referee::on_BluePenaltyButton_clicked()
@@ -254,10 +255,8 @@ void Referee::on_YellowGoalButton_clicked()
 
 void Referee::on_MinusYellowButton_clicked()
 {
-	bool result;
 	printf("Debug - Yellow Goal Minus.\n");
-	result = gameControl.removeGoal(Yellow);
-
+	gameControl.removeGoal(Yellow);
 }
 
 void Referee::on_YellowTimeOutButton_clicked()
@@ -267,15 +266,15 @@ void Referee::on_YellowTimeOutButton_clicked()
 	result = gameControl.beginTimeout(Yellow);
 
 	///Make sure yello timer is not active
-	if(_yellowTimeOutTimer.timerId() == -1) {
+//	if(_yellowTimeOutTimer.timerId() == -1) {
 		///Make sure there are enough time outs, that another time out clock isn't running, and that the game is playing
-		if( (yellowTimeOuts >= 1) && (_blueTimeOutTimer.timerId()==-1) && (currGameState==1)) {
-			_yellowTimeOutTimer.start(100);
-			Referee::stopGameTimer();
-			Referee::yellowTimeOuts--;
-			Referee::updateYellowTimeOutLabels();
-		}
-	}
+//		if( (yellowTimeOuts >= 1) && (_blueTimeOutTimer.timerId()==-1) && (currGameState==1)) {
+//			_yellowTimeOutTimer.start(100);
+//			Referee::stopGameTimer();
+//			Referee::yellowTimeOuts--;
+//			Referee::updateYellowTimeOutLabels();
+//		}
+//	}
 //printf("Debug.\n");
 
 }
@@ -335,9 +334,9 @@ void Referee::on_StartTimeButton_clicked()
 	Referee::startGameTimer();
 	
 	// temporarily commented out
-	//bool result;
+	bool result;
 	printf("Debug - Start Time.\n");
-	//result = gameControl.setReady();
+	result = gameControl.setReady();
 
 }
 
@@ -524,20 +523,30 @@ void Referee::updateYellowTimeOutRemaining()
 void Referee::stopGameTimer()
 {
 	///The timer has AIDS.  Stop it from reproducing.
-	_gameTimer.stop();
-	Referee::currGameState=0;
+	//_gameTimer.stop();
+	//Referee::currGameState=0;
+	_idleTimer.stop();
 }
 
 void Referee::startGameTimer()
 {
-	if(_gameTimer.timerId() == -1) {
+	//if(_gameTimer.timerId() == -1) {
 		//Start the timer if it hasn't been started yet.
-		_gameTimer.start(100);
+	//	_gameTimer.start(100);
 		///MAKE SURE YOU CHANGE THIS!!!!
-		currGameState=1;
+	//	currGameState=1;
+	//} else {
+		///Re-start the timer if it has already been started.
+	//	_gameTimer.start();
+	//}
+	if(_idleTimer.timerId() == -1) {
+		//Start the timer if it hasn't been started yet.
+		_idleTimer.start(100);
+		///MAKE SURE YOU CHANGE THIS!!!!
+		//currGameState=1;
 	} else {
 		///Re-start the timer if it has already been started.
-		_gameTimer.start();
+		_idleTimer.start();
 	}
 }
 
@@ -710,6 +719,12 @@ void Referee::idle()
 	   // First get new time step
 	   gameControl.stepTime();
 	   char str[1024];
+	   
+	   QFont sansSerifFont("Arial");
+	   sansSerifFont.setStyleHint(QFont::Serif);
+	   sansSerifFont.setPointSize(48);
+	   sansSerifFont.setWeight(QFont::Bold);
+	   
 	   GameInfo gi = gameControl.getGameInfo();
 	   
 	   // Update the Gui
@@ -724,16 +739,22 @@ void Referee::idle()
 	      // Needs extra handling.
 	      sprintf(str, "%2i", gi.game.goals[Yellow]);
 	      YellowScoreText->setText(str);
+	      YellowScoreText->setFont(sansSerifFont);
+
 	      sprintf(str, "%2i", gi.game.goals[Blue]);
 	      BlueScoreText->setText(str);
+	      BlueScoreText->setFont(sansSerifFont);
 
 	      sprintf(str, "Penalties:\n %i - %i\n", gi.game.penaltyGoals[Yellow], gi.game.penaltyGoals[Blue]);
 	      //time_label.set_text( str );
 	   } else {
 	      sprintf(str, "%2i", gi.game.goals[Yellow]);
 	      YellowScoreText->setText(str);
+	      YellowScoreText->setFont(sansSerifFont);
+	      
 	      sprintf(str, "%2i", gi.game.goals[Blue]);
 	      BlueScoreText->setText(str);
+	      BlueScoreText->setFont(sansSerifFont);
 
 	      sprintf(str, "%s\n%2i:%04.1f\n%2i:%04.1f", 
 	              gi.getStageString(),

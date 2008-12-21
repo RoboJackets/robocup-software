@@ -148,7 +148,13 @@ void GameControl::ethernetSendCommand(const char refereeCommand, const unsigned 
     packet.blueTeamScore = _gameInfo.game.goals[Blue  ] & 0xFF;
     packet.yellowTeamScore = _gameInfo.game.goals[Yellow] & 0xFF;
     packet.timeRemaining = htons((int)floor(_gameInfo.timeRemaining()));
+    
+    // Packet Test
+    printf("ref cmd: %c, cmd cnt: %i, blue: %2i, yellow: %2i, time remaining: %04.1f\n",
+    		refereeCommand, _lastCommandCounter, _gameInfo.game.goals[Blue],
+    		_gameInfo.game.goals[Yellow], _gameInfo.timeRemaining());
 
+    
     try
     {
     	_broadcast.sendPacket(&packet, sizeof(packet));
@@ -157,6 +163,7 @@ void GameControl::ethernetSendCommand(const char refereeCommand, const unsigned 
     {
         std::cerr << "!! UDP_Broadcast: " << e.what() << std::endl;
     }
+    
     
 }
     
