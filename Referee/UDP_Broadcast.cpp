@@ -61,7 +61,16 @@ void UDP_Broadcast::setDestination(const std::string &host, const uint16_t port)
 /** This function sends a packet */
 void UDP_Broadcast::sendPacket(const void *buffer, const size_t bufferLength) throw (IOError)
 {
-    ssize_t result = ::send(sock, (const char*)buffer, bufferLength, 0);
+	
+	ssize_t result = ::send(sock, (const char*)buffer, bufferLength, 0);
+	
+	/* for testing only */
+	//printf("inside sendPacket\n");
+    //printf("result: %i\n", (int)result);
+    //printf("sock: %i\n", sock);
+    //printf("buffer length: %i\n", bufferLength);
+    
+    
     if (result == SendFailure)
     {
         throw UDP_Broadcast::IOError(std::string("send() failed: ") + strerror(errno) );

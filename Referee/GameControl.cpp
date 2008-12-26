@@ -14,7 +14,7 @@
 #include "UDP_Broadcast.hpp"
 
 GameControl::GameControl(){
-       
+	
 }
 
 GameControl::~GameControl(){
@@ -39,7 +39,7 @@ bool GameControl::init(const char *configFileName, const char *logFileName, bool
 
 
     /** default multicast address */
-    _multicastAddress = "224.5.29.1";
+    _multicastAddress = "224.5.23.1";
     
     /** default multicast port */
     _multicastPort = 10001;
@@ -53,9 +53,15 @@ bool GameControl::init(const char *configFileName, const char *logFileName, bool
     }
     
     printf("filename ok\n");
+    
+    /* test multicast address and multicast port number */
+    printf("MulticastAddress: %s\n", _multicastAddress.c_str());
+    printf("MulticastPort: %hd\n", _multicastPort);
 
     try {
-        _broadcast.setDestination(_multicastAddress, _multicastPort);
+    	
+    	_broadcast.setDestination(_multicastAddress.c_str(),_multicastPort);
+    	
     }
     catch (UDP_Broadcast::IOError& e)
     {
@@ -149,12 +155,11 @@ void GameControl::ethernetSendCommand(const char refereeCommand, const unsigned 
     packet.yellowTeamScore = _gameInfo.game.goals[Yellow] & 0xFF;
     packet.timeRemaining = htons((int)floor(_gameInfo.timeRemaining()));
     
-    // Packet Test
+    // Test Packet Content
     printf("ref cmd: %c, cmd cnt: %i, blue: %2i, yellow: %2i, time remaining: %04.1f\n",
     		refereeCommand, _lastCommandCounter, _gameInfo.game.goals[Blue],
     		_gameInfo.game.goals[Yellow], _gameInfo.timeRemaining());
 
-    
     try
     {
     	_broadcast.sendPacket(&packet, sizeof(packet));
