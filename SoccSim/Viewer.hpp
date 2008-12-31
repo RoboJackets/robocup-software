@@ -14,7 +14,7 @@ class Viewer : public QGLWidget
 	public:
 		Viewer(Env* env, QWidget* parent = 0);
 		~Viewer();
-		
+
 	protected:
 		void initializeGL();
 		void resizeGL(int w, int h);
@@ -23,7 +23,7 @@ class Viewer : public QGLWidget
 	private:
 		void renderData(const NxDebugRenderable& data) const;
 		void setupColor(NxU32 color) const;
-		
+
 	/// members ///
 	private:
 		/** Timer for repainting the field display */

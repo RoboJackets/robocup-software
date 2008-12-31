@@ -2,6 +2,7 @@
 #define ROBOT_HPP_
 
 #include <Team.h>
+
 #include "ConfigFile.hpp"
 #include "Pid.hpp"
 #include "framework/Module.hpp"

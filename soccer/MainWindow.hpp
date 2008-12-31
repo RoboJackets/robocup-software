@@ -16,8 +16,6 @@
 
 #include "Processor.hpp"
 
-#include "Gamepad.hpp"
-
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT;

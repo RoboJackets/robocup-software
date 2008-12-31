@@ -4,7 +4,6 @@
 #include <QGridLayout>
 
 #include "module/modules.hpp"
-#include "Gamepad.hpp"
 
 using namespace Log;
 

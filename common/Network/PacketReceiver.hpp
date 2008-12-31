@@ -21,25 +21,25 @@ namespace Network
 			class _io
 			{
 				public:
-                    _io(uint16_t port, unsigned int msec) :
-                    	_port(port), _msecTimeout(msec)
-                    {
-                    	lastRecvTime.start();
-                    }
-                    
+                                    _io(uint16_t port, unsigned int msec) :
+                    	               _port(port), _msecTimeout(msec)
+				    {
+					lastRecvTime.start();
+				    }
+
 					virtual ~_io() {};
 
                     virtual int fd() = 0;
 
 					/** read a packet using the templated receiver */
 					virtual void read() = 0;
-					
+
                     /** call the timeout function */
                     virtual void timeout() = 0;
-                    
+
                     /** port used for the receiver */
                     uint16_t port() const { return _port; }
-                    
+
                     void timeoutCheck()
                     {
                         if (_msecTimeout && (unsigned int)lastRecvTime.elapsed() > _msecTimeout)
@@ -50,12 +50,12 @@ namespace Network
 
                     /** maintains the last time a packet was received */
                     QTime lastRecvTime;
-                    
+
                 protected:
                     /** the port number for this receiver
                      *  Each packet type has a distinct port number */
                     uint16_t _port;
-                    
+
                     const unsigned int _msecTimeout;
             };
 
@@ -77,7 +77,7 @@ namespace Network
                     {
                         return Receiver<T>::socketDescriptor();
                     }
-                    
+
 					virtual void read()
 					{
 						T packet;
@@ -91,7 +91,7 @@ namespace Network
 							}
 						}
 					}
-                    
+
                     virtual void timeout()
                     {
                     	//on timeout, return a null pointer to the handler
@@ -100,12 +100,12 @@ namespace Network
                     		_packetHandler(0);
                     	}
                     }
-					
+
 					/** handler for the received packet */
 					void (*_packetHandler)(const T*);
 			};
 #endif
-			
+
             template <typename T, typename C>
             class _mem_recv : public PacketReceiver::_io, public Receiver
             {
@@ -121,7 +121,7 @@ namespace Network
                     {
                         return fileDescriptor();
                     }
-                    
+
                     virtual void read()
                     {
                         T packet;
@@ -133,7 +133,7 @@ namespace Network
 							(_obj->*_handler)(&packet);
 						}
                     }
-                    
+
                     virtual void timeout()
                     {
                     	//on timeout, return a null pointer to the handler
@@ -142,11 +142,11 @@ namespace Network
 							(_obj->*_handler)(0);
 						}
                     }
-                    
+
                     C *_obj;
                     void (C::*_handler)(const T*);
             };
-            
+
 		public:
 			PacketReceiver() {}
 			~PacketReceiver() {}
@@ -177,7 +177,7 @@ namespace Network
 					_receivers[i]->timeoutCheck();
 				}
 			}
-			
+
 #if 0
             template <typename T>
             void addType(QHostAddress addr, uint16_t port, void (*packetHandler)(const T*) = 0, unsigned int msec = 0)
@@ -185,7 +185,7 @@ namespace Network
             	addReceiver(new _recv<T>(addr, port, packetHandler, msec));
             }
 #endif
-            
+
             // Member function version of the above.
             template <typename T, typename C>
 			void addType(const char* addr, uint16_t port, C *obj, void (C::*handler)(const T*) = 0, unsigned int msec = 0)
@@ -219,7 +219,7 @@ namespace Network
                 pfd.revents = 0;
                 _pollfds.push_back(pfd);
 			}
-            
+
 			std::vector< _io* > _receivers;
 			std::vector<struct pollfd> _pollfds;
 	};

@@ -5,11 +5,11 @@
 
 #include "Physics/Env.hpp"
 
-class Vision : public QThread
+class SimVision : public QThread
 {
 	public:
-		Vision(Env* env);
-		~Vision();
+		SimVision(Env* env);
+		~SimVision();
 
                 uint64_t timestamp();
 

@@ -2,6 +2,7 @@
 #define _ROBOT_HPP
 
 #include "Entity.hpp"
+#include <Geometry/Point2d.hpp>
 
 class Robot : public Entity
 {
@@ -13,6 +14,9 @@ class Robot : public Entity
 
 	/** set position of the robot */
 	void position(float x, float y);
+
+        /** Get the robot's position **/
+        Geometry::Point2d* getPosition();
 
 	//FIXME
 	int8_t vels[4];

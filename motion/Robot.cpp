@@ -52,13 +52,18 @@ void Robot::proc()
 
     if(_state->self[_id].valid)
     {
-        currPos = _state->self[_id].pos;
-        currVel = _state->self[_id].vel;
-        currAngle = _state->self[_id].angle;
+        if(_state->self[_id].cmdValid)
+        {
+            currPos = _state->self[_id].pos;
+            currVel = _state->self[_id].vel;
+            currAngle = _state->self[_id].angle;
 
-        velCmd.vel = _state->self[_id].cmdVel;
+            //TODO position based control
+            velCmd.vel.x = 10;//_state->self[_id].cmdVel;
+            velCmd.vel.y = 0;
 
-        genMotor(velCmd);
+            genMotor(velCmd);
+        }
     }
     /*
 	if (_self.valid)
@@ -221,9 +226,10 @@ void Robot::genMotor(VelocityCmd velCmd)
 
 	_motors[i] += change;
 
-        _state->radioCmd.robots[_id].motors[i] = (int8_t)(_motors[i]);;
+        _state->radioCmd.robots[_id].motors[i] = (int8_t)(_motors[i]);
         //_comm.motor[i] = (int8_t)(_motors[i]);
     }
+    _state->radioCmd.robots[_id].valid = true;
 }
 
 void Robot::clearPid()

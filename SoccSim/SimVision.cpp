@@ -1,12 +1,11 @@
-#include "Vision.hpp"
+#include "SimVision.hpp"
 
 #include <unistd.h>
 #include <sys/time.h>
-#include <Network/Network.hpp>
 #include <Network/Sender.hpp>
 #include <Vision.hpp>
 
-Vision::Vision(Env* env) :
+SimVision::SimVision(Env* env) :
 	_env(env)
 {
     //TODO make it so that these can be derived from config file
@@ -14,12 +13,12 @@ Vision::Vision(Env* env) :
     _fps = 30;
 }
 
-Vision::~Vision()
+SimVision::~SimVision()
 {
 
 }
 
-uint64_t Vision::timestamp()
+uint64_t SimVision::timestamp()
 {
 	struct timeval time;
 	gettimeofday(&time, 0);
@@ -27,14 +26,14 @@ uint64_t Vision::timestamp()
 	return time.tv_sec * 1000000 + time.tv_usec;
 }
 
-void Vision::run()
+void SimVision::run()
 {
-    Network::Sender sender(Network::Address, Network::Vision);
+    //Network::Sender sender(Network::Address, Network::Vision);
 
-    Packet::Vision packet;
-    packet.camera = _id;
+    //Packet::Vision packet;
+    //packet.camera = _id;
 
-    Packet::Vision::Robot r = Packet::Vision::Robot();
+    //Packet::Vision::Robot r = Packet::Vision::Robot();
     /*
     r.pos.x = -2;
     r.pos.y = 0;
@@ -47,21 +46,21 @@ void Vision::run()
     while (true)
     {
 	//clear all previous
-	packet.blue.clear();
-	packet.yellow.clear();
-	packet.balls.clear();
+// 	packet.blue.clear();
+// 	packet.yellow.clear();
+// 	packet.balls.clear();
 
 	//send sync
-	packet.timestamp = timestamp();
-	packet.sync = true;
-	sender.send(packet);
+// 	packet.timestamp = timestamp();
+// 	packet.sync = true;
+// 	sender.send(packet);
 
 	//fake vision processing
 	QThread::msleep(5);
 
 	//send real data
-	packet.sync = false;
-	packet.timestamp = timestamp();
+// 	packet.sync = false;
+// 	packet.timestamp = timestamp();
 
         //get the current positions of the robots
         /*
@@ -91,9 +90,9 @@ void Vision::run()
 	packet.blue.push_back(r);
         */
 	//send vision data
-	sender.send(packet);
+	//sender.send(packet);
 
-	printf("[%d] %lld :: Pos: %.3f %.3f\n", _id, packet.timestamp, r.pos.x, r.pos.y);
+// 	printf("[%d] %lld :: Pos: %.3f %.3f\n", _id, packet.timestamp, r.pos.x, r.pos.y);
 
 	//camera pause
 	QThread::msleep(msecs - 5);

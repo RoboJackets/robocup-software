@@ -7,7 +7,6 @@
 
 #include "Robot.hpp"
 #include "ConfigFile.hpp"
-#include "Gamepad.hpp"
 
 namespace Motion
 {
@@ -28,15 +27,11 @@ namespace Motion
 
 
 	private:
+            /** Robots **/
 	    Robot* _robots[5];
+
+            /** Config file from command line**/
 	    ConfigFile _config;
-
-            /** Defaults to Man if the controller is plugged in **/
-            CmdMode _mode;
-
-	    /** Gamepad **/
-	    Gamepad* _gamepad;
-
     };
 }
 

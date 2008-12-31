@@ -25,6 +25,9 @@
 
 		<!-- if true, this robot is active for use -->
 		<member type="bool" name="valid" value="false" />
+
+		<!-- the cmd to the robot is valid -->
+		<member type="bool" name="cmdValid" value="false"/>
 	</struct>
 
 	<!-- post processed ball information -->

@@ -10,6 +10,7 @@ set (USE_GEOMETRY true)
 set (USE_FRAMEWORK true)
 include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
 
+
 include_directories(${PROJECT_BINARY_DIR})
 
 qt4_wrap_cpp ( MOC_SRCS
@@ -27,5 +28,5 @@ set (SRCS
 
 add_library (motion ${SRCS} ${MOC_SRCS})
 #add_executable(motion ${SRCS} ${MOC_SRCS})
-target_link_libraries (motion ${QT_LIBRARIES} ${GEOMETRY_LIBRARY} ${FRAMEWORK_LIBRARY})
+target_link_libraries (motion ${QT_LIBRARIES} ${GEOMETRY_LIBRARY} ${FRAMEWORK_LIBRARY} ${NETWORK_LIBRARY})
 

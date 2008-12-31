@@ -4,8 +4,11 @@ cmake_minimum_required(VERSION 2.6)
 # default project build flags
 add_definitions (-Werror -Wall)
 
+#set (CMAKE_VERBOSE_MAKEFILE on)
 # use common stuff
-include ("../common/CMakeLists.txt")
+set (USE_NETWORK true)
+set (USE_GEOMETRY true)
+include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
 
 # PhysX Setup
 set (PHYSX_VERSION 2.8.1)
@@ -30,6 +33,7 @@ add_definitions (-DNX_DISABLE_FLUIDS)
 
 # setup QT
 add_definitions (-DQT_NO_KEYWORDS)
+set (USE_QT true)
 set (QT_USE_QTNETWORK true)
 set (QT_USE_QTOPENGL true)
 set (QT_USE_QTXML true)
@@ -42,11 +46,11 @@ qt4_wrap_cpp ( MOC_SRCS
 	Physics/Env.hpp
 	InputHandler.hpp
 	)
-	
+
 # this will run UIC on the .ui files
 qt4_wrap_ui ( UI_HDRS
 	)
-	
+
 # list any resource files
 qt4_add_resources ( RC_SRCS
 	)
@@ -58,31 +62,31 @@ if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
 	set (PHYSX_LINK_FLAGS -m32)
 	message (STATUS "Cross Compiling to 32 bit mode")
 	message (STATUS "run: 'make linkfix' as root to make required symlinks if needed")
-	
+
 	add_custom_command(OUTPUT "/usr/lib32/libQtOpenGL.so"
 		COMMAND ln ARGS -s libQtOpenGL.so.4 /usr/lib32/libQtOpenGL.so )
-		
+
 	add_custom_command(OUTPUT "/usr/lib32/libQtGui.so"
 		COMMAND ln ARGS -s libQtGui.so.4 /usr/lib32/libQtGui.so )
-		
+
 	add_custom_command(OUTPUT "/usr/lib32/libQtXml.so"
 		COMMAND ln ARGS -s libQtXml.so.4 /usr/lib32/libQtXml.so )
-		
+
 	add_custom_command(OUTPUT "/usr/lib32/libQtNetwork.so"
 		COMMAND ln ARGS -s libQtNetwork.so.4 /usr/lib32/libQtNetwork.so )
-		
+
 	add_custom_command(OUTPUT "/usr/lib32/libGLU.so"
 		COMMAND ln ARGS -s libGLU.so.4 /usr/lib32/libGLU.so )
-		
+
 	add_custom_command(OUTPUT "/usr/lib32/libGL.so"
 		COMMAND ln ARGS -s libGL.so.4 /usr/lib32/libGL.so )
-		
+
 	add_custom_command(OUTPUT "/usr/lib32/libX11.so"
 		COMMAND ln ARGS -s libX11.so.6 /usr/lib32/libX11.so )
-		
-	add_custom_command(OUTPUT "/usr/lib32/libXext.so"		
+
+	add_custom_command(OUTPUT "/usr/lib32/libXext.so"
 		COMMAND ln ARGS -s libXext.so.6 /usr/lib32/libXext.so )
-	
+
 	add_custom_target(linkfix
 		DEPENDS /usr/lib32/libQtOpenGL.so
 				/usr/lib32/libQtGui.so
@@ -96,21 +100,21 @@ if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
 endif ()
 
 add_executable (${PROJECT_NAME}
-	main.cpp
+        main.cpp
 	Viewer.cpp
-	Vision.cpp
 	JoystickInput.cpp
 	InputHandler.cpp
 	Config.cpp
-	
+        SimVision.cpp
+
 	## environment
-	Physics/Env.cpp
+        Physics/Env.cpp
 	Physics/Entity.cpp
 	Physics/Ball.cpp
 	Physics/Field.cpp
 	Physics/Robot.cpp
 	Physics/MemoryStream.cpp
-	
+
 	${MOC_SRCS} ${UI_HDRS} ${NxuStream2SRC}
 )
 
@@ -119,4 +123,8 @@ if (DEFINED PHYSX_LINK_FLAGS)
 	set_target_properties (${PROJECT_NAME} PROPERTIES LINK_FLAGS ${PHYSX_LINK_FLAGS})
 endif ()
 
-target_link_libraries (${PROJECT_NAME} NxCooking PhysXLoader pthread dl ${QT_LIBRARIES})
+target_link_libraries (${PROJECT_NAME} NxCooking PhysXLoader pthread dl ${QT_LIBRARIES}  )
+target_link_libraries(${PROJECT_NAME} ${NETWORK_LIBRARY})
+target_link_libraries(${PROJECT_NAME} ${PACKET_LIBRARY})
+#target_link_libraries(${PROJECT_NAME} ${GEOMETRY_LIBRARY})
+

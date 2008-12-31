@@ -1,5 +1,4 @@
 #include "Robot.hpp"
-
 #include <NxCooking.h>
 
 #include <Constants.hpp>
@@ -10,6 +9,8 @@
 #define ROLLER  0
 #define KICKER  0
 #define CHIPPER 0
+
+using namespace Geometry;
 
 Robot::Robot(NxScene& scene) :
 	Entity(scene)
@@ -355,4 +356,13 @@ void Robot::position(float x, float y)
 	}
 
 	_actor->setGlobalPosition(newPos);
+}
+
+Point2d* Robot::getPosition()
+{
+    Point2d* currPos = new Point2d();
+    currPos->x = (float)_actor->getGlobalPosition().x;
+    currPos->y = (float)_actor->getGlobalPosition().y;
+
+    return currPos;
 }
