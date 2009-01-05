@@ -1,16 +1,15 @@
 #include "Env.hpp"
-
 #include "Entity.hpp"
 #include "Ball.hpp"
 #include "Field.hpp"
 #include "Robot.hpp"
-
 #include <Team.h>
 #include <Network/Network.hpp>
-// #include <Network/PacketReceiver.hpp>
 
 NxPhysicsSDK* Env::_physicsSDK = 0;
 unsigned int Env::_refCount = 0;
+
+using namespace Geometry;
 
 Env::Env()
 {
@@ -84,10 +83,7 @@ Env::Env()
 	    inputHandler = 0;
     }
 
-    _receiver = new Network::PacketReceiver();
-    _receiver->addType(Network::Address, Network::addTeamOffset(Blue,Network::RadioTx), this, &Env::radioHandler);
-
-    _txPacket = new Packet::RadioTx();
+    txPacket = new Packet::RadioTx();
 
     connect(&_step, SIGNAL(timeout()), this, SLOT(step()));
 }
@@ -139,8 +135,10 @@ void Env::step()
 	{
 	    rid = 0;
 	}
+
 	Packet::RadioTx::Robot data = inputHandler->genRobotData();
-	for (int i=0 ; i<4 ; ++i)
+
+        for (int i=0 ; i<4 ; ++i)
 	{
 	    _robots[rid]->vels[i] = data.motors[i];
 	}
@@ -148,20 +146,25 @@ void Env::step()
     }
     else
     {
-        int numBotsInSim = _robots.size();
-	_receiver->receive();
+        int i = 0;
 
-        /** For all the robots on the field **/
-        for(int i=0; i<numBotsInSim; i++)
+//         for (int k=0 ; k<4 ; ++k)
+// 	{
+// 	    _robots[0]->vels[k] = txPacket->robots[0].motors[k];
+// 	    //printf("%d\n", txPacket->robots[0].motors[k]);
+// 	}
+// 	_robots[0]->step();
+        Q_FOREACH(Robot* r, _robots)
         {
-            if(_txPacket->robots[i].valid)
-            {
-                for (int k=0 ; k<4 ; ++k)
-		{
-		    _robots[i]->vels[k] = _txPacket->robots[i].motors[k];
-		}
-                _robots[i]->step();
-            }
+	    for (int k=0 ; k<4 ; ++k)
+	    {
+		r->vels[k] = txPacket->robots[i].motors[k];
+                //printf("%d\n", txPacket->robots[i].motors[k]);
+	    }
+	    r->step();
+
+
+            i++;
         }
 
     }
@@ -202,7 +205,19 @@ void Env::addRobot(int id, float x, float y)
     printf("New Robot: %d : %f %f\n", id, x, y);
 }
 
-void Env::radioHandler(const Packet::RadioTx* packet)
+QVector<Point2d*> Env::getRobotsPositions()
 {
-    _txPacket = packet;
+    QVector<Point2d*> botPositions;
+    Q_FOREACH(Robot* r, _robots)
+    {
+        botPositions.append(r->getPosition());
+    }
+
+    return botPositions;
+}
+
+QVector<Point2d*> Env::getBallPositions()
+{
+    QVector<Point2d*> ballPositions;
+    return ballPositions;
 }

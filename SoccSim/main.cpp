@@ -21,12 +21,15 @@ int main(int argc, char* argv[])
 	Viewer win(env);
 	win.setVisible(true);
 
-        SimVision simVis(env);
+        SimVision simVision(env);
+        simVision.start();
 
-	int ret = app.exec();
+        int ret = app.exec();
 
 	//cleanup
 	delete env;
+        simVision.terminate();
+        simVision.wait();
 
 	return ret;
 }

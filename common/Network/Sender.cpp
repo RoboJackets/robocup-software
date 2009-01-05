@@ -48,7 +48,7 @@ Network::Sender::~Sender()
 
 void Network::Sender::send(const uint8_t *data, unsigned int len)
 {
-    if (::sendto(_socket, data, len, 0, (struct sockaddr *)&_dest, sizeof(_dest)) != (int)len)
+    if (sendto(_socket, data, len, 0, (struct sockaddr *)&_dest, sizeof(_dest)) != (int)len)
     {
         throw runtime_error(strerror(errno));
     }

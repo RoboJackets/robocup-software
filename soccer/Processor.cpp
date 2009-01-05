@@ -124,9 +124,8 @@ void Processor::visionHandler(const Packet::Vision* packet)
 		if (packet->sync)
 		{
 			//printf("radio: %d\n", packet->camera);
-			//TODO tx radio data
                         _sender->send(_state.radioCmd);
-                        for(int i = 0; i<4; i++)
+                        for(int i = 0; i<5; i++)
                         {
                             _state.radioCmd.robots[i].valid = false;
                         }
@@ -152,7 +151,6 @@ void TeamHandler::radioHandler(const Packet::RadioRx* packet)
 void Processor::toTeamSpace(Packet::Vision& vision)
 {
 	//FIXME FIXME we should put this info into self/opp??
-
 	for (unsigned int i=0 ; i< vision.blue.size() ; ++i)
 	{
 		Packet::Vision::Robot& r = vision.blue[i];

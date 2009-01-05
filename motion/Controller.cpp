@@ -14,7 +14,7 @@ Controller::Controller(QString filename) :
 	    printf("Config Load Error: %s\n", re.what());
     }
 
-    for(unsigned int i=0 ; i<1 ; ++i)
+    for(unsigned int i=0 ; i<5 ; ++i)
     {
         _robots[i] = new Robot(_config.robotConfig(i));
     }
@@ -32,7 +32,7 @@ Controller::~Controller()
 
 void Controller::run()
 {
-    for(unsigned int i=0; i<1; ++i)
+    for(unsigned int i=0; i<5; ++i)
     {
 	_robots[i]->setSystemState(_state);
 	_robots[i]->proc();

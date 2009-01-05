@@ -6,9 +6,9 @@
 #include <QVector>
 #include <QTimer>
 #include <Team.h>
-#include <Network/PacketReceiver.hpp>
-#include <Network/Sender.hpp>
+#include <Geometry/Point2d.hpp>
 #include <RadioTx.hpp>
+#include <Vision.hpp>
 
 #include "../InputHandler.hpp"
 
@@ -31,15 +31,18 @@ class Env : public QObject
 		void addBall(float x, float y);
 		void addRobot(int id, float x, float y);
 
+                QVector<Geometry::Point2d*> getRobotsPositions();
+
+                QVector<Geometry::Point2d*> getBallPositions();
+
 	private Q_SLOTS:
 		void step();
-
-        protected:
-                void radioHandler(const Packet::RadioTx* packet);
 
 	public:
 		/** the global physics sdk for every environment */
 		static NxPhysicsSDK* _physicsSDK;
+
+                const Packet::RadioTx* txPacket;
 
 	private:
 		/** number of open environments */
@@ -57,12 +60,6 @@ class Env : public QObject
 		QTimer _step;
 
 		InputHandler* inputHandler;
-
-                /** Reciever for radio commands. Temporary until something better comes along**/
-                Network::PacketReceiver* _receiver;
-
-                const Packet::RadioTx* _txPacket;
-
 };
 
 #endif /* _ENV_HPP */

@@ -2,7 +2,10 @@
 
 #include <unistd.h>
 #include <sys/time.h>
+#include <QVector>
+#include <Geometry/Point2d.hpp>
 #include <Network/Sender.hpp>
+#include <Network/Network.hpp>
 #include <Vision.hpp>
 
 SimVision::SimVision(Env* env) :
@@ -11,6 +14,8 @@ SimVision::SimVision(Env* env) :
     //TODO make it so that these can be derived from config file
     _id = 0;
     _fps = 30;
+    _receiver = new Network::PacketReceiver();
+    _receiver->addType(Network::Address, Network::addTeamOffset(Blue,Network::RadioTx), this, &SimVision::radioHandler);
 }
 
 SimVision::~SimVision()
@@ -28,73 +33,60 @@ uint64_t SimVision::timestamp()
 
 void SimVision::run()
 {
-    //Network::Sender sender(Network::Address, Network::Vision);
+    Network::Sender sender(Network::Address, Network::Vision);
 
-    //Packet::Vision packet;
-    //packet.camera = _id;
+    Packet::Vision packet;
+    packet.camera = _id;
 
-    //Packet::Vision::Robot r = Packet::Vision::Robot();
-    /*
-    r.pos.x = -2;
-    r.pos.y = 0;
-    */
+    Packet::Vision::Robot r = Packet::Vision::Robot();
     const int msecs = (int)(1000/_fps);
 
-    //float rad = 0;
+    QVector<Geometry::Point2d*> robotsPositions;
 
-    //loop and send out robot positions
     while (true)
     {
-	//clear all previous
-// 	packet.blue.clear();
-// 	packet.yellow.clear();
-// 	packet.balls.clear();
+        //clear all previous
+	packet.blue.clear();
+	packet.yellow.clear();
+	packet.balls.clear();
+        robotsPositions.clear();
 
 	//send sync
-// 	packet.timestamp = timestamp();
-// 	packet.sync = true;
-// 	sender.send(packet);
+	packet.timestamp = timestamp();
+	packet.sync = true;
+	sender.send(packet);
 
 	//fake vision processing
 	QThread::msleep(5);
 
 	//send real data
-// 	packet.sync = false;
-// 	packet.timestamp = timestamp();
+	packet.sync = false;
+	packet.timestamp = timestamp();
 
         //get the current positions of the robots
-        /*
-	rad += .025;
 
-	if (rad > 2*M_PI)
-	{
-		rad -= 2*M_PI;
-	}
+        _simVisionMutex.lock();
+        robotsPositions = _env->getRobotsPositions();
 
-	r.shell = _id;
+        Q_FOREACH(Geometry::Point2d* pos, robotsPositions)
+        {
+	    r.pos = *pos;
+            packet.blue.push_back(r);
+        }
 
-	#if 1
-	r.pos.x = _sx + cos(rad);
-	r.pos.y = _sy + sin(rad);
-	#else
-	r.pos.x += .1;
-	r.pos.y = 0;
+	sender.send(packet);
 
-	if (r.pos.x >= 2)
-	{
-		r.pos.x = -2;
-	}
-	#endif
-	r.angle = 45.0f * _id;
+        _simVisionMutex.unlock();
 
-	packet.blue.push_back(r);
-        */
-	//send vision data
-	//sender.send(packet);
-
-// 	printf("[%d] %lld :: Pos: %.3f %.3f\n", _id, packet.timestamp, r.pos.x, r.pos.y);
-
+        _receiver->receive();
 	//camera pause
 	QThread::msleep(msecs - 5);
     }
 }
+
+void SimVision::radioHandler(const Packet::RadioTx* packet)
+{
+    _env->txPacket = packet;
+    //printf("Packet Rxd\n");
+}
+

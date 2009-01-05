@@ -285,7 +285,6 @@ void Robot::step()
 			_motors[i]->getMotor(motorDesc);
 
 			motorDesc.velTarget = 100.0f * vels[i] / 255.0f;
-			printf("%f\n", motorDesc.velTarget);
 
 			_motors[i]->setMotor(motorDesc);
 		}

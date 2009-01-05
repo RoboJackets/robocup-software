@@ -52,6 +52,9 @@ void Robot::proc()
 
     if(_state->self[_id].valid)
     {
+        //printf("ID Please %d\n",_id);
+        //TODO Send commands to motion via gameplay and set this flag there
+        _state->self[_id].cmdValid = true;
         if(_state->self[_id].cmdValid)
         {
             currPos = _state->self[_id].pos;
@@ -59,10 +62,14 @@ void Robot::proc()
             currAngle = _state->self[_id].angle;
 
             //TODO position based control
-            velCmd.vel.x = 10;//_state->self[_id].cmdVel;
-            velCmd.vel.y = 0;
+            velCmd.vel.x = 0;//_state->self[_id].cmdVel;
+            velCmd.vel.y = 10;
+
+            velCmd.w = 0;
 
             genMotor(velCmd);
+
+            _state->self[_id].cmdValid = false;
         }
     }
     /*
@@ -195,7 +202,6 @@ void Robot::genMotor(VelocityCmd velCmd)
 	//velocity in direction of wheel
 	float v = axel.perpCW().dot(velCmd.vel);
 	v += velCmd.w;
-
 	//if greater than old max, set as max
 	if (fabs(v) > max)
 	{
@@ -212,11 +218,11 @@ void Robot::genMotor(VelocityCmd velCmd)
 	scale = mMax/max;
     }
 
-    for (unsigned int i=0; i<4; ++i)
+    for (unsigned int j=0; j<4; ++j)
     {
-	const float req = mTemp[i] * scale;
+	const float req = mTemp[j] * scale;
 
-	float change = req - _motors[i];
+	float change = req - _motors[j];
 
 	const float mChange = 10.0;
 	if (fabs(change) > mChange)
@@ -224,9 +230,9 @@ void Robot::genMotor(VelocityCmd velCmd)
 		change = mChange/change * fabs(change);
 	}
 
-	_motors[i] += change;
-
-        _state->radioCmd.robots[_id].motors[i] = (int8_t)(_motors[i]);
+	_motors[j] += change;
+        _state->radioCmd.robots[_id].motors[j] = (int8_t)(_motors[j]);
+        //printf("Motor cmd for motor %d = %d\n", j, _state->radioCmd.robots[_id].motors[j]);
         //_comm.motor[i] = (int8_t)(_motors[i]);
     }
     _state->radioCmd.robots[_id].valid = true;
