@@ -71,16 +71,16 @@ Env::Env()
 
     try
     {
-	    inputHandler = new InputHandler();
+	inputHandler = new InputHandler();
 
-	    printf("Using /dev/input/js0 for input.\n");
-	    //start handling controller input
-	    inputHandler->start();
+	printf("Using /dev/input/js0 for input.\n");
+	//start handling controller input
+	inputHandler->start();
     }
     catch (std::runtime_error err)
     {
-	    printf("No input controller.\n");
-	    inputHandler = 0;
+	printf("No input controller.\n");
+	inputHandler = 0;
     }
 
     txPacket = new Packet::RadioTx();
@@ -148,18 +148,12 @@ void Env::step()
     {
         int i = 0;
 
-//         for (int k=0 ; k<4 ; ++k)
-// 	{
-// 	    _robots[0]->vels[k] = txPacket->robots[0].motors[k];
-// 	    //printf("%d\n", txPacket->robots[0].motors[k]);
-// 	}
-// 	_robots[0]->step();
         Q_FOREACH(Robot* r, _robots)
         {
 	    for (int k=0 ; k<4 ; ++k)
 	    {
 		r->vels[k] = txPacket->robots[i].motors[k];
-                //printf("%d\n", txPacket->robots[i].motors[k]);
+//                 printf("Robot %d Wheel %d\n",i, txPacket->robots[i].motors[k]);
 	    }
 	    r->step();
 

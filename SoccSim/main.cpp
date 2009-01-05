@@ -18,11 +18,11 @@ int main(int argc, char* argv[])
 
 	Config cfg("../config/sample.xml", env);
 
-	Viewer win(env);
-	win.setVisible(true);
-
         SimVision simVision(env);
         simVision.start();
+
+	Viewer win(env);
+	win.setVisible(true);
 
         int ret = app.exec();
 

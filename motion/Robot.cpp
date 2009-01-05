@@ -50,6 +50,8 @@ void Robot::proc()
     Geometry::Point2d currVel;
     VelocityCmd velCmd;
 
+
+
     if(_state->self[_id].valid)
     {
         //printf("ID Please %d\n",_id);
@@ -62,8 +64,8 @@ void Robot::proc()
             currAngle = _state->self[_id].angle;
 
             //TODO position based control
-            velCmd.vel.x = 0;//_state->self[_id].cmdVel;
-            velCmd.vel.y = 10;
+            velCmd.vel.x = 100;//_state->self[_id].cmdVel;
+            velCmd.vel.y = 0;
 
             velCmd.w = 0;
 
@@ -232,7 +234,7 @@ void Robot::genMotor(VelocityCmd velCmd)
 
 	_motors[j] += change;
         _state->radioCmd.robots[_id].motors[j] = (int8_t)(_motors[j]);
-        //printf("Motor cmd for motor %d = %d\n", j, _state->radioCmd.robots[_id].motors[j]);
+        printf("Robot %d Motor %d = %d\n", _id,j, _state->radioCmd.robots[_id].motors[j]);
         //_comm.motor[i] = (int8_t)(_motors[i]);
     }
     _state->radioCmd.robots[_id].valid = true;

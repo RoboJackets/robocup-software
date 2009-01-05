@@ -36,7 +36,6 @@ class Robot
 		/** clear PID windup */
 		void clearPid();
 
-                int goo;
                 /*
 		PathPlanner* pathPlanner() const { return _pathPlanner; }
 

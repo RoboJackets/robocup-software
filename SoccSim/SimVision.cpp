@@ -67,9 +67,10 @@ void SimVision::run()
 
         _simVisionMutex.lock();
         robotsPositions = _env->getRobotsPositions();
-
+        int i=0;
         Q_FOREACH(Geometry::Point2d* pos, robotsPositions)
         {
+            r.shell = i++;
 	    r.pos = *pos;
             packet.blue.push_back(r);
         }
@@ -87,6 +88,13 @@ void SimVision::run()
 void SimVision::radioHandler(const Packet::RadioTx* packet)
 {
     _env->txPacket = packet;
-    //printf("Packet Rxd\n");
+    for(int i=0; i<5; i++)
+    {
+        for(int k = 0; k<4; k++)
+	{
+            printf("Robot %d Wheel %d\n",i, packet->robots[i].motors[k]);
+        }
+    }
+
 }
 
