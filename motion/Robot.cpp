@@ -48,6 +48,7 @@ void Robot::proc()
     float currAngle;
     Geometry::Point2d currPos;
     Geometry::Point2d currVel;
+    Geometry::Point2d testDesiredPos;
     VelocityCmd velCmd;
 
 
@@ -57,6 +58,7 @@ void Robot::proc()
         //printf("ID Please %d\n",_id);
         //TODO Send commands to motion via gameplay and set this flag there
         _state->self[_id].cmdValid = true;
+
         if(_state->self[_id].cmdValid)
         {
             currPos = _state->self[_id].pos;
@@ -64,8 +66,8 @@ void Robot::proc()
             currAngle = _state->self[_id].angle;
 
             //TODO position based control
-            velCmd.vel.x = 100;//_state->self[_id].cmdVel;
-            velCmd.vel.y = 0;
+            velCmd.vel.x = 0;//_state->self[_id].cmdVel;
+            velCmd.vel.y = 50;
 
             velCmd.w = 0;
 
@@ -234,7 +236,7 @@ void Robot::genMotor(VelocityCmd velCmd)
 
 	_motors[j] += change;
         _state->radioCmd.robots[_id].motors[j] = (int8_t)(_motors[j]);
-        printf("Robot %d Motor %d = %d\n", _id,j, _state->radioCmd.robots[_id].motors[j]);
+//         printf("Robot %d Motor %d = %d\n", _id,j, _state->radioCmd.robots[_id].motors[j]);
         //_comm.motor[i] = (int8_t)(_motors[i]);
     }
     _state->radioCmd.robots[_id].valid = true;

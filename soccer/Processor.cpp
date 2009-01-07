@@ -62,7 +62,20 @@ void Processor::run()
 
 			_modulesMutex.unlock();
 
-			//clear system state info
+                        /** Phillip - Added 01/06/2009 **/
+                        _sender->send(_state.radioCmd);
+
+                        for(int i = 0; i<5; i++)
+                        {
+                            _state.radioCmd.robots[i].valid = false;
+                        }
+
+//                         for(int j =0; j<4; j++)
+//                         {
+//                             printf("Robot %d Motor %d = %d\n", 0,j, _state.radioCmd.robots[0].motors[j]);
+//                         }
+
+                        //clear system state info
 			_state = SystemState();
 
 			_trigger = false;
@@ -124,11 +137,7 @@ void Processor::visionHandler(const Packet::Vision* packet)
 		if (packet->sync)
 		{
 			//printf("radio: %d\n", packet->camera);
-                        _sender->send(_state.radioCmd);
-                        for(int i = 0; i<5; i++)
-                        {
-                            _state.radioCmd.robots[i].valid = false;
-                        }
+
 		}
 		else
 		{

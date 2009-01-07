@@ -3,6 +3,7 @@
 #include "Ball.hpp"
 #include "Field.hpp"
 #include "Robot.hpp"
+
 #include <Team.h>
 #include <Network/Network.hpp>
 
@@ -83,6 +84,10 @@ Env::Env()
 	inputHandler = 0;
     }
 
+
+    _receiver = new Network::PacketReceiver();
+    _receiver->addType(Network::Address, Network::addTeamOffset(Blue,Network::RadioTx), this, &Env::radioHandler);
+
     txPacket = new Packet::RadioTx();
 
     connect(&_step, SIGNAL(timeout()), this, SLOT(step()));
@@ -113,6 +118,8 @@ void Env::step()
 {
 
     int rid;
+
+    _receiver->receive();
 #if 0
     if (inputHandler)
     {
@@ -146,20 +153,22 @@ void Env::step()
     }
     else
     {
-        int i = 0;
-
         Q_FOREACH(Robot* r, _robots)
         {
-	    for (int k=0 ; k<4 ; ++k)
-	    {
-		r->vels[k] = txPacket->robots[i].motors[k];
-//                 printf("Robot %d Wheel %d\n",i, txPacket->robots[i].motors[k]);
-	    }
-	    r->step();
-
-
-            i++;
+	   r->step();
         }
+//         Q_FOREACH(Robot* r, _robots)
+//         {
+// 	    for (int k=0 ; k<4 ; ++k)
+// 	    {
+// 		r->vels[k] = txPacket->robots[i].motors[k];
+//                 printf("Robot %d Wheel %d\n",i, txPacket->robots[i].motors[k]);
+// 	    }
+// 	    r->step();
+//
+//
+//             i++;
+//         }
 
     }
     _scene->simulate(1.0/60.0);
@@ -197,6 +206,20 @@ void Env::addRobot(int id, float x, float y)
     _robots.append(r);
 
     printf("New Robot: %d : %f %f\n", id, x, y);
+}
+
+void Env::radioHandler(const Packet::RadioTx* packet)
+{
+    int i = 0;
+    Q_FOREACH(Robot* r, _robots)
+    {
+	for (int k=0 ; k<4 ; ++k)
+	{
+	    r->vels[k] = packet->robots[i].motors[k];
+// 	    printf("Robot %d Wheel %d\n",i, packet->robots[i].motors[k]);
+	}
+	i++;
+    }
 }
 
 QVector<Point2d*> Env::getRobotsPositions()

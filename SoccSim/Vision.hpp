@@ -24,8 +24,5 @@ class Vision : public QThread
 	Env* _env;
 
 	unsigned int _id, _fps;
-
-	/** Reciever for radio commands. Temporary until something better comes along**/
-	Network::PacketReceiver* _receiver;
 };
 #endif /* VISION_HPP_ */

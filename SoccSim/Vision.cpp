@@ -1,11 +1,11 @@
 #include "Vision.hpp"
 
-#include <Network/Sender.hpp>
 #include <Network/Network.hpp>
 #include "bin/Vision.hpp"
 
 #include <QVector>
 #include <Geometry/Point2d.hpp>
+#include <Network/Sender.hpp>
 
 #include <unistd.h>
 #include <sys/time.h>
@@ -15,8 +15,6 @@ Vision::Vision(Env* env) :
 {
     _id = 0;
     _fps = 30;
-    _receiver = new Network::PacketReceiver();
-    _receiver->addType(Network::Address, Network::addTeamOffset(Blue,Network::RadioTx), this, &Vision::radioHandler);
 }
 
 Vision::~Vision()
@@ -66,7 +64,6 @@ void Vision::run()
 
         //get the current positions of the robots
 
-//         _simVisionMutex.lock();
         robotsPositions = _env->getRobotsPositions();
         int i=0;
         Q_FOREACH(Geometry::Point2d* pos, robotsPositions)
@@ -77,25 +74,9 @@ void Vision::run()
         }
 
 	sender.send(packet);
-
-//         _simVisionMutex.unlock();
-
-        _receiver->receive();
 	//camera pause
 	QThread::msleep(msecs - 5);
     }
 }
 
-void Vision::radioHandler(const Packet::RadioTx* packet)
-{
-    _env->txPacket = packet;
-    for(int i=0; i<5; i++)
-    {
-        for(int k = 0; k<4; k++)
-	{
-            printf("Robot %d Wheel %d\n",i, packet->robots[i].motors[k]);
-        }
-    }
-
-}
 

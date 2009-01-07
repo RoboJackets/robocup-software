@@ -7,6 +7,7 @@
 #include <QTimer>
 #include <Team.h>
 #include <Geometry/Point2d.hpp>
+#include <Network/PacketReceiver.hpp>
 #include <RadioTx.hpp>
 
 #include "../InputHandler.hpp"
@@ -34,6 +35,8 @@ class Env : public QObject
 
                 QVector<Geometry::Point2d*> getBallPositions();
 
+                void radioHandler(const Packet::RadioTx* packet);
+
 	private Q_SLOTS:
 		void step();
 
@@ -59,6 +62,8 @@ class Env : public QObject
 		QTimer _step;
 
 		InputHandler* inputHandler;
+
+                Network::PacketReceiver* _receiver;
 };
 
 #endif /* _ENV_HPP */
