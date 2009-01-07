@@ -105,7 +105,7 @@ add_executable (${PROJECT_NAME}
 	JoystickInput.cpp
 	InputHandler.cpp
 	Config.cpp
-        SimVision.cpp
+        Vision.cpp
 
 	## environment
         Physics/Env.cpp
@@ -114,7 +114,6 @@ add_executable (${PROJECT_NAME}
 	Physics/Field.cpp
 	Physics/Robot.cpp
 	Physics/MemoryStream.cpp
-
 	${MOC_SRCS} ${UI_HDRS} ${NxuStream2SRC}
 )
 

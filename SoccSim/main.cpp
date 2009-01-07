@@ -1,13 +1,12 @@
+#include "Vision.hpp"
+#include "Viewer.hpp"
+#include "Physics/Env.hpp"
+#include "Config.hpp"
+
 #include <QApplication>
 
 #include <NxPhysics.h>
 #include <stdio.h>
-
-#include "Viewer.hpp"
-#include "SimVision.hpp"
-#include "Physics/Env.hpp"
-#include "Config.hpp"
-
 
 int main(int argc, char* argv[])
 {
@@ -18,8 +17,8 @@ int main(int argc, char* argv[])
 
 	Config cfg("../config/sample.xml", env);
 
-        SimVision simVision(env);
-        simVision.start();
+        Vision vision(env);
+        vision.start();
 
 	Viewer win(env);
 	win.setVisible(true);
@@ -28,8 +27,8 @@ int main(int argc, char* argv[])
 
 	//cleanup
 	delete env;
-        simVision.terminate();
-        simVision.wait();
+        vision.terminate();
+        vision.wait();
 
 	return ret;
 }

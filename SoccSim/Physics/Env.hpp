@@ -8,7 +8,6 @@
 #include <Team.h>
 #include <Geometry/Point2d.hpp>
 #include <RadioTx.hpp>
-#include <Vision.hpp>
 
 #include "../InputHandler.hpp"
 

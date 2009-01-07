@@ -1,29 +1,30 @@
-#include "SimVision.hpp"
+#include "Vision.hpp"
+
+#include <Network/Sender.hpp>
+#include <Network/Network.hpp>
+#include "bin/Vision.hpp"
+
+#include <QVector>
+#include <Geometry/Point2d.hpp>
 
 #include <unistd.h>
 #include <sys/time.h>
-#include <QVector>
-#include <Geometry/Point2d.hpp>
-#include <Network/Sender.hpp>
-#include <Network/Network.hpp>
-#include <Vision.hpp>
 
-SimVision::SimVision(Env* env) :
+Vision::Vision(Env* env) :
 	_env(env)
 {
-    //TODO make it so that these can be derived from config file
     _id = 0;
     _fps = 30;
     _receiver = new Network::PacketReceiver();
-    _receiver->addType(Network::Address, Network::addTeamOffset(Blue,Network::RadioTx), this, &SimVision::radioHandler);
+    _receiver->addType(Network::Address, Network::addTeamOffset(Blue,Network::RadioTx), this, &Vision::radioHandler);
 }
 
-SimVision::~SimVision()
+Vision::~Vision()
 {
 
 }
 
-uint64_t SimVision::timestamp()
+uint64_t Vision::timestamp()
 {
 	struct timeval time;
 	gettimeofday(&time, 0);
@@ -31,7 +32,7 @@ uint64_t SimVision::timestamp()
 	return time.tv_sec * 1000000 + time.tv_usec;
 }
 
-void SimVision::run()
+void Vision::run()
 {
     Network::Sender sender(Network::Address, Network::Vision);
 
@@ -65,7 +66,7 @@ void SimVision::run()
 
         //get the current positions of the robots
 
-        _simVisionMutex.lock();
+//         _simVisionMutex.lock();
         robotsPositions = _env->getRobotsPositions();
         int i=0;
         Q_FOREACH(Geometry::Point2d* pos, robotsPositions)
@@ -77,7 +78,7 @@ void SimVision::run()
 
 	sender.send(packet);
 
-        _simVisionMutex.unlock();
+//         _simVisionMutex.unlock();
 
         _receiver->receive();
 	//camera pause
@@ -85,7 +86,7 @@ void SimVision::run()
     }
 }
 
-void SimVision::radioHandler(const Packet::RadioTx* packet)
+void Vision::radioHandler(const Packet::RadioTx* packet)
 {
     _env->txPacket = packet;
     for(int i=0; i<5; i++)
