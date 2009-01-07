@@ -23,7 +23,8 @@ Robot::Robot(ConfigFile::RobotCfg cfg):
     ConfigFile::PidInfo pos = cfg.posPid;
     ConfigFile::PidInfo angle = cfg.anglePid;
 
-    _posPID = new Pid(pos.p, pos.i, pos.d, pos.windup);
+    _xPID = new Pid(pos.p, pos.i, pos.d, pos.windup);
+    _yPID = new Pid(pos.p, pos.i, pos.d, pos.windup);
     _anglePID = new Pid(angle.p, angle.i, angle.d, angle.windup);
 
     //_pathPlanner = 0;
@@ -31,7 +32,8 @@ Robot::Robot(ConfigFile::RobotCfg cfg):
 
 Robot::~Robot()
 {
-    delete _posPID;
+    delete _xPID;
+    delete _yPID;
     delete _anglePID;
 
     delete[] _motors;
@@ -59,6 +61,10 @@ void Robot::proc()
         //TODO Send commands to motion via gameplay and set this flag there
         _state->self[_id].cmdValid = true;
 
+        testDesiredPos.x = 1;
+	testDesiredPos.y = 1;
+
+
         if(_state->self[_id].cmdValid)
         {
             currPos = _state->self[_id].pos;
@@ -66,8 +72,11 @@ void Robot::proc()
             currAngle = _state->self[_id].angle;
 
             //TODO position based control
-            velCmd.vel.x = 0;//_state->self[_id].cmdVel;
-            velCmd.vel.y = 50;
+            velCmd.vel.x = _xPID->run(testDesiredPos.x - currPos.x);;
+            velCmd.vel.y = _yPID->run(testDesiredPos.y - currPos.y);
+
+            printf("Pos in the x %f\n", currPos.x);
+            printf("Pos in the y %f\n", currPos.y);
 
             velCmd.w = 0;
 
@@ -244,6 +253,7 @@ void Robot::genMotor(VelocityCmd velCmd)
 
 void Robot::clearPid()
 {
-	_posPID->clearWindup();
+	_xPID->clearWindup();
+        _yPID->clearWindup();
 	_anglePID->clearWindup();
 }

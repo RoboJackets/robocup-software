@@ -23,7 +23,6 @@ set (SRCS
         Pid.cpp
         ConfigFile.cpp
         main.cpp
-        JoystickInput.cpp
 )
 
 add_library (motion ${SRCS} ${MOC_SRCS})

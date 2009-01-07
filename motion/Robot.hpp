@@ -52,8 +52,12 @@ class Robot
 		/** robot identification */
 		const unsigned int _id;
 
-		/** position pid **/
-		Pid* _posPID;
+		/** X pid **/
+		Pid* _xPID;
+
+                /** Y PID **/
+                Pid* _yPID;
+
 		/** angle pid **/
 		Pid* _anglePID;
 
