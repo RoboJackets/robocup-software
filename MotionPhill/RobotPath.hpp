@@ -2,25 +2,29 @@
 #define _ROBOTPATH_HPP_
 
 #include <Geometry/Point2d.hpp>
+#include <QGLWidget>
 #include <QPainter>
 #include <QPointF>
 
 using namespace Geometry;
-typedef enum
-{
-    Line = 0,
-    Circle = 1,
-    Ellipse = 2,
-    Polygon = 3,
-    RoundedRectangle = 4,
-    BezierCurve = 5,
-} PathType;
 
-class RobotPath
+
+class RobotPath : public QGLWidget
 {
     public:
-        RobotPath();
-        void display(QPainter& p);
+	typedef enum
+	{
+	    Line = 0,
+	    Circle = 1,
+	    Ellipse = 2,
+	    Polygon = 3,
+	    RoundedRectangle = 4,
+	    BezierCurve = 5,
+	} PathType;
+
+    public:
+        RobotPath(QWidget* parent = 0, QGLWidget* share = 0);
+        void paintEvent(QPaintEvent* event);
         /**Bezier Curves using cubic**/
         void setPath(QPointF c1, QPointF c2, QPointF endpoint);
         /**Circles**/

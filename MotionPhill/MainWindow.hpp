@@ -1,13 +1,16 @@
 #ifndef MAIN_WINDOW_HPP
 #define MAIN_WINDOW_HPP
 
+#include "FieldDisplay.hpp"
+#include "RobotPath.hpp"
+
 #include <QMainWindow>
 #include <QMouseEvent>
 #include <QTimer>
 #include <QPointF>
 #include <ui_motion.h>
-#include "FieldDisplay.hpp"
-#include "RobotPath.hpp"
+
+#include <log/FieldView.hpp>
 
 class MainWindow : public QMainWindow, Ui::MainWindow
 {
@@ -22,9 +25,13 @@ class MainWindow : public QMainWindow, Ui::MainWindow
 	private:
             Ui::MainWindow ui;
 
-            RobotPath rp;
+            RobotPath* _rp;
             QPointF mousePoint;
             QTimer _timer;
+
+            Team _team;
+
+            Log::FieldView* _fieldView;
 
 };
 

@@ -36,7 +36,7 @@ void Viewer::resizeGL(int w, int h)
 
 	//eyeXYZ, targetXYZ, upXYZ
 	//gluLookAt(-1, -1, -1, 0, 0, 0, 0, 0, 1);
-	gluLookAt(-5, -5, 5, 0, 0, 0, 0, 0, 1);
+	gluLookAt(-2, -2, 2, 0, 0, 0, 0, 0, 1);
 	//gluLookAt(0, 0, 2, 0, 0, 0, 0, 0, 1);
 	//gluLookAt(.7, .7, .7, 0, 0, 0, 0, 0, 1);
 }

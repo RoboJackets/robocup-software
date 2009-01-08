@@ -2,20 +2,20 @@
 
 #include <QPainter>
 #include <QPainterPath>
-#include <QWidget>
 #include <QPointF>
 #include <Geometry/Point2d.hpp>
 
-RobotPath::RobotPath()
+RobotPath::RobotPath(QWidget* parent, QGLWidget* share) :
+    QGLWidget(parent,share)
 {
-
 }
 
-void RobotPath::display(QPainter& p)
+void RobotPath::paintEvent(QPaintEvent* event)
 {
+    QPainter painter(this);
     QPainterPath path;
 
-    p.setPen(Qt::black);
+    painter.setPen(Qt::red);
 
     switch(pathType)
     {
@@ -28,7 +28,8 @@ void RobotPath::display(QPainter& p)
             path.cubicTo(_c1, _c2, _endpoint);
 
     }
-    p.drawPath(path);
+    painter.setBackgroundMode(Qt::TransparentMode);
+    painter.drawPath(path);
 }
 
 void RobotPath::setPath(QPointF c1, QPointF c2, QPointF endpoint)

@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1079</width>
+    <width>1270</width>
     <height>722</height>
    </rect>
   </property>
@@ -16,8 +16,8 @@
    <widget class="QPushButton" name="run" >
     <property name="geometry" >
      <rect>
-      <x>940</x>
-      <y>550</y>
+      <x>1140</x>
+      <y>510</y>
       <width>93</width>
       <height>27</height>
      </rect>
@@ -29,8 +29,8 @@
    <widget class="QPushButton" name="stop" >
     <property name="geometry" >
      <rect>
-      <x>940</x>
-      <y>580</y>
+      <x>1140</x>
+      <y>540</y>
       <width>93</width>
       <height>27</height>
      </rect>
@@ -42,8 +42,8 @@
    <widget class="QLabel" name="kP" >
     <property name="geometry" >
      <rect>
-      <x>962</x>
-      <y>60</y>
+      <x>1142</x>
+      <y>40</y>
       <width>32</width>
       <height>27</height>
      </rect>
@@ -55,8 +55,8 @@
    <widget class="QSpinBox" name="K_p" >
     <property name="geometry" >
      <rect>
-      <x>1000</x>
-      <y>60</y>
+      <x>1180</x>
+      <y>40</y>
       <width>55</width>
       <height>27</height>
      </rect>
@@ -71,8 +71,8 @@
    <widget class="QLabel" name="kI" >
     <property name="geometry" >
      <rect>
-      <x>962</x>
-      <y>93</y>
+      <x>1142</x>
+      <y>73</y>
       <width>32</width>
       <height>27</height>
      </rect>
@@ -84,8 +84,8 @@
    <widget class="QSpinBox" name="K_i" >
     <property name="geometry" >
      <rect>
-      <x>1002</x>
-      <y>93</y>
+      <x>1182</x>
+      <y>73</y>
       <width>55</width>
       <height>27</height>
      </rect>
@@ -97,8 +97,8 @@
    <widget class="QLabel" name="kD" >
     <property name="geometry" >
      <rect>
-      <x>964</x>
-      <y>123</y>
+      <x>1144</x>
+      <y>103</y>
       <width>32</width>
       <height>27</height>
      </rect>
@@ -110,8 +110,8 @@
    <widget class="QSpinBox" name="K_d" >
     <property name="geometry" >
      <rect>
-      <x>1002</x>
-      <y>123</y>
+      <x>1182</x>
+      <y>103</y>
       <width>55</width>
       <height>27</height>
      </rect>
@@ -123,8 +123,8 @@
    <widget class="QPushButton" name="apply" >
     <property name="geometry" >
      <rect>
-      <x>962</x>
-      <y>153</y>
+      <x>1142</x>
+      <y>133</y>
       <width>93</width>
       <height>27</height>
      </rect>
@@ -136,8 +136,8 @@
    <widget class="QPushButton" name="close" >
     <property name="geometry" >
      <rect>
-      <x>940</x>
-      <y>610</y>
+      <x>1140</x>
+      <y>570</y>
       <width>93</width>
       <height>27</height>
      </rect>
@@ -146,26 +146,11 @@
      <string>Close</string>
     </property>
    </widget>
-   <widget class="FieldDisplay" native="1" name="field" >
-    <property name="geometry" >
-     <rect>
-      <x>19</x>
-      <y>19</y>
-      <width>901</width>
-      <height>621</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" >
-     <item row="0" column="0" >
-      <layout class="QGridLayout" />
-     </item>
-    </layout>
-   </widget>
    <widget class="QGroupBox" name="pathEditor" >
     <property name="geometry" >
      <rect>
-      <x>940</x>
-      <y>210</y>
+      <x>1120</x>
+      <y>190</y>
       <width>121</width>
       <height>121</height>
      </rect>
@@ -216,7 +201,7 @@
    <widget class="QLabel" name="xPos" >
     <property name="geometry" >
      <rect>
-      <x>30</x>
+      <x>10</x>
       <y>640</y>
       <width>71</width>
       <height>27</height>
@@ -229,7 +214,7 @@
    <widget class="QLabel" name="yPos" >
     <property name="geometry" >
      <rect>
-      <x>120</x>
+      <x>100</x>
       <y>640</y>
       <width>91</width>
       <height>27</height>
@@ -239,13 +224,24 @@
      <string>Y = </string>
     </property>
    </widget>
+   <widget class="QWidget" name="gridLayout" >
+    <property name="geometry" >
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>901</width>
+      <height>631</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" />
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar" >
    <property name="geometry" >
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1079</width>
+     <width>1270</width>
      <height>25</height>
     </rect>
    </property>
@@ -273,15 +269,18 @@
     <bool>false</bool>
    </attribute>
   </widget>
+  <widget class="QToolBar" name="toolBar_3" >
+   <property name="windowTitle" >
+    <string>toolBar_3</string>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+  </widget>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>FieldDisplay</class>
-   <extends>QWidget</extends>
-   <header>../FieldDisplay.hpp</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

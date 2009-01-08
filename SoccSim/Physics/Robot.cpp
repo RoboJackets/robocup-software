@@ -6,8 +6,8 @@
 #include "Env.hpp"
 #include "MemoryStream.hpp"
 
-#define ROLLER  0
-#define KICKER  0
+#define ROLLER  1
+#define KICKER  1
 #define CHIPPER 0
 
 using namespace Geometry;
