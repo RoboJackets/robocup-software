@@ -152,30 +152,30 @@
       <x>1120</x>
       <y>190</y>
       <width>121</width>
-      <height>121</height>
+      <height>211</height>
      </rect>
     </property>
     <property name="title" >
-     <string>Edit Path</string>
+     <string>Draw Path</string>
     </property>
-    <widget class="QPushButton" name="drawPath" >
+    <widget class="QPushButton" name="beizerCurve" >
      <property name="geometry" >
       <rect>
        <x>20</x>
-       <y>20</y>
+       <y>80</y>
        <width>80</width>
        <height>27</height>
       </rect>
      </property>
      <property name="text" >
-      <string>Draw</string>
+      <string>BeizerCurve</string>
      </property>
     </widget>
     <widget class="QPushButton" name="erasePath" >
      <property name="geometry" >
       <rect>
        <x>20</x>
-       <y>50</y>
+       <y>140</y>
        <width>80</width>
        <height>27</height>
       </rect>
@@ -188,13 +188,52 @@
      <property name="geometry" >
       <rect>
        <x>20</x>
-       <y>80</y>
+       <y>170</y>
        <width>80</width>
        <height>27</height>
       </rect>
      </property>
      <property name="text" >
       <string>Save</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="line" >
+     <property name="geometry" >
+      <rect>
+       <x>20</x>
+       <y>110</y>
+       <width>80</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text" >
+      <string>Line</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="point" >
+     <property name="geometry" >
+      <rect>
+       <x>20</x>
+       <y>50</y>
+       <width>80</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text" >
+      <string>Point</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="startPoint" >
+     <property name="geometry" >
+      <rect>
+       <x>20</x>
+       <y>20</y>
+       <width>80</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text" >
+      <string>Start Point</string>
      </property>
     </widget>
    </widget>
@@ -272,6 +311,17 @@
   <widget class="QToolBar" name="toolBar_3" >
    <property name="windowTitle" >
     <string>toolBar_3</string>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QToolBar" name="toolBar_4" >
+   <property name="windowTitle" >
+    <string>toolBar_4</string>
    </property>
    <attribute name="toolBarArea" >
     <enum>TopToolBarArea</enum>

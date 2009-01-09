@@ -2,31 +2,45 @@
 #define _ROBOTPATH_HPP_
 
 #include <Geometry/Point2d.hpp>
-#include <QGLWidget>
+#include <Team.h>
+
+#include <QVector>
+#include <QWidget>
+#include <QMouseEvent>
 #include <QPainter>
 #include <QPointF>
 
 using namespace Geometry;
 
 
-class RobotPath : public QGLWidget
+class RobotPath : public QWidget
 {
-    public:
-	typedef enum
-	{
-	    Line = 0,
-	    Circle = 1,
-	    Ellipse = 2,
-	    Polygon = 3,
-	    RoundedRectangle = 4,
-	    BezierCurve = 5,
-	} PathType;
+    Q_OBJECT;
 
     public:
-        RobotPath(QWidget* parent = 0, QGLWidget* share = 0);
-        void paintEvent(QPaintEvent* event);
+        typedef enum
+	{
+	    Line,
+	    Circle,
+	    Ellipse,
+            Start,
+            Point,
+	    BezierCurve,
+	} PathType;
+
+        typedef struct
+        {
+            int numPoints;
+	    PathType type;
+            QPointF points[4];
+        } Path;
+
+
+
+    public:
+        RobotPath(Team team, QWidget* parent = 0);
         /**Bezier Curves using cubic**/
-        void setPath(QPointF c1, QPointF c2, QPointF endpoint);
+        void setPath(PathType pathType);
         /**Circles**/
         //void setPath(Circle2d circle);
         /** Lines **/
@@ -34,15 +48,31 @@ class RobotPath : public QGLWidget
         /** Polygons **/
         //void setPath(QPolygonF poly);
 
+    protected:
+        void paintEvent(QPaintEvent* event);
+        void mousePressEvent(QMouseEvent* me);
+        void mouseReleaseEvent(QMouseEvent* me);
+        void mouseMoveEvent(QMouseEvent* me);
+        void mouseDoubleClickEvent(QMouseEvent* me);
+
+
     private:
         //TODO make it such that I don't need specific variables for all types of paths
+        QPointF _pathParamPoints[4];
         QPointF _c1;
         QPointF _c2;
         QPointF _endpoint;
 
         QPointF _currPos;
 
-        PathType pathType;
+        /** The current path (temp)**/
+        Path currPath;
+
+        Team _team;
+
+        int _numPathPoints;
+
+        int _pathPointInterator;
 
 };
 

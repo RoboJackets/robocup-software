@@ -1,7 +1,7 @@
 #ifndef MAIN_WINDOW_HPP
 #define MAIN_WINDOW_HPP
 
-#include "FieldDisplay.hpp"
+#include "FieldView.hpp"
 #include "RobotPath.hpp"
 
 #include <QMainWindow>
@@ -9,8 +9,6 @@
 #include <QTimer>
 #include <QPointF>
 #include <ui_motion.h>
-
-#include <log/FieldView.hpp>
 
 class MainWindow : public QMainWindow, Ui::MainWindow
 {
@@ -20,8 +18,13 @@ class MainWindow : public QMainWindow, Ui::MainWindow
 	    MainWindow(Team team);
 	    ~MainWindow();
         public Q_SLOTS:
-            void cursorPosition(float x, float y, float wx, float wy, QMouseEvent me);
             void redraw();
+            void on_point_clicked();
+            void on_beizerCurve_clicked();
+            void on_line_clicked();
+
+        protected:
+            void mouseMoveEvent(QMouseEvent* me);
 	private:
             Ui::MainWindow ui;
 
@@ -31,8 +34,7 @@ class MainWindow : public QMainWindow, Ui::MainWindow
 
             Team _team;
 
-            Log::FieldView* _fieldView;
-
+            FieldView* _fieldView;
 };
 
 #endif // MAIN_WINDOW_HPP
