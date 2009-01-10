@@ -3,6 +3,7 @@
 #include <Geometry/Point2d.hpp>
 #include <Constants.hpp>
 
+#include <QVector>
 #include <QPainter>
 #include <QPainterPath>
 #include <QPointF>
@@ -11,72 +12,134 @@ using namespace Constants;
 RobotPath::RobotPath(Team team, QWidget* parent) :
     QWidget(parent), _team(team)
 {
-    for(int i = 0; i<5; i++)
-    {
-        _pathParamPoints[i] = QPointF(0,0);
-    }
-
+    QPointF* initPoint = new QPointF(0,0);
     _numPathPoints = 0;
     _pathPointInterator = 0;
+
+    for(int i = 0; i<4; i++)
+    {
+        currPath.points[i] = *initPoint;
+    }
 
 }
 
 void RobotPath::paintEvent(QPaintEvent* event)
 {
     QPainter painter(this);
-    QPainterPath path;
+    QPainterPath* painterPath = new QPainterPath(QPointF(0,0));
 
-    painter.setPen(Qt::red);
-
-    switch(currPath.type)
+    painter.setPen(Qt::green);
+    Q_FOREACH(RobotPath::Path p, _paths)
     {
-        case Line:
-            path.lineTo(currPath.points[1]);
-        case Circle:
-	case Ellipse:
-        case Start:
-            path.moveTo(currPath.points[1]);
-        case Point:
-	    path.moveTo(currPath.points[1]);
-        case BezierCurve:
-            path.cubicTo(currPath.points[1], currPath.points[2], currPath.points[0]);
+	switch(p.type)
+	{
+	    case Line:
+		painterPath->lineTo(p.points[0]);
+                break;
+            case Arc:
+                //Arc parameters
+		painterPath->quadTo(p.points[1],p.points[0]);
+                break;
+	    case Circle:
+                break;
+	    case Ellipse:
+                break;
+	    case Start:
+		painterPath = new QPainterPath(p.points[0]);
+                painterPath->addEllipse(p.points[0].x(),p.points[0].y(),1,1);
+                painterPath->addEllipse(p.points[0].x() - 10,p.points[0].y() - 10,20,20);
+                painterPath->moveTo(p.points[0]);
+                break;
+            case Close:
+                painterPath->closeSubpath();
+                break;
+	    case BezierCurve:
+		painterPath->cubicTo(p.points[1], p.points[2], p.points[0]);
+                break;
+	}
     }
-    painter.drawPath(path);
+    painter.drawPath(*painterPath);
 }
 
-void RobotPath::setPath(PathType pathType)
+void RobotPath::addPath(PathType pathType)
 {
     currPath.type = pathType;
-    printf("this should be called once\n");
-
     switch(currPath.type)
     {
         case Line:
-            printf("Line\n");
             currPath.numPoints = 1;
+            break;
+        case Arc:
+            currPath.numPoints = 2;
+            break;
         case Circle:
             currPath.numPoints = 2;
+            break;
 	case Ellipse:
             currPath.numPoints = 3;
+            break;
         case Start:
-            printf("Start\n");
             currPath.numPoints = 1;
-        case Point:
-            printf("Point\n");
-            currPath.numPoints = 1;
+            break;
         case BezierCurve:
-            printf("BeizerCurve\n");
             currPath.numPoints = 3;
-
+            break;
+        case Close:
+            break;
     }
+
+    currPath.points[1] = currPath.points[0];
+    currPath.points[2] = currPath.points[0];
+
+    _pathPointInterator = 0;
+
+   _paths.append(currPath);
+}
+
+void RobotPath::eraseAllPaths()
+{
+    _paths.clear();
+
+    for(int i = 0; i<4; i++)
+    {
+        currPath.points[i] = QPointF(0,0);
+    }
+}
+
+void RobotPath::erase()
+{
+    if(!_paths.isEmpty())
+    {
+        _paths.remove(_paths.size()-1);
+    }
+    else
+    {
+        for(int i = 0; i<4; i++)
+        {
+            currPath.points[i] = QPointF(0,0);
+        }
+    }
+}
+
+void RobotPath::closePath()
+{
+    currPath.type = Close;
+
+    currPath.numPoints = 0;
+    currPath.points[1] = currPath.points[0];
+    currPath.points[2] = currPath.points[0];
+
+    _pathPointInterator = 0;
+
+   _paths.append(currPath);
 }
 
 void RobotPath::mousePressEvent(QMouseEvent* me)
 {
     if(_pathPointInterator % currPath.numPoints == 0)
     {
-        currPath.points[2] = QPointF(0,0);
-        currPath.points[1] = QPointF(0,0);
+        currPath.points[2] = currPath.points[0];
+        currPath.points[1] = currPath.points[0];
     }
 }
 
@@ -84,13 +147,13 @@ void RobotPath::mouseReleaseEvent(QMouseEvent* me)
 {
     currPath.points[_pathPointInterator % currPath.numPoints] = me->pos();
     _pathPointInterator++;
-    printf("_pathPointInterator %d \n", currPath.type);
-
+    _paths[_paths.size()-1] = currPath;
 }
 
 void RobotPath::mouseMoveEvent(QMouseEvent* me)
 {
     currPath.points[_pathPointInterator % currPath.numPoints] = me->pos();
+    _paths[_paths.size()-1] = currPath;
 }
 
 void RobotPath::mouseDoubleClickEvent(QMouseEvent* me)

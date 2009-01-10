@@ -21,11 +21,12 @@ class RobotPath : public QWidget
         typedef enum
 	{
 	    Line,
+            Arc,
 	    Circle,
 	    Ellipse,
             Start,
-            Point,
 	    BezierCurve,
+            Close,
 	} PathType;
 
         typedef struct
@@ -39,14 +40,11 @@ class RobotPath : public QWidget
 
     public:
         RobotPath(Team team, QWidget* parent = 0);
-        /**Bezier Curves using cubic**/
-        void setPath(PathType pathType);
-        /**Circles**/
-        //void setPath(Circle2d circle);
-        /** Lines **/
-        //void setPath(Point2d endpoint1, Point2d endpoint2);
-        /** Polygons **/
-        //void setPath(QPolygonF poly);
+        void addPath(PathType pathType);
+
+        void eraseAllPaths();
+        void erase();
+        void closePath();
 
     protected:
         void paintEvent(QPaintEvent* event);
@@ -57,11 +55,10 @@ class RobotPath : public QWidget
 
 
     private:
-        //TODO make it such that I don't need specific variables for all types of paths
-        QPointF _pathParamPoints[4];
-        QPointF _c1;
-        QPointF _c2;
-        QPointF _endpoint;
+        QVector<Path> _paths;
+//         QPointF _c1;
+//         QPointF _c2;
+//         QPointF _endpoint;
 
         QPointF _currPos;
 

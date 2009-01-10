@@ -149,49 +149,64 @@
    <widget class="QGroupBox" name="pathEditor" >
     <property name="geometry" >
      <rect>
-      <x>1120</x>
-      <y>190</y>
-      <width>121</width>
-      <height>211</height>
+      <x>1140</x>
+      <y>170</y>
+      <width>101</width>
+      <height>261</height>
      </rect>
     </property>
     <property name="title" >
-     <string>Draw Path</string>
+     <string>Drawing</string>
     </property>
     <widget class="QPushButton" name="beizerCurve" >
      <property name="geometry" >
       <rect>
        <x>20</x>
        <y>80</y>
-       <width>80</width>
-       <height>27</height>
+       <width>63</width>
+       <height>24</height>
       </rect>
      </property>
+     <property name="font" >
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
      <property name="text" >
-      <string>BeizerCurve</string>
+      <string>Bezier</string>
      </property>
     </widget>
     <widget class="QPushButton" name="erasePath" >
      <property name="geometry" >
       <rect>
        <x>20</x>
-       <y>140</y>
-       <width>80</width>
-       <height>27</height>
+       <y>200</y>
+       <width>63</width>
+       <height>24</height>
       </rect>
      </property>
+     <property name="font" >
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
      <property name="text" >
-      <string>Erase</string>
+      <string> Erase All</string>
      </property>
     </widget>
     <widget class="QPushButton" name="savePath" >
      <property name="geometry" >
       <rect>
        <x>20</x>
-       <y>170</y>
-       <width>80</width>
-       <height>27</height>
+       <y>230</y>
+       <width>63</width>
+       <height>24</height>
       </rect>
+     </property>
+     <property name="font" >
+      <font>
+       <pointsize>8</pointsize>
+      </font>
      </property>
      <property name="text" >
       <string>Save</string>
@@ -201,26 +216,18 @@
      <property name="geometry" >
       <rect>
        <x>20</x>
-       <y>110</y>
-       <width>80</width>
-       <height>27</height>
+       <y>50</y>
+       <width>63</width>
+       <height>24</height>
       </rect>
+     </property>
+     <property name="font" >
+      <font>
+       <pointsize>8</pointsize>
+      </font>
      </property>
      <property name="text" >
       <string>Line</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="point" >
-     <property name="geometry" >
-      <rect>
-       <x>20</x>
-       <y>50</y>
-       <width>80</width>
-       <height>27</height>
-      </rect>
-     </property>
-     <property name="text" >
-      <string>Point</string>
      </property>
     </widget>
     <widget class="QPushButton" name="startPoint" >
@@ -228,12 +235,71 @@
       <rect>
        <x>20</x>
        <y>20</y>
-       <width>80</width>
-       <height>27</height>
+       <width>63</width>
+       <height>24</height>
       </rect>
      </property>
+     <property name="font" >
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
      <property name="text" >
-      <string>Start Point</string>
+      <string>Start</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="erase" >
+     <property name="geometry" >
+      <rect>
+       <x>20</x>
+       <y>170</y>
+       <width>63</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="font" >
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
+     <property name="text" >
+      <string>Erase</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="arc" >
+     <property name="geometry" >
+      <rect>
+       <x>20</x>
+       <y>110</y>
+       <width>63</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="font" >
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
+     <property name="text" >
+      <string>Arc</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="closePath" >
+     <property name="geometry" >
+      <rect>
+       <x>20</x>
+       <y>140</y>
+       <width>63</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="font" >
+      <font>
+       <pointsize>8</pointsize>
+      </font>
+     </property>
+     <property name="text" >
+      <string>Close</string>
      </property>
     </widget>
    </widget>
