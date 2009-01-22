@@ -21,8 +21,8 @@ set (SRCS
 	Controller.cpp
         Robot.cpp
         Pid.cpp
-        ConfigFile.cpp
         main.cpp
+        ConfigFile.cpp
 )
 
 add_library (motion ${SRCS} ${MOC_SRCS})

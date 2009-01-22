@@ -13,7 +13,7 @@ include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
 #modules
 include_directories (${PROJECT_SOURCE_DIR}/..)
 add_subdirectory (${PROJECT_SOURCE_DIR}/../motion ${PROJECT_BINARY_DIR}/motion)
-# add_subdirectory (${PROJECT_SOURCE_DIR}/../log ${PROJECT_BINARY_DIR}/log)
+add_subdirectory (${PROJECT_SOURCE_DIR}/../log ${PROJECT_BINARY_DIR}/log)
 
 include_directories(${PROJECT_BINARY_DIR})
 
@@ -33,6 +33,8 @@ set (SRCS
         RobotPath.cpp
         FieldView.cpp
         drawing/Elements.cpp
+        ../soccer/Processor.cpp
+	../soccer/module/WorldModel.cpp
 )
 
 set (exec motionTest)
@@ -46,7 +48,7 @@ target_link_libraries(${exec} ${FRAMEWORK_LIBRARY})
 target_link_libraries(${exec} ${QT_LIBRARIES})
 
 #module linking
-# target_link_libraries(${exec} log)
+target_link_libraries(${exec} log)
 target_link_libraries(${exec} motion)
 
 

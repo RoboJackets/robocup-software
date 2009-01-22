@@ -3,12 +3,15 @@
 
 #include "FieldView.hpp"
 #include "RobotPath.hpp"
+#include "../soccer/Processor.hpp"
+#include <log/LogFile.hpp>
 
 #include <QMainWindow>
 #include <QMouseEvent>
 #include <QTimer>
 #include <QPointF>
 #include <ui_motion.h>
+#include <QString>
 
 class MainWindow : public QMainWindow, Ui::MainWindow
 {
@@ -22,7 +25,7 @@ class MainWindow : public QMainWindow, Ui::MainWindow
             };
 
 	public:
-	    MainWindow(Team team);
+	    MainWindow(Team team, QString filename);
 	    ~MainWindow();
         public Q_SLOTS:
             void redraw();
@@ -36,6 +39,7 @@ class MainWindow : public QMainWindow, Ui::MainWindow
             void on_closePath_clicked();
             void on_arc_clicked();
             void on_close_clicked();
+            void setupModules();
 
         protected:
 //             void mouseMoveEvent(QMouseEvent* me);
@@ -51,6 +55,13 @@ class MainWindow : public QMainWindow, Ui::MainWindow
             FieldView* _fieldView;
 
             int _mode;
+
+            Processor _processor;
+
+            Log::LogFile* _logFile;
+
+            /** Currently the configfile is for motion but others can add to it **/
+	    QString _configFile;
 };
 
 #endif // MAIN_WINDOW_HPP

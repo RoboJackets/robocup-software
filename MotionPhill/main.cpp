@@ -1,35 +1,42 @@
 #include <QApplication>
 #include <Team.h>
 #include "MainWindow.hpp"
+#include <QString>
 
 void usage(const char* prog)
 {
-	printf("Usage: %s [-b|-y]\n", prog);
+	printf("usage: %s <-y|-b> [-c <config file>]\n", prog);
+	printf("\t-y: run as the yellow team\n");
+	printf("\t-b: run as the blue team\n");
 }
+
 
 int main(int argc,char* argv[])
 {
         QApplication app(argc, argv);
 
 	Team t = Yellow;
+        QString cfgFile = "";
 
-	if (argc != 2 || strlen(argv[1]) != 2)
+        for (int i=0 ; i<argc; ++i)
 	{
-		usage(argv[0]);
-		return -1;
+	    const char* var = argv[i];
+
+	    if (strcmp(var, "-y") == 0)
+	    {
+	    	t = Yellow;
+	    }
+	    else if (strcmp(var, "-b") == 0)
+	    {
+	    	t = Blue;
+	    }
+	    else if(strcmp(var, "-c") == 0)
+	    {
+	    	cfgFile = argv[i+1];
+	    }
 	}
 
-	if (strncmp(argv[1], "-b", 2) == 0)
-	{
-		t = Blue;
-	}
-	else if (strncmp(argv[1], "-y", 2) != 0)
-	{
-		usage(argv[0]);
-		return -1;
-	}
-
-	MainWindow win(t);
+	MainWindow win(t,cfgFile);
 	win.show();
 
 	return app.exec();
