@@ -19,7 +19,6 @@ include_directories(${PROJECT_BINARY_DIR})
 
 qt4_wrap_cpp (MOC_SRCS
 	MainWindow.hpp
-        FieldView.hpp
         RobotPath.hpp
 )
 
@@ -31,8 +30,6 @@ set (SRCS
         main.cpp
 	MainWindow.cpp
         RobotPath.cpp
-        FieldView.cpp
-        drawing/Elements.cpp
         ../soccer/Processor.cpp
 	../soccer/module/WorldModel.cpp
 )
@@ -50,32 +47,3 @@ target_link_libraries(${exec} ${QT_LIBRARIES})
 #module linking
 target_link_libraries(${exec} log)
 target_link_libraries(${exec} motion)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

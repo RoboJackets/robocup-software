@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1270</width>
+    <width>1006</width>
     <height>722</height>
    </rect>
   </property>
@@ -16,8 +16,8 @@
    <widget class="QPushButton" name="run" >
     <property name="geometry" >
      <rect>
-      <x>1140</x>
-      <y>510</y>
+      <x>876</x>
+      <y>497</y>
       <width>93</width>
       <height>27</height>
      </rect>
@@ -29,8 +29,8 @@
    <widget class="QPushButton" name="stop" >
     <property name="geometry" >
      <rect>
-      <x>1140</x>
-      <y>540</y>
+      <x>876</x>
+      <y>527</y>
       <width>93</width>
       <height>27</height>
      </rect>
@@ -42,8 +42,8 @@
    <widget class="QLabel" name="kP" >
     <property name="geometry" >
      <rect>
-      <x>1142</x>
-      <y>40</y>
+      <x>878</x>
+      <y>27</y>
       <width>32</width>
       <height>27</height>
      </rect>
@@ -55,8 +55,8 @@
    <widget class="QSpinBox" name="K_p" >
     <property name="geometry" >
      <rect>
-      <x>1180</x>
-      <y>40</y>
+      <x>916</x>
+      <y>27</y>
       <width>55</width>
       <height>27</height>
      </rect>
@@ -71,8 +71,8 @@
    <widget class="QLabel" name="kI" >
     <property name="geometry" >
      <rect>
-      <x>1142</x>
-      <y>73</y>
+      <x>878</x>
+      <y>60</y>
       <width>32</width>
       <height>27</height>
      </rect>
@@ -84,8 +84,8 @@
    <widget class="QSpinBox" name="K_i" >
     <property name="geometry" >
      <rect>
-      <x>1182</x>
-      <y>73</y>
+      <x>918</x>
+      <y>60</y>
       <width>55</width>
       <height>27</height>
      </rect>
@@ -97,8 +97,8 @@
    <widget class="QLabel" name="kD" >
     <property name="geometry" >
      <rect>
-      <x>1144</x>
-      <y>103</y>
+      <x>880</x>
+      <y>90</y>
       <width>32</width>
       <height>27</height>
      </rect>
@@ -110,8 +110,8 @@
    <widget class="QSpinBox" name="K_d" >
     <property name="geometry" >
      <rect>
-      <x>1182</x>
-      <y>103</y>
+      <x>918</x>
+      <y>90</y>
       <width>55</width>
       <height>27</height>
      </rect>
@@ -123,8 +123,8 @@
    <widget class="QPushButton" name="apply" >
     <property name="geometry" >
      <rect>
-      <x>1142</x>
-      <y>133</y>
+      <x>878</x>
+      <y>120</y>
       <width>93</width>
       <height>27</height>
      </rect>
@@ -136,8 +136,8 @@
    <widget class="QPushButton" name="close" >
     <property name="geometry" >
      <rect>
-      <x>1140</x>
-      <y>570</y>
+      <x>876</x>
+      <y>557</y>
       <width>93</width>
       <height>27</height>
      </rect>
@@ -149,8 +149,8 @@
    <widget class="QGroupBox" name="pathEditor" >
     <property name="geometry" >
      <rect>
-      <x>1140</x>
-      <y>170</y>
+      <x>876</x>
+      <y>157</y>
       <width>101</width>
       <height>261</height>
      </rect>
@@ -334,8 +334,8 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>901</width>
-      <height>631</height>
+      <width>841</width>
+      <height>581</height>
      </rect>
     </property>
     <layout class="QGridLayout" />
@@ -346,8 +346,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1270</width>
-     <height>25</height>
+     <width>1006</width>
+     <height>29</height>
     </rect>
    </property>
   </widget>

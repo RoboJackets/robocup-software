@@ -1,7 +1,6 @@
 #ifndef MAIN_WINDOW_HPP
 #define MAIN_WINDOW_HPP
 
-#include "FieldView.hpp"
 #include "RobotPath.hpp"
 #include "../soccer/Processor.hpp"
 #include <log/LogFile.hpp>
@@ -52,7 +51,6 @@ class MainWindow : public QMainWindow, Ui::MainWindow
 
             Team _team;
 
-            FieldView* _fieldView;
 
             int _mode;
 

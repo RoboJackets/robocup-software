@@ -41,6 +41,8 @@ class Processor : public QThread
 
 	/// members ///
 	private:
+
+                /** Used to start and stop the thread **/
 		bool _running;
 
 		/** trigger camera id, triggers syncronous processing */

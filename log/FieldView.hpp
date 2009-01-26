@@ -32,6 +32,8 @@ namespace Log
 			float _tx, _ty, _ta;
 
 			Team _team;
+
+
 	};
 }
 

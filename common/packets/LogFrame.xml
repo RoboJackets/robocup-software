@@ -14,14 +14,17 @@
 		<!-- velocity of the robot -->
 		<member type="Point2d" name="vel" />
 
+		<!-- angle of the robot (+- 180 degrees) -->
+		<member type="float" name="angle" />
+
 		<!-- commanded position of the robot -->
 		<member type="Point2d" name="cmdPos" />
 
 		<!-- commanded velocity of the robot -->
 		<member type="Point2d" name="cmdVel" />
 
-		<!-- angle of the robot (+- 180 degrees -->
-		<member type="float" name="angle" />
+		<!-- commanded angle of the robot (+- 180 degrees) -->
+		<member type="float" name="cmdAngle" />
 
 		<!-- if true, this robot is active for use -->
 		<member type="bool" name="valid" value="false" />

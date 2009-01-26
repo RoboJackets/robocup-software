@@ -59,31 +59,25 @@ void Robot::proc()
     {
         //printf("ID Please %d\n",_id);
         //TODO Send commands to motion via gameplay and set this flag there
-        _state->self[_id].cmdValid = true;
 
         testDesiredPos.x = 1;
 	testDesiredPos.y = 1;
+	currPos = _state->self[_id].pos;
+	currVel = _state->self[_id].vel;
+	currAngle = _state->self[_id].angle;
 
+	//TODO position based control
+	velCmd.vel.x = _xPID->run(testDesiredPos.x - currPos.x);;
+	velCmd.vel.y = _yPID->run(testDesiredPos.y - currPos.y);
 
-        if(_state->self[_id].cmdValid)
-        {
-            currPos = _state->self[_id].pos;
-            currVel = _state->self[_id].vel;
-            currAngle = _state->self[_id].angle;
+	printf("Pos in the x %f\n", currPos.x);
+	printf("Pos in the y %f\n", currPos.y);
 
-            //TODO position based control
-            velCmd.vel.x = _xPID->run(testDesiredPos.x - currPos.x);;
-            velCmd.vel.y = _yPID->run(testDesiredPos.y - currPos.y);
+	velCmd.w = 0;
 
-            printf("Pos in the x %f\n", currPos.x);
-            printf("Pos in the y %f\n", currPos.y);
+	genMotor(velCmd);
 
-            velCmd.w = 0;
-
-            genMotor(velCmd);
-
-            _state->self[_id].cmdValid = false;
-        }
+	_state->self[_id].cmdValid = false;
     }
     /*
 	if (_self.valid)

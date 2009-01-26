@@ -9,6 +9,7 @@
 
 NxPhysicsSDK* Env::_physicsSDK = 0;
 unsigned int Env::_refCount = 0;
+unsigned char packetRxd;
 
 using namespace Geometry;
 
@@ -69,6 +70,7 @@ Env::Env()
 
     //new environment created
     ++_refCount;
+    packetRxd = 0;
 
     try
     {
@@ -83,7 +85,6 @@ Env::Env()
 	printf("No input controller.\n");
 	inputHandler = 0;
     }
-
 
     _receiver = new Network::PacketReceiver();
     _receiver->addType(Network::Address, Network::addTeamOffset(Blue,Network::RadioTx), this, &Env::radioHandler);
@@ -118,7 +119,7 @@ void Env::step()
 {
 
     int rid;
-
+    packetRxd = 0;
     _receiver->receive();
 #if 0
     if (inputHandler)
@@ -153,23 +154,16 @@ void Env::step()
     }
     else
     {
-        Q_FOREACH(Robot* r, _robots)
-        {
-	   r->step();
+        if(packetRxd)
+	    Q_FOREACH(Robot* r, _robots)
+	    {
+		r->step();
+	    }
         }
-//         Q_FOREACH(Robot* r, _robots)
-//         {
-// 	    for (int k=0 ; k<4 ; ++k)
-// 	    {
-// 		r->vels[k] = txPacket->robots[i].motors[k];
-//                 printf("Robot %d Wheel %d\n",i, txPacket->robots[i].motors[k]);
-// 	    }
-// 	    r->step();
-//
-//
-//             i++;
-//         }
-
+        else
+        {
+            r->vels[k] = 0;
+        }
     }
     _scene->simulate(1.0/60.0);
     _scene->flushStream();
@@ -220,6 +214,7 @@ void Env::radioHandler(const Packet::RadioTx* packet)
 	}
 	i++;
     }
+    packetRxd = 1;
 }
 
 QVector<Point2d*> Env::getRobotsPositions()

@@ -82,7 +82,6 @@ void Processor::run()
 		}
 	}
 }
-
 void Processor::addModule(Module* module)
 {
 	_modulesMutex.lock();

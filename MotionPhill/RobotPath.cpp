@@ -7,10 +7,11 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QPointF>
+#include <log/FieldView.hpp>
 
 using namespace Constants;
 RobotPath::RobotPath(Team team, QWidget* parent) :
-    QWidget(parent), _team(team)
+    Log::FieldView(team, parent), _team(team)
 {
     QPointF* initPoint = new QPointF(0,0);
     _numPathPoints = 0;
@@ -21,10 +22,14 @@ RobotPath::RobotPath(Team team, QWidget* parent) :
         currPath.points[i] = *initPoint;
     }
 
+    setAutoFillBackground(false);
+
 }
 
 void RobotPath::paintEvent(QPaintEvent* event)
 {
+
+    Log::FieldView::paintEvent(event);
     QPainter painter(this);
     QPainterPath* painterPath = new QPainterPath(QPointF(0,0));
 

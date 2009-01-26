@@ -2,6 +2,8 @@
 // #include <module/modules.hpp>
 #include "log/LogModule.hpp"
 #include "motion/Controller.hpp"
+//TODO  Get Alex to make world model a module
+#include "../soccer/module/WorldModel.hpp"
 
 #include <ui_motion.h>
 
@@ -12,11 +14,8 @@ MainWindow::MainWindow(Team team, QString filename)
 
     this->setCentralWidget(centralwidget);
 
-    _fieldView = new FieldView(team,this);
     _rp = new RobotPath(team,this);
-    _rp->addPath(RobotPath::BezierCurve);
 
-    gridLayout1->addWidget(_fieldView,0,0);
     gridLayout1->addWidget(_rp,0,0);
 
     _mode = DrawingMode;
@@ -25,7 +24,10 @@ MainWindow::MainWindow(Team team, QString filename)
 
     connect(&_timer, SIGNAL(timeout()), this, SLOT(redraw()));
     _timer.start(30);
-    printf("Motion\n");
+
+    _processor.start();
+//     _logFile = new Log::LogFile(LogFile::genFilename());
+    setupModules();
 
 }
 
@@ -59,7 +61,7 @@ void MainWindow::redraw()
 
 void MainWindow::setupModules()
 {
-// 	WorldModel* wm = new WorldModel();
+	WorldModel* wm = new WorldModel();
 
 	Motion::Controller* motion = new Motion::Controller(_configFile);
 
@@ -67,7 +69,7 @@ void MainWindow::setupModules()
 	lm->setLogFile(_logFile);
 
 	//add the modules....ORDER MATTERS!!
-// 	_processor.addModule(wm);
+	_processor.addModule(wm);
 	_processor.addModule(motion);
 	_processor.addModule(lm);
 }
@@ -111,9 +113,6 @@ void MainWindow::on_run_clicked()
 {
     _mode = RunMode;
     //reset state
-    _processor.start();
-//     _logFile = new Log::LogFile(LogFile::genFilename());
-    setupModules();
 }
 
 void MainWindow::on_stop_clicked()

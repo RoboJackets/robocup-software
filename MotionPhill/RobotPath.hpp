@@ -3,6 +3,7 @@
 
 #include <Geometry/Point2d.hpp>
 #include <Team.h>
+#include <log/FieldView.hpp>
 
 #include <QVector>
 #include <QWidget>
@@ -13,7 +14,7 @@
 using namespace Geometry;
 
 
-class RobotPath : public QWidget
+class RobotPath : public Log::FieldView
 {
     Q_OBJECT;
 
