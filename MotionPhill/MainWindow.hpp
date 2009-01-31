@@ -4,6 +4,7 @@
 #include "RobotPath.hpp"
 #include "../soccer/Processor.hpp"
 #include <log/LogFile.hpp>
+#include "log/LogControl.hpp"
 
 #include <QMainWindow>
 #include <QMouseEvent>
@@ -40,23 +41,28 @@ class MainWindow : public QMainWindow, Ui::MainWindow
             void on_close_clicked();
             void setupModules();
 
+        Q_SIGNALS:
+            void setModuleToRun();
+            void setModuleToStop();
+
         protected:
 //             void mouseMoveEvent(QMouseEvent* me);
 	private:
             Ui::MainWindow ui;
 
             RobotPath* _rp;
-            QPointF mousePoint;
+
             QTimer _timer;
 
             Team _team;
-
 
             int _mode;
 
             Processor _processor;
 
             Log::LogFile* _logFile;
+            /** This controls the data flow from logger to visualizers **/
+            Log::LogControl* _logControl;
 
             /** Currently the configfile is for motion but others can add to it **/
 	    QString _configFile;

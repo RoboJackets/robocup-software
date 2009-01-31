@@ -4,6 +4,7 @@
 #include "motion/Controller.hpp"
 //TODO  Get Alex to make world model a module
 #include "../soccer/module/WorldModel.hpp"
+#include "TrajectoryGen.hpp"
 
 #include <ui_motion.h>
 
@@ -14,27 +15,27 @@ MainWindow::MainWindow(Team team, QString filename)
 
     this->setCentralWidget(centralwidget);
 
+    //RobotPath draws the path and also extends FieldView to draw the field, robots, ball, etc
     _rp = new RobotPath(team,this);
-
+    _logControl = new Log::LogControl(this);
     gridLayout1->addWidget(_rp,0,0);
-
-    _mode = DrawingMode;
-
-    _logFile = new Log::LogFile(Log::LogFile::genFilename());
+    gridLayout1->addWidget(_logControl, 1, 0);
 
     connect(&_timer, SIGNAL(timeout()), this, SLOT(redraw()));
+
     _timer.start(30);
 
     _processor.start();
-//     _logFile = new Log::LogFile(LogFile::genFilename());
+    _logFile = new Log::LogFile(Log::LogFile::genFilename());
     setupModules();
 
+    _logControl->setLogFile(_logFile);
+    connect(_logControl, SIGNAL(newFrame(Packet::LogFrame*)), _rp, SLOT(frame(Packet::LogFrame*)));
 }
 
 MainWindow::~MainWindow()
 {
-	//remove the log file from the things that use it
-// 	_logControl->setLogFile(0);
+        _logControl->setLogFile(0);
 
 	_processor.terminate();
 	_processor.wait();
@@ -50,13 +51,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::redraw()
 {
-    if(_mode == DrawingMode)
-    {
-        _rp->update();
-    }
-    else if(_mode == RunMode)
-    {
-    }
+    _rp->update();
 }
 
 void MainWindow::setupModules()
@@ -65,11 +60,18 @@ void MainWindow::setupModules()
 
 	Motion::Controller* motion = new Motion::Controller(_configFile);
 
+        Trajectory::TrajectoryGen* trajGen = new Trajectory::TrajectoryGen();
+
+        //Thread-safe slots and signals require the use of a queue
+        connect(this, SIGNAL(setModuleToRun()), trajGen, SLOT(runModule()), Qt::QueuedConnection);
+        connect(this, SIGNAL(setModuleToStop()), trajGen, SLOT(stopModule()), Qt::QueuedConnection);
+
 	Log::LogModule* lm = new Log::LogModule();
 	lm->setLogFile(_logFile);
 
 	//add the modules....ORDER MATTERS!!
 	_processor.addModule(wm);
+//         _processor.addModule(trajGen);
 	_processor.addModule(motion);
 	_processor.addModule(lm);
 }
@@ -112,30 +114,16 @@ void MainWindow::on_closePath_clicked()
 void MainWindow::on_run_clicked()
 {
     _mode = RunMode;
-    //reset state
+    setModuleToRun();
 }
 
 void MainWindow::on_stop_clicked()
 {
     _mode = DrawingMode;
-    //run calcs on data
-    //switch focus to graphs
+    setModuleToStop();
 }
 
 void MainWindow::on_close_clicked()
 {
     printf("Close\n");
 }
-
-
-// void MainWindow::mouseMoveEvent(QMouseEvent* me)
-// {
-//     QString xlabel = "X = ";
-//     QString ylabel = "Y =";
-//
-//     xlabel.append(QString::number(me->x(),'f', 3));
-//     ylabel.append(QString::number(me->y(),'f', 3));
-//     MainWindow::xPos->setText(xlabel);
-//     MainWindow::yPos->setText(ylabel);
-// }
-

@@ -63,6 +63,7 @@ void Processor::run()
 			_modulesMutex.unlock();
 
                         /** Phillip - Added 01/06/2009 **/
+                        //Send radio commands and then set their flags as invalid
                         _sender->send(_state.radioCmd);
 
                         for(int i = 0; i<5; i++)

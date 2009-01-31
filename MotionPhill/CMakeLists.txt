@@ -20,6 +20,7 @@ include_directories(${PROJECT_BINARY_DIR})
 qt4_wrap_cpp (MOC_SRCS
 	MainWindow.hpp
         RobotPath.hpp
+        TrajectoryGen.hpp
 )
 
 QT4_WRAP_UI (UI_HDRS
@@ -30,6 +31,7 @@ set (SRCS
         main.cpp
 	MainWindow.cpp
         RobotPath.cpp
+        TrajectoryGen.cpp
         ../soccer/Processor.cpp
 	../soccer/module/WorldModel.cpp
 )

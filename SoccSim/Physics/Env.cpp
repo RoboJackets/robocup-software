@@ -154,15 +154,19 @@ void Env::step()
     }
     else
     {
-        if(packetRxd)
-	    Q_FOREACH(Robot* r, _robots)
+        Q_FOREACH(Robot* r, _robots)
+	{
+	    if(packetRxd)
 	    {
 		r->step();
 	    }
-        }
-        else
-        {
-            r->vels[k] = 0;
+	    else
+	    {
+	       for (int k=0 ; k<4 ; ++k)
+	       {
+		  r->vels[k] = 0;
+	       }
+	    }
         }
     }
     _scene->simulate(1.0/60.0);

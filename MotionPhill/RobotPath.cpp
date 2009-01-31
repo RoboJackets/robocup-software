@@ -28,7 +28,6 @@ RobotPath::RobotPath(Team team, QWidget* parent) :
 
 void RobotPath::paintEvent(QPaintEvent* event)
 {
-
     Log::FieldView::paintEvent(event);
     QPainter painter(this);
     QPainterPath* painterPath = new QPainterPath(QPointF(0,0));
@@ -42,7 +41,6 @@ void RobotPath::paintEvent(QPaintEvent* event)
 		painterPath->lineTo(p.points[0]);
                 break;
             case Arc:
-                //Arc parameters
 		painterPath->quadTo(p.points[1],p.points[0]);
                 break;
 	    case Circle:
