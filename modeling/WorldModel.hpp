@@ -2,11 +2,15 @@
 #define WORLD_MODEL_HPP_
 
 #include "framework/Module.hpp"
+//#include "Robot.hpp"
+#include "Ball.hpp"
+
+#include <vector>
 
 /** World modeling system */
 namespace Modeling
 {
-	class WorldModel : public Module
+        class WorldModel : public Module
 	{
 		public:
 			WorldModel();
@@ -14,11 +18,9 @@ namespace Modeling
 			virtual void run();
 			
 		private:
-			/** buffer previous states */
-			
-			/** Kalman Filters for robots */
-			
-			/** Kalman Filters for ball estimates */
+// 	                std::vector<Modeling::Robot*>* blueTeam;
+// 	                std::vector<Modeling::Robot*>* yellowTeam;
+	  		Ball* ball;
 	};
 }
 

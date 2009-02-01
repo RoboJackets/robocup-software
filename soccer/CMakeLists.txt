@@ -9,10 +9,12 @@ set (USE_GEOMETRY true)
 set (USE_FRAMEWORK true)
 include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
 
-#modules
+#Module Include Directories
+# Add a new line here for every module used
 include_directories (${PROJECT_SOURCE_DIR}/..)
 add_subdirectory (${PROJECT_SOURCE_DIR}/../motion ${PROJECT_BINARY_DIR}/motion)
 add_subdirectory (${PROJECT_SOURCE_DIR}/../log ${PROJECT_BINARY_DIR}/log)
+add_subdirectory (${PROJECT_SOURCE_DIR}/../modeling ${PROJECT_BINARY_DIR}/modeling)
 
 include_directories(${PROJECT_BINARY_DIR})
 
@@ -24,8 +26,6 @@ set (SRCS
 	main.cpp
 	Processor.cpp
 	MainWindow.cpp
-
-	module/WorldModel.cpp
 )
 
 set (exec soccer)
@@ -38,6 +38,8 @@ target_link_libraries(${exec} ${FRAMEWORK_LIBRARY})
 
 target_link_libraries(${exec} ${QT_LIBRARIES})
 
-#module linking
+#Module Linking
+# Add a new line here for every module used
 target_link_libraries(${exec} log)
 target_link_libraries(${exec} motion)
+target_link_libraries(${exec} modeling)

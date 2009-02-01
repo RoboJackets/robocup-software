@@ -2,15 +2,51 @@
 
 #include <QObject>
 #include <iostream>
+#include <vector>
+
+#include "Robot.hpp"
+#include "Ball.hpp"
+
+using namespace Modeling;
 
 WorldModel::WorldModel() :
 	Module("World Model")
 {
-	
+
+//   blueTeam = new std::vector<Robot*>;
+//   yellowTeam = new std::vector<Robot*>;
+//   for (unsigned int i = 0; i<5; ++i) 
+//     {
+//     blueTeam->push_back(new Robot());
+//     yellowTeam->push_back(new Robot());
+//     }
+//   ball = new Ball();
+
 }
 
 void WorldModel::run()
 {
-	SystemState::WorldModelOut& state = _state->worldModelOut;
 
+  Q_FOREACH(const Packet::Vision& vision, _state->rawVision)
+    {
+      	if (!vision.sync)
+	{
+	  //index is the id
+	  Q_FOREACH (const Packet::Vision::Robot& r, vision.blue)
+	    {
+	      _state->self[r.shell].shell = r.shell;
+	      _state->self[r.shell].pos = r.pos;
+	      _state->self[r.shell].angle = r.angle;
+	      _state->self[r.shell].valid = true;
+	    }
+	  //index is the id
+	  Q_FOREACH (const Packet::Vision::Robot& r, vision.yellow)
+	    {
+	      _state->opp[r.shell].shell = r.shell;
+	      _state->opp[r.shell].pos = r.pos;
+	      _state->opp[r.shell].angle = r.angle;
+	      _state->opp[r.shell].valid = true;
+	    }
+	}
+    }
 }
