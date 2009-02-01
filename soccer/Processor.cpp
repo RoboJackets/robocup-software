@@ -29,6 +29,16 @@ Processor::Processor(Team t) :
 	_trigger = false;
 
 	_sender = new Network::Sender(Network::Address, Network::addTeamOffset(_team,Network::RadioTx));
+	
+	//record team in state variable
+	if (_team == Blue)
+	{
+	  _state.isBlue = true;
+	}
+	else 
+	{
+	  _state.isBlue = false;
+	}
 
 }
 
