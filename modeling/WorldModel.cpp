@@ -47,6 +47,8 @@ void WorldModel::run()
 	      _state->opp[r.shell].angle = r.angle;
 	      _state->opp[r.shell].valid = true;
 	    }
+	  //copy ball
+	  _state->ball.pos = vision.balls.at(1).pos;
 	}
     }
 }
