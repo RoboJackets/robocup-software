@@ -1,4 +1,4 @@
-project (MotionModule)
+project (WorldModel)
 cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 
 add_definitions(-O2 -Wall -g3)
@@ -18,13 +18,9 @@ qt4_wrap_cpp ( MOC_SRCS
 )
 
 set (SRCS
-	Controller.cpp
-        Robot.cpp
-        Pid.cpp
-        main.cpp
-        ConfigFile.cpp
+	WorldModel.cpp
 )
 
-add_library (motion ${SRCS} ${MOC_SRCS})
-target_link_libraries (motion ${QT_LIBRARIES} ${GEOMETRY_LIBRARY} ${FRAMEWORK_LIBRARY} ${NETWORK_LIBRARY})
+add_library (modeling ${SRCS} ${MOC_SRCS})
+target_link_libraries (modeling ${QT_LIBRARIES} ${GEOMETRY_LIBRARY} ${FRAMEWORK_LIBRARY} ${NETWORK_LIBRARY})
 

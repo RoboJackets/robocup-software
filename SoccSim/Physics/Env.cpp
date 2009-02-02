@@ -82,8 +82,8 @@ Env::Env()
     }
     catch (std::runtime_error err)
     {
-	printf("No input controller.\n");
-	inputHandler = 0;
+    	printf("No input controller.\n");
+    	inputHandler = 0;
     }
 
     _receiver = new Network::PacketReceiver();
@@ -98,15 +98,15 @@ Env::~Env()
 {
     if (_scene)
     {
-	_physicsSDK->releaseScene(*_scene);
-	_scene = 0;
+    	_physicsSDK->releaseScene(*_scene);
+    	_scene = 0;
     }
 
     //teardown the SDK ... only do when refcount = 0;
     if (--_refCount == 0)
     {
-	_physicsSDK->release();
-	_physicsSDK = 0;
+    	_physicsSDK->release();
+    	_physicsSDK = 0;
     }
 }
 
@@ -137,20 +137,20 @@ void Env::step()
 
     if(inputHandler)
     {
-	rid = inputHandler->currentRobot();
-
-	if(rid > _robots.size())
-	{
-	    rid = 0;
-	}
-
-	Packet::RadioTx::Robot data = inputHandler->genRobotData();
-
-        for (int i=0 ; i<4 ; ++i)
-	{
-	    _robots[rid]->vels[i] = data.motors[i];
-	}
-	_robots[rid]->step();
+		rid = inputHandler->currentRobot();
+	
+		if(rid > _robots.size())
+		{
+			rid = 0;
+		}
+	
+		Packet::RadioTx::Robot data = inputHandler->genRobotData();
+	
+		for (int i=0 ; i<4 ; ++i)
+		{
+			_robots[rid]->vels[i] = data.motors[i];
+		}
+		_robots[rid]->step();
     }
     else
     {
@@ -169,6 +169,13 @@ void Env::step()
 	    }
         }
     }
+    
+    for (int i=0 ; i<4 ; ++i)
+	{
+		_robots[0]->vels[i] = 10;
+	}
+	_robots[0]->step();
+    
     _scene->simulate(1.0/60.0);
     _scene->flushStream();
 
@@ -221,15 +228,9 @@ void Env::radioHandler(const Packet::RadioTx* packet)
     packetRxd = 1;
 }
 
-QVector<Point2d*> Env::getRobotsPositions()
+QVector<Robot*> Env::getRobots()
 {
-    QVector<Point2d*> botPositions;
-    Q_FOREACH(Robot* r, _robots)
-    {
-        botPositions.append(r->getPosition());
-    }
-
-    return botPositions;
+    return _robots;
 }
 
 QVector<Point2d*> Env::getBallPositions()

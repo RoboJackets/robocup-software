@@ -276,7 +276,7 @@ void Robot::initWheels()
 }
 
 void Robot::step()
-{
+{	
 	if (_motors[0])
 	{
 		for (int i = 0; i < 4; ++i)
@@ -357,11 +357,15 @@ void Robot::position(float x, float y)
 	_actor->setGlobalPosition(newPos);
 }
 
-Point2d* Robot::getPosition()
+Point2d Robot::getPosition()
 {
-    Point2d* currPos = new Point2d();
-    currPos->x = (float)_actor->getGlobalPosition().x;
-    currPos->y = (float)_actor->getGlobalPosition().y;
+    Point2d currPos(_actor->getGlobalPosition().x, _actor->getGlobalPosition().y);
 
     return currPos;
+}
+
+float Robot::getAngle()
+{
+	NxVec3 c1 = _actor->getGlobalOrientation().getColumn(0);
+	return atan2(c1[1] , c1[0]) * 180.0f / M_PI;
 }

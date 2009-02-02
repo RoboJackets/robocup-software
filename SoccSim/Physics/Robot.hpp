@@ -10,16 +10,19 @@ class Robot : public Entity
         Robot(NxScene& scene);
         ~Robot();
 
-	void step();
+		void step();
+		
+		/** set position of the robot */
+		void position(float x, float y);
 
-	/** set position of the robot */
-	void position(float x, float y);
+        /** @return the world position */
+        Geometry::Point2d getPosition();
+        
+        /** @return the world angle */
+        float getAngle();
 
-        /** Get the robot's position **/
-        Geometry::Point2d* getPosition();
-
-	//FIXME
-	int8_t vels[4];
+        //FIXME
+        int8_t vels[4];
 
     private:
         void initRoller();
@@ -37,7 +40,7 @@ class Robot : public Entity
         NxActor* _kicker;
 
         NxActor* _wheels[4];
-	NxRevoluteJoint* _motors[4];
+        NxRevoluteJoint* _motors[4];
 
         /** center of roller from ground */
         const static float RollerHeight = .03;

@@ -100,15 +100,15 @@ if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
 endif ()
 
 add_executable (${PROJECT_NAME}
-        main.cpp
+	main.cpp
 	Viewer.cpp
 	JoystickInput.cpp
 	InputHandler.cpp
 	Config.cpp
-        Vision.cpp
+	Vision.cpp
 
 	## environment
-        Physics/Env.cpp
+	Physics/Env.cpp
 	Physics/Entity.cpp
 	Physics/Ball.cpp
 	Physics/Field.cpp
@@ -121,9 +121,6 @@ add_executable (${PROJECT_NAME}
 if (DEFINED PHYSX_LINK_FLAGS)
 	set_target_properties (${PROJECT_NAME} PROPERTIES LINK_FLAGS ${PHYSX_LINK_FLAGS})
 endif ()
-
-#To fix multiple definitions error in linking with Network.hpp
-set_target_properties (${PROJECT_NAME} PROPERTIES LINK_FLAGS "-z muldefs")
 
 target_link_libraries (${PROJECT_NAME} NxCooking PhysXLoader pthread dl ${QT_LIBRARIES}  )
 target_link_libraries(${PROJECT_NAME} ${NETWORK_LIBRARY})

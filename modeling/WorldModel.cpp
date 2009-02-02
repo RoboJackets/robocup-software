@@ -4,8 +4,8 @@
 #include <iostream>
 #include <vector>
 
-#include "Robot.hpp"
-#include "Ball.hpp"
+//#include "Robot.hpp"
+//#include "Ball.hpp"
 
 using namespace Modeling;
 
@@ -26,51 +26,43 @@ WorldModel::WorldModel() :
 
 void WorldModel::run()
 {
-
-  Q_FOREACH(const Packet::Vision& vision, _state->rawVision)
-    {
-      	if (!vision.sync)
+	Q_FOREACH(const Packet::Vision& vision, _state->rawVision)
 	{
-	  if (_state->isBlue)
-	    {
-	      //index is the id
-	      Q_FOREACH (const Packet::Vision::Robot& r, vision.blue)
+		if (!vision.sync)
 		{
-		  _state->self[r.shell].shell = r.shell;
-		  _state->self[r.shell].pos = r.pos;
-		  _state->self[r.shell].angle = r.angle;
-		  _state->self[r.shell].valid = true;
+			const std::vector<Packet::Vision::Robot>* self = &vision.blue;
+			const std::vector<Packet::Vision::Robot>* opp = &vision.yellow;
+			
+			printf("%d\n", vision.blue.size());
+			
+			if (!_state->isBlue)
+			{
+				self = &vision.yellow;
+				opp = &vision.blue;
+			}
+			
+			//index is the id
+			Q_FOREACH (const Packet::Vision::Robot& r, *self)
+			{
+				_state->self[r.shell].shell = r.shell;
+				_state->self[r.shell].pos = r.pos;
+				_state->self[r.shell].angle = r.angle;
+				_state->self[r.shell].valid = true;
+			}
+			//index is the id
+			Q_FOREACH (const Packet::Vision::Robot& r, *opp)
+			{
+				_state->opp[r.shell].shell = r.shell;
+				_state->opp[r.shell].pos = r.pos;
+				_state->opp[r.shell].angle = r.angle;
+				_state->opp[r.shell].valid = true;
+			}
+			
+			//copy ball
+			if (vision.balls.size() > 0)
+			{
+				_state->ball.pos = vision.balls.at(1).pos;
+			}
 		}
-	      //index is the id
-	      Q_FOREACH (const Packet::Vision::Robot& r, vision.yellow)
-		{
-		  _state->opp[r.shell].shell = r.shell;
-		  _state->opp[r.shell].pos = r.pos;
-		  _state->opp[r.shell].angle = r.angle;
-		  _state->opp[r.shell].valid = true;
-		}
-	    }
-	  else
-	    {
-	      //index is the id
-	      Q_FOREACH (const Packet::Vision::Robot& r, vision.blue)
-		{
-		  _state->opp[r.shell].shell = r.shell;
-		  _state->opp[r.shell].pos = r.pos;
-		  _state->opp[r.shell].angle = r.angle;
-		  _state->opp[r.shell].valid = true;
-		}
-	      //index is the id
-	      Q_FOREACH (const Packet::Vision::Robot& r, vision.yellow)
-		{
-		  _state->self[r.shell].shell = r.shell;
-		  _state->self[r.shell].pos = r.pos;
-		  _state->self[r.shell].angle = r.angle;
-		  _state->self[r.shell].valid = true;
-		}
-	    }
-	  //copy ball
-	  _state->ball.pos = vision.balls.at(1).pos;
 	}
-    }
 }

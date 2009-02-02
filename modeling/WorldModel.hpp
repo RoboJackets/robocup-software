@@ -3,7 +3,7 @@
 
 #include "framework/Module.hpp"
 //#include "Robot.hpp"
-#include "Ball.hpp"
+//#include "Ball.hpp"
 
 #include <vector>
 
@@ -20,7 +20,7 @@ namespace Modeling
 		private:
 // 	                std::vector<Modeling::Robot*>* blueTeam;
 // 	                std::vector<Modeling::Robot*>* yellowTeam;
-	  		Ball* ball;
+	  		//Ball* ball;
 	};
 }
 

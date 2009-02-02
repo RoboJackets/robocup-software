@@ -30,12 +30,12 @@ class Env : public QObject
 
 		void addBall(float x, float y);
 		void addRobot(int id, float x, float y);
+		
+		QVector<Robot*> getRobots();
 
-                QVector<Geometry::Point2d*> getRobotsPositions();
+		QVector<Geometry::Point2d*> getBallPositions();
 
-                QVector<Geometry::Point2d*> getBallPositions();
-
-                void radioHandler(const Packet::RadioTx* packet);
+		void radioHandler(const Packet::RadioTx* packet);
 
 	private Q_SLOTS:
 		void step();
@@ -44,7 +44,7 @@ class Env : public QObject
 		/** the global physics sdk for every environment */
 		static NxPhysicsSDK* _physicsSDK;
 
-                const Packet::RadioTx* txPacket;
+		const Packet::RadioTx* txPacket;
 
 	private:
 		/** number of open environments */
@@ -63,7 +63,7 @@ class Env : public QObject
 
 		InputHandler* inputHandler;
 
-                Network::PacketReceiver* _receiver;
+        Network::PacketReceiver* _receiver;
 };
 
 #endif /* _ENV_HPP */

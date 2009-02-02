@@ -95,6 +95,7 @@ if (USE_NETWORK AND NOT TARGET network)
 	set (network_srcs
 		Sender.cpp
 		Receiver.cpp
+		Network.cpp
 	)
 
     prepend_list(network_srcs "${common_include_dir}/Network/")

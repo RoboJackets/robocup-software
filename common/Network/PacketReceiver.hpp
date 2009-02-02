@@ -21,8 +21,8 @@ namespace Network
 			class _io
 			{
 				public:
-                                    _io(uint16_t port, unsigned int msec) :
-                    	               _port(port), _msecTimeout(msec)
+                    _io(uint16_t port, unsigned int msec) :
+                    	_port(port), _msecTimeout(msec)
 				    {
 					lastRecvTime.start();
 				    }
