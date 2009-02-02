@@ -117,8 +117,7 @@ const NxDebugRenderable& Env::dbgRenderable() const
 
 void Env::step()
 {
-
-    int rid;
+    //int rid = 0;
     packetRxd = 0;
     _receiver->receive();
 #if 0
@@ -135,6 +134,7 @@ void Env::step()
     }
 #endif
 
+    /*
     if(inputHandler)
     {
 		rid = inputHandler->currentRobot();
@@ -175,7 +175,7 @@ void Env::step()
 		_robots[0]->vels[i] = 10;
 	}
 	_robots[0]->step();
-    
+	*/
     _scene->simulate(1.0/60.0);
     _scene->flushStream();
 

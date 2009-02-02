@@ -20,7 +20,7 @@ if (NOT TARGET GeneratePackets)
 	set (Packets
 		Vision
 		RadioTx
-		#RadioRx
+		RadioRx
 		#SSLRef
 		LogFrame
 	)

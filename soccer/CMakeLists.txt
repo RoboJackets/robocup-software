@@ -1,5 +1,5 @@
-project (TestFramework)
-cmake_minimum_required(VERSION 2.6)
+project (Soccer)
+cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 
 add_definitions(-O2 -Wall -g3)
 

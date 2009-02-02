@@ -1,0 +1,10 @@
+<struct typename="RadioRx">
+	<!-- Packet going out from radio program to control program -->
+	
+	<struct typename="Robot">
+		<member type="bool" name="valid" />
+	</struct>
+		
+	<!-- up to five robots can be controlled -->
+	<array type="Robot" name="robots" size="5" />
+</struct>

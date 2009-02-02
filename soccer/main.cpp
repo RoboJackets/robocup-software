@@ -19,7 +19,7 @@ int main (int argc, char* argv[])
 	QApplication app(argc, argv);
 
 	Team team = UnknownTeam;
-        QString cfgFile = "";
+    QString cfgFile = "";
 
 	for (int i=0 ; i<argc; ++i)
 	{
