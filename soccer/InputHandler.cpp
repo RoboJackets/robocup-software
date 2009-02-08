@@ -1,4 +1,5 @@
 #include "InputHandler.hpp"
+#include "InputHandler.moc"
 
 #include <QMutex>
 #include <QMutexLocker>
@@ -8,7 +9,7 @@
 using namespace Geometry;
 
 InputHandler::InputHandler() :
-	QThread(), _running(true)
+	_running(true)
 {
 	//try to open controller
 	//if failed, prevents thread from running

@@ -23,12 +23,12 @@ set (SRCS
 	Processor.cpp
 	MainWindow.cpp
 	InputHandler.cpp
-	JoystrickInput.cpp
+	JoystickInput.cpp
 )
 
 qt4_automoc (${SRCS})
 
-set (${target} soccer)
+set (target soccer)
 add_executable (${target} ${SRCS} ${MOC_SRCS})
 
 target_link_libraries(${target} ${PACKET_LIBRARY})

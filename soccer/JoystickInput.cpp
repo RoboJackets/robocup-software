@@ -4,7 +4,7 @@
 #include <fcntl.h>
 #include <string.h>
 
-JoystickInput::JoystickInput(const char* filename)
+JoystickInput::JoystickInput(const char* filename) throw (std::runtime_error)
 {
     _fd = open(filename, O_RDONLY);
     if (_fd < 0)

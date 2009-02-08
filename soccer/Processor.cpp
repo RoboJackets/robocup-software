@@ -1,4 +1,5 @@
 #include "Processor.hpp"
+#include "Processor.moc"
 
 #include <QMutexLocker>
 
@@ -10,7 +11,7 @@
 #include <Constants.hpp>
 
 Processor::Processor(Team t) :
-	QThread(), _running(true), _team(t)
+	_running(true), _team(t)
 {
 	//default yellow
 	Geometry::Point2d trans(0, Constants::Field::Length / 2.0f);
@@ -53,8 +54,8 @@ void Processor::run()
 	Network::PacketReceiver receiver;
 	receiver.addType(Network::Address, Network::Vision, this,
 	        &Processor::visionHandler);
-	receiver.addType(Network::Address, Network::addTeamOffset(Network::RadioRx), 
-			this,&Processor::radioHandler);
+	receiver.addType(Network::Address, Network::addTeamOffset(_team, Network::RadioRx), 
+			this, &Processor::radioHandler);
 	
 	//sender of outgoing radio control data
 	Network::Sender sender(Network::Address, Network::addTeamOffset(_team, Network::RadioTx));
@@ -84,7 +85,7 @@ void Processor::run()
 
 			_modulesMutex.unlock();
 			
-			sender->send(_state.radioCmd);
+			sender.send(_state.radioCmd);
 			
 			//clear system state info
 			_state = SystemState();
@@ -162,12 +163,10 @@ void Processor::visionHandler(const Packet::Vision* packet)
 	}
 }
 
-#if 0
 void Processor::radioHandler(const Packet::RadioRx* packet)
 {
 	//log received radio data time
 }
-#endif
 
 void Processor::toTeamSpace(Packet::Vision& vision)
 {

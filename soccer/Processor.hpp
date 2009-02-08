@@ -10,6 +10,7 @@
 #include <Team.h>
 #include <Geometry/TransformMatrix.hpp>
 #include <Vision.hpp>
+#include <RadioRx.hpp>
 
 #include "framework/Module.hpp"
 
@@ -30,9 +31,9 @@ class Processor: public QThread
 		void addModule(Module* mod);
 
 	public Q_SLOTS:
-		void playPauseButton();
-		void manualAutoButton();
-		void changeRobot(int rid);
+		void playPauseButton() {};
+		void manualAutoButton() {};
+		void changeRobot(int rid) {};
 		
 	protected:
 		void run();
