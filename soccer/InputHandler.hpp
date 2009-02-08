@@ -14,7 +14,7 @@ class InputHandler : public QThread
 	Q_OBJECT;
 
 	public:
-		InputHandler();
+		InputHandler(QObject* parent = 0);
 		~InputHandler();
 		
 		Packet::RadioTx::Robot genRobotData();

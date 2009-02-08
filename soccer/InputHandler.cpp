@@ -8,8 +8,8 @@
 
 using namespace Geometry;
 
-InputHandler::InputHandler() :
-	_running(true)
+InputHandler::InputHandler(QObject* parent) :
+	QThread(parent), _running(true)
 {
 	//try to open controller
 	//if failed, prevents thread from running
@@ -17,13 +17,14 @@ InputHandler::InputHandler() :
 	{
 		_controller = new Gamepad("/dev/input/js0");
 	}
-	catch (std::runtime_error& re) 
+	catch (std::runtime_error& re)
 	{
-		printf("%s\n", re.what());
+		printf("InputHandler Error: %s\n", re.what());
+		printf("Not using joystick controller\n");
 		_controller = 0;
 		_running = false;
 	}
-	
+
 	_roller = 0;
 	_rid = 0;
 
@@ -51,8 +52,10 @@ Packet::RadioTx::Robot InputHandler::genRobotData()
 	{ 0, 0, 0, 0 };
 	static uint8_t stored_roller = 0;
 	
+	
 	//input is vx, vy in robot space
 	Point2d input(_controller->rX(), _controller->rY());
+	
 	
 	//if using DPad, this is the input value
 	uint8_t mVal = 10 + (int8_t) (abs(_controller->rY()));
@@ -135,6 +138,7 @@ void InputHandler::run()
 	{
 		if (_controller->waitForInput(100))
 		{
+#if 0
 			if (_controller->b9())
 			{
 				selectMode = true;
@@ -156,7 +160,7 @@ void InputHandler::run()
 				{
 					rid = 4;
 				}
-				if (rid > 0)
+				if (rid> 0)
 				{
 					_roller = 0;
 					if (rid != _rid)
@@ -187,20 +191,18 @@ void InputHandler::run()
 						selectMode = false;
 						continue;
 					}
-
-					if (_controller->b4())
-					{
-						_roller = 0;
-						playPauseButton();
-					}
-					else if (_controller->b3())
-					{
-						_roller = 0;
-						manualAutoButton();
-					}
-					_continueProcessing.wakeAll();
-				}
+#endif
+			if (_controller->b4())
+			{
+				_roller = 0;
+				playPauseButton();
 			}
+			else if (_controller->b3())
+			{
+				_roller = 0;
+				manualAutoButton();
+			}
+			//_continueProcessing.wakeAll();
 		}
 	}
 }

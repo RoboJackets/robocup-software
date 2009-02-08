@@ -9,8 +9,24 @@
 class SystemState: public Packet::LogFrame
 {
 	public:
+		typedef enum
+		{
+			Running,
+			Stopped
+		} RunState;
 		
-	private:
+		typedef enum
+		{
+			Manual,
+			Auto
+		} ControlState;
+		
+		ControlState controlState;
+		
+		RunState runState;
+		
+		/** manual control robot id */
+		unsigned int rid;
 };
 
 #endif /* SYSTEMSTATE_HPP_ */

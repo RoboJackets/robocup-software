@@ -31,9 +31,6 @@ MainWindow::MainWindow(Team t, QString filename) :
 
 	//start control thread
 	_processor.start();
-	
-	//start input handler
-	_inputHandler.start();
 
 	_logFile = new LogFile(LogFile::genFilename());
 
@@ -42,6 +39,8 @@ MainWindow::MainWindow(Team t, QString filename) :
 	_logControl->setLogFile(_logFile);
 	connect(_logControl, SIGNAL(newFrame(Packet::LogFrame*)), _fieldView, SLOT(frame(Packet::LogFrame*)));
 	connect(_logControl, SIGNAL(newFrame(Packet::LogFrame*)), _treeModel, SLOT(frame(Packet::LogFrame*)));
+	
+	//TODO make the log elements parent be the log control?
 }
 
 MainWindow::~MainWindow()

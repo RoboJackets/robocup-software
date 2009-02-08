@@ -15,7 +15,6 @@
 #include <log/TreeModel.hpp>
 
 #include "Processor.hpp"
-#include "InputHandler.hpp"
 
 class MainWindow : public QMainWindow
 {
@@ -31,8 +30,6 @@ class MainWindow : public QMainWindow
 		Team _team;
 
 		Processor _processor;
-		
-		InputHandler _inputHandler;
 		
 		Log::FieldView* _fieldView;
 		Log::LogControl* _logControl;

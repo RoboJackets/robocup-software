@@ -11,7 +11,7 @@
 #include <Constants.hpp>
 
 Processor::Processor(Team t) :
-	_running(true), _team(t)
+	_running(true), _team(t), _inputHandler(this)
 {
 	//default yellow
 	Geometry::Point2d trans(0, Constants::Field::Length / 2.0f);
@@ -40,6 +40,10 @@ Processor::Processor(Team t) :
 		_state.isBlue = false;
 	}
 	
+	_inputHandler.setObjectName("input");
+	_inputHandler.start();
+	
+	QMetaObject::connectSlotsByName(this);
 }
 
 Processor::~Processor()
@@ -88,7 +92,8 @@ void Processor::run()
 			sender.send(_state.radioCmd);
 			
 			//clear system state info
-			_state = SystemState();
+			//TODO should I clear system state?
+			//_state = SystemState();
 			
 			//wait for new trigger frame
 			_trigger = false;
@@ -111,19 +116,19 @@ void Processor::visionHandler(const Packet::Vision* packet)
 		if (_state.rawVision.size() > 0 && _state.rawVision[0].camera
 		        == packet->camera)
 		{
+			//TODO investigate...
 			uint64_t half = _state.rawVision[0].timestamp;
 			half += (packet->timestamp - _state.rawVision[0].timestamp) / 2;
-			
 			
 			//eval all packets, any packet less than half becomes the new tigger
 			//this gives us the last packet up to half as the trigger
 			Q_FOREACH (const Packet::Vision& raw , _state.rawVision) 
+			{
+				if (raw.timestamp < half)
 				{
-					if (raw.timestamp < half)
-					{
-						_triggerId = raw.camera;
-					}
+					_triggerId = raw.camera;
 				}
+			}
 
 			//we have set the trigger camera
 			printf("Set trigger camera: %d\n", _triggerId);
@@ -149,13 +154,11 @@ void Processor::visionHandler(const Packet::Vision* packet)
 		if (packet->sync)
 		{
 			//printf("radio: %d\n", packet->camera);
-
 		}
 		else
 		{
 			//set syncronous time to packet timestamp
 			_state.timestamp = packet->timestamp;
-			
 			
 			//start s.proc
 			_trigger = true;
@@ -204,4 +207,40 @@ void Processor::trim(float& angle)
 	{
 		angle += 360.0f;
 	}
+}
+
+/// slots ///
+void Processor::on_input_playPauseButton()
+{
+	switch (_state.runState)
+	{
+		case SystemState::Stopped:
+			_state.runState = SystemState::Running;
+			printf("Running\n");
+			break;
+		case SystemState::Running:
+		default:
+			_state.runState = SystemState::Stopped;
+			printf("Stopped\n");
+			break;
+	}
+}
+
+void Processor::on_input_manualAutoButton()
+{
+	switch (_state.controlState)
+	{
+		case SystemState::Manual:
+			_state.controlState = SystemState::Auto;
+			break;
+		case SystemState::Auto:
+		default:
+			_state.controlState = SystemState::Manual;
+			break;
+	}
+}
+
+void Processor::on_input_changeRobot(int rid)
+{
+	_state.rid = rid;
 }

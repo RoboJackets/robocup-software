@@ -12,11 +12,12 @@
 #include <Vision.hpp>
 #include <RadioRx.hpp>
 
+#include "InputHandler.hpp"
 #include "framework/Module.hpp"
 
 /** handles processing for a team */
 class Processor: public QThread
-{
+{	
 	Q_OBJECT;
 	
 	public:
@@ -29,11 +30,18 @@ class Processor: public QThread
 		//this means that the SystemState is clear each time and
 		//that only the vision information is fresh
 		void addModule(Module* mod);
-
+		
+		//RunState runState() const { return _runState; }
+		//void runState(RunState s);
+		
+		//ControlState controlState() const { return _controlState; }
+		//void controlState(ControlState s);
+		
 	public Q_SLOTS:
-		void playPauseButton() {};
-		void manualAutoButton() {};
-		void changeRobot(int rid) {};
+		void on_input_playPauseButton();
+		void on_input_manualAutoButton();
+		void on_input_changeRobot(int rid);
+			
 		
 	protected:
 		void run();
@@ -72,7 +80,8 @@ class Processor: public QThread
 		//modules
 		QMutex _modulesMutex;
 		std::list<Module*> _modules;
-
+		
+		InputHandler _inputHandler;
 };
 
 #endif // PROCESSOR_HPP
