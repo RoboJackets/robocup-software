@@ -14,3 +14,8 @@ Entity::~Entity()
         _actor = 0;
     }
 }
+
+Geometry::Point2d Entity::getPosition() const
+{
+    return Geometry::Point2d(_actor->getGlobalPosition().x, _actor->getGlobalPosition().y);;
+}

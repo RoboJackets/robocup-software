@@ -46,12 +46,15 @@ Config::Config(QString filename, Env* env) :
 			float x = element.attribute("x").toFloat();
 			float y = element.attribute("y").toFloat();
 			
-			_env->addBall(x, y);
+			_env->addBall(Geometry::Point2d(x,y));
 		}
-		else if (element.tagName() == QString("blue") || 
-				element.tagName() == QString("yellow"))
+		else if (element.tagName() == QString("blue"))
 		{
-			procTeam(element);
+			procTeam(element, Blue);
+		}
+		else if (element.tagName() == QString("yellow"))
+		{
+			procTeam(element, Yellow);
 		}
 		else if (element.tagName() == QString("vision"))
 		{
@@ -66,7 +69,7 @@ Config::Config(QString filename, Env* env) :
 	}
 }
 
-void Config::procTeam(QDomElement e)
+void Config::procTeam(QDomElement e, Team t)
 {
 	QDomElement elem = e.firstChildElement();
 	
@@ -78,7 +81,7 @@ void Config::procTeam(QDomElement e)
 			float y = elem.attribute("y").toFloat();
 			int id = elem.attribute("id").toInt();
 			
-			_env->addRobot(id, x, y);
+			_env->addRobot(t, id, Geometry::Point2d(x, y));
 		}
 		else if (elem.tagName() == "robots")
 		{

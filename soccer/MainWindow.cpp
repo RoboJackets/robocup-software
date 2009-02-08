@@ -1,5 +1,5 @@
 #include "MainWindow.hpp"
-
+#include "MainWindow.moc"
 #include <QHBoxLayout>
 #include <QGridLayout>
 
@@ -31,10 +31,13 @@ MainWindow::MainWindow(Team t, QString filename) :
 
 	//start control thread
 	_processor.start();
+	
+	//start input handler
+	_inputHandler.start();
 
 	_logFile = new LogFile(LogFile::genFilename());
 
-        setupModules();
+     setupModules();
 
 	_logControl->setLogFile(_logFile);
 	connect(_logControl, SIGNAL(newFrame(Packet::LogFrame*)), _fieldView, SLOT(frame(Packet::LogFrame*)));
@@ -60,9 +63,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupModules()
 {
-
 	Modeling::WorldModel* wm = new Modeling::WorldModel();
-
 	Motion::Controller* motion = new Motion::Controller(_configFile);
 
 	Log::LogModule* lm = new Log::LogModule();

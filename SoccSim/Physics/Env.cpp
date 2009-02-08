@@ -1,4 +1,5 @@
 #include "Env.hpp"
+#include "Env.moc"
 #include "Entity.hpp"
 #include "Ball.hpp"
 #include "Field.hpp"
@@ -6,10 +7,10 @@
 
 #include <Team.h>
 #include <Network/Network.hpp>
+#include <QMutexLocker>
 
 NxPhysicsSDK* Env::_physicsSDK = 0;
 unsigned int Env::_refCount = 0;
-unsigned char packetRxd;
 
 using namespace Geometry;
 
@@ -63,33 +64,18 @@ Env::Env()
     }
 
     //always add the field
-    _entities.append(new Field(*_scene));
+    _field = new Field(*_scene);
 
     //NxActor** actors = _scene->getActors();
     //NxU32 actorCount = _scene->getNbActors();
 
     //new environment created
     ++_refCount;
-    packetRxd = 0;
-
-    try
-    {
-	inputHandler = new InputHandler();
-
-	printf("Using /dev/input/js0 for input.\n");
-	//start handling controller input
-	inputHandler->start();
-    }
-    catch (std::runtime_error err)
-    {
-    	printf("No input controller.\n");
-    	inputHandler = 0;
-    }
-
-    _receiver = new Network::PacketReceiver();
-    _receiver->addType(Network::Address, Network::addTeamOffset(Blue,Network::RadioTx), this, &Env::radioHandler);
-
-    txPacket = new Packet::RadioTx();
+    
+    //packetRxd = 0;
+    //_receiver = new Network::PacketReceiver();
+    //_receiver->addType(Network::Address, Network::addTeamOffset(Blue,Network::RadioTx), this, &Env::radioHandler);
+    //txPacket = new Packet::RadioTx();
 
     connect(&_step, SIGNAL(timeout()), this, SLOT(step()));
 }
@@ -112,70 +98,15 @@ Env::~Env()
 
 const NxDebugRenderable& Env::dbgRenderable() const
 {
+	QMutexLocker ml(&_sceneMutex);
     return *_scene->getDebugRenderable();
 }
 
 void Env::step()
 {
-    //int rid = 0;
-    packetRxd = 0;
-    _receiver->receive();
-#if 0
-    if (inputHandler)
-    {
-	Packet::CommData::Robot data = inputHandler->genRobotData();
-
-	for (int i=0 ; i<4 ; ++i)
-	{
-	    _robots[0]->vels[i] = data.motor[i];
-	}
-
-	_robots[0]->step();
-    }
-#endif
-
-    /*
-    if(inputHandler)
-    {
-		rid = inputHandler->currentRobot();
+	//no new radio data while this is running
+	QMutexLocker ml(&_sceneMutex);
 	
-		if(rid > _robots.size())
-		{
-			rid = 0;
-		}
-	
-		Packet::RadioTx::Robot data = inputHandler->genRobotData();
-	
-		for (int i=0 ; i<4 ; ++i)
-		{
-			_robots[rid]->vels[i] = data.motors[i];
-		}
-		_robots[rid]->step();
-    }
-    else
-    {
-        Q_FOREACH(Robot* r, _robots)
-	{
-	    if(packetRxd)
-	    {
-		r->step();
-	    }
-	    else
-	    {
-	       for (int k=0 ; k<4 ; ++k)
-	       {
-		  r->vels[k] = 0;
-	       }
-	    }
-        }
-    }
-    
-    for (int i=0 ; i<4 ; ++i)
-	{
-		_robots[0]->vels[i] = 10;
-	}
-	_robots[0]->step();
-	*/
     _scene->simulate(1.0/60.0);
     _scene->flushStream();
 
@@ -183,7 +114,9 @@ void Env::step()
 
     _scene->fetchResults(NX_RIGID_BODY_FINISHED, true);
 
-    //send data out
+    //generate some vision information with latest positions
+    genVision();
+    genRadio();
 }
 
 void Env::start()
@@ -191,50 +124,174 @@ void Env::start()
 	_step.start(30);
 }
 
-void Env::addBall(float x, float y)
+void Env::addBall(Geometry::Point2d pos)
 {
-    //TODO lock mutex
+	QMutexLocker ml1(&_sceneMutex);
+	QMutexLocker ml2(&_entitiesMutex);
+	
     Ball* b = new Ball(*_scene);
-    b->position(x, y);
+    b->position(pos.x, pos.y);
 
-    _entities.append(b);
+    _balls.append(b);
 
-    printf("New Ball: %f %f\n", x, y);
+    printf("New Ball: %f %f\n", pos.x, pos.y);
 }
 
-void Env::addRobot(int id, float x, float y)
+void Env::addRobot(Team t, int id, Geometry::Point2d pos)
 {
-    Robot* r = new Robot(*_scene);
-    r->position(x, y);
-
-    _entities.append(r);
-    _robots.append(r);
-
-    printf("New Robot: %d : %f %f\n", id, x, y);
-}
-
-void Env::radioHandler(const Packet::RadioTx* packet)
-{
-    int i = 0;
-    Q_FOREACH(Robot* r, _robots)
-    {
-	for (int k=0 ; k<4 ; ++k)
+	if (t == UnknownTeam)
 	{
-	    r->vels[k] = packet->robots[i].motors[k];
-// 	    printf("Robot %d Wheel %d\n",i, packet->robots[i].motors[k]);
+		printf("Cannot add robots to unknown team.\n");
+		return;
 	}
-	i++;
+	
+	QMutexLocker ml1(&_sceneMutex);
+	QMutexLocker ml2(&_entitiesMutex);
+	
+    Robot* r = new Robot(*_scene);
+    r->position(pos.x, pos.y);
+    
+    if (t == Blue)
+    {
+    	_blue.append(r);
     }
-    packetRxd = 1;
+    else
+    {
+    	_yellow.append(r);
+    }
+
+    printf("New Robot: %d : %f %f\n", id, pos.x, pos.y);
 }
 
-QVector<Robot*> Env::getRobots()
+Packet::Vision Env::vision()
 {
-    return _robots;
+	//lock vision data mutex
+	QMutexLocker ml(&_visionMutex);
+	
+	//return copy
+	return _visionInfo;
 }
 
-QVector<Point2d*> Env::getBallPositions()
+void Env::genVision()
 {
-    QVector<Point2d*> ballPositions;
-    return ballPositions;
+	QMutexLocker ml(&_visionMutex);
+	
+	_visionInfo = Packet::Vision();
+	
+	//vision information is created by the environment because of the strict
+	//rules on when scene information can be accessed. This prevents needless
+	//locks on scene objects to generate vision info since a copy is returned
+	
+	int i=0;
+	Q_FOREACH(const Robot* r, _blue)
+	{
+		Packet::Vision::Robot vr;
+		vr.angle = r->getAngle();
+		vr.pos = r->getPosition();
+		vr.shell = i++; 
+		
+		_visionInfo.blue.push_back(vr);
+	}
+	
+	i=0;
+	Q_FOREACH(const Robot* r, _yellow)
+	{
+		Packet::Vision::Robot vr;
+		vr.angle = r->getAngle();
+		vr.pos = r->getPosition();
+		vr.shell = i++; 
+		
+		_visionInfo.yellow.push_back(vr);
+	}
+	
+	Q_FOREACH(const Ball* b, _balls)
+	{
+		Packet::Vision::Ball vb;
+		vb.pos = b->getPosition();
+		
+		_visionInfo.balls.push_back(vb);
+	}
 }
+
+Packet::RadioRx Env::radio(Team t)
+{
+	QMutexLocker ml(&_radioRxMutex);
+	
+	if (t == Blue)
+	{
+		return _radioRxBlue;
+	}
+	else if (t == Yellow)
+	{
+		return _radioRxYellow;
+	}
+	
+	return Packet::RadioRx();
+}
+
+void Env::radio(Team t, Packet::RadioTx& data)
+{
+	//control robots when not working with the scene
+	//this will prep new data for the next scene
+	QMutexLocker ml(&_sceneMutex);
+	
+	for (int i=0 ; i< 5 ; ++i)
+	{
+		Packet::RadioTx::Robot& r = data.robots[i];
+		if (r.valid)
+		{
+			Robot* robot = 0;
+			//need to get robot with given id (i)
+			if (t == Blue)
+			{
+				
+			}
+			else if (t == Yellow)
+			{
+				
+			}
+			
+			//if we found a robot to control
+			if (robot)
+			{
+				
+			}
+		}
+	}
+}
+
+void Env::genRadio()
+{
+	//generate radio data every loop cycle
+	//it will be pulled by radio when needed
+	QMutexLocker ml(&_radioRxMutex);
+	
+	_radioRxBlue = Packet::RadioRx();
+	_radioRxYellow = Packet::RadioRx();
+	
+	//first 5 robots generate radio data...?
+	/*
+	Q_FOREACH(const Robot* r, _blue)
+	{
+		//_radioRxBlue.robots
+	}
+	*/
+	//TODO gen outgoing data
+}
+
+/*
+const QVector<const Robot*>& Env::getRobots(Team t)
+{	
+	if (t == Blue)
+	{
+		return *((const QVector<const Robot*> *) &_blue);
+	}
+	
+	return *((const QVector<const Robot*> *) &_yellow);
+}
+
+const QVector<const Ball*>& Env::getBalls()
+{
+	return *((const QVector<const Ball*> *) &_balls);
+}
+*/

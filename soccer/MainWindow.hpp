@@ -15,6 +15,7 @@
 #include <log/TreeModel.hpp>
 
 #include "Processor.hpp"
+#include "InputHandler.hpp"
 
 class MainWindow : public QMainWindow
 {
@@ -23,14 +24,16 @@ class MainWindow : public QMainWindow
 	public:
 		MainWindow(Team t, QString filename);
 		~MainWindow();
-
+		
 		void setupModules();
-
+		
 	private:
 		Team _team;
 
 		Processor _processor;
-
+		
+		InputHandler _inputHandler;
+		
 		Log::FieldView* _fieldView;
 		Log::LogControl* _logControl;
 		Log::TreeView* _treeView;
@@ -38,8 +41,8 @@ class MainWindow : public QMainWindow
 
 		Log::LogFile* _logFile;
 
-                /** Currently the configfile is for motion but others can add to it **/
-                QString _configFile;
+        /** Currently the configfile is for motion but others can add to it **/
+        QString _configFile;
 };
 
 #endif /* MAINWINDOW_HPP_ */

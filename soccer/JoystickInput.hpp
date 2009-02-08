@@ -11,7 +11,7 @@
 class JoystickInput
 {
 	public:
-	    JoystickInput(const char* filename);
+	    JoystickInput(const char* filename) throw (std::runtime_error);
 	    ~JoystickInput();
 
 	    bool poll(int timeout = -1);

@@ -2,7 +2,8 @@
 #define _ROBOT_HPP
 
 #include "Entity.hpp"
-#include <Geometry/Point2d.hpp>
+#include <RadioTx.hpp>
+#include <RadioRx.hpp>
 
 class Robot : public Entity
 {
@@ -12,17 +13,15 @@ class Robot : public Entity
 
 		void step();
 		
-		/** set position of the robot */
-		void position(float x, float y);
-
-        /** @return the world position */
-        Geometry::Point2d getPosition();
-        
         /** @return the world angle */
-        float getAngle();
-
-        //FIXME
-        int8_t vels[4];
+        float getAngle() const;
+        
+        virtual void position(float x, float y); 
+        
+        /** set control data */
+        void radio(Packet::RadioTx::Robot& data);
+        /** get robot information data */
+        Packet::RadioRx::Robot radio() const;
 
     private:
         void initRoller();
@@ -33,14 +32,14 @@ class Robot : public Entity
                 const unsigned int sides);
 
     private:
-        /** the roller actor */
         NxActor* _roller;
-
-        /** the kicker actor */
         NxActor* _kicker;
-
+        
         NxActor* _wheels[4];
         NxRevoluteJoint* _motors[4];
+        
+        Packet::RadioTx::Robot _tx;
+        Packet::RadioRx::Robot _rx;
 
         /** center of roller from ground */
         const static float RollerHeight = .03;

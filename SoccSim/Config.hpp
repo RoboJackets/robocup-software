@@ -13,7 +13,7 @@ class Config
 		Config(QString filename, Env* env);
 		
 	private:
-		void procTeam(QDomElement e);
+		void procTeam(QDomElement e, Team t);
 		
 		Env* _env;
 };

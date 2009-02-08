@@ -18,28 +18,28 @@ add_subdirectory (${PROJECT_SOURCE_DIR}/../modeling ${PROJECT_BINARY_DIR}/modeli
 
 include_directories(${PROJECT_BINARY_DIR})
 
-qt4_wrap_cpp ( MOC_SRCS
-	MainWindow.hpp
-)
-
 set (SRCS
 	main.cpp
 	Processor.cpp
 	MainWindow.cpp
+	InputHandler.cpp
+	JoystrickInput.cpp
 )
 
-set (exec soccer)
-add_executable (${exec} ${SRCS} ${MOC_SRCS})
+qt4_automoc (${SRCS})
 
-target_link_libraries(${exec} ${PACKET_LIBRARY})
-target_link_libraries(${exec} ${GEOMETRY_LIBRARY})
-target_link_libraries(${exec} ${NETWORK_LIBRARY})
-target_link_libraries(${exec} ${FRAMEWORK_LIBRARY})
+set (${target} soccer)
+add_executable (${target} ${SRCS} ${MOC_SRCS})
 
-target_link_libraries(${exec} ${QT_LIBRARIES})
+target_link_libraries(${target} ${PACKET_LIBRARY})
+target_link_libraries(${target} ${GEOMETRY_LIBRARY})
+target_link_libraries(${target} ${NETWORK_LIBRARY})
+target_link_libraries(${target} ${FRAMEWORK_LIBRARY})
+
+target_link_libraries(${target} ${QT_LIBRARIES})
 
 #Module Linking
 # Add a new line here for every module used
-target_link_libraries(${exec} log)
-target_link_libraries(${exec} motion)
-target_link_libraries(${exec} modeling)
+target_link_libraries(${target} log)
+target_link_libraries(${target} motion)
+target_link_libraries(${target} modeling)

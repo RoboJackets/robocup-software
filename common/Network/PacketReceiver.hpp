@@ -159,7 +159,7 @@ namespace Network
 			{
 				//check for possible packets
 				//return value 0 = timeout on call
-				if (poll(&_pollfds[0], _pollfds.size(), 5) >= 1) //timeout is in ms
+				if (poll(&_pollfds[0], _pollfds.size(), 0) >= 1) //timeout is in ms
 				{
 					for (unsigned int i=0 ; i<_pollfds.size() ; ++i)
 					{

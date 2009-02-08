@@ -14,8 +14,12 @@ static inline Team opponentTeam(Team t)
 	{
 		return Yellow;
 	}
+	else if (t == Yellow)
+	{
+		return Blue;
+	}
 	
-	return Blue;
+	return UnknownTeam;
 }
 
 static inline const char* teamToA(Team t)
@@ -24,8 +28,12 @@ static inline const char* teamToA(Team t)
 	{
 		return "Blue";
 	}
+	else if (t == Yellow)
+	{
+		return "Yellow";
+	}
 	
-	return "Yellow";
+	return "UnkownTeam";
 }
 
 #endif /*TEAM_H_*/

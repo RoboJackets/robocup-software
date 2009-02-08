@@ -9,7 +9,7 @@ class Ball: public Entity
 		Ball(NxScene& scene);
 		~Ball();
 
-		void position(float x, float y);
+		virtual void position(float x, float y);
 		
 	private:
 };

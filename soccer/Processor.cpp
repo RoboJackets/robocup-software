@@ -1,5 +1,7 @@
 #include "Processor.hpp"
 
+#include <QMutexLocker>
+
 #include <Network/Network.hpp>
 #include <Network/Sender.hpp>
 #include <Network/PacketReceiver.hpp>
@@ -8,17 +10,16 @@
 #include <Constants.hpp>
 
 Processor::Processor(Team t) :
-	QThread(), _running(true),
-	_team(t)
+	QThread(), _running(true), _team(t)
 {
 	//default yellow
-	Geometry::Point2d trans(0, Constants::Field::Length/2.0f);
+	Geometry::Point2d trans(0, Constants::Field::Length / 2.0f);
 	_teamAngle = 90;
 
 	if (_team == Blue)
 	{
 		_teamAngle = -90;
-		trans = Geometry::Point2d(0, Constants::Field::Length/2.0f);
+		trans = Geometry::Point2d(0, Constants::Field::Length / 2.0f);
 	}
 
 	_teamTrans = Geometry::TransformMatrix::translate(trans);
@@ -27,19 +28,17 @@ Processor::Processor(Team t) :
 	//initially no camera does the triggering
 	_triggerId = -1;
 	_trigger = false;
-
-	_sender = new Network::Sender(Network::Address, Network::addTeamOffset(_team,Network::RadioTx));
 	
 	//record team in state variable
 	if (_team == Blue)
 	{
-	  _state.isBlue = true;
+		_state.isBlue = true;
 	}
-	else 
+	else
 	{
-	  _state.isBlue = false;
+		_state.isBlue = false;
 	}
-
+	
 }
 
 Processor::~Processor()
@@ -50,57 +49,57 @@ Processor::~Processor()
 
 void Processor::run()
 {
+	//setup receiver of packets for vision and radio
 	Network::PacketReceiver receiver;
-	receiver.addType(Network::Address, Network::Vision, this, &Processor::visionHandler);
-	//receiver.addType(Network::Address, Network::addTeamOffset(Network::RadioRx), this, &TeamHandler::radioHandler);
-
-
-        while (_running)
+	receiver.addType(Network::Address, Network::Vision, this,
+	        &Processor::visionHandler);
+	receiver.addType(Network::Address, Network::addTeamOffset(Network::RadioRx), 
+			this,&Processor::radioHandler);
+	
+	//sender of outgoing radio control data
+	Network::Sender sender(Network::Address, Network::addTeamOffset(_team, Network::RadioTx));
+	
+	while (_running)
 	{
-		//receive all packets
-		//call packet handlers
+		//needs to be non-blocking...is it?
 		receiver.receive();
-
+		
+		if (true)
+		{
+			//auto
+		}
+		else
+		{
+			//manual
+		}
+		
 		if (_trigger)
 		{
 			_modulesMutex.lock();
-
-			Q_FOREACH(Module* m, _modules)
+			
+			Q_FOREACH(Module* m, _modules) 
 			{
 				m->run();
 			}
 
 			_modulesMutex.unlock();
-
-                        /** Phillip - Added 01/06/2009 **/
-                        //Send radio commands and then set their flags as invalid
-                        _sender->send(_state.radioCmd);
-
-                        for(int i = 0; i<5; i++)
-                        {
-                            _state.radioCmd.robots[i].valid = false;
-                        }
-
-//                         for(int j =0; j<4; j++)
-//                         {
-//                             printf("Robot %d Motor %d = %d\n", 0,j, _state.radioCmd.robots[0].motors[j]);
-//                         }
-
-                        //clear system state info
+			
+			sender->send(_state.radioCmd);
+			
+			//clear system state info
 			_state = SystemState();
-
+			
+			//wait for new trigger frame
 			_trigger = false;
 		}
 	}
 }
 void Processor::addModule(Module* module)
 {
-	_modulesMutex.lock();
+	QMutexLocker ml(&_modulesMutex);
 
 	module->setSystemState(&_state);
 	_modules.push_back(module);
-
-	_modulesMutex.unlock();
 }
 
 void Processor::visionHandler(const Packet::Vision* packet)
@@ -108,20 +107,22 @@ void Processor::visionHandler(const Packet::Vision* packet)
 	//detect trigger camera, if not already set
 	if (_triggerId < 0 && packet->sync)
 	{
-		if (_state.rawVision.size() > 0 && _state.rawVision[0].camera == packet->camera)
+		if (_state.rawVision.size() > 0 && _state.rawVision[0].camera
+		        == packet->camera)
 		{
 			uint64_t half = _state.rawVision[0].timestamp;
-			half += (packet->timestamp - _state.rawVision[0].timestamp)/2;
-
+			half += (packet->timestamp - _state.rawVision[0].timestamp) / 2;
+			
+			
 			//eval all packets, any packet less than half becomes the new tigger
 			//this gives us the last packet up to half as the trigger
-			Q_FOREACH (const Packet::Vision& raw , _state.rawVision)
-			{
-				if (raw.timestamp < half)
+			Q_FOREACH (const Packet::Vision& raw , _state.rawVision) 
 				{
-					_triggerId = raw.camera;
+					if (raw.timestamp < half)
+					{
+						_triggerId = raw.camera;
+					}
 				}
-			}
 
 			//we have set the trigger camera
 			printf("Set trigger camera: %d\n", _triggerId);
@@ -131,7 +132,7 @@ void Processor::visionHandler(const Packet::Vision* packet)
 
 		//store received packets in the log frame
 		_state.rawVision.push_back(*packet);
-
+		
 		return;
 	}
 
@@ -141,7 +142,7 @@ void Processor::visionHandler(const Packet::Vision* packet)
 
 	//convert last frame to teamspace
 	toTeamSpace(_state.rawVision[_state.rawVision.size() - 1]);
-
+	
 	if (packet->camera == _triggerId)
 	{
 		if (packet->sync)
@@ -153,7 +154,8 @@ void Processor::visionHandler(const Packet::Vision* packet)
 		{
 			//set syncronous time to packet timestamp
 			_state.timestamp = packet->timestamp;
-
+			
+			
 			//start s.proc
 			_trigger = true;
 		}
@@ -161,7 +163,7 @@ void Processor::visionHandler(const Packet::Vision* packet)
 }
 
 #if 0
-void TeamHandler::radioHandler(const Packet::RadioRx* packet)
+void Processor::radioHandler(const Packet::RadioRx* packet)
 {
 	//log received radio data time
 }
@@ -170,7 +172,7 @@ void TeamHandler::radioHandler(const Packet::RadioRx* packet)
 void Processor::toTeamSpace(Packet::Vision& vision)
 {
 	//FIXME FIXME we should put this info into self/opp??
-	for (unsigned int i=0 ; i< vision.blue.size() ; ++i)
+	for (unsigned int i = 0; i < vision.blue.size(); ++i)
 	{
 		Packet::Vision::Robot& r = vision.blue[i];
 		r.pos = _teamTrans * r.pos;
@@ -178,15 +180,15 @@ void Processor::toTeamSpace(Packet::Vision& vision)
 		Processor::trim(r.angle);
 	}
 
-	for (unsigned int i=0 ; i<vision.yellow.size() ; ++i)
+	for (unsigned int i = 0; i < vision.yellow.size(); ++i)
 	{
 		Packet::Vision::Robot& r = vision.yellow[i];
 		r.pos = _teamTrans * r.pos;
 		r.angle = _teamAngle + r.angle;
 		Processor::trim(r.angle);
 	}
-
-	for (unsigned int i=0 ; i< vision.balls.size() ; ++i)
+	
+	for (unsigned int i = 0; i < vision.balls.size(); ++i)
 	{
 		Packet::Vision::Ball& b = vision.balls[i];
 		b.pos = _teamTrans * b.pos;

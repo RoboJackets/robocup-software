@@ -9,6 +9,9 @@ class Field : public Entity
         Field(NxScene& scene);
         ~Field();
         
+        //does nothing for the field
+        virtual void position(float x, float y) {};
+        
     private:
 };
 

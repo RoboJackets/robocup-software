@@ -15,13 +15,6 @@ using namespace Geometry;
 Robot::Robot(NxScene& scene) :
 	Entity(scene)
 {
-	for (int i = 0; i < 4; ++i)
-	{
-		vels[i] = 0;
-	}
-
-	//robot has a kicker, chipper, roller and body
-
 	//create entity
 	NxBodyDesc bodyDesc;
 	bodyDesc.mass = 5.0f;
@@ -277,18 +270,7 @@ void Robot::initWheels()
 
 void Robot::step()
 {	
-	if (_motors[0])
-	{
-		for (int i = 0; i < 4; ++i)
-		{
-			NxMotorDesc motorDesc;
-			_motors[i]->getMotor(motorDesc);
-
-			motorDesc.velTarget = 100.0f * vels[i] / 255.0f;
-
-			_motors[i]->setMotor(motorDesc);
-		}
-	}
+	
 }
 
 NxConvexMesh* Robot::cylinder(const float length, const float radius,
@@ -357,15 +339,30 @@ void Robot::position(float x, float y)
 	_actor->setGlobalPosition(newPos);
 }
 
-Point2d Robot::getPosition()
-{
-    Point2d currPos(_actor->getGlobalPosition().x, _actor->getGlobalPosition().y);
-
-    return currPos;
-}
-
-float Robot::getAngle()
+float Robot::getAngle() const
 {
 	NxVec3 c1 = _actor->getGlobalOrientation().getColumn(0);
 	return atan2(c1[1] , c1[0]) * 180.0f / M_PI;
+}
+
+void Robot::radio(Packet::RadioTx::Robot& data)
+{
+	//motors
+	for (int i = 0; i < 4; ++i)
+	{
+		NxMotorDesc motorDesc;
+		_motors[i]->getMotor(motorDesc);
+		
+		//create a velocity target based on the requested travel velocity
+		motorDesc.velTarget = 100.0f * data.motors[i] / 255.0f;
+
+		_motors[i]->setMotor(motorDesc);
+	}
+	
+	//TODO kick, roller
+}
+
+Packet::RadioRx::Robot radio()
+{
+	return Packet::RadioRx::Robot();
 }

@@ -1,7 +1,6 @@
 #include "WorldModel.hpp"
 
 #include <QObject>
-#include <iostream>
 #include <vector>
 
 //#include "Robot.hpp"
@@ -32,8 +31,6 @@ void WorldModel::run()
 		{
 			const std::vector<Packet::Vision::Robot>* self = &vision.blue;
 			const std::vector<Packet::Vision::Robot>* opp = &vision.yellow;
-			
-			printf("%d\n", vision.blue.size());
 			
 			if (!_state->isBlue)
 			{

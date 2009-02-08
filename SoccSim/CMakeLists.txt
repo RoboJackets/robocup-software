@@ -1,5 +1,5 @@
 project (soccsim)
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 
 # default project build flags
 add_definitions (-Werror -Wall)
@@ -42,10 +42,9 @@ include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${PROJECT_BINARY_DIR})
 include ( ${QT_USE_FILE} )
 
-qt4_wrap_cpp ( MOC_SRCS
-	Physics/Env.hpp
-	InputHandler.hpp
-	)
+#qt4_wrap_cpp ( MOC_SRCS
+#	Physics/Env.hpp
+#	)
 
 # this will run UIC on the .ui files
 qt4_wrap_ui ( UI_HDRS
@@ -99,13 +98,12 @@ if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
 	)
 endif ()
 
-add_executable (${PROJECT_NAME}
+set (SRCS
 	main.cpp
 	Viewer.cpp
-	JoystickInput.cpp
-	InputHandler.cpp
 	Config.cpp
-	Vision.cpp
+	VisionGen.cpp
+	Radio.cpp
 
 	## environment
 	Physics/Env.cpp
@@ -114,7 +112,13 @@ add_executable (${PROJECT_NAME}
 	Physics/Field.cpp
 	Physics/Robot.cpp
 	Physics/MemoryStream.cpp
-	${MOC_SRCS} ${UI_HDRS} ${NxuStream2SRC}
+)
+
+
+qt4_automoc(${SRCS})
+
+add_executable (${PROJECT_NAME}
+	${SRCS} ${UI_HDRS} ${NxuStream2SRC}
 )
 
 # if physx had flags to set, set them

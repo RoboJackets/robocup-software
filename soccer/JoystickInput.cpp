@@ -74,7 +74,6 @@ bool JoystickInput::poll(int timeout)
 		case JS_EVENT_BUTTON:
 			button[event.number] = event.value;
 			return true;
-
 		case JS_EVENT_AXIS:
 			axis[event.number] = event.value >> 8;
 			return true;

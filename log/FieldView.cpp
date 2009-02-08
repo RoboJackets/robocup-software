@@ -61,7 +61,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 
 			if (o.valid)
 			{
-				drawRobot(painter, _team, o.shell, o.pos, o.angle);
+				drawRobot(painter, opponentTeam(_team), o.shell, o.pos, o.angle);
 			}
 		}
 

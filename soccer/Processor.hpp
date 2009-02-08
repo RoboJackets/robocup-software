@@ -14,8 +14,10 @@
 #include "framework/Module.hpp"
 
 /** handles processing for a team */
-class Processor : public QThread
+class Processor: public QThread
 {
+	Q_OBJECT;
+	
 	public:
 		Processor(Team t);
 		~Processor();
@@ -27,11 +29,18 @@ class Processor : public QThread
 		//that only the vision information is fresh
 		void addModule(Module* mod);
 
+	public Q_SLOTS:
+		void playPauseButton();
+		void manualAutoButton();
+		void changeRobot(int rid);
+		
 	protected:
 		void run();
 
+		/** handle incoming vision packet */
 		void visionHandler(const Packet::Vision* packet);
-		//void radioHandler(const Packet::RadioRx* packet);
+		/** handle incoming radio packet */
+		void radioHandler(const Packet::RadioRx* packet);
 
 	private:
 		/** clip angle to +/- 180 */
@@ -39,10 +48,9 @@ class Processor : public QThread
 		/** convert all coords to team space */
 		void toTeamSpace(Packet::Vision& vision);
 
-	/// members ///
 	private:
-
-                /** Used to start and stop the thread **/
+		
+		/** Used to start and stop the thread **/
 		bool _running;
 
 		/** trigger camera id, triggers syncronous processing */
@@ -60,12 +68,9 @@ class Processor : public QThread
 		Geometry::TransformMatrix _teamTrans;
 		float _teamAngle;
 
-		//processes
+		//modules
 		QMutex _modulesMutex;
 		std::list<Module*> _modules;
-
-                /** Data sender to robots **/
-                Network::Sender* _sender;
 
 };
 

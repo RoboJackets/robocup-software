@@ -1,7 +1,8 @@
-#include "Vision.hpp"
+#include "VisionGen.hpp"
 #include "Viewer.hpp"
 #include "Physics/Env.hpp"
 #include "Config.hpp"
+#include "Radio.hpp"
 
 #include <QApplication>
 
@@ -22,15 +23,20 @@ int main(int argc, char* argv[])
 	{
 		if (strcmp(argv[i], "-c") == 0)
 		{
-			if (i + 1 < argc)
+			if (++i < argc)
 			{
-				configFile = argv[i+1];
+				configFile = argv[i];
 			}
 			else
 			{
 				printf ("Expected config file after -c parameter\n");
 				return 0;
 			}
+		}
+		else
+		{
+			printf("%s is not recognized as a valid flag\n", argv[i]);
+			return 0;
 		}
 	}
 	
@@ -41,8 +47,13 @@ int main(int argc, char* argv[])
 		config = new Config(configFile, env);
 	}
 	
-	Vision vision(env);
+	VisionGen vision(env);
 	vision.start();
+	
+	Radio radioBlue(Blue, *env);
+	Radio radioYellow(Yellow, *env);
+	radioBlue.start();
+	radioYellow.start();
 
 	Viewer win(env);
 	win.setVisible(true);
@@ -53,6 +64,11 @@ int main(int argc, char* argv[])
 	delete env;
 	vision.terminate();
 	vision.wait();
+	
+	radioBlue.terminate();
+	radioBlue.wait();
+	radioYellow.terminate();
+	radioYellow.wait();
 	
 	delete config;
 	
