@@ -16,7 +16,7 @@ qt4_wrap_cpp ( MOC_SRCS
 )
 
 set (SRCS
-	main.cpp
+	main.cpp USB_Device.cpp Radio.cpp
 )
 
 set (exec radio)
@@ -27,3 +27,4 @@ target_link_libraries(${exec} ${GEOMETRY_LIBRARY})
 target_link_libraries(${exec} ${NETWORK_LIBRARY})
 target_link_libraries(${exec} ${FRAMEWORK_LIBRARY})
 target_link_libraries(${exec} ${QT_LIBRARIES})
+target_link_libraries(${exec} usb)

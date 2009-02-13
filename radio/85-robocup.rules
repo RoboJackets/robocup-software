@@ -1,0 +1,10 @@
+# Put this file in /etc/udev/rules.d and
+#     /etc/init.d/udev restart
+
+# These are for the AT90USB bootloader
+SYSFS{idVendor}=="03eb", SYSFS{idProduct}=="2ff7", MODE="0660", GROUP="plugdev"
+SYSFS{idVendor}=="03eb", SYSFS{idProduct}=="2ff9", MODE="0660", GROUP="plugdev"
+
+# This is actually the base station
+SYSFS{idVendor}=="3141", SYSFS{idProduce}=="0004", MODE="0660", GROUP="plugdev"
+
