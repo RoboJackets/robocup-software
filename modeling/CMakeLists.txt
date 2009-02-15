@@ -19,6 +19,7 @@ qt4_wrap_cpp ( MOC_SRCS
 
 set (SRCS
 	WorldModel.cpp
+	RobotWM.cpp
 )
 
 add_library (modeling ${SRCS} ${MOC_SRCS})

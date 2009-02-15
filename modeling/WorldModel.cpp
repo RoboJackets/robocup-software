@@ -3,7 +3,8 @@
 #include <QObject>
 #include <vector>
 
-//#include "Robot.hpp"
+#include "RobotWM.hpp"
+#include "framework/Module.hpp"
 //#include "Ball.hpp"
 
 using namespace Modeling;
@@ -23,6 +24,7 @@ WorldModel::WorldModel() :
 
 }
 
+
 void WorldModel::run()
 {
 	Q_FOREACH(const Packet::Vision& vision, _state->rawVision)
@@ -41,18 +43,48 @@ void WorldModel::run()
 			//index is the id
 			Q_FOREACH (const Packet::Vision::Robot& r, *self)
 			{
-				_state->self[r.shell].shell = r.shell;
-				_state->self[r.shell].pos = r.pos;
-				_state->self[r.shell].angle = r.angle;
+				//get data from vision packet
+				_self[r.shell]._shell = r.shell;
+				_self[r.shell]._measPos = r.pos;
+				_self[r.shell]._measAngle = r.angle;
+				_self[r.shell]._valid = true;
+
+				//get data from commands
+				_self[r.shell]._cmdPos = _state->self[r.shell].cmdPos;
+				_self[r.shell]._cmdVel = _state->self[r.shell].cmdVel;
+				_self[r.shell]._cmdAngle = _state->self[r.shell].cmdAngle;
+			  
+				//process world model
+				_self[r.shell].process();
+
+				//store data back in state variable
+				_state->self[r.shell].shell = _self[r.shell]._shell;
+				_state->self[r.shell].pos = _self[r.shell]._pos;
+				_state->self[r.shell].vel = _self[r.shell]._vel;
+				_state->self[r.shell].angle = _self[r.shell]._posAngle;
+				_state->self[r.shell].angleVel = _self[r.shell]._velAngle;
 				_state->self[r.shell].valid = true;
 			}
 			//index is the id
 			Q_FOREACH (const Packet::Vision::Robot& r, *opp)
 			{
-				_state->opp[r.shell].shell = r.shell;
-				_state->opp[r.shell].pos = r.pos;
-				_state->opp[r.shell].angle = r.angle;
-				_state->opp[r.shell].valid = true;
+				//get data from vision packet
+				_opp[r.shell]._shell = r.shell;
+				_opp[r.shell]._measPos = r.pos;
+				_opp[r.shell]._measAngle = r.angle;
+				_opp[r.shell]._valid = true;
+				//Note that control information cannot be used for opp
+
+				//process world model
+				_opp[r.shell].process();
+
+				//store data back in state variable
+				_state->self[r.shell].shell = _opp[r.shell]._shell;
+				_state->self[r.shell].pos = _opp[r.shell]._pos;
+				_state->self[r.shell].vel = _opp[r.shell]._vel;
+				_state->self[r.shell].angle = _opp[r.shell]._posAngle;
+				_state->self[r.shell].angleVel = _opp[r.shell]._velAngle;
+				_state->self[r.shell].valid = true;
 			}
 			
 			//copy ball

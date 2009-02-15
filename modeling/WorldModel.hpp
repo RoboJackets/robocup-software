@@ -2,10 +2,9 @@
 #define WORLD_MODEL_HPP_
 
 #include "framework/Module.hpp"
-//#include "Robot.hpp"
+#include "RobotWM.hpp"
 //#include "Ball.hpp"
 
-#include <vector>
 
 /** World modeling system */
 namespace Modeling
@@ -18,8 +17,8 @@ namespace Modeling
 			virtual void run();
 			
 		private:
-// 	                std::vector<Modeling::Robot*>* blueTeam;
-// 	                std::vector<Modeling::Robot*>* yellowTeam;
+			RobotWM _self[5];
+			RobotWM _opp[5];
 	  		//Ball* ball;
 	};
 }
