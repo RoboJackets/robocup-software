@@ -17,6 +17,9 @@
 		<!-- angle of the robot (+- 180 degrees) -->
 		<member type="float" name="angle" />
 
+		<!-- angular velocity of the robot degrees/timestep -->
+		<member type="float" name="angleVel" />
+
 		<!-- commanded position of the robot -->
 		<member type="Point2d" name="cmdPos" />
 
