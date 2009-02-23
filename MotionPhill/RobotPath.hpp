@@ -20,24 +20,22 @@ class RobotPath : public Log::FieldView
 
     public:
         typedef enum
-	{
-	    Line,
+        {
+            Line,
             Arc,
-	    Circle,
-	    Ellipse,
+            Circle,
+            Ellipse,
             Start,
-	    BezierCurve,
+            BezierCurve,
             Close,
-	} PathType;
+        }PathType;
 
         typedef struct
         {
             int numPoints;
-	    PathType type;
+            PathType type;
             QPointF points[4];
         } Path;
-
-
 
     public:
         RobotPath(Team team, QWidget* parent = 0);
@@ -57,9 +55,6 @@ class RobotPath : public Log::FieldView
 
     private:
         QVector<Path> _paths;
-//         QPointF _c1;
-//         QPointF _c2;
-//         QPointF _endpoint;
 
         QPointF _currPos;
 

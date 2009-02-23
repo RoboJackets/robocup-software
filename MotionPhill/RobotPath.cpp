@@ -10,6 +10,7 @@
 #include <log/FieldView.hpp>
 
 using namespace Constants;
+
 RobotPath::RobotPath(Team team, QWidget* parent) :
     Log::FieldView(team, parent), _team(team)
 {
@@ -22,33 +23,38 @@ RobotPath::RobotPath(Team team, QWidget* parent) :
         currPath.points[i] = *initPoint;
     }
 
+    //Prevent the background from being re-draw prior to painting
     setAutoFillBackground(false);
 
 }
 
 void RobotPath::paintEvent(QPaintEvent* event)
 {
+
+    //Paint the field
     Log::FieldView::paintEvent(event);
+
+    //Paint the path
     QPainter painter(this);
     QPainterPath* painterPath = new QPainterPath(QPointF(0,0));
 
     painter.setPen(Qt::green);
     Q_FOREACH(RobotPath::Path p, _paths)
     {
-	switch(p.type)
-	{
-	    case Line:
-		painterPath->lineTo(p.points[0]);
+        switch(p.type)
+        {
+            case Line:
+                painterPath->lineTo(p.points[0]);
                 break;
             case Arc:
-		painterPath->quadTo(p.points[1],p.points[0]);
+                painterPath->quadTo(p.points[1],p.points[0]);
                 break;
-	    case Circle:
+            case Circle:
                 break;
-	    case Ellipse:
+            case Ellipse:
                 break;
-	    case Start:
-		painterPath = new QPainterPath(p.points[0]);
+            case Start:
+                painterPath = new QPainterPath(p.points[0]);
                 painterPath->addEllipse(p.points[0].x(),p.points[0].y(),1,1);
                 painterPath->addEllipse(p.points[0].x() - 10,p.points[0].y() - 10,20,20);
                 painterPath->moveTo(p.points[0]);
@@ -56,12 +62,13 @@ void RobotPath::paintEvent(QPaintEvent* event)
             case Close:
                 painterPath->closeSubpath();
                 break;
-	    case BezierCurve:
-		painterPath->cubicTo(p.points[1], p.points[2], p.points[0]);
+            case BezierCurve:
+                painterPath->cubicTo(p.points[1], p.points[2], p.points[0]);
                 break;
-	}
+        }
     }
     painter.drawPath(*painterPath);
+    free(painterPath);
 }
 
 void RobotPath::addPath(PathType pathType)
@@ -78,7 +85,7 @@ void RobotPath::addPath(PathType pathType)
         case Circle:
             currPath.numPoints = 2;
             break;
-	case Ellipse:
+        case Ellipse:
             currPath.numPoints = 3;
             break;
         case Start:
@@ -107,6 +114,7 @@ void RobotPath::eraseAllPaths()
     {
         currPath.points[i] = QPointF(0,0);
     }
+    update();
 }
 
 void RobotPath::erase()
@@ -122,6 +130,7 @@ void RobotPath::erase()
             currPath.points[i] = QPointF(0,0);
         }
     }
+    update();
 }
 
 void RobotPath::closePath()
@@ -135,6 +144,7 @@ void RobotPath::closePath()
     _pathPointInterator = 0;
 
    _paths.append(currPath);
+   update();
 }
 
 void RobotPath::mousePressEvent(QMouseEvent* me)
@@ -151,12 +161,15 @@ void RobotPath::mouseReleaseEvent(QMouseEvent* me)
     currPath.points[_pathPointInterator % currPath.numPoints] = me->pos();
     _pathPointInterator++;
     _paths[_paths.size()-1] = currPath;
+
 }
 
 void RobotPath::mouseMoveEvent(QMouseEvent* me)
 {
     currPath.points[_pathPointInterator % currPath.numPoints] = me->pos();
     _paths[_paths.size()-1] = currPath;
+
+    update();
 }
 
 void RobotPath::mouseDoubleClickEvent(QMouseEvent* me)

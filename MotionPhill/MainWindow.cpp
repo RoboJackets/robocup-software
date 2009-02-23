@@ -1,29 +1,28 @@
 #include "MainWindow.hpp"
-// #include <module/modules.hpp>
 #include "log/LogModule.hpp"
 #include "motion/Controller.hpp"
-//TODO  Get Alex to make world model a module
-#include "../soccer/module/WorldModel.hpp"
+#include "modeling/WorldModel.hpp"
 #include "TrajectoryGen.hpp"
 
 #include <ui_motion.h>
 
 MainWindow::MainWindow(Team team, QString filename)
-	   :QMainWindow(), _team(team), _processor(team), _logFile(0), _configFile(filename)
+    :QMainWindow(), _team(team), _processor(team), _logFile(0), _configFile(filename)
 {
     setupUi(this);
 
     this->setCentralWidget(centralwidget);
 
-    //RobotPath draws the path and also extends FieldView to draw the field, robots, ball, etc
     _rp = new RobotPath(team,this);
+    _rp->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _logControl = new Log::LogControl(this);
-    gridLayout1->addWidget(_rp,0,0);
-    gridLayout1->addWidget(_logControl, 1, 0);
 
-    connect(&_timer, SIGNAL(timeout()), this, SLOT(redraw()));
+    gridLayout->addWidget(_rp,0,0);
+    gridLayout->addWidget(_logControl,1,0);
 
-    _timer.start(30);
+    //connect(&_timer, SIGNAL(timeout()), this, SLOT(redraw()));
+
+    //_timer.start(30);
 
     _processor.start();
     _logFile = new Log::LogFile(Log::LogFile::genFilename());
@@ -35,18 +34,18 @@ MainWindow::MainWindow(Team team, QString filename)
 
 MainWindow::~MainWindow()
 {
-        _logControl->setLogFile(0);
+    _logControl->setLogFile(0);
 
-	_processor.terminate();
-	_processor.wait();
+    _processor.terminate();
+    _processor.wait();
 
-	//cleanup modules
+    //cleanup modules
 
-	if (_logFile)
-	{
-		delete _logFile;
-		_logFile = 0;
-	}
+    if (_logFile)
+    {
+        delete _logFile;
+        _logFile = 0;
+    }
 }
 
 void MainWindow::redraw()
@@ -56,24 +55,24 @@ void MainWindow::redraw()
 
 void MainWindow::setupModules()
 {
-	WorldModel* wm = new WorldModel();
+    Modeling::WorldModel* wm = new Modeling::WorldModel();
 
-	Motion::Controller* motion = new Motion::Controller(_configFile);
+    Motion::Controller* motion = new Motion::Controller(_configFile);
 
-        Trajectory::TrajectoryGen* trajGen = new Trajectory::TrajectoryGen();
+    Trajectory::TrajectoryGen* trajGen = new Trajectory::TrajectoryGen();
 
-        //Thread-safe slots and signals require the use of a queue
-        connect(this, SIGNAL(setModuleToRun()), trajGen, SLOT(runModule()), Qt::QueuedConnection);
-        connect(this, SIGNAL(setModuleToStop()), trajGen, SLOT(stopModule()), Qt::QueuedConnection);
+    //Thread-safe slots and signals require the use of a queue
+    connect(this, SIGNAL(setModuleToRun()), trajGen, SLOT(runModule()), Qt::QueuedConnection);
+    connect(this, SIGNAL(setModuleToStop()), trajGen, SLOT(stopModule()), Qt::QueuedConnection);
 
-	Log::LogModule* lm = new Log::LogModule();
-	lm->setLogFile(_logFile);
+    Log::LogModule* lm = new Log::LogModule();
+    lm->setLogFile(_logFile);
 
-	//add the modules....ORDER MATTERS!!
-	_processor.addModule(wm);
-//         _processor.addModule(trajGen);
-	_processor.addModule(motion);
-	_processor.addModule(lm);
+    //add the modules....ORDER MATTERS!!
+    _processor.addModule(wm);
+//     _processor.addModule(trajGen);
+    _processor.addModule(motion);
+    _processor.addModule(lm);
 }
 
 void MainWindow::on_erase_clicked()
@@ -125,5 +124,5 @@ void MainWindow::on_stop_clicked()
 
 void MainWindow::on_close_clicked()
 {
-    printf("Close\n");
+    this->QWidget::close();
 }

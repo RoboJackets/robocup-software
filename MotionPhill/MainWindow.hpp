@@ -15,18 +15,18 @@
 
 class MainWindow : public QMainWindow, Ui::MainWindow
 {
-	Q_OBJECT;
+    Q_OBJECT;
 
-        public:
-            enum
-            {
-	       DrawingMode,
-	       RunMode,
-            };
+    public:
+        enum
+        {
+        DrawingMode,
+        RunMode,
+    };
 
-	public:
-	    MainWindow(Team team, QString filename);
-	    ~MainWindow();
+    public:
+        MainWindow(Team team, QString filename);
+        ~MainWindow();
         public Q_SLOTS:
             void redraw();
             void on_erase_clicked();
@@ -47,25 +47,25 @@ class MainWindow : public QMainWindow, Ui::MainWindow
 
         protected:
 //             void mouseMoveEvent(QMouseEvent* me);
-	private:
-            Ui::MainWindow ui;
+    private:
+        Ui::MainWindow ui;
 
-            RobotPath* _rp;
+        RobotPath* _rp;
 
-            QTimer _timer;
+        QTimer _timer;
 
-            Team _team;
+        Team _team;
 
-            int _mode;
+        int _mode;
 
-            Processor _processor;
+        Processor _processor;
 
-            Log::LogFile* _logFile;
-            /** This controls the data flow from logger to visualizers **/
-            Log::LogControl* _logControl;
+        Log::LogFile* _logFile;
+        /** This controls the data flow from logger to visualizers **/
+        Log::LogControl* _logControl;
 
-            /** Currently the configfile is for motion but others can add to it **/
-	    QString _configFile;
+        /** Currently the configfile is for motion but others can add to it **/
+        QString _configFile;
 };
 
 #endif // MAIN_WINDOW_HPP

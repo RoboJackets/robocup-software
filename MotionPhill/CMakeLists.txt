@@ -14,28 +14,31 @@ include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
 include_directories (${PROJECT_SOURCE_DIR}/..)
 add_subdirectory (${PROJECT_SOURCE_DIR}/../motion ${PROJECT_BINARY_DIR}/motion)
 add_subdirectory (${PROJECT_SOURCE_DIR}/../log ${PROJECT_BINARY_DIR}/log)
+add_subdirectory (${PROJECT_SOURCE_DIR}/../modeling ${PROJECT_BINARY_DIR}/modeling)
 
 include_directories(${PROJECT_BINARY_DIR})
 
 qt4_wrap_cpp (MOC_SRCS
-	MainWindow.hpp
-        RobotPath.hpp
-        TrajectoryGen.hpp
+    MainWindow.hpp
+    RobotPath.hpp
+    TrajectoryGen.hpp
 )
 
 QT4_WRAP_UI (UI_HDRS
-	ui/motion.ui
+    ui/motion.ui
 )
 
 set (SRCS
-        main.cpp
-	MainWindow.cpp
-        RobotPath.cpp
-        TrajectoryGen.cpp
-        ../soccer/Processor.cpp
-	../soccer/module/WorldModel.cpp
+    main.cpp
+    MainWindow.cpp
+    RobotPath.cpp
+    TrajectoryGen.cpp
+    ../soccer/Processor.cpp
+    ../soccer/InputHandler.cpp
+    ../soccer/JoystickInput.cpp
 )
 
+qt4_automoc (${SRCS})
 set (exec motionTest)
 add_executable (${exec} ${SRCS} ${MOC_SRCS})
 
@@ -49,3 +52,4 @@ target_link_libraries(${exec} ${QT_LIBRARIES})
 #module linking
 target_link_libraries(${exec} log)
 target_link_libraries(${exec} motion)
+target_link_libraries(${exec} modeling)

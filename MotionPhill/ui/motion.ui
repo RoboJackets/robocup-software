@@ -78,10 +78,10 @@
      </rect>
     </property>
     <property name="text" >
-     <string>K_i</string>
+     <string>K_f</string>
     </property>
    </widget>
-   <widget class="QSpinBox" name="K_i" >
+   <widget class="QSpinBox" name="K_f" >
     <property name="geometry" >
      <rect>
       <x>918</x>
@@ -94,37 +94,11 @@
      <number>500</number>
     </property>
    </widget>
-   <widget class="QLabel" name="kD" >
+   <widget class="QPushButton" name="apply" >
     <property name="geometry" >
      <rect>
       <x>880</x>
       <y>90</y>
-      <width>32</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>K_d</string>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="K_d" >
-    <property name="geometry" >
-     <rect>
-      <x>918</x>
-      <y>90</y>
-      <width>55</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="maximum" >
-     <number>500</number>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="apply" >
-    <property name="geometry" >
-     <rect>
-      <x>878</x>
-      <y>120</y>
       <width>93</width>
       <height>27</height>
      </rect>
@@ -303,42 +277,16 @@
      </property>
     </widget>
    </widget>
-   <widget class="QLabel" name="xPos" >
+   <widget class="QWidget" name="gridLayoutWidget" >
     <property name="geometry" >
      <rect>
-      <x>10</x>
-      <y>640</y>
-      <width>71</width>
-      <height>27</height>
+      <x>30</x>
+      <y>19</y>
+      <width>811</width>
+      <height>611</height>
      </rect>
     </property>
-    <property name="text" >
-     <string>X = </string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="yPos" >
-    <property name="geometry" >
-     <rect>
-      <x>100</x>
-      <y>640</y>
-      <width>91</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>Y = </string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="gridLayout" >
-    <property name="geometry" >
-     <rect>
-      <x>10</x>
-      <y>10</y>
-      <width>841</width>
-      <height>581</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" />
+    <layout class="QGridLayout" name="gridLayout" />
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar" >
@@ -347,7 +295,7 @@
      <x>0</x>
      <y>0</y>
      <width>1006</width>
-     <height>29</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>
