@@ -22,9 +22,12 @@ MainWindow::MainWindow(Team team, QString filename)
     gridLayout->addWidget(_rp,0,0);
     gridLayout->addWidget(_logControl,1,0);
 
+    qRegisterMetaType<Geometry::Point2d>("Geometry::Point2d");
+    qRegisterMetaType<QVector<RobotPath::Path> >("QVector<RobotPath::Path>");
+
     _processor.start();
-    _logFile = new Log::LogFile(Log::LogFile::genFilename());
     setupModules();
+    _logFile = new Log::LogFile(Log::LogFile::genFilename());
 
     _logControl->setLogFile(_logFile);
     connect(_logControl, SIGNAL(newFrame(Packet::LogFrame*)), _rp, SLOT(frame(Packet::LogFrame*)));
@@ -46,11 +49,6 @@ MainWindow::~MainWindow()
     }
 }
 
-void MainWindow::redraw()
-{
-    _rp->update();
-}
-
 void MainWindow::setupModules()
 {
     Modeling::WorldModel* wm = new Modeling::WorldModel();
@@ -59,16 +57,18 @@ void MainWindow::setupModules()
 
     Trajectory::TrajectoryGen* trajGen = new Trajectory::TrajectoryGen();
 
-    connect(this, SIGNAL(setModuleToRun()), trajGen, SLOT(runModule()), Qt::QueuedConnection);
-    connect(this, SIGNAL(setModuleToStop()), trajGen, SLOT(stopModule()), Qt::QueuedConnection);
-    connect(_rp, SIGNAL(getPaths(QVector<Path>)), trajGen, SLOT(setPaths(QVector<Path>)), Qt::QueuedConnection);
+    connect(this, SIGNAL(runTrajectoryGen()), trajGen, SLOT(runModule()), Qt::QueuedConnection);
+    connect(this, SIGNAL(stopTrajectoryGen()), trajGen, SLOT(stopModule()), Qt::QueuedConnection);
+    connect(this, SIGNAL(setPaths(QVector<RobotPath::Path>)), trajGen, SLOT(setPaths(QVector<RobotPath::Path>)), Qt::QueuedConnection);
+    connect(this, SIGNAL(setPixelFieldSize(Geometry::Point2d)), trajGen, SLOT(pixelFieldSize(Geometry::Point2d)), Qt::QueuedConnection);
+    setPixelFieldSize(Point2d((float)_rp->width(),(float)_rp->height()));
 
     Log::LogModule* lm = new Log::LogModule();
     lm->setLogFile(_logFile);
 
     //add the modules....ORDER MATTERS!!
     _processor.addModule(wm);
-//     _processor.addModule(trajGen);
+    _processor.addModule(trajGen);
     _processor.addModule(motion);
     _processor.addModule(lm);
 }
@@ -111,14 +111,14 @@ void MainWindow::on_closePath_clicked()
 void MainWindow::on_run_clicked()
 {
     _mode = RunMode;
-    setModuleToRun();
-    _rp.getPaths(_rp)
+    runTrajectoryGen();
+    setPaths(_rp->getPaths());
 }
 
 void MainWindow::on_stop_clicked()
 {
     _mode = DrawingMode;
-    setModuleToStop();
+    stopTrajectoryGen();
 }
 
 void MainWindow::on_close_clicked()

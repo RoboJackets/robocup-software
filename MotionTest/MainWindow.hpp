@@ -1,6 +1,7 @@
 #ifndef MAIN_WINDOW_HPP
 #define MAIN_WINDOW_HPP
 
+#include <Geometry/Point2d.hpp>
 #include "RobotPath.hpp"
 #include "../soccer/Processor.hpp"
 #include <log/LogFile.hpp>
@@ -27,8 +28,8 @@ class MainWindow : public QMainWindow, Ui::MainWindow
     public:
         MainWindow(Team team, QString filename);
         ~MainWindow();
+
     public Q_SLOTS:
-        void redraw();
         void on_erase_clicked();
         void on_beizerCurve_clicked();
         void on_line_clicked();
@@ -42,11 +43,11 @@ class MainWindow : public QMainWindow, Ui::MainWindow
         void setupModules();
 
     Q_SIGNALS:
-        void setModuleToRun();
-        void setModuleToStop();
+        void runTrajectoryGen();
+        void stopTrajectoryGen();
+        void setPaths(QVector<RobotPath::Path> paths);
+        void setPixelFieldSize(Geometry::Point2d size);
 
-        protected:
-//             void mouseMoveEvent(QMouseEvent* me);
     private:
         Ui::MainWindow ui;
 

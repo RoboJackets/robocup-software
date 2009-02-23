@@ -60,125 +60,127 @@ void Robot::proc()
         //printf("ID Please %d\n",_id);
         //TODO Send commands to motion via gameplay and set this flag there
 
-        testDesiredPos.x = 1;
-	testDesiredPos.y = 1;
-	currPos = _state->self[_id].pos;
-	currVel = _state->self[_id].vel;
-	currAngle = _state->self[_id].angle;
+        int k = 100;
+        testDesiredPos.x = _state->self[_id].cmdPos.x;
+        testDesiredPos.y = _state->self[_id].cmdPos.y;
+        currPos = _state->self[_id].pos;
+        currVel = _state->self[_id].vel;
+        currAngle = _state->self[_id].angle;
 
-	//TODO position based control
-	velCmd.vel.x = _xPID->run(testDesiredPos.x - currPos.x);;
-	velCmd.vel.y = _yPID->run(testDesiredPos.y - currPos.y);
+        //TODO position based control
+        velCmd.vel.x = k*(testDesiredPos.x - currPos.x);
+        velCmd.vel.y = k*(testDesiredPos.y - currPos.y);
 
-	printf("Pos in the x %f\n", currPos.x);
-	printf("Pos in the y %f\n", currPos.y);
 
-	velCmd.w = 0;
+//         printf("Curr Pos x %f, y %f\n", currPos.x,currPos.y);
+//         printf("Desired pos x %f y %f\n", testDesiredPos.x,testDesiredPos.y);
 
-	genMotor(velCmd);
+        velCmd.w = 0;
 
-	_state->self[_id].cmdValid = false;
+        genMotor(velCmd);
+
+        _state->self[_id].cmdValid = false;
     }
     /*
-	if (_self.valid)
-	{
-		_comm.valid = true;
-		_log.valid = true;
+    if (_self.valid)
+    {
+        _comm.valid = true;
+        _log.valid = true;
 
-		//output velocity command for motor speed generation
-		VelocityCmd velCmd;
+        //output velocity command for motor speed generation
+        VelocityCmd velCmd;
 
-		_log.currPos = _self.pos;
+        _log.currPos = _self.pos;
 
-		const float currAngle = _self.theta;
+        const float currAngle = _self.theta;
 
-		//change in x,y for angle calculation
-		Point2d dxdy = cmd.face - _self.pos;
+        //change in x,y for angle calculation
+        Point2d dxdy = cmd.face - _self.pos;
 
-		//destination point for path planner
-		Point2d dest = cmd.pos;
+        //destination point for path planner
+        Point2d dest = cmd.pos;
 
-		if (cmd.valid)
-		{
-			if (_id)
-			{
-				_pathPlanner->addNoZone(Circle2d(0,0, .7));
-			}
+        if (cmd.valid)
+        {
+            if (_id)
+            {
+                _pathPlanner->addNoZone(Circle2d(0,0, .7));
+            }
 
-			//avoid zone
-			if (cmd.avoid)
-			{
-				_pathPlanner->addNoZone(cmd.avoidZone);
-			}
+            //avoid zone
+            if (cmd.avoid)
+            {
+                _pathPlanner->addNoZone(cmd.avoidZone);
+            }
 
-			//select style of motion
-			switch (cmd.style)
-			{
-				case MotionCmd::Fast:
-					velCmd.maxWheelSpeed = 90;
-					break;
-				case MotionCmd::Accurate:
-					velCmd.maxWheelSpeed = 50;
-					break;
-			}
+            //select style of motion
+            switch (cmd.style)
+            {
+                case MotionCmd::Fast:
+                    velCmd.maxWheelSpeed = 90;
+                    break;
+                case MotionCmd::Accurate:
+                    velCmd.maxWheelSpeed = 50;
+                    break;
+            }
 
-			float tAngle = atan2(dxdy.y, dxdy.x) * 180.0 / M_PI;
-			float err = currAngle - tAngle;
+            float tAngle = atan2(dxdy.y, dxdy.x) * 180.0 / M_PI;
+            float err = currAngle - tAngle;
 
-			//clip error to +/-180 deg
-			if (err > 180)
-			{
-				err -= 360.0;
-			}
-			else if (err < -180)
-			{
-				err += 360.0;
-			}
+            //clip error to +/-180 deg
+            if (err > 180)
+            {
+                err -= 360.0;
+            }
+            else if (err < -180)
+            {
+                err += 360.0;
+            }
 
-			velCmd.w = _anglePID->run(err);
+            velCmd.w = _anglePID->run(err);
 
-			//passthrough data
-			_comm.kick = cmd.kick;
-			_comm.roller = cmd.roller;
-		}
-		else
-		{
-			//no command, but we have vision
-			//plan path to current location
-			//this gets us out of noZones if there are any
-			dest = _self.pos;
-			velCmd.w = 0;
-			velCmd.maxWheelSpeed = 60;
+            //passthrough data
+            _comm.kick = cmd.kick;
+            _comm.roller = cmd.roller;
+        }
+        else
+        {
+            //no command, but we have vision
+            //plan path to current location
+            //this gets us out of noZones if there are any
+            dest = _self.pos;
+            velCmd.w = 0;
+            velCmd.maxWheelSpeed = 60;
 
-			//turn off
-			_comm.kick = 0;
-			_comm.roller = 0;
-		}
+            //turn off
+            _comm.kick = 0;
+            _comm.roller = 0;
+        }
 
-		PathPlanner::PPOut ppout = _pathPlanner->plan(_id, dest);
+        PathPlanner::PPOut ppout = _pathPlanner->plan(_id, dest);
 
-		_log.pdir = ppout.direction;
-		_log.distRemaining = ppout.distance;
-		_log.destPos = dest;
+        _log.pdir = ppout.direction;
+        _log.distRemaining = ppout.distance;
+        _log.destPos = dest;
 
-		ppout.direction *= _posPID->run(ppout.distance);
-		velCmd.vel = ppout.direction;
+        ppout.direction *= _posPID->run(ppout.distance);
+        velCmd.vel = ppout.direction;
 
-		//if spinning, clear linear vel
-		if (cmd.valid && cmd.spin)
-		{
-			velCmd.vel = Point2d();
-			velCmd.w = 100;
-		}
+        //if spinning, clear linear vel
+        if (cmd.valid && cmd.spin)
+        {
+            velCmd.vel = Point2d();
+            velCmd.w = 100;
+        }
 
-		//generate motor speeds and populate outgoing data
-		genMotor(velCmd);
-	}
-	else
-	{
-		//turn everything off if there is no vision
-		_comm.valid = false;
-	}
+        //generate motor speeds and populate outgoing data
+        genMotor(velCmd);
+    }
+    else
+    {
+        //turn everything off if there is no vision
+        _comm.valid = false;
+    }
     */
 }
 
@@ -239,7 +241,7 @@ void Robot::genMotor(VelocityCmd velCmd)
 
 	_motors[j] += change;
         _state->radioCmd.robots[_id].motors[j] = (int8_t)(_motors[j]);
-//         printf("Robot %d Motor %d = %d\n", _id,j, _state->radioCmd.robots[_id].motors[j]);
+        printf("Robot %d Motor %d = %d\n", _id,j, _state->radioCmd.robots[_id].motors[j]);
         //_comm.motor[i] = (int8_t)(_motors[i]);
     }
     _state->radioCmd.robots[_id].valid = true;

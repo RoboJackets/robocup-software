@@ -23,8 +23,6 @@ class RobotPath : public Log::FieldView
         {
             Line,
             Arc,
-            Circle,
-            Ellipse,
             Start,
             BezierCurve,
             Close,
@@ -45,15 +43,21 @@ class RobotPath : public Log::FieldView
         void erase();
         void closePath();
 
-    Q_SIGNALS:
-        void getPaths(QVector<Path> paths);
+        QVector<Path> getPaths()
+        {
+            return _paths;
+        }
+
+        Point2d getSize()
+        {
+            return Point2d((float)this->height(),(float)this->width());
+        }
 
     protected:
         void paintEvent(QPaintEvent* event);
         void mousePressEvent(QMouseEvent* me);
         void mouseReleaseEvent(QMouseEvent* me);
         void mouseMoveEvent(QMouseEvent* me);
-
 
     private:
         QVector<Path> _paths;

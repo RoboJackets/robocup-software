@@ -1,6 +1,6 @@
 #include "RobotPath.hpp"
 
-#include <Geometry/Point2d.hpp>
+
 #include <Constants.hpp>
 
 #include <QVector>
@@ -14,7 +14,6 @@ using namespace Constants;
 RobotPath::RobotPath(Team team, QWidget* parent) :
     Log::FieldView(team, parent), _team(team)
 {
-
     _numPathPoints = 0;
     _pathPointInterator = 0;
 
@@ -22,12 +21,10 @@ RobotPath::RobotPath(Team team, QWidget* parent) :
     setAutoFillBackground(false);
 
     _lastPoint = QPointF(0,0);
-
 }
 
 void RobotPath::paintEvent(QPaintEvent* event)
 {
-
     //Paint the field
     Log::FieldView::paintEvent(event);
 
@@ -45,10 +42,6 @@ void RobotPath::paintEvent(QPaintEvent* event)
                 break;
             case Arc:
                 painterPath->quadTo(p.points[1],p.points[0]);
-                break;
-            case Circle:
-                break;
-            case Ellipse:
                 break;
             case Start:
                 painterPath = new QPainterPath(p.points[0]);
@@ -79,12 +72,6 @@ void RobotPath::addPath(PathType pathType)
             break;
         case Arc:
             path.numPoints = 2;
-            break;
-        case Circle:
-            path.numPoints = 2;
-            break;
-        case Ellipse:
-            path.numPoints = 3;
             break;
         case Start:
             path.numPoints = 1;

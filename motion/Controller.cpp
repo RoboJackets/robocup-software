@@ -2,6 +2,7 @@
 
 using namespace Motion;
 
+//TODO add slot for controlling individual robots
 Controller::Controller(QString filename) :
 	Module("Motion"), _config(filename)
 {
