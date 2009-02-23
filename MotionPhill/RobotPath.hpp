@@ -45,18 +45,20 @@ class RobotPath : public Log::FieldView
         void erase();
         void closePath();
 
+    Q_SIGNALS:
+        void getPaths(QVector<Path> paths);
+
     protected:
         void paintEvent(QPaintEvent* event);
         void mousePressEvent(QMouseEvent* me);
         void mouseReleaseEvent(QMouseEvent* me);
         void mouseMoveEvent(QMouseEvent* me);
-        void mouseDoubleClickEvent(QMouseEvent* me);
 
 
     private:
         QVector<Path> _paths;
 
-        QPointF _currPos;
+        QPointF _lastPoint;
 
         /** The current path (temp)**/
         Path currPath;
@@ -66,6 +68,8 @@ class RobotPath : public Log::FieldView
         int _numPathPoints;
 
         int _pathPointInterator;
+
+        bool drawing;
 
 };
 

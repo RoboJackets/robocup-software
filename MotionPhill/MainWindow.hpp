@@ -27,23 +27,23 @@ class MainWindow : public QMainWindow, Ui::MainWindow
     public:
         MainWindow(Team team, QString filename);
         ~MainWindow();
-        public Q_SLOTS:
-            void redraw();
-            void on_erase_clicked();
-            void on_beizerCurve_clicked();
-            void on_line_clicked();
-            void on_erasePath_clicked();
-            void on_run_clicked();
-            void on_stop_clicked();
-            void on_startPoint_clicked();
-            void on_closePath_clicked();
-            void on_arc_clicked();
-            void on_close_clicked();
-            void setupModules();
+    public Q_SLOTS:
+        void redraw();
+        void on_erase_clicked();
+        void on_beizerCurve_clicked();
+        void on_line_clicked();
+        void on_erasePath_clicked();
+        void on_run_clicked();
+        void on_stop_clicked();
+        void on_startPoint_clicked();
+        void on_closePath_clicked();
+        void on_arc_clicked();
+        void on_close_clicked();
+        void setupModules();
 
-        Q_SIGNALS:
-            void setModuleToRun();
-            void setModuleToStop();
+    Q_SIGNALS:
+        void setModuleToRun();
+        void setModuleToStop();
 
         protected:
 //             void mouseMoveEvent(QMouseEvent* me);
@@ -51,8 +51,6 @@ class MainWindow : public QMainWindow, Ui::MainWindow
         Ui::MainWindow ui;
 
         RobotPath* _rp;
-
-        QTimer _timer;
 
         Team _team;
 

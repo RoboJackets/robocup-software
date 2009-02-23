@@ -14,17 +14,14 @@ using namespace Constants;
 RobotPath::RobotPath(Team team, QWidget* parent) :
     Log::FieldView(team, parent), _team(team)
 {
-    QPointF* initPoint = new QPointF(0,0);
+
     _numPathPoints = 0;
     _pathPointInterator = 0;
 
-    for(int i = 0; i<4; i++)
-    {
-        currPath.points[i] = *initPoint;
-    }
-
     //Prevent the background from being re-draw prior to painting
     setAutoFillBackground(false);
+
+    _lastPoint = QPointF(0,0);
 
 }
 
@@ -73,47 +70,45 @@ void RobotPath::paintEvent(QPaintEvent* event)
 
 void RobotPath::addPath(PathType pathType)
 {
-    currPath.type = pathType;
-    switch(currPath.type)
+    Path path;
+    path.type = pathType;
+    switch(path.type)
     {
         case Line:
-            currPath.numPoints = 1;
+            path.numPoints = 1;
             break;
         case Arc:
-            currPath.numPoints = 2;
+            path.numPoints = 2;
             break;
         case Circle:
-            currPath.numPoints = 2;
+            path.numPoints = 2;
             break;
         case Ellipse:
-            currPath.numPoints = 3;
+            path.numPoints = 3;
             break;
         case Start:
-            currPath.numPoints = 1;
+            path.numPoints = 1;
             break;
         case BezierCurve:
-            currPath.numPoints = 3;
+            path.numPoints = 3;
             break;
         case Close:
             break;
     }
 
-    currPath.points[1] = currPath.points[0];
-    currPath.points[2] = currPath.points[0];
+    for(int i = 0; i<4; i++)
+    {
+        path.points[i] = _lastPoint;
+    }
 
     _pathPointInterator = 0;
 
-   _paths.append(currPath);
+   _paths.append(path);
 }
 
 void RobotPath::eraseAllPaths()
 {
     _paths.clear();
-
-    for(int i = 0; i<4; i++)
-    {
-        currPath.points[i] = QPointF(0,0);
-    }
     update();
 }
 
@@ -123,55 +118,51 @@ void RobotPath::erase()
     {
         _paths.remove(_paths.size()-1);
     }
-    else
-    {
-        for(int i = 0; i<4; i++)
-        {
-            currPath.points[i] = QPointF(0,0);
-        }
-    }
+
     update();
 }
 
 void RobotPath::closePath()
 {
-    currPath.type = Close;
+    Path path;
+    path.type = Close;
 
-    currPath.numPoints = 0;
-    currPath.points[1] = currPath.points[0];
-    currPath.points[2] = currPath.points[0];
+    path.numPoints = 0;
 
-    _pathPointInterator = 0;
-
-   _paths.append(currPath);
+   _paths.append(path);
    update();
 }
 
 void RobotPath::mousePressEvent(QMouseEvent* me)
 {
-    if(_pathPointInterator % currPath.numPoints == 0)
+    if(!_paths.isEmpty())
     {
-        currPath.points[2] = currPath.points[0];
-        currPath.points[1] = currPath.points[0];
+        //Initialize all the points the be the same
+        for(int i = 0; i<4; i++)
+        {
+            _paths.last().points[i] = _lastPoint;
+        }
+
+        drawing = true;
     }
 }
 
 void RobotPath::mouseReleaseEvent(QMouseEvent* me)
 {
-    currPath.points[_pathPointInterator % currPath.numPoints] = me->pos();
-    _pathPointInterator++;
-    _paths[_paths.size()-1] = currPath;
-
+    if(drawing)
+    {
+        //Move to the next point
+        _pathPointInterator++;
+        drawing = false;
+    }
 }
 
 void RobotPath::mouseMoveEvent(QMouseEvent* me)
 {
-    currPath.points[_pathPointInterator % currPath.numPoints] = me->pos();
-    _paths[_paths.size()-1] = currPath;
-
-    update();
-}
-
-void RobotPath::mouseDoubleClickEvent(QMouseEvent* me)
-{
+    if(!_paths.isEmpty() && drawing)
+    {
+        _paths.last().points[_pathPointInterator % _paths.last().numPoints] = me->pos();
+        _lastPoint = me->pos();
+        update();
+    }
 }

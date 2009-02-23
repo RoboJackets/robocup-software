@@ -27,8 +27,8 @@ FieldView::FieldView(Team t, QWidget* parent) :
 
 void FieldView::frame(Packet::LogFrame* frame)
 {
-	_frame = frame;
-	update();
+    _frame = frame;
+    update();
 }
 
 void FieldView::paintEvent(QPaintEvent* event)

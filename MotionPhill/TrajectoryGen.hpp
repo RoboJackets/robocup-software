@@ -1,8 +1,9 @@
 #ifndef _TRAJECTORYGEN_HPP_
 #define _TRAJECTORYGEN_HPP_
 
-#include <QObject>
+#include <QVector>
 #include "framework/Module.hpp"
+#include "RobotPath.hpp"
 
 namespace Trajectory
 {
@@ -10,17 +11,24 @@ namespace Trajectory
     {
         Q_OBJECT;
 
-	public:
-	    TrajectoryGen();
-	    ~TrajectoryGen();
+    public:
+        TrajectoryGen();
+        ~TrajectoryGen();
 
-	    virtual void run();
-        public Q_SLOTS:
-            void runModule();
-            void stopModule();
+        virtual void run();
+    public Q_SLOTS:
+        void runModule();
+        void stopModule();
+        void setPath(QVector<RobotPath::Path> paths)
+        {
+            _paths = paths;
+        }
 
-        private:
-            bool _running;
+
+    private:
+
+        QVector<RobotPath::Path> _paths;
+        bool _running;
     };
 }
 #endif

@@ -6,6 +6,8 @@
 
 #include <ui_motion.h>
 
+//todo flicker is still an issue (though it only happens when you re-draw)
+
 MainWindow::MainWindow(Team team, QString filename)
     :QMainWindow(), _team(team), _processor(team), _logFile(0), _configFile(filename)
 {
@@ -19,10 +21,6 @@ MainWindow::MainWindow(Team team, QString filename)
 
     gridLayout->addWidget(_rp,0,0);
     gridLayout->addWidget(_logControl,1,0);
-
-    //connect(&_timer, SIGNAL(timeout()), this, SLOT(redraw()));
-
-    //_timer.start(30);
 
     _processor.start();
     _logFile = new Log::LogFile(Log::LogFile::genFilename());
@@ -61,9 +59,9 @@ void MainWindow::setupModules()
 
     Trajectory::TrajectoryGen* trajGen = new Trajectory::TrajectoryGen();
 
-    //Thread-safe slots and signals require the use of a queue
     connect(this, SIGNAL(setModuleToRun()), trajGen, SLOT(runModule()), Qt::QueuedConnection);
     connect(this, SIGNAL(setModuleToStop()), trajGen, SLOT(stopModule()), Qt::QueuedConnection);
+    connect(_rp, SIGNAL(getPaths(QVector<Path>)), trajGen, SLOT(setPaths(QVector<Path>)), Qt::QueuedConnection);
 
     Log::LogModule* lm = new Log::LogModule();
     lm->setLogFile(_logFile);
@@ -114,6 +112,7 @@ void MainWindow::on_run_clicked()
 {
     _mode = RunMode;
     setModuleToRun();
+    _rp.getPaths(_rp)
 }
 
 void MainWindow::on_stop_clicked()
