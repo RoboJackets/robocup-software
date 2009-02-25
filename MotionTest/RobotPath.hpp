@@ -10,9 +10,9 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPointF>
+#include <QObject>
 
 using namespace Geometry;
-
 
 class RobotPath : public Log::FieldView
 {

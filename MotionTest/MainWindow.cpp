@@ -26,8 +26,9 @@ MainWindow::MainWindow(Team team, QString filename)
     qRegisterMetaType<QVector<RobotPath::Path> >("QVector<RobotPath::Path>");
 
     _processor.start();
-    setupModules();
+
     _logFile = new Log::LogFile(Log::LogFile::genFilename());
+    setupModules();
 
     _logControl->setLogFile(_logFile);
     connect(_logControl, SIGNAL(newFrame(Packet::LogFrame*)), _rp, SLOT(frame(Packet::LogFrame*)));

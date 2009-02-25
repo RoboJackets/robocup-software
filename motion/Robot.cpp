@@ -27,6 +27,8 @@ Robot::Robot(ConfigFile::RobotCfg cfg):
     _yPID = new Pid(pos.p, pos.i, pos.d, pos.windup);
     _anglePID = new Pid(angle.p, angle.i, angle.d, angle.windup);
 
+    rotationMatrix = new TransformMatrix();
+
     //_pathPlanner = 0;
 }
 
@@ -57,26 +59,27 @@ void Robot::proc()
 
     if(_state->self[_id].valid)
     {
-        //printf("ID Please %d\n",_id);
         //TODO Send commands to motion via gameplay and set this flag there
 
-        int k = 100;
-        testDesiredPos.x = _state->self[_id].cmdPos.x;
-        testDesiredPos.y = _state->self[_id].cmdPos.y;
+        int kp = 80;
+        int k_feedforward = 10;
+        testDesiredPos.x = 1;//_state->self[_id].cmdPos.x;
+        testDesiredPos.y = 1;//_state->self[_id].cmdPos.y;
         currPos = _state->self[_id].pos;
         currVel = _state->self[_id].vel;
         currAngle = _state->self[_id].angle;
 
-        //TODO position based control
-        velCmd.vel.x = k*(testDesiredPos.x - currPos.x);
-        velCmd.vel.y = k*(testDesiredPos.y - currPos.y);
+        velCmd.vel.x = kp*(currPos.x - testDesiredPos.x) + k_feedforward * currVel.x;
+//         velCmd.vel.y = kp*(currPos.y - testDesiredPos.y) + k_feedforward * currVel.y;
 
-
-//         printf("Curr Pos x %f, y %f\n", currPos.x,currPos.y);
-//         printf("Desired pos x %f y %f\n", testDesiredPos.x,testDesiredPos.y);
+        printf("Curr Pos x %f y %f\n", currPos.x, currPos.y);
+        printf("Desired pos x %f y %f\n", testDesiredPos.x, testDesiredPos.y);
+        printf("Error x %f y %f \n", currPos.x-testDesiredPos.x, currPos.y-testDesiredPos.y);
 
         velCmd.w = 0;
 
+//         velCmd.vel.x = 0;
+        velCmd.vel.y = 0;
         genMotor(velCmd);
 
         _state->self[_id].cmdValid = false;
@@ -187,63 +190,81 @@ void Robot::proc()
 
 void Robot::genMotor(VelocityCmd velCmd)
 {
-    //clip the maximum spin velocity
-    const float clip = 150;
-    if (velCmd.w > clip)
-    {
-	velCmd.w = clip;
-    }
-    else if (velCmd.w < -clip)
-    {
-	velCmd.w = -clip;
-    }
 
-    float max = 0;
-    float mTemp[_axels.size()];
-    float scale = 1;
+    rotationMatrix = &rotationMatrix->rotate(_state->self[_id].angle);
+    velCmd.vel = rotationMatrix->transformDirection(velCmd.vel);
 
-    int i=0;
+    int j =0;
     Q_FOREACH(Geometry::Point2d axel, _axels)
     {
-	//TODO - need to give the robots thier position info
-	//axel.rotate(Point2d(0,0), _self.theta);
-
-	//velocity in direction of wheel
-	float v = axel.perpCW().dot(velCmd.vel);
-	v += velCmd.w;
-	//if greater than old max, set as max
-	if (fabs(v) > max)
-	{
-		max = fabs(v);
-	}
-
-	mTemp[i++] = v;
+        float v = axel.perpCW().dot(velCmd.vel);
+        _state->radioCmd.robots[_id].motors[j++] = (int8_t)v;
     }
+//     //clip the maximum spin velocity
+//     const float clip = 150;
+//     if (velCmd.w > clip)
+//     {
+//     velCmd.w = clip;
+//     }
+//     else if (velCmd.w < -clip)
+//     {
+//     velCmd.w = -clip;
+//     }
+//
+//     float max = 0;
+//     float mTemp[_axels.size()];
+//     float scale = 1;
+//
+//     int i=0;
+//     Q_FOREACH(Geometry::Point2d axel, _axels)
+//     {
+//         //TODO - need to give the robots thier position info
+//         //axel.rotate(Point2d(0,0), _self.theta);
+//
+//         //velocity in direction of wheel
+//         float v = axel.perpCW().dot(velCmd.vel);
+//         v += velCmd.w;
+//         //if greater than old max, set as max
+//         if (fabs(v) > max)
+//         {
+//             max = fabs(v);
+//         }
+//
+//         mTemp[i++] = v;
+//     }
+//
+//     const float mMax = velCmd.maxWheelSpeed;
+//
+//     if (max > mMax)
+//     {
+//         scale = mMax/max;
+//     }
+//
+//     for (unsigned int j=0; j<4; ++j)
+//     {
+//         const float req = mTemp[j] * scale;
+//
+//         float change = req - _motors[j];
+//
+//         const float mChange = 10.0;
+//         if (fabs(change) > mChange)
+//         {
+//             change = mChange/change * fabs(change);
+//         }
+//
+//         _motors[j] += change;
+//         _state->radioCmd.robots[_id].motors[j] = (int8_t)(_motors[j]);
+//         //         printf("Robot %d Motor %d = %d\n", _id,j, _state->radioCmd.robots[_id].motors[j]);
+//     }
 
-    const float mMax = velCmd.maxWheelSpeed;
-
-    if (max > mMax)
-    {
-	scale = mMax/max;
-    }
-
-    for (unsigned int j=0; j<4; ++j)
-    {
-	const float req = mTemp[j] * scale;
-
-	float change = req - _motors[j];
-
-	const float mChange = 10.0;
-	if (fabs(change) > mChange)
-	{
-		change = mChange/change * fabs(change);
-	}
-
-	_motors[j] += change;
-        _state->radioCmd.robots[_id].motors[j] = (int8_t)(_motors[j]);
-        printf("Robot %d Motor %d = %d\n", _id,j, _state->radioCmd.robots[_id].motors[j]);
-        //_comm.motor[i] = (int8_t)(_motors[i]);
-    }
+//         _state->radioCmd.robots[_id].motors[0] = 40;
+//         _state->radioCmd.robots[_id].motors[1] = -40;
+//         _state->radioCmd.robots[_id].motors[2] = -40;
+//         _state->radioCmd.robots[_id].motors[3] = 40;
+//     for(int i = 0; i<4; i++)
+//     {
+//         _state->radioCmd.robots[_id].motors[i] = 120;
+//     }
     _state->radioCmd.robots[_id].valid = true;
 }
 
