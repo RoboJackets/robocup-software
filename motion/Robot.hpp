@@ -14,22 +14,22 @@ class Robot
         /** robot velocity control information */
         typedef struct VelocityCmd
         {
-        VelocityCmd() : w(0), maxWheelSpeed(127) {}
+            VelocityCmd() : w(0), maxWheelSpeed(127) {}
 
-        /** velocity along x,y in team space */
-        Geometry::Point2d vel;
+            /** velocity along x,y in the robot frame */
+            Geometry::Point2d vel;
 
-        /** rotational velocity */
-        float w;
+            /** rotational velocity */
+            float w;
 
-        uint8_t maxWheelSpeed;
+            uint8_t maxWheelSpeed;
         } VelocityCmd;
 
     public:
         Robot(ConfigFile::RobotCfg cfg);
         ~Robot();
 
-                void setSystemState(SystemState* state);
+        void setSystemState(SystemState* state);
 
         /** Process the command for a robot and prepare output */
         void proc();
@@ -64,6 +64,11 @@ class Robot
 
         float* _motors;
 
+        //These need to go directly to the linear controller class
+        float _Kp, _Kv;
+
+        /** Mechanical data from configfile **/
+        float _maxAccel, _maxWheelVel;
 
         /** team we are running as */
         Team _team;

@@ -20,13 +20,19 @@ Robot::Robot(ConfigFile::RobotCfg cfg):
 	    _motors[i] = 0;
     }
 
+    _maxAccel = cfg.maxAccel;
+    _maxWheelVel = cfg.maxWheelVel;
+
+    _Kp = cfg.posCntrlr.Kp;
+    _Kv = cfg.posCntrlr.Kv;
+    /*
     ConfigFile::PidInfo pos = cfg.posPid;
     ConfigFile::PidInfo angle = cfg.anglePid;
 
     _xPID = new Pid(pos.p, pos.i, pos.d, pos.windup);
     _yPID = new Pid(pos.p, pos.i, pos.d, pos.windup);
     _anglePID = new Pid(angle.p, angle.i, angle.d, angle.windup);
-
+    */
     rotationMatrix = new TransformMatrix();
 
     //_pathPlanner = 0;
@@ -34,9 +40,9 @@ Robot::Robot(ConfigFile::RobotCfg cfg):
 
 Robot::~Robot()
 {
-    delete _xPID;
-    delete _yPID;
-    delete _anglePID;
+//     delete _xPID;
+//     delete _yPID;
+//     delete _anglePID;
 
     delete[] _motors;
 }
@@ -49,37 +55,34 @@ void Robot::setSystemState(SystemState* state)
 
 void Robot::proc()
 {
-    float currAngle;
-    Geometry::Point2d currPos;
-    Geometry::Point2d currVel;
-    Geometry::Point2d testDesiredPos;
-    VelocityCmd velCmd;
-
-
 
     if(_state->self[_id].valid)
     {
-        //TODO Send commands to motion via gameplay and set this flag there
-
+        float currAngle = _state->self[_id].angle;
+        Geometry::Point2d currPos = _state->self[_id].pos;
+        Geometry::Point2d currVel = _state->self[_id].vel;
+        Geometry::Point2d desiredPos = Point2d(1.0,1.0); //_state->self[_id].cmdPos;
+        Geometry::Point2d error = currPos - desiredPos;
+        VelocityCmd velCmd;
         int kp = 80;
         int k_feedforward = 10;
-        testDesiredPos.x = 1;//_state->self[_id].cmdPos.x;
-        testDesiredPos.y = 1;//_state->self[_id].cmdPos.y;
-        currPos = _state->self[_id].pos;
-        currVel = _state->self[_id].vel;
-        currAngle = _state->self[_id].angle;
 
-        velCmd.vel.x = kp*(currPos.x - testDesiredPos.x) + k_feedforward * currVel.x;
-//         velCmd.vel.y = kp*(currPos.y - testDesiredPos.y) + k_feedforward * currVel.y;
+        //TODO handle deadband
+        velCmd.vel.x = kp*(error.x) + k_feedforward * currVel.x;
+//         velCmd.vel.y = kp*(error.y) + k_feedforward * currVel.y;
 
         printf("Curr Pos x %f y %f\n", currPos.x, currPos.y);
-        printf("Desired pos x %f y %f\n", testDesiredPos.x, testDesiredPos.y);
-        printf("Error x %f y %f \n", currPos.x-testDesiredPos.x, currPos.y-testDesiredPos.y);
+        printf("Desired pos x %f y %f\n", desiredPos.x, desiredPos.y);
+        printf("Error x %f y %f \n", error.x, error.y);
 
+//         velCmd.vel.x = 100;
+        velCmd.vel.y = 0;
         velCmd.w = 0;
 
-//         velCmd.vel.x = 0;
-        velCmd.vel.y = 0;
+        //Rotate the velocity command from the team frame to the robot frame
+        rotationMatrix = new TransformMatrix(Point2d(0,0),currAngle, false, 1.0);
+        velCmd.vel = rotationMatrix->transformDirection(velCmd.vel);
+
         genMotor(velCmd);
 
         _state->self[_id].cmdValid = false;
@@ -190,87 +193,57 @@ void Robot::proc()
 
 void Robot::genMotor(VelocityCmd velCmd)
 {
+    static int8_t lastWheelVel[4];
 
-    rotationMatrix = &rotationMatrix->rotate(_state->self[_id].angle);
-    velCmd.vel = rotationMatrix->transformDirection(velCmd.vel);
+    for(int k = 0; k<4; k++)
+    {
+        lastWheelVel[k] = 0;
+    }
+
+    //clip the maximum spin velocity
+    const float clip = 150;
+    if (velCmd.w > clip)
+    {
+        velCmd.w = clip;
+    }
+    else if (velCmd.w < -clip)
+    {
+        velCmd.w = -clip;
+    }
 
     int j =0;
     Q_FOREACH(Geometry::Point2d axel, _axels)
     {
-        float v = axel.perpCW().dot(velCmd.vel);
-        _state->radioCmd.robots[_id].motors[j++] = (int8_t)v;
-    }
-//     //clip the maximum spin velocity
-//     const float clip = 150;
-//     if (velCmd.w > clip)
-//     {
-//     velCmd.w = clip;
-//     }
-//     else if (velCmd.w < -clip)
-//     {
-//     velCmd.w = -clip;
-//     }
-//
-//     float max = 0;
-//     float mTemp[_axels.size()];
-//     float scale = 1;
-//
-//     int i=0;
-//     Q_FOREACH(Geometry::Point2d axel, _axels)
-//     {
-//         //TODO - need to give the robots thier position info
-//         //axel.rotate(Point2d(0,0), _self.theta);
-//
-//         //velocity in direction of wheel
-//         float v = axel.perpCW().dot(velCmd.vel);
-//         v += velCmd.w;
-//         //if greater than old max, set as max
-//         if (fabs(v) > max)
-//         {
-//             max = fabs(v);
-//         }
-//
-//         mTemp[i++] = v;
-//     }
-//
-//     const float mMax = velCmd.maxWheelSpeed;
-//
-//     if (max > mMax)
-//     {
-//         scale = mMax/max;
-//     }
-//
-//     for (unsigned int j=0; j<4; ++j)
-//     {
-//         const float req = mTemp[j] * scale;
-//
-//         float change = req - _motors[j];
-//
-//         const float mChange = 10.0;
-//         if (fabs(change) > mChange)
-//         {
-//             change = mChange/change * fabs(change);
-//         }
-//
-//         _motors[j] += change;
-//         _state->radioCmd.robots[_id].motors[j] = (int8_t)(_motors[j]);
-//         //         printf("Robot %d Motor %d = %d\n", _id,j, _state->radioCmd.robots[_id].motors[j]);
-//     }
+        int8_t v = (int8_t)axel.perpCW().dot(velCmd.vel);
 
-//         _state->radioCmd.robots[_id].motors[0] = 40;
-//         _state->radioCmd.robots[_id].motors[1] = -40;
-//         _state->radioCmd.robots[_id].motors[2] = -40;
-//         _state->radioCmd.robots[_id].motors[3] = 40;
-//     for(int i = 0; i<4; i++)
-//     {
-//         _state->radioCmd.robots[_id].motors[i] = 120;
-//     }
+        v += velCmd.w;
+
+        //Limit wheel acceleration
+        if(abs(lastWheelVel[j] - v) > _maxAccel)
+        {
+            //Set v such that we achieve the max allowable acceleration
+            v = lastWheelVel[j] - _maxAccel;
+        }
+
+        //Saturate on max velocity
+        if(v > _maxWheelVel)
+        {
+            v = _maxWheelVel;
+        }
+        else if(v < -_maxWheelVel)
+        {
+            v = -_maxWheelVel;
+        }
+
+        _state->radioCmd.robots[_id].motors[j++] = v;
+        lastWheelVel[j] = v;
+    }
     _state->radioCmd.robots[_id].valid = true;
 }
 
 void Robot::clearPid()
 {
-	_xPID->clearWindup();
-        _yPID->clearWindup();
-	_anglePID->clearWindup();
+    _xPID->clearWindup();
+    _yPID->clearWindup();
+    _anglePID->clearWindup();
 }

@@ -12,53 +12,56 @@
 
 class ConfigFile
 {
-	//types
-	public:
-		typedef struct
-		{
-			float p,i,d;
-			unsigned int windup;
-		} PidInfo;
+    //types
+    public:
+        typedef struct
+        {
+            float Kp, Kv;
+        } linearControllerInfo;
 
-		typedef struct
-		{
-			unsigned int id;
+        typedef struct
+        {
+            unsigned int id;
+            float maxAccel, maxWheelVel;
 
-			PidInfo posPid, anglePid;
+            linearControllerInfo posCntrlr, angleCntrlr;
 
-			QVector<Geometry::Point2d> axels;
-		} RobotCfg;
+            QVector<Geometry::Point2d> axels;
+        } RobotCfg;
 
-	public:
-		ConfigFile(QString filename);
-		~ConfigFile();
+    public:
+        ConfigFile(QString filename);
+        ~ConfigFile();
 
-		void load() throw(std::runtime_error);
-		void save();
+        void load() throw(std::runtime_error);
+        void save();
 
-		RobotCfg robotConfig(const unsigned int id);
+        RobotCfg robotConfig(const unsigned int id);
 
-		const QVector<Geometry::Point2d> axels() const { return _axels; }
+        const QVector<Geometry::Point2d> axels() const { return _axels; }
 
-	protected:
-		/** returns the value of the attribute */
-		static float valueFloat(QDomAttr attr);
-		static int valueUInt(QDomAttr attr);
+    protected:
+        /** returns the value of the attribute */
+        static float valueFloat(QDomAttr attr);
+        static int valueUInt(QDomAttr attr);
 
-		/** process a pid tag */
-		void procPID(QDomElement element);
-		/** process the axels */
-		void procAxels(QDomElement element);
+        /** process a linear controller tag */
+        void procLinearController(QDomElement element);
+        /** process the axels */
+        void procAxels(QDomElement element);
+        /** process robot physical data **/
+        void procRobotData(QDomElement element);
 
-	private:
-		QString _filename;
-		QDomDocument _doc;
+    private:
+        QString _filename;
+        QDomDocument _doc;
 
-		/** pid info for position and angle */
-		PidInfo _pos, _angle;
+        /** pid info for position and angle */
+        linearControllerInfo _pos, _angle;
 
-		/** axel positions */
-		QVector<Geometry::Point2d> _axels;
+        float _maxAccel, _maxWheelVel;
+        /** axel positions */
+        QVector<Geometry::Point2d> _axels;
 };
 
 #endif /* CONFIGFILE_HPP_ */

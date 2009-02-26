@@ -8,11 +8,11 @@ Controller::Controller(QString filename) :
 {
     try
     {
-	    _config.load();
+        _config.load();
     }
     catch (std::runtime_error& re)
     {
-	    printf("Config Load Error: %s\n", re.what());
+        printf("Config Load Error: %s\n", re.what());
     }
 
     for(unsigned int i=0 ; i<5 ; i++)
@@ -26,8 +26,8 @@ Controller::~Controller()
 {
     for (unsigned int i=0 ; i<5 ; i++)
     {
-    	delete _robots[i];
-    	_robots[i] = 0;
+        delete _robots[i];
+        _robots[i] = 0;
     }
 }
 
@@ -35,7 +35,7 @@ void Controller::run()
 {
     for(unsigned int i=0; i<5; i++)
     {
-	_robots[i]->setSystemState(_state);
-	_robots[i]->proc();
+        _robots[i]->setSystemState(_state);
+        _robots[i]->proc();
     }
 }

@@ -13,11 +13,6 @@ namespace Motion
     class Controller : public Module
     {
         public:
-            enum CmdMode
-            {
-                AUTO,
-                MANUAL
-            };
 
 	public:
 	    Controller(QString filename);
