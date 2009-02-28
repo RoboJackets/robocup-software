@@ -11,13 +11,33 @@ RobotWM::RobotWM()
 {
   _bufsize = 10;
   _angleBuf.assign(_bufsize, 0);
-  _posBuf.assign(_bufsize, Point2d());
+  _posBuf.assign(_bufsize, Point2d()); 
 }
 
 RobotWM::~RobotWM()
 {
 
 
+}
+
+void RobotWM::init(bool isSelf)
+{
+  _isSelf = isSelf;
+
+  //create the kalman filter
+  if (_isSelf) 
+    {
+      //create kalman filter with control
+      _kf = cvCreateKalman(3,3,3);
+      //load B matrix
+    }
+  else 
+    {
+      //create kalman filter without control
+      _kf = cvCreateKalman(3,3,0);
+    }
+  //Load A matrix
+  //load C matrix
 }
 
 

@@ -23,5 +23,5 @@ set (SRCS
 )
 
 add_library (modeling ${SRCS} ${MOC_SRCS})
-target_link_libraries (modeling ${QT_LIBRARIES} ${GEOMETRY_LIBRARY} ${FRAMEWORK_LIBRARY} ${NETWORK_LIBRARY})
+target_link_libraries (modeling ${QT_LIBRARIES} ${GEOMETRY_LIBRARY} ${FRAMEWORK_LIBRARY} ${NETWORK_LIBRARY} cv)
 

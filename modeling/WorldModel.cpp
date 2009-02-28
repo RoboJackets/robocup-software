@@ -1,6 +1,7 @@
 #include "WorldModel.hpp"
 
 #include <QObject>
+#include <QString>
 #include <vector>
 
 #include "RobotWM.hpp"
@@ -9,10 +10,23 @@
 
 using namespace Modeling;
 
-WorldModel::WorldModel() :
-	Module("World Model")
+WorldModel::WorldModel(QString filename) :
+  Module("World Model"), _config(filename)
 {
+    try
+    {
+	    _config.load();
+    }
+    catch (std::runtime_error& re)
+    {
+	    printf("Config Load Error: %s\n", re.what());
+    }
 
+//     for(unsigned int i=0 ; i<5 ; i++)
+//     {
+//         _robots[i] = new Robot(_config.robotConfig(i));
+//     }
+  
 //   blueTeam = new std::vector<Robot*>;
 //   yellowTeam = new std::vector<Robot*>;
 //   for (unsigned int i = 0; i<5; ++i) 

@@ -1,8 +1,10 @@
 #ifndef WORLD_MODEL_HPP_
 #define WORLD_MODEL_HPP_
 
-#include "framework/Module.hpp"
+#include <QString>
+#include <framework/Module.hpp>
 #include "RobotWM.hpp"
+#include "../motion/ConfigFile.hpp"
 //#include "Ball.hpp"
 
 
@@ -12,7 +14,7 @@ namespace Modeling
         class WorldModel : public Module
 	{
 		public:
-			WorldModel();
+			WorldModel(QString filename);
 			
 			virtual void run();
 			
@@ -20,6 +22,8 @@ namespace Modeling
 			RobotWM _self[5];
 			RobotWM _opp[5];
 	  		//Ball* ball;
+
+	  		ConfigFile _config;
 	};
 }
 

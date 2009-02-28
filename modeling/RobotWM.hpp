@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <Geometry/Point2d.hpp>
+#include <opencv/cv.h>
 
 /** Wrapper for individual   */
 namespace Modeling
@@ -13,6 +14,7 @@ namespace Modeling
 			RobotWM();
 			~RobotWM();
 			void process();
+			void init(bool isSelf);
 			
 		public:
 			//////Input data
@@ -37,6 +39,8 @@ namespace Modeling
 			std::vector<Geometry::Point2d> _posBuf;
 			std::vector<float> _angleBuf;
 			unsigned int _bufsize;
+			bool _isSelf;
+			CvKalman * _kf;
 			
 	  
 	};
