@@ -4,7 +4,7 @@
 #include <QString>
 #include <framework/Module.hpp>
 #include "RobotWM.hpp"
-#include "../motion/ConfigFile.hpp"
+#include <config/ConfigFile.hpp>
 //#include "Ball.hpp"
 
 

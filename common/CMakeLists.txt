@@ -106,3 +106,17 @@ if (USE_NETWORK AND NOT TARGET network)
     set (NETWORK_LIBRARY network)
     
 endif()
+
+if (USE_CONFIG AND NOT TARGET config)
+    SET(config_SRCS 
+        ConfigFile.cpp
+	)
+
+    prepend_list(config_SRCS "config/")
+    prepend_list(config_SRCS ${common_include_dir})
+    message( STATUS "Using the Config library") 
+    add_library (config ${config_SRCS})
+    target_link_libraries(config ${GEOMETRY_LIBRARY})
+    add_dependencies (config ${GEOMETRY_LIBRARY})
+    set (CONFIG_LIBRARY config)
+endif()

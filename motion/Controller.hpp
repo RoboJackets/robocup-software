@@ -6,7 +6,7 @@
 #include <RadioTx.hpp>
 
 #include "Robot.hpp"
-#include "ConfigFile.hpp"
+#include <config/ConfigFile.hpp>
 
 namespace Motion
 {

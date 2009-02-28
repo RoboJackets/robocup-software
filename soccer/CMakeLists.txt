@@ -7,6 +7,7 @@ set (USE_QT true)
 set (USE_NETWORK true)
 set (USE_GEOMETRY true)
 set (USE_FRAMEWORK true)
+set (USE_CONFIG true)
 include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
 
 #Module Include Directories
@@ -35,6 +36,7 @@ target_link_libraries(${target} ${PACKET_LIBRARY})
 target_link_libraries(${target} ${GEOMETRY_LIBRARY})
 target_link_libraries(${target} ${NETWORK_LIBRARY})
 target_link_libraries(${target} ${FRAMEWORK_LIBRARY})
+target_link_libraries(${target} ${CONFIG_LIBRARY})
 
 target_link_libraries(${target} ${QT_LIBRARIES})
 

@@ -8,6 +8,7 @@ set (USE_NETWORK true)
 set (QT_USE_QTXML true)
 set (USE_GEOMETRY true)
 set (USE_FRAMEWORK true)
+set (USE_CONFIG true)
 include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
 
 
@@ -23,5 +24,5 @@ set (SRCS
 )
 
 add_library (modeling ${SRCS} ${MOC_SRCS})
-target_link_libraries (modeling ${QT_LIBRARIES} ${GEOMETRY_LIBRARY} ${FRAMEWORK_LIBRARY} ${NETWORK_LIBRARY} cv)
+target_link_libraries (modeling ${QT_LIBRARIES} ${GEOMETRY_LIBRARY} ${FRAMEWORK_LIBRARY} ${NETWORK_LIBRARY}  ${CONFIG_LIBRARY} cv)
 

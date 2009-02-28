@@ -4,7 +4,7 @@
 #include <Team.h>
 #include <Geometry/TransformMatrix.hpp>
 
-#include "ConfigFile.hpp"
+#include <config/ConfigFile.hpp>
 #include "Pid.hpp"
 #include "framework/Module.hpp"
 
