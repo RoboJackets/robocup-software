@@ -32,7 +32,7 @@ class RobotPath : public Log::FieldView
         {
             int numPoints;
             PathType type;
-            QPointF points[4];
+            QVector<QPointF> points;
         } Path;
 
     public:

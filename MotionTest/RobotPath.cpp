@@ -83,9 +83,9 @@ void RobotPath::addPath(PathType pathType)
             break;
     }
 
-    for(int i = 0; i<4; i++)
+    for(int i = 0; i<path.numPoints+1; i++)
     {
-        path.points[i] = _lastPoint;
+        path.points.append(_lastPoint);
     }
 
     _pathPointInterator = 0;
@@ -124,12 +124,10 @@ void RobotPath::mousePressEvent(QMouseEvent* me)
 {
     if(!_paths.isEmpty())
     {
-        //Initialize all the points the be the same
-        for(int i = 0; i<4; i++)
+        Q_FOREACH(QPointF p, _paths.last().points)
         {
-            _paths.last().points[i] = _lastPoint;
+            p = _lastPoint;
         }
-
         drawing = true;
     }
 }

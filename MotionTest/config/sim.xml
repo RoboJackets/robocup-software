@@ -2,8 +2,8 @@
 <motion>
 
     <linearController name="pos">
-        <kp value="70.0" />
-        <kv value="0.1" />
+        <kp value="120.0" />
+        <kv value="10" />
         <deadband x="0.01" y="0.01"/>
     </linearController>
 

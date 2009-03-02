@@ -37,7 +37,7 @@ namespace Trajectory
             _pixelFieldSize = size;
         }
 
-        Point2d convertUnits(QPointF point);
+        Point2d convertPoint(QPointF point);
         void setPaths(QVector<RobotPath::Path> paths);
 
     private:
