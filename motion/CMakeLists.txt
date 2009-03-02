@@ -19,10 +19,11 @@ qt4_wrap_cpp ( MOC_SRCS
 )
 
 set (SRCS
-	Controller.cpp
-        Robot.cpp
-        Pid.cpp
-        main.cpp
+    LinearController.cpp
+    Controller.cpp
+    Robot.cpp
+    Pid.cpp
+    main.cpp
 )
 
 add_library (motion ${SRCS} ${MOC_SRCS})

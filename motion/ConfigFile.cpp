@@ -81,13 +81,13 @@ void ConfigFile::procLinearController(QDomElement element)
         cntrlr = &_angle;
     }
 
-    QDomElement eElem = element.firstChildElement("Kp");
+    QDomElement eElem = element.firstChildElement("kp");
     if (!eElem.isNull())
     {
         cntrlr->Kp = valueFloat(eElem.attributeNode("value"));
     }
 
-    eElem = element.firstChildElement("Kv");
+    eElem = element.firstChildElement("kv");
     if (!eElem.isNull())
     {
         cntrlr->Kv = valueFloat(eElem.attributeNode("value"));

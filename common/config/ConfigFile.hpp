@@ -17,6 +17,7 @@ class ConfigFile
         typedef struct
         {
             float Kp, Kv;
+            Geometry::Point2d deadband;
         } linearControllerInfo;
 
         typedef struct

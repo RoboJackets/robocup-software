@@ -52,7 +52,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupModules()
 {
-    Modeling::WorldModel* wm = new Modeling::WorldModel();
+    Modeling::WorldModel* wm = new Modeling::WorldModel(_configFile);
 
     Motion::Controller* motion = new Motion::Controller(_configFile);
 

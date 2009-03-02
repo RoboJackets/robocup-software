@@ -19,7 +19,7 @@ Controller::Controller(QString filename) :
     {
         _robots[i] = new Robot(_config.robotConfig(i));
     }
-    printf("Motion is Running\n");
+
 }
 
 Controller::~Controller()

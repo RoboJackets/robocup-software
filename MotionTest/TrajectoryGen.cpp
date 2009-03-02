@@ -6,7 +6,7 @@ using namespace Trajectory;
 TrajectoryGen::TrajectoryGen() :
     Module("TrajectoryGen"), _running(false)
 {
-    _waypoints.append(Point2d(0,0));
+    _waypoints.append(Point2d(0,3));
     _currWaypoint = _waypoints.end();
 }
 
@@ -20,8 +20,7 @@ void TrajectoryGen::run()
     if(_running)
     {
         _state->self[0].cmdPos = *_currWaypoint;
-//         printf("Waypoint x %f\n", _state->self[0].cmdPos.x);
-//         printf("Waypoint y %f\n", _state->self[0].cmdPos.y);
+//         printf("Waypoint x %f y %f\n", _state->self[0].cmdPos.x, _state->self[0].cmdPos.y);
 //         printf("_waypoints.begin %d\n", _waypoints.begin());
 //         printf("_waypoint.end %d\n", _waypoints.end());
 //         printf("_currWaypoint %d\n", _currWaypoint);
@@ -30,6 +29,10 @@ void TrajectoryGen::run()
             _currWaypoint--;
         }
     }
+    else
+    {
+        _state->self[0].cmdPos = _state->self[0].pos;
+    }
 }
 
 
@@ -37,30 +40,30 @@ void TrajectoryGen::setPaths(QVector<RobotPath::Path> paths)
 {
     _paths = paths;
 
-    _waypoints.clear();
-
-    Q_FOREACH(RobotPath::Path p, _paths)
+    if(!_paths.isEmpty())
     {
-        switch(p.type)
+        _waypoints.clear();
+        Q_FOREACH(RobotPath::Path p, _paths)
         {
-            case RobotPath::Line:
-                break;
-            case RobotPath::Arc:
-                break;
-            case RobotPath::Start:
-                _waypoints.append(convertUnits(p.points[0]));
-                //printf("Waypoint x %f\n", _waypoints[0].x);
-                //printf("Waypoint y %f\n", _waypoints[0].y);
-                break;
-            case RobotPath::BezierCurve:
-                break;
-            case RobotPath::Close:
-                break;
+            switch(p.type)
+            {
+                case RobotPath::Line:
+                    break;
+                case RobotPath::Arc:
+                    break;
+                case RobotPath::Start:
+                    _waypoints.append(convertUnits(p.points[0]));
+                    //printf("Waypoint x %f\n", _waypoints[0].x);
+                    //printf("Waypoint y %f\n", _waypoints[0].y);
+                    break;
+                case RobotPath::BezierCurve:
+                    break;
+                case RobotPath::Close:
+                    break;
+            }
+            _currWaypoint = _waypoints.end();
+//             printf("_currWaypoint set to %d\n", _currWaypoint);
         }
-        _waypointMutex.lock();
-        _currWaypoint = _waypoints.end();
-        _waypointMutex.unlock();
-//         printf("_currWaypoint set to %d\n", _currWaypoint);
     }
 }
 

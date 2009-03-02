@@ -7,6 +7,7 @@
 #include <config/ConfigFile.hpp>
 #include "Pid.hpp"
 #include "framework/Module.hpp"
+#include "LinearController.hpp"
 
 class Robot
 {
@@ -53,15 +54,7 @@ class Robot
         /** robot identification */
         const unsigned int _id;
 
-        /** X pid **/
-        Pid* _xPID;
-
-        /** Y PID **/
-        Pid* _yPID;
-
-        /** angle pid **/
-        Pid* _anglePID;
-
+        /** motor values **/
         float* _motors;
 
         //These need to go directly to the linear controller class
@@ -85,6 +78,19 @@ class Robot
 
         /** transform matrix **/
         Geometry::TransformMatrix* rotationMatrix;
+
+        /** The wheel velocities in the last frame **/
+        int8_t _lastWheelVel[4];
+
+        /** Pos Controller **/
+        LinearController::LinearController* _posController;
+
+        /** DeadBand - needs to go in config file **/
+        Geometry::Point2d _deadband;
+
+        /** The max velocity the robot can have about the y or x is actually dependent on angle of motion**/
+        float maxRobotVelocity;
 };
+
 
 #endif /* ROBOT_HPP_ */

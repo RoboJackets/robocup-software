@@ -14,36 +14,25 @@ Robot::Robot(ConfigFile::RobotCfg cfg):
     _axels = cfg.axels;
     _motors = new float[_axels.size()];
 
-    //clear initial motor values
+    //clear initial motor values and wheel velocities
     for (unsigned int i=0 ; i<4 ; ++i)
     {
-	    _motors[i] = 0;
+        _motors[i] = 0;
+        _lastWheelVel[i] = 0;
     }
 
     _maxAccel = cfg.maxAccel;
     _maxWheelVel = cfg.maxWheelVel;
+    maxRobotVelocity = 250;
 
-    _Kp = cfg.posCntrlr.Kp;
-    _Kv = cfg.posCntrlr.Kv;
-    /*
-    ConfigFile::PidInfo pos = cfg.posPid;
-    ConfigFile::PidInfo angle = cfg.anglePid;
+    _posController = new LinearController(cfg.posCntrlr.Kp,cfg.posCntrlr.Kv,maxRobotVelocity);
+    _deadband = cfg.posCntrlr.deadband;
 
-    _xPID = new Pid(pos.p, pos.i, pos.d, pos.windup);
-    _yPID = new Pid(pos.p, pos.i, pos.d, pos.windup);
-    _anglePID = new Pid(angle.p, angle.i, angle.d, angle.windup);
-    */
     rotationMatrix = new TransformMatrix();
-
-    //_pathPlanner = 0;
 }
 
 Robot::~Robot()
 {
-//     delete _xPID;
-//     delete _yPID;
-//     delete _anglePID;
-
     delete[] _motors;
 }
 
@@ -52,153 +41,57 @@ void Robot::setSystemState(SystemState* state)
     _state = state;
 }
 
-
 void Robot::proc()
 {
-
     if(_state->self[_id].valid)
     {
         float currAngle = _state->self[_id].angle;
         Geometry::Point2d currPos = _state->self[_id].pos;
-        Geometry::Point2d currVel = _state->self[_id].vel;
-        Geometry::Point2d desiredPos = Point2d(1.0,1.0); //_state->self[_id].cmdPos;
-        Geometry::Point2d error = currPos - desiredPos;
+        Geometry::Point2d currVel =_state->self[_id].vel;
+        Geometry::Point2d desiredPos = _state->self[_id].cmdPos;
+        Geometry::Point2d error = desiredPos - currPos;
         VelocityCmd velCmd;
-        int kp = 80;
-        int k_feedforward = 10;
 
-        //TODO handle deadband
-        velCmd.vel.x = kp*(error.x) + k_feedforward * currVel.x;
-//         velCmd.vel.y = kp*(error.y) + k_feedforward * currVel.y;
+        velCmd.vel = _posController->run(error,currVel);
 
-        printf("Curr Pos x %f y %f\n", currPos.x, currPos.y);
-        printf("Desired pos x %f y %f\n", desiredPos.x, desiredPos.y);
-        printf("Error x %f y %f \n", error.x, error.y);
 
-//         velCmd.vel.x = 100;
-        velCmd.vel.y = 0;
+//         velCmd.vel.x = 100*(error.x) + 0.0 * currVel.x;
+//         velCmd.vel.y = 100*(error.y) + 0.0 * currVel.y;
+
+//         printf("Curr Pos x %f y %f\n", currPos.x, currPos.y);
+//         printf("Desired pos x %f y %f\n", desiredPos.x, desiredPos.y);
+//         printf("Error x %f y %f \n", error.x, error.y);
+
+//         printf("Velocity in Team Space x %f y %f \n", velCmd.vel.x, velCmd.vel.y);
+
+//         velCmd.vel.x = 10;
+//         velCmd.vel.y = 10;
         velCmd.w = 0;
 
+        //Handle Deadband
+        if(error.mag() < _deadband.mag())
+        {
+            velCmd.vel = Point2d(0,0);
+        }
+
         //Rotate the velocity command from the team frame to the robot frame
-        rotationMatrix = new TransformMatrix(Point2d(0,0),currAngle, false, 1.0);
+        //The angle also needs to be converted
+        rotationMatrix = new TransformMatrix(Point2d(0,0),(currAngle - 90.0), false, 1.0);
         velCmd.vel = rotationMatrix->transformDirection(velCmd.vel);
+
+//         printf("CurrAngle %f \n",currAngle-90.0);
+//         printf("Velocity in Robot Space x %f y %f \n", velCmd.vel.x, velCmd.vel.y);
 
         genMotor(velCmd);
 
         _state->self[_id].cmdValid = false;
     }
-    /*
-    if (_self.valid)
-    {
-        _comm.valid = true;
-        _log.valid = true;
-
-        //output velocity command for motor speed generation
-        VelocityCmd velCmd;
-
-        _log.currPos = _self.pos;
-
-        const float currAngle = _self.theta;
-
-        //change in x,y for angle calculation
-        Point2d dxdy = cmd.face - _self.pos;
-
-        //destination point for path planner
-        Point2d dest = cmd.pos;
-
-        if (cmd.valid)
-        {
-            if (_id)
-            {
-                _pathPlanner->addNoZone(Circle2d(0,0, .7));
-            }
-
-            //avoid zone
-            if (cmd.avoid)
-            {
-                _pathPlanner->addNoZone(cmd.avoidZone);
-            }
-
-            //select style of motion
-            switch (cmd.style)
-            {
-                case MotionCmd::Fast:
-                    velCmd.maxWheelSpeed = 90;
-                    break;
-                case MotionCmd::Accurate:
-                    velCmd.maxWheelSpeed = 50;
-                    break;
-            }
-
-            float tAngle = atan2(dxdy.y, dxdy.x) * 180.0 / M_PI;
-            float err = currAngle - tAngle;
-
-            //clip error to +/-180 deg
-            if (err > 180)
-            {
-                err -= 360.0;
-            }
-            else if (err < -180)
-            {
-                err += 360.0;
-            }
-
-            velCmd.w = _anglePID->run(err);
-
-            //passthrough data
-            _comm.kick = cmd.kick;
-            _comm.roller = cmd.roller;
-        }
-        else
-        {
-            //no command, but we have vision
-            //plan path to current location
-            //this gets us out of noZones if there are any
-            dest = _self.pos;
-            velCmd.w = 0;
-            velCmd.maxWheelSpeed = 60;
-
-            //turn off
-            _comm.kick = 0;
-            _comm.roller = 0;
-        }
-
-        PathPlanner::PPOut ppout = _pathPlanner->plan(_id, dest);
-
-        _log.pdir = ppout.direction;
-        _log.distRemaining = ppout.distance;
-        _log.destPos = dest;
-
-        ppout.direction *= _posPID->run(ppout.distance);
-        velCmd.vel = ppout.direction;
-
-        //if spinning, clear linear vel
-        if (cmd.valid && cmd.spin)
-        {
-            velCmd.vel = Point2d();
-            velCmd.w = 100;
-        }
-
-        //generate motor speeds and populate outgoing data
-        genMotor(velCmd);
-    }
-    else
-    {
-        //turn everything off if there is no vision
-        _comm.valid = false;
-    }
-    */
 }
 
 
 void Robot::genMotor(VelocityCmd velCmd)
 {
-    static int8_t lastWheelVel[4];
-
-    for(int k = 0; k<4; k++)
-    {
-        lastWheelVel[k] = 0;
-    }
+    float maxGenWheelVel = 0;
 
     //clip the maximum spin velocity
     const float clip = 150;
@@ -214,36 +107,45 @@ void Robot::genMotor(VelocityCmd velCmd)
     int j =0;
     Q_FOREACH(Geometry::Point2d axel, _axels)
     {
-        int8_t v = (int8_t)axel.perpCW().dot(velCmd.vel);
+        _motors[j] = axel.perpCW().dot(velCmd.vel);
 
-        v += velCmd.w;
+//         v += velCmd.w;
 
         //Limit wheel acceleration
-        if(abs(lastWheelVel[j] - v) > _maxAccel)
+        if(abs(_lastWheelVel[j] - _motors[j]) > _maxAccel)
         {
             //Set v such that we achieve the max allowable acceleration
-            v = lastWheelVel[j] - _maxAccel;
+            _motors[j] = _lastWheelVel[j] - _maxAccel;
         }
 
-        //Saturate on max velocity
-        if(v > _maxWheelVel)
+        if(abs(_motors[j] > maxGenWheelVel))
         {
-            v = _maxWheelVel;
-        }
-        else if(v < -_maxWheelVel)
-        {
-            v = -_maxWheelVel;
+            maxGenWheelVel = _motors[j];
+//             printf("max wheel speed %f\n",_motors[j]);
         }
 
-        _state->radioCmd.robots[_id].motors[j++] = v;
-        lastWheelVel[j] = v;
+        _lastWheelVel[j] = _motors[j];
+        j++;
     }
+    //One of the wheels has gone into saturation
+    if(maxGenWheelVel > _maxWheelVel)
+    {
+//         printf("Saturation\n");
+        //Scale it and the other wheels to achieveable velocities
+        for(int i = 0; i<4; i++)
+        {
+            _motors[i] *= _maxWheelVel / maxGenWheelVel;
+        }
+    }
+
+    for(int j = 0; j<4; j++)
+    {
+        _state->radioCmd.robots[_id].motors[j] = (int8_t)_motors[j];
+    }
+//     printf("Wheel Speeds [0] %f [1] %f [2] %f [3] %f\n",_motors[0], _motors[1], _motors[2], _motors[3]);
     _state->radioCmd.robots[_id].valid = true;
 }
 
 void Robot::clearPid()
 {
-    _xPID->clearWindup();
-    _yPID->clearWindup();
-    _anglePID->clearWindup();
 }
