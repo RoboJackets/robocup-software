@@ -17,7 +17,7 @@ TrajectoryGen::~TrajectoryGen()
 
 void TrajectoryGen::run()
 {
-
+    //TODO make stop if no more points
     if(_running)
     {
         _state->self[0].cmdPos = *_currWaypoint;

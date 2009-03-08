@@ -57,7 +57,7 @@ class Robot
         /** motor values **/
         float* _motors;
 
-        //These need to go directly to the linear controller class
+        /** Controlller gains **/
         float _Kp, _Kv;
 
         /** Mechanical data from configfile **/
@@ -76,7 +76,7 @@ class Robot
         /** robot axels */
         QVector<Geometry::Point2d> _axels;
 
-        /** transform matrix **/
+        /** rotation matrix to go from team space to robot space**/
         Geometry::TransformMatrix* rotationMatrix;
 
         /** The wheel velocities in the last frame **/

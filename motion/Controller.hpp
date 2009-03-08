@@ -12,21 +12,20 @@ namespace Motion
 {
     class Controller : public Module
     {
+
         public:
+            Controller(QString filename);
+            ~Controller();
 
-	public:
-	    Controller(QString filename);
-	    ~Controller();
-
-	    virtual void run();
+            virtual void run();
 
 
-	private:
-            /** Robots **/
-	    Robot* _robots[5];
+        private:
+                /** Robots **/
+            Robot* _robots[5];
 
-            /** Config file from command line**/
-	    ConfigFile _config;
+                /** Config file from command line**/
+            ConfigFile _config;
     };
 }
 

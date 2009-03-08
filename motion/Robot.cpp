@@ -83,8 +83,6 @@ void Robot::proc()
 //         printf("Velocity in Robot Space x %f y %f \n", velCmd.vel.x, velCmd.vel.y);
 
         genMotor(velCmd);
-
-        _state->self[_id].cmdValid = false;
     }
 }
 
@@ -105,11 +103,10 @@ void Robot::genMotor(VelocityCmd velCmd)
     }
 
     int j =0;
+    //TODO Do for loop
     Q_FOREACH(Geometry::Point2d axel, _axels)
     {
         _motors[j] = axel.perpCW().dot(velCmd.vel);
-
-//         v += velCmd.w;
 
         //Limit wheel acceleration
         if(abs(_lastWheelVel[j] - _motors[j]) > _maxAccel)
