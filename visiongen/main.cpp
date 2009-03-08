@@ -46,6 +46,10 @@ class VisionSender : public QThread
 			r.pos.x = -2;
 			r.pos.y = 0;
 
+            Packet::Vision::Ball b;
+            b.pos.x = 0;
+            b.pos.y = 0;
+
 			const int msecs = (int)(1000/_fps);
 
 			float rad = 0;
@@ -95,10 +99,12 @@ class VisionSender : public QThread
 
 				packet.blue.push_back(r);
 
+                packet.balls.push_back(b);
+
 				//send vision data
 				sender.send(packet);
 
-				printf("[%d] %lld :: Pos: %.3f %.3f\n", _id, packet.timestamp, r.pos.x, r.pos.y);
+				printf("[%d] %lld :: Pos: %.3f %.3f\n", _id, (long long int)packet.timestamp, r.pos.x, r.pos.y);
 
 				//camera pause
 				QThread::msleep(msecs - 5);

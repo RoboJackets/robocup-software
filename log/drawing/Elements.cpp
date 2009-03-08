@@ -111,6 +111,6 @@ void drawBall(QPainter& painter, Geometry::Point2d pos)
 	painter.setPen(QColor(0xff, 0x40, 0));
 	painter.setBrush(QColor(0xff,0x90,0x00));
 	
-	painter.drawEllipse(QRectF(-Ball::Radius + pos.y, -Ball::Radius + pos.y, 
+	painter.drawEllipse(QRectF(-Ball::Radius + pos.x, -Ball::Radius + pos.y, 
 			Ball::Diameter, Ball::Diameter));
 }

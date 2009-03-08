@@ -104,7 +104,8 @@ void WorldModel::run()
 			//copy ball
 			if (vision.balls.size() > 0)
 			{
-				_state->ball.pos = vision.balls.at(1).pos;
+				_state->ball.pos = vision.balls.at(0).pos;
+                _state->ball.valid = true;
 			}
 		}
 	}

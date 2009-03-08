@@ -67,7 +67,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 
 		if (_frame->ball.valid)
 		{
-			drawBall(painter,_frame->ball.pos);
+			drawBall(painter, _frame->ball.pos);
 		}
 	}
 }
