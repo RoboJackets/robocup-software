@@ -24,7 +24,7 @@ qt4_wrap_cpp (MOC_SRCS
     TrajectoryGen.hpp
 )
 
-QT4_WRAP_UI (UI_HDRS
+qt4_wrap_ui (UI_HDRS
     ui/motion.ui
 )
 
@@ -40,7 +40,7 @@ set (SRCS
 
 qt4_automoc (${SRCS})
 set (exec motionTest)
-add_executable (${exec} ${SRCS} ${MOC_SRCS})
+add_executable (${exec} ${SRCS} ${MOC_SRCS} ${UI_HDRS})
 
 target_link_libraries(${exec} ${PACKET_LIBRARY})
 target_link_libraries(${exec} ${GEOMETRY_LIBRARY})

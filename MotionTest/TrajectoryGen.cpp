@@ -23,16 +23,14 @@ void TrajectoryGen::run()
         _state->self[0].cmdPos = *_currWaypoint;
         Geometry::Point2d error = _state->self[0].cmdPos - _state->self[0].pos;
         Geometry::Point2d deadband(0.05,0.05);
-//         printf("error x %f y %f\n",error.x, error.y);
         if(error.mag() < deadband.mag())
         {
-            _currWaypoint++;
-//             printf("Waypoint x %f y %f\n", _currWaypoint->x, _currWaypoint->y);
+            if(_nextWaypoint < _waypoints.end())
+            {
+                _currWaypoint++;
+                _nextWaypoint++;
+            }
         }
-//         printf("_waypoints.begin %d\n", _waypoints.begin());
-//         printf("_waypoint.end %d\n", _waypoints.end());
-//         printf("_currWaypoint %d\n", _currWaypoint);
-
     }
     else
     {
@@ -52,6 +50,7 @@ void TrajectoryGen::setPaths(QVector<RobotPath::Path> paths)
         {
             Geometry::Point2d startPoint, endPoint, tempPoint;
             float m, delta_x, delta_y;
+            int numberPathPoints;
             switch(p.type)
             {
                 case RobotPath::Line:
@@ -60,6 +59,8 @@ void TrajectoryGen::setPaths(QVector<RobotPath::Path> paths)
                     m = (startPoint.y - endPoint.y)/(startPoint.x - endPoint.x);
 
                     _waypoints.append(startPoint);
+
+                    //determine number of points
 
                     delta_x=fabs(startPoint.x - endPoint.x)/50;
                     delta_y=fabs(startPoint.y - endPoint.y)/50;
@@ -88,7 +89,11 @@ void TrajectoryGen::setPaths(QVector<RobotPath::Path> paths)
 //             printf("Waypoint x %f y %f\n", _waypoints.last().x, _waypoints.last().y);
         }
         _currWaypoint = _waypoints.begin();
-//         printf("_currWaypoint set to %f %f\n", _currWaypoint->x, _currWaypoint->y);
+        _nextWaypoint = _currWaypoint;
+        _nextWaypoint++;
+//         printf("_waypoints.begin %f %f\n", _waypoints.begin()->x, _waypoints.begin()->y);
+//         printf("_waypoint.end %f %f\n", _waypoints.end()->x, _waypoints.end()->y);
+
     }
 }
 

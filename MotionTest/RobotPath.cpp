@@ -8,7 +8,6 @@
 #include <QPainterPath>
 #include <QPointF>
 #include <log/FieldView.hpp>
-#include <boost/foreach.hpp>
 
 using namespace Constants;
 
@@ -34,7 +33,7 @@ void RobotPath::paintEvent(QPaintEvent* event)
     QPainterPath* painterPath = new QPainterPath(QPointF(0,0));
 
     painter.setPen(Qt::green);
-    BOOST_FOREACH(RobotPath::Path p, _paths)
+    Q_FOREACH(RobotPath::Path p, _paths)
     {
         switch(p.type)
         {
@@ -125,7 +124,7 @@ void RobotPath::mousePressEvent(QMouseEvent* me)
 {
     if(!_paths.isEmpty())
     {
-        BOOST_FOREACH(QPointF p, _paths.last().points)
+        Q_FOREACH(QPointF p, _paths.last().points)
         {
             p = _lastPoint;
         }

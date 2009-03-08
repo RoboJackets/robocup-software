@@ -47,6 +47,7 @@ namespace Trajectory
         Point2d _pixelFieldSize;
 
         QVector<Geometry::Point2d>::iterator _currWaypoint;
+        QVector<Geometry::Point2d>::iterator _nextWaypoint;
         bool _running;
 
         QMutex _waypointMutex;

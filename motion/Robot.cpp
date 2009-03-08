@@ -55,22 +55,14 @@ void Robot::proc()
         VelocityCmd velCmd;
 
         velCmd.vel = _posController->run(error,currVel);
-
-
-//         velCmd.vel.x = 100*(error.x) + 0.0 * currVel.x;
-//         velCmd.vel.y = 100*(error.y) + 0.0 * currVel.y;
+        velCmd.w = 0;
 
 //         printf("Curr Pos x %f y %f\n", currPos.x, currPos.y);
 //         printf("Desired pos x %f y %f\n", desiredPos.x, desiredPos.y);
 //         printf("Error x %f y %f \n", error.x, error.y);
-
 //         printf("Velocity in Team Space x %f y %f \n", velCmd.vel.x, velCmd.vel.y);
 
-//         velCmd.vel.x = 10;
-//         velCmd.vel.y = 10;
-        velCmd.w = 0;
-
-        //Handle Deadband
+        //Deadband
         if(error.mag() < _deadband.mag())
         {
             velCmd.vel = Point2d(0,0);
@@ -81,7 +73,6 @@ void Robot::proc()
         rotationMatrix = new TransformMatrix(Point2d(0,0),(currAngle - 90.0), false, 1.0);
         velCmd.vel = rotationMatrix->transformDirection(velCmd.vel);
 
-//         printf("CurrAngle %f \n",currAngle-90.0);
 //         printf("Velocity in Robot Space x %f y %f \n", velCmd.vel.x, velCmd.vel.y);
 
         genMotor(velCmd);
