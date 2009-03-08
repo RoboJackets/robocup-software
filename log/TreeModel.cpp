@@ -1,6 +1,7 @@
 #include "TreeModel.hpp"
 
 #include <LogFrame.hpp>
+#include <boost/foreach.hpp>
 
 using namespace Log;
 
@@ -34,7 +35,7 @@ void TreeModel::frame(Packet::LogFrame* frame)
 	
 	QStandardItem* rItem = _vision->child(0);
 	rItem->removeRows(0, rItem->rowCount());
-	//Q_FOREACH(const Packet::Vision::Robot& r, frame->allSelf)
+	//BOOST_FOREACH(const Packet::Vision::Robot& r, frame->allSelf)
 	{
 		/*
 		QStandardItem* robot = new QStandardItem(QString("Shell: ") + 

@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QString>
 #include <vector>
+#include <boost/foreach.hpp>
 
 #include "RobotWM.hpp"
 #include "framework/Module.hpp"
@@ -41,7 +42,7 @@ WorldModel::WorldModel(QString filename) :
 
 void WorldModel::run()
 {
-	Q_FOREACH(const Packet::Vision& vision, _state->rawVision)
+	BOOST_FOREACH(const Packet::Vision& vision, _state->rawVision)
 	{
 		if (!vision.sync)
 		{
@@ -55,7 +56,7 @@ void WorldModel::run()
 			}
 			
 			//index is the id
-			Q_FOREACH (const Packet::Vision::Robot& r, *self)
+			BOOST_FOREACH (const Packet::Vision::Robot& r, *self)
 			{
 				//get data from vision packet
 				_self[r.shell]._shell = r.shell;
@@ -80,7 +81,7 @@ void WorldModel::run()
 				_state->self[r.shell].valid = true;
 			}
 			//index is the id
-			Q_FOREACH (const Packet::Vision::Robot& r, *opp)
+			BOOST_FOREACH (const Packet::Vision::Robot& r, *opp)
 			{
 				//get data from vision packet
 				_opp[r.shell]._shell = r.shell;
@@ -104,7 +105,7 @@ void WorldModel::run()
 			//copy ball
 			if (vision.balls.size() > 0)
 			{
-				_state->ball.pos = vision.balls.at(0).pos;
+				_state->ball.pos = vision.balls[0].pos;
                 _state->ball.valid = true;
 			}
 		}

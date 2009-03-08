@@ -2,6 +2,7 @@
 #include "Processor.moc"
 
 #include <QMutexLocker>
+#include <boost/foreach.hpp>
 
 #include <Network/Network.hpp>
 #include <Network/Sender.hpp>
@@ -83,7 +84,7 @@ void Processor::run()
 		{
 			_modulesMutex.lock();
 			
-			Q_FOREACH(Module* m, _modules) 
+			BOOST_FOREACH(Module* m, _modules) 
 			{
 				m->run();
 			}

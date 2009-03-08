@@ -8,6 +8,7 @@
 #include <Team.h>
 #include <Network/Network.hpp>
 #include <QMutexLocker>
+#include <boost/foreach.hpp>
 
 NxPhysicsSDK* Env::_physicsSDK = 0;
 unsigned int Env::_refCount = 0;
@@ -183,7 +184,7 @@ void Env::genVision()
 	//locks on scene objects to generate vision info since a copy is returned
 	
 	int i=0;
-	Q_FOREACH(const Robot* r, _blue)
+	BOOST_FOREACH(const Robot* r, _blue)
 	{
 		Packet::Vision::Robot vr;
 		vr.angle = r->getAngle();
@@ -194,7 +195,7 @@ void Env::genVision()
 	}
 	
 	i=0;
-	Q_FOREACH(const Robot* r, _yellow)
+	BOOST_FOREACH(const Robot* r, _yellow)
 	{
 		Packet::Vision::Robot vr;
 		vr.angle = r->getAngle();
@@ -204,7 +205,7 @@ void Env::genVision()
 		_visionInfo.yellow.push_back(vr);
 	}
 	
-	Q_FOREACH(const Ball* b, _balls)
+	BOOST_FOREACH(const Ball* b, _balls)
 	{
 		Packet::Vision::Ball vb;
 		vb.pos = b->getPosition();
@@ -271,7 +272,7 @@ void Env::genRadio()
 	
 	//first 5 robots generate radio data...?
 	/*
-	Q_FOREACH(const Robot* r, _blue)
+	BOOST_FOREACH(const Robot* r, _blue)
 	{
 		//_radioRxBlue.robots
 	}

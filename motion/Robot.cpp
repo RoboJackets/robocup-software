@@ -3,6 +3,8 @@
 #include <Geometry/Point2d.hpp>
 #include <Team.h>
 #include <config/ConfigFile.hpp>
+#include <boost/foreach.hpp>
+
 #include "Pid.hpp"
 #include "framework/Module.hpp"
 
@@ -104,7 +106,7 @@ void Robot::genMotor(VelocityCmd velCmd)
 
     int j =0;
     //TODO Do for loop
-    Q_FOREACH(Geometry::Point2d axel, _axels)
+    BOOST_FOREACH(Geometry::Point2d axel, _axels)
     {
         _motors[j] = axel.perpCW().dot(velCmd.vel);
 
