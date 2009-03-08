@@ -2,7 +2,7 @@
 
 #include <Geometry/Point2d.hpp>
 #include <Team.h>
-#include "ConfigFile.hpp"
+#include <config/ConfigFile.hpp>
 #include "Pid.hpp"
 #include "framework/Module.hpp"
 
