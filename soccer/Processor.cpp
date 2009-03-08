@@ -67,6 +67,7 @@ void Processor::run()
 	while (_running)
 	{
 		//needs to be non-blocking...is it?
+        usleep(1000);
 		receiver.receive();
 		
 		if (true)
@@ -91,6 +92,7 @@ void Processor::run()
 			
 			sender.send(_state.radioCmd);
 			
+            _state.rawVision.clear();
 			//clear system state info
 			//TODO should I clear system state?
 			//_state = SystemState();
@@ -100,6 +102,7 @@ void Processor::run()
 		}
 	}
 }
+
 void Processor::addModule(Module* module)
 {
 	QMutexLocker ml(&_modulesMutex);

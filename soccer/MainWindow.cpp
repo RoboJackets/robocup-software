@@ -18,6 +18,7 @@ MainWindow::MainWindow(Team t, QString filename) :
 
 	_fieldView = new FieldView(_team, this);
 	_fieldView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
 	_logControl = new LogControl(this);
 
 	_treeView = new TreeView(this);
