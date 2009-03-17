@@ -48,9 +48,9 @@ void TrajectoryGen::setPaths(QVector<RobotPath::Path> paths)
         _waypoints.clear();
         Q_FOREACH(RobotPath::Path p, _paths)
         {
-            Geometry::Point2d startPoint, endPoint, tempPoint;
+            Geometry::Point2d startPoint, endPoint, tempPoint, dist;
             float m, delta_x, delta_y;
-            int numberPathPoints;
+            int numPathPoints;
             switch(p.type)
             {
                 case RobotPath::Line:
@@ -61,11 +61,13 @@ void TrajectoryGen::setPaths(QVector<RobotPath::Path> paths)
                     _waypoints.append(startPoint);
 
                     //determine number of points
+                    dist = startPoint - endPoint;
+                    numPathPoints = (int) (dist.mag() / 0.10);
 
-                    delta_x=fabs(startPoint.x - endPoint.x)/50;
-                    delta_y=fabs(startPoint.y - endPoint.y)/50;
+                    delta_x=fabs(startPoint.x - endPoint.x)/numPathPoints;
+                    delta_y=fabs(startPoint.y - endPoint.y)/numPathPoints;
                     tempPoint.x = startPoint.x;
-                    for(int i = 0; i<50; i++)
+                    for(int i = 0; i<numPathPoints; i++)
                     {
                         //Parameterized lines (duh!!!)
                         tempPoint.x = startPoint.x + delta_x*i;

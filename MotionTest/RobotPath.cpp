@@ -1,13 +1,13 @@
 #include "RobotPath.hpp"
 
-
 #include <Constants.hpp>
+#include <log/FieldView.hpp>
 
 #include <QVector>
 #include <QPainter>
 #include <QPainterPath>
 #include <QPointF>
-#include <log/FieldView.hpp>
+#include <boost/foreach.hpp>
 
 using namespace Constants;
 
@@ -18,7 +18,7 @@ RobotPath::RobotPath(Team team, QWidget* parent) :
     _pathPointInterator = 0;
 
     //Prevent the background from being re-draw prior to painting
-    setAutoFillBackground(false);
+//     setAutoFillBackground(false);
 
     _lastPoint = QPointF(0,0);
 }
@@ -28,12 +28,12 @@ void RobotPath::paintEvent(QPaintEvent* event)
     //Paint the field
     Log::FieldView::paintEvent(event);
 
-    //Paint the path
     QPainter painter(this);
+
     QPainterPath* painterPath = new QPainterPath(QPointF(0,0));
 
     painter.setPen(Qt::green);
-    Q_FOREACH(RobotPath::Path p, _paths)
+    BOOST_FOREACH(RobotPath::Path p, _paths)
     {
         switch(p.type)
         {
@@ -45,8 +45,8 @@ void RobotPath::paintEvent(QPaintEvent* event)
                 break;
             case Start:
                 painterPath = new QPainterPath(p.points[0]);
-                painterPath->addEllipse(p.points[0].x(),p.points[0].y(),1,1);
-                painterPath->addEllipse(p.points[0].x() - 10,p.points[0].y() - 10,20,20);
+                painter.drawEllipse(p.points[0].x(),p.points[0].y(),1,1);
+                painter.drawEllipse(p.points[0].x() - 10,p.points[0].y() - 10,20,20);
                 painterPath->moveTo(p.points[0]);
                 break;
             case Close:
@@ -59,6 +59,7 @@ void RobotPath::paintEvent(QPaintEvent* event)
     }
     painter.drawPath(*painterPath);
     free(painterPath);
+    painter.end();
 }
 
 void RobotPath::addPath(PathType pathType)

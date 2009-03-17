@@ -6,7 +6,7 @@
 
 #include <ui_motion.h>
 
-//todo flicker is still an issue (though it only happens when you re-draw)
+//TODO flicker is still an issue (though it only happens when you re-draw)
 
 MainWindow::MainWindow(Team team, QString filename)
     :QMainWindow(), _team(team), _processor(team), _logFile(0), _configFile(filename)
@@ -17,6 +17,8 @@ MainWindow::MainWindow(Team team, QString filename)
 
     _rp = new RobotPath(team,this);
     _rp->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    _rp->setAttribute(Qt::WA_OpaquePaintEvent);
+    _rp->setAutoFillBackground(false);
     _logControl = new Log::LogControl(this);
 
     gridLayout->addWidget(_rp,0,0);
@@ -32,6 +34,7 @@ MainWindow::MainWindow(Team team, QString filename)
 
     _logControl->setLogFile(_logFile);
     connect(_logControl, SIGNAL(newFrame(Packet::LogFrame*)), _rp, SLOT(frame(Packet::LogFrame*)));
+
 }
 
 MainWindow::~MainWindow()

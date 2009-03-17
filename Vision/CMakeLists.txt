@@ -20,30 +20,30 @@ set(SRCS
     Transform_Setup.cpp
     Colorspace_Window.cpp
     Colorspace_View.cpp
-    
-    camera/dummy/Dummy.cpp 
-    
+
+    camera/dummy/Dummy.cpp
+
     camera/file/File.cpp
     camera/file/File_Control.cpp
-    
+
     camera/dcam/DCam.cpp
     camera/dcam/DCam_Config.cpp
-    
-    camera/prosilica/Prosilica.cpp 
+
+    camera/prosilica/Prosilica.cpp
     camera/prosilica/AttrBase.cpp
-    camera/prosilica/AttrCommand.cpp 
-    camera/prosilica/AttrEnum.cpp 
-    camera/prosilica/AttrFloat.cpp 
-    camera/prosilica/AttrString.cpp 
+    camera/prosilica/AttrCommand.cpp
+    camera/prosilica/AttrEnum.cpp
+    camera/prosilica/AttrFloat.cpp
+    camera/prosilica/AttrString.cpp
     camera/prosilica/AttrUint32.cpp
-    
+
     vision/Colors.cpp
     vision/Colorseg.cpp
     vision/Spanner.cpp
     vision/Process.cpp
     vision/Transform.cpp
     vision/Distortion.cpp
-    
+
     vision/identification/Dot_ID.cpp
     vision/identification/Vector_ID.cpp
     vision/identification/Offset3_ID.cpp
@@ -61,7 +61,8 @@ project(${PROJECT})
 
 set (USE_PACKET true)
 set (USE_GEOMETRY true)
-include ("../common/CMakeLists.txt")
+set (USE_NETWORK true)
+include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
 
 add_definitions(-O2 -Wall -g3 -funroll-loops -Wno-deprecated-declarations)
 
@@ -103,4 +104,6 @@ target_link_libraries(${PROJECT} ${LIBAVFORMAT_LIBRARIES})
 target_link_libraries(${PROJECT} swscale)
 target_link_libraries(${PROJECT} PvAPI)
 target_link_libraries(${PROJECT} dc1394)
-target_link_libraries(${PROJECT} ${GEOMETRY_LIBRARY} ${PACKET_LIBRARY})
+target_link_libraries(${PROJECT} ${PACKET_LIBRARY})
+target_link_libraries(${PROJECT} ${GEOMETRY_LIBRARY})
+target_link_libraries(${PROJECT} ${NETWORK_LIBRARY})
