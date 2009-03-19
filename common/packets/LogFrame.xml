@@ -31,9 +31,6 @@
 
 		<!-- if true, this robot is active for use -->
 		<member type="bool" name="valid" value="false" />
-
-		<!-- if true, this robot is active for use -->
-		<member type="bool" name="cmdValid" value="false" />
 	</struct>
 
 	<!-- post processed ball information -->

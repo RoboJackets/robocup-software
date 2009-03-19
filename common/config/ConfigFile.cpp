@@ -20,18 +20,14 @@ ConfigFile::~ConfigFile()
 void ConfigFile::load() throw (std::runtime_error)
 {
     QFile configFile(_filename);
-    QString errorMsg = "Hello";
-    int errorLine, errorColumn;
 
     if (!configFile.open(QIODevice::ReadOnly))
     {
         throw std::runtime_error("Unable to open config file.");
     }
 
-    if (!_doc.setContent(&configFile,1,&errorMsg,&errorLine,&errorColumn))
+    if (!_doc.setContent(&configFile))
     {
-        //printf(errorMsg.toAscii());
-        //printf("\nLine %d , Column %d \n", errorLine, errorColumn);
         configFile.close();
         throw std::runtime_error("Internal: unable to set document content.");
     }
@@ -87,10 +83,10 @@ void ConfigFile::procLinearController(QDomElement element)
         cntrlr->Kp = valueFloat(eElem.attributeNode("value"));
     }
 
-    eElem = element.firstChildElement("kv");
+    eElem = element.firstChildElement("kd");
     if (!eElem.isNull())
     {
-        cntrlr->Kv = valueFloat(eElem.attributeNode("value"));
+        cntrlr->Kd = valueFloat(eElem.attributeNode("value"));
     }
 
     eElem = element.firstChildElement("deadband");
@@ -149,6 +145,12 @@ void ConfigFile::procRobotData(QDomElement element)
         _maxWheelVel = valueFloat(eElem.attributeNode("value"));
     }
 
+    eElem = element.firstChildElement("maxRobotVel");
+    if (!eElem.isNull())
+    {
+        _maxRobotVel = valueFloat(eElem.attributeNode("value"));
+    }
+
 }
 
 float ConfigFile::valueFloat(QDomAttr attr)
@@ -198,6 +200,7 @@ ConfigFile::RobotCfg ConfigFile::robotConfig(const unsigned int id)
 
     cfg.maxAccel = _maxAccel;
     cfg.maxWheelVel = _maxWheelVel;
+    cfg.maxRobotVel = _maxRobotVel;
 
     return cfg;
 }

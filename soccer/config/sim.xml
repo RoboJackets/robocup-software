@@ -2,13 +2,15 @@
 <motion>
 
     <linearController name="pos">
-        <kp value="80.0" />
-        <kv value="20.0" />
+        <kp value="60.0" />
+        <kd value="2" />
+        <deadband x="0.01" y="0.01"/>
     </linearController>
 
     <linearController name="angle">
         <kp value="80.0" />
-        <kv value="20.0" />
+        <ki value="1.0" />
+        <deadband x="0.01" y="0.01"/>
     </linearController>
 
     <robotData>
@@ -28,6 +30,7 @@
         <!-- The max acceleration is based on a delta_t of 11ms !-->
         <maxAccel value = "100"/>
         <maxWheelVel value = "127"/>
+        <maxRobotVel value = "140"/>
     </robotData>
 
 </motion>

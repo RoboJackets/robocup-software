@@ -88,9 +88,8 @@ class Robot
         /** DeadBand - needs to go in config file **/
         Geometry::Point2d _deadband;
 
-        /** The max velocity the robot can have about the y or x is actually dependent on angle of motion**/
-        float maxRobotVelocity;
-};
+        Geometry::Point2d desiredPos;
+    };
 
 
 #endif /* ROBOT_HPP_ */

@@ -6,13 +6,14 @@
 class LinearController
 {
     public:
-        LinearController(float kp, float k_feedforward,float maxVelocity);
+        LinearController(float kp, float kd, float maxVelocity);
         ~LinearController();
 
         Geometry::Point2d run(Geometry::Point2d err, Geometry::Point2d velocity);
 
-        float _kp, _k_feedforward, _maxVelocity;
+        float _kp, _kd, _maxVelocity;
 
         Geometry::Point2d lastVelocity;
+        Geometry::Point2d lastErr;
 };
 #endif

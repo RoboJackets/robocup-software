@@ -25,9 +25,8 @@ Robot::Robot(ConfigFile::RobotCfg cfg):
 
     _maxAccel = cfg.maxAccel;
     _maxWheelVel = cfg.maxWheelVel;
-    maxRobotVelocity = 250;
 
-    _posController = new LinearController(cfg.posCntrlr.Kp,cfg.posCntrlr.Kv,maxRobotVelocity);
+    _posController = new LinearController(cfg.posCntrlr.Kp, cfg.posCntrlr.Kd, cfg.maxRobotVel);
     _deadband = cfg.posCntrlr.deadband;
 
     rotationMatrix = new TransformMatrix();
@@ -50,13 +49,17 @@ void Robot::proc()
         float currAngle = _state->self[_id].angle;
         Geometry::Point2d currPos = _state->self[_id].pos;
         Geometry::Point2d currVel =_state->self[_id].vel;
-        Geometry::Point2d desiredPos = _state->self[_id].cmdPos;
+        Geometry::Point2d desiredVel(0,0);
+        if(!(_state->self[_id].cmdPos == desiredPos))
+        {
+            desiredPos = _state->self[_id].cmdPos;
+        }
+
         Geometry::Point2d error = desiredPos - currPos;
         VelocityCmd velCmd;
 
-        velCmd.vel = _posController->run(error,currVel);
+        velCmd.vel = _posController->run(error,desiredVel);
         velCmd.w = 0;
-
 //         printf("Curr Pos x %f y %f\n", currPos.x, currPos.y);
 //         printf("Desired pos x %f y %f\n", desiredPos.x, desiredPos.y);
 //         printf("Error x %f y %f \n", error.x, error.y);
@@ -96,22 +99,20 @@ void Robot::genMotor(VelocityCmd velCmd)
     }
 
     int j =0;
-    //TODO Do for loop
     BOOST_FOREACH(Geometry::Point2d axel, _axels)
     {
         _motors[j] = axel.perpCW().dot(velCmd.vel);
 
         //Limit wheel acceleration
-        if(abs(_lastWheelVel[j] - _motors[j]) > _maxAccel)
-        {
-            //Set v such that we achieve the max allowable acceleration
-            _motors[j] = _lastWheelVel[j] - _maxAccel;
-        }
+//         if(abs(_lastWheelVel[j] - _motors[j]) > _maxAccel)
+//         {
+//             //Set v such that we achieve the max allowable acceleration
+//             _motors[j] = _lastWheelVel[j] - _maxAccel;
+//         }
 
         if(abs(_motors[j] > maxGenWheelVel))
         {
             maxGenWheelVel = _motors[j];
-//             printf("max wheel speed %f\n",_motors[j]);
         }
 
         _lastWheelVel[j] = _motors[j];
@@ -120,19 +121,21 @@ void Robot::genMotor(VelocityCmd velCmd)
     //One of the wheels has gone into saturation
     if(maxGenWheelVel > _maxWheelVel)
     {
-//         printf("Saturation\n");
+        printf("Wheel Speeds before [0] %f [1] %f [2] %f [3] %f\n",_motors[0], _motors[1], _motors[2], _motors[3]);
+//         printf("Wheel saturation\n");
         //Scale it and the other wheels to achieveable velocities
         for(int i = 0; i<4; i++)
         {
             _motors[i] *= _maxWheelVel / maxGenWheelVel;
         }
+        printf("Wheel Speeds after [0] %f [1] %f [2] %f [3] %f\n",_motors[0], _motors[1], _motors[2], _motors[3]);
     }
 
     for(int j = 0; j<4; j++)
     {
         _state->radioCmd.robots[_id].motors[j] = (int8_t)_motors[j];
     }
-//     printf("Wheel Speeds [0] %f [1] %f [2] %f [3] %f\n",_motors[0], _motors[1], _motors[2], _motors[3]);
+//     printf("Wheel Speeds after [0] %f [1] %f [2] %f [3] %f\n",_motors[0], _motors[1], _motors[2], _motors[3]);
     _state->radioCmd.robots[_id].valid = true;
 }
 

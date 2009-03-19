@@ -16,14 +16,14 @@ class ConfigFile
     public:
         typedef struct
         {
-            float Kp, Kv;
+            float Kp, Kd;
             Geometry::Point2d deadband;
         } linearControllerInfo;
 
         typedef struct
         {
             unsigned int id;
-            float maxAccel, maxWheelVel;
+            float maxAccel, maxWheelVel, maxRobotVel;
 
             linearControllerInfo posCntrlr, angleCntrlr;
 
@@ -60,7 +60,7 @@ class ConfigFile
         /** pid info for position and angle */
         linearControllerInfo _pos, _angle;
 
-        float _maxAccel, _maxWheelVel;
+        float _maxAccel, _maxWheelVel, _maxRobotVel;
         /** axel positions */
         QVector<Geometry::Point2d> _axels;
 };

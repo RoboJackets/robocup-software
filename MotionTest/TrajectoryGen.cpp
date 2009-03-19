@@ -80,8 +80,6 @@ void TrajectoryGen::setPaths(QVector<RobotPath::Path> paths)
                     break;
                 case RobotPath::Start:
                     _waypoints.append(convertPoint(p.points[0]));
-//                     printf("Waypoint x %f\n", _waypoints[0].x);
-//                     printf("Waypoint y %f\n", _waypoints[0].y);
                     break;
                 case RobotPath::BezierCurve:
                     break;
@@ -110,6 +108,7 @@ Point2d TrajectoryGen::convertPoint(QPointF point)
     if(_state->isBlue)
     {
         retPoint.y = Constants::Field::Length - retPoint.y;
+        retPoint.x = -retPoint.x;
     }
 
     return retPoint;
