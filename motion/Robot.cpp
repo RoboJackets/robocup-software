@@ -29,7 +29,9 @@ Robot::Robot(ConfigFile::RobotCfg cfg):
     _posController = new LinearController(cfg.posCntrlr.Kp, cfg.posCntrlr.Kd, cfg.maxRobotVel);
     _deadband = cfg.posCntrlr.deadband;
 
-    rotationMatrix = new TransformMatrix();
+    rotationMatrix = new TransformMatrix();\
+
+    _pathPlanner = new PathPlanner();
 }
 
 Robot::~Robot()
@@ -37,51 +39,52 @@ Robot::~Robot()
     delete[] _motors;
 }
 
-void Robot::setSystemState(SystemState* state)
-{
-    _state = state;
-}
-
 void Robot::proc()
 {
     if(_state->self[_id].valid)
     {
-        float currAngle = _state->self[_id].angle;
-        Geometry::Point2d currPos = _state->self[_id].pos;
-        Geometry::Point2d currVel =_state->self[_id].vel;
-        Geometry::Point2d desiredVel(0,0);
-        if(!(_state->self[_id].cmdPos == desiredPos))
-        {
-            desiredPos = _state->self[_id].cmdPos;
-        }
+        Geometry::Point2d goalPos = _state->self[_id].cmdPos;
 
-        Geometry::Point2d error = desiredPos - currPos;
-        VelocityCmd velCmd;
+        _waypoints.clear();
+        _pathPlanner->setState(_state);
+        _waypoints = _pathPlanner->plan(goalPos);
+        genVelocity();
+    }
+}
 
-        velCmd.vel = _posController->run(error,desiredVel);
-        velCmd.w = 0;
+void Robot::genVelocity()
+{
+    float currAngle = _state->self[_id].angle;
+    Geometry::Point2d currPos = _state->self[_id].pos;
+    Geometry::Point2d currVel =_state->self[_id].vel;
+    Geometry::Point2d desiredVel(0,0);
+
+    //FIXME Change so that trajectoryGen gives the position to goto
+    Geometry::Point2d error = _state->self[_id].cmdPos - currPos;
+    VelocityCmd velCmd;
+
+    velCmd.vel = _posController->run(error,desiredVel);
+    velCmd.w = 0;
 //         printf("Curr Pos x %f y %f\n", currPos.x, currPos.y);
 //         printf("Desired pos x %f y %f\n", desiredPos.x, desiredPos.y);
 //         printf("Error x %f y %f \n", error.x, error.y);
 //         printf("Velocity in Team Space x %f y %f \n", velCmd.vel.x, velCmd.vel.y);
 
-        //Deadband
-        if(error.mag() < _deadband.mag())
-        {
-            velCmd.vel = Point2d(0,0);
-        }
+    //Deadband
+    if(error.mag() < _deadband.mag())
+    {
+        velCmd.vel = Point2d(0,0);
+    }
 
-        //Rotate the velocity command from the team frame to the robot frame
-        //The angle also needs to be converted
-        rotationMatrix = new TransformMatrix(Point2d(0,0),(currAngle - 90.0), false, 1.0);
-        velCmd.vel = rotationMatrix->transformDirection(velCmd.vel);
+    //Rotate the velocity command from the team frame to the robot frame
+    //The angle also needs to be converted
+    rotationMatrix = new TransformMatrix(Point2d(0,0),(currAngle - 90.0), false, 1.0);
+    velCmd.vel = rotationMatrix->transformDirection(velCmd.vel);
 
 //         printf("Velocity in Robot Space x %f y %f \n", velCmd.vel.x, velCmd.vel.y);
 
-        genMotor(velCmd);
-    }
+    genMotor(velCmd);
 }
-
 
 void Robot::genMotor(VelocityCmd velCmd)
 {
@@ -139,6 +142,3 @@ void Robot::genMotor(VelocityCmd velCmd)
     _state->radioCmd.robots[_id].valid = true;
 }
 
-void Robot::clearPid()
-{
-}

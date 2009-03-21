@@ -24,6 +24,7 @@ set (SRCS
     Robot.cpp
     Pid.cpp
     main.cpp
+    PathPlanner.cpp
 )
 
 add_library (motion ${SRCS} ${MOC_SRCS})

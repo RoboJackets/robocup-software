@@ -8,6 +8,7 @@
 #include "Pid.hpp"
 #include "framework/Module.hpp"
 #include "LinearController.hpp"
+#include "PathPlanner.hpp"
 
 class Robot
 {
@@ -30,10 +31,18 @@ class Robot
         Robot(ConfigFile::RobotCfg cfg);
         ~Robot();
 
-        void setSystemState(SystemState* state);
+        void setSystemState(SystemState* state)
+        { _state = state; }
+
 
         /** Process the command for a robot and prepare output */
         void proc();
+
+        /** Given a position generate a robot velocity **/
+        void genVelocity();
+
+        /** given a created robot velocity, generate motor speeds */
+        void genMotor(VelocityCmd velCmd);
 
         /** clear PID windup */
         void clearPid();
@@ -48,17 +57,12 @@ class Robot
         }
                 */
     private:
-        /** given a created robot velocity, generate motor speeds */
-        void genMotor(VelocityCmd velCmd);
 
         /** robot identification */
         const unsigned int _id;
 
         /** motor values **/
         float* _motors;
-
-        /** Controlller gains **/
-        float _Kp, _Kv;
 
         /** Mechanical data from configfile **/
         float _maxAccel, _maxWheelVel;
@@ -69,9 +73,7 @@ class Robot
         /** SystemState **/
         SystemState* _state;
 
-                /*
         PathPlanner* _pathPlanner;
-                */
 
         /** robot axels */
         QVector<Geometry::Point2d> _axels;
@@ -88,7 +90,8 @@ class Robot
         /** DeadBand - needs to go in config file **/
         Geometry::Point2d _deadband;
 
-        Geometry::Point2d desiredPos;
+        /** Waypoints from pathplanner **/
+        std::vector<Geometry::Point2d> _waypoints;
     };
 
 
