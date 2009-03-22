@@ -12,27 +12,30 @@ class PathPlanner
             Geometry::Point2d center;
         }Obstacle;
 
+        typedef struct
+        {
+            int length;
+            std::vector<Geometry::Point2d> waypoints;
+        }Path;
+
     public:
         PathPlanner();
         ~PathPlanner();
 
-        std::vector<Geometry::Point2d> plan(Geometry::Point2d goal);
+        Path plan(Geometry::Point2d currPos, Geometry::Point2d goal);
         void genObstacles();
         void aStar();
 
         void setAvoidOppSide(bool avoid)
-        { avoidOppSide = avoid; }
+        { _avoidOppSide = avoid; }
 
         void setState(SystemState *state)
         { _state = state; }
 
     private:
-        bool avoidOppSide;
+        bool _avoidOppSide;
         std::vector<PathPlanner::Obstacle> _obstacles;
 
         SystemState *_state;
-
-
-
 };
 #endif

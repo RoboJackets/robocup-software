@@ -37,3 +37,13 @@ Geometry::Point2d LinearController::run(Geometry::Point2d err, Geometry::Point2d
 
     return output;
 }
+
+void LinearController::setKp(double kp)
+{
+    _kp = (float) kp;
+}
+
+void LinearController::setKd(double kd)
+{
+    _kd = (float) kd;
+}

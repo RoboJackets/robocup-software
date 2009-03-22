@@ -15,7 +15,7 @@ include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
 include_directories(${PROJECT_BINARY_DIR})
 
 qt4_wrap_cpp ( MOC_SRCS
-
+    Controller.hpp
 )
 
 set (SRCS

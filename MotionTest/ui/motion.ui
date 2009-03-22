@@ -39,7 +39,7 @@
      <string>Stop</string>
     </property>
    </widget>
-   <widget class="QLabel" name="kP" >
+   <widget class="QLabel" name="kpLabel" >
     <property name="geometry" >
      <rect>
       <x>878</x>
@@ -52,7 +52,7 @@
      <string>K_p</string>
     </property>
    </widget>
-   <widget class="QSpinBox" name="K_p" >
+   <widget class="QDoubleSpinBox" name="kp" >
     <property name="geometry" >
      <rect>
       <x>916</x>
@@ -68,7 +68,7 @@
      <number>1</number>
     </property>
    </widget>
-   <widget class="QLabel" name="kI" >
+   <widget class="QLabel" name="kdLabel" >
     <property name="geometry" >
      <rect>
       <x>878</x>
@@ -78,10 +78,10 @@
      </rect>
     </property>
     <property name="text" >
-     <string>K_f</string>
+     <string>K_d</string>
     </property>
    </widget>
-   <widget class="QSpinBox" name="K_f" >
+   <widget class="QDoubleSpinBox" name="kd" >
     <property name="geometry" >
      <rect>
       <x>918</x>
@@ -94,7 +94,7 @@
      <number>500</number>
     </property>
    </widget>
-   <widget class="QPushButton" name="apply" >
+   <widget class="QPushButton" name="saveGains" >
     <property name="geometry" >
      <rect>
       <x>880</x>
@@ -104,7 +104,7 @@
      </rect>
     </property>
     <property name="text" >
-     <string>Apply</string>
+     <string>Save</string>
     </property>
    </widget>
    <widget class="QPushButton" name="close" >

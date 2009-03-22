@@ -8,18 +8,21 @@ PathPlanner::~PathPlanner()
 {
 }
 
-std::vector<Geometry::Point2d> PathPlanner::plan(Geometry::Point2d goal)
+PathPlanner::Path PathPlanner::plan(Geometry::Point2d currPos, Geometry::Point2d goal)
 {
     std::vector<Geometry::Point2d> waypoints;
-
+    Path p;
     if(!_obstacles.empty())
     {
     }
     else
     {
         waypoints[0] = goal;
+        p.length =  currPos.distTo(goal);
     }
-    return waypoints;
+
+    p.waypoints = waypoints;
+    return p;
 }
 
 void PathPlanner::genObstacles()

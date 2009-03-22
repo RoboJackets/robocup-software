@@ -47,6 +47,8 @@ class Robot
         /** clear PID windup */
         void clearPid();
 
+        void setKp(double value);
+        void setKd(double value);
                 /*
         PathPlanner* pathPlanner() const { return _pathPlanner; }
 
@@ -90,8 +92,11 @@ class Robot
         /** DeadBand - needs to go in config file **/
         Geometry::Point2d _deadband;
 
-        /** Waypoints from pathplanner **/
-        std::vector<Geometry::Point2d> _waypoints;
+        /** Path from pathplanner **/
+        PathPlanner::Path _path;
+
+        Geometry::Point2d _currPos;
+        Geometry::Point2d _goalPos;
     };
 
 

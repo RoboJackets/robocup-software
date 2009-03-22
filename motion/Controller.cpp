@@ -23,13 +23,35 @@ Controller::Controller(QString filename) :
 
 Controller::~Controller()
 {
-    for (unsigned int i=0 ; i<5 ; i++)
+    for (unsigned int i=0; i<5; i++)
     {
         delete _robots[i];
         _robots[i] = 0;
     }
 }
 
+void Controller::setKpGains(double value)
+{
+    _config.setElement("linearController,kp",value);
+    for(unsigned int i=0; i<5; i++)
+    {
+        _robots[i]->setKp(value);
+    }
+}
+
+void Controller::setKdGains(double value)
+{
+    _config.setElement("linearController,kd",value);
+    for(unsigned int i=0; i<5; i++)
+    {
+        _robots[i]->setKd(value);
+    }
+}
+
+void Controller::saveGains()
+{
+    _config.save();
+}
 void Controller::run()
 {
     for(unsigned int i=0; i<5; i++)

@@ -40,6 +40,9 @@ class MainWindow : public QMainWindow, Ui::MainWindow
         void on_closePath_clicked();
         void on_arc_clicked();
         void on_close_clicked();
+        void on_kp_valueChanged(double value);
+        void on_kd_valueChanged(double value);
+        void on_saveGains_clicked();
         void setupModules();
 
     Q_SIGNALS:
@@ -47,6 +50,10 @@ class MainWindow : public QMainWindow, Ui::MainWindow
         void stopTrajectoryGen();
         void setPaths(QVector<RobotPath::Path> paths);
         void setPixelFieldSize(Geometry::Point2d size);
+        void kpChanged(double kp);
+        void kdChanged(double kd);
+        //TODO This isn't right. I need to load the config file here so that mainwindow can access it
+        void saveGains();
 
     private:
         Ui::MainWindow ui;

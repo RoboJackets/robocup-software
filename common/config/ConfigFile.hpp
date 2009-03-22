@@ -4,6 +4,7 @@
 #include <QString>
 #include <QDomDocument>
 #include <QVector>
+#include <QStringList>
 
 #include <stdexcept>
 
@@ -35,10 +36,10 @@ class ConfigFile
         ~ConfigFile();
 
         void load() throw(std::runtime_error);
-        void save();
-
+        void save(QString filename = QString("")) throw (std::runtime_error);
+        void setElement(QString tagString,int value);
+        void setElement(QString tagString,double value);
         RobotCfg robotConfig(const unsigned int id);
-
         const QVector<Geometry::Point2d> axels() const { return _axels; }
 
     protected:

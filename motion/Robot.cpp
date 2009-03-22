@@ -39,15 +39,27 @@ Robot::~Robot()
     delete[] _motors;
 }
 
+void Robot::setKp(double value)
+{
+    _posController->setKp(value);
+}
+
+void Robot::setKd(double value)
+{
+    _posController->setKd(value);
+}
+
 void Robot::proc()
 {
     if(_state->self[_id].valid)
     {
-        Geometry::Point2d goalPos = _state->self[_id].cmdPos;
+        _goalPos = _state->self[_id].cmdPos;
+        _currPos = _state->self[_id].pos;
 
-        _waypoints.clear();
+        _path.waypoints.clear();
         _pathPlanner->setState(_state);
-        _waypoints = _pathPlanner->plan(goalPos);
+        _path = _pathPlanner->plan(_currPos, _goalPos);
+
         genVelocity();
     }
 }

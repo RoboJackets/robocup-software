@@ -58,14 +58,15 @@ void MainWindow::setupModules()
     Modeling::WorldModel* wm = new Modeling::WorldModel(_configFile);
 
     Motion::Controller* motion = new Motion::Controller(_configFile);
+    connect(this, SIGNAL(kpChanged(double)), motion, SLOT(setKpGains(double)), Qt::QueuedConnection);
+    connect(this, SIGNAL(kdChanged(double)), motion, SLOT(setKdGains(double)), Qt::QueuedConnection);
+    connect(this, SIGNAL(saveGains()), motion, SLOT(saveGains()), Qt::QueuedConnection);
 
     Trajectory::TrajectoryGen* trajGen = new Trajectory::TrajectoryGen();
-
     connect(this, SIGNAL(runTrajectoryGen()), trajGen, SLOT(runModule()), Qt::QueuedConnection);
     connect(this, SIGNAL(stopTrajectoryGen()), trajGen, SLOT(stopModule()), Qt::QueuedConnection);
     connect(this, SIGNAL(setPaths(QVector<RobotPath::Path>)), trajGen, SLOT(setPaths(QVector<RobotPath::Path>)), Qt::QueuedConnection);
     connect(this, SIGNAL(setPixelFieldSize(Geometry::Point2d)), trajGen, SLOT(pixelFieldSize(Geometry::Point2d)), Qt::QueuedConnection);
-    setPixelFieldSize(Point2d((float)_rp->width(),(float)_rp->height()));
 
     Log::LogModule* lm = new Log::LogModule();
     lm->setLogFile(_logFile);
@@ -128,4 +129,19 @@ void MainWindow::on_stop_clicked()
 void MainWindow::on_close_clicked()
 {
     this->QWidget::close();
+}
+
+void MainWindow::on_kp_valueChanged(double value)
+{
+    kpChanged(value);
+}
+
+void MainWindow::on_kd_valueChanged(double value)
+{
+    kdChanged(value);
+}
+
+void MainWindow::on_saveGains_clicked()
+{
+    saveGains();
 }

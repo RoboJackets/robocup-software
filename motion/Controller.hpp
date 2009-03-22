@@ -1,6 +1,7 @@
 #ifndef CONTROLLER_HPP_
 #define CONTROLLER_HPP_
 
+#include <QObject>
 #include <QString>
 #include <framework/Module.hpp>
 #include <RadioTx.hpp>
@@ -10,8 +11,9 @@
 
 namespace Motion
 {
-    class Controller : public Module
+    class Controller : public QObject, public Module
     {
+        Q_OBJECT;
 
         public:
             Controller(QString filename);
@@ -19,6 +21,11 @@ namespace Motion
 
             virtual void run();
 
+        public Q_SLOTS:
+            void setKpGains(double value);
+            void setKdGains(double value);
+            //TODO This isn't right. I need to load the config file here so that mainwindow can access it
+            void saveGains();
 
         private:
                 /** Robots **/

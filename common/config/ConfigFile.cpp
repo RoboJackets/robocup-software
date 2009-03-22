@@ -60,9 +60,23 @@ void ConfigFile::load() throw (std::runtime_error)
     }
 }
 
-void ConfigFile::save()
+void ConfigFile::save(QString filename) throw (std::runtime_error)
 {
+    QFile configFile(_filename);
+    if(!(filename == QString("")))
+    {
+        QFile configFile(filename);
+    }
 
+    if (!configFile.open(QIODevice::WriteOnly))
+    {
+        throw std::runtime_error("Unable to open config file.");
+    }
+    else
+    {
+        configFile.write(_doc.toByteArray());
+    }
+    configFile.close();
 }
 
 void ConfigFile::procLinearController(QDomElement element)
@@ -151,6 +165,44 @@ void ConfigFile::procRobotData(QDomElement element)
         _maxRobotVel = valueFloat(eElem.attributeNode("value"));
     }
 
+}
+
+
+void ConfigFile::setElement(QString tagString,int value)
+{
+    QStringList tagNamesList = tagString.split(",");
+
+    //Initialize element to the document root
+    QDomElement element = _doc.documentElement();
+
+    QStringList::const_iterator i;
+    for (i = tagNamesList.constBegin(); i != tagNamesList.constEnd(); ++i)
+    {
+        QDomNodeList elemList = element.elementsByTagName(*i);
+        element = elemList.at(0).toElement();
+    }
+
+    element.setAttribute("value",value);
+
+}
+
+void ConfigFile::setElement(QString tagString,double value)
+{
+    QStringList tagNamesList = tagString.split(",");
+
+    //Initialize element to the document root
+    QDomElement element = _doc.documentElement();
+
+    QStringList::const_iterator i;
+    for (i = tagNamesList.constBegin(); i != tagNamesList.constEnd(); ++i)
+    {
+        QDomNodeList elemList = element.elementsByTagName(*i);
+        element = elemList.at(0).toElement();
+    }
+
+    element.setAttribute("value",value);
+//     float testFloat = valueFloat(element.attributeNode("value"));
+//     printf("The element was set to %f\n", testFloat);
 }
 
 float ConfigFile::valueFloat(QDomAttr attr)

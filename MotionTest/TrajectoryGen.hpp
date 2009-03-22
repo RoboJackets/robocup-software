@@ -4,7 +4,6 @@
 #include <Geometry/Point2d.hpp>
 #include <QVector>
 #include <QPointF>
-#include <QMutex>
 
 #include "framework/Module.hpp"
 #include "RobotPath.hpp"
@@ -49,8 +48,6 @@ namespace Trajectory
         QVector<Geometry::Point2d>::iterator _currWaypoint;
         QVector<Geometry::Point2d>::iterator _nextWaypoint;
         bool _running;
-
-        QMutex _waypointMutex;
     };
 }
 #endif

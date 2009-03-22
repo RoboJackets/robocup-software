@@ -10,6 +10,8 @@ class LinearController
         ~LinearController();
 
         Geometry::Point2d run(Geometry::Point2d err, Geometry::Point2d velocity);
+        void setKp(double kp);
+        void setKd(double kd);
 
         float _kp, _kd, _maxVelocity;
 
