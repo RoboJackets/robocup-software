@@ -20,7 +20,7 @@ const char *feature_name(dc1394feature_t feature)
 		case DC1394_FEATURE_BRIGHTNESS:
 			return "Brightness";
 		case DC1394_FEATURE_EXPOSURE:
-			return "Brightness";
+			return "Exposure";
 		case DC1394_FEATURE_SHARPNESS:
 			return "Sharpness";
 		case DC1394_FEATURE_WHITE_BALANCE:
@@ -87,7 +87,7 @@ DCam_Feature::DCam_Feature(dc1394camera_t *camera, dc1394feature_info_t *info,
 		auto_check->setEnabled(false);
 	}
 #endif
-	
+
 	dc1394feature_mode_t mode;
 	dc1394_feature_get_mode(_camera, _feature, &mode);
 	if (mode == DC1394_FEATURE_MODE_AUTO)
@@ -134,7 +134,9 @@ DCam_Feature::DCam_Feature(dc1394camera_t *camera, dc1394feature_info_t *info,
 		slider[0]->setSliderPosition(info->value);
 
 		if (_feature == DC1394_FEATURE_SHUTTER)
+        {
 			slider[0]->setMaximum(255);
+        }
 
 		pos_label[0] = new QLabel(QString::number(info->value), parent);
 		pos_label[0]->setMinimumSize(30, 10);
@@ -181,7 +183,6 @@ void DCam_Feature::slider0_changed(int value)
 void DCam_Feature::slider1_changed(int value)
 {
 	pos_label[1]->setText(QString::number(value));
-	
 	
 	// This is only called for white balance
 	dc1394_feature_whitebalance_set_value(_camera, slider[0]->sliderPosition(),
@@ -291,7 +292,7 @@ void DCam_Config::load(QDomElement element)
 			dc1394_feature_set_value(_camera, feature, value);
 		}
 	}
-	
+
 	update_values();
 }
 

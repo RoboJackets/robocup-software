@@ -133,12 +133,13 @@ const Image *DCam::read_frame()
 	
 	try
 	{
+        dc1394video_frame_t* _frame = 0;
 		dc1394_capture_dequeue(_camera, DC1394_CAPTURE_POLICY_WAIT, &_frame);
         
         if (_frame)
         {
         	QMutexLocker ml(&_camera_thread->mutex);
-    		dc1394_bayer_decoding_8bit(_frame->image, (uint8_t *)_image.data(), _image.width(), _image.height(), DC1394_COLOR_FILTER_GRBG, DC1394_BAYER_METHOD_EDGESENSE);
+            dc1394_bayer_decoding_8bit(_frame->image, (uint8_t *)_image.data(), _image.width(), _image.height(), DC1394_COLOR_FILTER_GRBG, DC1394_BAYER_METHOD_SIMPLE);
         } else {
             printf("no frame\n");
             return 0;

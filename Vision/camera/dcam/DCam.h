@@ -63,7 +63,6 @@ namespace Camera
 
             // Instance variables
 		dc1394camera_t* _camera;
-		dc1394video_frame_t* _frame;
 
             bool _initialized;
             Image _image;
