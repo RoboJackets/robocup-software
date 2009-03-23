@@ -93,10 +93,14 @@ add_executable(${PROJECT} ${SRCS} ${UIHS} ${RC_SRCS})
 find_package(PkgConfig REQUIRED)
 pkg_search_module(LIBAVFORMAT REQUIRED libavformat)
 include_directories(${LIBAVFORMAT_INCLUDE_DIRS})
+include_directories("/usr/include/libavformat")
+include_directories("/usr/include/libavcodec")
 link_directories(${LIBAVFORMAT_LIBRARY_DIRS})
 
 find_package(GLUT REQUIRED)
 include_directories(${GLUT_INCLUDE_DIR})
+
+include_directories("/usr/include/libswscale")
 
 target_link_libraries(${PROJECT} ${QT_LIBRARIES})
 target_link_libraries(${PROJECT} ${GLUT_LIBRARIES})
