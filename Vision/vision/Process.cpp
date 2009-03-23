@@ -83,17 +83,14 @@ void Process::proc(const Image* img)
 	for (std::list<Group*>::iterator iter = balls.begin() ; iter != balls.end() ; ++iter)
 	{
 		Group* g = *iter;
-		//data.balls.push_back(VisionData::Ball(g->center.x, g->center.y));
 		Packet::Vision::Ball ball;
 		ball.pos.x = g->center.x;
 		ball.pos.y = g->center.y;
-		_visionPacket.balls.push_back(ball);
 		
-		//printf("%f %f\n", ball.pos.x, ball.pos.y);
+		_visionPacket.balls.push_back(ball);
 	}
 	
 	blueId->run();
-	
 	const std::vector<Identifier::Robot>& blue = blueId->robots();
 	for (unsigned int i=0 ; i<blue.size() ; ++i)
 	{
@@ -104,15 +101,22 @@ void Process::proc(const Image* img)
 		rb.angle = r.angle;
 		rb.pos = Geometry::Point2d(r.x,r.y);
 		
-		if (i==1)
-		{
-			//printf("%f %f %f\n", rb.pos.x, rb.pos.y, rb.angle);
-		}
-		
 		_visionPacket.blue.push_back(rb);
 	}
 	
-	//printf("blue count: %d\n", _visionPacket.blue.size());
+	yellowId->run();
+	const std::vector<Identifier::Robot>& yellow = yellowId->robots();
+	for (unsigned int i=0 ; i<yellow.size() ; ++i)
+	{
+		const Identifier::Robot& r = yellow[i];
+		
+		Packet::Vision::Robot rb;
+		rb.shell = r.id;
+		rb.angle = r.angle;
+		rb.pos = Geometry::Point2d(r.x,r.y);
+		
+		_visionPacket.yellow.push_back(rb);
+	}
 	
 	_visionPacket.timestamp = timestamp();
 	_visionPacket.camera = _procID;

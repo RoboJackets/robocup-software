@@ -46,6 +46,7 @@ namespace Vision
 			Transform *robot_transform;
 
 		private:
+			//create a vision timestamp
 			uint64_t timestamp() const;
 
 		private:
