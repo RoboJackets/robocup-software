@@ -6,16 +6,16 @@
 	
 	<shells>
 		<shell id="0">
-			<color value="green" />
-			<color value="green" />
-			<color value="green" />
-			<color value="green" />
+			<color value="pink" />
+			<color value="pink" />
+			<color value="pink" />
+			<color value="pink" />
 		</shell>
 		<shell id="1">
-			<color value="pink" />
-			<color value="pink" />
-			<color value="pink" />
-			<color value="pink" />
+			<color value="green" />
+			<color value="green" />
+			<color value="green" />
+			<color value="green" />
 		</shell>
 		<shell id="2">
 			<color value="pink" />
@@ -35,11 +35,24 @@
 			<color value="green" />
 			<color value="pink" />
 		</shell>
-		<shell id="4">
+		<shell id="5">
 			<color value="green" />
 			<color value="pink" />
 			<color value="green" />
 			<color value="pink" />
 		</shell>
+		<shell id="6">
+			<color value="green" />
+			<color value="pink" />
+			<color value="pink" />
+			<color value="pink" />
+		</shell>
+		<shell id="7">
+			<color value="green" />
+			<color value="green" />
+			<color value="pink" />
+			<color value="green" />
+		</shell>
+	</shells>
 	</shells>
 </ident>

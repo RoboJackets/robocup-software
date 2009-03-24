@@ -5,6 +5,8 @@
 #include "Distortion.h"
 #include "identification/Vector_ID.h"
 
+#include <Network/Network.hpp>
+
 #include <sys/time.h>
 #include <QMutexLocker>
 #include <boost/foreach.hpp>
@@ -16,7 +18,7 @@ using namespace Vision;
 unsigned int Process::_nextID = 0;
 
 Process::Process() :
-	_sender("226.0.0.1", 1337), _procID(_nextID++)
+	_sender("226.0.0.1", Network::Vision), _procID(_nextID++)
 {
 	distortion = new Distortion();
 	ball_transform = new Transform();
@@ -38,6 +40,7 @@ Process::Process() :
     }
 
     blueId = Identifier::load("../config/teams/RoboJackets.xml", this, Blue);
+    yellowId = Identifier::load("../config/teams/RoboJackets.xml", this, Yellow);
     //blue_id = new Offset3_ID(this, Blue, Vector_ID::Strive);
     //yellow_id = new Vector_ID(this, Yellow, Vector_ID::CMU);
     //yellow_id = new Offset3_ID(this, Yellow, Offset3_ID::ZJUNlict);
@@ -65,6 +68,16 @@ float Process::robot_radius() const
 //data is assumed to be cleaned before this method
 void Process::proc(const Image* img)
 {
+    // Send a sync packet before processing
+    _visionPacket = Packet::Vision();
+    _visionPacket.timestamp = timestamp();
+    _visionPacket.sync = true;
+    _visionPacket.camera = _procID;
+    _sender.send(_visionPacket);
+
+    _visionPacket.sync = false;
+
+    distortion->frame_size(img->width(), img->height());
 	colorseg->run(img);
 	
 	//array of group lists from each spanner
@@ -76,8 +89,6 @@ void Process::proc(const Image* img)
 		spanner[i]->run();
 		groups[i] = spanner[i]->groups();
 	}
-	
-	_visionPacket = Packet::Vision();
 	
 	std::list<Group*> balls = groups[Orange];
 	for (std::list<Group*>::iterator iter = balls.begin() ; iter != balls.end() ; ++iter)
@@ -119,7 +130,6 @@ void Process::proc(const Image* img)
 	}
 	
 	_visionPacket.timestamp = timestamp();
-	_visionPacket.camera = _procID;
 	
 	_sender.send(_visionPacket);
 }

@@ -58,6 +58,9 @@ void WorldModel::run()
 			//index is the id
 			BOOST_FOREACH (const Packet::Vision::Robot& r, *self)
 			{
+                printf("shell %d\n", r.shell);
+                //FIXME - getting shell 255
+                if (r.shell > 5) continue;
 				//get data from vision packet
 				_self[r.shell]._shell = r.shell;
 				_self[r.shell]._measPos = r.pos;
@@ -84,6 +87,8 @@ void WorldModel::run()
 			BOOST_FOREACH (const Packet::Vision::Robot& r, *opp)
 			{
 				//get data from vision packet
+                //FIXME - getting shell 255
+                if (r.shell > 5) continue;
 				_opp[r.shell]._shell = r.shell;
 				_opp[r.shell]._measPos = r.pos;
 				_opp[r.shell]._measAngle = r.angle;

@@ -154,10 +154,10 @@ int main(int argc, char* argv[])
             
             if (robot.valid)
             {
-                m0 = robot.motors[0];
-                m1 = robot.motors[1];
-                m2 = robot.motors[2];
-                m3 = robot.motors[3];
+                m2 = robot.motors[0];
+                m3 = robot.motors[1];
+                m0 = robot.motors[2];
+                m1 = robot.motors[3];
                 kick = robot.kick;
                 roller = robot.roller;
             } else {
@@ -184,6 +184,12 @@ int main(int argc, char* argv[])
             forward_packet[1] = kick_id;
             forward_packet[2] = kick_strength;
         }
+        
+        for (unsigned int i = 0; i < Forward_Size; ++i)
+        {
+            printf("%02x ", forward_packet[i]);
+        }
+        printf("\n");
         
         // Send the forward packet
         radio->write_packet(forward_packet, Forward_Size);

@@ -64,7 +64,7 @@ void DCam::open()
 {
 	if (!_initialized && _camera)
 	{
-        if (dc1394_video_set_framerate(_camera, DC1394_FRAMERATE_60))
+        if (dc1394_video_set_framerate(_camera, DC1394_FRAMERATE_30))
         {
             throw runtime_error("Unable to set framerate.");
         }
@@ -139,7 +139,7 @@ const Image *DCam::read_frame()
         if (_frame)
         {
         	QMutexLocker ml(&_camera_thread->mutex);
-            dc1394_bayer_decoding_8bit(_frame->image, (uint8_t *)_image.data(), _image.width(), _image.height(), DC1394_COLOR_FILTER_GRBG, DC1394_BAYER_METHOD_SIMPLE);
+            dc1394_bayer_decoding_8bit(_frame->image, (uint8_t *)_image.data(), _image.width(), _image.height(), DC1394_COLOR_FILTER_GRBG, DC1394_BAYER_METHOD_BILINEAR);
         } else {
             printf("no frame\n");
             return 0;
