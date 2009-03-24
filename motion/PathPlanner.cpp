@@ -17,7 +17,7 @@ PathPlanner::Path PathPlanner::plan(Geometry::Point2d currPos, Geometry::Point2d
     }
     else
     {
-        waypoints[0] = goal;
+        waypoints.pushBack(goal);
         p.length =  currPos.distTo(goal);
     }
 

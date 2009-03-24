@@ -56,7 +56,11 @@ void Robot::proc()
         _goalPos = _state->self[_id].cmdPos;
         _currPos = _state->self[_id].pos;
 
-        _path.waypoints.clear();
+        if(!_path.waypoints.empty())
+        {
+            _path.waypoints.clear();
+        }
+
         _pathPlanner->setState(_state);
         _path = _pathPlanner->plan(_currPos, _goalPos);
 
