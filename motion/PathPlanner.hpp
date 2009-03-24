@@ -2,6 +2,7 @@
 #define _PATH_PLANNER_
 
 #include <Geometry/Point2d.hpp>
+#include <QVector>
 #include "framework/SystemState.hpp"
 
 class PathPlanner
@@ -15,7 +16,7 @@ class PathPlanner
         typedef struct
         {
             int length;
-            std::vector<Geometry::Point2d> waypoints;
+            QVector<Geometry::Point2d> waypoints;
         }Path;
 
     public:

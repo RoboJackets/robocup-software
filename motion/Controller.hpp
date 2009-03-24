@@ -25,7 +25,7 @@ namespace Motion
             void setKpGains(double value);
             void setKdGains(double value);
             //TODO This isn't right. I need to load the config file here so that mainwindow can access it
-            void saveGains();
+            void saveGains(QString filename);
 
         private:
                 /** Robots **/

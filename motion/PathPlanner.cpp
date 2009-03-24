@@ -10,14 +10,14 @@ PathPlanner::~PathPlanner()
 
 PathPlanner::Path PathPlanner::plan(Geometry::Point2d currPos, Geometry::Point2d goal)
 {
-    std::vector<Geometry::Point2d> waypoints;
+    QVector<Geometry::Point2d> waypoints;
     Path p;
     if(!_obstacles.empty())
     {
     }
     else
     {
-        waypoints.pushBack(goal);
+        waypoints.push_back(goal);
         p.length =  currPos.distTo(goal);
     }
 

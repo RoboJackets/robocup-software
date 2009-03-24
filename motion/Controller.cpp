@@ -48,9 +48,9 @@ void Controller::setKdGains(double value)
     }
 }
 
-void Controller::saveGains()
+void Controller::saveGains(QString filename)
 {
-    _config.save();
+    _config.save(filename);
 }
 void Controller::run()
 {

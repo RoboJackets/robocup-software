@@ -3,7 +3,7 @@
 #include "motion/Controller.hpp"
 #include "modeling/WorldModel.hpp"
 #include "TrajectoryGen.hpp"
-
+#include <QFileDialog>
 #include <ui_motion.h>
 
 //TODO flicker is still an issue (though it only happens when you re-draw)
@@ -60,7 +60,7 @@ void MainWindow::setupModules()
     Motion::Controller* motion = new Motion::Controller(_configFile);
     connect(this, SIGNAL(kpChanged(double)), motion, SLOT(setKpGains(double)), Qt::QueuedConnection);
     connect(this, SIGNAL(kdChanged(double)), motion, SLOT(setKdGains(double)), Qt::QueuedConnection);
-    connect(this, SIGNAL(saveGains()), motion, SLOT(saveGains()), Qt::QueuedConnection);
+    connect(this, SIGNAL(saveGains(QString)), motion, SLOT(saveGains(QString)), Qt::QueuedConnection);
 
     Trajectory::TrajectoryGen* trajGen = new Trajectory::TrajectoryGen();
     connect(this, SIGNAL(runTrajectoryGen()), trajGen, SLOT(runModule()), Qt::QueuedConnection);
@@ -143,5 +143,8 @@ void MainWindow::on_kd_valueChanged(double value)
 
 void MainWindow::on_saveGains_clicked()
 {
-    saveGains();
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+                            "../config/",
+                            tr("XML files (*.xml)"));
+    saveGains(fileName);
 }

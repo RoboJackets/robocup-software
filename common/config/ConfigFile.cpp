@@ -77,6 +77,8 @@ void ConfigFile::save(QString filename) throw (std::runtime_error)
         configFile.write(_doc.toByteArray());
     }
     configFile.close();
+
+    qDebug() << "Wrote: " << filename;
 }
 
 void ConfigFile::procLinearController(QDomElement element)

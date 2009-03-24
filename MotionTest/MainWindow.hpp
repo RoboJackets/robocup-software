@@ -53,7 +53,7 @@ class MainWindow : public QMainWindow, Ui::MainWindow
         void kpChanged(double kp);
         void kdChanged(double kd);
         //TODO This isn't right. I need to load the config file here so that mainwindow can access it
-        void saveGains();
+        void saveGains(QString filename);
 
     private:
         Ui::MainWindow ui;
