@@ -242,10 +242,10 @@ void Env::radio(Team t, Packet::RadioTx& data)
 		if (r.valid)
 		{
 			Robot* robot = 0;
-			//need to get robot with given id (i)
+			//TODO need to get robot with given id (i)
 			if (t == Blue)
 			{
-				
+				robot = _blue.at(0);
 			}
 			else if (t == Yellow)
 			{
@@ -255,7 +255,7 @@ void Env::radio(Team t, Packet::RadioTx& data)
 			//if we found a robot to control
 			if (robot)
 			{
-				
+				robot->radio(r);
 			}
 		}
 	}

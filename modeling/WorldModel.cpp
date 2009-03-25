@@ -46,6 +46,8 @@ void WorldModel::run()
 	{
 		if (!vision.sync)
 		{
+			/** TODO need to know team info here ... */
+#if 0
 			const std::vector<Packet::Vision::Robot>* self = &vision.blue;
 			const std::vector<Packet::Vision::Robot>* opp = &vision.yellow;
 			
@@ -113,6 +115,7 @@ void WorldModel::run()
 				_state->ball.pos = vision.balls[0].pos;
                 _state->ball.valid = true;
 			}
+#endif
 		}
 	}
 }

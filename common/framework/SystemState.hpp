@@ -27,6 +27,13 @@ class SystemState: public Packet::LogFrame
 		
 		/** manual control robot id */
 		unsigned int rid;
+		
+		SystemState()
+		{
+			rid = 0;
+			controlState = Manual;
+			runState = Stopped;
+		}
 };
 
 #endif /* SYSTEMSTATE_HPP_ */

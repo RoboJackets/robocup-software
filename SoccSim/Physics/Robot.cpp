@@ -268,11 +268,6 @@ void Robot::initWheels()
 	}
 }
 
-void Robot::step()
-{	
-	
-}
-
 NxConvexMesh* Robot::cylinder(const float length, const float radius,
         const unsigned int sides)
 {

@@ -10,9 +10,7 @@ class Robot : public Entity
     public:
         Robot(NxScene& scene);
         ~Robot();
-
-		void step();
-		
+        
         /** @return the world angle */
         float getAngle() const;
         

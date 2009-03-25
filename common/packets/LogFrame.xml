@@ -50,9 +50,6 @@
 	<!-- Commands to the robots -->
 	<member type="RadioTx" name="radioCmd" />
 
-	<!-- Record team  - True if self is blue, false if self is yellow-->
-	<member type="bool" name="isBlue"/>
-
 	<!-- array of robots for the system, index is player id -->
 	<array size="5" type="Robot" name="self"/>
 	<array size="5" type="Robot" name="opp"/>
