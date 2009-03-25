@@ -41,7 +41,6 @@ class Processor: public QThread
 		void on_input_playPauseButton();
 		void on_input_manualAutoButton();
 		void on_input_changeRobot(int rid);
-			
 		
 	protected:
 		void run();

@@ -2,7 +2,6 @@
 #include "Processor.moc"
 
 #include <QMutexLocker>
-#include <boost/foreach.hpp>
 
 #include <Network/Network.hpp>
 #include <Network/Sender.hpp>
@@ -32,6 +31,7 @@ Processor::Processor(Team t) :
 	_trigger = false;
 	
 	//record team in state variable
+#if 0
 	if (_team == Blue)
 	{
 		_state.isBlue = true;
@@ -40,6 +40,7 @@ Processor::Processor(Team t) :
 	{
 		_state.isBlue = false;
 	}
+#endif
 	
 	_inputHandler.setObjectName("input");
 	_inputHandler.start();
@@ -68,42 +69,54 @@ void Processor::run()
 	while (_running)
 	{
 		//needs to be non-blocking...is it?
-        usleep(1000);
+		//always receive new data, even when not running for display purposes
 		receiver.receive();
 		
-		if (true)
+		if (_state.runState == SystemState::Running)
 		{
-			//auto
-		}
-		else
-		{
-			//manual
-		}
-		
-		if (_trigger)
-		{
-			_modulesMutex.lock();
-			
-			BOOST_FOREACH(Module* m, _modules) 
+			if (_state.controlState == SystemState::Manual)
 			{
-				m->run();
+				//manual control only
+				//TODO some modules need not run
+				//TODO throw away some incoming data?
+				
+				_state.radioCmd = Packet::RadioTx();
+				_state.radioCmd.robots[_state.rid] = _inputHandler.genRobotData();
+				
+				//log??
+				
+				sender.send(_state.radioCmd);
+				
+				//fixed time wait (simulate vision time)
+				QThread::msleep(33);
 			}
-
-			_modulesMutex.unlock();
-			
-			sender.send(_state.radioCmd);
-			
-            _state.rawVision.clear();
-			//clear system state info
-			//TODO should I clear system state?
-			//_state = SystemState();
-			
-			//wait for new trigger frame
-			_trigger = false;
+			else if (_state.controlState == SystemState::Auto)
+			{
+				//full autonomous control
+				if (_trigger)
+				{
+					_modulesMutex.lock();
+					
+					Q_FOREACH(Module* m, _modules) 
+					{
+						m->run();
+					}
+		
+					_modulesMutex.unlock();
+					
+					sender.send(_state.radioCmd);
+					
+					//clear system state info
+					//TODO should I clear system state?
+					//_state = SystemState();
+					
+					//wait for new trigger frame
+					_trigger = false;
+				}
+			}
 		}
 	}
 }
-
 void Processor::addModule(Module* module)
 {
 	QMutexLocker ml(&_modulesMutex);
@@ -236,15 +249,21 @@ void Processor::on_input_manualAutoButton()
 	{
 		case SystemState::Manual:
 			_state.controlState = SystemState::Auto;
+			printf ("Auto mode\n");
 			break;
 		case SystemState::Auto:
 		default:
 			_state.controlState = SystemState::Manual;
+			printf ("Manual mode\n");
 			break;
 	}
 }
 
 void Processor::on_input_changeRobot(int rid)
 {
-	_state.rid = rid;
+	if (_state.controlState == SystemState::Manual)
+	{
+		_state.rid = rid;
+		printf ("Controlling robot: %d\n", _state.rid);
+	}
 }

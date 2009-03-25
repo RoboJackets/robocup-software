@@ -56,7 +56,6 @@ Packet::RadioTx::Robot InputHandler::genRobotData()
 	//input is vx, vy in robot space
 	Point2d input(_controller->rX(), _controller->rY());
 	
-	
 	//if using DPad, this is the input value
 	uint8_t mVal = 10 + (int8_t) (abs(_controller->rY()));
 	
