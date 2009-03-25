@@ -13,6 +13,7 @@
 #include <QPointF>
 #include <ui_motion.h>
 #include <QString>
+#include <config/ConfigFile.hpp>
 
 class MainWindow : public QMainWindow, Ui::MainWindow
 {
@@ -21,9 +22,9 @@ class MainWindow : public QMainWindow, Ui::MainWindow
     public:
         enum
         {
-        DrawingMode,
-        RunMode,
-    };
+            DrawingMode,
+            RunMode,
+        };
 
     public:
         MainWindow(Team team, QString filename);
@@ -49,11 +50,8 @@ class MainWindow : public QMainWindow, Ui::MainWindow
         void runTrajectoryGen();
         void stopTrajectoryGen();
         void setPaths(QVector<RobotPath::Path> paths);
-        void setPixelFieldSize(Geometry::Point2d size);
         void kpChanged(double kp);
         void kdChanged(double kd);
-        //TODO This isn't right. I need to load the config file here so that mainwindow can access it
-        void saveGains(QString filename);
 
     private:
         Ui::MainWindow ui;
@@ -70,8 +68,12 @@ class MainWindow : public QMainWindow, Ui::MainWindow
         /** This controls the data flow from logger to visualizers **/
         Log::LogControl* _logControl;
 
-        /** Currently the configfile is for motion but others can add to it **/
+        /** Filename for the configfile  **/
         QString _configFile;
+
+        /** Currently the configfile is for motion but others can add to it **/
+        ConfigFile _config;
+
 };
 
 #endif // MAIN_WINDOW_HPP

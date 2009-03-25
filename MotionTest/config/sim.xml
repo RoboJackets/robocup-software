@@ -1,7 +1,7 @@
 <motion>
  <linearController name="pos" >
-  <kp value="1" />
-  <kd value="3" />
+  <kp value="60" />
+  <kd value="1" />
   <deadband x="0.01" y="0.01" />
  </linearController>
  <linearController name="angle" >

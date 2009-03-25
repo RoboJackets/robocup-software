@@ -16,7 +16,7 @@ namespace Motion
         Q_OBJECT;
 
         public:
-            Controller(QString filename);
+            Controller(ConfigFile::RobotCfg cfg, unsigned int id[]);
             ~Controller();
 
             virtual void run();
@@ -24,15 +24,10 @@ namespace Motion
         public Q_SLOTS:
             void setKpGains(double value);
             void setKdGains(double value);
-            //TODO This isn't right. I need to load the config file here so that mainwindow can access it
-            void saveGains(QString filename);
 
         private:
-                /** Robots **/
+            /** Robots **/
             Robot* _robots[5];
-
-                /** Config file from command line**/
-            ConfigFile _config;
     };
 }
 

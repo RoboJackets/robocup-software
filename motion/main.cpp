@@ -48,8 +48,5 @@ int main (int argc, char* argv[])
 		usage(argv[0]);
 		return 0;
 	}
-
-        Motion::Controller* motion = new Motion::Controller(cfgFile);
-        motion->run();
 	return 0;
 }

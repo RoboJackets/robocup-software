@@ -9,7 +9,7 @@
 //TODO flicker is still an issue (though it only happens when you re-draw)
 
 MainWindow::MainWindow(Team team, QString filename)
-    :QMainWindow(), _team(team), _processor(team), _logFile(0), _configFile(filename)
+    :QMainWindow(), _team(team), _processor(team), _logFile(0), _configFile(filename), _config(filename)
 {
     setupUi(this);
 
@@ -30,11 +30,23 @@ MainWindow::MainWindow(Team team, QString filename)
     _processor.start();
 
     _logFile = new Log::LogFile(Log::LogFile::genFilename());
+
+    try
+    {
+        _config.load();
+    }
+    catch (std::runtime_error& re)
+    {
+        printf("Config Load Error: %s\n", re.what());
+    }
+
+    kp->setValue(_config.robotConfig().posCntrlr.Kp);
+    kd->setValue(_config.robotConfig().posCntrlr.Kd);
+
     setupModules();
 
     _logControl->setLogFile(_logFile);
     connect(_logControl, SIGNAL(newFrame(Packet::LogFrame*)), _rp, SLOT(frame(Packet::LogFrame*)));
-
 }
 
 MainWindow::~MainWindow()
@@ -57,16 +69,20 @@ void MainWindow::setupModules()
 {
     Modeling::WorldModel* wm = new Modeling::WorldModel(_configFile);
 
-    Motion::Controller* motion = new Motion::Controller(_configFile);
+    //TODO Get this out from vision don't make assumptions!!!!!
+    unsigned int id[5];
+    for(int i = 0; i<5; i++)
+    {
+        id[i] = i;
+    }
+    Motion::Controller* motion = new Motion::Controller(_config.robotConfig(), id);
     connect(this, SIGNAL(kpChanged(double)), motion, SLOT(setKpGains(double)), Qt::QueuedConnection);
     connect(this, SIGNAL(kdChanged(double)), motion, SLOT(setKdGains(double)), Qt::QueuedConnection);
-    connect(this, SIGNAL(saveGains(QString)), motion, SLOT(saveGains(QString)), Qt::QueuedConnection);
 
     Trajectory::TrajectoryGen* trajGen = new Trajectory::TrajectoryGen();
     connect(this, SIGNAL(runTrajectoryGen()), trajGen, SLOT(runModule()), Qt::QueuedConnection);
     connect(this, SIGNAL(stopTrajectoryGen()), trajGen, SLOT(stopModule()), Qt::QueuedConnection);
     connect(this, SIGNAL(setPaths(QVector<RobotPath::Path>)), trajGen, SLOT(setPaths(QVector<RobotPath::Path>)), Qt::QueuedConnection);
-    connect(this, SIGNAL(setPixelFieldSize(Geometry::Point2d)), trajGen, SLOT(pixelFieldSize(Geometry::Point2d)), Qt::QueuedConnection);
 
     Log::LogModule* lm = new Log::LogModule();
     lm->setLogFile(_logFile);
@@ -134,17 +150,16 @@ void MainWindow::on_close_clicked()
 void MainWindow::on_kp_valueChanged(double value)
 {
     kpChanged(value);
+    _config.setElement("linearController,kp",value);
 }
 
 void MainWindow::on_kd_valueChanged(double value)
 {
     kdChanged(value);
+    _config.setElement("linearController,kd",value);
 }
 
 void MainWindow::on_saveGains_clicked()
 {
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
-                            "../config/",
-                            tr("XML files (*.xml)"));
-    saveGains(fileName);
+    _config.save(QFileDialog::getSaveFileName(this, tr("Save File"),"../config/",tr("XML files (*.xml)")));
 }

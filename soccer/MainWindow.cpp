@@ -8,7 +8,7 @@
 using namespace Log;
 
 MainWindow::MainWindow(Team t, QString filename) :
-        QMainWindow(), _team(t), _processor(t), _logFile(0), _configFile(filename)
+        QMainWindow(), _team(t), _processor(t), _logFile(0), _configFile(filename), _config(filename)
 {
 	QWidget* central = new QWidget();
 	this->setCentralWidget(central);
@@ -35,7 +35,16 @@ MainWindow::MainWindow(Team t, QString filename) :
 
 	_logFile = new LogFile(LogFile::genFilename());
 
-     setupModules();
+    try
+    {
+        _config.load();
+    }
+    catch (std::runtime_error& re)
+    {
+        printf("Config Load Error: %s\n", re.what());
+    }
+
+    setupModules();
 
 	_logControl->setLogFile(_logFile);
 	connect(_logControl, SIGNAL(newFrame(Packet::LogFrame*)), _fieldView, SLOT(frame(Packet::LogFrame*)));
@@ -64,7 +73,14 @@ MainWindow::~MainWindow()
 void MainWindow::setupModules()
 {
 	Modeling::WorldModel* wm = new Modeling::WorldModel(_configFile);
-	Motion::Controller* motion = new Motion::Controller(_configFile);
+
+    //TODO Get this out from vision don't make assumptions!!!!!
+    unsigned int id[5];
+    for(int i = 0; i<5; i++)
+    {
+        id[i] = i;
+    }
+    Motion::Controller* motion = new Motion::Controller(_config.robotConfig(), id);
 
 	Log::LogModule* lm = new Log::LogModule();
 	lm->setLogFile(_logFile);

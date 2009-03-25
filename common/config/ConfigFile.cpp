@@ -243,10 +243,10 @@ int ConfigFile::valueUInt(QDomAttr attr)
     }
 }
 
-ConfigFile::RobotCfg ConfigFile::robotConfig(const unsigned int id)
+ConfigFile::RobotCfg ConfigFile::robotConfig()
 {
     RobotCfg cfg;
-    cfg.id = id;
+    cfg.id = 0;
 
     cfg.posCntrlr = _pos;
     cfg.angleCntrlr = _angle;

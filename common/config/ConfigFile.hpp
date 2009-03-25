@@ -39,7 +39,7 @@ class ConfigFile
         void save(QString filename = QString("")) throw (std::runtime_error);
         void setElement(QString tagString,int value);
         void setElement(QString tagString,double value);
-        RobotCfg robotConfig(const unsigned int id);
+        RobotCfg robotConfig();
         const QVector<Geometry::Point2d> axels() const { return _axels; }
 
     protected:
