@@ -2,6 +2,13 @@
 	<struct typename="Vision" include_cpp="Vision.hpp" external_cpp="Packet::Vision" external_python="Packet.Vision" />
 	<struct typename="Point2d" include_cpp="Geometry/Point2d.hpp" external_cpp="Geometry::Point2d" external_python="Geometry.Point2d" />
 	<struct typename="RadioTx" include_cpp="RadioTx.hpp" external_cpp="Packet::RadioTx" external_python="Packet.RadioTx"/>
+    
+    <!-- see Team.h -->
+    <enum type="uint8" typename="Team" external_cpp="Team" include_cpp="Team.h">
+        <constant name="UnknownTeam" value="-1"/>
+        <constant name="Yellow" value="0"/>
+        <constant name="Blue" value="1"/>
+    </enum>
 
 	<!-- post process robot information -->
 	<struct typename="Robot">
@@ -43,6 +50,9 @@
 
 	<!-- unprocessed vision, in team space -->
 	<array type="Packet::Vision" name="rawVision" />
+    
+    <!-- team we are running as -->
+    <member type="Team" name="team" />
 
 	<!-- timestamp of the vision packet that clocked the system -->
 	<member type="uint64" name="timestamp" />

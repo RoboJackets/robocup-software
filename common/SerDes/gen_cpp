@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 
 import sys
 from xml.dom.minidom import *
@@ -95,6 +96,12 @@ def emitIncludes(node):
             have_includes = True
             write('#include <' + inc + '>')
         emitIncludes(child)
+    for child in ChildrenByName(node, 'enum'):
+        inc = child.getAttribute('include_cpp')
+        if inc != '':
+            have_includes = True
+            write('#include <' + inc + '>')
+        emitIncludes(child)
 
 emitIncludes(root)
 if have_includes:
@@ -147,44 +154,66 @@ def declareStruct(node):
     enumTypes = {}
     enumDefault = {}
     for child in ChildrenByName(node, 'enum'):
+        ext = child.getAttribute('external_cpp')
+        
         enumName = child.getAttribute('typename')
         dataType = child.getAttribute('type')
         if dataType == '':
             dataType = 'uint32'
         enumTypes[enumName] = dataType
         
-        write('typedef enum')
-        write('{')
-        indent()
-        
-        value = 0
-        lastLine = ''
-        for item in ChildrenByName(child, 'constant'):
-            name = item.getAttribute('name')
-            valueAttr = item.getAttribute('value')
-            if valueAttr != '':
-                value = int(valueAttr)
+        if ext == '':
+            write('typedef enum')
+            write('{')
+            indent()
             
-            # Store the first value as the default
-            if lastLine == '':
-                enumDefault[enumName] = name
+            value = 0
+            lastLine = ''
+            for item in ChildrenByName(child, 'constant'):
+                name = item.getAttribute('name')
+                valueAttr = item.getAttribute('value')
+                if valueAttr != '':
+                    value = int(valueAttr)
+                
+                # Store the first value as the default
+                if lastLine == '':
+                    enumDefault[enumName] = name
+                
+                # Write the last line with a comma and store this one.
+                # If this is the last one, it will be written later without a comma.
+                if lastLine != '':
+                    write(lastLine + ',')
+                lastLine = name + ' = ' + str(value)
+                
+                # Go to the next value
+                value += 1
             
-            # Write the last line with a comma and store this one.
-            # If this is the last one, it will be written later without a comma.
+            # Write the last line without a comma
             if lastLine != '':
-                write(lastLine + ',')
-            lastLine = name + ' = ' + str(value)
-            
-            # Go to the next value
-            value += 1
-        
-        # Write the last line without a comma
-        if lastLine != '':
-            write(lastLine)
-            
-        unindent()
-        write('} ' + enumName + ';')
-        write()
+                write(lastLine)
+                
+            unindent()
+            write('} ' + enumName + ';')
+            write()
+        else:
+            value = 0
+            lastLine = ''
+            for item in ChildrenByName(child, 'constant'):
+                name = item.getAttribute('name')
+                valueAttr = item.getAttribute('value')
+                if valueAttr != '':
+                    value = int(valueAttr)
+                
+                # Store the first value as the default
+                if lastLine == '':
+                    enumDefault[enumName] = name
+                
+                # Write the last line with a comma and store this one.
+                # If this is the last one, it will be written later without a comma.
+                lastLine = name + ' = ' + str(value)
+                
+                # Go to the next value
+                value += 1
     
     # Members (single and arrays)
     # These must be done together to preserve order.
