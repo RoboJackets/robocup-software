@@ -21,6 +21,9 @@ class InputHandler : public QThread
 
 		/** returns the currently selected robot */
 		unsigned int currentRobot() const { return _rid; }
+        
+        /** returns true if a controller is active */
+        bool enabled() const { return _running; }
 		
 	Q_SIGNALS:
 		void playPauseButton();

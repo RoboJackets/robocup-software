@@ -5,10 +5,10 @@
 #include <Geometry/Point2d.hpp>
 #include <opencv/cv.h>
 
-/** Wrapper for individual   */
+/** Wrapper for individual */
 namespace Modeling
 {
-        class RobotWM 
+    class RobotWM 
 	{
 		public:
 			RobotWM();
@@ -23,6 +23,7 @@ namespace Modeling
 			Geometry::Point2d _measPos;
 			float _measAngle;
 			bool _valid;
+            
 			// From commands
 			Geometry::Point2d _cmdPos;
 			Geometry::Point2d _cmdVel;

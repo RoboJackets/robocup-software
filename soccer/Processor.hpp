@@ -1,3 +1,4 @@
+// kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 #ifndef PROCESSOR_HPP
 #define PROCESSOR_HPP
 
@@ -55,6 +56,9 @@ class Processor: public QThread
 		static void trim(float& angle);
 		/** convert all coords to team space */
 		void toTeamSpace(Packet::Vision& vision);
+        
+        /** reset certain system state variables */
+        void clearState();
 
 	private:
 		

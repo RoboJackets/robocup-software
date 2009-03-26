@@ -1,3 +1,4 @@
+// kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 #include "WorldModel.hpp"
 
 #include <QObject>
@@ -7,38 +8,36 @@
 
 #include "RobotWM.hpp"
 #include "framework/Module.hpp"
-//#include "Ball.hpp"
 
 using namespace Modeling;
 
 WorldModel::WorldModel(QString filename) :
-  Module("World Model"), _config(filename)
+	Module("World Model"), _config(filename)
 {
-    try
-    {
-	    _config.load();
-    }
-    catch (std::runtime_error& re)
-    {
-	    printf("Config Load Error: %s\n", re.what());
-    }
-
-//     for(unsigned int i=0 ; i<5 ; i++)
-//     {
-//         _robots[i] = new Robot(_config.robotConfig(i));
-//     }
-  
-//   blueTeam = new std::vector<Robot*>;
-//   yellowTeam = new std::vector<Robot*>;
-//   for (unsigned int i = 0; i<5; ++i) 
-//     {
-//     blueTeam->push_back(new Robot());
-//     yellowTeam->push_back(new Robot());
-//     }
-//   ball = new Ball();
-
+	try
+	{
+		_config.load();
+	}
+	catch (std::runtime_error& re)
+	{
+		printf("Config Load Error: %s\n", re.what());
+	}
+#if 0
+	for(unsigned int i=0 ; i<5 ; i++)
+	{
+		_robots[i] = new Robot(_config.robotConfig(i));
+	}
+	
+	blueTeam = new std::vector<Robot*>;
+	yellowTeam = new std::vector<Robot*>;
+	for (unsigned int i = 0; i<5; ++i) 
+	{
+		blueTeam->push_back(new Robot());
+		yellowTeam->push_back(new Robot());
+	}
+	ball = new Ball();
+#endif
 }
-
 
 void WorldModel::run()
 {
@@ -46,37 +45,43 @@ void WorldModel::run()
 	{
 		if (!vision.sync)
 		{
-			/** TODO need to know team info here ... */
-#if 0
+			//default blue
 			const std::vector<Packet::Vision::Robot>* self = &vision.blue;
 			const std::vector<Packet::Vision::Robot>* opp = &vision.yellow;
 			
-			if (!_state->isBlue)
+			if (_state->team == Yellow)
 			{
 				self = &vision.yellow;
 				opp = &vision.blue;
+			}
+			else if (_state->team == UnknownTeam)
+			{
+				//TODO need to not act..or something
 			}
 			
 			//index is the id
 			BOOST_FOREACH (const Packet::Vision::Robot& r, *self)
 			{
-                printf("shell %d\n", r.shell);
-                //FIXME - getting shell 255
-                if (r.shell > 5) continue;
+				//FIXME - getting shell 255
+				if (r.shell > 5)
+				{   
+					continue;
+				}
+				
 				//get data from vision packet
 				_self[r.shell]._shell = r.shell;
 				_self[r.shell]._measPos = r.pos;
 				_self[r.shell]._measAngle = r.angle;
 				_self[r.shell]._valid = true;
-
+				
 				//get data from commands
 				_self[r.shell]._cmdPos = _state->self[r.shell].cmdPos;
 				_self[r.shell]._cmdVel = _state->self[r.shell].cmdVel;
 				_self[r.shell]._cmdAngle = _state->self[r.shell].cmdAngle;
-			  
+				
 				//process world model
 				_self[r.shell].process();
-
+				
 				//store data back in state variable
 				_state->self[r.shell].shell = _self[r.shell]._shell;
 				_state->self[r.shell].pos = _self[r.shell]._pos;
@@ -89,17 +94,17 @@ void WorldModel::run()
 			BOOST_FOREACH (const Packet::Vision::Robot& r, *opp)
 			{
 				//get data from vision packet
-                //FIXME - getting shell 255
-                if (r.shell > 5) continue;
+				//FIXME - getting shell 255
+				if (r.shell > 5) continue;
 				_opp[r.shell]._shell = r.shell;
 				_opp[r.shell]._measPos = r.pos;
 				_opp[r.shell]._measAngle = r.angle;
 				_opp[r.shell]._valid = true;
 				//Note that control information cannot be used for opp
-
+				
 				//process world model
 				_opp[r.shell].process();
-
+				
 				//store data back in state variable
 				_state->self[r.shell].shell = _opp[r.shell]._shell;
 				_state->self[r.shell].pos = _opp[r.shell]._pos;
@@ -113,9 +118,8 @@ void WorldModel::run()
 			if (vision.balls.size() > 0)
 			{
 				_state->ball.pos = vision.balls[0].pos;
-                _state->ball.valid = true;
+				_state->ball.valid = true;
 			}
-#endif
 		}
 	}
 }

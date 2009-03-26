@@ -1,3 +1,4 @@
+// kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 #include "Processor.hpp"
 #include "Processor.moc"
 
@@ -22,7 +23,8 @@ Processor::Processor(Team t) :
 		_teamAngle = -90;
 		trans = Geometry::Point2d(0, Constants::Field::Length / 2.0f);
 	}
-
+    
+    //transoformatons from world->teamspace
 	_teamTrans = Geometry::TransformMatrix::translate(trans);
 	_teamTrans *= Geometry::TransformMatrix::rotate(_teamAngle);
 
@@ -30,20 +32,20 @@ Processor::Processor(Team t) :
 	_triggerId = -1;
 	_trigger = false;
 	
-	//record team in state variable
-#if 0
-	if (_team == Blue)
-	{
-		_state.isBlue = true;
-	}
-	else
-	{
-		_state.isBlue = false;
-	}
-#endif
-	
+    //runs independently of main loop
 	_inputHandler.setObjectName("input");
 	_inputHandler.start();
+	
+	///setup system state
+	//set the team
+	_state.team = _team;
+	
+	//default to auto, running when no input device
+	if (!_inputHandler.enabled())
+	{
+		_state.controlState = SystemState::Auto;
+		_state.runState = SystemState::Running;
+	}
 	
 	QMetaObject::connectSlotsByName(this);
 }
@@ -65,6 +67,8 @@ void Processor::run()
 	
 	//sender of outgoing radio control data
 	Network::Sender sender(Network::Address, Network::addTeamOffset(_team, Network::RadioTx));
+	
+	clearState();
 	
 	while (_running)
 	{
@@ -101,14 +105,12 @@ void Processor::run()
 					{
 						m->run();
 					}
-		
+					
 					_modulesMutex.unlock();
 					
 					sender.send(_state.radioCmd);
 					
-					//clear system state info
-					//TODO should I clear system state?
-					//_state = SystemState();
+					clearState();
 					
 					//wait for new trigger frame
 					_trigger = false;
@@ -117,6 +119,13 @@ void Processor::run()
 		}
 	}
 }
+
+void Processor::clearState()
+{
+	//always clear the vision packets
+	_state.rawVision.clear();
+}
+
 void Processor::addModule(Module* module)
 {
 	QMutexLocker ml(&_modulesMutex);
@@ -131,7 +140,7 @@ void Processor::visionHandler(const Packet::Vision* packet)
 	if (_triggerId < 0 && packet->sync)
 	{
 		if (_state.rawVision.size() > 0 && _state.rawVision[0].camera
-		        == packet->camera)
+				== packet->camera)
 		{
 			//TODO investigate...
 			uint64_t half = _state.rawVision[0].timestamp;
@@ -152,13 +161,13 @@ void Processor::visionHandler(const Packet::Vision* packet)
 			_state.rawVision.clear();
 			return;
 		}
-
+		
 		//store received packets in the log frame
 		_state.rawVision.push_back(*packet);
 		
 		return;
 	}
-
+	
 	//add the packet to the list of vision to process
 	//this also includes sync messages, which will need to be ignored
 	_state.rawVision.push_back(*packet);
@@ -190,7 +199,7 @@ void Processor::radioHandler(const Packet::RadioRx* packet)
 
 void Processor::toTeamSpace(Packet::Vision& vision)
 {
-	//FIXME FIXME we should put this info into self/opp??
+	//FIXME we should put this info into self/opp??
 	for (unsigned int i = 0; i < vision.blue.size(); ++i)
 	{
 		Packet::Vision::Robot& r = vision.blue[i];
