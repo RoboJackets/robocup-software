@@ -2,6 +2,7 @@
 	<!-- Packet going out from control program to radio program -->
 	
 	<struct typename="Robot">
+		<member type="uint8" name="board_id" />
 		<member type="int8" name="roller" />
 		<member type="uint8" name="kick" />
 		<member type="bool" name="valid" />

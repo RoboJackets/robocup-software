@@ -3,6 +3,8 @@
 #include <string.h>
 #include <pthread.h>
 
+#include <map>
+
 #include <Network/Network.hpp>
 #include <Network/Receiver.hpp>
 #include <Network/Sender.hpp>
@@ -11,10 +13,15 @@
 
 #include "Radio.hpp"
 
+using namespace std;
+
 Radio *radio;
 volatile bool reverse_running;
 pthread_t reverse_thread;
 Team team = UnknownTeam;
+
+pthread_mutex_t mapping_mutex;
+map<int, int> board_to_robot;
 
 void usage(const char* prog)
 {
@@ -42,8 +49,10 @@ void *reverse_main(void *arg)
         {
             int board_id = reverse_packet[0] & 0x0f;
             
-            //FIXME - Board to robot mapping
-            int robot_id = board_id;
+            // Board to robot mapping
+            pthread_mutex_lock(&mapping_mutex);
+            int robot_id = board_to_robot[board_id];
+            pthread_mutex_unlock(&mapping_mutex);
             
             Packet::RadioRx::Robot &robot = rxPacket.robots[robot_id];
             
@@ -134,6 +143,15 @@ int main(int argc, char* argv[])
 		Packet::RadioTx txPacket;
 		receiver.receive(txPacket);
 		
+        // Update the mapping for the reverse thread
+        pthread_mutex_lock(&mapping_mutex);
+        for (int robot_id = 0; robot_id < 5; ++robot_id)
+        {
+            int board_id = txPacket.robots[robot_id].board_id;
+            board_to_robot[board_id] = robot_id;
+        }
+        pthread_mutex_unlock(&mapping_mutex);
+        
         // Build a forward packet
         forward_packet[0] = (sequence << 4) | reverse_board_id;
         forward_packet[1] = 0x07;
@@ -144,10 +162,9 @@ int main(int argc, char* argv[])
         uint8_t kick_strength = 0;
         for (int robot_id = 0; robot_id < 5; ++robot_id)
         {
-            //FIXME - Robot to board mapping
-            int board_id = robot_id;
-            
             const Packet::RadioTx::Robot &robot = txPacket.robots[robot_id];
+            
+            int board_id = txPacket.robots[robot_id].board_id;
             
             int8_t m0, m1, m2, m3;
             uint8_t kick, roller;
