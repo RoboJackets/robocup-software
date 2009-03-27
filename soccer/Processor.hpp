@@ -85,6 +85,8 @@ class Processor: public QThread
 		std::list<Module*> _modules;
 		
 		InputHandler _inputHandler;
+		
+		Network::Sender _sender;
 };
 
 #endif // PROCESSOR_HPP

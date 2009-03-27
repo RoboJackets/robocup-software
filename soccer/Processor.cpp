@@ -12,7 +12,7 @@
 #include <Constants.hpp>
 
 Processor::Processor(Team t) :
-	_running(true), _team(t), _inputHandler(this)
+	_running(true), _team(t), _inputHandler(this), _sender(Network::Address, Network::addTeamOffset(_team, Network::RadioTx))
 {
 	//default yellow
 	Geometry::Point2d trans(0, Constants::Field::Length / 2.0f);
@@ -43,6 +43,7 @@ Processor::Processor(Team t) :
 	//default to auto, running when no input device
 	if (!_inputHandler.enabled())
 	{
+		printf("No controller: Auto/Running\n");
 		_state.controlState = SystemState::Auto;
 		_state.runState = SystemState::Running;
 	}
@@ -66,7 +67,7 @@ void Processor::run()
 			this, &Processor::radioHandler);
 	
 	//sender of outgoing radio control data
-	Network::Sender sender(Network::Address, Network::addTeamOffset(_team, Network::RadioTx));
+	//Network::Sender sender(Network::Address, Network::addTeamOffset(_team, Network::RadioTx));
 	
 	clearState();
 	
@@ -89,7 +90,7 @@ void Processor::run()
 				
 				//log??
 				
-				sender.send(_state.radioCmd);
+				_sender.send(_state.radioCmd);
 				
 				//fixed time wait (simulate vision time)
 				QThread::msleep(33);
@@ -97,6 +98,7 @@ void Processor::run()
 			else if (_state.controlState == SystemState::Auto)
 			{
 				//full autonomous control
+				//populates the radio packet that will go out on the next sync frame
 				if (_trigger)
 				{
 					_modulesMutex.lock();
@@ -107,10 +109,6 @@ void Processor::run()
 					}
 					
 					_modulesMutex.unlock();
-					
-					sender.send(_state.radioCmd);
-					
-					clearState();
 					
 					//wait for new trigger frame
 					_trigger = false;
@@ -177,9 +175,15 @@ void Processor::visionHandler(const Packet::Vision* packet)
 	
 	if (packet->camera == _triggerId)
 	{
-		if (packet->sync)
+		//if its a sync packet from trigger camera, then send radio data
+		//otherwise set state timestamp, set trigger flag and the system will 
+		//process modules
+		if (packet->sync && _state.controlState == SystemState::Auto)
 		{
-			//printf("radio: %d\n", packet->camera);
+			_sender.send(_state.radioCmd);
+			
+			//state is cleared after the packet is sentcd p
+			clearState();
 		}
 		else
 		{
