@@ -49,6 +49,24 @@ void FieldView::paintEvent(QPaintEvent* event)
 
 	if (_frame)
 	{
+		Q_FOREACH(const Packet::Vision& vis, _frame->rawVision)
+		{
+			Q_FOREACH(const Packet::Vision::Robot& r, vis.blue)
+			{
+				drawRobot(painter, Blue, r.shell, r.pos, r.angle);
+			}
+			
+			Q_FOREACH(const Packet::Vision::Robot& r, vis.yellow)
+			{
+				drawRobot(painter, Yellow, r.shell, r.pos, r.angle);
+			}
+			
+			Q_FOREACH(const Packet::Vision::Ball& b, vis.balls)
+			{
+				drawBall(painter, b.pos);
+			}
+		}
+		
 		for (unsigned int i=0 ; i<5 ; ++i)
 		{
 			const Packet::LogFrame::Robot& s = _frame->self[i];

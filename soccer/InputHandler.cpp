@@ -1,3 +1,4 @@
+// kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 #include "InputHandler.hpp"
 #include "InputHandler.moc"
 
@@ -15,7 +16,9 @@ InputHandler::InputHandler(QObject* parent) :
 	//if failed, prevents thread from running
 	try
 	{
-		_controller = new Gamepad("/dev/input/js0");
+		//TODO, need to check for vendor and device id
+		//_controller = new Gamepad("/dev/input/js0");
+		_controller = new Gamepad("/dev/input/js1");
 	}
 	catch (std::runtime_error& re)
 	{
@@ -51,14 +54,14 @@ Packet::RadioTx::Robot InputHandler::genRobotData()
 	int motors[4] =
 	{ 0, 0, 0, 0 };
 	static uint8_t stored_roller = 0;
-	
-	
+
+
 	//input is vx, vy in robot space
 	Point2d input(_controller->rX(), _controller->rY());
-	
+
 	//if using DPad, this is the input value
 	uint8_t mVal = 10 + (int8_t) (abs(_controller->rY()));
-	
+
 	if (_controller->dUp())
 	{
 		input.y = mVal;
@@ -81,12 +84,12 @@ Packet::RadioTx::Robot InputHandler::genRobotData()
 	}
 
 	int max = 0;
-	
+
 	for (unsigned int i = 0; i < 4; ++i)
 	{
 		motors[i] = (int) (_axels[i].perpCW().dot(input));
 		motors[i] += _controller->lX();
-		
+
 		if (abs(motors[i]) > max)
 		{
 			max = abs(motors[i]);
@@ -106,7 +109,7 @@ Packet::RadioTx::Robot InputHandler::genRobotData()
 	if (_controller->b7())
 	{
 		_roller = _controller->lY();
-		
+
 		if (_controller->b5())
 		{
 			stored_roller = _controller->lY();
@@ -124,15 +127,15 @@ Packet::RadioTx::Robot InputHandler::genRobotData()
 	{
 		r.kick = 255;
 	}
-	
+
 	return r;
 }
 
 void InputHandler::run()
 {
-	bool robotSelect = false;
-	bool selectMode = false;
-	
+	//bool robotSelect = false;
+	//bool selectMode = false;
+
 	while (_running)
 	{
 		if (_controller->waitForInput(100))

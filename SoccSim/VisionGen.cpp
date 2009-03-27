@@ -1,7 +1,7 @@
 #include "VisionGen.hpp"
 
 #include <Network/Network.hpp>
-#include "bin/Vision.hpp"
+#include <Vision.hpp>
 
 #include "Physics/Robot.hpp"
 
@@ -36,10 +36,10 @@ uint64_t VisionGen::timestamp()
 void VisionGen::run()
 {
     Network::Sender sender(Network::Address, Network::Vision);
-    
+
     //cycle time
     const int msecs = (int)(1000/_fps);
-    
+
     while (_running)
     {
     	//send sync
@@ -47,18 +47,18 @@ void VisionGen::run()
 		sync.timestamp = timestamp();
 		sync.sync = true;
 		sender.send(sync);
-	
+
 		//get latest vision data from environment
 		Packet::Vision genData = _env->vision();
-		
+
 		//fake vision processing time
 		QThread::msleep(5);
-		
+
 		//TODO noise, multiple cameras
 		genData.timestamp = timestamp();
 		genData.camera = _id;
 		sender.send(genData);
-		
+
 		//camera pause for cycle (minus fake processing time)
 		QThread::msleep(msecs - 5);
     }

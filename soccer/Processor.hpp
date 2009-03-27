@@ -84,6 +84,10 @@ class Processor: public QThread
 		QMutex _modulesMutex;
 		std::list<Module*> _modules;
 		
+		//Module* _motionModule;
+		//Module* _modelingModule;
+		//Module* _logModule;
+		
 		InputHandler _inputHandler;
 		
 		Network::Sender _sender;

@@ -73,7 +73,9 @@ MainWindow::~MainWindow()
 void MainWindow::setupModules()
 {
 	Modeling::WorldModel* wm = new Modeling::WorldModel(_configFile);
-
+	
+	//FIXME Roman
+#if 0
     //TODO Get this out from vision don't make assumptions!!!!!
     unsigned int id[5];
     for(int i = 0; i<5; i++)
@@ -89,4 +91,5 @@ void MainWindow::setupModules()
 	_processor.addModule(wm);
 	_processor.addModule(motion);
 	_processor.addModule(lm);
+#endif
 }

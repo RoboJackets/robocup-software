@@ -12,7 +12,8 @@
 #include <Constants.hpp>
 
 Processor::Processor(Team t) :
-	_running(true), _team(t), _inputHandler(this), _sender(Network::Address, Network::addTeamOffset(_team, Network::RadioTx))
+	_running(true), _team(t), _inputHandler(this),
+	_sender(Network::Address, Network::addTeamOffset(_team, Network::RadioTx))
 {
 	//default yellow
 	Geometry::Point2d trans(0, Constants::Field::Length / 2.0f);
@@ -23,7 +24,7 @@ Processor::Processor(Team t) :
 		_teamAngle = -90;
 		trans = Geometry::Point2d(0, Constants::Field::Length / 2.0f);
 	}
-    
+
     //transoformatons from world->teamspace
 	_teamTrans = Geometry::TransformMatrix::translate(trans);
 	_teamTrans *= Geometry::TransformMatrix::rotate(_teamAngle);
@@ -31,15 +32,15 @@ Processor::Processor(Team t) :
 	//initially no camera does the triggering
 	_triggerId = -1;
 	_trigger = false;
-	
+
     //runs independently of main loop
 	_inputHandler.setObjectName("input");
 	_inputHandler.start();
-	
+
 	///setup system state
 	//set the team
 	_state.team = _team;
-	
+
 	//default to auto, running when no input device
 	if (!_inputHandler.enabled())
 	{
@@ -47,7 +48,7 @@ Processor::Processor(Team t) :
 		_state.controlState = SystemState::Auto;
 		_state.runState = SystemState::Running;
 	}
-	
+
 	QMetaObject::connectSlotsByName(this);
 }
 
@@ -63,59 +64,81 @@ void Processor::run()
 	Network::PacketReceiver receiver;
 	receiver.addType(Network::Address, Network::Vision, this,
 	        &Processor::visionHandler);
-	receiver.addType(Network::Address, Network::addTeamOffset(_team, Network::RadioRx), 
+	receiver.addType(Network::Address,
+			Network::addTeamOffset(_team, Network::RadioRx),
 			this, &Processor::radioHandler);
-	
-	//sender of outgoing radio control data
-	//Network::Sender sender(Network::Address, Network::addTeamOffset(_team, Network::RadioTx));
-	
+
+	//initialize empty state
 	clearState();
-	
+
+	//FIXME Roman
+#if 0
 	while (_running)
 	{
-		//needs to be non-blocking...is it?
-		//always receive new data, even when not running for display purposes
-		receiver.receive();
+		//TODO when not running...we need to also show robot positions...
+		//do we want to run modeling in manual mode?
+		
+		//TODO always run log... last... regardless of runState..
 		
 		if (_state.runState == SystemState::Running)
 		{
 			if (_state.controlState == SystemState::Manual)
 			{
+				//non blocking information for manual control
+				receiver.receive(false);
+				
 				//manual control only
 				//TODO some modules need not run
 				//TODO throw away some incoming data?
 				
+				//TODO remove this...
+				_modulesMutex.lock();
+
+				Q_FOREACH(Module* m, _modules)
+				{
+					m->run();
+				}
+				
+				_modulesMutex.unlock();
+				
 				_state.radioCmd = Packet::RadioTx();
 				_state.radioCmd.robots[_state.rid] = _inputHandler.genRobotData();
-				
+
 				//log??
 				
+				//need to run log because it does the field display
+
+				//send out the radio data from manual control
 				_sender.send(_state.radioCmd);
-				
-				//fixed time wait (simulate vision time)
+
+				//constant time wait (simulate vision time)
 				QThread::msleep(33);
 			}
 			else if (_state.controlState == SystemState::Auto)
 			{
+				//blocking to act on new packets
+				receiver.receive(true);
+				
 				//full autonomous control
 				//populates the radio packet that will go out on the next sync frame
 				if (_trigger)
 				{
 					_modulesMutex.lock();
-					
-					Q_FOREACH(Module* m, _modules) 
+
+					Q_FOREACH(Module* m, _modules)
 					{
 						m->run();
 					}
-					
+
 					_modulesMutex.unlock();
-					
+
 					//wait for new trigger frame
 					_trigger = false;
 				}
 			}
 		}
 	}
+#endif
 }
 
 void Processor::clearState()
@@ -143,10 +166,10 @@ void Processor::visionHandler(const Packet::Vision* packet)
 			//TODO investigate...
 			uint64_t half = _state.rawVision[0].timestamp;
 			half += (packet->timestamp - _state.rawVision[0].timestamp) / 2;
-			
+
 			//eval all packets, any packet less than half becomes the new tigger
 			//this gives us the last packet up to half as the trigger
-			Q_FOREACH (const Packet::Vision& raw , _state.rawVision) 
+			Q_FOREACH (const Packet::Vision& raw , _state.rawVision)
 			{
 				if (raw.timestamp < half)
 				{
@@ -159,29 +182,29 @@ void Processor::visionHandler(const Packet::Vision* packet)
 			_state.rawVision.clear();
 			return;
 		}
-		
+
 		//store received packets in the log frame
 		_state.rawVision.push_back(*packet);
-		
+
 		return;
 	}
-	
+
 	//add the packet to the list of vision to process
 	//this also includes sync messages, which will need to be ignored
 	_state.rawVision.push_back(*packet);
 
 	//convert last frame to teamspace
 	toTeamSpace(_state.rawVision[_state.rawVision.size() - 1]);
-	
+
 	if (packet->camera == _triggerId)
 	{
 		//if its a sync packet from trigger camera, then send radio data
-		//otherwise set state timestamp, set trigger flag and the system will 
+		//otherwise set state timestamp, set trigger flag and the system will
 		//process modules
 		if (packet->sync && _state.controlState == SystemState::Auto)
 		{
 			_sender.send(_state.radioCmd);
-			
+
 			//state is cleared after the packet is sentcd p
 			clearState();
 		}
@@ -189,7 +212,7 @@ void Processor::visionHandler(const Packet::Vision* packet)
 		{
 			//set syncronous time to packet timestamp
 			_state.timestamp = packet->timestamp;
-			
+
 			//start s.proc
 			_trigger = true;
 		}
@@ -219,7 +242,7 @@ void Processor::toTeamSpace(Packet::Vision& vision)
 		r.angle = _teamAngle + r.angle;
 		Processor::trim(r.angle);
 	}
-	
+
 	for (unsigned int i = 0; i < vision.balls.size(); ++i)
 	{
 		Packet::Vision::Ball& b = vision.balls[i];

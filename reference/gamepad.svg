@@ -17,7 +17,7 @@
    version="1.0"
    sodipodi:docname="gamepad.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   inkscape:export-filename="gamepad.png"
+   inkscape:export-filename="/home/shtylman/projects/robocup/svn/software/trunk/reference/gamepad.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <sodipodi:namedview
@@ -107,18 +107,14 @@
          x="165.9062"
          id="tspan2410"
          sodipodi:role="line">Rotate</tspan></text>
-    <path
-       id="path4475"
-       d="M 311.40684,222.87706 L 311.40684,374.58809 L 326.93282,390.11407"
-       style="fill:none;fill-rule:evenodd;stroke:#ff0000;stroke-width:3;stroke-linecap:round;stroke-linejoin:miter;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <text
        id="text6571"
-       y="395.88086"
-       x="330.03802"
+       y="28.354891"
+       x="219.13815"
        style="font-size:18px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
        xml:space="preserve"><tspan
-         y="395.88086"
-         x="330.03802"
+         y="28.354891"
+         x="219.13815"
          id="tspan6573"
          sodipodi:role="line">Run/Halt</tspan></text>
     <path
@@ -141,17 +137,22 @@
        id="text6653"
        y="30.354881"
        x="4.4360027"
-       style="font-size:40px;font-style:normal;font-weight:normal;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
+       style="font-size:40px;font-style:normal;font-weight:normal;fill:#00005f;fill-opacity:0.96078432;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans"
        xml:space="preserve"><tspan
-         style="font-size:30px"
+         style="font-size:30px;fill:#00005f;fill-opacity:0.96078432"
          y="30.354881"
          x="4.4360027"
          id="tspan6655"
          sodipodi:role="line">RoboJackets</tspan><tspan
-         style="font-size:18px;font-style:italic"
+         style="font-size:18px;font-style:italic;fill:#00005f;fill-opacity:0.96078432"
          id="tspan6657"
          y="55.89389"
          x="4.4360027"
          sodipodi:role="line">RoboCup Gamepad</tspan></text>
+    <path
+       style="fill:none;fill-rule:evenodd;stroke:#ff0000;stroke-width:3;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1;opacity:1;color:#000000;fill-opacity:1;marker:none;marker-start:none;marker-mid:none;marker-end:none;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       d="M 314.06843,143.02916 L 314.06843,40.114084 L 299.87325,23.257304"
+       id="path2406"
+       sodipodi:nodetypes="ccc" />
   </g>
 </svg>

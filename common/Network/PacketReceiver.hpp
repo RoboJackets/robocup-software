@@ -154,12 +154,13 @@ namespace Network
 			/** receive ALL the next available packets.
 			 *  This will call the handlers registered for each packet
 			 *  If there was a packet of the type the packetHandler is called,
-			 *  If there was no packet and the timeout interval has passed, timeout handler is called */
-			void receive()
+			 *  If there was no packet and the timeout interval has passed, 
+			 *  timeout handler is called */
+			void receive(bool block)
 			{
 				//check for possible packets
 				//return value 0 = timeout on call
-				if (poll(&_pollfds[0], _pollfds.size(), 0) >= 1) //timeout is in ms
+				if (poll(&_pollfds[0], _pollfds.size(), (block) ? -1 : 1 ) >= 1) //timeout is in ms
 				{
 					for (unsigned int i=0 ; i<_pollfds.size() ; ++i)
 					{
