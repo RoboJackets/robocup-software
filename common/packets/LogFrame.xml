@@ -2,6 +2,7 @@
 	<struct typename="Vision" include_cpp="Vision.hpp" external_cpp="Packet::Vision" external_python="Packet.Vision" />
 	<struct typename="Point2d" include_cpp="Geometry/Point2d.hpp" external_cpp="Geometry::Point2d" external_python="Geometry.Point2d" />
 	<struct typename="RadioTx" include_cpp="RadioTx.hpp" external_cpp="Packet::RadioTx" external_python="Packet.RadioTx"/>
+	<struct typename="RadioRx" include_cpp="RadioRx.hpp" external_cpp="Packet::RadioRx" external_python="Packet.RadioRx"/>
 
     <!-- see Team.h -->
     <enum type="int8" typename="Team" external_cpp="Team" include_cpp="Team.h">
@@ -95,6 +96,9 @@
 		
 		<!-- radio tx packet for the robot -->
 		<member type="RadioTx::Robot" name="radioTx" />
+		
+		<!-- radio rx packet for the robot -->
+		<member type="RadioRx::Robot" name="radioRx" />
 	</struct>
 
 	<!-- post processed ball information -->

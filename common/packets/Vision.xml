@@ -1,9 +1,6 @@
 <struct typename="Vision">
-	<struct typename="Point2d" include_cpp="Geometry/Point2d.hpp" external_cpp="Geometry::Point2d" external_python="Geometry.Point2d">
-		<member type="float" name="x"/>
-		<member type="float" name="y"/>
- 	</struct>
-
+	<struct typename="Point2d" include_cpp="Geometry/Point2d.hpp" external_cpp="Geometry::Point2d" external_python="Geometry.Point2d" />
+	
 	<struct typename="Robot">
 		<member type="uint8" name="shell" />
 		<member type="Point2d" name="pos" />

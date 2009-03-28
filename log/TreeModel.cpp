@@ -157,7 +157,7 @@ void TreeModel::robotItem(QStandardItem* item, const Packet::Vision::Robot& r)
 
 void TreeModel::robotItem(QStandardItem* item, const Packet::LogFrame::Robot& r)
 {
-	for (int i=item->rowCount() ; i<5 ; ++i)
+	for (int i=item->rowCount() ; i<6 ; ++i)
 	{
 		item->appendRow(new QStandardItem());
 	}
@@ -170,22 +170,46 @@ void TreeModel::robotItem(QStandardItem* item, const Packet::LogFrame::Robot& r)
 	item->child(c++)->setText(QString("Angle: %1").arg(r.angle));
 	item->child(c++)->setText(QString("AngVel: %1").arg(r.angleVel));
 	
-	QStandardItem* rtx = item->child(c++);
-	rtx->setText(QString("Radio Tx (%1)").arg(r.radioTx.valid));
+	///radio tx data
+	QStandardItem* rTx = item->child(c++);
+	rTx->setText(QString("Radio Tx (%1)").arg(r.radioTx.valid));
 	
-	for (int i=rtx->rowCount() ; i<7 ; ++i)
+	for (int i=rTx->rowCount() ; i<7 ; ++i)
 	{
-		rtx->appendRow(new QStandardItem());
+		rTx->appendRow(new QStandardItem());
 	}
 	
-	c = 0;
-	rtx->child(c++)->setText(QString("Board: %1").arg(r.radioTx.board_id));
-	rtx->child(c++)->setText(QString("Roller: %1").arg(r.radioTx.roller));
-	rtx->child(c++)->setText(QString("Kick: %1").arg(r.radioTx.kick));
+	int c1 = 0;
+	rTx->child(c1++)->setText(QString("Board: %1").arg(r.radioTx.board_id));
+	rTx->child(c1++)->setText(QString("Roller: %1").arg(r.radioTx.roller));
+	rTx->child(c1++)->setText(QString("Kick: %1").arg(r.radioTx.kick));
 	
 	for (int i=0 ; i<4 ; ++i)
 	{
-		rtx->child(c++)->setText(QString("M%1: %2").arg(i).arg(r.radioTx.motors[i]));
+		rTx->child(c1++)->setText(QString("M %1: %2").arg(i).arg(r.radioTx.motors[i]));
+	}
+	
+	///radio rx data
+	QStandardItem* rRx = item->child(c++);
+	rRx->setText(QString("Radio Rx (%1)").arg(r.radioRx.valid));
+	
+	for (int i=rRx->rowCount() ; i<16 ; ++i)
+	{
+		rRx->appendRow(new QStandardItem());
+	}
+	
+	c1 = 0;
+	rRx->child(c1++)->setText(QString("Updated: %1").arg(r.radioRx.updated));
+	rRx->child(c1++)->setText(QString("Loss: %1").arg(r.radioRx.packetLoss));
+	rRx->child(c1++)->setText(QString("Rssi: %1").arg(r.radioRx.rssi));
+	rRx->child(c1++)->setText(QString("Tuning: %1").arg(r.radioRx.tuning));
+	rRx->child(c1++)->setText(QString("Battery: %1").arg(r.radioRx.battery));
+	rRx->child(c1++)->setText(QString("Capacitor: %1").arg(r.radioRx.capacitor));
+	
+	for (int i=0 ; i<5 ; ++i)
+	{
+		rRx->child(c1++)->setText(QString("M %1: %2").arg(i).arg(r.radioRx.motorFault[i]));
+		rRx->child(c1++)->setText(QString("Enc %1: %2").arg(i).arg(r.radioRx.encoders[i]));
 	}
 }
 

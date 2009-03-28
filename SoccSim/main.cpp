@@ -58,8 +58,11 @@ int main(int argc, char* argv[])
         exit(0);
     }
 
-    VisionGen vision(env);
-    vision.start();
+    VisionGen vision0(env, 0);
+    vision0.start();
+    
+    VisionGen vision1(env, 1);
+    vision1.start();
 
     Radio radioBlue(Blue, *env);
     Radio radioYellow(Yellow, *env);
@@ -73,8 +76,11 @@ int main(int argc, char* argv[])
 
     //cleanup
     delete env;
-    vision.terminate();
-    vision.wait();
+    vision0.terminate();
+    vision0.wait();
+    
+    vision1.terminate();
+    vision1.wait();
 
     radioBlue.terminate();
     radioBlue.wait();

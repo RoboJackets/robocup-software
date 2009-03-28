@@ -21,6 +21,7 @@ if (NOT TARGET GeneratePackets)
 		Vision
 		RadioTx
 		RadioRx
+		Point2d
 		#SSLRef
 		LogFrame
 	)

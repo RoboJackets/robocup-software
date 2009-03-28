@@ -157,7 +157,10 @@ void Processor::run()
 
 					//always run logging last
 					_logModule->run();
-
+					
+					//new state
+					clearState();
+					
 					//wait for new trigger frame
 					_trigger = false;
 				}
@@ -207,34 +210,39 @@ void Processor::sendRadioData()
 void Processor::visionHandler(const Packet::Vision* packet)
 {
 	//detect trigger camera, if not already set
-	if (_triggerId < 0 && packet->sync)
+	if (_triggerId < 0)
 	{
-		if (_state.rawVision.size() > 0 && _state.rawVision[0].camera
-				== packet->camera)
+		if (packet->sync)
 		{
-			//TODO investigate...
-			uint64_t half = _state.rawVision[0].timestamp;
-			half += (packet->timestamp - _state.rawVision[0].timestamp) / 2;
-
-			//eval all packets, any packet less than half becomes the new tigger
-			//this gives us the last packet up to half as the trigger
-			Q_FOREACH (const Packet::Vision& raw , _state.rawVision)
+			if (_state.rawVision.size() > 0 && _state.rawVision[0].camera
+					== packet->camera)
 			{
-				if (raw.timestamp < half)
+				//TODO investigate...
+				uint64_t half = _state.rawVision[0].timestamp;
+				half += (packet->timestamp - _state.rawVision[0].timestamp) / 2;
+	
+				//eval all packets, any packet less than half becomes the new tigger
+				//this gives us the last packet up to half as the trigger
+				Q_FOREACH (const Packet::Vision& raw , _state.rawVision)
 				{
-					_triggerId = raw.camera;
+					if (raw.timestamp < half)
+					{
+						_triggerId = raw.camera;
+					}
 				}
+	
+				//we have set the trigger camera
+				printf("Set trigger camera: %d\n", _triggerId);
+				
+				//clear state, this will cause only the trigger frame's sync
+				//to be stored and system will continue normal operation
+				clearState();
 			}
 
-			//we have set the trigger camera
-			printf("Set trigger camera: %d\n", _triggerId);
-			_state.rawVision.clear();
-			return;
+			//store the sync packets
+			_state.rawVision.push_back(*packet);
 		}
-
-		//store received packets in the log frame
-		_state.rawVision.push_back(*packet);
-
+		
 		return;
 	}
 	
@@ -251,9 +259,6 @@ void Processor::visionHandler(const Packet::Vision* packet)
 		{
 			//send first
 			sendRadioData();
-			
-			//new state
-			clearState();
 		}
 		else
 		{
@@ -273,9 +278,11 @@ void Processor::visionHandler(const Packet::Vision* packet)
 
 void Processor::radioHandler(const Packet::RadioRx* packet)
 {
-	//log received radio data time
-
 	//received radio packets
+	for (unsigned int i=0 ; i<5 ; ++i)
+	{
+		_state.self[i].radioRx = packet->robots[i];
+	}
 }
 
 void Processor::toTeamSpace(Packet::Vision& vision)

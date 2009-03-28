@@ -12,10 +12,10 @@
 #include <unistd.h>
 #include <sys/time.h>
 
-VisionGen::VisionGen(Env* env) :
+VisionGen::VisionGen(Env* env, unsigned int id) :
 	_env(env), _running(true)
 {
-    _id = 0;
+    _id = id;
     _fps = 30;
 }
 
@@ -46,6 +46,7 @@ void VisionGen::run()
     	Packet::Vision sync;
 		sync.timestamp = timestamp();
 		sync.sync = true;
+		sync.camera = _id;
 		sender.send(sync);
 
 		//get latest vision data from environment
