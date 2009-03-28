@@ -258,3 +258,13 @@ ConfigFile::RobotCfg ConfigFile::robotConfig()
 
     return cfg;
 }
+
+ConfigFile::RobotFilterCfg ConfigFile::robotFilterConfig()
+{
+    RobotFilterCfg cfg;
+    cfg.kf_enable = false;
+
+    return cfg;
+}
+
+

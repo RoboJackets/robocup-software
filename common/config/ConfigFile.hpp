@@ -31,6 +31,11 @@ class ConfigFile
             QVector<Geometry::Point2d> axels;
         } RobotCfg;
 
+        typedef struct
+        {
+	    bool kf_enable;
+        } RobotFilterCfg;
+
     public:
         ConfigFile(QString filename);
         ~ConfigFile();
@@ -40,6 +45,7 @@ class ConfigFile
         void setElement(QString tagString,int value);
         void setElement(QString tagString,double value);
         RobotCfg robotConfig();
+        RobotFilterCfg robotFilterConfig();
         const QVector<Geometry::Point2d> axels() const { return _axels; }
 
     protected:

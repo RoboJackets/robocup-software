@@ -72,7 +72,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupModules()
 {
-	Modeling::WorldModel* wm = new Modeling::WorldModel(_configFile);
+	Modeling::WorldModel* wm = new Modeling::WorldModel(_config.robotFilterConfig());
 	
 	//FIXME Roman
 #if 0

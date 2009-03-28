@@ -4,17 +4,18 @@
 #include <vector>
 #include <Geometry/Point2d.hpp>
 #include <opencv/cv.h>
+#include <config/ConfigFile.hpp>
 
-/** Wrapper for individual */
+/** Wrapper for individual   */
 namespace Modeling
 {
-    class RobotWM 
+        class RobotWM 
 	{
 		public:
 			RobotWM();
+			RobotWM(ConfigFile::RobotFilterCfg, bool isSelf);
 			~RobotWM();
 			void process();
-			void init(bool isSelf);
 			
 		public:
 			//////Input data
@@ -23,7 +24,6 @@ namespace Modeling
 			Geometry::Point2d _measPos;
 			float _measAngle;
 			bool _valid;
-            
 			// From commands
 			Geometry::Point2d _cmdPos;
 			Geometry::Point2d _cmdVel;
@@ -40,7 +40,7 @@ namespace Modeling
 			std::vector<Geometry::Point2d> _posBuf;
 			std::vector<float> _angleBuf;
 			unsigned int _bufsize;
-			bool _isSelf;
+			bool _isSelf, _kfEnabled;
 			CvKalman * _kf;
 			
 	  

@@ -5,8 +5,7 @@
 #include <framework/Module.hpp>
 #include "RobotWM.hpp"
 #include <config/ConfigFile.hpp>
-//#include "Ball.hpp"
-
+#include <vector>
 
 /** World modeling system */
 namespace Modeling
@@ -14,16 +13,17 @@ namespace Modeling
         class WorldModel : public Module
 	{
 		public:
-			WorldModel(QString filename);
+			WorldModel(ConfigFile::RobotFilterCfg cfg);
 			
 			virtual void run();
 			
 		private:
-			RobotWM _self[5];
-			RobotWM _opp[5];
+			RobotWM* _self[5];
+			RobotWM* _opp[5];
 	  		//Ball* ball;
+			ConfigFile::RobotFilterCfg _cfg;
+	  
 
-	  		ConfigFile _config;
 	};
 }
 
