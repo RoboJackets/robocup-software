@@ -67,31 +67,31 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupModules()
 {
-    Modeling::WorldModel* wm = new Modeling::WorldModel(_configFile);
-
-    //TODO Get this out from vision don't make assumptions!!!!!
-    unsigned int id[5];
-    for(int i = 0; i<5; i++)
-    {
-        id[i] = i;
-    }
-    Motion::Controller* motion = new Motion::Controller(_config.robotConfig(), id);
-    connect(this, SIGNAL(kpChanged(double)), motion, SLOT(setKpGains(double)), Qt::QueuedConnection);
-    connect(this, SIGNAL(kdChanged(double)), motion, SLOT(setKdGains(double)), Qt::QueuedConnection);
-
-    Trajectory::TrajectoryGen* trajGen = new Trajectory::TrajectoryGen(20,20);
-    connect(this, SIGNAL(runTrajectoryGen()), trajGen, SLOT(runModule()), Qt::QueuedConnection);
-    connect(this, SIGNAL(stopTrajectoryGen()), trajGen, SLOT(stopModule()), Qt::QueuedConnection);
-    connect(this, SIGNAL(setPaths(QVector<RobotPath::Path>)), trajGen, SLOT(setPaths(QVector<RobotPath::Path>)), Qt::QueuedConnection);
-
-    Log::LogModule* lm = new Log::LogModule();
-    lm->setLogFile(_logFile);
-
-    //add the modules....ORDER MATTERS!!
-    _processor.addModule(wm);
-    _processor.addModule(trajGen);
-    _processor.addModule(motion);
-    _processor.addModule(lm);
+//     Modeling::WorldModel* wm = new Modeling::WorldModel(_config.robotFilterConfig());
+//
+//     //TODO Get this out from vision don't make assumptions!!!!!
+//     unsigned int id[5];
+//     for(int i = 0; i<5; i++)
+//     {
+//         id[i] = i;
+//     }
+//     Motion::Controller* motion = new Motion::Controller(_config.robotConfig(), id);
+//     connect(this, SIGNAL(kpChanged(double)), motion, SLOT(setKpGains(double)), Qt::QueuedConnection);
+//     connect(this, SIGNAL(kdChanged(double)), motion, SLOT(setKdGains(double)), Qt::QueuedConnection);
+//
+//     Trajectory::TrajectoryGen* trajGen = new Trajectory::TrajectoryGen(20,20);
+//     connect(this, SIGNAL(runTrajectoryGen()), trajGen, SLOT(runModule()), Qt::QueuedConnection);
+//     connect(this, SIGNAL(stopTrajectoryGen()), trajGen, SLOT(stopModule()), Qt::QueuedConnection);
+//     connect(this, SIGNAL(setPaths(QVector<RobotPath::Path>)), trajGen, SLOT(setPaths(QVector<RobotPath::Path>)), Qt::QueuedConnection);
+//
+//     Log::LogModule* lm = new Log::LogModule();
+//     lm->setLogFile(_logFile);
+//
+//     //add the modules....ORDER MATTERS!!
+//     _processor.addModule(wm);
+//     _processor.addModule(trajGen);
+//     _processor.addModule(motion);
+//     _processor.addModule(lm);
 }
 
 void MainWindow::on_erase_clicked()

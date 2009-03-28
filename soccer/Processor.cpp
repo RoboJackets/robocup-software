@@ -54,14 +54,14 @@ Processor::Processor(Team t) :
 	}
 
 	QMetaObject::connectSlotsByName(this);
-	
+
 	//setup the modules
 	_motionModule = _modelingModule = _logModule = 0;
 	//_modelingModule = new Modeling::WorldModel(_configFile);
 	//Modeling::WorldModel* wm = new Modeling::WorldModel(_config.robotFilterConfig());
 	//_motionModule = new Motion::Controller(_config.robotConfig(), id);
 	_logModule = new Log::LogModule();
-	
+
 	//TODO fixme...I dunno..this needs to be done for all the modules
 	_logModule->setSystemState(&_state);
 }
@@ -70,19 +70,19 @@ Processor::~Processor()
 {
 	_running = false;
 	wait();
-	
+
 	if (_modelingModule)
 	{
 		delete _modelingModule;
 		_modelingModule = 0;
 	}
-	
+
 	if (_logModule)
 	{
 		delete _logModule;
 		_logModule = 0;
 	}
-	
+
 	if (_motionModule)
 	{
 		delete _motionModule;
@@ -105,29 +105,29 @@ void Processor::run()
 	receiver.addType(Network::Address,
 			Network::addTeamOffset(_team, Network::RadioRx),
 			this, &Processor::radioHandler);
-	
+
 	//initialize empty state
 	clearState();
-	
+
 	while (_running)
-	{		
+	{
 		if (_state.runState == SystemState::Running)
 		{
 			if (_state.controlState == SystemState::Manual)
 			{
 				//non blocking information for manual control
 				receiver.receive(false);
-				
+
 				_state.radioCmd = Packet::RadioTx();
 				_state.radioCmd.robots[_state.rid] = _inputHandler.genRobotData();
-				
+
 				_logModule->run();
-				
+
 				//send out the radio data from manual control
 				_sender.send(_state.radioCmd);
-				
+
 				clearState();
-				
+
 				//constant time wait (simulate vision time)
 				QThread::msleep(33);
 			}
@@ -135,17 +135,17 @@ void Processor::run()
 			{
 				//blocking to act on new packets
 				receiver.receive(true);
-				
+
 				//full autonomous control
 				//populates the radio packet that will go out on the next sync frame
 				if (_trigger)
 				{
 					//_modelingModule->run();
 					//_motionModule->run();
-					
+
 					//always run logging last
 					_logModule->run();
-					
+
 					//wait for new trigger frame
 					_trigger = false;
 				}
@@ -154,16 +154,16 @@ void Processor::run()
 		else
 		{
 			//still log when stopped
-			
+
 			//blocking to act on new packets
 			receiver.receive(true);
-			
-			//we should never do anything until processor 
+
+			//we should never do anything until processor
 			//has established a trigger id... -Roman
 			if (_triggerId >= 0)
 			{
 				_logModule->run();
-				
+
 				clearState();
 			}
 		}
@@ -206,20 +206,20 @@ void Processor::visionHandler(const Packet::Vision* packet)
 
 		//store received packets in the log frame
 		_state.rawVision.push_back(*packet);
-	
+
 		return;
 	}
-	
+
 	//add the packet to the list of vision to process
 	//this also includes sync messages, which will need to be ignored
 	_state.rawVision.push_back(*packet);
-	
+
 	//set syncronous time to packet timestamp
 	_state.timestamp = packet->timestamp;
-	
+
 	//convert last frame to teamspace
 	toTeamSpace(_state.rawVision[_state.rawVision.size() - 1]);
-	
+
 	//only every act if we are in Auto mode
 	if (packet->camera == _triggerId && _state.controlState == SystemState::Auto)
 	{
@@ -229,7 +229,7 @@ void Processor::visionHandler(const Packet::Vision* packet)
 		if (packet->sync)
 		{
 			_sender.send(_state.radioCmd);
-			
+
 			//state is cleared after the packet is sent
 			clearState();
 		}
@@ -244,7 +244,7 @@ void Processor::visionHandler(const Packet::Vision* packet)
 void Processor::radioHandler(const Packet::RadioRx* packet)
 {
 	//log received radio data time
-	
+
 	//received radio packets
 }
 
@@ -252,7 +252,7 @@ void Processor::toTeamSpace(Packet::Vision& vision)
 {
 	//translates raw vision into team space
 	//means modeling doesn't need to do it
-	
+
 	for (unsigned int i = 0; i < vision.blue.size(); ++i)
 	{
 		Packet::Vision::Robot& r = vision.blue[i];
