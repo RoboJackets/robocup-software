@@ -39,74 +39,6 @@
      <string>Stop</string>
     </property>
    </widget>
-   <widget class="QLabel" name="kpLabel" >
-    <property name="geometry" >
-     <rect>
-      <x>878</x>
-      <y>27</y>
-      <width>32</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>K_p</string>
-    </property>
-   </widget>
-   <widget class="QDoubleSpinBox" name="kp" >
-    <property name="geometry" >
-     <rect>
-      <x>916</x>
-      <y>27</y>
-      <width>55</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="maximum" >
-     <number>500</number>
-    </property>
-    <property name="singleStep" >
-     <number>1</number>
-    </property>
-   </widget>
-   <widget class="QLabel" name="kdLabel" >
-    <property name="geometry" >
-     <rect>
-      <x>878</x>
-      <y>60</y>
-      <width>32</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>K_d</string>
-    </property>
-   </widget>
-   <widget class="QDoubleSpinBox" name="kd" >
-    <property name="geometry" >
-     <rect>
-      <x>918</x>
-      <y>60</y>
-      <width>55</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="maximum" >
-     <number>500</number>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="saveGains" >
-    <property name="geometry" >
-     <rect>
-      <x>880</x>
-      <y>90</y>
-      <width>93</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text" >
-     <string>Save</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="close" >
     <property name="geometry" >
      <rect>
@@ -123,10 +55,10 @@
    <widget class="QGroupBox" name="pathEditor" >
     <property name="geometry" >
      <rect>
-      <x>876</x>
-      <y>157</y>
+      <x>870</x>
+      <y>300</y>
       <width>101</width>
-      <height>261</height>
+      <height>171</height>
      </rect>
     </property>
     <property name="title" >
@@ -136,7 +68,7 @@
      <property name="geometry" >
       <rect>
        <x>20</x>
-       <y>80</y>
+       <y>50</y>
        <width>63</width>
        <height>24</height>
       </rect>
@@ -154,7 +86,7 @@
      <property name="geometry" >
       <rect>
        <x>20</x>
-       <y>200</y>
+       <y>110</y>
        <width>63</width>
        <height>24</height>
       </rect>
@@ -172,7 +104,7 @@
      <property name="geometry" >
       <rect>
        <x>20</x>
-       <y>230</y>
+       <y>140</y>
        <width>63</width>
        <height>24</height>
       </rect>
@@ -184,24 +116,6 @@
      </property>
      <property name="text" >
       <string>Save</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="line" >
-     <property name="geometry" >
-      <rect>
-       <x>20</x>
-       <y>50</y>
-       <width>63</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="font" >
-      <font>
-       <pointsize>8</pointsize>
-      </font>
-     </property>
-     <property name="text" >
-      <string>Line</string>
      </property>
     </widget>
     <widget class="QPushButton" name="startPoint" >
@@ -226,7 +140,7 @@
      <property name="geometry" >
       <rect>
        <x>20</x>
-       <y>170</y>
+       <y>80</y>
        <width>63</width>
        <height>24</height>
       </rect>
@@ -240,42 +154,6 @@
       <string>Erase</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="arc" >
-     <property name="geometry" >
-      <rect>
-       <x>20</x>
-       <y>110</y>
-       <width>63</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="font" >
-      <font>
-       <pointsize>8</pointsize>
-      </font>
-     </property>
-     <property name="text" >
-      <string>Arc</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="closePath" >
-     <property name="geometry" >
-      <rect>
-       <x>20</x>
-       <y>140</y>
-       <width>63</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="font" >
-      <font>
-       <pointsize>8</pointsize>
-      </font>
-     </property>
-     <property name="text" >
-      <string>Close</string>
-     </property>
-    </widget>
    </widget>
    <widget class="QWidget" name="gridLayoutWidget" >
     <property name="geometry" >
@@ -287,6 +165,134 @@
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout" />
+    <zorder>groupBox</zorder>
+   </widget>
+   <widget class="QGroupBox" name="groupBox" >
+    <property name="geometry" >
+     <rect>
+      <x>860</x>
+      <y>30</y>
+      <width>121</width>
+      <height>231</height>
+     </rect>
+    </property>
+    <property name="title" >
+     <string>Gains</string>
+    </property>
+    <widget class="QDoubleSpinBox" name="angleKp" >
+     <property name="geometry" >
+      <rect>
+       <x>50</x>
+       <y>130</y>
+       <width>51</width>
+       <height>28</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="angleKd" >
+     <property name="geometry" >
+      <rect>
+       <x>50</x>
+       <y>160</y>
+       <width>51</width>
+       <height>28</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="angleKpLabel" >
+     <property name="geometry" >
+      <rect>
+       <x>10</x>
+       <y>140</y>
+       <width>21</width>
+       <height>18</height>
+      </rect>
+     </property>
+     <property name="text" >
+      <string>K_p</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="angleKdLabel" >
+     <property name="geometry" >
+      <rect>
+       <x>10</x>
+       <y>170</y>
+       <width>21</width>
+       <height>18</height>
+      </rect>
+     </property>
+     <property name="text" >
+      <string>K_d</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="saveGains" >
+     <property name="geometry" >
+      <rect>
+       <x>50</x>
+       <y>200</y>
+       <width>51</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text" >
+      <string>Save</string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="kd" >
+     <property name="geometry" >
+      <rect>
+       <x>50</x>
+       <y>30</y>
+       <width>51</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="maximum" >
+      <double>500.000000000000000</double>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="kp" >
+     <property name="geometry" >
+      <rect>
+       <x>50</x>
+       <y>60</y>
+       <width>51</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="maximum" >
+      <double>500.000000000000000</double>
+     </property>
+     <property name="singleStep" >
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+    <widget class="QLabel" name="kdLabel" >
+     <property name="geometry" >
+      <rect>
+       <x>10</x>
+       <y>60</y>
+       <width>32</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text" >
+      <string>K_d</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="kpLabel" >
+     <property name="geometry" >
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>32</width>
+       <height>27</height>
+      </rect>
+     </property>
+     <property name="text" >
+      <string>K_p</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar" >

@@ -20,31 +20,20 @@ class MainWindow : public QMainWindow, Ui::MainWindow
     Q_OBJECT;
 
     public:
-        enum
-        {
-            DrawingMode,
-            RunMode,
-        };
-
-    public:
         MainWindow(Team t, QString filename);
         ~MainWindow();
 
     public Q_SLOTS:
         void on_erase_clicked();
         void on_beizerCurve_clicked();
-        void on_line_clicked();
         void on_erasePath_clicked();
         void on_run_clicked();
         void on_stop_clicked();
         void on_startPoint_clicked();
-        void on_closePath_clicked();
-        void on_arc_clicked();
         void on_close_clicked();
         void on_kp_valueChanged(double value);
         void on_kd_valueChanged(double value);
         void on_saveGains_clicked();
-        void setupModules();
 
     Q_SIGNALS:
         void runTrajectoryGen();
@@ -57,8 +46,6 @@ class MainWindow : public QMainWindow, Ui::MainWindow
         Ui::MainWindow ui;
 
         RobotPath* _rp;
-
-        int _mode;
 
         Processor _processor;
 

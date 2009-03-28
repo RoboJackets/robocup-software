@@ -31,8 +31,6 @@ Geometry::Point2d LinearController::run(Geometry::Point2d err, Geometry::Point2d
         output.x = _maxVelocity*cos(angle);
         output.y = _maxVelocity*sin(angle);
 //         printf("Controller Saturation Velocity x=%f y=%f\n", output.x, output.y);
-        printf("In Angle %f ", angle);
-        printf("Out Angle %f\n", output.angle());
     }
 
     return output;

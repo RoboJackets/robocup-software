@@ -43,8 +43,6 @@ MainWindow::MainWindow(Team t, QString filename)
     kp->setValue(_config.robotConfig().posCntrlr.Kp);
     kd->setValue(_config.robotConfig().posCntrlr.Kd);
 
-    setupModules();
-
     _logControl->setLogFile(_logFile);
     connect(_logControl, SIGNAL(newFrame(Packet::LogFrame*)), _rp, SLOT(frame(Packet::LogFrame*)));
 }
@@ -65,44 +63,11 @@ MainWindow::~MainWindow()
     }
 }
 
-void MainWindow::setupModules()
-{
-//     Modeling::WorldModel* wm = new Modeling::WorldModel(_config.robotFilterConfig());
-//
-//     //TODO Get this out from vision don't make assumptions!!!!!
-//     unsigned int id[5];
-//     for(int i = 0; i<5; i++)
-//     {
-//         id[i] = i;
-//     }
-//     Motion::Controller* motion = new Motion::Controller(_config.robotConfig(), id);
-//     connect(this, SIGNAL(kpChanged(double)), motion, SLOT(setKpGains(double)), Qt::QueuedConnection);
-//     connect(this, SIGNAL(kdChanged(double)), motion, SLOT(setKdGains(double)), Qt::QueuedConnection);
-//
-//     Trajectory::TrajectoryGen* trajGen = new Trajectory::TrajectoryGen(20,20);
-//     connect(this, SIGNAL(runTrajectoryGen()), trajGen, SLOT(runModule()), Qt::QueuedConnection);
-//     connect(this, SIGNAL(stopTrajectoryGen()), trajGen, SLOT(stopModule()), Qt::QueuedConnection);
-//     connect(this, SIGNAL(setPaths(QVector<RobotPath::Path>)), trajGen, SLOT(setPaths(QVector<RobotPath::Path>)), Qt::QueuedConnection);
-//
-//     Log::LogModule* lm = new Log::LogModule();
-//     lm->setLogFile(_logFile);
-//
-//     //add the modules....ORDER MATTERS!!
-//     _processor.addModule(wm);
-//     _processor.addModule(trajGen);
-//     _processor.addModule(motion);
-//     _processor.addModule(lm);
-}
-
 void MainWindow::on_erase_clicked()
 {
     _rp->erase();
 }
 
-void MainWindow::on_line_clicked()
-{
-    _rp->addPath(RobotPath::Line);
-}
 
 void MainWindow::on_beizerCurve_clicked()
 {
@@ -119,26 +84,14 @@ void MainWindow::on_startPoint_clicked()
     _rp->addPath(RobotPath::Start);
 }
 
-void MainWindow::on_arc_clicked()
-{
-    _rp->addPath(RobotPath::Arc);
-}
-
-void MainWindow::on_closePath_clicked()
-{
-    _rp->closePath();
-}
-
 void MainWindow::on_run_clicked()
 {
-    _mode = RunMode;
     runTrajectoryGen();
     setPaths(_rp->getPaths());
 }
 
 void MainWindow::on_stop_clicked()
 {
-    _mode = DrawingMode;
     stopTrajectoryGen();
 }
 
