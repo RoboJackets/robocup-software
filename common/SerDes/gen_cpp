@@ -16,6 +16,9 @@ class Struct:
         # None if this is not an external struct
         self.externalName = None
         
+        # True if there are no members in this struct
+        self.empty = True
+        
         # Map of typenames to child structs
         self.structs = {}
         
@@ -276,6 +279,13 @@ def emitStruct(node, parentStruct):
     if parentStruct != None:
         parentStruct.structs[typename] = thisStruct
     
+    # Determine if the struct is empty even if it's external
+    for child in node.childNodes:
+        if child.nodeType == Node.ELEMENT_NODE:
+            if child.nodeName == 'member' or child.nodeName == 'array':
+                thisStruct.empty = False
+                break
+    
     external = node.getAttribute('external_cpp')
     if external != '':
         # Don't emit any declarations for this struct
@@ -361,16 +371,20 @@ def emitArraySerialization(child, thisStruct):
 def emitStructSerialization(node, thisStruct):
     name = fullName(thisStruct, node)
     
-    guard_name = '__SERDES__'
-    for ch in name:
-        if ch.isupper() or ch.isdigit():
-            guard_name += ch
-        elif ch.islower():
-            guard_name += ch.upper()
-        else:
-            guard_name += '_'
-    write('#ifndef ' + guard_name)
-    write('#define ' + guard_name)
+    if thisStruct.empty == True and thisStruct.externalName != None:
+        # Emit no body for empty external structs (assuming it will be defined in another file)
+        return
+    
+    #guard_name = '__SERDES__'
+    #for ch in name:
+        #if ch.isupper() or ch.isdigit():
+            #guard_name += ch
+        #elif ch.islower():
+            #guard_name += ch.upper()
+        #else:
+            #guard_name += '_'
+    #write('#ifndef ' + guard_name)
+    #write('#define ' + guard_name)
     
     for child in node.childNodes:
         if child.nodeType == Node.ELEMENT_NODE:
@@ -392,7 +406,7 @@ def emitStructSerialization(node, thisStruct):
     unindent()
     write('}')
     
-    write('#endif // ' + guard_name)
+    #write('#endif // ' + guard_name)
     
     write()
 
