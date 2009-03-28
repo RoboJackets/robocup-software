@@ -1,0 +1,7 @@
+cmake
+libavformat-dev
+libswscale-dev
+freeglut-dev
+libdc1394-22-dev
+libboost-dev
+libcv-dev
