@@ -30,7 +30,7 @@ TreeModel::TreeModel()
 
 void TreeModel::frame(Packet::LogFrame* frame)
 {
-	_teamName->setText(QString("Team: %1").arg(teamToA(frame->team)));
+	_teamName->setText(QString("Team: %1").arg(teamName(frame->team)));
 	
 	QString ts = QString::number((quint64)frame->timestamp);
 	_timestamp->setData(QString("%1.%2").arg(ts.left(ts.size()-6)).arg(ts.right(6)),

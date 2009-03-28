@@ -10,6 +10,48 @@
         <constant name="Blue" value="1"/>
     </enum>
 
+    <!-- Game state as determined by referee -->
+    <struct typename="GameState">
+        <enum type="uint8" typename="Period">
+            <constant name="FirstHalf"/>
+            <constant name="Halftime"/>
+            <constant name="SecondHalf"/>
+            <constant name="Overtime1"/>
+            <constant name="Overtime2"/>
+            <constant name="PenaltyShootout"/>
+        </enum>
+        
+        <enum type="uint8" typename="State">
+            <constant name="Halt"/>         <!-- Robots must not move -->
+            <constant name="Stop"/>         <!-- Robots must stay 500mm away from ball -->
+            <constant name="Start"/>        <!-- Robots not on starting team must stay 500mm away from ball -->
+            <constant name="Ready"/>        <!-- A robot on the starting team may kick the ball -->
+            <constant name="Playing"/>      <!-- Normal play -->
+        </enum>
+        
+        <!-- Types of restarts -->
+        <enum type="uint8" typename="Restart">
+            <constant name="Kickoff"/>
+            <constant name="Direct"/>
+            <constant name="Indirect"/>
+            <constant name="Penalty"/>
+        </enum>
+        
+        <member type="Period" name="period"/>
+        <member type="State" name="state"/>
+        <member type="Restart" name="restart"/>
+        
+        <!-- Which team can kick the ball during a restart -->
+        <member type="Team" name="startingTeam"/>
+        
+        <!-- Scores -->
+        <member type="uint8" name="scoreYellow"/>
+        <member type="uint8" name="scoreBlue"/>
+        
+        <!-- Time in seconds remaining in the current period -->
+        <member type="uint16" name="secondsRemaining"/>
+    </struct>
+    
     <!-- Commands for motion -->
     <struct typename="MotionCmd">
         <!--Goal position for the robot-->
@@ -78,4 +120,6 @@
 
 	<!-- gameplay ball -->
 	<member type="Ball" name="ball" />
+    
+    <member type="GameState" name="gameState"/>
 </struct>

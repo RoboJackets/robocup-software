@@ -1,3 +1,4 @@
+<!-- The first node may be a comment -->
 <struct typename="LogFrame">
     <enum type="uint8" typename="TestEnum">
         <constant name="A" value="3"/>

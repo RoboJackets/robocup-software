@@ -84,12 +84,13 @@ def cType(scope, typename):
         return typeMap[typename]
     return mapExternalType(scope, typename)
 
+# Returns the full C++ type name for a struct defined at a given DOM node
 def fullName(scope, node):
-    name = node.getAttribute('typename')
-    
-    ext = mapExternalType(scope, name)
-    if ext != name:
+    ext = node.getAttribute('external_cpp')
+    if ext != '':
         return ext
+    
+    name = node.getAttribute('typename')
     
     parent = node.parentNode
     while parent != None and parent.nodeType == parent.ELEMENT_NODE:
@@ -405,8 +406,10 @@ filename = sys.argv[1]
 dom = parse(filename)
 root = dom.firstChild
 
-if root.nodeType != Node.ELEMENT_NODE or root.nodeName != 'struct':
-    sys.stderr.write('Root tag must be struct\n')
+while root != None and (root.nodeType != Node.ELEMENT_NODE or root.nodeName != 'struct'):
+    root = root.nextSibling
+if root == None:
+    sys.stderr.write('No root struct found\n')
     sys.exit(1)
 
 # Declarations

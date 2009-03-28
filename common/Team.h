@@ -22,7 +22,7 @@ static inline Team opponentTeam(Team t)
 	return UnknownTeam;
 }
 
-static inline const char* teamToA(Team t)
+static inline const char* teamName(Team t)
 {
 	if (t == Blue)
 	{

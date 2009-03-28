@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+#FIXME - Finish supporting external enums
 
 import sys
 from xml.dom.minidom import *
@@ -150,9 +152,15 @@ def emitStruct(node):
         enumDefault = {}
         for child in ChildrenByName(node, 'enum'):
             enumName = child.getAttribute('typename')
+            
             dataType = child.getAttribute('type')
             if dataType == '':
                 dataType = 'uint32'
+
+            enumExt = child.getAttribute('external_python')
+            if enumExt != '':
+                externals[className] = enumExt
+            
             enumTypes[enumName] = dataType
             
             write('# ' + enumName)
