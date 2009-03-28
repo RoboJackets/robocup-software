@@ -160,14 +160,33 @@ namespace Network
 			{
 				//check for possible packets
 				//return value 0 = timeout on call
-				if (poll(&_pollfds[0], _pollfds.size(), (block) ? -1 : 1 ) >= 1) //timeout is in ms
+				
+				//TODO a blocking call should still read all the packets
+				if (block)
 				{
-					for (unsigned int i=0 ; i<_pollfds.size() ; ++i)
+					if (poll(&_pollfds[0], _pollfds.size(), -1 ) >= 1) //timeout is in ms
 					{
-						if (_pollfds[i].revents & POLLIN)
+						for (unsigned int i=0 ; i<_pollfds.size() ; ++i)
 						{
-							//read the packet
-							_receivers[i]->read();
+							if (_pollfds[i].revents & POLLIN)
+							{
+								//read the packet
+								_receivers[i]->read();
+							}
+						}
+					}	
+				}
+				else
+				{				
+					while (poll(&_pollfds[0], _pollfds.size(), 1) >= 1) //timeout is in ms
+					{
+						for (unsigned int i=0 ; i<_pollfds.size() ; ++i)
+						{
+							if (_pollfds[i].revents & POLLIN)
+							{
+								//read the packet
+								_receivers[i]->read();
+							}
 						}
 					}
 				}

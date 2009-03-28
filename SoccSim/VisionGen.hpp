@@ -12,7 +12,7 @@ class VisionGen: public QThread
 		VisionGen(Env* env);
 		~VisionGen();
 
-		uint64_t timestamp();
+		uint64_t timestamp() const;
 
 	protected:
 		void run();

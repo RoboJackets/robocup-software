@@ -49,8 +49,17 @@ void FieldView::paintEvent(QPaintEvent* event)
     
 	if (_frame)
 	{
+		//TODO handle display options...
+		
+		//draw the raw frame info
+		//TODO draw only the last frame?? - Roman
 		Q_FOREACH(const Packet::Vision& vis, _frame->rawVision)
 		{
+			if (vis.sync)
+			{
+				continue;
+			}
+			
 			Q_FOREACH(const Packet::Vision::Robot& r, vis.blue)
 			{
 				drawRobot(painter, Blue, r.shell, r.pos, r.angle);
@@ -67,6 +76,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 			}
 		}
 		
+		/*
 		for (unsigned int i=0 ; i<5 ; ++i)
 		{
 			const Packet::LogFrame::Robot& s = _frame->self[i];
@@ -87,6 +97,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 		{
 			drawBall(painter, _frame->ball.pos);
 		}
+		*/
 	}
 }
 

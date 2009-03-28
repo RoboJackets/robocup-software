@@ -150,13 +150,14 @@ void Robot::genMotor(VelocityCmd velCmd)
         printf("Wheel Speeds after [0] %f [1] %f [2] %f [3] %f\n",_motors[0], _motors[1], _motors[2], _motors[3]);
     }
 
-    _state->radioCmd.robots[_id].board_id = shellId;
+    _state->self[_id].radioTx.board_id = shellId;
 
     for(int j = 0; j<4; j++)
     {
-        _state->radioCmd.robots[_id].motors[j] = (int8_t)_motors[j];
+        _state->self[_id].radioTx.motors[j] = (int8_t)_motors[j];
     }
-//     printf("Wheel Speeds after [0] %f [1] %f [2] %f [3] %f\n",_motors[0], _motors[1], _motors[2], _motors[3]);
-    _state->radioCmd.robots[_id].valid = true;
+    
+    //printf("Wheel Speeds after [0] %f [1] %f [2] %f [3] %f\n",_motors[0], _motors[1], _motors[2], _motors[3]);
+    _state->self[_id].radioTx.valid = true;
 }
 

@@ -25,7 +25,7 @@ VisionGen::~VisionGen()
 	wait();
 }
 
-uint64_t VisionGen::timestamp()
+uint64_t VisionGen::timestamp() const
 {
 	struct timeval time;
 	gettimeofday(&time, 0);

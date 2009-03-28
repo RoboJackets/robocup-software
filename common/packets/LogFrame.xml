@@ -50,6 +50,9 @@
 
 		<!-- if true, this robot is active for use -->
 		<member type="bool" name="valid" value="false" />
+		
+		<!-- radio tx packet for the robot -->
+		<member type="RadioTx::Robot" name="radioTx" />
 	</struct>
 
 	<!-- post processed ball information -->
@@ -68,9 +71,6 @@
 
 	<!-- timestamp of the vision packet that clocked the system -->
 	<member type="uint64" name="timestamp" />
-
-	<!-- Commands to the robots -->
-	<member type="RadioTx" name="radioCmd" />
 
 	<!-- array of robots for the system, index is player id -->
 	<array size="5" type="Robot" name="self"/>

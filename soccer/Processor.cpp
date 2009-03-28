@@ -76,6 +76,8 @@ Processor::Processor(Team t, QString filename) :
 	_logModule->setSystemState(&_state);
 	_motionModule->setSystemState(&_state);
 	_modelingModule->setSystemState(&_state);
+	
+	_state.team = _team;
 }
 
 Processor::~Processor()
@@ -104,7 +106,6 @@ Processor::~Processor()
 
 void Processor::setLogFile(Log::LogFile* lf)
 {
-	//_logFile = lf;
 	_logModule->setLogFile(lf);
 }
 
@@ -118,9 +119,6 @@ void Processor::run()
 			Network::addTeamOffset(_team, Network::RadioRx),
 			this, &Processor::radioHandler);
 
-	//initialize empty state
-	clearState();
-
 	while (_running)
 	{
 		if (_state.runState == SystemState::Running)
@@ -130,30 +128,32 @@ void Processor::run()
 				//non blocking information for manual control
 				receiver.receive(false);
 
-				_state.radioCmd = Packet::RadioTx();
-				_state.radioCmd.robots[_state.rid] = _inputHandler.genRobotData();
-
+				//run modeling for testing
+				_modelingModule->run();
+				
+				//TODO clear radio command first
+				_state.self[_state.rid].radioTx = _inputHandler.genRobotData();
+				
 				_logModule->run();
 
 				//send out the radio data from manual control
-				_sender.send(_state.radioCmd);
+				sendRadioData();
 
 				clearState();
 
-				//constant time wait (simulate vision time)
-				QThread::msleep(33);
+				//constant time wait for radio consistency
+				QThread::msleep(35);
 			}
 			else if (_state.controlState == SystemState::Auto)
 			{
 				//blocking to act on new packets
 				receiver.receive(true);
-
-				//full autonomous control
-				//populates the radio packet that will go out on the next sync frame
+				
+				//if vision told us to act
 				if (_trigger)
 				{
-					//_modelingModule->run();
-					//_motionModule->run();
+					_modelingModule->run();
+					_motionModule->run();
 
 					//always run logging last
 					_logModule->run();
@@ -165,19 +165,23 @@ void Processor::run()
 		}
 		else
 		{
-			//still log when stopped
-
 			//blocking to act on new packets
-			receiver.receive(true);
+			receiver.receive(false);
 
 			//we should never do anything until processor
 			//has established a trigger id... -Roman
-			if (_triggerId >= 0)
-			{
-				_logModule->run();
-
-				clearState();
-			}
+			//what if there is no vision??
+			
+			//TODO clear the outgoing data (halt)
+			
+			//run modeling for testing
+			_modelingModule->run();
+			_logModule->run();
+			
+			clearState();
+			
+			//fixed wait
+			QThread::msleep(35);
 		}
 	}
 }
@@ -186,6 +190,18 @@ void Processor::clearState()
 {
 	//always clear the raw vision packets
 	_state.rawVision.clear();
+}
+
+void Processor::sendRadioData()
+{
+	Packet::RadioTx tx;
+	
+	for (int i=0; i<5 ; ++i)
+	{
+		tx.robots[i] = _state.self[i].radioTx;
+	}
+	
+	_sender.send(tx);
 }
 
 void Processor::visionHandler(const Packet::Vision* packet)
@@ -221,9 +237,31 @@ void Processor::visionHandler(const Packet::Vision* packet)
 
 		return;
 	}
-
-	//add the packet to the list of vision to process
-	//this also includes sync messages, which will need to be ignored
+	
+	//if we have trigger camera, we will either send data
+	//or set the trigger flag
+	if (packet->camera == _triggerId 
+			&& _state.controlState == SystemState::Auto
+			&& _state.runState == SystemState::Running)
+	{
+		//if its a sync packet from trigger camera, then send radio data
+		//otherwise set state timestamp, set trigger flag and the system will
+		//process modules and send out data
+		if (packet->sync)
+		{
+			//send first
+			sendRadioData();
+			
+			//new state
+			clearState();
+		}
+		else
+		{
+			_trigger = true;
+		}
+	}
+	
+	//populate the state
 	_state.rawVision.push_back(*packet);
 
 	//set syncronous time to packet timestamp
@@ -231,26 +269,6 @@ void Processor::visionHandler(const Packet::Vision* packet)
 
 	//convert last frame to teamspace
 	toTeamSpace(_state.rawVision[_state.rawVision.size() - 1]);
-
-	//only every act if we are in Auto mode
-	if (packet->camera == _triggerId && _state.controlState == SystemState::Auto)
-	{
-		//if its a sync packet from trigger camera, then send radio data
-		//otherwise set state timestamp, set trigger flag and the system will
-		//process modules
-		if (packet->sync)
-		{
-			_sender.send(_state.radioCmd);
-
-			//state is cleared after the packet is sent
-			clearState();
-		}
-		else
-		{
-			//start s.proc
-			_trigger = true;
-		}
-	}
 }
 
 void Processor::radioHandler(const Packet::RadioRx* packet)

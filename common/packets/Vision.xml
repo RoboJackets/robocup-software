@@ -14,7 +14,7 @@
 		<member type="Point2d" name="pos" />
 	</struct>
 
-    <member type="uint64" name="timestamp" />
+    <member type="uint64" name="timestamp" value="0" />
     <member type="uint8" name="camera" />
     <member type="bool" name="sync" value="false" />
 

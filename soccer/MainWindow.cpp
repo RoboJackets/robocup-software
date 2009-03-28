@@ -32,24 +32,13 @@ MainWindow::MainWindow(Team t, QString filename) :
 	//start control thread
 	_processor.start();
 	
-	/*
-	try
-	{
-		_config.load();
-	}
-	catch (std::runtime_error& re)
-	{
-		printf("Config Load Error: %s\n", re.what());
-	}
-	*/
-	
     _logFile = new LogFile(LogFile::genFilename());
 	_logControl->setLogFile(_logFile);
 	_processor.setLogFile(_logFile);
 	
 	//TODO fixme
 	connect(_logControl, SIGNAL(newFrame(Packet::LogFrame*)), _fieldView, SLOT(frame(Packet::LogFrame*)));
-	//connect(_logControl, SIGNAL(newFrame(Packet::LogFrame*)), _treeModel, SLOT(frame(Packet::LogFrame*)));
+	connect(_logControl, SIGNAL(newFrame(Packet::LogFrame*)), _treeModel, SLOT(frame(Packet::LogFrame*)));
 	
 	//TODO make the log elements parent be the log control?
 }

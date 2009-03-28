@@ -14,7 +14,6 @@
 #include <RadioRx.hpp>
 
 #include <log/LogModule.hpp>
-#include <log/LogFile.hpp>
 
 #include <config/ConfigFile.hpp>
 
@@ -60,6 +59,9 @@ class Processor: public QThread
 		/** reset certain system state variables
 		 * NOTE This should ALWAYS happen after a send on radio */
 		void clearState();
+		
+		/** send out the radio data for the radio program */
+		void sendRadioData();
 
 	private:
 		
@@ -74,7 +76,7 @@ class Processor: public QThread
 
 		/** team we are running as */
 		Team _team;
-
+		
 		/** global system state */
 		SystemState _state;
 
@@ -92,9 +94,6 @@ class Processor: public QThread
 		InputHandler _inputHandler;
 		
 		Network::Sender _sender;
-		
-		//current log file
-		Log::LogFile* _logFile;
 		
 		/** Currently the configfile is for motion but others can add to it **/
 		ConfigFile _config;
