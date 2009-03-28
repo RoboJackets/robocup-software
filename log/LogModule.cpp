@@ -5,11 +5,13 @@ using namespace Log;
 LogModule::LogModule() :
 	Module("Log Module")
 {
-	
+	_logFile = 0;
 }
 
 void LogModule::setLogFile(LogFile* file)
 {
+    //TODO this mutex should not be here...instread in code
+    //that actually uses this object?? - Roman
 	_logFileMutex.lock();
 	_logFile = file;
 	_logFileMutex.unlock();

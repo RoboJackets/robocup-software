@@ -12,6 +12,7 @@ Module::Module(std::string name) :
 		throw std::runtime_error("Module name conflict");
 	}
 	
+    _state = 0;
 	_modules[_name] = this; 
 }
 

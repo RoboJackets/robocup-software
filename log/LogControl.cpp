@@ -167,6 +167,8 @@ void LogControl::fetchFrame()
 		{
 			_frame = _logFile->readLast();
 			_fetchTimer.start(34);
+            
+            return;
 		}
 		else if (_logFile->hasNextFrame())
 		{	

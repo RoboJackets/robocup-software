@@ -46,7 +46,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	////team space
 	painter.translate(_tx, _ty);
 	painter.rotate(_ta);
-
+    
 	if (_frame)
 	{
 		Q_FOREACH(const Packet::Vision& vis, _frame->rawVision)
