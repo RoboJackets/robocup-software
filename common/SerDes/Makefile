@@ -1,5 +1,5 @@
 OBJS=t.o Sender.o Receiver.o
-CPPFLAGS=-O2 -Wall -g3 -I.
+CPPFLAGS=-O2 -Wall -g3 -I. -I../Network
 LDFLAGS=-lpthread
 
 .PHONY: all clean
