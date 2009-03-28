@@ -13,8 +13,11 @@
 #include <Vision.hpp>
 #include <RadioRx.hpp>
 
+#include <log/LogModule.hpp>
+#include <log/LogFile.hpp>
+
 #include "InputHandler.hpp"
-#include "framework/Module.hpp"
+#include <framework/Module.hpp>
 
 /** handles processing for a team */
 class Processor: public QThread
@@ -24,19 +27,14 @@ class Processor: public QThread
 	public:
 		Processor(Team t);
 		~Processor();
-
-		//add a process to the queue
-		//process are executed in the order they are placed
-		//team handler is only responsible for triggering
-		//this means that the SystemState is clear each time and
-		//that only the vision information is fresh
-		void addModule(Module* mod);
 		
 		//RunState runState() const { return _runState; }
 		//void runState(RunState s);
 		
 		//ControlState controlState() const { return _controlState; }
 		//void controlState(ControlState s);
+		
+		void setLogFile(Log::LogFile* lf);
 		
 	public Q_SLOTS:
 		void on_input_playPauseButton();
@@ -50,15 +48,16 @@ class Processor: public QThread
 		void visionHandler(const Packet::Vision* packet);
 		/** handle incoming radio packet */
 		void radioHandler(const Packet::RadioRx* packet);
-
+	
 	private:
 		/** clip angle to +/- 180 */
 		static void trim(float& angle);
 		/** convert all coords to team space */
 		void toTeamSpace(Packet::Vision& vision);
-        
-        /** reset certain system state variables */
-        void clearState();
+		
+		/** reset certain system state variables
+		 * NOTE This should ALWAYS happen after a send on radio */
+		void clearState();
 
 	private:
 		
@@ -82,15 +81,18 @@ class Processor: public QThread
 
 		//modules
 		QMutex _modulesMutex;
-		std::list<Module*> _modules;
 		
-		//Module* _motionModule;
-		//Module* _modelingModule;
-		//Module* _logModule;
+		Module* _motionModule;
+		Module* _modelingModule;
+		
+		Log::LogModule* _logModule;
 		
 		InputHandler _inputHandler;
 		
 		Network::Sender _sender;
+		
+		//current log file
+		Log::LogFile* _logFile;
 };
 
 #endif // PROCESSOR_HPP

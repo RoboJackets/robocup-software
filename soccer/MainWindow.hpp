@@ -1,3 +1,4 @@
+// kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 #ifndef MAINWINDOW_HPP_
 #define MAINWINDOW_HPP_
 
@@ -20,30 +21,28 @@
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT;
-
+	
 	public:
 		MainWindow(Team t, QString filename);
 		~MainWindow();
-
-		void setupModules();
-
+	
 	private:
 		Team _team;
-
+	
 		Processor _processor;
-
+	
 		Log::FieldView* _fieldView;
 		Log::LogControl* _logControl;
 		Log::TreeView* _treeView;
 		Log::TreeModel* _treeModel;
-
+	
 		Log::LogFile* _logFile;
-
-        /** Currently the configfile is for motion but others can add to it **/
-        QString _configFile;
-
-        /** Currently the configfile is for motion but others can add to it **/
-        ConfigFile _config;
+	
+		/** Currently the configfile is for motion but others can add to it **/
+		QString _configFile;
+	
+		/** Currently the configfile is for motion but others can add to it **/
+		ConfigFile _config;
 };
 
 #endif /* MAINWINDOW_HPP_ */
