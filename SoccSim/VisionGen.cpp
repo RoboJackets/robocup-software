@@ -1,6 +1,7 @@
 #include "VisionGen.hpp"
 
 #include <Network/Network.hpp>
+#include <Point2d.hpp>
 #include <Vision.hpp>
 
 #include "Physics/Robot.hpp"

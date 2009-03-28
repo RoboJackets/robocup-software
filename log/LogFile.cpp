@@ -2,6 +2,7 @@
 
 #include <QTime>
 #include <QMutexLocker>
+#include <Point2d.hpp>
 
 using namespace Log;
 

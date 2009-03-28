@@ -8,6 +8,7 @@
 #include <Network/Sender.hpp>
 #include <Network/PacketReceiver.hpp>
 
+#include <Point2d.hpp>
 #include <Vision.hpp>
 #include <Constants.hpp>
 
