@@ -4,7 +4,7 @@
 	<struct typename="RadioTx" include_cpp="RadioTx.hpp" external_cpp="Packet::RadioTx" external_python="Packet.RadioTx"/>
 
     <!-- see Team.h -->
-    <enum type="uint8" typename="Team" external_cpp="Team" include_cpp="Team.h">
+    <enum type="int8" typename="Team" external_cpp="Team" include_cpp="Team.h">
         <constant name="UnknownTeam" value="-1"/>
         <constant name="Yellow" value="0"/>
         <constant name="Blue" value="1"/>

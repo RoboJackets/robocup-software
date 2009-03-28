@@ -18,7 +18,7 @@ InputHandler::InputHandler(QObject* parent) :
 	{
 		//TODO, need to check for vendor and device id
 		//_controller = new Gamepad("/dev/input/js0");
-		_controller = new Gamepad("/dev/input/js1");
+		_controller = new Gamepad("/dev/input/robocupPad");
 	}
 	catch (std::runtime_error& re)
 	{
