@@ -8,14 +8,14 @@
 
 //TODO flicker is still an issue (though it only happens when you re-draw)
 
-MainWindow::MainWindow(Team team, QString filename)
-    :QMainWindow(), _team(team), _processor(team), _logFile(0), _configFile(filename), _config(filename)
+MainWindow::MainWindow(Team t, QString filename)
+    :QMainWindow(), _processor(t), _logFile(0), _configFile(filename), _config(filename)
 {
     setupUi(this);
 
     this->setCentralWidget(centralwidget);
 
-    _rp = new RobotPath(team,this);
+    _rp = new RobotPath(t,this);
     _rp->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     _rp->setAttribute(Qt::WA_OpaquePaintEvent);
     _rp->setAutoFillBackground(false);
@@ -79,7 +79,7 @@ void MainWindow::setupModules()
     connect(this, SIGNAL(kpChanged(double)), motion, SLOT(setKpGains(double)), Qt::QueuedConnection);
     connect(this, SIGNAL(kdChanged(double)), motion, SLOT(setKdGains(double)), Qt::QueuedConnection);
 
-    Trajectory::TrajectoryGen* trajGen = new Trajectory::TrajectoryGen();
+    Trajectory::TrajectoryGen* trajGen = new Trajectory::TrajectoryGen(20,20);
     connect(this, SIGNAL(runTrajectoryGen()), trajGen, SLOT(runModule()), Qt::QueuedConnection);
     connect(this, SIGNAL(stopTrajectoryGen()), trajGen, SLOT(stopModule()), Qt::QueuedConnection);
     connect(this, SIGNAL(setPaths(QVector<RobotPath::Path>)), trajGen, SLOT(setPaths(QVector<RobotPath::Path>)), Qt::QueuedConnection);

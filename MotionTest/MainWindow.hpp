@@ -27,7 +27,7 @@ class MainWindow : public QMainWindow, Ui::MainWindow
         };
 
     public:
-        MainWindow(Team team, QString filename);
+        MainWindow(Team t, QString filename);
         ~MainWindow();
 
     public Q_SLOTS:
@@ -57,8 +57,6 @@ class MainWindow : public QMainWindow, Ui::MainWindow
         Ui::MainWindow ui;
 
         RobotPath* _rp;
-
-        Team _team;
 
         int _mode;
 

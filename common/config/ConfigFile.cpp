@@ -169,7 +169,7 @@ void ConfigFile::procRobotData(QDomElement element)
 
 }
 
-
+//TODO Replace with templated member function
 void ConfigFile::setElement(QString tagString,int value)
 {
     QStringList tagNamesList = tagString.split(",");
@@ -203,8 +203,6 @@ void ConfigFile::setElement(QString tagString,double value)
     }
 
     element.setAttribute("value",value);
-//     float testFloat = valueFloat(element.attributeNode("value"));
-//     printf("The element was set to %f\n", testFloat);
 }
 
 float ConfigFile::valueFloat(QDomAttr attr)
@@ -246,7 +244,6 @@ int ConfigFile::valueUInt(QDomAttr attr)
 ConfigFile::RobotCfg ConfigFile::robotConfig()
 {
     RobotCfg cfg;
-    cfg.id = 0;
 
     cfg.posCntrlr = _pos;
     cfg.angleCntrlr = _angle;

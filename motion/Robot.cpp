@@ -10,8 +10,8 @@
 
 using namespace Geometry;
 
-Robot::Robot(ConfigFile::RobotCfg cfg):
-    _id(cfg.id)
+Robot::Robot(ConfigFile::RobotCfg cfg, unsigned int id):
+    _id(id)
 {
     _axels = cfg.axels;
     _motors = new float[_axels.size()];
@@ -53,7 +53,7 @@ void Robot::proc()
 {
     if(_state->self[_id].valid)
     {
-        _goalPos = _state->self[_id].cmdPos;
+        _goalPos = _state->self[_id].cmd.goal;
         _currPos = _state->self[_id].pos;
 
         if(!_path.waypoints.empty())
@@ -72,14 +72,11 @@ void Robot::genVelocity()
 {
     float currAngle = _state->self[_id].angle;
     Geometry::Point2d currPos = _state->self[_id].pos;
-    Geometry::Point2d currVel =_state->self[_id].vel;
-    Geometry::Point2d desiredVel(0,0);
-
-    //FIXME Change so that trajectoryGen gives the position to goto
-    Geometry::Point2d error = _state->self[_id].cmdPos - currPos;
+    Geometry::Point2d feedforwardVelocity = _state->self[_id].cmd.v_ff;
+    Geometry::Point2d error = _state->self[_id].cmd.pos - currPos;
     VelocityCmd velCmd;
 
-    velCmd.vel = _posController->run(error,desiredVel);
+    velCmd.vel = _posController->run(error,feedforwardVelocity);
     velCmd.w = 0;
 //         printf("Curr Pos x %f y %f\n", currPos.x, currPos.y);
 //         printf("Desired pos x %f y %f\n", desiredPos.x, desiredPos.y);
@@ -91,6 +88,8 @@ void Robot::genVelocity()
     {
         velCmd.vel = Point2d(0,0);
     }
+
+    _state->self[_id].vel = velCmd.vel;
 
     //Rotate the velocity command from the team frame to the robot frame
     //The angle also needs to be converted
@@ -105,6 +104,7 @@ void Robot::genVelocity()
 void Robot::genMotor(VelocityCmd velCmd)
 {
     float maxGenWheelVel = 0;
+    unsigned int shellId = _state->self[_id].shell;
 
     //clip the maximum spin velocity
     const float clip = 150;
@@ -149,6 +149,8 @@ void Robot::genMotor(VelocityCmd velCmd)
         }
         printf("Wheel Speeds after [0] %f [1] %f [2] %f [3] %f\n",_motors[0], _motors[1], _motors[2], _motors[3]);
     }
+
+    _state->radioCmd.robots[_id].board_id = shellId;
 
     for(int j = 0; j<4; j++)
     {

@@ -16,8 +16,7 @@ Controller::Controller(ConfigFile::RobotCfg cfg, unsigned int id[]) :
 
     for(unsigned int i=0 ; i<5 ; i++)
     {
-        cfg.id = id[i];
-        _robots[i] = new Robot(cfg);
+        _robots[i] = new Robot(cfg,i);
     }
 
 }

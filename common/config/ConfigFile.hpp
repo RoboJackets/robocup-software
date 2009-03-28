@@ -23,7 +23,6 @@ class ConfigFile
 
         typedef struct
         {
-            unsigned int id;
             float maxAccel, maxWheelVel, maxRobotVel;
 
             linearControllerInfo posCntrlr, angleCntrlr;

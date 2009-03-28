@@ -28,7 +28,7 @@ class Robot
         } VelocityCmd;
 
     public:
-        Robot(ConfigFile::RobotCfg cfg);
+        Robot(ConfigFile::RobotCfg cfg, unsigned int id);
         ~Robot();
 
         void setSystemState(SystemState* state)
