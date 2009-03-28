@@ -42,7 +42,7 @@ class MainWindow : public QMainWindow
 		QString _configFile;
 	
 		/** Currently the configfile is for motion but others can add to it **/
-		ConfigFile _config;
+		//ConfigFile _config;
 };
 
 #endif /* MAINWINDOW_HPP_ */

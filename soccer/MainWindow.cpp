@@ -7,8 +7,8 @@
 using namespace Log;
 
 MainWindow::MainWindow(Team t, QString filename) :
-		QMainWindow(), _team(t), _processor(t), _logFile(0), _configFile(filename), _config(filename)
-{
+		QMainWindow(), _team(t), _processor(t, filename), _logFile(0), _configFile(filename)
+{	
 	QWidget* central = new QWidget();
 	this->setCentralWidget(central);
 	
@@ -32,6 +32,7 @@ MainWindow::MainWindow(Team t, QString filename) :
 	//start control thread
 	_processor.start();
 	
+	/*
 	try
 	{
 		_config.load();
@@ -40,6 +41,7 @@ MainWindow::MainWindow(Team t, QString filename) :
 	{
 		printf("Config Load Error: %s\n", re.what());
 	}
+	*/
 	
     _logFile = new LogFile(LogFile::genFilename());
 	_logControl->setLogFile(_logFile);

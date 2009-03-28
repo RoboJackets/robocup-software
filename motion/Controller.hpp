@@ -16,7 +16,7 @@ namespace Motion
         Q_OBJECT;
 
         public:
-            Controller(ConfigFile::RobotCfg cfg, unsigned int id[]);
+            Controller(ConfigFile::RobotCfg cfg);
             ~Controller();
 
             virtual void run();

@@ -20,7 +20,7 @@ ConfigFile::~ConfigFile()
 void ConfigFile::load() throw (std::runtime_error)
 {
     QFile configFile(_filename);
-
+    
     if (!configFile.open(QIODevice::ReadOnly))
     {
         throw std::runtime_error("Unable to open config file.");

@@ -15,9 +15,10 @@
 #include <log/LogModule.hpp>
 #include <motion/Controller.hpp>
 
-Processor::Processor(Team t) :
+Processor::Processor(Team t, QString filename) :
 	_running(true), _team(t), _inputHandler(this),
-	_sender(Network::Address, Network::addTeamOffset(_team, Network::RadioTx))
+	_sender(Network::Address, Network::addTeamOffset(_team, Network::RadioTx)),
+	_config(filename)
 {
 	//default yellow
 	Geometry::Point2d trans(0, Constants::Field::Length / 2.0f);
@@ -55,15 +56,26 @@ Processor::Processor(Team t) :
 
 	QMetaObject::connectSlotsByName(this);
 
+	try
+	{
+		_config.load();
+	}
+	catch (std::runtime_error& re)
+	{
+		printf("Config Load Error: %s\n", re.what());
+	}
+	
 	//setup the modules
 	_motionModule = _modelingModule = _logModule = 0;
-	//_modelingModule = new Modeling::WorldModel(_configFile);
-	//Modeling::WorldModel* wm = new Modeling::WorldModel(_config.robotFilterConfig());
-	//_motionModule = new Motion::Controller(_config.robotConfig(), id);
+	
+	_modelingModule = new Modeling::WorldModel(_config.robotFilterConfig());
+	_motionModule = new Motion::Controller(_config.robotConfig());
 	_logModule = new Log::LogModule();
 
 	//TODO fixme...I dunno..this needs to be done for all the modules
 	_logModule->setSystemState(&_state);
+	_motionModule->setSystemState(&_state);
+	_modelingModule->setSystemState(&_state);
 }
 
 Processor::~Processor()

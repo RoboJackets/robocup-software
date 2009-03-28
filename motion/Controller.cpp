@@ -2,21 +2,12 @@
 
 using namespace Motion;
 
-Controller::Controller(ConfigFile::RobotCfg cfg, unsigned int id[]) :
-	Module("Motion") /*_config(filename),*/
+Controller::Controller(ConfigFile::RobotCfg cfg) :
+	Module("Motion")
 {
-//     try
-//     {
-//         _config.load();
-//     }
-//     catch (std::runtime_error& re)
-//     {
-//         printf("Config Load Error: %s\n", re.what());
-//     }
-
     for(unsigned int i=0 ; i<5 ; i++)
     {
-        _robots[i] = new Robot(cfg,i);
+        _robots[i] = new Robot(cfg, i);
     }
 
 }

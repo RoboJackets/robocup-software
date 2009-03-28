@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <QString>
+#include <QDebug>
 
 #include <Team.h>
 
@@ -12,6 +13,7 @@ void usage(const char* prog)
 	printf("usage: %s <-y|-b> [-c <config file>]\n", prog);
 	printf("\t-y: run as the yellow team\n");
 	printf("\t-b: run as the blue team\n");
+    exit(1);
 }
 
 int main (int argc, char* argv[])
@@ -21,7 +23,7 @@ int main (int argc, char* argv[])
 	Team team = UnknownTeam;
     QString cfgFile = "";
 
-	for (int i=0 ; i<argc; ++i)
+	for (int i=1 ; i<argc; ++i)
 	{
 	    const char* var = argv[i];
 
@@ -35,8 +37,20 @@ int main (int argc, char* argv[])
 	    }
 	    else if(strcmp(var, "-c") == 0)
 	    {
-	    	cfgFile = argv[i+1];
+            if (i+1 >= argc)
+            {
+                printf("no config file specified after -c");
+                usage(argv[0]);
+            }
+            
+            i++;
+	    	cfgFile = argv[i];
 	    }
+        else
+        {
+            printf("Not a valid flag: %s\n", argv[i]);
+            usage(argv[0]);
+        }
 	}
 
 	if (team == UnknownTeam)
@@ -45,7 +59,7 @@ int main (int argc, char* argv[])
 		usage(argv[0]);
 		return 0;
 	}
-
+    
 	MainWindow win(team, cfgFile);
 	win.showMaximized();
 

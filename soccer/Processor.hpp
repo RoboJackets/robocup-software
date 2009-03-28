@@ -16,6 +16,8 @@
 #include <log/LogModule.hpp>
 #include <log/LogFile.hpp>
 
+#include <config/ConfigFile.hpp>
+
 #include "InputHandler.hpp"
 #include <framework/Module.hpp>
 
@@ -25,7 +27,7 @@ class Processor: public QThread
 	Q_OBJECT;
 	
 	public:
-		Processor(Team t);
+		Processor(Team t, QString filename);
 		~Processor();
 		
 		//RunState runState() const { return _runState; }
@@ -93,6 +95,9 @@ class Processor: public QThread
 		
 		//current log file
 		Log::LogFile* _logFile;
+		
+		/** Currently the configfile is for motion but others can add to it **/
+		ConfigFile _config;
 };
 
 #endif // PROCESSOR_HPP
