@@ -1,0 +1,4 @@
+<struct typename="Point2d" include_cpp="Geometry/Point2d.hpp" external_cpp="Geometry::Point2d" external_python="Geometry.Point2d">
+	<member type="float" name="x"/>
+	<member type="float" name="y"/>
+</struct>
