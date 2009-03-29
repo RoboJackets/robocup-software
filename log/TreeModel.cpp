@@ -39,6 +39,6 @@ TreeModel::TreeModel()
 
 void TreeModel::frame(Packet::LogFrame* frame)
 {
-	Log::handleExt(this->invisibleRootItem(), *frame);
+	Log::handleExt(this->invisibleRootItem(), this->invisibleRootItem(), *frame);
 }
 

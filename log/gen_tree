@@ -156,9 +156,8 @@ def makeStruct(struct):
 		return
 	
 	for e in struct.enums:
-		write("static inline void handleExt(QStandardItem* item, const %s& p, const char* name=0)" % e.type())
+		write("""static inline void handleExt(QStandardItem* c1, QStandardItem* c2, const %s& p, const char* name="%s")""" % (e.type(), e.typename))
 		write("{")
-		#write("""printf("%d\\n", p);""")
 		write("""QString s = "";""")
 		write("switch (p)")
 		write("{")
@@ -167,48 +166,37 @@ def makeStruct(struct):
 			write("""\ts = "%s";""" % e.items[v])
 			write("\tbreak;")
 		write("}")
-		write("""item->setText(s);""")
+		write("""c1->setText(name);""");
+		write("""c2->setText(s);""");
 		write("}\n")
 
 	for s in struct.structs:
 		makeStruct(s)
 		
-	write("static inline void handleExt(QStandardItem* item, const %s& p, const char* name = 0)" % struct.type())
+	write("""static inline void handleExt(QStandardItem* c1, QStandardItem* c2, const %s& p, const char* name = "%s")""" % (struct.type(), struct.typename))
 	write("{")
 	
-	write("if (name)")
+	write("for (int i=c1->rowCount() ; i<%d ; ++i)" % (len(struct.members) + len(struct.arrays)))
 	write("{")
-	write("item->setText(name);")
-	write("}else{")
-	write("item->setText(\"%s\");" % struct.typename)
-	write("}")
-	
-	write("for (int i=item->rowCount() ; i<%d ; ++i)" % (len(struct.members) + len(struct.arrays)))
-	write("{")
-	write("item->setChild(i,0, new QStandardItem());")
-	write("item->setChild(i,1, new QStandardItem());")
+	write("c1->setChild(i,0, new QStandardItem());")
+	write("c1->setChild(i,1, new QStandardItem());")
 	write("}\n")
 
 	c = 0
 	for k in struct.members:
 		member = struct.members[k]
-		write("""item->child(%d, 0)->setText("%s");""" % (c, k))
-		if member in primitives:
-			write("""Log::handleExt(item->child(%d, 1), p.%s);""" % (c, k))
-			pass
-		else:
-			write("""Log::handleExt(item->child(%d, 0), p.%s, "%s");""" % (c, k, k))
-			pass
+		write("""c1->child(%d, 0)->setText("%s");""" % (c, k))
+		write("""Log::handleExt(c1->child(%d, 0), c1->child(%d, 1), p.%s, "%s");""" % (c, c, k, k))
 		
 		c += 1
 		
 	for a in struct.arrays:
-		write("""item->child(%d, 0)->setText("%s");""" % (c, a.name))
+		write("""c1->child(%d, 0)->setText("%s");""" % (c, a.name))
 		if a.size:
-			write("""Log::handleExtArray(item->child(%d, 0), p.%s, %s);""" % (c, a.name, a.size))
+			write("""Log::handleExtArray(c1->child(%d, 0), c1->child(%d, 1), p.%s, %s);""" % (c,c, a.name, a.size))
 			pass
 		else:
-			write("""Log::handleExtVector(item->child(%d, 0), p.%s);""" % (c, a.name))
+			write("""Log::handleExtArray(c1->child(%d, 0), c1->child(%d, 1), &(p.%s[0]), p.%s.size());""" % (c,c, a.name, a.name))
 			pass
 			
 		c += 1
