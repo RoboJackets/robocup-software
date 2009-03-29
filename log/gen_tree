@@ -183,6 +183,8 @@ def makeStruct(struct):
 	write("{")
 	write("c1->setChild(i,0, new QStandardItem());")
 	write("c1->setChild(i,1, new QStandardItem());")
+	write("c1->child(i,0)->setEditable(false);")
+	write("c1->child(i,1)->setEditable(false);")
 	write("}\n")
 
 	c = 0

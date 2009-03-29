@@ -14,6 +14,9 @@ namespace Log
             {
                 c1->setChild(i, 0, new QStandardItem(QString::number(i)));
                 c1->setChild(i, 1, new QStandardItem());
+                
+                c1->child(i,0)->setEditable(false);
+                c1->child(i,1)->setEditable(false);
             }
             
             handleExt(c1->child(i,0), c1->child(i,1), arr[i]);

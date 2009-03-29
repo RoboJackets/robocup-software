@@ -9,5 +9,7 @@ TreeView::TreeView(QWidget* parent) :
 	QTreeView(parent)
 {
 	header()->setVisible(true);
+    
+    this->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
 
