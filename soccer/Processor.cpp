@@ -2,6 +2,7 @@
 // vim:ai ts=4 et
 #include "Processor.hpp"
 #include "Processor.moc"
+#include "rrt.hpp"
 
 #include <QMutexLocker>
 
@@ -17,6 +18,8 @@
 #include <log/LogModule.hpp>
 #include <motion/Controller.hpp>
 #include <boost/foreach.hpp>
+
+using namespace std;
 
 Processor::Processor(Team t, QString filename) :
 	_running(true), _team(t), _inputHandler(this),
@@ -172,6 +175,26 @@ void Processor::run()
 					_refereeHandler.run();
 					//_motionModule->run();
 
+					_state.rrt.clear();
+					_state.pathTest.clear();
+					vector<RRT::Obstacle *> obstacles;
+					obstacles.push_back(new RRT::CircleObstacle(Geometry::Point2d(0, Constants::Field::Length / 2), Constants::Field::CenterRadius));
+					
+					for (int i = 0; i < 5; ++i)
+					{
+						if (_state.self[i].valid)
+						{
+							obstacles.push_back(new RRT::CircleObstacle(_state.self[i].pos, Constants::Robot::Radius));
+						}
+						
+						if (_state.opp[i].valid)
+						{
+							obstacles.push_back(new RRT::CircleObstacle(_state.opp[i].pos, Constants::Robot::Radius));
+						}
+					}
+					
+					RRT::plan(obstacles, Geometry::Point2d(0, 0.5), Geometry::Point2d(0, 5.5), 1000, &_state);
+					
 					//always run logging last
 					_logModule->run();
 					

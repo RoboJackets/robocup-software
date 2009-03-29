@@ -4,6 +4,8 @@
 #include <QPainter>
 #include <QResizeEvent>
 
+#include <boost/foreach.hpp>
+
 #include "drawing/Elements.hpp"
 
 using namespace Constants;
@@ -59,29 +61,48 @@ void FieldView::paintEvent(QPaintEvent* event)
 		
 		//draw the raw frame info
 		//TODO draw only the last frame?? - Roman
-		Q_FOREACH(const Packet::Vision& vis, _frame->rawVision)
+		BOOST_FOREACH(const Packet::Vision& vis, _frame->rawVision)
 		{
 			if (vis.sync)
 			{
 				continue;
 			}
 			
-			Q_FOREACH(const Packet::Vision::Robot& r, vis.blue)
+			BOOST_FOREACH(const Packet::Vision::Robot& r, vis.blue)
 			{
 				drawRobot(painter, Blue, r.shell, r.pos, r.angle);
 			}
 			
-			Q_FOREACH(const Packet::Vision::Robot& r, vis.yellow)
+			BOOST_FOREACH(const Packet::Vision::Robot& r, vis.yellow)
 			{
 				drawRobot(painter, Yellow, r.shell, r.pos, r.angle);
 			}
 			
-			Q_FOREACH(const Packet::Vision::Ball& b, vis.balls)
+			BOOST_FOREACH(const Packet::Vision::Ball& b, vis.balls)
 			{
 				drawBall(painter, b.pos);
 			}
 		}
 		
+        painter.setPen(Qt::gray);
+        BOOST_FOREACH(const Geometry::Segment &seg, _frame->rrt)
+        {
+            painter.drawLine(QPointF(seg.pt[0].x, seg.pt[0].y), QPointF(seg.pt[1].x, seg.pt[1].y));
+        }
+        
+        painter.setPen(Qt::red);
+        bool first = true;
+        Geometry::Point2d last;
+        BOOST_FOREACH(const Geometry::Point2d &pt, _frame->pathTest)
+        {
+            if (!first)
+            {
+                painter.drawLine(QPointF(pt.x, pt.y), QPointF(last.x, last.y));
+            }
+            first = false;
+            last = pt;
+        }
+        
 		/*
 		for (unsigned int i=0 ; i<5 ; ++i)
 		{

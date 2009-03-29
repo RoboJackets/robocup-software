@@ -140,4 +140,10 @@
 
 	<!-- gameplay ball -->
 	<member type="Ball" name="ball" />
+
+    <array type="Point2d" name="pathTest"/>
+    <struct typename="Segment" external_cpp="Geometry::Segment" include_cpp="Geometry/Segment.hpp">
+        <array size="2" type="Point2d" name="pt"/>
+    </struct>
+    <array type="Segment" name="rrt"/>
 </struct>

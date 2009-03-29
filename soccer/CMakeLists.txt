@@ -26,6 +26,7 @@ set (SRCS
 	InputHandler.cpp
 	JoystickInput.cpp
     RefereeHandler.cpp
+    rrt.cpp
 )
 
 qt4_automoc (${SRCS})

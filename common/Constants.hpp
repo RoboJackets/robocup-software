@@ -34,7 +34,8 @@ namespace Constants
         const float ArcRadius = .5f;
         
         /** diameter of the center circle */
-        const float CenterDiameter = ArcRadius * 2.0f;
+        const float CenterRadius = 0.5f;
+        const float CenterDiameter = CenterRadius * 2.0f;
         
         /** flat area for defence markings */
         const float GoalFlat = .35f;

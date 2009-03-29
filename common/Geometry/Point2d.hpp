@@ -171,11 +171,8 @@ namespace Geometry
 			}
 			
 			/**
-			find out if the current point is within a threshold of another point
-			@param pt the second point to compare threshold to
-			@param threshold the threshold the points must be within
-			@return true if the current point is within the threshold of another point
-			*/
+             * Returns true if this point is within the given distance (threshold) of (pt)
+			 */
 			bool inThreshold(const Point2d &pt, float threshold) const;
 			
 			/**
