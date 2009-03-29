@@ -9,7 +9,6 @@
 class SystemState: public Packet::LogFrame
 {
 	public:
-		
 		/** manual control robot id */
 		unsigned int rid;
 		

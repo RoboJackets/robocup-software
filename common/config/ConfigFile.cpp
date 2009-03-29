@@ -44,7 +44,7 @@ void ConfigFile::load() throw (std::runtime_error)
     }
 
     QDomElement element = root.firstChildElement();
-
+    
     while (!element.isNull())
     {
         if (element.tagName() == QString("linearController"))
@@ -63,7 +63,7 @@ void ConfigFile::load() throw (std::runtime_error)
         {
             procRobotKF(element);
         }
-
+        
         element = element.nextSiblingElement();
     }
 }

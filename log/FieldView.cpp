@@ -1,3 +1,5 @@
+// kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
+// vim:ai ts=4 et
 #include "FieldView.hpp"
 
 #include <Constants.hpp>
@@ -23,20 +25,19 @@ FieldView::FieldView(QWidget* parent) :
 
 void FieldView::team(Team t)
 {
-    _team = t;
+	_team = t;
 
-    if (_team == Blue)
-    {
-        _tx = Field::Length/2.0f;
-        _ta = 90;
-    }
+	if (_team == Blue)
+	{
+		_tx = Field::Length/2.0f;
+		_ta = 90;
+	}
 }
 
 void FieldView::frame(Packet::LogFrame* frame)
 {
-    _frame = frame;
-    
-    update();
+	_frame = frame;
+	update();
 }
 
 void FieldView::paintEvent(QPaintEvent* event)
@@ -54,7 +55,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	////team space
 	painter.translate(_tx, _ty);
 	painter.rotate(_ta);
-    
+	
 	if (_frame)
 	{
 		//TODO handle display options...
@@ -84,25 +85,26 @@ void FieldView::paintEvent(QPaintEvent* event)
 			}
 		}
 		
-        painter.setPen(Qt::gray);
-        BOOST_FOREACH(const Geometry::Segment &seg, _frame->rrt)
-        {
-            painter.drawLine(QPointF(seg.pt[0].x, seg.pt[0].y), QPointF(seg.pt[1].x, seg.pt[1].y));
-        }
-        
-        painter.setPen(Qt::red);
-        bool first = true;
-        Geometry::Point2d last;
-        BOOST_FOREACH(const Geometry::Point2d &pt, _frame->pathTest)
-        {
-            if (!first)
-            {
-                painter.drawLine(QPointF(pt.x, pt.y), QPointF(last.x, last.y));
-            }
-            first = false;
-            last = pt;
-        }
-        
+#if 1
+		painter.setPen(Qt::gray);
+		BOOST_FOREACH(const Geometry::Segment &seg, _frame->rrt)
+		{
+			painter.drawLine(QPointF(seg.pt[0].x, seg.pt[0].y), QPointF(seg.pt[1].x, seg.pt[1].y));
+		}
+		
+		painter.setPen(Qt::red);
+		bool first = true;
+		Geometry::Point2d last;
+		BOOST_FOREACH(const Geometry::Point2d &pt, _frame->pathTest)
+		{
+			if (!first)
+			{
+				painter.drawLine(QPointF(pt.x, pt.y), QPointF(last.x, last.y));
+			}
+			first = false;
+			last = pt;
+		}
+#endif
 		/*
 		for (unsigned int i=0 ; i<5 ; ++i)
 		{

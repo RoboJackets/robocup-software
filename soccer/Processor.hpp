@@ -100,7 +100,7 @@ class Processor: public QThread
 		Module* _motionModule;
 		Module* _modelingModule;
 		
-		Log::LogModule* _logModule;
+		Log::LogModule _logModule;
 		
 		InputHandler _inputHandler;
 		RefereeHandler _refereeHandler;

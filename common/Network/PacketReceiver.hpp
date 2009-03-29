@@ -24,7 +24,7 @@ namespace Network
                     _io(uint16_t port, unsigned int msec) :
                     	_port(port), _msecTimeout(msec)
 				    {
-					lastRecvTime.start();
+                        lastRecvTime.start();
 				    }
 
 					virtual ~_io() {};

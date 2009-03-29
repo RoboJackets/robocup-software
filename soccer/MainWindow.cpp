@@ -71,7 +71,6 @@ MainWindow::~MainWindow()
 	{
 		ui.logControl->setLogFile(0);
 		delete _logFile;
-		_logFile = 0;
 	}
 }
 

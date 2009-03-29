@@ -32,16 +32,16 @@ class ConfigFile
 
         typedef struct
         {
-          float cmd_scale;
-          float cmd_scale_angle;
-          int bufsize;
+            float cmd_scale;
+            float cmd_scale_angle;
+            int bufsize;
         } robotKF;
 
         typedef struct
         {
-	    bool kf_self_enable;
-	    bool kf_opp_enable;
-	    robotKF self, opp;
+            bool kf_self_enable;
+            bool kf_opp_enable;
+            robotKF self, opp;
         } RobotFilterCfg;
 
     public:

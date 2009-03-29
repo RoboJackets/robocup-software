@@ -130,18 +130,16 @@ void LogControl::fetchFrame()
 				_frame = _logFile->readNext();
 				_lastTimestamp = _frame.timestamp;
 				
-				//immediately call because signal happens at start
+				//immediately call because signal happens after timestamp is set
 				fetchFrame();
-			}
-			else
-			{
-				//wait and try again after some time (.5 sec)
-				QTimer::singleShot(500, this, SLOT(fetchFrame()));
+                return;
 			}
 			
+            //wait and try again after some time (.5 sec)
+            QTimer::singleShot(500, this, SLOT(fetchFrame()));
 			return;
 		}
-		
+        
 		newFrame(&_frame);
 		
 		if (_pause->isChecked())

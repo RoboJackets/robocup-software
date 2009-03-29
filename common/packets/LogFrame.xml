@@ -124,7 +124,7 @@
 	<member type="uint64" name="timestamp" />
 
 	<!-- team we are running as -->
-    <member type="Team" name="team" />
+    <member type="Team" name="team" value="UnknownTeam" />
 
 	<member type="ControlState" name="controlState" value="Manual" />
     <member type="RunState" name="runState" value="Stopped" />

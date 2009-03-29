@@ -57,7 +57,6 @@ Packet::LogFrame LogFile::readNext()
 	Packet::LogFrame frame;
 	
 	//printf("Prev: %lld \tNext: %lld\n", _prevPos, _nextPos);
-	
 	_prevPos = _nextPos - sizeof(FrameSizeType);
 	
 	//read from next position

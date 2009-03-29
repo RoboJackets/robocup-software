@@ -41,6 +41,8 @@ Processor::Processor(Team t, QString filename) :
 	_teamTrans = Geometry::TransformMatrix::translate(trans);
 	_teamTrans *= Geometry::TransformMatrix::rotate(_teamAngle);
 
+	_motionModule = _modelingModule = 0;
+	
 	//initially no camera does the triggering
 	_triggerId = -1;
 	_trigger = false;
@@ -48,11 +50,10 @@ Processor::Processor(Team t, QString filename) :
 	//runs independently of main loop
 	_inputHandler.setObjectName("input");
 	_inputHandler.start();
-
-	///setup system state
+	
 	//set the team
 	_state.team = _team;
-
+	
 	//default to auto, running when no input device
 	if (!_inputHandler.enabled())
 	{
@@ -62,7 +63,7 @@ Processor::Processor(Team t, QString filename) :
 	}
 
 	QMetaObject::connectSlotsByName(this);
-
+	
 	try
 	{
 		_config.load();
@@ -73,18 +74,14 @@ Processor::Processor(Team t, QString filename) :
 	}
 	
 	//setup the modules
-	_motionModule = _modelingModule = _logModule = 0;
+	//_modelingModule = new Modeling::WorldModel(_config.robotFilterConfig());
+	//_motionModule = new Motion::Controller(_config.robotConfig());
 	
-	_modelingModule = new Modeling::WorldModel(_config.robotFilterConfig());
-	_motionModule = new Motion::Controller(_config.robotConfig());
-	_logModule = new Log::LogModule();
-
 	//TODO fixme...I dunno..this needs to be done for all the modules
-	_logModule->setSystemState(&_state);
-	_motionModule->setSystemState(&_state);
-	_modelingModule->setSystemState(&_state);
+	//_modelingModule->setSystemState(&_state);
+	//_motionModule->setSystemState(&_state);
 	
-	_state.team = _team;
+	_logModule.setSystemState(&_state);
 }
 
 Processor::~Processor()
@@ -95,25 +92,17 @@ Processor::~Processor()
 	if (_modelingModule)
 	{
 		delete _modelingModule;
-		_modelingModule = 0;
-	}
-
-	if (_logModule)
-	{
-		delete _logModule;
-		_logModule = 0;
 	}
 
 	if (_motionModule)
 	{
 		delete _motionModule;
-		_motionModule = 0;
 	}
 }
 
 void Processor::setLogFile(Log::LogFile* lf)
 {
-	_logModule->setLogFile(lf);
+	_logModule.setLogFile(lf);
 }
 
 void Processor::refereeReceived(const Packet::Referee *packet)
@@ -144,8 +133,8 @@ void Processor::run()
 				receiver.receive(false);
 
 				//run modeling for testing
-				_modelingModule->run();
-				_refereeHandler.run();
+				//_modelingModule->run();
+				//_refereeHandler.run();
 				
 				// Clear radio commands
 				for (int r = 0; r < 5; ++r)
@@ -155,7 +144,7 @@ void Processor::run()
 				
 				_state.self[_state.rid].radioTx = _inputHandler.genRobotData();
 				
-				_logModule->run();
+				_logModule.run();
 
 				//send out the radio data from manual control
 				sendRadioData();
@@ -173,6 +162,7 @@ void Processor::run()
 				//if vision told us to act
 				if (_trigger)
 				{
+					#if 0
 					_modelingModule->run();
 					_refereeHandler.run();
 
@@ -201,9 +191,10 @@ void Processor::run()
 					_state.pathTest = bestPath.points;
 					
 					//_motionModule->run();
+					#endif
 					
 					//always run logging last
-					_logModule->run();
+					_logModule.run();
 					
 					//new state
 					clearState();
@@ -223,9 +214,10 @@ void Processor::run()
 			//what if there is no vision??
 			
 			//run modeling for testing
-			_modelingModule->run();
-			_refereeHandler.run();
-			_logModule->run();
+			//_modelingModule->run();
+			//_refereeHandler.run();
+			
+			_logModule.run();
 			
 			clearState();
 			
