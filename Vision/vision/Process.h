@@ -46,11 +46,7 @@ namespace Vision
 			Distortion *distortion;
 			Transform *ball_transform;
 			Transform *robot_transform;
-
-		private:
-			//create a vision timestamp
-			uint64_t timestamp() const;
-
+            
 		private:
 
 			mutable QMutex mutex;

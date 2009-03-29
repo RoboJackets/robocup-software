@@ -38,27 +38,9 @@ target_link_libraries(test log ${QT_LIBRARIES})
 
 add_dependencies (log gen_tree)
 
-if (NOT TARGET gen_tree)
-	macro (prepend_list aList aString)
-	    set (temp_list)
-	    
-	    foreach (list_item ${${aList}})
-	        list(APPEND temp_list ${aString}/${list_item})
-	    endforeach(list_item)
-	    
-	    set (${aList} ${temp_list})
-	endmacro(prepend_list)
-	
-	set (PacketDir ${common_include_dir}/packets)
-	set (Packets
-		Point2d
-		RadioTx
-		LogFrame
-		RadioRx
-		Vision
-		Referee
-	)
-	
+if (NOT TARGET gen_tree)	
+    #common CMakeLists.txt file contains the list of packets
+    
 	foreach (packet ${Packets})
 	    set (xmlFile ${PacketDir}/${packet}.xml)
 	    set (header tree_${packet}.hpp)
@@ -70,11 +52,11 @@ if (NOT TARGET gen_tree)
 	            VERBATIM
 	    )
 	    
-	    list (APPEND PacketHeaders ${PROJECT_BINARY_DIR}/${header})
+	    list (APPEND GenHeaders ${PROJECT_BINARY_DIR}/${header})
 	endforeach()
 	
 	add_custom_target(gen_tree
-	    DEPENDS ${PacketHeaders}
+	    DEPENDS ${GenHeaders}
 	    VERBATIM
 	)
 endif()

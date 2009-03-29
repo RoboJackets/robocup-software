@@ -11,9 +11,7 @@ class VisionGen: public QThread
 	public:
 		VisionGen(Env* env, unsigned int id);
 		~VisionGen();
-
-		uint64_t timestamp() const;
-
+        
 	protected:
 		void run();
 

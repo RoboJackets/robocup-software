@@ -9,6 +9,7 @@
 #include <QVector>
 #include <Geometry/Point2d.hpp>
 #include <Network/Sender.hpp>
+#include <Utils.hpp>
 
 #include <unistd.h>
 #include <sys/time.h>
@@ -29,14 +30,6 @@ VisionGen::~VisionGen()
 	wait();
 }
 
-uint64_t VisionGen::timestamp() const
-{
-	struct timeval time;
-	gettimeofday(&time, 0);
-
-	return (uint64_t)time.tv_sec * 1000000 + (uint64_t)time.tv_usec;
-}
-
 void VisionGen::run()
 {
     Network::Sender sender(Network::Address, Network::Vision);
@@ -48,7 +41,7 @@ void VisionGen::run()
     {
     	//send sync
     	Packet::Vision sync;
-		sync.timestamp = timestamp();
+		sync.timestamp = Utils::timestamp();
 		sync.sync = true;
 		sync.camera = _id;
 		sender.send(sync);
@@ -60,7 +53,7 @@ void VisionGen::run()
 		QThread::msleep(5);
 
 		//TODO noise, multiple cameras
-		genData.timestamp = timestamp();
+		genData.timestamp = Utils::timestamp();
 		genData.camera = _id;
 		sender.send(genData);
 

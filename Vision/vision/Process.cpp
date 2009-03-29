@@ -7,9 +7,9 @@
 
 #include <Network/Network.hpp>
 
-#include <sys/time.h>
 #include <QMutexLocker>
 #include <boost/foreach.hpp>
+#include <Utils.hpp>
 
 using namespace boost;
 using namespace std;
@@ -70,7 +70,7 @@ void Process::proc(const Image* img)
 {
     // Send a sync packet before processing
     _visionPacket = Packet::Vision();
-    _visionPacket.timestamp = timestamp();
+    _visionPacket.timestamp = Utils::timestamp();
     _visionPacket.sync = true;
     _visionPacket.camera = _procID;
     _sender.send(_visionPacket);
@@ -129,16 +129,7 @@ void Process::proc(const Image* img)
 		_visionPacket.yellow.push_back(rb);
 	}
 	
-	_visionPacket.timestamp = timestamp();
+	_visionPacket.timestamp = Utils::timestamp();
 	
 	_sender.send(_visionPacket);
 }
-
-uint64_t Process::timestamp() const
-{
-	struct timeval time;
-	gettimeofday(&time, 0);
-	
-	return (uint64_t)time.tv_sec * 1000000 + (uint64_t)time.tv_usec;
-}
-

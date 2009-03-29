@@ -11,14 +11,7 @@
 #include <Vision.hpp>
 #include <Network/Sender.hpp>
 #include <Network/Network.hpp>
-
-uint64_t timestamp()
-{
-	struct timeval time;
-	gettimeofday(&time, 0);
-
-	return (uint64_t)time.tv_sec * 1000000 + (uint64_t)time.tv_usec;
-}
+#include <Utils.hpp>
 
 class VisionSender : public QThread
 {
@@ -64,7 +57,7 @@ class VisionSender : public QThread
 				packet.balls.clear();
 
 				//send sync
-				packet.timestamp = timestamp();
+				packet.timestamp = Utils::timestamp();
 				packet.sync = true;
 				sender.send(packet);
 
@@ -73,7 +66,7 @@ class VisionSender : public QThread
 
 				//send real data
 				packet.sync = false;
-				packet.timestamp = timestamp();
+				packet.timestamp = Utils::timestamp();
 
 				rad += .025;
 
