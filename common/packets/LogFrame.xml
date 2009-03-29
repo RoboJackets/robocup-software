@@ -11,6 +11,16 @@
         <constant name="Blue" value="1"/>
     </enum>
 
+	<enum type="uint8" typename="RunState">
+        <constant name="Running"/>
+        <constant name="Stopped"/>
+    </enum>
+    
+    <enum type="uint8" typename="ControlState">
+        <constant name="Manual"/>
+        <constant name="Auto"/>
+    </enum>
+
     <!-- Game state as determined by referee -->
     <struct typename="GameState">
         <enum type="uint8" typename="Period">
@@ -109,15 +119,20 @@
 
 		<member type="bool" name="valid" value="false" />
 	</struct>
+	
+	<!-- timestamp of the vision packet that clocked the system -->
+	<member type="uint64" name="timestamp" />
+
+	<!-- team we are running as -->
+    <member type="Team" name="team" />
+
+	<member type="ControlState" name="controlState" value="Manual" />
+    <member type="RunState" name="runState" value="Stopped" />
 
 	<!-- unprocessed vision, in team space -->
 	<array type="Packet::Vision" name="rawVision" />
 
-    <!-- team we are running as -->
-    <member type="Team" name="team" />
-
-	<!-- timestamp of the vision packet that clocked the system -->
-	<member type="uint64" name="timestamp" />
+	<member type="GameState" name="gameState"/>
 
 	<!-- array of robots for the system, index is player id -->
 	<array size="5" type="Robot" name="self"/>
@@ -125,6 +140,4 @@
 
 	<!-- gameplay ball -->
 	<member type="Ball" name="ball" />
-    
-    <member type="GameState" name="gameState"/>
 </struct>

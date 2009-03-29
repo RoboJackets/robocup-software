@@ -48,7 +48,7 @@ class Enum:
 			
 		return "Packet::" + self.typename
 		
-class Array:
+class Member:
 	def __init__(self):
 		self.name = None
 		self.type = None
@@ -56,7 +56,7 @@ class Array:
 	
 class Struct:
 	def __init__(self):
-		self.members = {}
+		self.members = []
 		
 		self.typename = ""
 		
@@ -90,20 +90,23 @@ def procStruct(root, parent = None):
 	for node in root.childNodes:
 		if node.nodeName == "struct":
 			self.structs.append(procStruct(node, self))
-		elif node.nodeName == "member":
-			name = node.getAttribute("name")
-			type = node.getAttribute("type")
+		#elif node.nodeName == "member":
+			#name = node.getAttribute("name")
+			#type = node.getAttribute("type")
+			
+			#self.externOnly = False
+			#self.members[name] = type
+		elif node.nodeName == "array" or node.nodeName == "member":
+			m = Member()
+			m.name = node.getAttribute("name")
+			m.type = node.getAttribute("type")
+			m.size = node.getAttribute("size")
+			
+			if node.nodeName == "array" and not m.size:
+				m.size = "*"
 			
 			self.externOnly = False
-			self.members[name] = type
-		elif node.nodeName == "array":
-			a = Array()
-			a.name = node.getAttribute("name")
-			a.type = node.getAttribute("type")
-			a.size = node.getAttribute("size")
-			self.externOnly = False
-			
-			self.arrays.append(a)
+			self.members.append(m)
 			
 		elif node.nodeName == "enum":
 			enum = Enum()
@@ -176,29 +179,23 @@ def makeStruct(struct):
 	write("""static inline void handleExt(QStandardItem* c1, QStandardItem* c2, const %s& p, const char* name = "%s")""" % (struct.type(), struct.typename))
 	write("{")
 	
-	write("for (int i=c1->rowCount() ; i<%d ; ++i)" % (len(struct.members) + len(struct.arrays)))
+	write("for (int i=c1->rowCount() ; i<%d ; ++i)" % (len(struct.members)))
 	write("{")
 	write("c1->setChild(i,0, new QStandardItem());")
 	write("c1->setChild(i,1, new QStandardItem());")
 	write("}\n")
 
 	c = 0
-	for k in struct.members:
-		member = struct.members[k]
-		write("""c1->child(%d, 0)->setText("%s");""" % (c, k))
-		write("""Log::handleExt(c1->child(%d, 0), c1->child(%d, 1), p.%s, "%s");""" % (c, c, k, k))
+	for m in struct.members:
+		write("""c1->child(%d, 0)->setText("%s");""" % (c, m.name))
 		
-		c += 1
-		
-	for a in struct.arrays:
-		write("""c1->child(%d, 0)->setText("%s");""" % (c, a.name))
-		if a.size:
-			write("""Log::handleExtArray(c1->child(%d, 0), c1->child(%d, 1), p.%s, %s);""" % (c,c, a.name, a.size))
-			pass
+		if m.size and m.size == "*":
+			write("""Log::handleExtArray(c1->child(%d, 0), c1->child(%d, 1), &(p.%s[0]), p.%s.size());""" % (c, c, m.name, m.name))
+		elif m.size:
+			write("""Log::handleExtArray(c1->child(%d, 0), c1->child(%d, 1), p.%s, %s);""" % (c,c, m.name, m.size))
 		else:
-			write("""Log::handleExtArray(c1->child(%d, 0), c1->child(%d, 1), &(p.%s[0]), p.%s.size());""" % (c,c, a.name, a.name))
-			pass
-			
+			write("""Log::handleExt(c1->child(%d, 0), c1->child(%d, 1), p.%s, "%s");""" % (c, c, m.name, m.name))
+		
 		c += 1
 
 	write("}\n")

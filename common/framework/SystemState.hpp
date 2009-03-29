@@ -9,21 +9,6 @@
 class SystemState: public Packet::LogFrame
 {
 	public:
-		typedef enum
-		{
-			Running,
-			Stopped
-		} RunState;
-		
-		typedef enum
-		{
-			Manual,
-			Auto
-		} ControlState;
-		
-		ControlState controlState;
-		
-		RunState runState;
 		
 		/** manual control robot id */
 		unsigned int rid;
@@ -31,8 +16,6 @@ class SystemState: public Packet::LogFrame
 		SystemState()
 		{
 			rid = 0;
-			controlState = Manual;
-			runState = Stopped;
 		}
 };
 
