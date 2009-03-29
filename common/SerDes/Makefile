@@ -1,4 +1,4 @@
-OBJS=t.o Sender.o Receiver.o
+OBJS=t.o
 CPPFLAGS=-O2 -Wall -g3 -I. -I../Network
 LDFLAGS=-lpthread
 
@@ -15,4 +15,4 @@ t:	$(OBJS)
 %.hpp:	%.xml gen_cpp
 	./gen_cpp $< > $@
 
-t.o: test.hpp Sender.hpp Receiver.hpp Serialization.hpp
+t.o: test.hpp Serialization.hpp

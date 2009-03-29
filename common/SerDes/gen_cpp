@@ -343,7 +343,7 @@ def emitMemberSerialization(child, thisStruct):
     if storageType == None:
         write('buf & obj.%s;' % name)
     else:
-        write('buf & (%s &)obj.%s;' % (cType(thisStruct, storageType), name))
+        write('buf.template memberCast<%s>(obj.%s);' % (cType(thisStruct, storageType), name))
 
 def emitArraySerialization(child, thisStruct):
     name = child.getAttribute('name')

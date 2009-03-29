@@ -63,6 +63,13 @@ namespace Serialization
             }
         }
         
+        template<typename C, typename T>
+        void memberCast(T &x)
+        {
+            C cx = (C)x;
+            *this & cx;
+        }
+        
         template<typename S, typename T>
         void arrayVariable(std::vector<T> &x)
         {
@@ -92,7 +99,8 @@ namespace Serialization
             // works correctly if sizetype is too small.
             for (unsigned int i = 0; i < x.size(); ++i)
             {
-                *this & (C)x[i];
+                C cx = (C)x[i];
+                *this & cx;
             }
         }
         
@@ -101,7 +109,8 @@ namespace Serialization
         {
             for (unsigned int i = 0; i < N; ++i)
             {
-                *this & (C)x[i];
+                C cx = (C)x[i];
+                *this & cx;
             }
         }
     };
@@ -151,6 +160,14 @@ namespace Serialization
             }
         }
         
+        template<typename C, typename T>
+        void memberCast(T &x)
+        {
+            C cx;
+            *this & cx;
+            x = (T)cx;
+        }
+        
         template<typename S, typename T>
         void arrayVariable(std::vector<T> &x)
         {
@@ -178,18 +195,22 @@ namespace Serialization
             S size;
             *this & size;
             x.resize(size);
+            C cx;
             for (S i = 0; i < size; ++i)
             {
-                *this & (C &)x[i];
+                *this & cx;
+                x[i] = (T)cx;
             }
         }
         
         template<typename C, typename T, unsigned int N>
         void arrayFixedCast(T (&x)[N])
         {
+            C cx;
             for (unsigned int i = 0; i < N; ++i)
             {
-                *this & (C &)x[i];
+                *this & cx;
+                x[i] = (T)cx;
             }
         }
     };
