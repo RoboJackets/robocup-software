@@ -32,7 +32,8 @@ class ConfigFile
 
         typedef struct
         {
-	    bool kf_enable;
+	    bool kf_self_enable;
+	    bool kf_opp_enable;
         } RobotFilterCfg;
 
     public:

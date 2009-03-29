@@ -99,8 +99,8 @@
 		<!-- angular velocity of the robot degrees/timestep -->
 		<member type="float" name="angleVel" />
 
-        <!-- MotionCmd Structure -->
-        <member type="MotionCmd" name="cmd" />
+        	<!-- MotionCmd Structure -->
+        	<member type="MotionCmd" name="cmd" />
 
 		<!-- if true, this robot is active for use -->
 		<member type="bool" name="valid" value="false" />

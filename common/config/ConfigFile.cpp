@@ -259,7 +259,8 @@ ConfigFile::RobotCfg ConfigFile::robotConfig()
 ConfigFile::RobotFilterCfg ConfigFile::robotFilterConfig()
 {
     RobotFilterCfg cfg;
-    cfg.kf_enable = false;
+    cfg.kf_self_enable = false;
+    cfg.kf_opp_enable = false;
 
     return cfg;
 }

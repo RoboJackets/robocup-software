@@ -24,11 +24,13 @@ namespace Modeling
 			Geometry::Point2d _measPos;
 			float _measAngle;
 			bool _valid;
+
 			// From commands
-			Geometry::Point2d _cmdPos;
 			Geometry::Point2d _cmdVel;
 			float _cmdAngle;   
 			bool _cmdValid;
+			float _cmd_scale_factor;
+			float _cmd_scale_factor_angle;
 
 			//output data
 			Geometry::Point2d _vel;

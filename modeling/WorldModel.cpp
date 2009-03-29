@@ -33,23 +33,23 @@ void WorldModel::run()
 		{
 			const std::vector<Packet::Vision::Robot>* self = &vision.blue;
 			const std::vector<Packet::Vision::Robot>* opp = &vision.yellow;
-
+			
 			if (_state->team == Yellow)
 			{
 				self = &vision.yellow;
 				opp = &vision.blue;
-			}
+			} 
 			else if (_state->team == UnknownTeam)
 			{
 				//TODO need to not act..or something
 			}
-
+			
 			//index is the id
 			Q_FOREACH (const Packet::Vision::Robot& r, *self)
 			{
 				//FIXME - getting shell 255
 				if (r.shell > 5)
-				{
+				{   
 					continue;
 				}
 
@@ -60,10 +60,9 @@ void WorldModel::run()
 				_self[r.shell]->_valid = true;
 
 				//get data from commands
-				_self[r.shell]->_cmdPos = _state->self[r.shell].cmd.pos;
 				_self[r.shell]->_cmdVel = _state->self[r.shell].cmd.vel;
 				_self[r.shell]->_cmdAngle = _state->self[r.shell].cmd.angle;
-
+			  
 				//process world model
 				_self[r.shell]->process();
 
@@ -80,7 +79,7 @@ void WorldModel::run()
 			{
 				//FIXME - getting shell 255
 				if (r.shell > 5)
-				{
+				{   
 					continue;
 				}
 
@@ -95,14 +94,14 @@ void WorldModel::run()
 				_opp[r.shell]->process();
 
 				//store data back in state variable
-				_state->self[r.shell].shell = _opp[r.shell]->_shell;
-				_state->self[r.shell].pos = _opp[r.shell]->_pos;
-				_state->self[r.shell].vel = _opp[r.shell]->_vel;
-				_state->self[r.shell].angle = _opp[r.shell]->_posAngle;
-				_state->self[r.shell].angleVel = _opp[r.shell]->_velAngle;
-				_state->self[r.shell].valid = true;
+				_state->opp[r.shell].shell = _opp[r.shell]->_shell;
+				_state->opp[r.shell].pos = _opp[r.shell]->_pos;
+				_state->opp[r.shell].vel = _opp[r.shell]->_vel;
+				_state->opp[r.shell].angle = _opp[r.shell]->_posAngle;
+				_state->opp[r.shell].angleVel = _opp[r.shell]->_velAngle;
+				_state->opp[r.shell].valid = true;
 			}
-
+			
 			//copy ball
 			if (vision.balls.size() > 0)
 			{

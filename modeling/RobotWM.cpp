@@ -16,11 +16,23 @@ RobotWM::RobotWM()
 RobotWM::RobotWM(ConfigFile::RobotFilterCfg r, bool isSelf)
 {
   //Fill position/angle buffer
-  _bufsize = 10;
   _angleBuf.assign(_bufsize, 0);
   _posBuf.assign(_bufsize, Point2d()); 
   _isSelf = isSelf;
-  _kfEnabled = r.kf_enable;
+
+  //FIXME Get values from config file
+  _bufsize = 10;
+  _cmd_scale_factor = 1;  //FIXME check value
+  _cmd_scale_factor_angle = 1; //FIXME check value
+
+  if (_isSelf)
+    {
+      _kfEnabled = r.kf_self_enable;
+    }
+  else 
+    {
+      _kfEnabled = r.kf_opp_enable;
+    }
 
   //configure Kalman Filter
   if (_kfEnabled)
@@ -68,25 +80,64 @@ RobotWM::~RobotWM()
 void RobotWM::process()
 {
 
-  //TEMP: passthrough
-  _pos = _measPos;
-  _posAngle =_measAngle;
-  _vel = Point2d();
-  _velAngle = 0;
-
-  //buffer positions
-  rotate(_posBuf.begin(), _posBuf.end(), _posBuf.end());
-  rotate(_angleBuf.begin(), _angleBuf.end(), _angleBuf.end());
-  _posBuf[0] = _measPos;
-  _angleBuf[0] = _measAngle;
-
-  //calculate velocities
-  _vel.x = 0; _vel.y = 0; _velAngle = 0;
-  for (unsigned int i = 0; i<_bufsize-1; ++i)
+  if (_kfEnabled)
     {
-      _vel += (_posBuf[i]-_posBuf[i+1])/_bufsize;
-      _velAngle += (_angleBuf[i]-_angleBuf[i+1])/_bufsize;
+      //create a control vector
+      if (_isSelf)
+	{
+	  //create control input
+	  CvMat* ctrl = cvCreateMat(3,1,CV_32FC1);
+	  cvmSet(ctrl, 0, 0, _cmdVel.x*_cmd_scale_factor); //vx
+	  cvmSet(ctrl, 1, 0, _cmdVel.y*_cmd_scale_factor); //vy
+	  cvmSet(ctrl, 2, 0, _cmdAngle*_cmd_scale_factor_angle); //va
+	    
+	  //predict new state
+	  cvKalmanPredict(_kf, ctrl);
+	}
+      else
+	{
+	  //predict without control vector
+	  cvKalmanPredict(_kf);
+	}
+
+      //calculate measured velocity
+      
+      
+
+      //create measurement vector
+      CvMat* z = cvCreateMat(6,1,CV_32FC1);
+      cvmSet(z,0,0, _measPos.x); //px
+      cvmSet(z,1,0, 0); //vx
+      cvmSet(z,2,0, _measPos.y); //py
+      cvmSet(z,3,0, 0); //vy
+      cvmSet(z,4,0, _measAngle); //pa
+      cvmSet(z,5,0, 0); //va
+
+      //correct new state
+
+
     }
-  
+  else
+    {
+      //passthrough
+      _pos = _measPos;
+      _posAngle =_measAngle;
+      _vel = Point2d();
+      _velAngle = 0;
+      
+      //buffer positions
+      rotate(_posBuf.begin(), _posBuf.end(), _posBuf.end());
+      rotate(_angleBuf.begin(), _angleBuf.end(), _angleBuf.end());
+      _posBuf[0] = _measPos;
+      _angleBuf[0] = _measAngle;
+      
+      //calculate velocities
+      _vel.x = 0; _vel.y = 0; _velAngle = 0;
+      for (unsigned int i = 0; i<_bufsize-1; ++i)
+	{
+	  _vel += (_posBuf[i]-_posBuf[i+1])/_bufsize;
+	  _velAngle += (_angleBuf[i]-_angleBuf[i+1])/_bufsize;
+	}
+    }
   
 }
