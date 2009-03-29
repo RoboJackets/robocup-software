@@ -186,6 +186,8 @@ def makeStruct(struct):
 	write("c1->child(i,0)->setEditable(false);")
 	write("c1->child(i,1)->setEditable(false);")
 	write("}\n")
+	
+	write("c1->removeRows(%d, c1->rowCount() - %d);" % (len(struct.members), len(struct.members)))
 
 	c = 0
 	for m in struct.members:
