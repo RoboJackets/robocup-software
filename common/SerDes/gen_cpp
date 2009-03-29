@@ -438,15 +438,15 @@ write()
 have_includes = False
 def emitIncludes(node):
     global have_includes
+    inc = node.getAttribute('include_cpp')
+    if inc != '':
+        have_includes = True
+        if inc.startswith('.'):
+            write('#include "' + inc + '"')
+        else:
+            write('#include <' + inc + '>')
     for child in node.childNodes:
         if child.nodeType == Node.ELEMENT_NODE:
-            inc = child.getAttribute('include_cpp')
-            if inc != '':
-                have_includes = True
-                if inc.startswith('.'):
-                    write('#include "' + inc + '"')
-                else:
-                    write('#include <' + inc + '>')
             emitIncludes(child)
 
 emitIncludes(root)
