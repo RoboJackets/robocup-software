@@ -22,6 +22,7 @@ if (NOT TARGET GeneratePackets)
 		RadioTx
 		RadioRx
 		Point2d
+        Referee
 		#SSLRef
 		LogFrame
 	)

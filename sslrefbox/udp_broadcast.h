@@ -35,6 +35,7 @@ public:
     void send(const void* buffer, const size_t buflen) throw (IOError);    
 protected:
     int sock;
+    struct sockaddr_in dest;
 };
 
 #endif

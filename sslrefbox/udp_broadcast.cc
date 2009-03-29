@@ -72,17 +72,18 @@ void UDP_Broadcast::set_destination(const std::string& host,
     }
 #endif
 
+#if 0
     if (-1 == connect(sock, (const struct sockaddr*) &addr, sizeof(addr)))
     {
         throw IOError("connect failed (" + host + ")", errno);
     }
-    
-    
+#endif
+    dest = addr;
 }
 
 void UDP_Broadcast::send(const void* buffer, const size_t buflen) throw (IOError)
 {
-    ssize_t result = ::send(sock, (const char*)buffer, buflen, 0);
+    ssize_t result = ::sendto(sock, (const char*)buffer, buflen, 0, (struct sockaddr *)&dest, sizeof(dest));
     if (result == -1)
     {
         throw UDP_Broadcast::IOError(

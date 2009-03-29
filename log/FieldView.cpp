@@ -9,20 +9,25 @@
 using namespace Constants;
 using namespace Log;
 
-FieldView::FieldView(Team t, QWidget* parent) :
-	QGLWidget(parent), _team(t)
+FieldView::FieldView(QWidget* parent) :
+	QGLWidget(parent), _team(UnknownTeam)
 {
 	_frame = 0;
 
 	_tx = -Field::Length/2.0f;
 	_ty = 0;
 	_ta = -90;
+}
 
-	if (_team == Blue)
-	{
-		_tx = Field::Length/2.0f;
-		_ta = 90;
-	}
+void FieldView::team(Team t)
+{
+    _team = t;
+
+    if (_team == Blue)
+    {
+        _tx = Field::Length/2.0f;
+        _ta = 90;
+    }
 }
 
 void FieldView::frame(Packet::LogFrame* frame)

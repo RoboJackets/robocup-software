@@ -1,4 +1,5 @@
 // kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
+// vim:ai ts=4 et
 #include "Processor.hpp"
 #include "Processor.moc"
 
@@ -18,6 +19,7 @@
 
 Processor::Processor(Team t, QString filename) :
 	_running(true), _team(t), _inputHandler(this),
+	_refereeHandler(&_state),
 	_sender(Network::Address, Network::addTeamOffset(_team, Network::RadioTx)),
 	_config(filename)
 {
@@ -31,7 +33,7 @@ Processor::Processor(Team t, QString filename) :
 		trans = Geometry::Point2d(0, Constants::Field::Length / 2.0f);
 	}
 
-    //transoformatons from world->teamspace
+	//transoformatons from world->teamspace
 	_teamTrans = Geometry::TransformMatrix::translate(trans);
 	_teamTrans *= Geometry::TransformMatrix::rotate(_teamAngle);
 
@@ -39,7 +41,7 @@ Processor::Processor(Team t, QString filename) :
 	_triggerId = -1;
 	_trigger = false;
 
-    //runs independently of main loop
+	//runs independently of main loop
 	_inputHandler.setObjectName("input");
 	_inputHandler.start();
 
@@ -110,15 +112,21 @@ void Processor::setLogFile(Log::LogFile* lf)
 	_logModule->setLogFile(lf);
 }
 
+void Processor::refereeReceived(const Packet::Referee *packet)
+{
+}
+
 void Processor::run()
 {
 	//setup receiver of packets for vision and radio
 	Network::PacketReceiver receiver;
 	receiver.addType(Network::Address, Network::Vision, this,
-	        &Processor::visionHandler);
+			&Processor::visionHandler);
 	receiver.addType(Network::Address,
 			Network::addTeamOffset(_team, Network::RadioRx),
 			this, &Processor::radioHandler);
+	receiver.addType(RefereeAddress, RefereePort,
+			&_refereeHandler, &RefereeHandler::packet);
 
 	while (_running)
 	{
@@ -131,8 +139,14 @@ void Processor::run()
 
 				//run modeling for testing
 				_modelingModule->run();
+				_refereeHandler.run();
 				
-				//TODO clear radio command first
+				// Clear radio commands
+				for (int r = 0; r < 5; ++r)
+				{
+					_state.self[r].radioTx = Packet::RadioTx::Robot();
+				}
+				
 				_state.self[_state.rid].radioTx = _inputHandler.genRobotData();
 				
 				_logModule->run();
@@ -154,6 +168,7 @@ void Processor::run()
 				if (_trigger)
 				{
 					_modelingModule->run();
+					_refereeHandler.run();
 					_motionModule->run();
 
 					//always run logging last
@@ -176,10 +191,9 @@ void Processor::run()
 			//has established a trigger id... -Roman
 			//what if there is no vision??
 			
-			//TODO clear the outgoing data (halt)
-			
 			//run modeling for testing
 			_modelingModule->run();
+			_refereeHandler.run();
 			_logModule->run();
 			
 			clearState();
@@ -200,9 +214,21 @@ void Processor::sendRadioData()
 {
 	Packet::RadioTx tx;
 	
-	for (int i=0; i<5 ; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
 		tx.robots[i] = _state.self[i].radioTx;
+	}
+
+	bool halt = _refereeHandler.halt() || _state.runState != SystemState::Running;
+	if (halt)
+	{
+		for (int r = 0; r < 5; ++r)
+		{
+			for (int m = 0; m < 4; ++m)
+			{
+				tx.robots[r].motors[m] = 0;
+			}
+		}
 	}
 	
 	_sender.send(tx);

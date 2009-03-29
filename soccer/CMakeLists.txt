@@ -25,12 +25,17 @@ set (SRCS
 	MainWindow.cpp
 	InputHandler.cpp
 	JoystickInput.cpp
+    RefereeHandler.cpp
 )
 
 qt4_automoc (${SRCS})
 
+qt4_wrap_ui (UI_HDRS
+    MainWindow.ui
+)
+
 set (target soccer)
-add_executable (${target} ${SRCS} ${MOC_SRCS})
+add_executable (${target} ${SRCS} ${MOC_SRCS} ${UI_HDRS})
 
 target_link_libraries(${target} ${PACKET_LIBRARY})
 target_link_libraries(${target} ${GEOMETRY_LIBRARY})

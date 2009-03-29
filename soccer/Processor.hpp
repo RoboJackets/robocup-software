@@ -18,7 +18,7 @@
 #include <config/ConfigFile.hpp>
 
 #include "InputHandler.hpp"
-#include <framework/Module.hpp>
+#include "RefereeHandler.hpp"
 
 /** handles processing for a team */
 class Processor: public QThread
@@ -37,6 +37,16 @@ class Processor: public QThread
 		
 		void setLogFile(Log::LogFile* lf);
 		
+		SystemState &state()
+		{
+			return _state;
+		}
+		
+		RefereeHandler &refereeHandler()
+		{
+			return _refereeHandler;
+		}
+		
 	public Q_SLOTS:
 		void on_input_playPauseButton();
 		void on_input_manualAutoButton();
@@ -49,6 +59,7 @@ class Processor: public QThread
 		void visionHandler(const Packet::Vision* packet);
 		/** handle incoming radio packet */
 		void radioHandler(const Packet::RadioRx* packet);
+		void refereeReceived(const Packet::Referee *packet);
 	
 	private:
 		/** clip angle to +/- 180 */
@@ -92,6 +103,7 @@ class Processor: public QThread
 		Log::LogModule* _logModule;
 		
 		InputHandler _inputHandler;
+		RefereeHandler _refereeHandler;
 		
 		Network::Sender _sender;
 		

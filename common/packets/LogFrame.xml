@@ -32,6 +32,7 @@
         
         <!-- Types of restarts -->
         <enum type="uint8" typename="Restart">
+            <constant name="None"/>
             <constant name="Kickoff"/>
             <constant name="Direct"/>
             <constant name="Indirect"/>

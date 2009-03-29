@@ -14,7 +14,9 @@ namespace Log
 		Q_OBJECT;
 
 		public:
-			FieldView(Team t, QWidget* parent = 0);
+			FieldView(QWidget* parent = 0);
+            
+            void team(Team t);
 
 		protected:
 			void paintEvent(QPaintEvent* pe);
