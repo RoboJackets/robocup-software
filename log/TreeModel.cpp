@@ -6,6 +6,9 @@ using namespace Log;
 
 TreeModel::TreeModel()
 {
+	//_timestamp = new QStandardItem();
+	//this->appendRow(_timestamp);
+#if 0
 	_timestamp = new QStandardItem();
 	this->appendRow(_timestamp);
 	
@@ -26,10 +29,22 @@ TreeModel::TreeModel()
 		_self->appendRow(new QStandardItem());
 		_opp->appendRow(new QStandardItem());
 	}
+#endif
 }
+
+#include <tree_Point2d.hpp>
+#include <tree_Vision.hpp>
+#include <tree_RadioTx.hpp>
+#include <tree_RadioRx.hpp>
+#include <tree_LogFrame.hpp>
 
 void TreeModel::frame(Packet::LogFrame* frame)
 {
+	//TODO make root node, not timestamp
+	Packet::LogFrame& f = *frame;
+	Log::handleExt(this->invisibleRootItem(), f);
+	
+#if 0
 	_teamName->setText(QString("Team: %1").arg(teamName(frame->team)));
 	
 	QString ts = QString::number((quint64)frame->timestamp);
@@ -139,10 +154,12 @@ void TreeModel::frame(Packet::LogFrame* frame)
 		robotItem(_self->child(i), frame->self[i]);
 		robotItem(_opp->child(i), frame->opp[i]);
 	}
+#endif
 }
 
 void TreeModel::robotItem(QStandardItem* item, const Packet::Vision::Robot& r)
 {
+#if 0
 	for (int i=item->rowCount() ; i<2 ; ++i)
 	{
 		item->appendRow(new QStandardItem());
@@ -153,10 +170,12 @@ void TreeModel::robotItem(QStandardItem* item, const Packet::Vision::Robot& r)
 	QString pos = QString("Pos: %1, %2").arg(r.pos.x).arg(r.pos.y);
 	item->child(0)->setText(pos);
 	item->child(1)->setText(QString("Angle: %1").arg(r.angle));
+#endif
 }
 
 void TreeModel::robotItem(QStandardItem* item, const Packet::LogFrame::Robot& r)
 {
+#if 0
 	for (int i=item->rowCount() ; i<6 ; ++i)
 	{
 		item->appendRow(new QStandardItem());
@@ -165,12 +184,15 @@ void TreeModel::robotItem(QStandardItem* item, const Packet::LogFrame::Robot& r)
 	item->setText(QString("Robot: %1 (%2)").arg(r.shell).arg(r.valid));
 	
 	int c = 0;
-	item->child(c++)->setText(QString("Pos: %1, %2").arg(r.pos.x).arg(r.pos.y));
-	item->child(c++)->setText(QString("Vel: %1, %2").arg(r.vel.x).arg(r.vel.y));
+	//item->child(c++)->setText(QString("Pos: %1, %2").arg(r.pos.x).arg(r.pos.y));
+	Log::handleExt(item->child(c++), r.pos);
+	/*item->child(c++)->setText(QString("Vel: %1, %2").arg(r.vel.x).arg(r.vel.y));
 	item->child(c++)->setText(QString("Angle: %1").arg(r.angle));
 	item->child(c++)->setText(QString("AngVel: %1").arg(r.angleVel));
-	
+	*/
 	///radio tx data
+	//handleExt(item->child(c++), r.radioTx);
+	/*
 	QStandardItem* rTx = item->child(c++);
 	rTx->setText(QString("Radio Tx (%1)").arg(r.radioTx.valid));
 	
@@ -188,7 +210,7 @@ void TreeModel::robotItem(QStandardItem* item, const Packet::LogFrame::Robot& r)
 	{
 		rTx->child(c1++)->setText(QString("M %1: %2").arg(i).arg(r.radioTx.motors[i]));
 	}
-	
+	*/
 	///radio rx data
 	QStandardItem* rRx = item->child(c++);
 	rRx->setText(QString("Radio Rx (%1)").arg(r.radioRx.valid));
@@ -198,7 +220,7 @@ void TreeModel::robotItem(QStandardItem* item, const Packet::LogFrame::Robot& r)
 		rRx->appendRow(new QStandardItem());
 	}
 	
-	c1 = 0;
+	int c1 = 0;
 	rRx->child(c1++)->setText(QString("Updated: %1").arg(r.radioRx.updated));
 	rRx->child(c1++)->setText(QString("Loss: %1").arg(r.radioRx.packetLoss));
 	rRx->child(c1++)->setText(QString("Rssi: %1").arg(r.radioRx.rssi));
@@ -211,12 +233,15 @@ void TreeModel::robotItem(QStandardItem* item, const Packet::LogFrame::Robot& r)
 		rRx->child(c1++)->setText(QString("M %1: %2").arg(i).arg(r.radioRx.motorFault[i]));
 		rRx->child(c1++)->setText(QString("Enc %1: %2").arg(i).arg(r.radioRx.encoders[i]));
 	}
+#endif
 }
 
 void TreeModel::ballItem(QStandardItem* item, const Packet::Vision::Ball& b)
 {
+#if 0
 	QString pos = QString("Pos: %1, %2").arg(
 		QString::number(b.pos.x)).arg(QString::number(b.pos.y));
 	
 	item->setText(pos);
+#endif
 }
