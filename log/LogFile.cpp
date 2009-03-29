@@ -46,6 +46,8 @@ void LogFile::write(Packet::LogFrame& frame)
 	*_stream << size;
 	_stream->writeRawData((const char*)&_buf.data[0], _buf.data.size());
 	*_stream << size;
+	
+	_last = frame;
 }
 
 Packet::LogFrame LogFile::readNext()
@@ -117,6 +119,9 @@ Packet::LogFrame LogFile::readPrev()
 
 Packet::LogFrame LogFile::readLast()
 {
+	return _last;
+	
+#if 0
 	QMutexLocker ml(&_fileMutex);
 	
 	Packet::LogFrame frame;
@@ -148,6 +153,7 @@ Packet::LogFrame LogFile::readLast()
 	reader & frame;
 	
 	return frame;
+#endif
 }
 
 bool LogFile::hasNextFrame() const

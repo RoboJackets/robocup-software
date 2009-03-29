@@ -32,6 +32,14 @@ class Enum:
 		
 		self.items = {}
 		
+	def parentType(self):
+		if self.extType:
+			return ""
+		if self.parent:
+			return self.parent.type()
+			
+		return ""
+		
 	def type(self):
 		if self.extType:
 			return self.extType
@@ -106,8 +114,10 @@ def procStruct(root, parent = None):
 			
 			i = 0
 			for e in node.childNodes:
-				n = node.getAttribute("name")
-				v = node.getAttribute("value")
+				if e.nodeType != Node.ELEMENT_NODE:
+					continue
+				n = e.getAttribute("name")
+				v = e.getAttribute("value")
 				
 				if v:
 					enum.items[v] = n
@@ -148,12 +158,12 @@ def makeStruct(struct):
 	for e in struct.enums:
 		write("static inline void handleExt(QStandardItem* item, const %s& p, const char* name=0)" % e.type())
 		write("{")
-		#write("""item->setText(QString("%s: %%1").arg((%s_t)p));""" % (e.typename, e.ctype))
-		write("""QString s= "";""")
+		#write("""printf("%d\\n", p);""")
+		write("""QString s = "";""")
 		write("switch (p)")
 		write("{")
 		for v in e.items:
-			write("""case %s:""" % v)
+			write("""case %s::%s:""" % (e.parentType(), e.items[v]))
 			write("""\ts = "%s";""" % e.items[v])
 			write("\tbreak;")
 		write("}")

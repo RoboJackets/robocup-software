@@ -33,6 +33,7 @@ void FieldView::team(Team t)
 void FieldView::frame(Packet::LogFrame* frame)
 {
     _frame = frame;
+    
     update();
 }
 

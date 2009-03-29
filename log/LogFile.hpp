@@ -49,6 +49,8 @@ namespace Log
 		private:
 			mutable QMutex _fileMutex;
 			
+			Packet::LogFrame _last;
+			
 			QFile _file;
 			QDataStream* _stream;
 			
