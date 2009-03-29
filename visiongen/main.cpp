@@ -7,6 +7,7 @@
 
 #include <QThread>
 
+#include <Point2d.hpp>
 #include <Vision.hpp>
 #include <Network/Sender.hpp>
 #include <Network/Network.hpp>

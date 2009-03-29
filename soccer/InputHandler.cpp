@@ -51,11 +51,9 @@ Packet::RadioTx::Robot InputHandler::genRobotData()
 	r.valid = true;
 
 	float scale = 1.0f;
-	int motors[4] =
-	{ 0, 0, 0, 0 };
+	int motors[4] =	{ 0, 0, 0, 0 };
 	static uint8_t stored_roller = 0;
-
-
+	
 	//input is vx, vy in robot space
 	Point2d input(_controller->rX(), _controller->rY());
 
@@ -88,7 +86,7 @@ Packet::RadioTx::Robot InputHandler::genRobotData()
 	for (unsigned int i = 0; i < 4; ++i)
 	{
 		motors[i] = (int) (_axels[i].perpCW().dot(input));
-		motors[i] += _controller->lX();
+		motors[i] -= _controller->lX();
 
 		if (abs(motors[i]) > max)
 		{

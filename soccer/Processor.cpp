@@ -16,6 +16,7 @@
 #include <modeling/WorldModel.hpp>
 #include <log/LogModule.hpp>
 #include <motion/Controller.hpp>
+#include <boost/foreach.hpp>
 
 Processor::Processor(Team t, QString filename) :
 	_running(true), _team(t), _inputHandler(this),
@@ -169,7 +170,7 @@ void Processor::run()
 				{
 					_modelingModule->run();
 					_refereeHandler.run();
-					_motionModule->run();
+					//_motionModule->run();
 
 					//always run logging last
 					_logModule->run();
@@ -248,16 +249,19 @@ void Processor::visionHandler(const Packet::Vision* packet)
 				uint64_t half = _state.rawVision[0].timestamp;
 				half += (packet->timestamp - _state.rawVision[0].timestamp) / 2;
 	
+				//default trigger to this camera
+				_triggerId = packet->camera;
+				
 				//eval all packets, any packet less than half becomes the new tigger
 				//this gives us the last packet up to half as the trigger
-				Q_FOREACH (const Packet::Vision& raw , _state.rawVision)
+				BOOST_FOREACH (const Packet::Vision& raw , _state.rawVision)
 				{
 					if (raw.timestamp < half)
 					{
 						_triggerId = raw.camera;
 					}
 				}
-	
+				
 				//we have set the trigger camera
 				printf("Set trigger camera: %d\n", _triggerId);
 				
@@ -296,11 +300,14 @@ void Processor::visionHandler(const Packet::Vision* packet)
 	//populate the state
 	_state.rawVision.push_back(*packet);
 
-	//set syncronous time to packet timestamp
-	_state.timestamp = packet->timestamp;
-
-	//convert last frame to teamspace
-	toTeamSpace(_state.rawVision[_state.rawVision.size() - 1]);
+	if (!packet->sync)
+	{
+		//set syncronous time to packet timestamp
+		_state.timestamp = packet->timestamp;
+		
+		//convert last frame to teamspace
+		toTeamSpace(_state.rawVision[_state.rawVision.size() - 1]);
+	}
 }
 
 void Processor::radioHandler(const Packet::RadioRx* packet)

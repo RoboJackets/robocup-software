@@ -175,7 +175,7 @@ namespace Network
 								_receivers[i]->read();
 							}
 						}
-#if 0
+#if 1
 						//get any other queued packets using non-blocking
 						while (poll(&_pollfds[0], _pollfds.size(), 0) >= 1) //timeout is in ms
 						{
