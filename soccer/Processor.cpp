@@ -132,6 +132,8 @@ void Processor::run()
 	receiver.addType(RefereeAddress, RefereePort,
 			&_refereeHandler, &RefereeHandler::packet);
 
+	RRT::Path bestPath, newPath;
+	
 	while (_running)
 	{
 		if (_state.runState == SystemState::Running)
@@ -173,10 +175,8 @@ void Processor::run()
 				{
 					_modelingModule->run();
 					_refereeHandler.run();
-					//_motionModule->run();
 
 					_state.rrt.clear();
-					_state.pathTest.clear();
 					vector<RRT::Obstacle *> obstacles;
 					obstacles.push_back(new RRT::CircleObstacle(Geometry::Point2d(0, Constants::Field::Length / 2), Constants::Field::CenterRadius));
 					
@@ -193,7 +193,14 @@ void Processor::run()
 						}
 					}
 					
-					RRT::plan(obstacles, Geometry::Point2d(0, 0.5), Geometry::Point2d(0, 5.5), 1000, &_state);
+					RRT::plan(obstacles, Geometry::Point2d(0, 0.5), Geometry::Point2d(0, 5.5), 1000, newPath, &_state);
+					if (bestPath.points.empty() || (bestPath.distance() - newPath.distance()) > 0.25f || bestPath.hit(obstacles))
+					{
+						bestPath = newPath;
+					}
+					_state.pathTest = bestPath.points;
+					
+					//_motionModule->run();
 					
 					//always run logging last
 					_logModule->run();

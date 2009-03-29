@@ -7,6 +7,8 @@
 #include <Network/Sender.hpp>
 
 #include <Geometry/Point2d.hpp>
+
+#include <Point2d.hpp>
 #include <Vision.hpp>
 
 #include "Colors.h"

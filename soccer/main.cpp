@@ -1,3 +1,4 @@
+#include <mcheck.h>
 #include <QApplication>
 #include <stdio.h>
 #include <string.h>
@@ -5,6 +6,9 @@
 #include <QDebug>
 
 #include <Team.h>
+
+#include <unistd.h>
+#include <fcntl.h>
 
 #include "MainWindow.hpp"
 
@@ -18,6 +22,25 @@ void usage(const char* prog)
 
 int main (int argc, char* argv[])
 {
+    mcheck(0);
+    
+    // Seed the large random number generator
+    long int seed = 0;
+    int fd = open("/dev/random", O_RDONLY);
+    if (fd)
+    {
+        if (read(fd, &seed, sizeof(seed)) == sizeof(seed))
+        {
+            printf("seed %016lx\n", seed);
+            srand48(seed);
+        } else {
+            fprintf(stderr, "Can't read /dev/random: %m\n");
+        }
+        close(fd);
+    } else {
+        fprintf(stderr, "Can't open /dev/random: %m\n");
+    }
+    
 	QApplication app(argc, argv);
 
 	Team team = UnknownTeam;

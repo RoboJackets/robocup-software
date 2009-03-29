@@ -13,6 +13,9 @@
 #include <unistd.h>
 #include <sys/time.h>
 
+#include <boost/format.hpp>
+using namespace boost;
+
 VisionGen::VisionGen(Env* env, unsigned int id) :
 	_env(env), _running(true)
 {
@@ -31,7 +34,7 @@ uint64_t VisionGen::timestamp() const
 	struct timeval time;
 	gettimeofday(&time, 0);
 
-	return time.tv_sec * 1000000 + time.tv_usec;
+	return (uint64_t)time.tv_sec * 1000000 + (uint64_t)time.tv_usec;
 }
 
 void VisionGen::run()

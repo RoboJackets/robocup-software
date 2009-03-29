@@ -92,6 +92,26 @@ RRT::Point *RRT::Tree::move(Point *start, Geometry::Point2d dest)
         pos = start->pos + delta / d * step;
     }
     
+    // Check curvature
+    if (start->parent)
+    {
+        Geometry::Point2d va = (pos - start->pos).norm();
+        Geometry::Point2d vb = (start->parent->pos - start->pos).norm();
+        float dot = va.dot(vb);
+        if (dot >= -1 && dot <= 1)
+        {
+            // Rounding error for small or zero moves can produce an unusable dot product, so ignore those cases.
+            
+            float angle = fabs(acos(dot) * 180.0 / M_PI);
+            if (angle < 120)
+            {
+                // Corner too sharp
+                return 0;
+            }
+        }
+    }
+    
+    // Check for obstacles
     Geometry::Segment seg(pos, start->pos);
     BOOST_FOREACH(Obstacle *obs, _obstacles)
     {
@@ -101,7 +121,7 @@ RRT::Point *RRT::Tree::move(Point *start, Geometry::Point2d dest)
         }
     }
     
-    return new Point(pos);
+    return new Point(pos, start);
 }
 
 RRT::Tree::Status RRT::Tree::extend(Geometry::Point2d pt, Point **qnew)
@@ -146,7 +166,7 @@ RRT::Tree::Status RRT::Tree::connect(Geometry::Point2d pt)
     return s;
 }
 
-bool RRT::plan(const std::vector<Obstacle *> &obstacles, Geometry::Point2d start, Geometry::Point2d goal, int n, SystemState *state)
+bool RRT::plan(const std::vector<Obstacle *> &obstacles, Geometry::Point2d start, Geometry::Point2d goal, int n, Path &path, SystemState *state)
 {
     Tree t0(obstacles, start);
     Tree t1(obstacles, goal);
@@ -162,7 +182,12 @@ bool RRT::plan(const std::vector<Obstacle *> &obstacles, Geometry::Point2d start
         {
             if (tb->connect(newPoint->pos) == Tree::Reached)
             {
-                findPath(ta, tb, newPoint->pos, state);
+                findPath(ta, tb, newPoint->pos, path);
+                
+                state->rrt.clear();
+                addEdges(state->rrt, ta->start);
+                addEdges(state->rrt, tb->start);
+                
                 return true;
             }
         }
@@ -173,7 +198,7 @@ bool RRT::plan(const std::vector<Obstacle *> &obstacles, Geometry::Point2d start
     return false;
 }
 
-void RRT::findPath(Tree *ta, Tree *tb, Geometry::Point2d pt, SystemState *state)
+void RRT::findPath(Tree *ta, Tree *tb, Geometry::Point2d pt, Path &path)
 {
     list<Geometry::Point2d> pa, pb;
     
@@ -181,20 +206,16 @@ void RRT::findPath(Tree *ta, Tree *tb, Geometry::Point2d pt, SystemState *state)
     find(pb, tb->start, pt);
     pb.pop_front();
     
-    state->rrt.clear();
-    addEdges(state->rrt, ta->start);
-    addEdges(state->rrt, tb->start);
-    
-    state->pathTest.clear();
+    path.points.clear();
     
     for (list<Geometry::Point2d>::const_reverse_iterator i = pa.rbegin(); i != pa.rend(); ++i)
     {
-        state->pathTest.push_back(*i);
+        path.points.push_back(*i);
     }
 
     BOOST_FOREACH(Geometry::Point2d &pt, pb)
     {
-        state->pathTest.push_back(pt);
+        path.points.push_back(pt);
     }
 }
 
@@ -221,6 +242,39 @@ bool RRT::find(list<Geometry::Point2d> &path, Point *p, Geometry::Point2d goal)
         {
             path.push_back(p->pos);
             return true;
+        }
+    }
+    
+    return false;
+}
+
+float RRT::Path::distance(unsigned int start) const
+{
+    if (points.empty() || start >= (points.size() - 1))
+    {
+        return 0;
+    }
+    
+    float distance = 0;
+    for (unsigned int i = start; i < (points.size() - 1); ++i)
+    {
+        distance += (points[i + 1] - points[i]).mag();
+    }
+    return distance;
+}
+
+bool RRT::Path::hit(const std::vector<Obstacle *> &obstacles, unsigned int start) const
+{
+    for (unsigned int i = start; i < (points.size() - 1); ++i)
+    {
+        Geometry::Segment seg(points[i], points[i + 1]);
+        
+        BOOST_FOREACH(Obstacle *obs, obstacles)
+        {
+            if (obs->hit(seg))
+            {
+                return true;
+            }
         }
     }
     

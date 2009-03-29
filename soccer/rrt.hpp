@@ -12,9 +12,12 @@ namespace RRT
     class Point
     {
     public:
-        Point(Geometry::Point2d pt): pos(pt) {}
+        Point(Geometry::Point2d pt, Point *parent = 0): pos(pt), parent(parent) {}
         
         Geometry::Point2d pos;
+        
+        // The point with an edge leading to this one
+        Point *parent;
         
         std::list<Point *> edges;
     };
@@ -49,6 +52,17 @@ namespace RRT
         float _radius;
     };
     
+    class Path
+    {
+    public:
+        // Returns the length of the path starting at point (start).
+        float distance(unsigned int start = 0) const;
+        
+        bool hit(const std::vector<Obstacle *> &obstacles, unsigned int start = 0) const;
+        
+        std::vector<Geometry::Point2d> points;
+    };
+    
     class Tree
     {
     public:
@@ -79,7 +93,7 @@ namespace RRT
     };
     
     bool find(std::list<Geometry::Point2d> &path, Point *p, Geometry::Point2d goal);
-    void findPath(Tree *ta, Tree *tb, Geometry::Point2d pt, SystemState *state);
-    bool plan(const std::vector<Obstacle *> &obstacles, Geometry::Point2d start, Geometry::Point2d goal, int n, SystemState *state);
+    void findPath(Tree *ta, Tree *tb, Geometry::Point2d pt, Path &path);
+    bool plan(const std::vector<Obstacle *> &obstacles, Geometry::Point2d start, Geometry::Point2d goal, int n, Path &path, SystemState *state);
     void addEdges(std::vector<Geometry::Segment> &edges, Point *pt);
 }

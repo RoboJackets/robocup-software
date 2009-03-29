@@ -17,7 +17,7 @@ uint64_t timestamp()
 	struct timeval time;
 	gettimeofday(&time, 0);
 
-	return time.tv_sec * 1000000 + time.tv_usec;
+	return (uint64_t)time.tv_sec * 1000000 + (uint64_t)time.tv_usec;
 }
 
 class VisionSender : public QThread
