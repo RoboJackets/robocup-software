@@ -55,6 +55,14 @@ void ConfigFile::load() throw (std::runtime_error)
         {
             procRobotData(element);
         }
+        else if (element.tagName() == QString("worldModel"))
+        {
+            procWorldModel(element);
+        }
+        else if (element.tagName() == QString("robotKF"))
+        {
+            procRobotKF(element);
+        }
 
         element = element.nextSiblingElement();
     }
@@ -169,6 +177,55 @@ void ConfigFile::procRobotData(QDomElement element)
 
 }
 
+void ConfigFile::procWorldModel(QDomElement element)
+{
+
+    QDomElement eElem = element.firstChildElement("self_kf_enable");
+    if (!eElem.isNull())
+    {
+        _wm.kf_self_enable = valueBool(eElem.attributeNode("value"));
+    }
+
+    eElem = element.firstChildElement("opp_kf_enable");
+    if (!eElem.isNull())
+    {
+        _wm.kf_opp_enable = valueBool(eElem.attributeNode("value"));
+    }
+
+}
+
+void ConfigFile::procRobotKF(QDomElement element)
+{
+  robotKF* r = &(_wm.self);
+  QDomAttr nameAttr = element.attributeNode("name");
+  QString name = nameAttr.value();
+
+  if (name == "opp")
+    {
+      r = &(_wm.opp);
+    }
+  
+  QDomElement eElem = element.firstChildElement("cmd_scale_factor");
+  if (!eElem.isNull())
+    {
+      r->cmd_scale = valueFloat(eElem.attributeNode("value"));
+    }
+
+  eElem = element.firstChildElement("cmd_scale_factor_angle");
+  if (!eElem.isNull())
+    {
+      r->cmd_scale_angle = valueFloat(eElem.attributeNode("value"));
+    }
+
+  eElem = element.firstChildElement("velBufSize");
+  if (!eElem.isNull())
+    {
+      r->bufsize = valueUInt(eElem.attributeNode("value"));
+    }
+}
+
+
+
 //TODO Replace with templated member function
 void ConfigFile::setElement(QString tagString,int value)
 {
@@ -241,6 +298,13 @@ int ConfigFile::valueUInt(QDomAttr attr)
     }
 }
 
+bool ConfigFile::valueBool(QDomAttr attr)
+{
+  QString v = attr.value();
+  return v == "true";
+}
+
+
 ConfigFile::RobotCfg ConfigFile::robotConfig()
 {
     RobotCfg cfg;
@@ -258,9 +322,11 @@ ConfigFile::RobotCfg ConfigFile::robotConfig()
 
 ConfigFile::RobotFilterCfg ConfigFile::robotFilterConfig()
 {
-    RobotFilterCfg cfg;
-    cfg.kf_self_enable = false;
-    cfg.kf_opp_enable = false;
+    RobotFilterCfg cfg = _wm;
+
+    //Hardcoding for testing
+//     cfg.kf_self_enable = false;
+//     cfg.kf_opp_enable = false;
 
     return cfg;
 }

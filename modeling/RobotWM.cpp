@@ -41,7 +41,7 @@ RobotWM::RobotWM(ConfigFile::RobotFilterCfg r, bool isSelf)
       if (_isSelf)
 	{
 	  //Use pv model for state, full state output, v ctrl
-	  _kf = cvCreateKalman(6,6,3);
+	  _kf = cvCreateKalman(6,3,3);
 	  //Fill in ctrl matrix with values
           cvSetIdentity(_kf->control_matrix, cvRealScalar(0));
 	  cvmSet(_kf->control_matrix, 2, 1, 1);
@@ -52,6 +52,11 @@ RobotWM::RobotWM(ConfigFile::RobotFilterCfg r, bool isSelf)
 	  cvmSet(_kf->transition_matrix, 2, 2, 0);
 	  cvmSet(_kf->transition_matrix, 4, 4, 0);
 	  cvmSet(_kf->transition_matrix, 6, 6, 0);
+	  //Create measurement matrix
+	  cvSetZero(_kf->measurement_matrix);
+	  cvmSet(_kf->measurement_matrix, 0, 0, 1);
+	  cvmSet(_kf->measurement_matrix, 1, 2, 1);
+	  cvmSet(_kf->measurement_matrix, 2, 4, 1);
 	}
       else 
 	{
@@ -59,9 +64,9 @@ RobotWM::RobotWM(ConfigFile::RobotFilterCfg r, bool isSelf)
 	  _kf = cvCreateKalman(3,3,0);
 	  //simple state transition matrix
 	  cvSetIdentity(_kf->transition_matrix, cvRealScalar(1));
+	  //get full state (only position)
+	  cvSetIdentity(_kf->measurement_matrix, cvRealScalar(1));
 	}
-      //always have access to full state
-      cvSetIdentity(_kf->measurement_matrix, cvRealScalar(1));
       //process covariance
       cvSetIdentity(_kf->process_noise_cov, cvRealScalar(1e-1));
       //measurement covariance
@@ -82,40 +87,14 @@ void RobotWM::process()
 
   if (_kfEnabled)
     {
-      //create a control vector
       if (_isSelf)
 	{
-	  //create control input
-	  CvMat* ctrl = cvCreateMat(3,1,CV_32FC1);
-	  cvmSet(ctrl, 0, 0, _cmdVel.x*_cmd_scale_factor); //vx
-	  cvmSet(ctrl, 1, 0, _cmdVel.y*_cmd_scale_factor); //vy
-	  cvmSet(ctrl, 2, 0, _cmdAngle*_cmd_scale_factor_angle); //va
-	    
-	  //predict new state
-	  cvKalmanPredict(_kf, ctrl);
+	  selfProcess();
 	}
       else
 	{
-	  //predict without control vector
-	  cvKalmanPredict(_kf);
+	  oppProcess();
 	}
-
-      //calculate measured velocity
-      
-      
-
-      //create measurement vector
-      CvMat* z = cvCreateMat(6,1,CV_32FC1);
-      cvmSet(z,0,0, _measPos.x); //px
-      cvmSet(z,1,0, 0); //vx
-      cvmSet(z,2,0, _measPos.y); //py
-      cvmSet(z,3,0, 0); //vy
-      cvmSet(z,4,0, _measAngle); //pa
-      cvmSet(z,5,0, 0); //va
-
-      //correct new state
-
-
     }
   else
     {
@@ -139,5 +118,82 @@ void RobotWM::process()
 	  _velAngle += (_angleBuf[i]-_angleBuf[i+1])/_bufsize;
 	}
     }
-  
 }
+
+void RobotWM::selfProcess() 
+{
+
+  //create control input
+  CvMat* ctrl = cvCreateMat(3,1,CV_32FC1);
+  cvmSet(ctrl, 0, 0, _cmdVel.x*_cmd_scale_factor); //vx
+  cvmSet(ctrl, 1, 0, _cmdVel.y*_cmd_scale_factor); //vy
+  cvmSet(ctrl, 2, 0, _cmdAngle*_cmd_scale_factor_angle); //va
+  
+  //predict new state
+  cvKalmanPredict(_kf, ctrl);
+
+  //create measurement vector
+  CvMat* z = cvCreateMat(3,1,CV_32FC1);
+  cvmSet(z,0,0, _measPos.x); //px
+  cvmSet(z,1,0, _measPos.y); //py
+  cvmSet(z,2,0, _measAngle); //pa
+  
+  //correct new state
+  const CvMat* state = cvKalmanCorrect(_kf, z);
+  
+  //copy out the state variables
+  _pos.x = cvmGet(state, 0,0);
+  _vel.x = cvmGet(state, 1,0);
+  _pos.y = cvmGet(state, 2,0);
+  _vel.y = cvmGet(state, 3,0);
+  _posAngle = cvmGet(state, 4,0);
+  _velAngle = cvmGet(state, 5,0);
+
+  //cleanup
+  cvReleaseMat(&ctrl);
+  cvReleaseMat(&z);
+
+}
+
+void RobotWM::oppProcess() 
+{
+
+  //predict new state
+  cvKalmanPredict(_kf);
+
+  //create measurement vector
+  CvMat* z = cvCreateMat(3,1,CV_32FC1);
+  cvmSet(z,0,0, _measPos.x); //px
+  cvmSet(z,1,0, _measPos.y); //py
+  cvmSet(z,2,0, _measAngle); //pa
+  
+  //correct new state
+  const CvMat* state = cvKalmanCorrect(_kf, z);
+  
+  //copy out the state variables
+  _pos.x = cvmGet(state, 0,0);
+  _pos.y = cvmGet(state, 1,0);
+  _posAngle = cvmGet(state, 2,0);
+
+  //cleanup
+  cvReleaseMat(&z);
+
+  //buffer positions to calculate velocity
+  _vel = Point2d();
+  _velAngle = 0;
+  
+  //buffer positions
+  rotate(_posBuf.begin(), _posBuf.end(), _posBuf.end());
+  rotate(_angleBuf.begin(), _angleBuf.end(), _angleBuf.end());
+  _posBuf[0] = _pos;
+  _angleBuf[0] = _posAngle;
+  
+  //calculate velocities
+  _vel.x = 0; _vel.y = 0; _velAngle = 0;
+  for (unsigned int i = 0; i<_bufsize-1; ++i)
+    {
+      _vel += (_posBuf[i]-_posBuf[i+1])/_bufsize;
+      _velAngle += (_angleBuf[i]-_angleBuf[i+1])/_bufsize;
+    }
+}
+

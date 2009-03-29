@@ -38,6 +38,10 @@ namespace Modeling
 			Geometry::Point2d _pos;
 			float _posAngle;
 			
+		protected:
+			void selfProcess();
+			void oppProcess();
+
 		private:
 			std::vector<Geometry::Point2d> _posBuf;
 			std::vector<float> _angleBuf;
