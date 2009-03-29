@@ -9,13 +9,18 @@ namespace Log
     {
         for (unsigned int i=0 ; i<size ; ++i)
         {
-            QStandardItem* c = c1->child(i, 0);
-            if (!c)
+            QStandardItem* a = c1->child(i, 0);
+			QStandardItem* b = c1->child(i, 1);
+			
+            if (!a)
             {
                 c1->setChild(i, 0, new QStandardItem(QString::number(i)));
+				c1->child(i,0)->setEditable(false);
+			}
+			
+			if (!b)
+			{
                 c1->setChild(i, 1, new QStandardItem());
-                
-                c1->child(i,0)->setEditable(false);
                 c1->child(i,1)->setEditable(false);
             }
             
