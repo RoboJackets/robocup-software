@@ -11,6 +11,7 @@ MainWindow::MainWindow(Team t, QString filename) :
 {
 	ui.setupUi(this);
 	statusBar()->hide();
+	ui.fieldView->team(t);
 	
 	_treeModel = new TreeModel();
 	ui.splitter->setStretchFactor(0, 10);

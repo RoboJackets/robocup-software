@@ -30,6 +30,8 @@ class Enum:
 		
 		self.parent = None
 		
+		self.items = {}
+		
 	def type(self):
 		if self.extType:
 			return self.extType
@@ -37,6 +39,12 @@ class Enum:
 			return self.parent.type() + "::" + self.typename
 			
 		return "Packet::" + self.typename
+		
+class Array:
+	def __init__(self):
+		self.name = None
+		self.type = None
+		self.size = None
 	
 class Struct:
 	def __init__(self):
@@ -53,6 +61,8 @@ class Struct:
 		self.enums = []
 		
 		self.externOnly = True
+		
+		self.arrays = []
 		
 	def type(self):
 		if self.extType:
@@ -79,13 +89,13 @@ def procStruct(root, parent = None):
 			self.externOnly = False
 			self.members[name] = type
 		elif node.nodeName == "array":
-			name = node.getAttribute("name")
-			type = node.getAttribute("type")
-			size = node.getAttribute("size")
+			a = Array()
+			a.name = node.getAttribute("name")
+			a.type = node.getAttribute("type")
+			a.size = node.getAttribute("size")
 			self.externOnly = False
 			
-			if not size:
-				self.members[name] = type
+			self.arrays.append(a)
 			
 		elif node.nodeName == "enum":
 			enum = Enum()
@@ -93,6 +103,18 @@ def procStruct(root, parent = None):
 			enum.extType = node.getAttribute("external_cpp")
 			enum.ctype = node.getAttribute("type")
 			enum.parent = self
+			
+			i = 0
+			for e in node.childNodes:
+				n = node.getAttribute("name")
+				v = node.getAttribute("value")
+				
+				if v:
+					enum.items[v] = n
+				else:
+					enum.items[i] = n
+					
+				i += 1
 			
 			self.enums.append(enum)
 			
@@ -124,67 +146,78 @@ def makeStruct(struct):
 		return
 	
 	for e in struct.enums:
-		write("static void handleExt(QStandardItem* item, const %s& p)" % e.type())
+		write("static inline void handleExt(QStandardItem* item, const %s& p, const char* name=0)" % e.type())
 		write("{")
-		write("""item->setText(QString("%s: %%1").arg((%s_t)p));""" % (e.typename, e.ctype))
+		#write("""item->setText(QString("%s: %%1").arg((%s_t)p));""" % (e.typename, e.ctype))
+		write("""QString s= "";""")
+		write("switch (p)")
+		write("{")
+		for v in e.items:
+			write("""case %s:""" % v)
+			write("""\ts = "%s";""" % e.items[v])
+			write("\tbreak;")
+		write("}")
+		write("""item->setText(s);""")
 		write("}\n")
 
 	for s in struct.structs:
 		makeStruct(s)
 		
-	write("static void handleExt(QStandardItem* item, const %s& p)" % struct.type())
+	write("static inline void handleExt(QStandardItem* item, const %s& p, const char* name = 0)" % struct.type())
 	write("{")
 	
-	write("for (int i=item->rowCount() ; i<%d ; ++i)" % len(struct.members))
+	write("if (name)")
 	write("{")
-	write("item->appendRow(new QStandardItem());")
+	write("item->setText(name);")
+	write("}else{")
+	write("item->setText(\"%s\");" % struct.typename)
+	write("}")
+	
+	write("for (int i=item->rowCount() ; i<%d ; ++i)" % (len(struct.members) + len(struct.arrays)))
+	write("{")
+	write("item->setChild(i,0, new QStandardItem());")
+	write("item->setChild(i,1, new QStandardItem());")
 	write("}\n")
 
 	c = 0
 	for k in struct.members:
 		member = struct.members[k]
+		write("""item->child(%d, 0)->setText("%s");""" % (c, k))
 		if member in primitives:
-			write("""item->child(%d)->setText(QString("%s: %%1").arg(p.%s));""" % (c, k,k))
+			write("""Log::handleExt(item->child(%d, 1), p.%s);""" % (c, k))
+			pass
 		else:
-			write("""item->child(%d)->setText(QString("%s"));""" % (c, k))
-			write("""Log::handleExt(item->child(%d), p.%s);""" % (c, k))
+			write("""Log::handleExt(item->child(%d, 0), p.%s, "%s");""" % (c, k, k))
+			pass
 		
+		c += 1
+		
+	for a in struct.arrays:
+		write("""item->child(%d, 0)->setText("%s");""" % (c, a.name))
+		if a.size:
+			write("""Log::handleExtArray(item->child(%d, 0), p.%s, %s);""" % (c, a.name, a.size))
+			pass
+		else:
+			write("""Log::handleExtVector(item->child(%d, 0), p.%s);""" % (c, a.name))
+			pass
+			
 		c += 1
 
 	write("}\n")
 
+
 write("#ifndef TREE_GEN_%s_HPP" % rootStruct.typename);
 write("#define TREE_GEN_%s_HPP" % rootStruct.typename);
 
+write("#include <TreeGen.hpp>");
 write("#include <stdint.h>");
 write("#include <vector>");
+write("#include <string>");
 
 write("namespace Log");
 write("{")
 
 makeStruct(rootStruct)
-
-write("#ifndef TREE_GEN_VEC_HPP");
-write("#define TREE_GEN_VEC_HPP");
-
-write("template <typename T>")
-write("void handleExt(QStandardItem* item, const std::vector< T > arr)")
-write("{")
-
-write("for (unsigned int i=item->rowCount() ; i<arr.size() ; ++i)")
-write("{")
-write("item->appendRow(new QStandardItem());")
-write("}\n")
-
-write("int i=0;")
-write("Q_FOREACH(const T& a, arr)")
-write("{")
-write("handleExt(item->child(i), a);")
-write("}\n")
-
-write("}")
-
-write("#endif //TREE_GEN_VEC_HPP\n");
 
 write("}")
 

@@ -8,6 +8,6 @@ using namespace Log;
 TreeView::TreeView(QWidget* parent) :
 	QTreeView(parent)
 {
-	header()->setVisible(false);
+	header()->setVisible(true);
 }
 

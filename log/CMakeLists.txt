@@ -56,6 +56,7 @@ if (NOT TARGET gen_tree)
 		LogFrame
 		RadioRx
 		Vision
+		Referee
 	)
 	
 	foreach (packet ${Packets})
