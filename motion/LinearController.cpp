@@ -27,10 +27,8 @@ Geometry::Point2d LinearController::run(Geometry::Point2d err, Geometry::Point2d
     if(output.mag() > _maxVelocity)
     {
         float angle = output.angle();
-//         printf("Controller saturation\n");
         output.x = _maxVelocity*cos(angle);
         output.y = _maxVelocity*sin(angle);
-//         printf("Controller Saturation Velocity x=%f y=%f\n", output.x, output.y);
     }
 
     return output;

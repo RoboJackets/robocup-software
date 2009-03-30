@@ -12,10 +12,12 @@
 using namespace Constants;
 
 RobotPath::RobotPath(Team team, QWidget* parent) :
-    Log::FieldView(team, parent), _team(team)
+    Log::FieldView(parent), _team(team)
 {
     _numPathPoints = 0;
     _pathPointInterator = 0;
+
+    this->team(team);
 
     //Prevent the background from being re-draw prior to painting
 //     setAutoFillBackground(false);

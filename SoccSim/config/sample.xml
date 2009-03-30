@@ -8,20 +8,12 @@
     <!-- configure blue team robots -->
     <blue>
         <robot id="0" x="0" y="0" />
-        <robot id="1" x="-1" y="0" />
-        <robot id="2" x="1" y="0" />
-        <robot id="3" x="0" y="-1" />
         <!-- <robots qty="4" />-->
         <kinematics /> <!-- want: velocity ...etc -->
     </blue>
 
     <yellow>
         <!-- set up 3 robots at generic start positions -->
-        <robot id="0" x="-2" y="0" />
-        <robot id="1" x="0" y="1" />
-        <robot id="2" x="2" y="0" />
-        <robot id="3" x="-1" y="-1" />
-        <robot id="4" x="1" y="-1" />
     </yellow>
 
     <vision>

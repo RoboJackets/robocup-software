@@ -22,9 +22,8 @@ set (SRCS
     LinearController.cpp
     Controller.cpp
     Robot.cpp
-    Pid.cpp
-    main.cpp
     PathPlanner.cpp
+    Trajectory.cpp
 )
 
 add_library (motion ${SRCS} ${MOC_SRCS})

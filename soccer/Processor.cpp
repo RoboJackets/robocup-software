@@ -42,7 +42,7 @@ Processor::Processor(Team t, QString filename) :
 	_teamTrans *= Geometry::TransformMatrix::rotate(_teamAngle);
 
 	_motionModule = _modelingModule = 0;
-	
+
 	//initially no camera does the triggering
 	_triggerId = -1;
 	_trigger = false;
@@ -50,10 +50,10 @@ Processor::Processor(Team t, QString filename) :
 	//runs independently of main loop
 	_inputHandler.setObjectName("input");
 	_inputHandler.start();
-	
+
 	//set the team
 	_state.team = _team;
-	
+
 	//default to auto, running when no input device
 	if (!_inputHandler.enabled())
 	{
@@ -63,7 +63,7 @@ Processor::Processor(Team t, QString filename) :
 	}
 
 	QMetaObject::connectSlotsByName(this);
-	
+
 	try
 	{
 		_config.load();
@@ -72,16 +72,16 @@ Processor::Processor(Team t, QString filename) :
 	{
 		printf("Config Load Error: %s\n", re.what());
 	}
-	
+
 	//setup the modules
 	_modelingModule = new Modeling::WorldModel(_config.robotFilterConfig());
 	_motionModule = new Motion::Controller(_config.robotConfig());
-	
+
 	//TODO fixme...I dunno..this needs to be done for all the modules
 	_modelingModule->setSystemState(&_state);
 	_motionModule->setSystemState(&_state);
 	_logModule.setSystemState(&_state);
-	
+
 	//_modules.append(_modelingModule);
 	_modules.append(_motionModule);
 	_modules.append(&_logModule);
@@ -125,7 +125,7 @@ void Processor::run()
 			&_refereeHandler, &RefereeHandler::packet);
 
 	RRT::Path bestPath, newPath;
-	
+
 	while (_running)
 	{
 		if (_state.runState == SystemState::Running)
@@ -138,15 +138,15 @@ void Processor::run()
 				//run modeling for testing
 				//_modelingModule->run();
 				//_refereeHandler.run();
-				
+
 				// Clear radio commands
 				for (int r = 0; r < 5; ++r)
 				{
 					_state.self[r].radioTx = Packet::RadioTx::Robot();
 				}
-				
+
 				_state.self[_state.rid].radioTx = _inputHandler.genRobotData();
-				
+
 				_logModule.run();
 
 				//send out the radio data from manual control
@@ -161,7 +161,7 @@ void Processor::run()
 			{
 				//blocking to act on new packets
 				receiver.receive(true);
-				
+
 				//if vision told us to act
 				if (_trigger)
 				{
@@ -174,20 +174,20 @@ void Processor::run()
 					_state.rrt.clear();
 					RRT::ObstacleSet obstacles;
 					obstacles.add(new RRT::CircleObstacle(Geometry::Point2d(0, Constants::Field::Length / 2), Constants::Field::CenterRadius));
-					
+
 					for (int i = 0; i < 5; ++i)
 					{
 						if (_state.self[i].valid)
 						{
 							obstacles.add(new RRT::CircleObstacle(_state.self[i].pos, Constants::Robot::Radius));
 						}
-						
+
 						if (_state.opp[i].valid)
 						{
 							obstacles.add(new RRT::CircleObstacle(_state.opp[i].pos, Constants::Robot::Radius));
 						}
 					}
-					
+
 					RRT::plan(obstacles, Geometry::Point2d(0, 0.5), Geometry::Point2d(0, 5.5), 1000, newPath, &_state);
 					if (bestPath.points.empty() || (bestPath.distance() - newPath.distance()) > 0.25f || bestPath.hit(obstacles))
 					{
@@ -195,15 +195,18 @@ void Processor::run()
 					}
 					_state.pathTest = bestPath.points;
 #endif
+					Geometry::Point2d testPoint = Geometry::Point2d(1.5,5.0);
 
-					//_motionModule->run();
-					
+					_state.self[0].cmd.goal = testPoint;
+
+					_motionModule->run();
+
 					//always run logging last
 					_logModule.run();
-					
+
 					//new state
 					clearState();
-					
+
 					//wait for new trigger frame
 					_trigger = false;
 				}
@@ -217,15 +220,15 @@ void Processor::run()
 			//we should never do anything until processor
 			//has established a trigger id... -Roman
 			//what if there is no vision??
-			
+
 			//run modeling for testing
 			//_modelingModule->run();
 			//_refereeHandler.run();
-			
+
 			_logModule.run();
-			
+
 			clearState();
-			
+
 			//fixed wait
 			QThread::msleep(35);
 		}
@@ -241,7 +244,7 @@ void Processor::clearState()
 void Processor::sendRadioData()
 {
 	Packet::RadioTx tx;
-	
+
 	for (int i = 0; i < 5; ++i)
 	{
 		tx.robots[i] = _state.self[i].radioTx;
@@ -258,7 +261,7 @@ void Processor::sendRadioData()
 			}
 		}
 	}
-	
+
 	_sender.send(tx);
 }
 
@@ -275,10 +278,10 @@ void Processor::visionHandler(const Packet::Vision* packet)
 				//TODO investigate...
 				uint64_t half = _state.rawVision[0].timestamp;
 				half += (packet->timestamp - _state.rawVision[0].timestamp) / 2;
-	
+
 				//default trigger to this camera
 				_triggerId = packet->camera;
-				
+
 				//eval all packets, any packet less than half becomes the new tigger
 				//this gives us the last packet up to half as the trigger
 				BOOST_FOREACH (const Packet::Vision& raw , _state.rawVision)
@@ -288,10 +291,10 @@ void Processor::visionHandler(const Packet::Vision* packet)
 						_triggerId = raw.camera;
 					}
 				}
-				
+
 				//we have set the trigger camera
 				printf("Set trigger camera: %d\n", _triggerId);
-				
+
 				//clear state, this will cause only the trigger frame's sync
 				//to be stored and system will continue normal operation
 				clearState();
@@ -300,13 +303,13 @@ void Processor::visionHandler(const Packet::Vision* packet)
 			//store the sync packets
 			_state.rawVision.push_back(*packet);
 		}
-		
+
 		return;
 	}
-	
+
 	//if we have trigger camera, we will either send data
 	//or set the trigger flag
-	if (packet->camera == _triggerId 
+	if (packet->camera == _triggerId
 			&& _state.controlState == SystemState::Auto
 			&& _state.runState == SystemState::Running)
 	{
@@ -323,7 +326,7 @@ void Processor::visionHandler(const Packet::Vision* packet)
 			_trigger = true;
 		}
 	}
-	
+
 	//populate the state
 	_state.rawVision.push_back(*packet);
 
@@ -331,7 +334,7 @@ void Processor::visionHandler(const Packet::Vision* packet)
 	{
 		//set syncronous time to packet timestamp
 		_state.timestamp = packet->timestamp;
-		
+
 		//convert last frame to teamspace
 		toTeamSpace(_state.rawVision[_state.rawVision.size() - 1]);
 	}

@@ -2,14 +2,15 @@
 #include "log/LogModule.hpp"
 #include "motion/Controller.hpp"
 #include "modeling/WorldModel.hpp"
-#include "TrajectoryGen.hpp"
+#include "motion/Trajectory.hpp"
 #include <QFileDialog>
 #include <ui_motion.h>
+#include <Constants.hpp>
 
 //TODO flicker is still an issue (though it only happens when you re-draw)
 
 MainWindow::MainWindow(Team t, QString filename)
-    :QMainWindow(), _processor(t), _logFile(0), _configFile(filename), _config(filename)
+    :QMainWindow(), _processor(t, filename), _logFile(0), _config(filename)
 {
     setupUi(this);
 
@@ -30,6 +31,7 @@ MainWindow::MainWindow(Team t, QString filename)
     _processor.start();
 
     _logFile = new Log::LogFile(Log::LogFile::genFilename());
+    _processor.setLogFile(_logFile);
 
     try
     {
@@ -116,3 +118,22 @@ void MainWindow::on_saveGains_clicked()
 {
     _config.save(QFileDialog::getSaveFileName(this, tr("Save File"),"../config/",tr("XML files (*.xml)")));
 }
+
+/*
+Point2d MainWindow::convertPoint(QPointF point)
+{
+    Point2d retPoint;
+    retPoint.y = (point.x() * (Constants::Floor::Length/802.0)) - Constants::Field::Border;
+    retPoint.x = (point.y() * (Constants::Floor::Width/556.0)) - Constants::Field::Border;
+
+    retPoint.x = retPoint.x - Constants::Field::Width/2;
+
+    if(_team == Blue)
+    {
+        retPoint.y = Constants::Field::Length - retPoint.y;
+        retPoint.x = -retPoint.x;
+    }
+
+    return retPoint;
+}
+*/

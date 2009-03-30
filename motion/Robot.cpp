@@ -16,6 +16,8 @@ Robot::Robot(ConfigFile::RobotCfg cfg, unsigned int id):
     _axels = cfg.axels;
     _motors = new float[_axels.size()];
 
+    _elapsedTime = _lastTime = 0;
+
     //clear initial motor values and wheel velocities
     for (unsigned int i=0 ; i<4 ; ++i)
     {
@@ -29,9 +31,11 @@ Robot::Robot(ConfigFile::RobotCfg cfg, unsigned int id):
     _posController = new LinearController(cfg.posCntrlr.Kp, cfg.posCntrlr.Kd, cfg.maxRobotVel);
     _deadband = cfg.posCntrlr.deadband;
 
-    rotationMatrix = new TransformMatrix();\
+    rotationMatrix = new TransformMatrix();
 
     _pathPlanner = new PathPlanner();
+
+    _trajectory = new Trajectory(0.5,2.0);
 }
 
 Robot::~Robot()
@@ -51,19 +55,26 @@ void Robot::setKd(double value)
 
 void Robot::proc()
 {
+
     if(_state->self[_id].valid)
     {
-        _goalPos = _state->self[_id].cmd.goal;
-        _currPos = _state->self[_id].pos;
 
-        if(!_path.waypoints.empty())
+        _currPos = _state->self[_id].pos;
+        if(_state->self[_id].cmd.goal != _goalPos)
         {
-            _path.waypoints.clear();
+            _goalPos = _state->self[_id].cmd.goal;
+            _trajectory->setTrajectory(_goalPos, _state->self[_id].pos, _state->self[_id].vel);
+            _elapsedTime = 0;
+            _lastTime = _state->timestamp;
         }
 
-        _pathPlanner->setState(_state);
-        _path = _pathPlanner->plan(_currPos, _goalPos);
+        _elapsedTime += _state->timestamp - _lastTime;
+        float t = ((float)_elapsedTime / 1000000);
+        _lastTime = _state->timestamp;
 
+        Trajectory::TrajectoryCmd cmd = _trajectory->run(_currPos, t);
+        _state->self[_id].cmd.pos = cmd.pos;
+        _state->self[_id].cmd.v_ff = cmd.v_ff;
         genVelocity();
     }
 }
@@ -78,16 +89,6 @@ void Robot::genVelocity()
 
     velCmd.vel = _posController->run(error,feedforwardVelocity);
     velCmd.w = 0;
-//         printf("Curr Pos x %f y %f\n", currPos.x, currPos.y);
-//         printf("Desired pos x %f y %f\n", desiredPos.x, desiredPos.y);
-//         printf("Error x %f y %f \n", error.x, error.y);
-//         printf("Velocity in Team Space x %f y %f \n", velCmd.vel.x, velCmd.vel.y);
-
-    //Deadband
-    if(error.mag() < _deadband.mag())
-    {
-        velCmd.vel = Point2d(0,0);
-    }
 
     _state->self[_id].vel = velCmd.vel;
 
@@ -95,8 +96,6 @@ void Robot::genVelocity()
     //The angle also needs to be converted
     rotationMatrix = new TransformMatrix(Point2d(0,0),(currAngle - 90.0), false, 1.0);
     velCmd.vel = rotationMatrix->transformDirection(velCmd.vel);
-
-//         printf("Velocity in Robot Space x %f y %f \n", velCmd.vel.x, velCmd.vel.y);
 
     genMotor(velCmd);
 }
@@ -140,14 +139,14 @@ void Robot::genMotor(VelocityCmd velCmd)
     //One of the wheels has gone into saturation
     if(maxGenWheelVel > _maxWheelVel)
     {
-        printf("Wheel Speeds before [0] %f [1] %f [2] %f [3] %f\n",_motors[0], _motors[1], _motors[2], _motors[3]);
+//         printf("Wheel Speeds before [0] %f [1] %f [2] %f [3] %f\n",_motors[0], _motors[1], _motors[2], _motors[3]);
 //         printf("Wheel saturation\n");
         //Scale it and the other wheels to achieveable velocities
         for(int i = 0; i<4; i++)
         {
             _motors[i] *= _maxWheelVel / maxGenWheelVel;
         }
-        printf("Wheel Speeds after [0] %f [1] %f [2] %f [3] %f\n",_motors[0], _motors[1], _motors[2], _motors[3]);
+//         printf("Wheel Speeds after [0] %f [1] %f [2] %f [3] %f\n",_motors[0], _motors[1], _motors[2], _motors[3]);
     }
 
     _state->self[_id].radioTx.board_id = shellId;
@@ -156,7 +155,7 @@ void Robot::genMotor(VelocityCmd velCmd)
     {
         _state->self[_id].radioTx.motors[j] = (int8_t)_motors[j];
     }
-    
+
     //printf("Wheel Speeds after [0] %f [1] %f [2] %f [3] %f\n",_motors[0], _motors[1], _motors[2], _motors[3]);
     _state->self[_id].radioTx.valid = true;
 }

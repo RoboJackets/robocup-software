@@ -21,7 +21,6 @@ include_directories(${PROJECT_BINARY_DIR})
 qt4_wrap_cpp (MOC_SRCS
     MainWindow.hpp
     RobotPath.hpp
-    TrajectoryGen.hpp
 )
 
 qt4_wrap_ui (UI_HDRS
@@ -32,10 +31,11 @@ set (SRCS
     main.cpp
     MainWindow.cpp
     RobotPath.cpp
-    TrajectoryGen.cpp
     ../soccer/Processor.cpp
     ../soccer/InputHandler.cpp
     ../soccer/JoystickInput.cpp
+    ../soccer/RefereeHandler.cpp
+    ../soccer/rrt.cpp
 )
 
 qt4_automoc (${SRCS})

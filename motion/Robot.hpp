@@ -9,6 +9,7 @@
 #include "framework/Module.hpp"
 #include "LinearController.hpp"
 #include "PathPlanner.hpp"
+#include "Trajectory.hpp"
 
 class Robot
 {
@@ -44,20 +45,9 @@ class Robot
         /** given a created robot velocity, generate motor speeds */
         void genMotor(VelocityCmd velCmd);
 
-        /** clear PID windup */
-        void clearPid();
-
         void setKp(double value);
         void setKd(double value);
-                /*
-        PathPlanner* pathPlanner() const { return _pathPlanner; }
 
-        template <typename T>
-        void newPathPlanner()
-        {
-            _pathPlanner = new T(_vision);
-        }
-                */
     private:
 
         /** robot identification */
@@ -69,12 +59,16 @@ class Robot
         /** Mechanical data from configfile **/
         float _maxAccel, _maxWheelVel;
 
+        /** DeadBand  **/
+        Geometry::Point2d _deadband;
+
         /** team we are running as */
         Team _team;
 
         /** SystemState **/
         SystemState* _state;
 
+        /** Path Planner **/
         PathPlanner* _pathPlanner;
 
         /** robot axels */
@@ -89,15 +83,21 @@ class Robot
         /** Pos Controller **/
         LinearController::LinearController* _posController;
 
-        /** DeadBand - needs to go in config file **/
-        Geometry::Point2d _deadband;
-
         /** Path from pathplanner **/
         PathPlanner::Path _path;
 
+        /** Trajectory Gen **/
+        Trajectory* _trajectory;
+
+        /** Elapsed time **/
+        uint64_t _elapsedTime;
+
+        /** Last time **/
+        uint64_t _lastTime;
+
         Geometry::Point2d _currPos;
         Geometry::Point2d _goalPos;
-    };
+};
 
 
 #endif /* ROBOT_HPP_ */

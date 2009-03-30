@@ -5,6 +5,8 @@
 #include "RobotPath.hpp"
 #include "../soccer/Processor.hpp"
 #include <log/LogFile.hpp>
+#include <log/TreeView.hpp>
+#include <log/TreeModel.hpp>
 #include "log/LogControl.hpp"
 
 #include <QMainWindow>
@@ -15,6 +17,7 @@
 #include <QString>
 #include <config/ConfigFile.hpp>
 
+
 class MainWindow : public QMainWindow, Ui::MainWindow
 {
     Q_OBJECT;
@@ -22,6 +25,7 @@ class MainWindow : public QMainWindow, Ui::MainWindow
     public:
         MainWindow(Team t, QString filename);
         ~MainWindow();
+//         Point2d convertPoint(QPointF point);
 
     public Q_SLOTS:
         void on_erase_clicked();
@@ -47,14 +51,15 @@ class MainWindow : public QMainWindow, Ui::MainWindow
 
         RobotPath* _rp;
 
+        Team _team;
+
+
         Processor _processor;
 
         Log::LogFile* _logFile;
+
         /** This controls the data flow from logger to visualizers **/
         Log::LogControl* _logControl;
-
-        /** Filename for the configfile  **/
-        QString _configFile;
 
         /** Currently the configfile is for motion but others can add to it **/
         ConfigFile _config;
