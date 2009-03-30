@@ -19,6 +19,11 @@ MainWindow::MainWindow(Team t, QString filename) :
 	ui.treeView->setModel(_treeModel);
 	ui.treeView->expandAll();
 
+	Q_FOREACH(Module* m, _processor.modules())
+	{
+		ui.fieldView->addModule(m);
+	}
+	
 	//start control thread
 	_processor.start();
 	

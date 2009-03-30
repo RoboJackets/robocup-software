@@ -3,8 +3,11 @@
 
 #include "SystemState.hpp"
 
-#include <string>
-#include <map>
+#include <LogFrame.hpp>
+
+#include <QString>
+#include <QWidget>
+#include <QPainter>
 
 /** a module is called by the system trigger to process its data */
 class Module
@@ -12,29 +15,38 @@ class Module
 	public:
 		virtual ~Module() {};
 		
+		/** sets the system state for the module */
 		void setSystemState(SystemState* state);
 		
-		std::string name() const { return _name; }
+		/** return a widget for the ui */
+		virtual QWidget* widget() const { return _widget; }
+		
+		/** draw onto the field with the given painter */
+		virtual void fieldOverlay(QPainter&, Packet::LogFrame&) const {}
+		
+		QString name() const { return _name; }
 		
 		/** run the code for the module */
 		virtual void run() = 0;
 		
-		/** return the module with the given name */
-		static Module* module(std::string name);
+		///handle house events on the field
+		virtual void mousePress(QMouseEvent* me, Geometry::Point2d pos) {};
+		virtual void mouseMove(QMouseEvent* me, Geometry::Point2d pos) {};
+		virtual void mouseRelease(QMouseEvent* me, Geometry::Point2d pos) {};
 		
 	private:
 		Module(Module&);
 		Module& operator&=(Module&);
 		
 	protected:
-		Module(std::string name);
+		Module(QString name);
 		
 		/** this WILL BE SET before the module is run */
 		SystemState* _state;
 		
-		std::string _name;
+		QString _name;
 		
-		static std::map<std::string, Module*> _modules;
+		QWidget* _widget;
 };
 
 #endif /* MODULE_HPP_ */

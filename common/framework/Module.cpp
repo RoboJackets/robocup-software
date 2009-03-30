@@ -2,26 +2,14 @@
 
 #include <stdexcept>
 
-std::map<std::string, Module*> Module::_modules;
-
-Module::Module(std::string name) :
+Module::Module(QString name) :
 	_name(name)
 {
-	if (_modules[_name])
-	{
-		throw std::runtime_error("Module name conflict");
-	}
-	
     _state = 0;
-	_modules[_name] = this; 
+	_widget = 0;
 }
 
 void Module::setSystemState(SystemState* state)
 {
 	_state = state;
-}
-
-Module* Module::module(std::string name)
-{
-	return _modules[name];
 }

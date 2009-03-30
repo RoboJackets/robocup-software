@@ -8,11 +8,13 @@ set (USE_NETWORK true)
 set (USE_GEOMETRY true)
 set (USE_FRAMEWORK true)
 set (USE_CONFIG true)
+
 include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
 
 #Module Include Directories
 # Add a new line here for every module used
 include_directories (${PROJECT_SOURCE_DIR}/..)
+
 add_subdirectory (${PROJECT_SOURCE_DIR}/../motion ${PROJECT_BINARY_DIR}/motion)
 add_subdirectory (${PROJECT_SOURCE_DIR}/../log ${PROJECT_BINARY_DIR}/log)
 add_subdirectory (${PROJECT_SOURCE_DIR}/../modeling ${PROJECT_BINARY_DIR}/modeling)

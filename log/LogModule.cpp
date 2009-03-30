@@ -1,5 +1,9 @@
 #include "LogModule.hpp"
 
+#include <boost/foreach.hpp>
+
+#include "drawing/Elements.hpp"
+
 using namespace Log;
 
 LogModule::LogModule() :
@@ -15,6 +19,32 @@ void LogModule::setLogFile(LogFile* file)
 	_logFileMutex.lock();
 	_logFile = file;
 	_logFileMutex.unlock();
+}
+
+void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
+{
+	BOOST_FOREACH(const Packet::Vision& vision, f.rawVision)
+	{
+		if (vision.sync)
+		{
+			return;
+		}
+		
+		BOOST_FOREACH(const Packet::Vision::Robot& r, vision.blue)
+		{
+			drawRobot(p, Blue, r.shell, r.pos, r.angle);
+		}
+		
+		BOOST_FOREACH(const Packet::Vision::Robot& r, vision.yellow)
+		{
+			drawRobot(p, Yellow, r.shell, r.pos, r.angle);
+		}
+		
+		BOOST_FOREACH(const Packet::Vision::Ball& b, vision.balls)
+		{
+			drawBall(p, b.pos);
+		}
+	}
 }
 
 void LogModule::run()

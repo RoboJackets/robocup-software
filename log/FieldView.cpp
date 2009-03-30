@@ -6,10 +6,6 @@
 #include <QPainter>
 #include <QResizeEvent>
 
-#include <boost/foreach.hpp>
-
-#include "drawing/Elements.hpp"
-
 using namespace Constants;
 using namespace Log;
 
@@ -21,6 +17,9 @@ FieldView::FieldView(QWidget* parent) :
 	_tx = -Field::Length/2.0f;
 	_ty = 0;
 	_ta = -90;
+	
+	//turn on mouse tracking for modules that may need the event
+	this->setMouseTracking(true);
 }
 
 void FieldView::team(Team t)
@@ -38,6 +37,64 @@ void FieldView::frame(Packet::LogFrame* frame)
 {
 	_frame = frame;
 	update();
+}
+
+void FieldView::addModule(Module* module)
+{
+	_modules.append(module);
+}
+
+Geometry::Point2d FieldView::toTeamSpace(int x, int y) const
+{
+	//meters per pixel
+	float mpp = Constants::Floor::Length / width();
+	
+	float wx = x * mpp - Constants::Floor::Length/2.0f;
+	float wy = Constants::Floor::Width/2.0 - y * mpp;
+	
+	Geometry::Point2d world(wx, wy);
+	
+	//return world coords if team is unknown
+	if (_team == UnknownTeam)
+	{
+		return world;
+	}
+	
+	//default angle for blue
+	float angle = -90;
+	if (_team == Yellow)
+	{
+		angle = 90;
+	}
+	
+	world.rotate(Geometry::Point2d(0,0), angle);
+	world.y += Constants::Field::Length/2.0f;
+	
+	return world;
+}
+
+void FieldView::mousePressEvent(QMouseEvent* me)
+{
+	Q_FOREACH(Module* m, _modules)
+	{
+		m->mousePress(me, toTeamSpace(me->x(), me->y()));
+	}
+}
+
+void FieldView::mouseReleaseEvent(QMouseEvent* me)
+{
+	Q_FOREACH(Module* m, _modules)
+	{
+		m->mouseRelease(me, toTeamSpace(me->x(), me->y()));
+	}
+}
+
+void FieldView::mouseMoveEvent(QMouseEvent* me)
+{
+	Q_FOREACH(Module* m, _modules)
+	{
+		m->mouseMove(me, toTeamSpace(me->x(), me->y()));
+	}
 }
 
 void FieldView::paintEvent(QPaintEvent* event)
@@ -62,30 +119,15 @@ void FieldView::paintEvent(QPaintEvent* event)
 		
 		//draw the raw frame info
 		//TODO draw only the last frame?? - Roman
-		BOOST_FOREACH(const Packet::Vision& vis, _frame->rawVision)
+		
+		Q_FOREACH(const Module* m, _modules)
 		{
-			if (vis.sync)
-			{
-				continue;
-			}
-			
-			BOOST_FOREACH(const Packet::Vision::Robot& r, vis.blue)
-			{
-				drawRobot(painter, Blue, r.shell, r.pos, r.angle);
-			}
-			
-			BOOST_FOREACH(const Packet::Vision::Robot& r, vis.yellow)
-			{
-				drawRobot(painter, Yellow, r.shell, r.pos, r.angle);
-			}
-			
-			BOOST_FOREACH(const Packet::Vision::Ball& b, vis.balls)
-			{
-				drawBall(painter, b.pos);
-			}
+			painter.save();
+			m->fieldOverlay(painter, *_frame);
+			painter.restore();
 		}
 		
-#if 1
+#if 0
 		painter.setPen(Qt::gray);
 		BOOST_FOREACH(const Geometry::Segment &seg, _frame->rrt)
 		{
@@ -105,29 +147,70 @@ void FieldView::paintEvent(QPaintEvent* event)
 			last = pt;
 		}
 #endif
-		/*
-		for (unsigned int i=0 ; i<5 ; ++i)
-		{
-			const Packet::LogFrame::Robot& s = _frame->self[i];
-			const Packet::LogFrame::Robot& o = _frame->opp[i];
-
-			if (s.valid)
-			{
-				drawRobot(painter, _team, s.shell, s.pos, s.angle);
-			}
-
-			if (o.valid)
-			{
-				drawRobot(painter, opponentTeam(_team), o.shell, o.pos, o.angle);
-			}
-		}
-
-		if (_frame->ball.valid)
-		{
-			drawBall(painter, _frame->ball.pos);
-		}
-		*/
 	}
+}
+
+void FieldView::drawField(QPainter& p)
+{
+	p.save();
+	
+	//reset to center
+	p.translate(-Floor::Length/2.0, -Floor::Width/2.0);
+	
+	p.setPen(Qt::transparent);
+	p.setBrush(QColor(0,85,0));
+	p.drawRect(QRectF(0, 0, Floor::Length, Floor::Width));		
+	
+	p.translate(Field::Border, Field::Border);
+	
+	p.setPen(Qt::white);
+	p.setBrush(QColor(0,130,0));
+	p.drawRect(QRectF(0, 0, Field::Length, Field::Width));
+	
+	//set brush alpha to 0
+	p.setBrush(QColor(0,130,0, 0));
+	
+	//reset to center
+	p.translate(Field::Length/2.0, Field::Width/2.0);
+	
+	//centerline
+	p.drawLine(QLineF(0, Field::Width/2,0, -Field::Width/2.0));
+	
+	//center circle
+	p.drawEllipse(QRectF(-Field::ArcRadius, -Field::ArcRadius, 
+		Field::CenterDiameter, Field::CenterDiameter));
+	
+	p.translate(-Field::Length/2.0, 0);
+	
+	//goal areas
+	p.drawArc(QRectF(-Field::ArcRadius, -Field::ArcRadius + .175, Field::CenterDiameter, Field::CenterDiameter), -90*16, 90*16);
+	p.drawArc(QRectF(-Field::ArcRadius, -Field::ArcRadius - .175, Field::CenterDiameter, Field::CenterDiameter), 90*16, -90*16);
+	p.drawLine(QLineF(Field::ArcRadius, -.175, Field::ArcRadius, .175));
+	
+	p.translate(Field::Length, 0);
+	
+	p.drawArc(QRectF(-Field::ArcRadius, -Field::ArcRadius + .175, Field::CenterDiameter, Field::CenterDiameter), -90*16, -90*16);
+	p.drawArc(QRectF(-Field::ArcRadius, -Field::ArcRadius - .175, Field::CenterDiameter, Field::CenterDiameter), 90*16, 90*16);
+	p.drawLine(QLineF(-Field::ArcRadius, -.175, -Field::ArcRadius, .175));
+		
+	// goals
+	float x[2] = {0, Field::GoalDepth};
+	float y[2] = {Field::GoalWidth/2.0, -Field::GoalWidth/2.0};
+	
+	p.setPen(Qt::blue);
+	p.drawLine(QLineF(x[0], y[0], x[1], y[0]));
+	p.drawLine(QLineF(x[0], y[1], x[1], y[1]));
+	p.drawLine(QLineF(x[1], y[1], x[1], y[0]));
+	
+	x[0] -= Field::Length;
+	x[1] -= Field::Length + 2 * Field::GoalDepth;
+	
+	p.setPen(Qt::yellow);
+	p.drawLine(QLineF(x[0], y[0], x[1], y[0]));
+	p.drawLine(QLineF(x[0], y[1], x[1], y[1]));
+	p.drawLine(QLineF(x[1], y[1], x[1], y[0]));
+	
+	p.restore();
 }
 
 void FieldView::resizeEvent(QResizeEvent* event)

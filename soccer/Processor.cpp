@@ -75,13 +75,16 @@ Processor::Processor(Team t, QString filename) :
 	
 	//setup the modules
 	//_modelingModule = new Modeling::WorldModel(_config.robotFilterConfig());
-	//_motionModule = new Motion::Controller(_config.robotConfig());
+	_motionModule = new Motion::Controller(_config.robotConfig());
 	
 	//TODO fixme...I dunno..this needs to be done for all the modules
 	//_modelingModule->setSystemState(&_state);
-	//_motionModule->setSystemState(&_state);
-	
+	_motionModule->setSystemState(&_state);
 	_logModule.setSystemState(&_state);
+	
+	//_modules.append(_modelingModule);
+	_modules.append(_motionModule);
+	_modules.append(&_logModule);
 }
 
 Processor::~Processor()

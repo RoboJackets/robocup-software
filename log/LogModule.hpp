@@ -18,6 +18,8 @@ namespace Log
 			
 			virtual void run();
 			
+			virtual void fieldOverlay(QPainter&, Packet::LogFrame&) const;
+			
 		private:
 			QMutex _logFileMutex;
 			LogFile* _logFile;

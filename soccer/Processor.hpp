@@ -37,14 +37,20 @@ class Processor: public QThread
 		
 		void setLogFile(Log::LogFile* lf);
 		
-		SystemState &state()
+		SystemState& state()
 		{
 			return _state;
 		}
 		
-		RefereeHandler &refereeHandler()
+		RefereeHandler& refereeHandler()
 		{
 			return _refereeHandler;
+		}
+		
+		//return a list of all the modules */
+		const QVector<Module*>& modules()
+		{
+			return _modules;
 		}
 		
 	public Q_SLOTS:
@@ -109,6 +115,9 @@ class Processor: public QThread
 		
 		/** Currently the configfile is for motion but others can add to it **/
 		ConfigFile _config;
+		
+		/** list of all modules */
+		QVector<Module*> _modules;
 };
 
 #endif // PROCESSOR_HPP

@@ -81,6 +81,10 @@ if (USE_FRAMEWORK AND NOT TARGET framework)
     SET(framework_SRCS 
         Module.cpp
 	)
+	
+	#qt4_wrap_cpp(MOC_SRC
+	#	${common_include_dir}/framework/Module.hpp
+	#)
 
     prepend_list(framework_SRCS "framework/")
     prepend_list(framework_SRCS ${common_include_dir})
