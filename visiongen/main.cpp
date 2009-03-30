@@ -62,7 +62,7 @@ class VisionSender : public QThread
 				sender.send(packet);
 
 				//fake vision processing
-				QThread::msleep(5);
+//				QThread::msleep(5);
 
 				//send real data
 				packet.sync = false;
@@ -101,6 +101,7 @@ class VisionSender : public QThread
 				printf("[%d] %lld :: Pos: %.3f %.3f\n", _id, (long long int)packet.timestamp, r.pos.x, r.pos.y);
 
 				//camera pause
+                if (msecs > 5)
 				QThread::msleep(msecs - 5);
 			}
 		}

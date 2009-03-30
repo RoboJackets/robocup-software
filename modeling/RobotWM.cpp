@@ -9,19 +9,29 @@ using namespace std;
 
 RobotWM::RobotWM()
 {
-  
-  
+    _shell = 0;
+    _measAngle = 0;
+    _valid = false;
+    _cmdAngle = 0;
+    _cmdValid = false;
+    _cmd_scale_factor = 0;
+    _cmd_scale_factor_angle = 0;
+    _velAngle = 0;
+    _posAngle = 0;
+    _isSelf = false;
+    _kfEnabled = false;
 }
 
 RobotWM::RobotWM(ConfigFile::RobotFilterCfg r, bool isSelf)
 {
   //Fill position/angle buffer
-  _angleBuf.assign(_bufsize, 0);
-  _posBuf.assign(_bufsize, Point2d()); 
+  _angleBuf.resize(10);
+  _posBuf.resize(10);
+//  _angleBuf.assign(_bufsize, 0);
+//  _posBuf.assign(_bufsize, Point2d()); 
   _isSelf = isSelf;
 
   //FIXME Get values from config file
-  _bufsize = 10;
   _cmd_scale_factor = 1;  //FIXME check value
   _cmd_scale_factor_angle = 1; //FIXME check value
 
@@ -84,7 +94,6 @@ RobotWM::~RobotWM()
 
 void RobotWM::process()
 {
-
   if (_kfEnabled)
     {
       if (_isSelf)
@@ -112,11 +121,16 @@ void RobotWM::process()
       
       //calculate velocities
       _vel.x = 0; _vel.y = 0; _velAngle = 0;
-      for (unsigned int i = 0; i<_bufsize-1; ++i)
+      for (unsigned int i = 0; i<_posBuf.size()-1; ++i)
 	{
-	  _vel += (_posBuf[i]-_posBuf[i+1])/_bufsize;
-	  _velAngle += (_angleBuf[i]-_angleBuf[i+1])/_bufsize;
+	  _vel += (_posBuf[i]-_posBuf[i+1]);
 	}
+    _vel /= _posBuf.size();
+      for (unsigned int i = 0; i<_angleBuf.size()-1; ++i)
+      {
+      _velAngle += (_angleBuf[i]-_angleBuf[i+1]);
+      }
+      _velAngle /= _angleBuf.size();
     }
 }
 
@@ -190,10 +204,15 @@ void RobotWM::oppProcess()
   
   //calculate velocities
   _vel.x = 0; _vel.y = 0; _velAngle = 0;
-  for (unsigned int i = 0; i<_bufsize-1; ++i)
+    for (unsigned int i = 0; i<_posBuf.size()-1; ++i)
     {
-      _vel += (_posBuf[i]-_posBuf[i+1])/_bufsize;
-      _velAngle += (_angleBuf[i]-_angleBuf[i+1])/_bufsize;
+        _vel += _posBuf[i]-_posBuf[i+1];
     }
+    _vel /= _posBuf.size();
+    for (unsigned int i = 0; i<_angleBuf.size()-1; ++i)
+    {
+        _velAngle += _angleBuf[i]-_angleBuf[i+1];
+    }
+    _velAngle /= _angleBuf.size();
 }
 

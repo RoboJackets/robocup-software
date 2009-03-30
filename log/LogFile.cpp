@@ -118,6 +118,7 @@ Packet::LogFrame LogFile::readPrev()
 
 Packet::LogFrame LogFile::readLast()
 {
+    QMutexLocker ml(&_fileMutex);
 	return _last;
 	
 #if 0

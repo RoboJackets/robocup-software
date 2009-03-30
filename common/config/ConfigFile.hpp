@@ -15,34 +15,64 @@ class ConfigFile
 {
     //types
     public:
-        typedef struct
+        class linearControllerInfo
         {
+        public:
+            linearControllerInfo()
+            {
+                Kp = 0;
+                Kd = 0;
+            }
+            
             float Kp, Kd;
             Geometry::Point2d deadband;
-        } linearControllerInfo;
+        };
 
-        typedef struct
+        class RobotCfg
         {
+        public:
+            RobotCfg()
+            {
+                maxAccel = 0;
+                maxWheelVel = 0;
+                maxRobotVel = 0;
+            }
+            
             float maxAccel, maxWheelVel, maxRobotVel;
 
             linearControllerInfo posCntrlr, angleCntrlr;
 
             QVector<Geometry::Point2d> axels;
-        } RobotCfg;
+        };
 
-        typedef struct
+        class robotKF
         {
+        public:
+            robotKF()
+            {
+                cmd_scale = 0;
+                cmd_scale_angle = 0;
+                bufsize = 0;
+            }
+            
             float cmd_scale;
             float cmd_scale_angle;
             int bufsize;
-        } robotKF;
+        };
 
-        typedef struct
+        class RobotFilterCfg
         {
+        public:
+            RobotFilterCfg()
+            {
+                kf_self_enable = false;
+                kf_opp_enable = false;
+            }
+            
             bool kf_self_enable;
             bool kf_opp_enable;
             robotKF self, opp;
-        } RobotFilterCfg;
+        };
 
     public:
         ConfigFile(QString filename);

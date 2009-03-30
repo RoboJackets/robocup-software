@@ -42,7 +42,35 @@ bool RRT::CircleObstacle::hit(const Geometry::Segment &seg)
 
 ////////
 
-RRT::Tree::Tree(const std::vector<Obstacle *> &obstacles, Geometry::Point2d pt):
+RRT::ObstacleSet::~ObstacleSet()
+{
+    BOOST_FOREACH(Obstacle *obs, _obstacles)
+    {
+        delete obs;
+    }
+}
+
+void RRT::ObstacleSet::add(Obstacle *obs)
+{
+    _obstacles.push_back(obs);
+}
+
+bool RRT::ObstacleSet::hit(const Geometry::Segment &seg) const
+{
+    BOOST_FOREACH(Obstacle *obs, _obstacles)
+    {
+        if (obs->hit(seg))
+        {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+////////
+
+RRT::Tree::Tree(const ObstacleSet &obstacles, Geometry::Point2d pt):
     _obstacles(obstacles)
 {
     step = 0.1f;
@@ -112,13 +140,9 @@ RRT::Point *RRT::Tree::move(Point *start, Geometry::Point2d dest)
     }
     
     // Check for obstacles
-    Geometry::Segment seg(pos, start->pos);
-    BOOST_FOREACH(Obstacle *obs, _obstacles)
+    if (_obstacles.hit(Geometry::Segment(pos, start->pos)))
     {
-        if (obs->hit(seg))
-        {
-            return 0;
-        }
+        return 0;
     }
     
     return new Point(pos, start);
@@ -166,7 +190,7 @@ RRT::Tree::Status RRT::Tree::connect(Geometry::Point2d pt)
     return s;
 }
 
-bool RRT::plan(const std::vector<Obstacle *> &obstacles, Geometry::Point2d start, Geometry::Point2d goal, int n, Path &path, SystemState *state)
+bool RRT::plan(const ObstacleSet &obstacles, Geometry::Point2d start, Geometry::Point2d goal, int n, Path &path, SystemState *state)
 {
     Tree t0(obstacles, start);
     Tree t1(obstacles, goal);
@@ -263,18 +287,14 @@ float RRT::Path::distance(unsigned int start) const
     return distance;
 }
 
-bool RRT::Path::hit(const std::vector<Obstacle *> &obstacles, unsigned int start) const
+bool RRT::Path::hit(const ObstacleSet &obstacles, unsigned int start) const
 {
     for (unsigned int i = start; i < (points.size() - 1); ++i)
     {
         Geometry::Segment seg(points[i], points[i + 1]);
-        
-        BOOST_FOREACH(Obstacle *obs, obstacles)
+        if (obstacles.hit(seg))
         {
-            if (obs->hit(seg))
-            {
-                return true;
-            }
+            return true;
         }
     }
     

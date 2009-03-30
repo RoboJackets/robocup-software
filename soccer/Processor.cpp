@@ -74,11 +74,11 @@ Processor::Processor(Team t, QString filename) :
 	}
 	
 	//setup the modules
-	//_modelingModule = new Modeling::WorldModel(_config.robotFilterConfig());
+	_modelingModule = new Modeling::WorldModel(_config.robotFilterConfig());
 	_motionModule = new Motion::Controller(_config.robotConfig());
 	
 	//TODO fixme...I dunno..this needs to be done for all the modules
-	//_modelingModule->setSystemState(&_state);
+	_modelingModule->setSystemState(&_state);
 	_motionModule->setSystemState(&_state);
 	_logModule.setSystemState(&_state);
 	
@@ -165,24 +165,26 @@ void Processor::run()
 				//if vision told us to act
 				if (_trigger)
 				{
-					#if 0
-					_modelingModule->run();
+					if (_modelingModule)
+					{
+						_modelingModule->run();
+					}
 					_refereeHandler.run();
-
+#if 1
 					_state.rrt.clear();
-					vector<RRT::Obstacle *> obstacles;
-					obstacles.push_back(new RRT::CircleObstacle(Geometry::Point2d(0, Constants::Field::Length / 2), Constants::Field::CenterRadius));
+					RRT::ObstacleSet obstacles;
+					obstacles.add(new RRT::CircleObstacle(Geometry::Point2d(0, Constants::Field::Length / 2), Constants::Field::CenterRadius));
 					
 					for (int i = 0; i < 5; ++i)
 					{
 						if (_state.self[i].valid)
 						{
-							obstacles.push_back(new RRT::CircleObstacle(_state.self[i].pos, Constants::Robot::Radius));
+							obstacles.add(new RRT::CircleObstacle(_state.self[i].pos, Constants::Robot::Radius));
 						}
 						
 						if (_state.opp[i].valid)
 						{
-							obstacles.push_back(new RRT::CircleObstacle(_state.opp[i].pos, Constants::Robot::Radius));
+							obstacles.add(new RRT::CircleObstacle(_state.opp[i].pos, Constants::Robot::Radius));
 						}
 					}
 					
@@ -192,9 +194,9 @@ void Processor::run()
 						bestPath = newPath;
 					}
 					_state.pathTest = bestPath.points;
-					
+#endif
+
 					//_motionModule->run();
-					#endif
 					
 					//always run logging last
 					_logModule.run();

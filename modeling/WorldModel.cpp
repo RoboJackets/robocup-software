@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <vector>
+#include <boost/foreach.hpp>
 
 #include "RobotWM.hpp"
 #include "framework/Module.hpp"
@@ -24,10 +25,18 @@ WorldModel::WorldModel(ConfigFile::RobotFilterCfg cfg) :
 
 }
 
+WorldModel::~WorldModel()
+{
+    for(unsigned int i=0 ; i<5 ; i++)
+    {
+		delete _self[i];
+		delete _opp[i];
+	}
+}
 
 void WorldModel::run()
 {
-	Q_FOREACH(const Packet::Vision& vision, _state->rawVision)
+	BOOST_FOREACH(const Packet::Vision& vision, _state->rawVision)
 	{
 		if (!vision.sync)
 		{
@@ -45,7 +54,7 @@ void WorldModel::run()
 			}
 			
 			//index is the id
-			Q_FOREACH (const Packet::Vision::Robot& r, *self)
+			BOOST_FOREACH (const Packet::Vision::Robot& r, *self)
 			{
 				//FIXME - getting shell 255
 				if (r.shell > 5)
@@ -75,7 +84,7 @@ void WorldModel::run()
 				_state->self[r.shell].valid = true;
 			}
 			//index is the id
-			Q_FOREACH (const Packet::Vision::Robot& r, *opp)
+			BOOST_FOREACH (const Packet::Vision::Robot& r, *opp)
 			{
 				//FIXME - getting shell 255
 				if (r.shell > 5)

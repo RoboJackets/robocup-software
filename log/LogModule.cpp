@@ -27,7 +27,7 @@ void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
 	{
 		if (vision.sync)
 		{
-			return;
+			continue;
 		}
 		
 		BOOST_FOREACH(const Packet::Vision::Robot& r, vision.blue)

@@ -34,18 +34,18 @@
     </robotData>
 
     <worldModel>
-        <self_kf_enable value = "false"/>
-        <opp_kf_enable value = "false"/>
+        <self_kf_enable value = "true"/>
+        <opp_kf_enable value = "true"/>
     </worldModel>
 
     <robotKF name = "self">
         <cmd_scale_factor value = "1"/>
         <cmd_scale_factor_angle value = "1"/>
-        <velBufSize value = "10">
+        <velBufSize value = "10"/>
     </robotKF>
 
     <robotKF name = "opp">
-        <velBufSize value = "10">
+        <velBufSize value = "10"/>
     </robotKF>
 
 </motion>

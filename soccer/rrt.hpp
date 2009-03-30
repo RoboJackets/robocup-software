@@ -30,6 +30,19 @@ namespace RRT
         virtual bool hit(const Geometry::Segment &seg);
     };
     
+    class ObstacleSet
+    {
+    public:
+        ~ObstacleSet();
+        
+        void add(Obstacle *obs);
+        
+        bool hit(const Geometry::Segment &seg) const;
+    
+    protected:
+        std::vector<Obstacle *> _obstacles;
+    };
+    
     class CircleObstacle: public Obstacle
     {
     public:
@@ -58,7 +71,7 @@ namespace RRT
         // Returns the length of the path starting at point (start).
         float distance(unsigned int start = 0) const;
         
-        bool hit(const std::vector<Obstacle *> &obstacles, unsigned int start = 0) const;
+        bool hit(const ObstacleSet &obstacles, unsigned int start = 0) const;
         
         std::vector<Geometry::Point2d> points;
     };
@@ -66,7 +79,7 @@ namespace RRT
     class Tree
     {
     public:
-        Tree(const std::vector<Obstacle *> &obstacles, Geometry::Point2d pt);
+        Tree(const ObstacleSet &obstacles, Geometry::Point2d pt);
         ~Tree();
         
         Point *nearest(Geometry::Point2d pt);
@@ -89,11 +102,11 @@ namespace RRT
         float step;
     
     protected:
-        const std::vector<Obstacle *> &_obstacles;
+        const ObstacleSet &_obstacles;
     };
     
     bool find(std::list<Geometry::Point2d> &path, Point *p, Geometry::Point2d goal);
     void findPath(Tree *ta, Tree *tb, Geometry::Point2d pt, Path &path);
-    bool plan(const std::vector<Obstacle *> &obstacles, Geometry::Point2d start, Geometry::Point2d goal, int n, Path &path, SystemState *state);
+    bool plan(const ObstacleSet &obstacles, Geometry::Point2d start, Geometry::Point2d goal, int n, Path &path, SystemState *state);
     void addEdges(std::vector<Geometry::Segment> &edges, Point *pt);
 }

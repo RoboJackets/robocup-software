@@ -5,6 +5,7 @@
 #include <Constants.hpp>
 #include <QPainter>
 #include <QResizeEvent>
+#include <boost/foreach.hpp>
 
 using namespace Constants;
 using namespace Log;
@@ -127,7 +128,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 			painter.restore();
 		}
 		
-#if 0
+#if 1
 		painter.setPen(Qt::gray);
 		BOOST_FOREACH(const Geometry::Segment &seg, _frame->rrt)
 		{

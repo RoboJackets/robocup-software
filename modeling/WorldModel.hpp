@@ -14,6 +14,7 @@ namespace Modeling
 	{
 		public:
 			WorldModel(ConfigFile::RobotFilterCfg cfg);
+            ~WorldModel();
 			
 			virtual void run();
 			

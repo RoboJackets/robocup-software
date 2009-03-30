@@ -149,7 +149,13 @@ namespace Network
 
 		public:
 			PacketReceiver() {}
-			~PacketReceiver() {}
+			~PacketReceiver()
+            {
+                for (unsigned int i = 0; i < _receivers.size(); ++i)
+                {
+                    delete _receivers[i];
+                }
+            }
 
 			/** receive ALL the next available packets.
 			 *  This will call the handlers registered for each packet

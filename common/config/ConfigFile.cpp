@@ -7,6 +7,10 @@
 #include <QDebug>
 #include <QString>
 #include <QStringList>
+#include <boost/format.hpp>
+
+using namespace std;
+using namespace boost;
 
 ConfigFile::ConfigFile(QString filename) :
 	_filename(filename), _doc("config")
@@ -26,10 +30,12 @@ void ConfigFile::load() throw (std::runtime_error)
         throw std::runtime_error("Unable to open config file.");
     }
 
-    if (!_doc.setContent(&configFile))
+    QString errorMsg;
+    int errorLine = 0, errorColumn = 0;
+    if (!_doc.setContent(&configFile, &errorMsg, &errorLine, &errorColumn))
     {
         configFile.close();
-        throw std::runtime_error("Internal: unable to set document content.");
+        throw runtime_error(str(format("line %d col %d: %s") % errorLine % errorColumn % errorMsg.toStdString()));
     }
     configFile.close();
 

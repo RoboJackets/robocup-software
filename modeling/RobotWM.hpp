@@ -45,7 +45,6 @@ namespace Modeling
 		private:
 			std::vector<Geometry::Point2d> _posBuf;
 			std::vector<float> _angleBuf;
-			unsigned int _bufsize;
 			bool _isSelf, _kfEnabled;
 			CvKalman * _kf;
 			
