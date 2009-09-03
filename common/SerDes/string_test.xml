@@ -1,3 +1,0 @@
-<struct typename="Thing">
-    <member type="string" name="text"/>
-</struct>
