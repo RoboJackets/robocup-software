@@ -1,0 +1,8 @@
+<struct typename="Referee">
+    <member type="uint8" name="command"/>
+    <member type="uint8" name="counter"/>
+    <member type="uint8" name="scoreBlue"/>
+    <member type="uint8" name="scoreYellow"/>
+    <member type="uint8" name="timeHigh"/>
+    <member type="uint8" name="timeLow"/>
+</struct>

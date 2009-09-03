@@ -1,0 +1,140 @@
+<struct typename="LogFrame" >
+	<struct typename="Vision" include_cpp="Vision.hpp" external_cpp="Packet::Vision" external_python="Packet.Vision" />
+	<struct typename="Point" include_cpp="Geometry2d/Point.hpp" external_cpp="Geometry2d::Point" external_python="Geometry2d.Point" />
+	<struct typename="Segment" include_cpp="Geometry2d/Segment.hpp" external_cpp="Geometry2d::Segment" external_python="Geometry2d.Segment" />
+	<struct typename="Polygon" include_cpp="Geometry2d/Polygon.hpp" external_cpp="Geometry2d::Polygon" external_python="Geometry2d.Polygon" />
+	<struct typename="RadioTx" include_cpp="RadioTx.hpp" external_cpp="Packet::RadioTx" external_python="Packet.RadioTx"/>
+	<struct typename="RadioRx" include_cpp="RadioRx.hpp" external_cpp="Packet::RadioRx" external_python="Packet.RadioRx"/>
+
+    <!-- see Team.h -->
+    <enum type="int8" typename="Team" external_cpp="Team" include_cpp="Team.h">
+        <constant name="UnknownTeam" value="-1"/>
+        <constant name="Yellow" value="0"/>
+        <constant name="Blue" value="1"/>
+    </enum>
+
+	<enum type="uint8" typename="RunState">
+        <constant name="Running"/>
+        <constant name="Stopped"/>
+    </enum>
+    
+    <enum type="uint8" typename="ControlState">
+        <constant name="Manual"/>
+        <constant name="Auto"/>
+    </enum>
+
+    <!-- Game state as determined by referee -->
+    <struct typename="GameState" external_cpp="GameState" include_cpp="GameState.hpp" />
+    
+    <!-- Commands for motion -->
+    <struct typename="MotionCmd" >
+        <!-- goal position for the robot -->
+        <member type="Point" name="goalPosition" />
+
+        <!-- goal orientation -->
+        <member type="Point" name="goalOrientation" />
+        
+        <!-- percent of max speed to run -->
+        <member type="float" name="vScale" value="1.0" />
+        
+        <enum type="uint8" typename="OrientationType">
+        	<constant name="None" />
+			<constant name="Continuous" />
+			<constant name="Endpoint" />
+	    </enum>
+	    
+	    <enum type="uint8" typename="PivotType">
+        	<constant name="NoPivot" />
+			<constant name="CW" />
+			<constant name="CCW" />
+	    </enum>
+	    
+	    <enum type="uint8" typename="SpinType">
+	    	<constant name="NoSpin" />
+	    	<constant name="SpinCW" />
+	    	<constant name="SpinCCW" />
+	    </enum>
+	            
+        <!-- when true the robot will face the goalOrientation -->
+        <member type="OrientationType" name="face" value="None" />
+       
+       	<member type="PivotType" name="pivot" value="NoPivot" />
+       	<member type="Geometry2d::Point" name="pivotPoint" />
+       	
+       	<member type="SpinType" name="spin" value="NoSpin" />
+    </struct>
+
+	<!-- post process robot information -->
+	<struct typename="Robot" extend_cpp="Framework::Robot" include_cpp="framework/PacketExtra.hpp" >
+		<!-- shell id, used for debug -->
+		<member type="uint8" name="shell" />
+
+		<!-- position of the robot -->
+		<member type="Point" name="pos" />
+
+		<!-- velocity of the robot -->
+		<member type="Point" name="vel" />
+
+		<!-- angle of the robot (+- 180 degrees) -->
+		<member type="float" name="angle" />
+
+		<!-- angular velocity of the robot degrees/second -->
+		<member type="float" name="angleVel" />
+
+    	<!-- MotionCmd Structure -->
+    	<member type="MotionCmd" name="cmd" />
+
+		<!-- if true, this robot is active for use -->
+		<member type="bool" name="valid" value="false" />
+		
+		<!--  true if we have the ball -->
+		<member type="bool" name="haveBall" value="false" />
+		
+		<!-- radio tx packet for the robot -->
+		<member type="RadioTx::Robot" name="radioTx" />
+		
+		<!-- radio rx packet for the robot -->
+		<member type="RadioRx::Robot" name="radioRx" />
+		
+		<member type="string" name="behavior" />
+	</struct>
+
+	<!-- post processed ball information -->
+	<struct typename="Ball">
+		<member type="Point" name="pos" />
+		<member type="Point" name="vel" />
+        <member type="Point" name="accel" />
+
+		<member type="bool" name="valid" value="false" />
+	</struct>
+	
+	<!-- timestamp of the vision packet that clocked the system -->
+	<member type="uint64" name="timestamp" />
+
+	<!-- team we are running as -->
+    <member type="Team" name="team" value="UnknownTeam" />
+
+	<member type="ControlState" name="controlState" value="Manual" />
+    <member type="RunState" name="runState" value="Stopped" />
+
+	<!-- unprocessed vision, in team space -->
+	<array type="Packet::Vision" name="rawVision" />
+
+	<member type="GameState" name="gameState"/>
+
+	<!-- array of robots for the system, index is player id -->
+	<array size="5" type="Robot" name="self"/>
+	<array size="5" type="Robot" name="opp"/>
+
+	<!-- gameplay ball -->
+	<member type="Ball" name="ball" />
+
+    <array type="Point" name="pathTest" />
+	<array type="Segment" name="debugLines" />
+	
+	<struct typename="DebugPolygon" extend_cpp="Geometry2d::Polygon">
+		<array size="3" type="uint8" name="color" />
+	</struct>
+	
+	<array type="DebugPolygon" name="debugPolygons" />
+</struct>

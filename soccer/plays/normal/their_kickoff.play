@@ -1,0 +1,13 @@
+NAME "their kickoff"
+
+NO_RESTART
+REQUIRE !our_restart, kickoff
+
+ROLE @fullback1
+    fullback side=right
+ROLE @fullback2
+    fullback side=left
+ROLE @back1
+    kick
+ROLE @back2
+    kick

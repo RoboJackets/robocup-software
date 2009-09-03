@@ -1,0 +1,15 @@
+NAME "offense"
+
+
+
+REQUIRE playing, offense
+
+ROLE @forward1
+	forward
+ROLE @forward2
+	forward
+ROLE @fullback1
+	fullback side=left
+ROLE @fullback2
+	fullback side=right
+

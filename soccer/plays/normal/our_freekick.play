@@ -1,0 +1,16 @@
+NAME "our_freekick"
+
+NO_RESTART
+REQUIRE our_restart, freekick
+
+//kicker moves to ball, takes the place of halfback
+ROLE @kicker
+    forward
+//striker gets into position
+ROLE @forward
+	move pos=center:(0,1.5)
+ROLE @fullback1
+	fullback side=left
+ROLE @fullback2
+	fullback side=right
+

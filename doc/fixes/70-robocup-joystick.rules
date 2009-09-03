@@ -1,0 +1,6 @@
+# Wireless
+KERNEL=="js[0-9]*", SUBSYSTEMS=="usb", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c219", SYMLINK+="input/robocupPad"
+
+# Wired
+KERNEL=="js[0-9]*", SUBSYSTEMS=="usb", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c216", SYMLINK+="input/robocupPad"
+

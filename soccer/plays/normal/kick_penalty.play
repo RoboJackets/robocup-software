@@ -1,0 +1,13 @@
+NAME "kick penalty"
+
+NO_RESTART
+REQUIRE our_restart, penalty
+
+ROLE @kicker
+    penalty
+ROLE @idle1
+    move pos=(1.5, 1) face=opp:(0, 0)
+ROLE @idle2
+    move pos=(1.5, 1.5) face=opp:(0, 0)
+ROLE @idle3
+    move pos=(1.5, 2) face=opp:(0, 0)

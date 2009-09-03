@@ -1,0 +1,56 @@
+// The name should appear in debugging output.
+NAME "test play"
+
+// Normally, the play is restarted when it finishes
+// and is selected again by the playbook.
+// With this, the play continues with the last roles until
+// a different play is selected.
+NO_RESTART
+
+// A list of predicates separated by commas.
+// All must be true for this play to be selected.
+// If REQUIRE is not given, this play may be chosen at any time.
+REQUIRE stopped
+
+// Each play has a bias value which can cause one play to be chosen
+// over another play whose requirements are all met.
+// The bias is the sum of weights of all PREFER predicates.
+// If a weight is not given for a predicate, the default of 1.0 is used.
+PREFER winning:0.5, always:-10
+
+// Game-state aborts can always end a play.
+// If DONE is not given, only those cases apply.
+//DONE !offense
+
+// NOT IMPLEMENTED: @object references
+
+// Identifies an opponent by some criteria and assigns him a role name.
+// These are handled in order and will not assign two opponents to
+// the same role, so another closest_to_ball would
+// select the second-closest opponent overall.
+OPPONENT @going_to_kick near_ball
+
+// @goalie is our goalie.
+// @opp_goalie is the opponent goalie.
+
+ROLE @first
+    // NOT IMPLEMENTED:
+    // The special tactic "continue" means to continue the previous tactic.
+    // This is used if you need to synchronize later and don't want to reset the
+    // current tactic.
+    
+    // Positions can be given with a coordinate system like this:
+    //      face=ball:(0,0)
+    // Where "ball" is the name of a matrix which transforms the point (0, 0).
+    
+    move pos=(0, 0.5) threshold=0.03
+    move pos=(0, 5.0) threshold=0.03
+ROLE @second
+    move pos=(-1.5, 0.5) threshold=0.5
+    move pos=(1.5, 0.5) threshold=0.5
+ROLE @third
+    move pos=(-1.5, 5.5) threshold=0.5
+    move pos=(1.5, 5.5) threshold=0.5
+ROLE @fourth
+    move pos=(1.5, 5.5) threshold=0.5
+    move pos=(-1.5, 0.5) threshold=0.5

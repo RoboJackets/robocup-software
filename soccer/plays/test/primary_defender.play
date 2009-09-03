@@ -1,0 +1,18 @@
+// The name should appear in debugging output.
+NAME "primary defender test"
+
+// A list of predicates separated by commas.
+// All must be true for this play to be selected.
+// If REQUIRE is not given, this play may be chosen at any time.
+REQUIRE playing
+
+//PREFER winning:0.5, always:-10
+
+// Game-state aborts can always end a play.
+// If DONE is not given, only those cases apply.
+//DONE !defense
+
+OPPONENT @near_ball near_ball
+
+ROLE @primary_defender
+     primary_defender opp=@near_ball

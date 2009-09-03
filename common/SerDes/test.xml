@@ -1,0 +1,59 @@
+<!-- The first node may be a comment -->
+<struct typename="LogFrame">
+    <enum type="uint8" typename="TestEnum">
+        <constant name="A" value="3"/>
+        <constant name="B"/>
+        <constant name="C" value = "7"/>
+        <constant name="D"/>
+        <constant name="E"/>
+    </enum>
+    
+    <enum type="int8" typename="Team" external_cpp="Team" include_cpp="../Team.h">
+        <!-- Values are not needed for external enums -->
+        <constant name="UnknownTeam"/>
+        <constant name="Yellow"/>
+        <constant name="Blue"/>
+    </enum>
+    
+    <member type="Team" name="team" value="Yellow"/>
+    <member type="Team" name="otherTeam"/>
+    
+    <struct typename="Point"  external_cpp="Geometry::Point" include_cpp="../Geometry/Point.hpp">
+        <member type="float" name="x"/>
+        <member type="float" name="y"/>
+    </struct>
+    
+    <struct typename="Color">
+        <member type="uint8" name="r"/>
+        <member type="uint8" name="g"/>
+        <member type="uint8" name="b"/>
+    </struct>
+    
+    <struct typename="DebugLine">
+        <array size="2" type="Point" name="pt"/>
+        <member type="Color" name="color"/>
+
+        <!-- Testing scope of enums -->
+        <member type="TestEnum" name="testValue"/>
+    </struct>
+    
+    <struct typename="Robot">
+        <member type="Point" name="pos"/>
+        <member type="Point" name="vel"/>
+        <array type="Point" name="path"/>
+    </struct>
+    
+    <constant type="uint32" name="Test" value="1234"/>
+    
+    <member type="uint64" name="timestamp" value="1"/>
+    <array size="5" type="Robot" name="robots"/>
+    <array type="DebugLine" name="debugLines"/>
+    <array type="int32" name="intArray" sizetype="uint8"/>
+    <array type="int32" name="moreInts" size="2" value="5"/>
+    <member type="TestEnum" name="e_single" value="B"/>
+    <array type="TestEnum" name="e_array" size="3"/>
+    <array type="TestEnum" name="e_array_var"/>
+    <member type="string" name="someText"/>
+    <member type="bool" name="flag" value="true"/>
+    <member type="bool" name="flag_default"/>
+</struct>

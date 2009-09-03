@@ -1,0 +1,4 @@
+<struct typename="Segment" include_cpp="Geometry2d/Segment.hpp" external_cpp="Geometry2d::Segment" external_python="Geometry2d.Segment">
+	<struct typename="Point" include_cpp="Geometry2d/Point.hpp" external_cpp="Geometry2d::Point" external_python="Geometry2d.Point" />
+	<array size="2" type="Point" name="pt"/>
+</struct>

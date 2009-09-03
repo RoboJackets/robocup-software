@@ -1,0 +1,14 @@
+// The name should appear in debugging output.
+NAME "pivot test"
+
+// A list of predicates separated by commas.
+// All must be true for this play to be selected.
+// If REQUIRE is not given, this play may be chosen at any time.
+REQUIRE playing
+
+// Game-state aborts can always end a play.
+// If DONE is not given, only those cases apply.
+//DONE !defense
+
+ROLE @pivot
+     pivot

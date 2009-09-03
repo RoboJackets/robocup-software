@@ -1,0 +1,13 @@
+NAME "defend penalty"
+
+NO_RESTART
+REQUIRE !our_restart, penalty
+
+ROLE @idle1
+    move pos=(1.5, 1)
+ROLE @idle2
+    move pos=(1.5, 1.5)
+ROLE @idle3
+    move pos=(1.5, 2)
+ROLE @idle4
+    move pos=(1.5, 2.5)

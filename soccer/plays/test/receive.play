@@ -1,0 +1,6 @@
+NAME "receive_test"
+
+REQUIRE playing
+
+ROLE @kicker
+	receive_pass

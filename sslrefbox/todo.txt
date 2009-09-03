@@ -1,0 +1,7 @@
+- READY -> START
+START -> RESUME or NEUTRAL RESUME
+STOP -> BALL PLACE/REF CONTROL
+
+autostart after 10s
+
+state diagram

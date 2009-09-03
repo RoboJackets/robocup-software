@@ -1,0 +1,13 @@
+NAME "stopped"
+
+NO_RESTART
+REQUIRE stopped
+
+ROLE @fullback1
+    fullback side=left
+ROLE @fullback2
+    fullback side=right
+ROLE @idle3
+    idle
+ROLE @idle4
+    idle

@@ -1,0 +1,12 @@
+NAME "defense"
+
+REQUIRE playing, !offense
+
+ROLE @fullback1
+    fullback side=left
+ROLE @fullback2
+    fullback side=right
+ROLE @kicker1
+	forward
+Role @kicker2
+	forward

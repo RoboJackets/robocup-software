@@ -1,0 +1,49 @@
+<config>
+	<motion>
+		<planning>
+			
+		</planning>
+	
+	    <robot>
+	        <!-- Wheels
+	            /3   0\
+	               x > >
+	            \2   1/
+	
+	            > > > is positive X with robot center being 0,0
+	            Axles are specified on robot coord system
+	        -->
+	        <axles>
+	            <axle x="1" y="1" />
+	            <axle x="1" y="-1" />
+	            <axle x="-1" y="-1" />
+	            <axle x="-1" y="1" />
+	        </axles>
+	        
+	        <!-- calibration based data -->
+	    	<deg value="0">
+				<dynamics velocity="2.337" acceleration="5.43" deceleration="1.0" />
+			</deg>
+			<deg value="45">
+				<dynamics velocity="1.911" acceleration="4.415" deceleration=".83" />
+			</deg>
+			
+			<!-- rotational dynamics -->
+			<rotation>
+				<dynamics velocity="100" acceleration="0" deceleration="0" />
+			</rotation>
+			
+			<pid type="pos" p="0" i="0" d="0" />
+			<pid type="angle" p=".4" i="0" d="0" />
+	    </robot>
+	</motion>
+	
+	<worldModel>
+		<pos>
+	    	<filter alpha=".91" beta=".6" gamma=".15" />
+	    </pos>
+	    <angle>
+	    	<filter alpha=".91" beta=".6" gamma=".15" />
+	    </angle>
+	</worldModel>
+</config>

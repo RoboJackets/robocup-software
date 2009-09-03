@@ -1,0 +1,8 @@
+<!-- Wheels
+	/3   0\
+		x > >
+	\2   1/
+
+	> > > is positive X with robot center being 0,0
+	Axles are specified on robot coord system
+-->
