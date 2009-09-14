@@ -1,5 +1,5 @@
 project (soccsim)
-cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+cmake_minimum_required (VERSION 2.6 FATAL_ERROR)
 
 # default project build flags
 add_definitions (-Werror -Wall)
@@ -22,7 +22,7 @@ include_directories (${PHYSX_SDK_PATH}/PhysXLoader/include/)
 include_directories (${PHYSX_SDK_PATH}/Cooking/include/)
 
 # PhysX library path
-link_directories(${PHYSX_LIB_PATH})
+link_directories (${PHYSX_LIB_PATH})
 
 # PhysX defines
 add_definitions (-DNX32)
@@ -38,13 +38,9 @@ set (QT_USE_QTNETWORK true)
 set (QT_USE_QTOPENGL true)
 set (QT_USE_QTXML true)
 find_package ( Qt4 REQUIRED )
-include_directories(${PROJECT_SOURCE_DIR})
-include_directories(${PROJECT_BINARY_DIR})
+include_directories (${PROJECT_SOURCE_DIR})
+include_directories (${PROJECT_BINARY_DIR})
 include ( ${QT_USE_FILE} )
-
-#qt4_wrap_cpp ( MOC_SRCS
-#	Physics/Env.hpp
-#	)
 
 # this will run UIC on the .ui files
 qt4_wrap_ui ( UI_HDRS
@@ -54,57 +50,13 @@ qt4_wrap_ui ( UI_HDRS
 qt4_add_resources ( RC_SRCS
 	)
 
-# 64bit machines need to cross compile in 32bit mode
-# because the PhysX library only has 32bit linux binaries
-if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
-	add_definitions(-m32)
-	set (PHYSX_LINK_FLAGS -m32)
-	message (STATUS "Cross Compiling to 32 bit mode")
-	message (STATUS "run: 'make linkfix' as root to make required symlinks if needed")
-
-	add_custom_command(OUTPUT "/usr/lib32/libQtOpenGL.so"
-		COMMAND ln ARGS -s libQtOpenGL.so.4 /usr/lib32/libQtOpenGL.so )
-
-	add_custom_command(OUTPUT "/usr/lib32/libQtGui.so"
-		COMMAND ln ARGS -s libQtGui.so.4 /usr/lib32/libQtGui.so )
-
-	add_custom_command(OUTPUT "/usr/lib32/libQtXml.so"
-		COMMAND ln ARGS -s libQtXml.so.4 /usr/lib32/libQtXml.so )
-
-	add_custom_command(OUTPUT "/usr/lib32/libQtNetwork.so"
-		COMMAND ln ARGS -s libQtNetwork.so.4 /usr/lib32/libQtNetwork.so )
-
-	add_custom_command(OUTPUT "/usr/lib32/libGLU.so"
-		COMMAND ln ARGS -s libGLU.so.4 /usr/lib32/libGLU.so )
-
-	add_custom_command(OUTPUT "/usr/lib32/libGL.so"
-		COMMAND ln ARGS -s libGL.so.4 /usr/lib32/libGL.so )
-
-	add_custom_command(OUTPUT "/usr/lib32/libX11.so"
-		COMMAND ln ARGS -s libX11.so.6 /usr/lib32/libX11.so )
-
-	add_custom_command(OUTPUT "/usr/lib32/libXext.so"
-		COMMAND ln ARGS -s libXext.so.6 /usr/lib32/libXext.so )
-
-	add_custom_target(linkfix
-		DEPENDS /usr/lib32/libQtOpenGL.so
-				/usr/lib32/libQtGui.so
-				/usr/lib32/libQtNetwork.so
-				/usr/lib32/libQtXml.so
-				/usr/lib32/libGLU.so
-				/usr/lib32/libGL.so
-				/usr/lib32/libX11.so
-				/usr/lib32/libXext.so
-	)
-endif ()
-
 set (SRCS
 	main.cpp
 	Viewer.cpp
 	Config.cpp
 	VisionGen.cpp
 	Radio.cpp
-    CommandReceiver.cpp
+	CommandReceiver.cpp
 
 	## environment
 	Physics/Env.cpp
@@ -115,20 +67,28 @@ set (SRCS
 	Physics/MemoryStream.cpp
 )
 
-
-qt4_automoc(${SRCS})
+# Run moc on headers for Q_OBJECTs
+qt4_automoc (${SRCS})
 
 add_executable (${PROJECT_NAME}
 	${SRCS} ${UI_HDRS} ${NxuStream2SRC}
 )
 
-# if physx had flags to set, set them
-if (DEFINED PHYSX_LINK_FLAGS)
-	set_target_properties (${PROJECT_NAME} PROPERTIES LINK_FLAGS ${PHYSX_LINK_FLAGS})
+# Are we building on a 64-bit system?
+if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
+	# The ia32-libs package does not contain libQtOpenGL.so, so we provide it.
+    target_link_libraries (${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/lib/qtopengl/jaunty_amd64/libQtOpenGL.so)
+
+	# Remove the old libQtOpenGL from the linker command line so the linker doesn't look for the system (64-bit) version.
+	list(REMOVE_ITEM QT_LIBRARIES ${QT_QTOPENGL_LIBRARY})
+
+	# Cross compile to 32-bit
+	add_definitions(-m32)                                                                                                                                                                              
+	set_target_properties (${PROJECT_NAME} PROPERTIES LINK_FLAGS -m32)
 endif ()
 
-target_link_libraries (${PROJECT_NAME} NxCooking PhysXLoader pthread dl ${QT_LIBRARIES}  )
-target_link_libraries(${PROJECT_NAME} ${NETWORK_LIBRARY})
-target_link_libraries(${PROJECT_NAME} ${PACKET_LIBRARY})
-target_link_libraries(${PROJECT_NAME} ${GEOMETRY_LIBRARY})
+target_link_libraries (${PROJECT_NAME} NxCooking PhysXLoader pthread ${QT_LIBRARIES})
+target_link_libraries (${PROJECT_NAME} ${NETWORK_LIBRARY})
+target_link_libraries (${PROJECT_NAME} ${PACKET_LIBRARY})
+target_link_libraries (${PROJECT_NAME} ${GEOMETRY_LIBRARY})
 
