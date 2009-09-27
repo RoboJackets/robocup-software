@@ -342,8 +342,8 @@ NxConvexMesh* Robot::cylinder(const float length, const float radius,
 void Robot::position(float x, float y)
 {
 	NxVec3 newPos(x, y, Constants::Robot::Height/2.0);
-	NxVec3 delta = newPos - _actor->getGlobalPosition();
 #if 0
+    NxVec3 delta = newPos - _actor->getGlobalPosition();
 	for (int i=0 ; i<4 ; ++i)
 	{
 		NxVec3 wp = _wheels[i]->getGlobalPosition();
@@ -354,6 +354,7 @@ void Robot::position(float x, float y)
 	}
 #endif
 	_actor->setGlobalPosition(newPos);
+    _roller->setGlobalPosition(newPos + NxVec3(Robot::RollerOffset, 0, Robot::RollerHeight));
 }
 
 float Robot::getAngle() const

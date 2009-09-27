@@ -48,12 +48,6 @@ class Processor: public QThread
 		
 		void start();
 		
-		//RunState runState() const { return _runState; }
-		//void runState(RunState s);
-		
-		//ControlState controlState() const { return _controlState; }
-		//void controlState(ControlState s);
-		
 		Gameplay::GameplayModule *gameplayModule() const
 		{
 			return _gameplayModule;
