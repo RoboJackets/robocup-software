@@ -52,7 +52,7 @@ void FieldView::frame(Packet::LogFrame* frame)
 	update();
 }
 
-void FieldView::addModule(Module* module)
+void FieldView::addModule(Module::shared_ptr module)
 {
 	_modules.append(module);
 }
@@ -131,7 +131,7 @@ void FieldView::mousePressEvent(QMouseEvent* me)
 		{
 			state->manualID = newID;
 			
-			BOOST_FOREACH(Module* m, _modules)
+			BOOST_FOREACH(Module::shared_ptr m, _modules)
 			{
 				m->robotSelected(state->manualID);
 			}
@@ -146,7 +146,7 @@ void FieldView::mousePressEvent(QMouseEvent* me)
 		_dragTo = pos;
 	}
 	
-	BOOST_FOREACH(Module* m, _modules)
+	BOOST_FOREACH(Module::shared_ptr m, _modules)
 	{
 		m->mousePress(me, pos);
 	}
@@ -165,7 +165,7 @@ void FieldView::mouseReleaseEvent(QMouseEvent* me)
 		_dragBall = false;
 		update();
 	} else {
-		BOOST_FOREACH(Module* m, _modules)
+		BOOST_FOREACH(Module::shared_ptr m, _modules)
 		{
 			m->mouseRelease(me, toTeamSpace(me->x(), me->y()));
 		}
@@ -179,7 +179,7 @@ void FieldView::mouseMoveEvent(QMouseEvent* me)
 		_dragTo = toTeamSpace(me->x(), me->y());
 		update();
 	} else {
-		BOOST_FOREACH(Module* m, _modules)
+		BOOST_FOREACH(Module::shared_ptr m, _modules)
 		{
 			m->mouseMove(me, toTeamSpace(me->x(), me->y()));
 		}
@@ -252,7 +252,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 		//draw the raw frame info
 		//TODO draw only the last frame?? - Roman
 		
-		BOOST_FOREACH(const Module* m, _modules)
+		BOOST_FOREACH(const Module::shared_ptr m, _modules)
 		{
 			painter.save();
 			m->fieldOverlay(painter, *_frame);

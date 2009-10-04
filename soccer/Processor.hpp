@@ -8,6 +8,8 @@
 
 #include <list>
 
+#include <boost/shared_ptr.hpp>
+
 #include <Network/Sender.hpp>
 #include <Team.h>
 #include <Geometry2d/TransformMatrix.hpp>
@@ -49,7 +51,7 @@ class Processor: public QThread
 		
 		void start();
 		
-		Gameplay::GameplayModule *gameplayModule() const
+		Gameplay::GameplayModule::shared_ptr gameplayModule() const
 		{
 			return _gameplayModule;
 		}
@@ -62,7 +64,7 @@ class Processor: public QThread
 		}
 		
 		//return a list of all the modules */
-		const QVector<Module*>& modules()
+		const QVector<Module::shared_ptr>& modules()
 		{
 			return _modules;
 		}
@@ -117,14 +119,14 @@ class Processor: public QThread
 		//modules
 		QMutex _modulesMutex;
 		
-		Module* _modelingModule;
-		RefereeModule *_refereeModule;
-		Gameplay::GameplayModule *_gameplayModule;
-		Module* _motionModule;
-		Log::LogModule *_logModule;
-		StateIdentification::StateIDModule *_stateIDModule;
+		Module::shared_ptr _modelingModule;
+		RefereeModule::shared_ptr _refereeModule;
+		Gameplay::GameplayModule::shared_ptr _gameplayModule;
+		Module::shared_ptr _motionModule;
+		Log::LogModule::shared_ptr _logModule;
+		StateIdentification::StateIDModule::shared_ptr _stateIDModule;
 		
-		InputHandler *_inputHandler;
+		InputHandler::shared_ptr _inputHandler;
 		
 		Network::Sender _sender;
 		
@@ -132,7 +134,7 @@ class Processor: public QThread
 		ConfigFile _config;
 		
 		/** list of all modules */
-		QVector<Module*> _modules;
+		QVector<Module::shared_ptr> _modules;
 		
 		SlowThread _slowThread;
 };

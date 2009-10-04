@@ -22,7 +22,7 @@ namespace Log
 			
 			void team(Team t);
 			
-			void addModule(Module* module);
+			void addModule(Module::shared_ptr module);
 
 			SystemState *state;
 			
@@ -56,7 +56,7 @@ namespace Log
 			Team _team;
 			
 			//list of modules for fieldOverlay hook
-			QVector<Module*> _modules;
+			QVector<Module::shared_ptr> _modules;
 			
 			// True while a line is being dragged from the ball
 			bool _dragBall;

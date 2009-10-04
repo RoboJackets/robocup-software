@@ -17,6 +17,7 @@ namespace Gameplay
 	class GameplayModule: public Module
 	{
 		public:
+			typedef boost::shared_ptr<GameplayModule> shared_ptr;
 			GameplayModule();
 			
 			void createGoalie();

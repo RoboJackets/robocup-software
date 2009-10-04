@@ -13,6 +13,7 @@ namespace Log
 	class LogModule : public Module
 	{
 		public:
+			typedef boost::shared_ptr<LogModule> shared_ptr;
 			LogModule();
 		
 			void setLogFile(LogFile* file);

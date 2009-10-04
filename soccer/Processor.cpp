@@ -54,7 +54,7 @@ Processor::Processor(Team t, QString filename) :
 	_trigger = false;
 
 	//runs independently of main loop
-	_inputHandler = new InputHandler(this);
+	_inputHandler = InputHandler::shared_ptr(new InputHandler(this));
 	_inputHandler->setObjectName("input");
 	_inputHandler->start();
 
@@ -78,12 +78,12 @@ Processor::Processor(Team t, QString filename) :
 	}
 
 	//setup the modules
-	_modelingModule = new Modeling::WorldModel(_config.worldModel);
-	_stateIDModule = new StateIdentification::StateIDModule();
-	_motionModule = new Motion::MotionModule(_config.motionModule);
-	_refereeModule = new RefereeModule();
-	_gameplayModule = new Gameplay::GameplayModule();
-	_logModule = new Log::LogModule();
+	_modelingModule = Modeling::WorldModel::shared_ptr(new Modeling::WorldModel(_config.worldModel));
+	_stateIDModule = StateIdentification::StateIDModule::shared_ptr(new StateIdentification::StateIDModule());
+	_motionModule = Motion::MotionModule::shared_ptr(new Motion::MotionModule(_config.motionModule));
+	_refereeModule = RefereeModule::shared_ptr(new RefereeModule());
+	_gameplayModule = Gameplay::GameplayModule::shared_ptr(new Gameplay::GameplayModule());
+	_logModule = Log::LogModule::shared_ptr(new Log::LogModule());
 
 	_modules.append(_modelingModule);
 	_modules.append(_refereeModule);
@@ -92,7 +92,7 @@ Processor::Processor(Team t, QString filename) :
 	_modules.append(_motionModule);
 	_modules.append(_logModule);
 
-	BOOST_FOREACH(Module *module, _modules)
+	BOOST_FOREACH(Module::shared_ptr module, _modules)
 	{
 		module->state(&_state);
 	}
@@ -108,16 +108,6 @@ Processor::~Processor()
 {
 	_running = false;
 	wait();
-
-	if (_inputHandler)
-	{
-		delete _inputHandler;
-	}
-
-	BOOST_FOREACH(Module *module, _modules)
-	{
-		delete module;
-	}
 }
 
 void Processor::setLogFile(Log::LogFile* lf)
@@ -138,8 +128,9 @@ void Processor::run()
 	receiver.addType(Network::Address,
 			Network::addTeamOffset(_team, Network::RadioRx),
 			this, &Processor::radioHandler);
-	receiver.addType(RefereeAddress, RefereePort,
-			_refereeModule, &RefereeModule::packet);
+	RefereeModule* raw = dynamic_cast<RefereeModule*>(_refereeModule.get());
+	receiver.addType(RefereeAddress, RefereePort, 
+			raw, &RefereeModule::packet);
 
 	while (_running)
 	{

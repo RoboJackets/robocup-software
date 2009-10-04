@@ -9,10 +9,14 @@
 #include <QPainter>
 #include <QToolBar>
 
+#include <boost/shared_ptr.hpp>
+
 /** a module is called by the system trigger to process its data */
 class Module
 {
 	public:
+		
+		typedef boost::shared_ptr<Module> shared_ptr;
 		virtual ~Module() {};
 		
 		/** sets the system state for the module */

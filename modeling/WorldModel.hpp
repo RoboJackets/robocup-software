@@ -19,6 +19,7 @@ namespace Modeling
 	class WorldModel : public Module
 	{
 		public:
+			typedef boost::shared_ptr<WorldModel> shared_ptr;
 			WorldModel(ConfigFile::WorldModel& cfg);
 			~WorldModel();
 			

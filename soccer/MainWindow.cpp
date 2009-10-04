@@ -23,7 +23,7 @@ MainWindow::MainWindow(Team t, QString filename) :
 	ui.treeView->expandAll();
 
 	ui.fieldView->state = &_processor.state();
-	Q_FOREACH(Module* m, _processor.modules())
+	Q_FOREACH(Module::shared_ptr m, _processor.modules())
 	{
 		ui.fieldView->addModule(m);
 		
@@ -67,7 +67,6 @@ MainWindow::~MainWindow()
 	if (_logFile)
 	{
 		ui.logControl->setLogFile(0);
-		delete _logFile;
 	}
 }
 

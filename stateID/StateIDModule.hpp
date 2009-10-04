@@ -10,6 +10,7 @@ namespace StateIdentification
 	class StateIDModule : public Module
 	{
 		public:
+			typedef boost::shared_ptr<StateIDModule> shared_ptr;
 			StateIDModule();
 			~StateIDModule();
 			

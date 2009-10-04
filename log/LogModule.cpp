@@ -13,7 +13,7 @@ using namespace Log;
 LogModule::LogModule() :
 	Module("Log Module")
 {
-	_logFile = 0;
+	//_logFile = NULL;
 	_showVision = false;
 }
 

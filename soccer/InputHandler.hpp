@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <boost/shared_ptr.hpp>
 #include <QThread>
 #include <QWaitCondition>
 #include <QVector>
@@ -16,6 +17,7 @@ class InputHandler : public QThread
 	Q_OBJECT;
 
 	public:
+		typedef boost::shared_ptr<InputHandler> shared_ptr;
 		InputHandler(QObject* parent = 0);
 		~InputHandler();
 		
