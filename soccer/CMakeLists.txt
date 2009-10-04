@@ -19,6 +19,7 @@ add_subdirectory (${PROJECT_SOURCE_DIR}/../motion ${PROJECT_BINARY_DIR}/motion)
 add_subdirectory (${PROJECT_SOURCE_DIR}/../log ${PROJECT_BINARY_DIR}/log)
 add_subdirectory (${PROJECT_SOURCE_DIR}/../modeling ${PROJECT_BINARY_DIR}/modeling)
 add_subdirectory (${PROJECT_SOURCE_DIR}/../gameplay ${PROJECT_BINARY_DIR}/gameplay)
+add_subdirectory (${PROJECT_SOURCE_DIR}/../stateID ${PROJECT_BINARY_DIR}/stateID)
 
 include_directories(${PROJECT_BINARY_DIR}/motion)
 include_directories(${PROJECT_BINARY_DIR}/log)
@@ -64,5 +65,8 @@ target_link_libraries(${target} log)
 target_link_libraries(${target} motion)
 target_link_libraries(${target} modeling)
 target_link_libraries(${target} gameplay)
+target_link_libraries(${target} stateID)
+
+# External libraries
 target_link_libraries(${target} antlr)
 target_link_libraries(${target} boost_filesystem-mt)

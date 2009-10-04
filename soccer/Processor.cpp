@@ -79,6 +79,7 @@ Processor::Processor(Team t, QString filename) :
 
 	//setup the modules
 	_modelingModule = new Modeling::WorldModel(_config.worldModel);
+	_stateIDModule = new StateIdentification::StateIDModule();
 	_motionModule = new Motion::MotionModule(_config.motionModule);
 	_refereeModule = new RefereeModule();
 	_gameplayModule = new Gameplay::GameplayModule();
@@ -86,6 +87,7 @@ Processor::Processor(Team t, QString filename) :
 
 	_modules.append(_modelingModule);
 	_modules.append(_refereeModule);
+	_modules.append(_stateIDModule);
 	_modules.append(_gameplayModule);
 	_modules.append(_motionModule);
 	_modules.append(_logModule);
@@ -210,6 +212,11 @@ void Processor::run()
 					if (_refereeModule)
 					{
 						_refereeModule->run();
+					}
+					
+					if (_stateIDModule)
+					{
+						_stateIDModule->run();
 					}
 
 					if (_gameplayModule)

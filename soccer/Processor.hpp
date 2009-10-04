@@ -17,6 +17,7 @@
 #include <gameplay/GameplayModule.hpp>
 #include <motion/MotionModule.hpp>
 #include <log/LogModule.hpp>
+#include <stateID/StateIDModule.hpp>
 
 #include <framework/ConfigFile.hpp>
 
@@ -121,6 +122,7 @@ class Processor: public QThread
 		Gameplay::GameplayModule *_gameplayModule;
 		Module* _motionModule;
 		Log::LogModule *_logModule;
+		StateIdentification::StateIDModule *_stateIDModule;
 		
 		InputHandler *_inputHandler;
 		
