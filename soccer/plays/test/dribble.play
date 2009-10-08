@@ -1,6 +1,0 @@
-NAME "dribble"
-
-REQUIRE playing, free_ball
-
-ROLE @dribbler
-    dribble

@@ -1,7 +1,0 @@
-NAME "kicker_calibration"
-
-NO_RESTART
-REQUIRE playing
-
-ROLE @kicker
-	kicker_calibration

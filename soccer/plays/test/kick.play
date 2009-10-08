@@ -1,9 +1,0 @@
-NAME "kick_test"
-
-REQUIRE playing
-
-OPPONENT @opp near_ball
-
-ROLE @kicker
-	kick //mode=normal
-//target=@opp

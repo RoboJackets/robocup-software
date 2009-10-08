@@ -1,6 +1,0 @@
-NAME "intercept"
-
-REQUIRE playing, free_ball
-
-ROLE @intercept
-    intercept
