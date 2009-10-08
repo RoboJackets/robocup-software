@@ -14,7 +14,7 @@ namespace Log
 	{
 		public:
 			typedef boost::shared_ptr<LogModule> shared_ptr;
-			LogModule();
+			LogModule(SystemState *state);
 		
 			void setLogFile(LogFile* file);
 			
@@ -23,6 +23,7 @@ namespace Log
 			virtual void fieldOverlay(QPainter&, Packet::LogFrame&) const;
 			
 		private:
+			SystemState *_state;
 			QMutex _logFileMutex;
 			bool _showVision;
 			LogFile* _logFile;

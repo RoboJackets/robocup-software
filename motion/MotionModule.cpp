@@ -9,10 +9,11 @@
 using namespace Motion;
 using namespace Packet;
 
-MotionModule::MotionModule(ConfigFile::MotionModule& cfg) :
+MotionModule::MotionModule(SystemState *state, ConfigFile::MotionModule& cfg) :
 	Module("Motion"),
 	_config(cfg)
 {
+	_state = state;
 	_configWidget = new QWidget();
 	ui.setupUi(_configWidget);
 
@@ -24,7 +25,8 @@ MotionModule::MotionModule(ConfigFile::MotionModule& cfg) :
     for(unsigned int i=0 ; i<5 ; i++)
     {
         _robots[i] = new Robot(cfg.robot, i);
-    }
+		_robots[i]->setSystemState(_state);
+	}
 }
 
 MotionModule::~MotionModule()
@@ -43,11 +45,6 @@ QWidget* MotionModule::widget() const
 
 void MotionModule::fieldOverlay(QPainter& p, Packet::LogFrame& lf) const
 {
-	if (!_state)
-	{
-		return;
-	}
-
 	for(unsigned int i=0; i<5; i++)
 	{
 		if (ui.drawRRT->isChecked())
@@ -124,16 +121,6 @@ void MotionModule::mousePress(QMouseEvent* me, Geometry2d::Point pos)
 			_state->self[_selectedRobotId].cmd.goalOrientation = pos;
 		}
 	}
-}
-
-void MotionModule::state(SystemState* state)
-{
-	Module::state(state);
-
-	BOOST_FOREACH(Robot* r, _robots)
-    {
-		r->setSystemState(_state);
-    }
 }
 
 void MotionModule::run()

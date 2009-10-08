@@ -95,6 +95,7 @@ if (USE_FRAMEWORK AND NOT TARGET framework)
 
 	prepend_list(framework_SRCS "framework/")
 	prepend_list(framework_SRCS ${common_include_dir})
+	list(APPEND framework_SRCS ${common_include_dir}/Utils.cpp)
 	message( STATUS "Using the Framework library") 
 	
 	add_library (framework ${framework_SRCS})

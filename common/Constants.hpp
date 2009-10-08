@@ -10,6 +10,9 @@
 namespace Constants
 {
     const int Robots_Per_Team = 5;
+	
+	// Number of robots controlled by a play (all except the goalie)
+	const int Play_Robots = Robots_Per_Team - 1;
     
     namespace Ball
     {

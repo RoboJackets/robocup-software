@@ -10,10 +10,11 @@
 
 using namespace Log;
 
-LogModule::LogModule() :
+LogModule::LogModule(SystemState *state) :
 	Module("Log Module")
 {
-	//_logFile = NULL;
+	_state = state;
+	_logFile = 0;
 	_showVision = false;
 }
 
@@ -75,7 +76,7 @@ void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
 		{
 			if (r.valid)
 			{
-				drawRobot(p, f.team, r.shell, r.pos, r.angle, f.team, QString::fromStdString(r.behavior));
+				drawRobot(p, f.team, r.shell, r.pos, r.angle, f.team, QString::fromStdString(r.behaviorName));
 			}
 		}
 
@@ -84,7 +85,7 @@ void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
 		{
 			if (r.valid)
 			{
-				drawRobot(p, opp, r.shell, r.pos, r.angle, f.team, QString::fromStdString(r.behavior));
+				drawRobot(p, opp, r.shell, r.pos, r.angle, f.team, QString::fromStdString(r.behaviorName));
 			}
 		}
 

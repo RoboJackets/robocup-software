@@ -93,7 +93,7 @@ public:
     // Distance in meters that the ball must travel for a kick to be detected
     static const float KickThreshold = 0.050f;
     
-    RefereeModule();
+    RefereeModule(SystemState *state);
     
     // Called periodically.  Checks vision data for ball movement.
     void run();
@@ -144,6 +144,7 @@ protected Q_SLOTS:
 
 protected:
     Ui_Referee ui;
+	SystemState *_state;
     
     void refCommand(char cmd);
     

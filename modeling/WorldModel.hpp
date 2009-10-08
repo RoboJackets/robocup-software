@@ -20,12 +20,14 @@ namespace Modeling
 	{
 		public:
 			typedef boost::shared_ptr<WorldModel> shared_ptr;
-			WorldModel(ConfigFile::WorldModel& cfg);
+			WorldModel(SystemState *state, ConfigFile::WorldModel& cfg);
 			~WorldModel();
 			
 			virtual void run();
 			
 		protected:
+			SystemState *_state;
+			
 			// Add to opponents' shell IDs to get track map keys.
 			static const int OppOffset = 256;
 			

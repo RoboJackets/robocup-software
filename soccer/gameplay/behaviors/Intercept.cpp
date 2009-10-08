@@ -1,5 +1,4 @@
 #include "Intercept.hpp"
-#include "../Role.hpp"
 
 #include <Constants.hpp>
 #include <LogFrame.hpp>
@@ -7,15 +6,13 @@
 
 #include <iostream>
 #include <cmath>
+
 using namespace std;
 using namespace Packet;
 
-static Gameplay::BehaviorFactoryType<Gameplay::Behaviors::Intercept> behavior("intercept");
-
-Gameplay::Behaviors::Intercept::Intercept(GameplayModule *gameplay, Role *role) :
-	Behavior(gameplay, role), target_param(this, "target")
+Gameplay::Behaviors::Intercept::Intercept(GameplayModule *gameplay) :
+	Behavior(gameplay)
 {
-
 }
 
 void Gameplay::Behaviors::Intercept::run()
@@ -68,11 +65,11 @@ void Gameplay::Behaviors::Intercept::run()
 		{
 			if (ballPos.nearPoint(pos, farDist))
 			{
-				dest += (ballPos - target_param.point()).normalized() * ballPos.distTo(pos);
+				dest += (ballPos - target).normalized() * ballPos.distTo(pos);
 			}
 			else
 			{
-				dest += (ballPos - target_param.point()).normalized() * farDist;
+				dest += (ballPos - target).normalized() * farDist;
 			}
 		}
 
@@ -80,8 +77,7 @@ void Gameplay::Behaviors::Intercept::run()
 		robot()->move(dest);
 
 		//create an obstacle to avoid the ball during this state
-		ObstaclePtr ballObstacle(new CircleObstacle(ballPos, farDist
-		        - Constants::Ball::Radius));
+		ObstaclePtr ballObstacle(new CircleObstacle(ballPos, farDist - Constants::Ball::Radius));
 
 		const float dist = dest.distTo(pos);
 		
@@ -90,7 +86,6 @@ void Gameplay::Behaviors::Intercept::run()
 			_state = ApproachBall;
 		}
 	}
-
 
 	//approach the ball with intent to acquire it
 	if (_state == ApproachBall)
@@ -103,7 +98,7 @@ void Gameplay::Behaviors::Intercept::run()
 		robot()->move(ballPos);
 		robot()->dribble(50);
 
-		if (robot()->state()->haveBall)
+		if (robot()->haveBall())
 		{
 			_state = Done;
 

@@ -5,8 +5,10 @@ using namespace RefereeCommands;
 
 const char *RefereeAddress = "224.5.23.1";
 
-RefereeModule::RefereeModule(): Module("Referee")
+RefereeModule::RefereeModule(SystemState *state):
+	Module("Referee")
 {
+	_state = state;
 	_counter = -1;
 	_kicked = false;
 	_lastBallValid = false;

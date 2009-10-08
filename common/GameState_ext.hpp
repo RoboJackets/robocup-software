@@ -67,7 +67,17 @@ public:
         return state == Halt;
     }
     
-    bool kickoff() const
+	bool stopped() const
+	{
+		return state == Stop;
+	}
+	
+	bool playing() const
+	{
+		return state == Playing;
+	}
+	
+	bool kickoff() const
     {
         return restart == Kickoff;
     }
@@ -94,17 +104,17 @@ public:
     
     bool ourPenalty() const
     {
-        return kickoff() && ourPenalty();
+        return penalty() && ourRestart;
     }
     
     bool ourDirect() const
     {
-        return kickoff() && ourDirect();
+        return direct() && ourRestart;
     }
     
     bool ourIndirect() const
     {
-        return kickoff() && ourIndirect();
+        return indirect() && ourRestart;
     }
     
     bool ourFreeKick() const
@@ -112,7 +122,32 @@ public:
         return ourDirect() || ourIndirect();
     }
     
-    // Robots must be in position for a restart
+	bool theirKickoff() const
+	{
+		return kickoff() && !ourRestart;
+	}
+	
+	bool theirPenalty() const
+	{
+		return penalty() && !ourRestart;
+	}
+	
+	bool theirDirect() const
+	{
+		return direct() && !ourRestart;
+	}
+	
+	bool theirIndirect() const
+	{
+		return indirect() && !ourRestart;
+	}
+	
+	bool theirFreeKick() const
+	{
+		return theirDirect() || theirIndirect();
+	}
+	
+	// Robots must be in position for a restart
     bool setupRestart() const
     {
         return state == Setup || state == Ready;

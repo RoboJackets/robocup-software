@@ -24,16 +24,16 @@ set (SRCS
     difference_kalman.cpp
 )
 
-set (testSRCS
-    kalman_test.cpp
-    BLASWrap/blaswrap.cpp
-    difference_kalman.cpp
-    kalman.cpp
-    )
-
 add_library (modeling ${SRCS} ${MOC_SRCS})
 target_link_libraries (modeling ${QT_LIBRARIES} ${GEOMETRY_LIBRARY} ${FRAMEWORK_LIBRARY} ${NETWORK_LIBRARY} ${CONFIG_LIBRARY} blas lapack)
 
-add_executable (kalmanTest ${testSRCS})
-target_link_libraries (kalmanTest blas)
-target_link_libraries (kalmanTest lapack)
+#set (testSRCS
+#    kalman_test.cpp
+#    BLASWrap/blaswrap.cpp
+#    difference_kalman.cpp
+#    kalman.cpp
+#    )
+
+#add_executable (kalmanTest ${testSRCS})
+#target_link_libraries (kalmanTest blas)
+#target_link_libraries (kalmanTest lapack)

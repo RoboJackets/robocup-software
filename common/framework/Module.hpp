@@ -19,17 +19,6 @@ class Module
 		typedef boost::shared_ptr<Module> shared_ptr;
 		virtual ~Module() {};
 		
-		/** sets the system state for the module */
-		virtual void state(SystemState* state)
-        {
-            _state = state;
-        }
-        
-        SystemState *state() const
-        {
-            return _state;
-        }
-		
 		/** return a widget for the ui */
 		virtual QWidget* widget() const { return _widget; }
 		
@@ -37,8 +26,6 @@ class Module
 		
 		/** draw onto the field with the given painter */
 		virtual void fieldOverlay(QPainter&, Packet::LogFrame&) const {}
-		
-		QString name() const { return _name; }
 		
 		/** run the code for the module */
 		virtual void run() = 0;
@@ -59,11 +46,6 @@ class Module
 		
 	protected:
 		Module(QString name);
-		
-		/** this WILL BE SET before the module is run */
-		SystemState* _state;
-		
-		QString _name;
 		
 		/** selected robot id */
 		//-1 = no robot selected

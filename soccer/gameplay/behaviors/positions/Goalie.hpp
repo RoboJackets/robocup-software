@@ -13,7 +13,7 @@ namespace Gameplay
 		class Goalie: public Behavior
 		{
 			public:
-				Goalie(GameplayModule *gameplay, Role *role);
+				Goalie(GameplayModule *gameplay);
 				~Goalie();
 
 				virtual void run();

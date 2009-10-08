@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../Behavior.hpp"
-#include "../parameters/Point_Parameter.hpp"
 
 namespace Gameplay
 {
@@ -10,8 +9,7 @@ namespace Gameplay
 		class Intercept: public Behavior
 		{
 			public:
-				
-				Intercept(GameplayModule *gameplay, Role *role = 0);
+				Intercept(GameplayModule *gameplay);
 
 				virtual void run();
 				virtual void start();
@@ -21,7 +19,8 @@ namespace Gameplay
 				 * the intercept */
 				virtual float score(Robot * robot);
 
-				Point_Parameter target_param;
+				Geometry2d::Point target;
+				
 			protected:
 				typedef enum
 				{

@@ -2,11 +2,8 @@
 
 #include <boost/foreach.hpp>
 
-static Gameplay::BehaviorFactoryType<Gameplay::Behaviors::Idle>
-        behavior("idle");
-
-Gameplay::Behaviors::Idle::Idle(GameplayModule *gameplay, Role *role) :
-	Behavior(gameplay, role)
+Gameplay::Behaviors::Idle::Idle(GameplayModule *gameplay) :
+	Behavior(gameplay)
 {
 }
 

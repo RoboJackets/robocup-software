@@ -2,21 +2,19 @@
 
 #include "../Behavior.hpp"
 
-#include "../parameters/Robot_Parameter.hpp"
-#include "../parameters/String_Parameter.hpp"
-
 #include "Intercept.hpp"
 
 namespace Gameplay
 {
 	class Window;
+	class WindowEvaluator;
 
 	namespace Behaviors
 	{
 		class Kick: public Behavior
 		{
 			public:
-				Kick(GameplayModule *gameplay, Role *role = 0);
+				Kick(GameplayModule *gameplay);
 				~Kick();
 
 				virtual void start();
@@ -29,8 +27,8 @@ namespace Gameplay
 					return _state == Intercept;
 				}
 
-				Robot_Parameter target_param;
-				String_Parameter mode_param;
+				Robot *targetRobot;
+				bool automatic;
 
 			protected:
 				enum State

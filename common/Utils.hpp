@@ -6,6 +6,8 @@
 #include <sys/time.h>
 #include <stdint.h>
 #include <stdexcept>
+#include <typeinfo>
+#include <QString>
 
 namespace Utils
 {
@@ -105,4 +107,14 @@ namespace Utils
 			return *this;
 		}
 	};
+	
+	// Sets str to the name of a class.
+	// Use it like this:
+	//		Object *obj = new Object();
+	//		QString name = getClassName(typeid(*obj));
+	// The returned name is in the usual C++ format: "Namespace::Namespace::Class"
+	QString typeName(const std::type_info &info);
+	
+	// Like typeName, but only returns the final class name part.
+	QString className(const std::type_info &info);
 }

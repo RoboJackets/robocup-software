@@ -9,7 +9,7 @@ namespace Gameplay
         class Idle: public Behavior
         {
             public:
-                Idle(GameplayModule *gameplay, Role *role);
+                Idle(GameplayModule *gameplay);
                 
                 virtual void run();
                 

@@ -11,9 +11,12 @@ namespace StateIdentification
 	{
 		public:
 			typedef boost::shared_ptr<StateIDModule> shared_ptr;
-			StateIDModule();
+			StateIDModule(SystemState *state);
 			~StateIDModule();
 			
 			virtual void run();
+		
+		protected:
+			SystemState *_state;
 	};
 }

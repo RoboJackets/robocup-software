@@ -2,7 +2,7 @@
 // vim:ai ts=4 et
 
 #include "Processor.hpp"
-#include "Processor.moc"
+#include <Processor.moc>
 
 #include <QMutexLocker>
 
@@ -26,8 +26,7 @@ Processor::Processor(Team t, QString filename) :
 	_running(true),
 	_team(t),
 	_sender(Network::Address, Network::addTeamOffset(_team, Network::RadioTx)),
-	_config(filename),
-	_slowThread(this)
+	_config(filename)
 {
 	Geometry2d::Point trans;
 	if (_team == Blue)
@@ -78,12 +77,12 @@ Processor::Processor(Team t, QString filename) :
 	}
 
 	//setup the modules
-	_modelingModule = Modeling::WorldModel::shared_ptr(new Modeling::WorldModel(_config.worldModel));
-	_stateIDModule = StateIdentification::StateIDModule::shared_ptr(new StateIdentification::StateIDModule());
-	_motionModule = Motion::MotionModule::shared_ptr(new Motion::MotionModule(_config.motionModule));
-	_refereeModule = RefereeModule::shared_ptr(new RefereeModule());
-	_gameplayModule = Gameplay::GameplayModule::shared_ptr(new Gameplay::GameplayModule());
-	_logModule = Log::LogModule::shared_ptr(new Log::LogModule());
+	_modelingModule = Modeling::WorldModel::shared_ptr(new Modeling::WorldModel(&_state, _config.worldModel));
+	_stateIDModule = StateIdentification::StateIDModule::shared_ptr(new StateIdentification::StateIDModule(&_state));
+	_motionModule = Motion::MotionModule::shared_ptr(new Motion::MotionModule(&_state, _config.motionModule));
+	_refereeModule = RefereeModule::shared_ptr(new RefereeModule(&_state));
+	_gameplayModule = Gameplay::GameplayModule::shared_ptr(new Gameplay::GameplayModule(&_state));
+	_logModule = Log::LogModule::shared_ptr(new Log::LogModule(&_state));
 
 	_modules.append(_modelingModule);
 	_modules.append(_refereeModule);
@@ -91,17 +90,6 @@ Processor::Processor(Team t, QString filename) :
 	_modules.append(_gameplayModule);
 	_modules.append(_motionModule);
 	_modules.append(_logModule);
-
-	BOOST_FOREACH(Module::shared_ptr module, _modules)
-	{
-		module->state(&_state);
-	}
-}
-
-void Processor::start()
-{
-	QThread::start();
-	//_slowThread.start();
 }
 
 Processor::~Processor()
@@ -113,10 +101,6 @@ Processor::~Processor()
 void Processor::setLogFile(Log::LogFile* lf)
 {
 	_logModule->setLogFile(lf);
-}
-
-void Processor::SlowThread::run()
-{
 }
 
 void Processor::run()
@@ -342,7 +326,7 @@ void Processor::visionHandler(const Packet::Vision* packet)
 			&& _state.controlState == SystemState::Auto
 			&& _state.runState == SystemState::Running)
 	{
-		//if its a sync packet from trigger camera, then send radio data
+		//if it's a sync packet from trigger camera, then send radio data
 		//otherwise set state timestamp, set trigger flag and the system will
 		//process modules and send out data
 		if (packet->sync)

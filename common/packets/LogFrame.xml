@@ -65,7 +65,7 @@
     </struct>
 
 	<!-- post process robot information -->
-	<struct typename="Robot" extend_cpp="Framework::Robot" include_cpp="framework/PacketExtra.hpp" >
+	<struct typename="Robot" extend_cpp="Framework::Robot" include_cpp="framework/Robot.hpp" >
 		<!-- shell id, used for debug -->
 		<member type="uint8" name="shell" />
 
@@ -96,7 +96,7 @@
 		<!-- radio rx packet for the robot -->
 		<member type="RadioRx::Robot" name="radioRx" />
 		
-		<member type="string" name="behavior" />
+		<member type="string" name="behaviorName" />
 	</struct>
 
 	<!-- post processed ball information -->
@@ -116,6 +116,8 @@
 
 	<member type="ControlState" name="controlState" value="Manual" />
     <member type="RunState" name="runState" value="Stopped" />
+
+	<member type="string" name="playName" />
 
 	<!-- unprocessed vision, in team space -->
 	<array type="Packet::Vision" name="rawVision" />

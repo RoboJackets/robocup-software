@@ -34,39 +34,37 @@ set (SRCS
 	RefereeModule.cpp
 
 	gameplay/GameplayModule.cpp
-	gameplay/Playbook.cpp
-	gameplay/Robot.cpp
 	gameplay/Play.cpp
 	gameplay/Behavior.cpp
-	gameplay/Role.cpp
 	gameplay/Window.cpp
-
-	gameplay/parameters/Parameter.cpp
-	gameplay/parameters/Bool_Parameter.cpp
-	gameplay/parameters/Point_Parameter.cpp
-	gameplay/parameters/Robot_Parameter.cpp
-	gameplay/parameters/Float_Parameter.cpp
-	gameplay/parameters/String_Parameter.cpp
-
-	gameplay/behaviors/Move.cpp
-	gameplay/behaviors/Kickoff.cpp
-	gameplay/behaviors/ReceivePass.cpp
-	gameplay/behaviors/Penalty.cpp
-	gameplay/behaviors/Idle.cpp
-	gameplay/behaviors/Kick.cpp
-	gameplay/behaviors/Mark.cpp
-	gameplay/behaviors/Steal.cpp
-	gameplay/behaviors/Intercept.cpp
-	gameplay/behaviors/Dribble.cpp
+	gameplay/Robot.cpp
+	
+	gameplay/plays/OurKickoff.cpp
+	gameplay/plays/TheirKickoff.cpp
+	gameplay/plays/OurFreekick.cpp
+	gameplay/plays/TheirFreekick.cpp
+	gameplay/plays/KickPenalty.cpp
+	gameplay/plays/DefendPenalty.cpp
+	gameplay/plays/Stopped.cpp
+	gameplay/plays/Offense.cpp
+	gameplay/plays/Defense.cpp
+	
+# 	gameplay/behaviors/Move.cpp
+# 	gameplay/behaviors/Kickoff.cpp
+# 	gameplay/behaviors/ReceivePass.cpp
+# 	gameplay/behaviors/Penalty.cpp
+# 	gameplay/behaviors/Idle.cpp
+ 	gameplay/behaviors/Kick.cpp
+# 	gameplay/behaviors/Mark.cpp
+ 	gameplay/behaviors/Intercept.cpp
 	gameplay/behaviors/positions/Goalie.cpp      
-	gameplay/behaviors/positions/Fullback.cpp
-	gameplay/behaviors/positions/Halfback.cpp
-	gameplay/behaviors/positions/Striker.cpp     
-	gameplay/behaviors/positions/Forward.cpp
+# 	gameplay/behaviors/positions/Fullback.cpp
+# 	gameplay/behaviors/positions/Halfback.cpp
+# 	gameplay/behaviors/positions/Forward.cpp
 
-	gameplay/behaviors/test/KickerCalibration.cpp   
-	gameplay/behaviors/test/MotionLeader.cpp    
-	gameplay/behaviors/test/Pivot.cpp
+# 	gameplay/behaviors/test/KickerCalibration.cpp   
+# 	gameplay/behaviors/test/MotionLeader.cpp    
+# 	gameplay/behaviors/test/Pivot.cpp
 )
 
 qt4_automoc (${SRCS})
@@ -98,3 +96,4 @@ target_link_libraries(${target} log)
 target_link_libraries(${target} motion)
 target_link_libraries(${target} modeling)
 target_link_libraries(${target} stateID)
+target_link_libraries(${target} boost_system-mt)

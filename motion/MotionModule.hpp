@@ -19,11 +19,9 @@ namespace Motion
 		Q_OBJECT;
 
 		public:
-			MotionModule(ConfigFile::MotionModule& cfg);
+			MotionModule(SystemState *state, ConfigFile::MotionModule& cfg);
 			~MotionModule();
 
-			virtual void state(SystemState* state);
-			
 			virtual void run();
 			
 			virtual void slowRun();
@@ -46,6 +44,7 @@ namespace Motion
 		private:
 			Ui::Motion ui;
 
+			SystemState *_state;
 			QWidget* _configWidget;
 
 			/** Robots **/

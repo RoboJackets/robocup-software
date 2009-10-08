@@ -31,25 +31,9 @@ class Processor: public QThread
 {	
 	Q_OBJECT;
 	
-	class SlowThread : public QThread
-	{
-		public:
-			SlowThread(Processor* p) : proc(p) {}
-			
-			void run();
-			
-			Processor* proc;
-			
-			//the copy of the system state for the slow thread
-			//this will be the lastest state available
-			SystemState _state;
-	};
-	
 	public:
 		Processor(Team t, QString filename);
 		~Processor();
-		
-		void start();
 		
 		Gameplay::GameplayModule::shared_ptr gameplayModule() const
 		{
@@ -135,6 +119,4 @@ class Processor: public QThread
 		
 		/** list of all modules */
 		QVector<Module::shared_ptr> _modules;
-		
-		SlowThread _slowThread;
 };

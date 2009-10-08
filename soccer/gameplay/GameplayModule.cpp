@@ -1,10 +1,28 @@
 // kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 // vim:ai ts=4 et
 
+// Behaviors in use:
+// 	forward
+// 	fullback
+// 	idle
+// 	intercept
+// 	kick
+// 	kickoff
+// 	move
+// 	penalty
+
 #include "GameplayModule.hpp"
-#include "Predicates.hpp"
-#include "Named_Matrix.hpp"
 #include "behaviors/positions/Goalie.hpp"
+
+#include "plays/OurKickoff.hpp"
+#include "plays/TheirKickoff.hpp"
+#include "plays/OurFreekick.hpp"
+#include "plays/TheirFreekick.hpp"
+#include "plays/DefendPenalty.hpp"
+#include "plays/KickPenalty.hpp"
+#include "plays/Stopped.hpp"
+#include "plays/Offense.hpp"
+#include "plays/Defense.hpp"
 
 #include <QMouseEvent>
 
@@ -17,32 +35,17 @@
 using namespace std;
 using namespace Utils;
 
-// Centered on the ball
-Gameplay::Named_Matrix ball_matrix("ball");
-
-// Center of the field
-Gameplay::Named_Matrix center_matrix("center");
-
-// Opponent's coordinates
-Gameplay::Named_Matrix opp_matrix("opp");
-
-Gameplay::GameplayModule::GameplayModule():
-	Module("Gameplay"),
-	playbook(this)
+Gameplay::GameplayModule::GameplayModule(SystemState *state):
+	Module("Gameplay")
 {
-	_availableRobots = 0;
-
-	Predicates::always = true;
-
-	center_matrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length / 2));
-	opp_matrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length)) *
+	_state = state;
+	_goalie = 0;
+	_currentPlay = 0;
+	_playDone = false;
+	
+	_centerMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length / 2));
+	_oppMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length)) *
 				Geometry2d::TransformMatrix::rotate(180);
-
-	for (int r = 0; r < Constants::Robots_Per_Team; ++r)
-	{
-		self[r] = new Robot(this, r, true);
-		opp[r] = new Robot(this, r, false);
-	}
 
 	// Make an obstacle to cover the opponent's half of the field except for one robot diameter across the center line.
 	PolygonObstacle *sidePolygon = new PolygonObstacle;
@@ -103,50 +106,60 @@ Gameplay::GameplayModule::GameplayModule():
 	_goalArea[0] = ObstaclePtr(goalArea);
 	_goalArea[1] = ObstaclePtr(new CircleObstacle(Geometry2d::Point(-halfFlat, 0), radius));
 	_goalArea[2] = ObstaclePtr(new CircleObstacle(Geometry2d::Point(halfFlat, 0), radius));
+	
+	// Create robots
+	for (int i = 0; i < Constants::Robots_Per_Team; ++i)
+	{
+		self[i] = new Robot(this, i, true);
+		opp[i] = new Robot(this, i, false);
+	}
+	
+	// Create plays
+	_plays.insert(new Plays::OurKickoff(this));
+	_plays.insert(new Plays::TheirKickoff(this));
+	_plays.insert(new Plays::OurFreekick(this));
+	_plays.insert(new Plays::TheirFreekick(this));
+	_plays.insert(new Plays::KickPenalty(this));
+	_plays.insert(new Plays::DefendPenalty(this));
+	_plays.insert(new Plays::Stopped(this));
+	_plays.insert(new Plays::Offense(this));
+	_plays.insert(new Plays::Defense(this));
+}
+
+Gameplay::GameplayModule::~GameplayModule()
+{
+	removeGoalie();
 }
 
 void Gameplay::GameplayModule::createGoalie()
 {
-	if (!playbook.goalie())
+	if (!_goalie)
 	{
-		playbook.goalie(new Behaviors::Goalie(this, 0));
+ 		_goalie = new Behaviors::Goalie(this);
 	}
 }
 
-void Gameplay::GameplayModule::loadPlays(const char *dir)
+void Gameplay::GameplayModule::removeGoalie()
 {
-	playbook.loadDir(dir);
-}
-
-void Gameplay::GameplayModule::loadPlay(const char *path)
-{
-	playbook.load(path);
+	if (_goalie)
+	{
+		delete _goalie;
+		_goalie = 0;
+	}
 }
 
 void Gameplay::GameplayModule::fieldOverlay(QPainter &painter, Packet::LogFrame &frame) const
 {
-    // Referee rules
-    painter.setPen(Qt::black);
-    if (_state->gameState.stayAwayFromBall() && _state->ball.valid)
-    {
-        painter.drawEllipse(_state->ball.pos.toQPointF(), Constants::Field::CenterRadius, Constants::Field::CenterRadius);
-    }
+	// Referee rules
+	painter.setPen(Qt::black);
+	if (frame.gameState.stayAwayFromBall() && frame.ball.valid)
+	{
+		painter.drawEllipse(frame.ball.pos.toQPointF(), Constants::Field::CenterRadius, Constants::Field::CenterRadius);
+	}
 }
 
 void Gameplay::GameplayModule::run()
 {
-	// Put behavior names in log frame
-	for (int i = 0; i < Constants::Robots_Per_Team; ++i)
-	{
-		Behavior *b = self[i]->behavior();
-		if (b)
-		{
-			_state->self[i].behavior = b->name();
-		} else {
-			_state->self[i].behavior.clear();
-		}
-	}
-	
 	_state->debugLines.clear();
 	_state->debugPolygons.clear();
 	
@@ -174,276 +187,173 @@ void Gameplay::GameplayModule::run()
 		}
 	}
 
-	for (int r = 0; r < Constants::Robots_Per_Team; ++r)
+	// Assign the goalie
+	if (_goalie && !_goalie->robot())
+	{
+		//FIXME - The rules allow for changing the goalie only in certain circumstances.  Make sure we do this right.
+		BOOST_FOREACH(Robot *r, self)
+		{
+			//FIXME - ...and not in use by another behavior
+			if (r->visible())
+			{
+				printf("Goalie is robot %d\n", r->id());
+				_goalie->robot(r);
+				break;
+			}
+		}
+	}
+	
+	BOOST_FOREACH(Robot *r, self)
 	{
 		//robot resets
-		self[r]->willKick = false;
-		self[r]->avoidBall = false;
-		self[r]->state()->cmd.vScale = 1.0;
+		r->willKick = false;
+		r->avoidBall = false;
+		
+		// Reset the motion command
+		r->resetMotionCommand();
 
 		// Make each robot stand still.
 		// Manual controlled robots do not need this to happen.
-		if (_selectedRobotId == -1 || _selectedRobotId != r)
-		{
-			_state->self[r].cmd.goalPosition = _state->self[r].pos;
-			_state->self[r].cmd.pivot = Packet::LogFrame::MotionCmd::NoPivot;
-		}
+//FIXME - Pull this out of Module
+// 		if (_selectedRobotId == -1 || _selectedRobotId != r)
+// 		{
+// 			r->cmd.goalPosition = r->pos;
+// 			r->cmd.pivot = Packet::LogFrame::MotionCmd::NoPivot;
+// 		}
 
 		// Add obstacles for this robot
-		_state->self[r].obstacles.clear();
+		ObstacleGroup &obstacles = r->packet()->obstacles;
+		obstacles.clear();
 
-		if (_state->self[r].valid)
+		if (r->visible())
 		{
 			// Add rule-based obstacles (except for the ball, which will be added after the play
 			// has a change to set willKick and avoidBall)
 			for (int i = 0; i < Constants::Robots_Per_Team; ++i)
 			{
-				if (i != r && selfObstacles[i])
+				if (self[i] != r && selfObstacles[i])
 				{
-					_state->self[r].obstacles.add(selfObstacles[i]);
+					obstacles.add(selfObstacles[i]);
 				}
 
-				if (!self[r]->approachOpponent[i] && oppObstacles[i])
+				if (!r->approachOpponent[i] && oppObstacles[i])
 				{
-					_state->self[r].obstacles.add(oppObstacles[i]);
+					obstacles.add(oppObstacles[i]);
 				}
 			}
 
 			//if not a goalie, avoid our goalie area
-			if (!(playbook.goalie() && playbook.goalie()->robot() &&
-				r == playbook.goalie()->robot()->id()))
+			if (!_goalie || _goalie->robot() != r)
 			{
 				BOOST_FOREACH(ObstaclePtr& ptr, _goalArea)
 				{
-					_state->self[r].obstacles.add(ptr);
+					obstacles.add(ptr);
 				}
 			}
 
 			if (_state->gameState.stayOnSide())
 			{
-				_state->self[r].obstacles.add(_sideObstacle);
+				obstacles.add(_sideObstacle);
 			}
 
 			// Add non floor obstacles
 			BOOST_FOREACH(ObstaclePtr& ptr, _nonFloor)
 			{
-				_state->self[r].obstacles.add(ptr);
+				obstacles.add(ptr);
 			}
 		}
 	}
 
-	// Count how many robots are available.
-	_availableRobots = 0;
-	for (int i = 0; i < Constants::Robots_Per_Team; ++i)
+	_ballMatrix = Geometry2d::TransformMatrix::translate(_state->ball.pos);
+
+	// Select a play
+	if (_playDone || !_currentPlay || !_currentPlay->applicable())
 	{
-		if (self[i]->visible())
+		_playDone = false;
+		
+		Play *play = selectPlay();
+		if (play != _currentPlay)
 		{
-			_availableRobots++;
-		}
-	}
-
-	// Set predicates
-	Predicates::have2 = (_availableRobots >= 2);
-	Predicates::have3 = (_availableRobots >= 3);
-	Predicates::have4 = (_availableRobots >= 4);
-
-	Predicates::stopped = (_state->gameState.state == GameState::Stop);
-	Predicates::setup = (_state->gameState.state == GameState::Setup);
-	Predicates::ready = (_state->gameState.state == GameState::Ready);
-	Predicates::restart = _state->gameState.setupRestart();
-	Predicates::playing = (_state->gameState.state == GameState::Playing);
-
-	bool restart = _state->gameState.setupRestart();
-	Predicates::kickoff = restart && _state->gameState.kickoff();
-	Predicates::penalty = restart && _state->gameState.penalty();
-	Predicates::direct = restart && _state->gameState.direct();
-	Predicates::indirect = restart && _state->gameState.indirect();
-	Predicates::freekick = restart && (_state->gameState.direct() || _state->gameState.indirect());
-	Predicates::our_restart = restart && _state->gameState.ourRestart;
-
-	Predicates::winning = _state->gameState.ourScore > _state->gameState.theirScore;
-	Predicates::losing = _state->gameState.ourScore < _state->gameState.theirScore;
-
-	if (restart && _state->gameState.ourRestart)
-	{
-		Predicates::offense = true;
-	} else if (restart && !_state->gameState.ourRestart)
-	{
-		Predicates::offense = false;
-	}
-
-	// thresholds
-	float angle_thresh = 20 * DegreesToRadians;
-	float dist_thresh = Constants::Robot::Radius + Constants::Ball::Radius + 0.1;
-	float speed_thresh = 1.0;
-
-	Geometry2d::Point ball_pos = _state->ball.pos;
-	Geometry2d::Point ball_vel = _state->ball.vel;
-
-	//Determine if we have the ball to set offense
-	//Only change state if we have a team has changed possession
-	if (Predicates::offense)
-	{ //check if the other team now has the ball
-		BOOST_FOREACH(Robot *r, opp)
-		{
-			//opp has ball if it is close to a robot and moving in the same direction
-			float dist = ball_pos.distTo(r->pos());
-			float vel_angle_diff = abs(fixAngleRadians(ball_vel.angle() - r->vel().angle()));
-			bool ball_downfield = ball_pos.y < r->pos().y - Constants::Robot::Radius;
-			bool isSameSpeed = abs(r->vel().mag() - ball_vel.mag()) < speed_thresh;
-
-			if (dist < dist_thresh &&
-					vel_angle_diff < angle_thresh &&
-					ball_downfield &&
-					isSameSpeed)
+			if (_currentPlay)
 			{
-				Predicates::offense = false;
-				break;
+				_currentPlay->stop();
 			}
-		}
-	}
-	else
-	{
-		//check if we have acquired the ball, then set offense predicate
-		BOOST_FOREACH(Robot * r, self)
-		{
-			float dist = ball_pos.distTo(r->pos());
-			float vel_angle_diff = abs(fixAngleRadians(ball_vel.angle() - r->vel().angle()));
-			bool ball_downfield = ball_pos.y > (r->pos().y + Constants::Robot::Radius);
 			
-			if (r->state()->haveBall ||
-					(dist < dist_thresh &&
-							vel_angle_diff < angle_thresh &&
-							ball_downfield))
+			_currentPlay = play;
+			
+			if (_currentPlay)
 			{
-				Predicates::offense = true;
-				break;
+				_currentPlay->start();
 			}
-		}
-	}
-
-	//Determine if there is a free ball
-	float free_ball_thresh = 0.5;
-	float free_ball_vel_thresh = 1.0;
-	Predicates::free_ball = true;
-	BOOST_FOREACH(Robot *r, opp)
-	{
-		if (ball_pos.nearPoint(r->pos(), free_ball_thresh) &&
-				ball_vel.mag() < free_ball_vel_thresh)
-		{
-			Predicates::free_ball = false;
-			break;
 		}
 	}
 	
-	if (!Predicates::free_ball)
+	// Run the current play
+	if (_currentPlay)
 	{
-		BOOST_FOREACH(Robot *r, self)
+		_playDone = !_currentPlay->run();
+	}
+	
+	// Run the goalie
+	if (_goalie)
+	{
+		if (_goalie->robot() && _goalie->robot()->visible())
 		{
-			if (ball_pos.nearPoint(r->pos(), free_ball_thresh) &&
-					ball_vel.mag() < free_ball_vel_thresh)
-			{
-				Predicates::free_ball = true;
-				break;
-			}
+			_goalie->run();
 		}
 	}
 
-	//Set field position predicates
-	if (ball_pos.y < Constants::Field::Length /3)
-	{
-		Predicates::home_field = true;
-		Predicates::mid_field = false;
-		Predicates::opp_field = false;
-	}
-	else if (ball_pos.y < Constants::Field::Length * 2/3 &&
-			ball_pos.y > Constants::Field::Length /3)
-	{
-		Predicates::home_field = false;
-		Predicates::mid_field = true;
-		Predicates::opp_field = false;
-	}
-	else
-	{
-		Predicates::home_field = false;
-		Predicates::mid_field = false;
-		Predicates::opp_field = true;
-	}
-
-	ball_matrix = Geometry2d::TransformMatrix::translate(_state->ball.pos);
-
-	// Select a new play if necessary
-	if (playbook.setup())
-	{
-		// Selected a new play
-	}
-
-	// Run the current play
-	playbook.run();
-
 	// Add ball obstacles
-	for (int r = 0; r < Constants::Robots_Per_Team; ++r)
+	BOOST_FOREACH(Robot *r, self)
 	{
-		if (_state->self[r].valid)
+		if (r->visible() && (!_goalie || _goalie->robot() != r))
 		{
-			Behavior *goalie = playbook.goalie();
-			if (!goalie || goalie->robot() != self[r])
+			// Any robot that isn't the goalie may have to avoid the ball
+			if ((_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart) || r->avoidBall)
 			{
-				// Any robot that isn't the goalie may have to avoid the ball
-				if ((_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart) || self[r]->avoidBall)
+				// Opponent's restart: always stay away from the ball
+				if (largeBallObstacle)
 				{
-					// Opponent's restart: always stay away from the ball
-					if (largeBallObstacle)
-					{
-						_state->self[r].obstacles.add(largeBallObstacle);
-						_state->self[r].obstacles.add(smallBallObstacle);
-					}
-				} else if (!self[r]->willKick)
+					r->obstacles().add(largeBallObstacle);
+					r->obstacles().add(smallBallObstacle);
+				}
+			} else if (!r->willKick)
+			{
+				// Don't hit the ball unintentionally during normal play
+				if (smallBallObstacle)
 				{
-					// Don't hit the ball unintentionally during normal play
-					if (smallBallObstacle)
-					{
-						_state->self[r].obstacles.add(smallBallObstacle);
-					}
+					r->obstacles().add(smallBallObstacle);
 				}
 			}
 		}
 	}
-}
-
-void Gameplay::GameplayModule::mousePress(QMouseEvent* me, Geometry2d::Point pos)
-{
-    if (me->button() == Qt::LeftButton && _selectedRobotId != -1)
-    {
-        //_state->self[_selectedRobotId].cmd.goalPosition = pos;
-    }
-}
-
-void Gameplay::GameplayModule::mouseMove(QMouseEvent* me, Geometry2d::Point pos)
-{
-}
-
-void Gameplay::GameplayModule::mouseRelease(QMouseEvent* me, Geometry2d::Point pos)
-{
-}
-
-Gameplay::Robot *Gameplay::GameplayModule::find(const std::string &name)
-{
-	for (int i = 0; i < 5; ++i)
+	
+	if (_currentPlay)
 	{
-		if (self[i]->name() == name)
+		_state->playName = _currentPlay->name();
+	} else {
+		_state->playName = "(null)";
+	}
+}
+
+Gameplay::Play *Gameplay::GameplayModule::selectPlay()
+{
+	float bestScore = 0;
+	Play *bestPlay = 0;
+	
+	// Find the best applicable play
+	BOOST_FOREACH(Play *play, _plays)
+	{
+		if (play->applicable())
 		{
-			return self[i];
+			float score = play->score();
+			if (!bestPlay || score < bestScore)
+			{
+				bestScore = score;
+				bestPlay = play;
+			}
 		}
 	}
-
-	for (int i = 0; i < 5; ++i)
-	{
-		if (opp[i]->name() == name)
-		{
-			return opp[i];
-		}
-	}
-
-	return 0;
+	
+	return bestPlay;
 }

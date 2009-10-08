@@ -1,16 +1,12 @@
 #include "Kick.hpp"
 
 #include "../Window.hpp"
-#include "../Role.hpp"
 
 #include <boost/foreach.hpp>
 
 using namespace std;
 using namespace Utils;
 using namespace Geometry2d;
-
-static Gameplay::BehaviorFactoryType<Gameplay::Behaviors::Kick>
-        behavior("kick");
 
 //#define DEBUG
 
@@ -20,14 +16,10 @@ static Gameplay::BehaviorFactoryType<Gameplay::Behaviors::Kick>
 #define debug(...)
 #endif
 
-Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay, Role *role) :
-	Behavior(gameplay, role),
-	target_param(this, "target"),
-	mode_param(this, "mode", "auto")
+Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay) :
+	Behavior(gameplay)
 {
-	mode_param.legal.push_back("normal");
-	mode_param.legal.push_back("auto");
-	
+	automatic = true;
 	_win = 0;
 }
 
@@ -77,10 +69,10 @@ void Gameplay::Behaviors::Kick::run()
 	_win->exclude.push_back(pos);
 	_win->debug = true;
 
-	if (target_param.valid())
+	if (targetRobot)
 	{
 		// Kick towards a robot
-		Geometry2d::Point t = target_param.robot()->pos();
+		Geometry2d::Point t = targetRobot->pos();
 		_win->run(ballPos, t);
 		_win->exclude.push_back(t);
 	}
@@ -89,7 +81,7 @@ void Gameplay::Behaviors::Kick::run()
 		// Try to kick to the goal.
 		_win->run(ballPos, target);
 		
-		if (!_win->best && mode_param.value() == "auto")
+		if (!_win->best && automatic)
 		{
 			// Use the entire end line
 			target.pt[0] = Geometry2d::Point(-Constants::Field::Width / 2.0, Constants::Field::Length);
@@ -126,12 +118,12 @@ void Gameplay::Behaviors::Kick::run()
 	
 	//if kicking to a target
 	//calculate kick strength
-	if (target_param.valid())
+	if (targetRobot)
 	{
 		const float dist = robot()->pos().distTo(targetCenter);
 
-		const float m = robot()->state()->config.kicker.m;
-		const float b = robot()->state()->config.kicker.b;
+		const float m = robot()->packet()->config.kicker.m;
+		const float b = robot()->packet()->config.kicker.b;
 
 		kickStrength = int(m * dist + b);
 
@@ -151,7 +143,7 @@ void Gameplay::Behaviors::Kick::run()
 	// Vector that we would shoot along if we shot now
 	// assume that the ball goes where we were facing
 	//Geometry2d::Point shootDir = -(pos - ballPos);
-	Point shootDir = Point::direction(robot()->state()->angle * DegreesToRadians);
+	Point shootDir = Point::direction(robot()->packet()->angle * DegreesToRadians);
 
 	//shot segment is from us in direction of shootDir
 	//it is sufficiently large to handle the entire field shot
@@ -163,11 +155,12 @@ void Gameplay::Behaviors::Kick::run()
 	//see if the shot line intersects where we indent to shoot
 	bool intersectedTarget = shotLine.intersects(_target, &shootPoint);
 
+	//FIXME - These robot equivalence checks are too complicated.  Should be able to compare pointers.  Also don't use LogFrame from within Gameplay.
 	bool intersectsRobot = false;
 	BOOST_FOREACH(const Packet::LogFrame::Robot& r, gameplay()->state()->opp)
 	{
 		//don't check against if target
-		bool noAdd = (target_param.valid() && !target_param.robot()->self() && target_param.robot()->state()->shell == r.shell);
+		bool noAdd = (targetRobot && !targetRobot->self() && targetRobot->packet()->shell == r.shell);
 		if (r.valid && !noAdd)
 		{
 			if (shotLine.intersects(Circle(r.pos, Constants::Robot::Radius + Constants::Ball::Radius)))
@@ -181,8 +174,8 @@ void Gameplay::Behaviors::Kick::run()
 	BOOST_FOREACH(const Packet::LogFrame::Robot& r, gameplay()->state()->self)
 	{
 		//don't check against if target
-		bool noAdd = (target_param.valid() && target_param.robot()->self() && target_param.robot()->state()->shell == r.shell);
-		if (r.valid && r.shell != robot()->state()->shell && !noAdd)
+		bool noAdd = (targetRobot && targetRobot->self() && targetRobot->packet()->shell == r.shell);
+		if (r.valid && r.shell != robot()->packet()->shell && !noAdd)
 		{
 			if (shotLine.intersects(Circle(r.pos, Constants::Robot::Radius + Constants::Ball::Radius)))
 			{
@@ -193,7 +186,7 @@ void Gameplay::Behaviors::Kick::run()
 	}
 
 	// canKick is true if the robot is facing the target and the ball is between the robot and the target.
-	bool canKick = intersectedTarget && robot()->state()->haveBall && !intersectsRobot && robot()->state()->radioRx.charged;
+	bool canKick = intersectedTarget && robot()->packet()->haveBall && !intersectsRobot && robot()->packet()->radioRx.charged;
 
 	//debug("%d ", canKick);
 
@@ -220,7 +213,7 @@ void Gameplay::Behaviors::Kick::run()
 	//approach the ball at high speed using Intercept
 	if (_state == Intercept)
 	{
-	  _intercept->target_param.set(targetCenter);
+	  _intercept->target = targetCenter;
 	  _intercept->run();
 
 	  if (_intercept->done())
@@ -257,8 +250,8 @@ void Gameplay::Behaviors::Kick::run()
 			swap(g0, g1);
 		}
 
-		float ra = robot()->state()->angle;
-		float ba = (ballPos - pos).angle() * RadiansToDegrees;
+		float ra = robot()->packet()->angle;
+// 		float ba = (ballPos - pos).angle() * RadiansToDegrees;
 
 		Geometry2d::Point m = ballPos + (pos - ballPos).normalized()
 		        * clearance;

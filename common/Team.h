@@ -1,5 +1,4 @@
-#ifndef TEAM_H_
-#define TEAM_H_
+#pragma once
 
 typedef enum
 {
@@ -35,6 +34,4 @@ static inline const char* teamName(Team t)
 	
 	return "UnkownTeam";
 }
-
-#endif /*TEAM_H_*/
  

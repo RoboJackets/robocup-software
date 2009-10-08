@@ -3,7 +3,6 @@
 
 #include "Goalie.hpp"
 
-#include "../../Role.hpp"
 #include "../../Window.hpp"
 
 #include <LogFrame.hpp>
@@ -13,13 +12,11 @@ using namespace Geometry2d;
 
 static const float MaxX = Constants::Field::GoalWidth / 2.0f;
 
-Gameplay::Behaviors::Goalie::Goalie(GameplayModule *gameplay, Role *role):
-	Behavior(gameplay, role),
-	_kick(gameplay, role)
+Gameplay::Behaviors::Goalie::Goalie(GameplayModule *gameplay):
+	Behavior(gameplay),
+	_kick(gameplay)
 {
-	_name = "Goalie";
 	_win = 0;
-	
 	_state = Defend;
 }
 
@@ -46,7 +43,8 @@ void Gameplay::Behaviors::Goalie::start()
 
 void Gameplay::Behaviors::Goalie::run()
 {
-	Packet::LogFrame::Robot* self = robot()->state();
+	//FIXME - Use the Robot wrapper functions.  Don't touch LogFrame directly.
+	Packet::LogFrame::Robot* self = robot()->packet();
 
 	if (!ball().valid)
 	{
@@ -58,8 +56,8 @@ void Gameplay::Behaviors::Goalie::run()
 	if (_state == Clear)
 	{
 		//if the ball is in the defense area...clear it
-		_kick.target_param.clear();
-		_kick.mode_param.set("auto");
+		_kick.targetRobot = 0;
+		_kick.automatic = true;
 		
 		robot()->dribble(50);
 		

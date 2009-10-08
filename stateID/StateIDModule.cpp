@@ -7,9 +7,9 @@
 using namespace std;
 using namespace StateIdentification;
 
-StateIDModule::StateIDModule() : Module("State ID")
+StateIDModule::StateIDModule(SystemState *state) : Module("State ID")
 {
-	
+	_state = state;
 }
 
 StateIDModule::~StateIDModule()
