@@ -21,6 +21,7 @@ Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay) :
 {
 	automatic = true;
 	_win = 0;
+	targetRobot = 0;
 }
 
 Gameplay::Behaviors::Kick::~Kick()
@@ -31,8 +32,10 @@ Gameplay::Behaviors::Kick::~Kick()
 	}
 }
 
-void Gameplay::Behaviors::Kick::start()
+void Gameplay::Behaviors::Kick::assign(set<Robot *> &available)
 {
+	takeBest(available);
+	
 	if (!_win)
 	{
 		_win = new WindowEvaluator(_gameplay->state());
@@ -41,17 +44,16 @@ void Gameplay::Behaviors::Kick::start()
 
 	_state = Intercept;
 	_intercept = new Gameplay::Behaviors::Intercept(gameplay());
-	_intercept->robot(robot());
-	_intercept->start();
+	_intercept->assignOne(robot());
 	_lastMargin = 0;
 }
 
-void Gameplay::Behaviors::Kick::run()
+bool Gameplay::Behaviors::Kick::run()
 {
-	if (!ball().valid)
+	if (!allVisible() || !ball().valid)
 	{
 		// No ball
-		return;
+		return false;
 	}
 
 	// Get ball information
@@ -143,7 +145,7 @@ void Gameplay::Behaviors::Kick::run()
 	// Vector that we would shoot along if we shot now
 	// assume that the ball goes where we were facing
 	//Geometry2d::Point shootDir = -(pos - ballPos);
-	Point shootDir = Point::direction(robot()->packet()->angle * DegreesToRadians);
+	Point shootDir = Point::direction(robot()->angle() * DegreesToRadians);
 
 	//shot segment is from us in direction of shootDir
 	//it is sufficiently large to handle the entire field shot
@@ -186,7 +188,7 @@ void Gameplay::Behaviors::Kick::run()
 	}
 
 	// canKick is true if the robot is facing the target and the ball is between the robot and the target.
-	bool canKick = intersectedTarget && robot()->packet()->haveBall && !intersectsRobot && robot()->packet()->radioRx.charged;
+	bool canKick = intersectedTarget && robot()->haveBall() && !intersectsRobot && robot()->charged();
 
 	//debug("%d ", canKick);
 
@@ -213,13 +215,12 @@ void Gameplay::Behaviors::Kick::run()
 	//approach the ball at high speed using Intercept
 	if (_state == Intercept)
 	{
-	  _intercept->target = targetCenter;
-	  _intercept->run();
+		_intercept->target = targetCenter;
 
-	  if (_intercept->done())
-	    {
-	      _state = Aim;
-	    }
+		if (!_intercept->run())
+		{
+			_state = Aim;
+		}
 	}
 
 	//aim towards the target
@@ -250,11 +251,11 @@ void Gameplay::Behaviors::Kick::run()
 			swap(g0, g1);
 		}
 
-		float ra = robot()->packet()->angle;
+		float ra = robot()->angle();
 // 		float ba = (ballPos - pos).angle() * RadiansToDegrees;
 
 		Geometry2d::Point m = ballPos + (pos - ballPos).normalized()
-		        * clearance;
+				* clearance;
 		if (pos.nearPoint(m, Constants::Robot::Radius))
 		{
 			debug("pivot  ");
@@ -284,12 +285,12 @@ void Gameplay::Behaviors::Kick::run()
 		if (canKick)
 		{
 			float margin = max(fixAngleDegrees(ra - g0), fixAngleDegrees(g1
-			        - ra));
+					- ra));
 
 			float threshold = 0.9f * (g1 - g0) / 2;
 			debug(
-			        "goal %.1f, %.1f ball %.1f robot %.1f margin %.1f threshold %.1f\n",
-			        g0, g1, ba, ra, margin, threshold);
+					"goal %.1f, %.1f ball %.1f robot %.1f margin %.1f threshold %.1f\n",
+					g0, g1, ba, ra, margin, threshold);
 			if (margin > threshold || margin <= _lastMargin)
 			{
 				if (ballPos.nearPoint(pos, clearance + Constants::Robot::Radius))
@@ -332,11 +333,8 @@ void Gameplay::Behaviors::Kick::run()
 		}
 		debug("\n");
 	}
-}
-
-bool Gameplay::Behaviors::Kick::done()
-{
-	return _state == Done;
+	
+	return _state != Done;
 }
 
 float Gameplay::Behaviors::Kick::score(Robot* robot)

@@ -22,3 +22,11 @@ Gameplay::Robot::Robot(GameplayModule *gameplay, int id, bool self)
 		_packet = &_gameplay->state()->opp[_id];
 	}
 }
+
+void Gameplay::Robot::resetMotionCommand()
+{
+	packet()->cmd = Packet::LogFrame::MotionCmd();
+	
+	// Stay in place if possible.
+	move(pos());
+}

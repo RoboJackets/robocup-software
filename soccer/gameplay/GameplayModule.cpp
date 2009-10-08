@@ -12,6 +12,7 @@
 // 	penalty
 
 #include "GameplayModule.hpp"
+#include "Behavior.hpp"
 #include "behaviors/positions/Goalie.hpp"
 
 #include "plays/OurKickoff.hpp"
@@ -135,7 +136,7 @@ void Gameplay::GameplayModule::createGoalie()
 {
 	if (!_goalie)
 	{
- 		_goalie = new Behaviors::Goalie(this);
+  		_goalie = new Behaviors::Goalie(this);
 	}
 }
 
@@ -188,16 +189,25 @@ void Gameplay::GameplayModule::run()
 	}
 
 	// Assign the goalie
-	if (_goalie && !_goalie->robot())
+	if (_goalie && !_goalie->assigned())
 	{
 		//FIXME - The rules allow for changing the goalie only in certain circumstances.  Make sure we do this right.
 		BOOST_FOREACH(Robot *r, self)
 		{
-			//FIXME - ...and not in use by another behavior
-			if (r->visible())
+			bool inUse = false;
+			if (_currentPlay)
+			{
+				const std::set<Robot *> &playRobots = _currentPlay->robots();
+				if (playRobots.find(r) != playRobots.end())
+				{
+					inUse = true;
+				}
+			}
+			
+			if (r->visible() && !inUse)
 			{
 				printf("Goalie is robot %d\n", r->id());
-				_goalie->robot(r);
+				_goalie->assignOne(r);
 				break;
 			}
 		}
@@ -211,15 +221,6 @@ void Gameplay::GameplayModule::run()
 		
 		// Reset the motion command
 		r->resetMotionCommand();
-
-		// Make each robot stand still.
-		// Manual controlled robots do not need this to happen.
-//FIXME - Pull this out of Module
-// 		if (_selectedRobotId == -1 || _selectedRobotId != r)
-// 		{
-// 			r->cmd.goalPosition = r->pos;
-// 			r->cmd.pivot = Packet::LogFrame::MotionCmd::NoPivot;
-// 		}
 
 		// Add obstacles for this robot
 		ObstacleGroup &obstacles = r->packet()->obstacles;
@@ -274,16 +275,21 @@ void Gameplay::GameplayModule::run()
 		Play *play = selectPlay();
 		if (play != _currentPlay)
 		{
-			if (_currentPlay)
-			{
-				_currentPlay->stop();
-			}
-			
 			_currentPlay = play;
 			
 			if (_currentPlay)
 			{
-				_currentPlay->start();
+				// Assign to the new play all robots except the goalie
+				set<Robot *> robots;
+				BOOST_FOREACH(Robot *r, self)
+				{
+					if (!_goalie || r != _goalie->robot())
+					{
+						robots.insert(r);
+					}
+				}
+				
+				_currentPlay->assign(robots);
 			}
 		}
 	}
@@ -297,7 +303,7 @@ void Gameplay::GameplayModule::run()
 	// Run the goalie
 	if (_goalie)
 	{
-		if (_goalie->robot() && _goalie->robot()->visible())
+		if (_goalie->assigned() && _goalie->robot()->visible())
 		{
 			_goalie->run();
 		}
@@ -306,7 +312,7 @@ void Gameplay::GameplayModule::run()
 	// Add ball obstacles
 	BOOST_FOREACH(Robot *r, self)
 	{
-		if (r->visible() && (!_goalie || _goalie->robot() != r))
+		if (r->visible() && !(_goalie && _goalie->robot() == r))
 		{
 			// Any robot that isn't the goalie may have to avoid the ball
 			if ((_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart) || r->avoidBall)

@@ -1,50 +1,55 @@
 #include "Penalty.hpp"
 
-static Gameplay::BehaviorFactoryType<Gameplay::Behaviors::Penalty> behavior("penalty");
+using namespace std;
 
-Gameplay::Behaviors::Penalty::Penalty(GameplayModule *gameplay, Role *role):
-    Behavior(gameplay, role), _kick(gameplay,role)
+Gameplay::Behaviors::Penalty::Penalty(GameplayModule *gameplay):
+	Behavior(gameplay),
+	_kick(gameplay)
 {
 }
 
-
-void Gameplay::Behaviors::Penalty::start()
+void Gameplay::Behaviors::Penalty::assign(set<Robot *> &available)
 {
-    _kick.robot(robot());
-    _kick.start();
-}
-void Gameplay::Behaviors::Penalty::run()
-{
-    Geometry2d::Point ball(0, Constants::Field::Length / 2);
-    if (gameplay()->state()->ball.valid)
-    {
-        ball = gameplay()->state()->ball.pos;
-    }
-
-    GameState::State state = gameplay()->state()->gameState.state;
-    switch (state)
-    {
-        case GameState::Setup:
-            robot()->move(Geometry2d::Point(0,Constants::Field::Length / 2 - 0.3));
-            robot()->face(ball);
-            break;
-
-        case GameState::Ready:
-            robot()->move(ball + Geometry2d::Point(0, 0.1));
-            robot()->face(ball);
-            robot()->willKick = true;
-            robot()->state()->radioTx.kick = 255;
-            _kick.mode_param.set("normal");
-            _kick.run();
-            break;
-
-        default:
-            robot()->state()->cmd.goalOrientation = ball;
-            break;
-    }
+	takeBest(available);
+	
+	_kick.assignOne(robot());
 }
 
-bool Gameplay::Behaviors::Penalty::done()
+bool Gameplay::Behaviors::Penalty::run()
 {
-    return gameplay()->state()->gameState.state == GameState::Playing;
+	if (!allVisible() || !ball().valid)
+	{
+		return false;
+	}
+	
+	Geometry2d::Point penaltyMark = Geometry2d::Point(0, Constants::Field::Length - Constants::Field::PenaltyDist);
+	float backoff = 0.5f;
+	
+	switch (gameState().state)
+	{
+		case GameState::Setup:
+			if (ball().pos.nearPoint(penaltyMark, 0.5))
+			{
+				robot()->move(ball().pos + (ball().pos - Geometry2d::Point(0, Constants::Field::Length)).normalized() * backoff);
+			} else {
+				robot()->move(penaltyMark - Geometry2d::Point(0, backoff));
+			}
+			robot()->face(ball().pos);
+			break;
+
+		case GameState::Ready:
+			robot()->move(ball().pos + Geometry2d::Point(0, 0.1));
+			robot()->face(ball().pos);
+			robot()->kick(255);
+			
+			_kick.automatic = false;
+			_kick.run();
+			break;
+
+		default:
+			robot()->face(ball().pos);
+			break;
+	}
+	
+	return gameState().state != GameState::Playing;
 }

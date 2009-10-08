@@ -83,6 +83,11 @@ namespace Gameplay
 				packet()->cmd.face = continuous ? Packet::LogFrame::MotionCmd::Endpoint : Packet::LogFrame::MotionCmd::Continuous;
 			}
 			
+			void faceNone()
+			{
+				packet()->cmd.face = Packet::LogFrame::MotionCmd::None;
+			}
+			
 			void kick(uint8_t strength)
 			{
 				willKick = true;
@@ -95,6 +100,11 @@ namespace Gameplay
 				packet()->cmd.pivot = cw ? Packet::LogFrame::MotionCmd::CW : Packet::LogFrame::MotionCmd::CCW;
 			}
 			
+			bool charged() const
+			{
+				return packet()->radioRx.charged;
+			}
+			
 			bool self() const
 			{
 				return _self;
@@ -105,10 +115,7 @@ namespace Gameplay
 				return packet()->obstacles;
 			}
 			
-			void resetMotionCommand()
-			{
-				packet()->cmd = Packet::LogFrame::MotionCmd();
-			}
+			void resetMotionCommand();
 			
 			// True if this robot intends to kick the ball.
 			// This is reset when this robot's role changes.

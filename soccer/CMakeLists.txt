@@ -49,22 +49,18 @@ set (SRCS
 	gameplay/plays/Offense.cpp
 	gameplay/plays/Defense.cpp
 	
-# 	gameplay/behaviors/Move.cpp
-# 	gameplay/behaviors/Kickoff.cpp
-# 	gameplay/behaviors/ReceivePass.cpp
-# 	gameplay/behaviors/Penalty.cpp
-# 	gameplay/behaviors/Idle.cpp
- 	gameplay/behaviors/Kick.cpp
-# 	gameplay/behaviors/Mark.cpp
- 	gameplay/behaviors/Intercept.cpp
+	gameplay/behaviors/Move.cpp
+	gameplay/behaviors/Kickoff.cpp
+	gameplay/behaviors/Penalty.cpp
+	gameplay/behaviors/Idle.cpp
+	gameplay/behaviors/Kick.cpp
+	gameplay/behaviors/Intercept.cpp
 	gameplay/behaviors/positions/Goalie.cpp      
-# 	gameplay/behaviors/positions/Fullback.cpp
-# 	gameplay/behaviors/positions/Halfback.cpp
-# 	gameplay/behaviors/positions/Forward.cpp
+	gameplay/behaviors/positions/Fullback.cpp
+ 	gameplay/behaviors/positions/Forward.cpp
 
 # 	gameplay/behaviors/test/KickerCalibration.cpp   
 # 	gameplay/behaviors/test/MotionLeader.cpp    
-# 	gameplay/behaviors/test/Pivot.cpp
 )
 
 qt4_automoc (${SRCS})

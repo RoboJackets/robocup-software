@@ -17,11 +17,9 @@ namespace Gameplay
 				Kick(GameplayModule *gameplay);
 				~Kick();
 
-				virtual void start();
-				virtual void run();
-				virtual bool done();
+				virtual void assign(std::set<Robot *> &available);
+				virtual bool run();
 
-				virtual float score(Robot* robot);
 				bool isIntercept()
 				{
 					return _state == Intercept;
@@ -31,6 +29,8 @@ namespace Gameplay
 				bool automatic;
 
 			protected:
+				virtual float score(Robot* robot);
+				
 				enum State
 				{
 					Intercept,

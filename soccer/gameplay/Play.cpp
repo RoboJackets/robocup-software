@@ -1,10 +1,8 @@
 #include "Play.hpp"
-#include "Behavior.hpp"
-#include "GameplayModule.hpp"
 
-Gameplay::Play::Play(GameplayModule *gameplay)
+Gameplay::Play::Play(GameplayModule *gameplay):
+	Behavior(gameplay)
 {
-	_gameplay = gameplay;
 	_gameplay->_plays.insert(this);
 }
 
@@ -21,12 +19,4 @@ bool Gameplay::Play::applicable()
 float Gameplay::Play::score()
 {
 	return 0;
-}
-
-void Gameplay::Play::start()
-{
-}
-
-void Gameplay::Play::stop()
-{
 }

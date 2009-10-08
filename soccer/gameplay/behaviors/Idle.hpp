@@ -11,9 +11,8 @@ namespace Gameplay
             public:
                 Idle(GameplayModule *gameplay);
                 
-                virtual void run();
-                
-                virtual float score(Robot* r);
+				virtual void assign(std::set<Robot *> &available);
+                virtual bool run();
         };
     }
 }

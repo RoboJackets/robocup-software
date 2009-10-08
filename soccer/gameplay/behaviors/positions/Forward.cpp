@@ -1,37 +1,47 @@
 #include "Forward.hpp"
-#include "../Kick.hpp"
-#include <Constants.hpp>
 
+using namespace std;
 using namespace Geometry2d;
 
-static Gameplay::BehaviorFactoryType<Gameplay::Behaviors::Forward> behavior("forward");
-
-Gameplay::Behaviors::Forward::Forward(GameplayModule * gameplay, Role * role):
-	Behavior(gameplay, role)
-	{
-	_kick = new Gameplay::Behaviors::Kick(gameplay);
-	}
-
-Gameplay::Behaviors::Forward::~Forward()
+Gameplay::Behaviors::Forward::Forward(GameplayModule * gameplay):
+	Behavior(gameplay),
+	_kick(gameplay)
 {
-	delete _kick;
+	teammate = 0;
 }
 
-void Gameplay::Behaviors::Forward::run()
+void Gameplay::Behaviors::Forward::assign(set<Robot *> &available)
 {
+	takeBest(available);
+	
+	_kick.assignOne(robot());
+}
+
+bool Gameplay::Behaviors::Forward::run()
+{
+	if (!allVisible() || !ball().valid)
+	{
+		return false;
+	}
+	
 	//leave dribblers on
 	robot()->dribble(20);
 
+	if (!teammate)
+	{
+		_kick.run();
+		return false;
+	}
+
 	//Copy in important state data
-	const Packet::LogFrame::Ball& b = ball();
-	Geometry2d::Point ball_pos = b.pos;
+	Point ball_pos = ball().pos;
 
 	//get teammate position
-	Point tm_pos = _teammate->robot()->pos();
-	Point tm_vel = _teammate->robot()->vel();
+	Point tm_pos = teammate->robot()->pos();
+	Point tm_vel = teammate->robot()->vel();
 
 	//check what other team is doing
-	bool teammate_has_ball = !_teammate->isIntercept();
+	bool teammate_has_ball = !teammate->isIntercept();
 	bool teammate_nearer_ball = robot()->pos().distTo(ball_pos) > tm_pos.distTo(ball_pos);
 	if (teammate_has_ball)
 	{
@@ -62,22 +72,10 @@ void Gameplay::Behaviors::Forward::run()
 	else
 	{
 		//just run normal kick in auto mode
-		_kick->run();
+		_kick.run();
 	}
-}
-
-void Gameplay::Behaviors::Forward::start()
-{
-
-	_kick->robot(robot());
-	_kick->start();
-	//find the other forward
-	std::list<Robot*> teammates;
-	_gameplay->find_by_type<Forward*>(teammates);
-	if (teammates.size() > 0)
-	{
-		_teammate = dynamic_cast<Forward*>(teammates.front()->behavior());
-	}
+	
+	return false;
 }
 
 float Gameplay::Behaviors::Forward::score(Robot* robot)
@@ -87,5 +85,5 @@ float Gameplay::Behaviors::Forward::score(Robot* robot)
 
 bool Gameplay::Behaviors::Forward::isIntercept()
 {
-	return _kick->isIntercept();
+	return _kick.isIntercept();
 }

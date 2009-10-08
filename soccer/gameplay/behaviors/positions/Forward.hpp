@@ -1,33 +1,31 @@
 #pragma once
 
 #include "../../Behavior.hpp"
-#include "../Kick.hpp"
+
+#include <gameplay/behaviors/Kick.hpp>
 
 namespace Gameplay
 {
 	namespace Behaviors
 	{
-		class Kick;
-
 		class Forward : public Behavior
 		{
 			public:
-				Forward(GameplayModule * gameplay, Role * role);
-				~Forward();
+				Forward(GameplayModule * gameplay);
 
-				virtual void run();
-				virtual void start();
-				virtual float score(Robot* robot);
+				virtual void assign(std::set<Robot *> &available);
+				virtual bool run();
 
 				bool isIntercept();
 
-			protected:
-				//Kick/pass behavior
-				Gameplay::Behaviors::Kick * _kick;
-
 				//the other forward
-				Forward * _teammate;
-
+				Forward *teammate;
+				
+			protected:
+				virtual float score(Robot* robot);
+				
+				//Kick/pass behavior
+				Gameplay::Behaviors::Kick _kick;
 		};
 	}
 }

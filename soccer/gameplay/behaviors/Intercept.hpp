@@ -11,17 +11,14 @@ namespace Gameplay
 			public:
 				Intercept(GameplayModule *gameplay);
 
-				virtual void run();
-				virtual void start();
-				virtual bool done();
-
-				/** Closest robot to the ball gets
-				 * the intercept */
-				virtual float score(Robot * robot);
+				virtual void assign(std::set<Robot *> &available);
+				virtual bool run();
 
 				Geometry2d::Point target;
 				
 			protected:
+				virtual float score(Robot * robot);
+				
 				typedef enum
 				{
 					ApproachFar, 

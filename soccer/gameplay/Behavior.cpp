@@ -1,77 +1,83 @@
 #include "Behavior.hpp"
-#include "GameplayModule.hpp"
 
-#include <stdexcept>
 #include <boost/foreach.hpp>
-
-using namespace Geometry2d;
-using namespace std;
 
 Gameplay::Behavior::Behavior(GameplayModule *gameplay)
 {
 	_gameplay = gameplay;
-	_robot = 0;
 }
 
 Gameplay::Behavior::~Behavior()
 {
 }
 
-float Gameplay::Behavior::score(Robot *robot)
+bool Gameplay::Behavior::run()
 {
-	return 0;
+	return false;
 }
 
-Gameplay::Robot *Gameplay::Behavior::selectRobot()
+bool Gameplay::Behavior::allVisible() const
 {
-	float bestScore = 0;
-	Robot *bestRobot = 0;
-	BOOST_FOREACH(Robot *r, _gameplay->self)
+	if (_robots.empty())
 	{
-		if (r->visible())//FIXME && !r->behavior())
+		return false;
+	}
+	
+	BOOST_FOREACH(Robot *r, _robots)
+	{
+		if (!r->visible())
 		{
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+void Gameplay::Behavior::assign(std::set<Robot *> &available)
+{
+	takeBest(available);
+}
+
+void Gameplay::Behavior::takeAll(std::set<Robot *> &available)
+{
+	_robots = available;
+	available.clear();
+}
+
+Gameplay::Robot *Gameplay::Behavior::takeBest(std::set<Robot *> &available)
+{
+	if (available.empty())
+	{
+		return 0;
+	}
+	
+	float bestScore = 0;
+	Robot *best = 0;
+	BOOST_FOREACH(Robot *r, available)
+	{
+		if (!best)
+		{
+			best = r;
+		} else {
 			float s = score(r);
-			if (!bestRobot || s < bestScore)
+			if (s < bestScore)
 			{
 				bestScore = s;
-				bestRobot = r;
+				best = r;
 			}
 		}
 	}
-
-	return bestRobot;
+	
+	// best is guaranteed not to be null because we already ensured that available is not empty.
+	
+	available.erase(best);
+	_robots.insert(best);
+	
+	return best;
 }
 
-void Gameplay::Behavior::robot(Robot *robot)
+float Gameplay::Behavior::score(Robot *r)
 {
-	// If we were running, stop.
-	if (_robot)
-	{
-		stop();
-	}
-
-	_robot = robot;
-
-	// If we are now running, start.
-	if (_robot)
-	{
-		start();
-	}
-}
-
-void Gameplay::Behavior::start()
-{
-}
-
-void Gameplay::Behavior::stop()
-{
-}
-
-void Gameplay::Behavior::run()
-{
-}
-
-bool Gameplay::Behavior::done()
-{
-	return true;
+	return 0;
 }

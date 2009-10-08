@@ -1,27 +1,37 @@
 #include "Intercept.hpp"
 
 #include <Constants.hpp>
-#include <LogFrame.hpp>
-#include <vector>
 
-#include <iostream>
 #include <cmath>
 
 using namespace std;
-using namespace Packet;
 
 Gameplay::Behaviors::Intercept::Intercept(GameplayModule *gameplay) :
 	Behavior(gameplay)
 {
 }
 
-void Gameplay::Behaviors::Intercept::run()
+void Gameplay::Behaviors::Intercept::assign(set<Robot *> &available)
 {
+	takeBest(available);
+	
+	_state = ApproachFar;
+}
 
-	if (!ball().valid)
+float Gameplay::Behaviors::Intercept::score(Robot * robot)
+{
+	Geometry2d::Point ball_pos = ball().pos;
+	Geometry2d::Point robot_pos = robot->pos();
+	
+	return ball_pos.distTo(robot_pos);
+}
+
+bool Gameplay::Behaviors::Intercept::run()
+{
+	if (!allVisible() || !ball().valid)
 	{
 		// No ball
-		return;
+		return false;
 	}
 
 	const Geometry2d::Point pos = robot()->pos();
@@ -106,22 +116,6 @@ void Gameplay::Behaviors::Intercept::run()
 			robot()->move(pos);
 		}
 	}
+	
+	return _state != Done;
 }
-
-void Gameplay::Behaviors::Intercept::start()
-{
-	_state = ApproachFar;
-}
-
-bool Gameplay::Behaviors::Intercept::done()
-{
-	return _state == Done;
-}
-
-float Gameplay::Behaviors::Intercept::score(Robot * robot)
-{
-	Geometry2d::Point ball_pos = ball().pos;
-	Geometry2d::Point robot_pos = robot->pos();
-	return ball_pos.distTo(robot_pos);
-}
-

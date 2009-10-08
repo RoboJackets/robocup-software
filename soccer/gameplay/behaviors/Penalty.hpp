@@ -5,19 +5,18 @@
 
 namespace Gameplay
 {
-    namespace Behaviors
-    {
-        class Penalty: public Behavior
-        {
-            public:
-                Penalty(GameplayModule *gameplay, Role *role);
+	namespace Behaviors
+	{
+		class Penalty: public Behavior
+		{
+			public:
+				Penalty(GameplayModule *gameplay);
 
-                virtual void run();
-                virtual bool done();
-                virtual void start();
-            private:
-                Kick _kick;
-
-        };
-    }
+				virtual void assign(std::set<Robot *> &available);
+				virtual bool run();
+				
+			private:
+				Kick _kick;
+		};
+	}
 }

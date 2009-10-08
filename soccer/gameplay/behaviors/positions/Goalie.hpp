@@ -16,10 +16,12 @@ namespace Gameplay
 				Goalie(GameplayModule *gameplay);
 				~Goalie();
 
-				virtual void run();
-				virtual void start();
+				virtual void assign(std::set<Robot *> &available);
+				virtual bool run();
 
 			protected:
+				virtual float score(Robot *r);
+				
 				typedef enum
 				{
 					Defend,

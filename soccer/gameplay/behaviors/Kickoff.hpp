@@ -9,10 +9,9 @@ namespace Gameplay
         class Kickoff: public Behavior
         {
             public:
-                Kickoff(GameplayModule *gameplay, Role *role);
+                Kickoff(GameplayModule *gameplay);
                 
-                virtual void run();
-                virtual bool done();
+                virtual bool run();
         };
     }
 }
