@@ -1,6 +1,4 @@
 #include "Play.hpp"
-#include "Play_Lexer.hpp"
-#include "Play_Parser.hpp"
 #include "Role.hpp"
 #include "Robot.hpp"
 #include "Predicate.hpp"
@@ -14,70 +12,9 @@
 using namespace std;
 using namespace boost;
 
-void Gameplay::Play_Parser::reportError(const antlr::RecognitionException &e)
-{
-    // By default, this is just printed.  Need to re-throw the exception
-    // to make sure parsing fails.
-    throw e;
-}
-
-float Gameplay::Play::Predicate_Preference::value() const
-{
-    if (predicate && predicate->evaluate())
-    {
-        return weight;
-    } else {
-        return 0;
-    }
-}
-
-float Gameplay::Play::Completed_Preference::value() const
-{
-    int n = _play->numStarted();
-    if (n)
-    {
-        return (float)_play->numCompleted() / (float)n;
-    } else {
-        return 0;
-    }
-}
-
-////////
-
 Gameplay::Play::Play(GameplayModule *gameplay)
 {
-    init(gameplay);
-}
-
-Gameplay::Play::Play(GameplayModule *gameplay, const char *filename)
-{
-    init(gameplay);
-    
-    ifstream file(filename);
-    Play_Lexer lexer(file);
-    Play_Parser parser(lexer);
-    
-    parser.play_file(this);
-    
-    defaultPreferences();
-}
-
-void Gameplay::Play::init(GameplayModule *gameplay)
-{
-    _gameplay = gameplay;
-    _status = Terminated;
-    _statsDone = true;
-    _numStarted = 0;
-    _numTimeouts = 0;
-    _numTerminated = 0;
-    _numCompleted = 0;
-    _numAborted = 0;
-    _preferenceValue = 0;
-    timeout = -1;
-    
-    resetStats();
-    
-    restart = true;
+	_gameplay = gameplay;
 }
 
 Gameplay::Play::~Play()
@@ -85,24 +22,6 @@ Gameplay::Play::~Play()
     BOOST_FOREACH(Role *role, _roles)
     {
         delete role;
-    }
-    
-    BOOST_FOREACH(Preference *pref, preferences)
-    {
-        delete pref;
-    }
-    
-    BOOST_FOREACH(Opponent *opp, _opponents)
-    {
-        delete opp;
-    }
-}
-
-void Gameplay::Play::defaultPreferences()
-{
-    if (preferences.empty())
-    {
-        preferences.push_back(new Completed_Preference(this));
     }
 }
 

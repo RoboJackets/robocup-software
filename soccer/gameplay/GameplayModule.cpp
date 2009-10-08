@@ -103,9 +103,6 @@ Gameplay::GameplayModule::GameplayModule():
 	_goalArea[0] = ObstaclePtr(goalArea);
 	_goalArea[1] = ObstaclePtr(new CircleObstacle(Geometry2d::Point(-halfFlat, 0), radius));
 	_goalArea[2] = ObstaclePtr(new CircleObstacle(Geometry2d::Point(halfFlat, 0), radius));
-
-	//TESTING
-	Predicates::offense = true;
 }
 
 void Gameplay::GameplayModule::createGoalie()

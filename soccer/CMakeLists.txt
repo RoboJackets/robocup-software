@@ -18,12 +18,10 @@ include_directories (${PROJECT_SOURCE_DIR}/..)
 add_subdirectory (${PROJECT_SOURCE_DIR}/../motion ${PROJECT_BINARY_DIR}/motion)
 add_subdirectory (${PROJECT_SOURCE_DIR}/../log ${PROJECT_BINARY_DIR}/log)
 add_subdirectory (${PROJECT_SOURCE_DIR}/../modeling ${PROJECT_BINARY_DIR}/modeling)
-add_subdirectory (${PROJECT_SOURCE_DIR}/../gameplay ${PROJECT_BINARY_DIR}/gameplay)
 add_subdirectory (${PROJECT_SOURCE_DIR}/../stateID ${PROJECT_BINARY_DIR}/stateID)
 
 include_directories(${PROJECT_BINARY_DIR}/motion)
 include_directories(${PROJECT_BINARY_DIR}/log)
-include_directories(${PROJECT_BINARY_DIR}/gameplay)
 
 include_directories(${PROJECT_BINARY_DIR})
 
@@ -33,14 +31,49 @@ set (SRCS
 	MainWindow.cpp
 	InputHandler.cpp
 	JoystickInput.cpp
-    RefereeModule.cpp
+	RefereeModule.cpp
+
+	gameplay/GameplayModule.cpp
+	gameplay/Playbook.cpp
+	gameplay/Robot.cpp
+	gameplay/Play.cpp
+	gameplay/Behavior.cpp
+	gameplay/Role.cpp
+	gameplay/Window.cpp
+
+	gameplay/parameters/Parameter.cpp
+	gameplay/parameters/Bool_Parameter.cpp
+	gameplay/parameters/Point_Parameter.cpp
+	gameplay/parameters/Robot_Parameter.cpp
+	gameplay/parameters/Float_Parameter.cpp
+	gameplay/parameters/String_Parameter.cpp
+
+	gameplay/behaviors/Move.cpp
+	gameplay/behaviors/Kickoff.cpp
+	gameplay/behaviors/ReceivePass.cpp
+	gameplay/behaviors/Penalty.cpp
+	gameplay/behaviors/Idle.cpp
+	gameplay/behaviors/Kick.cpp
+	gameplay/behaviors/Mark.cpp
+	gameplay/behaviors/Steal.cpp
+	gameplay/behaviors/Intercept.cpp
+	gameplay/behaviors/Dribble.cpp
+	gameplay/behaviors/positions/Goalie.cpp      
+	gameplay/behaviors/positions/Fullback.cpp
+	gameplay/behaviors/positions/Halfback.cpp
+	gameplay/behaviors/positions/Striker.cpp     
+	gameplay/behaviors/positions/Forward.cpp
+
+	gameplay/behaviors/test/KickerCalibration.cpp   
+	gameplay/behaviors/test/MotionLeader.cpp    
+	gameplay/behaviors/test/Pivot.cpp
 )
 
 qt4_automoc (${SRCS})
 
 qt4_wrap_ui (UI_HDRS
-    ui/MainWindow.ui
-    ui/RefereeTab.ui
+	ui/MainWindow.ui
+	ui/RefereeTab.ui
 )
 
 qt4_add_resources (RC_FILES
@@ -64,9 +97,4 @@ target_link_libraries(${target} ${QT_LIBRARIES})
 target_link_libraries(${target} log)
 target_link_libraries(${target} motion)
 target_link_libraries(${target} modeling)
-target_link_libraries(${target} gameplay)
 target_link_libraries(${target} stateID)
-
-# External libraries
-target_link_libraries(${target} antlr)
-target_link_libraries(${target} boost_filesystem-mt)
