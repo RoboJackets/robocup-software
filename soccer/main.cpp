@@ -11,7 +11,6 @@
 #include <QDebug>
 
 #include <boost/foreach.hpp>
-#include <boost/filesystem.hpp>
 
 #include <Team.h>
 
