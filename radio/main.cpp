@@ -22,16 +22,12 @@
 using namespace std;
 
 Radio *radio;
-volatile bool reverse_running;
-pthread_t reverse_thread;
 Team team = UnknownTeam;
 
 pthread_mutex_t mapping_mutex;
 typedef map<int, int> Robot_Map;
 Robot_Map board_to_robot;
 
-//if a location is true, that board_id is for the opp team
-//bool activeOpp[16];
 bool useOpp;
 
 Packet::RadioTx txPacket;
@@ -45,85 +41,6 @@ void usage(const char* prog)
 	fprintf(stderr, "\t-n: use base station i (0 is the first base station detected by libusb)\n");
 	fprintf(stderr, "\t-o: run an opponent team as well (note: radio only handles up to 5 robots)\n");
 	exit(1);
-}
-
-void *reverse_main(void *arg)
-{
-	reverse_running = true;
-	
-	//data coming in from robots goes out through the sender
-	Network::Sender sender(Network::Address, Network::addTeamOffset(team, Network::RadioRx));
-	Packet::RadioRx rxPacket;
-
-	uint8_t reverse_packet[Reverse_Size + 2];
-
-	while (reverse_running)
-	{
-		reverse_packet[0] = 0;
-		if (radio->read_packet(reverse_packet, sizeof(reverse_packet), 100))
-		{
-#if 1
-			printf("rev");
-			for (unsigned int i = 0; i < Reverse_Size; ++i)
-			{
-				printf(" %02x", reverse_packet[i]);
-			}
-			printf("\n");
-#endif
-			
-			int board_id = reverse_packet[0] & 0x0f;
-			
-			// Board to robot mapping
-			pthread_mutex_lock(&mapping_mutex);
-			Robot_Map::const_iterator i = board_to_robot.find(board_id);
-			if (i == board_to_robot.end())
-			{
-				// We don't know about this board
-				pthread_mutex_unlock(&mapping_mutex);
-				continue;
-			}
-			int robot_id = board_to_robot[board_id];
-			pthread_mutex_unlock(&mapping_mutex);
-			
-			Packet::RadioRx::Robot &robot = rxPacket.robots[robot_id];
-			
-			// Set the updated flag for only this robot
-			for (int i = 0; i < 5; ++i)
-			{
-				rxPacket.robots[i].updated = false;
-			}
-			robot.updated = true;
-			robot.valid = true;
-			
-			for (int i = 0; i < 5; ++i)
-			{
-				robot.motorFault[i] = reverse_packet[5] & (1 << i);
-			}
-			
-			robot.rssi = (int8_t)reverse_packet[1] * 2.0f;
-			robot.battery = reverse_packet[3];      //FIXME - Conversion
-			
-			for (int i = 0; i < 5; ++i)
-			{
-				robot.encoders[i] = reverse_packet[6 + i];
-			}
-			
-			sender.send(rxPacket);
-		}
-	}
-	
-	return 0;
-}
-
-void reverse_start()
-{
-	pthread_create(&reverse_thread, 0, reverse_main, 0);
-}
-
-void reverse_stop()
-{
-	reverse_running = false;
-	pthread_join(reverse_thread, 0);
 }
 
 void packetHandler(const Packet::RadioTx* packet)
@@ -173,7 +90,6 @@ int main(int argc, char* argv[])
 		usage(argv[0]);
 	}
 	
-//	reverse_start();
 	Network::Sender sender(Network::Address, Network::addTeamOffset(team, Network::RadioRx));
 	Packet::RadioRx rxPacket;
 	
@@ -192,12 +108,6 @@ int main(int argc, char* argv[])
 		receiverOpp.addType(Network::Address, Network::addTeamOffset(opponentTeam(team), Network::RadioTx), oppPacketHandler);
 	}
 
-	//receiver for incoming radio data from the control program
-	//Network::Receiver receiver(Network::Address, Network::addTeamOffset(team, Network::RadioTx));
-	
-	//receiver for the opponent team packets
-	//Network::Receiver oppReceiver(Network::Address, Network::addTeamOffset(opponentTeam(team), Network::RadioTx));
-	
 	uint8_t forward_packet[Forward_Size];
 	int sequence = 0;
 	int reverse_robot_id = 0;
