@@ -35,6 +35,7 @@ Radio::Radio(int n)
 
 Radio::~Radio()
 {
+	delete _device;
 }
 
 void Radio::write_packet(const void *data, unsigned int size)

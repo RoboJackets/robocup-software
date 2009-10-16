@@ -10,7 +10,6 @@
 #include <map>
 
 #include <Network/Network.hpp>
-//#include <Network/Receiver.hpp>
 #include <Network/PacketReceiver.hpp>
 #include <Network/Sender.hpp>
 #include <RadioTx.hpp>
@@ -21,7 +20,6 @@
 
 using namespace std;
 
-Radio *radio;
 Team team = UnknownTeam;
 
 pthread_mutex_t mapping_mutex;
@@ -82,7 +80,12 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	radio = new Radio(n);
+	if (n)
+	{
+		fprintf(stderr, "WARNING: Specifying -n will likely result in the wrong base station being used if it is unplugged and reconnected.\n");
+	}
+	
+	Radio *radio = 0;
 	
 	if (team == UnknownTeam)
 	{
@@ -124,6 +127,32 @@ int main(int argc, char* argv[])
 		
 		//don't block on receiving the opponent
 		receiverOpp.receive(false);
+		
+		// Make sure we have a radio
+		bool first = true;
+		if (!radio)
+		{
+			while (!radio)
+			{
+				try
+				{
+					radio = new Radio(n);
+				} catch (exception &ex)
+				{
+					if (first)
+					{
+						fprintf(stderr, "%s\n", ex.what());
+						fprintf(stderr, "Waiting for the base station to be connected...\n");
+						first = false;
+					}
+					
+					sleep(1);
+				}
+			}
+			
+			// Drop this forward packet because it's probably really old
+			continue;
+		}
 		
 		// Update the mapping for the reverse thread
 		pthread_mutex_lock(&mapping_mutex);
@@ -273,13 +302,25 @@ int main(int argc, char* argv[])
 		printf("\n");
 #endif
 		
-		// Send the forward packet
-		radio->write_packet(forward_packet, Forward_Size);
+		bool read_ok = false;
+		try
+		{
+			// Send the forward packet
+			radio->write_packet(forward_packet, Forward_Size);
+			
+			// Read a forward packet if one is available
+			read_ok = radio->read_packet(reverse_packet, sizeof(reverse_packet), 1);
+		} catch (exception &ex)
+		{
+			fprintf(stderr, "%s\n", ex.what());
+			delete radio;
+			radio = 0;
+		}
 		
 		sequence = (sequence + 1) & 15;
 		
 		// Check for a reverse packet
-		if (radio->read_packet(reverse_packet, sizeof(reverse_packet), 1))
+		if (read_ok)
 		{
 #if 1
 			printf("rev");
