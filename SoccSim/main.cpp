@@ -12,7 +12,7 @@
 
 void usage(const char* prog)
 {
-    printf("usage: %s -c <config file>\n", prog);
+    printf("usage: %s -c <config file> [--ui]\n", prog);
 }
 
 int main(int argc, char* argv[])
@@ -23,13 +23,18 @@ int main(int argc, char* argv[])
     env->start();
 
     char* configFile = 0;
+	bool useGUI = false;
 
     //loop arguments and look for config file
     for (int i=1 ; i<argc ; ++i)
     {
-        if (strcmp(argv[i], "-c") == 0)
+		if (strcmp(argv[i], "--ui") == 0)
+		{
+			useGUI = true;
+		} else if (strcmp(argv[i], "-c") == 0)
         {
-            if (++i < argc)
+			++i;
+            if (i < argc)
             {
                 configFile = argv[i];
             }
@@ -72,12 +77,16 @@ int main(int argc, char* argv[])
     radioBlue.start();
     radioYellow.start();
 
-    Viewer win(env);
-    win.setVisible(true);
-
-    int ret = app.exec();
+	Viewer *win = 0;
+	if (useGUI)
+	{
+	    win = new Viewer(env);
+	    win->setVisible(true);
+	}
+   	int ret = app.exec();
 
     //cleanup
+	delete win;
     delete env;
     vision0.terminate();
     vision0.wait();
