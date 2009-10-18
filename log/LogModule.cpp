@@ -34,7 +34,9 @@ void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
 	{
 		p.drawLine(seg.pt[0].toQPointF(), seg.pt[1].toQPointF());
 	}
-	
+
+	// Save GL_BLEND state since QPainter needs it
+	glPushAttrib(GL_COLOR_BUFFER_BIT);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	BOOST_FOREACH(const Packet::LogFrame::DebugPolygon &polygon, f.debugPolygons)
@@ -48,7 +50,8 @@ void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
 		glEnd();
 	}
 	glDisable(GL_BLEND);
-	
+	glPopAttrib();
+
 	if (_showVision)
 	{
 		BOOST_FOREACH(const Packet::Vision& vision, f.rawVision)

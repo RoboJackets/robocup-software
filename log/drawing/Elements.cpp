@@ -10,7 +10,7 @@ using namespace Constants;
 
 void drawRobot(QPainter& painter, Team t, int ID, Geometry2d::Point pos, float theta, Team viewTeam, QString text)
 {	
-	painter.setPen(Qt::black);
+	painter.setPen(Qt::white);
 	painter.setBrush(Qt::NoBrush);
 	
 	painter.save();

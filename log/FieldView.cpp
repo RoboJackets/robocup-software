@@ -33,6 +33,7 @@ FieldView::FieldView(QWidget* parent) :
 	
 	//turn on mouse tracking for modules that may need the event
 	this->setMouseTracking(true);
+	setAutoFillBackground(false);
 }
 
 void FieldView::team(Team t)
