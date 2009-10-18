@@ -11,17 +11,9 @@ set (USE_CONFIG true)
 
 include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
 
-#Module Include Directories
-# Add a new line here for every module used
 include_directories (${PROJECT_SOURCE_DIR}/..)
-
-add_subdirectory (${PROJECT_SOURCE_DIR}/../motion ${PROJECT_BINARY_DIR}/motion)
+include_directories (${PROJECT_SOURCE_DIR}/modeling/)
 add_subdirectory (${PROJECT_SOURCE_DIR}/../log ${PROJECT_BINARY_DIR}/log)
-add_subdirectory (${PROJECT_SOURCE_DIR}/../modeling ${PROJECT_BINARY_DIR}/modeling)
-add_subdirectory (${PROJECT_SOURCE_DIR}/../stateID ${PROJECT_BINARY_DIR}/stateID)
-
-include_directories(${PROJECT_BINARY_DIR}/motion)
-include_directories(${PROJECT_BINARY_DIR}/log)
 
 include_directories(${PROJECT_BINARY_DIR})
 
@@ -32,6 +24,8 @@ set (SRCS
 	InputHandler.cpp
 	JoystickInput.cpp
 	RefereeModule.cpp
+
+# Sources for gameplay module
 
 	gameplay/GameplayModule.cpp
 	gameplay/Play.cpp
@@ -61,6 +55,28 @@ set (SRCS
 
 # 	gameplay/behaviors/test/KickerCalibration.cpp   
 # 	gameplay/behaviors/test/MotionLeader.cpp    
+
+# Sources for modeling module
+	modeling/WorldModel.cpp
+	modeling/BallModel.cpp
+	modeling/RobotModel.cpp
+	modeling/BLASWrap/blaswrap.cpp
+	modeling/difference_kalman.cpp
+	
+# Sources for motion module
+	motion/MotionModule.cpp
+	motion/Robot.cpp
+	motion/Pid.cpp
+	motion/Dynamics.cpp
+	motion/planning/rrt.cpp
+	motion/planning/Tree.cpp
+
+# Sources for stateID module
+	stateID/StateIDModule.cpp
+)
+
+qt4_wrap_cpp ( MOC_SRCS
+	motion/MotionModule.hpp
 )
 
 qt4_automoc (${SRCS})
@@ -68,6 +84,7 @@ qt4_automoc (${SRCS})
 qt4_wrap_ui (UI_HDRS
 	ui/MainWindow.ui
 	ui/RefereeTab.ui
+	motion/ui/config.ui
 )
 
 qt4_add_resources (RC_FILES
@@ -83,12 +100,10 @@ target_link_libraries(${target} ${FRAMEWORK_LIBRARY})
 target_link_libraries(${target} ${GEOMETRY_LIBRARY})
 target_link_libraries(${target} ${NETWORK_LIBRARY})
 target_link_libraries(${target} ${CONFIG_LIBRARY})
+target_link_libraries(${target}  blas lapack)
 
 target_link_libraries(${target} ${QT_LIBRARIES})
 
 #Module Linking
 # Add a new line here for every module used
 target_link_libraries(${target} log)
-target_link_libraries(${target} motion)
-target_link_libraries(${target} modeling)
-target_link_libraries(${target} stateID)
