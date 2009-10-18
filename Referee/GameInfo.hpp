@@ -2,6 +2,7 @@
 #define _GAME_INFO_HPP
 
 #include <sstream>
+#include <cstring>
 #include <cstdarg>
 #include <time.h>
 #include <sys/time.h>

@@ -557,7 +557,7 @@ bool GameControl::stopTimeout()
 bool GameControl::goalScored(Team team)
 { 
     if (_enabled) {
-        if (!_gameInfo.isStopped() && !_gameInfo.isHalted() ||
+        if ((!_gameInfo.isStopped() && !_gameInfo.isHalted()) ||
             (_gameInfo.game.stage == PREGAME))
             return (false);
     
@@ -577,7 +577,7 @@ bool GameControl::goalScored(Team team)
 bool GameControl::removeGoal(Team team)
 { 
     if (_enabled) {
-        if (!_gameInfo.isStopped() && !_gameInfo.isHalted() ||
+        if ((!_gameInfo.isStopped() && !_gameInfo.isHalted()) ||
             (_gameInfo.game.stage == PREGAME))
             return (false);
     
