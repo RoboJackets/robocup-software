@@ -20,7 +20,7 @@ using namespace std;
 
 void usage(const char* prog)
 {
-	printf("usage: %s <-y|-b> [-ng] [-p <play dir>] [-f] [-c <config file>]\n", prog);
+	printf("usage: %s <-y|-b> [-ng] [-f] [-c <config file>]\n", prog);
 	printf("\t-y:  run as the yellow team\n");
 	printf("\t-b:  run as the blue team\n");
 	printf("\t-ng: no goalie\n");
