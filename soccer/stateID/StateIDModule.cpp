@@ -19,5 +19,14 @@ StateIDModule::~StateIDModule()
 
 void StateIDModule::run()
 {
-	//TODO: insert code to process the filtered state here
+	// get the state from the state variable
+	Packet::LogFrame::GameStateID& stateID = _state->stateID;
+
+
+	// do some processing...
+
+
+	// write back an updated state
+	_state->stateID = stateID;
+
 }

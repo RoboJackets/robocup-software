@@ -12,6 +12,7 @@
 // 	penalty
 
 #include "GameplayModule.hpp"
+#include "GameplayModule.moc"
 #include "Behavior.hpp"
 #include "behaviors/positions/Goalie.hpp"
 
@@ -27,14 +28,19 @@
 
 #include <QMouseEvent>
 
+#include <iostream>
 #include <assert.h>
 #include <cmath>
 #include <Constants.hpp>
 
 #include <boost/foreach.hpp>
+#include <boost/tuple/tuple.hpp>
 
 using namespace std;
 using namespace Utils;
+
+// trick from some reading group
+#define FOREACH_PAIR( KEY, VAL, COL) BOOST_FOREACH (boost::tie(KEY,VAL),COL)
 
 Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	Module("Gameplay")
@@ -44,6 +50,18 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_currentPlay = 0;
 	_playDone = false;
 	
+	// setup GUI
+	_widget = new QWidget();
+	ui.setupUi(_widget);
+	((QObject*)_widget)->setParent((QObject*)this);
+	QMetaObject::connectSlotsByName(this);
+
+	// connect GUI components
+	QObject::connect(ui.btnRemoveAll, SIGNAL(clicked()), this, SLOT(removeAllPlays()));
+	QObject::connect(ui.btnSelectAll, SIGNAL(clicked()), this, SLOT(addAllPlays()));
+	QObject::connect(ui.listPossiblePlays, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(addPlay(QListWidgetItem *)));
+	QObject::connect(ui.listSelectedPlays, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(removePlay(QListWidgetItem *)));
+
 	_centerMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length / 2));
 	_oppMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length)) *
 				Geometry2d::TransformMatrix::rotate(180);
@@ -115,16 +133,22 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 		opp[i] = new Robot(this, i, false);
 	}
 	
-	// Create plays
-	_plays.insert(new Plays::OurKickoff(this));
-	_plays.insert(new Plays::TheirKickoff(this));
-	_plays.insert(new Plays::OurFreekick(this));
-	_plays.insert(new Plays::TheirFreekick(this));
-	_plays.insert(new Plays::KickPenalty(this));
-	_plays.insert(new Plays::DefendPenalty(this));
-	_plays.insert(new Plays::Stopped(this));
-	_plays.insert(new Plays::Offense(this));
-	_plays.insert(new Plays::Defense(this));
+	// Create a set of available plays
+	_AvailablePlays.insert(make_pair("OurKickoff", new Plays::OurKickoff(this)));
+	_AvailablePlays.insert(make_pair("TheirKickoff", new Plays::TheirKickoff(this)));
+	_AvailablePlays.insert(make_pair("OurFreekick", new Plays::OurFreekick(this)));
+	_AvailablePlays.insert(make_pair("TheirFreekick", new Plays::TheirFreekick(this)));
+	_AvailablePlays.insert(make_pair("KickPenalty", new Plays::KickPenalty(this)));
+	_AvailablePlays.insert(make_pair("DefendPenalty", new Plays::DefendPenalty(this)));
+	_AvailablePlays.insert(make_pair("Stopped", new Plays::Stopped(this)));
+	_AvailablePlays.insert(make_pair("Offense", new Plays::Offense(this)));
+	_AvailablePlays.insert(make_pair("Defense", new Plays::Defense(this)));
+
+	// add plays to list view
+	string name; Play * play;
+	FOREACH_PAIR(name, play, _AvailablePlays) {
+		ui.listPossiblePlays->addItem(QString::fromStdString(name));
+	}
 }
 
 Gameplay::GameplayModule::~GameplayModule()
@@ -276,7 +300,7 @@ void Gameplay::GameplayModule::run()
 		if (play != _currentPlay)
 		{
 			_currentPlay = play;
-			
+			updateCurrentPlay(QString::fromStdString(play->name()));
 			if (_currentPlay)
 			{
 				// Assign to the new play all robots except the goalie
@@ -348,7 +372,8 @@ Gameplay::Play *Gameplay::GameplayModule::selectPlay()
 	Play *bestPlay = 0;
 	
 	// Find the best applicable play
-	BOOST_FOREACH(Play *play, _plays)
+	string name; Play *play;
+	FOREACH_PAIR(name, play, _plays)
 	{
 		if (play->applicable())
 		{
@@ -363,3 +388,32 @@ Gameplay::Play *Gameplay::GameplayModule::selectPlay()
 	
 	return bestPlay;
 }
+
+void Gameplay::GameplayModule::removeAllPlays() {
+	_plays.clear();
+	ui.listSelectedPlays->clear();
+}
+
+void Gameplay::GameplayModule::addAllPlays() {
+	string name; Play * play;
+	FOREACH_PAIR(name, play, _AvailablePlays) {
+		_plays[name] = play;
+		ui.listSelectedPlays->addItem(QString::fromStdString(name));
+	}
+}
+
+void Gameplay::GameplayModule::addPlay(QListWidgetItem* index) {
+	string name = index->text().toStdString();
+	Play * play = _AvailablePlays[name];
+	_plays[name] = play;
+	ui.listSelectedPlays->addItem(QString::fromStdString(name));
+}
+
+void Gameplay::GameplayModule::removePlay(QListWidgetItem* index) {
+	index->setHidden(true);
+}
+
+void Gameplay::GameplayModule::updateCurrentPlay(QString playname) {
+	ui.lblCurrentPlay->setText(tr("Current Play: ")+playname);
+}
+

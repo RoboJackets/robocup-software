@@ -8,6 +8,8 @@
 
 #include <framework/Module.hpp>
 
+#include "ui_PlayConfigTab.h"
+
 #include "Robot.hpp"
 
 namespace Gameplay
@@ -15,8 +17,9 @@ namespace Gameplay
 	class Behavior;
 	class Play;
 	
-	class GameplayModule: public Module
+	class GameplayModule: public QObject, public Module
 	{
+		Q_OBJECT;
 		public:
 			typedef boost::shared_ptr<GameplayModule> shared_ptr;
 			GameplayModule(SystemState *state);
@@ -98,6 +101,20 @@ namespace Gameplay
 			//goal area
 			ObstaclePtr _goalArea[3];
 			
-			std::set<Play *> _plays;
+			// sets of plays with names as lookups
+			std::map<std::string, Play *> _plays;
+			std::map<std::string, Play *> _AvailablePlays;
+
+			// GUI Components
+		protected Q_SLOTS:
+			void removeAllPlays();
+			void addAllPlays();
+			void addPlay(QListWidgetItem*index);
+			void removePlay(QListWidgetItem* index);
+			void updateCurrentPlay(QString playname);
+
+
+		protected:
+		    Ui_PlayConfig ui;
 	};
 }

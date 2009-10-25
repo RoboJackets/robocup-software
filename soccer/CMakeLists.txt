@@ -84,6 +84,7 @@ qt4_automoc (${SRCS})
 qt4_wrap_ui (UI_HDRS
 	ui/MainWindow.ui
 	ui/RefereeTab.ui
+	ui/PlayConfigTab.ui
 	motion/ui/config.ui
 )
 

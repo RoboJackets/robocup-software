@@ -108,6 +108,17 @@
 		<member type="bool" name="valid" value="false" />
 	</struct>
 	
+	<!-- game state identification variables -->
+	<enum type="uint8" typename="Possession">
+		<constant name="offense"/>
+		<constant name="defense"/>
+		<constant name="freeball"/>
+	</enum>
+	<struct typename="GameStateID">
+		<member type="Possession" name="posession"/>
+	</struct>
+	<member type="GameStateID" name="stateID"/>
+	
 	<!-- timestamp of the vision packet that clocked the system -->
 	<member type="uint64" name="timestamp" />
 

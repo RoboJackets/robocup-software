@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>696</width>
-    <height>600</height>
+    <width>1039</width>
+    <height>645</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -53,6 +53,9 @@
        </property>
        <property name="currentIndex">
         <number>0</number>
+       </property>
+       <property name="elideMode">
+        <enum>Qt::ElideMiddle</enum>
        </property>
        <widget class="QWidget" name="treeTab">
         <property name="sizePolicy">
@@ -100,8 +103,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>696</width>
-     <height>24</height>
+     <width>1039</width>
+     <height>25</height>
     </rect>
    </property>
   </widget>

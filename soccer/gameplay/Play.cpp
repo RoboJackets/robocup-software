@@ -3,12 +3,12 @@
 Gameplay::Play::Play(GameplayModule *gameplay):
 	Behavior(gameplay)
 {
-	_gameplay->_plays.insert(this);
+	_gameplay->_AvailablePlays.insert(make_pair(this->name(), this));
 }
 
 Gameplay::Play::~Play()
 {
-	_gameplay->_plays.erase(this);
+	_gameplay->_AvailablePlays.erase(this->name());
 }
 
 bool Gameplay::Play::applicable()
