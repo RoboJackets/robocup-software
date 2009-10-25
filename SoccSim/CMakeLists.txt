@@ -1,14 +1,23 @@
 project (soccsim)
 cmake_minimum_required (VERSION 2.6 FATAL_ERROR)
 
+# Are we building on a 64-bit system?
+if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
+	# Cross compile to 32-bit
+	set (CROSS32 1)
+	
+	# This must be done before add_subdirectory for some libraries
+	add_definitions(-m32)
+endif ()
+
 # default project build flags
 add_definitions (-Werror -Wall)
 
-#set (CMAKE_VERBOSE_MAKEFILE on)
 # use common stuff
 set (USE_NETWORK true)
 set (USE_GEOMETRY true)
 include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
+add_subdirectory(${PROJECT_SOURCE_DIR}/../common/vision ${PROJECT_BINARY_DIR})
 
 # PhysX Setup
 set (PHYSX_VERSION 2.8.1)
@@ -44,11 +53,11 @@ include ( ${QT_USE_FILE} )
 
 # this will run UIC on the .ui files
 qt4_wrap_ui ( UI_HDRS
-	)
+)
 
 # list any resource files
 qt4_add_resources ( RC_SRCS
-	)
+)
 
 set (SRCS
 	main.cpp
@@ -70,20 +79,24 @@ set (SRCS
 # Run moc on headers for Q_OBJECTs
 qt4_automoc (${SRCS})
 
+# Fix Qt libraries when cross-compiling
+if (CROSS32)
+	set(COMPAT_SYSTEM jaunty_amd64)
+	
+	# This must be done before add_executable
+	link_directories(${CMAKE_SOURCE_DIR}/lib/32-on-64/${COMPAT_SYSTEM})
+	
+	# The ia32-libs package does not contain libQtOpenGL.so, so we provide it.
+	# Remove the old libQtOpenGL from the linker command line so the linker doesn't look for the system (64-bit) version.
+	list(REMOVE_ITEM QT_LIBRARIES ${QT_QTOPENGL_LIBRARY})
+	list(APPEND QT_LIBRARIES ${PROJECT_SOURCE_DIR}/lib/32-on-64/${COMPAT_SYSTEM}/libQtOpenGL.so)
+endif ()
+
 add_executable (${PROJECT_NAME}
 	${SRCS} ${UI_HDRS} ${NxuStream2SRC}
 )
 
-# Are we building on a 64-bit system?
-if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
-	# The ia32-libs package does not contain libQtOpenGL.so, so we provide it.
-    target_link_libraries (${PROJECT_NAME} ${PROJECT_SOURCE_DIR}/lib/qtopengl/jaunty_amd64/libQtOpenGL.so)
-
-	# Remove the old libQtOpenGL from the linker command line so the linker doesn't look for the system (64-bit) version.
-	list(REMOVE_ITEM QT_LIBRARIES ${QT_QTOPENGL_LIBRARY})
-
-	# Cross compile to 32-bit
-	add_definitions(-m32)                                                                                                                                                                              
+if (CROSS32)
 	set_target_properties (${PROJECT_NAME} PROPERTIES LINK_FLAGS -m32)
 endif ()
 
@@ -91,4 +104,4 @@ target_link_libraries (${PROJECT_NAME} NxCooking PhysXLoader pthread ${QT_LIBRAR
 target_link_libraries (${PROJECT_NAME} ${NETWORK_LIBRARY})
 target_link_libraries (${PROJECT_NAME} ${PACKET_LIBRARY})
 target_link_libraries (${PROJECT_NAME} ${GEOMETRY_LIBRARY})
-
+target_link_libraries (${PROJECT_NAME} vision)

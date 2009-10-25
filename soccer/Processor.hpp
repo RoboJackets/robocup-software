@@ -63,7 +63,7 @@ class Processor: public QThread
 		void run();
 
 		/** handle incoming vision packet */
-		void visionHandler(const Packet::Vision* packet);
+		void visionHandler(const std::vector<uint8_t>* packet);
 		/** handle incoming radio packet */
 		void radioHandler(const Packet::RadioRx* packet);
 	

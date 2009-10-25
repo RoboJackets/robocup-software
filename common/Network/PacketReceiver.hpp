@@ -162,7 +162,6 @@ namespace Network
 				//check for possible packets
 				//return value 0 = timeout on call
 				
-				//TODO a blocking call should still read all the packets
 				if (block)
 				{
 					//wait for first packet blocking
@@ -176,7 +175,6 @@ namespace Network
 								_receivers[i]->read();
 							}
 						}
-#if 1
 						//get any other queued packets using non-blocking
 						while (poll(&_pollfds[0], _pollfds.size(), 0) >= 1) //timeout is in ms
 						{
@@ -189,21 +187,7 @@ namespace Network
 								}
 							}
 						}
-#endif
 					}
-#if 0
-					if (poll(&_pollfds[0], _pollfds.size(), -1 ) >= 1) //timeout is in ms
-					{
-						for (unsigned int i=0 ; i<_pollfds.size() ; ++i)
-						{
-							if (_pollfds[i].revents & POLLIN)
-							{
-								//read the packet
-								_receivers[i]->read();
-							}
-						}
-					}
-#endif
 				}
 				else
 				{				

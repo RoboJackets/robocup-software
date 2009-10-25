@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Physics/Env.hpp"
-#include <Network/PacketReceiver.hpp>
+
 #include <QThread>
 
 /** vision interface class, emulates the vision system for the simulator */
