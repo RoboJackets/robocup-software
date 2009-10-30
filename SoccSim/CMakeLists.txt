@@ -17,7 +17,7 @@ add_definitions (-Werror -Wall)
 set (USE_NETWORK true)
 set (USE_GEOMETRY true)
 include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
-add_subdirectory(${PROJECT_SOURCE_DIR}/../common/vision ${PROJECT_BINARY_DIR})
+add_subdirectory(${PROJECT_SOURCE_DIR}/../common/vision ${PROJECT_BINARY_DIR}/vision)
 
 # PhysX Setup
 set (PHYSX_VERSION 2.8.1)

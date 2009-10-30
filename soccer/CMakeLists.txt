@@ -10,7 +10,7 @@ set (USE_FRAMEWORK true)
 set (USE_CONFIG true)
 
 include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
-add_subdirectory (${PROJECT_SOURCE_DIR}/../common/vision ${PROJECT_BINARY_DIR})
+add_subdirectory (${PROJECT_SOURCE_DIR}/../common/vision ${PROJECT_BINARY_DIR}/vision)
 
 include_directories (${PROJECT_SOURCE_DIR}/..)
 include_directories (${PROJECT_SOURCE_DIR}/modeling/)
