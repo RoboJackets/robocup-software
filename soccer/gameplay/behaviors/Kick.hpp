@@ -28,9 +28,6 @@ namespace Gameplay
 				Robot *targetRobot;
 				bool automatic;
 
-			protected:
-				virtual float score(Robot* robot);
-				
 				enum State
 				{
 					Intercept,
@@ -38,6 +35,13 @@ namespace Gameplay
 					Shoot,
 					Done
 				};
+				State getState() {return _state;}
+
+				/** Restarts the kick play - keep going after ball */
+				void restart() {_state = Intercept;}
+
+			protected:
+				virtual float score(Robot* robot);
 
 				WindowEvaluator *_win;
 				Gameplay::Behaviors::Intercept* _intercept;

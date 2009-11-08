@@ -27,6 +27,11 @@ bool Gameplay::Behaviors::Forward::run()
 	//leave dribblers on
 	robot()->dribble(20);
 
+	// restart kicking to ensure that robots continue chasing the ball
+	if (_kick.getState() == Kick::Done) {
+		_kick.restart();
+	}
+
 	if (!teammate)
 	{
 		_kick.run();
