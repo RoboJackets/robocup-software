@@ -23,6 +23,7 @@
 #ifndef __GAME_INFO_H__
 #define __GAME_INFO_H__
 
+#include <cstdio>
 #include <string.h>
 #include <sstream>
 #include <cstdarg>  //va_list
