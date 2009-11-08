@@ -110,12 +110,18 @@
 	
 	<!-- game state identification variables -->
 	<enum type="uint8" typename="Possession">
-		<constant name="offense"/>
-		<constant name="defense"/>
-		<constant name="freeball"/>
+		<constant name="OFFENSE"/>
+		<constant name="DEFENSE"/>
+		<constant name="FREEBALL"/>
+	</enum>
+	<enum type="uint8" typename="BallFieldPos">
+		<constant name="HOMEFIELD"/>
+		<constant name="MIDFIELD"/>
+		<constant name="OPPFIELD"/>
 	</enum>
 	<struct typename="GameStateID">
 		<member type="Possession" name="posession"/>
+		<member type="BallFieldPos" name="field_pos"/>
 	</struct>
 	<member type="GameStateID" name="stateID"/>
 	

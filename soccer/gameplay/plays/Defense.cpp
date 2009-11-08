@@ -15,8 +15,10 @@ Gameplay::Plays::Defense::Defense(GameplayModule *gameplay):
 
 bool Gameplay::Plays::Defense::applicable()
 {
-	//FIXME - Offense/defense
-	return gameState().playing();
+	bool refApplicable =_gameplay->state()->gameState.playing();
+	bool gameplayApplicable = _gameplay->state()->stateID.posession == Packet::LogFrame::DEFENSE;
+
+	return refApplicable && gameplayApplicable;
 }
 
 void Gameplay::Plays::Defense::assign(set<Robot *> &available)

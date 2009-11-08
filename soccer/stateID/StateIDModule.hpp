@@ -18,5 +18,13 @@ namespace StateIdentification
 		
 		protected:
 			SystemState *_state;
+
+			// Utility functions for each of the general parameters
+
+			/** Generates a new possession state from the current one */
+			Packet::LogFrame::Possession updatePossession(const Packet::LogFrame::Possession& cur_state);
+
+			/** Determines the ball field position - with hysteresis */
+			Packet::LogFrame::BallFieldPos updateFieldPos(const Packet::LogFrame::BallFieldPos& cur_pos);
 	};
 }

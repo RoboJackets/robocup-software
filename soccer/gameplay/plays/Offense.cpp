@@ -15,8 +15,11 @@ Gameplay::Plays::Offense::Offense(GameplayModule *gameplay):
 
 bool Gameplay::Plays::Offense::applicable()
 {
-	//FIXME - Offense/defense
-	return _gameplay->state()->gameState.playing();
+	bool refApplicable =_gameplay->state()->gameState.playing();
+	bool gameplayApplicable = _gameplay->state()->stateID.posession == Packet::LogFrame::OFFENSE ||
+						      _gameplay->state()->stateID.posession == Packet::LogFrame::FREEBALL;
+
+	return refApplicable && gameplayApplicable;
 }
 
 void Gameplay::Plays::Offense::assign(set<Robot *> &available)
