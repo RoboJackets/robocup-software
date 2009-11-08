@@ -62,7 +62,10 @@ void WorldModel::run()
 	
 	BOOST_FOREACH(Packet::LogFrame::Robot& r, _state->self)
 	{
-		r.haveBall = r.radioRx.ball;
+		if (r.radioRx.updated)
+		{
+			r.haveBall = r.radioRx.ball;
+		}
 		
 		//if a robot has the ball, we need to make an observation 
 		//using that information and project the ball in front of it
