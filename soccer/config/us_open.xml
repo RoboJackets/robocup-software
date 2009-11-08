@@ -160,14 +160,13 @@
 	
 	<worldModel>
 		<pos>
-	    	<filter alpha=".91" beta=".6" gamma=".15" />
+	    	<filter alpha="1" beta="0" gamma="0" />
 	    </pos>
 	    <angle>
-	    	<filter alpha=".91" beta=".6" gamma=".15" />
+	    	<filter alpha="1" beta="0" gamma="0" />
 	    </angle>
 	    
 	    <ball>
-	    	<float name="covar_" value="..." />
 	    </ball>
 	</worldModel>
 </config>

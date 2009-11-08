@@ -183,7 +183,6 @@ void Processor::run()
 							
 							if (rcfg)
 							{
-								//printf("%f\n", rcfg->motion.deg0.velocity);
 								_state.self[r].config = *rcfg;
 							}
 						}
@@ -211,6 +210,9 @@ void Processor::run()
 
 					//always run logging last
 					_logModule->run();
+					
+					// Send motion commands to the robots
+					sendRadioData();
 
 					//new state
 					clearState();
@@ -224,10 +226,6 @@ void Processor::run()
 		{
 			//blocking to act on new packets
 			receiver.receive(false);
-
-			//we should never do anything until processor
-			//has established a trigger id... -Roman
-			//what if there is no vision??
 
 			//run modeling for testing
 			_modelingModule->run();
@@ -246,7 +244,7 @@ void Processor::run()
 void Processor::clearState()
 {
 	//always clear the raw vision packets
-	_state.rawVision.clear();
+// 	_state.rawVision.clear();
 }
 
 void Processor::sendRadioData()
@@ -286,11 +284,20 @@ void Processor::sendRadioData()
 void Processor::visionHandler(const std::vector<uint8_t>* buf)
 {
 	SSL_WrapperPacket wrapper;
-	wrapper.ParseFromArray(&buf->at(0), buf->size());
+	if (!wrapper.ParseFromArray(&buf->at(0), buf->size()))
+	{
+		printf("Bad vision packet\n");
+		return;
+	}
+	
+	if (!wrapper.has_detection())
+	{
+		// Geometry only - we don't care
+		return;
+	}
 	
 	const SSL_DetectionFrame &detection = wrapper.detection();
 	
-	//FIXME - This is clunky.  Code copied from ssl-client.
 	Packet::Vision visionPacket;
 	visionPacket.camera = detection.camera_id();
 	visionPacket.timestamp = (uint64_t)(detection.t_capture() * 1.0e6);
@@ -339,63 +346,22 @@ void Processor::visionHandler(const std::vector<uint8_t>* buf)
 		b.pos.y = ball.y()/1000.0;
 		visionPacket.balls.push_back(b);
 	}
-	Packet::Vision *packet = &visionPacket;
-	
-	//detect trigger camera, if not already set
-	if (_triggerId < 0)
-	{
-		if (_state.rawVision.size() > 0 && _state.rawVision[0].camera
-				== packet->camera)
-		{
-			//TODO investigate...
-			uint64_t half = _state.rawVision[0].timestamp;
-			half += (packet->timestamp - _state.rawVision[0].timestamp) / 2;
-
-			//default trigger to this camera
-			_triggerId = packet->camera;
-
-			//eval all packets, any packet less than half becomes the new tigger
-			//this gives us the last packet up to half as the trigger
-			BOOST_FOREACH (const Packet::Vision& raw , _state.rawVision)
-			{
-				if (raw.timestamp < half)
-				{
-					_triggerId = raw.camera;
-				}
-			}
-
-			//we have set the trigger camera
-			printf("Set trigger camera: %d\n", _triggerId);
-
-			//clear state, this will cause only the trigger frame's sync
-			//to be stored and system will continue normal operation
-			clearState();
-		}
-
-		//store the sync packets
-		_state.rawVision.push_back(*packet);
-
-		return;
-	}
-
-	//if we have trigger camera, we will either send data
-	//or set the trigger flag
-	if (packet->camera == _triggerId
-			&& _state.controlState == SystemState::Auto
-			&& _state.runState == SystemState::Running)
-	{
-		sendRadioData();
-		_trigger = true;
-	}
 
 	//populate the state
-	_state.rawVision.push_back(*packet);
-
-	//set syncronous time to packet timestamp
-	_state.timestamp = packet->timestamp;
+	if (visionPacket.camera >= _state.rawVision.size())
+	{
+		_state.rawVision.resize(visionPacket.camera + 1);
+	}
+	_state.rawVision[visionPacket.camera] = visionPacket;
 
 	//convert last frame to teamspace
-	toTeamSpace(_state.rawVision[_state.rawVision.size() - 1]);
+	toTeamSpace(_state.rawVision[visionPacket.camera]);
+
+	if (visionPacket.camera == 0)
+	{
+		_state.timestamp = visionPacket.timestamp;
+		_trigger = true;
+	}
 }
 
 void Processor::radioHandler(const Packet::RadioRx* packet)

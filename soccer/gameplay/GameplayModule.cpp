@@ -300,9 +300,10 @@ void Gameplay::GameplayModule::run()
 		if (play != _currentPlay)
 		{
 			_currentPlay = play;
-			updateCurrentPlay(QString::fromStdString(play->name()));
 			if (_currentPlay)
 			{
+				updateCurrentPlay(QString::fromStdString(_currentPlay->name()));
+				
 				// Assign to the new play all robots except the goalie
 				set<Robot *> robots;
 				BOOST_FOREACH(Robot *r, self)

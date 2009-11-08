@@ -10,25 +10,24 @@
 #include "BLASWrap/blaswrap.h"
 #include "difference_kalman.hpp"
 
-
 namespace Modeling
 {
-    class RobotModel
-    {
-        public:
-            RobotModel(ConfigFile::WorldModel& cfg, int s);
+	class RobotModel
+	{
+		public:
+			RobotModel(ConfigFile::WorldModel& cfg, int s);
 
-            void observation(uint64_t time, Geometry2d::Point pos, float angle);
-            Geometry2d::Point predictPosAtTime(float dtime);
-            void update();
+			void observation(uint64_t time, Geometry2d::Point pos, float angle);
+			Geometry2d::Point predictPosAtTime(float dtime);
+			void update();
 
-            int shell;
+			int shell;
 
-            // Best observation so far
-            Geometry2d::Point observedPos;
-            uint64_t bestObservedTime;
-            float observedAngle;
-            float bestError;
+			// Best observation so far
+			Geometry2d::Point observedPos;
+			uint64_t bestObservedTime;
+			float observedAngle;
+			float bestError;
 			/** Position **/
 			//State Transistion Matrix
 			DMatrix posA;
@@ -78,29 +77,29 @@ namespace Modeling
 			DifferenceKalmanFilter *angKalman;
 
 			//Alpha Gamma Beta Filter
-            // Current filtered state
-            Geometry2d::Point pos;
+			// Current filtered state
+			Geometry2d::Point pos;
 			Geometry2d::Point abgPos;
-            Geometry2d::Point vel;
-            Geometry2d::Point accel;
-            float angle;
+			Geometry2d::Point vel;
+			Geometry2d::Point accel;
+			float angle;
 			float abgAngle;
-            float angleVel;
-            float angleAccel;
+			float angleVel;
+			float angleAccel;
 
-            // Filter coefficients
-            float posAlpha;
-            float posBeta;
-            float posGamma;
-            float angleAlpha;
-            float angleBeta;
-            float angleGamma;
+			// Filter coefficients
+			float posAlpha;
+			float posBeta;
+			float posGamma;
+			float angleAlpha;
+			float angleBeta;
+			float angleGamma;
 
-            uint64_t firstObservedTime;
-            uint64_t lastObservedTime;
+			uint64_t firstObservedTime;
+			uint64_t lastObservedTime;
 
-            RobotModel **report;
+			RobotModel **report;
 
-            ConfigFile::WorldModel& _config;
-    };
+			ConfigFile::WorldModel& _config;
+	};
 }

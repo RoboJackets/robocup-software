@@ -4,7 +4,7 @@
 #include "RobotModel.hpp"
 #include <Utils.hpp>
 
-#define KALMAN 1
+#define KALMAN 0
 
 Modeling::RobotModel::RobotModel(ConfigFile::WorldModel& cfg, int s) :
 	posA(6,6), posB(6,6), posP(6,6), posQ(6,6), posR(2,2), posH(2,6),
@@ -12,15 +12,15 @@ Modeling::RobotModel::RobotModel(ConfigFile::WorldModel& cfg, int s) :
 	angQ(3,3), angR(1,1), angH(1,3), angZ(1), angU(3), angE(3), angX0(3),
 	_config(cfg)
 {
-    shell = s;
+	shell = s;
 
-    observedAngle = 0;
-    bestError = 0;
-    bestObservedTime = 0;
+	observedAngle = 0;
+	bestError = 0;
+	bestObservedTime = 0;
 
-    angle = 0;
-    angleVel = 0;
-    angleAccel = 0;
+	angle = 0;
+	angleVel = 0;
+	angleAccel = 0;
 
 #if KALMAN
 
@@ -36,8 +36,8 @@ Modeling::RobotModel::RobotModel(ConfigFile::WorldModel& cfg, int s) :
 
 	//Alpha-Beta-Gamma Filter
 	posAlpha = _config.pos.alpha;
-    posBeta = _config.pos.beta;
-    posGamma = _config.pos.gamma;
+	posBeta = _config.pos.beta;
+	posGamma = _config.pos.gamma;
 
 	//Process covariance between position and velocity (E[x,x_dot])
 // 	posQ(1,0) = posQ(4,3) = 10;
@@ -84,8 +84,8 @@ Modeling::RobotModel::RobotModel(ConfigFile::WorldModel& cfg, int s) :
 
 	//Angle ABG Stuff
 	angleAlpha = _config.angle.alpha;
-    angleBeta = _config.angle.beta;
-    angleGamma = _config.angle.gamma;
+	angleBeta = _config.angle.beta;
+	angleGamma = _config.angle.gamma;
 
 	//Process covariance between position and velocity (E[x,x_dot])
 // 	angQ(1,0) = 10;
@@ -119,56 +119,56 @@ Modeling::RobotModel::RobotModel(ConfigFile::WorldModel& cfg, int s) :
 # else
 	//Alpha-Beta-Gamma Filter
 	posAlpha = _config.pos.alpha;
-    posBeta = _config.pos.beta;
-    posGamma = _config.pos.gamma;
+	posBeta = _config.pos.beta;
+	posGamma = _config.pos.gamma;
 
-    angleAlpha = _config.angle.alpha;
-    angleBeta = _config.angle.beta;
-    angleGamma = _config.angle.gamma;
+	angleAlpha = _config.angle.alpha;
+	angleBeta = _config.angle.beta;
+	angleGamma = _config.angle.gamma;
 #endif
-    firstObservedTime = 0;
-    lastObservedTime = 0;
+	firstObservedTime = 0;
+	lastObservedTime = 0;
 
-    report = 0;
+	report = 0;
 }
 
 void Modeling::RobotModel::observation(uint64_t time, Geometry2d::Point pos, float angle)
 {
-    if (lastObservedTime)
-    {
-        float dtime = (float)(time - lastObservedTime) / 1e6;
-        Geometry2d::Point predictPos = predictPosAtTime(dtime);
-        float error = (pos - predictPos).magsq();
-        if (bestError < 0 || error < bestError)
-        {
-            bestError = error;
-            observedPos = pos;
-            observedAngle = angle;
-            bestObservedTime = time;
-        }
-    } else {
-        // First observation
-        bestError = 0;
-        observedPos = pos;
-        observedAngle = angle;
-        firstObservedTime = time;
-        lastObservedTime = time;
-        bestObservedTime = time;
-    }
+	if (lastObservedTime)
+	{
+		float dtime = (float)(time - lastObservedTime) / 1e6;
+		Geometry2d::Point predictPos = predictPosAtTime(dtime);
+		float error = (pos - predictPos).magsq();
+		if (bestError < 0 || error < bestError)
+		{
+			bestError = error;
+			observedPos = pos;
+			observedAngle = angle;
+			bestObservedTime = time;
+		}
+	} else {
+		// First observation
+		bestError = 0;
+		observedPos = pos;
+		observedAngle = angle;
+		firstObservedTime = time;
+		lastObservedTime = time;
+		bestObservedTime = time;
+	}
 }
 
 Geometry2d::Point Modeling::RobotModel::predictPosAtTime(float dtime)
 {
-    return pos + vel * dtime + accel * 0.5f * dtime * dtime;
+	return pos + vel * dtime + accel * 0.5f * dtime * dtime;
 }
 
 void Modeling::RobotModel::update()
 {
-    float dtime = (float)(bestObservedTime - lastObservedTime) / 1e6;
-    lastObservedTime = bestObservedTime;
+	float dtime = (float)(bestObservedTime - lastObservedTime) / 1e6;
+	lastObservedTime = bestObservedTime;
 
-    if (dtime)
-    {
+	if (dtime)
+	{
 	#if KALMAN
 
 		/** Position **/
@@ -237,21 +237,21 @@ void Modeling::RobotModel::update()
 		//Using the ABG Filter for indpended velocity and acceleration
 
 	#else
-        Geometry2d::Point predictPos = predictPosAtTime(dtime);
-        Geometry2d::Point predictVel = vel + accel * dtime;
+		Geometry2d::Point predictPos = predictPosAtTime(dtime);
+		Geometry2d::Point predictVel = vel + accel * dtime;
 
-        float predictAngle = angle + angleVel * dtime + angleAccel * 0.5f * dtime * dtime;
-        float predictAngleVel = angleVel + angleAccel * dtime;
+		float predictAngle = angle + angleVel * dtime + angleAccel * 0.5f * dtime * dtime;
+		float predictAngleVel = angleVel + angleAccel * dtime;
 
-        Geometry2d::Point posError = observedPos - predictPos;
-        pos = predictPos + posError * posAlpha;
-        vel = predictVel + posError * posBeta / dtime;
-        accel += posError * posGamma / (dtime * dtime);
+		Geometry2d::Point posError = observedPos - predictPos;
+		pos = predictPos + posError * posAlpha;
+		vel = predictVel + posError * posBeta / dtime;
+		accel += posError * posGamma / (dtime * dtime);
 
-        float angleError = Utils::fixAngleDegrees(observedAngle - predictAngle);
-        angle = Utils::fixAngleDegrees(predictAngle + angleError * angleAlpha);
-        angleVel = predictAngleVel + angleError * angleBeta / dtime;
-        angleAccel += angleError * angleGamma / (dtime * dtime);
+		float angleError = Utils::fixAngleDegrees(observedAngle - predictAngle);
+		angle = Utils::fixAngleDegrees(predictAngle + angleError * angleAlpha);
+		angleVel = predictAngleVel + angleError * angleBeta / dtime;
+		angleAccel += angleError * angleGamma / (dtime * dtime);
 	#endif
-    }
+	}
 }
