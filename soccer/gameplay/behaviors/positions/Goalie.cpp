@@ -8,6 +8,7 @@
 #include <gameplay/Window.hpp>
 
 #include <boost/foreach.hpp>
+#include <iostream>
 
 using namespace std;
 using namespace Geometry2d;

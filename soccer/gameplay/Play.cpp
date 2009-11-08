@@ -1,9 +1,9 @@
+#include <iostream>
 #include "Play.hpp"
 
 Gameplay::Play::Play(GameplayModule *gameplay):
 	Behavior(gameplay)
 {
-
 }
 
 Gameplay::Play::~Play()

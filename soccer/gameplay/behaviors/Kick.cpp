@@ -22,6 +22,7 @@ Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay) :
 	automatic = true;
 	_win = 0;
 	targetRobot = 0;
+	_intercept = new Gameplay::Behaviors::Intercept(gameplay);
 }
 
 Gameplay::Behaviors::Kick::~Kick()
@@ -29,6 +30,10 @@ Gameplay::Behaviors::Kick::~Kick()
 	if (_win)
 	{
 		delete _win;
+	}
+	if (_intercept)
+	{
+		delete _intercept;
 	}
 }
 
@@ -43,7 +48,6 @@ void Gameplay::Behaviors::Kick::assign(set<Robot *> &available)
 	}
 
 	_state = Intercept;
-	_intercept = new Gameplay::Behaviors::Intercept(gameplay());
 	_intercept->assignOne(robot());
 	_lastMargin = 0;
 }
