@@ -67,6 +67,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	QObject::connect(ui.btnSavePlaybook, SIGNAL(clicked()), this, SLOT(savePlaybook()));
 	QObject::connect(ui.listPossiblePlays, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(addPlay(QListWidgetItem *)));
 	QObject::connect(ui.listSelectedPlays, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(removePlay(QListWidgetItem *)));
+	QObject::connect(ui.chkUseGoalie, SIGNAL(stateChanged(int)), this, SLOT(useGoalie(int)));
 
 	_centerMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length / 2));
 	_oppMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length)) *
@@ -499,6 +500,16 @@ void Gameplay::GameplayModule::savePlaybook() {
 		ofs << name << "\n";
 	}
 	ofs.close();
+}
+
+void Gameplay::GameplayModule::useGoalie(int state) {
+	if (ui.chkUseGoalie->isChecked()) {
+		cout << "Creating goalie" << endl;
+		createGoalie();
+	} else {
+		cout << "Removing goalie" << endl;
+		removeGoalie();
+	}
 }
 
 

@@ -114,6 +114,7 @@ namespace Gameplay
 			void updateCurrentPlay(QString playname);
 			void loadPlaybook();
 			void savePlaybook();
+			void useGoalie(int state);
 
 		protected:
 		    Ui_PlayConfig ui;

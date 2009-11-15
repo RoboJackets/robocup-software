@@ -51,6 +51,16 @@
     </widget>
    </item>
    <item>
+    <widget class="QCheckBox" name="chkUseGoalie">
+     <property name="text">
+      <string>Use Goalie</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QLabel" name="label">
      <property name="text">
       <string>All Available Plays</string>
@@ -115,5 +125,6 @@
   <slot>addAllPlays()</slot>
   <slot>loadPlaybook()</slot>
   <slot>savePlaybook()</slot>
+  <slot>UseGoalie(int)</slot>
  </slots>
 </ui>
