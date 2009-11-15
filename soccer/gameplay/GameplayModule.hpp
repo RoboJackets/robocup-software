@@ -112,7 +112,8 @@ namespace Gameplay
 			void addPlay(QListWidgetItem*index);
 			void removePlay(QListWidgetItem* index);
 			void updateCurrentPlay(QString playname);
-
+			void loadPlaybook();
+			void savePlaybook();
 
 		protected:
 		    Ui_PlayConfig ui;

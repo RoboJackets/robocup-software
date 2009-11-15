@@ -53,6 +53,11 @@ set (SRCS
 	gameplay/behaviors/positions/Goalie.cpp      
 	gameplay/behaviors/positions/Fullback.cpp
  	gameplay/behaviors/positions/Forward.cpp
+ 	
+	# testing plays/behaviors
+	gameplay/plays/test_plays/TestBasicPassing.cpp
+	gameplay/behaviors/test/Passer.cpp
+	gameplay/behaviors/test/Receiver.cpp
 
 # 	gameplay/behaviors/test/KickerCalibration.cpp   
 # 	gameplay/behaviors/test/MotionLeader.cpp    

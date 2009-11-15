@@ -26,9 +26,13 @@
 #include "plays/Offense.hpp"
 #include "plays/Defense.hpp"
 
+#include "plays/test_plays/TestBasicPassing.hpp"
+
 #include <QMouseEvent>
+#include <QFileDialog>
 
 #include <iostream>
+#include <fstream>
 #include <assert.h>
 #include <cmath>
 #include <Constants.hpp>
@@ -59,6 +63,8 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	// connect GUI components
 	QObject::connect(ui.btnRemoveAll, SIGNAL(clicked()), this, SLOT(removeAllPlays()));
 	QObject::connect(ui.btnSelectAll, SIGNAL(clicked()), this, SLOT(addAllPlays()));
+	QObject::connect(ui.btnLoadPlaybook, SIGNAL(clicked()), this, SLOT(loadPlaybook()));
+	QObject::connect(ui.btnSavePlaybook, SIGNAL(clicked()), this, SLOT(savePlaybook()));
 	QObject::connect(ui.listPossiblePlays, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(addPlay(QListWidgetItem *)));
 	QObject::connect(ui.listSelectedPlays, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(removePlay(QListWidgetItem *)));
 
@@ -133,7 +139,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 		opp[i] = new Robot(this, i, false);
 	}
 	
-	// Create a set of available plays
+	// Create a set of available normal plays
 	_AvailablePlays.insert(make_pair("OurKickoff", new Plays::OurKickoff(this)));
 	_AvailablePlays.insert(make_pair("TheirKickoff", new Plays::TheirKickoff(this)));
 	_AvailablePlays.insert(make_pair("OurFreekick", new Plays::OurFreekick(this)));
@@ -143,6 +149,9 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_AvailablePlays.insert(make_pair("Stopped", new Plays::Stopped(this)));
 	_AvailablePlays.insert(make_pair("Offense", new Plays::Offense(this)));
 	_AvailablePlays.insert(make_pair("Defense", new Plays::Defense(this)));
+
+	// Add testing plays
+	_AvailablePlays.insert(make_pair("TestBasicPassing", new Plays::TestBasicPassing(this)));
 
 	// add plays to list view
 	string name; Play * play;
@@ -398,23 +407,98 @@ void Gameplay::GameplayModule::removeAllPlays() {
 void Gameplay::GameplayModule::addAllPlays() {
 	string name; Play * play;
 	FOREACH_PAIR(name, play, _AvailablePlays) {
-		_plays[name] = play;
-		ui.listSelectedPlays->addItem(QString::fromStdString(name));
+		if (_plays.find(name) == _plays.end()) {
+			_plays[name] = play;
+			ui.listSelectedPlays->addItem(QString::fromStdString(name));
+		}
 	}
 }
 
 void Gameplay::GameplayModule::addPlay(QListWidgetItem* index) {
 	string name = index->text().toStdString();
 	Play * play = _AvailablePlays[name];
-	_plays[name] = play;
-	ui.listSelectedPlays->addItem(QString::fromStdString(name));
+	if (_plays.find(name) == _plays.end()) {
+		_plays[name] = play;
+		ui.listSelectedPlays->addItem(QString::fromStdString(name));
+	}
 }
 
 void Gameplay::GameplayModule::removePlay(QListWidgetItem* index) {
+	// make play invisible in list
 	index->setHidden(true);
+
+	// remove play from underlying plays
+	string name = index->text().toStdString(); // play to remove
+	map<string, Play *> newPlays;
+	string n; Play* p;
+	FOREACH_PAIR(n, p, _plays) {
+		if (n != name)
+			newPlays[n] = _plays[n];
+	}
+	_plays = newPlays;
 }
 
 void Gameplay::GameplayModule::updateCurrentPlay(QString playname) {
 	ui.lblCurrentPlay->setText(tr("Current Play: ")+playname);
 }
+
+void Gameplay::GameplayModule::loadPlaybook() {
+	// get a filename from the user
+	QString fileName = QFileDialog::getOpenFileName(_widget,
+	     tr("Load Playbook"), "./", tr("Playbook Files (*.pbk)"));
+
+	// clear the playbook
+	removeAllPlays();
+
+	// open the file
+	string fname = fileName.toStdString();
+	ifstream ifs(fname.c_str());
+
+	// load the name of the playbook
+	size_t name_start = fname.find_last_of("/");
+	string fname1 = fname.substr(name_start+1); // remove path
+	string fname2 = fname1.substr(0, fname1.size()-4); // remove ".pbk"
+	QString playbook_name = QString::fromStdString(fname2);
+	ui.lblCurrentPlaybook->setText(tr("Current Playbook: ") + playbook_name);
+
+	// read all of the strings
+	while (ifs.good()) {
+		string name;
+		ifs >> name;
+		if (name != "") {
+			if (_AvailablePlays.find(name) != _AvailablePlays.end()) {
+				_plays[name] = _AvailablePlays[name];
+				ui.listSelectedPlays->addItem(QString::fromStdString(name));
+			} else {
+				cout << "Missing Play: " << name << endl;
+			}
+		}
+	}
+	ifs.close();
+}
+
+void Gameplay::GameplayModule::savePlaybook() {
+	// get a filename from the user
+	QString fileName = QFileDialog::getSaveFileName(_widget,
+		     tr("Save Playbook"), "./", tr("Playbook Files (*.pbk)"));
+	string fname = fileName.toStdString() + ".pbk";
+
+	// change the name of the current playbook
+	size_t name_start = fname.find_last_of("/");
+	string fname1 = fname.substr(name_start+1); // remove path
+	string fname2 = fname1.substr(0, fname1.size()-4); // remove ".pbk"
+	QString playbook_name = QString::fromStdString(fname2);
+	ui.lblCurrentPlaybook->setText(tr("Current Playbook: ") + playbook_name);
+
+	// open the file
+	ofstream ofs(fname.c_str());
+
+	// write the plays in order
+	string name; Play* p;
+	FOREACH_PAIR(name, p, _plays) {
+		ofs << name << "\n";
+	}
+	ofs.close();
+}
+
 
