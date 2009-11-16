@@ -35,7 +35,7 @@ class Processor: public QThread
 		Processor(Team t, QString filename);
 		~Processor();
 		
-		Gameplay::GameplayModule::shared_ptr gameplayModule() const
+		boost::shared_ptr<Gameplay::GameplayModule> gameplayModule() const
 		{
 			return _gameplayModule;
 		}
@@ -48,7 +48,7 @@ class Processor: public QThread
 		}
 		
 		//return a list of all the modules */
-		const QVector<Module::shared_ptr>& modules()
+		const QVector<boost::shared_ptr<Module> >& modules()
 		{
 			return _modules;
 		}
@@ -103,14 +103,14 @@ class Processor: public QThread
 		//modules
 		QMutex _modulesMutex;
 		
-		Module::shared_ptr _modelingModule;
-		RefereeModule::shared_ptr _refereeModule;
-		Gameplay::GameplayModule::shared_ptr _gameplayModule;
-		Module::shared_ptr _motionModule;
-		Log::LogModule::shared_ptr _logModule;
-		StateIdentification::StateIDModule::shared_ptr _stateIDModule;
+		boost::shared_ptr<Module> _modelingModule;
+		boost::shared_ptr<RefereeModule> _refereeModule;
+		boost::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
+		boost::shared_ptr<Module> _motionModule;
+		boost::shared_ptr<Log::LogModule> _logModule;
+		boost::shared_ptr<StateIdentification::StateIDModule> _stateIDModule;
 		
-		InputHandler::shared_ptr _inputHandler;
+		boost::shared_ptr<InputHandler> _inputHandler;
 		
 		Network::Sender _sender;
 		
@@ -118,5 +118,5 @@ class Processor: public QThread
 		ConfigFile _config;
 		
 		/** list of all modules */
-		QVector<Module::shared_ptr> _modules;
+		QVector<boost::shared_ptr<Module> > _modules;
 };

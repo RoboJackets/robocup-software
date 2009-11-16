@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>309</width>
-    <height>767</height>
+    <height>404</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>Plays</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -31,27 +31,24 @@
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QPushButton" name="btnLoadPlaybook">
+       <widget class="QPushButton" name="load">
         <property name="text">
          <string>Load Playbook</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="btnSavePlaybook">
+       <widget class="QPushButton" name="save">
         <property name="text">
          <string>Save Playbook</string>
         </property>
        </widget>
       </item>
      </layout>
-     <zorder>btnLoadPlaybook</zorder>
-     <zorder>btnSavePlaybook</zorder>
-     <zorder>btnSavePlaybook</zorder>
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="chkUseGoalie">
+    <widget class="QCheckBox" name="goalie">
      <property name="text">
       <string>Use Goalie</string>
      </property>
@@ -68,43 +65,25 @@
     </widget>
    </item>
    <item>
-    <widget class="QListWidget" name="listPossiblePlays"/>
+    <widget class="QListView" name="plays"/>
    </item>
    <item>
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Currently Selected Plays</string>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QListWidget" name="listSelectedPlays"/>
-   </item>
-   <item>
-    <widget class="QFrame" name="frame">
-     <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
-     </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QPushButton" name="btnSelectAll">
-        <property name="text">
-         <string>Select All</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="btnRemoveAll">
-        <property name="text">
-         <string>Remove All</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="all">
+       <property name="text">
+        <string>&amp;All</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="none">
+       <property name="text">
+        <string>&amp;None</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QLabel" name="lblCurrentPlay">

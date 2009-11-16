@@ -21,7 +21,7 @@ using namespace Utils;
 // Maximum time to coast a track (keep the track alive with no observations) in microseconds.
 const uint64_t MaxCoastTime = 500000;
 
-WorldModel::WorldModel(SystemState *state, ConfigFile::WorldModel& cfg) :
+WorldModel::WorldModel(SystemState *state, const ConfigFile::WorldModel& cfg) :
 	Module("World Model"),
 	_config(cfg)
 {

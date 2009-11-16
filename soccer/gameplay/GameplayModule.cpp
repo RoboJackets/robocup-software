@@ -11,8 +11,8 @@
 // 	move
 // 	penalty
 
+#include "PlayConfigTab.hpp"
 #include "GameplayModule.hpp"
-#include "GameplayModule.moc"
 #include "Behavior.hpp"
 #include "behaviors/positions/Goalie.hpp"
 
@@ -31,44 +31,24 @@
 #include <QMouseEvent>
 #include <QFileDialog>
 
-#include <iostream>
-#include <fstream>
 #include <assert.h>
 #include <cmath>
 #include <Constants.hpp>
 
 #include <boost/foreach.hpp>
-#include <boost/tuple/tuple.hpp>
+#include <boost/make_shared.hpp>
 
 using namespace std;
+using namespace boost;
 using namespace Utils;
-
-// trick from some reading group
-#define FOREACH_PAIR( KEY, VAL, COL) BOOST_FOREACH (boost::tie(KEY,VAL),COL)
 
 Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	Module("Gameplay")
 {
 	_state = state;
 	_goalie = 0;
-	_currentPlay = 0;
 	_playDone = false;
 	
-	// setup GUI
-	_widget = new QWidget();
-	ui.setupUi(_widget);
-	((QObject*)_widget)->setParent((QObject*)this);
-	QMetaObject::connectSlotsByName(this);
-
-	// connect GUI components
-	QObject::connect(ui.btnRemoveAll, SIGNAL(clicked()), this, SLOT(removeAllPlays()));
-	QObject::connect(ui.btnSelectAll, SIGNAL(clicked()), this, SLOT(addAllPlays()));
-	QObject::connect(ui.btnLoadPlaybook, SIGNAL(clicked()), this, SLOT(loadPlaybook()));
-	QObject::connect(ui.btnSavePlaybook, SIGNAL(clicked()), this, SLOT(savePlaybook()));
-	QObject::connect(ui.listPossiblePlays, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(addPlay(QListWidgetItem *)));
-	QObject::connect(ui.listSelectedPlays, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(removePlay(QListWidgetItem *)));
-	QObject::connect(ui.chkUseGoalie, SIGNAL(stateChanged(int)), this, SLOT(useGoalie(int)));
-
 	_centerMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length / 2));
 	_oppMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length)) *
 				Geometry2d::TransformMatrix::rotate(180);
@@ -139,26 +119,25 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 		self[i] = new Robot(this, i, true);
 		opp[i] = new Robot(this, i, false);
 	}
+
+	// Create play configuration tab
+	_playConfig = new PlayConfigTab();
+	_playConfig->gameplay = this;
+	_widget = _playConfig;
 	
 	// Create a set of available normal plays
-	_AvailablePlays.insert(make_pair("OurKickoff", new Plays::OurKickoff(this)));
-	_AvailablePlays.insert(make_pair("TheirKickoff", new Plays::TheirKickoff(this)));
-	_AvailablePlays.insert(make_pair("OurFreekick", new Plays::OurFreekick(this)));
-	_AvailablePlays.insert(make_pair("TheirFreekick", new Plays::TheirFreekick(this)));
-	_AvailablePlays.insert(make_pair("KickPenalty", new Plays::KickPenalty(this)));
-	_AvailablePlays.insert(make_pair("DefendPenalty", new Plays::DefendPenalty(this)));
-	_AvailablePlays.insert(make_pair("Stopped", new Plays::Stopped(this)));
-	_AvailablePlays.insert(make_pair("Offense", new Plays::Offense(this)));
-	_AvailablePlays.insert(make_pair("Defense", new Plays::Defense(this)));
+	_playConfig->addPlay(make_shared<Plays::OurKickoff>(this));
+	_playConfig->addPlay(make_shared<Plays::TheirKickoff>(this));
+	_playConfig->addPlay(make_shared<Plays::OurFreekick>(this));
+	_playConfig->addPlay(make_shared<Plays::TheirFreekick>(this));
+	_playConfig->addPlay(make_shared<Plays::KickPenalty>(this));
+	_playConfig->addPlay(make_shared<Plays::DefendPenalty>(this));
+	_playConfig->addPlay(make_shared<Plays::Stopped>(this));
+	_playConfig->addPlay(make_shared<Plays::Offense>(this));
+	_playConfig->addPlay(make_shared<Plays::Defense>(this));
 
 	// Add testing plays
-	_AvailablePlays.insert(make_pair("TestBasicPassing", new Plays::TestBasicPassing(this)));
-
-	// add plays to list view
-	string name; Play * play;
-	FOREACH_PAIR(name, play, _AvailablePlays) {
-		ui.listPossiblePlays->addItem(QString::fromStdString(name));
-	}
+	_playConfig->addPlay(make_shared<Plays::TestBasicPassing>(this));
 }
 
 Gameplay::GameplayModule::~GameplayModule()
@@ -306,13 +285,13 @@ void Gameplay::GameplayModule::run()
 	{
 		_playDone = false;
 		
-		Play *play = selectPlay();
+		shared_ptr<Play> play = selectPlay();
 		if (play != _currentPlay)
 		{
 			_currentPlay = play;
 			if (_currentPlay)
 			{
-				updateCurrentPlay(QString::fromStdString(_currentPlay->name()));
+// 				updateCurrentPlay(QString::fromStdString(_currentPlay->name()));
 				
 				// Assign to the new play all robots except the goalie
 				set<Robot *> robots;
@@ -377,14 +356,31 @@ void Gameplay::GameplayModule::run()
 	}
 }
 
-Gameplay::Play *Gameplay::GameplayModule::selectPlay()
+void Gameplay::GameplayModule::enablePlay(shared_ptr<Play> play)
+{
+	QMutexLocker lock(&_playMutex);
+	_plays.insert(play);
+}
+
+void Gameplay::GameplayModule::disablePlay(shared_ptr<Play> play)
+{
+	QMutexLocker lock(&_playMutex);
+	_plays.erase(play);
+}
+
+bool Gameplay::GameplayModule::playEnabled(boost::shared_ptr<Play> play) const
+{
+	QMutexLocker lock(&_playMutex);
+	return _plays.find(play) != _plays.end();
+}
+
+shared_ptr<Gameplay::Play> Gameplay::GameplayModule::selectPlay()
 {
 	float bestScore = 0;
-	Play *bestPlay = 0;
+	shared_ptr<Play> bestPlay;
 	
 	// Find the best applicable play
-	string name; Play *play;
-	FOREACH_PAIR(name, play, _plays)
+	BOOST_FOREACH(shared_ptr<Play> play, _plays)
 	{
 		if (play->applicable())
 		{
@@ -399,117 +395,3 @@ Gameplay::Play *Gameplay::GameplayModule::selectPlay()
 	
 	return bestPlay;
 }
-
-void Gameplay::GameplayModule::removeAllPlays() {
-	_plays.clear();
-	ui.listSelectedPlays->clear();
-}
-
-void Gameplay::GameplayModule::addAllPlays() {
-	string name; Play * play;
-	FOREACH_PAIR(name, play, _AvailablePlays) {
-		if (_plays.find(name) == _plays.end()) {
-			_plays[name] = play;
-			ui.listSelectedPlays->addItem(QString::fromStdString(name));
-		}
-	}
-}
-
-void Gameplay::GameplayModule::addPlay(QListWidgetItem* index) {
-	string name = index->text().toStdString();
-	Play * play = _AvailablePlays[name];
-	if (_plays.find(name) == _plays.end()) {
-		_plays[name] = play;
-		ui.listSelectedPlays->addItem(QString::fromStdString(name));
-	}
-}
-
-void Gameplay::GameplayModule::removePlay(QListWidgetItem* index) {
-	// make play invisible in list
-	index->setHidden(true);
-
-	// remove play from underlying plays
-	string name = index->text().toStdString(); // play to remove
-	map<string, Play *> newPlays;
-	string n; Play* p;
-	FOREACH_PAIR(n, p, _plays) {
-		if (n != name)
-			newPlays[n] = _plays[n];
-	}
-	_plays = newPlays;
-}
-
-void Gameplay::GameplayModule::updateCurrentPlay(QString playname) {
-	ui.lblCurrentPlay->setText(tr("Current Play: ")+playname);
-}
-
-void Gameplay::GameplayModule::loadPlaybook() {
-	// get a filename from the user
-	QString fileName = QFileDialog::getOpenFileName(_widget,
-	     tr("Load Playbook"), "./", tr("Playbook Files (*.pbk)"));
-
-	// clear the playbook
-	removeAllPlays();
-
-	// open the file
-	string fname = fileName.toStdString();
-	ifstream ifs(fname.c_str());
-
-	// load the name of the playbook
-	size_t name_start = fname.find_last_of("/");
-	string fname1 = fname.substr(name_start+1); // remove path
-	string fname2 = fname1.substr(0, fname1.size()-4); // remove ".pbk"
-	QString playbook_name = QString::fromStdString(fname2);
-	ui.lblCurrentPlaybook->setText(tr("Current Playbook: ") + playbook_name);
-
-	// read all of the strings
-	while (ifs.good()) {
-		string name;
-		ifs >> name;
-		if (name != "") {
-			if (_AvailablePlays.find(name) != _AvailablePlays.end()) {
-				_plays[name] = _AvailablePlays[name];
-				ui.listSelectedPlays->addItem(QString::fromStdString(name));
-			} else {
-				cout << "Missing Play: " << name << endl;
-			}
-		}
-	}
-	ifs.close();
-}
-
-void Gameplay::GameplayModule::savePlaybook() {
-	// get a filename from the user
-	QString fileName = QFileDialog::getSaveFileName(_widget,
-		     tr("Save Playbook"), "./", tr("Playbook Files (*.pbk)"));
-	string fname = fileName.toStdString() + ".pbk";
-
-	// change the name of the current playbook
-	size_t name_start = fname.find_last_of("/");
-	string fname1 = fname.substr(name_start+1); // remove path
-	string fname2 = fname1.substr(0, fname1.size()-4); // remove ".pbk"
-	QString playbook_name = QString::fromStdString(fname2);
-	ui.lblCurrentPlaybook->setText(tr("Current Playbook: ") + playbook_name);
-
-	// open the file
-	ofstream ofs(fname.c_str());
-
-	// write the plays in order
-	string name; Play* p;
-	FOREACH_PAIR(name, p, _plays) {
-		ofs << name << "\n";
-	}
-	ofs.close();
-}
-
-void Gameplay::GameplayModule::useGoalie(int state) {
-	if (ui.chkUseGoalie->isChecked()) {
-		cout << "Creating goalie" << endl;
-		createGoalie();
-	} else {
-		cout << "Removing goalie" << endl;
-		removeGoalie();
-	}
-}
-
-

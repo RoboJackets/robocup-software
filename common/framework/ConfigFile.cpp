@@ -253,44 +253,6 @@ void ConfigFile::Robot::Kicker::proc(QDomElement element)
 	b = valueFloat(element.attributeNode("b"));
 }
 
-#if 0
-//TODO Replace with templated member function
-void ConfigFile::setElement(QString tagString,int value)
-{
-    QStringList tagNamesList = tagString.split(",");
-
-    //Initialize element to the document root
-    QDomElement element = _doc.documentElement();
-
-    QStringList::const_iterator i;
-    for (i = tagNamesList.constBegin(); i != tagNamesList.constEnd(); ++i)
-    {
-        QDomNodeList elemList = element.elementsByTagName(*i);
-        element = elemList.at(0).toElement();
-    }
-
-    element.setAttribute("value",value);
-
-}
-
-void ConfigFile::setElement(QString tagString,double value)
-{
-    QStringList tagNamesList = tagString.split(",");
-
-    //Initialize element to the document root
-    QDomElement element = _doc.documentElement();
-
-    QStringList::const_iterator i;
-    for (i = tagNamesList.constBegin(); i != tagNamesList.constEnd(); ++i)
-    {
-        QDomNodeList elemList = element.elementsByTagName(*i);
-        element = elemList.at(0).toElement();
-    }
-
-    element.setAttribute("value",value);
-}
-#endif
-
 /// value to type conversions ///
 
 float ConfigFile::valueFloat(QDomAttr attr)
@@ -329,6 +291,6 @@ uint ConfigFile::valueUInt(QDomAttr attr)
 
 bool ConfigFile::valueBool(QDomAttr attr)
 {
-  QString v = attr.value();
-  return v == "true";
+	QString v = attr.value();
+	return v == "true";
 }

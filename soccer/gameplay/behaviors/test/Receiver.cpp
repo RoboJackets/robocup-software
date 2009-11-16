@@ -16,11 +16,7 @@ Receiver::Receiver(GameplayModule *gameplay)
 }
 
 bool Receiver::run() {
-
-}
-
-bool Receiver::done() {
-	return true;
+	return false;
 }
 
 float Receiver::score(Robot* robot) {

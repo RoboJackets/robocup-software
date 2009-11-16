@@ -9,7 +9,7 @@
 using namespace Motion;
 using namespace Packet;
 
-MotionModule::MotionModule(SystemState *state, ConfigFile::MotionModule& cfg) :
+MotionModule::MotionModule(SystemState *state, const ConfigFile::MotionModule& cfg) :
 	Module("Motion"),
 	_config(cfg)
 {

@@ -25,6 +25,7 @@ set (SRCS
 	InputHandler.cpp
 	JoystickInput.cpp
 	RefereeModule.cpp
+	PlayConfigTab.cpp
 
 # Sources for gameplay module
 

@@ -32,9 +32,6 @@ class MainWindow : public QMainWindow
 			return &_processor;
 		}
 		
-	protected:
-		void keyReleaseEvent(QKeyEvent* ke);
-		
 	private:
 		Ui_MainWindow ui;
 		
@@ -48,5 +45,4 @@ class MainWindow : public QMainWindow
 	
 		/** Currently the configfile is for motion but others can add to it **/
 		QString _configFile;
-		//ConfigFile _config;
 };

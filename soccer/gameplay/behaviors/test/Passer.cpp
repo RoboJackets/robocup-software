@@ -11,16 +11,12 @@ using namespace Gameplay::Behaviors;
 
 Passer::Passer(GameplayModule *gameplay) :
 	Behavior(gameplay)
-	{
+{
 
 }
 
 bool Passer::run() {
-
-}
-
-bool Passer::done() {
-	return true;
+	return false;
 }
 
 float Passer::score(Robot* robot) {

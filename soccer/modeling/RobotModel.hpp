@@ -15,7 +15,7 @@ namespace Modeling
 	class RobotModel
 	{
 		public:
-			RobotModel(ConfigFile::WorldModel& cfg, int s);
+			RobotModel(const ConfigFile::WorldModel& cfg, int s);
 
 			void observation(uint64_t time, Geometry2d::Point pos, float angle);
 			Geometry2d::Point predictPosAtTime(float dtime);
@@ -100,6 +100,6 @@ namespace Modeling
 
 			RobotModel **report;
 
-			ConfigFile::WorldModel& _config;
+			const ConfigFile::WorldModel& _config;
 	};
 }

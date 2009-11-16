@@ -6,7 +6,7 @@
 
 #define KALMAN 0
 
-Modeling::RobotModel::RobotModel(ConfigFile::WorldModel& cfg, int s) :
+Modeling::RobotModel::RobotModel(const ConfigFile::WorldModel& cfg, int s) :
 	posA(6,6), posB(6,6), posP(6,6), posQ(6,6), posR(2,2), posH(2,6),
 	posZ(2), posU(6), posE(6), posX0(6), angA(3,3), angB(3,3), angP(3,3),
 	angQ(3,3), angR(1,1), angH(1,3), angZ(1), angU(3), angE(3), angX0(3),

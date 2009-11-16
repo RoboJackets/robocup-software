@@ -7,21 +7,20 @@
 #include <set>
 
 #include <framework/Module.hpp>
-
-#include "ui_PlayConfigTab.h"
+#include <boost/shared_ptr.hpp>
 
 #include "Robot.hpp"
+
+class PlayConfigTab;
 
 namespace Gameplay
 {
 	class Behavior;
 	class Play;
 	
-	class GameplayModule: public QObject, public Module
+	class GameplayModule: public Module
 	{
-		Q_OBJECT;
 		public:
-			typedef boost::shared_ptr<GameplayModule> shared_ptr;
 			GameplayModule(SystemState *state);
 			~GameplayModule();
 			
@@ -38,7 +37,7 @@ namespace Gameplay
 				return _goalie;
 			}
 			
-			Play *currentPlay() const
+			boost::shared_ptr<Play> currentPlay() const
 			{
 				return _currentPlay;
 			}
@@ -46,7 +45,7 @@ namespace Gameplay
 			virtual void fieldOverlay(QPainter&, Packet::LogFrame&) const;
 			virtual void run();
 			
-			Gameplay::Play *selectPlay();
+			boost::shared_ptr<Play> selectPlay();
 			
 			////////
 			// Useful matrices:
@@ -72,6 +71,15 @@ namespace Gameplay
 				return _oppMatrix;
 			}
 			
+			void enablePlay(boost::shared_ptr<Play> play);
+			void disablePlay(boost::shared_ptr<Play> play);
+			bool playEnabled(boost::shared_ptr<Play> play) const;
+			
+			const std::set<boost::shared_ptr<Play> > &plays() const
+			{
+				return _plays;
+			}
+
 			Robot *self[Constants::Robots_Per_Team];
 			Robot *opp[Constants::Robots_Per_Team];
 			
@@ -84,7 +92,7 @@ namespace Gameplay
 			Behavior *_goalie;
 			
 			// The current play
-			Play *_currentPlay;
+			boost::shared_ptr<Play> _currentPlay;
 			
 			// True if the current play is finished and a new one should be selected during the next frame
 			bool _playDone;
@@ -101,22 +109,9 @@ namespace Gameplay
 			//goal area
 			ObstaclePtr _goalArea[3];
 			
-			// sets of plays with names as lookups
-			std::map<std::string, Play *> _plays;
-			std::map<std::string, Play *> _AvailablePlays;
-
-			// GUI Components
-		protected Q_SLOTS:
-			void removeAllPlays();
-			void addAllPlays();
-			void addPlay(QListWidgetItem*index);
-			void removePlay(QListWidgetItem* index);
-			void updateCurrentPlay(QString playname);
-			void loadPlaybook();
-			void savePlaybook();
-			void useGoalie(int state);
-
-		protected:
-		    Ui_PlayConfig ui;
+			PlayConfigTab *_playConfig;
+			
+			mutable QMutex _playMutex;
+			std::set<boost::shared_ptr<Play> > _plays;
 	};
 }

@@ -39,23 +39,8 @@
        </property>
       </widget>
       <widget class="QTabWidget" name="tabWidget">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
        <property name="tabPosition">
         <enum>QTabWidget::East</enum>
-       </property>
-       <property name="tabShape">
-        <enum>QTabWidget::Rounded</enum>
-       </property>
-       <property name="currentIndex">
-        <number>0</number>
-       </property>
-       <property name="elideMode">
-        <enum>Qt::ElideMiddle</enum>
        </property>
        <widget class="QWidget" name="treeTab">
         <property name="sizePolicy">
@@ -104,7 +89,7 @@
      <x>0</x>
      <y>0</y>
      <width>1039</width>
-     <height>25</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

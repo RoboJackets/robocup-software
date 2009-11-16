@@ -43,7 +43,7 @@ namespace Motion
 			} Axle;
 
 		public:
-			Robot(ConfigFile::MotionModule::Robot& cfg, unsigned int id);
+			Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id);
 			~Robot();
 
 			void setSystemState(SystemState* state);

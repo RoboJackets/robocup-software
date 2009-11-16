@@ -157,31 +157,8 @@ class ConfigFile
 		static uint valueUInt(QDomAttr attr);
 		static bool valueBool(QDomAttr attr);
 
-		///parent tag processing ///
-		
-		/** process a linear controller tag */
-		//void procMotion(QDomElement element);
-		
-		/** process a world model tag */
-		//void procWorldModel(QDomElement element);
-		
 		void procRobots(QDomElement element);
 				
-		/// helper functions for parent tags ///
-		
-		/** process robot physical data **/
-		//static Motion::Robot procRobot(QDomElement element);
-		
-		//static Motion::Robot::Kicker procKicker(QDomElement element);
-		
-		//static QVector<Geometry2d::Point> procAxles(QDomElement element);
-		
-		//static Motion::Robot::Dynamics procDynamics(QDomElement element);
-		
-		//static WorldModel::Filter procFilter(QDomElement element);
-		
-		//static Motion::Pid procPid(QDomElement element);
-
 	private:
 		QString _filename;
 		QDomDocument _doc;

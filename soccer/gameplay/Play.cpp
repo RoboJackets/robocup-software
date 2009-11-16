@@ -6,11 +6,6 @@ Gameplay::Play::Play(GameplayModule *gameplay):
 {
 }
 
-Gameplay::Play::~Play()
-{
-	_gameplay->_AvailablePlays.erase(this->name());
-}
-
 bool Gameplay::Play::applicable()
 {
 	return true;

@@ -19,7 +19,7 @@ namespace Motion
 		Q_OBJECT;
 
 		public:
-			MotionModule(SystemState *state, ConfigFile::MotionModule& cfg);
+			MotionModule(SystemState *state, const ConfigFile::MotionModule& cfg);
 			~MotionModule();
 
 			virtual void run();
@@ -50,6 +50,6 @@ namespace Motion
 			/** Robots **/
 			Robot* _robots[5];
 			
-			ConfigFile::MotionModule& _config;
+			const ConfigFile::MotionModule& _config;
 	};
 }

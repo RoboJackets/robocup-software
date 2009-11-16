@@ -5,12 +5,15 @@
 #include "MainWindow.moc"
 #include <QHBoxLayout>
 #include <QGridLayout>
-#include <QKeyEvent>
 
 using namespace Log;
+using namespace boost;
 
 MainWindow::MainWindow(Team t, QString filename) :
-		_team(t), _processor(t, filename), _logFile(0), _configFile(filename)
+	_team(t),
+	_processor(t, filename),
+	_logFile(0),
+	_configFile(filename)
 {
 	ui.setupUi(this);
 	statusBar()->hide();
@@ -23,13 +26,13 @@ MainWindow::MainWindow(Team t, QString filename) :
 	ui.treeView->expandAll();
 
 	ui.fieldView->state = &_processor.state();
-	Q_FOREACH(Module::shared_ptr m, _processor.modules())
+	Q_FOREACH(shared_ptr<Module> m, _processor.modules())
 	{
 		ui.fieldView->addModule(m);
 		
 		if (m->widget())
 		{
-			ui.tabWidget->addTab(m->widget(), m->widget()->objectName());
+			ui.tabWidget->addTab(m->widget(), m->widget()->windowTitle());
 		}
 		
 		if (m->toolbar())
@@ -67,13 +70,5 @@ MainWindow::~MainWindow()
 	if (_logFile)
 	{
 		ui.logControl->setLogFile(0);
-	}
-}
-
-void MainWindow::keyReleaseEvent(QKeyEvent* ke)
-{
-	if (ke->key() & Qt::Key_Space)
-	{
-		_processor.on_input_playPauseButton();
 	}
 }

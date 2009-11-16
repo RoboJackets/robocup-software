@@ -10,6 +10,8 @@
 #include <framework/Module.hpp>
 #include <Network/Sender.hpp>
 
+#include <boost/shared_ptr.hpp>
+
 namespace Log
 {
 	/** class that performs drawing of log data onto the field */
@@ -22,7 +24,7 @@ namespace Log
 			
 			void team(Team t);
 			
-			void addModule(Module::shared_ptr module);
+			void addModule(boost::shared_ptr<Module> module);
 
 			SystemState *state;
 			
@@ -56,7 +58,7 @@ namespace Log
 			Team _team;
 			
 			//list of modules for fieldOverlay hook
-			QVector<Module::shared_ptr> _modules;
+			QVector<boost::shared_ptr<Module> > _modules;
 			
 			// True while a line is being dragged from the ball
 			bool _dragBall;

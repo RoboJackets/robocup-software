@@ -20,7 +20,6 @@ namespace Gameplay
 				Receiver(GameplayModule *gameplay);
 
 				virtual bool run();
-				virtual bool done();
 
 				virtual float score(Robot* robot);
 		};

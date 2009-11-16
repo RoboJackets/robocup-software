@@ -19,7 +19,7 @@ namespace Modeling
 	class WorldModel : public Module
 	{
 		public:
-			WorldModel(SystemState *state, ConfigFile::WorldModel& cfg);
+			WorldModel(SystemState *state, const ConfigFile::WorldModel& cfg);
 			~WorldModel();
 			
 			virtual void run();
@@ -37,6 +37,6 @@ namespace Modeling
 			RobotModel *_selfRobot[5];
 			RobotModel *_oppRobot[5];
 			
-			ConfigFile::WorldModel& _config;
+			const ConfigFile::WorldModel& _config;
 	};
 }

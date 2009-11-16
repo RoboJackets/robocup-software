@@ -10,7 +10,6 @@ namespace Gameplay
 	{
 	public:
 		Play(GameplayModule *gameplay);
-		virtual ~Play();
 		
 		// Returns true iff this play is allowed to be selected given the current state of the game.
 		// The default implementation always returns true.

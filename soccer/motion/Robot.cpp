@@ -17,7 +17,7 @@ using namespace Geometry2d;
 using namespace Motion;
 using namespace Packet;
 
-Robot::Robot(ConfigFile::MotionModule::Robot& cfg, unsigned int id) :
+Robot::Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id) :
 	_id(id)
 {
 	_state = 0;
