@@ -7,6 +7,7 @@
 
 #define KALMAN 1
 
+
 Modeling::BallModel::BallModel() :
 	A(6,6), B(6,6), P(6,6), Q(6,6), R(2,2), H(2,6),
 	Z(2), U(6), X0(6)
@@ -56,9 +57,25 @@ Modeling::BallModel::BallModel() :
 
 	posKalman = new DifferenceKalmanFilter(&A, &B, &X0, &P, &Q, &R, &H);
 #else
-	alpha = 1;
-	beta = .4;
-	gamma = .1;
+	/*
+	 * Initialize Rao-Blackwellized Particle Filter
+	 *   Constructs initial state X, initial covariance P, adds several models
+	 *   to the modelGraph, and sets some transition weights
+	 */
+	// Construct initial state X (n x 1)
+	Vector X(6); X*=0;
+	// Construct initial state covariance P (n x n)
+	Matrix P(6,6); P*=0.0; P(0,0)=P(1,1)= P(2,2)=P(3,3)=P(4,4)=P(5,5)=0.1;
+	// Create Rbpf
+	int numParticles = 20; // Number of particles in filter
+	raoBlackwellizedParticleFilter = new Rbpf(X,P,numParticles);
+	// create model graph
+	raoBlackwellizedParticleFilter->addModel(new RbpfModelRollingFriction());
+	raoBlackwellizedParticleFilter->addModel(new RbpfModelKicked());
+	raoBlackwellizedParticleFilter->setTransProb(0,0,0.9);
+	raoBlackwellizedParticleFilter->setTransProb(0,1,0.1);
+	raoBlackwellizedParticleFilter->setTransProb(1,0,0.9);
+	raoBlackwellizedParticleFilter->setTransProb(1,1,0.1);
 #endif
 }
 
@@ -134,13 +151,14 @@ void Modeling::BallModel::update()
 // 			vel = predictVel + posError * beta / dtime;
 // 			accel += posError * gamma / (dtime * dtime);
 		#else
-			Geometry2d::Point predictPos = pos + vel * dtime + accel * 0.5f * dtime * dtime;
-			Geometry2d::Point predictVel = vel + accel * dtime;
-
-			Geometry2d::Point posError = observedPos - predictPos;
-			pos = predictPos + posError * alpha;
-			vel = predictVel + posError * beta / dtime;
-			accel += posError * gamma / (dtime * dtime);
+			raoBlackwellizedParticleFilter->update(observedPos.x,observedPos.y,dtime);
+			RbpfState* bestState = raoBlackwellizedParticleFilter->getBestFilterState();
+			pos.x = bestState->X(0);
+			pos.y = bestState->X(1);
+			vel.x = bestState->X(2);
+			vel.y = bestState->X(3);
+			accel.x = bestState->X(4);
+			accel.y = bestState->X(5);
 		#endif
 
 		}
@@ -149,11 +167,9 @@ void Modeling::BallModel::update()
 		if (dtime)
 		{
 			pos += vel * dtime + accel * 0.5f * dtime * dtime;
-//			vel += accel * dtime;
 		}
 
 		++missedFrames;
 	}
-
 	bestError = -1;
 }

@@ -9,6 +9,20 @@
 #include "BLASWrap/blaswrap.h"
 #include "difference_kalman.hpp"
 
+/* RBPF Includes */
+#include <iostream>
+#include <fstream>
+#include <boost/numeric/ublas/vector.hpp>
+#include <boost/numeric/ublas/matrix.hpp>
+#include "Rbpf.hpp"
+#include "RbpfState.hpp"
+#include "RbpfModel.hpp"
+#include "RbpfAllModels.hpp"
+
+typedef Geometry2d::Point Point;
+typedef boost::numeric::ublas::vector<double> Vector;
+typedef boost::numeric::ublas::matrix<double> Matrix;
+
 namespace Modeling
 {
 	class BallModel
@@ -64,5 +78,8 @@ namespace Modeling
 			uint64_t lastObservedTime;
 
 			int missedFrames;
+
+		protected:
+			Rbpf* raoBlackwellizedParticleFilter;
 	};
 }

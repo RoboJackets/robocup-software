@@ -69,6 +69,12 @@ set (SRCS
 	modeling/RobotModel.cpp
 	modeling/BLASWrap/blaswrap.cpp
 	modeling/difference_kalman.cpp
+	modeling/Rbpf.cpp
+	modeling/RbpfModel.cpp
+	modeling/RbpfModelGraph.cpp
+	modeling/RbpfState.cpp
+	modeling/InvertMatrix.hpp
+	modeling/RbpfAllModels.cpp
 	
 # Sources for motion module
 	motion/MotionModule.cpp
