@@ -28,7 +28,13 @@ namespace Modeling
 	class BallModel
 	{
 		public:
-			BallModel();
+			typedef enum {
+				RBPF,
+				KALMAN,
+				ABG
+			} mode_t;
+
+			BallModel(mode_t mode = RBPF);
 
 			void observation(uint64_t time, const Geometry2d::Point &pos);
 
@@ -80,6 +86,37 @@ namespace Modeling
 			int missedFrames;
 
 		protected:
+			// mode of the filter
+			mode_t mode_;
+
+			// new particle filter implementation
 			Rbpf* raoBlackwellizedParticleFilter;
+
+			// Initialization functions for each mode
+
+			/**
+			 * Initialize Rao-Blackwellized Particle Filter
+			 *   Constructs initial state X, initial covariance P, adds several models
+			 *   to the modelGraph, and sets some transition weights
+			 */
+			void initRBPF();
+
+			/** Initialize the older implementation of the ball filter */
+			void initKalman();
+
+			/** Initializes the Alpha-Beta-Gamma filter */
+			void initABG();
+
+			// update functions
+
+			/** Old-style Kalman update */
+			void kalmanUpdate(float dtime);
+
+			/** Newer RBPF update */
+			void rbpfUpdate(float dtime);
+
+			/** ABG Filter update */
+			void abgUpdate(float dtime);
+
 	};
 }

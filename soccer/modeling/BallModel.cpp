@@ -2,22 +2,40 @@
 // vim:ai ts=4 et
 
 #include <stdio.h>
+#include <iostream>
 
 #include "BallModel.hpp"
 
-#define KALMAN 1
+using namespace std;
 
-
-Modeling::BallModel::BallModel() :
+Modeling::BallModel::BallModel(mode_t mode) :
 	A(6,6), B(6,6), P(6,6), Q(6,6), R(2,2), H(2,6),
-	Z(2), U(6), X0(6)
+	Z(2), U(6), X0(6), mode_(mode)
 {
 	bestError = 0;
 	bestObservedTime = 0;
 	lastObservedTime = 0;
 	missedFrames = 0;
 
-#if KALMAN
+	if (mode_ == KALMAN) {
+		initKalman();
+	} else if (mode_ == RBPF) {
+		initRBPF();
+	} else if (mode_ == ABG) {
+		initABG();
+	} else {
+		cout << "ERROR: Invalid initialization type, defaulting to RPBF!" << endl;
+		initRBPF();
+	}
+}
+
+void Modeling::BallModel::initABG() {
+	alpha = 1;
+	beta = .4;
+	gamma = .1;
+}
+
+void Modeling::BallModel::initKalman() {
 	A.zero();
 	B.zero();
 	Q.zero();
@@ -26,18 +44,14 @@ Modeling::BallModel::BallModel() :
 	P.zero();
 	X0.zero();
 
-	alpha = 1;
-	beta = .4;
-	gamma = .1;
-
 	//Process covariance between position and velocity (E[x,x_dot])
-// 	Q(1,0) = Q(4,3) = 0.01;
+	// 	Q(1,0) = Q(4,3) = 0.01;
 
 	//Process covariance between velocity and acceleration (E[x)dot,x_ddot])
-// 	Q(2,1) = Q(5,4) = 0.001;
+	// 	Q(2,1) = Q(5,4) = 0.001;
 
 	//Process covariance between position and acceleration (E[x,x_ddot])
-// 	Q(2,0) = Q(5,3) = 0.0001;
+	// 	Q(2,0) = Q(5,3) = 0.0001;
 
 	//Process covariance (E[x,x], E[x_dot,x_dot], etc)
 	Q(0,0) = Q(3,3) = 10;
@@ -56,12 +70,9 @@ Modeling::BallModel::BallModel() :
 	A(0,0) = A(1,1) = A(2,2) = A(3,3) = A(4,4) = A(5,5) = 1;
 
 	posKalman = new DifferenceKalmanFilter(&A, &B, &X0, &P, &Q, &R, &H);
-#else
-	/*
-	 * Initialize Rao-Blackwellized Particle Filter
-	 *   Constructs initial state X, initial covariance P, adds several models
-	 *   to the modelGraph, and sets some transition weights
-	 */
+}
+
+void Modeling::BallModel::initRBPF() {
 	// Construct initial state X (n x 1)
 	Vector X(6); X*=0;
 	// Construct initial state covariance P (n x n)
@@ -76,7 +87,6 @@ Modeling::BallModel::BallModel() :
 	raoBlackwellizedParticleFilter->setTransProb(0,1,0.1);
 	raoBlackwellizedParticleFilter->setTransProb(1,0,0.9);
 	raoBlackwellizedParticleFilter->setTransProb(1,1,0.1);
-#endif
 }
 
 Geometry2d::Point Modeling::BallModel::predictPosAtTime(float dtime)
@@ -107,6 +117,54 @@ void Modeling::BallModel::observation(uint64_t time, const Geometry2d::Point &po
 	}
 }
 
+void Modeling::BallModel::kalmanUpdate(float dtime) {
+	//Update model
+	A(0,1) = dtime;
+	A(0,2) = 0.5*dtime*dtime;
+
+	A(1,2) = dtime;
+
+	A(3,4) = dtime;
+	A(3,5) = 0.5*dtime*dtime;
+
+	A(4,5) = dtime;
+
+	//Position
+	Z(0) = observedPos.x;
+	Z(1) = observedPos.y;
+
+	posKalman->predict(&U);
+	posKalman->correct(&Z);
+
+	pos.x = (float)posKalman->state()->elt(0);
+	vel.x = (float)posKalman->state()->elt(1);
+	accel.x = (float)posKalman->state()->elt(2);
+	pos.y = (float)posKalman->state()->elt(3);
+	vel.y = (float)posKalman->state()->elt(4);
+	accel.y = (float)posKalman->state()->elt(5);
+}
+
+void Modeling::BallModel::rbpfUpdate(float dtime) {
+	raoBlackwellizedParticleFilter->update(observedPos.x,observedPos.y,dtime);
+	RbpfState* bestState = raoBlackwellizedParticleFilter->getBestFilterState();
+	pos.x = bestState->X(0);
+	pos.y = bestState->X(1);
+	vel.x = bestState->X(2);
+	vel.y = bestState->X(3);
+	accel.x = bestState->X(4);
+	accel.y = bestState->X(5);
+}
+
+void Modeling::BallModel::abgUpdate(float dtime) {
+	Geometry2d::Point predictPos = abgPos + vel * dtime + accel * 0.5f * dtime * dtime;
+	Geometry2d::Point predictVel = vel + accel * dtime;
+
+	Geometry2d::Point posError = observedPos - predictPos;
+	abgPos = predictPos + posError * alpha;
+	vel = predictVel + posError * beta / dtime;
+	accel += posError * gamma / (dtime * dtime);
+}
+
 void Modeling::BallModel::update()
 {
 	float dtime = (float)(bestObservedTime - lastObservedTime) / 1e6;
@@ -115,52 +173,16 @@ void Modeling::BallModel::update()
 	{
 		lastObservedTime = bestObservedTime;
 
+		// assuming we moved, then update the filter
 		if (dtime)
 		{
-		#if KALMAN
-			//Update model
-			A(0,1) = dtime;
-			A(0,2) = 0.5*dtime*dtime;
-
-			A(1,2) = dtime;
-
-			A(3,4) = dtime;
-			A(3,5) = 0.5*dtime*dtime;
-
-			A(4,5) = dtime;
-
-			//Position
-			Z(0) = observedPos.x;
-			Z(1) = observedPos.y;
-
-			posKalman->predict(&U);
-			posKalman->correct(&Z);
-
-			pos.x = (float)posKalman->state()->elt(0);
-			vel.x = (float)posKalman->state()->elt(1);
-			accel.x = (float)posKalman->state()->elt(2);
-			pos.y = (float)posKalman->state()->elt(3);
-			vel.y = (float)posKalman->state()->elt(4);
-			accel.y = (float)posKalman->state()->elt(5);
-
-// 			Geometry2d::Point predictPos = abgPos + vel * dtime + accel * 0.5f * dtime * dtime;
-// 			Geometry2d::Point predictVel = vel + accel * dtime;
-
-// 			Geometry2d::Point posError = observedPos - predictPos;
-// 			abgPos = predictPos + posError * alpha;
-// 			vel = predictVel + posError * beta / dtime;
-// 			accel += posError * gamma / (dtime * dtime);
-		#else
-			raoBlackwellizedParticleFilter->update(observedPos.x,observedPos.y,dtime);
-			RbpfState* bestState = raoBlackwellizedParticleFilter->getBestFilterState();
-			pos.x = bestState->X(0);
-			pos.y = bestState->X(1);
-			vel.x = bestState->X(2);
-			vel.y = bestState->X(3);
-			accel.x = bestState->X(4);
-			accel.y = bestState->X(5);
-		#endif
-
+			if (mode_ == KALMAN) {
+				kalmanUpdate(dtime);
+			} else if (mode_ == ABG) {
+				abgUpdate(dtime);
+			} else if (mode_ == RBPF) {
+				rbpfUpdate(dtime);
+			}
 		}
 	} else {
 		// Ball moved too far to possibly be a valid track, so just extrapolate from the last known state
