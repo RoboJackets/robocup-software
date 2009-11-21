@@ -20,10 +20,9 @@ using namespace std;
 
 void usage(const char* prog)
 {
-	printf("usage: %s <-y|-b> [-ng] [-f] [-c <config file>]\n", prog);
+	printf("usage: %s <-y|-b> [-f] [-c <config file>]\n", prog);
 	printf("\t-y:  run as the yellow team\n");
 	printf("\t-b:  run as the blue team\n");
-	printf("\t-ng: no goalie\n");
 	printf("\t-c:  specify the configuration file\n");
 	printf("\t-f:  flip field\n");
 	exit(1);
@@ -54,16 +53,12 @@ int main (int argc, char* argv[])
 	QString cfgFile = "";
 	vector<const char *> playDirs;
 
-	bool useGoalie = true;
 	bool flip = false;
 	for (int i=1 ; i<argc; ++i)
 	{
 		const char* var = argv[i];
 
-		if (strcmp(var, "-ng") == 0)
-		{
-			useGoalie = false;
-		} else if (strcmp(var, "-y") == 0)
+		if (strcmp(var, "-y") == 0)
 		{
 			team = Yellow;
 		}
@@ -101,11 +96,6 @@ int main (int argc, char* argv[])
 	}
 	
 	MainWindow win(team, cfgFile);
-	
-	if (useGoalie)
-	{
-		win.processor()->gameplayModule()->createGoalie();
-	}
 	
 	win.processor()->flip_field(flip);
 	

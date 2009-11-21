@@ -16,6 +16,7 @@
 #include "Behavior.hpp"
 #include "behaviors/positions/Goalie.hpp"
 
+// real plays
 #include "plays/OurKickoff.hpp"
 #include "plays/TheirKickoff.hpp"
 #include "plays/OurFreekick.hpp"
@@ -26,7 +27,9 @@
 #include "plays/Offense.hpp"
 #include "plays/Defense.hpp"
 
+// test plays
 #include "plays/test_plays/TestBasicPassing.hpp"
+#include "plays/test_plays/TestBasicAttack.hpp"
 
 #include <QMouseEvent>
 #include <QFileDialog>
@@ -125,6 +128,9 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_playConfig->gameplay = this;
 	_widget = _playConfig;
 	
+	// Create the goalie - on by default
+	createGoalie();
+
 	// Create a set of available normal plays
 	_playConfig->addPlay(make_shared<Plays::OurKickoff>(this));
 	_playConfig->addPlay(make_shared<Plays::TheirKickoff>(this));
@@ -138,6 +144,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 
 	// Add testing plays
 	_playConfig->addPlay(make_shared<Plays::TestBasicPassing>(this));
+	_playConfig->addPlay(make_shared<Plays::TestBasicAttack>(this));
 }
 
 Gameplay::GameplayModule::~GameplayModule()
