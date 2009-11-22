@@ -62,12 +62,8 @@ void WorldModel::run()
 	
 	BOOST_FOREACH(Packet::LogFrame::Robot& r, _state->self)
 	{
-		// FIXME: the radioRX.updated flag doesn't appear to be set correctly,
-		// so that the robot will never get the ball
-//		if (r.radioRx.updated)
-//		{
-			r.haveBall = r.radioRx.ball;
-//		}
+		//FIXME: handle stale data properly
+		r.haveBall = r.radioRx.ball;
 		
 		//if a robot has the ball, we need to make an observation 
 		//using that information and project the ball in front of it
