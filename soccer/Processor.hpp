@@ -99,6 +99,9 @@ class Processor: public QThread
 		float _teamAngle;
 		
 		bool _flipField;
+		
+		/** Which robot will next send reverse data */
+		int _reverseId;
 
 		//modules
 		QMutex _modulesMutex;

@@ -31,10 +31,10 @@ void Radio::run()
 		receiver.receive(radioTx);
 		
 		//control environment with radio data
-		_env.radio(_team, radioTx);
+		_env.radioTx(_team, radioTx);
 		
 		//get latest radio data from env
-		Packet::RadioRx radioRx = _env.radio(_team);
+		Packet::RadioRx radioRx = _env.radioRx(_team);
 		
 		sender.send(radioRx);
 		

@@ -12,4 +12,7 @@
 		
 	<!-- up to five robots can be controlled -->
 	<array type="Robot" name="robots" size="5" />
+	
+	<!-- Which board should return reverse data.  Must be on [0, 15]. -->
+	<member type="uint8" name="reverse_board_id" value="15"/>
 </struct>

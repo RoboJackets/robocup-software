@@ -8,8 +8,8 @@
 
 using namespace Constants;
 
-void drawRobot(QPainter& painter, Team t, int ID, Geometry2d::Point pos, float theta, Team viewTeam, QString text)
-{	
+void drawRobot(QPainter& painter, Team t, int ID, Geometry2d::Point pos, float theta, Team viewTeam, QString text, bool haveBall)
+{
 	painter.setPen(Qt::white);
 	painter.setBrush(Qt::NoBrush);
 	
@@ -44,8 +44,17 @@ void drawRobot(QPainter& painter, Team t, int ID, Geometry2d::Point pos, float t
 	
 	int span = 40;
 	
-	painter.drawChord(QRectF(-Constants::Robot::Radius, -Constants::Robot::Radius, 
-			Constants::Robot::Diameter, Constants::Robot::Diameter), span*16 + 90*16, 360*16 - (span*2)*16);
+	int start = span*16 + 90*16;
+	int end = 360*16 - (span*2)*16;
+	const float r = Constants::Robot::Radius;
+	painter.drawChord(QRectF(-r, -r, r * 2, r * 2), start, end);
+	
+	if (haveBall)
+	{
+		painter.setPen(Qt::red);
+		const float r = Constants::Robot::Radius * 0.75f;
+		painter.drawChord(QRectF(-r, -r, r * 2, r * 2), start, end);
+	}
 	
 	painter.restore();
 }

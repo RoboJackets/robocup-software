@@ -30,7 +30,7 @@ VisionGen::VisionGen(Env* env, unsigned int id) :
 	_env(env), _running(true)
 {
     _id = id;
-    _fps = 30;
+    _fps = 60;
 }
 
 VisionGen::~VisionGen()

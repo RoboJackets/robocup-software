@@ -44,10 +44,10 @@ class Env : public QObject
 		Packet::Vision vision();
 		
 		/** @return generated return data from robots */
-		Packet::RadioRx radio(Team t);
+		Packet::RadioRx radioRx(Team t);
 		
 		/** set received robot control data, used next loop cycle */
-		void radio(Team t, const Packet::RadioTx& data);
+		void radioTx(Team t, const Packet::RadioTx& data);
 		
         void command(const Packet::SimCommand &cmd);
         
@@ -56,8 +56,6 @@ class Env : public QObject
             return _balls;
         }
         
-		//const QVector<const Robot*>& getRobots(Team t);
-
 	private Q_SLOTS:
 		void step();
 		
@@ -71,6 +69,8 @@ class Env : public QObject
 	private:
 		/** number of open environments */
 		static unsigned int _refCount;
+
+		Robot *robot(Team t, int board_id) const;
 
 		mutable QMutex _sceneMutex;
 		/** local scene for this environment */

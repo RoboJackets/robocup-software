@@ -17,9 +17,9 @@ class Robot : public Entity
         virtual void position(float x, float y); 
         
         /** set control data */
-        void radio(const Packet::RadioTx::Robot& data);
+        void radioTx(const Packet::RadioTx::Robot& data);
         /** get robot information data */
-        Packet::RadioRx::Robot radio() const;
+        Packet::RadioRx radioRx() const;
 
     private:
         void initRoller();
@@ -39,9 +39,6 @@ class Robot : public Entity
         NxRevoluteJoint* _motors[4];
         NxD6Joint* _kickerJoint;
         
-        Packet::RadioTx::Robot _tx;
-        Packet::RadioRx::Robot _rx;
-
         /** center of roller from ground */
         const static float RollerHeight = .03;
         /** center of roller from center of robot */

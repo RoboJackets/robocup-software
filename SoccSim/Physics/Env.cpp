@@ -281,7 +281,7 @@ void Env::genVision()
 	}
 }
 
-Packet::RadioRx Env::radio(Team t)
+Packet::RadioRx Env::radioRx(Team t)
 {
 	QMutexLocker ml(&_radioRxMutex);
 
@@ -297,35 +297,52 @@ Packet::RadioRx Env::radio(Team t)
 	return Packet::RadioRx();
 }
 
-void Env::radio(Team t, const Packet::RadioTx& data)
+Robot *Env::robot(Team t, int board_id) const
+{
+	const QVector<Robot*> &robots = (t == Blue) ? _blue : _yellow;
+	
+	if (board_id < robots.size() && board_id >= 0)
+	{
+		return robots[board_id];
+	} else {
+		return 0;
+	}
+}
+
+void Env::radioTx(Team t, const Packet::RadioTx& tx)
 {
 	//control robots when not working with the scene
 	//this will prep new data for the next scene
 	QMutexLocker ml(&_sceneMutex);
 
-	for (int i=0 ; i< 5 ; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
-		const Packet::RadioTx::Robot& r = data.robots[i];
-		if (r.valid)
+		const Packet::RadioTx::Robot& cmd = tx.robots[i];
+		if (cmd.valid)
 		{
-			Robot* robot = 0;
-
-			QVector<Robot*>* robots = &_blue;
-			if (t == Yellow)
+			Robot *r = robot(t, cmd.board_id);
+			if (r)
 			{
-				robots = &_yellow;
+				r->radioTx(cmd);
+			} else {
+				printf("Commanding nonexistant robot %s:%d\n",
+					(t == Blue) ? "Blue" : "Yellow",
+					cmd.board_id);
 			}
-
-			if (r.board_id < robots->size() && r.board_id >= 0)
-			{
-				robot = robots->at(r.board_id);
-			}
-
-			//if we found a robot to control
-			if (robot)
-			{
-				robot->radio(r);
-			}
+		}
+	}
+	
+	Robot *rev = robot(t, tx.reverse_board_id);
+	if (rev)
+	{
+		Packet::RadioRx rx = rev->radioRx();
+		rx.board_id = tx.reverse_board_id;
+		
+		if (t == Blue)
+		{
+			_radioRxBlue = rx;
+		} else {
+			_radioRxYellow = rx;
 		}
 	}
 }
@@ -343,33 +360,4 @@ void Env::command(const Packet::SimCommand &cmd)
 
 void Env::genRadio()
 {
-	//generate radio data every loop cycle
-	//it will be pulled by radio when needed
-	QMutexLocker ml(&_radioRxMutex);
-
-	_radioRxBlue = Packet::RadioRx();
-	_radioRxYellow = Packet::RadioRx();
-
-	//first 5 robots generate radio data...?
-	unsigned int count = 0;
-	BOOST_FOREACH(const Robot* r, _blue)
-	{
-		_radioRxBlue.robots[count] = r->radio();
-
-		if (++count >= 5)
-		{
-			break;
-		}
-	}
-
-	count = 0;
-	BOOST_FOREACH(const Robot* r, _yellow)
-	{
-		_radioRxYellow.robots[count] = r->radio();
-
-		if (++count >= 5)
-		{
-			break;
-		}
-	}
 }

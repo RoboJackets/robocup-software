@@ -1,27 +1,18 @@
 <struct typename="RadioRx">
 	<!-- Packet going out from radio program to control program -->
 	
-	<struct typename="Robot">
-		<member type="bool" name="valid" />
-        
-        <!-- true if this robot's data is new for this frame -->
-        <member type="bool" name="updated" />
-        
-        <member type="uint8" name="packetLoss" />
-        <member type="float" name="rssi" />
-        <member type="float" name="battery" />
-        
-        <!-- ball sensor -->
-        <member type="bool" name="ball" />
-        
-		<!-- True if the kicker is fully charged -->
-		<member type="bool" name="charged" />
-		
-        <array type="bool" name="motorFault" size="5" />
+	<member type="uint64" name="timestamp" />
+	<member type="uint8" name="board_id" />
+	<member type="float" name="rssi" />
+	<member type="float" name="battery" />
+	
+	<!-- ball sensor -->
+	<member type="bool" name="ball" />
+	
+	<!-- True if the kicker is fully charged -->
+	<member type="bool" name="charged" />
+	
+	<array type="bool" name="motorFault" size="5" />
 
-        <array type="uint8" name="encoders" size="5" />
-	</struct>
-		
-	<!-- up to five robots can be controlled -->
-	<array type="Robot" name="robots" size="5" />
+	<array type="uint8" name="encoders" size="5" />
 </struct>

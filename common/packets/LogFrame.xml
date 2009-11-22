@@ -94,7 +94,7 @@
 		<member type="RadioTx::Robot" name="radioTx" />
 		
 		<!-- radio rx packet for the robot -->
-		<member type="RadioRx::Robot" name="radioRx" />
+		<member type="RadioRx" name="radioRx" />
 		
 		<member type="string" name="behaviorName" />
 	</struct>

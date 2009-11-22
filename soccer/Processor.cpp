@@ -36,6 +36,8 @@ Processor::Processor(Team t, QString filename) :
 	_sender(Network::Address, Network::addTeamOffset(_team, Network::RadioTx)),
 	_config(filename)
 {
+	_reverseId = 0;
+	
 	Geometry2d::Point trans;
 	if (_team == Blue)
 	{
@@ -254,6 +256,9 @@ void Processor::sendRadioData()
 {
 	Packet::RadioTx tx;
 
+	tx.reverse_board_id = _state.self[_reverseId].shell;
+	_reverseId = (_reverseId + 1) % Constants::Robots_Per_Team;
+	
 	for (int i = 0; i < 5; ++i)
 	{
 		tx.robots[i] = _state.self[i].radioTx;
@@ -372,7 +377,11 @@ void Processor::radioHandler(const Packet::RadioRx* packet)
 	//received radio packets
 	for (unsigned int i=0 ; i<5 ; ++i)
 	{
-		_state.self[i].radioRx = packet->robots[i];
+		if (_state.self[i].shell == packet->board_id)
+		{
+			_state.self[i].radioRx = *packet;
+			break;
+		}
 	}
 }
 

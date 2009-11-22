@@ -6,6 +6,7 @@
 #include <NxCooking.h>
 
 #include <Constants.hpp>
+#include <Utils.hpp>
 
 #include <boost/foreach.hpp>
 
@@ -363,7 +364,7 @@ float Robot::getAngle() const
 	return atan2(c1[1] , c1[0]) * 180.0f / M_PI;
 }
 
-void Robot::radio(const Packet::RadioTx::Robot& data)
+void Robot::radioTx(const Packet::RadioTx::Robot& data)
 {
 	//motors
 	#if 0
@@ -471,14 +472,14 @@ void Robot::radio(const Packet::RadioTx::Robot& data)
 #endif
 }
 
-Packet::RadioRx::Robot Robot::radio() const
+Packet::RadioRx Robot::radioRx() const
 {
-	Packet::RadioRx::Robot radio;
+	Packet::RadioRx packet;
 	
-	radio.battery = 1.0f;
-	radio.rssi = 1.0f;
-	radio.valid = true;
-	radio.charged = true;
+	packet.timestamp = Utils::timestamp();
+	packet.battery = 1.0f;
+	packet.rssi = 1.0f;
+	packet.charged = true;
 	
 	Geometry2d::Point pos = getPosition();
 	
@@ -509,9 +510,9 @@ Packet::RadioRx::Robot Robot::radio() const
 		
 		if (cmin.z > 0 && cmax.z > 0)
 		{
-			radio.ball = true;
+			packet.ball = true;
 		}
 	}
 	
-	return radio;
+	return packet;
 }

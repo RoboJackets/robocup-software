@@ -22,10 +22,6 @@ using namespace std;
 
 Team team = UnknownTeam;
 
-pthread_mutex_t mapping_mutex;
-typedef map<int, int> Robot_Map;
-Robot_Map board_to_robot;
-
 bool useOpp;
 
 Packet::RadioTx txPacket;
@@ -94,7 +90,6 @@ int main(int argc, char* argv[])
 	}
 	
 	Network::Sender sender(Network::Address, Network::addTeamOffset(team, Network::RadioRx));
-	Packet::RadioRx rxPacket;
 	
 	//sender for opponent robots
 	Network::Sender oppSender(Network::Address, Network::addTeamOffset(team, Network::RadioRx));
@@ -113,13 +108,12 @@ int main(int argc, char* argv[])
 
 	uint8_t forward_packet[Forward_Size];
 	int sequence = 0;
-	int reverse_robot_id = 0;
 	
 	uint64_t lastTime = Utils::timestamp();
 	
 	while (true)
 	{
-		//clear the in coming packet
+		//clear the incoming packet for the first team only
 		txPacket = Packet::RadioTx();
 		
 		//block for self
@@ -154,34 +148,8 @@ int main(int argc, char* argv[])
 			continue;
 		}
 		
-		// Update the mapping for the reverse thread
-		pthread_mutex_lock(&mapping_mutex);
-		board_to_robot.clear();
-		for (int robot_id = 0; robot_id < 5; ++robot_id)
-		{
-			int board_id = txPacket.robots[robot_id].board_id;
-			board_to_robot[board_id] = robot_id;
-		}
-		pthread_mutex_unlock(&mapping_mutex);
-		
-		// Find the next robot to send a reverse packet
-		int start = reverse_robot_id;
-		do
-		{
-			if (reverse_robot_id == 4)
-			{
-				reverse_robot_id = 0;
-			} else {
-				++reverse_robot_id;
-			}
-		} while (reverse_robot_id != start && !txPacket.robots[reverse_robot_id].valid);
-		
-		int reverse_board_id = 15;
-		
-		if (txPacket.robots[reverse_robot_id].valid)
-		{
-			reverse_board_id = txPacket.robots[reverse_robot_id].board_id;
-		}
+		//FIXME - Switch between teams for reverse channel
+		int reverse_board_id = txPacket.reverse_board_id;
 		
 		// Build a forward packet
 		forward_packet[0] = (sequence << 4) | reverse_board_id;
@@ -303,6 +271,7 @@ int main(int argc, char* argv[])
 #endif
 		
 		bool read_ok = false;
+		uint64_t rx_time = 0;
 		try
 		{
 			// Send the forward packet
@@ -310,6 +279,7 @@ int main(int argc, char* argv[])
 			
 			// Read a forward packet if one is available
 			read_ok = radio->read_packet(reverse_packet, sizeof(reverse_packet), 1);
+			rx_time = Utils::timestamp();
 		} catch (exception &ex)
 		{
 			fprintf(stderr, "%s\n", ex.what());
@@ -331,43 +301,24 @@ int main(int argc, char* argv[])
 			printf("\n");
 #endif
 			
+			Packet::RadioRx rxPacket;
 			int board_id = reverse_packet[0] & 0x0f;
 			
-			// Board to robot mapping
-			pthread_mutex_lock(&mapping_mutex);
-			Robot_Map::const_iterator i = board_to_robot.find(board_id);
-			if (i == board_to_robot.end())
-			{
-				// We don't know about this board
-				pthread_mutex_unlock(&mapping_mutex);
-				continue;
-			}
-			int robot_id = board_to_robot[board_id];
-			pthread_mutex_unlock(&mapping_mutex);
-			
-			Packet::RadioRx::Robot &robot = rxPacket.robots[robot_id];
-			
-			// Set the updated flag for only this robot
-			for (int i = 0; i < 5; ++i)
-			{
-				rxPacket.robots[i].updated = false;
-			}
-			robot.updated = true;
-			robot.valid = true;
+			rxPacket.timestamp = rx_time;
+			rxPacket.board_id = board_id;
+			rxPacket.rssi = (int8_t)reverse_packet[1] / 2.0;
+			rxPacket.battery = reverse_packet[3] * 3.3 / 256.0 * 5.0;
+			rxPacket.ball = reverse_packet[5] & (1 << 5);
+			rxPacket.charged = reverse_packet[4] & 1;
 			
 			for (int i = 0; i < 5; ++i)
 			{
-				robot.motorFault[i] = reverse_packet[5] & (1 << i);
+				rxPacket.motorFault[i] = reverse_packet[5] & (1 << i);
 			}
-			
-			robot.rssi = (int8_t)reverse_packet[1] / 2.0;
-			robot.battery = reverse_packet[3] * 3.3 / 256.0 * 5.0;
-			robot.ball = reverse_packet[5] & (1 << 5);
-			robot.charged = reverse_packet[4] & 1;
 			
 			for (int i = 0; i < 5; ++i)
 			{
-				robot.encoders[i] = reverse_packet[6 + i];
+				rxPacket.encoders[i] = reverse_packet[6 + i];
 			}
 			
 			sender.send(rxPacket);
