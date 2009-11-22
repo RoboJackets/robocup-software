@@ -35,6 +35,7 @@ set (SRCS
 	gameplay/Window.cpp
 	gameplay/Robot.cpp
 	
+	# Main Plays
 	gameplay/plays/OurKickoff.cpp
 	gameplay/plays/TheirKickoff.cpp
 	gameplay/plays/OurFreekick.cpp

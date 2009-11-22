@@ -16,6 +16,7 @@
 #include "Behavior.hpp"
 #include "behaviors/positions/Goalie.hpp"
 
+// TO INSERT PLAYS: Add the include here, grouped by test plays and real plays
 // real plays
 #include "plays/OurKickoff.hpp"
 #include "plays/TheirKickoff.hpp"
@@ -130,6 +131,8 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	
 	// Create the goalie - on by default
 	createGoalie();
+
+	// TO INSERT PLAYS: add the play as below
 
 	// Create a set of available normal plays
 	_playConfig->addPlay(make_shared<Plays::OurKickoff>(this));
