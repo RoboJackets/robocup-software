@@ -49,6 +49,9 @@ void oppPacketHandler(const Packet::RadioTx* packet)
 
 int main(int argc, char* argv[])
 {
+	bool debug_tx = true;
+	bool debug_rx = true;
+	
 	int n = 0;
 	for (int i = 0; i < argc; ++i)
 	{
@@ -257,18 +260,18 @@ int main(int argc, char* argv[])
 			forward_packet[2] = kick_strength;
 		}
 		
-		uint64_t t1 = Utils::timestamp();
-		uint64_t dt = t1 - lastTime;
-		lastTime = t1;
-#if 1
-		printf("%3ld.%03ldms ", dt / 1000, dt % 1000);
-		
-		for (unsigned int i = 0; i < Forward_Size; ++i)
+		if (debug_rx)
 		{
-			printf("%02x ", forward_packet[i]);
+			uint64_t t1 = Utils::timestamp();
+			uint64_t dt = t1 - lastTime;
+			lastTime = t1;
+			printf("%3ld.%03ldms ", dt / 1000, dt % 1000);
+			
+			for (unsigned int i = 0; i < Forward_Size; ++i)
+			{
+				printf("%02x ", forward_packet[i]);
+			}
 		}
-		printf("\n");
-#endif
 		
 		bool read_ok = false;
 		uint64_t rx_time = 0;
@@ -292,14 +295,14 @@ int main(int argc, char* argv[])
 		// Check for a reverse packet
 		if (read_ok)
 		{
-#if 1
-			printf("rev");
-			for (unsigned int i = 0; i < Reverse_Size; ++i)
+			if (debug_rx)
 			{
-				printf(" %02x", reverse_packet[i]);
+				printf("   rev");
+				for (unsigned int i = 0; i < Reverse_Size; ++i)
+				{
+					printf(" %02x", reverse_packet[i]);
+				}
 			}
-			printf("\n");
-#endif
 			
 			Packet::RadioRx rxPacket;
 			int board_id = reverse_packet[0] & 0x0f;
@@ -322,6 +325,11 @@ int main(int argc, char* argv[])
 			}
 			
 			sender.send(rxPacket);
+		}
+		
+		if (debug_tx || debug_rx)
+		{
+			printf("\n");
 		}
 	}
 
