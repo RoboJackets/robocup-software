@@ -62,10 +62,12 @@ void WorldModel::run()
 	
 	BOOST_FOREACH(Packet::LogFrame::Robot& r, _state->self)
 	{
-		if (r.radioRx.updated)
-		{
+		// FIXME: the radioRX.updated flag doesn't appear to be set correctly,
+		// so that the robot will never get the ball
+//		if (r.radioRx.updated)
+//		{
 			r.haveBall = r.radioRx.ball;
-		}
+//		}
 		
 		//if a robot has the ball, we need to make an observation 
 		//using that information and project the ball in front of it
@@ -171,7 +173,6 @@ void WorldModel::run()
 	}
 	
 	//FIXME - Sort unused lists
-	
 	unsigned int nextSelfUnused = 0;
 	unsigned int nextOppUnused = 0;
 	for (int i = 0; i < 5; ++i)
