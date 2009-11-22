@@ -20,6 +20,11 @@ void Gameplay::Plays::TestBasicAttack::assign(set<Robot *> &available)
 
 bool Gameplay::Plays::TestBasicAttack::run()
 {
+	// check if the robot is in done state
+	if (_kicker.getState() == Gameplay::Behaviors::Kick::Done)
+		_kicker.restart();
+
+	// run the kick play
 	_kicker.run();
 	return true;
 }
