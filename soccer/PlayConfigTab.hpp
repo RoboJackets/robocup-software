@@ -27,6 +27,8 @@ class PlayConfigTab: public QWidget
 		
 		Gameplay::GameplayModule *gameplay;
 		
+		void load(QString filename);
+		
 	private Q_SLOTS:
 		void on_load_clicked();
 		void on_save_clicked();

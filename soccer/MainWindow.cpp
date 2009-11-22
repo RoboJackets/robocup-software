@@ -72,3 +72,8 @@ MainWindow::~MainWindow()
 		ui.logControl->setLogFile(0);
 	}
 }
+
+PlayConfigTab *MainWindow::playConfig() const
+{
+	return _processor.gameplayModule()->playConfig();
+}

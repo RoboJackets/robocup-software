@@ -134,22 +134,24 @@ void PlayConfigTab::addPlay(shared_ptr<Gameplay::Play> play)
 void PlayConfigTab::on_load_clicked()
 {
 	// get a filename from the user
-	QString fileName = QFileDialog::getOpenFileName(this,
+	QString filename = QFileDialog::getOpenFileName(this,
 	     tr("Load Playbook"), "./", tr("Playbook Files (*.pbk)"));
 
+	// load the name of the playbook
+	QString playbook_name = QFileInfo(filename).baseName();
+	ui.lblCurrentPlaybook->setText(tr("Current Playbook: ") + playbook_name);
+	
+	load(filename);
+}
+
+void PlayConfigTab::load(QString filename)
+{
 	// clear the playbook
 	on_none_clicked();
 
 	// open the file
-	string fname = fileName.toStdString();
+	string fname = filename.toStdString();
 	ifstream ifs(fname.c_str());
-
-	// load the name of the playbook
-	size_t name_start = fname.find_last_of("/");
-	string fname1 = fname.substr(name_start+1); // remove path
-	string fname2 = fname1.substr(0, fname1.size()-4); // remove ".pbk"
-	QString playbook_name = QString::fromStdString(fname2);
-	ui.lblCurrentPlaybook->setText(tr("Current Playbook: ") + playbook_name);
 
 	// Build a map from name to play
 	typedef map<string, shared_ptr<Gameplay::Play> > PlayMap;

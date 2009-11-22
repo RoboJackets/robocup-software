@@ -83,6 +83,11 @@ namespace Gameplay
 			Robot *self[Constants::Robots_Per_Team];
 			Robot *opp[Constants::Robots_Per_Team];
 			
+			PlayConfigTab *playConfig() const
+			{
+				return _playConfig;
+			}
+			
 		protected:
 			friend class Play;
 			

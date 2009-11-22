@@ -19,6 +19,8 @@
 #include "Processor.hpp"
 #include "ui_MainWindow.h"
 
+class PlayConfigTab;
+
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT;
@@ -31,6 +33,8 @@ class MainWindow : public QMainWindow
 		{
 			return &_processor;
 		}
+		
+		PlayConfigTab *playConfig() const;
 		
 	private:
 		Ui_MainWindow ui;
