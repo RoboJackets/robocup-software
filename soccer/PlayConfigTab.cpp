@@ -137,15 +137,15 @@ void PlayConfigTab::on_load_clicked()
 	QString filename = QFileDialog::getOpenFileName(this,
 	     tr("Load Playbook"), "./", tr("Playbook Files (*.pbk)"));
 
-	// load the name of the playbook
-	QString playbook_name = QFileInfo(filename).baseName();
-	ui.lblCurrentPlaybook->setText(tr("Current Playbook: ") + playbook_name);
-	
 	load(filename);
 }
 
 void PlayConfigTab::load(QString filename)
 {
+	// Set the name of the playbook
+	QString playbook_name = QFileInfo(filename).baseName();
+	ui.lblCurrentPlaybook->setText(tr("Current Playbook: ") + playbook_name);
+	
 	// clear the playbook
 	on_none_clicked();
 
