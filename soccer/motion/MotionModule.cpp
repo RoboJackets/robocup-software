@@ -117,7 +117,7 @@ void MotionModule::mousePress(QMouseEvent* me, Geometry2d::Point pos)
 		}
 		else if (me->button() == Qt::MidButton)
 		{
-			_state->self[_selectedRobotId].cmd.face = LogFrame::MotionCmd::Endpoint;
+			_state->self[_selectedRobotId].cmd.face = MotionCmd::Endpoint;
 			_state->self[_selectedRobotId].cmd.goalOrientation = pos;
 		}
 	}

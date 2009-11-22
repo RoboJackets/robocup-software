@@ -107,7 +107,7 @@ void Robot::proc()
 		{
 #if 1
 			//pivoting takes precedence
-			if (_self->cmd.pivot == Packet::LogFrame::MotionCmd::NoPivot)
+			if (_self->cmd.pivot == Packet::MotionCmd::NoPivot)
 			{
 				//new path if better than old
 				Planning::Path path;
@@ -128,7 +128,7 @@ void Robot::proc()
 				//TODO fixme...
 				
 				//for now look at th ball
-				_self->cmd.face = Packet::LogFrame::MotionCmd::Continuous; 
+				_self->cmd.face = Packet::MotionCmd::Continuous;
 				_self->cmd.goalOrientation = _self->cmd.pivotPoint;
 			}
 			
@@ -196,7 +196,7 @@ void Robot::calib()
 		Geometry2d::Point dir = (_calibInfo.endPos - _calibInfo.startPos).normalized();
 		
 		_self->cmd.goalOrientation = _calibInfo.endPos + dir * 1.0;
-		_self->cmd.face = Packet::LogFrame::MotionCmd::Endpoint;
+		_self->cmd.face = Packet::MotionCmd::Endpoint;
 		_self->cmd.vScale = .5;
 		
 		Planning::Path path;
@@ -329,17 +329,17 @@ void Robot::genVelocity()
 	
 	const float deltaT = (_state->timestamp - _lastTimestamp)/1000000.0f;
 	
-	if (_self->cmd.face != LogFrame::MotionCmd::None)
+	if (_self->cmd.face != MotionCmd::None)
 	{
 		Geometry2d::Point orientation = _self->cmd.goalOrientation - _self->pos;
 		
 		//if the goal position and orientation are the same...use continuous mode
 		if (_self->cmd.goalOrientation == _self->cmd.goalPosition)
 		{
-			_self->cmd.face = LogFrame::MotionCmd::Continuous;
+			_self->cmd.face = MotionCmd::Continuous;
 		}
 		
-		if (_self->cmd.face == LogFrame::MotionCmd::Endpoint)
+		if (_self->cmd.face == MotionCmd::Endpoint)
 		{
 			orientation = _self->cmd.goalOrientation - _self->cmd.goalPosition;
 		}
@@ -357,7 +357,7 @@ void Robot::genVelocity()
 		/// limit the max rotation based on the full travel path
 		/// only if using endpoint mode
 		/// in continuous we do not limit
-		if (_self->cmd.face == LogFrame::MotionCmd::Endpoint)
+		if (_self->cmd.face == MotionCmd::Endpoint)
 		{
 			const float fixedLength = _planner.fixedPathLength();
 			
@@ -386,7 +386,7 @@ void Robot::genVelocity()
 		_w = 0;
 	}
 	
-	if (_self->cmd.pivot == Packet::LogFrame::MotionCmd::NoPivot)
+	if (_self->cmd.pivot == Packet::MotionCmd::NoPivot)
 	{
 		//dynamics path
 		const float length = _path.length();
@@ -474,7 +474,7 @@ void Robot::genVelocity()
 		//I know the perpCW is backwards...
 		//that is because to create a CW around object velocity I need
 		//to rotate the vector the other way
-		if (_self->cmd.pivot == Packet::LogFrame::MotionCmd::CW)
+		if (_self->cmd.pivot == Packet::MotionCmd::CW)
 		{
 			dir = dir.perpCCW();
 		}

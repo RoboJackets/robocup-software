@@ -45,6 +45,7 @@ set (SRCS
 	gameplay/plays/Stopped.cpp
 	gameplay/plays/Offense.cpp
 	gameplay/plays/Defense.cpp
+	gameplay/plays/OptimizedOffense.cpp
 	
 	gameplay/behaviors/Move.cpp
 	gameplay/behaviors/Kickoff.cpp

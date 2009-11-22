@@ -27,6 +27,7 @@
 #include "plays/Stopped.hpp"
 #include "plays/Offense.hpp"
 #include "plays/Defense.hpp"
+#include "plays/OptimizedOffense.hpp"
 
 // test plays
 #include "plays/test_plays/TestBasicPassing.hpp"
@@ -144,6 +145,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_playConfig->addPlay(make_shared<Plays::Stopped>(this));
 	_playConfig->addPlay(make_shared<Plays::Offense>(this));
 	_playConfig->addPlay(make_shared<Plays::Defense>(this));
+	_playConfig->addPlay(make_shared<Plays::OptimizedOffense>(this));
 
 	// Add testing plays
 	_playConfig->addPlay(make_shared<Plays::TestBasicPassing>(this));

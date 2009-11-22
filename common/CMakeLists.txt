@@ -28,6 +28,7 @@ if (NOT TARGET GeneratePackets)
 		GameState
 		LogFrame
 		SimCommand
+		MotionCmd
 	)
 	
 	foreach (packet ${Packets})

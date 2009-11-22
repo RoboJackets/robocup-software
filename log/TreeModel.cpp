@@ -17,6 +17,7 @@ TreeModel::TreeModel()
 #include <tree_RadioTx.hpp>
 #include <tree_RadioRx.hpp>
 #include <tree_GameState.hpp>
+#include <tree_MotionCmd.hpp>
 #include <tree_LogFrame.hpp>
 
 void TreeModel::frame(Packet::LogFrame* frame)

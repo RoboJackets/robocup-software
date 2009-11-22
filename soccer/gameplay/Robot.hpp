@@ -2,6 +2,7 @@
 
 #include <Constants.hpp>
 #include <LogFrame.hpp>
+#include <MotionCmd.hpp>
 
 #include <stdint.h>
 #include <string>
@@ -56,7 +57,7 @@ namespace Gameplay
 				packet()->cmd.goalPosition = pt;
 			}
 			
-			void spin(Packet::LogFrame::MotionCmd::SpinType dir)
+			void spin(Packet::MotionCmd::SpinType dir)
 			{
 				packet()->cmd.spin = dir;
 			}
@@ -71,7 +72,7 @@ namespace Gameplay
 				packet()->radioTx.roller = speed;
 			}
 			
-			void pivot(Geometry2d::Point ctr, Packet::LogFrame::MotionCmd::PivotType dir)
+			void pivot(Geometry2d::Point ctr, Packet::MotionCmd::PivotType dir)
 			{
 				packet()->cmd.pivotPoint = ctr;
 				packet()->cmd.pivot = dir;
@@ -80,12 +81,12 @@ namespace Gameplay
 			void face(Geometry2d::Point pt, bool continuous = false)
 			{
 				packet()->cmd.goalOrientation = pt;
-				packet()->cmd.face = continuous ? Packet::LogFrame::MotionCmd::Endpoint : Packet::LogFrame::MotionCmd::Continuous;
+				packet()->cmd.face = continuous ? Packet::MotionCmd::Endpoint : Packet::MotionCmd::Continuous;
 			}
 			
 			void faceNone()
 			{
-				packet()->cmd.face = Packet::LogFrame::MotionCmd::None;
+				packet()->cmd.face = Packet::MotionCmd::None;
 			}
 			
 			void kick(uint8_t strength)
@@ -97,7 +98,7 @@ namespace Gameplay
 			void pivot(Geometry2d::Point center, bool cw)
 			{
 				packet()->cmd.pivotPoint = center;
-				packet()->cmd.pivot = cw ? Packet::LogFrame::MotionCmd::CW : Packet::LogFrame::MotionCmd::CCW;
+				packet()->cmd.pivot = cw ? Packet::MotionCmd::CW : Packet::MotionCmd::CCW;
 			}
 			
 			bool charged() const

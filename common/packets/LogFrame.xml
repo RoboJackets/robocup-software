@@ -27,42 +27,7 @@
     <struct typename="GameState" external_cpp="GameState" include_cpp="GameState.hpp" />
     
     <!-- Commands for motion -->
-    <struct typename="MotionCmd" >
-        <!-- goal position for the robot -->
-        <member type="Point" name="goalPosition" />
-
-        <!-- goal orientation -->
-        <member type="Point" name="goalOrientation" />
-        
-        <!-- percent of max speed to run -->
-        <member type="float" name="vScale" value="1.0" />
-        
-        <enum type="uint8" typename="OrientationType">
-        	<constant name="None" />
-			<constant name="Continuous" />
-			<constant name="Endpoint" />
-	    </enum>
-	    
-	    <enum type="uint8" typename="PivotType">
-        	<constant name="NoPivot" />
-			<constant name="CW" />
-			<constant name="CCW" />
-	    </enum>
-	    
-	    <enum type="uint8" typename="SpinType">
-	    	<constant name="NoSpin" />
-	    	<constant name="SpinCW" />
-	    	<constant name="SpinCCW" />
-	    </enum>
-	            
-        <!-- when true the robot will face the goalOrientation -->
-        <member type="OrientationType" name="face" value="None" />
-       
-       	<member type="PivotType" name="pivot" value="NoPivot" />
-       	<member type="Geometry2d::Point" name="pivotPoint" />
-       	
-       	<member type="SpinType" name="spin" value="NoSpin" />
-    </struct>
+		<struct typename="MotionCmd" external_cpp="MotionCmd" include_cpp="MotionCmd.hpp" />
 
 	<!-- post process robot information -->
 	<struct typename="Robot" extend_cpp="Framework::Robot" include_cpp="framework/Robot.hpp" >
