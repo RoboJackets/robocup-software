@@ -41,6 +41,7 @@ namespace Planning
 			// starts out in an obstacle but leaves and never re-enters any obstacle.
 			bool hit(const ObstacleGroup &obstacles, unsigned int start = 0, bool exitObstacles = false) const;
 			
+			// Set of points in the path - used as waypoints
 			std::vector<Geometry2d::Point> points;
 	};
 }

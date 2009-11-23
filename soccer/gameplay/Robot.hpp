@@ -55,8 +55,17 @@ namespace Gameplay
 			void move(Geometry2d::Point pt)
 			{
 				packet()->cmd.goalPosition = pt;
+
+				// enable the RRT-based planner
+				packet()->cmd.planner = Packet::MotionCmd::RRT;
 			}
 			
+			void moveExplicit(const std::vector<Geometry2d::Point>& path)
+			{
+				packet()->cmd.planner = Packet::MotionCmd::Explicit;
+				packet()->cmd.explicitPath = path;
+			}
+
 			void spin(Packet::MotionCmd::SpinType dir)
 			{
 				packet()->cmd.spin = dir;

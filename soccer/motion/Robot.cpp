@@ -106,7 +106,19 @@ void Robot::proc()
 		else
 		{
 #if 1
-			//pivoting takes precedence
+			// handle explicit paths created in the planner
+			if (_self->cmd.planner == Packet::MotionCmd::Explicit)
+			{
+				// create a new path
+				Planning::Path path;
+
+				// set the precomputed path
+				path.points = _self->cmd.explicitPath;
+
+				// assign the path
+				_path = path;
+			}
+			// handle non-pivot case
 			if (_self->cmd.pivot == Packet::MotionCmd::NoPivot)
 			{
 				//new path if better than old
@@ -120,6 +132,7 @@ void Robot::proc()
 				//the goal position is the last path point
 				//_self->cmd.goalPosition = _path.points.back();
 			}
+			// handle pivoting
 			else
 			{
 				//clear old path for when we don't want to pivot

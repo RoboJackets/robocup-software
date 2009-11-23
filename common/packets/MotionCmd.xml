@@ -36,4 +36,13 @@
 		<member type="Geometry2d::Point" name="pivotPoint" />
 		
 		<member type="SpinType" name="spin" value="NoSpin" />
+		
+		<!--Allow for Overriding the Planner-->
+		<enum type="uint8" typename="PlannerType">
+			<constant name="RRT" />
+			<constant name="Explicit" />
+		</enum>
+		<array type="Point" name="explicitPath" />
+		<member type="PlannerType" name="planner" value="RRT" />
+		
 </struct>
