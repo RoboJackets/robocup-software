@@ -41,8 +41,15 @@
 		<enum type="uint8" typename="PlannerType">
 			<constant name="RRT" />
 			<constant name="Explicit" />
+			<constant name="DirectVelocity" />
 		</enum>
-		<array type="Point" name="explicitPath" />
 		<member type="PlannerType" name="planner" value="RRT" />
+				
+		<!--Position-based Path for Explicit Path Control-->
+		<array type="Point" name="explicitPath" />
 		
+		<!--Direct Velocity Commands-->
+		<member type="float" name="direct_ang_vel" value="0.0"/>
+		<member type="Geometry2d::Point" name="direct_trans_vel" />
+
 </struct>

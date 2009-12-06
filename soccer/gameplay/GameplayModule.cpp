@@ -34,6 +34,7 @@
 #include "plays/test_plays/TestBasicPassing.hpp"
 #include "plays/test_plays/TestBasicAttack.hpp"
 #include "plays/test_plays/TestPassPlay.hpp"
+#include "plays/test_plays/TestDirectMotionControl.hpp"
 
 #include <QMouseEvent>
 #include <QFileDialog>
@@ -156,6 +157,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_playConfig->addPlay(make_shared<Plays::TestBasicPassing>(this));
 	_playConfig->addPlay(make_shared<Plays::TestBasicAttack>(this));
 	_playConfig->addPlay(make_shared<Plays::TestPassPlay>(this));
+	_playConfig->addPlay(make_shared<Plays::TestDirectMotionControl>(this));
 }
 
 Gameplay::GameplayModule::~GameplayModule()

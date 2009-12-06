@@ -60,6 +60,7 @@ set (SRCS
  	
 	# testing plays/behaviors
 	gameplay/plays/test_plays/TestBasicPassing.cpp
+	gameplay/plays/test_plays/TestDirectMotionControl.cpp
 	gameplay/plays/test_plays/TestBasicAttack.cpp
 	gameplay/behaviors/test/Passer.cpp
 	gameplay/behaviors/test/Receiver.cpp

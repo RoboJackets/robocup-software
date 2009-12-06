@@ -52,6 +52,7 @@ namespace Gameplay
 				return packet()->angle;
 			}
 			
+			// Move to a particular point using the RRT planner
 			void move(Geometry2d::Point pt)
 			{
 				packet()->cmd.goalPosition = pt;
@@ -60,10 +61,29 @@ namespace Gameplay
 				packet()->cmd.planner = Packet::MotionCmd::RRT;
 			}
 			
+			// Move along a path for waypoint-based control
 			void moveExplicit(const std::vector<Geometry2d::Point>& path)
 			{
+				// set motion command to use the explicit path generation
 				packet()->cmd.planner = Packet::MotionCmd::Explicit;
+
+				// clear the path and set it to the correct one
+				packet()->cmd.explicitPath.clear();
 				packet()->cmd.explicitPath = path;
+
+				// set the facing
+				//FIXME: this shouldn't be necessary
+//				packet()->cmd.goalOrientation = path[0];
+//				packet()->cmd.face = Packet::MotionCmd::Continuous;
+
+			}
+
+			// Move using direct velocity control
+			void moveDirectVelocity(const Geometry2d::Point& trans, double ang)
+			{
+				packet()->cmd.planner = Packet::MotionCmd::DirectVelocity;
+				packet()->cmd.direct_ang_vel = ang;
+				packet()->cmd.direct_trans_vel = trans;
 			}
 
 			void spin(Packet::MotionCmd::SpinType dir)

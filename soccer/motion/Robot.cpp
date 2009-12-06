@@ -1,8 +1,9 @@
 // kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 // vim:ai ts=4 et
 
+#include <iostream>
+#include <string>
 #include "Robot.hpp"
-
 #include <QMutexLocker>
 #include <Geometry2d/Point.hpp>
 #include <Team.h>
@@ -13,9 +14,29 @@
 #include "Pid.hpp"
 #include "framework/Module.hpp"
 
+using namespace std;
 using namespace Geometry2d;
 using namespace Motion;
 using namespace Packet;
+
+
+/** Handles saturation of a bounded value */
+float saturate(float value, float max, float min) {
+	if (value > max)
+	{
+		return max;
+	}
+	else if (value < min)
+	{
+		return min;
+	}
+	return value;
+}
+
+/** prints out a labeled point */
+void printPt(const Geometry2d::Point& pt, const string& s="") {
+	cout << s << ": (" << pt.x << ", " << pt.y << ")" << endl;
+}
 
 Robot::Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id) :
 	_id(id)
@@ -87,10 +108,13 @@ void Robot::setSystemState(SystemState* state)
 void Robot::proc()
 {
 	_procMutex.lock();
+	// Check to make sure the system is valid
 	if (_self && _self->valid)
 	{
+		// get the dynamics from the config
 		_dynamics.setConfig(_self->config.motion);
 		
+		// set the correct PID parameters for position and angle
 		_posPid.kp = _self->config.motion.pos.p;
 		_posPid.ki = _self->config.motion.pos.i;
 		_posPid.kd = _self->config.motion.pos.d;
@@ -101,11 +125,18 @@ void Robot::proc()
 		
 		if (_state->gameState.state == GameState::Halt)
 		{
+			// don't do anything if we aren't transmitting to this robot
 			_self->radioTx.valid = false;
 		}
 		else
 		{
 #if 1
+			// handle direct velocity control from upper levels
+			if (_self->cmd.planner == Packet::MotionCmd::DirectVelocity) {
+				// set the velocities from the gameplay module
+				// TODO: make this smarter, as it should be an actual
+				// velocity controller that handles the current velocity as well
+			}
 			// handle explicit paths created in the planner
 			if (_self->cmd.planner == Packet::MotionCmd::Explicit)
 			{
@@ -117,20 +148,28 @@ void Robot::proc()
 
 				// assign the path
 				_path = path;
+
+				// create the velocities
+				genVelocity();
 			}
-			// handle non-pivot case
-			if (_self->cmd.pivot == Packet::MotionCmd::NoPivot)
+			// handle non-pivot RRT planner case
+			if (_self->cmd.planner == Packet::MotionCmd::RRT)
 			{
 				//new path if better than old
 				Planning::Path path;
 				
+				// determine the obstacles
 				ObstacleGroup& og = _self->obstacles;
 				
+				// run the RRT planner to generate a new plan
 				_planner.run(_self->pos, _self->angle, _self->vel, _self->cmd.goalPosition, &og, path);
 				_path = path;
 				
 				//the goal position is the last path point
 				//_self->cmd.goalPosition = _path.points.back();
+
+				// create the velocities
+				genVelocity();
 			}
 			// handle pivoting
 			else
@@ -140,12 +179,16 @@ void Robot::proc()
 				
 				//TODO fixme...
 				
-				//for now look at th ball
+				//for now look at the ball
 				_self->cmd.face = Packet::MotionCmd::Continuous;
 				_self->cmd.goalOrientation = _self->cmd.pivotPoint;
+
+				// create the velocities
+				genVelocity();
 			}
-			
-			genVelocity();
+
+			//generate motor outputs based on velocity
+			genMotor();
 #else
 			calib();
 #endif
@@ -335,6 +378,11 @@ void Robot::calib()
 	}
 }
 
+/**
+ * This function performs velocity control to convert the path and commands
+ * into instantaneous velocity commands that can be converted into wheel
+ * commands.
+ */
 void Robot::genVelocity()
 {
 	//TODO double check the field angle to robot angle conversions!
@@ -342,6 +390,7 @@ void Robot::genVelocity()
 	
 	const float deltaT = (_state->timestamp - _lastTimestamp)/1000000.0f;
 	
+	// handle facing
 	if (_self->cmd.face != MotionCmd::None)
 	{
 		Geometry2d::Point orientation = _self->cmd.goalOrientation - _self->pos;
@@ -362,7 +411,8 @@ void Robot::genVelocity()
 		_w = _anglePid.run(angleErr);
 		
 		//safety check
-		if (_self->cmd.goalOrientation == _self->pos)
+		float angle_thresh = 1e-3;
+		if (_self->cmd.goalOrientation.distTo(_self->pos) < angle_thresh)
 		{
 			_w = 0;
 		}
@@ -383,30 +433,30 @@ void Robot::genVelocity()
 				//TODO remove magic number(dynamics travel time is too small)
 				maxW /= 10.0f;
 				
-				if (_w > maxW)
-				{
-					_w = maxW;
-				}
-				else if (_w < -maxW)
-				{
-					_w = -maxW;
-				}
+				// check saturation of angular velocity
+				_w = saturate(_w, maxW, -maxW);
 			}
 		}
 	}
 	else
 	{
+		// No rotation, so set angular velocity to zero
 		_w = 0;
 	}
 	
+	// handle point-to-point driving without pivot
 	if (_self->cmd.pivot == Packet::MotionCmd::NoPivot)
 	{
 		//dynamics path
-		const float length = _path.length();
+		float length = _path.length();
 		
+		// handle direct point commands where the length may be very small
+		if (fabs(length) < 1e-5) {
+			length = _self->pos.distTo(_path.points[0]);
+		}
+
 		//target point is the last point on the closest segment
-		
-		Geometry2d::Point targetPos = _self->pos;
+		Geometry2d::Point targetPos = _path.points[0]; // first point
 		
 		if (_path.points.size() > 1)
 		{
@@ -421,18 +471,19 @@ void Robot::genVelocity()
 		
 		//direction of travel
 		const Geometry2d::Point dir = targetPos - _self->pos;
-		
+
 		///basically just a P for target velocity
 		//const float tvel = _posPid.run(length);
-		
 		const float robotAngle = _self->angle;
 		
 		//max velocity info is in the new desired velocity direction
 		Dynamics::DynamicsInfo info = _dynamics.info(dir.angle() * 
 			RadiansToDegrees - robotAngle, _w);
 		
+		// find magnitude of the velocity
 		const float vv = sqrtf(2 * length * info.deceleration);
 		
+		// create the velocity vector
 		Geometry2d::Point targetVel = dir.normalized() * vv;
 		
 		//last commanded velocity
@@ -449,24 +500,22 @@ void Robot::genVelocity()
 		//use frame acceleration
 		dVel = dVel.normalized() * frameAccel;
 		
+		// adjust the velocity
 		_vel += dVel;
 		
+
 		float vscale = 1;
 		
+		// move slower in stopped mode
 		if (_state->gameState.state == GameState::Stop)
 		{
 			vscale = .5;
 		}
 		
-		if (_self->cmd.vScale > 1)
-		{
-			_self->cmd.vScale = 1;
-		}
-		else if (_self->cmd.vScale < 0)
-		{
-			_self->cmd.vScale = 0;
-		}
+		// handle saturation of the velocity scaling
+		_self->cmd.vScale = saturate(_self->cmd.vScale, 1.0, 0.0);
 		
+		// scale the velocity if necessary
 		vscale *= _self->cmd.vScale;
 		
 		//max velocity info is in the new desired velocity direction
@@ -475,13 +524,16 @@ void Robot::genVelocity()
 		
 		const float maxVel = info.velocity * vscale;
 		
+		// handle maxvelocity scaling
 		if (_vel.mag() > maxVel)
 		{
 			_vel = _vel.normalized() * maxVel;
 		}
+
 	}
-	else
+	else /** Handle pivoting */
 	{
+
 		Geometry2d::Point dir = _self->cmd.goalOrientation - _self->pos;
 		
 		//I know the perpCW is backwards...
@@ -543,32 +595,17 @@ void Robot::genVelocity()
 			}
 		}
 	}
-	
-	//generate motor outputs based on velocity
-	genMotor();
-}
-
-void Robot::simplePid()
-{
-	//TODO populate with simple pid control? - Roman
 }
 
 void Robot::genMotor(bool old)
 {
 	if (!old)
 	{
+		// handle saturation of angular velocity
 		float w =  _w;
-		
 		const float maxW = _self->config.motion.rotation.velocity;
-		if (w > maxW)
-		{
-			w = maxW;
-		}
-		else if (w < -maxW)
-		{
-			w = -maxW;
-		}
-		
+		w = saturate(w, maxW, -maxW);
+
 		//amount of rotation out of max
 		//[-1...1]
 		float wPercent = 0;

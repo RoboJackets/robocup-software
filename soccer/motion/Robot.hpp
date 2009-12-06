@@ -72,8 +72,6 @@ namespace Motion
 			Pid _posPid;
 			Pid _anglePid;
 
-			void simplePid();
-
 			/** generate velocities based on path travel */
 			void genVelocity();
 
@@ -100,8 +98,8 @@ namespace Motion
 			uint64_t _lastTimestamp;
 
 			/** commanded velocities */
-			Geometry2d::Point _vel;
-			float _w;
+			Geometry2d::Point _vel; /// translational velocity
+			float _w; /// rotational velocity
 
 			/** latest path */
 			Planning::Path _path;
