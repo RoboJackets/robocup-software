@@ -18,6 +18,7 @@
 
 // TO INSERT PLAYS: Add the include here, grouped by test plays and real plays
 // real plays
+#include "plays/OktayPlay.hpp"
 #include "plays/OurKickoff.hpp"
 #include "plays/TheirKickoff.hpp"
 #include "plays/OurFreekick.hpp"
@@ -137,7 +138,9 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	// TO INSERT PLAYS: add the play as below
 
 	// Create a set of available normal plays
-	_playConfig->addPlay(make_shared<Plays::OurKickoff>(this));
+    
+    _playConfig->addPlay(make_shared<Plays::OktayPlay>(this));
+   	_playConfig->addPlay(make_shared<Plays::OurKickoff>(this));
 	_playConfig->addPlay(make_shared<Plays::TheirKickoff>(this));
 	_playConfig->addPlay(make_shared<Plays::OurFreekick>(this));
 	_playConfig->addPlay(make_shared<Plays::TheirFreekick>(this));
@@ -147,6 +150,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_playConfig->addPlay(make_shared<Plays::Offense>(this));
 	_playConfig->addPlay(make_shared<Plays::Defense>(this));
 	_playConfig->addPlay(make_shared<Plays::OptimizedOffense>(this));
+   
 
 	// Add testing plays
 	_playConfig->addPlay(make_shared<Plays::TestBasicPassing>(this));

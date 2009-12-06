@@ -46,7 +46,8 @@ set (SRCS
 	gameplay/plays/Offense.cpp
 	gameplay/plays/Defense.cpp
 	gameplay/plays/OptimizedOffense.cpp
-	
+	gameplay/plays/OktayPlay.cpp
+
 	gameplay/behaviors/Move.cpp
 	gameplay/behaviors/Kickoff.cpp
 	gameplay/behaviors/Penalty.cpp
