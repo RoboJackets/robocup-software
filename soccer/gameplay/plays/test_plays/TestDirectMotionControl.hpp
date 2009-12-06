@@ -14,6 +14,8 @@ namespace Gameplay
 		class TestDirectMotionControl: public Play
 		{
 			public:
+				typedef std::vector<Geometry2d::Point> path_t;
+
 				TestDirectMotionControl(GameplayModule *gameplay);
 
 				/** Always applicable if we are playing */
@@ -43,7 +45,7 @@ namespace Gameplay
 				Geometry2d::Point start_pt_;
 
 				/** Path to execute */
-				std::vector<Geometry2d::Point> path_;
+				path_t path_;
 		};
 	}
 }
