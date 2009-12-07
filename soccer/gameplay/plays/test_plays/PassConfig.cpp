@@ -28,3 +28,11 @@ int PassConfig::length(){
 void PassConfig::setWeight(double w){
 	weight = w;
 }
+
+ostream& operator<<(ostream& out, const PassConfig &config){
+	out << "config weight(" << config.weight << "):" << endl;
+	for(int i=0; i<(int)config.passStateVector.size(); i++){
+		out << "\t state(" << i << "):" << config.passStateVector.at(i) << endl;
+	}
+	return out;
+}
