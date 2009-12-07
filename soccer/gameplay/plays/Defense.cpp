@@ -5,7 +5,7 @@ using namespace std;
 Gameplay::Plays::Defense::Defense(GameplayModule *gameplay):
 	Play(gameplay),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
-	_fullback2(gameplay, Behaviors::Fullback::Left),
+	_fullback2(gameplay, Behaviors::Fullback::Left), // should it be "right"?
 	_kicker1(gameplay),
 	_kicker2(gameplay)
 {
