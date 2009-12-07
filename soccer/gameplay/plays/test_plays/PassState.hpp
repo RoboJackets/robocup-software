@@ -19,13 +19,18 @@ using std::endl;
 
 class PassState {
 public:
-	PassState(const Point* ballPos);
+	enum StateType{INITIAL,INTERMEDIATE,GOAL};
+
+	PassState(const Point* ballPos, StateType stateType);
 	PassState(const Point* ballPos, Robot* controllingRobot);
 	virtual ~PassState();
 	friend ostream& operator<<(ostream& out, const PassState &state);
 
 	Point ballPos;
 	Robot* controllingRobot;
+	double timeEnterState; // timestamp when the ball gets to this state (timestamp when ball leaves previous state + travel time)
+	double timeLeaveState; // timestamp when the ball leaves this state (includes robot maneuvering)
+	StateType stateType;
 };
 
 #endif /* PASSSTATE_HPP_ */

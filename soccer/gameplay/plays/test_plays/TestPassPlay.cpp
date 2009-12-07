@@ -20,29 +20,30 @@ void Gameplay::Plays::TestPassPlay::assign(set<Robot *> &available){
 	this->takeAll(available); // assign all robots from available to _robots
 	initializePlan();
 
-	/* THIS SEG FAULTS
+	PassConfig bestPassConfig = initialPlans[0];
 
-	PassConfig bestPassConfig = initialPlans.front();	// just pick up the first plan (temporary!)
-	boost::ptr_vector<Robot> nonPassingRobots;	// vector of robots which are not part of the
-												// selected passing strategy
-	BOOST_FOREACH(Robot *r, _robots){		// initialize the nonPassingRobots with all available
-		nonPassingRobots.push_back(r);		// robots
-	}
+	vector<Robot> nonPassingRobots;
+	BOOST_FOREACH(Robot *r, _robots)
+		nonPassingRobots.push_back(*r);
 	BOOST_FOREACH(PassState passState, bestPassConfig.passStateVector){
-		Robot *r = passState.controllingRobot;	// robot which takes part in the current state
-		if (r != 0){		// checking if the pointer is null
-			int id = r->id();
-			boost::ptr_vector<Robot>::iterator it;
-			// removing the passing robot from the vector of nonPassingRobots
-			for (it = nonPassingRobots.begin(); it != nonPassingRobots.end(); ++it){
-				if (it->id() == id){
+		Robot *r = passState.controllingRobot;
+		if(r != NULL){
+			for (vector<Robot>::iterator it = nonPassingRobots.begin(); it!=nonPassingRobots.end(); ++it) {
+				if(it->id() == r->id()){
 					nonPassingRobots.erase(it);
-					break;
+					--it;
 				}
 			}
 		}
 	}
-*/
+
+	// assign all Robots in nonPassingRobots to defenders here
+	// todo
+
+	nonPassingRobots.clear();
+
+
+
 	//boost::ptr_vector<Behaviors::Fullback> defenders;
 	//Behaviors::Fullback *fullback;
 
@@ -69,49 +70,106 @@ void Gameplay::Plays::TestPassPlay::initializePlan(){
 	initialPlans.clear();
 	const Geometry2d::Point ballPos = ball().pos;
 	Geometry2d::Point goalBallPos = Geometry2d::Point(-Constants::Field::Width / 2.0, Constants::Field::Length);
-	PassConfig* passConfig;
 	BOOST_FOREACH(Robot *r1, _robots){
 		// initialize configurations of length 1
-		passConfig = new PassConfig(); // add starting ball position
-		passConfig->addPassState(new PassState(&ballPos)); // add robot with ball
+		PassConfig* passConfig = new PassConfig(); // add starting ball position
+		passConfig->addPassState(new PassState(&ballPos,PassState::INITIAL)); // add robot with ball
 		passConfig->addPassState(new PassState(&ballPos, r1)); // add ending (goal) ball position
-		passConfig->addPassState(new PassState(&goalBallPos));
+		passConfig->addPassState(new PassState(&goalBallPos,PassState::GOAL));
 		initialPlans.push_back(passConfig);
 
 		// initialize configurations of length 2
 		BOOST_FOREACH(Robot *r2, _robots){
 			if(r2->id()==r1->id()){continue;} // don't pass to self
-			passConfig = new PassConfig(); // add starting ball position
-			passConfig->addPassState(new PassState(&ballPos)); // add robot1 with ball
+			PassConfig* passConfig = new PassConfig(); // add starting ball position
+			passConfig->addPassState(new PassState(&ballPos,PassState::INITIAL)); // add robot1 with ball
 			passConfig->addPassState(new PassState(&ballPos, r1)); // add robot2 with ball
 			passConfig->addPassState(new PassState(&r2->pos(), r2)); // add ending (goal) ball position
-			passConfig->addPassState(new PassState(&goalBallPos));
+			passConfig->addPassState(new PassState(&goalBallPos,PassState::GOAL));
 			initialPlans.push_back(passConfig);
 
+			/*
 			// initialize configurations of length 3
 			BOOST_FOREACH(Robot *r3, _robots){
 				if(r3->id()==r2->id()){continue;} // don't pass to self
 												  // note: r1 -> r2 -> r1 is ok.
-				passConfig = new PassConfig(); // add starting ball position
-				passConfig->addPassState(new PassState(&ballPos)); // add robot1 with ball
+				PassConfig* passConfig = new PassConfig(); // add starting ball position
+				passConfig->addPassState(new PassState(&ballPos,PassState::INITIAL)); // add robot1 with ball
 				passConfig->addPassState(new PassState(&ballPos, r1)); // add robot2 with ball
 				passConfig->addPassState(new PassState(&r2->pos(), r2)); // add robot3 with ball
 				passConfig->addPassState(new PassState(&r3->pos(), r3)); // add ending (goal) ball position
-				passConfig->addPassState(new PassState(&goalBallPos));
+				passConfig->addPassState(new PassState(&goalBallPos,PassState::GOAL));
 				initialPlans.push_back(passConfig);
 			}
+			*/
 		}
 	}
 
 	//
 	// Weight configs
 	//
-	cout << "number of configs:" << initialPlans.size() << endl;
+	PassState *prevState = (PassState*)NULL, *thisState, *nextState;
+	float ballTravelDist, robotTravelDist, robotRotateDist;
+	double ballTravelTime, robotTravelTime, robotRotateTime;
+	Point inVector, outVector;
+
 	for(int i=0; i<(int)initialPlans.size(); i++){
-		PassConfig passConfig = initialPlans.at(i);
-		// todo
-		passConfig.setWeight(1.0);
-		//cout << "number of states in config [" << i << "]: " << initialPlans.size() << ", weight: " << passConfig.weight << endl;
-		cout << "passConfig(" << i << "): " << passConfig << endl;
+		// calculate the timestamps at each state in the config
+		//
+		for(int j=0; j<initialPlans[i].length(); j++){
+			thisState = initialPlans[i].getPassState(j);
+			nextState = (j+1<initialPlans[i].length() ? initialPlans[i].getPassState(j+1) : thisState);
+			switch(thisState->stateType){
+				case PassState::INITIAL :
+					thisState->timeEnterState = 0.0;
+					thisState->timeLeaveState = 0.0;
+					break;
+				case PassState::INTERMEDIATE :
+					if(prevState->stateType == PassState::INITIAL){
+						robotTravelDist = thisState->controllingRobot->pos().distTo(thisState->ballPos);
+						robotTravelTime = robotTravelDist / APPROXROBOTVELTRANS;
+						thisState->timeEnterState = prevState->timeLeaveState + robotTravelTime;
+					}else{
+						ballTravelDist = thisState->ballPos.distTo(prevState->ballPos);
+						ballTravelTime = ballTravelDist / APPROXBALLVEL;
+						thisState->timeEnterState = prevState->timeLeaveState + ballTravelTime;
+					}
+					inVector = prevState->ballPos - thisState->ballPos;
+					outVector = nextState->ballPos - thisState->ballPos;
+					robotRotateDist = inVector.angleTo(outVector);
+					robotRotateTime = robotRotateDist / APPROXROBOTVELROT;
+					thisState->timeLeaveState = thisState->timeEnterState + robotRotateTime;
+					break;
+				case PassState::GOAL :
+					ballTravelDist = thisState->ballPos.distTo(prevState->ballPos);
+					ballTravelTime = ballTravelDist / APPROXBALLVEL;
+					thisState->timeEnterState = prevState->timeLeaveState + ballTravelTime;
+					thisState->timeLeaveState = thisState->timeEnterState;
+					break;
+			}
+			prevState = thisState;
+		}
+
+		// calculate the total number of opponents that can touch the ball along the path
+		//
+		int numInteractions = 0;
+		for(int j=0; j<initialPlans[i].length(); j++){
+			thisState = initialPlans[i].getPassState(j);
+			BOOST_FOREACH(Robot *opponentR, gameplay()->opp){
+				robotTravelDist = opponentR->pos().distTo(thisState->ballPos);
+				robotTravelTime = robotTravelDist / APPROXROBOTVELTRANS;
+				if(robotTravelTime < thisState->timeLeaveState){
+					numInteractions++;
+				}
+			}
+		}
+
+		initialPlans[i].setWeight(numInteractions);
+	}
+	initialPlans.sort();
+
+	// print out
+	for(int i=0; i<(int)initialPlans.size(); i++){
+		cout << "passConfig(" << i << "): " << initialPlans[i] << endl;
 	}
 }

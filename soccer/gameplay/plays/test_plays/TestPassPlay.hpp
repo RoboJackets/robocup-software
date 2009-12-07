@@ -27,10 +27,15 @@
 #include <gameplay/behaviors/positions/Fullback.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/foreach.hpp>
+#include <vector>
 
 typedef boost::ptr_vector<PassConfig> PassConfigVector;
 
 using namespace std;
+
+#define APPROXBALLVEL 20.0       // m/s
+#define APPROXROBOTVELTRANS 1.0  // m/s
+#define APPROXROBOTVELROT 4.0    // rad/s
 
 namespace Gameplay{
 	namespace Plays{

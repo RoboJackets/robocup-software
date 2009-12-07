@@ -7,11 +7,12 @@
 
 #include <gameplay/plays/test_plays/PassState.hpp>
 
-PassState::PassState(const Geometry2d::Point* _bP) : ballPos(_bP->x,_bP->y), controllingRobot((Robot*)NULL) {
+PassState::PassState(const Geometry2d::Point* _bP, StateType _sT) : ballPos(_bP->x,_bP->y), controllingRobot((Robot*)NULL), stateType(_sT) {
 
 }
 
-PassState::PassState(const Geometry2d::Point* _bP, Robot* _cR) : ballPos(_bP->x,_bP->y), controllingRobot(_cR) {
+// if there is a controlling robot, the state type is implicitly INTERMEDIATE
+PassState::PassState(const Geometry2d::Point* _bP, Robot* _cR) : ballPos(_bP->x,_bP->y), controllingRobot(_cR), stateType(INTERMEDIATE) {
 
 }
 
@@ -26,5 +27,6 @@ ostream& operator<<(ostream& out, const PassState &state){
 	else
 		out << "no robot";
 	out << ", ball position: (" << state.ballPos.x << ", " << state.ballPos.y << ")";
+	out << ", timeEnter: " << state.timeEnterState << ", timeLeave: " << state.timeLeaveState;
 	return out;
 }

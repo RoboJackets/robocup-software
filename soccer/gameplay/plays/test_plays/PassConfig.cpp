@@ -7,10 +7,11 @@
 
 #include <gameplay/plays/test_plays/PassConfig.hpp>
 
-PassConfig::PassConfig() : weight(0.0) {}
+PassConfig::PassConfig() : weight(0.0) { }
 
-PassConfig::~PassConfig() {}
-
+PassConfig::~PassConfig() {
+	passStateVector.clear();
+}
 
 void PassConfig::addPassState(PassState* passState){
 	passStateVector.push_back(passState);
@@ -35,4 +36,8 @@ ostream& operator<<(ostream& out, const PassConfig &config){
 		out << "\t state(" << i << "):" << config.passStateVector.at(i) << endl;
 	}
 	return out;
+}
+
+bool operator<(const PassConfig& lhs, const PassConfig& rhs){
+	return (lhs.weight < rhs.weight);
 }

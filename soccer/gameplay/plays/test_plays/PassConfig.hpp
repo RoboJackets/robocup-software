@@ -22,13 +22,14 @@ typedef boost::ptr_vector<PassState> PassStateVector;
 class PassConfig {
 public:
 	PassConfig();
-	virtual ~PassConfig();
+	~PassConfig();
 
 	void addPassState(PassState* passState);
 	PassState* getPassState(int idx);
 	int length();
 	void setWeight(double w);
 	friend ostream& operator<<(ostream& out, const PassConfig &config);
+	friend bool operator<(const PassConfig& lhs, const PassConfig& rhs);
 
 	PassStateVector passStateVector;
 	double weight;
