@@ -8,9 +8,6 @@
 using namespace std;
 using namespace Geometry2d;
 
-//const float DegreesToRadians = M_PI / 180.0;
-//const float RadiansToDegrees = 180.0 / M_PI;
-
 Gameplay::Plays::TestDirectMotionControl::TestDirectMotionControl(GameplayModule *gameplay):
 	Play(gameplay),
 	fsm_state_(Setup), // start with setup state so robot goes to given point
@@ -35,10 +32,10 @@ Gameplay::Plays::TestDirectMotionControl::TestDirectMotionControl(GameplayModule
 		Point newpt = center - delta;
 		path_.push_back(newpt);
 
-		cout << "Point: (" << newpt.x << ", " << newpt.y << ")" << endl;
+		//cout << "Point: (" << newpt.x << ", " << newpt.y << ")" << endl;
 	}
 
-	cout << "Generated Path, Size: " << path_.size() << endl;
+	//cout << "Generated Path, Size: " << path_.size() << endl;
 }
 
 bool Gameplay::Plays::TestDirectMotionControl::applicable()

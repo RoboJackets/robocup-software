@@ -18,7 +18,6 @@
 
 // TO INSERT PLAYS: Add the include here, grouped by test plays and real plays
 // real plays
-#include "plays/OktayPlay.hpp"
 #include "plays/OurKickoff.hpp"
 #include "plays/TheirKickoff.hpp"
 #include "plays/OurFreekick.hpp"
@@ -31,10 +30,12 @@
 #include "plays/OptimizedOffense.hpp"
 
 // test plays
+#include "plays/OktayPlay.hpp"
 #include "plays/test_plays/TestBasicPassing.hpp"
 #include "plays/test_plays/TestBasicAttack.hpp"
 #include "plays/test_plays/TestPassPlay.hpp"
 #include "plays/test_plays/TestDirectMotionControl.hpp"
+#include "plays/test_plays/TestTimePositionControl.hpp"
 
 #include <QMouseEvent>
 #include <QFileDialog>
@@ -50,8 +51,9 @@ using namespace std;
 using namespace boost;
 using namespace Utils;
 
-Gameplay::GameplayModule::GameplayModule(SystemState *state):
-	Module("Gameplay")
+Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::MotionModule& cfg):
+	Module("Gameplay"),
+	_motion_config(cfg)
 {
 	_state = state;
 	_goalie = 0;
@@ -139,8 +141,6 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	// TO INSERT PLAYS: add the play as below
 
 	// Create a set of available normal plays
-    
-    _playConfig->addPlay(make_shared<Plays::OktayPlay>(this));
    	_playConfig->addPlay(make_shared<Plays::OurKickoff>(this));
 	_playConfig->addPlay(make_shared<Plays::TheirKickoff>(this));
 	_playConfig->addPlay(make_shared<Plays::OurFreekick>(this));
@@ -154,10 +154,12 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
    
 
 	// Add testing plays
+	_playConfig->addPlay(make_shared<Plays::OktayPlay>(this));
 	_playConfig->addPlay(make_shared<Plays::TestBasicPassing>(this));
 	_playConfig->addPlay(make_shared<Plays::TestBasicAttack>(this));
 	_playConfig->addPlay(make_shared<Plays::TestPassPlay>(this));
 	_playConfig->addPlay(make_shared<Plays::TestDirectMotionControl>(this));
+	_playConfig->addPlay(make_shared<Plays::TestTimePositionControl>(this));
 }
 
 Gameplay::GameplayModule::~GameplayModule()

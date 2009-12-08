@@ -1,5 +1,6 @@
 /**
- *  Play to test motion control using direct path control commands
+ *  Play to test motion control using time-position control
+ *  This uses the new packet datatype with Position models tagged to a timestamp
  */
 
 #pragma once
@@ -11,12 +12,12 @@ namespace Gameplay
 {
 	namespace Plays
 	{
-		class TestDirectMotionControl: public Play
+		class TestTimePositionControl: public Play
 		{
 			public:
 				typedef std::vector<Geometry2d::Point> path_t;
 
-				TestDirectMotionControl(GameplayModule *gameplay);
+				TestTimePositionControl(GameplayModule *gameplay);
 
 				/** Always applicable if we are playing */
 				virtual bool applicable();
@@ -44,8 +45,8 @@ namespace Gameplay
 				/** start point */
 				Geometry2d::Point start_pt_;
 
-				/** Path to execute */
-				path_t path_;
+				/** Initial time */
+				uint64_t start_time_;
 		};
 	}
 }

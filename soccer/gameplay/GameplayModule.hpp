@@ -7,6 +7,7 @@
 #include <set>
 
 #include <framework/Module.hpp>
+#include <framework/ConfigFile.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include "Robot.hpp"
@@ -21,7 +22,7 @@ namespace Gameplay
 	class GameplayModule: public Module
 	{
 		public:
-			GameplayModule(SystemState *state);
+			GameplayModule(SystemState *state, const ConfigFile::MotionModule& cfg);
 			~GameplayModule();
 			
 			SystemState *state() const
@@ -118,5 +119,8 @@ namespace Gameplay
 			
 			mutable QMutex _playMutex;
 			std::set<boost::shared_ptr<Play> > _plays;
+
+			// motion config information
+			const ConfigFile::MotionModule& _motion_config;
 	};
 }

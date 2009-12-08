@@ -91,7 +91,7 @@ Processor::Processor(Team t, QString filename) :
 	_stateIDModule = make_shared<StateIdentification::StateIDModule>(&_state);
 	_motionModule = make_shared<Motion::MotionModule>(&_state, _config.motionModule);
 	_refereeModule = make_shared<RefereeModule>(&_state);
-	_gameplayModule = make_shared<Gameplay::GameplayModule>(&_state);
+	_gameplayModule = make_shared<Gameplay::GameplayModule>(&_state, _config.motionModule);
 	_logModule = make_shared<Log::LogModule>(&_state);
 
 	_modules.append(_modelingModule);

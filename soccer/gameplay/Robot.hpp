@@ -61,7 +61,7 @@ namespace Gameplay
 				packet()->cmd.planner = Packet::MotionCmd::RRT;
 			}
 			
-			// Move along a path for waypoint-based control
+			/// Move along a path for waypoint-based control
 			void moveExplicit(const std::vector<Geometry2d::Point>& path)
 			{
 				// set motion command to use the explicit path generation
@@ -70,20 +70,32 @@ namespace Gameplay
 				// clear the path and set it to the correct one
 				packet()->cmd.explicitPath.clear();
 				packet()->cmd.explicitPath = path;
-
-				// set the facing
-				//FIXME: this shouldn't be necessary
-//				packet()->cmd.goalOrientation = path[0];
-//				packet()->cmd.face = Packet::MotionCmd::Continuous;
-
 			}
 
-			// Move using direct velocity control
+			/// Move using direct velocity control
 			void moveDirectVelocity(const Geometry2d::Point& trans, double ang)
 			{
+				//NOT IMPLEMENTED!
 				packet()->cmd.planner = Packet::MotionCmd::DirectVelocity;
 				packet()->cmd.direct_ang_vel = ang;
 				packet()->cmd.direct_trans_vel = trans;
+			}
+
+			/**
+			 * Move using timed-positions, so that each node has a target time
+			 * Also, the command needs a start time, so that it can calculate deltas
+			 * in seconds
+			 */
+			void moveTimePos(const std::vector<Packet::MotionCmd::PathNode>& timedPath, uint64_t start) {
+				// set controller type
+				packet()->cmd.planner = Packet::MotionCmd::TimePosition;
+
+				// set path
+				packet()->cmd.timePosPath.clear();
+				packet()->cmd.timePosPath = timedPath;
+
+				// set start time
+				packet()->cmd.start_time = start;
 			}
 
 			void spin(Packet::MotionCmd::SpinType dir)

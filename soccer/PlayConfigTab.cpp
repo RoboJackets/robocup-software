@@ -162,10 +162,13 @@ void PlayConfigTab::load(QString filename)
 	}
 	
 	// read all of the strings
+	bool foundGoalie = false;
 	while (ifs.good()) {
 		string name;
 		ifs >> name;
 		if (name != "") {
+			if (name == "goalie")
+				foundGoalie = true;
 			PlayMap::const_iterator i = plays.find(name);
 			if (i != plays.end())
 			{
@@ -176,6 +179,15 @@ void PlayConfigTab::load(QString filename)
 		}
 	}
 	ifs.close();
+
+	// create/remove goalie
+	on_goalie_toggled(foundGoalie);
+
+	// ensure that the button for the goalie is checked appropriately
+	ui.goalie->setChecked(foundGoalie);
+
+
+	// do updates
 	_model->update();
 }
 
@@ -195,6 +207,11 @@ void PlayConfigTab::on_save_clicked()
 
 	// open the file
 	ofstream ofs(fname.c_str());
+
+	// if there is a goalie, write to file
+	if (gameplay->goalie()) {
+		ofs << "goalie\n";
+	}
 
 	// write the plays in order
 	BOOST_FOREACH(shared_ptr<Gameplay::Play> play, gameplay->plays())

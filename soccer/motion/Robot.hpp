@@ -57,9 +57,6 @@ namespace Motion
 			void drawPath(QPainter& p);
 			void drawRRT(QPainter& p);
 
-			/** generate motor speeds */
-			void genMotor(bool old = false);
-
 			void setPosKp(double value);
 			void setPosKi(double value);
 			void setPosKd(double value);
@@ -75,6 +72,20 @@ namespace Motion
 			/** generate velocities based on path travel */
 			void genVelocity();
 
+			/** generate velocities based on time-position control */
+			void genTimePosVelocity();
+
+			/** stop the robot by forcing velocities to zero */
+			void stop();
+
+			/** generate motor speeds */
+			void genMotor(bool old = false);
+			void genMotorOld();
+
+			/** calibration function
+			 * only runs when compile flags are set
+			 * FIXME: find a way to parameterize this properly
+			 */
 			void calib();
 
 		private:

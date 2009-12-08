@@ -1,9 +1,10 @@
+goalie
 DefendPenalty
-Defense
-KickPenalty
-Offense
 OurFreekick
-OurKickoff
-Stopped
+KickPenalty
 TheirFreekick
 TheirKickoff
+Stopped
+Defense
+OurKickoff
+Offense
