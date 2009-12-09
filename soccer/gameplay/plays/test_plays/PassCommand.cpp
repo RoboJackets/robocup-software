@@ -7,7 +7,7 @@
 
 #include <gameplay/plays/test_plays/PassCommand.hpp>
 
-PassCommand::PassCommand(CommandType cT, Robot* a, Robot* b, Point* bPI, Point* bGP, Point* aPI, Point* aDI, Point* aPF, Point* aDF) : commandType(cT), robotA(a), robotB(b) {
+PassCommand::PassCommand(CommandType cT, Robot* a, Robot* b, Point* bPI, Point* bGP, Point* aPI, Point* aDI, Point* aPF, Point* aDF, double time) : commandType(cT), robotA(a), robotB(b), time(time) {
 	if(bPI != NULL){ballPosInit.x = bPI->x; ballPosInit.y = bPI->y;}
 	if(bGP != NULL){ballGoalPos.x = bGP->x; ballGoalPos.y = bGP->y;}
 	if(aPI != NULL){robotAPosInit.x = aPI->x; robotAPosInit.y = aPI->y;}
@@ -17,9 +17,9 @@ PassCommand::PassCommand(CommandType cT, Robot* a, Robot* b, Point* bPI, Point* 
 }
 
 // convenience constructor for commandType, robotA, robotAPosInit, robotADirInit, robotAPosFinal, robotADirFinal
-PassCommand::PassCommand(CommandType cT, Robot* a, Point aPI, Point aDI, Point aPF, Point aDF) :
+PassCommand::PassCommand(CommandType cT, Robot* a, Point aPI, Point aDI, Point aPF, Point aDF, double time) :
 	commandType(cT), robotA(a), robotB(NULL), robotAPosInit(aPI), robotADirInit(aDI),
-	robotAPosFinal(aPF), robotADirFinal(aDF){};
+	robotAPosFinal(aPF), robotADirFinal(aDF), time(time) {};
 
 PassCommand::~PassCommand() {}
 
@@ -39,5 +39,6 @@ ostream& operator<<(ostream& out, const PassCommand &passCommand){
 	out << ", robotADirInit: (" << passCommand.robotADirInit.x << "," << passCommand.robotADirInit.y << ")";
 	out << ", robotAPosFinal: (" << passCommand.robotAPosFinal.x << "," << passCommand.robotAPosFinal.y << ")";
 	out << ", robotADirFinal: (" << passCommand.robotADirFinal.x << "," << passCommand.robotADirFinal.y << ")";
+	out << ", time: " << passCommand.time;
 	return out;
 }

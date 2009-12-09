@@ -23,9 +23,9 @@ public:
 	enum CommandType {AIM_TO_ROBOT, AIM_TO_GOAL, GOTO_POSITION, RECEIVE_BALL, KICK};
 
 	// full constructor
-	PassCommand(CommandType cT, Robot* a, Robot* b, Point* bPI, Point* bGP, Point* aPI, Point* aDI, Point* aPF, Point* aDF);
+	PassCommand(CommandType cT, Robot* a, Robot* b, Point* bPI, Point* bGP, Point* aPI, Point* aDI, Point* aPF, Point* aDF, double time);
 	// convenience constructor for commandType, robotA, robotAPosInit, robotADirInit, robotAPosFinal, robotADirFinal
-	PassCommand(CommandType cT, Robot* a, Point aPI, Point aDI, Point aPF, Point aDF);
+	PassCommand(CommandType cT, Robot* a, Point aPI, Point aDI, Point aPF, Point aDF, double time);
 	virtual ~PassCommand();
 	friend ostream& operator<<(ostream& out, const PassCommand &passCommand);
 
@@ -38,6 +38,7 @@ public:
 	Point robotADirInit;
 	Point robotAPosFinal;
 	Point robotADirFinal;
+	double time;
 };
 
 #endif /* PASSCOMMAND_HPP_ */
