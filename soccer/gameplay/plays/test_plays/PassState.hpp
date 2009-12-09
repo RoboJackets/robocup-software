@@ -21,9 +21,11 @@ class PassState {
 public:
 	enum StateType{INITIAL,INTERMEDIATE,GOAL};
 
-	PassState(const Point* ballPos, StateType stateType);
-	PassState(const Point* ballPos, Robot* robot); // Intermediate, no final robot pos
-	PassState(const Point* ballPos, Robot* robot, Point* robotPos); // Intermediate, with final robot pos
+	// alternate constructors
+	PassState(const Point &ballPos, StateType stateType);
+	PassState(const Point &ballPos, Robot* robot); // Intermediate, no final robot pos
+	PassState(const Point &ballPos, Robot* robot, Point &robotPos); // Intermediate, with final robot pos
+
 	virtual ~PassState();
 	friend ostream& operator<<(ostream& out, const PassState &state);
 

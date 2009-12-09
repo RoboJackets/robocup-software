@@ -7,14 +7,11 @@
 
 #include <gameplay/plays/test_plays/PassState.hpp>
 
-
-PassState::PassState(const Point* _bP, StateType _sT) : ballPos(_bP->x,_bP->y), robot((Robot*)NULL), stateType(_sT) {}
+PassState::PassState(const Point &_bP, StateType _sT) : ballPos(_bP.x,_bP.y), robot((Robot*)NULL), stateType(_sT) {}
 
 // if there is a robot, the state type is implicitly INTERMEDIATE
-PassState::PassState(const Point* _bP, Robot* _cR) : ballPos(_bP->x,_bP->y), robot(_cR), stateType(INTERMEDIATE) {}
-PassState::PassState(const Point* _bP, Robot* _cR, Point* _rP) : ballPos(_bP->x,_bP->y), robot(_cR), robotPos(_rP->x,_rP->y), stateType(INTERMEDIATE) {}
-
-
+PassState::PassState(const Point &_bP, Robot* _cR) : ballPos(_bP.x,_bP.y), robot(_cR), stateType(INTERMEDIATE) {}
+PassState::PassState(const Point &_bP, Robot* _cR, Point &_rP) : ballPos(_bP.x,_bP.y), robot(_cR), robotPos(_rP.x,_rP.y), stateType(INTERMEDIATE) {}
 
 PassState::~PassState() {}
 

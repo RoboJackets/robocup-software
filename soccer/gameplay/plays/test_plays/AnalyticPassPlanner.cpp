@@ -14,19 +14,19 @@ namespace AnalyticPassPlanner {
 		BOOST_FOREACH(Robot *r1, _robots){
 			// initialize configurations of length 1
 			PassConfig* passConfig = new PassConfig(); // add starting ball position
-			passConfig->addPassState(new PassState(&ballPos,PassState::INITIAL)); // add robot with ball
-			passConfig->addPassState(new PassState(&ballPos, r1)); // add ending (goal) ball position
-			passConfig->addPassState(new PassState(&goalBallPos,PassState::GOAL));
+			passConfig->addPassState(new PassState(ballPos,PassState::INITIAL)); // add robot with ball
+			passConfig->addPassState(new PassState(ballPos, r1)); // add ending (goal) ball position
+			passConfig->addPassState(new PassState(goalBallPos,PassState::GOAL));
 			passConfigResult.push_back(passConfig);
 
 			// initialize configurations of length 2
 			BOOST_FOREACH(Robot *r2, _robots){
 				if(r2->id()==r1->id()){continue;} // don't pass to self
 				PassConfig* passConfig = new PassConfig(); // add starting ball position
-				passConfig->addPassState(new PassState(&ballPos,PassState::INITIAL)); // add robot1 with ball
-				passConfig->addPassState(new PassState(&ballPos, r1)); // add robot2 with ball
-				passConfig->addPassState(new PassState(&r2->pos(), r2)); // add ending (goal) ball position
-				passConfig->addPassState(new PassState(&goalBallPos,PassState::GOAL));
+				passConfig->addPassState(new PassState(ballPos,PassState::INITIAL)); // add robot1 with ball
+				passConfig->addPassState(new PassState(ballPos, r1)); // add robot2 with ball
+				passConfig->addPassState(new PassState(r2->pos(), r2)); // add ending (goal) ball position
+				passConfig->addPassState(new PassState(goalBallPos,PassState::GOAL));
 				passConfigResult.push_back(passConfig);
 
 				/*
@@ -35,11 +35,11 @@ namespace AnalyticPassPlanner {
 					if(r3->id()==r2->id()){continue;} // don't pass to self
 													  // note: r1 -> r2 -> r1 is ok.
 					PassConfig* passConfig = new PassConfig(); // add starting ball position
-					passConfig->addPassState(new PassState(&ballPos,PassState::INITIAL)); // add robot1 with ball
-					passConfig->addPassState(new PassState(&ballPos, r1)); // add robot2 with ball
-					passConfig->addPassState(new PassState(&r2->pos(), r2)); // add robot3 with ball
-					passConfig->addPassState(new PassState(&r3->pos(), r3)); // add ending (goal) ball position
-					passConfig->addPassState(new PassState(&goalBallPos,PassState::GOAL));
+					passConfig->addPassState(new PassState(ballPos,PassState::INITIAL)); // add robot1 with ball
+					passConfig->addPassState(new PassState(ballPos, r1)); // add robot2 with ball
+					passConfig->addPassState(new PassState(r2->pos(), r2)); // add robot3 with ball
+					passConfig->addPassState(new PassState(r3->pos(), r3)); // add ending (goal) ball position
+					passConfig->addPassState(new PassState(goalBallPos,PassState::GOAL));
 					passConfigResult(passConfig);
 				}
 				*/
