@@ -66,7 +66,6 @@ bool Gameplay::Plays::TestTimePositionControl::run()
 	path.push_back(goal);
 
 	// issue the motion command
-	cout << "Issuing TimePos Move command" << endl;
 	robot()->moveTimePos(path, start_time_);
 
 	return true;

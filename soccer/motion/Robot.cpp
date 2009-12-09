@@ -527,7 +527,7 @@ void printTimePosPath(const vector<MotionCmd::PathNode>& path, const string& s="
 
 void Robot::genTimePosVelocity()
 {
-	bool verbose = true;
+	bool verbose = false;
 
 	// find the time stepsize
 	const float deltaT = (_state->timestamp - _lastTimestamp)/intTimeStampToFloat;
@@ -590,7 +590,7 @@ void Robot::genTimePosVelocity()
 
 	// find magnitude of the velocity
 	const float vv = sqrtf(2 * length * info.deceleration);
-	cout << "Deceleration: " << info.deceleration << endl;
+	if (verbose) cout << "Deceleration: " << info.deceleration << endl;
 
 	// don't use maximum velocity for travelTime estimate, adjust down to account
 	// for acceleration
@@ -598,8 +598,8 @@ void Robot::genTimePosVelocity()
 	float adjust = 0.8;
 
 	// determine how long it will take at the target velocity
-	cout << "length: " << length << endl;
-	cout << "vv: " << vv << endl;
+	if (verbose) cout << "length: " << length << endl;
+	if (verbose) cout << "vv: " << vv << endl;
 	//float travelTime = length/vv;
 	float travelTime = length/(vv*adjust);
 	if (verbose) cout << "Estimated travel time: " << travelTime << endl;
