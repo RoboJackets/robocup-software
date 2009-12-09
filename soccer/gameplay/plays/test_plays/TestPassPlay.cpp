@@ -54,7 +54,6 @@ void Gameplay::Plays::TestPassPlay::assign(set<Robot *> &available){
 	//	defenders.push_back(fullback);
 	//}
 
-
 	_passState = Optimizing;
 
 	_passState = Executing;

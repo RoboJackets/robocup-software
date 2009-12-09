@@ -24,6 +24,7 @@
 #include "../../Play.hpp"
 #include "PassState.hpp"
 #include "PassConfig.hpp"
+#include "PassCommand.hpp"
 #include <gameplay/behaviors/positions/Fullback.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/foreach.hpp>
