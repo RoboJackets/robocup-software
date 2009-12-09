@@ -8,10 +8,10 @@
 #include <gameplay/plays/test_plays/AnalyticPassPlanner.hpp>
 
 namespace AnalyticPassPlanner {
-	void generateAllConfigs(const Point &ballPos, set<Robot *> &_robots, PassConfigVector &passConfigResult){
+	void generateAllConfigs(const Point &ballPos, set<Robot *> &robots, PassConfigVector &passConfigResult){
 		Geometry2d::Point goalBallPos = Geometry2d::Point(-Constants::Field::Width / 2.0, Constants::Field::Length);
 
-		BOOST_FOREACH(Robot *r1, _robots){
+		BOOST_FOREACH(Robot *r1, robots){
 			// initialize configurations of length 1
 			PassConfig* passConfig = new PassConfig(); // add starting ball position
 			passConfig->addPassState(new PassState(ballPos,PassState::INITIAL)); // add robot with ball
@@ -20,7 +20,7 @@ namespace AnalyticPassPlanner {
 			passConfigResult.push_back(passConfig);
 
 			// initialize configurations of length 2
-			BOOST_FOREACH(Robot *r2, _robots){
+			BOOST_FOREACH(Robot *r2, robots){
 				if(r2->id()==r1->id()){continue;} // don't pass to self
 				PassConfig* passConfig = new PassConfig(); // add starting ball position
 				passConfig->addPassState(new PassState(ballPos,PassState::INITIAL)); // add robot1 with ball
@@ -31,7 +31,7 @@ namespace AnalyticPassPlanner {
 
 				/*
 				// initialize configurations of length 3
-				BOOST_FOREACH(Robot *r3, _robots){
+				BOOST_FOREACH(Robot *r3, robots){
 					if(r3->id()==r2->id()){continue;} // don't pass to self
 													  // note: r1 -> r2 -> r1 is ok.
 					PassConfig* passConfig = new PassConfig(); // add starting ball position
@@ -47,7 +47,7 @@ namespace AnalyticPassPlanner {
 		}
 	}
 
-	void evaluateConfigs(set<Robot *> &_robots,Robot** _opponents, PassConfigVector &passConfigs){
+	void evaluateConfigs(set<Robot *> &robots, Robot** opponents, PassConfigVector &passConfigs){
 		//
 		// Weight configs
 		//
@@ -98,15 +98,15 @@ namespace AnalyticPassPlanner {
 			int numInteractions = 0;
 			for(int j=0; j<passConfigs[i].length(); j++){
 				thisState = passConfigs[i].getPassState(j);
-				/*
-				BOOST_FOREACH(Robot *opponentR, _opponents){
+				for (int i=0; i<Constants::Robots_Per_Team; ++i)
+				{
+					Robot *opponentR = opponents[i];
 					robotTravelDist = opponentR->pos().distTo(thisState->ballPos);
 					robotTravelTime = robotTravelDist / APPROXROBOTVELTRANS;
 					if(robotTravelTime < thisState->timeLeaveState){
 						numInteractions++;
 					}
 				}
-				*/
 			}
 
 			passConfigs[i].setWeight(numInteractions);
@@ -114,4 +114,4 @@ namespace AnalyticPassPlanner {
 		passConfigs.sort();
 	}
 
-};
+}

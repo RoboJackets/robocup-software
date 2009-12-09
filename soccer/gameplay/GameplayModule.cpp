@@ -36,6 +36,7 @@
 #include "plays/test_plays/TestPassPlay.hpp"
 #include "plays/test_plays/TestDirectMotionControl.hpp"
 #include "plays/test_plays/TestTimePositionControl.hpp"
+#include "plays/test_plays/TestPassConfigOptimize.hpp"
 
 #include <QMouseEvent>
 #include <QFileDialog>
@@ -160,6 +161,11 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_playConfig->addPlay(make_shared<Plays::TestPassPlay>(this));
 	_playConfig->addPlay(make_shared<Plays::TestDirectMotionControl>(this));
 	_playConfig->addPlay(make_shared<Plays::TestTimePositionControl>(this));
+	_playConfig->addPlay(make_shared<Plays::TestPassConfigOptimize>(this));
+
+	// initialize the PassConfig renderering
+	_passConfig_primary = 0;
+	_passConfig_secondary = 0;
 }
 
 Gameplay::GameplayModule::~GameplayModule()
@@ -192,6 +198,66 @@ void Gameplay::GameplayModule::fieldOverlay(QPainter &painter, Packet::LogFrame 
 	{
 		painter.drawEllipse(frame.ball.pos.toQPointF(), Constants::Field::CenterRadius, Constants::Field::CenterRadius);
 	}
+
+	// Render the pass configs to illustrate
+	if (_passConfig_primary)
+		renderPassConfig(_passConfig_primary, painter, true);
+	if (_passConfig_secondary)
+		renderPassConfig(_passConfig_secondary, painter, false);
+}
+
+void Gameplay::GameplayModule::renderPassConfig(PassConfig* config, QPainter &painter, bool primary) const
+{
+	// error check this
+	if (!config)
+		return;
+
+	// parameters for drawing
+	float ball_radius = 0.05;
+	float pos_radius = 0.1;
+
+	// choose the color based on whether this is the primary
+	if (primary)
+		painter.setPen(Qt::cyan);
+	else
+		painter.setPen(Qt::darkCyan);
+
+	// draw the path of the ball and the robot trajectories
+	Geometry2d::Point prevPt;
+	BOOST_FOREACH(PassState state, config->passStateVector) {
+		// draw the ball
+		painter.drawEllipse(state.ballPos.toQPointF(),ball_radius, ball_radius);
+
+		// switch on the type of node
+		if (state.stateType == PassState::INITIAL) {
+			// save the point to connect to
+			prevPt = state.ballPos;
+		} else if (state.stateType == PassState::INTERMEDIATE) {
+			// connect a line between the current and the last ball state
+			painter.drawLine(prevPt.toQPointF(), state.ballPos.toQPointF());
+
+			// draw the robot pose and final robot pose
+			painter.drawEllipse(state.robot->pos().toQPointF(), pos_radius, pos_radius); // initial
+			painter.drawEllipse(state.robotPos.toQPointF(), pos_radius, pos_radius);     // final
+
+			// draw a line between the current robot state and its target state
+			painter.drawLine(state.robot->pos().toQPointF(), state.robotPos.toQPointF());
+
+			// save to previous ball pose
+			prevPt = state.ballPos;
+		} else if (state.stateType == PassState::GOAL) {
+			// connect the previous ball to the current one
+			painter.drawLine(prevPt.toQPointF(), state.ballPos.toQPointF());
+		}
+	}
+
+}
+
+void Gameplay::GameplayModule::disablePassConfigRendering()
+{
+	// NOTE: this does not actually free the config, just removes the reference
+	_passConfig_primary = 0;
+	_passConfig_secondary = 0;
 }
 
 void Gameplay::GameplayModule::run()
@@ -388,6 +454,9 @@ void Gameplay::GameplayModule::disablePlay(shared_ptr<Play> play)
 {
 	QMutexLocker lock(&_playMutex);
 	_plays.erase(play);
+
+	// always clear the passConfigs between plays
+	disablePassConfigRendering();
 }
 
 bool Gameplay::GameplayModule::playEnabled(boost::shared_ptr<Play> play) const

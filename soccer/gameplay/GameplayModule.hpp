@@ -13,6 +13,7 @@
 #include "Robot.hpp"
 
 class PlayConfigTab;
+class PassConfig;
 
 namespace Gameplay
 {
@@ -89,6 +90,11 @@ namespace Gameplay
 				return _playConfig;
 			}
 			
+
+			/** Render pass configs - may be null to indicate do not render */
+			PassConfig * _passConfig_primary;
+			PassConfig * _passConfig_secondary;
+
 		protected:
 			friend class Play;
 			
@@ -122,5 +128,11 @@ namespace Gameplay
 
 			// motion config information
 			const ConfigFile::MotionModule& _motion_config;
+
+			/** Resets the configs to render */
+			void disablePassConfigRendering();
+
+			/** Rendering function for a PassConfig */
+			void renderPassConfig(PassConfig* config, QPainter &painter, bool primary) const;
 	};
 }
