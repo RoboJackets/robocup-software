@@ -69,7 +69,7 @@ set (SRCS
 	gameplay/plays/test_plays/TestPassPlay.cpp
 	gameplay/plays/test_plays/PassConfig.cpp
 	gameplay/plays/test_plays/PassState.cpp
-	gameplay/plays/test_plays/PassCommand.cpp
+	gameplay/plays/test_plays/AnalyticPassPlanner.cpp
 
 # 	gameplay/behaviors/test/KickerCalibration.cpp   
 # 	gameplay/behaviors/test/MotionLeader.cpp    

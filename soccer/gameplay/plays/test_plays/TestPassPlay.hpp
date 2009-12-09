@@ -22,21 +22,17 @@
 #include <iostream>
 #include <fstream>
 #include "../../Play.hpp"
-#include "PassState.hpp"
-#include "PassConfig.hpp"
-#include "PassCommand.hpp"
 #include <gameplay/behaviors/positions/Fullback.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/foreach.hpp>
 #include <vector>
-
-typedef boost::ptr_vector<PassConfig> PassConfigVector;
+#include "PassState.hpp"
+#include "PassConfig.hpp"
+#include "AnalyticPassPlanner.hpp"
 
 using namespace std;
 
-#define APPROXBALLVEL 20.0       // m/s
-#define APPROXROBOTVELTRANS 1.0  // m/s
-#define APPROXROBOTVELROT 4.0    // rad/s
+typedef boost::ptr_vector<PassConfig> PassConfigVector;
 
 namespace Gameplay{
 	namespace Plays{
