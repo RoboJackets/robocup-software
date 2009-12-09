@@ -7,26 +7,24 @@
 
 #include <gameplay/plays/test_plays/PassState.hpp>
 
-PassState::PassState(const Geometry2d::Point* _bP, StateType _sT) : ballPos(_bP->x,_bP->y), controllingRobot((Robot*)NULL), stateType(_sT) {
 
-}
+PassState::PassState(const Point* _bP, StateType _sT) : ballPos(_bP->x,_bP->y), robot((Robot*)NULL), stateType(_sT) {}
 
-// if there is a controlling robot, the state type is implicitly INTERMEDIATE
-PassState::PassState(const Geometry2d::Point* _bP, Robot* _cR) : ballPos(_bP->x,_bP->y), controllingRobot(_cR), stateType(INTERMEDIATE) {
-
-}
+// if there is a robot, the state type is implicitly INTERMEDIATE
+PassState::PassState(const Point* _bP, Robot* _cR) : ballPos(_bP->x,_bP->y), robot(_cR), stateType(INTERMEDIATE) {}
+PassState::PassState(const Point* _bP, Robot* _cR, Point* _rP) : ballPos(_bP->x,_bP->y), robot(_cR), robotPos(_rP->x,_rP->y), stateType(INTERMEDIATE) {}
 
 
-PassState::~PassState() {
-	// TODO Auto-generated destructor stub
-}
+
+PassState::~PassState() {}
 
 ostream& operator<<(ostream& out, const PassState &state){
-	if(state.controllingRobot != NULL)
-		out << "robot id:" << state.controllingRobot->id();
+	if(state.robot != NULL)
+		out << "robot id:" << state.robot->id();
 	else
 		out << "no robot";
-	out << ", ball position: (" << state.ballPos.x << ", " << state.ballPos.y << ")";
+	out << ", init ball pos: (" << state.ballPos.x << ", " << state.ballPos.y << ")";
 	out << ", timeEnter: " << state.timeEnterState << ", timeLeave: " << state.timeLeaveState;
+	out << ", final robot pos: (" << state.robotPos.x << ", " << state.robotPos.y << ")";
 	return out;
 }

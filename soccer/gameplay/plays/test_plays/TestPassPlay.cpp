@@ -26,7 +26,7 @@ void Gameplay::Plays::TestPassPlay::assign(set<Robot *> &available){
 	BOOST_FOREACH(Robot *r, _robots)
 		nonPassingRobots.push_back(*r);
 	BOOST_FOREACH(PassState passState, bestPassConfig.passStateVector){
-		Robot *r = passState.controllingRobot;
+		Robot *r = passState.robot;
 		if(r != NULL){
 			for (vector<Robot>::iterator it = nonPassingRobots.begin(); it!=nonPassingRobots.end(); ++it) {
 				if(it->id() == r->id()){
@@ -125,7 +125,7 @@ void Gameplay::Plays::TestPassPlay::initializePlan(){
 					break;
 				case PassState::INTERMEDIATE :
 					if(prevState->stateType == PassState::INITIAL){
-						robotTravelDist = thisState->controllingRobot->pos().distTo(thisState->ballPos);
+						robotTravelDist = thisState->robot->pos().distTo(thisState->ballPos);
 						robotTravelTime = robotTravelDist / APPROXROBOTVELTRANS;
 						thisState->timeEnterState = prevState->timeLeaveState + robotTravelTime;
 					}else{
