@@ -139,7 +139,6 @@ void Robot::proc()
 			// handle direct velocity commands (NOT IMPLEMENTED)
 			case Packet::MotionCmd::DirectVelocity:
 			{
-				cout << "Got DirectVelocity Command" << endl;
 				// set the velocities from the gameplay module
 				_vel = _self->cmd.direct_trans_vel;
 				_w = _self->cmd.direct_ang_vel;
@@ -151,7 +150,6 @@ void Robot::proc()
 			// handle explicit path generation (short-circuit RRT)
 			case Packet::MotionCmd::Explicit:
 			{
-				cout << "Got ExplicitPath Command" << endl;
 				// create a new path
 				Planning::Path path;
 
@@ -169,7 +167,6 @@ void Robot::proc()
 			// handle time-position control
 			case Packet::MotionCmd::TimePosition:
 			{
-				cout << "Got TimePos Command" << endl;
 				// generate the velocity command for time-position control
 				genTimePosVelocity();
 				break;
@@ -178,7 +175,6 @@ void Robot::proc()
 			// default RRT-based planner that also handles pivoting
 			case Packet::MotionCmd::RRT:
 			{
-				cout << "Got Default RRT-based command" << endl;
 				if (_self->cmd.pivot == MotionCmd::NoPivot)
 				{
 					//new path if better than old
@@ -212,7 +208,7 @@ void Robot::proc()
 			}
 			}
 
-			//generate motor outputs based on velocity
+			// generate motor outputs based on velocity
 			genMotor();
 #else
 			calib();
@@ -275,6 +271,82 @@ void Robot::stop() {
 		_vel = Geometry2d::Point(0.,0.);
 	else
 		_vel -= _vel.normalized()*vv;
+}
+
+void Robot::scaleVelocity() {
+	// default scaling
+	float vscale = 1;
+
+	// pull out the robot angle
+	const float robotAngle = _self->angle;
+
+	// move slower in stopped mode
+	if (_state->gameState.state == GameState::Stop)
+	{
+		vscale = .5;
+	}
+
+	// handle saturation of the velocity scaling
+	_self->cmd.vScale = saturate(_self->cmd.vScale, 1.0, 0.0);
+
+	// scale the velocity if necessary
+	vscale *= _self->cmd.vScale;
+
+	//max velocity info is in the new desired velocity direction
+	Dynamics::DynamicsInfo info = _dynamics.info(_vel.angle() *
+			RadiansToDegrees - robotAngle, _w);
+
+	const float maxVel = info.velocity * vscale;
+
+	// handle saturating the maximum velocity
+	if (_vel.mag() > maxVel)
+	{
+		_vel = _vel.normalized() * maxVel;
+	}
+}
+
+void Robot::sanityCheck(const unsigned int LookAheadFrames) {
+	// timestep
+	const float deltaT = (_state->timestamp - _lastTimestamp)/intTimeStampToFloat;
+
+	// predict ahead
+	Geometry2d::Point predictedPos = _self->pos +
+		_vel * deltaT * LookAheadFrames;
+
+	// avoid opponents
+	BOOST_FOREACH(Packet::LogFrame::Robot& r, _state->opp)
+	{
+		Geometry2d::Circle c(r.pos, Constants::Robot::Diameter);
+
+		Geometry2d::Segment s(_self->pos, predictedPos);
+		if (r.valid && s.intersects(c))
+		{
+			Geometry2d::Point dir = r.pos - _self->pos;
+			dir = dir.normalized();
+
+			//take off the offending velocity
+			_vel -= (dir * dir.dot(_vel));
+		}
+	}
+
+	//protect against self hit
+	BOOST_FOREACH(Packet::LogFrame::Robot& r, _state->self)
+	{
+		if (r.shell != _self->shell)
+		{
+			Geometry2d::Circle c(r.pos, Constants::Robot::Diameter);
+
+			Geometry2d::Segment s(_self->pos, predictedPos);
+			if (r.valid && s.intersects(c))
+			{
+				Geometry2d::Point dir = r.pos - _self->pos;
+				dir = dir.normalized();
+
+				//take off the offending velocity
+				_vel -= (dir * dir.dot(_vel));
+			}
+		}
+	}
 }
 
 /**
@@ -405,32 +477,8 @@ void Robot::genVelocity()
 		// adjust the velocity
 		_vel += dVel;
 		
-
-		float vscale = 1;
-		
-		// move slower in stopped mode
-		if (_state->gameState.state == GameState::Stop)
-		{
-			vscale = .5;
-		}
-		
-		// handle saturation of the velocity scaling
-		_self->cmd.vScale = saturate(_self->cmd.vScale, 1.0, 0.0);
-		
-		// scale the velocity if necessary
-		vscale *= _self->cmd.vScale;
-		
-		//max velocity info is in the new desired velocity direction
-		info = _dynamics.info(_vel.angle() * 
-			RadiansToDegrees - robotAngle, _w);
-		
-		const float maxVel = info.velocity * vscale;
-		
-		// handle maxvelocity scaling
-		if (_vel.mag() > maxVel)
-		{
-			_vel = _vel.normalized() * maxVel;
-		}
+		// scale velocity due to commands
+		scaleVelocity();
 
 	}
 	else /** Handle pivoting */
@@ -455,48 +503,9 @@ void Robot::genVelocity()
 		_vel = dir * .4;
 	}
 	
-	//// safety net against hitting other robots
-	
-	//if the commanded velocity will cause us to hit something
-	//in N frames...we need to subtract from commanded velocity
-	
+	// sanity check the velocities due to obstacles
 	const unsigned int LookAheadFrames = 5;
-	Geometry2d::Point predictedPos = _self->pos + 
-		_vel * deltaT * LookAheadFrames;
-	
-	BOOST_FOREACH(Packet::LogFrame::Robot& r, _state->opp)
-	{
-		Geometry2d::Circle c(r.pos, Constants::Robot::Diameter);
-		
-		Geometry2d::Segment s(_self->pos, predictedPos);
-		if (r.valid && s.intersects(c))
-		{
-			Geometry2d::Point dir = r.pos - _self->pos;
-			dir = dir.normalized();
-			
-			//take off the offending velocity
-			_vel -= (dir * dir.dot(_vel));
-		}
-	}
-	
-	//protect against self hit
-	BOOST_FOREACH(Packet::LogFrame::Robot& r, _state->self)
-	{
-		if (r.shell != _self->shell)
-		{
-			Geometry2d::Circle c(r.pos, Constants::Robot::Diameter);
-			
-			Geometry2d::Segment s(_self->pos, predictedPos);
-			if (r.valid && s.intersects(c))
-			{
-				Geometry2d::Point dir = r.pos - _self->pos;
-				dir = dir.normalized();
-				
-				//take off the offending velocity
-				_vel -= (dir * dir.dot(_vel));
-			}
-		}
-	}
+	sanityCheck(LookAheadFrames);
 }
 
 /** print out a time-pos node for debugging */
@@ -520,13 +529,16 @@ void Robot::genTimePosVelocity()
 {
 	bool verbose = true;
 
+	// find the time stepsize
+	const float deltaT = (_state->timestamp - _lastTimestamp)/intTimeStampToFloat;
+
 	// determine what the change in time since last frame was
 	float cur_time = (_state->timestamp-_self->cmd.start_time)/intTimeStampToFloat;
 	if (verbose) cout << "Current time: " << cur_time << endl;
 
 	// extract a portion of the path
 	vector<MotionCmd::PathNode>& full_path = _self->cmd.timePosPath;
-	if (verbose) printTimePosPath(full_path, "Full path");
+	//if (verbose) printTimePosPath(full_path, "Full path");
 
 	// we only want a specific number of path nodes in advance, and after the current time
 	int lookahead = 3;
@@ -554,6 +566,7 @@ void Robot::genTimePosVelocity()
 		return;
 	}
 	if (verbose) printTimePosPath(path, "Future Path");
+	if (verbose) printPt(_self->pos, "Current Pos");
 
 	// handle facing - use PID to get the closest rotational position
 	float targetAngle = path[0].rot;
@@ -561,13 +574,70 @@ void Robot::genTimePosVelocity()
 	_w = _anglePid.run(angleErr);
 
 	// handle translation - use simple method for driving towards goal
-	// drive straight at point
+	// drive straight at point as fast as possible
+	Geometry2d::Point target = path[0].pos;
+	Geometry2d::Point dir = target - _self->pos;
 
-	// do sanity checking
+	// pull out the robot angle
+	const float robotAngle = _self->angle;
 
-	// PLACEHOLDER:
-	_vel = Geometry2d::Point(0.0,0.0);
+	//max velocity info is in the new desired velocity direction
+	Dynamics::DynamicsInfo info = _dynamics.info(dir.angle() *
+		RadiansToDegrees - robotAngle, _w);
 
+	// find the length of the path
+	float length = dir.mag();
+
+	// find magnitude of the velocity
+	const float vv = sqrtf(2 * length * info.deceleration);
+	cout << "Deceleration: " << info.deceleration << endl;
+
+	// don't use maximum velocity for travelTime estimate, adjust down to account
+	// for acceleration
+	// this should be a function of the distance - longer distances get closer to one
+	float adjust = 0.8;
+
+	// determine how long it will take at the target velocity
+	cout << "length: " << length << endl;
+	cout << "vv: " << vv << endl;
+	//float travelTime = length/vv;
+	float travelTime = length/(vv*adjust);
+	if (verbose) cout << "Estimated travel time: " << travelTime << endl;
+
+	// determine how long we want it to take
+	float targetTime = path[0].time - cur_time;
+
+	// weight the velocity vector to arrive at a particular time
+	float weight = 1.0;
+	if (travelTime < targetTime) {
+		weight = travelTime/targetTime; // bring down speed to match the time requirement
+	}
+
+	// create the velocity vector
+	Geometry2d::Point targetVel = dir.normalized() * vv * weight;
+
+	//last commanded velocity
+	Geometry2d::Point dVel = targetVel - _vel;
+
+	//!!!acceleration is in the change velocity direction not travel direction
+	info = _dynamics.info(dVel.angle() * RadiansToDegrees - robotAngle, _w);
+	const float maxAccel = info.acceleration;
+
+	//calc frame acceleration from total acceleration
+	const float frameAccel = deltaT * maxAccel;
+
+	//use frame acceleration
+	dVel = dVel.normalized() * frameAccel;
+
+	// adjust the velocity
+	_vel += dVel;
+
+	// scale velocities as per commands
+	scaleVelocity();
+
+	// sanity check the velocities due to obstacles
+	const unsigned int LookAheadFrames = 5;
+	sanityCheck(LookAheadFrames);
 
 	if (verbose) cout << "At end of genTimePosVelocity()" << endl;
 }

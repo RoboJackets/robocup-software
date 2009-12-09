@@ -42,6 +42,7 @@
 			<constant name="RRT" />
 			<constant name="Explicit" />
 			<constant name="DirectVelocity" />
+			<constant name="TimePosition" />
 		</enum>
 		<member type="PlannerType" name="planner" value="RRT" />
 				
@@ -51,5 +52,15 @@
 		<!--Direct Velocity Commands-->
 		<member type="float" name="direct_ang_vel" value="0.0"/>
 		<member type="Geometry2d::Point" name="direct_trans_vel" />
+		
+		<!--Time-Position Path-->
+		<struct typename="PathNode">
+			<member type="float" name="time" />
+			<member type="Geometry2d::Point" name="pos" />
+			<member type="float" name="rot" />
+		</struct>
+		<array type="PathNode" name="timePosPath" />
+		<!--Need a time for the start of the path-->
+		<member type="uint64" name="start_time" />
 
 </struct>

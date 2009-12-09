@@ -75,6 +75,16 @@ namespace Motion
 			/** generate velocities based on time-position control */
 			void genTimePosVelocity();
 
+			/**
+			 * safety net against hitting other robots
+			 * if the commanded velocity will cause us to hit something
+			 * in N frames...we need to subtract from commanded velocity
+			 */
+			void sanityCheck(const unsigned int N);
+
+			/** scales the velocity to a smaller value if commands require */
+			void scaleVelocity();
+
 			/** stop the robot by forcing velocities to zero */
 			void stop();
 
