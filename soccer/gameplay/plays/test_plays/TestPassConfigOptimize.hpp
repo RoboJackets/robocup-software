@@ -11,6 +11,7 @@
 #include <vector>
 #include "../../Play.hpp"
 #include "PassConfig.hpp"
+#include "../../optimizer/PassOptimizer.hpp"
 
 namespace Gameplay
 {
@@ -44,6 +45,9 @@ namespace Gameplay
 					DONE
 				} TestState;
 				TestState testState_;
+
+				/** Optimizer module */
+				Optimization::PassOptimizer optimizer_;
 		};
 	}
 }

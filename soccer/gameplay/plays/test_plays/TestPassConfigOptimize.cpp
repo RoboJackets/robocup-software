@@ -5,14 +5,17 @@
 #include <iostream>
 #include <boost/foreach.hpp>
 #include "TestPassConfigOptimize.hpp"
+#include "../../optimizer/PassOptimizer.hpp"
 
 using namespace std;
 using namespace Geometry2d;
 using namespace Packet;
+using namespace Optimization;
 
 Gameplay::Plays::TestPassConfigOptimize::TestPassConfigOptimize(GameplayModule *gameplay):
 	Play(gameplay),
-	testState_(INIT)
+	testState_(INIT),
+	optimizer_(gameplay)
 {
 }
 
@@ -66,6 +69,8 @@ bool Gameplay::Plays::TestPassConfigOptimize::run()
 	else if (testState_ == OPTIMIZE)
 	{
 		// perform optimization
+
+
 		// save to primary config in gameplay for drawing
 	}
 

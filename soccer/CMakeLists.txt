@@ -29,11 +29,15 @@ set (SRCS
 
 # Sources for gameplay module
 
+	# Core gameplay components
 	gameplay/GameplayModule.cpp
 	gameplay/Play.cpp
 	gameplay/Behavior.cpp
 	gameplay/Window.cpp
 	gameplay/Robot.cpp
+	
+	# Optimization components
+	gameplay/optimizer/PassOptimizer.cpp
 	
 	# Main Plays
 	gameplay/plays/OurKickoff.cpp
@@ -128,7 +132,9 @@ target_link_libraries(${target} ${NETWORK_LIBRARY})
 target_link_libraries(${target} ${CONFIG_LIBRARY})
 target_link_libraries(${target} blas lapack)
 target_link_libraries(${target} vision)
+target_link_libraries(${target} gtsam)
 target_link_libraries(${target} ${QT_LIBRARIES})
+
 
 #Module Linking
 # Add a new line here for every module used
