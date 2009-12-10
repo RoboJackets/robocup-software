@@ -22,9 +22,13 @@ public:
 	enum StateType{INITIAL,INTERMEDIATE,GOAL};
 
 	// alternate constructors
+	PassState() {} // default - don't read data from this
 	PassState(const Point &ballPos, StateType stateType);
 	PassState(const Point &ballPos, Robot* robot); // Intermediate, no final robot pos
 	PassState(const Point &ballPos, Robot* robot, const Point &robotPos); // Intermediate, with final robot pos
+
+	/// copy constructor
+	PassState(const PassState& s);
 
 	virtual ~PassState();
 	friend ostream& operator<<(ostream& out, const PassState &state);

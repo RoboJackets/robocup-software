@@ -46,7 +46,7 @@ namespace Gameplay
 				} TestState;
 				TestState testState_;
 
-				/** Optimizer module */
+				/** optimizer engine */
 				Optimization::PassOptimizer optimizer_;
 		};
 	}

@@ -38,6 +38,8 @@ set (SRCS
 	
 	# Optimization components
 	gameplay/optimizer/PassOptimizer.cpp
+	gameplay/optimizer/OptimizerGraph.cpp
+	gameplay/optimizer/OptimizerConfig.cpp
 	
 	# Main Plays
 	gameplay/plays/OurKickoff.cpp
@@ -132,7 +134,7 @@ target_link_libraries(${target} ${NETWORK_LIBRARY})
 target_link_libraries(${target} ${CONFIG_LIBRARY})
 target_link_libraries(${target} blas lapack)
 target_link_libraries(${target} vision)
-target_link_libraries(${target} gtsam)
+target_link_libraries(${target} gtsam) 
 target_link_libraries(${target} ${QT_LIBRARIES})
 
 

@@ -32,6 +32,8 @@ void Gameplay::Plays::TestPassConfigOptimize::assign(set<Robot *> &available)
 
 bool Gameplay::Plays::TestPassConfigOptimize::run()
 {
+	bool verbose = true;
+
 	if (testState_ == INIT)
 	{
 		// create the config
@@ -40,7 +42,7 @@ bool Gameplay::Plays::TestPassConfigOptimize::run()
 
 		// create the config and initialize the first step
 		PassConfig passConfig;
-		passConfig.addPassState(new PassState(initBallPos,PassState::INITIAL)); // add initial ball pos
+		passConfig.addPassState(PassState(initBallPos,PassState::INITIAL)); // add initial ball pos
 
 		// create the intermediate steps
 		BOOST_FOREACH(Robot * r, _robots)
@@ -48,19 +50,19 @@ bool Gameplay::Plays::TestPassConfigOptimize::run()
 			if (r->visible()) {
 				Geometry2d::Point final_robot_pos = r->pos() + (goalBallPos - r->pos()).normalized()*0.15;
 				Geometry2d::Point ballPos = final_robot_pos + (goalBallPos - r->pos()).normalized()*0.15;
-				passConfig.addPassState(new PassState(ballPos, r, final_robot_pos));     // add intercept pos
+				passConfig.addPassState(PassState(ballPos, r, final_robot_pos));     // add intercept pos
 			}
 		}
 
 		// create the final shot
-		passConfig.addPassState(new PassState(goalBallPos,PassState::GOAL));// add goal state
+		passConfig.addPassState(PassState(goalBallPos,PassState::GOAL));// add goal state
 
 		// save to the secondary config in gameplay for drawing
-		opt_config_ = passConfig;
-		gameplay()->_passConfig_secondary = &opt_config_; // this is a persistent object
+		config_ = passConfig;
+		gameplay()->_passConfig_secondary = &config_; // this is a persistent object
 
 		// print for debugging:
-		cout << passConfig << endl;
+		if (verbose) cout << "Initial Config" << passConfig << endl;
 
 		// goto next state
 		testState_ = OPTIMIZE;
@@ -69,9 +71,15 @@ bool Gameplay::Plays::TestPassConfigOptimize::run()
 	else if (testState_ == OPTIMIZE)
 	{
 		// perform optimization
+		opt_config_ = optimizer_.optimizePlan(config_, verbose);
 
+		if (verbose) cout << "Optimized Config" << opt_config_ << endl;
 
 		// save to primary config in gameplay for drawing
+		gameplay()->_passConfig_primary = &opt_config_;
+
+		// get out of state to avoid repeating calculations
+		testState_ = DONE;
 	}
 
 	return true;

@@ -10,23 +10,24 @@
 
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include "PassState.hpp"
-#include <boost/ptr_container/ptr_vector.hpp>
 #include <gameplay/Robot.hpp>
 
 using std::ostream;
 using std::endl;
 
-typedef boost::ptr_vector<PassState> PassStateVector;
+typedef std::vector<PassState> PassStateVector;
 
 class PassConfig {
 public:
 	PassConfig();
+	PassConfig(const PassConfig& c); /// copy constructor
 	~PassConfig();
 
-	void addPassState(PassState* passState);
-	PassState* getPassState(int idx);
-	int length();
+	void addPassState(const PassState& passState);
+	PassState getPassState(int idx) const;
+	int length() const;
 	void setWeight(double w);
 	friend ostream& operator<<(ostream& out, const PassConfig &config);
 	friend bool operator<(const PassConfig& lhs, const PassConfig& rhs);

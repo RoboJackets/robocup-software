@@ -8,6 +8,7 @@
 #pragma once
 
 #include "../GameplayModule.hpp"
+#include "../plays/test_plays/PassConfig.hpp"
 
 namespace Gameplay
 {
@@ -16,12 +17,23 @@ namespace Gameplay
 		class PassOptimizer {
 
 		public:
+			/**
+			 * Default constructor needs access to the gameplay for state information
+			 */
 			PassOptimizer(GameplayModule* gameplay);
+
 			virtual ~PassOptimizer();
 
-		protected:
-			GameplayModule * gameplay_;
+			/**
+			 * Primary optimization function
+			 * Takes a configuration and returns an optimized one
+			 * with optional verbosity levels
+			 */
+			PassConfig optimizePlan(const PassConfig& init, bool verbose = false) const;
 
+		protected:
+			/** the gameplay module link to get access to state information */
+			GameplayModule * gameplay_;
 		};
 	}
 }

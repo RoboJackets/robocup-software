@@ -13,6 +13,12 @@ PassState::PassState(const Point &_bP, StateType _sT) : ballPos(_bP.x,_bP.y), ro
 PassState::PassState(const Point &_bP, Robot* _cR) : ballPos(_bP.x,_bP.y), robot(_cR), stateType(INTERMEDIATE) {}
 PassState::PassState(const Point &_bP, Robot* _cR, const Point &_rP) : ballPos(_bP.x,_bP.y), robot(_cR), robotPos(_rP.x,_rP.y), stateType(INTERMEDIATE) {}
 
+PassState::PassState(const PassState& s)
+: ballPos(s.ballPos), robot(s.robot), robotPos(s.robotPos), stateType(s.stateType),
+  timeEnterState(s.timeEnterState), timeLeaveState(s.timeLeaveState)
+{
+}
+
 PassState::~PassState() {}
 
 ostream& operator<<(ostream& out, const PassState &state){

@@ -55,24 +55,23 @@ void Gameplay::Plays::TestPassPlay::assign(set<Robot *> &available){
 bool Gameplay::Plays::TestPassPlay::run(){
 	if(passIndex >= bestPassConfig.length())
 		return false;
-	PassState* passState = bestPassConfig.getPassState(passIndex);
-	PassState* nextPassState = (passIndex+1<bestPassConfig.length()?bestPassConfig.getPassState(passIndex+1):NULL);
+	PassState passState = bestPassConfig.getPassState(passIndex);
 
-	if(passState->stateType==PassState::GOAL){
+	if(passState.stateType==PassState::GOAL){
 		_robots.clear();
 		_passState = Done;
 		return false;
 	}else{
-		if(passState->stateType==PassState::INITIAL || !kicker.run()){
+		if(passState.stateType==PassState::INITIAL || !kicker.run()){
 			if(++passIndex >= bestPassConfig.length()){return false;}
 
 			passState = bestPassConfig.getPassState(passIndex);
-			nextPassState = (passIndex+1<bestPassConfig.length()?bestPassConfig.getPassState(passIndex+1):NULL);
-			if(passState->stateType == PassState::INTERMEDIATE){
-				kicker.assignOne(passState->robot);
-				if(nextPassState->stateType == PassState::INTERMEDIATE){
-					kicker.targetRobot = nextPassState->robot;
-					nextPassState->robot->move(nextPassState->robotPos);
+			if(passState.stateType == PassState::INTERMEDIATE){
+				kicker.assignOne(passState.robot);
+				PassState nextPassState = bestPassConfig.getPassState(passIndex+1);
+				if(nextPassState.stateType == PassState::INTERMEDIATE){
+					kicker.targetRobot = nextPassState.robot;
+					nextPassState.robot->move(nextPassState.robotPos);
 				}else{
 					kicker.targetRobot = 0;
 				}

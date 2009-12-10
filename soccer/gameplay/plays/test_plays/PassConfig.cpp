@@ -9,20 +9,27 @@
 
 PassConfig::PassConfig() : weight(0.0) { }
 
+PassConfig::PassConfig(const PassConfig& c)
+: weight(c.weight){
+	// copy over the states
+	for (int i=0; i<c.length(); ++i)
+		passStateVector.push_back(c.getPassState(i));
+}
+
 PassConfig::~PassConfig() {
 	passStateVector.clear();
 }
 
-void PassConfig::addPassState(PassState* passState){
+void PassConfig::addPassState(const PassState& passState){
 	passStateVector.push_back(passState);
 }
 
-PassState* PassConfig::getPassState(int idx){
+PassState PassConfig::getPassState(int idx) const {
 	assert(idx < (int)passStateVector.size()); // pass state index must exist
-	return &passStateVector.at(idx);
+	return passStateVector.at(idx);
 }
 
-int PassConfig::length(){
+int PassConfig::length() const{
 	return passStateVector.size();
 }
 
