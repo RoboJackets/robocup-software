@@ -3,6 +3,7 @@
 #include "../Behavior.hpp"
 
 #include "Intercept.hpp"
+#include <iostream>
 
 namespace Gameplay
 {

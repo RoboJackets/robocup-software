@@ -39,6 +39,7 @@ Gameplay::Behaviors::Kick::~Kick()
 
 void Gameplay::Behaviors::Kick::assign(set<Robot *> &available)
 {
+	_robots.clear(); // clear existing robots
 	takeBest(available);
 	
 	if (!_win)
@@ -109,7 +110,7 @@ bool Gameplay::Behaviors::Kick::run()
 			}
 		}
 	}
-	
+
 	if (_win->best)
 	{
 		_target = _win->best->segment;
@@ -121,7 +122,6 @@ bool Gameplay::Behaviors::Kick::run()
 	Geometry2d::Point targetCenter = _target.center();
 
 	int kickStrength = 255;
-	
 	//if kicking to a target
 	//calculate kick strength
 	if (targetRobot)

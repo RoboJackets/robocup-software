@@ -45,6 +45,19 @@ namespace AnalyticPassPlanner {
 				*/
 			}
 		}
+
+		// set the final robot position for each state
+		for(int pC=0; pC < (int)passConfigResult.size(); pC++){
+			for(int pS=0; pS < passConfigResult[pC].length(); pS++){
+				if(passConfigResult[pC].passStateVector[pS].stateType == PassState::INTERMEDIATE){
+					Point nextBallPos = passConfigResult[pC].passStateVector[pS+1].ballPos;
+					Point thisBallPos = passConfigResult[pC].passStateVector[pS].ballPos;
+					Point shotDir = (nextBallPos-thisBallPos).normalized();
+					Point robotPosFinal = shotDir * (float)(nextBallPos.distTo(thisBallPos) + Constants::Robot::Radius);
+					passConfigResult[pC].passStateVector[pS].robotPos = robotPosFinal;
+				}
+			}
+		}
 	}
 
 	void evaluateConfigs(set<Robot *> &robots, Robot** opponents, PassConfigVector &passConfigs){

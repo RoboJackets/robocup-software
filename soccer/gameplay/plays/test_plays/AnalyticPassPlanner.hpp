@@ -17,9 +17,9 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/foreach.hpp>
 
-#define APPROXBALLVEL 20.0       // m/s
-#define APPROXROBOTVELTRANS 1.0  // m/s
-#define APPROXROBOTVELROT 4.0    // rad/s
+#define APPROXBALLVEL 7.0        // m/s
+#define APPROXROBOTVELTRANS 0.5  // m/s    due to accel, much less than maxvel
+#define APPROXROBOTVELROT 2.0    // rad/s
 
 typedef boost::ptr_vector<PassConfig> PassConfigVector;
 

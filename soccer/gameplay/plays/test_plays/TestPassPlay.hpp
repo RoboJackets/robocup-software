@@ -23,6 +23,8 @@
 #include <fstream>
 #include "../../Play.hpp"
 #include <gameplay/behaviors/positions/Fullback.hpp>
+#include <gameplay/behaviors/Intercept.hpp>
+#include <gameplay/behaviors/Kick.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/foreach.hpp>
 #include <vector>
@@ -54,6 +56,9 @@ namespace Gameplay{
 				State _passState;
 
 				PassConfigVector initialPlans;
+				PassConfig bestPassConfig;
+				Behaviors::Kick kicker;
+				int passIndex;
 		};
 	}
 }

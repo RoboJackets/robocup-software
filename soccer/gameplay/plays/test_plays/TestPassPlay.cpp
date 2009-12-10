@@ -11,7 +11,7 @@
 using namespace Geometry2d;
 using namespace std;
 
-Gameplay::Plays::TestPassPlay::TestPassPlay(GameplayModule *gameplay) : Play(gameplay){
+Gameplay::Plays::TestPassPlay::TestPassPlay(GameplayModule *gameplay) : Play(gameplay), kicker(gameplay) {
 	_passState = Initializing;
 }
 
@@ -20,7 +20,11 @@ void Gameplay::Plays::TestPassPlay::assign(set<Robot *> &available){
 	this->takeAll(available); // assign all robots from available to _robots
 	initializePlan();
 
-	PassConfig bestPassConfig = initialPlans[0];
+	bestPassConfig = initialPlans[0];
+
+	_gameplay->_passConfig_primary = &initialPlans[0];
+	_gameplay->_passConfig_secondary = &initialPlans[1];
+
 
 	vector<Robot> nonPassingRobots;
 	BOOST_FOREACH(Robot *r, _robots)
@@ -37,31 +41,44 @@ void Gameplay::Plays::TestPassPlay::assign(set<Robot *> &available){
 		}
 	}
 
-	// assign all Robots in nonPassingRobots to defenders here
-	// todo
+	// todo: assign all Robots in nonPassingRobots to defenders
 
 	nonPassingRobots.clear();
-
-
-
-	//boost::ptr_vector<Behaviors::Fullback> defenders;
-	//Behaviors::Fullback *fullback;
-
-	//BOOST_FOREACH(Robot r, nonPassingRobots){
-
-	//	fullback = new Behaviors::Fullback();
-	//	fullback->assignOne(&r);
-	//	defenders.push_back(fullback);
-	//}
 
 	_passState = Optimizing;
 
 	_passState = Executing;
 
-	_passState = Done;
+	passIndex = 0; // start the index after the first state (0)
 }
 
 bool Gameplay::Plays::TestPassPlay::run(){
+	if(passIndex >= bestPassConfig.length())
+		return false;
+	PassState* passState = bestPassConfig.getPassState(passIndex);
+	PassState* nextPassState = (passIndex+1<bestPassConfig.length()?bestPassConfig.getPassState(passIndex+1):NULL);
+
+	if(passState->stateType==PassState::GOAL){
+		_robots.clear();
+		_passState = Done;
+		return false;
+	}else{
+		if(passState->stateType==PassState::INITIAL || !kicker.run()){
+			if(++passIndex >= bestPassConfig.length()){return false;}
+
+			passState = bestPassConfig.getPassState(passIndex);
+			nextPassState = (passIndex+1<bestPassConfig.length()?bestPassConfig.getPassState(passIndex+1):NULL);
+			if(passState->stateType == PassState::INTERMEDIATE){
+				kicker.assignOne(passState->robot);
+				if(nextPassState->stateType == PassState::INTERMEDIATE){
+					kicker.targetRobot = nextPassState->robot;
+					nextPassState->robot->move(nextPassState->robotPos);
+				}else{
+					kicker.targetRobot = 0;
+				}
+			}
+		}
+	}
 	return true;
 }
 
@@ -70,8 +87,6 @@ void Gameplay::Plays::TestPassPlay::initializePlan(){
 	AnalyticPassPlanner::generateAllConfigs(ball().pos,_robots,initialPlans);
 	AnalyticPassPlanner::evaluateConfigs(_robots,_gameplay->opp,initialPlans);
 
-	// print out
-	for(int i=0; i<(int)initialPlans.size(); i++){
+	for(int i=0; i<(int)initialPlans.size(); i++)
 		cout << "passConfig(" << i << "): " << initialPlans[i] << endl;
-	}
 }
