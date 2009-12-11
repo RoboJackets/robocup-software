@@ -64,6 +64,9 @@ namespace Gameplay{
 
 				/// Optimization Engine
 				Optimization::PassOptimizer optimizer_;
+
+				/// storage of robot pointers
+				std::set<Robot *> full_available_;
 		};
 	}
 }
