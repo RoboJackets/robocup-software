@@ -130,9 +130,10 @@ namespace AnalyticPassPlanner {
 				prevState = passConfigs[i].passStateVector[j];
 			}
 
-			// calculate the total number of opponents that can touch the ball along the path
-			//
 			int numInteractions = 0;
+
+			// calculate the total number of opponents that can touch the ball at each intermediate
+			// ballPos (where the ball will be waiting for the robot to pivot and pass)
 			for(int j=0; j<passConfigs[i].length(); j++){
 				PassState thisState = passConfigs[i].getPassState(j);
 				for (int i=0; i<Constants::Robots_Per_Team; ++i)
@@ -144,6 +145,22 @@ namespace AnalyticPassPlanner {
 						numInteractions++;
 					}
 				}
+			}
+
+			// calculate the total number of opponents that currently intersect
+			// the ball's path at this instant.
+			for(int j=0; j<passConfigs[i].length(); j++){
+				PassState thisState = passConfigs[i].getPassState(j);
+				if(thisState.stateType!=PassState::INITIAL){
+					Line ballPath(thisState.ballPos,prevState.ballPos);
+					for (int i=0; i<Constants::Robots_Per_Team; ++i){
+						Robot *opponentR = opponents[i];
+						if(ballPath.distTo(opponentR->pos()) < (float)(Constants::Robot::Radius + Constants::Ball::Radius)){
+							numInteractions++;
+						}
+					}
+				}
+				prevState = thisState;
 			}
 
 			passConfigs[i].setWeight(numInteractions);

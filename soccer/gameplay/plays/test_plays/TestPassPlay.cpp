@@ -23,6 +23,7 @@ void Gameplay::Plays::TestPassPlay::assign(set<Robot *> &available){
 	bestPassConfig = initialPlans[0];
 
 	_gameplay->_passConfig_primary = &initialPlans[0];
+	// commented out to make things easier to see during debugging
 	//_gameplay->_passConfig_secondary = &initialPlans[1];
 
 
@@ -71,7 +72,7 @@ bool Gameplay::Plays::TestPassPlay::run(){
 				PassState nextPassState = bestPassConfig.getPassState(passIndex+1);
 				if(nextPassState.stateType == PassState::INTERMEDIATE){
 					kicker.targetRobot = nextPassState.robot;
-					nextPassState.robot->move(nextPassState.robotPos);
+					//nextPassState.robot->move(nextPassState.robotPos);
 				}else{
 					kicker.targetRobot = 0;
 				}

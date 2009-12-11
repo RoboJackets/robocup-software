@@ -10,7 +10,6 @@
 
 #include <iostream>
 #include <fstream>
-//#include "../../Play.hpp"
 #include <gameplay/Robot.hpp>
 #include "PassState.hpp"
 #include "PassConfig.hpp"
@@ -18,7 +17,7 @@
 #include <boost/foreach.hpp>
 
 #define APPROXBALLVEL 7.0        // m/s
-#define APPROXROBOTVELTRANS 0.5  // m/s    due to accel, much less than maxvel
+#define APPROXROBOTVELTRANS 0.3  // m/s    due to accel, much less than maxvel
 #define APPROXROBOTVELROT 2.0    // rad/s
 
 typedef boost::ptr_vector<PassConfig> PassConfigVector;
