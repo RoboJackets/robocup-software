@@ -111,11 +111,11 @@ namespace AnalyticPassPlanner {
 							passConfigs[i].passStateVector[j].timeEnterState = prevState.timeLeaveState + ballTravelTime;
 						}
 						PassState nextState = passConfigs[i].getPassState(j+1);
-						inVector = prevState.ballPos - thisState.ballPos;
-						outVector = nextState.ballPos - thisState.ballPos;
+						inVector = (thisState.ballPos - prevState.ballPos).normalized();
+						outVector = (nextState.ballPos - thisState.ballPos).normalized();
 						robotRotateDist = inVector.angleTo(outVector);
 						robotRotateTime = robotRotateDist / APPROXROBOTVELROT;
-						passConfigs[i].passStateVector[j].timeLeaveState = thisState.timeEnterState + robotRotateTime;
+						passConfigs[i].passStateVector[j].timeLeaveState = passConfigs[i].passStateVector[j].timeEnterState + robotRotateTime;
 						break;
 					}
 					case PassState::GOAL :
