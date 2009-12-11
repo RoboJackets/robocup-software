@@ -52,6 +52,9 @@ namespace Gameplay {
 			/** Creates a shot on goal from a robot */
 			void addShot(int robot_num);
 
+			/** Adds priors to the robot's final positions */
+			void addRobotPrior(int robot_num, double prior_weight);
+
 			};
 
 	}

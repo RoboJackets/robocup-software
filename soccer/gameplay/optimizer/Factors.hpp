@@ -24,10 +24,12 @@ namespace Gameplay {
 		/** Constraint components for field bounds */
 		namespace field_bound {
 			/** p = 1, g(x,y) = [abs(x)-0.5*width abs(y-0.5*length)-0.5*length] */
-			Vector g_func(const OptimizerConfig& config, const std::list<std::string>& keys);
+			Vector g_func(const float min, const float max, int idx,
+					const OptimizerConfig& config, const std::list<std::string>& keys);
 
 			/** just one in the direction towards the field */
-			Matrix grad_g(const OptimizerConfig& config, const std::list<std::string>& keys);
+			Matrix grad_g(float middle, int idx,
+					const OptimizerConfig& config, const std::list<std::string>& keys);
 		}
 
 		/**

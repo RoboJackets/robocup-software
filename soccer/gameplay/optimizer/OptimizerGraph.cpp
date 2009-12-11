@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <boost/bind.hpp>
 #include <gtsam/NonlinearEquality.h>
 #include <gtsam/NonlinearConstraint.h>
 #include <gtsam/NonlinearConstraint-inl.h>
@@ -50,7 +51,8 @@ void OptimizerGraph::addBallIntercept(int robot_num, const Packet::LogFrame::Bal
 	}
 
 	// create the basic factor
-	double weight = 1;
+	double weight = 0.1;
+	cout << "Target for intercept: (" << target.x << ", " << target.y << ")" << endl;
 	shared_nlf1 f1(new RC_nlf1(pt2vec(target), weight,
 			Optimization::unary, genKey(robot_num, "final"),
 			Optimization::Dunary));
@@ -77,7 +79,8 @@ void OptimizerGraph::addRobotInitConstraint(int robot_num, const Geometry2d::Poi
 void OptimizerGraph::addRobotMotion(int robot_num, Robot* r) {
 	// Basic: want to shorten the distance between the intial and final position
 	double weight = 0.5;
-	shared_shortening f1(new ShorteningFactor(weight, genKey(robot_num, "init"), genKey(robot_num, "final")));
+	shared_shortening f1(new ShorteningFactor(weight, genKey(robot_num, "init"),
+													  genKey(robot_num, "final")));
 	push_back(f1);
 
 	// TODO: avoid collisions between points
@@ -86,15 +89,29 @@ void OptimizerGraph::addRobotMotion(int robot_num, Robot* r) {
 void OptimizerGraph::addRobotFieldBound(int robot_num) {
 	// adds an inequality constraint to the final robot position to keep it on the field
 	string lag_key = "L_" + genKey(robot_num, "final") + "_field";
-	shared_nlc1 constraint(new RC_nlc1(genKey(robot_num, "final"),
-			field_bound::grad_g, field_bound::g_func, 2, lag_key, false));
-	push_back(constraint);
+
+	// create a constraint on X
+	//FIXME: these constraints don't work right, and it's probably a systematic GTSAM problem
+//	shared_nlc1 c1(new RC_nlc1(genKey(robot_num, "final"),
+//			boost::bind(field_bound::grad_g, 0.0, 0, _1, _2),
+//			boost::bind(field_bound::g_func, -0.5*Constants::Field::Width, 0.5*Constants::Field::Width, 0, _1, _1),
+//			1, lag_key+"_x", false));
+//
+//	// create a constraint on Y
+//	shared_nlc1 c2(new RC_nlc1(genKey(robot_num, "final"),
+//			boost::bind(field_bound::grad_g, 0.5*Constants::Field::Length, 1, _1, _2),
+//			boost::bind(field_bound::g_func, 0.0, Constants::Field::Length, 1, _1, _1),
+//			1, lag_key+"_y", false));
+//
+//	// add the constraints
+//	push_back(c1);
+//	push_back(c2);
 }
 
 void OptimizerGraph::addPass(int passer, int receiver) {
 	// add a basic path shortening factor to the pass
-	double weight = 0.5;
-	shared_shortening f1(new ShorteningFactor(weight, genKey(passer, "final"), genKey(receiver, "final")));
+	double weight = 2.0;
+	shared_shortening f1(new ShorteningFactor(weight, genKey(receiver, "final"), genKey(passer, "final")));
 	push_back(f1);
 
 	// TODO: avoid collisions between points
@@ -105,13 +122,17 @@ void OptimizerGraph::addShot(int robot_num) {
 	Geometry2d::Point goal(0.0, Constants::Field::Length);
 
 	// add a weak basic unary factor to draw the shooter to the goal
-	double weight = 3;
+	double weight = 2.0;
 	shared_nlf1 f1(new RC_nlf1(pt2vec(goal), weight,
 				Optimization::unary, genKey(robot_num, "final"),
 				Optimization::Dunary));
 	push_back(f1);
 
 	// TODO: avoid collisions between points
+}
+
+void OptimizerGraph::addRobotPrior(int robot_num, double prior_weight) {
+	//shared_nlf1 f(new RC_nlf1())
 }
 
 void OptimizerGraph::print(const std::string& name) const {

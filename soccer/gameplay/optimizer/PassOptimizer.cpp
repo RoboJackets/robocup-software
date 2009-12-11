@@ -61,6 +61,10 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 			graph.addRobotMotion(robot_num, r);				   /// add basic path shortening
 			graph.addRobotFieldBound(robot_num);	           /// keep the robot on the field
 
+			// add some priors to the robot poses to avoid scatter
+			double prior_weight = 0.1;
+			graph.addRobotPrior(robot_num, prior_weight);
+
 			// if this robot is receiving a pass, create the pass factors
 			if (prevState.stateType == PassState::INTERMEDIATE) {
 				graph.addPass(robot_num, robot_num-1); // all-in-one pass creation from two points
@@ -96,7 +100,10 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 
 	// iterate-solve using fixed iteration numbers for safety
 	//TODO: do more than one iteration here, it'll be necessary
-	Optimizer next = optimizer.iterate(Optimizer::SILENT);
+	//Optimizer next = optimizer.iterate(Optimizer::SILENT);
+	double thresh = 1e-2;
+	int maxIt = 1;
+	Optimizer next = optimizer.iterateSolve(thresh, thresh, thresh, maxIt, Optimizer::FULL);
 	shared_const_config newConfig = next.config();
 
 	if (verbose) {
@@ -111,7 +118,7 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 		if (s.stateType == PassState::INITIAL) {
 			newState = PassState(s.ballPos, s.stateType);
 		} else if (s.stateType == PassState::INTERMEDIATE) {
-			newState = PassState(s.ballPos, s.robot, newConfig->getFinal(robot_num));
+			newState = PassState(newConfig->getFinal(robot_num), s.robot, newConfig->getFinal(robot_num));
 			++robot_num;
 		} else if (s.stateType == PassState::GOAL) {
 			newState = PassState(s.ballPos, s.stateType);
