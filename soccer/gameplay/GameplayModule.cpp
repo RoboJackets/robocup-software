@@ -30,7 +30,6 @@
 #include "plays/OptimizedOffense.hpp"
 
 // test plays
-#include "plays/OktayPlay.hpp"
 #include "plays/test_plays/TestBasicPassing.hpp"
 #include "plays/test_plays/TestBasicAttack.hpp"
 #include "plays/test_plays/TestPassPlay.hpp"
@@ -155,7 +154,6 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
    
 
 	// Add testing plays
-	_playConfig->addPlay(make_shared<Plays::OktayPlay>(this));
 	_playConfig->addPlay(make_shared<Plays::TestBasicPassing>(this));
 	_playConfig->addPlay(make_shared<Plays::TestBasicAttack>(this));
 	_playConfig->addPlay(make_shared<Plays::TestPassPlay>(this));
