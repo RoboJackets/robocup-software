@@ -46,14 +46,32 @@ namespace AnalyticPassPlanner {
 			}
 		}
 
-		// set the final robot position for each state
+		// correct the ball position for each state
+		// after a pass from robot A to robot B, the ball will lie on the line
+		// AB, at a distance of robotShellRadius+ballRadius from B.
 		for(int pC=0; pC < (int)passConfigResult.size(); pC++){
 			for(int pS=0; pS < passConfigResult[pC].length(); pS++){
 				if(passConfigResult[pC].passStateVector[pS].stateType == PassState::INTERMEDIATE){
 					Point nextBallPos = passConfigResult[pC].passStateVector[pS+1].ballPos;
 					Point thisBallPos = passConfigResult[pC].passStateVector[pS].ballPos;
 					Point shotDir = (nextBallPos-thisBallPos).normalized();
-					Point robotPosFinal = shotDir * (float)(nextBallPos.distTo(thisBallPos) + Constants::Robot::Radius);
+					float shotDist = nextBallPos.distTo(thisBallPos) - (float)(Constants::Robot::Radius + Constants::Ball::Radius);
+					nextBallPos = thisBallPos + (shotDir*shotDist);
+					passConfigResult[pC].passStateVector[pS+1].ballPos = nextBallPos;
+				}
+			}
+		}
+
+		// set the final robot position for each state
+		// this will be in the direction of the shot, at a distance of
+		// ballEnd-ballStart + robotShellRadius + ballRadius
+		for(int pC=0; pC < (int)passConfigResult.size(); pC++){
+			for(int pS=0; pS < passConfigResult[pC].length(); pS++){
+				if(passConfigResult[pC].passStateVector[pS].stateType == PassState::INTERMEDIATE){
+					Point nextBallPos = passConfigResult[pC].passStateVector[pS+1].ballPos;
+					Point thisBallPos = passConfigResult[pC].passStateVector[pS].ballPos;
+					Point shotDir = (thisBallPos-nextBallPos).normalized();
+					Point robotPosFinal = thisBallPos + shotDir * (float)(Constants::Robot::Radius + Constants::Ball::Radius);
 					passConfigResult[pC].passStateVector[pS].robotPos = robotPosFinal;
 				}
 			}

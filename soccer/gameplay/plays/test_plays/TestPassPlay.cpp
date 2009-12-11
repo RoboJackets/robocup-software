@@ -23,7 +23,7 @@ void Gameplay::Plays::TestPassPlay::assign(set<Robot *> &available){
 	bestPassConfig = initialPlans[0];
 
 	_gameplay->_passConfig_primary = &initialPlans[0];
-	_gameplay->_passConfig_secondary = &initialPlans[1];
+	//_gameplay->_passConfig_secondary = &initialPlans[1];
 
 
 	vector<Robot> nonPassingRobots;

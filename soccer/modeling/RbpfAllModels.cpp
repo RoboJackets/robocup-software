@@ -175,7 +175,7 @@ RbpfModelRollingFriction::RbpfModelRollingFriction(){
 	H(0,0)=1; H(0,1)=0; H(0,2)=0; H(0,3)=0; H(0,4)=0; H(0,5)=0; // dh(X)/dx
 	H(1,0)=0; H(1,1)=1; H(1,2)=0; H(1,3)=0; H(1,4)=0; H(1,5)=0; // dh(X)/dy
 	// initialize process noise (n x n)
-	double sP = 1.0, sV = 1.0, sA = 1.0;
+	double sP = 0.1, sV = 10.0, sA = 30.0;
 	Q(0,0)=sP; Q(0,1)=00; Q(0,2)=00; Q(0,3)=00; Q(0,4)=00; Q(0,5)=00;
 	Q(1,0)=00; Q(1,1)=sP; Q(1,2)=00; Q(1,3)=00; Q(1,4)=00; Q(1,5)=00;
 	Q(2,0)=00; Q(2,1)=00; Q(2,2)=sV; Q(2,3)=00; Q(2,4)=00; Q(2,5)=00;
@@ -183,15 +183,15 @@ RbpfModelRollingFriction::RbpfModelRollingFriction(){
 	Q(4,0)=00; Q(4,1)=00; Q(4,2)=00; Q(4,3)=00; Q(4,4)=sA; Q(4,5)=00;
 	Q(5,0)=00; Q(5,1)=00; Q(5,2)=00; Q(5,3)=00; Q(5,4)=00; Q(5,5)=sA;
 	// initialize measurement noise (s x s)
-	R(0,0)=.10; R(0,1)=000;
-	R(1,0)=000; R(1,1)=.10;
+	R(0,0)=0.01; R(0,1)=0000;
+	R(1,0)=0000; R(1,1)=0.01;
 }
 RbpfModelRollingFriction::~RbpfModelRollingFriction(){}
 // Function: transitionModel(X, U, dt)
 //   computes the effect of U and dt on the state, and stores the result in F
 void RbpfModelRollingFriction::transitionModel(Vector &X, Vector &U, double dt){
 	assert((int)X.size() == n); // X size must = 6. If changed, re-write this!
-	double rollingFriction = -0.02; // F/m
+	double rollingFriction = -0.001; // F/m
 	X(0) = X(0) + X(2)*dt + 0.5*X(4)*dt*dt ; // f(x) = x + vx*dt + 1/2*ax*dt^2
 	X(1) = X(1) + X(3)*dt + 0.5*X(5)*dt*dt ; // f(y) = y + vy*dt + 1/2*ay*dt^2
 	X(2) = X(2) + X(4)*dt;                   // f(vx) = vx + ax*dt
