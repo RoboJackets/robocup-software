@@ -8,6 +8,8 @@
 
 #include "TestPassPlay.hpp"
 
+#define TIMEMARGIN 1.5 // seconds a play can deviate from plan before abort
+
 using namespace Geometry2d;
 using namespace std;
 
@@ -51,12 +53,27 @@ void Gameplay::Plays::TestPassPlay::assign(set<Robot *> &available){
 	_passState = Executing;
 
 	passIndex = 0; // start the index after the first state (0)
+	playTime = -1; // set playTime to an invalid time
 }
 
 bool Gameplay::Plays::TestPassPlay::run(){
+	if (!allVisible() || !ball().valid)
+		return false; // no ball
 	if(passIndex >= bestPassConfig.length())
+		return false; // invalid state
+	if(this->gameState().state != GameState::Playing)
 		return false;
 	PassState passState = bestPassConfig.getPassState(passIndex);
+	double currentTime = _gameplay->state()->timestamp / 1000000.0;
+	if(playTime < 0){playTime = currentTime;}
+
+	//cout << "current time: " << (currentTime-playTime) << " should be less than: " << passState.timeLeaveState << endl;
+	if((currentTime-playTime) - passState.timeLeaveState >= TIMEMARGIN){
+		cout << "aborting due to invalid plan..." << endl; // abort plan
+		_robots.clear();
+		_passState = Done;
+		return false;
+	}
 
 	if(passState.stateType==PassState::GOAL){
 		_robots.clear();
@@ -72,6 +89,7 @@ bool Gameplay::Plays::TestPassPlay::run(){
 				PassState nextPassState = bestPassConfig.getPassState(passIndex+1);
 				if(nextPassState.stateType == PassState::INTERMEDIATE){
 					kicker.targetRobot = nextPassState.robot;
+					// todo: this doesn't quite work right
 					//nextPassState.robot->move(nextPassState.robotPos);
 				}else{
 					kicker.targetRobot = 0;
@@ -87,6 +105,6 @@ void Gameplay::Plays::TestPassPlay::initializePlan(){
 	AnalyticPassPlanner::generateAllConfigs(ball().pos,_robots,initialPlans);
 	AnalyticPassPlanner::evaluateConfigs(_robots,_gameplay->opp,initialPlans);
 
-	for(int i=0; i<(int)initialPlans.size(); i++)
-		cout << "passConfig(" << i << "): " << initialPlans[i] << endl;
+	//for(int i=0; i<(int)initialPlans.size(); i++)
+	//	cout << "passConfig(" << i << "): " << initialPlans[i] << endl;
 }

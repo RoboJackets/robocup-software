@@ -59,6 +59,7 @@ namespace Gameplay{
 				PassConfig bestPassConfig;
 				Behaviors::Kick kicker;
 				int passIndex;
+				double playTime;
 		};
 	}
 }
