@@ -95,8 +95,8 @@ namespace AnalyticPassPlanner {
 				switch(thisState.stateType){
 					case PassState::INITIAL :
 					{
-						thisState.timeEnterState = 0.0;
-						thisState.timeLeaveState = 0.0;
+						passConfigs[i].passStateVector[j].timeEnterState = 0.0;
+						passConfigs[i].passStateVector[j].timeLeaveState = 0.0;
 						break;
 					}
 					case PassState::INTERMEDIATE :
@@ -104,30 +104,30 @@ namespace AnalyticPassPlanner {
 						if(prevState.stateType == PassState::INITIAL){
 							robotTravelDist = thisState.robot->pos().distTo(thisState.ballPos);
 							robotTravelTime = robotTravelDist / APPROXROBOTVELTRANS;
-							thisState.timeEnterState = prevState.timeLeaveState + robotTravelTime;
+							passConfigs[i].passStateVector[j].timeEnterState = prevState.timeLeaveState + robotTravelTime;
 						}else{
 							ballTravelDist = thisState.ballPos.distTo(prevState.ballPos);
 							ballTravelTime = ballTravelDist / APPROXBALLVEL;
-							thisState.timeEnterState = prevState.timeLeaveState + ballTravelTime;
+							passConfigs[i].passStateVector[j].timeEnterState = prevState.timeLeaveState + ballTravelTime;
 						}
 						PassState nextState = passConfigs[i].getPassState(j+1);
 						inVector = prevState.ballPos - thisState.ballPos;
 						outVector = nextState.ballPos - thisState.ballPos;
 						robotRotateDist = inVector.angleTo(outVector);
 						robotRotateTime = robotRotateDist / APPROXROBOTVELROT;
-						thisState.timeLeaveState = thisState.timeEnterState + robotRotateTime;
+						passConfigs[i].passStateVector[j].timeLeaveState = thisState.timeEnterState + robotRotateTime;
 						break;
 					}
 					case PassState::GOAL :
 					{
 						ballTravelDist = thisState.ballPos.distTo(prevState.ballPos);
 						ballTravelTime = ballTravelDist / APPROXBALLVEL;
-						thisState.timeEnterState = prevState.timeLeaveState + ballTravelTime;
-						thisState.timeLeaveState = thisState.timeEnterState;
+						passConfigs[i].passStateVector[j].timeEnterState = prevState.timeLeaveState + ballTravelTime;
+						passConfigs[i].passStateVector[j].timeLeaveState = passConfigs[i].passStateVector[j].timeEnterState;
 						break;
 					}
 				}
-				prevState = thisState;
+				prevState = passConfigs[i].passStateVector[j];
 			}
 
 			// calculate the total number of opponents that can touch the ball along the path
