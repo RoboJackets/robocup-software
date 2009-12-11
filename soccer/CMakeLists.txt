@@ -40,6 +40,7 @@ set (SRCS
 	gameplay/optimizer/PassOptimizer.cpp
 	gameplay/optimizer/OptimizerGraph.cpp
 	gameplay/optimizer/OptimizerConfig.cpp
+	gameplay/optimizer/Factors.cpp
 	
 	# Main Plays
 	gameplay/plays/OurKickoff.cpp

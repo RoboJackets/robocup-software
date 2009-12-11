@@ -6,11 +6,21 @@
  */
 
 #include <boost/foreach.hpp>
+#include <gtsam/SQPOptimizer.h>
+#include <gtsam/SQPOptimizer-inl.h>
+#include <gtsam/NonlinearConstraint-inl.h>
 #include <gameplay/optimizer/PassOptimizer.hpp>
 #include "OptimizerGraph.hpp"
 #include "OptimizerConfig.hpp"
 
 using namespace std;
+using namespace gtsam;
+using namespace Gameplay;
+using namespace Optimization;
+
+typedef SQPOptimizer<OptimizerGraph, OptimizerConfig> Optimizer;
+typedef boost::shared_ptr<OptimizerConfig> shared_config;
+typedef boost::shared_ptr<const OptimizerConfig> shared_const_config;
 
 Gameplay::Optimization::PassOptimizer::PassOptimizer(GameplayModule* gameplay)
 : gameplay_(gameplay)
@@ -23,34 +33,91 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 		const PassConfig& init, bool verbose) const
 {
 	// build up the initial configuration and graph by reading through PassConfig
-	OptimizerConfig config;
+	shared_config config(new OptimizerConfig);
 	OptimizerGraph graph;
 
-	// track the robots in order
-	vector<Robot*> robotSequence;
+	// store the robots for lookup
+	vector<Robot*> robots;
 
 	// loop through the pass states to add them to the graph
+	int robot_num = 0;
+	PassState prevState;
 	BOOST_FOREACH(PassState s, init.passStateVector) {
 		if (s.stateType == PassState::INITIAL) {
+			// set up ball intercept for the first robot
+			graph.addBallIntercept(robot_num, gameplay_->state()->ball);
 
 		} else if (s.stateType == PassState::INTERMEDIATE) {
-			// save the robot to use
-			robotSequence.push_back(s.robot);
-		} else if (s.stateType == PassState::GOAL) {
+			// pull out the robot and store
+			Robot* r = s.robot;
+			robots.push_back(r);
 
+			// add the robot to the config - initial and final poses
+			config->initRobot(robot_num, r->pos(), s.robotPos);
+			//config->initTime(robot_num, s); //TODO: add timing information
+
+			// add appropriate factors to the graph for basic movement
+			graph.addRobotInitConstraint(robot_num, r->pos()); /// fix initial point
+			graph.addRobotMotion(robot_num, r);				   /// add basic path shortening
+			graph.addRobotFieldBound(robot_num);	           /// keep the robot on the field
+
+			// if this robot is receiving a pass, create the pass factors
+			if (prevState.stateType == PassState::INTERMEDIATE) {
+				graph.addPass(robot_num, robot_num-1); // all-in-one pass creation from two points
+			}
+
+			// goto next robot
+			++robot_num;
+		} else if (s.stateType == PassState::GOAL) {
+			// create the shot factor
+			graph.addShot(robot_num-1);
 		}
+		// save the state for connections
+		prevState = s;
 	}
 
-	// add initial positions of the robots
+	// get an ordering
+	Ordering ordering = graph.getOrdering();
 
-	// fix the initial states
+	// print out the parts
+	if (verbose) {
+		cout << "Printing initial graph and config..." << endl;
+		config->print("Initial");
+		graph.print("Initial");
+		ordering.print("Guessed Ordering for the graph");
+	}
 
 	// create an SQP optimizer to optimize the graph
+	Optimizer optimizer(graph, ordering, config);
+
+	if (verbose) {
+		optimizer.print("Initial Optimizer State");
+	}
 
 	// iterate-solve using fixed iteration numbers for safety
+	//TODO: do more than one iteration here, it'll be necessary
+	Optimizer next = optimizer.iterate(Optimizer::SILENT);
+	shared_const_config newConfig = next.config();
 
-	// if at end of iteration, the constraint-error is high, return the original plan
+	if (verbose) {
+		newConfig->print("Optimized SQP Config");
+	}
 
-	// if solution is better, then convert the config back into a PassConfig and return
-	return init;
+	// reconstruct the PassConfig from the updated configuration
+	PassConfig optConfig;
+	robot_num = 0;
+	BOOST_FOREACH(PassState s, init.passStateVector) {
+		PassState newState;
+		if (s.stateType == PassState::INITIAL) {
+			newState = PassState(s.ballPos, s.stateType);
+		} else if (s.stateType == PassState::INTERMEDIATE) {
+			newState = PassState(s.ballPos, s.robot, newConfig->getFinal(robot_num));
+			++robot_num;
+		} else if (s.stateType == PassState::GOAL) {
+			newState = PassState(s.ballPos, s.stateType);
+		}
+		optConfig.addPassState(newState);
+	}
+
+	return optConfig;
 }

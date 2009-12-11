@@ -31,7 +31,28 @@ namespace Gameplay {
 			 * equality up to tolerance
 			 */
 			bool equals(const OptimizerGraph& expected, double tol) const;
-		};
+
+			// Functions to create the graph
+
+			/** Forces the final pos of a robot to intercept a ball */
+			void addBallIntercept(int robot_num, const Packet::LogFrame::Ball& ball);
+
+			/** Fixes the initial pos of a robot to a point */
+			void addRobotInitConstraint(int robot_num, const Geometry2d::Point& pos);
+
+			/** Connects the init and final pos using the robot's motion model */
+			void addRobotMotion(int robot_num, Robot* r);
+
+			/** Keeps the final position on the field */
+			void addRobotFieldBound(int robot_num);
+
+			/** Creates a pass between two robots */
+			void addPass(int passer, int receiver);
+
+			/** Creates a shot on goal from a robot */
+			void addShot(int robot_num);
+
+			};
 
 	}
 

@@ -202,6 +202,8 @@ void Gameplay::GameplayModule::fieldOverlay(QPainter &painter, Packet::LogFrame 
 	// Render the pass configs to illustrate (flipped, so that primary renders last)
 	if (_passConfig_secondary)
 		renderPassConfig(_passConfig_secondary, painter, false);
+	if (_passConfig_secondary)
+		renderPassConfig(_passConfig_secondary, painter, false);
 	if (_passConfig_primary)
 		renderPassConfig(_passConfig_primary, painter, true);
 }
