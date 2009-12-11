@@ -7,17 +7,21 @@
 
 #include <gameplay/plays/test_plays/AnalyticPassPlanner.hpp>
 
+#define FORCEPASS 1
+
 namespace AnalyticPassPlanner {
 	void generateAllConfigs(const Point &ballPos, set<Robot *> &robots, PassConfigVector &passConfigResult){
 		Geometry2d::Point goalBallPos = Geometry2d::Point(0.0, Constants::Field::Length);
 
 		BOOST_FOREACH(Robot *r1, robots){
 			// initialize configurations of length 1
+			if(!FORCEPASS){
 			PassConfig* passConfig = new PassConfig(); // add starting ball position
 			passConfig->addPassState(PassState(ballPos,PassState::INITIAL)); // add robot with ball
 			passConfig->addPassState(PassState(ballPos, r1)); // add ending (goal) ball position
 			passConfig->addPassState(PassState(goalBallPos,PassState::GOAL));
 			passConfigResult.push_back(passConfig);
+			}
 
 			// initialize configurations of length 2
 			BOOST_FOREACH(Robot *r2, robots){
@@ -155,7 +159,8 @@ namespace AnalyticPassPlanner {
 					Line ballPath(thisState.ballPos,prevState.ballPos);
 					for (int i=0; i<Constants::Robots_Per_Team; ++i){
 						Robot *opponentR = opponents[i];
-						if(ballPath.distTo(opponentR->pos()) < (float)(Constants::Robot::Radius + Constants::Ball::Radius)){
+						// we use 2*Radius to give "wiggle room"
+						if(ballPath.distTo(opponentR->pos()) < (float)(Constants::Robot::Radius + 2*Constants::Ball::Radius)){
 							numInteractions++;
 						}
 					}

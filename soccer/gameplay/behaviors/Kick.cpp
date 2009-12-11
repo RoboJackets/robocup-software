@@ -40,6 +40,7 @@ Gameplay::Behaviors::Kick::~Kick()
 void Gameplay::Behaviors::Kick::assign(set<Robot *> &available)
 {
 	_robots.clear(); // clear existing robots
+	_intercept->robots().clear();
 	takeBest(available);
 	
 	if (!_win)
