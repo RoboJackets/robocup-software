@@ -59,11 +59,11 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 			// add appropriate factors to the graph for basic movement
 			graph.addRobotInitConstraint(robot_num, r->pos()); /// fix initial point
 			graph.addRobotMotion(robot_num, r);				   /// add basic path shortening
-			graph.addRobotFieldBound(robot_num);	           /// keep the robot on the field
+			//graph.addRobotFieldBound(robot_num);	           /// keep the robot on the field
 
-			// add some priors to the robot poses to avoid scatter
-			double prior_weight = 0.1;
-			graph.addRobotPrior(robot_num, prior_weight);
+//			// add some priors to the robot poses to avoid scatter
+//			double prior_weight = 0.1;
+//			graph.addRobotPrior(robot_num, prior_weight);
 
 			// if this robot is receiving a pass, create the pass factors
 			if (prevState.stateType == PassState::INTERMEDIATE) {
@@ -103,7 +103,7 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 	//Optimizer next = optimizer.iterate(Optimizer::SILENT);
 	double thresh = 1e-2;
 	int maxIt = 1;
-	Optimizer next = optimizer.iterateSolve(thresh, thresh, thresh, maxIt, Optimizer::FULL);
+	Optimizer next = optimizer.iterateSolve(thresh, thresh, thresh, maxIt, Optimizer::SILENT);
 	shared_const_config newConfig = next.config();
 
 	if (verbose) {

@@ -13,7 +13,8 @@
 using namespace Geometry2d;
 using namespace std;
 
-Gameplay::Plays::TestPassPlay::TestPassPlay(GameplayModule *gameplay) : Play(gameplay), kicker(gameplay) {
+Gameplay::Plays::TestPassPlay::TestPassPlay(GameplayModule *gameplay)
+: Play(gameplay), kicker(gameplay), optimizer_(gameplay) {
 	_passState = Initializing;
 }
 
@@ -104,6 +105,15 @@ void Gameplay::Plays::TestPassPlay::initializePlan(){
 	initialPlans.clear();
 	AnalyticPassPlanner::generateAllConfigs(ball().pos,_robots,initialPlans);
 	AnalyticPassPlanner::evaluateConfigs(_robots,_gameplay->opp,initialPlans);
+
+	// perform optimization on the first of the plans
+	PassConfigVector newConfigs;
+	PassConfig * opt = new PassConfig(optimizer_.optimizePlan(initialPlans[0], false));
+	newConfigs.push_back(opt);
+	AnalyticPassPlanner::evaluateConfigs(_robots, _gameplay->opp, newConfigs);
+
+	initialPlans.clear();
+	initialPlans = newConfigs;
 
 	//for(int i=0; i<(int)initialPlans.size(); i++)
 	//	cout << "passConfig(" << i << "): " << initialPlans[i] << endl;

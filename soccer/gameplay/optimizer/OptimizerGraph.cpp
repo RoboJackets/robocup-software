@@ -52,7 +52,7 @@ void OptimizerGraph::addBallIntercept(int robot_num, const Packet::LogFrame::Bal
 
 	// create the basic factor
 	double weight = 0.1;
-	cout << "Target for intercept: (" << target.x << ", " << target.y << ")" << endl;
+	//cout << "Target for intercept: (" << target.x << ", " << target.y << ")" << endl;
 	shared_nlf1 f1(new RC_nlf1(pt2vec(target), weight,
 			Optimization::unary, genKey(robot_num, "final"),
 			Optimization::Dunary));
@@ -78,7 +78,7 @@ void OptimizerGraph::addRobotInitConstraint(int robot_num, const Geometry2d::Poi
 
 void OptimizerGraph::addRobotMotion(int robot_num, Robot* r) {
 	// Basic: want to shorten the distance between the intial and final position
-	double weight = 0.5;
+	double weight = 1.0;
 	shared_shortening f1(new ShorteningFactor(weight, genKey(robot_num, "init"),
 													  genKey(robot_num, "final")));
 	push_back(f1);

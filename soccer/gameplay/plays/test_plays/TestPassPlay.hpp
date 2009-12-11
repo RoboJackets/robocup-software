@@ -28,6 +28,7 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/foreach.hpp>
 #include <vector>
+#include "../../optimizer/PassOptimizer.hpp"
 #include "PassState.hpp"
 #include "PassConfig.hpp"
 #include "AnalyticPassPlanner.hpp"
@@ -60,6 +61,9 @@ namespace Gameplay{
 				Behaviors::Kick kicker;
 				int passIndex;
 				double playTime;
+
+				/// Optimization Engine
+				Optimization::PassOptimizer optimizer_;
 		};
 	}
 }
