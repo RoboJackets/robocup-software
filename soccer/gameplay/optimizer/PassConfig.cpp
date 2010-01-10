@@ -5,7 +5,7 @@
  *      Author: Philip Rogers
  */
 
-#include <gameplay/plays/test_plays/PassConfig.hpp>
+#include "PassConfig.hpp"
 
 PassConfig::PassConfig() : weight(0.0) { }
 

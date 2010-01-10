@@ -9,7 +9,7 @@
 
 #include <gtsam/Testable.h>
 #include <gtsam/NonlinearFactorGraph.h>
-#include "OptimizerConfig.hpp"
+#include <OptimizerConfig.hpp>
 
 // implementations
 #include <gtsam/FactorGraph-inl.h>

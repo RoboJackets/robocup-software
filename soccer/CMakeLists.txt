@@ -14,6 +14,8 @@ add_subdirectory (${PROJECT_SOURCE_DIR}/../common/vision ${PROJECT_BINARY_DIR}/v
 
 include_directories (${PROJECT_SOURCE_DIR}/..)
 include_directories (${PROJECT_SOURCE_DIR}/modeling/)
+include_directories (${PROJECT_SOURCE_DIR}/gameplay/)
+include_directories (${PROJECT_SOURCE_DIR}/gameplay/optimizer)
 add_subdirectory (${PROJECT_SOURCE_DIR}/../log ${PROJECT_BINARY_DIR}/log)
 
 include_directories(${PROJECT_BINARY_DIR})
@@ -41,6 +43,9 @@ set (SRCS
 	gameplay/optimizer/OptimizerGraph.cpp
 	gameplay/optimizer/OptimizerConfig.cpp
 	gameplay/optimizer/Factors.cpp
+	gameplay/optimizer/PassConfig.cpp
+	gameplay/optimizer/PassState.cpp
+	gameplay/optimizer/AnalyticPassPlanner.cpp
 	
 	# Main Plays
 	gameplay/plays/OurKickoff.cpp
@@ -70,13 +75,9 @@ set (SRCS
 	gameplay/plays/test_plays/TestTimePositionControl.cpp
 	gameplay/plays/test_plays/TestBasicAttack.cpp
 	gameplay/plays/test_plays/TestPassConfigOptimize.cpp
+	gameplay/plays/test_plays/TestPassPlay.cpp
 	gameplay/behaviors/test/Passer.cpp
 	gameplay/behaviors/test/Receiver.cpp
-	
-	gameplay/plays/test_plays/TestPassPlay.cpp
-	gameplay/plays/test_plays/PassConfig.cpp
-	gameplay/plays/test_plays/PassState.cpp
-	gameplay/plays/test_plays/AnalyticPassPlanner.cpp
 
 # 	gameplay/behaviors/test/KickerCalibration.cpp   
 # 	gameplay/behaviors/test/MotionLeader.cpp    

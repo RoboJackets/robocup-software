@@ -5,7 +5,7 @@
  *      Author: Philip Rogers
  */
 
-#include <gameplay/plays/test_plays/PassCommand.hpp>
+#include <PassCommand.hpp>
 
 PassCommand::PassCommand(CommandType cT, Robot* a, Robot* b, Point* bPI, Point* bGP, Point* aPI, Point* aDI, Point* aPF, Point* aDF, double time) : commandType(cT), robotA(a), robotB(b), time(time) {
 	if(bPI != NULL){ballPosInit.x = bPI->x; ballPosInit.y = bPI->y;}

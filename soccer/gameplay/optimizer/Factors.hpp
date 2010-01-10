@@ -12,7 +12,7 @@
 #include <gtsam/NonlinearFactor.h>
 #include <gtsam/GaussianFactor.h>
 #include <gtsam/Matrix.h>
-#include "OptimizerConfig.hpp"
+#include <OptimizerConfig.hpp>
 
 namespace Gameplay {
 

@@ -29,9 +29,9 @@
 #include <boost/foreach.hpp>
 #include <vector>
 #include "../../optimizer/PassOptimizer.hpp"
-#include "PassState.hpp"
-#include "PassConfig.hpp"
-#include "AnalyticPassPlanner.hpp"
+#include "../../optimizer/PassState.hpp"
+#include "../../optimizer/PassConfig.hpp"
+#include "../../optimizer/AnalyticPassPlanner.hpp"
 
 using namespace std;
 

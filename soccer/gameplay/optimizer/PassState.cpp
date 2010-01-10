@@ -5,7 +5,7 @@
  *      Author: Philip Rogers
  */
 
-#include <gameplay/plays/test_plays/PassState.hpp>
+#include <PassState.hpp>
 
 PassState::PassState(const Point &_bP, StateType _sT) : ballPos(_bP.x,_bP.y), robot((Robot*)NULL), stateType(_sT) {}
 

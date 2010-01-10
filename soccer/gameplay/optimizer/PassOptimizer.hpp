@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "../GameplayModule.hpp"
-#include "../plays/test_plays/PassConfig.hpp"
+#include <GameplayModule.hpp>
+#include <PassConfig.hpp>
 
 namespace Gameplay
 {

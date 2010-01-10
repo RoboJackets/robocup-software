@@ -8,8 +8,8 @@
 #include <iostream>
 #include <sstream>
 #include <gtsam/Vector.h>
-#include <gameplay/optimizer/OptimizerConfig.hpp>
-#include "OptimizerUtils.hpp"
+#include <OptimizerConfig.hpp>
+#include <OptimizerUtils.hpp>
 
 using namespace Gameplay;
 using namespace Optimization;

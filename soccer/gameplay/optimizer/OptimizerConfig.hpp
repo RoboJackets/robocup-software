@@ -9,8 +9,8 @@
 
 #include <vector>
 #include <gtsam/VectorConfig.h>
-#include "../GameplayModule.hpp"
-#include "../plays/test_plays/PassState.hpp"
+#include <GameplayModule.hpp>
+#include <PassState.hpp>
 
 namespace Gameplay {
 

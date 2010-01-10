@@ -5,7 +5,7 @@
  *      Author: Philip Rogers
  */
 
-#include <gameplay/plays/test_plays/AnalyticPassPlanner.hpp>
+#include <AnalyticPassPlanner.hpp>
 
 #define FORCEPASS 1
 

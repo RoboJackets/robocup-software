@@ -11,9 +11,9 @@
 #include <gtsam/NonlinearEquality.h>
 #include <gtsam/NonlinearConstraint.h>
 #include <gtsam/NonlinearConstraint-inl.h>
-#include <gameplay/optimizer/OptimizerGraph.hpp>
-#include "OptimizerUtils.hpp"
-#include "Factors.hpp"
+#include <OptimizerGraph.hpp>
+#include <OptimizerUtils.hpp>
+#include <Factors.hpp>
 
 using namespace Gameplay;
 using namespace Optimization;

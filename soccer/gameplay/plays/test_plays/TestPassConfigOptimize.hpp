@@ -10,7 +10,7 @@
 
 #include <vector>
 #include "../../Play.hpp"
-#include "PassConfig.hpp"
+#include "../../optimizer/PassConfig.hpp"
 #include "../../optimizer/PassOptimizer.hpp"
 
 namespace Gameplay

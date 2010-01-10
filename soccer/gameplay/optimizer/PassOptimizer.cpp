@@ -9,7 +9,7 @@
 #include <gtsam/SQPOptimizer.h>
 #include <gtsam/SQPOptimizer-inl.h>
 #include <gtsam/NonlinearConstraint-inl.h>
-#include <gameplay/optimizer/PassOptimizer.hpp>
+#include <PassOptimizer.hpp>
 #include "OptimizerGraph.hpp"
 #include "OptimizerConfig.hpp"
 
