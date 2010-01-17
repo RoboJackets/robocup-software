@@ -10,8 +10,8 @@
 //#include <gtsam/SQPOptimizer-inl.h>
 //#include <gtsam/NonlinearConstraint-inl.h>
 #include <PassOptimizer.hpp>
-#include "OptimizerGraph.hpp"
-#include "OptimizerConfig.hpp"
+//#include "OptimizerGraph.hpp"
+//#include "OptimizerConfig.hpp"
 
 using namespace std;
 //using namespace gtsam;
