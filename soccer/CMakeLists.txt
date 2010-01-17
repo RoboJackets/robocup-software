@@ -40,9 +40,9 @@ set (SRCS
 	
 	# Optimization components
 	gameplay/optimizer/PassOptimizer.cpp
-	gameplay/optimizer/OptimizerGraph.cpp
-	gameplay/optimizer/OptimizerConfig.cpp
-	gameplay/optimizer/Factors.cpp
+	#gameplay/optimizer/OptimizerGraph.cpp # Disabled temporarily
+	#gameplay/optimizer/OptimizerConfig.cpp
+	#gameplay/optimizer/Factors.cpp
 	gameplay/optimizer/PassConfig.cpp
 	gameplay/optimizer/PassState.cpp
 	gameplay/optimizer/AnalyticPassPlanner.cpp
