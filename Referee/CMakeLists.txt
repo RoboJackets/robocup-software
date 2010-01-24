@@ -87,3 +87,5 @@ add_executable (sslreferee ${SRCS} ${MOC_SRCS} ${UI_HDRS} ${RC_SRCS})
 # link against qt libraries
 target_link_libraries (sslreferee ${GTKMM_LIBRARIES} ${QT_LIBRARIES})
 
+# Copy the executable out to project /bin folder
+#file(COPY ./bin/sslreferee DESTINATION ../../bin/)

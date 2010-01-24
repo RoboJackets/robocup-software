@@ -144,5 +144,5 @@ target_link_libraries(${target} ${QT_LIBRARIES})
 target_link_libraries(${target} log)
 
 # Copy the executable out to project /bin folder
-file(COPY ./bin/${target} DESTINATION ../../bin/)
+#file(COPY ./bin/${target} DESTINATION ../../bin/)
 
