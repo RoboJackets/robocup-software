@@ -105,3 +105,6 @@ target_link_libraries (${PROJECT_NAME} ${NETWORK_LIBRARY})
 target_link_libraries (${PROJECT_NAME} ${PACKET_LIBRARY})
 target_link_libraries (${PROJECT_NAME} ${GEOMETRY_LIBRARY})
 target_link_libraries (${PROJECT_NAME} vision)
+
+# Copy the executable out to project /bin folder
+file(COPY ./bin/${PROJECT_NAME} DESTINATION ../../bin/)

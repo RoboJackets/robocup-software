@@ -142,3 +142,7 @@ target_link_libraries(${target} ${QT_LIBRARIES})
 #Module Linking
 # Add a new line here for every module used
 target_link_libraries(${target} log)
+
+# Copy the executable out to project /bin folder
+file(COPY ./bin/${target} DESTINATION ../../bin/)
+
