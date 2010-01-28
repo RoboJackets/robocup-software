@@ -68,8 +68,9 @@ bool Gameplay::Behaviors::Intercept::run()
 		if (ballVel.mag() > .1)
 		{
 			//look at where the ball will be 1 second from now
+			// changed to 0.45 seconds
 			//aka... the pos + vel
-			dest += ballVel;
+			dest += ballVel*0.65;
 		}
 		else
 		{

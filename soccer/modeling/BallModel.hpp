@@ -29,6 +29,7 @@ namespace Modeling
 	{
 		public:
 			typedef enum {
+				MODELTESTS,
 				RBPF,
 				KALMAN,
 				ABG
@@ -84,6 +85,14 @@ namespace Modeling
 			uint64_t lastObservedTime;
 
 			int missedFrames;
+
+			Geometry2d::Point prevObservedPos;
+
+			// filter errors
+			float kalmanTestPosError;
+			float rbpfTestPosError;
+			float kalmanTestVelError;
+			float rbpfTestVelError;
 
 		protected:
 			// mode of the filter

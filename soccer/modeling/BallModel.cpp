@@ -17,7 +17,13 @@ Modeling::BallModel::BallModel(mode_t mode) :
 	lastObservedTime = 0;
 	missedFrames = 0;
 
-	if (mode_ == KALMAN) {
+	if (mode_ == MODELTESTS) {
+		cout << "Running ball model tests..." << endl;
+		initKalman();
+		initRBPF();
+		kalmanTestPosError = 0; kalmanTestVelError = 0;
+		rbpfTestPosError = 0; rbpfTestVelError = 0;
+	} else if (mode_ == KALMAN) {
 		initKalman();
 	} else if (mode_ == RBPF) {
 		initRBPF();
@@ -25,6 +31,7 @@ Modeling::BallModel::BallModel(mode_t mode) :
 		initABG();
 	} else {
 		cout << "ERROR: Invalid initialization type, defaulting to RPBF!" << endl;
+		mode_ = RBPF;
 		initRBPF();
 	}
 }
@@ -76,12 +83,12 @@ void Modeling::BallModel::initRBPF() {
 	// Construct initial state X (n x 1)
 	Vector X(6); X*=0;
 	// Construct initial state covariance P (n x n)
-	Matrix P(6,6); P*=0.0; P(0,0)=P(1,1)= P(2,2)=P(3,3)=P(4,4)=P(5,5)=0.1;
+	Matrix P(6,6); P*=0.0; P(0,0)=P(1,1)= P(2,2)=P(3,3)=P(4,4)=P(5,5)=0.01;
 	// Create Rbpf
 	int numParticles = 20; // Number of particles in filter
 	raoBlackwellizedParticleFilter = new Rbpf(X,P,numParticles);
 	// create model graph
-	raoBlackwellizedParticleFilter->addModel(new RbpfModelRollingFriction());
+	raoBlackwellizedParticleFilter->addModel(new RbpfModelRolling());
 	raoBlackwellizedParticleFilter->addModel(new RbpfModelKicked());
 	raoBlackwellizedParticleFilter->setTransProb(0,0,0.9);
 	raoBlackwellizedParticleFilter->setTransProb(0,1,0.1);
@@ -112,6 +119,7 @@ void Modeling::BallModel::observation(uint64_t time, const Geometry2d::Point &po
 		bestError = 0;
 		this->pos = pos;
 		observedPos = pos;
+		prevObservedPos = pos;
 		bestObservedTime = time;
 		lastObservedTime = time;
 	}
@@ -176,18 +184,47 @@ void Modeling::BallModel::update()
 		// assuming we moved, then update the filter
 		if (dtime)
 		{
-			if (mode_ == KALMAN) {
+			if (mode_ == MODELTESTS){
+				Geometry2d::Point posKalmanDiff, posRbpfDiff;
+				Geometry2d::Point velKalmanDiff, velRbpfDiff;
+				Geometry2d::Point observedVel = (observedPos - prevObservedPos)*(1/dtime);
+				float errorPosKalman, errorPosRbpf;
+				float errorVelKalman, errorVelRbpf;
+
+				kalmanUpdate(dtime);
+				posKalmanDiff = observedPos - pos;
+				velKalmanDiff = observedVel - vel;
+				rbpfUpdate(dtime);
+				posRbpfDiff = observedPos - pos;
+				velRbpfDiff = observedVel - vel;
+
+				errorPosKalman = posKalmanDiff.mag();
+				errorPosRbpf = posRbpfDiff.mag();
+				errorVelKalman = velKalmanDiff.mag();
+				errorVelRbpf = velRbpfDiff.mag();
+
+				kalmanTestPosError += errorPosKalman;
+				rbpfTestPosError += errorPosRbpf;
+				kalmanTestVelError += errorVelKalman;
+				rbpfTestVelError += errorVelRbpf;
+				//cout << "Total error (Kal, Rbpf): (" << kalmanTesPostError << "," << rbpfTestPosError << "), this obs error (Kal, Rbpf): (" << errorKalman << "," << errorRbpf << ")" << endl;
+				cout << "Total pos error (Kal, Rbpf): (" << kalmanTestPosError << "," << rbpfTestPosError << "), total vel error (Kal, Rbpf): (" << kalmanTestVelError << "," << rbpfTestVelError << ")" << endl;
+			} else if (mode_ == KALMAN) {
 				kalmanUpdate(dtime);
 			} else if (mode_ == ABG) {
 				abgUpdate(dtime);
 			} else if (mode_ == RBPF) {
 				rbpfUpdate(dtime);
 			}
+			prevObservedPos = observedPos;
 		}
 	} else {
 		// Ball moved too far to possibly be a valid track, so just extrapolate from the last known state
 		if (dtime)
 		{
+			if(mode_ == MODELTESTS){
+				cout << "Ball Model Tests: missed too many frames, extrapolating." << endl;
+			}
 			pos += vel * dtime + accel * 0.5f * dtime * dtime;
 		}
 

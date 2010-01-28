@@ -24,7 +24,7 @@ RbpfModelRolling::RbpfModelRolling(){
 	H(0,0)=1; H(0,1)=0; H(0,2)=0; H(0,3)=0; H(0,4)=0; H(0,5)=0; // dh(X)/dx
 	H(1,0)=0; H(1,1)=1; H(1,2)=0; H(1,3)=0; H(1,4)=0; H(1,5)=0; // dh(X)/dy
 	// initialize process noise (n x n)
-	double sP = 10.0, sV = 10.0, sA = 10.0;
+	double sP = 0.2, sV = 1.0, sA = 1000.0;
 	Q(0,0)=sP; Q(0,1)=00; Q(0,2)=00; Q(0,3)=00; Q(0,4)=00; Q(0,5)=00;
 	Q(1,0)=00; Q(1,1)=sP; Q(1,2)=00; Q(1,3)=00; Q(1,4)=00; Q(1,5)=00;
 	Q(2,0)=00; Q(2,1)=00; Q(2,2)=sV; Q(2,3)=00; Q(2,4)=00; Q(2,5)=00;
@@ -32,8 +32,8 @@ RbpfModelRolling::RbpfModelRolling(){
 	Q(4,0)=00; Q(4,1)=00; Q(4,2)=00; Q(4,3)=00; Q(4,4)=sA; Q(4,5)=00;
 	Q(5,0)=00; Q(5,1)=00; Q(5,2)=00; Q(5,3)=00; Q(5,4)=00; Q(5,5)=sA;
 	// initialize measurement noise (s x s)
-	R(0,0)=.10; R(0,1)=000;
-	R(1,0)=000; R(1,1)=.10;
+	R(0,0)=.01; R(0,1)=000;
+	R(1,0)=000; R(1,1)=.01;
 }
 RbpfModelRolling::~RbpfModelRolling(){}
 // Function: transitionModel(X, U, dt)
@@ -100,7 +100,7 @@ RbpfModelKicked::RbpfModelKicked(){
 	H(0,0)=1; H(0,1)=0; H(0,2)=0; H(0,3)=0; H(0,4)=0; H(0,5)=0; // dh(X)/dx
 	H(1,0)=0; H(1,1)=1; H(1,2)=0; H(1,3)=0; H(1,4)=0; H(1,5)=0; // dh(X)/dy
 	// initialize process noise (n x n)
-	double sP = 30.0, sV = 20.0, sA = 10.0;
+	double sP = 1.0, sV = 1.0, sA = 1000.0;
 	Q(0,0)=sP; Q(0,1)=00; Q(0,2)=00; Q(0,3)=00; Q(0,4)=00; Q(0,5)=00;
 	Q(1,0)=00; Q(1,1)=sP; Q(1,2)=00; Q(1,3)=00; Q(1,4)=00; Q(1,5)=00;
 	Q(2,0)=00; Q(2,1)=00; Q(2,2)=sV; Q(2,3)=00; Q(2,4)=00; Q(2,5)=00;
@@ -108,8 +108,8 @@ RbpfModelKicked::RbpfModelKicked(){
 	Q(4,0)=00; Q(4,1)=00; Q(4,2)=00; Q(4,3)=00; Q(4,4)=sA; Q(4,5)=00;
 	Q(5,0)=00; Q(5,1)=00; Q(5,2)=00; Q(5,3)=00; Q(5,4)=00; Q(5,5)=sA;
 	// initialize measurement noise (s x s)
-	R(0,0)=0.6; R(0,1)=000;
-	R(1,0)=000; R(1,1)=0.6;
+	R(0,0)=.01; R(0,1)=000;
+	R(1,0)=000; R(1,1)=.01;
 }
 RbpfModelKicked::~RbpfModelKicked(){}
 // Function: transitionModel(X, U, dt)
@@ -175,7 +175,7 @@ RbpfModelRollingFriction::RbpfModelRollingFriction(){
 	H(0,0)=1; H(0,1)=0; H(0,2)=0; H(0,3)=0; H(0,4)=0; H(0,5)=0; // dh(X)/dx
 	H(1,0)=0; H(1,1)=1; H(1,2)=0; H(1,3)=0; H(1,4)=0; H(1,5)=0; // dh(X)/dy
 	// initialize process noise (n x n)
-	double sP = 0.1, sV = 10.0, sA = 30.0;
+	double sP = 0.01, sV = 10.0, sA = 30.0;
 	Q(0,0)=sP; Q(0,1)=00; Q(0,2)=00; Q(0,3)=00; Q(0,4)=00; Q(0,5)=00;
 	Q(1,0)=00; Q(1,1)=sP; Q(1,2)=00; Q(1,3)=00; Q(1,4)=00; Q(1,5)=00;
 	Q(2,0)=00; Q(2,1)=00; Q(2,2)=sV; Q(2,3)=00; Q(2,4)=00; Q(2,5)=00;
