@@ -46,7 +46,7 @@
 #include "RbpfState.hpp"
 #include "RbpfModel.hpp"
 #include "RbpfModelGraph.hpp"
-#include <boost/math/constants/constants.hpp>
+
 using std::ostream;
 using std::endl;
 namespace ublas = boost::numeric::ublas;

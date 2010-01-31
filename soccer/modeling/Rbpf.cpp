@@ -7,13 +7,16 @@
  */
 
 #include <Rbpf.hpp>
+//#include <boost/math/constants/constants.hpp> // Not in 1.37 that 9.04 people use
+
+#define PI 3.1415926535897932384626
 
 // Constructor: Rbpf(X, P, k)
 //   X: initial state, (n x 1)
 //   P: initial state covariance, (n x n)
 //   k: the number of particles to be initialized.
 // initializes the particle vector, with k particle states
-Rbpf::Rbpf(Vector X, Matrix P, int _k) : k(_k), modelGraph(), pi(boost::math::constants::pi<double>()) {
+Rbpf::Rbpf(Vector X, Matrix P, int _k) : k(_k), modelGraph(), pi(PI) {
 	assert(X.size() == P.size1()); // P must be of size (n x n)
 	assert(X.size() == P.size2()); // P must be of size (n x n)
 	assert(k > 0);                 // Must have at least 1 particle state
