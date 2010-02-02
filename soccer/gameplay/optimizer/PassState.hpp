@@ -19,26 +19,26 @@ using std::endl;
 
 class PassState {
 public:
-	enum StateType{INITIAL,INTERMEDIATE,GOAL};
+	enum StateType{INTERMEDIATE,KICKPASS,RECEIVEPASS,KICKGOAL};
 
-	// alternate constructors
 	PassState() {} // default - don't read data from this
-	PassState(const Point &ballPos, StateType stateType);
-	PassState(const Point &ballPos, Robot* robot); // Intermediate, no final robot pos
-	PassState(const Point &ballPos, Robot* robot, const Point &robotPos); // Intermediate, with final robot pos
+	PassState(	Robot* robot1, Robot* robot2,
+				const Point &robot1Pos, const Point &robot2Pos,
+				const float &robot1Rot, const float &robot2Rot,
+				const Point &ballPos, StateType stateType, double timestamp);
 
-	/// copy constructor
+	// copy constructor
 	PassState(const PassState& s);
 
 	virtual ~PassState();
 	friend ostream& operator<<(ostream& out, const PassState &state);
 
-	Point ballPos;         // initial position of ball when entering this state
-	Robot* robot;
-	Point robotPos;        // position of robot when ball leaves this state.
-	StateType stateType;
-	double timeEnterState; // timestamp when the ball gets to this state (timestamp when ball leaves previous state + travel time)
-	double timeLeaveState; // timestamp when the ball leaves this state (includes robot maneuvering)
+	Robot* robot1, *robot2;
+	Point robot1Pos, robot2Pos;
+	float robot1Rot, robot2Rot;
+	Point ballPos;
+	StateType stateType; // action taken when leaving state
+	double timestamp;
 };
 
 #endif /* PASSSTATE_HPP_ */

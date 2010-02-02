@@ -74,7 +74,7 @@ set (SRCS
 	gameplay/plays/test_plays/TestDirectMotionControl.cpp
 	gameplay/plays/test_plays/TestTimePositionControl.cpp
 	gameplay/plays/test_plays/TestBasicAttack.cpp
-	gameplay/plays/test_plays/TestPassConfigOptimize.cpp
+#	gameplay/plays/test_plays/TestPassConfigOptimize.cpp
 	gameplay/plays/test_plays/TestPassPlay.cpp
 	gameplay/behaviors/test/Passer.cpp
 	gameplay/behaviors/test/Receiver.cpp

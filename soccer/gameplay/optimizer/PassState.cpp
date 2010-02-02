@@ -7,27 +7,38 @@
 
 #include <PassState.hpp>
 
-PassState::PassState(const Point &_bP, StateType _sT) : ballPos(_bP.x,_bP.y), robot((Robot*)NULL), stateType(_sT) {}
+PassState::PassState(Robot* robot1, Robot* robot2,
+					const Point &robot1Pos, const Point &robot2Pos,
+					const float &robot1Rot, const float &robot2Rot,
+					const Point &ballPos, StateType stateType, double timestamp)
+: robot1(robot1), robot2(robot2),
+  robot1Pos(robot1Pos), robot2Pos(robot2Pos),
+  ballPos(ballPos), stateType(stateType), timestamp(timestamp){}
 
-// if there is a robot, the state type is implicitly INTERMEDIATE
-PassState::PassState(const Point &_bP, Robot* _cR) : ballPos(_bP.x,_bP.y), robot(_cR), stateType(INTERMEDIATE) {}
-PassState::PassState(const Point &_bP, Robot* _cR, const Point &_rP) : ballPos(_bP.x,_bP.y), robot(_cR), robotPos(_rP.x,_rP.y), stateType(INTERMEDIATE) {}
-
+// copy constructor
 PassState::PassState(const PassState& s)
-: ballPos(s.ballPos), robot(s.robot), robotPos(s.robotPos), stateType(s.stateType),
-  timeEnterState(s.timeEnterState), timeLeaveState(s.timeLeaveState)
-{
-}
+: robot1(s.robot1), robot2(s.robot2),
+  robot1Pos(s.robot1Pos), robot2Pos(s.robot2Pos),
+  ballPos(s.ballPos), stateType(s.stateType), timestamp(s.timestamp){}
 
 PassState::~PassState() {}
 
 ostream& operator<<(ostream& out, const PassState &state){
-	if(state.robot != NULL)
-		out << "robot id:" << state.robot->id();
-	else
-		out << "no robot";
-	out << ", init ball pos: (" << state.ballPos.x << ", " << state.ballPos.y << ")";
-	out << ", timeEnter: " << state.timeEnterState << ", timeLeave: " << state.timeLeaveState;
-	out << ", final robot pos: (" << state.robotPos.x << ", " << state.robotPos.y << ")";
+	out << "r1.id(" << state.robot1->id() << "), ";
+	out << "r1.pos(" << state.robot1Pos.x << "," << state.robot1Pos.y << "), ";
+	out << "r1.rot(" << state.robot1Rot << "), ";
+	out << "r2.id(" << state.robot2->id() << "), ";
+	out << "r2.pos(" << state.robot2Pos.x << "," << state.robot2Pos.y << "), ";
+	out << "r2.rot(" << state.robot2Rot << "), ";
+	out << "ballPos(" << state.ballPos.x << "," << state.ballPos.y << "), ";
+	out << "timestamp(" << state.timestamp << "), ";
+	out << "stateType(";
+	switch(state.stateType){
+		case(PassState::INTERMEDIATE): out << "INTERMEDIATE"; break;
+		case(PassState::KICKPASS) : out << "KICKPASS"; break;
+		case(PassState::RECEIVEPASS) : out << "RECEIVEPASS"; break;
+		case(PassState::KICKGOAL) : default : out << "KICKGOAL"; break;
+	}
+	out << ")";
 	return out;
 }

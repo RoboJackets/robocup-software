@@ -7,77 +7,59 @@
 
 #include <AnalyticPassPlanner.hpp>
 
-#define FORCEPASS 1
-
 namespace AnalyticPassPlanner {
 	void generateAllConfigs(const Point &ballPos, set<Robot *> &robots, PassConfigVector &passConfigResult){
 		Geometry2d::Point goalBallPos = Geometry2d::Point(0.0, Constants::Field::Length);
 
 		BOOST_FOREACH(Robot *r1, robots){
-			// initialize configurations of length 1
-			if(!FORCEPASS){
-			PassConfig* passConfig = new PassConfig(); // add starting ball position
-			passConfig->addPassState(PassState(ballPos,PassState::INITIAL)); // add robot with ball
-			passConfig->addPassState(PassState(ballPos, r1)); // add ending (goal) ball position
-			passConfig->addPassState(PassState(goalBallPos,PassState::GOAL));
-			passConfigResult.push_back(passConfig);
-			}
-
-			// initialize configurations of length 2
 			BOOST_FOREACH(Robot *r2, robots){
 				if(r2->id()==r1->id()){continue;} // don't pass to self
-				PassConfig* passConfig = new PassConfig(); // add starting ball position
-				passConfig->addPassState(PassState(ballPos,PassState::INITIAL)); // add robot1 with ball
-				passConfig->addPassState(PassState(ballPos, r1)); // add robot2 with ball
-				passConfig->addPassState(PassState(r2->pos(), r2)); // add ending (goal) ball position
-				passConfig->addPassState(PassState(goalBallPos,PassState::GOAL));
+
+				PassConfig* passConfig = new PassConfig();
+
+				// setup calculations
+				Point passVec = (r2->pos() - ballPos).normalized();
+				float passAngle = passVec.angle();
+				Point goalVec = (goalBallPos - r2->pos()).normalized();
+				float goalAngle = goalVec.angle();
+
+				// add initial state with no robots having the ball
+				passConfig->addPassState(
+						PassState(r1, r2, r1->pos(), r2->pos(), r1->angle(), r2->angle(),
+						ballPos, PassState::INTERMEDIATE, 0));
+
+				// add state with robot1 at a position to pass to robot2
+				Point state2Robot1Pos = ballPos - passVec * (float)(Constants::Robot::Radius + Constants::Ball::Radius);
+				float state2Robot1Rot = passAngle;
+				double state2Time = r1->pos().distTo(state2Robot1Pos) / APPROXROBOTVELTRANS;
+				passConfig->addPassState(
+						PassState(r1, r2, state2Robot1Pos, r2->pos(), state2Robot1Rot, r2->angle(),
+						ballPos, PassState::KICKPASS, state2Time));
+
+				// add state with robot2 receiving ball
+				Point state3BallPos = r2->pos();
+				Point state3Robot2Pos = state3BallPos + passVec * (float)(Constants::Robot::Radius + Constants::Ball::Radius);
+				float state3Robot2Rot = (passVec * -1.0f).angle();
+				double state3Time = state2Time + r2->pos().distTo(state3Robot2Pos) / APPROXROBOTVELTRANS;
+				passConfig->addPassState(
+						PassState(r1, r2, state2Robot1Pos, state3Robot2Pos, state2Robot1Rot, state3Robot2Rot,
+						state3BallPos, PassState::RECEIVEPASS, state3Time));
+
+				// add state with robot2 kicking a goal
+				Point state4Robot2Pos = state3BallPos - goalVec * (float)(Constants::Robot::Radius + Constants::Ball::Radius);
+				float state4Robot2Rot = goalAngle;
+				double state4Time = state3Time + state3Robot2Pos.distTo(state4Robot2Pos) / APPROXROBOTVELTRANS;
+				passConfig->addPassState(
+						PassState(r1, r2, state2Robot1Pos, state4Robot2Pos, state2Robot1Rot, state4Robot2Rot,
+						state3BallPos, PassState::KICKGOAL, state4Time));
+
+				// add state with ball in goal
+				double state5Time = state4Time + state3BallPos.distTo(goalBallPos) / APPROXBALLVEL;
+				passConfig->addPassState(
+						PassState(r1, r2, state2Robot1Pos, state4Robot2Pos, state2Robot1Rot, state4Robot2Rot,
+						goalBallPos, PassState::INTERMEDIATE, state5Time));
+
 				passConfigResult.push_back(passConfig);
-
-				/*
-				// initialize configurations of length 3
-				BOOST_FOREACH(Robot *r3, robots){
-					if(r3->id()==r2->id()){continue;} // don't pass to self
-													  // note: r1 -> r2 -> r1 is ok.
-					PassConfig* passConfig = new PassConfig(); // add starting ball position
-					passConfig->addPassState(new PassState(ballPos,PassState::INITIAL)); // add robot1 with ball
-					passConfig->addPassState(new PassState(ballPos, r1)); // add robot2 with ball
-					passConfig->addPassState(new PassState(r2->pos(), r2)); // add robot3 with ball
-					passConfig->addPassState(new PassState(r3->pos(), r3)); // add ending (goal) ball position
-					passConfig->addPassState(new PassState(goalBallPos,PassState::GOAL));
-					passConfigResult(passConfig);
-				}
-				*/
-			}
-		}
-
-		// correct the ball position for each state
-		// after a pass from robot A to robot B, the ball will lie on the line
-		// AB, at a distance of robotShellRadius+ballRadius from B.
-		for(int pC=0; pC < (int)passConfigResult.size(); pC++){
-			for(int pS=0; pS < passConfigResult[pC].length(); pS++){
-				if(passConfigResult[pC].passStateVector[pS].stateType == PassState::INTERMEDIATE){
-					Point nextBallPos = passConfigResult[pC].passStateVector[pS+1].ballPos;
-					Point thisBallPos = passConfigResult[pC].passStateVector[pS].ballPos;
-					Point shotDir = (nextBallPos-thisBallPos).normalized();
-					float shotDist = nextBallPos.distTo(thisBallPos) - (float)(Constants::Robot::Radius + Constants::Ball::Radius);
-					nextBallPos = thisBallPos + (shotDir*shotDist);
-					passConfigResult[pC].passStateVector[pS+1].ballPos = nextBallPos;
-				}
-			}
-		}
-
-		// set the final robot position for each state
-		// this will be in the direction of the shot, at a distance of
-		// ballEnd-ballStart + robotShellRadius + ballRadius
-		for(int pC=0; pC < (int)passConfigResult.size(); pC++){
-			for(int pS=0; pS < passConfigResult[pC].length(); pS++){
-				if(passConfigResult[pC].passStateVector[pS].stateType == PassState::INTERMEDIATE){
-					Point nextBallPos = passConfigResult[pC].passStateVector[pS+1].ballPos;
-					Point thisBallPos = passConfigResult[pC].passStateVector[pS].ballPos;
-					Point shotDir = (thisBallPos-nextBallPos).normalized();
-					Point robotPosFinal = thisBallPos + shotDir * (float)(Constants::Robot::Radius + Constants::Ball::Radius);
-					passConfigResult[pC].passStateVector[pS].robotPos = robotPosFinal;
-				}
 			}
 		}
 	}
@@ -86,66 +68,21 @@ namespace AnalyticPassPlanner {
 		//
 		// Weight configs
 		//
+
 		PassState prevState;
-		float ballTravelDist, robotTravelDist, robotRotateDist;
-		double ballTravelTime, robotTravelTime, robotRotateTime;
-		Point inVector, outVector;
 
 		for(int i=0; i<(int)passConfigs.size(); i++){
-			// calculate the timestamps at each state in the config
-			//
-			for(int j=0; j<passConfigs[i].length(); j++){
-				PassState thisState = passConfigs[i].getPassState(j);
-				switch(thisState.stateType){
-					case PassState::INITIAL :
-					{
-						passConfigs[i].passStateVector[j].timeEnterState = 0.0;
-						passConfigs[i].passStateVector[j].timeLeaveState = 0.0;
-						break;
-					}
-					case PassState::INTERMEDIATE :
-					{
-						if(prevState.stateType == PassState::INITIAL){
-							robotTravelDist = thisState.robot->pos().distTo(thisState.ballPos);
-							robotTravelTime = robotTravelDist / APPROXROBOTVELTRANS;
-							passConfigs[i].passStateVector[j].timeEnterState = prevState.timeLeaveState + robotTravelTime;
-						}else{
-							ballTravelDist = thisState.ballPos.distTo(prevState.ballPos);
-							ballTravelTime = ballTravelDist / APPROXBALLVEL;
-							passConfigs[i].passStateVector[j].timeEnterState = prevState.timeLeaveState + ballTravelTime;
-						}
-						PassState nextState = passConfigs[i].getPassState(j+1);
-						inVector = (thisState.ballPos - prevState.ballPos).normalized();
-						outVector = (nextState.ballPos - thisState.ballPos).normalized();
-						robotRotateDist = inVector.angleTo(outVector);
-						robotRotateTime = robotRotateDist / APPROXROBOTVELROT;
-						passConfigs[i].passStateVector[j].timeLeaveState = passConfigs[i].passStateVector[j].timeEnterState + robotRotateTime;
-						break;
-					}
-					case PassState::GOAL :
-					{
-						ballTravelDist = thisState.ballPos.distTo(prevState.ballPos);
-						ballTravelTime = ballTravelDist / APPROXBALLVEL;
-						passConfigs[i].passStateVector[j].timeEnterState = prevState.timeLeaveState + ballTravelTime;
-						passConfigs[i].passStateVector[j].timeLeaveState = passConfigs[i].passStateVector[j].timeEnterState;
-						break;
-					}
-				}
-				prevState = passConfigs[i].passStateVector[j];
-			}
-
 			int numInteractions = 0;
 
 			// calculate the total number of opponents that can touch the ball at each intermediate
 			// ballPos (where the ball will be waiting for the robot to pivot and pass)
 			for(int j=0; j<passConfigs[i].length(); j++){
 				PassState thisState = passConfigs[i].getPassState(j);
-				for (int i=0; i<Constants::Robots_Per_Team; ++i)
-				{
+				for (int i=0; i<Constants::Robots_Per_Team; ++i){
 					Robot *opponentR = opponents[i];
-					robotTravelDist = opponentR->pos().distTo(thisState.ballPos);
-					robotTravelTime = robotTravelDist / APPROXROBOTVELTRANS;
-					if(robotTravelTime < thisState.timeLeaveState){
+					double robotTravelDist = opponentR->pos().distTo(thisState.ballPos);
+					double robotTravelTime = robotTravelDist / APPROXROBOTVELTRANS;
+					if(robotTravelTime < thisState.timestamp){
 						numInteractions++;
 					}
 				}
@@ -155,14 +92,12 @@ namespace AnalyticPassPlanner {
 			// the ball's path at this instant.
 			for(int j=0; j<passConfigs[i].length(); j++){
 				PassState thisState = passConfigs[i].getPassState(j);
-				if(thisState.stateType!=PassState::INITIAL){
-					Line ballPath(thisState.ballPos,prevState.ballPos);
-					for (int i=0; i<Constants::Robots_Per_Team; ++i){
-						Robot *opponentR = opponents[i];
-						// we use 2*Radius to give "wiggle room"
-						if(ballPath.distTo(opponentR->pos()) < (float)(Constants::Robot::Radius + 2*Constants::Ball::Radius)){
-							numInteractions++;
-						}
+				Line ballPath(thisState.ballPos,prevState.ballPos);
+				for (int i=0; i<Constants::Robots_Per_Team; ++i){
+					Robot *opponentR = opponents[i];
+					// we use 2*Radius to give "wiggle room"
+					if(ballPath.distTo(opponentR->pos()) < (float)(Constants::Robot::Radius + 2*Constants::Ball::Radius)){
+						numInteractions++;
 					}
 				}
 				prevState = thisState;
@@ -170,7 +105,7 @@ namespace AnalyticPassPlanner {
 
 			passConfigs[i].setWeight(numInteractions);
 		}
+
 		passConfigs.sort();
 	}
-
 }

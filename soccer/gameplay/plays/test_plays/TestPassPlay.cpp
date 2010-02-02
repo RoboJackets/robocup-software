@@ -9,13 +9,16 @@
 #include "TestPassPlay.hpp"
 
 #define TIMEMARGIN 1.5 // seconds a play can deviate from plan before abort
+#define ROBOTSUCCESSMARGIN 0.2 // if robot within this region, a move is complete
+#define BALLSUCCESSMARGIN 0.2 // if robot within this region, a move is complete
 
 using namespace Geometry2d;
 using namespace std;
 
 Gameplay::Plays::TestPassPlay::TestPassPlay(GameplayModule *gameplay)
-: Play(gameplay), kicker(gameplay), optimizer_(gameplay) {
+: Play(gameplay), kicker(gameplay), interceptor(gameplay)/*, optimizer_(gameplay)*/ {
 	_passState = Initializing;
+	newPassState = true;
 	passIndex = 0; // start the index after the first state (0)
 	playTime = -1; // set playTime to an invalid time
 }
@@ -27,8 +30,7 @@ void Gameplay::Plays::TestPassPlay::assign(set<Robot *> &available){
 }
 
 bool Gameplay::Plays::TestPassPlay::run(){
-	if (_passState == Initializing) {
-		// do initialization here
+	if (_passState == Initializing) { // do initialization here
 		initializePlan();
 
 		bestPassConfig = initialPlans[0];
@@ -37,24 +39,7 @@ bool Gameplay::Plays::TestPassPlay::run(){
 		_gameplay->_passConfig_primary = &initialPlans[0]; // optimized plan
 		_gameplay->_passConfig_secondary = &initialPlans[1]; // initial plan
 
-
-//		vector<Robot> nonPassingRobots;
-//		BOOST_FOREACH(Robot *r, _robots)
-//			nonPassingRobots.push_back(*r);
-//		BOOST_FOREACH(PassState passState, bestPassConfig.passStateVector){
-//			Robot *r = passState.robot;
-//			if(r != NULL){
-//				for (vector<Robot>::iterator it = nonPassingRobots.begin(); it!=nonPassingRobots.end(); ++it) {
-//					if(it->id() == r->id()){
-//						nonPassingRobots.erase(it);
-//						--it;
-//					}
-//				}
-//			}
-//		}
-//
-//		// todo: assign all Robots in nonPassingRobots to defenders
-//		nonPassingRobots.clear();
+		// todo: assign the robots that are unused...?
 
 		// goto next state
 		_passState = Executing;
@@ -62,8 +47,9 @@ bool Gameplay::Plays::TestPassPlay::run(){
 		passIndex = 0; // start the index after the first state (0)
 		playTime = -1; // set playTime to an invalid time
 
-	} else if (_passState == Executing) {// perform actual execution
+	}
 
+	if (_passState == Executing) { // perform actual execution
 		// sanity check
 		if (!allVisible() || !ball().valid)
 			return false; // no ball
@@ -72,49 +58,85 @@ bool Gameplay::Plays::TestPassPlay::run(){
 		if(this->gameState().state != GameState::Playing)
 			return false;
 
-		// issue move commands
-		PassState prev = bestPassConfig.passStateVector[0];
-		BOOST_FOREACH(PassState s, bestPassConfig.passStateVector) {
-			if (s.stateType == PassState::INTERMEDIATE &&
-					prev.stateType == PassState::INTERMEDIATE) {
-				s.robot->move(s.robotPos);
-			}
-			prev = s;
-		}
-
 		PassState passState = bestPassConfig.getPassState(passIndex);
+		PassState nextState = bestPassConfig.getPassState((passIndex+1<bestPassConfig.length()?passIndex+1:passIndex));
+
 		double currentTime = _gameplay->state()->timestamp / 1000000.0;
 		if(playTime < 0){playTime = currentTime;}
-
-		//cout << "current time: " << (currentTime-playTime) << " should be less than: " << passState.timeLeaveState << endl;
-		if((currentTime-playTime) - passState.timeLeaveState >= TIMEMARGIN){
+		if((currentTime-playTime) - passState.timestamp >= TIMEMARGIN){
 			cout << "aborting due to invalid plan..." << endl; // abort plan
-			_robots.clear();
 			_passState = Done;
-			return false;
-		}
+		}else if(passState.stateType==PassState::INTERMEDIATE){
+			passState.robot1->move(passState.robot1Pos);
+			passState.robot2->move(passState.robot2Pos);
+			if(nextState.stateType==PassState::KICKPASS||nextState.stateType==PassState::KICKGOAL)
+				passState.robot1->face(nextState.ballPos,true);
+			else
+				passState.robot1->face(passState.ballPos,true);
+			passState.robot2->face(passState.ballPos,true);
 
-		if(passState.stateType==PassState::GOAL){
-			_robots.clear();
-			_passState = Done;
-			return false;
-		}else{
-			if(passState.stateType==PassState::INITIAL || !kicker.run()){
-				if(++passIndex >= bestPassConfig.length()){return false;}
-
-				passState = bestPassConfig.getPassState(passIndex);
-				if(passState.stateType == PassState::INTERMEDIATE){
-					kicker.assignOne(passState.robot);
-					PassState nextPassState = bestPassConfig.getPassState(passIndex+1);
-					if(nextPassState.stateType == PassState::INTERMEDIATE){
-						kicker.targetRobot = nextPassState.robot;
-					}else{
-						kicker.targetRobot = 0;
-					}
-				}
+			float robot1GoalPosDist = passState.robot1->pos().distTo(passState.robot1Pos);
+			float robot2GoalPosDist = passState.robot2->pos().distTo(passState.robot2Pos);
+			if(robot1GoalPosDist < ROBOTSUCCESSMARGIN && robot2GoalPosDist < ROBOTSUCCESSMARGIN){
+				newPassState = true; // move complete, move to next state
+			}else{newPassState = false;}
+		}else if(passState.stateType==PassState::KICKPASS){
+			passState.robot2->move(passState.robot2Pos);
+			if(newPassState || !kicker.assigned() || kicker.getState()==kicker.Done){
+				kicker.assignOne(passState.robot1);
+				kicker.targetRobot = passState.robot2;
+				kicker.restart();
 			}
+
+			float ballPosDist = passState.ballPos.distTo(ball().pos);
+			float robot2GoalPosDist = passState.robot2->pos().distTo(passState.robot2Pos);
+			bool ballMoved = ballPosDist > BALLSUCCESSMARGIN;
+			if(kicker.run() && ballMoved && robot2GoalPosDist < ROBOTSUCCESSMARGIN){
+				newPassState = true; // pass complete, move to next state
+			}else{newPassState = false;}
+		}else if(passState.stateType==PassState::KICKGOAL){
+			if(newPassState || !kicker.assigned() || kicker.getState()==kicker.Done){
+				cout << "assigning new robot" << endl;
+				kicker.assignOne(passState.robot2);
+				kicker.targetRobot = NULL;
+				kicker.restart();
+			}
+
+			float ballPosDist = nextState.ballPos.distTo(ball().pos);
+			bool ballGoal = ballPosDist < BALLSUCCESSMARGIN;
+			if(kicker.run() && ballGoal){
+				newPassState = true; // pass complete, move to next state
+			}else{newPassState = false;}
+		}else if(passState.stateType==PassState::RECEIVEPASS){
+			if(newPassState || !interceptor.assigned()){
+				interceptor.assignOne(passState.robot2);
+			}
+
+			float ballPosDist = passState.ballPos.distTo(ball().pos);
+			float robot2GoalPosDist = passState.robot2->pos().distTo(passState.robot2Pos);
+			if(interceptor.run() && ballPosDist < BALLSUCCESSMARGIN && robot2GoalPosDist < ROBOTSUCCESSMARGIN){
+				newPassState = true; // receive complete, move to next state
+			}else{newPassState = false;}
 		}
+
+		if(newPassState){
+			passIndex++;
+			passState.robot1->resetMotionCommand();
+			passState.robot2->resetMotionCommand();
+		}
+
 	}
+
+	if(passIndex >= bestPassConfig.length()){
+		_passState = Done;
+	}
+
+	if(_passState == Done){
+		cout << "pass done" << endl;
+		_passState = Initializing;
+		return false;
+	}
+
 	return true;
 }
 
@@ -135,10 +157,12 @@ void Gameplay::Plays::TestPassPlay::initializePlan(){
 		++idx;
 	}
 
-	PassConfig * opt = new PassConfig(optimizer_.optimizePlan(initialPlans[idx], false));
-	newConfigs.push_back(opt);
+	//PassConfig * opt = new PassConfig(optimizer_.optimizePlan(initialPlans[idx], false));
+	//newConfigs.push_back(opt);
+	newConfigs.push_back(new PassConfig(initialPlans[0]));
+	newConfigs.push_back(new PassConfig(initialPlans[0]));
 	AnalyticPassPlanner::evaluateConfigs(_robots, _gameplay->opp, newConfigs);
-	newConfigs.push_back(new PassConfig(initialPlans[idx]));
+	//newConfigs.push_back(new PassConfig(initialPlans[idx]));
 
 	initialPlans.clear();
 	initialPlans = newConfigs;

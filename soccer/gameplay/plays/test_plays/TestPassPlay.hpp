@@ -9,9 +9,6 @@
  *
  *  Currently, this is under development and should not be used.
  *
- *  Current goal: dump solution to screen with a limit of 2 robots
- *
- *
  *  Created on: Nov 29, 2009
  *      Author: Philip Rogers
  *      Author:
@@ -28,7 +25,7 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/foreach.hpp>
 #include <vector>
-#include "../../optimizer/PassOptimizer.hpp"
+//#include "../../optimizer/PassOptimizer.hpp"
 #include "../../optimizer/PassState.hpp"
 #include "../../optimizer/PassConfig.hpp"
 #include "../../optimizer/AnalyticPassPlanner.hpp"
@@ -59,11 +56,13 @@ namespace Gameplay{
 				PassConfigVector initialPlans;
 				PassConfig bestPassConfig;
 				Behaviors::Kick kicker;
+				Behaviors::Intercept interceptor;
 				int passIndex;
 				double playTime;
+				bool newPassState;
 
 				/// Optimization Engine
-				Optimization::PassOptimizer optimizer_;
+				//Optimization::PassOptimizer optimizer_;
 
 				/// storage of robot pointers
 				std::set<Robot *> full_available_;

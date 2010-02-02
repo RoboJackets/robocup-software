@@ -33,9 +33,9 @@
 #include "plays/test_plays/TestBasicPassing.hpp"
 #include "plays/test_plays/TestBasicAttack.hpp"
 #include "plays/test_plays/TestPassPlay.hpp"
-#include "plays/test_plays/TestDirectMotionControl.hpp"
-#include "plays/test_plays/TestTimePositionControl.hpp"
-#include "plays/test_plays/TestPassConfigOptimize.hpp"
+//#include "plays/test_plays/TestDirectMotionControl.hpp"
+//#include "plays/test_plays/TestTimePositionControl.hpp"
+//#include "plays/test_plays/TestPassConfigOptimize.hpp"
 
 #include <QMouseEvent>
 #include <QFileDialog>
@@ -157,9 +157,9 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_playConfig->addPlay(make_shared<Plays::TestBasicPassing>(this));
 	_playConfig->addPlay(make_shared<Plays::TestBasicAttack>(this));
 	_playConfig->addPlay(make_shared<Plays::TestPassPlay>(this));
-	_playConfig->addPlay(make_shared<Plays::TestDirectMotionControl>(this));
-	_playConfig->addPlay(make_shared<Plays::TestTimePositionControl>(this));
-	_playConfig->addPlay(make_shared<Plays::TestPassConfigOptimize>(this));
+//	_playConfig->addPlay(make_shared<Plays::TestDirectMotionControl>(this));
+//	_playConfig->addPlay(make_shared<Plays::TestTimePositionControl>(this));
+//	_playConfig->addPlay(make_shared<Plays::TestPassConfigOptimize>(this));
 
 	// initialize the PassConfig renderering
 	_passConfig_primary = 0;
@@ -223,32 +223,22 @@ void Gameplay::GameplayModule::renderPassConfig(PassConfig* config, QPainter &pa
 		painter.setPen(Qt::darkCyan);
 
 	// draw the path of the ball and the robot trajectories
-	Geometry2d::Point prevPt;
+	int stateNum = 0;
+	PassState prevState;
 	BOOST_FOREACH(PassState state, config->passStateVector) {
 		// draw the ball
 		painter.drawEllipse(state.ballPos.toQPointF(),ball_radius, ball_radius);
+		// draw robots
+		painter.drawEllipse(state.robot1Pos.toQPointF(), pos_radius, pos_radius);
+		painter.drawEllipse(state.robot2Pos.toQPointF(), pos_radius, pos_radius);
 
-		// switch on the type of node
-		if (state.stateType == PassState::INITIAL) {
-			// save the point to connect to
-			prevPt = state.ballPos;
-		} else if (state.stateType == PassState::INTERMEDIATE) {
-			// connect a line between the current and the last ball state
-			painter.drawLine(prevPt.toQPointF(), state.ballPos.toQPointF());
-
-			// draw the robot pose and final robot pose
-			painter.drawEllipse(state.robot->pos().toQPointF(), pos_radius, pos_radius); // initial
-			painter.drawEllipse(state.robotPos.toQPointF(), pos_radius, pos_radius);     // final
-
-			// draw a line between the current robot state and its target state
-			painter.drawLine(state.robot->pos().toQPointF(), state.robotPos.toQPointF());
-
-			// save to previous ball pose
-			prevPt = state.ballPos;
-		} else if (state.stateType == PassState::GOAL) {
-			// connect the previous ball to the current one
-			painter.drawLine(prevPt.toQPointF(), state.ballPos.toQPointF());
+		if(stateNum > 0){
+			painter.drawLine(prevState.ballPos.toQPointF(), state.ballPos.toQPointF());
+			painter.drawLine(prevState.robot1Pos.toQPointF(), state.robot1Pos.toQPointF());
+			painter.drawLine(prevState.robot2Pos.toQPointF(), state.robot2Pos.toQPointF());
 		}
+		prevState = state;
+		stateNum++;
 	}
 
 }
