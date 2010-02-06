@@ -8,8 +8,9 @@
 
 #include "TestPassPlay.hpp"
 
-#define TIMEMARGIN 1.5 // seconds a play can deviate from plan before abort
-#define ROBOTSUCCESSMARGIN 0.2 // if robot within this region, a move is complete
+#define TIMEMARGIN 3.5 // seconds a play can deviate from plan before abort
+#define ROBOTSUCCESSMARGIN 0.05 // if robot within this region, a move is complete
+#define ROBOTKICKSUCCESSMARGIN 0.05 // if kicking robot within this region, proceed to kick
 #define BALLSUCCESSMARGIN 0.2 // if robot within this region, a move is complete
 
 using namespace Geometry2d;
@@ -39,8 +40,6 @@ bool Gameplay::Plays::TestPassPlay::run(){
 		_gameplay->_passConfig_primary = &initialPlans[0]; // optimized plan
 		_gameplay->_passConfig_secondary = &initialPlans[1]; // initial plan
 
-		// todo: assign the robots that are unused...?
-
 		// goto next state
 		_passState = Executing;
 
@@ -63,17 +62,21 @@ bool Gameplay::Plays::TestPassPlay::run(){
 
 		double currentTime = _gameplay->state()->timestamp / 1000000.0;
 		if(playTime < 0){playTime = currentTime;}
+
+
 		if((currentTime-playTime) - passState.timestamp >= TIMEMARGIN){
 			cout << "aborting due to invalid plan..." << endl; // abort plan
 			_passState = Done;
-		}else if(passState.stateType==PassState::INTERMEDIATE){
+		}else if(passState.stateType == PassState::INTERMEDIATE){
+			if(nextState.stateType == PassState::INTERMEDIATE){
+				passState.robot1->face(nextState.ballPos,true);
+				passState.robot2->face(passState.ballPos,true);
+			}else{
+				passState.robot1->face(nextState.ballPos,true);
+				passState.robot2->face(passState.ballPos,true);
+			}
 			passState.robot1->move(passState.robot1Pos);
 			passState.robot2->move(passState.robot2Pos);
-			if(nextState.stateType==PassState::KICKPASS||nextState.stateType==PassState::KICKGOAL)
-				passState.robot1->face(nextState.ballPos,true);
-			else
-				passState.robot1->face(passState.ballPos,true);
-			passState.robot2->face(passState.ballPos,true);
 
 			float robot1GoalPosDist = passState.robot1->pos().distTo(passState.robot1Pos);
 			float robot2GoalPosDist = passState.robot2->pos().distTo(passState.robot2Pos);
@@ -81,8 +84,11 @@ bool Gameplay::Plays::TestPassPlay::run(){
 				newPassState = true; // move complete, move to next state
 			}else{newPassState = false;}
 		}else if(passState.stateType==PassState::KICKPASS){
+			// drive receiver to receive position
 			passState.robot2->move(passState.robot2Pos);
-			if(newPassState || !kicker.assigned() || kicker.getState()==kicker.Done){
+			passState.robot2->face(passState.ballPos,true);
+
+			if(newPassState /*|| !kicker.assigned() || kicker.getState()==kicker.Done*/){
 				kicker.assignOne(passState.robot1);
 				kicker.targetRobot = passState.robot2;
 				kicker.restart();
@@ -91,12 +97,11 @@ bool Gameplay::Plays::TestPassPlay::run(){
 			float ballPosDist = passState.ballPos.distTo(ball().pos);
 			float robot2GoalPosDist = passState.robot2->pos().distTo(passState.robot2Pos);
 			bool ballMoved = ballPosDist > BALLSUCCESSMARGIN;
-			if(kicker.run() && ballMoved && robot2GoalPosDist < ROBOTSUCCESSMARGIN){
+			if(!kicker.run() && kicker.getState()==kicker.Done && ballMoved && robot2GoalPosDist < ROBOTSUCCESSMARGIN){
 				newPassState = true; // pass complete, move to next state
 			}else{newPassState = false;}
 		}else if(passState.stateType==PassState::KICKGOAL){
-			if(newPassState || !kicker.assigned() || kicker.getState()==kicker.Done){
-				cout << "assigning new robot" << endl;
+			if(newPassState /*|| !kicker.assigned() || kicker.getState()==kicker.Done*/){
 				kicker.assignOne(passState.robot2);
 				kicker.targetRobot = NULL;
 				kicker.restart();
@@ -104,19 +109,39 @@ bool Gameplay::Plays::TestPassPlay::run(){
 
 			float ballPosDist = nextState.ballPos.distTo(ball().pos);
 			bool ballGoal = ballPosDist < BALLSUCCESSMARGIN;
-			if(kicker.run() && ballGoal){
+			if(!kicker.run() && kicker.getState()==kicker.Done && ballGoal){
 				newPassState = true; // pass complete, move to next state
 			}else{newPassState = false;}
 		}else if(passState.stateType==PassState::RECEIVEPASS){
-			if(newPassState || !interceptor.assigned()){
-				interceptor.assignOne(passState.robot2);
+			newPassState = false;
+
+			// calculate line that the intercept can occur on
+			Point shootGoalVec = nextState.ballPos - nextState.robot2Pos;
+			Point ballVec = ball().vel;
+			Line receiveLine(shootGoalVec * (-100) + nextState.ballPos, shootGoalVec * (100) + nextState.ballPos);
+			Line ballLine(ballVec * (-100) + ball().pos, ballVec * (100) + ball().pos);
+			Point interceptPoint;
+
+			if(!receiveLine.intersects(ballLine,&interceptPoint)){
+				interceptPoint = ball().pos;
 			}
 
-			float ballPosDist = passState.ballPos.distTo(ball().pos);
-			float robot2GoalPosDist = passState.robot2->pos().distTo(passState.robot2Pos);
-			if(interceptor.run() && ballPosDist < BALLSUCCESSMARGIN && robot2GoalPosDist < ROBOTSUCCESSMARGIN){
-				newPassState = true; // receive complete, move to next state
-			}else{newPassState = false;}
+			if(ball().vel.mag() < 0.1){ // if ball is too slow, just go get it
+				interceptPoint = ball().pos;
+			}
+
+			passState.robot2->face(ball().pos);
+			passState.robot2->move(interceptPoint);
+			passState.robot2->dribble(50);
+			//passState.robot2->willKick = true;
+
+			if(passState.robot2->haveBall()){
+				if(passState.robot2->vel().mag() > 0.1){
+					passState.robot2->move(passState.robot2->pos());
+				}else{
+					newPassState = true;
+				}
+			}
 		}
 
 		if(newPassState){

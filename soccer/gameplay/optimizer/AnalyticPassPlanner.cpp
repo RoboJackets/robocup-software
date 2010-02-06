@@ -12,6 +12,28 @@ namespace AnalyticPassPlanner {
 		Geometry2d::Point goalBallPos = Geometry2d::Point(0.0, Constants::Field::Length);
 
 		BOOST_FOREACH(Robot *r1, robots){
+/*
+			float deg0accel = r1->packet()->config.motion.deg0.acceleration;
+			float deg0dccel = r1->packet()->config.motion.deg0.deceleration;
+			float deg0vel = r1->packet()->config.motion.deg0.velocity;
+			float deg45accel = r1->packet()->config.motion.deg45.acceleration;
+			float deg45dccel = r1->packet()->config.motion.deg45.deceleration;
+			float deg45vel = r1->packet()->config.motion.deg45.velocity;
+			float raccel = r1->packet()->config.motion.rotation.acceleration;
+			float rdccel = r1->packet()->config.motion.rotation.deceleration;
+			float rvel = r1->packet()->config.motion.rotation.velocity;
+			r1->packet()->config.motion.angle.
+
+			cout << "deg0accel: " << deg0accel << endl;
+			cout << "deg0dccel: " << deg0dccel << endl;
+			cout << "deg0vel: " << deg0vel << endl;
+			cout << "deg45accel: " << deg45accel << endl;
+			cout << "deg45dccel: " << deg45dccel << endl;
+			cout << "deg45vel: " << deg45vel << endl;
+			cout << "raccel: " << raccel << endl;
+			cout << "rdccel: " << rdccel << endl;
+			cout << "rvel: " << rvel << endl;*/
+
 			BOOST_FOREACH(Robot *r2, robots){
 				if(r2->id()==r1->id()){continue;} // don't pass to self
 
