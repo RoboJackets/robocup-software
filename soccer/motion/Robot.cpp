@@ -148,7 +148,7 @@ void Robot::proc()
 				break;
 			}
 			// handle explicit path generation (short-circuit RRT)
-			case Packet::MotionCmd::Explicit:
+			case Packet::MotionCmd::Path:
 			{
 				// create a new path
 				Planning::Path path;
@@ -160,7 +160,7 @@ void Robot::proc()
 				_path = path;
 
 				// create the velocities
-				genVelocity();
+				genVelocity(_self->cmd.pathEnd);
 				break;
 			}
 
@@ -188,7 +188,7 @@ void Robot::proc()
 					_path = path;
 
 					// create the velocities
-					genVelocity();
+					genVelocity(_self->cmd.pathEnd);
 				}
 				else // handle pivot
 				{
@@ -202,7 +202,7 @@ void Robot::proc()
 					_self->cmd.goalOrientation = _self->cmd.pivotPoint;
 
 					// create the velocities
-					genVelocity();
+					genVelocity(_self->cmd.pathEnd);
 				}
 				break;
 			}
@@ -354,7 +354,7 @@ void Robot::sanityCheck(const unsigned int LookAheadFrames) {
  * into instantaneous velocity commands that can be converted into wheel
  * commands.
  */
-void Robot::genVelocity()
+void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 {
 	//TODO double check the field angle to robot angle conversions!
 	//robot space angle = Clipped(team space angle - robot angle)
@@ -817,7 +817,7 @@ void Robot::calib()
 			_calibState = Wait1;
 		}
 
-		genVelocity();
+		genVelocity(_self->cmd.pathEnd);
 		genMotor();
 	}
 	else if (_calibState == Wait1)

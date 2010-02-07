@@ -69,8 +69,11 @@ namespace Motion
 			Pid _posPid;
 			Pid _anglePid;
 
-			/** generate velocities based on path travel */
-			void genVelocity();
+			/**
+			 * generate velocities based on path travel
+			 * @param endBehavior determines how to end the path
+			 */
+			void genVelocity(Packet::MotionCmd::PathEndType ending);
 
 			/** generate velocities based on time-position control */
 			void genTimePosVelocity();

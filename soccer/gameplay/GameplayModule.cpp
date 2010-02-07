@@ -33,8 +33,8 @@
 #include "plays/test_plays/TestBasicPassing.hpp"
 #include "plays/test_plays/TestBasicAttack.hpp"
 #include "plays/test_plays/TestPassPlay.hpp"
-//#include "plays/test_plays/TestDirectMotionControl.hpp"
-//#include "plays/test_plays/TestTimePositionControl.hpp"
+#include "plays/test_plays/TestDirectMotionControl.hpp"
+#include "plays/test_plays/TestTimePositionControl.hpp"
 //#include "plays/test_plays/TestPassConfigOptimize.hpp"
 
 #include <QMouseEvent>
@@ -157,8 +157,8 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_playConfig->addPlay(make_shared<Plays::TestBasicPassing>(this));
 	_playConfig->addPlay(make_shared<Plays::TestBasicAttack>(this));
 	_playConfig->addPlay(make_shared<Plays::TestPassPlay>(this));
-//	_playConfig->addPlay(make_shared<Plays::TestDirectMotionControl>(this));
-//	_playConfig->addPlay(make_shared<Plays::TestTimePositionControl>(this));
+	_playConfig->addPlay(make_shared<Plays::TestDirectMotionControl>(this));
+	_playConfig->addPlay(make_shared<Plays::TestTimePositionControl>(this));
 //	_playConfig->addPlay(make_shared<Plays::TestPassConfigOptimize>(this));
 
 	// initialize the PassConfig renderering
@@ -369,6 +369,7 @@ void Gameplay::GameplayModule::run()
 			_currentPlay = play;
 			if (_currentPlay)
 			{
+				// FIXME: make sure this works
 // 				updateCurrentPlay(QString::fromStdString(_currentPlay->name()));
 				
 				// Assign to the new play all robots except the goalie

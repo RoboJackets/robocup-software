@@ -40,13 +40,18 @@
 		<!--Allow for Overriding the Planner-->
 		<enum type="uint8" typename="PlannerType">
 			<constant name="RRT" />
-			<constant name="Explicit" />
+			<constant name="Path" />
 			<constant name="DirectVelocity" />
 			<constant name="TimePosition" />
 		</enum>
 		<member type="PlannerType" name="planner" value="RRT" />
 				
 		<!--Position-based Path for Explicit Path Control-->
+		<enum type="uint8" typename="PathEndType">
+			<constant name="StopAtEnd" />
+			<constant name="FastAtEnd" />
+		</enum>
+		<member type="PathEndType" name="pathEnd" value="StopAtEnd" />
 		<array type="Point" name="explicitPath" />
 		
 		<!--Direct Velocity Commands-->

@@ -77,7 +77,7 @@ bool Gameplay::Plays::TestDirectMotionControl::run()
 	}
 
 	// issue the motion command
-	robot()->moveExplicit(path);
+	robot()->move(path);
 
 	return true;
 }

@@ -53,27 +53,45 @@ namespace Gameplay
 			}
 			
 			// Move to a particular point using the RRT planner
-			void move(Geometry2d::Point pt)
+			void move(Geometry2d::Point pt, bool stopAtEnd=true)
 			{
 				packet()->cmd.goalPosition = pt;
+
+				// handle stop at end commands
+				if (stopAtEnd)
+					packet()->cmd.pathEnd = Packet::MotionCmd::StopAtEnd;
+				else
+					packet()->cmd.pathEnd = Packet::MotionCmd::FastAtEnd;
 
 				// enable the RRT-based planner
 				packet()->cmd.planner = Packet::MotionCmd::RRT;
 			}
 			
-			/// Move along a path for waypoint-based control
-			void moveExplicit(const std::vector<Geometry2d::Point>& path)
+			/**
+			 * Move along a path for waypoint-based control
+			 * If not set to stop at end, the planner will send the robot
+			 * traveling in whatever direction it was moving in at the end of the path.
+			 * This should only be used when there will be another command when
+			 * the robot reaches the end of the path.
+			 */
+			void move(const std::vector<Geometry2d::Point>& path, bool stopAtEnd=true)
 			{
 				// set motion command to use the explicit path generation
-				packet()->cmd.planner = Packet::MotionCmd::Explicit;
+				packet()->cmd.planner = Packet::MotionCmd::Path;
+				if (stopAtEnd)
+					packet()->cmd.pathEnd = Packet::MotionCmd::StopAtEnd;
+				else
+					packet()->cmd.pathEnd = Packet::MotionCmd::FastAtEnd;
 
 				// clear the path and set it to the correct one
 				packet()->cmd.explicitPath.clear();
 				packet()->cmd.explicitPath = path;
 			}
 
-			/// Move using direct velocity control
-			void moveDirectVelocity(const Geometry2d::Point& trans, double ang)
+			/** Move using direct velocity control by specifying
+			 *  translational and angular velocity
+			 */
+			void move(const Geometry2d::Point& trans, double ang)
 			{
 				//NOT IMPLEMENTED!
 				packet()->cmd.planner = Packet::MotionCmd::DirectVelocity;
@@ -86,7 +104,7 @@ namespace Gameplay
 			 * Also, the command needs a start time, so that it can calculate deltas
 			 * in seconds
 			 */
-			void moveTimePos(const std::vector<Packet::MotionCmd::PathNode>& timedPath, uint64_t start) {
+			void move(const std::vector<Packet::MotionCmd::PathNode>& timedPath, uint64_t start) {
 				// set controller type
 				packet()->cmd.planner = Packet::MotionCmd::TimePosition;
 
