@@ -65,6 +65,12 @@ namespace Gameplay
 		// The behavior may continue to be used after run() returns false.
 		virtual bool run() = 0;
 
+		/**
+		 * Called when the behavior ends so that it is aware that it has been switched out
+		 * By default, this does nothing, but should be added to reset FSMs inside behaviors
+		 */
+		virtual void end() {}
+
 	protected:
 		GameplayModule *_gameplay;
 		std::set<Robot *> _robots;

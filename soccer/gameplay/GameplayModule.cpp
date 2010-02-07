@@ -366,6 +366,7 @@ void Gameplay::GameplayModule::run()
 		shared_ptr<Play> play = selectPlay();
 		if (play != _currentPlay)
 		{
+			play->end();
 			_currentPlay = play;
 			if (_currentPlay)
 			{
@@ -443,6 +444,7 @@ void Gameplay::GameplayModule::enablePlay(shared_ptr<Play> play)
 
 void Gameplay::GameplayModule::disablePlay(shared_ptr<Play> play)
 {
+	play->end(); // notify and reset play
 	QMutexLocker lock(&_playMutex);
 	_plays.erase(play);
 
