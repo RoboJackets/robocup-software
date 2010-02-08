@@ -160,10 +160,6 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_playConfig->addPlay(make_shared<Plays::TestDirectMotionControl>(this));
 	_playConfig->addPlay(make_shared<Plays::TestTimePositionControl>(this));
 //	_playConfig->addPlay(make_shared<Plays::TestPassConfigOptimize>(this));
-
-	// initialize the PassConfig renderering
-	_passConfig_primary = 0;
-	_passConfig_secondary = 0;
 }
 
 Gameplay::GameplayModule::~GameplayModule()
@@ -196,59 +192,45 @@ void Gameplay::GameplayModule::fieldOverlay(QPainter &painter, Packet::LogFrame 
 	{
 		painter.drawEllipse(frame.ball.pos.toQPointF(), Constants::Field::CenterRadius, Constants::Field::CenterRadius);
 	}
-
-	// Render the pass configs to illustrate (flipped, so that primary renders last)
-	if (_passConfig_secondary)
-		renderPassConfig(_passConfig_secondary, painter, false);
-	if (_passConfig_secondary)
-		renderPassConfig(_passConfig_secondary, painter, false);
-	if (_passConfig_primary)
-		renderPassConfig(_passConfig_primary, painter, true);
 }
 
-void Gameplay::GameplayModule::renderPassConfig(PassConfig* config, QPainter &painter, bool primary) const
-{
-	// error check this
-	if (!config)
-		return;
-
-	// parameters for drawing
-	float ball_radius = 0.05;
-	float pos_radius = 0.1;
-
-	// choose the color based on whether this is the primary
-	if (primary)
-		painter.setPen(Qt::cyan);
-	else
-		painter.setPen(Qt::darkCyan);
-
-	// draw the path of the ball and the robot trajectories
-	int stateNum = 0;
-	PassState prevState;
-	BOOST_FOREACH(PassState state, config->passStateVector) {
-		// draw the ball
-		painter.drawEllipse(state.ballPos.toQPointF(),ball_radius, ball_radius);
-		// draw robots
-		painter.drawEllipse(state.robot1Pos.toQPointF(), pos_radius, pos_radius);
-		painter.drawEllipse(state.robot2Pos.toQPointF(), pos_radius, pos_radius);
-
-		if(stateNum > 0){
-			painter.drawLine(prevState.ballPos.toQPointF(), state.ballPos.toQPointF());
-			painter.drawLine(prevState.robot1Pos.toQPointF(), state.robot1Pos.toQPointF());
-			painter.drawLine(prevState.robot2Pos.toQPointF(), state.robot2Pos.toQPointF());
-		}
-		prevState = state;
-		stateNum++;
-	}
-
-}
-
-void Gameplay::GameplayModule::disablePassConfigRendering()
-{
-	// NOTE: this does not actually free the config, just removes the reference
-	_passConfig_primary = 0;
-	_passConfig_secondary = 0;
-}
+// FIXME: convert to using debug lines/circles
+//void Gameplay::GameplayModule::renderPassConfig(PassConfig* config, QPainter &painter, bool primary) const
+//{
+//	// error check this
+//	if (!config)
+//		return;
+//
+//	// parameters for drawing
+//	float ball_radius = 0.05;
+//	float pos_radius = 0.1;
+//
+//	// choose the color based on whether this is the primary
+//	if (primary)
+//		painter.setPen(Qt::cyan);
+//	else
+//		painter.setPen(Qt::darkCyan);
+//
+//	// draw the path of the ball and the robot trajectories
+//	int stateNum = 0;
+//	PassState prevState;
+//	BOOST_FOREACH(PassState state, config->passStateVector) {
+//		// draw the ball
+//		painter.drawEllipse(state.ballPos.toQPointF(),ball_radius, ball_radius);
+//		// draw robots
+//		painter.drawEllipse(state.robot1Pos.toQPointF(), pos_radius, pos_radius);
+//		painter.drawEllipse(state.robot2Pos.toQPointF(), pos_radius, pos_radius);
+//
+//		if(stateNum > 0){
+//			painter.drawLine(prevState.ballPos.toQPointF(), state.ballPos.toQPointF());
+//			painter.drawLine(prevState.robot1Pos.toQPointF(), state.robot1Pos.toQPointF());
+//			painter.drawLine(prevState.robot2Pos.toQPointF(), state.robot2Pos.toQPointF());
+//		}
+//		prevState = state;
+//		stateNum++;
+//	}
+//
+//}
 
 void Gameplay::GameplayModule::run()
 {
@@ -294,8 +276,6 @@ void Gameplay::GameplayModule::run()
 					inUse = true;
 				}
 			}
-			
-			if (r->visible() && !inUse)
 			{
 				printf("Goalie is robot %d\n", r->id());
 				_goalie->assignOne(r);
@@ -438,18 +418,18 @@ void Gameplay::GameplayModule::run()
 
 void Gameplay::GameplayModule::enablePlay(shared_ptr<Play> play)
 {
+	//cout << "Enabling Play..." << endl;
 	QMutexLocker lock(&_playMutex);
 	_plays.insert(play);
 }
 
 void Gameplay::GameplayModule::disablePlay(shared_ptr<Play> play)
 {
-	play->end(); // notify and reset play
+	//cout << "Disabling Play..." << endl;
 	QMutexLocker lock(&_playMutex);
+	//if (!play.use_count()) cout << "Play pointer is dead!" << endl;
+	//play->end(); // notify and reset play
 	_plays.erase(play);
-
-	// always clear the passConfigs between plays
-	disablePassConfigRendering();
 }
 
 bool Gameplay::GameplayModule::playEnabled(boost::shared_ptr<Play> play) const

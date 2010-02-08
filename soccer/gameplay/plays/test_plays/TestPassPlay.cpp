@@ -45,8 +45,9 @@ bool Gameplay::Plays::TestPassPlay::run(){
 		bestPassConfig = initialPlans[0];
 		cout << "Plan: " << bestPassConfig << endl;
 
-		_gameplay->_passConfig_primary = &initialPlans[0]; // optimized plan
-		_gameplay->_passConfig_secondary = &initialPlans[1]; // initial plan
+		// FIXME: handle drawing better here
+//		_gameplay->_passConfig_primary = &initialPlans[0]; // optimized plan
+//		_gameplay->_passConfig_secondary = &initialPlans[1]; // initial plan
 
 		// goto next state
 		_passState = Executing;
