@@ -16,9 +16,8 @@
 #include <PassState.hpp>
 #include <PassConfig.hpp>
 
-#define APPROXBALLVEL 7.0        // m/s
-#define APPROXROBOTVELTRANS 0.3  // m/s    due to accel, much less than maxvel
-#define APPROXROBOTVELROT 2.0    // rad/s
+#include <motion/planning/rrt.hpp>
+#include <framework/Path.hpp>
 
 typedef boost::ptr_vector<PassConfig> PassConfigVector;
 

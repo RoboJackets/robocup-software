@@ -28,6 +28,14 @@ void Gameplay::Plays::TestPassPlay::assign(set<Robot *> &available){
 	_passState = Initializing;
 	full_available_ = available;
 	this->takeAll(available); // assign all robots from available to _robots
+
+	// make sure robots that are available are sufficient to create a pass
+	int numVisible = 0;
+	BOOST_FOREACH(Robot *r, available){if(r->visible()){numVisible++;}}
+	if(available.size() < 2 || numVisible < 2){
+		cout << "Not enough robots to plan with." << endl;
+		_passState = Done;
+	}
 }
 
 bool Gameplay::Plays::TestPassPlay::run(){
@@ -99,6 +107,7 @@ bool Gameplay::Plays::TestPassPlay::run(){
 			bool ballMoved = ballPosDist > BALLSUCCESSMARGIN;
 			if(!kicker.run() && kicker.getState()==kicker.Done && ballMoved && robot2GoalPosDist < ROBOTSUCCESSMARGIN){
 				newPassState = true; // pass complete, move to next state
+				passState.robot1->willKick = false; // do not leave robot in willKick state
 			}else{newPassState = false;}
 		}else if(passState.stateType==PassState::KICKGOAL){
 			if(newPassState /*|| !kicker.assigned() || kicker.getState()==kicker.Done*/){
@@ -111,6 +120,7 @@ bool Gameplay::Plays::TestPassPlay::run(){
 			bool ballGoal = ballPosDist < BALLSUCCESSMARGIN;
 			if(!kicker.run() && kicker.getState()==kicker.Done && ballGoal){
 				newPassState = true; // pass complete, move to next state
+				passState.robot2->willKick = false; // do not leave robot in willKick state
 			}else{newPassState = false;}
 		}else if(passState.stateType==PassState::RECEIVEPASS){
 			newPassState = false;

@@ -7,34 +7,30 @@
 
 #include <AnalyticPassPlanner.hpp>
 
+#define TIME_TO_AIM_APPROX 0.3 // seconds it takes for the robot to pivot for an aim. Due to aiming time in kick behavior, even if we knew rot accel, this is an approximation.
+#define BALL_KICK_AVG_VEL 1.0 // average speed of ball during a kick ((kick vel + end vel) / 2) very conservative due to inaccurate kick speeds and varying dynamics
+
 namespace AnalyticPassPlanner {
 	void generateAllConfigs(const Point &ballPos, set<Robot *> &robots, PassConfigVector &passConfigResult){
 		Geometry2d::Point goalBallPos = Geometry2d::Point(0.0, Constants::Field::Length);
 
+		Planning::Path path;
+		Motion::RRT::Planner planner;
+		ObstacleGroup og;
+		float pathDist, pathTime;
+
+		// for times and distances, use a conservative estimate of 45deg. travel
+		Robot* rTmp = *(robots.begin());
+		float maxVel = rTmp->packet()->config.motion.deg45.velocity;
+		float timeStopToMaxVel = maxVel/ rTmp->packet()->config.motion.deg45.acceleration;
+		float timeMaxVelToStop = maxVel / rTmp->packet()->config.motion.deg45.deceleration;
+		float distStopToMaxVel = 0.5 * maxVel * timeStopToMaxVel;
+		float distMaxVelToStop = 0.5 * maxVel * timeMaxVelToStop;
+
 		BOOST_FOREACH(Robot *r1, robots){
-/*
-			float deg0accel = r1->packet()->config.motion.deg0.acceleration;
-			float deg0dccel = r1->packet()->config.motion.deg0.deceleration;
-			float deg0vel = r1->packet()->config.motion.deg0.velocity;
-			float deg45accel = r1->packet()->config.motion.deg45.acceleration;
-			float deg45dccel = r1->packet()->config.motion.deg45.deceleration;
-			float deg45vel = r1->packet()->config.motion.deg45.velocity;
-			float raccel = r1->packet()->config.motion.rotation.acceleration;
-			float rdccel = r1->packet()->config.motion.rotation.deceleration;
-			float rvel = r1->packet()->config.motion.rotation.velocity;
-			r1->packet()->config.motion.angle.
-
-			cout << "deg0accel: " << deg0accel << endl;
-			cout << "deg0dccel: " << deg0dccel << endl;
-			cout << "deg0vel: " << deg0vel << endl;
-			cout << "deg45accel: " << deg45accel << endl;
-			cout << "deg45dccel: " << deg45dccel << endl;
-			cout << "deg45vel: " << deg45vel << endl;
-			cout << "raccel: " << raccel << endl;
-			cout << "rdccel: " << rdccel << endl;
-			cout << "rvel: " << rvel << endl;*/
-
+			if(!r1->visible()){continue;} // don't use invisible robots
 			BOOST_FOREACH(Robot *r2, robots){
+				if(!r2->visible()){continue;} // don't use invisible robots
 				if(r2->id()==r1->id()){continue;} // don't pass to self
 
 				PassConfig* passConfig = new PassConfig();
@@ -53,7 +49,17 @@ namespace AnalyticPassPlanner {
 				// add state with robot1 at a position to pass to robot2
 				Point state2Robot1Pos = ballPos - passVec * (float)(Constants::Robot::Radius + Constants::Ball::Radius);
 				float state2Robot1Rot = passAngle;
-				double state2Time = r1->pos().distTo(state2Robot1Pos) / APPROXROBOTVELTRANS;
+				// calculate time
+				og = r1->obstacles();
+				planner.run(r1->pos(),r1->angle(),r1->vel(),ballPos,&og,path);
+				pathDist = path.length(0);
+				if(pathDist < distStopToMaxVel + distMaxVelToStop){
+					pathTime = (pathDist/(distStopToMaxVel + distMaxVelToStop))*(timeStopToMaxVel + timeMaxVelToStop);
+				}else{
+					pathTime = timeStopToMaxVel + timeMaxVelToStop + (pathDist - (distStopToMaxVel + distMaxVelToStop))/maxVel;
+				}
+				double state2Time = pathTime + TIME_TO_AIM_APPROX;
+				//double state2Time = r1->pos().distTo(state2Robot1Pos) / APPROXROBOTVELTRANS;
 				passConfig->addPassState(
 						PassState(r1, r2, state2Robot1Pos, r2->pos(), state2Robot1Rot, r2->angle(),
 						ballPos, PassState::KICKPASS, state2Time));
@@ -62,7 +68,7 @@ namespace AnalyticPassPlanner {
 				Point state3BallPos = r2->pos();
 				Point state3Robot2Pos = state3BallPos + passVec * (float)(Constants::Robot::Radius + Constants::Ball::Radius);
 				float state3Robot2Rot = (passVec * -1.0f).angle();
-				double state3Time = state2Time + r2->pos().distTo(state3Robot2Pos) / APPROXROBOTVELTRANS;
+				double state3Time = state2Time + r2->pos().distTo(state3Robot2Pos) / BALL_KICK_AVG_VEL;
 				passConfig->addPassState(
 						PassState(r1, r2, state2Robot1Pos, state3Robot2Pos, state2Robot1Rot, state3Robot2Rot,
 						state3BallPos, PassState::RECEIVEPASS, state3Time));
@@ -70,13 +76,15 @@ namespace AnalyticPassPlanner {
 				// add state with robot2 kicking a goal
 				Point state4Robot2Pos = state3BallPos - goalVec * (float)(Constants::Robot::Radius + Constants::Ball::Radius);
 				float state4Robot2Rot = goalAngle;
-				double state4Time = state3Time + state3Robot2Pos.distTo(state4Robot2Pos) / APPROXROBOTVELTRANS;
+				double state4Time = state3Time + state3Robot2Pos.distTo(state4Robot2Pos) / TIME_TO_AIM_APPROX;
+				//double state4Time = state3Time + state3Robot2Pos.distTo(state4Robot2Pos) / APPROXROBOTVELTRANS;
 				passConfig->addPassState(
 						PassState(r1, r2, state2Robot1Pos, state4Robot2Pos, state2Robot1Rot, state4Robot2Rot,
 						state3BallPos, PassState::KICKGOAL, state4Time));
 
 				// add state with ball in goal
-				double state5Time = state4Time + state3BallPos.distTo(goalBallPos) / APPROXBALLVEL;
+				double state5Time = state4Time + state3BallPos.distTo(goalBallPos) / BALL_KICK_AVG_VEL;
+				//double state5Time = state4Time + state3BallPos.distTo(goalBallPos) / APPROXBALLVEL;
 				passConfig->addPassState(
 						PassState(r1, r2, state2Robot1Pos, state4Robot2Pos, state2Robot1Rot, state4Robot2Rot,
 						goalBallPos, PassState::INTERMEDIATE, state5Time));
@@ -90,8 +98,19 @@ namespace AnalyticPassPlanner {
 		//
 		// Weight configs
 		//
-
 		PassState prevState;
+
+		Planning::Path path;
+		Motion::RRT::Planner planner;
+		ObstacleGroup og;
+		float pathDist, pathTime;
+
+		Robot* rTmp = *(robots.begin());
+		float maxVel = rTmp->packet()->config.motion.deg45.velocity;
+		float timeStopToMaxVel = maxVel/ rTmp->packet()->config.motion.deg45.acceleration;
+		float timeMaxVelToStop = maxVel / rTmp->packet()->config.motion.deg45.deceleration;
+		float distStopToMaxVel = 0.5 * maxVel * timeStopToMaxVel;
+		float distMaxVelToStop = 0.5 * maxVel * timeMaxVelToStop;
 
 		for(int i=0; i<(int)passConfigs.size(); i++){
 			int numInteractions = 0;
@@ -102,11 +121,20 @@ namespace AnalyticPassPlanner {
 				PassState thisState = passConfigs[i].getPassState(j);
 				for (int i=0; i<Constants::Robots_Per_Team; ++i){
 					Robot *opponentR = opponents[i];
-					double robotTravelDist = opponentR->pos().distTo(thisState.ballPos);
-					double robotTravelTime = robotTravelDist / APPROXROBOTVELTRANS;
-					if(robotTravelTime < thisState.timestamp){
+					og = opponentR->obstacles();
+					planner.run(opponentR->pos(),opponentR->angle(),opponentR->vel(),thisState.ballPos,&og,path);
+					pathDist = path.length(0);
+					if(pathDist < distStopToMaxVel + distMaxVelToStop){
+						pathTime = (pathDist/(distStopToMaxVel + distMaxVelToStop))*(timeStopToMaxVel + timeMaxVelToStop);
+					}else{
+						pathTime = timeStopToMaxVel + timeMaxVelToStop + (pathDist - (distStopToMaxVel + distMaxVelToStop))/maxVel;
+					}
+					if(pathTime < thisState.timestamp){
 						numInteractions++;
 					}
+				}
+				if(thisState.stateType == PassState::KICKGOAL){
+					break; // do not include the last state with ball in goal.
 				}
 			}
 
@@ -117,8 +145,8 @@ namespace AnalyticPassPlanner {
 				Line ballPath(thisState.ballPos,prevState.ballPos);
 				for (int i=0; i<Constants::Robots_Per_Team; ++i){
 					Robot *opponentR = opponents[i];
-					// we use 2*Radius to give "wiggle room"
-					if(ballPath.distTo(opponentR->pos()) < (float)(Constants::Robot::Radius + 2*Constants::Ball::Radius)){
+					// use 1.5*Radius to give "wiggle room"
+					if(ballPath.distTo(opponentR->pos()) < (float)(Constants::Robot::Radius + 1.5*Constants::Ball::Radius)){
 						numInteractions++;
 					}
 				}
