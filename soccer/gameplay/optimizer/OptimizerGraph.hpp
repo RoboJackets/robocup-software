@@ -7,12 +7,12 @@
 
 #pragma once
 
-//#include <gtsam/Testable.h>
-//#include <gtsam/NonlinearFactorGraph.h>
-#include <OptimizerConfig.hpp>
-
-// implementations
-//#include <gtsam/FactorGraph-inl.h>
+//#include <Testable.h>
+//#include <NonlinearFactorGraph.h>
+//#include <OptimizerConfig.hpp>
+//
+//// implementations
+//#include <FactorGraph-inl.h>
 
 namespace Gameplay {
 

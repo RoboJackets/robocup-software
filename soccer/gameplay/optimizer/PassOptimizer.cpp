@@ -6,19 +6,16 @@
  */
 
 #include <boost/foreach.hpp>
-//#include <gtsam/SQPOptimizer.h>
-//#include <gtsam/SQPOptimizer-inl.h>
-//#include <gtsam/NonlinearConstraint-inl.h>
+#include <gtsam/NonlinearConstraint-inl.h>
 #include <PassOptimizer.hpp>
 //#include "OptimizerGraph.hpp"
 //#include "OptimizerConfig.hpp"
 
 using namespace std;
-//using namespace gtsam;
+using namespace gtsam;
 using namespace Gameplay;
 using namespace Optimization;
 
-//typedef SQPOptimizer<OptimizerGraph, OptimizerConfig> Optimizer;
 //typedef boost::shared_ptr<OptimizerConfig> shared_config;
 //typedef boost::shared_ptr<const OptimizerConfig> shared_const_config;
 

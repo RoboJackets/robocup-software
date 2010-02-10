@@ -26,7 +26,7 @@ using namespace Gameplay;
 using namespace std;
 
 namespace AnalyticPassPlanner {
-	void generateAllConfigs(const Point &ballPos, set<Robot *> &_robots, PassConfigVector &passConfigResult);
+	void generateAllConfigs(const Point &ballPos, set<Robot *> &_nninghamrobots, PassConfigVector &passConfigResult);
 	void evaluateConfigs(set<Robot *> &_robots, Robot** _opponents, PassConfigVector &passConfigs);
 };
 

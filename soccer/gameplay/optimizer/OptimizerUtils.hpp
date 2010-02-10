@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <gtsam/Vector.h>
+#include <Vector.h>
 #include <Point.hpp>
 #include <sstream>
 

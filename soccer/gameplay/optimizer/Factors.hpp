@@ -7,11 +7,11 @@
 
 #pragma once
 
-#include <gtsam/Vector.h>
-#include <gtsam/Factor.h>
-#include <gtsam/NonlinearFactor.h>
-#include <gtsam/GaussianFactor.h>
-#include <gtsam/Matrix.h>
+#include <Vector.h>
+#include <Factor.h>
+#include <NonlinearFactor.h>
+#include <GaussianFactor.h>
+#include <Matrix.h>
 #include <OptimizerConfig.hpp>
 
 namespace Gameplay {

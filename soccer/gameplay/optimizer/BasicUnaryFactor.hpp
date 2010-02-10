@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gtsam/NonlinearFactor.h>
+#include <NonlinearFactor.h>
 #include <OptimizerConfig.hpp>
 
 namespace Gameplay {

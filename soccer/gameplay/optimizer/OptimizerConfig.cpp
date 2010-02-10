@@ -7,7 +7,7 @@
 
 #include <iostream>
 #include <sstream>
-#include <gtsam/Vector.h>
+#include <Vector.h>
 #include <OptimizerConfig.hpp>
 #include <OptimizerUtils.hpp>
 

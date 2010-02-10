@@ -9,9 +9,17 @@ set (USE_GEOMETRY true)
 set (USE_FRAMEWORK true)
 set (USE_CONFIG true)
 
+# setup gtsam inclusion
+# add_custom_command( OUTPUT gtsam_configure
+#					COMMAND ${PROJECT_SOURCE_DIR}/packages/
+
+# gtsam include
+include_directories ( ${PROJECT_SOURCE_DIR}/../packages/gtsam_install/include )
+include_directories ( ${PROJECT_SOURCE_DIR}/../packages/gtsam/CppUnitLite )
+link_directories ( ${PROJECT_SOURCE_DIR}/../packages/gtsam_install/lib )
+
 include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
 add_subdirectory (${PROJECT_SOURCE_DIR}/../common/vision ${PROJECT_BINARY_DIR}/vision)
-
 include_directories (${PROJECT_SOURCE_DIR}/..)
 include_directories (${PROJECT_SOURCE_DIR}/modeling/)
 include_directories (${PROJECT_SOURCE_DIR}/gameplay/)
@@ -19,7 +27,7 @@ include_directories (${PROJECT_SOURCE_DIR}/gameplay/optimizer)
 add_subdirectory (${PROJECT_SOURCE_DIR}/../log ${PROJECT_BINARY_DIR}/log)
 
 include_directories(${PROJECT_BINARY_DIR})
-
+	
 set (SRCS
 	main.cpp
 	Processor.cpp
@@ -39,10 +47,6 @@ set (SRCS
 	gameplay/Robot.cpp
 	
 	# Optimization components
-	gameplay/optimizer/PassOptimizer.cpp
-	#gameplay/optimizer/OptimizerGraph.cpp # Disabled temporarily
-	#gameplay/optimizer/OptimizerConfig.cpp
-	#gameplay/optimizer/Factors.cpp
 	gameplay/optimizer/PassConfig.cpp
 	gameplay/optimizer/PassState.cpp
 	gameplay/optimizer/AnalyticPassPlanner.cpp
@@ -74,10 +78,13 @@ set (SRCS
 	gameplay/plays/test_plays/TestDirectMotionControl.cpp
 	gameplay/plays/test_plays/TestTimePositionControl.cpp
 	gameplay/plays/test_plays/TestBasicAttack.cpp
-#	gameplay/plays/test_plays/TestPassConfigOptimize.cpp
 	gameplay/plays/test_plays/TestPassPlay.cpp
 	gameplay/behaviors/test/Passer.cpp
 	gameplay/behaviors/test/Receiver.cpp
+	
+	# files that use the optimizer - may want to disable
+	gameplay/plays/test_plays/TestPassConfigOptimize.cpp
+	gameplay/optimizer/PassOptimizer.cpp
 
 # 	gameplay/behaviors/test/KickerCalibration.cpp   
 # 	gameplay/behaviors/test/MotionLeader.cpp    
@@ -135,14 +142,10 @@ target_link_libraries(${target} ${NETWORK_LIBRARY})
 target_link_libraries(${target} ${CONFIG_LIBRARY})
 target_link_libraries(${target} blas lapack)
 target_link_libraries(${target} vision)
-#target_link_libraries(${target} gtsam) 
 target_link_libraries(${target} ${QT_LIBRARIES})
+target_link_libraries(${target} gtsam ) # libraries required by gtsam
 
 
 #Module Linking
 # Add a new line here for every module used
 target_link_libraries(${target} log)
-
-# Copy the executable out to project /bin folder
-#file(COPY ./bin/${target} DESTINATION ../../bin/)
-
