@@ -6,18 +6,13 @@
  */
 
 #include <boost/foreach.hpp>
-#include <gtsam/NonlinearConstraint-inl.h>
 #include <PassOptimizer.hpp>
-//#include "OptimizerGraph.hpp"
-//#include "OptimizerConfig.hpp"
+#include <passOptimization.hpp>
 
 using namespace std;
 using namespace gtsam;
 using namespace Gameplay;
 using namespace Optimization;
-
-//typedef boost::shared_ptr<OptimizerConfig> shared_config;
-//typedef boost::shared_ptr<const OptimizerConfig> shared_const_config;
 
 Gameplay::Optimization::PassOptimizer::PassOptimizer(GameplayModule* gameplay)
 : gameplay_(gameplay)
@@ -29,6 +24,22 @@ Gameplay::Optimization::PassOptimizer::~PassOptimizer() {}
 PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 		const PassConfig& init, bool verbose) const
 {
+	// create graph and config
+	shared_config config(new Config());
+	shared_graph graph(new Graph());
+
+	// initialize the ball and opponents
+
+
+	// go through initial passconfig and initialize the graph and the config
+
+	// optimize
+
+	// reconstruct a passconfig
+	PassConfig optConfig;
+
+
+	// OLD CODE: Saved for posterity
 //	// build up the initial configuration and graph by reading through PassConfig
 //	shared_config config(new OptimizerConfig);
 //	OptimizerGraph graph;
@@ -106,9 +117,9 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 //	if (verbose) {
 //		newConfig->print("Optimized SQP Config");
 //	}
-
-	// reconstruct the PassConfig from the updated configuration
-	PassConfig optConfig;
+//
+//	// reconstruct the PassConfig from the updated configuration
+//	PassConfig optConfig;
 //	robot_num = 0;
 //	BOOST_FOREACH(PassState s, init.passStateVector) {
 //		PassState newState;

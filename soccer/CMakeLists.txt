@@ -50,6 +50,7 @@ set (SRCS
 	gameplay/optimizer/PassConfig.cpp
 	gameplay/optimizer/PassState.cpp
 	gameplay/optimizer/AnalyticPassPlanner.cpp
+	gameplay/optimizer/passOptimization.cpp
 	
 	# Main Plays
 	gameplay/plays/OurKickoff.cpp
