@@ -7,6 +7,10 @@
 
 #include <PassState.hpp>
 
+using namespace std;
+using namespace Gameplay;
+using namespace Geometry2d;
+
 PassState::PassState(Robot* robot1, Robot* robot2,
 					const Point &robot1Pos, const Point &robot2Pos,
 					const float &robot1Rot, const float &robot2Rot,

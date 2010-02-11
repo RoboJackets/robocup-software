@@ -21,13 +21,9 @@
 
 typedef boost::ptr_vector<PassConfig> PassConfigVector;
 
-using namespace Geometry2d;
-using namespace Gameplay;
-using namespace std;
-
 namespace AnalyticPassPlanner {
-	void generateAllConfigs(const Point &ballPos, set<Robot *> &_nninghamrobots, PassConfigVector &passConfigResult);
-	void evaluateConfigs(set<Robot *> &_robots, Robot** _opponents, PassConfigVector &passConfigs);
+	void generateAllConfigs(const Geometry2d::Point &ballPos, std::set<Gameplay::Robot *> &robots, PassConfigVector &passConfigResult);
+	void evaluateConfigs(std::set<Gameplay::Robot *> &_robots, Gameplay::Robot** _opponents, PassConfigVector &passConfigs);
 };
 
 #endif /* ANALYTICPASSPLANNER_HPP_ */

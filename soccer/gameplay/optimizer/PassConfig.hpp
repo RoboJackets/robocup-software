@@ -9,13 +9,9 @@
 #define PASSCONFIG_HPP_
 
 #include <iostream>
-#include <fstream>
 #include <vector>
 #include "PassState.hpp"
 #include <gameplay/Robot.hpp>
-
-using std::ostream;
-using std::endl;
 
 typedef std::vector<PassState> PassStateVector;
 
@@ -29,7 +25,7 @@ public:
 	PassState getPassState(int idx) const;
 	int length() const;
 	void setWeight(double w);
-	friend ostream& operator<<(ostream& out, const PassConfig &config);
+	friend std::ostream& operator<<(std::ostream& out, const PassConfig &config);
 	friend bool operator<(const PassConfig& lhs, const PassConfig& rhs);
 
 	PassStateVector passStateVector;

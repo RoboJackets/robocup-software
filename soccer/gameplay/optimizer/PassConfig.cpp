@@ -7,6 +7,8 @@
 
 #include "PassConfig.hpp"
 
+using namespace std;
+
 PassConfig::PassConfig() : weight(0.0) { }
 
 PassConfig::PassConfig(const PassConfig& c)

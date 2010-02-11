@@ -9,9 +9,9 @@
 #pragma once
 
 #include <vector>
-#include "../../Play.hpp"
-#include "../../optimizer/PassConfig.hpp"
-#include "../../optimizer/PassOptimizer.hpp"
+#include <gameplay/Play.hpp>
+#include <gameplay/optimizer/PassConfig.hpp>
+#include <gameplay/optimizer/PassOptimizer.hpp>
 
 namespace Gameplay
 {

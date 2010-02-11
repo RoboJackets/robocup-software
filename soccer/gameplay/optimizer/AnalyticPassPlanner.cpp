@@ -7,6 +7,10 @@
 
 #include <AnalyticPassPlanner.hpp>
 
+using namespace Geometry2d;
+using namespace Gameplay;
+using namespace std;
+
 #define TIME_TO_AIM_APPROX 0.3 // seconds it takes for the robot to pivot for an aim. Due to aiming time in kick behavior, even if we knew rot accel, this is an approximation.
 #define BALL_KICK_AVG_VEL 1.0 // average speed of ball during a kick ((kick vel + end vel) / 2) very conservative due to inaccurate kick speeds and varying dynamics
 

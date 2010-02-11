@@ -5,12 +5,11 @@
 #include <iostream>
 #include <boost/foreach.hpp>
 #include "TestPassConfigOptimize.hpp"
-#include "../../optimizer/PassOptimizer.hpp"
+#include <gameplay/optimizer/PassOptimizer.hpp>
 
 using namespace std;
 using namespace Geometry2d;
 using namespace Packet;
-using namespace Optimization;
 
 Gameplay::Plays::TestPassConfigOptimize::TestPassConfigOptimize(GameplayModule *gameplay):
 	Play(gameplay),
@@ -32,7 +31,7 @@ void Gameplay::Plays::TestPassConfigOptimize::assign(set<Robot *> &available)
 
 bool Gameplay::Plays::TestPassConfigOptimize::run()
 {
-	bool verbose = true;
+	//bool verbose = true;
 
 	if (testState_ == INIT)
 	{
