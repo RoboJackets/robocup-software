@@ -6,6 +6,7 @@
  *      Author:
  */
 
+#include <QColor>
 #include "TestPassPlay.hpp"
 
 #define TIMEMARGIN 3.5 // seconds a play can deviate from plan before abort
@@ -44,10 +45,6 @@ bool Gameplay::Plays::TestPassPlay::run(){
 
 		bestPassConfig = initialPlans[0];
 		cout << "Plan: " << bestPassConfig << endl;
-
-		// FIXME: handle drawing better here
-//		_gameplay->_passConfig_primary = &initialPlans[0]; // optimized plan
-//		_gameplay->_passConfig_secondary = &initialPlans[1]; // initial plan
 
 		// goto next state
 		_passState = Executing;
@@ -161,6 +158,14 @@ bool Gameplay::Plays::TestPassPlay::run(){
 			passState.robot2->resetMotionCommand();
 		}
 
+	}
+
+	// perform rendering
+	if (initialPlans.size() > 1) {
+		QColor optC = Qt::cyan;
+		QColor initC = Qt::darkCyan;
+		initialPlans[0].drawConfig(gameplay()->state(), optC.red(), optC.green(), optC.blue());
+		initialPlans[1].drawConfig(gameplay()->state(), initC.red(), initC.green(), initC.blue());
 	}
 
 	if(passIndex >= bestPassConfig.length()){

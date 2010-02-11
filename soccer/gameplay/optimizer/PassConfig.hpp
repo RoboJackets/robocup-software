@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <vector>
+#include <common/framework/SystemState.hpp>
 #include "PassState.hpp"
 #include <gameplay/Robot.hpp>
 
@@ -27,6 +28,14 @@ public:
 	void setWeight(double w);
 	friend std::ostream& operator<<(std::ostream& out, const PassConfig &config);
 	friend bool operator<(const PassConfig& lhs, const PassConfig& rhs);
+
+	/**
+	 * Drawing function with color parameters
+	 * Ints are in RGB order
+	 * supply a Log state to perform drawing
+	 */
+	void drawConfig(SystemState* state, int r, int g, int b) const;
+
 
 	PassStateVector passStateVector;
 	double weight;
