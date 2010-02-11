@@ -35,7 +35,8 @@
 #include "plays/test_plays/TestPassPlay.hpp"
 #include "plays/test_plays/TestDirectMotionControl.hpp"
 #include "plays/test_plays/TestTimePositionControl.hpp"
-//#include "plays/test_plays/TestPassConfigOptimize.hpp"
+#include "plays/test_plays/TestPassConfigOptimize.hpp"
+#include "plays/test_plays/TestGUI.hpp"
 
 #include <QMouseEvent>
 #include <QFileDialog>
@@ -159,7 +160,9 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_playConfig->addPlay(make_shared<Plays::TestPassPlay>(this));
 	_playConfig->addPlay(make_shared<Plays::TestDirectMotionControl>(this));
 	_playConfig->addPlay(make_shared<Plays::TestTimePositionControl>(this));
-//	_playConfig->addPlay(make_shared<Plays::TestPassConfigOptimize>(this));
+	_playConfig->addPlay(make_shared<Plays::TestPassConfigOptimize>(this));
+	_playConfig->addPlay(make_shared<Plays::TestGUI>(this));
+
 }
 
 Gameplay::GameplayModule::~GameplayModule()
@@ -236,6 +239,7 @@ void Gameplay::GameplayModule::run()
 {
 	_state->debugLines.clear();
 	_state->debugPolygons.clear();
+	_state->debugCircles.clear();
 	
 	ObstaclePtr largeBallObstacle;
 	ObstaclePtr smallBallObstacle;
@@ -338,33 +342,36 @@ void Gameplay::GameplayModule::run()
 
 	_ballMatrix = Geometry2d::TransformMatrix::translate(_state->ball.pos);
 
-	// Select a play
-	if (_playDone || !_currentPlay || !_currentPlay->applicable())
+	// handle changes in play availability
+	if (_plays.size() == 0) {
+		boost::shared_ptr<Play> dummy;
+		_currentPlay = dummy;
+	} else if (_playDone || !_currentPlay || !_currentPlay->applicable() ||
+			   !playEnabled(_currentPlay))
 	{
 		_playDone = false;
-		
+
 		shared_ptr<Play> play = selectPlay();
-		if (play != _currentPlay)
+		if (play && play != _currentPlay)
 		{
-			play->end();
+			// send end signal to previously running play
+			if (_currentPlay) _currentPlay->end();
 			_currentPlay = play;
-			if (_currentPlay)
+
+			// FIXME: make sure this works
+			// updateCurrentPlay(QString::fromStdString(_currentPlay->name()));
+
+			// Assign to the new play all robots except the goalie
+			set<Robot *> robots;
+			BOOST_FOREACH(Robot *r, self)
 			{
-				// FIXME: make sure this works
-// 				updateCurrentPlay(QString::fromStdString(_currentPlay->name()));
-				
-				// Assign to the new play all robots except the goalie
-				set<Robot *> robots;
-				BOOST_FOREACH(Robot *r, self)
+				if (!_goalie || r != _goalie->robot())
 				{
-					if (!_goalie || r != _goalie->robot())
-					{
-						robots.insert(r);
-					}
+					robots.insert(r);
 				}
-				
-				_currentPlay->assign(robots);
 			}
+
+			_currentPlay->assign(robots);
 		}
 	}
 	
@@ -418,17 +425,13 @@ void Gameplay::GameplayModule::run()
 
 void Gameplay::GameplayModule::enablePlay(shared_ptr<Play> play)
 {
-	//cout << "Enabling Play..." << endl;
 	QMutexLocker lock(&_playMutex);
 	_plays.insert(play);
 }
 
 void Gameplay::GameplayModule::disablePlay(shared_ptr<Play> play)
 {
-	//cout << "Disabling Play..." << endl;
 	QMutexLocker lock(&_playMutex);
-	//if (!play.use_count()) cout << "Play pointer is dead!" << endl;
-	//play->end(); // notify and reset play
 	_plays.erase(play);
 }
 

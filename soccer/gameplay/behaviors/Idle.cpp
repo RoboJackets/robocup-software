@@ -38,12 +38,22 @@ bool Gameplay::Behaviors::Idle::run()
 	Geometry2d::Point dir = (Geometry2d::Point() - ball().pos).normalized() * radius;
 	dir.rotate(Geometry2d::Point(), -perRobot * (_robots.size() - 1) / 2);
 	
-	_gameplay->state()->debugLines.push_back(Geometry2d::Segment(ball().pos, Geometry2d::Point()));
+	Packet::LogFrame::DebugLine line;
+	line.pt[0] = ball().pos;
+	line.pt[1] = Geometry2d::Point();
+	// make line black
+	line.color[0] = 0.0; line.color[1] = 0.0; line.color[2] = 0.0;
+	_gameplay->state()->debugLines.push_back(line);
 	BOOST_FOREACH(Robot *r, _robots)
 	{
 		if (r->visible())
 		{
-			_gameplay->state()->debugLines.push_back(Geometry2d::Segment(ball().pos, ball().pos + dir));
+			Packet::LogFrame::DebugLine velLine;
+			velLine.pt[0] = ball().pos;
+			velLine.pt[1] = ball().pos + dir;
+			// make line black
+			velLine.color[0] = 0.0; velLine.color[1] = 0.0; velLine.color[2] = 0.0;
+			_gameplay->state()->debugLines.push_back(velLine);
 			
 			r->move(ball().pos + dir);
 			r->face(ball().pos);

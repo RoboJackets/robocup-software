@@ -85,9 +85,13 @@ bool PlayListModel::setData(const QModelIndex &index, const QVariant &value, int
 	{
 		if (value.toInt() == Qt::Checked)
 		{
+			cout << "enabling play from PlayListModel::setData()" << endl;
 			_config->gameplay->enablePlay(_available[index.row()]);
+			cout << "done with enabling play from PlayListModel::setData()" << endl;
 		} else {
+			cout << "disabling play from PlayListModel::setData()" << endl;
 			_config->gameplay->disablePlay(_available[index.row()]);
+			cout << "done with disabling play from PlayListModel::setData()" << endl;
 		}
 		dataChanged(index, index);
 		
@@ -232,11 +236,13 @@ void PlayConfigTab::on_all_clicked()
 
 void PlayConfigTab::on_none_clicked()
 {
+	cout << "PlayConfigTab::on_none_clicked()" << endl;
 	BOOST_FOREACH(shared_ptr<Gameplay::Play> play, _model->available())
 	{
 		gameplay->disablePlay(play);
 	}
 	_model->update();
+	cout << "   at end of PlayConfigTab::on_none_clicked()" << endl;
 }
 
 void PlayConfigTab::on_goalie_toggled(bool checked)

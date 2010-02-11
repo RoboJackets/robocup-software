@@ -3,6 +3,7 @@
 	<struct typename="Point" include_cpp="Geometry2d/Point.hpp" external_cpp="Geometry2d::Point" external_python="Geometry2d.Point" />
 	<struct typename="Segment" include_cpp="Geometry2d/Segment.hpp" external_cpp="Geometry2d::Segment" external_python="Geometry2d.Segment" />
 	<struct typename="Polygon" include_cpp="Geometry2d/Polygon.hpp" external_cpp="Geometry2d::Polygon" external_python="Geometry2d.Polygon" />
+	<struct typename="Circle" include_cpp="Geometry2d/Circle.hpp" external_cpp="Geometry2d::Circle" external_python="Geometry2d.Circle" />
 	<struct typename="RadioTx" include_cpp="RadioTx.hpp" external_cpp="Packet::RadioTx" external_python="Packet.RadioTx"/>
 	<struct typename="RadioRx" include_cpp="RadioRx.hpp" external_cpp="Packet::RadioRx" external_python="Packet.RadioRx"/>
 
@@ -114,11 +115,20 @@
 	<member type="Ball" name="ball" />
 
     <array type="Point" name="pathTest" />
-	<array type="Segment" name="debugLines" />
 	
 	<struct typename="DebugPolygon" extend_cpp="Geometry2d::Polygon">
 		<array size="3" type="uint8" name="color" />
 	</struct>
 	
+	<struct typename="DebugLine" extend_cpp="Geometry2d::Segment">
+		<array size="3" type="uint8" name="color" />
+	</struct>
+	
+	<struct typename="DebugCircle" extend_cpp="Geometry2d::Circle">
+		<array size="3" type="uint8" name="color" />
+	</struct>
+	
 	<array type="DebugPolygon" name="debugPolygons" />
+	<array type="DebugLine" name="debugLines" />
+	<array type="DebugCircle" name="debugCircles" />
 </struct>

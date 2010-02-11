@@ -5,6 +5,7 @@
 
 #include "drawing/Elements.hpp"
 
+#include <QColor>
 #include <GL/gl.h>
 #include <boost/foreach.hpp>
 
@@ -29,12 +30,21 @@ void LogModule::setLogFile(LogFile* file)
 
 void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
 {
-	p.setPen(Qt::black);
-	BOOST_FOREACH(const Geometry2d::Segment &seg, f.debugLines)
+	// draw debug lines
+	BOOST_FOREACH(const Packet::LogFrame::DebugLine& seg, f.debugLines)
 	{
+		p.setPen(QColor(seg.color[0], seg.color[1], seg.color[2]));
 		p.drawLine(seg.pt[0].toQPointF(), seg.pt[1].toQPointF());
 	}
 
+	// draw debug circles
+	BOOST_FOREACH(const Packet::LogFrame::DebugCircle& cir, f.debugCircles)
+	{
+		p.setPen(QColor(cir.color[0], cir.color[1], cir.color[2]));
+		p.drawEllipse(cir.center.toQPointF(), cir.radius(), cir.radius());
+	}
+
+	p.setPen(Qt::black);
 	// Save GL_BLEND state since QPainter needs it
 	glPushAttrib(GL_COLOR_BUFFER_BIT);
 	glEnable(GL_BLEND);

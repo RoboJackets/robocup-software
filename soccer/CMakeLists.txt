@@ -80,6 +80,7 @@ set (SRCS
 	gameplay/plays/test_plays/TestTimePositionControl.cpp
 	gameplay/plays/test_plays/TestBasicAttack.cpp
 	gameplay/plays/test_plays/TestPassPlay.cpp
+	gameplay/plays/test_plays/TestGUI.cpp
 	gameplay/behaviors/test/Passer.cpp
 	gameplay/behaviors/test/Receiver.cpp
 	
