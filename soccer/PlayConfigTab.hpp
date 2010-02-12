@@ -29,6 +29,9 @@ class PlayConfigTab: public QWidget
 		
 		void load(QString filename);
 		
+		void enable(const std::string &name);
+		void useGoalie(bool value);
+		
 	private Q_SLOTS:
 		void on_load_clicked();
 		void on_save_clicked();

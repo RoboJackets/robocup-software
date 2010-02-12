@@ -25,6 +25,7 @@ class PlayListModel: public QAbstractListModel
 		virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
 		
 		void addPlay(boost::shared_ptr<Gameplay::Play> play);
+		boost::shared_ptr<Gameplay::Play> find(const string &name);
 		
 		const std::vector<boost::shared_ptr<Gameplay::Play> > &available() const
 		{
@@ -97,7 +98,7 @@ bool PlayListModel::setData(const QModelIndex &index, const QVariant &value, int
 	}
 }
 
-void PlayListModel::addPlay(boost::shared_ptr<Gameplay::Play> play)
+void PlayListModel::addPlay(shared_ptr<Gameplay::Play> play)
 {
 	int n = _available.size();
 	beginInsertRows(QModelIndex(), n, n);
@@ -108,6 +109,19 @@ void PlayListModel::addPlay(boost::shared_ptr<Gameplay::Play> play)
 void PlayListModel::update()
 {
 	dataChanged(index(0), index(_available.size() - 1));
+}
+
+shared_ptr<Gameplay::Play> PlayListModel::find(const string &name)
+{
+	BOOST_FOREACH(shared_ptr<Gameplay::Play> play, _available)
+	{
+		if (play->name() == name)
+		{
+			return play;
+		}
+	}
+	
+	return shared_ptr<Gameplay::Play>();
 }
 
 ////////
@@ -153,14 +167,6 @@ void PlayConfigTab::load(QString filename)
 	string fname = filename.toStdString();
 	ifstream ifs(fname.c_str());
 
-	// Build a map from name to play
-	typedef map<string, shared_ptr<Gameplay::Play> > PlayMap;
-	PlayMap plays;
-	BOOST_FOREACH(shared_ptr<Gameplay::Play> play, _model->available())
-	{
-		plays[play->name()] = play;
-	}
-	
 	// read all of the strings
 	bool foundGoalie = false;
 	while (ifs.good()) {
@@ -168,27 +174,34 @@ void PlayConfigTab::load(QString filename)
 		ifs >> name;
 		if (name != "") {
 			if (name == "goalie")
-				foundGoalie = true;
-			PlayMap::const_iterator i = plays.find(name);
-			if (i != plays.end())
 			{
- 				gameplay->enablePlay(i->second);
-			} else {
-				cout << "Missing Play: " << name << endl;
+				foundGoalie = true;
 			}
+			enable(name);
 		}
 	}
 	ifs.close();
 
-	// create/remove goalie
-	on_goalie_toggled(foundGoalie);
-
-	// ensure that the button for the goalie is checked appropriately
-	ui.goalie->setChecked(foundGoalie);
-
-
+	useGoalie(foundGoalie);
 	// do updates
 	_model->update();
+}
+
+void PlayConfigTab::enable(const string &name)
+{
+	shared_ptr<Gameplay::Play> play = _model->find(name);
+	if (play)
+	{
+		gameplay->enablePlay(play);
+	} else {
+		cout << "Missing Play: " << name << endl;
+	}
+}
+
+void PlayConfigTab::useGoalie(bool value)
+{
+	// ensure that the button for the goalie is checked appropriately
+	ui.goalie->setChecked(value);
 }
 
 void PlayConfigTab::on_save_clicked()
@@ -209,7 +222,8 @@ void PlayConfigTab::on_save_clicked()
 	ofstream ofs(fname.c_str());
 
 	// if there is a goalie, write to file
-	if (gameplay->goalie()) {
+	if (gameplay->goalie())
+	{
 		ofs << "goalie\n";
 	}
 

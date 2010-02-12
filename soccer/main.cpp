@@ -21,12 +21,14 @@ using namespace std;
 
 void usage(const char* prog)
 {
-	printf("usage: %s <-y|-b> [-f] [-c <config file>] [-p playbook]\n", prog);
+	printf("usage: %s <-y|-b> [-f] [-ng] [-c <config file>] [-p <playbook>] [-pp <play>]\n", prog);
 	printf("\t-y:  run as the yellow team\n");
 	printf("\t-b:  run as the blue team\n");
 	printf("\t-c:  specify the configuration file\n");
 	printf("\t-f:  flip field\n");
 	printf("\t-p:  load playbook\n");
+	printf("\t-pp: enable named play\n");
+	printf("\t-ng: no goalie\n");
 	exit(1);
 }
 
@@ -55,7 +57,9 @@ int main (int argc, char* argv[])
 	QString cfgFile = "";
 	QString playbook;
 	vector<const char *> playDirs;
+	vector<string> extraPlays;
 
+	bool goalie = true;
 	bool flip = false;
 	for (int i=1 ; i<argc; ++i)
 	{
@@ -73,6 +77,10 @@ int main (int argc, char* argv[])
 		{
 			flip = true;
 		}
+		else if (strcmp(var, "-ng") == 0)
+		{
+			goalie = false;
+		}
 		else if(strcmp(var, "-c") == 0)
 		{
 			if (i+1 >= argc)
@@ -83,6 +91,17 @@ int main (int argc, char* argv[])
 			
 			i++;
 			cfgFile = argv[i];
+		}
+		else if(strcmp(var, "-pp") == 0)
+		{
+			if (i+1 >= argc)
+			{
+				printf("no play specified after -pp");
+				usage(argv[0]);
+			}
+			
+			i++;
+			extraPlays.push_back(argv[i]);
 		}
 		else if(strcmp(var, "-p") == 0)
 		{
@@ -115,6 +134,13 @@ int main (int argc, char* argv[])
 	{
 		win.playConfig()->load(playbook);
 	}
+	
+	BOOST_FOREACH(const string &str, extraPlays)
+	{
+		win.playConfig()->enable(str);
+	}
+	
+	win.playConfig()->useGoalie(goalie);
 	
 	win.processor()->flip_field(flip);
 	
