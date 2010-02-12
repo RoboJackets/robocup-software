@@ -63,6 +63,7 @@ void Rbpf::update(Vector &U, Vector &Z, double dt){
 		weightSum = 0.0;
 		for(int jIdx=0; jIdx<j; jIdx++){ // for each of the j models
 			model = modelGraph.getModel(jIdx);
+			assert(tmpPartIdx < (int)tmpParticleVector.size());
 			tmpParticle = &tmpParticleVector[tmpPartIdx];
 			tmpParticle->copy(particleVector[kIdx]);
 			model->predict(tmpParticle->X,tmpParticle->P,U,dt); // EKF Predict
@@ -159,7 +160,7 @@ void Rbpf::addModel(RbpfModel* model){
 	// Each particle in tmpParticleVector simply contains space for temporary
 	// particles during the update step.  The values in each particle will be
 	// overwritten at each iteration, so the initial values do not matter.
-	int modelIdx = 0; Vector X(n); X*=0.0; Matrix P(n,n); P*=0.0;
+	int modelIdx = 0; Vector X(n); X.clear(); Matrix P(n,n); P*=0.0;
 	for(int i=0; i<k; i++)
 		tmpParticleVector.push_back(new RbpfState(X, P, modelIdx, 0.0));
 }

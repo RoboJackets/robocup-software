@@ -12,7 +12,7 @@
 //   initializes n, m, s, F, H, Q, R, and space used for intermediate
 //   calculations: Inn (n x n Identity matrix), h, Yhat, S
 RbpfModel::RbpfModel() : n(NSIZE), m(MSIZE), s(SSIZE), F(n,n), H(s,n), Q(n,n), R(s,s), Inn(n,n), h(s), Yhat(s,1), S(s,s) {
-	Inn*=0.0; h*=0.0; Yhat*=0.0; S*=0.0; // zero out matrices
+	Inn.clear(); h.clear(); Yhat.clear(); S.clear(); // zero out matrices
 	for(int i=0;i<n;i++){Inn(i,i)=1.0;} // initialize identity matrix
 }
 

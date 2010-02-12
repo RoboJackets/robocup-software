@@ -81,9 +81,9 @@ void Modeling::BallModel::initKalman() {
 
 void Modeling::BallModel::initRBPF() {
 	// Construct initial state X (n x 1)
-	Vector X(6); X*=0;
+	Vector X(6); X.clear();
 	// Construct initial state covariance P (n x n)
-	Matrix P(6,6); P*=0.0; P(0,0)=P(1,1)= P(2,2)=P(3,3)=P(4,4)=P(5,5)=0.01;
+	Matrix P(6,6); P.clear(); P(0,0)=P(1,1)= P(2,2)=P(3,3)=P(4,4)=P(5,5)=0.01;
 	// Create Rbpf
 	int numParticles = 20; // Number of particles in filter
 	raoBlackwellizedParticleFilter = new Rbpf(X,P,numParticles);
