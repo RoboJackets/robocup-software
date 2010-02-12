@@ -16,7 +16,7 @@ bool Gameplay::Plays::TestGUI::run()
 {
 	// draw circles
 	Packet::LogFrame::DebugCircle c1, c2, c3, c4;
-	float rad = 0.8;
+	float rad = 0.2;
 	c1.radius(rad);
 	c2.radius(rad);
 	c3.radius(rad);
@@ -44,20 +44,19 @@ bool Gameplay::Plays::TestGUI::run()
 	t3.text = string("Text3");
 	t4.text = string("Text4");
 
-	t1.pos = Geometry2d::Point(Constants::Field::Width/3, Constants::Field::Length*(0.5-0.3));
-	t2.pos = Geometry2d::Point(-Constants::Field::Width/3, Constants::Field::Length*(0.5-0.3));
-	t3.pos = Geometry2d::Point(Constants::Field::Width/3, Constants::Field::Length*(0.5+0.3));
-	t4.pos = Geometry2d::Point(-Constants::Field::Width/3, Constants::Field::Length*(0.5+0.3));
+	t1.pos = c1.center;
+	t2.pos = c2.center;
+	t3.pos = c3.center;
+	t4.pos = c4.center;
 
 	t1.color[0] = t2.color[0] = t3.color[0] = t4.color[0] = 0;
 	t1.color[1] = t2.color[1] = t3.color[1] = t4.color[1] = 0;
 	t1.color[2] = t2.color[2] = t3.color[2] = t4.color[2] = 255;
 
-//	gameplay()->state()->debugText.push_back(t1);
-//	gameplay()->state()->debugText.push_back(t2);
-//	gameplay()->state()->debugText.push_back(t3);
-//	gameplay()->state()->debugText.push_back(t4);
-
+	gameplay()->state()->debugText.push_back(t1);
+	gameplay()->state()->debugText.push_back(t2);
+	gameplay()->state()->debugText.push_back(t3);
+	gameplay()->state()->debugText.push_back(t4);
 
 	return true;
 }
