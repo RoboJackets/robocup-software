@@ -25,9 +25,7 @@ Dynamics::DynamicsInfo Dynamics::info(const float angle, const float w) const
 	//given and angle and rotational speed
 	//compute the linear capabilities of the system
 	
-	//cout << "Loading vMax0 = _deg0.velocity" << endl;
-	const float vMax0 = _deg0.velocity; //FIXME: Error occurs here
-	//cout << "Finished Loading vMax0 = _deg0.velocity" << endl;
+	const float vMax0 = _deg0.velocity;
 	const float vMax45 = _deg45.velocity;
 	
 	const float aMax0 = _deg0.acceleration;

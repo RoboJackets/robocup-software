@@ -61,6 +61,9 @@ namespace Gameplay{
 				double playTime;
 				bool newPassState;
 
+				/// Pass Planning engine
+				AnalyticPassPlanner analyticPlanner_;
+
 				/// Optimization Engine
 				Optimization::PassOptimizer optimizer_;
 

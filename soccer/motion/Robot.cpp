@@ -117,7 +117,7 @@ void Robot::proc()
 	{
 		// get the dynamics from the config
 		if (!_isConfigLoaded) {
-			_dynamics.setConfig(_self->config.motion); //FIXME - change setConfig call cycle
+			_dynamics.setConfig(_self->config.motion);
 			_isConfigLoaded = true;
 		}
 		

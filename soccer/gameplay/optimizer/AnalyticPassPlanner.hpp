@@ -15,15 +15,26 @@
 #include <boost/foreach.hpp>
 #include <PassState.hpp>
 #include <PassConfig.hpp>
+#include <GameplayModule.hpp>
 
 #include <motion/planning/rrt.hpp>
 #include <framework/Path.hpp>
 
 typedef boost::ptr_vector<PassConfig> PassConfigVector;
 
-namespace AnalyticPassPlanner {
-	void generateAllConfigs(const Geometry2d::Point &ballPos, std::set<Gameplay::Robot *> &robots, PassConfigVector &passConfigResult);
-	void evaluateConfigs(std::set<Gameplay::Robot *> &_robots, Gameplay::Robot** _opponents, PassConfigVector &passConfigs);
+class AnalyticPassPlanner {
+public:
+	AnalyticPassPlanner(Gameplay::GameplayModule* gameplay) : _gameplay(gameplay) {}
+
+	void generateAllConfigs(const Geometry2d::Point &ballPos,
+							std::set<Gameplay::Robot *> &robots,
+							PassConfigVector &passConfigResult);
+	void evaluateConfigs(std::set<Gameplay::Robot *> &_robots,
+						 Gameplay::Robot** _opponents,
+						 PassConfigVector &passConfigs);
+
+protected:
+	Gameplay::GameplayModule * _gameplay;
 };
 
 #endif /* ANALYTICPASSPLANNER_HPP_ */

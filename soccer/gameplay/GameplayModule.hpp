@@ -89,7 +89,7 @@ namespace Gameplay
 			{
 				return _playConfig;
 			}
-			
+
 		protected:
 			friend class Play;
 			

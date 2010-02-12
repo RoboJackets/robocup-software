@@ -27,7 +27,6 @@ Gameplay::Optimization::PassOptimizer::~PassOptimizer() {}
 PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 		const PassConfig& init, bool verbose) const
 {
-	cout << "IN PassOptimizer::optimizePlan()" << endl;
 	// create graph and config
 	shared_config config(new Config());
 	shared_graph graph(new Graph());
@@ -85,7 +84,6 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 
 	// reconstruct a passconfig
 	PassConfig optConfig(init);
-	cout << "At end of PassOptimizer::optimizePlan()" << endl;
 
 
 	// OLD CODE: Saved for posterity
