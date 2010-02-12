@@ -1,5 +1,6 @@
 #include "Tree.hpp"
 
+#include <iostream>
 #include <boost/foreach.hpp>
 #include <Utils.hpp>
 
@@ -165,7 +166,9 @@ Tree::Point* DynamicsTree::extend(Geometry2d::Point pt, Point* base)
 	
 	//compute capabilities for our current state
 	//angle needs to be in robot space
-	Dynamics::DynamicsInfo info = dynamics->info(angle, 0);
+	//cout << "Getting dynamics info" << endl;
+	Dynamics::DynamicsInfo info = dynamics->info(angle, 0); //Segfault here
+	//cout << "after Getting dynamics info" << endl;
 
 	const float accel = info.acceleration;
 	const float vMax = info.velocity;
@@ -183,7 +186,7 @@ Tree::Point* DynamicsTree::extend(Geometry2d::Point pt, Point* base)
 
 	// Check for obstacles.
 
-    // moveHit is the set of obstacles that this move touches.
+	// moveHit is the set of obstacles that this move touches.
     // If this move touches any obstacles that the starting point didn't already touch,
     // it has entered an obstacle and will be rejected.
     ObstacleSet moveHit;
@@ -201,8 +204,8 @@ Tree::Point* DynamicsTree::extend(Geometry2d::Point pt, Point* base)
             return 0;
         }
     }
-    
-	// Allow this point to be added to the tree
+
+    // Allow this point to be added to the tree
 	Point* p = new Point(pos, base);
 	p->vel = vFinal;
 	_obstacles->hit(p->pos, &p->hit);

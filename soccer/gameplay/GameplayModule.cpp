@@ -199,49 +199,12 @@ void Gameplay::GameplayModule::fieldOverlay(QPainter &painter, Packet::LogFrame 
 	}
 }
 
-// FIXME: convert to using debug lines/circles
-//void Gameplay::GameplayModule::renderPassConfig(PassConfig* config, QPainter &painter, bool primary) const
-//{
-//	// error check this
-//	if (!config)
-//		return;
-//
-//	// parameters for drawing
-//	float ball_radius = 0.05;
-//	float pos_radius = 0.1;
-//
-//	// choose the color based on whether this is the primary
-//	if (primary)
-//		painter.setPen(Qt::cyan);
-//	else
-//		painter.setPen(Qt::darkCyan);
-//
-//	// draw the path of the ball and the robot trajectories
-//	int stateNum = 0;
-//	PassState prevState;
-//	BOOST_FOREACH(PassState state, config->passStateVector) {
-//		// draw the ball
-//		painter.drawEllipse(state.ballPos.toQPointF(),ball_radius, ball_radius);
-//		// draw robots
-//		painter.drawEllipse(state.robot1Pos.toQPointF(), pos_radius, pos_radius);
-//		painter.drawEllipse(state.robot2Pos.toQPointF(), pos_radius, pos_radius);
-//
-//		if(stateNum > 0){
-//			painter.drawLine(prevState.ballPos.toQPointF(), state.ballPos.toQPointF());
-//			painter.drawLine(prevState.robot1Pos.toQPointF(), state.robot1Pos.toQPointF());
-//			painter.drawLine(prevState.robot2Pos.toQPointF(), state.robot2Pos.toQPointF());
-//		}
-//		prevState = state;
-//		stateNum++;
-//	}
-//
-//}
-
 void Gameplay::GameplayModule::run()
 {
 	_state->debugLines.clear();
 	_state->debugPolygons.clear();
 	_state->debugCircles.clear();
+	_state->debugText.clear();
 
 	ObstaclePtr largeBallObstacle;
 	ObstaclePtr smallBallObstacle;

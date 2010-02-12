@@ -25,7 +25,7 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/foreach.hpp>
 #include <vector>
-//#include "../../optimizer/PassOptimizer.hpp"
+#include "../../optimizer/PassOptimizer.hpp"
 #include "../../optimizer/PassState.hpp"
 #include "../../optimizer/PassConfig.hpp"
 #include "../../optimizer/AnalyticPassPlanner.hpp"
@@ -62,7 +62,7 @@ namespace Gameplay{
 				bool newPassState;
 
 				/// Optimization Engine
-				//Optimization::PassOptimizer optimizer_;
+				Optimization::PassOptimizer optimizer_;
 
 				/// storage of robot pointers
 				std::set<Robot *> full_available_;

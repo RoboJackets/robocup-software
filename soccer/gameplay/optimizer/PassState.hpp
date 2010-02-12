@@ -9,13 +9,7 @@
 #define PASSSTATE_HPP_
 
 #include <iostream>
-//#include <fstream>
 #include <gameplay/Robot.hpp>
-
-//using namespace Geometry2d;
-//using namespace Gameplay;
-//using std::ostream;
-//using std::endl;
 
 class PassState {
 public:

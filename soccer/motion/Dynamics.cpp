@@ -1,4 +1,7 @@
 #include "Dynamics.hpp"
+#include <iostream>
+
+using namespace std;
 
 using namespace Motion;
 
@@ -9,6 +12,7 @@ Dynamics::Dynamics()
 
 void Dynamics::setConfig(ConfigFile::Robot::Motion cfg)
 {
+	//cout << "Dynamics::setConfig(ConfigFile::Robot::Motion cfg)" << endl;
 	_deg0 = cfg.deg0;
 	_deg45 = cfg.deg45;
 	_rotation = cfg.rotation;
@@ -21,7 +25,9 @@ Dynamics::DynamicsInfo Dynamics::info(const float angle, const float w) const
 	//given and angle and rotational speed
 	//compute the linear capabilities of the system
 	
-	const float vMax0 = _deg0.velocity;
+	//cout << "Loading vMax0 = _deg0.velocity" << endl;
+	const float vMax0 = _deg0.velocity; //FIXME: Error occurs here
+	//cout << "Finished Loading vMax0 = _deg0.velocity" << endl;
 	const float vMax45 = _deg45.velocity;
 	
 	const float aMax0 = _deg0.acceleration;
@@ -38,6 +44,7 @@ Dynamics::DynamicsInfo Dynamics::info(const float angle, const float w) const
 		clipped -= (int(clipped/45.0f) * 45);
 	}
 	
+
 	//percent of the difference to subtract from max
 	//TODO should use sin or something because it is a circle
 	//not a fixed ratio

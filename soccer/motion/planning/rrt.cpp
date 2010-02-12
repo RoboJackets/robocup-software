@@ -2,6 +2,7 @@
 // vim:ai ts=4 et
 
 #include <stdlib.h>
+#include <iostream>
 #include <boost/foreach.hpp>
 #include <algorithm>
 
@@ -38,7 +39,7 @@ void RRT::Planner::run(
 	path.clear();
 	
 	_obstacles = obstacles;
-	
+
 	// Simple case: no path
 	if (start == goal)
 	{
@@ -191,6 +192,8 @@ void RRT::Planner::run(
 	_dynamicsTree.step = .15;
 	_dynamicsTree.initAngle = angle;
 	
+
+	// FIXME: Segfault in this loop
 	/// find a path to the goal
     for (unsigned int i=0 ; i<_maxIterations ; ++i)
     {
@@ -224,8 +227,7 @@ void RRT::Planner::run(
 		
 		//TODO maybe check for point falling within certain range
 		//let us exit early
-		
-		_dynamicsTree.extend(r);
+		_dynamicsTree.extend(r); // Segfault is in here
     }
     
     Tree::Point* bestPoint = _dynamicsTree.nearest(target);

@@ -18,7 +18,7 @@ using namespace Geometry2d;
 using namespace std;
 
 Gameplay::Plays::TestPassPlay::TestPassPlay(GameplayModule *gameplay)
-: Play(gameplay), kicker(gameplay), interceptor(gameplay)/*, optimizer_(gameplay)*/ {
+: Play(gameplay), kicker(gameplay), interceptor(gameplay), optimizer_(gameplay) {
 	_passState = Initializing;
 	newPassState = true;
 	passIndex = 0; // start the index after the first state (0)
@@ -26,22 +26,26 @@ Gameplay::Plays::TestPassPlay::TestPassPlay(GameplayModule *gameplay)
 }
 
 void Gameplay::Plays::TestPassPlay::assign(set<Robot *> &available){
+	cout << "Total available to TestPassPlay: " << available.size() << endl;
 	_passState = Initializing;
 	full_available_ = available;
 	this->takeAll(available); // assign all robots from available to _robots
 
 	// make sure robots that are available are sufficient to create a pass
 	int numVisible = 0;
-	BOOST_FOREACH(Robot *r, available){if(r->visible()){numVisible++;}}
-	if(available.size() < 2 || numVisible < 2){
+	BOOST_FOREACH(Robot *r, _robots){if(r->visible()){numVisible++;}}
+	if(numVisible < 2){
 		cout << "Not enough robots to plan with." << endl;
 		_passState = Done;
 	}
+	cout << "At end of TestPassPlay::Assign()" << endl;
 }
 
 bool Gameplay::Plays::TestPassPlay::run(){
 	if (_passState == Initializing) { // do initialization here
+		cout << "Initializing plan" << endl;
 		initializePlan();
+		cout << "After initializePlan()" << endl;
 
 		bestPassConfig = initialPlans[0];
 		cout << "Plan: " << bestPassConfig << endl;
@@ -188,31 +192,40 @@ bool Gameplay::Plays::TestPassPlay::run(){
 }
 
 void Gameplay::Plays::TestPassPlay::initializePlan(){
+	cout << "In TestPassPlay::initializePlan()" << endl;
 	initialPlans.clear();
+	cout << "after clear()" << endl;
 	AnalyticPassPlanner::generateAllConfigs(ball().pos,_robots,initialPlans);
+	cout << "After generate" << endl;
 	AnalyticPassPlanner::evaluateConfigs(_robots,_gameplay->opp,initialPlans);
+	cout << "Finished evaluating plans" << endl;
 
 	// perform optimization on the first of the plans
 	PassConfigVector newConfigs;
 
 	//find a plan that uses a pass
-	size_t idx = 0;
-	BOOST_FOREACH(PassConfig cfg, initialPlans) {
-		if (cfg.length() > 3) {
-			break;
-		}
-		++idx;
-	}
+//	size_t idx = 0;
+//	BOOST_FOREACH(PassConfig cfg, initialPlans) {
+//		if (cfg.length() > 3) {
+//			break;
+//		}
+//		++idx;
+//	}
 
-	//PassConfig * opt = new PassConfig(optimizer_.optimizePlan(initialPlans[idx], false));
-	//newConfigs.push_back(opt);
+//	cout << "Executing optimizer" << endl;
+//	PassConfig * opt = new PassConfig(optimizer_.optimizePlan(initialPlans[0], false));
+//	cout << "Optimized Plan: " << *opt << endl;
+//	newConfigs.push_back(opt);
+//	cout << "evaluating " << newConfigs.size() << " pass configs" << endl;
 	newConfigs.push_back(new PassConfig(initialPlans[0]));
 	newConfigs.push_back(new PassConfig(initialPlans[0]));
 	AnalyticPassPlanner::evaluateConfigs(_robots, _gameplay->opp, newConfigs);
 	//newConfigs.push_back(new PassConfig(initialPlans[idx]));
+	//cout << "Constructed both optimized and non-optimized plan" << endl;
 
 	initialPlans.clear();
 	initialPlans = newConfigs;
+	cout << "at end of TestPassPlay::initializePlan()" << endl;
 
 	//for(int i=0; i<(int)initialPlans.size(); i++)
 	//	cout << "passConfig(" << i << "): " << initialPlans[i] << endl;

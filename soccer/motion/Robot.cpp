@@ -42,7 +42,7 @@ void printPt(const Geometry2d::Point& pt, const string& s="") {
 const float intTimeStampToFloat = 1000000.0f;
 
 Robot::Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id) :
-	_id(id)
+	_id(id), _isConfigLoaded(false)
 {
 	_state = 0;
 	_self = 0;
@@ -50,6 +50,7 @@ Robot::Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id) :
 	_planner.setDynamics(&_dynamics);
 	_planner.maxIterations(250);
 	
+
 	//since radio currently only handles 4 motors
 	//don't make axles (and thus don't drive) if not 4 configured
 	BOOST_FOREACH(const Point& p, cfg.axles)
@@ -115,7 +116,10 @@ void Robot::proc()
 	if (_self && _self->valid)
 	{
 		// get the dynamics from the config
-		_dynamics.setConfig(_self->config.motion);
+		if (!_isConfigLoaded) {
+			_dynamics.setConfig(_self->config.motion); //FIXME - change setConfig call cycle
+			_isConfigLoaded = true;
+		}
 		
 		// set the correct PID parameters for position and angle
 		_posPid.kp = _self->config.motion.pos.p;

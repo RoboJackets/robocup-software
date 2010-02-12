@@ -32,10 +32,10 @@ namespace AnalyticPassPlanner {
 
 		BOOST_FOREACH(Robot *r1, robots){
 			if(!r1->visible()){continue;} // don't use invisible robots
+
 			BOOST_FOREACH(Robot *r2, robots){
 				if(!r2->visible()){continue;} // don't use invisible robots
 				if(r2->id()==r1->id()){continue;} // don't pass to self
-
 				PassConfig* passConfig = new PassConfig();
 
 				// setup calculations
@@ -52,11 +52,19 @@ namespace AnalyticPassPlanner {
 				// add state with robot1 at a position to pass to robot2
 				Point state2Robot1Pos = ballPos - passVec * (float)(Constants::Robot::Radius + Constants::Ball::Radius);
 				float state2Robot1Rot = passAngle;
+
 				// calculate time
 				og = r1->obstacles();
+				Point r1pos = r1->pos();
+				float r1angle = r1->angle();
+				Point r1vel = r1->vel();
 				Motion::RRT::Planner planner;
-				planner.run(r1->pos(),r1->angle(),r1->vel(),ballPos,&og,path);
+				cout << "Robot ID: " << r1->id() << endl;
+				planner.run(r1pos,r1angle,r1vel,ballPos,&og,path); //Segfault here
+				cout << "  6b" << endl;
+
 				pathDist = path.length(0);
+
 				if(pathDist < distStopToMaxVel + distMaxVelToStop){
 					pathTime = (pathDist/(distStopToMaxVel + distMaxVelToStop))*(timeStopToMaxVel + timeMaxVelToStop);
 				}else{
@@ -67,7 +75,6 @@ namespace AnalyticPassPlanner {
 				passConfig->addPassState(
 						PassState(r1, r2, state2Robot1Pos, r2->pos(), state2Robot1Rot, r2->angle(),
 						ballPos, PassState::KICKPASS, state2Time));
-
 				// add state with robot2 receiving ball
 				Point state3BallPos = r2->pos();
 				Point state3Robot2Pos = state3BallPos + passVec * (float)(Constants::Robot::Radius + Constants::Ball::Radius);

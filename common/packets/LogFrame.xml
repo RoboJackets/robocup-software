@@ -128,7 +128,14 @@
 		<array size="3" type="uint8" name="color" />
 	</struct>
 	
+	<struct typename="DebugText">
+		<member type="string" name="text"/>
+		<member type="Point" name="pos"/>
+		<array size="3" type="uint8" name="color" />
+	</struct>
+	
 	<array type="DebugPolygon" name="debugPolygons" />
 	<array type="DebugLine" name="debugLines" />
 	<array type="DebugCircle" name="debugCircles" />
+	<array type="DebugText" name="debugText" />
 </struct>

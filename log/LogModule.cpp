@@ -44,6 +44,23 @@ void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
 		p.drawEllipse(cir.center.toQPointF(), cir.radius(), cir.radius());
 	}
 
+	// draw debug text
+	// Currently doesn't work right
+//	BOOST_FOREACH(const Packet::LogFrame::DebugText& tex, f.debugText)
+//	{
+//		p.save();
+//		p.scale(.008, -.008);
+//		//p.rotate((viewTeam == Blue) ? -90 : 90);
+//		p.rotate(-90);
+//		p.translate(tex.pos.x, tex.pos.y);
+//		p.setPen(QColor(tex.color[0], tex.color[1], tex.color[2]));
+//		QString text = QString::fromStdString(tex.text);
+//		QRect r = p.boundingRect(0, 0, 0, 0, 0, text);
+//		p.drawText(-r.width() / 2, 24, text);
+//		//p.drawText(tex.pos.toQPointF(), QString::fromStdString(tex.text));
+//		p.restore();
+//	}
+
 	p.setPen(Qt::black);
 	// Save GL_BLEND state since QPainter needs it
 	glPushAttrib(GL_COLOR_BUFFER_BIT);

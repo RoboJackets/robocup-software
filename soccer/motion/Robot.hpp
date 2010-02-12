@@ -163,5 +163,8 @@ namespace Motion
 			
 			CalibrationStates _calibState;
 			CalibInfo _calibInfo;
+
+			/// True if we have actually loaded the motion config file
+			bool _isConfigLoaded;
 	};
 }
