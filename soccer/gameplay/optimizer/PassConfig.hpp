@@ -14,9 +14,8 @@
 #include "PassState.hpp"
 #include <gameplay/Robot.hpp>
 
-typedef std::vector<PassState> PassStateVector;
-
 class PassConfig {
+	typedef std::vector<PassState> PassStateVector;
 public:
 	PassConfig();
 	PassConfig(const PassConfig& c); /// copy constructor

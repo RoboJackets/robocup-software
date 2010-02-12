@@ -16,23 +16,17 @@
 
 #pragma once
 
-#include <iostream>
-#include <fstream>
-#include "../../Play.hpp"
-#include <gameplay/behaviors/positions/Fullback.hpp>
+#include <gameplay/Play.hpp>
 #include <gameplay/behaviors/Intercept.hpp>
 #include <gameplay/behaviors/Kick.hpp>
-#include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/foreach.hpp>
-#include <vector>
-#include "../../optimizer/PassOptimizer.hpp"
-#include "../../optimizer/PassState.hpp"
-#include "../../optimizer/PassConfig.hpp"
-#include "../../optimizer/AnalyticPassPlanner.hpp"
+#include <gameplay/optimizer/PassOptimizer.hpp>
+#include <gameplay/optimizer/PassConfig.hpp>
+#include <gameplay/optimizer/AnalyticPassPlanner.hpp>
 
 using namespace std;
 
-typedef boost::ptr_vector<PassConfig> PassConfigVector;
+//typedef boost::ptr_vector<PassConfig> PassConfigVector;
 
 namespace Gameplay{
 	namespace Plays{
@@ -53,7 +47,7 @@ namespace Gameplay{
 				enum State{Initializing,Optimizing,Executing,Done};
 				State _passState;
 
-				PassConfigVector initialPlans;
+				AnalyticPassPlanner::PassConfigVector initialPlans;
 				PassConfig bestPassConfig;
 				Behaviors::Kick kicker;
 				Behaviors::Intercept interceptor;

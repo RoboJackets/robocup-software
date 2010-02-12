@@ -6,6 +6,10 @@
  */
 
 #include <AnalyticPassPlanner.hpp>
+#include <motion/planning/rrt.hpp>
+#include <framework/Path.hpp>
+#include <PassState.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 using namespace Geometry2d;
 using namespace Gameplay;

@@ -191,7 +191,7 @@ void Gameplay::Plays::TestPassPlay::initializePlan(){
 	analyticPlanner_.evaluateConfigs(_robots,_gameplay->opp,initialPlans);
 
 	// perform optimization on the first of the plans
-	PassConfigVector newConfigs;
+	AnalyticPassPlanner::PassConfigVector newConfigs;
 
 	//find a plan that uses a pass - AGC: we already hardcode this for now
 //	size_t idx = 0;
