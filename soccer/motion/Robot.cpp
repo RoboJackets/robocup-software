@@ -851,7 +851,7 @@ void Robot::calib()
 		//print duration, velocty mag, del position mag
 		if (_self->shell == debugRobotId)
 		{
-			printf("%f %f %f\n", duration, _self->vel.mag(), deltaP.mag());
+			printf("calib %f %f %f\n", duration, _self->vel.mag(), deltaP.mag());
 			fflush(stdout);
 		}
 

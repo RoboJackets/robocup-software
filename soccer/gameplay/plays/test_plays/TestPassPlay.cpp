@@ -55,6 +55,7 @@ bool Gameplay::Plays::TestPassPlay::run(){
 	}
 
 	if (_passState == Executing) { // perform actual execution
+	cout << "executing " << endl;
 		// sanity check
 		if (!allVisible() || !ball().valid)
 			return false; // no ball
@@ -62,6 +63,8 @@ bool Gameplay::Plays::TestPassPlay::run(){
 			return false; // invalid state
 		if(this->gameState().state != GameState::Playing)
 			return false;
+			
+		cout << "Actually doing things now..." << endl;
 
 		PassState passState = bestPassConfig.getPassState(passIndex);
 		PassState nextState = bestPassConfig.getPassState((passIndex+1<bestPassConfig.length()?passIndex+1:passIndex));
@@ -81,6 +84,7 @@ bool Gameplay::Plays::TestPassPlay::run(){
 				passState.robot1->face(nextState.ballPos,true);
 				passState.robot2->face(passState.ballPos,true);
 			}
+			cout << "Before move issue 1" << endl;
 			passState.robot1->move(passState.robot1Pos);
 			passState.robot2->move(passState.robot2Pos);
 
@@ -91,6 +95,7 @@ bool Gameplay::Plays::TestPassPlay::run(){
 			}else{newPassState = false;}
 		}else if(passState.stateType==PassState::KICKPASS){
 			// drive receiver to receive position
+			cout << "Before move issue 2" << endl;
 			passState.robot2->move(passState.robot2Pos);
 			passState.robot2->face(passState.ballPos,true);
 
@@ -137,7 +142,8 @@ bool Gameplay::Plays::TestPassPlay::run(){
 			if(ball().vel.mag() < 0.1){ // if ball is too slow, just go get it
 				interceptPoint = ball().pos;
 			}
-
+	
+			cout << "intercept move " << endl;
 			passState.robot2->face(ball().pos);
 			passState.robot2->move(interceptPoint);
 			passState.robot2->dribble(50);

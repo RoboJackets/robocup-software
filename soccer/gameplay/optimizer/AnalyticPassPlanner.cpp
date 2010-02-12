@@ -19,7 +19,6 @@ namespace AnalyticPassPlanner {
 		Geometry2d::Point goalBallPos = Geometry2d::Point(0.0, Constants::Field::Length);
 
 		Planning::Path path;
-		Motion::RRT::Planner planner;
 		ObstacleGroup og;
 		float pathDist, pathTime;
 
@@ -55,6 +54,7 @@ namespace AnalyticPassPlanner {
 				float state2Robot1Rot = passAngle;
 				// calculate time
 				og = r1->obstacles();
+				Motion::RRT::Planner planner;
 				planner.run(r1->pos(),r1->angle(),r1->vel(),ballPos,&og,path);
 				pathDist = path.length(0);
 				if(pathDist < distStopToMaxVel + distMaxVelToStop){
@@ -104,8 +104,7 @@ namespace AnalyticPassPlanner {
 		//
 		PassState prevState;
 
-		Planning::Path path;
-		Motion::RRT::Planner planner;
+		Planning::Path path;Motion::RRT::Planner planner;
 		ObstacleGroup og;
 		float pathDist, pathTime;
 
@@ -126,6 +125,7 @@ namespace AnalyticPassPlanner {
 				for (int i=0; i<Constants::Robots_Per_Team; ++i){
 					Robot *opponentR = opponents[i];
 					og = opponentR->obstacles();
+					Motion::RRT::Planner planner;
 					planner.run(opponentR->pos(),opponentR->angle(),opponentR->vel(),thisState.ballPos,&og,path);
 					pathDist = path.length(0);
 					if(pathDist < distStopToMaxVel + distMaxVelToStop){

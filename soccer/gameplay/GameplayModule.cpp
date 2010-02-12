@@ -37,6 +37,7 @@
 #include "plays/test_plays/TestTimePositionControl.hpp"
 #include "plays/test_plays/TestPassConfigOptimize.hpp"
 #include "plays/test_plays/TestGUI.hpp"
+#include "plays/test_plays/TestIntercept.hpp"
 
 #include <QMouseEvent>
 #include <QFileDialog>
@@ -59,7 +60,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_state = state;
 	_goalie = 0;
 	_playDone = false;
-	
+
 	_centerMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length / 2));
 	_oppMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length)) *
 				Geometry2d::TransformMatrix::rotate(180);
@@ -123,7 +124,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_goalArea[0] = ObstaclePtr(goalArea);
 	_goalArea[1] = ObstaclePtr(new CircleObstacle(Geometry2d::Point(-halfFlat, 0), radius));
 	_goalArea[2] = ObstaclePtr(new CircleObstacle(Geometry2d::Point(halfFlat, 0), radius));
-	
+
 	// Create robots
 	for (int i = 0; i < Constants::Robots_Per_Team; ++i)
 	{
@@ -135,7 +136,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_playConfig = new PlayConfigTab();
 	_playConfig->gameplay = this;
 	_widget = _playConfig;
-	
+
 	// Create the goalie - on by default
 	createGoalie();
 
@@ -152,7 +153,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_playConfig->addPlay(make_shared<Plays::Offense>(this));
 	_playConfig->addPlay(make_shared<Plays::Defense>(this));
 	_playConfig->addPlay(make_shared<Plays::OptimizedOffense>(this));
-   
+
 
 	// Add testing plays
 	_playConfig->addPlay(make_shared<Plays::TestBasicPassing>(this));
@@ -162,6 +163,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_playConfig->addPlay(make_shared<Plays::TestTimePositionControl>(this));
 	_playConfig->addPlay(make_shared<Plays::TestPassConfigOptimize>(this));
 	_playConfig->addPlay(make_shared<Plays::TestGUI>(this));
+	_playConfig->addPlay(make_shared<Plays::TestIntercept>(this));
 
 }
 
@@ -240,7 +242,7 @@ void Gameplay::GameplayModule::run()
 	_state->debugLines.clear();
 	_state->debugPolygons.clear();
 	_state->debugCircles.clear();
-	
+
 	ObstaclePtr largeBallObstacle;
 	ObstaclePtr smallBallObstacle;
 	if (_state->ball.valid)
@@ -287,13 +289,13 @@ void Gameplay::GameplayModule::run()
 			}
 		}
 	}
-	
+
 	BOOST_FOREACH(Robot *r, self)
 	{
 		//robot resets
 		r->willKick = false;
 		r->avoidBall = false;
-		
+
 		// Reset the motion command
 		r->resetMotionCommand();
 
@@ -374,13 +376,13 @@ void Gameplay::GameplayModule::run()
 			_currentPlay->assign(robots);
 		}
 	}
-	
+
 	// Run the current play
 	if (_currentPlay)
 	{
 		_playDone = !_currentPlay->run();
 	}
-	
+
 	// Run the goalie
 	if (_goalie)
 	{
@@ -414,7 +416,7 @@ void Gameplay::GameplayModule::run()
 			}
 		}
 	}
-	
+
 	if (_currentPlay)
 	{
 		_state->playName = _currentPlay->name();
@@ -445,7 +447,7 @@ shared_ptr<Gameplay::Play> Gameplay::GameplayModule::selectPlay()
 {
 	float bestScore = 0;
 	shared_ptr<Play> bestPlay;
-	
+
 	// Find the best applicable play
 	BOOST_FOREACH(shared_ptr<Play> play, _plays)
 	{
@@ -459,6 +461,6 @@ shared_ptr<Gameplay::Play> Gameplay::GameplayModule::selectPlay()
 			}
 		}
 	}
-	
+
 	return bestPlay;
 }

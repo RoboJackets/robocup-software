@@ -35,7 +35,7 @@ namespace Modeling
 				ABG
 			} mode_t;
 
-			BallModel(mode_t mode = RBPF);
+			BallModel(mode_t mode = KALMAN);
 
 			void observation(uint64_t time, const Geometry2d::Point &pos);
 
@@ -83,7 +83,6 @@ namespace Modeling
 			float gamma;
 
 			uint64_t lastObservedTime;
-
 			int missedFrames;
 
 			Geometry2d::Point prevObservedPos;
