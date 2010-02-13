@@ -7,8 +7,8 @@
 
 using namespace std;
 
-Gameplay::Behaviors::Intercept::Intercept(GameplayModule *gameplay) :
-	Behavior(gameplay)
+Gameplay::Behaviors::Intercept::Intercept(GameplayModule *gameplay, float dist) :
+	Behavior(gameplay), _farDist(dist)
 {
 }
 
@@ -40,10 +40,11 @@ bool Gameplay::Behaviors::Intercept::run()
 	const Geometry2d::Point ballPos = ball().pos;
 	const Geometry2d::Point ballVel = ball().vel;
 
+	// determine where to put the debug text
+	const Geometry2d::Point textOffset(Constants::Robot::Radius * -1.3, 0);
+
 	// Always face the ball
 	robot()->face(ballPos);
-
-	const float farDist = .25;
 
 	//if we already have the ball, skip approach states
 	if (robot()->haveBall())
@@ -52,7 +53,7 @@ bool Gameplay::Behaviors::Intercept::run()
 	}
 	else if (_state == ApproachBall)
 	{
-		if (!pos.nearPoint(ballPos, farDist))
+		if (!pos.nearPoint(ballPos, _farDist))
 		{
 			_state = ApproachFar;
 		}
@@ -61,26 +62,32 @@ bool Gameplay::Behaviors::Intercept::run()
 	//approach the ball at high speed facing the intended direction
 	if (_state == ApproachFar)
 	{
+		drawText("ApproachFar", pos + textOffset, 0, 0, 0);
 		Geometry2d::Point dest = ballPos;
 
 		//if the ball is moving
 		//we first need to try and intercept it
 		if (ballVel.mag() > .1)
 		{
+			// Project the destination ahead far enough to account for movement
+			const float average_speed  = 2.0; // for the robot
+			float travelTime = pos.distTo(ballPos)/average_speed;
+			dest += ballVel*travelTime;
+
 			//look at where the ball will be 1 second from now
 			// changed to 0.45 seconds
 			//aka... the pos + vel
-			dest += ballVel*0.2;
+			//dest += ballVel*0.2;
 		}
 		else
 		{
-			if (ballPos.nearPoint(pos, farDist))
+			if (ballPos.nearPoint(pos, _farDist))
 			{
 				dest += (ballPos - target).normalized() * ballPos.distTo(pos);
 			}
 			else
 			{
-				dest += (ballPos - target).normalized() * farDist;
+				dest += (ballPos - target).normalized() * _farDist;
 			}
 		}
 
@@ -88,11 +95,11 @@ bool Gameplay::Behaviors::Intercept::run()
 		robot()->move(dest);
 
 		//create an obstacle to avoid the ball during this state
-		ObstaclePtr ballObstacle(new CircleObstacle(ballPos, farDist - Constants::Ball::Radius));
+		ObstaclePtr ballObstacle(new CircleObstacle(ballPos, _farDist - Constants::Ball::Radius));
 
 		const float dist = dest.distTo(pos);
 
-		if (dist <= .05)
+		if (dist <= _farDist)
 		{
 			_state = ApproachBall;
 		}
@@ -101,6 +108,7 @@ bool Gameplay::Behaviors::Intercept::run()
 	//approach the ball with intent to acquire it
 	if (_state == ApproachBall)
 	{
+		drawText("ApproachBall", pos + textOffset, 0, 0, 0);
 		//TODO change to just willHandle?
 		//something more meaningful
 		//we don't always want to kick
@@ -115,6 +123,7 @@ bool Gameplay::Behaviors::Intercept::run()
 
 		robot()->move(kickerGoalPos);
 		robot()->dribble(50);
+		robot()->setVScale(0.8); // dampen velocity when near the ball
 
 		if (robot()->haveBall())
 		{
