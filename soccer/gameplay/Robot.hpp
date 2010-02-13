@@ -52,6 +52,10 @@ namespace Gameplay
 				return packet()->angle;
 			}
 			
+			void setVScale(float scale = 1.0) {
+				packet()->cmd.vScale = scale;
+			}
+
 			// Move to a particular point using the RRT planner
 			void move(Geometry2d::Point pt, bool stopAtEnd=true)
 			{
