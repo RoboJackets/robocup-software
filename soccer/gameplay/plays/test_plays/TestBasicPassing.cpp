@@ -55,6 +55,9 @@ bool Gameplay::Plays::TestBasicPassing::run()
 
 	_passer.run();
 	_receiver.run();
+
+	// indicate which robot is receiving
+	drawCircle(_receiver.robot()->pos(), Constants::Robot::Radius*1.1, 100, 100, 100);
 	
 	return true;
 }

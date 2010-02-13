@@ -72,6 +72,22 @@ namespace Gameplay
 				// velocity scaling close to the ball
 				float _ballHandlingScale;
 				float _ballHandlingRange;
+
+				// Kick evaluation via obstacles
+				Geometry2d::Segment evaluatePass(); /// finds a pass segment
+				Geometry2d::Segment evaluateShot(); /// finds a shot segment
+
+				// determining how hard to kick
+				int calcKickStrength(const Geometry2d::Point& targetCenter);
+
+				// checks whether other robots intersect the shot properly
+				bool checkRobotIntersections(const Geometry2d::Segment& shotLine);
+
+				// Individual state functions - these should execute a state's
+				// activities, and return what the next state should be
+				State intercept(const Geometry2d::Point& targetCenter);
+				State aim(const Geometry2d::Point& targetCenter, bool canKick);
+				State shoot(const Geometry2d::Point& targetCenter, int kickStrength);
 		};
 	}
 }
