@@ -5,17 +5,16 @@
 #include <QColor>
 #include "OptimizedPassing.hpp"
 
-#define TIMEMARGIN 3.5 // seconds a play can deviate from plan before abort
-#define ROBOTSUCCESSMARGIN 0.05 // if robot within this region, a move is complete
-#define ROBOTKICKSUCCESSMARGIN 0.05 // if kicking robot within this region, proceed to kick
-#define BALLSUCCESSMARGIN 0.2 // if robot within this region, a move is complete
-
 using namespace Geometry2d;
 using namespace std;
 
-Gameplay::Behaviors::OptimizedPassing::OptimizedPassing(GameplayModule *gameplay)
-: Behavior(gameplay), kicker(gameplay), interceptor(gameplay), analyticPlanner_(gameplay),
-  optimizer_(gameplay) {
+Gameplay::Behaviors::OptimizedPassing::OptimizedPassing(GameplayModule *gameplay,
+		double time_margin,
+		double robotsuccess_margin,
+		double ballsuccess_margin)
+: Behavior(gameplay), kicker(gameplay), interceptor(gameplay), time_margin_(time_margin),
+  robotsuccess_margin_(robotsuccess_margin), ballsuccess_margin_(ballsuccess_margin),
+  analyticPlanner_(gameplay), optimizer_(gameplay) {
 	_passState = Initializing;
 	newPassState = true;
 	passIndex = 0; // start the index after the first state (0)
@@ -66,7 +65,7 @@ bool Gameplay::Behaviors::OptimizedPassing::run(){
 		if(playTime < 0){playTime = currentTime;}
 
 
-		if((currentTime-playTime) - passState.timestamp >= TIMEMARGIN){
+		if((currentTime-playTime) - passState.timestamp >= time_margin_){
 			cout << "aborting due to invalid plan..." << endl; // abort plan
 			_passState = Done;
 		}else if(passState.stateType == PassState::INTERMEDIATE){
@@ -83,7 +82,7 @@ bool Gameplay::Behaviors::OptimizedPassing::run(){
 
 			float robot1GoalPosDist = passState.robot1->pos().distTo(passState.robot1Pos);
 			float robot2GoalPosDist = passState.robot2->pos().distTo(passState.robot2Pos);
-			if(robot1GoalPosDist < ROBOTSUCCESSMARGIN && robot2GoalPosDist < ROBOTSUCCESSMARGIN){
+			if(robot1GoalPosDist < robotsuccess_margin_ && robot2GoalPosDist < robotsuccess_margin_){
 				newPassState = true; // move complete, move to next state
 			}else{newPassState = false;}
 		}else if(passState.stateType==PassState::KICKPASS){
@@ -100,8 +99,8 @@ bool Gameplay::Behaviors::OptimizedPassing::run(){
 
 			float ballPosDist = passState.ballPos.distTo(ball().pos);
 			float robot2GoalPosDist = passState.robot2->pos().distTo(passState.robot2Pos);
-			bool ballMoved = ballPosDist > BALLSUCCESSMARGIN;
-			if(!kicker.run() && kicker.getState()==kicker.Done && ballMoved && robot2GoalPosDist < ROBOTSUCCESSMARGIN){
+			bool ballMoved = ballPosDist > ballsuccess_margin_;
+			if(!kicker.run() && kicker.getState()==kicker.Done && ballMoved && robot2GoalPosDist < robotsuccess_margin_){
 				newPassState = true; // pass complete, move to next state
 				passState.robot1->willKick = false; // do not leave robot in willKick state
 			}else{newPassState = false;}
@@ -113,7 +112,7 @@ bool Gameplay::Behaviors::OptimizedPassing::run(){
 			}
 
 			float ballPosDist = nextState.ballPos.distTo(ball().pos);
-			bool ballGoal = ballPosDist < BALLSUCCESSMARGIN;
+			bool ballGoal = ballPosDist < ballsuccess_margin_;
 			if(!kicker.run() && kicker.getState()==kicker.Done && ballGoal){
 				newPassState = true; // pass complete, move to next state
 				passState.robot2->willKick = false; // do not leave robot in willKick state

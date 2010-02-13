@@ -15,7 +15,10 @@ namespace Gameplay
 		{
 
 			public:
-				OptimizedPassing(GameplayModule *gameplay);
+				OptimizedPassing(GameplayModule *gameplay,
+						double time_margin = 3.5,
+						double robotsuccess_margin = 0.05,
+						double ballsuccess_margin = 0.2);
 
 				virtual void assign(std::set<Robot *> &available);
 
@@ -37,6 +40,11 @@ namespace Gameplay
 				int passIndex;
 				double playTime;
 				bool newPassState;
+
+				/// margins
+				double time_margin_;         /// seconds a play can deviate from plan before abort
+				double robotsuccess_margin_; /// if robot within this region, a move is complete
+				double ballsuccess_margin_;  /// if robot within this region, a move is complete
 
 				/// Pass Planning engine
 				AnalyticPassPlanner analyticPlanner_;
