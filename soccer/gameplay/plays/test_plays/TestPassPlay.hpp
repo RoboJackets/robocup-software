@@ -7,7 +7,8 @@
  *    3.) Underlying planner - low-level behaviors
  *          Actually executes plan
  *
- *  Currently, this is under development and should not be used.
+ *  This is currently just a skeleton play that drives the underlying OptmizedPassing
+ *  behavior.
  *
  *  Created on: Nov 29, 2009
  *      Author: Philip Rogers
@@ -17,16 +18,9 @@
 #pragma once
 
 #include <gameplay/Play.hpp>
-#include <gameplay/behaviors/Intercept.hpp>
-#include <gameplay/behaviors/Kick.hpp>
-#include <boost/foreach.hpp>
-#include <gameplay/optimizer/PassOptimizer.hpp>
-#include <gameplay/optimizer/PassConfig.hpp>
-#include <gameplay/optimizer/AnalyticPassPlanner.hpp>
+#include <gameplay/behaviors/OptimizedPassing.hpp>
 
 using namespace std;
-
-//typedef boost::ptr_vector<PassConfig> PassConfigVector;
 
 namespace Gameplay{
 	namespace Plays{
@@ -41,28 +35,7 @@ namespace Gameplay{
 				virtual bool run();
 
 			protected:
-				void initializePlan();
-
-				// passing system state
-				enum State{Initializing,Optimizing,Executing,Done};
-				State _passState;
-
-				AnalyticPassPlanner::PassConfigVector initialPlans;
-				PassConfig bestPassConfig;
-				Behaviors::Kick kicker;
-				Behaviors::Intercept interceptor;
-				int passIndex;
-				double playTime;
-				bool newPassState;
-
-				/// Pass Planning engine
-				AnalyticPassPlanner analyticPlanner_;
-
-				/// Optimization Engine
-				Optimization::PassOptimizer optimizer_;
-
-				/// storage of robot pointers
-				std::set<Robot *> full_available_;
+				Behaviors::OptimizedPassing passPlanner_;
 		};
 	}
 }

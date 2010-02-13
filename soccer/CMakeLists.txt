@@ -70,6 +70,7 @@ set (SRCS
 	gameplay/behaviors/Idle.cpp
 	gameplay/behaviors/Kick.cpp
 	gameplay/behaviors/Intercept.cpp
+	gameplay/behaviors/OptimizedPassing.cpp
 	gameplay/behaviors/positions/Goalie.cpp      
 	gameplay/behaviors/positions/Fullback.cpp
  	gameplay/behaviors/positions/Forward.cpp
