@@ -27,60 +27,60 @@ Gameplay::Optimization::PassOptimizer::~PassOptimizer() {}
 PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 		const PassConfig& init, bool verbose) const
 {
-	// create graph and config
-	shared_config config(new Config());
-	shared_graph graph(new Graph());
-
-	// initialize current positions of our robots
-	uint8_t nrSelf = 0;
-	BOOST_FOREACH(Gameplay::Robot * robot, gameplay_->self) {
-		if (robot->visible()) {
-			Point pos = robot->pos();
-			graph->add(RobotSelfConstraint(nrSelf, 0, pos));
-			config->insert(SelfKey(encodeID(nrSelf, 0)), rc2gt_Point2(pos));
-		}
-		++nrSelf;
-	}
-
-	// initialize current position for opp robots
-	uint8_t nrOpp = 5;
-	BOOST_FOREACH(Gameplay::Robot * robot, gameplay_->opp) {
-		if (robot->visible()) {
-			Point pos = robot->pos();
-			graph->add(RobotOppConstraint(nrOpp, 0, pos));
-			config->insert(OppKey(encodeID(nrOpp, 0)), rc2gt_Point2(pos));
-		}
-		++nrOpp;
-	}
-
-	// initialize ball
-	Point ballPos = gameplay_->state()->ball.pos;
-	graph->add(BallConstraint(0, ballPos));
-	config->insert(BallKey(0), rc2gt_Point2(ballPos));
-
-
-	// go through initial passconfig and initialize the graph and the config
-	BOOST_FOREACH(PassState s, init.passStateVector) {
-		switch (s.stateType) {
-		case PassState::INTERMEDIATE :
-			break;
-		case PassState::KICKPASS :
-			break;
-		case PassState::RECEIVEPASS :
-			break;
-		case PassState::KICKGOAL :
-			break;
-		}
-	}
-
-	// optimize
-	shared_ptr<Ordering> ordering(new Ordering(graph->getOrdering()));
-	Optimizer::shared_solver solver(new Optimizer::solver(ordering));
-	Optimizer optimizer(graph, config, solver);
-	double relThresh = 1e-3;
-	double absThresh = 1e-3;
-	size_t maxIt = 10;
-	Optimizer result = optimizer.levenbergMarquardt(relThresh, absThresh, Optimizer::SILENT, maxIt);
+//	// create graph and config
+//	shared_config config(new Config());
+//	shared_graph graph(new Graph());
+//
+//	// initialize current positions of our robots
+//	uint8_t nrSelf = 0;
+//	BOOST_FOREACH(Gameplay::Robot * robot, gameplay_->self) {
+//		if (robot->visible()) {
+//			Point pos = robot->pos();
+//			graph->add(RobotSelfConstraint(nrSelf, 0, pos));
+//			config->insert(SelfKey(encodeID(nrSelf, 0)), rc2gt_Point2(pos));
+//		}
+//		++nrSelf;
+//	}
+//
+//	// initialize current position for opp robots
+//	uint8_t nrOpp = 5;
+//	BOOST_FOREACH(Gameplay::Robot * robot, gameplay_->opp) {
+//		if (robot->visible()) {
+//			Point pos = robot->pos();
+//			graph->add(RobotOppConstraint(nrOpp, 0, pos));
+//			config->insert(OppKey(encodeID(nrOpp, 0)), rc2gt_Point2(pos));
+//		}
+//		++nrOpp;
+//	}
+//
+//	// initialize ball
+//	Point ballPos = gameplay_->state()->ball.pos;
+//	graph->add(BallConstraint(0, ballPos));
+//	config->insert(BallKey(0), rc2gt_Point2(ballPos));
+//
+//
+//	// go through initial passconfig and initialize the graph and the config
+//	BOOST_FOREACH(PassState s, init.passStateVector) {
+//		switch (s.stateType) {
+//		case PassState::INTERMEDIATE :
+//			break;
+//		case PassState::KICKPASS :
+//			break;
+//		case PassState::RECEIVEPASS :
+//			break;
+//		case PassState::KICKGOAL :
+//			break;
+//		}
+//	}
+//
+//	// optimize
+//	shared_ptr<Ordering> ordering(new Ordering(graph->getOrdering()));
+//	Optimizer::shared_solver solver(new Optimizer::solver(ordering));
+//	Optimizer optimizer(graph, config, solver);
+//	double relThresh = 1e-3;
+//	double absThresh = 1e-3;
+//	size_t maxIt = 10;
+//	Optimizer result = optimizer.levenbergMarquardt(relThresh, absThresh, Optimizer::SILENT, maxIt);
 
 	// reconstruct a passconfig
 	PassConfig optConfig(init);
