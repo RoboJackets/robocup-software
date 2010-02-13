@@ -109,5 +109,14 @@ namespace Gameplay
 		{
 			return _gameplay->opp[i];
 		}
+
+		// drawing functions - wraps the debug rendering
+		void drawText(const std::string& text, const Geometry2d::Point& pt, int r=0, int g=0, int b=0);
+		void drawText(const std::string& text, const Geometry2d::Point& pt, const QColor& color=Qt::black);
+		void drawLine(const Geometry2d::Segment& line, int r=0, int g=0, int b=0);
+		void drawLine(const Geometry2d::Segment& line, const QColor& color=Qt::black);
+		void drawCircle(const Geometry2d::Point& center, float radius, int r=0, int g=0, int b=0);
+		void drawCircle(const Geometry2d::Point& center, float radius, const QColor& color=Qt::black);
+
 	};
 }

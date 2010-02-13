@@ -45,7 +45,6 @@ void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
 	}
 
 	// draw debug text
-	// Currently doesn't work right
 	BOOST_FOREACH(const Packet::LogFrame::DebugText& tex, f.debugText)
 	{
 		p.setPen(QColor(tex.color[0], tex.color[1], tex.color[2]));
