@@ -5,6 +5,8 @@
 #include <gameplay/behaviors/Kick.hpp>
 #include <gameplay/behaviors/Move.hpp>
 
+#include <QTime>
+
 namespace Gameplay
 {
 	namespace Plays
@@ -29,16 +31,7 @@ namespace Gameplay
 				Behaviors::Kick _passer;
 				Behaviors::Move _receiver;
 
-				// passing system state
-				enum State
-				{
-					CreateTrajectory,
-					Positioning,
-					Execute,
-					Done
-				};
-
-				State _passState;
+				QTime _doneTime;
 		};
 	}
 }

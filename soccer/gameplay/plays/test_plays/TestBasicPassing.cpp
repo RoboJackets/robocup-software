@@ -15,7 +15,6 @@ Gameplay::Plays::TestBasicPassing::TestBasicPassing(GameplayModule *gameplay):
 	_passer(gameplay),
 	_receiver(gameplay)
 {
-	_passState = CreateTrajectory;
 }
 
 bool Gameplay::Plays::TestBasicPassing::applicable()
@@ -33,11 +32,23 @@ void Gameplay::Plays::TestBasicPassing::assign(set<Robot *> &available)
 
 bool Gameplay::Plays::TestBasicPassing::run()
 {
-	if (!_gameplay->state()->gameState.playing())
+	bool done = _passer.getState() == Behaviors::Kick::Done;
+	if (done)
+	{
+		if (_doneTime.isNull())
+		{
+			_doneTime = QTime::currentTime();
+		}
+	} else {
+		_doneTime = QTime();
+	}
+
+	if (!_gameplay->state()->gameState.playing() ||
+		(!_doneTime.isNull() && _doneTime.msecsTo(QTime::currentTime()) >= 5000))
 	{
 		_passer.restart();
 	}
-
+	
 	_receiver.face = _passer.robot()->pos();
 	_receiver.target = _receiver.robot()->pos();
 
