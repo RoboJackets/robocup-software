@@ -3,6 +3,7 @@
 #include "../Window.hpp"
 
 #include <boost/foreach.hpp>
+#include <boost/format.hpp>
 
 using namespace std;
 using namespace Utils;
@@ -42,7 +43,7 @@ void Gameplay::Behaviors::Kick::assign(set<Robot *> &available)
 	_robots.clear(); // clear existing robots
 	_intercept->robots().clear();
 	takeBest(available);
-	
+
 	if (!_win)
 	{
 		_win = new WindowEvaluator(_gameplay->state());
@@ -103,17 +104,14 @@ bool Gameplay::Behaviors::Kick::run()
 	bool intersectsRobot = checkRobotIntersections(shotLine);
 
 	// canKick is true if the robot is facing the target and the ball is between the robot and the target.
-	bool canKick = intersectedTarget && robot()->haveBall() && !intersectsRobot && robot()->charged();
+	// FIXME: appears to never be able to kick, so it never gets to the Shoot state
+	bool canKick = intersectedTarget;
+				   robot()->haveBall() &&
+				   !intersectsRobot &&
+				   robot()->charged();
+	//if (canKick) cout << "Kicking is possible!" << endl;
 
 	//debug("%d ", canKick);
-
-#if 0
-	if (_state == Shoot && !canKick)
-	{
-		debug("Abort shoot, ball out of range\n");
-		_state = Turn;
-	}
-#endif
 
 	// keep track of state transitions
 	State oldState = _state;
@@ -121,13 +119,17 @@ bool Gameplay::Behaviors::Kick::run()
 	Point textOffset(Constants::Robot::Radius*1.3, 0.0);
 
 	// keep a set of thresholds for aiming and shooting
-	const float aimThresh = Constants::Robot::Radius * 1.2;
+	const float aimThresh = Constants::Robot::Radius * 1.4;
 
 	// STATE TRANSITION OVERRIDES
 	//if we already have the ball, skip approach states
 	if (_state == Intercept && robot()->haveBall())
 	{
 		//cout << "Intercept succeded - switching to aim" << endl;
+		_state = Aim;
+		_pivot = ballPos;
+	} else if (_state == Intercept && pos.distTo(ballPos) < aimThresh) {
+		//cout << "Close enough to ball, switching to aim" << endl;
 		_state = Aim;
 		_pivot = ballPos;
 	} else if (_state == Aim && !robot()->haveBall() && pos.distTo(ballPos) > aimThresh)
@@ -154,7 +156,7 @@ bool Gameplay::Behaviors::Kick::run()
 	case Done: // do nothing
 		break;
 	}
-	
+
 	return _state != Done;
 }
 
@@ -179,7 +181,7 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 
 	// prepare the robot for kicking
 	robot()->willKick = true;
-	robot()->dribble(50);
+	robot()->dribble(30); // previously 50, set lower to prevent unintentional yanking
 
 	const float clearance = Constants::Ball::Radius + Constants::Robot::Radius;
 
@@ -190,6 +192,15 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 
 	Geometry2d::Line line(ballPos, ballPos + ballVel);
 	Geometry2d::Point intercept = line.nearestPoint(pos);
+
+	// show an ideal line from ball to target
+	drawLine(Segment(ballPos, targetCenter), 255, 0, 0); // red
+
+	// show a line along the likely shot if fired now
+	drawLine(Segment(pos, pos + (ballPos-pos).normalized()*2.0f), 0, 0, 200); // blue
+
+	// middle of shot arc - used for drawing text
+	const Geometry2d::Point shotTextPoint = Segment(ballPos, targetCenter).center();
 
 	// Vectors from ball to extents of target
 	Geometry2d::Point v0 = (_target.pt[0] - ballPos).normalized();
@@ -205,8 +216,7 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 	float ra = robot()->angle();
 	// 		float ba = (ballPos - pos).angle() * RadiansToDegrees;
 
-	Geometry2d::Point m = ballPos + (pos - ballPos).normalized()
-							* clearance;
+	Geometry2d::Point m = ballPos + (pos - ballPos).normalized() * clearance;
 	if (pos.nearPoint(m, Constants::Robot::Radius))
 	{
 		debug("pivot  ");
@@ -236,13 +246,15 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 	bool shotAvailable = false;
 	if (canKick)
 	{
-		float margin = max(fixAngleDegrees(ra - g0), fixAngleDegrees(g1
-				- ra));
+		// FIXME: never gets here!
+		cout << "Kicking possible" << endl;
+		float margin = max(fixAngleDegrees(ra - g0), fixAngleDegrees(g1 - ra));
 
 		float threshold = 0.9f * (g1 - g0) / 2;
 		debug(
 				"goal %.1f, %.1f ball %.1f robot %.1f margin %.1f threshold %.1f\n",
 				g0, g1, ba, ra, margin, threshold);
+		drawText(str(boost::format("M:%f") % margin), shotTextPoint, 0, 0, 0);
 		if (margin > threshold || margin <= _lastMargin)
 		{
 			if (ballPos.nearPoint(pos, clearance + Constants::Robot::Radius))

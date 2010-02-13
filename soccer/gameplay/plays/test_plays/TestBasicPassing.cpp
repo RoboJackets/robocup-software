@@ -26,7 +26,7 @@ void Gameplay::Plays::TestBasicPassing::assign(set<Robot *> &available)
 {
 	_passer.assign(available);
 	_receiver.assign(available);
-	
+
 	_passer.targetRobot = _receiver.robot();
 }
 
@@ -49,7 +49,7 @@ bool Gameplay::Plays::TestBasicPassing::run()
 	{
 		_passer.restart();
 	}
-	
+
 	_receiver.face = _passer.robot()->pos();
 	_receiver.target = _receiver.robot()->pos();
 
@@ -57,7 +57,7 @@ bool Gameplay::Plays::TestBasicPassing::run()
 	_receiver.run();
 
 	// indicate which robot is receiving
-	drawCircle(_receiver.robot()->pos(), Constants::Robot::Radius*1.1, 100, 100, 100);
-	
+	drawCircle(_receiver.robot()->pos(), Constants::Robot::Radius*1.2, 100, 100, 100);
+
 	return true;
 }
