@@ -1,16 +1,9 @@
-/*
- * TestBasicPassing.hpp
- *
- *  Created on: Nov 8, 2009
- *      Author: alexgc
- */
-
 #pragma once
 
 #include "../../Play.hpp"
 
-#include <gameplay/behaviors/test/Passer.hpp>
-#include <gameplay/behaviors/test/Receiver.hpp>
+#include <gameplay/behaviors/Kick.hpp>
+#include <gameplay/behaviors/Move.hpp>
 
 namespace Gameplay
 {
@@ -21,8 +14,7 @@ namespace Gameplay
 			public:
 				TestBasicPassing(GameplayModule *gameplay);
 
-				// test plays always return applicable
-				virtual bool applicable() {return true;}
+				virtual bool applicable();
 
 				/** Passing test needs two robots to work */
 				virtual void assign(std::set<Robot *> &available);
@@ -34,11 +26,8 @@ namespace Gameplay
 				/** one robot is the passer, the other is the receiver
 				 * These will switch as necessary
 				 */
-				Behaviors::Passer _passer;
-				Behaviors::Receiver _receiver;
-
-				// trajectory components
-				Geometry2d::Line _trajectory;
+				Behaviors::Kick _passer;
+				Behaviors::Move _receiver;
 
 				// passing system state
 				enum State
