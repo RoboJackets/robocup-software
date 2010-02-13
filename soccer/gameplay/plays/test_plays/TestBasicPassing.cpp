@@ -32,6 +32,7 @@ void Gameplay::Plays::TestBasicPassing::assign(set<Robot *> &available)
 
 bool Gameplay::Plays::TestBasicPassing::run()
 {
+	_passer.setVScale(0.8, 0.3);
 	bool done = _passer.getState() == Behaviors::Kick::Done;
 	if (done)
 	{

@@ -41,6 +41,15 @@ namespace Gameplay
 				/** Restarts the kick play - keep going after ball */
 				void restart() {_state = Intercept;}
 
+				/**
+				 * velocity bounding close to the ball
+				 * Set scale to 1.0 for no thresholding
+				 */
+				void setVScale(float scale, float range) {
+					_ballHandlingScale = scale;
+					_ballHandlingRange = range;
+				}
+
 			protected:
 				virtual float score(Robot* robot);
 
@@ -59,6 +68,10 @@ namespace Gameplay
 
 				Geometry2d::Point _shootMove;
 				Geometry2d::Point _shootBallStart;
+
+				// velocity scaling close to the ball
+				float _ballHandlingScale;
+				float _ballHandlingRange;
 		};
 	}
 }

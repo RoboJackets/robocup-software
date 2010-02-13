@@ -17,7 +17,7 @@ using namespace Geometry2d;
 #endif
 
 Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay) :
-	Behavior(gameplay)
+	Behavior(gameplay), _ballHandlingScale(1.0), _ballHandlingRange(0.5)
 {
 	automatic = true;
 	_win = 0;
@@ -233,6 +233,12 @@ bool Gameplay::Behaviors::Kick::run()
 	{
 		debug("Aim: ");
 
+		// scale velocity due to range
+		if (targetCenter.distTo(robot()->pos()) <= _ballHandlingRange) {
+			robot()->setVScale(_ballHandlingScale);
+		}
+
+		// prepare the robot for kicking
 		robot()->willKick = true;
 		robot()->dribble(50);
 
