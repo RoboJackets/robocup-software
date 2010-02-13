@@ -8,7 +8,7 @@
 
 using namespace Constants;
 
-void drawRobot(QPainter& painter, Team t, int ID, Geometry2d::Point pos, float theta, Team viewTeam, QString text, bool haveBall)
+void drawRobot(QPainter& painter, Team t, int ID, Geometry2d::Point pos, float theta, Team viewTeam, bool haveBall)
 {
 	painter.setPen(Qt::white);
 	painter.setBrush(Qt::NoBrush);
@@ -22,12 +22,6 @@ void drawRobot(QPainter& painter, Team t, int ID, Geometry2d::Point pos, float t
 	painter.scale(.008, -.008);
 	
 	painter.drawText(-5, 6, QString::number(ID));
-	
-	if (!text.isEmpty())
-	{
-		QRect r = painter.boundingRect(0, 0, 0, 0, 0, text);
-		painter.drawText(-r.width() / 2, 24, text);
-	}
 	
 	painter.restore();
 	

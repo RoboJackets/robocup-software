@@ -104,7 +104,7 @@ void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
 		{
 			if (r.valid)
 			{
-				drawRobot(p, f.team, r.shell, r.pos, r.angle, f.team, QString::fromStdString(r.behaviorName), r.haveBall);
+				drawRobot(p, f.team, r.shell, r.pos, r.angle, f.team, r.haveBall);
 			}
 		}
 
@@ -113,7 +113,7 @@ void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
 		{
 			if (r.valid)
 			{
-				drawRobot(p, opp, r.shell, r.pos, r.angle, f.team, QString::fromStdString(r.behaviorName), r.haveBall);
+				drawRobot(p, opp, r.shell, r.pos, r.angle, f.team, r.haveBall);
 			}
 		}
 

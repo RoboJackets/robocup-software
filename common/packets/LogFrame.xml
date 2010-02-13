@@ -61,8 +61,6 @@
 		
 		<!-- radio rx packet for the robot -->
 		<member type="RadioRx" name="radioRx" />
-		
-		<member type="string" name="behaviorName" />
 	</struct>
 
 	<!-- post processed ball information -->
