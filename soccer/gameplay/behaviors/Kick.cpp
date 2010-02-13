@@ -120,6 +120,9 @@ bool Gameplay::Behaviors::Kick::run()
 	QColor toggle = Qt::magenta, stable = Qt::black;
 	Point textOffset(Constants::Robot::Radius*1.3, 0.0);
 
+	// keep a set of thresholds for aiming and shooting
+	const float aimThresh = Constants::Robot::Radius * 1.2;
+
 	// STATE TRANSITION OVERRIDES
 	//if we already have the ball, skip approach states
 	if (_state == Intercept && robot()->haveBall())
@@ -127,7 +130,7 @@ bool Gameplay::Behaviors::Kick::run()
 		//cout << "Intercept succeded - switching to aim" << endl;
 		_state = Aim;
 		_pivot = ballPos;
-	} else if (_state == Aim && !robot()->haveBall())
+	} else if (_state == Aim && !robot()->haveBall() && pos.distTo(ballPos) > aimThresh)
 	{
 		//cout << "Lost ball - switching to intercept" << endl;
 		_state = Intercept;
