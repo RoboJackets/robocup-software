@@ -6,6 +6,7 @@
 #include <Utils.hpp>
 #include <Geometry2d/util.h>
 
+#include <iostream>
 #include <unistd.h>
 
 #include <boost/foreach.hpp>
@@ -14,6 +15,8 @@
 #include <vision/messages_robocup_ssl_detection.pb.h>
 #include <vision/messages_robocup_ssl_wrapper.pb.h>
 #include <vision/messages_robocup_ssl_geometry.pb.h>
+
+using namespace std;
 
 void convert_robot(const Packet::Vision::Robot &robot, SSL_DetectionRobot *out)
 {
@@ -26,8 +29,8 @@ void convert_robot(const Packet::Vision::Robot &robot, SSL_DetectionRobot *out)
 	out->set_pixel_y(robot.pos.y * 1000);
 }
 
-VisionGen::VisionGen(Env* env, unsigned int id) :
-	_env(env), _running(true)
+VisionGen::VisionGen(Env* env, unsigned int id, bool useNoisy) :
+	_useNoisy(useNoisy), _env(env), _running(true)
 {
     _id = id;
     _fps = 60;
@@ -51,8 +54,16 @@ void VisionGen::run()
     while (_running)
     {
 		//get latest vision data from environment
-		Packet::Vision vision = _env->vision();
+		Packet::Vision vision = _env->vision(), cleanVision = _env->vision();
 		
+		// if this is the first frame, copy in current vision packet
+		if (frame_number == 0)
+			_oldPacket = vision;
+
+		// add noise to the vision packet as necessary
+		if (_useNoisy)
+			addNoise(vision);
+
 		//fake vision processing time
 		QThread::msleep(5);
 		
@@ -67,18 +78,21 @@ void VisionGen::run()
 		det->set_t_capture(tv.tv_sec + (double)tv.tv_usec * 1.0e-6);
 		det->set_t_sent(det->t_capture());
 		
+		// copy in the yellow team
 		BOOST_FOREACH(Packet::Vision::Robot &robot, vision.yellow)
 		{
 			SSL_DetectionRobot *out = det->add_robots_yellow();
 			convert_robot(robot, out);
 		}
 		
+		// copy in the blue team
 		BOOST_FOREACH(Packet::Vision::Robot &robot, vision.blue)
 		{
 			SSL_DetectionRobot *out = det->add_robots_blue();
 			convert_robot(robot, out);
 		}
 		
+		// copy in the ball
 		BOOST_FOREACH(Packet::Vision::Ball &ball, vision.balls)
 		{
 			SSL_DetectionBall *out = det->add_balls();
@@ -88,7 +102,11 @@ void VisionGen::run()
 			out->set_pixel_x(ball.pos.x * 1000);
 			out->set_pixel_y(ball.pos.y * 1000);
 		}
-		
+
+		// remember the vision packet for next frame
+		// always remember the clean version of the packet so noise doesn't stack
+		_oldPacket = cleanVision;
+
 		//FIXME - Field geometry
 		
 		std::string buf;
@@ -98,4 +116,29 @@ void VisionGen::run()
 		//camera pause for cycle (minus fake processing time)
 		QThread::msleep(msecs - 5);
     }
+}
+
+
+// constants that describe thresholds for noisy driving
+const double maxSpeed = 5.0; /// (m/s) If ball is faster than this, ball is dropped
+
+void VisionGen::addNoise(Packet::Vision& vision) {
+	// handle ball noise
+	if (vision.balls.size() == _oldPacket.balls.size()) {
+		size_t nrBalls = 0;
+		bool ball_disappears = false;
+		BOOST_FOREACH (Packet::Vision::Ball& ball, vision.balls) {
+			Geometry2d::Point ballPos = ball.pos;
+			Geometry2d::Point oldBallPos = _oldPacket.balls.at(nrBalls).pos;
+			double curSpeed = ballPos.distTo(oldBallPos) * _fps;
+			if (curSpeed > maxSpeed)
+				ball_disappears = true;
+			++nrBalls;
+		}
+
+		// kill ball detection
+		if (ball_disappears) {
+			vision.balls.clear();
+		}
+	}
 }

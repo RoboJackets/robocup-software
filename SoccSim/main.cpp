@@ -12,7 +12,7 @@
 
 void usage(const char* prog)
 {
-    printf("usage: %s -c <config file> [--ui]\n", prog);
+    printf("usage: %s -c <config file> [--ui] [--noisy]\n", prog);
 }
 
 int main(int argc, char* argv[])
@@ -24,6 +24,7 @@ int main(int argc, char* argv[])
 
     char* configFile = 0;
 	bool useGUI = false;
+	bool useNoisy = false;
 
     //loop arguments and look for config file
     for (int i=1 ; i<argc ; ++i)
@@ -43,9 +44,9 @@ int main(int argc, char* argv[])
                 printf ("Expected config file after -c parameter\n");
                 return 0;
             }
-        }
-        else
-        {
+        } else if (strcmp(argv[i], "--noisy") == 0) {
+        	useNoisy = true;
+        } else {
             printf("%s is not recognized as a valid flag\n", argv[i]);
             return 0;
         }
@@ -66,10 +67,10 @@ int main(int argc, char* argv[])
     CommandReceiver cmd(env);
     cmd.start();
 
-    VisionGen vision0(env, 0);
+    VisionGen vision0(env, 0, useNoisy);
     vision0.start();
     
-    //VisionGen vision1(env, 1);
+    //VisionGen vision1(env, 1); // old code for multiple cameras
     //vision1.start();
 
     Radio radioBlue(Blue, *env);

@@ -36,7 +36,6 @@ bool Gameplay::Plays::TestBasicPassing::run()
 	bool done = _passer.getState() == Behaviors::Kick::Done;
 	if (done)
 	{
-		cout << "Done for now" << endl;
 		if (_doneTime.isNull())
 		{
 			_doneTime = QTime::currentTime();
