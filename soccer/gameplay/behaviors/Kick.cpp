@@ -104,8 +104,7 @@ bool Gameplay::Behaviors::Kick::run()
 	bool intersectsRobot = checkRobotIntersections(shotLine);
 
 	// canKick is true if the robot is facing the target and the ball is between the robot and the target.
-	// FIXME: appears to never be able to kick, so it never gets to the Shoot state
-	bool canKick = intersectedTarget;
+	bool canKick = intersectedTarget &&
 				   robot()->haveBall() &&
 				   !intersectsRobot &&
 				   robot()->charged();
@@ -132,7 +131,7 @@ bool Gameplay::Behaviors::Kick::run()
 		//cout << "Close enough to ball, switching to aim" << endl;
 		_state = Aim;
 		_pivot = ballPos;
-	} else if (_state == Aim && !robot()->haveBall() && pos.distTo(ballPos) > aimThresh)
+	} else if (_state == Aim && (!robot()->haveBall() || pos.distTo(ballPos) > aimThresh))
 	{
 		//cout << "Lost ball - switching to intercept" << endl;
 		_state = Intercept;
@@ -246,7 +245,6 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 	bool shotAvailable = false;
 	if (canKick)
 	{
-		// FIXME: never gets here!
 		cout << "Kicking possible" << endl;
 		float margin = max(fixAngleDegrees(ra - g0), fixAngleDegrees(g1 - ra));
 

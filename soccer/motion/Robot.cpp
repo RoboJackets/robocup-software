@@ -46,10 +46,10 @@ Robot::Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id) :
 {
 	_state = 0;
 	_self = 0;
-	
+
 	_planner.setDynamics(&_dynamics);
 	_planner.maxIterations(250);
-	
+
 
 	//since radio currently only handles 4 motors
 	//don't make axles (and thus don't drive) if not 4 configured
@@ -57,9 +57,9 @@ Robot::Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id) :
 	{
 		_axles.append(Axle(p.normalized()));
 	}
-	
+
 	_lastTimestamp = Utils::timestamp();
-	
+
 	_calibState = InitCalib;
 }
 
@@ -120,16 +120,16 @@ void Robot::proc()
 			_dynamics.setConfig(_self->config.motion);
 			_isConfigLoaded = true;
 		}
-		
+
 		// set the correct PID parameters for position and angle
 		_posPid.kp = _self->config.motion.pos.p;
 		_posPid.ki = _self->config.motion.pos.i;
 		_posPid.kd = _self->config.motion.pos.d;
-		
+
 		_anglePid.kp = _self->config.motion.angle.p;
 		_anglePid.ki = _self->config.motion.angle.i;
 		_anglePid.kd = _self->config.motion.angle.d;
-		
+
 		if (_state->gameState.state == GameState::Halt)
 		{
 			// don't do anything if we aren't transmitting to this robot
@@ -217,13 +217,13 @@ void Robot::proc()
 #else
 			calib();
 #endif
-			
+
 			_self->radioTx.valid = true;
 			_self->radioTx.board_id = _self->shell;
 		}
 	}
 	_lastTimestamp = _state->timestamp;
-	
+
 	_procMutex.unlock();
 }
 
@@ -234,13 +234,13 @@ void Robot::slow()
 void Robot::drawPath(QPainter& p)
 {
 	QMutexLocker ml(&_procMutex);
-	
+
 	// Draw a line from the robot directly to its goal
 	p.setPen(Qt::darkRed);
 	p.drawLine(_self->pos.toQPointF(), _self->cmd.goalPosition.toQPointF());
-	
+
 	_planner.draw(p);
-	
+
 	// Draw path
 	p.setPen(Qt::red);
 	const std::vector<Geometry2d::Point>& path = _path.points;
@@ -302,11 +302,15 @@ void Robot::scaleVelocity() {
 
 	const float maxVel = info.velocity * vscale;
 
-	// handle saturating the maximum velocity
+	// saturate translational velocity
 	if (_vel.mag() > maxVel)
 	{
 		_vel = _vel.normalized() * maxVel;
 	}
+
+	// scale the rotational velocity
+	_w *= vscale;
+
 }
 
 void Robot::sanityCheck(const unsigned int LookAheadFrames) {
@@ -362,53 +366,53 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 {
 	//TODO double check the field angle to robot angle conversions!
 	//robot space angle = Clipped(team space angle - robot angle)
-	
+
 	const float deltaT = (_state->timestamp - _lastTimestamp)/intTimeStampToFloat;
-	
+
 	// handle facing
 	if (_self->cmd.face != MotionCmd::None)
 	{
 		Geometry2d::Point orientation = _self->cmd.goalOrientation - _self->pos;
-		
+
 		//if the goal position and orientation are the same...use continuous mode
 		if (_self->cmd.goalOrientation == _self->cmd.goalPosition)
 		{
 			_self->cmd.face = MotionCmd::Continuous;
 		}
-		
+
 		if (_self->cmd.face == MotionCmd::Endpoint)
 		{
 			orientation = _self->cmd.goalOrientation - _self->cmd.goalPosition;
 		}
-		
+
 		const float angleErr = Utils::fixAngleDegrees(orientation.angle() * RadiansToDegrees - _self->angle);
-		
+
 		// Use pid to determine an angular velocity
 		_w = _anglePid.run(angleErr);
-		
+
 		//safety check to avoid singularities
 		float angle_thresh = 1e-2;
 		if (_self->cmd.goalOrientation.distTo(_self->pos) < angle_thresh)
 		{
 			_w = 0;
 		}
-		
+
 		/// limit the max rotation based on the full travel path
 		/// only if using endpoint mode
 		/// in continuous we do not limit
 		if (_self->cmd.face == MotionCmd::Endpoint)
 		{
 			const float fixedLength = _planner.fixedPathLength();
-			
+
 			if (fixedLength > 0)
 			{
 				//TODO recheck the dynamics calculation
 				//the times are too small
 				float maxW = fabs(angleErr/_dynamics.travelTime(fixedLength));
-				
+
 				//TODO remove magic number(dynamics travel time is too small)
 				maxW /= 10.0f;
-				
+
 				// check saturation of angular velocity
 				_w = saturate(_w, maxW, -maxW);
 			}
@@ -419,13 +423,17 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 		// No rotation, so set angular velocity to zero
 		_w = 0;
 	}
-	
+
+	// handle stopped condition
+//	if (fabs(_self->cmd.goalPosition.distTo(_self->pos)) < 1e-5) {
+//		_vel = Point(0.0f, 0.0f);
+//	}
 	// handle point-to-point driving without pivot
 	if (_self->cmd.pivot == Packet::MotionCmd::NoPivot)
 	{
 		//dynamics path
 		float length = _path.length();
-		
+
 		// handle direct point commands where the length may be very small
 		if (fabs(length) < 1e-5) {
 			length = _self->pos.distTo(_path.points[0]);
@@ -433,18 +441,18 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 
 		//target point is the last point on the closest segment
 		Geometry2d::Point targetPos = _path.points[0]; // first point
-		
+
 		if (_path.points.size() > 1)
 		{
 			targetPos = _path.points[1];
 		}
-		
+
 		//ideally we want to travel towards 2 points ahead...due to delays
 		if (_path.points.size() > 2)
 		{
 			targetPos = _path.points[2];
 		}
-		
+
 		//direction of travel
 		const Geometry2d::Point dir = targetPos - _self->pos;
 
@@ -454,33 +462,33 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 
 		// pull out the robot angle
 		const float robotAngle = _self->angle;
-		
+
 		//max velocity info is in the new desired velocity direction
-		Dynamics::DynamicsInfo info = _dynamics.info(dir.angle() * 
+		Dynamics::DynamicsInfo info = _dynamics.info(dir.angle() *
 			RadiansToDegrees - robotAngle, _w);
-		
+
 		// find magnitude of the velocity
 		const float vv = sqrtf(2 * length * info.deceleration);
-		
+
 		// create the velocity vector
 		Geometry2d::Point targetVel = dir.normalized() * vv;
-		
+
 		//last commanded velocity
 		Geometry2d::Point dVel = targetVel - _vel;
-		
+
 		//!!!acceleration is in the change velocity direction not travel direction
 		info = _dynamics.info(dVel.angle() * RadiansToDegrees - robotAngle, _w);
 		const float maxAccel = info.acceleration;
-		
+
 		//calc frame acceleration from total acceleration
 		const float frameAccel = deltaT * maxAccel;
-		
+
 		//use frame acceleration
 		dVel = dVel.normalized() * frameAccel;
-		
+
 		// adjust the velocity
 		_vel += dVel;
-		
+
 		// scale velocity due to commands
 		scaleVelocity();
 
@@ -489,7 +497,7 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 	{
 
 		Geometry2d::Point dir = _self->cmd.goalOrientation - _self->pos;
-		
+
 		//I know the perpCW is backwards...
 		//that is because to create a CW around object velocity I need
 		//to rotate the vector the other way
@@ -501,12 +509,12 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 		{
 			dir = dir.perpCW();
 		}
-		
+
 		dir = dir.normalized();
-		
+
 		_vel = dir * .4;
 	}
-	
+
 	// sanity check the velocities due to obstacles
 	const unsigned int LookAheadFrames = 5;
 	sanityCheck(LookAheadFrames);
@@ -658,48 +666,48 @@ void Robot::genMotor(bool old)
 		//amount of rotation out of max
 		//[-1...1]
 		float wPercent = 0;
-		
+
 		if (maxW != 0)
 		{
 			wPercent = w/maxW;
 		}
-		
+
 		if (wPercent > 1)
 		{
 			wPercent = 1;
 		}
-		
+
 		int8_t rotSpeed = 127 *  wPercent;
-		
+
 		for (unsigned int i=0 ; i<4; ++i)
 		{
 			_self->radioTx.motors[i] = rotSpeed;
 		}
-		
+
 		if (rotSpeed < 0)
 		{
 			rotSpeed = -rotSpeed;
 		}
-		
+
 		//max linear speed remaining
 		int8_t maxSpeed = 127 - rotSpeed;
-		
+
 		Geometry2d::Point rVel = _vel;
 		rVel.rotate(Point(), -_self->angle);
-		
+
 		Dynamics::DynamicsInfo info = _dynamics.info(rVel.angle() * RadiansToDegrees, 0);
-		
+
 		//vmax of the robot in desired velocity direction
 		const float vm = info.velocity;
-		
+
 		//limit max velocity in that direction
 		if (rVel.mag() > vm)
 		{
 			rVel = rVel.normalized() * vm;
 		}
-		
+
 		Geometry2d::Point vmax = rVel.normalized() * vm;
-		
+
 		float max = 0;
 		BOOST_FOREACH(Robot::Axle& axle, _axles)
 		{
@@ -709,7 +717,7 @@ void Robot::genMotor(bool old)
 				max = vwheel;
 			}
 		}
-		
+
 		int i=0;
 		BOOST_FOREACH(Robot::Axle& axle, _axles)
 		{
@@ -718,17 +726,17 @@ void Robot::genMotor(bool old)
 				printf("Radio packet does not support more than 4 wheels!\n");
 				break;
 			}
-			
+
 			//max ground velocity of the wheel
 			const float vwheel = axle.wheel.dot(rVel);
 			float per = vwheel/max;
-			
+
 			//this really won't happen because rVel has been limited to the right number
 			if (per > 1)
 			{
 				per = 1;
 			}
-			
+
 			_self->radioTx.motors[i] += int8_t(maxSpeed * per);
 			i++;
 		}
@@ -744,7 +752,7 @@ void Robot::genMotorOld() {
 	//convert the velocity command into robot space
 	Geometry2d::Point rVel = _vel;
 	rVel.rotate(Point(), -_self->angle);
-	
+
 	float maxGenWheelVel = 0;
 
 	BOOST_FOREACH(Robot::Axle& axle, _axles)

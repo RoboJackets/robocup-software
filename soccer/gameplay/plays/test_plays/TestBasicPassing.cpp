@@ -36,6 +36,7 @@ bool Gameplay::Plays::TestBasicPassing::run()
 	bool done = _passer.getState() == Behaviors::Kick::Done;
 	if (done)
 	{
+		cout << "Done for now" << endl;
 		if (_doneTime.isNull())
 		{
 			_doneTime = QTime::currentTime();
@@ -47,6 +48,7 @@ bool Gameplay::Plays::TestBasicPassing::run()
 	if (!_gameplay->state()->gameState.playing() ||
 		(!_doneTime.isNull() && _doneTime.msecsTo(QTime::currentTime()) >= 5000))
 	{
+		//cout << "Restarting kick behavior" << endl;
 		_passer.restart();
 	}
 

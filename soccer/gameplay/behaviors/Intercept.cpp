@@ -46,6 +46,9 @@ bool Gameplay::Behaviors::Intercept::run()
 	// Always face the ball
 	robot()->face(ballPos);
 
+	// default to full speed unless we are close to ball
+	robot()->setVScale(1.0f);
+
 	//if we already have the ball, skip approach states
 	if (robot()->haveBall())
 	{
@@ -64,6 +67,7 @@ bool Gameplay::Behaviors::Intercept::run()
 	{
 		drawText("ApproachFar", pos + textOffset, 0, 0, 0);
 		Geometry2d::Point dest = ballPos;
+
 
 		//if the ball is moving
 		//we first need to try and intercept it
