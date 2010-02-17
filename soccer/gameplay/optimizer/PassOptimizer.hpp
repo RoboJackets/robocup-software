@@ -31,6 +31,13 @@ namespace Gameplay
 			 */
 			PassConfig optimizePlan(const PassConfig& init, bool verbose = false) const;
 
+			/** parameters used in creation of a plan */
+			double fetchSigma;   /// determines how far to go while fetching
+			double passRecSigma; /// determines how far to go to receive pass
+			double reaimSigma;   /// determines how far to while reaiming
+			double shotLengthSigma; /// determines how much to shorten shots
+			double passLengthSigma; /// determines how much to shorten shots
+
 		protected:
 			/** the gameplay module link to get access to state information */
 			GameplayModule * gameplay_;

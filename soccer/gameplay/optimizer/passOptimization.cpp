@@ -17,7 +17,7 @@ using namespace Gameplay::Optimization;
 namespace gtsam {
 INSTANTIATE_NONLINEAR_FACTOR_GRAPH(Gameplay::Optimization::Config)
 INSTANTIATE_NONLINEAR_CONSTRAINT(Gameplay::Optimization::Config)
-INSTANTIATE_TUPLE_CONFIG3(Gameplay::Optimization::OppConfig, Gameplay::Optimization::SelfConfig, Gameplay::Optimization::BallConfig)
+INSTANTIATE_TUPLE_CONFIG2(Gameplay::Optimization::OppConfig, Gameplay::Optimization::SelfConfig)
 INSTANTIATE_NONLINEAR_OPTIMIZER(Gameplay::Optimization::Graph, Gameplay::Optimization::Config)
 }
 
@@ -31,6 +31,14 @@ Point2 Gameplay::Optimization::rc2gt_Point2(const Point& pt) {
 
 Point Gameplay::Optimization::gt2rc_Point2(const Point2& pt) {
 	return Point(pt.x(), pt.y());
+}
+
+Pose2 Gameplay::Optimization::rc2gt_Pose2(const Point& pt, float angle) {
+	return Pose2(pt.x, pt.y, angle);
+}
+
+pair<Point, float> Gameplay::Optimization::gt2rc_Pose2(const gtsam::Pose2& pt) {
+	return make_pair(Point(pt.x(), pt.y()), pt.theta());
 }
 
 size_t Gameplay::Optimization::encodeID(uint8_t robotNum, size_t frame_num) {
