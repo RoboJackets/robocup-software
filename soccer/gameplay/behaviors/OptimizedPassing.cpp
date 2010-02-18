@@ -23,11 +23,21 @@ Gameplay::Behaviors::OptimizedPassing::OptimizedPassing(GameplayModule *gameplay
 
 void Gameplay::Behaviors::OptimizedPassing::assign(set<Robot *> &available){
 	_passState = Initializing;
-	this->takeAll(available); // assign all robots from available to _robots
 
-	// make sure robots that are available are sufficient to create a pass
+	//this->takeAll(available); // assign all robots to _robots
+
+	// only take visible robots
+	// for final version, this check should go in the applicable() function of the play
+	_robots.clear();
 	int numVisible = 0;
-	BOOST_FOREACH(Robot *r, _robots){if(r->visible()){numVisible++;}}
+	BOOST_FOREACH(Robot *r, available){
+		if(r->visible()){
+			_robots.insert(r);
+			numVisible++;
+		}
+	}
+	available.clear();
+
 	if(numVisible < 2){
 		cout << "Not enough robots to plan with." << endl;
 		_passState = Done;
@@ -36,17 +46,16 @@ void Gameplay::Behaviors::OptimizedPassing::assign(set<Robot *> &available){
 
 bool Gameplay::Behaviors::OptimizedPassing::run(){
 	if (_passState == Initializing) { // do initialization here
-		initializePlan();
+		if(initializePlan()){
+			bestPassConfig = initialPlans[0];
+			cout << "Plan: " << bestPassConfig << endl;
+			_passState = Executing; // goto next state
 
-		bestPassConfig = initialPlans[0];
-		cout << "Plan: " << bestPassConfig << endl;
-
-		// goto next state
-		_passState = Executing;
-
-		passIndex = 0; // start the index after the first state (0)
-		playTime = -1; // set playTime to an invalid time
-
+			passIndex = 0; // start the index after the first state (0)
+			playTime = -1; // set playTime to an invalid time
+		}else{
+			return false; // no plans could be found
+		}
 	}
 
 	if (_passState == Executing) { // perform actual execution
@@ -179,33 +188,52 @@ bool Gameplay::Behaviors::OptimizedPassing::run(){
 	return true;
 }
 
-void Gameplay::Behaviors::OptimizedPassing::initializePlan(){
+bool Gameplay::Behaviors::OptimizedPassing::initializePlan(){
 	initialPlans.clear();
+
+	if(_robots.size() < 2)
+		return false; // not enough robots to play with
+
 	analyticPlanner_.generateAllConfigs(ball().pos,_robots,initialPlans);
+
+	if(initialPlans.size() == 0)
+		return false; // failed to generate plan
+
 	analyticPlanner_.evaluateConfigs(_robots,_gameplay->opp,initialPlans);
+
+	if(initialPlans.size() == 0)
+		return false; // no plans left after evaluation
 
 	// perform optimization on the first of the plans
 	AnalyticPassPlanner::PassConfigVector newConfigs;
 
 	//find a plan that uses a pass - AGC: we already hardcode this for now
-//	size_t idx = 0;
-//	BOOST_FOREACH(PassConfig cfg, initialPlans) {
-//		if (cfg.length() > 3) {
-//			break;
-//		}
-//		++idx;
-//	}
-
+	/*size_t idx = 0;
+	BOOST_FOREACH(PassConfig cfg, initialPlans) {
+		if (cfg.length() > 3) {
+			break;
+		}
+		++idx;
+	}*/
+	if(false){
+cout << "e1" << endl;
 	// optimize a plan, and then put both before and after in the ready location for render
 	PassConfig * opt = new PassConfig(optimizer_.optimizePlan(initialPlans[0], false));
+cout << "e2" << endl;
 	newConfigs.push_back(opt);
+cout << "e3" << endl;
 	newConfigs.push_back(new PassConfig(initialPlans[0]));
+cout << "e4" << endl;
 	analyticPlanner_.evaluateConfigs(_robots, _gameplay->opp, newConfigs);
 	//newConfigs.push_back(new PassConfig(initialPlans[idx]));
 	//cout << "Constructed both optimized and non-optimized plan" << endl;
+cout << "e5" << endl;
 
 	initialPlans.clear();
 	initialPlans = newConfigs;
+	}
+
+	return true;
 
 	//for(int i=0; i<(int)initialPlans.size(); i++)
 	//	cout << "passConfig(" << i << "): " << initialPlans[i] << endl;

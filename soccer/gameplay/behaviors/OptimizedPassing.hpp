@@ -27,7 +27,7 @@ namespace Gameplay
 				virtual bool done() { return _passState == Done; }
 
 			protected:
-				void initializePlan();
+				bool initializePlan();
 
 				// passing system state
 				enum State{Initializing,Optimizing,Executing,Done};
