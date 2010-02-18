@@ -121,7 +121,12 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 	double relThresh = 1e-3;
 	double absThresh = 1e-3;
 	size_t maxIt = 10;
-	Optimizer result = optimizer.levenbergMarquardt(relThresh, absThresh, Optimizer::SILENT, maxIt);
+
+// commented out due to crashing on my machine
+//	Optimizer result = optimizer.levenbergMarquardt(relThresh, absThresh, Optimizer::SILENT, maxIt);
+
+// temporary
+	Optimizer result = optimizer;
 
 	// reconstruct a passconfig by starting with initial config
 	Point2 defBallPos(Constants::Robot::Radius+Constants::Ball::Radius, 0.0f);

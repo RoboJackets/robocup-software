@@ -16,7 +16,7 @@ namespace Gameplay
 
 			public:
 				OptimizedPassing(GameplayModule *gameplay,
-						double time_margin = 3.5,
+						double time_margin = 5.5,
 						double robotsuccess_margin = 0.05,
 						double ballsuccess_margin = 0.2);
 

@@ -49,7 +49,7 @@ Ball::Ball(Env* env) :
 	_actor = _scene.createActor(actorDesc);
 	
 	//_actor->setLinearDamping (0.1f);
-	_actor->setAngularDamping (3.0f);
+	_actor->setAngularDamping (2.0f); // changed from 3 -> 2 to better match what we see on the field.
 	_actor->setMaxAngularVelocity (200.0f);
 
 	if (!_actor)
