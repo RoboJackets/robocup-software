@@ -105,7 +105,7 @@ bool Gameplay::Behaviors::Kick::run()
 
 	// canKick is true if the robot is facing the target and the ball is between the robot and the target.
 	bool canKick = intersectedTarget &&
-				   robot()->haveBall() &&
+				   /*robot()->haveBall() &&*/
 				   !intersectsRobot &&
 				   robot()->charged();
 	//if (canKick) cout << "Kicking is possible!" << endl;
@@ -118,7 +118,12 @@ bool Gameplay::Behaviors::Kick::run()
 	Point textOffset(Constants::Robot::Radius*1.3, 0.0);
 
 	// keep a set of thresholds for aiming and shooting
+	//const float aimThresh = Constants::Robot::Radius * 1.4;
+
+	// if intercepting and dist < aimThresh, enter aim state
 	const float aimThresh = Constants::Robot::Radius * 1.4;
+	// if aiming and dist > interceptThresh, enter intercept state
+	const float interceptThresh = Constants::Robot::Radius * 1.6;
 
 	// STATE TRANSITION OVERRIDES
 	//if we already have the ball, skip approach states
@@ -131,7 +136,7 @@ bool Gameplay::Behaviors::Kick::run()
 		//cout << "Close enough to ball, switching to aim" << endl;
 		_state = Aim;
 		_pivot = ballPos;
-	} else if (_state == Aim && (!robot()->haveBall() || pos.distTo(ballPos) > aimThresh))
+	} else if (_state == Aim && (!robot()->haveBall() && pos.distTo(ballPos) > interceptThresh))
 	{
 		//cout << "Lost ball - switching to intercept" << endl;
 		_state = Intercept;

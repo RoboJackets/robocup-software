@@ -71,7 +71,10 @@ bool Gameplay::Behaviors::Intercept::run()
 
 		//if the ball is moving
 		//we first need to try and intercept it
-		if (ballVel.mag() > .1)
+		bool skipBallVelocityCalc = true;
+// This is causing problems when the ball even has a low velocity
+// Disabled for now.
+		if (!skipBallVelocityCalc && ballVel.mag() > .1)
 		{
 			// Project the destination ahead far enough to account for movement
 			const float average_speed  = 2.0; // for the robot
@@ -121,7 +124,7 @@ bool Gameplay::Behaviors::Intercept::run()
 		// experimental 02/11/10
 		// kickerGoalPos is the target, instead of the ballpos
 		// hopefully, this will reduce ramming the ball.
-		Geometry2d::Point kickerGoalPos(robot()->pos() - ballPos);
+		Geometry2d::Point kickerGoalPos(ballPos-target);
 		kickerGoalPos = kickerGoalPos.normalized() * (Constants::Robot::Radius);
 		kickerGoalPos += ballPos;
 

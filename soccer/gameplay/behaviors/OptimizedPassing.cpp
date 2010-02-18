@@ -24,18 +24,18 @@ Gameplay::Behaviors::OptimizedPassing::OptimizedPassing(GameplayModule *gameplay
 void Gameplay::Behaviors::OptimizedPassing::assign(set<Robot *> &available){
 	_passState = Initializing;
 
-	//this->takeAll(available); // assign all robots to _robots
-
-	// only take visible robots
-	// for final version, this check should go in the applicable() function of the play
+	// remove non-visible robots
 	_robots.clear();
 	int numVisible = 0;
 	BOOST_FOREACH(Robot *r, available){
-		if(r->visible()){
-			_robots.insert(r);
+		if(!r->visible()){
+			available.erase(r);
+		}else{
 			numVisible++;
 		}
 	}
+
+	this->takeAll(available); // assign all robots to _robots
 	available.clear();
 
 	if(numVisible < 2){
@@ -215,23 +215,18 @@ bool Gameplay::Behaviors::OptimizedPassing::initializePlan(){
 		}
 		++idx;
 	}*/
-	if(false){
-cout << "e1" << endl;
+
 	// optimize a plan, and then put both before and after in the ready location for render
 	PassConfig * opt = new PassConfig(optimizer_.optimizePlan(initialPlans[0], false));
-cout << "e2" << endl;
 	newConfigs.push_back(opt);
-cout << "e3" << endl;
 	newConfigs.push_back(new PassConfig(initialPlans[0]));
-cout << "e4" << endl;
 	analyticPlanner_.evaluateConfigs(_robots, _gameplay->opp, newConfigs);
+
 	//newConfigs.push_back(new PassConfig(initialPlans[idx]));
 	//cout << "Constructed both optimized and non-optimized plan" << endl;
-cout << "e5" << endl;
 
 	initialPlans.clear();
 	initialPlans = newConfigs;
-	}
 
 	return true;
 

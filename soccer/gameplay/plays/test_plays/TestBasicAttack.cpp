@@ -1,5 +1,7 @@
 #include "TestBasicAttack.hpp"
 
+#include <boost/foreach.hpp>
+
 using namespace std;
 
 Gameplay::Plays::TestBasicAttack::TestBasicAttack(GameplayModule *gameplay):
@@ -15,6 +17,14 @@ bool Gameplay::Plays::TestBasicAttack::applicable()
 
 void Gameplay::Plays::TestBasicAttack::assign(set<Robot *> &available)
 {
+	// remove non-visible robots
+	// this prevents bug with 2-robot tests where play would do nothing
+	BOOST_FOREACH(Robot *r, available){
+		if(!r->visible()){
+			available.erase(r);
+		}
+	}
+
 	_kicker.assign(available);
 }
 
