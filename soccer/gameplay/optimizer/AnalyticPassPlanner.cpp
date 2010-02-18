@@ -110,10 +110,23 @@ void AnalyticPassPlanner::generateAllConfigs(const Point &ballPos, set<Robot *> 
 }
 
 void AnalyticPassPlanner::evaluateConfigs(set<Robot *> &robots, Robot** opponents, PassConfigVector &passConfigs){
+	Geometry2d::Point goalBallPos = Geometry2d::Point(0.0, Constants::Field::Length);
 	//
 	// Weight configs
 	//
 	PassState prevState;
+
+	// locate opponent's goalie by finding closest opponent to goal
+	Robot *oppGoalie = opponents[0];
+	float bestDist = oppGoalie->pos().distTo(goalBallPos), thisDist;
+	for (int i=0; i<Constants::Robots_Per_Team; ++i){
+		Robot *opponentR = opponents[i];
+		thisDist = opponentR->pos().distTo(goalBallPos);
+		if(thisDist < bestDist){
+			oppGoalie = opponentR;
+			bestDist = thisDist;
+		}
+	}
 
 	Planning::Path path;Motion::RRT::Planner planner;
 	ObstacleGroup og;
@@ -135,6 +148,7 @@ void AnalyticPassPlanner::evaluateConfigs(set<Robot *> &robots, Robot** opponent
 			PassState thisState = passConfigs[i].getPassState(j);
 			for (int i=0; i<Constants::Robots_Per_Team; ++i){
 				Robot *opponentR = opponents[i];
+				if(opponentR->id() == oppGoalie->id()){continue;} // do not consider opponent's goalie
 				og = opponentR->obstacles();
 				Motion::RRT::Planner planner;
 				planner.run(opponentR->pos(),opponentR->angle(),opponentR->vel(),thisState.ballPos,&og,path);
@@ -160,6 +174,7 @@ void AnalyticPassPlanner::evaluateConfigs(set<Robot *> &robots, Robot** opponent
 			Line ballPath(thisState.ballPos,prevState.ballPos);
 			for (int i=0; i<Constants::Robots_Per_Team; ++i){
 				Robot *opponentR = opponents[i];
+				if(opponentR->id() == oppGoalie->id()){continue;} // do not consider opponent's goalie
 				// use 1.5*Radius to give "wiggle room"
 				if(ballPath.distTo(opponentR->pos()) < (float)(Constants::Robot::Radius + 1.5*Constants::Ball::Radius)){
 					numInteractions++;
