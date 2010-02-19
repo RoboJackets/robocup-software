@@ -1,0 +1,4 @@
+#!/bin/sh
+for i in ../common/vision/*.proto; do
+    protoc $i --proto_path=../common/vision --python_out=.
+done
