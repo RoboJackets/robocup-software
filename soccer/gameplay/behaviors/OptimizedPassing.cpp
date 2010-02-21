@@ -135,23 +135,27 @@ bool Gameplay::Behaviors::OptimizedPassing::run(){
 			Line ballLine(ballVec * (-100) + ball().pos, ballVec * (100) + ball().pos);
 			Point interceptPoint;
 
-			if(!receiveLine.intersects(ballLine,&interceptPoint)){
-				interceptPoint = ball().pos;
-			}
+			if(!ball().valid || ball().vel.mag() > 0.9){ // use custom interceptor that stays near target receive pass position
+				if(!receiveLine.intersects(ballLine,&interceptPoint)){
+					interceptPoint = ball().pos;
+				}
+				if(ball().vel.mag() < 1.0){ // if ball is too slow, just go get it
+					interceptPoint = ball().pos;
+				}
+				// scale velocity due to range
+				if (interceptPoint.distTo(passState.robot2->pos()) <= _ballHandlingRange){
+					passState.robot2->setVScale(_ballHandlingScale);
+				}
 
-			if(ball().vel.mag() < 0.9){ // if ball is too slow, just go get it
-				interceptPoint = ball().pos;
+				passState.robot2->face(ball().pos);
+				passState.robot2->move(interceptPoint);
+				passState.robot2->dribble(50);
+				passState.robot2->willKick = true;
+			}else{ // use built-in interceptor behavior
+				interceptor.target = nextState.ballPos;
+				interceptor.assignOne(passState.robot2);
+				interceptor.run();
 			}
-
-			// scale velocity due to range
-			if (interceptPoint.distTo(passState.robot2->pos()) <= _ballHandlingRange){
-				passState.robot2->setVScale(_ballHandlingScale);
-			}
-
-			passState.robot2->face(ball().pos);
-			passState.robot2->move(interceptPoint);
-			passState.robot2->dribble(50);
-			passState.robot2->willKick = true;
 
 			if(passState.robot2->haveBall()){
 				_ballControlCounter++;
