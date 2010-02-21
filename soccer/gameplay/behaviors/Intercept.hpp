@@ -35,6 +35,9 @@ namespace Gameplay
 				
 				float _farDist; /// Distance threshold between near and far intercept
 
+				int _ballControlFrames; // number of frames the ball must be in roller before leaving intercept
+				int _ballControlCounter;
+
 		};
 	}
 }

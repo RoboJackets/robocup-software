@@ -239,7 +239,8 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 
 
 		// Pivot towards the target-ball line
-		robot()->pivot(_pivot, d < 0);
+		//robot()->pivot(_pivot, d < 0); // why not pivot around ball?
+		robot()->pivot(ball().pos, d < 0);
 	}
 	else
 	{

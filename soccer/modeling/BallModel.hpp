@@ -35,7 +35,7 @@ namespace Modeling
 				ABG
 			} mode_t;
 
-			BallModel(mode_t mode = KALMAN);
+			BallModel(mode_t mode = RBPF);
 
 			void observation(uint64_t time, const Geometry2d::Point &pos);
 

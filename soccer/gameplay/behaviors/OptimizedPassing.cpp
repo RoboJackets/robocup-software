@@ -15,6 +15,7 @@ Gameplay::Behaviors::OptimizedPassing::OptimizedPassing(GameplayModule *gameplay
 		bool enableOptimization)
 : Behavior(gameplay), kicker(gameplay), interceptor(gameplay), time_margin_(time_margin),
   robotsuccess_margin_(robotsuccess_margin), ballsuccess_margin_(ballsuccess_margin),
+  _ballHandlingRange(0.2), _ballControlFrames(10),
   analyticPlanner_(gameplay), enableOptimization_(enableOptimization), optimizer_(gameplay) {
 	_passState = Initializing;
 	newPassState = true;
@@ -74,20 +75,14 @@ bool Gameplay::Behaviors::OptimizedPassing::run(){
 		double currentTime = _gameplay->state()->timestamp / 1000000.0;
 		if(playTime < 0){playTime = currentTime;}
 
+		if(!passState.robot2->haveBall()){_ballControlCounter = 0;}; // reset ball counter
 
 		if((currentTime-playTime) - passState.timestamp >= time_margin_){
-			cout << "Time margin: " << time_margin_ << endl;
 			cout << "aborting due to invalid plan..." << endl; // abort plan
 			_passState = Done;
 		}else if(passState.stateType == PassState::INTERMEDIATE){
-			if(nextState.stateType == PassState::INTERMEDIATE){
-				passState.robot1->face(nextState.ballPos,true);
-				passState.robot2->face(passState.ballPos,true);
-			}else{
-				passState.robot1->face(nextState.ballPos,true);
-				passState.robot2->face(passState.ballPos,true);
-			}
-//			cout << "Before move issue 1" << endl;
+			passState.robot1->face(ball().pos,true);
+			passState.robot2->face(ball().pos,true);
 			passState.robot1->move(passState.robot1Pos);
 			passState.robot2->move(passState.robot2Pos);
 
@@ -98,9 +93,8 @@ bool Gameplay::Behaviors::OptimizedPassing::run(){
 			}else{newPassState = false;}
 		}else if(passState.stateType==PassState::KICKPASS){
 			// drive receiver to receive position
-//			cout << "Before move issue 2" << endl;
 			passState.robot2->move(passState.robot2Pos);
-			passState.robot2->face(passState.ballPos,true);
+			passState.robot2->face(ball().pos,true);
 
 			if(newPassState /*|| !kicker.assigned() || kicker.getState()==kicker.Done*/){
 				kicker.assignOne(passState.robot1);
@@ -127,7 +121,10 @@ bool Gameplay::Behaviors::OptimizedPassing::run(){
 			if(!kicker.run() && kicker.getState()==kicker.Done && ballGoal){
 				newPassState = true; // pass complete, move to next state
 				passState.robot2->willKick = false; // do not leave robot in willKick state
-			}else{newPassState = false;}
+			}else{
+				//if(kicker.getState()==kicker.Done){kicker.restart();}
+				newPassState = false;
+			}
 		}else if(passState.stateType==PassState::RECEIVEPASS){
 			newPassState = false;
 
@@ -142,22 +139,32 @@ bool Gameplay::Behaviors::OptimizedPassing::run(){
 				interceptPoint = ball().pos;
 			}
 
-			if(ball().vel.mag() < 0.1){ // if ball is too slow, just go get it
+			if(ball().vel.mag() < 0.9){ // if ball is too slow, just go get it
 				interceptPoint = ball().pos;
 			}
 
-//			cout << "intercept move " << endl;
+			// scale velocity due to range
+			if (interceptPoint.distTo(passState.robot2->pos()) <= _ballHandlingRange){
+				passState.robot2->setVScale(_ballHandlingScale);
+			}
+
 			passState.robot2->face(ball().pos);
 			passState.robot2->move(interceptPoint);
 			passState.robot2->dribble(50);
-			//passState.robot2->willKick = true;
+			passState.robot2->willKick = true;
 
 			if(passState.robot2->haveBall()){
-				if(passState.robot2->vel().mag() > 0.1){
-					passState.robot2->move(passState.robot2->pos());
-				}else{
+				_ballControlCounter++;
+				if(_ballControlCounter > _ballControlFrames){
 					newPassState = true;
+					// make sure to reset vscale
+					passState.robot1->setVScale(1.0);
+					passState.robot2->setVScale(1.0);
+				}else{
+					passState.robot2->move(passState.robot2->pos());
 				}
+			}else{
+				_ballControlCounter = 0; // reset counter
 			}
 		}
 

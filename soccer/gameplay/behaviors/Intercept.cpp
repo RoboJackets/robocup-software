@@ -8,7 +8,7 @@
 using namespace std;
 
 Gameplay::Behaviors::Intercept::Intercept(GameplayModule *gameplay, float dist) :
-	Behavior(gameplay), _farDist(dist)
+	Behavior(gameplay), _farDist(dist), _ballControlFrames(10)
 {
 }
 
@@ -34,6 +34,10 @@ bool Gameplay::Behaviors::Intercept::run()
 		return false;
 	}
 
+	if(!robot()->haveBall()){
+		_ballControlCounter = 0;
+	}
+
 	const Geometry2d::Point pos = robot()->pos();
 
 	// Get ball information
@@ -52,7 +56,12 @@ bool Gameplay::Behaviors::Intercept::run()
 	//if we already have the ball, skip approach states
 	if (robot()->haveBall())
 	{
-		_state = Done;
+		if(++_ballControlCounter > _ballControlFrames){
+			_state = Done;
+		}else{
+			//stop forward movement
+			robot()->move(robot()->pos());
+		}
 	}
 	else if (_state == ApproachBall)
 	{
@@ -65,19 +74,16 @@ bool Gameplay::Behaviors::Intercept::run()
 	//approach the ball at high speed facing the intended direction
 	if (_state == ApproachFar)
 	{
+
 		drawText("ApproachFar", pos + textOffset, 0, 0, 0);
 		Geometry2d::Point dest = ballPos;
 
-
 		//if the ball is moving
 		//we first need to try and intercept it
-		bool skipBallVelocityCalc = true;
-// This is causing problems when the ball even has a low velocity
-// Disabled for now.
-		if (!skipBallVelocityCalc && ballVel.mag() > .1)
+		if (ballVel.mag() > .1)
 		{
 			// Project the destination ahead far enough to account for movement
-			const float average_speed  = 2.0; // for the robot
+			const float average_speed  = 3.0; // for the robot
 			float travelTime = pos.distTo(ballPos)/average_speed;
 			dest += ballVel*travelTime;
 
@@ -134,11 +140,21 @@ bool Gameplay::Behaviors::Intercept::run()
 
 		if (robot()->haveBall())
 		{
-			_state = Done;
+			if(++_ballControlCounter > _ballControlFrames){
+				_state = Done;
+			}else{
+				//stop forward movement
+				robot()->move(robot()->pos());
+			}
 
-			//stop forward movement
-			robot()->move(pos);
 		}
+	}
+
+	if(_state == Done){
+		// return to full vscale
+		robot()->setVScale(1.0);
+		//stop forward movement
+		//robot()->move(pos);
 	}
 
 	return _state != Done;

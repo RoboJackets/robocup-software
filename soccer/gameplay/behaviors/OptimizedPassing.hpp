@@ -58,6 +58,13 @@ namespace Gameplay
 				double robotsuccess_margin_; /// if robot within this region, a move is complete
 				double ballsuccess_margin_;  /// if robot within this region, a move is complete
 
+				// velocity scaling close to the ball
+				float _ballHandlingScale;
+				float _ballHandlingRange;
+
+				int _ballControlFrames; // number of frames the ball must be in roller before leaving intercept
+				int _ballControlCounter;
+
 				/// Pass Planning engine
 				AnalyticPassPlanner analyticPlanner_;
 
