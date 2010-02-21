@@ -40,6 +40,7 @@
 #include "plays/test_plays/TestGUI.hpp"
 #include "plays/test_plays/TestIntercept.hpp"
 #include "plays/test_plays/TestBallSpeed.hpp"
+#include "plays/test_plays/TestPassExperiment1.hpp"
 
 #include <QMouseEvent>
 #include <QFileDialog>
@@ -157,6 +158,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_playConfig->addPlay(make_shared<Plays::OptimizedOffense>(this));
 
 	// Add testing plays
+	_playConfig->addPlay(make_shared<Plays::TestPassExperiment1>(this));
 	_playConfig->addPlay(make_shared<Plays::TestBasicPassing>(this));
 	_playConfig->addPlay(make_shared<Plays::TestBasicAttack>(this));
 	_playConfig->addPlay(make_shared<Plays::TestPassPlay>(this));

@@ -93,6 +93,9 @@ set (SRCS
 	gameplay/plays/test_plays/TestPassConfigOptimize.cpp
 	gameplay/optimizer/PassOptimizer.cpp
 
+	# files for pass experiments
+	gameplay/plays/test_plays/TestPassExperiment1.cpp
+
 # 	gameplay/behaviors/test/KickerCalibration.cpp   
 # 	gameplay/behaviors/test/MotionLeader.cpp    
 
