@@ -55,7 +55,7 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 	}
 
 	// DEBUGGING: a model for priors
-	SharedDiagonal prior_model = noiseModel::Isotropic::Sigma(3, 0.2);
+	SharedDiagonal prior_model = noiseModel::Isotropic::Sigma(3, 10.0);
 
 
 	// store shells for robots so we don't copy them in multiple times
@@ -102,7 +102,7 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 			// initialize with receive state for robot 2
 			config->insert(SelfKey(encodeID(r2id, 2)), r2pos);
 
-			// PLACEHOLDER: add a prior to the new pos
+			// add a prior to the new pos
 			graph->add(SelfPrior(SelfKey(encodeID(r2id, 2)), r2pos, prior_model));
 
 			// add driving factors from initial state to final state
@@ -117,7 +117,7 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 			// initialize reaim state for robot 2
 			config->insert(SelfKey(encodeID(r2id, 3)), r2pos);
 
-			// PLACEHOLDER: add a prior to the new pos
+			// add a prior to the new pos
 			graph->add(SelfPrior(SelfKey(encodeID(r2id, 3)), r2pos, prior_model));
 
 			// add aiming factor from previous state
