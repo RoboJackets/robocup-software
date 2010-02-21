@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <gameplay/Play.hpp>
+#include <gameplay/optimizer/AnalyticPassPlanner.hpp>
 #include <gameplay/optimizer/PassConfig.hpp>
 #include <gameplay/optimizer/PassOptimizer.hpp>
 
@@ -41,13 +42,17 @@ namespace Gameplay
 				/** state to handle initialization and execution */
 				typedef enum {
 					INIT,
-					OPTIMIZE,
+					SHOW,
 					DONE
 				} TestState;
 				TestState testState_;
 
+				/** initial plan generator */
+				AnalyticPassPlanner analyticPlanner_;
+
 				/** optimizer engine */
 				Optimization::PassOptimizer optimizer_;
+
 		};
 	}
 }

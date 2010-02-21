@@ -94,12 +94,9 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 			// initialize the fetch state for robot 1
 			config->insert(SelfKey(encodeID(r1id, 2)), r1pos);
 
-			// add a prior to avoid large jumps
-			graph->add(SelfPrior(SelfKey(encodeID(r1id, 1)), r1pos, prior_model));
-
-			// add driving factors from initial state to final state
-			graph->add(PathShorteningFactor(SelfKey(encodeID(r1id, 1)),
-											SelfKey(encodeID(r1id, 2)), fetchSigma));
+			// add a constraint for this pose, as it is entirely determined by the
+			// ball position
+			graph->add(SelfConstraint(SelfKey(encodeID(r1id, 2)), r1pos));
 			break;
 		case PassState::RECEIVEPASS :
 			// initialize with receive state for robot 2
