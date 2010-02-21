@@ -68,7 +68,7 @@ void Modeling::BallModel::initKalman() {
 	Q(2,2) = Q(5,5) = 10;
 
 	//Measurement Covariance for position in the x and the y
-	R(0,0) = R(1,1) = 0.1;
+	R(0,0) = R(1,1) = 0.84;
 
 	//Measurement Model. We can only measure position
 	H(0,0) = H(1,3) = 1;

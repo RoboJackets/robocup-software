@@ -135,7 +135,7 @@ bool Gameplay::Behaviors::OptimizedPassing::run(){
 			Line ballLine(ballVec * (-100) + ball().pos, ballVec * (100) + ball().pos);
 			Point interceptPoint;
 
-			if(!ball().valid || ball().vel.mag() > 0.9){ // use custom interceptor that stays near target receive pass position
+			if(false && (!ball().valid || ball().vel.mag() > 0.9)){ // use custom interceptor that stays near target receive pass position
 				if(!receiveLine.intersects(ballLine,&interceptPoint)){
 					interceptPoint = ball().pos;
 				}

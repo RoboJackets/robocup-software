@@ -121,9 +121,9 @@ bool Gameplay::Behaviors::Kick::run()
 	//const float aimThresh = Constants::Robot::Radius * 1.4;
 
 	// if intercepting and dist < aimThresh, enter aim state
-	const float aimThresh = Constants::Robot::Radius * 1.4;
+	const float aimThresh = Constants::Robot::Radius * 1.2;
 	// if aiming and dist > interceptThresh, enter intercept state
-	const float interceptThresh = Constants::Robot::Radius * 1.6;
+	const float interceptThresh = Constants::Robot::Radius * 1.4;
 
 	// STATE TRANSITION OVERRIDES
 	//if we already have the ball, skip approach states
