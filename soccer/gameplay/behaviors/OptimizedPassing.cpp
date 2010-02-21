@@ -224,6 +224,7 @@ bool Gameplay::Behaviors::OptimizedPassing::initializePlan(){
 	if (enableOptimization_) {
 		PassConfig * opt = new PassConfig(optimizer_.optimizePlan(initialPlans[0], false));
 		newConfigs.push_back(opt);
+		cout << "Optimized PassConfig: " << initialPlans[0] << endl;
 	} else {
 		newConfigs.push_back(new PassConfig(initialPlans[0]));
 	}

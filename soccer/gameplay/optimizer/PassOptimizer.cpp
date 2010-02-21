@@ -54,6 +54,10 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 		}
 	}
 
+	// DEBUGGING: a model for priors
+	SharedDiagonal prior_model = noiseModel::Isotropic::Sigma(3, 0.2);
+
+
 	// store shells for robots so we don't copy them in multiple times
 	set<int> self_shells;
 
@@ -73,7 +77,6 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 
 		switch (s.stateType) {
 		case PassState::INTERMEDIATE :
-			cout << "In intermediate state!" << endl;
 			// only for initialization
 			if (curFrame == 1) {
 				graph->add(RobotSelfConstraint(r1id, 1, r1->pos(), r1->angle()));
@@ -91,6 +94,9 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 			// initialize the fetch state for robot 1
 			config->insert(SelfKey(encodeID(r1id, 2)), r1pos);
 
+			// add a prior to avoid large jumps
+			graph->add(SelfPrior(SelfKey(encodeID(r1id, 1)), r1pos, prior_model));
+
 			// add driving factors from initial state to final state
 			graph->add(PathShorteningFactor(SelfKey(encodeID(r1id, 1)),
 											SelfKey(encodeID(r1id, 2)), fetchSigma));
@@ -98,6 +104,9 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 		case PassState::RECEIVEPASS :
 			// initialize with receive state for robot 2
 			config->insert(SelfKey(encodeID(r2id, 2)), r2pos);
+
+			// PLACEHOLDER: add a prior to the new pos
+			graph->add(SelfPrior(SelfKey(encodeID(r2id, 2)), r2pos, prior_model));
 
 			// add driving factors from initial state to final state
 			graph->add(PathShorteningFactor(SelfKey(encodeID(r2id, 1)),
@@ -110,6 +119,9 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 		case PassState::KICKGOAL :
 			// initialize reaim state for robot 2
 			config->insert(SelfKey(encodeID(r2id, 3)), r2pos);
+
+			// PLACEHOLDER: add a prior to the new pos
+			graph->add(SelfPrior(SelfKey(encodeID(r2id, 3)), r2pos, prior_model));
 
 			// add aiming factor from previous state
 			graph->add(ReaimFactor(SelfKey(encodeID(r2id, 2)),

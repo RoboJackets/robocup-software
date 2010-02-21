@@ -16,6 +16,7 @@
 #include <gtsam/NonlinearConstraint.h>
 #include <gtsam/NonlinearOptimizer.h>
 #include <gtsam/NonlinearEquality.h>
+#include <gtsam/PriorFactor.h>
 #include <common/Geometry2d/Point.hpp>
 
 namespace Gameplay
@@ -49,6 +50,10 @@ namespace Gameplay
 		// basic constraints
 		typedef gtsam::NonlinearEquality<Config, OppKey, Opp_t> OppConstraint;
 		typedef gtsam::NonlinearEquality<Config, SelfKey, Self_t> SelfConstraint;
+
+		// basic priors
+		typedef gtsam::PriorFactor<Config, SelfKey, Self_t> SelfPrior;
+		typedef gtsam::PriorFactor<Config, OppKey, Opp_t> OppPrior;
 
 		// Optimizer
 		typedef gtsam::NonlinearOptimizer<Graph, Config> Optimizer;

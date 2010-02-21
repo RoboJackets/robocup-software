@@ -82,22 +82,29 @@ void PassConfig::drawConfig(SystemState* sysState, int r, int g, int b) const {
 	int stateNum = 0;
 	PassState prevState;
 	BOOST_FOREACH(PassState state, passStateVector) {
+//		switch (state.stateType) {
+//		case PassState::INTERMEDIATE:
+//			// if in first state, draw the robot and ball positions
+//			// if in the last state, draw the ball
+//			break;
+//		case PassState::KICKPASS:
+//			break;
+//		case PassState::RECEIVEPASS:
+//			break;
+//		case PassState::KICKGOAL:
+//			break;
+//		}
+
 		// draw the ball
 		sysState->debugCircles.push_back(drawCircle(state.ballPos, ball_radius, r,g,b));
-		//painter.drawEllipse(state.ballPos.toQPointF(),ball_radius, ball_radius);
 
 		// draw robots
 		sysState->debugCircles.push_back(drawCircle(state.robot1Pos, pos_radius, r,g,b));
-		//painter.drawEllipse(state.robot1Pos.toQPointF(), pos_radius, pos_radius);
 		sysState->debugCircles.push_back(drawCircle(state.robot2Pos, pos_radius, r,g,b));
-		//painter.drawEllipse(state.robot2Pos.toQPointF(), pos_radius, pos_radius);
 
 		if(stateNum > 0){
-			//painter.drawLine(prevState.ballPos.toQPointF(), state.ballPos.toQPointF());
 			sysState->debugLines.push_back(drawLine(prevState.ballPos, state.ballPos, r,g,b));
-			//painter.drawLine(prevState.robot1Pos.toQPointF(), state.robot1Pos.toQPointF());
 			sysState->debugLines.push_back(drawLine(prevState.robot1Pos, state.robot1Pos, r,g,b));
-			//painter.drawLine(prevState.robot2Pos.toQPointF(), state.robot2Pos.toQPointF());
 			sysState->debugLines.push_back(drawLine(prevState.robot2Pos, state.robot2Pos, r,g,b));
 		}
 		prevState = state;
