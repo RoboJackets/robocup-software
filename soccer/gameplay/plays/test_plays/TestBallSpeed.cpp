@@ -26,6 +26,11 @@ void Gameplay::Plays::TestBallSpeed::assign(set<Robot *> &available)
 
 bool Gameplay::Plays::TestBallSpeed::run()
 {
+	if (!gameState().playing())
+	{
+		_max_speed = 0;
+	}
+
 	Geometry2d::Point ball;
 	uint64_t time = 0;
 	BOOST_FOREACH(Packet::Vision &vision, _gameplay->state()->rawVision)
@@ -37,15 +42,24 @@ bool Gameplay::Plays::TestBallSpeed::run()
 			break;
 		}
 	}
-	if (!time)
+
+	if (time)
 	{
-		return true;
+		_pos_history.push_back(ball);
+		if (_pos_history.size() > 250)
+		{
+			_pos_history.pop_front();
+		}
+	}
+	BOOST_FOREACH(Geometry2d::Point &pos, _pos_history)
+	{
+		drawCircle(pos, Constants::Ball::Radius, Qt::red);
 	}
 
-	float speed = 0;
-	if (!_first)
+	float speed = -1;
+	float dtime = (time - _last_time) / 1000000.0;
+	if (!_first && time && _last_time && dtime)
 	{
-		float dtime = (time - _last_time) / 1000000.0;
 		speed = (ball - _last_pos).mag() / dtime;
 	}
 	_first = false;
@@ -58,19 +72,20 @@ bool Gameplay::Plays::TestBallSpeed::run()
 	}
 	_speed_history[Num_Speed_History - 1] = speed;
 
+	bool ok = true;
 	float avg = 0;
 	for (int i = 0; i < Num_Speed_History; ++i)
 	{
 		avg += _speed_history[i];
+		ok &= _speed_history[i] >= 0;
 	}
 	avg /= Num_Speed_History;
 
-	if (!gameState().playing())
+	if (ok)
 	{
-		_max_speed = 0;
+		_max_speed = max(_max_speed, avg);
 	}
-	_max_speed = max(_max_speed, avg);
-	printf("%f\n", _max_speed);
+	printf("%f %f\n", speed, _max_speed);
 
 	return true;
 }

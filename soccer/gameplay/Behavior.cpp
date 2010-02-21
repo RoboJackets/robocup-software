@@ -22,7 +22,7 @@ bool Gameplay::Behavior::allVisible() const
 	{
 		return false;
 	}
-	
+
 	BOOST_FOREACH(Robot *r, _robots)
 	{
 		if (!r->visible())
@@ -30,7 +30,7 @@ bool Gameplay::Behavior::allVisible() const
 			return false;
 		}
 	}
-	
+
 	return true;
 }
 
@@ -51,7 +51,7 @@ Gameplay::Robot *Gameplay::Behavior::takeBest(std::set<Robot *> &available)
 	{
 		return 0;
 	}
-	
+
 	float bestScore = 0;
 	Robot *best = 0;
 	BOOST_FOREACH(Robot *r, available)
@@ -68,12 +68,12 @@ Gameplay::Robot *Gameplay::Behavior::takeBest(std::set<Robot *> &available)
 			}
 		}
 	}
-	
+
 	// best is guaranteed not to be null because we already ensured that available is not empty.
-	
+
 	available.erase(best);
 	_robots.insert(best);
-	
+
 	return best;
 }
 

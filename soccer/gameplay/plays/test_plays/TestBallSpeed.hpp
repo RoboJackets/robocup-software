@@ -27,6 +27,8 @@ namespace Gameplay
 				float _speed_history[Num_Speed_History];
 				float _max_speed;
 				uint64_t _last_time;
+
+				std::list<Geometry2d::Point> _pos_history;
 		};
 	}
 }

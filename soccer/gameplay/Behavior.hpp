@@ -74,37 +74,37 @@ namespace Gameplay
 	protected:
 		GameplayModule *_gameplay;
 		std::set<Robot *> _robots;
-		
+
 		// Finds the best (lowest-scoring) robot in <available>, removes it from <available>, adds it to _robots, and returns it.
 		// Returns 0 if <available> is empty.
 		Robot *takeBest(std::set<Robot *> &available);
-		
+
 		// Assigns all robots in <available> to this behavior.
 		void takeAll(std::set<Robot *> &available);
-		
+
 		// Returns a score for the given robot.
 		// This is used to pick from available robots in takeBest(), which is typically called by assign().
 		// The robot with the LOWEST score will be used.
 		//
 		// The default implementation always returns zero.
 		virtual float score(Robot *r);
-		
+
 		// Convenience functions
 		const Packet::LogFrame::Ball &ball() const
 		{
 			return gameplay()->state()->ball;
 		}
-		
+
 		const GameState &gameState() const
 		{
 			return _gameplay->state()->gameState;
 		}
-		
+
 		Gameplay::Robot *self(int i) const
 		{
 			return _gameplay->self[i];
 		}
-		
+
 		const Gameplay::Robot *opp(int i) const
 		{
 			return _gameplay->opp[i];
@@ -115,8 +115,7 @@ namespace Gameplay
 		void drawText(const std::string& text, const Geometry2d::Point& pt, const QColor& color=Qt::black);
 		void drawLine(const Geometry2d::Segment& line, int r=0, int g=0, int b=0);
 		void drawLine(const Geometry2d::Segment& line, const QColor& color=Qt::black);
-		void drawCircle(const Geometry2d::Point& center, float radius, int r=0, int g=0, int b=0);
-		void drawCircle(const Geometry2d::Point& center, float radius, const QColor& color=Qt::black);
-
+		void drawCircle(const Geometry2d::Point& center, float radius, int r, int g, int b);
+		void drawCircle(const Geometry2d::Point& center, float radius, const QColor& color = Qt::black);
 	};
 }
