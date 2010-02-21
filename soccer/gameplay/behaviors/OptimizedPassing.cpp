@@ -11,10 +11,11 @@ using namespace std;
 Gameplay::Behaviors::OptimizedPassing::OptimizedPassing(GameplayModule *gameplay,
 		double time_margin,
 		double robotsuccess_margin,
-		double ballsuccess_margin)
+		double ballsuccess_margin,
+		bool enableOptimization)
 : Behavior(gameplay), kicker(gameplay), interceptor(gameplay), time_margin_(time_margin),
   robotsuccess_margin_(robotsuccess_margin), ballsuccess_margin_(ballsuccess_margin),
-  analyticPlanner_(gameplay), optimizer_(gameplay) {
+  analyticPlanner_(gameplay), enableOptimization_(enableOptimization), optimizer_(gameplay) {
 	_passState = Initializing;
 	newPassState = true;
 	passIndex = 0; // start the index after the first state (0)
@@ -75,6 +76,7 @@ bool Gameplay::Behaviors::OptimizedPassing::run(){
 
 
 		if((currentTime-playTime) - passState.timestamp >= time_margin_){
+			cout << "Time margin: " << time_margin_ << endl;
 			cout << "aborting due to invalid plan..." << endl; // abort plan
 			_passState = Done;
 		}else if(passState.stateType == PassState::INTERMEDIATE){
@@ -207,19 +209,16 @@ bool Gameplay::Behaviors::OptimizedPassing::initializePlan(){
 	// perform optimization on the first of the plans
 	AnalyticPassPlanner::PassConfigVector newConfigs;
 
-	//find a plan that uses a pass - AGC: we already hardcode this for now
-	/*size_t idx = 0;
-	BOOST_FOREACH(PassConfig cfg, initialPlans) {
-		if (cfg.length() > 3) {
-			break;
-		}
-		++idx;
-	}*/
-
 	// optimize a plan, and then put both before and after in the ready location for render
-	PassConfig * opt = new PassConfig(optimizer_.optimizePlan(initialPlans[0], false));
-	newConfigs.push_back(opt);
-	newConfigs.push_back(new PassConfig(initialPlans[0]));
+	if (enableOptimization_) {
+		PassConfig * opt = new PassConfig(optimizer_.optimizePlan(initialPlans[0], false));
+		newConfigs.push_back(opt);
+	} else {
+		newConfigs.push_back(new PassConfig(initialPlans[0]));
+	}
+	newConfigs.push_back(new PassConfig(initialPlans[0])); // push in original
+
+	// reevaluate the configs
 	analyticPlanner_.evaluateConfigs(_robots, _gameplay->opp, newConfigs);
 
 	//newConfigs.push_back(new PassConfig(initialPlans[idx]));

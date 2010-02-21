@@ -27,10 +27,11 @@ Ball::Ball(Env* env) :
 	
 	sphereDesc.ccdSkeleton = Env::_physicsSDK->createCCDSkeleton(mesh);
 
+	// These materials apparently don't have any effect
 	NxMaterialDesc materialDesc;
-	materialDesc.restitution = 0.4f;
-	materialDesc.staticFriction = 20.0f;
-	materialDesc.dynamicFriction = 20.0f;
+	materialDesc.restitution = 0.1f; // 0.4f;
+	materialDesc.staticFriction = 100.0f; //20.0f;
+	materialDesc.dynamicFriction = 100.0f; //20.0f;
 	materialDesc.frictionCombineMode = NX_CM_MAX;
 
 	NxMaterial* newMaterial = _scene.createMaterial(materialDesc);

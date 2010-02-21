@@ -16,7 +16,8 @@ Vector Gameplay::Optimization::ShotShorteningFactor::evaluateError(
 	// Cost function is just a distance to the center of the goal using just translation
 	Point2 goalCenter(0.0, Constants::Field::Length);
 	Point2 posT = pos.t();
+	Vector ret = (posT - goalCenter).vector();
 
-	if (H1) *H1 = eye(2);
-	return (posT - goalCenter).vector();
+	if (H1) *H1 = eye(3);
+	return Vector_(3, ret(0), ret(1), 0.0);
 }

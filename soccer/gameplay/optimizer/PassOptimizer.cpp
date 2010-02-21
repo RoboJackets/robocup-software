@@ -38,35 +38,31 @@ Gameplay::Optimization::PassOptimizer::~PassOptimizer() {}
 PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 		const PassConfig& init, bool verbose) const
 {
+	cout << "Optimizing plan!" << endl;
+
 	// create graph and config
 	shared_config config(new Config());
 	shared_graph graph(new Graph());
 
-	// initialize current positions of our robots
-	uint8_t nrSelf = 0;
-	BOOST_FOREACH(Gameplay::Robot * robot, gameplay_->self) {
-		if (robot->visible()) {
-			Point pos = robot->pos();
-			float angle = robot->angle();
-			graph->add(RobotSelfConstraint(nrSelf, 0, pos, angle));
-			config->insert(SelfKey(encodeID(nrSelf, 0)), rc2gt_Pose2(pos, angle));
-		}
-		++nrSelf;
-	}
-
 	// initialize current position for opp robot
-	uint8_t nrOpp = 5;
 	BOOST_FOREACH(Gameplay::Robot * robot, gameplay_->opp) {
 		if (robot->visible()) {
+			int id = robot->id();
 			Point pos = robot->pos();
-			graph->add(RobotOppConstraint(nrOpp, 0, pos));
-			config->insert(OppKey(encodeID(nrOpp, 0)), rc2gt_Point2(pos));
+			graph->add(RobotOppConstraint(id, 1, pos));
+			config->insert(OppKey(encodeID(id, 1)), rc2gt_Point2(pos));
 		}
-		++nrOpp;
 	}
 
+	// store shells for robots so we don't copy them in multiple times
+	set<int> self_shells;
+
 	// go through initial passconfig and initialize the graph and the config
+	size_t curFrame = 1;
 	BOOST_FOREACH(PassState s, init.passStateVector) {
+		// get the robots
+		Robot * r1 = s.robot1, * r2 = s.robot2;
+
 		// get robot id's
 		int r1id = s.robot1->id(),
 		    r2id = s.robot2->id();
@@ -77,40 +73,63 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 
 		switch (s.stateType) {
 		case PassState::INTERMEDIATE :
-			// Only occurs for the first stage for robot initializations,
-			// so this is already handled
+			cout << "In intermediate state!" << endl;
+			// only for initialization
+			if (curFrame == 1) {
+				graph->add(RobotSelfConstraint(r1id, 1, r1->pos(), r1->angle()));
+				graph->add(RobotSelfConstraint(r2id, 1, r2->pos(), r2->angle()));
+				config->insert(SelfKey(encodeID(r1id, 1)), rc2gt_Pose2(r1->pos(), r1->angle()));
+				config->insert(SelfKey(encodeID(r2id, 1)), rc2gt_Pose2(r2->pos(), r2->angle()));
+
+				// remember the shells in use
+				self_shells.insert(r1id);
+				self_shells.insert(r2id);
+			}
+
 			break;
 		case PassState::KICKPASS :
 			// initialize the fetch state for robot 1
-			config->insert(SelfKey(encodeID(r1id, 1)), r1pos);
+			config->insert(SelfKey(encodeID(r1id, 2)), r1pos);
 
 			// add driving factors from initial state to final state
-			graph->add(PathShorteningFactor(SelfKey(encodeID(r1id, 0)),
-											SelfKey(encodeID(r1id, 1)), fetchSigma));
+			graph->add(PathShorteningFactor(SelfKey(encodeID(r1id, 1)),
+											SelfKey(encodeID(r1id, 2)), fetchSigma));
 			break;
 		case PassState::RECEIVEPASS :
 			// initialize with receive state for robot 2
-			config->insert(SelfKey(encodeID(r2id, 1)), r2pos);
+			config->insert(SelfKey(encodeID(r2id, 2)), r2pos);
 
 			// add driving factors from initial state to final state
-			graph->add(PathShorteningFactor(SelfKey(encodeID(r2id, 0)),
-											SelfKey(encodeID(r2id, 1)), passRecSigma));
+			graph->add(PathShorteningFactor(SelfKey(encodeID(r2id, 1)),
+											SelfKey(encodeID(r2id, 2)), passRecSigma));
 
 			// add pass factors
-			graph->add(PassShorteningFactor(SelfKey(encodeID(r1id, 1)),
-											SelfKey(encodeID(r2id, 1)), passLengthSigma));
+			graph->add(PassShorteningFactor(SelfKey(encodeID(r1id, 2)),
+											SelfKey(encodeID(r2id, 2)), passLengthSigma));
 			break;
 		case PassState::KICKGOAL :
 			// initialize reaim state for robot 2
-			config->insert(SelfKey(encodeID(r2id, 2)), r2pos);
+			config->insert(SelfKey(encodeID(r2id, 3)), r2pos);
 
 			// add aiming factor from previous state
-			graph->add(ReaimFactor(SelfKey(encodeID(r2id, 1)),
-								   SelfKey(encodeID(r2id, 2)), reaimSigma));
+			graph->add(ReaimFactor(SelfKey(encodeID(r2id, 2)),
+								   SelfKey(encodeID(r2id, 3)), reaimSigma));
 
 			// add shooting factor on goal
-			graph->add(ShotShorteningFactor(SelfKey(encodeID(r2id, 2)), shotLengthSigma));
+			graph->add(ShotShorteningFactor(SelfKey(encodeID(r2id, 3)), shotLengthSigma));
 			break;
+		}
+		++curFrame;
+	}
+
+	// initialize current positions of robots not involved
+	BOOST_FOREACH(Gameplay::Robot * robot, gameplay_->self) {
+		int id = robot->id();
+		if (robot->visible() && self_shells.find(id) == self_shells.end()) {
+			Point pos = robot->pos();
+			float angle = robot->angle();
+			graph->add(RobotSelfConstraint(id, 1, pos, angle));
+			config->insert(SelfKey(encodeID(id, 1)), rc2gt_Pose2(pos, angle));
 		}
 	}
 
@@ -122,11 +141,8 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 	double absThresh = 1e-3;
 	size_t maxIt = 10;
 
-// commented out due to crashing on my machine
-//	Optimizer result = optimizer.levenbergMarquardt(relThresh, absThresh, Optimizer::SILENT, maxIt);
-
-// temporary
-	Optimizer result = optimizer;
+	// execute optimization
+	Optimizer result = optimizer.levenbergMarquardt(relThresh, absThresh, Optimizer::SILENT, maxIt);
 
 	// reconstruct a passconfig by starting with initial config
 	Point2 defBallPos(Constants::Robot::Radius+Constants::Ball::Radius, 0.0f);
@@ -144,7 +160,7 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 
 		case PassState::KICKPASS :
 			// first state for robot 1
-			r1pose = result.config()->at(SelfKey(encodeID(r1id, 1)));
+			r1pose = result.config()->at(SelfKey(encodeID(r1id, 2)));
 			boost::tie(r1t, r1r) = gt2rc_Pose2(r1pose);
 			s.robot1Pos = r1t;
 			s.robot1Rot = r1r;
@@ -154,7 +170,7 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 
 		case PassState::RECEIVEPASS :
 			// receive state for robot 2
-			r2pose = result.config()->at(SelfKey(encodeID(r2id, 1)));
+			r2pose = result.config()->at(SelfKey(encodeID(r2id, 2)));
 			boost::tie(r2t, r2r) = gt2rc_Pose2(r2pose);
 			s.robot2Pos = r2t;
 			s.robot2Rot = r2r;
@@ -164,7 +180,7 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 
 		case PassState::KICKGOAL :
 			// reaim state for robot 2
-			r2pose = result.config()->at(SelfKey(encodeID(r2id, 2)));
+			r2pose = result.config()->at(SelfKey(encodeID(r2id, 3)));
 			boost::tie(r2t, r2r) = gt2rc_Pose2(r2pose);
 			s.robot2Pos = r2t;
 			s.robot2Rot = r2r;
@@ -173,6 +189,7 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 			break;
 		}
 	}
+	cout << "   Finished optimizing plan" << endl;
 
 	return optConfig;
 }

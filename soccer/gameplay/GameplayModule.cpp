@@ -33,6 +33,7 @@
 #include "plays/test_plays/TestBasicPassing.hpp"
 #include "plays/test_plays/TestBasicAttack.hpp"
 #include "plays/test_plays/TestPassPlay.hpp"
+#include "plays/test_plays/TestOptimizedPassPlay.hpp"
 #include "plays/test_plays/TestDirectMotionControl.hpp"
 #include "plays/test_plays/TestTimePositionControl.hpp"
 #include "plays/test_plays/TestPassConfigOptimize.hpp"
@@ -164,6 +165,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_playConfig->addPlay(make_shared<Plays::TestPassConfigOptimize>(this));
 	_playConfig->addPlay(make_shared<Plays::TestGUI>(this));
 	_playConfig->addPlay(make_shared<Plays::TestIntercept>(this));
+	_playConfig->addPlay(make_shared<Plays::TestOptimizedPassPlay>(this));
 
 }
 

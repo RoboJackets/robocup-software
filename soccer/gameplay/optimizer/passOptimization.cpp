@@ -42,11 +42,11 @@ pair<Point, float> Gameplay::Optimization::gt2rc_Pose2(const gtsam::Pose2& pt) {
 }
 
 size_t Gameplay::Optimization::encodeID(uint8_t robotNum, size_t frame_num) {
-	return frame_num + maxFrames*robotNum;
+	return frame_num + maxFrames*(robotNum+1);
 }
 
 uint8_t Gameplay::Optimization::decodeRobot(size_t id) {
-	return id/maxFrames;
+	return id/maxFrames-1;
 }
 
 size_t Gameplay::Optimization::decodeFrame(size_t id) {

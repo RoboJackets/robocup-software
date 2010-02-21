@@ -81,6 +81,8 @@ namespace Gameplay
 		public:
 			RobotSelfConstraint(uint8_t robotID, size_t frame_num, const Geometry2d::Point& pt, float angle)
 				: SelfConstraint(SelfKey(encodeID(robotID, frame_num)), rc2gt_Pose2(pt, angle)) {}
+			RobotSelfConstraint(uint8_t robotID, size_t frame_num, const Self_t& pose)
+							: SelfConstraint(SelfKey(encodeID(robotID, frame_num)), pose) {}
 		};
 
 		class RobotOppConstraint : public OppConstraint {

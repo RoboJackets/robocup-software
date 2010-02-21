@@ -18,13 +18,25 @@ namespace Gameplay
 				OptimizedPassing(GameplayModule *gameplay,
 						double time_margin = 5.5,
 						double robotsuccess_margin = 0.05,
-						double ballsuccess_margin = 0.2);
+						double ballsuccess_margin = 0.2,
+						bool enableOptimization = true);
 
 				virtual void assign(std::set<Robot *> &available);
 
 				virtual bool run();
 
 				virtual bool done() { return _passState == Done; }
+
+				// enable/disable optimization
+				void enableOptimization(bool opt) { enableOptimization_ = opt; }
+				bool enableOptimization() const { return enableOptimization_; }
+
+				// set margins
+				inline void setMargins(double time, double robotsuccess, double ballsuccess) {
+					time_margin_ = time;
+					robotsuccess_margin_ = robotsuccess;
+					ballsuccess_margin_ = ballsuccess;
+				}
 
 			protected:
 				bool initializePlan();
@@ -48,6 +60,9 @@ namespace Gameplay
 
 				/// Pass Planning engine
 				AnalyticPassPlanner analyticPlanner_;
+
+				/// enable flag for optimization
+				bool enableOptimization_;
 
 				/// Optimization Engine
 				Optimization::PassOptimizer optimizer_;

@@ -85,6 +85,7 @@ set (SRCS
 	gameplay/plays/test_plays/TestBasicAttack.cpp
 	gameplay/plays/test_plays/TestIntercept.cpp
 	gameplay/plays/test_plays/TestPassPlay.cpp
+	gameplay/plays/test_plays/TestOptimizedPassPlay.cpp
 	gameplay/plays/test_plays/TestGUI.cpp
 	
 	# files that use the optimizer - may want to disable
