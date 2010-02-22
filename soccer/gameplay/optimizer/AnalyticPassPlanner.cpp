@@ -50,11 +50,13 @@ void AnalyticPassPlanner::generateAllConfigs(const Point &ballPos, set<Robot *> 
 			// add initial state with no robots having the ball
 			passConfig->addPassState(
 					PassState(r1, r2, r1->pos(), r2->pos(), r1->angle(), r2->angle(),
-							ballPos, PassState::INTERMEDIATE, 0));
+							ballPos, PassState::INITIAL, 0));
 
 			// add state with robot1 at a position to pass to robot2
 			Point state2Robot1Pos = ballPos - passVec * (float)(Constants::Robot::Radius + Constants::Ball::Radius);
 			float state2Robot1Rot = passAngle;
+			Point state2Robot2Pos = r2->pos();
+			float state2Robot2Rot = (passVec * -1.0f).angle();
 
 			// calculate time
 			og = r1->obstacles();
@@ -77,10 +79,10 @@ void AnalyticPassPlanner::generateAllConfigs(const Point &ballPos, set<Robot *> 
 			double state2Time = pathTime + TIME_TO_AIM_APPROX;
 			//double state2Time = r1->pos().distTo(state2Robot1Pos) / APPROXROBOTVELTRANS;
 			passConfig->addPassState(
-					PassState(r1, r2, state2Robot1Pos, r2->pos(), state2Robot1Rot, r2->angle(),
+					PassState(r1, r2, state2Robot1Pos, state2Robot2Pos, state2Robot1Rot, state2Robot2Rot,
 							ballPos, PassState::KICKPASS, state2Time));
 			// add state with robot2 receiving ball
-			Point state3BallPos = r2->pos();
+			Point state3BallPos = state2Robot2Pos;
 			Point state3Robot2Pos = state3BallPos + passVec * (float)(Constants::Robot::Radius + Constants::Ball::Radius);
 			float state3Robot2Rot = (passVec * -1.0f).angle();
 			double state3Time = state2Time + r2->pos().distTo(state3Robot2Pos) / BALL_KICK_AVG_VEL;
@@ -102,7 +104,7 @@ void AnalyticPassPlanner::generateAllConfigs(const Point &ballPos, set<Robot *> 
 			//double state5Time = state4Time + state3BallPos.distTo(goalBallPos) / APPROXBALLVEL;
 			passConfig->addPassState(
 					PassState(r1, r2, state2Robot1Pos, state4Robot2Pos, state2Robot1Rot, state4Robot2Rot,
-							goalBallPos, PassState::INTERMEDIATE, state5Time));
+							goalBallPos, PassState::GOAL, state5Time));
 
 			passConfigResult.push_back(passConfig);
 		}
