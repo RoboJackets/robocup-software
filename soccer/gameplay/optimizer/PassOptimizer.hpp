@@ -32,14 +32,17 @@ namespace Gameplay
 			PassConfig optimizePlan(const PassConfig& init, bool verbose = false) const;
 
 			/** parameters used in creation of a plan */
+			// Make these smaller to make them more aggressive
 			double fetchSigma;      /// determines how far to go while fetching
 			double passRecSigma;    /// determines how far to go to receive pass
 			double reaimSigma;      /// determines how far to while reaiming
 			double shotLengthSigma; /// determines how much to shorten shots
 			double passLengthSigma; /// determines how much to shorten shots
-			double priorSigma;      /// Weight for priors on all variables - bounds all optimization
 			double facingSigma;     /// Weight for pass facing factors
 			double shotFacingSigma; /// Weight for shot facing factors
+
+			// Make this larger to make optimization more aggressive
+			double priorSigma;      /// Weight for priors on all variables - bounds all optimization
 
 		protected:
 			/** the gameplay module link to get access to state information */

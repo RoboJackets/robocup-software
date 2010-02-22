@@ -26,14 +26,18 @@ Gameplay::Optimization::PassOptimizer::PassOptimizer(GameplayModule* gameplay)
 : gameplay_(gameplay)
 {
 	// initialize the parameters
+
+	// NOTE: to make the optimization more aggressive, make these smaller
 	fetchSigma = 1.0;
 	passRecSigma = 1.5;
 	reaimSigma = 0.5;
 	shotLengthSigma = 3.0;
 	passLengthSigma = 2.0;
-	priorSigma = 2.0;
 	facingSigma = 1.0;
 	shotFacingSigma = 1.0;
+
+	// NOTE: to bound the strength of optimization, make this smaller
+	priorSigma = 2.0;
 }
 
 Gameplay::Optimization::PassOptimizer::~PassOptimizer() {}
