@@ -13,8 +13,8 @@ using namespace Geometry2d;
 using namespace std;
 
 Gameplay::Plays::TestPassExperiment1::TestPassExperiment1(GameplayModule *gameplay)
-: Play(gameplay), passPlanner_(gameplay, false), _kicker1(gameplay), _kicker2(gameplay),
-  _expTime(5000000 /* 5 seconds */), _expState(Initializing), _expType(Pass) {
+: Play(gameplay), passPlanner_(gameplay, true), _kicker1(gameplay), _kicker2(gameplay),
+  _expTime(5000000 /* 5 seconds */), _expState(Initializing), _expType(OptimizedPass) {
 
 }
 
@@ -37,8 +37,8 @@ bool Gameplay::Plays::TestPassExperiment1::run(){
 			_kicker2.teammate = &_kicker1;
 		}else if(_expType==Pass){
 			cout << "Experiment1: Type: Pass" << endl;
-			passPlanner_.assign(_robots);
 			passPlanner_.enableOptimization(false);
+			passPlanner_.assign(_robots);
 			// set margins
 			double time_margin = 5.5,
 					robotsuccess_margin = 0.05,
@@ -46,8 +46,8 @@ bool Gameplay::Plays::TestPassExperiment1::run(){
 			passPlanner_.setMargins(time_margin, robotsuccess_margin, ballsuccess_margin);
 		}else if(_expType==OptimizedPass){
 			cout << "Experiment1: Type: OptimizedPass" << endl;
-			passPlanner_.assign(_robots);
 			passPlanner_.enableOptimization(true);
+			passPlanner_.assign(_robots);
 			// set margins
 			double time_margin = 5.5,
 					robotsuccess_margin = 0.05,
