@@ -17,6 +17,7 @@
 #include <gtsam/NonlinearOptimizer.h>
 #include <gtsam/NonlinearEquality.h>
 #include <gtsam/PriorFactor.h>
+#include <gameplay/optimizer/LagrangePriorFactor.h>
 #include <common/Geometry2d/Point.hpp>
 
 namespace Gameplay
@@ -42,7 +43,8 @@ namespace Gameplay
 		// Configs
 		typedef gtsam::LieConfig<OppKey, Opp_t> OppConfig;
 		typedef gtsam::LieConfig<SelfKey, Self_t> SelfConfig;
-		typedef gtsam::TupleConfig2<OppConfig, SelfConfig> Config;
+		typedef gtsam::LieConfig<gtsam::LagrangeKey, Vector> LagrangeConfig;
+		typedef gtsam::TupleConfig3<OppConfig, SelfConfig, LagrangeConfig> Config;
 
 		// Graph
 		typedef gtsam::NonlinearFactorGraph<Config> Graph;
@@ -54,6 +56,7 @@ namespace Gameplay
 		// basic priors
 		typedef gtsam::PriorFactor<Config, SelfKey, Self_t> SelfPrior;
 		typedef gtsam::PriorFactor<Config, OppKey, Opp_t> OppPrior;
+		typedef gtsam::LagrangePriorFactor<Config, gtsam::LagrangeKey> LagrangePrior;
 
 		// Optimizer
 		typedef gtsam::NonlinearOptimizer<Graph, Config> Optimizer;

@@ -31,6 +31,8 @@ Gameplay::Optimization::PassOptimizer::PassOptimizer(GameplayModule* gameplay)
 	reaimSigma = 0.5;
 	shotLengthSigma = 3.0;
 	passLengthSigma = 2.0;
+	priorSigma = 2.0;
+	facingSigma = 1.0;
 }
 
 Gameplay::Optimization::PassOptimizer::~PassOptimizer() {}
@@ -55,7 +57,8 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 	}
 
 	// DEBUGGING: a model for priors
-	SharedDiagonal prior_model = noiseModel::Isotropic::Sigma(3, 10.0);
+	SharedDiagonal prior_model = noiseModel::Isotropic::Sigma(3, priorSigma);
+	SharedDiagonal facingModel = noiseModel::Isotropic::Sigma(2, facingSigma);
 
 
 	// store shells for robots so we don't copy them in multiple times
@@ -112,6 +115,11 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 			// add pass factors
 			graph->add(PassShorteningFactor(SelfKey(encodeID(r1id, 2)),
 											SelfKey(encodeID(r2id, 2)), passLengthSigma));
+
+			// add a pass facing factor
+			graph->add(PassFacingFactor(SelfKey(encodeID(r1id, 2)),
+										SelfKey(encodeID(r2id, 2)), facingModel));
+
 			break;
 		case PassState::KICKGOAL :
 			// initialize reaim state for robot 2
@@ -146,12 +154,21 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 	shared_ptr<Ordering> ordering(new Ordering(graph->getOrdering()));
 	Optimizer::shared_solver solver(new Optimizer::solver(ordering));
 	Optimizer optimizer(graph, config, solver);
-	double relThresh = 1e-3;
-	double absThresh = 1e-3;
-	size_t maxIt = 10;
+	double relThresh = 1e-2;
+	double absThresh = 1e-2;
+	size_t maxIt = 5;
 
-	// execute optimization
-	Optimizer result = optimizer.levenbergMarquardt(relThresh, absThresh, Optimizer::SILENT, maxIt);
+	// printing
+	if (true) {
+		graph->print("Graph before optimization");
+		config->print("Config before optimization");
+	}
+
+	// execute optimization - preferred is LM
+	//Optimizer result = optimizer.gaussNewton(relThresh, absThresh, Optimizer::CONFIG);
+	Optimizer result = optimizer.levenbergMarquardt(relThresh, absThresh, Optimizer::CONFIG, maxIt);
+	//Optimizer result = optimizer.iterateLM();
+	//Optimizer result = optimizer.iterate();
 
 	// reconstruct a passconfig by starting with initial config
 	Point2 defBallPos(Constants::Robot::Radius+Constants::Ball::Radius, 0.0f);

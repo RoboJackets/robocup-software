@@ -17,7 +17,7 @@ using namespace Gameplay::Optimization;
 namespace gtsam {
 INSTANTIATE_NONLINEAR_FACTOR_GRAPH(Gameplay::Optimization::Config)
 INSTANTIATE_NONLINEAR_CONSTRAINT(Gameplay::Optimization::Config)
-INSTANTIATE_TUPLE_CONFIG2(Gameplay::Optimization::OppConfig, Gameplay::Optimization::SelfConfig)
+INSTANTIATE_TUPLE_CONFIG3(Gameplay::Optimization::OppConfig, Gameplay::Optimization::SelfConfig, Gameplay::Optimization::LagrangeConfig)
 INSTANTIATE_NONLINEAR_OPTIMIZER(Gameplay::Optimization::Graph, Gameplay::Optimization::Config)
 }
 
