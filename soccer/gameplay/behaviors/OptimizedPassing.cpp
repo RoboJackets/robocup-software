@@ -80,7 +80,8 @@ bool Gameplay::Behaviors::OptimizedPassing::run(){
 		if((currentTime-playTime) - passState.timestamp >= time_margin_){
 			cout << "aborting due to invalid plan..." << endl; // abort plan
 			_passState = Done;
-		}else if(passState.stateType == PassState::INTERMEDIATE){
+		}else if(passState.stateType == PassState::INITIAL){
+
 			passState.robot1->face(ball().pos,true);
 			passState.robot2->face(ball().pos,true);
 			passState.robot1->move(passState.robot1Pos);
@@ -93,7 +94,7 @@ bool Gameplay::Behaviors::OptimizedPassing::run(){
 			}else{newPassState = false;}
 		}else if(passState.stateType==PassState::KICKPASS){
 			// drive receiver to receive position
-			passState.robot2->move(thisState.robot2Pos);
+			passState.robot2->move(passState.robot2Pos);
 			passState.robot2->face(ball().pos,true);
 
 			if(newPassState /*|| !kicker.assigned() || kicker.getState()==kicker.Done*/){
