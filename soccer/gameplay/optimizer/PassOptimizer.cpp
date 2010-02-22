@@ -33,6 +33,7 @@ Gameplay::Optimization::PassOptimizer::PassOptimizer(GameplayModule* gameplay)
 	passLengthSigma = 2.0;
 	priorSigma = 2.0;
 	facingSigma = 1.0;
+	shotFacingSigma = 1.0;
 }
 
 Gameplay::Optimization::PassOptimizer::~PassOptimizer() {}
@@ -59,6 +60,7 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 	// DEBUGGING: a model for priors
 	SharedDiagonal prior_model = noiseModel::Isotropic::Sigma(3, priorSigma);
 	SharedDiagonal facingModel = noiseModel::Isotropic::Sigma(2, facingSigma);
+	SharedDiagonal shotFacingModel = noiseModel::Isotropic::Sigma(2, shotFacingSigma);
 
 
 	// store shells for robots so we don't copy them in multiple times
@@ -134,6 +136,7 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 
 			// add shooting factor on goal
 			graph->add(ShotShorteningFactor(SelfKey(encodeID(r2id, 3)), shotLengthSigma));
+			graph->add(ShootFacingFactor(SelfKey(encodeID(r2id, 3)), shotFacingModel));
 			break;
 		}
 		++curFrame;

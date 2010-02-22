@@ -38,7 +38,8 @@ namespace Gameplay
 			double shotLengthSigma; /// determines how much to shorten shots
 			double passLengthSigma; /// determines how much to shorten shots
 			double priorSigma;      /// Weight for priors on all variables - bounds all optimization
-			double facingSigma;     /// Weigth for facing factors
+			double facingSigma;     /// Weight for pass facing factors
+			double shotFacingSigma; /// Weight for shot facing factors
 
 		protected:
 			/** the gameplay module link to get access to state information */

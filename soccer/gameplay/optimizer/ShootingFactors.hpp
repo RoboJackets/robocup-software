@@ -25,5 +25,27 @@ namespace Gameplay {
 			Vector evaluateError(const Self_t& pos, boost::optional<Matrix&> H1 = boost::none) const;
 	};
 
+	// a factor for aiming properly at the goal
+	class ShootFacingFactor: public gtsam::NonlinearFactor1<Config, SelfKey, Self_t> {
+	private:
+
+		typedef gtsam::NonlinearFactor1<Config, SelfKey, Self_t> Base;
+
+	public:
+
+		ShootFacingFactor(); /* Default constructor */
+		ShootFacingFactor(const SelfKey& i, const gtsam::SharedGaussian& noiseModel) :
+			Base(noiseModel, i) {
+		}
+
+		/** h(x)-z -> between(z,h(x)) for Rot2 manifold */
+		Vector evaluateError(const Self_t& pose, boost::optional<Matrix&> H1) const {
+			gtsam::Point2 goal(0.0f, Constants::Field::Length);
+			gtsam::Rot2 hx = bearing(pose, goal, H1, boost::none);
+			return logmap(between(gtsam::Rot2(), hx));
+		}
+	}; // BearingFactor
+
+
 	} // \Optimization
 } // \Gameplay
