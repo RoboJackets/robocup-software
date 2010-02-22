@@ -118,9 +118,11 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 			graph->add(PassShorteningFactor(SelfKey(encodeID(r1id, 2)),
 											SelfKey(encodeID(r2id, 2)), passLengthSigma));
 
-			// add a pass facing factor
+			// add a pass facing factor for each direction
 			graph->add(PassFacingFactor(SelfKey(encodeID(r1id, 2)),
 										SelfKey(encodeID(r2id, 2)), facingModel));
+			graph->add(PassFacingFactor(SelfKey(encodeID(r2id, 2)),
+										SelfKey(encodeID(r1id, 2)), facingModel));
 
 			break;
 		case PassState::KICKGOAL :
