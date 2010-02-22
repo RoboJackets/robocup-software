@@ -38,10 +38,11 @@ ostream& operator<<(ostream& out, const PassState &state){
 	out << "timestamp(" << state.timestamp << "), ";
 	out << "stateType(";
 	switch(state.stateType){
-		case(PassState::INTERMEDIATE): out << "INTERMEDIATE"; break;
+		case(PassState::INITIAL): out << "INITIAL"; break;
 		case(PassState::KICKPASS) : out << "KICKPASS"; break;
 		case(PassState::RECEIVEPASS) : out << "RECEIVEPASS"; break;
-		case(PassState::KICKGOAL) : default : out << "KICKGOAL"; break;
+		case(PassState::KICKGOAL) : out << "KICKGOAL"; break;
+		case(PassState::GOAL): default :out << "GOAL"; break;
 	}
 	out << ")";
 	return out;

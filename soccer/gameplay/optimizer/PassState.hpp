@@ -13,7 +13,7 @@
 
 class PassState {
 public:
-	enum StateType{INTERMEDIATE,KICKPASS,RECEIVEPASS,KICKGOAL};
+	enum StateType{INITIAL,KICKPASS,RECEIVEPASS,KICKGOAL,GOAL};
 
 	PassState() {} // default - don't read data from this
 	PassState(	Gameplay::Robot* robot1, Gameplay::Robot* robot2,

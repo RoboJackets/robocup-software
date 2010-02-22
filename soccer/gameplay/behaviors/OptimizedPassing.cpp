@@ -93,7 +93,7 @@ bool Gameplay::Behaviors::OptimizedPassing::run(){
 			}else{newPassState = false;}
 		}else if(passState.stateType==PassState::KICKPASS){
 			// drive receiver to receive position
-			passState.robot2->move(passState.robot2Pos);
+			passState.robot2->move(thisState.robot2Pos);
 			passState.robot2->face(ball().pos,true);
 
 			if(newPassState /*|| !kicker.assigned() || kicker.getState()==kicker.Done*/){
