@@ -85,18 +85,15 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 			  r2pos = rc2gt_Pose2(s.robot2Pos, s.robot2Rot);
 
 		switch (s.stateType) {
-		case PassState::INTERMEDIATE :
-			// only for initialization
-			if (curFrame == 1) {
-				graph->add(RobotSelfConstraint(r1id, 1, r1->pos(), r1->angle()));
-				graph->add(RobotSelfConstraint(r2id, 1, r2->pos(), r2->angle()));
-				config->insert(SelfKey(encodeID(r1id, 1)), rc2gt_Pose2(r1->pos(), r1->angle()));
-				config->insert(SelfKey(encodeID(r2id, 1)), rc2gt_Pose2(r2->pos(), r2->angle()));
+		case PassState::INITIAL:
+			graph->add(RobotSelfConstraint(r1id, 1, r1->pos(), r1->angle()));
+			graph->add(RobotSelfConstraint(r2id, 1, r2->pos(), r2->angle()));
+			config->insert(SelfKey(encodeID(r1id, 1)), rc2gt_Pose2(r1->pos(), r1->angle()));
+			config->insert(SelfKey(encodeID(r2id, 1)), rc2gt_Pose2(r2->pos(), r2->angle()));
 
-				// remember the shells in use
-				self_shells.insert(r1id);
-				self_shells.insert(r2id);
-			}
+			// remember the shells in use
+			self_shells.insert(r1id);
+			self_shells.insert(r2id);
 
 			break;
 		case PassState::KICKPASS :
@@ -146,6 +143,9 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 			graph->add(ShotShorteningFactor(SelfKey(encodeID(r2id, 3)), shotLengthSigma));
 			graph->add(ShootFacingFactor(SelfKey(encodeID(r2id, 3)), shotFacingModel));
 			break;
+		case PassState::GOAL :
+			// does nothing
+			break;
 		}
 		++curFrame;
 	}
@@ -191,7 +191,7 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 
 		Point r1t, r2t; float r1r, r2r; Pose2 r1pose, r2pose;
 		switch (s.stateType) {
-		case PassState::INTERMEDIATE :
+		case PassState::INITIAL :
 			// Just provided initial cases anyway, so no change
 			break;
 
@@ -232,6 +232,9 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 			s.robot2Rot = r2r;
 			// FIXME: setting the ball pose, likely wrong
 			s.ballPos = gt2rc_Point2(r2pose * defBallPos);
+			break;
+		case PassState::GOAL :
+			// does nothing
 			break;
 		}
 	}
