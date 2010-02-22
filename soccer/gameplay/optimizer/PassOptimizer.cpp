@@ -106,8 +106,7 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 			// add a constraint for this pose, as it is entirely determined by the
 			// ball position
 			graph->add(SelfConstraint(SelfKey(encodeID(r1id, 2)), r1pos));
-			break;
-		case PassState::RECEIVEPASS :
+
 			// initialize with receive state for robot 2
 			config->insert(SelfKey(encodeID(r2id, 2)), r2pos);
 
@@ -127,6 +126,9 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 										SelfKey(encodeID(r2id, 2)), facingModel));
 			graph->add(PassFacingFactor(SelfKey(encodeID(r2id, 2)),
 										SelfKey(encodeID(r1id, 2)), facingModel));
+			break;
+		case PassState::RECEIVEPASS :
+			// This state doesn't do anything
 
 			break;
 		case PassState::KICKGOAL :
@@ -199,16 +201,25 @@ PassConfig Gameplay::Optimization::PassOptimizer::optimizePlan(
 			boost::tie(r1t, r1r) = gt2rc_Pose2(r1pose);
 			s.robot1Pos = r1t;
 			s.robot1Rot = r1r;
-			// FIXME: setting the ball pose, likely wrong
-			s.ballPos = gt2rc_Point2(r1pose * defBallPos);
-			break;
 
-		case PassState::RECEIVEPASS :
 			// receive state for robot 2
 			r2pose = result.config()->at(SelfKey(encodeID(r2id, 2)));
 			boost::tie(r2t, r2r) = gt2rc_Pose2(r2pose);
 			s.robot2Pos = r2t;
 			s.robot2Rot = r2r;
+
+			// FIXME: setting the ball pose, likely wrong
+			s.ballPos = gt2rc_Point2(r1pose * defBallPos);
+			break;
+
+		case PassState::RECEIVEPASS :
+
+			// receive state for robot 2
+			r2pose = result.config()->at(SelfKey(encodeID(r2id, 2)));
+			boost::tie(r2t, r2r) = gt2rc_Pose2(r2pose);
+			s.robot2Pos = r2t;
+			s.robot2Rot = r2r;
+
 			// FIXME: setting the ball pose, likely wrong
 			s.ballPos = gt2rc_Point2(r2pose * defBallPos);
 			break;
