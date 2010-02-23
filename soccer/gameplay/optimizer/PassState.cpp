@@ -17,12 +17,14 @@ PassState::PassState(Robot* robot1, Robot* robot2,
 					const Point &ballPos, StateType stateType, double timestamp)
 : robot1(robot1), robot2(robot2),
   robot1Pos(robot1Pos), robot2Pos(robot2Pos),
+  robot1Rot(robot1Rot), robot2Rot(robot2Rot),
   ballPos(ballPos), stateType(stateType), timestamp(timestamp){}
 
 // copy constructor
 PassState::PassState(const PassState& s)
 : robot1(s.robot1), robot2(s.robot2),
   robot1Pos(s.robot1Pos), robot2Pos(s.robot2Pos),
+  robot1Rot(s.robot1Rot), robot2Rot(s.robot2Rot),
   ballPos(s.ballPos), stateType(s.stateType), timestamp(s.timestamp){}
 
 PassState::~PassState() {}

@@ -68,19 +68,18 @@ void AnalyticPassPlanner::generateAllConfigs(const Point &ballPos, set<Robot *> 
 			dynamics.setConfig(_gameplay->state()->self[r1->id()].config.motion);
 			planner.setDynamics(&dynamics);
 			planner.run(r1pos,r1angle,r1vel,ballPos,&og,path);
-
 			pathDist = path.length(0);
-
 			if(pathDist < distStopToMaxVel + distMaxVelToStop){
 				pathTime = (pathDist/(distStopToMaxVel + distMaxVelToStop))*(timeStopToMaxVel + timeMaxVelToStop);
 			}else{
 				pathTime = timeStopToMaxVel + timeMaxVelToStop + (pathDist - (distStopToMaxVel + distMaxVelToStop))/maxVel;
 			}
 			double state2Time = pathTime + TIME_TO_AIM_APPROX;
-			//double state2Time = r1->pos().distTo(state2Robot1Pos) / APPROXROBOTVELTRANS;
+
 			passConfig->addPassState(
 					PassState(r1, r2, state2Robot1Pos, state2Robot2Pos, state2Robot1Rot, state2Robot2Rot,
 							ballPos, PassState::KICKPASS, state2Time));
+
 			// add state with robot2 receiving ball
 			Point state3BallPos = state2Robot2Pos;
 			Point state3Robot2Pos = state3BallPos + passVec * (float)(Constants::Robot::Radius + Constants::Ball::Radius);
@@ -94,14 +93,12 @@ void AnalyticPassPlanner::generateAllConfigs(const Point &ballPos, set<Robot *> 
 			Point state4Robot2Pos = state3BallPos - goalVec * (float)(Constants::Robot::Radius + Constants::Ball::Radius);
 			float state4Robot2Rot = goalAngle;
 			double state4Time = state3Time + state3Robot2Pos.distTo(state4Robot2Pos) / TIME_TO_AIM_APPROX;
-			//double state4Time = state3Time + state3Robot2Pos.distTo(state4Robot2Pos) / APPROXROBOTVELTRANS;
 			passConfig->addPassState(
 					PassState(r1, r2, state2Robot1Pos, state4Robot2Pos, state2Robot1Rot, state4Robot2Rot,
 							state3BallPos, PassState::KICKGOAL, state4Time));
 
 			// add state with ball in goal
 			double state5Time = state4Time + state3BallPos.distTo(goalBallPos) / BALL_KICK_AVG_VEL;
-			//double state5Time = state4Time + state3BallPos.distTo(goalBallPos) / APPROXBALLVEL;
 			passConfig->addPassState(
 					PassState(r1, r2, state2Robot1Pos, state4Robot2Pos, state2Robot1Rot, state4Robot2Rot,
 							goalBallPos, PassState::GOAL, state5Time));

@@ -8,7 +8,7 @@
 using namespace std;
 
 Gameplay::Behaviors::Intercept::Intercept(GameplayModule *gameplay, float dist) :
-	Behavior(gameplay), _farDist(dist), _ballControlFrames(10)
+	Behavior(gameplay), _farDist(dist), _ballControlFrames(5)
 {
 }
 
