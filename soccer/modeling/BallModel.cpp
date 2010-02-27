@@ -8,9 +8,9 @@
 
 using namespace std;
 
-Modeling::BallModel::BallModel(mode_t mode) :
+Modeling::BallModel::BallModel(mode_t mode, RobotMap *robotMap) :
 	A(6,6), B(6,6), P(6,6), Q(6,6), R(2,2), H(2,6),
-	Z(2), U(6), X0(6), mode_(mode)
+	Z(2), U(6), X0(6), mode_(mode), _robotMap(robotMap)
 {
 	bestError = 0;
 	bestObservedTime = 0;
@@ -88,8 +88,8 @@ void Modeling::BallModel::initRBPF() {
 	int numParticles = 20; // Number of particles in filter
 	raoBlackwellizedParticleFilter = new Rbpf(X,P,numParticles);
 	// create model graph
-	raoBlackwellizedParticleFilter->addModel(new RbpfModelRolling());
-	raoBlackwellizedParticleFilter->addModel(new RbpfModelKicked());
+	raoBlackwellizedParticleFilter->addModel(new RbpfModelRolling(_robotMap));
+	raoBlackwellizedParticleFilter->addModel(new RbpfModelKicked(_robotMap));
 	raoBlackwellizedParticleFilter->setTransProb(0,0,0.9);
 	raoBlackwellizedParticleFilter->setTransProb(0,1,0.1);
 	raoBlackwellizedParticleFilter->setTransProb(1,0,0.9);

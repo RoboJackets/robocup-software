@@ -7,8 +7,7 @@
  */
 
 #include <Rbpf.hpp>
-//#include <boost/math/constants/constants.hpp> // Not in 1.37 that 9.04 people use
-
+//#include <boost/math/constants/constants.hpp> // Not in boost 1.37 that 9.04 people use
 #define PI 3.1415926535897932384626
 
 // Constructor: Rbpf(X, P, k)
@@ -32,26 +31,23 @@ Rbpf::Rbpf(Vector X, Matrix P, int _k) : k(_k), modelGraph(), pi(PI) {
 	}
 }
 
-// Destructor: ~Rbpf()
 Rbpf::~Rbpf() { }
 
-// Function: update(double x, double y, double dt)
-//   convenience function for calling update(U,Z,dt) with no control input
-//   note: assumes that control size (m) = 2 and measurement size (s) = 2
+// convenience function for calling update(U,Z,dt) with no control input
+// note: assumes that control size (m) = 2 and measurement size (s) = 2
 void Rbpf::update(double x, double y, double dt){
-	Vector U(6); U *= 0.0; // control input
+	Vector U(6); U.clear(); U *= 0.0; // control input
 	Vector Z(2); // measurement
 	Z(0) = x; Z(1) = y;
 	update(U,Z,dt);
 }
 
-// Function: update(Vector &U, Vector &Z, double dt)
-//   Updates the filter given control input U, measurement Z, and delta t = dt
-//   Closely follows the algorithm in [1], pg.8, table.1.
-//   Brief description: For each particle, assume it is in each state, and
-//                      update based on that assumption. If the resulting
-//                      probability is good, that assumption must have been true
-//                      and so we will end up resampling that particle.
+// Updates the filter given control input U, measurement Z, and delta t = dt
+// Closely follows the algorithm in [1], pg.8, table.1.
+// Brief description: For each particle, assume it is in each state, and
+//                    update based on that assumption. If the resulting
+//                    probability is good, that assumption must have been true
+//                    and so we will end up resampling that particle.
 void Rbpf::update(Vector &U, Vector &Z, double dt){
 	int j = modelGraph.j; // number of models in modelGraph
 	int tmpPartIdx = 0;
@@ -87,9 +83,8 @@ void Rbpf::update(Vector &U, Vector &Z, double dt){
 	resampleParticles(tmpParticleVector,particleVector,k);
 }
 
-// Function: resampleParticles(Vector &in, Vector &out, k)
-//   resample k particles from in, with respect to their weights
-//   store the result in out.
+// resample k particles from in, with respect to their weights
+// store the result in out.
 // TODO: switch the Vectors to dynamic double arrays, or at least pre-allocate.
 void Rbpf::resampleParticles(ParticleVector &in, ParticleVector &out, const int k){
 	double NThresh = k; // effective number of particles threshold
@@ -138,8 +133,7 @@ void Rbpf::resampleParticles(ParticleVector &in, ParticleVector &out, const int 
 	delete [] resampleIndex;
 }
 
-// Function: getBestFilterState()
-//   returns a pointer to the best particle state
+// returns a pointer to the best particle state
 RbpfState* Rbpf::getBestFilterState(){
 	int bestIdx = 0; double bestWeight = -1.0;
 	for(int i=0; i<k; i++){
@@ -151,8 +145,7 @@ RbpfState* Rbpf::getBestFilterState(){
 	return &(particleVector[bestIdx]);
 }
 
-// Function: addModel(RbpfModel* model)
-//   adds a model to the modelGraph and resizes the tmpParticleVector
+// adds a model to the modelGraph and resizes the tmpParticleVector
 void Rbpf::addModel(RbpfModel* model){
 	modelGraph.addModel(model);
 	// tmpParticleVector is assumed to contain j*k elements, so for each model
@@ -160,25 +153,24 @@ void Rbpf::addModel(RbpfModel* model){
 	// Each particle in tmpParticleVector simply contains space for temporary
 	// particles during the update step.  The values in each particle will be
 	// overwritten at each iteration, so the initial values do not matter.
-	int modelIdx = 0; Vector X(n); X.clear(); Matrix P(n,n); P*=0.0;
+	int modelIdx = 0; Vector X(n); X.clear(); Matrix P(n,n); P.clear(); P*=0.0;
 	for(int i=0; i<k; i++)
 		tmpParticleVector.push_back(new RbpfState(X, P, modelIdx, 0.0));
 }
 
-// Function: setTransProb(int AIdx, int BIdx, double weight)
-//   sets a transition probability in the modelGraph from model A to model B
+// sets a transition probability in the modelGraph from model A to model B with
+// a given weight.
 void Rbpf::setTransProb(int AIdx, int BIdx, double weight){
 	modelGraph.setTransProb(AIdx, BIdx, weight);
 }
 
-// Function gaussianPDF2D(*X,*Sigma)
-//   Evaluates the multivariate PDF of a centered (mean=0,0) 2D Gaussian
-//   distribution.
-//   X = (2 x 1), Sigma = (2 x 2)
-//   This function does not appear to be provided by Boost (yet).  This is
-//   explicitly for the 2D case because inverting Sigma (in the general multi-
-//   variate case) is expensive.
-//   Though I cannot guarantee correctness, I did compare to Matlab's mvnpdf()
+// Evaluates the multivariate PDF of a centered (mean=0,0) 2D Gaussian
+// distribution.
+// X = (2 x 1), Sigma = (2 x 2)
+// This function does not appear to be provided by Boost (yet).  This is
+// explicitly for the 2D case because inverting Sigma (in the general multi-
+// variate case) is expensive.
+// Compared against Matlab's mvnpdf() with several tests all passed.
 inline double Rbpf::gaussianPDF2D(Vector *X, Matrix *Sigma){
 	double sX2 = (*Sigma)(0,0), sY2 = (*Sigma)(1,1);
 	double sX = sqrt(sX2), sY = sqrt(sY2);
@@ -188,14 +180,13 @@ inline double Rbpf::gaussianPDF2D(Vector *X, Matrix *Sigma){
 	return (0.5/(pi*sX*sY*sqrt(1-p*p)))*std::exp(expTerm);
 }
 
-// Function: opterator<<
-//   Used for printing this state to a stream
-//   displays the modelGraph and each particle in the filter
-ostream& operator<<(ostream& out, const Rbpf &r){
+// Used for printing this state to a stream
+// displays the modelGraph and each particle in the filter
+std::ostream& operator<<(std::ostream& out, const Rbpf &r){
 	// display model graph
-	out << "model graph:" << endl << r.modelGraph << endl;
+	out << "model graph:" << std::endl << r.modelGraph << std::endl;
 	// display k particles
 	for(int x=0; x<r.k; x++)
-		out << "particle(" << x << "):" << endl << r.particleVector[x] << endl;
+		out << "particle(" << x << "):" << std::endl << r.particleVector[x] << std::endl;
 	return out;
 }

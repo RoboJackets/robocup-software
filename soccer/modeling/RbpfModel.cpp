@@ -8,26 +8,23 @@
 
 #include <RbpfModel.hpp>
 
-// Constructor: RbpfModel()
-//   initializes n, m, s, F, H, Q, R, and space used for intermediate
-//   calculations: Inn (n x n Identity matrix), h, Yhat, S
-RbpfModel::RbpfModel() : n(NSIZE), m(MSIZE), s(SSIZE), F(n,n), H(s,n), Q(n,n), R(s,s), Inn(n,n), h(s), Yhat(s,1), S(s,s) {
+// initializes n, m, s, F, H, Q, R, and space used for intermediates
+// calculations: Inn (n x n Identity matrix), h, Yhat, S
+RbpfModel::RbpfModel(RobotMap *robotMap) : n(NSIZE), m(MSIZE), s(SSIZE), F(n,n), H(s,n), Q(n,n), R(s,s), _robotMap(robotMap), Inn(n,n), h(s), Yhat(s,1), S(s,s) {
 	Inn.clear(); h.clear(); Yhat.clear(); S.clear(); // zero out matrices
 	for(int i=0;i<n;i++){Inn(i,i)=1.0;} // initialize identity matrix
 }
 
-// Destructor: ~RbpfModel()
 RbpfModel::~RbpfModel(){}
 
-// Function: predict(&X, &P, &U, dt)
-//   performs EKF predict, storing the result in X and P
-//   X: state vector that will be updated (n x 1)
-//   P: state covariance that will be updated (n x n)
-//   U: control input (m x 1)
-//   dt: change in time
-//   TODO: for speed, computeTransitionJacobian can be performed once per model.
-//   TODO: for speed, the transpose of F can be computed once per model.
-//   TODO: for speed, temp matrices should be removed.
+// performs EKF predict, storing the result in X and P
+// X: state vector that will be updated (n x 1)
+// P: state covariance that will be updated (n x n)
+// U: control input (m x 1)
+// dt: change in time
+// TODO: for speed, computeTransitionJacobian can be performed once per model.
+// TODO: for speed, the transpose of F can be computed once per model.
+// TODO: for speed, temp matrices should be removed.
 void RbpfModel::predict(Vector &X, Matrix &P, Vector &U, double dt){
 	assert((int)X.size() == n);  // X must be of size (n x 1)
 	assert((int)P.size1() == n); // P must be of size (n x n)
@@ -42,14 +39,13 @@ void RbpfModel::predict(Vector &X, Matrix &P, Vector &U, double dt){
 	P = FPFt + Q;
 }
 
-// Function: update(&X, &P, &Z, dt)
-//   performs EKF update, storing the result in X and P
-//   X: state vector that will be updated (n x 1)
-//   P: state covariance that will be updated (n x n)
-//   Z: observation (s x 1)
-//   dt: change in time
-//   TODO: for speed, the transpose of H can be computed once per model.
-//   TODO: for speed, temp matrices should be removed.
+// performs EKF update, storing the result in X and P
+// X: state vector that will be updated (n x 1)
+// P: state covariance that will be updated (n x n)
+// Z: observation (s x 1)
+// dt: change in time
+// TODO: for speed, the transpose of H can be computed once per model.
+// TODO: for speed, temp matrices should be removed.
 void RbpfModel::update(Vector &X, Matrix &P, Vector &Z, double dt){
 	assert((int)X.size() == n);  // X must be of size (n x 1)
 	assert((int)P.size1() == n); // P must be of size (n x n)
@@ -79,51 +75,46 @@ void RbpfModel::update(Vector &X, Matrix &P, Vector &Z, double dt){
 	}
 }
 
-// Function: getPredictedMeasurement()
-//   returns the previous predicted measurement, h (s x 1)
-Vector* RbpfModel::getPredictedMeasurement(){
+// returns the previous predicted measurement, h (s x 1)
+RbpfModel::Vector* RbpfModel::getPredictedMeasurement(){
 	return &h;
 }
 
-// Function: getInnovation()
-//   returns the previously calculated innovation, Y (s x 1)
-Vector* RbpfModel::getInnovation(){
+// returns the previously calculated innovation, Y (s x 1)
+RbpfModel::Vector* RbpfModel::getInnovation(){
 	return &Yhat;
 }
-// Function: getInnovationCovariance()
-//   returns the previously calculated innovation covariance, S (s x s)
-Matrix* RbpfModel::getInnovationCovariance(){
+// returns the previously calculated innovation covariance, S (s x s)
+RbpfModel::Matrix* RbpfModel::getInnovationCovariance(){
 	return &S;
 }
 
-// Function: opterator<<
-//   overloaded operator for printing a model (debugging)
-//   prints: F, H, Q, and R
-ostream& operator<<(ostream& out, const RbpfModel &model){
-	out << "F:" << endl;
+// overloaded operator for printing a model (debugging)
+// prints: F, H, Q, and R
+std::ostream& operator<<(std::ostream& out, const RbpfModel &model){
+	out << "F:" << std::endl;
 	for(int x=0; x<model.n; x++){
 		out << "\t";
 		for(int y=0; y<model.n; y++){out << model.F(x,y) << ", ";}
-		out << endl;
+		out << std::endl;
 	}
-	out << endl << "H:" << endl;
+	out << std::endl << "H:" << std::endl;
 	for(int x=0; x<model.s; x++){
 		out << "\t";
 		for(int y=0; y<model.n; y++){out << model.H(x,y) << ", ";}
-		out << endl;
+		out << std::endl;
 	}
-	out << endl << "Q:" << endl;
+	out << std::endl << "Q:" << std::endl;
 	for(int x=0; x<model.n; x++){
 		out << "\t";
 		for(int y=0; y<model.n; y++){out << model.Q(x,y) << ", ";}
-		out << endl;
+		out << std::endl;
 	}
-	out << endl << "R:" << endl;
+	out << std::endl << "R:" << std::endl;
 	for(int x=0; x<model.s; x++){
 		out << "\t";
 		for(int y=0; y<model.s; y++){out << model.R(x,y) << ", ";}
-		out << endl;
+		out << std::endl;
 	}
 	return out;
 }
-

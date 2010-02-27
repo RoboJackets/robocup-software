@@ -110,7 +110,8 @@ set (SRCS
 	modeling/RbpfModelGraph.cpp
 	modeling/RbpfState.cpp
 	modeling/InvertMatrix.hpp
-	modeling/RbpfAllModels.cpp
+	modeling/RbpfModelRolling.cpp
+	modeling/RbpfModelKicked.cpp
 	
 # Sources for motion module
 	motion/MotionModule.cpp

@@ -23,6 +23,7 @@ const uint64_t MaxCoastTime = 500000;
 
 WorldModel::WorldModel(SystemState *state, const ConfigFile::WorldModel& cfg) :
 	Module("World Model"),
+	ballModel(BallModel::RBPF, &_robotMap),
 	_config(cfg)
 {
 	_state = state;

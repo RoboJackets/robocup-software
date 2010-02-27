@@ -8,6 +8,7 @@
 #include <cblas.h>
 #include "BLASWrap/blaswrap.h"
 #include "difference_kalman.hpp"
+#include "RobotModel.hpp"
 
 /* RBPF Includes */
 #include <iostream>
@@ -17,7 +18,8 @@
 #include "Rbpf.hpp"
 #include "RbpfState.hpp"
 #include "RbpfModel.hpp"
-#include "RbpfAllModels.hpp"
+#include "RbpfModelRolling.hpp"
+#include "RbpfModelKicked.hpp"
 
 typedef Geometry2d::Point Point;
 typedef boost::numeric::ublas::vector<double> Vector;
@@ -35,7 +37,9 @@ namespace Modeling
 				ABG
 			} mode_t;
 
-			BallModel(mode_t mode = RBPF);
+			typedef std::map<int, RobotModel *> RobotMap;
+
+			BallModel(mode_t mode, RobotMap *robotMap);
 
 			void observation(uint64_t time, const Geometry2d::Point &pos);
 
@@ -97,10 +101,13 @@ namespace Modeling
 			// mode of the filter
 			mode_t mode_;
 
+			// map of robots so filters can include this information
+			RobotMap *_robotMap;
+
 			// new particle filter implementation
 			Rbpf* raoBlackwellizedParticleFilter;
 
-			// Initialization functions for each mode
+			// Initialization functions for each model
 
 			/**
 			 * Initialize Rao-Blackwellized Particle Filter
