@@ -18,7 +18,9 @@ using namespace Geometry2d;
 #endif
 
 Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay) :
-	Behavior(gameplay), _ballHandlingScale(1.0), _ballHandlingRange(0.5)
+	Behavior(gameplay),
+	_ballHandlingScale(1.0),
+	_ballHandlingRange(0.5)
 {
 	automatic = true;
 	_win = 0;
@@ -147,15 +149,15 @@ bool Gameplay::Behaviors::Kick::run()
 	case Intercept:
 		//approach the ball at high speed using Intercept
 		_state = intercept(targetCenter);
-		drawText("Intercept",robot()->pos() + textOffset, _state == oldState ? stable : toggle);
+		drawText("Intercept", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
 		break;
 	case Aim:
 		_state = aim(targetCenter, canKick);
-		drawText("Aim",robot()->pos() + textOffset, _state == oldState ? stable : toggle);
+		drawText("Aim", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
 		break;
 	case Shoot:
 		_state = shoot(targetCenter, kickStrength);
-		drawText("Shoot",robot()->pos() + textOffset, _state == oldState ? stable : toggle);
+		drawText("Shoot", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
 		break;
 	case Done: // do nothing
 		break;
@@ -293,13 +295,24 @@ Gameplay::Behaviors::Kick::shoot(const Geometry2d::Point& targetCenter, int kick
 	robot()->dribble(0);
 	robot()->move(_shootMove);
 
+	if (!robot()->pos().nearPoint(ball().pos, 0.2f))
+	{
+		// Lost the ball
+		return Aim;
+	}
+
+	if (!robot()->charged())
+	{
+		// We have kicked
+		return Done;
+	}
+
 	// If the robot has moved more than half a meter since starting to shoot, we are probably
 	// just pushing the ball around, so give up.
 	if (!ball().pos.nearPoint(_shootBallStart, 0.2f) || !robot()->pos().nearPoint(_shootStart, 0.5f))
 	{
 		// Ball was kicked or we moved far enough to give up
-		return Done;
-		debug("  done");
+//		return Done;
 	}
 	debug("\n");
 	return Shoot;

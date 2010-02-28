@@ -104,6 +104,7 @@ void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
 			if (r.valid)
 			{
 				drawRobot(p, f.team, r.shell, r.pos, r.angle, f.team, r.haveBall);
+				drawPoseHistory(p, r);
 			}
 		}
 
@@ -113,6 +114,7 @@ void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
 			if (r.valid)
 			{
 				drawRobot(p, opp, r.shell, r.pos, r.angle, f.team, r.haveBall);
+				drawPoseHistory(p, r);
 			}
 		}
 
@@ -120,6 +122,15 @@ void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
 		{
 			drawBall(p, f.ball.pos, f.ball.vel);
 		}
+	}
+}
+
+void LogModule::drawPoseHistory(QPainter &p, const Packet::LogFrame::Robot &r) const
+{
+	p.setPen(Qt::white);
+	for (unsigned int i = 1; i < r.poseHistory.size(); ++i)
+	{
+		p.drawLine(r.poseHistory[i - 1].pos.toQPointF(), r.poseHistory[i].pos.toQPointF());
 	}
 }
 

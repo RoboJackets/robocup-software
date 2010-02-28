@@ -266,6 +266,9 @@ void Gameplay::GameplayModule::run()
 		// Reset the motion command
 		r->resetMotionCommand();
 
+		// Pose history
+		r->updatePoseHistory();
+
 		// Add obstacles for this robot
 		ObstacleGroup &obstacles = r->packet()->obstacles;
 		obstacles.clear();

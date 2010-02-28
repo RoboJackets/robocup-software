@@ -61,6 +61,12 @@
 		
 		<!-- radio rx packet for the robot -->
 		<member type="RadioRx" name="radioRx" />
+		
+		<struct typename="Pose">
+			<member type="Point" name="pos"/>
+			<member type="float" name="angle"/>
+		</struct>
+		<array type="Pose" name="poseHistory"/>
 	</struct>
 
 	<!-- post processed ball information -->

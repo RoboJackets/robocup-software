@@ -15,14 +15,16 @@ namespace Log
 		public:
 			typedef boost::shared_ptr<LogModule> shared_ptr;
 			LogModule(SystemState *state);
-		
+
 			void setLogFile(LogFile* file);
-			
+
 			virtual void run();
-			
+
 			virtual void fieldOverlay(QPainter&, Packet::LogFrame&) const;
-			
+
 		private:
+			void drawPoseHistory(QPainter &p, const Packet::LogFrame::Robot &robot) const;
+
 			SystemState *_state;
 			QMutex _logFileMutex;
 			bool _showVision;

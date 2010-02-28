@@ -8,35 +8,35 @@
 using namespace std;
 
 Gameplay::Behaviors::Intercept::Intercept(GameplayModule *gameplay, float dist) :
-	Behavior(gameplay), _farDist(dist), _ballControlFrames(5)
+	Behavior(gameplay),
+	_farDist(dist),
+	_ballControlFrames(5)
 {
 }
 
-void Gameplay::Behaviors::Intercept::assign(set<Robot *> &available)
-{
+void Gameplay::Behaviors::Intercept::assign(set<Robot *> &available) {
 	takeBest(available);
 	_state = ApproachFar;
 }
 
-float Gameplay::Behaviors::Intercept::score(Robot * robot)
-{
+float Gameplay::Behaviors::Intercept::score(Robot * robot) {
 	Geometry2d::Point ball_pos = ball().pos;
 	Geometry2d::Point robot_pos = robot->pos();
 
 	return ball_pos.distTo(robot_pos);
 }
 
-bool Gameplay::Behaviors::Intercept::run()
-{
-	if (!allVisible() || !ball().valid)
-	{
+bool Gameplay::Behaviors::Intercept::run() {
+	if (!allVisible() || !ball().valid) {
 		// No ball
 		return false;
 	}
 
-	if(!robot()->haveBall()){
+	if (!robot()->haveBall()) {
 		_ballControlCounter = 0;
 	}
+
+	//FIXME - We ram the ball if we have to move a long distance because we don't start slowing down early enough.
 
 	const Geometry2d::Point pos = robot()->pos();
 
@@ -54,73 +54,64 @@ bool Gameplay::Behaviors::Intercept::run()
 	robot()->setVScale(1.0f);
 
 	//if we already have the ball, skip approach states
-	if (robot()->haveBall())
-	{
-		if(++_ballControlCounter > _ballControlFrames){
+	if (robot()->haveBall()) {
+		if (++_ballControlCounter > _ballControlFrames) {
 			_state = Done;
-		}else{
+		} else {
 			//stop forward movement
 			robot()->move(robot()->pos());
 		}
-	}
-	else if (_state == ApproachBall)
-	{
-		if (!pos.nearPoint(ballPos, _farDist))
-		{
+	} else if (_state == ApproachBall) {
+		if (!pos.nearPoint(ballPos, _farDist)) {
 			_state = ApproachFar;
 		}
 	}
 
 	//approach the ball at high speed facing the intended direction
-	if (_state == ApproachFar)
-	{
+	if (_state == ApproachFar) {
 
 		drawText("ApproachFar", pos + textOffset, 0, 0, 0);
 		Geometry2d::Point dest = ballPos;
 
 		//if the ball is moving
 		//we first need to try and intercept it
-		if (ballVel.mag() > .1)
-		{
+		if (ballVel.mag() > .1) {
 			// Project the destination ahead far enough to account for movement
-			const float average_speed  = 3.0; // for the robot
-			float travelTime = pos.distTo(ballPos)/average_speed;
-			dest += ballVel*travelTime;
+			const float average_speed = 3.0; // for the robot
+			float travelTime = pos.distTo(ballPos) / average_speed;
+			dest += ballVel * travelTime;
 
 			//look at where the ball will be 1 second from now
 			// changed to 0.45 seconds
 			//aka... the pos + vel
 			//dest += ballVel*0.2;
-		}
-		else
-		{
-			if (ballPos.nearPoint(pos, _farDist))
-			{
-				dest += (ballPos - target).normalized() * ballPos.distTo(pos);
+		} else {
+			float ballDist = ballPos.distTo(pos);
+			float stopDist = _farDist * (1 + robot()->vel().mag() * 0.5f);
+			if (ballDist < stopDist) {
+				dest += (ballPos - target).normalized() * ballDist;
+			} else {
+				dest += (ballPos - target).normalized() * stopDist;
 			}
-			else
-			{
-				dest += (ballPos - target).normalized() * _farDist;
-			}
+			drawLine(Geometry2d::Segment(pos, dest), 64, 64, 255);
 		}
 
 		//TODO use the move behavior?
 		robot()->move(dest);
 
 		//create an obstacle to avoid the ball during this state
-		ObstaclePtr ballObstacle(new CircleObstacle(ballPos, _farDist - Constants::Ball::Radius));
+//		ObstaclePtr ballObstacle(new CircleObstacle(ballPos,
+//				_farDist - Constants::Ball::Radius));
 
 		const float dist = dest.distTo(pos);
 
-		if (dist <= _farDist)
-		{
+		if (dist <= _farDist) {
 			_state = ApproachBall;
 		}
 	}
 
 	//approach the ball with intent to acquire it
-	if (_state == ApproachBall)
-	{
+	if (_state == ApproachBall) {
 		drawText("ApproachBall", pos + textOffset, 0, 0, 0);
 		//TODO change to just willHandle?
 		//something more meaningful
@@ -130,7 +121,7 @@ bool Gameplay::Behaviors::Intercept::run()
 		// experimental 02/11/10
 		// kickerGoalPos is the target, instead of the ballpos
 		// hopefully, this will reduce ramming the ball.
-		Geometry2d::Point kickerGoalPos(ballPos-target);
+		Geometry2d::Point kickerGoalPos(ballPos - target);
 		kickerGoalPos = kickerGoalPos.normalized() * (Constants::Robot::Radius);
 		kickerGoalPos += ballPos;
 
@@ -138,11 +129,10 @@ bool Gameplay::Behaviors::Intercept::run()
 		robot()->dribble(50);
 		robot()->setVScale(0.8); // dampen velocity when near the ball
 
-		if (robot()->haveBall())
-		{
-			if(++_ballControlCounter > _ballControlFrames){
+		if (robot()->haveBall()) {
+			if (++_ballControlCounter > _ballControlFrames) {
 				_state = Done;
-			}else{
+			} else {
 				//stop forward movement
 				robot()->move(robot()->pos());
 			}
@@ -150,7 +140,7 @@ bool Gameplay::Behaviors::Intercept::run()
 		}
 	}
 
-	if(_state == Done){
+	if (_state == Done) {
 		// return to full vscale
 		robot()->setVScale(1.0);
 		//stop forward movement

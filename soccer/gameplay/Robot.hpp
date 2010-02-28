@@ -7,13 +7,14 @@
 #include <stdint.h>
 #include <string>
 #include <list>
+#include <vector>
 
 namespace Gameplay
 {
 	class Opponent;
 	class GameplayModule;
 	class Behavior;
-	
+
 	// This is largely a wrapper around Packet::LogFrame::Robot.
 	// It provides convenience functions for setting motion commands and reading state.
 	// It also tracks per-robot information that is internal to gameplay which does not need to be logged.
@@ -27,6 +28,8 @@ namespace Gameplay
 				return _packet;
 			}
 
+			void updatePoseHistory();
+
 			bool visible() const
 			{
 				return packet()->valid;
@@ -36,22 +39,22 @@ namespace Gameplay
 			{
 				return _id;
 			}
-			
+
 			const Geometry2d::Point &pos() const
 			{
 				return packet()->pos;
 			}
-			
+
 			const Geometry2d::Point &vel() const
 			{
 				return packet()->vel;
 			}
-			
+
 			const float &angle() const
 			{
 				return packet()->angle;
 			}
-			
+
 			void setVScale(float scale = 1.0) {
 				packet()->cmd.vScale = scale;
 			}
@@ -70,7 +73,7 @@ namespace Gameplay
 				// enable the RRT-based planner
 				packet()->cmd.planner = Packet::MotionCmd::RRT;
 			}
-			
+
 			/**
 			 * Move along a path for waypoint-based control
 			 * If not set to stop at end, the planner will send the robot
@@ -124,63 +127,63 @@ namespace Gameplay
 			{
 				packet()->cmd.spin = dir;
 			}
-			
+
 			bool haveBall() const
 			{
 				return packet()->haveBall;
 			}
-			
+
 			void dribble(int8_t speed)
 			{
 				packet()->radioTx.roller = speed;
 			}
-			
+
 			void pivot(Geometry2d::Point ctr, Packet::MotionCmd::PivotType dir)
 			{
 				packet()->cmd.pivotPoint = ctr;
 				packet()->cmd.pivot = dir;
 			}
-			
+
 			void face(Geometry2d::Point pt, bool continuous = false)
 			{
 				packet()->cmd.goalOrientation = pt;
 				packet()->cmd.face = continuous ? Packet::MotionCmd::Endpoint : Packet::MotionCmd::Continuous;
 			}
-			
+
 			void faceNone()
 			{
 				packet()->cmd.face = Packet::MotionCmd::None;
 			}
-			
+
 			void kick(uint8_t strength)
 			{
 				willKick = true;
 				packet()->radioTx.kick = strength;
 			}
-			
+
 			void pivot(Geometry2d::Point center, bool cw)
 			{
 				packet()->cmd.pivotPoint = center;
 				packet()->cmd.pivot = cw ? Packet::MotionCmd::CW : Packet::MotionCmd::CCW;
 			}
-			
+
 			bool charged() const
 			{
 				return packet()->radioRx.charged;
 			}
-			
+
 			bool self() const
 			{
 				return _self;
 			}
-			
+
 			ObstacleGroup &obstacles() const
 			{
 				return packet()->obstacles;
 			}
-			
+
 			void resetMotionCommand();
-			
+
 			// True if this robot intends to kick the ball.
 			// This is reset when this robot's role changes.
 			// This allows the robot to get close to the ball during a restart.
@@ -203,5 +206,6 @@ namespace Gameplay
 			int _id;
 			bool _self;
 			Packet::LogFrame::Robot *_packet;
+			std::vector<Packet::LogFrame::Robot::Pose> _poseHistory;
 	};
 }
