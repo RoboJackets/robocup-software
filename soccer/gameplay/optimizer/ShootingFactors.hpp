@@ -46,6 +46,24 @@ namespace Gameplay {
 		}
 	}; // BearingFactor
 
+	/** Avoid shooting through opponents */
+	class OpponentShotAvoidanceFactor: public gtsam::NonlinearFactor2<Config, SelfKey, Self_t, OppKey, Opp_t> {
+	private:
+
+		typedef gtsam::NonlinearFactor2<Config, SelfKey, Self_t, OppKey, Opp_t> Base;
+
+	public:
+
+		OpponentShotAvoidanceFactor(); /* Default constructor */
+		OpponentShotAvoidanceFactor(const SelfKey& self, const OppKey& opp, double sigma);
+
+		/** h(x)-z -> between(z,h(x)) for Rot2 manifold */
+		Vector evaluateError(const Self_t& pose,  const Opp_t& opp,
+				boost::optional<Matrix&> H1 = boost::none,
+				boost::optional<Matrix&> H2 = boost::none) const;
+
+	}; // OpponentShotAvoidanceFactor
+
 
 	} // \Optimization
 } // \Gameplay

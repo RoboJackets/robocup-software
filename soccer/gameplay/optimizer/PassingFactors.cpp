@@ -4,8 +4,6 @@
  */
 
 #include <boost/bind.hpp>
-//#include <gtsam/BearingFactor.h>
-#include <gtsam/NonlinearConstraint-inl.h>
 #include "PassingFactors.hpp"
 
 using namespace gtsam;
@@ -14,85 +12,53 @@ using namespace Gameplay;
 using namespace Optimization;
 
 
+Gameplay::Optimization::OpponentPassAvoidFactor::OpponentPassAvoidFactor(
+		const SelfKey& kicker, const SelfKey& receiver,
+		const OppKey& opp, double sigma)
+ : NonlinearFactor<Config>(noiseModel::Isotropic::Sigma(1, sigma)),
+   passer_(kicker), receiver_(receiver), opp_(opp)
+   {
+   }
 
-//NonlinearConstraint2(
-//		Vector (*g)(const Config& config),
-//		const Key1& key1,
-//		Matrix (*G1)(const Config& config),
-//		const Key2& key2,
-//		Matrix (*G2)(const Config& config),
-//		size_t dim_constraint,
-//		const LagrangeKey& lagrange_key,
-//		bool isEquality=true);
+/** Vector of errors */
+Vector
+Gameplay::Optimization::OpponentPassAvoidFactor::unwhitenedError(const Config& c) const {
+	const Self_t& kicker = c[passer_];
+	const Self_t& receiver = c[receiver_];
+	const Opp_t&  opp = c[opp_];
 
-/**
- * Calculate bearing and optional derivative(s)
- */
-//Rot2 bearing(const Pose2& pose, const Point2& point,
-//		boost::optional<Matrix&> H1, boost::optional<Matrix&> H2) {
-//	if (!H1 && !H2) return bearing(pose, point);
-//	Point2 d = transform_to(pose, point);
-//	Matrix D_result_d;
-//	Rot2 result = relativeBearing(d, D_result_d);
-//	if (H1) *H1 = D_result_d * Dtransform_to1(pose, point);
-//	if (H2) *H2 = D_result_d * Dtransform_to2(pose, point);
-//	return result;
-//}
+	// cost is maximizing distance squared to the midpoint of the line
+	// TODO: switch to actual distance to the line after figuring out the derivatives
 
-///*
-// * Bidirectional facing term - one robot tries to face the other, want the bearing to
-// * the other robot to be zero so that the robot exactly faces the other target
-// */
-//Vector facing_g(const Config& config, const SelfKey& key1, const SelfKey& key2) {
-//	// extract poses
-//	Pose2 p1 = config[key1], p2 = config[key2];
-//
-//	// compute bearings in each direction
-//	Rot2 h12 = bearing(p1, p2.t()),
-//		 h21 = bearing(p2, p1.t());
-//
-//	return Vector_(2, logmap(between(Rot2(), h12))(0), logmap(between(Rot2(), h12))(0));
-//}
-//
-//Matrix facing_G1(const Config& config, const SelfKey& key1, const SelfKey& key2) {
-//	// extract poses
-//	Pose2 p1 = config[key1], p2 = config[key2];
-//
-//	// compute bearings and derivatives
-//	Matrix h12_1, h12_2, h21_1, h21_2;
-//	Rot2 h12 = bearing(p1, p2.t(), h12_1, h12_2),
-//		 h21 = bearing(p2, p1.t(), h21_1, h21_2);
-//
-//	// assemble the gradient matrix for key1
-//	Matrix G1 = zeros(2,3);
-//	insertSub(G1, h12_1, 0, 0);
-//	insertSub(G1, h21_2, 1, 0);
-//	return G1;
-//}
-//
-//Matrix facing_G2(const Config& config, const SelfKey& key1, const SelfKey& key2) {
-//	// extract poses
-//	Pose2 p1 = config[key1], p2 = config[key2];
-//
-//	// compute bearings and derivatives
-//	Matrix h12_1, h12_2, h21_1, h21_2;
-//	Rot2 h12 = bearing(p1, p2.t(), h12_1, h12_2),
-//		 h21 = bearing(p2, p1.t(), h21_1, h21_2);
-//
-//	// assemble the gradient matrix for key2
-//	Matrix G2 = zeros(2,3);
-//	insertSub(G2, h12_2, 0, 0);
-//	insertSub(G2, h21_1, 1, 0);
-//	return G2;
-//}
-//
-//
-///* Note that this is a dim=4 constraint, rotation for two robots */
-//PassFacingConstraint::PassFacingConstraint(const SelfKey& key1, const SelfKey& key2,
-//										   const LagrangeKey& lamKey)
-//: Base(boost::bind(facing_g, _1, key1, key2),
-//		key1, boost::bind(facing_G1, _1, key1, key2),
-//		key2, boost::bind(facing_G2, _1, key1, key2),
-//		2, lamKey)
-//  {
-//  }
+	// Note that we negate the cost because we want a big distance
+	return Vector_(1, -1*pointSegmentDist(kicker.t(), receiver.t(), opp));
+}
+
+/** linearize to a GaussianFactor */
+boost::shared_ptr<gtsam::GaussianFactor>
+Gameplay::Optimization::OpponentPassAvoidFactor::linearize(const Config& c) const {
+	const Self_t& kicker = c[passer_];
+	const Self_t& receiver = c[receiver_];
+	const Opp_t&  opp = c[opp_];
+
+	cout << "In OpponentPassAvoidFactor::linearize" << endl;
+
+	// Derivative matrices
+	Matrix Ak, Ar, Ao;
+
+	Vector b = Vector_(1, -pointSegmentDist(kicker.t(), receiver.t(), opp,
+											Ak, Ar, Ao));
+
+	gtsam::print(Ak, "Ak");
+
+	// bake in the noise information
+	this->noiseModel_->WhitenInPlace(Ak);
+	this->noiseModel_->WhitenInPlace(Ar);
+	this->noiseModel_->WhitenInPlace(Ao);
+	this->noiseModel_->whitenInPlace(b);
+
+	return GaussianFactor::shared_ptr(new GaussianFactor(
+			passer_, -Ak, receiver_, -Ar, opp_, -Ao, -b,
+			noiseModel::Unit::Create(1)));
+}
+

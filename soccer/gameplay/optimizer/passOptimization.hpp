@@ -99,6 +99,12 @@ namespace Gameplay
 				: OppConstraint(OppKey(encodeID(robotID, frame_num)), rc2gt_Point2(pt)) {}
 		};
 
+		/** Point to Segment distances */
+		double pointSegmentDist(const gtsam::Point2& start, const gtsam::Point2& end, const gtsam::Point2& pt,
+				boost::optional<Matrix&> Dstart = boost::none,
+				boost::optional<Matrix&> Dend = boost::none,
+				boost::optional<Matrix&> Dpt = boost::none);
+
 	} // \Optimization
 } // \Gameplay
 

@@ -40,6 +40,9 @@ namespace Gameplay
 			double passLengthSigma; /// determines how much to shorten shots
 			double facingSigma;     /// Weight for pass facing factors
 			double shotFacingSigma; /// Weight for shot facing factors
+			double oppAvoidSigma;   /// Weight for opp avoidance during driving
+			double oppPassAvoidSigma; /// Weight for opp avoidance during passes
+			double oppShotAvoidSigma; /// Weight for opp avoidance during shots
 
 			// Make this larger to make optimization more aggressive
 			double priorSigma;      /// Weight for priors on all variables - bounds all optimization

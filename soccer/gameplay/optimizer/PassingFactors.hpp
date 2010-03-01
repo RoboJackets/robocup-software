@@ -60,7 +60,26 @@ namespace Gameplay {
 				: Base(start, end, gtsam::Pose2(), gtsam::noiseModel::Isotropic::Sigma(3, sigma)) {}
 	};
 
+	/**
+	 * Factor that maximizes distance between the opp and the pass trajectory
+	 */
+	class OpponentPassAvoidFactor : public gtsam::NonlinearFactor<Config> {
+		protected:
+			/** Keys */
+			SelfKey passer_, receiver_;
+			OppKey opp_;
 
+		public:
+			OpponentPassAvoidFactor(const SelfKey& kicker, const SelfKey& receiver,
+					const OppKey& opp, double sigma);
+
+			/** Vector of errors */
+			Vector unwhitenedError(const Config& c) const;
+
+			/** linearize to a GaussianFactor */
+			boost::shared_ptr<gtsam::GaussianFactor>
+			linearize(const Config& c) const;
+	};
 
 //	/**
 //	 * Takes two poses and makes them face each other

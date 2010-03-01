@@ -21,3 +21,27 @@ Vector Gameplay::Optimization::ShotShorteningFactor::evaluateError(
 	if (H1) *H1 = eye(3);
 	return Vector_(3, ret(0), ret(1), 0.0);
 }
+
+Gameplay::Optimization::OpponentShotAvoidanceFactor::OpponentShotAvoidanceFactor(
+		const SelfKey& self, const OppKey& opp, double sigma)
+	: Base(noiseModel::Isotropic::Sigma(1, sigma), self, opp)
+{
+}
+
+Vector
+Gameplay::Optimization::OpponentShotAvoidanceFactor::evaluateError(
+		const Self_t& pose,  const Opp_t& opp,
+		boost::optional<Matrix&> H1, boost::optional<Matrix&> H2) const
+{
+	Point2 goalCenter(0.0, Constants::Field::Length);
+	Point2 posT = pose.t();
+
+	Matrix Ak, Ao;
+	Vector dist = Vector_(1, -pointSegmentDist(pose.t(), goalCenter, opp,
+											   Ak, boost::none, Ao));
+
+	if (H1) *H1 = -Ak;
+	if (H2) *H2 = -Ao;
+	return -dist;
+}
+
