@@ -120,9 +120,6 @@ Gameplay::Optimization::pointSegmentDist(
 			2*AB.y()*Cp/Dnormalizer,          // partial in x
 			-2*AB.x()*Cp/Dnormalizer); 		 // partial in y
 
-	cout << "Calculated derivatives" << endl;
-	gtsam::print(HA, "Dstart in pointSegmentDist");
-
 	if (Dstart) *Dstart = HA;
 	if (Dend) *Dend = HB;
 	if (Dpt) *Dpt = HC;

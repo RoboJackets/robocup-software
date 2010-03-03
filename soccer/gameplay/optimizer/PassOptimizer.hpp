@@ -9,6 +9,7 @@
 
 #include <GameplayModule.hpp>
 #include <PassConfig.hpp>
+#include <passOptimization.hpp>
 
 namespace Gameplay
 {
@@ -23,6 +24,9 @@ namespace Gameplay
 			PassOptimizer(GameplayModule* gameplay);
 
 			virtual ~PassOptimizer();
+
+			/** Generate a simple cost for a single PassConfig */
+			double evaluateConfig(const PassConfig& cfg);
 
 			/**
 			 * Primary optimization function
@@ -50,6 +54,12 @@ namespace Gameplay
 		protected:
 			/** the gameplay module link to get access to state information */
 			GameplayModule * gameplay_;
+
+			/** initializes a config based on a PassConfig */
+			shared_config initializeConfig(const PassConfig& cfg) const;
+
+			/** creates a factor graph */
+			shared_graph createGraph(const PassConfig& cfg) const;
 		};
 	}
 }

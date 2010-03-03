@@ -46,9 +46,11 @@ bool Gameplay::Plays::TestPassConfigOptimize::run()
 
 		// copy out first plan and optimize
 		config_ = initialPlans[0];
-		cout << "executing optimization" << endl;
+
+		double initError = optimizer_.evaluateConfig(config_);
+		cout << "executing optimization - started with cost = " << initError << endl;
 		opt_config_ = optimizer_.optimizePlan(config_, true);
-		cout << "  optimization complete!" << endl;
+		cout << "  optimization complete! - final cost = " << optimizer_.evaluateConfig(opt_config_) << endl;
 
 		// go to next state
 		testState_ = TestPassConfigOptimize::SHOW;

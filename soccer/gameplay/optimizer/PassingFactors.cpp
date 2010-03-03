@@ -41,15 +41,11 @@ Gameplay::Optimization::OpponentPassAvoidFactor::linearize(const Config& c) cons
 	const Self_t& receiver = c[receiver_];
 	const Opp_t&  opp = c[opp_];
 
-	cout << "In OpponentPassAvoidFactor::linearize" << endl;
-
 	// Derivative matrices
 	Matrix Ak, Ar, Ao;
 
 	Vector b = Vector_(1, -pointSegmentDist(kicker.t(), receiver.t(), opp,
 											Ak, Ar, Ao));
-
-	gtsam::print(Ak, "Ak");
 
 	// bake in the noise information
 	this->noiseModel_->WhitenInPlace(Ak);
