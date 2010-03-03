@@ -57,8 +57,9 @@ Gameplay::Optimization::OpponentPassAvoidFactor::linearize(const Config& c) cons
 	this->noiseModel_->WhitenInPlace(Ao);
 	this->noiseModel_->whitenInPlace(b);
 
+	// signs flipped so that this maximizes distance rather than minimizes it
 	return GaussianFactor::shared_ptr(new GaussianFactor(
-			passer_, -Ak, receiver_, -Ar, opp_, -Ao, -b,
+			passer_, -Ak, receiver_, -Ar, opp_, -Ao, b,
 			noiseModel::Unit::Create(1)));
 }
 

@@ -37,9 +37,9 @@ Gameplay::Optimization::PassOptimizer::PassOptimizer(GameplayModule* gameplay)
 	shotFacingSigma = 1.0;
 
 	// avoid sigmas
-	oppAvoidSigma = 0.5; // has little effect, apparently
-	oppPassAvoidSigma = 3.0; // at 1.0, this pushes the plan out of the field
-	oppShotAvoidSigma = 1.0;
+	oppAvoidSigma = 2.0;
+	oppPassAvoidSigma = 2.1; // at 2.0 or below, starts dramatically changing plan
+	oppShotAvoidSigma = 2.0;
 
 	// NOTE: to bound the strength of optimization, make this smaller
 	priorSigma = 2.0;
