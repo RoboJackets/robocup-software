@@ -72,6 +72,7 @@ set (SRCS
 	gameplay/behaviors/Penalty.cpp
 	gameplay/behaviors/Idle.cpp
 	gameplay/behaviors/Kick.cpp
+	gameplay/behaviors/OneTouchKick.cpp
 	gameplay/behaviors/Intercept.cpp
 	gameplay/behaviors/OptimizedPassing.cpp
 	gameplay/behaviors/positions/Goalie.cpp      
@@ -80,6 +81,7 @@ set (SRCS
  	
 	# testing plays/behaviors
 	gameplay/plays/test_plays/TestBasicPassing.cpp
+	gameplay/plays/test_plays/TestBasicOneTouchPassing.cpp
 	gameplay/plays/test_plays/TestDirectMotionControl.cpp
 	gameplay/plays/test_plays/TestTimePositionControl.cpp
 	gameplay/plays/test_plays/TestBasicAttack.cpp
