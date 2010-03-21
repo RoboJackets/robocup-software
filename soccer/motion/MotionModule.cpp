@@ -47,15 +47,36 @@ void MotionModule::fieldOverlay(QPainter& p, Packet::LogFrame& lf) const
 {
 	for(unsigned int i=0; i<5; i++)
 	{
+		// draw the RRT: NOT IMPLEMENTED
 		if (ui.drawRRT->isChecked())
 		{
 			_robots[i]->drawRRT(p);
 		}
 
+		// draw the path: includes RRT
 		if (ui.drawPath->isChecked())
 		{
 			_robots[i]->drawPath(p);
 		}
+
+		// draw the trajectory from bezier curves
+		if (ui.drawBezierTraj->isChecked())
+		{
+			_robots[i]->drawBezierTraj(p);
+		}
+
+		// draw the control points from bezier curves
+		if (ui.drawBezierControl->isChecked())
+		{
+			_robots[i]->drawBezierControl(p);
+		}
+
+		// draw trajectory history
+		if (ui.drawHistory->isChecked())
+		{
+			_robots[i]->drawPoseHistory(p);
+		}
+
 	}
 }
 

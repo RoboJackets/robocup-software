@@ -95,6 +95,33 @@ namespace Gameplay
 				packet()->cmd.explicitPath = path;
 			}
 
+			/**
+			 * Move via a bezier curve, designed to allow for faster movement
+			 * The points specified are bezier control points, which define the
+			 * path taken.  Note: longer paths are more computationally expensive.
+			 *
+			 * To enable control point modification to allow for avoidance of obstacles,
+			 * set the enableAvoid flag to true, false otherwise.  The stop at end
+			 * flag works like in other move commands
+			 */
+			void bezierMove(const std::vector<Geometry2d::Point>& controls,
+					bool enableAvoid, bool stopAtEnd=true) {
+				// set motion command to use the explicit path generation
+				packet()->cmd.planner = Packet::MotionCmd::Bezier;
+				if (stopAtEnd)
+					packet()->cmd.pathEnd = Packet::MotionCmd::StopAtEnd;
+				else
+					packet()->cmd.pathEnd = Packet::MotionCmd::FastAtEnd;
+
+				// set the avoidance flag
+				packet()->cmd.enableBezierAvoid = enableAvoid;
+
+				// we hardcode render resolution here
+				packet()->cmd.nrBezierPts = 20;
+				packet()->cmd.bezierControlPoints.clear();
+				packet()->cmd.bezierControlPoints = controls;
+			}
+
 			/** Move using direct velocity control by specifying
 			 *  translational and angular velocity
 			 */

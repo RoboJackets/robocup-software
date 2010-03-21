@@ -43,10 +43,11 @@
 			<constant name="Path" />
 			<constant name="DirectVelocity" />
 			<constant name="TimePosition" />
+			<constant name="Bezier" />
 		</enum>
 		<member type="PlannerType" name="planner" value="RRT" />
 				
-		<!--Position-based Path for Explicit Path Control-->
+		<!--Endpoint handling-->
 		<enum type="uint8" typename="PathEndType">
 			<constant name="StopAtEnd" />
 			<constant name="FastAtEnd" />
@@ -67,5 +68,12 @@
 		<array type="PathNode" name="timePosPath" />
 		<!--Need a time for the start of the path-->
 		<member type="uint64" name="start_time" />
+		
+		<!--Bezier Planner Parameters-->
+		<member type="uint16" name="nrBezierPts" />
+		<member type="bool" name="enableBezierAvoid" />
+		<array type="Geometry2d::Point" name="bezierControlPoints" />
+		
+		
 
 </struct>

@@ -54,8 +54,13 @@ namespace Motion
 			/** slow processing for each robot */
 			void slow();
 
+			/** drawing functions */
 			void drawPath(QPainter& p);
 			void drawRRT(QPainter& p);
+			void drawBezierTraj(QPainter& p);
+			void drawBezierControl(QPainter& p);
+			void drawPoseHistory(QPainter& p);
+
 
 			void setPosKp(double value);
 			void setPosKi(double value);
@@ -77,6 +82,9 @@ namespace Motion
 
 			/** generate velocities based on time-position control */
 			void genTimePosVelocity();
+
+			/** generate velocities based on bezier paths */
+			void genBezierVelocity();
 
 			/**
 			 * safety net against hitting other robots
@@ -114,6 +122,9 @@ namespace Motion
 			/** robot axles */
 			QVector<Robot::Axle> _axles;
 			QMutex _procMutex;
+
+			/** planner flag - copied out for rendering */
+			Packet::MotionCmd::PlannerType _plannerType;
 
 			RRT::Planner _planner;
 			/** robot dynamics information */
@@ -166,5 +177,21 @@ namespace Motion
 
 			/// True if we have actually loaded the motion config file
 			bool _isConfigLoaded;
+
+			/// store parameters for pose history for rendering
+			std::vector<Packet::LogFrame::Robot::Pose> _poseHistory;
+
+			/// store parameters for bezier curves for rendering
+			std::vector<Geometry2d::Point> _bezierControls;
+
+			/// evaluates a Bezier curve
+			Geometry2d::Point evaluateBezier(float t,
+					const std::vector<Geometry2d::Point>& controls,
+					const std::vector<float>& coeffs) const;
+
+			/// calculates binomial coefficients
+			int binomialCoefficient(int n, int k) const;
+
+			int factorial(int n) const;
 	};
 }

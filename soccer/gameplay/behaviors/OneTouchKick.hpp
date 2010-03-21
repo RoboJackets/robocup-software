@@ -54,7 +54,11 @@ namespace Gameplay
 				State approach();
 
 				// math functions
-				int binomialCoefficient(int n, int i);
+				int binomialCoefficient(int n, int i) const;
+
+				// create a bezier trajectory based on control points
+				void createTrajectory(const std::vector<Geometry2d::Point>& controls,
+						              std::vector<Geometry2d::Point>& traj, size_t nrPts) const;
 		};
 	}
 }

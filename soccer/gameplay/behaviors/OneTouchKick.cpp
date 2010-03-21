@@ -66,12 +66,11 @@ bool Gameplay::Behaviors::OneTouchKick::run()
 	}
 	drawLine(_target, 255, 0, 0); // show the target segment
 
-	// DEBUG: draw bezier trajectory to ball
-	size_t nrPts = 20; // number of interpolation points
+	// create a bezier trajectory to the ball
 	float velGain = 1.0; // gain on velocity for control point
 	float approachDist = 1.0; // distance along approach line for ball control point
 
-	// define the control points
+	// define the control points for a single kick
 	Point c0 = pos,       // initial position
 		  c1 = pos + vel * velGain, // first control point
 		  c2 = ballPos + (ballPos - _target.center()).normalized()*approachDist,
@@ -82,44 +81,8 @@ bool Gameplay::Behaviors::OneTouchKick::run()
 	controlPts.push_back(c2);
 	controlPts.push_back(c3);
 
-	// create the coefficients
-	vector<float> coeffs;
-	for (size_t i=0; i<controlPts.size(); ++i) {
-		coeffs.push_back(binomialCoefficient(controlPts.size()-1, i));
-	}
-
-	// create the points
-	vector<Point> traj;
-	traj.push_back(c0);
-	size_t n = controlPts.size();
-	float t = 0.0, inc = 1.0/nrPts;
-	for (size_t i = 0; i<nrPts; ++i) {
-		t += inc;
-		float j = 1.0 - t;
-		Point pt;
-		for (size_t k = 0; k<n; ++k) {
-			pt += controlPts.at(k) * pow(j, n-1-k) * pow(t, k) * coeffs.at(k);
-		}
-		traj.push_back(pt);
-	}
-
-	// draw the trajectory
-	Point prev(-1.0, -1.0);
-	BOOST_FOREACH(Point pt, traj) {
-		if (prev.x != -1.0) {
-			drawLine(Segment(prev, pt), 0, 0, 255);
-		}
-		prev = pt;
-	}
-
-	// draw the control points
-	prev = Point(-1.0, -1.0);
-	BOOST_FOREACH(Point pt, controlPts) {
-		if (prev.x != -1.0) {
-			drawLine(Segment(prev, pt), 0, 0, 255);
-		}
-		prev = pt;
-	}
+	// issue move command to transfer data to the motion module
+	robot()->bezierMove(controlPts, false);
 
 	// keep track of state transitions
 	State oldState = _state;
@@ -233,17 +196,4 @@ Geometry2d::Segment Gameplay::Behaviors::OneTouchKick::evaluateShot() {
 		bestTarget = _win->target();
 	}
 	return bestTarget;
-}
-
-int factorial(int n) {
-	if ( n == 1) return 1;
-	return n * factorial(n-1);
-}
-
-int Gameplay::Behaviors::OneTouchKick::binomialCoefficient(int n, int k) {
-	if (k > n) throw invalid_argument("K greater than N in binomialCoefficient()!");
-	if (k == n || k == 0 ) return 1;
-	if (k == 1 || k == n-1) return n;
-
-	return factorial(n)/(factorial(k)*factorial(n-k));
 }

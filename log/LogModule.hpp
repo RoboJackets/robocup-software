@@ -23,8 +23,6 @@ namespace Log
 			virtual void fieldOverlay(QPainter&, Packet::LogFrame&) const;
 
 		private:
-			void drawPoseHistory(QPainter &p, const Packet::LogFrame::Robot &robot) const;
-
 			SystemState *_state;
 			QMutex _logFileMutex;
 			bool _showVision;

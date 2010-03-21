@@ -138,6 +138,12 @@ void Robot::proc()
 		else
 		{
 #if 1
+			// record the type of planner for future use
+			_plannerType = _self->cmd.planner;
+
+			// record the history
+			_poseHistory = _self->poseHistory;
+
 			// switch between planner types
 			switch(_self->cmd.planner) {
 			// handle direct velocity commands (NOT IMPLEMENTED)
@@ -173,6 +179,17 @@ void Robot::proc()
 			{
 				// generate the velocity command for time-position control
 				genTimePosVelocity();
+				break;
+			}
+
+			// handle bezier control
+			case Packet::MotionCmd::Bezier:
+			{
+				// record the control points
+				_bezierControls = _self->cmd.bezierControlPoints;
+
+				// generate the velocities for the bezier curve planner
+				genBezierVelocity();
 				break;
 			}
 
@@ -253,7 +270,64 @@ void Robot::drawPath(QPainter& p)
 
 void Robot::drawRRT(QPainter& p)
 {
+	// FIXME: this should be implemented at some point
 }
+
+void Robot::drawBezierTraj(QPainter& p) {
+
+	QMutexLocker ml(&_procMutex);
+	if (_plannerType == Packet::MotionCmd::Bezier && _bezierControls.size() > 0) {
+
+		// create the coefficients
+		vector<float> coeffs;
+		size_t degree = _bezierControls.size();
+		for (size_t i=0; i<degree; ++i) {
+			coeffs.push_back(binomialCoefficient(degree-1, i));
+		}
+
+		// draw a curved blue line for the trajectory
+		int nrBezierPts = 20;
+		float inc = 1.0/nrBezierPts;
+		Point prev = _bezierControls.front();
+		Point pt;
+		p.setPen(Qt::blue);
+		for (size_t i = 0; i<nrBezierPts; ++i) {
+			pt = evaluateBezier(inc * i, _bezierControls, coeffs);
+			p.drawLine(prev.toQPointF(), pt.toQPointF());
+			prev = pt;
+		}
+		p.drawLine(pt.toQPointF(), _bezierControls.back().toQPointF());
+	}
+}
+
+void Robot::drawBezierControl(QPainter& p) {
+	QMutexLocker ml(&_procMutex);
+	if (_plannerType == Packet::MotionCmd::Bezier && _bezierControls.size() > 0) {
+
+		// draw straight blue lines for control lines, and small circles for points
+		Point prev(-1.0, -1.0);
+		p.setPen(Qt::blue);
+		BOOST_FOREACH(Point pt, _bezierControls) {
+			p.drawEllipse(pt.toQPointF(), 10., 10.);
+			if (prev.y != -1.0) {
+				p.drawLine(prev.toQPointF(), pt.toQPointF());
+			}
+			prev = pt;
+		}
+	}
+}
+
+void Robot::drawPoseHistory(QPainter& p) {
+
+	QMutexLocker ml(&_procMutex);
+
+	p.setPen(Qt::white);
+	for (unsigned int i = 1; i < _poseHistory.size(); ++i)
+	{
+		p.drawLine(_poseHistory[i - 1].pos.toQPointF(), _poseHistory[i].pos.toQPointF());
+	}
+}
+
 
 
 void Robot::stop() {
@@ -654,6 +728,31 @@ void Robot::genTimePosVelocity()
 	if (verbose) cout << "At end of genTimePosVelocity()" << endl;
 }
 
+void Robot::genBezierVelocity() {
+	// copy the control points - we may need to adjust them
+	vector<Point> control = _self->cmd.bezierControlPoints;
+
+	// get the number of interpolation points
+	// NOTE: this may be unnecessary
+//	size_t nrPts = _self->cmd.nrBezierPts;
+
+
+}
+
+Geometry2d::Point
+Robot::evaluateBezier(float t,
+		const std::vector<Geometry2d::Point>& controls,
+		const std::vector<float>& coeffs) const {
+
+	size_t n = controls.size();
+	float j = 1.0 - t;
+	Point pt;
+	for (size_t k = 0; k<n; ++k) {
+		pt += controls.at(k) * pow(j, n-1-k) * pow(t, k) * coeffs.at(k);
+	}
+	return pt;
+}
+
 void Robot::genMotor(bool old)
 {
 	if (!old)
@@ -935,4 +1034,17 @@ void Robot::calib()
 			}
 		}
 	}
+}
+
+int Motion::Robot::factorial(int n) const {
+	if ( n == 1) return 1;
+	return n * factorial(n-1);
+}
+
+int Motion::Robot::binomialCoefficient(int n, int k) const {
+	if (k > n) throw invalid_argument("K greater than N in binomialCoefficient()!");
+	if (k == n || k == 0 ) return 1;
+	if (k == 1 || k == n-1) return n;
+
+	return factorial(n)/(factorial(k)*factorial(n-k));
 }

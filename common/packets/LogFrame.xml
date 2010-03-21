@@ -62,6 +62,7 @@
 		<!-- radio rx packet for the robot -->
 		<member type="RadioRx" name="radioRx" />
 		
+		<!-- pose history for drawing and analysis -->
 		<struct typename="Pose">
 			<member type="Point" name="pos"/>
 			<member type="float" name="angle"/>
