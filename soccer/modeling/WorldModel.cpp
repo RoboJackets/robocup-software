@@ -129,10 +129,10 @@ void WorldModel::run()
 	// Update/delete robots
 	if (verbose) cout << "Sorting robots" << endl;
 	vector<RobotModel::shared> selfUnused, oppUnused;
-	BOOST_FOREACH(const RobotMap::value_type& p, _robotMap)
+	BOOST_FOREACH(RobotMap::value_type& p, _robotMap)
 	{
-		const int shell = p.first;
-		RobotModel::shared robot = p.second;
+		int shell = p.first;
+		RobotModel::shared &robot = p.second;
 		if ((curTime - robot->lastObservedTime) < MaxCoastTime) // && robot->bestError >= 0)
 		{
 			// This robot has a new observation.  Update it.

@@ -317,7 +317,7 @@ void Gameplay::GameplayModule::run()
 	_ballMatrix = Geometry2d::TransformMatrix::translate(_state->ball.pos);
 
 	// handle changes in play availability
-	bool playReady = false;
+	bool playReady = true;
 	if (_plays.size() == 0) {
 		boost::shared_ptr<Play> dummy;
 		_currentPlay = dummy;
