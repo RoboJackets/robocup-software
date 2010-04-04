@@ -10,12 +10,12 @@
 using namespace std;
 
 Gameplay::Behaviors::Fullback::Fullback(GameplayModule *gameplay, Side side):
-	Behavior(gameplay),
+	Behavior(gameplay, 1),
 	_side(side)
 {
 }
 
-void Gameplay::Behaviors::Fullback::assign(set<Robot *> &available)
+bool Gameplay::Behaviors::Fullback::assign(set<Robot *> &available)
 {
 	_robots.clear();
 	takeBest(available);
@@ -26,6 +26,8 @@ void Gameplay::Behaviors::Fullback::assign(set<Robot *> &available)
 	//initialize windowevaluator
 	_winEval = new Gameplay::WindowEvaluator(Behavior::gameplay()->state());
 	_winEval->debug = false;
+
+	return _robots.size() >= _minRobots;
 }
 
 bool Gameplay::Behaviors::Fullback::run()

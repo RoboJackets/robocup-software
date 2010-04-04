@@ -27,7 +27,7 @@ public:
 	/**
 	 * Takes the first robot as a kicker, ignores the rest
 	 */
-	virtual void assign(std::set<Robot *> &available);
+	virtual bool assign(std::set<Robot *> &available);
 
 	/** default run */
 	virtual bool run();

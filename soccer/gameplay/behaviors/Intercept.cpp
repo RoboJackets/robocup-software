@@ -8,15 +8,16 @@
 using namespace std;
 
 Gameplay::Behaviors::Intercept::Intercept(GameplayModule *gameplay, float dist) :
-	Behavior(gameplay),
+	Behavior(gameplay, 1),
 	_farDist(dist),
-	_ballControlFrames(5)
+	_ballControlFrames(5),
+	_state(ApproachFar)
 {
 }
 
-void Gameplay::Behaviors::Intercept::assign(set<Robot *> &available) {
+bool Gameplay::Behaviors::Intercept::assign(std::set<Robot *> &available) {
 	takeBest(available);
-	_state = ApproachFar;
+	return _robots.size() >= _minRobots;
 }
 
 float Gameplay::Behaviors::Intercept::score(Robot * robot) {

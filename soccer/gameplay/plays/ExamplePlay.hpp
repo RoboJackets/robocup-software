@@ -21,7 +21,7 @@ namespace Gameplay
 				virtual bool applicable();
 
 				/** Assigns robots to the play given a set of robots */
-				virtual void assign(std::set<Robot *> &available);
+				virtual bool assign(std::set<Robot *> &available);
 
 				/** Called every frame */
 				virtual bool run();

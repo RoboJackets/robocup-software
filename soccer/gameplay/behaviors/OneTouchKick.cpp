@@ -27,7 +27,7 @@ Gameplay::Behaviors::OneTouchKick::~OneTouchKick()
 	}
 }
 
-void Gameplay::Behaviors::OneTouchKick::assign(set<Robot *> &available)
+bool Gameplay::Behaviors::OneTouchKick::assign(set<Robot *> &available)
 {
 	_robots.clear(); // clear existing robots
 	takeBest(available);
@@ -41,6 +41,8 @@ void Gameplay::Behaviors::OneTouchKick::assign(set<Robot *> &available)
 	cout << "Initializing OneTouchKick to Intercept" << endl;
 	_state = Intercept;
 	_commandValid = false;
+
+	return _robots.size() >= _minRobots;
 }
 
 bool Gameplay::Behaviors::OneTouchKick::run()

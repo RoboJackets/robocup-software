@@ -13,12 +13,6 @@ bool Gameplay::Plays::OptimizedOffense::applicable()
 	return true;
 }
 
-void Gameplay::Plays::OptimizedOffense::assign(set<Robot *> &available)
-{
-	// this play always takes all available robots
-	this->takeAll(available);
-}
-
 bool Gameplay::Plays::OptimizedOffense::run()
 {
 	if (planReady_) {

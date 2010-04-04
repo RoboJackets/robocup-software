@@ -26,9 +26,6 @@ namespace Gameplay
 				/** Always applicable if we are playing */
 				virtual bool applicable();
 
-				/** takes all robots */
-				virtual void assign(std::set<Robot *> &available);
-
 				/** Called every frame */
 				virtual bool run();
 

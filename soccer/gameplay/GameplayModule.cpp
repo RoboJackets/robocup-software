@@ -317,6 +317,7 @@ void Gameplay::GameplayModule::run()
 	_ballMatrix = Geometry2d::TransformMatrix::translate(_state->ball.pos);
 
 	// handle changes in play availability
+	bool playReady = false;
 	if (_plays.size() == 0) {
 		boost::shared_ptr<Play> dummy;
 		_currentPlay = dummy;
@@ -345,12 +346,13 @@ void Gameplay::GameplayModule::run()
 				}
 			}
 
-			_currentPlay->assign(robots);
+			// assign and check if assignment was valid
+			playReady = _currentPlay->assign(robots);
 		}
 	}
 
-	// Run the current play
-	if (_currentPlay)
+	// Run the current play if assignment was successful
+	if (_currentPlay && playReady)
 	{
 		_playDone = !_currentPlay->run();
 	}

@@ -17,7 +17,7 @@ namespace Gameplay
 				OneTouchKick(GameplayModule *gameplay);
 				~OneTouchKick();
 
-				virtual void assign(std::set<Robot *> &available);
+				virtual bool assign(std::set<Robot *> &available);
 				virtual bool run();
 
 				Robot *targetRobot;

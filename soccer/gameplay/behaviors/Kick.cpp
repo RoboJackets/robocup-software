@@ -18,7 +18,7 @@ using namespace Geometry2d;
 #endif
 
 Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay) :
-	Behavior(gameplay),
+	Behavior(gameplay, 1),
 	_ballHandlingScale(1.0),
 	_ballHandlingRange(0.5)
 {
@@ -40,7 +40,7 @@ Gameplay::Behaviors::Kick::~Kick()
 	}
 }
 
-void Gameplay::Behaviors::Kick::assign(set<Robot *> &available)
+bool Gameplay::Behaviors::Kick::assign(set<Robot *> &available)
 {
 	_robots.clear(); // clear existing robots
 	_intercept->robots().clear();
@@ -55,6 +55,8 @@ void Gameplay::Behaviors::Kick::assign(set<Robot *> &available)
 	_state = Intercept;
 	_intercept->assignOne(robot());
 	_lastMargin = 0;
+
+	return _robots.size() >= _minRobots;
 }
 
 bool Gameplay::Behaviors::Kick::run()

@@ -22,8 +22,8 @@ Gameplay::Plays::TestOptimizedPassPlay::TestOptimizedPassPlay(GameplayModule *ga
 
 }
 
-void Gameplay::Plays::TestOptimizedPassPlay::assign(set<Robot *> &available){
-	passPlanner_.assign(available);
+bool Gameplay::Plays::TestOptimizedPassPlay::assign(set<Robot *> &available){
+	return passPlanner_.assign(available);
 }
 
 bool Gameplay::Plays::TestOptimizedPassPlay::run(){

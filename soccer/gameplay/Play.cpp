@@ -1,8 +1,8 @@
 #include <iostream>
 #include "Play.hpp"
 
-Gameplay::Play::Play(GameplayModule *gameplay):
-	Behavior(gameplay)
+Gameplay::Play::Play(GameplayModule *gameplay, size_t minRobots):
+	Behavior(gameplay, minRobots)
 {
 }
 

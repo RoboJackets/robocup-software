@@ -10,7 +10,7 @@ namespace Gameplay
 	class Behavior: public AutoName
 	{
 	public:
-		Behavior(GameplayModule *gameplay);
+		Behavior(GameplayModule *gameplay, size_t minRobots = 0);
 		virtual ~Behavior();
 
 		GameplayModule *gameplay() const
@@ -56,7 +56,7 @@ namespace Gameplay
 		// The assigned robots shall be removed from <available> when this function returns.
 		//
 		// The default implementation just calls takeBest(available).
-		virtual void assign(std::set<Robot *> &available);
+		virtual bool assign(std::set<Robot *> &available);
 
 		// Called each frame when this behavior is current.
 		// The default implementation does nothing.
@@ -75,12 +75,15 @@ namespace Gameplay
 		GameplayModule *_gameplay;
 		std::set<Robot *> _robots;
 
+		/// Minimum number of robots to take - by default zero
+		size_t _minRobots;
+
 		// Finds the best (lowest-scoring) robot in <available>, removes it from <available>, adds it to _robots, and returns it.
 		// Returns 0 if <available> is empty.
 		Robot *takeBest(std::set<Robot *> &available);
 
 		// Assigns all robots in <available> to this behavior.
-		void takeAll(std::set<Robot *> &available);
+		bool takeAll(std::set<Robot *> &available);
 
 		// Returns a score for the given robot.
 		// This is used to pick from available robots in takeBest(), which is typically called by assign().

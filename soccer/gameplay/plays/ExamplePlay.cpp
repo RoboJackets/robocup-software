@@ -19,9 +19,11 @@ bool Gameplay::Plays::ExamplePlay::applicable()
 	return true;
 }
 
-void Gameplay::Plays::ExamplePlay::assign(set<Robot *> &available)
+bool Gameplay::Plays::ExamplePlay::assign(set<Robot *> &available)
 {
 	/** replace this with your code to do assignments */
+
+	return true;
 }
 
 bool Gameplay::Plays::ExamplePlay::run()

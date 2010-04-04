@@ -10,7 +10,7 @@ using namespace Geometry2d;
 using namespace Packet;
 
 Gameplay::Plays::TestTimePositionControl::TestTimePositionControl(GameplayModule *gameplay):
-	Play(gameplay),
+	Play(gameplay, 1),
 	fsm_state_(Setup), // start with setup state so robot goes to given point
 	radius_(1.5),      // create a circle of given radius
 	start_pt_(Point(2.0,1.0)), // start the pattern
@@ -24,9 +24,10 @@ bool Gameplay::Plays::TestTimePositionControl::applicable()
 	return refApplicable;
 }
 
-void Gameplay::Plays::TestTimePositionControl::assign(set<Robot *> &available)
+bool Gameplay::Plays::TestTimePositionControl::assign(set<Robot *> &available)
 {
 	takeBest(available);
+	return _robots.size() >= _minRobots;
 }
 
 bool Gameplay::Plays::TestTimePositionControl::run()

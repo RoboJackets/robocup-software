@@ -11,7 +11,7 @@ using namespace Geometry2d;
 using namespace std;
 
 Gameplay::Plays::TestBasicPassing::TestBasicPassing(GameplayModule *gameplay):
-	Play(gameplay),
+	Play(gameplay, 2),
 	_passer(gameplay),
 	_receiver(gameplay)
 {
@@ -22,12 +22,13 @@ bool Gameplay::Plays::TestBasicPassing::applicable()
 	return true;
 }
 
-void Gameplay::Plays::TestBasicPassing::assign(set<Robot *> &available)
+bool Gameplay::Plays::TestBasicPassing::assign(set<Robot *> &available)
 {
 	_passer.assign(available);
 	_receiver.assign(available);
 
 	_passer.targetRobot = _receiver.robot();
+	return _robots.size() >= _minRobots;
 }
 
 bool Gameplay::Plays::TestBasicPassing::run()

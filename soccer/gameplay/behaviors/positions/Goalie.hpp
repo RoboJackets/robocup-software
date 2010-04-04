@@ -16,7 +16,7 @@ namespace Gameplay
 				Goalie(GameplayModule *gameplay);
 				~Goalie();
 
-				virtual void assign(std::set<Robot *> &available);
+				virtual bool assign(std::set<Robot *> &available);
 				virtual bool run();
 
 			protected:

@@ -36,8 +36,6 @@ namespace Gameplay{
 
 				virtual bool applicable(){return true;}
 
-				virtual void assign(std::set<Robot *> &available);
-
 				virtual bool run();
 
 			protected:

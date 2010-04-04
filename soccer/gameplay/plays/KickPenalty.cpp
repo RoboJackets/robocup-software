@@ -3,7 +3,7 @@
 using namespace std;
 
 Gameplay::Plays::KickPenalty::KickPenalty(GameplayModule *gameplay):
-	Play(gameplay),
+	Play(gameplay, 4),
 	_kicker(gameplay),
 	_idle1(gameplay),
 	_idle2(gameplay),
@@ -16,7 +16,7 @@ bool Gameplay::Plays::KickPenalty::applicable()
 	return gameState().setupRestart() && gameState().ourPenalty();
 }
 
-void Gameplay::Plays::KickPenalty::assign(set<Robot *> &available)
+bool Gameplay::Plays::KickPenalty::assign(set<Robot *> &available)
 {
 	_idle1.target = Geometry2d::Point(1.5, 1);
 	_idle2.target = Geometry2d::Point(1.5, 1.5);
@@ -26,6 +26,8 @@ void Gameplay::Plays::KickPenalty::assign(set<Robot *> &available)
 	_idle1.assign(available);
 	_idle2.assign(available);
 	_idle3.assign(available);
+
+	return _robots.size() >= _minRobots;
 }
 
 bool Gameplay::Plays::KickPenalty::run()

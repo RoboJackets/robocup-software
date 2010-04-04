@@ -14,7 +14,7 @@ namespace Gameplay
 				Stopped(GameplayModule *gameplay);
 				
 				virtual bool applicable();
-				virtual void assign(std::set<Robot *> &available);
+				virtual bool assign(std::set<Robot *> &available);
 				virtual bool run();
 			
 			protected:

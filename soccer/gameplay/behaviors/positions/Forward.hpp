@@ -13,7 +13,7 @@ namespace Gameplay
 			public:
 				Forward(GameplayModule * gameplay);
 
-				virtual void assign(std::set<Robot *> &available);
+				virtual bool assign(std::set<Robot *> &available);
 				virtual bool run();
 
 				bool isIntercept();

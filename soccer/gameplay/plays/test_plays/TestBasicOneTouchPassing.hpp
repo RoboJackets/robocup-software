@@ -19,7 +19,7 @@ namespace Gameplay
 				virtual bool applicable();
 
 				/** Passing test needs two robots to work */
-				virtual void assign(std::set<Robot *> &available);
+				virtual bool assign(std::set<Robot *> &available);
 
 				/** default run */
 				virtual bool run();

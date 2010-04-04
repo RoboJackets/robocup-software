@@ -3,7 +3,7 @@
 using namespace std;
 
 Gameplay::Plays::OurFreekick::OurFreekick(GameplayModule *gameplay):
-	Play(gameplay),
+	Play(gameplay, 4),
 	_kicker(gameplay),
 	_center(gameplay),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
@@ -16,7 +16,7 @@ bool Gameplay::Plays::OurFreekick::applicable()
 	return gameState().setupRestart() && gameState().ourFreeKick();
 }
 
-void Gameplay::Plays::OurFreekick::assign(set<Robot *> &available)
+bool Gameplay::Plays::OurFreekick::assign(set<Robot *> &available)
 {
 	_center.target = _gameplay->centerMatrix() * Geometry2d::Point(0, 1.5);
 	
@@ -24,6 +24,8 @@ void Gameplay::Plays::OurFreekick::assign(set<Robot *> &available)
 	_center.assign(available);
 	_fullback1.assign(available);
 	_fullback2.assign(available);
+
+	return _robots.size() >= _minRobots;
 }
 
 bool Gameplay::Plays::OurFreekick::run()

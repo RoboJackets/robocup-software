@@ -16,7 +16,7 @@ bool Gameplay::Plays::OurKickoff::applicable()
 	return gameState().setupRestart() && gameState().ourKickoff();
 }
 
-void Gameplay::Plays::OurKickoff::assign(set<Robot *> &available)
+bool Gameplay::Plays::OurKickoff::assign(set<Robot *> &available)
 {
 	_idle1.target = _gameplay->centerMatrix() * Geometry2d::Point(0.7, -0.2);
 	_idle2.target = _gameplay->centerMatrix() * Geometry2d::Point(-0.7, -0.2);
@@ -26,6 +26,8 @@ void Gameplay::Plays::OurKickoff::assign(set<Robot *> &available)
 	_idle1.assign(available);
 	_idle2.assign(available);
 	_idle3.assign(available);
+
+	return _robots.size() >= _minRobots;
 }
 
 bool Gameplay::Plays::OurKickoff::run()

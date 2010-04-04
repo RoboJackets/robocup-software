@@ -33,7 +33,7 @@ namespace Gameplay
 
 				Fullback(GameplayModule *gameplay, Side side);
 
-				virtual void assign(std::set<Robot *> &available);
+				virtual bool assign(std::set<Robot *> &available);
 				virtual bool run();
 				
 				std::set<Fullback *> otherFullbacks;

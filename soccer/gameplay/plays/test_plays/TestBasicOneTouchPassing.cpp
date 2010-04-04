@@ -5,7 +5,7 @@ using namespace Geometry2d;
 using namespace std;
 
 Gameplay::Plays::TestBasicOneTouchPassing::TestBasicOneTouchPassing(GameplayModule *gameplay):
-	Play(gameplay),
+	Play(gameplay, 2),
 	_passer(gameplay),
 	_receiver(gameplay)
 {
@@ -16,7 +16,7 @@ bool Gameplay::Plays::TestBasicOneTouchPassing::applicable()
 	return true;
 }
 
-void Gameplay::Plays::TestBasicOneTouchPassing::assign(set<Robot *> &available)
+bool Gameplay::Plays::TestBasicOneTouchPassing::assign(set<Robot *> &available)
 {
 	cout << "available robots:  ";
 	BOOST_FOREACH(Robot * r, available)
@@ -29,6 +29,8 @@ void Gameplay::Plays::TestBasicOneTouchPassing::assign(set<Robot *> &available)
 	cout << "Reciever ID: " << _receiver.robot()->id() << endl;
 
 	_passer.targetRobot = _receiver.robot();
+
+	return _robots.size() >= _minRobots;
 }
 
 bool Gameplay::Plays::TestBasicOneTouchPassing::run()

@@ -12,7 +12,7 @@ namespace Gameplay
 			public:
 				Penalty(GameplayModule *gameplay);
 
-				virtual void assign(std::set<Robot *> &available);
+				virtual bool assign(std::set<Robot *> &available);
 				virtual bool run();
 				
 			private:

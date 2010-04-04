@@ -4,17 +4,18 @@ using namespace std;
 using namespace Geometry2d;
 
 Gameplay::Behaviors::Forward::Forward(GameplayModule * gameplay):
-	Behavior(gameplay),
+	Behavior(gameplay, 1),
 	_kick(gameplay)
 {
 	teammate = 0;
 }
 
-void Gameplay::Behaviors::Forward::assign(set<Robot *> &available)
+bool Gameplay::Behaviors::Forward::assign(set<Robot *> &available)
 {
 	takeBest(available);
 	
 	_kick.assignOne(robot());
+	return _robots.size() >= _minRobots;
 }
 
 bool Gameplay::Behaviors::Forward::run()

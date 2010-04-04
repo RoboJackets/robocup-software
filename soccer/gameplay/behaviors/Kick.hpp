@@ -18,7 +18,7 @@ namespace Gameplay
 				Kick(GameplayModule *gameplay);
 				~Kick();
 
-				virtual void assign(std::set<Robot *> &available);
+				virtual bool assign(std::set<Robot *> &available);
 				virtual bool run();
 
 				bool isIntercept()

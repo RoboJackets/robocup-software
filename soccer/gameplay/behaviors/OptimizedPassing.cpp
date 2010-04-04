@@ -23,7 +23,7 @@ Gameplay::Behaviors::OptimizedPassing::OptimizedPassing(GameplayModule *gameplay
 	playTime = -1; // set playTime to an invalid time
 }
 
-void Gameplay::Behaviors::OptimizedPassing::assign(set<Robot *> &available){
+bool Gameplay::Behaviors::OptimizedPassing::assign(set<Robot *> &available){
 	_passState = Initializing;
 
 	// remove non-visible robots
@@ -44,6 +44,8 @@ void Gameplay::Behaviors::OptimizedPassing::assign(set<Robot *> &available){
 		cout << "Not enough robots to plan with." << endl;
 		_passState = Done;
 	}
+
+	return _robots.size() >= _minRobots;
 }
 
 bool Gameplay::Behaviors::OptimizedPassing::run(){

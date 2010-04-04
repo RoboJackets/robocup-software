@@ -18,10 +18,6 @@ Gameplay::Plays::TestPassExperiment1::TestPassExperiment1(GameplayModule *gamepl
 
 }
 
-void Gameplay::Plays::TestPassExperiment1::assign(set<Robot *> &available){
-	this->takeAll(available);
-}
-
 bool Gameplay::Plays::TestPassExperiment1::run(){
 	long time = _gameplay->state()->timestamp;
 

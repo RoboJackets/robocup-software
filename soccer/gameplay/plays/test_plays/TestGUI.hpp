@@ -18,9 +18,6 @@ namespace Gameplay
 				/** returns true if the play is currently applicable given gamestate */
 				virtual bool applicable() { return true; }
 
-				/** Assigns robots to the play given a set of robots */
-				virtual void assign(std::set<Robot *> &available) { takeAll(available); }
-
 				/** Called every frame */
 				virtual bool run();
 

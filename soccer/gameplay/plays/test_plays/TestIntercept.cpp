@@ -3,7 +3,7 @@
 using namespace std;
 
 Gameplay::Plays::TestIntercept::TestIntercept(GameplayModule *gameplay):
-	Play(gameplay), _kicker(gameplay)
+	Play(gameplay, 1), _kicker(gameplay)
 {
 }
 
@@ -13,9 +13,9 @@ bool Gameplay::Plays::TestIntercept::applicable()
 	return refApplicable;
 }
 
-void Gameplay::Plays::TestIntercept::assign(set<Robot *> &available)
+bool Gameplay::Plays::TestIntercept::assign(set<Robot *> &available)
 {
-	_kicker.assign(available);
+	return _kicker.assign(available);
 }
 
 bool Gameplay::Plays::TestIntercept::run()

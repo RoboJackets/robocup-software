@@ -5,7 +5,7 @@
 using namespace std;
 
 Gameplay::Plays::TestBasicAttack::TestBasicAttack(GameplayModule *gameplay):
-	Play(gameplay), _kicker(gameplay)
+	Play(gameplay, 1), _kicker(gameplay)
 {
 }
 
@@ -15,7 +15,7 @@ bool Gameplay::Plays::TestBasicAttack::applicable()
 	return refApplicable;
 }
 
-void Gameplay::Plays::TestBasicAttack::assign(set<Robot *> &available)
+bool Gameplay::Plays::TestBasicAttack::assign(set<Robot *> &available)
 {
 	// remove non-visible robots
 	// this prevents bug with 2-robot tests where play would do nothing
@@ -26,6 +26,7 @@ void Gameplay::Plays::TestBasicAttack::assign(set<Robot *> &available)
 	}
 
 	_kicker.assign(available);
+	return _robots.size() >= _minRobots;
 }
 
 bool Gameplay::Plays::TestBasicAttack::run()

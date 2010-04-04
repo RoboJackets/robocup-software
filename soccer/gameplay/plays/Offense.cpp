@@ -3,7 +3,7 @@
 using namespace std;
 
 Gameplay::Plays::Offense::Offense(GameplayModule *gameplay):
-	Play(gameplay),
+	Play(gameplay, 4),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
 	_fullback2(gameplay, Behaviors::Fullback::Left),
 	_kicker1(gameplay),
@@ -22,12 +22,14 @@ bool Gameplay::Plays::Offense::applicable()
 	return refApplicable && gameplayApplicable;
 }
 
-void Gameplay::Plays::Offense::assign(set<Robot *> &available)
+bool Gameplay::Plays::Offense::assign(set<Robot *> &available)
 {
 	_kicker1.assign(available);
 	_kicker2.assign(available);
 	_fullback1.assign(available);
 	_fullback2.assign(available);
+
+	return _robots.size() >= _minRobots;
 }
 
 bool Gameplay::Plays::Offense::run()

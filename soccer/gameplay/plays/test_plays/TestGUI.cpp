@@ -8,7 +8,7 @@
 using namespace std;
 
 Gameplay::Plays::TestGUI::TestGUI(GameplayModule *gameplay):
-	Play(gameplay)
+	Play(gameplay, 0)
 {
 }
 

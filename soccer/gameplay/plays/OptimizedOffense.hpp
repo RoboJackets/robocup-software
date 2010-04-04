@@ -44,13 +44,6 @@ namespace Gameplay
 				 */
 				virtual bool applicable();
 
-				/**
-				 * This will assign all available robots, with a custom
-				 * version for the goalie if necessary.
-				 * Currently will just assign all robots
-				 */
-				virtual void assign(std::set<Robot *> &available);
-
 				/** Called every frame */
 				virtual bool run();
 

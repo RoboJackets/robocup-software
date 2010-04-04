@@ -9,7 +9,8 @@ namespace Gameplay
 	class Play: public Behavior
 	{
 	public:
-		Play(GameplayModule *gameplay);
+		// Create the play, with a given number of robots
+		Play(GameplayModule *gameplay, size_t minRobots = 0);
 		
 		// Returns true iff this play is allowed to be selected given the current state of the game.
 		// The default implementation always returns true.

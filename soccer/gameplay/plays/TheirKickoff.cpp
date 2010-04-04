@@ -3,7 +3,7 @@
 using namespace std;
 
 Gameplay::Plays::TheirKickoff::TheirKickoff(GameplayModule *gameplay):
-	Play(gameplay),
+	Play(gameplay, 4),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
 	_fullback2(gameplay, Behaviors::Fullback::Right),
 	_back1(gameplay),
@@ -18,12 +18,14 @@ bool Gameplay::Plays::TheirKickoff::applicable()
 	return gameState().setupRestart() && gameState().theirKickoff();
 }
 
-void Gameplay::Plays::TheirKickoff::assign(set<Robot *> &available)
+bool Gameplay::Plays::TheirKickoff::assign(set<Robot *> &available)
 {
 	_fullback1.assign(available);
 	_fullback2.assign(available);
 	_back1.assign(available);
 	_back2.assign(available);
+
+	return _robots.size() >= _minRobots;
 }
 
 bool Gameplay::Plays::TheirKickoff::run()

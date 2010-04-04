@@ -9,7 +9,7 @@ using namespace std;
 using namespace Geometry2d;
 
 Gameplay::Plays::TestDirectMotionControl::TestDirectMotionControl(GameplayModule *gameplay):
-	Play(gameplay),
+	Play(gameplay, 1),
 	fsm_state_(Setup), // start with setup state so robot goes to given point
 	radius_(1.5),      // create a circle of given radius
 	start_pt_(Geometry2d::Point(0.0,1.0)) // start the pattern
@@ -44,9 +44,10 @@ bool Gameplay::Plays::TestDirectMotionControl::applicable()
 	return refApplicable;
 }
 
-void Gameplay::Plays::TestDirectMotionControl::assign(set<Robot *> &available)
+bool Gameplay::Plays::TestDirectMotionControl::assign(set<Robot *> &available)
 {
 	takeBest(available);
+	return _robots.size() >= _minRobots;
 }
 
 bool Gameplay::Plays::TestDirectMotionControl::run()

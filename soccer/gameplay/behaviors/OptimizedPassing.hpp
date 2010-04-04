@@ -21,7 +21,7 @@ namespace Gameplay
 						double ballsuccess_margin = 0.2,
 						bool enableOptimization = true);
 
-				virtual void assign(std::set<Robot *> &available);
+				virtual bool assign(std::set<Robot *> &available);
 
 				virtual bool run();
 

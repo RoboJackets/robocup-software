@@ -23,7 +23,7 @@ namespace Gameplay
 				virtual bool applicable();
 
 				/** Picks exactly one robot */
-				virtual void assign(std::set<Robot *> &available);
+				virtual bool assign(std::set<Robot *> &available);
 
 				/** Called every frame */
 				virtual bool run();

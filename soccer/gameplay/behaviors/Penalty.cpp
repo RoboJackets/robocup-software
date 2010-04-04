@@ -8,11 +8,11 @@ Gameplay::Behaviors::Penalty::Penalty(GameplayModule *gameplay):
 {
 }
 
-void Gameplay::Behaviors::Penalty::assign(set<Robot *> &available)
+bool Gameplay::Behaviors::Penalty::assign(set<Robot *> &available)
 {
 	takeBest(available);
-	
 	_kick.assignOne(robot());
+	return _robots.size() >= _minRobots;
 }
 
 bool Gameplay::Behaviors::Penalty::run()

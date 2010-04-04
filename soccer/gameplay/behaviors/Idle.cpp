@@ -5,13 +5,8 @@
 using namespace std;
 
 Gameplay::Behaviors::Idle::Idle(GameplayModule *gameplay) :
-	Behavior(gameplay)
+	Behavior(gameplay, 1)
 {
-}
-
-void Gameplay::Behaviors::Idle::assign(set<Robot *> &available)
-{
-	takeAll(available);
 }
 
 bool Gameplay::Behaviors::Idle::run()

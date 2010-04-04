@@ -13,7 +13,7 @@ bool Gameplay::Plays::TestBallSpeed::applicable()
 	return true;
 }
 
-void Gameplay::Plays::TestBallSpeed::assign(set<Robot *> &available)
+bool Gameplay::Plays::TestBallSpeed::assign(set<Robot *> &available)
 {
 	for (int i = 0; i < Num_Speed_History; ++i)
 	{
@@ -22,6 +22,8 @@ void Gameplay::Plays::TestBallSpeed::assign(set<Robot *> &available)
 	_last_pos = Geometry2d::Point();
 	_first = true;
 	_max_speed = 0;
+
+	return true;
 }
 
 bool Gameplay::Plays::TestBallSpeed::run()

@@ -25,11 +25,6 @@ bool Gameplay::Plays::TestPassConfigOptimize::applicable()
 	return refApplicable;
 }
 
-void Gameplay::Plays::TestPassConfigOptimize::assign(set<Robot *> &available)
-{
-	takeAll(available);
-}
-
 bool Gameplay::Plays::TestPassConfigOptimize::run()
 {
 	bool verbose = true;
