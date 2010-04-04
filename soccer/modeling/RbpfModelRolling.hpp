@@ -27,7 +27,7 @@ class RbpfModelRolling : public RbpfModel {
 public:
 	typedef boost::numeric::ublas::vector<double> Vector;
 	typedef boost::numeric::ublas::matrix<double> Matrix;
-	RbpfModelRolling(RobotMap *_robotMap);
+	RbpfModelRolling(Modeling::RobotModel::RobotMap *_robotMap);
 	~RbpfModelRolling();
 protected:
 	void transitionModel(Vector &X, Vector &U, double dt);

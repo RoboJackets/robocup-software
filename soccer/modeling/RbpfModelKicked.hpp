@@ -28,7 +28,7 @@ class RbpfModelKicked : public RbpfModel {
 public:
 	typedef boost::numeric::ublas::vector<double> Vector;
 	typedef boost::numeric::ublas::matrix<double> Matrix;
-	RbpfModelKicked(RobotMap *_robotMap);
+	RbpfModelKicked(Modeling::RobotModel::RobotMap *_robotMap);
 	~RbpfModelKicked();
 protected:
 	void transitionModel(Vector &X, Vector &U, double dt);

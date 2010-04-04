@@ -4,6 +4,7 @@
 
 #include <stdint.h>
 
+#include <boost/shared_ptr.hpp>
 #include <Geometry2d/Point.hpp>
 #include <framework/ConfigFile.hpp>
 #include <cblas.h>
@@ -15,6 +16,9 @@ namespace Modeling
 	class RobotModel
 	{
 		public:
+			typedef boost::shared_ptr<RobotModel> shared;
+			typedef std::map<int, shared> RobotMap;
+
 			RobotModel(const ConfigFile::WorldModel& cfg, int s);
 
 			void observation(uint64_t time, Geometry2d::Point pos, float angle);
@@ -98,7 +102,7 @@ namespace Modeling
 			uint64_t firstObservedTime;
 			uint64_t lastObservedTime;
 
-			RobotModel **report;
+			bool inUse;
 
 			const ConfigFile::WorldModel& _config;
 	};

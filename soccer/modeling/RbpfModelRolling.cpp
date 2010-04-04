@@ -12,7 +12,7 @@
 // state: X (6 x 1) = {x, y, vx, vy, ax, ay}
 // requires state size (n) = 6, control size (m) = 6, measurement size (s) = 2
 // initializes: F, H, Q, R
-RbpfModelRolling::RbpfModelRolling(RobotMap *_robotMap) : RbpfModel(_robotMap){
+RbpfModelRolling::RbpfModelRolling(Modeling::RobotModel::RobotMap *_robotMap) : RbpfModel(_robotMap){
 	assert(n==6); // state size (n) must = 6. If n changed, re-write this!
 	assert(m==6); // control size (m) must = 6. If m changed, re-write this!
 	assert(s==2); // measurement size (s) must = 2. If s changed, re-write this!

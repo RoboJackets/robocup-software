@@ -37,10 +37,9 @@ class RbpfModel {
 public:
 	typedef boost::numeric::ublas::vector<double> Vector;
 	typedef boost::numeric::ublas::matrix<double> Matrix;
-	typedef std::map<int, Modeling::RobotModel *> RobotMap;
 
 	// robotMap is a set of robots for calculating kicks/deflections in some models
-	RbpfModel(RobotMap *robotMap);
+	RbpfModel(Modeling::RobotModel::RobotMap *robotMap);
 
 	~RbpfModel();
 
@@ -98,7 +97,7 @@ protected:
 	Matrix H; // observation Jacobian (dh/dx) (s x n)
 	Matrix Q; // process noise (n x n)
 	Matrix R; // measurement noise (s x s)
-	RobotMap *_robotMap; // set of robots for kicks/deflections
+	Modeling::RobotModel::RobotMap *_robotMap; // set of robots for kicks/deflections
 
 	// variables used in intermediate calculations
 	Matrix Inn;  // identity matrix (n x n)

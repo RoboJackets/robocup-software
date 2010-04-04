@@ -37,9 +37,7 @@ namespace Modeling
 				ABG
 			} mode_t;
 
-			typedef std::map<int, RobotModel *> RobotMap;
-
-			BallModel(mode_t mode, RobotMap *robotMap);
+			BallModel(mode_t mode, RobotModel::RobotMap *robotMap);
 
 			void observation(uint64_t time, const Geometry2d::Point &pos);
 
@@ -102,7 +100,7 @@ namespace Modeling
 			mode_t mode_;
 
 			// map of robots so filters can include this information
-			RobotMap *_robotMap;
+			RobotModel::RobotMap *_robotMap;
 
 			// new particle filter implementation
 			Rbpf* raoBlackwellizedParticleFilter;

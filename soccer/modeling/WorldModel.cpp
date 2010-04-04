@@ -2,6 +2,7 @@
 // vim:ai ts=4 et
 #include "WorldModel.hpp"
 
+#include <iostream>
 #include <QObject>
 #include <QString>
 #include <vector>
@@ -41,26 +42,24 @@ WorldModel::~WorldModel()
 		//delete _self[i];
 		//delete _opp[i];
 	}
-	
-	BOOST_FOREACH(RobotMap::value_type p, _robotMap)
-	{
-		RobotModel *robot = p.second;
-		delete robot;
-	}
 }
 
 void WorldModel::run()
 {
+	// internal verbosity flag for debugging
+	bool verbose = false;
+
+	if (verbose) cout << "In WorldModel::run()" << endl;
 	// Reset errors on all tracks
 	BOOST_FOREACH(RobotMap::value_type p, _robotMap)
 	{
-		RobotModel *robot = p.second;
+		RobotModel::shared robot = p.second;
 		robot->bestError = -1;
 	}
 	ballModel.bestError = -1;
 	
 	/// ball sensor
-	
+	// FIXME: need to check for consistency here - could be a broken sensor
 	BOOST_FOREACH(Packet::LogFrame::Robot& r, _state->self)
 	{
 		//FIXME: handle stale data properly
@@ -77,7 +76,7 @@ void WorldModel::run()
 		}
 	}
 	
-	//printf("--- WorldModel\n");
+	if (verbose) cout << "Adding messages from vision " << endl;
 	uint64_t curTime = 0;
 	BOOST_FOREACH(const Packet::Vision& vision, _state->rawVision)
 	{
@@ -102,22 +101,20 @@ void WorldModel::run()
 			
 			BOOST_FOREACH(const Packet::Vision::Robot& r, *self)
 			{
-				RobotModel *robot = map_lookup(_robotMap, r.shell);
-				if (!robot)
-				{
-					robot = new RobotModel(_config, r.shell);
-					_robotMap[r.shell] = robot;
+				RobotModel::shared &robot = _robotMap[r.shell];
+				if (!robot.get()) {
+					cout << "creating self robot " << (int) r.shell << endl;
+					robot = RobotModel::shared(new RobotModel(_config, r.shell));
 				}
 				robot->observation(vision.timestamp, r.pos, r.angle);
 			}
 			
 			BOOST_FOREACH(const Packet::Vision::Robot& r, *opp)
 			{
-				RobotModel *robot = map_lookup(_robotMap, r.shell + OppOffset);
-				if (!robot)
-				{
-					robot = new RobotModel(_config, r.shell);
-					_robotMap[r.shell + OppOffset] = robot;
+				RobotModel::shared &robot = _robotMap[r.shell + OppOffset];
+				if (!robot.get()) {
+					cout << "creating opp robot " << (int) r.shell << endl;
+					robot = RobotModel::shared(new RobotModel(_config, r.shell));
 				}
 				robot->observation(vision.timestamp, r.pos, r.angle);
 			}
@@ -128,58 +125,48 @@ void WorldModel::run()
 			}
 		}
 	}
-	
+
 	// Update/delete robots
-	vector<RobotModel *> selfUnused;
-	vector<RobotModel *> oppUnused;
-	for (RobotMap::iterator i = _robotMap.begin(); i != _robotMap.end();)
+	if (verbose) cout << "Sorting robots" << endl;
+	vector<RobotModel::shared> selfUnused, oppUnused;
+	BOOST_FOREACH(const RobotMap::value_type& p, _robotMap)
 	{
-		RobotMap::iterator next = i;
-		++next;
-		
-		RobotModel *robot = i->second;
-		if ((curTime - robot->lastObservedTime) > MaxCoastTime)
+		const int shell = p.first;
+		RobotModel::shared robot = p.second;
+		if ((curTime - robot->lastObservedTime) < MaxCoastTime && robot->bestError >= 0)                           // error is not too high
 		{
-			// This robot is too old, so delete it.
-			if (robot->report)
+			// This robot has a new observation.  Update it.
+			robot->update();
+
+			// check if previously unused robot
+			if (!robot->inUse)
 			{
-				*robot->report = 0;
-			}
-			
-			delete robot;
-			_robotMap.erase(i);
-		} else {
-			if (robot->bestError >= 0)
-			{
-				// This robot has a new observation.  Update it.
-				robot->update();
-				
-				if (!robot->report)
+				if (shell < OppOffset)
 				{
-					if (i->first < OppOffset)
-					{
-						selfUnused.push_back(robot);
-					} else {
-						oppUnused.push_back(robot);
-					}
+					selfUnused.push_back(robot);
+				} else {
+					oppUnused.push_back(robot);
 				}
 			}
+		} else {
+			// robot is out of date, set flag
+			robot->inUse = false;
 		}
-		
-		i = next;
 	}
-	
-	//FIXME - Sort unused lists
+
+	if (verbose) cout << "Assigning robots to slots" << endl;
 	unsigned int nextSelfUnused = 0;
 	unsigned int nextOppUnused = 0;
 	for (int i = 0; i < 5; ++i)
 	{
+		// assigns unused robots to available slots
 		if (!_selfRobot[i] && nextSelfUnused < selfUnused.size())
 		{
-			_selfRobot[i] = selfUnused[nextSelfUnused++];
-			_selfRobot[i]->report = &_selfRobot[i];
+			_selfRobot[i] = selfUnused[nextSelfUnused++].get();
+			_selfRobot[i]->inUse = true;
 		}
 		
+		// copies in data to the actual packet
 		if (_selfRobot[i])
 		{
 			_state->self[i].valid = true;
@@ -194,8 +181,8 @@ void WorldModel::run()
 		
 		if (!_oppRobot[i] && nextOppUnused < oppUnused.size())
 		{
-			_oppRobot[i] = oppUnused[nextOppUnused++];
-			_oppRobot[i]->report = &_oppRobot[i];
+			_oppRobot[i] = oppUnused[nextOppUnused++].get();
+			_oppRobot[i]->inUse = true;
 		}
 		
 		if (_oppRobot[i])
@@ -210,6 +197,7 @@ void WorldModel::run()
 			_state->opp[i].valid = false;
 		}
 	}
+	if (verbose) cout << "Updating ball" << endl;
 	
 	ballModel.update();
 	

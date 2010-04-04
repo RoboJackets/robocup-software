@@ -8,7 +8,7 @@
 
 using namespace std;
 
-Modeling::BallModel::BallModel(mode_t mode, RobotMap *robotMap) :
+Modeling::BallModel::BallModel(mode_t mode, RobotModel::RobotMap *robotMap) :
 	A(6,6), B(6,6), P(6,6), Q(6,6), R(2,2), H(2,6),
 	Z(2), U(6), X0(6), mode_(mode), _robotMap(robotMap)
 {

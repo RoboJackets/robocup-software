@@ -10,7 +10,7 @@
 
 // initializes n, m, s, F, H, Q, R, and space used for intermediates
 // calculations: Inn (n x n Identity matrix), h, Yhat, S
-RbpfModel::RbpfModel(RobotMap *robotMap) : n(NSIZE), m(MSIZE), s(SSIZE), F(n,n), H(s,n), Q(n,n), R(s,s), _robotMap(robotMap), Inn(n,n), h(s), Yhat(s,1), S(s,s) {
+RbpfModel::RbpfModel(Modeling::RobotModel::RobotMap *robotMap) : n(NSIZE), m(MSIZE), s(SSIZE), F(n,n), H(s,n), Q(n,n), R(s,s), _robotMap(robotMap), Inn(n,n), h(s), Yhat(s,1), S(s,s) {
 	Inn.clear(); h.clear(); Yhat.clear(); S.clear(); // zero out matrices
 	for(int i=0;i<n;i++){Inn(i,i)=1.0;} // initialize identity matrix
 }

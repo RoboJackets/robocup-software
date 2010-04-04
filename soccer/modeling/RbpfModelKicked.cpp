@@ -9,12 +9,14 @@
 #include <RbpfModelKicked.hpp>
 #include <Constants.hpp>
 
+using namespace Modeling;
+
 // kicked ball with high noise, ignores control input
 // Note: could be written to accept control input from our robots
 // state: X (6 x 1) = {x, y, vx, vy, ax, ay}
 // requires state size (n) = 6, control size (m) = 6, measurement size (s) = 2
 // initializes: F, H, Q, R
-RbpfModelKicked::RbpfModelKicked(RobotMap *_robotMap) : RbpfModel(_robotMap){
+RbpfModelKicked::RbpfModelKicked(RobotModel::RobotMap *_robotMap) : RbpfModel(_robotMap){
 	assert(n==6); // state size (n) must = 6. If n changed, re-write this!
 	assert(m==6); // control size (m) must = 6. If m changed, re-write this!
 	assert(s==2); // measurement size (s) must = 2. If s changed, re-write this!
@@ -90,7 +92,7 @@ void RbpfModelKicked::update(Vector &X, Matrix &P, Vector &Z, double dt){
 	Geometry2d::Point bPos(X(0),X(1));
 	Geometry2d::Point rPos;
 	bool robotKicked = false;
-	for(RobotMap::const_iterator r = _robotMap->begin(); r!=_robotMap->end(); r++){
+	for(RobotModel::RobotMap::const_iterator r = _robotMap->begin(); r!=_robotMap->end(); r++){
 		rPos = r->second->pos;
 		if(bPos.distTo(rPos) < Constants::Robot::Radius){
 			robotKicked = true;

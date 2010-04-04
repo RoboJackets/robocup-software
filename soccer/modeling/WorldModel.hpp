@@ -30,7 +30,7 @@ namespace Modeling
 			// Add to opponents' shell IDs to get track map keys.
 			static const int OppOffset = 256;
 			
-			typedef std::map<int, RobotModel *> RobotMap;
+			typedef std::map<int, RobotModel::shared> RobotMap;
 			RobotMap _robotMap;
 			
 			BallModel ballModel;
