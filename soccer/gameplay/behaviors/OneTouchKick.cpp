@@ -38,7 +38,9 @@ void Gameplay::Behaviors::OneTouchKick::assign(set<Robot *> &available)
 		_win->debug = false;
 	}
 
+	cout << "Initializing OneTouchKick to Intercept" << endl;
 	_state = Intercept;
+	_commandValid = false;
 }
 
 bool Gameplay::Behaviors::OneTouchKick::run()
@@ -50,14 +52,6 @@ bool Gameplay::Behaviors::OneTouchKick::run()
 		return false;
 	}
 
-	// Get ball information
-	const Geometry2d::Point ballPos = ball().pos;
-	const Geometry2d::Point ballVel = ball().vel;
-
-	// Get robot information
-	const Geometry2d::Point pos = robot()->pos();
-	const Geometry2d::Point vel = robot()->vel();
-
 	// find a target segment using window evaluators
 	if (targetRobot) {
 		_target = evaluatePass();
@@ -65,24 +59,6 @@ bool Gameplay::Behaviors::OneTouchKick::run()
 		_target = evaluateShot();
 	}
 	drawLine(_target, 255, 0, 0); // show the target segment
-
-	// create a bezier trajectory to the ball
-	float velGain = 1.0; // gain on velocity for control point
-	float approachDist = 1.0; // distance along approach line for ball control point
-
-	// define the control points for a single kick
-	Point c0 = pos,       // initial position
-		  c1 = pos + vel * velGain, // first control point
-		  c2 = ballPos + (ballPos - _target.center()).normalized()*approachDist,
-		  c3 = ballPos;   // ball position
-	vector<Point> controlPts;
-	controlPts.push_back(c0);
-	controlPts.push_back(c1);
-	controlPts.push_back(c2);
-	controlPts.push_back(c3);
-
-	// issue move command to transfer data to the motion module
-	robot()->bezierMove(controlPts, false);
 
 	// keep track of state transitions
 	State oldState = _state;
@@ -109,9 +85,37 @@ bool Gameplay::Behaviors::OneTouchKick::run()
 
 Gameplay::Behaviors::OneTouchKick::State
 Gameplay::Behaviors::OneTouchKick::intercept() {
+	// calculate trajectory to get to the ball
+	float approachDist = 0.5; // distance along approach line for ball control point
+
+	Point pos = robot()->pos(), ballPos = ball().pos;
+	Point approachVec = (ballPos - _target.center()).normalized();
+
+	// define the control points for a single kick
+	Point approachFar = ballPos + approachVec*approachDist,
+		  approachBall = ballPos + approachVec*Constants::Robot::Radius;   // ball position
+
+	// use a 3rd degree bezier curve to get to the ball
+	_controls.clear();
+	_controls.push_back(pos);          // start at robot position
+	_controls.push_back(approachFar);  // back point for approach line
+	_controls.push_back(approachBall); // target destination
+
+	// issue move command
+	robot()->bezierMove(_controls, Packet::MotionCmd::Continuous);
+
+	// if we are not able to kick stay in the intercept
+	if (!robot()->charged())
+		return Intercept;
 
 	// if we are on the approach line, change to approach state
+	Segment approachLine(approachFar, approachBall);
+	float distThresh = 0.05;
+	if (approachLine.nearPoint(pos, distThresh)) {
+		return Approach;
+	}
 
+	// by default, continue in state
 	return Intercept;
 }
 
@@ -119,8 +123,39 @@ Gameplay::Behaviors::OneTouchKick::State
 Gameplay::Behaviors::OneTouchKick::approach() {
 
 	// if we have kicked the ball, we are done
+	if (robot()->charged() == false) {
+		robot()->willKick = false;
+		return Done;
+	}
 
-	// if we have gone too far away from the approach line, go to intercept
+	Point pos = robot()->pos(), ballPos = ball().pos;
+	Point approachVec = (ballPos - _target.center()).normalized();
+
+	// if the ball is suddenly moving now, we have hit/kicked it, so back off
+	float kickThresh = 1.0;
+	if (ball().accel.mag() > kickThresh) {
+		return Done;
+	}
+
+	// turn on the kicker for final approach
+	robot()->willKick = true;
+	robot()->kick(calcKickStrength(_target.center()));
+
+	// calculate trajectory to hit the ball correctly
+	float approachDist = 2.0; // how long to extend approach line beyond ball
+
+	// define the control points for a single kick
+	Point approachFar = ballPos + approachVec * Constants::Robot::Radius,
+		  approachBall = ballPos - approachVec * approachDist * Constants::Robot::Radius;
+
+	// use a 3rd degree bezier curve to get to the ball
+	_controls.clear();
+	_controls.push_back(pos);          // start at robot position
+	_controls.push_back(approachFar);  // back point for approach line
+	_controls.push_back(approachBall); // extended point
+
+	// issue move command if we don't need to change states
+	robot()->bezierMove(_controls, Packet::MotionCmd::Endpoint);
 
 	return Approach;
 }
@@ -196,4 +231,29 @@ Geometry2d::Segment Gameplay::Behaviors::OneTouchKick::evaluateShot() {
 		bestTarget = _win->target();
 	}
 	return bestTarget;
+}
+
+int Gameplay::Behaviors::OneTouchKick::calcKickStrength(const Geometry2d::Point& targetCenter) const {
+	//if kicking to a target
+	//calculate kick strength
+	int kickStrength = 255;
+	if (targetRobot)
+	{
+		const float dist = robot()->pos().distTo(targetCenter);
+
+		const float m = robot()->packet()->config.kicker.m;
+		const float b = robot()->packet()->config.kicker.b;
+
+		kickStrength = int(m * dist + b);
+
+		if (kickStrength < 0)
+		{
+			kickStrength = 0;
+		}
+		else if (kickStrength > 255)
+		{
+			kickStrength = 255;
+		}
+	}
+	return kickStrength;
 }

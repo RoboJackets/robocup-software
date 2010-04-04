@@ -136,9 +136,19 @@ namespace Motion
 			Geometry2d::Point _vel; /// translational velocity
 			float _w; /// rotational velocity
 
+			/** convenience functions for robot state */
+			inline Geometry2d::Point pos() const { return _self->pos; }
+			inline Geometry2d::Point vel() const { return _self->vel; }
+			inline float angle() const { return _self->angle; }
+			inline float angleVel() const { return _self->angleVel; }
+
+			/** convenience functions for ball state */
+			Geometry2d::Point ballPos() const { return _state->ball.pos; }
+			Geometry2d::Point ballVel() const { return _state->ball.vel; }
+
 			/** latest path */
 			Planning::Path _path;
-			
+
 			/// calibration things ///
 			typedef enum
 			{
@@ -183,15 +193,35 @@ namespace Motion
 
 			/// store parameters for bezier curves for rendering
 			std::vector<Geometry2d::Point> _bezierControls;
+			float _bezierTotalLength; /// total length of current bezier curve
+			float _bezierCurTime;     /// current time increment for curve progression
 
 			/// evaluates a Bezier curve
 			Geometry2d::Point evaluateBezier(float t,
 					const std::vector<Geometry2d::Point>& controls,
 					const std::vector<float>& coeffs) const;
 
+			/// evaluates the derivative of a Bezier curve
+			Geometry2d::Point
+			evaluateBezierVelocity(float t,
+					const std::vector<Geometry2d::Point>& controls,
+					const std::vector<float>& coeffs) const;
+
+			/// determines the length of a Bezier curve
+			float bezierLength(const std::vector<Geometry2d::Point>& controls,
+					const std::vector<float>& coeffs) const;
+
 			/// calculates binomial coefficients
 			int binomialCoefficient(int n, int k) const;
 
 			int factorial(int n) const;
+
+			// drawing functions - wraps the debug rendering
+			void drawText(const std::string& text, const Geometry2d::Point& pt, int r, int g, int b);
+			void drawText(const std::string& text, const Geometry2d::Point& pt, const QColor& color=Qt::black);
+			void drawLine(const Geometry2d::Segment& line, int r, int g, int b);
+			void drawLine(const Geometry2d::Segment& line, const QColor& color=Qt::black);
+			void drawCircle(const Geometry2d::Point& center, float radius, int r, int g, int b);
+			void drawCircle(const Geometry2d::Point& center, float radius, const QColor& color = Qt::black);
 	};
 }

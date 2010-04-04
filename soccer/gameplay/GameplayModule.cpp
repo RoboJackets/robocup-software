@@ -339,7 +339,7 @@ void Gameplay::GameplayModule::run()
 			set<Robot *> robots;
 			BOOST_FOREACH(Robot *r, self)
 			{
-				if (!_goalie || r != _goalie->robot())
+				if ((!_goalie || r != _goalie->robot()) && r->visible())
 				{
 					robots.insert(r);
 				}

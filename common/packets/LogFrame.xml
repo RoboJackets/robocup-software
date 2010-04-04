@@ -56,6 +56,10 @@
 		<!--  true if we have the ball -->
 		<member type="bool" name="haveBall" value="false" />
 		
+		<!--  commanded velocities - output of motion -->
+		<member type="Point" name="cmd_vel" />
+		<member type="float" name="cmd_w" />		
+		
 		<!-- radio tx packet for the robot -->
 		<member type="RadioTx::Robot" name="radioTx" />
 		

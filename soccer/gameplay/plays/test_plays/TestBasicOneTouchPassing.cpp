@@ -1,3 +1,4 @@
+#include <boost/foreach.hpp>
 #include "TestBasicOneTouchPassing.hpp"
 
 using namespace Geometry2d;
@@ -17,8 +18,15 @@ bool Gameplay::Plays::TestBasicOneTouchPassing::applicable()
 
 void Gameplay::Plays::TestBasicOneTouchPassing::assign(set<Robot *> &available)
 {
+	cout << "available robots:  ";
+	BOOST_FOREACH(Robot * r, available)
+		cout << r->id() << " ";
+	cout << endl;
+
 	_passer.assign(available);
+	cout << "Passer ID: " << _passer.robot()->id() << endl;
 	_receiver.assign(available);
+	cout << "Reciever ID: " << _receiver.robot()->id() << endl;
 
 	_passer.targetRobot = _receiver.robot();
 }

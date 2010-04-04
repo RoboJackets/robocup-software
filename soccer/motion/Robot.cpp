@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <algorithm>
 #include "Robot.hpp"
 #include <QMutexLocker>
 #include <Geometry2d/Point.hpp>
@@ -153,8 +155,8 @@ void Robot::proc()
 				_vel = _self->cmd.direct_trans_vel;
 				_w = _self->cmd.direct_ang_vel;
 
-				// TODO: make this smarter, as it should be an actual
-				// velocity controller that handles the current velocity as well
+				// safety check the velocities
+				scaleVelocity();
 				break;
 			}
 			// handle explicit path generation (short-circuit RRT)
@@ -185,7 +187,7 @@ void Robot::proc()
 			// handle bezier control
 			case Packet::MotionCmd::Bezier:
 			{
-				// record the control points
+				// record the control points if restart
 				_bezierControls = _self->cmd.bezierControlPoints;
 
 				// generate the velocities for the bezier curve planner
@@ -228,6 +230,10 @@ void Robot::proc()
 				break;
 			}
 			}
+
+			// save the commanded velocities to packet for inspection in tree
+			_self->cmd_vel = _vel;
+			_self->cmd_w = _w;
 
 			// generate motor outputs based on velocity
 			genMotor();
@@ -286,7 +292,7 @@ void Robot::drawBezierTraj(QPainter& p) {
 		}
 
 		// draw a curved blue line for the trajectory
-		int nrBezierPts = 20;
+		size_t nrBezierPts = 20;
 		float inc = 1.0/nrBezierPts;
 		Point prev = _bezierControls.front();
 		Point pt;
@@ -729,14 +735,71 @@ void Robot::genTimePosVelocity()
 }
 
 void Robot::genBezierVelocity() {
-	// copy the control points - we may need to adjust them
-	vector<Point> control = _self->cmd.bezierControlPoints;
+	// error handling
+	size_t degree = _bezierControls.size();
+	if (degree < 2) {
+		stop();
+		cout << "Bezier curve of size: " << degree << "!" << endl;
+		return;
+	}
 
-	// get the number of interpolation points
-	// NOTE: this may be unnecessary
-//	size_t nrPts = _self->cmd.nrBezierPts;
+	// generate coefficients
+	vector<float> coeffs;
+	for (size_t i=0; i<degree; ++i) {
+		coeffs.push_back(binomialCoefficient(degree-1, i));
+	}
 
+	// calculate length to allow for determination of time
+	_bezierTotalLength = bezierLength(_bezierControls, coeffs);
 
+	// DEBUG: show the length of the trajectory
+	ostringstream ss;
+	ss << _bezierTotalLength;
+	drawText(ss.str(), Segment(_bezierControls.at(0), _bezierControls.at(1)).center(), Qt::blue);
+
+	// calculate numerical derivative by stepping ahead a fixed constant
+	float lookAheadDist = 0.15; // in meters along path
+	float dt = lookAheadDist/_bezierTotalLength;
+
+	float velGain = 3.0; // FIXME: should be dependent on the length of the curve
+
+	// calculate a target velocity for translation
+	Point targetVel = evaluateBezierVelocity(dt, _bezierControls, coeffs);
+
+	// apply gain
+	targetVel *= velGain;
+
+	// DEBUG: draw the targetVel
+	Segment targetVelLine(pos(), pos() + targetVel);
+	drawLine(targetVelLine, Qt::red);
+
+	// directly set the velocity
+	_vel = targetVel;
+
+	// handle facing - TODO: should set a flag to allow for either continuous or endpoint facing
+	// endpoint facing
+	// in radians
+	float targetAngle = 0.0;
+	if (_self->cmd.face == Packet::MotionCmd::Continuous) {
+		// look further ahead for angle
+		float WlookAheadDist = 0.30; // in meters along path // prev: 0.15
+		float dtw = WlookAheadDist/_bezierTotalLength;
+		targetAngle = evaluateBezierVelocity(dtw, _bezierControls, coeffs).angle();
+	} else if (_self->cmd.face == Packet::MotionCmd::Endpoint) {
+		targetAngle = (_bezierControls.at(degree-1) - _bezierControls.at(degree-2)).angle();
+	}
+
+	// draw the intended facing
+	drawLine(Segment(pos(), pos() + Point::direction(targetAngle).normalized()), Qt::gray);
+
+	// Find the error (degrees)
+	float angleErr = Utils::fixAngleDegrees(targetAngle*RadiansToDegrees - _self->angle);
+
+	// angular velocity is in degrees/sec
+	_w = _anglePid.run(angleErr);
+
+	// scale velocities as per commands
+	scaleVelocity();
 }
 
 Geometry2d::Point
@@ -751,6 +814,40 @@ Robot::evaluateBezier(float t,
 		pt += controls.at(k) * pow(j, n-1-k) * pow(t, k) * coeffs.at(k);
 	}
 	return pt;
+}
+
+Geometry2d::Point
+Robot::evaluateBezierVelocity(float t,
+		const std::vector<Geometry2d::Point>& controls,
+		const std::vector<float>& coeffs) const {
+
+	int n = controls.size();
+	float j = 1.0 - t;
+	Point pt;
+	for (int k = 0; k<n; ++k) {
+		pt += controls.at(k) * -1 * (n-1-k) * pow(j, n-1-k-1) * pow(t, k) * coeffs.at(k);
+		pt += controls.at(k) * pow(j, n-1-k) * k * pow(t, k-1) * coeffs.at(k);
+	}
+	return pt;
+}
+
+float Robot::bezierLength(const std::vector<Geometry2d::Point>& controls,
+					const std::vector<float>& coeffs) const {
+	// linear interpolation of points
+	vector<Point> interp;
+	interp.push_back(controls.at(0));
+	size_t nrPoints = 20;
+	float inc = 1.0/nrPoints;
+	for (size_t t = 1; t<nrPoints-1; ++t)
+		interp.push_back(evaluateBezier(t*inc, controls, coeffs));
+	interp.push_back(controls.at(controls.size() -1));
+
+	// find the distance
+	float length = 0.0;
+	for (size_t i = 1; i<interp.size(); ++i)
+		length += interp.at(i).distTo(interp.at(i-1));
+
+	return length;
 }
 
 void Robot::genMotor(bool old)
@@ -1047,4 +1144,56 @@ int Motion::Robot::binomialCoefficient(int n, int k) const {
 	if (k == 1 || k == n-1) return n;
 
 	return factorial(n)/(factorial(k)*factorial(n-k));
+}
+
+void Motion::Robot::drawText(const std::string& text,
+								  const Geometry2d::Point& pt,
+								  int r, int g, int b) {
+	Packet::LogFrame::DebugText t;
+	t.text = text;
+	t.pos = pt;
+	t.color[0] = r;
+	t.color[1] = g;
+	t.color[2] = b;
+
+	_state->debugText.push_back(t);
+}
+
+void Motion::Robot::drawText(const std::string& text,
+								  const Geometry2d::Point& pt,
+								  const QColor& color) {
+	drawText(text, pt, color.red(), color.green(), color.blue());
+}
+
+void Motion::Robot::drawLine(const Geometry2d::Segment& line,
+								  int r, int g, int b) {
+	Packet::LogFrame::DebugLine ln;
+	ln.pt[0] = line.pt[0];
+	ln.pt[1] = line.pt[1];
+	ln.color[0] = r;
+	ln.color[1] = g;
+	ln.color[2] = b;
+	_state->debugLines.push_back(ln);
+}
+
+void Motion::Robot::drawLine(const Geometry2d::Segment& line,
+								  const QColor& color) {
+	drawLine(line, color.red(), color.green(), color.blue());
+}
+
+void Motion::Robot::drawCircle(const Geometry2d::Point& center,
+									float radius, int r, int g, int b) {
+	Packet::LogFrame::DebugCircle c;
+	c.radius(radius);
+	c.center = center;
+	c.color[0] = r;
+	c.color[1] = g;
+	c.color[2] = b;
+	_state->debugCircles.push_back(c);
+}
+
+void Motion::Robot::drawCircle(const Geometry2d::Point& center,
+									float radius,
+									const QColor& color) {
+	drawCircle(center, radius, color.red(), color.green(), color.blue());
 }

@@ -38,6 +38,9 @@ namespace Gameplay
 
 				WindowEvaluator *_win;
 
+				bool _commandValid; /// true if we have issued a command, false otherwise
+				std::vector<Geometry2d::Point> _controls;
+
 				State _state;
 
 				// segment we are targetting
@@ -47,6 +50,8 @@ namespace Gameplay
 				Geometry2d::Segment evaluatePass(); /// finds a pass segment
 				Geometry2d::Segment evaluateShot(); /// finds a shot segment
 
+				// shot strength calculation
+				int calcKickStrength(const Geometry2d::Point& targetCenter) const;
 
 				// Individual state functions - these should execute a state's
 				// activities, and return what the next state should be

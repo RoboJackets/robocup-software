@@ -105,19 +105,19 @@ namespace Gameplay
 			 * flag works like in other move commands
 			 */
 			void bezierMove(const std::vector<Geometry2d::Point>& controls,
-					bool enableAvoid, bool stopAtEnd=true) {
+					Packet::MotionCmd::OrientationType facing,
+					Packet::MotionCmd::PathEndType endpoint=Packet::MotionCmd::StopAtEnd) {
+
 				// set motion command to use the explicit path generation
 				packet()->cmd.planner = Packet::MotionCmd::Bezier;
-				if (stopAtEnd)
-					packet()->cmd.pathEnd = Packet::MotionCmd::StopAtEnd;
-				else
-					packet()->cmd.pathEnd = Packet::MotionCmd::FastAtEnd;
+				packet()->cmd.pathEnd = endpoint;
+				packet()->cmd.face = facing;
 
-				// set the avoidance flag
-				packet()->cmd.enableBezierAvoid = enableAvoid;
+				// TODO: enable this - currently not used
+//				// set the avoidance flag
+//				packet()->cmd.enableBezierAvoid = enableAvoid;
 
-				// we hardcode render resolution here
-				packet()->cmd.nrBezierPts = 20;
+				// set the control points
 				packet()->cmd.bezierControlPoints.clear();
 				packet()->cmd.bezierControlPoints = controls;
 			}

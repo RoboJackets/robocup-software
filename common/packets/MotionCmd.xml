@@ -70,7 +70,6 @@
 		<member type="uint64" name="start_time" />
 		
 		<!--Bezier Planner Parameters-->
-		<member type="uint16" name="nrBezierPts" />
 		<member type="bool" name="enableBezierAvoid" />
 		<array type="Geometry2d::Point" name="bezierControlPoints" />
 		
