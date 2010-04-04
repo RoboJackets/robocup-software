@@ -128,6 +128,8 @@ Modeling::RobotModel::RobotModel(const ConfigFile::WorldModel& cfg, int s) :
 #endif
 	firstObservedTime = 0;
 	lastObservedTime = 0;
+
+	inUse = false;
 }
 
 void Modeling::RobotModel::observation(uint64_t time, Geometry2d::Point pos, float angle)

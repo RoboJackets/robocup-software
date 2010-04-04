@@ -57,36 +57,36 @@ void WorldModel::run()
 		robot->bestError = -1;
 	}
 	ballModel.bestError = -1;
-	
+
 	/// ball sensor
 	// FIXME: need to check for consistency here - could be a broken sensor
 	BOOST_FOREACH(Packet::LogFrame::Robot& r, _state->self)
 	{
 		//FIXME: handle stale data properly
 		r.haveBall = r.radioRx.ball;
-		
-		//if a robot has the ball, we need to make an observation 
+
+		//if a robot has the ball, we need to make an observation
 		//using that information and project the ball in front of it
 		if (r.valid && r.haveBall)
 		{
 			Geometry2d::Point offset = Geometry2d::Point::
 				direction(r.angle * DegreesToRadians) *	Constants::Robot::Radius;
-			
+
 			ballModel.observation(_state->timestamp, r.pos + offset);
 		}
 	}
-	
+
 	if (verbose) cout << "Adding messages from vision " << endl;
 	uint64_t curTime = 0;
 	BOOST_FOREACH(const Packet::Vision& vision, _state->rawVision)
 	{
 		curTime = max(curTime, vision.timestamp);
-		
+
 		if (!vision.sync)
 		{
 			const std::vector<Packet::Vision::Robot>* self;
 			const std::vector<Packet::Vision::Robot>* opp;
-			
+
 			if (_state->team == Yellow)
 			{
 				self = &vision.yellow;
@@ -98,7 +98,7 @@ void WorldModel::run()
 			} else {
 				continue;
 			}
-			
+
 			BOOST_FOREACH(const Packet::Vision::Robot& r, *self)
 			{
 				RobotModel::shared &robot = _robotMap[r.shell];
@@ -108,7 +108,7 @@ void WorldModel::run()
 				}
 				robot->observation(vision.timestamp, r.pos, r.angle);
 			}
-			
+
 			BOOST_FOREACH(const Packet::Vision::Robot& r, *opp)
 			{
 				RobotModel::shared &robot = _robotMap[r.shell + OppOffset];
@@ -118,7 +118,7 @@ void WorldModel::run()
 				}
 				robot->observation(vision.timestamp, r.pos, r.angle);
 			}
-			
+
 			BOOST_FOREACH(const Packet::Vision::Ball &ball, vision.balls)
 			{
 				ballModel.observation(vision.timestamp, ball.pos);
@@ -133,7 +133,7 @@ void WorldModel::run()
 	{
 		const int shell = p.first;
 		RobotModel::shared robot = p.second;
-		if ((curTime - robot->lastObservedTime) < MaxCoastTime && robot->bestError >= 0)                           // error is not too high
+		if ((curTime - robot->lastObservedTime) < MaxCoastTime) // && robot->bestError >= 0)
 		{
 			// This robot has a new observation.  Update it.
 			robot->update();
@@ -165,7 +165,7 @@ void WorldModel::run()
 			_selfRobot[i] = selfUnused[nextSelfUnused++].get();
 			_selfRobot[i]->inUse = true;
 		}
-		
+
 		// copies in data to the actual packet
 		if (_selfRobot[i])
 		{
@@ -178,13 +178,13 @@ void WorldModel::run()
 		} else {
 			_state->self[i].valid = false;
 		}
-		
+
 		if (!_oppRobot[i] && nextOppUnused < oppUnused.size())
 		{
 			_oppRobot[i] = oppUnused[nextOppUnused++].get();
 			_oppRobot[i]->inUse = true;
 		}
-		
+
 		if (_oppRobot[i])
 		{
 			_state->opp[i].valid = true;
@@ -198,9 +198,9 @@ void WorldModel::run()
 		}
 	}
 	if (verbose) cout << "Updating ball" << endl;
-	
+
 	ballModel.update();
-	
+
 	_state->ball.pos = ballModel.pos;
 	_state->ball.vel = ballModel.vel;
 	_state->ball.accel = ballModel.accel;

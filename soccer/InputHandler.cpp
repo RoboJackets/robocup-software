@@ -121,7 +121,7 @@ void InputHandler::genRobotData(Packet::RadioTx::Robot &tx)
 
 	if (_controller->b8())
 	{
-		tx.kick = 16;
+		tx.kick = 255;
 	}
 }
 
