@@ -102,7 +102,8 @@ namespace Modeling
 			uint64_t firstObservedTime;
 			uint64_t lastObservedTime;
 
-			bool inUse;
+			bool inUse;   /// currently used as a robot on the field
+			bool isValid; /// currently receiving updates
 
 			const ConfigFile::WorldModel& _config;
 	};

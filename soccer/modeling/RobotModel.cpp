@@ -1,8 +1,11 @@
 // kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 // vim:ai ts=4 et
 
+#include <iostream>
 #include "RobotModel.hpp"
 #include <Utils.hpp>
+
+using namespace std;
 
 #define KALMAN 0
 
@@ -129,12 +132,19 @@ Modeling::RobotModel::RobotModel(const ConfigFile::WorldModel& cfg, int s) :
 	firstObservedTime = 0;
 	lastObservedTime = 0;
 
+	// by default, a robot is not in use until it is assigned
 	inUse = false;
+
+	// robots are created when they are observed, so it starts as valid
+	isValid = true;
 }
 
 void Modeling::RobotModel::observation(uint64_t time, Geometry2d::Point pos, float angle)
 {
-	if (lastObservedTime)
+	// check for valid flag - if we were invalid and get an observation,
+	// we should treat as if it were a new robot
+
+	if (lastObservedTime && isValid) // normal update
 	{
 		float dtime = (float)(time - lastObservedTime) / 1e6;
 		Geometry2d::Point predictPos = predictPosAtTime(dtime);
@@ -147,7 +157,7 @@ void Modeling::RobotModel::observation(uint64_t time, Geometry2d::Point pos, flo
 			bestObservedTime = time;
 		}
 	} else {
-		// First observation
+		// First observation or reset after being removed
 		bestError = 0;
 		observedPos = pos;
 		observedAngle = angle;
@@ -186,6 +196,7 @@ void Modeling::RobotModel::update()
 		//Position
 		posZ(0) = observedPos.x;
 		posZ(1) = observedPos.y;
+		RobotModel::shared &robot = p.second;
 
 		posKalman->predict(&posU);
 		posKalman->correct(&posZ);

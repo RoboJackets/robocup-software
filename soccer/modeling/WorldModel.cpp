@@ -28,20 +28,12 @@ WorldModel::WorldModel(SystemState *state, const ConfigFile::WorldModel& cfg) :
 	_config(cfg)
 {
 	_state = state;
-	for(unsigned int i=0 ; i<5 ; i++)
-	{
-		_selfRobot[i] = 0;
-		_oppRobot[i] = 0;
-	}
+	_selfSlots.assign(5, -1);
+	_oppSlots.assign(5, -1);
 }
 
 WorldModel::~WorldModel()
 {
-	for(unsigned int i=0 ; i<5 ; i++)
-	{
-		//delete _self[i];
-		//delete _opp[i];
-	}
 }
 
 void WorldModel::run()
@@ -84,8 +76,7 @@ void WorldModel::run()
 
 		if (!vision.sync)
 		{
-			const std::vector<Packet::Vision::Robot>* self;
-			const std::vector<Packet::Vision::Robot>* opp;
+			const std::vector<Packet::Vision::Robot> * self, * opp;
 
 			if (_state->team == Yellow)
 			{
@@ -137,6 +128,7 @@ void WorldModel::run()
 		{
 			// This robot has a new observation.  Update it.
 			robot->update();
+			robot->isValid = true;
 
 			// check if previously unused robot
 			if (!robot->inUse)
@@ -149,53 +141,69 @@ void WorldModel::run()
 				}
 			}
 		} else {
+			if (robot->isValid) cout << "Robot " << robot->shell << " out of date, removing..." << endl;
 			// robot is out of date, set flag
 			robot->inUse = false;
+			robot->isValid = false;
 		}
 	}
 
 	if (verbose) cout << "Assigning robots to slots" << endl;
-	unsigned int nextSelfUnused = 0;
-	unsigned int nextOppUnused = 0;
+	unsigned int nextSelfUnused = 0, nextOppUnused = 0;
 	for (int i = 0; i < 5; ++i)
 	{
-		// assigns unused robots to available slots
-		if (!_selfRobot[i] && nextSelfUnused < selfUnused.size())
+		// SELF ROBOTS
+
+		// clear out invalid robots
+		if (_selfSlots[i] >= 0 && _robotMap[_selfSlots[i]] && !_robotMap[_selfSlots[i]]->isValid)
 		{
-			_selfRobot[i] = selfUnused[nextSelfUnused++].get();
-			_selfRobot[i]->inUse = true;
+			_selfSlots[i] = -1;
 		}
 
-		// copies in data to the actual packet
-		if (_selfRobot[i])
-		{
+		// fill in slots
+		if (_selfSlots[i] < 0 && nextSelfUnused < selfUnused.size()) {
+			RobotModel::shared robot = selfUnused[nextSelfUnused++];
+			_selfSlots[i] = robot->shell;
+			robot->inUse = true;
+		}
+
+		// copy in the robot data
+		if (_selfSlots[i] >= 0) {
+			RobotModel::shared robot = _robotMap[_selfSlots[i]];
 			_state->self[i].valid = true;
-			_state->self[i].shell = _selfRobot[i]->shell;
-			_state->self[i].pos = _selfRobot[i]->pos;
-			_state->self[i].vel = _selfRobot[i]->vel;
-			_state->self[i].angle = _selfRobot[i]->angle;
-			_state->self[i].angleVel = _selfRobot[i]->angleVel;
-		} else {
-			_state->self[i].valid = false;
+			_state->self[i].shell = robot->shell;
+			_state->self[i].pos = robot->pos;
+			_state->self[i].vel = robot->vel;
+			_state->self[i].angle = robot->angle;
+			_state->self[i].angleVel = robot->angleVel;
 		}
 
-		if (!_oppRobot[i] && nextOppUnused < oppUnused.size())
+		// OPPONENT ROBOTS
+
+		// clear out invalid robots
+		if (_oppSlots[i] >= 0 && _robotMap[_oppSlots[i]] && !_robotMap[_oppSlots[i]]->isValid)
 		{
-			_oppRobot[i] = oppUnused[nextOppUnused++].get();
-			_oppRobot[i]->inUse = true;
+			_oppSlots[i] = -1;
 		}
 
-		if (_oppRobot[i])
-		{
+		// fill in slots
+		if (_oppSlots[i] < 0 && nextOppUnused < oppUnused.size()) {
+			RobotModel::shared robot = oppUnused[nextOppUnused++];
+			_oppSlots[i] = robot->shell;
+			robot->inUse = true;
+		}
+
+		// copy in the robot data
+		if (_oppSlots[i] >= 0) {
+			RobotModel::shared robot = _robotMap[_oppSlots[i]];
 			_state->opp[i].valid = true;
-			_state->opp[i].shell = _oppRobot[i]->shell;
-			_state->opp[i].pos = _oppRobot[i]->pos;
-			_state->opp[i].vel = _oppRobot[i]->vel;
-			_state->opp[i].angle = _oppRobot[i]->angle;
-			_state->opp[i].angleVel = _oppRobot[i]->angleVel;
-		} else {
-			_state->opp[i].valid = false;
+			_state->opp[i].shell = robot->shell;
+			_state->opp[i].pos = robot->pos;
+			_state->opp[i].vel = robot->vel;
+			_state->opp[i].angle = robot->angle;
+			_state->opp[i].angleVel = robot->angleVel;
 		}
+
 	}
 	if (verbose) cout << "Updating ball" << endl;
 
