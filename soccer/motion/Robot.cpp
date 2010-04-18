@@ -69,24 +69,6 @@ Robot::~Robot()
 {
 }
 
-void Robot::setPosKp(double value)
-{
-	_posPid.kp = value;
-	//_config.pos.p = value;
-}
-
-void Robot::setPosKi(double value)
-{
-	_posPid.ki = value;
-	//_config.pos.i = value;
-}
-
-void Robot::setPosKd(double value)
-{
-	_posPid.kd = value;
-	//_config.pos.d = value;
-}
-
 void Robot::setAngKp(double value)
 {
 	_anglePid.kp = value;
@@ -121,16 +103,12 @@ void Robot::proc()
 		if (!_isConfigLoaded) {
 			_dynamics.setConfig(_self->config.motion);
 			_isConfigLoaded = true;
+
+			// set the correct PID parameters for position and angle
+			_anglePid.kp = _self->config.motion.angle.p;
+			_anglePid.ki = _self->config.motion.angle.i;
+			_anglePid.kd = _self->config.motion.angle.d;
 		}
-
-		// set the correct PID parameters for position and angle
-		_posPid.kp = _self->config.motion.pos.p;
-		_posPid.ki = _self->config.motion.pos.i;
-		_posPid.kd = _self->config.motion.pos.d;
-
-		_anglePid.kp = _self->config.motion.angle.p;
-		_anglePid.ki = _self->config.motion.angle.i;
-		_anglePid.kd = _self->config.motion.angle.d;
 
 		if (_state->gameState.state == GameState::Halt)
 		{
@@ -547,10 +525,10 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 		Dynamics::DynamicsInfo info = _dynamics.info(dir.angle() *
 			RadiansToDegrees - robotAngle, _w);
 
-		// find magnitude of the velocity
+		// bound the velocity by the end of the path
 		const float vv = sqrtf(2 * length * info.deceleration);
 
-		// create the velocity vector
+		// create the maximum velocity given driving until the end of the path
 		Geometry2d::Point targetVel = dir.normalized() * vv;
 
 		//last commanded velocity
@@ -776,9 +754,6 @@ void Robot::genBezierVelocity() {
 	// directly set the velocity
 	_vel = targetVel;
 
-	// handle facing - TODO: should set a flag to allow for either continuous or endpoint facing
-	// endpoint facing
-	// in radians
 	float targetAngle = 0.0;
 	if (_self->cmd.face == Packet::MotionCmd::Continuous) {
 		// look further ahead for angle

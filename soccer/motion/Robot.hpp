@@ -61,17 +61,11 @@ namespace Motion
 			void drawBezierControl(QPainter& p);
 			void drawPoseHistory(QPainter& p);
 
-
-			void setPosKp(double value);
-			void setPosKi(double value);
-			void setPosKd(double value);
-
 			void setAngKp(double value);
 			void setAngKi(double value);
 			void setAngKd(double value);
 
 		private:
-			Pid _posPid;
 			Pid _anglePid;
 
 			/**

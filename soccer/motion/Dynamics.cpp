@@ -43,7 +43,7 @@ Dynamics::DynamicsInfo Dynamics::info(const float angle, const float w) const
 	}
 	
 
-	//percent of the difference to subtract from max
+	// linear interpolation of the values
 	//TODO should use sin or something because it is a circle
 	//not a fixed ratio
 	float percent = clipped/45.0f;

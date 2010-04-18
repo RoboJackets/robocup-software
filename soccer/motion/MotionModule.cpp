@@ -17,6 +17,11 @@ MotionModule::MotionModule(SystemState *state, const ConfigFile::MotionModule& c
 	_configWidget = new QWidget();
 	ui.setupUi(_configWidget);
 
+	//TODO initialize the spinners on the gui
+//	ui.ang_kd->setValue(cfg.robot);
+//	ui.ang_ki->setValue(ki_init);
+//	ui.ang_kp->setValue(kp_init);
+
 	//seems to be the only way to set the widgets parent to an object
 	((QObject*)_configWidget)->setParent((QObject*)this);
 	QMetaObject::connectSlotsByName(this);
@@ -77,30 +82,6 @@ void MotionModule::fieldOverlay(QPainter& p, Packet::LogFrame& lf) const
 			_robots[i]->drawPoseHistory(p);
 		}
 
-	}
-}
-
-void MotionModule::on_pos_kp_valueChanged(double value)
-{
-	for(unsigned int i=0; i<5; i++)
-	{
-		_robots[i]->setPosKp(value);
-	}
-}
-
-void MotionModule::on_pos_ki_valueChanged(double value)
-{
-	for(unsigned int i=0; i<5; i++)
-	{
-		_robots[i]->setPosKi(value);
-	}
-}
-
-void MotionModule::on_pos_kd_valueChanged(double value)
-{
-	for(unsigned int i=0; i<5; i++)
-	{
-		_robots[i]->setPosKd(value);
 	}
 }
 
