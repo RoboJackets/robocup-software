@@ -1,11 +1,13 @@
 // kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 // vim:ai ts=4 et
 
+#include <iostream>
 #include "MotionModule.hpp"
 
 #include <QMouseEvent>
 #include <boost/foreach.hpp>
 
+using namespace std;
 using namespace Motion;
 using namespace Packet;
 
@@ -87,6 +89,7 @@ void MotionModule::fieldOverlay(QPainter& p, Packet::LogFrame& lf) const
 
 void MotionModule::on_ang_kp_valueChanged(double value)
 {
+	cout << "Setting Angle Kp to " << value << endl;
 	for(unsigned int i=0; i<5; i++)
 	{
 		_robots[i]->setAngKp(value);
@@ -95,6 +98,7 @@ void MotionModule::on_ang_kp_valueChanged(double value)
 
 void MotionModule::on_ang_ki_valueChanged(double value)
 {
+	cout << "Setting Angle Ki to " << value << endl;
 	for(unsigned int i=0; i<5; i++)
 	{
 		_robots[i]->setAngKi(value);
@@ -103,6 +107,7 @@ void MotionModule::on_ang_ki_valueChanged(double value)
 
 void MotionModule::on_ang_kd_valueChanged(double value)
 {
+	cout << "Setting Angle Kd to " << value << endl;
 	for(unsigned int i=0; i<5; i++)
 	{
 		_robots[i]->setAngKd(value);

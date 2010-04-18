@@ -72,19 +72,16 @@ Robot::~Robot()
 void Robot::setAngKp(double value)
 {
 	_anglePid.kp = value;
-	//_config.angle.p = value;
 }
 
 void Robot::setAngKi(double value)
 {
 	_anglePid.ki = value;
-	//_config.angle.i = value;
 }
 
 void Robot::setAngKd(double value)
 {
 	_anglePid.kd = value;
-	//_config.angle.d = value;
 }
 
 void Robot::setSystemState(SystemState* state)
@@ -126,7 +123,7 @@ void Robot::proc()
 
 			// switch between planner types
 			switch(_self->cmd.planner) {
-			// handle direct velocity commands (NOT IMPLEMENTED)
+			// handle direct velocity commands
 			case Packet::MotionCmd::DirectVelocity:
 			{
 				// set the velocities from the gameplay module
@@ -769,6 +766,9 @@ void Robot::genBezierVelocity() {
 
 	// Find the error (degrees)
 	float angleErr = Utils::fixAngleDegrees(targetAngle*RadiansToDegrees - _self->angle);
+
+	// debug GUI for PID commands
+	cout << "Current Kp: " << _anglePid.kp << endl;
 
 	// angular velocity is in degrees/sec
 	_w = _anglePid.run(angleErr);
