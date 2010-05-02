@@ -23,56 +23,24 @@ namespace Gameplay
 		public:
 			Robot(GameplayModule *gameplay, int id, bool self);
 
-			Packet::LogFrame::Robot *packet() const
-			{
-				return _packet;
-			}
+			Packet::LogFrame::Robot *packet() const;
 
-			void updatePoseHistory();
+			// Status indicators
+			bool charged() const; /// true if the kicker is ready
+			bool self() const;    /// true if this is one of our robots
+			bool visible() const; /// true if robot is valid - FIXME: needs better check
+			int id() const;       /// shell number of robot
+			const Geometry2d::Point &pos() const;  /// Position
+			const Geometry2d::Point &vel() const;  /// Velocity (vector)
+			const float &angle() const;	  /// global orientation of the robot (radians)
+			bool haveBall() const; /// true if we have the ball
 
-			bool visible() const
-			{
-				return packet()->valid;
-			}
-
-			int id() const
-			{
-				return _id;
-			}
-
-			const Geometry2d::Point &pos() const
-			{
-				return packet()->pos;
-			}
-
-			const Geometry2d::Point &vel() const
-			{
-				return packet()->vel;
-			}
-
-			const float &angle() const
-			{
-				return packet()->angle;
-			}
-
-			void setVScale(float scale = 1.0) {
-				packet()->cmd.vScale = scale;
-			}
+			// Commands
+			void setVScale(float scale = 1.0); /// scales the velocity
+			void resetMotionCommand();  /// resets all motion commands for the robot
 
 			// Move to a particular point using the RRT planner
-			void move(Geometry2d::Point pt, bool stopAtEnd=true)
-			{
-				packet()->cmd.goalPosition = pt;
-
-				// handle stop at end commands
-				if (stopAtEnd)
-					packet()->cmd.pathEnd = Packet::MotionCmd::StopAtEnd;
-				else
-					packet()->cmd.pathEnd = Packet::MotionCmd::FastAtEnd;
-
-				// enable the RRT-based planner
-				packet()->cmd.planner = Packet::MotionCmd::RRT;
-			}
+			void move(Geometry2d::Point pt, bool stopAtEnd=true);
 
 			/**
 			 * Move along a path for waypoint-based control
@@ -81,19 +49,7 @@ namespace Gameplay
 			 * This should only be used when there will be another command when
 			 * the robot reaches the end of the path.
 			 */
-			void move(const std::vector<Geometry2d::Point>& path, bool stopAtEnd=true)
-			{
-				// set motion command to use the explicit path generation
-				packet()->cmd.planner = Packet::MotionCmd::Path;
-				if (stopAtEnd)
-					packet()->cmd.pathEnd = Packet::MotionCmd::StopAtEnd;
-				else
-					packet()->cmd.pathEnd = Packet::MotionCmd::FastAtEnd;
-
-				// clear the path and set it to the correct one
-				packet()->cmd.explicitPath.clear();
-				packet()->cmd.explicitPath = path;
-			}
+			void move(const std::vector<Geometry2d::Point>& path, bool stopAtEnd=true);
 
 			/**
 			 * Move via a bezier curve, designed to allow for faster movement
@@ -106,110 +62,54 @@ namespace Gameplay
 			 */
 			void bezierMove(const std::vector<Geometry2d::Point>& controls,
 					Packet::MotionCmd::OrientationType facing,
-					Packet::MotionCmd::PathEndType endpoint=Packet::MotionCmd::StopAtEnd) {
-
-				// set motion command to use the explicit path generation
-				packet()->cmd.planner = Packet::MotionCmd::Bezier;
-				packet()->cmd.pathEnd = endpoint;
-				packet()->cmd.face = facing;
-
-				// TODO: enable this - currently not used
-//				// set the avoidance flag
-//				packet()->cmd.enableBezierAvoid = enableAvoid;
-
-				// set the control points
-				packet()->cmd.bezierControlPoints.clear();
-				packet()->cmd.bezierControlPoints = controls;
-			}
+					Packet::MotionCmd::PathEndType endpoint=Packet::MotionCmd::StopAtEnd);
 
 			/** Move using direct velocity control by specifying
 			 *  translational and angular velocity
 			 */
-			void move(const Geometry2d::Point& trans, double ang)
-			{
-				//NOT IMPLEMENTED!
-				packet()->cmd.planner = Packet::MotionCmd::DirectVelocity;
-				packet()->cmd.direct_ang_vel = ang;
-				packet()->cmd.direct_trans_vel = trans;
-			}
+			void move(const Geometry2d::Point& trans, double ang);
 
 			/**
 			 * Move using timed-positions, so that each node has a target time
 			 * Also, the command needs a start time, so that it can calculate deltas
 			 * in seconds
 			 */
-			void move(const std::vector<Packet::MotionCmd::PathNode>& timedPath, uint64_t start) {
-				// set controller type
-				packet()->cmd.planner = Packet::MotionCmd::TimePosition;
+			void move(const std::vector<Packet::MotionCmd::PathNode>& timedPath, uint64_t start);
 
-				// set path
-				packet()->cmd.timePosPath.clear();
-				packet()->cmd.timePosPath = timedPath;
+			/**
+			 * Makes the robot spin in a specified direction
+			 */
+			void spin(Packet::MotionCmd::SpinType dir);
 
-				// set start time
-				packet()->cmd.start_time = start;
-			}
+			/*
+			 * Enable dribbler (note: can go both ways)
+			 */
+			void dribble(int8_t speed);
 
-			void spin(Packet::MotionCmd::SpinType dir)
-			{
-				packet()->cmd.spin = dir;
-			}
+			/**
+			 * Pivots around a given point in a particular direction
+			 * Specify direction manually, or with bool
+			 */
+			void pivot(Geometry2d::Point ctr, Packet::MotionCmd::PivotType dir);
+			void pivot(Geometry2d::Point center, bool cw);
 
-			bool haveBall() const
-			{
-				return packet()->haveBall;
-			}
+			/**
+			 * Face a point while remaining in place
+			 */
+			void face(Geometry2d::Point pt, bool continuous = false);
 
-			void dribble(int8_t speed)
-			{
-				packet()->radioTx.roller = speed;
-			}
+			/**
+			 * Remove the facing command
+			 */
+			void faceNone();
 
-			void pivot(Geometry2d::Point ctr, Packet::MotionCmd::PivotType dir)
-			{
-				packet()->cmd.pivotPoint = ctr;
-				packet()->cmd.pivot = dir;
-			}
+			/**
+			 * enable kick when ready at a given strength
+			 */
+			void kick(uint8_t strength);
 
-			void face(Geometry2d::Point pt, bool continuous = false)
-			{
-				packet()->cmd.goalOrientation = pt;
-				packet()->cmd.face = continuous ? Packet::MotionCmd::Endpoint : Packet::MotionCmd::Continuous;
-			}
 
-			void faceNone()
-			{
-				packet()->cmd.face = Packet::MotionCmd::None;
-			}
-
-			void kick(uint8_t strength)
-			{
-				willKick = true;
-				packet()->radioTx.kick = strength;
-			}
-
-			void pivot(Geometry2d::Point center, bool cw)
-			{
-				packet()->cmd.pivotPoint = center;
-				packet()->cmd.pivot = cw ? Packet::MotionCmd::CW : Packet::MotionCmd::CCW;
-			}
-
-			bool charged() const
-			{
-				return packet()->radioRx.charged;
-			}
-
-			bool self() const
-			{
-				return _self;
-			}
-
-			ObstacleGroup &obstacles() const
-			{
-				return packet()->obstacles;
-			}
-
-			void resetMotionCommand();
+			ObstacleGroup &obstacles() const;
 
 			// True if this robot intends to kick the ball.
 			// This is reset when this robot's role changes.
@@ -226,6 +126,11 @@ namespace Gameplay
 			// This reduces the size of the opponent's obstacle.
 			// These are reset when this robot's role changes.
 			bool approachOpponent[Constants::Robots_Per_Team];
+
+			// External access functions for utility reasons
+
+			/** adds the pose to the history in the state variable */
+			void updatePoseHistory();
 
 		protected:
 			GameplayModule *_gameplay;

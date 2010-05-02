@@ -827,96 +827,95 @@ float Robot::bezierLength(const std::vector<Geometry2d::Point>& controls,
 
 void Robot::genMotor(bool old)
 {
-	if (!old)
-	{
-		// handle saturation of angular velocity
-		float w =  _w;
-		const float maxW = _self->config.motion.rotation.velocity;
-		w = saturate(w, maxW, -maxW);
-
-		//amount of rotation out of max
-		//[-1...1]
-		float wPercent = 0;
-
-		if (maxW != 0)
-		{
-			wPercent = w/maxW;
-		}
-
-		if (wPercent > 1)
-		{
-			wPercent = 1;
-		}
-
-		int8_t rotSpeed = 127 *  wPercent;
-
-		for (unsigned int i=0 ; i<4; ++i)
-		{
-			_self->radioTx.motors[i] = rotSpeed;
-		}
-
-		if (rotSpeed < 0)
-		{
-			rotSpeed = -rotSpeed;
-		}
-
-		//max linear speed remaining
-		int8_t maxSpeed = 127 - rotSpeed;
-
-		Geometry2d::Point rVel = _vel;
-		rVel.rotate(Point(), -_self->angle);
-
-		Dynamics::DynamicsInfo info = _dynamics.info(rVel.angle() * RadiansToDegrees, 0);
-
-		//vmax of the robot in desired velocity direction
-		const float vm = info.velocity;
-
-		//limit max velocity in that direction
-		if (rVel.mag() > vm)
-		{
-			rVel = rVel.normalized() * vm;
-		}
-
-		Geometry2d::Point vmax = rVel.normalized() * vm;
-
-		float max = 0;
-		BOOST_FOREACH(Robot::Axle& axle, _axles)
-		{
-			const float vwheel = fabs(axle.wheel.dot(vmax));
-			if (vwheel > max)
-			{
-				max = vwheel;
-			}
-		}
-
-		int i=0;
-		BOOST_FOREACH(Robot::Axle& axle, _axles)
-		{
-			if (i >= 4)
-			{
-				printf("Radio packet does not support more than 4 wheels!\n");
-				break;
-			}
-
-			//max ground velocity of the wheel
-			const float vwheel = axle.wheel.dot(rVel);
-			float per = vwheel/max;
-
-			//this really won't happen because rVel has been limited to the right number
-			if (per > 1)
-			{
-				per = 1;
-			}
-
-			_self->radioTx.motors[i] += int8_t(maxSpeed * per);
-			i++;
-		}
-	}
-	else
-	{
-		/// old style generation....
+	// switch to older motor command generation
+	if (old) {
 		genMotorOld();
+		return;
 	}
+
+	// handle saturation of angular velocity
+	float w =  _w;
+	const float maxW = _self->config.motion.rotation.velocity;
+	w = saturate(w, maxW, -maxW);
+
+	//amount of rotation out of max
+	//[-1...1]
+	float wPercent = 0;
+
+	if (maxW != 0)
+	{
+		wPercent = w/maxW;
+	}
+
+	if (wPercent > 1)
+	{
+		wPercent = 1;
+	}
+
+	int8_t rotSpeed = 127 *  wPercent;
+
+	for (unsigned int i=0 ; i<4; ++i)
+	{
+		_self->radioTx.motors[i] = rotSpeed;
+	}
+
+	if (rotSpeed < 0)
+	{
+		rotSpeed = -rotSpeed;
+	}
+
+	//max linear speed remaining
+	int8_t maxSpeed = 127 - rotSpeed;
+
+	Geometry2d::Point rVel = _vel;
+	rVel.rotate(Point(), -_self->angle);
+
+	Dynamics::DynamicsInfo info = _dynamics.info(rVel.angle() * RadiansToDegrees, 0);
+
+	//vmax of the robot in desired velocity direction
+	const float vm = info.velocity;
+
+	//limit max velocity in that direction
+	if (rVel.mag() > vm)
+	{
+		rVel = rVel.normalized() * vm;
+	}
+
+	Geometry2d::Point vmax = rVel.normalized() * vm;
+
+	float max = 0;
+	BOOST_FOREACH(Robot::Axle& axle, _axles)
+	{
+		const float vwheel = fabs(axle.wheel.dot(vmax));
+		if (vwheel > max)
+		{
+			max = vwheel;
+		}
+	}
+
+	int i=0;
+	BOOST_FOREACH(Robot::Axle& axle, _axles)
+	{
+		if (i >= 4)
+		{
+			printf("Radio packet does not support more than 4 wheels!\n");
+			break;
+		}
+
+		//max ground velocity of the wheel
+		const float vwheel = axle.wheel.dot(rVel);
+		float per = vwheel/max;
+
+		//this really won't happen because rVel has been limited to the right number
+		if (per > 1)
+		{
+			per = 1;
+		}
+
+		_self->radioTx.motors[i] += int8_t(maxSpeed * per);
+		i++;
+	}
+
 }
 
 void Robot::genMotorOld() {

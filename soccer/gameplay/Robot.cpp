@@ -56,3 +56,164 @@ void Gameplay::Robot::updatePoseHistory()
 
 	_packet->poseHistory = _poseHistory;
 }
+
+void Gameplay::Robot::move(Geometry2d::Point pt, bool stopAtEnd)
+{
+	packet()->cmd.goalPosition = pt;
+
+	// handle stop at end commands
+	if (stopAtEnd)
+		packet()->cmd.pathEnd = Packet::MotionCmd::StopAtEnd;
+	else
+		packet()->cmd.pathEnd = Packet::MotionCmd::FastAtEnd;
+
+	// enable the RRT-based planner
+	packet()->cmd.planner = Packet::MotionCmd::RRT;
+}
+
+void Gameplay::Robot::move(const std::vector<Geometry2d::Point>& path, bool stopAtEnd)
+{
+	// set motion command to use the explicit path generation
+	packet()->cmd.planner = Packet::MotionCmd::Path;
+	if (stopAtEnd)
+		packet()->cmd.pathEnd = Packet::MotionCmd::StopAtEnd;
+	else
+		packet()->cmd.pathEnd = Packet::MotionCmd::FastAtEnd;
+
+	// clear the path and set it to the correct one
+	packet()->cmd.explicitPath.clear();
+	packet()->cmd.explicitPath = path;
+}
+
+void Gameplay::Robot::bezierMove(const std::vector<Geometry2d::Point>& controls,
+		Packet::MotionCmd::OrientationType facing,
+		Packet::MotionCmd::PathEndType endpoint) {
+
+	// set motion command to use the explicit path generation
+	packet()->cmd.planner = Packet::MotionCmd::Bezier;
+	packet()->cmd.pathEnd = endpoint;
+	packet()->cmd.face = facing;
+
+	// TODO: enable this - currently not used
+//				// set the avoidance flag
+//				packet()->cmd.enableBezierAvoid = enableAvoid;
+
+	// set the control points
+	packet()->cmd.bezierControlPoints.clear();
+	packet()->cmd.bezierControlPoints = controls;
+}
+
+void Gameplay::Robot::move(const Geometry2d::Point& trans, double ang)
+{
+	//NOT IMPLEMENTED!
+	packet()->cmd.planner = Packet::MotionCmd::DirectVelocity;
+	packet()->cmd.direct_ang_vel = ang;
+	packet()->cmd.direct_trans_vel = trans;
+}
+
+void Gameplay::Robot::move(const std::vector<Packet::MotionCmd::PathNode>& timedPath, uint64_t start) {
+	// set controller type
+	packet()->cmd.planner = Packet::MotionCmd::TimePosition;
+
+	// set path
+	packet()->cmd.timePosPath.clear();
+	packet()->cmd.timePosPath = timedPath;
+
+	// set start time
+	packet()->cmd.start_time = start;
+}
+
+Packet::LogFrame::Robot * Gameplay::Robot::packet() const
+{
+	return _packet;
+}
+
+bool Gameplay::Robot::visible() const
+{
+	return packet()->valid;
+}
+
+int Gameplay::Robot::id() const
+{
+	return _id;
+}
+
+const Geometry2d::Point & Gameplay::Robot::pos() const
+{
+	return packet()->pos;
+}
+
+const Geometry2d::Point & Gameplay::Robot::vel() const
+{
+	return packet()->vel;
+}
+
+const float & Gameplay::Robot::angle() const
+{
+	return packet()->angle;
+}
+
+void Gameplay::Robot::setVScale(float scale) {
+	packet()->cmd.vScale = scale;
+}
+
+
+void Gameplay::Robot::spin(Packet::MotionCmd::SpinType dir)
+{
+	packet()->cmd.spin = dir;
+}
+
+bool Gameplay::Robot::haveBall() const
+{
+	float dist = pos().distTo(_gameplay->state->ball().pos);
+	return packet()->haveBall && dist > Constants::Robot::Radius + 0.1;
+}
+
+void Gameplay::Robot::dribble(int8_t speed)
+{
+	packet()->radioTx.roller = speed;
+}
+
+void Gameplay::Robot::pivot(Geometry2d::Point ctr, Packet::MotionCmd::PivotType dir)
+{
+	packet()->cmd.pivotPoint = ctr;
+	packet()->cmd.pivot = dir;
+}
+
+void Gameplay::Robot::face(Geometry2d::Point pt, bool continuous)
+{
+	packet()->cmd.goalOrientation = pt;
+	packet()->cmd.face = continuous ? Packet::MotionCmd::Endpoint : Packet::MotionCmd::Continuous;
+}
+
+void Gameplay::Robot::faceNone()
+{
+	packet()->cmd.face = Packet::MotionCmd::None;
+}
+
+void Gameplay::Robot::kick(uint8_t strength)
+{
+	willKick = true;
+	packet()->radioTx.kick = strength;
+}
+
+void Gameplay::Robot::pivot(Geometry2d::Point center, bool cw)
+{
+	packet()->cmd.pivotPoint = center;
+	packet()->cmd.pivot = cw ? Packet::MotionCmd::CW : Packet::MotionCmd::CCW;
+}
+
+bool Gameplay::Robot::charged() const
+{
+	return packet()->radioRx.charged;
+}
+
+bool Gameplay::Robot::self() const
+{
+	return _self;
+}
+
+ObstacleGroup & Gameplay::Robot::obstacles() const
+{
+	return packet()->obstacles;
+}
