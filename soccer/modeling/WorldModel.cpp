@@ -181,7 +181,8 @@ void WorldModel::run()
 		// OPPONENT ROBOTS
 
 		// clear out invalid robots
-		if (_oppSlots[i] >= 0 && _robotMap[_oppSlots[i]] && !_robotMap[_oppSlots[i]]->isValid)
+		if (_oppSlots[i] >= 0 && _robotMap[_oppSlots[i] + OppOffset] &&
+				!_robotMap[_oppSlots[i] + OppOffset]->isValid)
 		{
 			_oppSlots[i] = -1;
 		}
@@ -195,7 +196,7 @@ void WorldModel::run()
 
 		// copy in the robot data
 		if (_oppSlots[i] >= 0) {
-			RobotModel::shared robot = _robotMap[_oppSlots[i]];
+			RobotModel::shared robot = _robotMap[_oppSlots[i] + OppOffset];
 			_state->opp[i].valid = true;
 			_state->opp[i].shell = robot->shell;
 			_state->opp[i].pos = robot->pos;
@@ -213,4 +214,6 @@ void WorldModel::run()
 	_state->ball.vel = ballModel.vel;
 	_state->ball.accel = ballModel.accel;
 	_state->ball.valid = (curTime - ballModel.lastObservedTime) < MaxCoastTime;
+
+	if (verbose) cout << "At end of WorldModel::run()" << endl;
 }

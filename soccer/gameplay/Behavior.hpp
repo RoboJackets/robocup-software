@@ -10,7 +10,7 @@ namespace Gameplay
 	class Behavior: public AutoName
 	{
 	public:
-		Behavior(GameplayModule *gameplay, size_t minRobots = 0);
+		Behavior(GameplayModule *gameplay, size_t minRobots = 1);
 		virtual ~Behavior();
 
 		GameplayModule *gameplay() const
@@ -32,6 +32,9 @@ namespace Gameplay
 		{
 			return _robots;
 		}
+
+		// Get the minimum number of robots
+		size_t getMinRobots() const { return _minRobots; }
 
 		// Simple way to get the robot for one-robot behaviors
 		Robot *robot() const

@@ -1,3 +1,4 @@
+#include <iostream>
 #include <boost/foreach.hpp>
 #include "TestBasicOneTouchPassing.hpp"
 
@@ -23,6 +24,9 @@ bool Gameplay::Plays::TestBasicOneTouchPassing::assign(set<Robot *> &available)
 		cout << r->id() << " ";
 	cout << endl;
 
+	if (_robots.size() < _minRobots)
+		return false;
+
 	_passer.assign(available);
 	cout << "Passer ID: " << _passer.robot()->id() << endl;
 	_receiver.assign(available);
@@ -30,11 +34,14 @@ bool Gameplay::Plays::TestBasicOneTouchPassing::assign(set<Robot *> &available)
 
 	_passer.targetRobot = _receiver.robot();
 
-	return _robots.size() >= _minRobots;
+	return true;
 }
 
 bool Gameplay::Plays::TestBasicOneTouchPassing::run()
 {
+	bool verbose = true;
+	if (verbose) cout << "PLAY: Running TestBasicOneTouchPassing" << endl;
+
 	bool done = _passer.getState() == Behaviors::OneTouchKick::Done;
 	if (done)
 	{
@@ -61,6 +68,8 @@ bool Gameplay::Plays::TestBasicOneTouchPassing::run()
 
 	// indicate which robot is receiving
 	drawCircle(_receiver.robot()->pos(), Constants::Robot::Radius*1.2, 100, 100, 100);
+
+	if (verbose) cout << "PLAY: Finished Running TestBasicOneTouchPassing" << endl;
 
 	return true;
 }

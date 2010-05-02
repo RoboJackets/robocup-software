@@ -768,7 +768,7 @@ void Robot::genBezierVelocity() {
 	float angleErr = Utils::fixAngleDegrees(targetAngle*RadiansToDegrees - _self->angle);
 
 	// debug GUI for PID commands
-	cout << "Current Kp: " << _anglePid.kp << endl;
+//	cout << "Current Kp: " << _anglePid.kp << endl;
 
 	// angular velocity is in degrees/sec
 	_w = _anglePid.run(angleErr);

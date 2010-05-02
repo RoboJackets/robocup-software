@@ -207,6 +207,9 @@ void Gameplay::GameplayModule::fieldOverlay(QPainter &painter, Packet::LogFrame 
 
 void Gameplay::GameplayModule::run()
 {
+	bool verbose = true;
+	if (verbose) cout << "Starting GameplayModule::run()" << endl;
+
 	_state->debugLines.clear();
 	_state->debugPolygons.clear();
 	_state->debugCircles.clear();
@@ -316,35 +319,46 @@ void Gameplay::GameplayModule::run()
 
 	_ballMatrix = Geometry2d::TransformMatrix::translate(_state->ball.pos);
 
+	if (verbose) cout << "  Updating play" << endl;
 	// handle changes in play availability
 	bool playReady = true;
 	if (_plays.size() == 0) {
+		// handle empty play scenario
 		boost::shared_ptr<Play> dummy;
 		_currentPlay = dummy;
-	} else if (_playDone || !_currentPlay || !_currentPlay->applicable() ||
-			   !playEnabled(_currentPlay))
+	} else if (_playDone || 					// New play if old one was complete
+			   !_currentPlay ||					// Current play is does not exist
+			   !_currentPlay->applicable() ||   // check if still available
+			   !_currentPlay->allVisible() ||   // check if robot still has all robots available
+			   !playEnabled(_currentPlay))		// check if play is still in the enabled pool
 	{
+		if (verbose) cout << "  Selecting a new play" << endl;
 		_playDone = false;
 
-		shared_ptr<Play> play = selectPlay();
+		// prepare a list of all non-goalie robots ready
+		set<Robot *> robots;
+		BOOST_FOREACH(Robot *r, self)
+		{
+			if ((!_goalie || r != _goalie->robot()) && r->visible())
+			{
+				robots.insert(r);
+			}
+		}
+		if (verbose) cout << "  Available Robots: " << robots.size() << endl;
+
+		// select a new play from available pool
+		shared_ptr<Play> play = selectPlay(robots.size()); // ensure that the play is viable
 		if (play && play != _currentPlay)
 		{
 			// send end signal to previously running play
-			if (_currentPlay) _currentPlay->end();
+			if (_currentPlay)
+				_currentPlay->end();
+
+			// swap in new play
 			_currentPlay = play;
 
 			// FIXME: make sure this works
 			// updateCurrentPlay(QString::fromStdString(_currentPlay->name()));
-
-			// Assign to the new play all robots except the goalie
-			set<Robot *> robots;
-			BOOST_FOREACH(Robot *r, self)
-			{
-				if ((!_goalie || r != _goalie->robot()) && r->visible())
-				{
-					robots.insert(r);
-				}
-			}
 
 			// assign and check if assignment was valid
 			playReady = _currentPlay->assign(robots);
@@ -354,12 +368,14 @@ void Gameplay::GameplayModule::run()
 	// Run the current play if assignment was successful
 	if (_currentPlay && playReady)
 	{
+		if (verbose) cout << "  Running play" << endl;
 		_playDone = !_currentPlay->run();
 	}
 
 	// Run the goalie
 	if (_goalie)
 	{
+		if (verbose) cout << "  Running goalie" << endl;
 		if (_goalie->assigned() && _goalie->robot()->visible())
 		{
 			_goalie->run();
@@ -367,6 +383,7 @@ void Gameplay::GameplayModule::run()
 	}
 
 	// Add ball obstacles
+	if (verbose) cout << "  Adding ball obstacles" << endl;
 	BOOST_FOREACH(Robot *r, self)
 	{
 		if (r->visible() && !(_goalie && _goalie->robot() == r))
@@ -391,12 +408,14 @@ void Gameplay::GameplayModule::run()
 		}
 	}
 
+	if (verbose) cout << "  Getting play name" << endl;
 	if (_currentPlay)
 	{
 		_state->playName = _currentPlay->name();
 	} else {
 		_state->playName = "(null)";
 	}
+	if (verbose) cout << "Finishing GameplayModule::run()" << endl;
 }
 
 void Gameplay::GameplayModule::enablePlay(shared_ptr<Play> play)
@@ -417,7 +436,7 @@ bool Gameplay::GameplayModule::playEnabled(boost::shared_ptr<Play> play) const
 	return _plays.find(play) != _plays.end();
 }
 
-shared_ptr<Gameplay::Play> Gameplay::GameplayModule::selectPlay()
+shared_ptr<Gameplay::Play> Gameplay::GameplayModule::selectPlay(size_t nrRobots)
 {
 	float bestScore = 0;
 	shared_ptr<Play> bestPlay;
@@ -425,7 +444,7 @@ shared_ptr<Gameplay::Play> Gameplay::GameplayModule::selectPlay()
 	// Find the best applicable play
 	BOOST_FOREACH(shared_ptr<Play> play, _plays)
 	{
-		if (play->applicable())
+		if (play->applicable() && nrRobots >= play->getMinRobots())
 		{
 			float score = play->score();
 			if (!bestPlay || score < bestScore)
