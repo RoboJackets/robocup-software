@@ -1,6 +1,8 @@
 #include "Robot.hpp"
 #include "GameplayModule.hpp"
 
+using namespace Geometry2d;
+
 Gameplay::Robot::Robot(GameplayModule *gameplay, int id, bool self)
 {
 	_gameplay = gameplay;
@@ -153,6 +155,15 @@ const float & Gameplay::Robot::angle() const
 	return packet()->angle;
 }
 
+const Geometry2d::Segment Gameplay::Robot::kickerBar() const {
+	TransformMatrix pose(pos(), angle());
+	const float mouthHalf = Constants::Robot::MouthWidth/2.0f;
+	float x = sin(acos(mouthHalf/Constants::Robot::Radius))*Constants::Robot::Radius;
+	Point L(x, Constants::Robot::MouthWidth/2.0f);
+	Point R(x, -1.0 * Constants::Robot::MouthWidth/2.0f);
+	return Segment(pose*L, pose*R);
+}
+
 void Gameplay::Robot::setVScale(float scale) {
 	packet()->cmd.vScale = scale;
 }
@@ -165,7 +176,8 @@ void Gameplay::Robot::spin(Packet::MotionCmd::SpinType dir)
 
 bool Gameplay::Robot::haveBall() const
 {
-	float dist = pos().distTo(_gameplay->state->ball().pos);
+	Point ball = _gameplay->state()->ball.pos;
+	float dist = pos().distTo(ball);
 	return packet()->haveBall && dist > Constants::Robot::Radius + 0.1;
 }
 

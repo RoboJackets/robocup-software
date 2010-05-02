@@ -30,10 +30,13 @@ namespace Gameplay
 			bool self() const;    /// true if this is one of our robots
 			bool visible() const; /// true if robot is valid - FIXME: needs better check
 			int id() const;       /// shell number of robot
+			bool haveBall() const; /// true if we have the ball
+
+			// Geometry helper functions
 			const Geometry2d::Point &pos() const;  /// Position
 			const Geometry2d::Point &vel() const;  /// Velocity (vector)
 			const float &angle() const;	  /// global orientation of the robot (radians)
-			bool haveBall() const; /// true if we have the ball
+			const Geometry2d::Segment kickerBar() const; /// segment for the location of the kicker
 
 			// Commands
 			void setVScale(float scale = 1.0); /// scales the velocity
