@@ -61,5 +61,6 @@ namespace Constants
         const float Diameter = 0.180f;
         const float Radius = Diameter/2.0f;
         const float Height = 0.150f;
+        const float MouthWidth = 0.070f;
     }
 }
