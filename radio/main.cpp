@@ -35,6 +35,8 @@ void usage(const char* prog)
 	fprintf(stderr, "\t-b: run as the blue team\n");
 	fprintf(stderr, "\t-n: use base station i (0 is the first base station detected by libusb)\n");
 	fprintf(stderr, "\t-o: run an opponent team as well (note: radio only handles up to 5 robots)\n");
+	fprintf(stderr, "\t--debug_tx: print transmitted packets\n");
+	fprintf(stderr, "\t--debug_rx: print received packets\n");
 	exit(1);
 }
 
@@ -50,8 +52,8 @@ void oppPacketHandler(const Packet::RadioTx* packet)
 
 int main(int argc, char* argv[])
 {
-	bool debug_tx = true;
-	bool debug_rx = true;
+	bool debug_tx = false;
+	bool debug_rx = false;
 	bool model_2010 = false;
 	
 	int n = 0;
@@ -69,6 +71,14 @@ int main(int argc, char* argv[])
 		else if (strcmp(var, "-b") == 0)
 		{
 			team = Blue;
+		}
+		else if (strcmp(var, "--debug_tx") == 0)
+		{
+			debug_tx = true;
+		}
+		else if (strcmp(var, "--debug_rx") == 0)
+		{
+			debug_rx = true;
 		}
 		else if (strcmp(var, "-n") == 0)
 		{
