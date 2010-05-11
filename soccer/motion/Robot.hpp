@@ -94,7 +94,8 @@ namespace Motion
 			void stop();
 
 			/** generate motor speeds */
-			void genMotor(bool old = false);
+			void genMotor();
+			void genMotorAlt();
 			void genMotorOld();
 
 			/** calibration function
@@ -104,6 +105,9 @@ namespace Motion
 			void calib();
 
 		private:
+			/** flag determining motor speed generation */
+			static const bool _useOldMotorGen = false;
+
 			/** robot identification */
 			const unsigned int _id;
 			
