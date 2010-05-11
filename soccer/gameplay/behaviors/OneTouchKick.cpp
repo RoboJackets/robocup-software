@@ -94,7 +94,7 @@ Gameplay::Behaviors::OneTouchKick::intercept() {
 	Point approachVec = (ballPos - _target.center()).normalized();
 
 	// define the control points for a single kick
-	Point approachFar = ballPos + approachVec*approachDist,
+	Point approachFar  = ballPos + approachVec*approachDist,
 		  approachBall = ballPos + approachVec*Constants::Robot::Radius;   // ball position
 
 	// use a 3rd degree bezier curve to get to the ball
@@ -112,7 +112,7 @@ Gameplay::Behaviors::OneTouchKick::intercept() {
 
 	// if we are on the approach line, change to approach state
 	Segment approachLine(approachFar, approachBall);
-	float distThresh = 0.05;
+	float distThresh = 0.1;
 	if (approachLine.nearPoint(pos, distThresh)) {
 		return Approach;
 	}
@@ -139,6 +139,13 @@ Gameplay::Behaviors::OneTouchKick::approach() {
 		return Done;
 	}
 
+	// if we are in front of the ball, we should go back to intercept
+	Point apprPoint = ballPos + approachVec * Constants::Robot::Radius * 0.8;
+	Segment ballPerpLine(apprPoint - approachVec.perpCW(), apprPoint + approachVec.perpCW());
+	drawLine(ballPerpLine, 0, 0, 0);
+	if (ballPerpLine.pointSide(ballPos) > 0.0)
+		return Intercept;
+
 	// turn on the kicker for final approach
 	robot()->willKick = true;
 	robot()->kick(calcKickStrength(_target.center()));
@@ -159,6 +166,13 @@ Gameplay::Behaviors::OneTouchKick::approach() {
 	// issue move command if we don't need to change states
 	robot()->bezierMove(_controls, Packet::MotionCmd::Endpoint);
 
+	// if we have gotten too far away (given hysteresis), go back to intercept
+	Segment approachLine(approachFar, approachBall);
+	float distThresh = 0.15;
+	if (!approachLine.nearPoint(pos, distThresh)) {
+		return Intercept;
+	}
+
 	return Approach;
 }
 
@@ -174,11 +188,10 @@ Geometry2d::Segment Gameplay::Behaviors::OneTouchKick::evaluatePass() {
 	_win->debug = true;
 
 	// Kick towards a robot
-	Geometry2d::Point t = targetRobot->pos();
-	_win->run(ball().pos, t);
-	_win->exclude.push_back(t);
+	Geometry2d::Segment target = targetRobot->kickerBar();
+	_win->run(ball().pos, target);
+	_win->exclude.push_back(targetRobot->pos());
 
-	Segment target;
 	if (_win->best)
 	{
 		target = _win->best->segment;

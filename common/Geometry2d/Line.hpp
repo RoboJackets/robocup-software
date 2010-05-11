@@ -59,6 +59,10 @@ namespace Geometry2d
 			/** returns the points of intersection b/t circle and line */
 			bool intersects(const Circle& circle, Point* p1 = 0, Point* p2 = 0) const;
             
+			/**
+			 * tells you which side of the line you are on
+			 * @return the sine of the non-zero portion of the cross product
+			 */
             float pointSide(const Point &p) const
             {
                 Point d = delta();

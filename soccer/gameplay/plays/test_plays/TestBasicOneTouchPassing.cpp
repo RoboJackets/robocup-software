@@ -40,7 +40,7 @@ bool Gameplay::Plays::TestBasicOneTouchPassing::assign(set<Robot *> &available)
 
 bool Gameplay::Plays::TestBasicOneTouchPassing::run()
 {
-	bool verbose = true;
+	bool verbose = false;
 	if (verbose) cout << "PLAY: Running TestBasicOneTouchPassing" << endl;
 
 	bool done = _passer.getState() == Behaviors::OneTouchKick::Done;

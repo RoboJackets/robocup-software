@@ -95,7 +95,6 @@ namespace Motion
 
 			/** generate motor speeds */
 			void genMotor();
-			void genMotorAlt();
 			void genMotorOld();
 
 			/** calibration function

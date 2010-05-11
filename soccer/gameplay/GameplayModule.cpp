@@ -207,7 +207,7 @@ void Gameplay::GameplayModule::fieldOverlay(QPainter &painter, Packet::LogFrame 
 
 void Gameplay::GameplayModule::run()
 {
-	bool verbose = true;
+	bool verbose = false;
 	if (verbose) cout << "Starting GameplayModule::run()" << endl;
 
 	_state->debugLines.clear();
