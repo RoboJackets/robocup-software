@@ -207,7 +207,7 @@ void Gameplay::GameplayModule::fieldOverlay(QPainter &painter, Packet::LogFrame 
 
 void Gameplay::GameplayModule::run()
 {
-	bool verbose = false;
+	bool verbose = true;
 	if (verbose) cout << "Starting GameplayModule::run()" << endl;
 
 	_state->debugLines.clear();
@@ -320,6 +320,18 @@ void Gameplay::GameplayModule::run()
 	_ballMatrix = Geometry2d::TransformMatrix::translate(_state->ball.pos);
 
 	if (verbose) cout << "  Updating play" << endl;
+	// All plays need steps:
+	// 1) select (if viable)
+	// 2) assign
+	// 3) if assignment succeeded, run
+
+	// important scenarios:
+	//  - no current plays - must pick a new one
+	//  - no available plays - must do nothing
+	//  - current play is fine, must be run
+	//  - current play has ended, must select new and run
+	//  - current play is not applicable/failed, must kill, select new and run
+
 	// handle changes in play availability
 	bool playReady = true;
 	if (_plays.size() == 0) {
@@ -350,6 +362,8 @@ void Gameplay::GameplayModule::run()
 		shared_ptr<Play> play = selectPlay(robots.size()); // ensure that the play is viable
 		if (play && play != _currentPlay)
 		{
+			if (verbose) cout << "  Assigning robots to play" << endl;
+
 			// send end signal to previously running play
 			if (_currentPlay)
 				_currentPlay->end();

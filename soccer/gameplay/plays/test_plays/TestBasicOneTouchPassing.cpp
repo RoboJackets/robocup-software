@@ -24,7 +24,7 @@ bool Gameplay::Plays::TestBasicOneTouchPassing::assign(set<Robot *> &available)
 		cout << r->id() << " ";
 	cout << endl;
 
-	if (_robots.size() < _minRobots)
+	if (_robots.size() >= _minRobots)
 		return false;
 
 	_passer.assign(available);
@@ -34,6 +34,7 @@ bool Gameplay::Plays::TestBasicOneTouchPassing::assign(set<Robot *> &available)
 
 	_passer.targetRobot = _receiver.robot();
 
+	cout << "TestBasicOneTouchPassing::assign() successful!" << endl;
 	return true;
 }
 
