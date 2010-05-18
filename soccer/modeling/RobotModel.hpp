@@ -102,6 +102,12 @@ namespace Modeling
 			uint64_t firstObservedTime;
 			uint64_t lastObservedTime;
 
+			/**
+			 * When robot is no longer visible, disable, but remember the
+			 * last position
+			 */
+			void deactivate();
+
 			bool inUse;   /// currently used as a robot on the field
 			bool isValid; /// currently receiving updates
 

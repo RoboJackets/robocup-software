@@ -139,6 +139,16 @@ Modeling::RobotModel::RobotModel(const ConfigFile::WorldModel& cfg, int s) :
 	isValid = true;
 }
 
+void Modeling::RobotModel::deactivate() {
+	// reset flags
+	inUse = false;
+	isValid = false;
+
+	// set observation times to ensure it will reset properly
+	firstObservedTime = 0;
+	lastObservedTime = 0;
+}
+
 void Modeling::RobotModel::observation(uint64_t time, Geometry2d::Point pos, float angle)
 {
 	// check for valid flag - if we were invalid and get an observation,

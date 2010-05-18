@@ -50,26 +50,9 @@ void WorldModel::run()
 	}
 	ballModel.bestError = -1;
 
-	/// ball sensor
-	// FIXME: need to check for consistency here - could be a broken sensor
-	BOOST_FOREACH(Packet::LogFrame::Robot& r, _state->self)
-	{
-		//FIXME: handle stale data properly
-		r.haveBall = r.radioRx.ball;
-
-		//if a robot has the ball, we need to make an observation
-		//using that information and project the ball in front of it
-		if (r.valid && r.haveBall)
-		{
-			Geometry2d::Point offset = Geometry2d::Point::
-				direction(r.angle * DegreesToRadians) *	Constants::Robot::Radius;
-
-			ballModel.observation(_state->timestamp, r.pos + offset);
-		}
-	}
-
 	if (verbose) cout << "Adding messages from vision " << endl;
 	uint64_t curTime = 0;
+
 	BOOST_FOREACH(const Packet::Vision& vision, _state->rawVision)
 	{
 		curTime = max(curTime, vision.timestamp);
@@ -117,6 +100,34 @@ void WorldModel::run()
 		}
 	}
 
+	if (verbose) cout << "Updating ball" << endl;
+
+	ballModel.update();
+
+	_state->ball.pos = ballModel.pos;
+	_state->ball.vel = ballModel.vel;
+	_state->ball.accel = ballModel.accel;
+	_state->ball.valid = (curTime - ballModel.lastObservedTime) < MaxCoastTime;
+
+	/// ball sensor
+	// FIXME: need to check for consistency here - could be a broken sensor
+	BOOST_FOREACH(Packet::LogFrame::Robot& r, _state->self)
+	{
+		//FIXME: handle stale data properly
+		r.haveBall = r.radioRx.ball;
+
+		//if a robot has the ball, we need to make an observation
+		//using that informati0.10on and project the ball in front of it
+		float haveBallThresh = 0.10; // must be within range to qualify as having ball
+		if (r.valid && r.haveBall && ballModel.pos.nearPoint(r.pos, Constants::Robot::Radius + haveBallThresh))
+		{
+			Geometry2d::Point offset = Geometry2d::Point::
+				direction(r.angle * DegreesToRadians) *	Constants::Robot::Radius;
+
+			ballModel.observation(_state->timestamp, r.pos + offset);
+		}
+	}
+
 	// Update/delete robots
 	if (verbose) cout << "Sorting robots" << endl;
 	vector<RobotModel::shared> selfUnused, oppUnused;
@@ -124,7 +135,7 @@ void WorldModel::run()
 	{
 		int shell = p.first;
 		RobotModel::shared &robot = p.second;
-		if ((curTime - robot->lastObservedTime) < MaxCoastTime) // && robot->bestError >= 0)
+		if ((curTime - robot->lastObservedTime) < MaxCoastTime && robot->bestError >= 0)
 		{
 			// This robot has a new observation.  Update it.
 			robot->update();
@@ -142,9 +153,7 @@ void WorldModel::run()
 			}
 		} else {
 			if (robot->isValid) cout << "Robot " << robot->shell << " out of date, removing..." << endl;
-			// robot is out of date, set flag
-			robot->inUse = false;
-			robot->isValid = false;
+			robot->deactivate();
 		}
 	}
 
@@ -206,14 +215,6 @@ void WorldModel::run()
 		}
 
 	}
-	if (verbose) cout << "Updating ball" << endl;
-
-	ballModel.update();
-
-	_state->ball.pos = ballModel.pos;
-	_state->ball.vel = ballModel.vel;
-	_state->ball.accel = ballModel.accel;
-	_state->ball.valid = (curTime - ballModel.lastObservedTime) < MaxCoastTime;
 
 	if (verbose) cout << "At end of WorldModel::run()" << endl;
 }
