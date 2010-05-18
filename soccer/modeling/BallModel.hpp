@@ -37,9 +37,14 @@ namespace Modeling
 				ABG
 			} mode_t;
 
+			typedef enum {
+				VISION,
+				BALL_SENSOR
+			} observeration_t;
+
 			BallModel(mode_t mode, RobotModel::RobotMap *robotMap);
 
-			void observation(uint64_t time, const Geometry2d::Point &pos);
+			void observation(uint64_t time, const Geometry2d::Point &pos, observeration_t obs_type);
 
 			Geometry2d::Point predictPosAtTime(float dtime);
 			void update();

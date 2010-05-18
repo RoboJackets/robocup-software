@@ -101,13 +101,13 @@ Geometry2d::Point Modeling::BallModel::predictPosAtTime(float dtime)
 	return pos + vel * dtime + accel * 0.5f * dtime * dtime;
 }
 
-void Modeling::BallModel::observation(uint64_t time, const Geometry2d::Point &pos)
+void Modeling::BallModel::observation(uint64_t time, const Geometry2d::Point &pos, observeration_t obs_type)
 {
+	// TODO: be more clever about the use of vision ball sensor measurements
 	if (lastObservedTime)
 	{
 		float dt = (float)(time - lastObservedTime) / 1e6;
 		float error = (pos - predictPosAtTime(dt)).magsq();
-//		float error = (pos - this->pos).magsq();
 		if (bestError < 0 || error < bestError)
 		{
 			bestError = error;

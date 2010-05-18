@@ -95,36 +95,8 @@ void WorldModel::run()
 
 			BOOST_FOREACH(const Packet::Vision::Ball &ball, vision.balls)
 			{
-				ballModel.observation(vision.timestamp, ball.pos);
+				ballModel.observation(vision.timestamp, ball.pos, BallModel::VISION);
 			}
-		}
-	}
-
-	if (verbose) cout << "Updating ball" << endl;
-
-	ballModel.update();
-
-	_state->ball.pos = ballModel.pos;
-	_state->ball.vel = ballModel.vel;
-	_state->ball.accel = ballModel.accel;
-	_state->ball.valid = (curTime - ballModel.lastObservedTime) < MaxCoastTime;
-
-	/// ball sensor
-	// FIXME: need to check for consistency here - could be a broken sensor
-	BOOST_FOREACH(Packet::LogFrame::Robot& r, _state->self)
-	{
-		//FIXME: handle stale data properly
-		r.haveBall = r.radioRx.ball;
-
-		//if a robot has the ball, we need to make an observation
-		//using that informati0.10on and project the ball in front of it
-		float haveBallThresh = 0.10; // must be within range to qualify as having ball
-		if (r.valid && r.haveBall && ballModel.pos.nearPoint(r.pos, Constants::Robot::Radius + haveBallThresh))
-		{
-			Geometry2d::Point offset = Geometry2d::Point::
-				direction(r.angle * DegreesToRadians) *	Constants::Robot::Radius;
-
-			ballModel.observation(_state->timestamp, r.pos + offset);
 		}
 	}
 
@@ -137,7 +109,7 @@ void WorldModel::run()
 		RobotModel::shared &robot = p.second;
 		if ((curTime - robot->lastObservedTime) < MaxCoastTime && robot->bestError >= 0)
 		{
-			// This robot has a new observation.  Update it.
+			// This robot has had a new observation.  Update it.
 			robot->update();
 			robot->isValid = true;
 
@@ -156,6 +128,31 @@ void WorldModel::run()
 			robot->deactivate();
 		}
 	}
+
+	if (verbose) cout << "Updating ball" << endl;
+
+	/// ball sensor
+	BOOST_FOREACH(Packet::LogFrame::Robot& r, _state->self)
+	{
+		//FIXME: handle stale data properly
+		r.haveBall = r.radioRx.ball;
+
+		//if a robot has the ball, we need to make an observation
+		if (r.valid && r.haveBall)
+		{
+			Geometry2d::Point offset = Geometry2d::Point::
+				direction(r.angle * DegreesToRadians) *	Constants::Robot::Radius;
+
+			ballModel.observation(_state->timestamp, r.pos + offset, BallModel::BALL_SENSOR);
+		}
+	}
+
+	ballModel.update();
+
+	_state->ball.pos = ballModel.pos;
+	_state->ball.vel = ballModel.vel;
+	_state->ball.accel = ballModel.accel;
+	_state->ball.valid = (curTime - ballModel.lastObservedTime) < MaxCoastTime;
 
 	if (verbose) cout << "Assigning robots to slots" << endl;
 	unsigned int nextSelfUnused = 0, nextOppUnused = 0;
