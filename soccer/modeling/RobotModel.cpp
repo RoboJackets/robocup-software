@@ -144,9 +144,9 @@ void Modeling::RobotModel::deactivate() {
 	inUse = false;
 	isValid = false;
 
-	// set observation times to ensure it will reset properly
-	firstObservedTime = 0;
-	lastObservedTime = 0;
+	// set observation times to ensure it will reset properly, necessary?
+//	firstObservedTime = 0;
+//	lastObservedTime = 0;
 }
 
 void Modeling::RobotModel::observation(uint64_t time, Geometry2d::Point pos, float angle)

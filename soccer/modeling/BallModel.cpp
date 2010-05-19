@@ -17,6 +17,8 @@ Modeling::BallModel::BallModel(mode_t mode, RobotModel::RobotMap *robotMap) :
 	lastObservedTime = 0;
 	missedFrames = 0;
 
+	lastUpdatedTime = 0;
+
 	if (mode_ == MODELTESTS) {
 		cout << "Running ball model tests..." << endl;
 		initKalman();
@@ -101,8 +103,37 @@ Geometry2d::Point Modeling::BallModel::predictPosAtTime(float dtime)
 	return pos + vel * dtime + accel * 0.5f * dtime * dtime;
 }
 
-void Modeling::BallModel::observation(uint64_t time, const Geometry2d::Point &pos, observeration_t obs_type)
+void Modeling::BallModel::observation(uint64_t time, const Geometry2d::Point &pos, observation_mode obs_type)
 {
+	observation_type obs;
+	obs.time = time;
+	obs.pos = pos;
+	obs.obs_type = obs_type;
+	observations.push_back(obs);
+
+	//lastObservedTime = time;
+
+	if (lastObservedTime)
+	{
+		float dt = (float)(time - lastObservedTime) / 1e6;
+		float error = (pos - predictPosAtTime(dt)).magsq();
+		if (bestError < 0 || error < bestError)
+		{
+			bestError = error;
+			observedPos = pos;
+			bestObservedTime = time;
+		}
+	} else {
+		// First observation
+		bestError = 0;
+		this->pos = pos;
+		observedPos = pos;
+		prevObservedPos = pos;
+		bestObservedTime = time;
+		lastObservedTime = time;
+	}
+
+	/*
 	// TODO: be more clever about the use of vision ball sensor measurements
 	if (lastObservedTime)
 	{
@@ -123,6 +154,7 @@ void Modeling::BallModel::observation(uint64_t time, const Geometry2d::Point &po
 		bestObservedTime = time;
 		lastObservedTime = time;
 	}
+	*/
 }
 
 void Modeling::BallModel::kalmanUpdate(float dtime) {
@@ -153,6 +185,7 @@ void Modeling::BallModel::kalmanUpdate(float dtime) {
 }
 
 void Modeling::BallModel::rbpfUpdate(float dtime) {
+
 	raoBlackwellizedParticleFilter->update(observedPos.x,observedPos.y,dtime);
 	RbpfState* bestState = raoBlackwellizedParticleFilter->getBestFilterState();
 	pos.x = bestState->X(0);
@@ -173,8 +206,52 @@ void Modeling::BallModel::abgUpdate(float dtime) {
 	accel += posError * gamma / (dtime * dtime);
 }
 
+bool Modeling::BallModel::valid(uint64_t time){
+	return ((time - lastObservedTime) > MaxCoastTime);
+}
+
 void Modeling::BallModel::update()
 {
+	/*
+	// loop through the observations and determine if we got vision observations
+	bool gotCameraObservation = false;
+	for(int i=observations.size()-1; i>=0; i--){
+		if(observations[i].obs_type == observation_mode::VISION){
+			gotCameraObservation = true;
+			break;
+		}
+	}
+
+	// If there are camera observations, remove robot sensor observations.
+	if(gotCameraObservation){
+		for(int i=observations.size()-1; i>=0; i--){
+			if(observations[i].obs_type == observation_mode::BALL_SENSOR){
+				observations[i].erase(observations.begin()+i);
+			}
+		}
+	}
+
+	// determine latest observation
+	uint64_t latestObservation = 0;
+	for(int i=observations.size()-1; i>=0; i--){
+		if(observations[i].time > latestObservation){
+			latestObservation = observations[i].time;
+		}
+	}
+
+	// TODO: handle non-RBPF filters properly
+	// right now, the kalman just uses the first observation.
+	if (mode_ != RBPF){
+		cout << "not implemented in ballmodel.cpp" << endl;
+	} else if (mode_ == RBPF) {
+		rbpfUpdate();
+	}
+
+	lastUpdateTime = latestObservation;
+
+*/
+
+
 	float dtime = (float)(bestObservedTime - lastObservedTime) / 1e6;
 
 	if (missedFrames > 5 || bestError < (0.2 * 0.2))

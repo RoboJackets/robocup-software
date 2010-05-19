@@ -39,7 +39,7 @@ WorldModel::~WorldModel()
 void WorldModel::run()
 {
 	// internal verbosity flag for debugging
-	bool verbose = false;
+	bool verbose = true;
 
 	if (verbose) cout << "In WorldModel::run()" << endl;
 	// Reset errors on all tracks
@@ -110,12 +110,14 @@ void WorldModel::run()
 		if ((curTime - robot->lastObservedTime) < MaxCoastTime && robot->bestError >= 0)
 		{
 			// This robot has had a new observation.  Update it.
+			if (verbose) cout << "  Updating robot " << robot->shell << endl;
 			robot->update();
 			robot->isValid = true;
 
 			// check if previously unused robot
 			if (!robot->inUse)
 			{
+				cout << "      robot " << robot->shell << " unused" << endl;
 				if (shell < OppOffset)
 				{
 					selfUnused.push_back(robot);
@@ -124,7 +126,9 @@ void WorldModel::run()
 				}
 			}
 		} else {
-			if (robot->isValid) cout << "Robot " << robot->shell << " out of date, removing..." << endl;
+			if (robot->isValid) {
+				cout << "Robot " << robot->shell << " out of date, removing..." << endl;
+			}
 			robot->deactivate();
 		}
 	}
@@ -154,6 +158,14 @@ void WorldModel::run()
 	_state->ball.accel = ballModel.accel;
 	_state->ball.valid = (curTime - ballModel.lastObservedTime) < MaxCoastTime;
 
+	if (verbose) {
+		cout << "Unused updated robots: ";
+		BOOST_FOREACH(const RobotModel::shared& robot, selfUnused) {
+			cout << robot->shell << " ";
+		}
+		cout << endl;
+	}
+
 	if (verbose) cout << "Assigning robots to slots" << endl;
 	unsigned int nextSelfUnused = 0, nextOppUnused = 0;
 	for (int i = 0; i < 5; ++i)
@@ -163,6 +175,7 @@ void WorldModel::run()
 		// clear out invalid robots
 		if (_selfSlots[i] >= 0 && _robotMap[_selfSlots[i]] && !_robotMap[_selfSlots[i]]->isValid)
 		{
+			if (verbose) cout << "   Clearing slot " << i << " of robot " << _selfSlots[i] << endl;
 			_selfSlots[i] = -1;
 		}
 
@@ -171,6 +184,7 @@ void WorldModel::run()
 			RobotModel::shared robot = selfUnused[nextSelfUnused++];
 			_selfSlots[i] = robot->shell;
 			robot->inUse = true;
+			if (verbose) cout << "   Setting slot " << i << " to robot " << robot->shell << endl;
 		}
 
 		// copy in the robot data

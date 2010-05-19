@@ -9,6 +9,7 @@
 #include "BLASWrap/blaswrap.h"
 #include "difference_kalman.hpp"
 #include "RobotModel.hpp"
+#include <vector>
 
 /* RBPF Includes */
 #include <iostream>
@@ -30,6 +31,9 @@ namespace Modeling
 	class BallModel
 	{
 		public:
+			// Maximum time to coast a track (keep the track alive with no observations) in microseconds.
+			static const uint64_t MaxCoastTime = 500000;
+
 			typedef enum {
 				MODELTESTS,
 				RBPF,
@@ -40,11 +44,13 @@ namespace Modeling
 			typedef enum {
 				VISION,
 				BALL_SENSOR
-			} observeration_t;
+			} observation_mode;
 
 			BallModel(mode_t mode, RobotModel::RobotMap *robotMap);
 
-			void observation(uint64_t time, const Geometry2d::Point &pos, observeration_t obs_type);
+			void observation(uint64_t time, const Geometry2d::Point &pos, observation_mode obs_mode);
+
+			bool valid(uint64_t time);
 
 			Geometry2d::Point predictPosAtTime(float dtime);
 			void update();
@@ -90,6 +96,7 @@ namespace Modeling
 			float gamma;
 
 			uint64_t lastObservedTime;
+			uint64_t lastUpdatedTime;
 			int missedFrames;
 
 			Geometry2d::Point prevObservedPos;
@@ -101,6 +108,14 @@ namespace Modeling
 			float rbpfTestVelError;
 
 		protected:
+			typedef struct {
+				uint64_t time;
+				Geometry2d::Point pos;
+				observation_mode obs_type;
+			} observation_type;
+
+			std::vector<observation_type> observations;
+
 			// mode of the filter
 			mode_t mode_;
 
