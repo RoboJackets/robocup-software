@@ -1,10 +1,8 @@
 // kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 // vim:ai ts=4 et
 
-//#include <stdio.h>
-#include <limits>
+#include <stdio.h>
 #include <iostream>
-#include <boost/foreach.hpp>
 
 #include "BallModel.hpp"
 
@@ -12,26 +10,30 @@ using namespace std;
 
 Modeling::BallModel::BallModel(mode_t mode, RobotModel::RobotMap *robotMap) :
 	A(6,6), B(6,6), P(6,6), Q(6,6), R(2,2), H(2,6),
-	Z(2), U(6), X0(6), _mode(mode), _robotMap(robotMap)
+	Z(2), U(6), X0(6), mode_(mode), _robotMap(robotMap)
 {
+	bestError = 0;
+	bestObservedTime = 0;
 	lastObservedTime = 0;
 	missedFrames = 0;
 
-	if (_mode == MODELTESTS) {
+	lastUpdatedTime = 0;
+
+	if (mode_ == MODELTESTS) {
 		cout << "Running ball model tests..." << endl;
 		initKalman();
 		initRBPF();
 		kalmanTestPosError = 0; kalmanTestVelError = 0;
 		rbpfTestPosError = 0; rbpfTestVelError = 0;
-	} else if (_mode == KALMAN) {
+	} else if (mode_ == KALMAN) {
 		initKalman();
-	} else if (_mode == RBPF) {
+	} else if (mode_ == RBPF) {
 		initRBPF();
-	} else if (_mode == ABG) {
+	} else if (mode_ == ABG) {
 		initABG();
 	} else {
 		cout << "ERROR: Invalid initialization type, defaulting to RPBF!" << endl;
-		_mode = RBPF;
+		mode_ = RBPF;
 		initRBPF();
 	}
 }
@@ -103,8 +105,11 @@ Geometry2d::Point Modeling::BallModel::predictPosAtTime(float dtime)
 
 void Modeling::BallModel::observation(uint64_t time, const Geometry2d::Point &pos, observation_mode obs_type)
 {
-	observation_type obs = {time, pos, obs_type};
-	_observations.push_back(obs);
+	observation_type obs;
+	obs.time = time;
+	obs.pos = pos;
+	obs.obs_type = obs_type;
+	observations.push_back(obs);
 
 	// set lastObservedTime to the last observation's time
 	lastObservedTime = 0;
@@ -208,10 +213,10 @@ void Modeling::BallModel::abgUpdate(float dtime) {
 }
 
 bool Modeling::BallModel::valid(uint64_t time){
-	return !_observations.empty() || (time - lastObservedTime) > MaxCoastTime;
+	return ((time - lastObservedTime) > MaxCoastTime);
 }
 
-void Modeling::BallModel::update(uint64_t cur_time)
+void Modeling::BallModel::update(uint64_t time)
 {
 	if(observations.size() == 0){
 		std::cout << "debug: no observations but update() was called" << std::endl;
@@ -238,16 +243,16 @@ void Modeling::BallModel::update(uint64_t cur_time)
 
 	// determine latest observation
 	uint64_t latestObservation = 0;
-	for(int i=_observations.size()-1; i>=0; i--){
-		if(_observations[i].time > latestObservation){
-			latestObservation = _observations[i].time;
+	for(int i=observations.size()-1; i>=0; i--){
+		if(observations[i].time > latestObservation){
+			latestObservation = observations[i].time;
 		}
 	}
 
 	// TODO: handle non-RBPF filters properly
-	if (_mode != RBPF){
+	if (mode_ != RBPF){
 		cout << "update() not implemented in ballmodel.cpp" << endl;
-	} else if (_mode == RBPF) {
+	} else if (mode_ == RBPF) {
 		rbpfUpdateMultipleObs(observations);
 	}
 
@@ -255,13 +260,19 @@ void Modeling::BallModel::update(uint64_t cur_time)
 	observations.clear();
 
 	// TODO: this should be the current time, not the latest observation
-	lastUpdatedTime = latestObservation;
+	lastUpdatedTime = time;
 
 	/*
+	float dtime = (float)(bestObservedTime - lastObservedTime) / 1e6;
+
+	if (missedFrames > 5 || bestError < (0.2 * 0.2))
+	{
+		lastObservedTime = bestObservedTime;
+
 		// assuming we moved, then update the filter
 		if (dtime)
 		{
-			if (_mode == MODELTESTS){
+			if (mode_ == MODELTESTS){
 				Geometry2d::Point posKalmanDiff, posRbpfDiff;
 				Geometry2d::Point velKalmanDiff, velRbpfDiff;
 				Geometry2d::Point observedVel = (observedPos - prevObservedPos)*(1/dtime);
@@ -286,30 +297,27 @@ void Modeling::BallModel::update(uint64_t cur_time)
 				rbpfTestVelError += errorVelRbpf;
 				//cout << "Total error (Kal, Rbpf): (" << kalmanTesPostError << "," << rbpfTestPosError << "), this obs error (Kal, Rbpf): (" << errorKalman << "," << errorRbpf << ")" << endl;
 				cout << "Total pos error (Kal, Rbpf): (" << kalmanTestPosError << "," << rbpfTestPosError << "), total vel error (Kal, Rbpf): (" << kalmanTestVelError << "," << rbpfTestVelError << ")" << endl;
-			} else if (_mode == KALMAN) {
+			} else if (mode_ == KALMAN) {
 				kalmanUpdate(dtime);
-			} else if (_mode == ABG) {
+			} else if (mode_ == ABG) {
 				abgUpdate(dtime);
-			} else if (_mode == RBPF) {
+			} else if (mode_ == RBPF) {
 				rbpfUpdate(dtime);
 			}
 			prevObservedPos = observedPos;
 		}
-//	} else {
-//		// Ball moved too far to possibly be a valid track, so just extrapolate from the last known state
-//		// AGC: this condition should be added to the coast scenario above
-//		if (dtime)
-//		{
-//			if(_mode == MODELTESTS){
-//				cout << "Ball Model Tests: missed too many frames, extrapolating." << endl;
-//			}
-//			pos += vel * dtime + accel * 0.5f * dtime * dtime;
-//		}
-//
-//		++missedFrames;
-//	}
+	} else {
+		// Ball moved too far to possibly be a valid track, so just extrapolate from the last known state
+		if (dtime)
+		{
+			if(mode_ == MODELTESTS){
+				cout << "Ball Model Tests: missed too many frames, extrapolating." << endl;
+			}
+			pos += vel * dtime + accel * 0.5f * dtime * dtime;
+		}
 
-	// cleanup - remove the observations from this frame
-	_observations.clear();
+		++missedFrames;
+	}
+	bestError = -1;
 	*/
 }
