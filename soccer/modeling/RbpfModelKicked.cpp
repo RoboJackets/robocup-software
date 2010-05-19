@@ -93,7 +93,7 @@ void RbpfModelKicked::update(Vector &X, Matrix &P, Vector &Z, double dt){
 	Geometry2d::Point rPos;
 	bool robotKicked = false;
 	for(RobotModel::RobotMap::const_iterator r = _robotMap->begin(); r!=_robotMap->end(); r++){
-		rPos = r->second->pos;
+		rPos = r->second->pos();
 		if(bPos.distTo(rPos) < Constants::Robot::Radius){
 			robotKicked = true;
 			break;

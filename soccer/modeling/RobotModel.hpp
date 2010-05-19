@@ -7,9 +7,9 @@
 #include <boost/shared_ptr.hpp>
 #include <Geometry2d/Point.hpp>
 #include <framework/ConfigFile.hpp>
-#include <cblas.h>
-#include "BLASWrap/blaswrap.h"
-#include "difference_kalman.hpp"
+//#include <cblas.h>
+//#include "BLASWrap/blaswrap.h"
+//#include "difference_kalman.hpp"
 
 namespace Modeling
 {
@@ -17,100 +17,115 @@ namespace Modeling
 	{
 		public:
 			typedef boost::shared_ptr<RobotModel> shared;
-			typedef std::map<int, shared> RobotMap;
+			typedef std::map<unsigned int, RobotModel::shared> RobotMap;
+
+			// observations to be added from vision
+			typedef struct {
+				Geometry2d::Point pos;
+				float angle;
+				uint64_t time;
+			} Observation_t;
+			typedef std::vector<Observation_t> ObsVec;
 
 			RobotModel(const ConfigFile::WorldModel& cfg, int s);
 
 			void observation(uint64_t time, Geometry2d::Point pos, float angle);
 			Geometry2d::Point predictPosAtTime(float dtime);
-			void update();
+			void update(uint64_t cur_time);
 
-			int shell;
+			// set/get
+			Geometry2d::Point pos() const { return _pos; }
+			Geometry2d::Point vel() const { return _vel; }
+			float angle() const { return _angle; }
+			float angleVel() const { return _angleVel; }
 
-			// Best observation so far
-			Geometry2d::Point observedPos;
-			uint64_t bestObservedTime;
-			float observedAngle;
-			float bestError;
-			/** Position **/
-			//State Transistion Matrix
-			DMatrix posA;
-			//Input Transistion Matrix
-			DMatrix posB;
-			//Initial Covariance Matrix
-			DMatrix posP;
-			//Process Covariance Matrix
-			DMatrix posQ;
-			//Measurement Covariance Matrix
-			DMatrix posR;
-			//Measurement Model
-			DMatrix posH;
-			//Measurement
-			DVector posZ;
-			//Input
-			DVector posU;
-			//Error
-			DVector posE;
-			//Initial Condition
-			DVector posX0;
+			int shell() const { return _shell; }
 
-			/** Angle **/
-			//State Transistion Matrix
-			DMatrix angA;
-			//Input Transistion Matrix
-			DMatrix angB;
-			//Initial Covariance Matrix
-			DMatrix angP;
-			//Process Covariance Matrix
-			DMatrix angQ;
-			//Measurement Covariance Matrix
-			DMatrix angR;
-			//Measurement Model
-			DMatrix angH;
-			//Measurement
-			DVector angZ;
-			//Input
-			DVector angU;
-			//Error
-			DVector angE;
-			//Initial Condition
-			DVector angX0;
-
-			//Difference Kalman Filter
-			DifferenceKalmanFilter *posKalman;
-			DifferenceKalmanFilter *angKalman;
-
-			//Alpha Gamma Beta Filter
-			// Current filtered state
-			Geometry2d::Point pos;
-			Geometry2d::Point abgPos;
-			Geometry2d::Point vel;
-			Geometry2d::Point accel;
-			float angle;
-			float abgAngle;
-			float angleVel;
-			float angleAccel;
-
-			// Filter coefficients
-			float posAlpha;
-			float posBeta;
-			float posGamma;
-			float angleAlpha;
-			float angleBeta;
-			float angleGamma;
-
-			uint64_t firstObservedTime;
-			uint64_t lastObservedTime;
+			bool hasBall() const { return _haveBall; }
+			void hasBall(bool a) { _haveBall = a; }
 
 			/**
-			 * When robot is no longer visible, disable, but remember the
-			 * last position
+			 * Valid if there are new observations or if the robot has not timed out
 			 */
-			void deactivate();
+			bool valid(uint64_t cur_time) const;
 
-			bool inUse;   /// currently used as a robot on the field
-			bool isValid; /// currently receiving updates
+			uint64_t lastObservedTime;  /// The time used in the last observation, stored between frames
+
+		private:
+			unsigned int _shell;
+
+			ObsVec _observations;
+
+			// Maximum time to coast a track (keep the track alive with no observations) in microseconds.
+			static const uint64_t MaxRobotCoastTime = 500000;
+
+			// Current filtered state
+			Geometry2d::Point _pos;
+			Geometry2d::Point _vel;
+			Geometry2d::Point _accel;
+			float _angle;
+			float _angleVel;
+			float _angleAccel;
+
+			// Filter coefficients for the ABG filter
+			float _posAlpha;
+			float _posBeta;
+			float _posGamma;
+			float _angleAlpha;
+			float _angleBeta;
+			float _angleGamma;
 
 			const ConfigFile::WorldModel& _config;
+
+			// Data from RadioRx
+			bool _haveBall;
+
+//			//Difference Kalman Filter
+//			DifferenceKalmanFilter *_posKalman;
+//			DifferenceKalmanFilter *_angKalman;
+//
+//			/** Position **/
+//			//State Transistion Matrix
+//			DMatrix posA;
+//			//Input Transistion Matrix
+//			DMatrix posB;
+//			//Initial Covariance Matrix
+//			DMatrix posP;
+//			//Process Covariance Matrix
+//			DMatrix posQ;
+//			//Measurement Covariance Matrix
+//			DMatrix posR;
+//			//Measurement Model
+//			DMatrix posH;
+//			//Measurement
+//			DVector posZ;
+//			//Input
+//			DVector posU;
+//			//Error
+//			DVector posE;
+//			//Initial Condition
+//			DVector posX0;
+//
+//			/** Angle **/
+//			//State Transistion Matrix
+//			DMatrix angA;
+//			//Input Transistion Matrix
+//			DMatrix angB;
+//			//Initial Covariance Matrix
+//			DMatrix angP;
+//			//Process Covariance Matrix
+//			DMatrix angQ;
+//			//Measurement Covariance Matrix
+//			DMatrix angR;
+//			//Measurement Model
+//			DMatrix angH;
+//			//Measurement
+//			DVector angZ;
+//			//Input
+//			DVector angU;
+//			//Error
+//			DVector angE;
+//			//Initial Condition
+//			DVector angX0;
 	};
 }

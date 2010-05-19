@@ -53,12 +53,10 @@ namespace Modeling
 			bool valid(uint64_t time);
 
 			Geometry2d::Point predictPosAtTime(float dtime);
-			void update();
+			void update(uint64_t cur_time);
 
-			// Best observation so far
+			// Current observation - FIXME: remove this
 			Geometry2d::Point observedPos;
-			uint64_t bestObservedTime;
-			float bestError;
 
 			/** Kalman **/
 			//State Transistion Matrix
@@ -96,8 +94,7 @@ namespace Modeling
 			float gamma;
 
 			uint64_t lastObservedTime;
-			uint64_t lastUpdatedTime;
-			int missedFrames;
+			int missedFrames; // AGC: remember that number of frames missed varies with framerate
 
 			Geometry2d::Point prevObservedPos;
 
@@ -114,10 +111,10 @@ namespace Modeling
 				observation_mode obs_type;
 			} observation_type;
 
-			std::vector<observation_type> observations;
+			std::vector<observation_type> _observations;
 
 			// mode of the filter
-			mode_t mode_;
+			mode_t _mode;
 
 			// map of robots so filters can include this information
 			RobotModel::RobotMap *_robotMap;

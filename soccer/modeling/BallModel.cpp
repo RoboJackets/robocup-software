@@ -1,8 +1,10 @@
 // kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 // vim:ai ts=4 et
 
-#include <stdio.h>
+//#include <stdio.h>
+#include <limits>
 #include <iostream>
+#include <boost/foreach.hpp>
 
 #include "BallModel.hpp"
 
@@ -10,30 +12,26 @@ using namespace std;
 
 Modeling::BallModel::BallModel(mode_t mode, RobotModel::RobotMap *robotMap) :
 	A(6,6), B(6,6), P(6,6), Q(6,6), R(2,2), H(2,6),
-	Z(2), U(6), X0(6), mode_(mode), _robotMap(robotMap)
+	Z(2), U(6), X0(6), _mode(mode), _robotMap(robotMap)
 {
-	bestError = 0;
-	bestObservedTime = 0;
 	lastObservedTime = 0;
 	missedFrames = 0;
 
-	lastUpdatedTime = 0;
-
-	if (mode_ == MODELTESTS) {
+	if (_mode == MODELTESTS) {
 		cout << "Running ball model tests..." << endl;
 		initKalman();
 		initRBPF();
 		kalmanTestPosError = 0; kalmanTestVelError = 0;
 		rbpfTestPosError = 0; rbpfTestVelError = 0;
-	} else if (mode_ == KALMAN) {
+	} else if (_mode == KALMAN) {
 		initKalman();
-	} else if (mode_ == RBPF) {
+	} else if (_mode == RBPF) {
 		initRBPF();
-	} else if (mode_ == ABG) {
+	} else if (_mode == ABG) {
 		initABG();
 	} else {
 		cout << "ERROR: Invalid initialization type, defaulting to RPBF!" << endl;
-		mode_ = RBPF;
+		_mode = RBPF;
 		initRBPF();
 	}
 }
@@ -105,33 +103,8 @@ Geometry2d::Point Modeling::BallModel::predictPosAtTime(float dtime)
 
 void Modeling::BallModel::observation(uint64_t time, const Geometry2d::Point &pos, observation_mode obs_type)
 {
-	observation_type obs;
-	obs.time = time;
-	obs.pos = pos;
-	obs.obs_type = obs_type;
-	observations.push_back(obs);
-
-	//lastObservedTime = time;
-
-	if (lastObservedTime)
-	{
-		float dt = (float)(time - lastObservedTime) / 1e6;
-		float error = (pos - predictPosAtTime(dt)).magsq();
-		if (bestError < 0 || error < bestError)
-		{
-			bestError = error;
-			observedPos = pos;
-			bestObservedTime = time;
-		}
-	} else {
-		// First observation
-		bestError = 0;
-		this->pos = pos;
-		observedPos = pos;
-		prevObservedPos = pos;
-		bestObservedTime = time;
-		lastObservedTime = time;
-	}
+	observation_type obs = {time, pos, obs_type};
+	_observations.push_back(obs);
 
 	/*
 	// TODO: be more clever about the use of vision ball sensor measurements
@@ -207,16 +180,42 @@ void Modeling::BallModel::abgUpdate(float dtime) {
 }
 
 bool Modeling::BallModel::valid(uint64_t time){
-	return ((time - lastObservedTime) > MaxCoastTime);
+	return !_observations.empty() || (time - lastObservedTime) > MaxCoastTime;
 }
 
-void Modeling::BallModel::update()
+void Modeling::BallModel::update(uint64_t cur_time)
 {
+	// find time differentials
+	float dtime = (float)(cur_time - lastObservedTime) / 1e6;
+	lastObservedTime = cur_time;
+
+	// naive predict using previous state
+	Geometry2d::Point predictPos = predictPosAtTime(dtime);
+	Geometry2d::Point predictVel = vel + accel * dtime;
+
+	// if no observations, coast and return
+	if (_observations.empty()) {
+		pos = predictPos;
+		vel = predictVel;
+		return;
+	}
+
+	// choose an observation to add
+	// PLACEHOLDER: use a min-error measurement over all observations
+	float bestError = std::numeric_limits<float>::infinity();
+	BOOST_FOREACH(const observation_type& obs, _observations) {
+		float error = (predictPos - obs.pos).magsq();
+		if (error < bestError) {
+			bestError = error;
+			observedPos = obs.pos;
+		}
+	}
+
 	/*
 	// loop through the observations and determine if we got vision observations
 	bool gotCameraObservation = false;
-	for(int i=observations.size()-1; i>=0; i--){
-		if(observations[i].obs_type == observation_mode::VISION){
+	for(int i=_observations.size()-1; i>=0; i--){
+		if(_observations[i].obs_type == observation_mode::VISION){
 			gotCameraObservation = true;
 			break;
 		}
@@ -224,26 +223,26 @@ void Modeling::BallModel::update()
 
 	// If there are camera observations, remove robot sensor observations.
 	if(gotCameraObservation){
-		for(int i=observations.size()-1; i>=0; i--){
-			if(observations[i].obs_type == observation_mode::BALL_SENSOR){
-				observations[i].erase(observations.begin()+i);
+		for(int i=_observations.size()-1; i>=0; i--){
+			if(_observations[i].obs_type == observation_mode::BALL_SENSOR){
+				_observations[i].erase(_observations.begin()+i);
 			}
 		}
 	}
 
 	// determine latest observation
 	uint64_t latestObservation = 0;
-	for(int i=observations.size()-1; i>=0; i--){
-		if(observations[i].time > latestObservation){
-			latestObservation = observations[i].time;
+	for(int i=_observations.size()-1; i>=0; i--){
+		if(_observations[i].time > latestObservation){
+			latestObservation = _observations[i].time;
 		}
 	}
 
 	// TODO: handle non-RBPF filters properly
 	// right now, the kalman just uses the first observation.
-	if (mode_ != RBPF){
+	if (_mode != RBPF){
 		cout << "not implemented in ballmodel.cpp" << endl;
-	} else if (mode_ == RBPF) {
+	} else if (_mode == RBPF) {
 		rbpfUpdate();
 	}
 
@@ -251,17 +250,13 @@ void Modeling::BallModel::update()
 
 */
 
-
-	float dtime = (float)(bestObservedTime - lastObservedTime) / 1e6;
-
-	if (missedFrames > 5 || bestError < (0.2 * 0.2))
-	{
-		lastObservedTime = bestObservedTime;
+//	if (missedFrames > 5 || bestError < (0.2 * 0.2))
+//	{
 
 		// assuming we moved, then update the filter
 		if (dtime)
 		{
-			if (mode_ == MODELTESTS){
+			if (_mode == MODELTESTS){
 				Geometry2d::Point posKalmanDiff, posRbpfDiff;
 				Geometry2d::Point velKalmanDiff, velRbpfDiff;
 				Geometry2d::Point observedVel = (observedPos - prevObservedPos)*(1/dtime);
@@ -286,26 +281,29 @@ void Modeling::BallModel::update()
 				rbpfTestVelError += errorVelRbpf;
 				//cout << "Total error (Kal, Rbpf): (" << kalmanTesPostError << "," << rbpfTestPosError << "), this obs error (Kal, Rbpf): (" << errorKalman << "," << errorRbpf << ")" << endl;
 				cout << "Total pos error (Kal, Rbpf): (" << kalmanTestPosError << "," << rbpfTestPosError << "), total vel error (Kal, Rbpf): (" << kalmanTestVelError << "," << rbpfTestVelError << ")" << endl;
-			} else if (mode_ == KALMAN) {
+			} else if (_mode == KALMAN) {
 				kalmanUpdate(dtime);
-			} else if (mode_ == ABG) {
+			} else if (_mode == ABG) {
 				abgUpdate(dtime);
-			} else if (mode_ == RBPF) {
+			} else if (_mode == RBPF) {
 				rbpfUpdate(dtime);
 			}
 			prevObservedPos = observedPos;
 		}
-	} else {
-		// Ball moved too far to possibly be a valid track, so just extrapolate from the last known state
-		if (dtime)
-		{
-			if(mode_ == MODELTESTS){
-				cout << "Ball Model Tests: missed too many frames, extrapolating." << endl;
-			}
-			pos += vel * dtime + accel * 0.5f * dtime * dtime;
-		}
+//	} else {
+//		// Ball moved too far to possibly be a valid track, so just extrapolate from the last known state
+//		// AGC: this condition should be added to the coast scenario above
+//		if (dtime)
+//		{
+//			if(_mode == MODELTESTS){
+//				cout << "Ball Model Tests: missed too many frames, extrapolating." << endl;
+//			}
+//			pos += vel * dtime + accel * 0.5f * dtime * dtime;
+//		}
+//
+//		++missedFrames;
+//	}
 
-		++missedFrames;
-	}
-	bestError = -1;
+	// cleanup - remove the observations from this frame
+	_observations.clear();
 }

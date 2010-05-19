@@ -2,30 +2,23 @@
 // vim:ai ts=4 et
 
 #include <iostream>
+#include <limits>
+#include <boost/foreach.hpp>
 #include "RobotModel.hpp"
 #include <Utils.hpp>
 
 using namespace std;
 
-#define KALMAN 0
+//#define KALMAN
 
 Modeling::RobotModel::RobotModel(const ConfigFile::WorldModel& cfg, int s) :
-	posA(6,6), posB(6,6), posP(6,6), posQ(6,6), posR(2,2), posH(2,6),
-	posZ(2), posU(6), posE(6), posX0(6), angA(3,3), angB(3,3), angP(3,3),
-	angQ(3,3), angR(1,1), angH(1,3), angZ(1), angU(3), angE(3), angX0(3),
-	_config(cfg)
+//	posA(6,6), posB(6,6), posP(6,6), posQ(6,6), posR(2,2), posH(2,6),
+//	posZ(2), posU(6), posE(6), posX0(6), angA(3,3), angB(3,3), angP(3,3),
+//	angQ(3,3), angR(1,1), angH(1,3), angZ(1), angU(3), angE(3), angX0(3),
+	_shell(s), _angle(0), _angleVel(0), _angleAccel(0), _config(cfg), _haveBall(false)
+
 {
-	shell = s;
-
-	observedAngle = 0;
-	bestError = 0;
-	bestObservedTime = 0;
-
-	angle = 0;
-	angleVel = 0;
-	angleAccel = 0;
-
-#if KALMAN
+#ifdef KALMAN
 
 	/** Position **/
 	posA.zero();
@@ -121,76 +114,87 @@ Modeling::RobotModel::RobotModel(const ConfigFile::WorldModel& cfg, int s) :
 	angKalman = new DifferenceKalmanFilter(&angA, &angB, &angX0, &angP, &angQ, &angR, &angH);
 # else
 	//Alpha-Beta-Gamma Filter
-	posAlpha = _config.pos.alpha;
-	posBeta = _config.pos.beta;
-	posGamma = _config.pos.gamma;
+	_posAlpha = _config.pos.alpha;
+	_posBeta = _config.pos.beta;
+	_posGamma = _config.pos.gamma;
 
-	angleAlpha = _config.angle.alpha;
-	angleBeta = _config.angle.beta;
-	angleGamma = _config.angle.gamma;
+	_angleAlpha = _config.angle.alpha;
+	_angleBeta = _config.angle.beta;
+	_angleGamma = _config.angle.gamma;
 #endif
-	firstObservedTime = 0;
 	lastObservedTime = 0;
 
-	// by default, a robot is not in use until it is assigned
-	inUse = false;
-
-	// robots are created when they are observed, so it starts as valid
-	isValid = true;
 }
 
-void Modeling::RobotModel::deactivate() {
-	// reset flags
-	inUse = false;
-	isValid = false;
-
-	// set observation times to ensure it will reset properly, necessary?
-//	firstObservedTime = 0;
-//	lastObservedTime = 0;
+bool Modeling::RobotModel::valid(uint64_t cur_time) const {
+	return !_observations.empty() || (cur_time - lastObservedTime) > MaxRobotCoastTime;
 }
 
 void Modeling::RobotModel::observation(uint64_t time, Geometry2d::Point pos, float angle)
 {
-	// check for valid flag - if we were invalid and get an observation,
-	// we should treat as if it were a new robot
-
-	if (lastObservedTime && isValid) // normal update
-	{
-		float dtime = (float)(time - lastObservedTime) / 1e6;
-		Geometry2d::Point predictPos = predictPosAtTime(dtime);
-		float error = (pos - predictPos).magsq();
-		if (bestError < 0 || error < bestError)
-		{
-			bestError = error;
-			observedPos = pos;
-			observedAngle = angle;
-			bestObservedTime = time;
-		}
-	} else {
-		// First observation or reset after being removed
-		bestError = 0;
-		observedPos = pos;
-		observedAngle = angle;
-		firstObservedTime = time;
-		lastObservedTime = time;
-		bestObservedTime = time;
-	}
+	Observation_t obs = {pos, angle, time};
+	_observations.push_back(obs);
 }
 
 Geometry2d::Point Modeling::RobotModel::predictPosAtTime(float dtime)
 {
-	return pos + vel * dtime + accel * 0.5f * dtime * dtime;
+	return _pos + _vel * dtime + _accel * 0.5f * dtime * dtime;
 }
 
-void Modeling::RobotModel::update()
+void Modeling::RobotModel::update(uint64_t cur_time)
 {
-	float dtime = (float)(bestObservedTime - lastObservedTime) / 1e6;
-	lastObservedTime = bestObservedTime;
+	// create time differential between this frame and the last
+	float dtime = (float)(cur_time - lastObservedTime) / 1e6;
+	lastObservedTime = cur_time;
 
+	// prediction step from previous frame
+	Geometry2d::Point predictPos = predictPosAtTime(dtime);
+	Geometry2d::Point predictVel = _vel + _accel * dtime;
+
+	float predictAngle = _angle + _angleVel * dtime + _angleAccel * 0.5f * dtime * dtime;
+	float predictAngleVel = _angleVel + _angleAccel * dtime;
+
+	// if we have no observations, coast and return
+	if (_observations.empty()) {
+		_pos = predictPos;
+		_vel = predictVel;
+		_angle = predictAngle;
+		_angleVel = predictAngleVel;
+		return;
+	}
+
+	// sort the observations to find the lowest error (cheap method)
+	// Alternative: average them
+	Geometry2d::Point observedPos = _observations.front().pos;
+	float observedAngle = _observations.front().angle;
+	float bestError = std::numeric_limits<float>::infinity();
+	BOOST_FOREACH(const Observation_t& obs, _observations) {
+		float error = (obs.pos - predictPos).magsq()
+				+ fabs(Utils::fixAngleDegrees(obs.angle - predictAngle));
+		if (error < bestError) {
+			observedPos = obs.pos;
+			observedAngle = obs.angle;
+			bestError = error;
+		}
+	}
+
+	// Perform filter updates
 	if (dtime)
 	{
-	#if KALMAN
+	#ifndef KALMAN
 
+		// determine error using observations
+		Geometry2d::Point posError = observedPos - predictPos;
+		_pos = predictPos + posError * _posAlpha;
+		_vel = predictVel + posError * _posBeta / dtime;
+		_accel += posError * _posGamma / (dtime * dtime);
+
+		float angleError = Utils::fixAngleDegrees(observedAngle - predictAngle);
+		_angle = Utils::fixAngleDegrees(predictAngle + angleError * _angleAlpha);
+		_angleVel = predictAngleVel + angleError * _angleBeta / dtime;
+		_angleAccel += angleError * _angleGamma / (dtime * dtime);
+
+	#else
 		/** Position **/
 		//Update model
 		posA(0,1) = dtime;
@@ -211,12 +215,12 @@ void Modeling::RobotModel::update()
 		posKalman->predict(&posU);
 		posKalman->correct(&posZ);
 
-		pos.x = (float)posKalman->state()->elt(0);
-		vel.x = (float)posKalman->state()->elt(1);
-		accel.x = (float)posKalman->state()->elt(2);
-		pos.y = (float)posKalman->state()->elt(3);
-		vel.y = (float)posKalman->state()->elt(4);
-		accel.y = (float)posKalman->state()->elt(5);
+		_pos.x = (float)posKalman->state()->elt(0);
+		_vel.x = (float)posKalman->state()->elt(1);
+		_accel.x = (float)posKalman->state()->elt(2);
+		_pos.y = (float)posKalman->state()->elt(3);
+		_vel.y = (float)posKalman->state()->elt(4);
+		_accel.y = (float)posKalman->state()->elt(5);
 
 		//Using the ABG filter for independent velocity and acceleration
 // 		Geometry2d::Point predictPos = abgPos + vel * dtime + accel * 0.5f * dtime * dtime;
@@ -243,36 +247,13 @@ void Modeling::RobotModel::update()
 		angKalman->predict(&angU);
 		angKalman->correct(&angZ);
 
-		angle = (float)angKalman->state()->elt(0);
-		angleVel = (float)angKalman->state()->elt(1);
-		angleAccel = (float)angKalman->state()->elt(2);
+		_angle = (float)angKalman->state()->elt(0);
+		_angleVel = (float)angKalman->state()->elt(1);
+		_angleAccel = (float)angKalman->state()->elt(2);
 
-// 		float predictAngle = abgAngle + angleVel * dtime + angleAccel * 0.5f * dtime * dtime;
-//         float predictAngleVel = angleVel + angleAccel * dtime;
-
-// 		float angleError = Utils::fixAngleDegrees(observedAngle - predictAngle);
-//         abgAngle = Utils::fixAngleDegrees(predictAngle + angleError * angleAlpha);
-//         angleVel = predictAngleVel + angleError * angleBeta / dtime;
-//         angleAccel += angleError * angleGamma / (dtime * dtime);
-
-		//Using the ABG Filter for indpended velocity and acceleration
-
-	#else
-		Geometry2d::Point predictPos = predictPosAtTime(dtime);
-		Geometry2d::Point predictVel = vel + accel * dtime;
-
-		float predictAngle = angle + angleVel * dtime + angleAccel * 0.5f * dtime * dtime;
-		float predictAngleVel = angleVel + angleAccel * dtime;
-
-		Geometry2d::Point posError = observedPos - predictPos;
-		pos = predictPos + posError * posAlpha;
-		vel = predictVel + posError * posBeta / dtime;
-		accel += posError * posGamma / (dtime * dtime);
-
-		float angleError = Utils::fixAngleDegrees(observedAngle - predictAngle);
-		angle = Utils::fixAngleDegrees(predictAngle + angleError * angleAlpha);
-		angleVel = predictAngleVel + angleError * angleBeta / dtime;
-		angleAccel += angleError * angleGamma / (dtime * dtime);
 	#endif
 	}
+
+	// cleanup by removing old observations
+	_observations.clear();
 }

@@ -25,20 +25,30 @@ namespace Modeling
 			virtual void run();
 
 		protected:
+
+			// useful typedefs
+			typedef std::vector<RobotModel::shared> RobotVector;
+			typedef enum { SELF, OPP } TeamMode;
+
 			SystemState *_state;
 
 			// Add to opponents' shell IDs to get track map keys.
 			static const int OppOffset = 256;
 
-			// track all observed robots
-			typedef std::map<int, RobotModel::shared> RobotMap;
-			RobotMap _robotMap;
+			/** Slots for players */
+			RobotVector _selfPlayers, _oppPlayers;
+
+			/** utility functions for update logic */
+			void addRobotObseration(const Packet::Vision::Robot &robot, uint64_t timestamp,
+					std::vector<RobotModel::shared>& players);
+			void updateRobots(std::vector<RobotModel::shared>& players, uint64_t cur_time);
+			void addRobotRxData(Packet::LogFrame::Robot& robot);
+			void copyRobotState(const std::vector<RobotModel::shared>& players, TeamMode m);
 
 			BallModel ballModel;
 
-			// keep track of which robot is in which slot
-			std::vector<int> _selfSlots;
-			std::vector<int> _oppSlots;
+			/** allow for searching by robot ID (both self and opp) */
+			RobotModel::RobotMap _robotMap;
 
 			const ConfigFile::WorldModel& _config;
 	};

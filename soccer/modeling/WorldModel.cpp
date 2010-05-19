@@ -24,12 +24,11 @@ const uint64_t MaxCoastTime = 500000;
 
 WorldModel::WorldModel(SystemState *state, const ConfigFile::WorldModel& cfg) :
 	Module("World Model"),
+	_state(state),
+	_selfPlayers(Constants::Robots_Per_Team), _oppPlayers(Constants::Robots_Per_Team),
 	ballModel(BallModel::RBPF, &_robotMap),
 	_config(cfg)
 {
-	_state = state;
-	_selfSlots.assign(5, -1);
-	_oppSlots.assign(5, -1);
 }
 
 WorldModel::~WorldModel()
@@ -39,193 +38,155 @@ WorldModel::~WorldModel()
 void WorldModel::run()
 {
 	// internal verbosity flag for debugging
-	bool verbose = true;
+	bool verbose = false;
 
 	if (verbose) cout << "In WorldModel::run()" << endl;
-	// Reset errors on all tracks
-	BOOST_FOREACH(RobotMap::value_type p, _robotMap)
-	{
-		RobotModel::shared robot = p.second;
-		robot->bestError = -1;
-	}
-	ballModel.bestError = -1;
 
-	if (verbose) cout << "Adding messages from vision " << endl;
+	// Add vision packets
 	uint64_t curTime = 0;
-
+	if (verbose) cout << "Adding vision packets" << endl;
 	BOOST_FOREACH(const Packet::Vision& vision, _state->rawVision)
 	{
 		curTime = max(curTime, vision.timestamp);
 
 		if (!vision.sync)
 		{
+			// determine team
 			const std::vector<Packet::Vision::Robot> * self, * opp;
-
 			if (_state->team == Yellow)
 			{
 				self = &vision.yellow;
 				opp = &vision.blue;
-			} else if (_state->team == Blue)
+			} else
 			{
 				self = &vision.blue;
 				opp = &vision.yellow;
-			} else {
-				continue;
 			}
 
-			BOOST_FOREACH(const Packet::Vision::Robot& r, *self)
-			{
-				RobotModel::shared &robot = _robotMap[r.shell];
-				if (!robot.get()) {
-					cout << "creating self robot " << (int) r.shell << endl;
-					robot = RobotModel::shared(new RobotModel(_config, r.shell));
-				}
-				robot->observation(vision.timestamp, r.pos, r.angle);
-			}
-
-			BOOST_FOREACH(const Packet::Vision::Robot& r, *opp)
-			{
-				RobotModel::shared &robot = _robotMap[r.shell + OppOffset];
-				if (!robot.get()) {
-					cout << "creating opp robot " << (int) r.shell << endl;
-					robot = RobotModel::shared(new RobotModel(_config, r.shell));
-				}
-				robot->observation(vision.timestamp, r.pos, r.angle);
-			}
-
+			// add ball observation
 			BOOST_FOREACH(const Packet::Vision::Ball &ball, vision.balls)
 			{
 				ballModel.observation(vision.timestamp, ball.pos, BallModel::VISION);
 			}
+
+			// add robot observations
+			BOOST_FOREACH(const Packet::Vision::Robot &robot, *self) {
+				addRobotObseration(robot, vision.timestamp, _selfPlayers);
+			}
+			BOOST_FOREACH(const Packet::Vision::Robot &robot, *opp) {
+				addRobotObseration(robot, vision.timestamp, _oppPlayers);
+			}
 		}
 	}
 
-	// Update/delete robots
-	if (verbose) cout << "Sorting robots" << endl;
-	vector<RobotModel::shared> selfUnused, oppUnused;
-	BOOST_FOREACH(RobotMap::value_type& p, _robotMap)
-	{
-		int shell = p.first;
-		RobotModel::shared &robot = p.second;
-		if ((curTime - robot->lastObservedTime) < MaxCoastTime && robot->bestError >= 0)
-		{
-			// This robot has had a new observation.  Update it.
-			if (verbose) cout << "  Updating robot " << robot->shell << endl;
-			robot->update();
-			robot->isValid = true;
+	// get robot data from return packets
+	if (verbose) cout << "Adding robot rx data" << endl;
+	BOOST_FOREACH(Packet::LogFrame::Robot& robot, _state->self) {
+		addRobotRxData(robot);
+	}
 
-			// check if previously unused robot
-			if (!robot->inUse)
+	// Robots perform updates
+	if (verbose) cout << "updating players" << endl;
+	updateRobots(_selfPlayers, curTime);
+	updateRobots(_oppPlayers, curTime);
+
+	// Copy robot data out of models into state
+	if (verbose) cout << "copying out data for robots" << endl;
+	copyRobotState(_selfPlayers, SELF);
+	copyRobotState(_oppPlayers, OPP);
+
+	// Store the robot models for use by the ball model
+	_robotMap.clear();
+	BOOST_FOREACH(const RobotModel::shared& model, _selfPlayers)
+	if (model)
+		_robotMap[model->shell()] = model;
+	BOOST_FOREACH(const RobotModel::shared& model, _oppPlayers)
+	if (model)
+		_robotMap[model->shell() + OppOffset] = model;
+
+	// add observations to the ball based on ball sensors and filtered robot positions
+	if (verbose) cout << "adding ball observations for ball sensors" << endl;
+	BOOST_FOREACH(RobotModel::shared robot, _selfPlayers)
+	{
+		if (robot) {
+			//if a robot has the ball, we need to make an observation
+			if (robot->valid(curTime) && robot->hasBall())
 			{
-				cout << "      robot " << robot->shell << " unused" << endl;
-				if (shell < OppOffset)
-				{
-					selfUnused.push_back(robot);
-				} else {
-					oppUnused.push_back(robot);
-				}
+				Geometry2d::Point offset = Geometry2d::Point::
+						direction(robot->angle() * DegreesToRadians) *	Constants::Robot::Radius;
+
+				ballModel.observation(_state->timestamp, robot->pos() + offset, BallModel::BALL_SENSOR);
 			}
-		} else {
-			if (robot->isValid) {
-				cout << "Robot " << robot->shell << " out of date, removing..." << endl;
-			}
-			robot->deactivate();
 		}
 	}
 
 	if (verbose) cout << "Updating ball" << endl;
-
-	/// ball sensor
-	BOOST_FOREACH(Packet::LogFrame::Robot& r, _state->self)
-	{
-		//FIXME: handle stale data properly
-		r.haveBall = r.radioRx.ball;
-
-		//if a robot has the ball, we need to make an observation
-		if (r.valid && r.haveBall)
-		{
-			Geometry2d::Point offset = Geometry2d::Point::
-				direction(r.angle * DegreesToRadians) *	Constants::Robot::Radius;
-
-			ballModel.observation(_state->timestamp, r.pos + offset, BallModel::BALL_SENSOR);
-		}
-	}
-
-	ballModel.update();
+	bool ballValid = ballModel.valid(curTime);
+	ballModel.update(curTime);
 
 	_state->ball.pos = ballModel.pos;
 	_state->ball.vel = ballModel.vel;
 	_state->ball.accel = ballModel.accel;
-	_state->ball.valid = (curTime - ballModel.lastObservedTime) < MaxCoastTime;
-
-	if (verbose) {
-		cout << "Unused updated robots: ";
-		BOOST_FOREACH(const RobotModel::shared& robot, selfUnused) {
-			cout << robot->shell << " ";
-		}
-		cout << endl;
-	}
-
-	if (verbose) cout << "Assigning robots to slots" << endl;
-	unsigned int nextSelfUnused = 0, nextOppUnused = 0;
-	for (int i = 0; i < 5; ++i)
-	{
-		// SELF ROBOTS
-
-		// clear out invalid robots
-		if (_selfSlots[i] >= 0 && _robotMap[_selfSlots[i]] && !_robotMap[_selfSlots[i]]->isValid)
-		{
-			if (verbose) cout << "   Clearing slot " << i << " of robot " << _selfSlots[i] << endl;
-			_selfSlots[i] = -1;
-		}
-
-		// fill in slots
-		if (_selfSlots[i] < 0 && nextSelfUnused < selfUnused.size()) {
-			RobotModel::shared robot = selfUnused[nextSelfUnused++];
-			_selfSlots[i] = robot->shell;
-			robot->inUse = true;
-			if (verbose) cout << "   Setting slot " << i << " to robot " << robot->shell << endl;
-		}
-
-		// copy in the robot data
-		if (_selfSlots[i] >= 0) {
-			RobotModel::shared robot = _robotMap[_selfSlots[i]];
-			_state->self[i].valid = true;
-			_state->self[i].shell = robot->shell;
-			_state->self[i].pos = robot->pos;
-			_state->self[i].vel = robot->vel;
-			_state->self[i].angle = robot->angle;
-			_state->self[i].angleVel = robot->angleVel;
-		}
-
-		// OPPONENT ROBOTS
-
-		// clear out invalid robots
-		if (_oppSlots[i] >= 0 && _robotMap[_oppSlots[i] + OppOffset] &&
-				!_robotMap[_oppSlots[i] + OppOffset]->isValid)
-		{
-			_oppSlots[i] = -1;
-		}
-
-		// fill in slots
-		if (_oppSlots[i] < 0 && nextOppUnused < oppUnused.size()) {
-			RobotModel::shared robot = oppUnused[nextOppUnused++];
-			_oppSlots[i] = robot->shell;
-			robot->inUse = true;
-		}
-
-		// copy in the robot data
-		if (_oppSlots[i] >= 0) {
-			RobotModel::shared robot = _robotMap[_oppSlots[i] + OppOffset];
-			_state->opp[i].valid = true;
-			_state->opp[i].shell = robot->shell;
-			_state->opp[i].pos = robot->pos;
-			_state->opp[i].vel = robot->vel;
-			_state->opp[i].angle = robot->angle;
-			_state->opp[i].angleVel = robot->angleVel;
-		}
-
-	}
+	_state->ball.valid = ballValid;
 
 	if (verbose) cout << "At end of WorldModel::run()" << endl;
+}
+
+void WorldModel::addRobotObseration(const Packet::Vision::Robot &obs, uint64_t timestamp, RobotVector& players) {
+	int obs_shell = obs.shell;
+
+	// try to add to an existing model, and return if we update something
+	BOOST_FOREACH(RobotModel::shared& model, players) {
+		if (model && model->shell() == obs_shell) {
+			model->observation(timestamp, obs.pos, obs.angle);
+			return;
+		}
+	}
+
+	// find an open slot - assumed that invalid models will have been removed already
+	BOOST_FOREACH(RobotModel::shared& model, players) {
+		if (!model) {
+			model = RobotModel::shared(new RobotModel(_config, obs_shell));
+			model->observation(timestamp, obs.pos, obs.angle);
+			return;
+		}
+	}
+}
+
+void WorldModel::updateRobots(vector<RobotModel::shared>& players, uint64_t cur_time) {
+	BOOST_FOREACH(RobotModel::shared& model, players) {
+		if (model && model->valid(cur_time)) {
+			model->update(cur_time);
+		} else {
+			model = RobotModel::shared();
+		}
+	}
+}
+
+void WorldModel::addRobotRxData(Packet::LogFrame::Robot& log_robot) {
+	int shell = log_robot.shell;
+	BOOST_FOREACH(RobotModel::shared& model, _selfPlayers) {
+		if (model && model->shell() == shell) {
+			model->hasBall(log_robot.radioRx.ball);
+			return;
+		}
+	}
+}
+
+void WorldModel::copyRobotState(const std::vector<RobotModel::shared>& players, TeamMode m) {
+	unsigned int i=0;
+	Packet::LogFrame::Robot* log = (m == SELF) ? _state->self : _state->opp;
+	BOOST_FOREACH(const RobotModel::shared& robot, players) {
+		if (robot) {
+			log[i].valid = true;
+			log[i].shell = robot->shell();
+			log[i].pos = robot->pos();
+			log[i].vel = robot->vel();
+			log[i].angle = robot->angle();
+			log[i].angleVel = robot->angleVel();
+		} else {
+			log[i].valid = false;
+		}
+		++i;
+	}
 }
