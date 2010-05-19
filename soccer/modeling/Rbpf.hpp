@@ -70,6 +70,8 @@ public:
 	// Where m and s = size of the control and measurement input
 	void update(Vector &U, Vector &Z, double dt);
 
+	void updateMultipleObs(double x[], double y[], double dt[], int numObs);
+
 	// adds a model to the internal modelGraph
 	void addModel(RbpfModel* model);
 

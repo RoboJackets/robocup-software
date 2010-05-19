@@ -83,6 +83,56 @@ void Rbpf::update(Vector &U, Vector &Z, double dt){
 	resampleParticles(tmpParticleVector,particleVector,k);
 }
 
+// Updates the filter given control input U, measurement Z, and delta t = dt
+// Note: this is for multiple observations (possibly from multiple cameras at diff times)
+// see: void Rbpf::update(Vector &U, Vector &Z, double dt) for more details
+void Rbpf::updateMultipleObs(double xs[], double ys[], double dts[], int numObs){
+	tmpParticleVector.clear();
+
+	int j = modelGraph.j; // number of models in modelGraph
+	int tmpPartIdx = 0;
+	float weightSum;
+	RbpfModel* model;
+	RbpfState* tmpParticle;
+	Vector U(6); U.clear(); U *= 0.0; // control input
+	Vector Z(2); // measurement
+	double dt;
+
+	for(int kIdx=0; kIdx<k; kIdx++){ // for each of the k particles
+		for(int oIdx=0; oIdx<numObs; oIdx++){ // for each of the o observations
+			Z(0) = xs[oIdx];
+			Z(1) = ys[oIdx];
+			dt = dts[oIdx];
+
+			weightSum = 0.0;
+			for(int jIdx=0; jIdx<j; jIdx++){ // for each of the j models
+				model = modelGraph.getModel(jIdx);
+				tmpParticleVector.push_back(new RbpfState(Vector(n), Matrix(n,n), 0, 0.0));
+				assert(tmpPartIdx < (int)tmpParticleVector.size());
+				tmpParticle = &tmpParticleVector[tmpPartIdx];
+				tmpParticle->copy(particleVector[kIdx]);
+				model->predict(tmpParticle->X,tmpParticle->P,U,dt); // EKF Predict
+				model->update(tmpParticle->X,tmpParticle->P,Z,dt);  // EKF Update
+
+				// calculate probability of switching from previous model to this (jIdx)
+				double probModel = modelGraph.getTransProb(tmpParticle->modelIdx,jIdx);
+				// calculate probability of observation
+				double probObs = gaussianPDF2D(model->getInnovation(), model->getInnovationCovariance());
+
+				weightSum += probModel*probObs;
+				tmpParticle->weight = probModel*probObs;
+				tmpParticle->modelIdx = jIdx;
+				tmpPartIdx++;
+			}
+			for(int jIdx=0; jIdx<j; jIdx++){ // for each of the j models
+				tmpParticle = &tmpParticleVector[tmpPartIdx-jIdx-1];
+				tmpParticle->weight *= weightSum; // multiply the weightSum in for particles with this model
+			}
+		}
+	}
+	resampleParticles(tmpParticleVector,particleVector,k);
+}
+
 // resample k particles from in, with respect to their weights
 // store the result in out.
 // TODO: switch the Vectors to dynamic double arrays, or at least pre-allocate.

@@ -144,6 +144,7 @@ namespace Modeling
 
 			/** Newer RBPF update */
 			void rbpfUpdate(float dtime);
+			void rbpfUpdateMultipleObs(std::vector<observation_type> &obs);
 
 			/** ABG Filter update */
 			void abgUpdate(float dtime);

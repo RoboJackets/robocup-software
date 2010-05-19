@@ -106,6 +106,15 @@ void Modeling::BallModel::observation(uint64_t time, const Geometry2d::Point &po
 	observation_type obs = {time, pos, obs_type};
 	_observations.push_back(obs);
 
+	// set lastObservedTime to the last observation's time
+	lastObservedTime = 0;
+	for(int i=observations.size()-1; i>=0; i--){
+		if(observations[i].time > lastObservedTime){
+			lastObservedTime = observations[i].time;
+		}
+	}
+
+
 	/*
 	// TODO: be more clever about the use of vision ball sensor measurements
 	if (lastObservedTime)
@@ -158,8 +167,27 @@ void Modeling::BallModel::kalmanUpdate(float dtime) {
 }
 
 void Modeling::BallModel::rbpfUpdate(float dtime) {
-
 	raoBlackwellizedParticleFilter->update(observedPos.x,observedPos.y,dtime);
+	RbpfState* bestState = raoBlackwellizedParticleFilter->getBestFilterState();
+	pos.x = bestState->X(0);
+	pos.y = bestState->X(1);
+	vel.x = bestState->X(2);
+	vel.y = bestState->X(3);
+	accel.x = bestState->X(4);
+	accel.y = bestState->X(5);
+}
+
+void Modeling::BallModel::rbpfUpdateMultipleObs(std::vector<observation_type> &obs){
+	int numObs = obs.size();
+	double x[numObs];
+	double y[numObs];
+	double dt[numObs];
+	for(int i=observations.size()-1; i>=0; i--){
+		x[i] = observations[i].pos.x;
+		y[i] = observations[i].pos.y;
+		dt[i] = (observations[i].time - lastUpdatedTime);
+	}
+	raoBlackwellizedParticleFilter->updateMultipleObs(x,y,dt,numObs);
 	RbpfState* bestState = raoBlackwellizedParticleFilter->getBestFilterState();
 	pos.x = bestState->X(0);
 	pos.y = bestState->X(1);
@@ -185,37 +213,15 @@ bool Modeling::BallModel::valid(uint64_t time){
 
 void Modeling::BallModel::update(uint64_t cur_time)
 {
-	// find time differentials
-	float dtime = (float)(cur_time - lastObservedTime) / 1e6;
-	lastObservedTime = cur_time;
-
-	// naive predict using previous state
-	Geometry2d::Point predictPos = predictPosAtTime(dtime);
-	Geometry2d::Point predictVel = vel + accel * dtime;
-
-	// if no observations, coast and return
-	if (_observations.empty()) {
-		pos = predictPos;
-		vel = predictVel;
+	if(observations.size() == 0){
+		std::cout << "debug: no observations but update() was called" << std::endl;
 		return;
 	}
 
-	// choose an observation to add
-	// PLACEHOLDER: use a min-error measurement over all observations
-	float bestError = std::numeric_limits<float>::infinity();
-	BOOST_FOREACH(const observation_type& obs, _observations) {
-		float error = (predictPos - obs.pos).magsq();
-		if (error < bestError) {
-			bestError = error;
-			observedPos = obs.pos;
-		}
-	}
-
-	/*
 	// loop through the observations and determine if we got vision observations
 	bool gotCameraObservation = false;
-	for(int i=_observations.size()-1; i>=0; i--){
-		if(_observations[i].obs_type == observation_mode::VISION){
+	for(int i=observations.size()-1; i>=0; i--){
+		if(observations[i].obs_type == BallModel::VISION){
 			gotCameraObservation = true;
 			break;
 		}
@@ -223,9 +229,9 @@ void Modeling::BallModel::update(uint64_t cur_time)
 
 	// If there are camera observations, remove robot sensor observations.
 	if(gotCameraObservation){
-		for(int i=_observations.size()-1; i>=0; i--){
-			if(_observations[i].obs_type == observation_mode::BALL_SENSOR){
-				_observations[i].erase(_observations.begin()+i);
+		for(int i=observations.size()-1; i>=0; i--){
+			if(observations[i].obs_type == BallModel::BALL_SENSOR){
+				observations.erase(observations.begin()+i);
 			}
 		}
 	}
@@ -239,20 +245,19 @@ void Modeling::BallModel::update(uint64_t cur_time)
 	}
 
 	// TODO: handle non-RBPF filters properly
-	// right now, the kalman just uses the first observation.
 	if (_mode != RBPF){
-		cout << "not implemented in ballmodel.cpp" << endl;
+		cout << "update() not implemented in ballmodel.cpp" << endl;
 	} else if (_mode == RBPF) {
-		rbpfUpdate();
+		rbpfUpdateMultipleObs(observations);
 	}
 
-	lastUpdateTime = latestObservation;
+	// remove previous observations after processing them
+	observations.clear();
 
-*/
+	// TODO: this should be the current time, not the latest observation
+	lastUpdatedTime = latestObservation;
 
-//	if (missedFrames > 5 || bestError < (0.2 * 0.2))
-//	{
-
+	/*
 		// assuming we moved, then update the filter
 		if (dtime)
 		{
@@ -306,4 +311,5 @@ void Modeling::BallModel::update(uint64_t cur_time)
 
 	// cleanup - remove the observations from this frame
 	_observations.clear();
+	*/
 }
