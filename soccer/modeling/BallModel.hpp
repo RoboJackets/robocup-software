@@ -57,13 +57,11 @@ namespace Modeling
 
 			// Best observation so far
 			Geometry2d::Point observedPos;
-			uint64_t bestObservedTime;
-			float bestError;
 
 			/** Kalman **/
-			//State Transistion Matrix
+			//State Transition Matrix
 			DMatrix A;
-			//Input Transistion Matrix
+			//Input Transition Matrix
 			DMatrix B;
 			//Initial Covariance Matrix
 			DMatrix P;
@@ -95,8 +93,7 @@ namespace Modeling
 			float beta;
 			float gamma;
 
-			uint64_t lastObservedTime;
-			uint64_t lastUpdatedTime;
+			uint64_t lastObservedTime, lastUpdatedTime;
 			int missedFrames;
 
 			Geometry2d::Point prevObservedPos;
@@ -114,10 +111,10 @@ namespace Modeling
 				observation_mode obs_type;
 			} observation_type;
 
-			std::vector<observation_type> observations;
+			std::vector<observation_type> _observations;
 
 			// mode of the filter
-			mode_t mode_;
+			mode_t _mode;
 
 			// map of robots so filters can include this information
 			RobotModel::RobotMap *_robotMap;
