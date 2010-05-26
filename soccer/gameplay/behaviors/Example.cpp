@@ -5,9 +5,10 @@ Gameplay::Behaviors::ChangeMe::ChangeMe(GameplayModule *gameplay):
 {
 }
 
-void Gameplay::Behaviors::ChangeMe::run()
+bool Gameplay::Behaviors::ChangeMe::run()
 {
     //...
+	return true;
 }
 
 bool Gameplay::Behaviors::ChangeMe::done()

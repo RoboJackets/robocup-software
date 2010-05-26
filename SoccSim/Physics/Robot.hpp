@@ -22,6 +22,7 @@ class Robot : public Entity
         Packet::RadioRx radioRx() const;
 
     private:
+        /** Functions to initialize physical objects */
         void initRoller();
         void initKicker();
         void initWheels();
@@ -32,6 +33,7 @@ class Robot : public Entity
     private:
         NxActor* _roller;
         NxActor* _kicker;
+        NxActor* _chipper;
         
         NxRevoluteJoint* _rollerJoint;
         

@@ -111,6 +111,10 @@ namespace Gameplay
 			 */
 			void kick(uint8_t strength);
 
+			/**
+			 * enable chip when ready at a given strength
+			 */
+			void chip(uint8_t strength);
 
 			ObstacleGroup &obstacles() const;
 

@@ -207,6 +207,14 @@ void Gameplay::Robot::kick(uint8_t strength)
 {
 	willKick = true;
 	packet()->radioTx.kick = strength;
+	packet()->radioTx.useChipper = false;
+}
+
+void Gameplay::Robot::chip(uint8_t strength)
+{
+	willKick = true;
+	packet()->radioTx.kick = strength;
+	packet()->radioTx.useChipper = true;
 }
 
 void Gameplay::Robot::pivot(Geometry2d::Point center, bool cw)

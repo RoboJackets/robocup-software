@@ -436,17 +436,37 @@ void Robot::radioTx(const Packet::RadioTx::Robot& data)
         _kickerJoint->setDriveLinearVelocity(NxVec3(v, 0, 0));
     }
 #else
-    float kickSpeed = data.kick / 255.0f * 5.0f;
-    if (kickSpeed)
+
+    /** How we kick:
+     * Kick speed will be zeroed if we are not kicking
+     * Otherwise we determine which direction we are kicking and kick that way, using
+     * max speeds guessed with science
+     */
+
+    // FIXME: make these parameters some place else
+    float maxKickSpeed = 5.0f, // m/s direct kicking speed
+    	  maxChipSpeed = 3.0f; // m/s chip kicking at the upwards angle
+//    	  chipAngle = 20.0f;   // angle (degrees) of upwards chip
+    if (data.kick)
     {
+    	// determine the kick speed
+    	float kickSpeed;
+    	if (data.useChipper)
+    		kickSpeed = data.kick / 255.0f * maxChipSpeed;
+    	else
+    		kickSpeed = data.kick / 255.0f * maxKickSpeed;
+
+    	// find the max and mins based on the field of the kicker
         const float halfKickerFOV = 30 * M_PI / 180.0f;
         NxVec3 kickerMax(cos(halfKickerFOV), sin(halfKickerFOV), 0);
         NxVec3 kickerMin(kickerMax.x, -kickerMax.y, 0);
         
+        // convert orientation to actual global space
         NxMat33 orientation = _actor->getGlobalOrientation();
         kickerMin = orientation * kickerMin;
         kickerMax = orientation * kickerMax;
         
+        // construct a velocity to apply FIXME: add a switch here
         Geometry2d::Point pos = getPosition();
         NxVec3 kickVel = _actor->getGlobalOrientation().getColumn(0) * kickSpeed;
         BOOST_FOREACH(Ball *ball, _env->balls())

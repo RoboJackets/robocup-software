@@ -6,6 +6,7 @@
 		<member type="int8" name="roller" />
 		<member type="uint8" name="kick" />
 		<member type="bool" name="valid" />
+		<member type="bool" name="useChipper" />
 		
 		<array type="int8" name="motors" size="4" />
 	</struct>

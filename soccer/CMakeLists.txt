@@ -67,14 +67,18 @@ set (SRCS
 	gameplay/plays/Defense.cpp
 	gameplay/plays/OptimizedOffense.cpp
 
+    # Core behaviors
 	gameplay/behaviors/Move.cpp
 	gameplay/behaviors/Kickoff.cpp
 	gameplay/behaviors/Penalty.cpp
 	gameplay/behaviors/Idle.cpp
 	gameplay/behaviors/Kick.cpp
+	gameplay/behaviors/Chip.cpp
 	gameplay/behaviors/OneTouchKick.cpp
 	gameplay/behaviors/Intercept.cpp
 	gameplay/behaviors/OptimizedPassing.cpp
+	
+	# Positions
 	gameplay/behaviors/positions/Goalie.cpp      
 	gameplay/behaviors/positions/Fullback.cpp
  	gameplay/behaviors/positions/Forward.cpp

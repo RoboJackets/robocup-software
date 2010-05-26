@@ -6,14 +6,16 @@ namespace Gameplay
 {
 	namespace Behaviors
 	{
-		class ChangeMe: public Behavior
+		/** This behavior will chip the ball at a target */
+		class Chip: public Behavior
 		{
 			public:
-				ChangeMe(GameplayModule *gameplay);
+				Chip(GameplayModule *gameplay);
 				
 				virtual bool run();
-				virtual bool done();
 				
+				virtual bool assign(std::set<Robot *> &available);
+
 				virtual float score(Robot* robot);
 		};
 	}
