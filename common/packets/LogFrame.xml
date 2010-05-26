@@ -14,16 +14,6 @@
         <constant name="Blue" value="1"/>
     </enum>
 
-	<enum type="uint8" typename="RunState">
-        <constant name="Running"/>
-        <constant name="Stopped"/>
-    </enum>
-    
-    <enum type="uint8" typename="ControlState">
-        <constant name="Manual"/>
-        <constant name="Auto"/>
-    </enum>
-
     <!-- Game state as determined by referee -->
     <struct typename="GameState" external_cpp="GameState" include_cpp="GameState.hpp" />
     
@@ -106,8 +96,8 @@
 	<!-- team we are running as -->
     <member type="Team" name="team" value="UnknownTeam" />
 
-	<member type="ControlState" name="controlState" value="Manual" />
-    <member type="RunState" name="runState" value="Stopped" />
+	<member type="bool" name="autonomous" />
+	<member type="int8_t" name="manualID" />
 
 	<member type="string" name="playName" />
 

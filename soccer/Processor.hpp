@@ -23,7 +23,7 @@
 
 #include <framework/ConfigFile.hpp>
 
-#include "InputHandler.hpp"
+#include "JoystickInput.hpp"
 #include "RefereeModule.hpp"
 
 /** handles processing for a team */
@@ -54,9 +54,6 @@ class Processor: public QThread
 		}
 		
 	public Q_SLOTS:
-		void on_input_playPauseButton();
-		void on_input_manualAutoButton();
-		void on_input_selectRobot(int rid);
 		void flip_field(bool flip);
 		
 	protected:
@@ -82,9 +79,6 @@ class Processor: public QThread
 		
 		/** Used to start and stop the thread **/
 		volatile bool _running;
-
-		/** trigger camera id, triggers syncronous processing */
-		int _triggerId;
 
 		/** if true, the system should run */
 		bool _trigger;
@@ -113,7 +107,7 @@ class Processor: public QThread
 		boost::shared_ptr<Log::LogModule> _logModule;
 		boost::shared_ptr<StateIdentification::StateIDModule> _stateIDModule;
 		
-		boost::shared_ptr<InputHandler> _inputHandler;
+		boost::shared_ptr<JoystickInput> _joystick;
 		
 		Network::Sender _sender;
 		

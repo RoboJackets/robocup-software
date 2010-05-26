@@ -58,22 +58,15 @@ Processor::Processor(Team t, QString filename) :
 	//set the team
 	_state.team = _team;
 
+	// Start not controlling any robot
+	_state.manualID = -1;
+	
 	//initially no camera does the triggering
-	_triggerId = -1;
 	_trigger = false;
 
-	//runs independently of main loop
-	_inputHandler = make_shared<InputHandler>(this);
-	_inputHandler->setObjectName("input");
-	_inputHandler->start();
-
-	//default to auto, running when no input device
-	if (!_inputHandler->enabled())
-	{
-		printf("No controller: Auto/Running\n");
-		_state.controlState = SystemState::Auto;
-		_state.runState = SystemState::Running;
-	}
+	_joystick = make_shared<JoystickInput>("/dev/input/robocupPad", &_state);
+	
+	_state.autonomous = !_joystick->valid();
 
 	QMetaObject::connectSlotsByName(this);
 
@@ -128,120 +121,103 @@ void Processor::run()
 
 	while (_running)
 	{
-		if (_state.runState == SystemState::Running)
+		// Read all pending data from the gamepad
+		while (_joystick->poll())
 		{
-			if (_state.controlState == SystemState::Manual)
-			{
-				//non blocking information for manual control
-				receiver.receive(false);
-
-				//run modeling for testing
-				_modelingModule->run();
-				_refereeModule->run();
-
-				// Clear radio commands and get shell numbers from world model
-				for (int r = 0; r < Constants::Robots_Per_Team; ++r)
-				{
-					_state.self[r].radioTx = Packet::RadioTx::Robot();
-					_state.self[r].radioTx.board_id = _state.self[r].shell;
-				}
-
-				if (_state.manualID >= 0)
-				{
-					_inputHandler->genRobotData(_state.self[_state.manualID].radioTx);
-				}
-
-				_logModule->run();
-
-				//send out the radio data from manual control
-				sendRadioData();
-
-				clearState();
-
-				//constant time wait for radio consistency
-				QThread::msleep(35);
-			}
-			else if (_state.controlState == SystemState::Auto)
-			{
-				//blocking to act on new packets
-				receiver.receive(true);
-
-				//if vision told us to act
-				if (_trigger)
-				{
-					// Clear radio commands
-					for (int r = 0; r < 5; ++r)
-					{
-						_state.self[r].radioTx = Packet::RadioTx::Robot();
-					}
-
-					if (_modelingModule)
-					{
-						_modelingModule->run();
-					}
-					
-					for (int r = 0; r < 5; ++r)
-					{
-						if (_state.self[r].valid)
-						{
-							ConfigFile::Robot* rcfg = _config.robot(_state.self[r].shell);
-							
-							if (rcfg)
-							{
-								_state.self[r].config = *rcfg;
-							}
-						}
-					}
-					
-					if (_refereeModule)
-					{
-						_refereeModule->run();
-					}
-					
-					if (_stateIDModule)
-					{
-						_stateIDModule->run();
-					}
-
-					if (_gameplayModule)
-					{
-						_gameplayModule->run();
-					}
-
-					if (_motionModule)
-					{
-						_motionModule->run();
-					}
-
-					//always run logging last
-					_logModule->run();
-					
-					// Send motion commands to the robots
-					sendRadioData();
-
-					//new state
-					clearState();
-
-					//wait for new trigger frame
-					_trigger = false;
-				}
-			}
 		}
-		else
+		
+		if (!_state.autonomous)
 		{
-			//blocking to act on new packets
+			//non blocking information for manual control
 			receiver.receive(false);
 
 			//run modeling for testing
 			_modelingModule->run();
 			_refereeModule->run();
 
+			// Clear radio commands and get shell numbers from world model
+			for (int r = 0; r < Constants::Robots_Per_Team; ++r)
+			{
+				_state.self[r].radioTx = Packet::RadioTx::Robot();
+				_state.self[r].radioTx.board_id = _state.self[r].shell;
+			}
+
+			_joystick->drive();
+
 			_logModule->run();
+
+			//send out the radio data from manual control
+			sendRadioData();
 
 			clearState();
 
-			//fixed wait
+			//constant time wait for radio consistency
 			QThread::msleep(35);
+		}
+		else
+		{
+			//blocking to act on new packets
+			receiver.receive(true);
+
+			//if vision told us to act
+			if (_trigger)
+			{
+				// Clear radio commands
+				for (int r = 0; r < 5; ++r)
+				{
+					_state.self[r].radioTx = Packet::RadioTx::Robot();
+				}
+
+				if (_modelingModule)
+				{
+					_modelingModule->run();
+				}
+				
+				for (int r = 0; r < 5; ++r)
+				{
+					if (_state.self[r].valid)
+					{
+						ConfigFile::Robot* rcfg = _config.robot(_state.self[r].shell);
+						
+						if (rcfg)
+						{
+							_state.self[r].config = *rcfg;
+						}
+					}
+				}
+				
+				if (_refereeModule)
+				{
+					_refereeModule->run();
+				}
+				
+				if (_stateIDModule)
+				{
+					_stateIDModule->run();
+				}
+
+				if (_gameplayModule)
+				{
+					_gameplayModule->run();
+				}
+
+				if (_motionModule)
+				{
+					_motionModule->run();
+				}
+
+				//always run logging last
+				_logModule->run();
+				
+				// Send motion commands to the robots
+				sendRadioData();
+
+				//new state
+				clearState();
+
+				//wait for new trigger frame
+				_trigger = false;
+			}
 		}
 	}
 }
@@ -265,10 +241,10 @@ void Processor::sendRadioData()
 	}
 
 	bool halt;
-	if (_state.controlState == SystemState::Manual)
+	if (!_state.autonomous)
 	{
 		// Manual
-		halt = (_state.runState != SystemState::Running);
+		halt = false;
 	} else {
 		// Auto
 		halt = _state.gameState.halt();
@@ -428,45 +404,6 @@ void Processor::toTeamSpace(Packet::Vision& vision)
 
 		b.pos = _teamTrans * b.pos;
 	}
-}
-
-/// slots ///
-void Processor::on_input_playPauseButton()
-{
-	switch (_state.runState)
-	{
-		case SystemState::Stopped:
-			_state.runState = SystemState::Running;
-			printf("Running\n");
-			break;
-		case SystemState::Running:
-		default:
-			_state.runState = SystemState::Stopped;
-			printf("Stopped\n");
-			break;
-	}
-}
-
-void Processor::on_input_manualAutoButton()
-{
-	switch (_state.controlState)
-	{
-		case SystemState::Manual:
-			_state.controlState = SystemState::Auto;
-			printf ("Auto mode\n");
-			break;
-		case SystemState::Auto:
-		default:
-			_state.controlState = SystemState::Manual;
-			printf ("Manual mode\n");
-			break;
-	}
-}
-
-void Processor::on_input_selectRobot(int rid)
-{
-	_state.manualID = rid;
-	printf ("Controlling robot: %d\n", _state.manualID);
 }
 
 void Processor::flip_field(bool flip)

@@ -32,7 +32,6 @@ set (SRCS
 	main.cpp
 	Processor.cpp
 	MainWindow.cpp
-	InputHandler.cpp
 	JoystickInput.cpp
 	RefereeModule.cpp
 	PlayConfigTab.cpp

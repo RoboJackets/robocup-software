@@ -10,12 +10,4 @@
  * until that module has run */
 class SystemState : public Packet::LogFrame
 {
-	public:		
-		SystemState()
-		{
-			manualID = -1;
-		}
-        
-        // ID of manually controlled robot or -1 if none
-        int manualID;
 };
