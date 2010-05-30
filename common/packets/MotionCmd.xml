@@ -44,6 +44,7 @@
 			<constant name="DirectVelocity" />
 			<constant name="TimePosition" />
 			<constant name="Bezier" />
+			<constant name="DirectMotor" />
 		</enum>
 		<member type="PlannerType" name="planner" value="RRT" />
 				
@@ -58,6 +59,9 @@
 		<!--Direct Velocity Commands-->
 		<member type="float" name="direct_ang_vel" value="0.0"/>
 		<member type="Geometry2d::Point" name="direct_trans_vel" />
+		
+		<!--Direct Motor Commands-->
+		<array type="int8" name="direct_motor_cmds" />
 		
 		<!--Time-Position Path-->
 		<struct typename="PathNode">

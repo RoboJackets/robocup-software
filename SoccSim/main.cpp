@@ -10,6 +10,8 @@
 #include <NxPhysics.h>
 #include <stdio.h>
 
+using namespace std;
+
 void usage(const char* prog)
 {
     printf("usage: %s -c <config file> [--ui] [--noisy]\n", prog);

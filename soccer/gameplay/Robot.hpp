@@ -67,17 +67,25 @@ namespace Gameplay
 					Packet::MotionCmd::OrientationType facing,
 					Packet::MotionCmd::PathEndType endpoint=Packet::MotionCmd::StopAtEnd);
 
-			/** Move using direct velocity control by specifying
-			 *  translational and angular velocity
-			 */
-			void move(const Geometry2d::Point& trans, double ang);
-
 			/**
 			 * Move using timed-positions, so that each node has a target time
 			 * Also, the command needs a start time, so that it can calculate deltas
 			 * in seconds
 			 */
 			void move(const std::vector<Packet::MotionCmd::PathNode>& timedPath, uint64_t start);
+
+			/**
+			 * Apply direct motion commands to the motors - use only for calibration
+			 * Vector of speeds must have 4 elements - will pad with zeros otherwise
+			 * Only use this function for calibration
+			 */
+			void directMotorCommands(const std::vector<int8_t>& speeds);
+
+			/**
+			 * Move using direct velocity control by specifying
+			 * translational and angular velocity
+			 */
+			void directMotionCommands(const Geometry2d::Point& trans, double ang);
 
 			/**
 			 * Makes the robot spin in a specified direction

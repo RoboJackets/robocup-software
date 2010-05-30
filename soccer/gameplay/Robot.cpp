@@ -105,14 +105,6 @@ void Gameplay::Robot::bezierMove(const std::vector<Geometry2d::Point>& controls,
 	packet()->cmd.bezierControlPoints = controls;
 }
 
-void Gameplay::Robot::move(const Geometry2d::Point& trans, double ang)
-{
-	//NOT IMPLEMENTED!
-	packet()->cmd.planner = Packet::MotionCmd::DirectVelocity;
-	packet()->cmd.direct_ang_vel = ang;
-	packet()->cmd.direct_trans_vel = trans;
-}
-
 void Gameplay::Robot::move(const std::vector<Packet::MotionCmd::PathNode>& timedPath, uint64_t start) {
 	// set controller type
 	packet()->cmd.planner = Packet::MotionCmd::TimePosition;
@@ -123,6 +115,18 @@ void Gameplay::Robot::move(const std::vector<Packet::MotionCmd::PathNode>& timed
 
 	// set start time
 	packet()->cmd.start_time = start;
+}
+
+void Gameplay::Robot::directMotorCommands(const std::vector<int8_t>& speeds) {
+	packet()->cmd.planner = Packet::MotionCmd::DirectMotor;
+	packet()->cmd.direct_motor_cmds = speeds;
+}
+
+void Gameplay::Robot::directMotionCommands(const Geometry2d::Point& trans, double ang)
+{
+	packet()->cmd.planner = Packet::MotionCmd::DirectVelocity;
+	packet()->cmd.direct_ang_vel = ang;
+	packet()->cmd.direct_trans_vel = trans;
 }
 
 Packet::LogFrame::Robot * Gameplay::Robot::packet() const

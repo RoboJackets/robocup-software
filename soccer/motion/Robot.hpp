@@ -107,6 +107,9 @@ namespace Motion
 			/** flag determining motor speed generation */
 			static const bool _useOldMotorGen = false;
 
+			/** flag for using low pass filter */
+			static const bool _enableVelocityFiltering = true;
+
 			/** robot identification */
 			const unsigned int _id;
 			
@@ -184,6 +187,10 @@ namespace Motion
 
 			/// True if we have actually loaded the motion config file
 			bool _isConfigLoaded;
+
+			/** filters for output */
+			Utils::FIRFilter<Geometry2d::Point> _velFilter;
+			Utils::FIRFilter<double> _wFilter;
 
 			/// store parameters for pose history for rendering
 			std::vector<Packet::LogFrame::Robot::Pose> _poseHistory;

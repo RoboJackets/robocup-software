@@ -33,7 +33,6 @@ class Robot : public Entity
     private:
         NxActor* _roller;
         NxActor* _kicker;
-        NxActor* _chipper;
         
         NxRevoluteJoint* _rollerJoint;
         

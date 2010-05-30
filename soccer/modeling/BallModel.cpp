@@ -184,6 +184,8 @@ bool Modeling::BallModel::valid(uint64_t time) {
 
 void Modeling::BallModel::update(uint64_t time)
 {
+	const bool verbose = false;
+
 	if(_observations.empty()) {
 		// coast the ball using simple integrator
 		float dtime = (float)(time - lastUpdatedTime) / 1e6;
@@ -213,7 +215,7 @@ void Modeling::BallModel::update(uint64_t time)
 		goodObs = _observations;
 	}
 	_observations = goodObs;
-	cout << " ballModel has " << _observations.size() << " observations, updating..." << endl;
+	if (verbose) cout << " ballModel has " << _observations.size() << " observations, updating..." << endl;
 
 	// TODO: handle non-RBPF filters properly
 	if (_mode != RBPF){

@@ -38,7 +38,7 @@ WorldModel::~WorldModel()
 void WorldModel::run()
 {
 	// internal verbosity flag for debugging
-	bool verbose = true;
+	bool verbose = false;
 
 	if (verbose) cout << "In WorldModel::run()" << endl;
 

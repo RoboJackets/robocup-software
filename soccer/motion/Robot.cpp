@@ -10,6 +10,7 @@
 #include <Geometry2d/Point.hpp>
 #include <Team.h>
 #include <boost/foreach.hpp>
+#include <boost/assign/std/vector.hpp>
 #include <Utils.hpp>
 #include <Constants.hpp>
 
@@ -17,10 +18,10 @@
 #include "framework/Module.hpp"
 
 using namespace std;
+using namespace boost::assign;
 using namespace Geometry2d;
 using namespace Motion;
 using namespace Packet;
-
 
 /** Handles saturation of a bounded value */
 float saturate(float value, float max, float min) {
@@ -54,7 +55,7 @@ void printPt(const Geometry2d::Point& pt, const string& s="") {
 const float intTimeStampToFloat = 1000000.0f;
 
 Robot::Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id) :
-	_id(id), _isConfigLoaded(false)
+	_id(id), _isConfigLoaded(false), _velFilter(Point(0.0, 0.0), 4), _wFilter(0.0, 4)
 {
 	_state = 0;
 	_self = 0;
@@ -73,6 +74,14 @@ Robot::Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id) :
 	_lastTimestamp = Utils::timestamp();
 
 	_calibState = InitCalib;
+
+	// initialize filters as necessary
+	if (_enableVelocityFiltering) {
+		Utils::FIRFilter<Point>::Coeffs coeffs;
+		coeffs += 10.0, 5.0, 2.0, 0.5;
+		_velFilter.setCoeffs(coeffs);
+		_wFilter.setCoeffs(coeffs);
+	}
 }
 
 Robot::~Robot()
@@ -81,7 +90,9 @@ Robot::~Robot()
 
 void Robot::setAngKp(double value)
 {
+	_procMutex.lock();
 	_anglePid.kp = value;
+	_procMutex.unlock();
 }
 
 void Robot::setAngKi(double value)
@@ -100,6 +111,15 @@ void Robot::setSystemState(SystemState* state)
 	_self = &_state->self[_id];
 }
 
+
+/**
+ * Phases in motor commands:
+ * 	I:   Create a plan (RRT)
+ *  II:  Create velocities
+ *  III: Sanity Check velocities (obstacle avoidance, bounding)
+ *  IV:  Smooth Velocities (Filter system)
+ *  V:   Convert to motor commands
+ */
 void Robot::proc()
 {
 	_procMutex.lock();
@@ -111,7 +131,7 @@ void Robot::proc()
 			_dynamics.setConfig(_self->config.motion);
 			_isConfigLoaded = true;
 
-			// set the correct PID parameters for position and angle
+			// set the correct PID parameters for angle
 			_anglePid.kp = _self->config.motion.angle.p;
 			_anglePid.ki = _self->config.motion.angle.i;
 			_anglePid.kd = _self->config.motion.angle.d;
@@ -124,7 +144,6 @@ void Robot::proc()
 		}
 		else
 		{
-#if 1
 			// record the type of planner for future use
 			_plannerType = _self->cmd.planner;
 
@@ -140,8 +159,17 @@ void Robot::proc()
 				_vel = _self->cmd.direct_trans_vel;
 				_w = _self->cmd.direct_ang_vel;
 
-				// safety check the velocities
-				scaleVelocity();
+				break;
+			}
+			// handle direct motor commands
+			case Packet::MotionCmd::DirectMotor:
+			{
+				// short circuit controller completely
+				size_t i = 0;
+				BOOST_FOREACH(const int8_t& vel, _self->cmd.direct_motor_cmds) {
+					_self->radioTx.motors[i++] = vel;
+				}
+
 				break;
 			}
 			// handle explicit path generation (short-circuit RRT)
@@ -216,9 +244,18 @@ void Robot::proc()
 			}
 			}
 
-			// save the commanded velocities to packet for inspection in tree
-			_self->cmd_vel = _vel;
-			_self->cmd_w = _w;
+			// scale velocities due to rules
+			scaleVelocity();
+
+			// sanity check the velocities due to obstacles
+			const unsigned int LookAheadFrames = 5;
+			sanityCheck(LookAheadFrames);
+
+			// filter the velocities
+			if (_enableVelocityFiltering) {
+				_vel = _velFilter.filter(_vel);
+				_w = _wFilter.filter(_w);
+			}
 
 			// generate motor outputs based on velocity
 			if (!_useOldMotorGen) {
@@ -227,9 +264,9 @@ void Robot::proc()
 				genMotorOld();
 			}
 
-#else
-			calib();
-#endif
+			// save the commanded velocities to packet for inspection in tree
+			_self->cmd_vel = _vel;
+			_self->cmd_w = _w;
 
 			_self->radioTx.valid = true;
 			_self->radioTx.board_id = _self->shell;
@@ -559,9 +596,6 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 		// adjust the velocity
 		_vel += dVel;
 
-		// scale velocity due to commands
-		scaleVelocity();
-
 	}
 	else /** Handle pivoting */
 	{
@@ -584,10 +618,6 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 
 		_vel = dir * .4;
 	}
-
-	// sanity check the velocities due to obstacles
-	const unsigned int LookAheadFrames = 5;
-	sanityCheck(LookAheadFrames);
 }
 
 /** print out a time-pos node for debugging */
@@ -714,17 +744,11 @@ void Robot::genTimePosVelocity()
 	// adjust the velocity
 	_vel += dVel;
 
-	// scale velocities as per commands
-	scaleVelocity();
-
-	// sanity check the velocities due to obstacles
-	const unsigned int LookAheadFrames = 5;
-	sanityCheck(LookAheadFrames);
-
 	if (verbose) cout << "At end of genTimePosVelocity()" << endl;
 }
 
 void Robot::genBezierVelocity() {
+	const bool verbose = false;
 	// error handling
 	size_t degree = _bezierControls.size();
 	if (degree < 2) {
@@ -783,13 +807,10 @@ void Robot::genBezierVelocity() {
 	float angleErr = Utils::fixAngleDegrees(targetAngle*RadiansToDegrees - _self->angle);
 
 	// debug GUI for PID commands
-//	cout << "Current Kp: " << _anglePid.kp << endl;
+	if (verbose) cout << "Current Kp: " << _anglePid.kp << endl;
 
 	// angular velocity is in degrees/sec
 	_w = _anglePid.run(angleErr);
-
-	// scale velocities as per commands
-	scaleVelocity();
 }
 
 Geometry2d::Point

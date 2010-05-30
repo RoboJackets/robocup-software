@@ -460,12 +460,12 @@ void Robot::radioTx(const Packet::RadioTx::Robot& data)
         const float halfKickerFOV = 30 * M_PI / 180.0f;
         NxVec3 kickerMax(cos(halfKickerFOV), sin(halfKickerFOV), 0);
         NxVec3 kickerMin(kickerMax.x, -kickerMax.y, 0);
-        
+
         // convert orientation to actual global space
         NxMat33 orientation = _actor->getGlobalOrientation();
         kickerMin = orientation * kickerMin;
         kickerMax = orientation * kickerMax;
-        
+
         // construct a velocity to apply FIXME: add a switch here
         Geometry2d::Point pos = getPosition();
         NxVec3 kickVel = _actor->getGlobalOrientation().getColumn(0) * kickSpeed;
@@ -473,7 +473,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot& data)
         {
             Geometry2d::Point ballPos = ball->getPosition();
             bool near = ballPos.nearPoint(pos, Constants::Robot::Radius + Constants::Ball::Radius);
-            
+
             // FIXME - This works as long as the robot is flat on the ground.
             //         A sensor object would be better.
             NxVec3 ballRel = ball->actor()->getGlobalPosition() - _actor->getGlobalPosition();
@@ -481,7 +481,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot& data)
             cmin.cross(kickerMin, ballRel);
             cmax.cross(ballRel, kickerMax);
 //            printf("min %f max %f\n", cmin.z, cmax.z);
-            
+
             if (near && cmin.z > 0 && cmax.z > 0)
             {
 //                printf("kick %p by %f: %f, %f, %f\n", ball, kickSpeed, kickVel.x, kickVel.y, kickVel.z);

@@ -5,6 +5,8 @@
 #include <math.h>
 #include <sys/time.h>
 #include <stdint.h>
+#include <deque>
+#include <vector>
 #include <stdexcept>
 #include <typeinfo>
 #include <QString>
@@ -79,6 +81,51 @@ namespace Utils
 			return 0;
 		}
 	}
+
+	/**
+	 * A basic FIR filter of variable type with float coeffs
+	 *
+	 * Note, coefficients will be normalized so that inputs
+	 * will always be scaled appropriately
+	 */
+	template<typename T>
+	class FIRFilter {
+	public:
+		typedef std::vector<float> Coeffs;
+
+		FIRFilter(const T& zero, size_t nrTaps) : _zero(zero) {
+			_taps.assign(nrTaps, zero);
+			_coeffs.assign(nrTaps, 0.0f);
+		}
+
+		T filter(const T& x) {
+			_taps.push_front(x);
+			_taps.pop_back();
+
+			T y = _zero;
+			for (size_t i = 0; i<_taps.size(); ++i)
+				y += _taps.at(i) * _coeffs.at(i);
+
+			return y;
+		}
+
+		void setCoeffs(const Coeffs& coeffs) {
+			if (coeffs.size() != _coeffs.size())
+				throw std::invalid_argument("FIRFilter: attempting to set wrong number of coeffs");
+
+			float normalizer = 0.0;
+			for (size_t i = 0; i<coeffs.size(); ++i)
+				normalizer += coeffs.at(i);
+
+			for (size_t i=0; i<coeffs.size(); ++i)
+				_coeffs[i] = coeffs.at(i) / normalizer;
+		}
+
+	protected:
+		T _zero;
+		std::deque<T> _taps;
+		Coeffs _coeffs;
+	};
 
 	// An output iterator which throws an exception when it's used.
 	// This is used for example to determine if the output of set_difference would be non-empty without
