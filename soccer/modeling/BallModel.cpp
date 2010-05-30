@@ -179,7 +179,9 @@ void Modeling::BallModel::abgUpdate(float dtime) {
 }
 
 bool Modeling::BallModel::valid(uint64_t time) {
-	return !_observations.empty() || ((time - lastUpdatedTime) > MaxCoastTime);
+	//return !_observations.empty() || ((time - lastUpdatedTime) > MaxCoastTime);
+	// even with no observations, we can be valid.
+	return ((time - lastUpdatedTime) > MaxCoastTime);
 }
 
 void Modeling::BallModel::update(uint64_t time)
