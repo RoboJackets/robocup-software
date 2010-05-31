@@ -107,9 +107,6 @@ namespace Motion
 			/** flag determining motor speed generation */
 			static const bool _useOldMotorGen = false;
 
-			/** flag for using low pass filter */
-			static const bool _enableVelocityFiltering = true;
-
 			/** robot identification */
 			const unsigned int _id;
 			

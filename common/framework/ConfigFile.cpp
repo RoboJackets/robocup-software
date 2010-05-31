@@ -68,6 +68,10 @@ void ConfigFile::load() throw (std::runtime_error)
 		{
 			motionModule.proc(element);
 		}
+		else if (element.tagName() == "revLUT")
+		{
+			procRevLUT(element);
+		}
 
 		element = element.nextSiblingElement();
 	}
@@ -177,6 +181,38 @@ void ConfigFile::procRobots(QDomElement element)
 	}
 }
 
+/// Lookup for revisions
+void ConfigFile::procRevLUT(QDomElement element) {
+	QDomElement child = element.firstChildElement();
+
+	while (!child.isNull())
+	{
+		const QString& name = child.tagName();
+		if (name == "rev2010")
+		{
+			// loop over list
+			QDomElement list_mem = child.firstChildElement();
+			while (!list_mem.isNull()) {
+				uint id = ConfigFile::valueUInt(list_mem.attributeNode("id"));
+				_revisionLUT[id] = rev2010;
+				list_mem = list_mem.nextSiblingElement();
+			}
+		}
+		else if (name == "rev2008")
+		{
+			// loop over list
+			QDomElement list_mem = child.firstChildElement();
+			while (!list_mem.isNull()) {
+				uint id = ConfigFile::valueUInt(list_mem.attributeNode("id"));
+				_revisionLUT[id] = rev2008;
+				list_mem = list_mem.nextSiblingElement();
+			}
+		}
+
+		child = child.nextSiblingElement();
+	}
+}
+
 /// Robot
 void ConfigFile::Robot::proc(QDomElement element)
 {
@@ -218,6 +254,16 @@ void ConfigFile::Robot::Motion::proc(QDomElement element)
 		{
 			rotation.proc(child.firstChildElement("dynamics"));
 			angle.proc(child.firstChildElement("pid"));
+		}
+		else if (name == "coeffs")
+		{
+			// initialize the coefficients
+			QDomElement list_mem = child.firstChildElement();
+			while (!list_mem.isNull()) {
+				float val = ConfigFile::valueFloat(list_mem.attributeNode("value"));
+				output_coeffs.push_back(val);
+				list_mem = list_mem.nextSiblingElement();
+			}
 		}
 		
 		child = child.nextSiblingElement();

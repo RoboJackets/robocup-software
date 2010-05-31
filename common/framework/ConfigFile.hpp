@@ -170,6 +170,7 @@ class ConfigFile
 		static bool valueBool(QDomAttr attr);
 
 		void procRobots(QDomElement element);
+		void procRevLUT(QDomElement element);
 				
 	private:
 		QString _filename;

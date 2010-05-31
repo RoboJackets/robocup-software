@@ -182,6 +182,12 @@ void Processor::run()
 						if (rcfg)
 						{
 							_state.self[r].config = *rcfg;
+
+							// set the config information
+							if (rcfg->rev == ConfigFile::rev2008)
+								_state.self[r].rev = Packet::LogFrame::Robot::rev2008;
+							else if (rcfg->rev == ConfigFile::rev2010)
+								_state.self[r].rev = Packet::LogFrame::Robot::rev2010;
 						}
 					}
 				}

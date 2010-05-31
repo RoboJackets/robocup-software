@@ -94,8 +94,13 @@ namespace Utils
 		typedef std::vector<float> Coeffs;
 
 		FIRFilter(const T& zero, size_t nrTaps) : _zero(zero) {
-			_taps.assign(nrTaps, zero);
+			if (nrTaps == 0)
+				throw std::invalid_argument("FIR Filter: number of taps must be greater than zero");
+
+			// initialize
+			_taps.assign(nrTaps, _zero);
 			_coeffs.assign(nrTaps, 0.0f);
+			_coeffs[0] = 1.0;
 		}
 
 		T filter(const T& x) {
@@ -109,14 +114,21 @@ namespace Utils
 			return y;
 		}
 
+		/** reinitializes the coeffs and taps to new values */
 		void setCoeffs(const Coeffs& coeffs) {
-			if (coeffs.size() != _coeffs.size())
-				throw std::invalid_argument("FIRFilter: attempting to set wrong number of coeffs");
+			size_t nrTaps = coeffs.size();
+			if (nrTaps == 0)
+				throw std::invalid_argument("FIR Filter: number of coeffs must be greater than zero");
 
+			_taps.assign(nrTaps, _zero);
+			_coeffs.assign(nrTaps, 0.0);
+
+			// find the normalizer
 			float normalizer = 0.0;
 			for (size_t i = 0; i<coeffs.size(); ++i)
 				normalizer += coeffs.at(i);
 
+			// set the normalized coefficients
 			for (size_t i=0; i<coeffs.size(); ++i)
 				_coeffs[i] = coeffs.at(i) / normalizer;
 		}

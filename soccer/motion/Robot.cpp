@@ -55,7 +55,7 @@ void printPt(const Geometry2d::Point& pt, const string& s="") {
 const float intTimeStampToFloat = 1000000.0f;
 
 Robot::Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id) :
-	_id(id), _isConfigLoaded(false), _velFilter(Point(0.0, 0.0), 4), _wFilter(0.0, 4)
+	_id(id), _isConfigLoaded(false), _velFilter(Point(0.0, 0.0), 1), _wFilter(0.0, 1)
 {
 	_state = 0;
 	_self = 0;
@@ -74,14 +74,6 @@ Robot::Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id) :
 	_lastTimestamp = Utils::timestamp();
 
 	_calibState = InitCalib;
-
-	// initialize filters as necessary
-	if (_enableVelocityFiltering) {
-		Utils::FIRFilter<Point>::Coeffs coeffs;
-		coeffs += 10.0, 5.0, 2.0, 0.5;
-		_velFilter.setCoeffs(coeffs);
-		_wFilter.setCoeffs(coeffs);
-	}
 }
 
 Robot::~Robot()
@@ -97,12 +89,16 @@ void Robot::setAngKp(double value)
 
 void Robot::setAngKi(double value)
 {
+	_procMutex.lock();
 	_anglePid.ki = value;
+	_procMutex.unlock();
 }
 
 void Robot::setAngKd(double value)
 {
+	_procMutex.lock();
 	_anglePid.kd = value;
+	_procMutex.unlock();
 }
 
 void Robot::setSystemState(SystemState* state)
@@ -135,6 +131,10 @@ void Robot::proc()
 			_anglePid.kp = _self->config.motion.angle.p;
 			_anglePid.ki = _self->config.motion.angle.i;
 			_anglePid.kd = _self->config.motion.angle.d;
+
+			// set coefficients for the output filters
+			_velFilter.setCoeffs(_self->config.motion.output_coeffs);
+			_wFilter.setCoeffs(_self->config.motion.output_coeffs);
 		}
 
 		if (_state->gameState.state == GameState::Halt)
@@ -252,10 +252,8 @@ void Robot::proc()
 			sanityCheck(LookAheadFrames);
 
 			// filter the velocities
-			if (_enableVelocityFiltering) {
-				_vel = _velFilter.filter(_vel);
-				_w = _wFilter.filter(_w);
-			}
+			_vel = _velFilter.filter(_vel);
+			_w = _wFilter.filter(_w);
 
 			// generate motor outputs based on velocity
 			if (!_useOldMotorGen) {
@@ -786,7 +784,6 @@ void Robot::genBezierVelocity() {
 	// DEBUG: draw the targetVel
 	Segment targetVelLine(pos(), pos() + targetVel);
 	drawLine(targetVelLine, Qt::red);
-
 	// directly set the velocity
 	_vel = targetVel;
 
