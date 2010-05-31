@@ -31,6 +31,7 @@ namespace Gameplay
 			bool visible() const; /// true if robot is valid - FIXME: needs better check
 			int id() const;       /// shell number of robot
 			bool haveBall() const; /// true if we have the ball
+			Packet::LogFrame::Robot::Rev rev() const; /// the revision for the robot, use for capability checks
 
 			// Geometry helper functions
 			const Geometry2d::Point &pos() const;  /// Position

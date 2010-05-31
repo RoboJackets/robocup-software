@@ -185,6 +185,16 @@ bool Gameplay::Robot::haveBall() const
 	return packet()->haveBall && dist > Constants::Robot::Radius + 0.1;
 }
 
+Packet::LogFrame::Robot::Rev Gameplay::Robot::rev() const
+{
+	switch (_packet->config.rev) {
+	case ConfigFile::rev2008:
+		return Packet::LogFrame::Robot::rev2008;
+	case ConfigFile::rev2010:
+		return Packet::LogFrame::Robot::rev2010;
+	}
+}
+
 void Gameplay::Robot::dribble(int8_t speed)
 {
 	packet()->radioTx.roller = speed;
