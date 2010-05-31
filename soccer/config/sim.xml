@@ -15,8 +15,7 @@
 	    	<motion>
 		        <!-- calibration based data -->
 		        <translation>
-		        	<pid type="pos" p="0" i="0" d="0" />
-		        
+
 			    	<deg value="0">
 						<dynamics velocity="1.44" acceleration="4.0" deceleration="1.8" />
 					</deg>
@@ -39,8 +38,7 @@
 	    	<motion>
 		        <!-- calibration based data -->
 		        <translation>
-		        	<pid type="pos" p="0" i="0" d="0" />
-		        
+
 			    	<deg value="0">
 						<dynamics velocity="1.44" acceleration="4.0" deceleration="1.8" />
 					</deg>
@@ -63,8 +61,7 @@
 	    	<motion>
 		        <!-- calibration based data -->
 		        <translation>
-		        	<pid type="pos" p="0" i="0" d="0" />
-		        
+
 			    	<deg value="0">
 						<dynamics velocity="1.44" acceleration="4.0" deceleration="1.8" />
 					</deg>
@@ -87,8 +84,7 @@
 	    	<motion>
 		        <!-- calibration based data -->
 		        <translation>
-		        	<pid type="pos" p="0" i="0" d="0" />
-		        
+
 			    	<deg value="0">
 						<dynamics velocity="1.44" acceleration="4.0" deceleration="1.8" />
 					</deg>
@@ -111,8 +107,7 @@
 	    	<motion>
 		        <!-- calibration based data -->
 		        <translation>
-		        	<pid type="pos" p="0" i="0" d="0" />
-		        
+
 			    	<deg value="0">
 						<dynamics velocity="1.44" acceleration="4.0" deceleration="1.8" />
 					</deg>
@@ -135,8 +130,7 @@
 	    	<motion>
 		        <!-- calibration based data -->
 		        <translation>
-		        	<pid type="pos" p="0" i="0" d="0" />
-		        
+
 			    	<deg value="0">
 						<dynamics velocity="1.44" acceleration="4.0" deceleration="1.8" />
 					</deg>
@@ -159,8 +153,7 @@
 	    	<motion>
 		        <!-- calibration based data -->
 		        <translation>
-		        	<pid type="pos" p="0" i="0" d="0" />
-		        
+
 			    	<deg value="0">
 						<dynamics velocity="1.44" acceleration="4.0" deceleration="1.8" />
 					</deg>
@@ -183,8 +176,7 @@
 	    	<motion>
 		        <!-- calibration based data -->
 		        <translation>
-		        	<pid type="pos" p="0" i="0" d="0" />
-		        
+
 			    	<deg value="0">
 						<dynamics velocity="1.44" acceleration="4.0" deceleration="1.8" />
 					</deg>

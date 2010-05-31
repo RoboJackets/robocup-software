@@ -94,6 +94,25 @@ void ConfigFile::save(QString filename) throw (std::runtime_error)
     qDebug() << "Wrote: " << filename;
 }
 
+ConfigFile::shared_robot ConfigFile::robot(unsigned int id) const
+{
+	// look for overrides
+	map<unsigned int, shared_robot>::const_iterator override_it = _robot_overrides.find(id);
+	if (override_it != _robot_overrides.end())
+		return override_it->second;
+
+	// use defaults
+	map<unsigned int, RobotRev>::const_iterator rev_it = _revisionLUT.find(id);
+	if (rev_it == _revisionLUT.end())
+		return _defaultRobot2008; // NOTE: this sets default behavior to assume rev2008
+	else if (rev_it->second == rev2008)
+		return _defaultRobot2008;
+	else if (rev_it->second == rev2010)
+		return _defaultRobot2010;
+	else
+		throw invalid_argument("Robot does not exist!");
+}
+
 /// World Model
 
 void ConfigFile::WorldModel::proc(QDomElement element)
@@ -132,13 +151,28 @@ void ConfigFile::procRobots(QDomElement element)
 		{
 			//new robot
 			unsigned int id = ConfigFile::valueUInt(robot.attributeNode("id"));
+			QString revString = robot.attributeNode("rev").value();
+			RobotRev rev = rev2008; // use default value of 2008 robots
+			if (revString == "rev2010")
+				rev = rev2010;
+			else if (revString == "rev2008")
+				rev = rev2008;
 			
-			ConfigFile::Robot* r = new ConfigFile::Robot();
-			_robots[id] = r;
-			
+			shared_robot r(new ConfigFile::Robot());
+			r->rev = rev;
 			r->proc(robot);
-		}
 
+			// detect defaults
+			if (id == 2008) {
+				_defaultRobot2008 = r;
+			} else if (id == 2010) {
+				_defaultRobot2010 = r;
+			} else {
+				// treat as override otherwise
+				_robot_overrides[id] = r; // add to override list
+				_revisionLUT[id] = rev;   // remember revision
+			}
+		}
 		robot = robot.nextSiblingElement();
 	}
 }
@@ -154,7 +188,6 @@ void ConfigFile::Robot::proc(QDomElement element)
 }
 
 /// Motion
-
 void ConfigFile::Robot::Motion::proc(QDomElement element)
 {
 	QDomElement child = element.firstChildElement();
@@ -180,8 +213,6 @@ void ConfigFile::Robot::Motion::proc(QDomElement element)
 					deg45.proc(deg0E.firstChild().toElement());
 				}
 			}
-			
-			pos.proc(child.firstChildElement("pid"));
 		}
 		else if (name == "rotation")
 		{

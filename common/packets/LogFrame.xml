@@ -25,6 +25,13 @@
 		<!-- shell id, used for debug -->
 		<member type="uint8" name="shell" />
 
+		<!-- which robot model we are using - add new variations as necessary for other configs -->
+		<enum type="uint8" typename="Rev">
+			<constant name="rev2008"/>
+			<constant name="rev2010"/>
+		</enum>
+		<member type="Rev" name="rev" />
+
 		<!-- position of the robot -->
 		<member type="Point" name="pos" />
 

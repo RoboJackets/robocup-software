@@ -16,8 +16,6 @@
 	    	<motion>
 		        <!-- calibration based data -->
 		        <translation>
-		        	<pid type="pos" p="0" i="0" d="0" />
-		        
 			    	<deg value="0">
 						<dynamics velocity="2.21557003571" acceleration="5.14073707537" deceleration="1.92777640326375" />
 					</deg>
@@ -40,8 +38,6 @@
 	    	<motion>
 		        <!-- calibration based data -->
 		        <translation>
-		        	<pid type="pos" p="0" i="0" d="0" />
-		        
 			    	<deg value="0">
 						<dynamics velocity="2.21557003571" acceleration="5.14073707537" deceleration="1.92777640326375" />
 					</deg>
@@ -64,8 +60,6 @@
 	    	<motion>
 		        <!-- calibration based data -->
 		        <translation>
-		        	<pid type="pos" p="0" i="0" d="0" />
-		        
 			    	<deg value="0">
 						<dynamics velocity="2.21557003571" acceleration="5.14073707537" deceleration="1.561498886644" />
 					</deg>
@@ -88,8 +82,6 @@
 	    	<motion>
 		        <!-- calibration based data -->
 		        <translation>
-		        	<pid type="pos" p="0" i="0" d="0" />
-		        
 			    	<deg value="0">
 						<dynamics velocity="2.21557003571" acceleration="5.14073707537" deceleration="1.92777640326375" />
 					</deg>
@@ -112,8 +104,6 @@
 	    	<motion>
 		        <!-- calibration based data -->
 		        <translation>
-		        	<pid type="pos" p="0" i="0" d="0" />
-		        
 			    	<deg value="0">
 						<dynamics velocity="2.21557003571" acceleration="5.14073707537" deceleration="1.92777640326375" />
 					</deg>
@@ -136,7 +126,6 @@
 	    	<motion>
 		        <!-- calibration based data -->
 		        <translation>
-		        	<pid type="pos" p="0" i="0" d="0" />
 		        
 			    	<deg value="0">
 						<dynamics velocity="2.21557003571" acceleration="5.14073707537" deceleration="1.92777640326375" />

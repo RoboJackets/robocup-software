@@ -177,7 +177,7 @@ void Processor::run()
 				{
 					if (_state.self[r].valid)
 					{
-						ConfigFile::Robot* rcfg = _config.robot(_state.self[r].shell);
+						ConfigFile::shared_robot rcfg = _config.robot(_state.self[r].shell);
 						
 						if (rcfg)
 						{

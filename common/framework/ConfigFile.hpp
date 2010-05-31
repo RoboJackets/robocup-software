@@ -1,5 +1,7 @@
 #pragma once
 
+#include <boost/shared_ptr.hpp>
+
 #include <QString>
 #include <QDomDocument>
 #include <QVector>
@@ -13,7 +15,13 @@
 
 class ConfigFile
 {
-	public:				
+	public:
+		/** label revision of robot */
+		typedef enum {
+			rev2008 = 0,
+			rev2010 = 1
+		} RobotRev;
+
 		/** robot configuration */
 		class Robot
 		{
@@ -34,7 +42,7 @@ class ConfigFile
 								float d;
 								
 								void proc(QDomElement element);
-						};
+						}; // \class Pid
 						
 						class Dynamics
 						{
@@ -55,7 +63,7 @@ class ConfigFile
 								float deceleration;
 								
 								void proc(QDomElement element);
-						};
+						}; // \class Dynamics
 						
 						//dynamics information
 						//forward and 45 degree direction
@@ -63,11 +71,14 @@ class ConfigFile
 						Dynamics deg45;
 						Dynamics rotation;
 						
-						Pid pos;
+						// only using PID for angular control
 						Pid angle;
 						
+						// need coefficients for the output FIR filter
+						std::vector<float> output_coeffs;
+
 						void proc(QDomElement element);
-				};
+				}; // \class motion
 				
 				class Kicker
 				{
@@ -83,11 +94,13 @@ class ConfigFile
 						void proc(QDomElement element);
 				};
 				
+				RobotRev rev;
+
 				Motion motion;
 				Kicker kicker;
 				
 				void proc(QDomElement element);
-		};
+		}; // \class Robot
 		
 		class MotionModule
 		{
@@ -100,7 +113,7 @@ class ConfigFile
 						void proc(QDomElement element);
 						void procAxels(QDomElement element);
 				};
-				
+
 				void proc(QDomElement element);
 				
 				Robot robot;
@@ -134,6 +147,8 @@ class ConfigFile
 		};
 
 	public:
+		typedef boost::shared_ptr<ConfigFile::Robot> shared_robot;
+
 		ConfigFile(QString filename);
 		~ConfigFile();
 
@@ -143,10 +158,7 @@ class ConfigFile
 		//void setElement(QString tagString, int value);
 		//void setElement(QString tagString, double value);
 		
-		ConfigFile::Robot* robot(unsigned int id) const
-		{
-			return Utils::map_lookup(_robots, id);
-		}
+		shared_robot robot(unsigned int id) const;
 		
 		WorldModel worldModel;
 		MotionModule motionModule;
@@ -163,6 +175,12 @@ class ConfigFile
 		QString _filename;
 		QDomDocument _doc;
 		
-		//robot configurations
-		std::map<unsigned int, ConfigFile::Robot*> _robots;
-};
+		/**
+		 * robot configurations
+		 *  - we keep default configurations
+		 *  and the config file will include a lookup for robot type
+		 */
+		shared_robot _defaultRobot2008, _defaultRobot2010;
+		std::map<unsigned int, RobotRev> _revisionLUT;
+		std::map<unsigned int, shared_robot> _robot_overrides;
+}; // \class ConfigFile
