@@ -12,17 +12,11 @@ using namespace Motion;
 using namespace Packet;
 
 MotionModule::MotionModule(SystemState *state, const ConfigFile::MotionModule& cfg) :
-	Module("Motion"),
-	_config(cfg)
+	Module("Motion"), _guiInitialized(false), _config(cfg)
 {
 	_state = state;
 	_configWidget = new QWidget();
-	ui.setupUi(_configWidget);
-
-	//TODO initialize the spinners on the gui
-//	ui.ang_kd->setValue(cfg.robot);
-//	ui.ang_ki->setValue(ki_init);
-//	ui.ang_kp->setValue(kp_init);
+	_ui.setupUi(_configWidget);
 
 	//seems to be the only way to set the widgets parent to an object
 	((QObject*)_configWidget)->setParent((QObject*)this);
@@ -55,31 +49,31 @@ void MotionModule::fieldOverlay(QPainter& p, Packet::LogFrame& lf) const
 	for(unsigned int i=0; i<5; i++)
 	{
 		// draw the RRT: NOT IMPLEMENTED
-		if (ui.drawRRT->isChecked())
+		if (_ui.drawRRT->isChecked())
 		{
 			_robots[i]->drawRRT(p);
 		}
 
 		// draw the path: includes RRT
-		if (ui.drawPath->isChecked())
+		if (_ui.drawPath->isChecked())
 		{
 			_robots[i]->drawPath(p);
 		}
 
 		// draw the trajectory from bezier curves
-		if (ui.drawBezierTraj->isChecked())
+		if (_ui.drawBezierTraj->isChecked())
 		{
 			_robots[i]->drawBezierTraj(p);
 		}
 
 		// draw the control points from bezier curves
-		if (ui.drawBezierControl->isChecked())
+		if (_ui.drawBezierControl->isChecked())
 		{
 			_robots[i]->drawBezierControl(p);
 		}
 
 		// draw trajectory history
-		if (ui.drawHistory->isChecked())
+		if (_ui.drawHistory->isChecked())
 		{
 			_robots[i]->drawPoseHistory(p);
 		}
@@ -132,6 +126,14 @@ void MotionModule::mousePress(QMouseEvent* me, Geometry2d::Point pos)
 
 void MotionModule::run()
 {
+	// update the GUI indicators
+	if (_state->self[0].valid && !_guiInitialized) {
+		_guiInitialized = true;
+		_ui.ang_kp->setValue(_state->self[0].config.motion.angle.p);
+		_ui.ang_ki->setValue(_state->self[0].config.motion.angle.i);
+		_ui.ang_kd->setValue(_state->self[0].config.motion.angle.d);
+	}
+
 	BOOST_FOREACH(Robot* r, _robots)
     {
 		r->proc();

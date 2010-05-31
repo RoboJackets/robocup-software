@@ -38,7 +38,9 @@ namespace Motion
 			void on_ang_kd_valueChanged(double value);
 
 		private:
-			Ui::Motion ui;
+			Ui::Motion _ui;
+
+			bool _guiInitialized; /// flag to initialize the indicators on the GUI
 
 			SystemState *_state;
 			QWidget* _configWidget;
