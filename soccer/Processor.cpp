@@ -34,7 +34,7 @@ Processor::Processor(Team t, QString filename) :
 	_running(true),
 	_team(t),
 	_sender(Network::Address, Network::addTeamOffset(_team, Network::RadioTx)),
-	_config(filename)
+	_config(new ConfigFile(filename))
 {
 	_reverseId = 0;
 	
@@ -72,7 +72,7 @@ Processor::Processor(Team t, QString filename) :
 
 	try
 	{
-		_config.load();
+		_config->load();
 	}
 	catch (std::runtime_error& re)
 	{
@@ -80,11 +80,11 @@ Processor::Processor(Team t, QString filename) :
 	}
 
 	//setup the modules
-	_modelingModule = make_shared<Modeling::WorldModel>(&_state, _config.worldModel);
+	_modelingModule = make_shared<Modeling::WorldModel>(&_state, _config->worldModel);
 	_stateIDModule = make_shared<StateIdentification::StateIDModule>(&_state);
-	_motionModule = make_shared<Motion::MotionModule>(&_state, _config.motionModule);
+	_motionModule = make_shared<Motion::MotionModule>(&_state, _config->motionModule);
 	_refereeModule = make_shared<RefereeModule>(&_state);
-	_gameplayModule = make_shared<Gameplay::GameplayModule>(&_state, _config.motionModule);
+	_gameplayModule = make_shared<Gameplay::GameplayModule>(&_state, _config->motionModule);
 	_logModule = make_shared<Log::LogModule>(&_state);
 
 	_modules.append(_modelingModule);
@@ -177,7 +177,7 @@ void Processor::run()
 				{
 					if (_state.self[r].valid)
 					{
-						ConfigFile::shared_robot rcfg = _config.robot(_state.self[r].shell);
+						ConfigFile::shared_robot rcfg = _config->robot(_state.self[r].shell);
 						
 						if (rcfg)
 						{

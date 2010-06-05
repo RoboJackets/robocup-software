@@ -41,6 +41,10 @@ MainWindow::MainWindow(Team t, QString filename) :
 		}
 	}
 	
+	// Manually add tabs not connected with modules
+	_configFileTab = new ConfigFileTab(_processor.configFile());
+	ui.tabWidget->addTab(_configFileTab, tr("Configuration"));
+
 	QToolBar* processorBar = new QToolBar("Processor Bar");
 	processorBar->setVisible(false);
 	

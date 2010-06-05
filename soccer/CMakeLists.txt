@@ -35,6 +35,7 @@ set (SRCS
 	JoystickInput.cpp
 	RefereeModule.cpp
 	PlayConfigTab.cpp
+	ConfigFileTab.cpp
 
 # Sources for gameplay module
 
@@ -140,6 +141,7 @@ qt4_wrap_ui (UI_HDRS
 	ui/MainWindow.ui
 	ui/RefereeTab.ui
 	ui/PlayConfigTab.ui
+	ui/ConfigFileTab.ui
 	motion/ui/config.ui
 )
 

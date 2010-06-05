@@ -129,9 +129,22 @@ void MotionModule::run()
 	// update the GUI indicators
 	if (_state->self[0].valid && !_guiInitialized) {
 		_guiInitialized = true;
+
+		// PID indicators
 		_ui.ang_kp->setValue(_state->self[0].config.motion.angle.p);
 		_ui.ang_ki->setValue(_state->self[0].config.motion.angle.i);
 		_ui.ang_kd->setValue(_state->self[0].config.motion.angle.d);
+
+		// Coefficients
+//		vector<float> cur_coeffs = _state->self[0].config.motion.output_coeffs;
+//		_ui.coeffs->setRowCount(cur_coeffs.size());
+//		_ui.coeffs->setColumnCount(1);
+//		int row = 0;
+//		BOOST_FOREACH(float coeff, cur_coeffs) {
+//
+//			_ui.coeffs->setItem(row, 0, element);
+//		}
+
 	}
 
 	BOOST_FOREACH(Robot* r, _robots)

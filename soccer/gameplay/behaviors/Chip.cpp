@@ -26,4 +26,5 @@ bool Gameplay::Behaviors::Chip::run()
 
 float Gameplay::Behaviors::Chip::score(Robot* robot)
 {
+	return 0.0;
 }

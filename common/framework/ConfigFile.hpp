@@ -155,6 +155,11 @@ class ConfigFile
 		void load() throw(std::runtime_error);
 		void save(QString filename = QString("")) throw (std::runtime_error);
 		
+		QString filename() const
+		{
+			return _filename;
+		}
+
 		//void setElement(QString tagString, int value);
 		//void setElement(QString tagString, double value);
 		

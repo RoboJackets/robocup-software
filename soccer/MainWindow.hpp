@@ -16,6 +16,7 @@
 #include <log/TreeView.hpp>
 #include <log/TreeModel.hpp>
 
+#include "ConfigFileTab.hpp"
 #include "Processor.hpp"
 #include "ui_MainWindow.h"
 
@@ -47,6 +48,7 @@ class MainWindow : public QMainWindow
 	
 		Log::LogFile* _logFile;
 	
-		/** Currently the configfile is for motion but others can add to it **/
 		QString _configFile;
+
+		ConfigFileTab* _configFileTab;
 };

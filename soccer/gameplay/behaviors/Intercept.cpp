@@ -9,9 +9,9 @@ using namespace std;
 
 Gameplay::Behaviors::Intercept::Intercept(GameplayModule *gameplay, float dist) :
 	Behavior(gameplay, 1),
+	_state(ApproachFar),
 	_farDist(dist),
-	_ballControlFrames(5),
-	_state(ApproachFar)
+	_ballControlFrames(5)
 {
 }
 

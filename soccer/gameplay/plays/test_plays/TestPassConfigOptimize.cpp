@@ -27,8 +27,6 @@ bool Gameplay::Plays::TestPassConfigOptimize::applicable()
 
 bool Gameplay::Plays::TestPassConfigOptimize::run()
 {
-	bool verbose = true;
-
 	if (testState_ == INIT)
 	{
 		// get the plans

@@ -53,6 +53,11 @@ class Processor: public QThread
 			return _modules;
 		}
 		
+		boost::shared_ptr<ConfigFile> configFile()
+		{
+			return _config;
+		}
+
 	public Q_SLOTS:
 		void flip_field(bool flip);
 		
@@ -111,8 +116,7 @@ class Processor: public QThread
 		
 		Network::Sender _sender;
 		
-		/** Currently the configfile is for motion but others can add to it **/
-		ConfigFile _config;
+		boost::shared_ptr<ConfigFile> _config;
 		
 		/** list of all modules */
 		QVector<boost::shared_ptr<Module> > _modules;

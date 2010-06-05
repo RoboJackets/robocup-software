@@ -33,6 +33,7 @@ namespace Motion
 			virtual void mousePress(QMouseEvent* me, Geometry2d::Point pos);
 
 		public Q_SLOTS:
+			/** handle PID controls */
 			void on_ang_kp_valueChanged(double value);
 			void on_ang_ki_valueChanged(double value);
 			void on_ang_kd_valueChanged(double value);
