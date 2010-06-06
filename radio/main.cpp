@@ -30,7 +30,6 @@ Packet::RadioTx oppTxPacket;
 void usage(const char* prog)
 {
 	fprintf(stderr, "usage: %s [-n i] [-2010] <-y|-b>\n", prog);
-	fprintf(stderr, "\t-2010: run 2010 robots (does not apply to opponent team)\n");
 	fprintf(stderr, "\t-y: run as the yellow team\n");
 	fprintf(stderr, "\t-b: run as the blue team\n");
 	fprintf(stderr, "\t-n: use base station i (0 is the first base station detected by libusb)\n");
@@ -54,17 +53,13 @@ int main(int argc, char* argv[])
 {
 	bool debug_tx = false;
 	bool debug_rx = false;
-	bool model_2010 = false;
 	
 	int n = 0;
 	for (int i = 0; i < argc; ++i)
 	{
 		const char* var = argv[i];
 
-		if (strcmp(var, "-2010") == 0)
-		{
-			model_2010 = true;
-		} else if (strcmp(var, "-y") == 0)
+		if (strcmp(var, "-y") == 0)
 		{
 			team = Yellow;
 		}
@@ -213,14 +208,6 @@ int main(int argc, char* argv[])
 			{
 				kick_id = board_id;
 				kick_strength = kick;
-			}
-			
-			if (model_2010)
-			{
-				m0 = -m0;
-				m1 = -m1;
-				m2 = -m2;
-				m3 = -m3;
 			}
 			
 			forward_packet[offset++] = m0;
