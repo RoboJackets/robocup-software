@@ -33,14 +33,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QTableWidget" name="paramTable">
-        <property name="verticalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOn</enum>
-        </property>
-        <property name="horizontalScrollBarPolicy">
-         <enum>Qt::ScrollBarAlwaysOn</enum>
-        </property>
-       </widget>
+       <widget class="QTreeView" name="treeView"/>
       </item>
       <item>
        <widget class="QWidget" name="widget" native="true">

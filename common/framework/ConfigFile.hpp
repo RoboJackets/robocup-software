@@ -163,11 +163,16 @@ class ConfigFile
 		//void setElement(QString tagString, int value);
 		//void setElement(QString tagString, double value);
 		
+		/** gets the value for a particular robot and handles defaults */
 		shared_robot robot(unsigned int id) const;
 		
 		WorldModel worldModel;
 		MotionModule motionModule;
 		
+		/** Access for gui interface */
+		shared_robot defaultRobot2008() const { return _defaultRobot2008; }
+		shared_robot defaultRobot2010() const { return _defaultRobot2010; }
+
 	protected:
 		/** returns the value of the attribute */
 		static float valueFloat(QDomAttr attr);
