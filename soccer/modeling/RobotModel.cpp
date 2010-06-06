@@ -9,16 +9,16 @@
 
 using namespace std;
 
-//#define KALMAN
-
 Modeling::RobotModel::RobotModel(const ConfigFile::WorldModel& cfg, int s) :
-//	posA(6,6), posB(6,6), posP(6,6), posQ(6,6), posR(2,2), posH(2,6),
-//	posZ(2), posU(6), posE(6), posX0(6), angA(3,3), angB(3,3), angP(3,3),
-//	angQ(3,3), angR(1,1), angH(1,3), angZ(1), angU(3), angE(3), angX0(3),
+#ifdef KALMANMODEL
+	posA(6,6), posB(6,6), posP(6,6), posQ(6,6), posR(2,2), posH(2,6),
+	posZ(2), posU(6), posE(6), posX0(6), angA(3,3), angB(3,3), angP(3,3),
+	angQ(3,3), angR(1,1), angH(1,3), angZ(1), angU(3), angE(3), angX0(3),
+#endif
 	_shell(s), _angle(0), _angleVel(0), _angleAccel(0), _config(cfg), _haveBall(false)
 
 {
-#ifdef KALMAN
+#ifdef KALMANMODEL
 
 	/** Position **/
 	posA.zero();
@@ -31,18 +31,18 @@ Modeling::RobotModel::RobotModel(const ConfigFile::WorldModel& cfg, int s) :
 	posU.zero();
 
 	//Alpha-Beta-Gamma Filter
-	posAlpha = _config.pos.alpha;
-	posBeta = _config.pos.beta;
-	posGamma = _config.pos.gamma;
+//	posAlpha = _config.pos.alpha;
+//	posBeta = _config.pos.beta;
+//	posGamma = _config.pos.gamma;
 
 	//Process covariance between position and velocity (E[x,x_dot])
-// 	posQ(1,0) = posQ(4,3) = 10;
+ 	posQ(1,0) = posQ(4,3) = 10;
 
 	//Process covariance between velocity and acceleration (E[x)dot,x_ddot])
-// 	posQ(2,1) = posQ(5,4) = 0.01;
+ 	posQ(2,1) = posQ(5,4) = 0.01;
 
 	//Process covariance between position and acceleration (E[x,x_ddot])
-// 	posQ(2,0) = posQ(5,3) = 0.001;
+ 	posQ(2,0) = posQ(5,3) = 0.001;
 
 	//Process covariance (E[x,x], E[x_dot,x_dot], etc)
 	posQ(0,0) = posQ(3,3) = 10;
@@ -66,7 +66,7 @@ Modeling::RobotModel::RobotModel(const ConfigFile::WorldModel& cfg, int s) :
 	//State Model
 	posA(0,0) = posA(1,1) = posA(2,2) = posA(3,3) = posA(4,4) = posA(5,5) = 1;
 
-	posKalman = new DifferenceKalmanFilter(&posA, &posB, &posX0, &posP, &posQ, &posR, &posH);
+	_posKalman = new DifferenceKalmanFilter(&posA, &posB, &posX0, &posP, &posQ, &posR, &posH);
 
 	/** Angle **/
 	angA.zero();
@@ -79,9 +79,9 @@ Modeling::RobotModel::RobotModel(const ConfigFile::WorldModel& cfg, int s) :
 	angU.zero();
 
 	//Angle ABG Stuff
-	angleAlpha = _config.angle.alpha;
-	angleBeta = _config.angle.beta;
-	angleGamma = _config.angle.gamma;
+//	angleAlpha = _config.angle.alpha;
+//	angleBeta = _config.angle.beta;
+//	angleGamma = _config.angle.gamma;
 
 	//Process covariance between position and velocity (E[x,x_dot])
 // 	angQ(1,0) = 10;
@@ -111,8 +111,8 @@ Modeling::RobotModel::RobotModel(const ConfigFile::WorldModel& cfg, int s) :
 	//State Model
 	angA(0,0) = angA(1,1) = angA(2,2) = 1;
 
-	angKalman = new DifferenceKalmanFilter(&angA, &angB, &angX0, &angP, &angQ, &angR, &angH);
-# else
+	_angKalman = new DifferenceKalmanFilter(&angA, &angB, &angX0, &angP, &angQ, &angR, &angH);
+#else
 	//Alpha-Beta-Gamma Filter
 	_posAlpha = _config.pos.alpha;
 	_posBeta = _config.pos.beta;
@@ -127,13 +127,20 @@ Modeling::RobotModel::RobotModel(const ConfigFile::WorldModel& cfg, int s) :
 }
 
 bool Modeling::RobotModel::valid(uint64_t cur_time) const {
-	return !_observations.empty() || (cur_time - lastObservedTime) > MaxRobotCoastTime;
+	return !_observations.empty() || (cur_time - lastObservedTime) < MaxRobotCoastTime;
 }
 
 void Modeling::RobotModel::observation(uint64_t time, Geometry2d::Point pos, float angle)
 {
-	Observation_t obs = {pos, angle, time};
-	_observations.push_back(obs);
+	// ignore obserations at exactly (0,0)
+	if(!(pos.x==0.0f && pos.y==0.0f)){
+		Observation_t obs = {pos, angle, time};
+		_observations.push_back(obs);
+	}
+
+	// set lastObser_posAlphavedTime to the last observation's time
+	if (time > lastObservedTime)
+		lastObservedTime = time;
 }
 
 Geometry2d::Point Modeling::RobotModel::predictPosAtTime(float dtime)
@@ -145,7 +152,7 @@ void Modeling::RobotModel::update(uint64_t cur_time)
 {
 	// create time differential between this frame and the last
 	float dtime = (float)(cur_time - lastObservedTime) / 1e6;
-	lastObservedTime = cur_time;
+	//lastObservedTime = cur_time;
 
 	// prediction step from previous frame
 	Geometry2d::Point predictPos = predictPosAtTime(dtime);
@@ -164,7 +171,7 @@ void Modeling::RobotModel::update(uint64_t cur_time)
 	}
 
 	// sort the observations to find the lowest error (cheap method)
-	// Alternative: average them
+	// Alternative: average themangKalman = new DifferenceKalmanFilter(&angA, &angB, &angX0, &angP, &angQ, &angR, &angH);
 	Geometry2d::Point observedPos = _observations.front().pos;
 	float observedAngle = _observations.front().angle;
 	float bestError = std::numeric_limits<float>::infinity();
@@ -181,7 +188,7 @@ void Modeling::RobotModel::update(uint64_t cur_time)
 	// Perform filter updates
 	if (dtime)
 	{
-	#ifndef KALMAN
+	#ifndef KALMANMODEL
 
 		// determine error using observations
 		Geometry2d::Point posError = observedPos - predictPos;
@@ -210,17 +217,17 @@ void Modeling::RobotModel::update(uint64_t cur_time)
 		//Position
 		posZ(0) = observedPos.x;
 		posZ(1) = observedPos.y;
-		RobotModel::shared &robot = p.second;
+		//RobotModel::shared &robot = p.second;
 
-		posKalman->predict(&posU);
-		posKalman->correct(&posZ);
+		_posKalman->predict(&posU);
+		_posKalman->correct(&posZ);
 
-		_pos.x = (float)posKalman->state()->elt(0);
-		_vel.x = (float)posKalman->state()->elt(1);
-		_accel.x = (float)posKalman->state()->elt(2);
-		_pos.y = (float)posKalman->state()->elt(3);
-		_vel.y = (float)posKalman->state()->elt(4);
-		_accel.y = (float)posKalman->state()->elt(5);
+		_pos.x = (float)_posKalman->state()->elt(0);
+		_vel.x = (float)_posKalman->state()->elt(1);
+		_accel.x = (float)_posKalman->state()->elt(2);
+		_pos.y = (float)_posKalman->state()->elt(3);
+		_vel.y = (float)_posKalman->state()->elt(4);
+		_accel.y = (float)_posKalman->state()->elt(5);
 
 		//Using the ABG filter for independent velocity and acceleration
 // 		Geometry2d::Point predictPos = abgPos + vel * dtime + accel * 0.5f * dtime * dtime;
@@ -244,12 +251,12 @@ void Modeling::RobotModel::update(uint64_t cur_time)
 		//Position
 		angZ(0) = observedAngle;
 
-		angKalman->predict(&angU);
-		angKalman->correct(&angZ);
+		_angKalman->predict(&angU);
+		_angKalman->correct(&angZ);
 
-		_angle = (float)angKalman->state()->elt(0);
-		_angleVel = (float)angKalman->state()->elt(1);
-		_angleAccel = (float)angKalman->state()->elt(2);
+		_angle = (float)_angKalman->state()->elt(0);
+		_angleVel = (float)_angKalman->state()->elt(1);
+		_angleAccel = (float)_angKalman->state()->elt(2);
 
 	#endif
 	}

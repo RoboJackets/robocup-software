@@ -7,9 +7,11 @@
 #include <boost/shared_ptr.hpp>
 #include <Geometry2d/Point.hpp>
 #include <framework/ConfigFile.hpp>
-//#include <cblas.h>
-//#include "BLASWrap/blaswrap.h"
-//#include "difference_kalman.hpp"
+#include <cblas.h>
+#include "BLASWrap/blaswrap.h"
+#include "difference_kalman.hpp"
+
+#define KALMANMODEL
 
 namespace Modeling
 {
@@ -80,52 +82,54 @@ namespace Modeling
 			// Data from RadioRx
 			bool _haveBall;
 
-//			//Difference Kalman Filter
-//			DifferenceKalmanFilter *_posKalman;
-//			DifferenceKalmanFilter *_angKalman;
-//
-//			/** Position **/
-//			//State Transistion Matrix
-//			DMatrix posA;
-//			//Input Transistion Matrix
-//			DMatrix posB;
-//			//Initial Covariance Matrix
-//			DMatrix posP;
-//			//Process Covariance Matrix
-//			DMatrix posQ;
-//			//Measurement Covariance Matrix
-//			DMatrix posR;
-//			//Measurement Model
-//			DMatrix posH;
-//			//Measurement
-//			DVector posZ;
-//			//Input
-//			DVector posU;
-//			//Error
-//			DVector posE;
-//			//Initial Condition
-//			DVector posX0;
-//
-//			/** Angle **/
-//			//State Transistion Matrix
-//			DMatrix angA;
-//			//Input Transistion Matrix
-//			DMatrix angB;
-//			//Initial Covariance Matrix
-//			DMatrix angP;
-//			//Process Covariance Matrix
-//			DMatrix angQ;
-//			//Measurement Covariance Matrix
-//			DMatrix angR;
-//			//Measurement Model
-//			DMatrix angH;
-//			//Measurement
-//			DVector angZ;
-//			//Input
-//			DVector angU;
-//			//Error
-//			DVector angE;
-//			//Initial Condition
-//			DVector angX0;
+#ifdef KALMANMODEL
+			//Difference Kalman Filter
+			DifferenceKalmanFilter *_posKalman;
+			DifferenceKalmanFilter *_angKalman;
+
+			/** Position **/
+			//State Transistion Matrix
+			DMatrix posA;
+			//Input Transistion Matrix
+			DMatrix posB;
+			//Initial Covariance Matrix
+			DMatrix posP;
+			//Process Covariance Matrix
+			DMatrix posQ;
+			//Measurement Covariance Matrix
+			DMatrix posR;
+			//Measurement Model
+			DMatrix posH;
+			//Measurement
+			DVector posZ;
+			//Input
+			DVector posU;
+			//Error
+			DVector posE;
+			//Initial Condition
+			DVector posX0;
+
+			/** Angle **/
+			//State Transistion Matrix
+			DMatrix angA;
+			//Input Transistion Matrix
+			DMatrix angB;
+			//Initial Covariance Matrix
+			DMatrix angP;
+			//Process Covariance Matrix
+			DMatrix angQ;
+			//Measurement Covariance Matrix
+			DMatrix angR;
+			//Measurement Model
+			DMatrix angH;
+			//Measurement
+			DVector angZ;
+			//Input
+			DVector angU;
+			//Error
+			DVector angE;
+			//Initial Condition
+			DVector angX0;
+#endif
 	};
 }

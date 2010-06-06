@@ -102,8 +102,11 @@ Geometry2d::Point Modeling::BallModel::predictPosAtTime(float dtime)
 
 void Modeling::BallModel::observation(uint64_t time, const Geometry2d::Point &pos, observation_mode obs_type)
 {
-	observation_type obs = {time, pos, obs_type};
-	_observations.push_back(obs);
+	// ignore obserations at exactly (0,0)
+	if(!(pos.x==0.0f && pos.y==0.0f)){
+		observation_type obs = {time, pos, obs_type};
+		_observations.push_back(obs);
+	}
 
 	// set lastObservedTime to the last observation's time
 	if (time > lastObservedTime)
