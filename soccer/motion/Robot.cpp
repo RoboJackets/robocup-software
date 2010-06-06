@@ -866,6 +866,7 @@ void Robot::genMotor() {
 	// 2) convert to percentage of maximum
 	// 3) saturate the percentages
 	// 4) apply to wheels
+	// 5) flip direction for 2010 robots
 
 	// angular velocity
 	float w =  _w;
@@ -926,7 +927,11 @@ void Robot::genMotor() {
 	BOOST_FOREACH(const float& vel, wheelVels) {
 		if (verbose) cout << " " << vel;
 		int8_t cmdVel = (int8_t) saturate(127.0*vel, 126.0, -127.0);
-		_self->radioTx.motors[i++] = cmdVel;
+		if (_self->rev == Packet::LogFrame::Robot::rev2008) {
+			_self->radioTx.motors[i++] = cmdVel;
+		} else if (_self->rev == Packet::LogFrame::Robot::rev2010) {
+			_self->radioTx.motors[i++] = -cmdVel;
+		}
 	}
 	if (verbose) cout << endl;
 }
