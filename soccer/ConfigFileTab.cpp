@@ -5,7 +5,7 @@
 
 ///////// Item
 
-ConfigFileItem::ConfigFileItem(const QList<QVariant> &data, ConfigFileItem *parent)
+ConfigFileItem::ConfigFileItem(const QVector<QVariant> &data, ConfigFileItem *parent)
 : _itemData(data), _parentItem(parent)
 {
 }
@@ -13,7 +13,7 @@ ConfigFileItem::ConfigFileItem(const QList<QVariant> &data, ConfigFileItem *pare
 ConfigFileItem::ConfigFileItem(const QString& label, ConfigFileItem *parent)
 : _parentItem(parent)
 {
-	_itemData << label << "  ";
+	_itemData << label << QVariant();
 }
 
 ConfigFileItem::ConfigFileItem(const QString& label, const float& value,
@@ -66,6 +66,75 @@ int ConfigFileItem::row() const
 	return 0;
 }
 
+int ConfigFileItem::childNumber() const
+{
+	if (_parentItem)
+		return _parentItem->_childItems.indexOf(const_cast<ConfigFileItem*>(this));
+
+	return 0;
+}
+
+bool ConfigFileItem::insertChildren(int position, int count, int columns)
+{
+	if (position < 0 || position > _childItems.size())
+		return false;
+
+	for (int row = 0; row < count; ++row) {
+		QVector<QVariant> data(columns);
+		ConfigFileItem *item = new ConfigFileItem(data, this);
+		_childItems.insert(position, item);
+	}
+
+	return true;
+}
+
+bool ConfigFileItem::insertColumns(int position, int columns)
+{
+	if (position < 0 || position > _itemData.size())
+		return false;
+
+	for (int column = 0; column < columns; ++column)
+		_itemData.insert(position, QVariant());
+
+	BOOST_FOREACH(ConfigFileItem *child, _childItems)
+		child->insertColumns(position, columns);
+
+	return true;
+}
+
+bool ConfigFileItem::removeChildren(int position, int count)
+{
+	if (position < 0 || position + count > _childItems.size())
+		return false;
+
+	for (int row = 0; row < count; ++row)
+		delete _childItems.takeAt(position);
+
+	return true;
+}
+
+bool ConfigFileItem::removeColumns(int position, int columns)
+{
+	if (position < 0 || position + columns > _itemData.size())
+		return false;
+
+	for (int column = 0; column < columns; ++column)
+		_itemData.remove(position);
+
+	BOOST_FOREACH (ConfigFileItem *child, _childItems)
+		child->removeColumns(position, columns);
+
+	return true;
+}
+
+bool ConfigFileItem::setData(int column, const QVariant &value)
+{
+	if (column < 0 || column >= _itemData.size())
+		return false;
+
+	_itemData[column] = value;
+	return true;
+}
 
 ////////////// Model
 
@@ -73,7 +142,7 @@ ConfigFileModel::ConfigFileModel(boost::shared_ptr<ConfigFile> config, QObject *
 {
 	_default2008 = config->defaultRobot2008();
 	_default2010 = config->defaultRobot2010();
-	QList<QVariant> rootData;
+	QVector<QVariant> rootData;
 	rootData << "Parameter" << "Value";
 	_root = new ConfigFileItem(rootData);
 	setupModelData();

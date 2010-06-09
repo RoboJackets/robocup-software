@@ -14,7 +14,7 @@
  {
  public:
 	 // general constructor
-	 ConfigFileItem(const QList<QVariant> &data, ConfigFileItem *parent = 0);
+	 ConfigFileItem(const QVector<QVariant> &data, ConfigFileItem *parent = 0);
 
 	 // one and two element constructors
 	 ConfigFileItem(const QString& label, ConfigFileItem *parent = 0);
@@ -31,9 +31,17 @@
      int row() const;
      ConfigFileItem *parent();
 
+     bool insertChildren(int position, int count, int columns);
+     bool insertColumns(int position, int columns);
+     bool removeChildren(int position, int count);
+     bool removeColumns(int position, int columns);
+     int childNumber() const;
+     bool setData(int column, const QVariant &value);
+
+
  private:
      QList<ConfigFileItem*> _childItems;
-     QList<QVariant> _itemData;
+     QVector<QVariant> _itemData;
      ConfigFileItem * _parentItem;
  };
 
