@@ -51,7 +51,7 @@ void printPt(const Geometry2d::Point& pt, const string& s="") {
 	cout << s << ": (" << pt.x << ", " << pt.y << ")" << endl;
 }
 
-/** Constant for timestamp to seconds? */
+/** Constant for timestamp to seconds */
 const float intTimeStampToFloat = 1000000.0f;
 
 Robot::Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id) :

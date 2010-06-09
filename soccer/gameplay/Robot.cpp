@@ -3,6 +3,9 @@
 
 using namespace Geometry2d;
 
+/** Constant for timestamp to seconds */
+const float intTimeStampToFloat = 1000000.0f;
+
 Gameplay::Robot::Robot(GameplayModule *gameplay, int id, bool self)
 {
 	_gameplay = gameplay;
@@ -172,6 +175,15 @@ void Gameplay::Robot::setVScale(float scale) {
 	packet()->cmd.vScale = scale;
 }
 
+float Gameplay::Robot::kickTimer() const {
+	return (charged()) ? 0.0 : intTimeStampToFloat * (float) (_gameplay->state()->timestamp - _lastChargedTime);
+}
+
+void Gameplay::Robot::update() {
+	if (charged())
+		_lastChargedTime = _gameplay->state()->timestamp;
+}
+
 
 void Gameplay::Robot::spin(Packet::MotionCmd::SpinType dir)
 {
@@ -193,6 +205,10 @@ Packet::LogFrame::Robot::Rev Gameplay::Robot::rev() const
 	case ConfigFile::rev2010:
 		return Packet::LogFrame::Robot::rev2010;
 	}
+}
+
+bool Gameplay::Robot::hasChipper() const {
+	return _packet->config.rev == ConfigFile::rev2010;
 }
 
 void Gameplay::Robot::dribble(int8_t speed)

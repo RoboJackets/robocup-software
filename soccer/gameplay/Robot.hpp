@@ -26,12 +26,21 @@ namespace Gameplay
 			Packet::LogFrame::Robot *packet() const;
 
 			// Status indicators
-			bool charged() const; /// true if the kicker is ready
 			bool self() const;    /// true if this is one of our robots
 			bool visible() const; /// true if robot is valid - FIXME: needs better check
 			int id() const;       /// shell number of robot
 			bool haveBall() const; /// true if we have the ball
 			Packet::LogFrame::Robot::Rev rev() const; /// the revision for the robot, use for capability checks
+			bool hasChipper() const; /// true if robot can chip
+
+			// kicker readiness checks
+			bool charged() const; /// true if the kicker is ready
+			float kickTimer() const; /// returns the time since the kicker was last charged, 0.0 if ready
+
+			/**
+			 * state variable updates - includes timers, etc.  Called each frame
+			 */
+			void update();
 
 			// Geometry helper functions
 			const Geometry2d::Point &pos() const;  /// Position
@@ -155,5 +164,6 @@ namespace Gameplay
 			bool _self;
 			Packet::LogFrame::Robot *_packet;
 			std::vector<Packet::LogFrame::Robot::Pose> _poseHistory;
+			uint64_t _lastChargedTime;
 	};
 }

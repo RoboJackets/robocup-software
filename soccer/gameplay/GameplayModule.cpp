@@ -210,6 +210,13 @@ void Gameplay::GameplayModule::run()
 	bool verbose = false;
 	if (verbose) cout << "Starting GameplayModule::run()" << endl;
 
+	// perform state variable updates on robots
+	BOOST_FOREACH(Robot* robot, self) {
+		if (robot) {
+			robot->update();
+		}
+	}
+
 	_state->debugLines.clear();
 	_state->debugPolygons.clear();
 	_state->debugCircles.clear();
