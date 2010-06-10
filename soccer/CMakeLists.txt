@@ -35,7 +35,11 @@ set (SRCS
 	JoystickInput.cpp
 	RefereeModule.cpp
 	PlayConfigTab.cpp
-	ConfigFileTab.cpp
+	
+	# config file tab components
+	configuration/ConfigFileTab.cpp
+	configuration/ConfigFileModel.cpp
+	configuration/ConfigFileItem.cpp
 
 # Sources for gameplay module
 

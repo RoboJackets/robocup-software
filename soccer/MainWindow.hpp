@@ -16,7 +16,8 @@
 #include <log/TreeView.hpp>
 #include <log/TreeModel.hpp>
 
-#include "ConfigFileTab.hpp"
+#include <configuration/ConfigFileTab.hpp>
+
 #include "Processor.hpp"
 #include "ui_MainWindow.h"
 
