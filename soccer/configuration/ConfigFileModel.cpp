@@ -4,7 +4,10 @@
 #include <configuration/ConfigFileModel.hpp>
 #include <ConfigFileModel.moc>
 
+#include <iostream>
 #include <boost/foreach.hpp>
+
+using namespace std;
 
 ConfigFileModel::ConfigFileModel(boost::shared_ptr<ConfigFile> config, QObject *parent)
  : QAbstractItemModel(parent),
@@ -147,7 +150,7 @@ void ConfigFileModel::setupRobotData(ConfigFileItem* robotRoot, ConfigFile::shar
 	ConfigFileItem * coeffs = addLabel(QString("Output FIR Coeffs"), robotRoot);
 	size_t idx = 0;
 	BOOST_FOREACH(float coeff, config->motion.output_coeffs) {
-		addParam(QString("A%1").arg(idx++), coeff, coeffs);
+		addParam(QString("%1").arg(idx++), coeff, coeffs);
 	}
 
 }
@@ -229,10 +232,13 @@ bool ConfigFileModel::setData(const QModelIndex &index, const QVariant &value,
 	if (role != Qt::EditRole)
 		return false;
 
-	// TODO: check that this is a value that makes sense
-
 	ConfigFileItem *item = getItem(index);
 	bool result = item->setData(index.column(), value);
+
+	// change the value in the underlying structure
+	if (result) {
+		changeParam(index, value.toFloat());
+	}
 
 //	if (result)
 //		emit dataChanged(index, index);  // FIXME: need to make these?
@@ -252,4 +258,63 @@ bool ConfigFileModel::setHeaderData(int section, Qt::Orientation orientation,
 //		emit headerDataChanged(orientation, section, section); // FIXME: need to make these?
 
 	return result;
+}
+
+void ConfigFileModel::changeParam(const QModelIndex &index, float value) {
+	bool verbose = true;
+
+	ConfigFileItem* param = getItem(index);
+	QString paramLabel = param->getLabel();
+	QString groupLabel = param->parent()->getLabel();
+	QString robotLabel = param->parent()->parent()->getLabel();
+
+	// determine the robot
+	ConfigFile::shared_robot cur_robot;
+	if (robotLabel.contains(QString("2008"))) {
+		cur_robot = _default2008;
+		if (verbose) cout << "changeParam: changing default2008" << endl;
+	} else if (robotLabel.contains(QString("2010"))) {
+		cur_robot = _default2010;
+		if (verbose) cout << "changeParam: changing default2010" << endl;
+	}
+
+	// handle individual components
+	if (groupLabel.contains(tr("PID"))) {
+		if (paramLabel.contains(tr("P")))
+			cur_robot->motion.angle.p = value;
+		else if (paramLabel.contains(tr("I")))
+			cur_robot->motion.angle.i = value;
+		else if (paramLabel.contains(tr("D")))
+			cur_robot->motion.angle.d = value;
+		else
+			cout << "IN PID: did not get correct paramLabel!" << endl;
+	}
+	else if (groupLabel.contains(tr("Dynamics"))) {
+		ConfigFile::Robot::Motion::Dynamics * cur_dyn = 0;
+		if (groupLabel.contains(tr("0 Degrees")))
+			cur_dyn = &(cur_robot->motion.deg0);
+		else if (groupLabel.contains(tr("45 Degrees")))
+			cur_dyn = &(cur_robot->motion.deg45);
+		else if (groupLabel.contains(tr("rotation")))
+			cur_dyn = &(cur_robot->motion.rotation);
+		else
+			cout << "IN DYNAMICS: did not get correct group Label!" << endl;
+
+		if (paramLabel.contains(tr("Acceleration")))
+			cur_dyn->acceleration = value;
+		else if (paramLabel.contains(tr("Velocity")))
+			cur_dyn->velocity = value;
+		else if (paramLabel.contains(tr("Deceleration")))
+			cur_dyn->deceleration = value;
+	}
+	else if (groupLabel.contains(tr("Output"))) {
+		bool val_good;
+		size_t idx = paramLabel.toUInt(&val_good);
+		if (!val_good)
+			cout << "IN changeParam: bad index for paramLabel in coeffs!" << endl;
+		cur_robot->motion.output_coeffs[idx] = value;
+	} else {
+		cout << "IN changeParam: Did not get a valid groupLabel!" << endl;
+	}
+
 }

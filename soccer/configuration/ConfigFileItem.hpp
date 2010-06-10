@@ -43,6 +43,14 @@ public:
 		return _type;
 	}
 
+	QString getLabel() const {
+		return _itemData[0].toString();
+	}
+
+	float getValue() const {
+		return _itemData[1].toFloat();
+	}
+
 private:
 	ItemType _type;
 

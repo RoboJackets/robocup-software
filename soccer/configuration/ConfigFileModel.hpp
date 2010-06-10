@@ -46,6 +46,7 @@ private:
 	void setupModelData();
 	void setupRobotData(ConfigFileItem* robotRoot, ConfigFile::shared_robot config);
 	void setupDynData(ConfigFileItem* parent, const ConfigFile::Robot::Motion::Dynamics& model);
+	void changeParam(const QModelIndex &index, float value);
 
 	// convenience functions for adding params and labels
 	ConfigFileItem * addLabel(const QString& label, ConfigFileItem * parent);
