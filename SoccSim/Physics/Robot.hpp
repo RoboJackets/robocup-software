@@ -50,6 +50,10 @@ class Robot : public Entity
         
         Rev _rev;
 
+        /** kicker charge status */
+        uint64_t _lastKicked;
+        const static uint64_t RechargeTime = 6000000; // six seconds
+
         /** center of roller from ground */
         const static float RollerHeight = .03;
         /** center of roller from center of robot */

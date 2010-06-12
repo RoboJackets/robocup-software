@@ -22,7 +22,7 @@ Geometry2d::Point toPoint(const NxVec3 &v)
 }
 
 Robot::Robot(Env* env, unsigned int id,  Robot::Rev rev) :
-	Entity(env), shell(id), _rev(rev)
+	Entity(env), shell(id), _rev(rev), _lastKicked(0)
 {
     _kickerJoint = 0;
     _rollerJoint = 0;
@@ -447,15 +447,17 @@ void Robot::radioTx(const Packet::RadioTx::Robot& data)
      * max speeds guessed with science
      */
 
-    // FIXME: make these parameters some place else
-    float maxKickSpeed = 5.0f, // m/s direct kicking speed
-    	  maxChipSpeed = 3.0f; // m/s chip kicking at the upwards angle
-//    	  chipAngle = 20.0f;   // angle (degrees) of upwards chip
-    if (data.kick)
+    if (data.kick && Utils::timestamp() - _lastKicked > RechargeTime)
     {
+    	// FIXME: make these parameters some place else
+    	float maxKickSpeed = 5.0f, // m/s direct kicking speed
+    		  maxChipSpeed = 3.0f, // m/s chip kicking at the upwards angle
+    		  chipAngle = 20.0f;   // angle (degrees) of upwards chip
+
     	// determine the kick speed
     	float kickSpeed;
-    	if (data.useChipper)
+    	bool chip = data.useChipper && _rev == rev2010;
+    	if (chip)
     		kickSpeed = data.kick / 255.0f * maxChipSpeed;
     	else
     		kickSpeed = data.kick / 255.0f * maxKickSpeed;
@@ -472,7 +474,13 @@ void Robot::radioTx(const Packet::RadioTx::Robot& data)
 
         // construct a velocity to apply FIXME: add a switch here
         Geometry2d::Point pos = getPosition();
-        NxVec3 kickVel = _actor->getGlobalOrientation().getColumn(0) * kickSpeed;
+        NxVec3 kickVel = _actor->getGlobalOrientation().getColumn(0);
+        if (chip) {
+        	kickVel.setz(cos(chipAngle));
+        	kickVel.normalize();
+        }
+
+        kickVel *= kickSpeed;
         BOOST_FOREACH(Ball *ball, _env->balls())
         {
             Geometry2d::Point ballPos = ball->getPosition();
@@ -488,8 +496,13 @@ void Robot::radioTx(const Packet::RadioTx::Robot& data)
 
             if (near && cmin.z > 0 && cmax.z > 0)
             {
-//                printf("kick %p by %f: %f, %f, %f\n", ball, kickSpeed, kickVel.x, kickVel.y, kickVel.z);
+            	if (chip)
+            		printf("Robot %d chip %p by %f: %f, %f, %f\n", shell, ball, kickSpeed, kickVel.x, kickVel.y, kickVel.z);
+            	else
+            		printf("Robot %d kick %p by %f: %f, %f, %f\n", shell, ball, kickSpeed, kickVel.x, kickVel.y, kickVel.z);
+
                 ball->actor()->addForce(kickVel, NX_VELOCITY_CHANGE);
+                _lastKicked = Utils::timestamp();
             }
         }
     }
@@ -503,7 +516,7 @@ Packet::RadioRx Robot::radioRx() const
 	packet.timestamp = Utils::timestamp();
 	packet.battery = 1.0f;
 	packet.rssi = 1.0f;
-	packet.charged = true;
+	packet.charged = Utils::timestamp() - _lastKicked > RechargeTime;
 	
 	Geometry2d::Point pos = getPosition();
 	

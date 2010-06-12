@@ -3,6 +3,7 @@
 #include <NxPhysics.h>
 
 #include <QVector>
+#include <QMap>
 #include <QTimer>
 #include <QMutex>
 #include <Team.h>
@@ -79,8 +80,8 @@ class Env : public QObject
 		Field* _field;
 		
 		mutable QMutex _entitiesMutex;
-		QVector<Robot*> _blue;
-		QVector<Robot*> _yellow;
+		QMap<unsigned int, Robot*> _blue;
+		QMap<unsigned int, Robot*> _yellow;
 		QVector<Ball*> _balls;
 		
 		QTimer _step;

@@ -160,11 +160,11 @@ void Env::addRobot(Team t, int id, Geometry2d::Point pos, Robot::Rev rev)
 
     if (t == Blue)
     {
-    	_blue.append(r);
+    	_blue.insert(id, r);
     }
     else
     {
-    	_yellow.append(r);
+    	_yellow.insert(id, r);
     }
 
     switch (rev) {
@@ -304,9 +304,9 @@ Packet::RadioRx Env::radioRx(Team t)
 
 Robot *Env::robot(Team t, int board_id) const
 {
-	const QVector<Robot*> &robots = (t == Blue) ? _blue : _yellow;
+	const QMap<unsigned int, Robot*> &robots = (t == Blue) ? _blue : _yellow;
 	
-	if (board_id < robots.size() && board_id >= 0)
+	if (robots.contains(board_id))
 	{
 		return robots[board_id];
 	} else {
