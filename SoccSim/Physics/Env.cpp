@@ -144,7 +144,7 @@ void Env::addBall(Geometry2d::Point pos)
     printf("New Ball: %f %f\n", pos.x, pos.y);
 }
 
-void Env::addRobot(Team t, int id, Geometry2d::Point pos)
+void Env::addRobot(Team t, int id, Geometry2d::Point pos, Robot::Rev rev)
 {
 	if (t == UnknownTeam)
 	{
@@ -155,7 +155,7 @@ void Env::addRobot(Team t, int id, Geometry2d::Point pos)
 	QMutexLocker ml1(&_sceneMutex);
 	QMutexLocker ml2(&_entitiesMutex);
 
-    Robot* r = new Robot(this);
+    Robot* r = new Robot(this, rev);
     r->position(pos.x, pos.y);
 
     if (t == Blue)
@@ -167,7 +167,14 @@ void Env::addRobot(Team t, int id, Geometry2d::Point pos)
     	_yellow.append(r);
     }
 
-    printf("New Robot: %d : %f %f\n", id, pos.x, pos.y);
+    switch (rev) {
+    case Robot::rev2008:
+    	printf("New 2008 Robot: %d : %f %f\n", id, pos.x, pos.y);
+    	break;
+    case Robot::rev2010:
+    	printf("New 2010 Robot: %d : %f %f\n", id, pos.x, pos.y);
+    }
+
 }
 
 Packet::Vision Env::vision()

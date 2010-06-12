@@ -8,7 +8,12 @@
 class Robot : public Entity
 {
     public:
-        Robot(Env* env);
+		typedef enum {
+			rev2010,
+			rev2008
+		} Rev;
+
+        Robot(Env* env, Robot::Rev rev);
         ~Robot();
         
         /** @return the world angle */
@@ -40,6 +45,8 @@ class Robot : public Entity
         NxRevoluteJoint* _motors[4];
         NxD6Joint* _kickerJoint;
         
+        Rev _rev;
+
         /** center of roller from ground */
         const static float RollerHeight = .03;
         /** center of roller from center of robot */

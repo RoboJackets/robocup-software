@@ -38,7 +38,7 @@ class Env : public QObject
 		void addBall(Geometry2d::Point pos);
 		
 		/** add a robot with id i to the environment @ pos */
-		void addRobot(Team t, int id, Geometry2d::Point pos);
+		void addRobot(Team t, int id, Geometry2d::Point pos, Robot::Rev rev);
 		
 		/** @return latest vision information about the environment */
 		Packet::Vision vision();

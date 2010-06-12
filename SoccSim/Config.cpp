@@ -81,7 +81,16 @@ void Config::procTeam(QDomElement e, Team t)
 			float y = elem.attribute("y").toFloat();
 			int id = elem.attribute("id").toInt();
 			
-			_env->addRobot(t, id, Geometry2d::Point(x, y));
+			if (elem.hasAttribute("rev")) {
+				QString rev = elem.attribute("rev");
+				Robot::Rev r;
+				if (rev.contains("2008")) r = Robot::rev2008;
+				else if (rev.contains("2010")) r = Robot::rev2010;
+				_env->addRobot(t, id, Geometry2d::Point(x, y), r);
+			} else {
+				_env->addRobot(t, id, Geometry2d::Point(x, y), Robot::rev2008);
+			}
+
 		}
 		else if (elem.tagName() == "robots")
 		{

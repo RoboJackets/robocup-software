@@ -21,8 +21,8 @@ Geometry2d::Point toPoint(const NxVec3 &v)
     return Geometry2d::Point(v.x, v.y);
 }
 
-Robot::Robot(Env* env) :
-	Entity(env)
+Robot::Robot(Env* env, Robot::Rev rev) :
+	Entity(env), _rev(rev)
 {
     _kickerJoint = 0;
     _rollerJoint = 0;
@@ -409,7 +409,11 @@ void Robot::radioTx(const Packet::RadioTx::Robot& data)
 		
 		float current = vel.dot(wheel);
 		
-		const float target = data.motors[i]/127.0f * 1.2;
+
+		float target = data.motors[i]/127.0f * 1.2;
+		// reverse for 2010 robots
+		if (_rev == rev2010)
+			target = -target;
 		const float diff = target - current;
 		
 		const float force = 20.0f * diff;
