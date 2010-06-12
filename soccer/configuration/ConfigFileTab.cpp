@@ -18,14 +18,6 @@ void ConfigFileTab::load(QString filename) {
 
 }
 
-void ConfigFileTab::on_loadConfig_clicked() {
-	// TODO: add load code here
-}
-
-void ConfigFileTab::on_saveConfig_clicked() {
-	// TODO: add save code here
-}
-
 
 
 

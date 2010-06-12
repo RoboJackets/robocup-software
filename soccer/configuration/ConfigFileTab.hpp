@@ -18,12 +18,6 @@ class ConfigFileTab: public QWidget
 		void save(QString filename);
 		void load(QString filename);
 
-	private Q_SLOTS:
-		void on_loadConfig_clicked();
-		void on_saveConfig_clicked();
-
-		// TODO: add something for changes to table
-
 	private:
 		Ui_ConfigFileTab _ui;
 
