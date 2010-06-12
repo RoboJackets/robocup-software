@@ -11,7 +11,7 @@
 #include "BLASWrap/blaswrap.h"
 #include "difference_kalman.hpp"
 
-#define KALMANMODEL
+//#define KALMANMODEL
 
 namespace Modeling
 {
@@ -52,6 +52,7 @@ namespace Modeling
 			bool valid(uint64_t cur_time) const;
 
 			uint64_t lastObservedTime;  /// The time used in the last observation, stored between frames
+			uint64_t lastUpdatedTime;   /// The last time we performed an update on the filter
 
 		private:
 			unsigned int _shell;

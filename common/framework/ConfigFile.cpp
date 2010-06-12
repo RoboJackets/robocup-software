@@ -1,5 +1,7 @@
 #include "ConfigFile.hpp"
 
+#include <iostream>
+
 #include <QDomDocument>
 #include <QDomElement>
 #include <QDomAttr>
@@ -100,21 +102,30 @@ void ConfigFile::save(QString filename) throw (std::runtime_error)
 
 ConfigFile::shared_robot ConfigFile::robot(unsigned int id) const
 {
+	bool verbose = false;
+	if (verbose) cout << "Getting id for robot " << id << ": ";
 	// look for overrides
 	map<unsigned int, shared_robot>::const_iterator override_it = _robot_overrides.find(id);
-	if (override_it != _robot_overrides.end())
+	if (override_it != _robot_overrides.end()) {
+		if (verbose) cout << "   override" << endl;
 		return override_it->second;
+	}
+
 
 	// use defaults
 	map<unsigned int, RobotRev>::const_iterator rev_it = _revisionLUT.find(id);
-	if (rev_it == _revisionLUT.end())
+	if (rev_it == _revisionLUT.end()) {
+		if (verbose) cout << "default - 2008" << endl;
 		return _defaultRobot2008; // NOTE: this sets default behavior to assume rev2008
-	else if (rev_it->second == rev2008)
+	} else if (rev_it->second == rev2008) {
+		if (verbose) cout << "2008" << endl;
 		return _defaultRobot2008;
-	else if (rev_it->second == rev2010)
+	} else if (rev_it->second == rev2010) {
+		if (verbose) cout << "2010" << endl;
 		return _defaultRobot2010;
-	else
+	} else {
 		throw invalid_argument("Robot does not exist!");
+	}
 }
 
 /// World Model
@@ -147,6 +158,7 @@ void ConfigFile::WorldModel::Filter::proc(QDomElement element)
 
 void ConfigFile::procRobots(QDomElement element)
 {
+	bool verbose = true;
 	QDomElement robot = element.firstChildElement();
 	
 	while (!robot.isNull())
@@ -155,12 +167,16 @@ void ConfigFile::procRobots(QDomElement element)
 		{
 			//new robot
 			unsigned int id = ConfigFile::valueUInt(robot.attributeNode("id"));
+			if (verbose) cout << "ConfigFile: new robot - " << id << endl;
 			QString revString = robot.attributeNode("rev").value();
 			RobotRev rev = rev2008; // use default value of 2008 robots
-			if (revString == "rev2010")
+			if (revString == "rev2010") {
+				if (verbose) cout << "    found 2010 robot" << endl;
 				rev = rev2010;
-			else if (revString == "rev2008")
+			} else if (revString == "rev2008") {
+				if (verbose) cout << "    found 2008 robot" << endl;
 				rev = rev2008;
+			}
 			
 			shared_robot r(new ConfigFile::Robot());
 			r->rev = rev;
@@ -172,6 +188,7 @@ void ConfigFile::procRobots(QDomElement element)
 			} else if (id == 2010) {
 				_defaultRobot2010 = r;
 			} else {
+				if (verbose) cout << "    adding to override list" << endl;
 				// treat as override otherwise
 				_robot_overrides[id] = r; // add to override list
 				_revisionLUT[id] = rev;   // remember revision
@@ -183,6 +200,8 @@ void ConfigFile::procRobots(QDomElement element)
 
 /// Lookup for revisions
 void ConfigFile::procRevLUT(QDomElement element) {
+	bool verbose = true;
+	if (verbose) cout << "Processing LUT" << endl;
 	QDomElement child = element.firstChildElement();
 
 	while (!child.isNull())
@@ -190,23 +209,29 @@ void ConfigFile::procRevLUT(QDomElement element) {
 		const QString& name = child.tagName();
 		if (name == "rev2010")
 		{
+			if (verbose) cout <<  "Found 2010 robots: ";
 			// loop over list
 			QDomElement list_mem = child.firstChildElement();
 			while (!list_mem.isNull()) {
 				uint id = ConfigFile::valueUInt(list_mem.attributeNode("id"));
 				_revisionLUT[id] = rev2010;
+				if (verbose) cout << id << " ";
 				list_mem = list_mem.nextSiblingElement();
 			}
+			cout << endl;
 		}
 		else if (name == "rev2008")
 		{
+			if (verbose) cout <<  "Found 2008 robots: ";
 			// loop over list
 			QDomElement list_mem = child.firstChildElement();
 			while (!list_mem.isNull()) {
 				uint id = ConfigFile::valueUInt(list_mem.attributeNode("id"));
 				_revisionLUT[id] = rev2008;
+				if (verbose) cout << id << " ";
 				list_mem = list_mem.nextSiblingElement();
 			}
+			cout << endl;
 		}
 
 		child = child.nextSiblingElement();

@@ -65,6 +65,8 @@ namespace Motion
 			void setAngKi(double value);
 			void setAngKd(double value);
 
+			SystemState::Robot* self() { return _self; }
+
 		private:
 			Pid _anglePid;
 
@@ -181,9 +183,6 @@ namespace Motion
 			
 			CalibrationStates _calibState;
 			CalibInfo _calibInfo;
-
-			/// True if we have actually loaded the motion config file
-			bool _isConfigLoaded;
 
 			/** filters for output */
 			Utils::FIRFilter<Geometry2d::Point> _velFilter;

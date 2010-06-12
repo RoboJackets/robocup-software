@@ -58,10 +58,10 @@
 				
 				<!-- output filtering -->
 				<coeffs>
-					<coeff value="1.0"/>
-					<coeff value="0.0"/>
-					<coeff value="0.0"/>
-					<coeff value="0.0"/>
+					<coeff value="10.0"/>
+					<coeff value="0.5"/>
+					<coeff value="0.1"/>
+					<coeff value="0.05"/>
 				</coeffs>
 			</motion>
 			

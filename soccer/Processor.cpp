@@ -187,6 +187,7 @@ void Processor::run()
 							switch (rcfg->rev) {
 							case ConfigFile::rev2008:
 								_state.self[r].rev =  Packet::LogFrame::Robot::rev2008;
+								break;
 							case ConfigFile::rev2010:
 								_state.self[r].rev =  Packet::LogFrame::Robot::rev2010;
 							}

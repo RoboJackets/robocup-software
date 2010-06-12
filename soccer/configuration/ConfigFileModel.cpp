@@ -240,9 +240,6 @@ bool ConfigFileModel::setData(const QModelIndex &index, const QVariant &value,
 		changeParam(index, value.toFloat());
 	}
 
-//	if (result)
-//		emit dataChanged(index, index);  // FIXME: need to make these?
-
 	return result;
 }
 
@@ -254,14 +251,11 @@ bool ConfigFileModel::setHeaderData(int section, Qt::Orientation orientation,
 
 	bool result = _root->setData(section, value);
 
-//	if (result)
-//		emit headerDataChanged(orientation, section, section); // FIXME: need to make these?
-
 	return result;
 }
 
 void ConfigFileModel::changeParam(const QModelIndex &index, float value) {
-	bool verbose = true;
+	bool verbose = false;
 
 	ConfigFileItem* param = getItem(index);
 	QString paramLabel = param->getLabel();

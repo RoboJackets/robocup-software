@@ -55,7 +55,7 @@ void printPt(const Geometry2d::Point& pt, const string& s="") {
 const float intTimeStampToFloat = 1000000.0f;
 
 Robot::Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id) :
-	_id(id), _isConfigLoaded(false), _velFilter(Point(0.0, 0.0), 1), _wFilter(0.0, 1)
+	_id(id), _velFilter(Point(0.0, 0.0), 1), _wFilter(0.0, 1)
 {
 	_state = 0;
 	_self = 0;
@@ -118,24 +118,22 @@ void Robot::setSystemState(SystemState* state)
  */
 void Robot::proc()
 {
+	bool verbose = false;
 	_procMutex.lock();
 	// Check to make sure the system is valid
 	if (_self && _self->valid)
 	{
 		// get the dynamics from the config
-		if (!_isConfigLoaded) {
-			_dynamics.setConfig(_self->config.motion);
-			_isConfigLoaded = true;
+		_dynamics.setConfig(_self->config.motion);
 
-			// set the correct PID parameters for angle
-			_anglePid.kp = _self->config.motion.angle.p;
-			_anglePid.ki = _self->config.motion.angle.i;
-			_anglePid.kd = _self->config.motion.angle.d;
+		// set the correct PID parameters for angle
+		_anglePid.kp = _self->config.motion.angle.p;
+		_anglePid.ki = _self->config.motion.angle.i;
+		_anglePid.kd = _self->config.motion.angle.d;
 
-			// set coefficients for the output filters
-			_velFilter.setCoeffs(_self->config.motion.output_coeffs);
-			_wFilter.setCoeffs(_self->config.motion.output_coeffs);
-		}
+		// set coefficients for the output filters
+		_velFilter.setCoeffs(_self->config.motion.output_coeffs);
+		_wFilter.setCoeffs(_self->config.motion.output_coeffs);
 
 		if (_state->gameState.state == GameState::Halt)
 		{
@@ -145,7 +143,18 @@ void Robot::proc()
 		else
 		{
 			// record the type of planner for future use
-			_plannerType = _self->cmd.planner;
+			_plannerType = _self->cmd.planner;		// get the dynamics from the config
+			_dynamics.setConfig(_self->config.motion);
+
+			// set the correct PID parameters for angle
+			_anglePid.kp = _self->config.motion.angle.p;
+			_anglePid.ki = _self->config.motion.angle.i;
+			_anglePid.kd = _self->config.motion.angle.d;
+
+			// set coefficients for the output filters
+			_velFilter.setCoeffs(_self->config.motion.output_coeffs);
+			_wFilter.setCoeffs(_self->config.motion.output_coeffs);
+
 
 			// record the history
 			_poseHistory = _self->poseHistory;
@@ -252,8 +261,10 @@ void Robot::proc()
 			sanityCheck(LookAheadFrames);
 
 			// filter the velocities
+			if (verbose) cout << "before - w: " << _w << " vel: (" << _vel.x << ", " << _vel.y << ")" << endl;
 			_vel = _velFilter.filter(_vel);
 			_w = _wFilter.filter(_w);
+			if (verbose) cout << "after - w: " << _w << " vel: (" << _vel.x << ", " << _vel.y << ")" << endl;
 
 			// generate motor outputs based on velocity
 			if (!_useOldMotorGen) {
@@ -469,6 +480,8 @@ void Robot::sanityCheck(const unsigned int LookAheadFrames) {
  */
 void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 {
+	bool verbose = false;
+	if (verbose) cout << "Generating Velocity" << endl;
 	//TODO double check the field angle to robot angle conversions!
 	//robot space angle = Clipped(team space angle - robot angle)
 
@@ -490,17 +503,23 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 			orientation = _self->cmd.goalOrientation - _self->cmd.goalPosition;
 		}
 
-		const float angleErr = Utils::fixAngleDegrees(orientation.angle() * RadiansToDegrees - _self->angle);
+		float angleErr = Utils::fixAngleDegrees(orientation.angle() * RadiansToDegrees - _self->angle);
+
+		// avoid singularity when facing exactly opposite of the goal
+		float bk_angle_thresh = 2.0;
+		if (180.0 - fabs(angleErr) < bk_angle_thresh)
+			angleErr = fabs(angleErr);
 
 		// Use pid to determine an angular velocity
-		_w = _anglePid.run(angleErr);
+		if (verbose) cout << "  angleErr: " << angleErr << endl;
+		if (verbose) cout << "  P: " << _anglePid.kp << " I: " << _anglePid.ki << " D: " << _anglePid.kd << endl;
+		float targetW = _anglePid.run(angleErr);
+		if (verbose) cout << "  w after PID: " << targetW << endl;
 
 		//safety check to avoid singularities
 		float angle_thresh = 1e-2;
 		if (_self->cmd.goalOrientation.distTo(_self->pos) < angle_thresh)
-		{
-			_w = 0;
-		}
+			targetW = 0;
 
 		/// limit the max rotation based on the full travel path
 		/// only if using endpoint mode
@@ -519,9 +538,17 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 				maxW /= 10.0f;
 
 				// check saturation of angular velocity
-				_w = saturate(_w, maxW, -maxW);
+				targetW = saturate(targetW, maxW, -maxW);
 			}
 		}
+
+		// clamp w to reasonable bounds to prevent oscillations
+		float dW = targetW - _w; // NOTE we do not fix this to range - this is acceleration
+
+//		float maxAccel = fabs(_self->config.motion.rotation.acceleration);
+//		dW = saturate(dW, maxAccel, -maxAccel);
+
+		_w += dW;
 	}
 	else
 	{
@@ -529,10 +556,6 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 		_w = 0;
 	}
 
-	// handle stopped condition
-//	if (fabs(_self->cmd.goalPosition.distTo(_self->pos)) < 1e-5) {
-//		_vel = Point(0.0f, 0.0f);
-//	}
 	// handle point-to-point driving without pivot
 	if (_self->cmd.pivot == Packet::MotionCmd::NoPivot)
 	{
@@ -574,12 +597,15 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 
 		// bound the velocity by the end of the path
 		const float vv = sqrtf(2 * length * info.deceleration);
+		if (verbose) cout << "   decel bound: " << info.deceleration << endl;
 
 		// create the maximum velocity given driving until the end of the path
 		Geometry2d::Point targetVel = dir.normalized() * vv;
+		if (verbose) printPt(targetVel, "   targetVel");
 
 		//last commanded velocity
 		Geometry2d::Point dVel = targetVel - _vel;
+		if (verbose) printPt(dVel, "   dVel - raw");
 
 		//!!!acceleration is in the change velocity direction not travel direction
 		info = _dynamics.info(dVel.angle() * RadiansToDegrees - robotAngle, _w);
@@ -590,6 +616,9 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 
 		//use frame acceleration
 		dVel = dVel.normalized() * frameAccel;
+
+		if (verbose) cout << "   frameAccel: " << frameAccel << " maxAccel: " << maxAccel << endl;
+		if (verbose) printPt(dVel, "   dVel - saturated");
 
 		// adjust the velocity
 		_vel += dVel;

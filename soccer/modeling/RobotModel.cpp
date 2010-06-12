@@ -123,7 +123,7 @@ Modeling::RobotModel::RobotModel(const ConfigFile::WorldModel& cfg, int s) :
 	_angleGamma = _config.angle.gamma;
 #endif
 	lastObservedTime = 0;
-
+	lastUpdatedTime = 0;
 }
 
 bool Modeling::RobotModel::valid(uint64_t cur_time) const {
@@ -138,7 +138,7 @@ void Modeling::RobotModel::observation(uint64_t time, Geometry2d::Point pos, flo
 		_observations.push_back(obs);
 	}
 
-	// set lastObser_posAlphavedTime to the last observation's time
+	// set lastObservedTime to the last observation's time
 	if (time > lastObservedTime)
 		lastObservedTime = time;
 }
@@ -150,9 +150,18 @@ Geometry2d::Point Modeling::RobotModel::predictPosAtTime(float dtime)
 
 void Modeling::RobotModel::update(uint64_t cur_time)
 {
+	bool verbose = false;
+	// debug by printing observations
+	if (verbose) {
+		cout << "Updating RobotModel with observations: ";
+		BOOST_FOREACH(const Observation_t obs, _observations) {
+			cout << "(" << obs.pos.x << ", " << obs.pos.y << ") ";
+		}
+		cout << endl;
+	}
+
 	// create time differential between this frame and the last
-	float dtime = (float)(cur_time - lastObservedTime) / 1e6;
-	//lastObservedTime = cur_time;
+	float dtime = (float)(cur_time - lastUpdatedTime) / 1e6;
 
 	// prediction step from previous frame
 	Geometry2d::Point predictPos = predictPosAtTime(dtime);
@@ -184,6 +193,8 @@ void Modeling::RobotModel::update(uint64_t cur_time)
 			bestError = error;
 		}
 	}
+
+	if (verbose) cout << "   Updating Filter (" << dtime << ") - best filter obs: (" << observedPos.x << ", " << observedPos.y << ")" << endl;
 
 	// Perform filter updates
 	if (dtime)
@@ -259,7 +270,11 @@ void Modeling::RobotModel::update(uint64_t cur_time)
 		_angleAccel = (float)_angKalman->state()->elt(2);
 
 	#endif
+
+		lastUpdatedTime = cur_time;
 	}
+
+	if (verbose) cout << "   Final RobotModel: (" << _pos.x << ", " << _pos.y << ")" << endl;
 
 	// cleanup by removing old observations
 	_observations.clear();
