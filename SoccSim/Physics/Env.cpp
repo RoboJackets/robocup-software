@@ -155,7 +155,7 @@ void Env::addRobot(Team t, int id, Geometry2d::Point pos, Robot::Rev rev)
 	QMutexLocker ml1(&_sceneMutex);
 	QMutexLocker ml2(&_entitiesMutex);
 
-    Robot* r = new Robot(this, rev);
+    Robot* r = new Robot(this, id, rev);
     r->position(pos.x, pos.y);
 
     if (t == Blue)
@@ -242,24 +242,22 @@ void Env::genVision()
 	//rules on when scene information can be accessed. This prevents needless
 	//locks on scene objects to generate vision info since a copy is returned
 
-	int i=0;
 	BOOST_FOREACH(const Robot* r, _blue)
 	{
 		Packet::Vision::Robot vr;
 		vr.angle = r->getAngle();
 		vr.pos = r->getPosition();// + gaussianPoint(25, 0.08);
-		vr.shell = i++;
+		vr.shell = r->shell;
 
 		_visionInfo.blue.push_back(vr);
 	}
 
-	i=0;
 	BOOST_FOREACH(const Robot* r, _yellow)
 	{
 		Packet::Vision::Robot vr;
 		vr.angle = r->getAngle();
 		vr.pos = r->getPosition();// + gaussianPoint(25, 0.08);
-		vr.shell = i++;
+		vr.shell = r->shell;
 
 		_visionInfo.yellow.push_back(vr);
 	}

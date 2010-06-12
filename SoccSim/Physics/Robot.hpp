@@ -13,7 +13,7 @@ class Robot : public Entity
 			rev2008
 		} Rev;
 
-        Robot(Env* env, Robot::Rev rev);
+        Robot(Env* env, unsigned int id, Robot::Rev rev);
         ~Robot();
         
         /** @return the world angle */
@@ -25,6 +25,9 @@ class Robot : public Entity
         void radioTx(const Packet::RadioTx::Robot& data);
         /** get robot information data */
         Packet::RadioRx radioRx() const;
+
+        /** assigned shell number */
+        unsigned int shell;
 
     private:
         /** Functions to initialize physical objects */
