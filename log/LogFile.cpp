@@ -8,8 +8,8 @@
 
 using namespace Log;
 
-LogFile::LogFile(QString filename) :
-	_file(filename)
+LogFile::LogFile(QString filename)
+:	_file(filename)
 {
 	_file.open(QIODevice::ReadWrite);
 	_stream = new QDataStream(&_file);
@@ -20,7 +20,7 @@ LogFile::LogFile(QString filename) :
 LogFile::~LogFile()
 {
 	_file.close();
-	
+
 	delete _stream;
 }
 
@@ -37,18 +37,20 @@ void LogFile::write(Packet::LogFrame& frame)
 	
 	//seek to end to write
 	_file.seek(_file.size());
-	
+
 	_buf.data.resize(0);
-	
+
 	Serialization::WriteBuffer& writer = _buf;
 	writer & frame;
-	
+
 	FrameSizeType size = _buf.data.size();
-	
+
 	*_stream << size;
 	_stream->writeRawData((const char*)&_buf.data[0], _buf.data.size());
 	*_stream << size;
-	
+}
+
+void LogFile::setLast(Packet::LogFrame& frame) {
 	_last = frame;
 }
 
@@ -122,40 +124,6 @@ Packet::LogFrame LogFile::readLast()
 {
     QMutexLocker ml(&_fileMutex);
 	return _last;
-	
-#if 0
-	QMutexLocker ml(&_fileMutex);
-	
-	Packet::LogFrame frame;
-	
-	//read the last size
-	_file.seek(_file.size() - sizeof(FrameSizeType));
-	
-	FrameSizeType size = 0;
-	*_stream >> size;
-	
-	//printf("Old pos: %lld\n", _file.pos());
-	//printf("Size: %d\n", size);
-	
-	//seek back size
-	_file.seek(_file.pos() - size - sizeof(FrameSizeType));
-	
-	//printf("New Pos: %lld\n", _file.pos());
-	
-	//there is no next
-	_nextPos = _file.size();
-	_prevPos = _file.pos() - 2 * sizeof(FrameSizeType);
-	
-	//read frame
-	_buf.data.resize(size);
-	_buf.rewind();
-	_stream->readRawData((char*)&_buf.data[0], size);
-
-	Serialization::ReadBuffer &reader = _buf;
-	reader & frame;
-	
-	return frame;
-#endif
 }
 
 bool LogFile::hasNextFrame() const

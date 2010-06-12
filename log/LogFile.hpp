@@ -28,6 +28,9 @@ namespace Log
 			/** write the log frame to the end of the file */
 			void write(Packet::LogFrame& frame);
 			
+			/** sets the last variable */
+			void setLast(Packet::LogFrame& frame);
+
 			/** read the next frame after the last frame read */
 			Packet::LogFrame readNext();
 			
@@ -55,6 +58,7 @@ namespace Log
 			
 			/** position of the next frame to read */
 			qint64 _nextPos;
+
 			/** position of previous frame to read */
 			qint64 _prevPos;
 			

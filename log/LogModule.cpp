@@ -130,6 +130,7 @@ void LogModule::run()
 	{
 		//write out log frame part of the state
 		_logFile->write(*_state);
+		_logFile->setLast(*_state);
 	}
 	_logFileMutex.unlock();
 }
