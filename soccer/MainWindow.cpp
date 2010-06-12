@@ -12,6 +12,7 @@ using namespace boost;
 MainWindow::MainWindow(Team t, QString filename) :
 	_team(t),
 	_processor(t, filename),
+	_logControl(new LogControl()),
 	_logFile(0),
 	_configFile(filename)
 {
@@ -59,11 +60,11 @@ MainWindow::MainWindow(Team t, QString filename) :
 	_processor.start();
 	
     _logFile = new LogFile(LogFile::genFilename());
-	ui.logControl->setLogFile(_logFile);
+    _logControl->setLogFile(_logFile);
 	_processor.setLogFile(_logFile);
 
-	connect(ui.logControl, SIGNAL(newFrame(Packet::LogFrame*)), ui.fieldView, SLOT(frame(Packet::LogFrame*)));
-	connect(ui.logControl, SIGNAL(newFrame(Packet::LogFrame*)), _treeModel, SLOT(frame(Packet::LogFrame*)));
+	connect(_logControl, SIGNAL(newFrame(Packet::LogFrame*)), ui.fieldView, SLOT(frame(Packet::LogFrame*)));
+	connect(_logControl, SIGNAL(newFrame(Packet::LogFrame*)), _treeModel, SLOT(frame(Packet::LogFrame*)));
 }
 
 MainWindow::~MainWindow()
@@ -73,8 +74,9 @@ MainWindow::~MainWindow()
 	
 	if (_logFile)
 	{
-		ui.logControl->setLogFile(0);
+		_logControl->setLogFile(0);
 	}
+	delete _logControl;
 }
 
 PlayConfigTab *MainWindow::playConfig() const

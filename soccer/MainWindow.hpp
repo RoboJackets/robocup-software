@@ -44,6 +44,8 @@ class MainWindow : public QMainWindow
 		Team _team;
 	
 		Processor _processor;
+
+		Log::LogControl* _logControl;
 	
 		Log::TreeModel* _treeModel;
 	

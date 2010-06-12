@@ -71,16 +71,6 @@
       </widget>
      </widget>
     </item>
-    <item>
-     <widget class="Log::LogControl" name="logControl" native="true">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
-      </property>
-     </widget>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -89,7 +79,7 @@
      <x>0</x>
      <y>0</y>
      <width>1039</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -100,12 +90,6 @@
    <class>Log::FieldView</class>
    <extends>QWidget</extends>
    <header>log/FieldView.hpp</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>Log::LogControl</class>
-   <extends>QWidget</extends>
-   <header>log/LogControl.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

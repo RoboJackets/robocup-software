@@ -13,7 +13,6 @@ include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
 include_directories(${PROJECT_BINARY_DIR})
 
 qt4_wrap_cpp ( MOC_SRCS
-	JogDial.hpp
 	LogControl.hpp
 	FieldView.hpp
 	TreeModel.hpp
@@ -21,7 +20,6 @@ qt4_wrap_cpp ( MOC_SRCS
 
 set (SRCS
 	LogFile.cpp
-	JogDial.cpp
 	LogControl.cpp
 	FieldView.cpp
 	TreeModel.cpp
@@ -32,25 +30,6 @@ set (SRCS
 )
 
 add_library (log ${SRCS} ${MOC_SRCS})
-
-qt4_wrap_cpp ( MOC_SRCS_VIEWER
-)
-
-set (VIEWER_SRCS
-	test/test.cpp
-	test/MainWindow.cpp
-)
-
-add_executable (controlTest EXCLUDE_FROM_ALL test/controlTest.cpp)
-target_link_libraries(controlTest log ${QT_LIBRARIES})
-
-set (target viewer)
-add_executable (${target} EXCLUDE_FROM_ALL ${VIEWER_SRCS} ${MOC_SRCS_VIEWER})
-target_link_libraries(${target} log ${QT_LIBRARIES} )
-target_link_libraries(${target} ${PACKET_LIBRARY})
-target_link_libraries(${target} ${FRAMEWORK_LIBRARY})
-target_link_libraries(${target} ${GEOMETRY_LIBRARY})
-target_link_libraries(${target} ${NETWORK_LIBRARY})
 
 add_dependencies (log gen_tree)
 
