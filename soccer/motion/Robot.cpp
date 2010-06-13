@@ -59,6 +59,7 @@ Robot::Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id) :
 {
 	_state = 0;
 	_self = 0;
+	_w = 0;
 
 	_planner.setDynamics(&_dynamics);
 	_planner.maxIterations(250);
