@@ -36,8 +36,8 @@ Rbpf::~Rbpf() { }
 // convenience function for calling update(U,Z,dt) with no control input
 // note: assumes that control size (m) = 2 and measurement size (s) = 2
 void Rbpf::update(double x, double y, double dt){
-	Vector U(6); U.clear(); U *= 0.0; // control input
-	Vector Z(2); // measurement
+	Vector U(6); U.clear(); // control input
+	Vector Z(2); Z.clear(); // measurement
 	Z(0) = x; Z(1) = y;
 	update(U,Z,dt);
 }
@@ -94,8 +94,8 @@ void Rbpf::updateMultipleObs(double xs[], double ys[], double dts[], int numObs)
 	float weightSum;
 	RbpfModel* model;
 	RbpfState* tmpParticle;
-	Vector U(6); U.clear(); U *= 0.0; // control input
-	Vector Z(2); // measurement
+	Vector U(6); U.clear(); // control input
+	Vector Z(2); Z.clear(); // measurement
 	double dt;
 
 	for(int kIdx=0; kIdx<k; kIdx++){ // for each of the k particles

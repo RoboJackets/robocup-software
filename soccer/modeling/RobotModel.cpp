@@ -132,6 +132,8 @@ bool Modeling::RobotModel::valid(uint64_t cur_time) const {
 
 void Modeling::RobotModel::observation(uint64_t time, Geometry2d::Point pos, float angle)
 {
+	//if(rand() % 2 != 1){cout << "skipping" << std::endl; return;} // testing - simulate bad obs
+
 	// ignore obserations at exactly (0,0)
 	if(!(pos.x==0.0f && pos.y==0.0f)){
 		Observation_t obs = {pos, angle, time};
