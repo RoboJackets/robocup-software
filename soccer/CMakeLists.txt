@@ -77,7 +77,6 @@ set (SRCS
 	gameplay/behaviors/Penalty.cpp
 	gameplay/behaviors/Idle.cpp
 	gameplay/behaviors/Kick.cpp
-	gameplay/behaviors/Chip.cpp
 	gameplay/behaviors/OneTouchKick.cpp
 	gameplay/behaviors/Intercept.cpp
 	gameplay/behaviors/OptimizedPassing.cpp
@@ -93,6 +92,7 @@ set (SRCS
 	gameplay/plays/test_plays/TestDirectMotionControl.cpp
 	gameplay/plays/test_plays/TestTimePositionControl.cpp
 	gameplay/plays/test_plays/TestBasicAttack.cpp
+	gameplay/plays/test_plays/TestBasicChipAttack.cpp
 	gameplay/plays/test_plays/TestIntercept.cpp
 	gameplay/plays/test_plays/TestPassPlay.cpp
 	gameplay/plays/test_plays/TestOptimizedPassPlay.cpp
