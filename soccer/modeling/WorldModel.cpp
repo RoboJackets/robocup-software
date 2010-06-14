@@ -26,7 +26,7 @@ WorldModel::WorldModel(SystemState *state, const ConfigFile::WorldModel& cfg) :
 	Module("World Model"),
 	_state(state),
 	_selfPlayers(Constants::Robots_Per_Team), _oppPlayers(Constants::Robots_Per_Team),
-	ballModel(BallModel::RBPF, &_robotMap),
+	ballModel(BallModel::RBPF, &_robotMap, cfg),
 	_config(cfg)
 {
 }

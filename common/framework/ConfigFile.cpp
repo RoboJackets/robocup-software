@@ -134,6 +134,8 @@ void ConfigFile::WorldModel::proc(QDomElement element)
 {
     QDomElement posE = element.firstChildElement("pos");
     QDomElement angleE = element.firstChildElement("angle");
+    QDomElement rbpfModelBallRollingE = element.firstChildElement("rbpfModelBallRolling");
+    QDomElement rbpfModelBallKickedE = element.firstChildElement("rbpfModelBallKicked");
     
     if (!posE.isNull())
     {
@@ -144,6 +146,14 @@ void ConfigFile::WorldModel::proc(QDomElement element)
 	{
     	angle.proc(angleE.firstChild().toElement());
 	}
+    if (!rbpfModelBallRollingE.isNull())
+    {
+    	rbpfModelBallRolling.proc(rbpfModelBallRollingE.firstChild().toElement());
+    }
+    if (!rbpfModelBallKickedE.isNull())
+    {
+    	rbpfModelBallKicked.proc(rbpfModelBallKickedE.firstChild().toElement());
+    }
 }
 
 void ConfigFile::WorldModel::Filter::proc(QDomElement element)
@@ -153,6 +163,28 @@ void ConfigFile::WorldModel::Filter::proc(QDomElement element)
 		alpha = valueFloat(element.attributeNode("alpha"));
 		beta = valueFloat(element.attributeNode("beta"));
 		gamma = valueFloat(element.attributeNode("gamma"));
+	}
+}
+
+void ConfigFile::WorldModel::RBPFModelBallRolling::proc(QDomElement element)
+{
+	if (element.tagName() == "rbpfModelBallRolling")
+	{
+		processNoiseSqrdPos = valueFloat(element.attributeNode("processNoiseSqrdPos"));
+		processNoiseSqrdVel = valueFloat(element.attributeNode("processNoiseSqrdVel"));
+		processNoiseSqrdAcc = valueFloat(element.attributeNode("processNoiseSqrdAcc"));
+		measurementNoiseSqrd = valueFloat(element.attributeNode("measurementNoiseSqrd"));
+	}
+}
+
+void ConfigFile::WorldModel::RBPFModelBallKicked::proc(QDomElement element)
+{
+	if (element.tagName() == "rbpfModelBallKicked")
+	{
+		processNoiseSqrdPos = valueFloat(element.attributeNode("processNoiseSqrdPos"));
+		processNoiseSqrdVel = valueFloat(element.attributeNode("processNoiseSqrdVel"));
+		processNoiseSqrdAcc = valueFloat(element.attributeNode("processNoiseSqrdAcc"));
+		measurementNoiseSqrd = valueFloat(element.attributeNode("measurementNoiseSqrd"));
 	}
 }
 

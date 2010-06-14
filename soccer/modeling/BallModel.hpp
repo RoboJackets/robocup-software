@@ -10,6 +10,7 @@
 #include "difference_kalman.hpp"
 #include "RobotModel.hpp"
 #include <vector>
+#include "framework/Module.hpp"
 
 /* RBPF Includes */
 #include <iostream>
@@ -46,7 +47,7 @@ namespace Modeling
 				BALL_SENSOR
 			} observation_mode;
 
-			BallModel(mode_t mode, RobotModel::RobotMap *robotMap);
+			BallModel(mode_t mode, RobotModel::RobotMap *robotMap, const ConfigFile::WorldModel& cfg);
 
 			void observation(uint64_t time, const Geometry2d::Point &pos, observation_mode obs_mode);
 
@@ -149,5 +150,6 @@ namespace Modeling
 			/** ABG Filter update */
 			void abgUpdate(float dtime);
 
+			const ConfigFile::WorldModel& _config;
 	};
 }

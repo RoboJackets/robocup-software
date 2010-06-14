@@ -21,19 +21,22 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include "RbpfModel.hpp"
 
+#include "framework/Module.hpp"
+
 // free rolling ball, ignores control input
 // state: X (6 x 1) = {x, y, vx, vy, ax, ay}
 class RbpfModelRolling : public RbpfModel {
 public:
 	typedef boost::numeric::ublas::vector<double> Vector;
 	typedef boost::numeric::ublas::matrix<double> Matrix;
-	RbpfModelRolling(Modeling::RobotModel::RobotMap *_robotMap);
+	RbpfModelRolling(Modeling::RobotModel::RobotMap *_robotMap, const ConfigFile::WorldModel& cfg);
 	~RbpfModelRolling();
 protected:
 	void transitionModel(Vector &X, Vector &U, double dt);
 	void computeTransitionJacobian(double dt);
 	void observationModel(Vector &X, Vector &out);
 	void computeObservationJacobian(double dt);
+	const ConfigFile::WorldModel& _config;
 };
 
 #endif /* RBPFMODELROLLING_HPP_ */

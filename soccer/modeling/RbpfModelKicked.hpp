@@ -21,6 +21,8 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include "RbpfModel.hpp"
 
+#include "framework/Module.hpp"
+
 // kicked ball with high noise, ignores control input
 // Note: could be written to accept control input from our robots
 // state: X (6 x 1) = {x, y, vx, vy, ax, ay}
@@ -28,7 +30,7 @@ class RbpfModelKicked : public RbpfModel {
 public:
 	typedef boost::numeric::ublas::vector<double> Vector;
 	typedef boost::numeric::ublas::matrix<double> Matrix;
-	RbpfModelKicked(Modeling::RobotModel::RobotMap *_robotMap);
+	RbpfModelKicked(Modeling::RobotModel::RobotMap *_robotMap, const ConfigFile::WorldModel& cfg);
 	~RbpfModelKicked();
 protected:
 	void transitionModel(Vector &X, Vector &U, double dt);
@@ -36,6 +38,7 @@ protected:
 	void observationModel(Vector &X, Vector &out);
 	void computeObservationJacobian(double dt);
 	void update(Vector &X, Matrix &P, Vector &Z, double dt);
+	const ConfigFile::WorldModel& _config;
 };
 
 #endif /* RBPFMODELKICKED_HPP_ */

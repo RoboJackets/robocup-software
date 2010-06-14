@@ -136,12 +136,50 @@ class ConfigFile
 						
 						void proc(QDomElement element);
 				};
-				
 				//position filter
 				Filter pos;
-				
 				//angle filter
 				Filter angle;
+				
+				class RBPFModelBallRolling
+				{
+				public:
+					RBPFModelBallRolling()
+					{
+						processNoiseSqrdPos = 0.2;
+						processNoiseSqrdVel = 1.0;
+						processNoiseSqrdAcc = 1000.0;
+						measurementNoiseSqrd = 0.01;
+					}
+
+					float processNoiseSqrdPos;
+					float processNoiseSqrdVel;
+					float processNoiseSqrdAcc;
+					float measurementNoiseSqrd;
+
+					void proc(QDomElement element);
+				};
+				RBPFModelBallRolling rbpfModelBallRolling;
+
+				class RBPFModelBallKicked
+				{
+				public:
+					RBPFModelBallKicked()
+					{
+						processNoiseSqrdPos = 1.0;
+						processNoiseSqrdVel = 1.0;
+						processNoiseSqrdAcc = 1000.0;
+						measurementNoiseSqrd = 0.01;
+					}
+
+					float processNoiseSqrdPos;
+					float processNoiseSqrdVel;
+					float processNoiseSqrdAcc;
+					float measurementNoiseSqrd;
+
+					void proc(QDomElement element);
+				};
+				RBPFModelBallKicked rbpfModelBallKicked;
 				
 				void proc(QDomElement element);
 		};

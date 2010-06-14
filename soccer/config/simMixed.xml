@@ -100,13 +100,18 @@
 	</robots>
 	
 	<worldModel>
-		<pos>
+	    <pos>
 	    	<filter alpha="1" beta="0" gamma="0" />
 	    </pos>
 	    <angle>
 	    	<filter alpha="1" beta="0" gamma="0" />
 	    </angle>
-	    
+	    <rbpfModelBallRolling>
+	        <rbpfModelBallRolling processNoiseSqrdPos="0.2" processNoiseSqrdVel="1.0" processNoiseSqrdAcc="2000.0" measurementNoiseSqrd="0.01" />
+	    </rbpfModelBallRolling>
+	    <rbpfModelBallKicked>
+	        <rbpfModelBallKicked processNoiseSqrdPos="1.0" processNoiseSqrdVel="1.0" processNoiseSqrdAcc="2000.0" measurementNoiseSqrd="0.01" />
+	    </rbpfModelBallKicked>
 	    <ball>
 	    </ball>
 	</worldModel>
