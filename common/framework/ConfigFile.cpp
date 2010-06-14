@@ -280,6 +280,10 @@ void ConfigFile::Robot::Motion::proc(QDomElement element)
 			rotation.proc(child.firstChildElement("dynamics"));
 			angle.proc(child.firstChildElement("pid"));
 		}
+		else if (name == "control")
+		{
+			wheel.proc(child.firstChildElement("pid"));
+		}
 		else if (name == "coeffs")
 		{
 			// initialize the coefficients

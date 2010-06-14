@@ -74,6 +74,9 @@ class ConfigFile
 						// only using PID for angular control
 						Pid angle;
 						
+						// wheel PIDs for encoder use
+						Pid wheel;
+
 						// need coefficients for the output FIR filter
 						std::vector<float> output_coeffs;
 

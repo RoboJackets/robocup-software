@@ -56,6 +56,12 @@
 					<coeff value="2.0"/>
 					<coeff value="0.5"/>
 				</coeffs>
+								
+				<!-- wheel PID controller -->
+				<control>
+					<pid type="wheel" p="1.0" i="0" d="0" />
+				</control>
+				
 			</motion>
 			<kicker m="10" b="0" />
 	    </robot>
