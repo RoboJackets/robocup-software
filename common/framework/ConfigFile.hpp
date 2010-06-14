@@ -94,6 +94,11 @@ class ConfigFile
 						void proc(QDomElement element);
 				};
 				
+				Robot()
+				{
+				    rev = rev2008;
+				}
+				
 				RobotRev rev;
 
 				Motion motion;
