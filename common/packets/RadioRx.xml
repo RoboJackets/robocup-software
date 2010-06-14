@@ -14,5 +14,5 @@
 	
 	<array type="bool" name="motorFault" size="5" />
 
-	<array type="uint8" name="encoders" size="5" />
+	<array type="uint16" name="encoders" size="5" />
 </struct>
