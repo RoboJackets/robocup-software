@@ -126,6 +126,8 @@ int main(int argc, char* argv[])
 	
 	while (true)
 	{
+		bool printed = false;
+		
 		//clear the incoming packet for the first team only
 		txPacket = Packet::RadioTx();
 		
@@ -270,7 +272,7 @@ int main(int argc, char* argv[])
 			forward_packet[2] = kick_strength;
 		}
 		
-		if (debug_rx)
+		if (debug_tx)
 		{
 			uint64_t t1 = Utils::timestamp();
 			uint64_t dt = t1 - lastTime;
@@ -281,6 +283,7 @@ int main(int argc, char* argv[])
 			{
 				printf("%02x ", forward_packet[i]);
 			}
+			printed = true;
 		}
 		
 		bool read_ok = false;
@@ -307,11 +310,16 @@ int main(int argc, char* argv[])
 		{
 			if (debug_rx)
 			{
-				printf("   rev");
+				if (debug_tx)
+				{
+					printf("   ");
+				}
+				printf("rev");
 				for (unsigned int i = 0; i < Reverse_Size; ++i)
 				{
 					printf(" %02x", reverse_packet[i]);
 				}
+				printed = true;
 			}
 			
 			Packet::RadioRx rxPacket;
@@ -329,15 +337,16 @@ int main(int argc, char* argv[])
 				rxPacket.motorFault[i] = reverse_packet[5] & (1 << i);
 			}
 			
-			for (int i = 0; i < 5; ++i)
+			for (int i = 0; i < 4; ++i)
 			{
 				rxPacket.encoders[i] = reverse_packet[6 + i];
+				rxPacket.encoders[i] |= ((reverse_packet[10] >> (i * 2)) & 3) << 8;
 			}
 			
 			sender.send(rxPacket);
 		}
 		
-		if (debug_tx || debug_rx)
+		if (printed)
 		{
 			printf("\n");
 		}
