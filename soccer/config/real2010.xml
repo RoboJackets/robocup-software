@@ -56,6 +56,11 @@
 					<pid type="angle" p=".4" i="0" d="0" />
 				</rotation>
 				
+				<!-- wheel PID controller -->
+				<control>
+					<pid type="wheel" p="1.0" i="0" d="0" />
+				</control>
+				
 				<!-- output filtering -->
 				<coeffs>
 					<coeff value="10.0"/>

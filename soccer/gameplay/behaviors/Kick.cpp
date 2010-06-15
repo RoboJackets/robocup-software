@@ -19,6 +19,7 @@ using namespace Geometry2d;
 
 Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay) :
 	Behavior(gameplay, 1),
+	_kickType(KICK),
 	_ballHandlingScale(1.0),
 	_ballHandlingRange(0.5)
 {
@@ -37,6 +38,15 @@ Gameplay::Behaviors::Kick::~Kick()
 	if (_intercept)
 	{
 		delete _intercept;
+	}
+}
+
+bool Gameplay::Behaviors::Kick::kickType(KickType mode) {
+	if (mode == CHIP && robot()->hasChipper()) {
+		_kickType = mode;
+		return true;
+	} else {
+		return false;
 	}
 }
 
@@ -292,7 +302,12 @@ Gameplay::Behaviors::Kick::State
 Gameplay::Behaviors::Kick::shoot(const Geometry2d::Point& targetCenter, int kickStrength) {
 	debug("Shoot: %f", ball().vel.dot(robot()->pos() - ball().pos));
 	//robot()->kick(strength_param.value());
-	robot()->kick(kickStrength);
+
+	if (_kickType == KICK)
+		robot()->kick(kickStrength);
+	else if (_kickType == CHIP)
+		robot()->chip(kickStrength);
+
 	robot()->face(targetCenter);
 	robot()->dribble(0);
 	robot()->move(_shootMove);

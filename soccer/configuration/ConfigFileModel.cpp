@@ -145,6 +145,11 @@ void ConfigFileModel::setupRobotData(ConfigFileItem* robotRoot, ConfigFile::shar
 	addParam(QString("I"), config->motion.angle.i, pid_angle);
 	addParam(QString("D"), config->motion.angle.d, pid_angle);
 
+	// Wheel PID
+	ConfigFileItem * pid_wheel = addLabel(QString("PID (wheels)"), robotRoot);
+	addParam(QString("P"), config->motion.wheel.p, pid_wheel);
+	addParam(QString("I"), config->motion.wheel.i, pid_wheel);
+	addParam(QString("D"), config->motion.wheel.d, pid_wheel);
 
 	// coefficients
 	ConfigFileItem * coeffs = addLabel(QString("Output FIR Coeffs"), robotRoot);

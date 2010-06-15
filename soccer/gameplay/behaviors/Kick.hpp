@@ -12,9 +12,23 @@ namespace Gameplay
 
 	namespace Behaviors
 	{
+		/**
+		 * Kick allows for general ball firing action
+		 *  - Direct kicking
+		 *  - Chip Kicking
+		 *
+		 * Can do either full power shots or reduced power for passes
+		 */
 		class Kick: public Behavior
 		{
 			public:
+
+				//TODO: include others, like yank, bunting, etc.
+				typedef enum {
+					KICK,
+					CHIP
+				} KickType;
+
 				Kick(GameplayModule *gameplay);
 				~Kick();
 
@@ -36,7 +50,11 @@ namespace Gameplay
 					Shoot,
 					Done
 				};
-				State getState() {return _state;}
+				State getState() const { return _state; }
+
+				/** returns if successful due to check for chipper */
+				bool kickType(KickType mode);
+				KickType kickType() const { return _kickType; }
 
 				/** Restarts the kick play - keep going after ball */
 				void restart() {_state = Intercept;}
@@ -59,6 +77,8 @@ namespace Gameplay
 				State _state;
 				float _lastMargin;
 				Geometry2d::Segment _target;
+
+				KickType _kickType;
 
 				//we lock in a pivot point
 				Geometry2d::Point _pivot;
