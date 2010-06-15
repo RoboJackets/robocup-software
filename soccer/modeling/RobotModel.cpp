@@ -36,23 +36,23 @@ Modeling::RobotModel::RobotModel(const ConfigFile::WorldModel& cfg, int s) :
 //	posGamma = _config.pos.gamma;
 
 	//Process covariance between position and velocity (E[x,x_dot])
- 	posQ(1,0) = posQ(4,3) = 10;
+ 	posQ(1,0) = posQ(4,3) = _config.covPosVel;
 
 	//Process covariance between velocity and acceleration (E[x)dot,x_ddot])
- 	posQ(2,1) = posQ(5,4) = 0.01;
+ 	posQ(2,1) = posQ(5,4) = _config.covVelAcc;
 
 	//Process covariance between position and acceleration (E[x,x_ddot])
- 	posQ(2,0) = posQ(5,3) = 0.001;
+ 	posQ(2,0) = posQ(5,3) = _config.covPosAcc;
 
 	//Process covariance (E[x,x], E[x_dot,x_dot], etc)
-	posQ(0,0) = posQ(3,3) = 10;
+	posQ(0,0) = posQ(3,3) = _config.covPos;
 
-	posQ(1,1) = posQ(4,4) = 10;
+	posQ(1,1) = posQ(4,4) = _config.covVel;
 
-	posQ(2,2) = posQ(5,5) = 10;
+	posQ(2,2) = posQ(5,5) = _config.covAcc;
 
 	//Measurement Covariance for position in the x and the y
-	posR(0,0) = posR(1,1) = 0.1;
+	posR(0,0) = posR(1,1) = _config.measurementNoise;
 
 	//Measurement Model. We can only measure position
 	posH(0,0) = posH(1,3) = 1;

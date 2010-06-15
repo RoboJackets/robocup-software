@@ -134,6 +134,8 @@ void ConfigFile::WorldModel::proc(QDomElement element)
 {
     QDomElement posE = element.firstChildElement("pos");
     QDomElement angleE = element.firstChildElement("angle");
+    QDomElement abgModelRobotE = element.firstChildElement("abgModelRobot");
+    QDomElement kalmanModelRobotE = element.firstChildElement("kalmanModelRobot");
     QDomElement rbpfModelBallRollingE = element.firstChildElement("rbpfModelBallRolling");
     QDomElement rbpfModelBallKickedE = element.firstChildElement("rbpfModelBallKicked");
     
@@ -146,10 +148,22 @@ void ConfigFile::WorldModel::proc(QDomElement element)
 	{
     	angle.proc(angleE.firstChild().toElement());
 	}
+
+    if (!abgModelRobotE.isNull())
+    {
+    	abgModelRobot.proc(abgModelRobotE.firstChild().toElement());
+    }
+
+    if (!kalmanModelRobotE.isNull())
+    {
+    	kalmanModelRobot.proc(kalmanModelRobotE.firstChild().toElement());
+    }
+
     if (!rbpfModelBallRollingE.isNull())
     {
     	rbpfModelBallRolling.proc(rbpfModelBallRollingE.firstChild().toElement());
     }
+
     if (!rbpfModelBallKickedE.isNull())
     {
     	rbpfModelBallKicked.proc(rbpfModelBallKickedE.firstChild().toElement());
@@ -163,6 +177,33 @@ void ConfigFile::WorldModel::Filter::proc(QDomElement element)
 		alpha = valueFloat(element.attributeNode("alpha"));
 		beta = valueFloat(element.attributeNode("beta"));
 		gamma = valueFloat(element.attributeNode("gamma"));
+	}
+}
+
+void ConfigFile::WorldModel::ABGModelRobot::proc(QDomElement element)
+{
+	if (element.tagName() == "abgModelRobot")
+	{
+		alphaPos = valueFloat(element.attributeNode("alphaPos"));
+		betaPos = valueFloat(element.attributeNode("betaPos"));
+		gammaPos = valueFloat(element.attributeNode("gammaPos"));
+		alphaAng = valueFloat(element.attributeNode("alphaAng"));
+		betaAng = valueFloat(element.attributeNode("betaAng"));
+		gammaAng = valueFloat(element.attributeNode("gammaAng"));
+	}
+}
+
+void ConfigFile::WorldModel::KalmanModelRobot::proc(QDomElement element)
+{
+	if (element.tagName() == "kalmanModelRobot")
+	{
+		covPosVel = valueFloat(element.attributeNode("covPosVel"));
+		covVelAcc = valueFloat(element.attributeNode("covVelAcc"));
+		covPosAcc = valueFloat(element.attributeNode("covPosAcc"));
+		covPos = valueFloat(element.attributeNode("covPos"));
+		covVel = valueFloat(element.attributeNode("covVel"));
+		covAcc = valueFloat(element.attributeNode("covAcc"));
+		measurementNoise = valueFloat(element.attributeNode("measurementNoise"));
 	}
 }
 

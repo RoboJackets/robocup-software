@@ -146,6 +146,56 @@ class ConfigFile
 				//angle filter
 				Filter angle;
 				
+				class ABGModelRobot
+				{
+					public:
+						ABGModelRobot()
+						{
+							alphaPos = 1;
+							betaPos = 1;
+							gammaPos = 1;
+							alphaAng = 1;
+							betaAng = 1;
+							gammaAng = 1;
+						}
+
+						float alphaPos;
+						float betaPos;
+						float gammaPos;
+						float alphaAng;
+						float betaAng;
+						float gammaAng;
+
+						void proc(QDomElement element);
+				};
+				ABGModelRobot abgModelRobot;
+
+				class KalmanModelRobot
+				{
+					public:
+						KalmanModelRobot()
+						{
+							covPosVel = 10;
+							covVelAcc = 0.01;
+							covPosAcc = 0.001;
+							covPos = 10;
+							covVel = 10;
+							covAcc = 10;
+							measurementNoise = 0.1;
+						}
+
+						float covPosVel;
+						float covVelAcc;
+						float covPosAcc;
+						float covPos;
+						float covVel;
+						float covAcc;
+						float measurementNoise;
+
+						void proc(QDomElement element);
+				};
+				KalmanModelRobot kalmanModelRobot;
+
 				class RBPFModelBallRolling
 				{
 				public:

@@ -106,6 +106,12 @@
 	    <angle>
 	    	<filter alpha="1" beta="0" gamma="0" />
 	    </angle>
+	    <abgModelRobot>
+	        <abgModelRobot alphaPos="1.0" betaPos="1.0" gammaPos="1.0" alphaAng="1.0" betaAng="1.0" gammaAng="1.0" />
+	    </abgModelRobot>
+	    <kalmanModelRobot>
+	        <kalmanModelRobot covPosVel="10.0" covVelAcc="0.01" covPosAcc="0.001" covPos="10.0" covVel="10.0" covAcc="10.0" measurementNoise="0.1" />
+	    </kalmanModelRobot>
 	    <rbpfModelBallRolling>
 	        <rbpfModelBallRolling processNoiseSqrdPos="0.2" processNoiseSqrdVel="1.0" processNoiseSqrdAcc="2000.0" measurementNoiseSqrd="0.01" />
 	    </rbpfModelBallRolling>

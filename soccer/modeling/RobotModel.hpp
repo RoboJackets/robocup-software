@@ -11,6 +11,8 @@
 #include "BLASWrap/blaswrap.h"
 #include "difference_kalman.hpp"
 
+#include "framework/Module.hpp"
+
 //#define KALMANMODEL
 
 namespace Modeling
