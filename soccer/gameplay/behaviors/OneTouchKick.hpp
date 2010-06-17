@@ -30,6 +30,16 @@ namespace Gameplay
 				};
 				State getState() {return _state;}
 
+				//TODO: include others, like yank, bunting, etc.
+				typedef enum {
+					KICK,
+					CHIP
+				} KickType;
+
+				/** returns if successful due to check for chipper */
+				bool kickType(KickType mode);
+				KickType kickType() const { return _kickType; }
+
 				/** Restarts the kick play - keep going after ball */
 				void restart() {_state = Intercept;}
 
@@ -42,6 +52,7 @@ namespace Gameplay
 				std::vector<Geometry2d::Point> _controls;
 
 				State _state;
+				KickType _kickType;
 
 				// segment we are targetting
 				Geometry2d::Segment _target;

@@ -13,7 +13,7 @@ using namespace Geometry2d;
 
 
 Gameplay::Behaviors::OneTouchKick::OneTouchKick(GameplayModule *gameplay) :
-	Behavior(gameplay)
+	Behavior(gameplay), _kickType(KICK)
 {
 	_win = 0;
 	targetRobot = 0;
@@ -43,6 +43,15 @@ bool Gameplay::Behaviors::OneTouchKick::assign(set<Robot *> &available)
 	_commandValid = false;
 
 	return _robots.size() >= _minRobots;
+}
+
+bool Gameplay::Behaviors::OneTouchKick::kickType(KickType mode) {
+	if (mode == CHIP && robot()->hasChipper()) {
+		_kickType = mode;
+		return true;
+	} else {
+		return false;
+	}
 }
 
 bool Gameplay::Behaviors::OneTouchKick::run()
@@ -148,7 +157,10 @@ Gameplay::Behaviors::OneTouchKick::approach() {
 
 	// turn on the kicker for final approach
 	robot()->willKick = true;
-	robot()->kick(calcKickStrength(_target.center()));
+	if (_kickType == KICK)
+		robot()->kick(calcKickStrength(_target.center()));
+	else if (_kickType == CHIP)
+		robot()->chip(calcKickStrength(_target.center()));
 
 	// calculate trajectory to hit the ball correctly
 	float approachDist = 2.0; // how long to extend approach line beyond ball
