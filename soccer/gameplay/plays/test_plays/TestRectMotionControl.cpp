@@ -17,7 +17,7 @@ Gameplay::Plays::TestRectMotionControl::TestRectMotionControl(GameplayModule *ga
 	pathGoalIdx_(0)
 {
 	// find the center of our side
-	Point center(0.0, 3*Constants::Field::Length/4);
+	Point center(0.0, Constants::Field::Length/4);
 
 	Point p1(center.x+hWidth_, center.y+hHeight_);
 	Point p2(center.x-hWidth_, center.y+hHeight_);

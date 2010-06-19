@@ -28,7 +28,26 @@ bool Gameplay::Plays::ClearBall::applicable()
 
 bool Gameplay::Plays::ClearBall::assign(set<Robot *> &available)
 {
-	if(!_kicker.assign(available)){return false;};
+	if(available.size() <= 0){return false;}
+
+	float selfBallDistMin = 999;
+	Geometry2d::Point ballPos = _gameplay->state()->ball.pos;
+	Robot* closest;
+
+	// calculate closest (non-goalie) self robot to ball
+	Robot* goalie = (_gameplay->goalie() ? _gameplay->goalie()->robot() : (Robot*)0);
+	BOOST_FOREACH(Robot *r, _gameplay->self){
+		float ballDist = ballPos.distTo(r->pos());
+		if(r!=goalie && selfBallDistMin > ballDist){
+			selfBallDistMin = ballDist;
+			closest = r;
+		}
+	}
+
+	if(!closest){return false;}
+
+	_kicker.assignOne(closest);
+	available.erase(closest);
 	if(!_fullback1.assign(available)){return false;};
 	if(!_kicker1.assign(available)){return false;};
 	if(!_kicker2.assign(available)){return false;};
