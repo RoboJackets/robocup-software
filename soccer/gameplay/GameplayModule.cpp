@@ -39,6 +39,7 @@
 #include "plays/test_plays/TestPassPlay.hpp"
 #include "plays/test_plays/TestOptimizedPassPlay.hpp"
 #include "plays/test_plays/TestDirectMotionControl.hpp"
+#include "plays/test_plays/TestRectMotionControl.hpp"
 #include "plays/test_plays/TestTimePositionControl.hpp"
 #include "plays/test_plays/TestPassConfigOptimize.hpp"
 #include "plays/test_plays/TestGUI.hpp"
@@ -171,6 +172,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_playConfig->addPlay(make_shared<Plays::TestBasicOneTouchChipAttack>(this));
 	_playConfig->addPlay(make_shared<Plays::TestPassPlay>(this));
 	_playConfig->addPlay(make_shared<Plays::TestDirectMotionControl>(this));
+	_playConfig->addPlay(make_shared<Plays::TestRectMotionControl>(this));
 	_playConfig->addPlay(make_shared<Plays::TestTimePositionControl>(this));
 	_playConfig->addPlay(make_shared<Plays::TestPassConfigOptimize>(this));
 	_playConfig->addPlay(make_shared<Plays::TestGUI>(this));
