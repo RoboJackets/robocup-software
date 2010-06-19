@@ -162,6 +162,12 @@ const float & Gameplay::Robot::angle() const
 	return packet()->angle;
 }
 
+Geometry2d::Point Gameplay::Robot::pointInRobotSpace(const Geometry2d::Point& pt) const {
+	Point p = pt;
+	p.rotate(pos(), -1.0 * angle());
+	return p;
+}
+
 const Geometry2d::Segment Gameplay::Robot::kickerBar() const {
 	TransformMatrix pose(pos(), angle());
 	const float mouthHalf = Constants::Robot::MouthWidth/2.0f;
@@ -170,6 +176,12 @@ const Geometry2d::Segment Gameplay::Robot::kickerBar() const {
 	Point R(x, -1.0 * Constants::Robot::MouthWidth/2.0f);
 	return Segment(pose*L, pose*R);
 }
+
+bool Gameplay::Robot::behindBall(const Geometry2d::Point& ballPos) const {
+	Point ballTransformed = pointInRobotSpace(ballPos);
+	return ballTransformed.x < -Constants::Robot::Radius;
+}
+
 
 void Gameplay::Robot::setVScale(float scale) {
 	packet()->cmd.vScale = scale;

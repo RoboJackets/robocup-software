@@ -142,6 +142,32 @@ bool Segment::nearPoint(const Point &point, float threshold) const
 	return d >= 0 && d <= 1;
 }
 
+bool Segment::nearPointPerp(const Point &point, float threshold) const {
+	const Point &p1 = pt[0];
+	const Point &p2 = pt[1];
+
+	Point delta = p2 - p1;
+	float top = delta.x * (p1.y - point.y) - (p1.x - point.x) * delta.y;
+	float delta_magsq = delta.magsq();
+	float dist = fabs(top) / sqrtf(delta_magsq);
+
+	// Check smallest distance from this point to the line
+	if (dist > threshold)
+    {
+		return false;
+    }
+
+	Point d1 = point - p1;
+	Point d2 = point - p2;
+
+	// Calculate the position between the endpoints of the point on
+	// the line nearest this point.
+	// In the result (d), p1 maps to 0 and p2 maps to 1.
+	float d = (d1.x * delta.x + d1.y * delta.y) / delta_magsq;
+
+	return d >= 0 && d <= 1;
+}
+
 Point Segment::nearestPoint(const Point& p) const
 {
 	const float magsq = delta().magsq();

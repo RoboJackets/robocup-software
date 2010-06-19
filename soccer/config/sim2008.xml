@@ -32,6 +32,7 @@
 		</rev2008>
 	</revLUT>
 	     
+	<robots>
 		<!-- Default 2008 robot -->	  
 	    <robot id="2008" rev="rev2008">	     
    			<motion>

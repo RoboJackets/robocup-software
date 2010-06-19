@@ -138,7 +138,7 @@ bool Gameplay::Behaviors::Kick::run()
 	// if intercepting and dist < aimThresh, enter aim state
 	const float aimThresh = Constants::Robot::Radius * 1.4;
 	// if aiming and dist > interceptThresh, enter intercept state
-	const float interceptThresh = Constants::Robot::Radius * 1.6;
+	const float interceptThresh = Constants::Robot::Radius * 1.6;drawText("Shoot", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
 
 	// STATE TRANSITION OVERRIDES
 	// check which aim mode we are in
@@ -151,19 +151,21 @@ bool Gameplay::Behaviors::Kick::run()
 	}
 
 	//if we already have the ball, skip approach states
-	if (_state == Intercept && robot()->haveBall())
-	{
-		//cout << "Intercept succeded - switching to aim" << endl;
-		_state = Aim;
-		_pivot = ballPos;
-	} else if (_state == Intercept && pos.distTo(ballPos) < aimThresh) {
-		//cout << "Close enough to ball, switching to aim" << endl;
-		_state = Aim;
-		_pivot = ballPos;
-	} else if (_state == Aim && (!robot()->haveBall() && pos.distTo(ballPos) > interceptThresh))
-	{
-		//cout << "Lost ball - switching to intercept" << endl;
-		_state = Intercept;
+	if (_aimType == PIVOT) {
+		if (_state == Intercept && robot()->haveBall())
+		{
+			//cout << "Intercept succeeded - switching to aim" << endl;
+			_state = Aim;
+			_pivot = ballPos;
+		} else if (_state == Intercept && pos.distTo(ballPos) < aimThresh) {
+			//cout << "Close enough to ball, switching to aim" << endl;
+			_state = Aim;
+			_pivot = ballPos;
+		} else if (_state == Aim && (!robot()->haveBall() && pos.distTo(ballPos) > interceptThresh))
+		{
+			//cout << "Lost ball - switching to intercept" << endl;
+			_state = Intercept;
+		}
 	}
 
 	// HANDLE STATES (with debug text)
@@ -183,6 +185,8 @@ bool Gameplay::Behaviors::Kick::run()
 		break;
 	case OneTouchAim:
 		_state = oneTouchApproach();
+		drawText("OneTouchAim", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
+		break;
 	case Done: // do nothing
 		break;
 	}
@@ -203,17 +207,23 @@ Gameplay::Behaviors::Kick::intercept(const Geometry2d::Point& targetCenter) {
 		// define the control points for a single kick
 		Point approachFar  = ballPos + approachVec*approachDist,
 			  approachBall = ballPos + approachVec*Constants::Robot::Radius,
-			  moveTarget   = Segment(approachFar, approachBall).center();
+			  moveTarget   = ballPos + approachVec * (0.5 * approachDist + Constants::Robot::Radius);
 
 		// issue move command to point halfway along line
 		robot()->move(moveTarget, false);
-		robot()->face(targetCenter);
+
+		// face ball to ensure we hit something
+		// FIXME: may want to get behind and then aim at both target and ball
+		robot()->face(ballPos);
 
 		// if we are on the approach line, change to approach state
 		Segment approachLine(approachFar, approachBall);
 		float distThresh = 0.1;
-		if (approachLine.nearPoint(pos, distThresh)) {
+		if (approachLine.nearPointPerp(pos, distThresh)) {
+			robot()->willKick = true;
 			return OneTouchAim;
+		} else {
+			robot()->willKick = false; // avoid ball when intercepting
 		}
 	} else if (_aimType == PIVOT){
 		// use normal intercept
@@ -392,12 +402,13 @@ Gameplay::Behaviors::Kick::oneTouchApproach() {
 		return Done;
 	}
 
-	// if we are in front of the ball, we should go back to intercept
-	Point apprPoint = ballPos + approachVec * Constants::Robot::Radius * 0.8;
-	Segment ballPerpLine(apprPoint - approachVec.perpCW(), apprPoint + approachVec.perpCW());
-	drawLine(ballPerpLine, 0, 0, 0);
-	if (ballPerpLine.pointSide(ballPos) > 0.0)
-		return Intercept;
+	// FIXME: detection appears to be glitchy, so disabled
+//	// if we are in front of the ball, we should go back to intercept
+//	Point apprPoint = ballPos + approachVec * Constants::Robot::Radius * 0.8;
+//	Segment ballPerpLine(apprPoint - approachVec.perpCW(), apprPoint + approachVec.perpCW());
+//	drawLine(ballPerpLine, 0, 0, 0);
+//	if (ballPerpLine.pointSide(ballPos) > 0.0)
+//		return Intercept;
 
 	// turn on the kicker for final approach
 	robot()->willKick = true;

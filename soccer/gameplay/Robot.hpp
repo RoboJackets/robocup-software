@@ -47,6 +47,11 @@ namespace Gameplay
 			const Geometry2d::Point &vel() const;  /// Velocity (vector)
 			const float &angle() const;	  /// global orientation of the robot (radians)
 			const Geometry2d::Segment kickerBar() const; /// segment for the location of the kicker
+			Geometry2d::Point pointInRobotSpace(const Geometry2d::Point& pt) const; /// converts a point to the frame of reference of robot
+
+			// simple checks to do geometry
+			/** returns true if the position specified is behind the robot */
+			bool behindBall(const Geometry2d::Point& ballPos) const;
 
 			// Commands
 			void setVScale(float scale = 1.0); /// scales the velocity
