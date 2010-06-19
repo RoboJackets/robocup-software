@@ -262,6 +262,8 @@ bool ConfigFileModel::setHeaderData(int section, Qt::Orientation orientation,
 void ConfigFileModel::changeParam(const QModelIndex &index, float value) {
 	bool verbose = false;
 
+	// FIXME: check whether we are changing a robot or a world model parameter here
+
 	ConfigFileItem* param = getItem(index);
 	QString paramLabel = param->getLabel();
 	QString groupLabel = param->parent()->getLabel();

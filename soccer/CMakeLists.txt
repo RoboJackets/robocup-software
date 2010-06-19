@@ -68,6 +68,7 @@ set (SRCS
 	gameplay/plays/DefendPenalty.cpp
 	gameplay/plays/Stopped.cpp
 	gameplay/plays/Offense.cpp
+	gameplay/plays/ClearBall.cpp
 	gameplay/plays/Defense.cpp
 	gameplay/plays/OptimizedOffense.cpp
 

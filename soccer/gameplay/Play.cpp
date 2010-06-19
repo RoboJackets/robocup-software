@@ -13,5 +13,5 @@ bool Gameplay::Play::applicable()
 
 float Gameplay::Play::score()
 {
-	return 0;
+	return 1.0;
 }
