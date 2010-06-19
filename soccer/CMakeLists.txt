@@ -90,6 +90,7 @@ set (SRCS
 	gameplay/plays/test_plays/TestBasicPassing.cpp
 	gameplay/plays/test_plays/TestBasicOneTouchPassing.cpp
 	gameplay/plays/test_plays/TestDirectMotionControl.cpp
+	gameplay/plays/test_plays/TestRectMotionControl.cpp
 	gameplay/plays/test_plays/TestTimePositionControl.cpp
 	gameplay/plays/test_plays/TestBasicAttack.cpp
 	gameplay/plays/test_plays/TestBasicChipAttack.cpp
