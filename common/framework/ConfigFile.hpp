@@ -130,6 +130,8 @@ class ConfigFile
 		class WorldModel
 		{
 			public:
+
+				// NOT USED
 				class Filter
 				{
 					public:

@@ -43,10 +43,19 @@ public:
 private:
 	ConfigFileItem *getItem(const QModelIndex &index) const;
 
+	/// general setup from a full config
 	void setupModelData();
 	void setupRobotData(ConfigFileItem* robotRoot, ConfigFile::shared_robot config);
 	void setupDynData(ConfigFileItem* parent, const ConfigFile::Robot::Motion::Dynamics& model);
+	void setupWorldModel(ConfigFileItem* parent, ConfigFile::shared_worldmodel config);
+
+	/// change a specific parameter
 	void changeParam(const QModelIndex &index, float value);
+	void changeRobotParam(
+			const QString& topLabel, const QString& groupLabel, const QString& paramLabel,
+			float value);
+	void changeWorldModelParam(const QString& groupLabel, const QString& paramLabel,
+			float value);
 
 	// convenience functions for adding params and labels
 	ConfigFileItem * addLabel(const QString& label, ConfigFileItem * parent);
