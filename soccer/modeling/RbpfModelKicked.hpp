@@ -30,7 +30,7 @@ class RbpfModelKicked : public RbpfModel {
 public:
 	typedef boost::numeric::ublas::vector<double> Vector;
 	typedef boost::numeric::ublas::matrix<double> Matrix;
-	RbpfModelKicked(Modeling::RobotModel::RobotMap *_robotMap, const ConfigFile::WorldModel& cfg);
+	RbpfModelKicked(Modeling::RobotModel::RobotMap *_robotMap, ConfigFile::shared_worldmodel& cfg);
 	~RbpfModelKicked();
 protected:
 	void transitionModel(Vector &X, Vector &U, double dt);
@@ -38,7 +38,7 @@ protected:
 	void observationModel(Vector &X, Vector &out);
 	void computeObservationJacobian(double dt);
 	void update(Vector &X, Matrix &P, Vector &Z, double dt);
-	const ConfigFile::WorldModel& _config;
+	ConfigFile::shared_worldmodel _config;
 };
 
 #endif /* RBPFMODELKICKED_HPP_ */

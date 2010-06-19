@@ -15,7 +15,7 @@ using namespace std;
 using namespace boost;
 
 ConfigFile::ConfigFile(QString filename) :
-	_filename(filename), _doc("config")
+worldModel(new WorldModel), _filename(filename), _doc("config")
 {
 }
 
@@ -64,7 +64,7 @@ void ConfigFile::load() throw (std::runtime_error)
 		else if (element.tagName() == "worldModel")
 		{
 			//procWorldModel(element);
-			worldModel.proc(element);
+			worldModel->proc(element);
 		}
 		else if (element.tagName() == "motionModule")
 		{

@@ -55,5 +55,8 @@ private:
 	/** Store links to robot types */
 	ConfigFile::shared_robot _default2008, _default2010;
 
+	/** Store links to the world model config data */
+	ConfigFile::shared_worldmodel _worldmodel;
+
 	ConfigFileItem* _root;
 };

@@ -12,7 +12,8 @@
 // state: X (6 x 1) = {x, y, vx, vy, ax, ay}
 // requires state size (n) = 6, control size (m) = 6, measurement size (s) = 2
 // initializes: F, H, Q, R
-RbpfModelRolling::RbpfModelRolling(Modeling::RobotModel::RobotMap *_robotMap, const ConfigFile::WorldModel& cfg) : RbpfModel(_robotMap), _config(cfg){
+RbpfModelRolling::RbpfModelRolling(Modeling::RobotModel::RobotMap *_robotMap, ConfigFile::shared_worldmodel& cfg)
+: RbpfModel(_robotMap), _config(cfg){
 	assert(n==6); // state size (n) must = 6. If n changed, re-write this!
 	assert(m==6); // control size (m) must = 6. If m changed, re-write this!
 	assert(s==2); // measurement size (s) must = 2. If s changed, re-write this!
@@ -22,9 +23,9 @@ RbpfModelRolling::RbpfModelRolling(Modeling::RobotModel::RobotMap *_robotMap, co
 	H(0,0)=1; H(0,1)=0; H(0,2)=0; H(0,3)=0; H(0,4)=0; H(0,5)=0; // dh(X)/dx
 	H(1,0)=0; H(1,1)=1; H(1,2)=0; H(1,3)=0; H(1,4)=0; H(1,5)=0; // dh(X)/dy
 	// initialize process noise (n x n)
-	double sP = _config.rbpfModelBallKicked.processNoiseSqrdPos;
-	double sV = _config.rbpfModelBallKicked.processNoiseSqrdVel;
-	double sA = _config.rbpfModelBallKicked.processNoiseSqrdAcc;
+	double sP = _config->rbpfModelBallKicked.processNoiseSqrdPos;
+	double sV = _config->rbpfModelBallKicked.processNoiseSqrdVel;
+	double sA = _config->rbpfModelBallKicked.processNoiseSqrdAcc;
 	Q(0,0)=sP; Q(0,1)=00; Q(0,2)=00; Q(0,3)=00; Q(0,4)=00; Q(0,5)=00;
 	Q(1,0)=00; Q(1,1)=sP; Q(1,2)=00; Q(1,3)=00; Q(1,4)=00; Q(1,5)=00;
 	Q(2,0)=00; Q(2,1)=00; Q(2,2)=sV; Q(2,3)=00; Q(2,4)=00; Q(2,5)=00;
@@ -32,7 +33,7 @@ RbpfModelRolling::RbpfModelRolling(Modeling::RobotModel::RobotMap *_robotMap, co
 	Q(4,0)=00; Q(4,1)=00; Q(4,2)=00; Q(4,3)=00; Q(4,4)=sA; Q(4,5)=00;
 	Q(5,0)=00; Q(5,1)=00; Q(5,2)=00; Q(5,3)=00; Q(5,4)=00; Q(5,5)=sA;
 	// initialize measurement noise (s x s)
-	double sM = _config.rbpfModelBallKicked.measurementNoiseSqrd;
+	double sM = _config->rbpfModelBallKicked.measurementNoiseSqrd;
 	R(0,0)=sM; R(0,1)=00;
 	R(1,0)=00; R(1,1)=sM;
 }

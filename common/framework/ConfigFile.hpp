@@ -244,6 +244,7 @@ class ConfigFile
 
 	public:
 		typedef boost::shared_ptr<ConfigFile::Robot> shared_robot;
+		typedef boost::shared_ptr<ConfigFile::WorldModel> shared_worldmodel;
 
 		ConfigFile(QString filename);
 		~ConfigFile();
@@ -262,7 +263,7 @@ class ConfigFile
 		/** gets the value for a particular robot and handles defaults */
 		shared_robot robot(unsigned int id) const;
 		
-		WorldModel worldModel;
+		shared_worldmodel worldModel;
 		MotionModule motionModule;
 		
 		/** Access for gui interface */

@@ -29,14 +29,14 @@ class RbpfModelRolling : public RbpfModel {
 public:
 	typedef boost::numeric::ublas::vector<double> Vector;
 	typedef boost::numeric::ublas::matrix<double> Matrix;
-	RbpfModelRolling(Modeling::RobotModel::RobotMap *_robotMap, const ConfigFile::WorldModel& cfg);
+	RbpfModelRolling(Modeling::RobotModel::RobotMap *_robotMap, ConfigFile::shared_worldmodel& cfg);
 	~RbpfModelRolling();
 protected:
 	void transitionModel(Vector &X, Vector &U, double dt);
 	void computeTransitionJacobian(double dt);
 	void observationModel(Vector &X, Vector &out);
 	void computeObservationJacobian(double dt);
-	const ConfigFile::WorldModel& _config;
+	ConfigFile::shared_worldmodel _config;
 };
 
 #endif /* RBPFMODELROLLING_HPP_ */

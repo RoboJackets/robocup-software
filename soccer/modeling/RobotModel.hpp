@@ -31,7 +31,7 @@ namespace Modeling
 			} Observation_t;
 			typedef std::vector<Observation_t> ObsVec;
 
-			RobotModel(const ConfigFile::WorldModel& cfg, int s);
+			RobotModel(ConfigFile::shared_worldmodel& cfg, int s);
 
 			void observation(uint64_t time, Geometry2d::Point pos, float angle);
 			Geometry2d::Point predictPosAtTime(float dtime);
@@ -80,7 +80,7 @@ namespace Modeling
 			float _angleBeta;
 			float _angleGamma;
 
-			const ConfigFile::WorldModel& _config;
+			ConfigFile::shared_worldmodel _config;
 
 			// Data from RadioRx
 			bool _haveBall;
