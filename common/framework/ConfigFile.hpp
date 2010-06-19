@@ -119,7 +119,7 @@ class ConfigFile
 						QVector<Geometry2d::Point> axles;
 						
 						void proc(QDomElement element);
-						void procAxels(QDomElement element);
+						void procAxles(QDomElement element);
 				};
 
 				void proc(QDomElement element);
