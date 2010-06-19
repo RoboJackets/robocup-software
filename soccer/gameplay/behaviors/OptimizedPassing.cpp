@@ -95,7 +95,7 @@ bool Gameplay::Behaviors::OptimizedPassing::run(){
 
 			if(newPassState){
 				kicker.assignOne(passState.robot1);
-				kicker.targetRobot = passState.robot2;
+				kicker.setTarget(passState.robot2);
 				kicker.restart();
 			}
 
@@ -150,7 +150,7 @@ bool Gameplay::Behaviors::OptimizedPassing::run(){
 		}else if(passState.stateType == PassState::KICKGOAL){
 			if(newPassState){
 				kicker.assignOne(passState.robot2);
-				kicker.targetRobot = NULL;
+				kicker.setTarget(); // force shooting
 				kicker.restart();
 			}
 

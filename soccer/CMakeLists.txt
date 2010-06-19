@@ -94,6 +94,7 @@ set (SRCS
 	gameplay/plays/test_plays/TestRectMotionControl.cpp
 	gameplay/plays/test_plays/TestTimePositionControl.cpp
 	gameplay/plays/test_plays/TestBasicAttack.cpp
+	gameplay/plays/test_plays/TestBasicOneTouchAttack.cpp
 	gameplay/plays/test_plays/TestBasicChipAttack.cpp
 	gameplay/plays/test_plays/TestBasicOneTouchChipAttack.cpp
 	gameplay/plays/test_plays/TestIntercept.cpp

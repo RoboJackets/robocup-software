@@ -19,13 +19,15 @@ using namespace Geometry2d;
 
 Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay) :
 	Behavior(gameplay, 1),
+	_aimType(PIVOT),
 	_kickType(KICK),
+	_targetType(GOAL),
 	_ballHandlingScale(1.0),
 	_ballHandlingRange(0.5)
 {
 	automatic = true;
 	_win = 0;
-	targetRobot = 0;
+	_targetRobot = 0;
 	_intercept = new Gameplay::Behaviors::Intercept(gameplay);
 }
 
@@ -48,6 +50,20 @@ bool Gameplay::Behaviors::Kick::kickType(KickType mode) {
 	} else {
 		return false;
 	}
+}
+
+void Gameplay::Behaviors::Kick::setTarget() {
+	_targetType = GOAL;
+}
+
+void Gameplay::Behaviors::Kick::setTarget(const Geometry2d::Segment& seg) {
+	_targetType = SEGMENT;
+	_target = seg;
+}
+
+void Gameplay::Behaviors::Kick::setTarget(Robot * r) {
+	_targetType = ROBOT;
+	_targetRobot = r;
 }
 
 bool Gameplay::Behaviors::Kick::assign(set<Robot *> &available)
@@ -84,10 +100,15 @@ bool Gameplay::Behaviors::Kick::run()
 	const Geometry2d::Point pos = robot()->pos();
 
 	// find a target segment using window evaluators
-	if (targetRobot) {
-		_target = evaluatePass();
-	} else {
+	switch (_targetType) {
+	case GOAL:
 		_target = evaluateShot();
+		break;
+	case ROBOT:
+		_target = evaluateShot();
+		break;
+	case SEGMENT:
+		_target = evaluateSegment();
 	}
 	drawLine(_target, 255, 0, 0); // show the target segment
 
@@ -137,23 +158,34 @@ bool Gameplay::Behaviors::Kick::run()
 	// if intercepting and dist < aimThresh, enter aim state
 	const float aimThresh = Constants::Robot::Radius * 1.4;
 	// if aiming and dist > interceptThresh, enter intercept state
-	const float interceptThresh = Constants::Robot::Radius * 1.6;
+	const float interceptThresh = Constants::Robot::Radius * 1.6;drawText("Shoot", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
 
 	// STATE TRANSITION OVERRIDES
-	//if we already have the ball, skip approach states
-	if (_state == Intercept && robot()->haveBall())
+	// check which aim mode we are in
+	if (_aimType == PIVOT && (_state == OneTouchAim))
 	{
-		//cout << "Intercept succeded - switching to aim" << endl;
-		_state = Aim;
-		_pivot = ballPos;
-	} else if (_state == Intercept && pos.distTo(ballPos) < aimThresh) {
-		//cout << "Close enough to ball, switching to aim" << endl;
-		_state = Aim;
-		_pivot = ballPos;
-	} else if (_state == Aim && (!robot()->haveBall() && pos.distTo(ballPos) > interceptThresh))
-	{
-		//cout << "Lost ball - switching to intercept" << endl;
 		_state = Intercept;
+	} else if (_aimType == ONETOUCH && (_state == Aim || _state == Shoot))
+	{
+		_state = OneTouchAim;
+	}
+
+	//if we already have the ball, skip approach states
+	if (_aimType == PIVOT) {
+		if (_state == Intercept && robot()->haveBall())
+		{
+			//cout << "Intercept succeeded - switching to aim" << endl;
+			_state = Aim;
+			_pivot = ballPos;
+		} else if (_state == Intercept && pos.distTo(ballPos) < aimThresh) {
+			//cout << "Close enough to ball, switching to aim" << endl;
+			_state = Aim;
+			_pivot = ballPos;
+		} else if (_state == Aim && (!robot()->haveBall() && pos.distTo(ballPos) > interceptThresh))
+		{
+			//cout << "Lost ball - switching to intercept" << endl;
+			_state = Intercept;
+		}
 	}
 
 	// HANDLE STATES (with debug text)
@@ -171,6 +203,10 @@ bool Gameplay::Behaviors::Kick::run()
 		_state = shoot(targetCenter, kickStrength);
 		drawText("Shoot", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
 		break;
+	case OneTouchAim:
+		_state = oneTouchApproach();
+		drawText("OneTouchAim", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
+		break;
 	case Done: // do nothing
 		break;
 	}
@@ -180,10 +216,43 @@ bool Gameplay::Behaviors::Kick::run()
 
 Gameplay::Behaviors::Kick::State
 Gameplay::Behaviors::Kick::intercept(const Geometry2d::Point& targetCenter) {
-	_intercept->target = targetCenter;
-	if (!_intercept->run())
-	{
-		return Aim;
+	// check if we can do one touch
+	if (_aimType == ONETOUCH) {
+		// calculate trajectory to get to the ball
+		float approachDist = 0.5; // distance along approach line for ball control point
+
+		Point pos = robot()->pos(), ballPos = ball().pos;
+		Point approachVec = (ballPos - targetCenter).normalized();
+
+		// define the control points for a single kick
+		Point approachFar  = ballPos + approachVec*approachDist,
+			  approachBall = ballPos + approachVec*Constants::Robot::Radius,
+			  moveTarget   = ballPos + approachVec * (0.5 * approachDist + Constants::Robot::Radius);
+
+		// issue move command to point halfway along line
+		robot()->move(moveTarget, false);
+
+		// face ball to ensure we hit something
+		// FIXME: may want to get behind and then aim at both target and ball
+		robot()->face(ballPos);
+
+		// if we are on the approach line, change to approach state
+		Segment approachLine(approachFar, approachBall);
+		float distThresh = 0.1;
+		if (approachLine.nearPointPerp(pos, distThresh)) {
+			robot()->willKick = true;
+			return OneTouchAim;
+		} else {
+			robot()->willKick = false; // avoid ball when intercepting
+		}
+	} else if (_aimType == PIVOT){
+		// use normal intercept
+		_intercept->target = targetCenter;
+		bool intercept_sucess = _intercept->run();
+		if (!intercept_sucess)
+		{
+			return Aim;
+		}
 	}
 	return Intercept;
 }
@@ -335,6 +404,64 @@ Gameplay::Behaviors::Kick::shoot(const Geometry2d::Point& targetCenter, int kick
 	return Shoot;
 }
 
+Gameplay::Behaviors::Kick::State
+Gameplay::Behaviors::Kick::oneTouchApproach() {
+
+	// if we have kicked the ball, we are done
+	if (robot()->charged() == false) {
+		robot()->willKick = false;
+		return Done;
+	}
+
+	Point pos = robot()->pos(), ballPos = ball().pos;
+	Point approachVec = (ballPos - _target.center()).normalized();
+
+	// if the ball is suddenly moving now, we have hit/kicked it, so back off
+	float kickThresh = 1.0;
+	if (ball().accel.mag() > kickThresh) {
+		return Done;
+	}
+
+	// FIXME: detection appears to be glitchy, so disabled
+//	// if we are in front of the ball, we should go back to intercept
+//	Point apprPoint = ballPos + approachVec * Constants::Robot::Radius * 0.8;
+//	Segment ballPerpLine(apprPoint - approachVec.perpCW(), apprPoint + approachVec.perpCW());
+//	drawLine(ballPerpLine, 0, 0, 0);
+//	if (ballPerpLine.pointSide(ballPos) > 0.0)
+//		return Intercept;
+
+	// turn on the kicker for final approach
+	robot()->willKick = true;
+	if (_kickType == KICK)
+		robot()->kick(calcKickStrength(_target.center()));
+	else if (_kickType == CHIP)
+		robot()->chip(calcKickStrength(_target.center()));
+
+	// calculate trajectory to hit the ball correctly
+	float approachDist = 2.0; // how long to extend approach line beyond ball
+
+	// define the control points for a single kick
+	Point approachFar = ballPos + approachVec * Constants::Robot::Radius,
+		  approachBall = ballPos - approachVec * approachDist * Constants::Robot::Radius;
+
+	// use a 3rd degree bezier curve to get to the ball
+	_controls.clear();
+	_controls.push_back(pos);          // start at robot position
+	_controls.push_back(approachFar);  // back point for approach line
+	_controls.push_back(approachBall); // extended point
+
+	// issue move command if we don't need to change states
+	robot()->bezierMove(_controls, Packet::MotionCmd::Endpoint);
+
+	// if we have gotten too far away (given hysteresis), go back to intercept
+	Segment approachLine(approachFar, approachBall);
+	float distThresh = 0.15;
+	if (!approachLine.nearPoint(pos, distThresh)) {
+		return Intercept;
+	}
+
+	return OneTouchAim; // continue aiming
+}
 
 float Gameplay::Behaviors::Kick::score(Robot* robot)
 {
@@ -348,7 +475,7 @@ Geometry2d::Segment Gameplay::Behaviors::Kick::evaluatePass() {
 	_win->debug = true;
 
 	// Kick towards a robot
-	Geometry2d::Point t = targetRobot->pos();
+	Geometry2d::Point t = _targetRobot->pos();
 	_win->run(ball().pos, t);
 	_win->exclude.push_back(t);
 
@@ -409,11 +536,34 @@ Geometry2d::Segment Gameplay::Behaviors::Kick::evaluateShot() {
 	return bestTarget;
 }
 
+Geometry2d::Segment Gameplay::Behaviors::Kick::evaluateSegment() {
+	// Update the target window
+	_win->exclude.clear();
+	_win->exclude.push_back(robot()->pos());
+	_win->debug = true;
+
+	//goal line, for intersection detection
+	Segment target = _target;
+
+	// Try to kick to the goal.
+	_win->run(ball().pos, target);
+
+	Segment bestTarget;
+	if (_win->best)
+	{
+		bestTarget = _win->best->segment;
+	} else {
+		// Can't reach the target
+		bestTarget = _win->target();
+	}
+	return bestTarget;
+}
+
 int Gameplay::Behaviors::Kick::calcKickStrength(const Geometry2d::Point& targetCenter) {
 	//if kicking to a target
 	//calculate kick strength
 	int kickStrength = 255;
-	if (targetRobot)
+	if (_targetType == ROBOT)
 	{
 		const float dist = robot()->pos().distTo(targetCenter);
 
@@ -441,7 +591,7 @@ bool Gameplay::Behaviors::Kick::checkRobotIntersections(const Geometry2d::Segmen
 	BOOST_FOREACH(const Packet::LogFrame::Robot& r, gameplay()->state()->opp)
 	{
 		//don't check against if target
-		bool noAdd = (targetRobot && !targetRobot->self() && targetRobot->packet()->shell == r.shell);
+		bool noAdd = (_targetType == ROBOT && _targetRobot && !_targetRobot->self() && _targetRobot->packet()->shell == r.shell);
 		if (r.valid && !noAdd)
 		{
 			if (shotLine.intersects(Circle(r.pos, Constants::Robot::Radius + Constants::Ball::Radius)))
@@ -455,7 +605,7 @@ bool Gameplay::Behaviors::Kick::checkRobotIntersections(const Geometry2d::Segmen
 	BOOST_FOREACH(const Packet::LogFrame::Robot& r, gameplay()->state()->self)
 	{
 		//don't check against if target
-		bool noAdd = (targetRobot && targetRobot->self() && targetRobot->packet()->shell == r.shell);
+		bool noAdd = (_targetType == ROBOT && _targetRobot && _targetRobot->self() && _targetRobot->packet()->shell == r.shell);
 		if (r.valid && r.shell != robot()->packet()->shell && !noAdd)
 		{
 			if (shotLine.intersects(Circle(r.pos, Constants::Robot::Radius + Constants::Ball::Radius)))
