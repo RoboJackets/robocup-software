@@ -47,7 +47,7 @@ namespace Modeling
 				BALL_SENSOR
 			} observation_mode;
 
-			BallModel(mode_t mode, RobotModel::RobotMap *robotMap, const ConfigFile::WorldModel& cfg);
+			BallModel(mode_t mode, RobotModel::RobotMap *robotMap, ConfigFile::shared_worldmodel& cfg);
 
 			void observation(uint64_t time, const Geometry2d::Point &pos, observation_mode obs_mode);
 
@@ -150,6 +150,6 @@ namespace Modeling
 			/** ABG Filter update */
 			void abgUpdate(float dtime);
 
-			const ConfigFile::WorldModel& _config;
+			ConfigFile::shared_worldmodel _config;
 	};
 }

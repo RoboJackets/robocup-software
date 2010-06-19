@@ -19,7 +19,7 @@ namespace Modeling
 	class WorldModel : public Module
 	{
 		public:
-			WorldModel(SystemState *state, const ConfigFile::WorldModel& cfg);
+			WorldModel(SystemState *state, ConfigFile::shared_worldmodel cfg);
 			~WorldModel();
 
 			virtual void run();
@@ -50,6 +50,6 @@ namespace Modeling
 			/** allow for searching by robot ID (both self and opp) */
 			RobotModel::RobotMap _robotMap;
 
-			const ConfigFile::WorldModel& _config;
+			ConfigFile::shared_worldmodel _config;
 	};
 }
