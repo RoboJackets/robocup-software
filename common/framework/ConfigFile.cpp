@@ -379,10 +379,10 @@ void ConfigFile::MotionModule::proc(QDomElement element)
 
 void ConfigFile::MotionModule::Robot::proc(QDomElement element)
 {
-	procAxels(element.firstChildElement("axles"));
+	procAxles(element.firstChildElement("axles"));
 }
 
-void ConfigFile::MotionModule::Robot::procAxels(QDomElement element)
+void ConfigFile::MotionModule::Robot::procAxles(QDomElement element)
 {
     QDomElement axle = element.firstChildElement();
 	

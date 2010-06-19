@@ -28,7 +28,7 @@ class MainWindow : public QMainWindow
 	Q_OBJECT;
 	
 	public:
-		MainWindow(Team t, QString filename);
+		MainWindow(Team t, QString filename, bool sim);
 		~MainWindow();
 		
 		Processor *processor()
