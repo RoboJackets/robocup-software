@@ -27,7 +27,7 @@ bool Gameplay::Plays::TestBasicPassing::assign(set<Robot *> &available)
 	_passer.assign(available);
 	_receiver.assign(available);
 
-	_passer.targetRobot = _receiver.robot();
+	_passer.setTarget(_receiver.robot());
 	return _robots.size() >= _minRobots;
 }
 

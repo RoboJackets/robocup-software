@@ -9,7 +9,7 @@
 
 using namespace std;
 
-Modeling::RobotModel::RobotModel(const ConfigFile::WorldModel& cfg, int s) :
+Modeling::RobotModel::RobotModel(ConfigFile::shared_worldmodel& cfg, int s) :
 #ifdef KALMANMODEL
 	posA(6,6), posB(6,6), posP(6,6), posQ(6,6), posR(2,2), posH(2,6),
 	posZ(2), posU(6), posE(6), posX0(6), angA(3,3), angB(3,3), angP(3,3),
@@ -31,28 +31,28 @@ Modeling::RobotModel::RobotModel(const ConfigFile::WorldModel& cfg, int s) :
 	posU.zero();
 
 	//Alpha-Beta-Gamma Filter
-//	posAlpha = _config.pos.alpha;
-//	posBeta = _config.pos.beta;
-//	posGamma = _config.pos.gamma;
+//	posAlpha = _config->pos.alpha;
+//	posBeta = _config->pos.beta;
+//	posGamma = _config->pos.gamma;
 
 	//Process covariance between position and velocity (E[x,x_dot])
- 	posQ(1,0) = posQ(4,3) = _config.covPosVel;
+ 	posQ(1,0) = posQ(4,3) = _config->covPosVel;
 
 	//Process covariance between velocity and acceleration (E[x)dot,x_ddot])
- 	posQ(2,1) = posQ(5,4) = _config.covVelAcc;
+ 	posQ(2,1) = posQ(5,4) = _config->covVelAcc;
 
 	//Process covariance between position and acceleration (E[x,x_ddot])
- 	posQ(2,0) = posQ(5,3) = _config.covPosAcc;
+ 	posQ(2,0) = posQ(5,3) = _config->covPosAcc;
 
 	//Process covariance (E[x,x], E[x_dot,x_dot], etc)
-	posQ(0,0) = posQ(3,3) = _config.covPos;
+	posQ(0,0) = posQ(3,3) = _config->covPos;
 
-	posQ(1,1) = posQ(4,4) = _config.covVel;
+	posQ(1,1) = posQ(4,4) = _config->covVel;
 
-	posQ(2,2) = posQ(5,5) = _config.covAcc;
+	posQ(2,2) = posQ(5,5) = _config->covAcc;
 
 	//Measurement Covariance for position in the x and the y
-	posR(0,0) = posR(1,1) = _config.measurementNoise;
+	posR(0,0) = posR(1,1) = _config->measurementNoise;
 
 	//Measurement Model. We can only measure position
 	posH(0,0) = posH(1,3) = 1;
@@ -79,9 +79,9 @@ Modeling::RobotModel::RobotModel(const ConfigFile::WorldModel& cfg, int s) :
 	angU.zero();
 
 	//Angle ABG Stuff
-//	angleAlpha = _config.angle.alpha;
-//	angleBeta = _config.angle.beta;
-//	angleGamma = _config.angle.gamma;
+//	angleAlpha = _config->angle.alpha;
+//	angleBeta = _config->angle.beta;
+//	angleGamma = _config->angle.gamma;
 
 	//Process covariance between position and velocity (E[x,x_dot])
 // 	angQ(1,0) = 10;
@@ -114,13 +114,13 @@ Modeling::RobotModel::RobotModel(const ConfigFile::WorldModel& cfg, int s) :
 	_angKalman = new DifferenceKalmanFilter(&angA, &angB, &angX0, &angP, &angQ, &angR, &angH);
 #else
 	//Alpha-Beta-Gamma Filter
-	_posAlpha = _config.pos.alpha;
-	_posBeta = _config.pos.beta;
-	_posGamma = _config.pos.gamma;
+	_posAlpha = _config->pos.alpha;
+	_posBeta = _config->pos.beta;
+	_posGamma = _config->pos.gamma;
 
-	_angleAlpha = _config.angle.alpha;
-	_angleBeta = _config.angle.beta;
-	_angleGamma = _config.angle.gamma;
+	_angleAlpha = _config->angle.alpha;
+	_angleBeta = _config->angle.beta;
+	_angleGamma = _config->angle.gamma;
 #endif
 	lastObservedTime = 0;
 	lastUpdatedTime = 0;

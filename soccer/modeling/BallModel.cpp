@@ -9,7 +9,7 @@
 
 using namespace std;
 
-Modeling::BallModel::BallModel(mode_t mode, RobotModel::RobotMap *robotMap, const ConfigFile::WorldModel& cfg) :
+Modeling::BallModel::BallModel(mode_t mode, RobotModel::RobotMap *robotMap, ConfigFile::shared_worldmodel& cfg) :
 	A(6,6), B(6,6), P(6,6), Q(6,6), R(2,2), H(2,6),
 	Z(2), U(6), X0(6), _mode(mode), _robotMap(robotMap), _config(cfg)
 {

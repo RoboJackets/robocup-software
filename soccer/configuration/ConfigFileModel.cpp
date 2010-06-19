@@ -12,7 +12,8 @@ using namespace std;
 ConfigFileModel::ConfigFileModel(boost::shared_ptr<ConfigFile> config, QObject *parent)
  : QAbstractItemModel(parent),
    _default2008(config->defaultRobot2008()),
-   _default2010(config->defaultRobot2010())
+   _default2010(config->defaultRobot2010()),
+   _worldmodel(config->worldModel)
 {
 	QVector<QVariant> rootData;
 	rootData << "Parameter" << "Value";
@@ -126,6 +127,12 @@ void ConfigFileModel::setupModelData()
 		ConfigFileItem *robotRoot = addLabel(QString("Default 2010 Robot"), _root);
 		setupRobotData(robotRoot, _default2010);
 	}
+
+	// add an entry for the world model
+	if (_worldmodel) {
+		ConfigFileItem *model_root = addLabel(QString("World Modeling"), _root);
+		setupWorldModel(model_root, _worldmodel);
+	}
 }
 
 void ConfigFileModel::setupRobotData(ConfigFileItem* robotRoot, ConfigFile::shared_robot config) {
@@ -167,6 +174,40 @@ void ConfigFileModel::setupDynData(ConfigFileItem* parent,
 	addParam(QString("Deceleration"), model.deceleration, parent);
 	addParam(QString("Velocity"), model.velocity, parent);
 }
+
+void ConfigFileModel::setupWorldModel(ConfigFileItem* parent, ConfigFile::shared_worldmodel config) {
+	// ABG filter
+	ConfigFileItem * abg_root = addLabel(QString("ABG Robot Model"), parent);
+	addParam(QString("alphaPos"), config->abgModelRobot.alphaPos, abg_root);
+	addParam(QString("betaPos"), config->abgModelRobot.betaPos, abg_root);
+	addParam(QString("gammaPos"), config->abgModelRobot.gammaPos, abg_root);
+	addParam(QString("alphaAng"), config->abgModelRobot.alphaAng, abg_root);
+	addParam(QString("betaAng"), config->abgModelRobot.betaAng, abg_root);
+	addParam(QString("gammaAng"), config->abgModelRobot.gammaAng, abg_root);
+
+	// Robot Kalman Filters
+	ConfigFileItem * kalman_root = addLabel(QString("Kalman Robot Model"), parent);
+	addParam(QString("covPosVel"), config->kalmanModelRobot.covPosVel, kalman_root);
+	addParam(QString("covVelAcc"), config->kalmanModelRobot.covVelAcc, kalman_root);
+	addParam(QString("covPosAcc"), config->kalmanModelRobot.covPosAcc, kalman_root);
+	addParam(QString("covPos"), config->kalmanModelRobot.covPos, kalman_root);
+	addParam(QString("covVel"), config->kalmanModelRobot.covVel, kalman_root);
+	addParam(QString("covAcc"), config->kalmanModelRobot.covAcc, kalman_root);
+	addParam(QString("measurementNoise"), config->kalmanModelRobot.measurementNoise, kalman_root);
+
+	// RBPF parts
+	ConfigFileItem * rbpf_roll_root = addLabel(QString("RBPF Ball Rolling"), parent);
+	addParam(QString("processNoiseSqrdPos"), config->rbpfModelBallRolling.processNoiseSqrdPos, rbpf_roll_root);
+	addParam(QString("processNoiseSqrdVel"), config->rbpfModelBallRolling.processNoiseSqrdVel, rbpf_roll_root);
+	addParam(QString("processNoiseSqrdAcc"), config->rbpfModelBallRolling.processNoiseSqrdAcc, rbpf_roll_root);
+	addParam(QString("measurementNoiseSqrd"), config->rbpfModelBallRolling.measurementNoiseSqrd, rbpf_roll_root);
+
+	ConfigFileItem * rbpf_kicked_root = addLabel(QString("RBPF Ball Kicked"), parent);
+	addParam(QString("processNoiseSqrdPos"), config->rbpfModelBallRolling.processNoiseSqrdPos, rbpf_kicked_root);
+	addParam(QString("processNoiseSqrdVel"), config->rbpfModelBallRolling.processNoiseSqrdVel, rbpf_kicked_root);
+	addParam(QString("processNoiseSqrdAcc"), config->rbpfModelBallRolling.processNoiseSqrdAcc, rbpf_kicked_root);
+}
+
 
 ConfigFileItem * ConfigFileModel::addLabel(const QString& label, ConfigFileItem * parent)
 {
@@ -260,12 +301,21 @@ bool ConfigFileModel::setHeaderData(int section, Qt::Orientation orientation,
 }
 
 void ConfigFileModel::changeParam(const QModelIndex &index, float value) {
-	bool verbose = false;
-
 	ConfigFileItem* param = getItem(index);
 	QString paramLabel = param->getLabel();
 	QString groupLabel = param->parent()->getLabel();
-	QString robotLabel = param->parent()->parent()->getLabel();
+	QString topLabel = param->parent()->parent()->getLabel();
+
+	if (topLabel.contains(QString("Robot")))
+		changeRobotParam(topLabel, groupLabel, paramLabel, value);
+	else if (topLabel.contains(QString("World")))
+		changeWorldModelParam(groupLabel, paramLabel, value);
+}
+
+void ConfigFileModel::changeRobotParam(
+		const QString& robotLabel, const QString& groupLabel, const QString& paramLabel,
+		float value) {
+	bool verbose = false;
 
 	// determine the robot
 	ConfigFile::shared_robot cur_robot;
@@ -314,6 +364,60 @@ void ConfigFileModel::changeParam(const QModelIndex &index, float value) {
 		cur_robot->motion.output_coeffs[idx] = value;
 	} else {
 		cout << "IN changeParam: Did not get a valid groupLabel!" << endl;
+	}
+}
+
+void ConfigFileModel::changeWorldModelParam(const QString& groupLabel, const QString& paramLabel, float value) {
+
+	if (groupLabel.contains(QString("ABG"))) {
+		if (paramLabel.contains(QString("alphaPos")))
+			_worldmodel->abgModelRobot.alphaPos = value;
+		else if (paramLabel.contains(QString("betaPos")))
+			_worldmodel->abgModelRobot.betaPos = value;
+		else if (paramLabel.contains(QString("gammaPos")))
+			_worldmodel->abgModelRobot.gammaPos = value;
+		else if (paramLabel.contains(QString("alphaAng")))
+			_worldmodel->abgModelRobot.alphaAng = value;
+		else if (paramLabel.contains(QString("betaAng")))
+			_worldmodel->abgModelRobot.betaAng = value;
+		else if (paramLabel.contains(QString("gammaAng")))
+			_worldmodel->abgModelRobot.gammaAng = value;
+
+	} else if (groupLabel.contains(QString("Kalman"))) {
+		if (paramLabel.contains(QString("covPosVel")))
+			_worldmodel->kalmanModelRobot.covPosVel = value;
+		else if (paramLabel.contains(QString("covVelAcc")))
+			_worldmodel->kalmanModelRobot.covVelAcc = value;
+		else if (paramLabel.contains(QString("covPosAcc")))
+			_worldmodel->kalmanModelRobot.covPosAcc = value;
+		else if (paramLabel.contains(QString("covPos")))
+			_worldmodel->kalmanModelRobot.covPos = value;
+		else if (paramLabel.contains(QString("covVel")))
+			_worldmodel->kalmanModelRobot.covVel = value;
+		else if (paramLabel.contains(QString("covAcc")))
+			_worldmodel->kalmanModelRobot.covAcc = value;
+		else if (paramLabel.contains(QString("measurementNoise")))
+			_worldmodel->kalmanModelRobot.measurementNoise = value;
+
+	} else if (groupLabel.contains(QString("Rolling"))) {
+		if (paramLabel.contains(QString("processNoiseSqrdPos")))
+			_worldmodel->rbpfModelBallRolling.processNoiseSqrdPos = value;
+		else if (paramLabel.contains(QString("processNoiseSqrdVel")))
+			_worldmodel->rbpfModelBallRolling.processNoiseSqrdVel = value;
+		else if (paramLabel.contains(QString("processNoiseSqrdAcc")))
+			_worldmodel->rbpfModelBallRolling.processNoiseSqrdAcc = value;
+		else if (paramLabel.contains(QString("measurementNoiseSqrd")))
+			_worldmodel->rbpfModelBallRolling.measurementNoiseSqrd = value;
+
+	} else if (groupLabel.contains(QString("Kicked"))) {
+		if (paramLabel.contains(QString("processNoiseSqrdPos")))
+			_worldmodel->rbpfModelBallKicked.processNoiseSqrdPos = value;
+		else if (paramLabel.contains(QString("processNoiseSqrdVel")))
+			_worldmodel->rbpfModelBallKicked.processNoiseSqrdVel = value;
+		else if (paramLabel.contains(QString("processNoiseSqrdAcc")))
+			_worldmodel->rbpfModelBallKicked.processNoiseSqrdAcc = value;
+		else if (paramLabel.contains(QString("measurementNoiseSqrd")))
+			_worldmodel->rbpfModelBallKicked.measurementNoiseSqrd = value;
 	}
 
 }

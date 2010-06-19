@@ -68,6 +68,7 @@ set (SRCS
 	gameplay/plays/DefendPenalty.cpp
 	gameplay/plays/Stopped.cpp
 	gameplay/plays/Offense.cpp
+	gameplay/plays/ClearBall.cpp
 	gameplay/plays/Defense.cpp
 	gameplay/plays/OptimizedOffense.cpp
 
@@ -90,8 +91,10 @@ set (SRCS
 	gameplay/plays/test_plays/TestBasicPassing.cpp
 	gameplay/plays/test_plays/TestBasicOneTouchPassing.cpp
 	gameplay/plays/test_plays/TestDirectMotionControl.cpp
+	gameplay/plays/test_plays/TestRectMotionControl.cpp
 	gameplay/plays/test_plays/TestTimePositionControl.cpp
 	gameplay/plays/test_plays/TestBasicAttack.cpp
+	gameplay/plays/test_plays/TestBasicOneTouchAttack.cpp
 	gameplay/plays/test_plays/TestBasicChipAttack.cpp
 	gameplay/plays/test_plays/TestBasicOneTouchChipAttack.cpp
 	gameplay/plays/test_plays/TestIntercept.cpp

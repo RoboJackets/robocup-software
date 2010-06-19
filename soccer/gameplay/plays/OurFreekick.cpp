@@ -20,10 +20,15 @@ bool Gameplay::Plays::OurFreekick::assign(set<Robot *> &available)
 {
 	_center.target = _gameplay->centerMatrix() * Geometry2d::Point(0, 1.5);
 	
-	_kicker.assign(available);
-	_center.assign(available);
-	_fullback1.assign(available);
-	_fullback2.assign(available);
+	if(!_kicker.assign(available)){return false;};
+	if(!_center.assign(available)){return false;};
+	if(!_fullback1.assign(available)){return false;};
+	if(!_fullback2.assign(available)){return false;};
+
+	_robots.insert(_kicker.robot());
+	_robots.insert(_center.robot());
+	_robots.insert(_fullback1.robot());
+	_robots.insert(_fullback2.robot());
 
 	return _robots.size() >= _minRobots;
 }

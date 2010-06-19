@@ -23,10 +23,15 @@ bool Gameplay::Plays::DefendPenalty::assign(set<Robot *> &available)
 	_idle3.target = Geometry2d::Point(1.5, 2);
 	_idle4.target = Geometry2d::Point(1.5, 2.5);
 	
-	_idle1.assign(available);
-	_idle2.assign(available);
-	_idle3.assign(available);
-	_idle4.assign(available);
+	if(!_idle1.assign(available)){return false;};
+	if(!_idle2.assign(available)){return false;};
+	if(!_idle3.assign(available)){return false;};
+	if(!_idle4.assign(available)){return false;};
+
+	_robots.insert(_idle1.robot());
+	_robots.insert(_idle2.robot());
+	_robots.insert(_idle3.robot());
+	_robots.insert(_idle4.robot());
 
 	return _robots.size() >= _minRobots;
 }

@@ -59,6 +59,8 @@ void Rbpf::update(Vector &U, Vector &Z, double dt){
 		weightSum = 0.0;
 		for(int jIdx=0; jIdx<j; jIdx++){ // for each of the j models
 			model = modelGraph.getModel(jIdx);
+			model->initializeQ(); // get latest params from config
+			model->initializeR();
 			assert(tmpPartIdx < (int)tmpParticleVector.size());
 			tmpParticle = &tmpParticleVector[tmpPartIdx];
 			tmpParticle->copy(particleVector[kIdx]);
@@ -82,7 +84,7 @@ void Rbpf::update(Vector &U, Vector &Z, double dt){
 	}
 	resampleParticles(tmpParticleVector,particleVector,k);
 }
-
+RbpfModel* model;
 // Updates the filter given control input U, measurement Z, and delta t = dt
 // Note: this is for multiple observations (possibly from multiple cameras at diff times)
 // see: void Rbpf::update(Vector &U, Vector &Z, double dt) for more details
@@ -107,6 +109,8 @@ void Rbpf::updateMultipleObs(double xs[], double ys[], double dts[], int numObs)
 			weightSum = 0.0;
 			for(int jIdx=0; jIdx<j; jIdx++){ // for each of the j models
 				model = modelGraph.getModel(jIdx);
+				model->initializeQ(); // get latest params from config
+				model->initializeR();
 				tmpParticleVector.push_back(new RbpfState(Vector(n), Matrix(n,n), 0, 0.0));
 				assert(tmpPartIdx < (int)tmpParticleVector.size());
 				tmpParticle = &tmpParticleVector[tmpPartIdx];

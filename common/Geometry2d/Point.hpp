@@ -150,6 +150,15 @@ namespace Geometry2d
 			void rotate(const Point &origin, float angle);
 
 			/**
+			 * static function to use rotate
+			 */
+			static Point rotate(const Point& pt, const Point& origin, float angle) {
+				Point newPt = pt;
+				newPt.rotate(origin, angle);
+				return newPt;
+			}
+
+			/**
 			computes the distance from the current point to another
 			@param other the point to find the distance to
 			@return the distance between the points

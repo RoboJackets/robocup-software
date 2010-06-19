@@ -56,12 +56,12 @@ Network::Receiver::~Receiver()
 
 void Network::Receiver::receive(vector<uint8_t> &data)
 {
-	// If data has a size, assume it's right.  Otherwise use the size from the constructor.
-	if (data.empty())
-	{
-		data.resize(_size);
-	}
-	
+    // If data has a size, assume it's right.  Otherwise use the size from the constructor.
+    if (data.empty())
+    {
+        data.resize(_size);
+    }
+    
     int len = recv(_socket, &data[0], data.size(), 0);
     if (len < 0)
     {

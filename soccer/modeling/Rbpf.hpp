@@ -70,6 +70,9 @@ public:
 	// Where m and s = size of the control and measurement input
 	void update(Vector &U, Vector &Z, double dt);
 
+	// reinitialize the parameters from the config files - should be called each frame
+	void initParams();
+
 	void updateMultipleObs(double x[], double y[], double dt[], int numObs);
 
 	// adds a model to the internal modelGraph

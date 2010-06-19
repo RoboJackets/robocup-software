@@ -26,6 +26,7 @@
 #include "plays/KickPenalty.hpp"
 #include "plays/Stopped.hpp"
 #include "plays/Offense.hpp"
+#include "plays/ClearBall.hpp"
 #include "plays/Defense.hpp"
 #include "plays/OptimizedOffense.hpp"
 
@@ -33,11 +34,13 @@
 #include "plays/test_plays/TestBasicPassing.hpp"
 #include "plays/test_plays/TestBasicOneTouchPassing.hpp"
 #include "plays/test_plays/TestBasicAttack.hpp"
+#include "plays/test_plays/TestBasicOneTouchAttack.hpp"
 #include "plays/test_plays/TestBasicChipAttack.hpp"
 #include "plays/test_plays/TestBasicOneTouchChipAttack.hpp"
 #include "plays/test_plays/TestPassPlay.hpp"
 #include "plays/test_plays/TestOptimizedPassPlay.hpp"
 #include "plays/test_plays/TestDirectMotionControl.hpp"
+#include "plays/test_plays/TestRectMotionControl.hpp"
 #include "plays/test_plays/TestTimePositionControl.hpp"
 #include "plays/test_plays/TestPassConfigOptimize.hpp"
 #include "plays/test_plays/TestGUI.hpp"
@@ -157,6 +160,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_playConfig->addPlay(make_shared<Plays::DefendPenalty>(this));
 	_playConfig->addPlay(make_shared<Plays::Stopped>(this));
 	_playConfig->addPlay(make_shared<Plays::Offense>(this));
+	_playConfig->addPlay(make_shared<Plays::ClearBall>(this));
 	_playConfig->addPlay(make_shared<Plays::Defense>(this));
 	_playConfig->addPlay(make_shared<Plays::OptimizedOffense>(this));
 
@@ -165,10 +169,12 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_playConfig->addPlay(make_shared<Plays::TestBasicPassing>(this));
 	_playConfig->addPlay(make_shared<Plays::TestBasicOneTouchPassing>(this));
 	_playConfig->addPlay(make_shared<Plays::TestBasicAttack>(this));
+	_playConfig->addPlay(make_shared<Plays::TestBasicOneTouchAttack>(this));
 	_playConfig->addPlay(make_shared<Plays::TestBasicChipAttack>(this));
 	_playConfig->addPlay(make_shared<Plays::TestBasicOneTouchChipAttack>(this));
 	_playConfig->addPlay(make_shared<Plays::TestPassPlay>(this));
 	_playConfig->addPlay(make_shared<Plays::TestDirectMotionControl>(this));
+	_playConfig->addPlay(make_shared<Plays::TestRectMotionControl>(this));
 	_playConfig->addPlay(make_shared<Plays::TestTimePositionControl>(this));
 	_playConfig->addPlay(make_shared<Plays::TestPassConfigOptimize>(this));
 	_playConfig->addPlay(make_shared<Plays::TestGUI>(this));
@@ -355,6 +361,7 @@ void Gameplay::GameplayModule::run()
 			   !_currentPlay->allVisible() ||   // check if robot still has all robots available
 			   !playEnabled(_currentPlay))		// check if play is still in the enabled pool
 	{
+
 		if (verbose) cout << "  Selecting a new play" << endl;
 		_playDone = false;
 

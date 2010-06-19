@@ -29,6 +29,17 @@ namespace Gameplay
 					CHIP
 				} KickType;
 
+				typedef enum {
+					PIVOT,
+					ONETOUCH
+				} AimType;
+
+				typedef enum {
+					ROBOT,
+					GOAL,
+					SEGMENT
+				} TargetType;
+
 				Kick(GameplayModule *gameplay);
 				~Kick();
 
@@ -40,7 +51,6 @@ namespace Gameplay
 					return _state == Intercept;
 				}
 
-				Robot *targetRobot;
 				bool automatic;
 
 				enum State
@@ -48,6 +58,7 @@ namespace Gameplay
 					Intercept,
 					Aim,
 					Shoot,
+					OneTouchAim,
 					Done
 				};
 				State getState() const { return _state; }
@@ -55,6 +66,17 @@ namespace Gameplay
 				/** returns if successful due to check for chipper */
 				bool kickType(KickType mode);
 				KickType kickType() const { return _kickType; }
+
+				void aimType(AimType mode) { _aimType = mode; }
+				AimType aimType() const { return _aimType; }
+
+				void targetType(TargetType mode) { _targetType = mode; }
+				TargetType targetType() const { return _targetType; }
+
+				/// set target functions
+				void setTarget(); /// sets to goal
+				void setTarget(const Geometry2d::Segment& seg); /// shoot to arbitrary segment (clearing)
+				void setTarget(Robot * r); /// pass to robot
 
 				/** Restarts the kick play - keep going after ball */
 				void restart() {_state = Intercept;}
@@ -76,9 +98,12 @@ namespace Gameplay
 
 				State _state;
 				float _lastMargin;
+				Robot * _targetRobot;
 				Geometry2d::Segment _target;
 
+				AimType _aimType;
 				KickType _kickType;
+				TargetType _targetType;
 
 				//we lock in a pivot point
 				Geometry2d::Point _pivot;
@@ -93,9 +118,13 @@ namespace Gameplay
 				float _ballHandlingScale;
 				float _ballHandlingRange;
 
+				// control values for one touch bezier movement
+				std::vector<Geometry2d::Point> _controls;
+
 				// Kick evaluation via obstacles
 				Geometry2d::Segment evaluatePass(); /// finds a pass segment
 				Geometry2d::Segment evaluateShot(); /// finds a shot segment
+				Geometry2d::Segment evaluateSegment();  /// finds a clear segment on an arbitrary segment
 
 				// determining how hard to kick
 				int calcKickStrength(const Geometry2d::Point& targetCenter);
@@ -108,6 +137,9 @@ namespace Gameplay
 				State intercept(const Geometry2d::Point& targetCenter);
 				State aim(const Geometry2d::Point& targetCenter, bool canKick);
 				State shoot(const Geometry2d::Point& targetCenter, int kickStrength);
+
+				// additional state for one-touch aiming
+				State oneTouchApproach();
 		};
 	}
 }

@@ -60,6 +60,10 @@ public:
 	// dt: change in time
 	virtual void update(Vector &X, Matrix &P, Vector &Z, double dt);
 
+	// functions that pull new values in from config files
+	virtual void initializeQ()=0;
+	virtual void initializeR()=0;
+
 	// returns the previously predicted measurement, h (s x 1)
 	Vector* getPredictedMeasurement();
 

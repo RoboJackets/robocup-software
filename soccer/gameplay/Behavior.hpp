@@ -26,7 +26,7 @@ namespace Gameplay
 
 		// Returns true if all robots assigned to this behavior are visible.
 		// Returns false if no robots are assigned.
-		bool allVisible() const;
+		virtual bool allVisible() const;
 
 		std::set<Robot *> &robots()
 		{

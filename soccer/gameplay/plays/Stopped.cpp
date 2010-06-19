@@ -23,6 +23,14 @@ bool Gameplay::Plays::Stopped::assign(set<Robot *> &available)
 	_right.assign(available);
 	_idle.assign(available);
 
+	if(!_left.assign(available)){return false;};
+	if(!_right.assign(available)){return false;};
+	if(!_idle.assign(available)){return false;};
+
+	_robots.insert(_left.robot());
+	_robots.insert(_right.robot());
+	_robots.insert(_idle.robot());
+
 	return _robots.size() >= _minRobots;
 }
 
