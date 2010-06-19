@@ -34,6 +34,12 @@ namespace Gameplay
 					ONETOUCH
 				} AimType;
 
+				typedef enum {
+					ROBOT,
+					GOAL,
+					SEGMENT
+				} TargetType;
+
 				Kick(GameplayModule *gameplay);
 				~Kick();
 
@@ -45,7 +51,6 @@ namespace Gameplay
 					return _state == Intercept;
 				}
 
-				Robot *targetRobot;
 				bool automatic;
 
 				enum State
@@ -64,6 +69,14 @@ namespace Gameplay
 
 				void aimType(AimType mode) { _aimType = mode; }
 				AimType aimType() const { return _aimType; }
+
+				void targetType(TargetType mode) { _targetType = mode; }
+				TargetType targetType() const { return _targetType; }
+
+				/// set target functions
+				void setTarget(); /// sets to goal
+				void setTarget(const Geometry2d::Segment& seg); /// shoot to arbitrary segment (clearing)
+				void setTarget(Robot * r); /// pass to robot
 
 				/** Restarts the kick play - keep going after ball */
 				void restart() {_state = Intercept;}
@@ -85,10 +98,12 @@ namespace Gameplay
 
 				State _state;
 				float _lastMargin;
+				Robot * _targetRobot;
 				Geometry2d::Segment _target;
 
 				AimType _aimType;
 				KickType _kickType;
+				TargetType _targetType;
 
 				//we lock in a pivot point
 				Geometry2d::Point _pivot;
@@ -109,6 +124,7 @@ namespace Gameplay
 				// Kick evaluation via obstacles
 				Geometry2d::Segment evaluatePass(); /// finds a pass segment
 				Geometry2d::Segment evaluateShot(); /// finds a shot segment
+				Geometry2d::Segment evaluateSegment();  /// finds a clear segment on an arbitrary segment
 
 				// determining how hard to kick
 				int calcKickStrength(const Geometry2d::Point& targetCenter);

@@ -596,7 +596,7 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 		Dynamics::DynamicsInfo info = _dynamics.info(dir.angle() *
 			RadiansToDegrees - robotAngle, _w);
 
-		// bound the velocity by the end of the path
+		// bound the velocity by the end of the path if we want to stop at end
 		const float vv = sqrtf(2 * length * info.deceleration);
 		if (verbose) cout << "   decel bound: " << info.deceleration << endl;
 

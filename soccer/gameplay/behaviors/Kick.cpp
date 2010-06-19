@@ -21,12 +21,13 @@ Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay) :
 	Behavior(gameplay, 1),
 	_aimType(PIVOT),
 	_kickType(KICK),
+	_targetType(GOAL),
 	_ballHandlingScale(1.0),
 	_ballHandlingRange(0.5)
 {
 	automatic = true;
 	_win = 0;
-	targetRobot = 0;
+	_targetRobot = 0;
 	_intercept = new Gameplay::Behaviors::Intercept(gameplay);
 }
 
@@ -49,6 +50,20 @@ bool Gameplay::Behaviors::Kick::kickType(KickType mode) {
 	} else {
 		return false;
 	}
+}
+
+void Gameplay::Behaviors::Kick::setTarget() {
+	_targetType = GOAL;
+}
+
+void Gameplay::Behaviors::Kick::setTarget(const Geometry2d::Segment& seg) {
+	_targetType = SEGMENT;
+	_target = seg;
+}
+
+void Gameplay::Behaviors::Kick::setTarget(Robot * r) {
+	_targetType = ROBOT;
+	_targetRobot = r;
 }
 
 bool Gameplay::Behaviors::Kick::assign(set<Robot *> &available)
@@ -85,10 +100,15 @@ bool Gameplay::Behaviors::Kick::run()
 	const Geometry2d::Point pos = robot()->pos();
 
 	// find a target segment using window evaluators
-	if (targetRobot) {
-		_target = evaluatePass();
-	} else {
+	switch (_targetType) {
+	case GOAL:
 		_target = evaluateShot();
+		break;
+	case ROBOT:
+		_target = evaluateShot();
+		break;
+	case SEGMENT:
+		_target = evaluateSegment();
 	}
 	drawLine(_target, 255, 0, 0); // show the target segment
 
@@ -455,7 +475,7 @@ Geometry2d::Segment Gameplay::Behaviors::Kick::evaluatePass() {
 	_win->debug = true;
 
 	// Kick towards a robot
-	Geometry2d::Point t = targetRobot->pos();
+	Geometry2d::Point t = _targetRobot->pos();
 	_win->run(ball().pos, t);
 	_win->exclude.push_back(t);
 
@@ -516,11 +536,34 @@ Geometry2d::Segment Gameplay::Behaviors::Kick::evaluateShot() {
 	return bestTarget;
 }
 
+Geometry2d::Segment Gameplay::Behaviors::Kick::evaluateSegment() {
+	// Update the target window
+	_win->exclude.clear();
+	_win->exclude.push_back(robot()->pos());
+	_win->debug = true;
+
+	//goal line, for intersection detection
+	Segment target = _target;
+
+	// Try to kick to the goal.
+	_win->run(ball().pos, target);
+
+	Segment bestTarget;
+	if (_win->best)
+	{
+		bestTarget = _win->best->segment;
+	} else {
+		// Can't reach the target
+		bestTarget = _win->target();
+	}
+	return bestTarget;
+}
+
 int Gameplay::Behaviors::Kick::calcKickStrength(const Geometry2d::Point& targetCenter) {
 	//if kicking to a target
 	//calculate kick strength
 	int kickStrength = 255;
-	if (targetRobot)
+	if (_targetType == ROBOT)
 	{
 		const float dist = robot()->pos().distTo(targetCenter);
 
@@ -548,7 +591,7 @@ bool Gameplay::Behaviors::Kick::checkRobotIntersections(const Geometry2d::Segmen
 	BOOST_FOREACH(const Packet::LogFrame::Robot& r, gameplay()->state()->opp)
 	{
 		//don't check against if target
-		bool noAdd = (targetRobot && !targetRobot->self() && targetRobot->packet()->shell == r.shell);
+		bool noAdd = (_targetType == ROBOT && _targetRobot && !_targetRobot->self() && _targetRobot->packet()->shell == r.shell);
 		if (r.valid && !noAdd)
 		{
 			if (shotLine.intersects(Circle(r.pos, Constants::Robot::Radius + Constants::Ball::Radius)))
@@ -562,7 +605,7 @@ bool Gameplay::Behaviors::Kick::checkRobotIntersections(const Geometry2d::Segmen
 	BOOST_FOREACH(const Packet::LogFrame::Robot& r, gameplay()->state()->self)
 	{
 		//don't check against if target
-		bool noAdd = (targetRobot && targetRobot->self() && targetRobot->packet()->shell == r.shell);
+		bool noAdd = (_targetType == ROBOT && _targetRobot && _targetRobot->self() && _targetRobot->packet()->shell == r.shell);
 		if (r.valid && r.shell != robot()->packet()->shell && !noAdd)
 		{
 			if (shotLine.intersects(Circle(r.pos, Constants::Robot::Radius + Constants::Ball::Radius)))

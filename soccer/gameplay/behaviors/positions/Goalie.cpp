@@ -62,7 +62,7 @@ bool Gameplay::Behaviors::Goalie::run()
 	if (_state == Clear)
 	{
 		//if the ball is in the defense area...clear it
-		_kick.targetRobot = 0;
+		_kick.setTarget();
 		_kick.automatic = true;
 		
 		robot()->dribble(50);
