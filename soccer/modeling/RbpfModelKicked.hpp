@@ -32,6 +32,9 @@ public:
 	typedef boost::numeric::ublas::matrix<double> Matrix;
 	RbpfModelKicked(Modeling::RobotModel::RobotMap *_robotMap, ConfigFile::shared_worldmodel& cfg);
 	~RbpfModelKicked();
+
+	// reinitialize the parameters from the config files - should be called each frame
+	void initParams();
 protected:
 	void transitionModel(Vector &X, Vector &U, double dt);
 	void computeTransitionJacobian(double dt);
@@ -39,6 +42,10 @@ protected:
 	void computeObservationJacobian(double dt);
 	void update(Vector &X, Matrix &P, Vector &Z, double dt);
 	ConfigFile::shared_worldmodel _config;
+
+	// initialization functions to pull from config file
+	virtual void initializeQ();
+	virtual void initializeR();
 };
 
 #endif /* RBPFMODELKICKED_HPP_ */
