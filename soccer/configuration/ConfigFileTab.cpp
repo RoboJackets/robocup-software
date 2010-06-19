@@ -17,7 +17,3 @@ void ConfigFileTab::save(QString filename) {
 void ConfigFileTab::load(QString filename) {
 
 }
-
-
-
-

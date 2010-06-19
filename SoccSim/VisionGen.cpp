@@ -44,7 +44,7 @@ VisionGen::~VisionGen()
 
 void VisionGen::run()
 {
-    Network::Sender sender("224.5.23.2", 10002);
+    Network::Sender sender("224.5.20.2", 10002);
 
     //cycle time
     const int msecs = (int)(1000/_fps);

@@ -21,7 +21,7 @@ using namespace std;
 
 void usage(const char* prog)
 {
-	printf("usage: %s <-y|-b> [-f] [-ng] [-c <config file>] [-p <playbook>] [-pp <play>]\n", prog);
+	printf("usage: %s <-y|-b> [-f] [-ng] [-sim] [-c <config file>] [-p <playbook>] [-pp <play>]\n", prog);
 	printf("\t-y:  run as the yellow team\n");
 	printf("\t-b:  run as the blue team\n");
 	printf("\t-c:  specify the configuration file\n");
@@ -29,6 +29,7 @@ void usage(const char* prog)
 	printf("\t-p:  load playbook\n");
 	printf("\t-pp: enable named play\n");
 	printf("\t-ng: no goalie\n");
+	printf("\t-sim: use simulator\n");
 	exit(1);
 }
 
@@ -61,6 +62,7 @@ int main (int argc, char* argv[])
 
 	bool goalie = true;
 	bool flip = false;
+	bool sim = false;
 	for (int i=1 ; i<argc; ++i)
 	{
 		const char* var = argv[i];
@@ -80,6 +82,10 @@ int main (int argc, char* argv[])
 		else if (strcmp(var, "-ng") == 0)
 		{
 			goalie = false;
+		}
+		else if (strcmp(var, "-sim") == 0)
+		{
+			sim = true;
 		}
 		else if(strcmp(var, "-c") == 0)
 		{
@@ -128,7 +134,7 @@ int main (int argc, char* argv[])
 		return 0;
 	}
 	
-	MainWindow win(team, cfgFile);
+	MainWindow win(team, cfgFile, sim);
 	
 	if (!playbook.isNull())
 	{

@@ -9,7 +9,7 @@
 using namespace Log;
 using namespace boost;
 
-MainWindow::MainWindow(Team t, QString filename) :
+MainWindow::MainWindow(Team t, QString filename, bool sim) :
 	_team(t),
 	_processor(t, filename),
 	_logControl(new LogControl()),
@@ -56,11 +56,16 @@ MainWindow::MainWindow(Team t, QString filename) :
 	
 	this->addToolBar(processorBar);
 	
+	if (sim)
+	{
+		_processor.vision_addr = "224.5.20.2";
+	}
+
 	//start control thread
 	_processor.start();
 	
-    _logFile = new LogFile(LogFile::genFilename());
-    _logControl->setLogFile(_logFile);
+	_logFile = new LogFile(LogFile::genFilename());
+	_logControl->setLogFile(_logFile);
 	_processor.setLogFile(_logFile);
 
 	connect(_logControl, SIGNAL(newFrame(Packet::LogFrame*)), ui.fieldView, SLOT(frame(Packet::LogFrame*)));

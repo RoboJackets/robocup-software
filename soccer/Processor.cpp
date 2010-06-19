@@ -36,6 +36,7 @@ Processor::Processor(Team t, QString filename) :
 	_sender(Network::Address, Network::addTeamOffset(_team, Network::RadioTx)),
 	_config(new ConfigFile(filename))
 {
+	vision_addr = "224.5.23.2";
 	_reverseId = 0;
 	
 	Geometry2d::Point trans;
@@ -110,7 +111,7 @@ void Processor::run()
 {
 	//setup receiver of packets for vision and radio
 	Network::PacketReceiver receiver;
-	receiver.addType("224.5.23.2", 10002, this,
+	receiver.addType(vision_addr.toAscii(), 10002, this,
 			&Processor::visionHandler);
 	receiver.addType(Network::Address,
 			Network::addTeamOffset(_team, Network::RadioRx),

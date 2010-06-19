@@ -58,6 +58,9 @@ class Processor: public QThread
 			return _config;
 		}
 
+		/** Multicast address for vision */
+		QString vision_addr;
+		
 	public Q_SLOTS:
 		void flip_field(bool flip);
 		
@@ -81,7 +84,6 @@ class Processor: public QThread
 		void sendRadioData();
 
 	private:
-		
 		/** Used to start and stop the thread **/
 		volatile bool _running;
 
