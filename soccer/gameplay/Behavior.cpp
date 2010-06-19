@@ -25,7 +25,7 @@ bool Gameplay::Behavior::allVisible() const
 
 	BOOST_FOREACH(Robot *r, _robots)
 	{
-		if (!r->visible())
+		if (r && !r->visible())
 		{
 			return false;
 		}

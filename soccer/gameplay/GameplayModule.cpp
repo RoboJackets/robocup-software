@@ -361,6 +361,7 @@ void Gameplay::GameplayModule::run()
 			   !_currentPlay->allVisible() ||   // check if robot still has all robots available
 			   !playEnabled(_currentPlay))		// check if play is still in the enabled pool
 	{
+
 		if (verbose) cout << "  Selecting a new play" << endl;
 		_playDone = false;
 

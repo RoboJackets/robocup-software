@@ -19,10 +19,15 @@ bool Gameplay::Plays::TheirFreekick::applicable()
 }
 bool Gameplay::Plays::TheirFreekick::assign(set<Robot *> &available)
 {
-	_fullback1.assign(available);
-	_fullback2.assign(available);
-	_halfback1.assign(available);
-	_halfback2.assign(available);
+	if(!_fullback1.assign(available)){return false;};
+	if(!_fullback2.assign(available)){return false;};
+	if(!_halfback1.assign(available)){return false;};
+	if(!_halfback2.assign(available)){return false;};
+
+	_robots.insert(_fullback1.robot());
+	_robots.insert(_fullback2.robot());
+	_robots.insert(_halfback1.robot());
+	_robots.insert(_halfback2.robot());
 
 	return _robots.size() >= _minRobots;
 }

@@ -30,6 +30,7 @@ public:
 
 	virtual float score();
 
+	virtual float score(Robot *r);
 protected:
 	Behaviors::Kick _kicker;
 	Behaviors::Fullback _fullback1;

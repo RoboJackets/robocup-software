@@ -22,7 +22,9 @@ bool Gameplay::Plays::ExamplePlay::applicable()
 bool Gameplay::Plays::ExamplePlay::assign(set<Robot *> &available)
 {
 	/** replace this with your code to do assignments */
-
+	/** don't forget to check that the assigns return true, and that
+	 * you assign _robots all robots that are assigned
+	 */
 	return true;
 }
 

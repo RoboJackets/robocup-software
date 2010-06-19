@@ -23,10 +23,15 @@ bool Gameplay::Plays::Defense::applicable()
 
 bool Gameplay::Plays::Defense::assign(set<Robot *> &available)
 {
-	_fullback1.assign(available);
-	_fullback2.assign(available);
-	_kicker1.assign(available);
-	_kicker2.assign(available);
+	if(!_fullback1.assign(available)){return false;};
+	if(!_fullback2.assign(available)){return false;};
+	if(!_kicker1.assign(available)){return false;};
+	if(!_kicker2.assign(available)){return false;};
+
+	_robots.insert(_fullback1.robot());
+	_robots.insert(_fullback2.robot());
+	_robots.insert(_kicker1.robot());
+	_robots.insert(_kicker2.robot());
 
 	return _robots.size() >= _minRobots;
 }

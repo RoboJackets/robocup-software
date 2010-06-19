@@ -15,6 +15,7 @@ Gameplay::Plays::ClearBall::ClearBall(GameplayModule *gameplay):
 	_oppDistMin(1.5),
 	_selfDistMax(0.75)
 {
+	//_kicker.aimType(Behaviors::Kick::ONETOUCH);
 }
 
 bool Gameplay::Plays::ClearBall::applicable()
@@ -27,10 +28,15 @@ bool Gameplay::Plays::ClearBall::applicable()
 
 bool Gameplay::Plays::ClearBall::assign(set<Robot *> &available)
 {
-	_kicker.assign(available);
-	_fullback1.assign(available);
-	_kicker1.assign(available);
-	_kicker2.assign(available);
+	if(!_kicker.assign(available)){return false;};
+	if(!_fullback1.assign(available)){return false;};
+	if(!_kicker1.assign(available)){return false;};
+	if(!_kicker2.assign(available)){return false;};
+
+	_robots.insert(_kicker.robot());
+	_robots.insert(_fullback1.robot());
+	_robots.insert(_kicker1.robot());
+	_robots.insert(_kicker2.robot());
 
 	return _robots.size() >= _minRobots;
 }
@@ -38,12 +44,18 @@ bool Gameplay::Plays::ClearBall::assign(set<Robot *> &available)
 bool Gameplay::Plays::ClearBall::run()
 {
 	// check if the robot is in done state
-	if (_kicker.getState() == Gameplay::Behaviors::Kick::Done)
-		_kicker.restart();
+//	if (_kicker.getState() == Gameplay::Behaviors::Kick::Done)
+//		return false;
 
 	// run the kick play
 	_kicker.run();
 	return true;
+}
+
+float Gameplay::Plays::ClearBall::score(Robot *r)
+{
+	cout << "dist is: " << _gameplay->state()->ball.pos.distTo(r->pos()) << std::endl;
+	return _gameplay->state()->ball.pos.distTo(r->pos());
 }
 
 float Gameplay::Plays::ClearBall::score()

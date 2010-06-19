@@ -20,10 +20,15 @@ bool Gameplay::Plays::TheirKickoff::applicable()
 
 bool Gameplay::Plays::TheirKickoff::assign(set<Robot *> &available)
 {
-	_fullback1.assign(available);
-	_fullback2.assign(available);
-	_back1.assign(available);
-	_back2.assign(available);
+	if(!_fullback1.assign(available)){return false;};
+	if(!_fullback2.assign(available)){return false;};
+	if(!_back1.assign(available)){return false;};
+	if(!_back2.assign(available)){return false;};
+
+	_robots.insert(_fullback1.robot());
+	_robots.insert(_fullback2.robot());
+	_robots.insert(_back1.robot());
+	_robots.insert(_back2.robot());
 
 	return _robots.size() >= _minRobots;
 }
