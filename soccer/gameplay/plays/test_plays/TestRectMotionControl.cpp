@@ -13,7 +13,7 @@ Gameplay::Plays::TestRectMotionControl::TestRectMotionControl(GameplayModule *ga
 	fsm_state_(Track),
 	hWidth_(1.0),
 	hHeight_(0.5),
-	waitFramesMax_(100),
+	waitFramesMax_(75),
 	pathGoalIdx_(0)
 {
 	// find the center of our side
@@ -56,7 +56,6 @@ bool Gameplay::Plays::TestRectMotionControl::run()
 	path_t path;
 	if (fsm_state_ == Wait)
 	{
-		cout << "in state wait, waitframes: " << waitFrames_ << std::endl;
 		if(waitFrames_-- <= 0)
 		{
 			// go to next state
@@ -67,7 +66,6 @@ bool Gameplay::Plays::TestRectMotionControl::run()
 	}
 	else if (fsm_state_ == Track)
 	{
-		cout << "in state track, dist goal: " << pos.distTo(goal) << std::endl;
 		float thresh = 0.1;
 		if (pos.distTo(goal) <= thresh)
 		{
