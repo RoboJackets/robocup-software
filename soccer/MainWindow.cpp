@@ -61,9 +61,6 @@ MainWindow::MainWindow(Team t, QString filename, bool sim) :
 	
 	connect(&_treeTimer, SIGNAL(timeout()), this, SLOT(updateTree()));
 	_treeTimer.start(150);
-
-	connect(&_fieldTimer, SIGNAL(timeout()), ui.fieldView, SLOT(update()));
-	_fieldTimer.start(30);
 }
 
 MainWindow::~MainWindow()

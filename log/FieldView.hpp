@@ -4,6 +4,7 @@
 
 #include <QWidget>
 #include <QVector>
+#include <QTimer>
 
 #include <Team.h>
 #include <LogFrame.hpp>
@@ -66,5 +67,7 @@ namespace Log
 			
 			// SimCommand sender
 			Network::Sender _sender;
+			
+			QTimer _updateTimer;
 	};
 }

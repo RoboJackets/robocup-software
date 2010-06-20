@@ -53,7 +53,6 @@ class MainWindow : public QMainWindow
 		QString _configFile;
 
 		QTimer _treeTimer;
-		QTimer _fieldTimer;
 		ConfigFileTab* _configFileTab;
 		Packet::LogFrame _viewFrame;
 };
