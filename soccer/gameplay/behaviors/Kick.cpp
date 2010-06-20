@@ -234,11 +234,11 @@ Gameplay::Behaviors::Kick::intercept(const Geometry2d::Point& targetCenter) {
 
 		// face ball to ensure we hit something
 		// FIXME: may want to get behind and then aim at both target and ball
-		robot()->face(ballPos);
+		robot()->face(ballPos); // should be the targetCenter or ballPos
 
 		// if we are on the approach line, change to approach state
 		Segment approachLine(approachFar, approachBall);
-		float distThresh = 0.1;
+		float distThresh = 0.05;
 		if (approachLine.nearPointPerp(pos, distThresh)) {
 			robot()->willKick = true;
 			return OneTouchAim;
@@ -429,12 +429,12 @@ Gameplay::Behaviors::Kick::oneTouchApproach() {
 	}
 
 	// FIXME: detection appears to be glitchy, so disabled
-//	// if we are in front of the ball, we should go back to intercept
-//	Point apprPoint = ballPos + approachVec * Constants::Robot::Radius * 0.8;
-//	Segment ballPerpLine(apprPoint - approachVec.perpCW(), apprPoint + approachVec.perpCW());
+	// if we are in front of the ball, we should go back to intercept
+	Point apprPoint = ballPos + approachVec * Constants::Robot::Radius * 0.8;
+	Segment ballPerpLine(apprPoint - approachVec.perpCW(), apprPoint + approachVec.perpCW());
 //	drawLine(ballPerpLine, 0, 0, 0);
-//	if (ballPerpLine.pointSide(ballPos) > 0.0)
-//		return Intercept;
+	if (ballPerpLine.pointSide(ballPos) > 0.0)
+		return Intercept;
 
 	// turn on the kicker for final approach
 	robot()->willKick = true;
@@ -444,7 +444,7 @@ Gameplay::Behaviors::Kick::oneTouchApproach() {
 		robot()->chip(calcKickStrength(_target.center()));
 
 	// calculate trajectory to hit the ball correctly
-	float approachDist = 1.5; // how long to extend approach line beyond ball
+	float approachDist = 2.0; // how long to extend approach line beyond ball
 
 	// define the control points for a single kick
 	Point approachFar = ballPos + approachVec * Constants::Robot::Radius + proj,
