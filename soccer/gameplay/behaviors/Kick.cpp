@@ -158,7 +158,7 @@ bool Gameplay::Behaviors::Kick::run()
 	// if intercepting and dist < aimThresh, enter aim state
 	const float aimThresh = Constants::Robot::Radius * 1.4;
 	// if aiming and dist > interceptThresh, enter intercept state
-	const float interceptThresh = Constants::Robot::Radius * 1.6;drawText("Shoot", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
+	const float interceptThresh = Constants::Robot::Radius * 1.6;
 
 	// STATE TRANSITION OVERRIDES
 	// check which aim mode we are in
@@ -413,8 +413,14 @@ Gameplay::Behaviors::Kick::oneTouchApproach() {
 		return Done;
 	}
 
-	Point pos = robot()->pos(), ballPos = ball().pos;
-	Point approachVec = (ballPos - _target.center()).normalized();
+	float avgVel = 0.5 * robot()->packet()->config.motion.deg45.velocity;
+	float proj_thresh = 0.01;
+	Point pos = robot()->pos(),
+		  ballVel = ball().vel,
+		  ballPos = ball().pos,
+		  proj = (ballVel.mag() > proj_thresh) ? ballVel * (pos.distTo(ballPos)/avgVel) : Point(),
+		  ballPosProj = ballPos + proj,
+		  approachVec = (ballPos - _target.center()).normalized();
 
 	// if the ball is suddenly moving now, we have hit/kicked it, so back off
 	float kickThresh = 1.0;
@@ -438,11 +444,11 @@ Gameplay::Behaviors::Kick::oneTouchApproach() {
 		robot()->chip(calcKickStrength(_target.center()));
 
 	// calculate trajectory to hit the ball correctly
-	float approachDist = 2.0; // how long to extend approach line beyond ball
+	float approachDist = 1.5; // how long to extend approach line beyond ball
 
 	// define the control points for a single kick
-	Point approachFar = ballPos + approachVec * Constants::Robot::Radius,
-		  approachBall = ballPos - approachVec * approachDist * Constants::Robot::Radius;
+	Point approachFar = ballPos + approachVec * Constants::Robot::Radius + proj,
+		  approachBall = ballPos - approachVec * approachDist * Constants::Robot::Radius + proj;
 
 	// use a 3rd degree bezier curve to get to the ball
 	_controls.clear();

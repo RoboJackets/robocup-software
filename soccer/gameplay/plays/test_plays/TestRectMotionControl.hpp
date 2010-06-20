@@ -53,6 +53,12 @@ namespace Gameplay
 
 				/** Path to execute */
 				path_t path_;
+
+				/** angles to turn */
+				std::vector<float> angles_;
+
+				/** angle to turn */
+				int angleGoalIdx_;
 		};
 	}
 }

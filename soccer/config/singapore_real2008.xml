@@ -41,10 +41,10 @@
 		        <!-- calibration based data -->
 		        <translation>
 			    	<deg value="0">
-						<dynamics velocity="1.2" acceleration="5.0" deceleration="0.5" />
+						<dynamics velocity="1.2" acceleration="5.0" deceleration="0.9" />
 					</deg>
 					<deg value="45">
-						<dynamics velocity="1.5" acceleration="5.0" deceleration="0.5" />
+						<dynamics velocity="1.5" acceleration="5.0" deceleration="0.9" />
 					</deg>
 				</translation>
 				
