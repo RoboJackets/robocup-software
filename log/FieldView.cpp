@@ -33,7 +33,7 @@ FieldView::FieldView(QWidget* parent) :
 	_ta = -90;
 	
 	//turn on mouse tracking for modules that may need the event
-	this->setMouseTracking(true);
+	setMouseTracking(true);
 	setAutoFillBackground(false);
 }
 
@@ -191,8 +191,6 @@ void FieldView::mouseMoveEvent(QMouseEvent* me)
 void FieldView::paintEvent(QPaintEvent* event)
 {
 	QPainter painter(this);
-	painter.setRenderHint(QPainter::Antialiasing);
-	//painter.setRenderHint(QPainter::SmoothPixmapTransform);
 	
 	painter.fillRect(rect(), QColor(0, 85.0, 0));
 	

@@ -3,17 +3,13 @@
 
 #include "MainWindow.hpp"
 #include "MainWindow.moc"
-#include <QHBoxLayout>
-#include <QGridLayout>
 
 using namespace Log;
 using namespace boost;
 
 MainWindow::MainWindow(Team t, QString filename, bool sim) :
 	_team(t),
-	_processor(t, filename),
-	_logControl(new LogControl()),
-	_logFile(0),
+	_processor(t, filename, this),
 	_configFile(filename)
 {
 	ui.setupUi(this);
@@ -64,27 +60,39 @@ MainWindow::MainWindow(Team t, QString filename, bool sim) :
 	//start control thread
 	_processor.start();
 	
-	_logFile = new LogFile(LogFile::genFilename());
-	_logControl->setLogFile(_logFile);
-	_processor.setLogFile(_logFile);
+	ui.fieldView->frame(&_viewFrame);
+	
+	connect(&_treeTimer, SIGNAL(timeout()), this, SLOT(updateTree()));
+	_treeTimer.start(150);
 
-	connect(_logControl, SIGNAL(newFrame(Packet::LogFrame*)), ui.fieldView, SLOT(frame(Packet::LogFrame*)));
-	connect(_logControl, SIGNAL(newFrame(Packet::LogFrame*)), _treeModel, SLOT(frame(Packet::LogFrame*)));
+	connect(&_fieldTimer, SIGNAL(timeout()), ui.fieldView, SLOT(update()));
+	_fieldTimer.start(30);
 }
 
 MainWindow::~MainWindow()
 {	
 	_processor.terminate();
 	_processor.wait();
-	
-	if (_logFile)
-	{
-		_logControl->setLogFile(0);
-	}
-	delete _logControl;
 }
 
 PlayConfigTab *MainWindow::playConfig() const
 {
 	return _processor.gameplayModule()->playConfig();
+}
+
+void MainWindow::updateTree()
+{
+	_treeModel->frame(&_viewFrame);
+}
+
+bool MainWindow::event(QEvent* e)
+{
+	if (e->type() == QEvent::User)
+	{
+		_viewFrame = _processor.lastFrame();
+
+		return true;
+	} else {
+		return QMainWindow::event(e);
+	}
 }

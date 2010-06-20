@@ -13,14 +13,11 @@ include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
 include_directories(${PROJECT_BINARY_DIR})
 
 qt4_wrap_cpp ( MOC_SRCS
-	LogControl.hpp
 	FieldView.hpp
 	TreeModel.hpp
 )
 
 set (SRCS
-	LogFile.cpp
-	LogControl.cpp
 	FieldView.cpp
 	TreeModel.cpp
 	TreeView.cpp
