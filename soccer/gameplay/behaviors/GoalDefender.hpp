@@ -14,6 +14,7 @@ namespace Gameplay
 
 				virtual bool run();
 				virtual bool done();
+				virtual bool assign(std::set<Robot *> &available);
 
 				virtual float score(Robot* robot);
 

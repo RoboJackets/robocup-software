@@ -144,7 +144,17 @@ bool Gameplay::Behaviors::GoalDefender::run()
 	return false;
 }
 
+bool Gameplay::Behaviors::GoalDefender::assign(std::set<Robot *> &available)
+{
+	_robots.clear();
+	takeBest(available);
 
+	//initialize windowevaluator
+	_winEval = new Gameplay::WindowEvaluator(Behavior::gameplay()->state());
+	_winEval->debug = false;
+
+	return _robots.size() >= _minRobots;
+}
 
 bool Gameplay::Behaviors::GoalDefender::done()
 {
