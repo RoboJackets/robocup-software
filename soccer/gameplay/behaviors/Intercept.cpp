@@ -43,11 +43,12 @@ bool Gameplay::Behaviors::Intercept::run() {
 
 	float avgVel = 0.5 * robot()->packet()->config.motion.deg45.velocity;
 	float proj_thresh = 0.01;
+	float proj_damp = 0.8;
 	Point pos = robot()->pos(),
 		  ballVel = ball().vel,
 		  ballPos = ball().pos,
 		  proj = (ballVel.mag() > proj_thresh) ? ballVel * (pos.distTo(ballPos)/avgVel) : Point(),
-		  ballPosProj = ballPos + proj;
+		  ballPosProj = ballPos + proj * proj_damp;
 
 	// determine where to put the debug text
 	const Geometry2d::Point textOffset(Constants::Robot::Radius * -1.3, 0);
@@ -78,9 +79,10 @@ bool Gameplay::Behaviors::Intercept::run() {
 
 		// create extra waypoint to the side of the ball behind it
 		// use hysteresis on the side of the ball
+		float perp_damp = 0.8;
 		Point targetTraj = (ballPosProj - pos).normalized();
-		Point goLeft = ballPosProj + targetTraj.perpCCW() * Constants::Robot::Radius;
-		Point goRight = ballPosProj + targetTraj.perpCW() * Constants::Robot::Radius;
+		Point goLeft = ballPosProj + targetTraj.perpCCW() * Constants::Robot::Radius * perp_damp;
+		Point goRight = ballPosProj + targetTraj.perpCW() * Constants::Robot::Radius * perp_damp;
 
 		float leftDist = pos.distTo(goLeft);
 		float rightDist = pos.distTo(goRight);
