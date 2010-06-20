@@ -373,22 +373,28 @@ void Robot::drawPoseHistory(QPainter& p) {
 
 
 
-void Robot::stop() {
+void Robot::stop(float dtime) {
 	// handle rotation with PID - force value to zero
 	_w = _anglePid.run(_w);
+
+	// force to zero if close
+	float ang_thresh = 0.2;
+	if (_w < ang_thresh)
+		_w = 0.0;
 
 	// get a model to use for approximating robot movement
 	const float robotAngle = _self->angle;
 	Dynamics::DynamicsInfo info = _dynamics.info(_vel.angle()*RadiansToDegrees - robotAngle, _w);
 
 	// find magnitude of the maximum deceleration
-	const float vv = info.deceleration;
+	const float vv = info.deceleration * dtime;
 
 	// find the magnitude of the current velocity
 	const float vcur = _vel.mag();
 
 	// if we can go straight to zero, do it, otherwise drop by maximum deceleration
-	if (vcur < vv)
+	float vel_thresh = 0.5;
+	if (vcur < vel_thresh)
 		_vel = Geometry2d::Point(0.,0.);
 	else
 		_vel -= _vel.normalized()*vv;
@@ -585,6 +591,13 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 		//direction of travel
 		const Geometry2d::Point dir = targetPos - _self->pos;
 
+		// use active breaking as necessary
+		float dist_stop_thresh = 0.15; // cm
+		if (ending == Packet::MotionCmd::StopAtEnd && dir.mag() < dist_stop_thresh) {
+			stop(deltaT);
+			return;
+		}
+
 		///basically just a P for target velocity
 		// We don't use PID for translation, apparently
 		//const float tvel = _posPid.run(length);
@@ -702,7 +715,7 @@ void Robot::genTimePosVelocity()
 	if (path.size() == 0)
 	{
 		// nowhere to go, so we stop the robot
-		stop();
+		stop(deltaT);
 		return;
 	}
 	if (verbose) printTimePosPath(path, "Future Path");
@@ -777,10 +790,12 @@ void Robot::genTimePosVelocity()
 
 void Robot::genBezierVelocity() {
 	const bool verbose = false;
+
+	const float deltaT = (_state->timestamp - _lastTimestamp)/intTimeStampToFloat;
 	// error handling
 	size_t degree = _bezierControls.size();
 	if (degree < 2) {
-		stop();
+		stop(deltaT);
 		cout << "Bezier curve of size: " << degree << "!" << endl;
 		return;
 	}
@@ -820,7 +835,7 @@ void Robot::genBezierVelocity() {
 	float targetAngle = 0.0;
 	if (_self->cmd.face == Packet::MotionCmd::Continuous) {
 		// look further ahead for angle
-		float WlookAheadDist = 0.30; // in meters along path // prev: 0.15
+		float WlookAheadDist = 0.30; // in meters along path // prev: 0.15ang_thresh
 		float dtw = WlookAheadDist/_bezierTotalLength;
 		targetAngle = evaluateBezierVelocity(dtw, _bezierControls, coeffs).angle();
 	} else if (_self->cmd.face == Packet::MotionCmd::Endpoint) {

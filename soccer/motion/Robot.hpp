@@ -93,7 +93,7 @@ namespace Motion
 			void scaleVelocity();
 
 			/** stop the robot by forcing velocities to zero */
-			void stop();
+			void stop(float dtime); // time in seconds for the framerate
 
 			/** generate motor speeds */
 			void genMotor();
