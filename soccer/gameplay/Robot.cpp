@@ -204,9 +204,10 @@ void Gameplay::Robot::spin(Packet::MotionCmd::SpinType dir)
 
 bool Gameplay::Robot::haveBall() const
 {
+	// prevent ball sensor from reporting true when the ball is nowhere near
 	Point ball = _gameplay->state()->ball.pos;
 	float dist = pos().distTo(ball);
-	return packet()->haveBall && dist > Constants::Robot::Radius + 0.1;
+	return packet()->haveBall && dist < Constants::Robot::Radius + 0.1;
 }
 
 Packet::LogFrame::Robot::Rev Gameplay::Robot::rev() const

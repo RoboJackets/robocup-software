@@ -72,7 +72,7 @@ bool Gameplay::Plays::ClearBall::run()
 
 float Gameplay::Plays::ClearBall::score(Robot *r)
 {
-	cout << "dist is: " << _gameplay->state()->ball.pos.distTo(r->pos()) << std::endl;
+	//cout << "dist is: " << _gameplay->state()->ball.pos.distTo(r->pos()) << std::endl;
 	return _gameplay->state()->ball.pos.distTo(r->pos());
 }
 
