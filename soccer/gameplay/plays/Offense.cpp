@@ -74,7 +74,7 @@ bool Gameplay::Plays::Offense::run()
 		_kicker1.run();
 		other = _kicker2.robot();
 		_usingKicker1 = true;
-	} else if (kick1Dist >= kick2Dist) {
+	} else {
 		if (_usingKicker1) {
 			_kicker2.restart();
 		}
