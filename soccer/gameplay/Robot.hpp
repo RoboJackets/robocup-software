@@ -28,7 +28,7 @@ namespace Gameplay
 			// Status indicators
 			bool self() const;    /// true if this is one of our robots
 			bool visible() const; /// true if robot is valid - FIXME: needs better check
-			int id() const;       /// shell number of robot
+			int id() const;       /// index in the array - NOT THE SHELL!
 			bool haveBall() const; /// true if we have the ball
 			Packet::LogFrame::Robot::Rev rev() const; /// the revision for the robot, use for capability checks
 			bool hasChipper() const; /// true if robot can chip
@@ -156,6 +156,11 @@ namespace Gameplay
 			// This reduces the size of the opponent's obstacle.
 			// These are reset when this robot's role changes.
 			bool approachOpponent[Constants::Robots_Per_Team];
+
+			/**
+			 * Convenience function for changing the approachOpponent flag given a robot key
+			 */
+			void approachOpp(Robot * opp, bool value);
 
 			// External access functions for utility reasons
 

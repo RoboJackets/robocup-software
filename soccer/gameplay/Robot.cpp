@@ -280,3 +280,8 @@ ObstacleGroup & Gameplay::Robot::obstacles() const
 {
 	return packet()->obstacles;
 }
+
+void Gameplay::Robot::approachOpp(Robot * opp, bool value) {
+	int idx = opp->id();
+	approachOpponent[idx] = value;
+}

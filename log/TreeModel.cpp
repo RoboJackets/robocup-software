@@ -4,7 +4,7 @@
 
 using namespace Log;
 
-TreeModel::TreeModel()
+TreeModel::TreeModel(QObject *parent): QStandardItemModel(parent)
 {
 	this->invisibleRootItem()->setEditable(false);
 	this->invisibleRootItem()->setColumnCount(2);
