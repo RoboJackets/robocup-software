@@ -76,8 +76,7 @@ bool Gameplay::Behaviors::Goalie::run()
 			_state = Defend;
 		}
 	}
-	
-	if (_state == Defend)
+	else if (_state == Defend)
 	{
 		robot()->face(ball().pos);
 
@@ -206,9 +205,10 @@ bool Gameplay::Behaviors::Goalie::run()
 		
 		//goalie should not go into the goal
 		//vision can loose sight
-		if (dest.y < Constants::Robot::Radius)
+		float margin = Constants::Ball::Radius;
+		if (dest.y < Constants::Robot::Radius+margin)
 		{
-			dest.y = Constants::Robot::Radius;
+			dest.y = Constants::Robot::Radius+margin;
 		}
 		
 		if (dest.x > MaxX)
