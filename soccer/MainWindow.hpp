@@ -36,12 +36,14 @@ class MainWindow : public QMainWindow
 	
 	public Q_SLOTS:
 		void updateTree();
+		void flipField(bool value);
 		
 	private:
 		virtual bool event(QEvent *e);
 		
 		Ui_MainWindow ui;
-		
+		QCheckBox* _flipBox;
+
 		Team _team;
 	
 		Processor _processor;

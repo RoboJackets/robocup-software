@@ -62,7 +62,7 @@ class Processor: public QThread
 		QString vision_addr;
 		
 	public Q_SLOTS:
-		void flip_field(bool flip);
+		void flipField(bool flip);
 		
 	protected:
 		void run();

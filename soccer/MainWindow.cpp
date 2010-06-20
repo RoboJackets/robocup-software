@@ -34,7 +34,7 @@ MainWindow::MainWindow(Team t, QString filename, bool sim) :
 		
 		if (m->toolbar())
 		{
-			this->addToolBar(m->toolbar());
+			addToolBar(m->toolbar());
 		}
 	}
 	
@@ -43,14 +43,11 @@ MainWindow::MainWindow(Team t, QString filename, bool sim) :
 	ui.tabWidget->addTab(_configFileTab, tr("Configuration"));
 
 	QToolBar* processorBar = new QToolBar("Processor Bar");
-	processorBar->setVisible(false);
+	_flipBox = new QCheckBox("Flip Field", processorBar);
+	processorBar->addWidget(_flipBox);
+	connect(_flipBox, SIGNAL(toggled(bool)), &_processor, SLOT(flipField(bool)));
 	
-	QCheckBox* flibBox = new QCheckBox("Flip Field", processorBar);
-	processorBar->addWidget(flibBox);
-	
-	connect(flibBox, SIGNAL(toggled(bool)), &_processor, SLOT(flip_field(bool)));
-	
-	this->addToolBar(processorBar);
+	addToolBar(processorBar);
 	
 	if (sim)
 	{
@@ -95,4 +92,10 @@ bool MainWindow::event(QEvent* e)
 	} else {
 		return QMainWindow::event(e);
 	}
+}
+
+void MainWindow::flipField(bool value)
+{
+	_flipBox->setChecked(value);
+	_processor.flipField(value);
 }
