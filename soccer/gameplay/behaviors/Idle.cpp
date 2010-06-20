@@ -9,6 +9,11 @@ Gameplay::Behaviors::Idle::Idle(GameplayModule *gameplay) :
 {
 }
 
+bool Gameplay::Behaviors::Idle::assign(std::set< Gameplay::Robot* >& available)
+{
+    return takeAll(available);
+}
+
 bool Gameplay::Behaviors::Idle::run()
 {
 	if (!ball().valid)

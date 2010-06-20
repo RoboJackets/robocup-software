@@ -3,7 +3,7 @@
 using namespace std;
 
 Gameplay::Plays::Stopped::Stopped(GameplayModule *gameplay):
-	Play(gameplay, 3),
+	Play(gameplay, 0),
 	_idle(gameplay),
 	_left(gameplay, Behaviors::Fullback::Left),
 	_right(gameplay, Behaviors::Fullback::Right)
@@ -19,19 +19,13 @@ bool Gameplay::Plays::Stopped::applicable()
 
 bool Gameplay::Plays::Stopped::assign(set<Robot *> &available)
 {
+	_robots = available;
+	
 	_left.assign(available);
 	_right.assign(available);
 	_idle.assign(available);
 
-	if(!_left.assign(available)){return false;};
-	if(!_right.assign(available)){return false;};
-	if(!_idle.assign(available)){return false;};
-
-	_robots.insert(_left.robot());
-	_robots.insert(_right.robot());
-	_robots.insert(_idle.robot());
-
-	return _robots.size() >= _minRobots;
+	return true;
 }
 
 bool Gameplay::Plays::Stopped::run()
