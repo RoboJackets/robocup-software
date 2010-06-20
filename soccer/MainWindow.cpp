@@ -82,7 +82,7 @@ PlayConfigTab *MainWindow::playConfig() const
 
 void MainWindow::updateTree()
 {
-// 	_treeModel->frame(&_viewFrame);
+	_treeModel->frame(&_viewFrame);
 }
 
 bool MainWindow::event(QEvent* e)
