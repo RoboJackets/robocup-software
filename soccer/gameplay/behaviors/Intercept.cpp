@@ -6,6 +6,7 @@
 #include <cmath>
 
 using namespace std;
+using namespace Geometry2d;
 
 Gameplay::Behaviors::Intercept::Intercept(GameplayModule *gameplay, float dist) :
 	Behavior(gameplay, 1),
@@ -39,11 +40,19 @@ bool Gameplay::Behaviors::Intercept::run() {
 
 	//FIXME - We ram the ball if we have to move a long distance because we don't start slowing down early enough.
 
-	const Geometry2d::Point pos = robot()->pos();
+//	const Geometry2d::Point pos = robot()->pos();
 
 	// Get ball information
-	const Geometry2d::Point ballPos = ball().pos;
-	const Geometry2d::Point ballVel = ball().vel;
+//	const Geometry2d::Point ballPos = ball().pos;
+//	const Geometry2d::Point ballVel = ball().vel;
+
+	float avgVel = 0.5 * robot()->packet()->config.motion.deg45.velocity;
+	float proj_thresh = 0.01;
+	Point pos = robot()->pos(),
+		  ballVel = ball().vel,
+		  ballPos = ball().pos,
+		  proj = (ballVel.mag() > proj_thresh) ? ballVel * (pos.distTo(ballPos)/avgVel) : Point(),
+		  ballPosProj = ballPos + proj;
 
 	// determine where to put the debug text
 	const Geometry2d::Point textOffset(Constants::Robot::Radius * -1.3, 0);
@@ -60,7 +69,7 @@ bool Gameplay::Behaviors::Intercept::run() {
 			_state = Done;
 		} else {
 			//stop forward movement
-			robot()->move(robot()->pos());
+			robot()->move(robot()->pos()); // FIXME: convert to real stop
 		}
 	} else if (_state == ApproachBall) {
 		if (!pos.nearPoint(ballPos, _farDist)) {
@@ -72,21 +81,11 @@ bool Gameplay::Behaviors::Intercept::run() {
 	if (_state == ApproachFar) {
 
 		drawText("ApproachFar", pos + textOffset, 0, 0, 0);
-		Geometry2d::Point dest = ballPos;
+		Geometry2d::Point dest = ballPosProj; // use projected target
 
 		//if the ball is moving
 		//we first need to try and intercept it
-		if (ballVel.mag() > .1) {
-			// Project the destination ahead far enough to account for movement
-			const float average_speed = 3.0; // for the robot
-			float travelTime = pos.distTo(ballPos) / average_speed;
-			dest += ballVel * travelTime;
-
-			//look at where the ball will be 1 second from now
-			// changed to 0.45 seconds
-			//aka... the pos + vel
-			//dest += ballVel*0.2;
-		} else {
+		if (ballVel.mag() < .1) {
 			float ballDist = ballPos.distTo(pos);
 			float stopDist = _farDist * (1 + robot()->vel().mag() * 0.5f);
 			if (ballDist < stopDist) {
@@ -94,15 +93,11 @@ bool Gameplay::Behaviors::Intercept::run() {
 			} else {
 				dest += (ballPos - target).normalized() * stopDist;
 			}
-			drawLine(Geometry2d::Segment(pos, dest), 64, 64, 255);
+
 		}
+		drawLine(Geometry2d::Segment(pos, dest), 64, 64, 255);
 
-		//TODO use the move behavior?
 		robot()->move(dest);
-
-		//create an obstacle to avoid the ball during this state
-//		ObstaclePtr ballObstacle(new CircleObstacle(ballPos,
-//				_farDist - Constants::Ball::Radius));
 
 		const float dist = dest.distTo(pos);
 

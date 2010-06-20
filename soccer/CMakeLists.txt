@@ -95,13 +95,13 @@ set (SRCS
 	gameplay/plays/test_plays/TestTimePositionControl.cpp
 	gameplay/plays/test_plays/TestBasicAttack.cpp
 	gameplay/plays/test_plays/TestBasicOneTouchAttack.cpp
-	gameplay/plays/test_plays/TestBasicChipAttack.cpp
-	gameplay/plays/test_plays/TestBasicOneTouchChipAttack.cpp
 	gameplay/plays/test_plays/TestIntercept.cpp
 	gameplay/plays/test_plays/TestPassPlay.cpp
 	gameplay/plays/test_plays/TestOptimizedPassPlay.cpp
 	gameplay/plays/test_plays/TestGUI.cpp
 	gameplay/plays/test_plays/TestBallSpeed.cpp
+	#gameplay/plays/test_plays/TestBasicChipAttack.cpp #disabled until 2010 robots ready
+	#gameplay/plays/test_plays/TestBasicOneTouchChipAttack.cpp
 	
 	# files that use the optimizer - may want to disable
 	gameplay/plays/test_plays/TestPassConfigOptimize.cpp
