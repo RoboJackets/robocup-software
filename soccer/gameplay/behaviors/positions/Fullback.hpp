@@ -33,11 +33,14 @@ namespace Gameplay
 					Right
 				} Side;
 
-				Fullback(GameplayModule *gameplay, Side side);
+				Fullback(GameplayModule *gameplay, Side side = Center);
 
 				virtual bool assign(std::set<Robot *> &available);
 				virtual bool run();
 				
+				void side(Side s) { _side = s; }
+				Side side() const { return _side; }
+
 				std::set<Fullback *> otherFullbacks;
 				
 			protected:

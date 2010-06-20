@@ -58,13 +58,17 @@ Gameplay::Behaviors::ZoneOffense::ZoneOffense(GameplayModule *gameplay)
 }
 
 Gameplay::Behaviors::ZoneOffense::~ZoneOffense() {
-	// release all behaviors here
+	//TODO release all behaviors here
 }
 
 bool Gameplay::Behaviors::ZoneOffense::assign(std::set<Robot *> &available) {
+	cout << "ZoneOffense: assign()" << endl;
 	takeAll(available);
+	cout << "ZoneOffense: after takeall" << endl;
 
-	if (_robots.size() == 2) {
+
+	if (_robots.size() == 2) {cout << "ZoneOffense: " << endl;
+		cout << "ZoneOffense: got 2 robots" << endl;
 		Robot *a = *_robots.begin(), *b = *(_robots.begin()++);
 		if (a->pos().x < b->pos().x) {
 			_leftAttack = a;
@@ -74,7 +78,7 @@ bool Gameplay::Behaviors::ZoneOffense::assign(std::set<Robot *> &available) {
 			_rightAttack = a;
 		}
 	} else if (_robots.size() == 3) {
-
+		cout << "ZoneOffense: got 3 robots" << endl;
 		// find the midfielder
 		float backY = 100;
 		vector<Robot*> forwards;
@@ -92,6 +96,8 @@ bool Gameplay::Behaviors::ZoneOffense::assign(std::set<Robot *> &available) {
 
 		// pick left and right
 		Robot *a = forwards[0], *b = forwards[1];
+		if (!a) cout << "ZoneOffense: robot a is not valid " << endl; // FIXME: this check fails
+		if (!b) cout << "ZoneOffense: robot b is not valid " << endl;
 		if (a->pos().x < b->pos().x) {
 			_leftAttack = a;
 			_rightAttack = b;
@@ -100,26 +106,29 @@ bool Gameplay::Behaviors::ZoneOffense::assign(std::set<Robot *> &available) {
 			_rightAttack = a;
 		}
 
+		cout << "ZoneOffense: set robot sides" << endl;
 	} else {
 		return false;
 	}
 
 	// additional setup
+	cout << "ZoneOffense: Adding right mark" << endl;
 	if (_markRight) delete _markRight;
 	_markRight = new Mark(_gameplay);
 	_markRight->assignOne(_rightAttack);
 
-
+	cout << "ZoneOffense: Adding left mark" << endl;
 	if (_markLeft) delete _markLeft;
 	_markLeft = new Mark(_gameplay);
 	_markLeft->assignOne(_leftAttack);
 
 	if (_robots.size() == 3) {
+		cout << "ZoneOffense: Adding midfield mark" << endl;
 		if (_markMidfield) delete _markMidfield;
 		_markMidfield = new Mark(_gameplay);
 		_markMidfield->assignOne(_midfielder);
 	}
-
+	cout << "ZoneOffense: at end of assign" << endl;
 
 	return true;
 }
@@ -221,51 +230,75 @@ bool Gameplay::Behaviors::ZoneOffense::run() {
 	}
 
 	// pick the closest opp to the ball to mark in each zone
-	if (_activeZone != LEFT && !leftOpps.empty()) {
-		Robot * op = leftOpps.front();
-		float bestDist = op->pos().distTo(ballPos);
-		for (size_t i=1; i<leftOpps.size(); ++i) {
-			float dist = opp(i)->pos().distTo(ballPos);
-			if (dist < bestDist) {
-				bestDist = dist;
-				op = _gameplay->opp[i];
+	if (_activeZone != LEFT) {
+		if (!leftOpps.empty()) {
+			Robot * op = leftOpps.front();
+			float bestDist = op->pos().distTo(ballPos);
+			for (size_t i=1; i<leftOpps.size(); ++i) {
+				float dist = opp(i)->pos().distTo(ballPos);
+				if (dist < bestDist) {
+					bestDist = dist;
+					op = _gameplay->opp[i];
+				}
 			}
+			_markLeft->markRobot(op);
+			_markLeft->run();
+		} else {
+			_leftAttack->face(ballPos);
+			_leftAttack->move(_leftZone.center());
 		}
-		_markLeft->markRobot(op);
 	}
 
-	if (_activeZone != RIGHT && !rightOpps.empty()) {
-		Robot * op = rightOpps.front();
-		float bestDist = op->pos().distTo(ballPos);
-		for (size_t i=1; i<rightOpps.size(); ++i) {
-			float dist = opp(i)->pos().distTo(ballPos);
-			if (dist < bestDist) {
-				bestDist = dist;
-				op = _gameplay->opp[i];
+	if (_activeZone != RIGHT) {
+		if (!rightOpps.empty()) {
+			Robot * op = rightOpps.front();
+			float bestDist = op->pos().distTo(ballPos);
+			for (size_t i=1; i<rightOpps.size(); ++i) {
+				float dist = opp(i)->pos().distTo(ballPos);
+				if (dist < bestDist) {
+					bestDist = dist;
+					op = _gameplay->opp[i];
+				}
 			}
+			_markRight->markRobot(op);
+			_markRight->run();
+		} else {
+			_rightAttack->face(ballPos);
+			_rightAttack->move(_rightZone.center());
 		}
-		_markRight->markRobot(op);
 	}
 
-	if (_midfielder && _activeZone != MIDFIELD && !midOpps.empty()) {
-		Robot * op = midOpps.front();
-		float bestDist = op->pos().distTo(ballPos);
-		for (size_t i=1; i<midOpps.size(); ++i) {
-			float dist = opp(i)->pos().distTo(ballPos);
-			if (dist < bestDist) {
-				bestDist = dist;
-				op = _gameplay->opp[i];
+	if (_midfielder && _activeZone != MIDFIELD) {
+		if (!midOpps.empty()) {
+			Robot * op = midOpps.front();
+			float bestDist = op->pos().distTo(ballPos);
+			for (size_t i=1; i<midOpps.size(); ++i) {
+				float dist = opp(i)->pos().distTo(ballPos);
+				if (dist < bestDist) {
+					bestDist = dist;
+					op = _gameplay->opp[i];
+				}
 			}
+			_markMidfield->markRobot(op);
+			_markMidfield->run();
 		}
-		_markMidfield->markRobot(op);
-		_markMidfield->run();
+		else {
+
+			// try to stay on a line through center of zone
+			Point zoneCenter = _midfieldZone.center();
+			Segment zoneMidLine(Point(-Constants::Field::Width/2.0, zoneCenter.y),
+								Point(Constants::Field::Width/2.0, zoneCenter.y));
+			Segment ballRobotLine(ballPos, _midfielder->pos());
+			Point dest = zoneCenter;
+			zoneMidLine.intersects(ballRobotLine, &dest);
+
+			_midfielder->face(ballPos);
+			_midfielder->move(dest);
+		}
 	}
 
 	// execute the kicker
-	// FIXME: check whether this is making progress and change to passing/clearing
 	_kicker->run();
-
-
 
 	return true;
 }

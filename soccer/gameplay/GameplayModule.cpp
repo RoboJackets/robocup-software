@@ -30,6 +30,7 @@
 #include "plays/Defense.hpp"
 #include "plays/DefendGoal.hpp"
 #include "plays/OptimizedOffense.hpp"
+#include "plays/AggressiveZoneOffense.hpp"
 
 // test plays
 #include "plays/test_plays/TestBasicPassing.hpp"
@@ -166,6 +167,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_playConfig->addPlay(make_shared<Plays::Defense>(this));
 	_playConfig->addPlay(make_shared<Plays::DefendGoal>(this));
 	_playConfig->addPlay(make_shared<Plays::OptimizedOffense>(this));
+	_playConfig->addPlay(make_shared<Plays::AggressiveZoneOffense>(this));
 
 	// Add testing plays
 	_playConfig->addPlay(make_shared<Plays::TestPassExperiment1>(this));

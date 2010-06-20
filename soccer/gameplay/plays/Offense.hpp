@@ -3,7 +3,7 @@
 #include "../Play.hpp"
 
 #include <gameplay/behaviors/positions/Fullback.hpp>
-#include <gameplay/behaviors/positions/Forward.hpp>
+#include <gameplay/behaviors/Kick.hpp>
 
 namespace Gameplay
 {
@@ -19,8 +19,11 @@ namespace Gameplay
 				virtual bool run();
 				
 			protected:
+
+				bool _usingKicker1;
+
 				Behaviors::Fullback _fullback1, _fullback2;
-				Behaviors::Forward _kicker1, _kicker2;
+				Behaviors::Kick _kicker1, _kicker2;
 		};
 	}
 }

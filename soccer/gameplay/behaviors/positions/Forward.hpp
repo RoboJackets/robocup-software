@@ -21,6 +21,8 @@ namespace Gameplay
 				//the other forward
 				Forward *teammate;
 				
+
+
 			protected:
 				virtual float score(Robot* robot);
 				

@@ -43,8 +43,6 @@ bool Gameplay::Behaviors::Fullback::run()
 		return false;
 	}
 	
-	bool isOtherFullback = (otherFullbacks.size() >= 1);
-
 	Geometry2d::Point ballFuture = ball().pos + ball().vel;
 
 	//goal line, for intersection detection

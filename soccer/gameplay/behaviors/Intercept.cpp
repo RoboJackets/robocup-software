@@ -83,16 +83,16 @@ bool Gameplay::Behaviors::Intercept::run() {
 
 		// create extra waypoint to the side of the ball behind it
 		// use hysteresis on the side of the ball
-		float perp_damp = 0.8;
-		Point targetTraj = (ballPosProj - pos).normalized();
-		Point goLeft = ballPosProj + targetTraj.perpCCW() * Constants::Robot::Radius * perp_damp;
-		Point goRight = ballPosProj + targetTraj.perpCW() * Constants::Robot::Radius * perp_damp;
+		float perp_damp = 1.0;
+		Point targetTraj = (ballPos - pos).normalized();
+		Point goLeft = ballPosProj + targetTraj.perpCCW().normalized() * Constants::Robot::Radius * perp_damp;
+		Point goRight = ballPosProj + targetTraj.perpCW().normalized() * Constants::Robot::Radius * perp_damp;
 
 		float leftDist = pos.distTo(goLeft);
 		float rightDist = pos.distTo(goRight);
 
 		// set the side
-		float hystersis_modifier = 0.85;
+		float hystersis_modifier = 0.80;
 		switch (_driveSide) {
 		case UNSET:
 			// take closest
