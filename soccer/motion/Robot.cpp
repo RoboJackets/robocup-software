@@ -373,7 +373,7 @@ void Robot::drawPoseHistory(QPainter& p) {
 
 
 
-void Robot::stop() {
+void Robot::stop(float dtime) {
 	// handle rotation with PID - force value to zero
 	_w = _anglePid.run(_w);
 
@@ -387,7 +387,7 @@ void Robot::stop() {
 	Dynamics::DynamicsInfo info = _dynamics.info(_vel.angle()*RadiansToDegrees - robotAngle, _w);
 
 	// find magnitude of the maximum deceleration
-	const float vv = info.deceleration;
+	const float vv = info.deceleration * dtime;
 
 	// find the magnitude of the current velocity
 	const float vcur = _vel.mag();
@@ -592,9 +592,9 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 		const Geometry2d::Point dir = targetPos - _self->pos;
 
 		// use active breaking as necessary
-		float dist_stop_thresh = 0.10; // cm
+		float dist_stop_thresh = 0.15; // cm
 		if (ending == Packet::MotionCmd::StopAtEnd && dir.mag() < dist_stop_thresh) {
-			stop();
+			stop(deltaT);
 			return;
 		}
 
@@ -715,7 +715,7 @@ void Robot::genTimePosVelocity()
 	if (path.size() == 0)
 	{
 		// nowhere to go, so we stop the robot
-		stop();
+		stop(deltaT);
 		return;
 	}
 	if (verbose) printTimePosPath(path, "Future Path");
@@ -790,10 +790,12 @@ void Robot::genTimePosVelocity()
 
 void Robot::genBezierVelocity() {
 	const bool verbose = false;
+
+	const float deltaT = (_state->timestamp - _lastTimestamp)/intTimeStampToFloat;
 	// error handling
 	size_t degree = _bezierControls.size();
 	if (degree < 2) {
-		stop();
+		stop(deltaT);
 		cout << "Bezier curve of size: " << degree << "!" << endl;
 		return;
 	}
