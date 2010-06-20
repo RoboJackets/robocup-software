@@ -72,8 +72,8 @@ bool Gameplay::Behaviors::Intercept::run() {
 		}
 	}
 
-	//approach the ball at high speed facing the intended direction
 	if (_state == ApproachFar) {
+		//approach the ball at high speed facing the intended direction
 		robot()->willKick = false;  // want to avoid collisions
 
 		// create extra waypoint to the side of the ball behind it
@@ -136,10 +136,8 @@ bool Gameplay::Behaviors::Intercept::run() {
 		if (dist <= _farDist) {
 			_state = ApproachBall;
 		}
-	}
-
-	//approach the ball with intent to acquire it
-	if (_state == ApproachBall) {
+	} else if (_state == ApproachBall) {
+		//approach the ball with intent to acquire it
 		drawText("ApproachBall", pos + textOffset, 0, 0, 0);
 		//TODO change to just willHandle?
 		//something more meaningful
@@ -166,9 +164,7 @@ bool Gameplay::Behaviors::Intercept::run() {
 			}
 
 		}
-	}
-
-	if (_state == Done) {
+	} else if (_state == Done) {
 		// return to full vscale
 		robot()->setVScale(1.0);
 		//stop forward movement
