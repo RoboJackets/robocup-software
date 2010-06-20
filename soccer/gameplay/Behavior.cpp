@@ -58,11 +58,12 @@ Gameplay::Robot *Gameplay::Behavior::takeBest(std::set<Robot *> &available)
 	Robot *best = 0;
 	BOOST_FOREACH(Robot *r, available)
 	{
+		float s = score(r);
 		if (!best)
 		{
+			bestScore = s;
 			best = r;
 		} else {
-			float s = score(r);
 			if (s < bestScore)
 			{
 				bestScore = s;
