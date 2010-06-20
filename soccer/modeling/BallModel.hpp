@@ -48,6 +48,7 @@ namespace Modeling
 			} observation_mode;
 
 			BallModel(mode_t mode, RobotModel::RobotMap *robotMap, ConfigFile::shared_worldmodel& cfg);
+			~BallModel();
 
 			void observation(uint64_t time, const Geometry2d::Point &pos, observation_mode obs_mode);
 

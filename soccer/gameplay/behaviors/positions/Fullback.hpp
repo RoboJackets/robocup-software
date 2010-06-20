@@ -3,6 +3,8 @@
 #include "../../Behavior.hpp"
 #include "../../Window.hpp"
 
+#include <boost/shared_ptr.hpp>
+
 namespace Gameplay
 {
 	namespace Behaviors
@@ -42,7 +44,7 @@ namespace Gameplay
 				Side _side;
 				
 				//Window evaluator for checking passes/shots
-				Gameplay::WindowEvaluator * _winEval;
+				boost::shared_ptr<Gameplay::WindowEvaluator> _winEval;
 
 				//state information
 				State _state;

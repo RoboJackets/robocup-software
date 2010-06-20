@@ -12,7 +12,7 @@ namespace Log
 		Q_OBJECT;
 		
 		public:
-			TreeModel();
+			TreeModel(QObject *parent = 0);
 			
 			void frame(Packet::LogFrame* frame);
 			

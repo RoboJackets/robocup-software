@@ -15,6 +15,7 @@ Modeling::BallModel::BallModel(mode_t mode, RobotModel::RobotMap *robotMap, Conf
 {
 	lastObservedTime = 0;
 	lastUpdatedTime = 0;
+	raoBlackwellizedParticleFilter = 0;
 
 	if (_mode == MODELTESTS) {
 		cout << "Running ball model tests..." << endl;
@@ -32,6 +33,14 @@ Modeling::BallModel::BallModel(mode_t mode, RobotModel::RobotMap *robotMap, Conf
 		cout << "ERROR: Invalid initialization type, defaulting to RPBF!" << endl;
 		_mode = RBPF;
 		initRBPF();
+	}
+}
+
+Modeling::BallModel::~BallModel()
+{
+	if (raoBlackwellizedParticleFilter)
+	{
+		delete raoBlackwellizedParticleFilter;
 	}
 }
 

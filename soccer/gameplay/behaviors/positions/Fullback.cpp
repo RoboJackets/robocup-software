@@ -4,6 +4,7 @@
 #include <vector>
 
 #include <boost/foreach.hpp>
+#include <boost/make_shared.hpp>
 
 #include "../../Window.hpp"
 
@@ -24,7 +25,7 @@ bool Gameplay::Behaviors::Fullback::assign(set<Robot *> &available)
 	_state = Init;
 
 	//initialize windowevaluator
-	_winEval = new Gameplay::WindowEvaluator(Behavior::gameplay()->state());
+	_winEval = boost::make_shared<Gameplay::WindowEvaluator>(Behavior::gameplay()->state());
 	_winEval->debug = false;
 
 	return _robots.size() >= _minRobots;
@@ -32,7 +33,7 @@ bool Gameplay::Behaviors::Fullback::assign(set<Robot *> &available)
 
 bool Gameplay::Behaviors::Fullback::run()
 {
-	if (!assigned() || !allVisible())
+	if (!assigned() || !allVisible() || !_winEval)
 	{
 		return false;
 	}

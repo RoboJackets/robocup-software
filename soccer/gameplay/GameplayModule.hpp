@@ -9,6 +9,7 @@
 #include <framework/Module.hpp>
 #include <framework/ConfigFile.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 #include "Robot.hpp"
 

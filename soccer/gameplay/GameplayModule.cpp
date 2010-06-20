@@ -116,7 +116,6 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_nonFloor[2] = ObstaclePtr(floorObstacle);
 
 	floorObstacle = new PolygonObstacle;
-	floorObstacle = new PolygonObstacle;
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x, -deadspace));
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x+1, -deadspace));
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x+1, y));
@@ -186,6 +185,12 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 Gameplay::GameplayModule::~GameplayModule()
 {
 	removeGoalie();
+	
+	for (int i = 0; i < Constants::Robots_Per_Team; ++i)
+	{
+		delete self[i];
+		delete opp[i];
+	}
 }
 
 void Gameplay::GameplayModule::createGoalie()
