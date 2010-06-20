@@ -3,9 +3,9 @@
 using namespace std;
 
 Gameplay::Plays::Defense::Defense(GameplayModule *gameplay):
-	Play(gameplay, 4),
+	Play(gameplay, 1),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
-	_fullback2(gameplay, Behaviors::Fullback::Left), // should it be "right"?
+	_fullback2(gameplay, Behaviors::Fullback::Right), // should it be "right"?
 	_kicker1(gameplay),
 	_kicker2(gameplay)
 {
@@ -23,15 +23,12 @@ bool Gameplay::Plays::Defense::applicable()
 
 bool Gameplay::Plays::Defense::assign(set<Robot *> &available)
 {
-	if(!_fullback1.assign(available)){return false;};
-	if(!_fullback2.assign(available)){return false;};
-	if(!_kicker1.assign(available)){return false;};
-	if(!_kicker2.assign(available)){return false;};
-
-	_robots.insert(_fullback1.robot());
-	_robots.insert(_fullback2.robot());
-	_robots.insert(_kicker1.robot());
-	_robots.insert(_kicker2.robot());
+	_robots = available;
+	
+	_fullback1.assign(available);
+	_fullback2.assign(available);
+	_kicker1.assign(available);
+	_kicker2.assign(available);
 
 	return _robots.size() >= _minRobots;
 }
