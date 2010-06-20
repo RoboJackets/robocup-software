@@ -552,8 +552,8 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 		// clamp w to reasonable bounds to prevent oscillations
 		float dW = targetW - _w; // NOTE we do not fix this to range - this is acceleration
 
-//		float maxAccel = fabs(_self->config.motion.rotation.acceleration);
-//		dW = saturate(dW, maxAccel, -maxAccel);
+		float maxAccel = fabs(_self->config.motion.rotation.acceleration);
+		dW = saturate(dW, maxAccel, -maxAccel);
 
 		_w += dW;
 	}
