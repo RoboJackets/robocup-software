@@ -31,6 +31,7 @@ bool Gameplay::Plays::Offense::assign(set<Robot *> &available)
 	_fullback2.assign(available);
 
 	// handle sides for fullbacks
+	Point ballPos = ball().pos;
 	if (_fullback1.robot()->pos().x < _fullback2.robot()->pos().x) {
 		_fullback1.side(Behaviors::Fullback::Left);
 		_fullback2.side(Behaviors::Fullback::Right);
@@ -48,6 +49,9 @@ bool Gameplay::Plays::Offense::assign(set<Robot *> &available)
 		_fullback2.side(Behaviors::Fullback::Left);
 	}
 
+	// set which robot is the kicker first
+	_usingKicker1 = _kicker1.robot()->pos().distTo(ballPos) < _kicker2.robot()->pos().distTo(ballPos);
+
 	return _robots.size() >= _minRobots;
 }
 
@@ -59,13 +63,27 @@ bool Gameplay::Plays::Offense::run()
 	Point ballPos = ball().pos;
 
 	Robot * other;
-	if (_kicker1.robot()->pos().distTo(ballPos) < _kicker2.robot()->pos().distTo(ballPos)) {
+	float kick1Dist = _kicker1.robot()->pos().distTo(ballPos),
+		  kick2Dist = _kicker2.robot()->pos().distTo(ballPos);
+
+	// handle toggle cases
+	if (kick1Dist < kick2Dist) {
+		if (!_usingKicker1) {
+			_kicker1.restart();
+		}
 		_kicker1.run();
 		other = _kicker2.robot();
-	} else {
+		_usingKicker1 = true;
+	} else if (kick1Dist >= kick2Dist) {
+		if (_usingKicker1) {
+			_kicker2.restart();
+		}
+		_kicker2.restart();
 		_kicker2.run();
-		other = _kicker2.robot();
+		other = _kicker1.robot();
+		_usingKicker1 = false;
 	}
+
 	// drive to other side of the field
 	float lag_y_dist = 0.5, x_offset = 1.5;
 	float newX = (ballPos.x < 0.0) ? ballPos.x + x_offset : ballPos.x - x_offset;

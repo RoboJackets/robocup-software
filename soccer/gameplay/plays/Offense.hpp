@@ -20,6 +20,8 @@ namespace Gameplay
 				
 			protected:
 
+				bool _usingKicker1;
+
 				Behaviors::Fullback _fullback1, _fullback2;
 				Behaviors::Kick _kicker1, _kicker2;
 		};
