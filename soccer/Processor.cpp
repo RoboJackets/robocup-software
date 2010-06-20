@@ -30,12 +30,13 @@
 using namespace std;
 using namespace boost;
 
-Processor::Processor(Team t, QString filename) :
+Processor::Processor(Team t, QString filename, QObject *mainWindow) :
 	_running(true),
 	_team(t),
 	_sender(Network::Address, Network::addTeamOffset(_team, Network::RadioTx)),
 	_config(new ConfigFile(filename))
 {
+	_mainWindow = mainWindow;
 	vision_addr = "224.5.23.2";
 	_reverseId = 0;
 	
@@ -102,11 +103,6 @@ Processor::~Processor()
 	wait();
 }
 
-void Processor::setLogFile(Log::LogFile* lf)
-{
-	_logModule->setLogFile(lf);
-}
-
 void Processor::run()
 {
 	//setup receiver of packets for vision and radio
@@ -146,6 +142,7 @@ void Processor::run()
 			_joystick->drive();
 
 			_logModule->run();
+			captureState();
 
 			//send out the radio data from manual control
 			sendRadioData();
@@ -218,6 +215,7 @@ void Processor::run()
 
 				//always run logging last
 				_logModule->run();
+				captureState();
 				
 				// Send motion commands to the robots
 				sendRadioData();
@@ -230,6 +228,19 @@ void Processor::run()
 			}
 		}
 	}
+}
+
+void Processor::captureState()
+{
+	QMutexLocker locker(&_frameMutex);
+	_lastFrame = _state;
+	qApp->postEvent(_mainWindow, new QEvent(QEvent::User));
+}
+
+Packet::LogFrame Processor::lastFrame()
+{
+	QMutexLocker locker(&_frameMutex);
+	return _lastFrame;
 }
 
 void Processor::clearState()

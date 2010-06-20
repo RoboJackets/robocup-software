@@ -17,17 +17,11 @@ namespace Gameplay
 				void markRobot(Robot * robot) { _markRobot = robot; }
 				Robot * markRobot() const { return _markRobot;}
 
-				/** set the radius */
-				void radius(float r) { _radius = r; }
-				float radius() const { return _radius; }
-
 				virtual bool run();
 
 			protected:
 				// the target
 				Robot * _markRobot;
-
-				float _radius; /// preferred radius to stay at to mark
 		};
 	}
 }

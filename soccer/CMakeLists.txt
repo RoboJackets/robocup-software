@@ -70,6 +70,7 @@ set (SRCS
 	gameplay/plays/Offense.cpp
 	gameplay/plays/ClearBall.cpp
 	gameplay/plays/Defense.cpp
+	gameplay/plays/DefendGoal.cpp
 	gameplay/plays/OptimizedOffense.cpp
 
     # Core behaviors
@@ -82,6 +83,7 @@ set (SRCS
 	gameplay/behaviors/Intercept.cpp
 	gameplay/behaviors/OptimizedPassing.cpp
 	gameplay/behaviors/Mark.cpp
+	gameplay/behaviors/GoalDefender.cpp
 	
 	# Positions
 	gameplay/behaviors/positions/Goalie.cpp      

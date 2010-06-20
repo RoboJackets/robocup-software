@@ -32,15 +32,13 @@ class Processor: public QThread
 	Q_OBJECT;
 	
 	public:
-		Processor(Team t, QString filename);
+		Processor(Team t, QString filename, QObject *mainWindow);
 		~Processor();
 		
 		boost::shared_ptr<Gameplay::GameplayModule> gameplayModule() const
 		{
 			return _gameplayModule;
 		}
-		
-		void setLogFile(Log::LogFile* lf);
 		
 		SystemState& state()
 		{
@@ -57,6 +55,8 @@ class Processor: public QThread
 		{
 			return _config;
 		}
+
+		Packet::LogFrame lastFrame();
 
 		/** Multicast address for vision */
 		QString vision_addr;
@@ -103,6 +103,11 @@ class Processor: public QThread
 		
 		/** Which robot will next send reverse data */
 		int _reverseId;
+			
+		QMutex _frameMutex;
+		Packet::LogFrame _lastFrame;
+		QObject *_mainWindow;
+		void captureState();
 
 		//modules
 		QMutex _modulesMutex;

@@ -6,6 +6,7 @@
 #include "drawing/Elements.hpp"
 
 #include <QColor>
+#include <QApplication>
 #include <boost/foreach.hpp>
 
 using namespace Log;
@@ -14,17 +15,7 @@ LogModule::LogModule(SystemState *state) :
 	Module("Log Module")
 {
 	_state = state;
-	_logFile = 0;
 	_showVision = false;
-}
-
-void LogModule::setLogFile(LogFile* file)
-{
-	//TODO this mutex should not be here...instread in code
-	//that actually uses this object?? - Roman
-	_logFileMutex.lock();
-	_logFile = file;
-	_logFileMutex.unlock();
 }
 
 void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
@@ -60,6 +51,12 @@ void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
 	p.setPen(Qt::NoPen);
 	BOOST_FOREACH(const Packet::LogFrame::DebugPolygon &polygon, f.debugPolygons)
 	{
+		if (polygon.vertices.empty())
+		{
+			printf("Empty polygon\n");
+			continue;
+		}
+		
 		p.setBrush(QColor(polygon.color[0], polygon.color[1], polygon.color[2], 64));
 		QPointF pts[polygon.vertices.size()];
 		for (unsigned int i = 0; i < polygon.vertices.size(); ++i)
@@ -119,12 +116,4 @@ void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
 
 void LogModule::run()
 {
-	_logFileMutex.lock();
-	if (_logFile && _state)
-	{
-		//write out log frame part of the state
-		_logFile->write(*_state);
-		_logFile->setLast(*_state);
-	}
-	_logFileMutex.unlock();
 }

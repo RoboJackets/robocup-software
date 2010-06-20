@@ -5,14 +5,10 @@
 
 #include <QMainWindow>
 #include <QTimer>
-#include <QPushButton>
-#include <QString>
 
 #include <Team.h>
 
 #include <log/FieldView.hpp>
-#include <log/LogFile.hpp>
-#include <log/LogControl.hpp>
 #include <log/TreeView.hpp>
 #include <log/TreeModel.hpp>
 
@@ -37,21 +33,25 @@ class MainWindow : public QMainWindow
 		}
 		
 		PlayConfigTab *playConfig() const;
+	
+	public Q_SLOTS:
+		void updateTree();
 		
 	private:
+		virtual bool event(QEvent *e);
+		
 		Ui_MainWindow ui;
 		
 		Team _team;
 	
 		Processor _processor;
 
-		Log::LogControl* _logControl;
-	
 		Log::TreeModel* _treeModel;
-	
-		Log::LogFile* _logFile;
 	
 		QString _configFile;
 
+		QTimer _treeTimer;
+		QTimer _fieldTimer;
 		ConfigFileTab* _configFileTab;
+		Packet::LogFrame _viewFrame;
 };

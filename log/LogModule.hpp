@@ -5,7 +5,6 @@
 #include <QMutex>
 
 #include <framework/Module.hpp>
-#include "LogFile.hpp"
 
 namespace Log
 {
@@ -16,16 +15,12 @@ namespace Log
 			typedef boost::shared_ptr<LogModule> shared_ptr;
 			LogModule(SystemState *state);
 
-			void setLogFile(LogFile* file);
-
 			virtual void run();
 
 			virtual void fieldOverlay(QPainter&, Packet::LogFrame&) const;
 
 		private:
 			SystemState *_state;
-			QMutex _logFileMutex;
 			bool _showVision;
-			LogFile* _logFile;
 	};
 }

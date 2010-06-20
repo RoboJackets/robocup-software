@@ -14,7 +14,6 @@ namespace Log
 		public:
 			TreeModel();
 			
-		protected Q_SLOTS:
 			void frame(Packet::LogFrame* frame);
 			
 		private:
