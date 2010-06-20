@@ -32,7 +32,6 @@ bool Gameplay::Behaviors::GoalDefender::run()
 
 	Window* best = 0;
 	float bestDist = 0;
-	Behavior* goalie = _gameplay->goalie();
 
 	// finds the closest segment to the ball
 	BOOST_FOREACH(Window* window, _winEval->windows)
