@@ -28,6 +28,7 @@
 #include "plays/Offense.hpp"
 #include "plays/ClearBall.hpp"
 #include "plays/Defense.hpp"
+#include "plays/DefendGoal.hpp"
 #include "plays/OptimizedOffense.hpp"
 
 // test plays
@@ -162,6 +163,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_playConfig->addPlay(make_shared<Plays::Offense>(this));
 	_playConfig->addPlay(make_shared<Plays::ClearBall>(this));
 	_playConfig->addPlay(make_shared<Plays::Defense>(this));
+	_playConfig->addPlay(make_shared<Plays::DefendGoal>(this));
 	_playConfig->addPlay(make_shared<Plays::OptimizedOffense>(this));
 
 	// Add testing plays
