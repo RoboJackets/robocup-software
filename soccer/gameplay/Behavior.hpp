@@ -18,6 +18,11 @@ namespace Gameplay
 			return _gameplay;
 		}
 
+		void unassign()
+		{
+			_robots.clear();
+		}
+		
 		// Returns true if any robots are assigned to this behavior
 		bool assigned() const
 		{

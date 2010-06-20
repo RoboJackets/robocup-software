@@ -21,7 +21,10 @@ Gameplay::Behaviors::Fullback::Fullback(GameplayModule *gameplay, Side side):
 bool Gameplay::Behaviors::Fullback::assign(set<Robot *> &available)
 {
 	_robots.clear();
-	takeBest(available);
+	if (!takeBest(available))
+	{
+	    return false;
+	}
 	
 	//Initial state
 	_state = Init;

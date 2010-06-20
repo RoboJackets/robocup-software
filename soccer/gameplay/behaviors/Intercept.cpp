@@ -18,7 +18,11 @@ Gameplay::Behaviors::Intercept::Intercept(GameplayModule *gameplay, float dist) 
 }
 
 bool Gameplay::Behaviors::Intercept::assign(std::set<Robot *> &available) {
-	takeBest(available);
+	_robots.clear();
+	if (!takeBest(available))
+	{
+	    return false;
+	}
 	return _robots.size() >= _minRobots;
 }
 

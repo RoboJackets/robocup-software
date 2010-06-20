@@ -35,6 +35,9 @@ FieldView::FieldView(QWidget* parent) :
 	//turn on mouse tracking for modules that may need the event
 	setMouseTracking(true);
 	setAutoFillBackground(false);
+	
+	_updateTimer.setSingleShot(true);
+	connect(&_updateTimer, SIGNAL(timeout()), SLOT(update()));
 }
 
 void FieldView::team(Team t)
@@ -257,6 +260,9 @@ void FieldView::paintEvent(QPaintEvent* event)
 			painter.restore();
 		}
 	}
+	
+	painter.end();
+	_updateTimer.start(30);
 }
 
 void FieldView::drawField(QPainter& p)

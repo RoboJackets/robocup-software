@@ -18,19 +18,16 @@ bool Gameplay::Plays::OurKickoff::applicable()
 
 bool Gameplay::Plays::OurKickoff::assign(set<Robot *> &available)
 {
+	_robots = available;
+	
 	_idle1.target = _gameplay->centerMatrix() * Geometry2d::Point(0.7, -0.2);
 	_idle2.target = _gameplay->centerMatrix() * Geometry2d::Point(-0.7, -0.2);
 	_idle3.target = Geometry2d::Point(0, 1.5);
 	
-	if(!_kicker.assign(available)){return false;};
-	if(!_idle1.assign(available)){return false;};
-	if(!_idle2.assign(available)){return false;};
-	if(!_idle3.assign(available)){return false;};
-
-	_robots.insert(_kicker.robot());
-	_robots.insert(_idle1.robot());
-	_robots.insert(_idle2.robot());
-	_robots.insert(_idle3.robot());
+	_kicker.assign(available);
+	_idle1.assign(available);
+	_idle2.assign(available);
+	_idle3.assign(available);
 
 	return _robots.size() >= _minRobots;
 }

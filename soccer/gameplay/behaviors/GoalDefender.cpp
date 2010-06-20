@@ -188,7 +188,10 @@ bool Gameplay::Behaviors::GoalDefender::run()
 bool Gameplay::Behaviors::GoalDefender::assign(std::set<Robot *> &available)
 {
 	_robots.clear();
-	takeBest(available);
+	if (!takeBest(available))
+	{
+	    return false;
+	}
 
 	//initialize windowevaluator
 	_winEval = new Gameplay::WindowEvaluator(Behavior::gameplay()->state());

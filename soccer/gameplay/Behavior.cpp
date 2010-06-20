@@ -36,6 +36,7 @@ bool Gameplay::Behavior::allVisible() const
 
 bool Gameplay::Behavior::assign(std::set<Robot *> &available)
 {
+	_robots.clear();
 	takeBest(available);
 	return _robots.size() >= _minRobots;
 }
