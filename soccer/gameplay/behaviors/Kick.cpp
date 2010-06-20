@@ -185,7 +185,7 @@ bool Gameplay::Behaviors::Kick::run()
 			_pivot = ballPos;
 		} else if (_state == Aim && (!robot()->haveBall() && pos.distTo(ballPos) > interceptThresh))
 		{
-			//cout << "Lost ball - switching to intercept" << endl;
+//			cout << "Lost ball - switching to intercept" << endl;
 			_state = Intercept;
 		}
 	}
@@ -336,10 +336,10 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 	bool shotAvailable = false;
 	if (canKick)
 	{
-		cout << "Kicking possible" << endl;
+//		cout << "Kicking possible" << endl;
 		float margin = max(fixAngleDegrees(ra - g0), fixAngleDegrees(g1 - ra));
 
-		float threshold = 0.9f * (g1 - g0) / 2;
+		float threshold = 0.90f * (g1 - g0) / 2;
 		debug(
 				"goal %.1f, %.1f ball %.1f robot %.1f margin %.1f threshold %.1f\n",
 				g0, g1, ba, ra, margin, threshold);
