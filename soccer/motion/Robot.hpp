@@ -51,9 +51,6 @@ namespace Motion
 			/** Process the command for a robot and prepare output */
 			void proc();
 
-			/** slow processing for each robot */
-			void slow();
-
 			/** drawing functions */
 			void drawPath(QPainter& p);
 			void drawRRT(QPainter& p);

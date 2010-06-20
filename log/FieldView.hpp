@@ -2,7 +2,7 @@
 // vim:ai ts=4 et
 #pragma once
 
-#include <QGLWidget>
+#include <QWidget>
 #include <QVector>
 
 #include <Team.h>
@@ -15,7 +15,7 @@
 namespace Log
 {
 	/** class that performs drawing of log data onto the field */
-	class FieldView : public QGLWidget
+	class FieldView : public QWidget
 	{
 		Q_OBJECT;
 

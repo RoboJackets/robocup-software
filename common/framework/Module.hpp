@@ -26,9 +26,6 @@ class Module
 		/** run the code for the module */
 		virtual void run() = 0;
 		
-		/** code run in a separate slower thread */
-		virtual void slowRun() {};
-		
 		///handle house events on the field
 		virtual void mousePress(QMouseEvent* me, Geometry2d::Point pos) {};
 		virtual void mouseMove(QMouseEvent* me, Geometry2d::Point pos) {};

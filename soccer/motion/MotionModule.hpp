@@ -24,8 +24,6 @@ namespace Motion
 
 			virtual void run();
 			
-			virtual void slowRun();
-
 			virtual QWidget* widget() const;
 
 			virtual void fieldOverlay(QPainter&, Packet::LogFrame&) const;
