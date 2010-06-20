@@ -3,7 +3,7 @@
 using namespace std;
 
 Gameplay::Plays::KickPenalty::KickPenalty(GameplayModule *gameplay):
-	Play(gameplay, 4),
+	Play(gameplay, 1),
 	_kicker(gameplay),
 	_idle1(gameplay),
 	_idle2(gameplay),

@@ -4,7 +4,7 @@ using namespace std;
 using namespace Geometry2d;
 
 Gameplay::Plays::Offense::Offense(GameplayModule *gameplay):
-	Play(gameplay, 4),
+	Play(gameplay, 1),
 	_fullback1(gameplay),
 	_fullback2(gameplay),
 	_kicker1(gameplay),
@@ -23,15 +23,21 @@ bool Gameplay::Plays::Offense::applicable()
 
 bool Gameplay::Plays::Offense::assign(set<Robot *> &available)
 {
-	if(!_kicker1.assign(available)){return false;};
-	if(!_kicker2.assign(available)){return false;};
-	if(!_fullback1.assign(available)){return false;};
-	if(!_fullback2.assign(available)){return false;};
+	_robots = available;
+	
+	_kicker1.assign(available);
+	_kicker2.assign(available);
+	_fullback1.assign(available);
+	_fullback2.assign(available);
 
-	_robots.insert(_kicker1.robot());
-	_robots.insert(_kicker2.robot());
-	_robots.insert(_fullback1.robot());
-	_robots.insert(_fullback2.robot());
+	// handle sides for fullbacks
+	if (_fullback1.robot()->pos().x < _fullback2.robot()->pos().x) {
+		_fullback1.side(Behaviors::Fullback::Left);
+		_fullback2.side(Behaviors::Fullback::Right);
+	} else {
+		_fullback1.side(Behaviors::Fullback::Right);
+		_fullback2.side(Behaviors::Fullback::Left);
+	}
 
 	// handle sides for fullbacks
 	if (_fullback1.robot()->pos().x < _fullback2.robot()->pos().x) {

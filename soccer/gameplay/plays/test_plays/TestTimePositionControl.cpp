@@ -26,7 +26,10 @@ bool Gameplay::Plays::TestTimePositionControl::applicable()
 
 bool Gameplay::Plays::TestTimePositionControl::assign(set<Robot *> &available)
 {
-	takeBest(available);
+	if (!takeBest(available))
+	{
+	    return false;
+	}
 	return _robots.size() >= _minRobots;
 }
 

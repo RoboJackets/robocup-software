@@ -30,7 +30,10 @@ Gameplay::Behaviors::OneTouchKick::~OneTouchKick()
 bool Gameplay::Behaviors::OneTouchKick::assign(set<Robot *> &available)
 {
 	_robots.clear(); // clear existing robots
-	takeBest(available);
+	if (!takeBest(available))
+	{
+	    return false;
+	}
 
 	if (!_win)
 	{

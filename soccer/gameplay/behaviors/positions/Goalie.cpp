@@ -30,7 +30,11 @@ Gameplay::Behaviors::Goalie::~Goalie()
 
 bool Gameplay::Behaviors::Goalie::assign(set<Robot *> &available)
 {
-	takeBest(available);
+	_robots.clear();
+	if (!takeBest(available))
+	{
+	    return false;
+	}
 	
 	if (!_win)
 	{

@@ -69,8 +69,10 @@ void Gameplay::Behaviors::Kick::setTarget(Robot * r) {
 bool Gameplay::Behaviors::Kick::assign(set<Robot *> &available)
 {
 	_robots.clear(); // clear existing robots
-	_intercept->robots().clear();
-	takeBest(available);
+	if (!takeBest(available))
+	{
+	    return false;
+	}
 
 	if (!_win)
 	{

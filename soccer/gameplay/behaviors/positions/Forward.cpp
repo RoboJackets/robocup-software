@@ -12,7 +12,11 @@ Gameplay::Behaviors::Forward::Forward(GameplayModule * gameplay):
 
 bool Gameplay::Behaviors::Forward::assign(set<Robot *> &available)
 {
-	takeBest(available);
+	_robots.clear();
+	if (!takeBest(available))
+	{
+	    return false;
+	}
 	
 	_kick.assignOne(robot());
 	return _robots.size() >= _minRobots;

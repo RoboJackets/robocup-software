@@ -45,7 +45,10 @@ bool Gameplay::Plays::TestRectMotionControl::applicable()
 
 bool Gameplay::Plays::TestRectMotionControl::assign(set<Robot *> &available)
 {
-	takeBest(available);
+	if (!takeBest(available))
+	{
+	    return false;
+	}
 	return _robots.size() >= _minRobots;
 }
 

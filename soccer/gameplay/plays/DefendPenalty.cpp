@@ -3,7 +3,7 @@
 using namespace std;
 
 Gameplay::Plays::DefendPenalty::DefendPenalty(GameplayModule *gameplay):
-	Play(gameplay, 4),
+	Play(gameplay, 1),
 	_idle1(gameplay),
 	_idle2(gameplay),
 	_idle3(gameplay),
@@ -18,20 +18,17 @@ bool Gameplay::Plays::DefendPenalty::applicable()
 
 bool Gameplay::Plays::DefendPenalty::assign(set<Robot *> &available)
 {
+	_robots = available;
+	
 	_idle1.target = Geometry2d::Point(1.5, 1);
 	_idle2.target = Geometry2d::Point(1.5, 1.5);
 	_idle3.target = Geometry2d::Point(1.5, 2);
 	_idle4.target = Geometry2d::Point(1.5, 2.5);
 	
-	if(!_idle1.assign(available)){return false;};
-	if(!_idle2.assign(available)){return false;};
-	if(!_idle3.assign(available)){return false;};
-	if(!_idle4.assign(available)){return false;};
-
-	_robots.insert(_idle1.robot());
-	_robots.insert(_idle2.robot());
-	_robots.insert(_idle3.robot());
-	_robots.insert(_idle4.robot());
+	_idle1.assign(available);
+	_idle2.assign(available);
+	_idle3.assign(available);
+	_idle4.assign(available);
 
 	return _robots.size() >= _minRobots;
 }
