@@ -87,7 +87,7 @@ bool Gameplay::Behaviors::Intercept::run() {
 		float rightDist = pos.distTo(goRight);
 
 		// set the side
-		float hystersis_modifier = 0.95;
+		float hystersis_modifier = 0.85;
 		switch (_driveSide) {
 		case UNSET:
 			// take closest
