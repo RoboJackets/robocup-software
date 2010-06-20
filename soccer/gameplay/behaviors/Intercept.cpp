@@ -40,12 +40,6 @@ bool Gameplay::Behaviors::Intercept::run() {
 
 	//FIXME - We ram the ball if we have to move a long distance because we don't start slowing down early enough.
 
-//	const Geometry2d::Point pos = robot()->pos();
-
-	// Get ball information
-//	const Geometry2d::Point ballPos = ball().pos;
-//	const Geometry2d::Point ballVel = ball().vel;
-
 	float avgVel = 0.5 * robot()->packet()->config.motion.deg45.velocity;
 	float proj_thresh = 0.01;
 	Point pos = robot()->pos(),
@@ -78,7 +72,9 @@ bool Gameplay::Behaviors::Intercept::run() {
 	}
 
 	//approach the ball at high speed facing the intended direction
+	// TESTING: force a particular side of the ball
 	if (_state == ApproachFar) {
+		robot()->willKick = false;  // want to avoid collisions
 
 		drawText("ApproachFar", pos + textOffset, 0, 0, 0);
 		Geometry2d::Point dest = ballPosProj; // use projected target

@@ -224,14 +224,15 @@ void Robot::proc()
 				if (_self->cmd.pivot == MotionCmd::NoPivot)
 				{
 					//new path if better than old
-					Planning::Path path;
+					Planning::Path newPath;
 
 					// determine the obstacles
 					ObstacleGroup& og = _self->obstacles;
 
 					// run the RRT planner to generate a new plan
-					_planner.run(_self->pos, _self->angle, _self->vel, _self->cmd.goalPosition, &og, path);
-					_path = path;
+					_planner.run(_self->pos, _self->angle, _self->vel, _self->cmd.goalPosition, &og, newPath);
+
+					_path = newPath;
 
 					// create the velocities
 					genVelocity(_self->cmd.pathEnd);
