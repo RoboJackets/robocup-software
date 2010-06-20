@@ -215,11 +215,33 @@ bool Gameplay::Behaviors::Fullback::run()
 				Geometry2d::Point blockPoint = (dest[0].y > 0 ? dest[0] : dest[1]);
 				Behavior::robot()->move(blockPoint);
 				Behavior::robot()->face(r->pos());
+				return true;
 			}
 		}
-
 	}
 
+	if(needTask) //TODO: look at this in detail. Hacked together so that robots don't sit around
+	{
+		//if no side parameter...stay in the middle
+		float bestDist = 0;
+		BOOST_FOREACH(Window* window, _winEval->windows)
+		{
+			Geometry2d::Segment seg(window->segment.center(), ball().pos);
+			float newDist = seg.distTo(Behavior::robot()->pos());
+
+			if (!best || newDist < bestDist)
+			{
+				best = window;
+				bestDist = newDist;
+			}
+		}
+		Geometry2d::Segment shootLine(ball().pos, ball().pos + ball().vel.normalized() * 7.0);
+
+		Geometry2d::Segment& winSeg = best->segment;
+
+		robot()->move(shootLine.nearestPoint(Behavior::robot()->pos()));
+		robot()->faceNone();
+	}
 	return false;
 }
 

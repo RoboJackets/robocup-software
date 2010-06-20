@@ -14,13 +14,14 @@
     <blue>
         <robot id="0" x="3.0" y="-0.25" />
         <robot id="1" x="2.6" y="-0.75" />
+	<robot id="2" x="2.8" y="-0.75" />
         <!-- <robots qty="4" />-->
         <kinematics />
     </blue>
 
     <yellow>
-    	<robot id="0" x="2.2" y="0.6" />
-        <robot id="1" x="2.29" y="-1.7" />
+    	<robot id="0" x="1.6" y="0.2" />
+        <robot id="1" x="1.6" y="-0.2" />
     </yellow>
 
     <vision>
