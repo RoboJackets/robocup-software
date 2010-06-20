@@ -157,6 +157,11 @@ namespace Gameplay
 			// These are reset when this robot's role changes.
 			bool approachOpponent[Constants::Robots_Per_Team];
 
+			/**
+			 * Convenience function for changing the approachOpponent flag given a robot key
+			 */
+			void approachOpp(Robot * opp, bool value);
+
 			// External access functions for utility reasons
 
 			/** adds the pose to the history in the state variable */

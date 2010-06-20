@@ -1,56 +1,55 @@
 #include "Mark.hpp"
-#include "../Role.hpp"
 
 #include <Constants.hpp>
 #include <LogFrame.hpp>
-#include <vector>
 
 #include <iostream>
 using namespace std;
 using namespace Geometry2d;
 
-static Gameplay::BehaviorFactoryType<Gameplay::Behaviors::Mark> behavior("mark");
-
-Gameplay::Behaviors::Mark::Mark(GameplayModule *gameplay, Role *role):
-	Behavior(gameplay, role),
-	target_param(this,"target"),
-	coverGoal_param(this,"coverGoal")
-	{
-
-	}
-
-void Gameplay::Behaviors::Mark::run()
+Gameplay::Behaviors::Mark::Mark(GameplayModule *gameplay):
+Behavior(gameplay, 1)
 {
-	//Copy in important state data
-	const Packet::LogFrame::Ball& b = ball();
-	Geometry2d::Point ball_pos = b.pos;
-	Robot* opp = target_param.robot();
-	float dist_to_man = Constants::Robot::Radius * 3;
-	Point dest;
+}
 
-	//check whether marking for passes or a shooter
-	if (coverGoal_param.valid() && coverGoal_param.value())
-	{
-		//stay between opp and goal
-		Geometry2d::Segment goal_line(Point(Constants::Field::GoalWidth/2, 0),Point(-Constants::Field::GoalWidth/2, 0));
-		Geometry2d::Point vel_correction = opp->vel()*0.5;
-		Point opp_proj = opp->pos() + vel_correction *0.5;
-		Point goal_point = goal_line.nearestPoint(opp_proj);
-		dest = opp_proj - (opp->pos() - goal_point).normalized()*dist_to_man;
-	}
-	else
-	{
-		//Calculate position to obstruct path
-		Geometry2d::Point static_dest = opp->pos() - (opp->pos()-ball_pos).normalized()*dist_to_man;
-		Geometry2d::Point vel_correction = opp->vel()*0.5;
-		//Project 1 sec ahead
-		dest = static_dest + vel_correction * 0.5;
+bool Gameplay::Behaviors::Mark::run()
+{
+	if (_markRobot) {
+		// state data
+		Point ballPos = ball().pos,
+			  ballVel = ball().vel,
+			  pos = robot()->pos(),
+			  markPos = _markRobot->pos(),
+			  markVel = _markRobot->vel();
+		Segment ballMarkLine(ballPos, markPos);
 
+		// we want to get between the mark and the ball as fast as possible, then close in
+		float markLineDist = ballMarkLine.distTo(pos);
+		Point targetPoint;
+		float mark_line_thresh = 0.9;
+		if (markLineDist > mark_line_thresh) {
+			// fast intercept possible passes
+			targetPoint = ballMarkLine.nearestPoint(pos);
+		} else {
+			// close in to harass
+			// NOTE: this will actually allow their robot to drive us in a direction
+			float avgVel = 0.5 * robot()->packet()->config.motion.deg45.velocity;
+			float proj_time = markPos.distTo(pos) / avgVel;
+			Point markProj = markPos + markVel * proj_time,
+				  ballProj = ballPos + ballVel * proj_time,
+			targetPoint = markProj + (ballProj-markProj).normalized() * _radius;
+		}
+
+		// go there, facing the ball
+		robot()->approachOpp(_markRobot, true);
+		robot()->move(targetPoint, false);
+		robot()->face(ballPos);
+
+	} else {
+		return false;
 	}
-	//go to destination
-	robot()->move(dest);
-	//always face ball
-	robot()->face(ball_pos);
+
+	return true;
 }
 
 

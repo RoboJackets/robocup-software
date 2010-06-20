@@ -28,6 +28,7 @@
 #include "plays/Offense.hpp"
 #include "plays/ClearBall.hpp"
 #include "plays/Defense.hpp"
+#include "plays/DefendGoal.hpp"
 #include "plays/OptimizedOffense.hpp"
 
 // test plays
@@ -35,8 +36,6 @@
 #include "plays/test_plays/TestBasicOneTouchPassing.hpp"
 #include "plays/test_plays/TestBasicAttack.hpp"
 #include "plays/test_plays/TestBasicOneTouchAttack.hpp"
-#include "plays/test_plays/TestBasicChipAttack.hpp"
-#include "plays/test_plays/TestBasicOneTouchChipAttack.hpp"
 #include "plays/test_plays/TestPassPlay.hpp"
 #include "plays/test_plays/TestOptimizedPassPlay.hpp"
 #include "plays/test_plays/TestDirectMotionControl.hpp"
@@ -47,6 +46,10 @@
 #include "plays/test_plays/TestIntercept.hpp"
 #include "plays/test_plays/TestBallSpeed.hpp"
 #include "plays/test_plays/TestPassExperiment1.hpp"
+
+// chipping test plays - disabled for now
+//#include "plays/test_plays/TestBasicChipAttack.hpp"
+//#include "plays/test_plays/TestBasicOneTouchChipAttack.hpp"
 
 #include <QMouseEvent>
 #include <QFileDialog>
@@ -161,6 +164,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_playConfig->addPlay(make_shared<Plays::Offense>(this));
 	_playConfig->addPlay(make_shared<Plays::ClearBall>(this));
 	_playConfig->addPlay(make_shared<Plays::Defense>(this));
+	_playConfig->addPlay(make_shared<Plays::DefendGoal>(this));
 	_playConfig->addPlay(make_shared<Plays::OptimizedOffense>(this));
 
 	// Add testing plays
@@ -169,8 +173,6 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_playConfig->addPlay(make_shared<Plays::TestBasicOneTouchPassing>(this));
 	_playConfig->addPlay(make_shared<Plays::TestBasicAttack>(this));
 	_playConfig->addPlay(make_shared<Plays::TestBasicOneTouchAttack>(this));
-	_playConfig->addPlay(make_shared<Plays::TestBasicChipAttack>(this));
-	_playConfig->addPlay(make_shared<Plays::TestBasicOneTouchChipAttack>(this));
 	_playConfig->addPlay(make_shared<Plays::TestPassPlay>(this));
 	_playConfig->addPlay(make_shared<Plays::TestDirectMotionControl>(this));
 	_playConfig->addPlay(make_shared<Plays::TestRectMotionControl>(this));
@@ -180,6 +182,8 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_playConfig->addPlay(make_shared<Plays::TestIntercept>(this));
 	_playConfig->addPlay(make_shared<Plays::TestOptimizedPassPlay>(this));
 	_playConfig->addPlay(make_shared<Plays::TestBallSpeed>(this));
+//	_playConfig->addPlay(make_shared<Plays::TestBasicChipAttack>(this));
+//	_playConfig->addPlay(make_shared<Plays::TestBasicOneTouchChipAttack>(this));
 }
 
 Gameplay::GameplayModule::~GameplayModule()
