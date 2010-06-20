@@ -12,6 +12,7 @@ namespace Gameplay
                 Idle(GameplayModule *gameplay);
                 
                 virtual bool run();
+		virtual bool assign(std::set<Robot *> &available);
         };
     }
 }
