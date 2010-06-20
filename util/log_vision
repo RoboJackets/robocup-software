@@ -1,0 +1,2 @@
+#!/bin/sh
+tcpdump $* -n -w vision.log ip src 224.5.23.2
