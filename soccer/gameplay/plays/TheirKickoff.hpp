@@ -3,7 +3,7 @@
 #include "../Play.hpp"
 
 #include <gameplay/behaviors/positions/Fullback.hpp>
-#include <gameplay/behaviors/Kick.hpp>
+#include <gameplay/behaviors/Idle.hpp>
 
 namespace Gameplay
 {
@@ -20,7 +20,7 @@ namespace Gameplay
 			
 			protected:
 				Behaviors::Fullback _fullback1, _fullback2;
-				Behaviors::Kick _back1, _back2;
+				Behaviors::Idle _idle;
 		};
 	}
 }
