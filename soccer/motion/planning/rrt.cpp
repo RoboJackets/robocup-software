@@ -192,7 +192,6 @@ void RRT::Planner::run(
 	_dynamicsTree.step = .15;
 	_dynamicsTree.initAngle = angle;
 	
-
 	// FIXME: Segfault in this loop
 	/// find a path to the goal
     for (unsigned int i=0 ; i<_maxIterations ; ++i)

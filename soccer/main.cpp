@@ -148,7 +148,7 @@ int main (int argc, char* argv[])
 	
 	win.playConfig()->useGoalie(goalie);
 	
-	win.processor()->flip_field(flip);
+	win.flipField(flip);
 	
 	win.showMaximized();
 

@@ -111,6 +111,14 @@ Geometry2d::Point Modeling::BallModel::predictPosAtTime(float dtime)
 
 void Modeling::BallModel::observation(uint64_t time, const Geometry2d::Point &pos, observation_mode obs_type)
 {
+	if(fabs(pos.x) < 0.1 && fabs(pos.y) < 0.1) {
+		cout << "pos[x.y] = [" << pos.x << ", " << pos.y << "]" << std::endl;
+	}
+	if(time < lastUpdatedTime){
+		// due to an issue with early measurements coming in late, this will
+		// discard any observations that happened before the previous update
+		return;
+	}
 	// ignore obserations at exactly (0,0)
 	if(!(pos.x==0.0f && pos.y==0.0f)){
 		observation_type obs = {time, pos, obs_type};
@@ -118,7 +126,7 @@ void Modeling::BallModel::observation(uint64_t time, const Geometry2d::Point &po
 	}
 
 	// set lastObservedTime to the last observation's time
-	if (time > lastObservedTime)
+	if (time >= lastObservedTime)
 		lastObservedTime = time;
 }
 
@@ -152,6 +160,7 @@ void Modeling::BallModel::kalmanUpdate(float dtime) {
 void Modeling::BallModel::rbpfUpdate(float dtime) {
 	raoBlackwellizedParticleFilter->update(observedPos.x,observedPos.y,dtime);
 	RbpfState* bestState = raoBlackwellizedParticleFilter->getBestFilterState();
+	Point posOld = pos;
 	pos.x = bestState->X(0);
 	pos.y = bestState->X(1);
 	vel.x = bestState->X(2);
@@ -161,9 +170,18 @@ void Modeling::BallModel::rbpfUpdate(float dtime) {
 }
 
 void Modeling::BallModel::rbpfUpdateMultipleObs(std::vector<observation_type> &obs){
+	if(obs.size() >= 1){
+		observedPos.x = obs.at(0).pos.x;
+		observedPos.y = obs.at(0).pos.y;
+		float dtime = (float)(obs.at(0).time - lastUpdatedTime) / 1e6;
+		rbpfUpdate(dtime);
+	}
+	/*
 	if(obs.size() <= 0){
 		return;
 	}
+
+	cout << "received " << obs.size() << " observations" << std::endl;
 
 	int numObs = obs.size();
 	double x[numObs];
@@ -181,7 +199,7 @@ void Modeling::BallModel::rbpfUpdateMultipleObs(std::vector<observation_type> &o
 	vel.x = bestState->X(2);
 	vel.y = bestState->X(3);
 	accel.x = bestState->X(4);
-	accel.y = bestState->X(5);
+	accel.y = bestState->X(5);*/
 }
 
 void Modeling::BallModel::abgUpdate(float dtime) {
@@ -195,6 +213,7 @@ void Modeling::BallModel::abgUpdate(float dtime) {
 }
 
 bool Modeling::BallModel::valid(uint64_t time) {
+	//cout << "ball model is " << (!_observations.empty() || ((time - lastUpdatedTime) < MaxCoastTime) ? "" : "not") << " valid" << std::endl;
 	return !_observations.empty() || ((time - lastUpdatedTime) < MaxCoastTime);
 }
 
