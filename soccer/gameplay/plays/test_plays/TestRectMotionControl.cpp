@@ -75,7 +75,7 @@ bool Gameplay::Plays::TestRectMotionControl::run()
 	}
 
 	// issue the motion command
-	robot()->move(goal);
+	robot()->move(goal,true);
 
 	return true;
 }

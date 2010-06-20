@@ -3,8 +3,6 @@
 
 using namespace std;
 
-// TODO: CHANGE APPLICABLE TO USE CORRECT DEFENSE CALC.
-// TODO: ASSIGN KICKER TO BE ONETOUCH
 
 Gameplay::Plays::ClearBall::ClearBall(GameplayModule *gameplay):
 	Play(gameplay, 4),
@@ -15,7 +13,8 @@ Gameplay::Plays::ClearBall::ClearBall(GameplayModule *gameplay):
 	_oppDistMin(1.5),
 	_selfDistMax(0.75)
 {
-	//_kicker.aimType(Behaviors::Kick::ONETOUCH);
+	// may want to comment this out
+	_kicker.aimType(Behaviors::Kick::ONETOUCH);
 }
 
 bool Gameplay::Plays::ClearBall::applicable()
@@ -63,8 +62,8 @@ bool Gameplay::Plays::ClearBall::assign(set<Robot *> &available)
 bool Gameplay::Plays::ClearBall::run()
 {
 	// check if the robot is in done state
-//	if (_kicker.getState() == Gameplay::Behaviors::Kick::Done)
-//		return false;
+	if (_kicker.getState() == Gameplay::Behaviors::Kick::Done)
+		return false;
 
 	// run the kick play
 	_kicker.run();
