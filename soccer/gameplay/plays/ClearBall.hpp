@@ -39,6 +39,7 @@ protected:
 	Behaviors::Forward _kicker1, _kicker2;
 	float _oppDistMin; // minimum distance opp must be for score calc
 	float _selfDistMax; // maximum distance self robot must be for score calc
+	bool _done;
 };
 } // \Gameplay
 } // \Plays

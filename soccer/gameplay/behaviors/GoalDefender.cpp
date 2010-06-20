@@ -14,7 +14,8 @@ bool Gameplay::Behaviors::GoalDefender::run()
 		return false;
 	}
 
-	Geometry2d::Point ballFuture = ball().pos + ball().vel; // TODO: Why 1s ?
+	Geometry2d::Point ballFuture = ball().pos + ball().vel*0.1;
+	const float radius = .7;
 
 	//goal line, for intersection detection
 	Geometry2d::Segment goalLine(Geometry2d::Point(-Constants::Field::GoalWidth / 2.0f, 0),
@@ -26,6 +27,46 @@ bool Gameplay::Behaviors::GoalDefender::run()
 	{
 		_winEval->exclude.push_back(r->pos());
 	}
+
+	_winEval->run(ballFuture, goalLine);
+
+	Window* best = 0;
+	float bestDist = 0;
+	Behavior* goalie = _gameplay->goalie();
+
+	// finds the closest segment to the ball
+	BOOST_FOREACH(Window* window, _winEval->windows)
+	{
+		Geometry2d::Segment seg(window->segment.center(), ball().pos);
+		float newDist = seg.distTo(Behavior::robot()->pos());
+
+		if (seg.length() > Constants::Robot::Radius && (!best || newDist < bestDist))
+		{
+			best = window;
+			bestDist = newDist;
+		}
+	}
+
+	Geometry2d::Circle arc(Geometry2d::Point(), radius);
+	Geometry2d::Line ballTravel(ball().pos, ballFuture);
+	Geometry2d::Point dest[2];
+	bool ballTravelIntersects = ballTravel.intersects(arc, &dest[0], &dest[1]);
+	Geometry2d::Point blockPoint = (dest[0].y > 0 ? dest[0] : dest[1]);
+	bool movingTowardsGoal = ballFuture.mag() < ball().pos.mag();
+
+	if(ballTravelIntersects && blockPoint.y > 0 && movingTowardsGoal)
+	{
+		// If ball is traveling towards the goal, block it.
+		drawText("YY", blockPoint, 255, 0, 255);
+	}
+	else
+	{	// Stand in the largest open window
+		Geometry2d::Line bestWindowLine(best->segment.center(), Geometry2d::Point(0,0));
+		Geometry2d::Point blockPoint = (best->segment.center().normalized()) * radius;
+		drawText("XX", blockPoint, 255, 255, 255);
+	}
+
+
 
 	/*
 	_winEval->exclude.push_back(Behavior::robot()->pos());
