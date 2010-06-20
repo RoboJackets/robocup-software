@@ -282,8 +282,6 @@ ObstacleGroup & Gameplay::Robot::obstacles() const
 }
 
 void Gameplay::Robot::approachOpp(Robot * opp, bool value) {
-	for (size_t i=0; i<Constants::Robots_Per_Team; ++i) {
-		Robot* r = _gameplay->opp[i];
-//		if (!r && )
-	}
+	int idx = opp->id();
+	approachOpponent[idx] = value;
 }

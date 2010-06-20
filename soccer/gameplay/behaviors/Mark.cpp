@@ -36,8 +36,8 @@ bool Gameplay::Behaviors::Mark::run()
 			float avgVel = 0.5 * robot()->packet()->config.motion.deg45.velocity;
 			float proj_time = markPos.distTo(pos) / avgVel;
 			Point markProj = markPos + markVel * proj_time,
-				  ballProj = ballPos + ballVel * proj_time,
-			targetPoint = markProj + (ballProj-markProj).normalized() * _radius;
+				  ballProj = ballPos + ballVel * proj_time;
+			targetPoint = markProj + (ballProj-markProj).normalized() * Constants::Robot::Radius;
 		}
 
 		// go there, facing the ball

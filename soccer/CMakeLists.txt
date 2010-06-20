@@ -84,6 +84,7 @@ set (SRCS
 	gameplay/behaviors/OptimizedPassing.cpp
 	gameplay/behaviors/Mark.cpp
 	gameplay/behaviors/GoalDefender.cpp
+	gameplay/behaviors/ZoneOffense.cpp
 	
 	# Positions
 	gameplay/behaviors/positions/Goalie.cpp      
