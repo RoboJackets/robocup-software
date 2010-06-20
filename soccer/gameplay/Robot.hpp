@@ -58,7 +58,7 @@ namespace Gameplay
 			void resetMotionCommand();  /// resets all motion commands for the robot
 
 			// Move to a particular point using the RRT planner
-			void move(Geometry2d::Point pt, bool stopAtEnd=true);
+			void move(Geometry2d::Point pt, bool stopAtEnd=false);
 
 			/**
 			 * Move along a path for waypoint-based control
