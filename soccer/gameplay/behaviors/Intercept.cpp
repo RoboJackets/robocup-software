@@ -10,6 +10,7 @@ using namespace Geometry2d;
 
 Gameplay::Behaviors::Intercept::Intercept(GameplayModule *gameplay, float dist) :
 	Behavior(gameplay, 1),
+	_driveSide(UNSET),
 	_state(ApproachFar),
 	_farDist(dist),
 	_ballControlFrames(5)
@@ -76,8 +77,44 @@ bool Gameplay::Behaviors::Intercept::run() {
 	if (_state == ApproachFar) {
 		robot()->willKick = false;  // want to avoid collisions
 
+		// create extra waypoint to the side of the ball behind it
+		// use hysteresis on the side of the ball
+		Point targetTraj = (ballPosProj - pos).normalized();
+		Point goLeft = ballPosProj + targetTraj.perpCCW() * Constants::Robot::Radius;
+		Point goRight = ballPosProj + targetTraj.perpCW() * Constants::Robot::Radius;
+
+		float leftDist = pos.distTo(goLeft);
+		float rightDist = pos.distTo(goRight);
+
+		// set the side
+		float hystersis_modifier = 0.95;
+		switch (_driveSide) {
+		case UNSET:
+			// take closest
+			if (leftDist < rightDist) {
+				_driveSide = LEFT;
+			} else {
+				_driveSide = RIGHT;
+			}
+			break;
+		case LEFT:
+			if (rightDist < hystersis_modifier * leftDist) {
+				_driveSide = RIGHT;
+			}
+			break;
+		case RIGHT:
+			if (leftDist < hystersis_modifier * rightDist) {
+				_driveSide = LEFT;
+			}
+			break;
+		}
+
 		drawText("ApproachFar", pos + textOffset, 0, 0, 0);
-		Geometry2d::Point dest = ballPosProj; // use projected target
+		Geometry2d::Point dest;
+		if (_driveSide == LEFT)
+			dest = goLeft;
+		else if (_driveSide == RIGHT)
+			dest = goRight;
 
 		//if the ball is moving
 		//we first need to try and intercept it

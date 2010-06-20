@@ -31,6 +31,13 @@ namespace Gameplay
 			protected:
 				virtual float score(Robot * robot);
 
+				typedef enum {
+					LEFT,
+					RIGHT,
+					UNSET
+				} DriveSide;
+				DriveSide _driveSide;
+
 				State _state;
 				
 				float _farDist; /// Distance threshold between near and far intercept
