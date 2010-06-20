@@ -104,11 +104,3 @@ void MotionModule::run()
 		r->proc();
     }
 }
-
-void MotionModule::slowRun()
-{
-	BOOST_FOREACH(Robot* r, _robots)
-	{
-		r->slow();
-	}
-}

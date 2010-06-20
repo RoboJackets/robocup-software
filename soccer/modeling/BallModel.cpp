@@ -152,6 +152,10 @@ void Modeling::BallModel::rbpfUpdate(float dtime) {
 }
 
 void Modeling::BallModel::rbpfUpdateMultipleObs(std::vector<observation_type> &obs){
+	if(obs.size() <= 0){
+		return;
+	}
+
 	int numObs = obs.size();
 	double x[numObs];
 	double y[numObs];

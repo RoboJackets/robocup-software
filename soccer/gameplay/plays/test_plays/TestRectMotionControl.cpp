@@ -97,12 +97,12 @@ bool Gameplay::Plays::TestRectMotionControl::run()
 		Point angleGoalPt(cos(angleGoal),sin(angleGoal));
 		angleGoalPt *= 10;
 		angleGoalPt += robot()->pos();
-		robot()->face(angleGoalPt,false);
+		robot()->face(angleGoalPt,true);
 	}else{ // point in direction of travel
 		Point prevGoal = path_.at((pathGoalIdx_ - 1 + (int)path_.size()) % ((int)path_.size()));
 		Point angleVec = goal - prevGoal;
 		Point angleGoalPt(angleVec + goal);
-		robot()->face(angleGoalPt,false);
+		robot()->face(angleGoalPt,true);
 	}
 
 	// issue the motion command

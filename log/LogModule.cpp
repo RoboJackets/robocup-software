@@ -6,7 +6,6 @@
 #include "drawing/Elements.hpp"
 
 #include <QColor>
-#include <GL/gl.h>
 #include <boost/foreach.hpp>
 
 using namespace Log;
@@ -58,23 +57,18 @@ void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
 		p.restore();
 	}
 
-	p.setPen(Qt::black);
-	// Save GL_BLEND state since QPainter needs it
-	glPushAttrib(GL_COLOR_BUFFER_BIT);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	p.setPen(Qt::NoPen);
 	BOOST_FOREACH(const Packet::LogFrame::DebugPolygon &polygon, f.debugPolygons)
 	{
-		glColor4ub(polygon.color[0], polygon.color[1], polygon.color[2], 64);
-		glBegin(GL_POLYGON);
-		BOOST_FOREACH(const Geometry2d::Point &pt, polygon.vertices)
+		p.setBrush(QColor(polygon.color[0], polygon.color[1], polygon.color[2], 64));
+		QPointF pts[polygon.vertices.size()];
+		for (unsigned int i = 0; i < polygon.vertices.size(); ++i)
 		{
-			glVertex2f(pt.x, pt.y);
+			pts[i] = polygon.vertices[i].toQPointF();
 		}
-		glEnd();
+		p.drawConvexPolygon(pts, polygon.vertices.size());
 	}
-	glDisable(GL_BLEND);
-	glPopAttrib();
+	p.setBrush(Qt::NoBrush);
 
 	if (_showVision)
 	{

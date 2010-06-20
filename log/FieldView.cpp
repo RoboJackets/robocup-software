@@ -20,7 +20,7 @@ using namespace Log;
 static const float ShootScale = 5;
 
 FieldView::FieldView(QWidget* parent) :
-	QGLWidget(parent),
+	QWidget(parent),
 	_team(UnknownTeam),
 	_sender(Network::Address, Network::SimCommandPort)
 {
@@ -194,9 +194,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	painter.setRenderHint(QPainter::Antialiasing);
 	//painter.setRenderHint(QPainter::SmoothPixmapTransform);
 	
-	//DON'T USE QT TO FILL LARGE AREAS...SLOW - Roman
-	glClearColor(0, 85.0/255.0, 0, 0);
-	glClear(GL_COLOR_BUFFER_BIT);
+	painter.fillRect(rect(), QColor(0, 85.0, 0));
 	
 	float scale = 1;
 	
@@ -273,17 +271,6 @@ void FieldView::drawField(QPainter& p)
 	p.setPen(Qt::NoPen);
 	
 	p.translate(Field::Border, Field::Border);
-	
-	#if 0
-	//use opengl for fills...qt slow - Roman
-	glColor3ub(0,130,0);
-	glBegin(GL_QUADS);
-		glVertex2f(0,0);
-		glVertex2f(0, Field::Width);
-		glVertex2f(Field::Length, Field::Width);
-		glVertex2f(Field::Length, 0);
-	glEnd();
-	#endif
 	
 	p.setPen(Qt::white);
 	p.setBrush(Qt::NoBrush);

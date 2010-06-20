@@ -288,10 +288,6 @@ void Robot::proc()
 	_procMutex.unlock();
 }
 
-void Robot::slow()
-{
-}
-
 void Robot::drawPath(QPainter& p)
 {
 	QMutexLocker ml(&_procMutex);
