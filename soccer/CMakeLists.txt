@@ -72,6 +72,7 @@ set (SRCS
 	gameplay/plays/Defense.cpp
 	gameplay/plays/DefendGoal.cpp
 	gameplay/plays/OptimizedOffense.cpp
+	gameplay/plays/AggressiveZoneOffense.cpp
 
     # Core behaviors
 	gameplay/behaviors/Move.cpp
