@@ -1,27 +1,33 @@
 #pragma once
 
 #include "../Behavior.hpp"
-#include "../parameters/Robot_Parameter.hpp"
-#include "../parameters/Bool_Parameter.hpp"
 
 namespace Gameplay
 {
 	namespace Behaviors
 	{
+		/** Prevents a target robot from receiving a pass */
 		class Mark: public Behavior
 		{
 			public:
 
-				Mark(GameplayModule *gameplay, Role *role = 0);
+				Mark(GameplayModule *gameplay);
 
-				virtual void run();
+				/** set the robot to mark */
+				void markRobot(Robot * robot) { _markRobot = robot; }
+				Robot * markRobot() const { return _markRobot;}
 
-				//target robot
-				Robot_Parameter target_param;
+				/** set the radius */
+				void radius(float r) { _radius = r; }
+				float radius() const { return _radius; }
 
-				//cover goal
-				Bool_Parameter coverGoal_param;
+				virtual bool run();
 
+			protected:
+				// the target
+				Robot * _markRobot;
+
+				float _radius; /// preferred radius to stay at to mark
 		};
 	}
 }

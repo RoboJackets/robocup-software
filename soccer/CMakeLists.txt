@@ -81,6 +81,7 @@ set (SRCS
 	gameplay/behaviors/OneTouchKick.cpp
 	gameplay/behaviors/Intercept.cpp
 	gameplay/behaviors/OptimizedPassing.cpp
+	gameplay/behaviors/Mark.cpp
 	
 	# Positions
 	gameplay/behaviors/positions/Goalie.cpp      

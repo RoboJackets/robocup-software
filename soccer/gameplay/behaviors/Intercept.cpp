@@ -73,7 +73,6 @@ bool Gameplay::Behaviors::Intercept::run() {
 	}
 
 	//approach the ball at high speed facing the intended direction
-	// TESTING: force a particular side of the ball
 	if (_state == ApproachFar) {
 		robot()->willKick = false;  // want to avoid collisions
 
