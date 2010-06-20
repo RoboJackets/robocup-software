@@ -427,7 +427,7 @@ void Processor::toTeamSpace(Packet::Vision& vision)
 	}
 }
 
-void Processor::flip_field(bool flip)
+void Processor::flipField(bool flip)
 {
 	_flipField = flip;
 }

@@ -563,6 +563,15 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 	// handle point-to-point driving without pivot
 	if (_self->cmd.pivot == Packet::MotionCmd::NoPivot)
 	{
+		if (_path.points.empty())
+		{
+			// No path - stop.
+			//FIXME - This should never happen.  We must keep the check, but fix the cause.
+			printf("genVelocity: empty path, stopping\n");
+			_vel = Point();
+			return;
+		}
+		
 		//dynamics path
 		float length = _path.length();
 
