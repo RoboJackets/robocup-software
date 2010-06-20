@@ -8,6 +8,8 @@
 
 #include "../../Window.hpp"
 
+#include <Geometry2d/util.h>
+
 using namespace std;
 
 Gameplay::Behaviors::Fullback::Fullback(GameplayModule *gameplay, Side side):
@@ -38,6 +40,8 @@ bool Gameplay::Behaviors::Fullback::run()
 		return false;
 	}
 	
+	bool isOtherFullback = (otherFullbacks.size() >= 1);
+
 	Geometry2d::Point ballFuture = ball().pos + ball().vel;
 
 	//goal line, for intersection detection
@@ -105,7 +109,7 @@ bool Gameplay::Behaviors::Fullback::run()
 		}
 	}
 	
-	if (best)
+	if (best && ((_side==Left&&ball().pos.x>=0) || (_side==Right&&ball().pos.x<0)))
 	{
 		Geometry2d::Segment shootLine(ball().pos, ball().pos + ball().vel.normalized() * 7.0);
 		
@@ -159,6 +163,60 @@ bool Gameplay::Behaviors::Fullback::run()
 		needTask = true;
 	}
 	
+	if(needTask){
+		//goal line, for intersection detection
+		Geometry2d::Segment goalLine(Geometry2d::Point(-Constants::Field::GoalWidth / 2.0f, 0),
+									  Geometry2d::Point(Constants::Field::GoalWidth / 2.0f, 0));
+		//goal arc
+		const float radius = .7;
+		Geometry2d::Circle arc(Geometry2d::Point(), radius);
+
+		//opponent with ball
+		Robot* oppWithBall = 0;
+		float minDist = 999;
+		BOOST_FOREACH(Robot *r, _gameplay->opp)
+		{
+			float dist = r->pos().distTo(ball().pos);
+			if(dist < minDist)
+			{
+				minDist = dist;
+				oppWithBall = r;
+			}
+		}
+		if(oppWithBall == 0)
+			return false; // need opp to block
+
+
+		// block opponents that are pointed towards our goal and are on our side (left or right) and do not have the ball
+		BOOST_FOREACH(Robot *r, _gameplay->opp)
+		{
+			if(r == oppWithBall)
+				continue;
+
+			bool sameSide = ((_side==Left&&r->pos().x<=0) || (_side==Right&&r->pos().x>=0));
+			bool nonDefender = (r->pos().y < 3*Constants::Field::Length/4);
+			bool facingGoal;
+			Geometry2d::Point facing(cos(DegreesToRadians * r->angle()),sin(DegreesToRadians * r->angle())); // make sure not degrees!
+			facing *= 20;
+			Geometry2d::Segment los(facing, r->pos());
+			Geometry2d::Point intr;
+			facingGoal = los.intersects(goalLine,&intr);
+
+			if(sameSide && nonDefender && facingGoal)
+			{
+				Geometry2d::Point dest[2];
+				Geometry2d::Line losLine(facing,r->pos());
+				bool ballTravelIntersects = losLine.intersects(arc, &dest[0], &dest[1]);
+				if(!ballTravelIntersects)
+					continue;
+				Geometry2d::Point blockPoint = (dest[0].y > 0 ? dest[0] : dest[1]);
+				Behavior::robot()->move(blockPoint);
+				Behavior::robot()->face(r->pos());
+			}
+		}
+
+	}
+
 	return false;
 }
 
