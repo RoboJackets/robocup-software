@@ -46,6 +46,12 @@ bool Gameplay::Behaviors::GoalDefender::run()
 		}
 	}
 
+	if (!best)
+	{
+	    //FIXME - What if there are no windows?
+	    return true;
+	}
+
 	Geometry2d::Circle arc(Geometry2d::Point(), radius);
 	Geometry2d::Line ballTravel(ball().pos, ballFuture);
 	Geometry2d::Point dest[2];
