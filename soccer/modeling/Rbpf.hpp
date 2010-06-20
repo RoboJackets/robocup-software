@@ -94,7 +94,6 @@ public:
 protected:
 	ParticleVector particleVector;    // vector of particles, (k x 1)
 	ParticleVector tmpParticleVector; // vector of temp particles, (k*j x 1)
-	const double pi;
 
 	// Evaluates the multivariate PDF of a centered (mean=0,0) 2D Gaussian dist.
 	// X: point to be evaluated (2 x 1)
