@@ -31,6 +31,7 @@ Gameplay::Plays::TestRectMotionControl::TestRectMotionControl(GameplayModule *ga
 	path_.push_back(p3);
 	path_.push_back(p4);
 
+	angles_.push_back(-1); // negative values will point in direction of travel
 	angles_.push_back(0*M_PI/180);
 	angles_.push_back(45*M_PI/180);
 	angles_.push_back((90+60)*M_PI/180);
@@ -91,10 +92,18 @@ bool Gameplay::Plays::TestRectMotionControl::run()
 	}
 
 	// issue the turn command
-	Point angleGoalPt(cos(angleGoal),sin(angleGoal));
-	angleGoalPt *= 10;
-	angleGoalPt += robot()->pos();
-	robot()->face(angleGoalPt,false);
+	if(angleGoal >= 0) // point at direction of angle we chose
+	{
+		Point angleGoalPt(cos(angleGoal),sin(angleGoal));
+		angleGoalPt *= 10;
+		angleGoalPt += robot()->pos();
+		robot()->face(angleGoalPt,false);
+	}else{ // point in direction of travel
+		Point prevGoal = path_.at((pathGoalIdx_ - 1 + (int)path_.size()) % ((int)path_.size()));
+		Point angleVec = goal - prevGoal;
+		Point angleGoalPt(angleVec + goal);
+		robot()->face(angleGoalPt,false);
+	}
 
 	// issue the motion command
 	robot()->move(goal, true);
