@@ -115,11 +115,11 @@ bool Gameplay::Behaviors::Intercept::run() {
 		}
 
 		drawText("ApproachFar", pos + textOffset, 0, 0, 0);
-		Geometry2d::Point dest;
-		if (_driveSide == LEFT)
-			dest = goLeft;
-		else if (_driveSide == RIGHT)
-			dest = goRight;
+		Geometry2d::Point dest = ballPosProj;
+//		if (_driveSide == LEFT)
+//			dest = goLeft;
+//		else if (_driveSide == RIGHT)
+//			dest = goRight;
 
 		//if the ball is moving
 		//we first need to try and intercept it
