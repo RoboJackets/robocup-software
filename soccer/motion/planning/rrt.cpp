@@ -133,6 +133,9 @@ void RRT::Planner::run(
 	
 	if (_bestPath.points.empty())
 	{
+		// FIXME: without these two lines, an empty path is returned which causes errors down the line.
+		path.points.push_back(start);
+		_bestPath = path;
 		return;
 	}
 	
