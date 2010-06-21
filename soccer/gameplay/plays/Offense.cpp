@@ -80,20 +80,27 @@ bool Gameplay::Plays::Offense::run()
 		kick2Dist = _kicker2.robot()->pos().distTo(ballPos);
 
 		// handle toggle cases
-		if (kick1Dist < kick2Dist) {
+		float percent = 0.85;
+		if (kick1Dist < percent * kick2Dist) {
 			if (!_usingKicker1) {
 				_kicker1.restart();
 			}
 			_kicker1.run();
 			other = _kicker2.robot();
 			_usingKicker1 = true;
-		} else {
+		} else if (kick2Dist < percent * kick1Dist) {
 			if (_usingKicker1) {
 				_kicker2.restart();
 			}
 			_kicker2.run();
 			other = _kicker1.robot();
 			_usingKicker1 = false;
+		} else if (_usingKicker1) {
+			_kicker1.run();
+			other = _kicker2.robot();
+		} else {
+			_kicker2.run();
+			other = _kicker1.robot();
 		}
 
 		// drive to other side of the field
@@ -101,7 +108,7 @@ bool Gameplay::Plays::Offense::run()
 		float newX = (ballPos.x < 0.0) ? ballPos.x + x_offset : ballPos.x - x_offset;
 		other->move(Point(newX, ballPos.y - lag_y_dist), false);
 	} else {
-		_kicker1.run(); // NOTE: this might not be correct
+		_kicker1.run();
 		_kicker2.run();
 	}
 
