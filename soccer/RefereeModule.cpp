@@ -62,15 +62,6 @@ void RefereeModule::packet(const Packet::Referee *packet)
 	int cmd = packet->command;
 	int newCounter = packet->counter;
 	
-	if (newCounter == _counter && cmd != Halt)
-	{
-		// Command hasn't changed.
-		// We never ignore Halt in case the counter is wrong or state is inconsistent.
-		return;
-	}
-	
-	_counter = newCounter;
-	
 	// Update scores and time
 	if (_state->team == Blue)
 	{
@@ -83,7 +74,13 @@ void RefereeModule::packet(const Packet::Referee *packet)
 	
 	_state->gameState.secondsRemaining = packet->timeHigh * 256 + packet->timeLow;
 
-	command(cmd);
+	if (newCounter != _counter || cmd == Halt)
+	{
+		// Command has changed.
+		// We never ignore Halt in case the counter is wrong or state is inconsistent.
+		_counter = newCounter;
+		command(cmd);
+	}
 }
 
 void RefereeModule::command(uint8_t command)
