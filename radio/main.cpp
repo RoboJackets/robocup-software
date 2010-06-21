@@ -158,6 +158,7 @@ int main(int argc, char* argv[])
 					sleep(1);
 				}
 			}
+			fprintf(stderr, "\nRadio connected\n");
 			
 			// Drop this forward packet because it's probably really old
 			continue;
