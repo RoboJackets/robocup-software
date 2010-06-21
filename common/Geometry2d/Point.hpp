@@ -220,6 +220,16 @@ namespace Geometry2d
             	return Point(-y, x);
             }
             
+        	/** saturates the magnitude of a vector */
+        	static Geometry2d::Point saturate(Geometry2d::Point value, float max) {
+        		float mag = value.mag();
+        		if (mag > fabs(max))
+        		{
+        			return value.normalized() * fabs(max);
+        		}
+        		return value;
+        	}
+
             /** returns the angle between the two points (radians) */
             float angleTo(const Point& other) const;
             

@@ -23,6 +23,11 @@ using namespace Geometry2d;
 using namespace Motion;
 using namespace Packet;
 
+/** prints out a labeled point */
+void printPt(const Geometry2d::Point& pt, const string& s="") {
+	cout << s << ": (" << pt.x << ", " << pt.y << ")" << endl;
+}
+
 /** Handles saturation of a bounded value */
 float saturate(float value, float max, float min) {
 	if (value > max)
@@ -34,21 +39,6 @@ float saturate(float value, float max, float min) {
 		return min;
 	}
 	return value;
-}
-
-/** saturates a vector */
-Point saturate(Point value, float max) {
-	float mag = value.mag();
-	if (mag > max)
-	{
-		return value.normalized() * max;
-	}
-	return value;
-}
-
-/** prints out a labeled point */
-void printPt(const Geometry2d::Point& pt, const string& s="") {
-	cout << s << ": (" << pt.x << ", " << pt.y << ")" << endl;
 }
 
 /** Constant for timestamp to seconds */
@@ -931,7 +921,7 @@ void Robot::genMotor() {
 	Dynamics::DynamicsInfo info = _dynamics.info(rVel.angle() * RadiansToDegrees, 0);
 	const float maxSpeed = info.velocity;
 	const Point maxVel = rVel.normalized() * maxSpeed;
-	rVel = saturate(rVel, maxSpeed);
+	rVel = Point::saturate(rVel, maxSpeed);
 	if (verbose) cout << "  rVel: (" << rVel.x << ", " << rVel.y << ")" <<
 			             "  maxVel: (" << maxVel.x << ", " << maxVel.y << ")" << endl;
 

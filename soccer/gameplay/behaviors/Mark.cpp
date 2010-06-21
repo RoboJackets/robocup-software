@@ -4,12 +4,24 @@
 #include <LogFrame.hpp>
 
 #include <iostream>
+
 using namespace std;
 using namespace Geometry2d;
 
 Gameplay::Behaviors::Mark::Mark(GameplayModule *gameplay):
-Behavior(gameplay, 1)
+Behavior(gameplay, 1),
+_ratio(0.9)
 {
+}
+
+void Gameplay::Behaviors::Mark::ratio(float r) {
+	if (r > 1.0) {
+		_ratio = 1.0;
+	} else if (r < 0.0) {
+		_ratio = 0.0;
+	} else {
+		_ratio = r;
+	}
 }
 
 bool Gameplay::Behaviors::Mark::run()
@@ -31,13 +43,8 @@ bool Gameplay::Behaviors::Mark::run()
 			// fast intercept possible passes
 			targetPoint = ballMarkLine.nearestPoint(pos);
 		} else {
-			// close in to harass
-			// NOTE: this will actually allow their robot to drive us in a direction
-			float avgVel = 0.5 * robot()->packet()->config.motion.deg45.velocity;
-			float proj_time = markPos.distTo(pos) / avgVel;
-			Point markProj = markPos + markVel * proj_time,
-				  ballProj = ballPos + ballVel * proj_time;
-			targetPoint = markProj + (ballProj-markProj).normalized() * Constants::Robot::Radius;
+			// drive to the given point specified by ratio
+			targetPoint = ballPos + (markPos - ballPos)* _ratio * ballMarkLine.length();
 		}
 
 		// go there, facing the ball

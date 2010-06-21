@@ -304,8 +304,10 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 		swap(g0, g1);
 	}
 
+#ifdef DEBUG
 	float ra = robot()->angle();
 	float ba = (ballPos - pos).angle() * RadiansToDegrees;
+#endif
 
 	Geometry2d::Point m = ballPos + (pos - ballPos).normalized() * clearance;
 	if (pos.nearPoint(m, Constants::Robot::Radius))

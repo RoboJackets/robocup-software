@@ -3,7 +3,7 @@
 #include "../Play.hpp"
 
 #include <gameplay/behaviors/positions/Fullback.hpp>
-#include <gameplay/behaviors/Intercept.hpp>
+#include <gameplay/behaviors/Mark.hpp>
 
 namespace Gameplay
 {
@@ -20,7 +20,7 @@ namespace Gameplay
 			
 			protected:
 				Behaviors::Fullback _fullback1, _fullback2;
-				Behaviors::Intercept _halfback1, _halfback2;
+				Behaviors::Mark _marking1, _marking2;
 		};
 	}
 }
