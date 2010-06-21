@@ -2,6 +2,7 @@
 
 #include "../Play.hpp"
 
+#include <gameplay/behaviors/Kick.hpp>
 #include <gameplay/behaviors/positions/Forward.hpp>
 #include <gameplay/behaviors/positions/Fullback.hpp>
 #include <gameplay/behaviors/Move.hpp>
@@ -20,7 +21,7 @@ namespace Gameplay
 				virtual bool run();
 			
 			protected:
-				Behaviors::Forward _kicker;
+				Behaviors::Kick _kicker;
 				Behaviors::Move _center;
 				Behaviors::Fullback _fullback1, _fullback2;
 		};

@@ -31,6 +31,7 @@ bool Gameplay::Plays::OurFreekick::assign(set<Robot *> &available)
 
 bool Gameplay::Plays::OurFreekick::run()
 {
+	_kicker.aimType(Behaviors::Kick::ONETOUCH);
 	_kicker.run();
 	_center.run();
 	_fullback1.run();

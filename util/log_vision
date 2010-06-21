@@ -1,2 +1,2 @@
 #!/bin/sh
-tcpdump $* -n -w vision.log ip src 224.5.23.2
+tcpdump $* -n -w vision.log ip dst 224.5.23.2
