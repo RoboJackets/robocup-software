@@ -9,15 +9,17 @@ Gameplay::Plays::OurKickoff::OurKickoff(GameplayModule *gameplay):
 	_idle2(gameplay),
 	_idle3(gameplay)
 {
+	_preventDoubleTouch = false;
 }
 
 bool Gameplay::Plays::OurKickoff::applicable()
 {
-	return gameState().setupRestart() && gameState().ourKickoff();
+	return (gameState().setupRestart() && gameState().ourKickoff()) || _preventDoubleTouch;
 }
 
 bool Gameplay::Plays::OurKickoff::assign(set<Robot *> &available)
 {
+	_preventDoubleTouch = false;
 	_robots = available;
 	
 	_idle1.target = _gameplay->centerMatrix() * Geometry2d::Point(0.7, -0.2);
@@ -44,11 +46,30 @@ bool Gameplay::Plays::OurKickoff::assign(set<Robot *> &available)
 
 bool Gameplay::Plays::OurKickoff::run()
 {
+	if (_preventDoubleTouch && (gameState().state != GameState::Ready && gameState().state != GameState::Playing))
+	{
+	    // We were waiting for another robot to touch the ball but the referee has cancelled the kickoff.
+	    // Allow applicable() to return false.
+	    _preventDoubleTouch = false;
+	}
+	
+	if (gameState().state == GameState::Ready)
+	{
+	    // At this point the kicker should either kick or collide with the ball.
+	    // After that one other robot must touch it.
+	    _preventDoubleTouch = true;
+	}
+	
 	_idle1.face = ball().pos;
 	_idle2.face = ball().pos;
 	_idle3.face = ball().pos;
 	
-	_kicker.run();
+	if (!_kicker.run())
+	{
+	    _preventDoubleTouch = false;
+	    printf("*** Kicker done\n");
+	}
+	
 	_idle1.run();
 	_idle2.run();
 	_idle3.run();

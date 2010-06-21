@@ -18,6 +18,7 @@ namespace Gameplay
 				virtual bool run();
 			
 			protected:
+				bool _preventDoubleTouch;
 				Behaviors::Kickoff _kicker;
 				Behaviors::Move _idle1, _idle2, _idle3;
 		};
