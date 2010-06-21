@@ -110,7 +110,7 @@ bool Gameplay::Behaviors::Fullback::run()
 		}
 	}
 	
-	if (best && ((_side==Left&&ball().pos.x>=0) || (_side==Right&&ball().pos.x<0)))
+	if (best /*&& ((_side==Left&&ball().pos.x>=0) || (_side==Right&&ball().pos.x<0))*/)
 	{
 		Geometry2d::Segment shootLine(ball().pos, ball().pos + ball().vel.normalized() * 7.0);
 		
@@ -164,8 +164,7 @@ bool Gameplay::Behaviors::Fullback::run()
 		needTask = true;
 	}
 	
-	bool debug = (robot()->id() == 3);
-	if (debug) printf("\nneedTask %d\n", needTask);
+	/*
 	if(needTask){
 		//goal line, for intersection detection
 		Geometry2d::Segment goalLine(Geometry2d::Point(-Constants::Field::GoalWidth / 2.0f, 0),
@@ -186,7 +185,6 @@ bool Gameplay::Behaviors::Fullback::run()
 				oppWithBall = r;
 			}
 		}
-		if (debug) printf("oppWithBall %p\n", oppWithBall);
 		if(oppWithBall == 0)
 			return false; // need opp to block
 
@@ -206,13 +204,11 @@ bool Gameplay::Behaviors::Fullback::run()
 			Geometry2d::Point intr;
 			facingGoal = los.intersects(goalLine,&intr);
 
-			if (debug) printf("%d: sameSide %d nonDefender %d facingGoal %d\n", r->id(), sameSide, nonDefender, facingGoal);
 			if(sameSide && nonDefender && facingGoal)
 			{
 				Geometry2d::Point dest[2];
 				Geometry2d::Line losLine(facing,r->pos());
 				bool ballTravelIntersects = losLine.intersects(arc, &dest[0], &dest[1]);
-				if (debug) printf("ballTravelIntersects %d\n", ballTravelIntersects);
 				if(!ballTravelIntersects)
 					continue;
 				Geometry2d::Point blockPoint = (dest[0].y > 0 ? dest[0] : dest[1]);
@@ -221,8 +217,8 @@ bool Gameplay::Behaviors::Fullback::run()
 				return true;
 			}
 		}
-	}
-
+	}*/
+		/*
 	if(needTask) //TODO: look at this in detail. Hacked together so that robots don't sit around
 	{
 		//if no side parameter...stay in the middle
@@ -244,7 +240,7 @@ bool Gameplay::Behaviors::Fullback::run()
 
 		robot()->move(shootLine.nearestPoint(Behavior::robot()->pos()));
 		robot()->faceNone();
-	}
+	}*/
 	return false;
 }
 
