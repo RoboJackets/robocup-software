@@ -56,14 +56,6 @@ Config::Config(QString filename, Env* env) :
 		{
 			procTeam(element, Yellow);
 		}
-		else if (element.tagName() == QString("vision"))
-		{
-			
-		}
-		else if (element.tagName() == QString("radio"))
-		{
-			
-		}
 		
 		element = element.nextSiblingElement();
 	}
@@ -84,17 +76,16 @@ void Config::procTeam(QDomElement e, Team t)
 			if (elem.hasAttribute("rev")) {
 				QString rev = elem.attribute("rev");
 				Robot::Rev r;
-				if (rev.contains("2008")) r = Robot::rev2008;
-				else if (rev.contains("2010")) r = Robot::rev2010;
+				if (rev.contains("2008"))
+				{
+				    r = Robot::rev2008;
+				} else if (rev.contains("2010")) {
+				    r = Robot::rev2010;
+				}
 				_env->addRobot(t, id, Geometry2d::Point(x, y), r);
 			} else {
 				_env->addRobot(t, id, Geometry2d::Point(x, y), Robot::rev2008);
 			}
-
-		}
-		else if (elem.tagName() == "robots")
-		{
-			
 		}
 		
 		elem = elem.nextSiblingElement();
