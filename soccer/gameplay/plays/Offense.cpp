@@ -106,7 +106,8 @@ bool Gameplay::Plays::Offense::run()
 		// drive to other side of the field
 		float lag_y_dist = 0.5, x_offset = 1.5;
 		float newX = (ballPos.x < 0.0) ? ballPos.x + x_offset : ballPos.x - x_offset;
-		other->move(Point(newX, ballPos.y - lag_y_dist), false);
+		float newY = (ballPos.y < Constants::Field::Length/2.0) ? ballPos.y + lag_y_dist : ballPos.y - lag_y_dist;
+		other->move(Point(newX, newY), false);
 	} else {
 		_kicker1.run();
 		_kicker2.run();
