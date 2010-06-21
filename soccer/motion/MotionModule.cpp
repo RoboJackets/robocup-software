@@ -77,7 +77,6 @@ void MotionModule::fieldOverlay(QPainter& p, Packet::LogFrame& lf) const
 		{
 			_robots[i]->drawPoseHistory(p);
 		}
-
 	}
 }
 

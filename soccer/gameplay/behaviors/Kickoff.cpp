@@ -37,6 +37,10 @@ bool Gameplay::Behaviors::Kickoff::run()
 	case GameState::Setup:
 	    robot()->move(Geometry2d::Point(0,Constants::Field::Length / 2 - 0.3), false); // stop at end enabled
 	    robot()->face(ballPos);
+	    
+	    // Need this in case the kickoff is restarted (transition from Ready to Setup).
+	    // This should not normally happen but it helps with testing and sloppy referees.
+	    kick.restart();
 	    break;
 	    
 	case GameState::Ready:
