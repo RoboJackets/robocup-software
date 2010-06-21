@@ -107,7 +107,7 @@ bool Gameplay::Behaviors::Kick::run()
 		_target = evaluateShot();
 		break;
 	case ROBOT:
-		_target = evaluateShot();
+		_target = evaluatePass();
 		break;
 	case SEGMENT:
 		_target = evaluateSegment();
