@@ -91,7 +91,6 @@ bool Gameplay::Plays::Offense::run()
 			if (_usingKicker1) {
 				_kicker2.restart();
 			}
-			_kicker2.restart();
 			_kicker2.run();
 			other = _kicker1.robot();
 			_usingKicker1 = false;
@@ -102,7 +101,7 @@ bool Gameplay::Plays::Offense::run()
 		float newX = (ballPos.x < 0.0) ? ballPos.x + x_offset : ballPos.x - x_offset;
 		other->move(Point(newX, ballPos.y - lag_y_dist), false);
 	} else {
-		_kicker1.run();
+		_kicker1.run(); // NOTE: this might not be correct
 		_kicker2.run();
 	}
 
