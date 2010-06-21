@@ -32,6 +32,7 @@ bool Gameplay::Plays::OurFreekick::assign(set<Robot *> &available)
 bool Gameplay::Plays::OurFreekick::run()
 {
 	_kicker.aimType(Behaviors::Kick::ONETOUCH);
+	_kicker.setVScale(0.3, 0.2); // drive slowly until close to ball
 	_kicker.run();
 	_center.run();
 	_fullback1.run();

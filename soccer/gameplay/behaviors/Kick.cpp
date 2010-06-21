@@ -441,6 +441,7 @@ Gameplay::Behaviors::Kick::oneTouchApproach() {
 	float avgVel = 0.5 * robot()->packet()->config.motion.deg45.velocity;
 	float proj_thresh = 0.01;
 	Point pos = robot()->pos(),
+		  vel = robot()->vel(),
 		  ballVel = ball().vel,
 		  ballPos = ball().pos,
 		  proj = (ballVel.mag() > proj_thresh) ? ballVel * (pos.distTo(ballPos)/avgVel) : Point(),
@@ -462,11 +463,17 @@ Gameplay::Behaviors::Kick::oneTouchApproach() {
 		return Intercept;
 
 	// turn on the kicker for final approach
-	robot()->willKick = true;
-	if (_kickType == KICK)
+	float fire_kick_thresh = Constants::Robot::Radius + Constants::Ball::Radius + 0.10;
+	float fire_angle_thresh = 0.3;
+	if (pos.distTo(ballPos) < fire_kick_thresh &&
+			fabs(robot()->angle() - (ballPos - pos).angle()) < fire_angle_thresh)
 		robot()->kick(calcKickStrength(_target.center()));
-	else if (_kickType == CHIP)
-		robot()->chip(calcKickStrength(_target.center()));
+	else
+		robot()->willKick = false; // do not kick during turn
+
+	// DISABLED: chip handling
+//	else if (_kickType == CHIP)
+//		robot()->chip(calcKickStrength(_target.center()));
 
 	// calculate trajectory to hit the ball correctly
 	float approachDist = 2.0; // how long to extend approach line beyond ball
