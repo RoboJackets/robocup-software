@@ -27,7 +27,7 @@ bool Gameplay::Plays::TheirFreekick::applicable()
 	return gameState().setupRestart() && gameState().theirFreeKick();
 }
 bool Gameplay::Plays::TheirFreekick::assign(set<Robot *> &available)
-{		// FIXME: goes to the wrong side of the mark
+{
 	_robots = available;
 	
 	_fullback1.assign(available);
