@@ -339,7 +339,6 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 	if (canKick)
 	{
 		// new code using segment - just gets it as close and fires
-//		Segment curShotLine(pos, pos + Point::direction(robot()->angle())*10.0f);
 		Point hitPoint;
 		float targetRadius = 0.5 * _target.length();
 		float percent_target = 0.9;
@@ -385,6 +384,8 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 		_lastMargin = 0;
 	}
 	debug("\n");
+	if (!shotAvailable)
+		debug("noShot");
 
 	// determine return state
 	return shotAvailable ? Shoot : Aim;
@@ -407,6 +408,7 @@ Gameplay::Behaviors::Kick::shoot(const Geometry2d::Point& targetCenter, int kick
 	if (!robot()->pos().nearPoint(ball().pos, 0.2f))
 	{
 		// Lost the ball
+		debug(" Lost ball");
 		return Aim;
 	}
 
