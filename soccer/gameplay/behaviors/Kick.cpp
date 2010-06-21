@@ -9,7 +9,7 @@ using namespace std;
 using namespace Utils;
 using namespace Geometry2d;
 
-//#define DEBUG
+#define DEBUG
 
 #ifdef DEBUG
 #define debug(...) fprintf(stderr, __VA_ARGS__)
@@ -286,7 +286,9 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 	drawLine(Segment(ballPos, targetCenter), 255, 0, 0); // red
 
 	// show a line along the likely shot if fired now
-	drawLine(Segment(pos, pos + (ballPos-pos).normalized()*2.0f), 0, 0, 200); // blue
+	Segment curShotLine(pos, pos + (ballPos-pos).normalized()*10.0);
+	Segment curShotLineViz(pos, pos + (ballPos-pos).normalized()*2.0);
+	drawLine(curShotLineViz, 0, 0, 200); // blue
 
 	// middle of shot arc - used for drawing text
 	const Geometry2d::Point shotTextPoint = Segment(ballPos, targetCenter).center();
@@ -303,7 +305,7 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 	}
 
 	float ra = robot()->angle();
-	// 		float ba = (ballPos - pos).angle() * RadiansToDegrees;
+	float ba = (ballPos - pos).angle() * RadiansToDegrees;
 
 	Geometry2d::Point m = ballPos + (pos - ballPos).normalized() * clearance;
 	if (pos.nearPoint(m, Constants::Robot::Radius))
@@ -336,16 +338,13 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 	bool shotAvailable = false;
 	if (canKick)
 	{
-//		cout << "Kicking possible" << endl;
-		float margin = max(fixAngleDegrees(ra - g0), fixAngleDegrees(g1 - ra));
-
-		float threshold = 0.90f * (g1 - g0) / 2;
-		debug(
-				"goal %.1f, %.1f ball %.1f robot %.1f margin %.1f threshold %.1f\n",
-				g0, g1, ba, ra, margin, threshold);
-		drawText(str(boost::format("M:%f") % margin), shotTextPoint, 0, 0, 0);
-		if (margin > threshold || margin <= _lastMargin)
-		{
+		// new code using segment - just gets it as close and fires
+//		Segment curShotLine(pos, pos + Point::direction(robot()->angle())*10.0f);
+		Point hitPoint;
+		float targetRadius = 0.5 * _target.length();
+		float percent_target = 0.9;
+		float good_shot_thresh = percent_target * targetRadius;
+		if (curShotLine.intersects(_target, &hitPoint) && hitPoint.distTo(targetCenter) < good_shot_thresh) {
 			if (ballPos.nearPoint(pos, clearance + Constants::Robot::Radius))
 			{
 				debug("Shoot\n");
@@ -356,7 +355,29 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 			}
 		}
 
-		_lastMargin = margin;
+
+
+		// Old kick code
+////		cout << "Kicking possible" << endl;
+//		float margin = max(fixAngleDegrees(ra - g0), fixAngleDegrees(g1 - ra));
+//
+//		float threshold = 0.9f * (g1 - g0) / 2;
+//		debug("goal %.1f, %.1f ball %.1f robot %.1f margin %.1f threshold %.1f\n",
+//				g0, g1, ba, ra, margin, threshold);
+//		drawText(str(boost::format("M:%f") % margin), shotTextPoint, 0, 0, 0);
+//		if (margin > threshold || margin <= _lastMargin)
+//		{
+//			if (ballPos.nearPoint(pos, clearance + Constants::Robot::Radius))
+//			{
+//				debug("Shoot\n");
+//				_shootStart = pos;
+//				_shootMove = pos + (ballPos - pos).normalized() * 0.2f;
+//				_shootBallStart = ballPos;
+//				shotAvailable = true;
+//			}
+//		}
+//
+//		_lastMargin = margin;
 	}
 	else
 	{
