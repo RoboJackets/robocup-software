@@ -467,8 +467,8 @@ Gameplay::Behaviors::Kick::oneTouchApproach() {
 	// turn on the kicker for final approach
 	float fire_kick_thresh = Constants::Robot::Radius + Constants::Ball::Radius + 0.10;
 	float fire_angle_thresh = 0.3;
-	if (pos.distTo(ballPos) < fire_kick_thresh &&
-			fabs(robot()->angle() - (ballPos - pos).angle()) < fire_angle_thresh)
+	if (pos.distTo(ballPos) < fire_kick_thresh) // &&
+			//fabs(robot()->angle() - (ballPos - pos).angle()) < fire_angle_thresh)
 		robot()->kick(calcKickStrength(_target.center()));
 	else
 		robot()->willKick = false; // do not kick during turn
