@@ -427,6 +427,14 @@ void Robot::sanityCheck(const unsigned int LookAheadFrames) {
 	// timestep
 	const float deltaT = (_state->timestamp - _lastTimestamp)/intTimeStampToFloat;
 
+	// remove nans from PID loop
+	if (isnan(_w) || fabs(_w) > 1000.0) {
+		_w = 0.0; // stationary is safer
+
+		// reset PID
+		_anglePid.clearWindup();
+	}
+
 	// predict ahead
 	Geometry2d::Point predictedPos = _self->pos +
 		_vel * deltaT * LookAheadFrames;
