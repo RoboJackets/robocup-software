@@ -28,6 +28,16 @@ bool Gameplay::Plays::OurKickoff::assign(set<Robot *> &available)
 	_idle1.assign(available);
 	_idle2.assign(available);
 	_idle3.assign(available);
+	
+	if (_kicker.assigned() && _idle1.assigned())
+	{
+	    printf("Kickoff: target %d\n", _idle1.robot()->id());
+	    _kicker.kick.setTarget(_idle1.robot());
+	    _kicker.kick.targetType(Behaviors::Kick::ROBOT);
+	} else {
+	    printf("Kickoff: target goal\n");
+	    _kicker.kick.setTarget();
+	}
 
 	return _robots.size() >= _minRobots;
 }

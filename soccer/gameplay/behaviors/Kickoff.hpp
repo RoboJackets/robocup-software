@@ -2,6 +2,8 @@
 
 #include "../Behavior.hpp"
 
+#include <gameplay/behaviors/Kick.hpp>
+
 namespace Gameplay
 {
     namespace Behaviors
@@ -12,6 +14,9 @@ namespace Gameplay
                 Kickoff(GameplayModule *gameplay);
                 
                 virtual bool run();
+		virtual bool assign(std::set<Robot *> &available);
+	
+		Behaviors::Kick kick;
         };
     }
 }
