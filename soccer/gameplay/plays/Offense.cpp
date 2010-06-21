@@ -18,7 +18,7 @@ bool Gameplay::Plays::Offense::applicable()
 	bool gameplayApplicable = _gameplay->state()->stateID.posession == Packet::LogFrame::OFFENSE ||
 						      _gameplay->state()->stateID.posession == Packet::LogFrame::FREEBALL;
 
-	return refApplicable && gameplayApplicable;
+	return refApplicable;// && gameplayApplicable;
 }
 
 bool Gameplay::Plays::Offense::assign(set<Robot *> &available)
