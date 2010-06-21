@@ -5,7 +5,7 @@ using namespace std;
 Gameplay::Plays::Defense::Defense(GameplayModule *gameplay):
 	Play(gameplay, 1),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
-	_fullback2(gameplay, Behaviors::Fullback::Right), // should it be "right"?
+	_fullback2(gameplay, Behaviors::Fullback::Right),
 	_kicker1(gameplay),
 	_kicker2(gameplay)
 {
@@ -16,7 +16,7 @@ Gameplay::Plays::Defense::Defense(GameplayModule *gameplay):
 bool Gameplay::Plays::Defense::applicable()
 {
 	bool refApplicable =_gameplay->state()->gameState.playing();
-	bool gameplayApplicable = true; //TESTING_gameplay->state()->stateID.posession == Packet::LogFrame::DEFENSE;
+	bool gameplayApplicable = _gameplay->state()->stateID.posession == Packet::LogFrame::DEFENSE;
 
 	return refApplicable && gameplayApplicable;
 }
@@ -27,8 +27,8 @@ bool Gameplay::Plays::Defense::assign(set<Robot *> &available)
 	
 	_fullback1.assign(available);
 	_fullback2.assign(available);
-//TESTING	//_kicker1.assign(available);
-// TESTING	//_kicker2.assign(available);
+	_kicker1.assign(available);
+	_kicker2.assign(available);
 
 	return _robots.size() >= _minRobots;
 }
