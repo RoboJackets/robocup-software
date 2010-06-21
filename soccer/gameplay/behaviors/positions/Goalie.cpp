@@ -58,8 +58,14 @@ float Gameplay::Behaviors::Goalie::score(Robot *r)
 
 bool Gameplay::Behaviors::Goalie::run()
 {
-	if (!assigned() || !allVisible() || !ball().valid)
+	if (!assigned() || !allVisible())
 	{
+		return true;
+	}
+
+	if (!ball().valid)
+	{
+		robot()->move(Geometry2d::Point(0, Constants::Robot::Radius));
 		return true;
 	}
 	
