@@ -35,6 +35,8 @@ bool Gameplay::Behaviors::Mark::run()
 			  markVel = _markRobot->vel();
 		Segment ballMarkLine(ballPos, markPos);
 
+		drawLine(ballMarkLine, 0, 0, 0);
+
 		// we want to get between the mark and the ball as fast as possible, then close in
 		float markLineDist = ballMarkLine.distTo(pos);
 		Point targetPoint;
@@ -44,7 +46,7 @@ bool Gameplay::Behaviors::Mark::run()
 			targetPoint = ballMarkLine.nearestPoint(pos);
 		} else {
 			// drive to the given point specified by ratio
-			targetPoint = ballPos + (markPos - ballPos)* _ratio * ballMarkLine.length();
+			targetPoint = ballPos + (markPos - ballPos).normalized()* _ratio * ballMarkLine.length();
 		}
 
 		// go there, facing the ball

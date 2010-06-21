@@ -19,6 +19,10 @@ namespace Gameplay
 				virtual bool run();
 			
 			protected:
+
+				bool _assignedMark1;
+				bool _assignedMark2;
+
 				Behaviors::Fullback _fullback1, _fullback2;
 				Behaviors::Mark _marking1, _marking2;
 		};
