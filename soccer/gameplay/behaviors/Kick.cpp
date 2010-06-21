@@ -9,7 +9,7 @@ using namespace std;
 using namespace Utils;
 using namespace Geometry2d;
 
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
 #define debug(...) fprintf(stderr, __VA_ARGS__)
