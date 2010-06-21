@@ -74,7 +74,12 @@ bool JoystickInput::poll(int timeout)
 			{
 				// Select robot
 				_state->autonomous = false;
-				++_state->manualID;
+				int oldID = _state->manualID;
+				do
+				{
+				    _state->manualID = (_state->manualID + 1) % Constants::Robots_Per_Team;
+				} while (_state->manualID != oldID && !_state->self[_state->manualID].valid);
+				
 				if (_state->manualID == Constants::Robots_Per_Team)
 				{
 					_state->manualID = 0;
