@@ -110,6 +110,8 @@ void WorldModel::run()
 	{
 		if (robot) {
 			//if a robot has the ball, we need to make an observation
+#if 0
+			//FIXME - They're breaking.  Turn this back on later.
 			if (robot->valid(curTime) && robot->hasBall())
 			{
 				Geometry2d::Point offset = Geometry2d::Point::
@@ -117,6 +119,7 @@ void WorldModel::run()
 
 				ballModel.observation(_state->timestamp, robot->pos() + offset, BallModel::BALL_SENSOR);
 			}
+#endif
 		}
 	}
 

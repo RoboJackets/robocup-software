@@ -175,6 +175,12 @@ void Processor::run()
 				{
 					if (_state.self[r].valid)
 					{
+						// Mixed play IDs
+						if (_state.self[r].shell == 4 || _state.self[r].shell == 11)
+						{
+							_gameplayModule->self[r]->exclude = true;
+						}
+						
 						ConfigFile::shared_robot rcfg = _config->robot(_state.self[r].shell);
 						
 						if (rcfg)
