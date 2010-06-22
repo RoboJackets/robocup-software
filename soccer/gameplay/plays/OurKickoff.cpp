@@ -50,6 +50,12 @@ bool Gameplay::Plays::OurKickoff::run()
 	_idle3.face = ball().pos;
 	
 	_pdt.run();
+
+	if (_pdt.kicked())
+	{
+		_idle1.target = ball().pos;
+	}
+
 	_idle1.run();
 	_idle2.run();
 	_idle3.run();

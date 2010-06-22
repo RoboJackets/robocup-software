@@ -60,7 +60,7 @@ void Gameplay::PreventDoubleTouch::run()
     {
     	_backoff.run();
     } else {
-        if (!_kicker->run())// || (gameState.state == GameState::Playing && _wasReady))
+        if (!_kicker->run() || (gameState.state == GameState::Playing && _wasReady))
         {
 	    _kicked = true;
         }

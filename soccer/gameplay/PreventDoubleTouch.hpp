@@ -17,6 +17,11 @@ namespace Gameplay
 		    return _keepRunning;
 		}
 		
+		bool kicked() const
+		{
+			return _kicked;
+		}
+
 	    protected:
 		GameplayModule *_gameplay;
 		Behavior *_kicker;

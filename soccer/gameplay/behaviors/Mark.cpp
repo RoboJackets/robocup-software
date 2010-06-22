@@ -27,7 +27,13 @@ void Gameplay::Behaviors::Mark::ratio(float r) {
 bool Gameplay::Behaviors::Mark::run()
 {
 	if (!assigned())
+	{
 		return false;
+	}
+	if (!ball().valid)
+	{
+		return false;
+	}
 	if (_markRobot) {
 		// state data
 		Point ballPos = ball().pos,
