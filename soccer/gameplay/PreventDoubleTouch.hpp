@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gameplay/behaviors/Idle.hpp>
+#include <QTime>
 
 namespace Gameplay
 {
@@ -17,6 +18,11 @@ namespace Gameplay
 		    return _keepRunning;
 		}
 		
+		bool kicked() const
+		{
+			return _kicked;
+		}
+
 	    protected:
 		GameplayModule *_gameplay;
 		Behavior *_kicker;
@@ -24,5 +30,6 @@ namespace Gameplay
 		bool _keepRunning;
 		bool _kicked;
 		bool _wasReady;
+		QTime _ruleTime;
 	};
 }

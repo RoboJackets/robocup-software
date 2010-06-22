@@ -188,6 +188,10 @@ void Gameplay::Robot::setVScale(float scale) {
 	packet()->cmd.vScale = scale;
 }
 
+void Gameplay::Robot::setWScale(float scale) {
+	packet()->cmd.wScale = scale;
+}
+
 float Gameplay::Robot::kickTimer() const {
 	return (charged()) ? 0.0 : intTimeStampToFloat * (float) (_gameplay->state()->timestamp - _lastChargedTime);
 }

@@ -5,12 +5,14 @@
  */
 
 #include "TestKicks.hpp"
+#include <boost/foreach.hpp>
 
 using namespace std;
 
 Gameplay::Plays::TestKicks::TestKicks(GameplayModule *gameplay):
 	Play(gameplay),
-	_test(Deg0StationaryKick)
+	_test(Deg0StationaryKick),
+	swichTest(true)
 {
 }
 
@@ -32,7 +34,10 @@ bool Gameplay::Plays::TestKicks::run()
 
 	switch(_test){
 		case(Deg0StationaryKick):
-				//robot =
+				robot = getRobotWithId(0);
+		break;
+		default:
+
 		break;
 	}
 	_test = (_test+1)%(NumTests);
@@ -40,4 +45,15 @@ bool Gameplay::Plays::TestKicks::run()
 
 	/** Replace this with your code to run every frame */
 	return true;
+}
+
+Robot* Gameplay::Plays::TestKicks::getRobotWithId(int id)
+{
+	BOOST_FOREACH(Robot* robot, _robots)
+	{
+		if(id == robot->shell){
+			return robot;
+		}
+	}
+	return 0;
 }

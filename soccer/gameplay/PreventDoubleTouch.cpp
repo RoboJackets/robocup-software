@@ -59,10 +59,15 @@ void Gameplay::PreventDoubleTouch::run()
     if (_kicked)
     {
     	_backoff.run();
+    	if (_ruleTime.msecsTo(QTime::currentTime()) > 5000)
+    	{
+    		_keepRunning = false;
+    	}
     } else {
-        if (!_kicker->run())// || (gameState.state == GameState::Playing && _wasReady))
+        if (!_kicker->run() || (gameState.state == GameState::Playing && _wasReady))
         {
 	    _kicked = true;
+	    _ruleTime = QTime::currentTime();
         }
     }
     

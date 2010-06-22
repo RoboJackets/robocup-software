@@ -322,8 +322,10 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 	debug("Aim: ");
 
 	// scale velocity due to range
+	const float wScale_percent = 0.4;
 	if (targetCenter.distTo(robot()->pos()) <= _ballHandlingRange) {
 		robot()->setVScale(_ballHandlingScale);
+		robot()->setWScale(wScale_percent);
 	}
 
 	// prepare the robot for kicking
@@ -443,6 +445,13 @@ Gameplay::Behaviors::Kick::shoot(const Geometry2d::Point& targetCenter, int kick
 Gameplay::Behaviors::Kick::State
 Gameplay::Behaviors::Kick::oneTouchApproach() {
 
+	// scale velocity due to range
+	const float wScale_percent = 0.4;
+	if (_target.center().distTo(robot()->pos()) <= _ballHandlingRange) {
+		robot()->setVScale(_ballHandlingScale);
+		robot()->setWScale(wScale_percent);
+	}
+
 	Point textOffsetLeft(0.0, Constants::Robot::Radius*1.3);
 
 	// if we have kicked the ball, we are done
@@ -452,7 +461,7 @@ Gameplay::Behaviors::Kick::oneTouchApproach() {
 	}
 
 	float avgVel = 0.5 * robot()->packet()->config.motion.deg45.velocity;
-	float proj_thresh = 0.01;
+	float proj_thresh = 0.1;
 	Point pos = robot()->pos(),
 		  vel = robot()->vel(),
 		  ballVel = ball().vel,

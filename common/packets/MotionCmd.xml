@@ -11,6 +11,9 @@
 		<!-- percent of max speed to run -->
 		<member type="float" name="vScale" value="1.0" />
 		
+		<!-- percent of max angular velocity to run -->
+		<member type="float" name="wScale" value="1.0" />
+		
 		<enum type="uint8" typename="OrientationType">
 			<constant name="None" />
 			<constant name="Continuous" />
