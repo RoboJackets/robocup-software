@@ -100,13 +100,16 @@ bool Gameplay::Plays::Offense::run()
 		}
 
 		// execute
+		Point kickerPos;
 		if (_usingKicker1) {
 			_kicker1.run();
 			drawText("Active", _kicker1.robot()->pos() + textOffset);
+			kickerPos = _kicker1.robot()->pos();
 			other = _kicker2.robot();
 		} else {
 			_kicker2.run();
 			drawText("Active", _kicker2.robot()->pos() + textOffset);
+			kickerPos = _kicker2.robot()->pos();
 			other = _kicker1.robot();
 		}
 
@@ -116,6 +119,7 @@ bool Gameplay::Plays::Offense::run()
 		float newY = (ballPos.y < Constants::Field::Length/2.0) ? ballPos.y + lag_y_dist : ballPos.y - lag_y_dist;
 		drawText("Backup", other->pos() + textOffset);
 		other->move(Point(newX, newY), false);
+		other->face(kickerPos);
 	} else {
 		_kicker1.run();
 		_kicker2.run();

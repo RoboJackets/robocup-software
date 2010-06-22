@@ -428,8 +428,8 @@ void Robot::sanityCheck(const unsigned int LookAheadFrames) {
 	const float deltaT = (_state->timestamp - _lastTimestamp)/intTimeStampToFloat;
 
 	// remove nans from PID loop
-	if (isnan(_w) || fabs(_w) > 1000.0) {
-		_w = 0.0; // stationary is safer
+	if (isnan(_w)) {
+		_w = 0.0; // stationary is safer for nans
 
 		// reset PID
 		_anglePid.clearWindup();
