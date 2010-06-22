@@ -143,13 +143,9 @@ bool Gameplay::Behaviors::Kick::run()
 
 	// canKick is true if the robot is facing the target and the ball is between the robot and the target.
 	bool canKick = intersectedTarget &&
-//				   robot()->haveBall() &&
 				   robot()->pos().nearPoint(ballPos, Constants::Robot::Radius + 0.2) &&
 				   !intersectsRobot &&
 				   robot()->charged();
-	//if (canKick) cout << "Kicking is possible!" << endl;
-
-	//debug("%d ", canKick);
 
 	// keep track of state transitions
 	State oldState = _state;
@@ -177,7 +173,8 @@ bool Gameplay::Behaviors::Kick::run()
 			//cout << "Intercept succeeded - switching to aim" << endl;
 			_state = Aim;
 			_pivot = ballPos;
-		} else if (_state == Intercept && pos.distTo(ballPos) < aimThresh) {
+		}
+		else if (_state == Intercept && pos.distTo(ballPos) < aimThresh) {
 			//cout << "Close enough to ball, switching to aim" << endl;
 			_state = Aim;
 			_pivot = ballPos;
@@ -225,44 +222,8 @@ Gameplay::Behaviors::Kick::intercept(const Geometry2d::Point& targetCenter) {
 	Point proj = (ballVel.mag() > proj_thresh) ? ballVel * (pos.distTo(ballPos)/avgVel) : Point();
 	Point ballPosProj = ballPos + proj * proj_damp;
 
-	// create extra waypoint to the side of the ball behind it - use when coming in from far away
-	// use hysteresis on the side of the ball
-	float perp_damp = 1.0;
-	Point targetTraj = (ballPosProj - pos).normalized();
-	Point goLeft = ballPosProj + targetTraj.perpCCW().normalized() * Constants::Robot::Radius * perp_damp;
-	Point goRight = ballPosProj + targetTraj.perpCW().normalized() * Constants::Robot::Radius * perp_damp;
-
-	float leftDist = pos.distTo(goLeft);
-	float rightDist = pos.distTo(goRight);
-
-	// set the side
-	float hystersis_modifier = 0.80;
-	switch (_driveSide) {
-	case UNSET:
-		// take closest
-		if (leftDist < rightDist) {
-			_driveSide = LEFT;
-		} else {
-			_driveSide = RIGHT;
-		}
-		break;
-	case LEFT:
-		if (rightDist < hystersis_modifier * leftDist) {
-			_driveSide = RIGHT;
-		}
-		break;
-	case RIGHT:
-		if (leftDist < hystersis_modifier * rightDist) {
-			_driveSide = LEFT;
-		}
-		break;
-	}
-
-	Point avoidDest = (_driveSide == LEFT) ? goLeft : goRight;
-
 	// calculate trajectory to get to the ball
 	float approachDist = 0.5; // distance along approach line for ball control point
-
 	Point approachVec = (ballPos - targetCenter).normalized();
 
 	// define the control points for a single kick
@@ -270,12 +231,59 @@ Gameplay::Behaviors::Kick::intercept(const Geometry2d::Point& targetCenter) {
 	Point approachBall = ballPos + approachVec*Constants::Robot::Radius;
 	Point moveTarget   = ballPos + approachVec * (0.5 * approachDist + Constants::Robot::Radius);
 
+	// create extra waypoint to the side of the ball behind it - use when coming in from far away
+	// use hysteresis on the side of the ball
+	float perp_damp = 2.0;
+	Point targetTraj = (ballPosProj - pos).normalized();
+	Point goLeft = ballPos + targetTraj.perpCCW().normalized() * Constants::Robot::Radius * perp_damp;
+	Point goRight = ballPos + targetTraj.perpCW().normalized() * Constants::Robot::Radius * perp_damp;
+
+	// create lines to tell if we are going the wrong way around the ball
+	Segment leftLine(pos, goLeft), rightLine(pos, goRight), ballSeg(ballPos, targetCenter);
+
+	// we always want to override the hysteresis if a line is intersecting
+	// NOTE: we can't have both intersect
+	if (leftLine.intersects(ballSeg)) {
+		_driveSide = RIGHT;
+	} else if (rightLine.intersects(ballSeg)) {
+		_driveSide = LEFT;
+	} else {
+		// compare using path length
+		float leftDist = pos.distTo(goLeft) + goLeft.distTo(moveTarget);
+		float rightDist = pos.distTo(goRight) + goRight.distTo(moveTarget);
+
+		// set the side
+		float hystersis_modifier = 0.80;
+		switch (_driveSide) {
+		case UNSET:
+			// take closest
+			if (leftDist < rightDist) {
+				_driveSide = LEFT;
+			} else {
+				_driveSide = RIGHT;
+			}
+			break;
+		case LEFT:
+			if (rightDist < hystersis_modifier * leftDist) {
+				_driveSide = RIGHT;
+			}
+			break;
+		case RIGHT:
+			if (leftDist < hystersis_modifier * rightDist) {
+				_driveSide = LEFT;
+			}
+			break;
+		}
+	}
+
+	Point avoidDest = (_driveSide == LEFT) ? goLeft : goRight;
+
 	// issue move command to point halfway along line
-	float wrap_thresh = 1.2; // m
-	if (ballPos.distTo(pos) > wrap_thresh)
-		robot()->move(avoidDest, false);
-	else
+	float wrap_thresh = 0.5; // m
+	if (ballPos.distTo(pos) < wrap_thresh || moveTarget.distTo(pos) < avoidDest.distTo(pos))
 		robot()->move(moveTarget, false);
+	else
+		robot()->move(avoidDest, false);
 
 	// face ball to ensure we hit something
 	robot()->face(ballPos); // should be the targetCenter or ballPos
@@ -283,7 +291,7 @@ Gameplay::Behaviors::Kick::intercept(const Geometry2d::Point& targetCenter) {
 	// if we are on the approach line, change to approach state
 	Segment approachLine(approachFar, approachBall);
 	float distThresh = 0.05;
-	if (approachLine.nearPointPerp(pos, distThresh)) {
+	if (approachLine.nearPointPerp(pos, distThresh) || robot()->haveBall()) {
 		robot()->willKick = true;
 		return (_aimType == ONETOUCH) ? OneTouchAim : Aim;
 	} else {
@@ -341,7 +349,7 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 
 		// Pivot towards the target-ball line
 		//robot()->pivot(_pivot, d < 0); // why not pivot around ball?
-		robot()->pivot(ball().pos, d < 0);
+		robot()->pivot(ball().pos, d < 0); // FIXME: this is actually the wrong side occasionally
 	}
 	else
 	{
@@ -368,6 +376,11 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 			}
 		}
 	}
+
+	// handle too far away case
+	float switch_to_intercept_dist = 0.5;
+	if (!shotAvailable && ballPos.nearPoint(pos, switch_to_intercept_dist))
+		return Intercept;
 
 	// determine return state
 	return shotAvailable ? Shoot : Aim;
@@ -467,8 +480,9 @@ Gameplay::Behaviors::Kick::oneTouchApproach() {
 
 	// if we have gotten too far away (given hysteresis), go back to intercept
 	Segment approachLine(approachFar, approachBall);
-	float distThresh = 0.15;
+	float distThresh = 0.15; // FIXME: need to update this for new intercept
 	if (!approachLine.nearPoint(pos, distThresh)) {
+		cout << "OneTouchApproach: too far away from approach line, switching to intercept" << endl;
 		return Intercept;
 	}
 
