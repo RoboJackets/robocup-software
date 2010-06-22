@@ -101,9 +101,16 @@ namespace Gameplay
 				Robot * _targetRobot;
 				Geometry2d::Segment _target;
 
+				typedef enum {
+					LEFT,
+					RIGHT,
+					UNSET
+				} DriveSide;
+
 				AimType _aimType;
 				KickType _kickType;
 				TargetType _targetType;
+				DriveSide _driveSide;
 
 				//we lock in a pivot point
 				Geometry2d::Point _pivot;
