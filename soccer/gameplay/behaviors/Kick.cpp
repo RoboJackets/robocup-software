@@ -152,10 +152,11 @@ bool Gameplay::Behaviors::Kick::run()
 	QColor toggle = Qt::magenta, stable = Qt::black;
 	Point textOffset(Constants::Robot::Radius*1.3, 0.0);
 
+	// NOTE: this should should only be for performing overrides
 	// if intercepting and dist < aimThresh, enter aim state
-	const float aimThresh = Constants::Robot::Radius + 0.4;
+	const float aimThresh = Constants::Robot::Radius + 0.05;
 	// if aiming and dist > interceptThresh, enter intercept state
-	const float interceptThresh = Constants::Robot::Radius + 0.5;
+	const float interceptThresh = Constants::Robot::Radius + 0.4;
 	// STATE TRANSITION OVERRIDES
 	// check which aim mode we are in
 	if (_aimType == PIVOT && (_state == OneTouchAim))
@@ -178,7 +179,7 @@ bool Gameplay::Behaviors::Kick::run()
 			//cout << "Close enough to ball, switching to aim" << endl;
 			_state = Aim;
 			_pivot = ballPos;
-		} else if (_state == Aim && (!robot()->haveBall() && pos.distTo(ballPos) > interceptThresh))
+		} else if (_state == Aim && (pos.distTo(ballPos) > interceptThresh))
 		{
 			_state = Intercept;
 		}
@@ -288,9 +289,15 @@ Gameplay::Behaviors::Kick::intercept(const Geometry2d::Point& targetCenter) {
 	// face ball to ensure we hit something
 	robot()->face(ballPos); // should be the targetCenter or ballPos
 
+	// if we are in front of the ball, we should stay in intercept
+	Point apprPoint = ballPos + approachVec * Constants::Robot::Radius * 0.8;
+	Segment ballPerpLine(apprPoint - approachVec.perpCW(), apprPoint + approachVec.perpCW());
+	if (ballPerpLine.pointSide(ballPos) > 0.0)
+		return Intercept;
+
 	// if we are on the approach line, change to approach state
 	Segment approachLine(approachFar, approachBall);
-	float distThresh = 0.05;
+	float distThresh = (_aimType == PIVOT ) ? 0.1 : 0.05;
 	if (approachLine.nearPointPerp(pos, distThresh) || robot()->haveBall()) {
 		robot()->willKick = true;
 		return (_aimType == ONETOUCH) ? OneTouchAim : Aim;
@@ -377,11 +384,6 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 		}
 	}
 
-	// handle too far away case
-	float switch_to_intercept_dist = 0.5;
-	if (!shotAvailable && ballPos.nearPoint(pos, switch_to_intercept_dist))
-		return Intercept;
-
 	// determine return state
 	return shotAvailable ? Shoot : Aim;
 }
@@ -449,11 +451,9 @@ Gameplay::Behaviors::Kick::oneTouchApproach() {
 		return Done;
 	}
 
-	// FIXME: detection appears to be glitchy, so disabled
 	// if we are in front of the ball, we should go back to intercept
 	Point apprPoint = ballPos + approachVec * Constants::Robot::Radius * 0.8;
 	Segment ballPerpLine(apprPoint - approachVec.perpCW(), apprPoint + approachVec.perpCW());
-//	drawLine(ballPerpLine, 0, 0, 0);
 	if (ballPerpLine.pointSide(ballPos) > 0.0)
 		return Intercept;
 
@@ -480,9 +480,9 @@ Gameplay::Behaviors::Kick::oneTouchApproach() {
 
 	// if we have gotten too far away (given hysteresis), go back to intercept
 	Segment approachLine(approachFar, approachBall);
-	float distThresh = 0.15; // FIXME: need to update this for new intercept
+	float distThresh = 0.30; // FIXME: need to update this for new intercept
 	if (!approachLine.nearPoint(pos, distThresh)) {
-		cout << "OneTouchApproach: too far away from approach line, switching to intercept" << endl;
+//		cout << "OneTouchApproach: " << approachLine.distTo(pos) << " too far away from approach line, switching to intercept" << endl;
 		return Intercept;
 	}
 
