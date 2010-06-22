@@ -14,6 +14,7 @@ Gameplay::Robot::Robot(GameplayModule *gameplay, int id, bool self)
 
 	willKick = false;
 	avoidBall = false;
+	exclude = false;
 
 	for (int i = 0; i < Constants::Robots_Per_Team; ++i)
 	{

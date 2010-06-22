@@ -157,6 +157,9 @@ namespace Gameplay
 			// This reduces the size of the opponent's obstacle.
 			// These are reset when this robot's role changes.
 			bool approachOpponent[Constants::Robots_Per_Team];
+			
+			// True if this robot should not be used in plays (for mixed play)
+			bool exclude;
 
 			/**
 			 * Convenience function for changing the approachOpponent flag given a robot key

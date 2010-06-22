@@ -40,6 +40,10 @@ bool Gameplay::Plays::TheirFreekick::assign(set<Robot *> &available)
 
 bool Gameplay::Plays::TheirFreekick::run()
 {
+	if (!ball().valid)
+	{
+		return false;
+	}
 	Point ballPos = ball().pos;
 
 	//  determine which robots to mark
