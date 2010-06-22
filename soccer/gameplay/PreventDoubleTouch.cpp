@@ -10,11 +10,15 @@ Gameplay::PreventDoubleTouch::PreventDoubleTouch(GameplayModule *gameplay, Behav
     _gameplay = gameplay;
     _kicker = kicker;
     _keepRunning = false;
+    _kicked = false;
+    _wasReady = false;
 }
 
 void Gameplay::PreventDoubleTouch::assign(set<Robot *> &available)
 {
     _keepRunning = false;
+    _kicked = false;
+    _wasReady = false;
     
     _kicker->assign(available);
     if (_kicker->assigned())
@@ -49,11 +53,17 @@ void Gameplay::PreventDoubleTouch::run()
 	// At this point the _kicker should either kick or collide with the ball.
 	// After that one other robot must touch it.
 	_keepRunning = true;
+	_wasReady = true;
     }
     
-    if (!_kicker->run())
+    if (_kicked)
     {
-	_backoff.run();
+    	_backoff.run();
+    } else {
+        if (!_kicker->run() || (gameState.state == GameState::Playing && _wasReady))
+        {
+	    _kicked = true;
+        }
     }
     
     Robot *best = 0;

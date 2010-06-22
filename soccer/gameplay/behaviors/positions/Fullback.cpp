@@ -170,19 +170,19 @@ bool Gameplay::Behaviors::Fullback::run()
 		needTask = true;
 	}
 	
-	// TESTING - if needTask, face the ball
+	// if needTask, face the ball
 	if(needTask)
 	{
 		robot()->face(ball().pos, true);
 	}
 
-	// TESTING - Turn dribbler on when ball is near
+	// Turn dribbler on when ball is near
 	if(ball().pos.y < Constants::Field::Length / 2)
 	{
 		robot()->dribble(255);
 	}
 
-	// TESTING - If ball sensor is tripped and we are not facing towards the goal, fire.
+	// If ball sensor is tripped and we are not facing towards the goal, fire.
 	Geometry2d::Point backVec(1,0);
 	Geometry2d::Point backPos(-Constants::Field::Width/2,0);
 	Geometry2d::Point shotVec(ball().pos - robot()->pos());
