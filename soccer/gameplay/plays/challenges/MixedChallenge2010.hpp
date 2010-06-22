@@ -27,7 +27,10 @@ namespace Gameplay
 
 				// states of system
 				typedef enum {
-					SETUP 		/// when we move to the staring position on the home side of the field
+					SETUP, 		/// when we move to the staring position on the home side of the field
+					RECEIVING,  /// prep a robot for getting a pass
+					PASSING,	/// sending a pass someplace
+					SHOOTING	/// making a shot ourselves
 				} State;
 				State _state;
 
