@@ -88,13 +88,6 @@ bool Gameplay::Behaviors::Kick::assign(set<Robot *> &available)
 	return _robots.size() >= _minRobots;
 }
 
-//bool checkBallPos(const Point& target, const Point& ballPos, const Point& chkPt) {
-//	Segment ballTrajSeg(target, ballPos);
-//	Point traj = target - ballPos;
-//	Point transChk = chkPt - ballPos;
-//
-//}
-
 bool Gameplay::Behaviors::Kick::run()
 {
 	if (!allVisible() || !ball().valid)
@@ -175,43 +168,41 @@ bool Gameplay::Behaviors::Kick::run()
 	}
 
 	//if we already have the ball, skip approach states
-//	if (_aimType == PIVOT) {
-		if (_state == Intercept && robot()->haveBall())
-		{
-			//cout << "Intercept succeeded - switching to aim" << endl;
-			_state = Aim;
-			_pivot = ballPos;
-		}
-		else if (_state == Intercept && pos.distTo(ballPos) < aimThresh) {
-			//cout << "Close enough to ball, switching to aim" << endl;
-			_state = Aim;
-			_pivot = ballPos;
-		} else if (_state == Aim && (pos.distTo(ballPos) > interceptThresh))
-		{
-			_state = Intercept;
-		}
-//	}
+	if (_state == Intercept && robot()->haveBall())
+	{
+		//cout << "Intercept succeeded - switching to aim" << endl;
+		_state = Aim;
+		_pivot = ballPos;
+	}
+	else if (_state == Intercept && pos.distTo(ballPos) < aimThresh) {
+		//cout << "Close enough to ball, switching to aim" << endl;
+		_state = Aim;
+		_pivot = ballPos;
+	} else if (_state == Aim && (pos.distTo(ballPos) > interceptThresh))
+	{
+		_state = Intercept;
+	}
 
 	// HANDLE STATES (with debug text)
 	switch (_state) {
-	case Intercept:
+	case Intercept: {
 		//approach the ball at high speed using Intercept
 		_state = intercept(targetCenter);
 		drawText("Intercept", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
 		break;
-	case Aim:
+	} case Aim: {
 		_state = aim(targetCenter, canKick);
 		drawText("Aim", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
 		break;
-	case Shoot:
+	} case Shoot: {
 		_state = shoot(targetCenter, kickStrength);
 		drawText("Shoot", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
 		break;
-	case OneTouchAim:
+	} case OneTouchAim: {
 		_state = oneTouchApproach();
 		drawText("OneTouchAim", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
 		break;
-	case Done: // do nothing
+	} case Done: // do nothing
 		break;
 	}
 
@@ -219,7 +210,7 @@ bool Gameplay::Behaviors::Kick::run()
 }
 
 bool Gameplay::Behaviors::Kick::ballBehind(const Point& ballPos, const Point& approachVec, const Point& pos, bool debugDraw) {
-	const Point textOffsetLeft(0.0, Constants::Robot::Radius*1.3);
+	const Point textOffsetLeft(0.0, -Constants::Robot::Radius*1.3);
 	Point apprPoint = ballPos + approachVec.normalized() * Constants::Robot::Radius * 0.3;
 	Segment ballPerpLine(apprPoint - approachVec.perpCW(), apprPoint + approachVec.perpCW());
 	bool res = ballPerpLine.pointSide(pos) < 0.0;
@@ -249,7 +240,6 @@ Gameplay::Behaviors::Kick::intercept(const Geometry2d::Point& targetCenter) {
 	// define the control points for a single kick
 	Point approachFar  = ballPos + approachVec*approachDist;
 	Point approachBall = ballPos + approachVec*Constants::Robot::Radius;
-//	Point moveTarget   = Segment(ballPos, ballPos + approachVec * (0.5 * approachDist + Constants::Robot::Radius)).nearestPoint(pos);
 	Point moveTarget   = ballPosProj + approachVec * (0.5 * approachDist + Constants::Robot::Radius);
 
 	// create extra waypoint to the side of the ball behind it - use when coming in from far away
@@ -263,7 +253,7 @@ Gameplay::Behaviors::Kick::intercept(const Geometry2d::Point& targetCenter) {
 	Segment leftLine(pos, goLeft), rightLine(pos, goRight), ballSeg(ballPos, targetCenter);
 
 	// we always want to override the hysteresis if a line is intersecting
-	// NOTE: we can't have both intersect
+	// NOTE: we can't have both intersect at the same time
 	if (leftLine.intersects(ballSeg)) {
 		_driveSide = RIGHT;
 	} else if (rightLine.intersects(ballSeg)) {
@@ -488,7 +478,7 @@ Gameplay::Behaviors::Kick::oneTouchApproach() {
 		robot()->kick(calcKickStrength(_target.center()));
 
 	// calculate trajectory to hit the ball correctly
-	float approachDist = 2.0; // how long to extend approach line beyond ball
+	float approachDist = 2.5; // how long to extend approach line beyond ball
 
 	// define the control points for a single kick
 	Point approachFar = ballPos + approachVec * Constants::Robot::Radius + proj,
