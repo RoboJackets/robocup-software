@@ -43,7 +43,9 @@ bool Gameplay::Behaviors::Fullback::run()
 		return false;
 	}
 	
-	Geometry2d::Point ballFuture = ball().pos + ball().vel;
+	// we multiply by 0.3 here to look 0.3s into the future when considering the ball position
+	// also, this will be used for where the robots will face
+	Geometry2d::Point ballFuture = ball().pos + ball().vel*0.3;
 
 	//goal line, for intersection detection
 	Geometry2d::Segment goalLine(Geometry2d::Point(-Constants::Field::GoalWidth / 2.0f, 0),
@@ -150,7 +152,11 @@ bool Gameplay::Behaviors::Fullback::run()
 					{
 						Behavior::robot()->move(dest[1]);
 					}
-					Behavior::robot()->face(ballFuture);
+					//Behavior::robot()->face(ballFuture);
+					// Using regular pos rather than future because velocity approx on ball is not exact
+					// enough and this leads to the robots turning backwards, towards the goal, when the
+					// ball is shot at the goal.
+					Behavior::robot()->face(ball().pos);
 				}
 				else
 				{
@@ -164,6 +170,30 @@ bool Gameplay::Behaviors::Fullback::run()
 		needTask = true;
 	}
 	
+	// TESTING - if needTask, face the ball
+	if(needTask)
+	{
+		robot()->face(ball().pos, true);
+	}
+
+	// TESTING - Turn dribbler on when ball is near
+	if(ball().pos.y < Constants::Field::Length / 2)
+	{
+		robot()->dribble(255);
+	}
+
+	// TESTING - If ball sensor is tripped and we are not facing towards the goal, fire.
+	Geometry2d::Point backVec(1,0);
+	Geometry2d::Point backPos(-Constants::Field::Width/2,0);
+	Geometry2d::Point shotVec(ball().pos - robot()->pos());
+	Geometry2d::Point shotPos(robot()->pos());
+	Geometry2d::Point backVecRot(backVec.perpCCW());
+	bool facingBackLine = (backVecRot.dot(shotVec) < 0);
+	if(!facingBackLine)
+	{
+		robot()->kick(255);
+	}
+
 	/*
 	if(needTask){
 		//goal line, for intersection detection

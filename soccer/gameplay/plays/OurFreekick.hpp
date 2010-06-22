@@ -6,6 +6,7 @@
 #include <gameplay/behaviors/positions/Forward.hpp>
 #include <gameplay/behaviors/positions/Fullback.hpp>
 #include <gameplay/behaviors/Move.hpp>
+#include <gameplay/PreventDoubleTouch.hpp>
 
 namespace Gameplay
 {
@@ -24,6 +25,7 @@ namespace Gameplay
 				Behaviors::Kick _kicker;
 				Behaviors::Move _center;
 				Behaviors::Fullback _fullback1, _fullback2;
+				PreventDoubleTouch _pdt;
 		};
 	}
 }
