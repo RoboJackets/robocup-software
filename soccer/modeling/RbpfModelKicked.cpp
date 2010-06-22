@@ -27,11 +27,8 @@ RbpfModelKicked::RbpfModelKicked(RobotModel::RobotMap *_robotMap, ConfigFile::sh
 	H(0,0)=1; H(0,1)=0; H(0,2)=0; H(0,3)=0; H(0,4)=0; H(0,5)=0; // dh(X)/dx
 	H(1,0)=0; H(1,1)=1; H(1,2)=0; H(1,3)=0; H(1,4)=0; H(1,5)=0; // dh(X)/dy
 
-	// initialize process noise (n x n)
-	initializeQ();
-
-	// initialize measurement noise (s x s)
-	initializeR();
+	// initialize parameters
+	initParams();
 }
 
 void RbpfModelKicked::initializeQ() {

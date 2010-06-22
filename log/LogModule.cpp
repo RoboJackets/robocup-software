@@ -4,6 +4,7 @@
 #include "LogModule.hpp"
 
 #include "drawing/Elements.hpp"
+#include <Constants.hpp>
 
 #include <QColor>
 #include <QApplication>
@@ -15,7 +16,7 @@ LogModule::LogModule(SystemState *state) :
 	Module("Log Module")
 {
 	_state = state;
-	_showVision = false;
+	_showVision = true;
 }
 
 void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
@@ -73,6 +74,7 @@ void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
 		{
 			if (!vision.sync)
 			{
+				/* don't draw the robots twice
 				BOOST_FOREACH(const Packet::Vision::Robot& r, vision.blue)
 				{
 					drawRobot(p, Blue, r.shell, r.pos, r.angle, f.team);
@@ -82,35 +84,39 @@ void LogModule::fieldOverlay(QPainter& p, Packet::LogFrame& f) const
 				{
 					drawRobot(p, Yellow, r.shell, r.pos, r.angle, f.team);
 				}
+				*/
 
 				BOOST_FOREACH(const Packet::Vision::Ball& b, vision.balls)
 				{
-					drawBall(p, b.pos);
+					//drawBall(p, b.pos);
+					// draw the raw vision
+					p.setPen(QColor(0xcc, 0xcc, 0xcc));
+					p.drawEllipse(QRectF(-Constants::Ball::Radius + b.pos.x, -Constants::Ball::Radius + b.pos.y,
+							Constants::Ball::Diameter, Constants::Ball::Diameter));
 				}
 			}
 		}
-	} else {
-		BOOST_FOREACH(const Packet::LogFrame::Robot &r, f.self)
+	}
+	BOOST_FOREACH(const Packet::LogFrame::Robot &r, f.self)
+	{
+		if (r.valid)
 		{
-			if (r.valid)
-			{
-				drawRobot(p, f.team, r.shell, r.pos, r.angle, f.team, r.haveBall);
-			}
+			drawRobot(p, f.team, r.shell, r.pos, r.angle, f.team, r.haveBall);
 		}
+	}
 
-		Team opp = opponentTeam(f.team);
-		BOOST_FOREACH(const Packet::LogFrame::Robot &r, f.opp)
+	Team opp = opponentTeam(f.team);
+	BOOST_FOREACH(const Packet::LogFrame::Robot &r, f.opp)
+	{
+		if (r.valid)
 		{
-			if (r.valid)
-			{
-				drawRobot(p, opp, r.shell, r.pos, r.angle, f.team, r.haveBall);
-			}
+			drawRobot(p, opp, r.shell, r.pos, r.angle, f.team, r.haveBall);
 		}
+	}
 
-		if (f.ball.valid)
-		{
-			drawBall(p, f.ball.pos, f.ball.vel);
-		}
+	if (f.ball.valid)
+	{
+		drawBall(p, f.ball.pos, f.ball.vel);
 	}
 }
 

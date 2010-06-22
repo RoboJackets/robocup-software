@@ -106,7 +106,9 @@ void Modeling::BallModel::initRBPF() {
 
 Geometry2d::Point Modeling::BallModel::predictPosAtTime(float dtime)
 {
-	return pos + vel * dtime + accel * 0.5f * dtime * dtime;
+	//return pos + vel * dtime + accel * 0.5f * dtime * dtime;
+	// because the approximation of accel is poor, just predict based on velocity and position
+	return pos+vel*dtime;
 }
 
 void Modeling::BallModel::observation(uint64_t time, const Geometry2d::Point &pos, observation_mode obs_type)
@@ -170,9 +172,17 @@ void Modeling::BallModel::rbpfUpdate(float dtime) {
 }
 
 void Modeling::BallModel::rbpfUpdateMultipleObs(std::vector<observation_type> &obs){
-	if(obs.size() >= 1){
-		observedPos.x = obs.at(0).pos.x;
-		observedPos.y = obs.at(0).pos.y;
+	if(obs.size() >= 1){ // currently hacked to just handle a single update
+		// pick the closest observation to the current estimate
+		float bestDist = 99999;
+		BOOST_FOREACH(const observation_type& observation, _observations)
+		{
+			if(observation.pos.distTo(pos) < bestDist)
+			{
+				bestDist = observation.pos.distTo(pos);
+				observedPos = observation.pos;
+			}
+		}
 		float dtime = (float)(obs.at(0).time - lastUpdatedTime) / 1e6;
 		rbpfUpdate(dtime);
 	}
