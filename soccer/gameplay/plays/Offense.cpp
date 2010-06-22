@@ -65,6 +65,8 @@ bool Gameplay::Plays::Offense::assign(set<Robot *> &available)
 
 bool Gameplay::Plays::Offense::run()
 {
+	_kicker1.aimType(Behaviors::Kick::ONETOUCH);
+	_kicker2.aimType(Behaviors::Kick::ONETOUCH);
 	// handle forward behavior
 	// basic approach: closest robot gets the ball, the other robot goes to the other side of the field
 	Point ballPos = ball().pos;

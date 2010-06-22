@@ -1,5 +1,7 @@
 #include "OurKickoff.hpp"
 
+#include <boost/foreach.hpp>
+
 using namespace std;
 
 Gameplay::Plays::OurKickoff::OurKickoff(GameplayModule *gameplay):
@@ -7,7 +9,8 @@ Gameplay::Plays::OurKickoff::OurKickoff(GameplayModule *gameplay):
 	_kicker(gameplay),
 	_idle1(gameplay),
 	_idle2(gameplay),
-	_idle3(gameplay)
+	_idle3(gameplay),
+	_backoff(gameplay)
 {
 	_preventDoubleTouch = false;
 }
@@ -25,11 +28,17 @@ bool Gameplay::Plays::OurKickoff::assign(set<Robot *> &available)
 	_idle1.target = _gameplay->centerMatrix() * Geometry2d::Point(0.7, -0.2);
 	_idle2.target = _gameplay->centerMatrix() * Geometry2d::Point(-0.7, -0.2);
 	_idle3.target = Geometry2d::Point(0, 1.5);
+// 	_backoff.target = Geometry2d::Point(0, 2);
 	
 	_kicker.assign(available);
 	_idle1.assign(available);
 	_idle2.assign(available);
 	_idle3.assign(available);
+	
+	if (_kicker.assigned())
+	{
+	    _backoff.assignOne(_kicker.robot());
+	}
 	
 	if (_kicker.assigned() && _idle1.assigned())
 	{
@@ -64,10 +73,34 @@ bool Gameplay::Plays::OurKickoff::run()
 	_idle2.face = ball().pos;
 	_idle3.face = ball().pos;
 	
-	if (!_kicker.run())
+	if (_kicker.assigned())
 	{
-	    _preventDoubleTouch = false;
-	    printf("*** Kicker done\n");
+	    if (!_kicker.run())
+	    {
+    // 	    _preventDoubleTouch = false;
+    // 	    _backoff.robot()->avoidBall = true;
+		_backoff.run();
+		printf("*** Kicker done\n");
+	    }
+	    
+	    Robot *best = 0;
+	    float bestDist = 0;
+	    BOOST_FOREACH(Robot *r, _gameplay->self)
+	    {
+		float dist = r->pos().distTo(ball().pos);
+		if (bestDist == 0 || bestDist > dist)
+		{
+		    bestDist = dist;
+		    best = r;
+		}
+	    }
+	    if (best != _kicker.robot())
+	    {
+		printf("Other better\n");
+		_preventDoubleTouch = false;
+	    }
+	} else {
+    	    _preventDoubleTouch = false;
 	}
 	
 	_idle1.run();
