@@ -95,12 +95,11 @@ void RefereeModule::run()
 
 void RefereeModule::packet(const Packet::Referee *packet)
 {
-	++_state->gameState.numPackets;
 	if (!_useExternal)
 	{
-		// Count the packets anyway but don't process them
 		return;
 	}
+	++_state->gameState.numPackets;
 	
 	int cmd = packet->command;
 	int newCounter = packet->counter;
