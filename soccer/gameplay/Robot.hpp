@@ -55,6 +55,7 @@ namespace Gameplay
 
 			// Commands
 			void setVScale(float scale = 1.0); /// scales the velocity
+			void setWScale(float scale = 0.5); /// scales the angular velocity
 			void resetMotionCommand();  /// resets all motion commands for the robot
 
 			// Move to a particular point using the RRT planner

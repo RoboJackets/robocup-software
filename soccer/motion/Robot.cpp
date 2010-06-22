@@ -419,7 +419,7 @@ void Robot::scaleVelocity() {
 	}
 
 	// scale the rotational velocity
-	_w *= vscale;
+	_w *= _self->cmd.wScale;
 
 }
 
