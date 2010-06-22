@@ -168,7 +168,7 @@ bool Gameplay::Behaviors::Kick::run()
 	}
 
 	//if we already have the ball, skip approach states
-	if (_aimType == PIVOT) {
+//	if (_aimType == PIVOT) {
 		if (_state == Intercept && robot()->haveBall())
 		{
 			//cout << "Intercept succeeded - switching to aim" << endl;
@@ -183,7 +183,7 @@ bool Gameplay::Behaviors::Kick::run()
 		{
 			_state = Intercept;
 		}
-	}
+//	}
 
 	// HANDLE STATES (with debug text)
 	switch (_state) {
@@ -230,6 +230,7 @@ Gameplay::Behaviors::Kick::intercept(const Geometry2d::Point& targetCenter) {
 	// define the control points for a single kick
 	Point approachFar  = ballPos + approachVec*approachDist;
 	Point approachBall = ballPos + approachVec*Constants::Robot::Radius;
+//	Point moveTarget   = Segment(ballPos, ballPos + approachVec * (0.5 * approachDist + Constants::Robot::Radius)).nearestPoint(pos);
 	Point moveTarget   = ballPos + approachVec * (0.5 * approachDist + Constants::Robot::Radius);
 
 	// create extra waypoint to the side of the ball behind it - use when coming in from far away
@@ -290,7 +291,7 @@ Gameplay::Behaviors::Kick::intercept(const Geometry2d::Point& targetCenter) {
 	robot()->face(ballPos); // should be the targetCenter or ballPos
 
 	// if we are in front of the ball, we should stay in intercept
-	Point apprPoint = ballPos + approachVec * Constants::Robot::Radius * 0.8;
+	Point apprPoint = ballPos + approachVec.normalized() * Constants::Robot::Radius * 0.8;
 	Segment ballPerpLine(apprPoint - approachVec.perpCW(), apprPoint + approachVec.perpCW());
 	if (ballPerpLine.pointSide(ballPos) > 0.0)
 		return Intercept;
@@ -391,7 +392,6 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 Gameplay::Behaviors::Kick::State
 Gameplay::Behaviors::Kick::shoot(const Geometry2d::Point& targetCenter, int kickStrength) {
 	debug("Shoot: %f", ball().vel.dot(robot()->pos() - ball().pos));
-	//robot()->kick(strength_param.value());
 
 	if (_kickType == KICK)
 		robot()->kick(kickStrength);
@@ -452,10 +452,13 @@ Gameplay::Behaviors::Kick::oneTouchApproach() {
 	}
 
 	// if we are in front of the ball, we should go back to intercept
-	Point apprPoint = ballPos + approachVec * Constants::Robot::Radius * 0.8;
+	Point apprPoint = ballPos - approachVec.normalized() * Constants::Robot::Radius * 0.8;
 	Segment ballPerpLine(apprPoint - approachVec.perpCW(), apprPoint + approachVec.perpCW());
-	if (ballPerpLine.pointSide(ballPos) > 0.0)
+	drawLine(ballPerpLine, 0, 0, 0);
+	if (ballPerpLine.pointSide(ballPos) < 0.0) {
+		cout << "OneTouchAim: behind robot" << endl;
 		return Intercept;
+	}
 
 	// turn on the kicker for final approach
 	float fire_kick_thresh = Constants::Robot::Radius + Constants::Ball::Radius + 0.10;
@@ -480,7 +483,7 @@ Gameplay::Behaviors::Kick::oneTouchApproach() {
 
 	// if we have gotten too far away (given hysteresis), go back to intercept
 	Segment approachLine(approachFar, approachBall);
-	float distThresh = 0.30; // FIXME: need to update this for new intercept
+	float distThresh = 0.25;
 	if (!approachLine.nearPoint(pos, distThresh)) {
 //		cout << "OneTouchApproach: " << approachLine.distTo(pos) << " too far away from approach line, switching to intercept" << endl;
 		return Intercept;
