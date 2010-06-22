@@ -52,6 +52,9 @@
 //#include "plays/test_plays/TestBasicChipAttack.hpp"
 //#include "plays/test_plays/TestBasicOneTouchChipAttack.hpp"
 
+// Demo plays
+#include "plays/challenges/MixedChallenge2010.hpp"
+
 #include <QMouseEvent>
 #include <QFileDialog>
 

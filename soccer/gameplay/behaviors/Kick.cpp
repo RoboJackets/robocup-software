@@ -231,7 +231,7 @@ Gameplay::Behaviors::Kick::intercept(const Geometry2d::Point& targetCenter) {
 	Point ballVel = ball().vel;
 	Point ballPos = ball().pos;
 	Point proj = (ballVel.mag() > proj_thresh) ? ballVel * (pos.distTo(ballPos)/avgVel) : Point();
-	Point ballPosProj = ballPos + proj * proj_damp;
+	Point ballPosProj = ballPos + Point::saturate(proj, 1.5) * proj_damp;
 
 	// calculate trajectory to get to the ball
 	float approachDist = 0.5; // distance along approach line for ball control point
