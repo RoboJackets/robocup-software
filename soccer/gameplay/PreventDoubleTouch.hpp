@@ -22,5 +22,6 @@ namespace Gameplay
 		Behavior *_kicker;
 		Behaviors::Idle _backoff;
 		bool _keepRunning;
+		bool _kicked;
 	};
 }

@@ -10,11 +10,13 @@ Gameplay::PreventDoubleTouch::PreventDoubleTouch(GameplayModule *gameplay, Behav
     _gameplay = gameplay;
     _kicker = kicker;
     _keepRunning = false;
+    _kicked = false;
 }
 
 void Gameplay::PreventDoubleTouch::assign(set<Robot *> &available)
 {
     _keepRunning = false;
+    _kicked = false;
     
     _kicker->assign(available);
     if (_kicker->assigned())
@@ -51,9 +53,14 @@ void Gameplay::PreventDoubleTouch::run()
 	_keepRunning = true;
     }
     
-    if (!_kicker->run())
+    if (_kicked)
     {
-	_backoff.run();
+    	_backoff.run();
+    } else {
+        if (!_kicker->run())
+        {
+        	_kicked = true;
+        }
     }
     
     Robot *best = 0;
