@@ -23,5 +23,6 @@ namespace Gameplay
 		Behaviors::Idle _backoff;
 		bool _keepRunning;
 		bool _kicked;
+		bool _wasReady;
 	};
 }
