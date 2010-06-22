@@ -151,6 +151,10 @@ namespace Gameplay
 
 				// additional state for one-touch aiming
 				State oneTouchApproach();
+
+				// utility for checking if we are on the wrong side of the ball
+				bool ballBehind(const Geometry2d::Point& ballPos, const Geometry2d::Point& approachVec,
+						const Geometry2d::Point& pos, bool debugDraw = false);
 		};
 	}
 }

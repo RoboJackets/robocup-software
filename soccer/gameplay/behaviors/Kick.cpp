@@ -88,6 +88,13 @@ bool Gameplay::Behaviors::Kick::assign(set<Robot *> &available)
 	return _robots.size() >= _minRobots;
 }
 
+//bool checkBallPos(const Point& target, const Point& ballPos, const Point& chkPt) {
+//	Segment ballTrajSeg(target, ballPos);
+//	Point traj = target - ballPos;
+//	Point transChk = chkPt - ballPos;
+//
+//}
+
 bool Gameplay::Behaviors::Kick::run()
 {
 	if (!allVisible() || !ball().valid)
@@ -211,9 +218,21 @@ bool Gameplay::Behaviors::Kick::run()
 	return _state != Done;
 }
 
+bool Gameplay::Behaviors::Kick::ballBehind(const Point& ballPos, const Point& approachVec, const Point& pos, bool debugDraw) {
+	const Point textOffsetLeft(0.0, Constants::Robot::Radius*1.3);
+	Point apprPoint = ballPos + approachVec.normalized() * Constants::Robot::Radius * 0.3;
+	Segment ballPerpLine(apprPoint - approachVec.perpCW(), apprPoint + approachVec.perpCW());
+	bool res = ballPerpLine.pointSide(pos) < 0.0;
+	if (debugDraw) {
+		drawLine(ballPerpLine, 0, 0, 0);
+		if (res)
+			drawText("B", pos + textOffsetLeft, 0, 0, 0);
+	}
+	return res;
+}
+
 Gameplay::Behaviors::Kick::State
 Gameplay::Behaviors::Kick::intercept(const Geometry2d::Point& targetCenter) {
-
 	float avgVel = 0.5 * robot()->packet()->config.motion.deg45.velocity;
 	float proj_thresh = 0.01;
 	float proj_damp = 0.5;
@@ -290,12 +309,8 @@ Gameplay::Behaviors::Kick::intercept(const Geometry2d::Point& targetCenter) {
 	// face ball to ensure we hit something
 	robot()->face(ballPos); // should be the targetCenter or ballPos
 
-	// if we are in front of the ball, we should go back to intercept
-	Point apprPoint = ballPos - approachVec.normalized() * Constants::Robot::Radius * 0.8;
-	Segment ballPerpLine(apprPoint - approachVec.perpCW(), apprPoint + approachVec.perpCW());
-	drawLine(ballPerpLine, 0, 0, 0);
-	if (ballPerpLine.pointSide(ballPos) < 0.0) {
-		cout << "OneTouchAim: behind robot" << endl;
+	// if we are in front of the ball, we should continue in intercept
+	if (ballBehind(ballPos, approachVec, pos, true)) {
 		return Intercept;
 	}
 
@@ -438,6 +453,8 @@ Gameplay::Behaviors::Kick::shoot(const Geometry2d::Point& targetCenter, int kick
 Gameplay::Behaviors::Kick::State
 Gameplay::Behaviors::Kick::oneTouchApproach() {
 
+	Point textOffsetLeft(0.0, Constants::Robot::Radius*1.3);
+
 	// if we have kicked the ball, we are done
 	if (robot()->charged() == false) {
 		robot()->willKick = false;
@@ -460,12 +477,8 @@ Gameplay::Behaviors::Kick::oneTouchApproach() {
 		return Done;
 	}
 
-	// if we are in front of the ball, we should go back to intercept
-	Point apprPoint = ballPos - approachVec.normalized() * Constants::Robot::Radius * 0.8;
-	Segment ballPerpLine(apprPoint - approachVec.perpCW(), apprPoint + approachVec.perpCW());
-	drawLine(ballPerpLine, 0, 0, 0);
-	if (ballPerpLine.pointSide(ballPos) < 0.0) {
-		cout << "OneTouchAim: behind robot" << endl;
+	// switch back if we go in front of the robot
+	if (ballBehind(ballPos, approachVec, pos, true)) {
 		return Intercept;
 	}
 
