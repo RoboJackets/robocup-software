@@ -50,6 +50,10 @@ namespace Gameplay
 				{
 					return _state == Intercept;
 				}
+				bool isDone()
+				{
+					return _state == Done;
+				}
 
 				bool automatic;
 

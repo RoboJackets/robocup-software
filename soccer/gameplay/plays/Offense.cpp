@@ -34,14 +34,6 @@ bool Gameplay::Plays::Offense::assign(set<Robot *> &available)
 	// handle sides for fullbacks
 	if (_fullback1.assigned() && _fullback2.assigned())
 	{
-		if (_fullback1.robot()->pos().x < _fullback2.robot()->pos().x) {
-			_fullback1.side(Behaviors::Fullback::Left);
-			_fullback2.side(Behaviors::Fullback::Right);
-		} else {
-			_fullback1.side(Behaviors::Fullback::Right);
-			_fullback2.side(Behaviors::Fullback::Left);
-		}
-
 		// handle sides for fullbacks
 		if (_fullback1.robot()->pos().x < _fullback2.robot()->pos().x) {
 			_fullback1.side(Behaviors::Fullback::Left);
@@ -65,11 +57,21 @@ bool Gameplay::Plays::Offense::assign(set<Robot *> &available)
 
 bool Gameplay::Plays::Offense::run()
 {
+	const Point textOffset(-Constants::Robot::Radius*1.3, 0.0);
+
+	// set kickers to onetouch for snap shots
 	_kicker1.aimType(Behaviors::Kick::ONETOUCH);
 	_kicker2.aimType(Behaviors::Kick::ONETOUCH);
+
 	// handle forward behavior
 	// basic approach: closest robot gets the ball, the other robot goes to the other side of the field
 	Point ballPos = ball().pos;
+
+	// manually reset any kickers
+	if (_kicker1.isDone())
+		_kicker1.restart();
+	if (_kicker2.isDone())
+		_kicker2.restart();
 
 	if (_kicker1.assigned() && _kicker2.assigned())
 	{
@@ -84,24 +86,27 @@ bool Gameplay::Plays::Offense::run()
 		// handle toggle cases
 		float percent = 0.85;
 		if (kick1Dist < percent * kick2Dist) {
-			if (!_usingKicker1) {
+			if (!_usingKicker1 || kick1Dist > 1.0) {
 				_kicker1.restart();
 			}
-			_kicker1.run();
 			other = _kicker2.robot();
 			_usingKicker1 = true;
 		} else if (kick2Dist < percent * kick1Dist) {
-			if (_usingKicker1) {
+			if (_usingKicker1 || kick2Dist > 1.0) {
 				_kicker2.restart();
 			}
-			_kicker2.run();
 			other = _kicker1.robot();
 			_usingKicker1 = false;
-		} else if (_usingKicker1) {
+		}
+
+		// execute
+		if (_usingKicker1) {
 			_kicker1.run();
+			drawText("Active", _kicker1.robot()->pos() + textOffset);
 			other = _kicker2.robot();
 		} else {
 			_kicker2.run();
+			drawText("Active", _kicker2.robot()->pos() + textOffset);
 			other = _kicker1.robot();
 		}
 
@@ -109,6 +114,7 @@ bool Gameplay::Plays::Offense::run()
 		float lag_y_dist = 0.5, x_offset = 1.5;
 		float newX = (ballPos.x < 0.0) ? ballPos.x + x_offset : ballPos.x - x_offset;
 		float newY = (ballPos.y < Constants::Field::Length/2.0) ? ballPos.y + lag_y_dist : ballPos.y - lag_y_dist;
+		drawText("Backup", other->pos() + textOffset);
 		other->move(Point(newX, newY), false);
 	} else {
 		_kicker1.run();
