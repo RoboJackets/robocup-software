@@ -22,6 +22,7 @@ Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay) :
 	_aimType(PIVOT),
 	_kickType(KICK),
 	_targetType(GOAL),
+	_driveSide(UNSET),
 	_ballHandlingScale(1.0),
 	_ballHandlingRange(0.5)
 {
@@ -142,7 +143,8 @@ bool Gameplay::Behaviors::Kick::run()
 
 	// canKick is true if the robot is facing the target and the ball is between the robot and the target.
 	bool canKick = intersectedTarget &&
-				   /*robot()->haveBall() &&*/
+//				   robot()->haveBall() &&
+				   robot()->pos().nearPoint(ballPos, Constants::Robot::Radius + 0.2) &&
 				   !intersectsRobot &&
 				   robot()->charged();
 	//if (canKick) cout << "Kicking is possible!" << endl;
@@ -154,14 +156,10 @@ bool Gameplay::Behaviors::Kick::run()
 	QColor toggle = Qt::magenta, stable = Qt::black;
 	Point textOffset(Constants::Robot::Radius*1.3, 0.0);
 
-	// keep a set of thresholds for aiming and shooting
-	//const float aimThresh = Constants::Robot::Radius * 1.4;
-
 	// if intercepting and dist < aimThresh, enter aim state
-	const float aimThresh = Constants::Robot::Radius * 1.4;
+	const float aimThresh = Constants::Robot::Radius + 0.4;
 	// if aiming and dist > interceptThresh, enter intercept state
-	const float interceptThresh = Constants::Robot::Radius * 1.6;
-
+	const float interceptThresh = Constants::Robot::Radius + 0.5;
 	// STATE TRANSITION OVERRIDES
 	// check which aim mode we are in
 	if (_aimType == PIVOT && (_state == OneTouchAim))
@@ -185,7 +183,6 @@ bool Gameplay::Behaviors::Kick::run()
 			_pivot = ballPos;
 		} else if (_state == Aim && (!robot()->haveBall() && pos.distTo(ballPos) > interceptThresh))
 		{
-//			cout << "Lost ball - switching to intercept" << endl;
 			_state = Intercept;
 		}
 	}
@@ -218,44 +215,81 @@ bool Gameplay::Behaviors::Kick::run()
 
 Gameplay::Behaviors::Kick::State
 Gameplay::Behaviors::Kick::intercept(const Geometry2d::Point& targetCenter) {
-	// check if we can do one touch
-	if (_aimType == ONETOUCH) {
-		// calculate trajectory to get to the ball
-		float approachDist = 0.5; // distance along approach line for ball control point
 
-		Point pos = robot()->pos(), ballPos = ball().pos;
-		Point approachVec = (ballPos - targetCenter).normalized();
+	float avgVel = 0.5 * robot()->packet()->config.motion.deg45.velocity;
+	float proj_thresh = 0.01;
+	float proj_damp = 0.8;
+	Point pos = robot()->pos();
+	Point ballVel = ball().vel;
+	Point ballPos = ball().pos;
+	Point proj = (ballVel.mag() > proj_thresh) ? ballVel * (pos.distTo(ballPos)/avgVel) : Point();
+	Point ballPosProj = ballPos + proj * proj_damp;
 
-		// define the control points for a single kick
-		Point approachFar  = ballPos + approachVec*approachDist,
-			  approachBall = ballPos + approachVec*Constants::Robot::Radius,
-			  moveTarget   = ballPos + approachVec * (0.5 * approachDist + Constants::Robot::Radius);
+	// create extra waypoint to the side of the ball behind it - use when coming in from far away
+	// use hysteresis on the side of the ball
+	float perp_damp = 1.0;
+	Point targetTraj = (ballPosProj - pos).normalized();
+	Point goLeft = ballPosProj + targetTraj.perpCCW().normalized() * Constants::Robot::Radius * perp_damp;
+	Point goRight = ballPosProj + targetTraj.perpCW().normalized() * Constants::Robot::Radius * perp_damp;
 
-		// issue move command to point halfway along line
+	float leftDist = pos.distTo(goLeft);
+	float rightDist = pos.distTo(goRight);
+
+	// set the side
+	float hystersis_modifier = 0.80;
+	switch (_driveSide) {
+	case UNSET:
+		// take closest
+		if (leftDist < rightDist) {
+			_driveSide = LEFT;
+		} else {
+			_driveSide = RIGHT;
+		}
+		break;
+	case LEFT:
+		if (rightDist < hystersis_modifier * leftDist) {
+			_driveSide = RIGHT;
+		}
+		break;
+	case RIGHT:
+		if (leftDist < hystersis_modifier * rightDist) {
+			_driveSide = LEFT;
+		}
+		break;
+	}
+
+	Point avoidDest = (_driveSide == LEFT) ? goLeft : goRight;
+
+	// calculate trajectory to get to the ball
+	float approachDist = 0.5; // distance along approach line for ball control point
+
+	Point approachVec = (ballPos - targetCenter).normalized();
+
+	// define the control points for a single kick
+	Point approachFar  = ballPos + approachVec*approachDist;
+	Point approachBall = ballPos + approachVec*Constants::Robot::Radius;
+	Point moveTarget   = ballPos + approachVec * (0.5 * approachDist + Constants::Robot::Radius);
+
+	// issue move command to point halfway along line
+	float wrap_thresh = 1.2; // m
+	if (ballPos.distTo(pos) > wrap_thresh)
+		robot()->move(avoidDest, false);
+	else
 		robot()->move(moveTarget, false);
 
-		// face ball to ensure we hit something
-		// FIXME: may want to get behind and then aim at both target and ball
-		robot()->face(ballPos); // should be the targetCenter or ballPos
+	// face ball to ensure we hit something
+	robot()->face(ballPos); // should be the targetCenter or ballPos
 
-		// if we are on the approach line, change to approach state
-		Segment approachLine(approachFar, approachBall);
-		float distThresh = 0.05;
-		if (approachLine.nearPointPerp(pos, distThresh)) {
-			robot()->willKick = true;
-			return OneTouchAim;
-		} else {
-			robot()->willKick = false; // avoid ball when intercepting
-		}
-	} else if (_aimType == PIVOT){
-		// use normal intercept
-		_intercept->target = targetCenter;
-		bool intercept_sucess = _intercept->run();
-		if (!intercept_sucess)
-		{
-			return Aim;
-		}
+	// if we are on the approach line, change to approach state
+	Segment approachLine(approachFar, approachBall);
+	float distThresh = 0.05;
+	if (approachLine.nearPointPerp(pos, distThresh)) {
+		robot()->willKick = true;
+		return (_aimType == ONETOUCH) ? OneTouchAim : Aim;
+	} else {
+		robot()->willKick = false; // avoid ball when intercepting
 	}
+
 	return Intercept;
 }
 
@@ -276,11 +310,7 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 
 	// pull out current states
 	Geometry2d::Point ballPos = ball().pos,
-					  ballVel = ball().vel,
 					  pos     = robot()->pos();
-
-	Geometry2d::Line line(ballPos, ballPos + ballVel);
-	Geometry2d::Point intercept = line.nearestPoint(pos);
 
 	// show an ideal line from ball to target
 	drawLine(Segment(ballPos, targetCenter), 255, 0, 0); // red
@@ -292,22 +322,6 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 
 	// middle of shot arc - used for drawing text
 	const Geometry2d::Point shotTextPoint = Segment(ballPos, targetCenter).center();
-
-	// Vectors from ball to extents of target
-	Geometry2d::Point v0 = (_target.pt[0] - ballPos).normalized();
-	Geometry2d::Point v1 = (_target.pt[1] - ballPos).normalized();
-	float g0 = v0.angle() * RadiansToDegrees;
-	float g1 = v1.angle() * RadiansToDegrees;
-
-	if (g0 > g1)
-	{
-		swap(g0, g1);
-	}
-
-#ifdef DEBUG
-	float ra = robot()->angle();
-	float ba = (ballPos - pos).angle() * RadiansToDegrees;
-#endif
 
 	Geometry2d::Point m = ballPos + (pos - ballPos).normalized() * clearance;
 	if (pos.nearPoint(m, Constants::Robot::Radius))
@@ -322,10 +336,8 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 		Geometry2d::Point t = (targetCenter - ballPos).normalized();
 		Geometry2d::Point s = t.perpCCW();
 
-
 		// How far the robot is from the ball in that direction
 		float d = (pos - ballPos).dot(s);
-
 
 		// Pivot towards the target-ball line
 		//robot()->pivot(_pivot, d < 0); // why not pivot around ball?
@@ -355,39 +367,7 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 				shotAvailable = true;
 			}
 		}
-
-
-
-		// Old kick code
-////		cout << "Kicking possible" << endl;
-//		float margin = max(fixAngleDegrees(ra - g0), fixAngleDegrees(g1 - ra));
-//
-//		float threshold = 0.9f * (g1 - g0) / 2;
-//		debug("goal %.1f, %.1f ball %.1f robot %.1f margin %.1f threshold %.1f\n",
-//				g0, g1, ba, ra, margin, threshold);
-//		drawText(str(boost::format("M:%f") % margin), shotTextPoint, 0, 0, 0);
-//		if (margin > threshold || margin <= _lastMargin)
-//		{
-//			if (ballPos.nearPoint(pos, clearance + Constants::Robot::Radius))
-//			{
-//				debug("Shoot\n");
-//				_shootStart = pos;
-//				_shootMove = pos + (ballPos - pos).normalized() * 0.2f;
-//				_shootBallStart = ballPos;
-//				shotAvailable = true;
-//			}
-//		}
-//
-//		_lastMargin = margin;
 	}
-	else
-	{
-		debug("wait %.1f %.1f %.1f %.1f", g0, g1, ba, ra);
-		_lastMargin = 0;
-	}
-	debug("\n");
-	if (!shotAvailable)
-		debug("noShot");
 
 	// determine return state
 	return shotAvailable ? Shoot : Aim;
@@ -466,16 +446,8 @@ Gameplay::Behaviors::Kick::oneTouchApproach() {
 
 	// turn on the kicker for final approach
 	float fire_kick_thresh = Constants::Robot::Radius + Constants::Ball::Radius + 0.10;
-	float fire_angle_thresh = 0.3;
-	if (pos.distTo(ballPos) < fire_kick_thresh &&
-			fabs(robot()->angle() - (ballPos - pos).angle()) < fire_angle_thresh)
+	if (pos.distTo(ballPos) < fire_kick_thresh)
 		robot()->kick(calcKickStrength(_target.center()));
-	else
-		robot()->willKick = false; // do not kick during turn
-
-	// DISABLED: chip handling
-//	else if (_kickType == CHIP)
-//		robot()->chip(calcKickStrength(_target.center()));
 
 	// calculate trajectory to hit the ball correctly
 	float approachDist = 2.0; // how long to extend approach line beyond ball
