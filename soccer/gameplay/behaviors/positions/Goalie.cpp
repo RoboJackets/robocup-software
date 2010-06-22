@@ -163,7 +163,7 @@ bool Gameplay::Behaviors::Goalie::run()
 
 			robot()->dribble(50);
 		}
-		else if (ball().pos.mag() < .5)
+		else if (ball().pos.mag() < .5 && !(gameState().theirPenalty() && !gameState().playing()))
 		{
 			_state = Clear;
 		}
