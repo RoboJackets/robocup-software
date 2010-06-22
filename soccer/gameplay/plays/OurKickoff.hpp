@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../Play.hpp"
+#include <gameplay/PreventDoubleTouch.hpp>
 #include <gameplay/behaviors/Idle.hpp>
 #include <gameplay/behaviors/Move.hpp>
 #include <gameplay/behaviors/Kickoff.hpp>
@@ -19,10 +20,9 @@ namespace Gameplay
 				virtual bool run();
 			
 			protected:
-				bool _preventDoubleTouch;
 				Behaviors::Kickoff _kicker;
 				Behaviors::Move _idle1, _idle2, _idle3;
-				Behaviors::Idle _backoff;
+				PreventDoubleTouch _pdt;
 		};
 	}
 }

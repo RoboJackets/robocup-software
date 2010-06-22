@@ -49,6 +49,7 @@ set (SRCS
 	gameplay/Behavior.cpp
 	gameplay/Window.cpp
 	gameplay/Robot.cpp
+	gameplay/PreventDoubleTouch.cpp
 	
 	# Optimization components
 	gameplay/optimizer/PassConfig.cpp
