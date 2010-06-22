@@ -40,4 +40,6 @@
     
     <!-- Time in seconds remaining in the current period -->
     <member type="uint16" name="secondsRemaining"/>
+
+    <member type="uint32" name="numPackets"/>
 </struct>

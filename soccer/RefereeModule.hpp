@@ -4,6 +4,7 @@
 #include <framework/SystemState.hpp>
 #include <Team.h>
 #include <Referee.hpp>
+#include <QTime>
 
 #include "ui_RefereeTab.h"
 
@@ -90,9 +91,6 @@ class RefereeModule: public QObject, public Module
     Q_OBJECT;
     
 public:
-    // Distance in meters that the ball must travel for a kick to be detected
-    static const float KickThreshold = 0.050f;
-    
     RefereeModule(SystemState *state);
     
     // Called periodically.  Checks vision data for ball movement.
@@ -106,7 +104,7 @@ public:
     // True if the ball has been kicked since the last restart began
     bool kicked() const
     {
-        return _kicked;
+        return _kickDetectState == Kicked;
     }
 
 protected Q_SLOTS:
@@ -141,6 +139,7 @@ protected Q_SLOTS:
     void on_refYellowCardYellow_clicked();
     void on_refRedCardBlue_clicked();
     void on_refRedCardYellow_clicked();
+	void on_externalReferee_toggled(bool value);
 
 protected:
     Ui_Referee ui;
@@ -154,7 +153,19 @@ protected:
     // Last counter value received or -1 if no packets have been processed
     int _counter;
     
-    bool _lastBallValid;
-    bool _kicked;
-    Geometry2d::Point _lastBallPos;
+	typedef enum
+	{
+		WaitForReady,
+		CapturePosition,
+		WaitForKick,
+		VerifyKick,
+		Kicked
+	} KickDetectState;
+	KickDetectState _kickDetectState;
+	
+    Geometry2d::Point _readyBallPos;
+	bool _useExternal;
+    
+    // Time the ball was first beyond KickThreshold from its original position
+    QTime _kickTime;
 };

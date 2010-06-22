@@ -3,6 +3,13 @@
 
 using namespace RefereeCommands;
 
+// Distance in meters that the ball must travel for a kick to be detected
+static const float KickThreshold = 0.150f;
+
+// How many milliseconds the ball must be more than KickThreshold meters away from
+// its position when the referee indicated Ready for us to detect the ball as having been kicked.
+static const int KickVerifyTime_ms = 500;
+
 const char *RefereeAddress = "224.5.23.1";
 
 RefereeModule::RefereeModule(SystemState *state):
@@ -10,11 +17,12 @@ RefereeModule::RefereeModule(SystemState *state):
 {
 	_state = state;
 	_counter = -1;
-	_kicked = false;
-	_lastBallValid = false;
+	_kickDetectState = WaitForReady;
 	
 	_widget = new QWidget();
 	ui.setupUi(_widget);
+	
+	_useExternal = ui.externalReferee->isChecked();
 	
 	((QObject*)_widget)->setParent((QObject*)this);
 	QMetaObject::connectSlotsByName(this);
@@ -39,19 +47,47 @@ void RefereeModule::run()
 {
 	if (_state->ball.valid)
 	{
-		if (_lastBallValid && !_state->ball.pos.nearPoint(_lastBallPos, KickThreshold))
+		// Only run the kick detector when the ball is visible
+		switch (_kickDetectState)
 		{
-			_kicked = true;
-		}
-		
-		if (!_lastBallValid)
-		{
-			_lastBallValid = true;
-			_lastBallPos = _state->ball.pos;
+			case WaitForReady:
+				// Never kicked and not ready for a restart
+				break;
+				
+			case CapturePosition:
+				// Do this in the processing thread
+				_readyBallPos = _state->ball.pos;
+				_kickDetectState = WaitForKick;
+				break;
+				
+			case WaitForKick:
+				if (!_state->ball.pos.nearPoint(_readyBallPos, KickThreshold))
+				{
+					// The ball appears to have moved
+					_kickTime = QTime::currentTime();
+					_kickDetectState = VerifyKick;
+				}
+				break;
+				
+			case VerifyKick:
+				if (_state->ball.pos.nearPoint(_readyBallPos, KickThreshold))
+				{
+					// The ball is back where it was.  There was probably a vision error.
+					_kickDetectState = WaitForKick;
+				} else if (_kickTime.msecsTo(QTime::currentTime()) >= KickVerifyTime_ms)
+				{
+					// The ball has been far enough away for enough time, so call this a kick.
+					_kickDetectState = Kicked;
+				}
+				break;
+				
+			case Kicked:
+				// Stay here until the referee puts us back in Ready
+				break;
 		}
 	}
 	
-	if (_state->gameState.state == GameState::Ready && _kicked)
+	if (_state->gameState.state == GameState::Ready && kicked())
 	{
 		_state->gameState.state = GameState::Playing;
 	}
@@ -59,6 +95,13 @@ void RefereeModule::run()
 
 void RefereeModule::packet(const Packet::Referee *packet)
 {
+	++_state->gameState.numPackets;
+	if (!_useExternal)
+	{
+		// Count the packets anyway but don't process them
+		return;
+	}
+	
 	int cmd = packet->command;
 	int newCounter = packet->counter;
 	
@@ -99,7 +142,7 @@ void RefereeModule::command(uint8_t command)
 			_state->gameState.state = GameState::Stop;
 			_state->gameState.ourRestart = false;
 			_state->gameState.restart = GameState::None;
-			_kicked = false;
+			_kickDetectState = WaitForReady;
 			break;
 		
 		case ForceStart:
@@ -198,8 +241,7 @@ void RefereeModule::command(uint8_t command)
 void RefereeModule::ready()
 {
 	_state->gameState.state = GameState::Ready;
-	_lastBallValid = false;
-	_kicked = false;
+	_kickDetectState = CapturePosition;
 }
 
 void RefereeModule::on_actionHalt_triggered()
@@ -389,4 +431,9 @@ void RefereeModule::on_refRedCardBlue_clicked()
 void RefereeModule::on_refRedCardYellow_clicked()
 {
 	command('r');
+}
+
+void RefereeModule::on_externalReferee_toggled(bool value)
+{
+	_useExternal = value;
 }
