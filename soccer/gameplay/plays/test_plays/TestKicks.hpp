@@ -35,6 +35,15 @@ namespace Gameplay
 			protected:
 				// Insert sub behaviors here as member variables
 				Test _test;
+
+				// flag for controlling switching between plays
+				bool switchTest;
+
+				// current robot
+				Robot* robot;
+
+				// returns the robot in _robots with id id
+				Robot* getRobotWithId(int id);
 		};
 	}
 }
