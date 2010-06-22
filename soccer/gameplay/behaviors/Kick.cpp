@@ -216,7 +216,7 @@ Gameplay::Behaviors::Kick::intercept(const Geometry2d::Point& targetCenter) {
 
 	float avgVel = 0.5 * robot()->packet()->config.motion.deg45.velocity;
 	float proj_thresh = 0.01;
-	float proj_damp = 0.8;
+	float proj_damp = 0.5;
 	Point pos = robot()->pos();
 	Point ballVel = ball().vel;
 	Point ballPos = ball().pos;
@@ -225,20 +225,20 @@ Gameplay::Behaviors::Kick::intercept(const Geometry2d::Point& targetCenter) {
 
 	// calculate trajectory to get to the ball
 	float approachDist = 0.5; // distance along approach line for ball control point
-	Point approachVec = (ballPos - targetCenter).normalized();
+	Point approachVec = (ballPosProj - targetCenter).normalized();
 
 	// define the control points for a single kick
 	Point approachFar  = ballPos + approachVec*approachDist;
 	Point approachBall = ballPos + approachVec*Constants::Robot::Radius;
 //	Point moveTarget   = Segment(ballPos, ballPos + approachVec * (0.5 * approachDist + Constants::Robot::Radius)).nearestPoint(pos);
-	Point moveTarget   = ballPos + approachVec * (0.5 * approachDist + Constants::Robot::Radius);
+	Point moveTarget   = ballPosProj + approachVec * (0.5 * approachDist + Constants::Robot::Radius);
 
 	// create extra waypoint to the side of the ball behind it - use when coming in from far away
 	// use hysteresis on the side of the ball
 	float perp_damp = 2.0;
 	Point targetTraj = (ballPosProj - pos).normalized();
-	Point goLeft = ballPos + targetTraj.perpCCW().normalized() * Constants::Robot::Radius * perp_damp;
-	Point goRight = ballPos + targetTraj.perpCW().normalized() * Constants::Robot::Radius * perp_damp;
+	Point goLeft = ballPosProj + targetTraj.perpCCW().normalized() * Constants::Robot::Radius * perp_damp;
+	Point goRight = ballPosProj + targetTraj.perpCW().normalized() * Constants::Robot::Radius * perp_damp;
 
 	// create lines to tell if we are going the wrong way around the ball
 	Segment leftLine(pos, goLeft), rightLine(pos, goRight), ballSeg(ballPos, targetCenter);
@@ -290,11 +290,14 @@ Gameplay::Behaviors::Kick::intercept(const Geometry2d::Point& targetCenter) {
 	// face ball to ensure we hit something
 	robot()->face(ballPos); // should be the targetCenter or ballPos
 
-	// if we are in front of the ball, we should stay in intercept
-	Point apprPoint = ballPos + approachVec.normalized() * Constants::Robot::Radius * 0.8;
+	// if we are in front of the ball, we should go back to intercept
+	Point apprPoint = ballPos - approachVec.normalized() * Constants::Robot::Radius * 0.8;
 	Segment ballPerpLine(apprPoint - approachVec.perpCW(), apprPoint + approachVec.perpCW());
-	if (ballPerpLine.pointSide(ballPos) > 0.0)
+	drawLine(ballPerpLine, 0, 0, 0);
+	if (ballPerpLine.pointSide(ballPos) < 0.0) {
+		cout << "OneTouchAim: behind robot" << endl;
 		return Intercept;
+	}
 
 	// if we are on the approach line, change to approach state
 	Segment approachLine(approachFar, approachBall);
@@ -325,21 +328,27 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 	const float clearance = Constants::Ball::Radius + Constants::Robot::Radius;
 
 	// pull out current states
-	Geometry2d::Point ballPos = ball().pos,
-					  pos     = robot()->pos();
+	float avgVel = 0.5 * robot()->packet()->config.motion.deg45.velocity;
+	float proj_thresh = 0.02;
+	float proj_damp = 0.3;
+	Geometry2d::Point pos = robot()->pos();
+	Point ballVel = ball().vel;
+	Point ballPos = ball().pos;
+	Point proj = (ballVel.mag() > proj_thresh) ? ballVel * (pos.distTo(ballPos)/avgVel) : Point();
+	Point ballPosProj = ballPos + proj * proj_damp;
 
 	// show an ideal line from ball to target
-	drawLine(Segment(ballPos, targetCenter), 255, 0, 0); // red
+	drawLine(Segment(ballPosProj, targetCenter), 255, 0, 0); // red
 
 	// show a line along the likely shot if fired now
-	Segment curShotLine(pos, pos + (ballPos-pos).normalized()*10.0);
-	Segment curShotLineViz(pos, pos + (ballPos-pos).normalized()*2.0);
+	Segment curShotLine(pos, pos + (ballPosProj-pos).normalized()*10.0);
+	Segment curShotLineViz(pos, pos + (ballPosProj-pos).normalized()*2.0);
 	drawLine(curShotLineViz, 0, 0, 200); // blue
 
 	// middle of shot arc - used for drawing text
-	const Geometry2d::Point shotTextPoint = Segment(ballPos, targetCenter).center();
+	const Geometry2d::Point shotTextPoint = Segment(ballPosProj, targetCenter).center();
 
-	Geometry2d::Point m = ballPos + (pos - ballPos).normalized() * clearance;
+	Geometry2d::Point m = ballPosProj + (pos - ballPosProj).normalized() * clearance;
 	if (pos.nearPoint(m, Constants::Robot::Radius))
 	{
 		debug("pivot  ");
@@ -349,11 +358,11 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 		// From the ball's point of view:
 		//     t is towards the target.
 		//     s is perpendicular to that.
-		Geometry2d::Point t = (targetCenter - ballPos).normalized();
+		Geometry2d::Point t = (targetCenter - ballPosProj).normalized();
 		Geometry2d::Point s = t.perpCCW();
 
 		// How far the robot is from the ball in that direction
-		float d = (pos - ballPos).dot(s);
+		float d = (pos - ballPosProj).dot(s);
 
 		// Pivot towards the target-ball line
 		//robot()->pivot(_pivot, d < 0); // why not pivot around ball?
@@ -378,8 +387,8 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 			{
 				debug("Shoot\n");
 				_shootStart = pos;
-				_shootMove = pos + (ballPos - pos).normalized() * 0.2f;
-				_shootBallStart = ballPos;
+				_shootMove = pos + (ballPosProj - pos).normalized() * 0.2f;
+				_shootBallStart = ballPosProj;
 				shotAvailable = true;
 			}
 		}
