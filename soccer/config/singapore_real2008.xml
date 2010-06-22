@@ -52,7 +52,7 @@
 				<rotation>
 					<dynamics velocity="100" acceleration="50" deceleration="0" />
 					
-					<pid type="angle" p=".4" i="0" d="0" />
+					<pid type="angle" p=".2" i="0" d="0" />
 				</rotation>
 								
 				<!-- output filtering -->
