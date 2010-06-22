@@ -139,6 +139,7 @@ protected Q_SLOTS:
     void on_refYellowCardYellow_clicked();
     void on_refRedCardBlue_clicked();
     void on_refRedCardYellow_clicked();
+	void on_externalReferee_toggled(bool value);
 
 protected:
     Ui_Referee ui;
@@ -163,6 +164,7 @@ protected:
 	KickDetectState _kickDetectState;
 	
     Geometry2d::Point _readyBallPos;
+	bool _useExternal;
     
     // Time the ball was first beyond KickThreshold from its original position
     QTime _kickTime;

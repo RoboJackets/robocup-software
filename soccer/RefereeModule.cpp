@@ -22,6 +22,8 @@ RefereeModule::RefereeModule(SystemState *state):
 	_widget = new QWidget();
 	ui.setupUi(_widget);
 	
+	_useExternal = ui.externalReferee->isChecked();
+	
 	((QObject*)_widget)->setParent((QObject*)this);
 	QMetaObject::connectSlotsByName(this);
 	
@@ -93,6 +95,13 @@ void RefereeModule::run()
 
 void RefereeModule::packet(const Packet::Referee *packet)
 {
+	++_state->gameState.numPackets;
+	if (!_useExternal)
+	{
+		// Count the packets anyway but don't process them
+		return;
+	}
+	
 	int cmd = packet->command;
 	int newCounter = packet->counter;
 	
@@ -422,4 +431,9 @@ void RefereeModule::on_refRedCardBlue_clicked()
 void RefereeModule::on_refRedCardYellow_clicked()
 {
 	command('r');
+}
+
+void RefereeModule::on_externalReferee_toggled(bool value)
+{
+	_useExternal = value;
 }
