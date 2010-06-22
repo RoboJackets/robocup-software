@@ -116,6 +116,8 @@ bool Gameplay::Behaviors::Intercept::run() {
 
 		drawText("ApproachFar", pos + textOffset, 0, 0, 0);
 		Geometry2d::Point dest = ballPosProj;
+
+		// DISABLED: not using side waypoints due to wrap-around error
 //		if (_driveSide == LEFT)
 //			dest = goLeft;
 //		else if (_driveSide == RIGHT)
@@ -131,15 +133,14 @@ bool Gameplay::Behaviors::Intercept::run() {
 			} else {
 				dest += (ballPos - target).normalized() * stopDist;
 			}
-
 		}
 		drawLine(Geometry2d::Segment(pos, dest), 64, 64, 255);
 
 		robot()->move(dest);
 
-		const float dist = dest.distTo(pos);
+		const float dest_dist = dest.distTo(pos);
 
-		if (dist <= _farDist) {
+		if (dest_dist <= _farDist) {
 			_state = ApproachBall;
 		}
 	} else if (_state == ApproachBall) {
@@ -168,7 +169,6 @@ bool Gameplay::Behaviors::Intercept::run() {
 				//stop forward movement
 				robot()->move(robot()->pos());
 			}
-
 		}
 	} else if (_state == Done) {
 		// return to full vscale
