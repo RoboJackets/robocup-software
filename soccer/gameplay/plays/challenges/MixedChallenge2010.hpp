@@ -18,16 +18,11 @@ namespace Gameplay
 				
 			protected:
 
-				// start side of the field
-				typedef enum {
-					LEFT,
-					RIGHT
-				} FieldSide;
-				FieldSide _fieldSide;
-
 				// states of system
 				typedef enum {
-					SETUP, 		/// when we move to the staring position on the home side of the field
+					STOPPED,	/// initial case
+					SETUP, 		/// move to quadrants
+					WAITONPASS, /// waiting on them to pass
 					RECEIVING,  /// prep a robot for getting a pass
 					PASSING,	/// sending a pass someplace
 					SHOOTING	/// making a shot ourselves
