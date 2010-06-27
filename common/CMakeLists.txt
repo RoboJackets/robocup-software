@@ -82,28 +82,6 @@ if (USE_GEOMETRY AND NOT TARGET geometry)
 	set (GEOMETRY_LIBRARY geometry)
 endif()
 
-if (USE_FRAMEWORK AND NOT TARGET framework)
-	SET(framework_SRCS 
-		Module.cpp
-		ConfigFile.cpp
-		Path.cpp
-		Obstacle.cpp
-	)
-	
-	#qt4_wrap_cpp(MOC_SRC
-	#	${common_include_dir}/framework/Module.hpp
-	#)
-
-	prepend_list(framework_SRCS "framework/")
-	prepend_list(framework_SRCS ${common_include_dir})
-	list(APPEND framework_SRCS ${common_include_dir}/Utils.cpp)
-	message( STATUS "Using the Framework library") 
-	
-	add_library (framework ${framework_SRCS})
-	add_dependencies (framework GeneratePackets)
-	set (FRAMEWORK_LIBRARY framework)
-endif()
-
 if (USE_NETWORK AND NOT TARGET network)
 	include_directories(${common_include_dir}/SerDes)
 	
@@ -119,6 +97,5 @@ if (USE_NETWORK AND NOT TARGET network)
 	add_library (network ${network_srcs})
 	add_dependencies (network GeneratePackets)
 	set (NETWORK_LIBRARY network)
-	
 endif()
 

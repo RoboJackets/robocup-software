@@ -208,7 +208,7 @@ def makeStruct(struct):
 write("#ifndef TREE_GEN_%s_HPP" % rootStruct.typename);
 write("#define TREE_GEN_%s_HPP" % rootStruct.typename);
 
-write("#include <TreeGen.hpp>");
+write("#include <log/TreeGen.hpp>");
 write("#include <stdint.h>");
 write("#include <vector>");
 write("#include <string>");

@@ -10,7 +10,7 @@
 
 #include <iostream>
 #include <vector>
-#include <common/framework/SystemState.hpp>
+#include <framework/SystemState.hpp>
 #include "PassState.hpp"
 #include <gameplay/Robot.hpp>
 

@@ -6,7 +6,6 @@ add_definitions(-O2 -fno-inline -Wall -g3)
 set (USE_QT true)
 set (USE_NETWORK true)
 set (USE_GEOMETRY true)
-set (USE_FRAMEWORK true)
 set (USE_CONFIG true)
 
 # setup gtsam inclusion
@@ -24,7 +23,6 @@ include_directories (${PROJECT_SOURCE_DIR}/..)
 include_directories (${PROJECT_SOURCE_DIR}/modeling/)
 include_directories (${PROJECT_SOURCE_DIR}/gameplay/)
 include_directories (${PROJECT_SOURCE_DIR}/gameplay/optimizer)
-add_subdirectory (${PROJECT_SOURCE_DIR}/../log ${PROJECT_BINARY_DIR}/log)
 
 include_directories(${PROJECT_BINARY_DIR})
 	
@@ -35,11 +33,24 @@ set (SRCS
 	JoystickInput.cpp
 	RefereeModule.cpp
 	PlayConfigTab.cpp
+
+	../common/Utils.cpp
 	
 	# config file tab components
 	configuration/ConfigFileTab.cpp
 	configuration/ConfigFileModel.cpp
 	configuration/ConfigFileItem.cpp
+
+	framework/ConfigFile.cpp
+	framework/Module.cpp
+	framework/Obstacle.cpp
+	framework/Path.cpp
+
+	log/FieldView.cpp
+	log/LogModule.cpp
+	log/draw.cpp
+	log/TreeModel.cpp
+	log/TreeView.cpp
 
 # Sources for gameplay module
 
@@ -148,6 +159,7 @@ set (SRCS
 
 qt4_wrap_cpp ( MOC_SRCS
 	motion/MotionModule.hpp
+	log/FieldView.hpp
 )
 
 qt4_automoc (${SRCS})
@@ -165,11 +177,32 @@ qt4_add_resources (RC_FILES
 	ui/main_icons.qrc
 )
 
+    #common CMakeLists.txt file contains the list of packets
+    
+	foreach (packet ${Packets})
+	    set (xmlFile ${PacketDir}/${packet}.xml)
+	    set (header tree_${packet}.hpp)
+	    
+	    add_custom_command(OUTPUT ${header}
+	            COMMAND ${PROJECT_SOURCE_DIR}/log/gen_tree ${xmlFile} > ${header}
+	            DEPENDS ${xmlFile} ${PROJECT_SOURCE_DIR}/log/gen_tree
+				
+	            VERBATIM
+	    )
+	    
+	    list (APPEND GenHeaders ${PROJECT_BINARY_DIR}/${header})
+	endforeach()
+	
+	add_custom_target(gen_tree
+	    DEPENDS ${GenHeaders}
+	    VERBATIM
+	)
+
 set (target soccer)
 add_executable (${target} ${SRCS} ${MOC_SRCS} ${UI_HDRS} ${RC_FILES})
+add_dependencies(${target} gen_tree)
 
 target_link_libraries(${target} ${PACKET_LIBRARY})
-target_link_libraries(${target} ${FRAMEWORK_LIBRARY})
 target_link_libraries(${target} ${GEOMETRY_LIBRARY})
 target_link_libraries(${target} ${NETWORK_LIBRARY})
 target_link_libraries(${target} ${CONFIG_LIBRARY})
@@ -177,8 +210,3 @@ target_link_libraries(${target} blas lapack)
 target_link_libraries(${target} vision)
 target_link_libraries(${target} ${QT_LIBRARIES})
 target_link_libraries(${target} gtsam ) # libraries required by gtsam
-
-
-#Module Linking
-# Add a new line here for every module used
-target_link_libraries(${target} log)

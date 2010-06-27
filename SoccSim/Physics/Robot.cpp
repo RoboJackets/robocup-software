@@ -5,8 +5,8 @@
 
 #include <NxCooking.h>
 
-#include <Constants.hpp>
 #include <Utils.hpp>
+#include <Constants.hpp>
 
 #include <boost/foreach.hpp>
 

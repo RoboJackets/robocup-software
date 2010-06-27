@@ -10,7 +10,7 @@
 #include <stdexcept>
 #include <map>
 
-#include <../Utils.hpp>
+#include <Utils.hpp>
 #include <Geometry2d/Point.hpp>
 
 class ConfigFile
