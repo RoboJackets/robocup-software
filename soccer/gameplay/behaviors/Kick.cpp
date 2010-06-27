@@ -226,12 +226,12 @@ Gameplay::Behaviors::Kick::State
 Gameplay::Behaviors::Kick::intercept(const Geometry2d::Point& targetCenter) {
 	float avgVel = 0.5 * robot()->packet()->config.motion.deg45.velocity;
 	float proj_thresh = 0.01;
-	float proj_damp = 0.5;
+	float proj_damp = 0.8;
 	Point pos = robot()->pos();
 	Point ballVel = ball().vel;
 	Point ballPos = ball().pos;
 	Point proj = (ballVel.mag() > proj_thresh) ? ballVel * (pos.distTo(ballPos)/avgVel) : Point();
-	Point ballPosProj = ballPos + proj * proj_damp;
+	Point ballPosProj = ballPos + Point::saturate(proj, 1.5) * proj_damp;
 
 	// calculate trajectory to get to the ball
 	float approachDist = 0.5; // distance along approach line for ball control point
@@ -337,7 +337,7 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 	// pull out current states
 	float avgVel = 0.5 * robot()->packet()->config.motion.deg45.velocity;
 	float proj_thresh = 0.02;
-	float proj_damp = 0.3;
+	float proj_damp = 0.6;
 	Geometry2d::Point pos = robot()->pos();
 	Point ballVel = ball().vel;
 	Point ballPos = ball().pos;

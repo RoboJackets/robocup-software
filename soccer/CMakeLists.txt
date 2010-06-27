@@ -121,6 +121,9 @@ set (SRCS
 	#gameplay/plays/test_plays/TestBasicOneTouchChipAttack.cpp
 	#gameplay/plays/test_plays/TestKicks.cpp
 	
+	# Demo plays 
+	gameplay/plays/challenges/MixedChallenge2010.cpp
+	
 	# files that use the optimizer - may want to disable
 	gameplay/plays/test_plays/TestPassConfigOptimize.cpp
 	gameplay/optimizer/PassOptimizer.cpp
