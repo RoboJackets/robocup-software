@@ -2,8 +2,8 @@
 
 #include "Entity.hpp"
 
-#include <RadioTx.hpp>
-#include <RadioRx.hpp>
+#include <protobuf/RadioTx.pb.h>
+#include <protobuf/RadioRx.pb.h>
 
 class Robot : public Entity
 {
@@ -35,7 +35,7 @@ class Robot : public Entity
         void initKicker();
         void initWheels();
 
-        static NxConvexMesh* cylinder(const float length, const float radius,
+        NxConvexMesh* cylinder(const float length, const float radius,
                 const unsigned int sides);
 
     private:

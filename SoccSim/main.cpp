@@ -1,9 +1,9 @@
-#include "VisionGen.hpp"
+// #include "VisionGen.hpp"
 #include "Viewer.hpp"
 #include "Physics/Env.hpp"
 #include "Config.hpp"
-#include "Radio.hpp"
-#include "CommandReceiver.hpp"
+// #include "Radio.hpp"
+// #include "CommandReceiver.hpp"
 
 #include <QApplication>
 
@@ -22,7 +22,6 @@ int main(int argc, char* argv[])
     QApplication app(argc, argv);
 
     Env* env = new Env();
-    env->start();
 
     char* configFile = 0;
 	bool useGUI = false;
@@ -66,19 +65,19 @@ int main(int argc, char* argv[])
         exit(0);
     }
 
-    CommandReceiver cmd(env);
-    cmd.start();
+//     CommandReceiver cmd(env);
+//     cmd.start();
 
-    VisionGen vision0(env, 0, useNoisy);
-    vision0.start();
+//     VisionGen vision0(env, 0, useNoisy);
+//     vision0.start();
     
     //VisionGen vision1(env, 1); // old code for multiple cameras
     //vision1.start();
 
-    Radio radioBlue(Blue, *env);
-    Radio radioYellow(Yellow, *env);
-    radioBlue.start();
-    radioYellow.start();
+//     Radio radioBlue(Blue, *env);
+//     Radio radioYellow(Yellow, *env);
+//     radioBlue.start();
+//     radioYellow.start();
 
 	Viewer *win = 0;
 	if (useGUI)
@@ -91,16 +90,16 @@ int main(int argc, char* argv[])
     //cleanup
 	delete win;
     delete env;
-    vision0.terminate();
-    vision0.wait();
+//     vision0.terminate();
+//     vision0.wait();
     
     //vision1.terminate();
     //vision1.wait();
 
-    radioBlue.terminate();
-    radioBlue.wait();
-    radioYellow.terminate();
-    radioYellow.wait();
+//     radioBlue.terminate();
+//     radioBlue.wait();
+//     radioYellow.terminate();
+//     radioYellow.wait();
 
     delete config;
 
