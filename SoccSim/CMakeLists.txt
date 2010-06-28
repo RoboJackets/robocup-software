@@ -14,7 +14,6 @@ endif ()
 add_definitions (-Werror -Wall)
 
 # use common stuff
-# set (USE_NETWORK true)
 set (USE_GEOMETRY true)
 include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
 add_subdirectory(${PROJECT_SOURCE_DIR}/../common/protobuf ${PROJECT_BINARY_DIR}/protobuf)
@@ -108,7 +107,6 @@ if (CROSS32)
 endif ()
 
 target_link_libraries (${PROJECT_NAME} NxCooking PhysXLoader ${QT_LIBRARIES})
-# target_link_libraries (${PROJECT_NAME} ${NETWORK_LIBRARY})
 target_link_libraries (${PROJECT_NAME} ${GEOMETRY_LIBRARY})
 target_link_libraries (${PROJECT_NAME} packets)
 

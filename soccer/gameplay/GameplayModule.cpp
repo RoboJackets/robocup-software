@@ -216,16 +216,6 @@ void Gameplay::GameplayModule::removeGoalie()
 	}
 }
 
-void Gameplay::GameplayModule::fieldOverlay(QPainter &painter, Packet::LogFrame &frame) const
-{
-	// Referee rules
-	painter.setPen(Qt::black);
-	if (frame.gameState.stayAwayFromBall() && frame.ball.valid)
-	{
-		painter.drawEllipse(frame.ball.pos.toQPointF(), Constants::Field::CenterRadius, Constants::Field::CenterRadius);
-	}
-}
-
 void Gameplay::GameplayModule::run()
 {
 	bool verbose = false;

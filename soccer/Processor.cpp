@@ -5,7 +5,10 @@
 #include <Processor.moc>
 
 #include <QMutexLocker>
+#include <QUdpSocket>
 
+#include <netdb.h>
+#include <arpa/inet.h>
 #include <Network/Network.hpp>
 #include <Network/Sender.hpp>
 #include <Network/PacketReceiver.hpp>
@@ -16,7 +19,6 @@
 #include <Utils.hpp>
 
 #include <modeling/WorldModel.hpp>
-#include <log/LogModule.hpp>
 #include <gameplay/GameplayModule.hpp>
 
 #include <boost/foreach.hpp>
@@ -87,14 +89,12 @@ Processor::Processor(Team t, QString filename, QObject *mainWindow) :
 	_motionModule = make_shared<Motion::MotionModule>(&_state, _config->motionModule);
 	_refereeModule = make_shared<RefereeModule>(&_state);
 	_gameplayModule = make_shared<Gameplay::GameplayModule>(&_state, _config->motionModule);
-	_logModule = make_shared<Log::LogModule>(&_state);
 
 	_modules.append(_modelingModule);
 	_modules.append(_refereeModule);
 	_modules.append(_stateIDModule);
 	_modules.append(_gameplayModule);
 	_modules.append(_motionModule);
-	_modules.append(_logModule);
 }
 
 Processor::~Processor()
@@ -106,16 +106,23 @@ Processor::~Processor()
 void Processor::run()
 {
 	//setup receiver of packets for vision and radio
-	Network::PacketReceiver receiver;
+/*	Network::PacketReceiver receiver;
 	receiver.addType(vision_addr.toAscii(), 10002, this,
 			&Processor::visionHandler);
 	receiver.addType(Network::Address,
 			Network::addTeamOffset(_team, Network::RadioRx),
-			this, &Processor::radioHandler);
-	RefereeModule* raw = dynamic_cast<RefereeModule*>(_refereeModule.get());
-	receiver.addType(RefereeAddress, RefereePort, 
-			raw, &RefereeModule::packet);
+			this, &Processor::radioHandler);*/
+// 	RefereeModule* raw = dynamic_cast<RefereeModule*>(_refereeModule.get());
+// 	receiver.addType(RefereeAddress, RefereePort, 
+// 			raw, &RefereeModule::packet);
 
+	QUdpSocket visionSocket;
+	visionSocket.bind(10002);
+        struct ip_mreqn mreq;
+        memset(&mreq, 0, sizeof(mreq));
+        mreq.imr_multiaddr.s_addr = inet_addr(vision_addr.toAscii());
+        setsockopt(visionSocket.socketDescriptor(), IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
+		
 	while (_running)
 	{
 		// Read all pending data from the gamepad
@@ -126,7 +133,7 @@ void Processor::run()
 		if (!_state.autonomous)
 		{
 			//non blocking information for manual control
-			receiver.receive(false);
+// 			receiver.receive(false);
 
 			//run modeling for testing
 			_modelingModule->run();
@@ -141,7 +148,6 @@ void Processor::run()
 
 			_joystick->drive();
 
-			_logModule->run();
 			captureState();
 
 			//send out the radio data from manual control
@@ -154,8 +160,16 @@ void Processor::run()
 		}
 		else
 		{
+			if (visionSocket.hasPendingDatagrams())
+			{
+				vector<uint8_t> buf;
+				buf.resize(visionSocket.pendingDatagramSize());
+				visionSocket.readDatagram((char *)&buf[0], buf.size());
+				visionHandler(&buf);
+			}
+			
 			//blocking to act on new packets
-			receiver.receive(true);
+// 			receiver.receive(true);
 
 			//if vision told us to act
 			if (_trigger)
@@ -219,8 +233,6 @@ void Processor::run()
 					_motionModule->run();
 				}
 
-				//always run logging last
-				_logModule->run();
 				captureState();
 				
 				// Send motion commands to the robots

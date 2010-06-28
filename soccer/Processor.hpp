@@ -18,7 +18,6 @@
 
 #include <gameplay/GameplayModule.hpp>
 #include <motion/MotionModule.hpp>
-#include <log/LogModule.hpp>
 #include <stateID/StateIDModule.hpp>
 
 #include <framework/ConfigFile.hpp>
@@ -116,7 +115,6 @@ class Processor: public QThread
 		boost::shared_ptr<RefereeModule> _refereeModule;
 		boost::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
 		boost::shared_ptr<Module> _motionModule;
-		boost::shared_ptr<Log::LogModule> _logModule;
 		boost::shared_ptr<StateIdentification::StateIDModule> _stateIDModule;
 		
 		boost::shared_ptr<JoystickInput> _joystick;

@@ -2,6 +2,7 @@
 // vim:ai ts=4 et
 #include "FieldView.hpp"
 
+#include "draw.hpp"
 #include <Constants.hpp>
 #include <Point.hpp>
 #include <Segment.hpp>
@@ -27,6 +28,7 @@ FieldView::FieldView(QWidget* parent) :
 	state = 0;
 	_dragBall = false;
 	_frame = 0;
+	_showVision = true;
 
 	_tx = -Field::Length/2.0f;
 	_ty = 0;
@@ -193,75 +195,177 @@ void FieldView::mouseMoveEvent(QMouseEvent* me)
 
 void FieldView::paintEvent(QPaintEvent* event)
 {
-	QPainter painter(this);
+	QPainter p(this);
 	
-	painter.fillRect(rect(), QColor(0, 85.0, 0));
+	p.fillRect(rect(), QColor(0, 85.0, 0));
 	
 	float scale = 1;
 	
 	float scalex = width()/Floor::Length * scale;
 	float scaley = height()/Floor::Width * scale;
 	
-	painter.scale(scalex, -scaley);
+	p.scale(scalex, -scaley);
 	
 	// world space
-	painter.translate(Floor::Length/2.0, -Floor::Width/2.0);
+	p.translate(Floor::Length/2.0, -Floor::Width/2.0);
 	
-	drawField(painter);
+	drawField(p);
 
-	////team space
-	painter.translate(_tx, _ty);
-	painter.rotate(_ta);
-	
-	if (_dragBall && _frame)
+	if (!_frame || !state)
 	{
-		painter.setPen(Qt::white);
+		return;
+	}
+	
+	////team space
+	p.translate(_tx, _ty);
+	p.rotate(_ta);
+	
+	if (_dragBall)
+	{
+		p.setPen(Qt::white);
 		Geometry2d::Point ball = _frame->ball.pos;
-		painter.drawLine(ball.toQPointF(), _dragTo.toQPointF());
+		p.drawLine(ball.toQPointF(), _dragTo.toQPointF());
 		
 		if (ball != _dragTo)
 		{
-			painter.setPen(Qt::gray);
+			p.setPen(Qt::gray);
 			
 			float speed = (ball - _dragTo).mag();
 			Geometry2d::Point shoot = ball + (ball - _dragTo) / speed * 8;
 			speed *= ShootScale;
 			
-			painter.drawLine(ball.toQPointF(), shoot.toQPointF());
-			painter.save();
-			painter.translate(_dragTo.toQPointF());
-			painter.rotate((_team == Blue) ? -90 : 90);
-			painter.scale(0.008, -0.008);
-			painter.drawText(_dragTo.toQPointF(), QString("%1 m/s").arg(speed, 0, 'f', 1));
-			painter.restore();
+			p.drawLine(ball.toQPointF(), shoot.toQPointF());
+			p.save();
+			p.translate(_dragTo.toQPointF());
+			p.rotate((_team == Blue) ? -90 : 90);
+			p.scale(0.008, -0.008);
+			p.drawText(_dragTo.toQPointF(), QString("%1 m/s").arg(speed, 0, 'f', 1));
+			p.restore();
 		}
 	}
 	
-	if (_frame)
+	if (state->manualID != -1)
 	{
-		//TODO handle display options...
+		p.setPen(Qt::green);
 		
-		if (state && state->manualID != -1)
-		{
-			painter.setPen(Qt::green);
-			
-			Geometry2d::Point center = _frame->self[state->manualID].pos;
-			const float r = Constants::Robot::Radius + .05;
-			painter.drawEllipse(center.toQPointF(), r, r);
-		}
-		
-		//draw the raw frame info
-		//TODO draw only the last frame?? - Roman
-		
-		BOOST_FOREACH(shared_ptr<Module> m, _modules)
-		{
-			painter.save();
-			m->fieldOverlay(painter, *_frame);
-			painter.restore();
-		}
+		Geometry2d::Point center = _frame->self[state->manualID].pos;
+		const float r = Constants::Robot::Radius + .05;
+		p.drawEllipse(center.toQPointF(), r, r);
 	}
 	
-	painter.end();
+	// draw debug lines
+	BOOST_FOREACH(const Packet::LogFrame::DebugLine& seg, _frame->debugLines)
+	{
+		p.setPen(QColor(seg.color[0], seg.color[1], seg.color[2]));
+		p.drawLine(seg.pt[0].toQPointF(), seg.pt[1].toQPointF());
+	}
+
+	// draw debug circles
+	BOOST_FOREACH(const Packet::LogFrame::DebugCircle& cir, _frame->debugCircles)
+	{
+		p.setPen(QColor(cir.color[0], cir.color[1], cir.color[2]));
+		p.drawEllipse(cir.center.toQPointF(), cir.radius(), cir.radius());
+	}
+
+	// draw debug text
+	BOOST_FOREACH(const Packet::LogFrame::DebugText& tex, _frame->debugText)
+	{
+		p.setPen(QColor(tex.color[0], tex.color[1], tex.color[2]));
+		QString text = QString::fromStdString(tex.text);
+		p.save();
+		p.translate(tex.pos.x, tex.pos.y);
+		p.rotate((_frame->team == Blue) ? -90 : 90);
+		p.scale(.008, -.008);
+		QRect r = p.boundingRect(0, 0, 0, 0, 0, text);
+		p.drawText(-r.width() / 2, r.height() / 2 - 4, text);
+		p.restore();
+	}
+
+	p.setPen(Qt::NoPen);
+	BOOST_FOREACH(const Packet::LogFrame::DebugPolygon &polygon, _frame->debugPolygons)
+	{
+		if (polygon.vertices.empty())
+		{
+			printf("Empty polygon\n");
+			continue;
+		}
+		
+		p.setBrush(QColor(polygon.color[0], polygon.color[1], polygon.color[2], 64));
+		QPointF pts[polygon.vertices.size()];
+		for (unsigned int i = 0; i < polygon.vertices.size(); ++i)
+		{
+			pts[i] = polygon.vertices[i].toQPointF();
+		}
+		p.drawConvexPolygon(pts, polygon.vertices.size());
+	}
+	p.setBrush(Qt::NoBrush);
+
+	if (_showVision)
+	{
+		BOOST_FOREACH(const Packet::Vision& vision, _frame->rawVision)
+		{
+			if (!vision.sync)
+			{
+				/* don't draw the robots twice
+				BOOST_FOREACH(const Packet::Vision::Robot& r, vision.blue)
+				{
+					drawRobot(p, Blue, r.shell, r.pos, r.angle, _frame->team);
+				}
+
+				BOOST_FOREACH(const Packet::Vision::Robot& r, vision.yellow)
+				{
+					drawRobot(p, Yellow, r.shell, r.pos, r.angle, _frame->team);
+				}
+				*/
+
+				BOOST_FOREACH(const Packet::Vision::Ball& b, vision.balls)
+				{
+					//drawBall(p, b.pos);
+					// draw the raw vision
+					p.setPen(QColor(0xcc, 0xcc, 0xcc));
+					p.drawEllipse(_frame->ball.pos.toQPointF(), Constants::Ball::Radius, Constants::Ball::Radius);
+				}
+			}
+		}
+	}
+	BOOST_FOREACH(const Packet::LogFrame::Robot &r, _frame->self)
+	{
+		if (r.valid)
+		{
+			drawRobot(p, _frame->team, r.shell, r.pos, r.angle, _frame->team, r.haveBall);
+		}
+	}
+
+	Team opp = opponentTeam(_frame->team);
+	BOOST_FOREACH(const Packet::LogFrame::Robot &r, _frame->opp)
+	{
+		if (r.valid)
+		{
+			drawRobot(p, opp, r.shell, r.pos, r.angle, _frame->team, r.haveBall);
+		}
+	}
+
+	if (_frame->ball.valid)
+	{
+		drawBall(p, _frame->ball.pos, _frame->ball.vel);
+	}
+	
+	// Referee rules
+	p.setPen(Qt::black);
+	if (_frame->gameState.stayAwayFromBall() && _frame->ball.valid)
+	{
+		p.setBrush(Qt::NoBrush);
+		p.drawEllipse(_frame->ball.pos.toQPointF(), Constants::Field::CenterRadius, Constants::Field::CenterRadius);
+	}
+	
+	BOOST_FOREACH(shared_ptr<Module> m, _modules)
+	{
+		p.save();
+		m->fieldOverlay(p, *_frame);
+		p.restore();
+	}
+	
+	p.end();
 	_updateTimer.start(30);
 }
 
@@ -271,8 +375,6 @@ void FieldView::drawField(QPainter& p)
 	
 	//reset to center
 	p.translate(-Floor::Length/2.0, -Floor::Width/2.0);
-	
-	p.setPen(Qt::NoPen);
 	
 	p.translate(Field::Border, Field::Border);
 	

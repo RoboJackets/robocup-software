@@ -57,6 +57,7 @@ namespace Log
 			float _tx, _ty, _ta;
 
 			Team _team;
+			bool _showVision;
 			
 			//list of modules for fieldOverlay hook
 			QVector<boost::shared_ptr<Module> > _modules;

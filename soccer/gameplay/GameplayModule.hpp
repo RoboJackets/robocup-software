@@ -45,7 +45,6 @@ namespace Gameplay
 				return _currentPlay;
 			}
 			
-			virtual void fieldOverlay(QPainter&, Packet::LogFrame&) const;
 			virtual void run();
 			
 			boost::shared_ptr<Play> selectPlay(size_t nrRobots);
