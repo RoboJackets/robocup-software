@@ -4,9 +4,9 @@
 
 #include "draw.hpp"
 #include <Constants.hpp>
-#include <Point.hpp>
-#include <Segment.hpp>
-#include <SimCommand.hpp>
+#include <Geometry2d/Point.hpp>
+#include <Geometry2d/Segment.hpp>
+#include <protobuf/SimCommand.pb.h>
 #include <Network/Network.hpp>
 
 #include <QPainter>
@@ -15,7 +15,6 @@
 
 using namespace boost;
 using namespace Constants;
-using namespace Log;
 
 // Converts from meters to m/s for manually shooting the ball
 static const float ShootScale = 5;
@@ -110,9 +109,9 @@ Geometry2d::Point FieldView::toWorldSpace(Geometry2d::Point pt, bool translate) 
 void FieldView::mouseDoubleClickEvent(QMouseEvent* me)
 {
 	Packet::SimCommand cmd;
-	cmd.ball.valid = true;
-	cmd.ball.pos = toWorldSpace(toTeamSpace(me->x(), me->y()));
-	_sender.send(cmd);
+	cmd.mutable_ball()->set_valid(true);
+	cmd.mutable_ball()->mutable_pos()->CopyFrom(toWorldSpace(toTeamSpace(me->x(), me->y())));
+	//FIXME - _sender.send(cmd);
 }
 
 void FieldView::mousePressEvent(QMouseEvent* me)
@@ -164,10 +163,10 @@ void FieldView::mouseReleaseEvent(QMouseEvent* me)
 	if (_dragBall)
 	{
 		Packet::SimCommand cmd;
-		cmd.ball.valid = true;
-		cmd.ball.pos = toWorldSpace(_frame->ball.pos);
-		cmd.ball.vel = toWorldSpace((_frame->ball.pos - _dragTo) * ShootScale, false);
-		_sender.send(cmd);
+		cmd.mutable_ball()->set_valid(true);
+		cmd.mutable_ball()->mutable_pos()->CopyFrom(toWorldSpace(_frame->ball.pos));
+		cmd.mutable_ball()->mutable_vel()->CopyFrom(toWorldSpace((_frame->ball.pos - _dragTo) * ShootScale, false));
+		//FIXME - _sender.send(cmd);
 		
 		_dragBall = false;
 		update();

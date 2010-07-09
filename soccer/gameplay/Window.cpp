@@ -1,5 +1,6 @@
 #include "Window.hpp"
 
+#include <stdio.h>
 #include <Constants.hpp>
 #include <framework/SystemState.hpp>
 #include <boost/foreach.hpp>

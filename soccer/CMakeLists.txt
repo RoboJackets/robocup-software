@@ -24,6 +24,9 @@ include_directories (${PROJECT_SOURCE_DIR}/modeling/)
 include_directories (${PROJECT_SOURCE_DIR}/gameplay/)
 include_directories (${PROJECT_SOURCE_DIR}/gameplay/optimizer)
 
+# Old packets, which are now normal headers
+include_directories(${PROJECT_SOURCE_DIR}/../common/old_packets)
+
 include_directories(${PROJECT_BINARY_DIR})
 	
 set (SRCS
@@ -46,9 +49,8 @@ set (SRCS
 	framework/Obstacle.cpp
 	framework/Path.cpp
 
-	log/FieldView.cpp
-	log/LogModule.cpp
-	log/draw.cpp
+	FieldView.cpp
+	draw.cpp
 
 # Sources for gameplay module
 
@@ -157,7 +159,7 @@ set (SRCS
 
 qt4_wrap_cpp ( MOC_SRCS
 	motion/MotionModule.hpp
-	log/FieldView.hpp
+	FieldView.hpp
 )
 
 qt4_automoc (${SRCS})

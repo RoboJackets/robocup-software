@@ -44,6 +44,7 @@ QWidget* MotionModule::widget() const
 	return _configWidget;
 }
 
+#if 0
 void MotionModule::fieldOverlay(QPainter& p, Packet::LogFrame& lf) const
 {
 	for(unsigned int i=0; i<5; i++)
@@ -79,7 +80,9 @@ void MotionModule::fieldOverlay(QPainter& p, Packet::LogFrame& lf) const
 		}
 	}
 }
+#endif
 
+#if 0
 void MotionModule::mousePress(QMouseEvent* me, Geometry2d::Point pos)
 {
 	if (_selectedRobotId != -1)
@@ -95,10 +98,11 @@ void MotionModule::mousePress(QMouseEvent* me, Geometry2d::Point pos)
 		}
 	}
 }
+#endif
 
 void MotionModule::run()
 {
-	BOOST_FOREACH(Robot* r, _robots)
+    BOOST_FOREACH(Robot* r, _robots)
     {
 		r->proc();
     }

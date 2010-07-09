@@ -5,16 +5,15 @@
 
 #include <QThread>
 #include <QMutex>
+#include <QUdpSocket>
 
 #include <list>
 
 #include <boost/shared_ptr.hpp>
 
-#include <Network/Sender.hpp>
 #include <Team.h>
 #include <Geometry2d/TransformMatrix.hpp>
 #include <Vision.hpp>
-#include <RadioRx.hpp>
 
 #include <gameplay/GameplayModule.hpp>
 #include <motion/MotionModule.hpp>
@@ -66,23 +65,19 @@ class Processor: public QThread
 	protected:
 		void run();
 
-		/** handle incoming vision packet */
-		void visionHandler(const std::vector<uint8_t>* packet);
-		/** handle incoming radio packet */
-		void radioHandler(const Packet::RadioRx* packet);
-	
 	private:
 		/** convert all coords to team space */
 		void toTeamSpace(Packet::Vision& vision);
 		
-		/** reset certain system state variables
-		 * NOTE This should ALWAYS happen after a send on radio */
-		void clearState();
-		
 		/** send out the radio data for the radio program */
 		void sendRadioData();
 
-	private:
+		/** handle incoming vision packet */
+		void visionPacket(const std::vector<uint8_t>* packet);
+		
+		/** handle incoming radio packet */
+		void radioHandler(const Packet::RadioRx* packet);
+	
 		/** Used to start and stop the thread **/
 		volatile bool _running;
 
@@ -102,11 +97,20 @@ class Processor: public QThread
 		
 		/** Which robot will next send reverse data */
 		int _reverseId;
-			
+		
+		// Time taken to run the last frame in microseconds
+		int _lastFrameTime;
+		
+		// Processing period in microseconds
+		int _framePeriod;
+		
 		QMutex _frameMutex;
 		Packet::LogFrame _lastFrame;
 		QObject *_mainWindow;
 		void captureState();
+		
+		QUdpSocket _visionSocket;
+		QUdpSocket _radioSocket;
 
 		//modules
 		QMutex _modulesMutex;
@@ -118,8 +122,6 @@ class Processor: public QThread
 		boost::shared_ptr<StateIdentification::StateIDModule> _stateIDModule;
 		
 		boost::shared_ptr<JoystickInput> _joystick;
-		
-		Network::Sender _sender;
 		
 		boost::shared_ptr<ConfigFile> _config;
 		

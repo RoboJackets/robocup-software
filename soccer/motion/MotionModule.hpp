@@ -5,8 +5,7 @@
 
 #include <QObject>
 #include <QString>
-#include <framework/Module.hpp>
-#include <RadioTx.hpp>
+#include <protobuf/RadioTx.pb.h>
 
 #include "Robot.hpp"
 #include <framework/ConfigFile.hpp>
@@ -14,7 +13,7 @@
 
 namespace Motion
 {
-	class MotionModule: public QObject, public Module
+	class MotionModule: public QObject
 	{
 		Q_OBJECT;
 
