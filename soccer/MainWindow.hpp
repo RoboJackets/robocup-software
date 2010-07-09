@@ -8,9 +8,7 @@
 
 #include <Team.h>
 
-#include <log/FieldView.hpp>
-#include <log/TreeView.hpp>
-#include <log/TreeModel.hpp>
+#include <FieldView.hpp>
 
 #include <configuration/ConfigFileTab.hpp>
 

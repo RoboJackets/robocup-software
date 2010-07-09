@@ -121,7 +121,7 @@ void JoystickInput::drive()
 	
 	Packet::RadioTx::Robot &tx = _state->self[_state->manualID].radioTx;
 	
-	tx.valid = true;
+	tx.set_valid(true);
 
 	//input is vx, vy in robot space
 	Point input(rightX, rightY);
@@ -180,7 +180,7 @@ void JoystickInput::drive()
 
 	for (unsigned int i = 0; i < 4; ++i)
 	{
-		tx.motors[i] = int8_t(scale * motors[i]);
+		tx.set_motors(i, int8_t(scale * motors[i]));
 	}
 
 	if (button[6])
@@ -198,7 +198,7 @@ void JoystickInput::drive()
 		_roller = _stored_roller;
 	}
 
-	tx.roller = _roller;
+	tx.set_roller(_roller);
 
-	tx.kick = button[7] ? 255 : 0;
+	tx.set_kick(button[7] ? 255 : 0);
 }

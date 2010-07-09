@@ -1,0 +1,9 @@
+package Packet;
+
+import "Point.proto";
+
+message Frame
+{
+	required Point whatever = 1;
+}
+

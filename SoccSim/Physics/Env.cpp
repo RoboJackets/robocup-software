@@ -5,143 +5,194 @@
 #include "Field.hpp"
 #include "Robot.hpp"
 
-#include <Constants.hpp>
-#include <Team.h>
-#include <Network/Network.hpp>
-#include <QMutexLocker>
-#include <boost/foreach.hpp>
+#include <protobuf/messages_robocup_ssl_detection.pb.h>
+#include <protobuf/messages_robocup_ssl_geometry.pb.h>
+#include <protobuf/messages_robocup_ssl_wrapper.pb.h>
 
-NxPhysicsSDK* Env::_physicsSDK = 0;
-unsigned int Env::_refCount = 0;
+#include <sys/time.h>
+#include <Constants.hpp>
+// #include <QMutexLocker>
+#include <boost/foreach.hpp>
+#include <Geometry2d/util.h>
 
 using namespace Geometry2d;
 
+const QHostAddress VisionAddress("224.5.23.2");
+const int VisionPort = 10002;
+
 Env::Env()
 {
-    if (!_physicsSDK)
-    {
-		//initialize the PhysX SDK
-		_physicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION);
-		if(!_physicsSDK)
-		{
-			printf("Wrong SDK DLL version\n");
-			//TODO throw exception
-		}
+	_frameNumber = 0;
+	
+	//initialize the PhysX SDK
+	_physicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION);
+	assert(_physicsSDK);
 
-		NxReal myScale = 0.5f;
-		_physicsSDK->setParameter(NX_VISUALIZATION_SCALE, myScale);
-		//gPhysicsSDK->setParameter(NX_VISUALIZE_WORLD_AXES, 2.0f);
-		_physicsSDK->setParameter(NX_VISUALIZE_COLLISION_SHAPES, 1.0f);
-		//_physicsSDK->setParameter(NX_VISUALIZE_COLLISION_SKELETONS, 1.0f);
-		//_physicsSDK->setParameter(NX_VISUALIZE_COLLISION_AABBS, 1.0f);
-		//_physicsSDK->setParameter(NX_VISUALIZE_BODY_LIN_VELOCITY, 1.0f);
+	NxReal myScale = 0.5f;
+	_physicsSDK->setParameter(NX_VISUALIZATION_SCALE, myScale);
+	//gPhysicsSDK->setParameter(NX_VISUALIZE_WORLD_AXES, 2.0f);
+	_physicsSDK->setParameter(NX_VISUALIZE_COLLISION_SHAPES, 1.0f);
+	//_physicsSDK->setParameter(NX_VISUALIZE_COLLISION_SKELETONS, 1.0f);
+	//_physicsSDK->setParameter(NX_VISUALIZE_COLLISION_AABBS, 1.0f);
+	//_physicsSDK->setParameter(NX_VISUALIZE_BODY_LIN_VELOCITY, 1.0f);
 
-		_physicsSDK->setParameter(NX_VISUALIZE_JOINT_WORLD_AXES, 1.0f);
-		//_physicsSDK->setParameter(NX_VISUALIZE_JOINT_LOCAL_AXES, 1.0f);
-		//_physicsSDK->setParameter(NX_VISUALIZE_JOINT_LIMITS, 1.0f);
+	_physicsSDK->setParameter(NX_VISUALIZE_JOINT_WORLD_AXES, 1.0f);
+	//_physicsSDK->setParameter(NX_VISUALIZE_JOINT_LOCAL_AXES, 1.0f);
+	//_physicsSDK->setParameter(NX_VISUALIZE_JOINT_LIMITS, 1.0f);
 
-		_physicsSDK->setParameter(NX_SKIN_WIDTH, 0.001f); //depth of the two skins
-		_physicsSDK->setParameter(NX_CONTINUOUS_CD, true);
-		_physicsSDK->setParameter(NX_CCD_EPSILON, .001f);
-    }
+	_physicsSDK->setParameter(NX_SKIN_WIDTH, 0.001f); //depth of the two skins
+	_physicsSDK->setParameter(NX_CONTINUOUS_CD, true);
+	_physicsSDK->setParameter(NX_CCD_EPSILON, .001f);
 
-    //setup a new scene
-    NxSceneDesc sceneDesc;
-    sceneDesc.setToDefault();
+	//setup a new scene
+	NxSceneDesc sceneDesc;
+	sceneDesc.setToDefault();
 
-    //setup gravity to world gravity
-    sceneDesc.gravity.set(0, 0, -9.81);
+	//setup gravity to world gravity
+	sceneDesc.gravity.set(0, 0, -9.81);
 
-    //set z-axis as up axis
-    sceneDesc.upAxis = 2;
+	//set z-axis as up axis
+	sceneDesc.upAxis = 2;
 
-    //setup the bounds for the scene, use field bounds
-    //TODO field bounds
-    NxBounds3 bounds;
-    bounds.set(-10, -10, 0, 10, 10, 10); //minx,y,z, maxx,y,z
-    sceneDesc.maxBounds = &bounds;
+	//setup the bounds for the scene, use field bounds
+	//TODO field bounds
+	NxBounds3 bounds;
+	bounds.set(-10, -10, 0, 10, 10, 10); //minx,y,z, maxx,y,z
+	sceneDesc.maxBounds = &bounds;
 
-    _scene = _physicsSDK->createScene(sceneDesc);
-    if (!_scene)
-    {
-	    printf("Can't create scene!\n");
-	    //TODO throw exception
-    }
+	_scene = _physicsSDK->createScene(sceneDesc);
+	assert(_scene);
 
-    //always add the field
-    _field = new Field(this);
+	//always add the field
+	_field = new Field(this);
 
-    //NxActor** actors = _scene->getActors();
-    //NxU32 actorCount = _scene->getNbActors();
+	//NxActor** actors = _scene->getActors();
+	//NxU32 actorCount = _scene->getNbActors();
 
-    //new environment created
-    ++_refCount;
+	//packetRxd = 0;
+	//_receiver = new Network::PacketReceiver();
+	//_receiver->addType(Network::Address, Network::addTeamOffset(Blue,Network::RadioTx), this, &Env::radioHandler);
+	//txPacket = new Packet::RadioTx();
 
-    //packetRxd = 0;
-    //_receiver = new Network::PacketReceiver();
-    //_receiver->addType(Network::Address, Network::addTeamOffset(Blue,Network::RadioTx), this, &Env::radioHandler);
-    //txPacket = new Packet::RadioTx();
-
-    connect(&_step, SIGNAL(timeout()), this, SLOT(step()));
+	gettimeofday(&_lastStepTime, 0);
+	
+	connect(&_timer, SIGNAL(timeout()), SLOT(step()));
+	_timer.start(5);
 }
 
 Env::~Env()
 {
-    if (_scene)
-    {
-    	_physicsSDK->releaseScene(*_scene);
-    	_scene = 0;
-    }
+	if (_scene)
+	{
+		_physicsSDK->releaseScene(*_scene);
+		_scene = 0;
+	}
 
-    //teardown the SDK ... only do when refcount = 0;
-    if (--_refCount == 0)
-    {
-    	_physicsSDK->release();
-    	_physicsSDK = 0;
-    }
+	_physicsSDK->release();
+	_physicsSDK = 0;
 }
 
-const NxDebugRenderable& Env::dbgRenderable() const
+NxDebugRenderable Env::dbgRenderable() const
 {
-	QMutexLocker ml(&_sceneMutex);
-    return *_scene->getDebugRenderable();
+// 	QMutexLocker ml(&_sceneMutex);
+	return *_scene->getDebugRenderable();
 }
 
 void Env::step()
 {
-	//no new radio data while this is running
-	//QMutexLocker ml(&_sceneMutex);
-	_sceneMutex.lock();
+	//FIXME - Check sockets
+	
+	// Run physics
+	struct timeval tv;
+	gettimeofday(&tv, 0);
+// 	_sceneMutex.lock();
+	_scene->simulate(tv.tv_sec - _lastStepTime.tv_sec + (tv.tv_usec - _lastStepTime.tv_usec) * 1.0e-6);
+	_lastStepTime = tv;
+	_scene->flushStream();
+// 	_sceneMutex.unlock();
+	_scene->fetchResults(NX_RIGID_BODY_FINISHED, true);
 
-    _scene->simulate(.005);
-    _scene->flushStream();
+	++_stepCount;
+	if (_stepCount == 4)
+	{
+		_stepCount = 0;
+		
+		// Send vision data
+		SSL_WrapperPacket packet;
+		SSL_DetectionFrame *det = packet.mutable_detection();
+		det->set_frame_number(_frameNumber++);
+		det->set_camera_id(0);
+		
+		det->set_t_capture(tv.tv_sec + (double)tv.tv_usec * 1.0e-6);
+		det->set_t_sent(det->t_capture());
+		
+		BOOST_FOREACH(Robot *robot, _yellow)
+		{
+			SSL_DetectionRobot *out = det->add_robots_yellow();
+			convert_robot(robot, out);
+		}
+		
+		BOOST_FOREACH(Robot *robot, _blue)
+		{
+			SSL_DetectionRobot *out = det->add_robots_blue();
+			convert_robot(robot, out);
+		}
+		
+		Geometry2d::Point cam0(-Constants::Field::Length / 4, 0);
+		Geometry2d::Point cam1(Constants::Field::Length / 4, 0);
 
-    //can use old data here
-	_sceneMutex.unlock();
+		BOOST_FOREACH(const Ball* b, _balls)
+		{
+			Geometry2d::Point ballPos = b->getPosition();
 
-    _scene->fetchResults(NX_RIGID_BODY_FINISHED, true);
+			bool occ;
+			if (ballPos.x < 0)
+			{
+				occ = occluded(ballPos, cam0);
+			} else {
+				occ = occluded(ballPos, cam1);
+			}
 
-    //generate some vision information with latest positions
-    genVision();
-    genRadio();
+			if (!occ)
+			{
+				SSL_DetectionBall *out = det->add_balls();
+				out->set_confidence(1);
+				out->set_x(ballPos.x * 1000);
+				out->set_y(ballPos.y * 1000);
+				out->set_pixel_x(ballPos.x * 1000);
+				out->set_pixel_y(ballPos.y * 1000);
+			}
+		}
+		
+		std::string buf;
+		packet.SerializeToString(&buf);
+		_visionSocket.writeDatagram(&buf[0], buf.size(), VisionAddress, VisionPort);
+	}
 }
 
-void Env::start()
+void Env::convert_robot(const Robot *robot, SSL_DetectionRobot *out)
 {
-	_step.start(5);
+	Geometry2d::Point pos = robot->getPosition();
+	out->set_confidence(1);
+	out->set_robot_id(robot->shell);
+	out->set_x(pos.x * 1000);
+	out->set_y(pos.y * 1000);
+	out->set_orientation(robot->getAngle() * DegreesToRadians);
+	out->set_pixel_x(pos.x * 1000);
+	out->set_pixel_y(pos.y * 1000);
 }
 
 void Env::addBall(Geometry2d::Point pos)
 {
-	QMutexLocker ml1(&_sceneMutex);
-	QMutexLocker ml2(&_entitiesMutex);
+// 	QMutexLocker ml1(&_sceneMutex);
+// 	QMutexLocker ml2(&_entitiesMutex);
 
-    Ball* b = new Ball(this);
-    b->position(pos.x, pos.y);
+	Ball* b = new Ball(this);
+	b->position(pos.x, pos.y);
 
-    _balls.append(b);
+	_balls.append(b);
 
-    printf("New Ball: %f %f\n", pos.x, pos.y);
+	printf("New Ball: %f %f\n", pos.x, pos.y);
 }
 
 void Env::addRobot(Team t, int id, Geometry2d::Point pos, Robot::Rev rev)
@@ -152,38 +203,28 @@ void Env::addRobot(Team t, int id, Geometry2d::Point pos, Robot::Rev rev)
 		return;
 	}
 
-	QMutexLocker ml1(&_sceneMutex);
-	QMutexLocker ml2(&_entitiesMutex);
+// 	QMutexLocker ml1(&_sceneMutex);
+// 	QMutexLocker ml2(&_entitiesMutex);
 
-    Robot* r = new Robot(this, id, rev);
-    r->position(pos.x, pos.y);
+	Robot* r = new Robot(this, id, rev);
+	r->position(pos.x, pos.y);
 
-    if (t == Blue)
-    {
-    	_blue.insert(id, r);
-    }
-    else
-    {
-    	_yellow.insert(id, r);
-    }
+	if (t == Blue)
+	{
+		_blue.insert(id, r);
+	}
+	else
+	{
+		_yellow.insert(id, r);
+	}
 
-    switch (rev) {
-    case Robot::rev2008:
-    	printf("New 2008 Robot: %d : %f %f\n", id, pos.x, pos.y);
-    	break;
-    case Robot::rev2010:
-    	printf("New 2010 Robot: %d : %f %f\n", id, pos.x, pos.y);
-    }
-
-}
-
-Packet::Vision Env::vision()
-{
-	//lock vision data mutex
-	QMutexLocker ml(&_visionMutex);
-
-	//return copy
-	return _visionInfo;
+	switch (rev) {
+	case Robot::rev2008:
+		printf("New 2008 Robot: %d : %f %f\n", id, pos.x, pos.y);
+		break;
+	case Robot::rev2010:
+		printf("New 2010 Robot: %d : %f %f\n", id, pos.x, pos.y);
+	}
 }
 
 Geometry2d::Point gaussianPoint(int n, float scale)
@@ -232,75 +273,21 @@ bool Env::occluded(Geometry2d::Point ball, Geometry2d::Point camera)
 	return false;
 }
 
-void Env::genVision()
-{
-	QMutexLocker ml(&_visionMutex);
-
-	_visionInfo = Packet::Vision();
-
-	//vision information is created by the environment because of the strict
-	//rules on when scene information can be accessed. This prevents needless
-	//locks on scene objects to generate vision info since a copy is returned
-
-	BOOST_FOREACH(const Robot* r, _blue)
-	{
-		Packet::Vision::Robot vr;
-		vr.angle = r->getAngle();
-		vr.pos = r->getPosition();// + gaussianPoint(25, 0.08);
-		vr.shell = r->shell;
-
-		_visionInfo.blue.push_back(vr);
-	}
-
-	BOOST_FOREACH(const Robot* r, _yellow)
-	{
-		Packet::Vision::Robot vr;
-		vr.angle = r->getAngle();
-		vr.pos = r->getPosition();// + gaussianPoint(25, 0.08);
-		vr.shell = r->shell;
-
-		_visionInfo.yellow.push_back(vr);
-	}
-
-	Geometry2d::Point cam0(-Constants::Field::Length / 4, 0);
-	Geometry2d::Point cam1(Constants::Field::Length / 4, 0);
-
-	BOOST_FOREACH(const Ball* b, _balls)
-	{
-		Geometry2d::Point ballPos = b->getPosition();
-
-		bool occ;
-		if (ballPos.x < 0)
-		{
-			occ = occluded(ballPos, cam0);
-		} else {
-			occ = occluded(ballPos, cam1);
-		}
-
-		if (!occ)
-		{
-			Packet::Vision::Ball vb;
-			vb.pos = ballPos;// + gaussianPoint(25, 0.08);
-			_visionInfo.balls.push_back(vb);
-		}
-	}
-}
-
-Packet::RadioRx Env::radioRx(Team t)
-{
-	QMutexLocker ml(&_radioRxMutex);
-
-	if (t == Blue)
-	{
-		return _radioRxBlue;
-	}
-	else if (t == Yellow)
-	{
-		return _radioRxYellow;
-	}
-
-	return Packet::RadioRx();
-}
+// Packet::RadioRx Env::radioRx(Team t)
+// {
+// 	QMutexLocker ml(&_radioRxMutex);
+// 
+// 	if (t == Blue)
+// 	{
+// 		return _radioRxBlue;
+// 	}
+// 	else if (t == Yellow)
+// 	{
+// 		return _radioRxYellow;
+// 	}
+// 
+// 	return Packet::RadioRx();
+// }
 
 Robot *Env::robot(Team t, int board_id) const
 {
@@ -314,55 +301,51 @@ Robot *Env::robot(Team t, int board_id) const
 	}
 }
 
-void Env::radioTx(Team t, const Packet::RadioTx& tx)
-{
-	//control robots when not working with the scene
-	//this will prep new data for the next scene
-	QMutexLocker ml(&_sceneMutex);
+// void Env::radioTx(Team t, const Packet::RadioTx& tx)
+// {
+// 	//control robots when not working with the scene
+// 	//this will prep new data for the next scene
+// 	QMutexLocker ml(&_sceneMutex);
+// 
+// 	for (int i = 0; i < 5; ++i)
+// 	{
+// 		const Packet::RadioTx::Robot& cmd = tx.robots[i];
+// 		if (cmd.valid)
+// 		{
+// 			Robot *r = robot(t, cmd.board_id);
+// 			if (r)
+// 			{
+// 				r->radioTx(cmd);
+// 			} else {
+// 				printf("Commanding nonexistant robot %s:%d\n",
+// 					(t == Blue) ? "Blue" : "Yellow",
+// 					cmd.board_id);
+// 			}
+// 		}
+// 	}
+// 	
+// 	Robot *rev = robot(t, tx.reverse_board_id);
+// 	if (rev)
+// 	{
+// 		Packet::RadioRx rx = rev->radioRx();
+// 		rx.board_id = tx.reverse_board_id;
+// 		
+// 		if (t == Blue)
+// 		{
+// 			_radioRxBlue = rx;
+// 		} else {
+// 			_radioRxYellow = rx;
+// 		}
+// 	}
+// }
 
-	for (int i = 0; i < 5; ++i)
-	{
-		const Packet::RadioTx::Robot& cmd = tx.robots[i];
-		if (cmd.valid)
-		{
-			Robot *r = robot(t, cmd.board_id);
-			if (r)
-			{
-				r->radioTx(cmd);
-			} else {
-				printf("Commanding nonexistant robot %s:%d\n",
-					(t == Blue) ? "Blue" : "Yellow",
-					cmd.board_id);
-			}
-		}
-	}
-	
-	Robot *rev = robot(t, tx.reverse_board_id);
-	if (rev)
-	{
-		Packet::RadioRx rx = rev->radioRx();
-		rx.board_id = tx.reverse_board_id;
-		
-		if (t == Blue)
-		{
-			_radioRxBlue = rx;
-		} else {
-			_radioRxYellow = rx;
-		}
-	}
-}
-
-void Env::command(const Packet::SimCommand &cmd)
-{
-    QMutexLocker ml(&_sceneMutex);
-
-    if (cmd.ball.valid && !_balls.empty())
-    {
-        _balls[0]->velocity(cmd.ball.vel.x, cmd.ball.vel.y);
-        _balls[0]->position(cmd.ball.pos.x, cmd.ball.pos.y);
-    }
-}
-
-void Env::genRadio()
-{
-}
+// void Env::command(const Packet::SimCommand &cmd)
+// {
+//     QMutexLocker ml(&_sceneMutex);
+// 
+//     if (cmd.ball.valid && !_balls.empty())
+//     {
+//         _balls[0]->velocity(cmd.ball.vel.x, cmd.ball.vel.y);
+//         _balls[0]->position(cmd.ball.pos.x, cmd.ball.pos.y);
+//     }
+// }

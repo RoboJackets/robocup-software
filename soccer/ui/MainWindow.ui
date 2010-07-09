@@ -87,9 +87,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>Log::FieldView</class>
+   <class>FieldView</class>
    <extends>QWidget</extends>
-   <header>log/FieldView.hpp</header>
+   <header>FieldView.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

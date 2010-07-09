@@ -1,9 +1,16 @@
 cmake_minimum_required(VERSION 2.6)
 
 set (PROTO_FILES
+	# ssl-vision
 	messages_robocup_ssl_detection
 	messages_robocup_ssl_geometry
 	messages_robocup_ssl_wrapper
+
+	# soccer
+	Point
+	RadioTx
+	RadioRx
+	SimCommand
 )
 
 set (GEN_CC)
@@ -30,7 +37,8 @@ add_custom_target(GenerateProto
 )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
+message(${CMAKE_CURRENT_BINARY_DIR})
 
-add_library(vision ${GEN_CC})
-add_dependencies(vision GenerateProto)
-target_link_libraries(vision protobuf)
+add_library(packets ${GEN_CC})
+add_dependencies(packets GenerateProto)
+target_link_libraries(packets protobuf)

@@ -25,7 +25,7 @@ Ball::Ball(Env* env) :
 	vert.z = .5f;
 	mesh.points = &vert;
 	
-	sphereDesc.ccdSkeleton = Env::_physicsSDK->createCCDSkeleton(mesh);
+	sphereDesc.ccdSkeleton = env->_physicsSDK->createCCDSkeleton(mesh);
 
 	// These materials apparently don't have any effect
 	NxMaterialDesc materialDesc;

@@ -95,7 +95,7 @@ if (USE_NETWORK AND NOT TARGET network)
 	message( STATUS "Using the Network library") 
 	
 	add_library (network ${network_srcs})
-	add_dependencies (network GeneratePackets)
+	#add_dependencies (network GeneratePackets)
 	set (NETWORK_LIBRARY network)
 endif()
 

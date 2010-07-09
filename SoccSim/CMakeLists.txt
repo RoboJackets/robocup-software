@@ -14,10 +14,9 @@ endif ()
 add_definitions (-Werror -Wall)
 
 # use common stuff
-set (USE_NETWORK true)
 set (USE_GEOMETRY true)
 include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
-add_subdirectory(${PROJECT_SOURCE_DIR}/../common/vision ${PROJECT_BINARY_DIR}/vision)
+add_subdirectory(${PROJECT_SOURCE_DIR}/../common/protobuf ${PROJECT_BINARY_DIR}/protobuf)
 
 # PhysX Setup
 set (PHYSX_VERSION 2.8.1)
@@ -63,9 +62,6 @@ set (SRCS
     main.cpp
     Viewer.cpp
     Config.cpp
-    VisionGen.cpp
-    Radio.cpp
-    CommandReceiver.cpp
 
     ## environment
     Physics/Env.cpp
@@ -110,11 +106,9 @@ if (CROSS32)
     set_target_properties (${PROJECT_NAME} PROPERTIES LINK_FLAGS -m32)
 endif ()
 
-target_link_libraries (${PROJECT_NAME} NxCooking PhysXLoader pthread ${QT_LIBRARIES})
-target_link_libraries (${PROJECT_NAME} ${NETWORK_LIBRARY})
-target_link_libraries (${PROJECT_NAME} ${PACKET_LIBRARY})
+target_link_libraries (${PROJECT_NAME} NxCooking PhysXLoader ${QT_LIBRARIES})
 target_link_libraries (${PROJECT_NAME} ${GEOMETRY_LIBRARY})
-target_link_libraries (${PROJECT_NAME} vision)
+target_link_libraries (${PROJECT_NAME} packets)
 
 # Copy the executable out to project /bin folder
 #file(COPY ./bin/${PROJECT_NAME} DESTINATION ../../bin/)

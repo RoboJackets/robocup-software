@@ -16,10 +16,10 @@ MainWindow::MainWindow(Team t, QString filename, bool sim) :
 	statusBar()->hide();
 	ui.fieldView->team(t);
 	
-	_treeModel = new TreeModel(ui.treeView);
+// 	_treeModel = new TreeModel(ui.treeView);
 	ui.splitter->setStretchFactor(0, 10);
 	ui.splitter->setStretchFactor(1, 1);
-	ui.treeView->setModel(_treeModel);
+// 	ui.treeView->setModel(_treeModel);
 	ui.treeView->expandAll();
 
 	ui.fieldView->state = &_processor.state();
@@ -76,7 +76,7 @@ PlayConfigTab *MainWindow::playConfig() const
 
 void MainWindow::updateTree()
 {
-	_treeModel->frame(&_viewFrame);
+// 	_treeModel->frame(&_viewFrame);
 }
 
 bool MainWindow::event(QEvent* e)
