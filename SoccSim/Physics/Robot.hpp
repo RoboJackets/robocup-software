@@ -22,7 +22,7 @@ class Robot : public Entity
         virtual void position(float x, float y); 
         
         /** set control data */
-        void radioTx(const Packet::RadioTx::Robot& data);
+        void radioTx(const Packet::RadioTx::Robot *data);
         /** get robot information data */
         Packet::RadioRx radioRx() const;
 

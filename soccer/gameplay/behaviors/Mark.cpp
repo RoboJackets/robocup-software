@@ -1,7 +1,6 @@
 #include "Mark.hpp"
 
 #include <Constants.hpp>
-#include <LogFrame.hpp>
 
 #include <iostream>
 
@@ -43,7 +42,7 @@ bool Gameplay::Behaviors::Mark::run()
 			  markVel = _markRobot->vel();
 		Segment ballMarkLine(ballPos, markPos);
 
-		drawLine(ballMarkLine, 0, 0, 0);
+		state()->drawLine(ballMarkLine);
 
 		// we want to get between the mark and the ball as fast as possible, then close in
 		float markLineDist = ballMarkLine.distTo(pos);

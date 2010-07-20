@@ -11,6 +11,8 @@ using namespace std;
 using namespace Geometry2d;
 using namespace Packet;
 
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::TestPassConfigOptimize, "Tests")
+
 Gameplay::Plays::TestPassConfigOptimize::TestPassConfigOptimize(GameplayModule *gameplay):
 	Play(gameplay),
 	testState_(INIT),

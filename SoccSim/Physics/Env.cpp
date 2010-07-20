@@ -8,20 +8,25 @@
 #include <protobuf/messages_robocup_ssl_detection.pb.h>
 #include <protobuf/messages_robocup_ssl_geometry.pb.h>
 #include <protobuf/messages_robocup_ssl_wrapper.pb.h>
+#include <protobuf/SimCommand.pb.h>
 
 #include <sys/time.h>
 #include <Constants.hpp>
-// #include <QMutexLocker>
+#include <Network.hpp>
 #include <boost/foreach.hpp>
 #include <Geometry2d/util.h>
 
+using namespace std;
 using namespace Geometry2d;
+using namespace Packet;
 
-const QHostAddress VisionAddress("224.5.23.2");
-const int VisionPort = 10002;
+static const QHostAddress LocalAddress(QHostAddress::LocalHost);
+static const QHostAddress MulticastAddress(SharedVisionAddress);
 
 Env::Env()
 {
+	sendShared = false;
+	_stepCount = 0;
 	_frameNumber = 0;
 	
 	//initialize the PhysX SDK
@@ -63,21 +68,17 @@ Env::Env()
 	_scene = _physicsSDK->createScene(sceneDesc);
 	assert(_scene);
 
-	//always add the field
 	_field = new Field(this);
 
-	//NxActor** actors = _scene->getActors();
-	//NxU32 actorCount = _scene->getNbActors();
-
-	//packetRxd = 0;
-	//_receiver = new Network::PacketReceiver();
-	//_receiver->addType(Network::Address, Network::addTeamOffset(Blue,Network::RadioTx), this, &Env::radioHandler);
-	//txPacket = new Packet::RadioTx();
-
+	// Bind sockets
+	assert(_visionSocket.bind(SimCommandPort));
+	assert(_radioSocket[0].bind(RadioTxPort));
+	assert(_radioSocket[1].bind(RadioTxPort + 1));
+	
 	gettimeofday(&_lastStepTime, 0);
 	
 	connect(&_timer, SIGNAL(timeout()), SLOT(step()));
-	_timer.start(5);
+	_timer.start(4);
 }
 
 Env::~Env()
@@ -94,22 +95,67 @@ Env::~Env()
 
 NxDebugRenderable Env::dbgRenderable() const
 {
-// 	QMutexLocker ml(&_sceneMutex);
 	return *_scene->getDebugRenderable();
 }
 
 void Env::step()
 {
-	//FIXME - Check sockets
+	// Check for SimCommands
+	while (_visionSocket.hasPendingDatagrams())
+	{
+		string buf;
+		unsigned int n = _visionSocket.pendingDatagramSize();
+		buf.resize(n);
+		_visionSocket.readDatagram(&buf[0], n);
+		
+		SimCommand cmd;
+		if (!cmd.ParseFromString(buf))
+		{
+			printf("Bad SimCommand of %d bytes\n", n);
+			continue;
+		}
+		
+		if (!_balls.empty())
+		{
+			if (cmd.has_ball_vel())
+			{
+				_balls[0]->velocity(cmd.ball_vel().x(), cmd.ball_vel().y());
+			}
+			if (cmd.has_ball_pos())
+			{
+				_balls[0]->position(cmd.ball_pos().x(), cmd.ball_pos().y());
+			}
+		}
+	}
+	
+	// Check for RadioTx packets
+	for (int r = 0; r < 2; ++r)
+	{
+		QUdpSocket &s = _radioSocket[r];
+		while (s.hasPendingDatagrams())
+		{
+			string buf;
+			unsigned int n = s.pendingDatagramSize();
+			buf.resize(n);
+			s.readDatagram(&buf[0], n);
+			
+			RadioTx tx;
+			if (!tx.ParseFromString(buf))
+			{
+				printf("Bad RadioTx on %d of %d bytes\n", r, n);
+				continue;
+			}
+			
+			handleRadioTx(r, tx);
+		}
+	}
 	
 	// Run physics
 	struct timeval tv;
 	gettimeofday(&tv, 0);
-// 	_sceneMutex.lock();
 	_scene->simulate(tv.tv_sec - _lastStepTime.tv_sec + (tv.tv_usec - _lastStepTime.tv_usec) * 1.0e-6);
 	_lastStepTime = tv;
 	_scene->flushStream();
-// 	_sceneMutex.unlock();
 	_scene->fetchResults(NX_RIGID_BODY_FINISHED, true);
 
 	++_stepCount;
@@ -118,8 +164,8 @@ void Env::step()
 		_stepCount = 0;
 		
 		// Send vision data
-		SSL_WrapperPacket packet;
-		SSL_DetectionFrame *det = packet.mutable_detection();
+		SSL_WrapperPacket wrapper;
+		SSL_DetectionFrame *det = wrapper.mutable_detection();
 		det->set_frame_number(_frameNumber++);
 		det->set_camera_id(0);
 		
@@ -165,8 +211,15 @@ void Env::step()
 		}
 		
 		std::string buf;
-		packet.SerializeToString(&buf);
-		_visionSocket.writeDatagram(&buf[0], buf.size(), VisionAddress, VisionPort);
+		wrapper.SerializeToString(&buf);
+		
+		if (sendShared)
+		{
+			_visionSocket.writeDatagram(&buf[0], buf.size(), MulticastAddress, SharedVisionPort);
+		} else {
+			_visionSocket.writeDatagram(&buf[0], buf.size(), LocalAddress, SimVisionPort);
+			_visionSocket.writeDatagram(&buf[0], buf.size(), LocalAddress, SimVisionPort + 1);
+		}
 	}
 }
 
@@ -184,9 +237,6 @@ void Env::convert_robot(const Robot *robot, SSL_DetectionRobot *out)
 
 void Env::addBall(Geometry2d::Point pos)
 {
-// 	QMutexLocker ml1(&_sceneMutex);
-// 	QMutexLocker ml2(&_entitiesMutex);
-
 	Ball* b = new Ball(this);
 	b->position(pos.x, pos.y);
 
@@ -195,26 +245,15 @@ void Env::addBall(Geometry2d::Point pos)
 	printf("New Ball: %f %f\n", pos.x, pos.y);
 }
 
-void Env::addRobot(Team t, int id, Geometry2d::Point pos, Robot::Rev rev)
+void Env::addRobot(bool blue, int id, Geometry2d::Point pos, Robot::Rev rev)
 {
-	if (t == UnknownTeam)
-	{
-		printf("Cannot add robots to unknown team.\n");
-		return;
-	}
-
-// 	QMutexLocker ml1(&_sceneMutex);
-// 	QMutexLocker ml2(&_entitiesMutex);
-
 	Robot* r = new Robot(this, id, rev);
 	r->position(pos.x, pos.y);
 
-	if (t == Blue)
+	if (blue)
 	{
 		_blue.insert(id, r);
-	}
-	else
-	{
+	} else {
 		_yellow.insert(id, r);
 	}
 
@@ -273,25 +312,9 @@ bool Env::occluded(Geometry2d::Point ball, Geometry2d::Point camera)
 	return false;
 }
 
-// Packet::RadioRx Env::radioRx(Team t)
-// {
-// 	QMutexLocker ml(&_radioRxMutex);
-// 
-// 	if (t == Blue)
-// 	{
-// 		return _radioRxBlue;
-// 	}
-// 	else if (t == Yellow)
-// 	{
-// 		return _radioRxYellow;
-// 	}
-// 
-// 	return Packet::RadioRx();
-// }
-
-Robot *Env::robot(Team t, int board_id) const
+Robot *Env::robot(bool blue, int board_id) const
 {
-	const QMap<unsigned int, Robot*> &robots = (t == Blue) ? _blue : _yellow;
+	const QMap<unsigned int, Robot*> &robots = blue ? _blue : _yellow;
 	
 	if (robots.contains(board_id))
 	{
@@ -301,51 +324,42 @@ Robot *Env::robot(Team t, int board_id) const
 	}
 }
 
-// void Env::radioTx(Team t, const Packet::RadioTx& tx)
-// {
-// 	//control robots when not working with the scene
-// 	//this will prep new data for the next scene
-// 	QMutexLocker ml(&_sceneMutex);
-// 
-// 	for (int i = 0; i < 5; ++i)
-// 	{
-// 		const Packet::RadioTx::Robot& cmd = tx.robots[i];
-// 		if (cmd.valid)
-// 		{
-// 			Robot *r = robot(t, cmd.board_id);
-// 			if (r)
-// 			{
-// 				r->radioTx(cmd);
-// 			} else {
-// 				printf("Commanding nonexistant robot %s:%d\n",
-// 					(t == Blue) ? "Blue" : "Yellow",
-// 					cmd.board_id);
-// 			}
-// 		}
-// 	}
-// 	
-// 	Robot *rev = robot(t, tx.reverse_board_id);
-// 	if (rev)
-// 	{
-// 		Packet::RadioRx rx = rev->radioRx();
-// 		rx.board_id = tx.reverse_board_id;
-// 		
-// 		if (t == Blue)
-// 		{
-// 			_radioRxBlue = rx;
-// 		} else {
-// 			_radioRxYellow = rx;
-// 		}
-// 	}
-// }
-
-// void Env::command(const Packet::SimCommand &cmd)
-// {
-//     QMutexLocker ml(&_sceneMutex);
-// 
-//     if (cmd.ball.valid && !_balls.empty())
-//     {
-//         _balls[0]->velocity(cmd.ball.vel.x, cmd.ball.vel.y);
-//         _balls[0]->position(cmd.ball.pos.x, cmd.ball.pos.y);
-//     }
-// }
+void Env::handleRadioTx(int ch, const Packet::RadioTx& tx)
+{
+	// Channel 0 is yellow.
+	// Channel 1 is blue.
+	bool blue = ch;
+	
+	for (int i = 0; i < tx.robots_size(); ++i)
+	{
+		const Packet::RadioTx::Robot &cmd = tx.robots(i);
+		
+		if (cmd.motors_size() != 4)
+		{
+			printf("ch %d r %d: Wrong number of motors: %d != 4\n", ch, i, cmd.motors_size());
+			continue;
+		}
+		
+		Robot *r = robot(blue, cmd.board_id());
+		if (r)
+		{
+			r->radioTx(&cmd);
+		} else {
+			printf("Commanding nonexistant robot %s:%d\n",
+				blue ? "Blue" : "Yellow",
+				cmd.board_id());
+		}
+	}
+	
+	Robot *rev = robot(blue, tx.reverse_board_id());
+	if (rev)
+	{
+		Packet::RadioRx rx = rev->radioRx();
+		rx.set_board_id(tx.reverse_board_id());
+		
+		// Send the RX packet
+		std::string out;
+		rx.SerializeToString(&out);
+		_radioSocket[ch].writeDatagram(&out[0], out.size(), LocalAddress, RadioRxPort + ch);
+	}
+}

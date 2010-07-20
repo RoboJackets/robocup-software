@@ -357,192 +357,198 @@ float Robot::getAngle() const
 	return atan2(c1[1] , c1[0]) * 180.0f / M_PI;
 }
 
-// void Robot::radioTx(const Packet::RadioTx::Robot& data)
-// {
-// 	//motors
-// 	#if 0
-// 	for (int i = 0; i < 4; ++i)
-// 	{
-// 		NxMotorDesc motorDesc;
-// 		_motors[i]->getMotor(motorDesc);
-// 		
-// 		//create a velocity target based on the requested travel velocity
-// 		motorDesc.velTarget = 100.0f * data.motors[i] / 255.0f;
-// 
-// 		_motors[i]->setMotor(motorDesc);
-// 	}
-// 	#endif
-// 	
-// 	Geometry2d::Point axles[4] =
-// 	{
-// 		Point( .08,  .08),
-// 		Point( .08, -.08),
-// 		Point(-.08, -.08),
-// 		Point(-.08,  .08)
-// 	};
-// 	
-// 	if (_rollerJoint)
-// 	{
-// 		NxMotorDesc motorDesc;
-// 		_rollerJoint->getMotor(motorDesc);
-// 		motorDesc.velTarget = data.roller * 10.0f / 255.0f;
-// 		_rollerJoint->setMotor(motorDesc);
-// 	}
-// 	
-// 	for (unsigned int i=0 ; i<4 ; ++i)
-// 	{		
-// 		Point wheel(-axles[i].y, axles[i].x);
-// 		wheel = wheel.normalized();
-// 		wheel.rotate(Point(), getAngle());
-// 		
-// 		NxVec3 p(axles[i].x, axles[i].y, 0);
-// 		
-// 		NxVec3 vp = _actor->getLocalPointVelocity(p);
-// 		Point vel(vp.x, vp.y);
-// 		
-// 		float current = vel.dot(wheel);
-// 		
-// 
-// 		float target = data.motors[i]/127.0f * 1.2;
-// 		// reverse for 2010 robots
-// 		if (_rev == rev2010)
-// 			target = -target;
-// 		const float diff = target - current;
-// 		
-// 		const float force = 20.0f * diff;
-// 		
-// 		const float fx = force * wheel.x;
-// 		const float fy = force * wheel.y;
-// 		
-// 		NxVec3 f(fx,fy,0);
-// 		_actor->addForceAtLocalPos(f, p);
-// 	}
-//     
-//     // Kicker
-// #if 0
-//     if (_kickerJoint)
-//     {
-//         float kick = data.kick;
-//         float v;
-//         if (kick)
-//         {
-//             v = kick * 10.0f / 255.0f;
-//         } else {
-//             v = -1;
-//         }
-//         _kickerJoint->setDriveLinearVelocity(NxVec3(v, 0, 0));
-//     }
-// #else
-// 
-//     /** How we kick:
-//      * Kick speed will be zeroed if we are not kicking
-//      * Otherwise we determine which direction we are kicking and kick that way, using
-//      * max speeds guessed with science
-//      */
-// 
-//     if (data.kick && Utils::timestamp() - _lastKicked > RechargeTime)
-//     {
-//     	// FIXME: make these parameters some place else
-//     	float maxKickSpeed = 5.0f, // m/s direct kicking speed
-//     		  maxChipSpeed = 3.0f, // m/s chip kicking at the upwards angle
-//     		  chipAngle = 20.0f;   // angle (degrees) of upwards chip
-// 
-//     	// determine the kick speed
-//     	float kickSpeed;
-//     	bool chip = data.useChipper && _rev == rev2010;
-//     	if (chip)
-//     		kickSpeed = data.kick / 255.0f * maxChipSpeed;
-//     	else
-//     		kickSpeed = data.kick / 255.0f * maxKickSpeed;
-// 
-//     	// find the max and mins based on the field of the kicker
-//         const float halfKickerFOV = 30 * M_PI / 180.0f;
-//         NxVec3 kickerMax(cos(halfKickerFOV), sin(halfKickerFOV), 0);
-//         NxVec3 kickerMin(kickerMax.x, -kickerMax.y, 0);
-// 
-//         // convert orientation to actual global space
-//         NxMat33 orientation = _actor->getGlobalOrientation();
-//         kickerMin = orientation * kickerMin;
-//         kickerMax = orientation * kickerMax;
-// 
-//         // construct a velocity to apply FIXME: add a switch here
-//         Geometry2d::Point pos = getPosition();
-//         NxVec3 kickVel = _actor->getGlobalOrientation().getColumn(0);
-//         if (chip) {
-//         	kickVel.setz(cos(chipAngle));
-//         	kickVel.normalize();
-//         }
-// 
-//         kickVel *= kickSpeed;
-//         BOOST_FOREACH(Ball *ball, _env->balls())
-//         {
-//             Geometry2d::Point ballPos = ball->getPosition();
-//             bool near = ballPos.nearPoint(pos, Constants::Robot::Radius + Constants::Ball::Radius);
-// 
-//             // FIXME - This works as long as the robot is flat on the ground.
-//             //         A sensor object would be better.
-//             NxVec3 ballRel = ball->actor()->getGlobalPosition() - _actor->getGlobalPosition();
-//             NxVec3 cmin, cmax;
-//             cmin.cross(kickerMin, ballRel);
-//             cmax.cross(ballRel, kickerMax);
-// //            printf("min %f max %f\n", cmin.z, cmax.z);
-// 
-//             if (near && cmin.z > 0 && cmax.z > 0)
-//             {
-//             	if (chip)
-//             		printf("Robot %d chip %p by %f: %f, %f, %f\n", shell, ball, kickSpeed, kickVel.x, kickVel.y, kickVel.z);
-//             	else
-//             		printf("Robot %d kick %p by %f: %f, %f, %f\n", shell, ball, kickSpeed, kickVel.x, kickVel.y, kickVel.z);
-// 
-//                 ball->actor()->addForce(kickVel, NX_VELOCITY_CHANGE);
-//                 _lastKicked = Utils::timestamp();
-//             }
-//         }
-//     }
-// #endif
-// }
-// 
-// Packet::RadioRx Robot::radioRx() const
-// {
-// 	Packet::RadioRx packet;
-// 	
-// 	packet.timestamp = Utils::timestamp();
-// 	packet.battery = 1.0f;
-// 	packet.rssi = 1.0f;
-// 	packet.charged = Utils::timestamp() - _lastKicked > RechargeTime;
-// 	
-// 	Geometry2d::Point pos = getPosition();
-// 	
-// 	const float halfKickerFOV = 30 * M_PI / 180.0f;
-// 	NxVec3 kickerMax(cos(halfKickerFOV), sin(halfKickerFOV), 0);
-// 	NxVec3 kickerMin(kickerMax.x, -kickerMax.y, 0);
-// 	
-// 	NxMat33 orientation = _actor->getGlobalOrientation();
-// 	kickerMin = orientation * kickerMin;
-// 	kickerMax = orientation * kickerMax;
-// 	
-// 	BOOST_FOREACH(const Ball* ball, _env->balls())
-// 	{
-// 		Geometry2d::Point ballPos = ball->getPosition();
-// 		bool near = ballPos.nearPoint(pos, Constants::Robot::Radius + Constants::Ball::Radius);
-// 		
-// 		if (!near)
-// 		{
-// 			continue;
-// 		}
-// 		
-// 		// FIXME - This works as long as the robot is flat on the ground.
-// 		//         A sensor object would be better.
-// 		NxVec3 ballRel = ball->actor()->getGlobalPosition() - _actor->getGlobalPosition();
-// 		NxVec3 cmin, cmax;
-// 		cmin.cross(kickerMin, ballRel);
-// 		cmax.cross(ballRel, kickerMax);
-// 		
-// 		if (cmin.z > 0 && cmax.z > 0)
-// 		{
-// 			packet.ball = true;
-// 		}
-// 	}
-// 	
-// 	return packet;
-// }
+void Robot::radioTx(const Packet::RadioTx::Robot *data)
+{
+	//motors
+	#if 0
+	for (int i = 0; i < 4; ++i)
+	{
+		NxMotorDesc motorDesc;
+		_motors[i]->getMotor(motorDesc);
+		
+		//create a velocity target based on the requested travel velocity
+		motorDesc.velTarget = 100.0f * data.motors[i] / 255.0f;
+
+		_motors[i]->setMotor(motorDesc);
+	}
+	#endif
+	
+	Geometry2d::Point axles[4] =
+	{
+		Point( .08,  .08),
+		Point( .08, -.08),
+		Point(-.08, -.08),
+		Point(-.08,  .08)
+	};
+	
+	if (_rollerJoint)
+	{
+		NxMotorDesc motorDesc;
+		_rollerJoint->getMotor(motorDesc);
+		motorDesc.velTarget = data->roller() * 10.0f / 255.0f;
+		_rollerJoint->setMotor(motorDesc);
+	}
+	
+	for (unsigned int i = 0 ; i < 4 ; ++i)
+	{		
+		Point wheel(-axles[i].y, axles[i].x);
+		wheel = wheel.normalized();
+		wheel.rotate(Point(), getAngle());
+		
+		NxVec3 p(axles[i].x, axles[i].y, 0);
+		
+		NxVec3 vp = _actor->getLocalPointVelocity(p);
+		Point vel(vp.x, vp.y);
+		
+		float current = vel.dot(wheel);
+		
+
+		float target = data->motors(i) / 127.0f * 1.2;
+		
+		// reverse for 2010 robots
+		if (_rev == rev2010)
+		{
+			target = -target;
+		}
+		
+		const float diff = target - current;
+		
+		const float force = 20.0f * diff;
+		
+		const float fx = force * wheel.x;
+		const float fy = force * wheel.y;
+		
+		NxVec3 f(fx,fy,0);
+		_actor->addForceAtLocalPos(f, p);
+	}
+    
+    // Kicker
+#if 0
+    if (_kickerJoint)
+    {
+        float kick = data.kick;
+        float v;
+        if (kick)
+        {
+            v = kick * 10.0f / 255.0f;
+        } else {
+            v = -1;
+        }
+        _kickerJoint->setDriveLinearVelocity(NxVec3(v, 0, 0));
+    }
+#else
+
+    /** How we kick:
+     * Kick speed will be zeroed if we are not kicking
+     * Otherwise we determine which direction we are kicking and kick that way, using
+     * max speeds guessed with science
+     */
+
+    if (data->kick() && Utils::timestamp() - _lastKicked > RechargeTime)
+    {
+    	// FIXME: make these parameters some place else
+    	float maxKickSpeed = 5.0f, // m/s direct kicking speed
+    		  maxChipSpeed = 3.0f, // m/s chip kicking at the upwards angle
+    		  chipAngle = 20.0f;   // angle (degrees) of upwards chip
+
+    	// determine the kick speed
+    	float kickSpeed;
+    	bool chip = data->use_chipper() && _rev == rev2010;
+    	if (chip)
+		{
+    		kickSpeed = data->kick() / 255.0f * maxChipSpeed;
+		} else {
+    		kickSpeed = data->kick() / 255.0f * maxKickSpeed;
+		}
+
+    	// find the max and mins based on the field of the kicker
+        const float halfKickerFOV = 30 * M_PI / 180.0f;
+        NxVec3 kickerMax(cos(halfKickerFOV), sin(halfKickerFOV), 0);
+        NxVec3 kickerMin(kickerMax.x, -kickerMax.y, 0);
+
+        // convert orientation to actual global space
+        NxMat33 orientation = _actor->getGlobalOrientation();
+        kickerMin = orientation * kickerMin;
+        kickerMax = orientation * kickerMax;
+
+        // construct a velocity to apply FIXME: add a switch here
+        Geometry2d::Point pos = getPosition();
+        NxVec3 kickVel = _actor->getGlobalOrientation().getColumn(0);
+        if (chip) {
+        	kickVel.setz(cos(chipAngle));
+        	kickVel.normalize();
+        }
+
+        kickVel *= kickSpeed;
+        BOOST_FOREACH(Ball *ball, _env->balls())
+        {
+            Geometry2d::Point ballPos = ball->getPosition();
+            bool near = ballPos.nearPoint(pos, Constants::Robot::Radius + Constants::Ball::Radius);
+
+            // FIXME - This works as long as the robot is flat on the ground.
+            //         A sensor object would be better.
+            NxVec3 ballRel = ball->actor()->getGlobalPosition() - _actor->getGlobalPosition();
+            NxVec3 cmin, cmax;
+            cmin.cross(kickerMin, ballRel);
+            cmax.cross(ballRel, kickerMax);
+//            printf("min %f max %f\n", cmin.z, cmax.z);
+
+            if (near && cmin.z > 0 && cmax.z > 0)
+            {
+            	if (chip)
+            		printf("Robot %d chip %p by %f: %f, %f, %f\n", shell, ball, kickSpeed, kickVel.x, kickVel.y, kickVel.z);
+            	else
+            		printf("Robot %d kick %p by %f: %f, %f, %f\n", shell, ball, kickSpeed, kickVel.x, kickVel.y, kickVel.z);
+
+                ball->actor()->addForce(kickVel, NX_VELOCITY_CHANGE);
+                _lastKicked = Utils::timestamp();
+            }
+        }
+    }
+#endif
+}
+
+Packet::RadioRx Robot::radioRx() const
+{
+	Packet::RadioRx packet;
+	
+	packet.set_timestamp(Utils::timestamp());
+	packet.set_battery(1.0f);
+	packet.set_rssi(1.0f);
+	packet.set_charged(Utils::timestamp() - _lastKicked > RechargeTime);
+	
+	Geometry2d::Point pos = getPosition();
+	
+	const float halfKickerFOV = 30 * M_PI / 180.0f;
+	NxVec3 kickerMax(cos(halfKickerFOV), sin(halfKickerFOV), 0);
+	NxVec3 kickerMin(kickerMax.x, -kickerMax.y, 0);
+	
+	NxMat33 orientation = _actor->getGlobalOrientation();
+	kickerMin = orientation * kickerMin;
+	kickerMax = orientation * kickerMax;
+	
+	BOOST_FOREACH(const Ball* ball, _env->balls())
+	{
+		Geometry2d::Point ballPos = ball->getPosition();
+		bool near = ballPos.nearPoint(pos, Constants::Robot::Radius + Constants::Ball::Radius);
+		
+		if (!near)
+		{
+			continue;
+		}
+		
+		// FIXME - This works as long as the robot is flat on the ground.
+		//         A sensor object would be better.
+		NxVec3 ballRel = ball->actor()->getGlobalPosition() - _actor->getGlobalPosition();
+		NxVec3 cmin, cmax;
+		cmin.cross(kickerMin, ballRel);
+		cmax.cross(ballRel, kickerMax);
+		
+		if (cmin.z > 0 && cmax.z > 0)
+		{
+			packet.set_ball(true);
+		}
+	}
+	
+	return packet;
+}

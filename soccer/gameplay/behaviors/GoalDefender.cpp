@@ -62,13 +62,13 @@ bool Gameplay::Behaviors::GoalDefender::run()
 	if(ballTravelIntersects && blockPoint.y > 0 && movingTowardsGoal)
 	{
 		// If ball is traveling towards the goal, block it.
-		drawText("YY", blockPoint, 255, 0, 255);
+		state()->drawText("YY", blockPoint, Qt::magenta);
 	}
 	else
 	{	// Stand in the largest open window
 		Geometry2d::Line bestWindowLine(best->segment.center(), Geometry2d::Point(0,0));
 		Geometry2d::Point blockPoint = (best->segment.center().normalized()) * radius;
-		drawText("XX", blockPoint, 255, 255, 255);
+		state()->drawText("XX", blockPoint, Qt::white);
 	}
 
 

@@ -2,6 +2,8 @@
 
 using namespace std;
 
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::Stopped, "Restarts")
+
 Gameplay::Plays::Stopped::Stopped(GameplayModule *gameplay):
 	Play(gameplay, 0),
 	_idle(gameplay),

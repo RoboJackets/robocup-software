@@ -113,7 +113,7 @@ bool Gameplay::Behaviors::Kick::run()
 	case SEGMENT:
 		_target = evaluateSegment();
 	}
-	drawLine(_target, 255, 0, 0); // show the target segment
+	state()->drawLine(_target, Qt::red); // show the target segment
 
 	Geometry2d::Point targetCenter = _target.center();
 
@@ -188,19 +188,19 @@ bool Gameplay::Behaviors::Kick::run()
 	case Intercept: {
 		//approach the ball at high speed using Intercept
 		_state = intercept(targetCenter);
-		drawText("Intercept", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
+		state()->drawText("Intercept", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
 		break;
 	} case Aim: {
 		_state = aim(targetCenter, canKick);
-		drawText("Aim", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
+		state()->drawText("Aim", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
 		break;
 	} case Shoot: {
 		_state = shoot(targetCenter, kickStrength);
-		drawText("Shoot", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
+		state()->drawText("Shoot", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
 		break;
 	} case OneTouchAim: {
 		_state = oneTouchApproach();
-		drawText("OneTouchAim", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
+		state()->drawText("OneTouchAim", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
 		break;
 	} case Done: // do nothing
 		break;
@@ -215,9 +215,9 @@ bool Gameplay::Behaviors::Kick::ballBehind(const Point& ballPos, const Point& ap
 	Segment ballPerpLine(apprPoint - approachVec.perpCW(), apprPoint + approachVec.perpCW());
 	bool res = ballPerpLine.pointSide(pos) < 0.0;
 	if (debugDraw) {
-		drawLine(ballPerpLine, 0, 0, 0);
+		state()->drawLine(ballPerpLine);
 		if (res)
-			drawText("B", pos + textOffsetLeft, 0, 0, 0);
+			state()->drawText("B", pos + textOffsetLeft);
 	}
 	return res;
 }
@@ -345,12 +345,12 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 	Point ballPosProj = ballPos + proj * proj_damp;
 
 	// show an ideal line from ball to target
-	drawLine(Segment(ballPosProj, targetCenter), 255, 0, 0); // red
+	state()->drawLine(Segment(ballPosProj, targetCenter), Qt::red);
 
 	// show a line along the likely shot if fired now
 	Segment curShotLine(pos, pos + (ballPosProj-pos).normalized()*10.0);
 	Segment curShotLineViz(pos, pos + (ballPosProj-pos).normalized()*2.0);
-	drawLine(curShotLineViz, 0, 0, 200); // blue
+	state()->drawLine(curShotLineViz, Qt::blue);
 
 	// middle of shot arc - used for drawing text
 	const Geometry2d::Point shotTextPoint = Segment(ballPosProj, targetCenter).center();
@@ -500,7 +500,7 @@ Gameplay::Behaviors::Kick::oneTouchApproach() {
 	_controls.push_back(approachBall); // extended point
 
 	// issue move command if we don't need to change states
-	robot()->bezierMove(_controls, Packet::MotionCmd::Endpoint);
+	robot()->bezierMove(_controls, MotionCmd::Endpoint);
 
 	// if we have gotten too far away (given hysteresis), go back to intercept
 	Segment approachLine(approachFar, approachBall);
@@ -638,7 +638,7 @@ int Gameplay::Behaviors::Kick::calcKickStrength(const Geometry2d::Point& targetC
 // Should be able to compare pointers.  Also don't use LogFrame from within Gameplay.
 bool Gameplay::Behaviors::Kick::checkRobotIntersections(const Geometry2d::Segment& shotLine) {
 	bool intersectsRobot = false;
-	BOOST_FOREACH(const Packet::LogFrame::Robot& r, gameplay()->state()->opp)
+	BOOST_FOREACH(const SystemState::Robot& r, gameplay()->state()->opp)
 	{
 		//don't check against if target
 		bool noAdd = (_targetType == ROBOT && _targetRobot && !_targetRobot->self() && _targetRobot->packet()->shell == r.shell);
@@ -652,7 +652,7 @@ bool Gameplay::Behaviors::Kick::checkRobotIntersections(const Geometry2d::Segmen
 		}
 	}
 
-	BOOST_FOREACH(const Packet::LogFrame::Robot& r, gameplay()->state()->self)
+	BOOST_FOREACH(const SystemState::Robot& r, gameplay()->state()->self)
 	{
 		//don't check against if target
 		bool noAdd = (_targetType == ROBOT && _targetRobot && _targetRobot->self() && _targetRobot->packet()->shell == r.shell);

@@ -1,76 +1,20 @@
 // kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 // vim:ai ts=4 et
 
-// Behaviors in use:
-// 	forward
-// 	fullback
-// 	idle
-// 	intercept
-// 	kick
-// 	kickoff
-// 	move
-// 	penalty
-
-#include "PlayConfigTab.hpp"
-#include "GameplayModule.hpp"
-#include "Behavior.hpp"
-#include "behaviors/positions/Goalie.hpp"
-
-// TO INSERT PLAYS: Add the include here, grouped by test plays and real plays
-// real plays
-#include "plays/OurKickoff.hpp"
-#include "plays/TheirKickoff.hpp"
-#include "plays/OurFreekick.hpp"
-#include "plays/TheirFreekick.hpp"
-#include "plays/DefendPenalty.hpp"
-#include "plays/KickPenalty.hpp"
-#include "plays/Stopped.hpp"
-#include "plays/Offense.hpp"
-#include "plays/ClearBall.hpp"
-#include "plays/Defense.hpp"
-#include "plays/DefendGoal.hpp"
-#include "plays/OptimizedOffense.hpp"
-#include "plays/AggressiveZoneOffense.hpp"
-
-// test plays
-#include "plays/test_plays/TestBasicPassing.hpp"
-#include "plays/test_plays/TestBasicOneTouchPassing.hpp"
-#include "plays/test_plays/TestBasicAttack.hpp"
-#include "plays/test_plays/TestBasicOneTouchAttack.hpp"
-#include "plays/test_plays/TestPassPlay.hpp"
-#include "plays/test_plays/TestOptimizedPassPlay.hpp"
-#include "plays/test_plays/TestDirectMotionControl.hpp"
-#include "plays/test_plays/TestRectMotionControl.hpp"
-#include "plays/test_plays/TestTimePositionControl.hpp"
-#include "plays/test_plays/TestPassConfigOptimize.hpp"
-#include "plays/test_plays/TestGUI.hpp"
-#include "plays/test_plays/TestIntercept.hpp"
-#include "plays/test_plays/TestBallSpeed.hpp"
-#include "plays/test_plays/TestPassExperiment1.hpp"
-
-// chipping test plays - disabled for now
-//#include "plays/test_plays/TestBasicChipAttack.hpp"
-//#include "plays/test_plays/TestBasicOneTouchChipAttack.hpp"
-
-// Demo plays
-#include "plays/challenges/MixedChallenge2010.hpp"
-
-#include <QMouseEvent>
-#include <QFileDialog>
-
-#include <assert.h>
-#include <cmath>
+#include <gameplay/GameplayModule.hpp>
+#include <gameplay/Behavior.hpp>
+#include <gameplay/behaviors/positions/Goalie.hpp>
+#include <gameplay/Play.hpp>
 #include <Constants.hpp>
 
+#include <stdio.h>
 #include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
 
 using namespace std;
 using namespace boost;
-using namespace Utils;
 
 Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::MotionModule& cfg):
-	Module("Gameplay"),
+	_playMutex(QMutex::Recursive),
 	_motion_config(cfg)
 {
 	_state = state;
@@ -146,49 +90,6 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 		self[i] = new Robot(this, i, true);
 		opp[i] = new Robot(this, i, false);
 	}
-
-	// Create play configuration tab
-	_playConfig = new PlayConfigTab();
-	_playConfig->gameplay = this;
-	_widget = _playConfig;
-
-	// Create the goalie - on by default
-	createGoalie();
-
-	// TO INSERT PLAYS: add the play as below
-
-	// Create a set of available normal plays
-   	_playConfig->addPlay(make_shared<Plays::OurKickoff>(this));
-	_playConfig->addPlay(make_shared<Plays::TheirKickoff>(this));
-	_playConfig->addPlay(make_shared<Plays::OurFreekick>(this));
-	_playConfig->addPlay(make_shared<Plays::TheirFreekick>(this));
-	_playConfig->addPlay(make_shared<Plays::KickPenalty>(this));
-	_playConfig->addPlay(make_shared<Plays::DefendPenalty>(this));
-	_playConfig->addPlay(make_shared<Plays::Stopped>(this));
-	_playConfig->addPlay(make_shared<Plays::Offense>(this));
-	_playConfig->addPlay(make_shared<Plays::ClearBall>(this));
-	_playConfig->addPlay(make_shared<Plays::Defense>(this));
-	_playConfig->addPlay(make_shared<Plays::DefendGoal>(this));
-	_playConfig->addPlay(make_shared<Plays::OptimizedOffense>(this));
-	_playConfig->addPlay(make_shared<Plays::AggressiveZoneOffense>(this));
-
-	// Add testing plays
-	_playConfig->addPlay(make_shared<Plays::TestPassExperiment1>(this));
-	_playConfig->addPlay(make_shared<Plays::TestBasicPassing>(this));
-	_playConfig->addPlay(make_shared<Plays::TestBasicOneTouchPassing>(this));
-	_playConfig->addPlay(make_shared<Plays::TestBasicAttack>(this));
-	_playConfig->addPlay(make_shared<Plays::TestBasicOneTouchAttack>(this));
-	_playConfig->addPlay(make_shared<Plays::TestPassPlay>(this));
-	_playConfig->addPlay(make_shared<Plays::TestDirectMotionControl>(this));
-	_playConfig->addPlay(make_shared<Plays::TestRectMotionControl>(this));
-	_playConfig->addPlay(make_shared<Plays::TestTimePositionControl>(this));
-	_playConfig->addPlay(make_shared<Plays::TestPassConfigOptimize>(this));
-	_playConfig->addPlay(make_shared<Plays::TestGUI>(this));
-	_playConfig->addPlay(make_shared<Plays::TestIntercept>(this));
-	_playConfig->addPlay(make_shared<Plays::TestOptimizedPassPlay>(this));
-	_playConfig->addPlay(make_shared<Plays::TestBallSpeed>(this));
-//	_playConfig->addPlay(make_shared<Plays::TestBasicChipAttack>(this));
-//	_playConfig->addPlay(make_shared<Plays::TestBasicOneTouchChipAttack>(this));
 }
 
 Gameplay::GameplayModule::~GameplayModule()
@@ -230,11 +131,6 @@ void Gameplay::GameplayModule::run()
 			robot->update();
 		}
 	}
-
-	_state->debugLines.clear();
-	_state->debugPolygons.clear();
-	_state->debugCircles.clear();
-	_state->debugText.clear();
 
 	ObstaclePtr largeBallObstacle;
 	ObstaclePtr smallBallObstacle;
@@ -291,9 +187,6 @@ void Gameplay::GameplayModule::run()
 
 		// Reset the motion command
 		r->resetMotionCommand();
-
-		// Pose history
-		r->updatePoseHistory();
 
 		// Add obstacles for this robot
 		ObstacleGroup &obstacles = r->packet()->obstacles;
@@ -354,16 +247,17 @@ void Gameplay::GameplayModule::run()
 	//  - current play is not applicable/failed, must kill, select new and run
 
 	// handle changes in play availability
+	QMutexLocker lock(&_playMutex);
 	bool playReady = true;
-	if (_plays.size() == 0) {
-		// handle empty play scenario
-		boost::shared_ptr<Play> dummy;
-		_currentPlay = dummy;
+	if (_plays.size() == 0)
+	{
+		// No plays available, so we don't have a current play
+		_currentPlay = shared_ptr<Play>();
 	} else if (_playDone || 					// New play if old one was complete
 			   !_currentPlay ||					// Current play is does not exist
-			   !_currentPlay->applicable() ||   // check if still available
-			   !_currentPlay->allVisible() ||   // check if robot still has all robots available
-			   !playEnabled(_currentPlay))		// check if play is still in the enabled pool
+			   !_currentPlay->applicable() ||	// check if still available
+			   !_currentPlay->allVisible() ||	// check if robot still has all robots available
+			   !_currentPlay->enabled)			// check if play is still enabled
 	{
 
 		if (verbose) cout << "  Selecting a new play" << endl;
@@ -400,6 +294,7 @@ void Gameplay::GameplayModule::run()
 			playReady = _currentPlay->assign(robots);
 		}
 	}
+	lock.unlock();
 
 	// Run the current play if assignment was successful
 	if (_currentPlay && playReady)
@@ -444,12 +339,17 @@ void Gameplay::GameplayModule::run()
 		}
 	}
 
+	if (_state->gameState.stayAwayFromBall() && _state->ball.valid)
+	{
+		_state->drawCircle(_state->ball.pos, Constants::Field::CenterRadius, Qt::black, "Rules");
+	}
+
 	if (verbose) cout << "  Getting play name" << endl;
 	if (_currentPlay)
 	{
-		_state->playName = _currentPlay->name();
+		_playName = _currentPlay->name();
 	} else {
-		_state->playName = "(null)";
+		_playName = "(null)";
 	}
 	if (verbose) cout << "Finishing GameplayModule::run()" << endl;
 }
@@ -457,30 +357,40 @@ void Gameplay::GameplayModule::run()
 void Gameplay::GameplayModule::enablePlay(shared_ptr<Play> play)
 {
 	QMutexLocker lock(&_playMutex);
-	_plays.insert(play);
+	if (!play->enabled)
+	{
+		play->enabled = true;
+		_plays.insert(play);
+	}
 }
 
 void Gameplay::GameplayModule::disablePlay(shared_ptr<Play> play)
 {
 	QMutexLocker lock(&_playMutex);
-	_plays.erase(play);
+	if (play->enabled)
+	{
+		play->enabled = false;
+		_plays.erase(play);
+	}
 }
 
-bool Gameplay::GameplayModule::playEnabled(boost::shared_ptr<Play> play) const
+bool Gameplay::GameplayModule::playEnabled(boost::shared_ptr<Play> play)
 {
 	QMutexLocker lock(&_playMutex);
-	return _plays.find(play) != _plays.end();
+	return play->enabled;
 }
 
 shared_ptr<Gameplay::Play> Gameplay::GameplayModule::selectPlay(size_t nrRobots)
 {
+	// It is assumed that _playMutex is already locked
+	
 	float bestScore = 0;
 	shared_ptr<Play> bestPlay;
 
 	// Find the best applicable play
 	BOOST_FOREACH(shared_ptr<Play> play, _plays)
 	{
-		if (play->applicable() && nrRobots >= play->getMinRobots())
+		if (play->enabled && play->applicable() && nrRobots >= play->getMinRobots())
 		{
 			float score = play->score();
 			if (!bestPlay || score < bestScore)

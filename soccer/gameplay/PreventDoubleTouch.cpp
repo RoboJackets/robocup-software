@@ -32,7 +32,7 @@ void Gameplay::PreventDoubleTouch::assign(set<Robot *> &available)
 void Gameplay::PreventDoubleTouch::run()
 {
     const GameState &gameState = _gameplay->state()->gameState;
-    const Packet::LogFrame::Ball &ball = _gameplay->state()->ball;
+    const SystemState::Ball &ball = _gameplay->state()->ball;
     
     if (!_kicker || !_kicker->assigned())
     {

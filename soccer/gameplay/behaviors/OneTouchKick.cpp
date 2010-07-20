@@ -72,7 +72,7 @@ bool Gameplay::Behaviors::OneTouchKick::run()
 	} else {
 		_target = evaluateShot();
 	}
-	drawLine(_target, 255, 0, 0); // show the target segment
+	state()->drawLine(_target, Qt::red); // show the target segment
 
 	// keep track of state transitions
 	State oldState = _state;
@@ -84,11 +84,11 @@ bool Gameplay::Behaviors::OneTouchKick::run()
 	case Intercept:
 		//approach the ball at high speed using Intercept
 		_state = intercept();
-		drawText("Intercept", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
+		state()->drawText("Intercept", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
 		break;
 	case Approach:
 		_state = approach();
-		drawText("Approach", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
+		state()->drawText("Approach", robot()->pos() + textOffset, _state == oldState ? stable : toggle);
 		break;
 	case Done: // do nothing
 		break;
@@ -116,7 +116,7 @@ Gameplay::Behaviors::OneTouchKick::intercept() {
 	_controls.push_back(approachBall); // target destination
 
 	// issue move command
-	robot()->bezierMove(_controls, Packet::MotionCmd::Continuous);
+	robot()->bezierMove(_controls, MotionCmd::Continuous);
 
 	// if we are not able to kick stay in the intercept
 	if (!robot()->charged())
@@ -154,9 +154,11 @@ Gameplay::Behaviors::OneTouchKick::approach() {
 	// if we are in front of the ball, we should go back to intercept
 	Point apprPoint = ballPos + approachVec * Constants::Robot::Radius * 0.8;
 	Segment ballPerpLine(apprPoint - approachVec.perpCW(), apprPoint + approachVec.perpCW());
-	drawLine(ballPerpLine, 0, 0, 0);
+	state()->drawLine(ballPerpLine);
 	if (ballPerpLine.pointSide(ballPos) > 0.0)
+	{
 		return Intercept;
+	}
 
 	// turn on the kicker for final approach
 	robot()->willKick = true;
@@ -179,7 +181,7 @@ Gameplay::Behaviors::OneTouchKick::approach() {
 	_controls.push_back(approachBall); // extended point
 
 	// issue move command if we don't need to change states
-	robot()->bezierMove(_controls, Packet::MotionCmd::Endpoint);
+	robot()->bezierMove(_controls, MotionCmd::Endpoint);
 
 	// if we have gotten too far away (given hysteresis), go back to intercept
 	Segment approachLine(approachFar, approachBall);

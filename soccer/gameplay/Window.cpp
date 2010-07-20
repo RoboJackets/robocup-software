@@ -71,7 +71,7 @@ void Gameplay::WindowEvaluator::run(Geometry2d::Point origin, const Geometry2d::
 	Window *all = new Window(0, _end);
 	windows.push_back(all);
 	
-	BOOST_FOREACH(const Packet::LogFrame::Robot &robot, _state->opp)
+	BOOST_FOREACH(const SystemState::Robot &robot, _state->opp)
 	{
 		if (robot.valid)
 		{
@@ -92,7 +92,7 @@ void Gameplay::WindowEvaluator::run(Geometry2d::Point origin, const Geometry2d::
 		}
 	}
 	
-	BOOST_FOREACH(const Packet::LogFrame::Robot &robot, _state->self)
+	BOOST_FOREACH(const SystemState::Robot &robot, _state->self)
 	{
 		if (robot.valid)
 		{
@@ -144,14 +144,17 @@ void Gameplay::WindowEvaluator::finish()
 		// Debug polygons for windows
 		BOOST_FOREACH(Window *w, windows)
 		{
-			Packet::LogFrame::DebugPolygon p;
-			p.vertices.push_back(_origin);
-			p.vertices.push_back(w->segment.pt[0]);
-			p.vertices.push_back(w->segment.pt[1]);
-			p.color[0] = (w == best) ? 255 : 0;
-			p.color[1] = 0;
-			p.color[2] = (w == best) ? 0 : 255;
-			_state->debugPolygons.push_back(p);
+			Geometry2d::Point pts[] = {
+				_origin,
+				w->segment.pt[0],
+				w->segment.pt[1]
+			};
+			QColor color(
+				(w == best) ? 255 : 0,
+				0,
+				(w == best) ? 0 : 255
+			);
+			_state->drawPolygon(pts, 3, color, "Windows");
 		}
 	}
 }

@@ -2,7 +2,6 @@
 // vim:ai ts=4 et
 #pragma once
 
-#include <framework/Module.hpp>
 #include <framework/ConfigFile.hpp>
 
 #include <QString>
@@ -10,19 +9,20 @@
 #include <list>
 #include <map>
 
+#include <framework/SystemState.hpp>
 #include "BallModel.hpp"
 #include "RobotModel.hpp"
 
 /** World modeling system */
 namespace Modeling
 {
-	class WorldModel : public Module
+	class WorldModel
 	{
 		public:
 			WorldModel(SystemState *state, ConfigFile::shared_worldmodel cfg);
 			~WorldModel();
 
-			virtual void run();
+			void run(bool blueTeam);
 
 		protected:
 
@@ -39,10 +39,10 @@ namespace Modeling
 			RobotVector _selfPlayers, _oppPlayers;
 
 			/** utility functions for update logic */
-			void addRobotObseration(const Packet::Vision::Robot &robot, uint64_t timestamp,
+			void addRobotObseration(const Vision::Robot &robot, uint64_t timestamp,
 					std::vector<RobotModel::shared>& players);
 			void updateRobots(std::vector<RobotModel::shared>& players, uint64_t cur_time);
-			void addRobotRxData(Packet::LogFrame::Robot& robot);
+			void addRobotRxData(SystemState::Robot& robot);
 			void copyRobotState(const std::vector<RobotModel::shared>& players, TeamMode m);
 
 			BallModel ballModel;

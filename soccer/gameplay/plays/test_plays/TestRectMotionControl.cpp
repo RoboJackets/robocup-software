@@ -9,6 +9,8 @@
 using namespace std;
 using namespace Geometry2d;
 
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::TestRectMotionControl, "Tests")
+
 Gameplay::Plays::TestRectMotionControl::TestRectMotionControl(GameplayModule *gameplay):
 	Play(gameplay, 1),
 	fsm_state_(Track),

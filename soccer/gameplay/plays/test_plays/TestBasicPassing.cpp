@@ -10,6 +10,8 @@
 using namespace Geometry2d;
 using namespace std;
 
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::TestBasicPassing, "Tests")
+
 Gameplay::Plays::TestBasicPassing::TestBasicPassing(GameplayModule *gameplay):
 	Play(gameplay, 2),
 	_passer(gameplay),
@@ -59,7 +61,7 @@ bool Gameplay::Plays::TestBasicPassing::run()
 	_receiver.run();
 
 	// indicate which robot is receiving
-	drawCircle(_receiver.robot()->pos(), Constants::Robot::Radius*1.2, 100, 100, 100);
+	state()->drawCircle(_receiver.robot()->pos(), Constants::Robot::Radius*1.2, Qt::gray);
 
 	return true;
 }

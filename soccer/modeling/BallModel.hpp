@@ -10,7 +10,6 @@
 #include "difference_kalman.hpp"
 #include "RobotModel.hpp"
 #include <vector>
-#include "framework/Module.hpp"
 
 /* RBPF Includes */
 #include <iostream>

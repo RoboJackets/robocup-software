@@ -53,30 +53,10 @@ bool operator<(const PassConfig& lhs, const PassConfig& rhs){
 	return (lhs.weight < rhs.weight);
 }
 
-Packet::LogFrame::DebugCircle drawCircle(const Geometry2d::Point& center, float radius, int r, int g, int b) {
-	Packet::LogFrame::DebugCircle circle;
-	circle.center = center;
-	circle.radius(radius);
-	circle.color[0] = r;
-	circle.color[1] = g;
-	circle.color[2] = b;
-	return circle;
-}
-
-Packet::LogFrame::DebugLine drawLine(const Geometry2d::Point& pt1, const Geometry2d::Point& pt2, int r, int g, int b) {
-	Packet::LogFrame::DebugLine line;
-	line.pt[0] = pt1;
-	line.pt[1] = pt2;
-	line.color[0] = r;
-	line.color[1] = g;
-	line.color[2] = b;
-	return line;
-}
-
 void PassConfig::drawConfig(SystemState* sysState, int r, int g, int b) const {
 	// parameters for drawing
-	float ball_radius = 0.05;
-	float pos_radius = 0.1;
+// 	float ball_radius = 0.05;
+// 	float pos_radius = 0.1;
 
 	// Hardcoded printing, assuming
 	// Intermediate (init), KickPass, ReceivePass, KickGoal, Intermediate (ball in goal)
@@ -90,6 +70,7 @@ void PassConfig::drawConfig(SystemState* sysState, int r, int g, int b) const {
 					kickGoal = passStateVector[3],
 					end      = passStateVector[4];
 
+#if 0
 	// render initial positions
 	sysState->debugCircles.push_back(drawCircle(start.robot1Pos, pos_radius, r,g,b));
 	sysState->debugCircles.push_back(drawCircle(start.robot2Pos, pos_radius, r,g,b));
@@ -113,6 +94,7 @@ void PassConfig::drawConfig(SystemState* sysState, int r, int g, int b) const {
 
 	// render final ball position
 	sysState->debugCircles.push_back(drawCircle(end.ballPos, ball_radius, r,g,b));
+#endif
 
 	// Code to do arbitrary paths while printing excess information
 //	// draw the path of the ball and the robot trajectories

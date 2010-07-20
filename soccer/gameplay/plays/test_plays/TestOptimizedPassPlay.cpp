@@ -17,6 +17,8 @@
 using namespace Geometry2d;
 using namespace std;
 
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::TestOptimizedPassPlay, "Tests")
+
 Gameplay::Plays::TestOptimizedPassPlay::TestOptimizedPassPlay(GameplayModule *gameplay)
 : Play(gameplay), passPlanner_(gameplay, true) {
 

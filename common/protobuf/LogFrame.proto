@@ -1,9 +1,80 @@
 package Packet;
 
 import "Point.proto";
+import "messages_robocup_ssl_wrapper.proto";
+import "RadioTx.proto";
+import "RadioRx.proto";
 
-message Frame
+message DebugPath
 {
-	required Point whatever = 1;
+	optional uint32 color = 1;
+	optional sint32 layer = 2 [default = -1];
+	repeated Point points = 3;
+}
+
+message DebugCircle
+{
+	optional uint32 color = 1;
+	optional sint32 layer = 2 [default = -1];
+	required Point center = 3;
+	required float radius = 4;
+}
+
+message DebugText
+{
+	optional uint32 color = 1;
+	optional sint32 layer = 2 [default = -1];
+	required Point pos = 3;
+	required string text = 4;
+	optional bool center = 5;
+}
+
+message LogFrame
+{
+	// Network packets received since the last iteration
+	repeated SSL_WrapperPacket raw_vision = 1;
+	repeated bytes raw_referee = 2;
+	repeated RadioRx radio_rx = 3;
+
+	// Which team are we playing as?
+	optional bool blue_team = 4;
+
+	// Timestamp when the loop started
+	required uint64 start_time = 5;
+
+	// Debug graphics
+	repeated DebugPath debug_paths = 6;
+	repeated DebugPath debug_polygons = 7;
+	repeated DebugCircle debug_circles = 8;
+	repeated DebugText debug_texts = 9;
+	repeated string debug_layers = 10;
+
+	// Filtered world state
+	message Robot
+	{
+		required Point pos = 1;
+		required int32 shell = 2;
+		required float angle = 3;
+		optional bool has_ball = 4;
+	}
+
+	message Ball
+	{
+		required Point pos = 1;
+		required Point vel = 2;
+	}
+
+	repeated Robot self = 11;
+	repeated Robot opp = 12;
+	optional Ball ball = 13;
+
+	// Data sent to the radio
+	required RadioTx radio_tx = 14;
+
+	// Which robot is under manual control
+	optional sint32 manual_id = 15 [default = -1];
+
+	// True if our goal is on the +X side of vision
+	optional bool defend_plus_x = 16;
 }
 

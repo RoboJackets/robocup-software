@@ -114,7 +114,7 @@ bool Gameplay::Behaviors::Intercept::run() {
 			break;
 		}
 
-		drawText("ApproachFar", pos + textOffset, 0, 0, 0);
+		state()->drawText("ApproachFar", pos + textOffset);
 		Geometry2d::Point dest = ballPosProj;
 
 		// DISABLED: not using side waypoints due to wrap-around error
@@ -134,7 +134,7 @@ bool Gameplay::Behaviors::Intercept::run() {
 				dest += (ballPos - target).normalized() * stopDist;
 			}
 		}
-		drawLine(Geometry2d::Segment(pos, dest), 64, 64, 255);
+		state()->drawLine(Geometry2d::Segment(pos, dest), Qt::blue);
 
 		robot()->move(dest);
 
@@ -145,7 +145,7 @@ bool Gameplay::Behaviors::Intercept::run() {
 		}
 	} else if (_state == ApproachBall) {
 		//approach the ball with intent to acquire it
-		drawText("ApproachBall", pos + textOffset, 0, 0, 0);
+		state()->drawText("ApproachBall", pos + textOffset);
 		//TODO change to just willHandle?
 		//something more meaningful
 		//we don't always want to kick

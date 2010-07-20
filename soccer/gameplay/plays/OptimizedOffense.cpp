@@ -2,6 +2,8 @@
 
 using namespace std;
 
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::OptimizedOffense, "Playing")
+
 Gameplay::Plays::OptimizedOffense::OptimizedOffense(GameplayModule *gameplay):
 	Play(gameplay)
 {

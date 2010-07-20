@@ -6,22 +6,18 @@
 #include <QMutex>
 #include <set>
 
-#include <framework/Module.hpp>
 #include <framework/ConfigFile.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 
-#include "Robot.hpp"
-
-class PlayConfigTab;
-class PassConfig;
+#include <gameplay/Robot.hpp>
 
 namespace Gameplay
 {
 	class Behavior;
 	class Play;
 	
-	class GameplayModule: public Module
+	class GameplayModule
 	{
 		public:
 			GameplayModule(SystemState *state, const ConfigFile::MotionModule& cfg);
@@ -46,8 +42,6 @@ namespace Gameplay
 			}
 			
 			virtual void run();
-			
-			boost::shared_ptr<Play> selectPlay(size_t nrRobots);
 			
 			////////
 			// Useful matrices:
@@ -75,8 +69,16 @@ namespace Gameplay
 			
 			void enablePlay(boost::shared_ptr<Play> play);
 			void disablePlay(boost::shared_ptr<Play> play);
-			bool playEnabled(boost::shared_ptr<Play> play) const;
+			bool playEnabled(boost::shared_ptr<Play> play);
 			
+			// Returns the name of the current play
+			QString playName()
+			{
+				return _playName;
+			}
+			
+			// This may be used by the GUI thread because the processing thread
+			// won't change the list of plays.
 			const std::set<boost::shared_ptr<Play> > &plays() const
 			{
 				return _plays;
@@ -85,13 +87,10 @@ namespace Gameplay
 			Robot *self[Constants::Robots_Per_Team];
 			Robot *opp[Constants::Robots_Per_Team];
 			
-			PlayConfigTab *playConfig() const
-			{
-				return _playConfig;
-			}
-
-		protected:
+		private:
 			friend class Play;
+			
+			boost::shared_ptr<Play> selectPlay(size_t nrRobots);
 			
 			SystemState *_state;
 			
@@ -116,13 +115,13 @@ namespace Gameplay
 			//goal area
 			ObstaclePtr _goalArea[3];
 			
-			PlayConfigTab *_playConfig;
-			
-			mutable QMutex _playMutex;
+			QMutex _playMutex;
 			std::set<boost::shared_ptr<Play> > _plays;
+			
+			// Name of the current play
+			QString _playName;
 
 			// motion config information
 			const ConfigFile::MotionModule& _motion_config;
-
 	};
 }

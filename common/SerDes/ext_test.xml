@@ -1,8 +1,0 @@
-<struct typename="Thing">
-    <struct typename="Point" external_cpp="Geometry::Point" include_cpp="Geometry/Point.hpp" external_python="Geometry.Point">
-        <member type="float" name="x"/>
-        <member type="float" name="y"/>
-    </struct>
-    
-    <member type="Point" name="pos"/>
-</struct>

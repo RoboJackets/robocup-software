@@ -2,26 +2,24 @@
 // vim:ai ts=4 et
 
 #include <iostream>
+#include <stdio.h>
 #include <string>
 #include <sstream>
 #include <algorithm>
-#include "Robot.hpp"
+#include <motion/Robot.hpp>
 #include <QMutexLocker>
 #include <Geometry2d/Point.hpp>
-#include <Team.h>
 #include <boost/foreach.hpp>
 #include <boost/assign/std/vector.hpp>
 #include <Utils.hpp>
 #include <Constants.hpp>
 
-#include "Pid.hpp"
-#include "framework/Module.hpp"
+#include <motion/Pid.hpp>
 
 using namespace std;
 using namespace boost::assign;
 using namespace Geometry2d;
 using namespace Motion;
-using namespace Packet;
 
 /** prints out a labeled point */
 void printPt(const Geometry2d::Point& pt, const string& s="") {
@@ -129,7 +127,10 @@ void Robot::proc()
 		if (_state->gameState.state == GameState::Halt)
 		{
 			// don't do anything if we aren't transmitting to this robot
-			_self->radioTx.valid = false;
+			for (int i = 0; i < 4; ++i)
+			{
+				_self->radioTx->set_motors(i, 0);
+			}
 		}
 		else
 		{
@@ -146,14 +147,10 @@ void Robot::proc()
 			_velFilter.setCoeffs(_self->config.motion.output_coeffs);
 			_wFilter.setCoeffs(_self->config.motion.output_coeffs);
 
-
-			// record the history
-			_poseHistory = _self->poseHistory;
-
 			// switch between planner types
 			switch(_self->cmd.planner) {
 			// handle direct velocity commands
-			case Packet::MotionCmd::DirectVelocity:
+			case MotionCmd::DirectVelocity:
 			{
 				// set the velocities from the gameplay module
 				_vel = _self->cmd.direct_trans_vel;
@@ -162,18 +159,18 @@ void Robot::proc()
 				break;
 			}
 			// handle direct motor commands
-			case Packet::MotionCmd::DirectMotor:
+			case MotionCmd::DirectMotor:
 			{
 				// short circuit controller completely
 				size_t i = 0;
 				BOOST_FOREACH(const int8_t& vel, _self->cmd.direct_motor_cmds) {
-					_self->radioTx.motors[i++] = vel;
+					_self->radioTx->set_motors(i++, vel);
 				}
 
 				break;
 			}
 			// handle explicit path generation (short-circuit RRT)
-			case Packet::MotionCmd::Path:
+			case MotionCmd::Path:
 			{
 				// create a new path
 				Planning::Path path;
@@ -190,7 +187,7 @@ void Robot::proc()
 			}
 
 			// handle time-position control
-			case Packet::MotionCmd::TimePosition:
+			case MotionCmd::TimePosition:
 			{
 				// generate the velocity command for time-position control
 				genTimePosVelocity();
@@ -198,7 +195,7 @@ void Robot::proc()
 			}
 
 			// handle bezier control
-			case Packet::MotionCmd::Bezier:
+			case MotionCmd::Bezier:
 			{
 				// record the control points if restart
 				_bezierControls = _self->cmd.bezierControlPoints;
@@ -209,7 +206,7 @@ void Robot::proc()
 			}
 
 			// default RRT-based planner that also handles pivoting
-			case Packet::MotionCmd::RRT:
+			case MotionCmd::RRT:
 			{
 				if (_self->cmd.pivot == MotionCmd::NoPivot)
 				{
@@ -235,7 +232,7 @@ void Robot::proc()
 					//TODO fixme...
 
 					//for now look at the ball
-					_self->cmd.face = Packet::MotionCmd::Continuous;
+					_self->cmd.face = MotionCmd::Continuous;
 					_self->cmd.goalOrientation = _self->cmd.pivotPoint;
 
 					// create the velocities
@@ -269,8 +266,7 @@ void Robot::proc()
 			_self->cmd_vel = _vel;
 			_self->cmd_w = _w;
 
-			_self->radioTx.valid = true;
-			_self->radioTx.board_id = _self->shell;
+			_self->radioTx->set_board_id(_self->shell);
 		}
 	}
 	_lastTimestamp = _state->timestamp;
@@ -278,6 +274,7 @@ void Robot::proc()
 	_procMutex.unlock();
 }
 
+#if 0
 void Robot::drawPath(QPainter& p)
 {
 	QMutexLocker ml(&_procMutex);
@@ -306,7 +303,7 @@ void Robot::drawRRT(QPainter& p)
 void Robot::drawBezierTraj(QPainter& p) {
 
 	QMutexLocker ml(&_procMutex);
-	if (_plannerType == Packet::MotionCmd::Bezier && _bezierControls.size() > 0) {
+	if (_plannerType == MotionCmd::Bezier && _bezierControls.size() > 0) {
 
 		// create the coefficients
 		vector<float> coeffs;
@@ -332,7 +329,7 @@ void Robot::drawBezierTraj(QPainter& p) {
 
 void Robot::drawBezierControl(QPainter& p) {
 	QMutexLocker ml(&_procMutex);
-	if (_plannerType == Packet::MotionCmd::Bezier && _bezierControls.size() > 0) {
+	if (_plannerType == MotionCmd::Bezier && _bezierControls.size() > 0) {
 
 		// draw straight blue lines for control lines, and small circles for points
 		Point prev(-1.0, -1.0);
@@ -346,19 +343,7 @@ void Robot::drawBezierControl(QPainter& p) {
 		}
 	}
 }
-
-void Robot::drawPoseHistory(QPainter& p) {
-
-	QMutexLocker ml(&_procMutex);
-
-	p.setPen(Qt::white);
-	for (unsigned int i = 1; i < _poseHistory.size(); ++i)
-	{
-		p.drawLine(_poseHistory[i - 1].pos.toQPointF(), _poseHistory[i].pos.toQPointF());
-	}
-}
-
-
+#endif
 
 void Robot::stop(float dtime) {
 	// handle rotation with PID - force value to zero
@@ -440,7 +425,7 @@ void Robot::sanityCheck(const unsigned int LookAheadFrames) {
 		_vel * deltaT * LookAheadFrames;
 
 	// avoid opponents
-	BOOST_FOREACH(Packet::LogFrame::Robot& r, _state->opp)
+	BOOST_FOREACH(SystemState::Robot& r, _state->opp)
 	{
 		Geometry2d::Circle c(r.pos, Constants::Robot::Diameter);
 
@@ -456,7 +441,7 @@ void Robot::sanityCheck(const unsigned int LookAheadFrames) {
 	}
 
 	//protect against self hit
-	BOOST_FOREACH(Packet::LogFrame::Robot& r, _state->self)
+	BOOST_FOREACH(SystemState::Robot& r, _state->self)
 	{
 		if (r.shell != _self->shell)
 		{
@@ -480,7 +465,7 @@ void Robot::sanityCheck(const unsigned int LookAheadFrames) {
  * into instantaneous velocity commands that can be converted into wheel
  * commands.
  */
-void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
+void Robot::genVelocity(MotionCmd::PathEndType ending)
 {
 	bool verbose = false;
 	if (verbose) cout << "Generating Velocity" << endl;
@@ -559,7 +544,7 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 	}
 
 	// handle point-to-point driving without pivot
-	if (_self->cmd.pivot == Packet::MotionCmd::NoPivot)
+	if (_self->cmd.pivot == MotionCmd::NoPivot)
 	{
 		if (_path.points.empty())
 		{
@@ -595,9 +580,9 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 		//direction of travel
 		const Geometry2d::Point dir = targetPos - _self->pos;
 
-		// use active breaking as necessary
+		// use active braking as necessary
 		float dist_stop_thresh = 0.15; // cm
-		if (ending == Packet::MotionCmd::StopAtEnd && dir.mag() < dist_stop_thresh) {
+		if (ending == MotionCmd::StopAtEnd && dir.mag() < dist_stop_thresh) {
 			stop(deltaT);
 			return;
 		}
@@ -640,7 +625,6 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 
 		// adjust the velocity
 		_vel += dVel;
-
 	}
 	else /** Handle pivoting */
 	{
@@ -650,7 +634,7 @@ void Robot::genVelocity(Packet::MotionCmd::PathEndType ending)
 		//I know the perpCW is backwards...
 		//that is because to create a CW around object velocity I need
 		//to rotate the vector the other way
-		if (_self->cmd.pivot == Packet::MotionCmd::CW)
+		if (_self->cmd.pivot == MotionCmd::CW)
 		{
 			dir = dir.perpCCW();
 		}
@@ -814,9 +798,7 @@ void Robot::genBezierVelocity() {
 	_bezierTotalLength = bezierLength(_bezierControls, coeffs);
 
 	// DEBUG: show the length of the trajectory
-	ostringstream ss;
-	ss << _bezierTotalLength;
-	drawText(ss.str(), Segment(_bezierControls.at(0), _bezierControls.at(1)).center(), Qt::blue);
+	_state->drawText(QString::number(_bezierTotalLength), Segment(_bezierControls.at(0), _bezierControls.at(1)).center(), Qt::blue);
 
 	// calculate numerical derivative by stepping ahead a fixed constant
 	float lookAheadDist = 0.15; // in meters along path
@@ -832,22 +814,22 @@ void Robot::genBezierVelocity() {
 
 	// DEBUG: draw the targetVel
 	Segment targetVelLine(pos(), pos() + targetVel);
-	drawLine(targetVelLine, Qt::red);
+	_state->drawLine(targetVelLine, Qt::red);
 	// directly set the velocity
 	_vel = targetVel;
 
 	float targetAngle = 0.0;
-	if (_self->cmd.face == Packet::MotionCmd::Continuous) {
+	if (_self->cmd.face == MotionCmd::Continuous) {
 		// look further ahead for angle
 		float WlookAheadDist = 0.30; // in meters along path // prev: 0.15ang_thresh
 		float dtw = WlookAheadDist/_bezierTotalLength;
 		targetAngle = evaluateBezierVelocity(dtw, _bezierControls, coeffs).angle();
-	} else if (_self->cmd.face == Packet::MotionCmd::Endpoint) {
+	} else if (_self->cmd.face == MotionCmd::Endpoint) {
 		targetAngle = (_bezierControls.at(degree-1) - _bezierControls.at(degree-2)).angle();
 	}
 
 	// draw the intended facing
-	drawLine(Segment(pos(), pos() + Point::direction(targetAngle).normalized()), Qt::gray);
+	_state->drawLine(Segment(pos(), pos() + Point::direction(targetAngle).normalized()), Qt::gray);
 
 	// Find the error (degrees)
 	float angleErr = Utils::fixAngleDegrees(targetAngle*RadiansToDegrees - _self->angle);
@@ -976,10 +958,10 @@ void Robot::genMotor() {
 	BOOST_FOREACH(const float& vel, wheelVels) {
 		if (verbose) cout << " " << vel;
 		int8_t cmdVel = (int8_t) saturate(127.0*vel, 126.0, -127.0);
-		if (_self->rev == Packet::LogFrame::Robot::rev2008) {
-			_self->radioTx.motors[i++] = cmdVel;
-		} else if (_self->rev == Packet::LogFrame::Robot::rev2010) {
-			_self->radioTx.motors[i++] = -cmdVel;
+		if (_self->rev == SystemState::Robot::rev2008) {
+			_self->radioTx->set_motors(i++, cmdVel);
+		} else if (_self->rev == SystemState::Robot::rev2010) {
+			_self->radioTx->set_motors(i++, -cmdVel);
 		}
 	}
 	if (verbose) cout << endl;
@@ -1011,7 +993,7 @@ void Robot::genMotor() {
 //	int8_t rotVel = 127 *  wPercent;
 //	for (unsigned int i=0 ; i<4; ++i)
 //	{
-//		_self->radioTx.motors[i] = rotVel;
+//		_self->radioTx->motors[i] = rotVel;
 //	}
 //
 //	// determine the speed
@@ -1064,7 +1046,7 @@ void Robot::genMotor() {
 //		//this really won't happen because rVel has been limited to the right number
 //		per = saturate(per, 1.0, -1.0);
 //
-//		_self->radioTx.motors[i] += int8_t(maxSpeed * per);
+//		_self->radioTx->motors[i] += int8_t(maxSpeed * per);
 //		i++;
 //	}
 //
@@ -1101,7 +1083,7 @@ void Robot::genMotorOld() {
 		}
 
 		//set outgoing motor
-		_self->radioTx.motors[j++] = (int8_t) a.motor;
+		_self->radioTx->set_motors(j++, (int8_t) a.motor);
 
 		//radio does not support more than 4 wheels
 		if (j >= 4)
@@ -1133,7 +1115,7 @@ void Robot::calib()
 		Geometry2d::Point dir = (_calibInfo.endPos - _calibInfo.startPos).normalized();
 
 		_self->cmd.goalOrientation = _calibInfo.endPos + dir * 1.0;
-		_self->cmd.face = Packet::MotionCmd::Endpoint;
+		_self->cmd.face = MotionCmd::Endpoint;
 		_self->cmd.vScale = .5;
 
 		Planning::Path path;
@@ -1204,15 +1186,15 @@ void Robot::calib()
 		int8_t wspeed = _calibInfo.outSpeed;
 
 #if 1
-		_self->radioTx.motors[0] = -wspeed;
-		_self->radioTx.motors[1] = wspeed;
-		_self->radioTx.motors[2] = wspeed;
-		_self->radioTx.motors[3] = -wspeed;
+		_self->radioTx->set_motors(0, -wspeed);
+		_self->radioTx->set_motors(1, wspeed);
+		_self->radioTx->set_motors(2, wspeed);
+		_self->radioTx->set_motors(3, -wspeed);
 #else //45
-		_self->radioTx.motors[0] = 0;
-		_self->radioTx.motors[1] = wspeed;
-		_self->radioTx.motors[2] = 0;
-		_self->radioTx.motors[3] = -wspeed;
+		_self->radioTx->motors[0] = 0;
+		_self->radioTx->motors[1] = wspeed;
+		_self->radioTx->motors[2] = 0;
+		_self->radioTx->motors[3] = -wspeed;
 #endif
 	}
 
@@ -1230,10 +1212,10 @@ void Robot::calib()
 			_calibInfo.outSpeed = 0;
 		}
 
-		_self->radioTx.motors[0] = -_calibInfo.outSpeed;
-		_self->radioTx.motors[1] = _calibInfo.outSpeed;
-		_self->radioTx.motors[2] = _calibInfo.outSpeed;
-		_self->radioTx.motors[3] = -_calibInfo.outSpeed;
+		_self->radioTx->set_motors(0, -_calibInfo.outSpeed);
+		_self->radioTx->set_motors(1, _calibInfo.outSpeed);
+		_self->radioTx->set_motors(2, _calibInfo.outSpeed);
+		_self->radioTx->set_motors(3, -_calibInfo.outSpeed);
 
 		if (_calibInfo.outSpeed == 0)
 		{
@@ -1270,56 +1252,4 @@ int Motion::Robot::binomialCoefficient(int n, int k) const {
 	if (k == 1 || k == n-1) return n;
 
 	return factorial(n)/(factorial(k)*factorial(n-k));
-}
-
-void Motion::Robot::drawText(const std::string& text,
-								  const Geometry2d::Point& pt,
-								  int r, int g, int b) {
-	Packet::LogFrame::DebugText t;
-	t.text = text;
-	t.pos = pt;
-	t.color[0] = r;
-	t.color[1] = g;
-	t.color[2] = b;
-
-	_state->debugText.push_back(t);
-}
-
-void Motion::Robot::drawText(const std::string& text,
-								  const Geometry2d::Point& pt,
-								  const QColor& color) {
-	drawText(text, pt, color.red(), color.green(), color.blue());
-}
-
-void Motion::Robot::drawLine(const Geometry2d::Segment& line,
-								  int r, int g, int b) {
-	Packet::LogFrame::DebugLine ln;
-	ln.pt[0] = line.pt[0];
-	ln.pt[1] = line.pt[1];
-	ln.color[0] = r;
-	ln.color[1] = g;
-	ln.color[2] = b;
-	_state->debugLines.push_back(ln);
-}
-
-void Motion::Robot::drawLine(const Geometry2d::Segment& line,
-								  const QColor& color) {
-	drawLine(line, color.red(), color.green(), color.blue());
-}
-
-void Motion::Robot::drawCircle(const Geometry2d::Point& center,
-									float radius, int r, int g, int b) {
-	Packet::LogFrame::DebugCircle c;
-	c.radius(radius);
-	c.center = center;
-	c.color[0] = r;
-	c.color[1] = g;
-	c.color[2] = b;
-	_state->debugCircles.push_back(c);
-}
-
-void Motion::Robot::drawCircle(const Geometry2d::Point& center,
-									float radius,
-									const QColor& color) {
-	drawCircle(center, radius, color.red(), color.green(), color.blue());
 }

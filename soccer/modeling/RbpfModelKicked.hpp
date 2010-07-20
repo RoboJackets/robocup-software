@@ -21,8 +21,6 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include "RbpfModel.hpp"
 
-#include "framework/Module.hpp"
-
 // kicked ball with high noise, ignores control input
 // Note: could be written to accept control input from our robots
 // state: X (6 x 1) = {x, y, vx, vy, ax, ay}

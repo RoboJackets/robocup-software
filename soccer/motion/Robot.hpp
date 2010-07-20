@@ -6,9 +6,8 @@
 #include <QMutex>
 #include <QPainter>
 
-#include <Team.h>
 #include <framework/ConfigFile.hpp>
-#include <framework/Module.hpp>
+#include <framework/SystemState.hpp>
 
 #include "Pid.hpp"
 
@@ -52,11 +51,11 @@ namespace Motion
 			void proc();
 
 			/** drawing functions */
-			void drawPath(QPainter& p);
-			void drawRRT(QPainter& p);
-			void drawBezierTraj(QPainter& p);
-			void drawBezierControl(QPainter& p);
-			void drawPoseHistory(QPainter& p);
+// 			void drawPath(QPainter& p);
+// 			void drawRRT(QPainter& p);
+// 			void drawBezierTraj(QPainter& p);
+// 			void drawBezierControl(QPainter& p);
+// 			void drawPoseHistory(QPainter& p);
 
 			void setAngKp(double value);
 			void setAngKi(double value);
@@ -71,7 +70,7 @@ namespace Motion
 			 * generate velocities based on path travel
 			 * @param endBehavior determines how to end the path
 			 */
-			void genVelocity(Packet::MotionCmd::PathEndType ending);
+			void genVelocity(MotionCmd::PathEndType ending);
 
 			/** generate velocities based on time-position control */
 			void genTimePosVelocity();
@@ -120,7 +119,7 @@ namespace Motion
 			QMutex _procMutex;
 
 			/** planner flag - copied out for rendering */
-			Packet::MotionCmd::PlannerType _plannerType;
+			MotionCmd::PlannerType _plannerType;
 
 			RRT::Planner _planner;
 			/** robot dynamics information */
@@ -185,9 +184,6 @@ namespace Motion
 			Utils::FIRFilter<Geometry2d::Point> _velFilter;
 			Utils::FIRFilter<double> _wFilter;
 
-			/// store parameters for pose history for rendering
-			std::vector<Packet::LogFrame::Robot::Pose> _poseHistory;
-
 			/// store parameters for bezier curves for rendering
 			std::vector<Geometry2d::Point> _bezierControls;
 			float _bezierTotalLength; /// total length of current bezier curve
@@ -212,13 +208,5 @@ namespace Motion
 			int binomialCoefficient(int n, int k) const;
 
 			int factorial(int n) const;
-
-			// drawing functions - wraps the debug rendering
-			void drawText(const std::string& text, const Geometry2d::Point& pt, int r, int g, int b);
-			void drawText(const std::string& text, const Geometry2d::Point& pt, const QColor& color=Qt::black);
-			void drawLine(const Geometry2d::Segment& line, int r, int g, int b);
-			void drawLine(const Geometry2d::Segment& line, const QColor& color=Qt::black);
-			void drawCircle(const Geometry2d::Point& center, float radius, int r, int g, int b);
-			void drawCircle(const Geometry2d::Point& center, float radius, const QColor& color = Qt::black);
 	};
 }

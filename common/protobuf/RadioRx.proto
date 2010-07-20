@@ -5,14 +5,14 @@ message RadioRx
 {
 	required uint64 timestamp = 1;
 	required uint32 board_id = 2;
-	required float rssi = 3;
-	required float battery = 4;
+	optional float rssi = 3;
+	optional float battery = 4;
 	
 	// ball sensor
-	required bool ball = 5;
+	optional bool ball = 5;
 	
 	// True if the kicker is fully charged
-	required bool charged = 6;
+	optional bool charged = 6 [default = true];
 	
 	repeated bool motorFault = 7;
 

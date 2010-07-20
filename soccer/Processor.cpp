@@ -2,17 +2,16 @@
 // vim:ai ts=4 et
 
 #include "Processor.hpp"
-#include <Processor.moc>
 
 #include <QMutexLocker>
 
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <Network/Network.hpp>
-
-#include <Vision.hpp>
+#include <poll.h>
+#include <multicast.hpp>
 #include <Constants.hpp>
+#include <Network.hpp>
 #include <Utils.hpp>
+#include <Joystick.hpp>
+#include <LogUtils.hpp>
 
 #include <modeling/WorldModel.hpp>
 #include <gameplay/GameplayModule.hpp>
@@ -28,49 +27,29 @@
 
 using namespace std;
 using namespace boost;
+using namespace Packet;
 
-Processor::Processor(Team t, QString filename, QObject *mainWindow) :
-	_running(true),
-	_team(t),
-// 	_sender(Network::Address, Network::addTeamOffset(_team, Network::RadioTx)),
+static QHostAddress LocalAddress(QHostAddress::LocalHost);
+
+Processor::Processor(QString filename, bool sim, int radio) :
 	_config(new ConfigFile(filename))
 {
-	_mainWindow = mainWindow;
-	vision_addr = "224.5.23.2";
+	_running = true;
+	_syncToVision = false;
 	_reverseId = 0;
 	_framePeriod = 1000000 / 60;
 	_lastFrameTime = 0;
+	_manualID = -1;
+	_defendPlusX = false;
+	_state.logFrame = &logFrame;
+	_externalReferee = true;
+
+	_simulation = sim;
+	_joystick = make_shared<Joystick>();
+
+	// Initialize team-space transformation
+	defendPlusX(_defendPlusX);
 	
-	Geometry2d::Point trans;
-	if (_team == Blue)
-	{
-		_teamAngle = -90;
-		trans = Geometry2d::Point(0, Constants::Field::Length / 2.0f);
-	} else {
-		// Assume yellow
-		_teamAngle = 90;
-		trans = Geometry2d::Point(0, Constants::Field::Length / 2.0f);
-	}
-
-	//transformations from world to team space
-	_teamTrans = Geometry2d::TransformMatrix::translate(trans);
-	_teamTrans *= Geometry2d::TransformMatrix::rotate(_teamAngle);
-
-	_flipField = false;
-
-	//set the team
-	_state.team = _team;
-
-	// Start not controlling any robot
-	_state.manualID = -1;
-	
-	//initially no camera does the triggering
-	_trigger = false;
-
-	_joystick = make_shared<JoystickInput>("/dev/input/robocupPad", &_state);
-	
-	_state.autonomous = !_joystick->valid();
-
 	QMetaObject::connectSlotsByName(this);
 
 	try
@@ -82,82 +61,261 @@ Processor::Processor(Team t, QString filename, QObject *mainWindow) :
 		printf("Config Load Error: %s\n", re.what());
 	}
 
-	_visionSocket.bind(10002);
-	struct ip_mreqn mreq;
-	memset(&mreq, 0, sizeof(mreq));
-	mreq.imr_multiaddr.s_addr = inet_addr(vision_addr.toAscii());
-	setsockopt(_visionSocket.socketDescriptor(), IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
+	// Create vision socket
+	if (_simulation)
+	{
+		// The simulator doesn't multicast its vision.  Instead, it sends to two different ports.
+		// Try to bind to the first one and, if that fails, use the second one.
+		if (!_visionSocket.bind(SimVisionPort))
+		{
+			if (!_visionSocket.bind(SimVisionPort + 1))
+			{
+				throw runtime_error("Can't bind to either simulated vision port");
+			}
+		}
+	} else {
+		// Receive multicast packets from shared vision.
+		if (!_visionSocket.bind(SharedVisionPort, QUdpSocket::ShareAddress))
+		{
+			throw runtime_error("Can't bind to shared vision port");
+		}
+		
+		multicast_add(_visionSocket, SharedVisionAddress);
+	}
 
-	_radioSocket.bind(Network::addTeamOffset(_team, Network::RadioTx));
-	memset(&mreq, 0, sizeof(mreq));
-	mreq.imr_multiaddr.s_addr = inet_addr(Network::Address);
-	setsockopt(_radioSocket.socketDescriptor(), IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
+	// Create referee socket
+	if (!_refereeSocket.bind(RefereePort, QUdpSocket::ShareAddress))
+	{
+		throw runtime_error("Can't bind to referee port");
+	}
+	
+	multicast_add(_refereeSocket, RefereeAddress);
 
+	// Create radio socket
+	if (radio < 0)
+	{
+		// No channel specified.
+		// Pick the first available one.
+		if (_radioSocket.bind(RadioRxPort))
+		{
+			_radio = 0;
+		} else {
+			if (_radioSocket.bind(RadioRxPort + 1))
+			{
+				_radio = 1;
+			} else {
+				throw runtime_error("Can't bind to either radio port");
+			}
+		}
+	} else {
+		// Bind only to the port for the specified channel.
+		if (!_radioSocket.bind(RadioRxPort + radio))
+		{
+			throw runtime_error("Can't bind to specified radio port");
+		}
+		_radio = radio;
+	}
+	
 	//setup the modules
-/*	_modelingModule = make_shared<Modeling::WorldModel>(&_state, _config->worldModel);
+	_modelingModule = make_shared<Modeling::WorldModel>(&_state, _config->worldModel);
 	_stateIDModule = make_shared<StateIdentification::StateIDModule>(&_state);
 	_motionModule = make_shared<Motion::MotionModule>(&_state, _config->motionModule);
 	_refereeModule = make_shared<RefereeModule>(&_state);
-	_gameplayModule = make_shared<Gameplay::GameplayModule>(&_state, _config->motionModule);*/
+	_gameplayModule = make_shared<Gameplay::GameplayModule>(&_state, _config->motionModule);
 }
 
 Processor::~Processor()
 {
-	_running = false;
-	wait();
+	stop();
+	
+	//DEBUG - This is unnecessary, but lets us determine which one breaks.
+	_modelingModule.reset();
+	_stateIDModule.reset();
+	_motionModule.reset();
+	_refereeModule.reset();
+	_gameplayModule.reset();
+}
+
+void Processor::stop()
+{
+	if (_running)
+	{
+		_running = false;
+		wait();
+	}
+}
+
+bool Processor::autonomous() const
+{
+	return _joystick->autonomous();
+}
+
+void Processor::manualID(int value)
+{
+	QMutexLocker locker(&loopMutex);
+	_manualID = value;
+}
+
+void Processor::blueTeam(bool value)
+{
+	// This is called from the GUI thread
+	QMutexLocker locker(&loopMutex);
+	
+	_blueTeam = value;
+}
+
+void Processor::addMotors(RadioTx::Robot* robot)
+{
+	for (int m = 0; m < 4; ++m)
+	{
+		robot->add_motors(0);
+	}
 }
 
 void Processor::run()
 {
-	//setup receiver of packets for vision and radio
-/*	Network::PacketReceiver receiver;
-	receiver.addType(vision_addr.toAscii(), 10002, this,
-			&Processor::visionHandler);
-	receiver.addType(Network::Address,
-			Network::addTeamOffset(_team, Network::RadioRx),
-			this, &Processor::radioHandler);*/
-// 	RefereeModule* raw = dynamic_cast<RefereeModule*>(_refereeModule.get());
-// 	receiver.addType(RefereeAddress, RefereePort, 
-// 			raw, &RefereeModule::packet);
-
-	uint64_t lastTime = Utils::timestamp();
+	Status curStatus;
+	
 	while (_running)
 	{
-		// Read all pending data from the gamepad
-		while (_joystick->poll())
-		{
-		}
+		uint64_t startTime = Utils::timestamp();
+		curStatus.lastLoopTime = startTime;
+		_state.timestamp = startTime;
 		
-		while (_visionSocket.hasPendingDatagrams())
-		{
-			vector<uint8_t> buf;
-			buf.resize(_visionSocket.pendingDatagramSize());
-			_visionSocket.readDatagram((char *)&buf[0], buf.size());
-			visionPacket(&buf);
-		}
+		////////////////
+		// Reset
 		
-#if 0
+		// Reset the log frame
+		logFrame.Clear();
+		logFrame.set_start_time(startTime);
+		
 		// Clear radio commands
-		for (int r = 0; r < 5; ++r)
+		radioTx.Clear();
+		for (int r = 0; r < Constants::Robots_Per_Team; ++r)
 		{
-			_state.self[r].radioTx = Packet::RadioTx::Robot();
+			_state.self[r].radioTx = 0;
 		}
 
-		if (_modelingModule)
+		////////////////
+		// Inputs
+		
+		// Read vision packets
+		int timeout = _framePeriod / 1000;
+		while (_syncToVision || _visionSocket.hasPendingDatagrams())
 		{
-			_modelingModule->run();
+			if (_syncToVision)
+			{
+				struct pollfd pfd;
+				pfd.fd = _visionSocket.socketDescriptor();
+				pfd.events = POLLIN;
+				if (poll(&pfd, 1, timeout) == 0)
+				{
+					// Timeout
+					break;
+				}
+				timeout = 0;
+			}
+			
+			string buf;
+			unsigned int n = _visionSocket.pendingDatagramSize();
+			buf.resize(n);
+			_visionSocket.readDatagram(&buf[0], n);
+			
+			SSL_WrapperPacket *packet = logFrame.add_raw_vision();
+			if (!packet->ParseFromString(buf))
+			{
+				printf("Bad vision packet of %d bytes\n", n);
+				continue;
+			}
+			
+			curStatus.lastVisionTime = Utils::timestamp();
+			visionPacket(*packet);
 		}
 		
-		for (int r = 0; r < 5; ++r)
+		// Read referee packets
+		while (_refereeSocket.hasPendingDatagrams())
+		{
+			unsigned int n = _refereeSocket.pendingDatagramSize();
+			string str(6, 0);
+			_refereeSocket.readDatagram(&str[0], str.size());
+			
+			// Check the size after receiving to discard bad packets
+			if (n != str.size())
+			{
+				printf("Bad referee packet of %d bytes\n", n);
+				continue;
+			}
+			
+			// Log the referee packet, but only use it if external referee is enabled
+			curStatus.lastRefereeTime = Utils::timestamp();
+			logFrame.add_raw_referee(str);
+			
+			if (_externalReferee)
+			{
+				_refereeModule->packet(str);
+			}
+		}
+		
+		// Read radio RX packets
+		while (_radioSocket.hasPendingDatagrams())
+		{
+			unsigned int n = _radioSocket.pendingDatagramSize();
+			string buf;
+			buf.resize(n);
+			_radioSocket.readDatagram(&buf[0], n);
+			
+			RadioRx *rx = logFrame.add_radio_rx();
+			if (!rx->ParseFromString(buf))
+			{
+				printf("Bad radio packet of %d bytes\n", n);
+				continue;
+			}
+			
+			curStatus.lastRadioRxTime = Utils::timestamp();
+			
+			// Store this packet in the appropriate robot
+			for (int i = 0 ; i < Constants::Robots_Per_Team; ++i)
+			{
+				if (_state.self[i].shell == rx->board_id())
+				{
+					// We have to copy because the RX packet will survive past this frame
+					// but LogFrame will not (the RadioRx in LogFrame will be reused).
+					_state.self[i].radioRx.CopyFrom(*rx);
+					break;
+				}
+			}
+		}
+		
+		loopMutex.lock();
+		
+		_joystick->update();
+		
+		if (_modelingModule)
+		{
+			_modelingModule->run(_blueTeam);
+		}
+		
+		// Add RadioTx commands for visible robots
+		for (int r = 0; r < Constants::Robots_Per_Team; ++r)
 		{
 			if (_state.self[r].valid)
 			{
-				// Mixed play IDs
-				if (_state.self[r].shell == 4 || _state.self[r].shell == 11)
-				{
-					_gameplayModule->self[r]->exclude = true;
-				}
-				
+				RadioTx::Robot *tx = radioTx.add_robots();
+				_state.self[r].radioTx = tx;
+				tx->set_board_id(_state.self[r].shell);
+				addMotors(tx);
+			}
+		}
+		
+		if (_refereeModule)
+		{
+			_refereeModule->run();
+		}
+		
+		for (int r = 0; r < Constants::Robots_Per_Team; ++r)
+		{
+			if (_state.self[r].valid)
+			{
 				ConfigFile::shared_robot rcfg = _config->robot(_state.self[r].shell);
 				
 				if (rcfg)
@@ -167,18 +325,13 @@ void Processor::run()
 					// set the config information
 					switch (rcfg->rev) {
 					case ConfigFile::rev2008:
-						_state.self[r].rev =  Packet::LogFrame::Robot::rev2008;
+						_state.self[r].rev =  SystemState::Robot::rev2008;
 						break;
 					case ConfigFile::rev2010:
-						_state.self[r].rev =  Packet::LogFrame::Robot::rev2010;
+						_state.self[r].rev =  SystemState::Robot::rev2010;
 					}
 				}
 			}
-		}
-		
-		if (_refereeModule)
-		{
-			_refereeModule->run();
 		}
 		
 		if (_stateIDModule)
@@ -195,85 +348,146 @@ void Processor::run()
 		{
 			_motionModule->run();
 		}
-#endif
+		
+		////////////////
+		// Store logging information
+		
+		logFrame.set_manual_id(_manualID);
+		logFrame.set_blue_team(_blueTeam);
+		logFrame.set_defend_plus_x(_defendPlusX);
+		
+		// Debug layers
+		const QStringList &layers = _state.debugLayers();
+		BOOST_FOREACH(const QString &str, layers)
+		{
+			logFrame.add_debug_layers(str.toStdString());
+		}
+		
+		// Filtered pose
+		BOOST_FOREACH(const SystemState::Robot &r, _state.self)
+		{
+			if (r.valid)
+			{
+				LogFrame::Robot *log = logFrame.add_self();
+				r.pos.set(log->mutable_pos());
+				log->set_shell(r.shell);
+				log->set_angle(r.angle);
+				log->set_has_ball(r.hasBall);
+			}
+		}
+		
+		BOOST_FOREACH(const SystemState::Robot &r, _state.opp)
+		{
+			if (r.valid)
+			{
+				LogFrame::Robot *log = logFrame.add_opp();
+				r.pos.set(log->mutable_pos());
+				log->set_shell(r.shell);
+				log->set_angle(r.angle);
+				log->set_has_ball(r.hasBall);
+			}
+		}
+		
+		if (_state.ball.valid)
+		{
+			LogFrame::Ball *log = logFrame.mutable_ball();
+			_state.ball.pos.set(log->mutable_pos());
+			_state.ball.vel.set(log->mutable_vel());
+		}
+		
+		logger.addFrame(logFrame);
 
-		captureState();
+		loopMutex.unlock();
+		
+		////////////////
+		// Outputs
 		
 		// Send motion commands to the robots
 		sendRadioData();
 
-		uint64_t curTime = Utils::timestamp();
-		int _lastFrameTime = curTime - lastTime;
+		// Store processing loop status
+		_statusMutex.lock();
+		_status = curStatus;
+		_statusMutex.unlock();
+		
+		////////////////
+		// Timing
+		
+		uint64_t endTime = Utils::timestamp();
+		int _lastFrameTime = endTime - startTime;
 		if (_lastFrameTime < _framePeriod)
 		{
-			usleep(_framePeriod - _lastFrameTime);
+			if (!_syncToVision)
+			{
+				usleep(_framePeriod - _lastFrameTime);
+			}
 		} else {
-			printf("Took too long: %d us\n", _lastFrameTime);
+			printf("Processor took too long: %d us\n", _lastFrameTime);
 		}
 	}
-}
-
-void Processor::captureState()
-{
-	QMutexLocker locker(&_frameMutex);
-	_lastFrame = _state;
-	qApp->postEvent(_mainWindow, new QEvent(QEvent::User));
-}
-
-Packet::LogFrame Processor::lastFrame()
-{
-	QMutexLocker locker(&_frameMutex);
-	return _lastFrame;
 }
 
 void Processor::sendRadioData()
 {
-	Packet::RadioTx tx;
-
-	tx.set_reverse_board_id(_state.self[_reverseId].shell);
+	// Cycle through reverse IDs
+	radioTx.set_reverse_board_id(_state.self[_reverseId].shell);
 	_reverseId = (_reverseId + 1) % Constants::Robots_Per_Team;
 	
-	for (int i = 0; i < Constants::Robots_Per_Team; ++i)
-	{
-		*tx.add_robots() = _state.self[i].radioTx;
-	}
-
-	bool halt;
-	if (!_state.autonomous)
-	{
-		// Manual
-		halt = false;
-	} else {
-		// Auto
-		halt = _state.gameState.halt();
-	}
-
-#if 0
-	if (halt)
+	// Halt overrides normal motion control
+	if (_joystick->autonomous() && _state.gameState.halt())
 	{
 		// Force all motor speeds to zero
-		for (int r = 0; r < 5; ++r)
+		for (int r = 0; r < radioTx.robots_size(); ++r)
 		{
-			for (int m = 0; m < 4; ++m)
+			RadioTx::Robot *robot = radioTx.mutable_robots(r);
+			for (int m = 0; m < robot->motors_size(); ++m)
 			{
-				tx.robots[r].motors[m] = 0;
+				robot->set_motors(m, 0);
 			}
 		}
 	}
-#endif
 
-// 	_sender.send(tx);
-}
-
-void Processor::visionPacket(const std::vector<uint8_t>* buf)
-{
-	SSL_WrapperPacket wrapper;
-	if (!wrapper.ParseFromArray(&buf->at(0), buf->size()))
+	// Apply joystick input
+	bool manualDone = false;
+	for (int i = 0; i < Constants::Robots_Per_Team; ++i)
 	{
-		printf("Bad vision packet\n");
-		return;
+		if (_state.self[i].valid)
+		{
+			RadioTx::Robot *tx = _state.self[i].radioTx;
+			if (_manualID >= 0 && _state.self[i].shell == _manualID)
+			{
+				// Drive this robot manually
+				_joystick->drive(tx);
+				manualDone = true;
+			} else if (!_joystick->autonomous())
+			{
+				// Stop this robot
+				for (int m = 0; m < tx->motors_size(); ++m)
+				{
+					tx->set_motors(m, 0);
+				}
+			}
+		}
 	}
 	
+	if (_manualID >= 0 && radioTx.robots_size() < Constants::Robots_Per_Team && !manualDone)
+	{
+		// The manual robot wasn't found by vision/modeling but we have room for it in the packet.
+		// This allows us to drive an off-field robot for testing or to drive a robot back onto the field.
+		RadioTx::Robot *robot = radioTx.add_robots();
+		robot->set_board_id(_manualID);
+		addMotors(robot);
+		_joystick->drive(robot);
+	}
+
+	// Send the packet
+	std::string out;
+	radioTx.SerializeToString(&out);
+	_radioSocket.writeDatagram(&out[0], out.size(), LocalAddress, RadioTxPort + _radio);
+}
+
+void Processor::visionPacket(const SSL_WrapperPacket &wrapper)
+{
 	if (!wrapper.has_detection())
 	{
 		// Geometry only - we don't care
@@ -282,7 +496,7 @@ void Processor::visionPacket(const std::vector<uint8_t>* buf)
 	
 	const SSL_DetectionFrame &detection = wrapper.detection();
 	
-	Packet::Vision visionPacket;
+	Vision visionPacket;
 	visionPacket.camera = detection.camera_id();
 	visionPacket.timestamp = (uint64_t)(detection.t_capture() * 1.0e6);
 	
@@ -293,7 +507,7 @@ void Processor::visionPacket(const std::vector<uint8_t>* buf)
 			continue;
 		}
 		
-		Packet::Vision::Robot r;
+		Vision::Robot r;
 		r.pos.x = robot.x()/1000.0;
 		r.pos.y = robot.y()/1000.0;
 		r.angle = robot.orientation() * RadiansToDegrees;
@@ -309,7 +523,7 @@ void Processor::visionPacket(const std::vector<uint8_t>* buf)
 			continue;
 		}
 		
-		Packet::Vision::Robot r;
+		Vision::Robot r;
 		r.pos.x = robot.x()/1000.0;
 		r.pos.y = robot.y()/1000.0;
 		r.angle = robot.orientation() * RadiansToDegrees;
@@ -325,7 +539,7 @@ void Processor::visionPacket(const std::vector<uint8_t>* buf)
 			continue;
 		}
 		
-		Packet::Vision::Ball b;
+		Vision::Ball b;
 		b.pos.x = ball.x()/1000.0;
 		b.pos.y = ball.y()/1000.0;
 		visionPacket.balls.push_back(b);
@@ -340,75 +554,47 @@ void Processor::visionPacket(const std::vector<uint8_t>* buf)
 
 	//convert last frame to teamspace
 	toTeamSpace(_state.rawVision[visionPacket.camera]);
-
-	if (visionPacket.camera == 0)
-	{
-		_state.timestamp = visionPacket.timestamp;
-		_trigger = true;
-	}
 }
 
-void Processor::radioHandler(const Packet::RadioRx* packet)
-{
-#if 0
-	//received radio packets
-	for (unsigned int i=0 ; i<5 ; ++i)
-	{
-		if (_state.self[i].shell == packet->board_id)
-		{
-			_state.self[i].radioRx = *packet;
-			break;
-		}
-	}
-#endif
-}
-
-void Processor::toTeamSpace(Packet::Vision& vision)
+void Processor::toTeamSpace(Vision& vision)
 {
 	//translates raw vision into team space
 	//means modeling doesn't need to do it
 	for (unsigned int i = 0; i < vision.blue.size(); ++i)
 	{
-		Packet::Vision::Robot& r = vision.blue[i];
+		Vision::Robot& r = vision.blue[i];
 
-		if (_flipField)
-		{
-			r.pos *= -1;
-			r.angle = Utils::fixAngleDegrees(r.angle + 180);
-		}
-
-		r.pos = _teamTrans * r.pos;
+		r.pos = _worldToTeam * r.pos;
 		r.angle = Utils::fixAngleDegrees(_teamAngle + r.angle);
 	}
 
 	for (unsigned int i = 0; i < vision.yellow.size(); ++i)
 	{
-		Packet::Vision::Robot& r = vision.yellow[i];
+		Vision::Robot& r = vision.yellow[i];
 
-		if (_flipField)
-		{
-			r.pos *= -1;
-			r.angle = Utils::fixAngleDegrees(r.angle + 180);
-		}
-
-		r.pos = _teamTrans * r.pos;
+		r.pos = _worldToTeam * r.pos;
 		r.angle = Utils::fixAngleDegrees(_teamAngle + r.angle);
 	}
 
 	for (unsigned int i = 0; i < vision.balls.size(); ++i)
 	{
-		Packet::Vision::Ball& b = vision.balls[i];
+		Vision::Ball& b = vision.balls[i];
 
-		if (_flipField)
-		{
-			b.pos *= -1;
-		}
-
-		b.pos = _teamTrans * b.pos;
+		b.pos = _worldToTeam * b.pos;
 	}
 }
 
-void Processor::flipField(bool flip)
+void Processor::defendPlusX(bool value)
 {
-	_flipField = flip;
+	_defendPlusX = value;
+
+	if (_defendPlusX)
+	{
+		_teamAngle = -90;
+	} else {
+		_teamAngle = 90;
+	}
+
+	_worldToTeam = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length / 2.0f));
+	_worldToTeam *= Geometry2d::TransformMatrix::rotate(_teamAngle);
 }

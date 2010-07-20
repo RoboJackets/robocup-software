@@ -5,6 +5,8 @@
 using namespace std;
 using namespace Geometry2d;
 
+REGISTER_PLAY(Gameplay::Plays::MixedChallenge2010)
+
 Gameplay::Plays::MixedChallenge2010::MixedChallenge2010(GameplayModule *gameplay):
 	Play(gameplay, 1),
 	_state(STOPPED),

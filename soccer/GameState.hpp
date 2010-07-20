@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Team.h"
+#include <stdint.h>
 
 class GameState
 {
@@ -48,9 +48,6 @@ public:
     // Time in seconds remaining in the current period
     uint16_t secondsRemaining;
     
-    // Counter from the most recent referee packet
-    uint32_t numPackets;
-
     GameState()
     {
         period = FirstHalf;

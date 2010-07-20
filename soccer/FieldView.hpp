@@ -3,14 +3,14 @@
 #pragma once
 
 #include <QWidget>
-#include <QVector>
-#include <QTimer>
+#include <QUdpSocket>
 
-#include <Team.h>
+#include <Geometry2d/Point.hpp>
+#include <Geometry2d/TransformMatrix.hpp>
 #include <protobuf/LogFrame.pb.h>
-#include <Network/Sender.hpp>
+#include <protobuf/SimCommand.pb.h>
 
-#include <boost/shared_ptr.hpp>
+class Logger;
 
 /** class that performs drawing of log data onto the field */
 class FieldView : public QWidget
@@ -20,51 +20,66 @@ class FieldView : public QWidget
 	public:
 		FieldView(QWidget* parent = 0);
 		
-		void team(Team t);
+		QVector<bool> layerVisible;
 		
-		void addModule(boost::shared_ptr<Module> module);
-
-		SystemState *state;
+		Logger *logger;
 		
+		bool showRawRobots;
+		bool showRawBalls;
+		bool showCoords;
+		
+		void rotate(int value);
+		
+		void sendSimCommand(const Packet::SimCommand &cmd);
+	
+	Q_SIGNALS:
+		// Emitted when the user selects a robot.
+		// The robot is identified by shell number.
+		// shell may be -1 to select no robot.
+		void robotSelected(int shell);
+	
 	protected:
-		void paintEvent(QPaintEvent* pe);
-		void resizeEvent(QResizeEvent* re);
+		virtual void paintEvent(QPaintEvent* pe);
+		virtual void resizeEvent(QResizeEvent *e);
 		
-		void mouseReleaseEvent(QMouseEvent*);
-		void mousePressEvent(QMouseEvent*);
-		void mouseMoveEvent(QMouseEvent*);
-		void mouseDoubleClickEvent(QMouseEvent*);
+		virtual void mouseReleaseEvent(QMouseEvent*);
+		virtual void mousePressEvent(QMouseEvent*);
+		virtual void mouseMoveEvent(QMouseEvent*);
+		virtual void mouseDoubleClickEvent(QMouseEvent*);
 		
-	protected:
-		/** convert from screen space to team space */
-		Geometry2d::Point toTeamSpace(int x, int y) const;
+		// Places the ball at a position on the screen
+		void placeBall(QPointF pos);
 		
-		Geometry2d::Point toWorldSpace(Geometry2d::Point pt, bool translate = true) const;
-		
+		void drawText(QPainter& p, QPointF pos, QString text, bool center = true);
 		void drawField(QPainter&);
-
-	public Q_SLOTS:
-		void frame(Packet::LogFrame* frame);
+		void drawRobot(QPainter& p, bool blueRobot, int ID, QPointF pos, float theta, bool hasBall = false);
+		void drawCoords(QPainter& p);
 
 	protected:
-		/** frame to display */
-		Packet::LogFrame* _frame;
-		
-		//translations for placing robots in team space
-		float _tx, _ty, _ta;
+		QUdpSocket _simCommandSocket;
 
-		Team _team;
-		bool _showVision;
+		// Coordinate transformations
+		Geometry2d::TransformMatrix _screenToWorld;
+		Geometry2d::TransformMatrix _worldToTeam;
+		Geometry2d::TransformMatrix _teamToWorld;
 		
-		//list of modules for fieldOverlay hook
-		QVector<boost::shared_ptr<Module> > _modules;
+		// Rotation of the field in 90-degree increments (0 to 3).
+		int _rotate;
+		
+		// How many degrees to rotate text so it shows up the right way on screen
+		int _textRotation;
 		
 		// True while a line is being dragged from the ball
-		bool _dragBall;
+		enum
+		{
+			DRAG_NONE = 0,
+			DRAG_PLACE,
+			DRAG_SHOOT
+		} _dragMode;
+		
 		Geometry2d::Point _dragTo;
+		Geometry2d::Point _shot;
 		
-		// SimCommand sender
-		Network::Sender _sender;
-		
-		QTimer _updateTimer;
+		// Most recent frame
+		Packet::LogFrame _frame;
 };

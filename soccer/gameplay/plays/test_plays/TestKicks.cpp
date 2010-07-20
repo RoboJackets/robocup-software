@@ -1,13 +1,9 @@
-/**
- *  Example play: This is a template for a play.
- *  To use, implement the functions and add the necessary member variables
- *  and do a test replacement for ExamplePlay with whatever name you want.
- */
-
 #include "TestKicks.hpp"
 #include <boost/foreach.hpp>
 
 using namespace std;
+
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::TestKicks, "Tests")
 
 Gameplay::Plays::TestKicks::TestKicks(GameplayModule *gameplay):
 	Play(gameplay),

@@ -12,6 +12,8 @@
 using namespace Geometry2d;
 using namespace std;
 
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::TestPassExperiment1, "Tests")
+
 Gameplay::Plays::TestPassExperiment1::TestPassExperiment1(GameplayModule *gameplay)
 : Play(gameplay), passPlanner_(gameplay, true), _kicker1(gameplay), _kicker2(gameplay),
   _expTime(5000000 /* 5 seconds */), _expState(Initializing), _expType(OptimizedPass) {

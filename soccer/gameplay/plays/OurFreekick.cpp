@@ -2,6 +2,8 @@
 
 using namespace std;
 
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::OurFreekick, "Restarts")
+
 Gameplay::Plays::OurFreekick::OurFreekick(GameplayModule *gameplay):
 	Play(gameplay, 1),
 	_kicker(gameplay),

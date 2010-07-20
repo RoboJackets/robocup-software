@@ -3,6 +3,8 @@
 using namespace std;
 using namespace Geometry2d;
 
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::Offense, "Playing")
+
 Gameplay::Plays::Offense::Offense(GameplayModule *gameplay):
 	Play(gameplay, 1),
 	_fullback1(gameplay),
@@ -15,8 +17,8 @@ Gameplay::Plays::Offense::Offense(GameplayModule *gameplay):
 bool Gameplay::Plays::Offense::applicable()
 {
 	bool refApplicable =_gameplay->state()->gameState.playing();
-	bool gameplayApplicable = _gameplay->state()->stateID.posession == Packet::LogFrame::OFFENSE ||
-						      _gameplay->state()->stateID.posession == Packet::LogFrame::FREEBALL;
+// 	bool gameplayApplicable = _gameplay->state()->stateID.posession == SystemState::OFFENSE ||
+// 						      _gameplay->state()->stateID.posession == SystemState::FREEBALL;
 
 	return refApplicable;// && gameplayApplicable;
 }
@@ -103,12 +105,12 @@ bool Gameplay::Plays::Offense::run()
 		Point kickerPos;
 		if (_usingKicker1) {
 			_kicker1.run();
-			drawText("Active", _kicker1.robot()->pos() + textOffset);
+			state()->drawText("Active", _kicker1.robot()->pos() + textOffset);
 			kickerPos = _kicker1.robot()->pos();
 			other = _kicker2.robot();
 		} else {
 			_kicker2.run();
-			drawText("Active", _kicker2.robot()->pos() + textOffset);
+			state()->drawText("Active", _kicker2.robot()->pos() + textOffset);
 			kickerPos = _kicker2.robot()->pos();
 			other = _kicker1.robot();
 		}
@@ -117,7 +119,7 @@ bool Gameplay::Plays::Offense::run()
 		float lag_y_dist = 0.5, x_offset = 1.5;
 		float newX = (ballPos.x < 0.0) ? ballPos.x + x_offset : ballPos.x - x_offset;
 		float newY = (ballPos.y < Constants::Field::Length/2.0) ? ballPos.y + lag_y_dist : ballPos.y - lag_y_dist;
-		drawText("Backup", other->pos() + textOffset);
+		state()->drawText("Backup", other->pos() + textOffset);
 		other->move(Point(newX, newY), false);
 		other->face(kickerPos);
 	} else {

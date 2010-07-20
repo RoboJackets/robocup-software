@@ -5,95 +5,173 @@
 
 #include <QThread>
 #include <QMutex>
+#include <QMutexLocker>
 #include <QUdpSocket>
-
-#include <list>
 
 #include <boost/shared_ptr.hpp>
 
-#include <Team.h>
+#include <protobuf/LogFrame.pb.h>
+#include <Network.hpp>
+#include <Logger.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
-#include <Vision.hpp>
 
+#include <framework/Vision.hpp>
 #include <gameplay/GameplayModule.hpp>
 #include <motion/MotionModule.hpp>
 #include <stateID/StateIDModule.hpp>
+#include <modeling/WorldModel.hpp>
 
 #include <framework/ConfigFile.hpp>
 
-#include "JoystickInput.hpp"
 #include "RefereeModule.hpp"
+
+class Joystick;
 
 /** handles processing for a team */
 class Processor: public QThread
-{	
-	Q_OBJECT;
-	
+{
 	public:
-		Processor(Team t, QString filename, QObject *mainWindow);
+		struct Status
+		{
+			Status()
+			{
+				lastLoopTime = 0;
+				lastVisionTime = 0;
+				lastRefereeTime = 0;
+				lastRadioRxTime = 0;
+			}
+			
+			uint64_t lastLoopTime;
+			uint64_t lastVisionTime;
+			uint64_t lastRefereeTime;
+			uint64_t lastRadioRxTime;
+		};
+		
+		Processor(QString filename, bool sim, int radio);
 		~Processor();
+		
+		void stop();
+		
+		int radio() const
+		{
+			return _radio;
+		}
+		
+		bool autonomous() const;
+		
+		void externalReferee(bool value)
+		{
+			_externalReferee = value;
+		}
+		
+		bool externalReferee() const
+		{
+			return _externalReferee;
+		}
+		
+		void manualID(int value);
+		int manualID()
+		{
+			QMutexLocker locker(&loopMutex);
+			return _manualID;
+		}
+		
+		void blueTeam(bool value);
+		bool blueTeam() const
+		{
+			return _blueTeam;
+		}
 		
 		boost::shared_ptr<Gameplay::GameplayModule> gameplayModule() const
 		{
 			return _gameplayModule;
 		}
 		
-		SystemState& state()
+		boost::shared_ptr<RefereeModule> refereeModule() const
 		{
-			return _state;
+			return _refereeModule;
 		}
 		
-		//return a list of all the modules */
-		const QVector<boost::shared_ptr<Module> >& modules()
+		SystemState *state()
 		{
-			return _modules;
+			return &_state;
 		}
 		
 		boost::shared_ptr<ConfigFile> configFile()
 		{
 			return _config;
 		}
-
-		Packet::LogFrame lastFrame();
-
-		/** Multicast address for vision */
-		QString vision_addr;
 		
-	public Q_SLOTS:
-		void flipField(bool flip);
+		bool simulation() const
+		{
+			return _simulation;
+		}
+
+		Logger logger;
+		
+		// LogFrame being built for the current frame
+		Packet::LogFrame logFrame;
+		
+		// Data to be sent to the radio at the end of the current frame
+		Packet::RadioTx radioTx;
+		
+		void defendPlusX(bool value);
+		
+		Status status()
+		{
+			QMutexLocker locker(&_statusMutex);
+			return _status;
+		}
+		
+		// Locked when processing loop stuff is happening (not when blocked for timing or I/O).
+		// This is public so the GUI thread can lock it to access SystemState, etc.
+		QMutex loopMutex;
 		
 	protected:
 		void run();
 
 	private:
+		// Adds motor values to a RadioTx::Robot
+		void addMotors(Packet::RadioTx::Robot *robot);
+		
 		/** convert all coords to team space */
-		void toTeamSpace(Packet::Vision& vision);
+		void toTeamSpace(Vision& vision);
 		
 		/** send out the radio data for the radio program */
 		void sendRadioData();
 
 		/** handle incoming vision packet */
-		void visionPacket(const std::vector<uint8_t>* packet);
+		void visionPacket(const SSL_WrapperPacket &wrapper);
 		
-		/** handle incoming radio packet */
-		void radioHandler(const Packet::RadioRx* packet);
-	
 		/** Used to start and stop the thread **/
 		volatile bool _running;
 
-		/** if true, the system should run */
-		bool _trigger;
-
-		/** team we are running as */
-		Team _team;
+		// True if we are running with a simulator.
+		// This changes network communications.
+		bool _simulation;
+		
+		// If true, the processing loop waits to run until a vision packet is received.
+		bool _syncToVision;
+		
+		// True if we are blue.
+		// False if we are yellow.
+		bool _blueTeam;
 		
 		/** global system state */
 		SystemState _state;
 
-		Geometry2d::TransformMatrix _teamTrans;
+		// Transformation from world space to team space.
+		// This depends on which goal we're defending.
+		//
+		// _teamTrans is used for positions, not angles.
+		// _teamAngle is used for angles.
+		Geometry2d::TransformMatrix _worldToTeam;
 		float _teamAngle;
 		
-		bool _flipField;
+		// Board ID of the robot to manually control or -1 if none
+		int _manualID;
+		
+		bool _defendPlusX;
 		
 		/** Which robot will next send reverse data */
 		int _reverseId;
@@ -104,27 +182,29 @@ class Processor: public QThread
 		// Processing period in microseconds
 		int _framePeriod;
 		
-		QMutex _frameMutex;
-		Packet::LogFrame _lastFrame;
-		QObject *_mainWindow;
-		void captureState();
+		// Which radio channel we're using
+		int _radio;
 		
+		// True if we are using external referee packets
+		bool _externalReferee;
+		
+		// This is used by the GUI to indicate status of the processing loop and network
+		QMutex _statusMutex;
+		Status _status;
+		
+		// Network sockets
 		QUdpSocket _visionSocket;
+		QUdpSocket _refereeSocket;
+		// _radioSocket is used for both sending (RadioTx) and receiving (RadioRx).
 		QUdpSocket _radioSocket;
 
 		//modules
-		QMutex _modulesMutex;
-		
-		boost::shared_ptr<Module> _modelingModule;
+		boost::shared_ptr<Modeling::WorldModel> _modelingModule;
 		boost::shared_ptr<RefereeModule> _refereeModule;
 		boost::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
-		boost::shared_ptr<Module> _motionModule;
+		boost::shared_ptr<Motion::MotionModule> _motionModule;
 		boost::shared_ptr<StateIdentification::StateIDModule> _stateIDModule;
-		
-		boost::shared_ptr<JoystickInput> _joystick;
+		boost::shared_ptr<Joystick> _joystick;
 		
 		boost::shared_ptr<ConfigFile> _config;
-		
-		/** list of all modules */
-		QVector<boost::shared_ptr<Module> > _modules;
 };

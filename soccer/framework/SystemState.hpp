@@ -3,194 +3,150 @@
 #include <vector>
 #include <string>
 
-#include <framework/Vision.hpp>
+#include <QMap>
+#include <QColor>
+
 #include <Geometry2d/Point.hpp>
-#include <Geometry2d/Segment.hpp>
-#include <Geometry2d/Polygon.hpp>
-#include <Geometry2d/Circle.hpp>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
-#include <Team.h>
 #include <GameState.hpp>
+#include <framework/Vision.hpp>
+#include <framework/ConfigFile.hpp>
+#include <framework/Obstacle.hpp>
 #include <framework/MotionCmd.hpp>
-#include <framework/Robot.hpp>
 
-    class SystemState
-    {
-        public:
-            class Robot
-             : public Framework::Robot
-            {
-                public:
-                    uint8_t shell;
-                    enum Rev
-                    {
-                        rev2008 = 0,
-                        rev2010 = 1
-                    };
-                    
-                    Rev rev;
-                    Geometry2d::Point pos;
-                    Geometry2d::Point vel;
-                    float angle;
-                    float angleVel;
-                    MotionCmd cmd;
-                    bool valid;
-                    bool haveBall;
-                    Geometry2d::Point cmd_vel;
-                    float cmd_w;
-                    RadioTx::Robot radioTx;
-                    Packet::RadioRx radioRx;
-                    class Pose
-                    {
-                        public:
-                            Geometry2d::Point pos;
-                            float angle;
-                            
-                            Pose()
-                            {
-                                angle = 0;
-                            }
-                    };
-                    
-                    std::vector<Pose> poseHistory;
-                    
-                    Robot()
-                    {
-                        shell = 0;
-                        rev = rev2008;
-                        angle = 0;
-                        angleVel = 0;
-                        valid = false;
-                        haveBall = false;
-                        cmd_w = 0;
-                    }
-            };
-            
-            class Ball
-            {
-                public:
-                    Geometry2d::Point pos;
-                    Geometry2d::Point vel;
-                    Geometry2d::Point accel;
-                    bool valid;
-                    
-                    Ball()
-                    {
-                        valid = false;
-                    }
-            };
-            
-            enum Possession
-            {
-                OFFENSE = 0,
-                DEFENSE = 1,
-                FREEBALL = 2
-            };
-            
-            enum BallFieldPos
-            {
-                HOMEFIELD = 0,
-                MIDFIELD = 1,
-                OPPFIELD = 2
-            };
-            
-            class GameStateID
-            {
-                public:
-                    Possession posession;
-                    BallFieldPos field_pos;
-                    
-                    GameStateID()
-                    {
-                        posession = OFFENSE;
-                        field_pos = HOMEFIELD;
-                    }
-            };
-            
-            GameStateID stateID;
-            uint64_t timestamp;
-            Team team;
-            bool autonomous;
-            int8_t manualID;
-            std::string playName;
-            std::vector<Packet::Vision> rawVision;
-            GameState gameState;
-            Robot self[5];
-            Robot opp[5];
-            Ball ball;
-            std::vector<Geometry2d::Point> pathTest;
-            class DebugPolygon
-             : public Geometry2d::Polygon
-            {
-                public:
-                    uint8_t color[3];
-                    
-                    DebugPolygon()
-                    {
-                        for (int i = 0; i < 3; ++i)
-                        {
-                            color[i] = 0;
-                        }
-                    }
-            };
-            
-            class DebugLine
-             : public Geometry2d::Segment
-            {
-                public:
-                    uint8_t color[3];
-                    
-                    DebugLine()
-                    {
-                        for (int i = 0; i < 3; ++i)
-                        {
-                            color[i] = 0;
-                        }
-                    }
-            };
-            
-            class DebugCircle
-             : public Geometry2d::Circle
-            {
-                public:
-                    uint8_t color[3];
-                    
-                    DebugCircle()
-                    {
-                        for (int i = 0; i < 3; ++i)
-                        {
-                            color[i] = 0;
-                        }
-                    }
-            };
-            
-            class DebugText
-            {
-                public:
-                    std::string text;
-                    Geometry2d::Point pos;
-                    uint8_t color[3];
-                    
-                    DebugText()
-                    {
-                        for (int i = 0; i < 3; ++i)
-                        {
-                            color[i] = 0;
-                        }
-                    }
-            };
-            
-            std::vector<DebugPolygon> debugPolygons;
-            std::vector<DebugLine> debugLines;
-            std::vector<DebugCircle> debugCircles;
-            std::vector<DebugText> debugText;
-            
-            LogFrame()
-            {
-                timestamp = 0;
-                team = UnknownTeam;
-                autonomous = 0;
-            }
-    };
+namespace Packet
+{
+	class LogFrame;
+}
 
+class SystemState
+{
+	public:
+		class Robot
+		{
+			public:
+				ObstacleGroup obstacles;
+				ConfigFile::Robot config;
+				
+				uint8_t shell;
+				enum Rev
+				{
+					rev2008 = 0,
+					rev2010 = 1
+				};
+				
+				Rev rev;
+				Geometry2d::Point pos;
+				Geometry2d::Point vel;
+				float angle;
+				float angleVel;
+				MotionCmd cmd;
+				bool valid;
+				bool hasBall;
+				Geometry2d::Point cmd_vel;
+				float cmd_w;
+				Packet::RadioTx::Robot *radioTx;
+				Packet::RadioRx radioRx;
+				
+				Robot()
+				{
+					shell = 0;
+					rev = rev2008;
+					angle = 0;
+					angleVel = 0;
+					valid = false;
+					hasBall = false;
+					cmd_w = 0;
+					radioTx = 0;
+				}
+		};
+		
+		class Ball
+		{
+			public:
+				Geometry2d::Point pos;
+				Geometry2d::Point vel;
+				Geometry2d::Point accel;
+				bool valid;
+				
+				Ball()
+				{
+					valid = false;
+				}
+		};
+		
+		enum Possession
+		{
+			OFFENSE = 0,
+			DEFENSE = 1,
+			FREEBALL = 2
+		};
+		
+		enum BallFieldPos
+		{
+			HOMEFIELD = 0,
+			MIDFIELD = 1,
+			OPPFIELD = 2
+		};
+		
+		class GameStateID
+		{
+			public:
+				Possession posession;
+				BallFieldPos field_pos;
+				
+				GameStateID()
+				{
+					posession = OFFENSE;
+					field_pos = HOMEFIELD;
+				}
+		};
+		
+		// Debug graphics
+		void drawLine(const Geometry2d::Line &line, const QColor &color = Qt::black, const QString &layer = QString());
+		
+		void drawLine(const Geometry2d::Point &p0, const Geometry2d::Point &p1, const QColor &color = Qt::black, const QString &layer = QString())
+		{
+			drawLine(Geometry2d::Line(p0, p1), color);
+		}
+		
+		void drawCircle(const Geometry2d::Point &center, float radius, const QColor &color = Qt::black, const QString &layer = QString());
+		void drawPath(const Geometry2d::Point *pts, int n, const QColor &color = Qt::black, const QString &layer = QString());
+		void drawPolygon(const Geometry2d::Point *pts, int n, const QColor &color = Qt::black, const QString &layer = QString());
+		void drawText(const QString &text, const Geometry2d::Point &pos, const QColor &color = Qt::black, const QString &layer = QString());
+		
+		GameStateID stateID;
+		uint64_t timestamp;
+		std::vector<Vision> rawVision;
+		GameState gameState;
+		Robot self[5];
+		Robot opp[5];
+		Ball ball;
+		Packet::LogFrame *logFrame;
+		
+		SystemState()
+		{
+			timestamp = 0;
+			_numDebugLayers = 0;
+		}
+		
+		const QStringList &debugLayers() const
+		{
+			return _debugLayers;
+		}
+		
+	private:
+		// Returns the number of a debug layer given its name
+		int findDebugLayer(QString layer);
+		
+		// Map from debug layer name to ID
+		typedef QMap<QString, int> DebugLayerMap;
+		DebugLayerMap _debugLayerMap;
+		
+		// Debug layers in order by ID
+		QStringList _debugLayers;
+		
+		// Number of debug layers
+		int _numDebugLayers;
+};

@@ -15,11 +15,28 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="lblCurrentPlaybook">
-     <property name="text">
-      <string>Current Playbook: [New Playbook]</string>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QLabel" name="lblCurrentPlaybook">
+       <property name="text">
+        <string>Current Playbook:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="playbookName">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QFrame" name="frame_2">
@@ -52,9 +69,6 @@
      <property name="text">
       <string>Use Goalie</string>
      </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
     </widget>
    </item>
    <item>
@@ -65,25 +79,27 @@
     </widget>
    </item>
    <item>
-    <widget class="QListView" name="plays"/>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QPushButton" name="all">
-       <property name="text">
-        <string>&amp;All</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="none">
-       <property name="text">
-        <string>&amp;None</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="QTreeWidget" name="plays">
+     <property name="columnCount">
+      <number>2</number>
+     </property>
+     <attribute name="headerVisible">
+      <bool>false</bool>
+     </attribute>
+     <attribute name="headerVisible">
+      <bool>false</bool>
+     </attribute>
+     <column>
+      <property name="text">
+       <string>Name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>App</string>
+      </property>
+     </column>
+    </widget>
    </item>
    <item>
     <widget class="QLabel" name="lblCurrentPlay">
@@ -94,7 +110,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="play_icons.qrc"/>
+ </resources>
  <connections/>
  <slots>
   <slot>addPlay(QListWidgetItem*)</slot>

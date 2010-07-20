@@ -1,9 +1,9 @@
 // kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 // vim:ai ts=4 et
 
-#include <iostream>
-#include "MotionModule.hpp"
+#include <motion/MotionModule.hpp>
 
+#include <Constants.hpp>
 #include <QMouseEvent>
 #include <boost/foreach.hpp>
 
@@ -12,18 +12,12 @@ using namespace Motion;
 using namespace Packet;
 
 MotionModule::MotionModule(SystemState *state, const ConfigFile::MotionModule& cfg) :
-	Module("Motion"), _guiInitialized(false), _config(cfg)
+	_config(cfg)
 {
 	_state = state;
-	_configWidget = new QWidget();
-	_ui.setupUi(_configWidget);
-
-	//seems to be the only way to set the widgets parent to an object
-	((QObject*)_configWidget)->setParent((QObject*)this);
-	QMetaObject::connectSlotsByName(this);
 
 	//initialize empty robots
-    for(unsigned int i=0 ; i<5 ; i++)
+    for(int i = 0; i < Constants::Robots_Per_Team; i++)
     {
         _robots[i] = new Robot(cfg.robot, i);
 		_robots[i]->setSystemState(_state);
@@ -32,16 +26,11 @@ MotionModule::MotionModule(SystemState *state, const ConfigFile::MotionModule& c
 
 MotionModule::~MotionModule()
 {
-    for (unsigned int i=0; i<5; i++)
+    for (int i = 0; i < Constants::Robots_Per_Team; i++)
     {
         delete _robots[i];
         _robots[i] = 0;
     }
-}
-
-QWidget* MotionModule::widget() const
-{
-	return _configWidget;
 }
 
 #if 0

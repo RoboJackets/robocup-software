@@ -21,8 +21,6 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include "RbpfModel.hpp"
 
-#include "framework/Module.hpp"
-
 // free rolling ball, ignores control input
 // state: X (6 x 1) = {x, y, vx, vy, ax, ay}
 class RbpfModelRolling : public RbpfModel {

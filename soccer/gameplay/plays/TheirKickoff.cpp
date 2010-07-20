@@ -2,6 +2,8 @@
 
 using namespace std;
 
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::TheirKickoff, "Restarts")
+
 Gameplay::Plays::TheirKickoff::TheirKickoff(GameplayModule *gameplay):
 	Play(gameplay, 1),
 	_fullback1(gameplay, Behaviors::Fullback::Left),

@@ -2,6 +2,8 @@
 
 using namespace std;
 
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::TestIntercept, "Tests")
+
 Gameplay::Plays::TestIntercept::TestIntercept(GameplayModule *gameplay):
 	Play(gameplay, 1), _kicker(gameplay)
 {

@@ -8,28 +8,26 @@
 
 #include <QApplication>
 #include <QString>
-#include <QDebug>
 
 #include <boost/foreach.hpp>
-
-#include <Team.h>
 
 #include "PlayConfigTab.hpp"
 #include "MainWindow.hpp"
 
 using namespace std;
+using namespace Packet;
 
 void usage(const char* prog)
 {
-	printf("usage: %s <-y|-b> [-f] [-ng] [-sim] [-c <config file>] [-p <playbook>] [-pp <play>]\n", prog);
-	printf("\t-y:  run as the yellow team\n");
-	printf("\t-b:  run as the blue team\n");
-	printf("\t-c:  specify the configuration file\n");
-	printf("\t-f:  flip field\n");
-	printf("\t-p:  load playbook\n");
-	printf("\t-pp: enable named play\n");
-	printf("\t-ng: no goalie\n");
-	printf("\t-sim: use simulator\n");
+	fprintf(stderr, "usage: %s <-y|-b> [-r <n>] [-ng] [-sim] [-c <config file>] [-p <playbook>] [-pp <play>]\n", prog);
+	fprintf(stderr, "\t-r:   run only on specified radio channel\n");
+	fprintf(stderr, "\t-y:   run as the yellow team\n");
+	fprintf(stderr, "\t-b:   run as the blue team\n");
+	fprintf(stderr, "\t-c:   specify the configuration file\n");
+	fprintf(stderr, "\t-p:   load playbook\n");
+	fprintf(stderr, "\t-pp:  enable named play\n");
+	fprintf(stderr, "\t-ng:  no goalie\n");
+	fprintf(stderr, "\t-sim: use simulator\n");
 	exit(1);
 }
 
@@ -38,7 +36,7 @@ int main (int argc, char* argv[])
 	// Seed the large random number generator
 	long int seed = 0;
 	int fd = open("/dev/random", O_RDONLY);
-	if (fd)
+	if (fd >= 0)
 	{
 		if (read(fd, &seed, sizeof(seed)) == sizeof(seed))
 		{
@@ -54,30 +52,28 @@ int main (int argc, char* argv[])
 	
 	QApplication app(argc, argv);
 
-	Team team = UnknownTeam;
+	bool blueTeam = false;
+	bool haveTeam = false;
 	QString cfgFile = "";
 	QString playbook;
 	vector<const char *> playDirs;
-	vector<string> extraPlays;
-
+	vector<QString> extraPlays;
 	bool goalie = true;
-	bool flip = false;
 	bool sim = false;
+	int radio = -1;
+	
 	for (int i=1 ; i<argc; ++i)
 	{
 		const char* var = argv[i];
 
 		if (strcmp(var, "-y") == 0)
 		{
-			team = Yellow;
+			haveTeam = true;
 		}
 		else if (strcmp(var, "-b") == 0)
 		{
-			team = Blue;
-		}
-		else if (strcmp(var, "-f") == 0)
-		{
-			flip = true;
+			blueTeam = true;
+			haveTeam = true;
 		}
 		else if (strcmp(var, "-ng") == 0)
 		{
@@ -86,6 +82,17 @@ int main (int argc, char* argv[])
 		else if (strcmp(var, "-sim") == 0)
 		{
 			sim = true;
+		}
+		else if(strcmp(var, "-r") == 0)
+		{
+			if (i+1 >= argc)
+			{
+				printf("no radio channel specified after -r");
+				usage(argv[0]);
+			}
+			
+			i++;
+			radio = atoi(argv[i]);
 		}
 		else if(strcmp(var, "-c") == 0)
 		{
@@ -127,28 +134,31 @@ int main (int argc, char* argv[])
 		}
 	}
 
-	if (team == UnknownTeam)
+	if (!haveTeam)
 	{
 		printf("Error: No team specified\n");
 		usage(argv[0]);
 		return 0;
 	}
 	
-	MainWindow win(team, cfgFile, sim);
+	MainWindow win;
+	Processor processor(cfgFile, sim, radio);
+	processor.blueTeam(blueTeam);
+	win.processor(&processor);
 	
 	if (!playbook.isNull())
 	{
-		win.playConfig()->load(playbook);
+		win.playConfigTab()->load(playbook);
 	}
 	
-	BOOST_FOREACH(const string &str, extraPlays)
+	BOOST_FOREACH(const QString &str, extraPlays)
 	{
-		win.playConfig()->enable(str);
+		win.playConfigTab()->enable(str);
 	}
 	
-	win.playConfig()->useGoalie(goalie);
+	win.playConfigTab()->useGoalie(goalie);
 	
-	win.flipField(flip);
+	processor.start();
 	
 	win.showMaximized();
 

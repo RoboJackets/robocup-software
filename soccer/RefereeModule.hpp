@@ -1,12 +1,10 @@
 #pragma once
 
-#include <framework/Module.hpp>
-#include <framework/SystemState.hpp>
-#include <Team.h>
-#include <Referee.hpp>
-#include <QTime>
+#include <Geometry2d/Point.hpp>
 
-#include "ui_RefereeTab.h"
+#include <QTime>
+#include <QMutex>
+#include <QMutexLocker>
 
 namespace RefereeCommands
 {
@@ -83,89 +81,60 @@ namespace RefereeCommands
     static const char IndirectBlue = 'I';
 };
 
-extern const char *RefereeAddress;
-static const int RefereePort = 10001;
+class SystemState;
 
-class RefereeModule: public QObject, public Module
+class RefereeModule
 {
-    Q_OBJECT;
-    
-public:
-    RefereeModule(SystemState *state);
-    
-    // Called periodically.  Checks vision data for ball movement.
-    void run();
-    
-    // Handles a packet from the referee.
-    // If force == true, the packet's counter value is ignored.
-    void packet(const Packet::Referee *data);
-    void command(uint8_t command);
+	public:
+		RefereeModule(SystemState *state);
+		
+		// Called periodically.  Checks vision data for ball movement.
+		void run();
+		
+		// Handles a packet from the referee.
+		void packet(const std::string &data);
+		
+		// Handles the command part of a packet.
+		// This is used by the GUI to simulate referee packets.
+		void command(char command);
 
-    // True if the ball has been kicked since the last restart began
-    bool kicked() const
-    {
-        return _kickDetectState == Kicked;
-    }
+		// True if the ball has been kicked since the last restart began
+		bool kicked() const
+		{
+			return _kickDetectState == Kicked;
+		}
+		
+		void blueTeam(bool value)
+		{
+			QMutexLocker locker(&_mutex);
+			_blueTeam = value;
+		}
+		
+	protected:
+		QMutex _mutex;
+		SystemState *_state;
+		bool _blueTeam;
 
-protected Q_SLOTS:
-    void on_actionHalt_triggered();
-    void on_actionStop_triggered();
-    void on_actionReady_triggered();
-    void on_actionForceStart_triggered();
-    void on_actionKickoffBlue_triggered();
-    void on_actionKickoffYellow_triggered();
-    
-    void on_refFirstHalf_clicked();
-    void on_refOvertime1_clicked();
-    void on_refHalftime_clicked();
-    void on_refOvertime2_clicked();
-    void on_refSecondHalf_clicked();
-    void on_refPenaltyShootout_clicked();
-    void on_refTimeoutBlue_clicked();
-    void on_refTimeoutYellow_clicked();
-    void on_refTimeoutEnd_clicked();
-    void on_refTimeoutCancel_clicked();
-    void on_refDirectBlue_clicked();
-    void on_refDirectYellow_clicked();
-    void on_refIndirectBlue_clicked();
-    void on_refIndirectYellow_clicked();
-    void on_refPenaltyBlue_clicked();
-    void on_refPenaltyYellow_clicked();
-    void on_refGoalBlue_clicked();
-    void on_refSubtractGoalBlue_clicked();
-    void on_refGoalYellow_clicked();
-    void on_refSubtractGoalYellow_clicked();
-    void on_refYellowCardBlue_clicked();
-    void on_refYellowCardYellow_clicked();
-    void on_refRedCardBlue_clicked();
-    void on_refRedCardYellow_clicked();
-	void on_externalReferee_toggled(bool value);
-
-protected:
-    Ui_Referee ui;
-	SystemState *_state;
-    
-    void refCommand(char cmd);
-    
-    // Moves to the ready state and sets up the ball kick detector
-    void ready();
-    
-    // Last counter value received or -1 if no packets have been processed
-    int _counter;
-    
-	typedef enum
-	{
-		WaitForReady,
-		CapturePosition,
-		WaitForKick,
-		VerifyKick,
-		Kicked
-	} KickDetectState;
-	KickDetectState _kickDetectState;
-	
-    Geometry2d::Point _readyBallPos;
-	bool _useExternal;
-    
-    // Time the ball was first beyond KickThreshold from its original position
-    QTime _kickTime;
+		void refCommand(char cmd);
+		
+		// Moves to the ready state and sets up the ball kick detector
+		void ready();
+		
+		// Last counter value received or -1 if no packets have been processed
+		int _counter;
+		
+		typedef enum
+		{
+			WaitForReady,
+			CapturePosition,
+			WaitForKick,
+			VerifyKick,
+			Kicked
+		} KickDetectState;
+		KickDetectState _kickDetectState;
+		
+		Geometry2d::Point _readyBallPos;
+		
+		// Time the ball was first beyond KickThreshold from its original position
+		QTime _kickTime;
 };

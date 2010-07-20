@@ -2,6 +2,8 @@
 
 using namespace std;
 
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::Defense, "Playing")
+
 Gameplay::Plays::Defense::Defense(GameplayModule *gameplay):
 	Play(gameplay, 1),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
@@ -16,7 +18,7 @@ Gameplay::Plays::Defense::Defense(GameplayModule *gameplay):
 bool Gameplay::Plays::Defense::applicable()
 {
 	bool refApplicable =_gameplay->state()->gameState.playing();
-	bool gameplayApplicable = _gameplay->state()->stateID.posession == Packet::LogFrame::DEFENSE;
+	bool gameplayApplicable = _gameplay->state()->stateID.posession == SystemState::DEFENSE;
 
 	return refApplicable && gameplayApplicable;
 }

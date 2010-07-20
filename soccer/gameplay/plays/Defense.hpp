@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Play.hpp"
+#include <gameplay/Play.hpp>
 
 #include <gameplay/behaviors/positions/Fullback.hpp>
 #include <gameplay/behaviors/positions/Forward.hpp>

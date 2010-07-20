@@ -11,6 +11,7 @@ set (PROTO_FILES
 	RadioTx
 	RadioRx
 	SimCommand
+	LogFrame
 )
 
 set (GEN_CC)
@@ -37,7 +38,6 @@ add_custom_target(GenerateProto
 )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-message(${CMAKE_CURRENT_BINARY_DIR})
 
 add_library(packets ${GEN_CC})
 add_dependencies(packets GenerateProto)

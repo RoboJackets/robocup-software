@@ -3,6 +3,8 @@
 
 using namespace std;
 
+REGISTER_PLAY(Gameplay::Plays::ClearBall)
+
 Gameplay::Plays::ClearBall::ClearBall(GameplayModule *gameplay):
 	Play(gameplay, 4),
 	_kicker(gameplay),
@@ -20,7 +22,7 @@ Gameplay::Plays::ClearBall::ClearBall(GameplayModule *gameplay):
 bool Gameplay::Plays::ClearBall::applicable()
 {
 	bool refApplicable =_gameplay->state()->gameState.playing();
-	bool gameplayApplicable = true && _gameplay->state()->stateID.posession == Packet::LogFrame::DEFENSE;
+	bool gameplayApplicable = true && _gameplay->state()->stateID.posession == SystemState::DEFENSE;
 
 	return refApplicable && gameplayApplicable;
 }
@@ -33,7 +35,7 @@ bool Gameplay::Plays::ClearBall::assign(set<Robot *> &available)
 
 	float selfBallDistMin = 999;
 	Geometry2d::Point ballPos = _gameplay->state()->ball.pos;
-	Robot* closest;
+	Robot* closest = 0;
 
 	// calculate closest (non-goalie) self robot to ball
 	Robot* goalie = (_gameplay->goalie() ? _gameplay->goalie()->robot() : (Robot*)0);

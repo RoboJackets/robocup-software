@@ -8,6 +8,10 @@
 
 using namespace std;
 
+REGISTER_PLAY(Gameplay::Plays::ExamplePlay)
+// Alternatively:
+//REGISTER_PLAY_CATEGORY(Gameplay::Plays::ExamplePlay, "Category")
+
 Gameplay::Plays::ExamplePlay::ExamplePlay(GameplayModule *gameplay):
 	Play(gameplay)
 {

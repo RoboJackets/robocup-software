@@ -26,7 +26,7 @@ namespace Gameplay
 				//set/get
 				void farDist(float dist) { _farDist = dist; }
 				float farDist() { return _farDist; }
-				State state() { return _state; }
+// 				State state() { return _state; }
 
 			protected:
 				virtual float score(Robot * robot);

@@ -2,12 +2,12 @@
 // vim:ai ts=4 et
 #pragma once
 
-#include <framework/Module.hpp>
+#include <framework/SystemState.hpp>
 
 /** Semantic State Identification system */
 namespace StateIdentification
 {
-	class StateIDModule : public Module
+	class StateIDModule
 	{
 		public:
 			typedef boost::shared_ptr<StateIDModule> shared_ptr;
@@ -22,9 +22,9 @@ namespace StateIdentification
 			// Utility functions for each of the general parameters
 
 			/** Generates a new possession state from the current one */
-			Packet::LogFrame::Possession updatePossession(const Packet::LogFrame::Possession& cur_state);
+			SystemState::Possession updatePossession(const SystemState::Possession& cur_state);
 
 			/** Determines the ball field position - with hysteresis */
-			Packet::LogFrame::BallFieldPos updateFieldPos(const Packet::LogFrame::BallFieldPos& cur_pos);
+			SystemState::BallFieldPos updateFieldPos(const SystemState::BallFieldPos& cur_pos);
 	};
 }

@@ -1,12 +1,8 @@
-/**
- *  Example play: This is a template for a play.
- *  To use, implement the functions and add the necessary member variables
- *  and do a test replacement for ExamplePlay with whatever name you want.
- */
-
 #include "DefendGoal.hpp"
 
 using namespace std;
+
+REGISTER_PLAY(Gameplay::Plays::DefendGoal)
 
 Gameplay::Plays::DefendGoal::DefendGoal(GameplayModule *gameplay):
 	Play(gameplay,4),

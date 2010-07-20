@@ -170,7 +170,7 @@ namespace Utils
 	// Sets str to the name of a class.
 	// Use it like this:
 	//		Object *obj = new Object();
-	//		QString name = getClassName(typeid(*obj));
+	//		QString name = typeName(typeid(*obj));
 	// The returned name is in the usual C++ format: "Namespace::Namespace::Class"
 	QString typeName(const std::type_info &info);
 	

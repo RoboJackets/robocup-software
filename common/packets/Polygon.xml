@@ -1,4 +1,0 @@
-<struct typename="Polygon" include_cpp="Geometry2d/Polygon.hpp" external_cpp="Geometry2d::Polygon" external_python="Geometry2d.Polygon">
-	<struct typename="Point" include_cpp="Geometry2d/Point.hpp" external_cpp="Geometry2d::Point" external_python="Geometry2d.Point" />
-	<array type="Point" name="vertices"/>
-</struct>

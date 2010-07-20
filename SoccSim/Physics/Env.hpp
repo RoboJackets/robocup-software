@@ -9,7 +9,6 @@
 #include <QUdpSocket>
 #include <sys/time.h>
 
-#include <Team.h>
 #include <Geometry2d/Point.hpp>
 
 #include "Ball.hpp"
@@ -26,10 +25,15 @@ class Env : public QObject
 		Env();
 		~Env();
         
-        NxScene* scene() const
-        {
-            return _scene;
-        }
+		NxScene* scene() const
+		{
+			return _scene;
+		}
+
+		const QVector<Ball*> &balls() const
+		{
+			return _balls;
+		}
 
 		/** return the debug renderable for the environment */
 		NxDebugRenderable dbgRenderable() const;
@@ -38,39 +42,26 @@ class Env : public QObject
 		void addBall(Geometry2d::Point pos);
 		
 		/** add a robot with id i to the environment @ pos */
-		void addRobot(Team t, int id, Geometry2d::Point pos, Robot::Rev rev);
+		void addRobot(bool blue, int id, Geometry2d::Point pos, Robot::Rev rev);
 		
-		/** @return latest vision information about the environment */
-// 		Packet::Vision vision();
+		// If true, send data to the shared vision multicast address.
+		// If false, send data to the two simulated vision addresses.
+		volatile bool sendShared;
 		
-		/** @return generated return data from robots */
-// 		Packet::RadioRx radioRx(Team t);
-		
-		/** set received robot control data, used next loop cycle */
-// 		void radioTx(Team t, const Packet::RadioTx& data);
-		
-//         void command(const Packet::SimCommand &cmd);
-        
-        const QVector<Ball*> &balls() const
-        {
-            return _balls;
-        }
-        
 		NxPhysicsSDK* _physicsSDK;
 
 	protected Q_SLOTS:
 		void step();
 		
 	private:
-		Robot *robot(Team t, int board_id) const;
+		Robot *robot(bool blue, int board_id) const;
 		static void convert_robot(const Robot *robot, SSL_DetectionRobot *out);
+		void handleRadioTx(int ch, const Packet::RadioTx& data);
 
-// 		mutable QMutex _sceneMutex;
 		NxScene* _scene;
 		
 		Field* _field;
 		
-// 		mutable QMutex _entitiesMutex;
 		QMap<unsigned int, Robot*> _blue;
 		QMap<unsigned int, Robot*> _yellow;
 		QVector<Ball*> _balls;
@@ -79,19 +70,15 @@ class Env : public QObject
 		QTimer _timer;
 		
 		QUdpSocket _visionSocket;
-		int _frameNumber;
+		QUdpSocket _radioSocket[2];
 		
 		struct timeval _lastStepTime;
 		
+		// How many vision frames we've sent
+		int _frameNumber;
+		
 		// How many physics steps have run since the last vision packet was sent
 		int _stepCount;
-		
-// 		QMutex _visionMutex;
-// 		SSL_WrapperPacket _vision;
-		
-// 		QMutex _radioRxMutex;
-// 		Packet::RadioRx _radioRxBlue;
-// 		Packet::RadioRx _radioRxYellow;
 		
 		// Returns true if any robot occludes a ball from a camera's point of view.
 		bool occluded(Geometry2d::Point ball, Geometry2d::Point camera);

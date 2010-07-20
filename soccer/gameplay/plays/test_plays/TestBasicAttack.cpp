@@ -4,6 +4,8 @@
 
 using namespace std;
 
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::TestBasicAttack, "Tests")
+
 Gameplay::Plays::TestBasicAttack::TestBasicAttack(GameplayModule *gameplay):
 	Play(gameplay, 1), _kicker(gameplay)
 {

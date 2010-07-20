@@ -3,6 +3,7 @@
 #include <Utils.hpp>
 #include <typeinfo>
 
+// Inherit from this class to get a name() function that will return the name of the class.
 class AutoName
 {
 	public:
@@ -10,18 +11,18 @@ class AutoName
 		{
 		}
 		
-		const std::string &name()
+		const QString &name()
 		{
-			// We get the name automatically from type_info, but the object doesn't have the proper type when Play::Play() is called
+			// We get the name automatically from type_info, but the object doesn't have the proper type when the constructor is called
 			// because the subclass' vtable isn't in place.  Thus we have to find the name lazily.
-			if (_name.empty())
+			if (_name.isNull())
 			{
-				_name = Utils::className(typeid(*this)).toStdString();
+				_name = Utils::className(typeid(*this));
 			}
 			
 			return _name;
 		}
 		
 	private:
-		std::string _name;
+		QString _name;
 };

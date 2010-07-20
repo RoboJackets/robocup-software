@@ -1,148 +1,80 @@
-#include "PlayConfigTab.hpp"
-#include "PlayConfigTab.moc"
+#include <PlayConfigTab.hpp>
+#include <PlayConfigTab.moc>
 
-#include "gameplay/Play.hpp"
-
-#include <iostream>
-#include <fstream>
-
+#include <gameplay/Play.hpp>
 #include <boost/foreach.hpp>
 
 #include <QFileDialog>
+#include <QFile>
+#include <QTextStream>
+#include <QMenu>
 
 using namespace std;
 using namespace boost;
+using namespace Gameplay;
 
-class PlayListModel: public QAbstractListModel
-{
-	public:
-		PlayListModel(PlayConfigTab *config);
-		
-		virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-		virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
-		virtual Qt::ItemFlags flags(const QModelIndex &index) const;
-		virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-		virtual bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
-		
-		void addPlay(boost::shared_ptr<Gameplay::Play> play);
-		boost::shared_ptr<Gameplay::Play> find(const string &name);
-		
-		const std::vector<boost::shared_ptr<Gameplay::Play> > &available() const
-		{
-			return _available;
-		}
-		
-		void update();
-		
-	private:
-		PlayConfigTab *_config;
-		std::vector<boost::shared_ptr<Gameplay::Play> > _available;
-};
+Q_DECLARE_METATYPE(shared_ptr<Play>)
 
-PlayListModel::PlayListModel(PlayConfigTab *config)
+// Gets the Play for a list item
+shared_ptr<Play> play_for_item(QTreeWidgetItem *item)
 {
-	_config = config;
+	return item->data(0, Qt::UserRole).value<shared_ptr<Play> >();
 }
-
-int PlayListModel::rowCount(const QModelIndex& parent) const
-{
-	return _available.size();
-}
-
-int PlayListModel::columnCount(const QModelIndex& parent) const
-{
-	// Checkbox and name
-	return 1;
-}
-
-Qt::ItemFlags PlayListModel::flags(const QModelIndex &index) const
-{
-	return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable;
-}
-
-QVariant PlayListModel::data(const QModelIndex &index, int role) const
-{
-	if (index.column() != 0 || index.row() < 0 || index.row() >= (int)_available.size())
-	{
-		return QVariant();
-	}
-	
-	if (role == Qt::CheckStateRole)
-	{
-		// Checkbox
-		return _config->gameplay->playEnabled(_available[index.row()]) ? Qt::Checked : Qt::Unchecked;
-	} else if (role == Qt::DisplayRole)
-	{
-		// Name
-		return QString::fromStdString(_available[index.row()]->name());
-	}
-	
-	return QVariant();
-}
-
-bool PlayListModel::setData(const QModelIndex &index, const QVariant &value, int role)
-{
-	if (index.column() == 0 && index.row() >= 0 && index.row() < (int)_available.size() && role == Qt::CheckStateRole)
-	{
-		if (value.toInt() == Qt::Checked)
-		{
-			_config->gameplay->enablePlay(_available[index.row()]);
-		} else {
-			_config->gameplay->disablePlay(_available[index.row()]);
-		}
-		dataChanged(index, index);
-		
-		return true;
-	} else {
-		return false;
-	}
-}
-
-void PlayListModel::addPlay(shared_ptr<Gameplay::Play> play)
-{
-	int n = _available.size();
-	beginInsertRows(QModelIndex(), n, n);
-	_available.push_back(play);
-	endInsertRows();
-}
-
-void PlayListModel::update()
-{
-	dataChanged(index(0), index(_available.size() - 1));
-}
-
-shared_ptr<Gameplay::Play> PlayListModel::find(const string &name)
-{
-	BOOST_FOREACH(shared_ptr<Gameplay::Play> play, _available)
-	{
-		if (play->name() == name)
-		{
-			return play;
-		}
-	}
-	
-	return shared_ptr<Gameplay::Play>();
-}
-
-////////
 
 PlayConfigTab::PlayConfigTab(QWidget *parent):
 	QWidget(parent)
 {
 	ui.setupUi(this);
 	
-	_model = new PlayListModel(this);
-	ui.plays->setModel(_model);
+	ui.plays->setContextMenuPolicy(Qt::CustomContextMenu);
+	
+	_iconRun = QIcon(":/icons/running.png");
+// 	_iconWait = QIcon(":/icons/waiting.png");
 }
 
-PlayConfigTab::~PlayConfigTab()
+void PlayConfigTab::setup(boost::shared_ptr<Gameplay::GameplayModule> gp)
 {
-	delete _model;
-}
-
-void PlayConfigTab::addPlay(shared_ptr<Gameplay::Play> play)
-{
-	_model->addPlay(play);
+	_gameplay = gp;
+	
+	typedef QMap<QString, QTreeWidgetItem *> CatMap;
+	CatMap categories;
+	
+	BOOST_FOREACH(PlayFactoryBase *factory, *PlayFactoryBase::factories)
+	{
+		QTreeWidgetItem *parent;
+		if (!factory->category.isNull())
+		{
+			CatMap::iterator i = categories.find(factory->category);
+			if (i == categories.end())
+			{
+				// New category
+				parent = new QTreeWidgetItem();
+				parent->setText(0, factory->category);
+				ui.plays->addTopLevelItem(parent);
+				categories[factory->category] = parent;
+			} else {
+				// Existing category
+				parent = i.value();
+			}
+		} else {
+			parent = ui.plays->invisibleRootItem();
+		}
+		
+		//FIXME - Either propagate the shared_ptr throughout all plays or make a regular pointer safe
+		shared_ptr<Play> play = shared_ptr<Play>(factory->create(_gameplay.get()));
+		QTreeWidgetItem *item = new QTreeWidgetItem(parent);
+		item->setData(0, Qt::UserRole, QVariant::fromValue(play));
+		item->setText(0, play->name());
+		item->setCheckState(0, Qt::Unchecked);
+		item->setIcon(1, _iconWait);
+		
+		_playMap[play->name()] = item;
+	}
+	
+	ui.plays->sortItems(0, Qt::AscendingOrder);
+	ui.plays->expandAll();
+	ui.plays->resizeColumnToContents(0);
+	ui.plays->resizeColumnToContents(1);
 }
 
 void PlayConfigTab::on_load_clicked()
@@ -157,44 +89,47 @@ void PlayConfigTab::on_load_clicked()
 void PlayConfigTab::load(QString filename)
 {
 	// Set the name of the playbook
-	QString playbook_name = QFileInfo(filename).baseName();
-	ui.lblCurrentPlaybook->setText(tr("Current Playbook: ") + playbook_name);
+	ui.playbookName->setText(QFileInfo(filename).baseName());
 	
 	// clear the playbook
-	on_none_clicked();
+	selectNone();
 
-	// open the file
-	string fname = filename.toStdString();
-	ifstream ifs(fname.c_str());
-
-	// read all of the strings
+	QFile file(filename);
+	if (!file.open(QIODevice::ReadOnly))
+	{
+		printf("Failed to open %s\n", (const char *)filename.toAscii());
+		return;
+	}
+	
+	QTextStream ts(&file);
+	
 	bool foundGoalie = false;
-	while (ifs.good()) {
-		string name;
-		ifs >> name;
-		if (name != "") {
+	while (!ts.atEnd())
+	{
+		QString name = ts.readLine();
+		if (name != "" && !name.startsWith('#'))
+		{
 			if (name == "goalie")
 			{
 				foundGoalie = true;
+			} else {
+				enable(name);
 			}
-			enable(name);
 		}
 	}
-	ifs.close();
 
 	useGoalie(foundGoalie);
-	// do updates
-	_model->update();
 }
 
-void PlayConfigTab::enable(const string &name)
+void PlayConfigTab::enable(QString name)
 {
-	shared_ptr<Gameplay::Play> play = _model->find(name);
-	if (play)
+	PlayMap::const_iterator i = _playMap.find(name);
+	if (i == _playMap.end())
 	{
-		gameplay->enablePlay(play);
+		printf("Missing play \"%s\"\n", (const char *)name.toAscii());
 	} else {
-		cout << "Missing Play: " << name << endl;
+		// This will cause itemChanged to be emitted, which will actually enable the play.
+		i.value()->setCheckState(0, Qt::Checked);
 	}
 }
 
@@ -207,69 +142,120 @@ void PlayConfigTab::useGoalie(bool value)
 void PlayConfigTab::on_save_clicked()
 {
 	// get a filename from the user
-	QString fileName = QFileDialog::getSaveFileName(this,
+	QString filename = QFileDialog::getSaveFileName(this,
 		     tr("Save Playbook"), "./", tr("Playbook Files (*.pbk)"));
-	string fname = fileName.toStdString() + ".pbk";
 
 	// change the name of the current playbook
-	size_t name_start = fname.find_last_of("/");
-	string fname1 = fname.substr(name_start+1); // remove path
-	string fname2 = fname1.substr(0, fname1.size()-4); // remove ".pbk"
-	QString playbook_name = QString::fromStdString(fname2);
-	ui.lblCurrentPlaybook->setText(tr("Current Playbook: ") + playbook_name);
+	ui.playbookName->setText(QFileInfo(filename).baseName());
 
 	// open the file
-	ofstream ofs(fname.c_str());
+	QFile file(filename);
+	QTextStream ts(&file);
 
 	// if there is a goalie, write to file
-	if (gameplay->goalie())
+	if (_gameplay->goalie())
 	{
-		ofs << "goalie\n";
+		ts << "goalie\n";
 	}
 
-	// write the plays in order
-	BOOST_FOREACH(shared_ptr<Gameplay::Play> play, gameplay->plays())
+	// Write the names of all enabled plays
+	BOOST_FOREACH(shared_ptr<Play> play, _gameplay->plays())
 	{
-		ofs << play->name() << "\n";
+		ts << play->name() << "\n";
 	}
-	ofs.close();
-}
-
-void PlayConfigTab::on_all_clicked()
-{
-	BOOST_FOREACH(shared_ptr<Gameplay::Play> play, _model->available())
-	{
-		gameplay->enablePlay(play);
-	}
-	_model->update();
-}
-
-void PlayConfigTab::on_none_clicked()
-{
-	BOOST_FOREACH(shared_ptr<Gameplay::Play> play, _model->available())
-	{
-		gameplay->disablePlay(play);
-	}
-	_model->update();
 }
 
 void PlayConfigTab::on_goalie_toggled(bool checked)
 {
 	if (checked)
 	{
-		cout << "Creating goalie" << endl;
-		gameplay->createGoalie();
+		_gameplay->createGoalie();
 	} else {
-		cout << "Removing goalie" << endl;
-		gameplay->removeGoalie();
+		_gameplay->removeGoalie();
 	}
 }
 
-#if 0
-void PlayConfigTab::updateCurrentPlay(QString playname) {
-	ui.lblCurrentPlay->setText(tr("Current Play: ")+playname);
+void PlayConfigTab::frameUpdate()
+{
+	ui.lblCurrentPlay->setText(_gameplay->playName());
+
+	BOOST_FOREACH(shared_ptr<Play> play, _gameplay->plays())
+	{
+		QTreeWidgetItem *item = _playMap[play->name()];
+		item->setIcon(1, play->applicable() ? _iconRun : _iconWait);
+	}
 }
 
-void PlayConfigTab::useGoalie(int state) {
+void PlayConfigTab::on_plays_itemChanged(QTreeWidgetItem* item)
+{
+	shared_ptr<Play> play = play_for_item(item);
+	if (!play)
+	{
+		return;
+	}
+	
+	if (item->checkState(0) == Qt::Checked)
+	{
+		_gameplay->enablePlay(play);
+	} else {
+		_gameplay->disablePlay(play);
+	}
 }
-#endif
+
+void PlayConfigTab::on_plays_customContextMenuRequested(const QPoint& pos)
+{
+	QTreeWidgetItem *item = ui.plays->itemAt(pos);
+	
+	QMenu menu;
+	QAction *none = menu.addAction("None");
+	QAction *single = menu.addAction("Only this");
+	QAction *cat_on = 0, *cat_off = 0;
+	if (item && item->childCount())
+	{
+		cat_on = menu.addAction("Select category");
+		cat_off = menu.addAction("Deselect category");
+	}
+	
+	QAction *act = menu.exec(ui.plays->mapToGlobal(pos));
+	if (act == none)
+	{
+		selectNone();
+	} else if (act == single)
+	{
+		selectNone();
+		if (item->childCount())
+		{
+			// This is a category
+			for (int i = 0; i < item->childCount(); ++i)
+			{
+				QTreeWidgetItem *child = item->child(i);
+				child->setCheckState(0, Qt::Checked);
+			}
+		} else {
+			// This is a play
+			item->setCheckState(0, Qt::Checked);
+		}
+	} else if (cat_on && act == cat_on)
+	{
+		for (int i = 0; i < item->childCount(); ++i)
+		{
+			QTreeWidgetItem *child = item->child(i);
+			child->setCheckState(0, Qt::Checked);
+		}
+	} else if (cat_off && act == cat_off)
+	{
+		for (int i = 0; i < item->childCount(); ++i)
+		{
+			QTreeWidgetItem *child = item->child(i);
+			child->setCheckState(0, Qt::Unchecked);
+		}
+	}
+}
+
+void PlayConfigTab::selectNone()
+{
+	BOOST_FOREACH(QTreeWidgetItem *item, _playMap)
+	{
+		item->setCheckState(0, Qt::Unchecked);
+	}
+}

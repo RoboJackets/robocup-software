@@ -1,371 +1,416 @@
 // kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 // vim:ai ts=4 et
-#include "FieldView.hpp"
 
-#include "draw.hpp"
+#include <FieldView.hpp>
+#include <FieldView.moc>
+
+#include <stdio.h>
+
+#include <Network.hpp>
+#include <Logger.hpp>
+#include <LogUtils.hpp>
 #include <Constants.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
-#include <protobuf/SimCommand.pb.h>
-#include <Network/Network.hpp>
 
+#include <QLayout>
 #include <QPainter>
 #include <QResizeEvent>
 #include <boost/foreach.hpp>
+#include <algorithm>
+#include <sys/socket.h>
 
+using namespace std;
 using namespace boost;
 using namespace Constants;
+using namespace Packet;
 
 // Converts from meters to m/s for manually shooting the ball
 static const float ShootScale = 5;
 
 FieldView::FieldView(QWidget* parent) :
-	QWidget(parent),
-	_team(UnknownTeam),
-	_sender(Network::Address, Network::SimCommandPort)
+	QWidget(parent)
 {
-	state = 0;
-	_dragBall = false;
-	_frame = 0;
-	_showVision = true;
+	showRawRobots = false;
+	showRawBalls = false;
+	showCoords = false;
+	logger = 0;
+	_dragMode = DRAG_NONE;
+	_rotate = 0;
 
-	_tx = -Field::Length/2.0f;
-	_ty = 0;
-	_ta = -90;
-	
-	//turn on mouse tracking for modules that may need the event
-	setMouseTracking(true);
-	setAutoFillBackground(false);
-	
-	_updateTimer.setSingleShot(true);
-	connect(&_updateTimer, SIGNAL(timeout()), SLOT(update()));
+	setAttribute(Qt::WA_OpaquePaintEvent);
 }
 
-void FieldView::team(Team t)
+void FieldView::rotate(int value)
 {
-	_team = t;
-
-	if (_team == Blue)
-	{
-		_tx = Field::Length/2.0f;
-		_ta = 90;
-	}
-}
-
-void FieldView::frame(Packet::LogFrame* frame)
-{
-	_frame = frame;
+	_rotate = value;
+	
+	// Fix size
+	updateGeometry();
+	
 	update();
-}
-
-void FieldView::addModule(shared_ptr<Module> module)
-{
-	_modules.append(module);
-}
-
-Geometry2d::Point FieldView::toTeamSpace(int x, int y) const
-{
-	//meters per pixel
-	float mpp = Constants::Floor::Length / width();
-	
-	float wx = x * mpp - Constants::Floor::Length/2.0f;
-	float wy = Constants::Floor::Width/2.0 - y * mpp;
-	
-	Geometry2d::Point world(wx, wy);
-	
-	//return world coords if team is unknown
-	if (_team == UnknownTeam)
-	{
-		return world;
-	}
-	
-	//default angle for blue
-	float angle = -90;
-	if (_team == Yellow)
-	{
-		angle = 90;
-	}
-	
-	world.rotate(Geometry2d::Point(0,0), angle);
-	world.y += Constants::Field::Length/2.0f;
-	
-	return world;
-}
-
-Geometry2d::Point FieldView::toWorldSpace(Geometry2d::Point pt, bool translate) const
-{
-	float offset = translate ? Constants::Field::Length / 2 : 0;
-	if (_team == Blue)
-	{
-		return Geometry2d::Point(offset - pt.y, pt.x);
-	} else if (_team == Yellow)
-	{
-		return Geometry2d::Point(pt.y - offset, -pt.x);
-	} else {
-		return pt;
-	}
 }
 
 void FieldView::mouseDoubleClickEvent(QMouseEvent* me)
 {
-	Packet::SimCommand cmd;
-	cmd.mutable_ball()->set_valid(true);
-	cmd.mutable_ball()->mutable_pos()->CopyFrom(toWorldSpace(toTeamSpace(me->x(), me->y())));
-	//FIXME - _sender.send(cmd);
+	if (me->button() == Qt::LeftButton)
+	{
+		placeBall(me->posF());
+	}
 }
 
 void FieldView::mousePressEvent(QMouseEvent* me)
 {
-	Geometry2d::Point pos = toTeamSpace(me->x(), me->y());
+	Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->posF();
 	
-	//look for a robot selection
-	if (me->button() == Qt::RightButton && _frame)
+	if (me->button() == Qt::LeftButton)
 	{
-		//reset to no robot if we don't find anything
-		int newID = -1;
-		
-		for (int i = 0; i < 5; ++i)
+		placeBall(me->posF());
+		_dragMode = DRAG_PLACE;
+	} else if (me->button() == Qt::RightButton)
+	{
+		if (_frame.has_ball() && pos.nearPoint(_frame.ball().pos(), Constants::Ball::Radius))
 		{
-			if (pos.distTo(_frame->self[i].pos) < Constants::Robot::Radius)
+			// Drag to shoot the ball
+			_dragMode = DRAG_SHOOT;
+			_dragTo = pos;
+		} else {
+			// Look for a robot selection
+			int newID = -1;
+			for (int i = 0; i < _frame.self_size(); ++i)
 			{
-				newID = i;
-				break;
+				if (pos.distTo(_frame.self(i).pos()) < Constants::Robot::Radius)
+				{
+					newID = _frame.self(i).shell();
+					break;
+				}
 			}
-		}
-		
-		if (state && newID != state->manualID)
-		{
-			state->manualID = newID;
 			
-			BOOST_FOREACH(shared_ptr<Module> m, _modules)
+			if (newID != _frame.manual_id())
 			{
-				m->robotSelected(state->manualID);
+				robotSelected(newID);
 			}
 		}
-		
-		return;
-	}
-	
-	if (me->button() == Qt::LeftButton && _frame && _frame->ball.valid && pos.nearPoint(_frame->ball.pos, Constants::Ball::Radius))
-	{
-		_dragBall = true;
-		_dragTo = pos;
-	}
-	
-	BOOST_FOREACH(shared_ptr<Module> m, _modules)
-	{
-		m->mousePress(me, pos);
 	}
 }
 
 void FieldView::mouseReleaseEvent(QMouseEvent* me)
 {
-	if (_dragBall)
+	if (_dragMode == DRAG_SHOOT)
 	{
-		Packet::SimCommand cmd;
-		cmd.mutable_ball()->set_valid(true);
-		cmd.mutable_ball()->mutable_pos()->CopyFrom(toWorldSpace(_frame->ball.pos));
-		cmd.mutable_ball()->mutable_vel()->CopyFrom(toWorldSpace((_frame->ball.pos - _dragTo) * ShootScale, false));
-		//FIXME - _sender.send(cmd);
+		SimCommand cmd;
+		_teamToWorld.transformDirection(_shot).set(cmd.mutable_ball_vel());
+		sendSimCommand(cmd);
 		
-		_dragBall = false;
 		update();
-	} else {
-		BOOST_FOREACH(shared_ptr<Module> m, _modules)
-		{
-			m->mouseRelease(me, toTeamSpace(me->x(), me->y()));
-		}
 	}
+	
+	_dragMode = DRAG_NONE;
 }
 
 void FieldView::mouseMoveEvent(QMouseEvent* me)
 {
-	if (_dragBall)
+	switch (_dragMode)
 	{
-		_dragTo = toTeamSpace(me->x(), me->y());
-		update();
-	} else {
-		BOOST_FOREACH(shared_ptr<Module> m, _modules)
-		{
-			m->mouseMove(me, toTeamSpace(me->x(), me->y()));
-		}
+		case DRAG_SHOOT:
+			_dragTo = _worldToTeam * _screenToWorld * me->posF();
+			break;
+		
+		case DRAG_PLACE:
+			placeBall(me->posF());
+			break;
+		
+		default:
+			break;
 	}
+	update();
+}
+
+void FieldView::placeBall(QPointF pos)
+{
+	SimCommand cmd;
+	cmd.mutable_ball_pos()->CopyFrom(_screenToWorld * pos);
+	cmd.mutable_ball_vel()->set_x(0);
+	cmd.mutable_ball_vel()->set_y(0);
+	sendSimCommand(cmd);
+}
+
+void FieldView::sendSimCommand(const Packet::SimCommand& cmd)
+{
+	std::string out;
+	cmd.SerializeToString(&out);
+	_simCommandSocket.writeDatagram(&out[0], out.size(), QHostAddress(QHostAddress::LocalHost), SimCommandPort);
 }
 
 void FieldView::paintEvent(QPaintEvent* event)
 {
 	QPainter p(this);
 	
+	// Green background
 	p.fillRect(rect(), QColor(0, 85.0, 0));
 	
-	float scale = 1;
+	// Set up world space
+	p.translate(width() / 2.0, height() / 2.0);
+	p.scale(width(), -height());
+	p.rotate(_rotate * 90);
+	p.scale(1.0 / Floor::Length, 1.0 / Floor::Width);
 	
-	float scalex = width()/Floor::Length * scale;
-	float scaley = height()/Floor::Width * scale;
-	
-	p.scale(scalex, -scaley);
-	
-	// world space
-	p.translate(Floor::Length/2.0, -Floor::Width/2.0);
+	// Set text rotation for world space
+	_textRotation = -_rotate * 90;
 	
 	drawField(p);
 
-	if (!_frame || !state)
+	if (showCoords)
 	{
+		drawCoords(p);
+	}
+	
+	if (!logger)
+	{
+		// Can't get frames without a logger
 		return;
 	}
 	
-	////team space
-	p.translate(_tx, _ty);
-	p.rotate(_ta);
+	logger->getFrame(0, _frame);
 	
-	if (_dragBall)
+	// Make coordinate transformations
+	_screenToWorld = Geometry2d::TransformMatrix();
+	_screenToWorld *= Geometry2d::TransformMatrix::scale(Constants::Floor::Length, Constants::Floor::Width);
+	_screenToWorld *= Geometry2d::TransformMatrix::rotate(-_rotate * 90);
+	_screenToWorld *= Geometry2d::TransformMatrix::scale(1.0 / width(), -1.0 / height());
+	_screenToWorld *= Geometry2d::TransformMatrix::translate(-width() / 2.0, -height() / 2.0);
+	
+	_worldToTeam = Geometry2d::TransformMatrix();
+	_worldToTeam *= Geometry2d::TransformMatrix::translate(0, Constants::Field::Length / 2.0f);
+	if (_frame.defend_plus_x())
+	{
+		_worldToTeam *= Geometry2d::TransformMatrix::rotate(-90);
+	} else {
+		_worldToTeam *= Geometry2d::TransformMatrix::rotate(90);
+	}
+	
+	_teamToWorld = Geometry2d::TransformMatrix();
+	if (_frame.defend_plus_x())
+	{
+		_teamToWorld *= Geometry2d::TransformMatrix::rotate(90);
+	} else {
+		_teamToWorld *= Geometry2d::TransformMatrix::rotate(-90);
+	}
+	_teamToWorld *= Geometry2d::TransformMatrix::translate(0, -Constants::Field::Length / 2.0f);
+
+	// Check number of debug layers
+	if (layerVisible.size() != _frame.debug_layers_size())
+	{
+		layerVisible.resize(_frame.debug_layers_size());
+	}
+	
+	// Raw vision, drawn in world space
+	if (showRawBalls || showRawRobots)
+	{
+		p.setPen(QColor(0xcc, 0xcc, 0xcc));
+		BOOST_FOREACH(const SSL_WrapperPacket& wrapper, _frame.raw_vision())
+		{
+			if (!wrapper.has_detection())
+			{
+				// Useless
+				continue;
+			}
+			
+			const SSL_DetectionFrame &detect = wrapper.detection();
+			
+			if (showRawRobots)
+			{
+				BOOST_FOREACH(const SSL_DetectionRobot& r, detect.robots_blue())
+				{
+					p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000), Constants::Robot::Radius, Constants::Robot::Radius);
+				}
+
+				BOOST_FOREACH(const SSL_DetectionRobot& r, detect.robots_yellow())
+				{
+					p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000), Constants::Robot::Radius, Constants::Robot::Radius);
+				}
+			}
+			
+			if (showRawBalls)
+			{
+				BOOST_FOREACH(const SSL_DetectionBall& b, detect.balls())
+				{
+					p.drawEllipse(QPointF(b.x() / 1000, b.y() / 1000), Constants::Ball::Radius, Constants::Ball::Radius);
+				}
+			}
+		}
+	}
+	
+	// Everything after this point is drawn in team space.
+	// Transform that back into world space depending on defending goal.
+	if (_frame.defend_plus_x())
+	{
+		p.rotate(90);
+	} else {
+		p.rotate(-90);
+	}
+	p.translate(0, -Field::Length / 2.0f);
+
+	// Text has to be rotated so it is always upright on screen
+	_textRotation = -_rotate * 90 + (_frame.defend_plus_x() ? -90 : 90);
+	
+	if (showCoords)
+	{
+		drawCoords(p);
+	}
+	
+	if (_dragMode == DRAG_SHOOT)
 	{
 		p.setPen(Qt::white);
-		Geometry2d::Point ball = _frame->ball.pos;
+		Geometry2d::Point ball = _frame.ball().pos();
 		p.drawLine(ball.toQPointF(), _dragTo.toQPointF());
 		
 		if (ball != _dragTo)
 		{
 			p.setPen(Qt::gray);
 			
-			float speed = (ball - _dragTo).mag();
-			Geometry2d::Point shoot = ball + (ball - _dragTo) / speed * 8;
-			speed *= ShootScale;
+			_shot = (ball - _dragTo) * ShootScale;
+			float speed = _shot.mag();
+			Geometry2d::Point shotExtension = ball + _shot / speed * 8;
 			
-			p.drawLine(ball.toQPointF(), shoot.toQPointF());
-			p.save();
-			p.translate(_dragTo.toQPointF());
-			p.rotate((_team == Blue) ? -90 : 90);
-			p.scale(0.008, -0.008);
-			p.drawText(_dragTo.toQPointF(), QString("%1 m/s").arg(speed, 0, 'f', 1));
-			p.restore();
+			p.drawLine(ball.toQPointF(), shotExtension.toQPointF());
+			drawText(p, _dragTo.toQPointF(), QString("%1 m/s").arg(speed, 0, 'f', 1));
 		}
 	}
 	
-	if (state->manualID != -1)
+	// Debug lines
+	BOOST_FOREACH(const DebugPath& path, _frame.debug_paths())
 	{
-		p.setPen(Qt::green);
-		
-		Geometry2d::Point center = _frame->self[state->manualID].pos;
-		const float r = Constants::Robot::Radius + .05;
-		p.drawEllipse(center.toQPointF(), r, r);
-	}
-	
-	// draw debug lines
-	BOOST_FOREACH(const Packet::LogFrame::DebugLine& seg, _frame->debugLines)
-	{
-		p.setPen(QColor(seg.color[0], seg.color[1], seg.color[2]));
-		p.drawLine(seg.pt[0].toQPointF(), seg.pt[1].toQPointF());
-	}
-
-	// draw debug circles
-	BOOST_FOREACH(const Packet::LogFrame::DebugCircle& cir, _frame->debugCircles)
-	{
-		p.setPen(QColor(cir.color[0], cir.color[1], cir.color[2]));
-		p.drawEllipse(cir.center.toQPointF(), cir.radius(), cir.radius());
+		if (path.layer() < 0 || layerVisible[path.layer()])
+		{
+			p.setPen(qcolor(path.color()));
+			QPointF pts[path.points_size()];
+			for (int i = 0; i < path.points_size(); ++i)
+			{
+				pts[i] = qpointf(path.points(i));
+			}
+			p.drawPolyline(pts, path.points_size());
+		}
 	}
 
-	// draw debug text
-	BOOST_FOREACH(const Packet::LogFrame::DebugText& tex, _frame->debugText)
+	// Debug circles
+	BOOST_FOREACH(const DebugCircle& c, _frame.debug_circles())
 	{
-		p.setPen(QColor(tex.color[0], tex.color[1], tex.color[2]));
-		QString text = QString::fromStdString(tex.text);
-		p.save();
-		p.translate(tex.pos.x, tex.pos.y);
-		p.rotate((_frame->team == Blue) ? -90 : 90);
-		p.scale(.008, -.008);
-		QRect r = p.boundingRect(0, 0, 0, 0, 0, text);
-		p.drawText(-r.width() / 2, r.height() / 2 - 4, text);
-		p.restore();
+		if (c.layer() < 0 || layerVisible[c.layer()])
+		{
+			p.setPen(qcolor(c.color()));
+			p.drawEllipse(qpointf(c.center()), c.radius(), c.radius());
+		}
 	}
 
+	// Debug text
+	BOOST_FOREACH(const DebugText& text, _frame.debug_texts())
+	{
+		if (text.layer() < 0 || layerVisible[text.layer()])
+		{
+			p.setPen(qcolor(text.color()));
+			drawText(p, qpointf(text.pos()), QString::fromStdString(text.text()), text.center());
+		}
+	}
+
+	// Debug polygons
 	p.setPen(Qt::NoPen);
-	BOOST_FOREACH(const Packet::LogFrame::DebugPolygon &polygon, _frame->debugPolygons)
+	BOOST_FOREACH(const DebugPath& path, _frame.debug_polygons())
 	{
-		if (polygon.vertices.empty())
+		if (path.layer() < 0 || layerVisible[path.layer()])
 		{
-			printf("Empty polygon\n");
-			continue;
+			if (path.points_size() < 3)
+			{
+				fprintf(stderr, "Ignoring DebugPolygon with %d points\n", path.points_size());
+				continue;
+			}
+			
+			QColor color = qcolor(path.color());
+			color.setAlpha(64);
+			p.setBrush(color);
+			QPointF pts[path.points_size()];
+			for (int i = 0; i < path.points_size(); ++i)
+			{
+				pts[i] = qpointf(path.points(i));
+			}
+			p.drawConvexPolygon(pts, path.points_size());
 		}
-		
-		p.setBrush(QColor(polygon.color[0], polygon.color[1], polygon.color[2], 64));
-		QPointF pts[polygon.vertices.size()];
-		for (unsigned int i = 0; i < polygon.vertices.size(); ++i)
-		{
-			pts[i] = polygon.vertices[i].toQPointF();
-		}
-		p.drawConvexPolygon(pts, polygon.vertices.size());
 	}
 	p.setBrush(Qt::NoBrush);
 
-	if (_showVision)
+	// Filtered robot positions
+	int manualID = _frame.manual_id();
+	BOOST_FOREACH(const LogFrame::Robot &r, _frame.self())
 	{
-		BOOST_FOREACH(const Packet::Vision& vision, _frame->rawVision)
+		QPointF center = qpointf(r.pos());
+		drawRobot(p, _frame.blue_team(), r.shell(), center, r.angle(), r.has_ball());
+		
+		// Highlight the manually controlled robot
+		if (manualID == r.shell())
 		{
-			if (!vision.sync)
-			{
-				/* don't draw the robots twice
-				BOOST_FOREACH(const Packet::Vision::Robot& r, vision.blue)
-				{
-					drawRobot(p, Blue, r.shell, r.pos, r.angle, _frame->team);
-				}
-
-				BOOST_FOREACH(const Packet::Vision::Robot& r, vision.yellow)
-				{
-					drawRobot(p, Yellow, r.shell, r.pos, r.angle, _frame->team);
-				}
-				*/
-
-				BOOST_FOREACH(const Packet::Vision::Ball& b, vision.balls)
-				{
-					//drawBall(p, b.pos);
-					// draw the raw vision
-					p.setPen(QColor(0xcc, 0xcc, 0xcc));
-					p.drawEllipse(_frame->ball.pos.toQPointF(), Constants::Ball::Radius, Constants::Ball::Radius);
-				}
-			}
-		}
-	}
-	BOOST_FOREACH(const Packet::LogFrame::Robot &r, _frame->self)
-	{
-		if (r.valid)
-		{
-			drawRobot(p, _frame->team, r.shell, r.pos, r.angle, _frame->team, r.haveBall);
+			p.setPen(Qt::green);
+			const float r = Constants::Robot::Radius + .05;
+			p.drawEllipse(center, r, r);
 		}
 	}
 
-	Team opp = opponentTeam(_frame->team);
-	BOOST_FOREACH(const Packet::LogFrame::Robot &r, _frame->opp)
+	BOOST_FOREACH(const LogFrame::Robot &r, _frame.opp())
 	{
-		if (r.valid)
-		{
-			drawRobot(p, opp, r.shell, r.pos, r.angle, _frame->team, r.haveBall);
-		}
+		drawRobot(p, !_frame.blue_team(), r.shell(), qpointf(r.pos()), r.angle(), r.has_ball());
 	}
 
-	if (_frame->ball.valid)
+	if (_frame.has_ball())
 	{
-		drawBall(p, _frame->ball.pos, _frame->ball.vel);
+		QPointF pos = qpointf(_frame.ball().pos());
+		QPointF vel = qpointf(_frame.ball().vel());
+		
+		p.setPen(QColor(0xff, 0x40, 0));
+		p.setBrush(QColor(0xff,0x90,0x00));
+		
+		p.drawEllipse(QRectF(-Ball::Radius + pos.x(), -Ball::Radius + pos.y(),
+				Ball::Diameter, Ball::Diameter));
+		
+		if (!vel.isNull())
+		{
+			p.drawLine(pos, QPointF(pos.x() + vel.x(), pos.y() + vel.y()));
+		}
+	}
+}
+
+void FieldView::drawText(QPainter &p, QPointF pos, QString text, bool center)
+{
+	p.save();
+	p.translate(pos);
+	p.rotate(_textRotation);
+	p.scale(0.008, -0.008);
+	
+	if (center)
+	{
+		int flags = Qt::AlignHCenter | Qt::AlignVCenter;
+		QRectF r = p.boundingRect(QRectF(), flags, text);
+		p.drawText(r, flags, text);
+	} else {
+		p.drawText(QPointF(), text);
 	}
 	
-	// Referee rules
-	p.setPen(Qt::black);
-	if (_frame->gameState.stayAwayFromBall() && _frame->ball.valid)
-	{
-		p.setBrush(Qt::NoBrush);
-		p.drawEllipse(_frame->ball.pos.toQPointF(), Constants::Field::CenterRadius, Constants::Field::CenterRadius);
-	}
+	p.restore();
+}
+
+void FieldView::drawCoords(QPainter& p)
+{
+	p.setPen(Qt::gray);
 	
-	BOOST_FOREACH(shared_ptr<Module> m, _modules)
-	{
-		p.save();
-		m->fieldOverlay(p, *_frame);
-		p.restore();
-	}
+	// X
+	p.drawLine(QPointF(0, 0), QPointF(0.25, 0));
+	p.drawLine(QPointF(0.25, 0), QPointF(0.20, -0.05));
+	p.drawLine(QPointF(0.25, 0), QPointF(0.20, 0.05));
+	drawText(p, QPointF(0.25, 0.1), "+X");
 	
-	p.end();
-	_updateTimer.start(30);
+	// Y
+	p.drawLine(QPointF(0, 0), QPointF(0, 0.25));
+	p.drawLine(QPointF(0, 0.25), QPointF(-0.05, 0.20));
+	p.drawLine(QPointF(0, 0.25), QPointF(0.05, 0.20));
+	drawText(p, QPointF(0.1, 0.25), "+Y");
 }
 
 void FieldView::drawField(QPainter& p)
@@ -411,7 +456,9 @@ void FieldView::drawField(QPainter& p)
 	float x[2] = {0, Field::GoalDepth};
 	float y[2] = {Field::GoalWidth/2.0, -Field::GoalWidth/2.0};
 	
-	p.setPen(Qt::blue);
+	bool flip = _frame.blue_team() ^ _frame.defend_plus_x();
+	
+	p.setPen(flip ? Qt::yellow : Qt::blue);
 	p.drawLine(QLineF(x[0], y[0], x[1], y[0]));
 	p.drawLine(QLineF(x[0], y[1], x[1], y[1]));
 	p.drawLine(QLineF(x[1], y[1], x[1], y[0]));
@@ -419,7 +466,7 @@ void FieldView::drawField(QPainter& p)
 	x[0] -= Field::Length;
 	x[1] -= Field::Length + 2 * Field::GoalDepth;
 	
-	p.setPen(Qt::yellow);
+	p.setPen(flip ? Qt::blue : Qt::yellow);
 	p.drawLine(QLineF(x[0], y[0], x[1], y[0]));
 	p.drawLine(QLineF(x[0], y[1], x[1], y[1]));
 	p.drawLine(QLineF(x[1], y[1], x[1], y[0]));
@@ -427,17 +474,68 @@ void FieldView::drawField(QPainter& p)
 	p.restore();
 }
 
-void FieldView::resizeEvent(QResizeEvent* event)
+void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos, float theta, bool hasBall)
 {
-	int w = event->size().width();
-	int h = int(w * Constants::Floor::Aspect);
-
-	if (h > event->size().height())
+	painter.setPen(Qt::white);
+	painter.setBrush(Qt::NoBrush);
+	
+	painter.save();
+	
+	painter.translate(pos.x(), pos.y());
+	
+	drawText(painter, QPointF(), QString::number(ID));
+	
+	if (blueRobot)
 	{
-		h = event->size().height();
-		w = int(h/Constants::Floor::Aspect);
+		painter.setPen(Qt::blue);
+	} else {
+		painter.setPen(Qt::yellow);
 	}
+	
+	painter.rotate(theta+90);
+	
+	int span = 40;
+	
+	int start = span*16 + 90*16;
+	int end = 360*16 - (span*2)*16;
+	const float r = Constants::Robot::Radius;
+	painter.drawChord(QRectF(-r, -r, r * 2, r * 2), start, end);
+	
+	if (hasBall)
+	{
+		painter.setPen(Qt::red);
+		const float r = Constants::Robot::Radius * 0.75f;
+		painter.drawChord(QRectF(-r, -r, r * 2, r * 2), start, end);
+	}
+	
+	painter.restore();
+}
 
-	this->resize(w,h);
-	event->accept();
+void FieldView::resizeEvent(QResizeEvent* e)
+{
+	int givenW = e->size().width();
+	int givenH = e->size().height();
+	int needW, needH;
+	if (_rotate & 1)
+	{
+		needH = roundf(givenW * Constants::Floor::Length / Constants::Floor::Width);
+		needW = roundf(givenH * Constants::Floor::Width / Constants::Floor::Length);
+	} else {
+		needH = roundf(givenW * Constants::Floor::Width / Constants::Floor::Length);
+		needW = roundf(givenH * Constants::Floor::Length / Constants::Floor::Width);
+	}
+	
+	QSize size;
+	if (needW < givenW)
+	{
+		size = QSize(needW, givenH);
+	} else {
+		size = QSize(givenW, needH);
+	}
+	
+	if (size != e->size())
+	{
+		resize(size);
+	}
+    e->accept();
 }

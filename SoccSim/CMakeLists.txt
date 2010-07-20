@@ -11,7 +11,7 @@ if (${CMAKE_SIZEOF_VOID_P} EQUAL 8)
 endif ()
 
 # default project build flags
-add_definitions (-Werror -Wall)
+add_definitions (-Werror -Wall -g3)
 
 # use common stuff
 set (USE_GEOMETRY true)

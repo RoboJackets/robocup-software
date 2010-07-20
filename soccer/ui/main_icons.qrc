@@ -1,5 +1,11 @@
 <RCC>
-  <qresource prefix="icons" >
+  <qresource prefix="icons">
+    <file>halt.svg</file>
+    <file>force_start.svg</file>
+    <file>kickoff_blue.svg</file>
+    <file>kickoff_yellow.svg</file>
+    <file>ready.svg</file>
+    <file>stop.svg</file>
     <file>SoccerBall.png</file>
   </qresource>
 </RCC>

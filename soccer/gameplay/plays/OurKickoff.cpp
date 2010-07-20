@@ -1,6 +1,10 @@
 #include "OurKickoff.hpp"
 
+#include <stdio.h>
+
 using namespace std;
+
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::OurKickoff, "Restarts")
 
 Gameplay::Plays::OurKickoff::OurKickoff(GameplayModule *gameplay):
 	Play(gameplay),

@@ -74,7 +74,7 @@ bool Gameplay::Behaviors::OptimizedPassing::run(){
 		PassState passState = bestPassConfig.getPassState(passIndex);
 		PassState nextState = bestPassConfig.getPassState((passIndex+1<bestPassConfig.length()?passIndex+1:passIndex));
 
-		double currentTime = _gameplay->state()->timestamp / 1000000.0;
+		double currentTime = Utils::timestamp() / 1000000.0;
 		if(playTime < 0){playTime = currentTime;}
 
 //if(!passState.robot2->haveBall()){_ballControlCounter = 0;}; // reset ball counter

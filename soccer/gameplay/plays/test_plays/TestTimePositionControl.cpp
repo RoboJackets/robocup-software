@@ -7,7 +7,8 @@
 
 using namespace std;
 using namespace Geometry2d;
-using namespace Packet;
+
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::TestTimePositionControl, "Tests")
 
 Gameplay::Plays::TestTimePositionControl::TestTimePositionControl(GameplayModule *gameplay):
 	Play(gameplay, 1),
@@ -50,7 +51,7 @@ bool Gameplay::Plays::TestTimePositionControl::run()
 			start_pt_.x = halfDist;
 
 		// set the initial timestamp
-		start_time_ = _gameplay->state()->timestamp;
+		start_time_ = Utils::timestamp();
 
 		// set the end time (in delta format)
 		//FIXME: set this to generally work

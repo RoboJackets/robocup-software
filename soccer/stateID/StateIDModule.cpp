@@ -12,7 +12,7 @@ using namespace StateIdentification;
 using namespace Packet;
 using namespace Utils;
 
-StateIDModule::StateIDModule(SystemState *state) : Module("State ID")
+StateIDModule::StateIDModule(SystemState *state)
 {
 	_state = state;
 }
@@ -25,7 +25,7 @@ StateIDModule::~StateIDModule()
 void StateIDModule::run()
 {
 	// get the state from the state variable
-	LogFrame::GameStateID& stateID = _state->stateID;
+	SystemState::GameStateID& stateID = _state->stateID;
 
 	// determine possession
 	stateID.posession = updatePossession(stateID.posession);
@@ -38,16 +38,16 @@ void StateIDModule::run()
 
 }
 
-LogFrame::Possession StateIDModule::updatePossession(const LogFrame::Possession& cur_state) {
+SystemState::Possession StateIDModule::updatePossession(const SystemState::Possession& cur_state) {
 
 	// handle restart cases
 	bool restart = _state->gameState.setupRestart();
 	if (restart && _state->gameState.ourRestart)
 	{
-		return LogFrame::OFFENSE;
+		return SystemState::OFFENSE;
 	} else if (restart && !_state->gameState.ourRestart)
 	{
-		return LogFrame::DEFENSE;
+		return SystemState::DEFENSE;
 	}
 
 	// thresholds
@@ -63,7 +63,7 @@ LogFrame::Possession StateIDModule::updatePossession(const LogFrame::Possession&
 	bool self_has_ball = false;
 
 	// check for other team's possession
-	BOOST_FOREACH(LogFrame::Robot robot, _state->opp) {
+	BOOST_FOREACH(SystemState::Robot robot, _state->opp) {
 		//opp has ball if it is close to a robot and moving in the same direction
 		double dist = ball_pos.distTo(robot.pos);
 		float vel_angle_diff = abs(fixAngleRadians(ball_vel.angle() - robot.vel.angle()));
@@ -81,7 +81,7 @@ LogFrame::Possession StateIDModule::updatePossession(const LogFrame::Possession&
 	}
 
 	// check if we have ball
-	BOOST_FOREACH(LogFrame::Robot robot, _state->self) {
+	BOOST_FOREACH(SystemState::Robot robot, _state->self) {
 		//opp has ball if it is close to a robot and moving in the same direction
 		double dist = ball_pos.distTo(robot.pos);
 		float vel_angle_diff = abs(fixAngleRadians(ball_vel.angle() - robot.vel.angle()));
@@ -101,20 +101,20 @@ LogFrame::Possession StateIDModule::updatePossession(const LogFrame::Possession&
 
 	// handle dynamic cases
 	switch (cur_state) {
-		case LogFrame::OFFENSE:
+		case SystemState::OFFENSE:
 			// switch out of offense only when the other team gets the ball
-			if (opp_has_ball) return LogFrame::DEFENSE;
+			if (opp_has_ball) return SystemState::DEFENSE;
 			break;
-		case LogFrame::DEFENSE:
+		case SystemState::DEFENSE:
 			// switch out of defense only when our team gets the ball
-			if (self_has_ball) return LogFrame::OFFENSE;
+			if (self_has_ball) return SystemState::OFFENSE;
 			break;
-		case LogFrame::FREEBALL:
+		case SystemState::FREEBALL:
 			// switch to offense or defense when a team gets the ball
 			if (self_has_ball && !opp_has_ball)
-				return LogFrame::OFFENSE;
+				return SystemState::OFFENSE;
 			else if (!self_has_ball && opp_has_ball)
-				return LogFrame::DEFENSE;
+				return SystemState::DEFENSE;
 			// if neither team has it, or both are close enough to have it,
 			// stay free ball
 			else if (!(self_has_ball xor opp_has_ball))
@@ -124,7 +124,7 @@ LogFrame::Possession StateIDModule::updatePossession(const LogFrame::Possession&
 	return cur_state;
 }
 
-LogFrame::BallFieldPos StateIDModule::updateFieldPos(const LogFrame::BallFieldPos& cur_pos) {
+SystemState::BallFieldPos StateIDModule::updateFieldPos(const SystemState::BallFieldPos& cur_pos) {
 
 	// get ball state
 	Geometry2d::Point ball_pos = _state->ball.pos;
@@ -135,15 +135,15 @@ LogFrame::BallFieldPos StateIDModule::updateFieldPos(const LogFrame::BallFieldPo
 	//Set field position predicates
 	if (ball_pos.y < Constants::Field::Length /3)
 	{
-		return LogFrame::HOMEFIELD;
+		return SystemState::HOMEFIELD;
 	}
 	else if (ball_pos.y < Constants::Field::Length * 2/3 &&
 			ball_pos.y > Constants::Field::Length /3)
 	{
-		return LogFrame::MIDFIELD;
+		return SystemState::MIDFIELD;
 	}
 	else
 	{
-		return LogFrame::OPPFIELD;
+		return SystemState::OPPFIELD;
 	}
 }

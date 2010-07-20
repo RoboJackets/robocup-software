@@ -5,6 +5,8 @@
 using namespace Geometry2d;
 using namespace std;
 
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::TestBasicOneTouchPassing, "Tests")
+
 Gameplay::Plays::TestBasicOneTouchPassing::TestBasicOneTouchPassing(GameplayModule *gameplay):
 	Play(gameplay, 2),
 	_passer(gameplay),
@@ -68,7 +70,7 @@ bool Gameplay::Plays::TestBasicOneTouchPassing::run()
 	_receiver.run();
 
 	// indicate which robot is receiving
-	drawCircle(_receiver.robot()->pos(), Constants::Robot::Radius*1.2, 100, 100, 100);
+	state()->drawCircle(_receiver.robot()->pos(), Constants::Robot::Radius*1.2, Qt::gray);
 
 	if (verbose) cout << "PLAY: Finished Running TestBasicOneTouchPassing" << endl;
 

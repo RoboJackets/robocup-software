@@ -2,6 +2,8 @@
 
 using namespace std;
 
+REGISTER_PLAY(Gameplay::Plays::AggressiveZoneOffense)
+
 Gameplay::Plays::AggressiveZoneOffense::AggressiveZoneOffense(GameplayModule *gameplay):
 	Play(gameplay, 4),
 	_fullback(gameplay, Behaviors::Fullback::Center),
@@ -12,8 +14,8 @@ Gameplay::Plays::AggressiveZoneOffense::AggressiveZoneOffense(GameplayModule *ga
 bool Gameplay::Plays::AggressiveZoneOffense::applicable()
 {
 	bool refApplicable =_gameplay->state()->gameState.playing();
-	bool gameplayApplicable = _gameplay->state()->stateID.posession == Packet::LogFrame::OFFENSE ||
-						      _gameplay->state()->stateID.posession == Packet::LogFrame::FREEBALL;
+	bool gameplayApplicable = _gameplay->state()->stateID.posession == SystemState::OFFENSE ||
+						      _gameplay->state()->stateID.posession == SystemState::FREEBALL;
 
 	return refApplicable && gameplayApplicable;
 }

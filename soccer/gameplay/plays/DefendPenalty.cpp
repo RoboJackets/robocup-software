@@ -2,6 +2,8 @@
 
 using namespace std;
 
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::DefendPenalty, "Restarts")
+
 Gameplay::Plays::DefendPenalty::DefendPenalty(GameplayModule *gameplay):
 	Play(gameplay, 1),
 	_idle1(gameplay),

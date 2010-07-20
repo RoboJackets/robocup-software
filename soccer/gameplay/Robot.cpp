@@ -31,36 +31,10 @@ Gameplay::Robot::Robot(GameplayModule *gameplay, int id, bool self)
 
 void Gameplay::Robot::resetMotionCommand()
 {
-	packet()->cmd = Packet::MotionCmd();
+	packet()->cmd = MotionCmd();
 
 	// Stay in place if possible.
 	move(pos());
-}
-
-void Gameplay::Robot::updatePoseHistory()
-{
-	Packet::LogFrame::Robot::Pose pose;
-	pose.pos = pos();
-	pose.angle = angle();
-
-	if (!_poseHistory.empty() && pose.pos.nearPoint(_poseHistory.back().pos, 0.01f))
-	{
-		return;
-	}
-
-	for (unsigned int i = 1; i < _poseHistory.size(); ++i)
-	{
-		_poseHistory[i - 1] = _poseHistory[i];
-	}
-
-	if (_poseHistory.size() < 400)
-	{
-		_poseHistory.push_back(pose);
-	} else {
-		_poseHistory.back() = pose;
-	}
-
-	_packet->poseHistory = _poseHistory;
 }
 
 void Gameplay::Robot::move(Geometry2d::Point pt, bool stopAtEnd)
@@ -69,22 +43,22 @@ void Gameplay::Robot::move(Geometry2d::Point pt, bool stopAtEnd)
 
 	// handle stop at end commands
 	if (stopAtEnd)
-		packet()->cmd.pathEnd = Packet::MotionCmd::StopAtEnd;
+		packet()->cmd.pathEnd = MotionCmd::StopAtEnd;
 	else
-		packet()->cmd.pathEnd = Packet::MotionCmd::FastAtEnd;
+		packet()->cmd.pathEnd = MotionCmd::FastAtEnd;
 
 	// enable the RRT-based planner
-	packet()->cmd.planner = Packet::MotionCmd::RRT;
+	packet()->cmd.planner = MotionCmd::RRT;
 }
 
 void Gameplay::Robot::move(const std::vector<Geometry2d::Point>& path, bool stopAtEnd)
 {
 	// set motion command to use the explicit path generation
-	packet()->cmd.planner = Packet::MotionCmd::Path;
+	packet()->cmd.planner = MotionCmd::Path;
 	if (stopAtEnd)
-		packet()->cmd.pathEnd = Packet::MotionCmd::StopAtEnd;
+		packet()->cmd.pathEnd = MotionCmd::StopAtEnd;
 	else
-		packet()->cmd.pathEnd = Packet::MotionCmd::FastAtEnd;
+		packet()->cmd.pathEnd = MotionCmd::FastAtEnd;
 
 	// clear the path and set it to the correct one
 	packet()->cmd.explicitPath.clear();
@@ -92,11 +66,11 @@ void Gameplay::Robot::move(const std::vector<Geometry2d::Point>& path, bool stop
 }
 
 void Gameplay::Robot::bezierMove(const std::vector<Geometry2d::Point>& controls,
-		Packet::MotionCmd::OrientationType facing,
-		Packet::MotionCmd::PathEndType endpoint) {
+		MotionCmd::OrientationType facing,
+		MotionCmd::PathEndType endpoint) {
 
 	// set motion command to use the explicit path generation
-	packet()->cmd.planner = Packet::MotionCmd::Bezier;
+	packet()->cmd.planner = MotionCmd::Bezier;
 	packet()->cmd.pathEnd = endpoint;
 	packet()->cmd.face = facing;
 
@@ -109,9 +83,9 @@ void Gameplay::Robot::bezierMove(const std::vector<Geometry2d::Point>& controls,
 	packet()->cmd.bezierControlPoints = controls;
 }
 
-void Gameplay::Robot::move(const std::vector<Packet::MotionCmd::PathNode>& timedPath, uint64_t start) {
+void Gameplay::Robot::move(const std::vector<MotionCmd::PathNode>& timedPath, uint64_t start) {
 	// set controller type
-	packet()->cmd.planner = Packet::MotionCmd::TimePosition;
+	packet()->cmd.planner = MotionCmd::TimePosition;
 
 	// set path
 	packet()->cmd.timePosPath.clear();
@@ -122,18 +96,18 @@ void Gameplay::Robot::move(const std::vector<Packet::MotionCmd::PathNode>& timed
 }
 
 void Gameplay::Robot::directMotorCommands(const std::vector<int8_t>& speeds) {
-	packet()->cmd.planner = Packet::MotionCmd::DirectMotor;
+	packet()->cmd.planner = MotionCmd::DirectMotor;
 	packet()->cmd.direct_motor_cmds = speeds;
 }
 
 void Gameplay::Robot::directMotionCommands(const Geometry2d::Point& trans, double ang)
 {
-	packet()->cmd.planner = Packet::MotionCmd::DirectVelocity;
+	packet()->cmd.planner = MotionCmd::DirectVelocity;
 	packet()->cmd.direct_ang_vel = ang;
 	packet()->cmd.direct_trans_vel = trans;
 }
 
-Packet::LogFrame::Robot * Gameplay::Robot::packet() const
+SystemState::Robot * Gameplay::Robot::packet() const
 {
 	return _packet;
 }
@@ -193,16 +167,17 @@ void Gameplay::Robot::setWScale(float scale) {
 }
 
 float Gameplay::Robot::kickTimer() const {
-	return (charged()) ? 0.0 : intTimeStampToFloat * (float) (_gameplay->state()->timestamp - _lastChargedTime);
+	return (charged()) ? 0.0 : intTimeStampToFloat * (float) (Utils::timestamp() - _lastChargedTime);
 }
 
 void Gameplay::Robot::update() {
 	if (charged())
-		_lastChargedTime = _gameplay->state()->timestamp;
+	{
+		_lastChargedTime = Utils::timestamp();
+	}
 }
 
-
-void Gameplay::Robot::spin(Packet::MotionCmd::SpinType dir)
+void Gameplay::Robot::spin(MotionCmd::SpinType dir)
 {
 	packet()->cmd.spin = dir;
 }
@@ -212,16 +187,16 @@ bool Gameplay::Robot::haveBall() const
 	// prevent ball sensor from reporting true when the ball is nowhere near
 	Point ball = _gameplay->state()->ball.pos;
 	float dist = pos().distTo(ball);
-	return packet()->haveBall && dist < Constants::Robot::Radius + 0.1;
+	return packet()->hasBall && dist < Constants::Robot::Radius + 0.1;
 }
 
-Packet::LogFrame::Robot::Rev Gameplay::Robot::rev() const
+SystemState::Robot::Rev Gameplay::Robot::rev() const
 {
 	switch (_packet->config.rev) {
 	case ConfigFile::rev2008:
-		return Packet::LogFrame::Robot::rev2008;
+		return SystemState::Robot::rev2008;
 	case ConfigFile::rev2010:
-		return Packet::LogFrame::Robot::rev2010;
+		return SystemState::Robot::rev2010;
 	}
 }
 
@@ -231,10 +206,10 @@ bool Gameplay::Robot::hasChipper() const {
 
 void Gameplay::Robot::dribble(int8_t speed)
 {
-	packet()->radioTx.roller = speed;
+	packet()->radioTx->set_roller(speed);
 }
 
-void Gameplay::Robot::pivot(Geometry2d::Point ctr, Packet::MotionCmd::PivotType dir)
+void Gameplay::Robot::pivot(Geometry2d::Point ctr, MotionCmd::PivotType dir)
 {
 	packet()->cmd.pivotPoint = ctr;
 	packet()->cmd.pivot = dir;
@@ -243,37 +218,37 @@ void Gameplay::Robot::pivot(Geometry2d::Point ctr, Packet::MotionCmd::PivotType 
 void Gameplay::Robot::face(Geometry2d::Point pt, bool continuous)
 {
 	packet()->cmd.goalOrientation = pt;
-	packet()->cmd.face = continuous ? Packet::MotionCmd::Endpoint : Packet::MotionCmd::Continuous;
+	packet()->cmd.face = continuous ? MotionCmd::Endpoint : MotionCmd::Continuous;
 }
 
 void Gameplay::Robot::faceNone()
 {
-	packet()->cmd.face = Packet::MotionCmd::None;
+	packet()->cmd.face = MotionCmd::None;
 }
 
 void Gameplay::Robot::kick(uint8_t strength)
 {
 	willKick = true;
-	packet()->radioTx.kick = strength;
-	packet()->radioTx.useChipper = false;
+	packet()->radioTx->set_kick(strength);
+	packet()->radioTx->set_use_chipper(false);
 }
 
 void Gameplay::Robot::chip(uint8_t strength)
 {
 	willKick = true;
-	packet()->radioTx.kick = strength;
-	packet()->radioTx.useChipper = true;
+	packet()->radioTx->set_kick(strength);
+	packet()->radioTx->set_use_chipper(true);
 }
 
 void Gameplay::Robot::pivot(Geometry2d::Point center, bool cw)
 {
 	packet()->cmd.pivotPoint = center;
-	packet()->cmd.pivot = cw ? Packet::MotionCmd::CW : Packet::MotionCmd::CCW;
+	packet()->cmd.pivot = cw ? MotionCmd::CW : MotionCmd::CCW;
 }
 
 bool Gameplay::Robot::charged() const
 {
-	return packet()->radioRx.charged;
+	return packet()->radioRx.charged();
 }
 
 bool Gameplay::Robot::self() const

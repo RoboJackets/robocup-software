@@ -11,8 +11,6 @@
 #include <Constants.hpp>
 #include <Utils.hpp>
 
-#include "framework/Module.hpp"
-
 //#include "Ball.hpp"
 
 using namespace std;
@@ -23,7 +21,6 @@ using namespace Utils;
 const uint64_t MaxCoastTime = 500000;
 
 WorldModel::WorldModel(SystemState *state, ConfigFile::shared_worldmodel cfg) :
-	Module("World Model"),
 	_state(state),
 	_selfPlayers(Constants::Robots_Per_Team), _oppPlayers(Constants::Robots_Per_Team),
 	ballModel(BallModel::RBPF, &_robotMap, cfg),
@@ -35,7 +32,7 @@ WorldModel::~WorldModel()
 {
 }
 
-void WorldModel::run()
+void WorldModel::run(bool blueTeam)
 {
 	// internal verbosity flag for debugging
 	bool verbose = false;
@@ -45,43 +42,40 @@ void WorldModel::run()
 	// Add vision packets
 	uint64_t curTime = 0;
 	if (verbose) cout << "Adding vision packets" << endl;
-	BOOST_FOREACH(const Packet::Vision& vision, _state->rawVision)
+	BOOST_FOREACH(const Vision& vision, _state->rawVision)
 	{
 		curTime = max(curTime, vision.timestamp);
 
-		if (!vision.sync)
+		// determine team
+		const std::vector<Vision::Robot> * self, * opp;
+		if (blueTeam)
 		{
-			// determine team
-			const std::vector<Packet::Vision::Robot> * self, * opp;
-			if (_state->team == Yellow)
-			{
-				self = &vision.yellow;
-				opp = &vision.blue;
-			} else
-			{
-				self = &vision.blue;
-				opp = &vision.yellow;
-			}
+			self = &vision.blue;
+			opp = &vision.yellow;
+		} else
+		{
+			self = &vision.yellow;
+			opp = &vision.blue;
+		}
 
-			// add ball observation
-			BOOST_FOREACH(const Packet::Vision::Ball &ball, vision.balls)
-			{
-				ballModel.observation(vision.timestamp, ball.pos, BallModel::VISION);
-			}
+		// add ball observation
+		BOOST_FOREACH(const Vision::Ball &ball, vision.balls)
+		{
+			ballModel.observation(vision.timestamp, ball.pos, BallModel::VISION);
+		}
 
-			// add robot observations
-			BOOST_FOREACH(const Packet::Vision::Robot &robot, *self) {
-				addRobotObseration(robot, vision.timestamp, _selfPlayers);
-			}
-			BOOST_FOREACH(const Packet::Vision::Robot &robot, *opp) {
-				addRobotObseration(robot, vision.timestamp, _oppPlayers);
-			}
+		// add robot observations
+		BOOST_FOREACH(const Vision::Robot &robot, *self) {
+			addRobotObseration(robot, vision.timestamp, _selfPlayers);
+		}
+		BOOST_FOREACH(const Vision::Robot &robot, *opp) {
+			addRobotObseration(robot, vision.timestamp, _oppPlayers);
 		}
 	}
 
 	// get robot data from return packets
 	if (verbose) cout << "Adding robot rx data" << endl;
-	BOOST_FOREACH(Packet::LogFrame::Robot& robot, _state->self) {
+	BOOST_FOREACH(SystemState::Robot& robot, _state->self) {
 		addRobotRxData(robot);
 	}
 
@@ -135,7 +129,7 @@ void WorldModel::run()
 	if (verbose) cout << "At end of WorldModel::run()" << endl;
 }
 
-void WorldModel::addRobotObseration(const Packet::Vision::Robot &obs, uint64_t timestamp, RobotVector& players) {
+void WorldModel::addRobotObseration(const Vision::Robot &obs, uint64_t timestamp, RobotVector& players) {
 	int obs_shell = obs.shell;
 
 	// try to add to an existing model, and return if we update something
@@ -166,11 +160,11 @@ void WorldModel::updateRobots(vector<RobotModel::shared>& players, uint64_t cur_
 	}
 }
 
-void WorldModel::addRobotRxData(Packet::LogFrame::Robot& log_robot) {
+void WorldModel::addRobotRxData(SystemState::Robot& log_robot) {
 	int shell = log_robot.shell;
 	BOOST_FOREACH(RobotModel::shared& model, _selfPlayers) {
 		if (model && model->shell() == shell) {
-			model->hasBall(log_robot.radioRx.ball);
+			model->hasBall(log_robot.radioRx.ball());
 			return;
 		}
 	}
@@ -178,7 +172,7 @@ void WorldModel::addRobotRxData(Packet::LogFrame::Robot& log_robot) {
 
 void WorldModel::copyRobotState(const std::vector<RobotModel::shared>& players, TeamMode m) {
 	unsigned int i=0;
-	Packet::LogFrame::Robot* log = (m == SELF) ? _state->self : _state->opp;
+	SystemState::Robot* log = (m == SELF) ? _state->self : _state->opp;
 	BOOST_FOREACH(const RobotModel::shared& robot, players) {
 		if (robot) {
 			log[i].valid = true;

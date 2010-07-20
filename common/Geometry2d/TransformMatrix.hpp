@@ -122,12 +122,23 @@ namespace Geometry2d
 
 			const float *m() const { return _m; }
 
+			////////////////
+			// Functions to build common transformations:
+			
+			// Translation
 			static TransformMatrix translate(const Point &delta)
 			{
 				return TransformMatrix(1, 0, delta.x,
 									   0, 1, delta.y);
 			}
+			
+			static TransformMatrix translate(float x, float y)
+			{
+				return translate(Point(x, y));
+			}
 
+
+			// Rotation in degrees around origin
 			static TransformMatrix rotate(float angle)
 			{
 				float c = cos(angle * DegreesToRadians);
@@ -137,10 +148,18 @@ namespace Geometry2d
 									   s, c, 0);
 			}
 
+			// Uniform scale
 			static TransformMatrix scale(float s)
 			{
 				return TransformMatrix(s, 0, 0,
 									   0, s, 0);
+			}
+
+			// Non-uniform scale
+			static TransformMatrix scale(float x, float y)
+			{
+				return TransformMatrix(x, 0, 0,
+									   0, y, 0);
 			}
 
 			// Returns a matrix to rotate <angle> degrees CCW around <center>.

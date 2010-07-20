@@ -4,12 +4,6 @@ import "Point.proto";
 
 message SimCommand
 {
-	message Ball
-	{
-		required bool valid = 1;
-		required Point pos = 2;
-		required Point vel = 3;
-	}
-	
-	required Ball ball = 1;
+	optional Point ball_pos = 1;
+	optional Point ball_vel = 2;
 }

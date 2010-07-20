@@ -1,8 +1,7 @@
 #pragma once
 
 #include <Constants.hpp>
-#include <LogFrame.hpp>
-#include <MotionCmd.hpp>
+#include <framework/SystemState.hpp>
 
 #include <stdint.h>
 #include <string>
@@ -15,7 +14,7 @@ namespace Gameplay
 	class GameplayModule;
 	class Behavior;
 
-	// This is largely a wrapper around Packet::LogFrame::Robot.
+	// This is largely a wrapper around SystemState::Robot.
 	// It provides convenience functions for setting motion commands and reading state.
 	// It also tracks per-robot information that is internal to gameplay which does not need to be logged.
 	class Robot
@@ -23,14 +22,14 @@ namespace Gameplay
 		public:
 			Robot(GameplayModule *gameplay, int id, bool self);
 
-			Packet::LogFrame::Robot *packet() const;
+			SystemState::Robot *packet() const;
 
 			// Status indicators
 			bool self() const;    /// true if this is one of our robots
 			bool visible() const; /// true if robot is valid - FIXME: needs better check
 			int id() const;       /// index in the array - NOT THE SHELL!
 			bool haveBall() const; /// true if we have the ball
-			Packet::LogFrame::Robot::Rev rev() const; /// the revision for the robot, use for capability checks
+			SystemState::Robot::Rev rev() const; /// the revision for the robot, use for capability checks
 			bool hasChipper() const; /// true if robot can chip
 
 			// kicker readiness checks
@@ -80,15 +79,15 @@ namespace Gameplay
 			 * flag works like in other move commands
 			 */
 			void bezierMove(const std::vector<Geometry2d::Point>& controls,
-					Packet::MotionCmd::OrientationType facing,
-					Packet::MotionCmd::PathEndType endpoint=Packet::MotionCmd::StopAtEnd);
+					MotionCmd::OrientationType facing,
+					MotionCmd::PathEndType endpoint=MotionCmd::StopAtEnd);
 
 			/**
 			 * Move using timed-positions, so that each node has a target time
 			 * Also, the command needs a start time, so that it can calculate deltas
 			 * in seconds
 			 */
-			void move(const std::vector<Packet::MotionCmd::PathNode>& timedPath, uint64_t start);
+			void move(const std::vector<MotionCmd::PathNode>& timedPath, uint64_t start);
 
 			/**
 			 * Apply direct motion commands to the motors - use only for calibration
@@ -106,7 +105,7 @@ namespace Gameplay
 			/**
 			 * Makes the robot spin in a specified direction
 			 */
-			void spin(Packet::MotionCmd::SpinType dir);
+			void spin(MotionCmd::SpinType dir);
 
 			/*
 			 * Enable dribbler (note: can go both ways)
@@ -117,7 +116,7 @@ namespace Gameplay
 			 * Pivots around a given point in a particular direction
 			 * Specify direction manually, or with bool
 			 */
-			void pivot(Geometry2d::Point ctr, Packet::MotionCmd::PivotType dir);
+			void pivot(Geometry2d::Point ctr, MotionCmd::PivotType dir);
 			void pivot(Geometry2d::Point center, bool cw);
 
 			/**
@@ -176,8 +175,7 @@ namespace Gameplay
 
 			int _id;
 			bool _self;
-			Packet::LogFrame::Robot *_packet;
-			std::vector<Packet::LogFrame::Robot::Pose> _poseHistory;
+			SystemState::Robot *_packet;
 			uint64_t _lastChargedTime;
 	};
 }

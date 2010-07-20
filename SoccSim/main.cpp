@@ -1,9 +1,6 @@
-// #include "VisionGen.hpp"
 #include "Viewer.hpp"
 #include "Physics/Env.hpp"
 #include "Config.hpp"
-// #include "Radio.hpp"
-// #include "CommandReceiver.hpp"
 
 #include <QApplication>
 
@@ -14,94 +11,75 @@ using namespace std;
 
 void usage(const char* prog)
 {
-    printf("usage: %s -c <config file> [--ui] [--noisy]\n", prog);
+	fprintf(stderr, "usage: %s -c <config file> [--ui] [--sv]\n", prog);
+	fprintf(stderr, "\t--ui    Show GUI\n");
+	fprintf(stderr, "\t--sv    Use shared vision multicast port\n");
 }
 
 int main(int argc, char* argv[])
 {
-    QApplication app(argc, argv);
+	QApplication app(argc, argv);
 
-    Env* env = new Env();
+	Env* env = new Env();
 
-    char* configFile = 0;
+	char* configFile = 0;
 	bool useGUI = false;
-	bool useNoisy = false;
+	bool sendShared = false;
 
-    //loop arguments and look for config file
-    for (int i=1 ; i<argc ; ++i)
-    {
+	//loop arguments and look for config file
+	for (int i=1 ; i<argc ; ++i)
+	{
 		if (strcmp(argv[i], "--ui") == 0)
 		{
 			useGUI = true;
+		} else if (strcmp(argv[i], "--sv") == 0)
+		{
+			sendShared = true;
 		} else if (strcmp(argv[i], "-c") == 0)
-        {
+		{
 			++i;
-            if (i < argc)
-            {
-                configFile = argv[i];
-            }
-            else
-            {
-                printf ("Expected config file after -c parameter\n");
-                return 0;
-            }
-        } else if (strcmp(argv[i], "--noisy") == 0) {
-        	useNoisy = true;
-        } else {
-            printf("%s is not recognized as a valid flag\n", argv[i]);
-            return 0;
-        }
-    }
+			if (i < argc)
+			{
+				configFile = argv[i];
+			}
+			else
+			{
+				printf ("Expected config file after -c parameter\n");
+				return 0;
+			}
+		} else {
+			printf("%s is not recognized as a valid flag\n", argv[i]);
+			return 0;
+		}
+	}
 
-    Config* config = 0;
+	env->sendShared = sendShared;
+	
+	Config* config = 0;
 
-    if (configFile)
-    {
-        config = new Config(configFile, env);
-    }
-    else
-    {
-        usage(argv[0]);
-        exit(0);
-    }
-
-//     CommandReceiver cmd(env);
-//     cmd.start();
-
-//     VisionGen vision0(env, 0, useNoisy);
-//     vision0.start();
-    
-    //VisionGen vision1(env, 1); // old code for multiple cameras
-    //vision1.start();
-
-//     Radio radioBlue(Blue, *env);
-//     Radio radioYellow(Yellow, *env);
-//     radioBlue.start();
-//     radioYellow.start();
+	if (configFile)
+	{
+		config = new Config(configFile, env);
+	}
+	else
+	{
+		usage(argv[0]);
+		exit(0);
+	}
 
 	Viewer *win = 0;
 	if (useGUI)
 	{
-	    win = new Viewer(env);
-	    win->setVisible(true);
+		win = new Viewer(env);
+		win->setVisible(true);
 	}
-   	int ret = app.exec();
+	int ret = app.exec();
 
-    //cleanup
+	//cleanup
 	delete win;
-    delete env;
-//     vision0.terminate();
-//     vision0.wait();
-    
-    //vision1.terminate();
-    //vision1.wait();
+	delete env;
 
-//     radioBlue.terminate();
-//     radioBlue.wait();
-//     radioYellow.terminate();
-//     radioYellow.wait();
+	delete config;
 
-    delete config;
-
-    return ret;
+	return ret;
 }

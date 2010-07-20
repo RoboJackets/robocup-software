@@ -1,7 +1,10 @@
 #include "TestBallSpeed.hpp"
 #include <boost/foreach.hpp>
+#include <stdio.h>
 
 using namespace std;
+
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::TestBallSpeed, "Tests")
 
 Gameplay::Plays::TestBallSpeed::TestBallSpeed(GameplayModule *gameplay):
 	Play(gameplay)
@@ -35,7 +38,7 @@ bool Gameplay::Plays::TestBallSpeed::run()
 
 	Geometry2d::Point ball;
 	uint64_t time = 0;
-	BOOST_FOREACH(Packet::Vision &vision, _gameplay->state()->rawVision)
+	BOOST_FOREACH(Vision &vision, _gameplay->state()->rawVision)
 	{
 		if (!vision.balls.empty())
 		{
@@ -55,7 +58,7 @@ bool Gameplay::Plays::TestBallSpeed::run()
 	}
 	BOOST_FOREACH(Geometry2d::Point &pos, _pos_history)
 	{
-		drawCircle(pos, Constants::Ball::Radius, Qt::red);
+		state()->drawCircle(pos, Constants::Ball::Radius, Qt::red);
 	}
 
 	float speed = -1;

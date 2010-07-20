@@ -2,7 +2,7 @@ package Packet;
 
 message Point
 {
-	required float x = 1;
-	required float y = 2;
+	optional float x = 1;
+	optional float y = 2;
 }
 

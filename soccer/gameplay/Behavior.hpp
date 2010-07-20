@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include <AutoName.hpp>
 
 #include "GameplayModule.hpp"
@@ -16,6 +15,11 @@ namespace Gameplay
 		GameplayModule *gameplay() const
 		{
 			return _gameplay;
+		}
+		
+		SystemState *state() const
+		{
+			return _gameplay->state();
 		}
 
 		void unassign()
@@ -101,7 +105,7 @@ namespace Gameplay
 		virtual float score(Robot *r);
 
 		// Convenience functions
-		const Packet::LogFrame::Ball &ball() const
+		const SystemState::Ball &ball() const
 		{
 			return gameplay()->state()->ball;
 		}
@@ -120,13 +124,5 @@ namespace Gameplay
 		{
 			return _gameplay->opp[i];
 		}
-
-		// drawing functions - wraps the debug rendering
-		void drawText(const std::string& text, const Geometry2d::Point& pt, int r, int g, int b);
-		void drawText(const std::string& text, const Geometry2d::Point& pt, const QColor& color=Qt::black);
-		void drawLine(const Geometry2d::Segment& line, int r, int g, int b);
-		void drawLine(const Geometry2d::Segment& line, const QColor& color=Qt::black);
-		void drawCircle(const Geometry2d::Point& center, float radius, int r, int g, int b);
-		void drawCircle(const Geometry2d::Point& center, float radius, const QColor& color = Qt::black);
 	};
 }

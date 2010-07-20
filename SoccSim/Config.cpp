@@ -50,18 +50,18 @@ Config::Config(QString filename, Env* env) :
 		}
 		else if (element.tagName() == QString("blue"))
 		{
-			procTeam(element, Blue);
+			procTeam(element, true);
 		}
 		else if (element.tagName() == QString("yellow"))
 		{
-			procTeam(element, Yellow);
+			procTeam(element, false);
 		}
 		
 		element = element.nextSiblingElement();
 	}
 }
 
-void Config::procTeam(QDomElement e, Team t)
+void Config::procTeam(QDomElement e, bool blue)
 {
 	QDomElement elem = e.firstChildElement();
 	
@@ -82,9 +82,9 @@ void Config::procTeam(QDomElement e, Team t)
 				} else if (rev.contains("2010")) {
 				    r = Robot::rev2010;
 				}
-				_env->addRobot(t, id, Geometry2d::Point(x, y), r);
+				_env->addRobot(blue, id, Geometry2d::Point(x, y), r);
 			} else {
-				_env->addRobot(t, id, Geometry2d::Point(x, y), Robot::rev2008);
+				_env->addRobot(blue, id, Geometry2d::Point(x, y), Robot::rev2008);
 			}
 		}
 		

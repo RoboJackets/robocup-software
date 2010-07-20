@@ -13,33 +13,42 @@ namespace Gameplay
 	class GameplayModule;
 };
 
-class PlayListModel;
-
 class PlayConfigTab: public QWidget
 {
 	Q_OBJECT;
 	
 	public:
 		PlayConfigTab(QWidget *parent = 0);
-		~PlayConfigTab();
 		
-		void addPlay(boost::shared_ptr<Gameplay::Play> play);
-		
-		Gameplay::GameplayModule *gameplay;
+		// Called after GameplayModule is created to populate the list of available plays.
+		void setup(boost::shared_ptr<Gameplay::GameplayModule> gp);
 		
 		void load(QString filename);
 		
-		void enable(const std::string &name);
+		void enable(QString name);
 		void useGoalie(bool value);
+		
+		// Called periodically to update controls.
+		// This is not actually called once per frame.
+		void frameUpdate();
+		
+		void selectNone();
 		
 	private Q_SLOTS:
 		void on_load_clicked();
 		void on_save_clicked();
-		void on_all_clicked();
-		void on_none_clicked();
 		void on_goalie_toggled(bool checked);
+		void on_plays_itemChanged(QTreeWidgetItem *item);
+		void on_plays_customContextMenuRequested(const QPoint &pos);
 		
 	private:
 		Ui_PlayConfig ui;
-		PlayListModel *_model;
+		boost::shared_ptr<Gameplay::GameplayModule> _gameplay;
+		
+		QIcon _iconRun;
+		QIcon _iconWait;
+		
+		// Map from play name to tree item
+		typedef QMap<QString, QTreeWidgetItem *> PlayMap;
+		PlayMap _playMap;
 };
