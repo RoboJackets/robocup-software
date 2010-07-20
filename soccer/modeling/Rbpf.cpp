@@ -6,7 +6,7 @@
  *  Author: Philip Rogers, Nov 15th 2009
  */
 
-#include <Rbpf.hpp>
+#include <modeling/Rbpf.hpp>
 #include <math.h>
 //#include <boost/math/constants/constants.hpp> // Not in boost 1.37 that 9.04 people use
 

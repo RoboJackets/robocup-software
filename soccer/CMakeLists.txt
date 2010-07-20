@@ -18,13 +18,6 @@ link_directories ( ${PROJECT_SOURCE_DIR}/../packages/gtsam_install/lib )
 
 include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
 add_subdirectory (${PROJECT_SOURCE_DIR}/../common/protobuf ${PROJECT_BINARY_DIR}/protobuf)
-include_directories (${PROJECT_SOURCE_DIR}/..)
-include_directories (${PROJECT_SOURCE_DIR}/modeling/)
-include_directories (${PROJECT_SOURCE_DIR}/gameplay/)
-include_directories (${PROJECT_SOURCE_DIR}/gameplay/optimizer)
-
-# Old packets, which are now normal headers
-include_directories(${PROJECT_SOURCE_DIR}/../common/old_packets)
 
 include_directories(${PROJECT_BINARY_DIR})
 	
@@ -177,7 +170,6 @@ qt4_add_resources (RC_FILES
 set (target soccer)
 add_executable (${target} ${SRCS} ${MOC_SRCS} ${UI_HDRS} ${RC_FILES})
 
-target_link_libraries(${target} ${PACKET_LIBRARY})
 target_link_libraries(${target} ${GEOMETRY_LIBRARY})
 target_link_libraries(${target} ${CONFIG_LIBRARY})
 target_link_libraries(${target} blas lapack)

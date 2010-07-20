@@ -6,7 +6,7 @@
  *  Author: Philip Rogers, Nov 9th 2009
  */
 
-#include <RbpfModelGraph.hpp>
+#include <modeling/RbpfModelGraph.hpp>
 
 // initializes the number of models in the graph (j) to zero.
 // note that modelVector and adjacencyMatrix are already empty.

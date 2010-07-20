@@ -45,16 +45,16 @@
 #include <assert.h>
 #include <string.h>
 #include <cblas.h>
-#include "BLASWrap/lapack.h"
+#include "lapack.h"
 
-#include "BLASWrap/blaswrap.h"
+#include "blaswrap.h"
 
 #define DOUBLE_TYPE
-#include "BLASWrap/def.h"
+#include "def.h"
 #include "blaswrap_source.cpp"
-#include "BLASWrap/undef.h"
+#include "undef.h"
 
 
 #define FLOAT_TYPE
-#include "BLASWrap/def.h"
+#include "def.h"
 #include "blaswrap_source.cpp"

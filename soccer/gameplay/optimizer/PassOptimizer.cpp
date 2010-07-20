@@ -7,13 +7,13 @@
 
 #include <boost/foreach.hpp>
 #include <gtsam/Ordering.h>
-#include <PassOptimizer.hpp>
-#include <passOptimization.hpp>
+#include <gameplay/optimizer/PassOptimizer.hpp>
+#include <gameplay/optimizer/passOptimization.hpp>
 
 // factors
-#include <DrivingFactors.hpp>
-#include <ShootingFactors.hpp>
-#include <PassingFactors.hpp>
+#include <gameplay/optimizer/DrivingFactors.hpp>
+#include <gameplay/optimizer/ShootingFactors.hpp>
+#include <gameplay/optimizer/PassingFactors.hpp>
 
 using namespace std;
 using namespace boost;

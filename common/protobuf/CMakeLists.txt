@@ -39,6 +39,7 @@ add_custom_target(GenerateProto
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-add_library(packets ${GEN_CC})
-add_dependencies(packets GenerateProto)
-target_link_libraries(packets protobuf)
+set(PACKET_LIBRARY packets)
+add_library(${PACKET_LIBRARY} ${GEN_CC})
+add_dependencies(${PACKET_LIBRARY} GenerateProto)
+target_link_libraries(${PACKET_LIBRARY} protobuf)

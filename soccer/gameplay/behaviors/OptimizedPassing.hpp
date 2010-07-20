@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Behavior.hpp"
+#include <gameplay/Behavior.hpp>
 #include <gameplay/behaviors/Intercept.hpp>
 #include <gameplay/behaviors/Kick.hpp>
 #include <gameplay/optimizer/PassOptimizer.hpp>

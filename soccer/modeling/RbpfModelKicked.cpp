@@ -6,7 +6,7 @@
  *  Author: Philip Rogers, Nov 15th 2009
  */
 
-#include <RbpfModelKicked.hpp>
+#include <modeling/RbpfModelKicked.hpp>
 #include <Constants.hpp>
 
 using namespace Modeling;

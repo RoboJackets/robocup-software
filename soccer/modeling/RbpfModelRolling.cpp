@@ -6,7 +6,7 @@
  *  Author: Philip Rogers, Nov 15th 2009
  */
 
-#include <RbpfModelRolling.hpp>
+#include <modeling/RbpfModelRolling.hpp>
 
 // model for free rolling ball, ignores control input
 // state: X (6 x 1) = {x, y, vx, vy, ax, ay}

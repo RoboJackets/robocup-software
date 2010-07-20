@@ -7,9 +7,9 @@
 
 #pragma once
 
-#include <GameplayModule.hpp>
-#include <PassConfig.hpp>
-#include <passOptimization.hpp>
+#include <gameplay/GameplayModule.hpp>
+#include <gameplay/optimizer/PassConfig.hpp>
+#include <gameplay/optimizer/passOptimization.hpp>
 
 namespace Gameplay
 {

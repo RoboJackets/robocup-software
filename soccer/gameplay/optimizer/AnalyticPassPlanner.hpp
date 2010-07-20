@@ -5,14 +5,14 @@
  *      Author: Philip Rogers
  */
 
-#ifndef ANALYTICPASSPLANNER_HPP_
-#define ANALYTICPASSPLANNER_HPP_
+#pragma once
 
 #include <gameplay/Robot.hpp>
+#include <gameplay/optimizer/PassConfig.hpp>
+#include <gameplay/GameplayModule.hpp>
+
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/foreach.hpp>
-#include <PassConfig.hpp>
-#include <GameplayModule.hpp>
 
 class AnalyticPassPlanner {
 
@@ -31,5 +31,3 @@ public:
 protected:
 	Gameplay::GameplayModule * _gameplay;
 };
-
-#endif /* ANALYTICPASSPLANNER_HPP_ */

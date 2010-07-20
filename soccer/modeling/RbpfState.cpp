@@ -6,7 +6,7 @@
  *  Author: Philip Rogers, Nov 10th 2009
  */
 
-#include <RbpfState.hpp>
+#include <modeling/RbpfState.hpp>
 
 // initializes X (state), P (state covariance),
 // the model index, the weight, and n (size of state)

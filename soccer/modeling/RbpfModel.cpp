@@ -6,7 +6,7 @@
  *  Author: Philip Rogers, Nov 15th 2009
  */
 
-#include <RbpfModel.hpp>
+#include <modeling/RbpfModel.hpp>
 
 // initializes n, m, s, F, H, Q, R, and space used for intermediates
 // calculations: Inn (n x n Identity matrix), h, Yhat, S

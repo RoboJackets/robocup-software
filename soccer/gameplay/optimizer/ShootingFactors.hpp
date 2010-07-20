@@ -8,7 +8,7 @@
 
 #include <gtsam/NonlinearFactor.h>
 #include <gtsam/Vector.h>
-#include "passOptimization.hpp"
+#include <gameplay/optimizer/passOptimization.hpp>
 
 namespace Gameplay {
 	namespace Optimization {

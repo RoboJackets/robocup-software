@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "../Play.hpp"
+#include <gameplay/Play.hpp>
 
 namespace Gameplay
 {

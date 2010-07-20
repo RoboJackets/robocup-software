@@ -4,7 +4,7 @@
  */
 
 #include <iostream>
-#include "passOptimization.hpp"
+#include <gameplay/optimizer/passOptimization.hpp>
 
 // implementations
 #include <gtsam/NonlinearConstraint-inl.h>

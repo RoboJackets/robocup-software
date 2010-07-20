@@ -5,7 +5,7 @@
  *      Author: Philip Rogers
  */
 
-#include <PassState.hpp>
+#include <gameplay/optimizer/PassState.hpp>
 
 using namespace std;
 using namespace Gameplay;

@@ -18,7 +18,7 @@
 #include <gtsam/NonlinearEquality.h>
 #include <gtsam/PriorFactor.h>
 #include <gameplay/optimizer/LagrangePriorFactor.h>
-#include <common/Geometry2d/Point.hpp>
+#include <Geometry2d/Point.hpp>
 
 namespace Gameplay
 {

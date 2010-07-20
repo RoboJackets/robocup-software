@@ -7,31 +7,23 @@
 #include <pthread.h>
 #include <assert.h>
 
-#include <map>
+#include <string>
 
-#include <Network/Network.hpp>
-#include <Network/PacketReceiver.hpp>
-#include <Network/Sender.hpp>
-#include <RadioTx.hpp>
-#include <RadioRx.hpp>
+#include <Network.hpp>
+#include <protobuf/RadioTx.pb.h>
+#include <protobuf/RadioRx.pb.h>
 #include <Utils.hpp>
+#include <QUdpSocket>
 
 #include "Radio.hpp"
 
 using namespace std;
 
-Team team = UnknownTeam;
-
-bool useOpp;
-
-Packet::RadioTx txPacket;
-Packet::RadioTx oppTxPacket;
+Packet::RadioTx txPacket[2];
 
 void usage(const char* prog)
 {
 	fprintf(stderr, "usage: %s [-n i] [-2010] <-y|-b>\n", prog);
-	fprintf(stderr, "\t-y: run as the yellow team\n");
-	fprintf(stderr, "\t-b: run as the blue team\n");
 	fprintf(stderr, "\t-n: use base station i (0 is the first base station detected by libusb)\n");
 	fprintf(stderr, "\t-o: run an opponent team as well (note: radio only handles up to 5 robots)\n");
 	fprintf(stderr, "\t--debug_tx: print transmitted packets\n");
@@ -39,18 +31,9 @@ void usage(const char* prog)
 	exit(1);
 }
 
-void packetHandler(const Packet::RadioTx* packet)
-{
-	txPacket = *packet;
-}
-
-void oppPacketHandler(const Packet::RadioTx* packet)
-{
-	oppTxPacket = *packet;
-}
-
 int main(int argc, char* argv[])
 {
+	bool useOpp;
 	bool debug_tx = false;
 	bool debug_rx = false;
 	
@@ -59,15 +42,7 @@ int main(int argc, char* argv[])
 	{
 		const char* var = argv[i];
 
-		if (strcmp(var, "-y") == 0)
-		{
-			team = Yellow;
-		}
-		else if (strcmp(var, "-b") == 0)
-		{
-			team = Blue;
-		}
-		else if (strcmp(var, "--debug_tx") == 0)
+		if (strcmp(var, "--debug_tx") == 0)
 		{
 			debug_tx = true;
 		}
@@ -94,116 +69,110 @@ int main(int argc, char* argv[])
 		fprintf(stderr, "WARNING: Specifying -n will likely result in the wrong base station being used if it is unplugged and reconnected.\n");
 	}
 	
+	//FIXME - Set up sockets here
+	QUdpSocket socket[2];
+	for (int i = 0; i < 2; ++i)
+	{
+		if (!socket[i].bind(RadioTxPort + i))
+		{
+			fprintf(stderr, "Can't bind to port %d\n", RadioTxPort + 1);
+			return 1;
+		}
+	}
+	
 	Radio *radio = 0;
 	
-	if (team == UnknownTeam)
-	{
-		fprintf(stderr, "Error: No team specified\n");
-		usage(argv[0]);
-	}
-	
-	Network::Sender sender(Network::Address, Network::addTeamOffset(team, Network::RadioRx));
-	
-	//sender for opponent robots
-	Network::Sender oppSender(Network::Address, Network::addTeamOffset(team, Network::RadioRx));
-
 	uint8_t reverse_packet[Reverse_Size + 2];
-	
-	Network::PacketReceiver receiverSelf;
-	Network::PacketReceiver receiverOpp;
-	
-	receiverSelf.addType(Network::Address, Network::addTeamOffset(team, Network::RadioTx), packetHandler);
-	
-	if (useOpp)
-	{
-		receiverOpp.addType(Network::Address, Network::addTeamOffset(opponentTeam(team), Network::RadioTx), oppPacketHandler);
-	}
-
 	uint8_t forward_packet[Forward_Size];
 	int sequence = 0;
 	
 	uint64_t lastTime = Utils::timestamp();
 	
+	bool radioErrorPrinted = false;
+	
 	while (true)
 	{
-		bool printed = false;
+		bool newData[2];
 		
-		//clear the incoming packet for the first team only
-		txPacket = Packet::RadioTx();
-		
-		//block for self
-		receiverSelf.receive(true);
-		
-		//don't block on receiving the opponent
-		receiverOpp.receive(false);
-		
-		// Make sure we have a radio
-		bool first = true;
-		if (!radio)
+		// Read RadioTx packets
+		for (int i = 0; i < 2; ++i)
 		{
-			while (!radio)
+			newData[i] = false;
+			
+			while (socket[i].hasPendingDatagrams())
 			{
-				try
+				int n = socket[i].pendingDatagramSize();
+				string str(n, 0);
+				socket[i].readDatagram(&str[0], n);
+				
+				if (!txPacket[i].ParseFromString(str))
 				{
-					radio = new Radio(n);
-				} catch (exception &ex)
-				{
-					if (first)
-					{
-						fprintf(stderr, "%s\n", ex.what());
-						fprintf(stderr, "Waiting for the base station to be connected...\n");
-						first = false;
-					}
-					
-					sleep(1);
+					fprintf(stderr, "Bad RadioTx packet of %d bytes on channel %d\n", n, i);
+				} else {
+					newData[i] = true;
 				}
 			}
-			fprintf(stderr, "\nRadio connected\n");
+		}
+		
+		// Make sure we have a radio
+		if (!radio)
+		{
+			try
+			{
+				radio = new Radio(n);
+			} catch (exception &ex)
+			{
+				if (!radioErrorPrinted)
+				{
+					fprintf(stderr, "%s\n", ex.what());
+					fprintf(stderr, "Waiting for the base station to be connected...\n");
+					radioErrorPrinted = true;
+				}
+				
+				usleep(500 * 1000);
+				
+				// Can't get any farther.  Go back to polling the sockets and radio.
+				continue;
+			}
 			
-			// Drop this forward packet because it's probably really old
-			continue;
+			fprintf(stderr, "\nRadio connected\n");
+			radioErrorPrinted = false;
 		}
 		
 		//FIXME - Switch between teams for reverse channel
-		int reverse_board_id = txPacket.reverse_board_id;
+		int reverse_board_id = txPacket[0].reverse_board_id();
 		
 		// Build a forward packet
 		forward_packet[0] = (sequence << 4) | reverse_board_id;
 		forward_packet[1] = 0x0f;
 		forward_packet[2] = 0x00;
 		
+		bool printed = false;
 		int offset = 3;
 		int kick_id = -1;
 		int self_bots = 0;
 		uint8_t kick_strength = 0;
 		for (int robot_id = 0; robot_id < 5; ++robot_id)
 		{
-			const Packet::RadioTx::Robot &robot = txPacket.robots[robot_id];
-			int board_id = robot.board_id;
+			//FIXME - Read from both channels and merge
+			const Packet::RadioTx::Robot &robot = txPacket[0].robots(robot_id);
+			int board_id = robot.board_id();
 			
 			int8_t m0, m1, m2, m3;
 			uint8_t kick, roller;
 			
-			if (robot.valid)
+			self_bots++;
+			
+			m1 = -robot.motors(0);
+			m2 = -robot.motors(1);
+			m3 = -robot.motors(2);
+			m0 = -robot.motors(3);
+			kick = robot.kick();
+			
+			if (robot.roller() > 0)
 			{
-				self_bots++;
-				
-				m1 = -robot.motors[0];
-				m2 = -robot.motors[1];
-				m3 = -robot.motors[2];
-				m0 = -robot.motors[3];
-				kick = robot.kick;
-				
-				if (robot.roller > 0)
-				{
-					roller = robot.roller * 2;
-				} else {
-					roller = 0;
-				}
+				roller = robot.roller() * 2;
 			} else {
-				board_id = 15;
-				m0 = m1 = m2 = m3 = 0;
-				kick = 0;
 				roller = 0;
 			}
 			
@@ -220,35 +189,29 @@ int main(int argc, char* argv[])
 			forward_packet[offset++] = (roller & 0xf0) | (board_id & 0x0f);
 		}
 		
+#if 0
+		//FIXME - Redesign this in light of the new approach to radio channels
 		if (useOpp)
 		{	
 			offset = 3 + self_bots * 5;
 			for (int robot_id = 0; robot_id < 5 - self_bots; ++robot_id)
 			{
-				const Packet::RadioTx::Robot &robot = oppTxPacket.robots[robot_id];
-				int board_id = robot.board_id;
+				const Packet::RadioTx::Robot &robot = oppTxPacket.robots(robot_id);
+				int board_id = robot.board_id();
 				
 				int8_t m0, m1, m2, m3;
 				uint8_t kick, roller;
 				
-				if (robot.valid)
+				m1 = -robot.motors(0);
+				m2 = -robot.motors(1);
+				m3 = -robot.motors(2);
+				m0 = -robot.motors(3);
+				kick = robot.kick();
+				
+				if (robot.roller() > 0)
 				{
-					m1 = -robot.motors[0];
-					m2 = -robot.motors[1];
-					m3 = -robot.motors[2];
-					m0 = -robot.motors[3];
-					kick = robot.kick;
-					
-					if (robot.roller > 0)
-					{
-						roller = robot.roller * 2;
-					} else {
-						roller = 0;
-					}
+					roller = robot.roller() * 2;
 				} else {
-					board_id = 15;
-					m0 = m1 = m2 = m3 = 0;
-					kick = 0;
 					roller = 0;
 				}
 				
@@ -265,6 +228,7 @@ int main(int argc, char* argv[])
 				forward_packet[offset++] = (roller & 0xf0) | (board_id & 0x0f);
 			}
 		}
+#endif
 
 		// ID of kicking robot and kick strength
 		if (kick_id >= 0)
@@ -295,6 +259,7 @@ int main(int argc, char* argv[])
 			radio->write_packet(forward_packet, Forward_Size);
 			
 			// Read a forward packet if one is available
+			//FIXME - Why is the timeout 1 instead of 0?
 			read_ok = radio->read_packet(reverse_packet, sizeof(reverse_packet), 1);
 			rx_time = Utils::timestamp();
 		} catch (exception &ex)
@@ -306,9 +271,9 @@ int main(int argc, char* argv[])
 		
 		sequence = (sequence + 1) & 15;
 		
-		// Check for a reverse packet
 		if (read_ok)
 		{
+			// A reverse packet was received
 			if (debug_rx)
 			{
 				if (debug_tx)
@@ -326,25 +291,25 @@ int main(int argc, char* argv[])
 			Packet::RadioRx rxPacket;
 			int board_id = reverse_packet[0] & 0x0f;
 			
-			rxPacket.timestamp = rx_time;
-			rxPacket.board_id = board_id;
-			rxPacket.rssi = (int8_t)reverse_packet[1] / 2.0;
-			rxPacket.battery = reverse_packet[3] * 3.3 / 256.0 * 5.0;
-			rxPacket.ball = reverse_packet[5] & (1 << 5);
-			rxPacket.charged = reverse_packet[4] & 1;
+			rxPacket.set_timestamp(rx_time);
+			rxPacket.set_board_id(board_id);
+			rxPacket.set_rssi((int8_t)reverse_packet[1] / 2.0);
+			rxPacket.set_battery(reverse_packet[3] * 3.3 / 256.0 * 5.0);
+			rxPacket.set_ball(reverse_packet[5] & (1 << 5));
+			rxPacket.set_charged(reverse_packet[4] & 1);
 			
-			for (int i = 0; i < 5; ++i)
-			{
-				rxPacket.motorFault[i] = reverse_packet[5] & (1 << i);
-			}
+			rxPacket.set_motor_fault(reverse_packet[5] & 0x1f);
 			
 			for (int i = 0; i < 4; ++i)
 			{
-				rxPacket.encoders[i] = reverse_packet[6 + i];
-				rxPacket.encoders[i] |= ((reverse_packet[10] >> (i * 2)) & 3) << 8;
+				int value = reverse_packet[6 + i] | ((reverse_packet[10] >> (i * 2)) & 3) << 8;
+				rxPacket.add_encoders(value);
 			}
 			
-			sender.send(rxPacket);
+			//FIXME - Send on which channel?
+			string str;
+			rxPacket.SerializeToString(&str);
+			socket[0].writeDatagram(&str[0], str.size(), QHostAddress(QHostAddress::LocalHost), RadioRxPort);
 		}
 		
 		if (printed)

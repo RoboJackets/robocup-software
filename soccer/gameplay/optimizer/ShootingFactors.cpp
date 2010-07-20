@@ -3,8 +3,8 @@
  * @author Alex Cunningham
  */
 
-#include <common/Constants.hpp>
-#include "ShootingFactors.hpp"
+#include <Constants.hpp>
+#include <gameplay/optimizer/ShootingFactors.hpp>
 
 using namespace gtsam;
 using namespace std;

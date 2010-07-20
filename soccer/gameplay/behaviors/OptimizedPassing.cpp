@@ -3,7 +3,7 @@
  */
 
 #include <QColor>
-#include "OptimizedPassing.hpp"
+#include <gameplay/behaviors/OptimizedPassing.hpp>
 
 using namespace Geometry2d;
 using namespace std;

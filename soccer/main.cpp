@@ -7,6 +7,7 @@
 #include <fcntl.h>
 
 #include <QApplication>
+#include <QFile>
 #include <QString>
 
 #include <boost/foreach.hpp>
@@ -15,7 +16,6 @@
 #include "MainWindow.hpp"
 
 using namespace std;
-using namespace Packet;
 
 void usage(const char* prog)
 {
@@ -53,8 +53,7 @@ int main (int argc, char* argv[])
 	QApplication app(argc, argv);
 
 	bool blueTeam = false;
-	bool haveTeam = false;
-	QString cfgFile = "";
+	QString cfgFile = "default.cfg";
 	QString playbook;
 	vector<const char *> playDirs;
 	vector<QString> extraPlays;
@@ -68,12 +67,11 @@ int main (int argc, char* argv[])
 
 		if (strcmp(var, "-y") == 0)
 		{
-			haveTeam = true;
+			// Default, don't care
 		}
 		else if (strcmp(var, "-b") == 0)
 		{
 			blueTeam = true;
-			haveTeam = true;
 		}
 		else if (strcmp(var, "-ng") == 0)
 		{
@@ -120,7 +118,7 @@ int main (int argc, char* argv[])
 		{
 			if (i+1 >= argc)
 			{
-				printf("no config file specified after -c");
+				printf("no playbook file specified after -p");
 				usage(argv[0]);
 			}
 			
@@ -133,14 +131,13 @@ int main (int argc, char* argv[])
 			usage(argv[0]);
 		}
 	}
-
-	if (!haveTeam)
-	{
-		printf("Error: No team specified\n");
-		usage(argv[0]);
-		return 0;
-	}
 	
+	if (!QFile(cfgFile).open(QIODevice::ReadOnly))
+	{
+		fprintf(stderr, "Can't read configuration file %s\n", (const char *)cfgFile.toAscii());
+		return 1;
+	}
+
 	MainWindow win;
 	Processor processor(cfgFile, sim, radio);
 	processor.blueTeam(blueTeam);
@@ -149,6 +146,9 @@ int main (int argc, char* argv[])
 	if (!playbook.isNull())
 	{
 		win.playConfigTab()->load(playbook);
+	} else {
+		// Try to load a default playbook
+		win.playConfigTab()->load("../playbooks/Default.pbk");
 	}
 	
 	BOOST_FOREACH(const QString &str, extraPlays)
