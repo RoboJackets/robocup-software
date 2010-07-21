@@ -88,34 +88,40 @@ void MainWindow::updateViews()
 	// Check if any debug layers have been added
 	// (layers should never be removed)
 	LogFrame frame;
-	_processor->logger.getFrame(0, frame);
-	if (frame.debug_layers_size() > ui.debugLayers->count())
+	int i = _processor->logger.lastFrame();
+	if (i >= 0)
 	{
-		// FieldView does this, but we may have received another frame between frameUpdate() and here.
-		ui.fieldView->layerVisible.resize(frame.debug_layers_size());
+		// At least one log frame is available, so read it.
+		_processor->logger.getFrame(i, frame);
 		
-		// Add the missing layers and turn them on
-		for (int i = ui.debugLayers->count(); i < frame.debug_layers_size(); ++i)
+		if (frame.debug_layers_size() > ui.debugLayers->count())
 		{
-			QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(frame.debug_layers(i)));
-			item->setCheckState(Qt::Checked);
-			item->setData(Qt::UserRole, i);
-			ui.debugLayers->addItem(item);
+			// FieldView does this, but we may have received another frame between frameUpdate() and here.
+			ui.fieldView->layerVisible.resize(frame.debug_layers_size());
 			
-			ui.fieldView->layerVisible[i] = true;
+			// Add the missing layers and turn them on
+			for (int i = ui.debugLayers->count(); i < frame.debug_layers_size(); ++i)
+			{
+				QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(frame.debug_layers(i)));
+				item->setCheckState(Qt::Checked);
+				item->setData(Qt::UserRole, i);
+				ui.debugLayers->addItem(item);
+				
+				ui.fieldView->layerVisible[i] = true;
+			}
+			
+			ui.debugLayers->sortItems();
 		}
 		
-		ui.debugLayers->sortItems();
-	}
-	
-	// Update the tree
-	ui.tree->clear();
-	addTreeData(ui.tree->invisibleRootItem(), frame);
-	if (!_treeInitialized)
-	{
-		ui.tree->resizeColumnToContents(0);
-		ui.tree->resizeColumnToContents(1);
-		_treeInitialized = true;
+		// Update the tree
+		ui.tree->clear();
+		addTreeData(ui.tree->invisibleRootItem(), frame);
+		if (!_treeInitialized)
+		{
+			ui.tree->resizeColumnToContents(0);
+			ui.tree->resizeColumnToContents(1);
+			_treeInitialized = true;
+		}
 	}
 	
 	//FIXME - Restart the timer AFTER the view has been drawn.  update() does not block on graphics (because it doesn't actually draw).

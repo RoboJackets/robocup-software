@@ -82,4 +82,9 @@ class FieldView : public QWidget
 		
 		// Most recent frame
 		Packet::LogFrame _frame;
+		
+		// Sequence number of the LogFrame in _frame.
+		// Since frames can be added while we're drawing history,
+		// this is needed to look back from a single point in time.
+		int _frameNumber;
 };

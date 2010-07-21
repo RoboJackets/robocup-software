@@ -25,6 +25,8 @@ using namespace boost;
 using namespace Constants;
 using namespace Packet;
 
+QColor ballColor(0xff, 0x90, 0);
+
 // Converts from meters to m/s for manually shooting the ball
 static const float ShootScale = 5;
 
@@ -37,6 +39,7 @@ FieldView::FieldView(QWidget* parent) :
 	logger = 0;
 	_dragMode = DRAG_NONE;
 	_rotate = 0;
+	_frameNumber = -1;
 
 	setAttribute(Qt::WA_OpaquePaintEvent);
 }
@@ -171,7 +174,13 @@ void FieldView::paintEvent(QPaintEvent* event)
 		return;
 	}
 	
-	logger->getFrame(0, _frame);
+	_frameNumber = logger->lastFrame();
+	if (_frameNumber < 0)
+	{
+		// No data available yet
+		return;
+	}
+	logger->getFrame(_frameNumber, _frame);
 	
 	// Make coordinate transformations
 	_screenToWorld = Geometry2d::TransformMatrix();
@@ -259,6 +268,26 @@ void FieldView::paintEvent(QPaintEvent* event)
 		drawCoords(p);
 	}
 	
+	// History
+	LogFrame oldFrame;
+	for (int i = 0; i < 200 && logger->getFrame(_frameNumber - i, oldFrame); ++i)
+	{
+		if (oldFrame.has_ball())
+		{
+			QPointF pos = qpointf(oldFrame.ball().pos());
+			
+			p.setPen(Qt::NoPen);
+			QColor c = ballColor;
+			c.setAlpha(255 - i);
+			p.setBrush(c);
+			
+			p.drawEllipse(QRectF(-Ball::Radius + pos.x(), -Ball::Radius + pos.y(),
+					Ball::Diameter, Ball::Diameter));
+		}
+	}
+	p.setBrush(Qt::NoBrush);
+	
+	// Simulator drag-to-shoot
 	if (_dragMode == DRAG_SHOOT)
 	{
 		p.setPen(Qt::white);
@@ -359,14 +388,14 @@ void FieldView::paintEvent(QPaintEvent* event)
 		drawRobot(p, !_frame.blue_team(), r.shell(), qpointf(r.pos()), r.angle(), r.has_ball());
 	}
 
+	// Current ball position and velocity
 	if (_frame.has_ball())
 	{
 		QPointF pos = qpointf(_frame.ball().pos());
 		QPointF vel = qpointf(_frame.ball().vel());
 		
-		p.setPen(QColor(0xff, 0x40, 0));
-		p.setBrush(QColor(0xff,0x90,0x00));
-		
+		p.setPen(ballColor);
+		p.setBrush(ballColor);
 		p.drawEllipse(QRectF(-Ball::Radius + pos.x(), -Ball::Radius + pos.y(),
 				Ball::Diameter, Ball::Diameter));
 		
