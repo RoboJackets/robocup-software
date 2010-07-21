@@ -71,6 +71,11 @@ class Logger
 		// Returns true if the frame was available or false if not (too old).
 		bool getFrame(int i, Packet::LogFrame &frame);
 		
+		// Gets frames.size() frames starting at <i> and working backwards.
+		// Clears any frames that couldn't be populated.
+		// Returns the number of frames copied.
+		int getFrames(int start, std::vector<Packet::LogFrame> &frames);
+		
 		// Returns the amount of memory used by all LogFrames in the history.
 		int spaceUsed()
 		{

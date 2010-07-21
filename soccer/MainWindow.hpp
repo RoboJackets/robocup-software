@@ -146,6 +146,10 @@ class MainWindow : public QMainWindow
 		
 		Processor *_processor;
 		
+		// Log history, copied from Logger.
+		// This is used by other controls to get log data without having to copy it again from the Logger.
+		std::vector<Packet::LogFrame> _history;
+		
 		// When true, External Referee is automatically set.
 		// This is cleared by manually changing the checkbox or after the
 		// first referee packet is seen and the box is automatically checked.

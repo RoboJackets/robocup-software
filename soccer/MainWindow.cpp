@@ -30,8 +30,10 @@ MainWindow::MainWindow(QWidget *parent):
 	_autoExternalReferee = true;
 	_frameNumber = -1;
 	_startTime = Utils::timestamp();
+	_history.resize(2 * 60);
 	
 	ui.setupUi(this);
+	ui.fieldView->history(&_history);
 	
 	// Initialize live/non-live control styles
 	_live = false;
@@ -68,7 +70,6 @@ void MainWindow::processor(Processor* value)
 	assert(!_processor);
 	
 	_processor = value;
-	ui.fieldView->logger = &_processor->logger;
 	
 	// External referee
 	on_externalReferee_toggled(ui.externalReferee->isChecked());
@@ -140,18 +141,24 @@ void MainWindow::updateViews()
 		}
 	}
 	
-	// Update field view
-	ui.fieldView->frameNumber(_frameNumber);
-	ui.fieldView->repaint(ui.fieldView->rect());
+	// Read recent history from the log
+	_processor->logger.getFrames(_frameNumber, _history);
 	
 	// Get the frame at the log playback time
-	const LogFrame &currentFrame = ui.fieldView->frame();
+	const LogFrame &currentFrame = _history[0];
+	
+	// Update field view
+	ui.fieldView->repaint(ui.fieldView->rect());
 	
 	// Get the live frame from FieldView or the Logger
 	LogFrame liveFrameStorage;
-	const LogFrame &liveFrame = _live ? currentFrame : liveFrameStorage;
-	if (!_live)
+	const LogFrame *liveFrame;
+	if (_live)
 	{
+		liveFrame = &_history[0];
+	} else {
+		liveFrame = &liveFrameStorage;
+		
 		// Not live, so we have to read the live frame ourselves
 		int i = _processor->logger.lastFrame();
 		if (i >= 0)
@@ -174,12 +181,12 @@ void MainWindow::updateViews()
 	
 	// Check if any debug layers have been added
 	// (layers should never be removed)
-	if (liveFrame.debug_layers_size() > ui.debugLayers->count())
+	if (liveFrame->debug_layers_size() > ui.debugLayers->count())
 	{
 		// Add the missing layers and turn them on
-		for (int i = ui.debugLayers->count(); i < liveFrame.debug_layers_size(); ++i)
+		for (int i = ui.debugLayers->count(); i < liveFrame->debug_layers_size(); ++i)
 		{
-			QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(liveFrame.debug_layers(i)));
+			QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(liveFrame->debug_layers(i)));
 			item->setCheckState(ui.fieldView->layerVisible(i) ? Qt::Checked : Qt::Unchecked);
 			item->setData(Qt::UserRole, i);
 			ui.debugLayers->addItem(item);
@@ -189,13 +196,10 @@ void MainWindow::updateViews()
 	}
 	
 	// Update the tree
-	if (_frameNumber >= 0)
+	if (ui.tree->message(currentFrame))
 	{
-		if (ui.tree->message(currentFrame))
-		{
-			// Items have been added, so sort again on tag number
-			ui.tree->sortItems(ProtobufTree::Column_Tag, Qt::AscendingOrder);
-		}
+		// Items have been added, so sort again on tag number
+		ui.tree->sortItems(ProtobufTree::Column_Tag, Qt::AscendingOrder);
 	}
 	
 	//FIXME - Restart the timer AFTER the view has been drawn.  update() does not block on graphics (because it doesn't actually draw).

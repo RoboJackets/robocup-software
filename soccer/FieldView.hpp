@@ -38,26 +38,19 @@ class FieldView : public QWidget
 			}
 		}
 		
-		Logger *logger;
-		
-		bool showRawRobots;
-		bool showRawBalls;
-		bool showCoords;
-		
-		// Returns the frame for _frameNumber.
-		// This is used by other GUI code to avoid reading the frame repeatedly.
-		const Packet::LogFrame &frame() const
+		void history(const std::vector<Packet::LogFrame> *value)
 		{
-			return _frame;
+			_history = value;
 		}
-		
-		// Sets the current frame number and reads the frame
-		void frameNumber(int n);
 		
 		void rotate(int value);
 		
 		void sendSimCommand(const Packet::SimCommand &cmd);
 	
+		bool showRawRobots;
+		bool showRawBalls;
+		bool showCoords;
+		
 	Q_SIGNALS:
 		// Emitted when the user selects a robot.
 		// The robot is identified by shell number.
@@ -109,10 +102,7 @@ class FieldView : public QWidget
 		// Most recent frame
 		Packet::LogFrame _frame;
 		
-		// Sequence number of the LogFrame in _frame.
-		// Since frames can be added while we're drawing history,
-		// this is needed to look back from a single point in time.
-		int _frameNumber;
+		const std::vector<Packet::LogFrame> *_history;
 		
 		QVector<bool> _layerVisible;
 };

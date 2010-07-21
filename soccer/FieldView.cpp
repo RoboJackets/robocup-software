@@ -7,7 +7,6 @@
 #include <stdio.h>
 
 #include <Network.hpp>
-#include <Logger.hpp>
 #include <LogUtils.hpp>
 #include <Constants.hpp>
 #include <Geometry2d/Point.hpp>
@@ -37,10 +36,9 @@ FieldView::FieldView(QWidget* parent) :
 	showRawRobots = false;
 	showRawBalls = false;
 	showCoords = false;
-	logger = 0;
 	_dragMode = DRAG_NONE;
 	_rotate = 0;
-	_frameNumber = -1;
+	_history = 0;
 
 	setAttribute(Qt::WA_OpaquePaintEvent);
 }
@@ -71,9 +69,10 @@ void FieldView::mousePressEvent(QMouseEvent* me)
 	{
 		placeBall(me->posF());
 		_dragMode = DRAG_PLACE;
-	} else if (me->button() == Qt::RightButton)
+	} else if (me->button() == Qt::RightButton && _history && !_history->empty())
 	{
-		if (_frame.has_ball() && pos.nearPoint(_frame.ball().pos(), Constants::Ball::Radius))
+		const LogFrame &frame = _history->at(0);
+		if (frame.has_ball() && pos.nearPoint(frame.ball().pos(), Constants::Ball::Radius))
 		{
 			// Drag to shoot the ball
 			_dragMode = DRAG_SHOOT;
@@ -81,16 +80,16 @@ void FieldView::mousePressEvent(QMouseEvent* me)
 		} else {
 			// Look for a robot selection
 			int newID = -1;
-			for (int i = 0; i < _frame.self_size(); ++i)
+			for (int i = 0; i < frame.self_size(); ++i)
 			{
-				if (pos.distTo(_frame.self(i).pos()) < Constants::Robot::Radius)
+				if (pos.distTo(frame.self(i).pos()) < Constants::Robot::Radius)
 				{
-					newID = _frame.self(i).shell();
+					newID = frame.self(i).shell();
 					break;
 				}
 			}
 			
-			if (newID != _frame.manual_id())
+			if (newID != frame.manual_id())
 			{
 				robotSelected(newID);
 			}
@@ -146,12 +145,6 @@ void FieldView::sendSimCommand(const Packet::SimCommand& cmd)
 	_simCommandSocket.writeDatagram(&out[0], out.size(), QHostAddress(QHostAddress::LocalHost), SimCommandPort);
 }
 
-void FieldView::frameNumber(int n)
-{
-	_frameNumber = n;
-	logger->getFrame(_frameNumber, _frame);
-}
-
 void FieldView::paintEvent(QPaintEvent* event)
 {
 	QStyleOption opt;
@@ -180,17 +173,14 @@ void FieldView::paintEvent(QPaintEvent* event)
 		drawCoords(p);
 	}
 	
-	if (!logger)
-	{
-		// Can't get frames without a logger
-		return;
-	}
-	
-	if (_frameNumber < 0)
+	if (!_history || _history->empty())
 	{
 		// No data available yet
 		return;
 	}
+	
+	// Make a convenient reference to the latest LogFrame
+	const LogFrame &frame = _history->at(0);
 	
 	// Make coordinate transformations
 	_screenToWorld = Geometry2d::TransformMatrix();
@@ -201,7 +191,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	
 	_worldToTeam = Geometry2d::TransformMatrix();
 	_worldToTeam *= Geometry2d::TransformMatrix::translate(0, Constants::Field::Length / 2.0f);
-	if (_frame.defend_plus_x())
+	if (frame.defend_plus_x())
 	{
 		_worldToTeam *= Geometry2d::TransformMatrix::rotate(-90);
 	} else {
@@ -209,7 +199,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	}
 	
 	_teamToWorld = Geometry2d::TransformMatrix();
-	if (_frame.defend_plus_x())
+	if (frame.defend_plus_x())
 	{
 		_teamToWorld *= Geometry2d::TransformMatrix::rotate(90);
 	} else {
@@ -218,10 +208,10 @@ void FieldView::paintEvent(QPaintEvent* event)
 	_teamToWorld *= Geometry2d::TransformMatrix::translate(0, -Constants::Field::Length / 2.0f);
 
 	// Check number of debug layers
-	if (_layerVisible.size() != _frame.debug_layers_size())
+	if (_layerVisible.size() != frame.debug_layers_size())
 	{
 		int start = _layerVisible.size();
-		_layerVisible.resize(_frame.debug_layers_size());
+		_layerVisible.resize(frame.debug_layers_size());
 		
 		// Turn on the new layers
 		for (int i = start; i < _layerVisible.size(); ++i)
@@ -234,7 +224,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	if (showRawBalls || showRawRobots)
 	{
 		p.setPen(QColor(0xcc, 0xcc, 0xcc));
-		BOOST_FOREACH(const SSL_WrapperPacket& wrapper, _frame.raw_vision())
+		BOOST_FOREACH(const SSL_WrapperPacket& wrapper, frame.raw_vision())
 		{
 			if (!wrapper.has_detection())
 			{
@@ -269,7 +259,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	
 	// Everything after this point is drawn in team space.
 	// Transform that back into world space depending on defending goal.
-	if (_frame.defend_plus_x())
+	if (frame.defend_plus_x())
 	{
 		p.rotate(90);
 	} else {
@@ -278,7 +268,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	p.translate(0, -Field::Length / 2.0f);
 
 	// Text has to be rotated so it is always upright on screen
-	_textRotation = -_rotate * 90 + (_frame.defend_plus_x() ? -90 : 90);
+	_textRotation = -_rotate * 90 + (frame.defend_plus_x() ? -90 : 90);
 	
 	if (showCoords)
 	{
@@ -286,9 +276,9 @@ void FieldView::paintEvent(QPaintEvent* event)
 	}
 	
 	// History
-	LogFrame oldFrame;
-	for (int i = 0; i < 200 && logger->getFrame(_frameNumber - i, oldFrame); ++i)
+	for (unsigned int i = 0; i < 200 && i < _history->size(); ++i)
 	{
+		const LogFrame &oldFrame = _history->at(i);
 		if (oldFrame.has_ball())
 		{
 			QPointF pos = qpointf(oldFrame.ball().pos());
@@ -308,7 +298,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	if (_dragMode == DRAG_SHOOT)
 	{
 		p.setPen(Qt::white);
-		Geometry2d::Point ball = _frame.ball().pos();
+		Geometry2d::Point ball = frame.ball().pos();
 		p.drawLine(ball.toQPointF(), _dragTo.toQPointF());
 		
 		if (ball != _dragTo)
@@ -325,7 +315,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	}
 	
 	// Debug lines
-	BOOST_FOREACH(const DebugPath& path, _frame.debug_paths())
+	BOOST_FOREACH(const DebugPath& path, frame.debug_paths())
 	{
 		if (path.layer() < 0 || _layerVisible[path.layer()])
 		{
@@ -340,7 +330,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	}
 
 	// Debug circles
-	BOOST_FOREACH(const DebugCircle& c, _frame.debug_circles())
+	BOOST_FOREACH(const DebugCircle& c, frame.debug_circles())
 	{
 		if (c.layer() < 0 || _layerVisible[c.layer()])
 		{
@@ -350,7 +340,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	}
 
 	// Debug text
-	BOOST_FOREACH(const DebugText& text, _frame.debug_texts())
+	BOOST_FOREACH(const DebugText& text, frame.debug_texts())
 	{
 		if (text.layer() < 0 || _layerVisible[text.layer()])
 		{
@@ -361,7 +351,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 
 	// Debug polygons
 	p.setPen(Qt::NoPen);
-	BOOST_FOREACH(const DebugPath& path, _frame.debug_polygons())
+	BOOST_FOREACH(const DebugPath& path, frame.debug_polygons())
 	{
 		if (path.layer() < 0 || _layerVisible[path.layer()])
 		{
@@ -385,11 +375,11 @@ void FieldView::paintEvent(QPaintEvent* event)
 	p.setBrush(Qt::NoBrush);
 
 	// Filtered robot positions
-	int manualID = _frame.manual_id();
-	BOOST_FOREACH(const LogFrame::Robot &r, _frame.self())
+	int manualID = frame.manual_id();
+	BOOST_FOREACH(const LogFrame::Robot &r, frame.self())
 	{
 		QPointF center = qpointf(r.pos());
-		drawRobot(p, _frame.blue_team(), r.shell(), center, r.angle(), r.has_ball());
+		drawRobot(p, frame.blue_team(), r.shell(), center, r.angle(), r.has_ball());
 		
 		// Highlight the manually controlled robot
 		if (manualID == r.shell())
@@ -400,16 +390,16 @@ void FieldView::paintEvent(QPaintEvent* event)
 		}
 	}
 
-	BOOST_FOREACH(const LogFrame::Robot &r, _frame.opp())
+	BOOST_FOREACH(const LogFrame::Robot &r, frame.opp())
 	{
-		drawRobot(p, !_frame.blue_team(), r.shell(), qpointf(r.pos()), r.angle(), r.has_ball());
+		drawRobot(p, !frame.blue_team(), r.shell(), qpointf(r.pos()), r.angle(), r.has_ball());
 	}
 
 	// Current ball position and velocity
-	if (_frame.has_ball())
+	if (frame.has_ball())
 	{
-		QPointF pos = qpointf(_frame.ball().pos());
-		QPointF vel = qpointf(_frame.ball().vel());
+		QPointF pos = qpointf(frame.ball().pos());
+		QPointF vel = qpointf(frame.ball().vel());
 		
 		p.setPen(ballColor);
 		p.setBrush(ballColor);

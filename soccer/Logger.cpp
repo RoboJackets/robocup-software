@@ -85,3 +85,33 @@ bool Logger::getFrame(int i, LogFrame& frame)
 	
 	return true;
 }
+
+int Logger::getFrames(int start, vector<LogFrame> &frames)
+{
+	QMutexLocker locker(&_mutex);
+	
+	int minFrame = _nextFrameNumber - (int)_history.size();
+	if (minFrame < 0)
+	{
+		minFrame = 0;
+	}
+	
+	if (start < minFrame || start >= _nextFrameNumber)
+	{
+		return 0;
+	}
+	
+	int end = start - frames.size() + 1;
+	if (end < minFrame)
+	{
+		end = minFrame;
+	}
+	
+	int n = start - end + 1;
+	for (int i = 0; i < n; ++i)
+	{
+		frames[i].CopyFrom(*_history[(start - i) % _history.size()]);
+	}
+	
+	return n;
+}
