@@ -1,11 +1,14 @@
 // kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 // vim:ai ts=4 et
 
+//FIXME - One time the display quit updating, like the timer died.  GUI was OK but frame # did not advance, etc.  Status was SIMULATION.
+
 #include "MainWindow.hpp"
 #include "MainWindow.moc"
 
 #include "PlayConfigTab.hpp"
 
+#include <QInputDialog>
 #include <QActionGroup>
 #include <boost/foreach.hpp>
 
@@ -16,19 +19,23 @@ using namespace boost;
 using namespace google::protobuf;
 using namespace Packet;
 
-// Style sheet used for non-live controls
-QString NonLiveStyle("border: 2px solid red");
+// Style sheets used for live/non-live controls
+QString LiveStyle("border:2px solid transparent");
+QString NonLiveStyle("border:2px solid red");
 
 MainWindow::MainWindow(QWidget *parent):
 	QMainWindow(parent)
 {
 	_processor = 0;
 	_autoExternalReferee = true;
-	_treeInitialized = false;
-	_live = true;
 	_frameNumber = -1;
+	_startTime = Utils::timestamp();
 	
 	ui.setupUi(this);
+	
+	// Initialize live/non-live control styles
+	_live = false;
+	live(true);
 	
 	_logMemory = new QLabel();
 	statusBar()->addPermanentWidget(_logMemory);
@@ -87,6 +94,26 @@ void MainWindow::processor(Processor* value)
 	ui.radioLabel->setText(QString("Radio %1").arg(_processor->radio()));
 }
 
+void MainWindow::live(bool value)
+{
+	if (_live != value)
+	{
+		_live = value;
+		
+		// Change styles for controls that can show historical data
+		if (_live)
+		{
+			ui.fieldView->setStyleSheet(QString());
+			ui.tree->setStyleSheet(QString("QTreeWidget{%1}").arg(LiveStyle));
+			ui.logControls->setStyleSheet(QString("#logControls{%1}").arg(LiveStyle));
+		} else {
+			ui.fieldView->setStyleSheet(NonLiveStyle);
+			ui.tree->setStyleSheet(QString("QTreeWidget{%1}").arg(NonLiveStyle));
+			ui.logControls->setStyleSheet(QString("#logControls{%1}").arg(NonLiveStyle));
+		}
+	}
+}
+
 void MainWindow::updateViews()
 {
 	// Status bar
@@ -96,14 +123,7 @@ void MainWindow::updateViews()
 	if (_live)
 	{
 		_frameNumber = _processor->logger.lastFrame();
-		
-		ui.fieldView->setStyleSheet(QString());
-		ui.tree->setStyleSheet(QString());
 	} else {
-		// Add a border to non-live controls
-		ui.fieldView->setStyleSheet(NonLiveStyle);
-		ui.tree->setStyleSheet(NonLiveStyle);
-	
 		double rate = ui.playbackRate->value();
 		QTime time = QTime::currentTime();
 		_frameNumber += rate * _lastUpdateTime.msecsTo(time) * 0.001;
@@ -120,54 +140,61 @@ void MainWindow::updateViews()
 		}
 	}
 	
-	ui.logFrame->setText(QString::number(int(_frameNumber)));
+	// Update field view
 	ui.fieldView->frameNumber(_frameNumber);
 	ui.fieldView->repaint(ui.fieldView->rect());
-	updateStatus();
-	_playConfigTab->frameUpdate();
 	
-	//FIXME - FieldView and this function read the same frame (but not always in the same way, live vs. non-live)
+	// Get the frame at the log playback time
+	const LogFrame &currentFrame = ui.fieldView->frame();
 	
-	// Check if any debug layers have been added
-	// (layers should never be removed)
-	LogFrame frame;
-	int i = _processor->logger.lastFrame();
-	if (i >= 0)
+	// Get the live frame from FieldView or the Logger
+	LogFrame liveFrameStorage;
+	const LogFrame &liveFrame = _live ? currentFrame : liveFrameStorage;
+	if (!_live)
 	{
-		// At least one log frame is available, so read it.
-		_processor->logger.getFrame(i, frame);
-		
-		if (frame.debug_layers_size() > ui.debugLayers->count())
+		// Not live, so we have to read the live frame ourselves
+		int i = _processor->logger.lastFrame();
+		if (i >= 0)
 		{
-			// Add the missing layers and turn them on
-			for (int i = ui.debugLayers->count(); i < frame.debug_layers_size(); ++i)
-			{
-				QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(frame.debug_layers(i)));
-				item->setCheckState(ui.fieldView->layerVisible(i) ? Qt::Checked : Qt::Unchecked);
-				item->setData(Qt::UserRole, i);
-				ui.debugLayers->addItem(item);
-			}
-			
-			ui.debugLayers->sortItems();
+			_processor->logger.getFrame(i, liveFrameStorage);
 		}
 	}
 	
-	if (_frameNumber >= 0)
+	// Update log controls
+	ui.logFrame->setText(QString::number(int(_frameNumber)));
+	int elapsedMillis = (currentFrame.start_time() - _startTime + 500) / 1000;
+	QTime elapsedTime = QTime().addMSecs(elapsedMillis);
+ 	ui.logTime->setText(elapsedTime.toString("hh:mm:ss.zzz"));
+	
+	// Update status indicator
+	updateStatus();
+	
+	// Update play list
+	_playConfigTab->frameUpdate();
+	
+	// Check if any debug layers have been added
+	// (layers should never be removed)
+	if (liveFrame.debug_layers_size() > ui.debugLayers->count())
 	{
-		// Update the tree
-		if (!_live)
+		// Add the missing layers and turn them on
+		for (int i = ui.debugLayers->count(); i < liveFrame.debug_layers_size(); ++i)
 		{
-			//FIXME - FieldView has done/will do this
-			_processor->logger.getFrame(_frameNumber, frame);
+			QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(liveFrame.debug_layers(i)));
+			item->setCheckState(ui.fieldView->layerVisible(i) ? Qt::Checked : Qt::Unchecked);
+			item->setData(Qt::UserRole, i);
+			ui.debugLayers->addItem(item);
 		}
 		
-		ui.tree->clear();
-		addTreeData(ui.tree->invisibleRootItem(), frame);
-		if (!_treeInitialized)
+		ui.debugLayers->sortItems();
+	}
+	
+	// Update the tree
+	if (_frameNumber >= 0)
+	{
+		if (ui.tree->message(currentFrame))
 		{
-			ui.tree->resizeColumnToContents(0);
-			ui.tree->resizeColumnToContents(1);
-			_treeInitialized = true;
+			// Items have been added, so sort again on tag number
+			ui.tree->sortItems(ProtobufTree::Column_Tag, Qt::AscendingOrder);
 		}
 	}
 	
@@ -175,146 +202,6 @@ void MainWindow::updateViews()
 	// We restart this timer repeatedly instead of using a single shot timer because
 	// we don't want to use 100% CPU redrawing the view if it takes too long.
 	_updateTimer.start(30);
-}
-
-void MainWindow::addTreeData(QTreeWidgetItem *parent, const google::protobuf::Message& msg)
-{
-	const Reflection *ref = msg.GetReflection();
-	vector<const FieldDescriptor *> fields;
-	ref->ListFields(msg, &fields);
-	
-	BOOST_FOREACH(const FieldDescriptor *field, fields)
-	{
-		QTreeWidgetItem *item = new QTreeWidgetItem(parent);
-		item->setText(0, QString::fromStdString(field->name()));
-		
-		if (field->is_repeated())
-		{
-			// Repeated field
-			int n = ref->FieldSize(msg, field);
-			
-			// Show the number of elements as the value for the field itself
-			item->setText(1, QString("<%1>").arg(n));
-			
-			// Add each element as a child
-			for (int i = 0; i < n; ++i)
-			{
-				QTreeWidgetItem *element = new QTreeWidgetItem(item);
-				element->setText(0, QString("[%1]").arg(i));
-				
-				switch (field->type())
-				{
-					case FieldDescriptor::TYPE_INT32:
-					case FieldDescriptor::TYPE_SINT32:
-					case FieldDescriptor::TYPE_FIXED32:
-					case FieldDescriptor::TYPE_SFIXED32:
-						element->setText(1, QString::number(ref->GetRepeatedInt32(msg, field, i)));
-						break;
-					
-					case FieldDescriptor::TYPE_INT64:
-					case FieldDescriptor::TYPE_SINT64:
-					case FieldDescriptor::TYPE_FIXED64:
-					case FieldDescriptor::TYPE_SFIXED64:
-						element->setText(1, QString::number(ref->GetRepeatedInt64(msg, field, i)));
-						break;
-					
-					case FieldDescriptor::TYPE_UINT32:
-						element->setText(1, QString::number(ref->GetRepeatedUInt32(msg, field, i)));
-						break;
-					
-					case FieldDescriptor::TYPE_UINT64:
-						element->setText(1, QString::number(ref->GetRepeatedUInt64(msg, field, i)));
-						break;
-					
-					case FieldDescriptor::TYPE_FLOAT:
-						element->setText(1, QString::number(ref->GetRepeatedFloat(msg, field, i)));
-						break;
-					
-					case FieldDescriptor::TYPE_DOUBLE:
-						element->setText(1, QString::number(ref->GetRepeatedDouble(msg, field, i)));
-						break;
-					
-					case FieldDescriptor::TYPE_BOOL:
-						element->setCheckState(1, ref->GetRepeatedBool(msg, field, i) ? Qt::Checked : Qt::Unchecked);
-						break;
-					
-					case FieldDescriptor::TYPE_ENUM:
-					{
-						const EnumValueDescriptor *ev = ref->GetRepeatedEnum(msg, field, i);
-						element->setText(1, QString::fromStdString(ev->name()));
-						break;
-					}
-					
-					case FieldDescriptor::TYPE_STRING:
-						element->setText(1, QString::fromStdString(ref->GetRepeatedString(msg, field, i)));
-						break;
-					
-					case FieldDescriptor::TYPE_MESSAGE:
-						addTreeData(element, ref->GetRepeatedMessage(msg, field, i));
-						break;
-					
-					default:
-						element->setText(1, "???");
-						break;
-				}
-			}
-		} else switch (field->type())
-		{
-			case FieldDescriptor::TYPE_INT32:
-			case FieldDescriptor::TYPE_SINT32:
-			case FieldDescriptor::TYPE_FIXED32:
-			case FieldDescriptor::TYPE_SFIXED32:
-				item->setText(1, QString::number(ref->GetInt32(msg, field)));
-				break;
-			
-			case FieldDescriptor::TYPE_INT64:
-			case FieldDescriptor::TYPE_SINT64:
-			case FieldDescriptor::TYPE_FIXED64:
-			case FieldDescriptor::TYPE_SFIXED64:
-				item->setText(1, QString::number(ref->GetInt64(msg, field)));
-				break;
-			
-			case FieldDescriptor::TYPE_UINT32:
-				item->setText(1, QString::number(ref->GetUInt32(msg, field)));
-				break;
-			
-			case FieldDescriptor::TYPE_UINT64:
-				item->setText(1, QString::number(ref->GetUInt64(msg, field)));
-				break;
-			
-			case FieldDescriptor::TYPE_FLOAT:
-				item->setText(1, QString::number(ref->GetFloat(msg, field)));
-				break;
-			
-			case FieldDescriptor::TYPE_DOUBLE:
-				item->setText(1, QString::number(ref->GetDouble(msg, field)));
-				break;
-			
-			case FieldDescriptor::TYPE_BOOL:
-				item->setCheckState(1, ref->GetBool(msg, field) ? Qt::Checked : Qt::Unchecked);
-				break;
-			
-			case FieldDescriptor::TYPE_ENUM:
-			{
-				const EnumValueDescriptor *ev = ref->GetEnum(msg, field);
-				item->setText(1, QString::fromStdString(ev->name()));
-				break;
-			}
-			
-			case FieldDescriptor::TYPE_STRING:
-				item->setText(1, QString::fromStdString(ref->GetString(msg, field)));
-				break;
-			
-			case FieldDescriptor::TYPE_MESSAGE:
-				addTreeData(item, ref->GetMessage(msg, field));
-				ui.tree->expandItem(item);
-				break;
-			
-			default:
-				item->setText(1, "???");
-				break;
-		}
-	}
 }
 
 void MainWindow::updateStatus()
@@ -531,15 +418,36 @@ void MainWindow::on_actionStopBall_triggered()
 	ui.fieldView->sendSimCommand(cmd);
 }
 
+// Debug commands
+
+void MainWindow::on_actionRestartUpdateTime_triggered()
+{
+	printf("Update timer: active %d, singleShot %d, interval %d\n", _updateTimer.isActive(), _updateTimer.isSingleShot(), _updateTimer.interval());
+	_updateTimer.stop();
+	_updateTimer.start(30);
+}
+
+void MainWindow::on_actionNonLiveStyle_triggered()
+{
+	QString ret = QInputDialog::getText(this, "Non-Live Style", "Stylesheet:", QLineEdit::Normal, NonLiveStyle);
+	if (!ret.isNull())
+	{
+		NonLiveStyle = ret;
+		live(true);
+		live(false);
+	}
+}
+
+// Log controls
 void MainWindow::on_playbackRate_sliderPressed()
 {
 	// Stop playback
-	_live = false;
+	live(false);
 }
 
 void MainWindow::on_playbackRate_sliderMoved(int value)
 {
-	_live = false;
+	live(false);
 }
 
 void MainWindow::on_playbackRate_sliderReleased()
@@ -562,7 +470,7 @@ void MainWindow::on_logPrev_clicked()
 
 void MainWindow::on_logStop_clicked()
 {
-	_live = false;
+	live(false);
 	ui.playbackRate->setValue(0);
 }
 
@@ -574,7 +482,7 @@ void MainWindow::on_logFirst_clicked()
 
 void MainWindow::on_logLive_clicked()
 {
-	_live = true;
+	live(true);
 }
 
 void MainWindow::on_actionTeamBlue_triggered()

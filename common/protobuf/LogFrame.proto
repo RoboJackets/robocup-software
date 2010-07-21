@@ -40,7 +40,7 @@ message LogFrame
 	optional bool blue_team = 4;
 
 	// Timestamp when the loop started
-	required uint64 start_time = 5;
+	optional uint64 start_time = 5;
 
 	// Debug graphics
 	repeated DebugPath debug_paths = 6;
@@ -69,7 +69,7 @@ message LogFrame
 	optional Ball ball = 13;
 
 	// Data sent to the radio
-	required RadioTx radio_tx = 14;
+	optional RadioTx radio_tx = 14;
 
 	// Which robot is under manual control
 	optional sint32 manual_id = 15 [default = -1];

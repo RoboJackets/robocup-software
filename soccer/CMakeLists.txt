@@ -7,10 +7,6 @@ set (USE_QT true)
 set (USE_GEOMETRY true)
 set (USE_CONFIG true)
 
-# setup gtsam inclusion
-# add_custom_command( OUTPUT gtsam_configure
-#					COMMAND ${PROJECT_SOURCE_DIR}/packages/
-
 # gtsam include
 include_directories ( ${PROJECT_SOURCE_DIR}/../packages/gtsam_install/include )
 include_directories ( ${PROJECT_SOURCE_DIR}/../packages/gtsam/CppUnitLite )
@@ -26,6 +22,7 @@ set (SRCS
 	Processor.cpp
 	Logger.cpp
 	MainWindow.cpp
+	ProtobufTree.cpp
 	Joystick.cpp
 	RefereeModule.cpp
 	PlayConfigTab.cpp
@@ -168,11 +165,11 @@ qt4_add_resources (RC_FILES
 )
 
 set (target soccer)
-add_executable (${target} ${SRCS} ${MOC_SRCS} ${UI_HDRS} ${RC_FILES})
+add_executable (${target} ${SRCS} ${UI_HDRS} ${RC_FILES})
 
 target_link_libraries(${target} ${GEOMETRY_LIBRARY})
 target_link_libraries(${target} ${CONFIG_LIBRARY})
 target_link_libraries(${target} blas lapack)
 target_link_libraries(${target} packets)
 target_link_libraries(${target} ${QT_LIBRARIES})
-target_link_libraries(${target} gtsam ) # libraries required by gtsam
+target_link_libraries(${target} gtsam)

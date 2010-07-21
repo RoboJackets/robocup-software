@@ -146,6 +146,12 @@ void FieldView::sendSimCommand(const Packet::SimCommand& cmd)
 	_simCommandSocket.writeDatagram(&out[0], out.size(), QHostAddress(QHostAddress::LocalHost), SimCommandPort);
 }
 
+void FieldView::frameNumber(int n)
+{
+	_frameNumber = n;
+	logger->getFrame(_frameNumber, _frame);
+}
+
 void FieldView::paintEvent(QPaintEvent* event)
 {
 	QStyleOption opt;
@@ -185,7 +191,6 @@ void FieldView::paintEvent(QPaintEvent* event)
 		// No data available yet
 		return;
 	}
-	logger->getFrame(_frameNumber, _frame);
 	
 	// Make coordinate transformations
 	_screenToWorld = Geometry2d::TransformMatrix();

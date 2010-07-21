@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1039</width>
-    <height>687</height>
+    <width>1080</width>
+    <height>700</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_5">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QWidget" name="refShortcuts" native="true">
         <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -154,182 +154,218 @@
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
-        <property name="spacing">
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QSlider" name="playbackRate">
-          <property name="toolTip">
-           <string>Playback Speed</string>
-          </property>
-          <property name="minimum">
-           <number>-600</number>
-          </property>
-          <property name="maximum">
-           <number>600</number>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="tickPosition">
-           <enum>QSlider::TicksBelow</enum>
-          </property>
-          <property name="tickInterval">
-           <number>600</number>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <property name="spacing">
-           <number>0</number>
-          </property>
-          <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QLabel" name="logFrame">
-            <property name="minimumSize">
-             <size>
-              <width>60</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="toolTip">
-             <string>Frame Number</string>
-            </property>
-            <property name="text">
-             <string>000000</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="logStop">
-            <property name="toolTip">
-             <string>Stop</string>
-            </property>
-            <property name="icon">
-             <iconset resource="main_icons.qrc">
-              <normaloff>:/icons/go-bottom.png</normaloff>:/icons/go-bottom.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>32</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="flat">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="logFirst">
-            <property name="icon">
-             <iconset resource="main_icons.qrc">
-              <normaloff>:/icons/go-first.png</normaloff>:/icons/go-first.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>32</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="flat">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="logPrev">
-            <property name="toolTip">
-             <string>Previous Frame</string>
-            </property>
-            <property name="icon">
-             <iconset resource="main_icons.qrc">
-              <normaloff>:/icons/go-previous.png</normaloff>:/icons/go-previous.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>32</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="flat">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="logNext">
-            <property name="toolTip">
-             <string>Next Frame</string>
-            </property>
-            <property name="icon">
-             <iconset resource="main_icons.qrc">
-              <normaloff>:/icons/go-next.png</normaloff>:/icons/go-next.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>32</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="flat">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="logLive">
-            <property name="toolTip">
-             <string>Live</string>
-            </property>
-            <property name="icon">
-             <iconset resource="main_icons.qrc">
-              <normaloff>:/icons/go-last.png</normaloff>:/icons/go-last.png</iconset>
-            </property>
-            <property name="iconSize">
-             <size>
-              <width>32</width>
-              <height>32</height>
-             </size>
-            </property>
-            <property name="flat">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-       </layout>
+       <widget class="QFrame" name="logControls">
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <property name="spacing">
+          <number>0</number>
+         </property>
+         <property name="margin">
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QSlider" name="playbackRate">
+           <property name="toolTip">
+            <string>Playback Speed</string>
+           </property>
+           <property name="minimum">
+            <number>-600</number>
+           </property>
+           <property name="maximum">
+            <number>600</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="tickPosition">
+            <enum>QSlider::TicksBelow</enum>
+           </property>
+           <property name="tickInterval">
+            <number>600</number>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QLabel" name="logTime">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>90</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Program Elapsed Time</string>
+             </property>
+             <property name="text">
+              <string>00:00:00.000</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="logFrame">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>60</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>Frame Number</string>
+             </property>
+             <property name="text">
+              <string>000000</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="logStop">
+             <property name="toolTip">
+              <string>Stop</string>
+             </property>
+             <property name="icon">
+              <iconset resource="main_icons.qrc">
+               <normaloff>:/icons/go-bottom.png</normaloff>:/icons/go-bottom.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="logFirst">
+             <property name="icon">
+              <iconset resource="main_icons.qrc">
+               <normaloff>:/icons/go-first.png</normaloff>:/icons/go-first.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="logPrev">
+             <property name="toolTip">
+              <string>Previous Frame</string>
+             </property>
+             <property name="icon">
+              <iconset resource="main_icons.qrc">
+               <normaloff>:/icons/go-previous.png</normaloff>:/icons/go-previous.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="logNext">
+             <property name="toolTip">
+              <string>Next Frame</string>
+             </property>
+             <property name="icon">
+              <iconset resource="main_icons.qrc">
+               <normaloff>:/icons/go-next.png</normaloff>:/icons/go-next.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="logLive">
+             <property name="toolTip">
+              <string>Live</string>
+             </property>
+             <property name="icon">
+              <iconset resource="main_icons.qrc">
+               <normaloff>:/icons/go-last.png</normaloff>:/icons/go-last.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
       </item>
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -562,7 +598,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QTreeWidget" name="tree">
+          <widget class="ProtobufTree" name="tree">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -570,16 +606,21 @@
             </sizepolicy>
            </property>
            <property name="columnCount">
-            <number>2</number>
+            <number>3</number>
            </property>
            <column>
             <property name="text">
-             <string>Name</string>
+             <string>Field</string>
             </property>
            </column>
            <column>
             <property name="text">
              <string>Value</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Tag</string>
             </property>
            </column>
           </widget>
@@ -1514,7 +1555,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1039</width>
+     <width>1080</width>
      <height>23</height>
     </rect>
    </property>
@@ -1564,9 +1605,17 @@
     <addaction name="actionCenterBall"/>
     <addaction name="actionStopBall"/>
    </widget>
+   <widget class="QMenu" name="menu_Debug">
+    <property name="title">
+     <string>&amp;Debug</string>
+    </property>
+    <addaction name="actionRestartUpdateTime"/>
+    <addaction name="actionNonLiveStyle"/>
+   </widget>
    <addaction name="menu_View"/>
    <addaction name="menu_Field"/>
    <addaction name="menu_Simulator"/>
+   <addaction name="menu_Debug"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action0">
@@ -1655,13 +1704,28 @@
     <string>&amp;Stop Ball</string>
    </property>
   </action>
+  <action name="actionRestartUpdateTime">
+   <property name="text">
+    <string>&amp;Restart Update Time</string>
+   </property>
+  </action>
+  <action name="actionNonLiveStyle">
+   <property name="text">
+    <string>&amp;Non-live Style...</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>FieldView</class>
    <extends>QWidget</extends>
-   <header>FieldView.hpp</header>
+   <header location="global">FieldView.hpp</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ProtobufTree</class>
+   <extends>QTreeWidget</extends>
+   <header location="global">ProtobufTree.hpp</header>
   </customwidget>
  </customwidgets>
  <resources>

@@ -45,6 +45,8 @@ class MainWindow : public QMainWindow
 		// Selects all debug layers
 		void allDebugOn();
 		
+		void live(bool value);
+		
 	private Q_SLOTS:
 		void updateViews();
 		
@@ -69,6 +71,10 @@ class MainWindow : public QMainWindow
 		// Simulator commands
 		void on_actionCenterBall_triggered();
 		void on_actionStopBall_triggered();
+		
+		// Debug menu commands
+		void on_actionRestartUpdateTime_triggered();
+		void on_actionNonLiveStyle_triggered();
 		
 		// Log controls
 		void on_playbackRate_sliderPressed();
@@ -120,8 +126,6 @@ class MainWindow : public QMainWindow
 		void on_refRedCardYellow_clicked();
 		
 	private:
-		void addTreeData(QTreeWidgetItem *parent, const google::protobuf::Message &msg);
-		
 		void updateStatus();
 		
 		void refCommand(char ch);
@@ -137,9 +141,10 @@ class MainWindow : public QMainWindow
 		
 		Ui_MainWindow ui;
 		
-		Processor *_processor;
+		// Time when this window was created.  Used for the elapsed time indicator.
+		uint64_t _startTime;
 		
-		bool _treeInitialized;
+		Processor *_processor;
 		
 		// When true, External Referee is automatically set.
 		// This is cleared by manually changing the checkbox or after the

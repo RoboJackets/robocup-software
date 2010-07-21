@@ -44,10 +44,15 @@ class FieldView : public QWidget
 		bool showRawBalls;
 		bool showCoords;
 		
-		void frameNumber(int n)
+		// Returns the frame for _frameNumber.
+		// This is used by other GUI code to avoid reading the frame repeatedly.
+		const Packet::LogFrame &frame() const
 		{
-			_frameNumber = n;
+			return _frame;
 		}
+		
+		// Sets the current frame number and reads the frame
+		void frameNumber(int n);
 		
 		void rotate(int value);
 		
