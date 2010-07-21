@@ -20,13 +20,34 @@ class FieldView : public QWidget
 	public:
 		FieldView(QWidget* parent = 0);
 		
-		QVector<bool> layerVisible;
+		void layerVisible(int i, bool value)
+		{
+			if (i >= 0 && i < _layerVisible.size())
+			{
+				_layerVisible[i] = value;
+			}
+		}
+		
+		bool layerVisible(int i) const
+		{
+			if (i < _layerVisible.size())
+			{
+				return true;
+			} else {
+				return false;
+			}
+		}
 		
 		Logger *logger;
 		
 		bool showRawRobots;
 		bool showRawBalls;
 		bool showCoords;
+		
+		void frameNumber(int n)
+		{
+			_frameNumber = n;
+		}
 		
 		void rotate(int value);
 		
@@ -87,4 +108,6 @@ class FieldView : public QWidget
 		// Since frames can be added while we're drawing history,
 		// this is needed to look back from a single point in time.
 		int _frameNumber;
+		
+		QVector<bool> _layerVisible;
 };

@@ -8,6 +8,8 @@
 
 #include <QApplication>
 #include <QFile>
+#include <QDir>
+#include <QDateTime>
 #include <QString>
 
 #include <boost/foreach.hpp>
@@ -157,6 +159,15 @@ int main (int argc, char* argv[])
 	}
 	
 	win.playConfigTab()->useGoalie(goalie);
+	
+	if (QDir("log").exists())
+	{
+		QString logFile = QString("log/") + QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
+		if (!processor.logger.open(logFile))
+		{
+			printf("Failed to open %s: %m\n", (const char *)logFile.toAscii());
+		}
+	}
 	
 	processor.start();
 	

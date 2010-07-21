@@ -13,6 +13,7 @@
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
 
+#include <QStyleOption>
 #include <QLayout>
 #include <QPainter>
 #include <QResizeEvent>
@@ -147,10 +148,15 @@ void FieldView::sendSimCommand(const Packet::SimCommand& cmd)
 
 void FieldView::paintEvent(QPaintEvent* event)
 {
+	QStyleOption opt;
+	opt.init(this);
+	
 	QPainter p(this);
 	
 	// Green background
 	p.fillRect(rect(), QColor(0, 85.0, 0));
+	
+	style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
 	
 	// Set up world space
 	p.translate(width() / 2.0, height() / 2.0);
@@ -174,7 +180,6 @@ void FieldView::paintEvent(QPaintEvent* event)
 		return;
 	}
 	
-	_frameNumber = logger->lastFrame();
 	if (_frameNumber < 0)
 	{
 		// No data available yet
@@ -208,9 +213,16 @@ void FieldView::paintEvent(QPaintEvent* event)
 	_teamToWorld *= Geometry2d::TransformMatrix::translate(0, -Constants::Field::Length / 2.0f);
 
 	// Check number of debug layers
-	if (layerVisible.size() != _frame.debug_layers_size())
+	if (_layerVisible.size() != _frame.debug_layers_size())
 	{
-		layerVisible.resize(_frame.debug_layers_size());
+		int start = _layerVisible.size();
+		_layerVisible.resize(_frame.debug_layers_size());
+		
+		// Turn on the new layers
+		for (int i = start; i < _layerVisible.size(); ++i)
+		{
+			_layerVisible[i] = true;
+		}
 	}
 	
 	// Raw vision, drawn in world space
@@ -310,7 +322,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	// Debug lines
 	BOOST_FOREACH(const DebugPath& path, _frame.debug_paths())
 	{
-		if (path.layer() < 0 || layerVisible[path.layer()])
+		if (path.layer() < 0 || _layerVisible[path.layer()])
 		{
 			p.setPen(qcolor(path.color()));
 			QPointF pts[path.points_size()];
@@ -325,7 +337,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	// Debug circles
 	BOOST_FOREACH(const DebugCircle& c, _frame.debug_circles())
 	{
-		if (c.layer() < 0 || layerVisible[c.layer()])
+		if (c.layer() < 0 || _layerVisible[c.layer()])
 		{
 			p.setPen(qcolor(c.color()));
 			p.drawEllipse(qpointf(c.center()), c.radius(), c.radius());
@@ -335,7 +347,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	// Debug text
 	BOOST_FOREACH(const DebugText& text, _frame.debug_texts())
 	{
-		if (text.layer() < 0 || layerVisible[text.layer()])
+		if (text.layer() < 0 || _layerVisible[text.layer()])
 		{
 			p.setPen(qcolor(text.color()));
 			drawText(p, qpointf(text.pos()), QString::fromStdString(text.text()), text.center());
@@ -346,7 +358,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	p.setPen(Qt::NoPen);
 	BOOST_FOREACH(const DebugPath& path, _frame.debug_polygons())
 	{
-		if (path.layer() < 0 || layerVisible[path.layer()])
+		if (path.layer() < 0 || _layerVisible[path.layer()])
 		{
 			if (path.points_size() < 3)
 			{

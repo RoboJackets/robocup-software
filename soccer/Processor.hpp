@@ -112,9 +112,6 @@ class Processor: public QThread
 		// LogFrame being built for the current frame
 		Packet::LogFrame logFrame;
 		
-		// Data to be sent to the radio at the end of the current frame
-		Packet::RadioTx radioTx;
-		
 		void defendPlusX(bool value);
 		
 		Status status()
@@ -125,6 +122,7 @@ class Processor: public QThread
 		
 		// Locked when processing loop stuff is happening (not when blocked for timing or I/O).
 		// This is public so the GUI thread can lock it to access SystemState, etc.
+		//FIXME - I hate public mutexes.  MainWindow is using this.
 		QMutex loopMutex;
 		
 	protected:

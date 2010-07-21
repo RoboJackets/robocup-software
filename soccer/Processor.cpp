@@ -190,7 +190,6 @@ void Processor::run()
 		logFrame.set_start_time(startTime);
 		
 		// Clear radio commands
-		radioTx.Clear();
 		for (int r = 0; r < Constants::Robots_Per_Team; ++r)
 		{
 			_state.self[r].radioTx = 0;
@@ -300,7 +299,7 @@ void Processor::run()
 		{
 			if (_state.self[r].valid)
 			{
-				RadioTx::Robot *tx = radioTx.add_robots();
+				RadioTx::Robot *tx = logFrame.mutable_radio_tx()->add_robots();
 				_state.self[r].radioTx = tx;
 				tx->set_board_id(_state.self[r].shell);
 				addMotors(tx);
@@ -395,10 +394,6 @@ void Processor::run()
 			_state.ball.vel.set(log->mutable_vel());
 		}
 		
-		logger.addFrame(logFrame);
-
-		loopMutex.unlock();
-		
 		////////////////
 		// Outputs
 		
@@ -409,6 +404,11 @@ void Processor::run()
 		_statusMutex.lock();
 		_status = curStatus;
 		_statusMutex.unlock();
+		
+		// Write to the log
+		logger.addFrame(logFrame);
+		
+		loopMutex.unlock();
 		
 		////////////////
 		// Timing
@@ -430,16 +430,16 @@ void Processor::run()
 void Processor::sendRadioData()
 {
 	// Cycle through reverse IDs
-	radioTx.set_reverse_board_id(_state.self[_reverseId].shell);
+	logFrame.mutable_radio_tx()->set_reverse_board_id(_state.self[_reverseId].shell);
 	_reverseId = (_reverseId + 1) % Constants::Robots_Per_Team;
 	
 	// Halt overrides normal motion control
 	if (_joystick->autonomous() && _state.gameState.halt())
 	{
 		// Force all motor speeds to zero
-		for (int r = 0; r < radioTx.robots_size(); ++r)
+		for (int r = 0; r < logFrame.mutable_radio_tx()->robots_size(); ++r)
 		{
-			RadioTx::Robot *robot = radioTx.mutable_robots(r);
+			RadioTx::Robot *robot = logFrame.mutable_radio_tx()->mutable_robots(r);
 			for (int m = 0; m < robot->motors_size(); ++m)
 			{
 				robot->set_motors(m, 0);
@@ -470,11 +470,11 @@ void Processor::sendRadioData()
 		}
 	}
 	
-	if (_manualID >= 0 && radioTx.robots_size() < Constants::Robots_Per_Team && !manualDone)
+	if (_manualID >= 0 && logFrame.radio_tx().robots_size() < Constants::Robots_Per_Team && !manualDone)
 	{
 		// The manual robot wasn't found by vision/modeling but we have room for it in the packet.
 		// This allows us to drive an off-field robot for testing or to drive a robot back onto the field.
-		RadioTx::Robot *robot = radioTx.add_robots();
+		RadioTx::Robot *robot = logFrame.mutable_radio_tx()->add_robots();
 		robot->set_board_id(_manualID);
 		addMotors(robot);
 		_joystick->drive(robot);
@@ -482,7 +482,7 @@ void Processor::sendRadioData()
 
 	// Send the packet
 	std::string out;
-	radioTx.SerializeToString(&out);
+	logFrame.radio_tx().SerializeToString(&out);
 	_radioSocket.writeDatagram(&out[0], out.size(), LocalAddress, RadioTxPort + _radio);
 }
 

@@ -5,6 +5,7 @@
 
 #include <QMainWindow>
 #include <QTimer>
+#include <QTime>
 
 #include <FieldView.hpp>
 #include <configuration/ConfigFileTab.hpp>
@@ -68,6 +69,16 @@ class MainWindow : public QMainWindow
 		// Simulator commands
 		void on_actionCenterBall_triggered();
 		void on_actionStopBall_triggered();
+		
+		// Log controls
+		void on_playbackRate_sliderPressed();
+		void on_playbackRate_sliderMoved(int value);
+		void on_playbackRate_sliderReleased();
+		void on_logStop_clicked();
+		void on_logFirst_clicked();
+		void on_logPrev_clicked();
+		void on_logNext_clicked();
+		void on_logLive_clicked();
 		
 		// Debug layers
 		void on_debugLayers_itemChanged(QListWidgetItem *item);
@@ -138,4 +149,10 @@ class MainWindow : public QMainWindow
 		QTimer _updateTimer;
 		ConfigFileTab* _configFileTab;
 		PlayConfigTab *_playConfigTab;
+		
+		bool _live;
+		double _frameNumber;
+		QTime _lastUpdateTime;
+		
+		QLabel *_logMemory;
 };

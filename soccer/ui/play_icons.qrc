@@ -1,6 +1,5 @@
 <RCC>
   <qresource prefix="icons">
     <file>running.png</file>
-    <file>waiting.png</file>
   </qresource>
 </RCC>

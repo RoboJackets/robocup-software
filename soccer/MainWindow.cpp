@@ -16,14 +16,22 @@ using namespace boost;
 using namespace google::protobuf;
 using namespace Packet;
 
+// Style sheet used for non-live controls
+QString NonLiveStyle("border: 2px solid red");
+
 MainWindow::MainWindow(QWidget *parent):
 	QMainWindow(parent)
 {
 	_processor = 0;
 	_autoExternalReferee = true;
 	_treeInitialized = false;
+	_live = true;
+	_frameNumber = -1;
 	
 	ui.setupUi(this);
+	
+	_logMemory = new QLabel();
+	statusBar()->addPermanentWidget(_logMemory);
 	
 	ui.debugLayers->setContextMenuPolicy(Qt::CustomContextMenu);
 	
@@ -81,9 +89,44 @@ void MainWindow::processor(Processor* value)
 
 void MainWindow::updateViews()
 {
-	ui.fieldView->update();
+	// Status bar
+	_logMemory->setText(QString("Log: %1 kiB").arg((_processor->logger.spaceUsed() + 512) / 1024));
+	
+	// Advance log playback time
+	if (_live)
+	{
+		_frameNumber = _processor->logger.lastFrame();
+		
+		ui.fieldView->setStyleSheet(QString());
+		ui.tree->setStyleSheet(QString());
+	} else {
+		// Add a border to non-live controls
+		ui.fieldView->setStyleSheet(NonLiveStyle);
+		ui.tree->setStyleSheet(NonLiveStyle);
+	
+		double rate = ui.playbackRate->value();
+		QTime time = QTime::currentTime();
+		_frameNumber += rate * _lastUpdateTime.msecsTo(time) * 0.001;
+		_lastUpdateTime = time;
+		
+		int minFrame = _processor->logger.firstFrame();
+		int maxFrame = _processor->logger.lastFrame();
+		if (_frameNumber < minFrame)
+		{
+			_frameNumber = minFrame;
+		} else if (_frameNumber > maxFrame)
+		{
+			_frameNumber = maxFrame;
+		}
+	}
+	
+	ui.logFrame->setText(QString::number(int(_frameNumber)));
+	ui.fieldView->frameNumber(_frameNumber);
+	ui.fieldView->repaint(ui.fieldView->rect());
 	updateStatus();
 	_playConfigTab->frameUpdate();
+	
+	//FIXME - FieldView and this function read the same frame (but not always in the same way, live vs. non-live)
 	
 	// Check if any debug layers have been added
 	// (layers should never be removed)
@@ -96,24 +139,28 @@ void MainWindow::updateViews()
 		
 		if (frame.debug_layers_size() > ui.debugLayers->count())
 		{
-			// FieldView does this, but we may have received another frame between frameUpdate() and here.
-			ui.fieldView->layerVisible.resize(frame.debug_layers_size());
-			
 			// Add the missing layers and turn them on
 			for (int i = ui.debugLayers->count(); i < frame.debug_layers_size(); ++i)
 			{
 				QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(frame.debug_layers(i)));
-				item->setCheckState(Qt::Checked);
+				item->setCheckState(ui.fieldView->layerVisible(i) ? Qt::Checked : Qt::Unchecked);
 				item->setData(Qt::UserRole, i);
 				ui.debugLayers->addItem(item);
-				
-				ui.fieldView->layerVisible[i] = true;
 			}
 			
 			ui.debugLayers->sortItems();
 		}
-		
+	}
+	
+	if (_frameNumber >= 0)
+	{
 		// Update the tree
+		if (!_live)
+		{
+			//FIXME - FieldView has done/will do this
+			_processor->logger.getFrame(_frameNumber, frame);
+		}
+		
 		ui.tree->clear();
 		addTreeData(ui.tree->invisibleRootItem(), frame);
 		if (!_treeInitialized)
@@ -382,6 +429,13 @@ void MainWindow::updateStatus()
 	
 	//FIXME - Can we validate or flag the playbook?
 	
+	if (!sim && !_processor->logger.recording())
+	{
+		// We should record logs during competition
+		status("NOT RECORDING", Status_Warning);
+		return;
+	}
+	
 	status("COMPETITION", Status_OK);
 }
 
@@ -477,6 +531,52 @@ void MainWindow::on_actionStopBall_triggered()
 	ui.fieldView->sendSimCommand(cmd);
 }
 
+void MainWindow::on_playbackRate_sliderPressed()
+{
+	// Stop playback
+	_live = false;
+}
+
+void MainWindow::on_playbackRate_sliderMoved(int value)
+{
+	_live = false;
+}
+
+void MainWindow::on_playbackRate_sliderReleased()
+{
+	// Center the slider and stop playback
+	ui.playbackRate->setValue(0);
+}
+
+void MainWindow::on_logNext_clicked()
+{
+	on_logStop_clicked();
+	++_frameNumber;
+}
+
+void MainWindow::on_logPrev_clicked()
+{
+	on_logStop_clicked();
+	--_frameNumber;
+}
+
+void MainWindow::on_logStop_clicked()
+{
+	_live = false;
+	ui.playbackRate->setValue(0);
+}
+
+void MainWindow::on_logFirst_clicked()
+{
+	on_logStop_clicked();
+	_frameNumber = _processor->logger.firstFrame();
+}
+
+void MainWindow::on_logLive_clicked()
+{
+	_live = true;
+}
+
 void MainWindow::on_actionTeamBlue_triggered()
 {
 	ui.team->setText("BLUE");
@@ -552,7 +652,7 @@ void MainWindow::on_debugLayers_itemChanged(QListWidgetItem* item)
 	int layer = item->data(Qt::UserRole).toInt();
 	if (layer >= 0)
 	{
-		ui.fieldView->layerVisible[layer] = (item->checkState() == Qt::Checked);
+		ui.fieldView->layerVisible(layer, item->checkState() == Qt::Checked);
 	}
 	ui.fieldView->update();
 }
