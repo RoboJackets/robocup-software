@@ -3,11 +3,7 @@ cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 
 add_definitions(-O2 -Wall -g3)
 
-set (USE_QT true)
-set (USE_GEOMETRY true)
 include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
-
-add_subdirectory (${PROJECT_SOURCE_DIR}/../common/protobuf ${PROJECT_BINARY_DIR}/protobuf)
 
 include_directories(${PROJECT_BINARY_DIR})
 
