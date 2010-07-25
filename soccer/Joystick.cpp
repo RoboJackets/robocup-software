@@ -21,7 +21,8 @@ static const char *devices[] =
 	0
 };
 
-Joystick::Joystick()
+Joystick::Joystick():
+	_mutex(QMutex::Recursive)
 {
 	_autonomous = true;
 	_roller = 0;
@@ -41,6 +42,7 @@ Joystick::~Joystick()
 
 bool Joystick::open()
 {
+	QMutexLocker locker(&_mutex);
 	if (_fd >= 0)
 	{
 		// Already open
@@ -70,10 +72,14 @@ bool Joystick::open()
 
 void Joystick::close()
 {
+	QMutexLocker locker(&_mutex);
 	if (_fd >= 0)
 	{
 		::close(_fd);
 		_fd = -1;
+		
+		_axis.clear();
+		_button.clear();
 	}
 }
 
@@ -147,6 +153,12 @@ void Joystick::update()
 void Joystick::drive(RadioTx::Robot *tx)
 {
 	QMutexLocker locker(&_mutex);
+	
+	if (_axis.size() < 4 || _button.size() < 8)
+	{
+		// No joystick or wrong joystick
+		return;
+	}
 	
 	int leftX = _axis[0] / 256;
 	int leftY = -_axis[1] / 256;

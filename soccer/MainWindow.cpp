@@ -117,6 +117,18 @@ void MainWindow::live(bool value)
 
 void MainWindow::updateViews()
 {
+	int manual =_processor->manualID();
+	if ((manual >= 0 || ui.manualID->isEnabled()) && !_processor->joystickValid())
+	{
+		// Joystick is gone - turn off manual control
+		_processor->manualID(-1);
+		ui.manualID->setEnabled(false);
+	} else if (!ui.manualID->isEnabled() && _processor->joystickValid())
+	{
+		// Joystick reconnected
+		ui.manualID->setEnabled(true);
+	}
+	
 	// Status bar
 	_logMemory->setText(QString("Log: %1 kiB").arg((_processor->logger.spaceUsed() + 512) / 1024));
 	

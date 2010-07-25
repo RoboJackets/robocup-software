@@ -57,7 +57,8 @@ class Processor: public QThread
 			return _radio;
 		}
 		
-		bool autonomous() const;
+		bool autonomous();
+		bool joystickValid();
 		
 		void externalReferee(bool value)
 		{
@@ -202,7 +203,7 @@ class Processor: public QThread
 		boost::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
 		boost::shared_ptr<Motion::MotionModule> _motionModule;
 		boost::shared_ptr<StateIdentification::StateIDModule> _stateIDModule;
-		boost::shared_ptr<Joystick> _joystick;
+		Joystick *_joystick;
 		
 		boost::shared_ptr<ConfigFile> _config;
 };

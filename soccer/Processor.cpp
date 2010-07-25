@@ -45,7 +45,7 @@ Processor::Processor(QString filename, bool sim, int radio) :
 	_externalReferee = true;
 
 	_simulation = sim;
-	_joystick = make_shared<Joystick>();
+	_joystick = new Joystick();
 
 	// Initialize team-space transformation
 	defendPlusX(_defendPlusX);
@@ -128,6 +128,8 @@ Processor::~Processor()
 {
 	stop();
 	
+	delete _joystick;
+	
 	//DEBUG - This is unnecessary, but lets us determine which one breaks.
 	_modelingModule.reset();
 	_stateIDModule.reset();
@@ -143,11 +145,6 @@ void Processor::stop()
 		_running = false;
 		wait();
 	}
-}
-
-bool Processor::autonomous() const
-{
-	return _joystick->autonomous();
 }
 
 void Processor::manualID(int value)
@@ -170,6 +167,18 @@ void Processor::addMotors(RadioTx::Robot* robot)
 	{
 		robot->add_motors(0);
 	}
+}
+
+bool Processor::autonomous()
+{
+	QMutexLocker lock(&loopMutex);
+	return _joystick->autonomous();
+}
+
+bool Processor::joystickValid()
+{
+	QMutexLocker lock(&loopMutex);
+	return _joystick->valid();
 }
 
 void Processor::run()
