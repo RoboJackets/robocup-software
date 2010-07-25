@@ -4,6 +4,9 @@ get_filename_component(common_include_dir ${CMAKE_CURRENT_LIST_FILE} PATH)
 #set the include dir to this file's directory
 include_directories(${common_include_dir})
 
+# Build protobuf files
+add_subdirectory (${common_include_dir}/protobuf ${PROJECT_BINARY_DIR}/protobuf)
+
 macro (prepend_list aList aString)
 	set (temp_list)
 	
@@ -14,33 +17,31 @@ macro (prepend_list aList aString)
 	set (${aList} ${temp_list})
 endmacro(prepend_list)
 	
-if (USE_QT)
-	add_definitions (-DQT_NO_KEYWORDS)
-	set (QT_USE_QTNETWORK true)
-	set (QT_USE_QTOPENGL true)
-	set (QT_USE_QTXML true)
-	find_package ( Qt4 REQUIRED )
-	include_directories(${PROJECT_SOURCE_DIR})
-	include_directories(${PROJECT_BINARY_DIR})
-	include ( ${QT_USE_FILE} )
-endif(USE_QT)
+# Qt
+add_definitions (-DQT_NO_KEYWORDS)
+set (QT_USE_QTNETWORK true)
+set (QT_USE_QTOPENGL true)
+set (QT_USE_QTXML true)
+find_package ( Qt4 REQUIRED )
+include_directories(${PROJECT_SOURCE_DIR})
+include_directories(${PROJECT_BINARY_DIR})
+include ( ${QT_USE_FILE} )
 
-if (USE_GEOMETRY AND NOT TARGET geometry)
-	SET(libgeometry_SRCS 
-		Circle.cpp 
-		Line.cpp 
-		Rect.cpp 
-		Segment.cpp 
-		TransformMatrix.cpp
-		Polygon.cpp
-	)
+SET(libgeometry_SRCS 
+	Circle.cpp 
+	Line.cpp 
+	Rect.cpp 
+	Segment.cpp 
+	TransformMatrix.cpp
+	Polygon.cpp
+)
 
-	prepend_list(libgeometry_SRCS "Geometry2d/")
-	prepend_list(libgeometry_SRCS ${common_include_dir})
-	message( STATUS "Using the Geometry library") 
-	
-	add_library (geometry ${libgeometry_SRCS})
-	
-	set (GEOMETRY_LIBRARY geometry)
-endif()
+prepend_list(libgeometry_SRCS "Geometry2d/")
+prepend_list(libgeometry_SRCS ${common_include_dir})
+message( STATUS "Using the Geometry library") 
+
+add_library (geometry ${libgeometry_SRCS})
+target_link_libraries (geometry packets)
+
+set (GEOMETRY_LIBRARY geometry)
 

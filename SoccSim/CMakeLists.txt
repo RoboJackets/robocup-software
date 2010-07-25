@@ -14,9 +14,7 @@ endif ()
 add_definitions (-Werror -Wall -g3)
 
 # use common stuff
-set (USE_GEOMETRY true)
-include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
-add_subdirectory(${PROJECT_SOURCE_DIR}/../common/protobuf ${PROJECT_BINARY_DIR}/protobuf)
+include (${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt)
 
 # PhysX Setup
 set (PHYSX_VERSION 2.8.1)
@@ -38,25 +36,6 @@ add_definitions (-DLINUX)
 
 # disable fluids, otherwise PhysX doesn't work in linux
 add_definitions (-DNX_DISABLE_FLUIDS)
-
-# setup QT
-add_definitions (-DQT_NO_KEYWORDS)
-set (USE_QT true)
-set (QT_USE_QTNETWORK true)
-set (QT_USE_QTOPENGL true)
-set (QT_USE_QTXML true)
-find_package ( Qt4 REQUIRED )
-include_directories (${PROJECT_SOURCE_DIR})
-include_directories (${PROJECT_BINARY_DIR})
-include ( ${QT_USE_FILE} )
-
-# this will run UIC on the .ui files
-qt4_wrap_ui ( UI_HDRS
-)
-
-# list any resource files
-qt4_add_resources ( RC_SRCS
-)
 
 set (SRCS
     main.cpp
@@ -99,7 +78,7 @@ if (CROSS32)
 endif ()
 
 add_executable (${PROJECT_NAME}
-    ${SRCS} ${UI_HDRS} ${NxuStream2SRC}
+    ${SRCS} ${NxuStream2SRC}
 )
 
 if (CROSS32)

@@ -3,17 +3,12 @@ cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
 
 add_definitions(-O2 -Wall -g3)
 
-set (USE_QT true)
-set (USE_GEOMETRY true)
-set (USE_CONFIG true)
-
 # gtsam include
 include_directories ( ${PROJECT_SOURCE_DIR}/../packages/gtsam_install/include )
 include_directories ( ${PROJECT_SOURCE_DIR}/../packages/gtsam/CppUnitLite )
 link_directories ( ${PROJECT_SOURCE_DIR}/../packages/gtsam_install/lib )
 
-include ("${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt")
-add_subdirectory (${PROJECT_SOURCE_DIR}/../common/protobuf ${PROJECT_BINARY_DIR}/protobuf)
+include (${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt)
 
 include_directories(${PROJECT_BINARY_DIR})
 	
