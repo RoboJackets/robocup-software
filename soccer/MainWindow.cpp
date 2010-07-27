@@ -28,7 +28,10 @@ MainWindow::MainWindow(QWidget *parent):
 {
 	_processor = 0;
 	_autoExternalReferee = true;
-	_frameNumber = -1;
+	_doubleFrameNumber = -1;
+	_liveFrameItem = 0;
+	_frameNumberItem = 0;
+	_elapsedTimeItem = 0;
 	_startTime = Utils::timestamp();
 	_history.resize(2 * 60);
 	
@@ -133,28 +136,29 @@ void MainWindow::updateViews()
 	_logMemory->setText(QString("Log: %1 kiB").arg((_processor->logger.spaceUsed() + 512) / 1024));
 	
 	// Advance log playback time
+	int liveFrameNumber = _processor->logger.lastFrame();
 	if (_live)
 	{
-		_frameNumber = _processor->logger.lastFrame();
+		_doubleFrameNumber = liveFrameNumber;
 	} else {
 		double rate = ui.playbackRate->value();
 		QTime time = QTime::currentTime();
-		_frameNumber += rate * _lastUpdateTime.msecsTo(time) * 0.001;
+		_doubleFrameNumber += rate * _lastUpdateTime.msecsTo(time) * 0.001;
 		_lastUpdateTime = time;
 		
 		int minFrame = _processor->logger.firstFrame();
 		int maxFrame = _processor->logger.lastFrame();
-		if (_frameNumber < minFrame)
+		if (_doubleFrameNumber < minFrame)
 		{
-			_frameNumber = minFrame;
-		} else if (_frameNumber > maxFrame)
+			_doubleFrameNumber = minFrame;
+		} else if (_doubleFrameNumber > maxFrame)
 		{
-			_frameNumber = maxFrame;
+			_doubleFrameNumber = maxFrame;
 		}
 	}
 	
 	// Read recent history from the log
-	_processor->logger.getFrames(_frameNumber, _history);
+	_processor->logger.getFrames(frameNumber(), _history);
 	
 	// Get the frame at the log playback time
 	const LogFrame &currentFrame = _history[0];
@@ -180,10 +184,8 @@ void MainWindow::updateViews()
 	}
 	
 	// Update log controls
-	ui.logFrame->setText(QString::number(int(_frameNumber)));
-	int elapsedMillis = (currentFrame.start_time() - _startTime + 500) / 1000;
-	QTime elapsedTime = QTime().addMSecs(elapsedMillis);
- 	ui.logTime->setText(elapsedTime.toString("hh:mm:ss.zzz"));
+	ui.logLive->setEnabled(!_live);
+	ui.logStop->setEnabled(_live);
 	
 	// Update status indicator
 	updateStatus();
@@ -208,13 +210,40 @@ void MainWindow::updateViews()
 	}
 	
 	// Update the tree
-	if (ui.tree->message(currentFrame))
+	bool newItems = ui.tree->message(currentFrame);
+	
+	// Update non-message tree items
+	// This must be done after the regular tree update because the first update (when there are no items)
+	// causes the columns to be automatically resized, so we must not add any items before that.
+	if (!_frameNumberItem)
+	{
+		_liveFrameItem = new QTreeWidgetItem(ui.tree);
+		_liveFrameItem->setText(ProtobufTree::Column_Field, "Live Frame");
+		_liveFrameItem->setData(ProtobufTree::Column_Tag, Qt::DisplayRole, -3);
+		
+		_frameNumberItem = new QTreeWidgetItem(ui.tree);
+		_frameNumberItem->setText(ProtobufTree::Column_Field, "Frame");
+		_frameNumberItem->setData(ProtobufTree::Column_Tag, Qt::DisplayRole, -2);
+		
+		_elapsedTimeItem = new QTreeWidgetItem(ui.tree);
+		_elapsedTimeItem->setText(ProtobufTree::Column_Field, "Elapsed Time");
+		_elapsedTimeItem->setData(ProtobufTree::Column_Tag, Qt::DisplayRole, -1);
+		
+		newItems = true;
+	}
+	_liveFrameItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole, liveFrameNumber);
+	_frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole, frameNumber());
+	int elapsedMillis = (currentFrame.start_time() - _startTime + 500) / 1000;
+	QTime elapsedTime = QTime().addMSecs(elapsedMillis);
+	_elapsedTimeItem->setText(ProtobufTree::Column_Value, elapsedTime.toString("hh:mm:ss.zzz"));
+	
+	// Sort the tree by tag if items have been added
+	if (newItems)
 	{
 		// Items have been added, so sort again on tag number
 		ui.tree->sortItems(ProtobufTree::Column_Tag, Qt::AscendingOrder);
 	}
 	
-	//FIXME - Restart the timer AFTER the view has been drawn.  update() does not block on graphics (because it doesn't actually draw).
 	// We restart this timer repeatedly instead of using a single shot timer because
 	// we don't want to use 100% CPU redrawing the view if it takes too long.
 	_updateTimer.start(30);
@@ -475,13 +504,13 @@ void MainWindow::on_playbackRate_sliderReleased()
 void MainWindow::on_logNext_clicked()
 {
 	on_logStop_clicked();
-	++_frameNumber;
+	frameNumber(frameNumber() + 1);
 }
 
 void MainWindow::on_logPrev_clicked()
 {
 	on_logStop_clicked();
-	--_frameNumber;
+	frameNumber(frameNumber() - 1);
 }
 
 void MainWindow::on_logStop_clicked()
@@ -493,7 +522,7 @@ void MainWindow::on_logStop_clicked()
 void MainWindow::on_logFirst_clicked()
 {
 	on_logStop_clicked();
-	_frameNumber = _processor->logger.firstFrame();
+	frameNumber(_processor->logger.firstFrame());
 }
 
 void MainWindow::on_logLive_clicked()

@@ -53,7 +53,7 @@
          <item>
           <widget class="QPushButton" name="fastStop">
            <property name="toolTip">
-            <string>Halt</string>
+            <string>Stop</string>
            </property>
            <property name="icon">
             <iconset resource="main_icons.qrc">
@@ -73,7 +73,7 @@
          <item>
           <widget class="QPushButton" name="fastReady">
            <property name="toolTip">
-            <string>Halt</string>
+            <string>Ready</string>
            </property>
            <property name="icon">
             <iconset resource="main_icons.qrc">
@@ -93,7 +93,7 @@
          <item>
           <widget class="QPushButton" name="fastForceStart">
            <property name="toolTip">
-            <string>Halt</string>
+            <string>Force Start</string>
            </property>
            <property name="icon">
             <iconset resource="main_icons.qrc">
@@ -113,7 +113,7 @@
          <item>
           <widget class="QPushButton" name="fastKickoffYellow">
            <property name="toolTip">
-            <string>Halt</string>
+            <string>Kickoff Yellow</string>
            </property>
            <property name="icon">
             <iconset resource="main_icons.qrc">
@@ -133,7 +133,7 @@
          <item>
           <widget class="QPushButton" name="fastKickoffBlue">
            <property name="toolTip">
-            <string>Halt</string>
+            <string>Kickoff Blue</string>
            </property>
            <property name="icon">
             <iconset resource="main_icons.qrc">
@@ -228,38 +228,13 @@
             </widget>
            </item>
            <item>
-            <widget class="QLabel" name="logFrame">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>60</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>Frame Number</string>
-             </property>
-             <property name="text">
-              <string>000000</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QPushButton" name="logStop">
              <property name="toolTip">
               <string>Stop</string>
              </property>
              <property name="icon">
               <iconset resource="main_icons.qrc">
-               <normaloff>:/icons/go-bottom.png</normaloff>:/icons/go-bottom.png</iconset>
+               <normaloff>:/icons/media-playback-pause.png</normaloff>:/icons/media-playback-pause.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -274,9 +249,12 @@
            </item>
            <item>
             <widget class="QPushButton" name="logFirst">
+             <property name="toolTip">
+              <string>First Available Frame</string>
+             </property>
              <property name="icon">
               <iconset resource="main_icons.qrc">
-               <normaloff>:/icons/go-first.png</normaloff>:/icons/go-first.png</iconset>
+               <normaloff>:/icons/media-skip-backward.png</normaloff>:/icons/media-skip-backward.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -296,7 +274,7 @@
              </property>
              <property name="icon">
               <iconset resource="main_icons.qrc">
-               <normaloff>:/icons/go-previous.png</normaloff>:/icons/go-previous.png</iconset>
+               <normaloff>:/icons/media-seek-backward.png</normaloff>:/icons/media-seek-backward.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -316,7 +294,7 @@
              </property>
              <property name="icon">
               <iconset resource="main_icons.qrc">
-               <normaloff>:/icons/go-next.png</normaloff>:/icons/go-next.png</iconset>
+               <normaloff>:/icons/media-seek-forward.png</normaloff>:/icons/media-seek-forward.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -336,7 +314,7 @@
              </property>
              <property name="icon">
               <iconset resource="main_icons.qrc">
-               <normaloff>:/icons/go-last.png</normaloff>:/icons/go-last.png</iconset>
+               <normaloff>:/icons/media-skip-forward.png</normaloff>:/icons/media-skip-forward.png</iconset>
              </property>
              <property name="iconSize">
               <size>

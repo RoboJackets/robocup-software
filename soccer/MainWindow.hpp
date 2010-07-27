@@ -47,6 +47,16 @@ class MainWindow : public QMainWindow
 		
 		void live(bool value);
 		
+		int frameNumber() const
+		{
+			return roundf(_doubleFrameNumber);
+		}
+		
+		void frameNumber(int value)
+		{
+			_doubleFrameNumber = value;
+		}
+		
 	private Q_SLOTS:
 		void updateViews();
 		
@@ -159,8 +169,17 @@ class MainWindow : public QMainWindow
 		ConfigFileTab* _configFileTab;
 		PlayConfigTab *_playConfigTab;
 		
+		// Tree items that are not in LogFrame
+		QTreeWidgetItem *_liveFrameItem;
+		QTreeWidgetItem *_frameNumberItem;
+		QTreeWidgetItem *_elapsedTimeItem;
+		
 		bool _live;
-		double _frameNumber;
+		
+		// Tracking fractional frames is the easiest way to allow arbitrary playback rates.
+		// To keep rounding consistent, only access this with frameNumber().
+		double _doubleFrameNumber;
+		
 		QTime _lastUpdateTime;
 		
 		QLabel *_logMemory;
