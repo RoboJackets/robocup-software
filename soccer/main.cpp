@@ -30,6 +30,7 @@ void usage(const char* prog)
 	fprintf(stderr, "\t-pp:  enable named play\n");
 	fprintf(stderr, "\t-ng:  no goalie\n");
 	fprintf(stderr, "\t-sim: use simulator\n");
+	fprintf(stderr, "\t-nolog: don't write log files\n");
 	exit(1);
 }
 
@@ -55,12 +56,13 @@ int main (int argc, char* argv[])
 	QApplication app(argc, argv);
 
 	bool blueTeam = false;
-	QString cfgFile = "default.cfg";
+	QString cfgFile = "soccer.cfg";
 	QString playbook;
 	vector<const char *> playDirs;
 	vector<QString> extraPlays;
 	bool goalie = true;
 	bool sim = false;
+	bool log = true;
 	int radio = -1;
 	
 	for (int i=1 ; i<argc; ++i)
@@ -82,6 +84,10 @@ int main (int argc, char* argv[])
 		else if (strcmp(var, "-sim") == 0)
 		{
 			sim = true;
+		}
+		else if (strcmp(var, "-nolog") == 0)
+		{
+			log = false;
 		}
 		else if(strcmp(var, "-r") == 0)
 		{
@@ -160,8 +166,13 @@ int main (int argc, char* argv[])
 	
 	win.playConfigTab()->useGoalie(goalie);
 	
-	if (QDir("log").exists())
+	if (!QDir("log").exists())
 	{
+		fprintf(stderr, "No log directory - not writing log file\n");
+	} else if (!log)
+	{
+		fprintf(stderr, "Not writing log file\n");
+	} else {
 		QString logFile = QString("log/") + QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
 		if (!processor.logger.open(logFile))
 		{

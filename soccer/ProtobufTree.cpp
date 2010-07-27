@@ -1,5 +1,4 @@
-//FIXME - The + on the first item (rawVision) flickers, and sometimes stays off, even though it never loses all its children.
-//    It will stay off in live, but not in playback...
+//FIXME - The + on rawVision flickers, and sometimes stays off, even though it never loses all its children.
 
 #include "ProtobufTree.hpp"
 #include <ProtobufTree.moc>

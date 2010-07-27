@@ -17,7 +17,7 @@ class ProtobufTree: public QTreeWidget
 			Column_Value = 1,
 			Column_Tag = 2
 		};
-	
+		
 		// Updates the tree with the given message.
 		// Returns true if any items were added.
 		//
