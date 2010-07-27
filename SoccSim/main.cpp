@@ -3,15 +3,15 @@
 #include "Config.hpp"
 
 #include <QApplication>
+#include <QFile>
 
-#include <NxPhysics.h>
 #include <stdio.h>
 
 using namespace std;
 
 void usage(const char* prog)
 {
-	fprintf(stderr, "usage: %s -c <config file> [--ui] [--sv]\n", prog);
+	fprintf(stderr, "usage: %s [-c <config file>] [--ui] [--sv]\n", prog);
 	fprintf(stderr, "\t--ui    Show GUI\n");
 	fprintf(stderr, "\t--sv    Use shared vision multicast port\n");
 }
@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 
 	Env* env = new Env();
 
-	char* configFile = 0;
+	QString configFile = "simulator.cfg";
 	bool useGUI = false;
 	bool sendShared = false;
 
@@ -55,17 +55,14 @@ int main(int argc, char* argv[])
 
 	env->sendShared = sendShared;
 	
+	if (!QFile(configFile).exists())
+	{
+		fprintf(stderr, "Configuration file %s does not exist\n", (const char *)configFile.toAscii());
+		return 1;
+	}
+	
 	Config* config = 0;
-
-	if (configFile)
-	{
-		config = new Config(configFile, env);
-	}
-	else
-	{
-		usage(argv[0]);
-		exit(0);
-	}
+	config = new Config(configFile, env);
 
 	Viewer *win = 0;
 	if (useGUI)
