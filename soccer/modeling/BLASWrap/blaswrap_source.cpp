@@ -69,13 +69,13 @@ static void bw_array_add( TYPENAME *X, TYPENAME a, size_t len ) {
 }
 
 /// addes a to each element U by a storing result in X
-static void bw_array_add( TYPENAME *X, const TYPENAME *U, TYPENAME a, size_t len ) {
+static inline void bw_array_add( TYPENAME *X, const TYPENAME *U, TYPENAME a, size_t len ) {
   for( size_t i = 0; i < len; i ++ )
     X[i] = U[i] + a;
 }
 
 /// elementwise multiplies X and U storing result in X
-static void bw_array_mult(TYPENAME *X, const TYPENAME *U, size_t len ) {
+static inline void bw_array_mult(TYPENAME *X, const TYPENAME *U, size_t len ) {
   for( size_t i = 0; i < len; i ++ )
     X[i] *= U[i];
 }
@@ -115,7 +115,7 @@ static void bw_array_add(TYPENAME *X, const TYPENAME u, const TYPENAME *U,
 
 
 /// elementwise subtracts X by U storing result in X
-static void bw_array_sub(TYPENAME *X, const TYPENAME *U, size_t len ) {
+static inline void bw_array_sub(TYPENAME *X, const TYPENAME *U, size_t len ) {
   for( size_t i = 0; i < len; i ++ )
     X[i] -= U[i];
 }
@@ -234,7 +234,7 @@ VECTORTMP::~VECTORTMP() { release(); }
 
 MATRIXDYN *MATRIXDYN::identity(size_t n ) {
   MATRIXDYN *I = new MATRIXDYN(n,n);
-  for( int i = 0; i < n; i ++ )
+  for( size_t i = 0; i < n; i ++ )
     I->elt(i,i) = 1;
   return I;
 }
@@ -554,6 +554,7 @@ MATRIX &MATRIX::operator*=( const MATRIX &other ) {
 
 MATRIX &MATRIX::operator*=( TYPENAME a ) {
   bw_array_scale( array(), a, size() );
+  return *this;
 }
 
 MATRIX &MATRIX::operator+=( TYPENAME a ) {
@@ -670,7 +671,7 @@ void VECTOR::gemv( const enum CBLAS_TRANSPOSE transA,
                    const TYPENAME alpha, const TYPENAME *A, 
                    const TYPENAME *X, const TYPENAME beta ) {
 
-  assert( size() == M );
+  assert( size() == (unsigned int)M );
   CBLAS_FUN(gemv)( CblasColMajor, transA, 
                    M, N, alpha, A, M, 
                    X, 1, beta, array(), 1);
@@ -689,21 +690,23 @@ void VECTOR::gemv( const enum CBLAS_TRANSPOSE TransA, const TYPENAME alpha, cons
 /*=======*/
 
 int VECTOR::write_csv( FILE *fout ) const {
-  for( int i = 0; i < size(); i ++ ) {
+  for( size_t i = 0; i < size(); i ++ ) {
     fprintf(fout, "%f%s", elt(i), ((i+1 < size())?",":"\n") );
   }
+  return 0;
 }
 
 
 int MATRIX::write_csv( FILE *fout ) const {
-  for( int i = 0; i < rows(); i ++ ) 
-    for( int j = 0; j < cols(); j ++ ) 
+  for( size_t i = 0; i < rows(); i ++ ) 
+    for( size_t j = 0; j < cols(); j ++ ) 
       fprintf(fout, "%f%s", elt(i,j), ((j+1 < cols())?",":"\n") );
+  return 0;
 }
 
 int MATRIX::read_csv( FILE *fout ) {
   int r;
-  size_t i = 0, j = 0;
+  int i = 0, j = 0;
   while( !feof(fout) ) {
     float f;
     r = fscanf(fout, "%f", &f);

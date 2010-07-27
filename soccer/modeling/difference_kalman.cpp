@@ -48,13 +48,13 @@
 DifferenceKalmanFilter::DifferenceKalmanFilter( DMatrix *_F, DMatrix *_B,
                             DVector *_x, DMatrix *_P, DMatrix *_Q,
                             DMatrix *_R, DMatrix *_H ) :
-  F(_F),
-  B(_B),
   x(_x),
   P(_P),
   Q(_Q),
   R(_R),
-  H(_H)
+  H(_H),
+  F(_F),
+  B(_B)
 {
   n = x->size();
   m = B->cols();

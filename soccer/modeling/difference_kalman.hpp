@@ -137,18 +137,18 @@ class DifferenceKalmanFilter {
   DMatrix  *tmp_nm_1;  ///< tmp var
 
   int *ipiv; ///< tmp var for pivots
-  int lwork; ///< length of ipiv
+  unsigned int lwork; ///< length of ipiv
   double *work; ///< tmp var for inversion work
 
   /// Identity matrix
   DMatrix *I_nn;
 
   /// length of state vector, x
-  int n;
+  unsigned int n;
   /// length of input vector, u
-  int m;
+  unsigned int m;
   /// length of measurement vector, z
-  int s;
+  unsigned int s;
 };
 
 #endif
