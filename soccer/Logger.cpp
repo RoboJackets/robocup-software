@@ -113,5 +113,10 @@ int Logger::getFrames(int start, vector<LogFrame> &frames)
 		frames[i].CopyFrom(*_history[(start - i) % _history.size()]);
 	}
 	
+	for (int i = n; i < (int)frames.size(); ++i)
+	{
+		frames[i].Clear();
+	}
+	
 	return n;
 }
