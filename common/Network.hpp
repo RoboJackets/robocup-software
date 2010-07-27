@@ -25,8 +25,8 @@
 // If no radio channel is given on the command line, the first available one is picked
 // based on which soccer-side port can be bound.
 
-static const char SharedVisionAddress[] = "224.5.20.2";
 static const char RefereeAddress[] = "224.5.23.1";
+static const char SharedVisionAddress[] = "224.5.23.2";
 
 static const int SimCommandPort = 8999;
 static const int SimVisionPort = 9000;
