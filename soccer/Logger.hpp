@@ -1,5 +1,5 @@
 // This logger implements a circular buffer for recent history and writes all
-// frames disk (FIXME - not yet).
+// frames to disk.
 //
 // _history is a circular buffer.
 //
@@ -33,6 +33,7 @@ class Logger
 {
 	public:
 		Logger();
+		~Logger();
 		
 		bool open(QString filename);
 		void close();
@@ -42,6 +43,13 @@ class Logger
 		{
 			QMutexLocker locker(&_mutex);
 			return std::min(_nextFrameNumber, (int)_history.size());
+		}
+		
+		// Returns the size of the circular buffer
+		int maxFrames()
+		{
+			QMutexLocker locker(&_mutex);
+			return _history.size();
 		}
 		
 		// Returns the sequence number of the earliest available frame.

@@ -168,3 +168,6 @@ target_link_libraries(${target} blas lapack)
 target_link_libraries(${target} packets)
 target_link_libraries(${target} ${QT_LIBRARIES})
 target_link_libraries(${target} gtsam)
+
+# Enable this for Google performance tools
+#target_link_libraries(${target} tcmalloc)

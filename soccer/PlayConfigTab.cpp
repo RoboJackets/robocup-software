@@ -13,12 +13,12 @@ using namespace std;
 using namespace boost;
 using namespace Gameplay;
 
-Q_DECLARE_METATYPE(shared_ptr<Play>)
+Q_DECLARE_METATYPE(Play *)
 
 // Gets the Play for a list item
-shared_ptr<Play> play_for_item(QTreeWidgetItem *item)
+Play *play_for_item(QTreeWidgetItem *item)
 {
-	return item->data(0, Qt::UserRole).value<shared_ptr<Play> >();
+	return item->data(0, Qt::UserRole).value<Play *>();
 }
 
 PlayConfigTab::PlayConfigTab(QWidget *parent):
@@ -29,7 +29,15 @@ PlayConfigTab::PlayConfigTab(QWidget *parent):
 	ui.plays->setContextMenuPolicy(Qt::CustomContextMenu);
 	
 	_iconRun = QIcon(":/icons/running.png");
-// 	_iconWait = QIcon(":/icons/waiting.png");
+}
+
+PlayConfigTab::~PlayConfigTab()
+{
+	// It is expected that this widget will be destroyed after the Processor has stopped.
+	BOOST_FOREACH(Play *play, _plays)
+	{
+		delete play;
+	}
 }
 
 void PlayConfigTab::setup(boost::shared_ptr<Gameplay::GameplayModule> gp)
@@ -60,15 +68,15 @@ void PlayConfigTab::setup(boost::shared_ptr<Gameplay::GameplayModule> gp)
 			parent = ui.plays->invisibleRootItem();
 		}
 		
-		//FIXME - Either propagate the shared_ptr throughout all plays or make a regular pointer safe
-		shared_ptr<Play> play = shared_ptr<Play>(factory->create(_gameplay.get()));
+		Play *play = factory->create(_gameplay.get());
+		_plays.push_back(play);
 		QTreeWidgetItem *item = new QTreeWidgetItem(parent);
 		item->setData(0, Qt::UserRole, QVariant::fromValue(play));
 		item->setText(0, play->name());
 		item->setCheckState(0, Qt::Unchecked);
-		item->setIcon(1, _iconWait);
+		item->setIcon(1, QIcon());
 		
-		_playMap[play->name()] = item;
+		_playNameMap[play->name()] = item;
 	}
 	
 	ui.plays->sortItems(0, Qt::AscendingOrder);
@@ -123,8 +131,8 @@ void PlayConfigTab::load(QString filename)
 
 void PlayConfigTab::enable(QString name)
 {
-	PlayMap::const_iterator i = _playMap.find(name);
-	if (i == _playMap.end())
+	PlayNameMap::const_iterator i = _playNameMap.find(name);
+	if (i == _playNameMap.end())
 	{
 		printf("Missing play \"%s\"\n", (const char *)name.toAscii());
 	} else {
@@ -159,7 +167,7 @@ void PlayConfigTab::on_save_clicked()
 	}
 
 	// Write the names of all enabled plays
-	BOOST_FOREACH(shared_ptr<Play> play, _gameplay->plays())
+	BOOST_FOREACH(Play *play, _gameplay->plays())
 	{
 		ts << play->name() << "\n";
 	}
@@ -179,16 +187,16 @@ void PlayConfigTab::frameUpdate()
 {
 	ui.lblCurrentPlay->setText(_gameplay->playName());
 
-	BOOST_FOREACH(shared_ptr<Play> play, _gameplay->plays())
+	BOOST_FOREACH(QTreeWidgetItem *item, _playNameMap)
 	{
-		QTreeWidgetItem *item = _playMap[play->name()];
-		item->setIcon(1, play->applicable() ? _iconRun : _iconWait);
+		Play *play = play_for_item(item);
+		item->setIcon(1, play->applicable() ? _iconRun : QIcon());
 	}
 }
 
 void PlayConfigTab::on_plays_itemChanged(QTreeWidgetItem* item)
 {
-	shared_ptr<Play> play = play_for_item(item);
+	Play *play = play_for_item(item);
 	if (!play)
 	{
 		return;
@@ -254,7 +262,8 @@ void PlayConfigTab::on_plays_customContextMenuRequested(const QPoint& pos)
 
 void PlayConfigTab::selectNone()
 {
-	BOOST_FOREACH(QTreeWidgetItem *item, _playMap)
+	// All play items are in _playNameMap
+	BOOST_FOREACH(QTreeWidgetItem *item, _playNameMap)
 	{
 		item->setCheckState(0, Qt::Unchecked);
 	}

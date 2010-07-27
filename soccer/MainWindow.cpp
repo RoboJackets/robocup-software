@@ -133,7 +133,11 @@ void MainWindow::updateViews()
 	}
 	
 	// Status bar
-	_logMemory->setText(QString("Log: %1 kiB").arg((_processor->logger.spaceUsed() + 512) / 1024));
+	_logMemory->setText(QString("Log: %1/%2 %3 kiB").arg(
+		QString::number(_processor->logger.numFrames()),
+		QString::number(_processor->logger.maxFrames()),
+		QString::number((_processor->logger.spaceUsed() + 512) / 1024)
+	));
 	
 	// Advance log playback time
 	int liveFrameNumber = _processor->logger.lastFrame();
@@ -613,13 +617,6 @@ void MainWindow::on_debugLayers_itemChanged(QListWidgetItem* item)
 ////////
 // Referee controls
 
-void MainWindow::refCommand(char ch)
-{
-	QMutexLocker locker(&_processor->loopMutex);
-	
-	_processor->refereeModule()->command(ch);
-}
-
 void MainWindow::on_externalReferee_clicked(bool value)
 {
 	// The user has taken control of external/internal referee selection.
@@ -647,198 +644,150 @@ void MainWindow::on_externalReferee_toggled(bool value)
 
 void MainWindow::on_refHalt_clicked()
 {
-	refCommand(RefereeCommands::Halt);
+	_processor->internalRefCommand(RefereeCommands::Halt);
 }
 
 void MainWindow::on_refReady_clicked()
 {
-	refCommand(RefereeCommands::Ready);
+	_processor->internalRefCommand(RefereeCommands::Ready);
 }
 
 void MainWindow::on_refStop_clicked()
 {
-	refCommand(RefereeCommands::Stop);
+	_processor->internalRefCommand(RefereeCommands::Stop);
 }
 
 void MainWindow::on_refForceStart_clicked()
 {
-	refCommand(RefereeCommands::ForceStart);
+	_processor->internalRefCommand(RefereeCommands::ForceStart);
 }
 
 void MainWindow::on_refFirstHalf_clicked()
 {
-	refCommand(RefereeCommands::FirstHalf);
+	_processor->internalRefCommand(RefereeCommands::FirstHalf);
 }
 
 void MainWindow::on_refOvertime1_clicked()
 {
-	refCommand(RefereeCommands::Overtime1);
+	_processor->internalRefCommand(RefereeCommands::Overtime1);
 }
 
 void MainWindow::on_refHalftime_clicked()
 {
-	refCommand(RefereeCommands::Halftime);
+	_processor->internalRefCommand(RefereeCommands::Halftime);
 }
 
 void MainWindow::on_refOvertime2_clicked()
 {
-	refCommand(RefereeCommands::Overtime2);
+	_processor->internalRefCommand(RefereeCommands::Overtime2);
 }
 
 void MainWindow::on_refSecondHalf_clicked()
 {
-	refCommand(RefereeCommands::SecondHalf);
+	_processor->internalRefCommand(RefereeCommands::SecondHalf);
 }
 
 void MainWindow::on_refPenaltyShootout_clicked()
 {
-	refCommand(RefereeCommands::PenaltyShootout);
+	_processor->internalRefCommand(RefereeCommands::PenaltyShootout);
 }
 
 void MainWindow::on_refTimeoutBlue_clicked()
 {
-	refCommand(RefereeCommands::TimeoutBlue);
+	_processor->internalRefCommand(RefereeCommands::TimeoutBlue);
 }
 
 void MainWindow::on_refTimeoutYellow_clicked()
 {
-	refCommand(RefereeCommands::TimeoutYellow);
+	_processor->internalRefCommand(RefereeCommands::TimeoutYellow);
 }
 
 void MainWindow::on_refTimeoutEnd_clicked()
 {
-	refCommand(RefereeCommands::TimeoutEnd);
+	_processor->internalRefCommand(RefereeCommands::TimeoutEnd);
 }
 
 void MainWindow::on_refTimeoutCancel_clicked()
 {
-	refCommand(RefereeCommands::TimeoutCancel);
+	_processor->internalRefCommand(RefereeCommands::TimeoutCancel);
 }
 
 void MainWindow::on_refKickoffBlue_clicked()
 {
-	refCommand(RefereeCommands::KickoffBlue);
+	_processor->internalRefCommand(RefereeCommands::KickoffBlue);
 }
 
 void MainWindow::on_refKickoffYellow_clicked()
 {
-	refCommand(RefereeCommands::KickoffYellow);
+	_processor->internalRefCommand(RefereeCommands::KickoffYellow);
 }
 
 void MainWindow::on_refDirectBlue_clicked()
 {
-	refCommand(RefereeCommands::DirectBlue);
+	_processor->internalRefCommand(RefereeCommands::DirectBlue);
 }
 
 void MainWindow::on_refDirectYellow_clicked()
 {
-	refCommand(RefereeCommands::DirectYellow);
+	_processor->internalRefCommand(RefereeCommands::DirectYellow);
 }
 
 void MainWindow::on_refIndirectBlue_clicked()
 {
-	refCommand(RefereeCommands::IndirectBlue);
+	_processor->internalRefCommand(RefereeCommands::IndirectBlue);
 }
 
 void MainWindow::on_refIndirectYellow_clicked()
 {
-	refCommand(RefereeCommands::IndirectYellow);
+	_processor->internalRefCommand(RefereeCommands::IndirectYellow);
 }
 
 void MainWindow::on_refPenaltyBlue_clicked()
 {
-	refCommand(RefereeCommands::PenaltyBlue);
+	_processor->internalRefCommand(RefereeCommands::PenaltyBlue);
 }
 
 void MainWindow::on_refPenaltyYellow_clicked()
 {
-	refCommand(RefereeCommands::PenaltyYellow);
+	_processor->internalRefCommand(RefereeCommands::PenaltyYellow);
 }
 
 void MainWindow::on_refGoalBlue_clicked()
 {
-	QMutexLocker locker(&_processor->loopMutex);
-	
-	if (_processor->blueTeam())
-	{
-		++state()->gameState.ourScore;
-	} else {
-		++state()->gameState.theirScore;
-	}
-	
-	refCommand(RefereeCommands::GoalBlue);
+	_processor->internalRefCommand(RefereeCommands::GoalBlue);
 }
 
 void MainWindow::on_refSubtractGoalBlue_clicked()
 {
-	QMutexLocker locker(&_processor->loopMutex);
-	
-	if (_processor->blueTeam())
-	{
-		if (state()->gameState.ourScore)
-		{
-			--state()->gameState.ourScore;
-		}
-	} else {
-		if (state()->gameState.theirScore)
-		{
-			--state()->gameState.theirScore;
-		}
-	}
-	
-	refCommand(RefereeCommands::SubtractGoalBlue);
+	_processor->internalRefCommand(RefereeCommands::SubtractGoalBlue);
 }
 
 void MainWindow::on_refGoalYellow_clicked()
 {
-	QMutexLocker locker(&_processor->loopMutex);
-	
-	if (_processor->blueTeam())
-	{
-		++state()->gameState.theirScore;
-	} else {
-		++state()->gameState.ourScore;
-	}
-	
-	refCommand(RefereeCommands::GoalYellow);
+	_processor->internalRefCommand(RefereeCommands::GoalYellow);
 }
 
 void MainWindow::on_refSubtractGoalYellow_clicked()
 {
-	QMutexLocker locker(&_processor->loopMutex);
-	
-	if (_processor->blueTeam())
-	{
-		if (state()->gameState.theirScore)
-		{
-			--state()->gameState.theirScore;
-		}
-	} else {
-		if (state()->gameState.ourScore)
-		{
-			--state()->gameState.ourScore;
-		}
-	}
-	
-	refCommand(RefereeCommands::SubtractGoalYellow);
+	_processor->internalRefCommand(RefereeCommands::SubtractGoalYellow);
 }
 
 void MainWindow::on_refYellowCardBlue_clicked()
 {
-	refCommand(RefereeCommands::YellowCardBlue);
+	_processor->internalRefCommand(RefereeCommands::YellowCardBlue);
 }
 
 void MainWindow::on_refYellowCardYellow_clicked()
 {
-	refCommand(RefereeCommands::YellowCardYellow);
+	_processor->internalRefCommand(RefereeCommands::YellowCardYellow);
 }
 
 void MainWindow::on_refRedCardBlue_clicked()
 {
-	refCommand(RefereeCommands::RedCardBlue);
+	_processor->internalRefCommand(RefereeCommands::RedCardBlue);
 }
 
 void MainWindow::on_refRedCardYellow_clicked()
 {
-	refCommand(RefereeCommands::RedCardYellow);
+	_processor->internalRefCommand(RefereeCommands::RedCardYellow);
 }

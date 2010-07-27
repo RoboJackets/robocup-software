@@ -73,7 +73,7 @@ class Processor: public QThread
 		void manualID(int value);
 		int manualID()
 		{
-			QMutexLocker locker(&loopMutex);
+			QMutexLocker locker(&_loopMutex);
 			return _manualID;
 		}
 		
@@ -121,10 +121,8 @@ class Processor: public QThread
 			return _status;
 		}
 		
-		// Locked when processing loop stuff is happening (not when blocked for timing or I/O).
-		// This is public so the GUI thread can lock it to access SystemState, etc.
-		//FIXME - I hate public mutexes.  MainWindow is using this.
-		QMutex loopMutex;
+		// Simulates a command from the referee
+		void internalRefCommand(char ch);
 		
 	protected:
 		void run();
@@ -155,6 +153,10 @@ class Processor: public QThread
 		// True if we are blue.
 		// False if we are yellow.
 		bool _blueTeam;
+		
+		// Locked when processing loop stuff is happening (not when blocked for timing or I/O).
+		// This is public so the GUI thread can lock it to access SystemState, etc.
+		QMutex _loopMutex;
 		
 		/** global system state */
 		SystemState _state;

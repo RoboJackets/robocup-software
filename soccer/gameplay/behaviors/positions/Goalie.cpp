@@ -1,14 +1,13 @@
 // kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 // vim:ai ts=4 et
 
-//FIXME - Goalie should not clear the ball before a penalty kick.
+//FIXME - The rules allow for changing the goalie only in certain circumstances.  Make sure we do this right.
 
 #include "Goalie.hpp"
 
 #include <gameplay/Window.hpp>
 
 #include <boost/foreach.hpp>
-#include <iostream>
 
 using namespace std;
 using namespace Geometry2d;

@@ -83,8 +83,11 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem *parent, const google::protobuf::
 			
 			if (!hasData && item->childCount())
 			{
-				// Remove children
-				item->takeChildren();
+				// Remove and delete children
+				BOOST_FOREACH(QTreeWidgetItem *child, item->takeChildren())
+				{
+					delete child;
+				}
 			}
 		} else {
 			hasData = ref->HasField(msg, field);

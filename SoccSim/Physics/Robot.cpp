@@ -461,18 +461,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
     		kickSpeed = data->kick() / 255.0f * maxKickSpeed;
 		}
 
-    	// find the max and mins based on the field of the kicker
-        const float halfKickerFOV = 30 * M_PI / 180.0f;
-        NxVec3 kickerMax(cos(halfKickerFOV), sin(halfKickerFOV), 0);
-        NxVec3 kickerMin(kickerMax.x, -kickerMax.y, 0);
-
-        // convert orientation to actual global space
-        NxMat33 orientation = _actor->getGlobalOrientation();
-        kickerMin = orientation * kickerMin;
-        kickerMax = orientation * kickerMax;
-
-        // construct a velocity to apply FIXME: add a switch here
-        Geometry2d::Point pos = getPosition();
+        // construct a velocity to apply
         NxVec3 kickVel = _actor->getGlobalOrientation().getColumn(0);
         if (chip) {
         	kickVel.setz(cos(chipAngle));
@@ -482,18 +471,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
         kickVel *= kickSpeed;
         BOOST_FOREACH(Ball *ball, _env->balls())
         {
-            Geometry2d::Point ballPos = ball->getPosition();
-            bool near = ballPos.nearPoint(pos, Constants::Robot::Radius + Constants::Ball::Radius);
-
-            // FIXME - This works as long as the robot is flat on the ground.
-            //         A sensor object would be better.
-            NxVec3 ballRel = ball->actor()->getGlobalPosition() - _actor->getGlobalPosition();
-            NxVec3 cmin, cmax;
-            cmin.cross(kickerMin, ballRel);
-            cmax.cross(ballRel, kickerMax);
-//            printf("min %f max %f\n", cmin.z, cmax.z);
-
-            if (near && cmin.z > 0 && cmax.z > 0)
+            if (ballSense(ball))
             {
             	if (chip)
             		printf("Robot %d chip %p by %f: %f, %f, %f\n", shell, ball, kickSpeed, kickVel.x, kickVel.y, kickVel.z);
@@ -517,38 +495,43 @@ Packet::RadioRx Robot::radioRx() const
 	packet.set_rssi(1.0f);
 	packet.set_charged(Utils::timestamp() - _lastKicked > RechargeTime);
 	
-	Geometry2d::Point pos = getPosition();
-	
-	const float halfKickerFOV = 30 * M_PI / 180.0f;
-	NxVec3 kickerMax(cos(halfKickerFOV), sin(halfKickerFOV), 0);
-	NxVec3 kickerMin(kickerMax.x, -kickerMax.y, 0);
-	
-	NxMat33 orientation = _actor->getGlobalOrientation();
-	kickerMin = orientation * kickerMin;
-	kickerMax = orientation * kickerMax;
-	
 	BOOST_FOREACH(const Ball* ball, _env->balls())
 	{
-		Geometry2d::Point ballPos = ball->getPosition();
-		bool near = ballPos.nearPoint(pos, Constants::Robot::Radius + Constants::Ball::Radius);
-		
-		if (!near)
-		{
-			continue;
-		}
-		
-		// FIXME - This works as long as the robot is flat on the ground.
-		//         A sensor object would be better.
-		NxVec3 ballRel = ball->actor()->getGlobalPosition() - _actor->getGlobalPosition();
-		NxVec3 cmin, cmax;
-		cmin.cross(kickerMin, ballRel);
-		cmax.cross(ballRel, kickerMax);
-		
-		if (cmin.z > 0 && cmax.z > 0)
+		if (ballSense(ball))
 		{
 			packet.set_ball(true);
 		}
 	}
 	
 	return packet;
+}
+
+bool Robot::ballSense(const Ball *ball) const
+{
+	const float halfKickerFOV = 30 * M_PI / 180.0f;
+	NxVec3 kickerMax(cos(halfKickerFOV), sin(halfKickerFOV), 0);
+	NxVec3 kickerMin(kickerMax.x, -kickerMax.y, 0);
+
+	// convert orientation to actual global space
+	NxMat33 orientation = _actor->getGlobalOrientation();
+	kickerMin = orientation * kickerMin;
+	kickerMax = orientation * kickerMax;
+	
+	Geometry2d::Point pos = getPosition();
+	Geometry2d::Point ballPos = ball->getPosition();
+	bool near = ballPos.nearPoint(pos, Constants::Robot::Radius + Constants::Ball::Radius);
+	
+	if (!near)
+	{
+		return false;
+	}
+	
+	// FIXME - This works as long as the robot is flat on the ground.
+	//         A sensor object would be better.
+	NxVec3 ballRel = ball->actor()->getGlobalPosition() - _actor->getGlobalPosition();
+	NxVec3 cmin, cmax;
+	cmin.cross(kickerMin, ballRel);
+	cmax.cross(ballRel, kickerMax);
+	
+	return cmin.z > 0 && cmax.z > 0;
 }

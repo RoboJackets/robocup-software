@@ -146,25 +146,26 @@ int main (int argc, char* argv[])
 		return 1;
 	}
 
-	MainWindow win;
-	Processor processor(cfgFile, sim, radio);
-	processor.blueTeam(blueTeam);
-	win.processor(&processor);
+	Processor *processor = new Processor(cfgFile, sim, radio);
+	processor->blueTeam(blueTeam);
+	
+	MainWindow *win = new MainWindow;
+	win->processor(processor);
 	
 	if (!playbook.isNull())
 	{
-		win.playConfigTab()->load(playbook);
+		win->playConfigTab()->load(playbook);
 	} else {
 		// Try to load a default playbook
-		win.playConfigTab()->load("../playbooks/Default.pbk");
+		win->playConfigTab()->load("../playbooks/Default.pbk");
 	}
 	
 	BOOST_FOREACH(const QString &str, extraPlays)
 	{
-		win.playConfigTab()->enable(str);
+		win->playConfigTab()->enable(str);
 	}
 	
-	win.playConfigTab()->useGoalie(goalie);
+	win->playConfigTab()->useGoalie(goalie);
 	
 	if (!QDir("log").exists())
 	{
@@ -174,15 +175,21 @@ int main (int argc, char* argv[])
 		fprintf(stderr, "Not writing log file\n");
 	} else {
 		QString logFile = QString("log/") + QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
-		if (!processor.logger.open(logFile))
+		if (!processor->logger.open(logFile))
 		{
 			printf("Failed to open %s: %m\n", (const char *)logFile.toAscii());
 		}
 	}
 	
-	processor.start();
+	processor->start();
 	
-	win.showMaximized();
+	win->showMaximized();
 
-	return app.exec();
+	int ret = app.exec();
+	processor->stop();
+	
+	delete win;
+	delete processor;
+	
+	return ret;
 }

@@ -50,10 +50,6 @@ void Gameplay::WindowEvaluator::run(Geometry2d::Point origin, const Geometry2d::
 
 void Gameplay::WindowEvaluator::run(Geometry2d::Point origin, const Geometry2d::Segment &target)
 {
-	if (debug)
-	{
-//		_state->debugLines.push_back(target);
-	}
 	_origin = origin;
 	_target = target;
 	
@@ -63,8 +59,8 @@ void Gameplay::WindowEvaluator::run(Geometry2d::Point origin, const Geometry2d::
 	
 	if (_end == 0)
 	{
-		// FIXME - Degenerate target
-		printf("Degenerate windowing target\n");
+		// Degenerate target can't have any windows
+		printf("WindowEvaluator: Degenerate target\n");
 		return;
 	}
 	

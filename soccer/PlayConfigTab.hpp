@@ -19,6 +19,7 @@ class PlayConfigTab: public QWidget
 	
 	public:
 		PlayConfigTab(QWidget *parent = 0);
+		~PlayConfigTab();
 		
 		// Called after GameplayModule is created to populate the list of available plays.
 		void setup(boost::shared_ptr<Gameplay::GameplayModule> gp);
@@ -45,10 +46,13 @@ class PlayConfigTab: public QWidget
 		Ui_PlayConfig ui;
 		boost::shared_ptr<Gameplay::GameplayModule> _gameplay;
 		
+		// All plays.
+		// Plays are owned by this widget, and destroyed with it.
+		std::vector<Gameplay::Play *> _plays;
+		
 		QIcon _iconRun;
-		QIcon _iconWait;
 		
 		// Map from play name to tree item
-		typedef QMap<QString, QTreeWidgetItem *> PlayMap;
-		PlayMap _playMap;
+		typedef QMap<QString, QTreeWidgetItem *> PlayNameMap;
+		PlayNameMap _playNameMap;
 };

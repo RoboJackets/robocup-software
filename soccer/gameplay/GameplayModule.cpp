@@ -19,6 +19,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 {
 	_state = state;
 	_goalie = 0;
+	_currentPlay = 0;
 	_playDone = false;
 
 	_centerMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length / 2));
@@ -144,7 +145,7 @@ void Gameplay::GameplayModule::run()
 	ObstaclePtr oppObstacles[Constants::Robots_Per_Team];
 	for (int i = 0; i < Constants::Robots_Per_Team; ++i)
 	{
-		//FIXME - Use polygons to extend in time
+		//FIXME - These should not be in Gameplay.  This should be the responsibility of motion planning.
 		if (_state->self[i].valid)
 		{
 			selfObstacles[i] = ObstaclePtr(new CircleObstacle(_state->self[i].pos, Constants::Robot::Radius - .01));
@@ -157,25 +158,20 @@ void Gameplay::GameplayModule::run()
 	}
 
 	// Assign the goalie
+	bool newGoalie = false;
 	if (_goalie && !_goalie->assigned())
 	{
-		//FIXME - The rules allow for changing the goalie only in certain circumstances.  Make sure we do this right.
+		set<Robot *> robots;
 		BOOST_FOREACH(Robot *r, self)
 		{
-			bool inUse = false;
-			if (_currentPlay)
-			{
-				const std::set<Robot *> &playRobots = _currentPlay->robots();
-				if (playRobots.find(r) != playRobots.end())
-				{
-					inUse = true;
-				}
-			}
-			{
-				printf("Goalie is robot %d\n", r->id());
-				_goalie->assignOne(r);
-				break;
-			}
+			robots.insert(r);
+		}
+		
+		// The Goalie behavior is responsible for only selecting a robot which is allowed by the rules
+		// (no changing goalies at random times)
+		if (_goalie->assign(robots))
+		{
+			newGoalie = true;
 		}
 	}
 
@@ -252,12 +248,13 @@ void Gameplay::GameplayModule::run()
 	if (_plays.size() == 0)
 	{
 		// No plays available, so we don't have a current play
-		_currentPlay = shared_ptr<Play>();
+		_currentPlay = 0;
 	} else if (_playDone || 					// New play if old one was complete
-			   !_currentPlay ||					// Current play is does not exist
-			   !_currentPlay->applicable() ||	// check if still available
-			   !_currentPlay->allVisible() ||	// check if robot still has all robots available
-			   !_currentPlay->enabled)			// check if play is still enabled
+			   newGoalie ||						// Goalie gets first pick of all robots
+			   !_currentPlay ||					// There is no current play
+			   !_currentPlay->applicable() ||	// Current play doesn't apply anymore
+			   !_currentPlay->allVisible() ||	// Lost robots used by current play
+			   !_currentPlay->enabled)			// Current play was disabled
 	{
 
 		if (verbose) cout << "  Selecting a new play" << endl;
@@ -265,17 +262,25 @@ void Gameplay::GameplayModule::run()
 
 		// prepare a list of all non-goalie robots ready
 		set<Robot *> robots;
+		int n = 0;
 		BOOST_FOREACH(Robot *r, self)
 		{
 			if ((!_goalie || r != _goalie->robot()) && r->visible() && !r->exclude)
 			{
 				robots.insert(r);
+				++n;
+			}
+			
+			if (n == Constants::Robots_Per_Team - 1)
+			{
+				// Leave one available to become the goalie, in case the goalie broke
+				break;
 			}
 		}
 		if (verbose) cout << "  Available Robots: " << robots.size() << endl;
 
 		// select a new play from available pool
-		shared_ptr<Play> play = selectPlay(robots.size()); // ensure that the play is viable
+		Play *play = selectPlay(robots.size()); // ensure that the play is viable
 		if (play && play != _currentPlay)
 		{
 			if (verbose) cout << "  Assigning robots to play" << endl;
@@ -286,9 +291,6 @@ void Gameplay::GameplayModule::run()
 
 			// swap in new play
 			_currentPlay = play;
-
-			// FIXME: make sure this works
-			// updateCurrentPlay(QString::fromStdString(_currentPlay->name()));
 
 			// assign and check if assignment was valid
 			playReady = _currentPlay->assign(robots);
@@ -344,7 +346,6 @@ void Gameplay::GameplayModule::run()
 		_state->drawCircle(_state->ball.pos, Constants::Field::CenterRadius, Qt::black, "Rules");
 	}
 
-	if (verbose) cout << "  Getting play name" << endl;
 	if (_currentPlay)
 	{
 		_playName = _currentPlay->name();
@@ -354,7 +355,7 @@ void Gameplay::GameplayModule::run()
 	if (verbose) cout << "Finishing GameplayModule::run()" << endl;
 }
 
-void Gameplay::GameplayModule::enablePlay(shared_ptr<Play> play)
+void Gameplay::GameplayModule::enablePlay(Play *play)
 {
 	QMutexLocker lock(&_playMutex);
 	if (!play->enabled)
@@ -364,7 +365,7 @@ void Gameplay::GameplayModule::enablePlay(shared_ptr<Play> play)
 	}
 }
 
-void Gameplay::GameplayModule::disablePlay(shared_ptr<Play> play)
+void Gameplay::GameplayModule::disablePlay(Play *play)
 {
 	QMutexLocker lock(&_playMutex);
 	if (play->enabled)
@@ -374,21 +375,21 @@ void Gameplay::GameplayModule::disablePlay(shared_ptr<Play> play)
 	}
 }
 
-bool Gameplay::GameplayModule::playEnabled(boost::shared_ptr<Play> play)
+bool Gameplay::GameplayModule::playEnabled(Play *play)
 {
 	QMutexLocker lock(&_playMutex);
 	return play->enabled;
 }
 
-shared_ptr<Gameplay::Play> Gameplay::GameplayModule::selectPlay(size_t nrRobots)
+Gameplay::Play *Gameplay::GameplayModule::selectPlay(size_t nrRobots)
 {
 	// It is assumed that _playMutex is already locked
 	
 	float bestScore = 0;
-	shared_ptr<Play> bestPlay;
+	Play *bestPlay = 0;
 
 	// Find the best applicable play
-	BOOST_FOREACH(shared_ptr<Play> play, _plays)
+	BOOST_FOREACH(Play *play, _plays)
 	{
 		if (play->enabled && play->applicable() && nrRobots >= play->getMinRobots())
 		{

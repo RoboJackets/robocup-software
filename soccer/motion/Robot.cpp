@@ -275,6 +275,8 @@ void Robot::proc()
 }
 
 #if 0
+//FIXME - Logging got rewritten and you can't get away with this anymore.
+//  Either use debug drawing or get rid of it (need drawBezier in SystemState?)
 void Robot::drawPath(QPainter& p)
 {
 	QMutexLocker ml(&_procMutex);
@@ -548,7 +550,7 @@ void Robot::genVelocity(MotionCmd::PathEndType ending)
 	{
 		if (_path.points.empty())
 		{
-			// No path - stop.
+			// No path: stop.
 			//FIXME - This should never happen.  We must keep the check, but fix the cause.
 			printf("genVelocity: empty path, stopping\n");
 			_vel = Point();

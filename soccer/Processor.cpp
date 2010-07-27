@@ -149,16 +149,76 @@ void Processor::stop()
 
 void Processor::manualID(int value)
 {
-	QMutexLocker locker(&loopMutex);
+	QMutexLocker locker(&_loopMutex);
 	_manualID = value;
 }
 
 void Processor::blueTeam(bool value)
 {
 	// This is called from the GUI thread
-	QMutexLocker locker(&loopMutex);
+	QMutexLocker locker(&_loopMutex);
 	
 	_blueTeam = value;
+}
+
+void Processor::internalRefCommand(char ch)
+{
+	QMutexLocker locker(&_loopMutex);
+	
+	// Change scores
+	switch (ch)
+	{
+		case RefereeCommands::GoalBlue:
+			if (blueTeam())
+			{
+				++state()->gameState.ourScore;
+			} else {
+				++state()->gameState.theirScore;
+			}
+			break;
+		
+		case RefereeCommands::SubtractGoalBlue:
+			if (blueTeam())
+			{
+				if (state()->gameState.ourScore)
+				{
+					--state()->gameState.ourScore;
+				}
+			} else {
+				if (state()->gameState.theirScore)
+				{
+					--state()->gameState.theirScore;
+				}
+			}
+			break;
+		
+		case RefereeCommands::GoalYellow:
+			if (blueTeam())
+			{
+				++state()->gameState.theirScore;
+			} else {
+				++state()->gameState.ourScore;
+			}
+			break;
+		
+		case RefereeCommands::SubtractGoalYellow:
+			if (blueTeam())
+			{
+				if (state()->gameState.theirScore)
+				{
+					--state()->gameState.theirScore;
+				}
+			} else {
+				if (state()->gameState.ourScore)
+				{
+					--state()->gameState.ourScore;
+				}
+			}
+			break;
+	}
+	
+	// Send the command to the referee handler
+	_refereeModule->command(ch);
 }
 
 void Processor::addMotors(RadioTx::Robot* robot)
@@ -171,13 +231,13 @@ void Processor::addMotors(RadioTx::Robot* robot)
 
 bool Processor::autonomous()
 {
-	QMutexLocker lock(&loopMutex);
+	QMutexLocker lock(&_loopMutex);
 	return _joystick->autonomous();
 }
 
 bool Processor::joystickValid()
 {
-	QMutexLocker lock(&loopMutex);
+	QMutexLocker lock(&_loopMutex);
 	return _joystick->valid();
 }
 
@@ -294,7 +354,7 @@ void Processor::run()
 			}
 		}
 		
-		loopMutex.lock();
+		_loopMutex.lock();
 		
 		_joystick->update();
 		
@@ -417,7 +477,7 @@ void Processor::run()
 		// Write to the log
 		logger.addFrame(logFrame);
 		
-		loopMutex.unlock();
+		_loopMutex.unlock();
 		
 		////////////////
 		// Timing

@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
 		fprintf(stderr, "WARNING: Specifying -n will likely result in the wrong base station being used if it is unplugged and reconnected.\n");
 	}
 	
-	//FIXME - Set up sockets here
+	// Set up sockets
 	QUdpSocket socket[2];
 	for (int i = 0; i < 2; ++i)
 	{

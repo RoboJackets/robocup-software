@@ -13,6 +13,15 @@ Logger::Logger()
 	_spaceUsed = sizeof(_history[0]) * _history.size();
 }
 
+Logger::~Logger()
+{
+	// Delete frames in history
+	BOOST_FOREACH(Packet::LogFrame *frame, _history)
+	{
+		delete frame;
+	}
+}
+
 bool Logger::open(QString filename)
 {
 	QMutexLocker locker(&_mutex);

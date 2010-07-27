@@ -138,8 +138,6 @@ class MainWindow : public QMainWindow
 	private:
 		void updateStatus();
 		
-		void refCommand(char ch);
-		
 		typedef enum
 		{
 			Status_OK,

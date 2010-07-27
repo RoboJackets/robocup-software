@@ -36,11 +36,6 @@ namespace Gameplay
 				return _goalie;
 			}
 			
-			boost::shared_ptr<Play> currentPlay() const
-			{
-				return _currentPlay;
-			}
-			
 			virtual void run();
 			
 			////////
@@ -67,9 +62,9 @@ namespace Gameplay
 				return _oppMatrix;
 			}
 			
-			void enablePlay(boost::shared_ptr<Play> play);
-			void disablePlay(boost::shared_ptr<Play> play);
-			bool playEnabled(boost::shared_ptr<Play> play);
+			void enablePlay(Play *play);
+			void disablePlay(Play *play);
+			bool playEnabled(Play *play);
 			
 			// Returns the name of the current play
 			QString playName()
@@ -79,7 +74,7 @@ namespace Gameplay
 			
 			// This may be used by the GUI thread because the processing thread
 			// won't change the list of plays.
-			const std::set<boost::shared_ptr<Play> > &plays() const
+			const std::set<Play *> &plays() const
 			{
 				return _plays;
 			}
@@ -90,7 +85,7 @@ namespace Gameplay
 		private:
 			friend class Play;
 			
-			boost::shared_ptr<Play> selectPlay(size_t nrRobots);
+			Play *selectPlay(size_t nrRobots);
 			
 			SystemState *_state;
 			
@@ -98,7 +93,7 @@ namespace Gameplay
 			Behavior *_goalie;
 			
 			// The current play
-			boost::shared_ptr<Play> _currentPlay;
+			Play *_currentPlay;
 			
 			// True if the current play is finished and a new one should be selected during the next frame
 			bool _playDone;
@@ -116,7 +111,7 @@ namespace Gameplay
 			ObstaclePtr _goalArea[3];
 			
 			QMutex _playMutex;
-			std::set<boost::shared_ptr<Play> > _plays;
+			std::set<Play *> _plays;
 			
 			// Name of the current play
 			QString _playName;
