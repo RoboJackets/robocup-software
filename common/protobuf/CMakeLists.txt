@@ -32,14 +32,6 @@ foreach (file ${PROTO_FILES})
 	list (APPEND GEN_H ${CMAKE_CURRENT_BINARY_DIR}/${h_file})
 endforeach()
 
-add_custom_target(GenerateProto
-	DEPENDS ${GEN_CC} ${GEN_H}
-	VERBATIM
-)
-
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-
 set(PACKET_LIBRARY packets)
 add_library(${PACKET_LIBRARY} ${GEN_CC})
-add_dependencies(${PACKET_LIBRARY} GenerateProto)
 target_link_libraries(${PACKET_LIBRARY} protobuf)
