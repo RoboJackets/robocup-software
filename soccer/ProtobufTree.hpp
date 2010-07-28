@@ -41,4 +41,6 @@ class ProtobufTree: public QTreeWidget
 		void addBytes(QTreeWidgetItem *parent, const std::string &bytes);
 		
 		virtual void contextMenuEvent(QContextMenuEvent *e);
+		
+		bool _first;
 };

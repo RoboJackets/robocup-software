@@ -29,9 +29,6 @@ MainWindow::MainWindow(QWidget *parent):
 	_processor = 0;
 	_autoExternalReferee = true;
 	_doubleFrameNumber = -1;
-	_liveFrameItem = 0;
-	_frameNumberItem = 0;
-	_elapsedTimeItem = 0;
 	_startTime = Utils::timestamp();
 	_history.resize(2 * 60);
 	
@@ -42,8 +39,25 @@ MainWindow::MainWindow(QWidget *parent):
 	_live = false;
 	live(true);
 	
+	_viewFPS = new QLabel();
+	_viewFPS->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+	statusBar()->addPermanentWidget(_viewFPS);
+	
+	_procFPS = new QLabel();
+	_procFPS->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+	statusBar()->addPermanentWidget(_procFPS);
+	
 	_logMemory = new QLabel();
+	_logMemory->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 	statusBar()->addPermanentWidget(_logMemory);
+	
+	_frameNumberItem = new QTreeWidgetItem(ui.tree);
+	_frameNumberItem->setText(ProtobufTree::Column_Field, "Frame");
+	_frameNumberItem->setData(ProtobufTree::Column_Tag, Qt::DisplayRole, -2);
+	
+	_elapsedTimeItem = new QTreeWidgetItem(ui.tree);
+	_elapsedTimeItem->setText(ProtobufTree::Column_Field, "Elapsed Time");
+	_elapsedTimeItem->setData(ProtobufTree::Column_Tag, Qt::DisplayRole, -1);
 	
 	ui.debugLayers->setContextMenuPolicy(Qt::CustomContextMenu);
 	
@@ -132,7 +146,16 @@ void MainWindow::updateViews()
 		ui.manualID->setEnabled(true);
 	}
 	
+	// Time since last update
+	uint64_t time = Utils::timestamp();
+	int delta_us = time - _lastUpdateTime;
+	_lastUpdateTime = time;
+	double framerate = 1000000.0 / delta_us;
+	
 	// Status bar
+	_viewFPS->setText(QString("View: %1 fps").arg(framerate, 0, 'f', 1));
+	_procFPS->setText(QString("Proc: %1 fps").arg(_processor->framerate(), 0, 'f', 1));
+	
 	_logMemory->setText(QString("Log: %1/%2 %3 kiB").arg(
 		QString::number(_processor->logger.numFrames()),
 		QString::number(_processor->logger.maxFrames()),
@@ -146,9 +169,7 @@ void MainWindow::updateViews()
 		_doubleFrameNumber = liveFrameNumber;
 	} else {
 		double rate = ui.playbackRate->value();
-		QTime time = QTime::currentTime();
-		_doubleFrameNumber += rate * _lastUpdateTime.msecsTo(time) * 0.001;
-		_lastUpdateTime = time;
+		_doubleFrameNumber += rate * framerate;
 		
 		int minFrame = _processor->logger.firstFrame();
 		int maxFrame = _processor->logger.lastFrame();
@@ -213,36 +234,14 @@ void MainWindow::updateViews()
 		ui.debugLayers->sortItems();
 	}
 	
-	// Update the tree
-	bool newItems = ui.tree->message(currentFrame);
-	
 	// Update non-message tree items
-	// This must be done after the regular tree update because the first update (when there are no items)
-	// causes the columns to be automatically resized, so we must not add any items before that.
-	if (!_frameNumberItem)
-	{
-		_liveFrameItem = new QTreeWidgetItem(ui.tree);
-		_liveFrameItem->setText(ProtobufTree::Column_Field, "Live Frame");
-		_liveFrameItem->setData(ProtobufTree::Column_Tag, Qt::DisplayRole, -3);
-		
-		_frameNumberItem = new QTreeWidgetItem(ui.tree);
-		_frameNumberItem->setText(ProtobufTree::Column_Field, "Frame");
-		_frameNumberItem->setData(ProtobufTree::Column_Tag, Qt::DisplayRole, -2);
-		
-		_elapsedTimeItem = new QTreeWidgetItem(ui.tree);
-		_elapsedTimeItem->setText(ProtobufTree::Column_Field, "Elapsed Time");
-		_elapsedTimeItem->setData(ProtobufTree::Column_Tag, Qt::DisplayRole, -1);
-		
-		newItems = true;
-	}
-	_liveFrameItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole, liveFrameNumber);
 	_frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole, frameNumber());
 	int elapsedMillis = (currentFrame.start_time() - _startTime + 500) / 1000;
 	QTime elapsedTime = QTime().addMSecs(elapsedMillis);
 	_elapsedTimeItem->setText(ProtobufTree::Column_Value, elapsedTime.toString("hh:mm:ss.zzz"));
 	
 	// Sort the tree by tag if items have been added
-	if (newItems)
+	if (ui.tree->message(currentFrame))
 	{
 		// Items have been added, so sort again on tag number
 		ui.tree->sortItems(ProtobufTree::Column_Tag, Qt::AscendingOrder);

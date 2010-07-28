@@ -1,5 +1,3 @@
-//FIXME - The + on rawVision flickers, and sometimes stays off, even though it never loses all its children.
-
 #include "ProtobufTree.hpp"
 #include <ProtobufTree.moc>
 
@@ -27,23 +25,25 @@ enum
 ProtobufTree::ProtobufTree(QWidget *parent):
 	QTreeWidget(parent)
 {
-	setColumnHidden(ProtobufTree::Column_Tag, true);
+	_first = true;
 }
 
 bool ProtobufTree::message(const google::protobuf::Message& msg)
 {
-	bool first = (topLevelItemCount() == 0);
-	
 	// Update items
 	bool ret = addTreeData(invisibleRootItem(), msg);
 	
 	// If this was the first time items were added, resize all columns
-	if (first && topLevelItemCount())
+	if (_first && ret)
 	{
+		_first = false;
+		
 		for (int i = 0; i < columnCount(); ++i)
 		{
 			resizeColumnToContents(i);
 		}
+		
+		setColumnHidden(ProtobufTree::Column_Tag, true);
 	}
 	
 	return ret;

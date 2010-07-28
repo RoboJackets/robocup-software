@@ -203,31 +203,6 @@
             </spacer>
            </item>
            <item>
-            <widget class="QLabel" name="logTime">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>90</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="toolTip">
-              <string>Program Elapsed Time</string>
-             </property>
-             <property name="text">
-              <string>00:00:00.000</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QPushButton" name="logStop">
              <property name="toolTip">
               <string>Stop</string>

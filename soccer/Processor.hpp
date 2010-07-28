@@ -124,6 +124,11 @@ class Processor: public QThread
 		// Simulates a command from the referee
 		void internalRefCommand(char ch);
 		
+		float framerate()
+		{
+			return _framerate;
+		}
+		
 	protected:
 		void run();
 
@@ -188,6 +193,9 @@ class Processor: public QThread
 		
 		// True if we are using external referee packets
 		bool _externalReferee;
+		
+		// Measured framerate
+		float _framerate;
 		
 		// This is used by the GUI to indicate status of the processing loop and network
 		QMutex _statusMutex;

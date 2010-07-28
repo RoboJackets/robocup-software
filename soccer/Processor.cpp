@@ -43,6 +43,7 @@ Processor::Processor(QString filename, bool sim, int radio) :
 	_defendPlusX = false;
 	_state.logFrame = &logFrame;
 	_externalReferee = true;
+	_framerate = 0;
 
 	_simulation = sim;
 	_joystick = new Joystick();
@@ -248,6 +249,8 @@ void Processor::run()
 	while (_running)
 	{
 		uint64_t startTime = Utils::timestamp();
+		int delta_us = startTime - curStatus.lastLoopTime;
+		_framerate = 1000000.0 / delta_us;
 		curStatus.lastLoopTime = startTime;
 		_state.timestamp = startTime;
 		
@@ -469,15 +472,15 @@ void Processor::run()
 		// Send motion commands to the robots
 		sendRadioData();
 
-		// Store processing loop status
-		_statusMutex.lock();
-		_status = curStatus;
-		_statusMutex.unlock();
-		
 		// Write to the log
 		logger.addFrame(logFrame);
 		
 		_loopMutex.unlock();
+		
+		// Store processing loop status
+		_statusMutex.lock();
+		_status = curStatus;
+		_statusMutex.unlock();
 		
 		////////////////
 		// Timing

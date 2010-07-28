@@ -168,7 +168,6 @@ class MainWindow : public QMainWindow
 		PlayConfigTab *_playConfigTab;
 		
 		// Tree items that are not in LogFrame
-		QTreeWidgetItem *_liveFrameItem;
 		QTreeWidgetItem *_frameNumberItem;
 		QTreeWidgetItem *_elapsedTimeItem;
 		
@@ -178,7 +177,9 @@ class MainWindow : public QMainWindow
 		// To keep rounding consistent, only access this with frameNumber().
 		double _doubleFrameNumber;
 		
-		QTime _lastUpdateTime;
+		uint64_t _lastUpdateTime;
 		
+		QLabel *_viewFPS;
+		QLabel *_procFPS;
 		QLabel *_logMemory;
 };
