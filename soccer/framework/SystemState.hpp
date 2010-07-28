@@ -10,7 +10,6 @@
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
 #include <GameState.hpp>
-#include <framework/Vision.hpp>
 #include <framework/ConfigFile.hpp>
 #include <framework/Obstacle.hpp>
 #include <framework/MotionCmd.hpp>
@@ -118,7 +117,6 @@ class SystemState
 		
 		GameStateID stateID;
 		uint64_t timestamp;
-		std::vector<Vision> rawVision;
 		GameState gameState;
 		Robot self[5];
 		Robot opp[5];

@@ -16,6 +16,7 @@
 using namespace std;
 using namespace Modeling;
 using namespace Utils;
+using namespace google::protobuf;
 
 // Maximum time to coast a track (keep the track alive with no observations) in microseconds.
 const uint64_t MaxCoastTime = 500000;
@@ -32,7 +33,7 @@ WorldModel::~WorldModel()
 {
 }
 
-void WorldModel::run(bool blueTeam)
+void WorldModel::run(bool blueTeam, const std::vector<SSL_DetectionFrame> &teamVision)
 {
 	// internal verbosity flag for debugging
 	bool verbose = false;
@@ -42,34 +43,37 @@ void WorldModel::run(bool blueTeam)
 	// Add vision packets
 	uint64_t curTime = 0;
 	if (verbose) cout << "Adding vision packets" << endl;
-	BOOST_FOREACH(const Vision& vision, _state->rawVision)
+	BOOST_FOREACH(const SSL_DetectionFrame& vision, teamVision)
 	{
-		curTime = max(curTime, vision.timestamp);
-
+		uint64_t timestamp = vision.t_capture() * 1000000.0;
+		curTime = max(curTime, timestamp);
+		
 		// determine team
-		const std::vector<Vision::Robot> * self, * opp;
+		const RepeatedPtrField<SSL_DetectionRobot> *self, *opp;
 		if (blueTeam)
 		{
-			self = &vision.blue;
-			opp = &vision.yellow;
-		} else
-		{
-			self = &vision.yellow;
-			opp = &vision.blue;
+			self = &vision.robots_blue();
+			opp = &vision.robots_yellow();
+		} else {
+			self = &vision.robots_yellow();
+			opp = &vision.robots_blue();
 		}
 
 		// add ball observation
-		BOOST_FOREACH(const Vision::Ball &ball, vision.balls)
+		BOOST_FOREACH(const SSL_DetectionBall &ball, vision.balls())
 		{
-			ballModel.observation(vision.timestamp, ball.pos, BallModel::VISION);
+			Geometry2d::Point pos(ball.x(), ball.y());
+			ballModel.observation(timestamp, pos, BallModel::VISION);
 		}
 
 		// add robot observations
-		BOOST_FOREACH(const Vision::Robot &robot, *self) {
-			addRobotObseration(robot, vision.timestamp, _selfPlayers);
+		BOOST_FOREACH(const SSL_DetectionRobot &robot, *self)
+		{
+			addRobotObseration(robot, timestamp, _selfPlayers);
 		}
-		BOOST_FOREACH(const Vision::Robot &robot, *opp) {
-			addRobotObseration(robot, vision.timestamp, _oppPlayers);
+		BOOST_FOREACH(const SSL_DetectionRobot &robot, *opp)
+		{
+			addRobotObseration(robot, timestamp, _oppPlayers);
 		}
 	}
 
@@ -92,11 +96,20 @@ void WorldModel::run(bool blueTeam)
 	// Store the robot models for use by the ball model
 	_robotMap.clear();
 	BOOST_FOREACH(const RobotModel::shared& model, _selfPlayers)
-	if (model)
-		_robotMap[model->shell()] = model;
+	{
+		if (model)
+		{
+			_robotMap[model->shell()] = model;
+		}
+	}
+	
 	BOOST_FOREACH(const RobotModel::shared& model, _oppPlayers)
-	if (model)
-		_robotMap[model->shell() + OppOffset] = model;
+	{
+		if (model)
+		{
+			_robotMap[model->shell() + OppOffset] = model;
+		}
+	}
 
 	// add observations to the ball based on ball sensors and filtered robot positions
 	if (verbose) cout << "adding ball observations for ball sensors" << endl;
@@ -129,13 +142,15 @@ void WorldModel::run(bool blueTeam)
 	if (verbose) cout << "At end of WorldModel::run()" << endl;
 }
 
-void WorldModel::addRobotObseration(const Vision::Robot &obs, uint64_t timestamp, RobotVector& players) {
-	int obs_shell = obs.shell;
+void WorldModel::addRobotObseration(const SSL_DetectionRobot &obs, uint64_t timestamp, RobotVector& players)
+{
+	int obs_shell = obs.robot_id();
 
 	// try to add to an existing model, and return if we update something
 	BOOST_FOREACH(RobotModel::shared& model, players) {
 		if (model && model->shell() == obs_shell) {
-			model->observation(timestamp, obs.pos, obs.angle);
+			Geometry2d::Point pos(obs.x(), obs.y());
+			model->observation(timestamp, pos, obs.orientation());
 			return;
 		}
 	}
@@ -144,7 +159,8 @@ void WorldModel::addRobotObseration(const Vision::Robot &obs, uint64_t timestamp
 	BOOST_FOREACH(RobotModel::shared& model, players) {
 		if (!model) {
 			model = RobotModel::shared(new RobotModel(_config, obs_shell));
-			model->observation(timestamp, obs.pos, obs.angle);
+			Geometry2d::Point pos(obs.x(), obs.y());
+			model->observation(timestamp, pos, obs.orientation());
 			return;
 		}
 	}

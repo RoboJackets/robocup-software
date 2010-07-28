@@ -9,6 +9,7 @@
 #include <list>
 #include <map>
 
+#include <protobuf/messages_robocup_ssl_detection.pb.h>
 #include <framework/SystemState.hpp>
 #include "BallModel.hpp"
 #include "RobotModel.hpp"
@@ -22,7 +23,7 @@ namespace Modeling
 			WorldModel(SystemState *state, ConfigFile::shared_worldmodel cfg);
 			~WorldModel();
 
-			void run(bool blueTeam);
+			void run(bool blueTeam, const std::vector<SSL_DetectionFrame> &teamVision);
 
 		protected:
 
@@ -39,7 +40,7 @@ namespace Modeling
 			RobotVector _selfPlayers, _oppPlayers;
 
 			/** utility functions for update logic */
-			void addRobotObseration(const Vision::Robot &robot, uint64_t timestamp,
+			void addRobotObseration(const SSL_DetectionRobot &robot, uint64_t timestamp,
 					std::vector<RobotModel::shared>& players);
 			void updateRobots(std::vector<RobotModel::shared>& players, uint64_t cur_time);
 			void addRobotRxData(SystemState::Robot& robot);

@@ -15,7 +15,6 @@
 #include <Logger.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
 
-#include <framework/Vision.hpp>
 #include <gameplay/GameplayModule.hpp>
 #include <motion/MotionModule.hpp>
 #include <stateID/StateIDModule.hpp>
@@ -139,14 +138,11 @@ class Processor: public QThread
 		// Adds motor values to a RadioTx::Robot
 		void addMotors(Packet::RadioTx::Robot *robot);
 		
-		/** convert all coords to team space */
-		void toTeamSpace(Vision& vision);
-		
 		/** send out the radio data for the radio program */
 		void sendRadioData();
 
 		/** handle incoming vision packet */
-		void visionPacket(const SSL_WrapperPacket &wrapper);
+		void visionPacket(const SSL_WrapperPacket &wrapper, std::vector<SSL_DetectionFrame> &teamVision);
 		
 		/** Used to start and stop the thread **/
 		volatile bool _running;

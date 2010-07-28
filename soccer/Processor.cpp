@@ -277,6 +277,7 @@ void Processor::run()
 		// Inputs
 		
 		// Read vision packets
+		vector<SSL_DetectionFrame> teamVision;
 		int timeout = _framePeriod / 1000;
 		while (_syncToVision || _visionSocket.hasPendingDatagrams())
 		{
@@ -306,7 +307,7 @@ void Processor::run()
 			}
 			
 			curStatus.lastVisionTime = Utils::timestamp();
-			visionPacket(*packet);
+			visionPacket(*packet, teamVision);
 		}
 		
 		// Read referee packets
@@ -369,7 +370,7 @@ void Processor::run()
 		
 		if (_modelingModule)
 		{
-			_modelingModule->run(_blueTeam);
+			_modelingModule->run(_blueTeam, teamVision);
 		}
 		
 		// Add RadioTx commands for visible robots
@@ -564,7 +565,7 @@ void Processor::sendRadioData()
 	_radioSocket.writeDatagram(&out[0], out.size(), LocalAddress, RadioTxPort + _radio);
 }
 
-void Processor::visionPacket(const SSL_WrapperPacket &wrapper)
+void Processor::visionPacket(const SSL_WrapperPacket &wrapper, vector<SSL_DetectionFrame> &teamVision)
 {
 	if (!wrapper.has_detection())
 	{
@@ -572,93 +573,35 @@ void Processor::visionPacket(const SSL_WrapperPacket &wrapper)
 		return;
 	}
 	
-	const SSL_DetectionFrame &detection = wrapper.detection();
+	// Copy the detection data to teamVision
+	teamVision.push_back(wrapper.detection());
+	SSL_DetectionFrame &frame = teamVision.back();
 	
-	Vision visionPacket;
-	visionPacket.camera = detection.camera_id();
-	visionPacket.timestamp = (uint64_t)(detection.t_capture() * 1.0e6);
-	
-	BOOST_FOREACH(const SSL_DetectionRobot& robot, detection.robots_yellow())
+	// Transform into team space (centered on our goal, meters, etc.)
+	BOOST_FOREACH(SSL_DetectionRobot& robot, *frame.mutable_robots_yellow())
 	{
-		if (robot.confidence() == 0)
-		{
-			continue;
-		}
-		
-		Vision::Robot r;
-		r.pos.x = robot.x()/1000.0;
-		r.pos.y = robot.y()/1000.0;
-		r.angle = robot.orientation() * RadiansToDegrees;
-		r.shell = robot.robot_id();
-		
-		visionPacket.yellow.push_back(r);
+		Geometry2d::Point pos(robot.x(), robot.y());
+		pos = _worldToTeam * (pos / 1000.0);
+		robot.set_x(pos.x);
+		robot.set_y(pos.y);
+		robot.set_orientation(Utils::fixAngleDegrees(_teamAngle + robot.orientation() * RadiansToDegrees));
 	}
 	
-	BOOST_FOREACH(const SSL_DetectionRobot& robot, detection.robots_blue())
+	BOOST_FOREACH(SSL_DetectionRobot& robot, *frame.mutable_robots_blue())
 	{
-		if (robot.confidence() == 0)
-		{
-			continue;
-		}
-		
-		Vision::Robot r;
-		r.pos.x = robot.x()/1000.0;
-		r.pos.y = robot.y()/1000.0;
-		r.angle = robot.orientation() * RadiansToDegrees;
-		r.shell = robot.robot_id();
-		
-		visionPacket.blue.push_back(r);
+		Geometry2d::Point pos(robot.x(), robot.y());
+		pos = _worldToTeam * (pos / 1000.0);
+		robot.set_x(pos.x);
+		robot.set_y(pos.y);
+		robot.set_orientation(Utils::fixAngleDegrees(_teamAngle + robot.orientation() * RadiansToDegrees));
 	}
 	
-	BOOST_FOREACH(const SSL_DetectionBall& ball, detection.balls())
+	BOOST_FOREACH(SSL_DetectionBall& ball, *frame.mutable_balls())
 	{
-		if (ball.confidence() == 0)
-		{
-			continue;
-		}
-		
-		Vision::Ball b;
-		b.pos.x = ball.x()/1000.0;
-		b.pos.y = ball.y()/1000.0;
-		visionPacket.balls.push_back(b);
-	}
-
-	//populate the state
-	if (visionPacket.camera >= _state.rawVision.size())
-	{
-		_state.rawVision.resize(visionPacket.camera + 1);
-	}
-	_state.rawVision[visionPacket.camera] = visionPacket;
-
-	//convert last frame to teamspace
-	toTeamSpace(_state.rawVision[visionPacket.camera]);
-}
-
-void Processor::toTeamSpace(Vision& vision)
-{
-	//translates raw vision into team space
-	//means modeling doesn't need to do it
-	for (unsigned int i = 0; i < vision.blue.size(); ++i)
-	{
-		Vision::Robot& r = vision.blue[i];
-
-		r.pos = _worldToTeam * r.pos;
-		r.angle = Utils::fixAngleDegrees(_teamAngle + r.angle);
-	}
-
-	for (unsigned int i = 0; i < vision.yellow.size(); ++i)
-	{
-		Vision::Robot& r = vision.yellow[i];
-
-		r.pos = _worldToTeam * r.pos;
-		r.angle = Utils::fixAngleDegrees(_teamAngle + r.angle);
-	}
-
-	for (unsigned int i = 0; i < vision.balls.size(); ++i)
-	{
-		Vision::Ball& b = vision.balls[i];
-
-		b.pos = _worldToTeam * b.pos;
+		Geometry2d::Point pos(ball.x(), ball.y());
+		pos = _worldToTeam * (pos / 1000.0);
+		ball.set_x(pos.x);
+		ball.set_y(pos.y);
 	}
 }
 
