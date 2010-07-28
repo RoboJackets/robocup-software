@@ -57,6 +57,9 @@ class MainWindow : public QMainWindow
 			_doubleFrameNumber = value;
 		}
 		
+		// Call this to update the status bar when the log file has changed
+		void logFileChanged();
+		
 	private Q_SLOTS:
 		void updateViews();
 		
@@ -176,6 +179,7 @@ class MainWindow : public QMainWindow
 		
 		uint64_t _lastUpdateTime;
 		
+		QLabel *_logFile;
 		QLabel *_viewFPS;
 		QLabel *_procFPS;
 		QLabel *_logMemory;

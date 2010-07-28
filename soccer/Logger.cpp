@@ -44,6 +44,8 @@ bool Logger::open(QString filename)
 		return false;
 	}
 	
+	_filename = filename;
+	
 	return true;
 }
 
@@ -54,6 +56,7 @@ void Logger::close()
 	{
 		::close(_fd);
 		_fd = -1;
+		_filename = QString();
 	}
 }
 

@@ -38,16 +38,24 @@ MainWindow::MainWindow(QWidget *parent):
 	_live = false;
 	live(true);
 	
+	_logFile = new QLabel();
+	_logFile->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+	_logFile->setToolTip("Log File");
+	statusBar()->addPermanentWidget(_logFile);
+	
 	_viewFPS = new QLabel();
 	_viewFPS->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+	_viewFPS->setToolTip("Display Framerate");
 	statusBar()->addPermanentWidget(_viewFPS);
 	
 	_procFPS = new QLabel();
 	_procFPS->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+	_procFPS->setToolTip("Processing Framerate");
 	statusBar()->addPermanentWidget(_procFPS);
 	
 	_logMemory = new QLabel();
 	_logMemory->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+	_logMemory->setToolTip("Log Memory Usage");
 	statusBar()->addPermanentWidget(_logMemory);
 	
 	_frameNumberItem = new QTreeWidgetItem(ui.tree);
@@ -109,6 +117,16 @@ void MainWindow::processor(Processor* value)
 
 	// Radio channel
 	ui.radioLabel->setText(QString("Radio %1").arg(_processor->radio()));
+}
+
+void MainWindow::logFileChanged()
+{
+	if (_processor->logger.recording())
+	{
+		_logFile->setText(_processor->logger.filename());
+	} else {
+		_logFile->setText("Not Recording");
+	}
 }
 
 void MainWindow::live(bool value)

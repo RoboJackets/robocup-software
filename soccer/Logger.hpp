@@ -23,11 +23,11 @@
 
 #include <protobuf/LogFrame.pb.h>
 
+#include <QString>
 #include <QMutexLocker>
 #include <QMutex>
 #include <vector>
 #include <algorithm>
-#include <google/protobuf/io/zero_copy_stream_impl.h>
 
 class Logger
 {
@@ -97,8 +97,16 @@ class Logger
 			return _fd >= 0;
 		}
 		
+		// It's expected that only the GUI thread will open/close or ask for the filename.
+		QString filename()
+		{
+			return _filename;
+		}
+		
 	protected:
 		QMutex _mutex;
+		
+		QString _filename;
 		
 		// Frame history.
 		// Increasing indices correspond to earlier times.

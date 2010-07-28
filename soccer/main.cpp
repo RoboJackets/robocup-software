@@ -186,6 +186,7 @@ int main (int argc, char* argv[])
 			printf("Failed to open %s: %m\n", (const char *)logFile.toAscii());
 		}
 	}
+	win->logFileChanged();
 	
 	processor->start();
 	
