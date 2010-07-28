@@ -98,7 +98,8 @@ bool LogViewer::readFrames(const char *filename)
 		
 		LogFrame *frame = new LogFrame;
 		frames.push_back(frame);
-		if (!frame->ParseFromString(str))
+		// Parse partial so we can recover from corrupt data
+		if (!frame->ParsePartialFromString(str))
 		{
 			printf("Failed: %s\n", frame->InitializationErrorString().c_str());
 			return false;

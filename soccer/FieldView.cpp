@@ -166,12 +166,16 @@ void FieldView::drawWorldSpace(QPainter& p)
 			{
 				BOOST_FOREACH(const SSL_DetectionRobot& r, detect.robots_blue())
 				{
-					p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000), Constants::Robot::Radius, Constants::Robot::Radius);
+					QPointF pos(r.x() / 1000, r.y() / 1000);
+					drawRobot(p, true, r.robot_id(), pos, r.orientation() * RadiansToDegrees);
+// 					p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000), Constants::Robot::Radius, Constants::Robot::Radius);
 				}
-
+				
 				BOOST_FOREACH(const SSL_DetectionRobot& r, detect.robots_yellow())
 				{
-					p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000), Constants::Robot::Radius, Constants::Robot::Radius);
+					QPointF pos(r.x() / 1000, r.y() / 1000);
+					drawRobot(p, false, r.robot_id(), pos, r.orientation() * RadiansToDegrees);
+// 					p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000), Constants::Robot::Radius, Constants::Robot::Radius);
 				}
 			}
 			
