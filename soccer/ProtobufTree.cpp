@@ -154,11 +154,16 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem *parent, const google::protobuf::
 				newFields = true;
 			} else if (children > n)
 			{
-				// Remove children
-				for (int i = n; i < children; ++i)
+				// Remove excess children
+				// Internally, QTreeWidgetItem stores a QList of children.
+				// Hopefully this is efficient.
+				QList<QTreeWidgetItem *> kids = item->takeChildren();
+				for (int i = 0; i < (children - n); ++i)
 				{
-					item->removeChild(item->child(i));
+					delete kids.back();
+					kids.pop_back();
 				}
+				item->addChildren(kids);
 			}
 			
 			// Set data for children
