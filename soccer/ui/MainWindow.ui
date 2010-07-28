@@ -208,7 +208,7 @@
               <string>Stop</string>
              </property>
              <property name="icon">
-              <iconset resource="main_icons.qrc">
+              <iconset resource="log_icons.qrc">
                <normaloff>:/icons/media-playback-pause.png</normaloff>:/icons/media-playback-pause.png</iconset>
              </property>
              <property name="iconSize">
@@ -228,7 +228,7 @@
               <string>First Available Frame</string>
              </property>
              <property name="icon">
-              <iconset resource="main_icons.qrc">
+              <iconset resource="log_icons.qrc">
                <normaloff>:/icons/media-skip-backward.png</normaloff>:/icons/media-skip-backward.png</iconset>
              </property>
              <property name="iconSize">
@@ -248,7 +248,7 @@
               <string>Previous Frame</string>
              </property>
              <property name="icon">
-              <iconset resource="main_icons.qrc">
+              <iconset resource="log_icons.qrc">
                <normaloff>:/icons/media-seek-backward.png</normaloff>:/icons/media-seek-backward.png</iconset>
              </property>
              <property name="iconSize">
@@ -268,7 +268,7 @@
               <string>Next Frame</string>
              </property>
              <property name="icon">
-              <iconset resource="main_icons.qrc">
+              <iconset resource="log_icons.qrc">
                <normaloff>:/icons/media-seek-forward.png</normaloff>:/icons/media-seek-forward.png</iconset>
              </property>
              <property name="iconSize">
@@ -288,7 +288,7 @@
               <string>Live</string>
              </property>
              <property name="icon">
-              <iconset resource="main_icons.qrc">
+              <iconset resource="log_icons.qrc">
                <normaloff>:/icons/media-skip-forward.png</normaloff>:/icons/media-skip-forward.png</iconset>
              </property>
              <property name="iconSize">
@@ -512,7 +512,7 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="FieldView" name="fieldView" native="true">
+      <widget class="SimFieldView" name="fieldView" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
@@ -1572,30 +1572,42 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action0">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>0</string>
    </property>
   </action>
   <action name="action90">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>90</string>
    </property>
   </action>
   <action name="action180">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>180</string>
    </property>
   </action>
   <action name="action270">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>270</string>
    </property>
   </action>
   <action name="actionRawBalls">
    <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="text">
@@ -1611,11 +1623,20 @@
    </property>
   </action>
   <action name="actionDefendMinusX">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Vision -X</string>
    </property>
   </action>
   <action name="actionDefendPlusX">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Vision +X</string>
    </property>
@@ -1670,19 +1691,20 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>FieldView</class>
-   <extends>QWidget</extends>
-   <header location="global">FieldView.hpp</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
    <class>ProtobufTree</class>
    <extends>QTreeWidget</extends>
    <header location="global">ProtobufTree.hpp</header>
   </customwidget>
+  <customwidget>
+   <class>SimFieldView</class>
+   <extends>QWidget</extends>
+   <header location="global">SimFieldView.hpp</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
   <include location="main_icons.qrc"/>
+  <include location="log_icons.qrc"/>
  </resources>
  <connections/>
 </ui>

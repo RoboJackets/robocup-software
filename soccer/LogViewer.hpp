@@ -32,6 +32,16 @@ class LogViewer: public QMainWindow
 	public Q_SLOTS:
 		void updateViews();
 		
+		void on_actionRawBalls_toggled(bool state);
+		void on_actionRawRobots_toggled(bool state);
+		void on_actionCoords_toggled(bool state);
+		
+		// Field rotation
+		void on_action0_triggered();
+		void on_action90_triggered();
+		void on_action180_triggered();
+		void on_action270_triggered();
+		
 		void on_timeSlider_sliderPressed();
 		void on_timeSlider_sliderMoved(int value);
 		void on_playbackRate_sliderReleased();

@@ -38,7 +38,6 @@ Processor::Processor(QString filename, bool sim, int radio) :
 	_syncToVision = false;
 	_reverseId = 0;
 	_framePeriod = 1000000 / 60;
-	_lastFrameTime = 0;
 	_manualID = -1;
 	_defendPlusX = false;
 	_state.logFrame = &logFrame;
@@ -493,15 +492,15 @@ void Processor::run()
 		// Timing
 		
 		uint64_t endTime = Utils::timestamp();
-		int _lastFrameTime = endTime - startTime;
-		if (_lastFrameTime < _framePeriod)
+		int lastFrameTime = endTime - startTime;
+		if (lastFrameTime < _framePeriod)
 		{
 			if (!_syncToVision)
 			{
-				usleep(_framePeriod - _lastFrameTime);
+				usleep(_framePeriod - lastFrameTime);
 			}
 		} else {
-			printf("Processor took too long: %d us\n", _lastFrameTime);
+			printf("Processor took too long: %d us\n", lastFrameTime);
 		}
 	}
 }

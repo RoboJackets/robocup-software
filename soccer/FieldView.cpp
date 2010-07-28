@@ -2,7 +2,6 @@
 // vim:ai ts=4 et
 
 #include <FieldView.hpp>
-#include <FieldView.moc>
 
 #include <stdio.h>
 
@@ -27,16 +26,12 @@ using namespace Packet;
 
 QColor ballColor(0xff, 0x90, 0);
 
-// Converts from meters to m/s for manually shooting the ball
-static const float ShootScale = 5;
-
 FieldView::FieldView(QWidget* parent) :
 	QWidget(parent)
 {
 	showRawRobots = false;
 	showRawBalls = false;
 	showCoords = false;
-	_dragMode = DRAG_NONE;
 	_rotate = 0;
 	_history = 0;
 
@@ -51,98 +46,6 @@ void FieldView::rotate(int value)
 	updateGeometry();
 	
 	update();
-}
-
-void FieldView::mouseDoubleClickEvent(QMouseEvent* me)
-{
-	if (me->button() == Qt::LeftButton)
-	{
-		placeBall(me->posF());
-	}
-}
-
-void FieldView::mousePressEvent(QMouseEvent* me)
-{
-	Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->posF();
-	
-	if (me->button() == Qt::LeftButton)
-	{
-		placeBall(me->posF());
-		_dragMode = DRAG_PLACE;
-	} else if (me->button() == Qt::RightButton && _history && !_history->empty())
-	{
-		const LogFrame &frame = _history->at(0);
-		if (frame.has_ball() && pos.nearPoint(frame.ball().pos(), Constants::Ball::Radius))
-		{
-			// Drag to shoot the ball
-			_dragMode = DRAG_SHOOT;
-			_dragTo = pos;
-		} else {
-			// Look for a robot selection
-			int newID = -1;
-			for (int i = 0; i < frame.self_size(); ++i)
-			{
-				if (pos.distTo(frame.self(i).pos()) < Constants::Robot::Radius)
-				{
-					newID = frame.self(i).shell();
-					break;
-				}
-			}
-			
-			if (newID != frame.manual_id())
-			{
-				robotSelected(newID);
-			}
-		}
-	}
-}
-
-void FieldView::mouseReleaseEvent(QMouseEvent* me)
-{
-	if (_dragMode == DRAG_SHOOT)
-	{
-		SimCommand cmd;
-		_teamToWorld.transformDirection(_shot).set(cmd.mutable_ball_vel());
-		sendSimCommand(cmd);
-		
-		update();
-	}
-	
-	_dragMode = DRAG_NONE;
-}
-
-void FieldView::mouseMoveEvent(QMouseEvent* me)
-{
-	switch (_dragMode)
-	{
-		case DRAG_SHOOT:
-			_dragTo = _worldToTeam * _screenToWorld * me->posF();
-			break;
-		
-		case DRAG_PLACE:
-			placeBall(me->posF());
-			break;
-		
-		default:
-			break;
-	}
-	update();
-}
-
-void FieldView::placeBall(QPointF pos)
-{
-	SimCommand cmd;
-	cmd.mutable_ball_pos()->CopyFrom(_screenToWorld * pos);
-	cmd.mutable_ball_vel()->set_x(0);
-	cmd.mutable_ball_vel()->set_y(0);
-	sendSimCommand(cmd);
-}
-
-void FieldView::sendSimCommand(const Packet::SimCommand& cmd)
-{
-	std::string out;
-	cmd.SerializeToString(&out);
-	_simCommandSocket.writeDatagram(&out[0], out.size(), QHostAddress(QHostAddress::LocalHost), SimCommandPort);
 }
 
 void FieldView::paintEvent(QPaintEvent* event)
@@ -166,8 +69,6 @@ void FieldView::paintEvent(QPaintEvent* event)
 	// Set text rotation for world space
 	_textRotation = -_rotate * 90;
 	
-	drawField(p);
-
 	if (showCoords)
 	{
 		drawCoords(p);
@@ -179,8 +80,21 @@ void FieldView::paintEvent(QPaintEvent* event)
 		return;
 	}
 	
-	// Make a convenient reference to the latest LogFrame
+	// Get the latest LogFrame
 	const LogFrame &frame = _history->at(0);
+	
+	// Check number of debug layers
+	if (_layerVisible.size() != frame.debug_layers_size())
+	{
+		int start = _layerVisible.size();
+		_layerVisible.resize(frame.debug_layers_size());
+		
+		// Turn on the new layers
+		for (int i = start; i < _layerVisible.size(); ++i)
+		{
+			_layerVisible[i] = true;
+		}
+	}
 	
 	// Make coordinate transformations
 	_screenToWorld = Geometry2d::TransformMatrix();
@@ -206,21 +120,35 @@ void FieldView::paintEvent(QPaintEvent* event)
 		_teamToWorld *= Geometry2d::TransformMatrix::rotate(-90);
 	}
 	_teamToWorld *= Geometry2d::TransformMatrix::translate(0, -Constants::Field::Length / 2.0f);
-
-	// Check number of debug layers
-	if (_layerVisible.size() != frame.debug_layers_size())
-	{
-		int start = _layerVisible.size();
-		_layerVisible.resize(frame.debug_layers_size());
-		
-		// Turn on the new layers
-		for (int i = start; i < _layerVisible.size(); ++i)
-		{
-			_layerVisible[i] = true;
-		}
-	}
 	
-	// Raw vision, drawn in world space
+	// Draw world-space graphics
+	drawWorldSpace(p);
+	
+	// Everything after this point is drawn in team space.
+	// Transform that into world space depending on defending goal.
+	if (frame.defend_plus_x())
+	{
+		p.rotate(90);
+	} else {
+		p.rotate(-90);
+	}
+	p.translate(0, -Field::Length / 2.0f);
+
+	// Text has to be rotated so it is always upright on screen
+	_textRotation = -_rotate * 90 + (frame.defend_plus_x() ? -90 : 90);
+	
+	drawTeamSpace(p);
+}
+
+void FieldView::drawWorldSpace(QPainter& p)
+{
+	// Get the latest LogFrame
+	const LogFrame &frame = _history->at(0);
+	
+	// Draw the field
+	drawField(p, frame);
+	
+	// Raw vision
 	if (showRawBalls || showRawRobots)
 	{
 		p.setPen(QColor(0xcc, 0xcc, 0xcc));
@@ -256,19 +184,12 @@ void FieldView::paintEvent(QPaintEvent* event)
 			}
 		}
 	}
-	
-	// Everything after this point is drawn in team space.
-	// Transform that back into world space depending on defending goal.
-	if (frame.defend_plus_x())
-	{
-		p.rotate(90);
-	} else {
-		p.rotate(-90);
-	}
-	p.translate(0, -Field::Length / 2.0f);
+}
 
-	// Text has to be rotated so it is always upright on screen
-	_textRotation = -_rotate * 90 + (frame.defend_plus_x() ? -90 : 90);
+void FieldView::drawTeamSpace(QPainter& p)
+{
+	// Get the latest LogFrame
+	const LogFrame &frame = _history->at(0);
 	
 	if (showCoords)
 	{
@@ -293,26 +214,6 @@ void FieldView::paintEvent(QPaintEvent* event)
 		}
 	}
 	p.setBrush(Qt::NoBrush);
-	
-	// Simulator drag-to-shoot
-	if (_dragMode == DRAG_SHOOT)
-	{
-		p.setPen(Qt::white);
-		Geometry2d::Point ball = frame.ball().pos();
-		p.drawLine(ball.toQPointF(), _dragTo.toQPointF());
-		
-		if (ball != _dragTo)
-		{
-			p.setPen(Qt::gray);
-			
-			_shot = (ball - _dragTo) * ShootScale;
-			float speed = _shot.mag();
-			Geometry2d::Point shotExtension = ball + _shot / speed * 8;
-			
-			p.drawLine(ball.toQPointF(), shotExtension.toQPointF());
-			drawText(p, _dragTo.toQPointF(), QString("%1 m/s").arg(speed, 0, 'f', 1));
-		}
-	}
 	
 	// Debug lines
 	BOOST_FOREACH(const DebugPath& path, frame.debug_paths())
@@ -449,7 +350,7 @@ void FieldView::drawCoords(QPainter& p)
 	drawText(p, QPointF(0.1, 0.25), "+Y");
 }
 
-void FieldView::drawField(QPainter& p)
+void FieldView::drawField(QPainter& p, const LogFrame &frame)
 {
 	p.save();
 	
@@ -492,7 +393,7 @@ void FieldView::drawField(QPainter& p)
 	float x[2] = {0, Field::GoalDepth};
 	float y[2] = {Field::GoalWidth/2.0, -Field::GoalWidth/2.0};
 	
-	bool flip = _frame.blue_team() ^ _frame.defend_plus_x();
+	bool flip = frame.blue_team() ^ frame.defend_plus_x();
 	
 	p.setPen(flip ? Qt::yellow : Qt::blue);
 	p.drawLine(QLineF(x[0], y[0], x[1], y[0]));

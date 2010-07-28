@@ -80,6 +80,16 @@ MainWindow::MainWindow(QWidget *parent):
 	teamGroup->addAction(ui.actionTeamBlue);
 	teamGroup->addAction(ui.actionTeamYellow);
 	
+	QActionGroup *goalGroup = new QActionGroup(this);
+	goalGroup->addAction(ui.actionDefendMinusX);
+	goalGroup->addAction(ui.actionDefendPlusX);
+	
+	QActionGroup *rotateGroup = new QActionGroup(this);
+	rotateGroup->addAction(ui.action0);
+	rotateGroup->addAction(ui.action90);
+	rotateGroup->addAction(ui.action180);
+	rotateGroup->addAction(ui.action270);
+	
 	ui.splitter->setStretchFactor(0, 98);
 	ui.splitter->setStretchFactor(1, 10);
 

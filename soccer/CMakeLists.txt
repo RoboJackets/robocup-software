@@ -21,6 +21,8 @@ set (SRCS
 	Joystick.cpp
 	RefereeModule.cpp
 	PlayConfigTab.cpp
+	FieldView.cpp
+	SimFieldView.cpp
 
 	../common/Utils.cpp
 	../common/multicast.cpp
@@ -34,8 +36,6 @@ set (SRCS
 	framework/Obstacle.cpp
 	framework/Path.cpp
 	framework/SystemState.cpp
-
-	FieldView.cpp
 
 # Sources for gameplay module
 
@@ -184,3 +184,11 @@ qt4_add_resources(LOG_RCS ui/log_icons.qrc)
 
 add_executable(log_viewer ${LOG_SRCS} ${LOG_UI_HDRS} ${LOG_RCS})
 target_link_libraries(log_viewer ${QT_LIBRARIES} packets)
+
+# Simple logger
+add_executable(simple_logger
+	simple_logger.cpp
+	../common/multicast.cpp
+	../common/Utils.cpp
+)
+target_link_libraries(simple_logger ${QT_LIBRARIES} packets)

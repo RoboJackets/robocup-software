@@ -264,8 +264,86 @@
      <height>23</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <widget class="QMenu" name="menuRotation">
+     <property name="title">
+      <string>R&amp;otation</string>
+     </property>
+     <addaction name="action0"/>
+     <addaction name="action90"/>
+     <addaction name="action180"/>
+     <addaction name="action270"/>
+    </widget>
+    <addaction name="menuRotation"/>
+    <addaction name="actionRawBalls"/>
+    <addaction name="actionRawRobots"/>
+    <addaction name="actionCoords"/>
+   </widget>
+   <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="action0">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>0</string>
+   </property>
+  </action>
+  <action name="action90">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>90</string>
+   </property>
+  </action>
+  <action name="action180">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>180</string>
+   </property>
+  </action>
+  <action name="action270">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>270</string>
+   </property>
+  </action>
+  <action name="actionRawBalls">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Raw &amp;Balls</string>
+   </property>
+  </action>
+  <action name="actionRawRobots">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Raw &amp;Robots</string>
+   </property>
+  </action>
+  <action name="actionCoords">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Coordinate Frames</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

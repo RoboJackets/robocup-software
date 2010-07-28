@@ -55,6 +55,12 @@ LogViewer::LogViewer(QWidget* parent): QMainWindow(parent)
 	ui.splitter->setStretchFactor(0, 98);
 	ui.splitter->setStretchFactor(1, 10);
 	
+	QActionGroup *rotateGroup = new QActionGroup(this);
+	rotateGroup->addAction(ui.action0);
+	rotateGroup->addAction(ui.action90);
+	rotateGroup->addAction(ui.action180);
+	rotateGroup->addAction(ui.action270);
+	
 	connect(&_updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
 	_updateTimer.start(30);
 }
@@ -147,6 +153,44 @@ void LogViewer::updateViews()
 		ui.tree->sortItems(ProtobufTree::Column_Tag, Qt::AscendingOrder);
 	}
 	
+	ui.fieldView->update();
+}
+
+void LogViewer::on_action0_triggered()
+{
+	ui.fieldView->rotate(0);
+}
+
+void LogViewer::on_action90_triggered()
+{
+	ui.fieldView->rotate(1);
+}
+
+void LogViewer::on_action180_triggered()
+{
+	ui.fieldView->rotate(2);
+}
+
+void LogViewer::on_action270_triggered()
+{
+	ui.fieldView->rotate(3);
+}
+
+void LogViewer::on_actionRawBalls_toggled(bool state)
+{
+	ui.fieldView->showRawBalls = state;
+	ui.fieldView->update();
+}
+
+void LogViewer::on_actionRawRobots_toggled(bool state)
+{
+	ui.fieldView->showRawRobots = state;
+	ui.fieldView->update();
+}
+
+void LogViewer::on_actionCoords_toggled(bool state)
+{
+	ui.fieldView->showCoords = state;
 	ui.fieldView->update();
 }
 

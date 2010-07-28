@@ -181,9 +181,6 @@ class Processor: public QThread
 		/** Which robot will next send reverse data */
 		int _reverseId;
 		
-		// Time taken to run the last frame in microseconds
-		int _lastFrameTime;
-		
 		// Processing period in microseconds
 		int _framePeriod;
 		
