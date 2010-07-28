@@ -27,7 +27,7 @@
 #include <QMutex>
 #include <vector>
 #include <algorithm>
-#include <fstream>
+#include <google/protobuf/io/zero_copy_stream_impl.h>
 
 class Logger
 {
@@ -94,7 +94,7 @@ class Logger
 		bool recording()
 		{
 			QMutexLocker locker(&_mutex);
-			return _file.is_open();
+			return _fd >= 0;
 		}
 		
 	protected:
@@ -109,5 +109,6 @@ class Logger
 		
 		int _spaceUsed;
 		
-		std::ofstream _file;
+		// File descriptor for log file
+		int _fd;
 };

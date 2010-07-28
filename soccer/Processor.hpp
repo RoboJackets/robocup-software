@@ -129,9 +129,12 @@ class Processor: public QThread
 			return _framerate;
 		}
 		
+		// Time of the first LogFrame
+		uint64_t firstLogTime;
+		
 	protected:
 		void run();
-
+		
 	private:
 		// Adds motor values to a RadioTx::Robot
 		void addMotors(Packet::RadioTx::Robot *robot);

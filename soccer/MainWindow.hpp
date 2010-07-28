@@ -149,9 +149,6 @@ class MainWindow : public QMainWindow
 		
 		Ui_MainWindow ui;
 		
-		// Time when this window was created.  Used for the elapsed time indicator.
-		uint64_t _startTime;
-		
 		Processor *_processor;
 		
 		// Log history, copied from Logger.

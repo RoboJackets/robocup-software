@@ -2,12 +2,16 @@
 
 #include <QString>
 #include <boost/foreach.hpp>
+#include <fcntl.h>
+#include <stdio.h>
 
 using namespace std;
 using namespace Packet;
+using namespace google::protobuf::io;
 
 Logger::Logger()
 {
+	_fd = -1;
 	_history.resize(100000, 0);
 	_nextFrameNumber = 0;
 	_spaceUsed = sizeof(_history[0]) * _history.size();
@@ -15,6 +19,8 @@ Logger::Logger()
 
 Logger::~Logger()
 {
+	close();
+	
 	// Delete frames in history
 	BOOST_FOREACH(Packet::LogFrame *frame, _history)
 	{
@@ -25,15 +31,30 @@ Logger::~Logger()
 bool Logger::open(QString filename)
 {
 	QMutexLocker locker(&_mutex);
-	_file.open((const char *)filename.toAscii(), ofstream::out);
 	
-	return _file.is_open();
+	if (_fd >= 0)
+	{
+		close();
+	}
+	
+	_fd = creat(filename.toAscii(), 0666);
+	if (_fd < 0)
+	{
+		printf("Can't create %s: %m\n", (const char *)filename.toAscii());
+		return false;
+	}
+	
+	return true;
 }
 
 void Logger::close()
 {
 	QMutexLocker locker(&_mutex);
-	_file.close();
+	if (_fd >= 0)
+	{
+		::close(_fd);
+		_fd = -1;
+	}
 }
 
 void Logger::addFrame(const LogFrame& frame)
@@ -41,20 +62,22 @@ void Logger::addFrame(const LogFrame& frame)
 	QMutexLocker locker(&_mutex);
 	
 	// Write this from to the file
-	if (_file.is_open())
+	if (_fd >= 0)
 	{
 		if (frame.IsInitialized())
 		{
-			frame.SerializeToOstream(&_file);
-		} else {
-			vector<string> errors;
-			frame.FindInitializationErrors(&errors);
-			printf("Logger: Not writing frame missing fields:");
-			BOOST_FOREACH(const string &str, errors)
+			uint32_t size = frame.ByteSize();
+			if (write(_fd, &size, sizeof(size)) != sizeof(size))
 			{
-				printf(" %s", str.c_str());
+				printf("Logger: Failed to write size, closing log: %m\n");
+				close();
+			} else if (!frame.SerializeToFileDescriptor(_fd))
+			{
+				printf("Logger: Failed to write frame, closing log: %m\n");
+				close();
 			}
-			printf("\n");
+		} else {
+			printf("Logger: Not writing frame missing fields: %s\n", frame.InitializationErrorString().c_str());
 		}
 	}
 	

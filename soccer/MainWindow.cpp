@@ -29,7 +29,6 @@ MainWindow::MainWindow(QWidget *parent):
 	_processor = 0;
 	_autoExternalReferee = true;
 	_doubleFrameNumber = -1;
-	_startTime = Utils::timestamp();
 	_history.resize(2 * 60);
 	
 	ui.setupUi(this);
@@ -123,11 +122,9 @@ void MainWindow::live(bool value)
 		{
 			ui.fieldView->setStyleSheet(QString());
 			ui.tree->setStyleSheet(QString("QTreeWidget{%1}").arg(LiveStyle));
-			ui.logControls->setStyleSheet(QString("#logControls{%1}").arg(LiveStyle));
 		} else {
 			ui.fieldView->setStyleSheet(NonLiveStyle);
 			ui.tree->setStyleSheet(QString("QTreeWidget{%1}").arg(NonLiveStyle));
-			ui.logControls->setStyleSheet(QString("#logControls{%1}").arg(NonLiveStyle));
 		}
 	}
 }
@@ -169,7 +166,7 @@ void MainWindow::updateViews()
 		_doubleFrameNumber = liveFrameNumber;
 	} else {
 		double rate = ui.playbackRate->value();
-		_doubleFrameNumber += rate * framerate;
+		_doubleFrameNumber += rate / framerate;
 		
 		int minFrame = _processor->logger.firstFrame();
 		int maxFrame = _processor->logger.lastFrame();
@@ -236,7 +233,7 @@ void MainWindow::updateViews()
 	
 	// Update non-message tree items
 	_frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole, frameNumber());
-	int elapsedMillis = (currentFrame.start_time() - _startTime + 500) / 1000;
+	int elapsedMillis = (currentFrame.start_time() - _processor->firstLogTime + 500) / 1000;
 	QTime elapsedTime = QTime().addMSecs(elapsedMillis);
 	_elapsedTimeItem->setText(ProtobufTree::Column_Value, elapsedTime.toString("hh:mm:ss.zzz"));
 	

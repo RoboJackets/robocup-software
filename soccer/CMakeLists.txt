@@ -101,7 +101,7 @@ set (SRCS
 	gameplay/plays/test_plays/TestPassPlay.cpp
 	gameplay/plays/test_plays/TestOptimizedPassPlay.cpp
 	gameplay/plays/test_plays/TestGUI.cpp
-	gameplay/plays/test_plays/TestBallSpeed.cpp
+	#gameplay/plays/test_plays/TestBallSpeed.cpp
 	#gameplay/plays/test_plays/TestBasicChipAttack.cpp #disabled until 2010 robots ready
 	#gameplay/plays/test_plays/TestBasicOneTouchChipAttack.cpp
 	#gameplay/plays/test_plays/TestKicks.cpp
@@ -154,20 +154,33 @@ qt4_wrap_ui (UI_HDRS
 )
 
 qt4_add_resources (RC_FILES
-	ui/ref_icons.qrc
 	ui/main_icons.qrc
-	ui/play_icons.qrc
+	ui/log_icons.qrc
 )
 
-set (target soccer)
-add_executable (${target} ${SRCS} ${UI_HDRS} ${RC_FILES})
+add_executable (soccer ${SRCS} ${UI_HDRS} ${RC_FILES})
 
-target_link_libraries(${target} ${GEOMETRY_LIBRARY})
-target_link_libraries(${target} ${CONFIG_LIBRARY})
-target_link_libraries(${target} blas lapack)
-target_link_libraries(${target} packets)
-target_link_libraries(${target} ${QT_LIBRARIES})
-target_link_libraries(${target} gtsam)
+target_link_libraries(soccer ${GEOMETRY_LIBRARY})
+target_link_libraries(soccer ${CONFIG_LIBRARY})
+target_link_libraries(soccer blas lapack)
+target_link_libraries(soccer packets)
+target_link_libraries(soccer ${QT_LIBRARIES})
+target_link_libraries(soccer gtsam)
 
 # Enable this for Google performance tools
-#target_link_libraries(${target} tcmalloc)
+#target_link_libraries(soccer tcmalloc)
+
+# Log viewer
+qt4_wrap_ui (LOG_UI_HDRS ui/LogViewer.ui)
+
+set(LOG_SRCS
+	LogViewer.cpp
+	FieldView.cpp
+	ProtobufTree.cpp
+)
+
+qt4_automoc(${LOG_SRCS})
+qt4_add_resources(LOG_RCS ui/log_icons.qrc)
+
+add_executable(log_viewer ${LOG_SRCS} ${LOG_UI_HDRS} ${LOG_RCS})
+target_link_libraries(log_viewer ${QT_LIBRARIES} packets)

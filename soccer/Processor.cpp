@@ -44,6 +44,7 @@ Processor::Processor(QString filename, bool sim, int radio) :
 	_state.logFrame = &logFrame;
 	_externalReferee = true;
 	_framerate = 0;
+	firstLogTime = 0;
 
 	_simulation = sim;
 	_joystick = new Joystick();
@@ -253,6 +254,11 @@ void Processor::run()
 		_framerate = 1000000.0 / delta_us;
 		curStatus.lastLoopTime = startTime;
 		_state.timestamp = startTime;
+		
+		if (!firstLogTime)
+		{
+			firstLogTime = startTime;
+		}
 		
 		////////////////
 		// Reset

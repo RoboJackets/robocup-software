@@ -1,3 +1,4 @@
 *
 !.gitignore
-!soccer.cfg
+!soccer-sim.cfg
+!soccer-real.cfg

@@ -56,7 +56,7 @@ int main (int argc, char* argv[])
 	QApplication app(argc, argv);
 
 	bool blueTeam = false;
-	QString cfgFile = "soccer.cfg";
+	QString cfgFile;
 	QString playbook;
 	vector<const char *> playDirs;
 	vector<QString> extraPlays;
@@ -138,6 +138,12 @@ int main (int argc, char* argv[])
 			printf("Not a valid flag: %s\n", argv[i]);
 			usage(argv[0]);
 		}
+	}
+	
+	// Default config file name
+	if (cfgFile.isNull())
+	{
+		cfgFile = sim ? "soccer-sim.cfg" : "soccer-real.cfg";
 	}
 	
 	if (!QFile(cfgFile).open(QIODevice::ReadOnly))

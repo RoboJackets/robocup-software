@@ -1,10 +1,6 @@
 <RCC>
   <qresource prefix="icons">
-    <file>media-playback-pause.png</file>
-    <file>media-seek-backward.png</file>
-    <file>media-seek-forward.png</file>
-    <file>media-skip-backward.png</file>
-    <file>media-skip-forward.png</file>
+    <file>running.png</file>
     <file>halt.svg</file>
     <file>force_start.svg</file>
     <file>kickoff_blue.svg</file>
