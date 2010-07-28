@@ -1,5 +1,0 @@
-/CMakeLists.txt - cmake build file
-/README - this file
- 
-/ui - directory for Qt designer gui files
-/bin - output directory for building
