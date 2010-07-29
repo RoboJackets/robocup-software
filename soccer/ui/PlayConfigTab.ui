@@ -101,17 +101,10 @@
      </column>
     </widget>
    </item>
-   <item>
-    <widget class="QLabel" name="lblCurrentPlay">
-     <property name="text">
-      <string>Current Play: [None]</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <resources>
-  <include location="play_icons.qrc"/>
+  <include location="main_icons.qrc"/>
  </resources>
  <connections/>
  <slots>

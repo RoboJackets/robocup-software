@@ -38,6 +38,11 @@ MainWindow::MainWindow(QWidget *parent):
 	_live = false;
 	live(true);
 	
+	_currentPlay = new QLabel();
+	_currentPlay->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+	_currentPlay->setToolTip("Current Play");
+	statusBar()->addPermanentWidget(_currentPlay);
+	
 	_logFile = new QLabel();
 	_logFile->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 	_logFile->setToolTip("Log File");
@@ -178,6 +183,13 @@ void MainWindow::updateViews()
 	double framerate = 1000000.0 / delta_us;
 	
 	// Status bar
+	QString play = _processor->gameplayModule()->playName();
+	if (play.isNull())
+	{
+		play = "(no play)";
+	}
+	_currentPlay->setText(play);
+	
 	_viewFPS->setText(QString("View: %1 fps").arg(framerate, 0, 'f', 1));
 	_procFPS->setText(QString("Proc: %1 fps").arg(_processor->framerate(), 0, 'f', 1));
 	

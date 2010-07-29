@@ -350,7 +350,7 @@ void Gameplay::GameplayModule::run()
 	{
 		_playName = _currentPlay->name();
 	} else {
-		_playName = "(null)";
+		_playName = QString();
 	}
 	if (verbose) cout << "Finishing GameplayModule::run()" << endl;
 }

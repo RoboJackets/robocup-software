@@ -185,8 +185,6 @@ void PlayConfigTab::on_goalie_toggled(bool checked)
 
 void PlayConfigTab::frameUpdate()
 {
-	ui.lblCurrentPlay->setText(_gameplay->playName());
-
 	BOOST_FOREACH(QTreeWidgetItem *item, _playNameMap)
 	{
 		Play *play = play_for_item(item);

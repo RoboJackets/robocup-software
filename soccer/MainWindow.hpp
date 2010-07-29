@@ -179,6 +179,7 @@ class MainWindow : public QMainWindow
 		
 		uint64_t _lastUpdateTime;
 		
+		QLabel *_currentPlay;
 		QLabel *_logFile;
 		QLabel *_viewFPS;
 		QLabel *_procFPS;
