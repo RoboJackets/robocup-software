@@ -30,13 +30,13 @@ int main(int argc, char *argv[])
 	
 	if (logFile.isNull())
 	{
-		if (!QDir("log").exists())
+		if (!QDir("logs").exists())
 		{
-			printf("No log directory and no log file specified\n");
+			printf("No logs directory and no log file specified\n");
 			return 1;
 		}
 		
-		logFile = QString("log/") + QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
+		logFile = QString("logs/") + QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
 	}
 	
 	// Create vision socket

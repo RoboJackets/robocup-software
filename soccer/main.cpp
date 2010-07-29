@@ -173,14 +173,14 @@ int main (int argc, char* argv[])
 	
 	win->playConfigTab()->useGoalie(goalie);
 	
-	if (!QDir("log").exists())
+	if (!QDir("logs").exists())
 	{
-		fprintf(stderr, "No log directory - not writing log file\n");
+		fprintf(stderr, "No logs directory - not writing log file\n");
 	} else if (!log)
 	{
 		fprintf(stderr, "Not writing log file\n");
 	} else {
-		QString logFile = QString("log/") + QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
+		QString logFile = QString("logs/") + QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
 		if (!processor->logger.open(logFile))
 		{
 			printf("Failed to open %s: %m\n", (const char *)logFile.toAscii());
