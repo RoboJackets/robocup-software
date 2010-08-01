@@ -1,8 +1,0 @@
-#!/bin/sh -e
-svn co --username robocup --password rjrobocup -r3333 http://svn.cc.gatech.edu/borg/gtsam/trunk gtsam
-cd gtsam
-./autogen.sh
-./configure --prefix=$PWD/../gtsam_install/ --with-toolbox=$PWD/../gtsam_toolbox/ --with-boost=/usr/ --enable-gsl=yes --enable-atlas=yes CXXFLAGS=" -g -O2 -march=core2 -DNDEBUG" --disable-static
-make
-make install
-rm -rf ../gtsam_toolbox
