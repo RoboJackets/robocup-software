@@ -87,6 +87,10 @@ namespace Gameplay
 			
 			Play *selectPlay(size_t nrRobots);
 			
+			// This protects all of Gameplay.
+			// This is held while plays are running.
+			QMutex _mutex;
+			
 			SystemState *_state;
 			
 			// The goalie behavior (may be null)
@@ -110,7 +114,6 @@ namespace Gameplay
 			//goal area
 			ObstaclePtr _goalArea[3];
 			
-			QMutex _playMutex;
 			std::set<Play *> _plays;
 			
 			// Name of the current play

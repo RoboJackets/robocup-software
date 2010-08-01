@@ -38,7 +38,6 @@ SET(libgeometry_SRCS
 
 prepend_list(libgeometry_SRCS "Geometry2d/")
 prepend_list(libgeometry_SRCS ${common_include_dir})
-message( STATUS "Using the Geometry library") 
 
 add_library (geometry ${libgeometry_SRCS})
 target_link_libraries (geometry packets)

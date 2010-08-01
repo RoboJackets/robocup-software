@@ -432,6 +432,7 @@ void Processor::run()
 		logFrame.set_manual_id(_manualID);
 		logFrame.set_blue_team(_blueTeam);
 		logFrame.set_defend_plus_x(_defendPlusX);
+		logFrame.set_play(_gameplayModule->playName().toStdString());
 		
 		// Debug layers
 		const QStringList &layers = _state.debugLayers();

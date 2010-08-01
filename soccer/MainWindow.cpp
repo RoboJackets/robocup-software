@@ -311,14 +311,17 @@ void MainWindow::updateStatus()
 	
 	// Get processing thread status
 	Processor::Status ps = _processor->status();
+	uint64_t curTime = Utils::timestamp();
 	
-	if (_autoExternalReferee && ps.lastRefereeTime && !ui.externalReferee->isChecked())
+	// Determine if we are receiving packets from an external referee
+	bool haveExternalReferee = (curTime - ps.lastRefereeTime) < 500 * 1000;
+	
+	if (_autoExternalReferee && haveExternalReferee && !ui.externalReferee->isChecked())
 	{
 		ui.externalReferee->setChecked(true);
 	}
 	
 	// Is the processing thread running?
-	uint64_t curTime = Utils::timestamp();
 	if (curTime - ps.lastLoopTime > 100 * 1000)
 	{
 		// Processing loop hasn't run recently.
@@ -364,17 +367,17 @@ void MainWindow::updateStatus()
 		return;
 	}
 	
-	if ((!sim || _processor->externalReferee()) && curTime - ps.lastRefereeTime > 500 * 1000)
+	if ((!sim || _processor->externalReferee()) && !haveExternalReferee)
 	{
-		if (_autoExternalReferee && ui.externalReferee->isChecked())
+		if (_autoExternalReferee && _processor->externalReferee())
 		{
-			// Automatically turn off external referee when in simulation
+			// Automatically turn off external referee
 			ui.externalReferee->setChecked(false);
+		} else {
+			// In simulation, we will often run without a referee, so just make it a warning.
+			// There is a separate status for non-simulation with internal referee.
+			status("NO REFEREE", Status_Fail);
 		}
-		
-		// In simulation, we will often run without a referee, so just make it a warning.
-		// There is a separate status for non-simulation with internal referee.
-		status("NO REFEREE", Status_Fail);
 		return;
 	}
 
@@ -505,7 +508,7 @@ void MainWindow::on_actionStopBall_triggered()
 
 // Debug commands
 
-void MainWindow::on_actionRestartUpdateTime_triggered()
+void MainWindow::on_actionRestartUpdateTimer_triggered()
 {
 	printf("Update timer: active %d, singleShot %d, interval %d\n", _updateTimer.isActive(), _updateTimer.isSingleShot(), _updateTimer.interval());
 	_updateTimer.stop();

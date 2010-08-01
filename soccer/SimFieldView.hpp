@@ -46,5 +46,4 @@ class SimFieldView: public FieldView
 		
 		Geometry2d::Point _dragTo;
 		Geometry2d::Point _shot;
-		
 };

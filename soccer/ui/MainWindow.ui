@@ -1562,7 +1562,7 @@
     <property name="title">
      <string>&amp;Debug</string>
     </property>
-    <addaction name="actionRestartUpdateTime"/>
+    <addaction name="actionRestartUpdateTimer"/>
     <addaction name="actionNonLiveStyle"/>
    </widget>
    <addaction name="menu_View"/>
@@ -1678,9 +1678,9 @@
     <string>&amp;Stop Ball</string>
    </property>
   </action>
-  <action name="actionRestartUpdateTime">
+  <action name="actionRestartUpdateTimer">
    <property name="text">
-    <string>&amp;Restart Update Time</string>
+    <string>&amp;Restart Update Timer</string>
    </property>
   </action>
   <action name="actionNonLiveStyle">

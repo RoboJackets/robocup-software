@@ -14,7 +14,7 @@ using namespace std;
 using namespace boost;
 
 Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::MotionModule& cfg):
-	_playMutex(QMutex::Recursive),
+	_mutex(QMutex::Recursive),
 	_motion_config(cfg)
 {
 	_state = state;
@@ -123,6 +123,8 @@ void Gameplay::GameplayModule::removeGoalie()
 
 void Gameplay::GameplayModule::run()
 {
+	QMutexLocker lock(&_mutex);
+	
 	bool verbose = false;
 	if (verbose) cout << "Starting GameplayModule::run()" << endl;
 
@@ -243,7 +245,6 @@ void Gameplay::GameplayModule::run()
 	//  - current play is not applicable/failed, must kill, select new and run
 
 	// handle changes in play availability
-	QMutexLocker lock(&_playMutex);
 	bool playReady = true;
 	if (_plays.size() == 0)
 	{
@@ -357,7 +358,7 @@ void Gameplay::GameplayModule::run()
 
 void Gameplay::GameplayModule::enablePlay(Play *play)
 {
-	QMutexLocker lock(&_playMutex);
+	QMutexLocker lock(&_mutex);
 	if (!play->enabled)
 	{
 		play->enabled = true;
@@ -367,7 +368,7 @@ void Gameplay::GameplayModule::enablePlay(Play *play)
 
 void Gameplay::GameplayModule::disablePlay(Play *play)
 {
-	QMutexLocker lock(&_playMutex);
+	QMutexLocker lock(&_mutex);
 	if (play->enabled)
 	{
 		play->enabled = false;
@@ -377,13 +378,13 @@ void Gameplay::GameplayModule::disablePlay(Play *play)
 
 bool Gameplay::GameplayModule::playEnabled(Play *play)
 {
-	QMutexLocker lock(&_playMutex);
+	QMutexLocker lock(&_mutex);
 	return play->enabled;
 }
 
 Gameplay::Play *Gameplay::GameplayModule::selectPlay(size_t nrRobots)
 {
-	// It is assumed that _playMutex is already locked
+	// It is assumed that _mutex is already locked
 	
 	float bestScore = 0;
 	Play *bestPlay = 0;

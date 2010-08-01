@@ -86,7 +86,7 @@ class MainWindow : public QMainWindow
 		void on_actionStopBall_triggered();
 		
 		// Debug menu commands
-		void on_actionRestartUpdateTime_triggered();
+		void on_actionRestartUpdateTimer_triggered();
 		void on_actionNonLiveStyle_triggered();
 		
 		// Log controls

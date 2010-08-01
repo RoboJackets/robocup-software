@@ -1,0 +1,31 @@
+#!/bin/sh -e
+
+MACH=$(uname -m)
+unset DPKG_FLAGS
+
+BASE=$(readlink -f $(dirname $0)/..)
+
+if [ "$MACH" = "x86_64" ]; then
+	echo "-- Detected a 64-bit system"
+
+	# Make dpkg install 32-bit PhysX packages on a 64-bit system
+	DPKG_FLAGS=--force-architecture
+
+	# 32-bit compatibility (simulator must build as 32-bit for PhysX)
+	echo "-- Installing 32-bit compatibility libraries"
+	sudo apt-get install libc6-dev-i386 g++-multilib ia32-libs
+fi
+
+echo "-- Installing normal packages"
+sudo apt-get install build-essential subversion cmake qt4-dev-tools libboost-dev \
+	libusb-dev libblas-dev liblapack-dev libgtkmm-2.4-dev protobuf-compiler libprotobuf-dev \
+	libatlas-base-dev libgsl0-dev automake autoconf libtool libpcap-dev
+
+# Install PhysX packages that aren't already installed (dpkg will reinstall, which is unecessary)
+for i in $BASE/SoccSim/lib/physx/*.deb; do
+	NAME=$(dpkg -I $i|grep Package:|cut -d " " -f 3)
+	if ! dpkg -s $NAME > /dev/null; then
+		echo "-- Installing $NAME"
+		sudo dpkg -i $DPKG_FLAGS $i
+	fi
+done

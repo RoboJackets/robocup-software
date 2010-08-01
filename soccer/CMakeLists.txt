@@ -10,8 +10,6 @@ link_directories ( ${PROJECT_SOURCE_DIR}/../packages/gtsam_install/lib )
 
 include (${PROJECT_SOURCE_DIR}/../common/CMakeLists.txt)
 
-include_directories(${PROJECT_BINARY_DIR})
-
 set (SRCS
 	main.cpp
 	Processor.cpp
@@ -185,16 +183,3 @@ qt4_add_resources(LOG_RCS ui/log_icons.qrc)
 add_executable(log_viewer ${LOG_SRCS} ${LOG_UI_HDRS} ${LOG_RCS})
 target_link_libraries(log_viewer ${QT_LIBRARIES} packets)
 
-# Simple logger
-add_executable(simple_logger
-	simple_logger.cpp
-	../common/multicast.cpp
-	../common/Utils.cpp
-)
-target_link_libraries(simple_logger ${QT_LIBRARIES} packets)
-
-# tcpdump log converter
-add_executable(convert-tcpdump
-	convert-tcpdump.cpp
-)
-target_link_libraries(convert-tcpdump packets pthread pcap)
