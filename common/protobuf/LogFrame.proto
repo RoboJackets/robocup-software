@@ -76,5 +76,8 @@ message LogFrame
 
 	// True if our goal is on the +X side of vision
 	optional bool defend_plus_x = 16;
+
+	// Name of the current play
+	optional string play = 17;
 }
 

@@ -33,7 +33,7 @@ namespace Constants
         const float GoalDepth = 0.2f;
         const float GoalHeight = 0.2f;
 
-        /** Disstance of the penalty marker from the goal line */
+        /** Distance of the penalty marker from the goal line */
         const float PenaltyDist = 0.450f;
         const float PenaltyDiam = 0.010f;
 
