@@ -14,10 +14,10 @@ namespace Plays
  * probably only be used with 1-2 robots on the field, as it
  * will get chaotic
  */
-class TestBasicAttack: public Play
+class DemoBasicAttack: public Play
 {
 public:
-	TestBasicAttack(GameplayModule *gameplay);
+	DemoBasicAttack(GameplayModule *gameplay);
 
 	/**
 	 * Applicable any time that the game is running

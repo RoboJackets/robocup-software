@@ -4,16 +4,16 @@
 
 #include <iostream>
 #include <boost/foreach.hpp>
-#include "TestPassConfigOptimize.hpp"
+#include "DemoPassConfigOptimize.hpp"
 #include <gameplay/optimizer/PassOptimizer.hpp>
 
 using namespace std;
 using namespace Geometry2d;
 using namespace Packet;
 
-REGISTER_PLAY_CATEGORY(Gameplay::Plays::TestPassConfigOptimize, "Tests")
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoPassConfigOptimize, "Demos")
 
-Gameplay::Plays::TestPassConfigOptimize::TestPassConfigOptimize(GameplayModule *gameplay):
+Gameplay::Plays::DemoPassConfigOptimize::DemoPassConfigOptimize(GameplayModule *gameplay):
 	Play(gameplay),
 	testState_(INIT),
 	analyticPlanner_(gameplay),
@@ -21,13 +21,13 @@ Gameplay::Plays::TestPassConfigOptimize::TestPassConfigOptimize(GameplayModule *
 {
 }
 
-bool Gameplay::Plays::TestPassConfigOptimize::applicable()
+bool Gameplay::Plays::DemoPassConfigOptimize::applicable()
 {
 	bool refApplicable =_gameplay->state()->gameState.playing();
 	return refApplicable;
 }
 
-bool Gameplay::Plays::TestPassConfigOptimize::run()
+bool Gameplay::Plays::DemoPassConfigOptimize::run()
 {
 	if (testState_ == INIT)
 	{
@@ -48,7 +48,7 @@ bool Gameplay::Plays::TestPassConfigOptimize::run()
 		cout << "  optimization complete! - final cost = " << optimizer_.evaluateConfig(opt_config_) << endl;
 
 		// go to next state
-		testState_ = TestPassConfigOptimize::SHOW;
+		testState_ = DemoPassConfigOptimize::SHOW;
 
 	}
 	else if (testState_ == SHOW)

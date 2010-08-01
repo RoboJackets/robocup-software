@@ -1,23 +1,23 @@
-#include "TestBasicChipAttack.hpp"
+#include "DemoBasicOneTouchChipAttack.hpp"
 
 #include <boost/foreach.hpp>
 
 using namespace std;
 
-REGISTER_PLAY_CATEGORY(Gameplay::Plays::TestBasicChipAttack, "Tests")
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoBasicOneTouchChipAttack, "Demos")
 
-Gameplay::Plays::TestBasicChipAttack::TestBasicChipAttack(GameplayModule *gameplay):
+Gameplay::Plays::DemoBasicOneTouchChipAttack::DemoBasicOneTouchChipAttack(GameplayModule *gameplay):
 	Play(gameplay, 1), _kicker(gameplay)
 {
 }
 
-bool Gameplay::Plays::TestBasicChipAttack::applicable()
+bool Gameplay::Plays::DemoBasicOneTouchChipAttack::applicable()
 {
 	bool refApplicable =_gameplay->state()->gameState.playing();
 	return refApplicable;
 }
 
-bool Gameplay::Plays::TestBasicChipAttack::assign(set<Robot *> &available)
+bool Gameplay::Plays::DemoBasicOneTouchChipAttack::assign(set<Robot *> &available)
 {
 	// remove non-visible robots
 	// this prevents bug with 2-robot tests where play would do nothing
@@ -31,14 +31,14 @@ bool Gameplay::Plays::TestBasicChipAttack::assign(set<Robot *> &available)
 	return _robots.size() >= _minRobots && robot()->hasChipper();
 }
 
-bool Gameplay::Plays::TestBasicChipAttack::run()
+bool Gameplay::Plays::DemoBasicOneTouchChipAttack::run()
 {
 	// check if the robot is in done state
-	if (_kicker.getState() == Gameplay::Behaviors::Kick::Done)
+	if (_kicker.getState() == Gameplay::Behaviors::OneTouchKick::Done)
 		_kicker.restart();
 
 	// run the kick play
-	_kicker.kickType(Behaviors::Kick::CHIP);
+	_kicker.kickType(Behaviors::OneTouchKick::CHIP);
 	_kicker.run();
 	return true;
 }

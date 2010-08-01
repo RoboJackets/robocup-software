@@ -18,10 +18,10 @@ namespace Gameplay
 {
 	namespace Plays
 	{
-		class TestPassConfigOptimize: public Play
+		class DemoPassConfigOptimize: public Play
 		{
 			public:
-				TestPassConfigOptimize(GameplayModule *gameplay);
+				DemoPassConfigOptimize(GameplayModule *gameplay);
 
 				/** Always applicable if we are playing */
 				virtual bool applicable();
@@ -41,8 +41,8 @@ namespace Gameplay
 					INIT,
 					SHOW,
 					DONE
-				} TestState;
-				TestState testState_;
+				} DemoState;
+				DemoState testState_;
 
 				/** initial plan generator */
 				AnalyticPassPlanner analyticPlanner_;

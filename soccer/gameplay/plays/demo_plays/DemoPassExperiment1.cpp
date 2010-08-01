@@ -1,26 +1,18 @@
-/*
- * TestPassExperiment1.cpp
- *
- *  Created on: Feb 21st, 2010
- *      Author: Philip Rogers
- *      Author:
- */
-
 #include <QColor>
-#include "TestPassExperiment1.hpp"
+#include "DemoPassExperiment1.hpp"
 #include <iostream> // testing
 using namespace Geometry2d;
 using namespace std;
 
-REGISTER_PLAY_CATEGORY(Gameplay::Plays::TestPassExperiment1, "Tests")
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoPassExperiment1, "Demos")
 
-Gameplay::Plays::TestPassExperiment1::TestPassExperiment1(GameplayModule *gameplay)
+Gameplay::Plays::DemoPassExperiment1::DemoPassExperiment1(GameplayModule *gameplay)
 : Play(gameplay), passPlanner_(gameplay, true), _kicker1(gameplay), _kicker2(gameplay),
   _expTime(5000000 /* 5 seconds */), _expState(Initializing), _expType(OptimizedPass) {
 
 }
 
-bool Gameplay::Plays::TestPassExperiment1::run(){
+bool Gameplay::Plays::DemoPassExperiment1::run(){
 	long time = _gameplay->state()->timestamp;
 
 	if(_expState==Initializing){

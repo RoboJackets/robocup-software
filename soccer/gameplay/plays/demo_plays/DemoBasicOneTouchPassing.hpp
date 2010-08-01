@@ -11,10 +11,10 @@ namespace Gameplay
 {
 	namespace Plays
 	{
-		class TestBasicOneTouchPassing: public Play
+		class DemoBasicOneTouchPassing: public Play
 		{
 			public:
-				TestBasicOneTouchPassing(GameplayModule *gameplay);
+				DemoBasicOneTouchPassing(GameplayModule *gameplay);
 
 				virtual bool applicable();
 

@@ -1,9 +1,3 @@
-/**
- *  Example play: This is a template for a play.
- *  To use, implement the functions and add the necessary member variables
- *  and do a test replacement for ExamplePlay with whatever name you want.
- */
-
 #pragma once
 
 #include "../Play.hpp"
@@ -12,16 +6,16 @@ namespace Gameplay
 {
 	namespace Plays
 	{
-		class TestKicks: public Play
+		class DemoKicks: public Play
 		{
 			public:
 				typedef enum {
 					Deg0StationaryKick,
 					Deg45StationaryKick,
-					NumTests // make sure this is last
-				} Test;
+					NumDemos // make sure this is last
+				} Demo;
 
-				TestKicks(GameplayModule *gameplay);
+				DemoKicks(GameplayModule *gameplay);
 
 				/** returns true if the play is currently applicable given gamestate */
 				virtual bool applicable();
@@ -34,10 +28,10 @@ namespace Gameplay
 
 			protected:
 				// Insert sub behaviors here as member variables
-				Test _test;
+				Demo _test;
 
 				// flag for controlling switching between plays
-				bool switchTest;
+				bool switchDemo;
 
 				// current robot
 				Robot* robot;

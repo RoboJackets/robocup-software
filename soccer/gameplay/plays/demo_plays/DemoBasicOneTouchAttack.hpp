@@ -14,12 +14,12 @@ namespace Plays
  * probably only be used with 1-2 robots on the field, as it
  * will get chaotic
  *
- * This variant uses chip kicking and only works for 2010 robots
+ * This will use the one touch mode for kicking
  */
-class TestBasicChipAttack: public Play
+class DemoBasicOneTouchAttack: public Play
 {
 public:
-	TestBasicChipAttack(GameplayModule *gameplay);
+	DemoBasicOneTouchAttack(GameplayModule *gameplay);
 
 	/**
 	 * Applicable any time that the game is running

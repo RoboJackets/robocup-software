@@ -1,24 +1,23 @@
-#include "TestBasicOneTouchAttack.hpp"
+#include "DemoBasicAttack.hpp"
 
 #include <boost/foreach.hpp>
 
 using namespace std;
-using namespace Gameplay::Behaviors;
 
-REGISTER_PLAY_CATEGORY(Gameplay::Plays::TestBasicOneTouchAttack, "Tests")
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoBasicAttack, "Demos")
 
-Gameplay::Plays::TestBasicOneTouchAttack::TestBasicOneTouchAttack(GameplayModule *gameplay):
+Gameplay::Plays::DemoBasicAttack::DemoBasicAttack(GameplayModule *gameplay):
 	Play(gameplay, 1), _kicker(gameplay)
 {
 }
 
-bool Gameplay::Plays::TestBasicOneTouchAttack::applicable()
+bool Gameplay::Plays::DemoBasicAttack::applicable()
 {
 	bool refApplicable =_gameplay->state()->gameState.playing();
 	return refApplicable;
 }
 
-bool Gameplay::Plays::TestBasicOneTouchAttack::assign(set<Robot *> &available)
+bool Gameplay::Plays::DemoBasicAttack::assign(set<Robot *> &available)
 {
 	// remove non-visible robots
 	// this prevents bug with 2-robot tests where play would do nothing
@@ -32,11 +31,8 @@ bool Gameplay::Plays::TestBasicOneTouchAttack::assign(set<Robot *> &available)
 	return _robots.size() >= _minRobots;
 }
 
-bool Gameplay::Plays::TestBasicOneTouchAttack::run()
+bool Gameplay::Plays::DemoBasicAttack::run()
 {
-	// set the aiming type
-	_kicker.aimType(Kick::ONETOUCH);
-
 	// check if the robot is in done state
 	if (_kicker.getState() == Gameplay::Behaviors::Kick::Done)
 		_kicker.restart();

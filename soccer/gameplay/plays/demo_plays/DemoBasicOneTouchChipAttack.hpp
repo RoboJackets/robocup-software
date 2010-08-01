@@ -2,7 +2,7 @@
 
 #include "../../Play.hpp"
 
-#include "../../behaviors/Kick.hpp"
+#include "../../behaviors/OneTouchKick.hpp"
 
 namespace Gameplay
 {
@@ -14,12 +14,12 @@ namespace Plays
  * probably only be used with 1-2 robots on the field, as it
  * will get chaotic
  *
- * This will use the one touch mode for kicking
+ * This variant uses chip kicking and one touch kicking
  */
-class TestBasicOneTouchAttack: public Play
+class DemoBasicOneTouchChipAttack: public Play
 {
 public:
-	TestBasicOneTouchAttack(GameplayModule *gameplay);
+	DemoBasicOneTouchChipAttack(GameplayModule *gameplay);
 
 	/**
 	 * Applicable any time that the game is running
@@ -35,7 +35,7 @@ public:
 	virtual bool run();
 
 protected:
-	Behaviors::Kick _kicker;
+	Behaviors::OneTouchKick _kicker;
 };
 } // \Gameplay
 } // \Plays

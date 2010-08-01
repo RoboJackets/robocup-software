@@ -1,25 +1,25 @@
 #include <iostream>
 #include <boost/foreach.hpp>
-#include "TestBasicOneTouchPassing.hpp"
+#include "DemoBasicOneTouchPassing.hpp"
 
 using namespace Geometry2d;
 using namespace std;
 
-REGISTER_PLAY_CATEGORY(Gameplay::Plays::TestBasicOneTouchPassing, "Tests")
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoBasicOneTouchPassing, "Demos")
 
-Gameplay::Plays::TestBasicOneTouchPassing::TestBasicOneTouchPassing(GameplayModule *gameplay):
+Gameplay::Plays::DemoBasicOneTouchPassing::DemoBasicOneTouchPassing(GameplayModule *gameplay):
 	Play(gameplay, 2),
 	_passer(gameplay),
 	_receiver(gameplay)
 {
 }
 
-bool Gameplay::Plays::TestBasicOneTouchPassing::applicable()
+bool Gameplay::Plays::DemoBasicOneTouchPassing::applicable()
 {
 	return true;
 }
 
-bool Gameplay::Plays::TestBasicOneTouchPassing::assign(set<Robot *> &available)
+bool Gameplay::Plays::DemoBasicOneTouchPassing::assign(set<Robot *> &available)
 {
 	cout << "available robots:  ";
 	BOOST_FOREACH(Robot * r, available)
@@ -36,14 +36,14 @@ bool Gameplay::Plays::TestBasicOneTouchPassing::assign(set<Robot *> &available)
 
 	_passer.targetRobot = _receiver.robot();
 
-	cout << "TestBasicOneTouchPassing::assign() successful!" << endl;
+	cout << "DemoBasicOneTouchPassing::assign() successful!" << endl;
 	return true;
 }
 
-bool Gameplay::Plays::TestBasicOneTouchPassing::run()
+bool Gameplay::Plays::DemoBasicOneTouchPassing::run()
 {
 	bool verbose = false;
-	if (verbose) cout << "PLAY: Running TestBasicOneTouchPassing" << endl;
+	if (verbose) cout << "PLAY: Running DemoBasicOneTouchPassing" << endl;
 
 	bool done = _passer.getState() == Behaviors::OneTouchKick::Done;
 	if (done)
@@ -72,7 +72,7 @@ bool Gameplay::Plays::TestBasicOneTouchPassing::run()
 	// indicate which robot is receiving
 	state()->drawCircle(_receiver.robot()->pos(), Constants::Robot::Radius*1.2, Qt::gray);
 
-	if (verbose) cout << "PLAY: Finished Running TestBasicOneTouchPassing" << endl;
+	if (verbose) cout << "PLAY: Finished Running DemoBasicOneTouchPassing" << endl;
 
 	return true;
 }

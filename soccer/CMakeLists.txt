@@ -47,14 +47,15 @@ set (SRCS
 	gameplay/Robot.cpp
 	gameplay/PreventDoubleTouch.cpp
 	
-	# Optimization components
-	gameplay/optimizer/PassConfig.cpp
-	gameplay/optimizer/PassState.cpp
-	gameplay/optimizer/AnalyticPassPlanner.cpp
-	gameplay/optimizer/passOptimization.cpp
-	gameplay/optimizer/DrivingFactors.cpp
-	gameplay/optimizer/PassingFactors.cpp
-	gameplay/optimizer/ShootingFactors.cpp
+	# Optimization components - disabled for now
+	#gameplay/optimizer/PassOptimizer.cpp
+	#gameplay/optimizer/PassConfig.cpp
+	#gameplay/optimizer/PassState.cpp
+	#gameplay/optimizer/AnalyticPassPlanner.cpp
+	#gameplay/optimizer/passOptimization.cpp
+	#gameplay/optimizer/DrivingFactors.cpp
+	#gameplay/optimizer/PassingFactors.cpp
+	#gameplay/optimizer/ShootingFactors.cpp
 	
 	# Main Plays
 	gameplay/plays/OurKickoff.cpp
@@ -79,7 +80,6 @@ set (SRCS
 	gameplay/behaviors/Kick.cpp
 	gameplay/behaviors/OneTouchKick.cpp
 	gameplay/behaviors/Intercept.cpp
-	gameplay/behaviors/OptimizedPassing.cpp
 	gameplay/behaviors/Mark.cpp
 	gameplay/behaviors/GoalDefender.cpp
 	gameplay/behaviors/ZoneOffense.cpp
@@ -89,32 +89,23 @@ set (SRCS
 	gameplay/behaviors/positions/Fullback.cpp
  	gameplay/behaviors/positions/Forward.cpp
  	
-	# testing plays/behaviors
-	gameplay/plays/test_plays/TestBasicPassing.cpp
-	gameplay/plays/test_plays/TestBasicOneTouchPassing.cpp
-	gameplay/plays/test_plays/TestDirectMotionControl.cpp
-	gameplay/plays/test_plays/TestRectMotionControl.cpp
-	gameplay/plays/test_plays/TestTimePositionControl.cpp
-	gameplay/plays/test_plays/TestBasicAttack.cpp
-	gameplay/plays/test_plays/TestBasicOneTouchAttack.cpp
-	gameplay/plays/test_plays/TestIntercept.cpp
-	gameplay/plays/test_plays/TestPassPlay.cpp
-	gameplay/plays/test_plays/TestOptimizedPassPlay.cpp
-	gameplay/plays/test_plays/TestGUI.cpp
-	#gameplay/plays/test_plays/TestBallSpeed.cpp
-	#gameplay/plays/test_plays/TestBasicChipAttack.cpp #disabled until 2010 robots ready
-	#gameplay/plays/test_plays/TestBasicOneTouchChipAttack.cpp
-	#gameplay/plays/test_plays/TestKicks.cpp
+	# demo plays/behaviors
+	gameplay/plays/demo_plays/DemoBasicPassing.cpp
+	gameplay/plays/demo_plays/DemoBasicOneTouchPassing.cpp
+	gameplay/plays/demo_plays/DemoBasicAttack.cpp
+	gameplay/plays/demo_plays/DemoBasicOneTouchAttack.cpp
+	#gameplay/plays/demo_plays/DemoBasicChipAttack.cpp #disabled until 2010 robots ready
+	#gameplay/plays/demo_plays/DemoBasicOneTouchChipAttack.cpp
+	#gameplay/plays/demo_plays/DemoKicks.cpp
 	
-	# Demo plays 
-	#gameplay/plays/challenges/MixedChallenge2010.cpp
+	# files that use the optimizer - disabled until new gtsam is in place
+	#gameplay/behaviors/OptimizedPassing.cpp
+	#gameplay/plays/demo_plays/DemoPassConfigOptimize.cpp
+    #gameplay/plays/demo_plays/DemoPassPlay.cpp
+	#gameplay/plays/demo_plays/DemoOptimizedPassPlay.cpp
 	
-	# files that use the optimizer - may want to disable
-	#gameplay/plays/test_plays/TestPassConfigOptimize.cpp
-	gameplay/optimizer/PassOptimizer.cpp
-
 	# files for pass experiments
-	gameplay/plays/test_plays/TestPassExperiment1.cpp
+	#gameplay/plays/demo_plays/DemoPassExperiment1.cpp
 
 # 	gameplay/behaviors/test/KickerCalibration.cpp   
 # 	gameplay/behaviors/test/MotionLeader.cpp    
@@ -165,7 +156,6 @@ target_link_libraries(soccer ${CONFIG_LIBRARY})
 target_link_libraries(soccer blas lapack)
 target_link_libraries(soccer packets)
 target_link_libraries(soccer ${QT_LIBRARIES})
-target_link_libraries(soccer gtsam)
 
 # Enable this for Google performance tools
 #target_link_libraries(soccer tcmalloc)
