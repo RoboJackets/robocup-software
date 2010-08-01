@@ -1,13 +1,5 @@
-/*
- * TestPassPlay.cpp
- *
- *  Created on: Nov 29th
- *      Author: Philip Rogers
- *      Author:
- */
-
 #include <QColor>
-#include "TestPassPlay.hpp"
+#include "DemoPassPlay.hpp"
 
 //#define TIMEMARGIN 3.5 // seconds a play can deviate from plan before abort
 //#define ROBOTSUCCESSMARGIN 0.05 // if robot within this region, a move is complete
@@ -17,18 +9,18 @@
 using namespace Geometry2d;
 using namespace std;
 
-REGISTER_PLAY_CATEGORY(Gameplay::Plays::TestPassPlay, "Tests")
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoPassPlay, "Demos")
 
-Gameplay::Plays::TestPassPlay::TestPassPlay(GameplayModule *gameplay)
+Gameplay::Plays::DemoPassPlay::DemoPassPlay(GameplayModule *gameplay)
 : Play(gameplay), passPlanner_(gameplay, false) {
 
 }
 
-bool Gameplay::Plays::TestPassPlay::assign(set<Robot *> &available){
+bool Gameplay::Plays::DemoPassPlay::assign(set<Robot *> &available){
 	return passPlanner_.assign(available);
 }
 
-bool Gameplay::Plays::TestPassPlay::run(){
+bool Gameplay::Plays::DemoPassPlay::run(){
 	passPlanner_.enableOptimization(false);
 	// set margins
 	double time_margin = 5.5,

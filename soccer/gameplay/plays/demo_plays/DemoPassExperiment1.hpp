@@ -1,5 +1,5 @@
 /*
- * TestPassExperiment1.hpp
+ * DemoPassExperiment1.hpp
  *
  * Runs a non-optimized pass against another team
  *
@@ -12,7 +12,7 @@
  *   1.) Start simulator: ./soccsim -c ../config/testPass.xml
  *   2.) Start yellow (pass) team: ./soccer -y -ng -c ../config/sim.xml
  *   3.) Start blue team: ./soccer -b -c ../config/sim.xml
- *   4.) Select yellow "TestPassExperiment" and press "force start"
+ *   4.) Select yellow "DemoPassExperiment" and press "force start"
  *   5.) Select blue play (offense + defense + goalie) and press "force start"
  *
  *  Created on: Feb 21st, 2010
@@ -30,9 +30,9 @@ using namespace std;
 
 namespace Gameplay{
 	namespace Plays{
-		class TestPassExperiment1: public Play{
+		class DemoPassExperiment1: public Play{
 			public:
-			TestPassExperiment1(GameplayModule *gameplay);
+			DemoPassExperiment1(GameplayModule *gameplay);
 
 				virtual bool applicable(){return true;}
 

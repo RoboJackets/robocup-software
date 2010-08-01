@@ -1,30 +1,30 @@
-#include "TestKicks.hpp"
+#include "DemoKicks.hpp"
 #include <boost/foreach.hpp>
 
 using namespace std;
 
-REGISTER_PLAY_CATEGORY(Gameplay::Plays::TestKicks, "Tests")
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoKicks, "Demos")
 
-Gameplay::Plays::TestKicks::TestKicks(GameplayModule *gameplay):
+Gameplay::Plays::DemoKicks::DemoKicks(GameplayModule *gameplay):
 	Play(gameplay),
 	_test(Deg0StationaryKick),
-	swichTest(true)
+	swichDemo(true)
 {
 }
 
-bool Gameplay::Plays::TestKicks::applicable()
+bool Gameplay::Plays::DemoKicks::applicable()
 {
 	return true;
 }
 
-bool Gameplay::Plays::TestKicks::assign(set<Robot *> &available)
+bool Gameplay::Plays::DemoKicks::assign(set<Robot *> &available)
 {
 	_robots = available;
 	takeAll(available);
 	return true;
 }
 
-bool Gameplay::Plays::TestKicks::run()
+bool Gameplay::Plays::DemoKicks::run()
 {
 	Robot* robot;
 
@@ -36,14 +36,14 @@ bool Gameplay::Plays::TestKicks::run()
 
 		break;
 	}
-	_test = (_test+1)%(NumTests);
+	_test = (_test+1)%(NumDemos);
 
 
 	/** Replace this with your code to run every frame */
 	return true;
 }
 
-Robot* Gameplay::Plays::TestKicks::getRobotWithId(int id)
+Robot* Gameplay::Plays::DemoKicks::getRobotWithId(int id)
 {
 	BOOST_FOREACH(Robot* robot, _robots)
 	{

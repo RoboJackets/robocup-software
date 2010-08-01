@@ -1,5 +1,5 @@
 /*
- * TestPassPlay.hpp
+ * DemoPassPlay.hpp
  *
  *  We perform three basic steps to implement a pass:
  *    1.) Generate high-level analytic plan(s)
@@ -24,9 +24,9 @@ using namespace std;
 
 namespace Gameplay{
 	namespace Plays{
-		class TestPassPlay: public Play{
+		class DemoPassPlay: public Play{
 			public:
-				TestPassPlay(GameplayModule *gameplay);
+				DemoPassPlay(GameplayModule *gameplay);
 
 				virtual bool applicable(){return true;}
 

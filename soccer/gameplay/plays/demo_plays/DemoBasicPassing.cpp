@@ -1,30 +1,23 @@
-/*
- * TestBasicPassing.cpp
- *
- *  Created on: Nov 8, 2009
- *      Author: alexgc
- */
-
-#include "TestBasicPassing.hpp"
+#include "DemoBasicPassing.hpp"
 
 using namespace Geometry2d;
 using namespace std;
 
-REGISTER_PLAY_CATEGORY(Gameplay::Plays::TestBasicPassing, "Tests")
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoBasicPassing, "Demos")
 
-Gameplay::Plays::TestBasicPassing::TestBasicPassing(GameplayModule *gameplay):
+Gameplay::Plays::DemoBasicPassing::DemoBasicPassing(GameplayModule *gameplay):
 	Play(gameplay, 2),
 	_passer(gameplay),
 	_receiver(gameplay)
 {
 }
 
-bool Gameplay::Plays::TestBasicPassing::applicable()
+bool Gameplay::Plays::DemoBasicPassing::applicable()
 {
 	return true;
 }
 
-bool Gameplay::Plays::TestBasicPassing::assign(set<Robot *> &available)
+bool Gameplay::Plays::DemoBasicPassing::assign(set<Robot *> &available)
 {
 	_passer.assign(available);
 	_receiver.assign(available);
@@ -33,7 +26,7 @@ bool Gameplay::Plays::TestBasicPassing::assign(set<Robot *> &available)
 	return _robots.size() >= _minRobots;
 }
 
-bool Gameplay::Plays::TestBasicPassing::run()
+bool Gameplay::Plays::DemoBasicPassing::run()
 {
 	_passer.setVScale(0.8, 0.3);
 	bool done = _passer.getState() == Behaviors::Kick::Done;
