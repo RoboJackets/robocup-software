@@ -120,7 +120,9 @@ Processor::Processor(QString filename, bool sim, int radio) :
 	//setup the modules
 	_modelingModule = make_shared<Modeling::WorldModel>(&_state, _config->worldModel);
 	_stateIDModule = make_shared<StateIdentification::StateIDModule>(&_state);
-	_motionModule = make_shared<Motion::MotionModule>(&_state, _config->motionModule);
+	_pointControlModule = make_shared<Motion::PointController>(&_state, _config->motionModule);
+	_wheelControlModule = make_shared<Motion::WheelController>(&_state, _config->motionModule);
+//	_motionModule = make_shared<Motion::MotionModule>(&_state, _config->motionModule); // FIXME: remove
 	_refereeModule = make_shared<RefereeModule>(&_state);
 	_gameplayModule = make_shared<Gameplay::GameplayModule>(&_state, _config->motionModule);
 }
@@ -134,7 +136,9 @@ Processor::~Processor()
 	//DEBUG - This is unnecessary, but lets us determine which one breaks.
 	_modelingModule.reset();
 	_stateIDModule.reset();
-	_motionModule.reset();
+	_pointControlModule.reset();
+	_wheelControlModule.reset();
+//	_motionModule.reset(); //FIXME: remove
 	_refereeModule.reset();
 	_gameplayModule.reset();
 }
@@ -421,9 +425,20 @@ void Processor::run()
 			_gameplayModule->run();
 		}
 
-		if (_motionModule)
+		// FIXME: remove
+//		if (_motionModule)
+//		{
+//			_motionModule->run();
+//		}
+
+		if (_pointControlModule)
 		{
-			_motionModule->run();
+			_pointControlModule->run();
+		}
+
+		if (_wheelControlModule)
+		{
+			_wheelControlModule->run();
 		}
 		
 		////////////////

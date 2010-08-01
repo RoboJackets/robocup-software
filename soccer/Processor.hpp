@@ -19,6 +19,8 @@
 #include <motion/MotionModule.hpp>
 #include <stateID/StateIDModule.hpp>
 #include <modeling/WorldModel.hpp>
+#include <motion/PointController.hpp>
+#include <motion/WheelController.hpp>
 
 #include <framework/ConfigFile.hpp>
 
@@ -207,7 +209,10 @@ class Processor: public QThread
 		boost::shared_ptr<Modeling::WorldModel> _modelingModule;
 		boost::shared_ptr<RefereeModule> _refereeModule;
 		boost::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
-		boost::shared_ptr<Motion::MotionModule> _motionModule;
+//		boost::shared_ptr<Motion::MotionModule> _motionModule; //FIXME: this should go away
+		boost::shared_ptr<Motion::PointController> _pointControlModule;
+		boost::shared_ptr<Motion::WheelController> _wheelControlModule;
+
 		boost::shared_ptr<StateIdentification::StateIDModule> _stateIDModule;
 		Joystick *_joystick;
 		

@@ -50,18 +50,13 @@ namespace Motion
 			/** Process the command for a robot and prepare output */
 			void proc();
 
-			/** drawing functions */
-// 			void drawPath(QPainter& p);
-// 			void drawRRT(QPainter& p);
-// 			void drawBezierTraj(QPainter& p);
-// 			void drawBezierControl(QPainter& p);
-// 			void drawPoseHistory(QPainter& p);
-
 			void setAngKp(double value);
 			void setAngKi(double value);
 			void setAngKd(double value);
 
 			SystemState::Robot* self() { return _self; }
+
+			typedef boost::shared_ptr<Robot> shared_ptr;
 
 		private:
 			Pid _anglePid;

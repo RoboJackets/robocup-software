@@ -46,6 +46,8 @@ set (SRCS
 	gameplay/Window.cpp
 	gameplay/Robot.cpp
 	gameplay/PreventDoubleTouch.cpp
+	gameplay/planning/rrt.cpp
+	gameplay/planning/Tree.cpp
 	
 	# Optimization components - disabled for now
 	#gameplay/optimizer/PassOptimizer.cpp
@@ -125,12 +127,12 @@ set (SRCS
 	modeling/RbpfModelKicked.cpp
 	
 # Sources for motion module
-	motion/MotionModule.cpp
+	#motion/MotionModule.cpp
+	motion/PointController.cpp
+	motion/WheelController.cpp
 	motion/Robot.cpp
 	motion/Pid.cpp
 	motion/Dynamics.cpp
-	motion/planning/rrt.cpp
-	motion/planning/Tree.cpp
 
 # Sources for stateID module
 	stateID/StateIDModule.cpp
