@@ -15,11 +15,11 @@ namespace Gameplay
 	{
 	public:
 		// Create the play, with a given number of robots
-		Play(GameplayModule *gameplay, size_t minRobots = 0);
+		Play(GameplayModule *gameplay);
 		
 		// Returns true iff this play is allowed to be selected given the current state of the game.
-		// The default implementation always returns true.
-		virtual bool applicable();
+		// The default implementation returns true when we are playing (not stopped or waiting on a restart).
+		virtual bool applicable(const std::set<Robot *> &robots);
 		
 		// Returns a score used to compare this play against all other applicable plays when a new play
 		// is to be selected.

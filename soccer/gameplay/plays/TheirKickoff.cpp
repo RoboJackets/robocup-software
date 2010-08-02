@@ -5,7 +5,7 @@ using namespace std;
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::TheirKickoff, "Restarts")
 
 Gameplay::Plays::TheirKickoff::TheirKickoff(GameplayModule *gameplay):
-	Play(gameplay, 1),
+	Play(gameplay),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
 	_fullback2(gameplay, Behaviors::Fullback::Right),
 	_idle(gameplay)
@@ -14,7 +14,7 @@ Gameplay::Plays::TheirKickoff::TheirKickoff(GameplayModule *gameplay):
 	_fullback2.otherFullbacks.insert(&_fullback1);
 }
 
-bool Gameplay::Plays::TheirKickoff::applicable()
+bool Gameplay::Plays::TheirKickoff::applicable(const std::set<Robot *> &robots)
 {
 	return gameState().setupRestart() && gameState().theirKickoff();
 }
@@ -27,7 +27,7 @@ bool Gameplay::Plays::TheirKickoff::assign(set<Robot *> &available)
 	_fullback2.assign(available);
 	_idle.assign(available);
 
-	return _robots.size() >= _minRobots;
+	return true;
 }
 
 bool Gameplay::Plays::TheirKickoff::run()

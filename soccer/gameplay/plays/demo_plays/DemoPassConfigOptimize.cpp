@@ -21,12 +21,6 @@ Gameplay::Plays::DemoPassConfigOptimize::DemoPassConfigOptimize(GameplayModule *
 {
 }
 
-bool Gameplay::Plays::DemoPassConfigOptimize::applicable()
-{
-	bool refApplicable =_gameplay->state()->gameState.playing();
-	return refApplicable;
-}
-
 bool Gameplay::Plays::DemoPassConfigOptimize::run()
 {
 	if (testState_ == INIT)

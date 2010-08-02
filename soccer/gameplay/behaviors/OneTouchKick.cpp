@@ -2,15 +2,9 @@
 
 #include "../Window.hpp"
 
-#include <cmath>
-
-#include <boost/foreach.hpp>
-#include <boost/format.hpp>
-
 using namespace std;
 using namespace Utils;
 using namespace Geometry2d;
-
 
 Gameplay::Behaviors::OneTouchKick::OneTouchKick(GameplayModule *gameplay) :
 	Behavior(gameplay), _kickType(KICK)
@@ -45,7 +39,7 @@ bool Gameplay::Behaviors::OneTouchKick::assign(set<Robot *> &available)
 	_state = Intercept;
 	_commandValid = false;
 
-	return _robots.size() >= _minRobots;
+	return true;
 }
 
 bool Gameplay::Behaviors::OneTouchKick::kickType(KickType mode) {

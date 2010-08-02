@@ -2,13 +2,21 @@
 
 #include <boost/foreach.hpp>
 
-Gameplay::Behavior::Behavior(GameplayModule *gameplay, size_t minRobots)
-	: _gameplay(gameplay), _minRobots(minRobots)
+using namespace std;
+
+Gameplay::Behavior::Behavior(GameplayModule *gameplay)
+	: _gameplay(gameplay)
 {
 }
 
 Gameplay::Behavior::~Behavior()
 {
+}
+
+void Gameplay::Behavior::unassign()
+{
+	set<Robot *> empty;
+	assign(empty);
 }
 
 bool Gameplay::Behavior::run()
@@ -37,15 +45,14 @@ bool Gameplay::Behavior::allVisible() const
 bool Gameplay::Behavior::assign(std::set<Robot *> &available)
 {
 	_robots.clear();
-	takeBest(available);
-	return _robots.size() >= _minRobots;
+	return takeBest(available);
 }
 
 bool Gameplay::Behavior::takeAll(std::set<Robot *> &available)
 {
 	_robots = available;
 	available.clear();
-	return _robots.size() >= _minRobots;
+	return true;
 }
 
 Gameplay::Robot *Gameplay::Behavior::takeBest(std::set<Robot *> &available)

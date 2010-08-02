@@ -5,7 +5,7 @@ using namespace std;
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::OurFreekick, "Restarts")
 
 Gameplay::Plays::OurFreekick::OurFreekick(GameplayModule *gameplay):
-	Play(gameplay, 1),
+	Play(gameplay),
 	_kicker(gameplay),
 	_center(gameplay),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
@@ -14,7 +14,7 @@ Gameplay::Plays::OurFreekick::OurFreekick(GameplayModule *gameplay):
 {
 }
 
-bool Gameplay::Plays::OurFreekick::applicable()
+bool Gameplay::Plays::OurFreekick::applicable(const std::set<Robot *> &robots)
 {
 	return (gameState().setupRestart() && gameState().ourFreeKick()) || _pdt.keepRunning();
 }
@@ -29,7 +29,7 @@ bool Gameplay::Plays::OurFreekick::assign(set<Robot *> &available)
 	_fullback1.assign(available);
 	_fullback2.assign(available);
 
-	return _robots.size() >= _minRobots;
+	return true;
 }
 
 bool Gameplay::Plays::OurFreekick::run()

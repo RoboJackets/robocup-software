@@ -14,7 +14,7 @@ namespace Gameplay
 			public:
 				Offense(GameplayModule *gameplay);
 				
-				virtual bool applicable();
+				virtual bool applicable(const std::set<Robot *> &robots);
 				virtual bool assign(std::set<Robot *> &available);
 				virtual bool run();
 				

@@ -42,7 +42,7 @@ namespace Gameplay
 				 * Runs whenever the game is running and the
 				 * opponents do not have the ball
 				 */
-				virtual bool applicable();
+				virtual bool applicable(const std::set<Robot *> &robots);
 
 				/** Called every frame */
 				virtual bool run();

@@ -8,7 +8,7 @@ using namespace std;
 using namespace Geometry2d;
 
 Gameplay::Behaviors::ZoneOffense::ZoneOffense(GameplayModule *gameplay)
-: Behavior(gameplay, 2),
+: Behavior(gameplay),
   _activeZone(NONE)
 {
 	_leftAttack = 0;

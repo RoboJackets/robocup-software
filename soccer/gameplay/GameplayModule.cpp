@@ -21,6 +21,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_goalie = 0;
 	_currentPlay = 0;
 	_playDone = false;
+	_forcePlay = 0;
 
 	_centerMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length / 2));
 	_oppMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length)) *
@@ -182,7 +183,9 @@ void Gameplay::GameplayModule::run()
 		}
 		
 		// The Goalie behavior is responsible for only selecting a robot which is allowed by the rules
-		// (no changing goalies at random times)
+		// (no changing goalies at random times).
+		// The goalie behavior has priority for choosing robots because it must obey this rule,
+		// so the current play will be restarted in case the goalie stole one of its robots.
 		if (_goalie->assign(robots))
 		{
 			newGoalie = true;
@@ -244,75 +247,101 @@ void Gameplay::GameplayModule::run()
 	_ballMatrix = Geometry2d::TransformMatrix::translate(_state->ball.pos);
 
 	if (verbose) cout << "  Updating play" << endl;
-	// All plays need steps:
-	// 1) select (if viable)
-	// 2) assign
-	// 3) if assignment succeeded, run
-
+	
 	// important scenarios:
 	//  - no current plays - must pick a new one
 	//  - no available plays - must do nothing
 	//  - current play is fine, must be run
 	//  - current play has ended, must select new and run
 	//  - current play is not applicable/failed, must kill, select new and run
+	//  - new goalie, select new play (may reselect current play, which much be assigned new robots)
+
+	// prepare a list of all non-goalie robots ready
+	set<Robot *> robots;
+	int n = 0;
+	BOOST_FOREACH(Robot *r, self)
+	{
+		if ((!_goalie || r != _goalie->robot()) && r->visible() && !r->exclude)
+		{
+			robots.insert(r);
+			++n;
+		}
+		
+		if (n == Constants::Robots_Per_Team - 1)
+		{
+			// Leave one available to become the goalie, in case the goalie broke
+			break;
+		}
+	}
+	if (verbose) cout << "  Available Robots: " << robots.size() << endl;
 
 	// handle changes in play availability
-	bool playReady = true;
 	if (_plays.size() == 0)
 	{
 		// No plays available, so we don't have a current play
 		_currentPlay = 0;
-	} else if (_playDone || 					// New play if old one was complete
-			   newGoalie ||						// Goalie gets first pick of all robots
-			   !_currentPlay ||					// There is no current play
-			   !_currentPlay->applicable() ||	// Current play doesn't apply anymore
-			   !_currentPlay->allVisible() ||	// Lost robots used by current play
-			   !_currentPlay->enabled)			// Current play was disabled
+	} else if (
+			newGoalie ||						// Goalie gets first pick of all robots
+			(_forcePlay && _forcePlay != _currentPlay) || // Changed the forced play
+			(!_forcePlay && (					// If forcing a play, don't change plays (but can restart if goalie changes)
+				_playDone || 					// New play if old one was complete
+				!_currentPlay ||				// There is no current play
+				!_currentPlay->applicable(robots) || // Current play doesn't apply anymore
+				!_currentPlay->allVisible() ||	// Lost robots used by current play
+				!_currentPlay->enabled)			// Current play was disabled
+			))
 	{
-
 		if (verbose) cout << "  Selecting a new play" << endl;
 		_playDone = false;
 
-		// prepare a list of all non-goalie robots ready
-		set<Robot *> robots;
-		int n = 0;
-		BOOST_FOREACH(Robot *r, self)
+		// Find the next play
+		Play *bestPlay = 0;
+		if (_forcePlay)
 		{
-			if ((!_goalie || r != _goalie->robot()) && r->visible() && !r->exclude)
+			// Restart the current play because we can't choose any other
+			bestPlay = _forcePlay;
+		} else {
+			// Pick a new play
+			float bestScore = 0;
+
+			// Find the best applicable play
+			BOOST_FOREACH(Play *play, _plays)
 			{
-				robots.insert(r);
-				++n;
-			}
-			
-			if (n == Constants::Robots_Per_Team - 1)
-			{
-				// Leave one available to become the goalie, in case the goalie broke
-				break;
+				//FIXME - Put minRobots test in applicable.  It used to be here.
+				if (play->enabled && play->applicable(robots))
+				{
+					float score = play->score();
+					if (!bestPlay || score < bestScore)
+					{
+						bestScore = score;
+						bestPlay = play;
+					}
+				}
 			}
 		}
-		if (verbose) cout << "  Available Robots: " << robots.size() << endl;
-
-		// select a new play from available pool
-		Play *play = selectPlay(robots.size()); // ensure that the play is viable
-		if (play && play != _currentPlay)
+		
+		// Start the play if it's not current.
+		// Restart the current play if the goalie changed, because we have to pick new robots.
+		if (bestPlay)
 		{
-			if (verbose) cout << "  Assigning robots to play" << endl;
+			if (bestPlay != _currentPlay || newGoalie)
+			{
+				if (verbose) cout << "  Assigning robots to play" << endl;
 
-			// send end signal to previously running play
-			if (_currentPlay)
-				_currentPlay->end();
-
-			// swap in new play
-			_currentPlay = play;
-
-			// assign and check if assignment was valid
-			playReady = _currentPlay->assign(robots);
+				// assign and check if assignment was successful
+				if (bestPlay->assign(robots))
+				{
+					_currentPlay = bestPlay;
+				}
+			}
+		} else {
+			// No usable plays
+			_currentPlay = 0;
 		}
 	}
-	lock.unlock();
 
-	// Run the current play if assignment was successful
-	if (_currentPlay && playReady)
+	// Run the current play
+	if (_currentPlay)
 	{
 		if (verbose) cout << "  Running play" << endl;
 		_playDone = !_currentPlay->run();
@@ -368,6 +397,12 @@ void Gameplay::GameplayModule::run()
 	if (verbose) cout << "Finishing GameplayModule::run()" << endl;
 }
 
+void Gameplay::GameplayModule::forcePlay(Gameplay::Play* play)
+{
+	QMutexLocker lock(&_mutex);
+	_forcePlay = play;
+}
+
 void Gameplay::GameplayModule::enablePlay(Play *play)
 {
 	QMutexLocker lock(&_mutex);
@@ -392,28 +427,4 @@ bool Gameplay::GameplayModule::playEnabled(Play *play)
 {
 	QMutexLocker lock(&_mutex);
 	return play->enabled;
-}
-
-Gameplay::Play *Gameplay::GameplayModule::selectPlay(size_t nrRobots)
-{
-	// It is assumed that _mutex is already locked
-	
-	float bestScore = 0;
-	Play *bestPlay = 0;
-
-	// Find the best applicable play
-	BOOST_FOREACH(Play *play, _plays)
-	{
-		if (play->enabled && play->applicable() && nrRobots >= play->getMinRobots())
-		{
-			float score = play->score();
-			if (!bestPlay || score < bestScore)
-			{
-				bestScore = score;
-				bestPlay = play;
-			}
-		}
-	}
-
-	return bestPlay;
 }

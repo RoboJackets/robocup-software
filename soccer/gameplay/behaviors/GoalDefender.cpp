@@ -202,7 +202,7 @@ bool Gameplay::Behaviors::GoalDefender::assign(std::set<Robot *> &available)
 	_winEval = new Gameplay::WindowEvaluator(Behavior::gameplay()->state());
 	_winEval->debug = false;
 
-	return _robots.size() >= _minRobots;
+	return true;
 }
 
 bool Gameplay::Behaviors::GoalDefender::done()

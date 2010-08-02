@@ -5,7 +5,7 @@ using namespace std;
 REGISTER_PLAY(Gameplay::Plays::DefendGoal)
 
 Gameplay::Plays::DefendGoal::DefendGoal(GameplayModule *gameplay):
-	Play(gameplay,4),
+	Play(gameplay),
 	_defenseState(DefendAndDefend),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
 	_fullback2(gameplay, Behaviors::Fullback::Right),
@@ -17,7 +17,7 @@ Gameplay::Plays::DefendGoal::DefendGoal(GameplayModule *gameplay):
 	_fullback2.otherFullbacks.insert(&_fullback1);
 }
 
-bool Gameplay::Plays::DefendGoal::applicable()
+bool Gameplay::Plays::DefendGoal::applicable(const std::set<Robot *> &robots)
 {
 	bool refApplicable =_gameplay->state()->gameState.playing();
 	bool gameplayApplicable = true; //_gameplay->state()->stateID.posession == Packet::LogFrame::DEFENSE;

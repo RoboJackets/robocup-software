@@ -34,8 +34,6 @@ namespace Gameplay{
 			public:
 			DemoPassExperiment1(GameplayModule *gameplay);
 
-				virtual bool applicable(){return true;}
-
 				virtual bool run();
 
 			protected:

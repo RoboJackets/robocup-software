@@ -8,15 +8,10 @@ using namespace std;
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoBasicOneTouchPassing, "Demos")
 
 Gameplay::Plays::DemoBasicOneTouchPassing::DemoBasicOneTouchPassing(GameplayModule *gameplay):
-	Play(gameplay, 2),
+	Play(gameplay),
 	_passer(gameplay),
 	_receiver(gameplay)
 {
-}
-
-bool Gameplay::Plays::DemoBasicOneTouchPassing::applicable()
-{
-	return true;
 }
 
 bool Gameplay::Plays::DemoBasicOneTouchPassing::assign(set<Robot *> &available)
@@ -25,9 +20,6 @@ bool Gameplay::Plays::DemoBasicOneTouchPassing::assign(set<Robot *> &available)
 	BOOST_FOREACH(Robot * r, available)
 		cout << r->id() << " ";
 	cout << endl;
-
-	if (_robots.size() >= _minRobots)
-		return false;
 
 	_passer.assign(available);
 	cout << "Passer ID: " << _passer.robot()->id() << endl;

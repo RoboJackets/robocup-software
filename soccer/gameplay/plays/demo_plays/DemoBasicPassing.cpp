@@ -6,15 +6,10 @@ using namespace std;
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoBasicPassing, "Demos")
 
 Gameplay::Plays::DemoBasicPassing::DemoBasicPassing(GameplayModule *gameplay):
-	Play(gameplay, 2),
+	Play(gameplay),
 	_passer(gameplay),
 	_receiver(gameplay)
 {
-}
-
-bool Gameplay::Plays::DemoBasicPassing::applicable()
-{
-	return true;
 }
 
 bool Gameplay::Plays::DemoBasicPassing::assign(set<Robot *> &available)
@@ -23,7 +18,7 @@ bool Gameplay::Plays::DemoBasicPassing::assign(set<Robot *> &available)
 	_receiver.assign(available);
 
 	_passer.setTarget(_receiver.robot());
-	return _robots.size() >= _minRobots;
+	return _robots.size() >= 2;
 }
 
 bool Gameplay::Plays::DemoBasicPassing::run()

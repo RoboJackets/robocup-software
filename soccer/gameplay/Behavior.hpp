@@ -9,7 +9,7 @@ namespace Gameplay
 	class Behavior: public AutoName
 	{
 	public:
-		Behavior(GameplayModule *gameplay, size_t minRobots = 1);
+		Behavior(GameplayModule *gameplay);
 		virtual ~Behavior();
 
 		GameplayModule *gameplay() const
@@ -22,10 +22,9 @@ namespace Gameplay
 			return _gameplay->state();
 		}
 
-		void unassign()
-		{
-			_robots.clear();
-		}
+		// Removes robot assignments and resets the behavior.
+		// Calls assign() with an empty set.
+		void unassign();
 		
 		// Returns true if any robots are assigned to this behavior
 		bool assigned() const
@@ -41,9 +40,6 @@ namespace Gameplay
 		{
 			return _robots;
 		}
-
-		// Get the minimum number of robots
-		size_t getMinRobots() const { return _minRobots; }
 
 		// Simple way to get the robot for one-robot behaviors
 		Robot *robot() const
@@ -77,18 +73,9 @@ namespace Gameplay
 		// The behavior may continue to be used after run() returns false.
 		virtual bool run() = 0;
 
-		/**
-		 * Called when the behavior ends so that it is aware that it has been switched out
-		 * By default, this does nothing, but should be added to reset FSMs inside behaviors
-		 */
-		virtual void end() {}
-
 	protected:
 		GameplayModule *_gameplay;
 		std::set<Robot *> _robots;
-
-		/// Minimum number of robots to take - by default zero
-		size_t _minRobots;
 
 		// Finds the best (lowest-scoring) robot in <available>, removes it from <available>, adds it to _robots, and returns it.
 		// Returns 0 if <available> is empty.

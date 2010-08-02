@@ -12,11 +12,6 @@ Gameplay::Plays::DemoKicks::DemoKicks(GameplayModule *gameplay):
 {
 }
 
-bool Gameplay::Plays::DemoKicks::applicable()
-{
-	return true;
-}
-
 bool Gameplay::Plays::DemoKicks::assign(set<Robot *> &available)
 {
 	_robots = available;

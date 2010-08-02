@@ -87,7 +87,11 @@ class MainWindow : public QMainWindow
 		
 		// Debug menu commands
 		void on_actionRestartUpdateTimer_triggered();
+		
+		// Gameplay menu
+		void on_menu_Gameplay_aboutToShow();
 		void on_actionSeed_triggered();
+		void on_actionUnforce_triggered();
 		
 		// Log controls
 		void on_playbackRate_sliderPressed();
