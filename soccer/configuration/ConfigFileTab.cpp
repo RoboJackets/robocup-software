@@ -1,5 +1,5 @@
 #include <configuration/ConfigFileTab.hpp>
-#include <ConfigFileTab.moc>
+// #include <ConfigFileTab.moc>
 
 #include <boost/foreach.hpp>
 

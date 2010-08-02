@@ -1,5 +1,5 @@
 #include "ProtobufTree.hpp"
-#include <ProtobufTree.moc>
+// #include <ProtobufTree.moc>
 
 #include <QMenu>
 #include <QContextMenuEvent>

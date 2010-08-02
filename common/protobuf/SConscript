@@ -1,0 +1,24 @@
+from os.path import *
+
+Import('*')
+
+def pb_emitter(target, source, env):
+	target = []
+	for s in source:
+		base = splitext(basename(s.path))[0]
+		target.append(s.File(base + '.pb.h'))
+		target.append(s.File(base + '.pb.cc'))
+	return target, source
+
+b = Builder(action='protoc -I${SOURCE.dir} --cpp_out=${TARGET.dir} $SOURCES', emitter=pb_emitter)
+env.Append(BUILDERS = {'Protoc': b})
+
+# FIXME - Make a scanner to figure this out
+env.Depends('LogFrame.proto', 'Point.proto')
+env.Depends('LogFrame.proto', 'RadioTx.proto')
+env.Depends('LogFrame.proto', 'RadioRx.proto')
+env.Depends('LogFrame.proto', 'messages_robocup_ssl_wrapper.proto')
+env.Depends('LogFrame.proto', 'messages_robocup_ssl_detection.proto')
+env.Depends('LogFrame.proto', 'messages_robocup_ssl_geometry.proto')
+
+env.Protoc(Glob('*.proto'))

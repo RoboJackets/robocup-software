@@ -1,0 +1,136 @@
+Import('*')
+
+srcs = [
+	'main.cpp',
+	'Processor.cpp',
+	'Logger.cpp',
+	'MainWindow.cpp',
+	'ProtobufTree.cpp',
+	'Joystick.cpp',
+	'RefereeModule.cpp',
+	'PlayConfigTab.cpp',
+	'FieldView.cpp',
+	'SimFieldView.cpp',
+
+	# config file tab components',
+	'configuration/ConfigFileTab.cpp',
+	'configuration/ConfigFileModel.cpp',
+	'configuration/ConfigFileItem.cpp',
+
+	'framework/ConfigFile.cpp',
+	'framework/Obstacle.cpp',
+	'framework/Path.cpp',
+	'framework/SystemState.cpp',
+
+# Sources for gameplay module',
+
+	# Core gameplay components',
+	'gameplay/GameplayModule.cpp',
+	'gameplay/Play.cpp',
+	'gameplay/Behavior.cpp',
+	'gameplay/Window.cpp',
+	'gameplay/Robot.cpp',
+	'gameplay/PreventDoubleTouch.cpp',
+
+	# Optimization components - disabled for now',
+	#gameplay/optimizer/PassOptimizer.cpp',
+	#gameplay/optimizer/PassConfig.cpp',
+	#gameplay/optimizer/PassState.cpp',
+	#gameplay/optimizer/AnalyticPassPlanner.cpp',
+	#gameplay/optimizer/passOptimization.cpp',
+	#gameplay/optimizer/DrivingFactors.cpp',
+	#gameplay/optimizer/PassingFactors.cpp',
+	#gameplay/optimizer/ShootingFactors.cpp',
+
+	# Main Plays',
+	'gameplay/plays/OurKickoff.cpp',
+	'gameplay/plays/TheirKickoff.cpp',
+	'gameplay/plays/OurFreekick.cpp',
+	'gameplay/plays/TheirFreekick.cpp',
+	'gameplay/plays/KickPenalty.cpp',
+	'gameplay/plays/DefendPenalty.cpp',
+	'gameplay/plays/Stopped.cpp',
+	'gameplay/plays/Offense.cpp',
+	'gameplay/plays/ClearBall.cpp',
+	'gameplay/plays/Defense.cpp',
+	'gameplay/plays/DefendGoal.cpp',
+	'gameplay/plays/OptimizedOffense.cpp',
+	#gameplay/plays/AggressiveZoneOffense.cpp',
+
+    # Core behaviors',
+	'gameplay/behaviors/Move.cpp',
+	'gameplay/behaviors/Kickoff.cpp',
+	'gameplay/behaviors/Penalty.cpp',
+	'gameplay/behaviors/Idle.cpp',
+	'gameplay/behaviors/Kick.cpp',
+	'gameplay/behaviors/OneTouchKick.cpp',
+	'gameplay/behaviors/Intercept.cpp',
+	'gameplay/behaviors/Mark.cpp',
+	'gameplay/behaviors/GoalDefender.cpp',
+	'gameplay/behaviors/ZoneOffense.cpp',
+
+	# Positions',
+	'gameplay/behaviors/positions/Goalie.cpp',
+	'gameplay/behaviors/positions/Fullback.cpp',
+	'gameplay/behaviors/positions/Forward.cpp',
+
+	# demo plays/behaviors',
+	'gameplay/plays/demo_plays/DemoBasicPassing.cpp',
+	'gameplay/plays/demo_plays/DemoBasicOneTouchPassing.cpp',
+	'gameplay/plays/demo_plays/DemoBasicAttack.cpp',
+	'gameplay/plays/demo_plays/DemoBasicOneTouchAttack.cpp',
+	#gameplay/plays/demo_plays/DemoBasicChipAttack.cpp #disabled until 2010 robots ready',
+	#gameplay/plays/demo_plays/DemoBasicOneTouchChipAttack.cpp',
+	#gameplay/plays/demo_plays/DemoKicks.cpp',
+
+	# files that use the optimizer - disabled until new gtsam is in place',
+	#gameplay/behaviors/OptimizedPassing.cpp',
+	#gameplay/plays/demo_plays/DemoPassConfigOptimize.cpp',
+    #gameplay/plays/demo_plays/DemoPassPlay.cpp',
+	#gameplay/plays/demo_plays/DemoOptimizedPassPlay.cpp',
+
+	# files for pass experiments',
+	#gameplay/plays/demo_plays/DemoPassExperiment1.cpp',
+
+# 	gameplay/behaviors/test/KickerCalibration.cpp',
+# 	gameplay/behaviors/test/MotionLeader.cpp',
+
+# Sources for modeling module',
+	'modeling/WorldModel.cpp',
+	'modeling/BallModel.cpp',
+	'modeling/RobotModel.cpp',
+	'modeling/BLASWrap/blaswrap.cpp',
+	'modeling/difference_kalman.cpp',
+	'modeling/Rbpf.cpp',
+	'modeling/RbpfModel.cpp',
+	'modeling/RbpfModelGraph.cpp',
+	'modeling/RbpfState.cpp',
+	'modeling/InvertMatrix.hpp',
+	'modeling/RbpfModelRolling.cpp',
+	'modeling/RbpfModelKicked.cpp',
+
+# Sources for motion module',
+	'motion/MotionModule.cpp',
+	'motion/Robot.cpp',
+	'motion/Pid.cpp',
+	'motion/Dynamics.cpp',
+	'motion/planning/rrt.cpp',
+	'motion/planning/Tree.cpp',
+
+# Sources for stateID module',
+	'stateID/StateIDModule.cpp'
+]
+
+rcs = env.Qrc4('ui/main_icons.qrc')
+
+uics = env.Uic4([
+	'ui/MainWindow.ui',
+	'ui/PlayConfigTab.ui',
+	'ui/ConfigFileTab.ui'
+])
+
+e = env.Clone()
+e.Append(CPPPATH=['#/soccer', Dir('ui')])
+e.Append(LIBS=['blas', 'lapack'])
+
+e.Program('soccer', srcs)

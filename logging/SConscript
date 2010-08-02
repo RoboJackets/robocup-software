@@ -1,0 +1,12 @@
+Import('*')
+
+p = env.Program('convert_tcpdump',
+	['convert_tcpdump.cpp'],
+	LIBS=['pcap', 'protobuf', 'pthread', 'common'])
+
+env.Install(exec_dir, p)
+
+p = env.Program('simple_logger',
+	['simple_logger.cpp'])
+
+env.Install(exec_dir, p)

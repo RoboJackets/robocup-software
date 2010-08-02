@@ -2,7 +2,7 @@
 
 #include <configuration/ConfigFileItem.hpp>
 #include <configuration/ConfigFileModel.hpp>
-#include <ConfigFileModel.moc>
+// #include <ConfigFileModel.moc>
 
 #include <iostream>
 #include <boost/foreach.hpp>
