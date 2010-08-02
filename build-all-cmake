@@ -1,0 +1,11 @@
+#!/bin/sh -e
+git clean -dxf soccer/bin SoccSim/bin radio/bin
+cd radio/bin
+cmake ..
+make
+cd ../../soccer/bin
+cmake ..
+make
+cd ../../SoccSim/bin
+cmake ..
+make
