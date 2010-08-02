@@ -1,18 +1,20 @@
 Import('*')
 
-env.Append(PHYSX_SDK='/usr/include/PhysX/v2.8.1/SDKs')
-env.Append(CPPPATH=[
+e = env.Clone()
+
+e.Append(PHYSX_SDK='/usr/include/PhysX/v2.8.1/SDKs')
+e.Append(CPPPATH=[
 	'$PHYSX_SDK/Physics/include',
 	'$PHYSX_SDK/Foundation/include',
 	'$PHYSX_SDK/PhysXLoader/include',
 	'$PHYSX_SDK/Cooking/include'])
 
-env.Append(LIBPATH='/usr/lib/PhysX/v2.8.1')
-env.MergeFlags('-DNX32 -DLINUX -DNX_DISABLE_FLUIDS')
+e.Append(LIBPATH='/usr/lib/PhysX/v2.8.1')
+e.MergeFlags('-DNX32 -DLINUX -DNX_DISABLE_FLUIDS')
 
-env.Append(LIBS=['NxCooking', 'PhysXLoader'])
+e.Append(LIBS=['NxCooking', 'PhysXLoader'])
 
-p = env.Program('soccsim', [
+p = e.Program('soccsim', [
 	'main.cpp',
 	'Viewer.cpp',
 	'Config.cpp',
@@ -23,4 +25,4 @@ p = env.Program('soccsim', [
 	'Physics/Robot.cpp',
 	'Physics/MemoryStream.cpp'])
 
-env.Install(exec_dir, p)
+e.Install(exec_dir, p)

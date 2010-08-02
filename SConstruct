@@ -38,3 +38,6 @@ SConscript('common/SConscript', variant_dir='build/common', duplicate=0)
 
 for dir in ['logging', 'radio', 'soccer']:
 	SConscript('%s/SConscript' % dir, variant_dir='build/%s' % dir, duplicate=0)
+
+# Build sslrefbox with its original makefile (no dependency checking)
+env.Command('sslrefbox/sslrefbox', 'sslrefbox/Makefile', 'make -C sslrefbox')
