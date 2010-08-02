@@ -16,7 +16,7 @@ Gameplay::Plays::OurKickoff::OurKickoff(GameplayModule *gameplay):
 {
 }
 
-bool Gameplay::Plays::OurKickoff::applicable()
+bool Gameplay::Plays::OurKickoff::applicable(const std::set<Robot *> &robots)
 {
 	return (gameState().setupRestart() && gameState().ourKickoff()) || _pdt.keepRunning();
 }
@@ -44,7 +44,7 @@ bool Gameplay::Plays::OurKickoff::assign(set<Robot *> &available)
 	    _kicker.kick.setTarget();
 	}
 
-	return _robots.size() >= _minRobots;
+	return true;
 }
 
 bool Gameplay::Plays::OurKickoff::run()

@@ -17,6 +17,7 @@ SimFieldView::SimFieldView(QWidget* parent): FieldView(parent)
 {
 	_dragMode = DRAG_NONE;
 	_dragRobot = -1;
+	_dragRobotBlue = false;
 }
 
 void SimFieldView::mouseDoubleClickEvent(QMouseEvent* me)

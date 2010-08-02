@@ -13,7 +13,7 @@
 using namespace std;
 
 Gameplay::Behaviors::Fullback::Fullback(GameplayModule *gameplay, Side side):
-	Behavior(gameplay, 1),
+	Behavior(gameplay),
 	_side(side)
 {
 }
@@ -33,7 +33,7 @@ bool Gameplay::Behaviors::Fullback::assign(set<Robot *> &available)
 	_winEval = boost::make_shared<Gameplay::WindowEvaluator>(Behavior::gameplay()->state());
 	_winEval->debug = false;
 
-	return _robots.size() >= _minRobots;
+	return true;
 }
 
 bool Gameplay::Behaviors::Fullback::run()

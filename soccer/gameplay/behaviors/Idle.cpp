@@ -5,7 +5,7 @@
 using namespace std;
 
 Gameplay::Behaviors::Idle::Idle(GameplayModule *gameplay) :
-	Behavior(gameplay, 1)
+	Behavior(gameplay)
 {
 }
 

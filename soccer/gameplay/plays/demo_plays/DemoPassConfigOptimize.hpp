@@ -23,9 +23,6 @@ namespace Gameplay
 			public:
 				DemoPassConfigOptimize(GameplayModule *gameplay);
 
-				/** Always applicable if we are playing */
-				virtual bool applicable();
-
 				/** Called every frame */
 				virtual bool run();
 

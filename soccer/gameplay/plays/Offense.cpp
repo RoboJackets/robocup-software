@@ -6,7 +6,7 @@ using namespace Geometry2d;
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::Offense, "Playing")
 
 Gameplay::Plays::Offense::Offense(GameplayModule *gameplay):
-	Play(gameplay, 1),
+	Play(gameplay),
 	_fullback1(gameplay),
 	_fullback2(gameplay),
 	_kicker1(gameplay),
@@ -14,7 +14,7 @@ Gameplay::Plays::Offense::Offense(GameplayModule *gameplay):
 {
 }
 
-bool Gameplay::Plays::Offense::applicable()
+bool Gameplay::Plays::Offense::applicable(const std::set<Robot *> &robots)
 {
 	bool refApplicable =_gameplay->state()->gameState.playing();
 // 	bool gameplayApplicable = _gameplay->state()->stateID.posession == SystemState::OFFENSE ||
@@ -54,7 +54,7 @@ bool Gameplay::Plays::Offense::assign(set<Robot *> &available)
 		_usingKicker1 = true;
 	}
 
-	return _robots.size() >= _minRobots;
+	return true;
 }
 
 bool Gameplay::Plays::Offense::run()

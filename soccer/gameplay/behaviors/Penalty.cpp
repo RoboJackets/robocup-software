@@ -16,7 +16,8 @@ bool Gameplay::Behaviors::Penalty::assign(set<Robot *> &available)
 	    return false;
 	}
 	_kick.assignOne(robot());
-	return _robots.size() >= _minRobots;
+
+	return true;
 }
 
 bool Gameplay::Behaviors::Penalty::run()

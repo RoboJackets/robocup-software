@@ -20,11 +20,6 @@ public:
 	DemoBasicAttack(GameplayModule *gameplay);
 
 	/**
-	 * Applicable any time that the game is running
-	 */
-	virtual bool applicable();
-
-	/**
 	 * Takes the first robot as a kicker, ignores the rest
 	 */
 	virtual bool assign(std::set<Robot *> &available);

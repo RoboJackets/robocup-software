@@ -6,7 +6,7 @@ using namespace std;
 REGISTER_PLAY(Gameplay::Plays::ClearBall)
 
 Gameplay::Plays::ClearBall::ClearBall(GameplayModule *gameplay):
-	Play(gameplay, 4),
+	Play(gameplay),
 	_kicker(gameplay),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
 	_kicker1(gameplay),
@@ -19,12 +19,12 @@ Gameplay::Plays::ClearBall::ClearBall(GameplayModule *gameplay):
 	_kicker.aimType(Behaviors::Kick::ONETOUCH);
 }
 
-bool Gameplay::Plays::ClearBall::applicable()
+bool Gameplay::Plays::ClearBall::applicable(const std::set<Robot *> &robots)
 {
 	bool refApplicable =_gameplay->state()->gameState.playing();
 	bool gameplayApplicable = true && _gameplay->state()->stateID.posession == SystemState::DEFENSE;
 
-	return refApplicable && gameplayApplicable;
+	return refApplicable && gameplayApplicable && robots.size() >= 4;
 }
 
 bool Gameplay::Plays::ClearBall::assign(set<Robot *> &available)
@@ -60,7 +60,7 @@ bool Gameplay::Plays::ClearBall::assign(set<Robot *> &available)
 	_robots.insert(_kicker1.robot());
 	_robots.insert(_kicker2.robot());
 
-	return _robots.size() >= _minRobots;
+	return true;
 }
 
 bool Gameplay::Plays::ClearBall::run()

@@ -17,7 +17,7 @@ Gameplay::Plays::ExamplePlay::ExamplePlay(GameplayModule *gameplay):
 {
 }
 
-bool Gameplay::Plays::ExamplePlay::applicable()
+bool Gameplay::Plays::ExamplePlay::applicable(const std::set<Robot *> &robots)
 {
 	/** Replace this with code to determine whether this play is applicable now */
 	return true;

@@ -15,7 +15,7 @@ using namespace Geometry2d;
 static const float MaxX = Constants::Field::GoalWidth / 2.0f;
 
 Gameplay::Behaviors::Goalie::Goalie(GameplayModule *gameplay):
-	Behavior(gameplay, 1),
+	Behavior(gameplay),
 	_kick(gameplay)
 {
 	_win = 0;
@@ -47,7 +47,7 @@ bool Gameplay::Behaviors::Goalie::assign(set<Robot *> &available)
 	
 	_index = 0;
 
-	return _robots.size() >= _minRobots;
+	return true;
 }
 
 float Gameplay::Behaviors::Goalie::score(Robot *r)

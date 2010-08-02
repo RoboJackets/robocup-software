@@ -5,7 +5,7 @@ using namespace std;
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::Defense, "Playing")
 
 Gameplay::Plays::Defense::Defense(GameplayModule *gameplay):
-	Play(gameplay, 1),
+	Play(gameplay),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
 	_fullback2(gameplay, Behaviors::Fullback::Right),
 	_kicker1(gameplay),
@@ -15,7 +15,7 @@ Gameplay::Plays::Defense::Defense(GameplayModule *gameplay):
 	_fullback2.otherFullbacks.insert(&_fullback1);
 }
 
-bool Gameplay::Plays::Defense::applicable()
+bool Gameplay::Plays::Defense::applicable(const std::set<Robot *> &robots)
 {
 	bool refApplicable =_gameplay->state()->gameState.playing();
 	bool gameplayApplicable = _gameplay->state()->stateID.posession == SystemState::DEFENSE;
@@ -32,7 +32,7 @@ bool Gameplay::Plays::Defense::assign(set<Robot *> &available)
 	_kicker1.assign(available);
 	_kicker2.assign(available);
 
-	return _robots.size() >= _minRobots;
+	return true;
 }
 
 bool Gameplay::Plays::Defense::run()

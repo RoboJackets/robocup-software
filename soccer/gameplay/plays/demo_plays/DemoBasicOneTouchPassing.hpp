@@ -16,8 +16,6 @@ namespace Gameplay
 			public:
 				DemoBasicOneTouchPassing(GameplayModule *gameplay);
 
-				virtual bool applicable();
-
 				/** Passing test needs two robots to work */
 				virtual bool assign(std::set<Robot *> &available);
 

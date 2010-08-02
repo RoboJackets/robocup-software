@@ -177,7 +177,7 @@ void PlayConfigTab::frameUpdate()
 	BOOST_FOREACH(QTreeWidgetItem *item, _playNameMap)
 	{
 		Play *play = play_for_item(item);
-		item->setIcon(1, play->applicable() ? _iconRun : QIcon());
+// 		item->setIcon(1, play->applicable() ? _iconRun : QIcon());
 	}
 }
 
@@ -203,18 +203,30 @@ void PlayConfigTab::on_plays_customContextMenuRequested(const QPoint& pos)
 	
 	QMenu menu;
 	QAction *none = menu.addAction("None");
-	QAction *single = menu.addAction("Only this");
+	QAction *force = 0, *single = 0;
 	QAction *cat_on = 0, *cat_off = 0;
-	if (item && item->childCount())
+	if (item)
 	{
-		cat_on = menu.addAction("Select category");
-		cat_off = menu.addAction("Deselect category");
+		force = menu.addAction("Force");
+		single = menu.addAction("Only this");
+		if (item->childCount())
+		{
+			cat_on = menu.addAction("Select category");
+			cat_off = menu.addAction("Deselect category");
+		}
 	}
 	
 	QAction *act = menu.exec(ui.plays->mapToGlobal(pos));
 	if (act == none)
 	{
 		selectNone();
+	} else if (act == force)
+	{
+		Play *play = play_for_item(item);
+		if (play)
+		{
+			_gameplay->forcePlay(play);
+		}
 	} else if (act == single)
 	{
 		selectNone();

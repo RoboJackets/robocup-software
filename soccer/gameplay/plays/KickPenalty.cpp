@@ -5,7 +5,7 @@ using namespace std;
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::KickPenalty, "Restarts")
 
 Gameplay::Plays::KickPenalty::KickPenalty(GameplayModule *gameplay):
-	Play(gameplay, 1),
+	Play(gameplay),
 	_kicker(gameplay),
 	_idle1(gameplay),
 	_idle2(gameplay),
@@ -13,7 +13,7 @@ Gameplay::Plays::KickPenalty::KickPenalty(GameplayModule *gameplay):
 {
 }
 
-bool Gameplay::Plays::KickPenalty::applicable()
+bool Gameplay::Plays::KickPenalty::applicable(const std::set<Robot *> &robots)
 {
 	return gameState().setupRestart() && gameState().ourPenalty();
 }
@@ -29,7 +29,7 @@ bool Gameplay::Plays::KickPenalty::assign(set<Robot *> &available)
 	_idle2.assign(available);
 	_idle3.assign(available);
 
-	return _robots.size() >= _minRobots;
+	return true;
 }
 
 bool Gameplay::Plays::KickPenalty::run()

@@ -1563,12 +1563,19 @@
      <string>&amp;Debug</string>
     </property>
     <addaction name="actionRestartUpdateTimer"/>
+   </widget>
+   <widget class="QMenu" name="menu_Gameplay">
+    <property name="title">
+     <string>&amp;Gameplay</string>
+    </property>
     <addaction name="actionSeed"/>
+    <addaction name="actionUnforce"/>
    </widget>
    <addaction name="menu_View"/>
    <addaction name="menu_Field"/>
    <addaction name="menu_Simulator"/>
    <addaction name="menu_Debug"/>
+   <addaction name="menu_Gameplay"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action0">
@@ -1691,6 +1698,11 @@
   <action name="actionSeed">
    <property name="text">
     <string>Random &amp;seed...</string>
+   </property>
+  </action>
+  <action name="actionUnforce">
+   <property name="text">
+    <string>Stop &amp;Forcing Play</string>
    </property>
   </action>
  </widget>

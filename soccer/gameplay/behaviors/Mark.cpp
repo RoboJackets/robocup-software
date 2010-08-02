@@ -8,7 +8,7 @@ using namespace std;
 using namespace Geometry2d;
 
 Gameplay::Behaviors::Mark::Mark(GameplayModule *gameplay):
-Behavior(gameplay, 1),
+Behavior(gameplay),
 _ratio(0.9)
 {
 }

@@ -9,7 +9,7 @@ using namespace std;
 using namespace Geometry2d;
 
 Gameplay::Behaviors::Intercept::Intercept(GameplayModule *gameplay, float dist) :
-	Behavior(gameplay, 1),
+	Behavior(gameplay),
 	_driveSide(UNSET),
 	_state(ApproachFar),
 	_farDist(dist),
@@ -23,7 +23,7 @@ bool Gameplay::Behaviors::Intercept::assign(std::set<Robot *> &available) {
 	{
 	    return false;
 	}
-	return _robots.size() >= _minRobots;
+	return true;
 }
 
 float Gameplay::Behaviors::Intercept::score(Robot * robot) {

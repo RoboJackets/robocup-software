@@ -16,15 +16,15 @@ Gameplay::PlayFactoryBase::PlayFactoryBase(QString c):
 
 ////////
 
-Gameplay::Play::Play(GameplayModule *gameplay, size_t minRobots):
-	Behavior(gameplay, minRobots)
+Gameplay::Play::Play(GameplayModule *gameplay):
+	Behavior(gameplay)
 {
 	enabled = false;
 }
 
-bool Gameplay::Play::applicable()
+bool Gameplay::Play::applicable(const std::set<Robot *> &robots)
 {
-	return true;
+	return _gameplay->state()->gameState.playing();
 }
 
 float Gameplay::Play::score()

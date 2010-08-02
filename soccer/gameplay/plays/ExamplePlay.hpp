@@ -18,7 +18,7 @@ namespace Gameplay
 				ExamplePlay(GameplayModule *gameplay);
 
 				/** returns true if the play is currently applicable given gamestate */
-				virtual bool applicable();
+				virtual bool applicable(const std::set<Robot *> &robots);
 
 				/** Assigns robots to the play given a set of robots */
 				virtual bool assign(std::set<Robot *> &available);

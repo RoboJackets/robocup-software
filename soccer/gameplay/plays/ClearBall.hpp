@@ -18,7 +18,7 @@ public:
 	/**
 	 * Applicable any time that the game is running
 	 */
-	virtual bool applicable();
+	virtual bool applicable(const std::set<Robot *> &robots);
 
 	/**
 	 * Takes the first robot as a kicker, ignores the rest

@@ -65,6 +65,13 @@ namespace Gameplay
 			void enablePlay(Play *play);
 			void disablePlay(Play *play);
 			bool playEnabled(Play *play);
+			void forcePlay(Play *play);
+			
+			// Returns true if the current play is forced
+			bool forcePlay()
+			{
+				return _forcePlay;
+			}
 			
 			// Returns the name of the current play
 			QString playName()
@@ -98,6 +105,9 @@ namespace Gameplay
 			
 			// The current play
 			Play *_currentPlay;
+			
+			// True if _currentPlay is forced by the GUI and cannot be changed
+			Play *_forcePlay;
 			
 			// True if the current play is finished and a new one should be selected during the next frame
 			bool _playDone;

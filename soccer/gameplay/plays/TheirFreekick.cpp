@@ -9,7 +9,7 @@ using namespace Geometry2d;
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::TheirFreekick, "Restarts")
 
 Gameplay::Plays::TheirFreekick::TheirFreekick(GameplayModule *gameplay):
-	Play(gameplay, 1),
+	Play(gameplay),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
 	_fullback2(gameplay, Behaviors::Fullback::Right),
 	_marking1(gameplay),
@@ -24,7 +24,7 @@ Gameplay::Plays::TheirFreekick::TheirFreekick(GameplayModule *gameplay):
 	_marking2.ratio(r);
 }
 
-bool Gameplay::Plays::TheirFreekick::applicable()
+bool Gameplay::Plays::TheirFreekick::applicable(const std::set<Robot *> &robots)
 {
 	return gameState().setupRestart() && gameState().theirFreeKick();
 }
@@ -37,7 +37,7 @@ bool Gameplay::Plays::TheirFreekick::assign(set<Robot *> &available)
 	_marking1.assign(available);
 	_marking2.assign(available);
 
-	return _robots.size() >= _minRobots;
+	return true;
 }
 
 bool Gameplay::Plays::TheirFreekick::run()

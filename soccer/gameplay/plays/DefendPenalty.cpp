@@ -5,7 +5,7 @@ using namespace std;
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::DefendPenalty, "Restarts")
 
 Gameplay::Plays::DefendPenalty::DefendPenalty(GameplayModule *gameplay):
-	Play(gameplay, 1),
+	Play(gameplay),
 	_idle1(gameplay),
 	_idle2(gameplay),
 	_idle3(gameplay),
@@ -13,7 +13,7 @@ Gameplay::Plays::DefendPenalty::DefendPenalty(GameplayModule *gameplay):
 {
 }
 
-bool Gameplay::Plays::DefendPenalty::applicable()
+bool Gameplay::Plays::DefendPenalty::applicable(const std::set<Robot *> &robots)
 {
 	return gameState().setupRestart() && gameState().theirPenalty();
 }
@@ -32,7 +32,7 @@ bool Gameplay::Plays::DefendPenalty::assign(set<Robot *> &available)
 	_idle3.assign(available);
 	_idle4.assign(available);
 
-	return _robots.size() >= _minRobots;
+	return true;
 }
 
 bool Gameplay::Plays::DefendPenalty::run()

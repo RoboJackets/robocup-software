@@ -5,7 +5,7 @@ using namespace std;
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::Stopped, "Restarts")
 
 Gameplay::Plays::Stopped::Stopped(GameplayModule *gameplay):
-	Play(gameplay, 0),
+	Play(gameplay),
 	_idle(gameplay),
 	_left(gameplay, Behaviors::Fullback::Left),
 	_right(gameplay, Behaviors::Fullback::Right)
@@ -14,7 +14,7 @@ Gameplay::Plays::Stopped::Stopped(GameplayModule *gameplay):
 	_right.otherFullbacks.insert(&_left);
 }
 
-bool Gameplay::Plays::Stopped::applicable()
+bool Gameplay::Plays::Stopped::applicable(const std::set<Robot *> &robots)
 {
 	return _gameplay->state()->gameState.stopped();
 }

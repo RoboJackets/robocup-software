@@ -18,7 +18,7 @@ using namespace Geometry2d;
 #endif
 
 Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay) :
-	Behavior(gameplay, 1),
+	Behavior(gameplay),
 	_aimType(PIVOT),
 	_kickType(KICK),
 	_targetType(GOAL),
@@ -85,7 +85,7 @@ bool Gameplay::Behaviors::Kick::assign(set<Robot *> &available)
 	_intercept->assignOne(robot());
 	_lastMargin = 0;
 
-	return _robots.size() >= _minRobots;
+	return true;
 }
 
 bool Gameplay::Behaviors::Kick::run()

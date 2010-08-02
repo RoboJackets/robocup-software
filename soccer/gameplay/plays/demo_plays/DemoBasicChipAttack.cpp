@@ -11,12 +11,6 @@ Gameplay::Plays::DemoBasicChipAttack::DemoBasicChipAttack(GameplayModule *gamepl
 {
 }
 
-bool Gameplay::Plays::DemoBasicChipAttack::applicable()
-{
-	bool refApplicable =_gameplay->state()->gameState.playing();
-	return refApplicable;
-}
-
 bool Gameplay::Plays::DemoBasicChipAttack::assign(set<Robot *> &available)
 {
 	// remove non-visible robots
