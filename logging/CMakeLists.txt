@@ -14,7 +14,7 @@ add_executable(simple_logger
 target_link_libraries(simple_logger ${QT_LIBRARIES} packets)
 
 # tcpdump log converter
-add_executable(convert-tcpdump
-	convert-tcpdump.cpp
+add_executable(convert_tcpdump
+	convert_tcpdump.cpp
 )
-target_link_libraries(convert-tcpdump packets pthread pcap)
+target_link_libraries(convert_tcpdump packets pthread pcap)
