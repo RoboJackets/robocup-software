@@ -113,19 +113,14 @@ Geometry2d::Point Modeling::BallModel::predictPosAtTime(float dtime)
 
 void Modeling::BallModel::observation(uint64_t time, const Geometry2d::Point &pos, observation_mode obs_type)
 {
-	if(fabs(pos.x) < 0.1 && fabs(pos.y) < 0.1) {
-		cout << "pos[x.y] = [" << pos.x << ", " << pos.y << "]" << std::endl;
-	}
 	if(time < lastUpdatedTime){
 		// due to an issue with early measurements coming in late, this will
 		// discard any observations that happened before the previous update
 		return;
 	}
-	// ignore obserations at exactly (0,0)
-	if(!(pos.x==0.0f && pos.y==0.0f)){
-		observation_type obs = {time, pos, obs_type};
-		_observations.push_back(obs);
-	}
+	
+	observation_type obs = {time, pos, obs_type};
+	_observations.push_back(obs);
 
 	// set lastObservedTime to the last observation's time
 	if (time >= lastObservedTime)
@@ -224,7 +219,7 @@ void Modeling::BallModel::abgUpdate(float dtime) {
 
 bool Modeling::BallModel::valid(uint64_t time) {
 	//cout << "ball model is " << (!_observations.empty() || ((time - lastUpdatedTime) < MaxCoastTime) ? "" : "not") << " valid" << std::endl;
-	return !_observations.empty() || ((time - lastUpdatedTime) < MaxCoastTime);
+	return !_observations.empty() && ((time - lastUpdatedTime) < MaxCoastTime);
 }
 
 void Modeling::BallModel::update(uint64_t time)

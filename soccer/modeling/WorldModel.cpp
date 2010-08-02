@@ -33,7 +33,7 @@ WorldModel::~WorldModel()
 {
 }
 
-void WorldModel::run(bool blueTeam, const std::vector<SSL_DetectionFrame> &teamVision)
+void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *> &rawVision)
 {
 	// internal verbosity flag for debugging
 	bool verbose = false;
@@ -43,24 +43,25 @@ void WorldModel::run(bool blueTeam, const std::vector<SSL_DetectionFrame> &teamV
 	// Add vision packets
 	uint64_t curTime = 0;
 	if (verbose) cout << "Adding vision packets" << endl;
-	BOOST_FOREACH(const SSL_DetectionFrame& vision, teamVision)
+	BOOST_FOREACH(const SSL_DetectionFrame* vision, rawVision)
 	{
-		uint64_t timestamp = vision.t_capture() * 1000000.0;
+		//FIXME - This time is not usable here.  It is in the vision computer's clock.
+		uint64_t timestamp = vision->t_capture() * 1000000.0;
 		curTime = max(curTime, timestamp);
 		
 		// determine team
 		const RepeatedPtrField<SSL_DetectionRobot> *self, *opp;
 		if (blueTeam)
 		{
-			self = &vision.robots_blue();
-			opp = &vision.robots_yellow();
+			self = &vision->robots_blue();
+			opp = &vision->robots_yellow();
 		} else {
-			self = &vision.robots_yellow();
-			opp = &vision.robots_blue();
+			self = &vision->robots_yellow();
+			opp = &vision->robots_blue();
 		}
 
 		// add ball observation
-		BOOST_FOREACH(const SSL_DetectionBall &ball, vision.balls())
+		BOOST_FOREACH(const SSL_DetectionBall &ball, vision->balls())
 		{
 			Geometry2d::Point pos(ball.x(), ball.y());
 			ballModel.observation(timestamp, pos, BallModel::VISION);
