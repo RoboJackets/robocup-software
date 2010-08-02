@@ -42,7 +42,7 @@ if platform.machine() == 'x86_64':
 
 	# Build a 32-bit version of common for SoccSim
 	Export({'env': env32})
-	SConscript('common/SConscript', variant_dir=common32_dir, duplicate=0)
+	SConscript('common/SConscript', variant_dir='build/common32', duplicate=0)
 else:
 	# This is a 32-bit system, so we only need one version of common
 	env32 = env
@@ -53,6 +53,7 @@ SConscript('common/SConscript', variant_dir='build/common', duplicate=0)
 Export({'env': env32})
 SConscript('SoccSim/SConscript', variant_dir='build/SoccSim', duplicate=0)
 
+Export('env')
 for dir in ['logging', 'radio', 'soccer']:
 	SConscript('%s/SConscript' % dir, variant_dir='build/%s' % dir, duplicate=0)
 
