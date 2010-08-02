@@ -151,7 +151,7 @@ void WorldModel::addRobotObseration(const SSL_DetectionRobot &obs, uint64_t time
 	BOOST_FOREACH(RobotModel::shared& model, players) {
 		if (model && model->shell() == obs_shell) {
 			Geometry2d::Point pos(obs.x() / 1000.0f, obs.y() / 1000.0f);
-			model->observation(timestamp, pos, obs.orientation());
+			model->observation(timestamp, pos, obs.orientation() * RadiansToDegrees);
 			return;
 		}
 	}
@@ -161,7 +161,7 @@ void WorldModel::addRobotObseration(const SSL_DetectionRobot &obs, uint64_t time
 		if (!model) {
 			model = RobotModel::shared(new RobotModel(_config, obs_shell));
 			Geometry2d::Point pos(obs.x() / 1000.0f, obs.y() / 1000.0f);
-			model->observation(timestamp, pos, obs.orientation());
+			model->observation(timestamp, pos, obs.orientation() * RadiansToDegrees);
 			return;
 		}
 	}
