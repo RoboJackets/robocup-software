@@ -63,7 +63,7 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 		// add ball observation
 		BOOST_FOREACH(const SSL_DetectionBall &ball, vision->balls())
 		{
-			Geometry2d::Point pos(ball.x(), ball.y());
+			Geometry2d::Point pos(ball.x() / 1000.0f, ball.y() / 1000.0f);
 			ballModel.observation(timestamp, pos, BallModel::VISION);
 		}
 
@@ -150,7 +150,7 @@ void WorldModel::addRobotObseration(const SSL_DetectionRobot &obs, uint64_t time
 	// try to add to an existing model, and return if we update something
 	BOOST_FOREACH(RobotModel::shared& model, players) {
 		if (model && model->shell() == obs_shell) {
-			Geometry2d::Point pos(obs.x(), obs.y());
+			Geometry2d::Point pos(obs.x() / 1000.0f, obs.y() / 1000.0f);
 			model->observation(timestamp, pos, obs.orientation());
 			return;
 		}
@@ -160,7 +160,7 @@ void WorldModel::addRobotObseration(const SSL_DetectionRobot &obs, uint64_t time
 	BOOST_FOREACH(RobotModel::shared& model, players) {
 		if (!model) {
 			model = RobotModel::shared(new RobotModel(_config, obs_shell));
-			Geometry2d::Point pos(obs.x(), obs.y());
+			Geometry2d::Point pos(obs.x() / 1000.0f, obs.y() / 1000.0f);
 			model->observation(timestamp, pos, obs.orientation());
 			return;
 		}

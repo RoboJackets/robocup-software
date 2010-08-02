@@ -373,21 +373,21 @@ void Processor::run()
 		_modelingModule->run(_blueTeam, rawVision);
 		
 		// Convert modeling output to team space
-		_state.ball.pos = _worldToTeam * (_state.ball.pos / 1000.0f);
-		_state.ball.vel = _worldToTeam.transformDirection(_state.ball.vel / 1000.0f);
-		_state.ball.accel = _worldToTeam.transformDirection(_state.ball.accel / 1000.0f);
+		_state.ball.pos = _worldToTeam * _state.ball.pos;
+		_state.ball.vel = _worldToTeam.transformDirection(_state.ball.vel);
+		_state.ball.accel = _worldToTeam.transformDirection(_state.ball.accel);
 		
 		BOOST_FOREACH(SystemState::Robot &robot, _state.self)
 		{
-			robot.pos = _worldToTeam * (robot.pos / 1000.0f);
-			robot.vel = _worldToTeam.transformDirection(robot.vel / 1000.0f);
+			robot.pos = _worldToTeam * robot.pos;
+			robot.vel = _worldToTeam.transformDirection(robot.vel);
 			robot.angle = Utils::fixAngleDegrees(_teamAngle + robot.angle);
 		}
 		
 		BOOST_FOREACH(SystemState::Robot &robot, _state.opp)
 		{
-			robot.pos = _worldToTeam * (robot.pos / 1000.0f);
-			robot.vel = _worldToTeam.transformDirection(robot.vel / 1000.0f);
+			robot.pos = _worldToTeam * robot.pos;
+			robot.vel = _worldToTeam.transformDirection(robot.vel);
 			robot.angle = Utils::fixAngleDegrees(_teamAngle + robot.angle);
 		}
 		

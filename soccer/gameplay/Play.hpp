@@ -32,6 +32,8 @@ namespace Gameplay
 		// The GUI thread should still use the enable/disable functions in GameplayModule because they are thread-safe.
 		// The GUI thread may read this field because the processing field will never change it.
 		bool enabled;
+		
+		QString category;
 	};
 	
 	// The list of factories has to hold a single (and thus non-templated) type, so we use this base class
@@ -62,7 +64,9 @@ namespace Gameplay
 			
 			virtual Play *create(GameplayModule *gameplay)
 			{
-				return new X(gameplay);
+				Play *play = new X(gameplay);
+				play->category = category;
+				return play;
 			}
 	};
 }
