@@ -428,7 +428,7 @@ def __qrc_path(head, prefix, tail, suffix):
     else:
         return "%s%s%s" % (prefix, tail, suffix)
 def __qrc_emitter(target, source, env):
-    sourceBase, sourceExt = os.path.splitext(SCons.Util.to_String(source[0]))
+    sourceBase, sourceExt = os.path.splitext(SCons.Util.to_String(target[0]))
     sHead = None
     sTail = sourceBase
     if sourceBase:
@@ -534,7 +534,7 @@ __qm_builder = SCons.Builder.Builder(
         suffix = '.qm')
 __qrc_builder = SCons.Builder.Builder(
         action = SCons.Action.CommandGeneratorAction(__qrc_generator, {}),
-        source_scanner = __qrcscanner,
+        #source_scanner = __qrcscanner,
         src_suffix = '$QT4_QRCSUFFIX',
         suffix = '$QT4_QRCCXXSUFFIX',
         prefix = '$QT4_QRCCXXPREFIX',
@@ -801,8 +801,8 @@ def generate(env):
     # *.qrc extension with the Environment)     
     cfile_builder, cxxfile_builder = SCons.Tool.createCFileBuilders(env)
     qrc_act = SCons.Action.CommandGeneratorAction(__qrc_generator, {})
-    cxxfile_builder.add_action('$QT4_QRCSUFFIX', qrc_act)    
-    cxxfile_builder.add_emitter('$QT4_QRCSUFFIX', __qrc_emitter)    
+    cxxfile_builder.add_action('$QT4_QRCSUFFIX', qrc_act)
+    cxxfile_builder.add_emitter('$QT4_QRCSUFFIX', __qrc_emitter)
 
     # We use the emitters of Program / StaticLibrary / SharedLibrary
     # to scan for moc'able files

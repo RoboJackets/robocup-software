@@ -120,7 +120,8 @@ srcs = [
 # Sources for stateID module',
 	'stateID/StateIDModule.cpp',
 	
-	'ui/main_icons.qrc'
+	'ui/main_icons.qrc',
+	'ui/log_icons.qrc'
 ]
 
 uics = env.Uic4([

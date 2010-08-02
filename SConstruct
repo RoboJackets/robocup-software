@@ -22,8 +22,13 @@ env32 = env.Clone()
 # available as 32-bit binaries.
 env32.Append(CPPFLAGS='-m32')
 env32.Append(LINKFLAGS='-m32')
-env32.Append(LIBPATH=[Dir('build/common32'), Dir('SoccSim/lib/32-on-64/lucid_amd64/')])
+env32.Append(LIBPATH=[Dir('build/common32'), Dir('SoccSim/lib/32-on-64/lucid_amd64')])
 env32.Append(CPPPATH=[Dir('#/build/common32')])
+
+# Ubuntu 10.04 32-bit compatibility:
+# Copy the 32-bit libprotobuf to the run directory and add let the dynamic linker find it.
+env32.Append(RPATH=[Literal('\\$$ORIGIN')])
+env32.Install(exec_dir, 'SoccSim/lib/32-on-64/lucid_amd64/libprotobuf.so.5')
 
 Export({'env': env32})
 SConscript('common/SConscript', variant_dir='build/common32', duplicate=0)
