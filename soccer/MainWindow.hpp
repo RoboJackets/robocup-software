@@ -87,7 +87,7 @@ class MainWindow : public QMainWindow
 		
 		// Debug menu commands
 		void on_actionRestartUpdateTimer_triggered();
-		void on_actionNonLiveStyle_triggered();
+		void on_actionSeed_triggered();
 		
 		// Log controls
 		void on_playbackRate_sliderPressed();

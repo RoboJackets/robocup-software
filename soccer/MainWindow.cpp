@@ -515,14 +515,14 @@ void MainWindow::on_actionRestartUpdateTimer_triggered()
 	_updateTimer.start(30);
 }
 
-void MainWindow::on_actionNonLiveStyle_triggered()
+void MainWindow::on_actionSeed_triggered()
 {
-	QString ret = QInputDialog::getText(this, "Non-Live Style", "Stylesheet:", QLineEdit::Normal, NonLiveStyle);
-	if (!ret.isNull())
+	QString text = QInputDialog::getText(this, "Set Random Seed", "Hexadecimal seed:");
+	if (!text.isNull())
 	{
-		NonLiveStyle = ret;
-		live(true);
-		live(false);
+		long seed = strtol(text.toAscii(), 0, 16);
+		printf("seed %016lx\n", seed);
+		srand48(seed);
 	}
 }
 
