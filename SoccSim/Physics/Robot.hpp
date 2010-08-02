@@ -22,7 +22,7 @@ class Robot : public Entity
 		float getAngle() const;
 		
 		virtual void position(float x, float y);
-		void velocity(float x, float y);
+		void velocity(float x, float y, float w);
 		
 		/** set control data */
 		void radioTx(const Packet::RadioTx::Robot *data);

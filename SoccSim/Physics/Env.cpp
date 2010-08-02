@@ -147,7 +147,7 @@ void Env::step()
 			
 			if (rcmd.has_vel())
 			{
-				robot->velocity(rcmd.vel().x(), rcmd.vel().y());
+				robot->velocity(rcmd.vel().x(), rcmd.vel().y(), 0);
 			}
 		}
 	}

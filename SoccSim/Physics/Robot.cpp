@@ -351,12 +351,12 @@ void Robot::position(float x, float y)
     _roller->setGlobalPosition(newPos + NxVec3(Robot::RollerOffset, 0, Robot::RollerHeight));
 }
 
-void Robot::velocity(float x, float y)
+void Robot::velocity(float x, float y, float w)
 {
     _actor->setLinearVelocity(NxVec3(x, y, 0));
     
     // Need to do this because the body may get an unexpected linear velocity from a collision (even with the ground)
-    _actor->setAngularVelocity(NxVec3(0, 0, 0));
+    _actor->setAngularVelocity(NxVec3(0, 0, w));
 }
 
 float Robot::getAngle() const
@@ -398,7 +398,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
 	}
 	
 	for (unsigned int i = 0 ; i < 4 ; ++i)
-	{		
+	{
 		Point wheel(-axles[i].y, axles[i].x);
 		wheel = wheel.normalized();
 		wheel.rotate(Point(), getAngle());
