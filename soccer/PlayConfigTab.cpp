@@ -31,15 +31,6 @@ PlayConfigTab::PlayConfigTab(QWidget *parent):
 	_iconRun = QIcon(":/icons/running.png");
 }
 
-PlayConfigTab::~PlayConfigTab()
-{
-	// It is expected that this widget will be destroyed after the Processor has stopped.
-	BOOST_FOREACH(Play *play, _plays)
-	{
-		delete play;
-	}
-}
-
 void PlayConfigTab::setup(boost::shared_ptr<Gameplay::GameplayModule> gp)
 {
 	_gameplay = gp;
@@ -47,19 +38,19 @@ void PlayConfigTab::setup(boost::shared_ptr<Gameplay::GameplayModule> gp)
 	typedef QMap<QString, QTreeWidgetItem *> CatMap;
 	CatMap categories;
 	
-	BOOST_FOREACH(PlayFactoryBase *factory, *PlayFactoryBase::factories)
+	BOOST_FOREACH(Play *play, _gameplay->plays())
 	{
 		QTreeWidgetItem *parent;
-		if (!factory->category.isNull())
+		if (!play->category.isNull())
 		{
-			CatMap::iterator i = categories.find(factory->category);
+			CatMap::iterator i = categories.find(play->category);
 			if (i == categories.end())
 			{
 				// New category
 				parent = new QTreeWidgetItem();
-				parent->setText(0, factory->category);
+				parent->setText(0, play->category);
 				ui.plays->addTopLevelItem(parent);
-				categories[factory->category] = parent;
+				categories[play->category] = parent;
 			} else {
 				// Existing category
 				parent = i.value();
@@ -68,8 +59,6 @@ void PlayConfigTab::setup(boost::shared_ptr<Gameplay::GameplayModule> gp)
 			parent = ui.plays->invisibleRootItem();
 		}
 		
-		Play *play = factory->create(_gameplay.get());
-		_plays.push_back(play);
 		QTreeWidgetItem *item = new QTreeWidgetItem(parent);
 		item->setData(0, Qt::UserRole, QVariant::fromValue(play));
 		item->setText(0, play->name());

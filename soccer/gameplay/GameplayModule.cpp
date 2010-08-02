@@ -91,6 +91,13 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 		self[i] = new Robot(this, i, true);
 		opp[i] = new Robot(this, i, false);
 	}
+	
+	// Create plays
+	BOOST_FOREACH(PlayFactoryBase *factory, *PlayFactoryBase::factories)
+	{
+		Play *play = factory->create(this);
+		_plays.insert(play);
+	}
 }
 
 Gameplay::GameplayModule::~GameplayModule()
@@ -101,6 +108,11 @@ Gameplay::GameplayModule::~GameplayModule()
 	{
 		delete self[i];
 		delete opp[i];
+	}
+	
+	BOOST_FOREACH(Play *play, _plays)
+	{
+		delete play;
 	}
 }
 

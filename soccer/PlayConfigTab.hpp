@@ -19,7 +19,6 @@ class PlayConfigTab: public QWidget
 	
 	public:
 		PlayConfigTab(QWidget *parent = 0);
-		~PlayConfigTab();
 		
 		// Called after GameplayModule is created to populate the list of available plays.
 		void setup(boost::shared_ptr<Gameplay::GameplayModule> gp);

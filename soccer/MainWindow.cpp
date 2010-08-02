@@ -29,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent):
 	_processor = 0;
 	_autoExternalReferee = true;
 	_doubleFrameNumber = -1;
+	_lastUpdateTime = Utils::timestamp();
 	_history.resize(2 * 60);
 	
 	ui.setupUi(this);
