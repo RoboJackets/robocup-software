@@ -126,6 +126,30 @@ void Env::step()
 				_balls[0]->position(cmd.ball_pos().x(), cmd.ball_pos().y());
 			}
 		}
+		
+		BOOST_FOREACH(const SimCommand::Robot &rcmd, cmd.robots())
+		{
+			const RobotMap &team = rcmd.blue_team() ? _blue : _yellow;
+			RobotMap::const_iterator i = team.find(rcmd.shell());
+			
+			if (i == team.end())
+			{
+				printf("Trying to override non-existent robot %d:%d\n", rcmd.blue_team(), rcmd.shell());
+				continue;
+			}
+			
+			Robot *robot = *i;
+			
+			if (rcmd.has_pos())
+			{
+				robot->position(rcmd.pos().x(), rcmd.pos().y());
+			}
+			
+			if (rcmd.has_vel())
+			{
+				robot->velocity(rcmd.vel().x(), rcmd.vel().y());
+			}
+		}
 	}
 	
 	// Check for RadioTx packets

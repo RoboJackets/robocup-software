@@ -21,7 +21,8 @@ class Robot : public Entity
 		/** @return the world angle */
 		float getAngle() const;
 		
-		virtual void position(float x, float y); 
+		virtual void position(float x, float y);
+		void velocity(float x, float y);
 		
 		/** set control data */
 		void radioTx(const Packet::RadioTx::Robot *data);

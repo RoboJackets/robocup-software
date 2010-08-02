@@ -351,6 +351,14 @@ void Robot::position(float x, float y)
     _roller->setGlobalPosition(newPos + NxVec3(Robot::RollerOffset, 0, Robot::RollerHeight));
 }
 
+void Robot::velocity(float x, float y)
+{
+    _actor->setLinearVelocity(NxVec3(x, y, 0));
+    
+    // Need to do this because the body may get an unexpected linear velocity from a collision (even with the ground)
+    _actor->setAngularVelocity(NxVec3(0, 0, 0));
+}
+
 float Robot::getAngle() const
 {
 	NxVec3 c1 = _actor->getGlobalOrientation().getColumn(0);

@@ -6,6 +6,7 @@
 
 #include <QPainter>
 #include <QMouseEvent>
+#include <boost/foreach.hpp>
 
 using namespace Packet;
 
@@ -15,6 +16,7 @@ static const float ShootScale = 5;
 SimFieldView::SimFieldView(QWidget* parent): FieldView(parent)
 {
 	_dragMode = DRAG_NONE;
+	_dragRobot = -1;
 }
 
 void SimFieldView::mouseDoubleClickEvent(QMouseEvent* me)
@@ -29,13 +31,38 @@ void SimFieldView::mousePressEvent(QMouseEvent* me)
 {
 	Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->posF();
 	
+	const LogFrame &frame = _history->at(0);
 	if (me->button() == Qt::LeftButton)
 	{
-		placeBall(me->posF());
+		_dragRobot = -1;
+		BOOST_FOREACH(const LogFrame::Robot &r, frame.self())
+		{
+			if (pos.nearPoint(r.pos(), Constants::Robot::Radius))
+			{
+				_dragRobot = r.shell();
+				_dragRobotBlue = frame.blue_team();
+				break;
+			}
+		}
+		BOOST_FOREACH(const LogFrame::Robot &r, frame.opp())
+		{
+			if (pos.nearPoint(r.pos(), Constants::Robot::Radius))
+			{
+				_dragRobot = r.shell();
+				_dragRobotBlue = !frame.blue_team();
+				break;
+			}
+		}
+		
+		printf("drag robot %d:%d\n", _dragRobotBlue, _dragRobot);
+		if (_dragRobot < 0)
+		{
+			placeBall(me->posF());
+		}
+		
 		_dragMode = DRAG_PLACE;
 	} else if (me->button() == Qt::RightButton && _history && !_history->empty())
 	{
-		const LogFrame &frame = _history->at(0);
 		if (frame.has_ball() && pos.nearPoint(frame.ball().pos(), Constants::Ball::Radius))
 		{
 			// Drag to shoot the ball
@@ -61,6 +88,36 @@ void SimFieldView::mousePressEvent(QMouseEvent* me)
 	}
 }
 
+void SimFieldView::mouseMoveEvent(QMouseEvent* me)
+{
+	switch (_dragMode)
+	{
+		case DRAG_SHOOT:
+			_dragTo = _worldToTeam * _screenToWorld * me->posF();
+			break;
+		
+		case DRAG_PLACE:
+			if (_dragRobot >= 0)
+			{
+				SimCommand cmd;
+				SimCommand::Robot *r = cmd.add_robots();
+				r->set_shell(_dragRobot);
+				r->set_blue_team(_dragRobotBlue);
+				r->mutable_pos()->CopyFrom(_screenToWorld * me->posF());
+				r->mutable_vel()->set_x(0);
+				r->mutable_vel()->set_y(0);
+				sendSimCommand(cmd);
+			} else {
+				placeBall(me->posF());
+			}
+			break;
+		
+		default:
+			break;
+	}
+	update();
+}
+
 void SimFieldView::mouseReleaseEvent(QMouseEvent* me)
 {
 	if (_dragMode == DRAG_SHOOT)
@@ -73,24 +130,6 @@ void SimFieldView::mouseReleaseEvent(QMouseEvent* me)
 	}
 	
 	_dragMode = DRAG_NONE;
-}
-
-void SimFieldView::mouseMoveEvent(QMouseEvent* me)
-{
-	switch (_dragMode)
-	{
-		case DRAG_SHOOT:
-			_dragTo = _worldToTeam * _screenToWorld * me->posF();
-			break;
-		
-		case DRAG_PLACE:
-			placeBall(me->posF());
-			break;
-		
-		default:
-			break;
-	}
-	update();
 }
 
 void SimFieldView::placeBall(QPointF pos)

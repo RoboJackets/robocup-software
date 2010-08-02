@@ -10,6 +10,4 @@ class Ball: public Entity
 
 		virtual void position(float x, float y);
         void velocity(float x, float y);
-		
-	private:
 };
