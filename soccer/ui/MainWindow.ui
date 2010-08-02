@@ -1563,7 +1563,7 @@
      <string>&amp;Debug</string>
     </property>
     <addaction name="actionRestartUpdateTimer"/>
-    <addaction name="actionNonLiveStyle"/>
+    <addaction name="actionSeed"/>
    </widget>
    <addaction name="menu_View"/>
    <addaction name="menu_Field"/>
@@ -1686,6 +1686,11 @@
   <action name="actionNonLiveStyle">
    <property name="text">
     <string>&amp;Non-live Style...</string>
+   </property>
+  </action>
+  <action name="actionSeed">
+   <property name="text">
+    <string>Random &amp;seed...</string>
    </property>
   </action>
  </widget>

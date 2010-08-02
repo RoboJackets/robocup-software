@@ -21,16 +21,17 @@ using namespace std;
 
 void usage(const char* prog)
 {
-	fprintf(stderr, "usage: %s <-y|-b> [-r <n>] [-ng] [-sim] [-c <config file>] [-p <playbook>] [-pp <play>]\n", prog);
-	fprintf(stderr, "\t-r:   run only on specified radio channel\n");
-	fprintf(stderr, "\t-y:   run as the yellow team\n");
-	fprintf(stderr, "\t-b:   run as the blue team\n");
-	fprintf(stderr, "\t-c:   specify the configuration file\n");
-	fprintf(stderr, "\t-p:   load playbook\n");
-	fprintf(stderr, "\t-pp:  enable named play\n");
-	fprintf(stderr, "\t-ng:  no goalie\n");
-	fprintf(stderr, "\t-sim: use simulator\n");
-	fprintf(stderr, "\t-nolog: don't write log files\n");
+	fprintf(stderr, "usage: %s [options...]\n", prog);
+	fprintf(stderr, "\t-r <n>:     run only on specified radio channel\n");
+	fprintf(stderr, "\t-y:         run as the yellow team\n");
+	fprintf(stderr, "\t-b:         run as the blue team\n");
+	fprintf(stderr, "\t-c <file>:  specify the configuration file\n");
+	fprintf(stderr, "\t-p <file>:  load playbook\n");
+	fprintf(stderr, "\t-s <seed>:  set random seed (hexadecimal)\n");
+	fprintf(stderr, "\t-pp <play>: enable named play\n");
+	fprintf(stderr, "\t-ng:        no goalie\n");
+	fprintf(stderr, "\t-sim:       use simulator\n");
+	fprintf(stderr, "\t-nolog:     don't write log files\n");
 	exit(1);
 }
 
@@ -41,16 +42,13 @@ int main (int argc, char* argv[])
 	int fd = open("/dev/random", O_RDONLY);
 	if (fd >= 0)
 	{
-		if (read(fd, &seed, sizeof(seed)) == sizeof(seed))
+		if (read(fd, &seed, sizeof(seed)) != sizeof(seed))
 		{
-			printf("seed %016lx\n", seed);
-			srand48(seed);
-		} else {
-			fprintf(stderr, "Can't read /dev/random: %m\n");
+			fprintf(stderr, "Can't read /dev/random, using zero seed: %m\n");
 		}
 		close(fd);
 	} else {
-		fprintf(stderr, "Can't open /dev/random: %m\n");
+		fprintf(stderr, "Can't open /dev/random, using zero seed: %m\n");
 	}
 	
 	QApplication app(argc, argv);
@@ -111,6 +109,17 @@ int main (int argc, char* argv[])
 			i++;
 			cfgFile = argv[i];
 		}
+		else if(strcmp(var, "-s") == 0)
+		{
+			if (i+1 >= argc)
+			{
+				printf("no seed specified after -s");
+				usage(argv[0]);
+			}
+			
+			i++;
+			seed = strtol(argv[i], 0, 16);
+		}
 		else if(strcmp(var, "-pp") == 0)
 		{
 			if (i+1 >= argc)
@@ -139,6 +148,9 @@ int main (int argc, char* argv[])
 			usage(argv[0]);
 		}
 	}
+	
+	printf("seed %016lx\n", seed);
+	srand48(seed);
 	
 	// Default config file name
 	if (cfgFile.isNull())
