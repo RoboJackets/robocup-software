@@ -1,4 +1,10 @@
-#!/bin/sh -e
+#!/bin/bash -e
+
+# Become root
+if [ $UID -ne 0 ]; then
+	echo "-- Becoming root"
+	exec sudo $0
+fi
 
 MACH=$(uname -m)
 unset DPKG_FLAGS
@@ -13,19 +19,19 @@ if [ "$MACH" = "x86_64" ]; then
 
 	# 32-bit compatibility (simulator must build as 32-bit for PhysX)
 	echo "-- Installing 32-bit compatibility libraries"
-	sudo apt-get install libc6-dev-i386 g++-multilib ia32-libs
+	apt-get install libc6-dev-i386 g++-multilib ia32-libs
 fi
 
 echo "-- Installing normal packages"
-sudo apt-get install build-essential subversion cmake qt4-dev-tools libboost-dev \
+apt-get install build-essential qt4-dev-tools libboost-dev \
 	libusb-dev libblas-dev liblapack-dev libgtkmm-2.4-dev protobuf-compiler libprotobuf-dev \
-	libatlas-base-dev libgsl0-dev automake autoconf libtool libpcap-dev
+	libpcap-dev
 
-# Install PhysX packages that aren't already installed (dpkg will reinstall, which is unecessary)
-for i in $BASE/SoccSim/lib/physx/*.deb; do
-	NAME=$(dpkg -I $i|grep Package:|cut -d " " -f 3)
-	if ! dpkg -s $NAME > /dev/null; then
-		echo "-- Installing $NAME"
-		sudo dpkg -i $DPKG_FLAGS $i
-	fi
-done
+# Install all PhysX packages together
+if [ ! -d /usr/lib/PhysX ]; then
+	echo "-- Installing PhysX"
+	dpkg -i $DPKG_FLAGS SoccSim/lib/physx/*.deb
+else
+	echo "-- PhysX is already installed"
+fi
+
