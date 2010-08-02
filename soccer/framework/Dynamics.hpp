@@ -2,7 +2,7 @@
 
 #include <framework/ConfigFile.hpp>
 
-namespace Motion
+namespace Planning
 {
 	class Dynamics
 	{

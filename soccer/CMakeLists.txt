@@ -34,6 +34,7 @@ set (SRCS
 	framework/Obstacle.cpp
 	framework/Path.cpp
 	framework/SystemState.cpp
+	framework/Dynamics.cpp
 
 # Sources for gameplay module
 
@@ -46,6 +47,7 @@ set (SRCS
 	gameplay/PreventDoubleTouch.cpp
 	gameplay/planning/rrt.cpp
 	gameplay/planning/Tree.cpp
+	gameplay/planning/bezier.cpp
 	
 	# Optimization components - disabled for now
 	#gameplay/optimizer/PassOptimizer.cpp
@@ -130,7 +132,6 @@ set (SRCS
 	motion/WheelController.cpp
 	motion/Robot.cpp
 	motion/Pid.cpp
-	motion/Dynamics.cpp
 
 # Sources for stateID module
 	stateID/StateIDModule.cpp

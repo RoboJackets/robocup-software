@@ -2,8 +2,7 @@
 #include <iostream>
 
 using namespace std;
-
-using namespace Motion;
+using namespace Planning;
 
 Dynamics::Dynamics()
 {

@@ -8,8 +8,11 @@
 class MotionCmd
 {
 	public:
+		/** Inputs to PointController */
 		Geometry2d::Point goalPosition;
 		Geometry2d::Point goalOrientation;
+		float pathLength;
+
 		float vScale;
 		float wScale;
 		enum OrientationType
@@ -39,12 +42,10 @@ class MotionCmd
 		SpinType spin;
 		enum PlannerType
 		{
-			RRT = 0,
-			Path = 1,
-			DirectVelocity = 2,
-			TimePosition = 3,
-			Bezier = 4,
-			DirectMotor = 5
+			Point = 0,
+			DirectVelocity = 1,
+			DirectMotor = 2,
+			ForceStop = 3
 		};
 		
 		PlannerType planner;
@@ -55,40 +56,24 @@ class MotionCmd
 		};
 		
 		PathEndType pathEnd;
-		std::vector<Geometry2d::Point> explicitPath;
+
+		/** the robot velocity - output of PointController */
 		float direct_ang_vel;
 		Geometry2d::Point direct_trans_vel;
+
+		/** the motor commands - output of WheelController */
 		std::vector<int8_t> direct_motor_cmds;
-		class PathNode
-		{
-			public:
-				float time;
-				Geometry2d::Point pos;
-				float rot;
-				
-				PathNode()
-				{
-					time = 0;
-					rot = 0;
-				}
-		};
-		
-		std::vector<PathNode> timePosPath;
-		uint64_t start_time;
-		bool enableBezierAvoid;
-		std::vector<Geometry2d::Point> bezierControlPoints;
 		
 		MotionCmd()
 		{
+			pathLength = 0.0;
 			vScale = 1.0;
 			wScale = 1.0;
 			face = None;
 			pivot = NoPivot;
 			spin = NoSpin;
-			planner = RRT;
+			planner = Point;
 			pathEnd = StopAtEnd;
 			direct_ang_vel = 0.0;
-			start_time = 0;
-			enableBezierAvoid = 0;
 		}
 };

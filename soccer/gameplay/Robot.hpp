@@ -1,12 +1,14 @@
 #pragma once
 
-#include <Constants.hpp>
-#include <framework/SystemState.hpp>
-
 #include <stdint.h>
 #include <string>
 #include <list>
 #include <vector>
+
+#include <Constants.hpp>
+#include <framework/SystemState.hpp>
+
+#include <gameplay/planning/rrt.hpp>
 
 namespace Gameplay
 {
@@ -57,7 +59,12 @@ namespace Gameplay
 			void setWScale(float scale = 0.5); /// scales the angular velocity
 			void resetMotionCommand();  /// resets all motion commands for the robot
 
-			// Move to a particular point using the RRT planner
+			/** Stop the robot */
+			void stop();
+
+			/**
+			 * Move to a given point using the default RRT planner
+			 */
 			void move(Geometry2d::Point pt, bool stopAtEnd=false);
 
 			/**
@@ -83,13 +90,6 @@ namespace Gameplay
 					MotionCmd::PathEndType endpoint=MotionCmd::StopAtEnd);
 
 			/**
-			 * Move using timed-positions, so that each node has a target time
-			 * Also, the command needs a start time, so that it can calculate deltas
-			 * in seconds
-			 */
-			void move(const std::vector<MotionCmd::PathNode>& timedPath, uint64_t start);
-
-			/**
 			 * Apply direct motion commands to the motors - use only for calibration
 			 * Vector of speeds must have 4 elements - will pad with zeros otherwise
 			 * Only use this function for calibration
@@ -100,7 +100,7 @@ namespace Gameplay
 			 * Move using direct velocity control by specifying
 			 * translational and angular velocity
 			 */
-			void directMotionCommands(const Geometry2d::Point& trans, double ang);
+			void directVelocityCommands(const Geometry2d::Point& trans, double ang);
 
 			/**
 			 * Makes the robot spin in a specified direction
@@ -177,5 +177,15 @@ namespace Gameplay
 			bool _self;
 			SystemState::Robot *_packet;
 			uint64_t _lastChargedTime;
+
+			/** Planning components - should be generalized */
+			Planning::Path _path;	/// latest path
+			Planning::RRT::Planner _planner;	/// single-robot RRT planner
+
+			/** robot dynamics information */
+			Planning::Dynamics _dynamics;
+
+			/** actually performs the conversion from path->point target */
+			void executeMove(bool stopAtEnd);
 	};
 }

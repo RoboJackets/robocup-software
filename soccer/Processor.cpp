@@ -228,7 +228,7 @@ void Processor::internalRefCommand(char ch)
 
 void Processor::addMotors(RadioTx::Robot* robot)
 {
-	for (int m = 0; m < 4; ++m)
+	for (size_t m = 0; m < 4; ++m)
 	{
 		robot->add_motors(0);
 	}
@@ -271,7 +271,7 @@ void Processor::run()
 		logFrame.set_start_time(startTime);
 		
 		// Clear radio commands
-		for (int r = 0; r < Constants::Robots_Per_Team; ++r)
+		for (size_t r = 0; r < Constants::Robots_Per_Team; ++r)
 		{
 			_state.self[r].radioTx = 0;
 		}
@@ -358,7 +358,7 @@ void Processor::run()
 			curStatus.lastRadioRxTime = Utils::timestamp();
 			
 			// Store this packet in the appropriate robot
-			for (int i = 0 ; i < Constants::Robots_Per_Team; ++i)
+			for (size_t i = 0 ; i < Constants::Robots_Per_Team; ++i)
 			{
 				if (_state.self[i].shell == rx->board_id())
 				{
@@ -396,7 +396,7 @@ void Processor::run()
 		}
 		
 		// Add RadioTx commands for visible robots
-		for (int r = 0; r < Constants::Robots_Per_Team; ++r)
+		for (size_t r = 0; r < Constants::Robots_Per_Team; ++r)
 		{
 			if (_state.self[r].valid)
 			{
@@ -412,7 +412,7 @@ void Processor::run()
 			_refereeModule->run();
 		}
 		
-		for (int r = 0; r < Constants::Robots_Per_Team; ++r)
+		for (size_t r = 0; r < Constants::Robots_Per_Team; ++r)
 		{
 			if (_state.self[r].valid)
 			{
@@ -562,7 +562,7 @@ void Processor::sendRadioData()
 
 	// Apply joystick input
 	bool manualDone = false;
-	for (int i = 0; i < Constants::Robots_Per_Team; ++i)
+	for (size_t i = 0; i < Constants::Robots_Per_Team; ++i)
 	{
 		if (_state.self[i].valid)
 		{

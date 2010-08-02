@@ -12,7 +12,7 @@
 #include <Utils.hpp>
 
 using namespace std;
-using namespace Motion;
+using namespace Planning;
 
 Geometry2d::Point RRT::randomPoint()
 {

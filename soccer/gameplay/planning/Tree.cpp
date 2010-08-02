@@ -4,7 +4,7 @@
 #include <boost/foreach.hpp>
 #include <Utils.hpp>
 
-using namespace Motion;
+using namespace Planning;
 using namespace std;
 
 //// Point ////

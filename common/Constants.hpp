@@ -3,16 +3,18 @@
 
 #pragma once
 
+#include <string> // for size_t
+
 /// all distances in meters
 /// all times in seconds
-/// all weights in killograms
+/// all weights in kilograms
 
 namespace Constants
 {
-    const int Robots_Per_Team = 5;
+    const size_t Robots_Per_Team = 5;
 	
 	// Number of robots controlled by a play (all except the goalie)
-	const int Play_Robots = Robots_Per_Team - 1;
+	const size_t Play_Robots = Robots_Per_Team - 1;
     
     namespace Ball
     {

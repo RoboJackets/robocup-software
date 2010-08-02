@@ -7,13 +7,13 @@
 #include <Geometry2d/Point.hpp>
 #include <framework/Obstacle.hpp>
 #include <framework/Path.hpp>
+#include <framework/Dynamics.hpp>
 
 #include <QPainter>
 
-#include "../Dynamics.hpp"
 #include "Tree.hpp"
 
-namespace Motion
+namespace Planning
 {
 	namespace RRT
 	{

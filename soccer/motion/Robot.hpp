@@ -8,12 +8,9 @@
 
 #include <framework/ConfigFile.hpp>
 #include <framework/SystemState.hpp>
+#include <framework/Dynamics.hpp>
 
 #include "Pid.hpp"
-
-#include "Dynamics.hpp"
-
-#include "planning/rrt.hpp"
 
 namespace Motion
 {
@@ -67,11 +64,8 @@ namespace Motion
 			 */
 			void genVelocity(MotionCmd::PathEndType ending);
 
-			/** generate velocities based on time-position control */
-			void genTimePosVelocity();
-
-			/** generate velocities based on bezier paths */
-			void genBezierVelocity();
+			/** generate velocities based on bezier paths - TEMPORARILY DISABLED */
+			//void genBezierVelocity();
 
 			/**
 			 * safety net against hitting other robots
@@ -90,13 +84,12 @@ namespace Motion
 			void genMotor();
 			void genMotorOld();
 
-			/** calibration function
+			/** calibration function - disabled until someone figures out how to use it
 			 * only runs when compile flags are set
 			 * FIXME: find a way to parameterize this properly
 			 */
-			void calib();
+//			void calib();
 
-		private:
 			/** flag determining motor speed generation */
 			static const bool _useOldMotorGen = false;
 
@@ -116,9 +109,8 @@ namespace Motion
 			/** planner flag - copied out for rendering */
 			MotionCmd::PlannerType _plannerType;
 
-			RRT::Planner _planner;
 			/** robot dynamics information */
-			Dynamics _dynamics;
+			Planning::Dynamics _dynamics;
 
 			uint64_t _lastTimestamp;
 
@@ -136,72 +128,45 @@ namespace Motion
 			Geometry2d::Point ballPos() const { return _state->ball.pos; }
 			Geometry2d::Point ballVel() const { return _state->ball.vel; }
 
-			/** latest path */
-			Planning::Path _path;
-
 			/// calibration things ///
-			typedef enum
-			{
-				InitCalib,
-				InitialPoint,
-				Wait1,
-				Travel,
-				Decel,
-				End
-			} CalibrationStates;
-			
-			class CalibInfo
-			{
-				public:
-					CalibInfo()
-					{
-						startTime = 0;
-						pSum = 0;
-						speed = 0;
-						outSpeed = 0;
-					}
-					
-					uint64_t startTime;
-					float pSum;
-					Geometry2d::Point lastPos;
-					
-					int speed;
-					int8_t outSpeed;
-					
-					Geometry2d::Point startPos;
-					Geometry2d::Point endPos;
-			};
-			
-			CalibrationStates _calibState;
-			CalibInfo _calibInfo;
+//			typedef enum
+//			{
+//				InitCalib,
+//				InitialPoint,
+//				Wait1,
+//				Travel,
+//				Decel,
+//				End
+//			} CalibrationStates;
+//
+//			class CalibInfo
+//			{
+//				public:
+//					CalibInfo()
+//					{
+//						startTime = 0;
+//						pSum = 0;
+//						speed = 0;
+//						outSpeed = 0;
+//					}
+//
+//					uint64_t startTime;
+//					float pSum;
+//					Geometry2d::Point lastPos;
+//
+//					int speed;
+//					int8_t outSpeed;
+//
+//					Geometry2d::Point startPos;
+//					Geometry2d::Point endPos;
+//			};
+//
+//			CalibrationStates _calibState;
+//			CalibInfo _calibInfo;
 
 			/** filters for output */
 			Utils::FIRFilter<Geometry2d::Point> _velFilter;
 			Utils::FIRFilter<double> _wFilter;
 
-			/// store parameters for bezier curves for rendering
-			std::vector<Geometry2d::Point> _bezierControls;
-			float _bezierTotalLength; /// total length of current bezier curve
-			float _bezierCurTime;     /// current time increment for curve progression
-
-			/// evaluates a Bezier curve
-			Geometry2d::Point evaluateBezier(float t,
-					const std::vector<Geometry2d::Point>& controls,
-					const std::vector<float>& coeffs) const;
-
-			/// evaluates the derivative of a Bezier curve
-			Geometry2d::Point
-			evaluateBezierVelocity(float t,
-					const std::vector<Geometry2d::Point>& controls,
-					const std::vector<float>& coeffs) const;
-
-			/// determines the length of a Bezier curve
-			float bezierLength(const std::vector<Geometry2d::Point>& controls,
-					const std::vector<float>& coeffs) const;
-
-			/// calculates binomial coefficients
-			int binomialCoefficient(int n, int k) const;
-
-			int factorial(int n) const;
 	};
 }

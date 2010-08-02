@@ -1,12 +1,12 @@
 #pragma once
 
-#include <framework/Path.hpp>
-#include <Geometry2d/Segment.hpp>
 #include <list>
 
-#include "../Dynamics.hpp"
+#include <Geometry2d/Segment.hpp>
+#include <framework/Dynamics.hpp>
+#include <framework/Path.hpp>
 
-namespace Motion
+namespace Planning
 {
 	/** base tree class for rrt trees
 	 *  Tree can be grown in different ways */

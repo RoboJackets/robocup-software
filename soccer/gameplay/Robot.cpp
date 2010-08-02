@@ -1,5 +1,6 @@
 #include "Robot.hpp"
 #include "GameplayModule.hpp"
+#include <gameplay/planning/bezier.hpp>
 
 using namespace Geometry2d;
 
@@ -7,16 +8,10 @@ using namespace Geometry2d;
 const float intTimeStampToFloat = 1000000.0f;
 
 Gameplay::Robot::Robot(GameplayModule *gameplay, int id, bool self)
+: willKick(false), avoidBall(false), exclude(false),
+  _gameplay(gameplay), _id(id), _self(self)
 {
-	_gameplay = gameplay;
-	_id = id;
-	_self = self;
-
-	willKick = false;
-	avoidBall = false;
-	exclude = false;
-
-	for (int i = 0; i < Constants::Robots_Per_Team; ++i)
+	for (size_t i = 0; i < Constants::Robots_Per_Team; ++i)
 	{
 		approachOpponent[i] = false;
 	}
@@ -27,6 +22,9 @@ Gameplay::Robot::Robot(GameplayModule *gameplay, int id, bool self)
 	} else {
 		_packet = &_gameplay->state()->opp[_id];
 	}
+
+	_planner.setDynamics(&_dynamics);
+	_planner.maxIterations(250);
 }
 
 void Gameplay::Robot::resetMotionCommand()
@@ -37,74 +35,133 @@ void Gameplay::Robot::resetMotionCommand()
 	move(pos());
 }
 
+void Gameplay::Robot::stop()
+{
+	move(pos());
+}
+
 void Gameplay::Robot::move(Geometry2d::Point pt, bool stopAtEnd)
 {
-	packet()->cmd.goalPosition = pt;
+	//new path if better than old
+	Planning::Path newPath;
 
-	// handle stop at end commands
-	if (stopAtEnd)
-		packet()->cmd.pathEnd = MotionCmd::StopAtEnd;
-	else
-		packet()->cmd.pathEnd = MotionCmd::FastAtEnd;
+	// determine the obstacles
+	ObstacleGroup& og = packet()->obstacles;
 
-	// enable the RRT-based planner
-	packet()->cmd.planner = MotionCmd::RRT;
+	// run the RRT planner to generate a new plan
+	_planner.run(pos(), angle(), vel(), pt, &og, newPath);
+
+	_path = newPath;
+
+	// call the path move command
+	executeMove(stopAtEnd);
+
+//	packet()->cmd.goalPosition = pt;
+//
+//	// handle stop at end commands
+//	if (stopAtEnd)
+//		packet()->cmd.pathEnd = MotionCmd::StopAtEnd;
+//	else
+//		packet()->cmd.pathEnd = MotionCmd::FastAtEnd;
+//
+//	// enable the RRT-based planner
+//	packet()->cmd.planner = MotionCmd::RRT;
 }
 
 void Gameplay::Robot::move(const std::vector<Geometry2d::Point>& path, bool stopAtEnd)
 {
-	// set motion command to use the explicit path generation
-	packet()->cmd.planner = MotionCmd::Path;
-	if (stopAtEnd)
-		packet()->cmd.pathEnd = MotionCmd::StopAtEnd;
-	else
-		packet()->cmd.pathEnd = MotionCmd::FastAtEnd;
+	// copy path from input
+	_path.clear();
+	_path.points = path;
 
-	// clear the path and set it to the correct one
-	packet()->cmd.explicitPath.clear();
-	packet()->cmd.explicitPath = path;
+	// execute
+	executeMove(stopAtEnd);
+
+//	// set motion command to use the explicit path generation
+//	packet()->cmd.planner = MotionCmd::Path;
+//	if (stopAtEnd)
+//		packet()->cmd.pathEnd = MotionCmd::StopAtEnd;
+//	else
+//		packet()->cmd.pathEnd = MotionCmd::FastAtEnd;
+//
+//	// clear the path and set it to the correct one
+//	packet()->cmd.explicitPath.clear();
+//	packet()->cmd.explicitPath = path;
 }
 
 void Gameplay::Robot::bezierMove(const std::vector<Geometry2d::Point>& controls,
 		MotionCmd::OrientationType facing,
 		MotionCmd::PathEndType endpoint) {
 
-	// set motion command to use the explicit path generation
-	packet()->cmd.planner = MotionCmd::Bezier;
-	packet()->cmd.pathEnd = endpoint;
-	packet()->cmd.face = facing;
+	// calculate path using simple interpolation
+	_path = Planning::createBezierPath(controls);
 
-	// TODO: enable this - currently not used
-//				// set the avoidance flag
-//				packet()->cmd.enableBezierAvoid = enableAvoid;
+	// execute path
+	executeMove(endpoint);
 
-	// set the control points
-	packet()->cmd.bezierControlPoints.clear();
-	packet()->cmd.bezierControlPoints = controls;
+//	// set motion command to use the explicit path generation
+//	packet()->cmd.planner = MotionCmd::Bezier;
+//	packet()->cmd.pathEnd = endpoint;
+//	packet()->cmd.face = facing;
+//
+//	// TODO: enable this - currently not used
+////				// set the avoidance flag
+////				packet()->cmd.enableBezierAvoid = enableAvoid;
+//
+//	// set the control points
+//	packet()->cmd.bezierControlPoints.clear();
+//	packet()->cmd.bezierControlPoints = controls;
 }
 
-void Gameplay::Robot::move(const std::vector<MotionCmd::PathNode>& timedPath, uint64_t start) {
-	// set controller type
-	packet()->cmd.planner = MotionCmd::TimePosition;
+void Gameplay::Robot::executeMove(bool stopAtEnd)
+{
+	// given a path, determine what the best point to use as a
+	// target point is, and assign to packet
 
-	// set path
-	packet()->cmd.timePosPath.clear();
-	packet()->cmd.timePosPath = timedPath;
+	if (_path.empty()) {
+		// THIS IS VERY BAD AND SHOULD NOT OCCUR
+		throw std::runtime_error("In Gameplay::Robot::executeMove: empty path!");
+	}
 
-	// set start time
-	packet()->cmd.start_time = start;
+	//dynamics path
+	float length = _path.length();
+
+	// handle direct point commands where the length may be very small
+	if (fabs(length) < 1e-5) {
+		length = pos().distTo(_path.points[0]);
+	}
+
+	//target point is the last point on the closest segment
+	Geometry2d::Point targetPos = _path.points[0]; // first point
+
+	size_t path_start = 0;
+	if (_path.points.size() > 1)
+	{
+		targetPos = _path.points[1];
+	}
+
+	//ideally we want to travel towards 2 points ahead...due to delays
+	if (_path.points.size() > 2)
+	{
+		targetPos = _path.points[2];
+		path_start = 1;
+	}
+
+	packet()->cmd.goalPosition = targetPos;
+	packet()->cmd.pathLength = _path.length(path_start);
+	packet()->cmd.planner = MotionCmd::Point;
+}
+
+void Gameplay::Robot::directVelocityCommands(const Geometry2d::Point& trans, double ang)
+{
+	packet()->cmd.planner = MotionCmd::DirectVelocity;
+	packet()->cmd.direct_ang_vel = ang;
+	packet()->cmd.direct_trans_vel = trans;
 }
 
 void Gameplay::Robot::directMotorCommands(const std::vector<int8_t>& speeds) {
 	packet()->cmd.planner = MotionCmd::DirectMotor;
 	packet()->cmd.direct_motor_cmds = speeds;
-}
-
-void Gameplay::Robot::directMotionCommands(const Geometry2d::Point& trans, double ang)
-{
-	packet()->cmd.planner = MotionCmd::DirectVelocity;
-	packet()->cmd.direct_ang_vel = ang;
-	packet()->cmd.direct_trans_vel = trans;
 }
 
 SystemState::Robot * Gameplay::Robot::packet() const

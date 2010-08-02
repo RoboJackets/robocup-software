@@ -20,6 +20,7 @@ using namespace std;
 using namespace boost::assign;
 using namespace Geometry2d;
 using namespace Motion;
+using namespace Planning;
 
 /** prints out a labeled point */
 void printPt(const Geometry2d::Point& pt, const string& s="") {
@@ -49,10 +50,6 @@ Robot::Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id) :
 	_self = 0;
 	_w = 0;
 
-	_planner.setDynamics(&_dynamics);
-	_planner.maxIterations(250);
-
-
 	//since radio currently only handles 4 motors
 	//don't make axles (and thus don't drive) if not 4 configured
 	BOOST_FOREACH(const Point& p, cfg.axles)
@@ -62,7 +59,7 @@ Robot::Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id) :
 
 	_lastTimestamp = Utils::timestamp();
 
-	_calibState = InitCalib;
+//	_calibState = InitCalib;
 }
 
 Robot::~Robot()
@@ -161,65 +158,41 @@ void Robot::proc()
 			// handle direct motor commands
 			case MotionCmd::DirectMotor:
 			{
+				// FIXME: we really should do nothing here, and pass to WheelController
+
 				// short circuit controller completely
-				size_t i = 0;
-				BOOST_FOREACH(const int8_t& vel, _self->cmd.direct_motor_cmds) {
-					_self->radioTx->set_motors(i++, vel);
-				}
+//				size_t i = 0;
+//				BOOST_FOREACH(const int8_t& vel, _self->cmd.direct_motor_cmds) {
+//					_self->radioTx->set_motors(i++, vel);
+//				}
 
 				break;
 			}
-			// handle explicit path generation (short-circuit RRT)
-			case MotionCmd::Path:
+
+			// Catch force stop commands
+			case MotionCmd::ForceStop:
 			{
-				// create a new path
-				Planning::Path path;
-
-				// set the precomputed path
-				path.points = _self->cmd.explicitPath;
-
-				// assign the path
-				_path = path;
-
-				// create the velocities
-				genVelocity(_self->cmd.pathEnd);
-				break;
-			}
-
-			// handle time-position control
-			case MotionCmd::TimePosition:
-			{
-				// generate the velocity command for time-position control
-				genTimePosVelocity();
-				break;
-			}
-
-			// handle bezier control
-			case MotionCmd::Bezier:
-			{
-				// record the control points if restart
-				_bezierControls = _self->cmd.bezierControlPoints;
-
-				// generate the velocities for the bezier curve planner
-				genBezierVelocity();
-				break;
+				const float deltaT = (_state->timestamp - _lastTimestamp)/intTimeStampToFloat;
+				stop(deltaT);
 			}
 
 			// default RRT-based planner that also handles pivoting
-			case MotionCmd::RRT:
+			case MotionCmd::Point:
 			{
 				if (_self->cmd.pivot == MotionCmd::NoPivot)
 				{
-					//new path if better than old
-					Planning::Path newPath;
 
-					// determine the obstacles
-					ObstacleGroup& og = _self->obstacles;
-
-					// run the RRT planner to generate a new plan
-					_planner.run(_self->pos, _self->angle, _self->vel, _self->cmd.goalPosition, &og, newPath);
-
-					_path = newPath;
+					// FIXME: no need for path planning here
+//					//new path if better than old
+//					Planning::Path newPath;
+//
+//					// determine the obstacles
+//					ObstacleGroup& og = _self->obstacles;
+//
+//					// run the RRT planner to generate a new plan
+//					_planner.run(_self->pos, _self->angle, _self->vel, _self->cmd.goalPosition, &og, newPath);
+//
+//					_path = newPath;
 
 					// create the velocities
 					genVelocity(_self->cmd.pathEnd);
@@ -227,9 +200,7 @@ void Robot::proc()
 				else // handle pivot
 				{
 					//clear old path for when we don't want to pivot
-					_path.clear();
-
-					//TODO fixme...
+//					_path.clear();
 
 					//for now look at the ball
 					_self->cmd.face = MotionCmd::Continuous;
@@ -266,7 +237,8 @@ void Robot::proc()
 			_self->cmd_vel = _vel;
 			_self->cmd_w = _w;
 
-			_self->radioTx->set_board_id(_self->shell);
+			// FIXME: we set the radio messages in WheelController
+//			_self->radioTx->set_board_id(_self->shell);
 		}
 	}
 	_lastTimestamp = _state->timestamp;
@@ -515,7 +487,7 @@ void Robot::genVelocity(MotionCmd::PathEndType ending)
 		/// in continuous we do not limit
 		if (_self->cmd.face == MotionCmd::Endpoint)
 		{
-			const float fixedLength = _planner.fixedPathLength();
+			const float fixedLength = _self->cmd.pathLength;
 
 			if (fixedLength > 0)
 			{
@@ -548,39 +520,41 @@ void Robot::genVelocity(MotionCmd::PathEndType ending)
 	// handle point-to-point driving without pivot
 	if (_self->cmd.pivot == MotionCmd::NoPivot)
 	{
-		if (_path.points.empty())
-		{
-			// No path: stop.
-			//FIXME - This should never happen.  We must keep the check, but fix the cause.
-			printf("genVelocity: empty path, stopping\n");
-			_vel = Point();
-			return;
-		}
-		
-		//dynamics path
-		float length = _path.length();
+//		if (_path.points.empty())
+//		{
+//			// No path: stop.
+//			//FIXME - This should never happen.  We must keep the check, but fix the cause.
+//			printf("genVelocity: empty path, stopping\n");
+//			_vel = Point();
+//			return;
+//		}
+//
+//		//dynamics path
+//		float length = _path.length();
+//
+//		// handle direct point commands where the length may be very small
+//		if (fabs(length) < 1e-5) {
+//			length = _self->pos.distTo(_path.points[0]);
+//		}
+//
+//		//target point is the last point on the closest segment
+//		Geometry2d::Point targetPos = _path.points[0]; // first point
+//
+//		if (_path.points.size() > 1)
+//		{
+//			targetPos = _path.points[1];
+//		}
+//
+//		//ideally we want to travel towards 2 points ahead...due to delays
+//		if (_path.points.size() > 2)
+//		{
+//			targetPos = _path.points[2];
+//		}
 
-		// handle direct point commands where the length may be very small
-		if (fabs(length) < 1e-5) {
-			length = _self->pos.distTo(_path.points[0]);
-		}
-
-		//target point is the last point on the closest segment
-		Geometry2d::Point targetPos = _path.points[0]; // first point
-
-		if (_path.points.size() > 1)
-		{
-			targetPos = _path.points[1];
-		}
-
-		//ideally we want to travel towards 2 points ahead...due to delays
-		if (_path.points.size() > 2)
-		{
-			targetPos = _path.points[2];
-		}
+		// ************************** SPLIT HERE (PointController) ********************** //
 
 		//direction of travel
-		const Geometry2d::Point dir = targetPos - _self->pos;
+		const Geometry2d::Point dir = _self->cmd.goalPosition - _self->pos;
 
 		// use active braking as necessary
 		float dist_stop_thresh = 0.15; // cm
@@ -601,7 +575,7 @@ void Robot::genVelocity(MotionCmd::PathEndType ending)
 			RadiansToDegrees - robotAngle, _w);
 
 		// bound the velocity by the end of the path if we want to stop at end
-		const float vv = sqrtf(2 * length * info.deceleration);
+		const float vv = sqrtf(2 * _self->cmd.pathLength * info.deceleration);
 		if (verbose) cout << "   decel bound: " << info.deceleration << endl;
 
 		// create the maximum velocity given driving until the end of the path
@@ -651,245 +625,71 @@ void Robot::genVelocity(MotionCmd::PathEndType ending)
 	}
 }
 
-/** print out a time-pos node for debugging */
-void printTimePos(const MotionCmd::PathNode& node) {
-	cout << "PathNode: "
-		 << "   Angle: " << node.rot << endl;
-	printPt(node.pos, "   Pos: ");
-	cout << "   Time: " << node.time << endl;
-}
-
-/** Print out a path of path-time nodes */
-void printTimePosPath(const vector<MotionCmd::PathNode>& path, const string& s="") {
-	cout << "TimePos Path [" << s << "] (Size " << path.size() << ")" << endl;
-	BOOST_FOREACH(MotionCmd::PathNode node, path) {
-		printTimePos(node);
-	}
-	cout << endl;
-}
-
-void Robot::genTimePosVelocity()
-{
-	bool verbose = false;
-
-	// find the time stepsize
-	const float deltaT = (_state->timestamp - _lastTimestamp)/intTimeStampToFloat;
-
-	// determine what the change in time since last frame was
-	float cur_time = (_state->timestamp-_self->cmd.start_time)/intTimeStampToFloat;
-	if (verbose) cout << "Current time: " << cur_time << endl;
-
-	// extract a portion of the path
-	vector<MotionCmd::PathNode>& full_path = _self->cmd.timePosPath;
-	//if (verbose) printTimePosPath(full_path, "Full path");
-
-	// we only want a specific number of path nodes in advance, and after the current time
-	int lookahead = 3;
-	vector<MotionCmd::PathNode> path;
-	MotionCmd::PathNode node;
-	int i = 0;
-	BOOST_FOREACH(node, full_path)
-	{
-		// look for a node that is in the future
-		if (node.time < cur_time)
-			continue;
-
-		// if we have a node in the future, keep counting until reached the lookahead count
-		if (i < lookahead) {
-			path.push_back(node);
-			++i;
-		}
-	}
-
-	// handle no nodes in the future
-	if (path.size() == 0)
-	{
-		// nowhere to go, so we stop the robot
-		stop(deltaT);
-		return;
-	}
-	if (verbose) printTimePosPath(path, "Future Path");
-	if (verbose) printPt(_self->pos, "Current Pos");
-
-	// handle facing - use PID to get the closest rotational position
-	float targetAngle = path[0].rot;
-	float angleErr = Utils::fixAngleDegrees(targetAngle - _self->angle);
-	_w = _anglePid.run(angleErr);
-
-	// handle translation - use simple method for driving towards goal
-	// drive straight at point as fast as possible
-	Geometry2d::Point target = path[0].pos;
-	Geometry2d::Point dir = target - _self->pos;
-
-	// pull out the robot angle
-	const float robotAngle = _self->angle;
-
-	//max velocity info is in the new desired velocity direction
-	Dynamics::DynamicsInfo info = _dynamics.info(dir.angle() *
-		RadiansToDegrees - robotAngle, _w);
-
-	// find the length of the path
-	float length = dir.mag();
-
-	// find magnitude of the velocity
-	const float vv = sqrtf(2 * length * info.deceleration);
-	if (verbose) cout << "Deceleration: " << info.deceleration << endl;
-
-	// don't use maximum velocity for travelTime estimate, adjust down to account
-	// for acceleration
-	// this should be a function of the distance - longer distances get closer to one
-	float adjust = 0.8;
-
-	// determine how long it will take at the target velocity
-	if (verbose) cout << "length: " << length << endl;
-	if (verbose) cout << "vv: " << vv << endl;
-	//float travelTime = length/vv;
-	float travelTime = length/(vv*adjust);
-	if (verbose) cout << "Estimated travel time: " << travelTime << endl;
-
-	// determine how long we want it to take
-	float targetTime = path[0].time - cur_time;
-
-	// weight the velocity vector to arrive at a particular time
-	float weight = 1.0;
-	if (travelTime < targetTime) {
-		weight = travelTime/targetTime; // bring down speed to match the time requirement
-	}
-
-	// create the velocity vector
-	Geometry2d::Point targetVel = dir.normalized() * vv * weight;
-
-	//last commanded velocity
-	Geometry2d::Point dVel = targetVel - _vel;
-
-	//!!!acceleration is in the change velocity direction not travel direction
-	info = _dynamics.info(dVel.angle() * RadiansToDegrees - robotAngle, _w);
-	const float maxAccel = info.acceleration;
-
-	//calc frame acceleration from total acceleration
-	const float frameAccel = deltaT * maxAccel;
-
-	//use frame acceleration
-	dVel = dVel.normalized() * frameAccel;
-
-	// adjust the velocity
-	_vel += dVel;
-
-	if (verbose) cout << "At end of genTimePosVelocity()" << endl;
-}
-
-void Robot::genBezierVelocity() {
-	const bool verbose = false;
-
-	const float deltaT = (_state->timestamp - _lastTimestamp)/intTimeStampToFloat;
-	// error handling
-	size_t degree = _bezierControls.size();
-	if (degree < 2) {
-		stop(deltaT);
-		cout << "Bezier curve of size: " << degree << "!" << endl;
-		return;
-	}
-
-	// generate coefficients
-	vector<float> coeffs;
-	for (size_t i=0; i<degree; ++i) {
-		coeffs.push_back(binomialCoefficient(degree-1, i));
-	}
-
-	// calculate length to allow for determination of time
-	_bezierTotalLength = bezierLength(_bezierControls, coeffs);
-
-	// DEBUG: show the length of the trajectory
-	_state->drawText(QString::number(_bezierTotalLength), Segment(_bezierControls.at(0), _bezierControls.at(1)).center(), Qt::blue);
-
-	// calculate numerical derivative by stepping ahead a fixed constant
-	float lookAheadDist = 0.15; // in meters along path
-	float dt = lookAheadDist/_bezierTotalLength;
-
-	float velGain = 3.0; // FIXME: should be dependent on the length of the curve
-
-	// calculate a target velocity for translation
-	Point targetVel = evaluateBezierVelocity(dt, _bezierControls, coeffs);
-
-	// apply gain
-	targetVel *= velGain;
-
-	// DEBUG: draw the targetVel
-	Segment targetVelLine(pos(), pos() + targetVel);
-	_state->drawLine(targetVelLine, Qt::red);
-	// directly set the velocity
-	_vel = targetVel;
-
-	float targetAngle = 0.0;
-	if (_self->cmd.face == MotionCmd::Continuous) {
-		// look further ahead for angle
-		float WlookAheadDist = 0.30; // in meters along path // prev: 0.15ang_thresh
-		float dtw = WlookAheadDist/_bezierTotalLength;
-		targetAngle = evaluateBezierVelocity(dtw, _bezierControls, coeffs).angle();
-	} else if (_self->cmd.face == MotionCmd::Endpoint) {
-		targetAngle = (_bezierControls.at(degree-1) - _bezierControls.at(degree-2)).angle();
-	}
-
-	// draw the intended facing
-	_state->drawLine(Segment(pos(), pos() + Point::direction(targetAngle).normalized()), Qt::gray);
-
-	// Find the error (degrees)
-	float angleErr = Utils::fixAngleDegrees(targetAngle*RadiansToDegrees - _self->angle);
-
-	// debug GUI for PID commands
-	if (verbose) cout << "Current Kp: " << _anglePid.kp << endl;
-
-	// angular velocity is in degrees/sec
-	_w = _anglePid.run(angleErr);
-}
-
-Geometry2d::Point
-Robot::evaluateBezier(float t,
-		const std::vector<Geometry2d::Point>& controls,
-		const std::vector<float>& coeffs) const {
-
-	size_t n = controls.size();
-	float j = 1.0 - t;
-	Point pt;
-	for (size_t k = 0; k<n; ++k) {
-		pt += controls.at(k) * pow(j, n-1-k) * pow(t, k) * coeffs.at(k);
-	}
-	return pt;
-}
-
-Geometry2d::Point
-Robot::evaluateBezierVelocity(float t,
-		const std::vector<Geometry2d::Point>& controls,
-		const std::vector<float>& coeffs) const {
-
-	int n = controls.size();
-	float j = 1.0 - t;
-	Point pt;
-	for (int k = 0; k<n; ++k) {
-		pt += controls.at(k) * -1 * (n-1-k) * pow(j, n-1-k-1) * pow(t, k) * coeffs.at(k);
-		pt += controls.at(k) * pow(j, n-1-k) * k * pow(t, k-1) * coeffs.at(k);
-	}
-	return pt;
-}
-
-float Robot::bezierLength(const std::vector<Geometry2d::Point>& controls,
-					const std::vector<float>& coeffs) const {
-	// linear interpolation of points
-	vector<Point> interp;
-	interp.push_back(controls.at(0));
-	size_t nrPoints = 20;
-	float inc = 1.0/nrPoints;
-	for (size_t t = 1; t<nrPoints-1; ++t)
-		interp.push_back(evaluateBezier(t*inc, controls, coeffs));
-	interp.push_back(controls.at(controls.size() -1));
-
-	// find the distance
-	float length = 0.0;
-	for (size_t i = 1; i<interp.size(); ++i)
-		length += interp.at(i).distTo(interp.at(i-1));
-
-	return length;
-}
+// TEMPORARILY DISABLED
+//void Robot::genBezierVelocity() {
+//	const bool verbose = false;
+//
+//	const float deltaT = (_state->timestamp - _lastTimestamp)/intTimeStampToFloat;
+//	// error handling
+//	size_t degree = _bezierControls.size();
+//	if (degree < 2) {
+//		stop(deltaT);
+//		cout << "Bezier curve of size: " << degree << "!" << endl;
+//		return;
+//	}
+//
+//	// generate coefficients
+//	vector<float> coeffs;
+//	for (size_t i=0; i<degree; ++i) {
+//		coeffs.push_back(binomialCoefficient(degree-1, i));
+//	}
+//
+//	// calculate length to allow for determination of time
+//	_bezierTotalLength = bezierLength(_bezierControls, coeffs);
+//
+//	// DEBUG: show the length of the trajectory
+//	_state->drawText(QString::number(_bezierTotalLength), Segment(_bezierControls.at(0), _bezierControls.at(1)).center(), Qt::blue);
+//
+//	// calculate numerical derivative by stepping ahead a fixed constant
+//	float lookAheadDist = 0.15; // in meters along path
+//	float dt = lookAheadDist/_bezierTotalLength;
+//
+//	float velGain = 3.0; // FIXME: should be dependent on the length of the curve
+//
+//	// calculate a target velocity for translation
+//	Point targetVel = evaluateBezierVelocity(dt, _bezierControls, coeffs);
+//
+//	// apply gain
+//	targetVel *= velGain;
+//
+//	// DEBUG: draw the targetVel
+//	Segment targetVelLine(pos(), pos() + targetVel);
+//	_state->drawLine(targetVelLine, Qt::red);
+//	// directly set the velocity
+//	_vel = targetVel;
+//
+//	float targetAngle = 0.0;
+//	if (_self->cmd.face == MotionCmd::Continuous) {
+//		// look further ahead for angle
+//		float WlookAheadDist = 0.30; // in meters along path // prev: 0.15ang_thresh
+//		float dtw = WlookAheadDist/_bezierTotalLength;
+//		targetAngle = evaluateBezierVelocity(dtw, _bezierControls, coeffs).angle();
+//	} else if (_self->cmd.face == MotionCmd::Endpoint) {
+//		targetAngle = (_bezierControls.at(degree-1) - _bezierControls.at(degree-2)).angle();
+//	}
+//
+//	// draw the intended facing
+//	_state->drawLine(Segment(pos(), pos() + Point::direction(targetAngle).normalized()), Qt::gray);
+//
+//	// Find the error (degrees)
+//	float angleErr = Utils::fixAngleDegrees(targetAngle*RadiansToDegrees - _self->angle);
+//
+//	// debug GUI for PID commands
+//	if (verbose) cout << "Current Kp: " << _anglePid.kp << endl;
+//
+//	// angular velocity is in degrees/sec
+//	_w = _anglePid.run(angleErr);
+//}
 
 void Robot::genMotor() {
 	bool verbose = false;
@@ -1095,163 +895,150 @@ void Robot::genMotorOld() {
 	}
 }
 
-void Robot::calib()
-{
-	const float fieldW2 = Constants::Field::Width/2.0f;
-
-	int debugRobotId = 9;
-
-	if (_calibState == InitCalib)
-	{
-		_calibInfo = CalibInfo();
-
-		float y = 1.5;
-
-		_calibInfo.startPos = Geometry2d::Point(fieldW2 - .3, y);
-		_calibInfo.endPos = Geometry2d::Point(0, y);
-
-		_calibState = InitialPoint;
-	}
-	else if (_calibState == InitialPoint)
-	{
-		Geometry2d::Point dir = (_calibInfo.endPos - _calibInfo.startPos).normalized();
-
-		_self->cmd.goalOrientation = _calibInfo.endPos + dir * 1.0;
-		_self->cmd.face = MotionCmd::Endpoint;
-		_self->cmd.vScale = .5;
-
-		Planning::Path path;
-		ObstacleGroup& og = _self->obstacles;
-		_planner.run(_self->pos, _self->angle, _self->vel, _calibInfo.startPos, &og, path);
-		_path = path;
-
-		float destAngle =  dir.angle() * RadiansToDegrees;
-
-		float a = fabs(Utils::fixAngleDegrees(_self->angle - destAngle));
-
-		if (_calibInfo.startPos.nearPoint(_self->pos, .1) && a < 5)
-		{
-			_calibInfo.startTime = Utils::timestamp();
-			_calibState = Wait1;
-		}
-
-		genVelocity(_self->cmd.pathEnd);
-		genMotor();
-	}
-	else if (_calibState == Wait1)
-	{
-		const float dur = (_state->timestamp - _calibInfo.startTime)/1000000.0f;
-		if (dur > 3)
-		{
-			_calibInfo.startTime = Utils::timestamp();
-			_calibInfo.lastPos = _self->pos;
-			_calibInfo.pSum = 0;
-			_calibInfo.startPos = _self->pos;
-
-			_calibState = Travel;
-			_calibInfo.outSpeed = _calibInfo.speed;
-
-			if (_self->shell == debugRobotId)
-			{
-				printf("Speed: %d\n", _calibInfo.outSpeed);
-			}
-		}
-	}
-	else if (_calibState == Travel)
-	{
-		float duration = (_state->timestamp-_calibInfo.startTime)/1000000.0f;
-
-		Geometry2d::Point deltaP = (_self->pos - _calibInfo.lastPos);
-
-		//add to running point sum
-		_calibInfo.pSum += deltaP.mag();
-
-		//print duration, velocty mag, del position mag
-		if (_self->shell == debugRobotId)
-		{
-			printf("calib %f %f %f\n", duration, _self->vel.mag(), deltaP.mag());
-			fflush(stdout);
-		}
-
-		//end
-		if (_self->pos.y >= Constants::Field::Length - .2 || _self->pos.y <= .2 ||
-			_self->pos.x <= (-Constants::Field::Width/2.0 + .2) ||
-			_self->pos.x >= (Constants::Field::Width/2.0 - .2) ||
-			duration > 5 || !_self->valid)
-		{
-			//goto deccel
-			_calibState = Decel;
-		}
-
-		_calibInfo.lastPos = _self->pos;
-
-		int8_t wspeed = _calibInfo.outSpeed;
-
-#if 1
-		_self->radioTx->set_motors(0, -wspeed);
-		_self->radioTx->set_motors(1, wspeed);
-		_self->radioTx->set_motors(2, wspeed);
-		_self->radioTx->set_motors(3, -wspeed);
-#else //45
-		_self->radioTx->motors[0] = 0;
-		_self->radioTx->motors[1] = wspeed;
-		_self->radioTx->motors[2] = 0;
-		_self->radioTx->motors[3] = -wspeed;
-#endif
-	}
-
-	if (_calibState == Decel)
-	{
-		_calibInfo.outSpeed -= 30;
-
-		if (_calibInfo.outSpeed < 0)
-		{
-			_calibInfo.outSpeed = 0;
-		}
-
-		if (!_self->valid)
-		{
-			_calibInfo.outSpeed = 0;
-		}
-
-		_self->radioTx->set_motors(0, -_calibInfo.outSpeed);
-		_self->radioTx->set_motors(1, _calibInfo.outSpeed);
-		_self->radioTx->set_motors(2, _calibInfo.outSpeed);
-		_self->radioTx->set_motors(3, -_calibInfo.outSpeed);
-
-		if (_calibInfo.outSpeed == 0)
-		{
-			_calibState = InitialPoint;
-
-			//if we ran at the max speed
-			//we are all done
-			if (_calibInfo.speed == 127)
-			{
-				//end
-				_calibState = End;
-			}
-
-			//increment speed by fixed amount
-			_calibInfo.speed += 10;
-
-			//otherwise go to max speed
-			if (_calibInfo.speed > 127)
-			{
-				_calibInfo.speed = 127;
-			}
-		}
-	}
-}
-
-int Motion::Robot::factorial(int n) const {
-	if ( n == 1) return 1;
-	return n * factorial(n-1);
-}
-
-int Motion::Robot::binomialCoefficient(int n, int k) const {
-	if (k > n) throw invalid_argument("K greater than N in binomialCoefficient()!");
-	if (k == n || k == 0 ) return 1;
-	if (k == 1 || k == n-1) return n;
-
-	return factorial(n)/(factorial(k)*factorial(n-k));
-}
+//void Robot::calib()
+//{
+//	const float fieldW2 = Constants::Field::Width/2.0f;
+//
+//	int debugRobotId = 9;
+//
+//	if (_calibState == InitCalib)
+//	{
+//		_calibInfo = CalibInfo();
+//
+//		float y = 1.5;
+//
+//		_calibInfo.startPos = Geometry2d::Point(fieldW2 - .3, y);
+//		_calibInfo.endPos = Geometry2d::Point(0, y);
+//
+//		_calibState = InitialPoint;
+//	}
+//	else if (_calibState == InitialPoint)
+//	{
+//		Geometry2d::Point dir = (_calibInfo.endPos - _calibInfo.startPos).normalized();
+//
+//		_self->cmd.goalOrientation = _calibInfo.endPos + dir * 1.0;
+//		_self->cmd.face = MotionCmd::Endpoint;
+//		_self->cmd.vScale = .5;
+//
+//		Planning::Path path;
+//		ObstacleGroup& og = _self->obstacles;
+//		_planner.run(_self->pos, _self->angle, _self->vel, _calibInfo.startPos, &og, path);
+//		_path = path;
+//
+//		float destAngle =  dir.angle() * RadiansToDegrees;
+//
+//		float a = fabs(Utils::fixAngleDegrees(_self->angle - destAngle));
+//
+//		if (_calibInfo.startPos.nearPoint(_self->pos, .1) && a < 5)
+//		{
+//			_calibInfo.startTime = Utils::timestamp();
+//			_calibState = Wait1;
+//		}
+//
+//		genVelocity(_self->cmd.pathEnd);
+//		genMotor();
+//	}
+//	else if (_calibState == Wait1)
+//	{
+//		const float dur = (_state->timestamp - _calibInfo.startTime)/1000000.0f;
+//		if (dur > 3)
+//		{
+//			_calibInfo.startTime = Utils::timestamp();
+//			_calibInfo.lastPos = _self->pos;
+//			_calibInfo.pSum = 0;
+//			_calibInfo.startPos = _self->pos;
+//
+//			_calibState = Travel;
+//			_calibInfo.outSpeed = _calibInfo.speed;
+//
+//			if (_self->shell == debugRobotId)
+//			{
+//				printf("Speed: %d\n", _calibInfo.outSpeed);
+//			}
+//		}
+//	}
+//	else if (_calibState == Travel)
+//	{
+//		float duration = (_state->timestamp-_calibInfo.startTime)/1000000.0f;
+//
+//		Geometry2d::Point deltaP = (_self->pos - _calibInfo.lastPos);
+//
+//		//add to running point sum
+//		_calibInfo.pSum += deltaP.mag();
+//
+//		//print duration, velocty mag, del position mag
+//		if (_self->shell == debugRobotId)
+//		{
+//			printf("calib %f %f %f\n", duration, _self->vel.mag(), deltaP.mag());
+//			fflush(stdout);
+//		}
+//
+//		//end
+//		if (_self->pos.y >= Constants::Field::Length - .2 || _self->pos.y <= .2 ||
+//			_self->pos.x <= (-Constants::Field::Width/2.0 + .2) ||
+//			_self->pos.x >= (Constants::Field::Width/2.0 - .2) ||
+//			duration > 5 || !_self->valid)
+//		{
+//			//goto deccel
+//			_calibState = Decel;
+//		}
+//
+//		_calibInfo.lastPos = _self->pos;
+//
+//		int8_t wspeed = _calibInfo.outSpeed;
+//
+//#if 1
+//		_self->radioTx->set_motors(0, -wspeed);
+//		_self->radioTx->set_motors(1, wspeed);
+//		_self->radioTx->set_motors(2, wspeed);
+//		_self->radioTx->set_motors(3, -wspeed);
+//#else //45
+//		_self->radioTx->motors[0] = 0;
+//		_self->radioTx->motors[1] = wspeed;
+//		_self->radioTx->motors[2] = 0;
+//		_self->radioTx->motors[3] = -wspeed;
+//#endif
+//	}
+//
+//	if (_calibState == Decel)
+//	{
+//		_calibInfo.outSpeed -= 30;
+//
+//		if (_calibInfo.outSpeed < 0)
+//		{
+//			_calibInfo.outSpeed = 0;
+//		}
+//
+//		if (!_self->valid)
+//		{
+//			_calibInfo.outSpeed = 0;
+//		}
+//
+//		_self->radioTx->set_motors(0, -_calibInfo.outSpeed);
+//		_self->radioTx->set_motors(1, _calibInfo.outSpeed);
+//		_self->radioTx->set_motors(2, _calibInfo.outSpeed);
+//		_self->radioTx->set_motors(3, -_calibInfo.outSpeed);
+//
+//		if (_calibInfo.outSpeed == 0)
+//		{
+//			_calibState = InitialPoint;
+//
+//			//if we ran at the max speed
+//			//we are all done
+//			if (_calibInfo.speed == 127)
+//			{
+//				//end
+//				_calibState = End;
+//			}
+//
+//			//increment speed by fixed amount
+//			_calibInfo.speed += 10;
+//
+//			//otherwise go to max speed
+//			if (_calibInfo.speed > 127)
+//			{
+//				_calibInfo.speed = 127;
+//			}
+//		}
+//	}
+//}

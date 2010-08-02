@@ -86,7 +86,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 	_goalArea[2] = ObstaclePtr(new CircleObstacle(Geometry2d::Point(halfFlat, 0), radius));
 
 	// Create robots
-	for (int i = 0; i < Constants::Robots_Per_Team; ++i)
+	for (size_t i = 0; i < Constants::Robots_Per_Team; ++i)
 	{
 		self[i] = new Robot(this, i, true);
 		opp[i] = new Robot(this, i, false);
@@ -97,7 +97,7 @@ Gameplay::GameplayModule::~GameplayModule()
 {
 	removeGoalie();
 	
-	for (int i = 0; i < Constants::Robots_Per_Team; ++i)
+	for (size_t i = 0; i < Constants::Robots_Per_Team; ++i)
 	{
 		delete self[i];
 		delete opp[i];
@@ -145,7 +145,7 @@ void Gameplay::GameplayModule::run()
 
 	ObstaclePtr selfObstacles[Constants::Robots_Per_Team];
 	ObstaclePtr oppObstacles[Constants::Robots_Per_Team];
-	for (int i = 0; i < Constants::Robots_Per_Team; ++i)
+	for (size_t i = 0; i < Constants::Robots_Per_Team; ++i)
 	{
 		//FIXME - These should not be in Gameplay.  This should be the responsibility of motion planning.
 		if (_state->self[i].valid)
@@ -194,7 +194,7 @@ void Gameplay::GameplayModule::run()
 		{
 			// Add rule-based obstacles (except for the ball, which will be added after the play
 			// has a change to set willKick and avoidBall)
-			for (int i = 0; i < Constants::Robots_Per_Team; ++i)
+			for (size_t i = 0; i < Constants::Robots_Per_Team; ++i)
 			{
 				if (self[i] != r && selfObstacles[i])
 				{

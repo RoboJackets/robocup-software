@@ -214,7 +214,7 @@ bool Gameplay::Behaviors::ZoneOffense::run() {
 
 	// handle opponents
 	vector<Robot *> leftOpps, rightOpps, midOpps;
-	for (int i = 0; i<Constants::Robots_Per_Team; ++i) {
+	for (size_t i = 0; i<Constants::Robots_Per_Team; ++i) {
 		Robot * op = _gameplay->opp[i];
 		Point opPos = op->pos();
 		if ((_midfielder && _rightZone.contains(opPos)) ||
