@@ -23,7 +23,7 @@ namespace Modeling
 			WorldModel(SystemState *state, ConfigFile::shared_worldmodel cfg);
 			~WorldModel();
 
-			void run(bool blueTeam, const std::vector<SSL_DetectionFrame> &teamVision);
+			void run(bool blueTeam, const std::vector<const SSL_DetectionFrame *> &teamVision);
 
 		protected:
 

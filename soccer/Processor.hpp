@@ -141,9 +141,6 @@ class Processor: public QThread
 		/** send out the radio data for the radio program */
 		void sendRadioData();
 
-		/** handle incoming vision packet */
-		void visionPacket(const SSL_WrapperPacket &wrapper, std::vector<SSL_DetectionFrame> &teamVision);
-		
 		/** Used to start and stop the thread **/
 		volatile bool _running;
 

@@ -276,7 +276,7 @@ void Processor::run()
 		// Inputs
 		
 		// Read vision packets
-		vector<SSL_DetectionFrame> teamVision;
+		vector<const SSL_DetectionFrame *> rawVision;
 		int timeout = _framePeriod / 1000;
 		while (_syncToVision || _visionSocket.hasPendingDatagrams())
 		{
@@ -306,7 +306,10 @@ void Processor::run()
 			}
 			
 			curStatus.lastVisionTime = Utils::timestamp();
-			visionPacket(*packet, teamVision);
+			if (packet->has_detection())
+			{
+				rawVision.push_back(&packet->detection());
+			}
 		}
 		
 		// Read referee packets
@@ -367,9 +370,25 @@ void Processor::run()
 		
 		_joystick->update();
 		
-		if (_modelingModule)
+		_modelingModule->run(_blueTeam, rawVision);
+		
+		// Convert modeling output to team space
+		_state.ball.pos = _worldToTeam * (_state.ball.pos / 1000.0f);
+		_state.ball.vel = _worldToTeam.transformDirection(_state.ball.vel / 1000.0f);
+		_state.ball.accel = _worldToTeam.transformDirection(_state.ball.accel / 1000.0f);
+		
+		BOOST_FOREACH(SystemState::Robot &robot, _state.self)
 		{
-			_modelingModule->run(_blueTeam, teamVision);
+			robot.pos = _worldToTeam * (robot.pos / 1000.0f);
+			robot.vel = _worldToTeam.transformDirection(robot.vel / 1000.0f);
+			robot.angle = Utils::fixAngleDegrees(_teamAngle + robot.angle);
+		}
+		
+		BOOST_FOREACH(SystemState::Robot &robot, _state.opp)
+		{
+			robot.pos = _worldToTeam * (robot.pos / 1000.0f);
+			robot.vel = _worldToTeam.transformDirection(robot.vel / 1000.0f);
+			robot.angle = Utils::fixAngleDegrees(_teamAngle + robot.angle);
 		}
 		
 		// Add RadioTx commands for visible robots
@@ -563,46 +582,6 @@ void Processor::sendRadioData()
 	std::string out;
 	logFrame.radio_tx().SerializeToString(&out);
 	_radioSocket.writeDatagram(&out[0], out.size(), LocalAddress, RadioTxPort + _radio);
-}
-
-void Processor::visionPacket(const SSL_WrapperPacket &wrapper, vector<SSL_DetectionFrame> &teamVision)
-{
-	if (!wrapper.has_detection())
-	{
-		// Geometry only - we don't care
-		return;
-	}
-	
-	// Copy the detection data to teamVision
-	teamVision.push_back(wrapper.detection());
-	SSL_DetectionFrame &frame = teamVision.back();
-	
-	// Transform into team space (centered on our goal, meters, etc.)
-	BOOST_FOREACH(SSL_DetectionRobot& robot, *frame.mutable_robots_yellow())
-	{
-		Geometry2d::Point pos(robot.x(), robot.y());
-		pos = _worldToTeam * (pos / 1000.0);
-		robot.set_x(pos.x);
-		robot.set_y(pos.y);
-		robot.set_orientation(Utils::fixAngleDegrees(_teamAngle + robot.orientation() * RadiansToDegrees));
-	}
-	
-	BOOST_FOREACH(SSL_DetectionRobot& robot, *frame.mutable_robots_blue())
-	{
-		Geometry2d::Point pos(robot.x(), robot.y());
-		pos = _worldToTeam * (pos / 1000.0);
-		robot.set_x(pos.x);
-		robot.set_y(pos.y);
-		robot.set_orientation(Utils::fixAngleDegrees(_teamAngle + robot.orientation() * RadiansToDegrees));
-	}
-	
-	BOOST_FOREACH(SSL_DetectionBall& ball, *frame.mutable_balls())
-	{
-		Geometry2d::Point pos(ball.x(), ball.y());
-		pos = _worldToTeam * (pos / 1000.0);
-		ball.set_x(pos.x);
-		ball.set_y(pos.y);
-	}
 }
 
 void Processor::defendPlusX(bool value)
