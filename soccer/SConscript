@@ -92,8 +92,8 @@ srcs = [
 	# files for pass experiments',
 	#gameplay/plays/demo_plays/DemoPassExperiment1.cpp',
 
-# 	gameplay/behaviors/test/KickerCalibration.cpp',
-# 	gameplay/behaviors/test/MotionLeader.cpp',
+#	gameplay/behaviors/test/KickerCalibration.cpp',
+#	gameplay/behaviors/test/MotionLeader.cpp',
 
 # Sources for modeling module',
 	'modeling/WorldModel.cpp',
@@ -118,10 +118,10 @@ srcs = [
 	'motion/planning/Tree.cpp',
 
 # Sources for stateID module',
-	'stateID/StateIDModule.cpp'
+	'stateID/StateIDModule.cpp',
+	
+	'ui/main_icons.qrc'
 ]
-
-rcs = env.Qrc4('ui/main_icons.qrc')
 
 uics = env.Uic4([
 	'ui/MainWindow.ui',
@@ -133,4 +133,6 @@ e = env.Clone()
 e.Append(CPPPATH=['#/soccer', Dir('ui')])
 e.Append(LIBS=['blas', 'lapack'])
 
-e.Program('soccer', srcs)
+p = e.Program('soccer', srcs)
+
+e.Install(exec_dir, p)

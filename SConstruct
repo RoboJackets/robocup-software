@@ -1,5 +1,5 @@
 # Where to put all executables
-exec_dir = Dir('#/build')
+exec_dir = Dir('#/run')
 Export('exec_dir')
 
 env = Environment()
