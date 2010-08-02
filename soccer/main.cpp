@@ -175,7 +175,7 @@ int main (int argc, char* argv[])
 		win->playConfigTab()->load(playbook);
 	} else {
 		// Try to load a default playbook
-		win->playConfigTab()->load("../playbooks/Default.pbk");
+		win->playConfigTab()->load("default.pbk");
 	}
 	
 	BOOST_FOREACH(const QString &str, extraPlays)

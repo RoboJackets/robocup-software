@@ -1,5 +1,4 @@
 #include <SimFieldView.hpp>
-#include <SimFieldView.moc>
 
 #include <Constants.hpp>
 #include <Network.hpp>
