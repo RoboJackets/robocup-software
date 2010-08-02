@@ -4,7 +4,6 @@
 //FIXME - One time the display quit updating, like the timer died.  GUI was OK but frame # did not advance, etc.  Status was SIMULATION.
 
 #include "MainWindow.hpp"
-// #include "MainWindow.moc"
 
 #include "PlayConfigTab.hpp"
 

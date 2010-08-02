@@ -1,4 +1,3 @@
 *.kdev4
 *.pyc
 .sconsign.dblite
-/build/*
