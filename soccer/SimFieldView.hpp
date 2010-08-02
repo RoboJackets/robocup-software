@@ -44,6 +44,8 @@ class SimFieldView: public FieldView
 			DRAG_SHOOT
 		} _dragMode;
 		
+		int _dragRobot;
+		int _dragRobotBlue;
 		Geometry2d::Point _dragTo;
 		Geometry2d::Point _shot;
 };

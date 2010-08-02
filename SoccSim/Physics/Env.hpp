@@ -62,8 +62,9 @@ class Env : public QObject
 		
 		Field* _field;
 		
-		QMap<unsigned int, Robot*> _blue;
-		QMap<unsigned int, Robot*> _yellow;
+		typedef QMap<unsigned int, Robot*> RobotMap;
+		RobotMap _blue;
+		RobotMap _yellow;
 		QVector<Ball*> _balls;
 		
 		// This timer causes physics to be stepped on a regular basis
