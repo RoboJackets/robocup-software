@@ -1,3 +1,5 @@
+Clean('.', Glob('build/*'))
+
 # Where to put all executables
 exec_dir = Dir('#/run')
 Export('exec_dir')
