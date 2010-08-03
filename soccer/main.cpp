@@ -67,9 +67,12 @@ int main (int argc, char* argv[])
 	{
 		const char* var = argv[i];
 
-		if (strcmp(var, "-y") == 0)
+		if (strcmp(var, "--help") == 0)
 		{
-			// Default, don't care
+			usage(argv[0]);
+		} else if (strcmp(var, "-y") == 0)
+		{
+			blueTeam = false;
 		}
 		else if (strcmp(var, "-b") == 0)
 		{
