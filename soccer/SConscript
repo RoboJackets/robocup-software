@@ -135,5 +135,9 @@ e.Append(CPPPATH=['#/soccer', Dir('ui')])
 e.Append(LIBS=['blas', 'lapack'])
 
 p = e.Program('soccer', srcs)
+env.Depends(p, uics)
+e.Install(exec_dir, p)
 
+p = e.Program('log_viewer', ['LogViewer.cpp', 'FieldView.cpp', 'ProtobufTree.cpp'])
+env.Depends(p, env.Uic4('ui/LogViewer.ui'))
 e.Install(exec_dir, p)
