@@ -108,6 +108,7 @@ srcs = [
 	'modeling/InvertMatrix.hpp',
 	'modeling/RbpfModelRolling.cpp',
 	'modeling/RbpfModelKicked.cpp',
+	'modeling/ExtendedKalmanFilter.cpp',
 
 # Sources for motion module',
 	'motion/MotionModule.cpp',
