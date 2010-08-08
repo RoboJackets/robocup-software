@@ -10,10 +10,7 @@ REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoBasicOneTouchAttack, "Demos")
 Gameplay::Plays::DemoBasicOneTouchAttack::DemoBasicOneTouchAttack(GameplayModule *gameplay):
 	Play(gameplay), _kicker(gameplay)
 {
-}
-
-bool Gameplay::Plays::DemoBasicOneTouchAttack::assign(set<Robot *> &available)
-{
+	set<Robot *> available = gameplay->robots();
 	// remove non-visible robots
 	// this prevents bug with 2-robot tests where play would do nothing
 	BOOST_FOREACH(Robot *r, available){
@@ -23,7 +20,6 @@ bool Gameplay::Plays::DemoBasicOneTouchAttack::assign(set<Robot *> &available)
 	}
 
 	_kicker.assign(available);
-	return true;
 }
 
 bool Gameplay::Plays::DemoBasicOneTouchAttack::run()

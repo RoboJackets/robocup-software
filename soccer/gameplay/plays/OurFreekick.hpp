@@ -17,8 +17,7 @@ namespace Gameplay
 			public:
 				OurFreekick(GameplayModule *gameplay);
 				
-				virtual bool applicable(const std::set<Robot *> &robots);
-				virtual bool assign(std::set<Robot *> &available);
+				static float score(GameplayModule *gameplay);
 				virtual bool run();
 			
 			protected:

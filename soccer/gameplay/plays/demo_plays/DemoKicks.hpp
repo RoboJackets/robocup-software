@@ -17,10 +17,6 @@ namespace Gameplay
 
 				DemoKicks(GameplayModule *gameplay);
 
-				/** Assigns robots to the play given a set of robots */
-				virtual bool assign(std::set<Robot *> &available);
-
-				/** Called every frame */
 				virtual bool run();
 
 			protected:

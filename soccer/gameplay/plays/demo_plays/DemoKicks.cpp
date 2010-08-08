@@ -10,13 +10,9 @@ Gameplay::Plays::DemoKicks::DemoKicks(GameplayModule *gameplay):
 	_test(Deg0StationaryKick),
 	swichDemo(true)
 {
-}
-
-bool Gameplay::Plays::DemoKicks::assign(set<Robot *> &available)
-{
+	set<Robot *> available = gameplay->robots();
 	_robots = available;
 	takeAll(available);
-	return true;
 }
 
 bool Gameplay::Plays::DemoKicks::run()

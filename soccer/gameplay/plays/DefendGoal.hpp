@@ -1,12 +1,6 @@
-/**
- *  Example play: This is a template for a play.
- *  To use, implement the functions and add the necessary member variables
- *  and do a test replacement for ExamplePlay with whatever name you want.
- */
-
 #pragma once
 
-#include "../Play.hpp"
+#include <gameplay/Play.hpp>
 
 #include <gameplay/behaviors/positions/Fullback.hpp>
 #include <gameplay/behaviors/positions/Forward.hpp>
@@ -28,13 +22,7 @@ namespace Gameplay
 
 				DefendGoal(GameplayModule *gameplay);
 
-				/** returns true if the play is currently applicable given gamestate */
-				virtual bool applicable(const std::set<Robot *> &robots);
-
-				/** Assigns robots to the play given a set of robots */
-				virtual bool assign(std::set<Robot *> &available);
-
-				/** Called every frame */
+				static float score(GameplayModule *gameplay);
 				virtual bool run();
 
 			protected:

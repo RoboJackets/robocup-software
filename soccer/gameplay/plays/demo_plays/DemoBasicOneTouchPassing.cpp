@@ -12,10 +12,7 @@ Gameplay::Plays::DemoBasicOneTouchPassing::DemoBasicOneTouchPassing(GameplayModu
 	_passer(gameplay),
 	_receiver(gameplay)
 {
-}
-
-bool Gameplay::Plays::DemoBasicOneTouchPassing::assign(set<Robot *> &available)
-{
+	set<Robot *> available = gameplay->robots();
 	cout << "available robots:  ";
 	BOOST_FOREACH(Robot * r, available)
 		cout << r->id() << " ";
@@ -29,7 +26,6 @@ bool Gameplay::Plays::DemoBasicOneTouchPassing::assign(set<Robot *> &available)
 	_passer.targetRobot = _receiver.robot();
 
 	cout << "DemoBasicOneTouchPassing::assign() successful!" << endl;
-	return true;
 }
 
 bool Gameplay::Plays::DemoBasicOneTouchPassing::run()

@@ -11,15 +11,8 @@ Gameplay::Plays::DefendPenalty::DefendPenalty(GameplayModule *gameplay):
 	_idle3(gameplay),
 	_idle4(gameplay)
 {
-}
-
-bool Gameplay::Plays::DefendPenalty::applicable(const std::set<Robot *> &robots)
-{
-	return gameState().setupRestart() && gameState().theirPenalty();
-}
-
-bool Gameplay::Plays::DefendPenalty::assign(set<Robot *> &available)
-{
+	set<Robot *> available = _gameplay->robots();
+	
 	_robots = available;
 	
 	_idle1.target = Geometry2d::Point(1.5, 1);
@@ -31,8 +24,11 @@ bool Gameplay::Plays::DefendPenalty::assign(set<Robot *> &available)
 	_idle2.assign(available);
 	_idle3.assign(available);
 	_idle4.assign(available);
+}
 
-	return true;
+float Gameplay::Plays::DefendPenalty::score ( Gameplay::GameplayModule* gameplay )
+{
+	return (gameplay->state()->gameState.setupRestart() && gameplay->state()->gameState.theirPenalty()) ? 0 : INFINITY;
 }
 
 bool Gameplay::Plays::DefendPenalty::run()

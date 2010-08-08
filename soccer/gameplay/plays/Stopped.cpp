@@ -10,24 +10,21 @@ Gameplay::Plays::Stopped::Stopped(GameplayModule *gameplay):
 	_left(gameplay, Behaviors::Fullback::Left),
 	_right(gameplay, Behaviors::Fullback::Right)
 {
+	set<Robot *> available = _gameplay->robots();
+	
 	_left.otherFullbacks.insert(&_right);
 	_right.otherFullbacks.insert(&_left);
-}
-
-bool Gameplay::Plays::Stopped::applicable(const std::set<Robot *> &robots)
-{
-	return _gameplay->state()->gameState.stopped();
-}
-
-bool Gameplay::Plays::Stopped::assign(set<Robot *> &available)
-{
+	
 	_robots = available;
 	
 	_left.assign(available);
 	_right.assign(available);
 	_idle.assign(available);
+}
 
-	return true;
+float Gameplay::Plays::Stopped::score ( Gameplay::GameplayModule* gameplay )
+{
+	return gameplay->state()->gameState.stopped() ? 0 : INFINITY;
 }
 
 bool Gameplay::Plays::Stopped::run()

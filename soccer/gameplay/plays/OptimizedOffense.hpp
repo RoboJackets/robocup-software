@@ -32,25 +32,21 @@ namespace Gameplay
 		 *
 		 * The resulting plans are all spline-based robot trajectories, with timing
 		 * for ball kicks.
+		 *
+		 * Runs whenever the game is running and the
+		 * opponents do not have the ball
 		 */
 		class OptimizedOffense: public Play
 		{
 			public:
 				OptimizedOffense(GameplayModule *gameplay);
 
-				/**
-				 * Runs whenever the game is running and the
-				 * opponents do not have the ball
-				 */
-				virtual bool applicable(const std::set<Robot *> &robots);
+				static float score(GameplayModule *gameplay);
 
 				/** Called every frame */
 				virtual bool run();
-
+			
 			protected:
-
-
-
 				bool planReady_; /// true if there is a calculated plan
 		};
 	}

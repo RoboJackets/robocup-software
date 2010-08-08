@@ -3,9 +3,9 @@
 #include "Behavior.hpp"
 
 // This macro lets PlayConfigTab automagically populate its list of available plays.
-// It creates a PlayFactor for the given play class.
-#define REGISTER_PLAY(x) static Gameplay::PlayFactory<x> __factory;
-#define REGISTER_PLAY_CATEGORY(x, c) static Gameplay::PlayFactory<x> __factory(c);
+// It creates a PlayFactory for the given play class.
+#define REGISTER_PLAY(x) static Gameplay::PlayFactoryImpl<x> __factory;
+#define REGISTER_PLAY_CATEGORY(x, c) static Gameplay::PlayFactoryImpl<x> __factory(c);
 
 namespace Gameplay
 {
@@ -14,59 +14,71 @@ namespace Gameplay
 	class Play: public Behavior
 	{
 	public:
-		// Create the play, with a given number of robots
 		Play(GameplayModule *gameplay);
 		
-		// Returns true iff this play is allowed to be selected given the current state of the game.
-		// The default implementation returns true when we are playing (not stopped or waiting on a restart).
-		virtual bool applicable(const std::set<Robot *> &robots);
-		
-		// Returns a score used to compare this play against all other applicable plays when a new play
-		// is to be selected.
-		//
-		// The applicable play with the LOWEST score is selected.  This is intended to be convenient for error-minimizing criteria.
-		// The default implementation always returns zero.
-		virtual float score();
-		
-		// If true, this play can be examined by GameplayModule::selectPlay.
-		// The GUI thread should still use the enable/disable functions in GameplayModule because they are thread-safe.
-		// The GUI thread may read this field because the processing field will never change it.
-		bool enabled;
-		
-		QString category;
+		// Every subclass of Play needs to override this function.
+		// Return INFINITY if the play cannot be used or a score (lower is better) used to select the best play.
+		static float score(GameplayModule *gameplay);
 	};
 	
 	// The list of factories has to hold a single (and thus non-templated) type, so we use this base class
 	// to add factories to the list of factories.
-	class PlayFactoryBase
+	class PlayFactory
 	{
 		public:
-			PlayFactoryBase(QString c = QString());
+			PlayFactory(QString c = QString());
 			
+			virtual float score(GameplayModule *gameplay) = 0;
 			virtual Play *create(GameplayModule *gameplay) = 0;
+			virtual QString name() = 0;
 			
 			QString category;
 			
+			bool enabled;
+			
+			// Cached score() value from last gameplay iteration
+			float lastScore;
+			
+			static const std::list<PlayFactory *> &factories();
+			
+		protected:
 			// This has to be a pointer to a list because a static list may not be constructed before the factories
-			static std::list<PlayFactoryBase *> *factories;
+			static std::list<PlayFactory *> *_factories;
 	};
 	
 	// This class is used to create a particular play.  It is created by REGISTER_PLAY and added to the
 	// factory list by PlayFactoryBase's constructor.
 	template<class X>
-	class PlayFactory: public PlayFactoryBase
+	class PlayFactoryImpl: public PlayFactory
 	{
 		public:
-			PlayFactory(QString c = QString()):
-				PlayFactoryBase(c)
+			PlayFactoryImpl(QString c = QString()):
+				PlayFactory(c)
 			{
+			}
+			
+			virtual float score(GameplayModule *gameplay)
+			{
+				return X::score(gameplay);
 			}
 			
 			virtual Play *create(GameplayModule *gameplay)
 			{
 				Play *play = new X(gameplay);
-				play->category = category;
 				return play;
 			}
+			
+			virtual QString name()
+			{
+				if (_name.isNull())
+				{
+					_name = Utils::className(typeid(X));
+				}
+				
+				return _name;
+			}
+			
+		protected:
+			QString _name;
 	};
 }

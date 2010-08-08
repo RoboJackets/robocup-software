@@ -17,11 +17,8 @@ namespace Gameplay
 			public:
 				ExamplePlay(GameplayModule *gameplay);
 
-				/** returns true if the play is currently applicable given gamestate */
-				virtual bool applicable(const std::set<Robot *> &robots);
-
-				/** Assigns robots to the play given a set of robots */
-				virtual bool assign(std::set<Robot *> &available);
+				// Return INFINITY if the play cannot be used or a score (lower is better) used to select the best play.
+				static float score(GameplayModule *gameplay);
 
 				/** Called every frame */
 				virtual bool run();

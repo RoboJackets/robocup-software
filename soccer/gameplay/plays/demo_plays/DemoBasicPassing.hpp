@@ -15,11 +15,8 @@ namespace Gameplay
 		{
 			public:
 				DemoBasicPassing(GameplayModule *gameplay);
-
-				/** Passing test needs two robots to work */
-				virtual bool assign(std::set<Robot *> &available);
-
-				/** default run */
+				
+				static float score(GameplayModule *gameplay);
 				virtual bool run();
 
 			protected:

@@ -25,7 +25,7 @@ QString NonLiveStyle("border:2px solid red");
 MainWindow::MainWindow(QWidget *parent):
 	QMainWindow(parent)
 {
-// 	_processor = 0;
+	_processor = 0;
 	_autoExternalReferee = true;
 	_doubleFrameNumber = -1;
 	_lastUpdateTime = Utils::timestamp();
@@ -187,10 +187,6 @@ void MainWindow::updateViews()
 	if (play.isNull())
 	{
 		play = "(no play)";
-	}
-	if (_processor->gameplayModule()->forcePlay())
-	{
-		play += " (forced)";
 	}
 	_currentPlay->setText(play);
 	
@@ -523,12 +519,6 @@ void MainWindow::on_actionRestartUpdateTimer_triggered()
 
 void MainWindow::on_menu_Gameplay_aboutToShow()
 {
-	ui.actionUnforce->setEnabled(_processor->gameplayModule()->forcePlay());
-}
-
-void MainWindow::on_actionUnforce_triggered()
-{
-	_processor->gameplayModule()->forcePlay(0);
 }
 
 void MainWindow::on_actionSeed_triggered()

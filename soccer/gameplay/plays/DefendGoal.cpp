@@ -13,33 +13,20 @@ Gameplay::Plays::DefendGoal::DefendGoal(GameplayModule *gameplay):
 	_kicker2(gameplay),
 	_goalDefender(gameplay)
 {
+	set<Robot *> available = gameplay->robots();
+	
 	_fullback1.otherFullbacks.insert(&_fullback2);
 	_fullback2.otherFullbacks.insert(&_fullback1);
+
+	_goalDefender.assign(available);
 }
 
-bool Gameplay::Plays::DefendGoal::applicable(const std::set<Robot *> &robots)
+float Gameplay::Plays::DefendGoal::score ( GameplayModule* gameplay )
 {
-	bool refApplicable =_gameplay->state()->gameState.playing();
-	bool gameplayApplicable = true; //_gameplay->state()->stateID.posession == Packet::LogFrame::DEFENSE;
+	bool refApplicable = gameplay->state()->gameState.playing();
+	bool gameplayApplicable = true; //gameplay->state()->stateID.posession == Packet::LogFrame::DEFENSE;
 
-	return refApplicable && gameplayApplicable;
-}
-
-bool Gameplay::Plays::DefendGoal::assign(set<Robot *> &available)
-{
-	if(!_goalDefender.assign(available)){return false;}
-	//if(!_fullback1.assign(available)){return false;};
-	//if(!_fullback2.assign(available)){return false;};
-	//if(!_kicker1.assign(available)){return false;};
-	//if(!_kicker2.assign(available)){return false;};
-
-	//_robots.insert(_fullback1.robot());
-	//_robots.insert(_fullback2.robot());
-	//_robots.insert(_kicker1.robot());
-	//_robots.insert(_kicker2.robot());
-
-	//return _robots.size() >= _minRobots;
-	return true;
+	return (refApplicable && gameplayApplicable) ? 0 : INFINITY;
 }
 
 bool Gameplay::Plays::DefendGoal::run()

@@ -12,7 +12,7 @@ srcs = [
 	'FieldView.cpp',
 	'SimFieldView.cpp',
 
-	# config file tab components',
+	# config file tab components
 	'configuration/ConfigFileTab.cpp',
 	'configuration/ConfigFileModel.cpp',
 	'configuration/ConfigFileItem.cpp',
@@ -22,7 +22,7 @@ srcs = [
 	'framework/Path.cpp',
 	'framework/SystemState.cpp',
 
-# Sources for gameplay module',
+# Sources for gameplay module
 
 	# Core gameplay components',
 	'gameplay/GameplayModule.cpp',
@@ -32,17 +32,17 @@ srcs = [
 	'gameplay/Robot.cpp',
 	'gameplay/PreventDoubleTouch.cpp',
 
-	# Optimization components - disabled for now',
-	#gameplay/optimizer/PassOptimizer.cpp',
-	#gameplay/optimizer/PassConfig.cpp',
-	#gameplay/optimizer/PassState.cpp',
-	#gameplay/optimizer/AnalyticPassPlanner.cpp',
-	#gameplay/optimizer/passOptimization.cpp',
-	#gameplay/optimizer/DrivingFactors.cpp',
-	#gameplay/optimizer/PassingFactors.cpp',
-	#gameplay/optimizer/ShootingFactors.cpp',
+	# Optimization components - disabled for now
+	#'gameplay/optimizer/PassOptimizer.cpp',
+	#'gameplay/optimizer/PassConfig.cpp',
+	#'gameplay/optimizer/PassState.cpp',
+	#'gameplay/optimizer/AnalyticPassPlanner.cpp',
+	#'gameplay/optimizer/passOptimization.cpp',
+	#'gameplay/optimizer/DrivingFactors.cpp',
+	#'gameplay/optimizer/PassingFactors.cpp',
+	#'gameplay/optimizer/ShootingFactors.cpp',
 
-	# Main Plays',
+	# Main Plays
 	'gameplay/plays/OurKickoff.cpp',
 	'gameplay/plays/TheirKickoff.cpp',
 	'gameplay/plays/OurFreekick.cpp',
@@ -54,10 +54,10 @@ srcs = [
 	'gameplay/plays/ClearBall.cpp',
 	'gameplay/plays/Defense.cpp',
 	'gameplay/plays/DefendGoal.cpp',
-	'gameplay/plays/OptimizedOffense.cpp',
-	#gameplay/plays/AggressiveZoneOffense.cpp',
+	#'gameplay/plays/OptimizedOffense.cpp',
+	#'gameplay/plays/AggressiveZoneOffense.cpp',
 
-    # Core behaviors',
+    # Core behaviors
 	'gameplay/behaviors/Move.cpp',
 	'gameplay/behaviors/Kickoff.cpp',
 	'gameplay/behaviors/Penalty.cpp',
@@ -69,33 +69,33 @@ srcs = [
 	'gameplay/behaviors/GoalDefender.cpp',
 	'gameplay/behaviors/ZoneOffense.cpp',
 
-	# Positions',
+	# Positions
 	'gameplay/behaviors/positions/Goalie.cpp',
 	'gameplay/behaviors/positions/Fullback.cpp',
 	'gameplay/behaviors/positions/Forward.cpp',
 
-	# demo plays/behaviors',
+	# demo plays/behaviors
 	'gameplay/plays/demo_plays/DemoBasicPassing.cpp',
 	'gameplay/plays/demo_plays/DemoBasicOneTouchPassing.cpp',
 	'gameplay/plays/demo_plays/DemoBasicAttack.cpp',
 	'gameplay/plays/demo_plays/DemoBasicOneTouchAttack.cpp',
-	#gameplay/plays/demo_plays/DemoBasicChipAttack.cpp #disabled until 2010 robots ready',
-	#gameplay/plays/demo_plays/DemoBasicOneTouchChipAttack.cpp',
-	#gameplay/plays/demo_plays/DemoKicks.cpp',
+	#'gameplay/plays/demo_plays/DemoBasicChipAttack.cpp #disabled until 2010 robots ready',
+	#'gameplay/plays/demo_plays/DemoBasicOneTouchChipAttack.cpp',
+	#'gameplay/plays/demo_plays/DemoKicks.cpp',
 
-	# files that use the optimizer - disabled until new gtsam is in place',
-	#gameplay/behaviors/OptimizedPassing.cpp',
-	#gameplay/plays/demo_plays/DemoPassConfigOptimize.cpp',
-    #gameplay/plays/demo_plays/DemoPassPlay.cpp',
-	#gameplay/plays/demo_plays/DemoOptimizedPassPlay.cpp',
+	# files that use the optimizer - disabled until new gtsam is in place
+	#'gameplay/behaviors/OptimizedPassing.cpp',
+	#'gameplay/plays/demo_plays/DemoPassConfigOptimize.cpp',
+    #'gameplay/plays/demo_plays/DemoPassPlay.cpp',
+	#'gameplay/plays/demo_plays/DemoOptimizedPassPlay.cpp',
 
-	# files for pass experiments',
-	#gameplay/plays/demo_plays/DemoPassExperiment1.cpp',
+	# files for pass experiments
+	#'gameplay/plays/demo_plays/DemoPassExperiment1.cpp',
 
 #	gameplay/behaviors/test/KickerCalibration.cpp',
 #	gameplay/behaviors/test/MotionLeader.cpp',
 
-# Sources for modeling module',
+# Sources for modeling module
 	'modeling/WorldModel.cpp',
 	'modeling/BallModel.cpp',
 	'modeling/RobotModel.cpp',
@@ -110,7 +110,7 @@ srcs = [
 	'modeling/RbpfModelKicked.cpp',
 	'modeling/ExtendedKalmanFilter.cpp',
 
-# Sources for motion module',
+# Sources for motion module
 	'motion/MotionModule.cpp',
 	'motion/Robot.cpp',
 	'motion/Pid.cpp',
@@ -118,7 +118,7 @@ srcs = [
 	'motion/planning/rrt.cpp',
 	'motion/planning/Tree.cpp',
 
-# Sources for stateID module',
+# Sources for stateID module
 	'stateID/StateIDModule.cpp',
 	
 	'ui/main_icons.qrc',

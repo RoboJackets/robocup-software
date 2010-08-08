@@ -12,19 +12,7 @@ Gameplay::Plays::Offense::Offense(GameplayModule *gameplay):
 	_kicker1(gameplay),
 	_kicker2(gameplay)
 {
-}
-
-bool Gameplay::Plays::Offense::applicable(const std::set<Robot *> &robots)
-{
-	bool refApplicable =_gameplay->state()->gameState.playing();
-// 	bool gameplayApplicable = _gameplay->state()->stateID.posession == SystemState::OFFENSE ||
-// 						      _gameplay->state()->stateID.posession == SystemState::FREEBALL;
-
-	return refApplicable;// && gameplayApplicable;
-}
-
-bool Gameplay::Plays::Offense::assign(set<Robot *> &available)
-{
+	set<Robot *> available = gameplay->robots();
 	_robots = available;
 	
 	_kicker1.assign(available);
@@ -53,8 +41,15 @@ bool Gameplay::Plays::Offense::assign(set<Robot *> &available)
 	} else {
 		_usingKicker1 = true;
 	}
+}
 
-	return true;
+float Gameplay::Plays::Offense::score ( Gameplay::GameplayModule* gameplay )
+{
+	bool refApplicable = gameplay->state()->gameState.playing();
+// 	bool gameplayApplicable = gameplay->state()->stateID.posession == SystemState::OFFENSE ||
+// 						      gameplay->state()->stateID.posession == SystemState::FREEBALL;
+
+	return refApplicable ? 0 : INFINITY;
 }
 
 bool Gameplay::Plays::Offense::run()

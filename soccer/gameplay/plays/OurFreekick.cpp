@@ -12,15 +12,7 @@ Gameplay::Plays::OurFreekick::OurFreekick(GameplayModule *gameplay):
 	_fullback2(gameplay, Behaviors::Fullback::Left),
 	_pdt(gameplay, &_kicker)
 {
-}
-
-bool Gameplay::Plays::OurFreekick::applicable(const std::set<Robot *> &robots)
-{
-	return (gameState().setupRestart() && gameState().ourFreeKick()) || _pdt.keepRunning();
-}
-
-bool Gameplay::Plays::OurFreekick::assign(set<Robot *> &available)
-{
+	set<Robot *> available = gameplay->robots();
 	_robots = available;
 	_center.target = _gameplay->centerMatrix() * Geometry2d::Point(0, 1.5);
 	
@@ -28,8 +20,12 @@ bool Gameplay::Plays::OurFreekick::assign(set<Robot *> &available)
 	_center.assign(available);
 	_fullback1.assign(available);
 	_fullback2.assign(available);
+}
 
-	return true;
+float Gameplay::Plays::OurFreekick::score ( Gameplay::GameplayModule* gameplay )
+{
+	bool ok = (gameplay->state()->gameState.setupRestart() && gameplay->state()->gameState.ourFreeKick());
+	return ok ? 0 : INFINITY;
 }
 
 bool Gameplay::Plays::OurFreekick::run()
@@ -41,5 +37,5 @@ bool Gameplay::Plays::OurFreekick::run()
 	_fullback1.run();
 	_fullback2.run();
 	
-	return true;
+	return _pdt.keepRunning();
 }

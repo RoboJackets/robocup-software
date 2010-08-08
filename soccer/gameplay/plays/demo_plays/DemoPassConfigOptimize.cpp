@@ -55,4 +55,3 @@ bool Gameplay::Plays::DemoPassConfigOptimize::run()
 
 	return true;
 }
-

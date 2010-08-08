@@ -9,10 +9,9 @@ Gameplay::Plays::OptimizedOffense::OptimizedOffense(GameplayModule *gameplay):
 {
 }
 
-bool Gameplay::Plays::OptimizedOffense::applicable(const std::set<Robot *> &robots)
+float Gameplay::Plays::OptimizedOffense::score ( Gameplay::GameplayModule* gameplay )
 {
-	/** Replace this with code to determine whether this play is applicable now */
-	return true;
+	return 0;
 }
 
 bool Gameplay::Plays::OptimizedOffense::run()

@@ -32,7 +32,7 @@ namespace Gameplay{
 	namespace Plays{
 		class DemoPassExperiment1: public Play{
 			public:
-			DemoPassExperiment1(GameplayModule *gameplay);
+				DemoPassExperiment1(GameplayModule *gameplay);
 
 				virtual bool run();
 

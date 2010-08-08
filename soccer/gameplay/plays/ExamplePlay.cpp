@@ -17,19 +17,9 @@ Gameplay::Plays::ExamplePlay::ExamplePlay(GameplayModule *gameplay):
 {
 }
 
-bool Gameplay::Plays::ExamplePlay::applicable(const std::set<Robot *> &robots)
+float Gameplay::Plays::ExamplePlay::score(GameplayModule *gameplay))
 {
-	/** Replace this with code to determine whether this play is applicable now */
-	return true;
-}
-
-bool Gameplay::Plays::ExamplePlay::assign(set<Robot *> &available)
-{
-	/** replace this with your code to do assignments */
-	/** don't forget to check that the assigns return true, and that
-	 * you assign _robots all robots that are assigned
-	 */
-	return true;
+	return 0;
 }
 
 bool Gameplay::Plays::ExamplePlay::run()

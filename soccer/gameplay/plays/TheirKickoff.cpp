@@ -10,24 +10,21 @@ Gameplay::Plays::TheirKickoff::TheirKickoff(GameplayModule *gameplay):
 	_fullback2(gameplay, Behaviors::Fullback::Right),
 	_idle(gameplay)
 {
+	set<Robot *> available = gameplay->robots();
+	
 	_fullback1.otherFullbacks.insert(&_fullback2);
 	_fullback2.otherFullbacks.insert(&_fullback1);
-}
-
-bool Gameplay::Plays::TheirKickoff::applicable(const std::set<Robot *> &robots)
-{
-	return gameState().setupRestart() && gameState().theirKickoff();
-}
-
-bool Gameplay::Plays::TheirKickoff::assign(set<Robot *> &available)
-{
+	
 	_robots = available;
 	
 	_fullback1.assign(available);
 	_fullback2.assign(available);
 	_idle.assign(available);
+}
 
-	return true;
+float Gameplay::Plays::TheirKickoff::score ( Gameplay::GameplayModule* gameplay )
+{
+	return (gameplay->state()->gameState.setupRestart() && gameplay->state()->gameState.theirKickoff()) ? 0 : INFINITY;
 }
 
 bool Gameplay::Plays::TheirKickoff::run()

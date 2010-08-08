@@ -15,6 +15,8 @@ Gameplay::Plays::TheirFreekick::TheirFreekick(GameplayModule *gameplay):
 	_marking1(gameplay),
 	_marking2(gameplay)
 {
+	set<Robot *> available = _gameplay->robots();
+	
 	_fullback1.otherFullbacks.insert(&_fullback2);
 	_fullback2.otherFullbacks.insert(&_fullback1);
 
@@ -22,22 +24,18 @@ Gameplay::Plays::TheirFreekick::TheirFreekick(GameplayModule *gameplay):
 	float r = 0.3;
 	_marking1.ratio(r);
 	_marking2.ratio(r);
-}
-
-bool Gameplay::Plays::TheirFreekick::applicable(const std::set<Robot *> &robots)
-{
-	return gameState().setupRestart() && gameState().theirFreeKick();
-}
-bool Gameplay::Plays::TheirFreekick::assign(set<Robot *> &available)
-{
+	
 	_robots = available;
 	
 	_fullback1.assign(available);
 	_fullback2.assign(available);
 	_marking1.assign(available);
 	_marking2.assign(available);
+}
 
-	return true;
+float Gameplay::Plays::TheirFreekick::score ( Gameplay::GameplayModule* gameplay )
+{
+	return (gameplay->state()->gameState.setupRestart() && gameplay->state()->gameState.theirFreeKick()) ? 0 : INFINITY;
 }
 
 bool Gameplay::Plays::TheirFreekick::run()

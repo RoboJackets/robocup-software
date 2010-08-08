@@ -8,8 +8,8 @@ REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoPassExperiment1, "Demos")
 
 Gameplay::Plays::DemoPassExperiment1::DemoPassExperiment1(GameplayModule *gameplay)
 : Play(gameplay), passPlanner_(gameplay, true), _kicker1(gameplay), _kicker2(gameplay),
-  _expTime(5000000 /* 5 seconds */), _expState(Initializing), _expType(OptimizedPass) {
-
+  _expTime(5000000 /* 5 seconds */), _expState(Initializing), _expType(OptimizedPass)
+{
 }
 
 bool Gameplay::Plays::DemoPassExperiment1::run(){
