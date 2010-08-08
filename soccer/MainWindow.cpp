@@ -22,6 +22,12 @@ using namespace Packet;
 QString LiveStyle("border:2px solid transparent");
 QString NonLiveStyle("border:2px solid red");
 
+void calcMinimumWidth(QWidget *widget, QString text)
+{
+	QRect rect = QFontMetrics(widget->font()).boundingRect(text);
+	widget->setMinimumWidth(rect.width());
+}
+
 MainWindow::MainWindow(QWidget *parent):
 	QMainWindow(parent)
 {
@@ -41,6 +47,8 @@ MainWindow::MainWindow(QWidget *parent):
 	_currentPlay = new QLabel();
 	_currentPlay->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 	_currentPlay->setToolTip("Current Play");
+	_currentPlay->setAlignment(Qt::AlignCenter);
+	calcMinimumWidth(_currentPlay, "XXXXXXXXXXXXXXXX");
 	statusBar()->addPermanentWidget(_currentPlay);
 	
 	_logFile = new QLabel();
@@ -51,16 +59,20 @@ MainWindow::MainWindow(QWidget *parent):
 	_viewFPS = new QLabel();
 	_viewFPS->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 	_viewFPS->setToolTip("Display Framerate");
+	calcMinimumWidth(_viewFPS, "View: 00.0 fps");
 	statusBar()->addPermanentWidget(_viewFPS);
 	
 	_procFPS = new QLabel();
 	_procFPS->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 	_procFPS->setToolTip("Processing Framerate");
+	calcMinimumWidth(_procFPS, "Proc: 00.0 fps");
 	statusBar()->addPermanentWidget(_procFPS);
 	
 	_logMemory = new QLabel();
 	_logMemory->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 	_logMemory->setToolTip("Log Memory Usage");
+	_logMemory->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+	calcMinimumWidth(_logMemory, "Log: 000000/000000 000000 kiB");
 	statusBar()->addPermanentWidget(_logMemory);
 	
 	_frameNumberItem = new QTreeWidgetItem(ui.tree);
