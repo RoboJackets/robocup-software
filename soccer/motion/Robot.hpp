@@ -16,27 +16,6 @@ namespace Motion
 {
 	class Robot
 	{
-		private:
-			/** information pertaining to a single robot axle */
-			typedef struct Axle
-			{
-				Axle(const Geometry2d::Point axel = Geometry2d::Point())
-				{
-					motor = 0;
-					lastWheelVel = 0;
-					wheel = axel.perpCCW();
-				}
-
-				//motor value
-				float motor;
-
-				//weeel velocities in the last frame
-				int8_t lastWheelVel;
-
-				//axle vector
-				Geometry2d::Point axle;
-				Geometry2d::Point wheel;
-			} Axle;
 
 		public:
 			Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id);
@@ -82,7 +61,7 @@ namespace Motion
 
 			/** generate motor speeds */
 			void genMotor();
-			void genMotorOld();
+//			void genMotorOld(); // FIXME: we really don't need old code kicking around
 
 			/** calibration function - disabled until someone figures out how to use it
 			 * only runs when compile flags are set
@@ -91,7 +70,7 @@ namespace Motion
 //			void calib();
 
 			/** flag determining motor speed generation */
-			static const bool _useOldMotorGen = false;
+//			static const bool _useOldMotorGen = false;
 
 			/** robot identification */
 			const unsigned int _id;
@@ -103,7 +82,7 @@ namespace Motion
 			SystemState::Robot* _self;
 
 			/** robot axles */
-			QVector<Robot::Axle> _axles;
+//			QVector<Robot::Axle> _axles;
 			QMutex _procMutex;
 
 			/** planner flag - copied out for rendering */

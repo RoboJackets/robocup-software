@@ -40,6 +40,19 @@ namespace Utils
 		}
 	}
 	
+	/** Handles saturation of a bounded value */
+	static inline float setBound(float value, float max, float min) {
+		if (value > max)
+		{
+			return max;
+		}
+		else if (value < min)
+		{
+			return min;
+		}
+		return value;
+	}
+
 	/** returns the vision timestamp */
 	static inline uint64_t timestamp()
 	{

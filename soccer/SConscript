@@ -20,6 +20,7 @@ srcs = [
 	'framework/ConfigFile.cpp',
 	'framework/Obstacle.cpp',
 	'framework/Path.cpp',
+	'framework/Dynamics.cpp',
 	'framework/SystemState.cpp',
 
 # Sources for gameplay module',
@@ -31,6 +32,11 @@ srcs = [
 	'gameplay/Window.cpp',
 	'gameplay/Robot.cpp',
 	'gameplay/PreventDoubleTouch.cpp',
+
+	# Planning components',
+	'gameplay/planning/rrt.cpp',
+	'gameplay/planning/Tree.cpp',
+	'gameplay/planning/bezier.cpp',
 
 	# Optimization components - disabled for now',
 	#gameplay/optimizer/PassOptimizer.cpp',
@@ -111,12 +117,11 @@ srcs = [
 	'modeling/ExtendedKalmanFilter.cpp',
 
 # Sources for motion module',
-	'motion/MotionModule.cpp',
+	#motion/MotionModule.cpp', # unused during motion module slicing
+	'motion/PointController.cpp',
+	'motion/WheelController.cpp',
 	'motion/Robot.cpp',
 	'motion/Pid.cpp',
-	'motion/Dynamics.cpp',
-	'motion/planning/rrt.cpp',
-	'motion/planning/Tree.cpp',
 
 # Sources for stateID module',
 	'stateID/StateIDModule.cpp',

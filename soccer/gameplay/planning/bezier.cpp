@@ -5,8 +5,9 @@
 using namespace std;
 using namespace Geometry2d;
 
-Geometry2d::Point
-Planning::evaluateBezier(float t,
+namespace Planning {
+
+Geometry2d::Point evaluateBezier(float t,
 		const std::vector<Geometry2d::Point>& controls,
 		const std::vector<float>& coeffs) {
 
@@ -19,8 +20,7 @@ Planning::evaluateBezier(float t,
 	return pt;
 }
 
-Geometry2d::Point
-Planning::evaluateBezierVelocity(float t,
+Geometry2d::Point evaluateBezierVelocity(float t,
 		const std::vector<Geometry2d::Point>& controls,
 		const std::vector<float>& coeffs) {
 
@@ -34,26 +34,26 @@ Planning::evaluateBezierVelocity(float t,
 	return pt;
 }
 
-Planning::Path createBezierPath(const std::vector<Geometry2d::Point>& controls) {
+Path createBezierPath(const std::vector<Geometry2d::Point>& controls) {
 	Planning::Path interp;
 	size_t degree = controls.size();
 
 	// generate coefficients
 	vector<float> coeffs;
 	for (size_t i=0; i<degree; ++i) {
-		coeffs.push_back(Planning::binomialCoefficient(degree-1, i));
+		coeffs.push_back(binomialCoefficient(degree-1, i));
 	}
 
 	size_t nrPoints = 20;
 	float inc = 1.0/nrPoints;
 	for (size_t t = 1; t<nrPoints-1; ++t)
-		interp.points.push_back(Planning::evaluateBezier(t*inc, controls, coeffs));
+		interp.points.push_back(evaluateBezier(t*inc, controls, coeffs));
 	interp.points.push_back(controls.at(controls.size() -1));
 
 	return interp;
 }
 
-float Planning::bezierLength(const std::vector<Geometry2d::Point>& controls,
+float bezierLength(const std::vector<Geometry2d::Point>& controls,
 					const std::vector<float>& coeffs) {
 	// linear interpolation of points
 	vector<Point> interp;
@@ -61,7 +61,7 @@ float Planning::bezierLength(const std::vector<Geometry2d::Point>& controls,
 	size_t nrPoints = 20;
 	float inc = 1.0/nrPoints;
 	for (size_t t = 1; t<nrPoints-1; ++t)
-		interp.push_back(Planning::evaluateBezier(t*inc, controls, coeffs));
+		interp.push_back(evaluateBezier(t*inc, controls, coeffs));
 	interp.push_back(controls.at(controls.size() -1));
 
 	// find the distance
@@ -72,15 +72,17 @@ float Planning::bezierLength(const std::vector<Geometry2d::Point>& controls,
 	return length;
 }
 
-int Planning::factorial(int n) {
+int factorial(int n) {
 	if ( n == 1) return 1;
-	return n * Planning::factorial(n-1);
+	return n * factorial(n-1);
 }
 
-int Planning::binomialCoefficient(int n, int k) {
+int binomialCoefficient(int n, int k) {
 	if (k > n) throw invalid_argument("K greater than N in binomialCoefficient()!");
 	if (k == n || k == 0 ) return 1;
 	if (k == 1 || k == n-1) return n;
 
-	return Planning::factorial(n)/(Planning::factorial(k)*Planning::factorial(n-k));
+	return factorial(n)/(factorial(k)*factorial(n-k));
 }
+
+} // \namespace Planning

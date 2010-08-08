@@ -27,19 +27,6 @@ void printPt(const Geometry2d::Point& pt, const string& s="") {
 	cout << s << ": (" << pt.x << ", " << pt.y << ")" << endl;
 }
 
-/** Handles saturation of a bounded value */
-float saturate(float value, float max, float min) {
-	if (value > max)
-	{
-		return max;
-	}
-	else if (value < min)
-	{
-		return min;
-	}
-	return value;
-}
-
 /** Constant for timestamp to seconds */
 const float intTimeStampToFloat = 1000000.0f;
 
@@ -52,10 +39,10 @@ Robot::Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id) :
 
 	//since radio currently only handles 4 motors
 	//don't make axles (and thus don't drive) if not 4 configured
-	BOOST_FOREACH(const Point& p, cfg.axles)
-	{
-		_axles.append(Axle(p.normalized()));
-	}
+//	BOOST_FOREACH(const Point& p, cfg.axles)
+//	{
+//		_axles.append(Axle(p.normalized()));
+//	}
 
 	_lastTimestamp = Utils::timestamp();
 
@@ -227,11 +214,7 @@ void Robot::proc()
 			if (verbose) cout << "after - w: " << _w << " vel: (" << _vel.x << ", " << _vel.y << ")" << endl;
 
 			// generate motor outputs based on velocity
-			if (!_useOldMotorGen) {
-				genMotor();
-			} else {
-				genMotorOld();
-			}
+//			genMotor(); // FIXME: move to wheel controller
 
 			// save the commanded velocities to packet for inspection in tree
 			_self->cmd_vel = _vel;
@@ -360,7 +343,7 @@ void Robot::scaleVelocity() {
 	}
 
 	// handle saturation of the velocity scaling
-	_self->cmd.vScale = saturate(_self->cmd.vScale, 1.0, 0.0);
+	_self->cmd.vScale = Utils::setBound(_self->cmd.vScale, 1.0, 0.0);
 
 	// scale the velocity if necessary
 	vscale *= _self->cmd.vScale;
@@ -499,7 +482,7 @@ void Robot::genVelocity(MotionCmd::PathEndType ending)
 				maxW /= 10.0f;
 
 				// check saturation of angular velocity
-				targetW = saturate(targetW, maxW, -maxW);
+				targetW = Utils::setBound(targetW, maxW, -maxW);
 			}
 		}
 
@@ -507,7 +490,7 @@ void Robot::genVelocity(MotionCmd::PathEndType ending)
 		float dW = targetW - _w; // NOTE we do not fix this to range - this is acceleration
 
 		float maxAccel = fabs(_self->config.motion.rotation.acceleration);
-		dW = saturate(dW, maxAccel, -maxAccel);
+		dW = Utils::setBound(dW, maxAccel, -maxAccel);
 
 		_w += dW;
 	}
@@ -520,6 +503,8 @@ void Robot::genVelocity(MotionCmd::PathEndType ending)
 	// handle point-to-point driving without pivot
 	if (_self->cmd.pivot == MotionCmd::NoPivot)
 	{
+		// ************************** SPLIT HERE (Gameplay Robot) ********************** //
+
 //		if (_path.points.empty())
 //		{
 //			// No path: stop.
@@ -691,83 +676,83 @@ void Robot::genVelocity(MotionCmd::PathEndType ending)
 //	_w = _anglePid.run(angleErr);
 //}
 
-void Robot::genMotor() {
-	bool verbose = false;
-
-	// algorithm:
-	// 1) saturate the velocities with model bounds (calc current and max)
-	// 2) convert to percentage of maximum
-	// 3) saturate the percentages
-	// 4) apply to wheels
-	// 5) flip direction for 2010 robots
-
-	// angular velocity
-	float w =  _w;
-	const float maxW = _self->config.motion.rotation.velocity;
-	w = saturate(w, maxW, -maxW);
-	if (verbose) cout << "\nCommands: w = " << w << " maxW = " << maxW;
-
-	// handle translational velocity - convert into robot space, then bound
-	Point rVel = _vel;
-	rVel.rotate(Point(), -_self->angle);
-	Dynamics::DynamicsInfo info = _dynamics.info(rVel.angle() * RadiansToDegrees, 0);
-	const float maxSpeed = info.velocity;
-	const Point maxVel = rVel.normalized() * maxSpeed;
-	rVel = Point::saturate(rVel, maxSpeed);
-	if (verbose) cout << "  rVel: (" << rVel.x << ", " << rVel.y << ")" <<
-			             "  maxVel: (" << maxVel.x << ", " << maxVel.y << ")" << endl;
-
-	// amount of rotation out of max - note these are signed
-	float wPercent = 0.0;
-	if (maxW != 0.0)
-	{
-		wPercent = w/maxW;
-	}
-	wPercent = saturate(wPercent, 1.0, -1.0);
-
-	// find the fastest wheel speed, out of all axles with commands
-	double vwheelmax = 0.0;
-	BOOST_FOREACH(Robot::Axle& axle, _axles) {
-		float vwheel = fabs(axle.wheel.dot(maxVel));
-		if (vwheel > vwheelmax)
-			vwheelmax = vwheel;
-	}
-
-	// amount of velocity out of max - also signed
-	vector<float> vels(4);
-	float maxVelPer = 0.0;
-	size_t i = 0;
-	BOOST_FOREACH(Robot::Axle& axle, _axles) {
-		float vwheel = axle.wheel.dot(rVel);  // velocity for wheel
-		float per = 0.0;
-		if (vwheelmax != 0.0)
-			per = vwheel/vwheelmax;
-		vels[i++] = per;
-		if (fabs(per) > maxVelPer)
-			maxVelPer = per;
-	}
-
-	// mix the control inputs together
-	vector<float> wheelVels(4); // signed percents of maximum from each wheel
-	i = 0;
-	BOOST_FOREACH(float& vel, wheelVels) {
-		vel = wPercent + (1.0-fabs(wPercent)) * vels[i++];
-	}
-
-	// convert to integer commands and assign
-	i = 0;
-	if (verbose) cout << "Motor percent at assign: ";
-	BOOST_FOREACH(const float& vel, wheelVels) {
-		if (verbose) cout << " " << vel;
-		int8_t cmdVel = (int8_t) saturate(127.0*vel, 126.0, -127.0);
-		if (_self->rev == SystemState::Robot::rev2008) {
-			_self->radioTx->set_motors(i++, cmdVel);
-		} else if (_self->rev == SystemState::Robot::rev2010) {
-			_self->radioTx->set_motors(i++, -cmdVel);
-		}
-	}
-	if (verbose) cout << endl;
-}
+//void Robot::genMotor() {
+//	bool verbose = false;
+//
+//	// algorithm:
+//	// 1) saturate the velocities with model bounds (calc current and max)
+//	// 2) convert to percentage of maximum
+//	// 3) saturate the percentages
+//	// 4) apply to wheels
+//	// 5) flip direction for 2010 robots
+//
+//	// angular velocity
+//	float w =  _w;
+//	const float maxW = _self->config.motion.rotation.velocity;
+//	w = setBound(w, maxW, -maxW);
+//	if (verbose) cout << "\nCommands: w = " << w << " maxW = " << maxW;
+//
+//	// handle translational velocity - convert into robot space, then bound
+//	Point rVel = _vel;
+//	rVel.rotate(Point(), -_self->angle);
+//	Dynamics::DynamicsInfo info = _dynamics.info(rVel.angle() * RadiansToDegrees, 0);
+//	const float maxSpeed = info.velocity;
+//	const Point maxVel = rVel.normalized() * maxSpeed;
+//	rVel = Point::setBound(rVel, maxSpeed);
+//	if (verbose) cout << "  rVel: (" << rVel.x << ", " << rVel.y << ")" <<
+//			             "  maxVel: (" << maxVel.x << ", " << maxVel.y << ")" << endl;
+//
+//	// amount of rotation out of max - note these are signed
+//	float wPercent = 0.0;
+//	if (maxW != 0.0)
+//	{
+//		wPercent = w/maxW;
+//	}
+//	wPercent = setBound(wPercent, 1.0, -1.0);
+//
+//	// find the fastest wheel speed, out of all axles with commands
+//	double vwheelmax = 0.0;
+//	BOOST_FOREACH(Robot::Axle& axle, _axles) {
+//		float vwheel = fabs(axle.wheel.dot(maxVel));
+//		if (vwheel > vwheelmax)
+//			vwheelmax = vwheel;
+//	}
+//
+//	// amount of velocity out of max - also signed
+//	vector<float> vels(4);
+//	float maxVelPer = 0.0;
+//	size_t i = 0;
+//	BOOST_FOREACH(Robot::Axle& axle, _axles) {
+//		float vwheel = axle.wheel.dot(rVel);  // velocity for wheel
+//		float per = 0.0;
+//		if (vwheelmax != 0.0)
+//			per = vwheel/vwheelmax;
+//		vels[i++] = per;
+//		if (fabs(per) > maxVelPer)
+//			maxVelPer = per;
+//	}
+//
+//	// mix the control inputs together
+//	vector<float> wheelVels(4); // signed percents of maximum from each wheel
+//	i = 0;
+//	BOOST_FOREACH(float& vel, wheelVels) {
+//		vel = wPercent + (1.0-fabs(wPercent)) * vels[i++];
+//	}
+//
+//	// convert to integer commands and assign
+//	i = 0;
+//	if (verbose) cout << "Motor percent at assign: ";
+//	BOOST_FOREACH(const float& vel, wheelVels) {
+//		if (verbose) cout << " " << vel;
+//		int8_t cmdVel = (int8_t) setBound(127.0*vel, 126.0, -127.0);
+//		if (_self->rev == SystemState::Robot::rev2008) {
+//			_self->radioTx->set_motors(i++, cmdVel);
+//		} else if (_self->rev == SystemState::Robot::rev2010) {
+//			_self->radioTx->set_motors(i++, -cmdVel);
+//		}
+//	}
+//	if (verbose) cout << endl;
+//}
 
 //void Robot::genMotor()
 //{
@@ -779,7 +764,7 @@ void Robot::genMotor() {
 //	// handle saturation of angular velocity
 //	float w =  _w;
 //	const float maxW = _self->config.motion.rotation.velocity;
-//	w = saturate(w, maxW, -maxW);
+//	w = setBound(w, maxW, -maxW);
 //
 //	//amount of rotation out of max
 //	//[-1...1]
@@ -789,7 +774,7 @@ void Robot::genMotor() {
 //	{
 //		wPercent = w/maxW;
 //	}
-//	wPercent = saturate(wPercent, 1.0, -1.0);
+//	wPercent = setBound(wPercent, 1.0, -1.0);
 //
 //	// assign rotational velocities to the wheels
 //	int8_t rotVel = 127 *  wPercent;
@@ -846,7 +831,7 @@ void Robot::genMotor() {
 //		float per = vwheel/max;
 //
 //		//this really won't happen because rVel has been limited to the right number
-//		per = saturate(per, 1.0, -1.0);
+//		per = setBound(per, 1.0, -1.0);
 //
 //		_self->radioTx->motors[i] += int8_t(maxSpeed * per);
 //		i++;
@@ -854,46 +839,46 @@ void Robot::genMotor() {
 //
 //}
 
-void Robot::genMotorOld() {
-	//convert the velocity command into robot space
-	Geometry2d::Point rVel = _vel;
-	rVel.rotate(Point(), -_self->angle);
-
-	float maxGenWheelVel = 0;
-
-	BOOST_FOREACH(Robot::Axle& axle, _axles)
-	{
-		axle.motor = axle.wheel.dot(rVel);
-		axle.motor += _w;
-
-		if (abs(axle.motor > maxGenWheelVel))
-		{
-			maxGenWheelVel = axle.motor;
-		}
-
-		axle.lastWheelVel = axle.motor;
-	}
-
-	int j = 0;
-	const float _maxWheelVel = 255;
-	BOOST_FOREACH(Robot::Axle& a, _axles)
-	{
-		//one of the wheels saturated...scale others back accordingly
-		if (maxGenWheelVel > _maxWheelVel)
-		{
-			a.motor *= _maxWheelVel / maxGenWheelVel;
-		}
-
-		//set outgoing motor
-		_self->radioTx->set_motors(j++, (int8_t) a.motor);
-
-		//radio does not support more than 4 wheels
-		if (j >= 4)
-		{
-			break;
-		}
-	}
-}
+//void Robot::genMotorOld() {
+//	//convert the velocity command into robot space
+//	Geometry2d::Point rVel = _vel;
+//	rVel.rotate(Point(), -_self->angle);
+//
+//	float maxGenWheelVel = 0;
+//
+//	BOOST_FOREACH(Robot::Axle& axle, _axles)
+//	{
+//		axle.motor = axle.wheel.dot(rVel);
+//		axle.motor += _w;
+//
+//		if (abs(axle.motor > maxGenWheelVel))
+//		{
+//			maxGenWheelVel = axle.motor;
+//		}
+//
+//		axle.lastWheelVel = axle.motor;
+//	}
+//
+//	int j = 0;
+//	const float _maxWheelVel = 255;
+//	BOOST_FOREACH(Robot::Axle& a, _axles)
+//	{
+//		//one of the wheels saturated...scale others back accordingly
+//		if (maxGenWheelVel > _maxWheelVel)
+//		{
+//			a.motor *= _maxWheelVel / maxGenWheelVel;
+//		}
+//
+//		//set outgoing motor
+//		_self->radioTx->set_motors(j++, (int8_t) a.motor);
+//
+//		//radio does not support more than 4 wheels
+//		if (j >= 4)
+//		{
+//			break;
+//		}
+//	}
+//}
 
 //void Robot::calib()
 //{

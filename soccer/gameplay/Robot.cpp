@@ -42,7 +42,7 @@ void Gameplay::Robot::stop()
 
 void Gameplay::Robot::move(Geometry2d::Point pt, bool stopAtEnd)
 {
-	//new path if better than old
+	// create a new path
 	Planning::Path newPath;
 
 	// determine the obstacles
@@ -103,10 +103,6 @@ void Gameplay::Robot::bezierMove(const std::vector<Geometry2d::Point>& controls,
 //	packet()->cmd.planner = MotionCmd::Bezier;
 //	packet()->cmd.pathEnd = endpoint;
 //	packet()->cmd.face = facing;
-//
-//	// TODO: enable this - currently not used
-////				// set the avoidance flag
-////				packet()->cmd.enableBezierAvoid = enableAvoid;
 //
 //	// set the control points
 //	packet()->cmd.bezierControlPoints.clear();
