@@ -11,16 +11,12 @@ srcs = [
 	'PlayConfigTab.cpp',
 	'FieldView.cpp',
 	'SimFieldView.cpp',
+	'Configuration.cpp',
 
-	# config file tab components
-	'configuration/ConfigFileTab.cpp',
-	'configuration/ConfigFileModel.cpp',
-	'configuration/ConfigFileItem.cpp',
-
-	'framework/ConfigFile.cpp',
 	'framework/Obstacle.cpp',
 	'framework/Path.cpp',
 	'framework/SystemState.cpp',
+	'framework/RobotConfig.cpp',
 
 # Sources for gameplay module
 

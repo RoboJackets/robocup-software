@@ -192,16 +192,13 @@ bool Gameplay::Robot::haveBall() const
 
 SystemState::Robot::Rev Gameplay::Robot::rev() const
 {
-	switch (_packet->config.rev) {
-	case ConfigFile::rev2008:
-		return SystemState::Robot::rev2008;
-	case ConfigFile::rev2010:
-		return SystemState::Robot::rev2010;
-	}
+	//FIXME - Revision from config file, or something
+	return SystemState::Robot::rev2008;
 }
 
-bool Gameplay::Robot::hasChipper() const {
-	return _packet->config.rev == ConfigFile::rev2010;
+bool Gameplay::Robot::hasChipper() const
+{
+	return rev() == SystemState::Robot::rev2010;
 }
 
 void Gameplay::Robot::dribble(int8_t speed)

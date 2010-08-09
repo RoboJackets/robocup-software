@@ -6,14 +6,14 @@
 #include <QMutex>
 #include <QPainter>
 
-#include <framework/ConfigFile.hpp>
 #include <framework/SystemState.hpp>
+#include <Utils.hpp>
 
 #include "Pid.hpp"
-
 #include "Dynamics.hpp"
-
 #include "planning/rrt.hpp"
+
+class Configuration;
 
 namespace Motion
 {
@@ -21,45 +21,29 @@ namespace Motion
 	{
 		private:
 			/** information pertaining to a single robot axle */
-			typedef struct Axle
+			struct Axle
 			{
-				Axle(const Geometry2d::Point axel = Geometry2d::Point())
+				Axle()
 				{
 					motor = 0;
 					lastWheelVel = 0;
-					wheel = axel.perpCCW();
 				}
-
+				
 				//motor value
 				float motor;
 
 				//weeel velocities in the last frame
 				int8_t lastWheelVel;
 
-				//axle vector
-				Geometry2d::Point axle;
 				Geometry2d::Point wheel;
-			} Axle;
+			};
 
 		public:
-			Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id);
+			Robot(Configuration *config, SystemState *state, int id);
 			~Robot();
-
-			void setSystemState(SystemState* state);
 
 			/** Process the command for a robot and prepare output */
 			void proc();
-
-			/** drawing functions */
-// 			void drawPath(QPainter& p);
-// 			void drawRRT(QPainter& p);
-// 			void drawBezierTraj(QPainter& p);
-// 			void drawBezierControl(QPainter& p);
-// 			void drawPoseHistory(QPainter& p);
-
-			void setAngKp(double value);
-			void setAngKi(double value);
-			void setAngKd(double value);
 
 			SystemState::Robot* self() { return _self; }
 
@@ -105,9 +89,6 @@ namespace Motion
 			/** flag determining motor speed generation */
 			static const bool _useOldMotorGen = false;
 
-			/** robot identification */
-			const unsigned int _id;
-			
 			/** overall state **/
 			SystemState* _state;
 
@@ -115,7 +96,7 @@ namespace Motion
 			SystemState::Robot* _self;
 
 			/** robot axles */
-			QVector<Robot::Axle> _axles;
+			Axle _axles[4];
 			QMutex _procMutex;
 
 			/** planner flag - copied out for rendering */

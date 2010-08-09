@@ -13,9 +13,8 @@
 using namespace std;
 using namespace boost;
 
-Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::MotionModule& cfg):
-	_mutex(QMutex::Recursive),
-	_motion_config(cfg)
+Gameplay::GameplayModule::GameplayModule(SystemState *state):
+	_mutex(QMutex::Recursive)
 {
 	_state = state;
 	_goalie = 0;

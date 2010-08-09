@@ -1,20 +1,20 @@
 // kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 // vim:ai ts=4 et
 
-#include <iostream>
-#include <stdio.h>
-#include <string>
-#include <sstream>
-#include <algorithm>
 #include <motion/Robot.hpp>
 #include <QMutexLocker>
 #include <Geometry2d/Point.hpp>
-#include <boost/foreach.hpp>
-#include <boost/assign/std/vector.hpp>
 #include <Utils.hpp>
 #include <Constants.hpp>
-
+#include <framework/RobotConfig.hpp>
 #include <motion/Pid.hpp>
+
+#include <iostream>
+#include <stdio.h>
+
+#include <algorithm>
+#include <boost/foreach.hpp>
+#include <boost/assign/std/vector.hpp>
 
 using namespace std;
 using namespace boost::assign;
@@ -42,23 +42,17 @@ float saturate(float value, float max, float min) {
 /** Constant for timestamp to seconds */
 const float intTimeStampToFloat = 1000000.0f;
 
-Robot::Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id) :
-	_id(id), _velFilter(Point(0.0, 0.0), 1), _wFilter(0.0, 1)
+Robot::Robot(Configuration *config, SystemState *state, int id) :
+	_self(&state->self[id]),
+	_dynamics(&state->self[id]),
+	_velFilter(Point(0.0, 0.0), 1),
+	_wFilter(0.0, 1)
 {
-	_state = 0;
-	_self = 0;
+	_state = state;
 	_w = 0;
 
 	_planner.setDynamics(&_dynamics);
 	_planner.maxIterations(250);
-
-
-	//since radio currently only handles 4 motors
-	//don't make axles (and thus don't drive) if not 4 configured
-	BOOST_FOREACH(const Point& p, cfg.axles)
-	{
-		_axles.append(Axle(p.normalized()));
-	}
 
 	_lastTimestamp = Utils::timestamp();
 
@@ -69,37 +63,9 @@ Robot::~Robot()
 {
 }
 
-void Robot::setAngKp(double value)
-{
-	_procMutex.lock();
-	_anglePid.kp = value;
-	_procMutex.unlock();
-}
-
-void Robot::setAngKi(double value)
-{
-	_procMutex.lock();
-	_anglePid.ki = value;
-	_procMutex.unlock();
-}
-
-void Robot::setAngKd(double value)
-{
-	_procMutex.lock();
-	_anglePid.kd = value;
-	_procMutex.unlock();
-}
-
-void Robot::setSystemState(SystemState* state)
-{
-	_state = state;
-	_self = &_state->self[_id];
-}
-
-
 /**
  * Phases in motor commands:
- * 	I:   Create a plan (RRT)
+ *  I:   Create a plan (RRT)
  *  II:  Create velocities
  *  III: Sanity Check velocities (obstacle avoidance, bounding)
  *  IV:  Smooth Velocities (Filter system)
@@ -109,20 +75,25 @@ void Robot::proc()
 {
 	bool verbose = false;
 	_procMutex.lock();
+	
+	// Update axles
+	for (int i = 0; i < 4; ++i)
+	{
+		Geometry2d::Point axle(_self->config->axles[i]->x, _self->config->axles[i]->y);
+		_axles[i].wheel = axle.normalized().perpCCW();
+	}
+	
 	// Check to make sure the system is valid
 	if (_self && _self->valid)
 	{
-		// get the dynamics from the config
-		_dynamics.setConfig(_self->config.motion);
-
 		// set the correct PID parameters for angle
-		_anglePid.kp = _self->config.motion.angle.p;
-		_anglePid.ki = _self->config.motion.angle.i;
-		_anglePid.kd = _self->config.motion.angle.d;
+		_anglePid.kp = _self->config->motion.angle.p;
+		_anglePid.ki = _self->config->motion.angle.i;
+		_anglePid.kd = _self->config->motion.angle.d;
 
 		// set coefficients for the output filters
-		_velFilter.setCoeffs(_self->config.motion.output_coeffs);
-		_wFilter.setCoeffs(_self->config.motion.output_coeffs);
+		_velFilter.setCoeffs(_self->config->motion.output_coeffs.values());
+		_wFilter.setCoeffs(_self->config->motion.output_coeffs.values());
 
 		if (_state->gameState.state == GameState::Halt)
 		{
@@ -136,16 +107,15 @@ void Robot::proc()
 		{
 			// record the type of planner for future use
 			_plannerType = _self->cmd.planner;		// get the dynamics from the config
-			_dynamics.setConfig(_self->config.motion);
 
 			// set the correct PID parameters for angle
-			_anglePid.kp = _self->config.motion.angle.p;
-			_anglePid.ki = _self->config.motion.angle.i;
-			_anglePid.kd = _self->config.motion.angle.d;
+			_anglePid.kp = _self->config->motion.angle.p;
+			_anglePid.ki = _self->config->motion.angle.i;
+			_anglePid.kd = _self->config->motion.angle.d;
 
 			// set coefficients for the output filters
-			_velFilter.setCoeffs(_self->config.motion.output_coeffs);
-			_wFilter.setCoeffs(_self->config.motion.output_coeffs);
+			_velFilter.setCoeffs(_self->config->motion.output_coeffs.values());
+			_wFilter.setCoeffs(_self->config->motion.output_coeffs.values());
 
 			// switch between planner types
 			switch(_self->cmd.planner) {
@@ -534,7 +504,7 @@ void Robot::genVelocity(MotionCmd::PathEndType ending)
 		// clamp w to reasonable bounds to prevent oscillations
 		float dW = targetW - _w; // NOTE we do not fix this to range - this is acceleration
 
-		float maxAccel = fabs(_self->config.motion.rotation.acceleration);
+		float maxAccel = fabs(_self->config->motion.rotation.acceleration);
 		dW = saturate(dW, maxAccel, -maxAccel);
 
 		_w += dW;
@@ -903,7 +873,7 @@ void Robot::genMotor() {
 
 	// angular velocity
 	float w =  _w;
-	const float maxW = _self->config.motion.rotation.velocity;
+	const float maxW = _self->config->motion.rotation.velocity;
 	w = saturate(w, maxW, -maxW);
 	if (verbose) cout << "\nCommands: w = " << w << " maxW = " << maxW;
 
@@ -927,7 +897,7 @@ void Robot::genMotor() {
 
 	// find the fastest wheel speed, out of all axles with commands
 	double vwheelmax = 0.0;
-	BOOST_FOREACH(Robot::Axle& axle, _axles) {
+	BOOST_FOREACH(Robot::Axle &axle, _axles) {
 		float vwheel = fabs(axle.wheel.dot(maxVel));
 		if (vwheel > vwheelmax)
 			vwheelmax = vwheel;
@@ -937,7 +907,7 @@ void Robot::genMotor() {
 	vector<float> vels(4);
 	float maxVelPer = 0.0;
 	size_t i = 0;
-	BOOST_FOREACH(Robot::Axle& axle, _axles) {
+	BOOST_FOREACH(Robot::Axle &axle, _axles) {
 		float vwheel = axle.wheel.dot(rVel);  // velocity for wheel
 		float per = 0.0;
 		if (vwheelmax != 0.0)
@@ -978,7 +948,7 @@ void Robot::genMotor() {
 //
 //	// handle saturation of angular velocity
 //	float w =  _w;
-//	const float maxW = _self->config.motion.rotation.velocity;
+//	const float maxW = _self->config->motion.rotation.velocity;
 //	w = saturate(w, maxW, -maxW);
 //
 //	//amount of rotation out of max
@@ -1061,7 +1031,7 @@ void Robot::genMotorOld() {
 
 	float maxGenWheelVel = 0;
 
-	BOOST_FOREACH(Robot::Axle& axle, _axles)
+	BOOST_FOREACH(Robot::Axle &axle, _axles)
 	{
 		axle.motor = axle.wheel.dot(rVel);
 		axle.motor += _w;
@@ -1076,16 +1046,16 @@ void Robot::genMotorOld() {
 
 	int j = 0;
 	const float _maxWheelVel = 255;
-	BOOST_FOREACH(Robot::Axle& a, _axles)
+	BOOST_FOREACH(Robot::Axle &axle, _axles)
 	{
 		//one of the wheels saturated...scale others back accordingly
 		if (maxGenWheelVel > _maxWheelVel)
 		{
-			a.motor *= _maxWheelVel / maxGenWheelVel;
+			axle.motor *= _maxWheelVel / maxGenWheelVel;
 		}
 
 		//set outgoing motor
-		_self->radioTx->set_motors(j++, (int8_t) a.motor);
+		_self->radioTx->set_motors(j++, (int8_t)axle.motor);
 
 		//radio does not support more than 4 wheels
 		if (j >= 4)

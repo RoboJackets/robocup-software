@@ -12,8 +12,6 @@
 #include <vector>
 
 /* RBPF Includes */
-#include <iostream>
-#include <fstream>
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include "Rbpf.hpp"
@@ -25,6 +23,8 @@
 typedef Geometry2d::Point Point;
 typedef boost::numeric::ublas::vector<double> Vector;
 typedef boost::numeric::ublas::matrix<double> Matrix;
+
+class Configuration;
 
 namespace Modeling
 {
@@ -46,7 +46,7 @@ namespace Modeling
 				BALL_SENSOR
 			} observation_mode;
 
-			BallModel(mode_t mode, RobotModel::RobotMap *robotMap, ConfigFile::shared_worldmodel& cfg);
+			BallModel(mode_t mode, RobotModel::RobotMap *robotMap, Configuration *config);
 			~BallModel();
 
 			void observation(uint64_t time, const Geometry2d::Point &pos, observation_mode obs_mode);
@@ -130,7 +130,7 @@ namespace Modeling
 			 *   Constructs initial state X, initial covariance P, adds several models
 			 *   to the modelGraph, and sets some transition weights
 			 */
-			void initRBPF();
+			void initRBPF(Configuration *config);
 
 			/** Initialize the older implementation of the ball filter */
 			void initKalman();
@@ -149,7 +149,5 @@ namespace Modeling
 
 			/** ABG Filter update */
 			void abgUpdate(float dtime);
-
-			ConfigFile::shared_worldmodel _config;
 	};
 }

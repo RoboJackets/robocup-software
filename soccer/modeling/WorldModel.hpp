@@ -11,6 +11,7 @@
 
 #include <protobuf/messages_robocup_ssl_detection.pb.h>
 #include <framework/SystemState.hpp>
+#include <Configuration.hpp>
 #include "BallModel.hpp"
 #include "RobotModel.hpp"
 
@@ -20,17 +21,18 @@ namespace Modeling
 	class WorldModel
 	{
 		public:
-			WorldModel(SystemState *state, ConfigFile::shared_worldmodel cfg);
+			WorldModel(SystemState *state, Configuration *config);
 			~WorldModel();
 
 			void run(bool blueTeam, const std::vector<const SSL_DetectionFrame *> &teamVision);
 
 		protected:
-
 			// useful typedefs
 			typedef std::vector<RobotModel::shared> RobotVector;
 			typedef enum { SELF, OPP } TeamMode;
 
+			RobotModel::Config _robotConfig;
+			
 			SystemState *_state;
 
 			// Add to opponents' shell IDs to get track map keys.
@@ -50,7 +52,5 @@ namespace Modeling
 
 			/** allow for searching by robot ID (both self and opp) */
 			RobotModel::RobotMap _robotMap;
-
-			ConfigFile::shared_worldmodel _config;
 	};
 }

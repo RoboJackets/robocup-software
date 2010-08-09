@@ -1,8 +1,7 @@
 #include <framework/SystemState.hpp>
 #include <protobuf/LogFrame.pb.h>
 #include <LogUtils.hpp>
-
-#include <stdio.h>
+#include <framework/RobotConfig.hpp>
 
 using namespace Packet;
 

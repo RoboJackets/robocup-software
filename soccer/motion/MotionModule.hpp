@@ -9,12 +9,14 @@
 #include <motion/Robot.hpp>
 #include <framework/ConfigFile.hpp>
 
+class Configuration;
+
 namespace Motion
 {
 	class MotionModule
 	{
 		public:
-			MotionModule(SystemState *state, const ConfigFile::MotionModule& cfg);
+			MotionModule(SystemState *state, Configuration *config);
 			~MotionModule();
 
 			void run();
@@ -24,7 +26,5 @@ namespace Motion
 
 			/** Robots **/
 			Robot* _robots[5];
-			
-			const ConfigFile::MotionModule& _config;
 	};
 }

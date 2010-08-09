@@ -11,6 +11,7 @@
 #include <QDir>
 #include <QDateTime>
 #include <QString>
+#include <QMessageBox>
 
 #include <boost/foreach.hpp>
 
@@ -161,16 +162,21 @@ int main (int argc, char* argv[])
 		cfgFile = sim ? "soccer-sim.cfg" : "soccer-real.cfg";
 	}
 	
-	if (!QFile(cfgFile).open(QIODevice::ReadOnly))
-	{
-		fprintf(stderr, "Can't read configuration file %s\n", (const char *)cfgFile.toAscii());
-		return 1;
-	}
-
-	Processor *processor = new Processor(cfgFile, sim, radio);
+	Configuration config;
+	
+	Processor *processor = new Processor(&config, sim, radio);
 	processor->blueTeam(blueTeam);
 	
+	// Load config file
+	QString error;
+	if (!config.load(cfgFile, error))
+	{
+		QMessageBox::critical(0, "Soccer",
+			QString("Can't read initial configuration %1:\n%2").arg(cfgFile, error));
+	}
+	
 	MainWindow *win = new MainWindow;
+	win->configuration(&config);
 	win->processor(processor);
 	
 	if (!playbook.isNull())

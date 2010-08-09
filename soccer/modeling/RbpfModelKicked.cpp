@@ -16,8 +16,13 @@ using namespace Modeling;
 // state: X (6 x 1) = {x, y, vx, vy, ax, ay}
 // requires state size (n) = 6, control size (m) = 6, measurement size (s) = 2
 // initializes: F, H, Q, R
-RbpfModelKicked::RbpfModelKicked(RobotModel::RobotMap *_robotMap, ConfigFile::shared_worldmodel& cfg)
-: RbpfModel(_robotMap), _config(cfg){
+RbpfModelKicked::RbpfModelKicked(RobotModel::RobotMap *_robotMap, Configuration *config)
+	: RbpfModel(_robotMap),
+	_processNoiseSqrdPos(config, "rbpfModelBallKicked/Process Noise Position", 1.0),
+	_processNoiseSqrdVel(config, "rbpfModelBallKicked/Process Noise Velocity", 1.0),
+	_processNoiseSqrdAcc(config, "rbpfModelBallKicked/Process Noise Acceleration", 1000.0),
+	_measurementNoiseSqrd(config, "rbpfModelBallKicked/Measurement Noise Position", 0.01)
+{
 	assert(n==6); // state size (n) must = 6. If n changed, re-write this!
 	assert(m==6); // control size (m) must = 6. If m changed, re-write this!
 	assert(s==2); // measurement size (s) must = 2. If s changed, re-write this!
@@ -32,9 +37,9 @@ RbpfModelKicked::RbpfModelKicked(RobotModel::RobotMap *_robotMap, ConfigFile::sh
 }
 
 void RbpfModelKicked::initializeQ() {
-	double sP = _config->rbpfModelBallKicked.processNoiseSqrdPos;
-	double sV = _config->rbpfModelBallKicked.processNoiseSqrdVel;
-	double sA = _config->rbpfModelBallKicked.processNoiseSqrdAcc;
+	double sP = _processNoiseSqrdPos;
+	double sV = _processNoiseSqrdVel;
+	double sA = _processNoiseSqrdAcc;
 	Q(0,0)=sP; Q(0,1)=00; Q(0,2)=00; Q(0,3)=00; Q(0,4)=00; Q(0,5)=00;
 	Q(1,0)=00; Q(1,1)=sP; Q(1,2)=00; Q(1,3)=00; Q(1,4)=00; Q(1,5)=00;
 	Q(2,0)=00; Q(2,1)=00; Q(2,2)=sV; Q(2,3)=00; Q(2,4)=00; Q(2,5)=00;
@@ -44,7 +49,7 @@ void RbpfModelKicked::initializeQ() {
 }
 
 void RbpfModelKicked::initializeR() {
-	double sM = _config->rbpfModelBallKicked.measurementNoiseSqrd;
+	double sM = _measurementNoiseSqrd;
 	R(0,0)=sM; R(0,1)=00;
 	R(1,0)=00; R(1,1)=sM;
 }

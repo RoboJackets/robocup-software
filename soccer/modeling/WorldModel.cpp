@@ -8,6 +8,7 @@
 #include <vector>
 #include <boost/foreach.hpp>
 
+#include <Configuration.hpp>
 #include <Constants.hpp>
 #include <Utils.hpp>
 
@@ -21,11 +22,12 @@ using namespace google::protobuf;
 // Maximum time to coast a track (keep the track alive with no observations) in microseconds.
 const uint64_t MaxCoastTime = 500000;
 
-WorldModel::WorldModel(SystemState *state, ConfigFile::shared_worldmodel cfg) :
+WorldModel::WorldModel(SystemState *state, Configuration *config) :
+	_robotConfig(config),
 	_state(state),
-	_selfPlayers(Constants::Robots_Per_Team), _oppPlayers(Constants::Robots_Per_Team),
-	ballModel(BallModel::RBPF, &_robotMap, cfg),
-	_config(cfg)
+	_selfPlayers(Constants::Robots_Per_Team),
+	_oppPlayers(Constants::Robots_Per_Team),
+	ballModel(BallModel::RBPF, &_robotMap, config)
 {
 }
 
@@ -159,7 +161,7 @@ void WorldModel::addRobotObseration(const SSL_DetectionRobot &obs, uint64_t time
 	// find an open slot - assumed that invalid models will have been removed already
 	BOOST_FOREACH(RobotModel::shared& model, players) {
 		if (!model) {
-			model = RobotModel::shared(new RobotModel(_config, obs_shell));
+			model = RobotModel::shared(new RobotModel(&_robotConfig, obs_shell));
 			Geometry2d::Point pos(obs.x() / 1000.0f, obs.y() / 1000.0f);
 			model->observation(timestamp, pos, obs.orientation() * RadiansToDegrees);
 			return;

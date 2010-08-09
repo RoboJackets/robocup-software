@@ -1,21 +1,15 @@
 #include "Dynamics.hpp"
-#include <iostream>
+#include <framework/RobotConfig.hpp>
+
+#include <math.h>
 
 using namespace std;
 
 using namespace Motion;
 
-Dynamics::Dynamics()
+Dynamics::Dynamics(SystemState::Robot *robot):
+	_self(robot)
 {
-	
-}
-
-void Dynamics::setConfig(ConfigFile::Robot::Motion cfg)
-{
-	//cout << "Dynamics::setConfig(ConfigFile::Robot::Motion cfg)" << endl;
-	_deg0 = cfg.deg0;
-	_deg45 = cfg.deg45;
-	_rotation = cfg.rotation;
 }
 
 Dynamics::DynamicsInfo Dynamics::info(const float angle, const float w) const
@@ -25,14 +19,14 @@ Dynamics::DynamicsInfo Dynamics::info(const float angle, const float w) const
 	//given and angle and rotational speed
 	//compute the linear capabilities of the system
 	
-	const float vMax0 = _deg0.velocity;
-	const float vMax45 = _deg45.velocity;
+	const float vMax0 = _self->config->motion.deg0.velocity;
+	const float vMax45 = _self->config->motion.deg45.velocity;
 	
-	const float aMax0 = _deg0.acceleration;
-	const float aMax45 = _deg45.acceleration;
+	const float aMax0 = _self->config->motion.deg0.acceleration;
+	const float aMax45 = _self->config->motion.deg45.acceleration;
 	
-	const float dMax0 = _deg0.deceleration;
-	const float dMax45 = _deg45.deceleration;
+	const float dMax0 = _self->config->motion.deg0.deceleration;
+	const float dMax45 = _self->config->motion.deg45.deceleration;
 	
 	float clipped = fabs(angle);
 	
@@ -59,9 +53,9 @@ Dynamics::DynamicsInfo Dynamics::info(const float angle, const float w) const
 	//1 - percent of rotation out of max
 	float wPercent = 1;
 	
-	if (_rotation.velocity != 0)
+	if (_self->config->motion.rotation.velocity != 0)
 	{
-		wPercent -= fabs(w/_rotation.velocity);
+		wPercent -= fabs(w/_self->config->motion.rotation.velocity);
 	}
 	
 	if (wPercent < 0)
@@ -78,11 +72,11 @@ Dynamics::DynamicsInfo Dynamics::info(const float angle, const float w) const
 
 float Dynamics::travelTime(const float length) const
 {
-	if (_deg0.velocity == 0)
+	if (_self->config->motion.deg0.velocity == 0)
 	{
 		return 0;
 	}
 	
 	//for now assume the max velocity
-	return length/_deg0.velocity;
+	return length/_self->config->motion.deg0.velocity;
 }

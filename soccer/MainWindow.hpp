@@ -22,6 +22,8 @@ class MainWindow : public QMainWindow
 	public:
 		MainWindow(QWidget *parent = 0);
 		
+		void configuration(Configuration *config);
+		
 		void processor(Processor *value);
 		
 		Processor *processor()
@@ -141,6 +143,10 @@ class MainWindow : public QMainWindow
 		void on_refRedCardBlue_clicked();
 		void on_refRedCardYellow_clicked();
 		
+		// Configuration
+		void on_loadConfig_clicked();
+		void on_saveConfig_clicked();
+		
 	private:
 		void updateStatus();
 		
@@ -153,9 +159,10 @@ class MainWindow : public QMainWindow
 		
 		void status(QString text, StatusType status);
 		
-		Ui_MainWindow ui;
+		Ui_MainWindow _ui;
 		
 		Processor *_processor;
+		Configuration *_config;
 		
 		// Log history, copied from Logger.
 		// This is used by other controls to get log data without having to copy it again from the Logger.

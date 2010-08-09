@@ -21,7 +21,7 @@ namespace Gameplay
 	class GameplayModule
 	{
 		public:
-			GameplayModule(SystemState *state, const ConfigFile::MotionModule& cfg);
+			GameplayModule(SystemState *state);
 			~GameplayModule();
 			
 			SystemState *state() const
@@ -115,8 +115,5 @@ namespace Gameplay
 			
 			// Name of the current play
 			QString _playName;
-			
-			// motion config information
-			const ConfigFile::MotionModule& _motion_config;
 	};
 }

@@ -8,7 +8,9 @@
 #include "PlayConfigTab.hpp"
 
 #include <QInputDialog>
+#include <QFileDialog>
 #include <QActionGroup>
+#include <QMessageBox>
 #include <boost/foreach.hpp>
 
 #include <google/protobuf/descriptor.h>
@@ -37,8 +39,8 @@ MainWindow::MainWindow(QWidget *parent):
 	_lastUpdateTime = Utils::timestamp();
 	_history.resize(2 * 60);
 	
-	ui.setupUi(this);
-	ui.fieldView->history(&_history);
+	_ui.setupUi(this);
+	_ui.fieldView->history(&_history);
 	
 	// Initialize live/non-live control styles
 	_live = false;
@@ -75,44 +77,50 @@ MainWindow::MainWindow(QWidget *parent):
 	calcMinimumWidth(_logMemory, "Log: 000000/000000 000000 kiB");
 	statusBar()->addPermanentWidget(_logMemory);
 	
-	_frameNumberItem = new QTreeWidgetItem(ui.tree);
+	_frameNumberItem = new QTreeWidgetItem(_ui.logTree);
 	_frameNumberItem->setText(ProtobufTree::Column_Field, "Frame");
 	_frameNumberItem->setData(ProtobufTree::Column_Tag, Qt::DisplayRole, -2);
 	
-	_elapsedTimeItem = new QTreeWidgetItem(ui.tree);
+	_elapsedTimeItem = new QTreeWidgetItem(_ui.logTree);
 	_elapsedTimeItem->setText(ProtobufTree::Column_Field, "Elapsed Time");
 	_elapsedTimeItem->setData(ProtobufTree::Column_Tag, Qt::DisplayRole, -1);
 	
-	ui.debugLayers->setContextMenuPolicy(Qt::CustomContextMenu);
+	_ui.debugLayers->setContextMenuPolicy(Qt::CustomContextMenu);
 	
 	// Connect shortcut buttons to regular referee buttons
-	connect(ui.fastHalt, SIGNAL(clicked()), ui.refHalt, SLOT(click()));
-	connect(ui.fastStop, SIGNAL(clicked()), ui.refStop, SLOT(click()));
-	connect(ui.fastReady, SIGNAL(clicked()), ui.refReady, SLOT(click()));
-	connect(ui.fastForceStart, SIGNAL(clicked()), ui.refForceStart, SLOT(click()));
-	connect(ui.fastKickoffBlue, SIGNAL(clicked()), ui.refKickoffBlue, SLOT(click()));
-	connect(ui.fastKickoffYellow, SIGNAL(clicked()), ui.refKickoffYellow, SLOT(click()));
+	connect(_ui.fastHalt, SIGNAL(clicked()), _ui.refHalt, SLOT(click()));
+	connect(_ui.fastStop, SIGNAL(clicked()), _ui.refStop, SLOT(click()));
+	connect(_ui.fastReady, SIGNAL(clicked()), _ui.refReady, SLOT(click()));
+	connect(_ui.fastForceStart, SIGNAL(clicked()), _ui.refForceStart, SLOT(click()));
+	connect(_ui.fastKickoffBlue, SIGNAL(clicked()), _ui.refKickoffBlue, SLOT(click()));
+	connect(_ui.fastKickoffYellow, SIGNAL(clicked()), _ui.refKickoffYellow, SLOT(click()));
 	
 	QActionGroup *teamGroup = new QActionGroup(this);
-	teamGroup->addAction(ui.actionTeamBlue);
-	teamGroup->addAction(ui.actionTeamYellow);
+	teamGroup->addAction(_ui.actionTeamBlue);
+	teamGroup->addAction(_ui.actionTeamYellow);
 	
 	QActionGroup *goalGroup = new QActionGroup(this);
-	goalGroup->addAction(ui.actionDefendMinusX);
-	goalGroup->addAction(ui.actionDefendPlusX);
+	goalGroup->addAction(_ui.actionDefendMinusX);
+	goalGroup->addAction(_ui.actionDefendPlusX);
 	
 	QActionGroup *rotateGroup = new QActionGroup(this);
-	rotateGroup->addAction(ui.action0);
-	rotateGroup->addAction(ui.action90);
-	rotateGroup->addAction(ui.action180);
-	rotateGroup->addAction(ui.action270);
+	rotateGroup->addAction(_ui.action0);
+	rotateGroup->addAction(_ui.action90);
+	rotateGroup->addAction(_ui.action180);
+	rotateGroup->addAction(_ui.action270);
 	
-	ui.splitter->setStretchFactor(0, 98);
-	ui.splitter->setStretchFactor(1, 10);
+	_ui.splitter->setStretchFactor(0, 98);
+	_ui.splitter->setStretchFactor(1, 10);
 
 	_updateTimer.setSingleShot(true);
 	connect(&_updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
 	_updateTimer.start(30);
+}
+
+void MainWindow::configuration(Configuration* config)
+{
+	_config = config;
+	_config->tree(_ui.configTree);
 }
 
 void MainWindow::processor(Processor* value)
@@ -123,27 +131,23 @@ void MainWindow::processor(Processor* value)
 	_processor = value;
 	
 	// External referee
-	on_externalReferee_toggled(ui.externalReferee->isChecked());
+	on_externalReferee_toggled(_ui.externalReferee->isChecked());
 	
 	// Team
 	if (_processor->blueTeam())
 	{
-		ui.actionTeamBlue->trigger();
+		_ui.actionTeamBlue->trigger();
 	} else {
-		ui.actionTeamYellow->trigger();
+		_ui.actionTeamYellow->trigger();
 	}
 	
 	// Add Plays tab
 	_playConfigTab = new PlayConfigTab();
-	ui.tabWidget->addTab(_playConfigTab, tr("Plays"));
+	_ui.tabWidget->addTab(_playConfigTab, tr("Plays"));
 	_playConfigTab->setup(_processor->gameplayModule());
 	
-	// Add Configuration tab
-	_configFileTab = new ConfigFileTab(_processor->configFile());
-	ui.tabWidget->addTab(_configFileTab, tr("Configuration"));
-
 	// Radio channel
-	ui.radioLabel->setText(QString("Radio %1").arg(_processor->radio()));
+	_ui.radioLabel->setText(QString("Radio %1").arg(_processor->radio()));
 }
 
 void MainWindow::logFileChanged()
@@ -165,11 +169,11 @@ void MainWindow::live(bool value)
 		// Change styles for controls that can show historical data
 		if (_live)
 		{
-			ui.fieldView->setStyleSheet(QString());
-			ui.tree->setStyleSheet(QString("QTreeWidget{%1}").arg(LiveStyle));
+			_ui.fieldView->setStyleSheet(QString());
+			_ui.logTree->setStyleSheet(QString("QTreeWidget{%1}").arg(LiveStyle));
 		} else {
-			ui.fieldView->setStyleSheet(NonLiveStyle);
-			ui.tree->setStyleSheet(QString("QTreeWidget{%1}").arg(NonLiveStyle));
+			_ui.fieldView->setStyleSheet(NonLiveStyle);
+			_ui.logTree->setStyleSheet(QString("QTreeWidget{%1}").arg(NonLiveStyle));
 		}
 	}
 }
@@ -177,15 +181,15 @@ void MainWindow::live(bool value)
 void MainWindow::updateViews()
 {
 	int manual =_processor->manualID();
-	if ((manual >= 0 || ui.manualID->isEnabled()) && !_processor->joystickValid())
+	if ((manual >= 0 || _ui.manualID->isEnabled()) && !_processor->joystickValid())
 	{
 		// Joystick is gone - turn off manual control
 		_processor->manualID(-1);
-		ui.manualID->setEnabled(false);
-	} else if (!ui.manualID->isEnabled() && _processor->joystickValid())
+		_ui.manualID->setEnabled(false);
+	} else if (!_ui.manualID->isEnabled() && _processor->joystickValid())
 	{
 		// Joystick reconnected
-		ui.manualID->setEnabled(true);
+		_ui.manualID->setEnabled(true);
 	}
 	
 	// Time since last update
@@ -217,7 +221,7 @@ void MainWindow::updateViews()
 	{
 		_doubleFrameNumber = liveFrameNumber;
 	} else {
-		double rate = ui.playbackRate->value();
+		double rate = _ui.playbackRate->value();
 		_doubleFrameNumber += rate / framerate;
 		
 		int minFrame = _processor->logger.firstFrame();
@@ -238,7 +242,7 @@ void MainWindow::updateViews()
 	const LogFrame &currentFrame = _history[0];
 	
 	// Update field view
-	ui.fieldView->repaint(ui.fieldView->rect());
+	_ui.fieldView->repaint(_ui.fieldView->rect());
 	
 	// Get the live frame from FieldView or the Logger
 	LogFrame liveFrameStorage;
@@ -258,8 +262,8 @@ void MainWindow::updateViews()
 	}
 	
 	// Update log controls
-	ui.logLive->setEnabled(!_live);
-	ui.logStop->setEnabled(_live);
+	_ui.logLive->setEnabled(!_live);
+	_ui.logStop->setEnabled(_live);
 	
 	// Update status indicator
 	updateStatus();
@@ -269,18 +273,18 @@ void MainWindow::updateViews()
 	
 	// Check if any debug layers have been added
 	// (layers should never be removed)
-	if (liveFrame->debug_layers_size() > ui.debugLayers->count())
+	if (liveFrame->debug_layers_size() > _ui.debugLayers->count())
 	{
 		// Add the missing layers and turn them on
-		for (int i = ui.debugLayers->count(); i < liveFrame->debug_layers_size(); ++i)
+		for (int i = _ui.debugLayers->count(); i < liveFrame->debug_layers_size(); ++i)
 		{
 			QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(liveFrame->debug_layers(i)));
-			item->setCheckState(ui.fieldView->layerVisible(i) ? Qt::Checked : Qt::Unchecked);
+			item->setCheckState(_ui.fieldView->layerVisible(i) ? Qt::Checked : Qt::Unchecked);
 			item->setData(Qt::UserRole, i);
-			ui.debugLayers->addItem(item);
+			_ui.debugLayers->addItem(item);
 		}
 		
-		ui.debugLayers->sortItems();
+		_ui.debugLayers->sortItems();
 	}
 	
 	// Update non-message tree items
@@ -290,10 +294,10 @@ void MainWindow::updateViews()
 	_elapsedTimeItem->setText(ProtobufTree::Column_Value, elapsedTime.toString("hh:mm:ss.zzz"));
 	
 	// Sort the tree by tag if items have been added
-	if (ui.tree->message(currentFrame))
+	if (_ui.logTree->message(currentFrame))
 	{
 		// Items have been added, so sort again on tag number
-		ui.tree->sortItems(ProtobufTree::Column_Tag, Qt::AscendingOrder);
+		_ui.logTree->sortItems(ProtobufTree::Column_Tag, Qt::AscendingOrder);
 	}
 	
 	// We restart this timer repeatedly instead of using a single shot timer because
@@ -328,9 +332,9 @@ void MainWindow::updateStatus()
 	// Determine if we are receiving packets from an external referee
 	bool haveExternalReferee = (curTime - ps.lastRefereeTime) < 500 * 1000;
 	
-	if (_autoExternalReferee && haveExternalReferee && !ui.externalReferee->isChecked())
+	if (_autoExternalReferee && haveExternalReferee && !_ui.externalReferee->isChecked())
 	{
-		ui.externalReferee->setChecked(true);
+		_ui.externalReferee->setChecked(true);
 	}
 	
 	// Is the processing thread running?
@@ -384,7 +388,7 @@ void MainWindow::updateStatus()
 		if (_autoExternalReferee && _processor->externalReferee())
 		{
 			// Automatically turn off external referee
-			ui.externalReferee->setChecked(false);
+			_ui.externalReferee->setChecked(false);
 		} else {
 			// In simulation, we will often run without a referee, so just make it a warning.
 			// There is a separate status for non-simulation with internal referee.
@@ -428,46 +432,46 @@ void MainWindow::updateStatus()
 
 void MainWindow::status(QString text, MainWindow::StatusType status)
 {
-	ui.statusLabel->setText(text);
+	_ui.statusLabel->setText(text);
 	
 	switch (status)
 	{
 		case Status_OK:
-			ui.statusLabel->setStyleSheet("background-color: #00ff00");
+			_ui.statusLabel->setStyleSheet("background-color: #00ff00");
 			break;
 		
 		case Status_Warning:
-			ui.statusLabel->setStyleSheet("background-color: #ffff00");
+			_ui.statusLabel->setStyleSheet("background-color: #ffff00");
 			break;
 		
 		case Status_Fail:
-			ui.statusLabel->setStyleSheet("background-color: #ff4040");
+			_ui.statusLabel->setStyleSheet("background-color: #ff4040");
 			break;
 	}
 }
 
 void MainWindow::on_fieldView_robotSelected(int shell)
 {
-	ui.manualID->setCurrentIndex(shell + 1);
+	_ui.manualID->setCurrentIndex(shell + 1);
 	_processor->manualID(shell);
 }
 
 void MainWindow::on_actionRawBalls_toggled(bool state)
 {
-	ui.fieldView->showRawBalls = state;
-	ui.fieldView->update();
+	_ui.fieldView->showRawBalls = state;
+	_ui.fieldView->update();
 }
 
 void MainWindow::on_actionRawRobots_toggled(bool state)
 {
-	ui.fieldView->showRawRobots = state;
-	ui.fieldView->update();
+	_ui.fieldView->showRawRobots = state;
+	_ui.fieldView->update();
 }
 
 void MainWindow::on_actionCoords_toggled(bool state)
 {
-	ui.fieldView->showCoords = state;
-	ui.fieldView->update();
+	_ui.fieldView->showCoords = state;
+	_ui.fieldView->update();
 }
 
 void MainWindow::on_actionDefendMinusX_triggered()
@@ -482,22 +486,22 @@ void MainWindow::on_actionDefendPlusX_triggered()
 
 void MainWindow::on_action0_triggered()
 {
-	ui.fieldView->rotate(0);
+	_ui.fieldView->rotate(0);
 }
 
 void MainWindow::on_action90_triggered()
 {
-	ui.fieldView->rotate(1);
+	_ui.fieldView->rotate(1);
 }
 
 void MainWindow::on_action180_triggered()
 {
-	ui.fieldView->rotate(2);
+	_ui.fieldView->rotate(2);
 }
 
 void MainWindow::on_action270_triggered()
 {
-	ui.fieldView->rotate(3);
+	_ui.fieldView->rotate(3);
 }
 
 void MainWindow::on_actionCenterBall_triggered()
@@ -507,7 +511,7 @@ void MainWindow::on_actionCenterBall_triggered()
 	cmd.mutable_ball_pos()->set_y(0);
 	cmd.mutable_ball_vel()->set_x(0);
 	cmd.mutable_ball_vel()->set_y(0);
-	ui.fieldView->sendSimCommand(cmd);
+	_ui.fieldView->sendSimCommand(cmd);
 }
 
 void MainWindow::on_actionStopBall_triggered()
@@ -515,7 +519,7 @@ void MainWindow::on_actionStopBall_triggered()
 	SimCommand cmd;
 	cmd.mutable_ball_vel()->set_x(0);
 	cmd.mutable_ball_vel()->set_y(0);
-	ui.fieldView->sendSimCommand(cmd);
+	_ui.fieldView->sendSimCommand(cmd);
 }
 
 // Debug commands
@@ -560,7 +564,7 @@ void MainWindow::on_playbackRate_sliderMoved(int value)
 void MainWindow::on_playbackRate_sliderReleased()
 {
 	// Center the slider and stop playback
-	ui.playbackRate->setValue(0);
+	_ui.playbackRate->setValue(0);
 }
 
 void MainWindow::on_logNext_clicked()
@@ -578,7 +582,7 @@ void MainWindow::on_logPrev_clicked()
 void MainWindow::on_logStop_clicked()
 {
 	live(false);
-	ui.playbackRate->setValue(0);
+	_ui.playbackRate->setValue(0);
 }
 
 void MainWindow::on_logFirst_clicked()
@@ -594,15 +598,15 @@ void MainWindow::on_logLive_clicked()
 
 void MainWindow::on_actionTeamBlue_triggered()
 {
-	ui.team->setText("BLUE");
-	ui.team->setStyleSheet("background-color: #4040ff; color: #ffffff");
+	_ui.team->setText("BLUE");
+	_ui.team->setStyleSheet("background-color: #4040ff; color: #ffffff");
 	_processor->blueTeam(true);
 }
 
 void MainWindow::on_actionTeamYellow_triggered()
 {
-	ui.team->setText("YELLOW");
-	ui.team->setStyleSheet("background-color: #ffff00");
+	_ui.team->setText("YELLOW");
+	_ui.team->setStyleSheet("background-color: #ffff00");
 	_processor->blueTeam(false);
 }
 
@@ -616,23 +620,23 @@ void MainWindow::on_manualID_currentIndexChanged(int value)
 
 void MainWindow::allDebugOn()
 {
-	for (int i = 0; i < ui.debugLayers->count(); ++i)
+	for (int i = 0; i < _ui.debugLayers->count(); ++i)
 	{
-		ui.debugLayers->item(i)->setCheckState(Qt::Checked);
+		_ui.debugLayers->item(i)->setCheckState(Qt::Checked);
 	}
 }
 
 void MainWindow::allDebugOff()
 {
-	for (int i = 0; i < ui.debugLayers->count(); ++i)
+	for (int i = 0; i < _ui.debugLayers->count(); ++i)
 	{
-		ui.debugLayers->item(i)->setCheckState(Qt::Unchecked);
+		_ui.debugLayers->item(i)->setCheckState(Qt::Unchecked);
 	}
 }
 
 void MainWindow::on_debugLayers_customContextMenuRequested(const QPoint& pos)
 {
-	QListWidgetItem *item = ui.debugLayers->itemAt(pos);
+	QListWidgetItem *item = _ui.debugLayers->itemAt(pos);
 	
 	QMenu menu;
 	QAction *all = menu.addAction("All");
@@ -644,7 +648,7 @@ void MainWindow::on_debugLayers_customContextMenuRequested(const QPoint& pos)
 		notSingle = menu.addAction("All except this");
 	}
 	
-	QAction *act = menu.exec(ui.debugLayers->mapToGlobal(pos));
+	QAction *act = menu.exec(_ui.debugLayers->mapToGlobal(pos));
 	if (act == all)
 	{
 		allDebugOn();
@@ -667,9 +671,9 @@ void MainWindow::on_debugLayers_itemChanged(QListWidgetItem* item)
 	int layer = item->data(Qt::UserRole).toInt();
 	if (layer >= 0)
 	{
-		ui.fieldView->layerVisible(layer, item->checkState() == Qt::Checked);
+		_ui.fieldView->layerVisible(layer, item->checkState() == Qt::Checked);
 	}
-	ui.fieldView->update();
+	_ui.fieldView->update();
 }
 
 ////////
@@ -686,14 +690,14 @@ void MainWindow::on_externalReferee_toggled(bool value)
 	_processor->externalReferee(value);
 	
 	// Enable/disable buttons in the Referee tab
-	QList<QPushButton *> buttons = ui.refereeTab->findChildren<QPushButton *>();
+	QList<QPushButton *> buttons = _ui.refereeTab->findChildren<QPushButton *>();
 	BOOST_FOREACH(QPushButton *btn, buttons)
 	{
 		btn->setEnabled(!value);
 	}
 
 	// Enable/disable shortcut buttons
-	buttons = ui.refShortcuts->findChildren<QPushButton *>();
+	buttons = _ui.refShortcuts->findChildren<QPushButton *>();
 	BOOST_FOREACH(QPushButton *btn, buttons)
 	{
 		btn->setEnabled(!value);
@@ -848,4 +852,30 @@ void MainWindow::on_refRedCardBlue_clicked()
 void MainWindow::on_refRedCardYellow_clicked()
 {
 	_processor->internalRefCommand(RefereeCommands::RedCardYellow);
+}
+
+void MainWindow::on_loadConfig_clicked()
+{
+	QString filename = QFileDialog::getOpenFileName(this, "Load Configuration");
+	if (!filename.isNull())
+	{
+		QString error;
+		if (!_config->load(filename, error))
+		{
+			QMessageBox::critical(this, "Load Configuration", error);
+		}
+	}
+}
+
+void MainWindow::on_saveConfig_clicked()
+{
+	QString filename = QFileDialog::getSaveFileName(this, "Save Configuration");
+	if (!filename.isNull())
+	{
+		QString error;
+		if (!_config->save(filename, error))
+		{
+			QMessageBox::critical(this, "Save Configuration", error);
+		}
+	}
 }
