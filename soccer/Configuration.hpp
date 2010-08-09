@@ -107,7 +107,38 @@ class ConfigDouble: public ConfigItem
 		double _value;
 };
 
-class ConfigFloatVector: public ConfigItem
+class ConfigVector: public ConfigItem
+{
+	public:
+		ConfigVector(Configuration *tree, QString name):
+			ConfigItem(tree, name)
+		{
+		}
+		
+		virtual void setElement(int i, const QString &str) = 0;
+		virtual QString getElement(int i) = 0;
+};
+
+class ConfigVectorElement: public ConfigItem
+{
+	public:
+		ConfigVectorElement(ConfigVector *vector, int index, Configuration *tree, QString name);
+		
+		virtual QString toString();
+		virtual void setValue(const QString &str);
+
+		// This is made public so the vector can change it
+		void valueChanged(const QString &str)
+		{
+			ConfigItem::valueChanged(str);
+		}
+
+	protected:
+		ConfigVector *_vector;
+		int _index;
+};
+
+class ConfigFloatVector: public ConfigVector
 {
 	public:
 		ConfigFloatVector(Configuration *tree, QString name);
@@ -115,6 +146,9 @@ class ConfigFloatVector: public ConfigItem
 		// The value of this item is the number of elements.  Each element is a child item.
 		virtual QString toString();
 		virtual void setValue(const QString &str);
+		
+		virtual void setElement(int i, const QString &str);
+		virtual QString getElement(int i);
 		
 		const std::vector<float> &values() const
 		{
@@ -126,7 +160,7 @@ class ConfigFloatVector: public ConfigItem
 		
 	protected:
 		std::vector<float> _values;
-		std::vector<QTreeWidgetItem *> _items;
+		std::vector<ConfigVectorElement *> _items;
 };
 
 class Configuration: public QObject

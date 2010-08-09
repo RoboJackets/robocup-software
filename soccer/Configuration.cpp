@@ -72,8 +72,28 @@ void ConfigDouble::setValue(const QString& str)
 
 ////////
 
+ConfigVectorElement::ConfigVectorElement(ConfigVector* vector, int index, Configuration* tree, QString name):
+	ConfigItem(tree, name)
+{
+	_vector = vector;
+	_index = index;
+	addToTree();
+}
+
+void ConfigVectorElement::setValue(const QString& str)
+{
+	_vector->setElement(_index, str);
+}
+
+QString ConfigVectorElement::toString()
+{
+	return _vector->getElement(_index);
+}
+
+////////
+
 ConfigFloatVector::ConfigFloatVector(Configuration *config, QString name):
-	ConfigItem(config, name)
+	ConfigVector(config, name)
 {
 	addToTree();
 }
@@ -114,9 +134,8 @@ void ConfigFloatVector::resize(unsigned int n)
 		// Create new items
 		for (unsigned int i = oldSize; i < n; ++i)
 		{
-			_items[i] = new QTreeWidgetItem(_treeItem);
-			_items[i]->setText(0, QString::number(i));
-			_items[i]->setText(1, QString::number(_values[i]));
+			_items[i] = new ConfigVectorElement(this, i, _config, QString("%1/%2").arg(_path.join("/"), QString::number(i)));
+			_items[i]->valueChanged(QString::number(_values[i]));
 		}
 	}
 }
@@ -127,8 +146,18 @@ void ConfigFloatVector::set(unsigned int i, float value)
 	
 	if (_treeItem)
 	{
-		_items[i]->setText(1, QString::number(value));
+		_items[i]->valueChanged(QString::number(_values[i]));
 	}
+}
+
+QString ConfigFloatVector::getElement(int i)
+{
+	return QString::number(_values[i]);
+}
+
+void ConfigFloatVector::setElement(int i, const QString& str)
+{
+	_values[i] = str.toDouble();
 }
 
 ////////
@@ -278,6 +307,7 @@ bool Configuration::load(const QString &filename, QString &error)
 			if (!str.isNull())
 			{
 				item->setValue(str);
+				item->valueChanged(str);
 			}
 		}
 	}
@@ -297,6 +327,7 @@ bool Configuration::save(const QString &filename, QString &error)
 	QDomElement root = _doc.firstChildElement("config");
 	
 	// Update the DOM
+	//FIXME - Remove superfluous vector elements
 	BOOST_FOREACH(ConfigItem *item, _allItems)
 	{
 		QDomElement el = root;
