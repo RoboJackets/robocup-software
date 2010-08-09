@@ -12,6 +12,7 @@ using namespace std;
 void usage(const char* prog)
 {
 	fprintf(stderr, "usage: %s [-c <config file>] [--ui] [--sv]\n", prog);
+	fprintf(stderr, "\t--help  Show usage message\n");
 	fprintf(stderr, "\t--ui    Show GUI\n");
 	fprintf(stderr, "\t--sv    Use shared vision multicast port\n");
 }
@@ -47,6 +48,10 @@ int main(int argc, char* argv[])
 				printf ("Expected config file after -c parameter\n");
 				return 0;
 			}
+		} else if ((strcmp(argv[i], "--h") == 0) || (strcmp(argv[i], "--help") == 0))
+		{
+			usage(argv[0]);
+			return 0;
 		} else {
 			printf("%s is not recognized as a valid flag\n", argv[i]);
 			return 0;
