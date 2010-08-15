@@ -2,6 +2,7 @@
 #include "GameplayModule.hpp"
 #include <gameplay/planning/bezier.hpp>
 
+using namespace std;
 using namespace Geometry2d;
 
 /** Constant for timestamp to seconds */
@@ -76,17 +77,6 @@ void Gameplay::Robot::move(const std::vector<Geometry2d::Point>& path, bool stop
 
 	// execute
 	executeMove(stopAtEnd);
-
-//	// set motion command to use the explicit path generation
-//	packet()->cmd.planner = MotionCmd::Path;
-//	if (stopAtEnd)
-//		packet()->cmd.pathEnd = MotionCmd::StopAtEnd;
-//	else
-//		packet()->cmd.pathEnd = MotionCmd::FastAtEnd;
-//
-//	// clear the path and set it to the correct one
-//	packet()->cmd.explicitPath.clear();
-//	packet()->cmd.explicitPath = path;
 }
 
 void Gameplay::Robot::bezierMove(const std::vector<Geometry2d::Point>& controls,
@@ -94,19 +84,39 @@ void Gameplay::Robot::bezierMove(const std::vector<Geometry2d::Point>& controls,
 		MotionCmd::PathEndType endpoint) {
 
 	// calculate path using simple interpolation
-	_path = Planning::createBezierPath(controls);
+//	_path = Planning::createBezierPath(controls);
 
 	// execute path
-	executeMove(endpoint);
+	//executeMove(endpoint); // FIXME: handles curves poorly
 
-//	// set motion command to use the explicit path generation
-//	packet()->cmd.planner = MotionCmd::Bezier;
-//	packet()->cmd.pathEnd = endpoint;
-//	packet()->cmd.face = facing;
-//
-//	// set the control points
-//	packet()->cmd.bezierControlPoints.clear();
-//	packet()->cmd.bezierControlPoints = controls;
+
+	size_t degree = controls.size();
+
+	// generate coefficients
+	vector<float> coeffs;
+	for (size_t i=0; i<degree; ++i) {
+		coeffs.push_back(Planning::binomialCoefficient(degree-1, i));
+	}
+
+	// calculate length to allow for determination of time
+	double pathLength = Planning::bezierLength(controls, coeffs);
+
+	// calculate numerical derivative by stepping ahead a fixed constant
+	float lookAheadDist = 0.15; // in meters along path
+	float dt = lookAheadDist/pathLength;
+
+	float velGain = 3.0; // FIXME: should be dependent on the length of the curve
+
+	// calculate a target velocity for translation
+	Point targetVel = Planning::evaluateBezierVelocity(dt, controls, coeffs);
+
+	// apply gain
+	targetVel *= velGain;
+
+	// create a dummy goal position
+	packet()->cmd.goalPosition = pos() + targetVel;
+	packet()->cmd.pathLength = pathLength;
+	packet()->cmd.planner = MotionCmd::Point;
 }
 
 void Gameplay::Robot::executeMove(bool stopAtEnd)

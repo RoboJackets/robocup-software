@@ -45,9 +45,6 @@ namespace Motion
 			 */
 			void genVelocity(MotionCmd::PathEndType ending);
 
-			/** generate velocities based on bezier paths - TEMPORARILY DISABLED */
-			//void genBezierVelocity();
-
 			/**
 			 * safety net against hitting other robots
 			 * if the commanded velocity will cause us to hit something
@@ -71,7 +68,6 @@ namespace Motion
 			SystemState::Robot* _self;
 
 			/** robot axles */
-//			Axle _axles[4];
 			QMutex _procMutex;
 
 			/** planner flag - copied out for rendering */

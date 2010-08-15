@@ -31,15 +31,14 @@ void printPt(const Geometry2d::Point& pt, const string& s="") {
 const float intTimeStampToFloat = 1000000.0f;
 
 Robot::Robot(Configuration *config, SystemState *state, int id) :
+	_state(state),
 	_self(&state->self[id]),
 	_dynamics(&state->self[id]),
+	_lastTimestamp(Utils::timestamp()),
+	_w(0),
 	_velFilter(Point(0.0, 0.0), 1),
 	_wFilter(0.0, 1)
 {
-	_state = state;
-	_w = 0;
-
-	_lastTimestamp = Utils::timestamp();
 }
 
 Robot::~Robot()
@@ -58,14 +57,6 @@ void Robot::proc()
 {
 	bool verbose = false;
 	_procMutex.lock();
-	
-	// remove
-//	// Update axles
-//	for (int i = 0; i < 4; ++i)
-//	{
-//		Geometry2d::Point axle(_self->config->axles[i]->x, _self->config->axles[i]->y);
-//		_axles[i].wheel = axle.normalized().perpCCW();
-//	}
 	
 	// Check to make sure the system is valid
 	if (_self && _self->valid)
@@ -103,6 +94,7 @@ void Robot::proc()
 
 			// switch between planner types
 			switch(_self->cmd.planner) {
+
 			// handle direct velocity commands
 			case MotionCmd::DirectVelocity:
 			{
@@ -112,19 +104,9 @@ void Robot::proc()
 
 				break;
 			}
-			// handle direct motor commands
+			// handle direct motor commands - just pass on to wheel controller
 			case MotionCmd::DirectMotor:
-			{
-				// FIXME: we really should do nothing here, and pass to WheelController
-
-				// short circuit controller completely
-//				size_t i = 0;
-//				BOOST_FOREACH(const int8_t& vel, _self->cmd.direct_motor_cmds) {
-//					_self->radioTx->set_motors(i++, vel);
-//				}
-
 				break;
-			}
 
 			// Catch force stop commands
 			case MotionCmd::ForceStop:
@@ -133,32 +115,15 @@ void Robot::proc()
 				stop(deltaT);
 			}
 
-			// default RRT-based planner that also handles pivoting
+			// normal drive to point commands
 			case MotionCmd::Point:
 			{
 				if (_self->cmd.pivot == MotionCmd::NoPivot)
 				{
-
-					// FIXME: no need for path planning here
-//					//new path if better than old
-//					Planning::Path newPath;
-//
-//					// determine the obstacles
-//					ObstacleGroup& og = _self->obstacles;
-//
-//					// run the RRT planner to generate a new plan
-//					_planner.run(_self->pos, _self->angle, _self->vel, _self->cmd.goalPosition, &og, newPath);
-//
-//					_path = newPath;
-
-					// create the velocities
 					genVelocity(_self->cmd.pathEnd);
 				}
 				else // handle pivot
 				{
-					//clear old path for when we don't want to pivot
-//					_path.clear();
-
 					//for now look at the ball
 					_self->cmd.face = MotionCmd::Continuous;
 					_self->cmd.goalOrientation = _self->cmd.pivotPoint;
@@ -183,15 +148,9 @@ void Robot::proc()
 			_w = _wFilter.filter(_w);
 			if (verbose) cout << "after - w: " << _w << " vel: (" << _vel.x << ", " << _vel.y << ")" << endl;
 
-			// generate motor outputs based on velocity
-//			genMotor(); // FIXME: move to wheel controller
-
 			// save the commanded velocities to packet for inspection in tree
 			_self->cmd_vel = _vel;
 			_self->cmd_w = _w;
-
-			// FIXME: we set the radio messages in WheelController
-//			_self->radioTx->set_board_id(_self->shell);
 		}
 	}
 	_lastTimestamp = _state->timestamp;
@@ -473,41 +432,6 @@ void Robot::genVelocity(MotionCmd::PathEndType ending)
 	// handle point-to-point driving without pivot
 	if (_self->cmd.pivot == MotionCmd::NoPivot)
 	{
-		// ************************** SPLIT HERE (Gameplay Robot) ********************** //
-
-//		if (_path.points.empty())
-//		{
-//			// No path: stop.
-//			//FIXME - This should never happen.  We must keep the check, but fix the cause.
-//			printf("genVelocity: empty path, stopping\n");
-//			_vel = Point();
-//			return;
-//		}
-//
-//		//dynamics path
-//		float length = _path.length();
-//
-//		// handle direct point commands where the length may be very small
-//		if (fabs(length) < 1e-5) {
-//			length = _self->pos.distTo(_path.points[0]);
-//		}
-//
-//		//target point is the last point on the closest segment
-//		Geometry2d::Point targetPos = _path.points[0]; // first point
-//
-//		if (_path.points.size() > 1)
-//		{
-//			targetPos = _path.points[1];
-//		}
-//
-//		//ideally we want to travel towards 2 points ahead...due to delays
-//		if (_path.points.size() > 2)
-//		{
-//			targetPos = _path.points[2];
-//		}
-
-		// ************************** SPLIT HERE (PointController) ********************** //
-
 		//direction of travel
 		const Geometry2d::Point dir = _self->cmd.goalPosition - _self->pos;
 
@@ -645,357 +569,3 @@ void Robot::genVelocity(MotionCmd::PathEndType ending)
 //	// angular velocity is in degrees/sec
 //	_w = _anglePid.run(angleErr);
 //}
-
-//void Robot::genMotor() {
-//	bool verbose = false;
-//
-//	// algorithm:
-//	// 1) saturate the velocities with model bounds (calc current and max)
-//	// 2) convert to percentage of maximum
-//	// 3) saturate the percentages
-//	// 4) apply to wheels
-//	// 5) flip direction for 2010 robots
-//
-//	// angular velocity
-//	float w =  _w;
-//	const float maxW = _self->config.motion.rotation.velocity;
-//	w = setBound(w, maxW, -maxW);
-//	if (verbose) cout << "\nCommands: w = " << w << " maxW = " << maxW;
-//
-//	// handle translational velocity - convert into robot space, then bound
-//	Point rVel = _vel;
-//	rVel.rotate(Point(), -_self->angle);
-//	Dynamics::DynamicsInfo info = _dynamics.info(rVel.angle() * RadiansToDegrees, 0);
-//	const float maxSpeed = info.velocity;
-//	const Point maxVel = rVel.normalized() * maxSpeed;
-//	rVel = Point::setBound(rVel, maxSpeed);
-//	if (verbose) cout << "  rVel: (" << rVel.x << ", " << rVel.y << ")" <<
-//			             "  maxVel: (" << maxVel.x << ", " << maxVel.y << ")" << endl;
-//
-//	// amount of rotation out of max - note these are signed
-//	float wPercent = 0.0;
-//	if (maxW != 0.0)
-//	{
-//		wPercent = w/maxW;
-//	}
-//	wPercent = setBound(wPercent, 1.0, -1.0);
-//
-//	// find the fastest wheel speed, out of all axles with commands
-//	double vwheelmax = 0.0;
-//	BOOST_FOREACH(Robot::Axle& axle, _axles) {
-//		float vwheel = fabs(axle.wheel.dot(maxVel));
-//		if (vwheel > vwheelmax)
-//			vwheelmax = vwheel;
-//	}
-//
-//	// amount of velocity out of max - also signed
-//	vector<float> vels(4);
-//	float maxVelPer = 0.0;
-//	size_t i = 0;
-//	BOOST_FOREACH(Robot::Axle& axle, _axles) {
-//		float vwheel = axle.wheel.dot(rVel);  // velocity for wheel
-//		float per = 0.0;
-//		if (vwheelmax != 0.0)
-//			per = vwheel/vwheelmax;
-//		vels[i++] = per;
-//		if (fabs(per) > maxVelPer)
-//			maxVelPer = per;
-//	}
-//
-//	// mix the control inputs together
-//	vector<float> wheelVels(4); // signed percents of maximum from each wheel
-//	i = 0;
-//	BOOST_FOREACH(float& vel, wheelVels) {
-//		vel = wPercent + (1.0-fabs(wPercent)) * vels[i++];
-//	}
-//
-//	// convert to integer commands and assign
-//	i = 0;
-//	if (verbose) cout << "Motor percent at assign: ";
-//	BOOST_FOREACH(const float& vel, wheelVels) {
-//		if (verbose) cout << " " << vel;
-//		int8_t cmdVel = (int8_t) setBound(127.0*vel, 126.0, -127.0);
-//		if (_self->rev == SystemState::Robot::rev2008) {
-//			_self->radioTx->set_motors(i++, cmdVel);
-//		} else if (_self->rev == SystemState::Robot::rev2010) {
-//			_self->radioTx->set_motors(i++, -cmdVel);
-//		}
-//	}
-//	if (verbose) cout << endl;
-//}
-
-//void Robot::genMotor()
-//{
-//	// algorithm:
-//	// 1) assign rotational velocities to wheels
-//	// 2) determine remaining amount of rotational velocity left, and use for translation
-//	// 3) assign to wheels
-//
-//	// handle saturation of angular velocity
-//	float w =  _w;
-//	const float maxW = _self->config->motion.rotation.velocity;
-//	w = setBound(w, maxW, -maxW);
-//
-//	//amount of rotation out of max
-//	//[-1...1]
-//	float wPercent = 0.0;
-//
-//	if (maxW != 0)
-//	{
-//		wPercent = w/maxW;
-//	}
-//	wPercent = setBound(wPercent, 1.0, -1.0);
-//
-//	// assign rotational velocities to the wheels
-//	int8_t rotVel = 127 *  wPercent;
-//	for (unsigned int i=0 ; i<4; ++i)
-//	{
-//		_self->radioTx->motors[i] = rotVel;
-//	}
-//
-//	// determine the speed
-//	int8_t rotSpeed = abs(rotVel);
-//
-//	//max linear speed remaining
-//	int8_t maxSpeed = 127 - rotSpeed;
-//
-//	// handle translational velocity - convert into robot space
-//	Geometry2d::Point rVel = _vel;
-//	rVel.rotate(Point(), -_self->angle);
-//
-//	Dynamics::DynamicsInfo info = _dynamics.info(rVel.angle() * RadiansToDegrees, 0);
-//
-//	//vmax of the robot in desired velocity direction
-//	const float vm = info.velocity;
-//
-//	//limit max velocity in that direction
-//	if (rVel.mag() > vm)
-//	{
-//		rVel = rVel.normalized() * vm;
-//	}
-//
-//	// find max velocity
-//	Geometry2d::Point vmax = rVel.normalized() * vm;
-//
-//	float max = 0;
-//	BOOST_FOREACH(Robot::Axle& axle, _axles)
-//	{
-//		const float vwheel = fabs(axle.wheel.dot(vmax));
-//		if (vwheel > max)
-//		{
-//			max = vwheel;
-//		}
-//	}
-//
-//	int i=0;
-//	BOOST_FOREACH(Robot::Axle& axle, _axles)
-//	{
-//		if (i >= 4)
-//		{
-//			printf("Radio packet does not support more than 4 wheels!\n");
-//			break;
-//		}
-//
-//		//max ground velocity of the wheel
-//		const float vwheel = axle.wheel.dot(rVel);
-//		float per = vwheel/max;
-//
-//		//this really won't happen because rVel has been limited to the right number
-//		per = setBound(per, 1.0, -1.0);
-//
-//		_self->radioTx->motors[i] += int8_t(maxSpeed * per);
-//		i++;
-//	}
-//
-//}
-
-//void Robot::genMotorOld() {
-//	//convert the velocity command into robot space
-//	Geometry2d::Point rVel = _vel;
-//	rVel.rotate(Point(), -_self->angle);
-//
-//	float maxGenWheelVel = 0;
-//
-//	BOOST_FOREACH(Robot::Axle& axle, _axles)
-//	{
-//		axle.motor = axle.wheel.dot(rVel);
-//		axle.motor += _w;
-//
-//		if (abs(axle.motor > maxGenWheelVel))
-//		{
-//			maxGenWheelVel = axle.motor;
-//		}
-//
-//		axle.lastWheelVel = axle.motor;
-//	}
-//
-//	int j = 0;
-//	const float _maxWheelVel = 255;
-//	BOOST_FOREACH(Robot::Axle& a, _axles)
-//	{
-//		//one of the wheels saturated...scale others back accordingly
-//		if (maxGenWheelVel > _maxWheelVel)
-//		{
-//			a.motor *= _maxWheelVel / maxGenWheelVel;
-//		}
-//
-//		//set outgoing motor
-//		_self->radioTx->set_motors(j++, (int8_t) a.motor);
-//
-//		//radio does not support more than 4 wheels
-//		if (j >= 4)
-//		{
-//			break;
-//		}
-//	}
-//}
-
-
-//void Robot::calib()
-//{
-//	const float fieldW2 = Constants::Field::Width/2.0f;
-//
-//	int debugRobotId = 9;
-//
-//	if (_calibState == InitCalib)
-//	{
-//		_calibInfo = CalibInfo();
-//
-//		float y = 1.5;
-//
-//		_calibInfo.startPos = Geometry2d::Point(fieldW2 - .3, y);
-//		_calibInfo.endPos = Geometry2d::Point(0, y);
-//
-//		_calibState = InitialPoint;
-//	}
-//	else if (_calibState == InitialPoint)
-//	{
-//		Geometry2d::Point dir = (_calibInfo.endPos - _calibInfo.startPos).normalized();
-//
-//		_self->cmd.goalOrientation = _calibInfo.endPos + dir * 1.0;
-//		_self->cmd.face = MotionCmd::Endpoint;
-//		_self->cmd.vScale = .5;
-//
-//		Planning::Path path;
-//		ObstacleGroup& og = _self->obstacles;
-//		_planner.run(_self->pos, _self->angle, _self->vel, _calibInfo.startPos, &og, path);
-//		_path = path;
-//
-//		float destAngle =  dir.angle() * RadiansToDegrees;
-//
-//		float a = fabs(Utils::fixAngleDegrees(_self->angle - destAngle));
-//
-//		if (_calibInfo.startPos.nearPoint(_self->pos, .1) && a < 5)
-//		{
-//			_calibInfo.startTime = Utils::timestamp();
-//			_calibState = Wait1;
-//		}
-//
-//		genVelocity(_self->cmd.pathEnd);
-//		genMotor();
-//	}
-//	else if (_calibState == Wait1)
-//	{
-//		const float dur = (_state->timestamp - _calibInfo.startTime)/1000000.0f;
-//		if (dur > 3)
-//		{
-//			_calibInfo.startTime = Utils::timestamp();
-//			_calibInfo.lastPos = _self->pos;
-//			_calibInfo.pSum = 0;
-//			_calibInfo.startPos = _self->pos;
-//
-//			_calibState = Travel;
-//			_calibInfo.outSpeed = _calibInfo.speed;
-//
-//			if (_self->shell == debugRobotId)
-//			{
-//				printf("Speed: %d\n", _calibInfo.outSpeed);
-//			}
-//		}
-//	}
-//	else if (_calibState == Travel)
-//	{
-//		float duration = (_state->timestamp-_calibInfo.startTime)/1000000.0f;
-//
-//		Geometry2d::Point deltaP = (_self->pos - _calibInfo.lastPos);
-//
-//		//add to running point sum
-//		_calibInfo.pSum += deltaP.mag();
-//
-//		//print duration, velocty mag, del position mag
-//		if (_self->shell == debugRobotId)
-//		{
-//			printf("calib %f %f %f\n", duration, _self->vel.mag(), deltaP.mag());
-//			fflush(stdout);
-//		}
-//
-//		//end
-//		if (_self->pos.y >= Constants::Field::Length - .2 || _self->pos.y <= .2 ||
-//			_self->pos.x <= (-Constants::Field::Width/2.0 + .2) ||
-//			_self->pos.x >= (Constants::Field::Width/2.0 - .2) ||
-//			duration > 5 || !_self->valid)
-//		{
-//			//goto deccel
-//			_calibState = Decel;
-//		}
-//
-//		_calibInfo.lastPos = _self->pos;
-//
-//		int8_t wspeed = _calibInfo.outSpeed;
-//
-//#if 1
-//		_self->radioTx->set_motors(0, -wspeed);
-//		_self->radioTx->set_motors(1, wspeed);
-//		_self->radioTx->set_motors(2, wspeed);
-//		_self->radioTx->set_motors(3, -wspeed);
-//#else //45
-//		_self->radioTx->motors[0] = 0;
-//		_self->radioTx->motors[1] = wspeed;
-//		_self->radioTx->motors[2] = 0;
-//		_self->radioTx->motors[3] = -wspeed;
-//#endif
-//	}
-//
-//	if (_calibState == Decel)
-//	{
-//		_calibInfo.outSpeed -= 30;
-//
-//		if (_calibInfo.outSpeed < 0)
-//		{
-//			_calibInfo.outSpeed = 0;
-//		}
-//
-//		if (!_self->valid)
-//		{
-//			_calibInfo.outSpeed = 0;
-//		}
-//
-//		_self->radioTx->set_motors(0, -_calibInfo.outSpeed);
-//		_self->radioTx->set_motors(1, _calibInfo.outSpeed);
-//		_self->radioTx->set_motors(2, _calibInfo.outSpeed);
-//		_self->radioTx->set_motors(3, -_calibInfo.outSpeed);
-//
-//		if (_calibInfo.outSpeed == 0)
-//		{
-//			_calibState = InitialPoint;
-//
-//			//if we ran at the max speed
-//			//we are all done
-//			if (_calibInfo.speed == 127)
-//			{
-//				//end
-//				_calibState = End;
-//			}
-//
-//			//increment speed by fixed amount
-//			_calibInfo.speed += 10;
-//
-//			//otherwise go to max speed
-//			if (_calibInfo.speed > 127)
-//			{
-//				_calibInfo.speed = 127;
-//			}
-//		}
-//	}
-//}
-

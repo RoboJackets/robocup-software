@@ -112,7 +112,6 @@ srcs = [
 	'modeling/ExtendedKalmanFilter.cpp',
 
 # Sources for motion module',
-	#motion/MotionModule.cpp', # unused during motion module slicing
 	'motion/PointController.cpp',
 	'motion/WheelController.cpp',
 	'motion/Robot.cpp',

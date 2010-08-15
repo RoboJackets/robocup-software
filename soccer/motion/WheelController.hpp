@@ -32,7 +32,7 @@ namespace Motion {
 			//motor value
 			float motor;
 
-			//weeel velocities in the last frame
+			//wheel velocities in the last frame
 			int8_t lastWheelVel;
 
 			Geometry2d::Point wheel;
