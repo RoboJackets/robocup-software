@@ -1,6 +1,6 @@
 #include "Intercept.hpp"
+#include <framework/RobotConfig.hpp>
 
-#include <iostream>
 #include <Constants.hpp>
 
 #include <cmath>
@@ -45,7 +45,7 @@ bool Gameplay::Behaviors::Intercept::run() {
 
 	//FIXME - We ram the ball if we have to move a long distance because we don't start slowing down early enough.
 
-	float avgVel = 0.5 * robot()->packet()->config.motion.deg45.velocity;
+	float avgVel = 0.5 * robot()->packet()->config->motion.deg45.velocity;
 	float proj_thresh = 0.01;
 	float proj_damp = 0.8;
 	Point pos = robot()->pos(),

@@ -14,15 +14,7 @@ Gameplay::Plays::OurKickoff::OurKickoff(GameplayModule *gameplay):
 	_idle3(gameplay),
 	_pdt(gameplay, &_kicker)
 {
-}
-
-bool Gameplay::Plays::OurKickoff::applicable(const std::set<Robot *> &robots)
-{
-	return (gameState().setupRestart() && gameState().ourKickoff()) || _pdt.keepRunning();
-}
-
-bool Gameplay::Plays::OurKickoff::assign(set<Robot *> &available)
-{
+	set<Robot *> available = _gameplay->robots();
 	_robots = available;
 	
 	_idle1.target = _gameplay->centerMatrix() * Geometry2d::Point(0.7, -0.2);
@@ -43,8 +35,11 @@ bool Gameplay::Plays::OurKickoff::assign(set<Robot *> &available)
 	    printf("Kickoff: target goal\n");
 	    _kicker.kick.setTarget();
 	}
+}
 
-	return true;
+float Gameplay::Plays::OurKickoff::score (Gameplay::GameplayModule* gameplay)
+{
+	return (gameplay->state()->gameState.setupRestart() && gameplay->state()->gameState.ourKickoff()) ? 0 : INFINITY;
 }
 
 bool Gameplay::Plays::OurKickoff::run()
@@ -64,5 +59,5 @@ bool Gameplay::Plays::OurKickoff::run()
 	_idle2.run();
 	_idle3.run();
 	
-	return true;
+	return _pdt.keepRunning();
 }

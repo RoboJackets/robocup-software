@@ -1,4 +1,5 @@
 #include "Kick.hpp"
+#include <framework/RobotConfig.hpp>
 
 #include "../Window.hpp"
 
@@ -224,7 +225,7 @@ bool Gameplay::Behaviors::Kick::ballBehind(const Point& ballPos, const Point& ap
 
 Gameplay::Behaviors::Kick::State
 Gameplay::Behaviors::Kick::intercept(const Geometry2d::Point& targetCenter) {
-	float avgVel = 0.5 * robot()->packet()->config.motion.deg45.velocity;
+	float avgVel = 0.5 * robot()->packet()->config->motion.deg45.velocity;
 	float proj_thresh = 0.01;
 	float proj_damp = 0.8;
 	Point pos = robot()->pos();
@@ -335,7 +336,7 @@ Gameplay::Behaviors::Kick::aim(const Geometry2d::Point& targetCenter, bool canKi
 	const float clearance = Constants::Ball::Radius + Constants::Robot::Radius;
 
 	// pull out current states
-	float avgVel = 0.5 * robot()->packet()->config.motion.deg45.velocity;
+	float avgVel = 0.5 * robot()->packet()->config->motion.deg45.velocity;
 	float proj_thresh = 0.02;
 	float proj_damp = 0.6;
 	Geometry2d::Point pos = robot()->pos();
@@ -460,7 +461,7 @@ Gameplay::Behaviors::Kick::oneTouchApproach() {
 		return Done;
 	}
 
-	float avgVel = 0.5 * robot()->packet()->config.motion.deg45.velocity;
+	float avgVel = 0.5 * robot()->packet()->config->motion.deg45.velocity;
 	float proj_thresh = 0.1;
 	Point pos = robot()->pos(),
 		  vel = robot()->vel(),
@@ -617,8 +618,8 @@ int Gameplay::Behaviors::Kick::calcKickStrength(const Geometry2d::Point& targetC
 	{
 		const float dist = robot()->pos().distTo(targetCenter);
 
-		const float m = robot()->packet()->config.kicker.m;
-		const float b = robot()->packet()->config.kicker.b;
+		const float m = robot()->packet()->config->kicker.m;
+		const float b = robot()->packet()->config->kicker.b;
 
 		kickStrength = int(m * dist + b);
 

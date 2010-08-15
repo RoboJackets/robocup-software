@@ -11,15 +11,8 @@ Gameplay::Plays::KickPenalty::KickPenalty(GameplayModule *gameplay):
 	_idle2(gameplay),
 	_idle3(gameplay)
 {
-}
-
-bool Gameplay::Plays::KickPenalty::applicable(const std::set<Robot *> &robots)
-{
-	return gameState().setupRestart() && gameState().ourPenalty();
-}
-
-bool Gameplay::Plays::KickPenalty::assign(set<Robot *> &available)
-{
+	set<Robot *> available = gameplay->robots();
+	
 	_idle1.target = Geometry2d::Point(1.5, 1);
 	_idle2.target = Geometry2d::Point(1.5, 1.5);
 	_idle3.target = Geometry2d::Point(1.5, 2);
@@ -28,8 +21,11 @@ bool Gameplay::Plays::KickPenalty::assign(set<Robot *> &available)
 	_idle1.assign(available);
 	_idle2.assign(available);
 	_idle3.assign(available);
+}
 
-	return true;
+float Gameplay::Plays::KickPenalty::score ( Gameplay::GameplayModule* gameplay )
+{
+	return (gameplay->state()->gameState.setupRestart() && gameplay->state()->gameState.ourPenalty()) ? 0 : INFINITY;
 }
 
 bool Gameplay::Plays::KickPenalty::run()

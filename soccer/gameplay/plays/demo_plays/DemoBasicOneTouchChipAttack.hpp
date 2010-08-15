@@ -21,12 +21,6 @@ class DemoBasicOneTouchChipAttack: public Play
 public:
 	DemoBasicOneTouchChipAttack(GameplayModule *gameplay);
 
-	/**
-	 * Takes the first robot as a kicker, ignores the rest
-	 */
-	virtual bool assign(std::set<Robot *> &available);
-
-	/** default run */
 	virtual bool run();
 
 protected:

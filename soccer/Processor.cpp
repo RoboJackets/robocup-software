@@ -13,6 +13,7 @@
 #include <Joystick.hpp>
 #include <LogUtils.hpp>
 
+#include <framework/RobotConfig.hpp>
 #include <modeling/WorldModel.hpp>
 #include <gameplay/GameplayModule.hpp>
 
@@ -31,8 +32,7 @@ using namespace Packet;
 
 static QHostAddress LocalAddress(QHostAddress::LocalHost);
 
-Processor::Processor(QString filename, bool sim, int radio) :
-	_config(new ConfigFile(filename))
+Processor::Processor(Configuration *config, bool sim, int radio)
 {
 	_running = true;
 	_syncToVision = false;
@@ -47,20 +47,22 @@ Processor::Processor(QString filename, bool sim, int radio) :
 
 	_simulation = sim;
 	_joystick = new Joystick();
+	
+	// Create robot configuration
+	shared_ptr<RobotConfig> robotConfig2008 = make_shared<RobotConfig>(config, "Rev2008");
+	
+	robotConfig2008->motion.output_coeffs.resize(4);
+	robotConfig2008->motion.output_coeffs.set(0, 10);
+	
+	BOOST_FOREACH(SystemState::Robot &robot, _state.self)
+	{
+		robot.config = robotConfig2008;
+	}
 
 	// Initialize team-space transformation
 	defendPlusX(_defendPlusX);
 	
 	QMetaObject::connectSlotsByName(this);
-
-	try
-	{
-		_config->load();
-	}
-	catch (std::runtime_error& re)
-	{
-		printf("Config Load Error: %s\n", re.what());
-	}
 
 	// Create vision socket
 	if (_simulation)
@@ -118,13 +120,13 @@ Processor::Processor(QString filename, bool sim, int radio) :
 	}
 	
 	//setup the modules
-	_modelingModule = make_shared<Modeling::WorldModel>(&_state, _config->worldModel);
+	_modelingModule = make_shared<Modeling::WorldModel>(&_state, config);
 	_stateIDModule = make_shared<StateIdentification::StateIDModule>(&_state);
-	_pointControlModule = make_shared<Motion::PointController>(&_state, _config->motionModule);
-	_wheelControlModule = make_shared<Motion::WheelController>(&_state, _config->motionModule);
-//	_motionModule = make_shared<Motion::MotionModule>(&_state, _config->motionModule); // FIXME: remove
+	_pointControlModule = make_shared<Motion::PointController>(&_state, config);
+	_wheelControlModule = make_shared<Motion::WheelController>(&_state, config);
+//	_motionModule = make_shared<Motion::MotionModule>(&_state, config); // FIXME: remove
 	_refereeModule = make_shared<RefereeModule>(&_state);
-	_gameplayModule = make_shared<Gameplay::GameplayModule>(&_state, _config->motionModule);
+	_gameplayModule = make_shared<Gameplay::GameplayModule>(&_state);
 }
 
 Processor::~Processor()
@@ -412,7 +414,9 @@ void Processor::run()
 			_refereeModule->run();
 		}
 		
-		for (size_t r = 0; r < Constants::Robots_Per_Team; ++r)
+
+		#if 0
+		for (int r = 0; r < Constants::Robots_Per_Team; ++r)
 		{
 			if (_state.self[r].valid)
 			{
@@ -433,6 +437,7 @@ void Processor::run()
 				}
 			}
 		}
+		#endif
 		
 		if (_stateIDModule)
 		{

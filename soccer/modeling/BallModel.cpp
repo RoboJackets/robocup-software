@@ -1,17 +1,19 @@
 // kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 // vim:ai ts=4 et
 
+#include "BallModel.hpp"
+
+#include <Configuration.hpp>
+
 #include <iostream>
 
 #include <boost/foreach.hpp>
 
-#include "BallModel.hpp"
-
 using namespace std;
 
-Modeling::BallModel::BallModel(mode_t mode, RobotModel::RobotMap *robotMap, ConfigFile::shared_worldmodel& cfg) :
+Modeling::BallModel::BallModel(mode_t mode, RobotModel::RobotMap *robotMap, Configuration *config) :
 	A(6,6), B(6,6), P(6,6), Q(6,6), R(2,2), H(2,6),
-	Z(2), U(6), X0(6), _mode(mode), _robotMap(robotMap), _config(cfg)
+	Z(2), U(6), X0(6), _mode(mode), _robotMap(robotMap)
 {
 	lastObservedTime = 0;
 	lastUpdatedTime = 0;
@@ -20,19 +22,19 @@ Modeling::BallModel::BallModel(mode_t mode, RobotModel::RobotMap *robotMap, Conf
 	if (_mode == MODELTESTS) {
 		cout << "Running ball model tests..." << endl;
 		initKalman();
-		initRBPF();
+		initRBPF(config);
 		kalmanTestPosError = 0; kalmanTestVelError = 0;
 		rbpfTestPosError = 0; rbpfTestVelError = 0;
 	} else if (_mode == KALMAN) {
 		initKalman();
 	} else if (_mode == RBPF) {
-		initRBPF();
+		initRBPF(config);
 	} else if (_mode == ABG) {
 		initABG();
 	} else {
 		cout << "ERROR: Invalid initialization type, defaulting to RPBF!" << endl;
 		_mode = RBPF;
-		initRBPF();
+		initRBPF(config);
 	}
 }
 
@@ -87,7 +89,8 @@ void Modeling::BallModel::initKalman() {
 	posKalman = new DifferenceKalmanFilter(&A, &B, &X0, &P, &Q, &R, &H);
 }
 
-void Modeling::BallModel::initRBPF() {
+void Modeling::BallModel::initRBPF(Configuration *config)
+{
 	// Construct initial state X (n x 1)
 	Vector X(6); X.clear();
 	// Construct initial state covariance P (n x n)
@@ -96,8 +99,8 @@ void Modeling::BallModel::initRBPF() {
 	int numParticles = 20; // Number of particles in filter
 	raoBlackwellizedParticleFilter = new Rbpf(X,P,numParticles);
 	// create model graph
-	raoBlackwellizedParticleFilter->addModel(new RbpfModelRolling(_robotMap, _config));
-	raoBlackwellizedParticleFilter->addModel(new RbpfModelKicked(_robotMap, _config));
+	raoBlackwellizedParticleFilter->addModel(new RbpfModelRolling(_robotMap, config));
+	raoBlackwellizedParticleFilter->addModel(new RbpfModelKicked(_robotMap, config));
 	raoBlackwellizedParticleFilter->setTransProb(0,0,0.9);
 	raoBlackwellizedParticleFilter->setTransProb(0,1,0.1);
 	raoBlackwellizedParticleFilter->setTransProb(1,0,0.9);

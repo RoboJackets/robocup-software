@@ -21,24 +21,31 @@
 #include <boost/numeric/ublas/matrix.hpp>
 #include "RbpfModel.hpp"
 
+#include <Configuration.hpp>
+
 // free rolling ball, ignores control input
 // state: X (6 x 1) = {x, y, vx, vy, ax, ay}
 class RbpfModelRolling : public RbpfModel {
 public:
 	typedef boost::numeric::ublas::vector<double> Vector;
 	typedef boost::numeric::ublas::matrix<double> Matrix;
-	RbpfModelRolling(Modeling::RobotModel::RobotMap *_robotMap, ConfigFile::shared_worldmodel& cfg);
+	
+	RbpfModelRolling(Modeling::RobotModel::RobotMap *_robotMap, Configuration *config);
 	~RbpfModelRolling();
 
 	// reinitialize the parameters from the config files - should be called each frame
 	void initParams();
 
 protected:
+	ConfigDouble _processNoiseSqrdPos;
+	ConfigDouble _processNoiseSqrdVel;
+	ConfigDouble _processNoiseSqrdAcc;
+	ConfigDouble _measurementNoiseSqrd;
+	
 	void transitionModel(Vector &X, Vector &U, double dt);
 	void computeTransitionJacobian(double dt);
 	void observationModel(Vector &X, Vector &out);
 	void computeObservationJacobian(double dt);
-	ConfigFile::shared_worldmodel _config;
 
 	// initialization functions to pull from config file
 	virtual void initializeQ();

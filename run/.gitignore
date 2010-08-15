@@ -2,6 +2,7 @@ libprotobuf.so.5
 soccsim
 soccer
 simple_logger
+log_viewer
 radio
 convert_tcpdump
 sslrefbox

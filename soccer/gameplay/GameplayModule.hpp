@@ -16,11 +16,12 @@ namespace Gameplay
 {
 	class Behavior;
 	class Play;
+	class PlayFactory;
 	
 	class GameplayModule
 	{
 		public:
-			GameplayModule(SystemState *state, const ConfigFile::MotionModule& cfg);
+			GameplayModule(SystemState *state);
 			~GameplayModule();
 			
 			SystemState *state() const
@@ -62,37 +63,23 @@ namespace Gameplay
 				return _oppMatrix;
 			}
 			
-			void enablePlay(Play *play);
-			void disablePlay(Play *play);
-			bool playEnabled(Play *play);
-			void forcePlay(Play *play);
-			
-			// Returns true if the current play is forced
-			bool forcePlay()
-			{
-				return _forcePlay;
-			}
-			
 			// Returns the name of the current play
 			QString playName()
 			{
 				return _playName;
 			}
 			
-			// This may be used by the GUI thread because the processing thread
-			// won't change the list of plays.
-			const std::set<Play *> &plays() const
+			// Set of all robots on our team that are usable by plays
+			const std::set<Robot *> &robots() const
 			{
-				return _plays;
+				return _robots;
 			}
-
+			
 			Robot *self[Constants::Robots_Per_Team];
 			Robot *opp[Constants::Robots_Per_Team];
 			
 		private:
 			friend class Play;
-			
-			Play *selectPlay(size_t nrRobots);
 			
 			// This protects all of Gameplay.
 			// This is held while plays are running.
@@ -103,11 +90,13 @@ namespace Gameplay
 			// The goalie behavior (may be null)
 			Behavior *_goalie;
 			
-			// The current play
-			Play *_currentPlay;
+			std::set<Robot *> _robots;
 			
-			// True if _currentPlay is forced by the GUI and cannot be changed
-			Play *_forcePlay;
+			// The current play
+			boost::shared_ptr<Play> _currentPlay;
+			
+			// Factory which produced the current play
+			PlayFactory *_currentPlayFactory;
 			
 			// True if the current play is finished and a new one should be selected during the next frame
 			bool _playDone;
@@ -124,12 +113,7 @@ namespace Gameplay
 			//goal area
 			ObstaclePtr _goalArea[3];
 			
-			std::set<Play *> _plays;
-			
 			// Name of the current play
 			QString _playName;
-
-			// motion config information
-			const ConfigFile::MotionModule& _motion_config;
 	};
 }

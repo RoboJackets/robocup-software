@@ -1,4 +1,5 @@
 #include "OneTouchKick.hpp"
+#include <framework/RobotConfig.hpp>
 
 #include "../Window.hpp"
 
@@ -259,7 +260,8 @@ Geometry2d::Segment Gameplay::Behaviors::OneTouchKick::evaluateShot() {
 	return bestTarget;
 }
 
-int Gameplay::Behaviors::OneTouchKick::calcKickStrength(const Geometry2d::Point& targetCenter) const {
+int Gameplay::Behaviors::OneTouchKick::calcKickStrength(const Geometry2d::Point& targetCenter) const
+{
 	//if kicking to a target
 	//calculate kick strength
 	int kickStrength = 255;
@@ -267,8 +269,8 @@ int Gameplay::Behaviors::OneTouchKick::calcKickStrength(const Geometry2d::Point&
 	{
 		const float dist = robot()->pos().distTo(targetCenter);
 
-		const float m = robot()->packet()->config.kicker.m;
-		const float b = robot()->packet()->config.kicker.b;
+		const float m = robot()->packet()->config->kicker.m;
+		const float b = robot()->packet()->config->kicker.b;
 
 		kickStrength = int(m * dist + b);
 

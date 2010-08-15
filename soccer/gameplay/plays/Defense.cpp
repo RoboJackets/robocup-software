@@ -11,28 +11,25 @@ Gameplay::Plays::Defense::Defense(GameplayModule *gameplay):
 	_kicker1(gameplay),
 	_kicker2(gameplay)
 {
+	set<Robot *> available = gameplay->robots();
+	
 	_fullback1.otherFullbacks.insert(&_fullback2);
 	_fullback2.otherFullbacks.insert(&_fullback1);
-}
 
-bool Gameplay::Plays::Defense::applicable(const std::set<Robot *> &robots)
-{
-	bool refApplicable =_gameplay->state()->gameState.playing();
-	bool gameplayApplicable = _gameplay->state()->stateID.posession == SystemState::DEFENSE;
-
-	return refApplicable && gameplayApplicable;
-}
-
-bool Gameplay::Plays::Defense::assign(set<Robot *> &available)
-{
 	_robots = available;
 	
 	_fullback1.assign(available);
 	_fullback2.assign(available);
 	_kicker1.assign(available);
 	_kicker2.assign(available);
+}
 
-	return true;
+float Gameplay::Plays::Defense::score ( GameplayModule* gameplay )
+{
+	bool refApplicable = gameplay->state()->gameState.playing();
+	bool gameplayApplicable = gameplay->state()->stateID.posession == SystemState::DEFENSE;
+
+	return (refApplicable && gameplayApplicable) ? 0 : INFINITY;
 }
 
 bool Gameplay::Plays::Defense::run()

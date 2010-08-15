@@ -9,7 +9,7 @@ const float intTimeStampToFloat = 1000000.0f;
 
 Gameplay::Robot::Robot(GameplayModule *gameplay, int id, bool self)
 : willKick(false), avoidBall(false), exclude(false),
-  _gameplay(gameplay), _id(id), _self(self)
+  _gameplay(gameplay), _id(id), _self(self), _dynamics(&gameplay->state()->self[id])
 {
 	for (size_t i = 0; i < Constants::Robots_Per_Team; ++i)
 	{
@@ -245,16 +245,13 @@ bool Gameplay::Robot::haveBall() const
 
 SystemState::Robot::Rev Gameplay::Robot::rev() const
 {
-	switch (_packet->config.rev) {
-	case ConfigFile::rev2008:
-		return SystemState::Robot::rev2008;
-	case ConfigFile::rev2010:
-		return SystemState::Robot::rev2010;
-	}
+	//FIXME - Revision from config file, or something
+	return SystemState::Robot::rev2008;
 }
 
-bool Gameplay::Robot::hasChipper() const {
-	return _packet->config.rev == ConfigFile::rev2010;
+bool Gameplay::Robot::hasChipper() const
+{
+	return rev() == SystemState::Robot::rev2010;
 }
 
 void Gameplay::Robot::dribble(int8_t speed)

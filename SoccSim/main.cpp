@@ -30,7 +30,11 @@ int main(int argc, char* argv[])
 	//loop arguments and look for config file
 	for (int i=1 ; i<argc ; ++i)
 	{
-		if (strcmp(argv[i], "--ui") == 0)
+		if (strcmp(argv[i], "--help") == 0)
+		{
+			usage(argv[0]);
+			return 1;
+		} else if (strcmp(argv[i], "--ui") == 0)
 		{
 			useGUI = true;
 		} else if (strcmp(argv[i], "--sv") == 0)
@@ -46,7 +50,7 @@ int main(int argc, char* argv[])
 			else
 			{
 				printf ("Expected config file after -c parameter\n");
-				return 0;
+				return 1;
 			}
 		} else if ((strcmp(argv[i], "--h") == 0) || (strcmp(argv[i], "--help") == 0))
 		{
@@ -54,7 +58,7 @@ int main(int argc, char* argv[])
 			return 0;
 		} else {
 			printf("%s is not recognized as a valid flag\n", argv[i]);
-			return 0;
+			return 1;
 		}
 	}
 

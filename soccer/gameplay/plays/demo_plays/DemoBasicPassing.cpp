@@ -10,15 +10,16 @@ Gameplay::Plays::DemoBasicPassing::DemoBasicPassing(GameplayModule *gameplay):
 	_passer(gameplay),
 	_receiver(gameplay)
 {
-}
-
-bool Gameplay::Plays::DemoBasicPassing::assign(set<Robot *> &available)
-{
+	set<Robot *> available = gameplay->robots();
 	_passer.assign(available);
 	_receiver.assign(available);
 
 	_passer.setTarget(_receiver.robot());
-	return _robots.size() >= 2;
+}
+
+float Gameplay::Plays::DemoBasicPassing::score ( Gameplay::GameplayModule* gameplay )
+{
+	return gameplay->robots().size() >= 2 ? 0 : INFINITY;
 }
 
 bool Gameplay::Plays::DemoBasicPassing::run()

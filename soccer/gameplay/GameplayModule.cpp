@@ -13,15 +13,13 @@
 using namespace std;
 using namespace boost;
 
-Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::MotionModule& cfg):
-	_mutex(QMutex::Recursive),
-	_motion_config(cfg)
+Gameplay::GameplayModule::GameplayModule(SystemState *state):
+	_mutex(QMutex::Recursive)
 {
 	_state = state;
 	_goalie = 0;
-	_currentPlay = 0;
+	_currentPlayFactory = 0;
 	_playDone = false;
-	_forcePlay = 0;
 
 	_centerMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length / 2));
 	_oppMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length)) *
@@ -92,13 +90,6 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state, const ConfigFile::M
 		self[i] = new Robot(this, i, true);
 		opp[i] = new Robot(this, i, false);
 	}
-	
-	// Create plays
-	BOOST_FOREACH(PlayFactoryBase *factory, *PlayFactoryBase::factories)
-	{
-		Play *play = factory->create(this);
-		_plays.insert(play);
-	}
 }
 
 Gameplay::GameplayModule::~GameplayModule()
@@ -109,11 +100,6 @@ Gameplay::GameplayModule::~GameplayModule()
 	{
 		delete self[i];
 		delete opp[i];
-	}
-	
-	BOOST_FOREACH(Play *play, _plays)
-	{
-		delete play;
 	}
 }
 
@@ -142,7 +128,8 @@ void Gameplay::GameplayModule::run()
 	if (verbose) cout << "Starting GameplayModule::run()" << endl;
 
 	// perform state variable updates on robots
-	BOOST_FOREACH(Robot* robot, self) {
+	BOOST_FOREACH(Robot* robot, self)
+	{
 		if (robot) {
 			robot->update();
 		}
@@ -192,6 +179,7 @@ void Gameplay::GameplayModule::run()
 		}
 	}
 
+	// Set up robots before the play is run
 	BOOST_FOREACH(Robot *r, self)
 	{
 		//robot resets
@@ -257,13 +245,13 @@ void Gameplay::GameplayModule::run()
 	//  - new goalie, select new play (may reselect current play, which much be assigned new robots)
 
 	// prepare a list of all non-goalie robots ready
-	set<Robot *> robots;
+	_robots.clear();
 	int n = 0;
 	BOOST_FOREACH(Robot *r, self)
 	{
 		if ((!_goalie || r != _goalie->robot()) && r->visible() && !r->exclude)
 		{
-			robots.insert(r);
+			_robots.insert(r);
 			++n;
 		}
 		
@@ -273,49 +261,43 @@ void Gameplay::GameplayModule::run()
 			break;
 		}
 	}
-	if (verbose) cout << "  Available Robots: " << robots.size() << endl;
+	if (verbose) cout << "  Available Robots: " << _robots.size() << endl;
 
-	// handle changes in play availability
-	if (_plays.size() == 0)
+	// Update play scores.
+	// The GUI thread needs this for the Plays tab and we will use it later
+	// to determine the new play.
+	BOOST_FOREACH(PlayFactory *factory, PlayFactory::factories())
 	{
-		// No plays available, so we don't have a current play
-		_currentPlay = 0;
-	} else if (
-			newGoalie ||						// Goalie gets first pick of all robots
-			(_forcePlay && _forcePlay != _currentPlay) || // Changed the forced play
-			(!_forcePlay && (					// If forcing a play, don't change plays (but can restart if goalie changes)
-				_playDone || 					// New play if old one was complete
-				!_currentPlay ||				// There is no current play
-				!_currentPlay->applicable(robots) || // Current play doesn't apply anymore
-				!_currentPlay->allVisible() ||	// Lost robots used by current play
-				!_currentPlay->enabled)			// Current play was disabled
-			))
+		factory->lastScore = factory->score(this);
+	}
+
+	if (
+			newGoalie ||							// Goalie gets first pick of all robots
+			_playDone || 							// New play if old one was complete
+			!_currentPlay ||						// There is no current play
+			isinf(_currentPlayFactory->lastScore) || // Current play doesn't apply anymore
+			!_currentPlay->allVisible() ||			// Lost robots used by current play
+			!_currentPlayFactory->enabled			// Current play was disabled
+		)
 	{
 		if (verbose) cout << "  Selecting a new play" << endl;
 		_playDone = false;
 
 		// Find the next play
-		Play *bestPlay = 0;
-		if (_forcePlay)
-		{
-			// Restart the current play because we can't choose any other
-			bestPlay = _forcePlay;
-		} else {
-			// Pick a new play
-			float bestScore = 0;
+		PlayFactory *bestPlay = 0;
+		// Pick a new play
+		float bestScore = 0;
 
-			// Find the best applicable play
-			BOOST_FOREACH(Play *play, _plays)
+		// Find the best applicable play
+		BOOST_FOREACH(PlayFactory *factory, PlayFactory::factories())
+		{
+			if (factory->enabled)
 			{
-				//FIXME - Put minRobots test in applicable.  It used to be here.
-				if (play->enabled && play->applicable(robots))
+				float score = factory->lastScore;
+				if (!isinf(score) && (!bestPlay || score < bestScore))
 				{
-					float score = play->score();
-					if (!bestPlay || score < bestScore)
-					{
-						bestScore = score;
-						bestPlay = play;
-					}
+					bestScore = score;
+					bestPlay = factory;
 				}
 			}
 		}
@@ -324,19 +306,17 @@ void Gameplay::GameplayModule::run()
 		// Restart the current play if the goalie changed, because we have to pick new robots.
 		if (bestPlay)
 		{
-			if (bestPlay != _currentPlay || newGoalie)
+			if (bestPlay != _currentPlayFactory || newGoalie)
 			{
 				if (verbose) cout << "  Assigning robots to play" << endl;
 
-				// assign and check if assignment was successful
-				if (bestPlay->assign(robots))
-				{
-					_currentPlay = bestPlay;
-				}
+				_currentPlayFactory = bestPlay;
+				_currentPlay = shared_ptr<Play>(_currentPlayFactory->create(this));
 			}
 		} else {
 			// No usable plays
-			_currentPlay = 0;
+			_currentPlay.reset();
+			_currentPlayFactory = 0;
 		}
 	}
 
@@ -395,36 +375,4 @@ void Gameplay::GameplayModule::run()
 		_playName = QString();
 	}
 	if (verbose) cout << "Finishing GameplayModule::run()" << endl;
-}
-
-void Gameplay::GameplayModule::forcePlay(Gameplay::Play* play)
-{
-	QMutexLocker lock(&_mutex);
-	_forcePlay = play;
-}
-
-void Gameplay::GameplayModule::enablePlay(Play *play)
-{
-	QMutexLocker lock(&_mutex);
-	if (!play->enabled)
-	{
-		play->enabled = true;
-		_plays.insert(play);
-	}
-}
-
-void Gameplay::GameplayModule::disablePlay(Play *play)
-{
-	QMutexLocker lock(&_mutex);
-	if (play->enabled)
-	{
-		play->enabled = false;
-		_plays.erase(play);
-	}
-}
-
-bool Gameplay::GameplayModule::playEnabled(Play *play)
-{
-	QMutexLocker lock(&_mutex);
-	return play->enabled;
 }

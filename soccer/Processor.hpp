@@ -26,6 +26,7 @@
 
 #include "RefereeModule.hpp"
 
+class Configuration;
 class Joystick;
 
 /** handles processing for a team */
@@ -48,7 +49,7 @@ class Processor: public QThread
 			uint64_t lastRadioRxTime;
 		};
 		
-		Processor(QString filename, bool sim, int radio);
+		Processor(Configuration *config, bool sim, int radio);
 		~Processor();
 		
 		void stop();
@@ -97,11 +98,6 @@ class Processor: public QThread
 		SystemState *state()
 		{
 			return &_state;
-		}
-		
-		boost::shared_ptr<ConfigFile> configFile()
-		{
-			return _config;
 		}
 		
 		bool simulation() const
@@ -212,6 +208,4 @@ class Processor: public QThread
 
 		boost::shared_ptr<StateIdentification::StateIDModule> _stateIDModule;
 		Joystick *_joystick;
-		
-		boost::shared_ptr<ConfigFile> _config;
 };

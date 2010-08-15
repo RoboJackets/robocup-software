@@ -10,9 +10,11 @@
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
 #include <GameState.hpp>
-#include <framework/ConfigFile.hpp>
 #include <framework/Obstacle.hpp>
 #include <framework/MotionCmd.hpp>
+#include <Constants.hpp>
+
+class RobotConfig;
 
 namespace Packet
 {
@@ -25,8 +27,9 @@ class SystemState
 		class Robot
 		{
 			public:
+				boost::shared_ptr<RobotConfig> config;
+				
 				ObstacleGroup obstacles;
-				ConfigFile::Robot config;
 				
 				uint8_t shell;
 				enum Rev
@@ -118,8 +121,8 @@ class SystemState
 		GameStateID stateID;
 		uint64_t timestamp;
 		GameState gameState;
-		Robot self[5];
-		Robot opp[5];
+		Robot self[Constants::Robots_Per_Team];
+		Robot opp[Constants::Robots_Per_Team];
 		Ball ball;
 		Packet::LogFrame *logFrame;
 		

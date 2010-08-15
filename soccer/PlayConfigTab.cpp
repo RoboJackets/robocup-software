@@ -12,12 +12,12 @@ using namespace std;
 using namespace boost;
 using namespace Gameplay;
 
-Q_DECLARE_METATYPE(Play *)
+Q_DECLARE_METATYPE(PlayFactory *)
 
 // Gets the Play for a list item
-Play *play_for_item(QTreeWidgetItem *item)
+PlayFactory *factory_for_item(QTreeWidgetItem *item)
 {
-	return item->data(0, Qt::UserRole).value<Play *>();
+	return item->data(0, Qt::UserRole).value<PlayFactory *>();
 }
 
 PlayConfigTab::PlayConfigTab(QWidget *parent):
@@ -37,19 +37,19 @@ void PlayConfigTab::setup(boost::shared_ptr<Gameplay::GameplayModule> gp)
 	typedef QMap<QString, QTreeWidgetItem *> CatMap;
 	CatMap categories;
 	
-	BOOST_FOREACH(Play *play, _gameplay->plays())
+	BOOST_FOREACH(PlayFactory *factory, PlayFactory::factories())
 	{
 		QTreeWidgetItem *parent;
-		if (!play->category.isNull())
+		if (!factory->category.isNull())
 		{
-			CatMap::iterator i = categories.find(play->category);
+			CatMap::iterator i = categories.find(factory->category);
 			if (i == categories.end())
 			{
 				// New category
 				parent = new QTreeWidgetItem();
-				parent->setText(0, play->category);
+				parent->setText(0, factory->category);
 				ui.plays->addTopLevelItem(parent);
-				categories[play->category] = parent;
+				categories[factory->category] = parent;
 			} else {
 				// Existing category
 				parent = i.value();
@@ -59,12 +59,12 @@ void PlayConfigTab::setup(boost::shared_ptr<Gameplay::GameplayModule> gp)
 		}
 		
 		QTreeWidgetItem *item = new QTreeWidgetItem(parent);
-		item->setData(0, Qt::UserRole, QVariant::fromValue(play));
-		item->setText(0, play->name());
+		item->setData(0, Qt::UserRole, QVariant::fromValue(factory));
+		item->setText(0, factory->name());
 		item->setCheckState(0, Qt::Unchecked);
 		item->setIcon(1, QIcon());
 		
-		_playNameMap[play->name()] = item;
+		_nameItemMap[factory->name()] = item;
 	}
 	
 	ui.plays->sortItems(0, Qt::AscendingOrder);
@@ -119,8 +119,8 @@ void PlayConfigTab::load(QString filename)
 
 void PlayConfigTab::enable(QString name)
 {
-	PlayNameMap::const_iterator i = _playNameMap.find(name);
-	if (i == _playNameMap.end())
+	NameItemMap::const_iterator i = _nameItemMap.find(name);
+	if (i == _nameItemMap.end())
 	{
 		printf("Missing play \"%s\"\n", (const char *)name.toAscii());
 	} else {
@@ -155,9 +155,12 @@ void PlayConfigTab::on_save_clicked()
 	}
 
 	// Write the names of all enabled plays
-	BOOST_FOREACH(Play *play, _gameplay->plays())
+	BOOST_FOREACH(PlayFactory *factory, PlayFactory::factories())
 	{
-		ts << play->name() << "\n";
+		if (factory->enabled)
+		{
+			ts << factory->name() << "\n";
+		}
 	}
 }
 
@@ -173,26 +176,28 @@ void PlayConfigTab::on_goalie_toggled(bool checked)
 
 void PlayConfigTab::frameUpdate()
 {
-	BOOST_FOREACH(QTreeWidgetItem *item, _playNameMap)
+	BOOST_FOREACH(QTreeWidgetItem *item, _nameItemMap)
 	{
-		Play *play = play_for_item(item);
-// 		item->setIcon(1, play->applicable() ? _iconRun : QIcon());
+		PlayFactory *factory = factory_for_item(item);
+		item->setIcon(1, isinf(factory->lastScore) ? QIcon() : _iconRun);
 	}
 }
 
 void PlayConfigTab::on_plays_itemChanged(QTreeWidgetItem* item)
 {
-	Play *play = play_for_item(item);
-	if (!play)
+	PlayFactory *factory = factory_for_item(item);
+	if (!factory)
 	{
 		return;
 	}
 	
 	if (item->checkState(0) == Qt::Checked)
 	{
-		_gameplay->enablePlay(play);
+		factory->enabled = true;
+// 		_gameplay->enablePlay(play);
 	} else {
-		_gameplay->disablePlay(play);
+		factory->enabled = false;
+// 		_gameplay->disablePlay(play);
 	}
 }
 
@@ -202,11 +207,10 @@ void PlayConfigTab::on_plays_customContextMenuRequested(const QPoint& pos)
 	
 	QMenu menu;
 	QAction *none = menu.addAction("None");
-	QAction *force = 0, *single = 0;
+	QAction *single = 0;
 	QAction *cat_on = 0, *cat_off = 0;
 	if (item)
 	{
-		force = menu.addAction("Force");
 		single = menu.addAction("Only this");
 		if (item->childCount())
 		{
@@ -219,13 +223,6 @@ void PlayConfigTab::on_plays_customContextMenuRequested(const QPoint& pos)
 	if (act == none)
 	{
 		selectNone();
-	} else if (act == force)
-	{
-		Play *play = play_for_item(item);
-		if (play)
-		{
-			_gameplay->forcePlay(play);
-		}
 	} else if (act == single)
 	{
 		selectNone();
@@ -260,8 +257,8 @@ void PlayConfigTab::on_plays_customContextMenuRequested(const QPoint& pos)
 
 void PlayConfigTab::selectNone()
 {
-	// All play items are in _playNameMap
-	BOOST_FOREACH(QTreeWidgetItem *item, _playNameMap)
+	// All play items are in _nameItemMap
+	BOOST_FOREACH(QTreeWidgetItem *item, _nameItemMap)
 	{
 		item->setCheckState(0, Qt::Unchecked);
 	}

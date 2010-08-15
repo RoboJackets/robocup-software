@@ -10,6 +10,7 @@
 #include <cblas.h>
 #include "BLASWrap/blaswrap.h"
 #include "difference_kalman.hpp"
+#include <Configuration.hpp>
 
 //#define KALMANMODEL
 
@@ -29,7 +30,19 @@ namespace Modeling
 			} Observation_t;
 			typedef std::vector<Observation_t> ObsVec;
 
-			RobotModel(ConfigFile::shared_worldmodel& cfg, int s);
+			struct Config
+			{
+				Config(Configuration *config);
+				
+				ConfigDouble posAlpha;
+				ConfigDouble posBeta;
+				ConfigDouble posGamma;
+				ConfigDouble angleAlpha;
+				ConfigDouble angleBeta;
+				ConfigDouble angleGamma;
+			};
+			
+			RobotModel(Config *config, int s);
 
 			void observation(uint64_t time, Geometry2d::Point pos, float angle);
 			Geometry2d::Point predictPosAtTime(float dtime);
@@ -70,15 +83,7 @@ namespace Modeling
 			float _angleVel;
 			float _angleAccel;
 
-			// Filter coefficients for the ABG filter
-			float _posAlpha;
-			float _posBeta;
-			float _posGamma;
-			float _angleAlpha;
-			float _angleBeta;
-			float _angleGamma;
-
-			ConfigFile::shared_worldmodel _config;
+			Config *_config;
 
 			// Data from RadioRx
 			bool _haveBall;

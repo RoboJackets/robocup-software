@@ -9,7 +9,6 @@
 
 namespace Gameplay
 {
-	class Play;
 	class GameplayModule;
 };
 
@@ -45,13 +44,9 @@ class PlayConfigTab: public QWidget
 		Ui_PlayConfig ui;
 		boost::shared_ptr<Gameplay::GameplayModule> _gameplay;
 		
-		// All plays.
-		// Plays are owned by this widget, and destroyed with it.
-		std::vector<Gameplay::Play *> _plays;
-		
 		QIcon _iconRun;
 		
 		// Map from play name to tree item
-		typedef QMap<QString, QTreeWidgetItem *> PlayNameMap;
-		PlayNameMap _playNameMap;
+		typedef QMap<QString, QTreeWidgetItem *> NameItemMap;
+		NameItemMap _nameItemMap;
 };

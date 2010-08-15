@@ -1,17 +1,30 @@
 #include <iostream>
 #include "Play.hpp"
 
-std::list<Gameplay::PlayFactoryBase *> *Gameplay::PlayFactoryBase::factories = 0;
+std::list<Gameplay::PlayFactory *> *Gameplay::PlayFactory::_factories = 0;
 
-Gameplay::PlayFactoryBase::PlayFactoryBase(QString c):
+Gameplay::PlayFactory::PlayFactory(QString c):
 	category(c)
 {
-	if (!factories)
+	enabled = false;
+	lastScore = 0;
+	
+	if (!_factories)
 	{
-		factories = new std::list<Gameplay::PlayFactoryBase *>();
+		_factories = new std::list<Gameplay::PlayFactory *>();
 	}
 	
-	factories->push_back(this);
+	_factories->push_back(this);
+}
+
+const std::list<Gameplay::PlayFactory *>& Gameplay::PlayFactory::factories()
+{
+	if (!_factories)
+	{
+		_factories = new std::list<PlayFactory *>();
+	}
+	
+	return *_factories;
 }
 
 ////////
@@ -19,15 +32,9 @@ Gameplay::PlayFactoryBase::PlayFactoryBase(QString c):
 Gameplay::Play::Play(GameplayModule *gameplay):
 	Behavior(gameplay)
 {
-	enabled = false;
 }
 
-bool Gameplay::Play::applicable(const std::set<Robot *> &robots)
+float Gameplay::Play::score(GameplayModule *gameplay)
 {
-	return _gameplay->state()->gameState.playing();
-}
-
-float Gameplay::Play::score()
-{
-	return 1.0;
+	return gameplay->state()->gameState.playing() ? 0 : INFINITY;
 }

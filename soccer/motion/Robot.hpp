@@ -6,11 +6,15 @@
 #include <QMutex>
 #include <QPainter>
 
-#include <framework/ConfigFile.hpp>
 #include <framework/SystemState.hpp>
 #include <framework/Dynamics.hpp>
 
 #include "Pid.hpp"
+#include <Utils.hpp>
+
+
+
+class Configuration;
 
 namespace Motion
 {
@@ -18,10 +22,8 @@ namespace Motion
 	{
 
 		public:
-			Robot(const ConfigFile::MotionModule::Robot& cfg, unsigned int id);
+			Robot(Configuration *config, SystemState *state, int id);
 			~Robot();
-
-			void setSystemState(SystemState* state);
 
 			/** Process the command for a robot and prepare output */
 			void proc();
@@ -61,20 +63,7 @@ namespace Motion
 
 			/** generate motor speeds */
 			void genMotor();
-//			void genMotorOld(); // FIXME: we really don't need old code kicking around
 
-			/** calibration function - disabled until someone figures out how to use it
-			 * only runs when compile flags are set
-			 * FIXME: find a way to parameterize this properly
-			 */
-//			void calib();
-
-			/** flag determining motor speed generation */
-//			static const bool _useOldMotorGen = false;
-
-			/** robot identification */
-			const unsigned int _id;
-			
 			/** overall state **/
 			SystemState* _state;
 
@@ -82,7 +71,7 @@ namespace Motion
 			SystemState::Robot* _self;
 
 			/** robot axles */
-//			QVector<Robot::Axle> _axles;
+//			Axle _axles[4];
 			QMutex _procMutex;
 
 			/** planner flag - copied out for rendering */
@@ -106,42 +95,6 @@ namespace Motion
 			/** convenience functions for ball state */
 			Geometry2d::Point ballPos() const { return _state->ball.pos; }
 			Geometry2d::Point ballVel() const { return _state->ball.vel; }
-
-			/// calibration things ///
-//			typedef enum
-//			{
-//				InitCalib,
-//				InitialPoint,
-//				Wait1,
-//				Travel,
-//				Decel,
-//				End
-//			} CalibrationStates;
-//
-//			class CalibInfo
-//			{
-//				public:
-//					CalibInfo()
-//					{
-//						startTime = 0;
-//						pSum = 0;
-//						speed = 0;
-//						outSpeed = 0;
-//					}
-//
-//					uint64_t startTime;
-//					float pSum;
-//					Geometry2d::Point lastPos;
-//
-//					int speed;
-//					int8_t outSpeed;
-//
-//					Geometry2d::Point startPos;
-//					Geometry2d::Point endPos;
-//			};
-//
-//			CalibrationStates _calibState;
-//			CalibInfo _calibInfo;
 
 			/** filters for output */
 			Utils::FIRFilter<Geometry2d::Point> _velFilter;

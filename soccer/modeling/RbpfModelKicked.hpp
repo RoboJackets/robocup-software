@@ -15,11 +15,11 @@
 #ifndef RBPFMODELKICKED_HPP_
 #define RBPFMODELKICKED_HPP_
 
-#include <iostream>
-#include <assert.h>
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
 #include "RbpfModel.hpp"
+
+#include <Configuration.hpp>
 
 // kicked ball with high noise, ignores control input
 // Note: could be written to accept control input from our robots
@@ -28,18 +28,22 @@ class RbpfModelKicked : public RbpfModel {
 public:
 	typedef boost::numeric::ublas::vector<double> Vector;
 	typedef boost::numeric::ublas::matrix<double> Matrix;
-	RbpfModelKicked(Modeling::RobotModel::RobotMap *_robotMap, ConfigFile::shared_worldmodel& cfg);
+	RbpfModelKicked(Modeling::RobotModel::RobotMap *_robotMap, Configuration *config);
 	~RbpfModelKicked();
 
 	// reinitialize the parameters from the config files - should be called each frame
 	void initParams();
 protected:
+	ConfigDouble _processNoiseSqrdPos;
+	ConfigDouble _processNoiseSqrdVel;
+	ConfigDouble _processNoiseSqrdAcc;
+	ConfigDouble _measurementNoiseSqrd;
+	
 	void transitionModel(Vector &X, Vector &U, double dt);
 	void computeTransitionJacobian(double dt);
 	void observationModel(Vector &X, Vector &out);
 	void computeObservationJacobian(double dt);
 	void update(Vector &X, Matrix &P, Vector &Z, double dt);
-	ConfigFile::shared_worldmodel _config;
 
 	// initialization functions to pull from config file
 	virtual void initializeQ();

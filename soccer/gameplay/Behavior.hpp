@@ -89,7 +89,7 @@ namespace Gameplay
 		// The robot with the LOWEST score will be used.
 		//
 		// The default implementation always returns zero.
-		virtual float score(Robot *r);
+		virtual float scoreRobot(Robot *r);
 
 		// Convenience functions
 		const SystemState::Ball &ball() const

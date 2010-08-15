@@ -551,7 +551,7 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="ProtobufTree" name="tree">
+          <widget class="ProtobufTree" name="logTree">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Ignored" vsizetype="Expanding">
              <horstretch>0</horstretch>
@@ -1495,6 +1495,58 @@
             </size>
            </property>
           </spacer>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="configTab">
+        <attribute name="title">
+         <string>Config</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_6">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <item>
+            <widget class="QPushButton" name="loadConfig">
+             <property name="text">
+              <string>&amp;Load...</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="saveConfig">
+             <property name="text">
+              <string>&amp;Save...</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_3">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QTreeWidget" name="configTree">
+           <column>
+            <property name="text">
+             <string>Name</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Value</string>
+            </property>
+           </column>
+          </widget>
          </item>
         </layout>
        </widget>

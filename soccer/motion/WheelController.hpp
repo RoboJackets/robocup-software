@@ -3,6 +3,7 @@
 #include <boost/array.hpp>
 
 #include <Constants.hpp>
+#include <Configuration.hpp>
 #include <framework/SystemState.hpp>
 #include <framework/ConfigFile.hpp>
 
@@ -18,13 +19,12 @@ namespace Motion {
 
 	private:
 		/** information pertaining to a single robot axle */
-		typedef struct Axle
+		struct Axle
 		{
-			Axle(const Geometry2d::Point axel = Geometry2d::Point())
+			Axle()
 			{
 				motor = 0;
 				lastWheelVel = 0;
-				wheel = axel.perpCCW();
 			}
 
 			//motor value
@@ -33,19 +33,16 @@ namespace Motion {
 			//weeel velocities in the last frame
 			int8_t lastWheelVel;
 
-			//axle vector
-			Geometry2d::Point axle;
 			Geometry2d::Point wheel;
-		} Axle;
+		};
 
 		typedef boost::array<Axle, 4> Axles;
-		static Axles initAxles(const QVector<Geometry2d::Point>& points);
 
 	public:
 
 		typedef boost::array<int8_t, 4> MotorCmd;
 
-		WheelController(SystemState *state, const ConfigFile::MotionModule& cfg);
+		WheelController(SystemState *state, Configuration *cfg);
 		~WheelController() {}
 
 		void run();
@@ -53,13 +50,13 @@ namespace Motion {
 	private:
 		SystemState *_state;
 
-		const ConfigFile::MotionModule& _config;
+		Configuration *_config;
 
 		/**
 		 * function that actually generates motor commands
 		 * Needs velocity as well as a dynamics model
 		 */
-		MotorCmd genMotor(const Geometry2d::Point& vel, float w, const SystemState::Robot& robot);
+		MotorCmd genMotor(const Geometry2d::Point& vel, float w, SystemState::Robot* robot);
 	};
 
 }

@@ -9,14 +9,13 @@
 
 namespace Motion {
 
-PointController::PointController(SystemState *state, const ConfigFile::MotionModule& cfg)
+PointController::PointController(SystemState *state, Configuration *cfg)
 : _state(state), _config(cfg)
 {
 	//initialize empty robots
     for(unsigned int i = 0; i < Constants::Robots_Per_Team; i++)
     {
-        _robots[i] = Robot::shared_ptr(new Robot(cfg.robot, i));
-		_robots[i]->setSystemState(_state);
+        _robots[i] = Robot::shared_ptr(new Robot(_config, _state, i));
 	}
 }
 

@@ -6,6 +6,8 @@
 #include <framework/ConfigFile.hpp>
 #include <motion/Robot.hpp>
 
+class Configuration;
+
 namespace Motion {
 
 	/**
@@ -20,7 +22,7 @@ namespace Motion {
 
 	public:
 
-		PointController(SystemState *state, const ConfigFile::MotionModule& cfg);
+		PointController(SystemState *state, Configuration *cfg);
 		~PointController() {}
 
 		/** executes the module's commands for the frame */
@@ -29,7 +31,7 @@ namespace Motion {
 	private:
 		SystemState *_state;
 
-		const ConfigFile::MotionModule& _config;
+		Configuration *_config;
 
 		boost::array<Motion::Robot::shared_ptr, Constants::Robots_Per_Team> _robots;
 	};

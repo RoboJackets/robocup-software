@@ -2,6 +2,7 @@
 #include <iostream>
 #include <boost/foreach.hpp>
 #include <Utils.hpp>
+#include <framework/RobotConfig.hpp>
 #include <framework/Dynamics.hpp>
 
 #include "WheelController.hpp"
@@ -11,7 +12,7 @@ using namespace Geometry2d;
 
 namespace Motion {
 
-WheelController::WheelController(SystemState *state, const ConfigFile::MotionModule& cfg)
+WheelController::WheelController(SystemState *state, Configuration *cfg)
 : _state(state), _config(cfg)
 {
 }
@@ -30,10 +31,10 @@ void WheelController::run()
 			}
 		} else if (robot.cmd.planner == MotionCmd::DirectVelocity) {
 			// generate commands from manually specified velocities
-			cmd = genMotor(robot.cmd.direct_trans_vel, robot.cmd.direct_ang_vel, robot);
+			cmd = genMotor(robot.cmd.direct_trans_vel, robot.cmd.direct_ang_vel, &robot);
 		} else {
 			// convert from generated velocities
-			cmd = genMotor(robot.cmd_vel, robot.cmd_w, robot);
+			cmd = genMotor(robot.cmd_vel, robot.cmd_w, &robot);
 		}
 
 		// assign to radio packet
@@ -45,7 +46,7 @@ void WheelController::run()
 }
 
 WheelController::MotorCmd
-WheelController::genMotor(const Geometry2d::Point& vel, float w, const SystemState::Robot& robot) {
+WheelController::genMotor(const Geometry2d::Point& vel, float w, SystemState::Robot* robot) {
 	bool verbose = false;
 
 	// algorithm:
@@ -55,17 +56,16 @@ WheelController::genMotor(const Geometry2d::Point& vel, float w, const SystemSta
 	// 4) apply to wheels
 	// 5) flip direction for 2010 robots
 
-	Planning::Dynamics dynamics;
-	dynamics.setConfig(robot.config.motion);
+	Planning::Dynamics dynamics(robot);
 
 	// angular velocity
-	const float maxW = robot.config.motion.rotation.velocity;
+	const float maxW = robot->config->motion.rotation.velocity;
 	w = Utils::setBound(w, maxW, -maxW);
 	if (verbose) cout << "\nCommands: w = " << w << " maxW = " << maxW;
 
 	// handle translational velocity - convert into robot space, then bound
 	Point rVel = vel;
-	rVel.rotate(Point(), - robot.angle);
+	rVel.rotate(Point(), - robot->angle);
 	Planning::Dynamics::DynamicsInfo info = dynamics.info(rVel.angle() * RadiansToDegrees, 0);
 	const float maxSpeed = info.velocity;
 	const Point maxVel = rVel.normalized() * maxSpeed;
@@ -81,8 +81,13 @@ WheelController::genMotor(const Geometry2d::Point& vel, float w, const SystemSta
 	}
 	wPercent = Utils::setBound(wPercent, 1.0, -1.0);
 
-	// create axles
-	Axles axles = initAxles(_config.robot.axles);
+	// Update axles
+	Axles axles;
+	for (int i = 0; i < 4; ++i)
+	{
+		Geometry2d::Point axle(robot->config->axles[i]->x, robot->config->axles[i]->y);
+		axles[i].wheel = axle.normalized().perpCCW();
+	}
 
 	// find the fastest wheel speed, out of all axles with commands
 	double vwheelmax = 0.0;
@@ -120,24 +125,15 @@ WheelController::genMotor(const Geometry2d::Point& vel, float w, const SystemSta
 	BOOST_FOREACH(const float& vel, wheelVels) {
 		if (verbose) cout << " " << vel;
 		int8_t cmdVel = (int8_t) Utils::setBound(127.0*vel, 126.0, -127.0);
-		if (robot.rev == SystemState::Robot::rev2008) {
+		if (robot->rev == SystemState::Robot::rev2008) {
 			cmd[i++] = cmdVel;
-		} else if (robot.rev == SystemState::Robot::rev2010) {
+		} else if (robot->rev == SystemState::Robot::rev2010) {
 			cmd[i++] = -cmdVel;
 		}
 	}
 	if (verbose) cout << endl;
 
 	return cmd;
-}
-
-WheelController::Axles WheelController::initAxles(const QVector<Geometry2d::Point>& points) {
-	Axles ret;
-	size_t i = 0;
-	BOOST_FOREACH(const Geometry2d::Point& pt, points) {
-		ret[i++] = Axle(pt.normalized());
-	}
-	return ret;
 }
 
 }

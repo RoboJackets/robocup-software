@@ -28,8 +28,6 @@ namespace Gameplay{
 			public:
 				DemoPassPlay(GameplayModule *gameplay);
 
-				virtual bool assign(std::set<Robot *> &available);
-
 				virtual bool run();
 
 			protected:

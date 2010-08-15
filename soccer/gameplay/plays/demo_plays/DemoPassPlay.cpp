@@ -12,12 +12,10 @@ using namespace std;
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoPassPlay, "Demos")
 
 Gameplay::Plays::DemoPassPlay::DemoPassPlay(GameplayModule *gameplay)
-: Play(gameplay), passPlanner_(gameplay, false) {
-
-}
-
-bool Gameplay::Plays::DemoPassPlay::assign(set<Robot *> &available){
-	return passPlanner_.assign(available);
+: Play(gameplay), passPlanner_(gameplay, false)
+{
+	set<Robot *> available = gameplay->robots();
+	passPlanner_.assign(available);
 }
 
 bool Gameplay::Plays::DemoPassPlay::run(){

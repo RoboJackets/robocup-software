@@ -1,7 +1,5 @@
 #pragma once
 
-#include <stdint.h>
-
 class GameState
 {
 public:
@@ -42,11 +40,11 @@ public:
     bool ourRestart;
     
     // Scores
-    uint8_t ourScore;
-    uint8_t theirScore;
+    int ourScore;
+    int theirScore;
     
     // Time in seconds remaining in the current period
-    uint16_t secondsRemaining;
+    int secondsRemaining;
     
     GameState()
     {

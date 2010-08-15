@@ -54,7 +54,6 @@ void SimFieldView::mousePressEvent(QMouseEvent* me)
 			}
 		}
 		
-		printf("drag robot %d:%d\n", _dragRobotBlue, _dragRobot);
 		if (_dragRobot < 0)
 		{
 			placeBall(me->posF());

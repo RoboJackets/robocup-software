@@ -9,14 +9,23 @@
 
 using namespace std;
 
-Modeling::RobotModel::RobotModel(ConfigFile::shared_worldmodel& cfg, int s) :
+Modeling::RobotModel::Config::Config (Configuration* config):
+	posAlpha(config, "RobotModel/Position/Alpha", 1),
+	posBeta(config, "RobotModel/Position/Beta", 0),
+	posGamma(config, "RobotModel/Position/Gamma", 0),
+	angleAlpha(config, "RobotModel/Angle/Alpha", 1),
+	angleBeta(config, "RobotModel/Angle/Beta", 0),
+	angleGamma(config, "RobotModel/Angle/Gamma", 0)
+{
+}
+
+Modeling::RobotModel::RobotModel(Config *config, int s) :
 #ifdef KALMANMODEL
 	posA(6,6), posB(6,6), posP(6,6), posQ(6,6), posR(2,2), posH(2,6),
 	posZ(2), posU(6), posE(6), posX0(6), angA(3,3), angB(3,3), angP(3,3),
 	angQ(3,3), angR(1,1), angH(1,3), angZ(1), angU(3), angE(3), angX0(3),
 #endif
-	_shell(s), _angle(0), _angleVel(0), _angleAccel(0), _config(cfg), _haveBall(false)
-
+	_shell(s), _angle(0), _angleVel(0), _angleAccel(0), _config(config), _haveBall(false)
 {
 #ifdef KALMANMODEL
 
@@ -29,11 +38,6 @@ Modeling::RobotModel::RobotModel(ConfigFile::shared_worldmodel& cfg, int s) :
 	posP.zero();
 	posX0.zero();
 	posU.zero();
-
-	//Alpha-Beta-Gamma Filter
-//	posAlpha = _config->pos.alpha;
-//	posBeta = _config->pos.beta;
-//	posGamma = _config->pos.gamma;
 
 	//Process covariance between position and velocity (E[x,x_dot])
  	posQ(1,0) = posQ(4,3) = _config->covPosVel;
@@ -78,11 +82,6 @@ Modeling::RobotModel::RobotModel(ConfigFile::shared_worldmodel& cfg, int s) :
 	angX0.zero();
 	angU.zero();
 
-	//Angle ABG Stuff
-//	angleAlpha = _config->angle.alpha;
-//	angleBeta = _config->angle.beta;
-//	angleGamma = _config->angle.gamma;
-
 	//Process covariance between position and velocity (E[x,x_dot])
 // 	angQ(1,0) = 10;
 
@@ -112,15 +111,6 @@ Modeling::RobotModel::RobotModel(ConfigFile::shared_worldmodel& cfg, int s) :
 	angA(0,0) = angA(1,1) = angA(2,2) = 1;
 
 	_angKalman = new DifferenceKalmanFilter(&angA, &angB, &angX0, &angP, &angQ, &angR, &angH);
-#else
-	//Alpha-Beta-Gamma Filter
-	_posAlpha = _config->pos.alpha;
-	_posBeta = _config->pos.beta;
-	_posGamma = _config->pos.gamma;
-
-	_angleAlpha = _config->angle.alpha;
-	_angleBeta = _config->angle.beta;
-	_angleGamma = _config->angle.gamma;
 #endif
 	lastObservedTime = 0;
 	lastUpdatedTime = 0;
@@ -205,14 +195,14 @@ void Modeling::RobotModel::update(uint64_t cur_time)
 
 		// determine error using observations
 		Geometry2d::Point posError = observedPos - predictPos;
-		_pos = predictPos + posError * _posAlpha;
-		_vel = predictVel + posError * _posBeta / dtime;
-		_accel += posError * _posGamma / (dtime * dtime);
+		_pos = predictPos + posError * _config->posAlpha;
+		_vel = predictVel + posError * _config->posBeta / dtime;
+		_accel += posError * _config->posGamma / (dtime * dtime);
 
 		float angleError = Utils::fixAngleDegrees(observedAngle - predictAngle);
-		_angle = Utils::fixAngleDegrees(predictAngle + angleError * _angleAlpha);
-		_angleVel = predictAngleVel + angleError * _angleBeta / dtime;
-		_angleAccel += angleError * _angleGamma / (dtime * dtime);
+		_angle = Utils::fixAngleDegrees(predictAngle + angleError * _config->angleAlpha);
+		_angleVel = predictAngleVel + angleError * _config->angleBeta / dtime;
+		_angleAccel += angleError * _config->angleGamma / (dtime * dtime);
 
 	#else
 		/** Position **/
