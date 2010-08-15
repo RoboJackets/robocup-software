@@ -1,5 +1,8 @@
 
 #include <iostream>
+
+#include <QMutexLocker>
+
 #include <boost/foreach.hpp>
 #include <Utils.hpp>
 #include <framework/RobotConfig.hpp>
@@ -21,32 +24,29 @@ void WheelController::run()
 {
 	BOOST_FOREACH(SystemState::Robot& robot, _state->self)
 	{
-		// check for direct motion commands
-		MotorCmd cmd;
-		if (robot.cmd.planner == MotionCmd::DirectMotor) {
-			// copy manually specified motor speeds
-			size_t j = 0;
-			BOOST_FOREACH(const int8_t&  v, robot.cmd.direct_motor_cmds) {
-				cmd[j++] = v;
+		// check that system is valid
+		if (robot.valid) {
+			// check for direct motion commands
+			if (robot.cmd.planner == MotionCmd::DirectMotor) {
+				// copy manually specified motor speeds
+				size_t j = 0;
+				BOOST_FOREACH(const int8_t&  v, robot.cmd.direct_motor_cmds) {
+					robot.radioTx->set_motors(j++, v);
+				}
+			} else if (robot.cmd.planner == MotionCmd::DirectVelocity) {
+				// generate commands from manually specified velocities
+				genMotor(robot.cmd.direct_trans_vel, robot.cmd.direct_ang_vel, &robot);
+			} else {
+				// convert from generated velocities
+				genMotor(robot.cmd_vel, robot.cmd_w, &robot);
 			}
-		} else if (robot.cmd.planner == MotionCmd::DirectVelocity) {
-			// generate commands from manually specified velocities
-			cmd = genMotor(robot.cmd.direct_trans_vel, robot.cmd.direct_ang_vel, &robot);
-		} else {
-			// convert from generated velocities
-			cmd = genMotor(robot.cmd_vel, robot.cmd_w, &robot);
-		}
-
-		// assign to radio packet
-		size_t j = 0;
-		BOOST_FOREACH(const int8_t& v, cmd) {
-			robot.radioTx->set_motors(j++, v);
 		}
 	}
 }
 
-WheelController::MotorCmd
+void
 WheelController::genMotor(const Geometry2d::Point& vel, float w, SystemState::Robot* robot) {
+	_procMutex.lock();
 	bool verbose = false;
 
 	// algorithm:
@@ -101,6 +101,7 @@ WheelController::genMotor(const Geometry2d::Point& vel, float w, SystemState::Ro
 	vector<float> vels(4);
 	float maxVelPer = 0.0;
 	size_t i = 0;
+	if (verbose) cout << "  ";
 	BOOST_FOREACH(const Axle& axle, axles) {
 		float vwheel = axle.wheel.dot(rVel);  // velocity for wheel
 		float per = 0.0;
@@ -109,7 +110,10 @@ WheelController::genMotor(const Geometry2d::Point& vel, float w, SystemState::Ro
 		vels[i++] = per;
 		if (fabs(per) > maxVelPer)
 			maxVelPer = per;
+
+		if (verbose) cout << per << " ";
 	}
+	if (verbose) cout << endl;
 
 	// mix the control inputs together
 	vector<float> wheelVels(4); // signed percents of maximum from each wheel
@@ -119,21 +123,20 @@ WheelController::genMotor(const Geometry2d::Point& vel, float w, SystemState::Ro
 	}
 
 	// convert to integer commands and assign
-	MotorCmd cmd;
 	i = 0;
 	if (verbose) cout << "Motor percent at assign: ";
 	BOOST_FOREACH(const float& vel, wheelVels) {
 		if (verbose) cout << " " << vel;
 		int8_t cmdVel = (int8_t) Utils::setBound(127.0*vel, 126.0, -127.0);
-		if (robot->rev == SystemState::Robot::rev2008) {
-			cmd[i++] = cmdVel;
-		} else if (robot->rev == SystemState::Robot::rev2010) {
-			cmd[i++] = -cmdVel;
+		if (robot->rev == SystemState::Robot::rev2010) {
+			robot->radioTx->set_motors(i, -cmdVel);
+		} else {
+			robot->radioTx->set_motors(i, cmdVel);
 		}
+		++i;
 	}
 	if (verbose) cout << endl;
-
-	return cmd;
+	_procMutex.unlock();
 }
 
 }

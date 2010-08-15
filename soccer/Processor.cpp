@@ -119,12 +119,10 @@ Processor::Processor(Configuration *config, bool sim, int radio)
 		_radio = radio;
 	}
 	
-	//setup the modules
 	_modelingModule = make_shared<Modeling::WorldModel>(&_state, config);
 	_stateIDModule = make_shared<StateIdentification::StateIDModule>(&_state);
 	_pointControlModule = make_shared<Motion::PointController>(&_state, config);
 	_wheelControlModule = make_shared<Motion::WheelController>(&_state, config);
-//	_motionModule = make_shared<Motion::MotionModule>(&_state, config); // FIXME: remove
 	_refereeModule = make_shared<RefereeModule>(&_state);
 	_gameplayModule = make_shared<Gameplay::GameplayModule>(&_state);
 }
@@ -140,7 +138,6 @@ Processor::~Processor()
 	_stateIDModule.reset();
 	_pointControlModule.reset();
 	_wheelControlModule.reset();
-//	_motionModule.reset(); //FIXME: remove
 	_refereeModule.reset();
 	_gameplayModule.reset();
 }
@@ -251,6 +248,7 @@ bool Processor::joystickValid()
 void Processor::run()
 {
 	Status curStatus;
+	fprintf(stderr, "Running processor\n");
 	
 	while (_running)
 	{
@@ -414,7 +412,6 @@ void Processor::run()
 			_refereeModule->run();
 		}
 		
-
 		#if 0
 		for (int r = 0; r < Constants::Robots_Per_Team; ++r)
 		{
@@ -449,11 +446,6 @@ void Processor::run()
 			_gameplayModule->run();
 		}
 
-		// FIXME: remove
-//		if (_motionModule)
-//		{
-//			_motionModule->run();
-//		}
 
 		if (_pointControlModule)
 		{

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QMutex>
+
 #include <boost/array.hpp>
 
 #include <Constants.hpp>
@@ -40,8 +42,6 @@ namespace Motion {
 
 	public:
 
-		typedef boost::array<int8_t, 4> MotorCmd;
-
 		WheelController(SystemState *state, Configuration *cfg);
 		~WheelController() {}
 
@@ -52,11 +52,13 @@ namespace Motion {
 
 		Configuration *_config;
 
+		QMutex _procMutex;
+
 		/**
 		 * function that actually generates motor commands
 		 * Needs velocity as well as a dynamics model
 		 */
-		MotorCmd genMotor(const Geometry2d::Point& vel, float w, SystemState::Robot* robot);
+		void genMotor(const Geometry2d::Point& vel, float w, SystemState::Robot* robot);
 	};
 
 }
