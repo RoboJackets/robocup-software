@@ -61,12 +61,7 @@ Robot::Robot(Env* env, unsigned int id,  Robot::Rev rev) :
 	
 	//this creates an actor in the scene
 	_actor = _scene.createActor(actorDesc);
-	
-	if (!_actor)
-	{
-		printf("Failed to create actor\n");
-		//TODO throw exception
-	}
+	assert(_actor);
 
 	_roller = 0;
 	_kicker = 0;
@@ -118,11 +113,7 @@ void Robot::initRoller()
 	        = NxVec3(Robot::RollerOffset, 0, Robot::RollerHeight);
 	actorDesc.globalPose.M.rotX(M_PI / 2.0);
 
-	if (!actorDesc.isValid())
-	{
-		printf("not valid\n");
-		return;
-	}
+	assert(actorDesc.isValid());
 
 	_roller = _scene.createActor(actorDesc);
 
@@ -140,7 +131,7 @@ void Robot::initRoller()
 	revDesc.flags |= NX_RJF_MOTOR_ENABLED;
 
 	_rollerJoint = (NxRevoluteJoint *) _scene.createJoint(revDesc);
-	printf("roller joint %p\n", _rollerJoint);
+	assert(_rollerJoint);
 }
 
 void Robot::initKicker()
@@ -157,12 +148,7 @@ void Robot::initKicker()
 
 	actorDesc.globalPose.t = NxVec3(0.05, 0, .01);
 	//actorDesc.globalPose.M.rotX(M_PI/2.0);
-
-	if (!actorDesc.isValid())
-	{
-		printf("not valid\n");
-		return;
-	}
+	assert(actorDesc.isValid());
 
 	_kicker = _scene.createActor(actorDesc);
 
@@ -255,12 +241,7 @@ void Robot::initWheels()
 
 		actorDesc.globalPose.M.fromQuat(q);
 		actorDesc.globalPose.t = loc[i];
-		
-		if (!actorDesc.isValid())
-		{
-			printf("not valid\n");
-			return;
-		}
+		assert(actorDesc.isValid());
 
 		_wheels[i] = _scene.createActor(actorDesc);
 

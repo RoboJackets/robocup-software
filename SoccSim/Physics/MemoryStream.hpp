@@ -10,7 +10,6 @@ class MemoryStream : public NxStream
 {
     public:
         MemoryStream();
-        virtual ~MemoryStream();
 
         virtual NxU8 readByte() const;
         virtual NxU16 readWord() const;
@@ -31,8 +30,9 @@ class MemoryStream : public NxStream
         T read() const
         {
             T res = 0;
-            memcpy(&res, &_data[_readLoc], sizeof(T));
-            _readLoc += sizeof(T);
+			assert((_readLoc + sizeof(T)) < _data.size());
+			memcpy(&res, &_data[_readLoc], sizeof(T));
+			_readLoc += sizeof(T);
             
             return res;
         }

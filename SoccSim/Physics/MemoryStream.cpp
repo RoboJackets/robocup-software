@@ -5,10 +5,6 @@ MemoryStream::MemoryStream()
     _readLoc = 0;
 }
 
-MemoryStream::~MemoryStream()
-{
-}
-
 // Loading API
 NxU8 MemoryStream::readByte() const
 {
