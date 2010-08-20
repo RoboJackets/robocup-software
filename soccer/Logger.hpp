@@ -76,7 +76,7 @@ class Logger
 		
 		boost::shared_ptr<Packet::LogFrame> lastFrame();
 		
-		void addFrame(const Packet::LogFrame &frame);
+		void addFrame(boost::shared_ptr<Packet::LogFrame> frame);
 		
 		// Gets frames.size() frames starting at <i> and working backwards.
 		// Clears any frames that couldn't be populated.
@@ -102,13 +102,17 @@ class Logger
 			return _filename;
 		}
 		
-	protected:
+	private:
 		QMutex _mutex;
 		
 		QString _filename;
 		
 		// Frame history.
 		// Increasing indices correspond to earlier times.
+		// This must only be accessed while _mutex is locked.
+		//
+		// It is not safe to modify a single boost::shared_ptr from multiple threads,
+		// but after it is copied the copies can be used and destroyed freely in different threads.
 		std::vector<boost::shared_ptr<Packet::LogFrame> > _history;
 		
 		// Sequence number of the next frame to be written

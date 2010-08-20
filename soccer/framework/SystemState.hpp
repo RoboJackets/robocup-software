@@ -124,7 +124,7 @@ class SystemState
 		Robot self[Constants::Robots_Per_Team];
 		Robot opp[Constants::Robots_Per_Team];
 		Ball ball;
-		Packet::LogFrame *logFrame;
+		boost::shared_ptr<Packet::LogFrame> logFrame;
 		
 		SystemState()
 		{

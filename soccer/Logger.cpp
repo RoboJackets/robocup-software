@@ -56,27 +56,27 @@ void Logger::close()
 	}
 }
 
-void Logger::addFrame(const LogFrame& frame)
+void Logger::addFrame(shared_ptr<LogFrame> frame)
 {
 	QMutexLocker locker(&_mutex);
 	
 	// Write this from to the file
 	if (_fd >= 0)
 	{
-		if (frame.IsInitialized())
+		if (frame->IsInitialized())
 		{
-			uint32_t size = frame.ByteSize();
+			uint32_t size = frame->ByteSize();
 			if (write(_fd, &size, sizeof(size)) != sizeof(size))
 			{
 				printf("Logger: Failed to write size, closing log: %m\n");
 				close();
-			} else if (!frame.SerializeToFileDescriptor(_fd))
+			} else if (!frame->SerializeToFileDescriptor(_fd))
 			{
 				printf("Logger: Failed to write frame, closing log: %m\n");
 				close();
 			}
 		} else {
-			printf("Logger: Not writing frame missing fields: %s\n", frame.InitializationErrorString().c_str());
+			printf("Logger: Not writing frame missing fields: %s\n", frame->InitializationErrorString().c_str());
 		}
 	}
 	
@@ -90,7 +90,7 @@ void Logger::addFrame(const LogFrame& frame)
 	}
 	
 	// Create a new LogFrame
-	_history[i] = make_shared<LogFrame>(frame);
+	_history[i] = frame;
 	
 	// Add space used by the new data
 	_spaceUsed += _history[i]->SpaceUsed();
@@ -98,23 +98,6 @@ void Logger::addFrame(const LogFrame& frame)
 	// Go to the next frame
 	++_nextFrameNumber;
 }
-
-#if 0
-bool Logger::getFrame(int i, LogFrame& frame)
-{
-	QMutexLocker locker(&_mutex);
-	
-	if (i < 0 || i < (_nextFrameNumber - (int)_history.size()) || i >= _nextFrameNumber)
-	{
-		// Frame number is out of range
-		return false;
-	}
-	
-	frame.CopyFrom(*_history[i % _history.size()]);
-	
-	return true;
-}
-#endif
 
 shared_ptr<LogFrame> Logger::lastFrame()
 {

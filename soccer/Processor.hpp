@@ -106,9 +106,6 @@ class Processor: public QThread
 
 		Logger logger;
 		
-		// LogFrame being built for the current frame
-		Packet::LogFrame logFrame;
-		
 		void defendPlusX(bool value);
 		
 		Status status()

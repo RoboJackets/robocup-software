@@ -40,7 +40,6 @@ Processor::Processor(Configuration *config, bool sim, int radio)
 	_framePeriod = 1000000 / 60;
 	_manualID = -1;
 	_defendPlusX = false;
-	_state.logFrame = &logFrame;
 	_externalReferee = true;
 	_framerate = 0;
 	firstLogTime = 0;
@@ -266,9 +265,9 @@ void Processor::run()
 		////////////////
 		// Reset
 		
-		// Reset the log frame
-		logFrame.Clear();
-		logFrame.set_start_time(startTime);
+		// Make a new log frame
+		_state.logFrame = make_shared<LogFrame>();
+		_state.logFrame->set_start_time(startTime);
 		
 		// Clear radio commands
 		for (size_t r = 0; r < Constants::Robots_Per_Team; ++r)
@@ -302,7 +301,7 @@ void Processor::run()
 			buf.resize(n);
 			_visionSocket.readDatagram(&buf[0], n);
 			
-			SSL_WrapperPacket *packet = logFrame.add_raw_vision();
+			SSL_WrapperPacket *packet = _state.logFrame->add_raw_vision();
 			if (!packet->ParseFromString(buf))
 			{
 				printf("Bad vision packet of %d bytes\n", n);
@@ -332,7 +331,7 @@ void Processor::run()
 			
 			// Log the referee packet, but only use it if external referee is enabled
 			curStatus.lastRefereeTime = Utils::timestamp();
-			logFrame.add_raw_referee(str);
+			_state.logFrame->add_raw_referee(str);
 			
 			if (_externalReferee)
 			{
@@ -348,7 +347,7 @@ void Processor::run()
 			buf.resize(n);
 			_radioSocket.readDatagram(&buf[0], n);
 			
-			RadioRx *rx = logFrame.add_radio_rx();
+			RadioRx *rx = _state.logFrame->add_radio_rx();
 			if (!rx->ParseFromString(buf))
 			{
 				printf("Bad radio packet of %d bytes\n", n);
@@ -400,7 +399,7 @@ void Processor::run()
 		{
 			if (_state.self[r].valid)
 			{
-				RadioTx::Robot *tx = logFrame.mutable_radio_tx()->add_robots();
+				RadioTx::Robot *tx = _state.logFrame->mutable_radio_tx()->add_robots();
 				_state.self[r].radioTx = tx;
 				tx->set_board_id(_state.self[r].shell);
 				addMotors(tx);
@@ -460,16 +459,16 @@ void Processor::run()
 		////////////////
 		// Store logging information
 		
-		logFrame.set_manual_id(_manualID);
-		logFrame.set_blue_team(_blueTeam);
-		logFrame.set_defend_plus_x(_defendPlusX);
-		logFrame.set_play(_gameplayModule->playName().toStdString());
+		_state.logFrame->set_manual_id(_manualID);
+		_state.logFrame->set_blue_team(_blueTeam);
+		_state.logFrame->set_defend_plus_x(_defendPlusX);
+		_state.logFrame->set_play(_gameplayModule->playName().toStdString());
 		
 		// Debug layers
 		const QStringList &layers = _state.debugLayers();
 		BOOST_FOREACH(const QString &str, layers)
 		{
-			logFrame.add_debug_layers(str.toStdString());
+			_state.logFrame->add_debug_layers(str.toStdString());
 		}
 		
 		// Filtered pose
@@ -477,7 +476,7 @@ void Processor::run()
 		{
 			if (r.valid)
 			{
-				LogFrame::Robot *log = logFrame.add_self();
+				LogFrame::Robot *log = _state.logFrame->add_self();
 				r.pos.set(log->mutable_pos());
 				log->set_shell(r.shell);
 				log->set_angle(r.angle);
@@ -489,7 +488,7 @@ void Processor::run()
 		{
 			if (r.valid)
 			{
-				LogFrame::Robot *log = logFrame.add_opp();
+				LogFrame::Robot *log = _state.logFrame->add_opp();
 				r.pos.set(log->mutable_pos());
 				log->set_shell(r.shell);
 				log->set_angle(r.angle);
@@ -499,7 +498,7 @@ void Processor::run()
 		
 		if (_state.ball.valid)
 		{
-			LogFrame::Ball *log = logFrame.mutable_ball();
+			LogFrame::Ball *log = _state.logFrame->mutable_ball();
 			_state.ball.pos.set(log->mutable_pos());
 			_state.ball.vel.set(log->mutable_vel());
 		}
@@ -511,7 +510,7 @@ void Processor::run()
 		sendRadioData();
 
 		// Write to the log
-		logger.addFrame(logFrame);
+		logger.addFrame(_state.logFrame);
 		
 		_loopMutex.unlock();
 		
@@ -540,16 +539,16 @@ void Processor::run()
 void Processor::sendRadioData()
 {
 	// Cycle through reverse IDs
-	logFrame.mutable_radio_tx()->set_reverse_board_id(_state.self[_reverseId].shell);
+	_state.logFrame->mutable_radio_tx()->set_reverse_board_id(_state.self[_reverseId].shell);
 	_reverseId = (_reverseId + 1) % Constants::Robots_Per_Team;
 	
 	// Halt overrides normal motion control
 	if (_joystick->autonomous() && _state.gameState.halt())
 	{
 		// Force all motor speeds to zero
-		for (int r = 0; r < logFrame.mutable_radio_tx()->robots_size(); ++r)
+		for (int r = 0; r < _state.logFrame->mutable_radio_tx()->robots_size(); ++r)
 		{
-			RadioTx::Robot *robot = logFrame.mutable_radio_tx()->mutable_robots(r);
+			RadioTx::Robot *robot = _state.logFrame->mutable_radio_tx()->mutable_robots(r);
 			for (int m = 0; m < robot->motors_size(); ++m)
 			{
 				robot->set_motors(m, 0);
@@ -580,11 +579,11 @@ void Processor::sendRadioData()
 		}
 	}
 	
-	if (_manualID >= 0 && logFrame.radio_tx().robots_size() < (int)Constants::Robots_Per_Team && !manualDone)
+	if (_manualID >= 0 && _state.logFrame->radio_tx().robots_size() < (int)Constants::Robots_Per_Team && !manualDone)
 	{
 		// The manual robot wasn't found by vision/modeling but we have room for it in the packet.
 		// This allows us to drive an off-field robot for testing or to drive a robot back onto the field.
-		RadioTx::Robot *robot = logFrame.mutable_radio_tx()->add_robots();
+		RadioTx::Robot *robot = _state.logFrame->mutable_radio_tx()->add_robots();
 		robot->set_board_id(_manualID);
 		addMotors(robot);
 		_joystick->drive(robot);
@@ -592,7 +591,7 @@ void Processor::sendRadioData()
 
 	// Send the packet
 	std::string out;
-	logFrame.radio_tx().SerializeToString(&out);
+	_state.logFrame->radio_tx().SerializeToString(&out);
 	_radioSocket.writeDatagram(&out[0], out.size(), LocalAddress, RadioTxPort + _radio);
 }
 
