@@ -166,7 +166,7 @@ class MainWindow : public QMainWindow
 		
 		// Log history, copied from Logger.
 		// This is used by other controls to get log data without having to copy it again from the Logger.
-		std::vector<Packet::LogFrame> _history;
+		std::vector<boost::shared_ptr<Packet::LogFrame> > _history;
 		
 		// When true, External Referee is automatically set.
 		// This is cleared by manually changing the checkbox or after the

@@ -580,7 +580,7 @@ void Processor::sendRadioData()
 		}
 	}
 	
-	if (_manualID >= 0 && logFrame.radio_tx().robots_size() < Constants::Robots_Per_Team && !manualDone)
+	if (_manualID >= 0 && logFrame.radio_tx().robots_size() < (int)Constants::Robots_Per_Team && !manualDone)
 	{
 		// The manual robot wasn't found by vision/modeling but we have room for it in the packet.
 		// This allows us to drive an off-field robot for testing or to drive a robot back onto the field.

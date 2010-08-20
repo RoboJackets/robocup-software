@@ -2,17 +2,19 @@
 
 #include <QString>
 #include <boost/foreach.hpp>
+#include <boost/make_shared.hpp>
 #include <fcntl.h>
 #include <stdio.h>
 
 using namespace std;
+using namespace boost;
 using namespace Packet;
 using namespace google::protobuf::io;
 
 Logger::Logger()
 {
 	_fd = -1;
-	_history.resize(100000, 0);
+	_history.resize(100000);
 	_nextFrameNumber = 0;
 	_spaceUsed = sizeof(_history[0]) * _history.size();
 }
@@ -20,12 +22,6 @@ Logger::Logger()
 Logger::~Logger()
 {
 	close();
-	
-	// Delete frames in history
-	BOOST_FOREACH(Packet::LogFrame *frame, _history)
-	{
-		delete frame;
-	}
 }
 
 bool Logger::open(QString filename)
@@ -91,13 +87,10 @@ void Logger::addFrame(const LogFrame& frame)
 	{
 		// Remove the space used by the old data
 		_spaceUsed -= _history[i]->SpaceUsed();
-	} else {
-		// Create a new LogFrame
-		_history[i] = new LogFrame();
 	}
 	
-	// Store the frame
-	_history[i]->CopyFrom(frame);
+	// Create a new LogFrame
+	_history[i] = make_shared<LogFrame>(frame);
 	
 	// Add space used by the new data
 	_spaceUsed += _history[i]->SpaceUsed();
@@ -106,6 +99,7 @@ void Logger::addFrame(const LogFrame& frame)
 	++_nextFrameNumber;
 }
 
+#if 0
 bool Logger::getFrame(int i, LogFrame& frame)
 {
 	QMutexLocker locker(&_mutex);
@@ -120,8 +114,15 @@ bool Logger::getFrame(int i, LogFrame& frame)
 	
 	return true;
 }
+#endif
 
-int Logger::getFrames(int start, vector<LogFrame> &frames)
+shared_ptr<LogFrame> Logger::lastFrame()
+{
+	QMutexLocker locker(&_mutex);
+	return _history[(_nextFrameNumber - 1) % _history.size()];
+}
+
+int Logger::getFrames(int start, vector<shared_ptr<LogFrame> > &frames)
 {
 	QMutexLocker locker(&_mutex);
 	
@@ -145,12 +146,12 @@ int Logger::getFrames(int start, vector<LogFrame> &frames)
 	int n = start - end + 1;
 	for (int i = 0; i < n; ++i)
 	{
-		frames[i].CopyFrom(*_history[(start - i) % _history.size()]);
+		frames[i] = _history[(start - i) % _history.size()];
 	}
 	
 	for (int i = n; i < (int)frames.size(); ++i)
 	{
-		frames[i].Clear();
+		frames[i].reset();
 	}
 	
 	return n;

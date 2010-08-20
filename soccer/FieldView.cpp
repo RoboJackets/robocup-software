@@ -38,6 +38,16 @@ FieldView::FieldView(QWidget* parent) :
 	setAttribute(Qt::WA_OpaquePaintEvent);
 }
 
+shared_ptr<LogFrame> FieldView::currentFrame()
+{
+	if (_history && !_history->empty())
+	{
+		return _history->at(0);
+	} else {
+		return shared_ptr<LogFrame>();
+	}
+}
+
 void FieldView::rotate(int value)
 {
 	_rotate = value;
@@ -74,20 +84,20 @@ void FieldView::paintEvent(QPaintEvent* event)
 		drawCoords(p);
 	}
 	
-	if (!_history || _history->empty())
+	// Get the latest LogFrame
+	const shared_ptr<LogFrame> frame = currentFrame();
+	
+	if (!frame)
 	{
 		// No data available yet
 		return;
 	}
 	
-	// Get the latest LogFrame
-	const LogFrame &frame = _history->at(0);
-	
 	// Check number of debug layers
-	if (_layerVisible.size() != frame.debug_layers_size())
+	if (_layerVisible.size() != frame->debug_layers_size())
 	{
 		int start = _layerVisible.size();
-		_layerVisible.resize(frame.debug_layers_size());
+		_layerVisible.resize(frame->debug_layers_size());
 		
 		// Turn on the new layers
 		for (int i = start; i < _layerVisible.size(); ++i)
@@ -105,7 +115,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	
 	_worldToTeam = Geometry2d::TransformMatrix();
 	_worldToTeam *= Geometry2d::TransformMatrix::translate(0, Constants::Field::Length / 2.0f);
-	if (frame.defend_plus_x())
+	if (frame->defend_plus_x())
 	{
 		_worldToTeam *= Geometry2d::TransformMatrix::rotate(-90);
 	} else {
@@ -113,7 +123,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	}
 	
 	_teamToWorld = Geometry2d::TransformMatrix();
-	if (frame.defend_plus_x())
+	if (frame->defend_plus_x())
 	{
 		_teamToWorld *= Geometry2d::TransformMatrix::rotate(90);
 	} else {
@@ -126,7 +136,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	
 	// Everything after this point is drawn in team space.
 	// Transform that into world space depending on defending goal.
-	if (frame.defend_plus_x())
+	if (frame->defend_plus_x())
 	{
 		p.rotate(90);
 	} else {
@@ -135,7 +145,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 	p.translate(0, -Field::Length / 2.0f);
 
 	// Text has to be rotated so it is always upright on screen
-	_textRotation = -_rotate * 90 + (frame.defend_plus_x() ? -90 : 90);
+	_textRotation = -_rotate * 90 + (frame->defend_plus_x() ? -90 : 90);
 	
 	drawTeamSpace(p);
 }
@@ -143,7 +153,7 @@ void FieldView::paintEvent(QPaintEvent* event)
 void FieldView::drawWorldSpace(QPainter& p)
 {
 	// Get the latest LogFrame
-	const LogFrame &frame = _history->at(0);
+	const LogFrame *frame = _history->at(0).get();
 	
 	// Draw the field
 	drawField(p, frame);
@@ -152,7 +162,7 @@ void FieldView::drawWorldSpace(QPainter& p)
 	if (showRawBalls || showRawRobots)
 	{
 		p.setPen(QColor(0xcc, 0xcc, 0xcc));
-		BOOST_FOREACH(const SSL_WrapperPacket& wrapper, frame.raw_vision())
+		BOOST_FOREACH(const SSL_WrapperPacket& wrapper, frame->raw_vision())
 		{
 			if (!wrapper.has_detection())
 			{
@@ -193,7 +203,7 @@ void FieldView::drawWorldSpace(QPainter& p)
 void FieldView::drawTeamSpace(QPainter& p)
 {
 	// Get the latest LogFrame
-	const LogFrame &frame = _history->at(0);
+	const LogFrame *frame = _history->at(0).get();
 	
 	if (showCoords)
 	{
@@ -204,10 +214,10 @@ void FieldView::drawTeamSpace(QPainter& p)
 	p.setBrush(Qt::NoBrush);
 	for (unsigned int i = 1; i < 200 && i < _history->size(); ++i)
 	{
-		const LogFrame &oldFrame = _history->at(i);
-		if (oldFrame.has_ball())
+		const LogFrame *oldFrame = _history->at(i).get();
+		if (oldFrame && oldFrame->has_ball())
 		{
-			QPointF pos = qpointf(oldFrame.ball().pos());
+			QPointF pos = qpointf(oldFrame->ball().pos());
 			
 			QColor c = ballColor;
 			c.setAlpha(255 - i);
@@ -219,7 +229,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 	}
 	
 	// Debug lines
-	BOOST_FOREACH(const DebugPath& path, frame.debug_paths())
+	BOOST_FOREACH(const DebugPath& path, frame->debug_paths())
 	{
 		if (path.layer() < 0 || _layerVisible[path.layer()])
 		{
@@ -234,7 +244,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 	}
 
 	// Debug circles
-	BOOST_FOREACH(const DebugCircle& c, frame.debug_circles())
+	BOOST_FOREACH(const DebugCircle& c, frame->debug_circles())
 	{
 		if (c.layer() < 0 || _layerVisible[c.layer()])
 		{
@@ -244,7 +254,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 	}
 
 	// Debug text
-	BOOST_FOREACH(const DebugText& text, frame.debug_texts())
+	BOOST_FOREACH(const DebugText& text, frame->debug_texts())
 	{
 		if (text.layer() < 0 || _layerVisible[text.layer()])
 		{
@@ -255,7 +265,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 
 	// Debug polygons
 	p.setPen(Qt::NoPen);
-	BOOST_FOREACH(const DebugPath& path, frame.debug_polygons())
+	BOOST_FOREACH(const DebugPath& path, frame->debug_polygons())
 	{
 		if (path.layer() < 0 || _layerVisible[path.layer()])
 		{
@@ -279,11 +289,11 @@ void FieldView::drawTeamSpace(QPainter& p)
 	p.setBrush(Qt::NoBrush);
 
 	// Filtered robot positions
-	int manualID = frame.manual_id();
-	BOOST_FOREACH(const LogFrame::Robot &r, frame.self())
+	int manualID = frame->manual_id();
+	BOOST_FOREACH(const LogFrame::Robot &r, frame->self())
 	{
 		QPointF center = qpointf(r.pos());
-		drawRobot(p, frame.blue_team(), r.shell(), center, r.angle(), r.has_ball());
+		drawRobot(p, frame->blue_team(), r.shell(), center, r.angle(), r.has_ball());
 		
 		// Highlight the manually controlled robot
 		if (manualID == r.shell())
@@ -294,16 +304,16 @@ void FieldView::drawTeamSpace(QPainter& p)
 		}
 	}
 
-	BOOST_FOREACH(const LogFrame::Robot &r, frame.opp())
+	BOOST_FOREACH(const LogFrame::Robot &r, frame->opp())
 	{
-		drawRobot(p, !frame.blue_team(), r.shell(), qpointf(r.pos()), r.angle(), r.has_ball());
+		drawRobot(p, !frame->blue_team(), r.shell(), qpointf(r.pos()), r.angle(), r.has_ball());
 	}
 
 	// Current ball position and velocity
-	if (frame.has_ball())
+	if (frame->has_ball())
 	{
-		QPointF pos = qpointf(frame.ball().pos());
-		QPointF vel = qpointf(frame.ball().vel());
+		QPointF pos = qpointf(frame->ball().pos());
+		QPointF vel = qpointf(frame->ball().vel());
 		
 		p.setPen(ballColor);
 		p.setBrush(ballColor);
@@ -353,7 +363,7 @@ void FieldView::drawCoords(QPainter& p)
 	drawText(p, QPointF(0.1, 0.25), "+Y");
 }
 
-void FieldView::drawField(QPainter& p, const LogFrame &frame)
+void FieldView::drawField(QPainter& p, const LogFrame *frame)
 {
 	p.save();
 	
@@ -396,7 +406,7 @@ void FieldView::drawField(QPainter& p, const LogFrame &frame)
 	float x[2] = {0, Field::GoalDepth};
 	float y[2] = {Field::GoalWidth/2.0, -Field::GoalWidth/2.0};
 	
-	bool flip = frame.blue_team() ^ frame.defend_plus_x();
+	bool flip = frame->blue_team() ^ frame->defend_plus_x();
 	
 	p.setPen(flip ? Qt::yellow : Qt::blue);
 	p.drawLine(QLineF(x[0], y[0], x[1], y[0]));

@@ -23,6 +23,7 @@
 
 #include <protobuf/LogFrame.pb.h>
 
+#include <boost/shared_ptr.hpp>
 #include <QString>
 #include <QMutexLocker>
 #include <QMutex>
@@ -54,7 +55,7 @@ class Logger
 		
 		// Returns the sequence number of the earliest available frame.
 		// Returns -1 if no frames have been added.
-		int firstFrame()
+		int firstFrameNumber()
 		{
 			QMutexLocker locker(&_mutex);
 			if (_nextFrameNumber == 0)
@@ -67,22 +68,20 @@ class Logger
 		
 		// Returns the sequence number of the most recently added frame.
 		// Returns -1 if no frames have been added.
-		int lastFrame()
+		int lastFrameNumber()
 		{
 			QMutexLocker locker(&_mutex);
 			return _nextFrameNumber - 1;
 		}
 		
-		void addFrame(const Packet::LogFrame &frame);
+		boost::shared_ptr<Packet::LogFrame> lastFrame();
 		
-		// Gets frame <i>, if available.
-		// Returns true if the frame was available or false if not (too old).
-		bool getFrame(int i, Packet::LogFrame &frame);
+		void addFrame(const Packet::LogFrame &frame);
 		
 		// Gets frames.size() frames starting at <i> and working backwards.
 		// Clears any frames that couldn't be populated.
 		// Returns the number of frames copied.
-		int getFrames(int start, std::vector<Packet::LogFrame> &frames);
+		int getFrames(int start, std::vector<boost::shared_ptr<Packet::LogFrame> > &frames);
 		
 		// Returns the amount of memory used by all LogFrames in the history.
 		int spaceUsed()
@@ -110,7 +109,7 @@ class Logger
 		
 		// Frame history.
 		// Increasing indices correspond to earlier times.
-		std::vector<Packet::LogFrame *> _history;
+		std::vector<boost::shared_ptr<Packet::LogFrame> > _history;
 		
 		// Sequence number of the next frame to be written
 		int _nextFrameNumber;

@@ -1,6 +1,7 @@
 #include <LogViewer.hpp>
 
 #include <google/protobuf/io/zero_copy_stream_impl.h>
+#include <boost/make_shared.hpp>
 
 #include <QApplication>
 #include <QFile>
@@ -10,6 +11,7 @@
 #include <stdio.h>
 
 using namespace std;
+using namespace boost;
 using namespace Packet;
 using namespace google::protobuf::io;
 
@@ -95,7 +97,7 @@ bool LogViewer::readFrames(const char *filename)
 			return false;
 		}
 		
-		LogFrame *frame = new LogFrame;
+		shared_ptr<LogFrame> frame = make_shared<LogFrame>();
 		frames.push_back(frame);
 		// Parse partial so we can recover from corrupt data
 		if (!frame->ParsePartialFromString(str))
@@ -133,11 +135,11 @@ void LogViewer::updateViews()
 	int n = min(f, (int)_history.size());
 	for (int i = 0; i < n; ++i)
 	{
-		_history[i] = *frames[f - i];
+		_history[i] = frames[f - i];
 	}
 	for (int i = n; i < (int)_history.size(); ++i)
 	{
-		_history[i].Clear();
+		_history[i].reset();
 	}
 	
 	// Update non-message tree items

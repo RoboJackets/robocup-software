@@ -7,6 +7,7 @@
 #include <QMouseEvent>
 #include <boost/foreach.hpp>
 
+using namespace boost;
 using namespace Packet;
 
 // Converts from meters to m/s for manually shooting the ball
@@ -31,25 +32,25 @@ void SimFieldView::mousePressEvent(QMouseEvent* me)
 {
 	Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->posF();
 	
-	const LogFrame &frame = _history->at(0);
-	if (me->button() == Qt::LeftButton)
+	shared_ptr<LogFrame> frame = currentFrame();
+	if (me->button() == Qt::LeftButton && frame)
 	{
 		_dragRobot = -1;
-		BOOST_FOREACH(const LogFrame::Robot &r, frame.self())
+		BOOST_FOREACH(const LogFrame::Robot &r, frame->self())
 		{
 			if (pos.nearPoint(r.pos(), Constants::Robot::Radius))
 			{
 				_dragRobot = r.shell();
-				_dragRobotBlue = frame.blue_team();
+				_dragRobotBlue = frame->blue_team();
 				break;
 			}
 		}
-		BOOST_FOREACH(const LogFrame::Robot &r, frame.opp())
+		BOOST_FOREACH(const LogFrame::Robot &r, frame->opp())
 		{
 			if (pos.nearPoint(r.pos(), Constants::Robot::Radius))
 			{
 				_dragRobot = r.shell();
-				_dragRobotBlue = !frame.blue_team();
+				_dragRobotBlue = !frame->blue_team();
 				break;
 			}
 		}
@@ -62,7 +63,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me)
 		_dragMode = DRAG_PLACE;
 	} else if (me->button() == Qt::RightButton && _history && !_history->empty())
 	{
-		if (frame.has_ball() && pos.nearPoint(frame.ball().pos(), Constants::Ball::Radius))
+		if (frame->has_ball() && pos.nearPoint(frame->ball().pos(), Constants::Ball::Radius))
 		{
 			// Drag to shoot the ball
 			_dragMode = DRAG_SHOOT;
@@ -70,16 +71,16 @@ void SimFieldView::mousePressEvent(QMouseEvent* me)
 		} else {
 			// Look for a robot selection
 			int newID = -1;
-			for (int i = 0; i < frame.self_size(); ++i)
+			for (int i = 0; i < frame->self_size(); ++i)
 			{
-				if (pos.distTo(frame.self(i).pos()) < Constants::Robot::Radius)
+				if (pos.distTo(frame->self(i).pos()) < Constants::Robot::Radius)
 				{
-					newID = frame.self(i).shell();
+					newID = frame->self(i).shell();
 					break;
 				}
 			}
 			
-			if (newID != frame.manual_id())
+			if (newID != frame->manual_id())
 			{
 				robotSelected(newID);
 			}
@@ -149,15 +150,14 @@ void SimFieldView::sendSimCommand(const Packet::SimCommand& cmd)
 
 void SimFieldView::drawTeamSpace(QPainter& p)
 {
-    FieldView::drawTeamSpace(p);
+	FieldView::drawTeamSpace(p);
 
 	// Simulator drag-to-shoot
-	if (_dragMode == DRAG_SHOOT)
+	shared_ptr<LogFrame> frame = currentFrame();
+	if (_dragMode == DRAG_SHOOT && frame)
 	{
-		const LogFrame &frame = _history->at(0);
-		
 		p.setPen(Qt::white);
-		Geometry2d::Point ball = frame.ball().pos();
+		Geometry2d::Point ball = frame->ball().pos();
 		p.drawLine(ball.toQPointF(), _dragTo.toQPointF());
 		
 		if (ball != _dragTo)

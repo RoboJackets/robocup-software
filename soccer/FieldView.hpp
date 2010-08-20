@@ -7,6 +7,7 @@
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
 #include <protobuf/LogFrame.pb.h>
+#include <boost/shared_ptr.hpp>
 
 class Logger;
 
@@ -34,7 +35,7 @@ class FieldView : public QWidget
 			}
 		}
 		
-		void history(const std::vector<Packet::LogFrame> *value)
+		void history(const std::vector<boost::shared_ptr<Packet::LogFrame> > *value)
 		{
 			_history = value;
 		}
@@ -53,11 +54,14 @@ class FieldView : public QWidget
 		virtual void drawTeamSpace(QPainter &p);
 		
 		void drawText(QPainter& p, QPointF pos, QString text, bool center = true);
-		void drawField(QPainter& p, const Packet::LogFrame &frame);
+		void drawField(QPainter& p, const Packet::LogFrame *frame);
 		void drawRobot(QPainter& p, bool blueRobot, int ID, QPointF pos, float theta, bool hasBall = false);
 		void drawCoords(QPainter& p);
 
 	protected:
+		// Returns a pointer to the most recent frame, or null if none is available.
+		boost::shared_ptr<Packet::LogFrame> currentFrame();
+		
 		// Coordinate transformations
 		Geometry2d::TransformMatrix _screenToWorld;
 		Geometry2d::TransformMatrix _worldToTeam;
@@ -69,7 +73,7 @@ class FieldView : public QWidget
 		// How many degrees to rotate text so it shows up the right way on screen
 		int _textRotation;
 		
-		const std::vector<Packet::LogFrame> *_history;
+		const std::vector<boost::shared_ptr<Packet::LogFrame> > *_history;
 		
 		QVector<bool> _layerVisible;
 };

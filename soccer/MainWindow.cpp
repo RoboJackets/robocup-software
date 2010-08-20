@@ -216,7 +216,7 @@ void MainWindow::updateViews()
 	));
 	
 	// Advance log playback time
-	int liveFrameNumber = _processor->logger.lastFrame();
+	int liveFrameNumber = _processor->logger.lastFrameNumber();
 	if (_live)
 	{
 		_doubleFrameNumber = liveFrameNumber;
@@ -224,8 +224,8 @@ void MainWindow::updateViews()
 		double rate = _ui.playbackRate->value();
 		_doubleFrameNumber += rate / framerate;
 		
-		int minFrame = _processor->logger.firstFrame();
-		int maxFrame = _processor->logger.lastFrame();
+		int minFrame = _processor->logger.firstFrameNumber();
+		int maxFrame = _processor->logger.lastFrameNumber();
 		if (_doubleFrameNumber < minFrame)
 		{
 			_doubleFrameNumber = minFrame;
@@ -239,27 +239,13 @@ void MainWindow::updateViews()
 	_processor->logger.getFrames(frameNumber(), _history);
 	
 	// Get the frame at the log playback time
-	const LogFrame &currentFrame = _history[0];
+	const shared_ptr<LogFrame> currentFrame = _history[0];
 	
 	// Update field view
 	_ui.fieldView->update();
 	
-	// Get the live frame from FieldView or the Logger
-	LogFrame liveFrameStorage;
-	const LogFrame *liveFrame;
-	if (_live)
-	{
-		liveFrame = &_history[0];
-	} else {
-		liveFrame = &liveFrameStorage;
-		
-		// Not live, so we have to read the live frame ourselves
-		int i = _processor->logger.lastFrame();
-		if (i >= 0)
-		{
-			_processor->logger.getFrame(i, liveFrameStorage);
-		}
-	}
+	// Get the live frame from history or the Logger
+	const shared_ptr<LogFrame> liveFrame = _processor->logger.lastFrame();
 	
 	// Update log controls
 	_ui.logLive->setEnabled(!_live);
@@ -289,12 +275,12 @@ void MainWindow::updateViews()
 	
 	// Update non-message tree items
 	_frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole, frameNumber());
-	int elapsedMillis = (currentFrame.start_time() - _processor->firstLogTime + 500) / 1000;
+	int elapsedMillis = (currentFrame->start_time() - _processor->firstLogTime + 500) / 1000;
 	QTime elapsedTime = QTime().addMSecs(elapsedMillis);
 	_elapsedTimeItem->setText(ProtobufTree::Column_Value, elapsedTime.toString("hh:mm:ss.zzz"));
 	
 	// Sort the tree by tag if items have been added
-	if (_ui.logTree->message(currentFrame))
+	if (_ui.logTree->message(*currentFrame))
 	{
 		// Items have been added, so sort again on tag number
 		_ui.logTree->sortItems(ProtobufTree::Column_Tag, Qt::AscendingOrder);
@@ -588,7 +574,7 @@ void MainWindow::on_logStop_clicked()
 void MainWindow::on_logFirst_clicked()
 {
 	on_logStop_clicked();
-	frameNumber(_processor->logger.firstFrame());
+	frameNumber(_processor->logger.firstFrameNumber());
 }
 
 void MainWindow::on_logLive_clicked()
