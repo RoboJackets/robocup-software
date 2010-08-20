@@ -33,6 +33,7 @@ void calcMinimumWidth(QWidget *widget, QString text)
 MainWindow::MainWindow(QWidget *parent):
 	QMainWindow(parent)
 {
+	_updateCount = 0;
 	_processor = 0;
 	_autoExternalReferee = true;
 	_doubleFrameNumber = -1;
@@ -167,12 +168,11 @@ void MainWindow::live(bool value)
 		_live = value;
 		
 		// Change styles for controls that can show historical data
+		_ui.fieldView->live = _live;
 		if (_live)
 		{
-			_ui.fieldView->setStyleSheet(QString());
 			_ui.logTree->setStyleSheet(QString("QTreeWidget{%1}").arg(LiveStyle));
 		} else {
-			_ui.fieldView->setStyleSheet(NonLiveStyle);
 			_ui.logTree->setStyleSheet(QString("QTreeWidget{%1}").arg(NonLiveStyle));
 		}
 	}
@@ -206,14 +206,20 @@ void MainWindow::updateViews()
 	}
 	_currentPlay->setText(play);
 	
-	_viewFPS->setText(QString("View: %1 fps").arg(framerate, 0, 'f', 1));
-	_procFPS->setText(QString("Proc: %1 fps").arg(_processor->framerate(), 0, 'f', 1));
-	
-	_logMemory->setText(QString("Log: %1/%2 %3 kiB").arg(
-		QString::number(_processor->logger.numFrames()),
-		QString::number(_processor->logger.maxFrames()),
-		QString::number((_processor->logger.spaceUsed() + 512) / 1024)
-	));
+	++_updateCount;
+	if (_updateCount == 4)
+	{
+		_updateCount = 0;
+		
+		_viewFPS->setText(QString("View: %1 fps").arg(framerate, 0, 'f', 1));
+		_procFPS->setText(QString("Proc: %1 fps").arg(_processor->framerate(), 0, 'f', 1));
+		
+		_logMemory->setText(QString("Log: %1/%2 %3 kiB").arg(
+			QString::number(_processor->logger.numFrames()),
+			QString::number(_processor->logger.maxFrames()),
+			QString::number((_processor->logger.spaceUsed() + 512) / 1024)
+		));
+	}
 	
 	// Advance log playback time
 	int liveFrameNumber = _processor->logger.lastFrameNumber();
@@ -418,21 +424,25 @@ void MainWindow::updateStatus()
 
 void MainWindow::status(QString text, MainWindow::StatusType status)
 {
-	_ui.statusLabel->setText(text);
-	
-	switch (status)
+	// Assume that the status type alone won't change.
+	if (_ui.statusLabel->text() != text)
 	{
-		case Status_OK:
-			_ui.statusLabel->setStyleSheet("background-color: #00ff00");
-			break;
+		_ui.statusLabel->setText(text);
 		
-		case Status_Warning:
-			_ui.statusLabel->setStyleSheet("background-color: #ffff00");
-			break;
-		
-		case Status_Fail:
-			_ui.statusLabel->setStyleSheet("background-color: #ff4040");
-			break;
+		switch (status)
+		{
+			case Status_OK:
+				_ui.statusLabel->setStyleSheet("background-color: #00ff00");
+				break;
+			
+			case Status_Warning:
+				_ui.statusLabel->setStyleSheet("background-color: #ffff00");
+				break;
+			
+			case Status_Fail:
+				_ui.statusLabel->setStyleSheet("background-color: #ff4040");
+				break;
+		}
 	}
 }
 

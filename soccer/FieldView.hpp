@@ -2,7 +2,7 @@
 // vim:ai ts=4 et
 #pragma once
 
-#include <QWidget>
+#include <QGLWidget>
 
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
@@ -12,7 +12,7 @@
 class Logger;
 
 /** class that performs drawing of log data onto the field */
-class FieldView : public QWidget
+class FieldView : public QGLWidget
 {
 	public:
 		FieldView(QWidget* parent = 0);
@@ -41,6 +41,10 @@ class FieldView : public QWidget
 		}
 		
 		void rotate(int value);
+		
+		// True if this control is showing live (vs. historical) data.
+		// If false, it will draw a red border.
+		bool live;
 		
 		bool showRawRobots;
 		bool showRawBalls;

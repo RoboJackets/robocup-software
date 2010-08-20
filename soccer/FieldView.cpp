@@ -27,7 +27,7 @@ using namespace Packet;
 QColor ballColor(0xff, 0x90, 0);
 
 FieldView::FieldView(QWidget* parent) :
-	QWidget(parent)
+	QGLWidget(parent)
 {
 	showRawRobots = false;
 	showRawBalls = false;
@@ -35,7 +35,10 @@ FieldView::FieldView(QWidget* parent) :
 	_rotate = 0;
 	_history = 0;
 
-	setAttribute(Qt::WA_OpaquePaintEvent);
+	// Green background
+	QPalette p = palette();
+	p.setColor(QPalette::Window, QColor(0, 85.0, 0));
+	setPalette(p);
 }
 
 shared_ptr<LogFrame> FieldView::currentFrame()
@@ -60,15 +63,14 @@ void FieldView::rotate(int value)
 
 void FieldView::paintEvent(QPaintEvent* event)
 {
-	QStyleOption opt;
-	opt.init(this);
-	
 	QPainter p(this);
 	
-	// Green background
-	p.fillRect(rect(), QColor(0, 85.0, 0));
-	
-	style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
+	if (!live)
+	{
+		// Non-live border
+		p.setPen(QPen(Qt::red, 4));
+		p.drawRect(rect());
+	}
 	
 	// Set up world space
 	p.translate(width() / 2.0, height() / 2.0);

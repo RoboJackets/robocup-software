@@ -183,6 +183,9 @@ class MainWindow : public QMainWindow
 		
 		bool _live;
 		
+		// This is used to update some status items less frequently than the full field view
+		int _updateCount;
+		
 		// Tracking fractional frames is the easiest way to allow arbitrary playback rates.
 		// To keep rounding consistent, only access this with frameNumber().
 		double _doubleFrameNumber;
