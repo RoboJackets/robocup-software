@@ -8,7 +8,8 @@ Export('exec_dir')
 env = Environment()
 
 # C++ compiler
-env.MergeFlags('-O2 -g3 -Wall')
+# NDEBUG turns off uBLAS debugging (very slow)
+env.MergeFlags('-O2 -g3 -Wall -DNDEBUG')
 env.Append(CPPPATH = [Dir('#/common')])
 
 # Enable profiling if requested

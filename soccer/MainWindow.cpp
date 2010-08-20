@@ -250,9 +250,6 @@ void MainWindow::updateViews()
 	// Update field view
 	_ui.fieldView->update();
 	
-	// Get the live frame from history or the Logger
-	const shared_ptr<LogFrame> liveFrame = _processor->logger.lastFrame();
-	
 	// Update log controls
 	_ui.logLive->setEnabled(!_live);
 	_ui.logStop->setEnabled(_live);
@@ -265,7 +262,8 @@ void MainWindow::updateViews()
 	
 	// Check if any debug layers have been added
 	// (layers should never be removed)
-	if (liveFrame->debug_layers_size() > _ui.debugLayers->count())
+	const shared_ptr<LogFrame> liveFrame = _processor->logger.lastFrame();
+	if (liveFrame && liveFrame->debug_layers_size() > _ui.debugLayers->count())
 	{
 		// Add the missing layers and turn them on
 		for (int i = _ui.debugLayers->count(); i < liveFrame->debug_layers_size(); ++i)

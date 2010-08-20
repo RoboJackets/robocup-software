@@ -445,7 +445,6 @@ void Processor::run()
 			_gameplayModule->run();
 		}
 
-
 		if (_pointControlModule)
 		{
 			_pointControlModule->run();

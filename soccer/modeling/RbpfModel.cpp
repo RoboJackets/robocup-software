@@ -15,8 +15,6 @@ RbpfModel::RbpfModel(Modeling::RobotModel::RobotMap *robotMap) : n(NSIZE), m(MSI
 	for(int i=0;i<n;i++){Inn(i,i)=1.0;} // initialize identity matrix
 }
 
-RbpfModel::~RbpfModel(){}
-
 // performs EKF predict, storing the result in X and P
 // X: state vector that will be updated (n x 1)
 // P: state covariance that will be updated (n x n)

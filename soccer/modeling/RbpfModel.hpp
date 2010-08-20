@@ -41,8 +41,6 @@ public:
 	// robotMap is a set of robots for calculating kicks/deflections in some models
 	RbpfModel(Modeling::RobotModel::RobotMap *robotMap);
 
-	~RbpfModel();
-
 	// Used for printing this model to a stream (debugging)
 	friend std::ostream& operator<<(std::ostream& out, const RbpfModel &model);
 

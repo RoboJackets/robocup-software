@@ -107,8 +107,15 @@ void Joystick::update()
 		} else if (ret < 0)
 		{
 			// Poll error (not fd error)
-			printf("Joystick poll error: %m\n");
-			close();
+			//
+			// EINTR can happen while profiling because the poll() is interrupted
+			// by the timer signal used for statistical sampling.
+			// In this case, ignore the error and try again next time.
+			if (errno != EINTR)
+			{
+				printf("Joystick poll error: %m\n");
+				close();
+			}
 			return;
 		}
 		
