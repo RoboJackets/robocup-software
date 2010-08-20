@@ -201,23 +201,22 @@ void FieldView::drawTeamSpace(QPainter& p)
 	}
 	
 	// History
-	for (unsigned int i = 0; i < 200 && i < _history->size(); ++i)
+	p.setBrush(Qt::NoBrush);
+	for (unsigned int i = 1; i < 200 && i < _history->size(); ++i)
 	{
 		const LogFrame &oldFrame = _history->at(i);
 		if (oldFrame.has_ball())
 		{
 			QPointF pos = qpointf(oldFrame.ball().pos());
 			
-			p.setPen(Qt::NoPen);
 			QColor c = ballColor;
 			c.setAlpha(255 - i);
-			p.setBrush(c);
+			p.setPen(c);
 			
 			p.drawEllipse(QRectF(-Ball::Radius + pos.x(), -Ball::Radius + pos.y(),
 					Ball::Diameter, Ball::Diameter));
 		}
 	}
-	p.setBrush(Qt::NoBrush);
 	
 	// Debug lines
 	BOOST_FOREACH(const DebugPath& path, frame.debug_paths())

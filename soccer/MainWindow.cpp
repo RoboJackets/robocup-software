@@ -242,7 +242,7 @@ void MainWindow::updateViews()
 	const LogFrame &currentFrame = _history[0];
 	
 	// Update field view
-	_ui.fieldView->repaint(_ui.fieldView->rect());
+	_ui.fieldView->update();
 	
 	// Get the live frame from FieldView or the Logger
 	LogFrame liveFrameStorage;
@@ -300,9 +300,9 @@ void MainWindow::updateViews()
 		_ui.logTree->sortItems(ProtobufTree::Column_Tag, Qt::AscendingOrder);
 	}
 	
-	// We restart this timer repeatedly instead of using a single shot timer because
-	// we don't want to use 100% CPU redrawing the view if it takes too long.
-	_updateTimer.start(30);
+	// We restart this timer repeatedly instead of using a single shot timer in order
+	// to guarantee a minimum time between redraws.  This will limit the CPU usage on a fast computer.
+	_updateTimer.start(20);
 }
 
 void MainWindow::updateStatus()

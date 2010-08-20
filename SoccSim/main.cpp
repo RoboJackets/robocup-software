@@ -6,8 +6,15 @@
 #include <QFile>
 
 #include <stdio.h>
+#include <signal.h>
 
 using namespace std;
+
+void quit(int signal)
+{
+	fprintf(stderr, "Exiting due to signal %d\n", signal);
+	exit(0);
+}
 
 void usage(const char* prog)
 {
@@ -73,6 +80,11 @@ int main(int argc, char* argv[])
 	Config* config = 0;
 	config = new Config(configFile, env);
 
+	struct sigaction act;
+	memset(&act, 0, sizeof(act));
+	act.sa_handler = quit;
+	sigaction(SIGINT, &act, 0);
+	
 	Viewer *win = 0;
 	if (useGUI)
 	{

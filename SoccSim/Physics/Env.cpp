@@ -23,6 +23,8 @@ using namespace Packet;
 static const QHostAddress LocalAddress(QHostAddress::LocalHost);
 static const QHostAddress MulticastAddress(SharedVisionAddress);
 
+const int Oversample = 1;
+
 Env::Env()
 {
 	sendShared = false;
@@ -78,7 +80,7 @@ Env::Env()
 	gettimeofday(&_lastStepTime, 0);
 	
 	connect(&_timer, SIGNAL(timeout()), SLOT(step()));
-	_timer.start(4);
+	_timer.start(16 / Oversample);
 }
 
 Env::~Env()
@@ -183,7 +185,7 @@ void Env::step()
 	_scene->fetchResults(NX_RIGID_BODY_FINISHED, true);
 
 	++_stepCount;
-	if (_stepCount == 4)
+	if (_stepCount == Oversample)
 	{
 		_stepCount = 0;
 		

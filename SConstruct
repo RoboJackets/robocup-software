@@ -8,8 +8,10 @@ Export('exec_dir')
 env = Environment()
 
 # C++ compiler
-env.MergeFlags('-O2 -g3 -Wall -DQT_NO_KEYWORDS')
+env.MergeFlags('-O2 -g3 -Wall')
 env.Append(CPPPATH = [Dir('#/common')])
+
+env.Append(CPPFLAGS='-pg ', LINKFLAGS='-pg ')
 
 # Qt
 env['QT4DIR'] = '/usr'
@@ -18,6 +20,12 @@ env.EnableQt4Modules(['QtCore', 'QtGui', 'QtNetwork', 'QtXml', 'QtOpenGL'])
 
 # All executables need to link with the common library, which depends on protobuf
 env.Append(LIBS=['common', 'protobuf'])
+
+# http://www.scons.org/wiki/GoFastButton
+env.Decider('MD5-timestamp')
+SetOption('max_drift', 1)
+SetOption('implicit_cache', 1)
+env.SourceCode(".", None)
 
 # Make a new environment for code that must be 32-bit
 env32 = env.Clone()
@@ -47,15 +55,18 @@ else:
 	# This is a 32-bit system, so we only need one version of common
 	env32 = env
 
+def build_dir(dir):
+	SConscript(dir + '/SConscript', variant_dir='build/' + dir, duplicate=0)
+
 Export('env')
-SConscript('common/SConscript', variant_dir='build/common', duplicate=0)
+build_dir('common')
 
 Export({'env': env32})
-SConscript('SoccSim/SConscript', variant_dir='build/SoccSim', duplicate=0)
+build_dir('SoccSim')
 
 Export('env')
 for dir in ['logging', 'radio', 'soccer']:
-	SConscript('%s/SConscript' % dir, variant_dir='build/%s' % dir, duplicate=0)
+	build_dir(dir)
 
 # Build sslrefbox with its original makefile (no dependency checking)
 env.Command('sslrefbox/sslrefbox', 'sslrefbox/Makefile', 'make -C sslrefbox')

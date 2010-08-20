@@ -191,14 +191,7 @@ void PlayConfigTab::on_plays_itemChanged(QTreeWidgetItem* item)
 		return;
 	}
 	
-	if (item->checkState(0) == Qt::Checked)
-	{
-		factory->enabled = true;
-// 		_gameplay->enablePlay(play);
-	} else {
-		factory->enabled = false;
-// 		_gameplay->disablePlay(play);
-	}
+	factory->enabled = (item->checkState(0) == Qt::Checked);
 }
 
 void PlayConfigTab::on_plays_customContextMenuRequested(const QPoint& pos)
