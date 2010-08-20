@@ -11,7 +11,11 @@ env = Environment()
 env.MergeFlags('-O2 -g3 -Wall')
 env.Append(CPPPATH = [Dir('#/common')])
 
-env.Append(CPPFLAGS='-pg ', LINKFLAGS='-pg ')
+# Enable profiling if requested
+AddOption('--pg', action='store_true', dest='profile', default=False, help='Robocup: Build for profiling')
+if GetOption('profile'):
+	print '*** Building for profiling'
+	env.Append(CPPFLAGS='-pg ', LINKFLAGS='-pg ')
 
 # Qt
 env['QT4DIR'] = '/usr'

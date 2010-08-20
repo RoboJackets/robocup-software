@@ -8,3 +8,6 @@ convert_tcpdump
 sslrefbox
 gamecontrol
 referee.sav
+*.txt
+*.dot
+gmon.out

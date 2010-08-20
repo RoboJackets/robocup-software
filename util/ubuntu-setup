@@ -25,7 +25,7 @@ fi
 echo "-- Installing normal packages"
 apt-get install build-essential qt4-dev-tools libboost-dev \
 	libusb-dev libblas-dev liblapack-dev libgtkmm-2.4-dev protobuf-compiler libprotobuf-dev \
-	libpcap-dev scons
+	libpcap-dev scons graphviz
 
 # Install all PhysX packages together
 if [ ! -d /usr/lib/PhysX ]; then

@@ -153,6 +153,8 @@ int main (int argc, char* argv[])
 		}
 	}
 	
+	printf("Running on %s\n", sim ? "simulation" : "real hardware");
+	
 	printf("seed %016lx\n", seed);
 	srand48(seed);
 	
