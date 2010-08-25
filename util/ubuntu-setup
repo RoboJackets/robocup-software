@@ -30,7 +30,7 @@ apt-get install build-essential qt4-dev-tools libboost-dev \
 # Install all PhysX packages together
 if [ ! -d /usr/lib/PhysX ]; then
 	echo "-- Installing PhysX"
-	dpkg -i $DPKG_FLAGS SoccSim/lib/physx/*.deb
+	dpkg -i $DPKG_FLAGS $BASE/SoccSim/lib/physx/*.deb
 else
 	echo "-- PhysX is already installed"
 fi
