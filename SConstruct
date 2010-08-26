@@ -9,7 +9,7 @@ env = Environment()
 
 # C++ compiler
 # NDEBUG turns off uBLAS debugging (very slow)
-env.MergeFlags('-O2 -g3 -Wall -DNDEBUG')
+env.MergeFlags('-O2 -g3 -Wall -DBOOST_UBLAS_NDEBUG')
 env.Append(CPPPATH = [Dir('#/common')])
 
 # Enable profiling if requested
