@@ -61,7 +61,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me)
 		}
 		
 		_dragMode = DRAG_PLACE;
-	} else if (me->button() == Qt::RightButton && _history && !_history->empty())
+	} else if (me->button() == Qt::RightButton && frame)
 	{
 		if (frame->has_ball() && pos.nearPoint(frame->ball().pos(), Constants::Ball::Radius))
 		{
