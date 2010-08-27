@@ -45,6 +45,7 @@ Processor::Processor(Configuration *config, bool sim, int radio)
 	firstLogTime = 0;
 
 	_simulation = sim;
+	_radio = radio;
 	_joystick = new Joystick();
 	
 	// Create robot configuration
@@ -63,61 +64,6 @@ Processor::Processor(Configuration *config, bool sim, int radio)
 	
 	QMetaObject::connectSlotsByName(this);
 
-	// Create vision socket
-	if (_simulation)
-	{
-		// The simulator doesn't multicast its vision.  Instead, it sends to two different ports.
-		// Try to bind to the first one and, if that fails, use the second one.
-		if (!_visionSocket.bind(SimVisionPort))
-		{
-			if (!_visionSocket.bind(SimVisionPort + 1))
-			{
-				throw runtime_error("Can't bind to either simulated vision port");
-			}
-		}
-	} else {
-		// Receive multicast packets from shared vision.
-		if (!_visionSocket.bind(SharedVisionPort, QUdpSocket::ShareAddress))
-		{
-			throw runtime_error("Can't bind to shared vision port");
-		}
-		
-		multicast_add(_visionSocket, SharedVisionAddress);
-	}
-
-	// Create referee socket
-	if (!_refereeSocket.bind(RefereePort, QUdpSocket::ShareAddress))
-	{
-		throw runtime_error("Can't bind to referee port");
-	}
-	
-	multicast_add(_refereeSocket, RefereeAddress);
-
-	// Create radio socket
-	if (radio < 0)
-	{
-		// No channel specified.
-		// Pick the first available one.
-		if (_radioSocket.bind(RadioRxPort))
-		{
-			_radio = 0;
-		} else {
-			if (_radioSocket.bind(RadioRxPort + 1))
-			{
-				_radio = 1;
-			} else {
-				throw runtime_error("Can't bind to either radio port");
-			}
-		}
-	} else {
-		// Bind only to the port for the specified channel.
-		if (!_radioSocket.bind(RadioRxPort + radio))
-		{
-			throw runtime_error("Can't bind to specified radio port");
-		}
-		_radio = radio;
-	}
-	
 	_modelingModule = make_shared<Modeling::WorldModel>(&_state, config);
 	_stateIDModule = make_shared<StateIdentification::StateIDModule>(&_state);
 	_pointControlModule = make_shared<Motion::PointController>(&_state, config);
@@ -246,8 +192,61 @@ bool Processor::joystickValid()
 
 void Processor::run()
 {
+	// Create vision socket
+	if (_simulation)
+	{
+		// The simulator doesn't multicast its vision.  Instead, it sends to two different ports.
+		// Try to bind to the first one and, if that fails, use the second one.
+		if (!_visionSocket.bind(SimVisionPort))
+		{
+			if (!_visionSocket.bind(SimVisionPort + 1))
+			{
+				throw runtime_error("Can't bind to either simulated vision port");
+			}
+		}
+	} else {
+		// Receive multicast packets from shared vision.
+		if (!_visionSocket.bind(SharedVisionPort, QUdpSocket::ShareAddress))
+		{
+			throw runtime_error("Can't bind to shared vision port");
+		}
+		
+		multicast_add(_visionSocket, SharedVisionAddress);
+	}
+
+	// Create referee socket
+	if (!_refereeSocket.bind(RefereePort, QUdpSocket::ShareAddress))
+	{
+		throw runtime_error("Can't bind to referee port");
+	}
+	
+	multicast_add(_refereeSocket, RefereeAddress);
+
+	// Create radio socket
+	if (_radio < 0)
+	{
+		// No channel specified.
+		// Pick the first available one.
+		if (_radioSocket.bind(RadioRxPort))
+		{
+			_radio = 0;
+		} else {
+			if (_radioSocket.bind(RadioRxPort + 1))
+			{
+				_radio = 1;
+			} else {
+				throw runtime_error("Can't bind to either radio port");
+			}
+		}
+	} else {
+		// Bind only to the port for the specified channel.
+		if (!_radioSocket.bind(RadioRxPort + _radio))
+		{
+			throw runtime_error("Can't bind to specified radio port");
+		}
+	}
+	
 	Status curStatus;
-	fprintf(stderr, "Running processor\n");
 	
 	while (_running)
 	{
