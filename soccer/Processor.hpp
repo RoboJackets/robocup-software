@@ -189,10 +189,10 @@ class Processor: public QThread
 		Status _status;
 		
 		// Network sockets
-		QUdpSocket _visionSocket;
-		QUdpSocket _refereeSocket;
+		QUdpSocket *_visionSocket;
+		QUdpSocket *_refereeSocket;
 		// _radioSocket is used for both sending (RadioTx) and receiving (RadioRx).
-		QUdpSocket _radioSocket;
+		QUdpSocket *_radioSocket;
 
 		//modules
 		boost::shared_ptr<Modeling::WorldModel> _modelingModule;

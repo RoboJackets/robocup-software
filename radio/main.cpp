@@ -6,6 +6,7 @@
 #include <string.h>
 #include <pthread.h>
 #include <assert.h>
+#include <poll.h>
 
 #include <string>
 
@@ -18,8 +19,7 @@
 #include "Radio.hpp"
 
 using namespace std;
-
-Packet::RadioTx txPacket[2];
+using namespace Packet;
 
 void usage(const char* prog)
 {
@@ -90,29 +90,10 @@ int main(int argc, char* argv[])
 	
 	bool radioErrorPrinted = false;
 	
+	RadioTx txPacket[2];
 	while (true)
 	{
 		bool newData[2];
-		
-		// Read RadioTx packets
-		for (int i = 0; i < 2; ++i)
-		{
-			newData[i] = false;
-			
-			while (socket[i].hasPendingDatagrams())
-			{
-				int n = socket[i].pendingDatagramSize();
-				string str(n, 0);
-				socket[i].readDatagram(&str[0], n);
-				
-				if (!txPacket[i].ParseFromString(str))
-				{
-					fprintf(stderr, "Bad RadioTx packet of %d bytes on channel %d\n", n, i);
-				} else {
-					newData[i] = true;
-				}
-			}
-		}
 		
 		// Make sure we have a radio
 		if (!radio)
@@ -139,6 +120,38 @@ int main(int argc, char* argv[])
 			radioErrorPrinted = false;
 		}
 		
+		// Wait for RadioTX packets
+		struct pollfd pfd[2];
+		pfd[0].fd = socket[0].socketDescriptor();
+		pfd[0].events = POLLIN;
+		pfd[1].fd = socket[1].socketDescriptor();
+		pfd[1].events = POLLIN;
+		if (poll(pfd, 2, -1) < 1)
+		{
+			printf("Poll: %m\n");
+			continue;
+		}
+		
+		// Read RadioTx packets
+		for (int i = 0; i < 2; ++i)
+		{
+			newData[i] = false;
+			
+			while (socket[i].hasPendingDatagrams())
+			{
+				int n = socket[i].pendingDatagramSize();
+				string str(n, 0);
+				socket[i].readDatagram(&str[0], n);
+				
+				if (!txPacket[i].ParseFromString(str))
+				{
+					fprintf(stderr, "Bad RadioTx packet of %d bytes on channel %d\n", n, i);
+				} else {
+					newData[i] = true;
+				}
+			}
+		}
+		
 		//FIXME - Switch between teams for reverse channel
 		int reverse_board_id = txPacket[0].reverse_board_id();
 		
@@ -152,10 +165,11 @@ int main(int argc, char* argv[])
 		int kick_id = -1;
 		int self_bots = 0;
 		uint8_t kick_strength = 0;
-		for (int robot_id = 0; robot_id < 5; ++robot_id)
+		int robot_id;
+		for (robot_id = 0; robot_id < 5 && robot_id < txPacket[0].robots_size(); ++robot_id)
 		{
 			//FIXME - Read from both channels and merge
-			const Packet::RadioTx::Robot &robot = txPacket[0].robots(robot_id);
+			const RadioTx::Robot &robot = txPacket[0].robots(robot_id);
 			int board_id = robot.board_id();
 			
 			int8_t m0, m1, m2, m3;
@@ -189,6 +203,16 @@ int main(int argc, char* argv[])
 			forward_packet[offset++] = (roller & 0xf0) | (board_id & 0x0f);
 		}
 		
+		// Unused slots
+		for (; robot_id < 5; ++robot_id)
+		{
+			forward_packet[offset++] = 0;
+			forward_packet[offset++] = 0;
+			forward_packet[offset++] = 0;
+			forward_packet[offset++] = 0;
+			forward_packet[offset++] = 0x0f;
+		}
+		
 #if 0
 		//FIXME - Redesign this in light of the new approach to radio channels
 		if (useOpp)
@@ -196,7 +220,7 @@ int main(int argc, char* argv[])
 			offset = 3 + self_bots * 5;
 			for (int robot_id = 0; robot_id < 5 - self_bots; ++robot_id)
 			{
-				const Packet::RadioTx::Robot &robot = oppTxPacket.robots(robot_id);
+				const RadioTx::Robot &robot = oppTxPacket.robots(robot_id);
 				int board_id = robot.board_id();
 				
 				int8_t m0, m1, m2, m3;
@@ -288,7 +312,7 @@ int main(int argc, char* argv[])
 				printed = true;
 			}
 			
-			Packet::RadioRx rxPacket;
+			RadioRx rxPacket;
 			int board_id = reverse_packet[0] & 0x0f;
 			
 			rxPacket.set_timestamp(rx_time);
@@ -297,7 +321,6 @@ int main(int argc, char* argv[])
 			rxPacket.set_battery(reverse_packet[3] * 3.3 / 256.0 * 5.0);
 			rxPacket.set_ball(reverse_packet[5] & (1 << 5));
 			rxPacket.set_charged(reverse_packet[4] & 1);
-			
 			rxPacket.set_motor_fault(reverse_packet[5] & 0x1f);
 			
 			for (int i = 0; i < 4; ++i)

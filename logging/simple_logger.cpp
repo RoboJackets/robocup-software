@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 		printf("Can't bind to shared vision port");
 		return 1;
 	}
-	multicast_add(visionSocket, SharedVisionAddress);
+	multicast_add(&visionSocket, SharedVisionAddress);
 	
 	// Create referee socket
 	QUdpSocket refereeSocket;
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 		printf("Can't bind to referee port");
 		return 1;
 	}
-	multicast_add(refereeSocket, RefereeAddress);
+	multicast_add(&refereeSocket, RefereeAddress);
 	
 	// Create log file
 	int fd = creat(logFile.toAscii(), 0666);

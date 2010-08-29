@@ -43,6 +43,8 @@ void Gameplay::Robot::stop()
 
 void Gameplay::Robot::move(Geometry2d::Point pt, bool stopAtEnd)
 {
+    _gameplay->state()->drawLine(pos(), pt);
+	
 	// create a new path
 	Planning::Path newPath;
 
@@ -71,6 +73,8 @@ void Gameplay::Robot::move(Geometry2d::Point pt, bool stopAtEnd)
 
 void Gameplay::Robot::move(const std::vector<Geometry2d::Point>& path, bool stopAtEnd)
 {
+    _gameplay->state()->drawLine(path.back(), pos());
+	
 	// copy path from input
 	_path.clear();
 	_path.points = path;

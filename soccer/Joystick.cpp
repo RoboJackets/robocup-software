@@ -16,6 +16,7 @@ using namespace Packet;
 static const char *devices[] =
 {
 	"/dev/input/by-id/usb-Logitech_Logitech_Cordless_RumblePad_2-joystick",
+	"/dev/input/by-id/usb-Logitech_Logitech_Dual_Action-joystick",
 	
 	// End of list
 	0

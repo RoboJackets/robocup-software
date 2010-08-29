@@ -192,21 +192,25 @@ bool Processor::joystickValid()
 
 void Processor::run()
 {
+	_visionSocket = new QUdpSocket;
+	_radioSocket = new QUdpSocket;
+	_refereeSocket = new QUdpSocket;
+	
 	// Create vision socket
 	if (_simulation)
 	{
 		// The simulator doesn't multicast its vision.  Instead, it sends to two different ports.
 		// Try to bind to the first one and, if that fails, use the second one.
-		if (!_visionSocket.bind(SimVisionPort))
+		if (!_visionSocket->bind(SimVisionPort))
 		{
-			if (!_visionSocket.bind(SimVisionPort + 1))
+			if (!_visionSocket->bind(SimVisionPort + 1))
 			{
 				throw runtime_error("Can't bind to either simulated vision port");
 			}
 		}
 	} else {
 		// Receive multicast packets from shared vision.
-		if (!_visionSocket.bind(SharedVisionPort, QUdpSocket::ShareAddress))
+		if (!_visionSocket->bind(SharedVisionPort, QUdpSocket::ShareAddress))
 		{
 			throw runtime_error("Can't bind to shared vision port");
 		}
@@ -215,7 +219,7 @@ void Processor::run()
 	}
 
 	// Create referee socket
-	if (!_refereeSocket.bind(RefereePort, QUdpSocket::ShareAddress))
+	if (!_refereeSocket->bind(RefereePort, QUdpSocket::ShareAddress))
 	{
 		throw runtime_error("Can't bind to referee port");
 	}
@@ -227,11 +231,11 @@ void Processor::run()
 	{
 		// No channel specified.
 		// Pick the first available one.
-		if (_radioSocket.bind(RadioRxPort))
+		if (_radioSocket->bind(RadioRxPort))
 		{
 			_radio = 0;
 		} else {
-			if (_radioSocket.bind(RadioRxPort + 1))
+			if (_radioSocket->bind(RadioRxPort + 1))
 			{
 				_radio = 1;
 			} else {
@@ -240,7 +244,7 @@ void Processor::run()
 		}
 	} else {
 		// Bind only to the port for the specified channel.
-		if (!_radioSocket.bind(RadioRxPort + _radio))
+		if (!_radioSocket->bind(RadioRxPort + _radio))
 		{
 			throw runtime_error("Can't bind to specified radio port");
 		}
@@ -280,12 +284,12 @@ void Processor::run()
 		// Read vision packets
 		vector<const SSL_DetectionFrame *> rawVision;
 		int timeout = _framePeriod / 1000;
-		while (_syncToVision || _visionSocket.hasPendingDatagrams())
+		while (_syncToVision || _visionSocket->hasPendingDatagrams())
 		{
 			if (_syncToVision)
 			{
 				struct pollfd pfd;
-				pfd.fd = _visionSocket.socketDescriptor();
+				pfd.fd = _visionSocket->socketDescriptor();
 				pfd.events = POLLIN;
 				if (poll(&pfd, 1, timeout) == 0)
 				{
@@ -296,9 +300,9 @@ void Processor::run()
 			}
 			
 			string buf;
-			unsigned int n = _visionSocket.pendingDatagramSize();
+			unsigned int n = _visionSocket->pendingDatagramSize();
 			buf.resize(n);
-			_visionSocket.readDatagram(&buf[0], n);
+			_visionSocket->readDatagram(&buf[0], n);
 			
 			SSL_WrapperPacket *packet = _state.logFrame->add_raw_vision();
 			if (!packet->ParseFromString(buf))
@@ -315,11 +319,11 @@ void Processor::run()
 		}
 		
 		// Read referee packets
-		while (_refereeSocket.hasPendingDatagrams())
+		while (_refereeSocket->hasPendingDatagrams())
 		{
-			unsigned int n = _refereeSocket.pendingDatagramSize();
+			unsigned int n = _refereeSocket->pendingDatagramSize();
 			string str(6, 0);
-			_refereeSocket.readDatagram(&str[0], str.size());
+			_refereeSocket->readDatagram(&str[0], str.size());
 			
 			// Check the size after receiving to discard bad packets
 			if (n != str.size())
@@ -339,12 +343,12 @@ void Processor::run()
 		}
 		
 		// Read radio RX packets
-		while (_radioSocket.hasPendingDatagrams())
+		while (_radioSocket->hasPendingDatagrams())
 		{
-			unsigned int n = _radioSocket.pendingDatagramSize();
+			unsigned int n = _radioSocket->pendingDatagramSize();
 			string buf;
 			buf.resize(n);
-			_radioSocket.readDatagram(&buf[0], n);
+			_radioSocket->readDatagram(&buf[0], n);
 			
 			RadioRx *rx = _state.logFrame->add_radio_rx();
 			if (!rx->ParseFromString(buf))
@@ -532,6 +536,10 @@ void Processor::run()
 			printf("Processor took too long: %d us\n", lastFrameTime);
 		}
 	}
+	
+	delete _refereeSocket;
+	delete _radioSocket;
+	delete _visionSocket;
 }
 
 void Processor::sendRadioData()
@@ -590,7 +598,7 @@ void Processor::sendRadioData()
 	// Send the packet
 	std::string out;
 	_state.logFrame->radio_tx().SerializeToString(&out);
-	_radioSocket.writeDatagram(&out[0], out.size(), LocalAddress, RadioTxPort + _radio);
+	_radioSocket->writeDatagram(&out[0], out.size(), LocalAddress, RadioTxPort + _radio);
 }
 
 void Processor::defendPlusX(bool value)
