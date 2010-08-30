@@ -1,4 +1,5 @@
 #include <LogViewer.hpp>
+#include <debug.hpp>
 
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <boost/make_shared.hpp>
@@ -23,6 +24,8 @@ void usage(const char *prog)
 
 int main(int argc, char *argv[])
 {
+	//FIXME - debugInit with specified soccer executable?
+	
 	QApplication app(argc, argv);
 	
 	if (argc != 2)

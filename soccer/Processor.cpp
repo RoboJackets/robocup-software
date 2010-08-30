@@ -29,6 +29,7 @@
 using namespace std;
 using namespace boost;
 using namespace Packet;
+using namespace google::protobuf;
 
 static QHostAddress LocalAddress(QHostAddress::LocalHost);
 
@@ -43,6 +44,7 @@ Processor::Processor(Configuration *config, bool sim, int radio)
 	_externalReferee = true;
 	_framerate = 0;
 	firstLogTime = 0;
+	_useHalfField = false;
 
 	_simulation = sim;
 	_radio = radio;
@@ -271,6 +273,7 @@ void Processor::run()
 		// Make a new log frame
 		_state.logFrame = make_shared<LogFrame>();
 		_state.logFrame->set_start_time(startTime);
+		_state.logFrame->set_use_half_field(_useHalfField);
 		
 		// Clear radio commands
 		for (size_t r = 0; r < Constants::Robots_Per_Team; ++r)
@@ -314,7 +317,46 @@ void Processor::run()
 			curStatus.lastVisionTime = Utils::timestamp();
 			if (packet->has_detection())
 			{
-				rawVision.push_back(&packet->detection());
+				SSL_DetectionFrame *det = packet->mutable_detection();
+				
+				if (_state.logFrame->use_half_field())
+				{
+					// Remove balls on the excluded half of the field
+					google::protobuf::RepeatedPtrField<SSL_DetectionBall> *balls = det->mutable_balls();
+					for (int i = 0; i < balls->size(); ++i)
+					{
+						float x = balls->Get(i).x();
+						if ((_defendPlusX && x < 0) || (!_defendPlusX && x > 0))
+						{
+							balls->SwapElements(i, balls->size() - 1);
+							balls->RemoveLast();
+							--i;
+						}
+					}
+					
+					// Remove robots on the excluded half of the field
+					google::protobuf::RepeatedPtrField<SSL_DetectionRobot> *robots[2] =
+					{
+						det->mutable_robots_yellow(),
+						det->mutable_robots_blue()
+					};
+					
+					for (int team = 0; team < 2; ++team)
+					{
+						for (int i = 0; i < robots[team]->size(); ++i)
+						{
+							float x = robots[team]->Get(i).x();
+							if ((_defendPlusX && x < 0) || (!_defendPlusX && x > 0))
+							{
+								robots[team]->SwapElements(i, robots[team]->size() - 1);
+								robots[team]->RemoveLast();
+								--i;
+							}
+						}
+					}
+				}
+				
+				rawVision.push_back(det);
 			}
 		}
 		
@@ -473,9 +515,10 @@ void Processor::run()
 			_state.logFrame->add_debug_layers(str.toStdString());
 		}
 		
-		// Filtered pose
-		BOOST_FOREACH(const SystemState::Robot &r, _state.self)
+		// Our robots
+		for (unsigned int i = 0; i < Constants::Robots_Per_Team; ++i)
 		{
+			const SystemState::Robot &r = _state.self[i];
 			if (r.valid)
 			{
 				LogFrame::Robot *log = _state.logFrame->add_self();
@@ -483,9 +526,18 @@ void Processor::run()
 				log->set_shell(r.shell);
 				log->set_angle(r.angle);
 				log->set_has_ball(r.hasBall);
+				
+				const vector<void *> &src = _gameplayModule->self[i]->commandTrace();
+				RepeatedField<uint64> *dst = log->mutable_command_trace();
+				dst->Reserve(src.size());
+				for (unsigned int j = 0; j < src.size(); ++j)
+				{
+					dst->Add((uint64)src[j]);
+				}
 			}
 		}
 		
+		// Opponent robots
 		BOOST_FOREACH(const SystemState::Robot &r, _state.opp)
 		{
 			if (r.valid)
@@ -498,6 +550,7 @@ void Processor::run()
 			}
 		}
 		
+		// Ball
 		if (_state.ball.valid)
 		{
 			LogFrame::Ball *log = _state.logFrame->mutable_ball();
@@ -512,7 +565,7 @@ void Processor::run()
 		sendRadioData();
 
 		// Write to the log
-		logger.addFrame(_state.logFrame);
+		_logger.addFrame(_state.logFrame);
 		
 		_loopMutex.unlock();
 		

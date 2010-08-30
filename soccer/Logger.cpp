@@ -99,13 +99,13 @@ void Logger::addFrame(shared_ptr<LogFrame> frame)
 	++_nextFrameNumber;
 }
 
-shared_ptr<LogFrame> Logger::lastFrame()
+shared_ptr<LogFrame> Logger::lastFrame() const
 {
 	QMutexLocker locker(&_mutex);
 	return _history[(_nextFrameNumber - 1) % _history.size()];
 }
 
-int Logger::getFrames(int start, vector<shared_ptr<LogFrame> > &frames)
+int Logger::getFrames(int start, vector<shared_ptr<LogFrame> > &frames) const
 {
 	QMutexLocker locker(&_mutex);
 	

@@ -1,6 +1,10 @@
 #include "Robot.hpp"
 #include "GameplayModule.hpp"
 #include <gameplay/planning/bezier.hpp>
+#include <Utils.hpp>
+
+#include <execinfo.h>
+#include <stdexcept>
 
 using namespace std;
 using namespace Geometry2d;
@@ -26,6 +30,19 @@ Gameplay::Robot::Robot(GameplayModule *gameplay, int id, bool self)
 
 	_planner.setDynamics(&_dynamics);
 	_planner.maxIterations(250);
+}
+
+void Gameplay::Robot::setCommandTrace()
+{
+	void *trace[9];
+	int n = backtrace(trace, sizeof(trace) / sizeof(trace[0]));
+	
+	// Skip the call into this function
+	_commandTrace.resize(n - 1);
+	for (int i = 0; i < n - 1; ++i)
+	{
+		_commandTrace[i] = trace[i + 1];
+	}
 }
 
 void Gameplay::Robot::resetMotionCommand()
@@ -71,7 +88,7 @@ void Gameplay::Robot::move(Geometry2d::Point pt, bool stopAtEnd)
 //	packet()->cmd.planner = MotionCmd::RRT;
 }
 
-void Gameplay::Robot::move(const std::vector<Geometry2d::Point>& path, bool stopAtEnd)
+void Gameplay::Robot::move(const vector<Geometry2d::Point>& path, bool stopAtEnd)
 {
     _gameplay->state()->drawLine(path.back(), pos());
 	
@@ -83,7 +100,7 @@ void Gameplay::Robot::move(const std::vector<Geometry2d::Point>& path, bool stop
 	executeMove(stopAtEnd);
 }
 
-void Gameplay::Robot::bezierMove(const std::vector<Geometry2d::Point>& controls,
+void Gameplay::Robot::bezierMove(const vector<Geometry2d::Point>& controls,
 		MotionCmd::OrientationType facing,
 		MotionCmd::PathEndType endpoint) {
 
@@ -125,12 +142,14 @@ void Gameplay::Robot::bezierMove(const std::vector<Geometry2d::Point>& controls,
 
 void Gameplay::Robot::executeMove(bool stopAtEnd)
 {
+	setCommandTrace();
+	
 	// given a path, determine what the best point to use as a
 	// target point is, and assign to packet
 
 	if (_path.empty()) {
 		// THIS IS VERY BAD AND SHOULD NOT OCCUR
-		throw std::runtime_error("In Gameplay::Robot::executeMove: empty path!");
+		throw runtime_error("In Gameplay::Robot::executeMove: empty path!");
 	}
 
 	//dynamics path
@@ -169,7 +188,7 @@ void Gameplay::Robot::directVelocityCommands(const Geometry2d::Point& trans, dou
 	packet()->cmd.direct_trans_vel = trans;
 }
 
-void Gameplay::Robot::directMotorCommands(const std::vector<int8_t>& speeds) {
+void Gameplay::Robot::directMotorCommands(const vector<int8_t>& speeds) {
 	packet()->cmd.planner = MotionCmd::DirectMotor;
 	packet()->cmd.direct_motor_cmds = speeds;
 }

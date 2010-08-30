@@ -189,6 +189,14 @@ namespace Geometry2d
 				x = newX;
 				y = newY;
 			}
+			
+			// Like rotate(), but returns a new point instead of changing *this
+			Point rotated(float angle)
+			{
+				float newX = x * cos(angle * DegreesToRadians) - y * sin(angle * DegreesToRadians);
+				float newY = y * cos(angle * DegreesToRadians) + x * sin(angle * DegreesToRadians);
+				return Point(newX, newY);
+			}
 
 			/**
 			* static function to use rotate

@@ -17,6 +17,7 @@
 
 #include "PlayConfigTab.hpp"
 #include "MainWindow.hpp"
+#include "debug.hpp"
 
 using namespace std;
 
@@ -38,6 +39,8 @@ void usage(const char* prog)
 
 int main (int argc, char* argv[])
 {
+	debugInit(argv[0]);
+	
 	// Seed the large random number generator
 	long int seed = 0;
 	int fd = open("/dev/random", O_RDONLY);
@@ -204,7 +207,7 @@ int main (int argc, char* argv[])
 		fprintf(stderr, "Not writing log file\n");
 	} else {
 		QString logFile = QString("logs/") + QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
-		if (!processor->logger.open(logFile))
+		if (!processor->openLog(logFile))
 		{
 			printf("Failed to open %s: %m\n", (const char *)logFile.toAscii());
 		}

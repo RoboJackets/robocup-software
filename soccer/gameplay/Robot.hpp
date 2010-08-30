@@ -165,14 +165,19 @@ namespace Gameplay
 			 */
 			void approachOpp(Robot * opp, bool value);
 
-			// External access functions for utility reasons
-
-			/** adds the pose to the history in the state variable */
-			void updatePoseHistory();
+			const std::vector<void *> &commandTrace() const
+			{
+			    return _commandTrace;
+			}
 
 		protected:
 			GameplayModule *_gameplay;
 
+			// Stores a stack trace in _commandTrace
+			void setCommandTrace();
+			
+			std::vector<void *> _commandTrace;
+			
 			int _id;
 			bool _self;
 			SystemState::Robot *_packet;

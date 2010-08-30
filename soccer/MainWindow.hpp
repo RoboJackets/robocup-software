@@ -8,7 +8,6 @@
 #include <QTime>
 
 #include <FieldView.hpp>
-#include <configuration/ConfigFileTab.hpp>
 
 #include "Processor.hpp"
 #include "ui_MainWindow.h"
@@ -76,6 +75,7 @@ class MainWindow : public QMainWindow
 		// Field side
 		void on_actionDefendPlusX_triggered();
 		void on_actionDefendMinusX_triggered();
+		void on_actionUseHalf_toggled(bool value);
 		
 		// Field rotation
 		void on_action0_triggered();
@@ -174,7 +174,6 @@ class MainWindow : public QMainWindow
 		bool _autoExternalReferee;
 
 		QTimer _updateTimer;
-		ConfigFileTab* _configFileTab;
 		PlayConfigTab *_playConfigTab;
 		
 		// Tree items that are not in LogFrame

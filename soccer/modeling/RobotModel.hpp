@@ -6,7 +6,6 @@
 
 #include <boost/shared_ptr.hpp>
 #include <Geometry2d/Point.hpp>
-#include <framework/ConfigFile.hpp>
 #include <cblas.h>
 #include "BLASWrap/blaswrap.h"
 #include "difference_kalman.hpp"

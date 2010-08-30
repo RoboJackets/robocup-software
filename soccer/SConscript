@@ -12,6 +12,7 @@ srcs = [
 	'FieldView.cpp',
 	'SimFieldView.cpp',
 	'Configuration.cpp',
+	'debug.cpp',
 
 	'framework/Obstacle.cpp',
 	'framework/Path.cpp',
@@ -126,18 +127,17 @@ srcs = [
 
 uics = env.Uic4([
 	'ui/MainWindow.ui',
-	'ui/PlayConfigTab.ui',
-	'ui/ConfigFileTab.ui'
+	'ui/PlayConfigTab.ui'
 ])
 
 e = env.Clone()
 e.Append(CPPPATH=['#/soccer', Dir('ui')])
-e.Append(LIBS=['blas', 'lapack'])
+e.Append(LIBS=['blas', 'lapack', 'bfd'])
 
 p = e.Program('soccer', srcs)
 env.Depends(p, uics)
 e.Install(exec_dir, p)
 
-p = e.Program('log_viewer', ['LogViewer.cpp', 'FieldView.cpp', 'ProtobufTree.cpp'])
+p = e.Program('log_viewer', ['LogViewer.cpp', 'FieldView.cpp', 'ProtobufTree.cpp', 'debug.cpp'])
 env.Depends(p, env.Uic4('ui/LogViewer.ui'))
 e.Install(exec_dir, p)

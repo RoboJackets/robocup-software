@@ -3,7 +3,6 @@
 #include <boost/array.hpp>
 
 #include <Constants.hpp>
-#include <framework/ConfigFile.hpp>
 #include <motion/Robot.hpp>
 
 class Configuration;

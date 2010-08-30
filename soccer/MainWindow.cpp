@@ -1,8 +1,6 @@
 // kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 // vim:ai ts=4 et
 
-//FIXME - One time the display quit updating, like the timer died.  GUI was OK but frame # did not advance, etc.  Status was SIMULATION.
-
 #include "MainWindow.hpp"
 
 #include "PlayConfigTab.hpp"
@@ -153,9 +151,9 @@ void MainWindow::processor(Processor* value)
 
 void MainWindow::logFileChanged()
 {
-	if (_processor->logger.recording())
+	if (_processor->logger().recording())
 	{
-		_logFile->setText(_processor->logger.filename());
+		_logFile->setText(_processor->logger().filename());
 	} else {
 		_logFile->setText("Not Recording");
 	}
@@ -215,14 +213,14 @@ void MainWindow::updateViews()
 		_procFPS->setText(QString("Proc: %1 fps").arg(_processor->framerate(), 0, 'f', 1));
 		
 		_logMemory->setText(QString("Log: %1/%2 %3 kiB").arg(
-			QString::number(_processor->logger.numFrames()),
-			QString::number(_processor->logger.maxFrames()),
-			QString::number((_processor->logger.spaceUsed() + 512) / 1024)
+			QString::number(_processor->logger().numFrames()),
+			QString::number(_processor->logger().maxFrames()),
+			QString::number((_processor->logger().spaceUsed() + 512) / 1024)
 		));
 	}
 	
 	// Advance log playback time
-	int liveFrameNumber = _processor->logger.lastFrameNumber();
+	int liveFrameNumber = _processor->logger().lastFrameNumber();
 	if (_live)
 	{
 		_doubleFrameNumber = liveFrameNumber;
@@ -230,8 +228,8 @@ void MainWindow::updateViews()
 		double rate = _ui.playbackRate->value();
 		_doubleFrameNumber += rate / framerate;
 		
-		int minFrame = _processor->logger.firstFrameNumber();
-		int maxFrame = _processor->logger.lastFrameNumber();
+		int minFrame = _processor->logger().firstFrameNumber();
+		int maxFrame = _processor->logger().lastFrameNumber();
 		if (_doubleFrameNumber < minFrame)
 		{
 			_doubleFrameNumber = minFrame;
@@ -242,7 +240,7 @@ void MainWindow::updateViews()
 	}
 	
 	// Read recent history from the log
-	_processor->logger.getFrames(frameNumber(), _history);
+	_processor->logger().getFrames(frameNumber(), _history);
 	
 	// Get the frame at the log playback time
 	const shared_ptr<LogFrame> currentFrame = _history[0];
@@ -262,7 +260,7 @@ void MainWindow::updateViews()
 	
 	// Check if any debug layers have been added
 	// (layers should never be removed)
-	const shared_ptr<LogFrame> liveFrame = _processor->logger.lastFrame();
+	const shared_ptr<LogFrame> liveFrame = _processor->logger().lastFrame();
 	if (liveFrame && liveFrame->debug_layers_size() > _ui.debugLayers->count())
 	{
 		// Add the missing layers and turn them on
@@ -410,7 +408,7 @@ void MainWindow::updateStatus()
 	
 	//FIXME - Can we validate or flag the playbook?
 	
-	if (!sim && !_processor->logger.recording())
+	if (!sim && !_processor->logger().recording())
 	{
 		// We should record logs during competition
 		status("NOT RECORDING", Status_Warning);
@@ -498,6 +496,11 @@ void MainWindow::on_action270_triggered()
 	_ui.fieldView->rotate(3);
 }
 
+void MainWindow::on_actionUseHalf_toggled(bool value)
+{
+	_processor->useHalfField(value);
+}
+
 void MainWindow::on_actionCenterBall_triggered()
 {
 	SimCommand cmd;
@@ -582,7 +585,7 @@ void MainWindow::on_logStop_clicked()
 void MainWindow::on_logFirst_clicked()
 {
 	on_logStop_clicked();
-	frameNumber(_processor->logger.firstFrameNumber());
+	frameNumber(_processor->logger().firstFrameNumber());
 }
 
 void MainWindow::on_logLive_clicked()

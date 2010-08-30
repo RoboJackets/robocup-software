@@ -12,7 +12,7 @@
 class Logger;
 
 /** class that performs drawing of log data onto the field */
-class FieldView : public QGLWidget
+class FieldView : public QWidget
 {
 	public:
 		FieldView(QWidget* parent = 0);
@@ -49,6 +49,9 @@ class FieldView : public QGLWidget
 		bool showRawRobots;
 		bool showRawBalls;
 		bool showCoords;
+		
+		// Shell ID of robot to show command trace or -1 if none.
+		int showCommandTrace;
 		
 	protected:
 		virtual void paintEvent(QPaintEvent* pe);

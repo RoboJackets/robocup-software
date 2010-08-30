@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 
+#include <debug.hpp>
 #include <Network.hpp>
 #include <LogUtils.hpp>
 #include <Constants.hpp>
@@ -27,18 +28,20 @@ using namespace Packet;
 QColor ballColor(0xff, 0x90, 0);
 
 FieldView::FieldView(QWidget* parent) :
-	QGLWidget(parent)
+	QWidget(parent)
 {
 	showRawRobots = false;
 	showRawBalls = false;
 	showCoords = false;
 	_rotate = 0;
 	_history = 0;
+	showCommandTrace = -1;
 
 	// Green background
 	QPalette p = palette();
 	p.setColor(QPalette::Window, QColor(0, 85.0, 0));
 	setPalette(p);
+	setAutoFillBackground(true);
 }
 
 shared_ptr<LogFrame> FieldView::currentFrame()
@@ -207,6 +210,15 @@ void FieldView::drawTeamSpace(QPainter& p)
 	// Get the latest LogFrame
 	const LogFrame *frame = _history->at(0).get();
 	
+	// Block off half the field
+	if (frame->use_half_field())
+	{
+		const float FX = Constants::Floor::Width / 2;
+		const float FY1 = Constants::Field::Length / 2;
+		const float FY2 = Constants::Field::Length + Constants::Field::Border;
+		p.fillRect(QRectF(QPointF(-FX, FY1), QPointF(FX, FY2)), QColor(0, 0, 0, 128));
+	}
+	
 	if (showCoords)
 	{
 		drawCoords(p);
@@ -290,7 +302,18 @@ void FieldView::drawTeamSpace(QPainter& p)
 	}
 	p.setBrush(Qt::NoBrush);
 
-	// Filtered robot positions
+	// Text positioning vectors
+	QPointF rtX = qpointf(Geometry2d::Point(0, 1).rotated(-_rotate * 90));
+	QPointF rtY = qpointf(Geometry2d::Point(-1, 0).rotated(-_rotate * 90));
+	
+
+	// Opponent robots
+	BOOST_FOREACH(const LogFrame::Robot &r, frame->opp())
+	{
+		drawRobot(p, !frame->blue_team(), r.shell(), qpointf(r.pos()), r.angle(), r.has_ball());
+	}
+	
+	// Our robots
 	int manualID = frame->manual_id();
 	BOOST_FOREACH(const LogFrame::Robot &r, frame->self())
 	{
@@ -304,11 +327,18 @@ void FieldView::drawTeamSpace(QPainter& p)
 			const float r = Constants::Robot::Radius + .05;
 			p.drawEllipse(center, r, r);
 		}
-	}
-
-	BOOST_FOREACH(const LogFrame::Robot &r, frame->opp())
-	{
-		drawRobot(p, !frame->blue_team(), r.shell(), qpointf(r.pos()), r.angle(), r.has_ball());
+		
+		// Command trace
+		if (r.shell() == showCommandTrace)
+		{
+			QPointF cpt = center - rtX * 0.2 - rtY * (Constants::Robot::Radius + 0.1);
+			QStringList strs = debugTrace(r.command_trace());
+			BOOST_FOREACH(const QString &str, strs)
+			{
+				drawText(p, cpt, str, false);
+				cpt -= rtY * 0.1;
+			}
+		}
 	}
 
 	// Current ball position and velocity

@@ -6,9 +6,11 @@
 #include <gameplay/behaviors/positions/Goalie.hpp>
 #include <gameplay/Play.hpp>
 #include <Constants.hpp>
+#include <protobuf/LogFrame.pb.h>
 
 #include <stdio.h>
 #include <boost/foreach.hpp>
+#include <boost/make_shared.hpp>
 
 using namespace std;
 using namespace boost;
@@ -84,6 +86,12 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_goalArea[1] = ObstaclePtr(new CircleObstacle(Geometry2d::Point(-halfFlat, 0), radius));
 	_goalArea[2] = ObstaclePtr(new CircleObstacle(Geometry2d::Point(halfFlat, 0), radius));
 
+	_otherHalf = make_shared<PolygonObstacle>();
+	_otherHalf->polygon.vertices.push_back(Geometry2d::Point(-x, y1));
+	_otherHalf->polygon.vertices.push_back(Geometry2d::Point(-x, y2));
+	_otherHalf->polygon.vertices.push_back(Geometry2d::Point(x, y2));
+	_otherHalf->polygon.vertices.push_back(Geometry2d::Point(x, y1));
+	
 	// Create robots
 	for (size_t i = 0; i < Constants::Robots_Per_Team; ++i)
 	{
@@ -222,6 +230,11 @@ void Gameplay::GameplayModule::run()
 			if (_state->gameState.stayOnSide())
 			{
 				obstacles.add(_sideObstacle);
+			}
+			
+			if (_state->logFrame->use_half_field())
+			{
+				obstacles.add(_otherHalf);
 			}
 
 			// Add non floor obstacles

@@ -49,13 +49,16 @@ message LogFrame
 	repeated DebugText debug_texts = 9;
 	repeated string debug_layers = 10;
 
-	// Filtered world state
+	// Filtered world state and commands
 	message Robot
 	{
 		required Point pos = 1;
 		required int32 shell = 2;
 		required float angle = 3;
 		optional bool has_ball = 4;
+		
+		// Stack trace leading up to where the robot's final command was set
+		repeated uint64 command_trace = 5;
 	}
 
 	message Ball
@@ -79,5 +82,7 @@ message LogFrame
 
 	// Name of the current play
 	optional string play = 17;
+	
+	// True if only using our half of the field
+	optional bool use_half_field = 18;
 }
-

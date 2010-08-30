@@ -2,8 +2,6 @@
 // vim:ai ts=4 et
 #pragma once
 
-#include <framework/ConfigFile.hpp>
-
 #include <QString>
 #include <vector>
 #include <list>

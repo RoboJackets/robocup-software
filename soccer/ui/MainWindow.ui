@@ -1568,16 +1568,11 @@
     <property name="title">
      <string>&amp;View</string>
     </property>
-    <widget class="QMenu" name="menu_Rotation">
-     <property name="title">
-      <string>R&amp;otation</string>
-     </property>
-     <addaction name="action0"/>
-     <addaction name="action90"/>
-     <addaction name="action180"/>
-     <addaction name="action270"/>
-    </widget>
-    <addaction name="menu_Rotation"/>
+    <addaction name="action0"/>
+    <addaction name="action90"/>
+    <addaction name="action180"/>
+    <addaction name="action270"/>
+    <addaction name="separator"/>
     <addaction name="actionRawBalls"/>
     <addaction name="actionRawRobots"/>
     <addaction name="actionCoords"/>
@@ -1586,22 +1581,13 @@
     <property name="title">
      <string>&amp;Field</string>
     </property>
-    <widget class="QMenu" name="menuDefend_Goal">
-     <property name="title">
-      <string>Defend &amp;Goal</string>
-     </property>
-     <addaction name="actionDefendMinusX"/>
-     <addaction name="actionDefendPlusX"/>
-    </widget>
-    <widget class="QMenu" name="menuTeam">
-     <property name="title">
-      <string>&amp;Team Color</string>
-     </property>
-     <addaction name="actionTeamYellow"/>
-     <addaction name="actionTeamBlue"/>
-    </widget>
-    <addaction name="menuDefend_Goal"/>
-    <addaction name="menuTeam"/>
+    <addaction name="actionDefendMinusX"/>
+    <addaction name="actionDefendPlusX"/>
+    <addaction name="separator"/>
+    <addaction name="actionTeamYellow"/>
+    <addaction name="actionTeamBlue"/>
+    <addaction name="separator"/>
+    <addaction name="actionUseHalf"/>
    </widget>
    <widget class="QMenu" name="menu_Simulator">
     <property name="title">
@@ -1638,7 +1624,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>0</string>
+    <string>0 degrees</string>
    </property>
   </action>
   <action name="action90">
@@ -1646,7 +1632,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>90</string>
+    <string>90 degrees</string>
    </property>
   </action>
   <action name="action180">
@@ -1654,7 +1640,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>180</string>
+    <string>180 degrees</string>
    </property>
   </action>
   <action name="action270">
@@ -1662,7 +1648,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>270</string>
+    <string>270 degrees</string>
    </property>
   </action>
   <action name="actionRawBalls">
@@ -1689,7 +1675,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Vision -X</string>
+    <string>Defend Vision -X</string>
    </property>
   </action>
   <action name="actionDefendPlusX">
@@ -1697,7 +1683,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Vision +X</string>
+    <string>Defend Vision +X</string>
    </property>
   </action>
   <action name="actionTeamYellow">
@@ -1755,6 +1741,35 @@
   <action name="actionUnforce">
    <property name="text">
     <string>Stop &amp;Forcing Play</string>
+   </property>
+  </action>
+  <action name="actionUseHalf">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use &amp;Half Field</string>
+   </property>
+  </action>
+  <action name="actionUseMinusX">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use Only -X</string>
+   </property>
+  </action>
+  <action name="actionUsePlusX">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use Only +X</string>
+   </property>
+  </action>
+  <action name="actionCommand_Trace">
+   <property name="text">
+    <string>Command &amp;Trace</string>
    </property>
   </action>
  </widget>

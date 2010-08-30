@@ -21,8 +21,6 @@
 #include <motion/PointController.hpp>
 #include <motion/WheelController.hpp>
 
-#include <framework/ConfigFile.hpp>
-
 #include "RefereeModule.hpp"
 
 class Configuration;
@@ -74,7 +72,7 @@ class Processor: public QThread
 		void manualID(int value);
 		int manualID()
 		{
-			QMutexLocker locker(&_loopMutex);
+			QMutexLocker lock(&_loopMutex);
 			return _manualID;
 		}
 		
@@ -104,13 +102,11 @@ class Processor: public QThread
 			return _simulation;
 		}
 
-		Logger logger;
-		
 		void defendPlusX(bool value);
 		
 		Status status()
 		{
-			QMutexLocker locker(&_statusMutex);
+			QMutexLocker lock(&_statusMutex);
 			return _status;
 		}
 		
@@ -121,6 +117,29 @@ class Processor: public QThread
 		{
 			return _framerate;
 		}
+		
+		const Logger &logger() const
+		{
+			return _logger;
+		}
+		
+		bool openLog(const QString &filename)
+		{
+			return _logger.open(filename);
+		}
+		
+		void closeLog()
+		{
+			_logger.close();
+		}
+		
+		// Use all/part of the field
+		void useHalfField(bool value)
+		{
+			_useHalfField = value;
+		}
+		
+		////////
 		
 		// Time of the first LogFrame
 		uint64_t firstLogTime;
@@ -138,6 +157,10 @@ class Processor: public QThread
 		/** Used to start and stop the thread **/
 		volatile bool _running;
 
+		Logger _logger;
+		
+		bool _useHalfField;
+		
 		// True if we are running with a simulator.
 		// This changes network communications.
 		bool _simulation;

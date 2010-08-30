@@ -6,7 +6,6 @@
 #include <QMutex>
 #include <set>
 
-#include <framework/ConfigFile.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 
@@ -104,6 +103,9 @@ namespace Gameplay
 			Geometry2d::TransformMatrix _ballMatrix;
 			Geometry2d::TransformMatrix _centerMatrix;
 			Geometry2d::TransformMatrix _oppMatrix;
+			
+			// Obstacles to prevent using half the field
+			boost::shared_ptr<PolygonObstacle> _otherHalf;
 			
 			ObstaclePtr _sideObstacle;
 			

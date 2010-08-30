@@ -40,14 +40,14 @@ class Logger
 		void close();
 		
 		// Returns the number of available frames
-		int numFrames()
+		int numFrames() const
 		{
 			QMutexLocker locker(&_mutex);
 			return std::min(_nextFrameNumber, (int)_history.size());
 		}
 		
 		// Returns the size of the circular buffer
-		int maxFrames()
+		int maxFrames() const
 		{
 			QMutexLocker locker(&_mutex);
 			return _history.size();
@@ -55,7 +55,7 @@ class Logger
 		
 		// Returns the sequence number of the earliest available frame.
 		// Returns -1 if no frames have been added.
-		int firstFrameNumber()
+		int firstFrameNumber() const
 		{
 			QMutexLocker locker(&_mutex);
 			if (_nextFrameNumber == 0)
@@ -68,42 +68,42 @@ class Logger
 		
 		// Returns the sequence number of the most recently added frame.
 		// Returns -1 if no frames have been added.
-		int lastFrameNumber()
+		int lastFrameNumber() const
 		{
 			QMutexLocker locker(&_mutex);
 			return _nextFrameNumber - 1;
 		}
 		
-		boost::shared_ptr<Packet::LogFrame> lastFrame();
+		boost::shared_ptr<Packet::LogFrame> lastFrame() const;
 		
 		void addFrame(boost::shared_ptr<Packet::LogFrame> frame);
 		
 		// Gets frames.size() frames starting at <i> and working backwards.
 		// Clears any frames that couldn't be populated.
 		// Returns the number of frames copied.
-		int getFrames(int start, std::vector<boost::shared_ptr<Packet::LogFrame> > &frames);
+		int getFrames(int start, std::vector<boost::shared_ptr<Packet::LogFrame> > &frames) const;
 		
 		// Returns the amount of memory used by all LogFrames in the history.
-		int spaceUsed()
+		int spaceUsed() const
 		{
 			QMutexLocker locker(&_mutex);
 			return _spaceUsed;
 		}
 		
-		bool recording()
+		bool recording() const
 		{
 			QMutexLocker locker(&_mutex);
 			return _fd >= 0;
 		}
 		
-		// It's expected that only the GUI thread will open/close or ask for the filename.
-		QString filename()
+		QString filename() const
 		{
+			QMutexLocker locker(&_mutex);
 			return _filename;
 		}
 		
 	private:
-		QMutex _mutex;
+		mutable QMutex _mutex;
 		
 		QString _filename;
 		

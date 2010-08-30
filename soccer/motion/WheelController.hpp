@@ -7,7 +7,6 @@
 #include <Constants.hpp>
 #include <Configuration.hpp>
 #include <framework/SystemState.hpp>
-#include <framework/ConfigFile.hpp>
 
 namespace Motion {
 
