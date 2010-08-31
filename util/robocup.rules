@@ -3,17 +3,10 @@
 
 SUBSYSTEM!="usb_device", ACTION!="add", GOTO="robocup_rules_end"
 
-# These are for the AT90USB bootloader
-SYSFS{idVendor}=="03eb", SYSFS{idProduct}=="2ff7", MODE="0660", GROUP="plugdev"
-SYSFS{idVendor}=="03eb", SYSFS{idProduct}=="2ff9", MODE="0660", GROUP="plugdev"
+# Base station (AT90USB1287 bootloader)
+SYSFS{idVendor}=="03eb", SYSFS{idProduct}=="2ffb", MODE="0660", GROUP="plugdev"
 
-# This is actually the base station
+# Base station (normal operation)
 SYSFS{idVendor}=="3141", SYSFS{idProduct}=="0004", MODE="0660", GROUP="plugdev"
-
-# Wired
-KERNEL=="js[0-9]*", SUBSYSTEMS=="usb", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c216", SYMLINK+="input/robocupPad"
-
-# Wireless
-KERNEL=="js[0-9]*", SUBSYSTEMS=="usb", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="c219", SYMLINK+="input/robocupPad"
 
 LABEL="robocup_rules_end"
