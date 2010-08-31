@@ -5,6 +5,8 @@ Clean('.', 'build')
 exec_dir = Dir('#/run')
 Export('exec_dir')
 
+build_dir = Dir('#/build')
+
 env = Environment()
 
 # C++ compiler
@@ -12,10 +14,19 @@ env = Environment()
 env.MergeFlags('-O2 -g3 -Wall -DBOOST_UBLAS_NDEBUG')
 env.Append(CPPPATH = [Dir('#/common')])
 
-# Enable profiling if requested
-AddOption('--pg', action='store_true', dest='profile', default=False, help='Robocup: Build for profiling')
-if GetOption('profile'):
-	print '*** Building for profiling'
+# Variables
+var_file = build_dir.File('variables.cache').abspath
+vv = Variables(var_file)
+vv.AddVariables(
+	BoolVariable('profile', 'build for profiling', False)
+)
+vv.Update(env)
+vv.Save(var_file, env)
+Help(vv.GenerateHelpText(env))
+
+# Profiling
+if env['profile']:
+	print '*** Profiling enabled'
 	env.Append(CPPFLAGS='-pg ', LINKFLAGS='-pg ')
 
 # Qt
@@ -36,8 +47,8 @@ env.SourceCode(".", None)
 env32 = env.Clone()
 
 # Search paths for native code
-env.Append(LIBPATH=[Dir('build/common')])
-env.Append(CPPPATH=[Dir('#/build/common')])
+env.Append(LIBPATH=[build_dir.Dir('common')])
+env.Append(CPPPATH=[build_dir.Dir('common')])
 
 import platform
 if platform.machine() == 'x86_64':
@@ -45,33 +56,33 @@ if platform.machine() == 'x86_64':
 	# available as 32-bit binaries.
 	env32.Append(CPPFLAGS='-m32')
 	env32.Append(LINKFLAGS='-m32')
-	env32.Append(LIBPATH=[Dir('build/common32'), Dir('SoccSim/lib/32-on-64/lucid_amd64')])
-	env32.Append(CPPPATH=[Dir('#/build/common32')])
+	env32.Append(LIBPATH=[build_dir.Dir('common32'), Dir('#/SoccSim/lib/32-on-64/lucid_amd64')])
+	env32.Append(CPPPATH=[build_dir.Dir('common32')])
 
 	# Ubuntu 10.04 32-bit compatibility:
 	# Copy the 32-bit libprotobuf to the run directory and add let the dynamic linker find it.
 	env32.Append(RPATH=[Literal('\\$$ORIGIN')])
-	env32.Install(exec_dir, 'SoccSim/lib/32-on-64/lucid_amd64/libprotobuf.so.5')
+	env32.Install(exec_dir, '#/SoccSim/lib/32-on-64/lucid_amd64/libprotobuf.so.5')
 
 	# Build a 32-bit version of common for SoccSim
 	Export({'env': env32})
-	SConscript('common/SConscript', variant_dir='build/common32', duplicate=0)
+	SConscript('common/SConscript', variant_dir=build_dir.Dir('common32'), duplicate=0)
 else:
 	# This is a 32-bit system, so we only need one version of common
 	env32 = env
 
-def build_dir(dir):
-	SConscript(dir + '/SConscript', variant_dir='build/' + dir, duplicate=0)
+def do_build(dir):
+	SConscript(dir + '/SConscript', variant_dir=build_dir.Dir(dir), duplicate=0)
 
 Export('env')
-build_dir('common')
+do_build('common')
 
 Export({'env': env32})
-build_dir('SoccSim')
+do_build('SoccSim')
 
 Export('env')
 for dir in ['logging', 'radio', 'soccer']:
-	build_dir(dir)
+	do_build(dir)
 
 # Build sslrefbox with its original makefile (no dependency checking)
 env.Command('sslrefbox/sslrefbox', 'sslrefbox/Makefile', 'make -C sslrefbox')
