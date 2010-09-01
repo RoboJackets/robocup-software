@@ -35,7 +35,6 @@ FieldView::FieldView(QWidget* parent) :
 	showCoords = false;
 	_rotate = 0;
 	_history = 0;
-	showCommandTrace = -1;
 
 	// Green background
 	QPalette p = palette();
@@ -64,7 +63,30 @@ void FieldView::rotate(int value)
 	update();
 }
 
-void FieldView::paintEvent(QPaintEvent* event)
+void FieldView::mouseDoubleClickEvent(QMouseEvent* e)
+{
+	Geometry2d::Point pos = _worldToTeam * _screenToWorld * e->posF();
+	
+	shared_ptr<LogFrame> frame = currentFrame();
+	if (e->button() == Qt::LeftButton && frame)
+	{
+		BOOST_FOREACH(const LogFrame::Robot &r, frame->self())
+		{
+			if (pos.nearPoint(r.pos(), Constants::Robot::Radius))
+			{
+				if (showCommandTrace.find(r.shell()) != showCommandTrace.end())
+				{
+					showCommandTrace.erase(r.shell());
+				} else {
+					showCommandTrace.insert(r.shell());
+				}
+				break;
+			}
+		}
+	}
+}
+
+void FieldView::paintEvent(QPaintEvent* e)
 {
 	QPainter p(this);
 	
@@ -329,7 +351,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 		}
 		
 		// Command trace
-		if (r.shell() == showCommandTrace)
+		if (showCommandTrace.find(r.shell()) != showCommandTrace.end())
 		{
 			QPointF cpt = center - rtX * 0.2 - rtY * (Constants::Robot::Radius + 0.1);
 			QStringList strs = debugTrace(r.command_trace());

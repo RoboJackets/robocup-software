@@ -20,25 +20,6 @@ SimFieldView::SimFieldView(QWidget* parent): FieldView(parent)
 	_dragRobotBlue = false;
 }
 
-void SimFieldView::mouseDoubleClickEvent(QMouseEvent* me)
-{
-	Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->posF();
-	
-	shared_ptr<LogFrame> frame = currentFrame();
-	if (me->button() == Qt::LeftButton && frame)
-	{
-		showCommandTrace = -1;
-		BOOST_FOREACH(const LogFrame::Robot &r, frame->self())
-		{
-			if (pos.nearPoint(r.pos(), Constants::Robot::Radius))
-			{
-				showCommandTrace = r.shell();
-				break;
-			}
-		}
-	}
-}
-
 void SimFieldView::mousePressEvent(QMouseEvent* me)
 {
 	Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->posF();

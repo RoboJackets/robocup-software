@@ -7,6 +7,8 @@
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
 #include <protobuf/LogFrame.pb.h>
+
+#include <set>
 #include <boost/shared_ptr.hpp>
 
 class Logger;
@@ -50,11 +52,12 @@ class FieldView : public QWidget
 		bool showRawBalls;
 		bool showCoords;
 		
-		// Shell ID of robot to show command trace or -1 if none.
-		int showCommandTrace;
+		// Which robots will show a command trace
+		std::set<int> showCommandTrace;
 		
 	protected:
-		virtual void paintEvent(QPaintEvent* pe);
+		virtual void mouseDoubleClickEvent(QMouseEvent* e);
+		virtual void paintEvent(QPaintEvent* e);
 		virtual void resizeEvent(QResizeEvent *e);
 		
 		virtual void drawWorldSpace(QPainter &p);

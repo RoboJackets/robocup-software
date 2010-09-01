@@ -26,7 +26,6 @@ class SimFieldView: public FieldView
 		virtual void mouseReleaseEvent(QMouseEvent*);
 		virtual void mousePressEvent(QMouseEvent*);
 		virtual void mouseMoveEvent(QMouseEvent*);
-		virtual void mouseDoubleClickEvent(QMouseEvent*);
 		
 		virtual void drawTeamSpace(QPainter &p);
 		
