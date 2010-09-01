@@ -1,7 +1,17 @@
 #pragma once
 
+#include <vector>
 #include <QTreeWidget>
 #include <google/protobuf/message.h>
+#include <boost/shared_ptr.hpp>
+
+class QMainWindow;
+class QTimer;
+
+namespace Packet
+{
+	class LogFrame;
+}
 
 class ProtobufTree: public QTreeWidget
 {
@@ -31,7 +41,16 @@ class ProtobufTree: public QTreeWidget
 		void expandSubtree(QTreeWidgetItem *item);
 		
 		// Collapses an item recursively
-		void collapseSubtree(QTreeWidgetItem *item);		
+		void collapseSubtree(QTreeWidgetItem *item);
+		
+		// This is only used for creating charts
+		void history(const std::vector<boost::shared_ptr<Packet::LogFrame> > *value)
+		{
+			_history = value;
+		}
+		
+		QMainWindow *mainWindow;
+		QTimer *updateTimer;
 		
 	protected:
 		// Recursively updates the tree.
@@ -43,4 +62,5 @@ class ProtobufTree: public QTreeWidget
 		virtual void contextMenuEvent(QContextMenuEvent *e);
 		
 		bool _first;
+		const std::vector<boost::shared_ptr<Packet::LogFrame> > *_history;
 };

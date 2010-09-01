@@ -1,7 +1,11 @@
 #include "ProtobufTree.hpp"
+#include "StripChart.hpp"
 
 #include <QMenu>
 #include <QContextMenuEvent>
+#include <QDockWidget>
+#include <QMainWindow>
+#include <QTimer>
 
 #include <stdio.h>
 #include <boost/foreach.hpp>
@@ -13,18 +17,23 @@ using namespace google::protobuf;
 // Map from protobuf field ID to tree item
 typedef QMap<int, QTreeWidgetItem *> FieldMap;
 Q_DECLARE_METATYPE(FieldMap)
+Q_DECLARE_METATYPE(const FieldDescriptor*)
 
 // Roles
 enum
 {
 	FieldMapRole = Qt::UserRole,	// Column_Tag: Holds a FieldMap for this item's children
-	IsMessageRole					// Column_Tag: true if this item is a message
+	IsMessageRole,					// Column_Tag: true if this item is a message
+	FieldDescriptorRole				// Column_Tag: FieldDescriptor* for this field, if applicable
 };
 
 ProtobufTree::ProtobufTree(QWidget *parent):
 	QTreeWidget(parent)
 {
 	_first = true;
+	_history = 0;
+	mainWindow = 0;
+	updateTimer = 0;
 }
 
 bool ProtobufTree::message(const google::protobuf::Message& msg)
@@ -57,7 +66,7 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem *parent, const google::protobuf::
 	ref->ListFields(msg, &fields);
 	
 	// Get map of field numbers to child items
-	FieldMap fieldMap = parent->data(Column_Field, FieldMapRole).value<FieldMap>();
+	FieldMap fieldMap = parent->data(Column_Tag, FieldMapRole).value<FieldMap>();
 	
 	bool newFields = false;
 	
@@ -112,8 +121,9 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem *parent, const google::protobuf::
 			item = new QTreeWidgetItem(parent);
 			fieldMap[field->number()] = item;
 			
-			parent->setData(Column_Field, FieldMapRole, QVariant::fromValue<FieldMap>(fieldMap));
+			parent->setData(Column_Tag, FieldMapRole, QVariant::fromValue<FieldMap>(fieldMap));
 			item->setData(Column_Tag, Qt::DisplayRole, field->number());
+			item->setData(Column_Tag, FieldDescriptorRole, QVariant::fromValue(field));
 			item->setText(Column_Field, QString::fromStdString(field->name()));
 			
 			if (field->type() == FieldDescriptor::TYPE_MESSAGE && !field->is_repeated())
@@ -142,6 +152,8 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem *parent, const google::protobuf::
 				{
 					QTreeWidgetItem *child = new QTreeWidgetItem(item);
 					child->setText(Column_Field, QString("[%1]").arg(i));
+					
+					child->setData(Column_Tag, FieldDescriptorRole, field);
 					
 					// For repeated items, the tag column holds the index in the field
 					child->setData(Column_Tag, Qt::DisplayRole, i);
@@ -397,6 +409,21 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e)
 	showTags->setCheckable(true);
 	showTags->setChecked(!isColumnHidden(Column_Tag));
 	
+	QAction *chartAction = 0;
+	const FieldDescriptor *field = 0;
+	if (mainWindow && item)
+	{
+		field = item->data(Column_Tag, FieldDescriptorRole).value<const FieldDescriptor *>();
+		if (field)
+		{
+			int t = field->type();
+			if (t == FieldDescriptor::TYPE_FLOAT || t == FieldDescriptor::TYPE_DOUBLE || (t == FieldDescriptor::TYPE_MESSAGE && field->message_type()->name() == "Point"))
+			{
+				chartAction = menu.addAction("Chart");
+			}
+		}
+	}
+	
 	QAction *act = menu.exec(mapToGlobal(e->pos()));
 	if (act == expandMessagesAction)
 	{
@@ -417,5 +444,40 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e)
 	} else if (collapseItemAction && act == collapseItemAction)
 	{
 		collapseSubtree(item);
+	} else if (chartAction && act == chartAction)
+	{
+		// Find the path from LogFrame to the chosen item
+		QVector<int> path;
+		QStringList names;
+		for (QTreeWidgetItem *i = item; i; i = i->parent())
+		{
+			int tag = i->data(Column_Tag, Qt::DisplayRole).toInt();
+			path.push_back(tag);
+			names.append(i->text(Column_Field));
+		}
+		reverse(path.begin(), path.end());
+		reverse(names.begin(), names.end());
+		
+		QDockWidget *dock = new QDockWidget(names.join("."), mainWindow);
+		StripChart *chart = new StripChart(dock);
+		chart->history(_history);
+		
+		if (field->type() == FieldDescriptor::TYPE_MESSAGE)
+		{
+			Chart::PointMagnitude *f = new Chart::PointMagnitude;
+			f->path = path;
+			chart->function(f);
+		} else {
+			Chart::NumericField *f = new Chart::NumericField;
+			f->path = path;
+			chart->function(f);
+		}
+		
+		dock->setWidget(chart);
+		mainWindow->addDockWidget(Qt::BottomDockWidgetArea, dock);
+		if (updateTimer)
+		{
+			connect(updateTimer, SIGNAL(timeout()), chart, SLOT(update()));
+		}
 	}
 }

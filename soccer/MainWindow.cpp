@@ -9,6 +9,7 @@
 #include <QFileDialog>
 #include <QActionGroup>
 #include <QMessageBox>
+
 #include <boost/foreach.hpp>
 
 #include <google/protobuf/descriptor.h>
@@ -40,6 +41,10 @@ MainWindow::MainWindow(QWidget *parent):
 	
 	_ui.setupUi(this);
 	_ui.fieldView->history(&_history);
+	
+	_ui.logTree->history(&_history);
+	_ui.logTree->mainWindow = this;
+	_ui.logTree->updateTimer = &updateTimer;
 	
 	// Initialize live/non-live control styles
 	_live = false;
@@ -111,9 +116,9 @@ MainWindow::MainWindow(QWidget *parent):
 	_ui.splitter->setStretchFactor(0, 98);
 	_ui.splitter->setStretchFactor(1, 10);
 
-	_updateTimer.setSingleShot(true);
-	connect(&_updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
-	_updateTimer.start(30);
+	updateTimer.setSingleShot(true);
+	connect(&updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
+	updateTimer.start(30);
 }
 
 void MainWindow::configuration(Configuration* config)
@@ -290,7 +295,7 @@ void MainWindow::updateViews()
 	
 	// We restart this timer repeatedly instead of using a single shot timer in order
 	// to guarantee a minimum time between redraws.  This will limit the CPU usage on a fast computer.
-	_updateTimer.start(20);
+	updateTimer.start(20);
 }
 
 void MainWindow::updateStatus()
@@ -523,9 +528,9 @@ void MainWindow::on_actionStopBall_triggered()
 
 void MainWindow::on_actionRestartUpdateTimer_triggered()
 {
-	printf("Update timer: active %d, singleShot %d, interval %d\n", _updateTimer.isActive(), _updateTimer.isSingleShot(), _updateTimer.interval());
-	_updateTimer.stop();
-	_updateTimer.start(30);
+	printf("Update timer: active %d, singleShot %d, interval %d\n", updateTimer.isActive(), updateTimer.isSingleShot(), updateTimer.interval());
+	updateTimer.stop();
+	updateTimer.start(30);
 }
 
 // Gameplay commands

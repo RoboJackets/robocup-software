@@ -13,6 +13,7 @@ srcs = [
 	'SimFieldView.cpp',
 	'Configuration.cpp',
 	'debug.cpp',
+	'StripChart.cpp',
 
 	'framework/Obstacle.cpp',
 	'framework/Path.cpp',
@@ -138,6 +139,6 @@ p = e.Program('soccer', srcs)
 env.Depends(p, uics)
 e.Install(exec_dir, p)
 
-p = e.Program('log_viewer', ['LogViewer.cpp', 'FieldView.cpp', 'ProtobufTree.cpp', 'debug.cpp'])
+p = e.Program('log_viewer', ['LogViewer.cpp', 'FieldView.cpp', 'ProtobufTree.cpp', 'StripChart.cpp', 'debug.cpp'])
 env.Depends(p, env.Uic4('ui/LogViewer.ui'))
 e.Install(exec_dir, p)

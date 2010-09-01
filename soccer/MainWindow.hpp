@@ -13,6 +13,7 @@
 #include "ui_MainWindow.h"
 
 class PlayConfigTab;
+class StripChart;
 
 class MainWindow : public QMainWindow
 {
@@ -60,6 +61,8 @@ class MainWindow : public QMainWindow
 		
 		// Call this to update the status bar when the log file has changed
 		void logFileChanged();
+		
+		QTimer updateTimer;
 		
 	private Q_SLOTS:
 		void updateViews();
@@ -172,8 +175,7 @@ class MainWindow : public QMainWindow
 		// This is cleared by manually changing the checkbox or after the
 		// first referee packet is seen and the box is automatically checked.
 		bool _autoExternalReferee;
-
-		QTimer _updateTimer;
+		
 		PlayConfigTab *_playConfigTab;
 		
 		// Tree items that are not in LogFrame
