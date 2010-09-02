@@ -28,8 +28,8 @@ void usage(const char* prog)
 	fprintf(stderr, "\t-y:         run as the yellow team\n");
 	fprintf(stderr, "\t-b:         run as the blue team\n");
 	fprintf(stderr, "\t-c <file>:  specify the configuration file\n");
-	fprintf(stderr, "\t-p <file>:  load playbook\n");
 	fprintf(stderr, "\t-s <seed>:  set random seed (hexadecimal)\n");
+	fprintf(stderr, "\t-p <file>:  load playbook\n");
 	fprintf(stderr, "\t-pp <play>: enable named play\n");
 	fprintf(stderr, "\t-ng:        no goalie\n");
 	fprintf(stderr, "\t-sim:       use simulator\n");
@@ -187,7 +187,8 @@ int main (int argc, char* argv[])
 	if (!playbook.isNull())
 	{
 		win->playConfigTab()->load(playbook);
-	} else {
+	} else if (extraPlays.empty())
+	{
 		// Try to load a default playbook
 		win->playConfigTab()->load("default.pbk");
 	}

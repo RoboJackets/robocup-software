@@ -30,6 +30,10 @@ namespace Gameplay
 			bool self() const;    /// true if this is one of our robots
 			bool visible() const; /// true if robot is valid - FIXME: needs better check
 			int id() const;       /// index in the array - NOT THE SHELL!
+			int shell() const
+			{
+				return _packet->shell;
+			}
 			bool haveBall() const; /// true if we have the ball
 			SystemState::Robot::Rev rev() const; /// the revision for the robot, use for capability checks
 			bool hasChipper() const; /// true if robot can chip

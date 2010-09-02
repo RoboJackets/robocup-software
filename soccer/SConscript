@@ -76,6 +76,9 @@ srcs = [
 	'gameplay/behaviors/positions/Goalie.cpp',
 	'gameplay/behaviors/positions/Fullback.cpp',
 	'gameplay/behaviors/positions/Forward.cpp',
+	
+	# Development tests
+	'gameplay/plays/Follow.cpp',
 
 	# demo plays/behaviors
 	'gameplay/plays/demo_plays/DemoBasicPassing.cpp',

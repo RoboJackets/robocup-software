@@ -28,6 +28,8 @@ namespace Gameplay
 				return _state;
 			}
 			
+			int manualID() const;
+			
 			void createGoalie();
 			void removeGoalie();
 			

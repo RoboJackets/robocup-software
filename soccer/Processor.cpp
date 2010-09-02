@@ -274,6 +274,9 @@ void Processor::run()
 		_state.logFrame = make_shared<LogFrame>();
 		_state.logFrame->set_start_time(startTime);
 		_state.logFrame->set_use_half_field(_useHalfField);
+		_state.logFrame->set_manual_id(_manualID);
+		_state.logFrame->set_blue_team(_blueTeam);
+		_state.logFrame->set_defend_plus_x(_defendPlusX);
 		
 		// Clear radio commands
 		for (size_t r = 0; r < Constants::Robots_Per_Team; ++r)
@@ -503,9 +506,6 @@ void Processor::run()
 		////////////////
 		// Store logging information
 		
-		_state.logFrame->set_manual_id(_manualID);
-		_state.logFrame->set_blue_team(_blueTeam);
-		_state.logFrame->set_defend_plus_x(_defendPlusX);
 		_state.logFrame->set_play(_gameplayModule->playName().toStdString());
 		
 		// Debug layers

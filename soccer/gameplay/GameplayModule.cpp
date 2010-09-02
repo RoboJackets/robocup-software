@@ -111,6 +111,11 @@ Gameplay::GameplayModule::~GameplayModule()
 	}
 }
 
+int Gameplay::GameplayModule::manualID() const
+{
+	return _state->logFrame->manual_id();
+}
+
 void Gameplay::GameplayModule::createGoalie()
 {
 	if (!_goalie)
