@@ -1,23 +1,23 @@
-#include "Follow.hpp"
+#include "FollowTheLeader.hpp"
 
 #include <algorithm>
 #include <stdio.h>
 
 using namespace std;
 
-REGISTER_PLAY_CATEGORY(Gameplay::Plays::Follow, "Tests")
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::FollowTheLeader, "Demos")
 
 static bool shellLessThan(Gameplay::Robot *r1, Gameplay::Robot *r2)
 {
 	return r1->shell() < r2->shell();
 }
 
-Gameplay::Plays::Follow::Follow(GameplayModule *gameplay):
+Gameplay::Plays::FollowTheLeader::FollowTheLeader(GameplayModule *gameplay):
 	Play(gameplay)
 {
 }
 
-bool Gameplay::Plays::Follow::run()
+bool Gameplay::Plays::FollowTheLeader::run()
 {
 	if (_gameplay->robots().empty())
 	{

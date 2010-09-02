@@ -6,10 +6,10 @@ namespace Gameplay
 {
 	namespace Plays
 	{
-		class Follow: public Play
+		class FollowTheLeader: public Play
 		{
 			public:
-				Follow(GameplayModule *gameplay);
+				FollowTheLeader(GameplayModule *gameplay);
 
 				/** Called every frame */
 				virtual bool run();
