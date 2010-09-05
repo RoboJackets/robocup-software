@@ -15,6 +15,11 @@ Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay):
 
 bool Gameplay::Behaviors::Kick::run()
 {
+	if (!robot || !robot->visible || !ball().valid)
+	{
+		return false;
+	}
+	
 	Geometry2d::Point ballPos = ball().pos;
 	
 	Geometry2d::Segment target = _target;
