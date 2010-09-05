@@ -46,8 +46,6 @@ void Gameplay::Behaviors::Goalie::assign(set<OurRobot *> &available)
 		// Keep the current goalie, and prevent it from being used in a play
 		available.erase(robot);
 	}
-	
-// 	_kick.assignOne(robot);
 }
 
 bool Gameplay::Behaviors::Goalie::run()
@@ -57,6 +55,8 @@ bool Gameplay::Behaviors::Goalie::run()
 		return true;
 	}
 
+	_kick.robot = robot;
+	
 	if (!ball().valid)
 	{
 		//FIXME - Stay where we are, if we are near the goal
@@ -228,7 +228,7 @@ bool Gameplay::Behaviors::Goalie::run()
 		robot->move(dest);
 		
 		//clear the kick behavior
-// 		_kick.assignOne(robot);
+		_kick.restart();
 	}
 	
 	return true;

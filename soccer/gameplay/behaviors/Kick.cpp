@@ -155,7 +155,7 @@ bool Gameplay::Behaviors::Kick::run()
 			break;
 	}
 	
-	return true;
+	return _state != State_Done;
 }
 
 void Gameplay::Behaviors::Kick::restart()
