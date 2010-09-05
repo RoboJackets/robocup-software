@@ -15,7 +15,9 @@ env.MergeFlags('-O2 -g3 -Wall -DBOOST_UBLAS_NDEBUG')
 env.Append(CPPPATH = [Dir('#/common')])
 
 # Variables
-var_file = build_dir.File('variables.cache').abspath
+# Can't put this in build_dir because scons wants to read it before build_dir exists.
+# I don't want to create build_dir for the sole purpose of hiding that error...
+var_file = File('#/.scons_variables').abspath
 vv = Variables(var_file)
 vv.AddVariables(
 	BoolVariable('profile', 'build for profiling', False)

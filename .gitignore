@@ -1,4 +1,5 @@
 *.kdev4
 *.pyc
 .sconsign.dblite
+.scons_variables
 /build
