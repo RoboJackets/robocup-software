@@ -113,7 +113,8 @@ namespace Gameplay
 			Geometry2d::TransformMatrix _oppMatrix;
 			
 			// Obstacles to prevent using half the field
-			boost::shared_ptr<PolygonObstacle> _otherHalf;
+			boost::shared_ptr<PolygonObstacle> _ourHalf;
+			boost::shared_ptr<PolygonObstacle> _opponentHalf;
 			
 			ObstaclePtr _sideObstacle;
 			

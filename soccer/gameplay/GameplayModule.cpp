@@ -87,11 +87,17 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_goalArea[1] = ObstaclePtr(new CircleObstacle(Geometry2d::Point(-halfFlat, 0), radius));
 	_goalArea[2] = ObstaclePtr(new CircleObstacle(Geometry2d::Point(halfFlat, 0), radius));
 
-	_otherHalf = make_shared<PolygonObstacle>();
-	_otherHalf->polygon.vertices.push_back(Geometry2d::Point(-x, y1));
-	_otherHalf->polygon.vertices.push_back(Geometry2d::Point(-x, y2));
-	_otherHalf->polygon.vertices.push_back(Geometry2d::Point(x, y2));
-	_otherHalf->polygon.vertices.push_back(Geometry2d::Point(x, y1));
+	_ourHalf = make_shared<PolygonObstacle>();
+	_ourHalf->polygon.vertices.push_back(Geometry2d::Point(-x, -Field_Border));
+	_ourHalf->polygon.vertices.push_back(Geometry2d::Point(-x, y1));
+	_ourHalf->polygon.vertices.push_back(Geometry2d::Point(x, y1));
+	_ourHalf->polygon.vertices.push_back(Geometry2d::Point(x, -Field_Border));
+
+	_opponentHalf = make_shared<PolygonObstacle>();
+	_opponentHalf->polygon.vertices.push_back(Geometry2d::Point(-x, y1));
+	_opponentHalf->polygon.vertices.push_back(Geometry2d::Point(-x, y2));
+	_opponentHalf->polygon.vertices.push_back(Geometry2d::Point(x, y2));
+	_opponentHalf->polygon.vertices.push_back(Geometry2d::Point(x, y1));
 }
 
 Gameplay::GameplayModule::~GameplayModule()
@@ -221,9 +227,14 @@ void Gameplay::GameplayModule::run()
 				obstacles.add(_sideObstacle);
 			}
 			
-			if (_state->logFrame->use_half_field())
+			if (!_state->logFrame->use_our_half())
 			{
-				obstacles.add(_otherHalf);
+				obstacles.add(_ourHalf);
+			}
+
+			if (!_state->logFrame->use_opponent_half())
+			{
+				obstacles.add(_opponentHalf);
 			}
 
 			// Add non floor obstacles

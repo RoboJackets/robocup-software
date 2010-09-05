@@ -505,9 +505,14 @@ void MainWindow::on_action270_triggered()
 	_ui.fieldView->rotate(3);
 }
 
-void MainWindow::on_actionUseHalf_toggled(bool value)
+void MainWindow::on_actionUseOurHalf_toggled(bool value)
 {
-	_processor->useHalfField(value);
+	_processor->useOurHalf(value);
+}
+
+void MainWindow::on_actionUseOpponentHalf_toggled(bool value)
+{
+	_processor->useOpponentHalf(value);
 }
 
 void MainWindow::on_actionCenterBall_triggered()

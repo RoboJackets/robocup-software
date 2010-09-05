@@ -85,6 +85,7 @@ message LogFrame
 	// Name of the current play
 	optional string play = 17;
 	
-	// True if only using our half of the field
-	optional bool use_half_field = 18;
+	// True if using each half of the field
+	optional bool use_our_half = 18 [default = true];
+	optional bool use_opponent_half = 19 [default = true];
 }

@@ -1587,7 +1587,8 @@
     <addaction name="actionTeamYellow"/>
     <addaction name="actionTeamBlue"/>
     <addaction name="separator"/>
-    <addaction name="actionUseHalf"/>
+    <addaction name="actionUseOurHalf"/>
+    <addaction name="actionUseOpponentHalf"/>
    </widget>
    <widget class="QMenu" name="menu_Simulator">
     <property name="title">
@@ -1743,12 +1744,15 @@
     <string>Stop &amp;Forcing Play</string>
    </property>
   </action>
-  <action name="actionUseHalf">
+  <action name="actionUseOurHalf">
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>Use &amp;Half Field</string>
+    <string>Use Our &amp;Half</string>
    </property>
   </action>
   <action name="actionUseMinusX">
@@ -1770,6 +1774,22 @@
   <action name="actionCommand_Trace">
    <property name="text">
     <string>Command &amp;Trace</string>
+   </property>
+  </action>
+  <action name="actionUseAll">
+   <property name="text">
+    <string>Use &amp;All</string>
+   </property>
+  </action>
+  <action name="actionUseOpponentHalf">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use &amp;Opponent Half</string>
    </property>
   </action>
  </widget>

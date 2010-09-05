@@ -49,7 +49,8 @@ Processor::Processor(Configuration *config, bool sim, int radio)
 	_externalReferee = true;
 	_framerate = 0;
 	firstLogTime = 0;
-	_useHalfField = false;
+	_useOurHalf = true;
+	_useOpponentHalf = true;
 
 	_simulation = sim;
 	_radio = radio;
@@ -270,7 +271,8 @@ void Processor::run()
 		// Make a new log frame
 		_state.logFrame = make_shared<LogFrame>();
 		_state.logFrame->set_start_time(startTime);
-		_state.logFrame->set_use_half_field(_useHalfField);
+		_state.logFrame->set_use_our_half(_useOurHalf);
+		_state.logFrame->set_use_opponent_half(_useOpponentHalf);
 		_state.logFrame->set_manual_id(_manualID);
 		_state.logFrame->set_blue_team(_blueTeam);
 		_state.logFrame->set_defend_plus_x(_defendPlusX);
@@ -313,39 +315,39 @@ void Processor::run()
 			{
 				SSL_DetectionFrame *det = packet->mutable_detection();
 				
-				if (_state.logFrame->use_half_field())
+				// Remove balls on the excluded half of the field
+				google::protobuf::RepeatedPtrField<SSL_DetectionBall> *balls = det->mutable_balls();
+				for (int i = 0; i < balls->size(); ++i)
 				{
-					// Remove balls on the excluded half of the field
-					google::protobuf::RepeatedPtrField<SSL_DetectionBall> *balls = det->mutable_balls();
-					for (int i = 0; i < balls->size(); ++i)
+					float x = balls->Get(i).x();
+					//FIXME - OMG too many terms
+					if ((!_state.logFrame->use_opponent_half() && ((_defendPlusX && x < 0) || (!_defendPlusX && x > 0))) ||
+						(!_state.logFrame->use_our_half() && ((_defendPlusX && x > 0) || (!_defendPlusX && x < 0))))
 					{
-						float x = balls->Get(i).x();
-						if ((_defendPlusX && x < 0) || (!_defendPlusX && x > 0))
-						{
-							balls->SwapElements(i, balls->size() - 1);
-							balls->RemoveLast();
-							--i;
-						}
+						balls->SwapElements(i, balls->size() - 1);
+						balls->RemoveLast();
+						--i;
 					}
-					
-					// Remove robots on the excluded half of the field
-					google::protobuf::RepeatedPtrField<SSL_DetectionRobot> *robots[2] =
+				}
+				
+				// Remove robots on the excluded half of the field
+				google::protobuf::RepeatedPtrField<SSL_DetectionRobot> *robots[2] =
+				{
+					det->mutable_robots_yellow(),
+					det->mutable_robots_blue()
+				};
+				
+				for (int team = 0; team < 2; ++team)
+				{
+					for (int i = 0; i < robots[team]->size(); ++i)
 					{
-						det->mutable_robots_yellow(),
-						det->mutable_robots_blue()
-					};
-					
-					for (int team = 0; team < 2; ++team)
-					{
-						for (int i = 0; i < robots[team]->size(); ++i)
+						float x = robots[team]->Get(i).x();
+						if ((!_state.logFrame->use_opponent_half() && ((_defendPlusX && x < 0) || (!_defendPlusX && x > 0))) ||
+							(!_state.logFrame->use_our_half() && ((_defendPlusX && x > 0) || (!_defendPlusX && x < 0))))
 						{
-							float x = robots[team]->Get(i).x();
-							if ((_defendPlusX && x < 0) || (!_defendPlusX && x > 0))
-							{
-								robots[team]->SwapElements(i, robots[team]->size() - 1);
-								robots[team]->RemoveLast();
-								--i;
-							}
+							robots[team]->SwapElements(i, robots[team]->size() - 1);
+							robots[team]->RemoveLast();
+							--i;
 						}
 					}
 				}

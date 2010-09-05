@@ -150,9 +150,14 @@ class Processor: public QThread
 		}
 		
 		// Use all/part of the field
-		void useHalfField(bool value)
+		void useOurHalf(bool value)
 		{
-			_useHalfField = value;
+			_useOurHalf = value;
+		}
+		
+		void useOpponentHalf(bool value)
+		{
+			_useOpponentHalf = value;
 		}
 		
 		////////
@@ -175,7 +180,7 @@ class Processor: public QThread
 
 		Logger _logger;
 		
-		bool _useHalfField;
+		bool _useOurHalf, _useOpponentHalf;
 		
 		// True if we are running with a simulator.
 		// This changes network communications.

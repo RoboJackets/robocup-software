@@ -232,7 +232,14 @@ void FieldView::drawTeamSpace(QPainter& p)
 	const LogFrame *frame = _history->at(0).get();
 	
 	// Block off half the field
-	if (frame->use_half_field())
+	if (!frame->use_our_half())
+	{
+		const float FX = Floor_Width / 2;
+		const float FY1 = -Field_Border;
+		const float FY2 = Field_Length / 2;
+		p.fillRect(QRectF(QPointF(-FX, FY1), QPointF(FX, FY2)), QColor(0, 0, 0, 128));
+	}
+	if (!frame->use_opponent_half())
 	{
 		const float FX = Floor_Width / 2;
 		const float FY1 = Field_Length / 2;

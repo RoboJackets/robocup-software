@@ -78,7 +78,8 @@ class MainWindow : public QMainWindow
 		// Field side
 		void on_actionDefendPlusX_triggered();
 		void on_actionDefendMinusX_triggered();
-		void on_actionUseHalf_toggled(bool value);
+		void on_actionUseOurHalf_toggled(bool value);
+		void on_actionUseOpponentHalf_toggled(bool value);
 		
 		// Field rotation
 		void on_action0_triggered();
