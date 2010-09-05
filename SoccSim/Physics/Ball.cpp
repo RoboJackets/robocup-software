@@ -11,12 +11,12 @@ Ball::Ball(Env* env) :
 	//create entity
 	NxBodyDesc bodyDesc;
 	bodyDesc.setToDefault();
-	bodyDesc.mass = Constants::Ball::Mass;
+	bodyDesc.mass = Ball_Mass;
 
 	NxSphereShapeDesc sphereDesc;
 	
-	sphereDesc.radius = Constants::Ball::Radius;
-	sphereDesc.mass = Constants::Ball::Mass;
+	sphereDesc.radius = Ball_Radius;
+	sphereDesc.mass = Ball_Mass;
 	
 	NxSimpleTriangleMesh mesh;
 	mesh.numVertices = 1;
@@ -67,7 +67,7 @@ Ball::~Ball()
 
 void Ball::position(float x, float y)
 {
-	_actor->setGlobalPosition(NxVec3(x, y, Constants::Ball::Radius/2.0 + 0.01f));
+	_actor->setGlobalPosition(NxVec3(x, y, Ball_Radius/2.0 + 0.01f));
 }
 
 void Ball::velocity(float x, float y)

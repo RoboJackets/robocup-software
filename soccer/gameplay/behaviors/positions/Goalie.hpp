@@ -4,24 +4,27 @@
 #pragma once
 
 #include "../../Behavior.hpp"
-#include "../Kick.hpp"
+#include <gameplay/behaviors/Kick.hpp>
 
 namespace Gameplay
 {
+	class WindowEvaluator;
+	
 	namespace Behaviors
 	{
-		class Goalie: public Behavior
+		class Goalie: public SingleRobotBehavior
 		{
 			public:
 				Goalie(GameplayModule *gameplay);
 				~Goalie();
 
-				virtual bool assign(std::set<Robot *> &available);
+				// Takes one robot out of <available> and makes it the goalie.
+				// This will be called every frame.
+				void assign(std::set<OurRobot *> &available);
+				
 				virtual bool run();
 
 			protected:
-				virtual float score(Robot *r);
-				
 				typedef enum
 				{
 					Defend,

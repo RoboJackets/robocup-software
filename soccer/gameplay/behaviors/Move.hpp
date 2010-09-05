@@ -6,19 +6,16 @@ namespace Gameplay
 {
 	namespace Behaviors
 	{
-		class Move: public Behavior
+		class Move: public SingleRobotBehavior
 		{
-		public:
-			Move(GameplayModule *gameplay);
-			
-			virtual bool run();
-			
-			Geometry2d::Point target;
-			Geometry2d::Point face;
-			float backoff;
-			
-		protected:
-			virtual float score(Robot* robot);
+			public:
+				Move(GameplayModule *gameplay);
+				
+				virtual bool run();
+				
+				Geometry2d::Point target;
+				Geometry2d::Point face;
+				float backoff;
 		};
 	}
 }

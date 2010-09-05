@@ -6,17 +6,16 @@
 
 namespace Gameplay
 {
-    namespace Behaviors
-    {
-        class Kickoff: public Behavior
-        {
-            public:
-                Kickoff(GameplayModule *gameplay);
-                
-                virtual bool run();
-		virtual bool assign(std::set<Robot *> &available);
-	
-		Behaviors::Kick kick;
-        };
-    }
+	namespace Behaviors
+	{
+		class Kickoff: public SingleRobotBehavior
+		{
+			public:
+				Kickoff(GameplayModule *gameplay);
+				
+				virtual bool run();
+
+				Behaviors::Kick kick;
+		};
+	}
 }

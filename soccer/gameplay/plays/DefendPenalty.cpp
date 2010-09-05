@@ -11,28 +11,27 @@ Gameplay::Plays::DefendPenalty::DefendPenalty(GameplayModule *gameplay):
 	_idle3(gameplay),
 	_idle4(gameplay)
 {
-	set<Robot *> available = _gameplay->robots();
-	
-	_robots = available;
-	
 	_idle1.target = Geometry2d::Point(1.5, 1);
 	_idle2.target = Geometry2d::Point(1.5, 1.5);
 	_idle3.target = Geometry2d::Point(1.5, 2);
 	_idle4.target = Geometry2d::Point(1.5, 2.5);
-	
-	_idle1.assign(available);
-	_idle2.assign(available);
-	_idle3.assign(available);
-	_idle4.assign(available);
 }
 
 float Gameplay::Plays::DefendPenalty::score ( Gameplay::GameplayModule* gameplay )
 {
-	return (gameplay->state()->gameState.setupRestart() && gameplay->state()->gameState.theirPenalty()) ? 0 : INFINITY;
+	const GameState &gs = gameplay->state()->gameState;
+	return (gs.setupRestart() && gs.theirPenalty()) ? 0 : INFINITY;
 }
 
 bool Gameplay::Plays::DefendPenalty::run()
 {
+	set<OurRobot *> available = _gameplay->playRobots();
+	
+	assignNearest(_idle1.robot, available, _idle1.target);
+	assignNearest(_idle2.robot, available, _idle2.target);
+	assignNearest(_idle3.robot, available, _idle3.target);
+	assignNearest(_idle4.robot, available, _idle4.target);
+	
 	_idle1.run();
 	_idle2.run();
 	_idle3.run();

@@ -5,6 +5,30 @@
 
 using namespace Packet;
 
+SystemState::SystemState()
+{
+	timestamp = 0;
+	_numDebugLayers = 0;
+	
+	//FIXME - boost::arrray?
+	self.resize(Num_Shells);
+	opp.resize(Num_Shells);
+	for (unsigned int i = 0; i < Num_Shells; ++i)
+	{
+		self[i] = new OurRobot(i, this);
+		opp[i] = new OpponentRobot(i);
+	}
+}
+
+SystemState::~SystemState()
+{
+	for (unsigned int i = 0; i < Num_Shells; ++i)
+	{
+		delete self[i];
+		delete opp[i];
+	}
+}
+
 int SystemState::findDebugLayer(QString layer)
 {
 	if (layer.isNull())
@@ -32,7 +56,7 @@ void SystemState::drawPath(const Geometry2d::Point* pts, int n, const QColor& qc
 	dbg->set_layer(findDebugLayer(layer));
 	for (int i = 0; i < n; ++i)
 	{
-		pts[i].set(dbg->add_points());
+		*dbg->add_points() = pts[i];
 	}
 	dbg->set_color(color(qc));
 }
@@ -43,7 +67,7 @@ void SystemState::drawPolygon(const Geometry2d::Point* pts, int n, const QColor&
 	dbg->set_layer(findDebugLayer(layer));
 	for (int i = 0; i < n; ++i)
 	{
-		pts[i].set(dbg->add_points());
+		*dbg->add_points() = pts[i];
 	}
 	dbg->set_color(color(qc));
 }
@@ -52,7 +76,7 @@ void SystemState::drawCircle(const Geometry2d::Point& center, float radius, cons
 {
 	DebugCircle *dbg = logFrame->add_debug_circles();
 	dbg->set_layer(findDebugLayer(layer));
-	center.set(dbg->mutable_center());
+	*dbg->mutable_center() = center;
 	dbg->set_radius(radius);
 	dbg->set_color(color(qc));
 }
@@ -61,8 +85,8 @@ void SystemState::drawLine(const Geometry2d::Line& line, const QColor& qc, const
 {
 	DebugPath *dbg = logFrame->add_debug_paths();
 	dbg->set_layer(findDebugLayer(layer));
-	line.pt[0].set(dbg->add_points());
-	line.pt[1].set(dbg->add_points());
+	*dbg->add_points() = line.pt[0];
+	*dbg->add_points() = line.pt[1];
 	dbg->set_color(color(qc));
 }
 
@@ -71,6 +95,6 @@ void SystemState::drawText(const QString& text, const Geometry2d::Point& pos, co
 	DebugText *dbg = logFrame->add_debug_texts();
 	dbg->set_layer(findDebugLayer(layer));
 	dbg->set_text(text.toStdString());
-	pos.set(dbg->mutable_pos());
+	*dbg->mutable_pos() = pos;
 	dbg->set_color(color(qc));
 }

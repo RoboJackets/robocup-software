@@ -32,7 +32,7 @@ namespace Motion {
 
 		Configuration *_config;
 
-		boost::array<Motion::Robot::shared_ptr, Constants::Robots_Per_Team> _robots;
+		boost::array<Motion::Robot::shared_ptr, Num_Shells> _robots;
 	};
 
 }

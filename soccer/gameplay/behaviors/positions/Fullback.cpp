@@ -1,44 +1,30 @@
 #include "Fullback.hpp"
 
+#include <gameplay/behaviors/positions/Goalie.hpp>
 #include <Constants.hpp>
-#include <vector>
+#include <gameplay/Window.hpp>
+#include <Geometry2d/util.h>
 
+#include <vector>
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
-
-#include "../../Window.hpp"
-
-#include <Geometry2d/util.h>
 
 using namespace std;
 
 Gameplay::Behaviors::Fullback::Fullback(GameplayModule *gameplay, Side side):
 	Behavior(gameplay),
+	_winEval(gameplay->state()),
 	_side(side)
 {
-}
-
-bool Gameplay::Behaviors::Fullback::assign(set<Robot *> &available)
-{
-	_robots.clear();
-	if (!takeBest(available))
-	{
-	    return false;
-	}
-	
-	//Initial state
+	robot = 0;
 	_state = Init;
 
-	//initialize windowevaluator
-	_winEval = boost::make_shared<Gameplay::WindowEvaluator>(Behavior::gameplay()->state());
-	_winEval->debug = false;
-
-	return true;
+	_winEval.debug = false;
 }
 
 bool Gameplay::Behaviors::Fullback::run()
 {
-	if (!assigned() || !allVisible() || !_winEval)
+	if (!robot || !robot->visible)
 	{
 		return false;
 	}
@@ -48,47 +34,46 @@ bool Gameplay::Behaviors::Fullback::run()
 	Geometry2d::Point ballFuture = ball().pos + ball().vel*0.3;
 
 	//goal line, for intersection detection
-	Geometry2d::Segment goalLine(Geometry2d::Point(-Constants::Field::GoalWidth / 2.0f, 0),
-								  Geometry2d::Point(Constants::Field::GoalWidth / 2.0f, 0));
+	Geometry2d::Segment goalLine(Geometry2d::Point(-Field_GoalWidth / 2.0f, 0),
+								  Geometry2d::Point(Field_GoalWidth / 2.0f, 0));
 
 	// Update the target window
-	_winEval->exclude.clear();
-	_winEval->exclude.push_back(Behavior::robot()->pos());
+	_winEval.exclude.clear();
+	_winEval.exclude.push_back(robot->pos);
 	
 	//exclude robots that arn't the fullback
-	//_winEval->run(ball().pos, goalLine);
+	//_winEval.run(ball().pos, goalLine);
 	
 	BOOST_FOREACH(Fullback *f, otherFullbacks)
 	{
-		if (f->robot())
+		if (f->robot)
 		{
-			_winEval->exclude.push_back(f->robot()->pos());
+			_winEval.exclude.push_back(f->robot->pos);
 		}
 	}
 	
-	_winEval->run(ballFuture, goalLine);
+	_winEval.run(ballFuture, goalLine);
 	
 	Window* best = 0;
 
-	Behavior* goalie = _gameplay->goalie();
-	
 	bool needTask = false;
 	
 	//pick biggest window on appropriate side
-	if (goalie && goalie->robot())
+	Goalie* goalie = _gameplay->goalie();
+	if (goalie && goalie->robot)
 	{
-		BOOST_FOREACH(Window* window, _winEval->windows)
+		BOOST_FOREACH(Window* window, _winEval.windows)
 		{
 			if (_side == Left)
 			{
-				if (!best || window->segment.center().x < goalie->robot()->pos().x)
+				if (!best || window->segment.center().x < goalie->robot->pos.x)
 				{
 					best = window;
 				}
 			}
 			else if (_side == Right)
 			{
-				if (!best || window->segment.center().x > goalie->robot()->pos().x)
+				if (!best || window->segment.center().x > goalie->robot->pos.x)
 				{
 					best = window;
 				}
@@ -99,10 +84,10 @@ bool Gameplay::Behaviors::Fullback::run()
 	{
 		//if no side parameter...stay in the middle
 		float bestDist = 0;
-		BOOST_FOREACH(Window* window, _winEval->windows)
+		BOOST_FOREACH(Window* window, _winEval.windows)
 		{
 			Geometry2d::Segment seg(window->segment.center(), ball().pos);
-			float newDist = seg.distTo(Behavior::robot()->pos());
+			float newDist = seg.distTo(robot->pos);
 			
 			if (!best || newDist < bestDist)
 			{
@@ -120,14 +105,14 @@ bool Gameplay::Behaviors::Fullback::run()
 		
 		if (ball().vel.magsq() > 0.03 && winSeg.intersects(shootLine))
 		{
-			robot()->move(shootLine.nearestPoint(Behavior::robot()->pos()));
-			robot()->faceNone();
+			robot->move(shootLine.nearestPoint(robot->pos));
+			robot->faceNone();
 		}
 		else
 		{
 			const float winSize = winSeg.length();
 				
-			if (winSize < Constants::Ball::Radius)
+			if (winSize < Ball_Radius)
 			{
 				needTask = true;
 			}
@@ -146,17 +131,17 @@ bool Gameplay::Behaviors::Fullback::run()
 				{
 					if (dest[0].y > 0)
 					{
-						Behavior::robot()->move(dest[0]);
+						robot->move(dest[0]);
 					}
 					else
 					{
-						Behavior::robot()->move(dest[1]);
+						robot->move(dest[1]);
 					}
-					//Behavior::robot()->face(ballFuture);
+					//robot->face(ballFuture);
 					// Using regular pos rather than future because velocity approx on ball is not exact
 					// enough and this leads to the robots turning backwards, towards the goal, when the
 					// ball is shot at the goal.
-					Behavior::robot()->face(ball().pos);
+					robot->face(ball().pos);
 				}
 				else
 				{
@@ -173,32 +158,32 @@ bool Gameplay::Behaviors::Fullback::run()
 	// if needTask, face the ball
 	if(needTask)
 	{
-		robot()->face(ball().pos, true);
+		robot->face(ball().pos, true);
 	}
 
 	// Turn dribbler on when ball is near
-	if(ball().pos.y < Constants::Field::Length / 2)
+	if(ball().pos.y < Field_Length / 2)
 	{
-		robot()->dribble(255);
+		robot->dribble(255);
 	}
 
 	// If ball sensor is tripped and we are not facing towards the goal, fire.
 	Geometry2d::Point backVec(1,0);
-	Geometry2d::Point backPos(-Constants::Field::Width/2,0);
-	Geometry2d::Point shotVec(ball().pos - robot()->pos());
-	Geometry2d::Point shotPos(robot()->pos());
+	Geometry2d::Point backPos(-Field_Width/2,0);
+	Geometry2d::Point shotVec(ball().pos - robot->pos);
+	Geometry2d::Point shotPos(robot->pos);
 	Geometry2d::Point backVecRot(backVec.perpCCW());
 	bool facingBackLine = (backVecRot.dot(shotVec) < 0);
 	if(!facingBackLine)
 	{
-		robot()->kick(255);
+		robot->kick(255);
 	}
 
 	/*
 	if(needTask){
 		//goal line, for intersection detection
-		Geometry2d::Segment goalLine(Geometry2d::Point(-Constants::Field::GoalWidth / 2.0f, 0),
-									  Geometry2d::Point(Constants::Field::GoalWidth / 2.0f, 0));
+		Geometry2d::Segment goalLine(Geometry2d::Point(-Field_GoalWidth / 2.0f, 0),
+									  Geometry2d::Point(Field_GoalWidth / 2.0f, 0));
 		//goal arc
 		const float radius = .7;
 		Geometry2d::Circle arc(Geometry2d::Point(), radius);
@@ -226,7 +211,7 @@ bool Gameplay::Behaviors::Fullback::run()
 				continue;
 
 			bool sameSide = ((_side==Left&&r->pos().x<=0) || (_side==Right&&r->pos().x>=0));
-			bool nonDefender = (r->pos().y < 3*Constants::Field::Length/4);
+			bool nonDefender = (r->pos().y < 3*Field_Length/4);
 			bool facingGoal;
 			Geometry2d::Point facing(cos(DegreesToRadians * r->angle()),sin(DegreesToRadians * r->angle())); // make sure not degrees!
 			facing *= 20;
@@ -253,7 +238,7 @@ bool Gameplay::Behaviors::Fullback::run()
 	{
 		//if no side parameter...stay in the middle
 		float bestDist = 0;
-		BOOST_FOREACH(Window* window, _winEval->windows)
+		BOOST_FOREACH(Window* window, _winEval.windows)
 		{
 			Geometry2d::Segment seg(window->segment.center(), ball().pos);
 			float newDist = seg.distTo(Behavior::robot()->pos());
@@ -272,10 +257,4 @@ bool Gameplay::Behaviors::Fullback::run()
 		robot()->faceNone();
 	}*/
 	return false;
-}
-
-float Gameplay::Behaviors::Fullback::score(Robot* robot)
-{
-	//robot closest to the back line wins
-	return robot->pos().y;
 }

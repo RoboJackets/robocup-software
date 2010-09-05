@@ -4,6 +4,10 @@
 #include "MainWindow.hpp"
 
 #include "PlayConfigTab.hpp"
+#include "RefereeModule.hpp"
+#include "Configuration.hpp"
+#include <Utils.hpp>
+#include <gameplay/GameplayModule.hpp>
 
 #include <QInputDialog>
 #include <QFileDialog>

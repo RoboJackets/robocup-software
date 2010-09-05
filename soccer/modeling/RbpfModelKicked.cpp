@@ -116,7 +116,7 @@ void RbpfModelKicked::update(Vector &X, Matrix &P, Vector &Z, double dt){
 	bool robotKicked = false;
 	for(RobotModel::RobotMap::const_iterator r = _robotMap->begin(); r!=_robotMap->end(); r++){
 		rPos = r->second->pos();
-		if(bPos.distTo(rPos) < Constants::Robot::Radius){
+		if(bPos.distTo(rPos) < Robot_Radius){
 			robotKicked = true;
 			break;
 		}

@@ -30,7 +30,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me)
 		_dragRobot = -1;
 		BOOST_FOREACH(const LogFrame::Robot &r, frame->self())
 		{
-			if (pos.nearPoint(r.pos(), Constants::Robot::Radius))
+			if (pos.nearPoint(r.pos(), Robot_Radius))
 			{
 				_dragRobot = r.shell();
 				_dragRobotBlue = frame->blue_team();
@@ -39,7 +39,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me)
 		}
 		BOOST_FOREACH(const LogFrame::Robot &r, frame->opp())
 		{
-			if (pos.nearPoint(r.pos(), Constants::Robot::Radius))
+			if (pos.nearPoint(r.pos(), Robot_Radius))
 			{
 				_dragRobot = r.shell();
 				_dragRobotBlue = !frame->blue_team();
@@ -55,7 +55,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me)
 		_dragMode = DRAG_PLACE;
 	} else if (me->button() == Qt::RightButton && frame)
 	{
-		if (frame->has_ball() && pos.nearPoint(frame->ball().pos(), Constants::Ball::Radius))
+		if (frame->has_ball() && pos.nearPoint(frame->ball().pos(), Ball_Radius))
 		{
 			// Drag to shoot the ball
 			_dragMode = DRAG_SHOOT;
@@ -65,7 +65,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me)
 			int newID = -1;
 			for (int i = 0; i < frame->self_size(); ++i)
 			{
-				if (pos.distTo(frame->self(i).pos()) < Constants::Robot::Radius)
+				if (pos.distTo(frame->self(i).pos()) < Robot_Radius)
 				{
 					newID = frame->self(i).shell();
 					break;
@@ -115,7 +115,7 @@ void SimFieldView::mouseReleaseEvent(QMouseEvent* me)
 	if (_dragMode == DRAG_SHOOT)
 	{
 		SimCommand cmd;
-		_teamToWorld.transformDirection(_shot).set(cmd.mutable_ball_vel());
+		*cmd.mutable_ball_vel() = _teamToWorld.transformDirection(_shot);
 		sendSimCommand(cmd);
 		
 		update();

@@ -6,7 +6,7 @@
 using namespace std;
 using namespace Planning;
 
-Dynamics::Dynamics(SystemState::Robot *robot):
+Dynamics::Dynamics(OurRobot *robot):
 	_self(robot)
 {
 }

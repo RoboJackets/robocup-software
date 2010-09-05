@@ -1,25 +1,21 @@
 #include "Move.hpp"
 
 Gameplay::Behaviors::Move::Move(GameplayModule *gameplay):
-	Behavior(gameplay)
+	SingleRobotBehavior(gameplay)
 {
 	backoff = 0;
 }
 
-float Gameplay::Behaviors::Move::score(Robot* r)
-{
-	return r->pos().distTo(target);
-}
-
 bool Gameplay::Behaviors::Move::run()
 {
-	if (!allVisible())
+	if (!robot || !robot->visible)
 	{
 		return false;
 	}
 	
-	robot()->move(target - (target - robot()->pos()).normalized() * backoff);
-	robot()->face(face);
+	robot->move(target - (target - robot->pos).normalized() * backoff);
+	robot->face(face);
 	
+	//FIXME - Threshold
 	return false;
 }

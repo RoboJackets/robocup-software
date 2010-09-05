@@ -5,6 +5,7 @@
 
 #include "Goalie.hpp"
 
+#include <gameplay/Play.hpp>
 #include <gameplay/Window.hpp>
 
 #include <boost/foreach.hpp>
@@ -12,14 +13,18 @@
 using namespace std;
 using namespace Geometry2d;
 
-static const float MaxX = Constants::Field::GoalWidth / 2.0f;
+static const float MaxX = Field_GoalWidth / 2.0f;
 
 Gameplay::Behaviors::Goalie::Goalie(GameplayModule *gameplay):
-	Behavior(gameplay),
+	SingleRobotBehavior(gameplay),
 	_kick(gameplay)
 {
-	_win = 0;
+	_win = new WindowEvaluator(_gameplay->state());
+	_win->debug = true;
+	
 	_state = Defend;
+	robot = 0;
+	_index = 0;
 }
 
 Gameplay::Behaviors::Goalie::~Goalie()
@@ -27,54 +32,45 @@ Gameplay::Behaviors::Goalie::~Goalie()
 	delete _win;
 }
 
-bool Gameplay::Behaviors::Goalie::assign(set<Robot *> &available)
+void Gameplay::Behaviors::Goalie::assign(set<OurRobot *> &available)
 {
-	_robots.clear();
-	if (!takeBest(available))
+	if (!robot)
 	{
-	    return false;
+		// Take the robot nearest the goal
+		assignNearest(robot, available, Geometry2d::Point());
+	} else if (robot && !robot->visible)
+	{
+		//FIXME - Goalie replacement
+		available.erase(robot);
+	} else {
+		// Keep the current goalie, and prevent it from being used in a play
+		available.erase(robot);
 	}
 	
-	if (!_win)
-	{
-		_win = new WindowEvaluator(_gameplay->state());
-		_win->debug = true;
-	}
-	
-	_kick.assignOne(robot());
-	
-	_state = Defend;
-	
-	_index = 0;
-
-	return true;
-}
-
-float Gameplay::Behaviors::Goalie::score(Robot *r)
-{
-	return r->pos().magsq();
+// 	_kick.assignOne(robot);
 }
 
 bool Gameplay::Behaviors::Goalie::run()
 {
-	if (!assigned() || !allVisible())
+	if (!robot || !robot->visible)
 	{
 		return true;
 	}
 
 	if (!ball().valid)
 	{
-		robot()->move(Geometry2d::Point(0, Constants::Robot::Radius));
+		//FIXME - Stay where we are, if we are near the goal
+		robot->move(Geometry2d::Point(0, Robot_Radius));
 		return true;
 	}
 	
 	if (_state == Clear)
 	{
 		//if the ball is in the defense area...clear it
-		_kick.setTarget();
-		_kick.automatic = true;
+// 		_kick.setTarget();
+// 		_kick.automatic = true;
 		
-		robot()->dribble(50);
+		robot->dribble(50);
 		
 		bool done = !_kick.run();
 		
@@ -87,13 +83,13 @@ bool Gameplay::Behaviors::Goalie::run()
 	}
 	else if (_state == Defend)
 	{
-		robot()->face(ball().pos);
+		robot->face(ball().pos);
 
 		Robot* closest = 0;
 		float bestDist = 0;
-		BOOST_FOREACH(Robot *r, gameplay()->opp)
+		BOOST_FOREACH(Robot *r, state()->opp)
 		{
-			float dist = r->pos().distTo(ball().pos);
+			float dist = r->pos.distTo(ball().pos);
 			if (!closest || dist < bestDist)
 			{
 				closest = r;
@@ -101,14 +97,14 @@ bool Gameplay::Behaviors::Goalie::run()
 			}
 		}
 
-		//const Point goalBack(0,-Constants::Field::GoalDepth);
+		//const Point goalBack(0,-Field_GoalDepth);
 
 		//goal line, for intersection detection
 		Segment goalLine(Point(-MaxX, 0), Point(MaxX, 0));
 		
 		// Update the target window
 		_win->exclude.clear();
-		_win->exclude.push_back(robot()->pos());
+		_win->exclude.push_back(robot->pos);
 		_win->run(ball().pos, goalLine);
 		
 		Segment shootWindow = (_win->best) ? _win->best->segment : _win->target();
@@ -121,8 +117,8 @@ bool Gameplay::Behaviors::Goalie::run()
 		
 		Point windowCenter = shootWindow.center();
 		
-		Segment robotLine(Point(-Constants::Field::Width/2.0, Constants::Robot::Radius),
-				Point(Constants::Field::Width/2.0, Constants::Robot::Radius));
+		Segment robotLine(Point(-Field_Width/2.0, Robot_Radius),
+				Point(Field_Width/2.0, Robot_Radius));
 		
 		Point dest;
 		robotLine.intersects(shootLine, &dest);
@@ -134,13 +130,13 @@ bool Gameplay::Behaviors::Goalie::run()
 		robotLine.intersects(seg1, &pt[0]);
 		robotLine.intersects(seg2, &pt[1]);
 		
-		bool useCenter = noShot || (robot()->pos().nearPoint(pt[0], .25) && robot()->pos().nearPoint(pt[1], .25));
+		bool useCenter = noShot || (robot->pos.nearPoint(pt[0], .25) && robot->pos.nearPoint(pt[1], .25));
 		
 		if (!useCenter)
 		{
 			dest = pt[_index];
 			
-			if (dest.nearPoint(robot()->pos(), .25))
+			if (dest.nearPoint(robot->pos, .25))
 			{
 				_index++;
 				_index %= 2;
@@ -153,47 +149,47 @@ bool Gameplay::Behaviors::Goalie::run()
 		if (ball().vel.magsq() > 0.02 && ball().vel.dot(windowCenter - ball().pos) > 0)
 		{
 			shootLine = Segment(ball().pos, ball().pos + ball().vel.normalized() * 7.0);
-			robot()->faceNone();
+			robot->faceNone();
 
 			if (shootLine.intersects(shootWindow))
 			{
-				dest = shootLine.nearestPoint(robot()->pos());
+				dest = shootLine.nearestPoint(robot->pos);
 			}
 
-			robot()->dribble(50);
+			robot->dribble(50);
 		}
 		else if (ball().pos.mag() < .5 && !(gameState().theirPenalty() && !gameState().playing()))
 		{
 			_state = Clear;
 		}
-		else if (closest && closest->pos().nearPoint(ball().pos, Constants::Robot::Diameter))
+		else if (closest && closest->pos.nearPoint(ball().pos, Robot_Diameter))
 		{
-			Point shootDir = Point::direction(closest->angle() * DegreesToRadians);
+			Point shootDir = Point::direction(closest->angle * DegreesToRadians);
 
-			Segment closestShootLine = Segment(closest->pos(), closest->pos() + shootDir * 7.0);
+			Segment closestShootLine = Segment(closest->pos, closest->pos + shootDir * 7.0);
 
 			bool closestIntersect = closestShootLine.intersects(goalLine);
 
 			shootLine = closestShootLine;
 
 			//dribble to catch just in case
-			robot()->dribble(20);
+			robot->dribble(20);
 
 			//if the shot will not go in the goal
 			//tend toward the side it will go to
 			if (!closestIntersect)
 			{
 				//no need to dribble yet
-				robot()->dribble(0);
+				robot->dribble(0);
 
 				//the shoot line does not intersect
 				//but we still want to protect the left or right side
-				Segment baseLine(Point(-Constants::Field::Width/2.0,0), Point(Constants::Field::Width/2.0,0));
+				Segment baseLine(Point(-Field_Width/2.0,0), Point(Field_Width/2.0,0));
 
 				Point intersectPoint;
 				if (baseLine.intersects(closestShootLine, &intersectPoint))
 				{
-					intersectPoint.y += Constants::Robot::Radius;
+					intersectPoint.y += Robot_Radius;
 
 					if (intersectPoint.x > MaxX)
 					{
@@ -208,16 +204,16 @@ bool Gameplay::Behaviors::Goalie::run()
 
 			if (shootLine.intersects(goalLine))
 			{
-				dest = shootLine.nearestPoint(robot()->pos());
+				dest = shootLine.nearestPoint(robot->pos);
 			}
 		}
 		
 		//goalie should not go into the goal
 		//vision can loose sight
-		float margin = Constants::Ball::Radius;
-		if (dest.y < Constants::Robot::Radius+margin)
+		float margin = Ball_Radius;
+		if (dest.y < Robot_Radius+margin)
 		{
-			dest.y = Constants::Robot::Radius+margin;
+			dest.y = Robot_Radius+margin;
 		}
 		
 		if (dest.x > MaxX)
@@ -229,10 +225,10 @@ bool Gameplay::Behaviors::Goalie::run()
 			dest.x = -MaxX;
 		}
 		
-		robot()->move(dest);
+		robot->move(dest);
 		
 		//clear the kick behavior
-		_kick.assignOne(robot());
+// 		_kick.assignOne(robot);
 	}
 	
 	return true;

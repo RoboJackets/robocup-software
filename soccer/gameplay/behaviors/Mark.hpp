@@ -7,15 +7,15 @@ namespace Gameplay
 	namespace Behaviors
 	{
 		/** Prevents a target robot from receiving a pass */
-		class Mark: public Behavior
+		class Mark: public SingleRobotBehavior
 		{
 			public:
 
 				Mark(GameplayModule *gameplay);
 
 				/** set the robot to mark */
-				void markRobot(Robot * robot) { _markRobot = robot; }
-				Robot * markRobot() const { return _markRobot;}
+				void markRobot(OpponentRobot * robot) { _markRobot = robot; }
+				OpponentRobot * markRobot() const { return _markRobot;}
 
 				/** set the ratio */
 				void ratio(float r);
@@ -29,7 +29,7 @@ namespace Gameplay
 				float _ratio;
 
 				// the target
-				Robot * _markRobot;
+				OpponentRobot * _markRobot;
 		};
 	}
 }

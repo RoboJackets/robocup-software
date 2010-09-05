@@ -11,25 +11,26 @@ Gameplay::Plays::KickPenalty::KickPenalty(GameplayModule *gameplay):
 	_idle2(gameplay),
 	_idle3(gameplay)
 {
-	set<Robot *> available = gameplay->robots();
-	
 	_idle1.target = Geometry2d::Point(1.5, 1);
 	_idle2.target = Geometry2d::Point(1.5, 1.5);
 	_idle3.target = Geometry2d::Point(1.5, 2);
-	
-	_kicker.assign(available);
-	_idle1.assign(available);
-	_idle2.assign(available);
-	_idle3.assign(available);
 }
 
 float Gameplay::Plays::KickPenalty::score ( Gameplay::GameplayModule* gameplay )
 {
-	return (gameplay->state()->gameState.setupRestart() && gameplay->state()->gameState.ourPenalty()) ? 0 : INFINITY;
+	const GameState &gs = gameplay->state()->gameState;
+	return (gs.setupRestart() && gs.ourPenalty()) ? 0 : INFINITY;
 }
 
 bool Gameplay::Plays::KickPenalty::run()
 {
+	set<OurRobot *> available = _gameplay->playRobots();
+	
+	assignNearest(_kicker.robot, available, ball().pos);
+	assignNearest(_idle1.robot, available, _idle1.target);
+	assignNearest(_idle2.robot, available, _idle2.target);
+	assignNearest(_idle3.robot, available, _idle3.target);
+	
 	_kicker.run();
 	_idle1.run();
 	_idle2.run();

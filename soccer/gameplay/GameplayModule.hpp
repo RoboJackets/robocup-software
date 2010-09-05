@@ -3,19 +3,28 @@
 
 #pragma once
 
-#include <QMutex>
+#include <Geometry2d/Point.hpp>
+#include <framework/Obstacle.hpp>
+
 #include <set>
+#include <QMutex>
+#include <QString>
 
 #include <boost/shared_ptr.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 
-#include <gameplay/Robot.hpp>
+class OurRobot;
+class SystemState;
 
 namespace Gameplay
 {
-	class Behavior;
 	class Play;
 	class PlayFactory;
+	
+	namespace Behaviors
+	{
+		class Goalie;
+	}
 	
 	class GameplayModule
 	{
@@ -33,7 +42,7 @@ namespace Gameplay
 			void createGoalie();
 			void removeGoalie();
 			
-			Behavior *goalie() const
+			Behaviors::Goalie *goalie() const
 			{
 				return _goalie;
 			}
@@ -70,14 +79,11 @@ namespace Gameplay
 				return _playName;
 			}
 			
-			// Set of all robots on our team that are usable by plays
-			const std::set<Robot *> &robots() const
+			// All robots on our team that are usable by plays
+			const std::set<OurRobot *> &playRobots() const
 			{
-				return _robots;
+				return _playRobots;
 			}
-			
-			Robot *self[Constants::Robots_Per_Team];
-			Robot *opp[Constants::Robots_Per_Team];
 			
 		private:
 			friend class Play;
@@ -89,9 +95,9 @@ namespace Gameplay
 			SystemState *_state;
 			
 			// The goalie behavior (may be null)
-			Behavior *_goalie;
+			Behaviors::Goalie *_goalie;
 			
-			std::set<Robot *> _robots;
+			std::set<OurRobot *> _playRobots;
 			
 			// The current play
 			boost::shared_ptr<Play> _currentPlay;

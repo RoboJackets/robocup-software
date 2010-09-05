@@ -24,7 +24,7 @@ void usage(const char *prog)
 
 int main(int argc, char *argv[])
 {
-	//FIXME - debugInit with specified soccer executable?
+	debugInit("soccer");
 	
 	QApplication app(argc, argv);
 	

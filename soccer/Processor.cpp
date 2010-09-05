@@ -16,6 +16,11 @@
 #include <framework/RobotConfig.hpp>
 #include <modeling/WorldModel.hpp>
 #include <gameplay/GameplayModule.hpp>
+// #include <stateID/StateIDModule.hpp>
+#include <motion/PointController.hpp>
+#include <motion/WheelController.hpp>
+#include <modeling/WorldModel.hpp>
+#include <RefereeModule.hpp>
 
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
@@ -56,9 +61,9 @@ Processor::Processor(Configuration *config, bool sim, int radio)
 	robotConfig2008->motion.output_coeffs.resize(4);
 	robotConfig2008->motion.output_coeffs.set(0, 10);
 	
-	BOOST_FOREACH(SystemState::Robot &robot, _state.self)
+	BOOST_FOREACH(OurRobot *robot, _state.self)
 	{
-		robot.config = robotConfig2008;
+		robot->config = robotConfig2008;
 	}
 
 	// Initialize team-space transformation
@@ -67,7 +72,7 @@ Processor::Processor(Configuration *config, bool sim, int radio)
 	QMetaObject::connectSlotsByName(this);
 
 	_modelingModule = make_shared<Modeling::WorldModel>(&_state, config);
-	_stateIDModule = make_shared<StateIdentification::StateIDModule>(&_state);
+// 	_stateIDModule = make_shared<StateIdentification::StateIDModule>(&_state);
 	_pointControlModule = make_shared<Motion::PointController>(&_state, config);
 	_wheelControlModule = make_shared<Motion::WheelController>(&_state, config);
 	_refereeModule = make_shared<RefereeModule>(&_state);
@@ -172,14 +177,6 @@ void Processor::internalRefCommand(char ch)
 	_refereeModule->command(ch);
 }
 
-void Processor::addMotors(RadioTx::Robot* robot)
-{
-	for (size_t m = 0; m < 4; ++m)
-	{
-		robot->add_motors(0);
-	}
-}
-
 bool Processor::autonomous()
 {
 	QMutexLocker lock(&_loopMutex);
@@ -278,12 +275,6 @@ void Processor::run()
 		_state.logFrame->set_blue_team(_blueTeam);
 		_state.logFrame->set_defend_plus_x(_defendPlusX);
 		
-		// Clear radio commands
-		for (size_t r = 0; r < Constants::Robots_Per_Team; ++r)
-		{
-			_state.self[r].radioTx = 0;
-		}
-
 		////////////////
 		// Inputs
 		
@@ -405,15 +396,13 @@ void Processor::run()
 			curStatus.lastRadioRxTime = Utils::timestamp();
 			
 			// Store this packet in the appropriate robot
-			for (size_t i = 0 ; i < Constants::Robots_Per_Team; ++i)
+			unsigned int board = rx->board_id();
+			if (board < Num_Shells)
 			{
-				if (_state.self[i].shell == rx->board_id())
-				{
-					// We have to copy because the RX packet will survive past this frame
-					// but LogFrame will not (the RadioRx in LogFrame will be reused).
-					_state.self[i].radioRx.CopyFrom(*rx);
-					break;
-				}
+				// We have to copy because the RX packet will survive past this frame
+				// but LogFrame will not (the RadioRx in LogFrame will be reused).
+				_state.self[board]->radioRx.CopyFrom(*rx);
+				break;
 			}
 		}
 		
@@ -428,30 +417,18 @@ void Processor::run()
 		_state.ball.vel = _worldToTeam.transformDirection(_state.ball.vel);
 		_state.ball.accel = _worldToTeam.transformDirection(_state.ball.accel);
 		
-		BOOST_FOREACH(SystemState::Robot &robot, _state.self)
+		BOOST_FOREACH(Robot *robot, _state.self)
 		{
-			robot.pos = _worldToTeam * robot.pos;
-			robot.vel = _worldToTeam.transformDirection(robot.vel);
-			robot.angle = Utils::fixAngleDegrees(_teamAngle + robot.angle);
+			robot->pos = _worldToTeam * robot->pos;
+			robot->vel = _worldToTeam.transformDirection(robot->vel);
+			robot->angle = Utils::fixAngleDegrees(_teamAngle + robot->angle);
 		}
 		
-		BOOST_FOREACH(SystemState::Robot &robot, _state.opp)
+		BOOST_FOREACH(Robot *robot, _state.opp)
 		{
-			robot.pos = _worldToTeam * robot.pos;
-			robot.vel = _worldToTeam.transformDirection(robot.vel);
-			robot.angle = Utils::fixAngleDegrees(_teamAngle + robot.angle);
-		}
-		
-		// Add RadioTx commands for visible robots
-		for (size_t r = 0; r < Constants::Robots_Per_Team; ++r)
-		{
-			if (_state.self[r].valid)
-			{
-				RadioTx::Robot *tx = _state.logFrame->mutable_radio_tx()->add_robots();
-				_state.self[r].radioTx = tx;
-				tx->set_board_id(_state.self[r].shell);
-				addMotors(tx);
-			}
+			robot->pos = _worldToTeam * robot->pos;
+			robot->vel = _worldToTeam.transformDirection(robot->vel);
+			robot->angle = Utils::fixAngleDegrees(_teamAngle + robot->angle);
 		}
 		
 		if (_refereeModule)
@@ -459,33 +436,9 @@ void Processor::run()
 			_refereeModule->run();
 		}
 		
-		#if 0
-		for (int r = 0; r < Constants::Robots_Per_Team; ++r)
-		{
-			if (_state.self[r].valid)
-			{
-				ConfigFile::shared_robot rcfg = _config->robot(_state.self[r].shell);
-				
-				if (rcfg)
-				{
-					_state.self[r].config = *rcfg;
-
-					// set the config information
-					switch (rcfg->rev) {
-					case ConfigFile::rev2008:
-						_state.self[r].rev =  SystemState::Robot::rev2008;
-						break;
-					case ConfigFile::rev2010:
-						_state.self[r].rev =  SystemState::Robot::rev2010;
-					}
-				}
-			}
-		}
-		#endif
-		
 		if (_stateIDModule)
 		{
-			_stateIDModule->run();
+// 			_stateIDModule->run();
 		}
 
 		if (_gameplayModule)
@@ -516,18 +469,23 @@ void Processor::run()
 		}
 		
 		// Our robots
-		for (unsigned int i = 0; i < Constants::Robots_Per_Team; ++i)
+		BOOST_FOREACH(OurRobot *r, _state.self)
 		{
-			const SystemState::Robot &r = _state.self[i];
-			if (r.valid)
+			if (r->visible)
 			{
 				LogFrame::Robot *log = _state.logFrame->add_self();
-				r.pos.set(log->mutable_pos());
-				log->set_shell(r.shell);
-				log->set_angle(r.angle);
-				log->set_has_ball(r.hasBall);
+				*log->mutable_pos() = r->pos;
+				log->set_shell(r->shell());
+				log->set_angle(r->angle);
+				log->set_has_ball(r->hasBall);
 				
-				const vector<void *> &src = _gameplayModule->self[i]->commandTrace();
+				BOOST_FOREACH(const DebugText &t, r->robotText)
+				{
+					log->add_text()->CopyFrom(t);
+				}
+				
+				// Copy command trace, converting to uint64
+				const vector<void *> &src = r->commandTrace();
 				RepeatedField<uint64> *dst = log->mutable_command_trace();
 				dst->Reserve(src.size());
 				for (unsigned int j = 0; j < src.size(); ++j)
@@ -538,15 +496,14 @@ void Processor::run()
 		}
 		
 		// Opponent robots
-		BOOST_FOREACH(const SystemState::Robot &r, _state.opp)
+		BOOST_FOREACH(OpponentRobot *r, _state.opp)
 		{
-			if (r.valid)
+			if (r->visible)
 			{
 				LogFrame::Robot *log = _state.logFrame->add_opp();
-				r.pos.set(log->mutable_pos());
-				log->set_shell(r.shell);
-				log->set_angle(r.angle);
-				log->set_has_ball(r.hasBall);
+				*log->mutable_pos() = r->pos;
+				log->set_shell(r->shell());
+				log->set_angle(r->angle);
 			}
 		}
 		
@@ -554,8 +511,8 @@ void Processor::run()
 		if (_state.ball.valid)
 		{
 			LogFrame::Ball *log = _state.logFrame->mutable_ball();
-			_state.ball.pos.set(log->mutable_pos());
-			_state.ball.vel.set(log->mutable_vel());
+			*log->mutable_pos() = _state.ball.pos;
+			*log->mutable_vel() = _state.ball.vel;
 		}
 		
 		////////////////
@@ -597,55 +554,69 @@ void Processor::run()
 
 void Processor::sendRadioData()
 {
-	// Cycle through reverse IDs
-	_state.logFrame->mutable_radio_tx()->set_reverse_board_id(_state.self[_reverseId].shell);
-	_reverseId = (_reverseId + 1) % Constants::Robots_Per_Team;
+	RadioTx *tx = _state.logFrame->mutable_radio_tx();
 	
-	// Halt overrides normal motion control
+	// Cycle through reverse IDs for all visible robots
+	int giveUp = _reverseId;
+	do
+	{
+		_reverseId = (_reverseId + 1) % Num_Shells;
+		if (_state.self[_reverseId]->visible)
+		{
+			break;
+		}
+	} while (_reverseId != giveUp);
+	tx->set_reverse_board_id(_reverseId);
+	
+	// Halt overrides normal motion control, but not joystick
 	if (_joystick->autonomous() && _state.gameState.halt())
 	{
 		// Force all motor speeds to zero
-		for (int r = 0; r < _state.logFrame->mutable_radio_tx()->robots_size(); ++r)
+		BOOST_FOREACH(OurRobot *r, _state.self)
 		{
-			RadioTx::Robot *robot = _state.logFrame->mutable_radio_tx()->mutable_robots(r);
-			for (int m = 0; m < robot->motors_size(); ++m)
+			RadioTx::Robot &txRobot = r->radioTx;
+			for (int m = 0; m < txRobot.motors_size(); ++m)
 			{
-				robot->set_motors(m, 0);
+				txRobot.set_motors(m, 0);
 			}
 		}
 	}
-
-	// Apply joystick input
-	bool manualDone = false;
-	for (size_t i = 0; i < Constants::Robots_Per_Team; ++i)
+	
+	// Add RadioTx commands for visible robots and apply joystick input
+	BOOST_FOREACH(OurRobot *r, _state.self)
 	{
-		if (_state.self[i].valid)
+		if (r->visible)
 		{
-			RadioTx::Robot *tx = _state.self[i].radioTx;
-			if (_manualID >= 0 && _state.self[i].shell == _manualID)
+			RadioTx::Robot *txRobot = tx->add_robots();
+			
+			// Copy motor commands.
+			// Even if we are using the joystick, this sets board_id and the
+			// number of motors.
+			txRobot->CopyFrom(r->radioTx);
+			
+			if (_manualID >= 0 && (int)r->shell() == _manualID)
 			{
 				// Drive this robot manually
-				_joystick->drive(tx);
-				manualDone = true;
+				_joystick->drive(txRobot);
 			} else if (!_joystick->autonomous())
 			{
 				// Stop this robot
-				for (int m = 0; m < tx->motors_size(); ++m)
+				for (int m = 0; m < 4; ++m)
 				{
-					tx->set_motors(m, 0);
+					txRobot->set_motors(m, 0);
 				}
 			}
 		}
 	}
 	
-	if (_manualID >= 0 && _state.logFrame->radio_tx().robots_size() < (int)Constants::Robots_Per_Team && !manualDone)
+	// Manual driving for invisible robots
+	if (_manualID >= 0 && !_state.self[_manualID]->visible && tx->robots_size() < (int)Robots_Per_Team)
 	{
 		// The manual robot wasn't found by vision/modeling but we have room for it in the packet.
 		// This allows us to drive an off-field robot for testing or to drive a robot back onto the field.
-		RadioTx::Robot *robot = _state.logFrame->mutable_radio_tx()->add_robots();
-		robot->set_board_id(_manualID);
-		addMotors(robot);
-		_joystick->drive(robot);
+		RadioTx::Robot *txRobot = &_state.self[_manualID]->radioTx;
+		_joystick->drive(txRobot);
+		tx->add_robots()->CopyFrom(*txRobot);
 	}
 
 	// Send the packet
@@ -665,6 +636,6 @@ void Processor::defendPlusX(bool value)
 		_teamAngle = 90;
 	}
 
-	_worldToTeam = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length / 2.0f));
+	_worldToTeam = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Length / 2.0f));
 	_worldToTeam *= Geometry2d::TransformMatrix::rotate(_teamAngle);
 }

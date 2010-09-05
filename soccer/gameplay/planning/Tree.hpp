@@ -3,11 +3,12 @@
 #include <list>
 
 #include <Geometry2d/Segment.hpp>
-#include <framework/Dynamics.hpp>
 #include <framework/Path.hpp>
 
 namespace Planning
 {
+	class Dynamics;
+	
 	/** base tree class for rrt trees
 	 *  Tree can be grown in different ways */
 	class Tree

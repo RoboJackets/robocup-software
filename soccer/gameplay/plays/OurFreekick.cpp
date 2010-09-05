@@ -12,26 +12,28 @@ Gameplay::Plays::OurFreekick::OurFreekick(GameplayModule *gameplay):
 	_fullback2(gameplay, Behaviors::Fullback::Left),
 	_pdt(gameplay, &_kicker)
 {
-	set<Robot *> available = gameplay->robots();
-	_robots = available;
 	_center.target = _gameplay->centerMatrix() * Geometry2d::Point(0, 1.5);
-	
-	_pdt.assign(available);
-	_center.assign(available);
-	_fullback1.assign(available);
-	_fullback2.assign(available);
 }
 
 float Gameplay::Plays::OurFreekick::score ( Gameplay::GameplayModule* gameplay )
 {
-	bool ok = (gameplay->state()->gameState.setupRestart() && gameplay->state()->gameState.ourFreeKick());
-	return ok ? 0 : INFINITY;
+	const GameState &gs = gameplay->state()->gameState;
+	return (gs.setupRestart() && gs.ourFreeKick()) ? 0 : INFINITY;
 }
 
 bool Gameplay::Plays::OurFreekick::run()
 {
-	_kicker.aimType(Behaviors::Kick::ONETOUCH);
-	_kicker.setVScale(0.3, 0.2); // drive slowly until close to ball
+	set<OurRobot *> available = _gameplay->playRobots();
+	
+	assignNearest(_kicker.robot, available, ball().pos);
+	_pdt.backoff.robots.clear();
+	_pdt.backoff.robots.insert(_kicker.robot);
+	assignNearest(_center.robot, available, _center.target);
+	assignNearest(_fullback1.robot, available, Geometry2d::Point());
+	assignNearest(_fullback2.robot, available, Geometry2d::Point());
+	
+// 	_kicker.aimType(Behaviors::Kick::ONETOUCH);
+// 	_kicker.setVScale(0.3, 0.2); // drive slowly until close to ball
 	_pdt.run();
 	_center.run();
 	_fullback1.run();

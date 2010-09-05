@@ -34,10 +34,10 @@ Robot::Robot(Env* env, unsigned int id,  Robot::Rev rev) :
 	//TODO fixme, use real shell mesh
 	#if 1
 	NxConvexShapeDesc shapeDesc;
-	shapeDesc.meshData = cylinder(Constants::Robot::Height,
-	        Constants::Robot::Radius, 20);
+	shapeDesc.meshData = cylinder(Robot_Height,
+	        Robot_Radius, 20);
 	
-	shapeDesc.localPose.t = NxVec3(0.0f, 0.0f, Constants::Robot::Height/2.0);
+	shapeDesc.localPose.t = NxVec3(0.0f, 0.0f, Robot_Height/2.0);
 	#endif
 	//NxBoxShapeDesc shapeDesc;
 	//shapeDesc.dimensions.set(0.2f,0.2f,0.2f);
@@ -316,7 +316,7 @@ NxConvexMesh* Robot::cylinder(const float length, const float radius,
 
 void Robot::position(float x, float y)
 {
-	NxVec3 newPos(x, y, Constants::Robot::Height/2.0);
+	NxVec3 newPos(x, y, Robot_Height/2.0);
 #if 0
     NxVec3 delta = newPos - _actor->getGlobalPosition();
 	for (int i=0 ; i<4 ; ++i)
@@ -508,7 +508,7 @@ bool Robot::ballSense(const Ball *ball) const
 	
 	Geometry2d::Point pos = getPosition();
 	Geometry2d::Point ballPos = ball->getPosition();
-	bool near = ballPos.nearPoint(pos, Constants::Robot::Radius + Constants::Ball::Radius);
+	bool near = ballPos.nearPoint(pos, Robot_Radius + Ball_Radius);
 	
 	if (!near)
 	{

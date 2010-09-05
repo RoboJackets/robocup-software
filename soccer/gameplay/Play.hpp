@@ -1,5 +1,7 @@
 #pragma once
 
+#include <AutoName.hpp>
+
 #include "Behavior.hpp"
 
 // This macro lets PlayConfigTab automagically populate its list of available plays.
@@ -11,7 +13,7 @@ namespace Gameplay
 {
 	class GameplayModule;
 	
-	class Play: public Behavior
+	class Play: public Behavior, public AutoName
 	{
 	public:
 		Play(GameplayModule *gameplay);
@@ -82,3 +84,18 @@ namespace Gameplay
 			QString _name;
 	};
 }
+
+////////
+// Assignment functions
+//
+// These are used to find the best robot according to some criteria,
+// remove it from the available set, and store it in role.
+//
+// If needVisible is true and the currently assigned robot is not visible,
+// a new robot will be selected.  If no robot can be selected, role
+// is unchanged and the function returns false.
+//
+// Each assigner returns true iff the role has a usable robot.
+
+// Assigns the robot in nearest to <pt>
+bool assignNearest(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt, bool needVisible = true);

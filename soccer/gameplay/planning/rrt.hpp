@@ -15,6 +15,8 @@
 
 namespace Planning
 {
+	class Dynamics;
+	
 	namespace RRT
 	{
 		/** generate a random point on the floor */

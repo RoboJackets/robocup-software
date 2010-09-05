@@ -41,7 +41,7 @@ namespace Utils
 	}
 	
 	/** Handles saturation of a bounded value */
-	static inline float setBound(float value, float max, float min) {
+	static inline float clamp(float value, float max, float min) {
 		if (value > max)
 		{
 			return max;

@@ -57,7 +57,7 @@ namespace Motion {
 		 * function that actually generates motor commands
 		 * Needs velocity as well as a dynamics model
 		 */
-		void genMotor(const Geometry2d::Point& vel, float w, SystemState::Robot* robot);
+		void genMotor(const Geometry2d::Point& vel, float w, OurRobot* robot);
 	};
 
 }

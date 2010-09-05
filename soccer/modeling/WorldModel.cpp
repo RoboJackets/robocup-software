@@ -25,8 +25,8 @@ const uint64_t MaxCoastTime = 500000;
 WorldModel::WorldModel(SystemState *state, Configuration *config) :
 	_robotConfig(config),
 	_state(state),
-	_selfPlayers(Constants::Robots_Per_Team),
-	_oppPlayers(Constants::Robots_Per_Team),
+	_selfPlayers(Robots_Per_Team),
+	_oppPlayers(Robots_Per_Team),
 	ballModel(BallModel::RBPF, &_robotMap, config)
 {
 }
@@ -82,7 +82,7 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 
 	// get robot data from return packets
 	if (verbose) cout << "Adding robot rx data" << endl;
-	BOOST_FOREACH(SystemState::Robot& robot, _state->self) {
+	BOOST_FOREACH(OurRobot *robot, _state->self) {
 		addRobotRxData(robot);
 	}
 
@@ -91,10 +91,46 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 	updateRobots(_selfPlayers, curTime);
 	updateRobots(_oppPlayers, curTime);
 
+	// Ball sensor
+	//FIXME - Detect broken ball sensors and spurious triggers (from spinning or collision)
+	BOOST_FOREACH(OurRobot *robot, _state->self)
+	{
+		robot->hasBall = robot->radioRx.ball();
+	}
+	
 	// Copy robot data out of models into state
 	if (verbose) cout << "copying out data for robots" << endl;
-	copyRobotState(_selfPlayers, SELF);
-	copyRobotState(_oppPlayers, OPP);
+	BOOST_FOREACH(Robot *robot, _state->self)
+	{
+		robot->visible = false;
+	}
+	BOOST_FOREACH(Robot *robot, _state->opp)
+	{
+		robot->visible = false;
+	}
+	
+	BOOST_FOREACH(const RobotModel::shared& robot, _selfPlayers)
+	{
+		if (robot) {
+			int i = robot->shell();
+			_state->self[i]->visible = true;
+			_state->self[i]->pos = robot->pos();
+			_state->self[i]->vel = robot->vel();
+			_state->self[i]->angle = robot->angle();
+			_state->self[i]->angleVel = robot->angleVel();
+		}
+	}
+	BOOST_FOREACH(const RobotModel::shared& robot, _oppPlayers)
+	{
+		if (robot) {
+			int i = robot->shell();
+			_state->opp[i]->visible = true;
+			_state->opp[i]->pos = robot->pos();
+			_state->opp[i]->vel = robot->vel();
+			_state->opp[i]->angle = robot->angle();
+			_state->opp[i]->angleVel = robot->angleVel();
+		}
+	}
 
 	// Store the robot models for use by the ball model
 	_robotMap.clear();
@@ -125,7 +161,7 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 			if (robot->valid(curTime) && robot->hasBall())
 			{
 				Geometry2d::Point offset = Geometry2d::Point::
-						direction(robot->angle() * DegreesToRadians) *	Constants::Robot::Radius;
+						direction(robot->angle() * DegreesToRadians) *	Robot::Radius;
 
 				ballModel.observation(_state->timestamp, robot->pos() + offset, BallModel::BALL_SENSOR);
 			}
@@ -179,30 +215,12 @@ void WorldModel::updateRobots(vector<RobotModel::shared>& players, uint64_t cur_
 	}
 }
 
-void WorldModel::addRobotRxData(SystemState::Robot& log_robot) {
-	int shell = log_robot.shell;
+void WorldModel::addRobotRxData(OurRobot *robot) {
+	int shell = robot->shell();
 	BOOST_FOREACH(RobotModel::shared& model, _selfPlayers) {
 		if (model && model->shell() == shell) {
-			model->hasBall(log_robot.radioRx.ball());
+			model->hasBall(robot->radioRx.ball());
 			return;
 		}
-	}
-}
-
-void WorldModel::copyRobotState(const std::vector<RobotModel::shared>& players, TeamMode m) {
-	unsigned int i=0;
-	SystemState::Robot* log = (m == SELF) ? _state->self : _state->opp;
-	BOOST_FOREACH(const RobotModel::shared& robot, players) {
-		if (robot) {
-			log[i].valid = true;
-			log[i].shell = robot->shell();
-			log[i].pos = robot->pos();
-			log[i].vel = robot->vel();
-			log[i].angle = robot->angle();
-			log[i].angleVel = robot->angleVel();
-		} else {
-			log[i].valid = false;
-		}
-		++i;
 	}
 }

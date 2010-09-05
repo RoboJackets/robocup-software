@@ -9,60 +9,44 @@
 /// all times in seconds
 /// all weights in kilograms
 
-namespace Constants
-{
-    const size_t Robots_Per_Team = 5;
-	
-	// Number of robots controlled by a play (all except the goalie)
-	const size_t Play_Robots = Robots_Per_Team - 1;
-    
-    namespace Ball
-    {
-        const float Diameter = 0.043f;
-        const float Radius = Diameter/2.0f;
-        const float Mass = 0.048f;
-    }
+// Number of identifiable robots on one team
+const size_t Num_Shells = 16;
 
-    namespace Field
-    {
-        const float Length = 6.05f;
-        const float Width = 4.05f;
-        const float Border = 0.25f;
+// Number of playing robots on one team
+const size_t Robots_Per_Team = 5;
 
-        const float LineWidth = 0.01f;
+const float Ball_Diameter = 0.043f;
+const float Ball_Radius = Ball_Diameter/2.0f;
+const float Ball_Mass = 0.048f;
 
-        const float GoalWidth = 0.7f;
-        const float GoalDepth = 0.2f;
-        const float GoalHeight = 0.2f;
+const float Field_Length = 6.05f;
+const float Field_Width = 4.05f;
+const float Field_Border = 0.25f;
 
-        /** Distance of the penalty marker from the goal line */
-        const float PenaltyDist = 0.450f;
-        const float PenaltyDiam = 0.010f;
+const float Field_LineWidth = 0.01f;
 
-        /** Radius of the goal arcs */
-        const float ArcRadius = 0.5f;
-        
-        /** diameter of the center circle */
-        const float CenterRadius = 0.5f;
-        const float CenterDiameter = CenterRadius * 2.0f;
-        
-        /** flat area for defence markings */
-        const float GoalFlat = 0.35f;
-    }
+const float Field_GoalWidth = 0.7f;
+const float Field_GoalDepth = 0.2f;
+const float Field_GoalHeight = 0.2f;
 
-    namespace Floor
-    {
-        const float Length = Field::Length + 2.0 * Field::Border;
-        const float Width = Field::Width + 2.0 * Field::Border;
+/** Distance of the penalty marker from the goal line */
+const float Field_PenaltyDist = 0.450f;
+const float Field_PenaltyDiam = 0.010f;
 
-        const float Aspect = Width/Length;
-    }
+/** Radius of the goal arcs */
+const float Field_ArcRadius = 0.5f;
 
-    namespace Robot
-    {
-        const float Diameter = 0.180f;
-        const float Radius = Diameter/2.0f;
-        const float Height = 0.150f;
-        const float MouthWidth = 0.070f;
-    }
-}
+/** diameter of the center circle */
+const float Field_CenterRadius = 0.5f;
+const float Field_CenterDiameter = Field_CenterRadius * 2.0f;
+
+/** flat area for defence markings */
+const float Field_GoalFlat = 0.35f;
+
+const float Floor_Length = Field_Length + 2.0 * Field_Border;
+const float Floor_Width = Field_Width + 2.0 * Field_Border;
+
+const float Robot_Diameter = 0.180f;
+const float Robot_Radius = Robot_Diameter/2.0f;
+const float Robot_Height = 0.150f;
+const float Robot_MouthWidth = 0.070f;

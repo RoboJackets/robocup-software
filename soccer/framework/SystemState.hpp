@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Robot.hpp>
+
 #include <vector>
 #include <string>
 
@@ -15,96 +17,30 @@
 #include <Constants.hpp>
 
 class RobotConfig;
+class OurRobot;
+class OpponentRobot;
 
 namespace Packet
 {
 	class LogFrame;
 }
 
+struct Ball
+{
+	Ball()
+	{
+		valid = false;
+	}
+	
+	Geometry2d::Point pos;
+	Geometry2d::Point vel;
+	Geometry2d::Point accel;
+	bool valid;
+};
+
 class SystemState
 {
 	public:
-		class Robot
-		{
-			public:
-				boost::shared_ptr<RobotConfig> config;
-				
-				ObstacleGroup obstacles;
-				
-				uint8_t shell;
-				enum Rev
-				{
-					rev2008 = 0,
-					rev2010 = 1
-				};
-				
-				Rev rev;
-				Geometry2d::Point pos;
-				Geometry2d::Point vel;
-				float angle;
-				float angleVel;
-				MotionCmd cmd;
-				bool valid;
-				bool hasBall;
-				Geometry2d::Point cmd_vel;
-				float cmd_w;
-				Packet::RadioTx::Robot *radioTx;
-				Packet::RadioRx radioRx;
-				
-				Robot()
-				{
-					shell = 0;
-					rev = rev2008;
-					angle = 0;
-					angleVel = 0;
-					valid = false;
-					hasBall = false;
-					cmd_w = 0;
-					radioTx = 0;
-				}
-		};
-		
-		class Ball
-		{
-			public:
-				Geometry2d::Point pos;
-				Geometry2d::Point vel;
-				Geometry2d::Point accel;
-				bool valid;
-				
-				Ball()
-				{
-					valid = false;
-				}
-		};
-		
-		enum Possession
-		{
-			OFFENSE = 0,
-			DEFENSE = 1,
-			FREEBALL = 2
-		};
-		
-		enum BallFieldPos
-		{
-			HOMEFIELD = 0,
-			MIDFIELD = 1,
-			OPPFIELD = 2
-		};
-		
-		class GameStateID
-		{
-			public:
-				Possession posession;
-				BallFieldPos field_pos;
-				
-				GameStateID()
-				{
-					posession = OFFENSE;
-					field_pos = HOMEFIELD;
-				}
-		};
-		
 		// Debug graphics
 		void drawLine(const Geometry2d::Line &line, const QColor &color = Qt::black, const QString &layer = QString());
 		
@@ -118,19 +54,25 @@ class SystemState
 		void drawPolygon(const Geometry2d::Point *pts, int n, const QColor &color = Qt::black, const QString &layer = QString());
 		void drawText(const QString &text, const Geometry2d::Point &pos, const QColor &color = Qt::black, const QString &layer = QString());
 		
-		GameStateID stateID;
 		uint64_t timestamp;
 		GameState gameState;
-		Robot self[Constants::Robots_Per_Team];
-		Robot opp[Constants::Robots_Per_Team];
+		
+		// All possible robots.
+		// Robots that aren't on the field are present here because a robot may be removed and replaced,
+		// and that particular robot may be important (e.g. goalie).
+		//
+		// Plays need to keep Robot*'s around, so we can't just delete the robot since the play needs
+		// to see that it is no longer visible.  We don't want multiple Robots for the same shell because
+		// that would give the appearance that a new robot appeared when it was actually just pushed back on
+		// the field.
+		std::vector<OurRobot *> self;
+		std::vector<OpponentRobot *> opp;
+		
 		Ball ball;
 		boost::shared_ptr<Packet::LogFrame> logFrame;
 		
-		SystemState()
-		{
-			timestamp = 0;
-			_numDebugLayers = 0;
-		}
+		SystemState();
+		~SystemState();
 		
 		const QStringList &debugLayers() const
 		{

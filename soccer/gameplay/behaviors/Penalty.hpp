@@ -7,12 +7,11 @@ namespace Gameplay
 {
 	namespace Behaviors
 	{
-		class Penalty: public Behavior
+		class Penalty: public SingleRobotBehavior
 		{
 			public:
 				Penalty(GameplayModule *gameplay);
 
-				virtual bool assign(std::set<Robot *> &available);
 				virtual bool run();
 				
 			private:

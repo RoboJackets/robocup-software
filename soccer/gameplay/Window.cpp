@@ -32,8 +32,8 @@ void Gameplay::WindowEvaluator::clear()
 
 void Gameplay::WindowEvaluator::run(Geometry2d::Point origin)
 {
-	Geometry2d::Point g0(Constants::Field::GoalWidth / 2, Constants::Field::Length);
-	Geometry2d::Point g1(-Constants::Field::GoalWidth / 2, Constants::Field::Length);
+	Geometry2d::Point g0(Field_GoalWidth / 2, Field_Length);
+	Geometry2d::Point g1(-Field_GoalWidth / 2, Field_Length);
 	Geometry2d::Segment goal(g0, g1);
 	
 	run(origin, goal);
@@ -42,8 +42,8 @@ void Gameplay::WindowEvaluator::run(Geometry2d::Point origin)
 void Gameplay::WindowEvaluator::run(Geometry2d::Point origin, const Geometry2d::Point &target)
 {
 	Geometry2d::Point dir = (target - origin).perpCCW().normalized();
-	Geometry2d::Segment seg(target + dir * Constants::Robot::Radius,
-							target - dir * Constants::Robot::Radius);
+	Geometry2d::Segment seg(target + dir * Robot_Radius,
+							target - dir * Robot_Radius);
 	
 	run(origin, seg);
 }
@@ -67,14 +67,14 @@ void Gameplay::WindowEvaluator::run(Geometry2d::Point origin, const Geometry2d::
 	Window *all = new Window(0, _end);
 	windows.push_back(all);
 	
-	BOOST_FOREACH(const SystemState::Robot &robot, _state->opp)
+	BOOST_FOREACH(const Robot *robot, _state->opp)
 	{
-		if (robot.valid)
+		if (robot->visible)
 		{
 			bool skip = false;
 			BOOST_FOREACH(const Geometry2d::Point &pt, exclude)
 			{
-				if (pt.nearPoint(robot.pos, Constants::Robot::Radius))
+				if (pt.nearPoint(robot->pos, Robot_Radius))
 				{
 					skip = true;
 					break;
@@ -83,19 +83,19 @@ void Gameplay::WindowEvaluator::run(Geometry2d::Point origin, const Geometry2d::
 			
 			if (!skip)
 			{
-				obstacleRobot(robot.pos);
+				obstacleRobot(robot->pos);
 			}
 		}
 	}
 	
-	BOOST_FOREACH(const SystemState::Robot &robot, _state->self)
+	BOOST_FOREACH(const Robot *robot, _state->self)
 	{
-		if (robot.valid)
+		if (robot->visible)
 		{
 			bool skip = false;
 			BOOST_FOREACH(const Geometry2d::Point &pt, exclude)
 			{
-				if (pt.nearPoint(robot.pos, Constants::Robot::Radius))
+				if (pt.nearPoint(robot->pos, Robot_Radius))
 				{
 					skip = true;
 					break;
@@ -104,7 +104,7 @@ void Gameplay::WindowEvaluator::run(Geometry2d::Point origin, const Geometry2d::
 			
 			if (!skip)
 			{
-				obstacleRobot(robot.pos);
+				obstacleRobot(robot->pos);
 			}
 		}
 	}
@@ -159,9 +159,9 @@ void Gameplay::WindowEvaluator::obstacleRobot(Geometry2d::Point pos)
 {
 	Geometry2d::Point n = (pos - _origin).normalized();
 	Geometry2d::Point t = n.perpCCW();
-	const float r = Constants::Robot::Radius + Constants::Ball::Radius;
-	Geometry2d::Segment seg(pos - n * Constants::Robot::Radius + t * r,
-							pos - n * Constants::Robot::Radius - t * r);
+	const float r = Robot_Radius + Ball_Radius;
+	Geometry2d::Segment seg(pos - n * Robot_Radius + t * r,
+							pos - n * Robot_Radius - t * r);
 	
 	if (debug)
 	{

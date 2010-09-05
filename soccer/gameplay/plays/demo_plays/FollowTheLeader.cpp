@@ -7,7 +7,7 @@ using namespace std;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::FollowTheLeader, "Demos")
 
-static bool shellLessThan(Gameplay::Robot *r1, Gameplay::Robot *r2)
+static bool shellLessThan(Robot *r1, Robot *r2)
 {
 	return r1->shell() < r2->shell();
 }
@@ -19,7 +19,8 @@ Gameplay::Plays::FollowTheLeader::FollowTheLeader(GameplayModule *gameplay):
 
 bool Gameplay::Plays::FollowTheLeader::run()
 {
-	if (_gameplay->robots().empty())
+	const set<OurRobot *> &playRobots = _gameplay->playRobots();
+	if (playRobots.empty())
 	{
 		// No robots
 		return false;
@@ -28,15 +29,15 @@ bool Gameplay::Plays::FollowTheLeader::run()
 	float backoff = 0.1;
 	
 	// Make a list of robots, sorted by shell
-	vector<Robot *> robots(_gameplay->robots().size());
-	copy(_gameplay->robots().begin(), _gameplay->robots().end(), robots.begin());
+	vector<OurRobot *> robots(playRobots.size());
+	copy(playRobots.begin(), playRobots.end(), robots.begin());
 	sort(robots.begin(), robots.end(), shellLessThan);
 	
 	// Put the manual robot in front
 	int manualID = _gameplay->manualID();
 	for (unsigned int i = 0; i < robots.size(); ++i)
 	{
-		if (robots[i]->shell() == manualID)
+		if ((int)robots[i]->shell() == manualID)
 		{
 			swap(robots[i], robots[0]);
 			break;
@@ -47,8 +48,8 @@ bool Gameplay::Plays::FollowTheLeader::run()
 	{
 		// No manual robot: first robot follows the ball
 		Geometry2d::Point ballPos = ball().pos;
-		Geometry2d::Point cur = robots[0]->pos();
-		Geometry2d::Point dest = ballPos - (ballPos - cur).normalized() * (Constants::Robot::Radius + Constants::Ball::Radius + backoff);
+		Geometry2d::Point cur = robots[0]->pos;
+		Geometry2d::Point dest = ballPos - (ballPos - cur).normalized() * (Robot_Radius + Ball_Radius + backoff);
 		robots[0]->move(dest);
 	}
 	
@@ -56,10 +57,10 @@ bool Gameplay::Plays::FollowTheLeader::run()
 	// robot[i] follows robot[i-1].
 	for (unsigned int i = 1; i < robots.size(); ++i)
 	{
-		Geometry2d::Point leader = robots[i - 1]->pos();
-		Geometry2d::Point cur = robots[i]->pos();
+		Geometry2d::Point leader = robots[i - 1]->pos;
+		Geometry2d::Point cur = robots[i]->pos;
 		// Stay a small distance behind the leader
-		Geometry2d::Point dest = leader - (leader - cur).normalized() * (Constants::Robot::Diameter + backoff);
+		Geometry2d::Point dest = leader - (leader - cur).normalized() * (Robot_Diameter + backoff);
 		robots[i]->move(dest);
 	}
 	

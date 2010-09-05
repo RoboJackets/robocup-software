@@ -18,6 +18,7 @@
 #include "PlayConfigTab.hpp"
 #include "MainWindow.hpp"
 #include "debug.hpp"
+#include "Configuration.hpp"
 
 using namespace std;
 

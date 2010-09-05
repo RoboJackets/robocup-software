@@ -39,22 +39,22 @@ CircleObstacle::CircleObstacle(Geometry2d::Point center, float radius):
 
 bool CircleObstacle::hit(const Geometry2d::Point &pt)
 {
-    return pt.nearPoint(circle.center, circle.radius() + Constants::Robot::Radius);
+    return pt.nearPoint(circle.center, circle.radius() + Robot_Radius);
 }
 
 bool CircleObstacle::hit(const Geometry2d::Segment &seg)
 {
-    return seg.nearPoint(circle.center, circle.radius() + Constants::Robot::Radius);
+    return seg.nearPoint(circle.center, circle.radius() + Robot_Radius);
 }
 
 ////////
 
 bool PolygonObstacle::hit(const Geometry2d::Point &pt)
 {
-    return polygon.nearPoint(pt, Constants::Robot::Radius);
+    return polygon.nearPoint(pt, Robot_Radius);
 }
 
 bool PolygonObstacle::hit(const Geometry2d::Segment &seg)
 {
-    return polygon.nearSegment(seg, Constants::Robot::Radius);
+    return polygon.nearSegment(seg, Robot_Radius);
 }

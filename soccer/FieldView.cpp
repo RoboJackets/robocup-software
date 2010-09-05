@@ -22,7 +22,6 @@
 
 using namespace std;
 using namespace boost;
-using namespace Constants;
 using namespace Packet;
 
 QColor ballColor(0xff, 0x90, 0);
@@ -72,7 +71,7 @@ void FieldView::mouseDoubleClickEvent(QMouseEvent* e)
 	{
 		BOOST_FOREACH(const LogFrame::Robot &r, frame->self())
 		{
-			if (pos.nearPoint(r.pos(), Constants::Robot::Radius))
+			if (pos.nearPoint(r.pos(), Robot_Radius))
 			{
 				if (showCommandTrace.find(r.shell()) != showCommandTrace.end())
 				{
@@ -101,7 +100,7 @@ void FieldView::paintEvent(QPaintEvent* e)
 	p.translate(width() / 2.0, height() / 2.0);
 	p.scale(width(), -height());
 	p.rotate(_rotate * 90);
-	p.scale(1.0 / Floor::Length, 1.0 / Floor::Width);
+	p.scale(1.0 / Floor_Length, 1.0 / Floor_Width);
 	
 	// Set text rotation for world space
 	_textRotation = -_rotate * 90;
@@ -135,13 +134,13 @@ void FieldView::paintEvent(QPaintEvent* e)
 	
 	// Make coordinate transformations
 	_screenToWorld = Geometry2d::TransformMatrix();
-	_screenToWorld *= Geometry2d::TransformMatrix::scale(Constants::Floor::Length, Constants::Floor::Width);
+	_screenToWorld *= Geometry2d::TransformMatrix::scale(Floor_Length, Floor_Width);
 	_screenToWorld *= Geometry2d::TransformMatrix::rotate(-_rotate * 90);
 	_screenToWorld *= Geometry2d::TransformMatrix::scale(1.0 / width(), -1.0 / height());
 	_screenToWorld *= Geometry2d::TransformMatrix::translate(-width() / 2.0, -height() / 2.0);
 	
 	_worldToTeam = Geometry2d::TransformMatrix();
-	_worldToTeam *= Geometry2d::TransformMatrix::translate(0, Constants::Field::Length / 2.0f);
+	_worldToTeam *= Geometry2d::TransformMatrix::translate(0, Field_Length / 2.0f);
 	if (frame->defend_plus_x())
 	{
 		_worldToTeam *= Geometry2d::TransformMatrix::rotate(-90);
@@ -156,7 +155,7 @@ void FieldView::paintEvent(QPaintEvent* e)
 	} else {
 		_teamToWorld *= Geometry2d::TransformMatrix::rotate(-90);
 	}
-	_teamToWorld *= Geometry2d::TransformMatrix::translate(0, -Constants::Field::Length / 2.0f);
+	_teamToWorld *= Geometry2d::TransformMatrix::translate(0, -Field_Length / 2.0f);
 	
 	// Draw world-space graphics
 	drawWorldSpace(p);
@@ -169,7 +168,7 @@ void FieldView::paintEvent(QPaintEvent* e)
 	} else {
 		p.rotate(-90);
 	}
-	p.translate(0, -Field::Length / 2.0f);
+	p.translate(0, -Field_Length / 2.0f);
 
 	// Text has to be rotated so it is always upright on screen
 	_textRotation = -_rotate * 90 + (frame->defend_plus_x() ? -90 : 90);
@@ -205,14 +204,14 @@ void FieldView::drawWorldSpace(QPainter& p)
 				{
 					QPointF pos(r.x() / 1000, r.y() / 1000);
 					drawRobot(p, true, r.robot_id(), pos, r.orientation() * RadiansToDegrees);
-// 					p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000), Constants::Robot::Radius, Constants::Robot::Radius);
+// 					p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000), Robot_Radius, Robot_Radius);
 				}
 				
 				BOOST_FOREACH(const SSL_DetectionRobot& r, detect.robots_yellow())
 				{
 					QPointF pos(r.x() / 1000, r.y() / 1000);
 					drawRobot(p, false, r.robot_id(), pos, r.orientation() * RadiansToDegrees);
-// 					p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000), Constants::Robot::Radius, Constants::Robot::Radius);
+// 					p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000), Robot_Radius, Robot_Radius);
 				}
 			}
 			
@@ -220,7 +219,7 @@ void FieldView::drawWorldSpace(QPainter& p)
 			{
 				BOOST_FOREACH(const SSL_DetectionBall& b, detect.balls())
 				{
-					p.drawEllipse(QPointF(b.x() / 1000, b.y() / 1000), Constants::Ball::Radius, Constants::Ball::Radius);
+					p.drawEllipse(QPointF(b.x() / 1000, b.y() / 1000), Ball_Radius, Ball_Radius);
 				}
 			}
 		}
@@ -235,9 +234,9 @@ void FieldView::drawTeamSpace(QPainter& p)
 	// Block off half the field
 	if (frame->use_half_field())
 	{
-		const float FX = Constants::Floor::Width / 2;
-		const float FY1 = Constants::Field::Length / 2;
-		const float FY2 = Constants::Field::Length + Constants::Field::Border;
+		const float FX = Floor_Width / 2;
+		const float FY1 = Field_Length / 2;
+		const float FY2 = Field_Length + Field_Border;
 		p.fillRect(QRectF(QPointF(-FX, FY1), QPointF(FX, FY2)), QColor(0, 0, 0, 128));
 	}
 	
@@ -259,8 +258,8 @@ void FieldView::drawTeamSpace(QPainter& p)
 			c.setAlpha(255 - i);
 			p.setPen(c);
 			
-			p.drawEllipse(QRectF(-Ball::Radius + pos.x(), -Ball::Radius + pos.y(),
-					Ball::Diameter, Ball::Diameter));
+			p.drawEllipse(QRectF(-Ball_Radius + pos.x(), -Ball_Radius + pos.y(),
+					Ball_Diameter, Ball_Diameter));
 		}
 	}
 	
@@ -346,19 +345,30 @@ void FieldView::drawTeamSpace(QPainter& p)
 		if (manualID == r.shell())
 		{
 			p.setPen(Qt::green);
-			const float r = Constants::Robot::Radius + .05;
+			const float r = Robot_Radius + .05;
 			p.drawEllipse(center, r, r);
+		}
+		
+		// Robot text
+		QPointF textPos = center - rtX * 0.2 - rtY * (Robot_Radius + 0.1);
+		BOOST_FOREACH(const DebugText& text, r.text())
+		{
+			if (text.layer() < 0 || _layerVisible[text.layer()])
+			{
+				p.setPen(qcolor(text.color()));
+				drawText(p, textPos, QString::fromStdString(text.text()), false);
+				textPos -= rtY * 0.1;
+			}
 		}
 		
 		// Command trace
 		if (showCommandTrace.find(r.shell()) != showCommandTrace.end())
 		{
-			QPointF cpt = center - rtX * 0.2 - rtY * (Constants::Robot::Radius + 0.1);
 			QStringList strs = debugTrace(r.command_trace());
 			BOOST_FOREACH(const QString &str, strs)
 			{
-				drawText(p, cpt, str, false);
-				cpt -= rtY * 0.1;
+				drawText(p, textPos, str, false);
+				textPos -= rtY * 0.1;
 			}
 		}
 	}
@@ -371,8 +381,8 @@ void FieldView::drawTeamSpace(QPainter& p)
 		
 		p.setPen(ballColor);
 		p.setBrush(ballColor);
-		p.drawEllipse(QRectF(-Ball::Radius + pos.x(), -Ball::Radius + pos.y(),
-				Ball::Diameter, Ball::Diameter));
+		p.drawEllipse(QRectF(-Ball_Radius + pos.x(), -Ball_Radius + pos.y(),
+				Ball_Diameter, Ball_Diameter));
 		
 		if (!vel.isNull())
 		{
@@ -422,43 +432,43 @@ void FieldView::drawField(QPainter& p, const LogFrame *frame)
 	p.save();
 	
 	//reset to center
-	p.translate(-Floor::Length/2.0, -Floor::Width/2.0);
+	p.translate(-Floor_Length/2.0, -Floor_Width/2.0);
 	
-	p.translate(Field::Border, Field::Border);
+	p.translate(Field_Border, Field_Border);
 	
 	p.setPen(Qt::white);
 	p.setBrush(Qt::NoBrush);
-	p.drawRect(QRectF(0, 0, Field::Length, Field::Width));
+	p.drawRect(QRectF(0, 0, Field_Length, Field_Width));
 	
 	//set brush alpha to 0
 	p.setBrush(QColor(0,130,0, 0));
 	
 	//reset to center
-	p.translate(Field::Length/2.0, Field::Width/2.0);
+	p.translate(Field_Length/2.0, Field_Width/2.0);
 	
 	//centerline
-	p.drawLine(QLineF(0, Field::Width/2,0, -Field::Width/2.0));
+	p.drawLine(QLineF(0, Field_Width/2,0, -Field_Width/2.0));
 	
 	//center circle
-	p.drawEllipse(QRectF(-Field::ArcRadius, -Field::ArcRadius, 
-		Field::CenterDiameter, Field::CenterDiameter));
+	p.drawEllipse(QRectF(-Field_ArcRadius, -Field_ArcRadius, 
+		Field_CenterDiameter, Field_CenterDiameter));
 	
-	p.translate(-Field::Length/2.0, 0);
+	p.translate(-Field_Length/2.0, 0);
 	
 	//goal areas
-	p.drawArc(QRectF(-Field::ArcRadius, -Field::ArcRadius + .175, Field::CenterDiameter, Field::CenterDiameter), -90*16, 90*16);
-	p.drawArc(QRectF(-Field::ArcRadius, -Field::ArcRadius - .175, Field::CenterDiameter, Field::CenterDiameter), 90*16, -90*16);
-	p.drawLine(QLineF(Field::ArcRadius, -.175, Field::ArcRadius, .175));
+	p.drawArc(QRectF(-Field_ArcRadius, -Field_ArcRadius + .175, Field_CenterDiameter, Field_CenterDiameter), -90*16, 90*16);
+	p.drawArc(QRectF(-Field_ArcRadius, -Field_ArcRadius - .175, Field_CenterDiameter, Field_CenterDiameter), 90*16, -90*16);
+	p.drawLine(QLineF(Field_ArcRadius, -.175, Field_ArcRadius, .175));
 	
-	p.translate(Field::Length, 0);
+	p.translate(Field_Length, 0);
 	
-	p.drawArc(QRectF(-Field::ArcRadius, -Field::ArcRadius + .175, Field::CenterDiameter, Field::CenterDiameter), -90*16, -90*16);
-	p.drawArc(QRectF(-Field::ArcRadius, -Field::ArcRadius - .175, Field::CenterDiameter, Field::CenterDiameter), 90*16, 90*16);
-	p.drawLine(QLineF(-Field::ArcRadius, -.175, -Field::ArcRadius, .175));
+	p.drawArc(QRectF(-Field_ArcRadius, -Field_ArcRadius + .175, Field_CenterDiameter, Field_CenterDiameter), -90*16, -90*16);
+	p.drawArc(QRectF(-Field_ArcRadius, -Field_ArcRadius - .175, Field_CenterDiameter, Field_CenterDiameter), 90*16, 90*16);
+	p.drawLine(QLineF(-Field_ArcRadius, -.175, -Field_ArcRadius, .175));
 		
 	// goals
-	float x[2] = {0, Field::GoalDepth};
-	float y[2] = {Field::GoalWidth/2.0, -Field::GoalWidth/2.0};
+	float x[2] = {0, Field_GoalDepth};
+	float y[2] = {Field_GoalWidth/2.0, -Field_GoalWidth/2.0};
 	
 	bool flip = frame->blue_team() ^ frame->defend_plus_x();
 	
@@ -467,8 +477,8 @@ void FieldView::drawField(QPainter& p, const LogFrame *frame)
 	p.drawLine(QLineF(x[0], y[1], x[1], y[1]));
 	p.drawLine(QLineF(x[1], y[1], x[1], y[0]));
 	
-	x[0] -= Field::Length;
-	x[1] -= Field::Length + 2 * Field::GoalDepth;
+	x[0] -= Field_Length;
+	x[1] -= Field_Length + 2 * Field_GoalDepth;
 	
 	p.setPen(flip ? Qt::blue : Qt::yellow);
 	p.drawLine(QLineF(x[0], y[0], x[1], y[0]));
@@ -502,13 +512,13 @@ void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos
 	
 	int start = span*16 + 90*16;
 	int end = 360*16 - (span*2)*16;
-	const float r = Constants::Robot::Radius;
+	const float r = Robot_Radius;
 	painter.drawChord(QRectF(-r, -r, r * 2, r * 2), start, end);
 	
 	if (hasBall)
 	{
 		painter.setPen(Qt::red);
-		const float r = Constants::Robot::Radius * 0.75f;
+		const float r = Robot_Radius * 0.75f;
 		painter.drawChord(QRectF(-r, -r, r * 2, r * 2), start, end);
 	}
 	
@@ -522,11 +532,11 @@ void FieldView::resizeEvent(QResizeEvent* e)
 	int needW, needH;
 	if (_rotate & 1)
 	{
-		needH = roundf(givenW * Constants::Floor::Length / Constants::Floor::Width);
-		needW = roundf(givenH * Constants::Floor::Width / Constants::Floor::Length);
+		needH = roundf(givenW * Floor_Length / Floor_Width);
+		needW = roundf(givenH * Floor_Width / Floor_Length);
 	} else {
-		needH = roundf(givenW * Constants::Floor::Width / Constants::Floor::Length);
-		needW = roundf(givenH * Constants::Floor::Length / Constants::Floor::Width);
+		needH = roundf(givenW * Floor_Width / Floor_Length);
+		needW = roundf(givenH * Floor_Length / Floor_Width);
 	}
 	
 	QSize size;

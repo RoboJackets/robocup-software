@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Behavior.hpp"
+#include <gameplay/Behavior.hpp>
 
 namespace Gameplay
 {
@@ -12,9 +12,6 @@ namespace Gameplay
 				ChangeMe(GameplayModule *gameplay);
 				
 				virtual bool run();
-				virtual bool done();
-				
-				virtual float score(Robot* robot);
 		};
 	}
 }

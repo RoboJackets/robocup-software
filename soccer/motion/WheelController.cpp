@@ -22,30 +22,30 @@ WheelController::WheelController(SystemState *state, Configuration *cfg)
 
 void WheelController::run()
 {
-	BOOST_FOREACH(SystemState::Robot& robot, _state->self)
+	BOOST_FOREACH(OurRobot *robot, _state->self)
 	{
 		// check that system is valid
-		if (robot.valid) {
+		if (robot->visible) {
 			// check for direct motion commands
-			if (robot.cmd.planner == MotionCmd::DirectMotor) {
+			if (robot->cmd.planner == MotionCmd::DirectMotor) {
 				// copy manually specified motor speeds
 				size_t j = 0;
-				BOOST_FOREACH(const int8_t&  v, robot.cmd.direct_motor_cmds) {
-					robot.radioTx->set_motors(j++, v);
+				BOOST_FOREACH(const int8_t&  v, robot->cmd.direct_motor_cmds) {
+					robot->radioTx.set_motors(j++, v);
 				}
-			} else if (robot.cmd.planner == MotionCmd::DirectVelocity) {
+			} else if (robot->cmd.planner == MotionCmd::DirectVelocity) {
 				// generate commands from manually specified velocities
-				genMotor(robot.cmd.direct_trans_vel, robot.cmd.direct_ang_vel, &robot);
+				genMotor(robot->cmd.direct_trans_vel, robot->cmd.direct_ang_vel, robot);
 			} else {
 				// convert from generated velocities
-				genMotor(robot.cmd_vel, robot.cmd_w, &robot);
+				genMotor(robot->cmd_vel, robot->cmd_w, robot);
 			}
 		}
 	}
 }
 
 void
-WheelController::genMotor(const Geometry2d::Point& vel, float w, SystemState::Robot* robot) {
+WheelController::genMotor(const Geometry2d::Point& vel, float w, OurRobot* robot) {
 	_procMutex.lock();
 	bool verbose = false;
 
@@ -60,7 +60,7 @@ WheelController::genMotor(const Geometry2d::Point& vel, float w, SystemState::Ro
 
 	// angular velocity
 	const float maxW = robot->config->motion.rotation.velocity;
-	w = Utils::setBound(w, maxW, -maxW);
+	w = Utils::clamp(w, maxW, -maxW);
 	if (verbose) cout << "\nCommands: w = " << w << " maxW = " << maxW;
 
 	// handle translational velocity - convert into robot space, then bound
@@ -79,7 +79,7 @@ WheelController::genMotor(const Geometry2d::Point& vel, float w, SystemState::Ro
 	{
 		wPercent = w/maxW;
 	}
-	wPercent = Utils::setBound(wPercent, 1.0, -1.0);
+	wPercent = Utils::clamp(wPercent, 1.0, -1.0);
 
 	// Update axles
 	Axles axles;
@@ -127,11 +127,13 @@ WheelController::genMotor(const Geometry2d::Point& vel, float w, SystemState::Ro
 	if (verbose) cout << "Motor percent at assign: ";
 	BOOST_FOREACH(const float& vel, wheelVels) {
 		if (verbose) cout << " " << vel;
-		int8_t cmdVel = (int8_t) Utils::setBound(127.0*vel, 126.0, -127.0);
-		if (robot->rev == SystemState::Robot::rev2010) {
-			robot->radioTx->set_motors(i, -cmdVel);
+		int8_t cmdVel = (int8_t) Utils::clamp(127.0*vel, 126.0, -127.0);
+		//FIXME - if (robot->rev == SystemState::Robot::rev2010) {
+		if (false)
+		{
+			robot->radioTx.set_motors(i, -cmdVel);
 		} else {
-			robot->radioTx->set_motors(i, cmdVel);
+			robot->radioTx.set_motors(i, cmdVel);
 		}
 		++i;
 	}

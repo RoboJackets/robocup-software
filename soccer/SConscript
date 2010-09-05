@@ -14,6 +14,7 @@ srcs = [
 	'Configuration.cpp',
 	'debug.cpp',
 	'StripChart.cpp',
+	'Robot.cpp',
 
 	'framework/Obstacle.cpp',
 	'framework/Path.cpp',
@@ -28,7 +29,6 @@ srcs = [
 	'gameplay/Play.cpp',
 	'gameplay/Behavior.cpp',
 	'gameplay/Window.cpp',
-	'gameplay/Robot.cpp',
 	'gameplay/PreventDoubleTouch.cpp',
 
 	# Planning components',
@@ -46,6 +46,7 @@ srcs = [
 	#'gameplay/optimizer/PassingFactors.cpp',
 	#'gameplay/optimizer/ShootingFactors.cpp',
 
+	# Restart plays
 	'gameplay/plays/OurKickoff.cpp',
 	'gameplay/plays/TheirKickoff.cpp',
 	'gameplay/plays/OurFreekick.cpp',
@@ -53,12 +54,13 @@ srcs = [
 	'gameplay/plays/KickPenalty.cpp',
 	'gameplay/plays/DefendPenalty.cpp',
 	'gameplay/plays/Stopped.cpp',
-	'gameplay/plays/Offense.cpp',
-	'gameplay/plays/ClearBall.cpp',
-	'gameplay/plays/Defense.cpp',
-	'gameplay/plays/DefendGoal.cpp',
-	#'gameplay/plays/OptimizedOffense.cpp',
-	#'gameplay/plays/AggressiveZoneOffense.cpp',
+	
+#	'gameplay/plays/Offense.cpp',
+#	'gameplay/plays/ClearBall.cpp',
+#	'gameplay/plays/Defense.cpp',
+#	'gameplay/plays/DefendGoal.cpp',
+#	'gameplay/plays/OptimizedOffense.cpp',
+#	'gameplay/plays/AggressiveZoneOffense.cpp',
 
     # Core behaviors
 	'gameplay/behaviors/Move.cpp',
@@ -66,38 +68,38 @@ srcs = [
 	'gameplay/behaviors/Penalty.cpp',
 	'gameplay/behaviors/Idle.cpp',
 	'gameplay/behaviors/Kick.cpp',
-	'gameplay/behaviors/OneTouchKick.cpp',
-	'gameplay/behaviors/Intercept.cpp',
+#	'gameplay/behaviors/OneTouchKick.cpp',
+#	'gameplay/behaviors/Intercept.cpp',
 	'gameplay/behaviors/Mark.cpp',
-	'gameplay/behaviors/GoalDefender.cpp',
-	'gameplay/behaviors/ZoneOffense.cpp',
+#	'gameplay/behaviors/GoalDefender.cpp',
+#	'gameplay/behaviors/ZoneOffense.cpp',
 
 	# Positions
 	'gameplay/behaviors/positions/Goalie.cpp',
 	'gameplay/behaviors/positions/Fullback.cpp',
-	'gameplay/behaviors/positions/Forward.cpp',
+#	'gameplay/behaviors/positions/Forward.cpp',
 	
 	# Development tests
-	'gameplay/plays/TestLatency.cpp',
+#	'gameplay/plays/TestLatency.cpp',
 
 	# demo plays/behaviors
 	'gameplay/plays/demo_plays/FollowTheLeader.cpp',
-	'gameplay/plays/demo_plays/DemoBasicPassing.cpp',
-	'gameplay/plays/demo_plays/DemoBasicOneTouchPassing.cpp',
+#	'gameplay/plays/demo_plays/DemoBasicPassing.cpp',
+#	'gameplay/plays/demo_plays/DemoBasicOneTouchPassing.cpp',
 	'gameplay/plays/demo_plays/DemoBasicAttack.cpp',
-	'gameplay/plays/demo_plays/DemoBasicOneTouchAttack.cpp',
-	#'gameplay/plays/demo_plays/DemoBasicChipAttack.cpp #disabled until 2010 robots ready',
-	#'gameplay/plays/demo_plays/DemoBasicOneTouchChipAttack.cpp',
-	#'gameplay/plays/demo_plays/DemoKicks.cpp',
+#	'gameplay/plays/demo_plays/DemoBasicOneTouchAttack.cpp',
+#	'gameplay/plays/demo_plays/DemoBasicChipAttack.cpp #disabled until 2010 robots ready',
+#	'gameplay/plays/demo_plays/DemoBasicOneTouchChipAttack.cpp',
+#	'gameplay/plays/demo_plays/DemoKicks.cpp',
 
 	# files that use the optimizer - disabled until new gtsam is in place
-	#'gameplay/behaviors/OptimizedPassing.cpp',
-	#'gameplay/plays/demo_plays/DemoPassConfigOptimize.cpp',
-    #'gameplay/plays/demo_plays/DemoPassPlay.cpp',
-	#'gameplay/plays/demo_plays/DemoOptimizedPassPlay.cpp',
+#	'gameplay/behaviors/OptimizedPassing.cpp',
+#	'gameplay/plays/demo_plays/DemoPassConfigOptimize.cpp',
+#	'gameplay/plays/demo_plays/DemoPassPlay.cpp',
+#	'gameplay/plays/demo_plays/DemoOptimizedPassPlay.cpp',
 
 	# files for pass experiments
-	#'gameplay/plays/demo_plays/DemoPassExperiment1.cpp',
+#	'gameplay/plays/demo_plays/DemoPassExperiment1.cpp',
 
 #	gameplay/behaviors/test/KickerCalibration.cpp',
 #	gameplay/behaviors/test/MotionLeader.cpp',
@@ -115,7 +117,7 @@ srcs = [
 	'modeling/InvertMatrix.hpp',
 	'modeling/RbpfModelRolling.cpp',
 	'modeling/RbpfModelKicked.cpp',
-	'modeling/ExtendedKalmanFilter.cpp',
+#	'modeling/ExtendedKalmanFilter.cpp',
 
 # Sources for motion module',
 	'motion/PointController.cpp',
@@ -124,7 +126,7 @@ srcs = [
 	'motion/Pid.cpp',
 
 # Sources for stateID module
-	'stateID/StateIDModule.cpp',
+#	'stateID/StateIDModule.cpp',
 	
 	'ui/main_icons.qrc',
 	'ui/log_icons.qrc'

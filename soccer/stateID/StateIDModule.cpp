@@ -53,7 +53,7 @@ SystemState::Possession StateIDModule::updatePossession(const SystemState::Posse
 
 	// thresholds
 	float angle_thresh = 20 * DegreesToRadians;
-	float dist_thresh = Constants::Robot::Radius + Constants::Ball::Radius + 0.1;
+	float dist_thresh = Robot_Radius + Ball_Radius + 0.1;
 	float speed_thresh = 1.0;
 
 	// get ball state
@@ -68,7 +68,7 @@ SystemState::Possession StateIDModule::updatePossession(const SystemState::Posse
 		//opp has ball if it is close to a robot and moving in the same direction
 		double dist = ball_pos.distTo(robot.pos);
 		float vel_angle_diff = abs(fixAngleRadians(ball_vel.angle() - robot.vel.angle()));
-		bool ball_downfield = ball_pos.y < robot.pos.y - Constants::Robot::Radius;
+		bool ball_downfield = ball_pos.y < robot.pos.y - Robot_Radius;
 		bool isSameSpeed = abs(robot.vel.mag() - ball_vel.mag()) < speed_thresh;
 
 		if (dist < dist_thresh &&
@@ -86,7 +86,7 @@ SystemState::Possession StateIDModule::updatePossession(const SystemState::Posse
 		//opp has ball if it is close to a robot and moving in the same direction
 		double dist = ball_pos.distTo(robot.pos);
 		float vel_angle_diff = abs(fixAngleRadians(ball_vel.angle() - robot.vel.angle()));
-		bool ball_downfield = ball_pos.y < robot.pos.y - Constants::Robot::Radius;
+		bool ball_downfield = ball_pos.y < robot.pos.y - Robot_Radius;
 		bool isSameSpeed = abs(robot.vel.mag() - ball_vel.mag()) < speed_thresh;
 
 		if (dist < dist_thresh &&
@@ -134,12 +134,12 @@ SystemState::BallFieldPos StateIDModule::updateFieldPos(const SystemState::BallF
 	//TODO: Add hystersis using the projected ball location
 
 	//Set field position predicates
-	if (ball_pos.y < Constants::Field::Length /3)
+	if (ball_pos.y < Field_Length /3)
 	{
 		return SystemState::HOMEFIELD;
 	}
-	else if (ball_pos.y < Constants::Field::Length * 2/3 &&
-			ball_pos.y > Constants::Field::Length /3)
+	else if (ball_pos.y < Field_Length * 2/3 &&
+			ball_pos.y > Field_Length /3)
 	{
 		return SystemState::MIDFIELD;
 	}

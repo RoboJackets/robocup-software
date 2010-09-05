@@ -9,6 +9,7 @@
 #include <protobuf/LogFrame.pb.h>
 
 #include <stdio.h>
+#include <iostream>
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
@@ -23,17 +24,17 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_currentPlayFactory = 0;
 	_playDone = false;
 
-	_centerMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length / 2));
-	_oppMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Constants::Field::Length)) *
+	_centerMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Length / 2));
+	_oppMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Length)) *
 				Geometry2d::TransformMatrix::rotate(180);
 
 	// Make an obstacle to cover the opponent's half of the field except for one robot diameter across the center line.
 	PolygonObstacle *sidePolygon = new PolygonObstacle;
 	_sideObstacle = ObstaclePtr(sidePolygon);
-	float x = Constants::Field::Width / 2 + Constants::Field::Border;
-	const float y1 = Constants::Field::Length / 2;
-	const float y2 = Constants::Field::Length + Constants::Field::Border;
-	const float r = Constants::Field::CenterRadius;
+	float x = Field_Width / 2 + Field_Border;
+	const float y1 = Field_Length / 2;
+	const float y2 = Field_Length + Field_Border;
+	const float r = Field_CenterRadius;
 	sidePolygon->polygon.vertices.push_back(Geometry2d::Point(-x, y1));
 	sidePolygon->polygon.vertices.push_back(Geometry2d::Point(-r, y1));
 	sidePolygon->polygon.vertices.push_back(Geometry2d::Point(0, y1 + r));
@@ -42,9 +43,9 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	sidePolygon->polygon.vertices.push_back(Geometry2d::Point(x, y2));
 	sidePolygon->polygon.vertices.push_back(Geometry2d::Point(-x, y2));
 
-	float y = -Constants::Field::Border;
-	float deadspace = Constants::Field::Border;
-	x = Constants::Floor::Width/2.0f;
+	float y = -Field_Border;
+	float deadspace = Field_Border;
+	x = Floor_Width/2.0f;
 	PolygonObstacle* floorObstacle = new PolygonObstacle;
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(-x, y));
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(-x, y-1));
@@ -52,7 +53,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x, y));
 	_nonFloor[0] = ObstaclePtr(floorObstacle);
 
-	y = Constants::Field::Length + Constants::Field::Border;
+	y = Field_Length + Field_Border;
 	floorObstacle = new PolygonObstacle;
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(-x, y));
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(-x, y+1));
@@ -60,7 +61,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x, y));
 	_nonFloor[1] = ObstaclePtr(floorObstacle);
 
-	y = Constants::Floor::Length;
+	y = Floor_Length;
 	floorObstacle = new PolygonObstacle;
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(-x, -deadspace));
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(-x-1, -deadspace));
@@ -76,8 +77,8 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_nonFloor[3] = ObstaclePtr(floorObstacle);
 
 	PolygonObstacle* goalArea = new PolygonObstacle;
-	const float halfFlat = Constants::Field::GoalFlat/2.0;
-	const float radius = Constants::Field::ArcRadius;
+	const float halfFlat = Field_GoalFlat/2.0;
+	const float radius = Field_ArcRadius;
 	goalArea->polygon.vertices.push_back(Geometry2d::Point(-halfFlat, 0));
 	goalArea->polygon.vertices.push_back(Geometry2d::Point(-halfFlat, radius));
 	goalArea->polygon.vertices.push_back(Geometry2d::Point( halfFlat, radius));
@@ -91,24 +92,11 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_otherHalf->polygon.vertices.push_back(Geometry2d::Point(-x, y2));
 	_otherHalf->polygon.vertices.push_back(Geometry2d::Point(x, y2));
 	_otherHalf->polygon.vertices.push_back(Geometry2d::Point(x, y1));
-	
-	// Create robots
-	for (size_t i = 0; i < Constants::Robots_Per_Team; ++i)
-	{
-		self[i] = new Robot(this, i, true);
-		opp[i] = new Robot(this, i, false);
-	}
 }
 
 Gameplay::GameplayModule::~GameplayModule()
 {
 	removeGoalie();
-	
-	for (size_t i = 0; i < Constants::Robots_Per_Team; ++i)
-	{
-		delete self[i];
-		delete opp[i];
-	}
 }
 
 int Gameplay::GameplayModule::manualID() const
@@ -141,7 +129,7 @@ void Gameplay::GameplayModule::run()
 	if (verbose) cout << "Starting GameplayModule::run()" << endl;
 
 	// perform state variable updates on robots
-	BOOST_FOREACH(Robot* robot, self)
+	BOOST_FOREACH(OurRobot* robot, _state->self)
 	{
 		if (robot) {
 			robot->update();
@@ -152,67 +140,63 @@ void Gameplay::GameplayModule::run()
 	ObstaclePtr smallBallObstacle;
 	if (_state->ball.valid)
 	{
-		largeBallObstacle = ObstaclePtr(new CircleObstacle(_state->ball.pos, Constants::Field::CenterRadius));
-		smallBallObstacle = ObstaclePtr(new CircleObstacle(_state->ball.pos, Constants::Ball::Radius));
+		largeBallObstacle = ObstaclePtr(new CircleObstacle(_state->ball.pos, Field_CenterRadius));
+		smallBallObstacle = ObstaclePtr(new CircleObstacle(_state->ball.pos, Ball_Radius));
 	}
 
-	ObstaclePtr selfObstacles[Constants::Robots_Per_Team];
-	ObstaclePtr oppObstacles[Constants::Robots_Per_Team];
-	for (size_t i = 0; i < Constants::Robots_Per_Team; ++i)
+	ObstaclePtr selfObstacles[Num_Shells];
+	ObstaclePtr oppObstacles[Num_Shells];
+	for (unsigned int i = 0; i < Num_Shells; ++i)
 	{
 		//FIXME - These should not be in Gameplay.  This should be the responsibility of motion planning.
-		if (_state->self[i].valid)
+		if (_state->self[i]->visible)
 		{
-			selfObstacles[i] = ObstaclePtr(new CircleObstacle(_state->self[i].pos, Constants::Robot::Radius - .01));
+			selfObstacles[i] = ObstaclePtr(new CircleObstacle(_state->self[i]->pos, Robot_Radius - .01));
 		}
 
-		if (_state->opp[i].valid)
+		if (_state->opp[i]->visible)
 		{
-			oppObstacles[i] = ObstaclePtr((new CircleObstacle(_state->opp[i].pos, Constants::Robot::Radius - .01)));
+			oppObstacles[i] = ObstaclePtr((new CircleObstacle(_state->opp[i]->pos, Robot_Radius - .01)));
 		}
 	}
 
-	// Assign the goalie
-	bool newGoalie = false;
-	if (_goalie && !_goalie->assigned())
+	// Build a list of visible robots
+	_playRobots.clear();
+	BOOST_FOREACH(OurRobot *r, _state->self)
 	{
-		set<Robot *> robots;
-		BOOST_FOREACH(Robot *r, self)
+		if (r->visible && !r->exclude)
 		{
-			robots.insert(r);
+			_playRobots.insert(r);
 		}
-		
+	}
+
+	// Assign the goalie and remove it from _playRobots
+	if (_goalie)
+	{
 		// The Goalie behavior is responsible for only selecting a robot which is allowed by the rules
 		// (no changing goalies at random times).
 		// The goalie behavior has priority for choosing robots because it must obey this rule,
 		// so the current play will be restarted in case the goalie stole one of its robots.
-		if (_goalie->assign(robots))
-		{
-			newGoalie = true;
-		}
+		_goalie->assign(_playRobots);
 	}
 
 	// Set up robots before the play is run
-	BOOST_FOREACH(Robot *r, self)
+	BOOST_FOREACH(OurRobot *r, _state->self)
 	{
-		//robot resets
-		r->willKick = false;
-		r->avoidBall = false;
-
 		// Reset the motion command
 		r->resetMotionCommand();
 
-		// Add obstacles for this robot
-		ObstacleGroup &obstacles = r->packet()->obstacles;
-		obstacles.clear();
-
-		if (r->visible())
+		if (r->visible)
 		{
+			// Add obstacles for this robot
+			ObstacleGroup &obstacles = r->obstacles;
+			obstacles.clear();
+
 			// Add rule-based obstacles (except for the ball, which will be added after the play
 			// has a change to set willKick and avoidBall)
-			for (size_t i = 0; i < Constants::Robots_Per_Team; ++i)
+			for (unsigned int i = 0; i < Num_Shells; ++i)
 			{
-				if (self[i] != r && selfObstacles[i])
+				if (i != r->shell() && selfObstacles[i])
 				{
 					obstacles.add(selfObstacles[i]);
 				}
@@ -224,7 +208,7 @@ void Gameplay::GameplayModule::run()
 			}
 
 			//if not a goalie, avoid our goalie area
-			if (!_goalie || _goalie->robot() != r)
+			if (!_goalie || _goalie->robot != r)
 			{
 				BOOST_FOREACH(ObstaclePtr& ptr, _goalArea)
 				{
@@ -262,25 +246,6 @@ void Gameplay::GameplayModule::run()
 	//  - current play is not applicable/failed, must kill, select new and run
 	//  - new goalie, select new play (may reselect current play, which much be assigned new robots)
 
-	// prepare a list of all non-goalie robots ready
-	_robots.clear();
-	int n = 0;
-	BOOST_FOREACH(Robot *r, self)
-	{
-		if ((!_goalie || r != _goalie->robot()) && r->visible() && !r->exclude)
-		{
-			_robots.insert(r);
-			++n;
-		}
-		
-		if (n == Constants::Robots_Per_Team - 1)
-		{
-			// Leave one available to become the goalie, in case the goalie broke
-			break;
-		}
-	}
-	if (verbose) cout << "  Available Robots: " << _robots.size() << endl;
-
 	// Update play scores.
 	// The GUI thread needs this for the Plays tab and we will use it later
 	// to determine the new play.
@@ -289,12 +254,9 @@ void Gameplay::GameplayModule::run()
 		factory->lastScore = factory->score(this);
 	}
 
-	if (
-			newGoalie ||							// Goalie gets first pick of all robots
-			_playDone || 							// New play if old one was complete
+	if (	_playDone || 							// New play if old one was complete
 			!_currentPlay ||						// There is no current play
 			isinf(_currentPlayFactory->lastScore) || // Current play doesn't apply anymore
-			!_currentPlay->allVisible() ||			// Lost robots used by current play
 			!_currentPlayFactory->enabled			// Current play was disabled
 		)
 	{
@@ -321,13 +283,10 @@ void Gameplay::GameplayModule::run()
 		}
 		
 		// Start the play if it's not current.
-		// Restart the current play if the goalie changed, because we have to pick new robots.
 		if (bestPlay)
 		{
-			if (bestPlay != _currentPlayFactory || newGoalie)
+			if (bestPlay != _currentPlayFactory)
 			{
-				if (verbose) cout << "  Assigning robots to play" << endl;
-
 				_currentPlayFactory = bestPlay;
 				_currentPlay = shared_ptr<Play>(_currentPlayFactory->create(this));
 			}
@@ -349,7 +308,7 @@ void Gameplay::GameplayModule::run()
 	if (_goalie)
 	{
 		if (verbose) cout << "  Running goalie" << endl;
-		if (_goalie->assigned() && _goalie->robot()->visible())
+		if (_goalie->robot && _goalie->robot->visible)
 		{
 			_goalie->run();
 		}
@@ -357,9 +316,9 @@ void Gameplay::GameplayModule::run()
 
 	// Add ball obstacles
 	if (verbose) cout << "  Adding ball obstacles" << endl;
-	BOOST_FOREACH(Robot *r, self)
+	BOOST_FOREACH(OurRobot *r, _state->self)
 	{
-		if (r->visible() && !(_goalie && _goalie->robot() == r))
+		if (r->visible && !(_goalie && _goalie->robot == r))
 		{
 			// Any robot that isn't the goalie may have to avoid the ball
 			if ((_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart) || r->avoidBall)
@@ -367,15 +326,15 @@ void Gameplay::GameplayModule::run()
 				// Opponent's restart: always stay away from the ball
 				if (largeBallObstacle)
 				{
-					r->obstacles().add(largeBallObstacle);
-					r->obstacles().add(smallBallObstacle);
+					r->obstacles.add(largeBallObstacle);
+					r->obstacles.add(smallBallObstacle);
 				}
 			} else if (!r->willKick)
 			{
 				// Don't hit the ball unintentionally during normal play
 				if (smallBallObstacle)
 				{
-					r->obstacles().add(smallBallObstacle);
+					r->obstacles.add(smallBallObstacle);
 				}
 			}
 		}
@@ -383,7 +342,7 @@ void Gameplay::GameplayModule::run()
 
 	if (_state->gameState.stayAwayFromBall() && _state->ball.valid)
 	{
-		_state->drawCircle(_state->ball.pos, Constants::Field::CenterRadius, Qt::black, "Rules");
+		_state->drawCircle(_state->ball.pos, Field_CenterRadius, Qt::black, "Rules");
 	}
 
 	if (_currentPlay)

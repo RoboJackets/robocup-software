@@ -13,7 +13,7 @@ PointController::PointController(SystemState *state, Configuration *cfg)
 : _state(state), _config(cfg)
 {
 	//initialize empty robots
-    for(unsigned int i = 0; i < Constants::Robots_Per_Team; i++)
+    for(unsigned int i = 0; i < Num_Shells; i++)
     {
         _robots[i] = Robot::shared_ptr(new Robot(_config, _state, i));
 	}

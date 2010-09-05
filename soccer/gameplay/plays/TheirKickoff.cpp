@@ -10,25 +10,24 @@ Gameplay::Plays::TheirKickoff::TheirKickoff(GameplayModule *gameplay):
 	_fullback2(gameplay, Behaviors::Fullback::Right),
 	_idle(gameplay)
 {
-	set<Robot *> available = gameplay->robots();
-	
 	_fullback1.otherFullbacks.insert(&_fullback2);
 	_fullback2.otherFullbacks.insert(&_fullback1);
-	
-	_robots = available;
-	
-	_fullback1.assign(available);
-	_fullback2.assign(available);
-	_idle.assign(available);
 }
 
 float Gameplay::Plays::TheirKickoff::score ( Gameplay::GameplayModule* gameplay )
 {
-	return (gameplay->state()->gameState.setupRestart() && gameplay->state()->gameState.theirKickoff()) ? 0 : INFINITY;
+	const GameState &gs = gameplay->state()->gameState;
+	return (gs.setupRestart() && gs.theirKickoff()) ? 0 : INFINITY;
 }
 
 bool Gameplay::Plays::TheirKickoff::run()
 {
+	set<OurRobot *> available = _gameplay->playRobots();
+	
+	assignNearest(_fullback1.robot, available, Geometry2d::Point());
+	assignNearest(_fullback2.robot, available, Geometry2d::Point());
+	_idle.robots = available;
+	
 	_fullback1.run();
 	_fullback2.run();
 	_idle.run();

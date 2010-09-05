@@ -27,7 +27,6 @@ namespace Modeling
 		protected:
 			// useful typedefs
 			typedef std::vector<RobotModel::shared> RobotVector;
-			typedef enum { SELF, OPP } TeamMode;
 
 			RobotModel::Config _robotConfig;
 			
@@ -43,8 +42,7 @@ namespace Modeling
 			void addRobotObseration(const SSL_DetectionRobot &robot, uint64_t timestamp,
 					std::vector<RobotModel::shared>& players);
 			void updateRobots(std::vector<RobotModel::shared>& players, uint64_t cur_time);
-			void addRobotRxData(SystemState::Robot& robot);
-			void copyRobotState(const std::vector<RobotModel::shared>& players, TeamMode m);
+			void addRobotRxData(OurRobot *robot);
 
 			BallModel ballModel;
 

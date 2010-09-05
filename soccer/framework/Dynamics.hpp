@@ -4,6 +4,10 @@
 
 #include <boost/shared_ptr.hpp>
 
+class OurRobot;
+
+//FIXME - This class is just conversion and calculation.  Put it with the data.
+
 namespace Planning
 {
 	class Dynamics
@@ -23,7 +27,7 @@ namespace Planning
 				float deceleration;
 			} DynamicsInfo;
 		
-			Dynamics(SystemState::Robot *robot);
+			Dynamics(OurRobot *robot);
 			
 			/** calculate the possible dynamics for an angle @a angle 
 			 *  assuming the particular angular velocity @a w
@@ -34,6 +38,6 @@ namespace Planning
 			float travelTime(const float length) const;
 			
 		private:
-			SystemState::Robot* _self;
+			OurRobot* _self;
 	};
 }

@@ -12,8 +12,6 @@
 #include "Pid.hpp"
 #include <Utils.hpp>
 
-
-
 class Configuration;
 
 namespace Motion
@@ -22,7 +20,7 @@ namespace Motion
 	{
 
 		public:
-			Robot(Configuration *config, SystemState *state, int id);
+			Robot(Configuration *config, SystemState *state, int shell);
 			~Robot();
 
 			/** Process the command for a robot and prepare output */
@@ -32,7 +30,7 @@ namespace Motion
 			void setAngKi(double value);
 			void setAngKd(double value);
 
-			SystemState::Robot* self() { return _self; }
+			OurRobot* self() { return _self; }
 
 			typedef boost::shared_ptr<Robot> shared_ptr;
 
@@ -65,9 +63,8 @@ namespace Motion
 			SystemState* _state;
 
 			/** state info for self */
-			SystemState::Robot* _self;
+			OurRobot* _self;
 
-			/** robot axles */
 			QMutex _procMutex;
 
 			/** planner flag - copied out for rendering */
@@ -88,13 +85,8 @@ namespace Motion
 			inline float angle() const { return _self->angle; }
 			inline float angleVel() const { return _self->angleVel; }
 
-			/** convenience functions for ball state */
-			Geometry2d::Point ballPos() const { return _state->ball.pos; }
-			Geometry2d::Point ballVel() const { return _state->ball.vel; }
-
 			/** filters for output */
 			Utils::FIRFilter<Geometry2d::Point> _velFilter;
 			Utils::FIRFilter<double> _wFilter;
-
 	};
 }

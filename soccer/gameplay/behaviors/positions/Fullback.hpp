@@ -3,8 +3,6 @@
 #include "../../Behavior.hpp"
 #include "../../Window.hpp"
 
-#include <boost/shared_ptr.hpp>
-
 namespace Gameplay
 {
 	namespace Behaviors
@@ -35,7 +33,6 @@ namespace Gameplay
 
 				Fullback(GameplayModule *gameplay, Side side = Center);
 
-				virtual bool assign(std::set<Robot *> &available);
 				virtual bool run();
 				
 				void side(Side s) { _side = s; }
@@ -43,16 +40,14 @@ namespace Gameplay
 
 				std::set<Fullback *> otherFullbacks;
 				
-			protected:
-				Side _side;
+				OurRobot *robot;
 				
+			protected:
 				//Window evaluator for checking passes/shots
-				boost::shared_ptr<Gameplay::WindowEvaluator> _winEval;
+				Gameplay::WindowEvaluator _winEval;
 
-				//state information
+				Side _side;
 				State _state;
-
-				virtual float score(Robot *r);
 		};
 	}
 }

@@ -14,12 +14,9 @@
 
 #include <algorithm>
 #include <boost/foreach.hpp>
-#include <boost/assign/std/vector.hpp>
 
 using namespace std;
-using namespace boost::assign;
 using namespace Geometry2d;
-using namespace Motion;
 using namespace Planning;
 
 /** prints out a labeled point */
@@ -30,10 +27,10 @@ void printPt(const Geometry2d::Point& pt, const string& s="") {
 /** Constant for timestamp to seconds */
 const float intTimeStampToFloat = 1000000.0f;
 
-Robot::Robot(Configuration *config, SystemState *state, int id) :
+Motion::Robot::Robot(Configuration *config, SystemState *state, int shell) :
 	_state(state),
-	_self(&state->self[id]),
-	_dynamics(&state->self[id]),
+	_self(state->self[shell]),
+	_dynamics(state->self[shell]),
 	_lastTimestamp(Utils::timestamp()),
 	_w(0),
 	_velFilter(Point(0.0, 0.0), 1),
@@ -41,7 +38,7 @@ Robot::Robot(Configuration *config, SystemState *state, int id) :
 {
 }
 
-Robot::~Robot()
+Motion::Robot::~Robot()
 {
 }
 
@@ -53,13 +50,12 @@ Robot::~Robot()
  *  IV:  Smooth Velocities (Filter system)
  *  V:   Convert to motor commands
  */
-void Robot::proc()
+void Motion::Robot::proc()
 {
 	bool verbose = false;
 	_procMutex.lock();
 	
-	// Check to make sure the system is valid
-	if (_self && _self->valid)
+	if (_self && _self->visible)
 	{
 		// set the correct PID parameters for angle
 		_anglePid.kp = _self->config->motion.angle.p;
@@ -72,10 +68,9 @@ void Robot::proc()
 
 		if (_state->gameState.state == GameState::Halt)
 		{
-			// don't do anything if we aren't transmitting to this robot
 			for (int i = 0; i < 4; ++i)
 			{
-				_self->radioTx->set_motors(i, 0);
+				_self->radioTx.set_motors(i, 0);
 			}
 		}
 		else
@@ -148,7 +143,6 @@ void Robot::proc()
 			_w = _wFilter.filter(_w);
 			if (verbose) cout << "after - w: " << _w << " vel: (" << _vel.x << ", " << _vel.y << ")" << endl;
 
-			// save the commanded velocities to packet for inspection in tree
 			_self->cmd_vel = _vel;
 			_self->cmd_w = _w;
 		}
@@ -231,7 +225,7 @@ void Robot::drawBezierControl(QPainter& p) {
 }
 #endif
 
-void Robot::stop(float dtime) {
+void Motion::Robot::stop(float dtime) {
 	// handle rotation with PID - force value to zero
 	_w = _anglePid.run(_w);
 
@@ -239,6 +233,9 @@ void Robot::stop(float dtime) {
 	float ang_thresh = 0.2;
 	if (_w < ang_thresh)
 		_w = 0.0;
+	
+	//FIXME - Exploding numbers
+	_w = 0.0;
 
 	// get a model to use for approximating robot movement
 	const float robotAngle = _self->angle;
@@ -258,7 +255,7 @@ void Robot::stop(float dtime) {
 		_vel -= _vel.normalized()*vv;
 }
 
-void Robot::scaleVelocity() {
+void Motion::Robot::scaleVelocity() {
 	// default scaling
 	float vscale = 1;
 
@@ -272,7 +269,7 @@ void Robot::scaleVelocity() {
 	}
 
 	// handle saturation of the velocity scaling
-	_self->cmd.vScale = Utils::setBound(_self->cmd.vScale, 1.0, 0.0);
+	_self->cmd.vScale = Utils::clamp(_self->cmd.vScale, 1.0, 0.0);
 
 	// scale the velocity if necessary
 	vscale *= _self->cmd.vScale;
@@ -294,7 +291,7 @@ void Robot::scaleVelocity() {
 
 }
 
-void Robot::sanityCheck(const unsigned int LookAheadFrames) {
+void Motion::Robot::sanityCheck(const unsigned int LookAheadFrames) {
 	// timestep
 	const float deltaT = (_state->timestamp - _lastTimestamp)/intTimeStampToFloat;
 
@@ -311,14 +308,14 @@ void Robot::sanityCheck(const unsigned int LookAheadFrames) {
 		_vel * deltaT * LookAheadFrames;
 
 	// avoid opponents
-	BOOST_FOREACH(SystemState::Robot& r, _state->opp)
+	BOOST_FOREACH(::Robot* r, _state->opp)
 	{
-		Geometry2d::Circle c(r.pos, Constants::Robot::Diameter);
+		Geometry2d::Circle c(r->pos, Robot_Diameter);
 
 		Geometry2d::Segment s(_self->pos, predictedPos);
-		if (r.valid && s.intersects(c))
+		if (r->visible && s.intersects(c))
 		{
-			Geometry2d::Point dir = r.pos - _self->pos;
+			Geometry2d::Point dir = r->pos - _self->pos;
 			dir = dir.normalized();
 
 			//take off the offending velocity
@@ -327,16 +324,16 @@ void Robot::sanityCheck(const unsigned int LookAheadFrames) {
 	}
 
 	//protect against self hit
-	BOOST_FOREACH(SystemState::Robot& r, _state->self)
+	BOOST_FOREACH(::Robot* r, _state->self)
 	{
-		if (r.shell != _self->shell)
+		if (r != _self)
 		{
-			Geometry2d::Circle c(r.pos, Constants::Robot::Diameter);
+			Geometry2d::Circle c(r->pos, Robot_Diameter);
 
 			Geometry2d::Segment s(_self->pos, predictedPos);
-			if (r.valid && s.intersects(c))
+			if (r->visible && s.intersects(c))
 			{
-				Geometry2d::Point dir = r.pos - _self->pos;
+				Geometry2d::Point dir = r->pos - _self->pos;
 				dir = dir.normalized();
 
 				//take off the offending velocity
@@ -351,7 +348,7 @@ void Robot::sanityCheck(const unsigned int LookAheadFrames) {
  * into instantaneous velocity commands that can be converted into wheel
  * commands.
  */
-void Robot::genVelocity(MotionCmd::PathEndType ending)
+void Motion::Robot::genVelocity(MotionCmd::PathEndType ending)
 {
 	bool verbose = false;
 	if (verbose) cout << "Generating Velocity" << endl;
@@ -411,7 +408,7 @@ void Robot::genVelocity(MotionCmd::PathEndType ending)
 				maxW /= 10.0f;
 
 				// check saturation of angular velocity
-				targetW = Utils::setBound(targetW, maxW, -maxW);
+				targetW = Utils::clamp(targetW, maxW, -maxW);
 			}
 		}
 
@@ -419,7 +416,7 @@ void Robot::genVelocity(MotionCmd::PathEndType ending)
 		float dW = targetW - _w; // NOTE we do not fix this to range - this is acceleration
 
 		float maxAccel = fabs(_self->config->motion.rotation.acceleration);
-		dW = Utils::setBound(dW, maxAccel, -maxAccel);
+		dW = Utils::clamp(dW, maxAccel, -maxAccel);
 
 		_w += dW;
 	}
@@ -463,6 +460,12 @@ void Robot::genVelocity(MotionCmd::PathEndType ending)
 
 		//last commanded velocity
 		Geometry2d::Point dVel = targetVel - _vel;
+		if (dVel.isZero())
+		{
+			// No change needed
+			return;
+		}
+		
 		if (verbose) printPt(dVel, "   dVel - raw");
 
 		//!!!acceleration is in the change velocity direction not travel direction
@@ -483,7 +486,6 @@ void Robot::genVelocity(MotionCmd::PathEndType ending)
 	}
 	else /** Handle pivoting */
 	{
-
 		Geometry2d::Point dir = _self->cmd.goalOrientation - _self->pos;
 
 		//I know the perpCW is backwards...

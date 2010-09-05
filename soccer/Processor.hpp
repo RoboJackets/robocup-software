@@ -14,17 +14,33 @@
 #include <Network.hpp>
 #include <Logger.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
-
-#include <gameplay/GameplayModule.hpp>
-#include <stateID/StateIDModule.hpp>
-#include <modeling/WorldModel.hpp>
-#include <motion/PointController.hpp>
-#include <motion/WheelController.hpp>
-
-#include "RefereeModule.hpp"
+#include <framework/SystemState.hpp>
 
 class Configuration;
 class Joystick;
+
+namespace StateIdentification
+{
+	class StateIDModule;
+}
+
+namespace Gameplay
+{
+	class GameplayModule;
+}
+
+namespace Motion
+{
+	class PointController;
+	class WheelController;
+}
+
+namespace Modeling
+{
+	class WorldModel;
+}
+
+class RefereeModule;
 
 /** handles processing for a team */
 class Processor: public QThread

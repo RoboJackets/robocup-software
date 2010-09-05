@@ -8,12 +8,13 @@ using namespace std;
 using namespace Geometry2d;
 
 Gameplay::Behaviors::Mark::Mark(GameplayModule *gameplay):
-Behavior(gameplay),
+SingleRobotBehavior(gameplay),
 _ratio(0.9)
 {
 }
 
-void Gameplay::Behaviors::Mark::ratio(float r) {
+void Gameplay::Behaviors::Mark::ratio(float r)
+{
 	if (r > 1.0) {
 		_ratio = 1.0;
 	} else if (r < 0.0) {
@@ -25,7 +26,7 @@ void Gameplay::Behaviors::Mark::ratio(float r) {
 
 bool Gameplay::Behaviors::Mark::run()
 {
-	if (!assigned())
+	if (!robot || !robot->visible)
 	{
 		return false;
 	}
@@ -37,9 +38,9 @@ bool Gameplay::Behaviors::Mark::run()
 		// state data
 		Point ballPos = ball().pos,
 			  ballVel = ball().vel,
-			  pos = robot()->pos(),
-			  markPos = _markRobot->pos(),
-			  markVel = _markRobot->vel();
+			  pos = robot->pos,
+			  markPos = _markRobot->pos,
+			  markVel = _markRobot->vel;
 		Segment ballMarkLine(ballPos, markPos);
 
 		state()->drawLine(ballMarkLine);
@@ -57,9 +58,9 @@ bool Gameplay::Behaviors::Mark::run()
 		}
 
 		// go there, facing the ball
-		robot()->approachOpp(_markRobot, true);
-		robot()->move(targetPoint, false);
-		robot()->face(ballPos);
+		robot->approachOpp(_markRobot, true);
+		robot->move(targetPoint, false);
+		robot->face(ballPos);
 
 	} else {
 		return false;
@@ -67,6 +68,3 @@ bool Gameplay::Behaviors::Mark::run()
 
 	return true;
 }
-
-
-

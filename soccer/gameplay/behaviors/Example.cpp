@@ -10,13 +10,3 @@ bool Gameplay::Behaviors::ChangeMe::run()
     //...
 	return true;
 }
-
-bool Gameplay::Behaviors::ChangeMe::done()
-{
-    //...
-}
-
-float Gameplay::Behaviors::ChangeMe::score(Robot* robot)
-{
-	//...
-}

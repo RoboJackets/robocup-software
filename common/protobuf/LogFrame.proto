@@ -24,7 +24,7 @@ message DebugText
 {
 	optional uint32 color = 1;
 	optional sint32 layer = 2 [default = -1];
-	required Point pos = 3;
+	optional Point pos = 3;		// Not present for robot text, otherwise required
 	required string text = 4;
 	optional bool center = 5;
 }
@@ -59,6 +59,8 @@ message LogFrame
 		
 		// Stack trace leading up to where the robot's final command was set
 		repeated uint64 command_trace = 5;
+		
+		repeated DebugText text = 6;
 	}
 
 	message Ball

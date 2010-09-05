@@ -7,29 +7,34 @@ namespace Gameplay
 {
 	class PreventDoubleTouch
 	{
-	    public:
-		PreventDoubleTouch(GameplayModule *gameplay, Behavior *kicker = 0);
-		
-		void assign(std::set<Robot *> &available);
-		void run();
-		
-		bool keepRunning() const
-		{
-		    return _keepRunning;
-		}
-		
-		bool kicked() const
-		{
-			return _kicked;
-		}
+		public:
+			PreventDoubleTouch(GameplayModule *gameplay, SingleRobotBehavior *kicker = 0);
+			
+			void run();
+			
+			bool keepRunning() const
+			{
+				return _keepRunning;
+			}
+			
+			bool kicked() const
+			{
+				return _kicked;
+			}
 
-	    protected:
-		GameplayModule *_gameplay;
-		Behavior *_kicker;
-		Behaviors::Idle _backoff;
-		bool _keepRunning;
-		bool _kicked;
-		bool _wasReady;
-		QTime _ruleTime;
+			Behaviors::Idle backoff;
+			
+		protected:
+			SystemState *state() const
+			{
+				return _gameplay->state();
+			}
+			
+			GameplayModule *_gameplay;
+			SingleRobotBehavior *_kicker;
+			bool _keepRunning;
+			bool _kicked;
+			bool _wasReady;
+			QTime _ruleTime;
 	};
 }

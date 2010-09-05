@@ -1,5 +1,4 @@
 #include "Env.hpp"
-//#include "Env.moc"
 #include "Entity.hpp"
 #include "Ball.hpp"
 #include "Field.hpp"
@@ -210,8 +209,8 @@ void Env::step()
 			convert_robot(robot, out);
 		}
 		
-		Geometry2d::Point cam0(-Constants::Field::Length / 4, 0);
-		Geometry2d::Point cam1(Constants::Field::Length / 4, 0);
+		Geometry2d::Point cam0(-Field_Length / 4, 0);
+		Geometry2d::Point cam1(Field_Length / 4, 0);
 
 		BOOST_FOREACH(const Ball* b, _balls)
 		{
@@ -308,8 +307,8 @@ Geometry2d::Point gaussianPoint(int n, float scale)
 bool Env::occluded(Geometry2d::Point ball, Geometry2d::Point camera)
 {
 	float camZ = 4;
-	float ballZ = Constants::Ball::Radius;
-	float intZ = Constants::Robot::Height;
+	float ballZ = Ball_Radius;
+	float intZ = Robot_Height;
 
 	// Find where the line from the camera to the ball intersects the
 	// plane at the top of the robots.
@@ -323,14 +322,14 @@ bool Env::occluded(Geometry2d::Point ball, Geometry2d::Point camera)
 	// Return true if the intersection point is inside any robot
 	BOOST_FOREACH(const Robot* r, _blue)
 	{
-		if (intersection.nearPoint(r->getPosition(), Constants::Robot::Radius))
+		if (intersection.nearPoint(r->getPosition(), Robot_Radius))
 		{
 			return true;
 		}
 	}
 	BOOST_FOREACH(const Robot* r, _yellow)
 	{
-		if (intersection.nearPoint(r->getPosition(), Constants::Robot::Radius))
+		if (intersection.nearPoint(r->getPosition(), Robot_Radius))
 		{
 			return true;
 		}

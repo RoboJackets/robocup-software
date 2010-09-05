@@ -1,5 +1,7 @@
 #include "Stopped.hpp"
 
+#include <stdio.h>
+
 using namespace std;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::Stopped, "Restarts")
@@ -10,25 +12,23 @@ Gameplay::Plays::Stopped::Stopped(GameplayModule *gameplay):
 	_left(gameplay, Behaviors::Fullback::Left),
 	_right(gameplay, Behaviors::Fullback::Right)
 {
-	set<Robot *> available = _gameplay->robots();
-	
 	_left.otherFullbacks.insert(&_right);
 	_right.otherFullbacks.insert(&_left);
-	
-	_robots = available;
-	
-	_left.assign(available);
-	_right.assign(available);
-	_idle.assign(available);
 }
 
-float Gameplay::Plays::Stopped::score ( Gameplay::GameplayModule* gameplay )
+float Gameplay::Plays::Stopped::score(Gameplay::GameplayModule* gameplay)
 {
 	return gameplay->state()->gameState.stopped() ? 0 : INFINITY;
 }
 
 bool Gameplay::Plays::Stopped::run()
 {
+	set<OurRobot *> available = _gameplay->playRobots();
+	
+	assignNearest(_left.robot, available, Geometry2d::Point());
+	assignNearest(_right.robot, available, Geometry2d::Point());
+	_idle.robots = available;
+	
 	_idle.run();
 	_left.run();
 	_right.run();

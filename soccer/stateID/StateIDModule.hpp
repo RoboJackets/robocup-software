@@ -2,19 +2,43 @@
 // vim:ai ts=4 et
 #pragma once
 
-#include <framework/SystemState.hpp>
-
 /** Semantic State Identification system */
 namespace StateIdentification
 {
 	class StateIDModule
 	{
 		public:
-			typedef boost::shared_ptr<StateIDModule> shared_ptr;
+			enum Possession
+			{
+				OFFENSE = 0,
+				DEFENSE = 1,
+				FREEBALL = 2
+			};
+			
+			enum BallFieldPos
+			{
+				HOMEFIELD = 0,
+				MIDFIELD = 1,
+				OPPFIELD = 2
+			};
+			
+			class GameStateID
+			{
+				public:
+					Possession posession;
+					BallFieldPos field_pos;
+					
+					GameStateID()
+					{
+						posession = OFFENSE;
+						field_pos = HOMEFIELD;
+					}
+			};
+			
 			StateIDModule(SystemState *state);
 			~StateIDModule();
 			
-			virtual void run();
+			void run();
 		
 		protected:
 			SystemState *_state;

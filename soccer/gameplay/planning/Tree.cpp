@@ -1,8 +1,10 @@
 #include "Tree.hpp"
 
+#include <framework/Dynamics.hpp>
+#include <Utils.hpp>
+
 #include <iostream>
 #include <boost/foreach.hpp>
-#include <Utils.hpp>
 
 using namespace Planning;
 using namespace std;

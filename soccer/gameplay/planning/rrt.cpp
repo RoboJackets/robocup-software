@@ -16,8 +16,8 @@ using namespace Planning;
 
 Geometry2d::Point RRT::randomPoint()
 {
-    float x = Constants::Floor::Width * (drand48() - 0.5f);
-    float y = Constants::Floor::Length * drand48() - Constants::Field::Border;
+    float x = Floor_Width * (drand48() - 0.5f);
+    float y = Floor_Length * drand48() - Field_Border;
     
     return Geometry2d::Point(x, y);
 }
@@ -78,7 +78,7 @@ void RRT::Planner::run(
 		/// see if the new goal is better than old one
 		/// must be at least a robot radius better else the move isn't worth it
 		const float oldDist = _bestGoal.distTo(goal);
-		const float newDist = newGoal.distTo(goal) + Constants::Robot::Radius;
+		const float newDist = newGoal.distTo(goal) + Robot_Radius;
 		if (newDist < oldDist || obstacles->hit(_bestGoal))
 		{
 			_bestGoal = newGoal;

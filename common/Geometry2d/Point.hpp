@@ -55,13 +55,6 @@ namespace Geometry2d
 				return out;
 			}
 			
-			// Write this point to a Packet::Point
-			void set(Packet::Point *other) const
-			{
-				other->set_x(x);
-				other->set_y(y);
-			}
-
 			Point operator+(Point other) const
 			{
 				return Point(x + other.x, y + other.y);
@@ -284,6 +277,11 @@ namespace Geometry2d
 			float angleTo(const Point& other) const
 			{
 				return acos(normalized().dot(other.normalized()));
+			}
+			
+			float cross(const Point &other) const
+			{
+				return x * other.y - y * other.x;
 			}
 			
 			/** the x coordinate */
