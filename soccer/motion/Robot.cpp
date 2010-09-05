@@ -433,7 +433,7 @@ void Motion::Robot::genVelocity(MotionCmd::PathEndType ending)
 		const Geometry2d::Point dir = _self->cmd.goalPosition - _self->pos;
 
 		// use active braking as necessary
-		float dist_stop_thresh = 0.15; // cm
+		float dist_stop_thresh = 0.05;
 		if (ending == MotionCmd::StopAtEnd && dir.mag() < dist_stop_thresh) {
 			stop(deltaT);
 			return;

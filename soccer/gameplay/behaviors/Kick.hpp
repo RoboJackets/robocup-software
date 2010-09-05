@@ -21,8 +21,7 @@ namespace Gameplay
 				// Kicks at a robot (pass)
 				void setTarget(Robot *r);
 				
-				// Kicks towards a point
-				void setTarget(Geometry2d::Point pt);
+				void setTarget(const Geometry2d::Segment &seg);
 			
 			private:
 				enum State
