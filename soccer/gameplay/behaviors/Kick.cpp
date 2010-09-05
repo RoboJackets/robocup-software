@@ -41,6 +41,7 @@ bool Gameplay::Behaviors::Kick::run()
 		case State_Approach2:
 			if (robot->hasBall)
 			{
+				robot->addText("Aim");
 				_state = State_Aim;
 				_lastError = INFINITY;
 			}
@@ -150,6 +151,7 @@ bool Gameplay::Behaviors::Kick::run()
 			break;
 		
 		case State_Done:
+			robot->addText("Done");
 			break;
 	}
 	
