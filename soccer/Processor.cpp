@@ -571,7 +571,7 @@ void Processor::sendRadioData()
 	tx->set_reverse_board_id(_reverseId);
 	
 	// Halt overrides normal motion control, but not joystick
-	if (_joystick->autonomous() && _state.gameState.halt())
+	if (!_joystick->autonomous() || _state.gameState.halt())
 	{
 		// Force all motor speeds to zero
 		BOOST_FOREACH(OurRobot *r, _state.self)
@@ -580,6 +580,8 @@ void Processor::sendRadioData()
 			for (int m = 0; m < txRobot.motors_size(); ++m)
 			{
 				txRobot.set_motors(m, 0);
+				txRobot.set_kick(0);
+				txRobot.set_roller(0);
 			}
 		}
 	}
@@ -600,13 +602,6 @@ void Processor::sendRadioData()
 			{
 				// Drive this robot manually
 				_joystick->drive(txRobot);
-			} else if (!_joystick->autonomous())
-			{
-				// Stop this robot
-				for (int m = 0; m < 4; ++m)
-				{
-					txRobot->set_motors(m, 0);
-				}
 			}
 		}
 	}

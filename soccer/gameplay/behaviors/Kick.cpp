@@ -102,6 +102,10 @@ bool Gameplay::Behaviors::Kick::run()
 			robot->addText("Approach1");
 			robot->move(ballPos + (ballPos - target.pt[0]).normalized() * (Robot_Radius + Ball_Radius));
 			robot->face(target.pt[0]);
+			
+			//FIXME - Real robots overshoot and hit the ball in this state.  This shouldn't be necessary.
+			robot->dribble(127);
+			
 			robot->avoidBall = true;
 			break;
 			
@@ -144,6 +148,7 @@ bool Gameplay::Behaviors::Kick::run()
 				}
 			}
 			
+			robot->dribble(127);
 			robot->pivot(ballPos, dir);
 			break;
 		}
@@ -152,6 +157,7 @@ bool Gameplay::Behaviors::Kick::run()
 			robot->addText("Kick");
 			robot->move(ballPos);
 			robot->face(ballPos);
+			robot->dribble(127);
 			robot->kick(255);
 			break;
 		
