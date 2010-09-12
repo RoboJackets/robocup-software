@@ -145,6 +145,13 @@ p = e.Program('soccer', srcs)
 env.Depends(p, uics)
 e.Install(exec_dir, p)
 
-p = e.Program('log_viewer', ['LogViewer.cpp', 'FieldView.cpp', 'ProtobufTree.cpp', 'StripChart.cpp', 'debug.cpp'])
+p = e.Program('log_viewer', [
+	'LogViewer.cpp',
+	'FieldView.cpp',
+	'ProtobufTree.cpp',
+	'StripChart.cpp',
+	'debug.cpp',
+	'ui/log_icons.qrc'
+])
 env.Depends(p, env.Uic4('ui/LogViewer.ui'))
 e.Install(exec_dir, p)
