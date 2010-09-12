@@ -37,6 +37,9 @@ namespace Gameplay
 				float _lastError;
 				
 				Geometry2d::Segment _target;
+				
+				// Used to display expected kick trajectory after finishing
+				Geometry2d::Segment _kickSegment;
 		};
 	}
 }
