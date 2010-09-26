@@ -41,7 +41,7 @@
 #include <stdlib.h>
 #include <cstdio>
 #include <cblas.h>
-#include "BLASWrap/blaswrap.h"
+#include "../BLASWrap/blaswrap.h"
 #include <assert.h>
 #include "difference_kalman.hpp"
 

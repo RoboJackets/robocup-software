@@ -40,23 +40,20 @@
 #include <stdlib.h>
 #include <iostream>
 #include <boost/ptr_container/ptr_vector.hpp>
-#include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/ublas/matrix.hpp>
+#include <LinearAlgebra.hpp>
 #include "RbpfState.hpp"
 #include "RbpfModel.hpp"
 #include "RbpfModelGraph.hpp"
 
 class Rbpf {
 public:
-	typedef boost::numeric::ublas::vector<double> Vector;
-	typedef boost::numeric::ublas::matrix<double> Matrix;
 	typedef boost::ptr_vector<RbpfState> ParticleVector;
 
 	// X: initial state, (n x 1)
 	// P: initial state covariance, (n x n)
 	// k: the number of particles to be initialized.
 	// Where n = size of Kalman Filter state
-	Rbpf(Vector _X, Matrix _P, int _k);
+	Rbpf(LinAlg::Vector _X, LinAlg::Matrix _P, int _k);
 
 	~Rbpf();
 
@@ -68,7 +65,7 @@ public:
 	// Z: measurement, (s x 1)
 	// dt: change in time
 	// Where m and s = size of the control and measurement input
-	void update(Vector &U, Vector &Z, double dt);
+	void update(LinAlg::Vector &U, LinAlg::Vector &Z, double dt);
 
 	// reinitialize the parameters from the config files - should be called each frame
 	void initParams();
@@ -98,7 +95,7 @@ protected:
 	// Evaluates the multivariate PDF of a centered (mean=0,0) 2D Gaussian dist.
 	// X: point to be evaluated (2 x 1)
 	// Sigma: covariance matrix (2 x 2)
-	inline double gaussianPDF2D(Vector *X, Matrix *Sigma);
+	inline double gaussianPDF2D(LinAlg::Vector *X, LinAlg::Matrix *Sigma);
 
 	// resample k particles from out, with respect to their weights
 	void resampleParticles(ParticleVector &in, ParticleVector &out, int);

@@ -14,6 +14,7 @@
 
 // different options for ball model here
 #include "RBPFBallModel.hpp"
+//#include "EKFBallModel.hpp" // currently broken
 
 using namespace std;
 using namespace Modeling;

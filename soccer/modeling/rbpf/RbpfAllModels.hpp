@@ -29,15 +29,8 @@
 #include <iostream>
 #include <fstream>
 #include <assert.h>
-#include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/ublas/matrix.hpp>
+#include <LinearAlgebra.hpp>
 #include "RbpfModel.hpp"
-using std::ostream;
-using std::endl;
-namespace ublas = boost::numeric::ublas;
-typedef ublas::vector<double> Vector;
-typedef ublas::matrix<double> Matrix;
-
 
 // Class: RbpfModelRolling
 //   free rolling ball, ignores control input
@@ -45,11 +38,11 @@ typedef ublas::matrix<double> Matrix;
 class RbpfModelRolling : public RbpfModel {
 public:
 	RbpfModelRolling();
-	~RbpfModelRolling();
+	virtual ~RbpfModelRolling();
 protected:
-	void transitionModel(Vector &X, Vector &U, double dt);
+	void transitionModel(LinAlg::Vector &X, LinAlg::Vector &U, double dt);
 	void computeTransitionJacobian(double dt);
-	void observationModel(Vector &X, Vector &out);
+	void observationModel(LinAlg::Vector &X, LinAlg::Vector &out);
 	void computeObservationJacobian(double dt);
 };
 
@@ -60,11 +53,11 @@ protected:
 class RbpfModelKicked : public RbpfModel {
 public:
 	RbpfModelKicked();
-	~RbpfModelKicked();
+	virtual ~RbpfModelKicked();
 protected:
-	void transitionModel(Vector &X, Vector &U, double dt);
+	void transitionModel(LinAlg::Vector &X, LinAlg::Vector &U, double dt);
 	void computeTransitionJacobian(double dt);
-	void observationModel(Vector &X, Vector &out);
+	void observationModel(LinAlg::Vector &X, LinAlg::Vector &out);
 	void computeObservationJacobian(double dt);
 };
 
@@ -74,11 +67,11 @@ protected:
 class RbpfModelRollingFriction : public RbpfModel {
 public:
 	RbpfModelRollingFriction();
-	~RbpfModelRollingFriction();
+	virtual ~RbpfModelRollingFriction();
 protected:
-	void transitionModel(Vector &X, Vector &U, double dt);
+	void transitionModel(LinAlg::Vector &X, LinAlg::Vector &U, double dt);
 	void computeTransitionJacobian(double dt);
-	void observationModel(Vector &X, Vector &out);
+	void observationModel(LinAlg::Vector &X, LinAlg::Vector &out);
 	void computeObservationJacobian(double dt);
 };
 

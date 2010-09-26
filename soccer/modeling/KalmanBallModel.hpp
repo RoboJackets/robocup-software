@@ -12,17 +12,12 @@
 #include <vector>
 
 /* RBPF Includes */
-#include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/ublas/matrix.hpp>
+#include <common/LinearAlgebra.hpp>
 #include "Rbpf.hpp"
 #include "RbpfState.hpp"
 #include "RbpfModel.hpp"
 #include "RbpfModelRolling.hpp"
 #include "RbpfModelKicked.hpp"
-
-typedef Geometry2d::Point Point;
-typedef boost::numeric::ublas::vector<double> Vector;
-typedef boost::numeric::ublas::matrix<double> Matrix;
 
 class Configuration;
 

@@ -17,12 +17,11 @@
 
 #include <iostream>
 #include <boost/ptr_container/ptr_vector.hpp>
-#include <boost/numeric/ublas/matrix.hpp>
+#include <LinearAlgebra.hpp>
 #include "RbpfModel.hpp"
 
 class RbpfModelGraph {
 public:
-	typedef boost::numeric::ublas::matrix<double> Matrix;
 	typedef boost::ptr_vector<RbpfModel> ModelVector;
 
 	RbpfModelGraph();
@@ -48,7 +47,7 @@ public:
 	int j; // number of models in graph
 
 protected:
-	Matrix adjacencyMatrix;
+	LinAlg::Matrix adjacencyMatrix;
 	ModelVector modelVector;
 };
 

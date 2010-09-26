@@ -66,5 +66,12 @@ namespace Modeling
 			/** manages updating given a set of observations */
 			virtual void update(float dtime)=0;
 
+			/**
+			 * perform initializations of params from configs
+			 * Called every frame, but does nothing in default implementation
+			 */
+			virtual void initParams() {}
+
+
 	};
 }

@@ -1,23 +1,28 @@
 /*
- * RbpfModelRolling.cpp
+ * RbpfModelKicked.cpp
  *
- *  See: RbpfModelRolling.hpp for additional information.
+ *  See: RbpfModelKicked.hpp for additional information.
  *
  *  Author: Philip Rogers, Nov 15th 2009
  */
 
-#include <modeling/RbpfModelRolling.hpp>
+#include "RbpfModelKicked.hpp"
+#include <Constants.hpp>
 
-// model for free rolling ball, ignores control input
+using namespace LinAlg;
+using namespace Modeling;
+
+// kicked ball with high noise, ignores control input
+// Note: could be written to accept control input from our robots
 // state: X (6 x 1) = {x, y, vx, vy, ax, ay}
 // requires state size (n) = 6, control size (m) = 6, measurement size (s) = 2
 // initializes: F, H, Q, R
-RbpfModelRolling::RbpfModelRolling(Modeling::RobotModel::RobotMap *_robotMap, Configuration *config):
-	RbpfModel(_robotMap),
-	_processNoiseSqrdPos(config, "rbpfModelBallRolling/Process Noise Position", 0.2),
-	_processNoiseSqrdVel(config, "rbpfModelBallRolling/Process Noise Velocity", 1.0),
-	_processNoiseSqrdAcc(config, "rbpfModelBallRolling/Process Noise Acceleration", 1000.0),
-	_measurementNoiseSqrd(config, "rbpfModelBallRolling/Measurement Noise Position", 0.01)
+RbpfModelKicked::RbpfModelKicked(RobotModel::RobotMap *_robotMap, Configuration *config)
+	: RbpfModel(_robotMap),
+	_processNoiseSqrdPos(config, "rbpfModelBallKicked/Process Noise Position", 1.0),
+	_processNoiseSqrdVel(config, "rbpfModelBallKicked/Process Noise Velocity", 1.0),
+	_processNoiseSqrdAcc(config, "rbpfModelBallKicked/Process Noise Acceleration", 1000.0),
+	_measurementNoiseSqrd(config, "rbpfModelBallKicked/Measurement Noise Position", 0.01)
 {
 	assert(n==6); // state size (n) must = 6. If n changed, re-write this!
 	assert(m==6); // control size (m) must = 6. If m changed, re-write this!
@@ -32,7 +37,7 @@ RbpfModelRolling::RbpfModelRolling(Modeling::RobotModel::RobotMap *_robotMap, Co
 	initParams();
 }
 
-void RbpfModelRolling::initializeQ() {
+void RbpfModelKicked::initializeQ() {
 	double sP = _processNoiseSqrdPos;
 	double sV = _processNoiseSqrdVel;
 	double sA = _processNoiseSqrdAcc;
@@ -44,21 +49,22 @@ void RbpfModelRolling::initializeQ() {
 	Q(5,0)=00; Q(5,1)=00; Q(5,2)=00; Q(5,3)=00; Q(5,4)=00; Q(5,5)=sA;
 }
 
-void RbpfModelRolling::initializeR() {
+void RbpfModelKicked::initializeR() {
 	double sM = _measurementNoiseSqrd;
 	R(0,0)=sM; R(0,1)=00;
 	R(1,0)=00; R(1,1)=sM;
 }
 
-void RbpfModelRolling::initParams() {
+
+void RbpfModelKicked::initParams() {
 	initializeQ();
 	initializeR();
 }
 
-RbpfModelRolling::~RbpfModelRolling(){}
+RbpfModelKicked::~RbpfModelKicked(){}
 
 // computes the effect of U and dt on the state, and stores the result in F
-void RbpfModelRolling::transitionModel(Vector &X, Vector &U, double dt){
+void RbpfModelKicked::transitionModel(Vector &X, Vector &U, double dt){
 	assert((int)X.size() == n); // X size must = 6. If changed, re-write this!
 	X(0) = X(0) + X(2)*dt + 0.5*X(4)*dt*dt ; // f(x) = x + vx*dt + 1/2*ax*dt^2
 	X(1) = X(1) + X(3)*dt + 0.5*X(5)*dt*dt ; // f(y) = y + vy*dt + 1/2*ay*dt^2
@@ -71,7 +77,7 @@ void RbpfModelRolling::transitionModel(Vector &X, Vector &U, double dt){
 // computes the Jacobian of the transitionModel function, wrt the state and
 // control input. Requires that F has size (n x n)
 // Call before using the state transition Jacobian, F.
-void RbpfModelRolling::computeTransitionJacobian(double dt){
+void RbpfModelKicked::computeTransitionJacobian(double dt){
 	assert(n == 6); // n must be of size 6. If n changed, re-write this!
 	F(0,0)=01; F(0,1)=00; F(0,2)=dt; F(0,3)=00; F(0,4)=0.5*dt*dt; F(0,5)=00; // df/dx
 	F(1,0)=00; F(1,1)=01; F(1,2)=00; F(1,3)=dt; F(1,4)=00; F(1,5)=0.5*dt*dt; // df/dy
@@ -83,19 +89,48 @@ void RbpfModelRolling::computeTransitionJacobian(double dt){
 
 // calculates naive observation of the first s components of X, storing the
 // result in out. For RoboCup, this will correspond to the x and y of the ball
-void RbpfModelRolling::observationModel(Vector &X, Vector &out){
+void RbpfModelKicked::observationModel(Vector &X, Vector &out){
 	for(int i=0; i<s; i++)
 		out(i) = X(i);
 }
 
 // computes the Jacobian of the observationModel function, wrt the state.
-// Requires that H has size (s x n)
+// equires that H has size (s x n)
 // Because the observation model is static for this model, H is computed
 // at initialization and does not need to be re-computed here.
 // Call before using the observation Jacobian, H.
-void RbpfModelRolling::computeObservationJacobian(double dt){
+void RbpfModelKicked::computeObservationJacobian(double dt){
 	assert(n==6); // n must be of size 4. If n changed, re-write this!
 	assert(s==2); // s must be of size 2. If s changed, re-write this!
 	//H(0,0)=1; H(0,1)=0; H(0,2)=0; H(0,3)=0; H(0,4)=0; H(0,5)=0; // dh(X)/dx
 	//H(1,0)=0; H(1,1)=1; H(1,2)=0; H(1,3)=0; H(1,4)=0; H(1,5)=0; // dh(X)/dy
+}
+
+// checks whether close to other robots. If so, assumes a kick and
+// updates the velocity of the ball. Otherwise, standard EKF update.
+// Note: does not consider orientation of robots, so kicking
+//       is possible from any direction.
+// Need to consider control input here.
+void RbpfModelKicked::update(Vector &X, Matrix &P, Vector &Z, double dt){
+	Geometry2d::Point bPos(X(0),X(1));
+	Geometry2d::Point rPos;
+	bool robotKicked = false;
+	for(RobotModel::RobotMap::const_iterator r = _robotMap->begin(); r!=_robotMap->end(); r++){
+		rPos = r->second->pos();
+		if(bPos.distTo(rPos) < Robot_Radius){
+			robotKicked = true;
+			break;
+		}
+	}
+	if(robotKicked){
+		Geometry2d::Point kickVel(bPos-rPos);
+		kickVel = kickVel.normalized();
+		kickVel = kickVel * 5;
+		X(0) = rPos.x + kickVel.x * dt;
+		X(1) = rPos.y + kickVel.y * dt;
+		X(2) = kickVel.x;
+		X(3) = kickVel.y;
+	}else{
+		RbpfModel::update(X, P, Z, dt);
+	}
 }

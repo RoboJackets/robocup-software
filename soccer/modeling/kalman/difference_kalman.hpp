@@ -44,7 +44,7 @@
 #ifndef DIFFERENCE_KALMAN_H_
 #define DIFFERENCE_KALMAN_H_
 
-#include "BLASWrap/blaswrap.h"
+#include "../BLASWrap/blaswrap.h"
 
 #ifdef __cplusplus
 

@@ -8,7 +8,7 @@
 #include <Geometry2d/Point.hpp>
 #include <cblas.h>
 #include "BLASWrap/blaswrap.h"
-#include "difference_kalman.hpp"
+#include "kalman/difference_kalman.hpp"
 #include <Configuration.hpp>
 
 //#define KALMANMODEL

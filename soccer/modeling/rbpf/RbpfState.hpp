@@ -14,24 +14,20 @@
  *  Author: Philip Rogers, Nov 8th 2009
  */
 
-#ifndef RBPFSTATE_HPP_
-#define RBPFSTATE_HPP_
+#pragma once
 
 #include <iostream>
-#include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/ublas/matrix.hpp>
+#include <LinearAlgebra.hpp>
 
 class RbpfState {
 public:
-	typedef boost::numeric::ublas::vector<double> Vector;
-	typedef boost::numeric::ublas::matrix<double> Matrix;
 
 	// _X: initial state, (n x 1)
 	// _P: initial state covariance, (n x n)
 	// _modelIdx: index of this particle's model
 	// _w: initial weight
 	//  n: size of Kalman Filter state
-	RbpfState(Vector _X, Matrix _P, int _modelIdx, double _w):
+	RbpfState(LinAlg::Vector _X, LinAlg::Matrix _P, int _modelIdx, double _w):
 		X(_X), P(_P), modelIdx(_modelIdx), weight(_w)
 	{
 		assert(X.size() == P.size1()); // P must be of size (n x n)
@@ -49,10 +45,8 @@ public:
 	friend std::ostream& operator<<(std::ostream& out, const RbpfState &state);
 
 	int n;         // size of Kalman Filter state
-	Vector X;      // state vector (n x 1)
-	Matrix P;      // state covariance (n x n)
+	LinAlg::Vector X;      // state vector (n x 1)
+	LinAlg::Matrix P;      // state covariance (n x n)
 	int modelIdx;  // index of this particle's model
 	double weight; // particle weight
 };
-
-#endif /* RBPFSTATE_HPP_ */

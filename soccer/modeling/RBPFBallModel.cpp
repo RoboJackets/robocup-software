@@ -4,25 +4,21 @@
 #include <iostream>
 #include <boost/foreach.hpp>
 
-#include "Rbpf.hpp"
-#include "RbpfModelRolling.hpp"
-#include "RbpfModelKicked.hpp"
+#include <LinearAlgebra.hpp>
+
+#include "rbpf/Rbpf.hpp"
+#include "rbpf/RbpfModelRolling.hpp"
+#include "rbpf/RbpfModelKicked.hpp"
 
 #include "RBPFBallModel.hpp"
 
-/* RBPF Includes */
-#include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/ublas/matrix.hpp>
-
 using namespace std;
 using namespace Geometry2d;
+using namespace LinAlg;
 
 Modeling::RBPFBallModel::RBPFBallModel(RobotModel::RobotMap *robotMap, Configuration *config) :
 		BallModel(robotMap, config)
 {
-	typedef boost::numeric::ublas::vector<double> Vector;
-	typedef boost::numeric::ublas::matrix<double> Matrix;
-
 	// Construct initial state X (n x 1)
 	Vector X(6); X.clear();
 	// Construct initial state covariance P (n x n)

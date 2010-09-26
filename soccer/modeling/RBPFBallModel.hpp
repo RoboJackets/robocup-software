@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include "RobotModel.hpp"
 #include "BallModel.hpp"
-#include "Rbpf.hpp"
+#include "rbpf/Rbpf.hpp"
 
 class Configuration;
 

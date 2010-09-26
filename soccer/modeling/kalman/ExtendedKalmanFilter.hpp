@@ -1,4 +1,4 @@
-/*
+/**
  * ExtendedKalmanFilter.hpp
  *
  * Very simple EKF implementation for position and velocity estimation
@@ -6,9 +6,7 @@
  *  Created on: Jul 22, 2010
  *      Author: Philip Rogers
  */
-
-#ifndef EXTENDEDKALMANFILTER_HPP_
-#define EXTENDEDKALMANFILTER_HPP_
+#pragma once
 
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
@@ -23,7 +21,7 @@ namespace Modeling
 		// Q: 4x4 process covariance, R: 2x2 observation covariance
 		// These control the uncertainty on the update (e.g., friction on
 		// ground) and measurement (e.g., camera error.)
-		ExtendedKalmanFilter(Matrix &Q, Matrix &R);
+		ExtendedKalmanFilter(const Matrix &Q, const Matrix &R);
 		virtual ~ExtendedKalmanFilter();
 
 		// update the filter estimate to some other time (aka coast the filter)
@@ -57,4 +55,3 @@ namespace Modeling
 	};
 }
 
-#endif /* EXTENDEDKALMANFILTER_HPP_ */
