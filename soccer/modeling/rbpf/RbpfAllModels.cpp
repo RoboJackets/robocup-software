@@ -8,6 +8,7 @@
 
 #include <RbpfAllModels.hpp>
 
+using namespace LinAlg;
 // *****************************************************************************
 // Constructor: RbpfModelRolling()
 //   model for free rolling ball, ignores control input

@@ -1,14 +1,10 @@
-/*
- * ExtendedKalmanFilter.cpp
- *
- *  Created on: Jul 22, 2010
- *      Author: Philip Rogers
- */
-
-#include "modeling/ExtendedKalmanFilter.hpp"
+#include "ExtendedKalmanFilter.hpp"
 #include "InvertMatrix.hpp"
 
-Modeling::ExtendedKalmanFilter::ExtendedKalmanFilter(Matrix &Q, Matrix &R) : _X(4,1), _P(4,4), _F(4,4), _H(2,4), _Q(Q), _R(R), _Inn(4,4), _h(2), _Yhat(2,1), _S(2,2) {
+Modeling::ExtendedKalmanFilter::ExtendedKalmanFilter(const Matrix &Q, const Matrix &R)
+: _X(4,1), _P(4,4), _F(4,4), _H(2,4), _Q(Q),
+  _R(R), _Inn(4,4), _h(2), _Yhat(2,1), _S(2,2)
+{
 	_X.clear(); _P.clear(); _F.clear(); _H.clear(); // zero out matrices
 	_Inn.clear(); _h.clear(); _Yhat.clear(); _S.clear();
 	for(int i=0;i<4;i++){_Inn(i,i)=1.0;} // initialize identity matrix

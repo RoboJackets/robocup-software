@@ -12,6 +12,8 @@ namespace Gameplay
 				Kick(GameplayModule *gameplay);
 				
 				virtual bool run();
+
+				inline bool done() const { return _state == State_Done; }
 				
 				void restart();
 				
@@ -37,6 +39,9 @@ namespace Gameplay
 				float _lastError;
 				
 				Geometry2d::Segment _target;
+				
+				// Used to display expected kick trajectory after finishing
+				Geometry2d::Segment _kickSegment;
 		};
 	}
 }

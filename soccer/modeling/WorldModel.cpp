@@ -12,7 +12,9 @@
 #include <Constants.hpp>
 #include <Utils.hpp>
 
-//#include "Ball.hpp"
+// different options for ball model here
+#include "RBPFBallModel.hpp"
+//#include "EKFBallModel.hpp" // currently broken
 
 using namespace std;
 using namespace Modeling;
@@ -26,13 +28,14 @@ WorldModel::WorldModel(SystemState *state, Configuration *config) :
 	_robotConfig(config),
 	_state(state),
 	_selfPlayers(Robots_Per_Team),
-	_oppPlayers(Robots_Per_Team),
-	ballModel(BallModel::RBPF, &_robotMap, config)
+	_oppPlayers(Robots_Per_Team)
 {
+	_ballModel = new RBPFBallModel(&_robotMap, config);
 }
 
 WorldModel::~WorldModel()
 {
+	delete _ballModel;
 }
 
 void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *> &rawVision)
@@ -66,7 +69,7 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 		BOOST_FOREACH(const SSL_DetectionBall &ball, vision->balls())
 		{
 			Geometry2d::Point pos(ball.x() / 1000.0f, ball.y() / 1000.0f);
-			ballModel.observation(timestamp, pos, BallModel::VISION);
+			_ballModel->observation(timestamp, pos, BallModel::VISION);
 		}
 
 		// add robot observations
@@ -163,19 +166,19 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 				Geometry2d::Point offset = Geometry2d::Point::
 						direction(robot->angle() * DegreesToRadians) *	Robot::Radius;
 
-				ballModel.observation(_state->timestamp, robot->pos() + offset, BallModel::BALL_SENSOR);
+				_ballModel->observation(_state->timestamp, robot->pos() + offset, BallModel::BALL_SENSOR);
 			}
 #endif
 		}
 	}
 
 	if (verbose) cout << "Updating ball" << endl;
-	bool ballValid = ballModel.valid(curTime);
-	ballModel.update(curTime);
+	bool ballValid = _ballModel->valid(curTime);
+	_ballModel->run(curTime);
 
-	_state->ball.pos = ballModel.pos;
-	_state->ball.vel = ballModel.vel;
-	_state->ball.accel = ballModel.accel;
+	_state->ball.pos = _ballModel->pos;
+	_state->ball.vel = _ballModel->vel;
+	_state->ball.accel = _ballModel->accel;
 	_state->ball.valid = ballValid;
 
 	if (verbose) cout << "At end of WorldModel::run()" << endl;

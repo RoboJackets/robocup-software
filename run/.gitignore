@@ -11,3 +11,4 @@ referee.sav
 *.txt
 *.dot
 gmon.out
+logs

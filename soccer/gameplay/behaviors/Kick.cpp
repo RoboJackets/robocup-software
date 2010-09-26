@@ -44,7 +44,7 @@ bool Gameplay::Behaviors::Kick::run()
 			break;
 		
 		case State_Approach2:
-			if (robot->hasBall)
+			if (robot->hasBall && robot->charged())
 			{
 				robot->addText("Aim");
 				_state = State_Aim;
@@ -61,8 +61,8 @@ bool Gameplay::Behaviors::Kick::run()
 				state()->drawLine(ballPos, target.pt[1], Qt::white);
 				
 				Geometry2d::Point rd = Geometry2d::Point::direction(robot->angle * DegreesToRadians);
-				state()->drawLine(robot->pos, robot->pos + rd * Field_Length);
-				state()->drawLine(robot->pos, target.center());
+				_kickSegment = Geometry2d::Segment(robot->pos, robot->pos + rd * Field_Length);
+				state()->drawLine(robot->pos, target.center(), Qt::gray);
 				float error = acos(rd.dot((target.center() - robot->pos).normalized())) * RadiansToDegrees;
 				robot->addText(QString("Aim %1").arg(error));
 				
@@ -86,7 +86,7 @@ bool Gameplay::Behaviors::Kick::run()
 			break;
 		
 		case State_Kick:
-			if (!robot->hasBall)
+			if (!robot->charged())
 			{
 				_state = State_Done;
 			}
@@ -102,6 +102,10 @@ bool Gameplay::Behaviors::Kick::run()
 			robot->addText("Approach1");
 			robot->move(ballPos + (ballPos - target.pt[0]).normalized() * (Robot_Radius + Ball_Radius));
 			robot->face(target.pt[0]);
+			
+			//FIXME - Real robots overshoot and hit the ball in this state.  This shouldn't be necessary.
+			robot->dribble(127);
+			
 			robot->avoidBall = true;
 			break;
 			
@@ -144,7 +148,9 @@ bool Gameplay::Behaviors::Kick::run()
 				}
 			}
 			
+			robot->dribble(127);
 			robot->pivot(ballPos, dir);
+			state()->drawLine(_kickSegment);
 			break;
 		}
 			
@@ -152,11 +158,14 @@ bool Gameplay::Behaviors::Kick::run()
 			robot->addText("Kick");
 			robot->move(ballPos);
 			robot->face(ballPos);
+			robot->dribble(127);
 			robot->kick(255);
+			state()->drawLine(_kickSegment);
 			break;
 		
 		case State_Done:
 			robot->addText("Done");
+			state()->drawLine(_kickSegment);
 			break;
 	}
 	

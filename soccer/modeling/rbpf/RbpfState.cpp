@@ -6,7 +6,7 @@
  *  Author: Philip Rogers, Nov 10th 2009
  */
 
-#include <modeling/RbpfState.hpp>
+#include "RbpfState.hpp"
 
 // overloaded operator for printing a RbpfState
 // displays the X (state), P (state covariance), and the weight

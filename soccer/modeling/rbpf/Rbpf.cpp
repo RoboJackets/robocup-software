@@ -6,9 +6,11 @@
  *  Author: Philip Rogers, Nov 15th 2009
  */
 
-#include <modeling/Rbpf.hpp>
+#include "Rbpf.hpp"
 #include <math.h>
 //#include <boost/math/constants/constants.hpp> // Not in boost 1.37 that 9.04 people use
+
+using namespace LinAlg;
 
 // Constructor: Rbpf(X, P, k)
 //   X: initial state, (n x 1)

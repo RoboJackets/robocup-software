@@ -15,9 +15,8 @@
 #ifndef RBPFMODELKICKED_HPP_
 #define RBPFMODELKICKED_HPP_
 
-#include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/ublas/matrix.hpp>
 #include "RbpfModel.hpp"
+#include <LinearAlgebra.hpp>
 
 #include <Configuration.hpp>
 
@@ -26,10 +25,8 @@
 // state: X (6 x 1) = {x, y, vx, vy, ax, ay}
 class RbpfModelKicked : public RbpfModel {
 public:
-	typedef boost::numeric::ublas::vector<double> Vector;
-	typedef boost::numeric::ublas::matrix<double> Matrix;
 	RbpfModelKicked(Modeling::RobotModel::RobotMap *_robotMap, Configuration *config);
-	~RbpfModelKicked();
+	virtual ~RbpfModelKicked();
 
 	// reinitialize the parameters from the config files - should be called each frame
 	void initParams();
@@ -39,11 +36,11 @@ protected:
 	ConfigDouble _processNoiseSqrdAcc;
 	ConfigDouble _measurementNoiseSqrd;
 	
-	void transitionModel(Vector &X, Vector &U, double dt);
+	void transitionModel(LinAlg::Vector &X, LinAlg::Vector &U, double dt);
 	void computeTransitionJacobian(double dt);
-	void observationModel(Vector &X, Vector &out);
+	void observationModel(LinAlg::Vector &X, LinAlg::Vector &out);
 	void computeObservationJacobian(double dt);
-	void update(Vector &X, Matrix &P, Vector &Z, double dt);
+	void update(LinAlg::Vector &X, LinAlg::Matrix &P, LinAlg::Vector &Z, double dt);
 
 	// initialization functions to pull from config file
 	virtual void initializeQ();

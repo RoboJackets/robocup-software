@@ -6,7 +6,9 @@
  *  Author: Philip Rogers, Nov 9th 2009
  */
 
-#include <modeling/RbpfModelGraph.hpp>
+#include "RbpfModelGraph.hpp"
+
+using namespace LinAlg;
 
 // initializes the number of models in the graph (j) to zero.
 // note that modelVector and adjacencyMatrix are already empty.

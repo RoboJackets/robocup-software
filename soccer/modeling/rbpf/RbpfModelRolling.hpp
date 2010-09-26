@@ -17,8 +17,7 @@
 
 #include <iostream>
 #include <assert.h>
-#include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/ublas/matrix.hpp>
+#include <LinearAlgebra.hpp>
 #include "RbpfModel.hpp"
 
 #include <Configuration.hpp>
@@ -27,11 +26,8 @@
 // state: X (6 x 1) = {x, y, vx, vy, ax, ay}
 class RbpfModelRolling : public RbpfModel {
 public:
-	typedef boost::numeric::ublas::vector<double> Vector;
-	typedef boost::numeric::ublas::matrix<double> Matrix;
-	
 	RbpfModelRolling(Modeling::RobotModel::RobotMap *_robotMap, Configuration *config);
-	~RbpfModelRolling();
+	virtual ~RbpfModelRolling();
 
 	// reinitialize the parameters from the config files - should be called each frame
 	void initParams();
@@ -42,9 +38,9 @@ protected:
 	ConfigDouble _processNoiseSqrdAcc;
 	ConfigDouble _measurementNoiseSqrd;
 	
-	void transitionModel(Vector &X, Vector &U, double dt);
+	void transitionModel(LinAlg::Vector &X, LinAlg::Vector &U, double dt);
 	void computeTransitionJacobian(double dt);
-	void observationModel(Vector &X, Vector &out);
+	void observationModel(LinAlg::Vector &X, LinAlg::Vector &out);
 	void computeObservationJacobian(double dt);
 
 	// initialization functions to pull from config file
