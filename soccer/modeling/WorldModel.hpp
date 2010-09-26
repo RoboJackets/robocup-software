@@ -10,12 +10,13 @@
 #include <protobuf/messages_robocup_ssl_detection.pb.h>
 #include <framework/SystemState.hpp>
 #include <Configuration.hpp>
-#include "BallModel.hpp"
 #include "RobotModel.hpp"
 
 /** World modeling system */
 namespace Modeling
 {
+	class BallModel;
+
 	class WorldModel
 	{
 		public:
@@ -44,7 +45,8 @@ namespace Modeling
 			void updateRobots(std::vector<RobotModel::shared>& players, uint64_t cur_time);
 			void addRobotRxData(OurRobot *robot);
 
-			BallModel ballModel;
+			/** general ball model - switchable between different versions */
+			BallModel * _ballModel;
 
 			/** allow for searching by robot ID (both self and opp) */
 			RobotModel::RobotMap _robotMap;

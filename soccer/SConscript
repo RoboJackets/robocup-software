@@ -107,6 +107,7 @@ srcs = [
 # Sources for modeling module
 	'modeling/WorldModel.cpp',
 	'modeling/BallModel.cpp',
+	'modeling/RBPFBallModel.cpp',
 	'modeling/RobotModel.cpp',
 	'modeling/BLASWrap/blaswrap.cpp',
 	'modeling/difference_kalman.cpp',
