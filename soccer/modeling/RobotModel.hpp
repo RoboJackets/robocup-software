@@ -4,14 +4,16 @@
 
 #include <stdint.h>
 
+//#define KALMANMODEL
+
 #include <boost/shared_ptr.hpp>
 #include <Geometry2d/Point.hpp>
+#ifdef KALMANMODEL
 #include <cblas.h>
 #include "BLASWrap/blaswrap.h"
 #include "kalman/difference_kalman.hpp"
+#endif
 #include <Configuration.hpp>
-
-//#define KALMANMODEL
 
 namespace Modeling
 {
@@ -93,9 +95,9 @@ namespace Modeling
 			DifferenceKalmanFilter *_angKalman;
 
 			/** Position **/
-			//State Transistion Matrix
+			//State Transition Matrix
 			DMatrix posA;
-			//Input Transistion Matrix
+			//Input Transition Matrix
 			DMatrix posB;
 			//Initial Covariance Matrix
 			DMatrix posP;
@@ -115,9 +117,9 @@ namespace Modeling
 			DVector posX0;
 
 			/** Angle **/
-			//State Transistion Matrix
+			//State Transition Matrix
 			DMatrix angA;
-			//Input Transistion Matrix
+			//Input Transition Matrix
 			DMatrix angB;
 			//Initial Covariance Matrix
 			DMatrix angP;

@@ -40,122 +40,91 @@
 
 #include <stdlib.h>
 #include <cstdio>
-#include <cblas.h>
-#include <BLASWrap/blaswrap.h>
 #include <assert.h>
 #include "kalman.h"
 
-KalmanFilter::KalmanFilter( DMatrix *_A, DMatrix *_B,
-                            DVector *_x, DMatrix *_P, DMatrix *_Q, 
-                            DMatrix *_R, DMatrix *_H ) :
-  A(_A),
-  B(_B),
-  x(_x),
-  P(_P),
-  Q(_Q),
-  R(_R),
-  H(_H)
+using namespace LinAlg;
+
+KalmanFilter::KalmanFilter( Matrix _A, Matrix _B,
+                            Vector_x, Matrix _P, Matrix _Q,
+                            Matrix _R, Matrix _H ) :
+  A(_A),  B(_B),  x(_x),  P(_P),  Q(_Q),  R(_R),  H(_H),
+  I_nn(eye(P.rows())), K(n,s), tmp_n_1( n ), tmp_n_2( n ),
+  tmp_s_1( s ), tmp_sn_1( s, n ), tmp_ns_1( n, s ), tmp_ss_1( s, s ),
+  tmp_nn_1( n, n ), tmp_nm_1( n, m )
 {
-  n = x->size();
-  m = B->cols();
-  s = H->rows();
+  n = x.size();
+  m = B.cols();
+  s = H.rows();
 
-  assert( A->rows() == n );
-  assert( A->cols() == n );
-  assert( B->rows() == n );
-  assert( B->cols() == m );
-  assert( H->rows() == s );
-  assert( H->cols() == n );
-  assert( P->rows() == n );
-  assert( P->cols() == n );
-  assert( Q->rows() == n );
-  assert( Q->cols() == n );
-  assert( R->rows() == s );
-  assert( R->cols() == s );
-
-  I_nn = DMatrix::identity( P->rows() );
-
-  K = new DMatrix(n,s);
-
-  tmp_n_1 = new DVector( n );
-  tmp_n_2 = new DVector( n );
-  tmp_s_1 = new DVector( s );
-
-  tmp_sn_1 = new DMatrix( s, n );
-  tmp_ns_1 = new DMatrix( n, s );
-  tmp_ss_1 = new DMatrix( s, s );
-  tmp_nn_1 = new DMatrix( n, n );
-  tmp_nm_1 = new DMatrix( n, m );
+  assert( A.rows() == n );
+  assert( A.cols() == n );
+  assert( B.rows() == n );
+  assert( B.cols() == m );
+  assert( H.rows() == s );
+  assert( H.cols() == n );
+  assert( P.rows() == n );
+  assert( P.cols() == n );
+  assert( Q.rows() == n );
+  assert( Q.cols() == n );
+  assert( R.rows() == s );
+  assert( R.cols() == s );
 
   ipiv = (int*)BW_ALLOC( sizeof(int) * s );
-  lwork = tmp_ss_1->invert_size();
+  lwork = tmp_ss_1.invert_size();
   work = (double*)BW_ALLOC(sizeof(double) * lwork);
 }
 
-KalmanFilter::~KalmanFilter() {
-  delete I_nn;
-  delete tmp_n_1;
-  delete tmp_n_2;
-  delete tmp_s_1;
-  delete tmp_sn_1;
-  delete tmp_ns_1;
-  delete tmp_ss_1;
-  delete tmp_nn_1;
-  delete tmp_nm_1;
-  delete K;
+KalmanFilter::~KalmanFilter() {}
 
-  BW_FREE( ipiv );
-  BW_FREE( work );
-}
-
-void KalmanFilter::predict(const DVector *u, double dt) {
-  assert( u->size()  == m );
+void KalmanFilter::predict(const Vector& u, double dt) {
+  assert( u.size()  == m );
   
   // calculate new A
-  tmp_nn_1->add( dt, A, I_nn ); // dt*A + I
+  tmp_nn_1 add( dt, A, I_nn ); // dt*A + I
   // calculate new B
-  tmp_nm_1->scale( B, dt); // dt*B
+  tmp_nm_1.scale( B, dt); // dt*B
 
   // project state
   // x_{k-} = A x_{k-1} + B u_{k-1|
   // really: dx/dt(t) = A x(t-dt) + B u(t-dt) and x(t) = x(t-dt) + dx/dt(t) dt
-  x->lsim( A, B, u, dt );
+  x.lsim( A, B, u, dt );
   
   // project error covariance
   // P(k) = A P(k-1)A^T + Q
-  P->mult( tmp_nn_1, P ); // A P(k-1)
-  P->mult_1t( P, tmp_nn_1 ); // (A P(k-1)) A^T
-  *P += *Q; // ( (A P(k-1)) A^T ) + Q
+  P.mult( tmp_nn_1, P ); // A P(k-1)
+  P.mult_1t( P, tmp_nn_1 ); // (A P(k-1)) A^T
+  P += Q; // ( (A P(k-1)) A^T ) + Q
 }
 
-int KalmanFilter::correct(const DVector *z) {
-  assert( z->size()  == s );
-  DMatrix *S = tmp_ss_1;
+int KalmanFilter::correct(const Vector z) {
+  assert( z.size()  == s );
+  Matrix S = tmp_ss_1;
 
   // compute kalman gain
-  tmp_sn_1->mult( H, P ); // H P
+  tmp_sn_1.mult( H, P ); // H P
   *S = *R;
-  S->gemm(CblasNoTrans, CblasTrans, 1, tmp_sn_1, H, 1); // (HP) H^T + R
+  S.gemm(CblasNoTrans, CblasTrans, 1, tmp_sn_1, H, 1); // (HP) H^T + R
 
-  assert( S->invert_size() == lwork );
-  int inv = S->invert(work, lwork, ipiv, s);
+  assert( S.invert_size() == lwork );
+  int inv = S.invert(work, lwork, ipiv, s);
   if( inv ) {
     return inv; // couldn't invert, skip it
   }
 
-  tmp_ns_1->mult_1t(P, H); // P H^T
-  K->mult( tmp_ns_1, S );
+  tmp_ns_1.mult_1t(P, H); // P H^T
+  K.mult( tmp_ns_1, S );
 
   // update estimate with measurement
   *tmp_s_1 = *z;
-  tmp_s_1->gemv( CblasNoTrans, -1, H, x, 1 ); // -Hx + z
-  x->gemv( CblasNoTrans, 1, K, tmp_s_1, 1 ); // K * (-Hx + z) + x
+  tmp_s_1.gemv( CblasNoTrans, -1, H, x, 1 ); // -Hx + z
+  x.gemv( CblasNoTrans, 1, K, tmp_s_1, 1 ); // K * (-Hx + z) + x
  
 
   // update measurement covariance
   *tmp_nn_1 = *I_nn;
-  tmp_nn_1->gemm(CblasNoTrans, CblasNoTrans, -1, K, H, 1); //I-KH
-  P->mult( tmp_nn_1, P ); // P = (I-KH) P
+  tmp_nn_1.gemm(CblasNoTrans, CblasNoTrans, -1, K, H, 1); //I-KH
+  P.mult( tmp_nn_1, P ); // P = (I-KH) P
 
   return 0;
 }

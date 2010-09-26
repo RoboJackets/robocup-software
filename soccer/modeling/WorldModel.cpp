@@ -22,7 +22,7 @@ using namespace Utils;
 using namespace google::protobuf;
 
 // Maximum time to coast a track (keep the track alive with no observations) in microseconds.
-const uint64_t MaxCoastTime = 500000;
+//const uint64_t MaxCoastTime = 500000; //
 
 WorldModel::WorldModel(SystemState *state, Configuration *config) :
 	_robotConfig(config),
@@ -103,6 +103,7 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 	
 	// Copy robot data out of models into state
 	if (verbose) cout << "copying out data for robots" << endl;
+	// by default, sets robots to not visible
 	BOOST_FOREACH(Robot *robot, _state->self)
 	{
 		robot->visible = false;

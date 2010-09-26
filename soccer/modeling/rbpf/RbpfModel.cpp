@@ -68,7 +68,8 @@ void RbpfModel::update(Vector &X, Matrix &P, Vector &Z, double dt){
 	if(InvertMatrix(S,Sinv)){
 		K = prod(K,Sinv);
 		X = X + prod(K,Yhat);
-		P = prod(Inn - prod(K,H),P);
+		Matrix temp = Inn - prod(K,H);
+		P = prod(temp,P);
 	}else{
 		// S^{-1} could not be determined, throw exception
 		printf("S^-1 could not be calculated during EKF update in RbpfModel.update()");

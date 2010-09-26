@@ -1,5 +1,6 @@
 #include "ExtendedKalmanFilter.hpp"
-#include "InvertMatrix.hpp"
+
+using namespace LinAlg;
 
 Modeling::ExtendedKalmanFilter::ExtendedKalmanFilter(const Matrix &Q, const Matrix &R)
 : _X(4,1), _P(4,4), _F(4,4), _H(2,4), _Q(Q),

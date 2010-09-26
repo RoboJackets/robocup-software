@@ -41,11 +41,9 @@
  */
 
 
-#ifndef KALMAN_H_
-#define KALMAN_H_
+#pragma once
 
-#ifdef __cplusplus
-
+#include <LinearAlgebra.hpp>
 
 /** Discrete time or Euler Approximated Kalman Filter 
  */
@@ -67,8 +65,8 @@ class KalmanFilter {
       \param _R measurement noise covariance, \f${\bf R} \in \Re^{s\times s}\f$
       \param _H observation model: z = H x, \f${\bf H} \in \Re^{s\times n}\f$
    */
-  KalmanFilter( DMatrix *_A, DMatrix *_B, DVector *_x, 
-                DMatrix *_P, DMatrix *_Q, DMatrix *_R, DMatrix *_H );
+  KalmanFilter( LinAlg::Matrix _A, LinAlg::Matrix _B, LinAlg::Vector _x,
+                LinAlg::Matrix _P, LinAlg::Matrix _Q, LinAlg::Matrix _R, LinAlg::Matrix _H );
   /** Destructor.
 
       Frees all tmps that were malloc'ed by the constructor.  Does not
@@ -79,54 +77,54 @@ class KalmanFilter {
  
   /** Euler approximated prediction
    */
-  void predict(const DVector *u, double dt);
+  void predict(const LinAlg::Vectoru, double dt);
   /** Kalman correction step.
    */
-  int correct(const DVector *z);
+  int correct(const LinAlg::Vectorz);
 
   /**Returns pointer to the state vector.*/
-  DVector *state() { return x; }
+  LinAlg::Vector state() { return x; }
   
  protected:
  
   /// estimated state
-  DVector *x;
+  LinAlg::Vectorx;
   /// error covariance
-  DMatrix *P;
+  LinAlg::Matrix P;
   /// process noise covariance
-  DMatrix *Q;
+  LinAlg::Matrix Q;
   /// measurement noise covariance
-  DMatrix *R;
+  LinAlg::Matrix R;
 
   /// observation model (z = H x)
-  DMatrix *H;
+  LinAlg::Matrix H;
 
   /// System A matrix
-  DMatrix *A;
+  LinAlg::Matrix A;
   /// System B matrix
-  DMatrix *B;
+  LinAlg::Matrix B;
 
   /// computed kalman gain
-  DMatrix *K;
+  LinAlg::Matrix K;
   
   // tmps
   
-  DVector *tmp_n_1; ///< tmp var
-  DVector *tmp_n_2; ///< tmp var
-  DVector  *tmp_s_1; ///< tmp var
+  LinAlg::Vector tmp_n_1; ///< tmp var
+  LinAlg::Vector tmp_n_2; ///< tmp var
+  LinAlg::Vector tmp_s_1; ///< tmp var
 
-  DMatrix *tmp_sn_1;  ///< tmp var
-  DMatrix *tmp_ns_1;  ///< tmp var
-  DMatrix  *tmp_ss_1;  ///< tmp var
-  DMatrix  *tmp_nn_1;  ///< tmp var
-  DMatrix  *tmp_nm_1;  ///< tmp var
+  LinAlg::Matrix tmp_sn_1;  ///< tmp var
+  LinAlg::Matrix tmp_ns_1;  ///< tmp var
+  LinAlg::Matrix tmp_ss_1;  ///< tmp var
+  LinAlg::Matrix tmp_nn_1;  ///< tmp var
+  LinAlg::Matrix tmp_nm_1;  ///< tmp var
 
-  int *ipiv; ///< tmp var for pivots
+  int ipiv; ///< tmp var for pivots
   int lwork; ///< length of ipiv
-  double *work; ///< tmp var for inversion work
+  double work; ///< tmp var for inversion work
 
   /// Identity matrix
-  DMatrix *I_nn;
+  LinAlg::Matrix I_nn;
 
   /// length of state vector, x
   int n; 
@@ -135,7 +133,3 @@ class KalmanFilter {
   /// length of measurement vector, z
   int s;
 };
-
-#endif
-
-#endif

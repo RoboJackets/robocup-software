@@ -20,6 +20,11 @@ namespace LinAlg {
 	typedef boost::numeric::ublas::vector<double> Vector;
 	typedef boost::numeric::ublas::matrix<double> Matrix;
 
+	/** constructors */
+	inline Matrix eye(size_t n) {
+		return boost::numeric::ublas::identity_matrix<double>(n);
+	}
+
 	/** useful algorithms */
 
 	/* Matrix inversion routine.
