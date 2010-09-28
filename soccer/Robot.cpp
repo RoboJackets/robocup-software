@@ -131,17 +131,6 @@ void OurRobot::move(Geometry2d::Point pt, bool stopAtEnd)
 
 	// call the path move command
 	executeMove(stopAtEnd);
-
-//	cmd.goalPosition = pt;
-//
-//	// handle stop at end commands
-//	if (stopAtEnd)
-//		cmd.pathEnd = MotionCmd::StopAtEnd;
-//	else
-//		cmd.pathEnd = MotionCmd::FastAtEnd;
-//
-//	// enable the RRT-based planner
-//	cmd.planner = MotionCmd::RRT;
 }
 
 void OurRobot::move(const vector<Geometry2d::Point>& path, bool stopAtEnd)
@@ -204,8 +193,9 @@ void OurRobot::executeMove(bool stopAtEnd)
 	// target point is, and assign to packet
 
 	if (_path.empty()) {
-		// THIS IS VERY BAD AND SHOULD NOT OCCUR
-		throw runtime_error("In OurRobot::executeMove: empty path!");
+		// to avoid crashing if the path is empty, just stop the robot
+		stop();
+		return;
 	}
 
 	//dynamics path
@@ -217,23 +207,31 @@ void OurRobot::executeMove(bool stopAtEnd)
 	}
 
 	//target point is the last point on the closest segment
-	Geometry2d::Point targetPos = _path.points[0]; // first point
-
-	size_t path_start = 0;
-	if (_path.points.size() > 1)
+	if (_path.points.size() == 1) {
+		cmd.goalPosition = _path.points[0]; // first point
+		cmd.pathLength = pos.distTo(cmd.goalPosition);
+		cmd.planner = MotionCmd::Point;
+		return;
+	}
+	// simple case: one segment, go to end of segment
+	else if (_path.points.size() == 2)
 	{
-		targetPos = _path.points[1];
+		cmd.goalPosition = _path.points[1];
+		cmd.pathLength = _path.length(0);
+		cmd.planner = MotionCmd::Point;
+		return;
 	}
 
-	//ideally we want to travel towards 2 points ahead...due to delays
-	if (_path.points.size() > 2)
-	{
-		targetPos = _path.points[2];
-		path_start = 1;
-	}
+	// pull out relevant points
+	Point p0 = pos, p1 = _path.points[1], p2 = _path.points[2];
+	float dist1 = p1.distTo(p1), dist2 = p1.distTo(p2);
+
+	// mix the next point between the first and second point
+	float scale = 1-Utils::clamp(dist1/dist2, 1.0, 0.0);
+	Geometry2d::Point targetPos = p1 + (p2-p1)*scale;
 
 	cmd.goalPosition = targetPos;
-	cmd.pathLength = _path.length(path_start);
+	cmd.pathLength = pos.distTo(targetPos) + targetPos.distTo(p2) + _path.length(2);
 	cmd.planner = MotionCmd::Point;
 }
 
