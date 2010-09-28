@@ -91,7 +91,7 @@ srcs = [
 #	'gameplay/plays/demo_plays/DemoBasicChipAttack.cpp #disabled until 2010 robots ready',
 #	'gameplay/plays/demo_plays/DemoBasicOneTouchChipAttack.cpp',
 #	'gameplay/plays/demo_plays/DemoKicks.cpp',
-	'gameplay/plays/demo_plays/PracticePlay.cpp',
+	'gameplay/plays/demo_plays/KickWithClosestPlay.cpp',
 
 	# files that use the optimizer - disabled until new gtsam is in place
 #	'gameplay/behaviors/OptimizedPassing.cpp',
