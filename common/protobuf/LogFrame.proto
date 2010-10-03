@@ -29,6 +29,19 @@ message DebugText
 	optional bool center = 5;
 }
 
+message TestResult 
+{
+	enum TestState 
+	{
+		INCOMPLETE = 0;
+		PASSED = 1;
+		FAILED = 2;
+	}
+	optional TestState result = 1;
+	optional string name = 2;
+	optional string group = 3;
+}
+
 message LogFrame
 {
 	// Network packets received since the last iteration
@@ -88,4 +101,7 @@ message LogFrame
 	// True if using each half of the field
 	optional bool use_our_half = 18 [default = true];
 	optional bool use_opponent_half = 19 [default = true];
+	
+	// results from testing
+	repeated TestResult testResults = 20;
 }

@@ -4,6 +4,7 @@
 #include "MainWindow.hpp"
 
 #include "PlayConfigTab.hpp"
+#include "TestResultTab.hpp"
 #include "RefereeModule.hpp"
 #include "Configuration.hpp"
 #include <Utils.hpp>
@@ -153,6 +154,11 @@ void MainWindow::processor(Processor* value)
 	_playConfigTab = new PlayConfigTab();
 	_ui.tabWidget->addTab(_playConfigTab, tr("Plays"));
 	_playConfigTab->setup(_processor->gameplayModule());
+
+	// Add Test Results tab
+	_testResultTab = new TestResultTab();
+	_ui.tabWidget->addTab(_testResultTab, tr("Test Results"));
+//	_testResultTab->setup(_processor->gameplayModule()); // FIXME: this should actually exist
 	
 	// Radio channel
 	_ui.radioLabel->setText(QString("Radio %1").arg(_processor->radio()));
