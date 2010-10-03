@@ -79,6 +79,10 @@ srcs = [
 	'gameplay/behaviors/positions/Fullback.cpp',
 #	'gameplay/behaviors/positions/Forward.cpp',
 	
+	# Test framework for plays
+	'gameplay/TestFixture.cpp',
+	'gameplay/plays/test_plays/TestPathTracking.cpp',
+	
 	# Development tests
 #	'gameplay/plays/TestLatency.cpp',
 

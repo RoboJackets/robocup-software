@@ -3,3 +3,4 @@
 .sconsign.dblite
 .scons_variables
 /build
+.pydevproject

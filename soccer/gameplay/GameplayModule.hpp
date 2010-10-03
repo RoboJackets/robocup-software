@@ -30,7 +30,7 @@ namespace Gameplay
 	{
 		public:
 			GameplayModule(SystemState *state);
-			~GameplayModule();
+			virtual ~GameplayModule();
 			
 			SystemState *state() const
 			{
