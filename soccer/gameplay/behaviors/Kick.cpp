@@ -42,10 +42,10 @@ bool Gameplay::Behaviors::Kick::run()
                         //Change state when the robot is in the right location
                         //facing the right direction
                         Geometry2d::Point b = (ballPos - robot->pos).normalized();
-                        float angleError = b.dot(Geometry2d::Point::direction(robot->angle
-                                            * DegreesToRadians));
-			bool nearBall = robot->pos.nearPoint(ballPos, Robot_Radius +
-                                    Ball_Radius + 0.15);
+                        float angleError = b.dot(Geometry2d::Point::direction(robot->angle * DegreesToRadians));
+			bool nearBall = robot->pos.nearPoint(ballPos, Robot_Radius + Ball_Radius + 0.15);
+                       
+                        //angleError is greater than because cos(0) is 1 which is perfect
                         if (nearBall && angleError > cos(15 * DegreesToRadians))
 			{
 				_state = State_Approach2;
@@ -97,16 +97,17 @@ bool Gameplay::Behaviors::Kick::run()
 		
 		case State_Kick:
 
-                        //Look into approach 1 versus approach 2
-                        if(!robot->hasBall)
-                        {
-                           _state = State_Approach1;
-                        }
-
 			if (!robot->charged())
 			{
 				_state = State_Done;
 			}
+                        
+                        //If the robot loses the ball whilst trying to kick before the kick is done
+                        //go back to approach1 to reacquire the ball
+                        else if(!robot->hasBall)
+                        {
+                            _state = State_Approach1;
+                        }
 			break;
 		
 		case State_Done:
@@ -148,7 +149,9 @@ bool Gameplay::Behaviors::Kick::run()
 		        state()->drawLine(ballPos, point, Qt::red);
 
 			//FIXME - Real robots overshoot and hit the ball in this state.  This shouldn't be necessary.
-			robot->dribble(127);
+                        //Hopefully moving the target point back and pivoting whilst moving will prevent the ball 
+                        //from getting hit thus there shouldn't need to be a dribbler
+			//robot->dribble(127);
 			
 			robot->avoidBall = true;
 			break;
@@ -157,6 +160,8 @@ bool Gameplay::Behaviors::Kick::run()
 		case State_Approach2:
 			robot->addText("Approach2");
 			robot->move(ballPos);
+
+                        //Should this face be ballPos or the quanity found in Approach1?
 			robot->face(ballPos);
 			robot->dribble(127);
 			break;
@@ -224,6 +229,8 @@ void Gameplay::Behaviors::Kick::restart()
 
 void Gameplay::Behaviors::Kick::setTargetGoal()
 {
+        //Set the target to be a little inside of the goal posts to prevent noise errors from 
+        //causing a post shot
 	setTarget(Geometry2d::Segment(
 		Geometry2d::Point((Field_GoalWidth / 2 - Ball_Diameter), Field_Length),
 		Geometry2d::Point((-Field_GoalWidth / 2 + Ball_Diameter), Field_Length)));
