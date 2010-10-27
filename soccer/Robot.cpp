@@ -32,6 +32,7 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	avoidBall = false;
 	exclude = false;
 	hasBall = false;
+        sensorConfidence = 0;
 	cmd_w = 0;
 	_lastChargedTime = 0;
 	

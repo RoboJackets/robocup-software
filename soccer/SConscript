@@ -15,6 +15,7 @@ srcs = [
 	'debug.cpp',
 	'StripChart.cpp',
 	'Robot.cpp',
+        'BallSensor.cpp',
 
 	'framework/Obstacle.cpp',
 	'framework/Path.cpp',
