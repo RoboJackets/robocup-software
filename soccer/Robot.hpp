@@ -73,6 +73,8 @@ class OurRobot: public Robot
 		void addText(const QString &text, const QColor &color = Qt::white);
 
 		bool haveBall() const; /// true if we have the ball
+
+    //            bool sensorConfidence() const;
 		
 		bool hasChipper() const; /// true if robot can chip
 
@@ -219,6 +221,9 @@ class OurRobot: public Robot
 		Packet::RadioTx::Robot radioTx;
 		Packet::RadioRx radioRx;
 		
+                //The confidence for this robot's ball sensor
+                int sensorConfidence; 
+
 	protected:
 		// Stores a stack trace in _commandTrace
 		void setCommandTrace();

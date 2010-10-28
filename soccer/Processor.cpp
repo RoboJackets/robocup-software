@@ -12,6 +12,7 @@
 #include <Utils.hpp>
 #include <Joystick.hpp>
 #include <LogUtils.hpp>
+#include <BallSensor.hpp>
 
 #include <framework/RobotConfig.hpp>
 #include <modeling/WorldModel.hpp>
@@ -30,6 +31,7 @@
 #include <protobuf/messages_robocup_ssl_geometry.pb.h>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
+
 
 using namespace std;
 using namespace boost;
@@ -425,6 +427,8 @@ void Processor::run()
 			robot->vel = _worldToTeam.transformDirection(robot->vel);
 			robot->angle = Utils::fixAngleDegrees(_teamAngle + robot->angle);
 		}
+
+                updateStatusOfBallSensors(state());
 		
 		BOOST_FOREACH(Robot *robot, _state.opp)
 		{
