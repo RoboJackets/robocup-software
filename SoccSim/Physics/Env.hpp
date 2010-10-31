@@ -44,6 +44,9 @@ class Env : public QObject
 		/** add a robot with id i to the environment @ pos */
 		void addRobot(bool blue, int id, Geometry2d::Point pos, Robot::Rev rev);
 		
+		/** removes a robot with id i from the environment */
+		void removeRobot(bool blue, int id);
+
 		// If true, send data to the shared vision multicast address.
 		// If false, send data to the two simulated vision addresses.
 		volatile bool sendShared;

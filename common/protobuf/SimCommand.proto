@@ -21,4 +21,5 @@ message SimCommand
 	optional Point ball_pos = 1;
 	optional Point ball_vel = 2;
 	repeated Robot robots = 3;
+	optional bool reset = 4; // performs a full reset back to simulator config initialization
 }

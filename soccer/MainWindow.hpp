@@ -96,6 +96,8 @@ class MainWindow : public QMainWindow
 		// Simulator commands
 		void on_actionCenterBall_triggered();
 		void on_actionStopBall_triggered();
+		void on_actionResetField_triggered();
+		void on_actionStopRobots_triggered();
 		
 		// Debug menu commands
 		void on_actionRestartUpdateTimer_triggered();
