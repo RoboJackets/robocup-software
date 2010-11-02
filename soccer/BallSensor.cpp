@@ -34,6 +34,7 @@ void updateStatusOfBallSensors(SystemState * _state)
             if(robot->sensorConfidence >= Bad_Sensor_Threshold)
             {
                 robot->hasBall = false;
+                robot->addText("Bad Ball Sensor", Qt::red);
             }
         }
         else

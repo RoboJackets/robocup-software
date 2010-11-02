@@ -37,7 +37,10 @@ namespace Planning
 			// Returns the shortest distance from this path to the given point
 			float distanceTo(const Geometry2d::Point &pt) const;
 			
-			// Returns true if the path never touches an obstacle or additionally, when exitObstacles is true, if the path
+                        //Returns the destination of this path (the last point in the points array)
+                        Geometry2d::Point destination();
+			
+                        // Returns true if the path never touches an obstacle or additionally, when exitObstacles is true, if the path
 			// starts out in an obstacle but leaves and never re-enters any obstacle.
 			bool hit(const ObstacleGroup &obstacles, unsigned int start = 0, bool exitObstacles = false) const;
 			
