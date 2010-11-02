@@ -16,6 +16,9 @@ using namespace Geometry2d;
 /** Constant for timestamp to seconds */
 const float intTimeStampToFloat = 1000000.0f;
 
+//The threshold necessary to change paths tuning required 
+const float path_threshold = 2 * Robot_Diameter;
+
 Robot::Robot(unsigned int shell, bool self)
 {
 	_shell = shell;
@@ -121,14 +124,19 @@ void OurRobot::move(Geometry2d::Point pt, bool stopAtEnd)
 	// run the RRT planner to generate a new plan
 	_planner->run(pos, angle, vel, pt, &og, newPath);
 
-	_path = newPath;
+       //Without this soccer seg faults when its started (I don't know why - Anthony)
+       if(_path.empty() || (_path.destination().distTo(newPath.destination()) > Robot_Radius) ||
+               (_path.hit(og, 0, false)) || (_path.length(0) > newPath.length(0) + path_threshold))
+       {
+           _path = newPath;
 	
-	Geometry2d::Point last = pos;
-	BOOST_FOREACH(Geometry2d::Point pt, _path.points)
-	{
+	   Geometry2d::Point last = pos;
+	   BOOST_FOREACH(Geometry2d::Point pt, _path.points)
+	   {
 		_state->drawLine(last, pt);
 		last = pt;
-	}
+	   }
+       }
 
 	// call the path move command
 	executeMove(stopAtEnd);

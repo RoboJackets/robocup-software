@@ -23,6 +23,18 @@ float Planning::Path::length(unsigned int start) const
     return length;
 }
 
+Geometry2d::Point Planning::Path::destination()
+{
+    Geometry2d::Point point; 
+
+    if(!points.empty())
+    {
+        point = points[points.size() - 1];
+    }
+
+    return point;
+}
+
 // Returns the index of the point in this path nearest to pt.
 int Planning::Path::nearestIndex(const Geometry2d::Point &pt) const
 {
