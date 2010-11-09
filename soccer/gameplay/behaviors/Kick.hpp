@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gameplay/Behavior.hpp>
+#include <gameplay/Window.hpp>
 
 namespace Gameplay
 {
@@ -42,6 +43,8 @@ namespace Gameplay
 				
 				// Used to display expected kick trajectory after finishing
 				Geometry2d::Segment _kickSegment;
+
+                                bool hasShot;
 		};
 	}
 }

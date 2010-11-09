@@ -5,24 +5,74 @@
 
 using namespace std;
 
+const float Min_Segment = 1.5 * Ball_Diameter; //Tuning Required (Anthony)
+
 Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay)
 {
 	setTargetGoal();
-	
+        hasShot = false;
 	restart();
 }
 
 bool Gameplay::Behaviors::Kick::run()
 {
-	if (!robot || !robot->visible || !ball().valid)
+	if (!robot || !robot->visible)
 	{
 		return false;
 	}
-	
-	Geometry2d::Point ballPos = ball().pos;
-	
-	Geometry2d::Segment target = _target;
+
+        //Only end the behavior is the ball can't be seen and the robot doesn't have it
+        //This prevents the behavior from stopping when the robot blocks the ball
+        if(!ball().valid && !robot->hasBall)
+        {
+            return false;
+        }
+     
+        //If the ball is being blocked set its location to the location of the robot 
+        //Accounting for the direction the robot is facing
+        Geometry2d::Point ballPos;
+
+        if(!ball().valid)
+        {
+           float x = Robot_Radius * sin(robot->angle * DegreesToRadians);
+           float y = Robot_Radius * cos(robot->angle * DegreesToRadians);
+           Geometry2d::Point pt = Geometry2d::Point(x, y);
+           ballPos = robot->pos + pt; 
+        }
+        else
+        {
+            ballPos = ball().pos;
+        }
+
+        //Get the best ublocked area in the target to aim at
+        WindowEvaluator e = WindowEvaluator(state());
+        e.run(ballPos, _target);
+        Window *w = e.best;
+        
+        //The target to use
+        Geometry2d::Segment target;
+
+        //Prevents the segfault from using a non existent window
+        if(w != NULL)
+        {
+            if(w->segment.length() < Min_Segment)
+            {
+                hasShot = false;
+            }
+            else
+            {
+                hasShot = true;
+            }
+
+            target = w->segment;
+        }
+        else
+        {
+            hasShot = false;
+            target = _target;
+        }
+
 	// Some calculations depend on the order of the target endpoints.
 	// Ensure that t0 x t1 > 0.
 	// We have to do this each frame since the ball may move to the other side of the target.
@@ -38,12 +88,32 @@ bool Gameplay::Behaviors::Kick::run()
 	switch (_state)
 	{
 		case State_Approach1:
-                    {
+                {
+                        Geometry2d::Point targetCenter = target.center();
+			
+                        // Vector from ball to center of target
+			Geometry2d::Point toTarget = targetCenter - ballPos;
+                        
+                        // Robot position relative to the ball
+			Geometry2d::Point relPos = robot->pos - ballPos;
+
+                        //The Point to compute with
+                        Geometry2d::Point point = target.pt[0];
+			
+			//Behind the ball: move to the nearest line containing the ball and a target endpoint.
+			//the robot is behind the ball, while the target vectors all point in *front* of the ball.
+			if (toTarget.cross(relPos) < 0)
+			{
+				// Above the center line: nearest endpoint-line includes target.pt[1]
+				point = target.pt[1];
+	               	}
+
                         //Change state when the robot is in the right location
                         //facing the right direction
-                        Geometry2d::Point b = (ballPos - robot->pos).normalized();
+                        Geometry2d::Point b = (point - ballPos + robot->pos).normalized();
+
                         float angleError = b.dot(Geometry2d::Point::direction(robot->angle * DegreesToRadians));
-			bool nearBall = robot->pos.nearPoint(ballPos, Robot_Radius + Ball_Radius + 0.15);
+			bool nearBall = robot->pos.nearPoint(ballPos, Robot_Radius + Ball_Radius + 0.25);
                        
                         //angleError is greater than because cos(0) is 1 which is perfect
                         if (nearBall && angleError > cos(15 * DegreesToRadians))
@@ -51,17 +121,28 @@ bool Gameplay::Behaviors::Kick::run()
 				_state = State_Approach2;
 			}
 			break;
-                    }
+                }
 		
 		case State_Approach2:
-			if (robot->hasBall && robot->charged())
+                {
+                        if (robot->hasBall && robot->charged())
 			{
 				robot->addText("Aim");
 				_state = State_Aim;
 				_lastError = INFINITY;
 			}
+                        
+			bool nearBall = robot->pos.nearPoint(ballPos, Robot_Radius + Ball_Radius + 0.30);
+
+                        //Go back to state one if needed
+                        if(!nearBall)
+                        {
+                            _state = State_Approach1;
+                        }
+                       
 			break;
-		
+                }
+
 		case State_Aim:
 			if (!robot->hasBall)
 			{
@@ -128,7 +209,6 @@ bool Gameplay::Behaviors::Kick::run()
                         // Robot position relative to the ball
 			Geometry2d::Point relPos = robot->pos - ballPos;
 			
-			
                         //The Point to compute with
                         Geometry2d::Point point = target.pt[0];
 			
@@ -151,7 +231,7 @@ bool Gameplay::Behaviors::Kick::run()
 			//FIXME - Real robots overshoot and hit the ball in this state.  This shouldn't be necessary.
                         //Hopefully moving the target point back and pivoting whilst moving will prevent the ball 
                         //from getting hit thus there shouldn't need to be a dribbler
-			//robot->dribble(127);
+			robot->dribble(127);
 			
 			robot->avoidBall = true;
 			break;
@@ -206,12 +286,15 @@ bool Gameplay::Behaviors::Kick::run()
 			
 		case State_Kick:
 			robot->addText("Kick");
-			robot->move(ballPos);
-			robot->face(ballPos);
-			robot->dribble(127);
-			robot->kick(255);
+                        if(hasShot)
+                        {
+                            robot->move(ballPos);
+		            robot->face(ballPos);
+			    robot->dribble(127);
+			    robot->kick(255);
+                        }
 			state()->drawLine(_kickSegment);
-			break;
+                        break;
 		
 		case State_Done:
 			robot->addText("Done");
