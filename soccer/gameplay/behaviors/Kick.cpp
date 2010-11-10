@@ -11,7 +11,11 @@ Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay)
 {
 	setTargetGoal();
+ 
+        //Whether or not the shot is feasible
         hasShot = false;
+        //The segment of the best shot 
+        _shotSegment = Geometry2d::Segment(Geometry2d::Point(0,0), Geometry2d::Point(0,0));
 	restart();
 }
 
@@ -66,11 +70,15 @@ bool Gameplay::Behaviors::Kick::run()
             }
 
             target = w->segment;
+            _shotSegment = target;
         }
         else
         {
             hasShot = false;
             target = _target;
+
+            //There is not shot therefore set the best segment to a single point
+            _shotSegment = Geometry2d::Segment(Geometry2d::Point(0,0), Geometry2d::Point(0,0));
         }
 
 	// Some calculations depend on the order of the target endpoints.
@@ -152,10 +160,18 @@ bool Gameplay::Behaviors::Kick::run()
 				state()->drawLine(ballPos, target.pt[1], Qt::white);
 				
 				Geometry2d::Point rd = Geometry2d::Point::direction(robot->angle * DegreesToRadians);
+
 				_kickSegment = Geometry2d::Segment(robot->pos, robot->pos + rd * Field_Length);
 				state()->drawLine(robot->pos, target.center(), Qt::gray);
 				float error = acos(rd.dot((target.center() - robot->pos).normalized())) * RadiansToDegrees;
-				robot->addText(QString("Aim %1").arg(error));
+			
+                                //The distance between the trajectory and the target center
+                                float distOff = _kickSegment.distTo(target.center());
+                                
+                                //The width of half the target 
+                                float width = target.pt[0].distTo(target.center());
+
+                                robot->addText(QString("Aim %1").arg(error));
 				
 				if (!isinf(_lastError))
 				{
@@ -163,14 +179,21 @@ bool Gameplay::Behaviors::Kick::run()
 					bool inT0 = (target.pt[0] - ballPos).cross(rd) > 0;
 					bool inT1 = rd.cross(target.pt[1] - ballPos) > 0;
 					robot->addText(QString("in %1 %2").arg(inT0).arg(inT1));
-					
-					//FIXME - Predict the error at the time of kicking (need latency/dwdt measurement)
-					// and get rid of the magic number
-					if ((error > _lastError && inT0 && inT1) || error < 1.5)
-					{
+
+                                        //How close to the center line printout
+                                        robot->addText(QString("Width %1 Distance %2").arg(width).arg(distOff));					
+                                        
+                                        //If the tarjectory is within the target bounds
+                                        if (inT0 && inT1)
+                                        {
+                                            //Shoot if the shot is getting worse or the shot is
+                                            //very good (within half of the width of half the window) (Tuning required)
+                                            if((error > _lastError) || (distOff < (width * .5)))
+		                            {
 						// Past the best position
 						_state = State_Kick;
-					}
+					    }
+                                        }
 				}
 				_lastError = error;
 			}
