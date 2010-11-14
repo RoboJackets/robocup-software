@@ -135,10 +135,26 @@ void Env::step()
 			
 			if (i == team.end())
 			{
-				printf("Trying to override non-existent robot %d:%d\n", rcmd.blue_team(), rcmd.shell());
+				if (rcmd.has_pos())
+				{
+					// add a new robot
+					addRobot(rcmd.blue_team(), rcmd.shell(), rcmd.pos(), Robot::rev2008); // TODO: make this check robot revision
+				}
+				else
+				{
+					// if there's no position, we can't add a robot
+					printf("Trying to override non-existent robot %d:%d\n", rcmd.blue_team(), rcmd.shell());
+					continue;
+				}
+			}
+
+			// remove a robot if it is marked not visible
+			if (rcmd.has_visible() && !rcmd.visible()) {
+				removeRobot(rcmd.blue_team(), rcmd.shell());
 				continue;
 			}
 			
+			// change existing robots
 			Robot *robot = *i;
 			
 			if (rcmd.has_pos())
@@ -146,9 +162,24 @@ void Env::step()
 				robot->position(rcmd.pos().x(), rcmd.pos().y());
 			}
 			
+			float new_w = 0.0;
+			if (rcmd.has_w())
+			{
+				new_w = rcmd.w();
+				if (!rcmd.has_vel())
+				{
+					robot->velocity(0.0, 0.0, new_w);
+				}
+			}
+
 			if (rcmd.has_vel())
 			{
-				robot->velocity(rcmd.vel().x(), rcmd.vel().y(), 0);
+				robot->velocity(rcmd.vel().x(), rcmd.vel().y(), new_w);
+			}
+
+			if (cmd.has_reset() && cmd.reset()) {
+				// TODO: reset the robots to their initial config
+				printf("Resetting to initial config - NOT IMPLEMENTED");
 			}
 		}
 	}
@@ -288,6 +319,15 @@ void Env::addRobot(bool blue, int id, Geometry2d::Point pos, Robot::Rev rev)
 		break;
 	case Robot::rev2010:
 		printf("New 2010 Robot: %d : %f %f\n", id, pos.x, pos.y);
+	}
+}
+
+void Env::removeRobot(bool blue, int id) {
+	if (blue)
+	{
+		_blue.remove(id);
+	} else {
+		_yellow.remove(id);
 	}
 }
 

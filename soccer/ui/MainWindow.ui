@@ -1596,6 +1596,8 @@
     </property>
     <addaction name="actionCenterBall"/>
     <addaction name="actionStopBall"/>
+    <addaction name="actionResetField"/>
+    <addaction name="actionStopRobots"/>
    </widget>
    <widget class="QMenu" name="menu_Debug">
     <property name="title">
@@ -1790,6 +1792,16 @@
    </property>
    <property name="text">
     <string>Use &amp;Opponent Half</string>
+   </property>
+  </action>
+  <action name="actionResetField">
+   <property name="text">
+    <string>&amp;Reset Field</string>
+   </property>
+  </action>
+  <action name="actionStopRobots">
+   <property name="text">
+    <string>S&amp;top Robots</string>
    </property>
   </action>
  </widget>

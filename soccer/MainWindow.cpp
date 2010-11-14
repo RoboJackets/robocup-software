@@ -539,6 +539,36 @@ void MainWindow::on_actionStopBall_triggered()
 	_ui.fieldView->sendSimCommand(cmd);
 }
 
+void MainWindow::on_actionResetField_triggered() {
+	SimCommand cmd;
+	cmd.set_reset(true);
+	_ui.fieldView->sendSimCommand(cmd);
+}
+
+void MainWindow::on_actionStopRobots_triggered() {
+	SimCommand cmd;
+	// TODO: check that this handles threads properly
+	BOOST_FOREACH(OurRobot* robot, state()->self)
+	{
+		SimCommand::Robot *r = cmd.add_robots();
+		r->set_shell(robot->shell());
+		r->set_blue_team(processor()->blueTeam());
+		r->mutable_vel()->set_x(0);
+		r->mutable_vel()->set_y(0);
+		r->set_w(0);
+	}
+	BOOST_FOREACH(OpponentRobot* robot, state()->opp)
+	{
+		SimCommand::Robot *r = cmd.add_robots();
+		r->set_shell(robot->shell());
+		r->set_blue_team(processor()->blueTeam());
+		r->mutable_vel()->set_x(0);
+		r->mutable_vel()->set_y(0);
+		r->set_w(0);
+	}
+	_ui.fieldView->sendSimCommand(cmd);
+}
+
 // Debug commands
 
 void MainWindow::on_actionRestartUpdateTimer_triggered()
