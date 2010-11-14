@@ -481,6 +481,9 @@ void Processor::run()
 			{
 				LogFrame::Robot *log = _state.logFrame->add_self();
 				*log->mutable_pos() = r->pos;
+				*log->mutable_vel() = r->vel;
+				*log->mutable_cmd_vel() = r->cmd_vel;
+				log->set_cmd_w(r->cmd_w);
 				log->set_shell(r->shell());
 				log->set_angle(r->angle);
 				log->set_has_ball(r->hasBall);
@@ -510,6 +513,7 @@ void Processor::run()
 				*log->mutable_pos() = r->pos;
 				log->set_shell(r->shell());
 				log->set_angle(r->angle);
+				*log->mutable_vel() = r->vel;
 			}
 		}
 		

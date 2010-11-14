@@ -66,6 +66,7 @@ message LogFrame
 	message Robot
 	{
 		required Point pos = 1;
+		required Point vel = 7;
 		required int32 shell = 2;
 		required float angle = 3;
 		optional bool has_ball = 4;
@@ -74,6 +75,11 @@ message LogFrame
 		repeated uint64 command_trace = 5;
 		
 		repeated DebugText text = 6;
+		
+		// only during commands
+		optional Point cmd_vel = 8;
+		optional float cmd_w = 9;
+		
 	}
 
 	message Ball
