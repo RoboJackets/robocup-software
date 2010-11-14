@@ -122,9 +122,14 @@ bool Gameplay::Behaviors::Kick::run()
 
                         float angleError = b.dot(Geometry2d::Point::direction(robot->angle * DegreesToRadians));
 			bool nearBall = robot->pos.nearPoint(ballPos, Robot_Radius + Ball_Radius + 0.25);
-                       
+                      
+                        robot->addText(QString("Near Ball %1").arg(nearBall));
+                        robot->addText(QString("X Pos %1 Ball X %2").arg(robot->pos.x).arg(ballPos.x));
+                        robot->addText(QString("Y Pos %1 Ball Y %2").arg(robot->pos.y).arg(ballPos.y));
+                        robot->addText(QString("Angle %1 Threshold %2").arg(angleError).arg(cos(15 * DegreesToRadians)));
+                        
                         //angleError is greater than because cos(0) is 1 which is perfect 
-                        if (nearBall && angleError > cos(20 * DegreesToRadians))
+                        if (nearBall)// && angleError > cos(15 * DegreesToRadians))
 			{
 				_state = State_Approach2;
 			}
@@ -133,14 +138,14 @@ bool Gameplay::Behaviors::Kick::run()
 		
 		case State_Approach2:
                 {
-                        if (robot->hasBall && robot->charged())
+                        if ((robot->hasBall || robot->pos.nearPoint(ballPos, .02)) && robot->charged())
 			{
 				robot->addText("Aim");
 				_state = State_Aim;
 				_lastError = INFINITY;
 			}
                         
-			bool nearBall = robot->pos.nearPoint(ballPos, Robot_Radius + Ball_Radius + 0.30);
+			bool nearBall = robot->pos.nearPoint(ballPos, Robot_Radius + Ball_Radius + 0.20);
 
                         //Go back to state one if needed
                         if(!nearBall)
@@ -173,7 +178,7 @@ bool Gameplay::Behaviors::Kick::run()
 
                                 robot->addText(QString("Aim %1").arg(error));
 				
-				if (!isinf(_lastError))
+				if (!isinf(_lastError) )
 				{
 					//FIXME - Depends on t0 x t1 > 0
 					bool inT0 = (target.pt[0] - ballPos).cross(rd) > 0;
@@ -187,7 +192,8 @@ bool Gameplay::Behaviors::Kick::run()
                                         if (inT0 && inT1)
                                         {
                                             //Shoot if the shot is getting worse or the shot is
-                                            //very good (within half of the width of half the window) (Tuning required)
+                                            //very good (within half of the width of half the window) (Tuning requiredek;
+
                                             if((error > _lastError) || (distOff < (width * .5)))
 		                            {
 						// Past the best position
@@ -230,10 +236,14 @@ bool Gameplay::Behaviors::Kick::run()
 			Geometry2d::Point toTarget = targetCenter - ballPos;
                         
                         // Robot position relative to the ball
-			Geometry2d::Point relPos = robot->pos - ballPos;
+			Geometry2d::Point relPos = ballPos - robot->pos;
+			
+                        bool nearBall = robot->pos.nearPoint(ballPos, Robot_Radius + Ball_Radius + 0.25);
 			
                         //The Point to compute with
                         Geometry2d::Point point = target.pt[0];
+                        
+                        MotionCmd::PivotType dir = (point - ballPos).cross(relPos) > 0 ? MotionCmd::CW : MotionCmd::CCW;
 			
 			//Behind the ball: move to the nearest line containing the ball and a target endpoint.
 			//the robot is behind the ball, while the target vectors all point in *front* of the ball.
@@ -241,20 +251,28 @@ bool Gameplay::Behaviors::Kick::run()
 			{
 				// Above the center line: nearest endpoint-line includes target.pt[1]
 				point = target.pt[1];
+				dir = (point - ballPos).cross(relPos) > 0 ? MotionCmd::CCW : MotionCmd::CW;
 	               	}
 			
                         //Face that point and move to the appropriate line
-                        robot->move(ballPos + (ballPos -
-                                    point).normalized() * (Robot_Radius +
-                                        Ball_Radius + .07));
-                        robot->face(point - ballPos + robot->pos);
+                        robot->move(ballPos + (ballPos - point).normalized() * (Robot_Radius + Ball_Radius + .07));
+                        
+                        if(nearBall)
+                        {
+                        //    robot->pivot(point - ballPos + robot->pos, dir);
+                        }
+                        else
+                        {
+                        //    robot->face(point - ballPos + robot->pos);
+                        }
 
 		        state()->drawLine(ballPos, point, Qt::red);
 
+                        state()->drawLine(robot->pos, Geometry2d::Point::direction(robot->angle * DegreesToRadians) + robot->pos, Qt::gray);
 			//FIXME - Real robots overshoot and hit the ball in this state.  This shouldn't be necessary.
                         //Hopefully moving the target point back and pivoting whilst moving will prevent the ball 
                         //from getting hit thus there shouldn't need to be a dribbler
-			robot->dribble(127);
+	                //robot->dribble(127);
 			
 			robot->avoidBall = true;
 			break;
@@ -294,7 +312,7 @@ bool Gameplay::Behaviors::Kick::run()
 				if (toTarget.cross(relPos) > 0)
 				{
 					// Below the center line: nearest endpoint-line includes target.pt[0]
-					dir = (target.pt[0] - ballPos).cross(relPos) > 0 ? MotionCmd::CW : MotionCmd::CCW;
+		        		dir = (target.pt[0] - ballPos).cross(relPos) > 0 ? MotionCmd::CW : MotionCmd::CCW;
 				} else {
 					// Above the center line: nearest endpoint-line includes target.pt[1]
 					dir = (target.pt[1] - ballPos).cross(relPos) > 0 ? MotionCmd::CCW : MotionCmd::CW;
