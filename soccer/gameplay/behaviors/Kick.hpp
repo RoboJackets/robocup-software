@@ -41,6 +41,9 @@ namespace Gameplay
 				
 				Geometry2d::Segment _target;
 				
+                                //The best segment of the _target that is able to be shot at
+                                Geometry2d::Segment _shotSegment;
+
 				// Used to display expected kick trajectory after finishing
 				Geometry2d::Segment _kickSegment;
 
