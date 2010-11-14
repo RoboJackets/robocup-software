@@ -123,8 +123,8 @@ bool Gameplay::Behaviors::Kick::run()
                         float angleError = b.dot(Geometry2d::Point::direction(robot->angle * DegreesToRadians));
 			bool nearBall = robot->pos.nearPoint(ballPos, Robot_Radius + Ball_Radius + 0.25);
                        
-                        //angleError is greater than because cos(0) is 1 which is perfect
-                        if (nearBall && angleError > cos(15 * DegreesToRadians))
+                        //angleError is greater than because cos(0) is 1 which is perfect 
+                        if (nearBall && angleError > cos(20 * DegreesToRadians))
 			{
 				_state = State_Approach2;
 			}
@@ -262,7 +262,7 @@ bool Gameplay::Behaviors::Kick::run()
 
 		case State_Approach2:
 			robot->addText("Approach2");
-			robot->move(ballPos);
+                        robot->move(ballPos);
 
                         //Should this face be ballPos or the quanity found in Approach1?
 			robot->face(ballPos);
@@ -302,6 +302,8 @@ bool Gameplay::Behaviors::Kick::run()
 			}
 			
 			robot->dribble(127);
+
+                        //Robot has trouble handling a moving ball when trying to pivot (I don't know how to fix this)
 			robot->pivot(ballPos, dir);
 			state()->drawLine(_kickSegment);
 			break;
