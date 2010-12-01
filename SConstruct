@@ -61,7 +61,7 @@ if platform.machine() == 'x86_64':
 	if issue[0] != 'Ubuntu':
 		raise '32-bit compatibility only works on Ubuntu'
 
-	if issue[1] == '10.04':
+	if issue[1].startswith('10.04'):
 		compat_dir = Dir('#/SoccSim/lib/32-on-64/lucid')
 		protobuf_lib = compat_dir.File('libprotobuf.so.5')
 	elif issue[1] == '10.10':
