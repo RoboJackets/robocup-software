@@ -1,4 +1,4 @@
-libprotobuf.so.5
+libprotobuf.so*
 soccsim
 soccer
 simple_logger
