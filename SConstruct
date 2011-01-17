@@ -54,17 +54,33 @@ env.Append(CPPPATH=[build_dir.Dir('common')])
 
 import platform
 if platform.machine() == 'x86_64':
+	f = file('/etc/issue')
+	issue = f.readlines()[0].split()
+	f.close()
+
+	if issue[0] != 'Ubuntu':
+		raise '32-bit compatibility only works on Ubuntu'
+
+	if issue[1].startswith('10.04'):
+		compat_dir = Dir('#/SoccSim/lib/32-on-64/lucid')
+		protobuf_lib = compat_dir.File('libprotobuf.so.5')
+	elif issue[1] == '10.10':
+		compat_dir = Dir('#/SoccSim/lib/32-on-64/maverick')
+		protobuf_lib = compat_dir.File('libprotobuf.so.6')
+	else:
+		raise '32-bit compatibility: Unsupported version of Ubuntu'
+
 	# SoccSim must build 32-bit code, even on a 64-bit system, because PhysX is only
 	# available as 32-bit binaries.
 	env32.Append(CPPFLAGS='-m32')
 	env32.Append(LINKFLAGS='-m32')
-	env32.Append(LIBPATH=[build_dir.Dir('common32'), Dir('#/SoccSim/lib/32-on-64/lucid_amd64')])
+	env32.Append(LIBPATH=[build_dir.Dir('common32'), compat_dir])
 	env32.Append(CPPPATH=[build_dir.Dir('common32')])
 
 	# Ubuntu 10.04 32-bit compatibility:
 	# Copy the 32-bit libprotobuf to the run directory and add let the dynamic linker find it.
 	env32.Append(RPATH=[Literal('\\$$ORIGIN')])
-	env32.Install(exec_dir, '#/SoccSim/lib/32-on-64/lucid_amd64/libprotobuf.so.5')
+	env32.Install(exec_dir, protobuf_lib)
 
 	# Build a 32-bit version of common for SoccSim
 	Export({'env': env32})
