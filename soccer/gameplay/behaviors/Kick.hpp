@@ -30,7 +30,8 @@ namespace Gameplay
 				enum State
 				{
 					State_Approach1,
-					State_Approach2,
+					State_Face, //Aligns the Robot's Dribbler with the ball (Eventually should be part of Approach1)
+                                        State_Approach2,
 					State_Aim,
 					State_Kick,
 					State_Done

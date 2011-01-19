@@ -25,6 +25,8 @@ const float xOffset = 0 * Robot_Radius; //Tuning Required (Anthony)
 //balls) and then tries to drive straight at the ball to avoid the issue where
 //pivoting knocks the ball out of the way but the robot still has trouble
 //obtaining the ball even though it hits it dead on with the dribbler 
+//I tested driving the robot directly forward as little as 2 inches with the dribbler running
+//the whole time and a stationary ball and the robot still lost the ball when the dribbler made contact.
 // - Anthony Gendreau
 
 
@@ -113,8 +115,7 @@ bool Gameplay::Behaviors::Kick::run()
 	}
 
        
-//Find the point to use the the first approach method 
-        
+//Find the point to use the the first approach method  
         //The targetPoint Always behind the ball
         //Eventually this should take into account where the robot starts in relation to the ball 
         Geometry2d::Point targetPoint;
@@ -135,53 +136,68 @@ bool Gameplay::Behaviors::Kick::run()
             targetPoint = ballPos;
         }
 
+//Information about the Ball location relative to the robot used in multiple states
+        Geometry2d::Point targetCenter = target.center();
+			
+        // Vector from ball to center of target
+	Geometry2d::Point toTarget = targetCenter - ballPos;
+                        
+        // Robot position relative to the ball
+	Geometry2d::Point relPos = robot->pos - ballPos;
+
+        //The Point to compute with
+        Geometry2d::Point point = target.pt[0];
+			
+	//Behind the ball: move to the nearest line containing the ball and a target endpoint.
+	//the robot is behind the ball, while the target vectors all point in *front* of the ball.
+	if (toTarget.cross(relPos) < 0)
+	{
+		// Above the center line: nearest endpoint-line includes target.pt[1]
+		point = target.pt[1];
+      	}
 
 	// State transitions
 	switch (_state)
 	{
 		case State_Approach1:
                 {
-                        Geometry2d::Point targetCenter = target.center();
-			
-                        // Vector from ball to center of target
-			Geometry2d::Point toTarget = targetCenter - ballPos;
-                        
-                        // Robot position relative to the ball
-			Geometry2d::Point relPos = robot->pos - ballPos;
-
-                        //The Point to compute with
-                        Geometry2d::Point point = target.pt[0];
-			
-			//Behind the ball: move to the nearest line containing the ball and a target endpoint.
-			//the robot is behind the ball, while the target vectors all point in *front* of the ball.
-			if (toTarget.cross(relPos) < 0)
-			{
-				// Above the center line: nearest endpoint-line includes target.pt[1]
-				point = target.pt[1];
-	               	}
-
-                        //Change state when the robot is in the right location
-                        //facing the right direction
-                        Geometry2d::Point b = (point - targetPoint + robot->pos).normalized();
-
-                        float angleError = b.dot(Geometry2d::Point::direction(robot->angle * DegreesToRadians));
 			bool nearTarget = robot->pos.nearPoint(targetPoint, 0.25);
                       
                         robot->addText(QString("Near Target %1").arg(nearTarget));
                         robot->addText(QString("X Pos %1 Target X %2").arg(robot->pos.x).arg(targetPoint.x));
                         robot->addText(QString("Y Pos %1 Target Y %2").arg(robot->pos.y).arg(targetPoint.y));
-                        robot->addText(QString("Angle %1 Threshold %2").arg(angleError).arg(cos(15 * DegreesToRadians)));
                         
-                        //angleError is greater than because cos(0) is 1 which is perfect 
-
-                        if ((nearTarget)) // && (angleError > cos(15 * DegreesToRadians)))
+                        //Change States when the robot is near enough to the targetPoint
+                        if (nearTarget)
 			{
-				_state = State_Approach2;
-                               // _state = State_Done; //For Debugging Purposes
+				_state = State_Face;
                         }
 			break;
                 }
 		
+                case State_Face:
+                {
+
+                        Geometry2d::Point b = (point - targetPoint + robot->pos).normalized();
+                        float angleError = b.dot(Geometry2d::Point::direction(robot->angle * DegreesToRadians));
+                        
+			bool nearTarget = robot->pos.nearPoint(targetPoint, 0.25);
+                        
+                        robot->addText(QString("Angle %1 Threshold %2").arg(angleError).arg(cos(15 * DegreesToRadians)));
+                        robot->addText(QString("Near Target %1").arg(nearTarget));
+                        robot->addText(QString("X Pos %1 Target X %2").arg(robot->pos.x).arg(targetPoint.x));
+                        robot->addText(QString("Y Pos %1 Target Y %2").arg(robot->pos.y).arg(targetPoint.y));
+                    
+                        //Change States when the robot is facing the right direction acquire the ball
+                        //angleError is greater than because cos(0) is 1 which is perfect 
+                        if(angleError > cos(15 * DegreesToRadians))
+                        {
+                            _state = State_Approach2;
+                        //    _state = State_Done; //For Debugging Purposes
+                        }
+                        break;
+                }
+
 		case State_Approach2:
                 {
                         if ((robot->hasBall || robot->pos.nearPoint(ballPos, .02)) && robot->charged())
@@ -203,10 +219,12 @@ bool Gameplay::Behaviors::Kick::run()
                 }
 
 		case State_Aim:
-			if (!robot->hasBall)
+                        if ((!robot->hasBall && !robot->pos.nearPoint(ballPos, .02)) || !robot->charged())
 			{
 				_state = State_Approach2;
-			} else {
+			}
+                        else 
+                        {
 				state()->drawLine(ballPos, target.pt[0], Qt::red);
 				state()->drawLine(ballPos, target.pt[1], Qt::white);
 				
@@ -276,62 +294,49 @@ bool Gameplay::Behaviors::Kick::run()
                 {
                         robot->addText("Approach1");
 			
-                        Geometry2d::Point targetCenter = target.center();
-		
-			// Vector from ball to center of target
-			Geometry2d::Point toTarget = targetCenter - ballPos;
-                        
-                        // Robot position relative to the ball
-			Geometry2d::Point relPos = ballPos - robot->pos;
-			
-                        bool nearTarget = robot->pos.nearPoint(targetPoint, 0.20);
-			
-                        //The Point to compute with
-                        Geometry2d::Point point = target.pt[0];
-                        
-                        MotionCmd::PivotType dir = (point - ballPos).cross(relPos) > 0 ? MotionCmd::CW : MotionCmd::CCW;
-			
-			//Behind the ball: move to the nearest line containing the ball and a target endpoint.
-			//the robot is behind the ball, while the target vectors all point in *front* of the ball.
-			if (toTarget.cross(relPos) < 0)
-			{
-				// Above the center line: nearest endpoint-line includes target.pt[1]
-				point = target.pt[1];
-				dir = (point - ballPos).cross(relPos) > 0 ? MotionCmd::CCW : MotionCmd::CW;
-	               	}
-			
-                        //Face that point and move to the appropriate line
+                        //Move to the appropriate point
                         robot->move(targetPoint + (targetPoint - point).normalized() * (Robot_Radius + .07));
                         
-                        if(nearTarget)
-                        {
-                            robot->pivot(point - ballPos + robot->pos, dir);
-                        }
-                        else
-                        {
-                        //    robot->face(point - ballPos + robot->pos);
-                        }
-
 		        state()->drawLine(ballPos, point, Qt::red);
 
                         state()->drawLine(robot->pos, Geometry2d::Point::direction(robot->angle * DegreesToRadians) + robot->pos, Qt::gray);
-			//FIXME - Real robots overshoot and hit the ball in this state.  This shouldn't be necessary.
-                        //Hopefully moving the target point back and pivoting whilst moving will prevent the ball 
-                        //from getting hit thus there shouldn't need to be a dribbler
-	                //robot->dribble(127);
 			
 			robot->avoidBall = true;
 			break;
+                }
+
+                case State_Face:
+                {
+                        robot->addText("Face");
+                        
+                        MotionCmd::PivotType dir = (point - ballPos).cross(relPos) > 0 ? MotionCmd::CW : MotionCmd::CCW;
+			
+                        if (toTarget.cross(relPos) < 0)
+			{
+				dir = (point - ballPos).cross(relPos) > 0 ? MotionCmd::CCW : MotionCmd::CW;
+	               	}
+                        
+                        robot->pivot(point - ballPos + robot->pos, dir);
+                        robot->dribble(127);
+
+                        state()->drawLine(ballPos, point, Qt::red);
+
+                        state()->drawLine(robot->pos, Geometry2d::Point::direction(robot->angle * DegreesToRadians) + robot->pos, Qt::gray);
+                     
+
+			robot->avoidBall = true;
+                        break;
                 }
 
 		case State_Approach2:
 			robot->addText("Approach2");
                         robot->setVScale(.5);
                         robot->setWScale(.25);
+                        robot->avoidBall = false;
                         robot->move(ballPos);
 
                         //Should this face be ballPos or the quanity found in Approach1?
-			robot->face(ballPos);
+			//robot->face(ballPos);
 			robot->dribble(127);
 			break;
 			
