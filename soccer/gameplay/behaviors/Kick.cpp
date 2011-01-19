@@ -5,7 +5,28 @@
 
 using namespace std;
 
+//Smallest segment that the robot will shoot at
 const float Min_Segment = 1.5 * Ball_Diameter; //Tuning Required (Anthony)
+
+//Speed at which the ball is effectively not moving
+const float ballVelThreshold = 0.009;   //Tuning Required (Anthony)
+
+//Position behind the ball by an amount where the robot will have space to align itself 
+//without hit the ball
+const float yOffset = 3 * Robot_Radius; //Tuning Required (Anthony) 
+
+const float xOffset = 0 * Robot_Radius; //Tuning Required (Anthony) 
+                                //I don't think there has to be a horizontal
+                                //offset
+
+//There seems to be a problem with the dribbler obtaining and keeping the ball
+//I changed the code so that the robot drives to a point 3 robot radii behind
+//the ball (only for stationary balls thus far have to add prediction for moving
+//balls) and then tries to drive straight at the ball to avoid the issue where
+//pivoting knocks the ball out of the way but the robot still has trouble
+//obtaining the ball even though it hits it dead on with the dribbler 
+// - Anthony Gendreau
+
 
 Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay)
@@ -91,7 +112,30 @@ bool Gameplay::Behaviors::Kick::run()
 		swap(target.pt[0], target.pt[1]);
 	}
 
-	
+       
+//Find the point to use the the first approach method 
+        
+        //The targetPoint Always behind the ball
+        //Eventually this should take into account where the robot starts in relation to the ball 
+        Geometry2d::Point targetPoint;
+
+        //Create the targetPoint by choosing a point behind the ball
+        //Account for a moving ball and guess at where the ball will end up
+        Geometry2d::Point ballVel = ball().vel;
+
+        //Ball is effectively stationary
+        if((fabs(ballVel.x) <= ballVelThreshold) &&
+                fabs((ballVel.y) <= ballVelThreshold))
+        {
+            targetPoint.x = ballPos.x - xOffset; 
+            targetPoint.y = ballPos.y - yOffset;
+        }
+        else //Ball is moving (I don't know how to handle this case yet)
+        {
+            targetPoint = ballPos;
+        }
+
+
 	// State transitions
 	switch (_state)
 	{
@@ -118,21 +162,23 @@ bool Gameplay::Behaviors::Kick::run()
 
                         //Change state when the robot is in the right location
                         //facing the right direction
-                        Geometry2d::Point b = (point - ballPos + robot->pos).normalized();
+                        Geometry2d::Point b = (point - targetPoint + robot->pos).normalized();
 
                         float angleError = b.dot(Geometry2d::Point::direction(robot->angle * DegreesToRadians));
-			bool nearBall = robot->pos.nearPoint(ballPos, Robot_Radius + Ball_Radius + 0.25);
+			bool nearTarget = robot->pos.nearPoint(targetPoint, 0.25);
                       
-                        robot->addText(QString("Near Ball %1").arg(nearBall));
-                        robot->addText(QString("X Pos %1 Ball X %2").arg(robot->pos.x).arg(ballPos.x));
-                        robot->addText(QString("Y Pos %1 Ball Y %2").arg(robot->pos.y).arg(ballPos.y));
+                        robot->addText(QString("Near Target %1").arg(nearTarget));
+                        robot->addText(QString("X Pos %1 Target X %2").arg(robot->pos.x).arg(targetPoint.x));
+                        robot->addText(QString("Y Pos %1 Target Y %2").arg(robot->pos.y).arg(targetPoint.y));
                         robot->addText(QString("Angle %1 Threshold %2").arg(angleError).arg(cos(15 * DegreesToRadians)));
                         
                         //angleError is greater than because cos(0) is 1 which is perfect 
-                        if (nearBall)// && angleError > cos(15 * DegreesToRadians))
+
+                        if ((nearTarget)) // && (angleError > cos(15 * DegreesToRadians)))
 			{
 				_state = State_Approach2;
-			}
+                               // _state = State_Done; //For Debugging Purposes
+                        }
 			break;
                 }
 		
@@ -145,10 +191,10 @@ bool Gameplay::Behaviors::Kick::run()
 				_lastError = INFINITY;
 			}
                         
-			bool nearBall = robot->pos.nearPoint(ballPos, Robot_Radius + Ball_Radius + 0.20);
+			bool nearTarget = robot->pos.nearPoint(targetPoint, 0.30);
 
                         //Go back to state one if needed
-                        if(!nearBall)
+                        if(!nearTarget)
                         {
                             _state = State_Approach1;
                         }
@@ -238,7 +284,7 @@ bool Gameplay::Behaviors::Kick::run()
                         // Robot position relative to the ball
 			Geometry2d::Point relPos = ballPos - robot->pos;
 			
-                        bool nearBall = robot->pos.nearPoint(ballPos, Robot_Radius + Ball_Radius + 0.25);
+                        bool nearTarget = robot->pos.nearPoint(targetPoint, 0.20);
 			
                         //The Point to compute with
                         Geometry2d::Point point = target.pt[0];
@@ -255,11 +301,11 @@ bool Gameplay::Behaviors::Kick::run()
 	               	}
 			
                         //Face that point and move to the appropriate line
-                        robot->move(ballPos + (ballPos - point).normalized() * (Robot_Radius + Ball_Radius + .07));
+                        robot->move(targetPoint + (targetPoint - point).normalized() * (Robot_Radius + .07));
                         
-                        if(nearBall)
+                        if(nearTarget)
                         {
-                        //    robot->pivot(point - ballPos + robot->pos, dir);
+                            robot->pivot(point - ballPos + robot->pos, dir);
                         }
                         else
                         {
@@ -280,6 +326,8 @@ bool Gameplay::Behaviors::Kick::run()
 
 		case State_Approach2:
 			robot->addText("Approach2");
+                        robot->setVScale(.5);
+                        robot->setWScale(.25);
                         robot->move(ballPos);
 
                         //Should this face be ballPos or the quanity found in Approach1?
