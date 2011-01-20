@@ -25,7 +25,10 @@ namespace Gameplay
 				void setTarget(Robot *r);
 				
 				void setTarget(const Geometry2d::Segment &seg);
-			
+	                        
+                                //Calculates where the robot should go in the case of a moving ball
+                                Geometry2d::Point calculateInterceptPoint();
+
 			private:
 				enum State
 				{
