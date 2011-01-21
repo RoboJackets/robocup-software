@@ -191,7 +191,25 @@ bool Gameplay::Behaviors::Kick::run()
         }
        
         interceptPoint.y -= yOffset;
-       
+
+        //Check to make sure the robot doesn't leave the field
+        if(interceptPoint.x < - (Field_Width / 2))
+        {
+                interceptPoint.x = - (Field_Width /2);
+        }
+        else if(interceptPoint.x > (Field_Width / 2))
+        {
+                interceptPoint.x = (Field_Width / 2);
+        }
+
+        if(interceptPoint.y < 0)
+        {
+                interceptPoint.y = 0;
+        }
+        else if(interceptPoint.y > Field_Length)
+        {
+                interceptPoint.y = Field_Length;
+        }
 
 //Information about the Ball location relative to the robot used in multiple states
         Geometry2d::Point targetCenter = target.center();
@@ -228,24 +246,23 @@ bool Gameplay::Behaviors::Kick::run()
                         if (nearIntercept)
 			{
 				_state = State_Face;
+                        //        _state = State_Done; //For Debugging
                         }
 			break;
                 }
-		
+	
                 case State_Face:
                 {
 
-                        //Geometry2d::Point b = (targetEdge - ballPos + robot->pos).normalized();
-                        Geometry2d::Point b = ballPos;
+                        Geometry2d::Point b = (targetEdge - ballPos + robot->pos).normalized();
+                        //Geometry2d::Point b = ballPos.normalized();
 
                         float angleError = b.dot(Geometry2d::Point::direction(robot->angle * DegreesToRadians));
-                        
+                       // float angleError = 1;
+
 			bool nearIntercept = robot->pos.nearPoint(interceptPoint, 0.25);
                         
                         robot->addText(QString("Angle %1 Threshold %2").arg(angleError).arg(cos(15 * DegreesToRadians)));
-                        robot->addText(QString("Near Target %1").arg(nearIntercept));
-                        robot->addText(QString("X Pos %1 Target X %2").arg(robot->pos.x).arg(interceptPoint.x));
-                        robot->addText(QString("Y Pos %1 Target Y %2").arg(robot->pos.y).arg(interceptPoint.y));
                     
                         //Change States when the robot is facing the right direction acquire the ball
                         //angleError is greater than because cos(0) is 1 which is perfect 
@@ -263,7 +280,9 @@ bool Gameplay::Behaviors::Kick::run()
 
 		case State_Approach2:
                 {
-                        if ((robot->hasBall || robot->pos.nearPoint(ballPos, .02)) && robot->charged())
+                        Geometry2d::Point p = ballPos;
+                        p.y = ballPos.y - Ball_Radius;
+                        if ((robot->hasBall || robot->pos.nearPoint(p, .02)) && robot->charged())
 			{
 				robot->addText("Aim");
 				_state = State_Aim;
@@ -322,7 +341,7 @@ bool Gameplay::Behaviors::Kick::run()
                                             //Shoot if the shot is getting worse or the shot is
                                             //very good (within half of the width of half the window) (Tuning requiredek;
 
-                                            if(((distOff < (width * .9)) && (error > _lastError)) || (distOff < (width * .5)))
+                                            if(((distOff < (width * .65)) && (error > _lastError)) || (distOff < (width * .3)))
 		                            {
 						// Past the best position
 						_state = State_Kick;
@@ -382,8 +401,8 @@ bool Gameplay::Behaviors::Kick::run()
 				dir = (targetEdge - ballPos).cross(relPos) > 0 ? MotionCmd::CCW : MotionCmd::CW;
 	               	}
                         
-                        //robot->pivot(targetEdge - ballPos + robot->pos, dir);
-                        robot->face(ballPos);
+                        robot->pivot(targetEdge - ballPos + robot->pos, dir);
+                        //robot->face(ballPos);
                         robot->dribble(127);
 
                         state()->drawLine(ballPos, targetEdge, Qt::red);
@@ -404,8 +423,8 @@ bool Gameplay::Behaviors::Kick::run()
 
                         //Create a point that is offset from the center of the ball so that the robot doesn't hit the ball out of the way
                         Geometry2d::Point point;
-                        point.x = ballPos.x; //- Ball_Radius;
-                        point.y = ballPos.y - (Ball_Radius / 2);
+                        point.x = ballPos.x;
+                        point.y = ballPos.y - (Ball_Radius);
 
                         robot->move(point);
 
