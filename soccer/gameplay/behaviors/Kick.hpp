@@ -42,9 +42,10 @@ namespace Gameplay
 				
 				State _state;
 				float _lastError;
-				
+			        int _timeout;
+
 				Geometry2d::Segment _target;
-				
+			
                                 //The best segment of the _target that is able to be shot at
                                 Geometry2d::Segment _shotSegment;
 

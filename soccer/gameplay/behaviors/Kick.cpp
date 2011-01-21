@@ -19,6 +19,8 @@ const float yOffset = 3 * Robot_Radius; //Tuning Required (Anthony)
 //the robot doesn't run over it attempting to get behind it
 const float xOffset = 2 * Robot_Radius; //Tuning Required (Anthony) 
 
+const int Max_Timeout = 25;
+
 Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay)
 {
@@ -28,11 +30,13 @@ Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay):
         hasShot = false;
         //The segment of the best shot 
         _shotSegment = Geometry2d::Segment(Geometry2d::Point(0,0), Geometry2d::Point(0,0));
-	restart();
+	_timeout = 0;   
+        restart();
 }
 
 bool Gameplay::Behaviors::Kick::run()
 {
+
 	if (!robot || !robot->visible)
 	{
 		return false;
@@ -253,7 +257,7 @@ bool Gameplay::Behaviors::Kick::run()
 	
                 case State_Face:
                 {
-
+                        _timeout++;
                         Geometry2d::Point b = (targetEdge - ballPos + robot->pos).normalized();
                         //Geometry2d::Point b = ballPos.normalized();
 
@@ -266,7 +270,7 @@ bool Gameplay::Behaviors::Kick::run()
                     
                         //Change States when the robot is facing the right direction acquire the ball
                         //angleError is greater than because cos(0) is 1 which is perfect 
-                        if(angleError > cos(15 * DegreesToRadians))
+                        if(angleError > cos(15 * DegreesToRadians) || (_timeout > Max_Timeout))
                         {
                             _state = State_Approach2;
                         }
@@ -282,7 +286,13 @@ bool Gameplay::Behaviors::Kick::run()
                 {
                         Geometry2d::Point p = ballPos;
                         p.y = ballPos.y - Ball_Radius;
-                        if ((robot->hasBall || robot->pos.nearPoint(p, .02)) && robot->charged())
+                        
+                        bool nearBall = robot->pos.nearPoint(p, .05) || robot->hasBall;
+
+                        robot->addText(QString("Near Ball %1").arg(nearBall));
+                        robot->addText(QString("Timeout %1").arg(_timeout));
+                        
+                        if (nearBall && robot->charged())
 			{
 				robot->addText("Aim");
 				_state = State_Aim;
@@ -292,7 +302,7 @@ bool Gameplay::Behaviors::Kick::run()
 			bool nearIntercept = robot->pos.nearPoint(interceptPoint, 0.30);
 
                         //Go back to state one if needed
-                        if(!nearIntercept)
+                        if(!nearIntercept && (_timeout < Max_Timeout))
                         {
                             _state = State_Approach1;
                         }
@@ -302,6 +312,7 @@ bool Gameplay::Behaviors::Kick::run()
 
 		case State_Aim:
                 {
+                        _timeout = 0;
                         if ((!robot->hasBall && !robot->pos.nearPoint(ballPos, .02)) || !robot->charged())
 			{
 				_state = State_Approach2;
@@ -517,7 +528,7 @@ Geometry2d::Point Gameplay::Behaviors::Kick::calculateInterceptPoint()
         Geometry2d::Point ballVel = ball().vel;
         float dist = ballPos.distTo(robot->pos);
         //TODO: Make time a better function based on distance apart
-        float time = dist * 2;
+        float time = dist * 1.25; //Tuning Required
 
         interceptPoint = ballPos + ballVel * time;
 
