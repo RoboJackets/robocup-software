@@ -57,6 +57,8 @@ srcs = [
 	'gameplay/plays/DefendPenalty.cpp',
 	'gameplay/plays/Stopped.cpp',
 	
+	# Open gameplay plays
+	'gameplay/plays/MightyMight.cpp',
 #	'gameplay/plays/Offense.cpp',
 #	'gameplay/plays/ClearBall.cpp',
 #	'gameplay/plays/Defense.cpp',
