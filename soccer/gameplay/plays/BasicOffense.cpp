@@ -34,7 +34,7 @@ bool Gameplay::Plays::BasicOffense::run()
 	assignNearest(_rightFullback.robot, available, Geometry2d::Point(Field_GoalWidth/2, 0.0));
 
 	// determine whether to change offense players
-	const float coeff = 0.75; // Determines level of hysteresis
+	const float coeff = 0.50; // Determines level of hysteresis
 	if (_kicker.robot && _support.robot &&
 			_support.robot->pos.distTo(ball().pos) < coeff * _kicker.robot->pos.distTo(ball().pos)) {
 		_kicker.robot = NULL;
@@ -50,16 +50,24 @@ bool Gameplay::Plays::BasicOffense::run()
 		_kicker.restart();
 
 	// pick as a mark target the furthest back opposing robot
+	// and adjust mark ratio based on field position
 	OpponentRobot* bestOpp = NULL;
 	float bestDist = Field_Length;
+	size_t nrOppClose = 0;
 	BOOST_FOREACH(OpponentRobot* opp, state()->opp)
 	{
 		if (opp->pos.y < bestDist) {
 			bestDist = opp->pos.y;
 			bestOpp = opp;
 		}
+		if (opp->pos.y < Field_Length/2)
+			++nrOppClose;
 	}
 	_support.markRobot(bestOpp);
+	if (ball().pos.y > Field_Length/2 && nrOppClose)
+		_support.ratio(0.7);
+	else
+		_support.ratio(0.9);
 
 	// execute behaviors
 	_kicker.run();
