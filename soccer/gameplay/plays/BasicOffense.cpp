@@ -64,12 +64,14 @@ bool Gameplay::Plays::BasicOffense::run()
 	// and adjust mark ratio based on field position
 	OpponentRobot* bestOpp = NULL;
 	float bestDist = numeric_limits<float>::infinity();
-	float cur_dist = (_support.markRobot()) ? _support.markRobot()->pos.distTo(ballProj) : 0;
+	float cur_dist = (_support.markRobot()) ?
+			_support.markRobot()->pos.distTo(ballProj) :
+			numeric_limits<float>::infinity();
 	size_t nrOppClose = 0;
 	BOOST_FOREACH(OpponentRobot* opp, state()->opp)
 	{
 		const float oppPos = opp->pos.y;
-		if (opp && oppPos > 0.1) {
+		if (opp && opp->visible && oppPos > 0.1) {
 			if (oppPos < bestDist) {
 				bestDist = opp->pos.y;
 				bestOpp = opp;
@@ -85,14 +87,16 @@ bool Gameplay::Plays::BasicOffense::run()
 
 	// use hysteresis for changing of the robot
 	const float mark_coeff = 0.8; // how much of an improvement is necessary to switch
-	if (bestOpp && (forward_reset || bestDist < cur_dist * mark_coeff))
+	if (bestOpp && bestOpp->visible && (forward_reset || bestDist < cur_dist * mark_coeff))
 		_support.markRobot(bestOpp);
 	if (ballProj.y > Field_Length/2.0 && nrOppClose)
 		_support.ratio(0.7);
 	else
 		_support.ratio(0.9);
-	if (bestOpp && bestOpp->pos.nearPoint(Geometry2d::Point(0.0, Field_Length/2.0), 0.001))
-		state()->drawCircle(bestOpp->pos, Robot_Radius * 1.2, QColor(0.0, 127, 255, 255), "BasicOffense");
+
+	// Cyan circle around the marked robot
+	if (_support.markRobot())
+		state()->drawCircle(_support.markRobot()->pos, Robot_Radius * 1.2, QColor(0.0, 127, 255, 255), "BasicOffense");
 
 	// execute behaviors
 	if (_kicker.robot) _kicker.run();

@@ -42,7 +42,9 @@ bool Gameplay::Behaviors::Mark::run()
 			  pos = robot->pos,
 			  markPos = _markRobot->pos,
 			  markVel = _markRobot->vel;
-		Segment ballMarkLine(ballPos, markPos);
+		Point markLineDir = (ballPos-markPos).normalized();
+		Segment ballMarkLine(ballPos - markLineDir * Ball_Radius,
+				markPos + markLineDir * 2.0 * Robot_Radius);
 
 		state()->drawLine(ballMarkLine, QColor(0, 0, 255, 255), "Mark");
 		robot->addText("Mark", QColor(255, 255, 255, 255));
