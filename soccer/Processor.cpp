@@ -118,6 +118,7 @@ void Processor::blueTeam(bool value)
 	QMutexLocker locker(&_loopMutex);
 	
 	_blueTeam = value;
+	_refereeModule->blueTeam(value);
 }
 
 void Processor::internalRefCommand(char ch)
