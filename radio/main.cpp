@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
 	{
 		if (!socket[i].bind(RadioTxPort + i))
 		{
-			fprintf(stderr, "Can't bind to port %d\n", RadioTxPort + 1);
+			fprintf(stderr, "Can't bind to port %d\n", RadioTxPort + i);
 			return 1;
 		}
 	}

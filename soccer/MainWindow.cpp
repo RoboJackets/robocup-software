@@ -37,6 +37,7 @@ void calcMinimumWidth(QWidget *widget, QString text)
 MainWindow::MainWindow(QWidget *parent):
 	QMainWindow(parent)
 {
+	_haveRadioChannel = false;
 	_updateCount = 0;
 	_processor = 0;
 	_autoExternalReferee = true;
@@ -159,9 +160,6 @@ void MainWindow::processor(Processor* value)
 	_testResultTab = new TestResultTab();
 	_ui.tabWidget->addTab(_testResultTab, tr("Test Results"));
 //	_testResultTab->setup(_processor->gameplayModule()); // FIXME: this should actually exist
-	
-	// Radio channel
-	_ui.radioLabel->setText(QString("Radio %1").arg(_processor->radio()));
 }
 
 void MainWindow::logFileChanged()
@@ -193,6 +191,17 @@ void MainWindow::live(bool value)
 
 void MainWindow::updateViews()
 {
+	// Radio channel
+	if (!_haveRadioChannel)
+	{
+		int r = _processor->radio();
+		if (r >= 0)
+		{
+			_haveRadioChannel = true;
+			_ui.radioLabel->setText(QString("Radio %1").arg(r));
+		}
+	}
+
 	int manual =_processor->manualID();
 	if ((manual >= 0 || _ui.manualID->isEnabled()) && !_processor->joystickValid())
 	{

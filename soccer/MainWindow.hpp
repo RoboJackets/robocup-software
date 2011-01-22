@@ -209,4 +209,7 @@ class MainWindow : public QMainWindow
 		QLabel *_viewFPS;
 		QLabel *_procFPS;
 		QLabel *_logMemory;
+
+		// True after the processor has chosen a radio channel and the label has been updated.
+		bool _haveRadioChannel;
 };
