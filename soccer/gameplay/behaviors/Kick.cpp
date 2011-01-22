@@ -5,6 +5,8 @@
 
 using namespace std;
 
+#define DEBUG 1
+
 //Smallest segment that the robot will shoot at
 const float Min_Segment = 1.5 * Ball_Diameter; //Tuning Required (Anthony)
 
@@ -236,81 +238,132 @@ bool Gameplay::Behaviors::Kick::run()
 		// Above the center line: nearest endpoint-line includes target.pt[1]
 		targetEdge = target.pt[1];
       	}
+        
+//Information about whether the robot should skip to future steps 
+        //Determines whether or not the shot is there
+        Geometry2d::Point rd = Geometry2d::Point::direction(robot->angle * DegreesToRadians);
+	_kickSegment = Geometry2d::Segment(robot->pos, robot->pos + rd * Field_Length);
+	
+//Skip to Kick Utilities
+        //Checks to see if within the target
+        bool inT0 = (target.pt[0] - ballPos).cross(rd) > 0;
+	bool inT1 = rd.cross(target.pt[1] - ballPos) > 0;
+        //How far off center we are
+        float distOff = _kickSegment.distTo(target.center());
+        //Distance from center to edge of target 
+        float width = target.pt[0].distTo(target.center());
+        
+//Skip to Approach2 Utilities
+        Geometry2d::Point b = (targetEdge - ballPos + robot->pos).normalized();
+        float angleError = b.dot(Geometry2d::Point::direction(robot->angle * DegreesToRadians));
+
+
+        bool skipToKick = (inT0 && inT1 && (distOff < width * .75) && robot->hasBall && robot->charged());
+        bool skipToAim = robot->hasBall && robot->charged();
+        bool skipToApproach2 = angleError > cos(15 * DegreesToRadians); 
 
 	// State transitions
 	switch (_state)
 	{
 		case State_Approach1:
                 {
-		        _aimTimeout = 0;
+                        _aimTimeout = 0;
                         bool nearIntercept = robot->pos.nearPoint(interceptPoint, Robot_Radius + 0.15);
-                      
+                        
+#ifdef DEBUG
+                        robot->addText("Approach1");
+	                robot->addText("");
                         robot->addText(QString("Near Target %1").arg(nearIntercept));
                         robot->addText(QString("X Pos %1 Target X %2").arg(robot->pos.x).arg(interceptPoint.x));
                         robot->addText(QString("Y Pos %1 Target Y %2").arg(robot->pos.y).arg(interceptPoint.y));
-                        
-                        //Change States when the robot is near enough to the interceptPoint
+                        robot->addText(QString("Skip to Approach2 %1").arg(skipToApproach2));
+                        robot->addText(QString("Skip to Aim %1").arg(skipToAim));
+                        robot->addText(QString("Skip to Kick %1").arg(skipToKick));
+#endif
+
+                        //Change States do in order so that the last one is the futherest along
                         if (nearIntercept)
 			{
 				_state = State_Face;
-                        //        _state = State_Done; //For Debugging
                         }
+                        if(skipToApproach2)
+                        {
+                                _state = State_Approach2;
+                        }
+                        if(skipToAim)
+                        {
+                                _state = State_Aim;
+                        }
+                        if(skipToKick)
+                        {
+                                _state = State_Kick;
+                        }
+
 			break;
                 }
 	
                 case State_Face:
                 {
+                        
                         _faceTimeout++;
-                        Geometry2d::Point b = (targetEdge - ballPos + robot->pos).normalized();
-                        //Geometry2d::Point b = ballPos.normalized();
-
-                        float angleError = b.dot(Geometry2d::Point::direction(robot->angle * DegreesToRadians));
-                       // float angleError = 1;
-
 			bool nearIntercept = robot->pos.nearPoint(interceptPoint, Robot_Radius + 0.20);
                         
+#ifdef DEBUG
+                        robot->addText("Face");
+	                robot->addText("");
                         robot->addText(QString("Angle %1 Threshold %2").arg(angleError).arg(cos(15 * DegreesToRadians)));
                         robot->addText(QString("Timeout %1").arg(_faceTimeout));
-                    
-                        //Change States when the robot is facing the right direction acquire the ball
-                        //angleError is greater than because cos(0) is 1 which is perfect 
+                        robot->addText(QString("Skip to Aim %1").arg(skipToAim));
+                        robot->addText(QString("Skip to Kick %1").arg(skipToKick));
+#endif
+
+                        //Change States do in order so that the last one is the futherest along
+                        if (!nearIntercept)
+			{
+				_state = State_Approach1;
+                        }
                         if(angleError > cos(15 * DegreesToRadians) || (_faceTimeout >= Max_Face_Timeout))
                         {
                             _state = State_Approach2;
                         }
-
-                        if(!nearIntercept)
+                        if(skipToAim)
                         {
-                                _state = State_Approach1;
+                                _state = State_Aim;
                         }
+                        if(skipToKick)
+                        {
+                                _state = State_Kick;
+                        }
+
                         break;
                 }
 
 		case State_Approach2:
                 {
-                        Geometry2d::Point p = ballPos;
-                        p.y = ballPos.y;
-                        
-                        bool nearBall = robot->pos.nearPoint(p, Robot_Radius + Ball_Radius + .10) || robot->hasBall;
-
-                        robot->addText(QString("Near Ball %1").arg(nearBall));
+			bool nearIntercept = robot->pos.nearPoint(interceptPoint, Robot_Radius + 0.25);
+                       
+#ifdef DEBUG
+                        robot->addText("Approach2");
+	                robot->addText("");
                         robot->addText(QString("Timeout %1").arg(_faceTimeout));
-                        
-                        if ((nearBall || robot->hasBall) && robot->charged())
+                        robot->addText(QString("Skip to Kick %1").arg(skipToKick));
+#endif
+
+                        //Change States do in order so that the last one is the futherest along
+                        if (!nearIntercept)
 			{
-				robot->addText("Aim");
+				_state = State_Approach1;
+                        }
+                        if (robot->hasBall && robot->charged())
+			{
 				_state = State_Aim;
 				_lastError = INFINITY;
 			}
-                        
-			bool nearIntercept = robot->pos.nearPoint(interceptPoint, Robot_Radius + 0.25);
-
-                        //Go back to state one if needed
-                        if(!nearIntercept )//&& (_faceTimeout < Max_Face_Timeout))
+                        if(skipToKick)
                         {
-                            _state = State_Approach1;
+                                _state = State_Kick;
                         }
-                       
+                        
 			break;
                 }
 
@@ -318,7 +371,14 @@ bool Gameplay::Behaviors::Kick::run()
                 {
                         _faceTimeout = 0;
                         _aimTimeout++;
-                        if ((!robot->hasBall && !robot->pos.nearPoint(ballPos, Robot_Radius + Ball_Radius + .05)) || !robot->charged())
+                        bool nearBall = robot->pos.nearPoint(ballPos, Robot_Radius + .10);
+			
+#ifdef DEBUG                        
+                        robot->addText("Aim");
+	                robot->addText("");
+#endif                        
+
+                        if ((!robot->hasBall && !nearBall) || !robot->charged())  
 			{
 				_state = State_Approach2;
 			}
@@ -327,40 +387,28 @@ bool Gameplay::Behaviors::Kick::run()
 				state()->drawLine(ballPos, target.pt[0], Qt::red);
 				state()->drawLine(ballPos, target.pt[1], Qt::white);
 				
-				Geometry2d::Point rd = Geometry2d::Point::direction(robot->angle * DegreesToRadians);
-
-				_kickSegment = Geometry2d::Segment(robot->pos, robot->pos + rd * Field_Length);
 				state()->drawLine(robot->pos, target.center(), Qt::gray);
 				float error = acos(rd.dot((target.center() - robot->pos).normalized())) * RadiansToDegrees;
 			
-                                //The distance between the trajectory and the target center
-                                float distOff = _kickSegment.distTo(target.center());
-                                
-                                //The width of half the target 
-                                float width = target.pt[0].distTo(target.center());
-
-                                robot->addText(QString("Aim %1").arg(error));
+#ifdef DEBUG
+                                robot->addText(QString("Error %1").arg(error));
                                 robot->addText(QString("Timeout %1").arg(_aimTimeout));
-				
+#endif
+
 				if (!isinf(_lastError) )
 				{
-					//FIXME - Depends on t0 x t1 > 0
-					bool inT0 = (target.pt[0] - ballPos).cross(rd) > 0;
-					bool inT1 = rd.cross(target.pt[1] - ballPos) > 0;
-					robot->addText(QString("in %1 %2").arg(inT0).arg(inT1));
 
-                                        //How close to the center line printout
-                                        robot->addText(QString("Width %1 Distance %2").arg(width).arg(distOff));					
-                                        
+#ifdef DEBUG
+                                        robot->addText(QString("in %1 %2").arg(inT0).arg(inT1));
+                                        robot->addText(QString("Width %1 DistOff %2").arg(width).arg(distOff));					
+#endif
+
                                         //If the tarjectory is within the target bounds
                                         if (inT0 && inT1)
                                         {
-                                            //Shoot if the shot is getting worse or the shot is
-                                            //very good (within half of the width of half the window) (Tuning requiredek;
-
-                                            if((((distOff < (width * .65)) && (error > _lastError)) || (distOff < (width * .3))) && hasShot)
+                                            //Shoot if the shot is getting worse or the shot is very good
+                                            if((((distOff < (width * .85)) && (error > _lastError)) || (distOff < (width * .6))) && hasShot)
 		                            {
-						// Past the best position
 						_state = State_Kick;
 					    }
                                         }
@@ -372,13 +420,22 @@ bool Gameplay::Behaviors::Kick::run()
                                     _state = State_Kick;
                                 }
 			}
+
 			break;
                 }
 
 		case State_Kick:
                 {
                         _aimTimeout++;
-			if (!robot->charged())
+                        
+#ifdef DEBUG
+                        robot->addText("Kick");
+                        robot->addText("");
+                        robot->addText(QString("Has Shot %1").arg(hasShot));
+                        robot->addText(QString("Timeout %1").arg(_aimTimeout));
+#endif
+
+                        if (!robot->charged())
 			{
 				_state = State_Done;
 			}
@@ -394,9 +451,15 @@ bool Gameplay::Behaviors::Kick::run()
 
 		case State_Done:
                 {
-                    _faceTimeout = 0;
-                    _aimTimeout = 0;
-                    break;
+                        _faceTimeout = 0;
+                        _aimTimeout = 0;
+
+#ifdef DEBUG
+                        robot->addText("Done");
+                        robot->addText("");
+#endif
+
+                        break;
                 }
 	}
 	
@@ -404,8 +467,6 @@ bool Gameplay::Behaviors::Kick::run()
 	{
 		case State_Approach1:
                 {
-                        robot->addText("Approach1");
-			
                         //Move to the appropriate point
                         robot->move(interceptPoint);
                         
@@ -419,8 +480,6 @@ bool Gameplay::Behaviors::Kick::run()
 
                 case State_Face:
                 {
-                        robot->addText("Face");
-                        
                         MotionCmd::PivotType dir = (targetEdge - ballPos).cross(relPos) > 0 ? MotionCmd::CW : MotionCmd::CCW;
 			
                         if (toTarget.cross(relPos) < 0)
@@ -443,9 +502,6 @@ bool Gameplay::Behaviors::Kick::run()
 
 		case State_Approach2:
                 {
-			robot->addText("Approach2");
-                        robot->setVScale(.50);
-                        robot->setWScale(.25);
                         robot->avoidBall = false;
 
                         //Create a point that is offset from the center of the ball so that the robot doesn't hit the ball out of the way
@@ -495,13 +551,12 @@ bool Gameplay::Behaviors::Kick::run()
 			
 		case State_Kick:
                 {
-                        robot->addText("Kick");
-                        robot->addText(QString("Has Shot %1").arg(hasShot));
-                        robot->addText(QString("Timeout %1").arg(_aimTimeout));
-                          
+                        Geometry2d::Point p = ballPos;
+                        p.y += yOffset;
+
                         if(hasShot || _aimTimeout >= Max_Aim_Timeout)
                         {
-                            robot->move(ballPos);
+                            robot->move(p);
 		            robot->face(ballPos);
 			    robot->dribble(127);
 			    robot->kick(255);
@@ -512,7 +567,6 @@ bool Gameplay::Behaviors::Kick::run()
 
 		case State_Done:
                 {
-                        robot->addText("Done");
 			state()->drawLine(_kickSegment);
 			break;
                 }
