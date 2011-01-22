@@ -9,7 +9,8 @@ using namespace Geometry2d;
 
 Gameplay::Behaviors::Mark::Mark(GameplayModule *gameplay):
 SingleRobotBehavior(gameplay),
-_ratio(0.9)
+_ratio(0.9),
+_mark_line_thresh(0.9)
 {
 }
 
@@ -43,13 +44,13 @@ bool Gameplay::Behaviors::Mark::run()
 			  markVel = _markRobot->vel;
 		Segment ballMarkLine(ballPos, markPos);
 
-		state()->drawLine(ballMarkLine);
+		state()->drawLine(ballMarkLine, QColor(0, 0, 255, 255), "Mark");
+		robot->addText("Mark", QColor(255, 255, 255, 255));
 
 		// we want to get between the mark and the ball as fast as possible, then close in
 		float markLineDist = ballMarkLine.distTo(pos);
 		Point targetPoint;
-		float mark_line_thresh = 0.9;
-		if (markLineDist > mark_line_thresh) {
+		if (markLineDist > _mark_line_thresh) {
 			// fast intercept possible passes
 			targetPoint = ballMarkLine.nearestPoint(pos);
 		} else {
