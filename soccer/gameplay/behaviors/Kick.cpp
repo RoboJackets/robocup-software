@@ -242,7 +242,8 @@ bool Gameplay::Behaviors::Kick::run()
 	{
 		case State_Approach1:
                 {
-			bool nearIntercept = robot->pos.nearPoint(interceptPoint, 0.25);
+		        _aimTimeout = 0;
+                        bool nearIntercept = robot->pos.nearPoint(interceptPoint, 0.25);
                       
                         robot->addText(QString("Near Target %1").arg(nearIntercept));
                         robot->addText(QString("X Pos %1 Target X %2").arg(robot->pos.x).arg(interceptPoint.x));
