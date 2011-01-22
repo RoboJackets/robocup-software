@@ -199,7 +199,8 @@ void Gameplay::GameplayModule::run()
 			obstacles.clear();
 
 			// Add rule-based obstacles (except for the ball, which will be added after the play
-			// has a change to set willKick and avoidBall)
+			// has a chance to set willKick and avoidBall)
+			// FIXME: should add a ball obstacle for stopped, opponent restarts
 			for (unsigned int i = 0; i < Num_Shells; ++i)
 			{
 				if (i != r->shell() && selfObstacles[i])
@@ -308,6 +309,26 @@ void Gameplay::GameplayModule::run()
 		}
 	}
 
+
+	// Add ball obstacles for for rules (avoid during opponent restarts, etc.)
+	// FIXME: handle small ball obstacles correctly
+	if (verbose) cout << "  Adding rule ball obstacles" << endl;
+	BOOST_FOREACH(OurRobot *r, _state->self)
+	{
+		if (r->visible && !(_goalie && _goalie->robot == r))
+		{
+			// Any robot that isn't the goalie may have to avoid the ball
+			if (_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart)
+			{
+				// Opponent's restart: always stay away from the ball
+				if (largeBallObstacle)
+				{
+					r->obstacles.add(largeBallObstacle);
+				}
+			}
+		}
+	}
+
 	// Run the current play
 	if (_currentPlay)
 	{
@@ -326,18 +347,20 @@ void Gameplay::GameplayModule::run()
 	}
 
 	// Add ball obstacles
+	// FIXME: if planning occurs inside gameplay robots, then these obstacles will be ignored!
+	// Temp solution: move large ball to before play execution, just small ball here
+	// still won't do anything, though
 	if (verbose) cout << "  Adding ball obstacles" << endl;
 	BOOST_FOREACH(OurRobot *r, _state->self)
 	{
 		if (r->visible && !(_goalie && _goalie->robot == r))
 		{
 			// Any robot that isn't the goalie may have to avoid the ball
-			if ((_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart) || r->avoidBall)
+			if (r->avoidBall)
 			{
 				// Opponent's restart: always stay away from the ball
 				if (largeBallObstacle)
 				{
-					r->obstacles.add(largeBallObstacle);
 					r->obstacles.add(smallBallObstacle);
 				}
 			} else if (!r->willKick)
