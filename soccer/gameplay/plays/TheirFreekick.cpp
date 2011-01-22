@@ -1,6 +1,7 @@
 #include "TheirFreekick.hpp"
 
 #include <iostream>
+#include <limits>
 #include <boost/foreach.hpp>
 
 using namespace std;
@@ -19,7 +20,7 @@ Gameplay::Plays::TheirFreekick::TheirFreekick(GameplayModule *gameplay):
 	_fullback2.otherFullbacks.insert(&_fullback1);
 
 	// assign general parameters
-	float r = 0.3;
+	float r = 0.7;
 	_marking1.ratio(r);
 	_marking2.ratio(r);
 }
@@ -34,8 +35,9 @@ bool Gameplay::Plays::TheirFreekick::run()
 {
 	set<OurRobot *> available = _gameplay->playRobots();
 	
-	assignNearest(_fullback1.robot, available, Geometry2d::Point());
-	assignNearest(_fullback2.robot, available, Geometry2d::Point());
+	assignNearest(_fullback1.robot, available, Geometry2d::Point(-Field_GoalWidth/2, 0.0));
+	assignNearest(_fullback2.robot, available, Geometry2d::Point( Field_GoalWidth/2, 0.0));
+
 	//FIXME - How to choose?
 	assignNearest(_marking1.robot, available, Geometry2d::Point());
 	assignNearest(_marking2.robot, available, Geometry2d::Point());
@@ -48,38 +50,55 @@ bool Gameplay::Plays::TheirFreekick::run()
 
 	//  determine which robots to mark
 	map<float, OpponentRobot*> open_opp;
+	OpponentRobot* closestRobot = NULL;
+	float closestRobotDist = numeric_limits<float>::infinity();
+	float closestOpenDist = numeric_limits<float>::infinity();
 	BOOST_FOREACH(OpponentRobot * r, state()->opp) {
-		// want maximum distance that is less than 3 meters from any of our robots
-		Point oppPos = r->pos;
-		float ballDist = oppPos.distTo(ballPos);
-		float max_relevant_robot_range = 3.0; // meters
-		if (ballDist < max_relevant_robot_range) {
+		if (r && r->visible) {
+			// want maximum distance that is less than 3 meters from any of our robots
+			Point oppPos = r->pos;
+			float ballDist = oppPos.distTo(ballPos);
+			float max_relevant_robot_range = 3.0; // meters
 			float closestSelfDist = 100.0;
-			BOOST_FOREACH(OurRobot * s, state()->self) {
-				float selfDist = s->pos.distTo(oppPos);
-				if (selfDist < closestSelfDist) {
-					closestSelfDist = selfDist;
+			if (ballDist < max_relevant_robot_range) {
+				BOOST_FOREACH(OurRobot * s, state()->self) {
+					float selfDist = s->pos.distTo(oppPos);
+					if (selfDist < closestSelfDist) {
+						closestSelfDist = selfDist;
+					}
+				}
+				if (closestSelfDist < 100.0) {
+					// record the robot with distance, sort by open-ness
+					open_opp[closestSelfDist] = r;
 				}
 			}
-			if (closestSelfDist < 100.0) {
-				// record the robot with distance, sort by open-ness
-				open_opp[closestSelfDist] = r;
+
+			if (ballDist < closestRobotDist) {
+				closestRobot = r;
+				closestRobotDist = ballDist;
+				closestOpenDist = closestSelfDist;
 			}
 		}
 	}
 
+	// remove the closest robot to the ball, as it is actually kicking
+	if (closestRobot) {
+		open_opp.erase(closestOpenDist);
+	}
+
 	// assign targets
 	if (open_opp.empty()) {
-		// if nothing open, just drive at the ball
-		//FIXME - They both drive towards the ball?  What?
+		// if nothing open, just drive near the ball, but not within radius
 		if (_marking1.robot)
 		{
-			_marking1.robot->move(ballPos);
+			Geometry2d::Point pos = _marking1.robot->pos;
+			_marking1.robot->move(pos + (ballPos-pos).normalized() * (ballPos.distTo(pos) - Field_CenterRadius));
 			_marking1.robot->face(ballPos);
 		}
 		if (_marking2.robot)
 		{
-			_marking2.robot->move(ballPos);
+			Geometry2d::Point pos = _marking2.robot->pos;
+			_marking2.robot->move(pos + (ballPos-pos).normalized() * (ballPos.distTo(pos) - Field_CenterRadius));
 			_marking2.robot->face(ballPos);
 		}
 	} else if (open_opp.size() == 1) {
@@ -90,7 +109,8 @@ bool Gameplay::Plays::TheirFreekick::run()
 		}
 		if (_marking2.robot)
 		{
-			_marking2.robot->move(ballPos);
+			Geometry2d::Point pos = _marking2.robot->pos;
+			_marking2.robot->move(pos + (ballPos-pos).normalized() * (ballPos.distTo(pos) - Field_CenterRadius));
 			_marking2.robot->face(ballPos);
 		}
 	} else {

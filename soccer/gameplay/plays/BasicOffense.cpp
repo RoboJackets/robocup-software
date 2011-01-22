@@ -94,10 +94,6 @@ bool Gameplay::Plays::BasicOffense::run()
 	else
 		_support.ratio(0.9);
 
-	// Cyan circle around the marked robot
-	if (_support.markRobot())
-		state()->drawCircle(_support.markRobot()->pos, Robot_Radius * 1.2, QColor(0.0, 127, 255, 255), "BasicOffense");
-
 	// execute behaviors
 	if (_kicker.robot) _kicker.run();
 	if (_support.robot) _support.run();
