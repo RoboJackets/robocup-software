@@ -57,16 +57,26 @@ bool Gameplay::Plays::BasicOffense::run()
 	assignNearest(_support.robot, available, ballProj);
 
 	// manually reset any kickers so they keep kicking
-	if (_kicker.done())
+	if (_kicker.done() && _kicker.robot)
 		_kicker.restart();
 
 	// pick as a mark target the furthest back opposing robot
 	// and adjust mark ratio based on field position
 	OpponentRobot* bestOpp = NULL;
 	float bestDist = numeric_limits<float>::infinity();
-	float cur_dist = (_support.markRobot()) ?
-			_support.markRobot()->pos.distTo(ballProj) :
-			numeric_limits<float>::infinity();
+	float cur_dist;
+
+        if(_support.robot)
+        {
+                cur_dist = (_support.markRobot()) ?
+		        	_support.markRobot()->pos.distTo(ballProj) :
+			        numeric_limits<float>::infinity();
+        }
+        else
+        {
+                cur_dist = numeric_limits<float>::infinity();
+        }
+
 	size_t nrOppClose = 0;
 	BOOST_FOREACH(OpponentRobot* opp, state()->opp)
 	{
@@ -81,17 +91,17 @@ bool Gameplay::Plays::BasicOffense::run()
 			}
 		}
 	}
-	if (!bestOpp) {
+	if (!bestOpp && _support.robot) {
 		_support.robot->addText("No mark target");
 	}
 
 	// use hysteresis for changing of the robot
 	const float mark_coeff = 0.9; // how much of an improvement is necessary to switch
-	if (bestOpp && bestOpp->visible && (forward_reset || bestDist < cur_dist * mark_coeff))
+	if (bestOpp && bestOpp->visible && (forward_reset || bestDist < cur_dist * mark_coeff) && _support.robot)
 		_support.markRobot(bestOpp);
-	if (ballProj.y > Field_Length/2.0 && nrOppClose)
+	if (ballProj.y > Field_Length/2.0 && nrOppClose && _support.robot)
 		_support.ratio(0.7);
-	else
+	else if(_support.robot)
 		_support.ratio(0.9);
 
 	// execute behaviors
