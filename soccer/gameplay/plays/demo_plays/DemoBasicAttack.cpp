@@ -21,8 +21,7 @@ bool Gameplay::Plays::DemoBasicAttack::run()
 
 	// if we have kicked, we want to reset
 	if (_kicker.done() &&  ball().valid && 
-                (!ballPos.nearPoint(Geometry2d::Point(0, Field_Length), 
-                                   Field_ArcRadius)))
+                (!ballPos.nearPoint(Geometry2d::Point(0, Field_Length), Field_ArcRadius)))
         {
 		_kicker.restart();
         }

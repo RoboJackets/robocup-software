@@ -25,12 +25,16 @@ namespace Gameplay
 				void setTarget(Robot *r);
 				
 				void setTarget(const Geometry2d::Segment &seg);
-			
+	                        
+                                //Calculates where the robot should go in the case of a moving ball
+                                Geometry2d::Point calculateInterceptPoint();
+
 			private:
 				enum State
 				{
 					State_Approach1,
-					State_Approach2,
+					State_Face, //Aligns the Robot's Dribbler with the ball (Eventually should be part of Approach1)
+                                        State_Approach2,
 					State_Aim,
 					State_Kick,
 					State_Done
@@ -38,9 +42,11 @@ namespace Gameplay
 				
 				State _state;
 				float _lastError;
-				
+			        int _faceTimeout;
+                                int _aimTimeout;
+
 				Geometry2d::Segment _target;
-				
+			
                                 //The best segment of the _target that is able to be shot at
                                 Geometry2d::Segment _shotSegment;
 
