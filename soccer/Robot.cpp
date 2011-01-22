@@ -233,6 +233,9 @@ void OurRobot::executeMove(bool stopAtEnd) // FIXME: need to do something with s
 		return;
 	}
 
+	// All other cases: mix the next two points together for a smoother
+	// path, so long as it is still viable
+
 	// pull out relevant points
 	Point p0 = pos, p1 = _path.points[1], p2 = _path.points[2];
 	float dist1 = p1.distTo(p1), dist2 = p1.distTo(p2);
@@ -241,9 +244,21 @@ void OurRobot::executeMove(bool stopAtEnd) // FIXME: need to do something with s
 	float scale = 1-Utils::clamp(dist1/dist2, 1.0, 0.0);
 	Geometry2d::Point targetPos = p1 + (p2-p1)*scale;
 
-	cmd.goalPosition = targetPos;
-	cmd.pathLength = pos.distTo(targetPos) + targetPos.distTo(p2) + _path.length(2);
+	// check for collisions
+	Planning::Path smoothPath;
+	smoothPath.points.push_back(p0);
+	smoothPath.points.push_back(targetPos);
+	if (smoothPath.hit(obstacles, 0, false)) {
+		// go to original next state
+		cmd.goalPosition = p1;
+		cmd.pathLength = _path.length(0);
+
+	} else {
+		cmd.goalPosition = targetPos;
+		cmd.pathLength = pos.distTo(targetPos) + targetPos.distTo(p2) + _path.length(2);
+	}
 	cmd.planner = MotionCmd::Point;
+	return;
 }
 
 void OurRobot::directVelocityCommands(const Geometry2d::Point& trans, double ang)
