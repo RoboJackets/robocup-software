@@ -258,7 +258,7 @@ bool Gameplay::Behaviors::Kick::run()
         float angleError = b.dot(Geometry2d::Point::direction(robot->angle * DegreesToRadians));
 
 
-        bool skipToKick = (inT0 && inT1 && (distOff < width * .75) && robot->hasBall && robot->charged());
+        bool skipToKick = (inT0 && inT1 && (distOff < width * .5) && robot->hasBall && robot->charged());
         bool skipToAim = robot->hasBall && robot->charged();
         bool skipToApproach2 = angleError > cos(15 * DegreesToRadians); 
 
@@ -407,7 +407,7 @@ bool Gameplay::Behaviors::Kick::run()
                                         if (inT0 && inT1)
                                         {
                                             //Shoot if the shot is getting worse or the shot is very good
-                                            if((((distOff < (width * .85)) && (error > _lastError)) || (distOff < (width * .6))) && hasShot)
+                                            if((((distOff < (width * .85)) && (error > _lastError)) || (distOff < (width * .5))) && hasShot)
 		                            {
 						_state = State_Kick;
 					    }
