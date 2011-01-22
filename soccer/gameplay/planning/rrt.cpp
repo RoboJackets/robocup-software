@@ -321,7 +321,7 @@ again:
         try
         {
             set_difference(newHit.begin(), newHit.end(), hit.begin(), hit.end(), Utils::ExceptionIterator<ObstaclePtr>());
-        } catch (exception e)
+        } catch (exception& e)
         {
             start = end - 1;
             goto again;

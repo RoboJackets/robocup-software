@@ -60,7 +60,7 @@ bool Gameplay::Behaviors::Fullback::run()
 	
 	//pick biggest window on appropriate side
 	Goalie* goalie = _gameplay->goalie();
-	if (goalie && goalie->robot)
+	if (goalie && goalie->robot && _side != Center)
 	{
 		BOOST_FOREACH(Window* window, _winEval.windows)
 		{
