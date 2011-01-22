@@ -16,7 +16,7 @@ namespace Gameplay
 		{
 			public:
 				Goalie(GameplayModule *gameplay);
-				~Goalie();
+				virtual ~Goalie();
 
 				// Takes one robot out of <available> and makes it the goalie.
 				// This will be called every frame.
