@@ -42,7 +42,8 @@ namespace Gameplay
 				
 				State _state;
 				float _lastError;
-			        int _timeout;
+			        int _faceTimeout;
+                                int _aimTimeout;
 
 				Geometry2d::Segment _target;
 			

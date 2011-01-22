@@ -19,7 +19,8 @@ const float yOffset = 3 * Robot_Radius; //Tuning Required (Anthony)
 //the robot doesn't run over it attempting to get behind it
 const float xOffset = 2 * Robot_Radius; //Tuning Required (Anthony) 
 
-const int Max_Timeout = 25;
+const int Max_Face_Timeout = 30;
+const int Max_Aim_Timeout = 50;
 
 Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay)
@@ -30,7 +31,8 @@ Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay):
         hasShot = false;
         //The segment of the best shot 
         _shotSegment = Geometry2d::Segment(Geometry2d::Point(0,0), Geometry2d::Point(0,0));
-	_timeout = 0;   
+	_faceTimeout = 0;   
+	_aimTimeout = 0;   
         restart();
 }
 
@@ -257,7 +259,7 @@ bool Gameplay::Behaviors::Kick::run()
 	
                 case State_Face:
                 {
-                        _timeout++;
+                        _faceTimeout++;
                         Geometry2d::Point b = (targetEdge - ballPos + robot->pos).normalized();
                         //Geometry2d::Point b = ballPos.normalized();
 
@@ -270,7 +272,7 @@ bool Gameplay::Behaviors::Kick::run()
                     
                         //Change States when the robot is facing the right direction acquire the ball
                         //angleError is greater than because cos(0) is 1 which is perfect 
-                        if(angleError > cos(15 * DegreesToRadians) || (_timeout > Max_Timeout))
+                        if(angleError > cos(15 * DegreesToRadians) || (_faceTimeout >= Max_Face_Timeout))
                         {
                             _state = State_Approach2;
                         }
@@ -290,7 +292,7 @@ bool Gameplay::Behaviors::Kick::run()
                         bool nearBall = robot->pos.nearPoint(p, .05) || robot->hasBall;
 
                         robot->addText(QString("Near Ball %1").arg(nearBall));
-                        robot->addText(QString("Timeout %1").arg(_timeout));
+                        robot->addText(QString("Timeout %1").arg(_faceTimeout));
                         
                         if (nearBall && robot->charged())
 			{
@@ -302,7 +304,7 @@ bool Gameplay::Behaviors::Kick::run()
 			bool nearIntercept = robot->pos.nearPoint(interceptPoint, 0.30);
 
                         //Go back to state one if needed
-                        if(!nearIntercept && (_timeout < Max_Timeout))
+                        if(!nearIntercept && (_faceTimeout < Max_Face_Timeout))
                         {
                             _state = State_Approach1;
                         }
@@ -312,7 +314,8 @@ bool Gameplay::Behaviors::Kick::run()
 
 		case State_Aim:
                 {
-                        _timeout = 0;
+                        _faceTimeout = 0;
+                        _aimTimeout++;
                         if ((!robot->hasBall && !robot->pos.nearPoint(ballPos, .02)) || !robot->charged())
 			{
 				_state = State_Approach2;
@@ -335,6 +338,7 @@ bool Gameplay::Behaviors::Kick::run()
                                 float width = target.pt[0].distTo(target.center());
 
                                 robot->addText(QString("Aim %1").arg(error));
+                                robot->addText(QString("Timeout %1").arg(_aimTimeout));
 				
 				if (!isinf(_lastError) )
 				{
@@ -360,12 +364,18 @@ bool Gameplay::Behaviors::Kick::run()
                                         }
 				}
 				_lastError = error;
+
+                                if(_aimTimeout >= Max_Aim_Timeout)
+                                {
+                                    _state = State_Kick;
+                                }
 			}
 			break;
                 }
 
 		case State_Kick:
                 {
+                        _aimTimeout++;
 			if (!robot->charged())
 			{
 				_state = State_Done;
@@ -381,7 +391,10 @@ bool Gameplay::Behaviors::Kick::run()
                 }
 
 		case State_Done:
-			break;
+                {
+                    _aimTimeout = 0;
+                    break;
+                }
 	}
 	
 	switch (_state)
@@ -480,7 +493,10 @@ bool Gameplay::Behaviors::Kick::run()
 		case State_Kick:
                 {
                         robot->addText("Kick");
-                        if(hasShot)
+                        robot->addText(QString("Has Shot %1").arg(hasShot));
+                        robot->addText(QString("Timeout %1").arg(_aimTimeout));
+                          
+                        if(hasShot || _aimTimeout >= Max_Aim_Timeout)
                         {
                             robot->move(ballPos);
 		            robot->face(ballPos);
