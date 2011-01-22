@@ -125,8 +125,10 @@ void OurRobot::move(Geometry2d::Point pt, bool stopAtEnd)
 	_planner->run(pos, angle, vel, pt, &og, newPath);
 
        //Without this soccer seg faults when its started (I don't know why - Anthony)
-       if(_path.empty() || (_path.destination().distTo(newPath.destination()) > Robot_Radius) ||
-               (_path.hit(og, 0, false)) || (_path.length(0) > newPath.length(0) + path_threshold))
+       if(_path.empty() ||
+    		   (_path.destination().distTo(newPath.destination()) > Robot_Radius) ||
+               (_path.hit(og, 0, false)) ||
+               (_path.length(0) > newPath.length(0) + path_threshold))
        {
            _path = newPath;
 	
@@ -194,7 +196,7 @@ void OurRobot::bezierMove(const vector<Geometry2d::Point>& controls,
 	cmd.planner = MotionCmd::Point;
 }
 
-void OurRobot::executeMove(bool stopAtEnd)
+void OurRobot::executeMove(bool stopAtEnd) // FIXME: need to do something with stopAtEnd
 {
 	setCommandTrace();
 	

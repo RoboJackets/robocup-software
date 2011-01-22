@@ -35,7 +35,7 @@ bool Gameplay::Behaviors::Mark::run()
 	{
 		return false;
 	}
-	if (_markRobot) {
+	if (_markRobot && _markRobot->visible) {
 		// state data
 		Point ballPos = ball().pos,
 			  ballVel = ball().vel,
@@ -59,6 +59,8 @@ bool Gameplay::Behaviors::Mark::run()
 			// drive to the given point specified by ratio
 			targetPoint = ballPos + (markPos - ballPos).normalized()* _ratio * ballMarkLine.length();
 		}
+
+		state()->drawCircle(_markRobot->pos, Robot_Radius * 1.2, QColor(0.0, 127, 255, 255), "Mark");
 
 		// go there, facing the ball
 		robot->approachOpp(_markRobot, true);
