@@ -19,8 +19,8 @@ const float yOffset = 3 * Robot_Radius; //Tuning Required (Anthony)
 //the robot doesn't run over it attempting to get behind it
 const float xOffset = 2 * Robot_Radius; //Tuning Required (Anthony) 
 
-const int Max_Face_Timeout = 30;
-const int Max_Aim_Timeout = 200;
+const int Max_Face_Timeout = 75; //Tuning 
+const int Max_Aim_Timeout = 200; //Tuning
 
 Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay)
@@ -269,6 +269,7 @@ bool Gameplay::Behaviors::Kick::run()
 			bool nearIntercept = robot->pos.nearPoint(interceptPoint, 0.25);
                         
                         robot->addText(QString("Angle %1 Threshold %2").arg(angleError).arg(cos(15 * DegreesToRadians)));
+                        robot->addText(QString("Timeout %1").arg(_faceTimeout));
                     
                         //Change States when the robot is facing the right direction acquire the ball
                         //angleError is greater than because cos(0) is 1 which is perfect 
@@ -294,7 +295,7 @@ bool Gameplay::Behaviors::Kick::run()
                         robot->addText(QString("Near Ball %1").arg(nearBall));
                         robot->addText(QString("Timeout %1").arg(_faceTimeout));
                         
-                        if (nearBall && robot->charged())
+                        if ((nearBall || robot->hasBall) && robot->charged())
 			{
 				robot->addText("Aim");
 				_state = State_Aim;
@@ -304,7 +305,7 @@ bool Gameplay::Behaviors::Kick::run()
 			bool nearIntercept = robot->pos.nearPoint(interceptPoint, 0.30);
 
                         //Go back to state one if needed
-                        if(!nearIntercept && (_faceTimeout < Max_Face_Timeout))
+                        if(!nearIntercept )//&& (_faceTimeout < Max_Face_Timeout))
                         {
                             _state = State_Approach1;
                         }
@@ -392,6 +393,7 @@ bool Gameplay::Behaviors::Kick::run()
 
 		case State_Done:
                 {
+                    _faceTimeout = 0;
                     _aimTimeout = 0;
                     break;
                 }
