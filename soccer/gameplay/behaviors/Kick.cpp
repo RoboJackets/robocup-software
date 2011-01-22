@@ -258,7 +258,7 @@ bool Gameplay::Behaviors::Kick::run()
         float angleError = b.dot(Geometry2d::Point::direction(robot->angle * DegreesToRadians));
 
 
-        bool skipToKick = (inT0 && inT1 && (distOff < width * .5) && robot->hasBall && robot->charged());
+        bool skipToKick = (inT0 && inT1 && (distOff < width * .7) && robot->hasBall && robot->charged());
         bool skipToAim = robot->hasBall && robot->charged();
         bool skipToApproach2 = angleError > cos(15 * DegreesToRadians); 
 
@@ -407,7 +407,7 @@ bool Gameplay::Behaviors::Kick::run()
                                         if (inT0 && inT1)
                                         {
                                             //Shoot if the shot is getting worse or the shot is very good
-                                            if((((distOff < (width * .85)) && (error > _lastError)) || (distOff < (width * .5))) && hasShot)
+                                            if((((distOff < (width * .95)) && (error > _lastError)) || (distOff < (width * .7))) && hasShot)
 		                            {
 						_state = State_Kick;
 					    }
@@ -541,7 +541,7 @@ bool Gameplay::Behaviors::Kick::run()
 				}
 			}
 			
-			robot->dribble(127);
+			robot->dribble(50); // previously 127
 
                         //Robot has trouble handling a moving ball when trying to pivot (I don't know how to fix this)
 			robot->pivot(ballPos, dir);
@@ -558,7 +558,7 @@ bool Gameplay::Behaviors::Kick::run()
                         {
                             robot->move(p);
 		            robot->face(ballPos);
-			    robot->dribble(127);
+			    robot->dribble(60); // previously 127
 			    robot->kick(255);
                         }
 			state()->drawLine(_kickSegment);
@@ -603,7 +603,7 @@ Geometry2d::Point Gameplay::Behaviors::Kick::calculateInterceptPoint()
         //TODO: Make time a better function based on distance apart
         float time = dist * 1.25; //Tuning Required
 
-        interceptPoint = ballPos + ballVel * time;
+        interceptPoint = ballPos + Geometry2d::Point::saturate(ballVel * time, 1);
 
         return interceptPoint;
 }
