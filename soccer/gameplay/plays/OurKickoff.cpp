@@ -17,7 +17,11 @@ Gameplay::Plays::OurKickoff::OurKickoff(GameplayModule *gameplay):
 	_idle1.target = _gameplay->centerMatrix() * Geometry2d::Point(0.7, -0.2);
 	_idle2.target = _gameplay->centerMatrix() * Geometry2d::Point(-0.7, -0.2);
 	_idle3.target = Geometry2d::Point(0, 1.5);
-	_kicker.kick.setTargetGoal();
+
+	// FIXME: find a better way of selecting targets - using endline to give choice
+//	_kicker.kick.setTargetGoal();
+	_kicker.kick.setTarget(Geometry2d::Segment(Geometry2d::Point(-Field_Width/2.0, Field_Length),
+											   Geometry2d::Point( Field_Width/2.0, Field_Length)));
 }
 
 float Gameplay::Plays::OurKickoff::score (Gameplay::GameplayModule* gameplay)

@@ -86,7 +86,7 @@ bool Gameplay::Plays::BasicOffense::run()
 	}
 
 	// use hysteresis for changing of the robot
-	const float mark_coeff = 0.8; // how much of an improvement is necessary to switch
+	const float mark_coeff = 0.9; // how much of an improvement is necessary to switch
 	if (bestOpp && bestOpp->visible && (forward_reset || bestDist < cur_dist * mark_coeff))
 		_support.markRobot(bestOpp);
 	if (ballProj.y > Field_Length/2.0 && nrOppClose)
