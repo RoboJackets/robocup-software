@@ -19,8 +19,8 @@ const float yOffset = 3 * Robot_Radius; //Tuning Required (Anthony)
 //the robot doesn't run over it attempting to get behind it
 const float xOffset = 2 * Robot_Radius; //Tuning Required (Anthony) 
 
-const int Max_Face_Timeout = 75; //Tuning 
-const int Max_Aim_Timeout = 200; //Tuning
+const int Max_Face_Timeout = 60; //Tuning 
+const int Max_Aim_Timeout = 100; //Tuning
 
 Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay)
@@ -243,7 +243,7 @@ bool Gameplay::Behaviors::Kick::run()
 		case State_Approach1:
                 {
 		        _aimTimeout = 0;
-                        bool nearIntercept = robot->pos.nearPoint(interceptPoint, 0.25);
+                        bool nearIntercept = robot->pos.nearPoint(interceptPoint, Robot_Radius + 0.15);
                       
                         robot->addText(QString("Near Target %1").arg(nearIntercept));
                         robot->addText(QString("X Pos %1 Target X %2").arg(robot->pos.x).arg(interceptPoint.x));
@@ -267,7 +267,7 @@ bool Gameplay::Behaviors::Kick::run()
                         float angleError = b.dot(Geometry2d::Point::direction(robot->angle * DegreesToRadians));
                        // float angleError = 1;
 
-			bool nearIntercept = robot->pos.nearPoint(interceptPoint, 0.25);
+			bool nearIntercept = robot->pos.nearPoint(interceptPoint, Robot_Radius + 0.20);
                         
                         robot->addText(QString("Angle %1 Threshold %2").arg(angleError).arg(cos(15 * DegreesToRadians)));
                         robot->addText(QString("Timeout %1").arg(_faceTimeout));
@@ -289,9 +289,9 @@ bool Gameplay::Behaviors::Kick::run()
 		case State_Approach2:
                 {
                         Geometry2d::Point p = ballPos;
-                        p.y = ballPos.y - Ball_Radius;
+                        p.y = ballPos.y;
                         
-                        bool nearBall = robot->pos.nearPoint(p, .05) || robot->hasBall;
+                        bool nearBall = robot->pos.nearPoint(p, Robot_Radius + Ball_Radius + .10) || robot->hasBall;
 
                         robot->addText(QString("Near Ball %1").arg(nearBall));
                         robot->addText(QString("Timeout %1").arg(_faceTimeout));
@@ -303,7 +303,7 @@ bool Gameplay::Behaviors::Kick::run()
 				_lastError = INFINITY;
 			}
                         
-			bool nearIntercept = robot->pos.nearPoint(interceptPoint, 0.30);
+			bool nearIntercept = robot->pos.nearPoint(interceptPoint, Robot_Radius + 0.25);
 
                         //Go back to state one if needed
                         if(!nearIntercept )//&& (_faceTimeout < Max_Face_Timeout))
@@ -318,7 +318,7 @@ bool Gameplay::Behaviors::Kick::run()
                 {
                         _faceTimeout = 0;
                         _aimTimeout++;
-                        if ((!robot->hasBall && !robot->pos.nearPoint(ballPos, .02)) || !robot->charged())
+                        if ((!robot->hasBall && !robot->pos.nearPoint(ballPos, Robot_Radius + Ball_Radius + .05)) || !robot->charged())
 			{
 				_state = State_Approach2;
 			}
