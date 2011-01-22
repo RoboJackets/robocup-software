@@ -9,10 +9,18 @@ Gameplay::Plays::OurFreekick::OurFreekick(GameplayModule *gameplay):
 	_kicker(gameplay),
 	_center(gameplay),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
-	_fullback2(gameplay, Behaviors::Fullback::Left),
+	_fullback2(gameplay, Behaviors::Fullback::Right),
 	_pdt(gameplay, &_kicker)
 {
 	_center.target = _gameplay->centerMatrix() * Geometry2d::Point(0, 1.5);
+
+	// FIXME: find a better setting for kicking
+	// this target is an expanded version of the goal to give more options
+	_kicker.setTarget(Geometry2d::Segment(Geometry2d::Point(-Field_Width/3.0, Field_Length),
+										  Geometry2d::Point( Field_Width/3.0, Field_Length)));
+
+	_fullback2.otherFullbacks.insert(&_fullback1);
+	_fullback1.otherFullbacks.insert(&_fullback2);
 }
 
 float Gameplay::Plays::OurFreekick::score ( Gameplay::GameplayModule* gameplay )
@@ -29,8 +37,8 @@ bool Gameplay::Plays::OurFreekick::run()
 	_pdt.backoff.robots.clear();
 	_pdt.backoff.robots.insert(_kicker.robot);
 	assignNearest(_center.robot, available, _center.target);
-	assignNearest(_fullback1.robot, available, Geometry2d::Point());
-	assignNearest(_fullback2.robot, available, Geometry2d::Point());
+	assignNearest(_fullback1.robot, available, Geometry2d::Point(-Field_GoalHeight/2.0, 0.0));
+	assignNearest(_fullback2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
 	
 // 	_kicker.aimType(Behaviors::Kick::ONETOUCH);
 // 	_kicker.setVScale(0.3, 0.2); // drive slowly until close to ball
