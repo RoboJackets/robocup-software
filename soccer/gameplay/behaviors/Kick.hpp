@@ -44,7 +44,9 @@ namespace Gameplay
 				
 				State _state;
 				float _lastError;
-			        int _faceTimeout;
+                                int _approach1Timeout;
+                                int _faceTimeout;
+                                int _approach2Timeout;
                                 int _aimTimeout;
                                 bool _override;
 

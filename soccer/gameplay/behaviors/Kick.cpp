@@ -21,7 +21,9 @@ const float yOffset = 3 * Robot_Radius; //Tuning Required (Anthony)
 //the robot doesn't run over it attempting to get behind it
 const float xOffset = 2 * Robot_Radius; //Tuning Required (Anthony) 
 
+//const int Max_Approach1_Timeout = 400; //Tuning
 const int Max_Face_Timeout = 60; //Tuning 
+const int Max_Approach2_Timeout = 100; //Tuning
 const int Max_Aim_Timeout = 100; //Tuning
 
 Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay):
@@ -269,6 +271,7 @@ bool Gameplay::Behaviors::Kick::run()
 		case State_Approach1:
                 {
                         _aimTimeout = 0;
+                        _approach1Timeout++;
                         bool nearIntercept = robot->pos.nearPoint(interceptPoint, Robot_Radius + 0.15);
                         
 #ifdef DEBUG
@@ -283,7 +286,7 @@ bool Gameplay::Behaviors::Kick::run()
 #endif
 
                         //Change States do in order so that the last one is the futherest along
-                        if (nearIntercept)
+                        if (nearIntercept) // || _approach1Timeout > Max_Approach1_Timeout)
 			{
 				_state = State_Face;
                         }
@@ -305,7 +308,6 @@ bool Gameplay::Behaviors::Kick::run()
 	
                 case State_Face:
                 {
-                        
                         _faceTimeout++;
 			bool nearIntercept = robot->pos.nearPoint(interceptPoint, Robot_Radius + 0.20);
                         
@@ -341,6 +343,7 @@ bool Gameplay::Behaviors::Kick::run()
 
 		case State_Approach2:
                 {
+                        _approach2Timeout++;
 			bool nearIntercept = robot->pos.nearPoint(interceptPoint, Robot_Radius + 0.25);
                        
 #ifdef DEBUG
@@ -355,7 +358,7 @@ bool Gameplay::Behaviors::Kick::run()
 			{
 				_state = State_Approach1;
                         }
-                        if (robot->hasBall && robot->charged())
+                        if ((robot->hasBall && robot->charged()) || _approach2Timeout > Max_Approach2_Timeout)
 			{
 				_state = State_Aim;
 				_lastError = INFINITY;
@@ -428,7 +431,9 @@ bool Gameplay::Behaviors::Kick::run()
 		case State_Kick:
                 {
                         _aimTimeout++;
-                        
+                        _approach2Timeout = 0;
+                        _approach1Timeout = 0;
+                        _faceTimeout = 0;
 #ifdef DEBUG
                         robot->addText("Kick");
                         robot->addText("");
