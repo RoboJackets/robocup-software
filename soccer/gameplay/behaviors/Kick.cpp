@@ -491,19 +491,24 @@ bool Gameplay::Behaviors::Kick::run()
 	{
 		case State_Approach1:
                 {
+                        //set the avoid flag
+                        robot->avoidOpponents = true;
+
                         //Move to the appropriate point
                         robot->move(interceptPoint);
-                        
+                          
 		        state()->drawLine(ballPos, targetEdge, Qt::red);
 
                         state()->drawLine(robot->pos, Geometry2d::Point::direction(robot->angle * DegreesToRadians) + robot->pos, Qt::gray);
 			
-			robot->avoidBall = true;
 			break;
                 }
 
                 case State_Face:
                 {
+                        //set the avoid flag
+                        robot->avoidOpponents = false;
+                        
                         MotionCmd::PivotType dir = (targetEdge - ballPos).cross(relPos) > 0 ? MotionCmd::CW : MotionCmd::CCW;
 			
                         if (toTarget.cross(relPos) < 0)
@@ -519,13 +524,13 @@ bool Gameplay::Behaviors::Kick::run()
 
                         state()->drawLine(robot->pos, Geometry2d::Point::direction(robot->angle * DegreesToRadians) + robot->pos, Qt::gray);
                      
-			robot->avoidBall = true;
                         break;
                 }
 
 		case State_Approach2:
                 {
-                        robot->avoidBall = false;
+                        //set the avoid flag
+                        robot->avoidOpponents = false;
 
                         //Create a point that is offset from the center of the ball so that the robot doesn't hit the ball out of the way
                         Geometry2d::Point point;
@@ -542,7 +547,10 @@ bool Gameplay::Behaviors::Kick::run()
 
 		case State_Aim:
 		{
-			// True if the robot is in front of the ball
+                        //set the avoid flag
+                        robot->avoidOpponents = false;
+			
+                        // True if the robot is in front of the ball
 			bool inFrontOfBall = toTarget.perpCCW().cross(relPos) > 0;
 			
 			MotionCmd::PivotType dir;
@@ -575,6 +583,9 @@ bool Gameplay::Behaviors::Kick::run()
 			
 		case State_Kick:
                 {
+                        //set the avoid flag
+                        robot->avoidOpponents = false;
+                        
                         Geometry2d::Point p = ballPos;
                         p.y += yOffset;
 
@@ -591,7 +602,10 @@ bool Gameplay::Behaviors::Kick::run()
 
 		case State_Done:
                 {
-			state()->drawLine(_kickSegment);
+                        //set the avoid flag
+                        robot->avoidOpponents = true;
+			
+                        state()->drawLine(_kickSegment);
 			break;
                 }
         }
