@@ -178,7 +178,7 @@ QString RefereeModule::lastPacketDescription()
 			break;
 	}
 	
-	desc += QString(" #%1 Y%2 B%3").arg(QString::number(_lastPacket[1]), QString::number(_lastPacket[3]), QString::number(_lastPacket[2]));
+	desc += QString(" #%1 Y%2 B%3 (%4s)").arg(QString::number(_lastPacket[1]), QString::number(_lastPacket[3]), QString::number(_lastPacket[2]), QString::number(_lastPacketTime.msecsTo(QTime::currentTime()) / 1000.0, 'f', 1));
 	
 	return desc;
 }
