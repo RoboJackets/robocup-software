@@ -71,9 +71,124 @@ void RefereeModule::run()
 	}
 }
 
+QString RefereeModule::lastPacketDescription()
+{
+	QMutexLocker locker(&_mutex);
+	QString desc;
+	
+	if (_lastPacket.size() != 6)
+	{
+		return QString("%1 bytes").arg(_lastPacket.size());
+	}
+	char cmd = _lastPacket[0];
+	switch (cmd)
+	{
+		case Halt:
+			desc = "Halt";
+			break;
+		case Stop:
+			desc = "Stop";
+			break;
+		case ForceStart:
+			desc = "ForceStart";
+			break;
+		case Ready:
+			desc = "Ready";
+			break;
+		case FirstHalf:
+			desc = "FirstHalf";
+			break;
+		case Halftime:
+			desc = "Halftime";
+			break;
+		case SecondHalf:
+			desc = "SecondHalf";
+			break;
+		case Overtime1:
+			desc = "Overtime1";
+			break;
+		case Overtime2:
+			desc = "Overtime2";
+			break;
+		case PenaltyShootout:
+			desc = "PenaltyShootout";
+			break;
+		case TimeoutYellow:
+			desc = "TimeoutYellow";
+			break;
+		case TimeoutBlue:
+			desc = "TimeoutBlue";
+			break;
+		case TimeoutEnd:
+			desc = "TimeoutEnd";
+			break;
+		case TimeoutCancel:
+			desc = "TimeoutCancel";
+			break;
+		case GoalYellow:
+			desc = "GoalYellow";
+			break;
+		case GoalBlue:
+			desc = "GoalBlue";
+			break;
+		case SubtractGoalYellow:
+			desc = "SubtractGoalYellow";
+			break;
+		case SubtractGoalBlue:
+			desc = "SubtractGoalBlue";
+			break;
+		case YellowCardYellow:
+			desc = "YellowCardYellow";
+			break;
+		case YellowCardBlue:
+			desc = "YellowCardBlue";
+			break;
+		case RedCardYellow:
+			desc = "RedCardYellow";
+			break;
+		case RedCardBlue:
+			desc = "RedCardBlue";
+			break;
+		case KickoffYellow:
+			desc = "KickoffYellow";
+			break;
+		case KickoffBlue:
+			desc = "KickoffBlue";
+			break;
+		case PenaltyYellow:
+			desc = "PenaltyYellow";
+			break;
+		case PenaltyBlue:
+			desc = "PenaltyBlue";
+			break;
+		case DirectYellow:
+			desc = "DirectYellow";
+			break;
+		case DirectBlue:
+			desc = "DirectBlue";
+			break;
+		case IndirectYellow:
+			desc = "IndirectYellow";
+			break;
+		case IndirectBlue:
+			desc = "IndirectBlue";
+			break;
+		default:
+			desc = QString("'%1'").arg(cmd);
+			break;
+	}
+	
+	desc += QString(" #%1 Y%2 B%3").arg(QString::number(_lastPacket[1]), QString::number(_lastPacket[3]), QString::number(_lastPacket[2]));
+	
+	return desc;
+}
+
 void RefereeModule::packet(const std::string &packet)
 {
 	QMutexLocker locker(&_mutex);
+	
+	_lastPacket = packet;
+	_lastPacketTime = QTime::currentTime();
 	
 	int cmd = packet[0];
 	uint8_t newCounter = packet[1];

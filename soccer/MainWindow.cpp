@@ -56,6 +56,13 @@ MainWindow::MainWindow(QWidget *parent):
 	_live = false;
 	live(true);
 	
+	_refereeLabel = new QLabel();
+	_refereeLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+	_refereeLabel->setToolTip("Last Referee Packet");
+	_refereeLabel->setAlignment(Qt::AlignCenter);
+	calcMinimumWidth(_refereeLabel, "XXXXXXXXXXXXXXXX");
+	statusBar()->addPermanentWidget(_refereeLabel);
+	
 	_currentPlay = new QLabel();
 	_currentPlay->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 	_currentPlay->setToolTip("Current Play");
@@ -191,6 +198,8 @@ void MainWindow::live(bool value)
 
 void MainWindow::updateViews()
 {
+	_refereeLabel->setText(_processor->refereeModule()->lastPacketDescription());
+	
 	// Radio channel
 	if (!_haveRadioChannel)
 	{

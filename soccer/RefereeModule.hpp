@@ -110,10 +110,15 @@ class RefereeModule
 			_blueTeam = value;
 		}
 		
+		QString lastPacketDescription();
+		
 	protected:
 		QMutex _mutex;
 		SystemState *_state;
 		bool _blueTeam;
+		
+		std::string _lastPacket;
+		QTime _lastPacketTime;
 
 		void refCommand(char cmd);
 		
