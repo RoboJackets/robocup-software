@@ -19,7 +19,7 @@ namespace Modeling
 	{
 		public:
 			// Maximum time to coast a track (keep the track alive with no observations) in microseconds.
-			static const uint64_t MaxCoastTime = 1000000; // one second
+			static const uint64_t MaxCoastTime = 100000; // tenth of a second
 
 			typedef enum {
 				VISION,

@@ -171,13 +171,20 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 	}
 
 	if (verbose) cout << "Updating ball" << endl;
-	bool ballValid = _ballModel->valid(curTime);
+	bool ballValid = _ballModel->valid(curTime); // checks whether should use prediction or last frame
 	_ballModel->run(curTime);
 
-	_state->ball.pos = _ballModel->pos;
-	_state->ball.vel = _ballModel->vel;
-	_state->ball.accel = _ballModel->accel;
-	_state->ball.valid = ballValid;
+	if (ballValid) {
+		_state->ball.pos = _ballModel->pos;
+		_state->ball.vel = _ballModel->vel;
+		_state->ball.accel = _ballModel->accel;
+	} else {
+		// for invalid ball, just use
+		_state->ball.pos = _ballModel->observedPos;
+		_state->ball.vel = Geometry2d::Point();
+		_state->ball.accel = Geometry2d::Point();
+	}
+	_state->ball.valid = true; // FIXME: always assume we have a valid ball
 
 	if (verbose) cout << "At end of WorldModel::run()" << endl;
 }
