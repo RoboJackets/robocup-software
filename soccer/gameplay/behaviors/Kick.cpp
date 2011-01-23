@@ -23,7 +23,7 @@ const float xOffset = 2 * Robot_Radius; //Tuning Required (Anthony)
 
 //const int Max_Approach1_Timeout = 400; //Tuning
 const int Max_Face_Timeout = 60; //Tuning 
-const int Max_Approach2_Timeout = 100; //Tuning
+const int Max_Approach2_Timeout = 250; //Tuning
 const int Max_Aim_Timeout = 100; //Tuning
 
 Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay):
@@ -349,7 +349,8 @@ bool Gameplay::Behaviors::Kick::run()
 #ifdef DEBUG
                         robot->addText("Approach2");
 	                robot->addText("");
-                        robot->addText(QString("Timeout %1").arg(_faceTimeout));
+                        robot->addText(QString("Face Timeout %1").arg(_faceTimeout));
+                        robot->addText(QString("Approach2 Timeout %1").arg(_approach2Timeout));
                         robot->addText(QString("Skip to Kick %1").arg(skipToKick));
 #endif
 
@@ -551,7 +552,8 @@ bool Gameplay::Behaviors::Kick::run()
 
                         //Robot has trouble handling a moving ball when trying to pivot (I don't know how to fix this)
 			robot->pivot(ballPos, dir);
-			state()->drawLine(_kickSegment);
+		        robot->move(ballPos);
+                        state()->drawLine(_kickSegment);
 			break;
 		}
 			
