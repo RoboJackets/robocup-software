@@ -185,6 +185,10 @@ class OurRobot: public Robot
 		
 		ObstacleGroup obstacles;
 
+		// True if this robot will treat opponents as obstacles
+		// Set to false for defenders to avoid being herded
+		bool avoidOpponents;
+
 		// True if this robot intends to kick the ball.
 		// This is reset when this robot's role changes.
 		// This allows the robot to get close to the ball during a restart.

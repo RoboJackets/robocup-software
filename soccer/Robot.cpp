@@ -35,6 +35,7 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	avoidBall = false;
 	exclude = false;
 	hasBall = false;
+	avoidOpponents = true;
         sensorConfidence = 0;
 	cmd_w = 0;
 	_lastChargedTime = 0;
@@ -83,8 +84,10 @@ void OurRobot::resetMotionCommand()
 {
 	robotText.clear();
 	
-	willKick = false;
-	avoidBall = false;
+	// FIXME: these are moved to assignment to allow for commands from the previous frame to
+	// still be in effect.  They are automatically reset at assignment by assignNearest()
+//	willKick = false;
+//	avoidBall = false;
 	
 	radioTx.set_roller(0);
 	radioTx.set_kick(0);

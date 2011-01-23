@@ -29,6 +29,13 @@ bool Gameplay::Behaviors::Fullback::run()
 		return false;
 	}
 	
+	// Do not avoid opponents when planning while we are close to the goal
+	const float oppAvoidThresh = 2.0; // meters radius of goal
+	if (robot->pos.nearPoint(Geometry2d::Point(), oppAvoidThresh))
+		robot->avoidOpponents = false;
+	else
+		robot->avoidOpponents = true;
+
 	// we multiply by 0.3 here to look 0.3s into the future when considering the ball position
 	// also, this will be used for where the robots will face
 	Geometry2d::Point ballFuture = ball().pos + ball().vel*0.3;
@@ -179,82 +186,5 @@ bool Gameplay::Behaviors::Fullback::run()
 		robot->kick(255);
 	}
 
-	/*
-	if(needTask){
-		//goal line, for intersection detection
-		Geometry2d::Segment goalLine(Geometry2d::Point(-Field_GoalWidth / 2.0f, 0),
-									  Geometry2d::Point(Field_GoalWidth / 2.0f, 0));
-		//goal arc
-		const float radius = .7;
-		Geometry2d::Circle arc(Geometry2d::Point(), radius);
-
-		//opponent with ball
-		Robot* oppWithBall = 0;
-		float minDist = 999;
-		BOOST_FOREACH(Robot *r, _gameplay->opp)
-		{
-			float dist = r->pos().distTo(ball().pos);
-			if(dist < minDist)
-			{
-				minDist = dist;
-				oppWithBall = r;
-			}
-		}
-		if(oppWithBall == 0)
-			return false; // need opp to block
-
-
-		// block opponents that are pointed towards our goal and are on our side (left or right) and do not have the ball
-		BOOST_FOREACH(Robot *r, _gameplay->opp)
-		{
-			if(r == oppWithBall)
-				continue;
-
-			bool sameSide = ((_side==Left&&r->pos().x<=0) || (_side==Right&&r->pos().x>=0));
-			bool nonDefender = (r->pos().y < 3*Field_Length/4);
-			bool facingGoal;
-			Geometry2d::Point facing(cos(DegreesToRadians * r->angle()),sin(DegreesToRadians * r->angle())); // make sure not degrees!
-			facing *= 20;
-			Geometry2d::Segment los(facing, r->pos());
-			Geometry2d::Point intr;
-			facingGoal = los.intersects(goalLine,&intr);
-
-			if(sameSide && nonDefender && facingGoal)
-			{
-				Geometry2d::Point dest[2];
-				Geometry2d::Line losLine(facing,r->pos());
-				bool ballTravelIntersects = losLine.intersects(arc, &dest[0], &dest[1]);
-				if(!ballTravelIntersects)
-					continue;
-				Geometry2d::Point blockPoint = (dest[0].y > 0 ? dest[0] : dest[1]);
-				Behavior::robot()->move(blockPoint);
-				Behavior::robot()->face(r->pos());
-				return true;
-			}
-		}
-	}*/
-		/*
-	if(needTask) //TODO: look at this in detail. Hacked together so that robots don't sit around
-	{
-		//if no side parameter...stay in the middle
-		float bestDist = 0;
-		BOOST_FOREACH(Window* window, _winEval.windows)
-		{
-			Geometry2d::Segment seg(window->segment.center(), ball().pos);
-			float newDist = seg.distTo(Behavior::robot()->pos());
-
-			if (!best || newDist < bestDist)
-			{
-				best = window;
-				bestDist = newDist;
-			}
-		}
-		Geometry2d::Segment shootLine(ball().pos, ball().pos + ball().vel.normalized() * 7.0);
-
-		Geometry2d::Segment& winSeg = best->segment;
-
-		robot()->move(shootLine.nearestPoint(Behavior::robot()->pos()));
-		robot()->faceNone();
-	}*/
 	return false;
 }
