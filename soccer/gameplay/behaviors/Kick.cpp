@@ -21,6 +21,7 @@ const float yOffset = 1.5 * Robot_Radius; //Tuning Required (Anthony)
 //the robot doesn't run over it attempting to get behind it
 const float xOffset = 2 * Robot_Radius; //Tuning Required (Anthony) 
 
+//TODO: Change these to use actual timing as opposed to a counter
 //const int Max_Approach1_Timeout = 400; //Tuning
 const int Max_Face_Timeout = 60; //Tuning 
 const int Max_Approach2_Timeout = 100; //Tuning
@@ -493,6 +494,10 @@ bool Gameplay::Behaviors::Kick::run()
                 {
                         //set the avoid flag
                         robot->avoidOpponents = true;
+                        
+                        //set the speeds for this state
+                        robot->setVScale(1);
+                        robot->setWScale(.5);
 
                         //Move to the appropriate point
                         robot->move(interceptPoint);
@@ -509,6 +514,10 @@ bool Gameplay::Behaviors::Kick::run()
                         //set the avoid flag
                         robot->avoidOpponents = false;
                         
+                        //set the speeds for this state
+                        robot->setVScale(.5);
+                        robot->setWScale(.25);
+
                         MotionCmd::PivotType dir = (targetEdge - ballPos).cross(relPos) > 0 ? MotionCmd::CW : MotionCmd::CCW;
 			
                         if (toTarget.cross(relPos) < 0)
@@ -531,6 +540,10 @@ bool Gameplay::Behaviors::Kick::run()
                 {
                         //set the avoid flag
                         robot->avoidOpponents = false;
+                        
+                        //set the speeds for this state
+                        robot->setVScale(.5);
+                        robot->setWScale(.25);
 
                         //Create a point that is offset from the center of the ball so that the robot doesn't hit the ball out of the way
                         Geometry2d::Point point;
@@ -549,6 +562,10 @@ bool Gameplay::Behaviors::Kick::run()
 		{
                         //set the avoid flag
                         robot->avoidOpponents = false;
+                        
+                        //set the speeds for this state
+                        robot->setVScale(.5);
+                        robot->setWScale(.25);
 			
                         // True if the robot is in front of the ball
 			bool inFrontOfBall = toTarget.perpCCW().cross(relPos) > 0;
@@ -586,6 +603,10 @@ bool Gameplay::Behaviors::Kick::run()
                         //set the avoid flag
                         robot->avoidOpponents = false;
                         
+                        //set the speeds for this state
+                        robot->setVScale(.5);
+                        robot->setWScale(.25);
+                        
                         Geometry2d::Point p = ballPos;
                         p.y += yOffset;
 
@@ -604,6 +625,10 @@ bool Gameplay::Behaviors::Kick::run()
                 {
                         //set the avoid flag
                         robot->avoidOpponents = true;
+                        
+                        //set the speeds for this state
+                        robot->setVScale(1);
+                        robot->setWScale(.5);
 			
                         state()->drawLine(_kickSegment);
 			break;
