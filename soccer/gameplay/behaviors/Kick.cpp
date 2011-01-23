@@ -55,9 +55,9 @@ bool Gameplay::Behaviors::Kick::run()
      
         //If the ball is being blocked set its location to the location of the robot 
         //Accounting for the direction the robot is facing
-        Geometry2d::Point ballPos;
+        Geometry2d::Point ballPos = ball().pos;
 
-        if(!ball().valid)
+/*      if(!ball().valid)
         {
            float x = Robot_Radius * sin(robot->angle * DegreesToRadians);
            float y = Robot_Radius * cos(robot->angle * DegreesToRadians);
@@ -68,6 +68,7 @@ bool Gameplay::Behaviors::Kick::run()
         {
             ballPos = ball().pos;
         }
+*/
 
         //Get the best ublocked area in the target to aim at
         WindowEvaluator e = WindowEvaluator(state());
