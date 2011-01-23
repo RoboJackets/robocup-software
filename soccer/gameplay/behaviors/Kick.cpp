@@ -15,7 +15,7 @@ const float ballVelThreshold = 0.009;   //Tuning Required (Anthony)
 
 //Position behind the ball by an amount where the robot will have space to align itself 
 //without hitting the ball
-const float yOffset = 3 * Robot_Radius; //Tuning Required (Anthony) 
+const float yOffset = 1.5 * Robot_Radius; //Tuning Required (Anthony) 
 
 //Used for the case where the ball is directly behind the robot so that i
 //the robot doesn't run over it attempting to get behind it
@@ -23,8 +23,8 @@ const float xOffset = 2 * Robot_Radius; //Tuning Required (Anthony)
 
 //const int Max_Approach1_Timeout = 400; //Tuning
 const int Max_Face_Timeout = 60; //Tuning 
-const int Max_Approach2_Timeout = 250; //Tuning
-const int Max_Aim_Timeout = 100; //Tuning
+const int Max_Approach2_Timeout = 100; //Tuning
+const int Max_Aim_Timeout = 75; //Tuning
 
 Gameplay::Behaviors::Kick::Kick(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay)
@@ -270,9 +270,11 @@ bool Gameplay::Behaviors::Kick::run()
 	{
 		case State_Approach1:
                 {
-                        _aimTimeout = 0;
+                        //Clear/Increment Timeouts
                         _approach1Timeout++;
-                        bool nearIntercept = robot->pos.nearPoint(interceptPoint, Robot_Radius + 0.15);
+                        _aimTimeout = 0;
+
+                        bool nearIntercept = robot->pos.nearPoint(interceptPoint, Robot_Radius + 0.05);
                         
 #ifdef DEBUG
                         robot->addText("Approach1");
@@ -308,9 +310,11 @@ bool Gameplay::Behaviors::Kick::run()
 	
                 case State_Face:
                 {
+                        //Clear/Increment Timeouts
                         _faceTimeout++;
-			bool nearIntercept = robot->pos.nearPoint(interceptPoint, Robot_Radius + 0.20);
-                        
+			
+                        bool nearIntercept = robot->pos.nearPoint(interceptPoint, Robot_Radius + 0.20);
+
 #ifdef DEBUG
                         robot->addText("Face");
 	                robot->addText("");
@@ -343,8 +347,12 @@ bool Gameplay::Behaviors::Kick::run()
 
 		case State_Approach2:
                 {
+                        //Clear/Increment Timeouts
+                        _approach1Timeout = 0;
                         _approach2Timeout++;
-			bool nearIntercept = robot->pos.nearPoint(interceptPoint, Robot_Radius + 0.25);
+			
+                        bool nearIntercept = robot->pos.nearPoint(interceptPoint, Robot_Radius + 0.25);
+                        bool nearBall = robot->pos.nearPoint(ballPos, Robot_Radius + .05);
                        
 #ifdef DEBUG
                         robot->addText("Approach2");
@@ -355,7 +363,7 @@ bool Gameplay::Behaviors::Kick::run()
 #endif
 
                         //Change States do in order so that the last one is the futherest along
-                        if (!nearIntercept)
+                        if (!nearIntercept && !nearBall)
 			{
 				_state = State_Approach1;
                         }
@@ -374,8 +382,11 @@ bool Gameplay::Behaviors::Kick::run()
 
 		case State_Aim:
                 {
+                        //Clear/Increment Timeouts
+                        _approach1Timeout = 0;
                         _faceTimeout = 0;
                         _aimTimeout++;
+                        
                         bool nearBall = robot->pos.nearPoint(ballPos, Robot_Radius + .10);
 			
 #ifdef DEBUG                        
@@ -432,10 +443,12 @@ bool Gameplay::Behaviors::Kick::run()
 
 		case State_Kick:
                 {
-                        _aimTimeout++;
-                        _approach2Timeout = 0;
+                        //Clear/Increment Timeouts
                         _approach1Timeout = 0;
                         _faceTimeout = 0;
+                        _approach2Timeout = 0;
+                        _aimTimeout++;
+
 #ifdef DEBUG
                         robot->addText("Kick");
                         robot->addText("");
@@ -459,7 +472,10 @@ bool Gameplay::Behaviors::Kick::run()
 
 		case State_Done:
                 {
+                        //Clear all the Timeouts
+                        _approach1Timeout = 0;
                         _faceTimeout = 0;
+                        _approach2Timeout = 0;
                         _aimTimeout = 0;
 
 #ifdef DEBUG
@@ -503,7 +519,6 @@ bool Gameplay::Behaviors::Kick::run()
 
                         state()->drawLine(robot->pos, Geometry2d::Point::direction(robot->angle * DegreesToRadians) + robot->pos, Qt::gray);
                      
-
 			robot->avoidBall = true;
                         break;
                 }
@@ -610,7 +625,7 @@ Geometry2d::Point Gameplay::Behaviors::Kick::calculateInterceptPoint()
         Geometry2d::Point ballVel = ball().vel;
         float dist = ballPos.distTo(robot->pos);
         //TODO: Make time a better function based on distance apart
-        float time = dist * .75; //Tuning Required
+        float time = dist * .6; //Tuning Required
 
         interceptPoint = ballPos + Geometry2d::Point::saturate(ballVel * time, 1);
 
