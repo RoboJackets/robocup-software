@@ -21,9 +21,6 @@ using namespace Modeling;
 using namespace Utils;
 using namespace google::protobuf;
 
-// Maximum time to coast a track (keep the track alive with no observations) in microseconds.
-//const uint64_t MaxCoastTime = 500000; //
-
 WorldModel::WorldModel(SystemState *state, Configuration *config) :
 	_robotConfig(config),
 	_state(state),

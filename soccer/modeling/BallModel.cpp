@@ -47,7 +47,12 @@ void Modeling::BallModel::observation(uint64_t time, const Geometry2d::Point &po
 
 bool Modeling::BallModel::valid(uint64_t time) {
 	//cout << "ball model is " << (!_observations.empty() || ((time - lastUpdatedTime) < MaxCoastTime) ? "" : "not") << " valid" << std::endl;
-	return !_observations.empty() && ((time - lastUpdatedTime) < MaxCoastTime);
+	// FIXME: logic here is broken - if the ball is currently occluded, then there are no observations
+
+//	return !_observations.empty() && ((time - lastUpdatedTime) < MaxCoastTime);
+
+	// just use coast time
+	return (time - lastUpdatedTime) < MaxCoastTime;
 }
 
 void Modeling::BallModel::run(uint64_t time)
