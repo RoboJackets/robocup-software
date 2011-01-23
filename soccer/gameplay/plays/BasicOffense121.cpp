@@ -83,16 +83,15 @@ bool Gameplay::Plays::BasicOffense121::run()
 				bestOpp2 = opp;
 			}
 
-
 			if (oppDistSq < Field_Length * Field_Length / 4.0) {
 				++nrOppClose;
 			}
 		}
 	}
-	if (!bestOpp1) {
+	if (!bestOpp1 && _support1.robot) {
 		_support1.robot->addText("No mark target");
 	}
-	if (!bestOpp2) {
+	if (!bestOpp2 && _support2.robot) {
 		_support2.robot->addText("No mark target");
 	}
 
@@ -102,6 +101,7 @@ bool Gameplay::Plays::BasicOffense121::run()
 		_support1.markRobot(bestOpp1);
 	if (bestOpp2 && bestOpp2->visible && (forward_reset || bestDist2 < cur_dist2 * cur_dist2 * mark_coeff))
 		_support2.markRobot(bestOpp2);
+
 	if (ballProj.y > Field_Length/2.0 && nrOppClose) {
 		_support1.ratio(0.7);
 		_support2.ratio(0.7);
@@ -110,7 +110,6 @@ bool Gameplay::Plays::BasicOffense121::run()
 		_support1.ratio(0.9);
 		_support2.ratio(0.9);
 	}
-
 
 	// execute behaviors
 	if (_striker.robot) _striker.run();

@@ -23,7 +23,7 @@ namespace Gameplay
 				
 			protected:
 				Behaviors::Fullback _leftFullback, _rightFullback;
-				Behaviors::Kick _kicker;
+				Behaviors::Kick _striker;
 				Behaviors::Mark _support;
 		};
 	}

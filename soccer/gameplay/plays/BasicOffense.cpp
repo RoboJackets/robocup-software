@@ -8,17 +8,18 @@ using namespace Geometry2d;
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::BasicOffense, "Playing")
 
 Gameplay::Plays::BasicOffense::BasicOffense(GameplayModule *gameplay):
-	Play(gameplay),
-	_leftFullback(gameplay, Behaviors::Fullback::Left),
-	_rightFullback(gameplay, Behaviors::Fullback::Right),
-	_kicker(gameplay),
-	_support(gameplay)
+Play(gameplay),
+_leftFullback(gameplay, Behaviors::Fullback::Left),
+_rightFullback(gameplay, Behaviors::Fullback::Right),
+_striker(gameplay),
+_support(gameplay)
 {
 	_leftFullback.otherFullbacks.insert(&_rightFullback);
 	_rightFullback.otherFullbacks.insert(&_leftFullback);
 
 	// use constant value of mark threshold for now
 	_support.markLineThresh(1.0);
+
 }
 
 float Gameplay::Plays::BasicOffense::score ( Gameplay::GameplayModule* gameplay )
@@ -45,37 +46,26 @@ bool Gameplay::Plays::BasicOffense::run()
 	// determine whether to change offense players
 	const float coeff = 0.50; // Determines level of hysteresis
 	bool forward_reset = false;
-	if (_kicker.robot && _support.robot &&
-			_support.robot->pos.distTo(ballProj) < coeff * _kicker.robot->pos.distTo(ballProj)) {
-		_kicker.robot = NULL;
+	if (_striker.robot && _support.robot &&
+			_support.robot->pos.distTo(ballProj) < coeff * _striker.robot->pos.distTo(ballProj)) {
+		_striker.robot = NULL;
 		_support.robot = NULL;
 		forward_reset = true;
 	}
 
 	// choose offense, we want closest robot to ball to be striker
-	assignNearest(_kicker.robot, available, ballProj);
+	assignNearest(_striker.robot, available, ballProj);
 	assignNearest(_support.robot, available, ballProj);
 
 	// manually reset any kickers so they keep kicking
-	if (_kicker.done() && _kicker.robot)
-		_kicker.restart();
+	if (_striker.done())
+		_striker.restart();
 
 	// pick as a mark target the furthest back opposing robot
 	// and adjust mark ratio based on field position
 	OpponentRobot* bestOpp = NULL;
 	float bestDist = numeric_limits<float>::infinity();
-	float cur_dist;
-
-        if(_support.robot)
-        {
-                cur_dist = (_support.markRobot()) ?
-		        	_support.markRobot()->pos.distTo(ballProj) :
-			        numeric_limits<float>::infinity();
-        }
-        else
-        {
-                cur_dist = numeric_limits<float>::infinity();
-        }
+	float cur_dist = (_support.markRobot()) ? _support.markRobot()->pos.distTo(ballProj) : numeric_limits<float>::infinity();
 
 	size_t nrOppClose = 0;
 	BOOST_FOREACH(OpponentRobot* opp, state()->opp)
@@ -97,18 +87,20 @@ bool Gameplay::Plays::BasicOffense::run()
 
 	// use hysteresis for changing of the robot
 	const float mark_coeff = 0.9; // how much of an improvement is necessary to switch
-	if (bestOpp && bestOpp->visible && (forward_reset || bestDist < cur_dist * mark_coeff) && _support.robot)
+	if (bestOpp && bestOpp->visible && (forward_reset || bestDist < cur_dist * mark_coeff))
 		_support.markRobot(bestOpp);
-	if (ballProj.y > Field_Length/2.0 && nrOppClose && _support.robot)
+
+	// if we are further away, we can mark further from robot
+	if (ballProj.y > Field_Length/2.0 && nrOppClose)
 		_support.ratio(0.7);
-	else if(_support.robot)
+	else
 		_support.ratio(0.9);
 
 	// execute behaviors
-	if (_kicker.robot) _kicker.run();
+	if (_striker.robot) _striker.run();
 	if (_support.robot) _support.run();
 	if (_leftFullback.robot) _leftFullback.run();
 	if (_rightFullback.robot) _rightFullback.run();
-	
+
 	return true;
 }

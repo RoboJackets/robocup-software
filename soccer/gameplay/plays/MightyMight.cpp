@@ -42,13 +42,13 @@ bool Gameplay::Plays::MightyMight::run()
 	if (_kicker2.done())
 		_kicker2.restart();
 
-	// execute kickers dumbly - FIXME: make this smarter to keep them from colliding
-	_kicker1.run();
-	_kicker2.run();
+	// execute kickers dumbly
+	if (_kicker1.robot) _kicker1.run();
+	if (_kicker2.robot) _kicker2.run();
 
 	// run standard fullback behavior
-	_leftFullback.run();
-	_rightFullback.run();
+	if (_leftFullback.robot) _leftFullback.run();
+	if (_rightFullback.robot) _rightFullback.run();
 	
 	return true;
 }
