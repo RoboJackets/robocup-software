@@ -61,6 +61,23 @@ bool Gameplay::Plays::BasicOffense::run()
 	if (_striker.done())
 		_striker.restart();
 
+	// find the nearest opponent to the striker
+	OpponentRobot* closestRobotToStriker = 0;
+	float closestDistToStriker = numeric_limits<float>::infinity();
+	if (_striker.robot) {
+		BOOST_FOREACH(OpponentRobot* opp, state()->opp) {
+			if (opp) {
+				float d = opp->pos.distTo(_striker.robot->pos);
+				if (d < closestDistToStriker) {
+					closestDistToStriker = d;
+					closestRobotToStriker = opp;
+				}
+			}
+		}
+	}
+	const float support_backoff_thresh = 1.5;
+	bool striker_engaged = _striker.robot && closestDistToStriker < support_backoff_thresh;
+
 	// pick as a mark target the furthest back opposing robot
 	// and adjust mark ratio based on field position
 	OpponentRobot* bestOpp = NULL;
@@ -71,7 +88,7 @@ bool Gameplay::Plays::BasicOffense::run()
 	BOOST_FOREACH(OpponentRobot* opp, state()->opp)
 	{
 		const float oppPos = opp->pos.y;
-		if (opp && opp->visible && oppPos > 0.1) {
+		if (opp && opp->visible && oppPos > 0.1 && !(striker_engaged && opp == closestRobotToStriker)) {
 			if (oppPos < bestDist) {
 				bestDist = opp->pos.y;
 				bestOpp = opp;
