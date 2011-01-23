@@ -383,7 +383,8 @@ bool Gameplay::Behaviors::Kick::run()
 	                robot->addText("");
 #endif                        
 
-                        if ((!robot->hasBall && !nearBall) || !robot->charged())  
+                        if (((!robot->hasBall && !nearBall) || !robot->charged()) && _approach2Timeout <=
+                                Max_Approach2_Timeout)  
 			{
 				_state = State_Approach2;
 			}
