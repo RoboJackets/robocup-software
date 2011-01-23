@@ -48,7 +48,7 @@ bool Gameplay::Behaviors::Kick::run()
 
         //Only end the behavior is the ball can't be seen and the robot doesn't have it
         //This prevents the behavior from stopping when the robot blocks the ball
-        if(!ball().valid && !robot->hasBall)
+        if(!ball().valid && !robot->hasBall && !_override)
         {
             return false;
         }
@@ -601,7 +601,7 @@ Geometry2d::Point Gameplay::Behaviors::Kick::calculateInterceptPoint()
         Geometry2d::Point ballVel = ball().vel;
         float dist = ballPos.distTo(robot->pos);
         //TODO: Make time a better function based on distance apart
-        float time = dist * 1.25; //Tuning Required
+        float time = dist * .75; //Tuning Required
 
         interceptPoint = ballPos + Geometry2d::Point::saturate(ballVel * time, 1);
 

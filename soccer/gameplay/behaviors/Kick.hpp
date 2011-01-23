@@ -18,7 +18,9 @@ namespace Gameplay
 				
 				void restart();
 				
-				// Kicks at the opponent's goal
+				void override(bool override) { _override = override; }
+                                
+                                // Kicks at the opponent's goal
 				void setTargetGoal();
 				
 				// Kicks at a robot (pass)
@@ -44,6 +46,7 @@ namespace Gameplay
 				float _lastError;
 			        int _faceTimeout;
                                 int _aimTimeout;
+                                bool _override;
 
 				Geometry2d::Segment _target;
 			
