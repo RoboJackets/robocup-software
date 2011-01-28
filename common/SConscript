@@ -19,7 +19,7 @@ repo = git.Repo(Dir('#').path)
 
 env.Textfile('git_version.h',
 	['static const char git_version_hash[] = "@hash@";',
-	 'static bool git_version_dirty = @dirty@;'
+	 'static bool git_version_dirty = @dirty@;',
 	 ''],
 	SUBST_DICT=(
 		('@hash@', repo.head.commit.hexsha),
