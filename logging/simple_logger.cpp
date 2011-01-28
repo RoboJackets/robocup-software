@@ -4,6 +4,7 @@
 
 #include <protobuf/messages_robocup_ssl_wrapper.pb.h>
 #include <protobuf/LogFrame.pb.h>
+#include <git_version.h>
 
 #include <multicast.hpp>
 #include <Network.hpp>
@@ -69,6 +70,7 @@ int main(int argc, char *argv[])
 	
 	// Main loop
 	LogFrame logFrame;
+	bool first = true;
 	while (true)
 	{
 		uint64_t startTime = Utils::timestamp();
@@ -117,6 +119,16 @@ int main(int argc, char *argv[])
 			}
 			
 			logFrame.add_raw_referee(str);
+		}
+		
+		if (first)
+		{
+			first = false;
+			
+			LogConfig *logConfig = logFrame.mutable_log_config();
+			logConfig->set_generator("simple_logger");
+			logConfig->set_git_version_hash(git_version_hash);
+			logConfig->set_git_version_dirty(git_version_dirty);
 		}
 		
 		uint32_t size = logFrame.ByteSize();

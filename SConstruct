@@ -7,7 +7,7 @@ Export('exec_dir')
 
 build_dir = Dir('#/build')
 
-env = Environment()
+env = Environment(tools=['default', 'textfile'])
 
 # C++ compiler
 # BOOST_UBLAS_NDEBUG turns off uBLAS debugging (very slow)
@@ -52,6 +52,7 @@ env32 = env.Clone()
 env.Append(LIBPATH=[build_dir.Dir('common')])
 env.Append(CPPPATH=[build_dir.Dir('common')])
 
+# Hack up some compatibility on 64-bit systems
 import platform
 if platform.machine() == 'x86_64':
 	f = file('/etc/issue')
@@ -78,27 +79,28 @@ if platform.machine() == 'x86_64':
 	env32.Append(CPPPATH=[build_dir.Dir('common32')])
 
 	# Ubuntu 10.04 32-bit compatibility:
-	# Copy the 32-bit libprotobuf to the run directory and add let the dynamic linker find it.
+	# Copy the 32-bit libprotobuf to the run directory and add a linker option to let the dynamic linker know where to look.
 	env32.Append(RPATH=[Literal('\\$$ORIGIN')])
 	env32.Install(exec_dir, protobuf_lib)
 
-	# Build a 32-bit version of common for SoccSim
-	Export({'env': env32})
-	SConscript('common/SConscript', variant_dir=build_dir.Dir('common32'), duplicate=0)
+	# Build a 32-bit version of common for SoccSim.
+	Export({'env': env32, 'cross_32bit': True})
+	SConscript('common/SConscript', exports={'env':env32, 'cross_32bit':True}, variant_dir=build_dir.Dir('common32'), duplicate=0)
 else:
 	# This is a 32-bit system, so we only need one version of common
 	env32 = env
 
-def do_build(dir):
-	SConscript(dir + '/SConscript', variant_dir=build_dir.Dir(dir), duplicate=0)
+# Use SConscripts
+def do_build(dir, exports={}):
+	SConscript(dir + '/SConscript', exports=exports, variant_dir=build_dir.Dir(dir), duplicate=0)
 
-Export('env')
+Export({'env': env, 'cross_32bit': False})
 do_build('common')
 
-Export({'env': env32})
-do_build('SoccSim')
+Export({'env': env32, 'cross_32bit': True})
+do_build('SoccSim', {'env': env32})
 
-Export('env')
+Export({'env': env, 'cross_32bit': False})
 for dir in ['logging', 'radio', 'soccer']:
 	do_build(dir)
 

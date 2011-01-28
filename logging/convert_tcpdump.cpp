@@ -4,6 +4,7 @@
 #include <fcntl.h>
 
 #include <protobuf/LogFrame.pb.h>
+#include <git_version.h>
 
 using namespace std;
 using namespace Packet;
@@ -65,6 +66,7 @@ int main(int argc, char *argv[])
 	// endTime is the time that a simulated processing loop iteration ends.
 	uint64_t endTime = 0;
 	
+	bool first = true;
 	while (true)
 	{
 		struct pcap_pkthdr header;
@@ -106,6 +108,17 @@ int main(int argc, char *argv[])
 			
 			// Advance endTime to the next iteration.
 			endTime += FramePeriod;
+			
+			// Add software information
+			if (first)
+			{
+				first = false;
+				
+				LogConfig *logConfig = frame.mutable_log_config();
+				logConfig->set_generator("convert_tcpdump");
+				logConfig->set_git_version_hash(git_version_hash);
+				logConfig->set_git_version_dirty(git_version_dirty);
+			}
 			
 			// Write this frame
 			needWrite = false;

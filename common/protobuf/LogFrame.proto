@@ -42,8 +42,29 @@ message TestResult
 	optional string group = 3;
 }
 
+// Only the first LogFrame in a log file contains this.
+// It contains unchanging information about the soccer build and invocation.
+message LogConfig
+{
+	// Name of the program which generated this log
+	optional string generator = 1;
+	
+	// git commit hash that the generating program was built from
+	optional string git_version_hash = 2;
+	
+	// If true, there were uncommitted changes to the code
+	optional bool git_version_dirty = 3;
+	
+	// If true, we are running in a simulation.
+	// The standalone loggers don't set this field because they don't know for sure.
+	optional bool simulation = 4;
+}
+
 message LogFrame
 {
+	// Only present in the first LogFrame, and not guaranteed even then.
+	optional LogConfig log_config = 2047;
+	
 	// Network packets received since the last iteration
 	repeated SSL_WrapperPacket raw_vision = 1;
 	repeated bytes raw_referee = 2;

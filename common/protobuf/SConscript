@@ -1,8 +1,8 @@
 from os.path import *
 
-Import('*')
+Import('env', 'exec_dir', 'cross_32bit')
 
-def pb_emitter(target, source, env):
+def pb_cpp_emitter(target, source, env):
 	target = []
 	for s in source:
 		base = splitext(basename(s.path))[0]
@@ -10,8 +10,17 @@ def pb_emitter(target, source, env):
 		target.append(s.File(base + '.pb.cc'))
 	return target, source
 
-b = Builder(action='protoc -I${SOURCE.dir} --cpp_out=${TARGET.dir} $SOURCES', emitter=pb_emitter)
-env.Append(BUILDERS = {'Protoc': b})
+def pb_py_emitter(target, source, env):
+	target = []
+	for s in source:
+		base = splitext(basename(s.path))[0]
+		target.append(s.File(base + '_pb2.py'))
+	return target, source
+
+env.Append(BUILDERS = {
+	'ProtocCPP':	Builder(action='protoc -I${SOURCE.dir} --cpp_out=${TARGET.dir} $SOURCES', emitter=pb_cpp_emitter),
+	'ProtocPython':	Builder(action='protoc -I${SOURCE.dir} --python_out=${TARGET.dir} $SOURCES', emitter=pb_py_emitter)
+})
 
 # FIXME - Make a scanner to figure this out
 env.Depends('LogFrame.proto', 'Point.proto')
@@ -21,4 +30,13 @@ env.Depends('LogFrame.proto', 'messages_robocup_ssl_wrapper.proto')
 env.Depends('LogFrame.proto', 'messages_robocup_ssl_detection.proto')
 env.Depends('LogFrame.proto', 'messages_robocup_ssl_geometry.proto')
 
-env.Protoc(Glob('*.proto'))
+protos = Glob('*.proto')
+
+env.ProtocCPP(protos)
+proto_py = env.ProtocPython(protos)
+
+# Make common.protobuf a Python package
+#env.Textfile('__init__.py', source=[''])
+
+if not cross_32bit:
+	env.Install(exec_dir, proto_py)

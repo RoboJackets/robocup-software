@@ -12,3 +12,6 @@ referee.sav
 *.dot
 gmon.out
 logs
+*.py
+*.pyc
+log_info

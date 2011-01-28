@@ -31,7 +31,7 @@
 #include <protobuf/messages_robocup_ssl_geometry.pb.h>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
-
+#include <git_version.h>
 
 using namespace std;
 using namespace boost;
@@ -255,6 +255,7 @@ void Processor::run()
 	
 	Status curStatus;
 	
+	bool first = true;
 	while (_running)
 	{
 		uint64_t startTime = Utils::timestamp();
@@ -279,6 +280,17 @@ void Processor::run()
 		_state.logFrame->set_manual_id(_manualID);
 		_state.logFrame->set_blue_team(_blueTeam);
 		_state.logFrame->set_defend_plus_x(_defendPlusX);
+		
+		if (first)
+		{
+			first = false;
+			
+			LogConfig *logConfig = _state.logFrame->mutable_log_config();
+			logConfig->set_generator("soccer");
+			logConfig->set_git_version_hash(git_version_hash);
+			logConfig->set_git_version_dirty(git_version_dirty);
+			logConfig->set_simulation(_simulation);
+		}
 		
 		////////////////
 		// Inputs
