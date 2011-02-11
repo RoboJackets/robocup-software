@@ -12,4 +12,7 @@ SYSFS{idVendor}=="3141", SYSFS{idProduct}=="0004", MODE="0660", GROUP="plugdev"
 # JTAG adapter
 SYSFS{idVendor}=="0403", SYSFS{idProduct}=="6010", MODE="0660", GROUP="plugdev"
 
+# Robot
+SYSFS{idVendor}=="03eb", SYSFS{idProduct}=="6119", MODE="0660", SYMLINK+="robot"
+
 LABEL="robocup_rules_end"
