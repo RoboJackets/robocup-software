@@ -277,6 +277,7 @@ NxConvexMesh* Robot::cylinder(const float length, const float radius,
 {
 	static NxCookingInterface *gCooking = NxGetCookingLib(
 	        NX_PHYSICS_SDK_VERSION);
+	assert(gCooking);
 	gCooking->NxInitCooking();
 
 	const NxU32 vertCount = (sides + 1) * 2;

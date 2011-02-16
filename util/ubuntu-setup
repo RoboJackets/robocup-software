@@ -33,11 +33,3 @@ apt-get remove python-git
 echo "-- Installing python packages"
 pip install GitPython
 
-# Install all PhysX packages together
-if [ ! -d /usr/lib/PhysX ]; then
-	echo "-- Installing PhysX"
-	dpkg -i $DPKG_FLAGS $BASE/SoccSim/lib/physx/*.deb
-else
-	echo "-- PhysX is already installed"
-fi
-

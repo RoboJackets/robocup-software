@@ -2,20 +2,19 @@ Import('*')
 
 e = env.Clone()
 
-e.Append(PHYSX_SDK='/usr/include/PhysX/v2.8.1/SDKs')
+physx_path=Dir('#/SoccSim/lib/physx')
+physx_include=physx_path.Dir('include')
+physx_libpath = physx_path.Dir('lib')
+
 e.Append(CPPPATH=[
-	'$PHYSX_SDK/Physics/include',
-	'$PHYSX_SDK/Foundation/include',
-	'$PHYSX_SDK/PhysXLoader/include',
-	'$PHYSX_SDK/Cooking/include'])
+	physx_include.Dir('Physics/include'),
+	physx_include.Dir('Foundation/include'),
+	physx_include.Dir('PhysXLoader/include'),
+	physx_include.Dir('Cooking/include')])
 
 # Link with PhysX libraries
-physx_libpath = '/usr/lib/PhysX/v2.8.1'
 e.Append(LIBPATH=physx_libpath)
 e.Append(LIBS=['NxCooking', 'PhysXLoader'])
-
-# Make the dynamic linker look in the PhysX library directory at runtime
-e.Append(RPATH=physx_libpath)
 
 # Flags required for PhysX on Linux
 e.MergeFlags('-DNX32 -DLINUX -DNX_DISABLE_FLUIDS')
@@ -32,3 +31,9 @@ p = e.Program('soccsim', [
 	'Physics/MemoryStream.cpp'])
 
 e.Install(exec_dir, p)
+
+# Copy PhysX libraries to the run directory
+e.Install(exec_dir, physx_libpath.File('libNxCooking.so.1'))
+e.Install(exec_dir, physx_libpath.File('libPhysXLoader.so.1'))
+e.Install(exec_dir, physx_libpath.File('libPhysXCore.so.1'))
+

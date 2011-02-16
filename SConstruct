@@ -59,17 +59,18 @@ if platform.machine() == 'x86_64':
 	issue = f.readlines()[0].split()
 	f.close()
 
-	if issue[0] != 'Ubuntu':
-		raise '32-bit compatibility only works on Ubuntu'
-
-	if issue[1].startswith('10.04'):
-		compat_dir = Dir('#/SoccSim/lib/32-on-64/lucid')
-		protobuf_lib = compat_dir.File('libprotobuf.so.5')
-	elif issue[1] == '10.10':
-		compat_dir = Dir('#/SoccSim/lib/32-on-64/maverick')
-		protobuf_lib = compat_dir.File('libprotobuf.so.6')
+	if issue[0] == 'Ubuntu':
+		if issue[1].startswith('10.04'):
+			compat_dir = Dir('#/SoccSim/lib/32-on-64/lucid')
+			protobuf_lib = compat_dir.File('libprotobuf.so.5')
+		elif issue[1] == '10.10':
+			compat_dir = Dir('#/SoccSim/lib/32-on-64/maverick')
+			protobuf_lib = compat_dir.File('libprotobuf.so.6')
+		else:
+			raise '32-bit compatibility: Unsupported version of Ubuntu'
+		env32.Install(exec_dir, protobuf_lib)
 	else:
-		raise '32-bit compatibility: Unsupported version of Ubuntu'
+		raise '32-bit compatibility only works on Ubuntu'
 
 	# SoccSim must build 32-bit code, even on a 64-bit system, because PhysX is only
 	# available as 32-bit binaries.
@@ -78,17 +79,16 @@ if platform.machine() == 'x86_64':
 	env32.Append(LIBPATH=[build_dir.Dir('common32'), compat_dir])
 	env32.Append(CPPPATH=[build_dir.Dir('common32')])
 
-	# Ubuntu 10.04 32-bit compatibility:
-	# Copy the 32-bit libprotobuf to the run directory and add a linker option to let the dynamic linker know where to look.
-	env32.Append(RPATH=[Literal('\\$$ORIGIN')])
-	env32.Install(exec_dir, protobuf_lib)
-
 	# Build a 32-bit version of common for SoccSim.
 	Export({'env': env32, 'cross_32bit': True})
 	SConscript('common/SConscript', exports={'env':env32, 'cross_32bit':True}, variant_dir=build_dir.Dir('common32'), duplicate=0)
 else:
 	# This is a 32-bit system, so we only need one version of common
 	env32 = env
+
+# PhysX libraries will be copied to the run directory.
+# Use rpath to tell the dynamic linker where to find them.
+env32.Append(RPATH=[Literal('\\$$ORIGIN')])
 
 # Use SConscripts
 def do_build(dir, exports={}):
