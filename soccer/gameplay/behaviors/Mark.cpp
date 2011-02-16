@@ -9,9 +9,9 @@ using namespace Geometry2d;
 
 Gameplay::Behaviors::Mark::Mark(GameplayModule *gameplay):
 SingleRobotBehavior(gameplay),
-_markRobot(NULL),
 _ratio(0.9),
-_mark_line_thresh(0.9)
+_mark_line_thresh(0.9),
+_markRobot(NULL)
 {
 }
 
