@@ -31,9 +31,9 @@ p = e.Program('soccsim', [
 	'Physics/MemoryStream.cpp'])
 
 e.Install(exec_dir, p)
+Default(p)
 
 # Copy PhysX libraries to the run directory
 e.Install(exec_dir, physx_libpath.File('libNxCooking.so.1'))
 e.Install(exec_dir, physx_libpath.File('libPhysXLoader.so.1'))
 e.Install(exec_dir, physx_libpath.File('libPhysXCore.so.1'))
-
