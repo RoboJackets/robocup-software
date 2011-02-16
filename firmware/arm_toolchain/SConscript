@@ -1,0 +1,60 @@
+import os
+this_dir = Dir(os.getcwd())
+
+Import('*')
+
+env = env.Clone()
+env.AppendENVPath('PATH', this_dir.Dir('install/bin').abspath)
+
+mirror_gnu = 'http://www.gtlib.gatech.edu/pub/gnu/gnu'
+mirror_newlib = 'ftp://sources.redhat.com/pub/newlib'
+
+# Package versions
+# Use gcc-core to avoid downloading huge things when we're not using C++
+binutils_package = 'binutils-2.21'
+gcc_version = '4.5.2'
+newlib_package = 'newlib-1.19.0'
+
+gcc_package = 'gcc-core-' + gcc_version
+gcc_dir = 'gcc-' + gcc_version
+
+target = 'arm-elf'
+
+#FIXME - Download files
+
+def BuildPackage(dir, source_file, config_options):
+	# These files will be created after complicated steps are completed successfully
+	unpack_stamp = 'source/.unpacked_' + dir
+	config_stamp = 'build/%s/.configured' % dir
+	build_stamp = 'build/%s/.built' % dir
+	
+	# Unpack the source
+	unpack = env.Command(unpack_stamp, 'downloads/' + source_file, 'tar -C ${TARGET.dir} -xf ${SOURCE} && touch ${TARGET}')
+	
+	# Configure in a build directory
+	mkdir_build = env.Command('build/' + dir, '', Mkdir('${TARGET}'))
+	configure = env.Command(config_stamp, unpack_stamp,
+		'cd ${TARGET.dir} && ${SOURCE.dir.abspath}/%s/configure --prefix=%s %s && touch ${TARGET.file}' % (dir, this_dir.Dir('install').abspath, config_options))
+	
+	# Build the package
+	#FIXME - GetOption isn't working with SCONSFLAGS
+	build = env.Command(build_stamp, config_stamp, 'cd ${TARGET.dir} && make -j%d && make install && touch ${TARGET.file}' % GetOption('num_jobs'))
+	
+	return (unpack, configure, build)
+
+print GetOption('num_jobs')
+
+(unpack_binutils, config_binutils, build_binutils) = BuildPackage(binutils_package, binutils_package + '.tar.bz2', '--target=%s --enable-interwork --enable-multilib' % target)
+
+(unpack_gcc, config_gcc, build_gcc) = BuildPackage(gcc_dir, gcc_package + '.tar.bz2',
+	'--target=%s --with-newlib --enable-languages="c" --disable-threads '
+	'--disable-shared --with-headers=%s/source/%s/newlib/libc/include '
+	'--enable-interwork --enable-multilib --with-system-zlib --with-mode=thumb --with-arch=armv4t' %
+	(target, this_dir.abspath, newlib_package)
+)
+
+(unpack_newlib, config_newlib, build_newlib) = BuildPackage(newlib_package, newlib_package + '.tar.gz', '--target=%s --enable-interwork --enable-multilib' % target)
+
+Depends(config_gcc, unpack_newlib)
+Depends(config_gcc, build_binutils)
+Depends(config_newlib, build_gcc)

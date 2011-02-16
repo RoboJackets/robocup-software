@@ -6,6 +6,7 @@ exec_dir = Dir('#/run')
 Export('exec_dir')
 
 build_dir = Dir('#/build')
+Export('build_dir')
 
 env = Environment(tools=['default', 'textfile'])
 
@@ -101,7 +102,7 @@ Export({'env': env32, 'cross_32bit': True})
 do_build('SoccSim', {'env': env32})
 
 Export({'env': env, 'cross_32bit': False})
-for dir in ['logging', 'radio', 'soccer']:
+for dir in ['logging', 'radio', 'soccer', 'firmware']:
 	do_build(dir)
 
 # Build sslrefbox with its original makefile (no dependency checking)

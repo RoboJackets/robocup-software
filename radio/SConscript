@@ -9,3 +9,4 @@ p = usb.Program('radio', [
 	'Radio.cpp'])
 
 usb.Install(exec_dir, p)
+Default(p)

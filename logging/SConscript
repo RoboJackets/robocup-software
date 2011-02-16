@@ -4,10 +4,12 @@ p = env.Program('convert_tcpdump',
 	['convert_tcpdump.cpp'],
 	LIBS=['pcap', 'protobuf', 'pthread', 'common'])
 env.Install(exec_dir, p)
+Default(p)
 
 p = env.Program('simple_logger',
 	['simple_logger.cpp'])
 env.Install(exec_dir, p)
+Default(p)
 
 # This has to be copied, not symlinked, because python will look in the file's
 # real location for modules, but we need generated protobuf files to be in
