@@ -37,12 +37,9 @@ def BuildPackage(dir, source_file, config_options):
 		'cd ${TARGET.dir} && ${SOURCE.dir.abspath}/%s/configure --prefix=%s %s && touch ${TARGET.file}' % (dir, this_dir.Dir('install').abspath, config_options))
 	
 	# Build the package
-	#FIXME - GetOption isn't working with SCONSFLAGS
 	build = env.Command(build_stamp, config_stamp, 'cd ${TARGET.dir} && make -j%d && make install && touch ${TARGET.file}' % GetOption('num_jobs'))
 	
 	return (unpack, configure, build)
-
-print GetOption('num_jobs')
 
 (unpack_binutils, config_binutils, build_binutils) = BuildPackage(binutils_package, binutils_package + '.tar.bz2', '--target=%s --enable-interwork --enable-multilib' % target)
 
