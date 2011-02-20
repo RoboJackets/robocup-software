@@ -1,0 +1,27 @@
+Import('*')
+
+avr = Environment()
+avr.Append(DEVICE='at90usb1287')
+avr.Append(CFLAGS='-Os -Wall -mmcu=${DEVICE} -std=c99')
+avr.Append(LINKFLAGS='-mmcu=${DEVICE}')
+avr.Replace(CC='avr-gcc')
+
+def generate_bin(source, target, env, for_signature):
+	return 'avr-objcopy -O binary %s %s'%(source[0], target[0])
+
+avr.Append(BUILDERS={'Binary': Builder(
+	generator=generate_bin,
+	suffix='.bin',
+	src_suffix='.elf')})
+
+avr.Program('base_station.elf',
+	['base_station.c',
+	'radio.c',
+	'device.c',
+	'host.c'])
+
+avr.Binary('base_station.bin', 'base_station.elf')
+
+avr.Alias('base-prog', 'base_station.bin', Action('dfu-programmer ${DEVICE} erase && dfu-programmer ${DEVICE} flash --suppress-validation ${SOURCE} && dfu-programmer ${DEVICE} reset'))
+avr.AlwaysBuild('base-prog')
+

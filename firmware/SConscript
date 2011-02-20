@@ -1,3 +1,8 @@
 Import('*')
 
-SConscript('arm_toolchain/SConscript')#, variant_dir=build_dir.Dir('firmware/arm_toolchain'), duplicate=0)
+env.AppendENVPath('PATH', Dir('install/bin').abspath)
+
+# variant_dir is not necessary because it is inherited from the top-level SConstruct
+SConscript('arm_toolchain/SConscript')
+SConscript('base_2009/SConscript')
+
