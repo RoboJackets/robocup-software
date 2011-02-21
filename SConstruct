@@ -10,6 +10,16 @@ Export('build_dir')
 
 env = Environment(tools=['default', 'textfile'])
 
+# http://www.scons.org/wiki/GoFastButton
+env.Decider('MD5-timestamp')
+SetOption('max_drift', 1)
+SetOption('implicit_cache', 1)
+env.SourceCode(".", None)
+
+# Keep a plain environment for cross-compiling later
+env_base = env.Clone()
+Export('env_base')
+
 # C++ compiler
 # BOOST_UBLAS_NDEBUG turns off uBLAS debugging (very slow)
 env.MergeFlags('-O2 -g3 -Wall -DBOOST_UBLAS_NDEBUG')
@@ -39,12 +49,6 @@ env.EnableQt4Modules(['QtCore', 'QtGui', 'QtNetwork', 'QtXml', 'QtOpenGL'])
 
 # All executables need to link with the common library, which depends on protobuf
 env.Append(LIBS=['common', 'protobuf'])
-
-# http://www.scons.org/wiki/GoFastButton
-env.Decider('MD5-timestamp')
-SetOption('max_drift', 1)
-SetOption('implicit_cache', 1)
-env.SourceCode(".", None)
 
 # Make a new environment for code that must be 32-bit
 env32 = env.Clone()
