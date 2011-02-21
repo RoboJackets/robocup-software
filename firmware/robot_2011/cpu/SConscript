@@ -1,0 +1,103 @@
+Import('*')
+
+chip = 'at91sam7s64'
+
+# Definitions needed by at91lib
+defs = '-D%s -DTRACE_LEVEL=0 -DNOASSERT' % chip
+
+# FIXME - Reorganize the files so we don't have three include paths at different levels of the same directory tree
+arm.Append(CPPPATH=[Dir('at91lib/boards/robocup').srcnode(), Dir('at91lib/peripherals').srcnode(), Dir('at91lib').srcnode()])
+arm.Append(CFLAGS=defs + ' -g -Wall -std=gnu99 -Werror')
+arm.Append(CPPPATH=Dir('.'))
+
+# Specify CPU explicitly since some GCC ARM builds may expect something more awesome by default.
+#
+# You can specify -marm to emit only full ARM (no Thumb) code.
+# Thumb code is preferred because it is smaller and faster (due to flash prefetching).
+#
+# For some reason I can't get libgcc to build with interworking, so I changed the startup code (the only
+# code that must be ARM) to Thumb, so we don't need -mthumb-interwork.
+arm.Append(CFLAGS='-Os -mcpu=arm7tdmi')
+
+# AT91 headers are used for both C and assembly, so a define must be used to hide C-specific parts.
+arm.Append(ASFLAGS=defs + ' -D__ASSEMBLY__ -Wall')
+
+# Remove unreferenced code
+arm.Append(CFLAGS='-ffunction-sections')
+arm.Append(LINKFLAGS='-Wl,--gc-sections')
+
+# -static: Don't look for shared libraries and don't emit an interp section.
+arm.Append(LINKFLAGS='-static')
+
+# Only link with libgcc (needed for some arithmetic).
+# Don't use whatever crt0 or libc may have been installed with gcc.
+arm.Append(LINKFLAGS='-nostdlib')
+arm.Append(LIBS='gcc')
+
+# Make environments for linking for each type of memory
+sram_lds = File('at91lib/boards/robocup/%s/sram.lds' % chip).srcnode()
+arm_sram = arm.Clone()
+arm_sram.Append(LINKFLAGS='-T' + sram_lds.path)
+
+flash_lds = File('at91lib/boards/robocup/%s/flash.lds' % chip).srcnode()
+arm_flash = arm.Clone()
+arm_flash.Append(LINKFLAGS='-T' + flash_lds.path)
+
+# --Wl,--build-id: Enable build ID to allow the code to be identified independent of git version
+arm_flash.Append(LINKFLAGS='-Wl,--build-id')
+
+# Build programming tools
+reflasher = arm_sram.Program('tools/reflash.elf', ['tools/sram_start.S', 'tools/reflash.o'])
+arm_sram.Binary('tools/reflash.bin', 'tools/reflash.elf')
+Depends(reflasher, sram_lds)
+
+samba_flash = Command(File('tools/samba-flash'), File('tools/samba-flash').srcnode().abspath, Copy('$TARGET', '$SOURCE'))
+sam7 = Command(File('tools/sam7.py'), File('tools/sam7.py').srcnode().abspath, Copy('$TARGET', '$SOURCE'))
+find_tty = Command(File('tools/find_tty.py'), File('tools/find_tty.py').srcnode().abspath, Copy('$TARGET', '$SOURCE'))
+Depends(samba_flash, sam7)
+Depends(samba_flash, find_tty)
+
+# Built at91lib
+(at91lib, start) = SConscript('at91lib/SConscript')
+
+# Build robot code
+Export('at91lib')
+Export('start')
+
+# Update git version text which will be compiled into the firmware for the status command
+arm.Tool('textfile')
+import git
+repo = git.Repo(Dir('#').path)
+git_version = repo.head.commit.hexsha
+if repo.is_dirty():
+	git_version += ' (modified)';
+version = arm.Textfile('version.c',
+	['const char git_version[] = "@version@";', ''],
+	SUBST_DICT=(('@version@', git_version),)
+)
+
+# Files to build
+robot_fw = arm_flash.Program('robocup.elf', [start,
+	version,
+	'main.c',
+	'command.c',
+	'timer.c',
+	'sound.c',
+	'spi.c',
+	'radio.c',
+	'tools/reflash.c',
+	at91lib
+])
+Depends(robot_fw, flash_lds)
+
+# Generate a bare binary for programming
+arm.Binary('robocup.bin', 'robocup.elf')
+
+# Target to program with SAM-BA (blank chip)
+arm.Alias('robot-prog-blank', ['robocup.bin', samba_flash, 'tools/reflash.bin'], Action('./${SOURCES[1]} ${SOURCES[0]}'))
+AlwaysBuild('robot-prog-blank')
+
+# Target to program CPU with Robocup firmware already running
+arm.Alias('robot-prog', 'robocup.bin', Action(File('tools/reflash').srcnode().path + ' $SOURCE'))
+AlwaysBuild('robot-prog')
+

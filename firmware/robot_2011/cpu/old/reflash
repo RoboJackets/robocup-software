@@ -1,0 +1,10 @@
+init
+halt
+wait_halt
+flash erase_sector 0 0 last
+flash write_image robot.elf
+verify_image robot.elf 0
+resume 0
+sleep 250
+exit
+

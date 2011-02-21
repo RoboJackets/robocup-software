@@ -1,0 +1,145 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import os.path
+import sys
+import struct
+from sam7 import *
+import find_tty
+
+device = None
+
+if not device:
+	devices = find_tty.find(0x03eb, 0x6124)
+	if not devices:
+		print >> sys.stderr, 'No SAM-BA devices found'
+		sys.exit(1)
+	if len(devices) > 1:
+		# Make the user choose
+		print >> sys.stderr, 'Found %d SAM-BA devices:' % len(devices)
+		for d in devices:
+			print >> sys.stderr, '    %s' % d
+		sys.exit(1)
+	else:
+		# Only one device, so use that
+		device = devices[0]
+		print 'Using device %s' % device
+
+sam = SAM7(device)
+
+print 'SAM-BA Version:', sam.version()
+cidr = sam.readWord(0xfffff240)
+print 'Chip ID: %08x' % cidr
+
+arch = (cidr >> 20) & 0xff
+if arch != 0x70:
+	print >> sys.stderr, 'Unsupported architecture 0x%02x' % arch
+	sys.exit(1)
+
+nvpsiz = (cidr >> 8) & 15
+if nvpsiz == 3:
+	# 32k
+	Page_Bits = 7
+	Flash_Size = 32768
+	Num_Locks = 8
+elif nvpsiz == 5:
+	# 64k
+	Page_Bits = 7
+	Flash_Size = 65536
+	Num_Locks = 16
+else:
+	print >> sys.stderr, 'Unsupported flash size %d' % nvpsiz
+	sys.exit(1)
+
+Page_Size = 1 << Page_Bits
+Num_Pages = Flash_Size / Page_Size
+Pages_Per_Lock = Num_Pages / Num_Locks
+
+# Erase pages while programming
+fmr = sam.readWord(MC_FMR)
+if fmr & 0x80:
+	sam.writeWord(MC_FMR, fmr & ~0x80)
+
+def FSR():
+	return sam.readWord(MC_FSR)
+
+print 'EFC status 0x%08x' % FSR()
+
+if len(sys.argv) != 2:
+	# Just testing
+	sys.exit(0)
+
+# Read the reflash code
+f = file(os.path.dirname(sys.argv[0]) + '/reflash.bin')
+reflash = bytearray(f.read())
+f.close()
+
+# Read all data before we touch the flash
+f = file(sys.argv[1])
+data = f.read()
+f.close()
+
+# Pad data to page boundary
+extra = len(data) % Page_Size
+if extra:
+	data += '\xff' * (Page_Size - extra)
+
+def waitReady():
+	while not FSR() & 1:
+		pass
+
+status = FSR()
+if not status & 1:
+	print 'Flash not ready (0x%08x)' % status
+	sys.exit(1)
+
+#  Enable the brownout detector
+def set_gpnvm(bit):
+	print 'Set GPNVM[%d]' % bit
+	sam.writeWord(MC_FCR, FCR_KEY | (bit << 8) | FCR_SGPB)
+	waitReady()
+if not status & 0x100:
+	set_gpnvm(0)
+if not status & 0x200:
+	set_gpnvm(1)
+status = FSR()
+if not status & 0x00000300:
+	print 'Failed to set GPNVM bits (0x%08x)' % status
+	sys.exit(1)
+
+# Make sure all pages are unlocked
+if status & 0xffff0000:
+	# Unlock all pages
+	for i in range(16):
+		if status & 1 << (16 + i):
+			page = i * Pages_Per_Lock
+			print 'Unlock page %d' % page
+			sam.writeWord(MC_FCR, FCR_KEY | (page << 8) | FCR_CLB)
+			waitReady()
+	status = FSR()
+	if status & 0xffff0000:
+		print 'Unlock failed: FSR=0x%08x' % status
+		sys.exit(1)
+
+reflash[16:20] = struct.pack('<I', len(data))
+sam.writeData(RAM + 0x2000, reflash)
+sam.go(RAM + 0x2000)
+
+print 'Programming...'
+sam.f.write(data)
+
+print 'Verifying...'
+# Read repeatedly since the read can end early
+v = ''
+while len(v) < len(data):
+	v += sam.f.read(len(data) - len(v))
+
+if v == data:
+	print 'OK'
+else:
+	f = file('verify.bad', 'wb')
+	f.write(v)
+	f.close()
+	print 'Verification failed!'
+	print 'Returned data written to verify.bad'
+	print '*** Reset board now - you will probably need to recover with SAM-BA'
