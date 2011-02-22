@@ -1,0 +1,44 @@
+import os
+from os.path import *
+
+# Find the Xilinx tools
+home = os.getenv('HOME')
+xilinx_versions = {}
+for start in ['/opt', home]:
+	# Look for a Xilinx directory
+	path = join(start, 'Xilinx')
+	if isdir(path):
+		# Find all versions installed in this directory
+		for entry in os.listdir(path):
+			try:
+				ver = float(entry)
+			except ValueError:
+				continue
+			ver_path = join(path, entry)
+			xpath = join(ver_path, 'ISE_DS')
+			if isdir(ver_path) and isdir(xpath):
+				xilinx_versions[xpath] = ver
+
+# Find the highest of all installed versions
+xilinx_path = max(xilinx_versions, key=xilinx_versions.get)
+
+import platform
+machine = platform.machine()
+if machine == 'x86_64':
+	platform_dir = 'lin64'
+elif machine == 'x86':
+	platform_dir = 'lin'
+else:
+	raise NotImplementedError('Xilinx tools only supported for 32/64-bit x86 Linux')
+
+xilinx = Environment()
+xilinx.AppendENVPath('PATH', join(xilinx_path, 'ISE/bin/', platform_dir))
+xilinx.AppendENVPath('XILINXD_LICENSE_FILE', join(home, '.Xilinx/Xilinx.lic'))
+
+copy_ucf = xilinx.Command('robocup.ucf', File('robocup.ucf').srcnode(), Copy('$TARGET', '$SOURCE'))
+
+xflow = xilinx.Command('robocup.bit', ['robocup.prj', copy_ucf],
+	'xflow -wd ${TARGET.dir.abspath} -p xc3s100etq144 -synth xst_mixed -implement fast_runtime -config bitgen robocup',
+	chdir=Dir('.').srcnode())
+Clean(xflow, Dir('.'))
+
