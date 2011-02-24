@@ -1,13 +1,22 @@
+import os.path
+
 Import('*')
+
+# Add the install path so that gcc and newlib can find the tools that we are building
+host_env = env_base.Clone()
+host_env.AppendENVPath('PATH', Dir('install/bin').abspath)
 
 mirror_gnu = 'http://www.gtlib.gatech.edu/pub/gnu/gnu'
 mirror_newlib = 'ftp://sources.redhat.com/pub/newlib'
 
-# Package versions
+# Package versions and size of complete file
 # Use gcc-core to avoid downloading huge things when we're not using C++
 binutils_package = 'binutils-2.21'
+binutils_size = 18742991
 gcc_version = '4.5.2'
+gcc_size = 28241468
 newlib_package = 'newlib-1.19.0'
+newlib_size = 14323667
 
 downloads_dir = Dir('#/downloads')
 
@@ -23,15 +32,21 @@ newlib_url = '%s/%s' % (mirror_newlib, newlib_file)
 
 target = 'arm-elf'
 
+def HashDecider(dep, target, prev_ni):
+	print '--- here'
+	return False
+
 # Build packages
-def BuildPackage(dir, filename, url, config_options):
+def BuildPackage(dir, filename, size, url, config_options):
 	dl_target = downloads_dir.File(filename)
-	done_stamp = downloads_dir.File('.done_' + filename)
-	(dl_file, dl_done) = env.Command([dl_target, done_stamp], '',
-		'curl %s -o ${TARGETS[0]} && touch ${TARGETS[1]}' % url)
-	NoClean(dl_file)
-	NoClean(dl_done)
-	
+
+	if os.path.isfile(dl_target.abspath) and os.path.getsize(dl_target.abspath) == size:
+		# File is already present and complete
+		dl_file = dl_target
+	else:
+		# Need to download file
+		dl_file = host_env.Command(dl_target, '', 'curl %s -o ${TARGET}' % url)
+
 	source_dir = Dir('source/%s' % dir)
 	build_dir = Dir('build/%s' % dir)
 
@@ -40,31 +55,31 @@ def BuildPackage(dir, filename, url, config_options):
 	build_stamp = build_dir.File('.built')
 	
 	# Unpack the source
-	unpack = env.Command(source_dir.File('.unpacked'), dl_file,
+	unpack = host_env.Command(source_dir.File('.unpacked'), dl_file,
 		'tar -C %s -xf ${SOURCE} && touch ${TARGET}' % Dir('source').abspath)
-	Depends(unpack, dl_done)
+	Depends(unpack, dl_file)
 	Clean(unpack, source_dir)
 	
 	# Configure in a build directory
-	configure = env.Command(config_stamp, source_dir,
-		'cd ${TARGET.dir} && ${SOURCE.abspath}/configure --prefix=%s %s && touch ${TARGET.file}' % (Dir('install').abspath, config_options))
+	configure = host_env.Command(config_stamp, source_dir,
+		'cd ${TARGET.dir} && echo ---CONFIGURE && ${SOURCE.abspath}/configure --prefix=%s %s && touch ${TARGET.file}' % (Dir('install').abspath, config_options))
 	
 	# Build the package
-	build = env.Command(build_stamp, config_stamp, 'cd ${TARGET.dir} && make -j%d && make install && touch ${TARGET.file}' % GetOption('num_jobs'))
+	build = host_env.Command(build_stamp, config_stamp, 'cd ${TARGET.dir} && make -j%d && make install && touch ${TARGET.file}' % GetOption('num_jobs'))
 	Clean(build, build_dir)
 	
 	return (unpack, configure, build)
 
-(unpack_binutils, config_binutils, build_binutils) = BuildPackage(binutils_package, binutils_file, binutils_url,
+(unpack_binutils, config_binutils, build_binutils) = BuildPackage(binutils_package, binutils_file, binutils_size, binutils_url,
 	'--target=%s --enable-interwork --enable-multilib' % target)
 
-(unpack_gcc, config_gcc, build_gcc) = BuildPackage(gcc_dir, gcc_file, gcc_url,
+(unpack_gcc, config_gcc, build_gcc) = BuildPackage(gcc_dir, gcc_file, gcc_size, gcc_url,
 	'--target=%s --with-newlib --enable-languages="c" --disable-threads '
 	'--disable-shared --with-headers=%s/source/%s/newlib/libc/include '
 	'--enable-interwork --enable-multilib --with-system-zlib --with-mode=thumb --with-arch=armv4t' %
 	(target, Dir('.').abspath, newlib_package))
 
-(unpack_newlib, config_newlib, build_newlib) = BuildPackage(newlib_package, newlib_file, newlib_url,
+(unpack_newlib, config_newlib, build_newlib) = BuildPackage(newlib_package, newlib_file, newlib_size, newlib_url,
 	'--target=%s --enable-interwork --enable-multilib' % target)
 
 # Dependencies
@@ -80,5 +95,24 @@ Alias('arm-toolchain', ['arm-binutils', 'arm-gcc', 'arm-newlib'])
 
 # To remove the installed files, you must clean all of the toolchain.
 # The packages do not provide any way to uninstall files.
-Clean('arm-toolchain', Dir('install'))
+Clean('.', Dir('install'))
+
+# ARM build environment
+arm = host_env.Clone()
+arm.Replace(CC='arm-elf-gcc')
+
+arm.Append(BUILDERS={'Binary': Builder(
+	action='arm-elf-objcopy -O binary $SOURCE $TARGET',
+	suffix='.bin',
+	src_suffix='.elf')})
+
+# Add a dependency on the complete toolchain to every object
+def ArmEmitter(target, source, env):
+	for s in source:
+		env.Depends(s, build_newlib)
+	return (target, source)
+arm.AppendUnique(PROGEMITTER=ArmEmitter)
+arm.AppendUnique(LIBEMITTER=ArmEmitter)
+
+Return('arm')
 

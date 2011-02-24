@@ -60,10 +60,6 @@ Depends(samba_flash, find_tty)
 # Built at91lib
 (at91lib, start) = SConscript('at91lib/SConscript')
 
-# Build robot code
-Export('at91lib')
-Export('start')
-
 # Update git version text which will be compiled into the firmware for the status command
 arm.Tool('textfile')
 import git
@@ -94,8 +90,8 @@ Depends(robot_fw, flash_lds)
 arm.Binary('robocup.bin', 'robocup.elf')
 
 # Target to program with SAM-BA (blank chip)
-arm.Alias('robot-prog-blank', ['robocup.bin', samba_flash, 'tools/reflash.bin'], Action('./${SOURCES[1]} ${SOURCES[0]}'))
-AlwaysBuild('robot-prog-blank')
+arm.Alias('robot-prog-samba', ['robocup.bin', samba_flash, 'tools/reflash.bin'], Action('./${SOURCES[1]} ${SOURCES[0]}'))
+AlwaysBuild('robot-prog-samba')
 
 # Target to program CPU with Robocup firmware already running
 arm.Alias('robot-prog', 'robocup.bin', Action(File('tools/reflash').srcnode().path + ' $SOURCE'))
