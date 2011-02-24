@@ -8,14 +8,17 @@
 #include "LCD_driver.h"
 #include "button.h"
 
-// Distance between sensor centers in mm
-#define SENSOR_DISTANCE 25
+// Distance between sensor centers in 1/10 mm
+#define SENSOR_DISTANCE 265
 
 // Additional 8 bits to augment timer 0
-uint16_t tcnt0_high;
+volatile uint16_t tcnt0_high;
 
 // Nonzero when t0tr_high wraps
-uint8_t tcnt0_overflow;
+volatile uint8_t tcnt0_overflow;
+
+volatile uint8_t beep_time;
+volatile uint16_t power_off_time;
 
 enum
 {
@@ -34,32 +37,71 @@ enum
 
 volatile uint8_t speed_state = SPEED_IDLE;
 
+void beep(uint16_t period)
+{
+	cli();
+	TCCR1A = 0x40;
+	TCCR1B = 0x09;
+	OCR1A = period;
+	beep_time = 15;
+	sei();
+}
+
+void beep_off()
+{
+	TCCR1A = 0;
+	TCCR1B = 0;
+}
+
 void clear_display()
 {
 	lcd_puts_r(PSTR(" -----"));
 }
 
+void reset_auto_power_off()
+{
+	// 5 minutes
+	power_off_time = 36621;
+}
+
+void reset()
+{
+	// Stop the beeper timer
+	beep_off();
+	
+	// Stop the break-beam timer
+	TCCR0A = 0;
+
+	// Reset the speed measurement state
+	speed_state = SPEED_IDLE;
+
+	reset_auto_power_off();
+}
+
 void power_off()
 {
+	reset();
+
 	// Turn off LEDs
 	PORTE &= ~(1 << 6);
 
     // Disable LCD
     LCDCRA &= ~(1 << 7);
 
+	// Wait for all buttons to be released
     while ((PINB & 0xd0) != 0xd0 || (PINE & 0x0c) != 0x0c)
     {
 		Delay(100);
 	}
 
+	// Sleep until a button is pressed
     set_sleep_mode(SLEEP_MODE_PWR_SAVE);
-
     while ((PINB & 0xd0) == 0xd0 && (PINE & 0x0c) == 0x0c)
     {
         sleep_mode();
     }
     
-    // UP pressed
+	// Clear the LCD screen before enabling
     uint8_t i;
     for (i = 0; i < 20; i++)
     {
@@ -72,8 +114,9 @@ void power_off()
 	// Turn on LEDs
 	PORTE |= 1 << 6;
 
+	// Do this again because the LEDs just turned on
+	reset();
 	clear_display();
-	speed_state = SPEED_IDLE;
 }
 
 ISR(TIMER0_OVF_vect)
@@ -104,8 +147,6 @@ void speed_interrupt()
 	switch (speed_state)
 	{
 		case SPEED_IDLE:
-		case SPEED_FWD_DONE:
-		case SPEED_REV_DONE:
 			if (second)
 			{
 				timer_start();
@@ -149,13 +190,32 @@ void speed_interrupt()
 	}
 }
 
+ISR(TIMER2_OVF_vect)
+{
+	if (power_off_time)
+	{
+		--power_off_time;
+	}
+
+	if (beep_time)
+	{
+		--beep_time;
+		if (!beep_time)
+		{
+			beep_off();
+		}
+	}
+}
+
 int main()
 {
-	//FIXME - On SPEED_DONE, start beeping and go to SPEED_IDLE.
-	//		Beep timer
-	//		Auto power off timer
+	uint32_t time_us;
+
     Initialization();
 
+	// Beeper
+	PORTB |= 0x20;
+	DDRB |= 0x20;
 	// LED enable
 	DDRE |= 0x40;
 	// Pullups on phototransistors
@@ -165,12 +225,23 @@ int main()
     TCCR0A = 0;
     TIMSK0 = 1;
     
+	// Timer 2 is used for beep and power-off timing
+	ASSR = 0;
+	TCCR2A = 3;
+	TIMSK2 = 1;
+
 	power_off();
 
     while (1)
     {
 		set_sleep_mode(SLEEP_MODE_IDLE);
 		sleep_mode();
+
+		// Auto power off
+		if (power_off_time == 0)
+		{
+			power_off();
+		}
 
 		switch (getkey())
 		{
@@ -180,13 +251,26 @@ int main()
 				break;
 
 			case KEY_UP:
-				// Clear display
-				if (speed_state == SPEED_FWD_DONE || speed_state == SPEED_REV_DONE)
-				{
-					speed_state = SPEED_IDLE;
-				}
+				// Clear last measurement
+				reset();
 				clear_display();
 				break;
+			
+			case KEY_RIGHT:
+			{
+				// Display raw time in microseconds
+				uint32_t v = time_us;
+                lcd_clear();
+                for (uint8_t i = 0; i < 6; i++)
+                {
+                    uint8_t digit = v % 10;
+                    v /= 10;
+                    
+                    lcd_putc(5 - i, '0' + digit);
+                }
+				lcd_update();
+				break;
+			}
 		}
 
         if (speed_state == SPEED_FWD_DONE || speed_state == SPEED_REV_DONE)
@@ -198,19 +282,17 @@ int main()
                 lcd_puts_r(PSTR("SLOW"));
             } else {
                 // Time in microseconds
-                uint32_t dtime = (uint32_t)TCNT0 + ((uint32_t)tcnt0_high << 8);
+                time_us = (uint32_t)TCNT0 + ((uint32_t)tcnt0_high << 8);
                 
                 // Velocity in mm/s
                 // v(mm/s) = d(mm) / (t(us) / 1e6)
-                uint32_t v = SENSOR_DISTANCE * 1000000 / dtime;
+                uint32_t v = SENSOR_DISTANCE * 100000 / time_us;
                 if (v > 99999)
                 {
                     lcd_puts_r(PSTR("FAST"));
                 } else {
-                    uint8_t i;
-                    
                     lcd_clear();
-                    for (i = 0; i < 5; i++)
+                    for (uint8_t i = 0; i < 5; i++)
                     {
                         uint8_t digit = v % 10;
                         v /= 10;
@@ -228,7 +310,17 @@ int main()
                     lcd_update();
                 }
             }
-		} else {
+
+			if (speed_state == SPEED_FWD_DONE)
+			{
+				beep(1400);
+			} else {
+				beep(600);
+			}
+			speed_state = SPEED_IDLE;
+			reset_auto_power_off();
+		} else if (speed_state != SPEED_IDLE)
+		{
 			// Measurement in progress
 			clear_display();
 		}

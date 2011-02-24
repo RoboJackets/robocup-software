@@ -4,6 +4,7 @@ When power is applied, the speedgate is off.  Press the joystick in any directio
 When running, press UP to clear the display or DOWN to power off.
 Speeds are displayed in mm/s, with a space separating meters from millimeters.
 The first character in a measurement is an arrow indicating the direction the object was moving.
+Pressing RIGHT will change the display to the time in microseconds of the last reading (mod 1e6).
 
 Displays:
 	------		Measurement not started or in progress
