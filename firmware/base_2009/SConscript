@@ -2,7 +2,7 @@ Import('*')
 
 avr = Environment()
 avr.Append(DEVICE='at90usb1287')
-avr.Append(CFLAGS='-Os -Wall -mmcu=${DEVICE} -std=c99')
+avr.Append(CFLAGS='-Os -Wall -mmcu=${DEVICE} -std=gnu99')
 avr.Append(LINKFLAGS='-mmcu=${DEVICE}')
 avr.Replace(CC='avr-gcc')
 
