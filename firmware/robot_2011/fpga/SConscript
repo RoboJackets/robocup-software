@@ -4,7 +4,8 @@ from os.path import *
 # Find the Xilinx tools
 home = os.getenv('HOME')
 xilinx_versions = {}
-for start in ['/opt', home]:
+paths = ['/opt', home]
+for start in paths:
 	# Look for a Xilinx directory
 	path = join(start, 'Xilinx')
 	if isdir(path):
@@ -18,6 +19,9 @@ for start in ['/opt', home]:
 			xpath = join(ver_path, 'ISE_DS')
 			if isdir(ver_path) and isdir(xpath):
 				xilinx_versions[xpath] = ver
+
+if not xilinx_versions:
+	raise Exception('Xilinx tools not found: checked ' + ' '.join(paths))
 
 # Find the highest of all installed versions
 xilinx_path = max(xilinx_versions, key=xilinx_versions.get)
