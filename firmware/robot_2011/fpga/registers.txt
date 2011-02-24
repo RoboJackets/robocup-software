@@ -1,0 +1,74 @@
+00-04   Motor 1-5
+    Write bits:
+        7      : Direction: 0=CW, 1=CCW
+        6-0    : Speed (0-127)
+    Reads return the hall-effect encoder count for each motor.
+
+08      Motor faults
+    Bits 7-5 R : Reserved
+           4 R : Motor 5 fault
+           3 R : Motor 4 fault
+           2 R : Motor 3 fault
+           1 R : Motor 2 fault
+           0 R : Motor 1 fault
+    
+    A fault is latched until a one is written into the corresponding bit.
+
+10      Radio SPI data
+
+11      Interrupts
+    Bits 7-2 R : Reserved, always zero
+           1 R : Radio GDO2
+           0 R : Radio GDO0
+    
+    A bit reads high if a positive edge has been detected.
+    Writing a one to a bit resets it.  Writing zero has no effect.
+
+12      Radio configuration
+    Bits 7-4 R : Reserved, always zero
+           3 R : SPI idle
+           2 R : GDO2
+           1 R : GDO0
+           0 RW: Radio select (active high)
+
+13      Switches
+    1=on, 0=off.
+    Bits 7-5 R : Reserved, always zero
+           4 R : Button
+         3-0 R : Switch status
+
+20      Kicker
+    Bits 7-0  W: Pulse duration
+    Generates a kick pulse with every write
+        0=about 100us
+        255=about 6ms
+
+21      Kicker status and control
+    Bits 7-6 R : Reserved
+           5 RW: Select output: 1=chip, 0=kick
+           4 R : Charge disabled by button
+           3 RW: Charge enable
+           2 R : Charge active
+           1 R : Lockout (time after kick before kicker can be recharged)
+           0 R : Charge done
+
+30	Capture encoder counts (write)
+    Any write to this address causes the current encoder counts to be latched.
+    They may then be read from registers 0-3.
+
+30	Encoder 1 low (read)
+31	Encoder 1 high (read)
+32	Encoder 2 low (read)
+33	Encoder 2 high (read)
+34	Encoder 3 low (read)
+35	Encoder 3 high (read)
+36	Encoder 4 low (read)
+37	Encoder 4 high (read)
+
+FE      Test register (reserved address)
+    Any unused or write-only address, including this one, reads 0xc9.
+    Writes to read-only or unused addresses have no effect.
+
+FF      Test register
+    Contains the value 0xa5 after configuration.
+    Reads the last value written to this address.

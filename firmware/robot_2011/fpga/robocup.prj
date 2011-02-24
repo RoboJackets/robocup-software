@@ -1,0 +1,8 @@
+verilog work bldc.v
+verilog work half_bridge.v
+verilog work kicker.v
+verilog work hall_counter.v
+verilog work motor.v
+verilog work pwm.v
+verilog work encoder.v
+verilog work top.v

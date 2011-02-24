@@ -1,0 +1,55 @@
+#pragma once
+
+#include <stdint.h>
+
+// Failure flags
+enum
+{
+	// FPGA did not configure: FPGA bad, SPI flash bad, or SPI flash contents bad
+	Fail_FPGA_Config		= 0x00000001,
+	
+	// FPGA logic failed sanity check: faulty FPGA code
+	Fail_FPGA_Logic			= 0x00000002,
+	
+	// FPGA logic probably works but reports incompatible version: SPI flash not in sync with ARM flash
+	Fail_FPGA_Version		= 0x00000004,
+	
+	// Can't talk to radio at all: bad radio or SPI contention
+	Fail_Radio_Interface	= 0x00000010,
+	
+	// Radio interrupt line is stuck low: probable solder bridge
+	Fail_Radio_Int_Low		= 0x00000020,
+	
+	// Radio interrupt line is stuck high: probable solder bridge
+	Fail_Radio_Int_High		= 0x00000040,
+	
+	// Battery too low for driving
+	Fail_Undervoltage		= 0x00000100,
+	
+	// Supply voltage too high (battery resistance or braking current too high?)
+	Fail_Overvoltage		= 0x00000200,
+	
+	// Motor fuse is blown
+	Fail_Fuse				= 0x00000400,
+};
+
+// Motor numbers
+// Drive motors 0-3 are labelled M1-M4 on the board.
+enum
+{
+	Motor_Back_Left		= 0,
+	Motor_Front_Left	= 1,
+	Motor_Front_Right	= 2,
+	Motor_Back_Right	= 3,
+	Motor_Dribbler		= 4
+};
+
+// Failure categories
+#define Fail_FPGA	(Fail_FPGA_Config | Fail_FPGA_Logic | Fail_FPGA_Version)
+#define Fail_Radio	(Fail_Radio_Interface | Fail_Radio_Int_Low | Fail_Radio_Int_High)
+#define Fail_Power	(Fail_Undervoltage | Fail_Overvoltage | Fail_Fuse)
+
+extern unsigned int failures;
+
+// Bits 0-4 correspond to motors 0-4 (see Motor_* above).
+extern uint8_t motor_faults;

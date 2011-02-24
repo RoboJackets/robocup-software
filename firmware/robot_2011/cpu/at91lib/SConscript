@@ -1,0 +1,16 @@
+Import('arm')
+
+at91lib = arm.StaticLibrary('at91lib', [
+	'usb/common/core/USBConfigurationDescriptor.c',
+	'usb/device/cdc-serial/CDCDSerialDriverDescriptors.c',
+	'usb/device/cdc-serial/CDCDSerialDriver.c',
+	'usb/device/core/USBDDriver.c',
+	'usb/device/core/USBD_UDP.c',
+	'utility/stdio.c',
+	'utility/string.c',
+	'boards/robocup/board_lowlevel.c',
+	'boards/robocup/board_memories.c'
+])
+
+start = File('boards/robocup/board_cstartup.S')
+Return(('at91lib', 'start'))
