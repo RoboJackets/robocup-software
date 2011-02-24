@@ -8,178 +8,47 @@
 #include "LCD_driver.h"
 #include "button.h"
 
-enum
-{
-    Menu_Trigger,
-    Menu_Period,
-    Menu_Time_On,
-    Menu_Burst_Mode,
-    Menu_Burst_Count,
-    Menu_Velocity,
-    Menu_DTime,
-    Menu_Distance,
-    Menu_Off,
-    
-    Num_Menu_Items
-};
+// Distance between sensor centers in mm
+#define SENSOR_DISTANCE 25
 
-uint8_t input_max[] = {6, 5, 5, 3, 5};
-uint8_t input_buf[5];
-uint8_t input_pos;
-
-uint16_t period = 10000;
-uint16_t on_time = 1000;
-    
 // Additional 8 bits to augment timer 0
 uint16_t tcnt0_high;
 
 // Nonzero when t0tr_high wraps
 uint8_t tcnt0_overflow;
 
-// Distance between sensor centers in mm
-uint16_t speed_distance = 25;
-
-// Set after both sensors have been triggered
-#define SPEED_DONE  1
-// Prevents speed_dtime from being changed
-#define SPEED_HOLD  2
-volatile uint8_t speed_flags = 0;       // Combination of SPEED_* above
-
-// If nonzero, use burst_count
-volatile char burst = 1;
-volatile uint16_t burst_remaining = 0;
-uint16_t burst_count = 1;
-
-void input_move(uint8_t new_pos)
+enum
 {
-    lcd_putc(input_pos, input_buf[input_pos] + '0');
-    input_pos = new_pos;
-    lcd_putc(input_pos, input_buf[input_pos] + '0' + 0x80);
-    lcd_update();
-    lcd_flash_off();
+	SPEED_IDLE,			// Waiting for first beam to be broken
+	SPEED_FIRST_HIT,	// First beam is broken
+	SPEED_SECOND_HIT,	// Second beam is broken
+	SPEED_DONE,			// Cleared second beam
+	SPEED_ERROR			// Unexpected condition
+};
+
+volatile uint8_t speed_state = SPEED_IDLE;
+
+void clear_display()
+{
+	lcd_puts_r(PSTR("-- ---"));
 }
 
-uint16_t input_value()
+void power_off()
 {
-    uint8_t i;
-    uint16_t value = 0;
-    
-    for (i = 0; i < 5; ++i)
-    {
-        value = value * 10 + input_buf[i];
-    }
-    
-    return value;
-}
+	// Turn off LEDs
+	PORTE &= ~(1 << 6);
 
-char input_set(uint8_t new_value, uint16_t min, uint16_t max)
-{
-    char ret = 1;
-    uint8_t old = input_buf[input_pos];
-    input_buf[input_pos] = new_value;
-    
-    // Revert if the new value is greater than the maximum value
-    uint8_t i;
-    for (i = 0; i < 5; ++i)
-    {
-        if (input_buf[i] < input_max[i])
-        {
-            break;
-        } else if (input_buf[i] > input_max[i])
-        {
-            input_buf[input_pos] = old;
-            ret = 0;
-        }
-    }
-    
-    uint16_t value = input_value();
-    if (value < min || value > max)
-    {
-        input_buf[input_pos] = old;
-        ret = 0;
-    }
-    
-    lcd_putc(input_pos, input_buf[input_pos] + '0' + 0x80);
-    lcd_update();
-    
-    return ret;
-}
-
-uint16_t input_number(uint16_t value, uint16_t min, uint16_t max, void (*update)(uint16_t))
-{
-    char i;
-    
-    lcd_clear();
-    
-    for (i = 4; i >= 0; --i)
-    {
-        input_buf[(uint8_t)i] = value % 10;
-        value /= 10;
-    }
-    
-    for (i = 0; i < 5; ++i)
-    {
-        lcd_putc(i, input_buf[(uint8_t)i] + '0');
-    }
-    
-    lcd_update();
-    
-    input_move(0);
-    
-    while (1)
-    {
-        char ch = getch();
-        uint8_t cur = input_buf[input_pos];
-        switch (ch)
-        {
-            case KEY_LEFT:
-                if (input_pos)
-                {
-                    input_move(input_pos - 1);
-                }
-                break;
-            
-            case KEY_RIGHT:
-                if (input_pos < 4)
-                {
-                    input_move(input_pos + 1);
-                }
-                break;
-            
-            case KEY_UP:
-                if (cur < 9)
-                {
-                    if (input_set(cur + 1, min, max) && update)
-                    {
-                        update(input_value());
-                    }
-                }
-                break;
-            
-            case KEY_DOWN:
-                if (cur > 0)
-                {
-                    if (input_set(cur - 1, min, max) && update)
-                    {
-                        update(input_value());
-                    }
-                }
-                break;
-            
-            case KEY_CENTER:
-                return input_value();
-        }
-    }
-}
-
-void sleep()
-{
     // Disable LCD
     LCDCRA &= ~(1 << 7);
 
+    while ((PINB & 0xd0) != 0xd0 || (PINE & 0x0c) != 0x0c)
+    {
+		Delay(100);
+	}
+
     set_sleep_mode(SLEEP_MODE_PWR_SAVE);
 
-    while (PINB & 0x40)
+    while ((PINB & 0xd0) == 0xd0 && (PINE & 0x0c) == 0x0c)
     {
         sleep_mode();
     }
@@ -193,29 +62,12 @@ void sleep()
     
     // Enable LCD
     LCDCRA |= 1 << 7;
-}
 
-void set_period(uint16_t value)
-{
-    TCCR1B &= ~7;
-    
-    // Set TOP
-    ICR1H = value >> 8;
-    ICR1L = value;
-    
-    // Make the timer overflow on the next count
-    // so the output will turn on.
-    --value;
-    TCNT1H = value >> 8;
-    TCNT1L = value;
-    
-    TCCR1B |= 1;
-}
+	// Turn on LEDs
+	PORTE |= 1 << 6;
 
-void set_on_time(uint16_t value)
-{
-    OCR1AH = value >> 8;
-    OCR1AL = value;
+	clear_display();
+	speed_state = SPEED_IDLE;
 }
 
 ISR(TIMER0_OVF_vect)
@@ -227,79 +79,97 @@ ISR(TIMER0_OVF_vect)
     }
 }
 
-ISR(TIMER1_COMPA_vect)
+void timer_start()
 {
-    if (burst)
-    {
-        burst_remaining--;
-        if (burst_remaining == 0)
-        {
-            // Stop timer 1
-            TCCR1B &= ~7;
-        }
-    }
-}
-
-void burst_trigger()
-{
-    if (burst_count)
-    {
-        burst_remaining = burst_count;
-        
-        set_period(period);
-        /*
-        // Make the counter overflow so the output will go high
-        // (the output only goes high when the timer resets to zero
-        // while counting).
-        TCNT1H = 0xff;
-        TCNT1L = 0xff;
-        
-        TCCR1B |= 1;*/
-    } else {
-        burst_remaining = 0;
-    }
+	tcnt0_overflow = 0;
+    tcnt0_high = 0;
+    TCNT0 = 0;
+    TCCR0A = 1;
 }
 
 void speed_interrupt()
 {
-    if (!(PINE & (1 << 4)))
-    {
-        // Start
-        //
-        // Reset and start the timer if we haven't finished a reading
-        // or we are replacing one.
-        if (TCCR0A == 0 && (!(speed_flags & SPEED_DONE) || !(speed_flags & SPEED_HOLD)))
-        {
-            speed_flags &= ~SPEED_DONE;
-            tcnt0_overflow = 0;
-            tcnt0_high = 0;
-            TCNT0 = 0;
-            TCCR0A = 1;
-        }
-    }
-    
-    if (!(PINE & (1 << 5)))
-    {
-        // Stop
-        if (TCCR0A)
-        {
-            TCCR0A = 0;
-            speed_flags |= SPEED_DONE;
-        }
-    }
+	// Nonzero if first beam is broken
+	uint8_t first = PINE & (1 << 4);
+
+	// Nonzero if second beam is broken
+	uint8_t second = PINE & (1 << 5);
+
+	switch (speed_state)
+	{
+		case SPEED_IDLE:
+		case SPEED_DONE:
+		case SPEED_ERROR:
+			if (second)
+			{
+				speed_state = SPEED_ERROR;
+			} else if (first)
+			{
+				timer_start();
+				speed_state = SPEED_FIRST_HIT;
+			}
+			break;
+
+		case SPEED_FIRST_HIT:
+			if (second)
+			{
+				TCCR0A = 0;
+				speed_state = SPEED_SECOND_HIT;
+			}
+			break;
+
+		case SPEED_SECOND_HIT:
+			if (!second && !first)
+			{
+				speed_state = SPEED_DONE;
+			}
+			break;
+	}
 }
 
-void show_velocity(uint8_t time_only)
+int main()
 {
-    // Keep speed readings until they are displayed
-    speed_flags |= SPEED_HOLD;
+	//FIXME - On SPEED_DONE, start beeping and go to SPEED_IDLE.
+	//		Beep timer
+	//		Auto power off timer
+    Initialization();
+
+	// LED enable
+	DDRE |= 0x40;
+	// Pullups on phototransistors
+	PORTE |= 0x30;
+
+    // Timer 0 is used for break-beam timing
+    TCCR0A = 0;
+    TIMSK0 = 1;
     
-    lcd_puts_r(PSTR("-- ---"));
+	power_off();
 
     while (1)
     {
-        if (speed_flags & SPEED_DONE)
+		set_sleep_mode(SLEEP_MODE_IDLE);
+		sleep_mode();
+
+		switch (getkey())
+		{
+			case KEY_DOWN:
+				// Power off
+				power_off();
+				break;
+
+			case KEY_UP:
+				// Clear display
+				if (speed_state == SPEED_DONE || speed_state == SPEED_ERROR)
+				{
+					speed_state = SPEED_IDLE;
+				}
+				clear_display();
+				break;
+		}
+
+        if (speed_state == SPEED_DONE)
         {
+			// Display last speed
             if (tcnt0_overflow)
             {
                 tcnt0_overflow = 0;
@@ -310,15 +180,7 @@ void show_velocity(uint8_t time_only)
                 
                 // Velocity in mm/s
                 // v(mm/s) = d(mm) / (t(us) / 1e6)
-                uint32_t v;
-                
-                if (time_only)
-                {
-                    v = dtime / 1000;
-                } else {
-                    v = speed_distance * 1000000 / dtime;
-                }
-                
+                uint32_t v = SENSOR_DISTANCE * 1000000 / dtime;
                 if (v > 99999)
                 {
                     lcd_puts_r(PSTR("FAST"));
@@ -341,173 +203,13 @@ void show_velocity(uint8_t time_only)
                     lcd_update();
                 }
             }
-            
-            // Allow another measurement
-            speed_flags &= ~SPEED_DONE;
-        }
-        
-        char ch = getkey();
-        
-        switch (ch)
-        {
-            case KEY_CENTER:
-            case KEY_LEFT:
-                // Exit
-                speed_flags &= ~SPEED_HOLD;
-                return;
-            
-            case KEY_RIGHT:
-                // Trigger
-                burst = 1;
-                burst_trigger();
-                break;
-            
-            case KEY_UP:
-            case KEY_DOWN:
-                // Reset
-                TCCR0A = 0;
-                TCNT0 = 0;
-                tcnt0_overflow = 0;
-                lcd_puts_r(PSTR("-- ---"));
-                break;
-        }
-    }
-}
-
-int main()
-{
-    Initialization();
-
-    cli();
-    
-    set_period(period);
-    set_on_time(on_time);
-    
-    // WGM mode 14
-    TCCR1A = 0x82;
-    TCCR1B = 0x18;
-    TCCR1C = 0x00;
-    TIMSK1 = 0x02;
-    sei();
-    
-    // Timer 0 is used for break-beam timing
-    TCCR0A = 0;
-    TIMSK0 = 1;
-    
-    uint8_t cur = 0;
-    
-    while (1)
-    {
-        switch (cur)
-        {
-            case Menu_Period:
-                lcd_puts_r(PSTR("PERIOD"));
-                break;
-            
-            case Menu_Time_On:
-                lcd_puts_r(PSTR("T-ON"));
-                break;
-            
-            case Menu_Trigger:
-                lcd_puts_r(PSTR("TRIG"));
-                break;
-                
-            case Menu_Burst_Mode:
-                if (burst)
-                {
-                    lcd_puts_r(PSTR("BURST"));
-                } else {
-                    lcd_puts_r(PSTR("CONT"));
-                }
-                break;
-                
-            case Menu_Burst_Count:
-                lcd_puts_r(PSTR("COUNT"));
-                break;
-            
-            case Menu_Velocity:
-                lcd_puts_r(PSTR("V M/S"));
-                break;
-                
-            case Menu_DTime:
-                lcd_puts_r(PSTR("^TIME"));
-                break;
-                
-            case Menu_Distance:
-                lcd_puts_r(PSTR("D MM"));
-                break;
-            
-            case Menu_Off:
-                lcd_puts_r(PSTR("Off"));
-                break;
-        }
-        
-        char k = getch();
-        switch (k)
-        {
-            case KEY_UP:
-                if (cur)
-                {
-                    cur--;
-                } else {
-                    cur = Num_Menu_Items - 1;
-                }
-                break;
-                
-            case KEY_DOWN:
-                if (cur < (Num_Menu_Items - 1))
-                {
-                    cur++;
-                } else {
-                    cur = 0;
-                }
-                break;
-                
-            case KEY_CENTER:
-            case KEY_RIGHT:
-                switch (cur)
-                {
-                    case Menu_Period:
-                        period = input_number(period, 1, 65535, set_period);
-                        break;
-                
-                    case Menu_Time_On:
-                        on_time = input_number(on_time, 1, 65535, set_on_time);
-                        break;
-                    
-                    case Menu_Burst_Mode:
-                        burst ^= 1;
-                        burst_trigger();
-                        break;
-                    
-                    case Menu_Burst_Count:
-                        burst_count = input_number(burst_count, 1, 65535, 0);
-                        break;
-                        
-                    case Menu_Trigger:
-                        burst = 1;
-                        burst_trigger();
-                        break;
-                        
-                    case Menu_Velocity:
-                        show_velocity(0);
-                        break;
-                    
-                    case Menu_DTime:
-                        show_velocity(1);
-                        break;
-                    
-                    case Menu_Distance:
-                        speed_distance = input_number(speed_distance, 1, 1000, 0);
-                        break;
-                        
-                    case Menu_Off:
-                        sleep();
-                        cur = 0;
-                        break;
-                }
-                break;
-        }
+        } else if (speed_state == SPEED_ERROR)
+		{
+			lcd_puts_r(PSTR("ERROR"));
+		} else {
+			// Measurement in progress
+			clear_display();
+		}
     }
 }
 
@@ -536,12 +238,6 @@ void Initialization(void)
 
     // Disable Digital input on PF0-2 (power save)
     DIDR0 = (7<<ADC0D);
-
-    PORTB = (15<<PB0);       // Enable pullup on 
-    PORTE = (15<<PE4);
-
-    DDRB |= 1 << 5;               // set OC1A as output
-    PORTB = 0;
 
     Button_Init();              // Initialize pin change interrupt on joystick
     lcd_init();                 // initialize the LCD

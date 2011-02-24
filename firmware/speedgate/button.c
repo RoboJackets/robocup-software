@@ -109,7 +109,7 @@ void PinChangeInterrupt(void)
         }
     }
 
-    EIFR = (1<<PCIF1) | (1<<PCIF0);     // Clear pin change interrupt flags
+//    EIFR = (1<<PCIF1) | (1<<PCIF0);     // Clear pin change interrupt flags
 }
 
 ISR(PCINT0_vect)
