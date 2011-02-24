@@ -19,18 +19,24 @@ uint8_t tcnt0_overflow;
 
 enum
 {
-	SPEED_IDLE,			// Waiting for first beam to be broken
-	SPEED_FIRST_HIT,	// First beam is broken
-	SPEED_SECOND_HIT,	// Second beam is broken
-	SPEED_DONE,			// Cleared second beam
-	SPEED_ERROR			// Unexpected condition
+	SPEED_IDLE,			// Waiting for any beam to be broken
+
+	// Object moving from first to second beam
+	SPEED_FWD_FIRST,	// First beam is broken, forward direction
+	SPEED_FWD_SECOND,	// Second beam is broken, forward direction
+	SPEED_FWD_DONE,		// Cleared second beam
+
+	// Object moving from second to first beam
+	SPEED_REV_SECOND,	// Second beam broken, reverse direction
+	SPEED_REV_FIRST,	// First beam broken, reverse direction
+	SPEED_REV_DONE		// Cleared first beam
 };
 
 volatile uint8_t speed_state = SPEED_IDLE;
 
 void clear_display()
 {
-	lcd_puts_r(PSTR("-- ---"));
+	lcd_puts_r(PSTR(" -----"));
 }
 
 void power_off()
@@ -98,30 +104,46 @@ void speed_interrupt()
 	switch (speed_state)
 	{
 		case SPEED_IDLE:
-		case SPEED_DONE:
-		case SPEED_ERROR:
+		case SPEED_FWD_DONE:
+		case SPEED_REV_DONE:
 			if (second)
 			{
-				speed_state = SPEED_ERROR;
+				timer_start();
+				speed_state = SPEED_REV_SECOND;
 			} else if (first)
 			{
 				timer_start();
-				speed_state = SPEED_FIRST_HIT;
+				speed_state = SPEED_FWD_FIRST;
 			}
 			break;
 
-		case SPEED_FIRST_HIT:
+		case SPEED_FWD_FIRST:
 			if (second)
 			{
 				TCCR0A = 0;
-				speed_state = SPEED_SECOND_HIT;
+				speed_state = SPEED_FWD_SECOND;
 			}
 			break;
 
-		case SPEED_SECOND_HIT:
+		case SPEED_FWD_SECOND:
 			if (!second && !first)
 			{
-				speed_state = SPEED_DONE;
+				speed_state = SPEED_FWD_DONE;
+			}
+			break;
+
+		case SPEED_REV_SECOND:
+			if (first)
+			{
+				TCCR0A = 0;
+				speed_state = SPEED_REV_FIRST;
+			}
+			break;
+
+		case SPEED_REV_FIRST:
+			if (!second && !first)
+			{
+				speed_state = SPEED_REV_DONE;
 			}
 			break;
 	}
@@ -159,7 +181,7 @@ int main()
 
 			case KEY_UP:
 				// Clear display
-				if (speed_state == SPEED_DONE || speed_state == SPEED_ERROR)
+				if (speed_state == SPEED_FWD_DONE || speed_state == SPEED_REV_DONE)
 				{
 					speed_state = SPEED_IDLE;
 				}
@@ -167,7 +189,7 @@ int main()
 				break;
 		}
 
-        if (speed_state == SPEED_DONE)
+        if (speed_state == SPEED_FWD_DONE || speed_state == SPEED_REV_DONE)
         {
 			// Display last speed
             if (tcnt0_overflow)
@@ -193,19 +215,19 @@ int main()
                         uint8_t digit = v % 10;
                         v /= 10;
                         
-                        if (i < 3)
-                        {
-                            lcd_putc(5 - i, '0' + digit);
-                        } else {
-                            lcd_putc(4 - i, '0' + digit);
-                        }
+                        lcd_putc(5 - i, '0' + digit);
                     }
+
+					if (speed_state == SPEED_FWD_DONE)
+					{
+						lcd_putc(0, '>');
+					} else {
+						lcd_putc(0, '<');
+					}
+
                     lcd_update();
                 }
             }
-        } else if (speed_state == SPEED_ERROR)
-		{
-			lcd_puts_r(PSTR("ERROR"));
 		} else {
 			// Measurement in progress
 			clear_display();

@@ -3,10 +3,10 @@ This is a two-beam speed sensor based on the AVR Butterfly.
 When power is applied, the speedgate is off.  Press the joystick in any direction to turn it on.
 When running, press UP to clear the display or DOWN to power off.
 Speeds are displayed in mm/s, with a space separating meters from millimeters.
+The first character in a measurement is an arrow indicating the direction the object was moving.
 
 Displays:
-	-- ----		Measurement not started or in progress
-	ERROR		Beams broken in wrong order
+	------		Measurement not started or in progress
 	SLOW		Object too slow to measure (probable invalid measurement)
 	FAST		Object too fast to measure (probable jittery input)
 

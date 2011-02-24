@@ -80,9 +80,9 @@ unsigned int LCD_character_table[] PROGMEM =
     0x1b51,     // '9'
     0x0000,     // ':' (Not defined)
     0x0000,     // ';' (Not defined)
-    0x8008,     // '<'
+    0x8208,     // '<'
     0x1a00,     // '='
-    0x4020,     // '>'
+    0x4820,     // '>'
     0x2851,     // '?'
     0x0000,     // '@' (Not defined)
     0x0f51,     // 'A' (+ 'a')
