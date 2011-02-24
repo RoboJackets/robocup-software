@@ -1,0 +1,27 @@
+Import('*')
+
+project = 'speedgate'
+
+avr_m169p = avr.Clone()
+avr_m169p.Append(DEVICE='atmega169p')
+avr_m169p.Append(CFLAGS='-mmcu=${DEVICE}')
+avr_m169p.Append(LINKFLAGS='-mmcu=${DEVICE}')
+
+def generate_bin(source, target, env, for_signature):
+	return 'avr-objcopy -O binary %s %s'%(source[0], target[0])
+
+avr_m169p.Append(BUILDERS={'Binary': Builder(
+	generator=generate_bin,
+	suffix='.bin',
+	src_suffix='.elf')})
+
+avr_m169p.Program(project + '.elf',
+	['main.c',
+	'LCD_driver.c',
+	'button.c'])
+
+avr_m169p.Binary(project + '.bin', project + '.elf')
+
+avr_m169p.Alias(project + '-prog', project + '.bin', Action('avrdude -c stk500v2 -P /dev/ttyS1 -p m169 -U flash:w:${SOURCE}'))
+avr_m169p.AlwaysBuild(project + '-prog')
+
