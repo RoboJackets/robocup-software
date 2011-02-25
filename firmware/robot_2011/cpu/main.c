@@ -58,6 +58,9 @@ uint8_t dribble;
 uint32_t rx_lost_time;
 int8_t last_rssi;
 
+// Most recent detector readings for LED on and off
+uint16_t ball_sense_light, ball_sense_dark;
+
 // Time the motor outputs were last updated
 unsigned int motor_time;
 
@@ -490,6 +493,26 @@ static void cmd_fail(int argc, const char *argv[], void *arg)
 	failures = parse_uint32(argv[0]);
 }
 
+static void cmd_adc(int argc, const char *argv[], void *arg)
+{
+	for (int i = 0; i < 8; ++i)
+	{
+		if (i == 3)
+		{
+			// PA20 is not assigned to AD3
+			continue;
+		}
+		printf("%d: 0x%03x\n", i, *(&AT91C_BASE_ADC->ADC_CDR0 + i));
+	}
+}
+
+static void cmd_ball(int argc, const char *argv[], void *arg)
+{
+	printf("Light: 0x%03x\n", ball_sense_light);
+	printf("Dark:  0x%03x\n", ball_sense_dark);
+	printf("Delta: 0x%03x\n", ball_sense_light - ball_sense_dark);
+}
+
 static const write_int_t write_fpga_off = {&AT91C_BASE_PIOA->PIO_CODR, MCU_PROGB};
 static const write_int_t write_reset = {AT91C_RSTC_RCR, 0xa5000005};
 static const write_int_t write_run = {&run_robot, 1};
@@ -524,6 +547,8 @@ const command_t commands[] =
 	{"music", cmd_music},
 	{"tone", cmd_tone},
 	{"fail", cmd_fail},
+	{"adc", cmd_adc},
+	{"ball", cmd_ball},
 
 	// End of list placeholder
 	{0, 0}
@@ -941,10 +966,10 @@ int main()
 	AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOA;	// Turn on PIO clock
 	AT91C_BASE_PIOA->PIO_OWER = LED_ALL;			// Allow LED states to be written directly
 	AT91C_BASE_PIOA->PIO_ODR = ~0;					// Disable all outputs
-	AT91C_BASE_PIOA->PIO_CODR = LED_ALL;			// Turn all LEDs on
-	AT91C_BASE_PIOA->PIO_OER = LED_ALL | BUZZ;		// Enable LED outputs
+	AT91C_BASE_PIOA->PIO_CODR = LED_ALL | BALL_LED;	// Turn on all LEDs except the ball sense LED
+	AT91C_BASE_PIOA->PIO_OER = LED_ALL | BUZZ | BALL_LED;	// Enable outputs
 	// Connect some pins to the PIO controller
-	AT91C_BASE_PIOA->PIO_PER = LED_ALL | MCU_PROGB | FLASH_NCS | RADIO_INT | VBUS;
+	AT91C_BASE_PIOA->PIO_PER = LED_ALL | MCU_PROGB | FLASH_NCS | RADIO_INT | VBUS | BALL_LED;
 	// Enable and disable pullups
 	AT91C_BASE_PIOA->PIO_PPUER = RADIO_INT | FLASH_NCS | MISO | ID0 | ID1 | ID2 | ID3 | DP0 | DP1 | DP2;
 	AT91C_BASE_PIOA->PIO_PPUDR = VBUS | M2DIV | M3DIV | M5DIV | BUZZ;
@@ -1098,6 +1123,19 @@ int main()
 			if (failures & Fail_Power)
 			{
 				run_robot = 0;
+			}
+			
+			// Update the ball sensor and toggle its LED.
+			// Invert the data so increasing values indicate increasing light.
+			if (AT91C_BASE_PIOA->PIO_ODSR & BALL_LED)
+			{
+				// LED was on
+				ball_sense_light = 0x3ff - AT91C_BASE_ADC->ADC_CDR4;
+				AT91C_BASE_PIOA->PIO_CODR = BALL_LED;
+			} else {
+				// LED was off
+				ball_sense_dark = 0x3ff - AT91C_BASE_ADC->ADC_CDR4;
+				AT91C_BASE_PIOA->PIO_SODR = BALL_LED;
 			}
 			
 			// Start a new set of ADC conversions
