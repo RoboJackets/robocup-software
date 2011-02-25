@@ -32,10 +32,6 @@ newlib_url = '%s/%s' % (mirror_newlib, newlib_file)
 
 target = 'arm-elf'
 
-def HashDecider(dep, target, prev_ni):
-	print '--- here'
-	return False
-
 # Build packages
 def BuildPackage(dir, filename, size, url, config_options):
 	dl_target = downloads_dir.File(filename)
@@ -95,7 +91,7 @@ Alias('arm-toolchain', ['arm-binutils', 'arm-gcc', 'arm-newlib'])
 
 # To remove the installed files, you must clean all of the toolchain.
 # The packages do not provide any way to uninstall files.
-Clean('.', Dir('install'))
+Clean('arm-toolchain', Dir('install'))
 
 # ARM build environment
 arm = host_env.Clone()
@@ -109,10 +105,14 @@ arm.Append(BUILDERS={'Binary': Builder(
 # Add a dependency on the complete toolchain to every object
 def ArmEmitter(target, source, env):
 	for s in source:
-		env.Depends(s, build_newlib)
+		env.Depends(s, 'arm-toolchain')
 	return (target, source)
-arm.AppendUnique(PROGEMITTER=ArmEmitter)
-arm.AppendUnique(LIBEMITTER=ArmEmitter)
+if not GetOption('clean'):
+	# Doing this all the time causes the toolchain to be cleaned whenever a target built with it is cleaned.
+	#
+	# We are subverting scons' automatic cleaning: build the toolchain when building targets that need it,
+	# but only clean it if explicitly instructed to do so on the command line.
+	arm.AppendUnique(PROGEMITTER=ArmEmitter)
+	arm.AppendUnique(LIBEMITTER=ArmEmitter)
 
 Return('arm')
-
