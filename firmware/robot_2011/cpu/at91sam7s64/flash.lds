@@ -28,7 +28,7 @@
  */
 
 /*------------------------------------------------------------------------------
- *      Linker script for running in internal Flash on the AT91SAM7S512.
+ *      Linker script for running in internal Flash on the AT91SAM7S64.
  *----------------------------------------------------------------------------*/
 
 OUTPUT_FORMAT("elf32-littlearm", "elf32-littlearm", "elf32-littlearm")
@@ -37,8 +37,8 @@ ENTRY(entry)
 
 MEMORY
 {
-    sram (W!RX) : ORIGIN = 0x200000, LENGTH = 0x10000
-    flash (RX) : ORIGIN = 0x100000, LENGTH = 0x80000
+    sram (W!RX) : ORIGIN = 0x200000, LENGTH = 0x4000
+    flash (RX) : ORIGIN = 0x100000, LENGTH = 0x10000
 }
 
 SECTIONS
@@ -47,9 +47,14 @@ SECTIONS
     {
         . = ALIGN(4);
         _sfixed = .;
+		*(.startup)
         *(.text*)
         *(.rodata*)
         . = ALIGN(4);
+		_sbuild_id = .;
+		*(.note.gnu.build-id)
+        . = ALIGN(4);
+		_ebuild_id = .;
         _efixed = .;
     } >flash
 
@@ -60,18 +65,42 @@ SECTIONS
         *(.vectors)
         *(.ramfunc)
         *(.data)
+		
+		/* Reflashing code is stored in flash after relocate when not in use, but will be
+		* copied to SRAM.  It doesn't actually matter where in SRAM this goes
+		* as long as it doesn't hit the stack.  When reflash runs, the rest
+		* of the system is unrecoverable and interrupts are off so collisions
+		* (except for the stack) are irrelevant.
+		* 
+		* FIXME - This keeps reflash in RAM all the time.  I want it to overlap data/bss
+		* so we don't waste space when not reflashing.  Can you force ld to overlap?
+		*/
+		*(.reflash)
+		
         . = ALIGN(4);
         _erelocate = .;
     } >sram
 
+/*
+	.reflash : AT(_efixed + _erelocate - _srelocate)
+	{
+        . = ALIGN(4);
+		_sreflash = .;
+		*(.reflash)
+		. = ALIGN(4);
+		_ereflash = .;
+	} >sram
+	*/
+	
     .bss (NOLOAD) : {
         _szero = .;
         *(.bss)
+		*(COMMON)
         . = ALIGN(4);
         _ezero = .;
     } >sram
     
-    _sstack = 0x210000;
+    _sstack = 0x204000;
 }
 end = .;
 

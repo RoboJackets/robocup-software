@@ -459,7 +459,7 @@ static void cmd_music(int argc, const char *argv[], void *arg)
 	int n;
 	if (argc != 1 || (n = parse_uint32(argv[0])) >= NUM_TEST_SONGS)
 	{
-		printf("music <0-%d>\n", (int)NUM_TEST_SONGS);
+		printf("music <0-%d>\n", (int)NUM_TEST_SONGS - 1);
 		return;
 	}
 	

@@ -1,3 +1,4 @@
+		.section .startup
 		.global entry
 entry:
 		/* SAM-BA doesn't expect to regain control, but fixing the stack makes it work

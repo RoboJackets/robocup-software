@@ -55,6 +55,7 @@ SECTIONS
     .fixed :
     {
         _sfixed = .;
+		*(.startup)
         *(.text*)
 		*(.reflash)
         *(.ramfunc)
