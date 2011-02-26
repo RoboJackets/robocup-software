@@ -58,11 +58,21 @@ uint8_t dribble;
 uint32_t rx_lost_time;
 int8_t last_rssi;
 
-// Most recent detector readings for LED on and off
-uint16_t ball_sense_light, ball_sense_dark;
+// Most recent detector readings for LED on and off.
+// The minimum value is zero (no light or broken detector wires).
+// The maximum value is 0x3ff (very bright light or shorted detector wires).
+int ball_sense_light, ball_sense_dark;
 
-// Time the motor outputs were last updated
-unsigned int motor_time;
+// Time the ball status LED was last toggled while flashing
+unsigned int last_ball_flash_time;
+
+// Last time the 5ms periodic code was executed
+unsigned int update_time;
+
+// Ball sensor result:
+// Nonzero if we are confident that we have the ball.
+// Zero if we don't have the ball or the ball sensor is suspect.
+int have_ball;
 
 // Raw power supply voltage measurements:
 // Last, minimum since reset, maximum since reset
@@ -74,6 +84,10 @@ int supply_good_time;
 int disable_power_music;
 
 int hack;
+
+// Most recent ADC conversion results.
+// Read from here instead of ADC registers.
+uint16_t adc[8];
 
 int fpga_init();
 
@@ -160,6 +174,10 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	if (failures & Fail_Power)
 	{
 		printf(" Power");
+	}
+	if (failures & Fail_Ball)
+	{
+		printf(" BallSense");
 	}
 	putchar('\n');
 	
@@ -495,6 +513,9 @@ static void cmd_fail(int argc, const char *argv[], void *arg)
 
 static void cmd_adc(int argc, const char *argv[], void *arg)
 {
+	printf("0x%08x\n", AT91C_BASE_ADC->ADC_CHSR);
+	printf("0x%08x\n", AT91C_BASE_ADC->ADC_MR);
+	printf("0x%08x\n", AT91C_BASE_ADC->ADC_SR);
 	for (int i = 0; i < 8; ++i)
 	{
 		if (i == 3)
@@ -502,8 +523,11 @@ static void cmd_adc(int argc, const char *argv[], void *arg)
 			// PA20 is not assigned to AD3
 			continue;
 		}
-		printf("%d: 0x%03x\n", i, *(&AT91C_BASE_ADC->ADC_CDR0 + i));
+		printf("%d: 0x%03x\n", i, adc[i]);
 	}
+	
+	if (argc)
+		AT91C_BASE_ADC->ADC_CR = AT91C_ADC_START;
 }
 
 static void cmd_ball(int argc, const char *argv[], void *arg)
@@ -626,7 +650,7 @@ good:
 static int forward_packet_received()
 {
 	uint8_t bytes = radio_read(RXBYTES);
-	AT91C_BASE_PIOA->PIO_ODSR ^= LED_RY;
+	LED_TOGGLE(LED_RY);
 	
 	if (bytes != (Forward_Size + 2))
 	{
@@ -662,8 +686,8 @@ static int forward_packet_received()
 	}
 	
 	rx_lost_time = current_time;
-	AT91C_BASE_PIOA->PIO_ODSR ^= LED_RG;
-	AT91C_BASE_PIOA->PIO_SODR = LED_RR;
+	LED_TOGGLE(LED_RG);
+	LED_OFF(LED_RR);
 	
 // 	uint8_t reverse_id = forward_packet[0] & 15;
 	
@@ -674,9 +698,9 @@ static int forward_packet_received()
 	uint8_t kick_id = forward_packet[1] & 15;
 	if (kick_id == robot_id && forward_packet[2])
 	{
-// 		AT91C_BASE_PIOA->PIO_CODR = LED_RY;
+// 		LED_ON(LED_RY);
 	} else {
-// 		AT91C_BASE_PIOA->PIO_SODR = LED_RY;
+// 		LED_OFF(LED_RY);
 	}
 	
 	// Kick/chip selection
@@ -841,14 +865,14 @@ static void check_usb_connection()
 }
 
 // Called every update cycle to check for power failures
-static void check_power()
+static void update_power()
 {
 	// Power failures are latched until reset.
 	// Undervoltage could disappear briefly when load is removed, but the battery is still weak.
 	// Overvoltage indicates a hardware failure  (caps, TVS, battery resistance, etc.) or a design flaw that
 	// seriously needs to be fixed.
 	
-	supply_raw = AT91C_BASE_ADC->ADC_CDR5;
+	supply_raw = adc[5];
 	
 	if (supply_raw < FUSE_BLOWN_RAW)
 	{
@@ -897,6 +921,13 @@ static void check_power()
 			supply_max = supply_raw;
 		}
 	}
+	
+	// Stop driving if there is a power supply problem
+	if (failures & Fail_Power)
+	{
+		run_robot = 0;
+	}
+	
 }
 
 // Called every main loop iteration to restart power-failure music
@@ -917,6 +948,87 @@ static void power_fail_music()
 		} else if (failures & Fail_Undervoltage)
 		{
 			music_start(song_undervoltage);
+		}
+	}
+}
+
+void update_ball_sensor()
+{
+	// Update the ball sensor and toggle its LED.
+	// Invert the data so increasing values indicate increasing light.
+	if (LED_IS_ON(BALL_LED))
+	{
+		// LED was on
+		ball_sense_light = 0x3ff - adc[4];
+		
+		// Check for emitter failure
+		//
+		// While the output is low, switch it to input.  If the LED is connected, it will
+		// quickly pull the pin high.  If the LED is open, the pin will stay low.
+		//
+		// I haven't found a way to also detect a shorted emitter without using another ADC
+		// channel, which we can't spare (to drive the LED directly it must be on PA0-3,
+		// none of which can be ADC inputs, and we don't have enough I/O to connect the LED to
+		// two pins).
+		AT91C_BASE_PIOA->PIO_CODR = BALL_LED;
+		AT91C_BASE_PIOA->PIO_ODR = BALL_LED;
+		if (!(AT91C_BASE_PIOA->PIO_PDSR & BALL_LED))
+		{
+			failures |= Fail_Ball_LED_Open;
+		} else {
+			failures &= ~Fail_Ball_LED_Open;
+		}
+		
+		// Drive the LED off
+		LED_OFF(BALL_LED);
+		
+		// Make the pin output again
+		AT91C_BASE_PIOA->PIO_OER = BALL_LED;
+	} else {
+		// LED was off
+		ball_sense_dark = 0x3ff - adc[4];
+		LED_ON(BALL_LED);
+	}
+	
+	// Check for detector failures and excessive ambient light
+	failures &= ~(Fail_Ball_Det_Open | Fail_Ball_Det_Short | Fail_Ball_Dazzled);
+	if (ball_sense_dark < 4 && ball_sense_light < 4)
+	{
+		// Detector is open and the pullup resistor pulled the ADC input to 3.3V
+		failures |= Fail_Ball_Det_Open;
+	} else if (ball_sense_dark == 0x3ff && ball_sense_light == 0x3ff)
+	{
+		// Detector is shorted so the ADC input is fixed at GND
+		failures |= Fail_Ball_Det_Short;
+	} else if (ball_sense_dark > 0x200)
+	{
+		// Too much outside light
+		//FIXME - The above number is arbitrary
+		failures |= Fail_Ball_Dazzled;
+	}
+	
+	// Update have_ball and the ball status LED
+	if (failures & Fail_Ball)
+	{
+		// The ball sensor is broken
+		have_ball = 0;
+		
+		// Flash the ball status LED
+		if ((current_time - last_ball_flash_time) >= 250)
+		{
+			last_ball_flash_time = current_time;
+			LED_TOGGLE(LED_LY);
+		}
+	} else {
+		// The ball sensor works, so determine if we have the ball
+		//FIXME - This number is arbitrary
+		have_ball = (ball_sense_light - ball_sense_dark) < 0x050;
+		
+		if (have_ball)
+		{
+			LED_ON(LED_LY);
+		} else {
+			LED_OFF(LED_LY);
 		}
 	}
 }
@@ -966,13 +1078,14 @@ int main()
 	AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOA;	// Turn on PIO clock
 	AT91C_BASE_PIOA->PIO_OWER = LED_ALL;			// Allow LED states to be written directly
 	AT91C_BASE_PIOA->PIO_ODR = ~0;					// Disable all outputs
-	AT91C_BASE_PIOA->PIO_CODR = LED_ALL | BALL_LED;	// Turn on all LEDs except the ball sense LED
+	AT91C_BASE_PIOA->PIO_CODR = LED_ALL;			// Turn on all LEDs
+	AT91C_BASE_PIOA->PIO_SODR = BALL_LED;			// Turn off ball sensor LED
 	AT91C_BASE_PIOA->PIO_OER = LED_ALL | BUZZ | BALL_LED;	// Enable outputs
 	// Connect some pins to the PIO controller
 	AT91C_BASE_PIOA->PIO_PER = LED_ALL | MCU_PROGB | FLASH_NCS | RADIO_INT | VBUS | BALL_LED;
 	// Enable and disable pullups
 	AT91C_BASE_PIOA->PIO_PPUER = RADIO_INT | FLASH_NCS | MISO | ID0 | ID1 | ID2 | ID3 | DP0 | DP1 | DP2;
-	AT91C_BASE_PIOA->PIO_PPUDR = VBUS | M2DIV | M3DIV | M5DIV | BUZZ;
+	AT91C_BASE_PIOA->PIO_PPUDR = VBUS | M2DIV | M3DIV | M5DIV | BUZZ | BALL_LED;
 	
 	// Set up MCU_PROGB as an open-drain output, initially high
 	AT91C_BASE_PIOA->PIO_SODR = MCU_PROGB;
@@ -992,7 +1105,7 @@ int main()
 	
 	// Set up the ADC
 	//FIXME - Justify these numbers
-	AT91C_BASE_ADC->ADC_MR = AT91C_ADC_SLEEP | (0x3f << 8) | (4 << 16) | (2 << 24);
+	AT91C_BASE_ADC->ADC_MR = AT91C_ADC_SLEEP | (0x3f << 8) | (4 << 16) | (15 << 24);
 	// Use all channels except 3
 	AT91C_BASE_ADC->ADC_CHER = 0xf7;
 	// Start the first conversion
@@ -1000,10 +1113,10 @@ int main()
 	
 	// Check for low/high supply voltage
 	while (!(AT91C_BASE_ADC->ADC_SR & AT91C_ADC_EOC5));
-	check_power();
+	update_power();
 	
 	// Turn off LEDs
-	AT91C_BASE_PIOA->PIO_SODR = LED_ALL;
+	LED_OFF(LED_ALL);
 	
 	if (failures == 0)
 	{
@@ -1064,12 +1177,12 @@ int main()
 			if ((current_time - rx_lost_time) > 250)
 			{
 				rx_lost_time = current_time;
-				AT91C_BASE_PIOA->PIO_SODR = LED_RG;
-				AT91C_BASE_PIOA->PIO_ODSR ^= LED_RR;
+				LED_OFF(LED_RG);
+				LED_TOGGLE(LED_RR);
 				radio_command(SIDLE);
 				radio_command(SFRX);
 				radio_command(SRX);
-				++hack;
+// 				++hack;
 			}
 			
 			// Check for radiio packets
@@ -1089,8 +1202,21 @@ int main()
 		}
 		
 		// Periodic activities: motor and ADC updates
-		if ((current_time - motor_time) >= 5)
+		if ((current_time - update_time) >= 5)
 		{
+			// Read ADC results
+			for (int i = 0; i < 8; ++i)
+			{
+				adc[i] = *(&AT91C_BASE_ADC->ADC_CDR0 + i);
+			}
+			
+			// Start a new set of ADC conversions
+			AT91C_BASE_ADC->ADC_CR = AT91C_ADC_START;
+			
+			// Check things that depend on ADC results
+			update_power();
+			update_ball_sensor();
+			
 			// Send motor speeds to the FPGA
 			spi_select(NPCS_FPGA);
 			spi_xfer(0x01);
@@ -1115,31 +1241,7 @@ int main()
 			motor_faults = spi_xfer(0);
 			spi_deselect();
 			
-			motor_time = current_time;
-			
-			check_power();
-			
-			// Stop driving if there is a power supply problem
-			if (failures & Fail_Power)
-			{
-				run_robot = 0;
-			}
-			
-			// Update the ball sensor and toggle its LED.
-			// Invert the data so increasing values indicate increasing light.
-			if (AT91C_BASE_PIOA->PIO_ODSR & BALL_LED)
-			{
-				// LED was on
-				ball_sense_light = 0x3ff - AT91C_BASE_ADC->ADC_CDR4;
-				AT91C_BASE_PIOA->PIO_CODR = BALL_LED;
-			} else {
-				// LED was off
-				ball_sense_dark = 0x3ff - AT91C_BASE_ADC->ADC_CDR4;
-				AT91C_BASE_PIOA->PIO_SODR = BALL_LED;
-			}
-			
-			// Start a new set of ADC conversions
-			AT91C_BASE_ADC->ADC_CR = AT91C_ADC_START;
+			update_time = current_time;
 		}
 		
 		// Keep power failure music playing continuously

@@ -31,6 +31,18 @@ enum
 	
 	// Motor fuse is blown
 	Fail_Fuse				= 0x00000400,
+	
+	// Ball sensor detector is open
+	Fail_Ball_Det_Open		= 0x00001000,
+	
+	// Ball sensor detector is shorted
+	Fail_Ball_Det_Short		= 0x00002000,
+	
+	// Ball sensor emitter is open
+	Fail_Ball_LED_Open		= 0x00004000,
+	
+	// Ball sensor dazzled
+	Fail_Ball_Dazzled		= 0x00008000,
 };
 
 // Motor numbers
@@ -48,6 +60,7 @@ enum
 #define Fail_FPGA	(Fail_FPGA_Config | Fail_FPGA_Logic | Fail_FPGA_Version)
 #define Fail_Radio	(Fail_Radio_Interface | Fail_Radio_Int_Low | Fail_Radio_Int_High)
 #define Fail_Power	(Fail_Undervoltage | Fail_Overvoltage | Fail_Fuse)
+#define Fail_Ball	(Fail_Ball_Det_Open | Fail_Ball_Det_Short | Fail_Ball_LED_Open | Fail_Ball_Dazzled)
 
 extern unsigned int failures;
 

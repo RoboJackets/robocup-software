@@ -156,7 +156,7 @@
 // Pins
 #define LED_RG		(1 <<  0)
 #define LED_RR		(1 <<  1)
-#define LED_RY		(1 <<  2)
+#define BALL_LED	(1 <<  2)
 #define I2C_SDA		(1 <<  3)
 #define I2C_SCL		(1 <<  4)
 #define LED_LR		(1 <<  5)
@@ -177,7 +177,7 @@
 #define RADIO_INT	(1 << 20)
 #define MCU_PROGB	(1 << 21)
 #define RADIO_NCS	(1 << 22)
-#define BALL_LED	(1 << 23)
+#define LED_RY		(1 << 23)
 #define ID1			(1 << 24)
 #define ID2			(1 << 25)
 #define ID3			(1 << 26)
@@ -193,6 +193,13 @@
 #define NPCS_FLASH	0
 #define NPCS_FPGA	1
 #define NPCS_RADIO	3
+
+// Macros to turn LEDs on and off.  Works on multiple LEDs.
+#define LED_ON(x)	{AT91C_BASE_PIOA->PIO_CODR = (x);}
+#define LED_OFF(x)	{AT91C_BASE_PIOA->PIO_SODR = (x);}
+#define LED_TOGGLE(x) {AT91C_BASE_PIOA->PIO_ODSR ^= (x);}
+
+#define LED_IS_ON(x) (!(AT91C_BASE_PIOA->PIO_ODSR & (x)))
 
 //------------------------------------------------------------------------------
 // Flash

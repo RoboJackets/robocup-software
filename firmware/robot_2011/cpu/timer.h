@@ -10,7 +10,7 @@ typedef struct timer_t
 	// The time at which the handler will be called.
 	// timer_start adds the current time to this when the timer is first added.
 	// You may change this after the timer is started.
-	unsigned int  time;
+	unsigned int time;
 	
 	// If zero, this timer will be removed when it triggers.
 	// If nonzero, period will be added to time when it triggers and
@@ -18,7 +18,7 @@ typedef struct timer_t
 	//
 	// This may be changed by the handler to efficiently remove a recurring
 	// timer in response to some condition.
-	unsigned int  period;
+	unsigned int period;
 	
 	// This is called when the time specified above is reached.
 	// Be aware that this is called in a high-priority interrupt, so it
