@@ -22,13 +22,15 @@ env.Append(BUILDERS = {
 	'ProtocPython':	Builder(action='protoc -I${SOURCE.dir} --python_out=${TARGET.dir} $SOURCES', emitter=pb_py_emitter)
 })
 
-# FIXME - Make a scanner to figure this out
-env.Depends('LogFrame.proto', 'Point.proto')
-env.Depends('LogFrame.proto', 'RadioTx.proto')
-env.Depends('LogFrame.proto', 'RadioRx.proto')
-env.Depends('LogFrame.proto', 'messages_robocup_ssl_wrapper.proto')
-env.Depends('LogFrame.proto', 'messages_robocup_ssl_detection.proto')
-env.Depends('LogFrame.proto', 'messages_robocup_ssl_geometry.proto')
+# Scanner to find protobuf import statements
+import re
+pb_import_re = re.compile(r'^import\s+"(\S+)";', re.M)
+
+def pb_scan(node, env, path):
+	contents = node.get_text_contents()
+	return pb_import_re.findall(contents)
+
+env.Append(SCANNERS=Scanner(function=pb_scan, skeys=['.proto']))
 
 protos = Glob('*.proto')
 
