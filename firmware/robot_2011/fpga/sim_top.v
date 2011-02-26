@@ -1,13 +1,6 @@
 `timescale 100ns/100ns
 
-`include "pwm.v"
-`include "half_bridge.v"
-`include "bldc.v"
-`include "hall_counter.v"
-`include "motor.v"
 `include "top.v"
-`include "kicker.v"
-`include "encoder.v"
 
 module main;
     reg clk = 0;

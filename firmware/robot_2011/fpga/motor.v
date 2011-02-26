@@ -1,3 +1,7 @@
+`include "pwm.v"
+`include "bldc.v"
+`include "half_bridge.v"
+
 // Motor driver and encoder
 
 module motor(
@@ -9,7 +13,6 @@ module motor(
     
     input [2:0] hall,
     output [5:0] motor_out,
-    output [7:0] hall_count,
     output fault
 );
 
@@ -29,7 +32,7 @@ pwm pwm(clk, pwm_clk, pwm_level, pwm_out);
 bldc bldc(clk, pwm_out, direction, hall_sync, bridge_drive);
 half_bridge half_bridge[1:3](clk, bridge_drive, motor_out);
 
-hall_counter hall_counter(clk, hall_sync, hall_count, fault);
+assign fault = (hall == 3'b000) || (hall == 3'b111);
 
 reg [19:0] watchdog_timer = 0;
 

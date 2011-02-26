@@ -39,10 +39,28 @@ xilinx = Environment()
 xilinx.AppendENVPath('PATH', join(xilinx_path, 'ISE/bin/', platform_dir))
 xilinx.AppendENVPath('XILINXD_LICENSE_FILE', join(home, '.Xilinx/Xilinx.lic'))
 
-copy_ucf = xilinx.Command('robocup.ucf', File('robocup.ucf').srcnode(), Copy('$TARGET', '$SOURCE'))
+# Scanner to find Verilog includes
+import re
+include_re = re.compile(r'^`include\s+"(\S+)"', re.M)
 
-xflow = xilinx.Command('robocup.bit', ['robocup.prj', copy_ucf],
-	'xflow -wd ${TARGET.dir.abspath} -p xc3s100etq144 -synth xst_mixed -implement fast_runtime -config bitgen robocup',
-	chdir=Dir('.').srcnode())
+def vfile_scan (node, env, path):
+	contents = node.get_contents()
+	return include_re.findall(contents)
+
+xilinx.Append(SCANNERS=Scanner(function=vfile_scan, skeys=['.v'], recursive=True))
+
+project = 'robocup'
+ucf_file = File(project + '.ucf')
+top_file = File(project + '.v')
+
+#FIXME - Create a module, use it, compile, remove its use, compile.  XST will still see it (somewhere in build dir) and think it is a possible top.
+
+xilinx.Command(ucf_file, ucf_file.srcnode(), Copy('$TARGET', '$SOURCE'))
+
+xflow = xilinx.Command(['robocup.bit', 'xflow.log'], [top_file, ucf_file],
+	'xflow -wd ${TARGET.dir} -p xc3s100etq144-4 -synth xst_verilog -implement fast_runtime -config bitgen $SOURCE')
 Clean(xflow, Dir('.'))
 
+# Command to print only the errors, warnings, and infos from xflow.
+xilinx.Alias('fpga-results', 'xflow.log', Action('grep -E "(^ERROR|^WARNING|^INFO)" $SOURCE'))
+AlwaysBuild('fpga-results')
