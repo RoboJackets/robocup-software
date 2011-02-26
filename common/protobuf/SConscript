@@ -30,7 +30,7 @@ def pb_scan(node, env, path):
 	contents = node.get_text_contents()
 	return pb_import_re.findall(contents)
 
-env.Append(SCANNERS=Scanner(function=pb_scan, skeys=['.proto']))
+env.Append(SCANNERS=Scanner(function=pb_scan, skeys=['.proto'], recursive=True))
 
 protos = Glob('*.proto')
 
