@@ -92,6 +92,8 @@ void delay_ms(int ms)
 {
 	for (unsigned int t = current_time; current_time <= (t + ms);)
 	{
+		// Reset the watchdog timer
+		AT91C_BASE_WDTC->WDTC_WDCR = 0xa5000001;
 	}
 }
 

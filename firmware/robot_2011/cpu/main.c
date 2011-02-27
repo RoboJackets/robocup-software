@@ -89,6 +89,13 @@ int hack;
 // Read from here instead of ADC registers.
 uint16_t adc[8];
 
+// Most recent wheel encoder values
+uint16_t encoder[4];
+uint16_t last_encoder[4];
+
+int8_t wheel_out[4];
+int integral[4];
+
 int fpga_init();
 
 static void cmd_help(int argc, const char *argv[], void *arg)
@@ -202,6 +209,31 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	}
 	putchar('\n');
 	
+	printf("Encoders:");
+	for (int i = 0; i < 4; ++i)
+	{
+		printf(" 0x%04x", encoder[i]);
+	}
+	printf("\n");
+	printf("   Delta:");
+	for (int i = 0; i < 4; ++i)
+	{
+		printf(" %4d", encoder[i] - last_encoder[i]);
+	}
+	printf("\n");
+	printf(" Command:");
+	for (int i = 0; i < 4; ++i)
+	{
+		printf(" %4d", wheel_command[i]);
+	}
+	printf("\n");
+	printf("  Output:");
+	for (int i = 0; i < 4; ++i)
+	{
+		printf(" %4d", wheel_out[i]);
+	}
+	printf("\n");
+	
 	printf("GIT version: %s\n", git_version);
 }
 
@@ -241,6 +273,9 @@ static int spi_wait(int max)
 	spi_xfer(0x05);
 	for (unsigned int  start_time = current_time; (current_time - start_time) < max;)
 	{
+		// Reset the watchdog timer
+		AT91C_BASE_WDTC->WDTC_WDCR = 0xa5000001;
+		
 		uint8_t status = spi_xfer(0);
 		if (!(status & 1))
 		{
@@ -750,7 +785,8 @@ static int forward_packet_received()
 		{
 			for (int i = 0; i < 4; ++i)
 			{
-				wheel_command[i] = (int8_t)forward_packet[offset + i];
+				//FIXME - Select 2008/2010 mechanical base with switch DP0
+				wheel_command[i] = -(int8_t)forward_packet[offset + i];
 			}
 			dribble = forward_packet[offset + 4] >> 4;
 		}
@@ -862,6 +898,18 @@ static void check_usb_connection()
 			run_robot = 0;
 		}
 	}
+}
+
+void update_adc()
+{
+	// Read ADC results
+	for (int i = 0; i < 8; ++i)
+	{
+		adc[i] = *(&AT91C_BASE_ADC->ADC_CDR0 + i);
+	}
+	
+	// Start a new set of ADC conversions
+	AT91C_BASE_ADC->ADC_CR = AT91C_ADC_START;
 }
 
 // Called every update cycle to check for power failures
@@ -1033,6 +1081,72 @@ void update_ball_sensor()
 	}
 }
 
+void update_fpga()
+{
+	uint8_t tx[10] = {0}, rx[10];
+	
+	if (run_robot)
+	{
+		// Calculate new motor commands
+		for (int i = 0; i < 4; ++i)
+		{
+			// Wheel speed in ticks/s, opposite of joystick direction
+			int last_speed = encoder[i] - last_encoder[i];
+			int error = ((int)wheel_command[i] * 4) - last_speed;
+			integral[i] += error;
+			
+			int cmd = integral[i] / 40;
+			
+			// Stop oscillating
+			if ((cmd < 0 && wheel_command[i] > 0) || (cmd > 0 && wheel_command[i] < 0))
+			{
+				cmd = 0;
+				integral[i] = 0;
+			}
+			
+			wheel_out[i] = cmd;
+			
+			// Convert from 2's-complement to sign-magnitude for FPGA
+			uint8_t out;
+			if (cmd < 0)
+			{
+				out = -cmd | 0x80;
+			} else {
+				out = cmd;
+			}
+			tx[i] = out;
+		}
+		tx[4] = 0x80 | (dribble << 3);
+	} else {
+		for (int i = 0; i < 4; ++i)
+		{
+			integral[i] = 0;
+		}
+	}
+	
+	// Save old encoder counts
+	for (int i = 0; i < 4; ++i)
+	{
+		last_encoder[i] = encoder[i];
+	}
+	
+	// Swap data with the FPGA
+	spi_select(NPCS_FPGA);
+	spi_xfer(0x01);
+	for (int i = 0; i < sizeof(tx); ++i)
+	{
+		rx[i] = spi_xfer(tx[i]);
+	}
+	spi_deselect();
+	
+	// Unpack data from the FPGA's response
+	encoder[0] = rx[0] | (rx[1] << 8);
+	encoder[1] = rx[2] | (rx[3] << 8);
+	encoder[2] = rx[4] | (rx[5] << 8);
+	encoder[3] = rx[6] | (rx[7] << 8);
+	motor_faults = rx[8];
+}
+
 #if 0
 // Use this main() to debug startup code, IRQ, or linker script problems.
 // You can change SConstruct to build for SRAM because linker garbage collection
@@ -1110,9 +1224,13 @@ int main()
 	AT91C_BASE_ADC->ADC_CHER = 0xf7;
 	// Start the first conversion
 	AT91C_BASE_ADC->ADC_CR = AT91C_ADC_START;
+	// Wait for it to finish
+	while ((AT91C_BASE_ADC->ADC_SR & 0xff) != 0xf7);
+	// Read results
+	update_adc();
 	
 	// Check for low/high supply voltage
-	while (!(AT91C_BASE_ADC->ADC_SR & AT91C_ADC_EOC5));
+	supply_good_time = current_time;
 	update_power();
 	
 	// Turn off LEDs
@@ -1123,7 +1241,7 @@ int main()
 		music_start(song_startup);
 		
 		// Enough hardware is working, so act like a robot
-		run_robot = 1;
+// 		run_robot = 1;
 	} else if (failures & Fail_Power)
 	{
 		// Dead battery (probably)
@@ -1204,42 +1322,14 @@ int main()
 		// Periodic activities: motor and ADC updates
 		if ((current_time - update_time) >= 5)
 		{
-			// Read ADC results
-			for (int i = 0; i < 8; ++i)
-			{
-				adc[i] = *(&AT91C_BASE_ADC->ADC_CDR0 + i);
-			}
-			
-			// Start a new set of ADC conversions
-			AT91C_BASE_ADC->ADC_CR = AT91C_ADC_START;
+			update_adc();
 			
 			// Check things that depend on ADC results
 			update_power();
 			update_ball_sensor();
 			
-			// Send motor speeds to the FPGA
-			spi_select(NPCS_FPGA);
-			spi_xfer(0x01);
-			for (int i = 0; i < 4; ++i)
-			{
-				int8_t cmd = wheel_command[i];
-				
-				//FIXME - Select 2008/2010 mechanical base with switch DP0
-				cmd = -cmd;
-				
-				// Convert from 2's-complement to sign-magnitude for FPGA
-				uint8_t out;
-				if (cmd < 0)
-				{
-					out = -cmd | 0x80;
-				} else {
-					out = cmd;
-				}
-				spi_xfer(out);
-			}
-			spi_xfer(0x80 | (dribble << 3));
-			motor_faults = spi_xfer(0);
-			spi_deselect();
+			// Send commands to and read status from the FPGA
+			update_fpga();
 			
 			update_time = current_time;
 		}

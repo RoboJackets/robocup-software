@@ -52,15 +52,42 @@ xilinx.Append(SCANNERS=Scanner(function=vfile_scan, skeys=['.v'], recursive=True
 project = 'robocup'
 ucf_file = File(project + '.ucf')
 top_file = File(project + '.v')
+bit_file = File(project + '.bit')
+svf_file = File(project + '.svf')
+
+xilinx.Tool('textfile')
+
+# Generate an iMPACT script to make the SVF file
+impact_file = xilinx.Textfile(project + '.impact', [
+	'setmode -bscan',
+	'setcable -p svf -file ' + svf_file.abspath,
+	'adddevice -p 1 -file ' + bit_file.abspath,
+	'program -p 1',
+	'quit'])
+
+# Generate an urjtag script
+jtag_file = xilinx.Textfile(project + '.jtag', [
+	'cable jtagkey pid=6010',
+	'detect',
+	'svf ' + File(svf_file).path])
 
 #FIXME - Create a module, use it, compile, remove its use, compile.  XST will still see it (somewhere in build dir) and think it is a possible top.
+#FIXME - Build ., then build fpga-results.  xflow will run again even though nothing's changed.  Why?
 
 xilinx.Command(ucf_file, ucf_file.srcnode(), Copy('$TARGET', '$SOURCE'))
 
-xflow = xilinx.Command(['robocup.bit', 'xflow.log'], [top_file, ucf_file],
+xflow = xilinx.Command([bit_file, 'xflow.log'], [top_file, ucf_file],
 	'xflow -wd ${TARGET.dir} -p xc3s100etq144-4 -synth xst_verilog -implement fast_runtime -config bitgen $SOURCE')
 Clean(xflow, Dir('.'))
+
+xilinx.Command(svf_file, [impact_file, bit_file], 'impact -batch ${SOURCE.file}', chdir=Dir('.'))
 
 # Command to print only the errors, warnings, and infos from xflow.
 xilinx.Alias('fpga-results', 'xflow.log', Action('grep -E "(^ERROR|^WARNING|^INFO)" $SOURCE'))
 AlwaysBuild('fpga-results')
+
+xilinx.Alias('fpga-jtag', [jtag_file, svf_file], Action('jtag $SOURCE'))
+AlwaysBuild('fpga-jtag')
+
+xilinx.Alias('fpga-spi', [bit_file, File('../cpu/tools/spi-write').srcnode()], Action('${SOURCES[1]} ${SOURCES[0]}'))
+AlwaysBuild('fpga-spi')
