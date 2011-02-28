@@ -1,53 +1,4 @@
-import os
-from os.path import *
-
-# Find the Xilinx tools
-home = os.getenv('HOME')
-xilinx_versions = {}
-paths = ['/opt', home]
-for start in paths:
-	# Look for a Xilinx directory
-	path = join(start, 'Xilinx')
-	if isdir(path):
-		# Find all versions installed in this directory
-		for entry in os.listdir(path):
-			try:
-				ver = float(entry)
-			except ValueError:
-				continue
-			ver_path = join(path, entry)
-			xpath = join(ver_path, 'ISE_DS')
-			if isdir(ver_path) and isdir(xpath):
-				xilinx_versions[xpath] = ver
-
-if not xilinx_versions:
-	raise Exception('Xilinx tools not found: checked ' + ' '.join(paths))
-
-# Find the highest of all installed versions
-xilinx_path = max(xilinx_versions, key=xilinx_versions.get)
-
-import platform
-machine = platform.machine()
-if machine == 'x86_64':
-	platform_dir = 'lin64'
-elif machine == 'x86':
-	platform_dir = 'lin'
-else:
-	raise NotImplementedError('Xilinx tools only supported for 32/64-bit x86 Linux')
-
-xilinx = Environment()
-xilinx.AppendENVPath('PATH', join(xilinx_path, 'ISE/bin/', platform_dir))
-xilinx.AppendENVPath('XILINXD_LICENSE_FILE', join(home, '.Xilinx/Xilinx.lic'))
-
-# Scanner to find Verilog includes
-import re
-include_re = re.compile(r'^`include\s+"(\S+)"', re.M)
-
-def vfile_scan (node, env, path):
-	contents = node.get_contents()
-	return include_re.findall(contents)
-
-xilinx.Append(SCANNERS=Scanner(function=vfile_scan, skeys=['.v'], recursive=True))
+Import('*')
 
 project = 'robocup'
 ucf_file = File(project + '.ucf')
@@ -72,7 +23,7 @@ jtag_file = xilinx.Textfile(project + '.jtag', [
 	'svf ' + File(svf_file).path])
 
 #FIXME - Create a module, use it, compile, remove its use, compile.  XST will still see it (somewhere in build dir) and think it is a possible top.
-#FIXME - Build ., then build fpga-results.  xflow will run again even though nothing's changed.  Why?
+#FIXME - Build this directory, then build fpga-results.  xflow will run again even though nothing's changed.  Why?
 
 xilinx.Command(ucf_file, ucf_file.srcnode(), Copy('$TARGET', '$SOURCE'))
 
