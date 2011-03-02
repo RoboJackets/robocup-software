@@ -22,6 +22,9 @@ avr_m169p.Program(project + '.elf',
 
 avr_m169p.Binary(project + '.bin', project + '.elf')
 
+avr_m169p.Alias(project, project + '.bin')
+avr_m169p.AlwaysBuild(project)
+
 avr_m169p.Alias(project + '-prog', project + '.bin', Action('avrdude -c stk500v2 -P /dev/ttyS1 -p m169 -U flash:w:${SOURCE}'))
 avr_m169p.AlwaysBuild(project + '-prog')
 

@@ -2,14 +2,23 @@ This is a two-beam speed sensor based on the AVR Butterfly.
 
 When power is applied, the speedgate is off.  Press the joystick in any direction to turn it on.
 When running, press UP to clear the display or DOWN to power off.
-Speeds are displayed in mm/s, with a space separating meters from millimeters.
+The speedgate will automatically turn off after five minutes without a valid measurement.
 The first character in a measurement is an arrow indicating the direction the object was moving.
-Pressing RIGHT will change the display to the time in microseconds of the last reading (mod 1e6).
+Pressing RIGHT will toggle the display between speed and time.
 
 Displays:
-	------		Measurement not started or in progress
-	SLOW		Object too slow to measure (probable invalid measurement)
+	------		Measurement not started
+	>#####		Speed in mm/s, moving right
+	<#####		Speed in mm/s, moving left
+	######		Time in microseconds
 	FAST		Object too fast to measure (probable jittery input)
+
+If more than one second elapses after one beam is broken without the other beam being broken,
+no measurement will be made.  This condition will not reset the auto-power-off timer, so
+an object sitting in a beam will not keep the speedgate on.
+
+After a measurement is made, the state of the beams is ignored for one second.
+This prevents an object which bounces back into the speedgate from erasing the first measurement.
 
 FIXME - Draw a schematic
 
@@ -30,4 +39,3 @@ Connect the programmer to the 6-pin ISP header on the Butterfly.
 Pin 1 is toward the inside of the board.
 Run 'scons -u speedgate-prog' to program the device.  The programming command
 expects to see an STK500 on /dev/ttyS1.
-

@@ -248,7 +248,7 @@ ISR(LCD_vect)
     {
         timeout_count++;
         
-        if (timeout_count > 2)
+        if (timeout_count > 3)
         {
             gButtonTimeout = 1;
             timeout_count = 0;

@@ -11,14 +11,22 @@
 // Distance between sensor centers in 1/10 mm
 #define SENSOR_DISTANCE 265
 
-// Additional 8 bits to augment timer 0
-volatile uint16_t tcnt0_high;
+// Minimum time between measurements, in timer2 overflows
+#define HOLDOFF_COUNT	122
 
-// Nonzero when t0tr_high wraps
-volatile uint8_t tcnt0_overflow;
+// Additional bits to augment the beam timer
+volatile uint16_t beam_timer_high;
+
+// The entire beam timer value
+#define beam_timer_value()	((uint32_t)TCNT1 + ((uint32_t)beam_timer_high << 16))
 
 volatile uint8_t beep_time;
 volatile uint16_t power_off_time;
+volatile uint8_t holdoff;
+
+// Most recent measurement
+uint32_t time_us = 0;
+uint8_t forward = 0;
 
 enum
 {
@@ -37,11 +45,14 @@ enum
 
 volatile uint8_t speed_state = SPEED_IDLE;
 
+// Timer 1 is used for both beeping (with output compare) and beam timing.
+
 void beep(uint16_t period)
 {
 	cli();
 	TCCR1A = 0x40;
 	TCCR1B = 0x09;
+	TIMSK1 = 0x00;
 	OCR1A = period;
 	beep_time = 15;
 	sei();
@@ -53,9 +64,37 @@ void beep_off()
 	TCCR1B = 0;
 }
 
+void beam_timer_start()
+{
+    beam_timer_high = 0;
+    TCNT1 = 0;
+	TIFR1 = 0x01;
+	TIMSK1 = 0x01;
+    TCCR1A = 0x00;
+	TCCR1B = 0x01;
+}
+
+void beam_timer_stop()
+{
+	TCCR1A = 0x00;
+	TCCR1B = 0x00;
+	TIMSK1 = 0x00;
+}
+
+ISR(TIMER1_OVF_vect)
+{
+    beam_timer_high++;
+    if (beam_timer_high >= 16)
+    {
+		// Measurement took too long
+		speed_state = SPEED_IDLE;
+		beam_timer_stop();
+    }
+}
+
 void clear_display()
 {
-	lcd_puts_r(PSTR(" -----"));
+	lcd_puts_r(PSTR("------"));
 }
 
 void reset_auto_power_off()
@@ -70,10 +109,11 @@ void reset()
 	beep_off();
 	
 	// Stop the break-beam timer
-	TCCR0A = 0;
+	beam_timer_stop();
 
 	// Reset the speed measurement state
 	speed_state = SPEED_IDLE;
+	holdoff = 0;
 
 	reset_auto_power_off();
 }
@@ -119,23 +159,6 @@ void power_off()
 	clear_display();
 }
 
-ISR(TIMER0_OVF_vect)
-{
-    tcnt0_high++;
-    if (tcnt0_high == 0)
-    {
-        tcnt0_overflow = 1;
-    }
-}
-
-void timer_start()
-{
-	tcnt0_overflow = 0;
-    tcnt0_high = 0;
-    TCNT0 = 0;
-    TCCR0A = 1;
-}
-
 void speed_interrupt()
 {
 	// Nonzero if first beam is broken
@@ -147,21 +170,24 @@ void speed_interrupt()
 	switch (speed_state)
 	{
 		case SPEED_IDLE:
-			if (second)
+			if (holdoff == 0)
 			{
-				timer_start();
-				speed_state = SPEED_REV_SECOND;
-			} else if (first)
-			{
-				timer_start();
-				speed_state = SPEED_FWD_FIRST;
+				if (second)
+				{
+					beam_timer_start();
+					speed_state = SPEED_REV_SECOND;
+				} else if (first)
+				{
+					beam_timer_start();
+					speed_state = SPEED_FWD_FIRST;
+				}
 			}
 			break;
 
 		case SPEED_FWD_FIRST:
 			if (second)
 			{
-				TCCR0A = 0;
+				beam_timer_stop();
 				speed_state = SPEED_FWD_SECOND;
 			}
 			break;
@@ -170,13 +196,14 @@ void speed_interrupt()
 			if (!second && !first)
 			{
 				speed_state = SPEED_FWD_DONE;
+				holdoff = HOLDOFF_COUNT;
 			}
 			break;
 
 		case SPEED_REV_SECOND:
 			if (first)
 			{
-				TCCR0A = 0;
+				beam_timer_stop();
 				speed_state = SPEED_REV_FIRST;
 			}
 			break;
@@ -185,6 +212,7 @@ void speed_interrupt()
 			if (!second && !first)
 			{
 				speed_state = SPEED_REV_DONE;
+				holdoff = HOLDOFF_COUNT;
 			}
 			break;
 	}
@@ -192,6 +220,14 @@ void speed_interrupt()
 
 ISR(TIMER2_OVF_vect)
 {
+	// This happens at about 122Hz.
+	// Decrement some slow timers.
+	
+	if (holdoff)
+	{
+		--holdoff;
+	}
+	
 	if (power_off_time)
 	{
 		--power_off_time;
@@ -207,10 +243,44 @@ ISR(TIMER2_OVF_vect)
 	}
 }
 
+void display_number(uint32_t value, uint8_t digits)
+{
+	lcd_clear();
+	for (uint8_t i = 0; i < digits; i++)
+	{
+		uint8_t digit = value % 10;
+		value /= 10;
+		
+		lcd_putc(5 - i, '0' + digit);
+	}
+	lcd_update();
+}
+
+void display_speed()
+{
+	// Velocity in mm/s
+	// v(mm/s) = d(mm) / (t(us) / 1e6)
+	uint32_t v = SENSOR_DISTANCE * 100000 / time_us;
+	if (v > 99999)
+	{
+		lcd_puts_r(PSTR("FAST"));
+	} else {
+		display_number(v, 5);
+
+		if (speed_state == SPEED_FWD_DONE)
+		{
+			lcd_putc(0, '>');
+		} else {
+			lcd_putc(0, '<');
+		}
+		lcd_update();
+	}
+}
+
 int main()
 {
-	uint32_t time_us;
-
+	uint8_t show_speed = 0;
+	
     Initialization();
 
 	// Beeper
@@ -221,13 +291,9 @@ int main()
 	// Pullups on phototransistors
 	PORTE |= 0x30;
 
-    // Timer 0 is used for break-beam timing
-    TCCR0A = 0;
-    TIMSK0 = 1;
-    
 	// Timer 2 is used for beep and power-off timing
 	ASSR = 0;
-	TCCR2A = 3;
+	TCCR2A = 3;		// ~122Hz
 	TIMSK2 = 1;
 
 	power_off();
@@ -257,72 +323,39 @@ int main()
 				break;
 			
 			case KEY_RIGHT:
-			{
-				// Display raw time in microseconds
-				uint32_t v = time_us;
-                lcd_clear();
-                for (uint8_t i = 0; i < 6; i++)
-                {
-                    uint8_t digit = v % 10;
-                    v /= 10;
-                    
-                    lcd_putc(5 - i, '0' + digit);
-                }
-				lcd_update();
+				if (time_us)
+				{
+					if (show_speed)
+					{
+						// Display raw time in microseconds
+						display_number(time_us, 6);
+						show_speed = 0;
+					} else {
+						display_speed();
+						show_speed = 1;
+					}
+				}
 				break;
-			}
 		}
 
-        if (speed_state == SPEED_FWD_DONE || speed_state == SPEED_REV_DONE)
-        {
+		if (speed_state == SPEED_FWD_DONE || speed_state == SPEED_REV_DONE)
+		{
 			// Display last speed
-            if (tcnt0_overflow)
-            {
-                tcnt0_overflow = 0;
-                lcd_puts_r(PSTR("SLOW"));
-            } else {
-                // Time in microseconds
-                time_us = (uint32_t)TCNT0 + ((uint32_t)tcnt0_high << 8);
-                
-                // Velocity in mm/s
-                // v(mm/s) = d(mm) / (t(us) / 1e6)
-                uint32_t v = SENSOR_DISTANCE * 100000 / time_us;
-                if (v > 99999)
-                {
-                    lcd_puts_r(PSTR("FAST"));
-                } else {
-                    lcd_clear();
-                    for (uint8_t i = 0; i < 5; i++)
-                    {
-                        uint8_t digit = v % 10;
-                        v /= 10;
-                        
-                        lcd_putc(5 - i, '0' + digit);
-                    }
-
-					if (speed_state == SPEED_FWD_DONE)
-					{
-						lcd_putc(0, '>');
-					} else {
-						lcd_putc(0, '<');
-					}
-
-                    lcd_update();
-                }
-            }
+			// Time in microseconds
+			time_us = beam_timer_value();
 
 			if (speed_state == SPEED_FWD_DONE)
 			{
+				forward = 1;
 				beep(1400);
 			} else {
+				forward = 0;
 				beep(600);
 			}
 			speed_state = SPEED_IDLE;
 			reset_auto_power_off();
-		} else if (speed_state != SPEED_IDLE)
-		{
-			// Measurement in progress
-			clear_display();
+
+			display_speed();
 		}
     }
 }
