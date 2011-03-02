@@ -66,11 +66,11 @@ void beep_off()
 
 void beam_timer_start()
 {
-    beam_timer_high = 0;
-    TCNT1 = 0;
+	beam_timer_high = 0;
+	TCNT1 = 0;
 	TIFR1 = 0x01;
 	TIMSK1 = 0x01;
-    TCCR1A = 0x00;
+	TCCR1A = 0x00;
 	TCCR1B = 0x01;
 }
 
@@ -83,13 +83,13 @@ void beam_timer_stop()
 
 ISR(TIMER1_OVF_vect)
 {
-    beam_timer_high++;
-    if (beam_timer_high >= 16)
-    {
+	beam_timer_high++;
+	if (beam_timer_high >= 16)
+	{
 		// Measurement took too long
 		speed_state = SPEED_IDLE;
 		beam_timer_stop();
-    }
+	}
 }
 
 void clear_display()
@@ -125,31 +125,31 @@ void power_off()
 	// Turn off LEDs
 	PORTE &= ~(1 << 6);
 
-    // Disable LCD
-    LCDCRA &= ~(1 << 7);
+	// Disable LCD
+	LCDCRA &= ~(1 << 7);
 
 	// Wait for all buttons to be released
-    while ((PINB & 0xd0) != 0xd0 || (PINE & 0x0c) != 0x0c)
-    {
+	while ((PINB & 0xd0) != 0xd0 || (PINE & 0x0c) != 0x0c)
+	{
 		Delay(100);
 	}
 
 	// Sleep until a button is pressed
-    set_sleep_mode(SLEEP_MODE_PWR_SAVE);
-    while ((PINB & 0xd0) == 0xd0 && (PINE & 0x0c) == 0x0c)
-    {
-        sleep_mode();
-    }
-    
+	set_sleep_mode(SLEEP_MODE_PWR_SAVE);
+	while ((PINB & 0xd0) == 0xd0 && (PINE & 0x0c) == 0x0c)
+	{
+		sleep_mode();
+	}
+	
 	// Clear the LCD screen before enabling
-    uint8_t i;
-    for (i = 0; i < 20; i++)
-    {
-        *(pLCDREG + i) = 0x00;
-    }
-    
-    // Enable LCD
-    LCDCRA |= 1 << 7;
+	uint8_t i;
+	for (i = 0; i < 20; i++)
+	{
+		*(pLCDREG + i) = 0x00;
+	}
+	
+	// Enable LCD
+	LCDCRA |= 1 << 7;
 
 	// Turn on LEDs
 	PORTE |= 1 << 6;
@@ -281,7 +281,7 @@ int main()
 {
 	uint8_t show_speed = 0;
 	
-    Initialization();
+	Initialization();
 
 	// Beeper
 	PORTB |= 0x20;
@@ -298,8 +298,8 @@ int main()
 
 	power_off();
 
-    while (1)
-    {
+	while (1)
+	{
 		set_sleep_mode(SLEEP_MODE_IDLE);
 		sleep_mode();
 
@@ -357,7 +357,7 @@ int main()
 
 			display_speed();
 		}
-    }
+	}
 }
 
 /*****************************************************************************
@@ -373,21 +373,21 @@ int main()
 *****************************************************************************/
 void Initialization(void)
 {
-    OSCCAL_calibration();       // calibrate the OSCCAL byte
-        
-    CLKPR = (1<<CLKPCE);        // set Clock Prescaler Change Enable
+	OSCCAL_calibration();       // calibrate the OSCCAL byte
+		
+	CLKPR = (1<<CLKPCE);        // set Clock Prescaler Change Enable
 
-    // set prescaler = 8, Inter RC 8Mhz / 8 = 1Mhz
-    CLKPR = (1<<CLKPS1) | (1<<CLKPS0);
+	// set prescaler = 8, Inter RC 8Mhz / 8 = 1Mhz
+	CLKPR = (1<<CLKPS1) | (1<<CLKPS0);
 
-    // Disable Analog Comparator (power save)
-    ACSR = (1<<ACD);
+	// Disable Analog Comparator (power save)
+	ACSR = (1<<ACD);
 
-    // Disable Digital input on PF0-2 (power save)
-    DIDR0 = (7<<ADC0D);
+	// Disable Digital input on PF0-2 (power save)
+	DIDR0 = (7<<ADC0D);
 
-    Button_Init();              // Initialize pin change interrupt on joystick
-    lcd_init();                 // initialize the LCD
+	Button_Init();              // Initialize pin change interrupt on joystick
+	lcd_init();                 // initialize the LCD
 }
 
 /*****************************************************************************
@@ -427,69 +427,69 @@ void Delay(unsigned int millisec)
 *****************************************************************************/
 void OSCCAL_calibration(void)
 {
-    unsigned char calibrate = FALSE;
-    int temp;
-    unsigned char tempL;
+	unsigned char calibrate = FALSE;
+	int temp;
+	unsigned char tempL;
 
-    CLKPR = (1<<CLKPCE);        // set Clock Prescaler Change Enable
-    // set prescaler = 8, Inter RC 8Mhz / 8 = 1Mhz
-    CLKPR = (1<<CLKPS1) | (1<<CLKPS0);
-    
-    TIMSK2 = 0;             //disable OCIE2A and TOIE2
+	CLKPR = (1<<CLKPCE);        // set Clock Prescaler Change Enable
+	// set prescaler = 8, Inter RC 8Mhz / 8 = 1Mhz
+	CLKPR = (1<<CLKPS1) | (1<<CLKPS0);
+	
+	TIMSK2 = 0;             //disable OCIE2A and TOIE2
 
-    ASSR = (1<<AS2);        //select asynchronous operation of timer2 (32,768kHz)
-    
-    OCR2A = 200;            // set timer2 compare value 
+	ASSR = (1<<AS2);        //select asynchronous operation of timer2 (32,768kHz)
+	
+	OCR2A = 200;            // set timer2 compare value 
 
-    TIMSK0 = 0;             // delete any interrupt sources
-        
-    TCCR1B = (1<<CS10);     // start timer1 with no prescaling
-    TCCR2A = (1<<CS20);     // start timer2 with no prescaling
+	TIMSK0 = 0;             // delete any interrupt sources
+		
+	TCCR1B = (1<<CS10);     // start timer1 with no prescaling
+	TCCR2A = (1<<CS20);     // start timer2 with no prescaling
 
-    while((ASSR & 0x01) | (ASSR & 0x04));       //wait for TCN2UB and TCR2UB to be cleared
+	while((ASSR & 0x01) | (ASSR & 0x04));       //wait for TCN2UB and TCR2UB to be cleared
 
-    Delay(100);             // wait for external crystal to stabilise
-    
-    while(!calibrate)
-    {
-        cli();              // disable global interrupt
-        
-        TIFR1 = 0xFF;       // clear TIFR1 flags
-        TIFR2 = 0xFF;       // clear TIFR2 flags
-        
-        TCNT1H = 0;         // clear timer1 counter
-        TCNT1L = 0;
-        TCNT2 = 0;          // clear timer2 counter
-           
-        while ( !(TIFR2 & (1<<OCF2A)) );   // wait for timer2 compareflag
+	Delay(100);             // wait for external crystal to stabilise
+	
+	while(!calibrate)
+	{
+		cli();              // disable global interrupt
+		
+		TIFR1 = 0xFF;       // clear TIFR1 flags
+		TIFR2 = 0xFF;       // clear TIFR2 flags
+		
+		TCNT1H = 0;         // clear timer1 counter
+		TCNT1L = 0;
+		TCNT2 = 0;          // clear timer2 counter
+		
+		while ( !(TIFR2 & (1<<OCF2A)) );   // wait for timer2 compareflag
 
-        TCCR1B = 0;         // stop timer1
+		TCCR1B = 0;         // stop timer1
 
-        sei();              // enable global interrupt
-    
-        if ( (TIFR1 & (1<<TOV1)) )
-        {
-            temp = 0xFFFF;  // if timer1 overflows, set the temp to 0xFFFF
-        }
-        else
-        {                   // read out the timer1 counter value
-            tempL = TCNT1L;
-            temp = TCNT1H;
-            temp = (temp << 8);
-            temp += tempL;
-        }
-    
-        if (temp > 6250)
-        {
-            OSCCAL--;   // the internRC oscillator runs to fast, decrease the OSCCAL
-        } else if (temp < 6120)
-        {
-            OSCCAL++;   // the internRC oscillator runs to slow, increase the OSCCAL
-        } else {
-            calibrate = TRUE;   // the interRC is correct
-        }
+		sei();              // enable global interrupt
+	
+		if ( (TIFR1 & (1<<TOV1)) )
+		{
+			temp = 0xFFFF;  // if timer1 overflows, set the temp to 0xFFFF
+		}
+		else
+		{                   // read out the timer1 counter value
+			tempL = TCNT1L;
+			temp = TCNT1H;
+			temp = (temp << 8);
+			temp += tempL;
+		}
+	
+		if (temp > 6250)
+		{
+			OSCCAL--;   // the internRC oscillator runs to fast, decrease the OSCCAL
+		} else if (temp < 6120)
+		{
+			OSCCAL++;   // the internRC oscillator runs to slow, increase the OSCCAL
+		} else {
+			calibrate = TRUE;   // the interRC is correct
+		}
 
-        TCCR1B = (1<<CS10);     // start timer1
-    }
-    TCCR1B = 0;
+		TCCR1B = (1<<CS10);     // start timer1
+	}
+	TCCR1B = 0;
 }
