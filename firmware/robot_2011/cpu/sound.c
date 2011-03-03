@@ -102,7 +102,7 @@ void music_start(const note_t *song)
 	AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PWMC;
 	// Set period and duty cycle
 	AT91C_BASE_PWMC->PWMC_MR = 0;
-	AT91C_BASE_PWMC->PWMC_CH[3].PWMC_CMR = 0x407;
+	AT91C_BASE_PWMC->PWMC_CH[3].PWMC_CMR = 0x607;
 	AT91C_BASE_PWMC->PWMC_CH[3].PWMC_CPRDR = song[0].period;
 	AT91C_BASE_PWMC->PWMC_CH[3].PWMC_CDTYR = song[0].period / 2;
 	AT91C_BASE_PWMC->PWMC_ENA = 1 << 3;

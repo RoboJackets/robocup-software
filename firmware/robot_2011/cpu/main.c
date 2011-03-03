@@ -1179,32 +1179,33 @@ int main()
 int main()
 {
 	// Set up watchdog timer
+	AT91C_BASE_WDTC->WDTC_WDCR = 0xa5000001;
 	AT91C_BASE_WDTC->WDTC_WDMR = AT91C_WDTC_WDRSTEN | AT91C_WDTC_WDDBGHLT | (0xfff << 16) | 0x0ff;
 	
 	// Enable user reset (reset button)
 	AT91C_BASE_SYS->RSTC_RMR = 0xa5000000 | AT91C_RSTC_URSTEN;
 	
-	timer_init();
-	
 	// Set up PIOs
 	// Initially, FLASH_NCS is a PIO because the FPGA will be driving it.
-	// After the FPGA is configured (or we give up on it), FLASH_NCS is assigned to SPI.  This happens in spi_init().
+	// After the FPGA is configured (or we give up on it), FLASH_NCS is assigned to SPI.  This happens later in spi_init().
 	AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_PIOA;	// Turn on PIO clock
-	AT91C_BASE_PIOA->PIO_OWER = LED_ALL;			// Allow LED states to be written directly
-	AT91C_BASE_PIOA->PIO_ODR = ~0;					// Disable all outputs
-	AT91C_BASE_PIOA->PIO_CODR = LED_ALL;			// Turn on all LEDs
-	AT91C_BASE_PIOA->PIO_SODR = BALL_LED;			// Turn off ball sensor LED
-	AT91C_BASE_PIOA->PIO_OER = LED_ALL | BUZZ | BALL_LED;	// Enable outputs
 	// Connect some pins to the PIO controller
 	AT91C_BASE_PIOA->PIO_PER = LED_ALL | MCU_PROGB | FLASH_NCS | RADIO_INT | VBUS | BALL_LED;
+	AT91C_BASE_PIOA->PIO_ODR = ~0;					// Disable all outputs (FIXME - unnecessary?)
+	AT91C_BASE_PIOA->PIO_OWER = LED_ALL;			// Allow LED states to be written directly
+	AT91C_BASE_PIOA->PIO_CODR = LED_ALL;			// Turn on all LEDs
+	AT91C_BASE_PIOA->PIO_SODR = BALL_LED;			// Turn off ball sensor LED
+	AT91C_BASE_PIOA->PIO_OER = LED_ALL | BALL_LED;	// Enable outputs
 	// Enable and disable pullups
 	AT91C_BASE_PIOA->PIO_PPUER = RADIO_INT | FLASH_NCS | MISO | ID0 | ID1 | ID2 | ID3 | DP0 | DP1 | DP2;
-	AT91C_BASE_PIOA->PIO_PPUDR = VBUS | M2DIV | M3DIV | M5DIV | BUZZ | BALL_LED;
+	AT91C_BASE_PIOA->PIO_PPUDR = VBUS | M2DIV | M3DIV | M5DIV | BALL_LED;
 	
 	// Set up MCU_PROGB as an open-drain output, initially high
 	AT91C_BASE_PIOA->PIO_SODR = MCU_PROGB;
 	AT91C_BASE_PIOA->PIO_MDER = MCU_PROGB;
 	AT91C_BASE_PIOA->PIO_OER = MCU_PROGB;
+	
+	timer_init();
 	
 	// At this point, the FPGA is presumed to be the SPI master.
 	// Wait for it to configure and determine if it works.
@@ -1225,6 +1226,9 @@ int main()
 	// Start the first conversion
 	AT91C_BASE_ADC->ADC_CR = AT91C_ADC_START;
 	// Wait for it to finish
+	// The WDT must be reset here, but I'm not sure why.  The time since the
+	// first reset above should not have been long enough to overflow the WDT.
+	AT91C_BASE_WDTC->WDTC_WDCR = 0xa5000001;
 	while ((AT91C_BASE_ADC->ADC_SR & 0xff) != 0xf7);
 	// Read results
 	update_adc();
