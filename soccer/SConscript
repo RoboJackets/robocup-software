@@ -1,7 +1,7 @@
 Import('*')
 
 srcs = [
-	'main.cpp',
+#	'main.cpp',  # don't include main here to allow for 
 	'Processor.cpp',
 	'Logger.cpp',
 	'MainWindow.cpp',
@@ -155,11 +155,13 @@ e = env.Clone()
 e.Append(CPPPATH=['#/soccer', Dir('ui')])
 e.Append(LIBS=['blas', 'lapack', 'bfd'])
 
-p = e.Program('soccer', srcs)
+# build soccer executable
+p = e.Program('soccer', ['main.cpp'] + srcs )
 env.Depends(p, uics)
 e.Install(exec_dir, p)
 Default(p)
 
+# build log viewer executable 
 p = e.Program('log_viewer', [
 	'LogViewer.cpp',
 	'FieldView.cpp',
@@ -171,3 +173,16 @@ p = e.Program('log_viewer', [
 env.Depends(p, env.Uic4('ui/LogViewer.ui'))
 e.Install(exec_dir, p)
 Default(p)
+
+# build unit tests and framework
+# Add new unit tests here
+tests = [
+'tests/testExamples.cpp'
+]
+e.Append(LIBS=['gtest'])
+# NOTE: this links against all sources to avoid needing to actually check dependencies
+p = e.Program('soccer_tests', ['tests/gtest_main.cpp'] + tests + srcs)
+e.Install(exec_dir, p)
+Default(p)
+test_alias = e.Alias('test', [p], p[0].abspath)
+AlwaysBuild(test_alias)
