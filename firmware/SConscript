@@ -1,5 +1,7 @@
 Import('*')
 
+Help('\nFirmware targets:\n')
+
 # AVR cross-compiler
 avr = Environment()
 avr.Replace(CC='avr-gcc')

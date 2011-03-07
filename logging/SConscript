@@ -5,11 +5,13 @@ p = env.Program('convert_tcpdump',
 	LIBS=['pcap', 'protobuf', 'pthread', 'common'])
 env.Install(exec_dir, p)
 Default(p)
+Help('convert_tcpdump: Converts a tcpdump log to a soccer (protobuf) log\n')
 
 p = env.Program('simple_logger',
 	['simple_logger.cpp'])
 env.Install(exec_dir, p)
 Default(p)
+Help('simple_logger: Stand-alone log recorder (vision and referee only)\n')
 
 # This has to be copied, not symlinked, because python will look in the file's
 # real location for modules, but we need generated protobuf files to be in

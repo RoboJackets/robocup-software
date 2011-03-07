@@ -31,14 +31,20 @@ xflow = xilinx.Command([bit_file, 'xflow.log'], [top_file, ucf_file],
 	'xflow -wd ${TARGET.dir} -p xc3s100etq144-4 -synth xst_verilog -implement fast_runtime -config bitgen $SOURCE')
 Clean(xflow, Dir('.'))
 
+Alias('fpga2011', bit_file)
+Help('  fpga2011: Build 2011 FPGA firmware')
+
 xilinx.Command(svf_file, [impact_file, bit_file], 'impact -batch ${SOURCE.file}', chdir=Dir('.'))
 
 # Command to print only the errors, warnings, and infos from xflow.
-xilinx.Alias('fpga-results', 'xflow.log', Action('grep -E "(^ERROR|^WARNING|^INFO)" $SOURCE'))
-AlwaysBuild('fpga-results')
+xilinx.Alias('fpga2011-results', 'xflow.log', Action('grep -E "(^ERROR|^WARNING|^INFO)" $SOURCE'))
+AlwaysBuild('fpga2011-results')
+Help('  fpga2011-results: Build 2011 FPGA firmware and show info, warnings, and errors\n')
 
-xilinx.Alias('fpga-jtag', [jtag_file, svf_file], Action('jtag $SOURCE'))
-AlwaysBuild('fpga-jtag')
+xilinx.Alias('fpga2011-jtag', [jtag_file, svf_file], Action('jtag $SOURCE'))
+AlwaysBuild('fpga2011-jtag')
+Help('  fpga2011-jtag: Build and program 2011 FPGA firmware with FT2232 JTAG adapter\n')
 
-xilinx.Alias('fpga-spi', [bit_file, File('../cpu/tools/spi-write').srcnode()], Action('${SOURCES[1]} ${SOURCES[0]}'))
-AlwaysBuild('fpga-spi')
+xilinx.Alias('fpga2011-spi', [bit_file, File('../cpu/tools/spi-write').srcnode()], Action('${SOURCES[1]} ${SOURCES[0]}'))
+AlwaysBuild('fpga2011-spi')
+Help('  fpga2011-spi: Build 2011 FPGA firmware and write to SPI flash on robot\n')

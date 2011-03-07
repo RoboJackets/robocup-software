@@ -32,6 +32,7 @@ p = e.Program('soccsim', [
 
 e.Install(exec_dir, p)
 Default(p)
+Help('soccsim: Simulator\n')
 
 # Copy PhysX libraries to the run directory
 e.Install(exec_dir, physx_libpath.File('libNxCooking.so.1'))

@@ -29,13 +29,17 @@ env.Append(CPPPATH = [Dir('#/common')])
 # Can't put this in build_dir because scons wants to read it before build_dir exists.
 # I don't want to create build_dir for the sole purpose of hiding that error...
 var_file = File('#/.scons_variables').abspath
-vv = Variables(var_file)
-vv.AddVariables(
+vars = Variables(var_file)
+vars.AddVariables(
 	BoolVariable('profile', 'build for profiling', False)
 )
-vv.Update(env)
-vv.Save(var_file, env)
-Help(vv.GenerateHelpText(env))
+vars.Update(env)
+vars.Save(var_file, env)
+Help('Variables (specify as name=value on the command line):')
+Help('\n'.join(['  ' + x for x in vars.GenerateHelpText(env).splitlines()]))
+Help('\n\nAvailable targets (specify on the command line):\n\n')
+
+# All subsequent help text should describe targets
 
 # Profiling
 if env['profile']:
@@ -106,9 +110,12 @@ Export({'env': env32, 'cross_32bit': True})
 do_build('SoccSim', {'env': env32})
 
 Export({'env': env, 'cross_32bit': False})
-for dir in ['logging', 'radio', 'soccer', 'firmware']:
-	do_build(dir)
 
 # Build sslrefbox with its original makefile (no dependency checking)
-env.Command('sslrefbox/sslrefbox', 'sslrefbox/Makefile', 'make -C sslrefbox')
+sslrefbox = env.Command('sslrefbox/sslrefbox', 'sslrefbox/Makefile', 'make -C sslrefbox')
+Alias('sslrefbox', sslrefbox)
 env.Install(exec_dir, 'sslrefbox/sslrefbox')
+Help('sslrefbox: SSL referee box\n')
+
+for dir in ['logging', 'radio', 'soccer', 'firmware']:
+	do_build(dir)

@@ -160,6 +160,7 @@ p = e.Program('soccer', ['main.cpp'] + srcs )
 env.Depends(p, uics)
 e.Install(exec_dir, p)
 Default(p)
+Help('soccer: Main program\n')
 
 # build log viewer executable 
 p = e.Program('log_viewer', [
@@ -173,11 +174,12 @@ p = e.Program('log_viewer', [
 env.Depends(p, env.Uic4('ui/LogViewer.ui'))
 e.Install(exec_dir, p)
 Default(p)
+Help('log_viewer: Stand-alone log viewer\n')
 
 # build unit tests and framework
 # Add new unit tests here
 tests = [
-'tests/testExamples.cpp'
+	'tests/testExamples.cpp'
 ]
 e.Append(LIBS=['gtest'])
 # NOTE: this links against all sources to avoid needing to actually check dependencies
@@ -186,3 +188,4 @@ e.Install(exec_dir, p)
 Default(p)
 test_alias = e.Alias('test', [p], p[0].abspath)
 AlwaysBuild(test_alias)
+Help('test: Run tests\n')

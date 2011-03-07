@@ -22,9 +22,12 @@ avr_m169p.Program(project + '.elf',
 
 avr_m169p.Binary(project + '.bin', project + '.elf')
 
-avr_m169p.Alias(project, project + '.bin')
+Alias(project, project + '.bin')
 avr_m169p.AlwaysBuild(project)
 
 avr_m169p.Alias(project + '-prog', project + '.bin', Action('avrdude -c stk500v2 -P /dev/ttyS1 -p m169 -U flash:w:${SOURCE}'))
 avr_m169p.AlwaysBuild(project + '-prog')
 
+Help('  speedgate: Build speedgate firmware.\n')
+Help('  speedgate-prog: Build and program speedgate firmware.\n')
+Help('    STK500 must be connected to /dev/ttyS1 and connected to speedgate ISP header\n')
