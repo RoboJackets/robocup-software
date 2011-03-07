@@ -1,4 +1,4 @@
-#include <aic/aic.h>
+#include <aic.h>
 #include <board.h>
 
 #include "timer.h"

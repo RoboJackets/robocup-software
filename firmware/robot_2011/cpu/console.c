@@ -3,12 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "command.h"
-#include "timer.h"
+#include "console.h"
 #include "write.h"
-
-#define MAX_COMMAND_SIZE	64
-#define MAX_COMMAND_ARGS	8
 
 unsigned char usb_rx_buffer[64];
 // Amount of data in usb_rx_buffer.
@@ -39,7 +35,7 @@ void subcommand(int argc, const char *argv[], void *arg)
 	printf("*** Unrecognized command\n");
 }
 
-void command_execute_buffer()
+void console_execute_buffer()
 {
 	const char *argv[MAX_COMMAND_ARGS];
 	int argc;
@@ -156,7 +152,7 @@ void usb_rx_start()
 	CDCDSerialDriver_Read(usb_rx_buffer, sizeof(usb_rx_buffer), usb_rx_complete, 0);
 }
 
-void command_init()
+void console_init()
 {
 	command_len = 0;
 	
@@ -167,7 +163,7 @@ void command_init()
 	usb_rx_start();
 }
 
-int command_run()
+int console_run()
 {
 	int ret = 1;
 	
@@ -195,7 +191,7 @@ int command_run()
 					command_buffer[command_len] = 0;
 					
 					// Execute the command
-					command_execute_buffer();
+					console_execute_buffer();
 				}
 				
 				// Clear the command buffer

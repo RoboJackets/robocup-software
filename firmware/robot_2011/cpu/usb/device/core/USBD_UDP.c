@@ -45,7 +45,7 @@
 #include "USBDCallbacks.h"
 #include <board.h>
 #include <utility/trace.h>
-#include <aic/aic.h>
+#include <aic.h>
 #ifdef USB_LED
 #include <utility/led.h>
 #endif

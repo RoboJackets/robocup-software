@@ -2,6 +2,9 @@
 
 #include <stdint.h>
 
+#define MAX_COMMAND_SIZE	64
+#define MAX_COMMAND_ARGS	4
+
 typedef struct
 {
 	const char *name;
@@ -20,15 +23,18 @@ void usb_rx_start();
 void putchar_raw(uint8_t ch);
 void flush_stdout();
 
-void command_init(void);
+void console_init(void);
 
 // Handles command input from USB.
 // Returns 1 to continue running robot operations or 0 to stop (user break).
-int command_run(void);
+int console_run(void);
 
 void subcommand(int argc, const char *argv[], void *arg);
 
 // arg points to a write_int_t
 void cmd_write_int(int argc, const char *argv[], void *arg);
 
+// Parses a 32-bit unsigned integer from a string.
+// If the string starts with "0x", it is interpreted as hexadecimal.
+// Otherwise, it is interpreted as decimal.
 uint32_t parse_uint32(const char *str);

@@ -8,7 +8,7 @@
 #define Forward_Size    28
 #define Reverse_Size    11
 
-static void radio_select()
+static inline void radio_select()
 {
 	spi_select(NPCS_RADIO);
 }

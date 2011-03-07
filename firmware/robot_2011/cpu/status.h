@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 
+extern unsigned int robot_id;
+
 // Failure flags
 enum
 {
@@ -45,6 +47,12 @@ enum
 	Fail_Ball_Dazzled		= 0x00008000,
 };
 
+// Failure categories
+#define Fail_FPGA	(Fail_FPGA_Config | Fail_FPGA_Logic | Fail_FPGA_Version)
+#define Fail_Radio	(Fail_Radio_Interface | Fail_Radio_Int_Low | Fail_Radio_Int_High)
+#define Fail_Power	(Fail_Undervoltage | Fail_Overvoltage | Fail_Fuse)
+#define Fail_Ball	(Fail_Ball_Det_Open | Fail_Ball_Det_Short | Fail_Ball_LED_Open | Fail_Ball_Dazzled)
+
 // Motor numbers
 // Drive motors 0-3 are labelled M1-M4 on the board.
 enum
@@ -56,13 +64,10 @@ enum
 	Motor_Dribbler		= 4
 };
 
-// Failure categories
-#define Fail_FPGA	(Fail_FPGA_Config | Fail_FPGA_Logic | Fail_FPGA_Version)
-#define Fail_Radio	(Fail_Radio_Interface | Fail_Radio_Int_Low | Fail_Radio_Int_High)
-#define Fail_Power	(Fail_Undervoltage | Fail_Overvoltage | Fail_Fuse)
-#define Fail_Ball	(Fail_Ball_Det_Open | Fail_Ball_Det_Short | Fail_Ball_LED_Open | Fail_Ball_Dazzled)
-
 extern unsigned int failures;
 
 // Bits 0-4 correspond to motors 0-4 (see Motor_* above).
 extern uint8_t motor_faults;
+
+// Periodic functions
+void check_usb_connection(void);
