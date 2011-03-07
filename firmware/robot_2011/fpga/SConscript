@@ -37,10 +37,24 @@ Help('  fpga2011: Build 2011 FPGA firmware')
 xilinx.Command(svf_file, [impact_file, bit_file], 'impact -batch ${SOURCE.file}', chdir=Dir('.'))
 
 # Command to print only the errors, warnings, and infos from xflow.
-xilinx.Alias('fpga2011-results', 'xflow.log', Action('grep -E "(^ERROR|^WARNING|^INFO)" $SOURCE'))
+def PrintXFlowResults(target, source, env):
+	f = file(str(source[0]))
+	print_more = False
+	for line in f:
+		line = line.strip('\n')
+		if line.startswith('INFO:') or line.startswith('WARNING:') or line.startswith('ERROR:'):
+			print_more = True
+			print line
+		elif line.startswith('   ') and line[3] != ' ' and print_more:
+			print line
+		else:
+			print_more = False
+	f.close()
+xilinx.Alias('fpga2011-results', 'xflow.log', Action(PrintXFlowResults))
 AlwaysBuild('fpga2011-results')
 Help('  fpga2011-results: Build 2011 FPGA firmware and show info, warnings, and errors\n')
 
+# Programming targets
 xilinx.Alias('fpga2011-jtag', [jtag_file, svf_file], Action('jtag $SOURCE'))
 AlwaysBuild('fpga2011-jtag')
 Help('  fpga2011-jtag: Build and program 2011 FPGA firmware with FT2232 JTAG adapter\n')
