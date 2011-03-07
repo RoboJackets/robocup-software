@@ -10,3 +10,4 @@ p = usb.Program('radio', [
 
 usb.Install(exec_dir, p)
 Default(p)
+Help('radio: Base station interface\n')
