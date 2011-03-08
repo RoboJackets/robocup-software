@@ -17,21 +17,14 @@ uint8_t forward_packet[Forward_Size];
 // Last reverse packet
 uint8_t reverse_packet[Reverse_Size];
 
-int8_t wheel_command[4];
-uint8_t dribble;
+int_fast8_t wheel_command[4];
+uint_fast8_t dribble_command;
 
 uint32_t rx_lost_time;
-int8_t last_rssi;
+int_fast8_t last_rssi;
 
 // Last time the 5ms periodic code was executed
 unsigned int update_time;
-
-// Most recent wheel encoder values
-uint16_t encoder[4];
-uint16_t last_encoder[4];
-
-int8_t wheel_out[4];
-int integral[4];
 
 static int forward_packet_received()
 {
@@ -126,7 +119,7 @@ static int forward_packet_received()
 	{
 		wheel_command[i] = 0;
 	}
-	dribble = 0;
+	dribble_command = 0;
 
 	// Get motor commands from the packet
 	int offset = 3;
@@ -136,10 +129,12 @@ static int forward_packet_received()
 		{
 			for (int i = 0; i < 4; ++i)
 			{
-				//FIXME - Select 2008/2010 mechanical base with switch DP0
-				wheel_command[i] = -(int8_t)forward_packet[offset + i];
+				wheel_command[i] = (int8_t)forward_packet[offset + i];
 			}
-			dribble = forward_packet[offset + 4] >> 4;
+			
+			// Convert the dribbler speed from the top four bits in a byte to seven bits
+			dribble_command = (forward_packet[offset + 4] & 0xf0) >> 1;
+			dribble_command |= dribble_command >> 4;
 		}
 		offset += 5;
 	}
@@ -204,72 +199,6 @@ static int forward_packet_received()
 #endif
 	
 	return 1;
-}
-
-void update_fpga()
-{
-	uint8_t tx[10] = {0}, rx[10];
-	
-	if (controller)
-	{
-		// Calculate new motor commands
-		for (int i = 0; i < 4; ++i)
-		{
-			// Wheel speed in ticks/s, opposite of joystick direction
-			int last_speed = encoder[i] - last_encoder[i];
-			int error = ((int)wheel_command[i] * 4) - last_speed;
-			integral[i] += error;
-			
-			int cmd = integral[i] / 40;
-			
-			// Stop oscillating
-			if ((cmd < 0 && wheel_command[i] > 0) || (cmd > 0 && wheel_command[i] < 0))
-			{
-				cmd = 0;
-				integral[i] = 0;
-			}
-			
-			wheel_out[i] = cmd;
-			
-			// Convert from 2's-complement to sign-magnitude for FPGA
-			uint8_t out;
-			if (cmd < 0)
-			{
-				out = -cmd | 0x80;
-			} else {
-				out = cmd;
-			}
-			tx[i] = out;
-		}
-		tx[4] = 0x80 | (dribble << 3);
-	} else {
-		for (int i = 0; i < 4; ++i)
-		{
-			integral[i] = 0;
-		}
-	}
-	
-	// Save old encoder counts
-	for (int i = 0; i < 4; ++i)
-	{
-		last_encoder[i] = encoder[i];
-	}
-	
-	// Swap data with the FPGA
-	spi_select(NPCS_FPGA);
-	spi_xfer(0x01);
-	for (int i = 0; i < sizeof(tx); ++i)
-	{
-		rx[i] = spi_xfer(tx[i]);
-	}
-	spi_deselect();
-	
-	// Unpack data from the FPGA's response
-	encoder[0] = rx[0] | (rx[1] << 8);
-	encoder[1] = rx[2] | (rx[3] << 8);
-	encoder[2] = rx[4] | (rx[5] << 8);
-	encoder[3] = rx[6] | (rx[7] << 8);
-	motor_faults = rx[8];
 }
 
 #if 0
@@ -376,6 +305,11 @@ int main()
 	
 	rx_lost_time = current_time;
 	
+	if (controller && controller->init)
+	{
+		controller->init(0, 0);
+	}
+	
 	// Main loop
 	while (1)
 	{
@@ -416,43 +350,57 @@ int main()
 				radio_command(SIDLE);
 				radio_command(SFRX);
 				radio_command(SRX);
-			}
-			
-			//FIXME - Clean this up
-			
-			// Check for radiio packets
-			if (radio_gdo2())
-			{
-				forward_packet_received();
-			}
-			//int have_forward = radio_gdo2() && forward_packet_received();
-			
-			// Run robot operations
-			if (controller)
-			{
-				controller();
-			} else {
+				
+				// Clear drive commands
 				for (int i = 0; i < 4; ++i)
 				{
 					wheel_command[i] = 0;
 				}
-				dribble = 0;
+				dribble_command = 0;
+			}
+			
+			// Check for radiio packets
+			if (radio_gdo2())
+			{
+				if (forward_packet_received() && controller && controller->received)
+				{
+					controller->received();
+				}
 			}
 		}
 		
-		// Periodic activities: motor and ADC updates
+		// Periodic activities
 		if ((current_time - update_time) >= 5)
 		{
+			update_time = current_time;
+			
+			// Read ADC results
 			adc_update();
 			
 			// Check things that depend on ADC results
 			power_update();
 			update_ball_sensor();
 			
-			// Send commands to and read status from the FPGA
-			update_fpga();
+			// Reset motor outputs in case the controller is broken
+			for (int i = 0; i < 4; ++i)
+			{
+				wheel_out[i] = 0;
+			}
+			dribble_out = 0;
 			
-			update_time = current_time;
+			// Run the controller, if there is one
+			if (controller && controller->update)
+			{
+				controller->update();
+			}
+			
+			// Send commands to and read status from the FPGA
+			fpga_update();
+			
+			if (controller && controller->post)
+			{
+				controller->post();
+			}
 		}
 		
 		// Keep power failure music playing continuously

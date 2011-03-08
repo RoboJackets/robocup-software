@@ -1,5 +1,14 @@
 #pragma once
 
+#include <stdint.h>
+
+extern uint_fast16_t encoder[4];
+extern int_fast16_t encoder_delta[4];
+
+// PWM values sent to the FPGA
+extern int_fast8_t wheel_out[4];
+extern int_fast8_t dribble_out;
+
 // Initializes and tests the FPGA.
 // This does not force the FPGA to reconfigure, but waits for it to finish.
 //

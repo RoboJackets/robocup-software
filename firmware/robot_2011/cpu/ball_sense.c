@@ -4,6 +4,7 @@
 #include "status.h"
 #include "timer.h"
 #include "ball_sense.h"
+#include "adc.h"
 
 int have_ball;
 int ball_sense_light, ball_sense_dark;

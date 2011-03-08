@@ -5,6 +5,12 @@
 #include "spi.h"
 #include "timer.h"
 
+uint_fast16_t encoder[4];
+int_fast16_t encoder_delta[4];
+
+int_fast8_t wheel_out[4];
+int_fast8_t dribble_out;
+
 int fpga_init()
 {
 	int ret;
@@ -68,4 +74,50 @@ good:
 	}
 	
 	return ret;
+}
+
+void fpga_update()
+{
+	uint8_t tx[10] = {0}, rx[10];
+	
+	// Save old encoder counts
+	int_fast16_t last_encoder[4];
+	for (int i = 0; i < 4; ++i)
+	{
+		last_encoder[i] = encoder[i];
+	}
+	
+	//FIXME - Select 2008/2010 mechanical base with switch DP0
+	for (int i = 0; i < 4; ++i)
+	{
+		int_fast8_t cmd = wheel_out[i];
+		if (cmd < 0)
+		{
+			tx[i] = -cmd | 0x80;
+		} else {
+			tx[i] = cmd;
+		}
+	}
+	tx[4] = 0x80 | dribble_out;
+	
+	// Swap data with the FPGA
+	spi_select(NPCS_FPGA);
+	spi_xfer(0x01);
+	for (int i = 0; i < sizeof(tx); ++i)
+	{
+		rx[i] = spi_xfer(tx[i]);
+	}
+	spi_deselect();
+	
+	// Unpack data from the FPGA's response
+	encoder[0] = rx[0] | (rx[1] << 8);
+	encoder[1] = rx[2] | (rx[3] << 8);
+	encoder[2] = rx[4] | (rx[5] << 8);
+	encoder[3] = rx[6] | (rx[7] << 8);
+	motor_faults = rx[8];
+	
+	for (int i = 0; i < 4; ++i)
+	{
+		encoder_delta[i] = (int16_t)(encoder[i] - last_encoder[i]);
+	}
 }

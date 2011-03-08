@@ -1,0 +1,75 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""Fit 1D-data to arbitrary specified objective function.
+Copyright (C) 2008 Jochen Küpper
+"""
+__author__ = "Jochen Küpper"
+__version__ = "1.0 (03.10.2008)"
+
+import sys
+import numpy
+import scipy
+import scipy.optimize
+from scipy.optimize.minpack import leastsq
+import matplotlib.pyplot as matplot
+import pylab
+
+# various functions
+def single_exponential(A, t):
+	"""Calculate the values y[i] of a single exponential function 
+		y = A[0] + A[1]*exp(-t/A[2]) 
+	at all times t[i]"""
+	return A[0] + A[1] * numpy.exp(-t/A[2])
+
+
+def objective(A, t, y0, func):
+	"""Calculate residual deviation of simulated data and experimental data."""
+	return y0 - func(A, t)
+
+
+if len(sys.argv) != 2:
+	print >> sys.stderr, 'Usage: %s <input>' % sys.argv[0]
+	print >> sys.stderr, '  Each line of the input file is a time-value pair'
+	sys.exit(1)
+
+# read data
+datafile = sys.argv[1]
+data = pylab.loadtxt(datafile)
+#t_exp = data[:,0]
+y_exp = data[1:,1]
+t_exp = numpy.array(range(len(y_exp))) * 0.005
+
+# define cost function - adapt to your usage
+#
+# single exponential
+function = single_exponential
+x0 = [0., y_exp[0], 1e-1]
+param = (t_exp, y_exp, function)
+
+# perform least squares fit
+A_final, cov_x, infodict, mesg, ier = leastsq(objective, x0, args=param, full_output=True, warning=True)
+if ier != 1:
+	print "No fit!"
+	print msg
+	sys.exit(0)
+y_final = function(A_final, t_exp)
+chi2 = sum((y_exp-y_final)**2 / y_final)
+
+# print resulting parameters and their std. deviations
+print "Optimized parameters:"
+#resultfile = file(datafile + ".result", "w")
+for i in range(len(A_final)):
+	#print>>resultfile, "# A[%d]  =%8.3f +- %.4f" % (i, A_final[i], numpy.sqrt(cov_x[i,i]))
+	print "A[%d]  =%8.3f +- %.4f" % (i, A_final[i], numpy.sqrt(cov_x[i,i]))
+#print>>resultfile, "# chi^2 =%8.3f" % (chi2,)
+print "chi^2 =", chi2
+
+# write data to disk
+#pylab.savetxt(resultfile, zip(t_exp, y_exp, y_final, y_exp-y_final))
+#resultfile.close()
+
+# plot data (must be last)
+matplot.plot(t_exp, y_exp)
+matplot.plot(t_exp, y_final)
+#matplot.plot(t_exp, y_exp-y_final)
+matplot.show()

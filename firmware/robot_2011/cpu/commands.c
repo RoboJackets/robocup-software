@@ -1,6 +1,7 @@
 #include <usb/device/cdc-serial/CDCDSerialDriver.h>
 #include <board.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "timer.h"
 #include "console.h"
@@ -16,6 +17,8 @@
 #include "main.h"
 #include "version.h"
 #include "ball_sense.h"
+#include "adc.h"
+#include "fpga.h"
 
 static void cmd_help(int argc, const char *argv[], void *arg)
 {
@@ -78,12 +81,12 @@ static void print_supply(const char *label, int raw)
 
 static void cmd_status(int argc, const char *argv[], void *arg)
 {
-	printf("Robot ");
-	if (!controller)
+	if (controller)
 	{
-		printf("NOT ");
+		printf("Controller: %s\n", controller->name);
+	} else {
+		printf("No controller\n");
 	}
-	printf("running\n");
 	
 	printf("Robot ID %X\n", robot_id);
 	printf("Reset type %x\n", (AT91C_BASE_SYS->RSTC_RSR >> 8) & 7);
@@ -137,21 +140,21 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	printf("   Delta:");
 	for (int i = 0; i < 4; ++i)
 	{
-		printf(" %4d", encoder[i] - last_encoder[i]);
+		printf(" %6d", encoder_delta[i]);
 	}
 	printf("\n");
 	printf(" Command:");
 	for (int i = 0; i < 4; ++i)
 	{
-		printf(" %4d", wheel_command[i]);
+		printf(" %6d", wheel_command[i]);
 	}
-	printf("\n");
+	printf(" %4d\n", dribble_command);
 	printf("  Output:");
 	for (int i = 0; i < 4; ++i)
 	{
-		printf(" %4d", wheel_out[i]);
+		printf(" %6d", wheel_out[i]);
 	}
-	printf("\n");
+	printf(" %4d\n", dribble_out);
 	
 	printf("Ball sensor:\n");
 	printf("  Light: 0x%03x\n", ball_sense_light);
@@ -480,7 +483,31 @@ static void cmd_adc(int argc, const char *argv[], void *arg)
 
 static void cmd_run(int argc, const char *argv[], void *arg)
 {
-	printf("FIXME\n");
+	if (argc)
+	{
+		// Start the named controller
+		for (int i = 0; controllers[i].name; ++i)
+		{
+			if (!strcmp(argv[0], controllers[i].name))
+			{
+				controller = &controllers[i];
+				if (controller->init)
+				{
+					controller->init(argc - 1, argv + 1);
+				}
+				return;
+			}
+		}
+		
+		printf("Not found\n");
+	} else {
+		// Start the default controller
+		controller = DEFAULT_CONTROLLER;
+		if (controller->init)
+		{
+			controller->init(0, 0);
+		}
+	}
 }
 
 static const write_int_t write_fpga_off = {&AT91C_BASE_PIOA->PIO_CODR, MCU_PROGB};

@@ -15,12 +15,23 @@ if len(sys.argv) != 2:
 	print >> sys.stderr, 'Usage: %s <file>' % sys.argv[0]
 	sys.exit(1)
 
+dev = io.open(devices[0], 'w+b', 0)
+
+# Make sure we're talking to the firmware
+dev.write('\x03')
+expect = 'Stop\r\n> '
+i = 0
+while i < len(expect):
+	ch = dev.read(1)
+	if ch != expect[i]:
+		i = 0
+	else:
+		i += 1
+
 # Read data to be programmed
 f = file(sys.argv[1])
 data = f.read()
 f.close()
-
-dev = io.open(devices[0], 'w+b', 0)
 
 # Pad data to page boundary
 Page_Size = 128

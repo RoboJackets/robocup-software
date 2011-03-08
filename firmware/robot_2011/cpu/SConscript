@@ -98,13 +98,13 @@ Alias('robot2011', 'robocup.bin')
 Help('  robot2011: Build 2011 robot ARM firmware')
 
 # Target to program with SAM-BA (blank chip)
-arm.Alias('robot-prog-samba', ['robocup.bin', samba_flash, 'tools/reflash.bin'], Action('./${SOURCES[1]} ${SOURCES[0]}'))
+arm.Alias('robot2011-prog-samba', ['robocup.bin', samba_flash, 'tools/reflash.bin'], Action('./${SOURCES[1]} ${SOURCES[0]}'))
 AlwaysBuild('robot2011-prog-samba')
 Help('  robot2011-prog-samba: Build and program 2011 robot ARM firmware with SAM-BA\n')
 Help('    (robot CPU must have SAM-BA loaded)\n')
 
 # Target to program CPU with Robocup firmware already running
-arm.Alias('robot-prog', 'robocup.bin', Action(File('tools/reflash').srcnode().path + ' $SOURCE'))
+arm.Alias('robot2011-prog', 'robocup.bin', Action(File('tools/reflash').srcnode().path + ' $SOURCE'))
 AlwaysBuild('robot2011-prog')
 Help('  robot2011-prog: Build and program 2011 robot ARM firmware with USB console\n')
 Help('    (robot CPU must have working firmware)\n')

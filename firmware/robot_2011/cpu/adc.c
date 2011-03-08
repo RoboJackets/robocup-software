@@ -2,7 +2,7 @@
 
 #include "adc.h"
 
-uint16_t adc[8];
+uint_fast16_t adc[8];
 
 void adc_init()
 {
