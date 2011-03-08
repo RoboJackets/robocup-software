@@ -1,0 +1,3 @@
+[submodule "firmware/urjtag"]
+	path = firmware/urjtag
+	url = https://github.com/cktben/urjtag.git
