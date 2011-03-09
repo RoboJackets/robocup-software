@@ -1,0 +1,26 @@
+#!/usr/bin/env python
+
+import sys
+from numpy import *
+from matplotlib.pyplot import *
+
+if len(sys.argv) != 2:
+	print >> sys.stderr, 'Usage: %s <step response file>' % sys.argv[0]
+	sys.exit(1)
+
+data = loadtxt(sys.argv[1])
+
+vt = data[0,0]
+last_speed = 0
+x = []
+y = []
+for row in data:
+	(vbatt, speed) = row
+	accel = speed - last_speed
+	last_speed = speed
+	# (vt - vbatt) / r = i = accel * k
+	# vt - vbatt = accel * k * r
+	x.append(vt - vbatt)
+	y.append(accel)
+scatter(x, y)
+show()

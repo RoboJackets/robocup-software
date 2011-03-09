@@ -1,0 +1,16 @@
+#!/usr/bin/env python
+
+from numpy import *
+from matplotlib.pyplot import *
+
+# Max steady-state speed is 564.02
+
+t = range(100)
+s = [0] * 100
+last_speed = 0
+cmd = 127
+vbatt = 12.483
+for i in t:
+	# Steady-state speed
+	ss = 564.02 * cmd / 127.0
+	
