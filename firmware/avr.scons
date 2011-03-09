@@ -1,0 +1,12 @@
+Import('*')
+
+avr = env_base.Clone()
+avr.Replace(CC='avr-gcc')
+avr.Append(CFLAGS='-Os -Wall -std=gnu99')
+avr.Append(BUILDERS={'Binary': Builder(
+	action='avr-objcopy -O binary $SOURCE $TARGET',
+	suffix='.bin',
+	src_suffix='.elf')})
+
+Export('avr')
+

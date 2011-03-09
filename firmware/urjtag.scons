@@ -1,0 +1,27 @@
+Import('*')
+
+env = env_base.Clone()
+env['ENV']['MAKEFLAGS'] = '-j%d' % GetOption('num_jobs')
+
+urjtag_build_dir = Dir('urjtag')
+urjtag_source_dir = Dir('urjtag/urjtag').srcnode()
+urjtag_install_dir = Dir('urjtag/install')
+
+# Check out the submodule and generate autoconf scripts.
+# These modify the source tree.
+urjtag_checkout = env.Command(Dir('urjtag').srcnode().Dir('.git'), '#.gitmodules',
+	'cd ' + Dir('#').abspath + ' && git submodule update --init')
+NoClean(urjtag_checkout)
+urjtag_autoconf = env.Command(urjtag_source_dir.File('configure'), urjtag_checkout,
+	'autoreconf -i -s -v -f', chdir=1)
+
+# Configure and build in the build directory
+urjtag_configure = env.Command(urjtag_build_dir.File('.configured'), urjtag_autoconf,
+	'${SOURCE.dir.abspath}/configure --prefix=' + urjtag_install_dir.abspath + ' && touch ${TARGET.file}', chdir=1)
+urjtag_build = env.Command(urjtag_install_dir.Dir('bin').File('jtag'), urjtag_configure,
+	'cd ' + urjtag_build_dir.path + ' && make && make install')
+
+Alias('urjtag', urjtag_build)
+Clean('urjtag', urjtag_build_dir)
+Help('  urjtag: JTAG programming tools\n')
+
