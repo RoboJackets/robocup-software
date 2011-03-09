@@ -1,6 +1,7 @@
 libprotobuf.so*
 soccsim
 soccer
+soccer_tests
 simple_logger
 log_viewer
 radio
