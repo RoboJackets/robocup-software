@@ -14,8 +14,10 @@ vt = data[0,0]
 last_speed = 0
 x = []
 y = []
-for row in data:
-	(vbatt, speed) = row
+for i in range(len(data) - 1):
+	vbatt = data[i, 0]
+	speed = data[i, 1]
+	print vbatt, speed
 	accel = speed - last_speed
 	last_speed = speed
 	# (vt - vbatt) / r = i = accel * k
