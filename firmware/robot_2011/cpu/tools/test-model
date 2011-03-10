@@ -3,65 +3,39 @@
 from math import *
 from numpy import *
 from matplotlib.pyplot import *
+from motor_model import *
 
 # Max steady-state speed is 564.02
 
-cmd = 63			# FPGA command, 0-127
+motor = MotorModel()
+motor.cmd = 127
 
 # Load reference data
-ref = loadtxt('data/%d_batt' % cmd)
-ref_vbatt = ref[1:,0]
-ref_enc_delta = ref[1:,1]
+ref = loadtxt('data/%d_bench' % motor.cmd)
+ref_vbatt = ref[2:,0]
+ref_enc_delta = ref[2:,1]
 
 n = len(ref_vbatt)
 #n = 50
 
-#vbatt = 12.483		# Battery voltage
-vbatt = ref[0,0]
+motor.vbatt = ref[0,0]
 
-rad_s_to_rpm = 60.0 / (2 * pi)
-
-#kr = 374			# Speed constant, rpm/V
-#kr = 371			# Speed constant, rpm/V
-kr = 379			# Speed constant, rpm/V
-kr = kr / rad_s_to_rpm # Convert to rad/s/V
-kt = 25.5			# Torque constant, mNm/A
-
-oversample = 10
-
-s = [0]
-sample_time = 0.005 / oversample	# Sample time, s
-speed = 0			# Motor speed, rad/s
-rbatt = 0.39		# Battery internal resistance, ohms
-rmot = 1.2			# Winding resistance, phase-to-phase, ohms
-#phase = -0.8		# Rotor phase, rad (15_batt)
-phase = -2.2		# Rotor phase, rad (63_batt)
-load = 120 / 10000.0	# Load inertia, g/m^2
-for i in range(n * oversample):
-	# PWM duty cycle
-	pwm_duty = cmd / 127.0
-	
-	# Back-EMF
-	vmot = speed / kr
-	
-	# Winding current
-	#FIXME - This use of rbatt may not work with PWM
-	imot = (vbatt * pwm_duty - vmot) / (rmot + rbatt)
-	
-	# Measured supply voltage
-	vs = vbatt - imot * rbatt
-	
-	torque = kt * imot
-	torque += speed * speed * 0.00027 * sin(phase)
-	accel = torque / load
-	phase += speed * sample_time + 0.5 * accel * sample_time * sample_time
-	speed += accel * sample_time
-	
-	#enc_delta = int(0.5 + speed / (2 * pi) * 1440.0 * sample_time + speed * 10.0 / 488.0 * sin(phase))
-	enc_delta = int(0.5 + speed / (2 * pi) * 1440.0 * sample_time * oversample)
-	s.append(enc_delta)
-	#print '%6.3f %3d %6.3f %3d %3d' % (vs, enc_delta, ref_vbatt[i], ref_enc_delta[i], enc_delta - ref_enc_delta[i])
+s = []
+#motor.angle = -0.8		# 15_batt
+#motor.angle = -2.1		# 63_batt
+#motor.angle = -1.4		# 127_batt
+#motor.load = 160		# 127_batt
+motor.angle = -1.5		# 127_bench
+motor.load = 130		# 127_bench
+motor.kr = 379			# 127_bench
+motor.friction = 0
+#motor.kosc = 0
 for i in range(n):
-	print s[i * oversample], int(ref_enc_delta[i])
-plot(s[::oversample], 'b', ref_enc_delta[:n], 'r')
+	motor.step()
+	s.append(motor.enc_delta)
+	#print '%6.3f %3d %6.3f %3d %3d' % (vs, enc_delta, ref_vbatt[i], ref_enc_delta[i], enc_delta - ref_enc_delta[i])
+
+#for i in range(n):
+	#print s[i], int(ref_enc_delta[i])
+plot(s, 'b', ref_enc_delta[:n], 'r')
 show()
