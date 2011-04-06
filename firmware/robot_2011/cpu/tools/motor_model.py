@@ -18,6 +18,7 @@ class MotorModel:
 		self.cmd = 0			# FPGA command, 0..127
 		self.ticks_per_rev = 1440	# Encoder ticks per motor revolution
 		self.friction = 0		# Constant (kinetic) friction, mNm
+		self.enc_delta = 0		# Encoder count change since last sample
 
 	def step(self):
 		dtime = self.sample_time / self.oversample

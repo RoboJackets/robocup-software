@@ -1,0 +1,46 @@
+#!/usr/bin/env python
+
+from math import *
+from numpy import *
+from matplotlib.pyplot import *
+from motor_model import *
+
+# Max steady-state speed is 564.02
+
+motor = MotorModel()
+
+n = 50
+motor.vbatt = 12
+
+s = []
+#motor.angle = -0.8		# 15_batt
+#motor.angle = -2.1		# 63_batt
+#motor.angle = -1.4		# 127_batt
+#motor.load = 160		# 127_batt
+motor.angle = -1.5		# 127_bench
+motor.load = 130		# 127_bench
+motor.kr = 379			# 127_bench
+motor.friction = 0
+#motor.kosc = 0
+
+setpoint = 400
+last_w = 0
+ka = 1.0
+kw = 60.0 / motor.kr / motor.ticks_per_rev / motor.vbatt / motor.sample_time
+
+for i in range(n):
+	w = motor.enc_delta
+	if abs(w - last_w) > 10:
+		ka = (motor.cmd / 127.0 - kw * last_w) / (w - last_w)
+	last_w = w
+	
+	motor.cmd = int((ka * (setpoint - w) + kw * w) * 127.0 + 0.5)
+	if motor.cmd > 127:
+		motor.cmd = 127
+	print ka, motor.cmd
+	
+	motor.step()
+	s.append(motor.enc_delta)
+
+plot(s, 'b')
+show()
