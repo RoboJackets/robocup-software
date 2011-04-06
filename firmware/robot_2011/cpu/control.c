@@ -39,8 +39,8 @@ static void step_update()
 
 const controller_info_t controllers[] =
 {
-	{"dumb", 0, 0, dumb_update, 0},
-	{"step", step_init, 0, step_update, 0},
+	{"dumb", 0, 0, dumb_update},
+	{"step", step_init, 0, step_update},
 	
 	// End of table
 	{0, 0}

@@ -18,10 +18,6 @@ typedef struct
 	// Called just after sensors are updated and just before commands are sent to the FPGA.
 	// Put the speed controller here.
 	void (*update)(void);
-	
-	// Called after commands are sent to the FPGA.
-	// Put slow or debugging stuff here.
-	void (*post)(void);
 } controller_info_t;
 
 extern const controller_info_t controllers[];

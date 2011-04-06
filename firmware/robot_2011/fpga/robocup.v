@@ -58,6 +58,14 @@ reg [15:0] encoder_capture_2 = 0;
 reg [15:0] encoder_capture_3 = 0;
 reg [15:0] encoder_capture_4 = 0;
 
+// Motor commands
+reg [5:1] motor_dir = 0;
+reg [8:0] motor_speed_1 = 0;
+reg [8:0] motor_speed_2 = 0;
+reg [8:0] motor_speed_3 = 0;
+reg [8:0] motor_speed_4 = 0;
+reg [8:0] motor_speed_5 = 0;
+
 // SPI interface
 reg [7:0] spi_dr = 0;
 reg sck_s = 0, sck_d = 0;
@@ -69,16 +77,10 @@ reg [2:0] spi_bit_count = 0;
 // Index of the byte in this SPI packet
 reg [3:0] spi_byte_count = 0;
 
-// First byte in the packet
-reg [7:0] spi_command = 0;
-
 // Goes high for one cycle after each byte is received
 reg spi_strobe = 0;
 
-// This goes high for one cycle after each byte in a drive update command
-wire spi_drive_update = spi_strobe && spi_command == 8'h01;
-
-reg [7:0] spi_rx = 0;
+reg [7:0] spi_rx[0:9];
 
 always @(posedge sysclk) begin
 	// Synchronize SPI signals
@@ -91,10 +93,10 @@ always @(posedge sysclk) begin
 	
 	if (ncs_s == 1) begin
 		// Reset when not selected
-		spi_dr <= 8'hc9;
+		spi_dr <= 8'h02;	// FPGA SPI interface version
 		spi_bit_count <= 0;
 		spi_byte_count <= 0;
-		spi_command <= 0;
+		spi_rx[0] <= 0;
 	end else begin
 		if (sck_d == 0 && sck_s == 1) begin
 			// SCK rising edge: middle of a bit.  Sample MOSI.
@@ -103,11 +105,9 @@ always @(posedge sysclk) begin
 			if (spi_bit_count == 7) begin
 				// Sampling the last bit of a byte.
 				spi_strobe <= 1;
-				spi_rx <= {spi_dr[6:0], mosi_s};
 				
-				if (spi_byte_count == 0) begin
-					// Finished receiving the first byte, which is the command
-					spi_command <= {spi_dr[6:0], mosi_s};
+				if (spi_byte_count <= 10) begin
+					spi_rx[spi_byte_count] <= {spi_dr[6:0], mosi_s};
 				end
 			end
 		end
@@ -122,23 +122,18 @@ always @(posedge sysclk) begin
 				
 				// Set up to send the next byte.
 				// Note that spi_byte has not been incremented at this point,
-				// so the byte immediately after the commmand byte is spi_byte==0.
-				case (spi_command)
-					8'h00: spi_dr <= 8'ha5;
-					
-					8'h01: case (spi_byte_count)
-						0: spi_dr <= encoder_capture_1[7:0];
-						1: spi_dr <= encoder_capture_1[15:8];
-						2: spi_dr <= encoder_capture_2[7:0];
-						3: spi_dr <= encoder_capture_2[15:8];
-						4: spi_dr <= encoder_capture_3[7:0];
-						5: spi_dr <= encoder_capture_3[15:8];
-						6: spi_dr <= encoder_capture_4[7:0];
-						7: spi_dr <= encoder_capture_4[15:8];
-						8: spi_dr <= {3'b000, motor_fault[5:1]};
-					endcase
-					
-					default: spi_dr <= 8'h00;
+				// so the byte immediately after the first byte is spi_byte==0.
+				case (spi_byte_count)
+					0: spi_dr <= encoder_capture_1[7:0];
+					1: spi_dr <= encoder_capture_1[15:8];
+					2: spi_dr <= encoder_capture_2[7:0];
+					3: spi_dr <= encoder_capture_2[15:8];
+					4: spi_dr <= encoder_capture_3[7:0];
+					5: spi_dr <= encoder_capture_3[15:8];
+					6: spi_dr <= encoder_capture_4[7:0];
+					7: spi_dr <= encoder_capture_4[15:8];
+					8: spi_dr <= {3'b000, motor_fault[5:1]};
+					default: spi_dr <= 0;
 				endcase
 				
 				spi_byte_count <= spi_byte_count + 1;
@@ -152,43 +147,44 @@ end
 
 assign miso = fpga_ncs ? 1'bz : spi_dr[7];
 
+always @(posedge sysclk) begin
+	if (ncs_s == 1 && spi_byte_count == 10) begin
+		motor_speed_1 <= {spi_rx[1][0], spi_rx[0]};
+		motor_dir[1] = spi_rx[1][1];
+		motor_speed_2 <= {spi_rx[3][0], spi_rx[2]};
+		motor_dir[2] = spi_rx[3][1];
+		motor_speed_3 <= {spi_rx[5][0], spi_rx[4]};
+		motor_dir[3] = spi_rx[5][1];
+		motor_speed_4 <= {spi_rx[7][0], spi_rx[6]};
+		motor_dir[4] = spi_rx[7][1];
+		motor_speed_5 <= {spi_rx[9][0], spi_rx[8]};
+		motor_dir[5] = spi_rx[9][1];
+	end
+end
+
 // PWM clock divider and counter
-parameter pwm_period = 2;
-reg [1:0] pwm_divider = 0;
-reg [6:0] pwm_phase = 0;
+reg [8:0] pwm_phase = 0;
 reg pwm_direction = 0;
 always @(posedge sysclk) begin
-	if (pwm_divider == pwm_period) begin
-		pwm_divider <= 0;
-		
-		if (pwm_direction == 0) begin
-			if (pwm_phase == 7'h7d) begin
-				pwm_direction <= 1;
-			end
-			pwm_phase <= pwm_phase + 1;
-		end else begin
-			if (pwm_phase == 7'h01) begin
-				pwm_direction <= 0;
-			end
-			pwm_phase <= pwm_phase - 1;
+	if (pwm_direction == 0) begin
+		if (pwm_phase == 9'h1fd) begin
+			pwm_direction <= 1;
 		end
+		pwm_phase <= pwm_phase + 1;
 	end else begin
-		pwm_divider <= pwm_divider + 1;
+		if (pwm_phase == 9'h001) begin
+			pwm_direction <= 0;
+		end
+		pwm_phase <= pwm_phase - 1;
 	end
 end
 
 // Motor drivers
-wire set_pwm_1 = spi_drive_update && spi_byte_count == 1;
-wire set_pwm_2 = spi_drive_update && spi_byte_count == 2;
-wire set_pwm_3 = spi_drive_update && spi_byte_count == 3;
-wire set_pwm_4 = spi_drive_update && spi_byte_count == 4;
-wire set_pwm_5 = spi_drive_update && spi_byte_count == 5;
-
-motor md_1(sysclk, pwm_phase, set_pwm_1, spi_rx, {m1hall_a, m1hall_b, m1hall_c}, {m1a_h, m1a_l, m1b_h, m1b_l, m1c_h, m1c_l}, motor_fault[1]);
-motor md_2(sysclk, pwm_phase, set_pwm_2, spi_rx, {m2hall_a, m2hall_b, m2hall_c}, {m2a_h, m2a_l, m2b_h, m2b_l, m2c_h, m2c_l}, motor_fault[2]);
-motor md_3(sysclk, pwm_phase, set_pwm_3, spi_rx, {m3hall_a, m3hall_b, m3hall_c}, {m3a_h, m3a_l, m3b_h, m3b_l, m3c_h, m3c_l}, motor_fault[3]);
-motor md_4(sysclk, pwm_phase, set_pwm_4, spi_rx, {m4hall_a, m4hall_b, m4hall_c}, {m4a_h, m4a_l, m4b_h, m4b_l, m4c_h, m4c_l}, motor_fault[4]);
-motor md_5(sysclk, pwm_phase, set_pwm_5, spi_rx, {m5hall_a, m5hall_b, m5hall_c}, {m5a_h, m5a_l, m5b_h, m5b_l, m5c_h, m5c_l}, motor_fault[5]);
+motor md_1(sysclk, pwm_phase, motor_dir[1], motor_speed_1, {m1hall_a, m1hall_b, m1hall_c}, {m1a_h, m1a_l, m1b_h, m1b_l, m1c_h, m1c_l}, motor_fault[1]);
+motor md_2(sysclk, pwm_phase, motor_dir[2], motor_speed_2, {m2hall_a, m2hall_b, m2hall_c}, {m2a_h, m2a_l, m2b_h, m2b_l, m2c_h, m2c_l}, motor_fault[2]);
+motor md_3(sysclk, pwm_phase, motor_dir[3], motor_speed_3, {m3hall_a, m3hall_b, m3hall_c}, {m3a_h, m3a_l, m3b_h, m3b_l, m3c_h, m3c_l}, motor_fault[3]);
+motor md_4(sysclk, pwm_phase, motor_dir[4], motor_speed_4, {m4hall_a, m4hall_b, m4hall_c}, {m4a_h, m4a_l, m4b_h, m4b_l, m4c_h, m4c_l}, motor_fault[4]);
+motor md_5(sysclk, pwm_phase, motor_dir[5], motor_speed_5, {m5hall_a, m5hall_b, m5hall_c}, {m5a_h, m5a_l, m5b_h, m5b_l, m5c_h, m5c_l}, motor_fault[5]);
 
 // Encoders
 wire [15:0] encoder_1;
@@ -201,9 +197,9 @@ encoder counter2(sysclk, {m2enc_a, m2enc_b}, encoder_2);
 encoder counter3(sysclk, {m3enc_a, m3enc_b}, encoder_3);
 encoder counter4(sysclk, {m4enc_a, m4enc_b}, encoder_4);
 
-// Capture all encoder counts together at the beginning of a drive update
+// Capture all encoder counts together at the beginning of a transfer
 always @(posedge sysclk) begin
-	if (spi_drive_update && spi_byte_count == 0) begin
+	if (spi_strobe && spi_byte_count == 0) begin
 		encoder_capture_1 <= encoder_1;
 		encoder_capture_2 <= encoder_2;
 		encoder_capture_3 <= encoder_3;

@@ -503,7 +503,7 @@ static void cmd_run(int argc, const char *argv[], void *arg)
 	} else {
 		// Start the default controller
 		controller = DEFAULT_CONTROLLER;
-		if (controller->init)
+		if (controller && controller->init)
 		{
 			controller->init(0, 0);
 		}

@@ -32,7 +32,7 @@ xflow = xilinx.Command([bit_file, 'xflow.log'], [top_file, ucf_file],
 Clean(xflow, Dir('.'))
 
 Alias('fpga2011', bit_file)
-Help('  fpga2011: Build 2011 FPGA firmware')
+Help('  fpga2011: Build 2011 FPGA firmware\n')
 
 xilinx.Command(svf_file, [impact_file, bit_file], 'impact -batch ${SOURCE.file}', chdir=Dir('.'))
 

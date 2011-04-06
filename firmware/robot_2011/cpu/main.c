@@ -388,6 +388,12 @@ int main()
 			}
 			dribble_out = 0;
 			
+			// Read encoders
+			if (!(failures & Fail_FPGA))
+			{
+				fpga_update();
+			}
+			
 			// Run the controller, if there is one
 			if (controller && controller->update)
 			{
@@ -395,11 +401,9 @@ int main()
 			}
 			
 			// Send commands to and read status from the FPGA
-			fpga_update();
-			
-			if (controller && controller->post)
+			if (!(failures & Fail_FPGA))
 			{
-				controller->post();
+				fpga_update();
 			}
 		}
 		

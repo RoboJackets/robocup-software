@@ -61,15 +61,13 @@ good:
 	// Become the SPI master
 	spi_init();
 
-	//FIXME - Read version
+	// Verify interface version
 	spi_select(NPCS_FPGA);
-	uint8_t s0 = spi_xfer(0);
-	uint8_t s1 = spi_xfer(0);
+	uint8_t version = spi_xfer(0);
 	spi_deselect();
 	
-	if (s0 != 0xc9 || s1 != 0xa5)
+	if (version != 0x02)
 	{
-		failures |= Fail_FPGA_Logic;
 		failures |= Fail_FPGA_Version;
 	}
 	
@@ -93,16 +91,20 @@ void fpga_update()
 		int_fast8_t cmd = wheel_out[i];
 		if (cmd < 0)
 		{
-			tx[i] = -cmd | 0x80;
+			cmd = -cmd;
+			tx[i * 2] = cmd << 1;
+			tx[i * 2 + 1] = cmd >> 7;
+			tx[i * 2 + 1] |= 2;
 		} else {
-			tx[i] = cmd;
+			tx[i * 2] = cmd << 1;
+			tx[i * 2 + 1] = cmd >> 7;
 		}
 	}
-	tx[4] = 0x80 | dribble_out;
+	tx[8] = dribble_out << 1;
+	tx[9] = (dribble_out >> 7) | 2;
 	
 	// Swap data with the FPGA
 	spi_select(NPCS_FPGA);
-	spi_xfer(0x01);
 	for (int i = 0; i < sizeof(tx); ++i)
 	{
 		rx[i] = spi_xfer(tx[i]);
@@ -110,11 +112,11 @@ void fpga_update()
 	spi_deselect();
 	
 	// Unpack data from the FPGA's response
-	encoder[0] = rx[0] | (rx[1] << 8);
-	encoder[1] = rx[2] | (rx[3] << 8);
-	encoder[2] = rx[4] | (rx[5] << 8);
-	encoder[3] = rx[6] | (rx[7] << 8);
-	motor_faults = rx[8];
+	encoder[0] = rx[1] | (rx[2] << 8);
+	encoder[1] = rx[3] | (rx[4] << 8);
+	encoder[2] = rx[5] | (rx[6] << 8);
+	encoder[3] = rx[7] | (rx[8] << 8);
+	motor_faults = rx[9];
 	
 	for (int i = 0; i < 4; ++i)
 	{

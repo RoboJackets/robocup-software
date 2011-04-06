@@ -12,12 +12,12 @@ module kicker (
     output lockout
 );
 
-parameter Prescale_Divisor = 575;
-parameter Lockout_Time = 5119;
+localparam Prescale_Divisor = 575;
+localparam Lockout_Time = 5119;
 
-parameter State_Charge = 0;
-parameter State_Fire = 1;
-parameter State_Lockout = 2;
+localparam State_Charge = 0;
+localparam State_Fire = 1;
+localparam State_Lockout = 2;
 
 reg [9:0] prescalar = 0;
 reg [2:0] state = State_Charge;
