@@ -114,7 +114,7 @@ Export({'env': env, 'cross_32bit': False})
 # Build sslrefbox with its original makefile (no dependency checking)
 sslrefbox = env.Command('sslrefbox/sslrefbox', 'sslrefbox/Makefile', 'make -C sslrefbox')
 Alias('sslrefbox', sslrefbox)
-env.Install(exec_dir, 'sslrefbox/sslrefbox')
+Default(env.Install(exec_dir, 'sslrefbox/sslrefbox'))
 Help('sslrefbox: SSL referee box\n')
 
 for dir in ['logging', 'radio', 'soccer', 'firmware']:
