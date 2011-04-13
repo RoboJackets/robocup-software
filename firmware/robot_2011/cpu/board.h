@@ -181,9 +181,9 @@
 #define ID1			(1 << 24)
 #define ID2			(1 << 25)
 #define ID3			(1 << 26)
-#define DP0			(1 << 27)
-#define DP1			(1 << 28)
-#define DP2			(1 << 29)
+#define DP4			(1 << 27)
+#define DP3			(1 << 28)
+#define DP1			(1 << 29)
 #define LED_LY		(1 << 30)
 #define VBUS		(1 << 31)
 

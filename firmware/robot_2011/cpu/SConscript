@@ -1,6 +1,6 @@
 Import('*')
 
-chip = 'at91sam7s64'
+chip = 'at91sam7s321'
 
 # Definitions needed by at91lib
 defs = '-D%s -DTRACE_LEVEL=0 -DNOASSERT' % chip
@@ -95,7 +95,7 @@ Depends(robot_fw, flash_lds)
 # Generate a bare binary for programming
 arm.Binary('robocup.bin', 'robocup.elf')
 Alias('robot2011', 'robocup.bin')
-Help('  robot2011: Build 2011 robot ARM firmware')
+Help('  robot2011: Build 2011 robot ARM firmware\n')
 
 # Target to program with SAM-BA (blank chip)
 arm.Alias('robot2011-prog-samba', ['robocup.bin', samba_flash, 'tools/reflash.bin'], Action('./${SOURCES[1]} ${SOURCES[0]}'))

@@ -1,9 +1,9 @@
-import io
+import serial
 import os
 
 class SAM7:
 	def __init__(self, device):
-		self.f = io.open(device, 'w+b', 0)
+		self.f = serial.Serial(device)
 	
 	def __del__(self):
 		self.close()
@@ -13,16 +13,22 @@ class SAM7:
 			self.f.close()
 			self.f = None
 	
+	def expect(self, s):
+		for want in s:
+			got = self.f.read(1)
+			if got != want:
+				raise AssertionError('Expected 0x%02x, got 0x%02x' % (ord(want), ord(got)))
+
 	def commandWithLine(self, cmd):
 		self.f.write(cmd)
-		assert self.f.read(2) == '\n\r'
+		self.expect('\n\r')
 		value = self.f.readline().strip()
-		assert self.f.read(2) == '\r>'
+		self.expect('\r>')
 		return value
 	
 	def command(self, cmd):
 		self.f.write(cmd)
-		assert self.f.read(3) == '\n\r>'
+		self.expect('\n\r>')
 	
 	def version(self):
 		return self.commandWithLine('V#')
@@ -50,23 +56,23 @@ class SAM7:
 	
 	def readData(self, addr, size):
 		self.f.write('R%x,%x#' % (addr, size))
-		assert self.f.read(2) == '\n\r'
+		self.expect('\n\r')
 		data = ''
 		while len(data) < size:
 			chunk = self.f.read(size - len(data))
 			data += chunk
-		assert self.f.read(1) == '>'
+		self.expect('>')
 		return data
 	
 	def writeData(self, addr, data):
 		self.f.write('S%x,%x#' % (addr, len(data)))
-		assert self.f.read(2) == '\n\r'
+		self.expect('\n\r')
 		self.f.write(data)
 		assert self.f.read(1) == '>'
 	
 	def go(self, addr):
 		self.f.write('G%x#' % addr)
-		assert self.f.read(2) == '\n\r'
+		self.expect('\n\r')
 	
 	def dump(self, addr, size, filename):
 		f_out = file(filename, 'w')

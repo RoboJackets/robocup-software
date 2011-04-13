@@ -122,8 +122,10 @@ if status & 0xffff0000:
 		sys.exit(1)
 
 reflash[16:20] = struct.pack('<I', len(data))
-sam.writeData(RAM + 0x2000, reflash)
-sam.go(RAM + 0x2000)
+#user_start = 0x2000
+user_start = 0x1400
+sam.writeData(RAM + user_start, str(reflash))
+sam.go(RAM + user_start)
 
 print 'Programming...'
 sam.f.write(data)

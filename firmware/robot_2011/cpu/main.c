@@ -251,7 +251,7 @@ int main()
 	AT91C_BASE_PIOA->PIO_SODR = BALL_LED;			// Turn off ball sensor LED
 	AT91C_BASE_PIOA->PIO_OER = LED_ALL | BALL_LED;	// Enable outputs
 	// Enable and disable pullups
-	AT91C_BASE_PIOA->PIO_PPUER = RADIO_INT | FLASH_NCS | MISO | ID0 | ID1 | ID2 | ID3 | DP0 | DP1 | DP2;
+	AT91C_BASE_PIOA->PIO_PPUER = RADIO_INT | FLASH_NCS | MISO | ID0 | ID1 | ID2 | ID3 | DP1 | DP3 | DP4;
 	AT91C_BASE_PIOA->PIO_PPUDR = VBUS | M2DIV | M3DIV | M5DIV | BALL_LED;
 	
 	// Set up MCU_PROGB as an open-drain output, initially high
