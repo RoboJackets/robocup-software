@@ -8,6 +8,5 @@ p = usb.Program('radio', [
 	'USB_Device.cpp',
 	'Radio.cpp'])
 
-usb.Install(exec_dir, p)
-Default(p)
+Default(usb.Install(exec_dir, p))
 Help('radio: Base station interface\n')

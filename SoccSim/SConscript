@@ -30,8 +30,7 @@ p = e.Program('soccsim', [
 	'Physics/Robot.cpp',
 	'Physics/MemoryStream.cpp'])
 
-e.Install(exec_dir, p)
-Default(p)
+Default(e.Install(exec_dir, p))
 Help('soccsim: Simulator\n')
 
 # Copy PhysX libraries to the run directory
