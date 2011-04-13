@@ -158,8 +158,7 @@ e.Append(LIBS=['blas', 'lapack', 'bfd'])
 # build soccer executable
 p = e.Program('soccer', ['main.cpp'] + srcs )
 env.Depends(p, uics)
-e.Install(exec_dir, p)
-Default(p)
+Default(e.Install(exec_dir, p))
 Help('soccer: Main program\n')
 
 # build log viewer executable 
@@ -172,8 +171,7 @@ p = e.Program('log_viewer', [
 	'ui/log_icons.qrc'
 ])
 env.Depends(p, env.Uic4('ui/LogViewer.ui'))
-e.Install(exec_dir, p)
-Default(p)
+Default(e.Install(exec_dir, p))
 Help('log_viewer: Stand-alone log viewer\n')
 
 # build unit tests and framework
@@ -184,8 +182,7 @@ tests = [
 e.Append(LIBS=['gtest'])
 # NOTE: this links against all sources to avoid needing to actually check dependencies
 p = e.Program('soccer_tests', ['tests/gtest_main.cpp'] + tests + srcs)
-e.Install(exec_dir, p)
-Default(p)
+Default(e.Install(exec_dir, p))
 test_alias = e.Alias('test', [p], p[0].abspath)
 AlwaysBuild(test_alias)
 Help('test: Run tests\n')
