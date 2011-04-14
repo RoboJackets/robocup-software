@@ -27,8 +27,8 @@ NET "SYSCLK" LOC="P50";
 #NET "FS0" LOC="P52"; # unused
 # M2(57) is not used by the FPGA after configuration
 NET "MISO" LOC="P63";
-#NET "FPGA_NCS" LOC="P69";
-NET "FPGA_NCS" LOC="P23";	# FIXME - Using FPGA_SPARE3 for now on prototype because the MCU wires are hard to reach
+NET "FPGA_NCS" LOC="P69";
+#NET "FPGA_NCS" LOC="P23";	# FIXME - Using FPGA_SPARE3 for now on prototype because the MCU wires are hard to reach
 NET "SCK" LOC="P71";
 # DONE(72) is not used by the FPGA after configuration
 NET "M3ENC_A" LOC="P77";
@@ -48,8 +48,8 @@ NET "M5B_L" LOC="P93";
 NET "M5C_H" LOC="P94";
 NET "M3HALL_B" LOC="P95";
 NET "M5C_L" LOC="P96";
-NET "M5HALL_B" LOC="P97";
-NET "M5HALL_A" LOC="P98";
+NET "M5HALL_A" LOC="P97";
+NET "M5HALL_B" LOC="P98";
 NET "M5HALL_C" LOC="P101";
 NET "M2A_H" LOC="P103";
 NET "M2A_L" LOC="P104";

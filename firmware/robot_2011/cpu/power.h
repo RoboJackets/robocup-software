@@ -1,7 +1,6 @@
 #pragma once
 
-//FIXME - Precision reference
-#define VBATT_RH	90000
+#define VBATT_RH	68000
 #define VBATT_RL	10000
 
 // Numerator and denominator for Vbatt raw-to-millivolts conversion ratio

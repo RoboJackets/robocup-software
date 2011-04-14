@@ -1,0 +1,63 @@
+Forward command packet:
+
+00  Sequence and reverse ID
+    Bits 7-4: Sequence number (for packet loss measurements)
+    Bits 3-0: Board ID of robot to send a reverse packet immediately after this forward packet.
+01  Kick select and tuning
+       Bit 7: Reserved, always zero
+    Bits 6-5: Configuration sequence, must be 00
+       Bit 4: 1=chip, 0=kick
+    Bits 3-0: Robot ID of kicking robot
+02  Kick strength
+
+For each of five robots:
+    +0  Wheel 0 speed
+    +1  Wheel 1 speed
+    +2  Wheel 2 speed
+    +3  Wheel 3 speed
+    +4  Dribble/ID
+        Bits 7-4: Dribble strength
+        Bits 3-0: Board ID of this robot
+    
+    Each wheel speed is a signed 8-bit integer on the range [-127, 127].
+    Positive speeds produce clockwise rotation.
+
+    To leave a slot unused, fill it with a stop command (all zeros) for an unused robot ID.
+
+28 bytes total
+
+Reverse packet:
+00  Packet loss and ID
+    Bits 7-4: Number of lost packets in the last 16 sequence numbers
+    Bits 3-0: Board ID of the robot sending this packet
+01  RSSI of forward packet which requested this reverse packet
+02  Reserved
+03  Battery voltage
+    LSB is 3.3*5/255 volts.
+04  Kicker status
+    Bits 7-6: Reserved
+           5: Last pulse was a chip
+           4: Charge disabled by button
+           3: Charge enable
+           2: Charge active
+           1: Lockout
+           0: Charge done
+05  Flags
+    Bits 7: Reserved, always zero
+    Bit 6: Ball sensor fault
+    Bit 5: Holding ball
+    Bit 4: Dribbler fault
+    Bit 3: Wheel 3 fault
+    Bit 2: Wheel 2 fault
+    Bit 1: Wheel 1 fault
+    Bit 0: Wheel 0 fault
+    
+    A motor fault is indicated if the hall effect inputs are invalid (111 or 000).
+
+06  Wheel 0 hall count
+07  Wheel 1 hall count
+08  Wheel 2 hall count
+09  Wheel 3 hall count
+0a  Dribbler hall count
+
+11 bytes total
