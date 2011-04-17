@@ -159,7 +159,7 @@ int main(int argc, char* argv[])
 		forward_packet[0] = (sequence << 4) | reverse_board_id;
 		
 		bool printed = false;
-		int offset = 3;
+		int offset = 1;
 		int self_bots = 0;
 		int robot_id;
 		for (robot_id = 0; robot_id < 5 && robot_id < txPacket[0].robots_size(); ++robot_id)
