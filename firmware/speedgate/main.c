@@ -267,7 +267,7 @@ void display_speed()
 	} else {
 		display_number(v, 5);
 
-		if (speed_state == SPEED_FWD_DONE)
+		if (forward)
 		{
 			lcd_putc(0, '>');
 		} else {
