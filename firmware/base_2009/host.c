@@ -564,9 +564,6 @@ ISR(TIMER0_COMPA_vect)
 	
 	// Sequence number and reverse board ID (no reverse packet, since we don't have any use for it)
     forward_packet[0] = ((forward_packet[0] & 0xf0) + 0x10) | 0x0f;
-    // Kick ID and strength
-    forward_packet[1] = (chip_select << 4) | selected_robot;
-    forward_packet[2] = kick_strength;
     
     uint8_t offset = 3;
 	// Leave the first four slots empty
@@ -577,6 +574,7 @@ ISR(TIMER0_COMPA_vect)
         forward_packet[offset++] = 0;
         forward_packet[offset++] = 0;
         forward_packet[offset++] = 0x0f;
+        forward_packet[offset++] = 0;
 	}
 
 	// Wheel layout:
@@ -625,6 +623,7 @@ ISR(TIMER0_COMPA_vect)
 	forward_packet[offset++] = w2;
 	forward_packet[offset++] = w3;
 	forward_packet[offset++] = (dribble << 4) | selected_robot;
+	forward_packet[offset++] = kick_strength;
 
     radio_command(SIDLE);
     radio_command(SFTX);

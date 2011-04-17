@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 //FIXME - This needs to go somewhere common to this code, the robot firmware, and the base station test code.
-const unsigned int Forward_Size = 28;
+const unsigned int Forward_Size = 31;
 const unsigned int Reverse_Size = 11;
 
 class USB_Device;

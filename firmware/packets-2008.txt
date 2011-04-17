@@ -3,12 +3,6 @@ Forward command packet:
 00  Sequence and reverse ID
     Bits 7-4: Sequence number (for packet loss measurements)
     Bits 3-0: Board ID of robot to send a reverse packet immediately after this forward packet.
-01  Kick select and tuning
-       Bit 7: Reserved, always zero
-    Bits 6-5: Configuration sequence, must be 00
-       Bit 4: 1=chip, 0=kick
-    Bits 3-0: Robot ID of kicking robot
-02  Kick strength
 
 For each of five robots:
     +0  Wheel 0 speed
@@ -18,13 +12,14 @@ For each of five robots:
     +4  Dribble/ID
         Bits 7-4: Dribble strength
         Bits 3-0: Board ID of this robot
+	+5  Kick strength
     
     Each wheel speed is a signed 8-bit integer on the range [-127, 127].
     Positive speeds produce clockwise rotation.
 
     To leave a slot unused, fill it with a stop command (all zeros) for an unused robot ID.
 
-28 bytes total
+31 bytes total
 
 Reverse packet:
 00  Packet loss and ID

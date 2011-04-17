@@ -381,7 +381,7 @@ void handle_ep1_rx()
     radio_command(SFTX);
     
     // Set forward packet size
-    radio_write(PKTLEN, Forward_Size);
+    radio_write(PKTLEN, UEBCLX);
     
     // Copy data to the radio transmit FIFO
     radio_select();

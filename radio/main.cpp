@@ -157,14 +157,10 @@ int main(int argc, char* argv[])
 		
 		// Build a forward packet
 		forward_packet[0] = (sequence << 4) | reverse_board_id;
-		forward_packet[1] = 0x0f;
-		forward_packet[2] = 0x00;
 		
 		bool printed = false;
 		int offset = 3;
-		int kick_id = -1;
 		int self_bots = 0;
-		uint8_t kick_strength = 0;
 		int robot_id;
 		for (robot_id = 0; robot_id < 5 && robot_id < txPacket[0].robots_size(); ++robot_id)
 		{
@@ -190,17 +186,12 @@ int main(int argc, char* argv[])
 				roller = 0;
 			}
 			
-			if (kick)
-			{
-				kick_id = board_id;
-				kick_strength = kick;
-			}
-			
 			forward_packet[offset++] = m0;
 			forward_packet[offset++] = m1;
 			forward_packet[offset++] = m2;
 			forward_packet[offset++] = m3;
 			forward_packet[offset++] = (roller & 0xf0) | (board_id & 0x0f);
+			forward_packet[offset++] = kick;
 		}
 		
 		// Unused slots
@@ -211,6 +202,7 @@ int main(int argc, char* argv[])
 			forward_packet[offset++] = 0;
 			forward_packet[offset++] = 0;
 			forward_packet[offset++] = 0x0f;
+			forward_packet[offset++] = 0;
 		}
 		
 #if 0
@@ -239,28 +231,16 @@ int main(int argc, char* argv[])
 					roller = 0;
 				}
 				
-				if (kick)
-				{
-					kick_id = board_id;
-					kick_strength = kick;
-				}
-				
 				forward_packet[offset++] = m0;
 				forward_packet[offset++] = m1;
 				forward_packet[offset++] = m2;
 				forward_packet[offset++] = m3;
 				forward_packet[offset++] = (roller & 0xf0) | (board_id & 0x0f);
+				forward_packet[offset++] = kick;
 			}
 		}
 #endif
 
-		// ID of kicking robot and kick strength
-		if (kick_id >= 0)
-		{
-			forward_packet[1] = kick_id;
-			forward_packet[2] = kick_strength;
-		}
-		
 		if (debug_tx)
 		{
 			uint64_t t1 = Utils::timestamp();

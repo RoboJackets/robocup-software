@@ -11,11 +11,11 @@ avr_usb.Program('base_station.elf',
 	'device.c',
 	'host.c'])
 
-avr_usb.Binary('base_station.bin', 'base_station.elf')
-avr_usb.Alias('base2009', 'base_station.bin')
+hex = avr_usb.IHex('base_station.hex', 'base_station.elf')
+avr_usb.Alias('base2009', 'base_station.hex')
 Help('  base2009: Build 2009 base station firmware\n')
 
-avr_usb.Alias('base2009-prog', 'base_station.bin', Action('dfu-programmer ${DEVICE} erase && dfu-programmer ${DEVICE} flash --suppress-validation ${SOURCE} && dfu-programmer ${DEVICE} reset'))
+avr_usb.Alias('base2009-prog', hex, Action('dfu-programmer ${DEVICE} erase && dfu-programmer ${DEVICE} flash --suppress-validation ${SOURCE} && dfu-programmer ${DEVICE} reset'))
 avr_usb.AlwaysBuild('base2009-prog')
 Help('  base2009-prog: Build and program 2009 base station firmware\n')
 Help('    (put device in bootloader mode first by holding PROG and pressing RESET)\n')

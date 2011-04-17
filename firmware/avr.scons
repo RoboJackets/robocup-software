@@ -7,6 +7,10 @@ avr.Append(BUILDERS={'Binary': Builder(
 	action='avr-objcopy -O binary $SOURCE $TARGET',
 	suffix='.bin',
 	src_suffix='.elf')})
+avr.Append(BUILDERS={'IHex': Builder(
+	action='avr-objcopy -O ihex $SOURCE $TARGET',
+	suffix='.hex',
+	src_suffix='.elf')})
 
 Export('avr')
 

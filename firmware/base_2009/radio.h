@@ -5,7 +5,7 @@
 
 #include "bits.h"
 
-#define Forward_Size    28
+#define Forward_Size    31
 
 static inline void radio_select()
 {
