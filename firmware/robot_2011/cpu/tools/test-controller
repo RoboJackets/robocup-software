@@ -9,7 +9,7 @@ from motor_model import *
 
 motor = MotorModel()
 
-n = 50
+n = 100
 motor.vbatt = 12
 
 s = []
@@ -29,15 +29,20 @@ ka = 1.0
 kw = 60.0 / motor.kr / motor.ticks_per_rev / motor.vbatt / motor.sample_time
 
 for i in range(n):
+	if i == 50:
+		motor.load *= 2
+		motor.speed = 0
+	
 	w = motor.enc_delta
-	if abs(w - last_w) > 10:
+	if abs(w - last_w) > 10 and ka == 1:
 		ka = (motor.cmd / 127.0 - kw * last_w) / (w - last_w)
+		print 'ka', ka
 	last_w = w
 	
 	motor.cmd = int((ka * (setpoint - w) + kw * w) * 127.0 + 0.5)
 	if motor.cmd > 127:
 		motor.cmd = 127
-	print ka, motor.cmd
+	print 'cmd', motor.cmd
 	
 	motor.step()
 	s.append(motor.enc_delta)

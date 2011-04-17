@@ -565,7 +565,7 @@ ISR(TIMER0_COMPA_vect)
 	// Sequence number and reverse board ID (no reverse packet, since we don't have any use for it)
     forward_packet[0] = ((forward_packet[0] & 0xf0) + 0x10) | 0x0f;
     
-    uint8_t offset = 3;
+    uint8_t offset = 1;
 	// Leave the first four slots empty
     for (uint8_t i = 0; i < 4; ++i)
     {
