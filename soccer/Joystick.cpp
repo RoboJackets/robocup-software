@@ -249,5 +249,6 @@ void Joystick::drive(RadioTx::Robot *tx)
 	}
 
 	tx->set_roller(_roller);
-	tx->set_kick(_button[7] ? 255 : 0);
+	tx->set_kick((_button[7] | _button[5]) ? 255 : 0);
+	tx->set_use_chipper(_button[5]);
 }

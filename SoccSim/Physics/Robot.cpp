@@ -446,7 +446,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
 
     	// determine the kick speed
     	float kickSpeed;
-    	bool chip = data->use_chipper() && _rev == rev2010;
+    	bool chip = data->use_chipper();// && _rev == rev2010;
     	if (chip)
 		{
     		kickSpeed = data->kick() / 255.0f * maxChipSpeed;
