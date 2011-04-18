@@ -215,6 +215,7 @@ void MainWindow::updateViews()
 	if ((manual >= 0 || _ui.manualID->isEnabled()) && !_processor->joystickValid())
 	{
 		// Joystick is gone - turn off manual control
+		_ui.manualID->setCurrentIndex(0);
 		_processor->manualID(-1);
 		_ui.manualID->setEnabled(false);
 	} else if (!_ui.manualID->isEnabled() && _processor->joystickValid())
@@ -477,8 +478,11 @@ void MainWindow::status(QString text, MainWindow::StatusType status)
 
 void MainWindow::on_fieldView_robotSelected(int shell)
 {
-	_ui.manualID->setCurrentIndex(shell + 1);
-	_processor->manualID(shell);
+	if (_processor->joystickValid())
+	{
+		_ui.manualID->setCurrentIndex(shell + 1);
+		_processor->manualID(shell);
+	}
 }
 
 void MainWindow::on_actionRawBalls_toggled(bool state)
