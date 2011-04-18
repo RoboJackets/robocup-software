@@ -437,7 +437,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
      * max speeds guessed with science
      */
 
-    if (data->kick() && Utils::timestamp() - _lastKicked > RechargeTime)
+    if (data->kick() && (Utils::timestamp() - _lastKicked) > RechargeTime && chargerWorks)
     {
     	// FIXME: make these parameters some place else
     	float maxKickSpeed = 5.0f, // m/s direct kicking speed
