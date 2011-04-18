@@ -31,6 +31,10 @@ class Robot : public Entity
 
 		/** assigned shell number */
 		unsigned int shell;
+		
+		int visibility;
+		bool ballSensorWorks;
+		bool chargerWorks;
 
 	private:
 		/** Functions to initialize physical objects */

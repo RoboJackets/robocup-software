@@ -19,8 +19,12 @@ e.Append(LIBS=['NxCooking', 'PhysXLoader'])
 # Flags required for PhysX on Linux
 e.MergeFlags('-DNX32 -DLINUX -DNX_DISABLE_FLUIDS')
 
+# Find uic output
+e.Append(CPPPATH='.')
+
 p = e.Program('soccsim', [
 	'main.cpp',
+	'SimControl.cpp',
 	'Viewer.cpp',
 	'Config.cpp',
 	'Physics/Env.cpp',
@@ -30,10 +34,15 @@ p = e.Program('soccsim', [
 	'Physics/Robot.cpp',
 	'Physics/MemoryStream.cpp'])
 
+uics = e.Uic4([
+	'SimControl.ui'
+])
+e.Depends(p, uics)
+
 Default(e.Install(exec_dir, p))
 Help('soccsim: Simulator\n')
 
 # Copy PhysX libraries to the run directory
-e.Install(exec_dir, physx_libpath.File('libNxCooking.so.1'))
-e.Install(exec_dir, physx_libpath.File('libPhysXLoader.so.1'))
-e.Install(exec_dir, physx_libpath.File('libPhysXCore.so.1'))
+Default(e.Install(exec_dir, physx_libpath.File('libNxCooking.so.1')))
+Default(e.Install(exec_dir, physx_libpath.File('libPhysXLoader.so.1')))
+Default(e.Install(exec_dir, physx_libpath.File('libPhysXCore.so.1')))

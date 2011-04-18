@@ -26,6 +26,9 @@ Robot::Robot(Env* env, unsigned int id,  Robot::Rev rev) :
 {
     _kickerJoint = 0;
     _rollerJoint = 0;
+	visibility = 100;
+	ballSensorWorks = true;
+	chargerWorks = true;
     
 	//create entity
 	NxBodyDesc bodyDesc;
@@ -483,11 +486,11 @@ Packet::RadioRx Robot::radioRx() const
 	packet.set_timestamp(Utils::timestamp());
 	packet.set_battery(1.0f);
 	packet.set_rssi(1.0f);
-	packet.set_charged(Utils::timestamp() - _lastKicked > RechargeTime);
+	packet.set_charged(chargerWorks && (Utils::timestamp() - _lastKicked) > RechargeTime);
 	
 	BOOST_FOREACH(const Ball* ball, _env->balls())
 	{
-		if (ballSense(ball))
+		if (ballSense(ball) || !ballSensorWorks)
 		{
 			packet.set_ball(true);
 		}
