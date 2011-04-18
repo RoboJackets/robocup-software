@@ -26,17 +26,17 @@ void debugInit(const char *filename)
 	assert(bfd_check_format(abfd, bfd_object));
 	assert(bfd_get_file_flags(abfd) & HAS_SYMS);
 	
-	long storage = bfd_get_symtab_upper_bound (abfd);
+	long storage = bfd_get_symtab_upper_bound(abfd);
 	assert(storage > 0);
 	syms = (asymbol **)malloc(storage);
 	assert(syms);
-	int symcount = bfd_canonicalize_symtab (abfd, syms);
+	int symcount = bfd_canonicalize_symtab(abfd, syms);
 	assert(symcount > 0);
 	printf("Debug: %d symbols\n", symcount);
 	
 	// Assume all backtraces will stay in .text
 	// This is true as long as we don't use self-modifying or generated code...
-	section = bfd_get_section_by_name (abfd, ".text");
+	section = bfd_get_section_by_name(abfd, ".text");
 }
 
 QStringList debugTrace(const google::protobuf::RepeatedField<google::protobuf::uint64> &trace)
@@ -54,8 +54,8 @@ QStringList debugTrace(const google::protobuf::RepeatedField<google::protobuf::u
 		QString s;
 		s.sprintf("0x%lx", pc);
 		
-		bfd_vma vma = bfd_get_section_vma (abfd, section);
-		bfd_size_type size = bfd_get_section_size (section);
+		bfd_vma vma = bfd_get_section_vma(abfd, section);
+		bfd_size_type size = bfd_get_section_size(section);
 		if (pc < vma || pc >= vma + size)
 		{
 			continue;
@@ -73,12 +73,12 @@ QStringList debugTrace(const google::protobuf::RepeatedField<google::protobuf::u
 		bool found;
 		do
 		{
-			found = bfd_find_inliner_info (abfd, &filename, &function, &line);
+			found = bfd_find_inliner_info(abfd, &filename, &function, &line);
 		} while (found);
 		
 		if (function)
 		{
-			char *demangled = bfd_demangle (abfd, function, DMGL_ANSI | DMGL_PARAMS);
+			char *demangled = bfd_demangle(abfd, function, DMGL_ANSI | DMGL_PARAMS);
 			strs.append(demangled ? demangled : function);
 			if (demangled)
 			{
