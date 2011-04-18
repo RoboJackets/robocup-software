@@ -1,5 +1,6 @@
 #include "PreventDoubleTouch.hpp"
 
+#include <stdio.h>
 #include <boost/foreach.hpp>
 
 using namespace std;
@@ -49,7 +50,7 @@ void Gameplay::PreventDoubleTouch::run()
 			_keepRunning = false;
 		}
 	} else {
-		if (!_kicker->run() || (gameState.state == GameState::Playing && _wasReady))
+		if ((_kicker->robot->visible && !_kicker->run()) || (gameState.state == GameState::Playing && _wasReady))
 		{
 			_kicked = true;
 			_ruleTime = QTime::currentTime();
