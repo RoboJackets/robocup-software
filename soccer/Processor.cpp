@@ -499,7 +499,7 @@ void Processor::run()
 				log->set_cmd_w(r->cmd_w);
 				log->set_shell(r->shell());
 				log->set_angle(r->angle);
-				log->set_has_ball(r->hasBall);
+				log->set_ball_sense(r->hasBall);
 				
 				BOOST_FOREACH(const DebugText &t, r->robotText)
 				{

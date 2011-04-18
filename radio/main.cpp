@@ -299,7 +299,7 @@ int main(int argc, char* argv[])
 			rxPacket.set_board_id(board_id);
 			rxPacket.set_rssi((int8_t)reverse_packet[1] / 2.0);
 			rxPacket.set_battery(reverse_packet[3] * 3.3 / 256.0 * 5.0);
-			rxPacket.set_ball(reverse_packet[5] & (1 << 5));
+			rxPacket.set_ball_sense(reverse_packet[5] & (1 << 5));
 			rxPacket.set_charged(reverse_packet[4] & 1);
 			rxPacket.set_motor_fault(reverse_packet[5] & 0x1f);
 			

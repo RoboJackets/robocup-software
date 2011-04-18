@@ -490,10 +490,7 @@ Packet::RadioRx Robot::radioRx() const
 	
 	BOOST_FOREACH(const Ball* ball, _env->balls())
 	{
-		if (ballSense(ball) || !ballSensorWorks)
-		{
-			packet.set_ball(true);
-		}
+		packet.set_ball_sense(ballSense(ball) || !ballSensorWorks);
 	}
 	
 	return packet;
