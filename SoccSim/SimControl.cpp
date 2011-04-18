@@ -144,8 +144,6 @@ SimControl::SimControl(QWidget* parent):
 	_model = new RobotTableModel();
 	_ui.robotTable->setModel(_model);
 	_ui.robotTable->resizeColumnsToContents();
-	
-	resize(300, 500);
 }
 
 void SimControl::env(Env* value)
