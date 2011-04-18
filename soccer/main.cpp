@@ -203,7 +203,7 @@ int main (int argc, char* argv[])
 	
 	if (!QDir("logs").exists())
 	{
-		fprintf(stderr, "No logs directory - not writing log file\n");
+		fprintf(stderr, "No logs/ directory - not writing log file\n");
 	} else if (!log)
 	{
 		fprintf(stderr, "Not writing log file\n");
