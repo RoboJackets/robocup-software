@@ -27,6 +27,7 @@ WorldModel::WorldModel(SystemState *state, Configuration *config) :
 	_selfPlayers(Robots_Per_Team),
 	_oppPlayers(Robots_Per_Team)
 {
+	_visionTimeOffset = 0;
 	_ballModel = new RBPFBallModel(&_robotMap, config);
 }
 
@@ -43,13 +44,22 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 	if (verbose) cout << "In WorldModel::run()" << endl;
 
 	// Add vision packets
-	uint64_t curTime = 0;
+	uint64_t curTime = Utils::timestamp();
 	if (verbose) cout << "Adding vision packets" << endl;
 	BOOST_FOREACH(const SSL_DetectionFrame* vision, rawVision)
 	{
-		//FIXME - This time is not usable here.  It is in the vision computer's clock.
 		uint64_t timestamp = vision->t_capture() * 1000000.0;
-		curTime = max(curTime, timestamp);
+		
+		// Convert vision computer times to local times by assuming a constant offset.
+		// This doesn't account for network latency, but there are enough other sources
+		// of latency that it should be handled elsewhere.
+		//
+		// This does assume that the clocks move at exactly the same speed, which is not true, but what can we do?
+		if (!_visionTimeOffset)
+		{
+			_visionTimeOffset = curTime - timestamp;
+		}
+		timestamp += _visionTimeOffset;
 		
 		// determine team
 		const RepeatedPtrField<SSL_DetectionRobot> *self, *opp;

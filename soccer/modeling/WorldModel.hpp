@@ -50,5 +50,8 @@ namespace Modeling
 
 			/** allow for searching by robot ID (both self and opp) */
 			RobotModel::RobotMap _robotMap;
+			
+			// Add to vision packet times to get local times
+			uint64_t _visionTimeOffset;
 	};
 }
