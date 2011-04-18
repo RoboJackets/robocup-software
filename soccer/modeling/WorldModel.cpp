@@ -95,7 +95,7 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 	//FIXME - Detect broken ball sensors and spurious triggers (from spinning or collision)
 	BOOST_FOREACH(OurRobot *robot, _state->self)
 	{
-		robot->hasBall = robot->radioRx.ball();
+		robot->hasBall = robot->radioRx.ball_sense();
 	}
 	
 	// Copy robot data out of models into state
@@ -227,7 +227,7 @@ void WorldModel::addRobotRxData(OurRobot *robot) {
 	int shell = robot->shell();
 	BOOST_FOREACH(RobotModel::shared& model, _selfPlayers) {
 		if (model && model->shell() == shell) {
-			model->hasBall(robot->radioRx.ball());
+			model->hasBall(robot->radioRx.ball_sense());
 			return;
 		}
 	}

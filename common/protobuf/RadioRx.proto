@@ -9,7 +9,7 @@ message RadioRx
 	optional float battery = 4;
 	
 	// ball sensor
-	optional bool ball = 5;
+	optional bool ball_sense = 5;
 	
 	// True if the kicker is fully charged
 	optional bool charged = 6 [default = true];

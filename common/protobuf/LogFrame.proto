@@ -90,7 +90,7 @@ message LogFrame
 		required Point vel = 7;
 		required int32 shell = 2;
 		required float angle = 3;
-		optional bool has_ball = 4;
+		optional bool ball_sense = 4;
 		
 		// Stack trace leading up to where the robot's final command was set
 		repeated uint64 command_trace = 5;

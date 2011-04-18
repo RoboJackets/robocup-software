@@ -77,7 +77,7 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem *parent, const google::protobuf::
 		const FieldDescriptor *field = desc->FindFieldByNumber(i.key());
 		if (!field)
 		{
-			// Field has left the decriptor - should never happen
+			// Field has left the descriptor - should never happen
 			printf("Lost field %s.%d\n", desc->name().c_str(), i.key());
 			continue;
 		}
@@ -104,23 +104,25 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem *parent, const google::protobuf::
 		if (!hasData)
 		{
 			item->setText(Column_Value, QString());
+			item->setData(Column_Value, Qt::CheckStateRole, QVariant());
 		}
 	}
 	
 	BOOST_FOREACH(const FieldDescriptor *field, fields)
 	{
 		// Get the item for this field if the field has been seen before
-		//FIXME - This looks up in the map twice
 		QTreeWidgetItem *item;
-		if (fieldMap.contains(field->number()))
+		FieldMap::iterator fieldIter = fieldMap.find(field->number());
+		if (fieldIter != fieldMap.end())
 		{
 			// Field is already in parent
-			item = fieldMap[field->number()];
+			item = *fieldIter;
 		} else {
 			// New field
 			item = new QTreeWidgetItem(parent);
-			fieldMap[field->number()] = item;
+			fieldMap.insert(field->number(), item);
 			
+			item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
 			parent->setData(Column_Tag, FieldMapRole, QVariant::fromValue<FieldMap>(fieldMap));
 			item->setData(Column_Tag, Qt::DisplayRole, field->number());
 			item->setData(Column_Tag, FieldDescriptorRole, QVariant::fromValue(field));
@@ -276,7 +278,6 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem *parent, const google::protobuf::
 				break;
 			
 			case FieldDescriptor::TYPE_BOOL:
-				//FIXME - Disable user operation of the checkbox
 				item->setCheckState(Column_Value, ref->GetBool(msg, field) ? Qt::Checked : Qt::Unchecked);
 				break;
 			

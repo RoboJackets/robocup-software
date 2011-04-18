@@ -334,11 +334,10 @@ void FieldView::drawTeamSpace(QPainter& p)
 	QPointF rtX = qpointf(Geometry2d::Point(0, 1).rotated(-_rotate * 90));
 	QPointF rtY = qpointf(Geometry2d::Point(-1, 0).rotated(-_rotate * 90));
 	
-
 	// Opponent robots
 	BOOST_FOREACH(const LogFrame::Robot &r, frame->opp())
 	{
-		drawRobot(p, !frame->blue_team(), r.shell(), qpointf(r.pos()), r.angle(), r.has_ball());
+		drawRobot(p, !frame->blue_team(), r.shell(), qpointf(r.pos()), r.angle(), r.ball_sense());
 	}
 	
 	// Our robots
@@ -346,7 +345,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 	BOOST_FOREACH(const LogFrame::Robot &r, frame->self())
 	{
 		QPointF center = qpointf(r.pos());
-		drawRobot(p, frame->blue_team(), r.shell(), center, r.angle(), r.has_ball());
+		drawRobot(p, frame->blue_team(), r.shell(), center, r.angle(), r.ball_sense());
 		
 		// Highlight the manually controlled robot
 		if (manualID == r.shell())
