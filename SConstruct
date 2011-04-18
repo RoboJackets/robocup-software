@@ -77,7 +77,7 @@ if platform.machine() == 'x86_64':
 			protobuf_lib = compat_dir.File('libprotobuf.so.6')
 		else:
 			raise '32-bit compatibility: Unsupported version of Ubuntu'
-		env32.Install(exec_dir, protobuf_lib)
+		Default(env32.Install(exec_dir, protobuf_lib))
 	else:
 		raise '32-bit compatibility only works on Ubuntu'
 
