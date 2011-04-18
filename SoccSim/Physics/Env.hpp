@@ -22,9 +22,16 @@ class Env : public QObject
 	Q_OBJECT;
 	
 	public:
+		typedef QMap<unsigned int, Robot*> RobotMap;
+		
 		Env();
 		~Env();
         
+		void dropFrame()
+		{
+			_dropFrame = true;
+		}
+		
 		NxScene* scene() const
 		{
 			return _scene;
@@ -33,6 +40,16 @@ class Env : public QObject
 		const QVector<Ball*> &balls() const
 		{
 			return _balls;
+		}
+		
+		const RobotMap &blue() const
+		{
+			return _blue;
+		}
+
+		const RobotMap &yellow() const
+		{
+			return _yellow;
 		}
 
 		/** return the debug renderable for the environment */
@@ -51,6 +68,8 @@ class Env : public QObject
 		// If false, send data to the two simulated vision addresses.
 		volatile bool sendShared;
 		
+		int ballVisibility;
+		
 		NxPhysicsSDK* _physicsSDK;
 
 	protected Q_SLOTS:
@@ -61,11 +80,16 @@ class Env : public QObject
 		static void convert_robot(const Robot *robot, SSL_DetectionRobot *out);
 		void handleRadioTx(int ch, const Packet::RadioTx& data);
 
+		void sendVision();
+		
+		// IF true, the next vision frame is dropped.
+		// Automatically cleared.
+		bool _dropFrame;
+		
 		NxScene* _scene;
 		
 		Field* _field;
 		
-		typedef QMap<unsigned int, Robot*> RobotMap;
 		RobotMap _blue;
 		RobotMap _yellow;
 		QVector<Ball*> _balls;

@@ -29,6 +29,8 @@ Env::Env()
 	sendShared = false;
 	_stepCount = 0;
 	_frameNumber = 0;
+	_dropFrame = false;
+	ballVisibility = 100;
 	
 	//initialize the PhysX SDK
 	_physicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION);
@@ -214,68 +216,86 @@ void Env::step()
 	_scene->flushStream();
 	_scene->fetchResults(NX_RIGID_BODY_FINISHED, true);
 
+	// Send vision data
 	++_stepCount;
 	if (_stepCount == Oversample)
 	{
 		_stepCount = 0;
 		
-		// Send vision data
-		SSL_WrapperPacket wrapper;
-		SSL_DetectionFrame *det = wrapper.mutable_detection();
-		det->set_frame_number(_frameNumber++);
-		det->set_camera_id(0);
-		
-		det->set_t_capture(tv.tv_sec + (double)tv.tv_usec * 1.0e-6);
-		det->set_t_sent(det->t_capture());
-		
-		BOOST_FOREACH(Robot *robot, _yellow)
+		if (_dropFrame)
+		{
+			_dropFrame = false;
+		} else {
+			sendVision();
+		}
+	}
+}
+
+void Env::sendVision()
+{
+	SSL_WrapperPacket wrapper;
+	SSL_DetectionFrame *det = wrapper.mutable_detection();
+	det->set_frame_number(_frameNumber++);
+	det->set_camera_id(0);
+	
+	struct timeval tv;
+	gettimeofday(&tv, 0);
+	det->set_t_capture(tv.tv_sec + (double)tv.tv_usec * 1.0e-6);
+	det->set_t_sent(det->t_capture());
+	
+	BOOST_FOREACH(Robot *robot, _yellow)
+	{
+		if ((rand() % 100) < robot->visibility)
 		{
 			SSL_DetectionRobot *out = det->add_robots_yellow();
 			convert_robot(robot, out);
 		}
-		
-		BOOST_FOREACH(Robot *robot, _blue)
+	}
+	
+	BOOST_FOREACH(Robot *robot, _blue)
+	{
+		if ((rand() % 100) < robot->visibility)
 		{
 			SSL_DetectionRobot *out = det->add_robots_blue();
 			convert_robot(robot, out);
 		}
-		
-		Geometry2d::Point cam0(-Field_Length / 4, 0);
-		Geometry2d::Point cam1(Field_Length / 4, 0);
+	}
+	
+	Geometry2d::Point cam0(-Field_Length / 4, 0);
+	Geometry2d::Point cam1(Field_Length / 4, 0);
 
-		BOOST_FOREACH(const Ball* b, _balls)
+	BOOST_FOREACH(const Ball* b, _balls)
+	{
+		Geometry2d::Point ballPos = b->getPosition();
+
+		bool occ;
+		if (ballPos.x < 0)
 		{
-			Geometry2d::Point ballPos = b->getPosition();
-
-			bool occ;
-			if (ballPos.x < 0)
-			{
-				occ = occluded(ballPos, cam0);
-			} else {
-				occ = occluded(ballPos, cam1);
-			}
-
-			if (!occ)
-			{
-				SSL_DetectionBall *out = det->add_balls();
-				out->set_confidence(1);
-				out->set_x(ballPos.x * 1000);
-				out->set_y(ballPos.y * 1000);
-				out->set_pixel_x(ballPos.x * 1000);
-				out->set_pixel_y(ballPos.y * 1000);
-			}
-		}
-		
-		std::string buf;
-		wrapper.SerializeToString(&buf);
-		
-		if (sendShared)
-		{
-			_visionSocket.writeDatagram(&buf[0], buf.size(), MulticastAddress, SharedVisionPort);
+			occ = occluded(ballPos, cam0);
 		} else {
-			_visionSocket.writeDatagram(&buf[0], buf.size(), LocalAddress, SimVisionPort);
-			_visionSocket.writeDatagram(&buf[0], buf.size(), LocalAddress, SimVisionPort + 1);
+			occ = occluded(ballPos, cam1);
 		}
+
+		if (!occ && (rand() % 100) < ballVisibility)
+		{
+			SSL_DetectionBall *out = det->add_balls();
+			out->set_confidence(1);
+			out->set_x(ballPos.x * 1000);
+			out->set_y(ballPos.y * 1000);
+			out->set_pixel_x(ballPos.x * 1000);
+			out->set_pixel_y(ballPos.y * 1000);
+		}
+	}
+	
+	std::string buf;
+	wrapper.SerializeToString(&buf);
+	
+	if (sendShared)
+	{
+		_visionSocket.writeDatagram(&buf[0], buf.size(), MulticastAddress, SharedVisionPort);
+	} else {
+		_visionSocket.writeDatagram(&buf[0], buf.size(), LocalAddress, SimVisionPort);
+		_visionSocket.writeDatagram(&buf[0], buf.size(), LocalAddress, SimVisionPort + 1);
 	}
 }
 

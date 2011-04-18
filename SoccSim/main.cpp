@@ -1,6 +1,7 @@
 #include "Viewer.hpp"
 #include "Physics/Env.hpp"
 #include "Config.hpp"
+#include "SimControl.hpp"
 
 #include <QApplication>
 #include <QFile>
@@ -18,9 +19,8 @@ void quit(int signal)
 
 void usage(const char* prog)
 {
-	fprintf(stderr, "usage: %s [-c <config file>] [--ui] [--sv]\n", prog);
+	fprintf(stderr, "usage: %s [-c <config file>] [--sv]\n", prog);
 	fprintf(stderr, "\t--help  Show usage message\n");
-	fprintf(stderr, "\t--ui    Show GUI\n");
 	fprintf(stderr, "\t--sv    Use shared vision multicast port\n");
 }
 
@@ -31,7 +31,6 @@ int main(int argc, char* argv[])
 	Env* env = new Env();
 
 	QString configFile = "simulator.cfg";
-	bool useGUI = false;
 	bool sendShared = false;
 
 	//loop arguments and look for config file
@@ -41,9 +40,6 @@ int main(int argc, char* argv[])
 		{
 			usage(argv[0]);
 			return 1;
-		} else if (strcmp(argv[i], "--ui") == 0)
-		{
-			useGUI = true;
 		} else if (strcmp(argv[i], "--sv") == 0)
 		{
 			sendShared = true;
@@ -85,16 +81,12 @@ int main(int argc, char* argv[])
 	act.sa_handler = quit;
 	sigaction(SIGINT, &act, 0);
 	
-	Viewer *win = 0;
-	if (useGUI)
-	{
-		win = new Viewer(env);
-		win->setVisible(true);
-	}
+	SimControl win;
+	win.env(env);
+	win.show();
+	
 	int ret = app.exec();
 
-	//cleanup
-	delete win;
 	delete env;
 
 	delete config;
