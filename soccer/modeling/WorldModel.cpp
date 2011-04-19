@@ -48,18 +48,9 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 	if (verbose) cout << "Adding vision packets" << endl;
 	BOOST_FOREACH(const SSL_DetectionFrame* vision, rawVision)
 	{
-		uint64_t timestamp = vision->t_capture() * 1000000.0;
-		
-		// Convert vision computer times to local times by assuming a constant offset.
-		// This doesn't account for network latency, but there are enough other sources
-		// of latency that it should be handled elsewhere.
-		//
-		// This does assume that the clocks move at exactly the same speed, which is not true, but what can we do?
-		if (!_visionTimeOffset)
-		{
-			_visionTimeOffset = curTime - timestamp;
-		}
-		timestamp += _visionTimeOffset;
+		//FIXME - Use vision computer time, but only as a relative time.
+		//  Be aware that network/scheduling latency can change dramatically.
+		uint64_t timestamp = curTime;
 		
 		// determine team
 		const RepeatedPtrField<SSL_DetectionRobot> *self, *opp;
