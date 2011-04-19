@@ -117,5 +117,5 @@ Alias('sslrefbox', sslrefbox)
 Default(env.Install(exec_dir, 'sslrefbox/sslrefbox'))
 Help('sslrefbox: SSL referee box\n')
 
-for dir in ['logging', 'radio', 'soccer', 'firmware']:
+for dir in ['logging', 'soccer', 'firmware']:
 	do_build(dir)
