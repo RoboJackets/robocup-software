@@ -16,7 +16,7 @@ namespace Motion {
 	 * but could become more complex to handle traction
 	 * control scenarios.
 	 */
-	class WheelController {
+	class WheelControlModule {
 
 	private:
 		/** information pertaining to a single robot axle */
@@ -41,8 +41,8 @@ namespace Motion {
 
 	public:
 
-		WheelController(SystemState *state, Configuration *cfg);
-		~WheelController() {}
+		WheelControlModule(SystemState *state, Configuration *cfg);
+		~WheelControlModule() {}
 
 		void run();
 

@@ -8,19 +8,19 @@
 #include <framework/RobotConfig.hpp>
 #include <framework/Dynamics.hpp>
 
-#include "WheelController.hpp"
+#include "WheelControlModule.hpp"
 
 using namespace std;
 using namespace Geometry2d;
 
 namespace Motion {
 
-WheelController::WheelController(SystemState *state, Configuration *cfg)
+WheelControlModule::WheelControlModule(SystemState *state, Configuration *cfg)
 : _state(state), _config(cfg)
 {
 }
 
-void WheelController::run()
+void WheelControlModule::run()
 {
 	BOOST_FOREACH(OurRobot *robot, _state->self)
 	{
@@ -45,7 +45,7 @@ void WheelController::run()
 }
 
 void
-WheelController::genMotor(const Geometry2d::Point& vel, float w, OurRobot* robot) {
+WheelControlModule::genMotor(const Geometry2d::Point& vel, float w, OurRobot* robot) {
 	_procMutex.lock();
 	bool verbose = false;
 
@@ -128,7 +128,7 @@ WheelController::genMotor(const Geometry2d::Point& vel, float w, OurRobot* robot
 	BOOST_FOREACH(const float& vel, wheelVels) {
 		if (verbose) cout << " " << vel;
 		int8_t cmdVel = (int8_t) Utils::clamp(127.0*vel, 126.0, -127.0);
-		//FIXME - if (robot->rev == SystemState::Robot::rev2010) {
+//		if (robot->rev == SystemState::Robot::rev2010) // FIXME: need to enable new 2011 fleet
 		if (false)
 		{
 			robot->radioTx.set_motors(i, -cmdVel);

@@ -61,7 +61,7 @@ class MotionCmd
 		float direct_ang_vel;
 		Geometry2d::Point direct_trans_vel;
 
-		/** the motor commands - output of WheelController */
+		/** the motor commands - output of WheelControlModule */
 		std::vector<int8_t> direct_motor_cmds;
 		
 		MotionCmd()

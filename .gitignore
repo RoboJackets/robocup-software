@@ -4,3 +4,4 @@
 .scons_variables
 /build
 .pydevproject
+/gmon.out

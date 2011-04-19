@@ -30,6 +30,11 @@ void ObstacleGroup::add(ObstaclePtr obs)
     _obstacles.push_back(obs);
 }
 
+void ObstacleGroup::add(const ObstacleGroup& group)
+{
+	_obstacles.insert(_obstacles.end(), group._obstacles.begin(), group._obstacles.end());
+}
+
 ////////
 
 CircleObstacle::CircleObstacle(Geometry2d::Point center, float radius):

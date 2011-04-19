@@ -16,12 +16,12 @@ class Configuration;
 
 namespace Motion
 {
-	class Robot
+	class RobotController
 	{
 
 		public:
-			Robot(Configuration *config, SystemState *state, int shell);
-			~Robot();
+			RobotController(Configuration *config, SystemState *state, int shell);
+			~RobotController();
 
 			/** Process the command for a robot and prepare output */
 			void proc();
@@ -32,7 +32,7 @@ namespace Motion
 
 			OurRobot* self() { return _self; }
 
-			typedef boost::shared_ptr<Robot> shared_ptr;
+			typedef boost::shared_ptr<RobotController> shared_ptr;
 
 		private:
 			Pid _anglePid;

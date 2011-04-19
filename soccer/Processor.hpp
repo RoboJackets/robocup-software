@@ -31,8 +31,8 @@ namespace Gameplay
 
 namespace Motion
 {
-	class PointController;
-	class WheelController;
+	class PointControlModule;
+	class WheelControlModule;
 }
 
 namespace Modeling
@@ -63,8 +63,8 @@ class Processor: public QThread
 			uint64_t lastRadioRxTime;
 		};
 		
-		Processor(Configuration *config, bool sim);
-		~Processor();
+		Processor(Configuration *config, bool sim, int radio);
+		virtual ~Processor();
 		
 		void stop();
 		
@@ -235,9 +235,8 @@ class Processor: public QThread
 		boost::shared_ptr<Modeling::WorldModel> _modelingModule;
 		boost::shared_ptr<RefereeModule> _refereeModule;
 		boost::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
-		boost::shared_ptr<Motion::PointController> _pointControlModule;
-		boost::shared_ptr<Motion::WheelController> _wheelControlModule;
+		boost::shared_ptr<Motion::PointControlModule> _pointControlModule;
+		boost::shared_ptr<Motion::WheelControlModule> _wheelControlModule;
 
-		boost::shared_ptr<StateIdentification::StateIDModule> _stateIDModule;
 		Joystick *_joystick;
 };

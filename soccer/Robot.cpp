@@ -6,6 +6,7 @@
 #include <protobuf/LogFrame.pb.h>
 
 #include <stdio.h>
+#include <iostream>
 #include <execinfo.h>
 #include <stdexcept>
 #include <boost/foreach.hpp>
@@ -28,21 +29,21 @@ Robot::Robot(unsigned int shell, bool self)
 }
 
 OurRobot::OurRobot(int shell, SystemState *state):
-	Robot(shell, true),
-	_state(state)
+					Robot(shell, true),
+					_state(state)
 {
 	willKick = false;
 	avoidBall = false;
 	exclude = false;
 	hasBall = false;
 	avoidOpponents = true;
-        sensorConfidence = 0;
+	sensorConfidence = 0;
 	cmd_w = 0;
 	_lastChargedTime = 0;
-	
+
 	_dynamics = new Planning::Dynamics(this);
 	_planner = new Planning::RRT::Planner();
-	
+
 	for (size_t i = 0; i < Num_Shells; ++i)
 	{
 		approachOpponent[i] = false;
@@ -61,7 +62,7 @@ OurRobot::OurRobot(int shell, SystemState *state):
 void OurRobot::addText(const QString& text, const QColor& qc)
 {
 	Packet::DebugText *dbg = new Packet::DebugText;
-// 	dbg->set_layer(_state->findDebugLayer(layer));
+	// 	dbg->set_layer(_state->findDebugLayer(layer));
 	dbg->set_text(text.toStdString());
 	dbg->set_color(color(qc));
 	robotText.push_back(dbg);
@@ -71,7 +72,7 @@ void OurRobot::setCommandTrace()
 {
 	void *trace[9];
 	int n = backtrace(trace, sizeof(trace) / sizeof(trace[0]));
-	
+
 	// Skip the call into this function
 	_commandTrace.resize(n - 1);
 	for (int i = 0; i < n - 1; ++i)
@@ -83,16 +84,16 @@ void OurRobot::setCommandTrace()
 void OurRobot::resetMotionCommand()
 {
 	robotText.clear();
-	
+
 	// FIXME: these are moved to assignment to allow for commands from the previous frame to
 	// still be in effect.  They are automatically reset at assignment by assignNearest()
-//	willKick = false;
-//	avoidBall = false;
-	
+	//	willKick = false;
+	//	avoidBall = false;
+
 	radioTx.set_roller(0);
 	radioTx.set_kick(0);
 	radioTx.set_use_chipper(false);
-	
+
 	for (int i = 0; i < 4; ++i)
 	{
 		radioTx.set_motors(i, 0);
@@ -109,39 +110,51 @@ void OurRobot::stop()
 	move(pos);
 }
 
-void OurRobot::move(Geometry2d::Point pt, bool stopAtEnd)
+void OurRobot::move(const OptionalPoint& goal, const MoveType& goal_param,
+		const OptionalPoint& facing, const FacingType& facing_param) {
+
+}
+
+void OurRobot::avoid(const BallAvoid& ball, const RobotMask& opp_robots,
+		const RobotMask& self_robots, const ObstacleGroup& regions) {
+
+}
+
+void OurRobot::move(Geometry2d::Point goal, bool stopAtEnd)
 {
 	if (!visible)
-	{
 		return;
-	}
-	
-//     _state->drawLine(pos, pt);
-	
-	// create a new path
-	Planning::Path newPath;
 
-	// determine the obstacles
-	ObstacleGroup& og = obstacles;
-
-	// run the RRT planner to generate a new plan
-	_planner->run(pos, angle, vel, pt, &og, newPath);
-
-       //Without this soccer seg faults when its started (I don't know why - Anthony)
-       if(_path.empty() ||
-    		   (_path.destination().distTo(newPath.destination()) > Robot_Radius) ||
-               (_path.hit(og, 0, false)) ||
-               (_path.length(0) > newPath.length(0) + path_threshold))
-       {
-           _path = newPath;
-	
-	   Geometry2d::Point last = pos;
-	   BOOST_FOREACH(Geometry2d::Point pt, _path.points)
-	   {
-		_state->drawLine(last, pt);
-		last = pt;
-	   }
-       }
+//	// set planning target and continue
+//	// Rest of planning will occur after plays are complete
+//	if (_planner_goal && _planner_goal)
+//	_planner_goal = pt;
+//	_planner_stopAtEnd = stopAtEnd;
+//
+//	// create a new path
+//	Planning::Path newPath;
+//
+//	// determine the obstacles
+//	ObstacleGroup& og = obstacles;
+//
+//	// run the RRT planner to generate a new plan
+//	_planner->run(pos, angle, vel, pt, &og, newPath);
+//
+//	//Without this soccer seg faults when its started (I don't know why - Anthony)
+//	if(_path.empty() ||
+//			(_path.destination().distTo(newPath.destination()) > Robot_Radius) ||
+//			(_path.hit(og, 0, false)) ||
+//			(_path.length(0) > newPath.length(0) + path_threshold))
+//	{
+//		_path = newPath;
+//
+//		Geometry2d::Point last = pos;
+//		BOOST_FOREACH(Geometry2d::Point pt, _path.points)
+//		{
+//			_state->drawLine(last, pt);
+//			last = pt;
+//		}
+//	}
 
 	// call the path move command
 	executeMove(stopAtEnd);
@@ -149,8 +162,8 @@ void OurRobot::move(Geometry2d::Point pt, bool stopAtEnd)
 
 void OurRobot::move(const vector<Geometry2d::Point>& path, bool stopAtEnd)
 {
-    _state->drawLine(path.back(), pos);
-	
+	_state->drawLine(path.back(), pos);
+
 	// copy path from input
 	_path.clear();
 	_path.points = path;
@@ -164,7 +177,7 @@ void OurRobot::bezierMove(const vector<Geometry2d::Point>& controls,
 		MotionCmd::PathEndType endpoint) {
 
 	// calculate path using simple interpolation
-//	_path = Planning::createBezierPath(controls);
+	//	_path = Planning::createBezierPath(controls);
 
 	// execute path
 	//executeMove(endpoint); // FIXME: handles curves poorly
@@ -202,7 +215,7 @@ void OurRobot::bezierMove(const vector<Geometry2d::Point>& controls,
 void OurRobot::executeMove(bool stopAtEnd) // FIXME: need to do something with stopAtEnd
 {
 	setCommandTrace();
-	
+
 	// given a path, determine what the best point to use as a
 	// target point is, and assign to packet
 
@@ -375,4 +388,71 @@ bool OurRobot::charged() const
 
 void OurRobot::approachOpp(Robot * opp, bool value) {
 	approachOpponent[opp->shell()] = value;
+}
+
+void OurRobot::execute(const ObstacleGroup& global_obstacles, const ObstacleGroup& goal_area, bool isGoalie) {
+	const bool verbose = false;
+
+	// determine obstacles
+	ObstaclePtr largeBallObstacle;
+	ObstaclePtr smallBallObstacle;
+	if (_state->ball.valid)	{
+		largeBallObstacle = ObstaclePtr(new CircleObstacle(_state->ball.pos, Field_CenterRadius));
+		smallBallObstacle = ObstaclePtr(new CircleObstacle(_state->ball.pos, Ball_Radius));
+	}
+
+	ObstaclePtr selfObstacles[Num_Shells];
+	ObstaclePtr oppObstacles[Num_Shells];
+	for (unsigned int i = 0; i < Num_Shells; ++i)	{
+		if (_state->self[i]->visible)
+			selfObstacles[i] = ObstaclePtr(new CircleObstacle(_state->self[i]->pos, Robot_Radius - .01));
+		if (_state->opp[i]->visible) {
+			// FIXME: find a better size of obstacle avoidance obstacles - old radius was: Robot_Radius - .01
+			const float oppAvoidRadius = Robot_Radius - 0.03;
+			oppObstacles[i] = ObstaclePtr((new CircleObstacle(_state->opp[i]->pos, oppAvoidRadius)));
+		}
+	}
+
+	// Reset the motion command
+	// FIXME: this also resets flags from the previous frame
+	resetMotionCommand();
+
+	if (visible) {
+		// Add obstacles for this robot
+		obstacles.clear();
+
+		// Add rule-based obstacles (except for the ball, which will be added after the play
+		// has a chance to set willKick and avoidBall)
+		// NOTE: this uses the avoidOpponents flag from the last frame to set this
+		for (unsigned int i = 0; i < Num_Shells; ++i)		{
+			if (i != shell() && selfObstacles[i])
+				obstacles.add(selfObstacles[i]);
+			if (!approachOpponent[i] && avoidOpponents && oppObstacles[i])
+				obstacles.add(oppObstacles[i]);
+		}
+
+		//if not a goalie, avoid our goalie area
+		if (!isGoalie)
+			obstacles.add(goal_area);
+	}
+
+	// Add ball obstacles
+	// NOTE: there will be a lag in the small obstacle avoidance due to planning execution order
+	// FIXME: removed small ball obstacle
+	if (verbose) cout << "  Adding ball obstacles" << endl;
+	if (visible && !isGoalie)	{
+		// Any robot that isn't the goalie may have to avoid the ball due to rules
+		if ((_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart)) {// || avoidBall)
+			if (largeBallObstacle)
+				obstacles.add(largeBallObstacle);
+		}	else if (!willKick)	{
+			// Don't hit the ball unintentionally during normal play
+			if (smallBallObstacle)
+				obstacles.add(smallBallObstacle);
+		}
+	}
+
+	// perform planning
+
+	// construct motion command
 }

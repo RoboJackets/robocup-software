@@ -138,13 +138,10 @@ srcs = [
 #	'modeling/kalman/ExtendedKalmanFilter.cpp',
 
 # Sources for motion module',
-	'motion/PointController.cpp',
-	'motion/WheelController.cpp',
-	'motion/Robot.cpp',
+	'motion/PointControlModule.cpp',
+	'motion/WheelControlModule.cpp',
+	'motion/RobotController.cpp',
 	'motion/Pid.cpp',
-
-# Sources for stateID module
-#	'stateID/StateIDModule.cpp',
 	
 	'ui/main_icons.qrc',
 	'ui/log_icons.qrc'
