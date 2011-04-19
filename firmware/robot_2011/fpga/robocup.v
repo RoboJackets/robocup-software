@@ -45,10 +45,7 @@ module robocup (
 	// Microcontroller interface
 	input fpga_ncs,
 	input mosi, sck,
-	inout miso,
-
-	// This is only included so we can set the pullup configuration for this pin by itself
-	input flash_ncs
+	inout miso
 );
 
 // Status that can be read over SPI

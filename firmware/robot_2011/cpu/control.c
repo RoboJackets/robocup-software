@@ -6,8 +6,6 @@
 #include "console.h"
 #include "power.h"
 
-const controller_info_t *controller = 0;
-
 static void dumb_update()
 {
 	for (int i = 0; i < 4; ++i)
@@ -45,3 +43,6 @@ const controller_info_t controllers[] =
 	// End of table
 	{0, 0}
 };
+
+const controller_info_t *controller = 0;
+

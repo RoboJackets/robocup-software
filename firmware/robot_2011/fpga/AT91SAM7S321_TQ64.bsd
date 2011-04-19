@@ -1,0 +1,335 @@
+------------------------------------------------------------------------
+-- A T M E L   A R M   M I C R O C O N T R O L L E R S                --
+------------------------------------------------------------------------
+-- BSDL file
+--
+-- File Name:     AT91SAM7S321_TQ64.BSD
+-- File Revision: 2.0
+-- Date: 	  Thu July 21 2005
+
+-- Created by:    Atmel Corporation
+-- File Status:   Released
+--
+-- Device:        AT91SAM7S321
+-- Package:       R_LQ064_A
+--
+-- Visit http://www.atmel.com for a updated list of BSDL files.
+--
+------------------------------------------------------------------------
+-- Syntax and Semantics are checked against the IEEE 1149.1 standard. --
+-- The logical functioning of the standard Boundary-Scan instructions --
+-- and of the associated bypass, idcode and boundary-scan register    --
+-- described in this BSDL file has been verified against its related  --
+-- silicon by JTAG Technologies B.V.                                  --
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+--                       IMPORTANT NOTICE                             --
+--                                                                    --
+--   Copyright 2005 Atmel Corporation. All Rights Reserved.           --
+--                                                                    --
+--   Atmel assumes no responsibility or liability arising out         --
+--   this application or use of any information described herein      --
+--   except as expressly agreed to in writing by Atmel Corporation.   --
+--                                                                    --
+-- ------------------------------------------------------------------ --
+-- This BSDL File has been verified on severals BSDL Syntax           --
+-- Checker/Compilers                                                  --
+--                                                                    --
+--                                                                    --
+-- AGILENT 3070 BSDL COMPILER   Thu Jul 21 07:12:29 MDT 2005          --
+--     BSDL File /work/AT91SAM7S321.bsdl, package R_LQ064_A compiled  --
+--     successfully. 0 ERRORS, 0 WARNINGS, OBJECT PRODUCED            --
+------------------------------------------------------------------------
+
+ entity AT91SAM7S321 is
+   
+-- This section identifies the default device package selected.
+   
+   generic (PHYSICAL_PIN_MAP: string:= "R_LQ064_A");
+   
+-- This section declares all the ports in the design.
+   
+   port ( 
+          erase   : in       bit;
+          icetck  : in       bit;
+          icetdi  : in       bit;
+          icetms  : in       bit;
+          jtagsel : in       bit;
+          selv32  : in       bit;
+          test    : linkage  bit;
+          nrst    : in       bit;
+          pa0     : inout    bit;
+          pa1     : inout    bit;
+          pa10    : inout    bit;
+          pa11    : inout    bit;
+          pa12    : inout    bit;
+          pa13    : inout    bit;
+          pa14    : inout    bit;
+          pa15    : inout    bit;
+          pa16    : inout    bit;
+          pa17    : inout    bit;
+          pa18    : inout    bit;
+          pa19    : inout    bit;
+          pa2     : inout    bit;
+          pa20    : inout    bit;
+          pa21    : inout    bit;
+          pa22    : inout    bit;
+          pa23    : inout    bit;
+          pa24    : inout    bit;
+          pa25    : inout    bit;
+          pa26    : inout    bit;
+          pa27    : inout    bit;
+          pa28    : inout    bit;
+          pa29    : inout    bit;
+          pa3     : inout    bit;
+          pa30    : inout    bit;
+          pa31    : inout    bit;
+          pa4     : inout    bit;
+          pa5     : inout    bit;
+          pa6     : inout    bit;
+          pa7     : inout    bit;
+          pa8     : inout    bit;
+          pa9     : inout    bit;
+          icetdo  : out      bit
+   );
+   
+   use STD_1149_1_1994.all;
+   
+   attribute COMPONENT_CONFORMANCE of AT91SAM7S321: entity is "STD_1149_1_1993";
+   
+   attribute PIN_MAP of AT91SAM7S321: entity is PHYSICAL_PIN_MAP;
+   
+-- This section specifies the pin map for each port. This information
+-- is extracted from the port-to-pin map file that was read in using
+-- the "read_pin_map" command.
+   
+     constant R_LQ064_A: PIN_MAP_STRING := 
+        "erase   : 55," &
+        "icetck  : 53," &
+        "icetdi  : 33," &
+        "icetms  : 51," &
+        "jtagsel : 50," &
+        "selv32  : 56," &
+        "test    : 40," &
+        "nrst    : 39," &
+        "pa0     : 48," &
+        "pa1     : 47," &
+        "pa10    : 29," &
+        "pa11    : 28," &
+        "pa12    : 27," &
+        "pa13    : 22," &
+        "pa14    : 21," &
+        "pa15    : 20," &
+        "pa16    : 19," &
+        "pa17    : 9," &
+        "pa18    : 10," &
+        "pa19    : 13," &
+        "pa2     : 44," &
+        "pa20    : 16," &
+        "pa21    : 11," &
+        "pa22    : 14," &
+        "pa23    : 15," &
+        "pa24    : 23," &
+        "pa25    : 25," &
+        "pa26    : 26," &
+        "pa27    : 37," &
+        "pa28    : 38," &
+        "pa29    : 41," &
+        "pa3     : 43," &
+        "pa30    : 42," &
+        "pa31    : 52," &
+        "pa4     : 36," &
+        "pa5     : 35," &
+        "pa6     : 34," &
+        "pa7     : 32," &
+        "pa8     : 31," &
+        "pa9     : 30," &
+        "icetdo  : 49";
+   
+-- This section specifies the TAP ports.
+-- For the TAP TCK port, the parameters in the brackets are:
+--        First Field : Maximum  TCK frequency.
+--        Second Field: Allowable states TCK may be stopped in.
+   
+   attribute TAP_SCAN_CLOCK of icetck: signal is (10.0e6, BOTH);
+   attribute TAP_SCAN_IN    of icetdi: signal is true;
+   attribute TAP_SCAN_MODE  of icetms: signal is true;
+   attribute TAP_SCAN_OUT   of icetdo: signal is true;
+   attribute TAP_SCAN_RESET of nrst  : signal is true;
+   
+-- Specifies the compliance enable patterns for the design.
+-- It lists a set of design ports and the values that they
+-- should be set to, in order to enable compliance to IEEE
+-- Std 1149.1
+   
+   attribute COMPLIANCE_PATTERNS of AT91SAM7S321: entity is 
+        "(jtagsel, selv32) (10)";
+   
+-- Specifies the number of bits in the instruction register.
+   
+   attribute INSTRUCTION_LENGTH of AT91SAM7S321: entity is 3;
+   
+-- Specifies the boundary-scan instructions implemented in the
+-- design and their opcodes.
+   
+   attribute INSTRUCTION_OPCODE of AT91SAM7S321: entity is 
+     "BYPASS (111)," &
+     "EXTEST (000, 011)," &
+     "SAMPLE (001)," &
+     "HIGHZ  (100, 110)," &
+     "IDCODE (010)";
+   
+-- Specifies the bit pattern that is loaded into the instruction
+-- register when the TAP controller passes through the Capture-IR
+-- state. The standard mandates that the two LSBs must be "01".
+-- The remaining bits are design specific.
+   
+   attribute INSTRUCTION_CAPTURE of AT91SAM7S321: entity is "001";
+   
+-- Specifies the bit pattern that is loaded into the DEVICE_ID
+-- register during the IDCODE instruction when the TAP controller
+-- passes through the Capture-DR state.
+   
+   attribute IDCODE_REGISTER of AT91SAM7S321: entity is 
+     "0000" &                  -- 4-bit version number
+     "0101101100010010" &      -- 16-bit part number
+     "00000011111" &           -- 11-bit identity of the manufacturer
+     "1";                      -- Required by IEEE Std 1149.1
+   
+-- This section specifies the test data register placed between TDI
+-- and TDO for each implemented instruction.
+   
+   attribute REGISTER_ACCESS of AT91SAM7S321: entity is 
+        "BYPASS    (BYPASS, HIGHZ)," &
+        "BOUNDARY  (EXTEST, SAMPLE)," &
+        "DEVICE_ID (IDCODE)";
+   
+-- Specifies the length of the boundary scan register.
+   
+   attribute BOUNDARY_LENGTH of AT91SAM7S321: entity is 97;
+   
+-- The following list specifies the characteristics of each cell
+-- in the boundary scan register from TDI to TDO.
+-- The following is a description of the label fields:
+--      num     : Is the cell number.
+--      cell    : Is the cell type as defined by the standard.
+--      port    : Is the design port name. Control cells do not
+--                have a port name.
+--      function: Is the function of the cell as defined by the
+--                standard. Is one of input, output2, output3,
+--                bidir, control or controlr.
+--      safe    : Specifies the value that the BSR cell should be
+--                loaded with for safe operation when the software
+--                might otherwise choose a random value.
+--      ccell   : The control cell number. Specifies the control
+--                cell that drives the output enable for this port.
+--      disval  : Specifies the value that is loaded into the
+--                control cell to disable the output enable for
+--                the corresponding port.
+--      rslt    : Resulting state. Shows the state of the driver
+--                when it is disabled.
+   
+   attribute BOUNDARY_REGISTER of AT91SAM7S321: entity is 
+--    
+--    num   cell   port     function      safe  [ccell  disval  rslt]
+--    
+     "96   (BC_1,  pa17,    input,        X),                        " &
+     "95   (BC_1,  pa17,    output3,      X,    94,     1,      Z),  " &
+     "94   (BC_1,  *,       controlr,     1),                        " &
+     "93   (BC_1,  pa18,    input,        X),                        " &
+     "92   (BC_1,  pa18,    output3,      X,    91,     1,      Z),  " &
+     "91   (BC_1,  *,       controlr,     1),                        " &
+     "90   (BC_1,  pa21,    input,        X),                        " &
+     "89   (BC_1,  pa21,    output3,      X,    88,     1,      Z),  " &
+     "88   (BC_1,  *,       controlr,     1),                        " &
+     "87   (BC_1,  pa19,    input,        X),                        " &
+     "86   (BC_1,  pa19,    output3,      X,    85,     1,      Z),  " &
+     "85   (BC_1,  *,       controlr,     1),                        " &
+     "84   (BC_1,  pa20,    input,        X),                        " &
+     "83   (BC_1,  pa20,    output3,      X,    82,     1,      Z),  " &
+     "82   (BC_1,  *,       controlr,     1),                        " &
+     "81   (BC_1,  pa16,    input,        X),                        " &
+     "80   (BC_1,  pa16,    output3,      X,    79,     1,      Z),  " &
+     "79   (BC_1,  *,       controlr,     1),                        " &
+     "78   (BC_1,  pa15,    input,        X),                        " &
+     "77   (BC_1,  pa15,    output3,      X,    76,     1,      Z),  " &
+     "76   (BC_1,  *,       controlr,     1),                        " &
+     "75   (BC_1,  pa14,    input,        X),                        " &
+     "74   (BC_1,  pa14,    output3,      X,    73,     1,      Z),  " &
+     "73   (BC_1,  *,       controlr,     1),                        " &
+     "72   (BC_1,  pa13,    input,        X),                        " &
+     "71   (BC_1,  pa13,    output3,      X,    70,     1,      Z),  " &
+     "70   (BC_1,  *,       controlr,     1),                        " &
+     "69   (BC_1,  pa22,    input,        X),                        " &
+     "68   (BC_1,  pa22,    output3,      X,    67,     1,      Z),  " &
+     "67   (BC_1,  *,       controlr,     1),                        " &
+     "66   (BC_1,  pa23,    input,        X),                        " &
+     "65   (BC_1,  pa23,    output3,      X,    64,     1,      Z),  " &
+     "64   (BC_1,  *,       controlr,     1),                        " &
+     "63   (BC_1,  pa24,    input,        X),                        " &
+     "62   (BC_1,  pa24,    output3,      X,    61,     1,      Z),  " &
+     "61   (BC_1,  *,       controlr,     1),                        " &
+     "60   (BC_1,  pa12,    input,        X),                        " &
+     "59   (BC_1,  pa12,    output3,      X,    58,     1,      Z),  " &
+     "58   (BC_1,  *,       controlr,     1),                        " &
+     "57   (BC_1,  pa11,    input,        X),                        " &
+     "56   (BC_1,  pa11,    output3,      X,    55,     1,      Z),  " &
+     "55   (BC_1,  *,       controlr,     1),                        " &
+     "54   (BC_1,  pa10,    input,        X),                        " &
+     "53   (BC_1,  pa10,    output3,      X,    52,     1,      Z),  " &
+     "52   (BC_1,  *,       controlr,     1),                        " &
+     "51   (BC_1,  pa9,     input,        X),                        " &
+     "50   (BC_1,  pa9,     output3,      X,    49,     1,      Z),  " &
+     "49   (BC_1,  *,       controlr,     1),                        " &
+     "48   (BC_1,  pa8,     input,        X),                        " &
+     "47   (BC_1,  pa8,     output3,      X,    46,     1,      Z),  " &
+     "46   (BC_1,  *,       controlr,     1),                        " &
+     "45   (BC_1,  pa7,     input,        X),                        " &
+     "44   (BC_1,  pa7,     output3,      X,    43,     1,      Z),  " &
+     "43   (BC_1,  *,       controlr,     1),                        " &
+     "42   (BC_1,  pa6,     input,        X),                        " &
+     "41   (BC_1,  pa6,     output3,      X,    40,     1,      Z),  " &
+     "40   (BC_1,  *,       controlr,     1),                        " &
+     "39   (BC_1,  pa5,     input,        X),                        " &
+     "38   (BC_1,  pa5,     output3,      X,    37,     1,      Z),  " &
+     "37   (BC_1,  *,       controlr,     1),                        " &
+     "36   (BC_1,  pa4,     input,        X),                        " &
+     "35   (BC_1,  pa4,     output3,      X,    34,     1,      Z),  " &
+     "34   (BC_1,  *,       controlr,     1),                        " &
+     "33   (BC_1,  pa25,    input,        X),                        " &
+     "32   (BC_1,  pa25,    output3,      X,    31,     1,      Z),  " &
+     "31   (BC_1,  *,       controlr,     1),                        " &
+     "30   (BC_1,  pa26,    input,        X),                        " &
+     "29   (BC_1,  pa26,    output3,      X,    28,     1,      Z),  " &
+     "28   (BC_1,  *,       controlr,     1),                        " &
+     "27   (BC_1,  pa27,    input,        X),                        " &
+     "26   (BC_1,  pa27,    output3,      X,    25,     1,      Z),  " &
+     "25   (BC_1,  *,       controlr,     1),                        " &
+     "24   (BC_1,  pa28,    input,        X),                        " &
+     "23   (BC_1,  pa28,    output3,      X,    22,     1,      Z),  " &
+     "22   (BC_1,  *,       controlr,     1),                        " &
+     "21   (BC_1,  pa3,     input,        X),                        " &
+     "20   (BC_1,  pa3,     output3,      X,    19,     1,      Z),  " &
+     "19   (BC_1,  *,       controlr,     1),                        " &
+     "18   (BC_1,  pa2,     input,        X),                        " &
+     "17   (BC_1,  pa2,     output3,      X,    16,     1,      Z),  " &
+     "16   (BC_1,  *,       controlr,     1),                        " &
+     "15   (BC_1,  pa1,     input,        X),                        " &
+     "14   (BC_1,  pa1,     output3,      X,    13,     1,      Z),  " &
+     "13   (BC_1,  *,       controlr,     1),                        " &
+     "12   (BC_1,  pa0,     input,        X),                        " &
+     "11   (BC_1,  pa0,     output3,      X,    10,     1,      Z),  " &
+     "10   (BC_1,  *,       controlr,     1),                        " &
+     "9    (BC_1,  pa29,    input,        X),                        " &
+     "8    (BC_1,  pa29,    output3,      X,    7,      1,      Z),  " &
+     "7    (BC_1,  *,       controlr,     1),                        " &
+     "6    (BC_1,  pa30,    input,        X),                        " &
+     "5    (BC_1,  pa30,    output3,      X,    4,      1,      Z),  " &
+     "4    (BC_1,  *,       controlr,     1),                        " &
+     "3    (BC_1,  pa31,    input,        X),                        " &
+     "2    (BC_1,  pa31,    output3,      X,    1,      1,      Z),  " &
+     "1    (BC_1,  *,       controlr,     1),                        " &
+     "0    (BC_1,  erase,   input,        X)                         ";
+ 
+ end AT91SAM7S321;
+

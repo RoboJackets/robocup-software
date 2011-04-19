@@ -5,7 +5,7 @@
 #include "spi.h"
 #include "cc1101.h"
 
-#define Forward_Size    28
+#define Forward_Size    31
 #define Reverse_Size    11
 
 static inline void radio_select()

@@ -73,47 +73,6 @@ static int forward_packet_received()
 	// Update sequence number history
 // 	uint8_t sequence = forward_packet[0] >> 4;
 	
-	// Kicking
-	uint8_t kick_id = forward_packet[1] & 15;
-	if (kick_id == robot_id && forward_packet[2])
-	{
-// 		LED_ON(LED_RY);
-	} else {
-// 		LED_OFF(LED_RY);
-	}
-	
-	// Kick/chip selection
-/*	kicker_control &= ~0x20;
-	if (forward_packet[1] & 0x10)
-	{
-	    kicker_control |= 0x20;
-	}
-	fpga_write(FPGA_Kicker_Status, kicker_control);*/
-
-#if 0
-	// Clear history bits for missed packets
-	for (int i = (last_sequence + 1) & 15; i != sequence; i = (i + 1) & 15)
-	{
-		sequence_history &= ~(1 << i);
-	}
-	
-	// Set the history bit for this packet
-	sequence_history |= 1 << sequence;
-	
-	// Save this packet's sequence number for next time
-	last_sequence = sequence;
-	
-	// Count lost packets
-	int lost_packets = 0;
-	for (int i = 0; i < 16; ++i)
-	{
-		if (!(sequence_history & (1 << i)))
-		{
-			++lost_packets;
-		}
-	}
-#endif
-	
 	// Clear motor commands in case this robot's ID does not appear in the packet
 	for (int i = 0; i < 4; ++i)
 	{
@@ -122,7 +81,7 @@ static int forward_packet_received()
 	dribble_command = 0;
 
 	// Get motor commands from the packet
-	int offset = 3;
+	int offset = 1;
 	for (int slot = 0; slot < 5; ++slot)
 	{
 		if ((forward_packet[offset + 4] & 0x0f) == robot_id)
@@ -136,7 +95,7 @@ static int forward_packet_received()
 			dribble_command = (forward_packet[offset + 4] & 0xf0) >> 1;
 			dribble_command |= dribble_command >> 4;
 		}
-		offset += 5;
+		offset += 6;
 	}
 
 #if 0

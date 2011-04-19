@@ -131,6 +131,13 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	}
 	putchar('\n');
 	
+	printf("Motor out:");
+	for (int i = 0; i < 4; ++i)
+	{
+		printf(" 0x%02x", wheel_out[i]);
+	}
+	printf("\n");
+
 	printf("Encoders:");
 	for (int i = 0; i < 4; ++i)
 	{

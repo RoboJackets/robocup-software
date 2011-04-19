@@ -82,7 +82,7 @@ end
 wire [9:0] pwm_inverted_threshold = {0, pwm_level} + dead_time;
 
 wire pwm_active = (pwm_phase < pwm_level);
-wire pwm_inverted  = (pwm_phase >= pwm_inverted_threshold);
+wire pwm_inverted = (pwm_phase >= pwm_inverted_threshold);
 
 // Commutation
 wire [5:0] com_out =

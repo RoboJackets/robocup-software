@@ -9,16 +9,18 @@ svf_file = File(project + '.svf')
 xilinx.Tool('textfile')
 
 # Generate an iMPACT script to make the SVF file
+cpu_bsdl_file = File('AT91SAM7S321_TQ64.bsd')
 impact_file = xilinx.Textfile(project + '.impact', [
 	'setmode -bscan',
 	'setcable -p svf -file ' + svf_file.abspath,
-	'adddevice -p 1 -file ' + bit_file.abspath,
-	'program -p 1',
+	'adddevice -p 1 -file ' + cpu_bsdl_file.srcnode().abspath,
+	'adddevice -p 2 -file ' + bit_file.abspath,
+	'program -p 2',
 	'quit'])
 
 # Generate an urjtag script
 jtag_file = xilinx.Textfile(project + '.jtag', [
-	'cable jtagkey pid=6010',
+	'cable jtagkey pid=0x6010',
 	'detect',
 	'svf ' + File(svf_file).path])
 

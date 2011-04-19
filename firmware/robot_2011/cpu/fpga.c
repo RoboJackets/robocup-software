@@ -92,12 +92,12 @@ void fpga_update()
 		if (cmd < 0)
 		{
 			cmd = -cmd;
-			tx[i * 2] = cmd << 1;
-			tx[i * 2 + 1] = cmd >> 7;
+			tx[i * 2] = cmd << 2;
+			tx[i * 2 + 1] = cmd >> 6;
 			tx[i * 2 + 1] |= 2;
 		} else {
-			tx[i * 2] = cmd << 1;
-			tx[i * 2 + 1] = cmd >> 7;
+			tx[i * 2] = cmd << 2;
+			tx[i * 2 + 1] = cmd >> 6;
 		}
 	}
 	tx[8] = dribble_out << 1;

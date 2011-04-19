@@ -1,6 +1,6 @@
 #pragma once
 
-#define DEFAULT_CONTROLLER 0
+#define DEFAULT_CONTROLLER (&controllers[0])
 
 typedef struct
 {
