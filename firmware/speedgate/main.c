@@ -114,12 +114,14 @@ void reset()
 	// Reset the speed measurement state
 	speed_state = SPEED_IDLE;
 	holdoff = 0;
+	time_us = 0;
 
 	reset_auto_power_off();
 }
 
 void power_off()
 {
+	// Turn off peripherals
 	reset();
 
 	// Turn off LEDs
