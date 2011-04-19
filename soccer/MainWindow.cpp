@@ -203,12 +203,15 @@ void MainWindow::updateViews()
 	// Radio channel
 	if (!_haveRadioChannel)
 	{
+		//FIXME - Not like this any more
+#if 0
 		int r = _processor->radio();
 		if (r >= 0)
 		{
 			_haveRadioChannel = true;
 			_ui.radioLabel->setText(QString("Radio %1").arg(r));
 		}
+#endif
 	}
 
 	int manual =_processor->manualID();
@@ -276,9 +279,6 @@ void MainWindow::updateViews()
 	// Read recent history from the log
 	_processor->logger().getFrames(frameNumber(), _history);
 	
-	// Get the frame at the log playback time
-	const shared_ptr<LogFrame> currentFrame = _history[0];
-	
 	// Update field view
 	_ui.fieldView->update();
 	
@@ -309,17 +309,23 @@ void MainWindow::updateViews()
 		_ui.debugLayers->sortItems();
 	}
 	
-	// Update non-message tree items
-	_frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole, frameNumber());
-	int elapsedMillis = (currentFrame->start_time() - _processor->firstLogTime + 500) / 1000;
-	QTime elapsedTime = QTime().addMSecs(elapsedMillis);
-	_elapsedTimeItem->setText(ProtobufTree::Column_Value, elapsedTime.toString("hh:mm:ss.zzz"));
+	// Get the frame at the log playback time
+	const shared_ptr<LogFrame> currentFrame = _history[0];
 	
-	// Sort the tree by tag if items have been added
-	if (_ui.logTree->message(*currentFrame))
+	if (currentFrame)
 	{
-		// Items have been added, so sort again on tag number
-		_ui.logTree->sortItems(ProtobufTree::Column_Tag, Qt::AscendingOrder);
+		// Update non-message tree items
+		_frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole, frameNumber());
+		int elapsedMillis = (currentFrame->start_time() - _processor->firstLogTime + 500) / 1000;
+		QTime elapsedTime = QTime().addMSecs(elapsedMillis);
+		_elapsedTimeItem->setText(ProtobufTree::Column_Value, elapsedTime.toString("hh:mm:ss.zzz"));
+		
+		// Sort the tree by tag if items have been added
+		if (_ui.logTree->message(*currentFrame))
+		{
+			// Items have been added, so sort again on tag number
+			_ui.logTree->sortItems(ProtobufTree::Column_Tag, Qt::AscendingOrder);
+		}
 	}
 	
 	// We restart this timer repeatedly instead of using a single shot timer in order

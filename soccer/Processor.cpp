@@ -2,6 +2,8 @@
 // vim:ai ts=4 et
 
 #include "Processor.hpp"
+#include "radio/SimRadio.hpp"
+#include "radio/USBRadio.hpp"
 
 #include <QMutexLocker>
 
@@ -38,9 +40,7 @@ using namespace boost;
 using namespace Packet;
 using namespace google::protobuf;
 
-static QHostAddress LocalAddress(QHostAddress::LocalHost);
-
-Processor::Processor(Configuration *config, bool sim, int radio)
+Processor::Processor(Configuration *config, bool sim)
 {
 	_running = true;
 	_syncToVision = false;
@@ -55,7 +55,7 @@ Processor::Processor(Configuration *config, bool sim, int radio)
 	_useOpponentHalf = true;
 
 	_simulation = sim;
-	_radio = radio;
+	_radio = 0;
 	_joystick = new Joystick();
 	
 	// Create robot configuration
@@ -196,7 +196,6 @@ bool Processor::joystickValid()
 void Processor::run()
 {
 	_visionSocket = new QUdpSocket;
-	_radioSocket = new QUdpSocket;
 	_refereeSocket = new QUdpSocket;
 	
 	// Create vision socket
@@ -230,27 +229,11 @@ void Processor::run()
 	multicast_add(_refereeSocket, RefereeAddress);
 
 	// Create radio socket
-	if (_radio < 0)
+	if (_simulation)
 	{
-		// No channel specified.
-		// Pick the first available one.
-		if (_radioSocket->bind(RadioRxPort))
-		{
-			_radio = 0;
-		} else {
-			if (_radioSocket->bind(RadioRxPort + 1))
-			{
-				_radio = 1;
-			} else {
-				throw runtime_error("Can't bind to either radio port");
-			}
-		}
+		_radio = new SimRadio();
 	} else {
-		// Bind only to the port for the specified channel.
-		if (!_radioSocket->bind(RadioRxPort + _radio))
-		{
-			throw runtime_error("Can't bind to specified radio port");
-		}
+		_radio = new USBRadio();
 	}
 	
 	Status curStatus;
@@ -395,31 +378,21 @@ void Processor::run()
 			}
 		}
 		
-		// Read radio RX packets
-		while (_radioSocket->hasPendingDatagrams())
+		// Read radio reverse packets
+		RadioRx rx;
+		if (_radio->receive(&rx))
 		{
-			unsigned int n = _radioSocket->pendingDatagramSize();
-			string buf;
-			buf.resize(n);
-			_radioSocket->readDatagram(&buf[0], n);
-			
-			RadioRx *rx = _state.logFrame->add_radio_rx();
-			if (!rx->ParseFromString(buf))
-			{
-				printf("Bad radio packet of %d bytes\n", n);
-				continue;
-			}
+			_state.logFrame->add_radio_rx()->CopyFrom(rx);
 			
 			curStatus.lastRadioRxTime = Utils::timestamp();
 			
 			// Store this packet in the appropriate robot
-			unsigned int board = rx->board_id();
+			unsigned int board = rx.board_id();
 			if (board < Num_Shells)
 			{
 				// We have to copy because the RX packet will survive past this frame
 				// but LogFrame will not (the RadioRx in LogFrame will be reused).
-				_state.self[board]->radioRx.CopyFrom(*rx);
-				break;
+				_state.self[board]->radioRx.CopyFrom(rx);
 			}
 		}
 		
@@ -571,7 +544,6 @@ void Processor::run()
 	}
 	
 	delete _refereeSocket;
-	delete _radioSocket;
 	delete _visionSocket;
 }
 
@@ -637,10 +609,10 @@ void Processor::sendRadioData()
 		tx->add_robots()->CopyFrom(*txRobot);
 	}
 
-	// Send the packet
-	std::string out;
-	_state.logFrame->radio_tx().SerializeToString(&out);
-	_radioSocket->writeDatagram(&out[0], out.size(), LocalAddress, RadioTxPort + _radio);
+	if (_radio)
+	{
+		_radio->send(_state.logFrame->radio_tx());
+	}
 }
 
 void Processor::defendPlusX(bool value)
