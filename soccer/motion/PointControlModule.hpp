@@ -3,7 +3,7 @@
 #include <boost/array.hpp>
 
 #include <Constants.hpp>
-#include <motion/Robot.hpp>
+#include <motion/RobotController.hpp>
 
 class Configuration;
 
@@ -17,12 +17,12 @@ namespace Motion {
 	 * as this controller will do nothing more than try to stop if there is a possible
 	 * collision.
 	 */
-	class PointController {
+	class PointControlModule {
 
 	public:
 
-		PointController(SystemState *state, Configuration *cfg);
-		~PointController() {}
+		PointControlModule(SystemState *state, Configuration *cfg);
+		~PointControlModule() {}
 
 		/** executes the module's commands for the frame */
 		void run();
@@ -32,7 +32,7 @@ namespace Motion {
 
 		Configuration *_config;
 
-		boost::array<Motion::Robot::shared_ptr, Num_Shells> _robots;
+		boost::array<Motion::RobotController::shared_ptr, Num_Shells> _robots;
 	};
 
 }

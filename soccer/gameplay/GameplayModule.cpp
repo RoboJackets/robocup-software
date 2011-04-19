@@ -83,9 +83,9 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	goalArea->polygon.vertices.push_back(Geometry2d::Point(-halfFlat, radius));
 	goalArea->polygon.vertices.push_back(Geometry2d::Point( halfFlat, radius));
 	goalArea->polygon.vertices.push_back(Geometry2d::Point( halfFlat, 0));
-	_goalArea[0] = ObstaclePtr(goalArea);
-	_goalArea[1] = ObstaclePtr(new CircleObstacle(Geometry2d::Point(-halfFlat, 0), radius));
-	_goalArea[2] = ObstaclePtr(new CircleObstacle(Geometry2d::Point(halfFlat, 0), radius));
+	_goalArea.add(ObstaclePtr(goalArea));
+	_goalArea.add(ObstaclePtr(new CircleObstacle(Geometry2d::Point(-halfFlat, 0), radius)));
+	_goalArea.add(ObstaclePtr(new CircleObstacle(Geometry2d::Point(halfFlat, 0), radius)));
 
 	_ourHalf = make_shared<PolygonObstacle>();
 	_ourHalf->polygon.vertices.push_back(Geometry2d::Point(-x, -Field_Border));
@@ -127,6 +127,94 @@ void Gameplay::GameplayModule::removeGoalie()
 	}
 }
 
+void Gameplay::GameplayModule::updatePlay() {
+	const bool verbose = false;
+
+	// important scenarios:
+	//  - no current plays - must pick a new one
+	//  - no available plays - must do nothing
+	//  - current play is fine, must be run
+	//  - current play has ended, must select new and run
+	//  - current play is not applicable/failed, must kill, select new and run
+	//  - new goalie, select new play (may reselect current play, which much be assigned new robots)
+
+	// Update play scores.
+	// The GUI thread needs this for the Plays tab and we will use it later
+	// to determine the new play.
+	BOOST_FOREACH(PlayFactory *factory, PlayFactory::factories())
+	{
+	factory->lastScore = factory->score(this);
+	}
+
+	if (	_playDone || 							// New play if old one was complete
+			!_currentPlay ||						// There is no current play
+			isinf(_currentPlayFactory->lastScore) || // Current play doesn't apply anymore
+			!_currentPlayFactory->enabled			// Current play was disabled
+	)
+	{
+		if (verbose) cout << "  Selecting a new play" << endl;
+		_playDone = false;
+
+		// Find the next play
+		PlayFactory *bestPlay = 0;
+		// Pick a new play
+		float bestScore = 0;
+
+		// Find the best applicable play
+		BOOST_FOREACH(PlayFactory *factory, PlayFactory::factories())
+		{
+			if (factory->enabled)
+			{
+				float score = factory->lastScore;
+				if (!isinf(score) && (!bestPlay || score < bestScore))
+				{
+					bestScore = score;
+					bestPlay = factory;
+				}
+			}
+		}
+
+		// Start the play if it's not current.
+		if (bestPlay)
+		{
+			if (bestPlay != _currentPlayFactory)
+			{
+				_currentPlayFactory = bestPlay;
+				_currentPlay = shared_ptr<Play>(_currentPlayFactory->create(this));
+			}
+		} else {
+			// No usable plays
+			_currentPlay.reset();
+			_currentPlayFactory = 0;
+		}
+	}
+}
+
+ObstacleGroup Gameplay::GameplayModule::globalObstacles() const {
+	ObstacleGroup obstacles;
+	if (_state->gameState.stayOnSide())
+	{
+		obstacles.add(_sideObstacle);
+	}
+
+	if (!_state->logFrame->use_our_half())
+	{
+		obstacles.add(_ourHalf);
+	}
+
+	if (!_state->logFrame->use_opponent_half())
+	{
+		obstacles.add(_opponentHalf);
+	}
+
+	// Add non floor obstacles
+	BOOST_FOREACH(const ObstaclePtr& ptr, _nonFloor)
+	{
+		obstacles.add(ptr);
+	}
+	return obstacles;
+}
+
 void Gameplay::GameplayModule::run()
 {
 	QMutexLocker lock(&_mutex);
@@ -139,32 +227,6 @@ void Gameplay::GameplayModule::run()
 	{
 		if (robot) {
 			robot->update();
-		}
-	}
-
-	ObstaclePtr largeBallObstacle;
-	ObstaclePtr smallBallObstacle;
-	if (_state->ball.valid)
-	{
-		largeBallObstacle = ObstaclePtr(new CircleObstacle(_state->ball.pos, Field_CenterRadius));
-		smallBallObstacle = ObstaclePtr(new CircleObstacle(_state->ball.pos, Ball_Radius));
-	}
-
-	ObstaclePtr selfObstacles[Num_Shells];
-	ObstaclePtr oppObstacles[Num_Shells];
-	for (unsigned int i = 0; i < Num_Shells; ++i)
-	{
-		//FIXME - These should not be in Gameplay.  This should be the responsibility of motion planning.
-		if (_state->self[i]->visible)
-		{
-			selfObstacles[i] = ObstaclePtr(new CircleObstacle(_state->self[i]->pos, Robot_Radius - .01));
-		}
-
-		if (_state->opp[i]->visible)
-		{
-			// FIXME: find a better size of obstacle avoidance obstacles - old radius was: Robot_Radius - .01
-			const float oppAvoidRadius = Robot_Radius - 0.03;
-			oppObstacles[i] = ObstaclePtr((new CircleObstacle(_state->opp[i]->pos, oppAvoidRadius)));
 		}
 	}
 
@@ -188,157 +250,11 @@ void Gameplay::GameplayModule::run()
 		_goalie->assign(_playRobots);
 	}
 
-	// Set up robots before the play is run
-	BOOST_FOREACH(OurRobot *r, _state->self)
-	{
-		// Reset the motion command
-		// FIXME: this also resets flags from the previous frame
-		r->resetMotionCommand();
-
-		if (r->visible)
-		{
-			// Add obstacles for this robot
-			ObstacleGroup &obstacles = r->obstacles;
-			obstacles.clear();
-
-			// Add rule-based obstacles (except for the ball, which will be added after the play
-			// has a chance to set willKick and avoidBall)
-			// NOTE: this uses the avoidOpponents flag from the last frame to set this
-			for (unsigned int i = 0; i < Num_Shells; ++i)
-			{
-				if (i != r->shell() && selfObstacles[i])
-				{
-					obstacles.add(selfObstacles[i]);
-				}
-
-				if (!r->approachOpponent[i] && r->avoidOpponents && oppObstacles[i])
-				{
-					obstacles.add(oppObstacles[i]);
-				}
-			}
-
-			//if not a goalie, avoid our goalie area
-			if (!_goalie || _goalie->robot != r)
-			{
-				BOOST_FOREACH(ObstaclePtr& ptr, _goalArea)
-				{
-					obstacles.add(ptr);
-				}
-			}
-
-			if (_state->gameState.stayOnSide())
-			{
-				obstacles.add(_sideObstacle);
-			}
-			
-			if (!_state->logFrame->use_our_half())
-			{
-				obstacles.add(_ourHalf);
-			}
-
-			if (!_state->logFrame->use_opponent_half())
-			{
-				obstacles.add(_opponentHalf);
-			}
-
-			// Add non floor obstacles
-			BOOST_FOREACH(ObstaclePtr& ptr, _nonFloor)
-			{
-				obstacles.add(ptr);
-			}
-		}
-	}
-
 	_ballMatrix = Geometry2d::TransformMatrix::translate(_state->ball.pos);
 
 	if (verbose) cout << "  Updating play" << endl;
+	updatePlay();
 	
-	// important scenarios:
-	//  - no current plays - must pick a new one
-	//  - no available plays - must do nothing
-	//  - current play is fine, must be run
-	//  - current play has ended, must select new and run
-	//  - current play is not applicable/failed, must kill, select new and run
-	//  - new goalie, select new play (may reselect current play, which much be assigned new robots)
-
-	// Update play scores.
-	// The GUI thread needs this for the Plays tab and we will use it later
-	// to determine the new play.
-	BOOST_FOREACH(PlayFactory *factory, PlayFactory::factories())
-	{
-		factory->lastScore = factory->score(this);
-	}
-
-	if (	_playDone || 							// New play if old one was complete
-			!_currentPlay ||						// There is no current play
-			isinf(_currentPlayFactory->lastScore) || // Current play doesn't apply anymore
-			!_currentPlayFactory->enabled			// Current play was disabled
-		)
-	{
-		if (verbose) cout << "  Selecting a new play" << endl;
-		_playDone = false;
-
-		// Find the next play
-		PlayFactory *bestPlay = 0;
-		// Pick a new play
-		float bestScore = 0;
-
-		// Find the best applicable play
-		BOOST_FOREACH(PlayFactory *factory, PlayFactory::factories())
-		{
-			if (factory->enabled)
-			{
-				float score = factory->lastScore;
-				if (!isinf(score) && (!bestPlay || score < bestScore))
-				{
-					bestScore = score;
-					bestPlay = factory;
-				}
-			}
-		}
-		
-		// Start the play if it's not current.
-		if (bestPlay)
-		{
-			if (bestPlay != _currentPlayFactory)
-			{
-				_currentPlayFactory = bestPlay;
-				_currentPlay = shared_ptr<Play>(_currentPlayFactory->create(this));
-			}
-		} else {
-			// No usable plays
-			_currentPlay.reset();
-			_currentPlayFactory = 0;
-		}
-	}
-
-	// Add ball obstacles
-	// NOTE: there will be a lag in the small obstacle avoidance due to planning execution order
-	// FIXME: removed small ball obstacle
-	if (verbose) cout << "  Adding ball obstacles" << endl;
-	BOOST_FOREACH(OurRobot *r, _state->self)
-	{
-		if (r->visible && !(_goalie && _goalie->robot == r))
-		{
-			// Any robot that isn't the goalie may have to avoid the ball due to rules
-			if ((_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart))// || r->avoidBall)
-			{
-				if (largeBallObstacle)
-				{
-					r->obstacles.add(largeBallObstacle);
-				}
-			}
-//			else if (!r->willKick)
-//			{
-//				// Don't hit the ball unintentionally during normal play
-//				if (smallBallObstacle)
-//				{
-//					r->obstacles.add(smallBallObstacle);
-//				}
-//			}
-		}
-	}
-
 	// Run the current play
 	if (_currentPlay)
 	{
@@ -356,6 +272,18 @@ void Gameplay::GameplayModule::run()
 		}
 	}
 
+	// determine global obstacles - field requirements
+	ObstacleGroup global_obstacles = globalObstacles();
+
+	// execute motion planning for each robot - performs RRT once
+	BOOST_FOREACH(OurRobot* r, _state->self) {
+		if (r) {
+			// perform local robot planning
+			r->execute(global_obstacles, _goalArea, r == (OurRobot*) _goalie);
+		}
+	}
+
+	// visualize
 	if (_state->gameState.stayAwayFromBall() && _state->ball.valid)
 	{
 		_state->drawCircle(_state->ball.pos, Field_CenterRadius, Qt::black, "Rules");

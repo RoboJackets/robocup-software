@@ -122,9 +122,23 @@ namespace Gameplay
 			ObstaclePtr _nonFloor[4];
 			
 			//goal area
-			ObstaclePtr _goalArea[3];
+			ObstacleGroup _goalArea;
 			
 			// Name of the current play
 			QString _playName;
+
+			// utility functions
+
+			/**
+			 * Checks the current play to determine if it is necessary to find a new one,
+			 * and performs necessary updates
+			 */
+			void updatePlay();
+
+			/**
+			 * Returns the current set of global obstacles, including the field
+			 */
+			ObstacleGroup globalObstacles() const;
+
 	};
 }

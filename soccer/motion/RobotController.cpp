@@ -1,7 +1,7 @@
 // kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 // vim:ai ts=4 et
 
-#include <motion/Robot.hpp>
+#include <motion/RobotController.hpp>
 #include <QMutexLocker>
 #include <Geometry2d/Point.hpp>
 #include <Utils.hpp>
@@ -27,7 +27,7 @@ void printPt(const Geometry2d::Point& pt, const string& s="") {
 /** Constant for timestamp to seconds */
 const float intTimeStampToFloat = 1000000.0f;
 
-Motion::Robot::Robot(Configuration *config, SystemState *state, int shell) :
+Motion::RobotController::RobotController(Configuration *config, SystemState *state, int shell) :
 	_state(state),
 	_self(state->self[shell]),
 	_dynamics(state->self[shell]),
@@ -38,7 +38,7 @@ Motion::Robot::Robot(Configuration *config, SystemState *state, int shell) :
 {
 }
 
-Motion::Robot::~Robot()
+Motion::RobotController::~RobotController()
 {
 }
 
@@ -50,7 +50,7 @@ Motion::Robot::~Robot()
  *  IV:  Smooth Velocities (Filter system)
  *  V:   Convert to motor commands
  */
-void Motion::Robot::proc()
+void Motion::RobotController::proc()
 {
 	bool verbose = false;
 	_procMutex.lock();
@@ -225,7 +225,7 @@ void Robot::drawBezierControl(QPainter& p) {
 }
 #endif
 
-void Motion::Robot::stop(float dtime) {
+void Motion::RobotController::stop(float dtime) {
 	// handle rotation with PID - force value to zero
 	_w = _anglePid.run(_w);
 
@@ -255,7 +255,7 @@ void Motion::Robot::stop(float dtime) {
 		_vel -= _vel.normalized()*vv;
 }
 
-void Motion::Robot::scaleVelocity() {
+void Motion::RobotController::scaleVelocity() {
 	// default scaling
 	float vscale = 1;
 
@@ -291,7 +291,7 @@ void Motion::Robot::scaleVelocity() {
 
 }
 
-void Motion::Robot::sanityCheck(const unsigned int LookAheadFrames) {
+void Motion::RobotController::sanityCheck(const unsigned int LookAheadFrames) {
 	// timestep
 	const float deltaT = (_state->timestamp - _lastTimestamp)/intTimeStampToFloat;
 
@@ -348,7 +348,7 @@ void Motion::Robot::sanityCheck(const unsigned int LookAheadFrames) {
  * into instantaneous velocity commands that can be converted into wheel
  * commands.
  */
-void Motion::Robot::genVelocity(MotionCmd::PathEndType ending)
+void Motion::RobotController::genVelocity(MotionCmd::PathEndType ending)
 {
 	bool verbose = false;
 	if (verbose) cout << "Generating Velocity" << endl;

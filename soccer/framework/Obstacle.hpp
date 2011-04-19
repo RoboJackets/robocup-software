@@ -35,6 +35,7 @@ public:
     
     void clear();
     void add(ObstaclePtr obs);
+    void add(const ObstacleGroup& group);
     
     unsigned int size() const
     {
