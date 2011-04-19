@@ -25,7 +25,6 @@ using namespace std;
 void usage(const char* prog)
 {
 	fprintf(stderr, "usage: %s [options...]\n", prog);
-	fprintf(stderr, "\t-r <n>:     run only on specified radio channel\n");
 	fprintf(stderr, "\t-y:         run as the yellow team\n");
 	fprintf(stderr, "\t-b:         run as the blue team\n");
 	fprintf(stderr, "\t-c <file>:  specify the configuration file\n");
@@ -66,7 +65,6 @@ int main (int argc, char* argv[])
 	bool goalie = true;
 	bool sim = false;
 	bool log = true;
-	int radio = -1;
 	
 	for (int i=1 ; i<argc; ++i)
 	{
@@ -94,17 +92,6 @@ int main (int argc, char* argv[])
 		else if (strcmp(var, "-nolog") == 0)
 		{
 			log = false;
-		}
-		else if(strcmp(var, "-r") == 0)
-		{
-			if (i+1 >= argc)
-			{
-				printf("no radio channel specified after -r");
-				usage(argv[0]);
-			}
-			
-			i++;
-			radio = atoi(argv[i]);
 		}
 		else if(strcmp(var, "-c") == 0)
 		{
@@ -170,7 +157,7 @@ int main (int argc, char* argv[])
 	
 	Configuration config;
 	
-	Processor *processor = new Processor(&config, sim, radio);
+	Processor *processor = new Processor(&config, sim);
 	processor->blueTeam(blueTeam);
 	
 	// Load config file

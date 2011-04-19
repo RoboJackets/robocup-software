@@ -41,6 +41,7 @@ namespace Modeling
 }
 
 class RefereeModule;
+class Radio;
 
 /** handles processing for a team */
 class Processor: public QThread
@@ -62,15 +63,10 @@ class Processor: public QThread
 			uint64_t lastRadioRxTime;
 		};
 		
-		Processor(Configuration *config, bool sim, int radio);
+		Processor(Configuration *config, bool sim);
 		~Processor();
 		
 		void stop();
-		
-		int radio() const
-		{
-			return _radio;
-		}
 		
 		bool autonomous();
 		bool joystickValid();
@@ -180,6 +176,8 @@ class Processor: public QThread
 
 		Logger _logger;
 		
+		Radio *_radio;
+		
 		bool _useOurHalf, _useOpponentHalf;
 		
 		// True if we are running with a simulator.
@@ -219,9 +217,6 @@ class Processor: public QThread
 		// Processing period in microseconds
 		int _framePeriod;
 		
-		// Which radio channel we're using
-		int _radio;
-		
 		// True if we are using external referee packets
 		bool _externalReferee;
 		
@@ -235,8 +230,6 @@ class Processor: public QThread
 		// Network sockets
 		QUdpSocket *_visionSocket;
 		QUdpSocket *_refereeSocket;
-		// _radioSocket is used for both sending (RadioTx) and receiving (RadioRx).
-		QUdpSocket *_radioSocket;
 
 		//modules
 		boost::shared_ptr<Modeling::WorldModel> _modelingModule;

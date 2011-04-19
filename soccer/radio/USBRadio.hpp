@@ -2,29 +2,37 @@
 
 #include <stdint.h>
 
+#include "Radio.hpp"
+
 //FIXME - This needs to go somewhere common to this code, the robot firmware, and the base station test code.
 const unsigned int Forward_Size = 31;
 const unsigned int Reverse_Size = 11;
 
 class USB_Device;
 
-class Radio
+class USBRadio: public Radio
 {
 public:
 	// n identifies which base station to use.
-	Radio(int n = 0);
-	~Radio();
+	USBRadio();
+	~USBRadio();
 
 	USB_Device *device() const
 	{
 		return _device;
 	}
-
-	void write_packet(const void *data, unsigned int size);
-	bool read_packet(void *data, unsigned int size, int timeout = 0);
 	
+	virtual bool isOpen() const;
+	virtual void send(const Packet::RadioTx &packet);
+	virtual bool receive(Packet::RadioRx *packet);
+
 protected:
 	USB_Device *_device;
+
+	int _sequence;
+	bool _printedError;
+	
+	bool open();
 	
 	// Low level operations
 	void command(uint8_t cmd);

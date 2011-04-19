@@ -32,8 +32,8 @@ const uint8_t cc1101_regs[] =
     0x03, 0x07,    // FIFOTHR  - RXFIFO and TXFIFO thresholds.
 //    0x00, 0x0b,    // IOCFG2   - GDO2 output pin configuration.
 //    0x02, 0x0c,    // IOCFG0D  - GDO0 output pin configuration. Refer to SmartRF� Studio User Manual for detailed pseudo register explanation.
-//    0x07, 0x04,    // PKTCTRL1 - Packet automation control.
-//    0x08, 0x12,    // PKTCTRL0 - Packet automation control.
+    0x07, 0x4c,    // PKTCTRL1 - Packet automation control.
+    0x08, 0x04,    // PKTCTRL0 - Packet automation control.
 //    0x09, 0x00,    // ADDR     - Device address.
 //    0x06, 0xff,    // PKTLEN   - Packet length.
 };

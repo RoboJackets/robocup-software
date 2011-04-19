@@ -16,7 +16,11 @@ srcs = [
 	'debug.cpp',
 	'StripChart.cpp',
 	'Robot.cpp',
-        'BallSensor.cpp',
+	'BallSensor.cpp',
+
+	'radio/SimRadio.cpp',
+	'radio/USBRadio.cpp',
+	'radio/USB_Device.cpp',
 
 	'framework/Obstacle.cpp',
 	'framework/Path.cpp',
@@ -154,7 +158,7 @@ uics = env.Uic4([
 
 e = env.Clone()
 e.Append(CPPPATH=['#/soccer', Dir('ui')])
-e.Append(LIBS=['blas', 'lapack', 'bfd'])
+e.Append(LIBS=['blas', 'lapack', 'bfd', 'usb'])
 
 # build soccer executable
 p = e.Program('soccer', ['main.cpp'] + srcs )
