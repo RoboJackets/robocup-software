@@ -1,0 +1,574 @@
+#LyX 1.6.7 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+DC Motor Model
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $V_{s}$
+\end_inset
+
+ = Supply voltage
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $V_{b}$
+\end_inset
+
+ = Back-EMF = 
+\begin_inset Formula $k_{b}$
+\end_inset
+
+
+\begin_inset Formula $\omega$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $k_{r}$
+\end_inset
+
+= Speed constant, 
+\begin_inset Formula $\frac{rpm}{V}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $k_{b}$
+\end_inset
+
+ = Back-EMF constant, 
+\begin_inset Formula $\frac{V}{\nicefrac{rad}{s}}$
+\end_inset
+
+=
+\begin_inset Formula $\frac{V\cdot s}{rad}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $k_{b}=\frac{60}{2\pi k_{r}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $k_{T}$
+\end_inset
+
+ = Torque constant, 
+\begin_inset Formula $\frac{N\cdot m}{A}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\omega$
+\end_inset
+
+ = Angular velocity, 
+\begin_inset Formula $\frac{rad}{s}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $R_{c}$
+\end_inset
+
+ = Coil resistance, ohms
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $I$
+\end_inset
+
+ = Current through motor = 
+\begin_inset Formula $\frac{V_{s}-V_{b}}{R_{c}}$
+\end_inset
+
+=
+\begin_inset Formula $\frac{V_{s}-k_{b}\omega}{R_{c}}$
+\end_inset
+
+ (without modulation)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $T_{m}$
+\end_inset
+
+= Torque exerted by motor, 
+\begin_inset Formula $N\cdot m$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $T_{L}$
+\end_inset
+
+= Torque exerted by load and losses, 
+\begin_inset Formula $N\cdot m$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $T$
+\end_inset
+
+ = Total torque = 
+\begin_inset Formula $T_{m}-T_{L}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $m$
+\end_inset
+
+ = Moment of inertia of mechanical system as seen by motor, 
+\begin_inset Formula $kg\cdot m$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\dot{\omega}$
+\end_inset
+
+ = Angular acceleration, 
+\begin_inset Formula $\frac{rad}{s^{2}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $T=m\dot{\omega}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $T_{m}=k_{T}I$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\dot{\omega}=\frac{T}{m}=\frac{T_{m}-T_{L}}{m}=\frac{k_{T}I-T_{L}}{m}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $c$
+\end_inset
+
+ = PWM duty cycle
+\begin_inset Formula $\in\left[0,1\right]$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Slow decay (voltage control):
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+I=\frac{cV_{s}-k_{b}\omega}{R_{c}}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\dot{\omega}=\frac{k_{T}\left(\frac{cV_{s}-k_{b}\omega}{R_{c}}\right)-T_{L}}{m}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Fast decay (current control):
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+I=c\left(\frac{V_{s}-k_{b}\omega}{R_{c}}\right)=\frac{cV_{s}-ck_{b}\omega}{R_{c}}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula \[
+\dot{\omega}=\frac{k_{T}\left(\frac{cV_{s}-ck_{b}\omega}{R_{c}}\right)-T_{L}}{m}\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Note that the only difference between slow and fast decay is whether 
+\begin_inset Formula $k_{b}$
+\end_inset
+
+is modulated by the motor command.
+\end_layout
+
+\begin_layout Standard
+Controller for slow decay:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\dot{\omega}=\frac{k_{T}\left(cV_{s}-k_{b}\omega\right)}{mR_{c}}-\frac{T_{L}}{m}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+\begin_inset Formula $mR_{c}\left(\dot{\omega}+\frac{T_{L}}{m}\right)=k_{T}cV_{s}-k_{T}k_{b}\omega$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+\begin_inset Formula $k_{T}cV_{s}=R_{c}\left(\dot{\omega}m+T_{L}\right)+k_{T}k_{b}\omega$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $c=\frac{\frac{R_{c}}{k_{T}}\left(\dot{\omega}m+T_{L}\right)+k_{b}\omega}{V_{s}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+To solve for 
+\begin_inset Formula $m$
+\end_inset
+
+ and 
+\begin_inset Formula $T_{L}$
+\end_inset
+
+, solve a system of this equation at multiple times:
+\end_layout
+
+\begin_layout Standard
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+\begin_inset Formula $\frac{R_{c}}{k_{T}}\dot{\omega}m+\frac{R_{c}}{k_{T}}T_{L}=cV_{s}-k_{b}\omega$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Closed form:
+\end_layout
+
+\begin_layout Standard
+Speed with constant command:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\omega_{0}$
+\end_inset
+
+ = Initial angular velocity at beginning of cycle
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\dot{\omega}=\frac{k_{T}cV_{s}}{mR_{c}}-\frac{k_{T}k_{b}\omega}{mR_{c}}-\frac{T_{L}}{m}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\dot{\omega}=b-a\omega$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $a=\frac{k_{T}k_{b}}{mR_{c}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $b=\frac{k_{T}cV_{s}}{mR_{c}}-\frac{T_{L}}{m}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\omega=\frac{b}{a}+c_{1}e^{-at}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\omega_{0}=\frac{b}{a}+c_{1}\Longrightarrow c_{1}=\omega_{0}-\frac{b}{a}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\omega=\frac{b}{a}+\left(\omega_{t=0}-\frac{b}{a}\right)e^{-at}=\frac{b}{a}+\omega_{0}e^{-at}-\frac{b}{a}e^{-at}=\frac{b}{a}\left(1-e^{-at}\right)+\omega_{0}e^{-at}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Solving for command:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\omega$
+\end_inset
+
+ = Desired angular velocity at end of cycle
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $t$
+\end_inset
+
+ = Cycle time
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $b=\frac{a\left(\omega-\omega_{0}e^{-at}\right)}{\left(1-e^{-at}\right)}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+\begin_inset Formula $\frac{k_{T}cV_{s}}{mR_{c}}=\frac{k_{T}k_{b}}{mR_{c}}\frac{\left(\omega-\omega_{0}e^{-at}\right)}{\left(1-e^{-at}\right)}+\frac{T_{L}}{m}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+\begin_inset Formula $c=\frac{k_{b}\left(\omega-\omega_{0}e^{-at}\right)}{V_{s}\left(1-e^{-at}\right)}+\frac{T_{L}R_{c}}{V_{s}k_{T}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Solve for 
+\begin_inset Formula $e^{-at}$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+\begin_inset Formula $e^{-at}=\frac{V_{s}c-\frac{T_{L}R_{c}}{k_{T}}-k_{b}\omega}{V_{s}c-\frac{T_{L}R_{c}}{k_{T}}-k_{b}\omega_{0}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Solve for 
+\begin_inset Formula $m$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+\begin_inset Formula $e^{-at}=e^{-\frac{k_{T}k_{b}}{mR_{c}}t}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\ln\left(e^{-at}\right)=-\frac{k_{T}k_{b}}{mR_{c}}t$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+\begin_inset Formula $m=-\frac{k_{T}k_{b}}{\ln\left(e^{-at}\right)R_{c}}t$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Average speed:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\bar{\omega}=\int_{0}^{t}\frac{b}{a}+c_{1}e^{-ax}dx=\frac{b}{a}+c_{1}\int_{0}^{t}e^{-ax}dx=\frac{b}{a}+c_{1}\left(\frac{e^{-at}}{a}-1\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\frac{b}{a}=\frac{\frac{k_{T}cV_{s}}{mR_{c}}-\frac{T_{L}}{m}}{\frac{k_{T}k_{b}}{mR_{c}}}=\frac{cV_{s}}{k_{b}}-\frac{R_{c}T_{L}}{k_{T}k_{b}}$
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
