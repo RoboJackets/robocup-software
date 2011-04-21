@@ -1,5 +1,5 @@
 `include "motor.v"
-//`include "kicker.v"
+`include "kicker.v"
 `include "encoder.v"
 
 // Conventions:
@@ -37,10 +37,8 @@ module robocup (
 	input discharge,
 	
 	// Kicker
-	//input kdone,
+	input kdone,
 	output kcharge, kkick, kchip,
-	output kncs, kclk,
-	output klimit,
 	
 	// Microcontroller interface
 	input fpga_ncs,
@@ -217,27 +215,18 @@ end
 
 // FIXME - Kicker
 wire kick_select = 0;
-assign kcharge = 0;
-/*
-reg charge_enable = 0;
-wire write_kick = 0;//(write_edge && address_sync == 8'h20);
 wire lockout;
-// wire [7:0] kicker_status = {2'b00, kick_select, charge_override, charge_enable, kcharge, lockout, ~kdone};
+reg charge_enable = 0;
+wire [7:0] kicker_status = {2'b00, kick_select, charge_override, charge_enable, kcharge, lockout, ~kdone};
 
-wire kick_write = write_kick;
+wire kick_write = 0;
 wire [7:0] kick_strength = 0;//data_sync;
+wire kick_pulse;
 
-kicker kicker(sysclk, button_sync, kick_write, kick_strength, charge_enable & ~charge_override, charge, kick_pulse, lockout);
-*/
-wire kick_pulse = 0;
-assign klimit = 0;
+kicker kicker(sysclk, button_sync, kick_write, kick_strength, charge_enable & ~charge_override, kcharge, kick_pulse, lockout);
 
 // Send the kick pulse to either the kicker or the chipper
 assign kkick = kick_pulse && (kick_select == 0);
 assign kchip = kick_pulse && (kick_select == 1);
-
-//FIXME - V/I tracing
-assign kclk = 0;
-assign kncs = 1;
 
 endmodule
