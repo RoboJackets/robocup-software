@@ -5,47 +5,113 @@ from numpy import *
 from matplotlib.pyplot import *
 from motor_model import *
 
-# Max steady-state speed is 564.02
+# Max steady-state speed is 564.02 encoder ticks per sample time
 
 motor = MotorModel()
 
-n = 100
+n = 50
 motor.vbatt = 12
 
-s = []
-#motor.angle = -0.8		# 15_batt
-#motor.angle = -2.1		# 63_batt
-#motor.angle = -1.4		# 127_batt
-#motor.load = 160		# 127_batt
-motor.angle = -1.5		# 127_bench
-motor.load = 130		# 127_bench
-motor.kr = 379			# 127_bench
-motor.friction = 0
-#motor.kosc = 0
+s = [0]
+motor.cmd_scale = motor.cmd_scale
+motor.load = 130e-7
+motor.kr = 379
+motor.friction = 0.001
+motor.kosc = 0
+motor.rbatt = 0
 
-setpoint = 400
-last_w = 0
-ka = 1.0
-kw = 60.0 / motor.kr / motor.ticks_per_rev / motor.vbatt / motor.sample_time
+#setpoint = 400 / motor.sample_time / motor.ticks_per_rev * 2 * pi
+setpoint = 100
+
+#motor.sample_time /= motor.oversample
+#motor.oversample = 1
+
+kb = 60 / (2 * pi * motor.kr)
+print 'setpoint', setpoint
+
+est_load = motor.load
+est_friction = motor.friction
+
+#FIXME - enc_delta gives average speed, but these formulas were designed for instantaneous end-of-period speed
+
+# State history, used for estimating load and loss.
+# Each item is (command, velocity, acceleration) for the beginning of a cycle.
+state_1 = (0, 0, 0)
+state_2 = (0, 0, 0)
+
+last_speed = 0
+alpha = 0.5
 
 for i in range(n):
-	if i == 50:
-		motor.load *= 2
-		motor.speed = 0
+	if i == 25:
+		motor.friction = 0.05
+		setpoint = 200
+		motor.load = 260e-7
 	
-	w = motor.enc_delta
-	if abs(w - last_w) > 10 and ka == 1:
-		ka = (motor.cmd / 127.0 - kw * last_w) / (w - last_w)
-		print 'ka', ka
-	last_w = w
+	avg_speed = 2 * pi * motor.enc_delta / motor.ticks_per_rev / motor.sample_time
 	
-	motor.cmd = int((ka * (setpoint - w) + kw * w) * 127.0 + 0.5)
-	if motor.cmd > 127:
-		motor.cmd = 127
-	print 'cmd', motor.cmd
+	est_speed = avg_speed * 2 - last_speed
+	est_speed = motor.speed
+	est_accel = (est_speed - last_speed) / motor.sample_time
+	
+	state_2 = state_1
+	state_1 = (motor.cmd / motor.cmd_scale, last_speed, est_accel)
+	
+	# This works but doesn't consider the change in speed over the sample period
+	if False:
+		# Update load and loss estimates
+		try:
+			a = matrix([[motor.rmot / motor.kt * state_1[2], motor.rmot / motor.kt], \
+						[motor.rmot / motor.kt * state_2[2], motor.rmot / motor.kt]])
+			b = matrix([[state_1[0] * motor.vbatt - kb * state_1[1]], \
+						[state_2[0] * motor.vbatt - kb * state_2[1]]])
+			r = a.I * b
+			new_load = r[0,0]
+			new_friction = r[1,0]
+			print i, new_load, new_friction
+			
+			est_load = new_load * alpha + est_load * (1.0 - alpha)
+			est_friction = new_friction * alpha + est_friction * (1.0 - alpha)
+		except linalg.linalg.LinAlgError:
+			# Singular matrix: no history or identical conditions
+			print i, 'No estimate'
+			pass
+	
+		target_accel = (setpoint - est_speed) / motor.sample_time
+		target_torque = (target_accel * est_load + est_friction)
+		motor.cmd = int(motor.cmd_scale * (motor.rmot / motor.kt * target_torque + kb * est_speed) / motor.vbatt + 0.5)
+	
+	# This is more accurate, but for physically possible motor commands there is little difference
+	if True:
+		a = motor.kt * kb / (est_load * motor.rmot)
+		e_at = exp(-a * motor.sample_time)
+		
+		# Simple friction estimate for constant-command form
+		new_friction = (motor.cmd / motor.cmd_scale - kb * (est_speed - last_speed * e_at) / (motor.vbatt * (1 - e_at))) / (motor.rmot / (motor.vbatt * motor.kt))
+		
+		q = motor.vbatt * motor.cmd / motor.cmd_scale - est_friction * motor.rmot / motor.kt
+		if q != kb * last_speed:
+			new_e_at = (q - kb * est_speed) / (q - kb * last_speed)
+			if new_e_at < 1 and new_e_at > 0:
+				new_load = -motor.kt * kb / (log(new_e_at) * motor.rmot) * motor.sample_time
+				est_load = new_load * alpha + est_load * (1.0 - alpha)
+		
+		est_friction = new_friction * alpha + est_friction * (1.0 - alpha)
+		print i, est_friction, est_load
+		
+		motor.cmd = int(motor.cmd_scale * (kb * (setpoint - est_speed * e_at) / (motor.vbatt * (1 - e_at)) + est_friction * motor.rmot / (motor.vbatt * motor.kt)) + 0.5)
+	
+	if motor.cmd > motor.cmd_scale:
+		motor.cmd = motor.cmd_scale
+	elif motor.cmd < -motor.cmd_scale:
+		motor.cmd = -motor.cmd_scale
+	
+	# Save the speed at the beginning of this cycle
+	last_speed = est_speed
 	
 	motor.step()
-	s.append(motor.enc_delta)
+	#print '%2d:' % i, 'cmd', motor.cmd, 'accel', motor.accel, est_accel, 'speed', motor.speed, est_speed
+	s.append(motor.speed)
 
 plot(s, 'b')
 show()

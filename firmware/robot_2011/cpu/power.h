@@ -24,7 +24,7 @@
 // This is determined by the maximum voltage that the TC4428's can tolerate.
 // This has a large safety margin because we may not detect spikes from regenerative
 // braking quickly enough to protect the circuitry.
-#define MAX_SUPPLY_RAW	MV_TO_RAW(16000)
+#define MAX_SUPPLY_RAW	MV_TO_RAW(18000)
 
 // Raw power supply voltage measurements:
 // Last, minimum since reset, maximum since reset
