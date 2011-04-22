@@ -66,7 +66,7 @@ class Robot
 class OurRobot: public Robot
 {
 	public:
-		boost::shared_ptr<RobotConfig> config;
+		RobotConfig *config;
 		
 		OurRobot(int shell, SystemState *state);
 		

@@ -8,6 +8,7 @@
 unsigned int robot_id;
 unsigned int failures;
 uint8_t motor_faults;
+uint8_t kicker_status;
 
 // Detects and handles USB connection/disconnection
 enum

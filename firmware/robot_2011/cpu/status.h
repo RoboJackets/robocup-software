@@ -69,5 +69,18 @@ extern unsigned int failures;
 // Bits 0-4 correspond to motors 0-4 (see Motor_* above).
 extern uint8_t motor_faults;
 
+// kicker_status bits
+enum
+{
+	Kicker_Charged			= 0x01,
+	Kicker_Lockout			= 0x02,
+	Kicker_Charging			= 0x04,
+	Kicker_Enabled			= 0x08,
+	Kicker_Override			= 0x10,
+	Kicker_Chipping			= 0x20
+};
+
+extern uint8_t kicker_status;
+
 // Periodic functions
 void check_usb_connection(void);

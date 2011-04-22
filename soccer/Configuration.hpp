@@ -13,6 +13,7 @@ class ConfigItem
 {
 	public:
 		ConfigItem(Configuration *tree, const QString &name);
+		~ConfigItem();
 		
 		// A ConfigItem's name is a sequence of path segments separated by '/'.
 		// The path is a list of these segments in order.
@@ -31,12 +32,43 @@ class ConfigItem
 	protected:
 		friend class Configuration;
 		
+		// Called when the tree item is first created
+		virtual void setupItem();
+		
 		// Called by subclasses to update item text
 		void valueChanged(const QString &str);
 		
 		QStringList _path;
 		Configuration *_config;
 		QTreeWidgetItem *_treeItem;
+};
+
+class ConfigBool: public ConfigItem
+{
+	public:
+		ConfigBool(Configuration *tree, QString name, bool value = false);
+		
+		bool value();
+		
+		operator bool()
+		{
+			return value();
+		}
+		
+		bool operator=(bool x)
+		{
+			_value = x;
+			setupItem();
+			return x;
+		}
+		
+		virtual QString toString();
+		virtual void setValue(const QString &str);
+	
+	protected:
+		virtual void setupItem();
+		
+		bool _value;
 };
 
 class ConfigInt: public ConfigItem

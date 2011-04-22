@@ -61,6 +61,8 @@ reg [8:0] motor_speed_3 = 0;
 reg [8:0] motor_speed_4 = 0;
 reg [8:0] motor_speed_5 = 0;
 
+wire [7:0] kicker_status;
+
 // SPI interface
 reg [7:0] spi_dr = 0;
 reg sck_s = 0, sck_d = 0;
@@ -75,7 +77,7 @@ reg [3:0] spi_byte_count = 0;
 // Goes high for one cycle after each byte is received
 reg spi_strobe = 0;
 
-reg [7:0] spi_rx[0:9];
+reg [7:0] spi_rx[0:10];
 
 always @(posedge sysclk) begin
 	// Synchronize SPI signals
@@ -88,7 +90,7 @@ always @(posedge sysclk) begin
 	
 	if (ncs_s == 1) begin
 		// Reset when not selected
-		spi_dr <= 8'h02;	// FPGA SPI interface version
+		spi_dr <= 8'h02;	// RX byte 0: FPGA SPI interface version
 		spi_bit_count <= 0;
 		spi_byte_count <= 0;
 		spi_rx[0] <= 0;
@@ -117,7 +119,7 @@ always @(posedge sysclk) begin
 				
 				// Set up to send the next byte.
 				// Note that spi_byte has not been incremented at this point,
-				// so the byte immediately after the first byte is spi_byte==0.
+				// so the byte after the first byte (version, above) is spi_byte==0.
 				case (spi_byte_count)
 					0: spi_dr <= encoder_capture_1[7:0];
 					1: spi_dr <= encoder_capture_1[15:8];
@@ -128,6 +130,7 @@ always @(posedge sysclk) begin
 					6: spi_dr <= encoder_capture_4[7:0];
 					7: spi_dr <= encoder_capture_4[15:8];
 					8: spi_dr <= {3'b000, motor_fault[5:1]};
+					9: spi_dr <= kicker_status;
 					default: spi_dr <= 0;
 				endcase
 				
@@ -142,8 +145,13 @@ end
 
 assign miso = fpga_ncs ? 1'bz : spi_dr[7];
 
+reg kick_strobe = 0;
+reg [7:0] kick_strength = 0;
+reg kick_select = 0;
+reg charge_enable = 0;
+
 always @(posedge sysclk) begin
-	if (ncs_s == 1 && spi_byte_count == 10) begin
+	if (ncs_s == 1 && spi_byte_count == 11) begin
 		motor_speed_1 <= {spi_rx[1][0], spi_rx[0]};
 		motor_dir[1] = spi_rx[1][1];
 		motor_speed_2 <= {spi_rx[3][0], spi_rx[2]};
@@ -154,6 +162,14 @@ always @(posedge sysclk) begin
 		motor_dir[4] = spi_rx[7][1];
 		motor_speed_5 <= {spi_rx[9][0], spi_rx[8]};
 		motor_dir[5] = spi_rx[9][1];
+		charge_enable <= spi_rx[9][7];
+		kick_select <= spi_rx[9][6];
+		kick_strength <= spi_rx[10];
+		if (spi_rx[10] != 0) begin
+			kick_strobe <= 1;
+		end
+	end else begin
+		kick_strobe <= 0;
 	end
 end
 
@@ -205,25 +221,22 @@ end
 // Button synchronization for firing kicker manually
 reg charge_override = 0;
 reg button_sync = 0;
+reg done_sync = 0;
 always @(posedge sysclk) begin
 	button_sync <= ~discharge;
+	done_sync <= ~kdone;
 	
 	if (button_sync) begin
 		charge_override <= 1;
 	end
 end
 
-// FIXME - Kicker
-wire kick_select = 0;
+// Kicker
 wire lockout;
-reg charge_enable = 0;
-wire [7:0] kicker_status = {2'b00, kick_select, charge_override, charge_enable, kcharge, lockout, ~kdone};
+assign kicker_status = {2'b00, kick_select, charge_override, charge_enable, kcharge, lockout, done_sync};
 
-wire kick_write = 0;
-wire [7:0] kick_strength = 0;//data_sync;
 wire kick_pulse;
-
-kicker kicker(sysclk, button_sync, kick_write, kick_strength, charge_enable & ~charge_override, kcharge, kick_pulse, lockout);
+kicker kicker(sysclk, button_sync, kick_strobe, kick_strength, charge_enable & ~charge_override, kcharge, kick_pulse, lockout);
 
 // Send the kick pulse to either the kicker or the chipper
 assign kkick = kick_pulse && (kick_select == 0);

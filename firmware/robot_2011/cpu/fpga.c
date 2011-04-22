@@ -11,6 +11,9 @@ int_fast16_t encoder_delta[4];
 int_fast8_t wheel_out[4];
 int_fast8_t dribble_out;
 
+uint_fast8_t kick_strength;
+uint_fast8_t use_chipper;
+
 int fpga_init()
 {
 	int ret;
@@ -76,7 +79,7 @@ good:
 
 void fpga_update()
 {
-	uint8_t tx[10] = {0}, rx[10];
+	uint8_t tx[11] = {0}, rx[11];
 	
 	// Save old encoder counts
 	int_fast16_t last_encoder[4];
@@ -102,6 +105,12 @@ void fpga_update()
 	}
 	tx[8] = dribble_out << 1;
 	tx[9] = (dribble_out >> 7) | 2;
+	tx[9] |= 0x80;	// Always enable kicker charging
+	if (use_chipper)
+	{
+		tx[9] |= 0x40;	// Select chipper
+	}
+	tx[10] = kick_strength;
 	
 	// Swap data with the FPGA
 	spi_select(NPCS_FPGA);
@@ -117,6 +126,7 @@ void fpga_update()
 	encoder[2] = rx[5] | (rx[6] << 8);
 	encoder[3] = rx[7] | (rx[8] << 8);
 	motor_faults = rx[9];
+	kicker_status = rx[10];
 	
 	for (int i = 0; i < 4; ++i)
 	{

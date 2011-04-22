@@ -16,7 +16,6 @@
 #include <LogUtils.hpp>
 #include <BallSensor.hpp>
 
-#include <framework/RobotConfig.hpp>
 #include <modeling/WorldModel.hpp>
 #include <gameplay/GameplayModule.hpp>
 // #include <stateID/StateIDModule.hpp>
@@ -58,17 +57,6 @@ Processor::Processor(Configuration *config, bool sim)
 	_radio = 0;
 	_joystick = new Joystick();
 	
-	// Create robot configuration
-	shared_ptr<RobotConfig> robotConfig2008 = make_shared<RobotConfig>(config, "Rev2008");
-	
-	robotConfig2008->motion.output_coeffs.resize(4);
-	robotConfig2008->motion.output_coeffs.set(0, 10);
-	
-	BOOST_FOREACH(OurRobot *robot, _state.self)
-	{
-		robot->config = robotConfig2008;
-	}
-
 	// Initialize team-space transformation
 	defendPlusX(_defendPlusX);
 	

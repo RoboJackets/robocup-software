@@ -183,6 +183,12 @@ void USBRadio::send(const Packet::RadioTx& packet)
 		m0 = -robot.motors(3);
 		kick = robot.kick();
 		
+		//FIXME - Lame, for testing 2011 chipping
+		if (robot.use_chipper())
+		{
+			forward_packet[0] |= 0x80;
+		}
+		
 		if (robot.roller() > 0)
 		{
 			roller = robot.roller() * 2;
@@ -217,7 +223,7 @@ void USBRadio::send(const Packet::RadioTx& packet)
 		_device = 0;
 	}
 	
-	_sequence = (_sequence + 1) & 15;
+	_sequence = (_sequence + 1) & 7;
 }
 
 bool USBRadio::receive(Packet::RadioRx* packet)

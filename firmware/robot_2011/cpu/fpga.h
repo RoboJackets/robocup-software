@@ -9,6 +9,9 @@ extern int_fast16_t encoder_delta[4];
 extern int_fast8_t wheel_out[4];
 extern int_fast8_t dribble_out;
 
+extern uint_fast8_t kick_strength;
+extern uint_fast8_t use_chipper;
+
 // Initializes and tests the FPGA.
 // This does not force the FPGA to reconfigure, but waits for it to finish.
 //
