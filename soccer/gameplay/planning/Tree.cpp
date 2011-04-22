@@ -64,7 +64,7 @@ void Tree::init(const Geometry2d::Point& start, const ObstacleGroup* obstacles)
 	_obstacles = obstacles;
 	
 	Point* p = new Point(start, 0);
-	_obstacles->hit(p->pos, &p->hit);
+	_obstacles->hit(p->pos, p->hit);
 	points.push_back(p);
 }
 
@@ -191,8 +191,8 @@ Tree::Point* DynamicsTree::extend(Geometry2d::Point pt, Point* base)
 	// moveHit is the set of obstacles that this move touches.
     // If this move touches any obstacles that the starting point didn't already touch,
     // it has entered an obstacle and will be rejected.
-    ObstacleSet moveHit;
-    if (_obstacles->hit(Geometry2d::Segment(pos, base->pos), &moveHit))
+    ObstacleGroup moveHit;
+    if (_obstacles->hit(Geometry2d::Segment(pos, base->pos), moveHit))
     {
         // We only care if there are any items in moveHit that are not in point->hit, so
         // we don't store the result of set_difference.
@@ -200,7 +200,7 @@ Tree::Point* DynamicsTree::extend(Geometry2d::Point pt, Point* base)
         {
             set_difference(moveHit.begin(), moveHit.end(), base->hit.begin(), 
             	base->hit.end(), Utils::ExceptionIterator<ObstaclePtr>());
-        } catch (exception e)
+        } catch (exception& e)
         {
             // We hit a new obstacle
             return 0;
@@ -210,7 +210,7 @@ Tree::Point* DynamicsTree::extend(Geometry2d::Point pt, Point* base)
     // Allow this point to be added to the tree
 	Point* p = new Point(pos, base);
 	p->vel = vFinal;
-	_obstacles->hit(p->pos, &p->hit);
+	_obstacles->hit(p->pos, p->hit);
 	points.push_back(p);
 	
 	return p;
@@ -248,8 +248,8 @@ Tree::Point* FixedStepTree::extend(Geometry2d::Point pt, Tree::Point* base)
 	// moveHit is the set of obstacles that this move touches.
 	// If this move touches any obstacles that the starting point didn't already touch,
 	// it has entered an obstacle and will be rejected.
-	ObstacleSet moveHit;
-	if (_obstacles->hit(Geometry2d::Segment(pos, base->pos), &moveHit))
+	ObstacleGroup moveHit;
+	if (_obstacles->hit(Geometry2d::Segment(pos, base->pos), moveHit))
 	{
 		// We only care if there are any items in moveHit that are not in point->hit, so
 		// we don't store the result of set_difference.
@@ -257,7 +257,7 @@ Tree::Point* FixedStepTree::extend(Geometry2d::Point pt, Tree::Point* base)
 		{
 			set_difference(moveHit.begin(), moveHit.end(), base->hit.begin(), 
 				base->hit.end(), Utils::ExceptionIterator<ObstaclePtr>());
-		} catch (exception e)
+		} catch (exception& e)
 		{
 			// We hit a new obstacle
 			return 0;
@@ -266,7 +266,7 @@ Tree::Point* FixedStepTree::extend(Geometry2d::Point pt, Tree::Point* base)
 	
 	// Allow this point to be added to the tree
 	Point* p = new Point(pos, base);
-	_obstacles->hit(p->pos, &p->hit);
+	_obstacles->hit(p->pos, p->hit);
 	points.push_back(p);
 	
 	return p;

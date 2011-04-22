@@ -20,6 +20,8 @@ const float intTimeStampToFloat = 1000000.0f;
 //The threshold necessary to change paths tuning required 
 const float path_threshold = 2 * Robot_Diameter;
 
+const bool verbose = true;
+
 Robot::Robot(unsigned int shell, bool self)
 {
 	_shell = shell;
@@ -32,21 +34,22 @@ OurRobot::OurRobot(int shell, SystemState *state):
 					Robot(shell, true),
 					_state(state)
 {
-	willKick = false;
-	avoidBall = false;
+	_ball_avoid = AVOID_SMALL;
+	_ball_avoid_radius = Ball_Radius;
+	_delayed_goal = boost::none;
 	exclude = false;
 	hasBall = false;
-	avoidOpponents = true;
 	sensorConfidence = 0;
 	cmd_w = 0;
 	_lastChargedTime = 0;
 
 	_dynamics = new Planning::Dynamics(this);
 	_planner = new Planning::RRT::Planner();
-
 	for (size_t i = 0; i < Num_Shells; ++i)
 	{
 		approachOpponent[i] = false;
+		_self_avoid_mask[i] = (i != (size_t) shell) ? Robot_Radius : -1.0; // TODO move threshold elsewhere
+		_opp_avoid_mask[i] = Robot_Radius - 0.03; // TODO: move threshold elsewhere
 	}
 
 	_planner->setDynamics(_dynamics);
@@ -81,8 +84,68 @@ void OurRobot::setCommandTrace()
 	}
 }
 
+bool OurRobot::avoidOpponents() const {
+	// checks for avoiding all opponents
+	for (size_t i=0; i<Num_Shells; ++i)
+		if (_state->opp[i] && _state->opp[i]->visible && _opp_avoid_mask[i] < 0.1)
+			return false;
+	return true;
+}
+
+void OurRobot::avoidOpponents(bool enable) {
+	BOOST_FOREACH(float a, _opp_avoid_mask)
+		if (enable) a = Robot_Radius - 0.03;
+		else a = -1.0;
+}
+
+bool OurRobot::willKick() const {
+	return _ball_avoid == OurRobot::KICK;
+}
+
+void OurRobot::willKick(bool enable) {
+	if (enable)
+		_ball_avoid = OurRobot::KICK;
+	else
+		_ball_avoid = OurRobot::AVOID_SMALL;
+}
+
+bool OurRobot::avoidBallLarge() const {
+	return _ball_avoid == OurRobot::AVOID_LARGE;
+}
+
+void OurRobot::avoidBallLarge(bool enable) {
+	if (enable)
+		_ball_avoid = OurRobot::AVOID_LARGE;
+	else
+		_ball_avoid = OurRobot::AVOID_SMALL;
+}
+
+bool OurRobot::avoidBall() const {
+	return _ball_avoid == AVOID_PARAM;
+}
+
+void OurRobot::avoidBall(bool enable, float radius) {
+	if (!enable)
+		_ball_avoid = AVOID_NONE;
+	else {
+		_ball_avoid = AVOID_PARAM;
+		_ball_avoid_radius = radius;
+	}
+}
+
+float OurRobot::avoidBallRadius() const {
+	return _ball_avoid_radius;
+}
+
+void OurRobot::ballAvoidance(const BallAvoid& flag, boost::optional<float> radius) {
+	_ball_avoid = flag;
+	if (radius)
+		_ball_avoid_radius = *radius;
+}
+
 void OurRobot::resetMotionCommand()
 {
+	if (verbose) cout << "in OurRobot::resetMotionCommand()" << endl;
 	robotText.clear();
 
 	// FIXME: these are moved to assignment to allow for commands from the previous frame to
@@ -101,23 +164,24 @@ void OurRobot::resetMotionCommand()
 
 	cmd = MotionCmd();
 
-	// Stay in place if possible.
-	stop();
+	_local_obstacles.clear();
+
 }
 
 void OurRobot::stop()
 {
-	move(pos);
-}
-
-void OurRobot::move(const OptionalPoint& goal, const MoveType& goal_param,
-		const OptionalPoint& facing, const FacingType& facing_param) {
-
+	_delayed_goal = boost::none;
 }
 
 void OurRobot::avoid(const BallAvoid& ball, const RobotMask& opp_robots,
 		const RobotMask& self_robots, const ObstacleGroup& regions) {
+	_ball_avoid = ball;
+	_local_obstacles = regions;
+	_opp_avoid_mask = opp_robots;
 
+	// override the mask for this robot to ensure
+	_self_avoid_mask = self_robots;
+	_self_avoid_mask[shell()] = -1.0;
 }
 
 void OurRobot::move(Geometry2d::Point goal, bool stopAtEnd)
@@ -125,39 +189,10 @@ void OurRobot::move(Geometry2d::Point goal, bool stopAtEnd)
 	if (!visible)
 		return;
 
-//	// set planning target and continue
-//	// Rest of planning will occur after plays are complete
-//	if (_planner_goal && _planner_goal)
-//	_planner_goal = pt;
-//	_planner_stopAtEnd = stopAtEnd;
-//
-//	// create a new path
-//	Planning::Path newPath;
-//
-//	// determine the obstacles
-//	ObstacleGroup& og = obstacles;
-//
-//	// run the RRT planner to generate a new plan
-//	_planner->run(pos, angle, vel, pt, &og, newPath);
-//
-//	//Without this soccer seg faults when its started (I don't know why - Anthony)
-//	if(_path.empty() ||
-//			(_path.destination().distTo(newPath.destination()) > Robot_Radius) ||
-//			(_path.hit(og, 0, false)) ||
-//			(_path.length(0) > newPath.length(0) + path_threshold))
-//	{
-//		_path = newPath;
-//
-//		Geometry2d::Point last = pos;
-//		BOOST_FOREACH(Geometry2d::Point pt, _path.points)
-//		{
-//			_state->drawLine(last, pt);
-//			last = pt;
-//		}
-//	}
-
-	// call the path move command
-	executeMove(stopAtEnd);
+	// sets flags for future movement
+	if (verbose) cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", " << goal.y << ")" << endl;
+	cmd.goalPosition = goal;
+	cmd.pathEnd = (stopAtEnd) ? MotionCmd::StopAtEnd : MotionCmd::FastAtEnd;
 }
 
 void OurRobot::move(const vector<Geometry2d::Point>& path, bool stopAtEnd)
@@ -168,8 +203,11 @@ void OurRobot::move(const vector<Geometry2d::Point>& path, bool stopAtEnd)
 	_path.clear();
 	_path.points = path;
 
-	// execute
-	executeMove(stopAtEnd);
+	// convert to motion command
+	cmd.goalPosition = findGoalOnPath(pos, _path);
+	cmd.pathLength = _path.length(pos);
+	cmd.planner = MotionCmd::Point;
+	cmd.pathEnd = (stopAtEnd) ? MotionCmd::StopAtEnd : MotionCmd::FastAtEnd;
 }
 
 void OurRobot::bezierMove(const vector<Geometry2d::Point>& controls,
@@ -210,71 +248,6 @@ void OurRobot::bezierMove(const vector<Geometry2d::Point>& controls,
 	cmd.goalPosition = pos + targetVel;
 	cmd.pathLength = pathLength;
 	cmd.planner = MotionCmd::Point;
-}
-
-void OurRobot::executeMove(bool stopAtEnd) // FIXME: need to do something with stopAtEnd
-{
-	setCommandTrace();
-
-	// given a path, determine what the best point to use as a
-	// target point is, and assign to packet
-
-	if (_path.empty()) {
-		// to avoid crashing if the path is empty, just stop the robot
-		stop();
-		return;
-	}
-
-	//dynamics path
-	float length = _path.length();
-
-	// handle direct point commands where the length may be very small
-	if (fabs(length) < 1e-5) {
-		length = pos.distTo(_path.points[0]);
-	}
-
-	//target point is the last point on the closest segment
-	if (_path.points.size() == 1) {
-		cmd.goalPosition = _path.points[0]; // first point
-		cmd.pathLength = pos.distTo(cmd.goalPosition);
-		cmd.planner = MotionCmd::Point;
-		return;
-	}
-	// simple case: one segment, go to end of segment
-	else if (_path.points.size() == 2)
-	{
-		cmd.goalPosition = _path.points[1];
-		cmd.pathLength = _path.length(0);
-		cmd.planner = MotionCmd::Point;
-		return;
-	}
-
-	// All other cases: mix the next two points together for a smoother
-	// path, so long as it is still viable
-
-	// pull out relevant points
-	Point p0 = pos, p1 = _path.points[1], p2 = _path.points[2];
-	float dist1 = p1.distTo(p1), dist2 = p1.distTo(p2);
-
-	// mix the next point between the first and second point
-	float scale = 1-Utils::clamp(dist1/dist2, 1.0, 0.0);
-	Geometry2d::Point targetPos = p1 + (p2-p1)*scale;
-
-	// check for collisions
-	Planning::Path smoothPath;
-	smoothPath.points.push_back(p0);
-	smoothPath.points.push_back(targetPos);
-	if (smoothPath.hit(obstacles, 0, false)) {
-		// go to original next state
-		cmd.goalPosition = p1;
-		cmd.pathLength = _path.length(0);
-
-	} else {
-		cmd.goalPosition = targetPos;
-		cmd.pathLength = pos.distTo(targetPos) + targetPos.distTo(p2) + _path.length(2);
-	}
-	cmd.planner = MotionCmd::Point;
-	return;
 }
 
 void OurRobot::directVelocityCommands(const Geometry2d::Point& trans, double ang)
@@ -363,14 +336,14 @@ void OurRobot::faceNone()
 
 void OurRobot::kick(uint8_t strength)
 {
-	willKick = true;
+	_ball_avoid = KICK;
 	radioTx.set_kick(strength);
 	radioTx.set_use_chipper(false);
 }
 
 void OurRobot::chip(uint8_t strength)
 {
-	willKick = true;
+	_ball_avoid = KICK;
 	radioTx.set_kick(strength);
 	radioTx.set_use_chipper(true);
 }
@@ -390,69 +363,237 @@ void OurRobot::approachOpp(Robot * opp, bool value) {
 	approachOpponent[opp->shell()] = value;
 }
 
-void OurRobot::execute(const ObstacleGroup& global_obstacles, const ObstacleGroup& goal_area, bool isGoalie) {
-	const bool verbose = false;
+ObstaclePtr OurRobot::createBallObstacle() const {
+	// no obstacle when kicking is enabled
+	if (_ball_avoid == KICK)
+		return ObstaclePtr();
 
-	// determine obstacles
-	ObstaclePtr largeBallObstacle;
-	ObstaclePtr smallBallObstacle;
-	if (_state->ball.valid)	{
-		largeBallObstacle = ObstaclePtr(new CircleObstacle(_state->ball.pos, Field_CenterRadius));
-		smallBallObstacle = ObstaclePtr(new CircleObstacle(_state->ball.pos, Ball_Radius));
+	// choose size of the obstacle
+	float radius = Ball_Radius;
+	switch (_ball_avoid) {
+		case OurRobot::AVOID_LARGE:
+			radius = Field_CenterRadius;
+			break;
+		case OurRobot::AVOID_PARAM:
+			radius = _ball_avoid_radius;
+			break;
+		default:
+			break;
+	}
+	return ObstaclePtr(new CircleObstacle(_state->ball.pos, radius));
+}
+
+Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
+		const Planning::Path& path,	const ObstacleGroup& obstacles) {
+		setCommandTrace();
+
+		// TODO: verify the use of going from the closest point - previously started at beginning
+
+		// empty path case - leave robot stationary
+		if (path.empty())
+			return pose;
+
+		// path properties
+		float length = path.length(0);
+
+		// handle direct point commands where the length may be very small
+		if (length < 1e-5)
+			length = pos.distTo(path.points[0]);
+
+		// go to nearest point if only point or closest point is the goal
+		if (path.size() == 1)
+			return path.points[0];
+
+		// can't mix, just go to endpoint
+		if (path.size() == 2)
+			return path.points[1];
+
+		// All other cases: proportionally blend the next two points together for a smoother
+		// path, so long as it is still viable
+
+		// pull out relevant points
+		Point p0 = pos,
+				  p1 = path.points[1],
+				  p2 = path.points[2];
+		float dist1 = p1.distTo(p1), dist2 = p1.distTo(p2);
+
+		// mix the next point between the first and second point
+		float scale = 1-Utils::clamp(dist1/dist2, 1.0, 0.0);
+		Geometry2d::Point targetPos = p1 + (p2-p1)*scale;
+
+		// check for collisions on blended path
+		Planning::Path smoothPath;
+		smoothPath.points.push_back(p0);
+		smoothPath.points.push_back(targetPos);
+		if (smoothPath.hit(obstacles, 0))
+			return p1;
+		else
+			return targetPos;
+
+
+		// version that tries to start at closest
+//		// empty path case - leave robot stationary
+//		if (path.empty())
+//			return pose;
+//
+//		// path properties
+//		float length = path.length(pose);
+//		const size_t start_idx = path.nearestIndex(pose);
+//		Geometry2d::Point start_pt = path.points[start_idx];
+//		// if we are starting at the beginning of the path, start_idx is a useless goal
+//		bool close = start_pt.nearPoint(pose, 0.1);
+//
+//		// handle direct point commands where the length may be very small
+//		if (length < 1e-5)
+//			length = pos.distTo(start_pt);
+//
+//		// go to nearest point if only point or closest point is the goal
+//		if (path.size() == 1 || start_idx == path.size()-1)
+//			return start_pt;
+//
+//		// can't mix, just go to endpoint
+//		if (close && (path.size() == 2 || start_idx == path.size()-2))
+//			return path.points[start_idx+1];
+//
+//		// All other cases: proportionally blend the next two points together for a smoother
+//		// path, so long as it is still viable
+//
+//		// pull out relevant points
+//		Point p0 = pos,
+//				  p1 = (close) ? path.points[start_idx+1] : path.points[start_idx],
+//				  p2 = (close) ? path.points[start_idx+2] : path.points[start_idx+1];
+//		float dist1 = p1.distTo(p1), dist2 = p1.distTo(p2);
+//
+//		// mix the next point between the first and second point
+//		float scale = 1-Utils::clamp(dist1/dist2, 1.0, 0.0);
+//		Geometry2d::Point targetPos = p1 + (p2-p1)*scale;
+//
+//		// check for collisions on blended path
+//		Planning::Path smoothPath;
+//		smoothPath.points.push_back(p0);
+//		smoothPath.points.push_back(targetPos);
+//		if (smoothPath.hit(obstacles, 0))
+//			return p1;
+//		else
+//			return targetPos;
+}
+
+Planning::Path OurRobot::rrtReplan(const Geometry2d::Point& goal,
+		const ObstacleGroup& obstacles) {
+	setCommandTrace();
+
+	// create a new path
+	Planning::Path result;
+
+	// run the RRT planner to generate a new plan
+	_planner->run(pos, angle, vel, goal, &obstacles, result);
+
+	return result;
+}
+
+Geometry2d::Point OurRobot::escapeObstacles(const Geometry2d::Point& pose,
+		const ObstacleGroup& hitset) const {
+	// PLACEHOLDER: only escapes from one obstacle at a time
+	ObstaclePtr obs = *hitset.begin();
+	return obs->closestEscape(pose);
+}
+
+void OurRobot::drawPath() {
+	Geometry2d::Point last = pos;
+	BOOST_FOREACH(Geometry2d::Point pt, _path.points)
+	{
+		_state->drawLine(last, pt);
+		last = pt;
+	}
+}
+
+void OurRobot::execute(const ObstacleGroup& global_obstacles) {
+	setCommandTrace();
+
+	// if motion command complete and now allowment for planning - we're done
+	if (_planner_type != OurRobot::RRT) {
+		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: non-RRT planner" << endl;
+		return;
 	}
 
-	ObstaclePtr selfObstacles[Num_Shells];
-	ObstaclePtr oppObstacles[Num_Shells];
-	for (unsigned int i = 0; i < Num_Shells; ++i)	{
-		if (_state->self[i]->visible)
-			selfObstacles[i] = ObstaclePtr(new CircleObstacle(_state->self[i]->pos, Robot_Radius - .01));
-		if (_state->opp[i]->visible) {
-			// FIXME: find a better size of obstacle avoidance obstacles - old radius was: Robot_Radius - .01
-			const float oppAvoidRadius = Robot_Radius - 0.03;
-			oppObstacles[i] = ObstaclePtr((new CircleObstacle(_state->opp[i]->pos, oppAvoidRadius)));
+	// assemble obstacles
+	ObstacleGroup full_obstacles(_local_obstacles);
+	full_obstacles.add(createRobotObstacles(_state->self, _self_avoid_mask));
+	full_obstacles.add(createRobotObstacles(_state->opp, _opp_avoid_mask));
+	full_obstacles.add(global_obstacles);
+	full_obstacles.add(createBallObstacle());
+
+	// sanity check the current position and escape if necessary
+	ObstacleGroup hitset;
+	if (full_obstacles.hit(pos, hitset)) {
+		if (verbose) cout << "Robot " << shell() << " inside " << hitset.size() << " obstacles, escaping" << endl;
+		cmd.goalPosition = escapeObstacles(pos, hitset);
+		cmd.pathLength = pos.distTo(cmd.goalPosition);
+		cmd.planner = MotionCmd::Point;
+		return;
+	}
+
+	// check for stopped condition
+	// NOTE: after sanity check to ensure it will go to valid area first
+	if (!_delayed_goal) {
+		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: stopped" << endl;
+		cmd.goalPosition = pos;
+		cmd.pathLength = 0;
+		cmd.planner = MotionCmd::Point;
+		return;
+	}
+
+	// create default path for comparison - swtich if available
+	Planning::Path straight_line(pos, *_delayed_goal);
+	if (!straight_line.hit(full_obstacles, 0)) {
+		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using straight line goal" << endl;
+		_path = straight_line;
+		cmd.goalPosition = *_delayed_goal;
+		cmd.pathLength = straight_line.length(0);
+		cmd.planner = MotionCmd::Point;
+		return;
+	}
+
+	// create new a new path for comparision
+	// TODO: somehow do this less often
+	Planning::Path rrt_path = rrtReplan(*_delayed_goal, full_obstacles);
+	const float rrt_path_len = rrt_path.length(pos);
+
+	// check if goal is close to previous goal to reuse path
+	if (_path.valid() &&	_delayed_goal->nearPoint(*_path.destination(), 0.01)) {
+
+		// check if previous path is good enough to use - use if possible
+		if (!_path.hit(full_obstacles) && _path.length(pos) > rrt_path_len + path_threshold) {
+			if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using previous path" << endl;
+			cmd.goalPosition = findGoalOnPath(pos, _path, full_obstacles);
+			cmd.pathLength = _path.length(pos);
+			cmd.planner = MotionCmd::Point;
+			return;
 		}
 	}
 
-	// Reset the motion command
-	// FIXME: this also resets flags from the previous frame
-	resetMotionCommand();
+	// use the newly generated path
+	if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using new RRT path" << endl;
+	_path = rrt_path;
+	cmd.goalPosition = findGoalOnPath(pos, _path, full_obstacles);
+	cmd.pathLength = rrt_path_len;
+	cmd.planner = MotionCmd::Point;
+	return;
 
-	if (visible) {
-		// Add obstacles for this robot
-		obstacles.clear();
+//	// Add ball obstacles
+//	// NOTE: there will be a lag in the small obstacle avoidance due to planning execution order
+//	// FIXME: removed small ball obstacle
+//	if (verbose) cout << "  Adding ball obstacles" << endl;
+//	if (visible && !isGoalie)	{
+//		// Any robot that isn't the goalie may have to avoid the ball due to rules
+//		if ((_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart)) {// || avoidBall)
+//			if (largeBallObstacle)
+//				obstacles.add(largeBallObstacle);
+//		}	else if (!willKick)	{
+//			// Don't hit the ball unintentionally during normal play
+//			if (smallBallObstacle)
+//				obstacles.add(smallBallObstacle);
+//		}
+//	}
 
-		// Add rule-based obstacles (except for the ball, which will be added after the play
-		// has a chance to set willKick and avoidBall)
-		// NOTE: this uses the avoidOpponents flag from the last frame to set this
-		for (unsigned int i = 0; i < Num_Shells; ++i)		{
-			if (i != shell() && selfObstacles[i])
-				obstacles.add(selfObstacles[i]);
-			if (!approachOpponent[i] && avoidOpponents && oppObstacles[i])
-				obstacles.add(oppObstacles[i]);
-		}
-
-		//if not a goalie, avoid our goalie area
-		if (!isGoalie)
-			obstacles.add(goal_area);
-	}
-
-	// Add ball obstacles
-	// NOTE: there will be a lag in the small obstacle avoidance due to planning execution order
-	// FIXME: removed small ball obstacle
-	if (verbose) cout << "  Adding ball obstacles" << endl;
-	if (visible && !isGoalie)	{
-		// Any robot that isn't the goalie may have to avoid the ball due to rules
-		if ((_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart)) {// || avoidBall)
-			if (largeBallObstacle)
-				obstacles.add(largeBallObstacle);
-		}	else if (!willKick)	{
-			// Don't hit the ball unintentionally during normal play
-			if (smallBallObstacle)
-				obstacles.add(smallBallObstacle);
-		}
-	}
-
-	// perform planning
-
-	// construct motion command
 }

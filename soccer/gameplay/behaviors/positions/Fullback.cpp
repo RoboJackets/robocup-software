@@ -32,9 +32,9 @@ bool Gameplay::Behaviors::Fullback::run()
 	// Do not avoid opponents when planning while we are close to the goal
 	const float oppAvoidThresh = 2.0; // meters radius of goal
 	if (robot->pos.nearPoint(Geometry2d::Point(), oppAvoidThresh))
-		robot->avoidOpponents = false;
+		robot->avoidOpponents(false);
 	else
-		robot->avoidOpponents = true;
+		robot->avoidOpponents(true);
 
 	// we multiply by 0.3 here to look 0.3s into the future when considering the ball position
 	// also, this will be used for where the robots will face

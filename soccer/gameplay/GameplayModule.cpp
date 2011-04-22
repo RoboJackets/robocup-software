@@ -223,10 +223,12 @@ void Gameplay::GameplayModule::run()
 	if (verbose) cout << "Starting GameplayModule::run()" << endl;
 
 	// perform state variable updates on robots
+	// Currently - only the timer for the kicker charger
 	BOOST_FOREACH(OurRobot* robot, _state->self)
 	{
 		if (robot) {
 			robot->update();
+			robot->resetMotionCommand();
 		}
 	}
 
@@ -273,13 +275,19 @@ void Gameplay::GameplayModule::run()
 	}
 
 	// determine global obstacles - field requirements
+	// Two versions - one set with goal area, another without for goalie
 	ObstacleGroup global_obstacles = globalObstacles();
+	ObstacleGroup obstacles_with_goal = global_obstacles;
+	obstacles_with_goal.add(_goalArea);
 
 	// execute motion planning for each robot - performs RRT once
 	BOOST_FOREACH(OurRobot* r, _state->self) {
-		if (r) {
-			// perform local robot planning
-			r->execute(global_obstacles, _goalArea, r == (OurRobot*) _goalie);
+		if (r && r->visible) {
+			// set obstacles for the robots
+			if (r == (OurRobot*) _goalie)
+				r->execute(global_obstacles);
+			else
+				r->execute(obstacles_with_goal);
 		}
 	}
 

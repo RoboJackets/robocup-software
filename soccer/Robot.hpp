@@ -69,8 +69,9 @@ class OurRobot: public Robot
 {
 public:
 	typedef boost::optional<Geometry2d::Point> OptionalPoint;
-	typedef boost::array<bool, 5> RobotMask;
+	typedef boost::array<float,Num_Shells> RobotMask;
 	typedef enum {
+		NONE, 			 /// makes no attempt to adjust facing
 		CONTINUOUS,  /// change facing continously
 		CONSTANT,    /// specifies changing facing before moving, and keeps it constant throughout trajectory
 		ENDPOINT		 /// only handle facing at end (fastest)
@@ -83,9 +84,11 @@ public:
 	} MoveType;
 
 	typedef enum {
-		KICK,					/// will maneuver to kick the ball
+		KICK,					/// will kick the ball when in range
+		AVOID_NONE,		/// will hit ball, but not kick
 		AVOID_LARGE,  /// will avoid the ball with large (0.5 meter) radius - needed for rules
 		AVOID_SMALL,  /// will avoid ball with small radius - needed for maneuvering
+		AVOID_PARAM,  /// will avoid the ball with a specific radius
 	} BallAvoid;
 
 	boost::shared_ptr<RobotConfig> config;
@@ -119,17 +122,6 @@ public:
 	bool behindBall(const Geometry2d::Point& ballPos) const;
 
 	// Commands
-
-	/**
-	 * generic move command - supplies all parameters, should be masked with other functions to allow for
-	 * special cases (e.g., face())
-	 *
-	 * @param goal is the translational goal - if not specified, goal is current position
-	 * @param goal_param specifies the movement type
-	 * @param facing is the facing goal - if not specifed, no facing commanded
-	 * @param facing_param specifies how to handle facing
-	 */
-	void move(const OptionalPoint& goal, const MoveType& goal_param, const OptionalPoint& facing, const FacingType& facing_param);
 
 	/**
 	 * Obstacle avoidance command - specifies how a robot will manage obstacles
@@ -228,21 +220,43 @@ public:
 
 	boost::ptr_vector<Packet::DebugText> robotText;
 
-	ObstacleGroup obstacles;
 
 	// True if this robot will treat opponents as obstacles
 	// Set to false for defenders to avoid being herded
-	bool avoidOpponents;
+	bool avoidOpponents() const;
+	void avoidOpponents(bool enable);
 
 	// True if this robot intends to kick the ball.
 	// This is reset when this robot's role changes.
 	// This allows the robot to get close to the ball during a restart.
-	bool willKick;
+	// if disabled, creates a small obstacle for the ball
+	bool willKick() const;
+	void willKick(bool enable);
 
 	// True if this robot should avoid the ball by 500mm.
 	// Used during our restart for robots that aren't going to kick
 	// (not strictly necessary).
-	bool avoidBall;
+	bool avoidBallLarge() const;
+	void avoidBallLarge(bool enable);
+
+	// Add a custom radius avoidance of the ball
+	// creates an obstacle around the ball
+	bool avoidBall() const;  // true only for parameterized version
+	float avoidBallRadius() const;
+	void avoidBall(bool enable, float radius = Ball_Radius);
+
+	// general ball avoidance - easier to use than others
+	void ballAvoidance(const BallAvoid& flag, boost::optional<float> radius = boost::none);
+	BallAvoid ballAvoidance() const { return _ball_avoid; }
+
+	/**
+	 * Adds an obstacle to the local set of obstacles for avoidance
+	 * Cleared after every frame
+	 */
+	void localObstacles(const ObstaclePtr& obs) { _local_obstacles.add(obs); }
+	void localObstacles(const ObstacleGroup& obs) { _local_obstacles.add(obs); }
+	const ObstacleGroup& localObstacles() const { return _local_obstacles; }
+	void clearLocalObstacles() { _local_obstacles.clear(); }
 
 	// True if this robot intends to get close to an opponent
 	// (e.g. for stealing).
@@ -250,18 +264,19 @@ public:
 	// These are reset when this robot's role changes.
 	bool approachOpponent[Num_Shells];
 
+
 	// True if this robot should not be used in plays (for mixed play)
 	bool exclude;
+
+	// gameplay interface - interface for delayed update/planning
 
 	/**
 	 * Executes last motion command, retrieves the necessary set of
 	 * obstacles, and performs planning
 	 *
-	 * @param global_obstacles is an obstacle group with field-related things
-	 * @param goal area is the set of obstacles around the goal
-	 * @param isGoalie is true if this robot is the goalie - controls flags for obstacles
+	 * Needs a set of global obstacles to use - assuming field regions and goal
 	 */
-	void execute(const ObstacleGroup& global_obstacles, const ObstacleGroup& goal_area, bool isGoalie);
+	void execute(const ObstacleGroup& global_obstacles);
 
 	/**
 	 * Convenience function for changing the approachOpponent flag given a robot key
@@ -273,10 +288,16 @@ public:
 	return _commandTrace;
 	}
 
+	/** motion command - sent to point/wheel controllers, is valid when _planning_complete is true */
 	MotionCmd cmd;
+
 	bool hasBall;
+
+	/** velocity specification for direct velocity control */
 	Geometry2d::Point cmd_vel;
 	float cmd_w;
+
+	/** radio packets */
 	Packet::RadioTx::Robot radioTx;
 	Packet::RadioRx radioRx;
 
@@ -293,8 +314,15 @@ protected:
 
 	uint64_t _lastChargedTime;
 
-	/** Planning components - should be generalized */
-	bool _planning_complete; /// set to false by move commands, set to true if motionCmd is ready
+	/** Planning components for delayed planning */
+//	bool _planning_complete; /// set to false by move commands, set to true if motionCmd is ready
+	MoveType _planner_type;  /// movement class - set during move
+	BallAvoid _ball_avoid;   /// avoidance mode for the ball
+	float _ball_avoid_radius;   /// custom avoidance radius for the ball
+	boost::optional<Geometry2d::Point> _delayed_goal;   /// goal from move command
+	RobotMask _self_avoid_mask, _opp_avoid_mask;  /// masks for obstacle avoidance
+
+	ObstacleGroup _local_obstacles; /// set of obstacles added by plays
 
 	Planning::Path _path;	/// latest path
 	Planning::RRT::Planner *_planner;	/// single-robot RRT planner
@@ -302,8 +330,54 @@ protected:
 	/** robot dynamics information */
 	Planning::Dynamics *_dynamics;
 
-	/** actually performs the conversion from path->point target */
-	void executeMove(bool stopAtEnd);
+	// planning functions
+
+	/**
+	 * Creates a set of obstacles from a given robot team mask,
+	 * where mask values < 0 create no obstacle, and larger values
+	 * create an obstacle of a given radius
+	 *
+	 * NOTE: mask must not be set for this robot
+	 *
+	 * @param robots is the set of robots to use to create a mask - either self or opp from _state
+	 */
+	template<class ROBOT>
+	ObstacleGroup createRobotObstacles(const std::vector<ROBOT*>& robots, const RobotMask& mask) const {
+		ObstacleGroup result;
+		for (size_t i=0; i<RobotMask::size(); ++i)
+			if (mask[i] > 0 && robots[i] && robots[i]->visible)
+				result.add(ObstaclePtr(new CircleObstacle(robots[i]->pos, mask[i])));
+		return result;
+	}
+
+	/**
+	 * Creates an obstacle for the ball if necessary
+	 */
+	ObstaclePtr createBallObstacle() const;
+
+	/**
+	 * Given a path, finds the first local goal through mixing to create
+	 * a point target for the PointController.  Finds the closest point
+	 * on the path, and mixes from there
+	 *
+	 * @param pose is the current robot pos
+	 * @param path is the path
+	 * @param obstacles are a set of obstacles to use
+	 */
+	Geometry2d::Point findGoalOnPath(const Geometry2d::Point& pos, const Planning::Path& path,
+			const ObstacleGroup& obstacles = ObstacleGroup());
+
+	/** executes RRT planning through a set of obstacles */
+	Planning::Path rrtReplan(const Geometry2d::Point& goal, const ObstacleGroup& obstacles);
+
+	/** computes a target position that is outside of a set of obstacles */
+	Geometry2d::Point escapeObstacles(const Geometry2d::Point& pose, const ObstacleGroup& hitset) const;
+
+	// rendering
+
+	/** draws the contents of the _path variables */
+	void drawPath();
+
 };
 
 class OpponentRobot: public Robot
