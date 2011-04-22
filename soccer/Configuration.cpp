@@ -2,6 +2,7 @@
 
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
+#include <QThread>
 
 #include <stdio.h>
 #include <assert.h>
@@ -19,6 +20,17 @@ ConfigItem::ConfigItem(Configuration *config, const QString& name)
 	_path = name.split('/');
 }
 
+ConfigItem::~ConfigItem()
+{
+	_config->_allItems.removeAll(this);
+	if (_treeItem)
+	{
+		//FIXME - Things are getting deleted in a non-GUI thread
+// 		delete _treeItem;
+		_treeItem = 0;
+	}
+}
+
 void ConfigItem::valueChanged(const QString& str)
 {
 	if (_treeItem)
@@ -30,6 +42,54 @@ void ConfigItem::valueChanged(const QString& str)
 void ConfigItem::addToTree()
 {
 	_config->addItem(this);
+}
+
+void ConfigItem::setupItem()
+{
+	_treeItem->setText(1, toString());
+}
+
+////////
+
+ConfigBool::ConfigBool(Configuration* tree, QString name, bool value):
+	ConfigItem(tree, name)
+{
+	_value = value;
+	addToTree();
+}
+
+QString ConfigBool::toString()
+{
+	return _value ? "true" : "false";
+}
+
+bool ConfigBool::value()
+{
+	if (_treeItem)
+	{
+		_value = _treeItem->checkState(1) == Qt::Checked;
+	}
+	return _value;
+}
+
+void ConfigBool::setValue(const QString& str)
+{
+	if (str == "true")
+	{
+		_value = true;
+	} else if (str == "false")
+	{
+		_value = false;
+	} else {
+		// Use what's in the tree in case this was called because the user clicked on it
+		_value = (_treeItem->checkState(1) == Qt::Checked);
+	}
+	setupItem();
+}
+
+void ConfigBool::setupItem()
+{
+	_treeItem->setCheckState(1, _value ? Qt::Checked : Qt::Unchecked);
 }
 
 ////////
@@ -215,7 +275,7 @@ void Configuration::addToTree(ConfigItem *item)
 	item->_treeItem->setFlags(item->_treeItem->flags() | Qt::ItemIsEditable);
 	item->_treeItem->setData(0, ConfigItemRole, QVariant::fromValue(item));
 	item->_treeItem->setText(0, path.back());
-	item->_treeItem->setText(1, item->toString());
+	item->setupItem();
 }
 
 void Configuration::tree(QTreeWidget* tree)

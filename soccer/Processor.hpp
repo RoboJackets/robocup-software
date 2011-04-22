@@ -156,6 +156,11 @@ class Processor: public QThread
 			_useOpponentHalf = value;
 		}
 		
+		QMutex &loopMutex()
+		{
+			return _loopMutex;
+		}
+		
 		////////
 		
 		// Time of the first LogFrame
