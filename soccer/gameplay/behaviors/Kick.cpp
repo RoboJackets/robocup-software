@@ -493,7 +493,7 @@ bool Gameplay::Behaviors::Kick::run()
 		case State_Approach1:
                 {
                         //set the avoid flag
-                        robot->avoidOpponents = true;
+                        robot->avoidOpponents(true);
                         
                         //set the speeds for this state
                         robot->setVScale(1);
@@ -512,7 +512,7 @@ bool Gameplay::Behaviors::Kick::run()
                 case State_Face:
                 {
                         //set the avoid flag
-                        robot->avoidOpponents = false;
+                        robot->avoidOpponents(false);
                         
                         //set the speeds for this state
                         robot->setVScale(.5);
@@ -539,7 +539,7 @@ bool Gameplay::Behaviors::Kick::run()
 		case State_Approach2:
                 {
                         //set the avoid flag
-                        robot->avoidOpponents = false;
+                        robot->avoidOpponents(false);
                         
                         //set the speeds for this state
                         robot->setVScale(.5);
@@ -561,7 +561,7 @@ bool Gameplay::Behaviors::Kick::run()
 		case State_Aim:
 		{
                         //set the avoid flag
-                        robot->avoidOpponents = false;
+                        robot->avoidOpponents(false);
                         
                         //set the speeds for this state
                         robot->setVScale(.5);
@@ -601,7 +601,7 @@ bool Gameplay::Behaviors::Kick::run()
 		case State_Kick:
                 {
                         //set the avoid flag
-                        robot->avoidOpponents = false;
+                        robot->avoidOpponents(false);
                         
                         //set the speeds for this state
                         robot->setVScale(.5);
@@ -624,7 +624,7 @@ bool Gameplay::Behaviors::Kick::run()
 		case State_Done:
                 {
                         //set the avoid flag
-                        robot->avoidOpponents = true;
+                        robot->avoidOpponents(true);
                         
                         //set the speeds for this state
                         robot->setVScale(1);

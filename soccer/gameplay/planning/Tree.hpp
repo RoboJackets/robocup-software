@@ -25,7 +25,7 @@ namespace Planning
 					Geometry2d::Point pos;
 					
 					// Which obstacles contain this point
-					ObstacleSet hit;
+					ObstacleGroup hit;
 					
 					//velocity information (used by dynamic tree)
 					Geometry2d::Point vel;

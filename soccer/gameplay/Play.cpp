@@ -71,9 +71,9 @@ bool assignNearest(OurRobot *&role, std::set<OurRobot*>& robots, Geometry2d::Poi
 		robots.erase(role);
 
 		// set default flags - only gets reset at assignment, rather than each frame
-		role->avoidOpponents = true;
-		role->willKick = false;
-		role->avoidBall = false;
+		role->avoidOpponents(true);
+		role->willKick(false);
+		role->avoidBall(false);
 	}
 	
 	return role != 0;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <math.h>
+#include <boost/optional.hpp>
 #include <QPointF>
 #include <protobuf/Point.pb.h>
 
@@ -14,6 +15,8 @@ namespace Geometry2d
 	class Point
 	{
 		public:
+			typedef boost::optional<Point> Optional;
+
 			/**
 			default constrctor.
 			initializes point to (0,0)

@@ -8,6 +8,15 @@
 
 using namespace std;
 
+Planning::Path::Path(const Geometry2d::Point& p0) {
+	points.push_back(p0);
+}
+
+Planning::Path::Path(const Geometry2d::Point& p0, const Geometry2d::Point& p1) {
+	points.push_back(p0);
+	points.push_back(p1);
+}
+
 float Planning::Path::length(unsigned int start) const
 {
     if (points.empty() || start >= (points.size() - 1))
@@ -23,16 +32,20 @@ float Planning::Path::length(unsigned int start) const
     return length;
 }
 
-Geometry2d::Point Planning::Path::destination()
+Geometry2d::Point::Optional Planning::Path::start() const
 {
-    Geometry2d::Point point; 
+		if (points.empty())
+			return boost::none;
+		else
+			return points.front();
+}
 
-    if(!points.empty())
-    {
-        point = points[points.size() - 1];
-    }
-
-    return point;
+Geometry2d::Point::Optional Planning::Path::destination() const
+{
+		if (points.empty())
+			return boost::none;
+		else
+			return points.back();
 }
 
 // Returns the index of the point in this path nearest to pt.
@@ -59,7 +72,7 @@ int Planning::Path::nearestIndex(const Geometry2d::Point &pt) const
 	return index;
 }
 
-bool Planning::Path::hit(const ObstacleGroup &obstacles, unsigned int start, bool exitObstacles) const
+bool Planning::Path::hit(const ObstacleGroup &obstacles, unsigned int start) const
 {
     if (start >= points.size())
     {
@@ -68,17 +81,17 @@ bool Planning::Path::hit(const ObstacleGroup &obstacles, unsigned int start, boo
     }
     
     // The set of obstacles the starting point was inside of
-    ObstacleSet hit;
-    obstacles.hit(points[start], &hit);
+    ObstacleGroup hit;
+    obstacles.hit(points[start], hit);
     
     for (unsigned int i = start; i < (points.size() - 1); ++i)
     {
-        ObstacleSet newHit;
-        obstacles.hit(Geometry2d::Segment(points[i], points[i + 1]), &newHit);
+        ObstacleGroup newHit;
+        obstacles.hit(Geometry2d::Segment(points[i], points[i + 1]), newHit);
         try
         {
             set_difference(newHit.begin(), newHit.end(), hit.begin(), hit.end(), Utils::ExceptionIterator<ObstaclePtr>());
-        } catch (exception e)
+        } catch (exception& e)
         {
             // Going into a new obstacle
             return true;

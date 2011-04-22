@@ -10,7 +10,7 @@ SystemState::SystemState()
 	timestamp = 0;
 	_numDebugLayers = 0;
 	
-	//FIXME - boost::arrray?
+	//FIXME - boost::array?
 	self.resize(Num_Shells);
 	opp.resize(Num_Shells);
 	for (unsigned int i = 0; i < Num_Shells; ++i)
