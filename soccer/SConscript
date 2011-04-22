@@ -83,6 +83,8 @@ srcs = [
 	'gameplay/behaviors/Mark.cpp',
 #	'gameplay/behaviors/GoalDefender.cpp',
 #	'gameplay/behaviors/ZoneOffense.cpp',
+	'gameplay/behaviors/LineKick.cpp',
+	'gameplay/behaviors/PivotKick.cpp',
 
 	# Positions
 	'gameplay/behaviors/positions/Goalie.cpp',
