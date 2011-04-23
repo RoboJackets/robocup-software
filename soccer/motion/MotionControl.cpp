@@ -1,6 +1,7 @@
 #include "MotionControl.hpp"
 #include <framework/RobotConfig.hpp>
 #include <Robot.hpp>
+#include <Utils.hpp>
 
 #include <stdio.h>
 #include <algorithm>
@@ -81,10 +82,12 @@ void MotionControl::positionPD()
 
 void MotionControl::anglePD()
 {
+	_robot->state()->drawLine(_robot->pos, _robot->cmd.goalOrientation, Qt::black, "Motion");
 	Point dir = (_robot->cmd.goalOrientation - _robot->pos).normalized();
-	float error = acos(Point::direction(_robot->angle * DegreesToRadians).dot(dir));
+	
+	float error = Utils::fixAngleRadians(dir.angle() - _robot->angle * DegreesToRadians);
+	
 	_spin = error * _robot->config->rotation.p + (error - _lastAngleError) * _robot->config->rotation.d;
-// 	printf("spin PD %f %f %f %f\n", error, _spin, (double)_robot->config->rotation.p, (double)_robot->config->rotation.d);
 	_lastAngleError = error;
 }
 
@@ -118,7 +121,7 @@ void MotionControl::run()
 	const float Contact_Circle_Radius = 0.0812;
 	
 	// Maximum angular speed without translation
-	const float Max_Angular_Speed = Max_Linear_Speed / (Contact_Circle_Radius * 2 * M_PI);
+// 	const float Max_Angular_Speed = Max_Linear_Speed / (Contact_Circle_Radius * 2 * M_PI);
 	
 	// Limit speed so we at least go in the right direction
 	float s = bodyVel.mag();
@@ -126,8 +129,6 @@ void MotionControl::run()
 	{
 		bodyVel = bodyVel / s * Max_Linear_Speed;
 	}
-	
-// 	_spin = min(_spin, Max_Angular_Speed);
 	
 	// Axle direction, pointing out of the robot
 	const Point axles[4] =
@@ -168,9 +169,7 @@ void MotionControl::run()
 	maxNeg = max(maxNeg, -Max_Wheel_Command);
 	
 	// Add as much rotation as we can without overflow
-	_spin = 0;
 	int spinCommand = int(Max_Wheel_Command * _spin / Max_Wheel_Speed + 0.5);
-// 	printf("spin command %d\n", spinCommand);
 	
 	if (spinCommand > 0 && (maxPos + spinCommand) > Max_Wheel_Command)
 	{
@@ -180,7 +179,6 @@ void MotionControl::run()
 		spinCommand = -Max_Wheel_Command - maxNeg;
 	}
 	
-// 	printf("spin effective %d\n", spinCommand);
 	for (int i = 0; i < 4; ++i)
 	{
 		motors[i] += spinCommand;

@@ -50,7 +50,7 @@ bool Gameplay::Plays::FollowTheLeader::run()
 		Geometry2d::Point cur = robots[0]->pos;
 		Geometry2d::Point dest = ballPos - (ballPos - cur).normalized() * (Robot_Radius + Ball_Radius + backoff);
 		robots[0]->move(dest);
-		robots[0]->face(dest);
+		robots[0]->face(ballPos);
 	}
 	
 	// robot[0] is manual.
@@ -62,7 +62,7 @@ bool Gameplay::Plays::FollowTheLeader::run()
 		// Stay a small distance behind the leader
 		Geometry2d::Point dest = leader - (leader - cur).normalized() * (Robot_Diameter + backoff);
 		robots[i]->move(dest);
-		robots[i]->face(dest);
+		robots[i]->face(leader);
 	}
 	
 	return true;

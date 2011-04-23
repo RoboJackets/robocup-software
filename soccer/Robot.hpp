@@ -303,6 +303,11 @@ public:
 	{
 		_motionControl.run();
 	}
+	
+	SystemState *state() const
+	{
+		return _state;
+	}
 
 protected:
 	// Stores a stack trace in _commandTrace
