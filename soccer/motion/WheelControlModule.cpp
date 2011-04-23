@@ -6,7 +6,6 @@
 #include <boost/foreach.hpp>
 #include <Utils.hpp>
 #include <framework/RobotConfig.hpp>
-#include <framework/Dynamics.hpp>
 
 #include "WheelControlModule.hpp"
 
@@ -24,7 +23,6 @@ void WheelControlModule::run()
 {
 	BOOST_FOREACH(OurRobot *robot, _state->self)
 	{
-		// check that system is valid
 		if (robot->visible) {
 			// check for direct motion commands
 			if (robot->cmd.planner == MotionCmd::DirectMotor) {
@@ -47,8 +45,7 @@ void WheelControlModule::run()
 void
 WheelControlModule::genMotor(const Geometry2d::Point& vel, float w, OurRobot* robot) {
 	_procMutex.lock();
-	bool verbose = false;
-
+#if 0
 	// algorithm:
 	// 1) saturate the velocities with model bounds (calc current and max)
 	// 2) convert to percentage of maximum
@@ -64,8 +61,7 @@ WheelControlModule::genMotor(const Geometry2d::Point& vel, float w, OurRobot* ro
 	if (verbose) cout << "\nCommands: w = " << w << " maxW = " << maxW;
 
 	// handle translational velocity - convert into robot space, then bound
-	Point rVel = vel;
-	rVel.rotate(Point(), - robot->angle);
+	Point rVel = vel.rotated(-robot->angle);
 	Planning::Dynamics::DynamicsInfo info = dynamics.info(rVel.angle() * RadiansToDegrees, 0);
 	const float maxSpeed = info.velocity;
 	const Point maxVel = rVel.normalized() * maxSpeed;
@@ -115,29 +111,14 @@ WheelControlModule::genMotor(const Geometry2d::Point& vel, float w, OurRobot* ro
 	}
 	if (verbose) cout << endl;
 
-	// mix the control inputs together
-	vector<float> wheelVels(4); // signed percents of maximum from each wheel
-	i = 0;
-	BOOST_FOREACH(float& vel, wheelVels) {
-		vel = wPercent + (1.0-fabs(wPercent)) * vels[i++];
-	}
-
 	// convert to integer commands and assign
 	i = 0;
-	if (verbose) cout << "Motor percent at assign: ";
 	BOOST_FOREACH(const float& vel, wheelVels) {
-		if (verbose) cout << " " << vel;
 		int8_t cmdVel = (int8_t) Utils::clamp(127.0*vel, 126.0, -127.0);
-//		if (robot->rev == SystemState::Robot::rev2010) // FIXME: need to enable new 2011 fleet
-		if (false)
-		{
-			robot->radioTx.set_motors(i, -cmdVel);
-		} else {
-			robot->radioTx.set_motors(i, cmdVel);
-		}
+		robot->radioTx.set_motors(i, cmdVel);
 		++i;
 	}
-	if (verbose) cout << endl;
+#endif
 	_procMutex.unlock();
 }
 

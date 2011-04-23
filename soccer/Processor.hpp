@@ -31,8 +31,7 @@ namespace Gameplay
 
 namespace Motion
 {
-	class PointControlModule;
-	class WheelControlModule;
+	class RobotController;
 }
 
 namespace Modeling
@@ -240,8 +239,6 @@ class Processor: public QThread
 		boost::shared_ptr<Modeling::WorldModel> _modelingModule;
 		boost::shared_ptr<RefereeModule> _refereeModule;
 		boost::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
-		boost::shared_ptr<Motion::PointControlModule> _pointControlModule;
-		boost::shared_ptr<Motion::WheelControlModule> _wheelControlModule;
 
 		Joystick *_joystick;
 };

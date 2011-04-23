@@ -7,7 +7,6 @@
 #include <QPainter>
 
 #include <framework/SystemState.hpp>
-#include <framework/Dynamics.hpp>
 
 #include "Pid.hpp"
 #include <Utils.hpp>
@@ -18,17 +17,12 @@ namespace Motion
 {
 	class RobotController
 	{
-
 		public:
-			RobotController(Configuration *config, SystemState *state, int shell);
+			RobotController(OurRobot *robot);
 			~RobotController();
 
 			/** Process the command for a robot and prepare output */
-			void proc();
-
-			void setAngKp(double value);
-			void setAngKi(double value);
-			void setAngKd(double value);
+			void run();
 
 			OurRobot* self() { return _self; }
 
@@ -53,9 +47,6 @@ namespace Motion
 			/** scales the velocity to a smaller value if commands require */
 			void scaleVelocity();
 
-			/** stop the robot by forcing velocities to zero */
-			void stop(float dtime); // time in seconds for the framerate
-
 			/** generate motor speeds */
 			void genMotor();
 
@@ -69,9 +60,6 @@ namespace Motion
 
 			/** planner flag - copied out for rendering */
 			MotionCmd::PlannerType _plannerType;
-
-			/** robot dynamics information */
-			Planning::Dynamics _dynamics;
 
 			uint64_t _lastTimestamp;
 

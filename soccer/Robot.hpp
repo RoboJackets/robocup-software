@@ -14,6 +14,7 @@
 #include <gameplay/planning/rrt.hpp>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
+#include <motion/MotionControl.hpp>
 
 class SystemState;
 class RobotConfig;
@@ -32,7 +33,6 @@ class Behavior;
 
 namespace Planning
 {
-class Dynamics;
 namespace RRT
 {
 class Planner;
@@ -166,22 +166,10 @@ public:
 	 */
 	void directVelocityCommands(const Geometry2d::Point& trans, double ang);
 
-	/**
-	 * Makes the robot spin in a specified direction
-	 */
-	void spin(MotionCmd::SpinType dir);
-
 	/*
 	 * Enable dribbler (note: can go both ways)
 	 */
 	void dribble(int8_t speed);
-
-	/**
-	 * Pivots around a given point in a particular direction
-	 * Specify direction manually, or with bool
-	 */
-	void pivot(Geometry2d::Point ctr, MotionCmd::PivotType dir);
-	void pivot(Geometry2d::Point center, bool cw);
 
 	/**
 	 * Face a point while remaining in place
@@ -204,7 +192,6 @@ public:
 	void chip(uint8_t strength);
 
 	boost::ptr_vector<Packet::DebugText> robotText;
-
 
 	// True if this robot will treat opponents as obstacles
 	// Set to false for defenders to avoid being herded
@@ -275,7 +262,6 @@ public:
 	bool avoidTeammate(unsigned shell_id) const;
 	float avoidTeammateRadius(unsigned shell_id) const;
 
-
 	// True if this robot should not be used in plays (for mixed play)
 	bool exclude;
 
@@ -310,6 +296,8 @@ public:
 	//The confidence for this robot's ball sensor
 	int sensorConfidence;
 
+	MotionControl motionControl;
+	
 	void newRevision(bool is_2011) { _newRevision = is_2011; }
 	bool newRevision() const { return _newRevision; }
 
@@ -381,7 +369,7 @@ protected:
 
 	// rendering
 
-	/** draws the contents of the _path variables */
+	//FIXME - This doesn't need to be in this class.  Put it in SystemState, along with other drawing?
 	void drawPath(const Planning::Path& path, const QColor &color = Qt::black);
 };
 

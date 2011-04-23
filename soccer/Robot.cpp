@@ -1,6 +1,5 @@
 #include <Robot.hpp>
 #include <gameplay/planning/bezier.hpp>
-#include <framework/Dynamics.hpp>
 #include <Utils.hpp>
 #include <LogUtils.hpp>
 #include <protobuf/LogFrame.pb.h>
@@ -36,8 +35,9 @@ Robot::Robot(unsigned int shell, bool self)
 }
 
 OurRobot::OurRobot(int shell, SystemState *state):
-					Robot(shell, true),
-					_state(state)
+	Robot(shell, true),
+	motionControl(this),
+	_state(state)
 {
 	_ball_avoid = AVOID_SMALL;
 	_ball_avoid_radius = Ball_Radius;
@@ -58,12 +58,6 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	}
 
 	_planner->maxIterations(250);
-
-	radioTx.set_board_id(shell);
-	for (int m = 0; m < 4; ++m)
-	{
-		radioTx.add_motors(0);
-	}
 }
 
 void OurRobot::addText(const QString& text, const QColor& qc)
