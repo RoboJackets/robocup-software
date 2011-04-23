@@ -296,15 +296,20 @@ public:
 	//The confidence for this robot's ball sensor
 	int sensorConfidence;
 
-	MotionControl motionControl;
-	
 	void newRevision(bool is_2011) { _newRevision = is_2011; }
 	bool newRevision() const { return _newRevision; }
+
+	void runMotionControl()
+	{
+		_motionControl.run();
+	}
 
 protected:
 	// Stores a stack trace in _commandTrace
 	void setCommandTrace();
 
+	MotionControl _motionControl;
+	
 	SystemState *_state;
 
 	std::vector<void *> _commandTrace;

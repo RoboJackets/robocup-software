@@ -418,7 +418,7 @@ void Processor::run()
 		{
 			if (robot->visible)
 			{
-				robot->motionControl.run();
+				robot->runMotionControl();
 			}
 		}
 

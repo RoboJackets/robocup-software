@@ -16,21 +16,6 @@ RobotConfig::Dynamics::Dynamics(Configuration* config, QString prefix):
 {
 }
 
-RobotConfig::Motion::Motion(Configuration* config, QString prefix):
-	deg0(config, QString("%1/deg0").arg(prefix)),
-	deg45(config, QString("%1/deg45").arg(prefix)),
-	rotation(config, QString("%1/rotation").arg(prefix)),
-	angle(config, QString("%1/angle").arg(prefix)),
-	output_coeffs(config, QString("%1/output_coeffs").arg(prefix))
-{
-}
-
-RobotConfig::Axle::Axle(Configuration* config, QString prefix):
-	x(config, QString("%1/x").arg(prefix)),
-	y(config, QString("%1/y").arg(prefix))
-{
-}
-
 RobotConfig::Kicker::Kicker(Configuration* config, QString prefix):
 	m(config, QString("%1/m").arg(prefix), 1),
 	b(config, QString("%1/b").arg(prefix))
@@ -38,19 +23,14 @@ RobotConfig::Kicker::Kicker(Configuration* config, QString prefix):
 }
 
 RobotConfig::RobotConfig(Configuration* config, QString prefix):
-	motion(config, QString("%1/motion").arg(prefix)),
+	trapTrans(config, QString("%1/trapTrans").arg(prefix)),
+	trapRot(config, QString("%1/trapRot").arg(prefix)),
+	translation(config, QString("%1/translation").arg(prefix)),
+	rotation(config, QString("%1/rotation").arg(prefix)),
 	kicker(config, QString("%1/kicker").arg(prefix))
 {
-	for (int i = 0; i < 4; ++i)
-	{
-		axles[i] = new Axle(config, QString("%1/axle/%2").arg(prefix, QString::number(i)));
-	}
 }
 
 RobotConfig::~RobotConfig()
 {
-	for (int i = 0; i < 4; ++i)
-	{
-		delete axles[i];
-	}
 }
