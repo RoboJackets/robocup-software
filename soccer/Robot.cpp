@@ -218,46 +218,6 @@ void OurRobot::move(const vector<Geometry2d::Point>& path, bool stopAtEnd)
 	cmd.pathEnd = (stopAtEnd) ? MotionCmd::StopAtEnd : MotionCmd::FastAtEnd;
 }
 
-void OurRobot::bezierMove(const vector<Geometry2d::Point>& controls,
-		MotionCmd::OrientationType facing,
-		MotionCmd::PathEndType endpoint) {
-
-	// calculate path using simple interpolation
-	//	_path = Planning::createBezierPath(controls);
-
-	// execute path
-	//executeMove(endpoint); // FIXME: handles curves poorly
-
-
-	size_t degree = controls.size();
-
-	// generate coefficients
-	vector<float> coeffs;
-	for (size_t i=0; i<degree; ++i) {
-		coeffs.push_back(Planning::binomialCoefficient(degree-1, i));
-	}
-
-	// calculate length to allow for determination of time
-	double pathLength = Planning::bezierLength(controls, coeffs);
-
-	// calculate numerical derivative by stepping ahead a fixed constant
-	float lookAheadDist = 0.15; // in meters along path
-	float dt = lookAheadDist/pathLength;
-
-	float velGain = 3.0; // FIXME: should be dependent on the length of the curve
-
-	// calculate a target velocity for translation
-	Point targetVel = Planning::evaluateBezierVelocity(dt, controls, coeffs);
-
-	// apply gain
-	targetVel *= velGain;
-
-	// create a dummy goal position
-	cmd.goalPosition = pos + targetVel;
-	cmd.pathLength = pathLength;
-	cmd.planner = MotionCmd::Point;
-}
-
 void OurRobot::directVelocityCommands(const Geometry2d::Point& trans, double ang)
 {
 	// ensure RRT not used
@@ -380,21 +340,6 @@ void OurRobot::approachOpp(Robot * opp, bool value) {
 }
 
 ObstaclePtr OurRobot::createBallObstacle() const {
-
-	//	// Add ball obstacles
-	//	// FIXME: removed small ball obstacle
-	//	if (verbose) cout << "  Adding ball obstacles" << endl;
-	//	if (visible && !isGoalie)	{
-	//		// Any robot that isn't the goalie may have to avoid the ball due to rules
-	//		if ((_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart)) {// || avoidBall)
-	//			if (largeBallObstacle)
-	//				obstacles.add(largeBallObstacle);
-	//		}	else if (!willKick)	{
-	//			// Don't hit the ball unintentionally during normal play
-	//			if (smallBallObstacle)
-	//				obstacles.add(smallBallObstacle);
-	//		}
-	//	}
 
 	// if game is stopped, large obstacle regardless of flags
 	if (_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart)

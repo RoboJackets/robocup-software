@@ -79,7 +79,6 @@ public:
 
 	typedef enum {
 		RRT, 			/// moves to a point with the RRT planner
-		BEZIER,   /// moves using the bezier planner - broken
 		OVERRIDE  /// moves to a point without regard for obstacles
 	} MoveType;
 
@@ -155,19 +154,6 @@ public:
 	 * the robot reaches the end of the path.
 	 */
 	void move(const std::vector<Geometry2d::Point>& path, bool stopAtEnd=true);
-
-	/**
-	 * Move via a bezier curve, designed to allow for faster movement
-	 * The points specified are bezier control points, which define the
-	 * path taken.  Note: longer paths are more computationally expensive.
-	 *
-	 * To enable control point modification to allow for avoidance of obstacles,
-	 * set the enableAvoid flag to true, false otherwise.  The stop at end
-	 * flag works like in other move commands
-	 */
-	void bezierMove(const std::vector<Geometry2d::Point>& controls,
-			MotionCmd::OrientationType facing,
-			MotionCmd::PathEndType endpoint=MotionCmd::StopAtEnd);
 
 	/**
 	 * Apply direct motion commands to the motors - use only for calibration
