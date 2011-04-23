@@ -570,7 +570,8 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 
 	// create default path for comparison - swtich if available
 	Planning::Path straight_line(pos, *_delayed_goal);
-	if (!straight_line.hit(full_obstacles, 0)) {
+	Geometry2d::Segment straight_seg(pos, *_delayed_goal);
+	if (!full_obstacles.hit(straight_seg)) {
 		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using straight line goal" << endl;
 		addText(QString("execute: straight_line"));
 		_path = straight_line;
