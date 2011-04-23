@@ -20,8 +20,6 @@ public:
     
     virtual bool hit(const Geometry2d::Point &pt) const = 0;
     virtual bool hit(const Geometry2d::Segment &seg) const = 0;
-
-    virtual Geometry2d::Point closestEscape(const Geometry2d::Point& pose) const = 0;
 };
 
 typedef boost::shared_ptr<Obstacle> ObstaclePtr;
@@ -94,8 +92,6 @@ public:
     
     bool hit(const Geometry2d::Point &pt) const;
     bool hit(const Geometry2d::Segment &seg) const;
-    
-    Geometry2d::Point closestEscape(const Geometry2d::Point& pose) const;
 
     Geometry2d::Circle circle;
 };
@@ -105,8 +101,6 @@ class PolygonObstacle: public Obstacle
 public:
     bool hit(const Geometry2d::Point &pt) const;
     bool hit(const Geometry2d::Segment &seg) const;
-    
-    Geometry2d::Point closestEscape(const Geometry2d::Point& pose) const;
 
     Geometry2d::Polygon polygon;
 };

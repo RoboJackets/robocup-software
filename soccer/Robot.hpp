@@ -371,9 +371,6 @@ protected:
 	/** executes RRT planning through a set of obstacles */
 	Planning::Path rrtReplan(const Geometry2d::Point& goal, const ObstacleGroup& obstacles);
 
-	/** computes a target position that is outside of a set of obstacles */
-	Geometry2d::Point escapeObstacles(const Geometry2d::Point& pose, const ObstacleGroup& hitset) const;
-
 	// rendering
 
 	/** draws the contents of the _path variables */
