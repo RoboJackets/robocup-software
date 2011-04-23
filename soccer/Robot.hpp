@@ -98,8 +98,6 @@ public:
 
 	bool haveBall() const; /// true if we have the ball
 
-	//            bool sensorConfidence() const;
-
 	bool hasChipper() const; /// true if robot can chip
 
 	// kicker readiness checks
@@ -291,11 +289,6 @@ public:
 	 */
 	void execute(const ObstacleGroup& global_obstacles);
 
-	/**
-	 * Convenience function for changing the approachOpponent flag given a robot key
-	 */
-//	void approachOpp(Robot * opp, bool value);
-
 	const std::vector<void *> &commandTrace() const
 	{
 	return _commandTrace;
@@ -378,9 +371,10 @@ protected:
 	 * @param pose is the current robot pos
 	 * @param path is the path
 	 * @param obstacles are a set of obstacles to use
+	 * @param slice enables shortening a longer path to start from start position
 	 */
 	Geometry2d::Point findGoalOnPath(const Geometry2d::Point& pos, const Planning::Path& path,
-			const ObstacleGroup& obstacles = ObstacleGroup());
+			const ObstacleGroup& obstacles = ObstacleGroup(), bool slice = false);
 
 	/** executes RRT planning through a set of obstacles */
 	Planning::Path rrtReplan(const Geometry2d::Point& goal, const ObstacleGroup& obstacles);

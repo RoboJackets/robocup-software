@@ -149,6 +149,44 @@ Geometry2d::Segment Planning::Path::nearestSegment(const Geometry2d::Point &pt) 
 	return best;
 }
 
+void Planning::Path::startFrom(const Geometry2d::Point& pt, Planning::Path& result) const {
+
+	// path will start at the last point
+	result.clear();
+	result.points.push_back(pt);
+
+	if (points.empty())
+		return;
+
+	// handle simple paths
+	if (points.size() == 1) {
+		result.points.push_back(points.front());
+		return;
+	}
+
+	// find where to start the path
+	Geometry2d::Segment best;
+	float dist = -1;
+	unsigned int i;
+	vector<Geometry2d::Point>::const_iterator path_start = ++points.begin();
+	for (i = 0; i < (points.size() - 1); ++i)
+    {
+		Geometry2d::Segment s(points[i], points[i+1]);
+		const float d = s.distTo(pt);
+		if (dist < 0 || d < dist)
+		{
+			best = s;
+			dist = d;
+		}
+	}
+
+	// slice path
+	// new path will be pt, [closest point on nearest segment], [i+1 to end]
+	result.points.push_back(best.nearestPoint(pt));
+	result.points.insert(result.points.end(), path_start, points.end());
+
+}
+
 float Planning::Path::length(const Geometry2d::Point &pt) const
 {
 	float dist = -1;

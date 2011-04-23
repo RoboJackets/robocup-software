@@ -56,6 +56,9 @@ namespace Planning
 			// Returns the start of the path
 			Geometry2d::Point::Optional start() const;
 
+			// Returns a new path starting from a given point
+			void startFrom(const Geometry2d::Point& pt, Planning::Path& result) const;
+
 			//Returns the destination of this path (the last point in the points array)
 			Geometry2d::Point::Optional destination() const;
 
