@@ -518,11 +518,11 @@ bool Gameplay::Behaviors::Kick::run()
                         robot->setVScale(.5);
                         robot->setWScale(.25);
 
-                        MotionCmd::PivotType dir = (targetEdge - ballPos).cross(relPos) > 0 ? MotionCmd::CW : MotionCmd::CCW;
+//                         MotionCmd::PivotType dir = (targetEdge - ballPos).cross(relPos) > 0 ? MotionCmd::CW : MotionCmd::CCW;
 			
                         if (toTarget.cross(relPos) < 0)
 			{
-				dir = (targetEdge - ballPos).cross(relPos) > 0 ? MotionCmd::CCW : MotionCmd::CW;
+// 				dir = (targetEdge - ballPos).cross(relPos) > 0 ? MotionCmd::CCW : MotionCmd::CW;
 	               	}
                         
 //                        robot->pivot(targetEdge - ballPos + robot->pos, dir);
@@ -570,11 +570,11 @@ bool Gameplay::Behaviors::Kick::run()
                         // True if the robot is in front of the ball
 			bool inFrontOfBall = toTarget.perpCCW().cross(relPos) > 0;
 			
-			MotionCmd::PivotType dir;
+// 			MotionCmd::PivotType dir;
 			if (inFrontOfBall)
 			{
 				// Move behind the ball
-				dir = (toTarget.cross(relPos) > 0) ? MotionCmd::CCW : MotionCmd::CW;
+// 				dir = (toTarget.cross(relPos) > 0) ? MotionCmd::CCW : MotionCmd::CW;
 			} else {
 				// Behind the ball: move to the nearest line containing the ball and a target endpoint.
 				// Note that the robot is behind the ball, while the target vectors all point in *front* of the ball.
@@ -582,10 +582,10 @@ bool Gameplay::Behaviors::Kick::run()
 				if (toTarget.cross(relPos) > 0)
 				{
 					// Below the center line: nearest endpoint-line includes target.pt[0]
-		        		dir = (target.pt[0] - ballPos).cross(relPos) > 0 ? MotionCmd::CW : MotionCmd::CCW;
+// 		        		dir = (target.pt[0] - ballPos).cross(relPos) > 0 ? MotionCmd::CW : MotionCmd::CCW;
 				} else {
 					// Above the center line: nearest endpoint-line includes target.pt[1]
-					dir = (target.pt[1] - ballPos).cross(relPos) > 0 ? MotionCmd::CCW : MotionCmd::CW;
+// 					dir = (target.pt[1] - ballPos).cross(relPos) > 0 ? MotionCmd::CCW : MotionCmd::CW;
 				}
 			}
 			

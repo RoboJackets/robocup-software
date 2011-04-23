@@ -168,11 +168,6 @@ public:
 	 */
 	void directVelocityCommands(const Geometry2d::Point& trans, double ang);
 
-	/**
-	 * Makes the robot spin in a specified direction
-	 */
-	void spin(MotionCmd::SpinType dir);
-
 	/*
 	 * Enable dribbler (note: can go both ways)
 	 */
