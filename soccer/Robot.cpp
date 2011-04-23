@@ -382,7 +382,6 @@ void OurRobot::approachOpp(Robot * opp, bool value) {
 ObstaclePtr OurRobot::createBallObstacle() const {
 
 	//	// Add ball obstacles
-	//	// NOTE: there will be a lag in the small obstacle avoidance due to planning execution order
 	//	// FIXME: removed small ball obstacle
 	//	if (verbose) cout << "  Adding ball obstacles" << endl;
 	//	if (visible && !isGoalie)	{

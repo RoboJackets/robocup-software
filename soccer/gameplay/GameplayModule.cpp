@@ -284,7 +284,7 @@ void Gameplay::GameplayModule::run()
 	BOOST_FOREACH(OurRobot* r, _state->self) {
 		if (r && r->visible) {
 			// set obstacles for the robots
-			if (r == (OurRobot*) _goalie)
+			if (_goalie && _goalie->robot && r->shell() == _goalie->robot->shell())
 				r->execute(global_obstacles);
 			else
 				r->execute(obstacles_with_goal);
