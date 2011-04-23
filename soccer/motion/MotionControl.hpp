@@ -14,6 +14,13 @@ public:
 	void run();
 	
 private:
+	void positionPD();
+	void positionTrapezoidal();
+	void anglePD();
+	
 	OurRobot *_robot;
-	Geometry2d::Point _lastError;
+	Geometry2d::Point _lastPosError;
+	float _lastAngleError;
+	Geometry2d::Point _worldVel;
+	float _spin;
 };

@@ -25,27 +25,6 @@ struct RobotConfig
 		ConfigDouble deceleration;
 	};
 	
-	struct Motion
-	{
-		Motion(Configuration *config, QString prefix);
-		
-		Dynamics deg0;
-		Dynamics deg45;
-		Dynamics rotation;
-		
-		PID angle;
-		
-		ConfigFloatVector output_coeffs;
-		//FIXME - In config
-// 		std::vector<float> output_coeffs;
-	};
-	
-	struct Axle
-	{
-		Axle(Configuration *config, QString prefix);
-		ConfigDouble x, y;
-	};
-	
 	struct Kicker
 	{
 		Kicker(Configuration *config, QString prefix);
@@ -54,7 +33,10 @@ struct RobotConfig
 		ConfigDouble b;
 	};
 	
-	Motion motion;
+	Dynamics trapTrans;
+	Dynamics trapRot;
+	PID translation;
+	PID rotation;
+	
 	Kicker kicker;
-	Axle *axles[4];
 };
