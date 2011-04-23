@@ -377,7 +377,7 @@ protected:
 	// rendering
 
 	/** draws the contents of the _path variables */
-	void drawPath();
+	void drawPath(const Planning::Path& path);
 };
 
 class OpponentRobot: public Robot
