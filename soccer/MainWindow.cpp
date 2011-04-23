@@ -198,7 +198,8 @@ void MainWindow::updateRobotConfigs()
 		QMutexLocker lock(&_processor->loopMutex());
 		BOOST_FOREACH(OurRobot *robot, state()->self)
 		{
-			robot->config = (*_robot2011[robot->shell()]) ? _robotConfig2011 : _robotConfig2008;
+			robot->newRevision(*_robot2011[robot->shell()]);
+			robot->config = (robot->newRevision()) ? _robotConfig2011 : _robotConfig2008;
 		}
 	}
 }
