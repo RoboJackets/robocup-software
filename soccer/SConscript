@@ -24,7 +24,6 @@ srcs = [
 
 	'framework/Obstacle.cpp',
 	'framework/Path.cpp',
-	'framework/Dynamics.cpp',
 	'framework/SystemState.cpp',
 	'framework/RobotConfig.cpp',
 
@@ -140,9 +139,7 @@ srcs = [
 #	'modeling/kalman/ExtendedKalmanFilter.cpp',
 
 # Sources for motion module',
-	'motion/PointControlModule.cpp',
-	'motion/WheelControlModule.cpp',
-	'motion/RobotController.cpp',
+	'motion/MotionControl.cpp',
 	'motion/Pid.cpp',
 	
 	'ui/main_icons.qrc',
