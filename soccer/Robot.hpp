@@ -247,37 +247,36 @@ public:
 
 	// opponent approach interface
 
+	void approachAllOpponents(bool enable = true);
+	void avoidAllOpponents(bool enable = true);
+
 	/** checks if opponents are avoided at all */
-	bool avoidOpponent(int shell_id) const { return _opp_avoid_mask[shell_id] > 0.0; }
+	bool avoidOpponent(unsigned shell_id) const;
 
 	/** @return true if we are able to approach opponents */
-	// FIXME: move opponent avoidance parameters elsewhere
-	bool approachOpponent(int shell_id) const {
-		return avoidOpponent(shell_id) && _opp_avoid_mask[shell_id] < Robot_Radius - 0.01;
-	}
+	bool approachOpponent(unsigned shell_id) const;
 
 	/** returns the avoidance radius */
-	float avoidOpponentRadius(int shell_id) const { return _opp_avoid_mask[shell_id]; }
+	float avoidOpponentRadius(unsigned shell_id) const;
 
 	/** enable/disable for opponent avoidance */
-	void avoidOpponent(int shell_id, bool enable_avoid) {
-		if (enable_avoid)
-			_opp_avoid_mask[shell_id] = Robot_Radius - 0.01;
-		else
-			_opp_avoid_mask[shell_id] = -1.0;
-	}
+	void avoidOpponent(unsigned shell_id, bool enable_avoid);
 
 	/** enable/disable approach of opponents - diable uses larger avoidance radius */
-	void approachOpponent(int shell_id, bool enable_approach) {
-		if (enable_approach)
-			_opp_avoid_mask[shell_id] = Robot_Radius - 0.03;
-		else
-			_opp_avoid_mask[shell_id] = Robot_Radius - 0.01;
-	}
+	void approachOpponent(unsigned shell_id, bool enable_approach);
 
-	void avoidOpponentRadius(int shell_id, float radius) {
-		_opp_avoid_mask[shell_id] = radius;
-	}
+	void avoidOpponentRadius(unsigned shell_id, float radius);
+
+	// self approach interface
+
+	/** determines whether a robot will avoid another robot when it plans - use for priority */
+
+	void avoidAllTeammates(bool enable = true);
+	void avoidTeammate(unsigned shell_id, bool enable = true);
+	void avoidTeammateRadius(unsigned shell_id, float radius);
+	bool avoidTeammate(unsigned shell_id) const;
+	float avoidTeammateRadius(unsigned shell_id) const;
+
 
 	// True if this robot should not be used in plays (for mixed play)
 	bool exclude;
