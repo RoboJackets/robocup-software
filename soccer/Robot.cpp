@@ -18,7 +18,8 @@ using namespace Geometry2d;
 const float intTimeStampToFloat = 1000000.0f;
 
 //The threshold necessary to change paths tuning required 
-const float path_threshold = 2 * Robot_Diameter;
+//const float path_threshold = 2 * Robot_Diameter; // previous value
+const float path_threshold = 5.0;
 
 const bool verbose = false;
 
@@ -37,6 +38,7 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	_ball_avoid = AVOID_SMALL;
 	_ball_avoid_radius = Ball_Radius;
 	_delayed_goal = boost::none;
+	_planner_type = RRT;
 	exclude = false;
 	hasBall = false;
 	sensorConfidence = 0;
@@ -50,7 +52,7 @@ OurRobot::OurRobot(int shell, SystemState *state):
 		approachOpponent[i] = false;
 		// TODO move thresholds elsewhere
 		_self_avoid_mask[i] = (i != (size_t) shell) ? Robot_Radius : -1.0;
-		_opp_avoid_mask[i] = Robot_Radius - 0.03;
+		_opp_avoid_mask[i] = Robot_Radius - 0.01;
 	}
 
 	_planner->setDynamics(_dynamics);
@@ -380,6 +382,27 @@ void OurRobot::approachOpp(Robot * opp, bool value) {
 }
 
 ObstaclePtr OurRobot::createBallObstacle() const {
+
+	//	// Add ball obstacles
+	//	// NOTE: there will be a lag in the small obstacle avoidance due to planning execution order
+	//	// FIXME: removed small ball obstacle
+	//	if (verbose) cout << "  Adding ball obstacles" << endl;
+	//	if (visible && !isGoalie)	{
+	//		// Any robot that isn't the goalie may have to avoid the ball due to rules
+	//		if ((_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart)) {// || avoidBall)
+	//			if (largeBallObstacle)
+	//				obstacles.add(largeBallObstacle);
+	//		}	else if (!willKick)	{
+	//			// Don't hit the ball unintentionally during normal play
+	//			if (smallBallObstacle)
+	//				obstacles.add(smallBallObstacle);
+	//		}
+	//	}
+
+	// if game is stopped, large obstacle regardless of flags
+	if (_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart)
+		return ObstaclePtr(new CircleObstacle(_state->ball.pos, Field_CenterRadius));
+
 	// no obstacle when kicking is enabled
 	if (_ball_avoid == KICK)
 		return ObstaclePtr();
@@ -507,13 +530,6 @@ Planning::Path OurRobot::rrtReplan(const Geometry2d::Point& goal,
 	return result;
 }
 
-Geometry2d::Point OurRobot::escapeObstacles(const Geometry2d::Point& pose,
-		const ObstacleGroup& hitset) const {
-	// PLACEHOLDER: only escapes from one obstacle at a time
-	ObstaclePtr obs = *hitset.begin();
-	return obs->closestEscape(pose);
-}
-
 void OurRobot::drawPath(const Planning::Path& path, const QColor &color) {
 	Geometry2d::Point last = pos;
 	BOOST_FOREACH(Geometry2d::Point pt, path.points)
@@ -532,6 +548,16 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		return;
 	}
 
+	// halt case - same as stopped
+	if (_state->gameState.state == GameState::Halt) {
+		_path = Planning::Path(pos);
+		drawPath(_path);
+		cmd.goalPosition = pos;
+		cmd.pathLength = 0;
+		cmd.planner = MotionCmd::Point;
+		return;
+	}
+
 	// create and visualize obstacles
 	ObstacleGroup full_obstacles(_local_obstacles);
 	ObstacleGroup
@@ -546,29 +572,30 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	full_obstacles.add(ball_obs);
 	full_obstacles.add(global_obstacles);
 
-	// sanity check the current position and escape if necessary
-	ObstacleGroup hitset;
-	if (full_obstacles.hit(pos, hitset) && !hitset.empty()) {
-		addText(QString("execute: in obstacle"));
-		if (verbose) cout << "Robot " << shell() << " inside " << hitset.size() << " obstacles, escaping" << endl;
-		cmd.goalPosition = escapeObstacles(pos, hitset);
-		cmd.pathLength = pos.distTo(cmd.goalPosition);
+	// if we are in full stopped mode, try to drive to ball
+	if (_state->gameState.state == GameState::Stop) {
+		Planning::Path rrt_path = rrtReplan(_state->ball.pos, full_obstacles);
+		_path = rrt_path;
+		cmd.goalPosition = findGoalOnPath(pos, _path, full_obstacles);
+		cmd.pathLength = rrt_path.length(0);
 		cmd.planner = MotionCmd::Point;
+		drawPath(_path);
 		return;
 	}
 
-	// check for stopped condition
-	// NOTE: after sanity check to ensure it will go to valid area first
+	// if no goal command robot to stop in place
 	if (!_delayed_goal) {
 		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: stopped" << endl;
 		addText(QString("execute: stopped"));
+		_path = Planning::Path(pos);
 		cmd.goalPosition = pos;
 		cmd.pathLength = 0;
 		cmd.planner = MotionCmd::Point;
+		drawPath(_path);
 		return;
 	}
 
-	// create default path for comparison - swtich if available
+	// create default path for comparison - switch if available
 	Planning::Path straight_line(pos, *_delayed_goal);
 	Geometry2d::Segment straight_seg(pos, *_delayed_goal);
 	if (!full_obstacles.hit(straight_seg)) {
@@ -592,7 +619,7 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	if (dest && _delayed_goal->nearPoint(*dest, 0.1)) {
 
 		// check if previous path is good enough to use - use if possible
-		if (!_path.hit(full_obstacles) && _path.length(pos) > rrt_path_len + path_threshold) {
+		if (!_path.hit(full_obstacles) && _path.length(0) > rrt_path_len + path_threshold) {
 			if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using previous path" << endl;
 			addText(QString("execute: reusing path"));
 			cmd.goalPosition = findGoalOnPath(pos, _path, full_obstacles);
@@ -612,21 +639,5 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	cmd.pathLength = rrt_path_len;
 	cmd.planner = MotionCmd::Point;
 	return;
-
-//	// Add ball obstacles
-//	// NOTE: there will be a lag in the small obstacle avoidance due to planning execution order
-//	// FIXME: removed small ball obstacle
-//	if (verbose) cout << "  Adding ball obstacles" << endl;
-//	if (visible && !isGoalie)	{
-//		// Any robot that isn't the goalie may have to avoid the ball due to rules
-//		if ((_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart)) {// || avoidBall)
-//			if (largeBallObstacle)
-//				obstacles.add(largeBallObstacle);
-//		}	else if (!willKick)	{
-//			// Don't hit the ball unintentionally during normal play
-//			if (smallBallObstacle)
-//				obstacles.add(smallBallObstacle);
-//		}
-//	}
 
 }
