@@ -145,12 +145,7 @@ void MainWindow::configuration(Configuration* config)
 
 	// Revision-specific configuration
 	_robotConfig2008 = new RobotConfig(config, "Rev2008");
-	_robotConfig2008->motion.output_coeffs.resize(4);
-	_robotConfig2008->motion.output_coeffs.set(0, 10);
-	
 	_robotConfig2011 = new RobotConfig(config, "Rev2011");
-	_robotConfig2011->motion.output_coeffs.resize(4);
-	_robotConfig2011->motion.output_coeffs.set(0, 10);
 	
 	for (size_t i = 0; i < Num_Shells; ++i)
 	{

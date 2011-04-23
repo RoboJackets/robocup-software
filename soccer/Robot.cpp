@@ -36,7 +36,7 @@ Robot::Robot(unsigned int shell, bool self)
 
 OurRobot::OurRobot(int shell, SystemState *state):
 	Robot(shell, true),
-	motionControl(this),
+	_motionControl(this),
 	_state(state)
 {
 	_ball_avoid = AVOID_SMALL;
