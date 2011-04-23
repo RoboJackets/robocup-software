@@ -1,6 +1,5 @@
 #include <Robot.hpp>
 #include <gameplay/planning/bezier.hpp>
-#include <framework/Dynamics.hpp>
 #include <Utils.hpp>
 #include <LogUtils.hpp>
 #include <protobuf/LogFrame.pb.h>
@@ -32,8 +31,9 @@ Robot::Robot(unsigned int shell, bool self)
 }
 
 OurRobot::OurRobot(int shell, SystemState *state):
-					Robot(shell, true),
-					_state(state)
+	Robot(shell, true),
+	motionControl(this),
+	_state(state)
 {
 	_ball_avoid = AVOID_SMALL;
 	_ball_avoid_radius = Ball_Radius;
@@ -55,12 +55,6 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	}
 
 	_planner->maxIterations(250);
-
-	radioTx.set_board_id(shell);
-	for (int m = 0; m < 4; ++m)
-	{
-		radioTx.add_motors(0);
-	}
 }
 
 void OurRobot::addText(const QString& text, const QColor& qc)
@@ -333,12 +327,6 @@ void OurRobot::dribble(int8_t speed)
 	radioTx.set_roller(speed);
 }
 
-void OurRobot::pivot(Geometry2d::Point ctr, MotionCmd::PivotType dir)
-{
-	cmd.pivotPoint = ctr;
-	cmd.pivot = dir;
-}
-
 void OurRobot::face(Geometry2d::Point pt, bool continuous)
 {
 	cmd.goalOrientation = pt;
@@ -362,12 +350,6 @@ void OurRobot::chip(uint8_t strength)
 	_ball_avoid = KICK;
 	radioTx.set_kick(strength);
 	radioTx.set_use_chipper(true);
-}
-
-void OurRobot::pivot(Geometry2d::Point center, bool cw)
-{
-	cmd.pivotPoint = center;
-	cmd.pivot = cw ? MotionCmd::CW : MotionCmd::CCW;
 }
 
 bool OurRobot::charged() const
