@@ -48,7 +48,6 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	_planner = new Planning::RRT::Planner();
 	for (size_t i = 0; i < Num_Shells; ++i)
 	{
-		approachOpponent[i] = false;
 		// TODO move thresholds elsewhere
 		_self_avoid_mask[i] = (i != (size_t) shell) ? Robot_Radius : -1.0;
 		_opp_avoid_mask[i] = Robot_Radius - 0.01;
@@ -278,11 +277,6 @@ void OurRobot::update() {
 	}
 }
 
-void OurRobot::spin(MotionCmd::SpinType dir)
-{
-	cmd.spin = dir;
-}
-
 bool OurRobot::hasChipper() const
 {
 	return false;
@@ -291,12 +285,6 @@ bool OurRobot::hasChipper() const
 void OurRobot::dribble(int8_t speed)
 {
 	radioTx.set_roller(speed);
-}
-
-void OurRobot::pivot(Geometry2d::Point ctr, MotionCmd::PivotType dir)
-{
-	cmd.pivotPoint = ctr;
-	cmd.pivot = dir;
 }
 
 void OurRobot::face(Geometry2d::Point pt, bool continuous)
@@ -324,19 +312,9 @@ void OurRobot::chip(uint8_t strength)
 	radioTx.set_use_chipper(true);
 }
 
-void OurRobot::pivot(Geometry2d::Point center, bool cw)
-{
-	cmd.pivotPoint = center;
-	cmd.pivot = cw ? MotionCmd::CW : MotionCmd::CCW;
-}
-
 bool OurRobot::charged() const
 {
 	return radioRx.charged();
-}
-
-void OurRobot::approachOpp(Robot * opp, bool value) {
-	approachOpponent[opp->shell()] = value;
 }
 
 ObstaclePtr OurRobot::createBallObstacle() const {
@@ -373,13 +351,6 @@ Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 		// empty path case - leave robot stationary
 		if (path.empty())
 			return pose;
-
-		// path properties
-		float length = path.length(0);
-
-		// handle direct point commands where the length may be very small
-		if (length < 1e-5)
-			length = pos.distTo(path.points[0]);
 
 		// go to nearest point if only point or closest point is the goal
 		if (path.size() == 1)
@@ -484,20 +455,14 @@ void OurRobot::drawPath(const Planning::Path& path, const QColor &color) {
 void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	setCommandTrace();
 
-	// if motion command complete and now allowment for planning - we're done
-	if (_planner_type != OurRobot::RRT) {
-		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: non-RRT planner" << endl;
+	// halt case - same as stopped
+	if (_state->gameState.state == GameState::Halt) {
 		return;
 	}
 
-	// halt case - same as stopped
-	if (_state->gameState.state == GameState::Halt) {
-		addText(QString("execute: halt"));
-		_path = Planning::Path(pos);
-		drawPath(_path);
-		cmd.goalPosition = pos;
-		cmd.pathLength = 0;
-		cmd.planner = MotionCmd::Point;
+	// if motion command complete and now allowment for planning - we're done
+	if (_planner_type != OurRobot::RRT) {
+		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: non-RRT planner" << endl;
 		return;
 	}
 

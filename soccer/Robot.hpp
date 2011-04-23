@@ -245,12 +245,39 @@ public:
 	const ObstacleGroup& localObstacles() const { return _local_obstacles; }
 	void clearLocalObstacles() { _local_obstacles.clear(); }
 
-	// True if this robot intends to get close to an opponent
-	// (e.g. for stealing).
-	// This reduces the size of the opponent's obstacle.
-	// These are reset when this robot's role changes.
-	bool approachOpponent[Num_Shells];
+	// opponent approach interface
 
+	/** checks if opponents are avoided at all */
+	bool avoidOpponent(int shell_id) const { return _opp_avoid_mask[shell_id] > 0.0; }
+
+	/** @return true if we are able to approach opponents */
+	// FIXME: move opponent avoidance parameters elsewhere
+	bool approachOpponent(int shell_id) const {
+		return avoidOpponent(shell_id) && _opp_avoid_mask[shell_id] < Robot_Radius - 0.01;
+	}
+
+	/** returns the avoidance radius */
+	float avoidOpponentRadius(int shell_id) const { return _opp_avoid_mask[shell_id]; }
+
+	/** enable/disable for opponent avoidance */
+	void avoidOpponent(int shell_id, bool enable_avoid) {
+		if (enable_avoid)
+			_opp_avoid_mask[shell_id] = Robot_Radius - 0.01;
+		else
+			_opp_avoid_mask[shell_id] = -1.0;
+	}
+
+	/** enable/disable approach of opponents - diable uses larger avoidance radius */
+	void approachOpponent(int shell_id, bool enable_approach) {
+		if (enable_approach)
+			_opp_avoid_mask[shell_id] = Robot_Radius - 0.03;
+		else
+			_opp_avoid_mask[shell_id] = Robot_Radius - 0.01;
+	}
+
+	void avoidOpponentRadius(int shell_id, float radius) {
+		_opp_avoid_mask[shell_id] = radius;
+	}
 
 	// True if this robot should not be used in plays (for mixed play)
 	bool exclude;
@@ -268,7 +295,7 @@ public:
 	/**
 	 * Convenience function for changing the approachOpponent flag given a robot key
 	 */
-	void approachOpp(Robot * opp, bool value);
+//	void approachOpp(Robot * opp, bool value);
 
 	const std::vector<void *> &commandTrace() const
 	{
