@@ -64,7 +64,7 @@ bool Gameplay::Behaviors::Mark::run()
 		state()->drawCircle(_markRobot->pos, Robot_Radius * 1.2, QColor(0.0, 127, 255, 255), "Mark");
 
 		// go there, facing the ball
-		robot->approachOpp(_markRobot, true);
+		robot->approachOpponent(_markRobot->shell(), true);
 		robot->move(targetPoint, false);
 		robot->face(ballPos);
 

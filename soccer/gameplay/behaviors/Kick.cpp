@@ -525,7 +525,7 @@ bool Gameplay::Behaviors::Kick::run()
 				dir = (targetEdge - ballPos).cross(relPos) > 0 ? MotionCmd::CCW : MotionCmd::CW;
 	               	}
                         
-                        robot->pivot(targetEdge - ballPos + robot->pos, dir);
+//                        robot->pivot(targetEdge - ballPos + robot->pos, dir);
                         //robot->face(ballPos);
                         robot->dribble(127);
 
@@ -592,7 +592,7 @@ bool Gameplay::Behaviors::Kick::run()
 			robot->dribble(50); // previously 127
 
                         //Robot has trouble handling a moving ball when trying to pivot (I don't know how to fix this)
-			robot->pivot(ballPos, dir);
+//			robot->pivot(ballPos, dir);
 		        robot->move(ballPos);
                         state()->drawLine(_kickSegment);
 			break;

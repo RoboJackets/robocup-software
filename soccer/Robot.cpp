@@ -20,6 +20,10 @@ const float intTimeStampToFloat = 1000000.0f;
 //const float path_threshold = 2 * Robot_Diameter; // previous value
 const float path_threshold = 5.0;
 
+// thresholds for avoidance of opponents - either a normal (large) or an approach (small)
+const float Opp_Avoid_Small = Robot_Radius - 0.03;
+const float Opp_Avoid_Large = Robot_Radius - 0.01;
+
 const bool verbose = false;
 
 Robot::Robot(unsigned int shell, bool self)
@@ -48,10 +52,9 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	_planner = new Planning::RRT::Planner();
 	for (size_t i = 0; i < Num_Shells; ++i)
 	{
-		approachOpponent[i] = false;
 		// TODO move thresholds elsewhere
 		_self_avoid_mask[i] = (i != (size_t) shell) ? Robot_Radius : -1.0;
-		_opp_avoid_mask[i] = Robot_Radius - 0.01;
+		_opp_avoid_mask[i] = Opp_Avoid_Large;
 	}
 
 	_planner->maxIterations(250);
@@ -212,46 +215,6 @@ void OurRobot::move(const vector<Geometry2d::Point>& path, bool stopAtEnd)
 	cmd.pathEnd = (stopAtEnd) ? MotionCmd::StopAtEnd : MotionCmd::FastAtEnd;
 }
 
-void OurRobot::bezierMove(const vector<Geometry2d::Point>& controls,
-		MotionCmd::OrientationType facing,
-		MotionCmd::PathEndType endpoint) {
-
-	// calculate path using simple interpolation
-	//	_path = Planning::createBezierPath(controls);
-
-	// execute path
-	//executeMove(endpoint); // FIXME: handles curves poorly
-
-
-	size_t degree = controls.size();
-
-	// generate coefficients
-	vector<float> coeffs;
-	for (size_t i=0; i<degree; ++i) {
-		coeffs.push_back(Planning::binomialCoefficient(degree-1, i));
-	}
-
-	// calculate length to allow for determination of time
-	double pathLength = Planning::bezierLength(controls, coeffs);
-
-	// calculate numerical derivative by stepping ahead a fixed constant
-	float lookAheadDist = 0.15; // in meters along path
-	float dt = lookAheadDist/pathLength;
-
-	float velGain = 3.0; // FIXME: should be dependent on the length of the curve
-
-	// calculate a target velocity for translation
-	Point targetVel = Planning::evaluateBezierVelocity(dt, controls, coeffs);
-
-	// apply gain
-	targetVel *= velGain;
-
-	// create a dummy goal position
-	cmd.goalPosition = pos + targetVel;
-	cmd.pathLength = pathLength;
-	cmd.planner = MotionCmd::Point;
-}
-
 void OurRobot::directVelocityCommands(const Geometry2d::Point& trans, double ang)
 {
 	// ensure RRT not used
@@ -312,11 +275,6 @@ void OurRobot::update() {
 	}
 }
 
-void OurRobot::spin(MotionCmd::SpinType dir)
-{
-	cmd.spin = dir;
-}
-
 bool OurRobot::hasChipper() const
 {
 	return false;
@@ -357,26 +315,68 @@ bool OurRobot::charged() const
 	return radioRx.charged();
 }
 
-void OurRobot::approachOpp(Robot * opp, bool value) {
-	approachOpponent[opp->shell()] = value;
+void OurRobot::approachAllOpponents(bool enable) {
+	BOOST_FOREACH(float &ar, _opp_avoid_mask)
+		ar = (enable) ?  Opp_Avoid_Small : Opp_Avoid_Large;
+}
+void OurRobot::avoidAllOpponents(bool enable) {
+	BOOST_FOREACH(float &ar, _opp_avoid_mask)
+		ar = (enable) ?  -1.0 : Opp_Avoid_Large;
+}
+
+bool OurRobot::avoidOpponent(unsigned shell_id) const {
+	return _opp_avoid_mask[shell_id] > 0.0;
+}
+
+bool OurRobot::approachOpponent(unsigned shell_id) const {
+	return avoidOpponent(shell_id) && _opp_avoid_mask[shell_id] < Robot_Radius - 0.01;
+}
+
+float OurRobot::avoidOpponentRadius(unsigned shell_id) const {
+	return _opp_avoid_mask[shell_id];
+}
+
+void OurRobot::avoidOpponent(unsigned shell_id, bool enable_avoid) {
+	if (enable_avoid)
+		_opp_avoid_mask[shell_id] = Opp_Avoid_Large;
+	else
+		_opp_avoid_mask[shell_id] = -1.0;
+}
+
+void OurRobot::approachOpponent(unsigned shell_id, bool enable_approach) {
+	if (enable_approach)
+		_opp_avoid_mask[shell_id] = Opp_Avoid_Small;
+	else
+		_opp_avoid_mask[shell_id] = Opp_Avoid_Large;
+}
+
+void OurRobot::avoidOpponentRadius(unsigned shell_id, float radius) {
+	_opp_avoid_mask[shell_id] = radius;
+}
+
+void OurRobot::avoidAllTeammates(bool enable) {
+	for (size_t i=0; i<Num_Shells; ++i)
+		avoidTeammate(i, enable);
+}
+void OurRobot::avoidTeammate(unsigned shell_id, bool enable) {
+	if (shell_id != shell())
+		_self_avoid_mask[shell_id] = (enable) ? Robot_Radius : -1.0;
+}
+
+void OurRobot::avoidTeammateRadius(unsigned shell_id, float radius) {
+	if (shell_id != shell())
+		_self_avoid_mask[shell_id] = radius;
+}
+
+bool OurRobot::avoidTeammate(unsigned shell_id) const {
+	return _self_avoid_mask[shell_id] < Robot_Radius;
+}
+
+float OurRobot::avoidTeammateRadius(unsigned shell_id) const {
+	return _self_avoid_mask[shell_id];
 }
 
 ObstaclePtr OurRobot::createBallObstacle() const {
-
-	//	// Add ball obstacles
-	//	// FIXME: removed small ball obstacle
-	//	if (verbose) cout << "  Adding ball obstacles" << endl;
-	//	if (visible && !isGoalie)	{
-	//		// Any robot that isn't the goalie may have to avoid the ball due to rules
-	//		if ((_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart)) {// || avoidBall)
-	//			if (largeBallObstacle)
-	//				obstacles.add(largeBallObstacle);
-	//		}	else if (!willKick)	{
-	//			// Don't hit the ball unintentionally during normal play
-	//			if (smallBallObstacle)
-	//				obstacles.add(smallBallObstacle);
-	//		}
-	//	}
 
 	// if game is stopped, large obstacle regardless of flags
 	if (_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart)
@@ -410,13 +410,6 @@ Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 		// empty path case - leave robot stationary
 		if (path.empty())
 			return pose;
-
-		// path properties
-		float length = path.length(0);
-
-		// handle direct point commands where the length may be very small
-		if (length < 1e-5)
-			length = pos.distTo(path.points[0]);
 
 		// go to nearest point if only point or closest point is the goal
 		if (path.size() == 1)
@@ -521,20 +514,14 @@ void OurRobot::drawPath(const Planning::Path& path, const QColor &color) {
 void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	setCommandTrace();
 
-	// if motion command complete and now allowment for planning - we're done
-	if (_planner_type != OurRobot::RRT) {
-		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: non-RRT planner" << endl;
+	// halt case - same as stopped
+	if (_state->gameState.state == GameState::Halt) {
 		return;
 	}
 
-	// halt case - same as stopped
-	if (_state->gameState.state == GameState::Halt) {
-		addText(QString("execute: halt"));
-		_path = Planning::Path(pos);
-		drawPath(_path);
-		cmd.goalPosition = pos;
-		cmd.pathLength = 0;
-		cmd.planner = MotionCmd::Point;
+	// if motion command complete and now allowment for planning - we're done
+	if (_planner_type != OurRobot::RRT) {
+		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: non-RRT planner" << endl;
 		return;
 	}
 
