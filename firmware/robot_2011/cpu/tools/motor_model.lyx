@@ -36,6 +36,7 @@
 \tracking_changes false
 \output_changes false
 \author "" 
+\author "" 
 \end_header
 
 \begin_body
@@ -557,7 +558,7 @@ Average speed:
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\bar{\omega}=\int_{0}^{t}\frac{b}{a}+c_{1}e^{-ax}dx=\frac{b}{a}+c_{1}\int_{0}^{t}e^{-ax}dx=\frac{b}{a}+c_{1}\left(\frac{e^{-at}}{a}-1\right)$
+\begin_inset Formula $\bar{\omega}=\frac{1}{t}\int_{0}^{t}\frac{b}{a}+c_{1}e^{-ax}dx=\frac{b}{at}+\frac{c_{1}}{t}\int_{0}^{t}e^{-ax}dx=\frac{b}{at}+\frac{c_{1}}{t}\left(\frac{e^{-at}}{a}-1\right)$
 \end_inset
 
 
