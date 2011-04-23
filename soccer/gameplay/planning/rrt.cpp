@@ -243,18 +243,4 @@ void RRT::Planner::draw(QPainter& painter)
 		painter.drawLine(_bestPath.points[i].toQPointF(),
 				_bestPath.points[i+1].toQPointF());
 	}
-
-	//painter.setPen(Qt::gray);
-#if 0
-	Tree::Point* start = _dynamicsTree.start();
-	if (start)
-	{
-		list<Geometry2d::Segment> edges;
-		start->addEdges(edges);
-		BOOST_FOREACH(const Geometry2d::Segment &seg, edges)
-		{
-			painter.drawLine(seg.pt[0].toQPointF(), seg.pt[1].toQPointF());
-		}
-	}
-#endif
 }
