@@ -48,8 +48,9 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	for (size_t i = 0; i < Num_Shells; ++i)
 	{
 		approachOpponent[i] = false;
-		_self_avoid_mask[i] = (i != (size_t) shell) ? Robot_Radius : -1.0; // TODO move threshold elsewhere
-		_opp_avoid_mask[i] = Robot_Radius - 0.03; // TODO: move threshold elsewhere
+		// TODO move thresholds elsewhere
+		_self_avoid_mask[i] = (i != (size_t) shell) ? Robot_Radius : -1.0;
+		_opp_avoid_mask[i] = Robot_Radius - 0.03;
 	}
 
 	_planner->setDynamics(_dynamics);
@@ -65,7 +66,8 @@ OurRobot::OurRobot(int shell, SystemState *state):
 void OurRobot::addText(const QString& text, const QColor& qc)
 {
 	Packet::DebugText *dbg = new Packet::DebugText;
-	// 	dbg->set_layer(_state->findDebugLayer(layer));
+	QString layer = QString("RobotText%1").arg(shell());
+	dbg->set_layer(_state->findDebugLayer(layer));
 	dbg->set_text(text.toStdString());
 	dbg->set_color(color(qc));
 	robotText.push_back(dbg);
@@ -588,7 +590,7 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	const float rrt_path_len = rrt_path.length(pos);
 
 	// check if goal is close to previous goal to reuse path
-	if (_path.valid() &&	_delayed_goal->nearPoint(*_path.destination(), 0.01)) {
+	if (_path.valid() &&	_delayed_goal->nearPoint(*_path.destination(), 0.1)) {
 
 		// check if previous path is good enough to use - use if possible
 		if (!_path.hit(full_obstacles) && _path.length(pos) > rrt_path_len + path_threshold) {
