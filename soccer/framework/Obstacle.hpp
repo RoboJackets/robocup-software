@@ -30,13 +30,13 @@ public:
 	typedef boost::optional<ObstacleGroup> Optional;
 
 	// STL typedefs
-	typedef std::vector<ObstaclePtr>::const_iterator const_iterator;
-	typedef std::vector<ObstaclePtr>::iterator iterator;
+	typedef std::set<ObstaclePtr>::const_iterator const_iterator;
+	typedef std::set<ObstaclePtr>::iterator iterator;
 	typedef ObstaclePtr value_type;
 
     ~ObstacleGroup();
     
-    const std::vector<ObstaclePtr> &obstacles() const
+    const std::set<ObstaclePtr> &obstacles() const
     {
         return _obstacles;
     }
@@ -65,13 +65,13 @@ public:
     template<typename T>
     bool hit(const T &obj, Optional hitSet = boost::none) const
     {
-        for (unsigned int i = 0; i < _obstacles.size(); ++i)
+        for (const_iterator it = begin(); it!=end(); ++it)
         {
-            if (_obstacles[i]->hit(obj))
+            if ((*it)->hit(obj))
             {
                 if (hitSet)
                 {
-                    hitSet->add(_obstacles[i]);
+                    hitSet->add(*it);
                 } else {
                     return true;
                 }
@@ -82,7 +82,7 @@ public:
     }
 
 protected:
-    std::vector<ObstaclePtr> _obstacles;
+    std::set<ObstaclePtr> _obstacles;
 };
 
 class CircleObstacle: public Obstacle
