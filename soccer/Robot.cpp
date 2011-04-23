@@ -514,11 +514,11 @@ Geometry2d::Point OurRobot::escapeObstacles(const Geometry2d::Point& pose,
 	return obs->closestEscape(pose);
 }
 
-void OurRobot::drawPath(const Planning::Path& path) {
+void OurRobot::drawPath(const Planning::Path& path, const QColor &color) {
 	Geometry2d::Point last = pos;
 	BOOST_FOREACH(Geometry2d::Point pt, path.points)
 	{
-		_state->drawLine(last, pt);
+		_state->drawLine(last, pt, color);
 		last = pt;
 	}
 }
@@ -578,7 +578,7 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		cmd.goalPosition = *_delayed_goal;
 		cmd.pathLength = straight_line.length(0);
 		cmd.planner = MotionCmd::Point;
-		drawPath(straight_line);
+		drawPath(straight_line, Qt::red);
 		return;
 	}
 
@@ -588,7 +588,8 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	const float rrt_path_len = rrt_path.length(pos);
 
 	// check if goal is close to previous goal to reuse path
-	if (_path.valid() &&	_delayed_goal->nearPoint(*_path.destination(), 0.1)) {
+	Geometry2d::Point::Optional dest = _path.destination();
+	if (dest && _delayed_goal->nearPoint(*dest, 0.1)) {
 
 		// check if previous path is good enough to use - use if possible
 		if (!_path.hit(full_obstacles) && _path.length(pos) > rrt_path_len + path_threshold) {
@@ -597,7 +598,7 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 			cmd.goalPosition = findGoalOnPath(pos, _path, full_obstacles);
 			cmd.pathLength = _path.length(pos);
 			cmd.planner = MotionCmd::Point;
-			drawPath(_path);
+			drawPath(_path, Qt::yellow);
 			return;
 		}
 	}
@@ -605,8 +606,8 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	// use the newly generated path
 	if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using new RRT path" << endl;
 	_path = rrt_path;
-	drawPath(rrt_path);
-	addText(QString("execute: RRT path"));
+	drawPath(rrt_path, Qt::magenta);
+	addText(QString("execute: RRT path %1").arg(full_obstacles.size()));
 	cmd.goalPosition = findGoalOnPath(pos, _path, full_obstacles);
 	cmd.pathLength = rrt_path_len;
 	cmd.planner = MotionCmd::Point;

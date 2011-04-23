@@ -377,7 +377,7 @@ protected:
 	// rendering
 
 	/** draws the contents of the _path variables */
-	void drawPath(const Planning::Path& path);
+	void drawPath(const Planning::Path& path, const QColor &color = Qt::black);
 };
 
 class OpponentRobot: public Robot
