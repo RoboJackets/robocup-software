@@ -305,6 +305,9 @@ public:
 	//The confidence for this robot's ball sensor
 	int sensorConfidence;
 
+	void newRevision(bool is_2011) { _newRevision = is_2011; }
+	bool newRevision() const { return _newRevision; }
+
 protected:
 	// Stores a stack trace in _commandTrace
 	void setCommandTrace();
@@ -313,7 +316,9 @@ protected:
 
 	std::vector<void *> _commandTrace;
 
-	uint64_t _lastChargedTime;
+	uint64_t _lastChargedTime; // TODO: make this a boost pointer to avoid update() function
+
+	bool _newRevision; /// true if this a 2011 robot, false otherwise
 
 	/** Planning components for delayed planning */
 //	bool _planning_complete; /// set to false by move commands, set to true if motionCmd is ready
