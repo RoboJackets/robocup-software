@@ -1,3 +1,4 @@
+#include <boost/foreach.hpp>
 #include <framework/SystemState.hpp>
 #include <protobuf/LogFrame.pb.h>
 #include <LogUtils.hpp>
@@ -72,6 +73,17 @@ void SystemState::drawPolygon(const Geometry2d::Point* pts, int n, const QColor&
 	dbg->set_color(color(qc));
 }
 
+void SystemState::drawPolygon(const std::vector<Geometry2d::Point>& pts, const QColor &qc, const QString &layer)
+{
+	DebugPath *dbg = logFrame->add_debug_polygons();
+	dbg->set_layer(findDebugLayer(layer));
+	for (size_t i = 0; i < pts.size(); ++i)
+	{
+		*dbg->add_points() = pts[i];
+	}
+	dbg->set_color(color(qc));
+}
+
 void SystemState::drawCircle(const Geometry2d::Point& center, float radius, const QColor& qc, const QString &layer)
 {
 	DebugCircle *dbg = logFrame->add_debug_circles();
@@ -79,6 +91,21 @@ void SystemState::drawCircle(const Geometry2d::Point& center, float radius, cons
 	*dbg->mutable_center() = center;
 	dbg->set_radius(radius);
 	dbg->set_color(color(qc));
+}
+
+void SystemState::drawObstacle(const ObstaclePtr& obs, const QColor &color, const QString &layer) {
+	boost::shared_ptr<CircleObstacle> circObs = boost::shared_dynamic_cast<CircleObstacle>(obs);
+	boost::shared_ptr<PolygonObstacle> polyObs = boost::shared_dynamic_cast<PolygonObstacle>(obs);
+	if (circObs)
+		drawCircle(circObs->circle.center, circObs->circle.radius(), color, layer);
+	else if (polyObs)
+		drawPolygon(polyObs->polygon.vertices, color, layer);
+}
+
+void SystemState::drawObstacles(const ObstacleGroup& group, const QColor &color, const QString &layer)
+{
+	BOOST_FOREACH(const ObstaclePtr& obs, group)
+		drawObstacle(obs, color, layer);
 }
 
 void SystemState::drawLine(const Geometry2d::Line& line, const QColor& qc, const QString &layer)

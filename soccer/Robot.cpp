@@ -20,7 +20,7 @@ const float intTimeStampToFloat = 1000000.0f;
 //The threshold necessary to change paths tuning required 
 const float path_threshold = 2 * Robot_Diameter;
 
-const bool verbose = true;
+const bool verbose = false;
 
 Robot::Robot(unsigned int shell, bool self)
 {
@@ -191,7 +191,9 @@ void OurRobot::move(Geometry2d::Point goal, bool stopAtEnd)
 
 	// sets flags for future movement
 	if (verbose) cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", " << goal.y << ")" << endl;
-	cmd.goalPosition = goal;
+	addText(QString("move:(%1, %2)").arg(goal.x).arg(goal.y));
+	_delayed_goal = goal;
+	_planner_type = RRT;
 	cmd.pathEnd = (stopAtEnd) ? MotionCmd::StopAtEnd : MotionCmd::FastAtEnd;
 }
 
@@ -202,6 +204,10 @@ void OurRobot::move(const vector<Geometry2d::Point>& path, bool stopAtEnd)
 	// copy path from input
 	_path.clear();
 	_path.points = path;
+
+	// ensure RRT not used
+	_delayed_goal = boost::none;
+	_planner_type = OVERRIDE;
 
 	// convert to motion command
 	cmd.goalPosition = findGoalOnPath(pos, _path);
@@ -252,12 +258,20 @@ void OurRobot::bezierMove(const vector<Geometry2d::Point>& controls,
 
 void OurRobot::directVelocityCommands(const Geometry2d::Point& trans, double ang)
 {
+	// ensure RRT not used
+	_delayed_goal = boost::none;
+	_planner_type = OVERRIDE;
+
 	cmd.planner = MotionCmd::DirectVelocity;
 	cmd.direct_ang_vel = ang;
 	cmd.direct_trans_vel = trans;
 }
 
 void OurRobot::directMotorCommands(const vector<int8_t>& speeds) {
+	// ensure RRT not used
+	_delayed_goal = boost::none;
+	_planner_type = OVERRIDE;
+
 	cmd.planner = MotionCmd::DirectMotor;
 	cmd.direct_motor_cmds = speeds;
 }
@@ -498,9 +512,9 @@ Geometry2d::Point OurRobot::escapeObstacles(const Geometry2d::Point& pose,
 	return obs->closestEscape(pose);
 }
 
-void OurRobot::drawPath() {
+void OurRobot::drawPath(const Planning::Path& path) {
 	Geometry2d::Point last = pos;
-	BOOST_FOREACH(Geometry2d::Point pt, _path.points)
+	BOOST_FOREACH(Geometry2d::Point pt, path.points)
 	{
 		_state->drawLine(last, pt);
 		last = pt;
@@ -516,16 +530,27 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		return;
 	}
 
+	// create and visualize obstacles
+
+
 	// assemble obstacles
 	ObstacleGroup full_obstacles(_local_obstacles);
-	full_obstacles.add(createRobotObstacles(_state->self, _self_avoid_mask));
-	full_obstacles.add(createRobotObstacles(_state->opp, _opp_avoid_mask));
+	ObstacleGroup
+		self_obs = createRobotObstacles(_state->self, _self_avoid_mask),
+		opp_obs = createRobotObstacles(_state->opp, _opp_avoid_mask);
+	ObstaclePtr ball_obs = createBallObstacle();
+	_state->drawObstacles(self_obs, Qt::blue, "self_obstacles");
+	_state->drawObstacles(opp_obs, Qt::blue, "opp_obstacles");
+	_state->drawObstacle(ball_obs, Qt::blue, "ball_obstacles");
+	full_obstacles.add(self_obs);
+	full_obstacles.add(opp_obs);
+	full_obstacles.add(ball_obs);
 	full_obstacles.add(global_obstacles);
-	full_obstacles.add(createBallObstacle());
 
 	// sanity check the current position and escape if necessary
 	ObstacleGroup hitset;
-	if (full_obstacles.hit(pos, hitset)) {
+	if (full_obstacles.hit(pos, hitset) && !hitset.empty()) {
+		addText(QString("execute: in obstacle"));
 		if (verbose) cout << "Robot " << shell() << " inside " << hitset.size() << " obstacles, escaping" << endl;
 		cmd.goalPosition = escapeObstacles(pos, hitset);
 		cmd.pathLength = pos.distTo(cmd.goalPosition);
@@ -537,6 +562,7 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	// NOTE: after sanity check to ensure it will go to valid area first
 	if (!_delayed_goal) {
 		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: stopped" << endl;
+		addText(QString("execute: stopped"));
 		cmd.goalPosition = pos;
 		cmd.pathLength = 0;
 		cmd.planner = MotionCmd::Point;
@@ -547,10 +573,12 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	Planning::Path straight_line(pos, *_delayed_goal);
 	if (!straight_line.hit(full_obstacles, 0)) {
 		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using straight line goal" << endl;
+		addText(QString("execute: straight_line"));
 		_path = straight_line;
 		cmd.goalPosition = *_delayed_goal;
 		cmd.pathLength = straight_line.length(0);
 		cmd.planner = MotionCmd::Point;
+		drawPath(straight_line);
 		return;
 	}
 
@@ -565,9 +593,11 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		// check if previous path is good enough to use - use if possible
 		if (!_path.hit(full_obstacles) && _path.length(pos) > rrt_path_len + path_threshold) {
 			if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using previous path" << endl;
+			addText(QString("execute: reusing path"));
 			cmd.goalPosition = findGoalOnPath(pos, _path, full_obstacles);
 			cmd.pathLength = _path.length(pos);
 			cmd.planner = MotionCmd::Point;
+			drawPath(_path);
 			return;
 		}
 	}
@@ -575,6 +605,8 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	// use the newly generated path
 	if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using new RRT path" << endl;
 	_path = rrt_path;
+	drawPath(rrt_path);
+	addText(QString("execute: RRT path"));
 	cmd.goalPosition = findGoalOnPath(pos, _path, full_obstacles);
 	cmd.pathLength = rrt_path_len;
 	cmd.planner = MotionCmd::Point;

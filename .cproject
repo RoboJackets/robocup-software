@@ -303,7 +303,7 @@
 				<buildTargets>
 					<target name="build" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 						<buildCommand>scons</buildCommand>
-						<buildArguments/>
+						<buildArguments>-j3</buildArguments>
 						<buildTarget/>
 						<stopOnError>true</stopOnError>
 						<useDefaultCommand>false</useDefaultCommand>
