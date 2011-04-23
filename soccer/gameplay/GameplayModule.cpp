@@ -288,6 +288,10 @@ void Gameplay::GameplayModule::run()
 				r->execute(global_obstacles);
 			else
 				r->execute(obstacles_with_goal);
+
+			// DEBUG: look for NaNs
+			if (isnan(r->cmd_vel.x))
+				cout << "cmd_vel is NaN after robot execute()" << endl;
 		}
 	}
 

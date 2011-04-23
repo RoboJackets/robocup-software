@@ -19,7 +19,7 @@ const float intTimeStampToFloat = 1000000.0f;
 
 //The threshold necessary to change paths tuning required 
 //const float path_threshold = 2 * Robot_Diameter; // previous value
-const float path_threshold = 5.0;
+const float path_threshold = 1.0;
 
 // thresholds for avoidance of opponents - either a normal (large) or an approach (small)
 const float Opp_Avoid_Small = Robot_Radius - 0.03;
@@ -168,6 +168,10 @@ void OurRobot::resetMotionCommand()
 	}
 
 	cmd = MotionCmd();
+
+	// DEBUG: replace NaNs with zero
+	if (isnan(cmd_vel.x) && isnan(cmd_vel.y))
+		cmd_vel = Geometry2d::Point(0.0, 0.0);
 
 	_local_obstacles.clear();
 
@@ -408,22 +412,27 @@ ObstaclePtr OurRobot::createBallObstacle() const {
 }
 
 Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
-		const Planning::Path& path,	const ObstacleGroup& obstacles) {
+		const Planning::Path& path_full,	const ObstacleGroup& obstacles, bool slice) {
 		setCommandTrace();
 
 		// TODO: verify the use of going from the closest point - previously started at beginning
 
 		// empty path case - leave robot stationary
-		if (path.empty())
+		if (path_full.empty())
 			return pose;
 
 		// go to nearest point if only point or closest point is the goal
-		if (path.size() == 1)
-			return path.points[0];
+		if (path_full.size() == 1)
+			return path_full.points[0];
 
 		// can't mix, just go to endpoint
-		if (path.size() == 2)
-			return path.points[1];
+		if (path_full.size() == 2)
+			return path_full.points[1];
+
+		// slice the path so that previous parts of the path are not used
+		Planning::Path path = path_full;
+		if (slice)
+			path_full.startFrom(pose, path);
 
 		// All other cases: proportionally blend the next two points together for a smoother
 		// path, so long as it is still viable
@@ -442,57 +451,14 @@ Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 		Planning::Path smoothPath;
 		smoothPath.points.push_back(p0);
 		smoothPath.points.push_back(targetPos);
+
+		Geometry2d::Point result = targetPos;
 		if (smoothPath.hit(obstacles, 0))
-			return p1;
-		else
-			return targetPos;
+			result = p1;
 
+		addText(QString("point (%1, %2)").arg(result.x).arg(result.y));
 
-		// version that tries to start at closest
-//		// empty path case - leave robot stationary
-//		if (path.empty())
-//			return pose;
-//
-//		// path properties
-//		float length = path.length(pose);
-//		const size_t start_idx = path.nearestIndex(pose);
-//		Geometry2d::Point start_pt = path.points[start_idx];
-//		// if we are starting at the beginning of the path, start_idx is a useless goal
-//		bool close = start_pt.nearPoint(pose, 0.1);
-//
-//		// handle direct point commands where the length may be very small
-//		if (length < 1e-5)
-//			length = pos.distTo(start_pt);
-//
-//		// go to nearest point if only point or closest point is the goal
-//		if (path.size() == 1 || start_idx == path.size()-1)
-//			return start_pt;
-//
-//		// can't mix, just go to endpoint
-//		if (close && (path.size() == 2 || start_idx == path.size()-2))
-//			return path.points[start_idx+1];
-//
-//		// All other cases: proportionally blend the next two points together for a smoother
-//		// path, so long as it is still viable
-//
-//		// pull out relevant points
-//		Point p0 = pos,
-//				  p1 = (close) ? path.points[start_idx+1] : path.points[start_idx],
-//				  p2 = (close) ? path.points[start_idx+2] : path.points[start_idx+1];
-//		float dist1 = p1.distTo(p1), dist2 = p1.distTo(p2);
-//
-//		// mix the next point between the first and second point
-//		float scale = 1-Utils::clamp(dist1/dist2, 1.0, 0.0);
-//		Geometry2d::Point targetPos = p1 + (p2-p1)*scale;
-//
-//		// check for collisions on blended path
-//		Planning::Path smoothPath;
-//		smoothPath.points.push_back(p0);
-//		smoothPath.points.push_back(targetPos);
-//		if (smoothPath.hit(obstacles, 0))
-//			return p1;
-//		else
-//			return targetPos;
+		return result;
 }
 
 Planning::Path OurRobot::rrtReplan(const Geometry2d::Point& goal,
@@ -586,20 +552,25 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	// create new a new path for comparision
 	// TODO: somehow do this less often
 	Planning::Path rrt_path = rrtReplan(*_delayed_goal, full_obstacles);
-	const float rrt_path_len = rrt_path.length(pos);
+	const float rrt_path_len = rrt_path.length(0);
 
 	// check if goal is close to previous goal to reuse path
 	Geometry2d::Point::Optional dest = _path.destination();
 	if (dest && _delayed_goal->nearPoint(*dest, 0.1)) {
-		// check if previous path is good enough to use - use if possible
-		if (!_path.hit(full_obstacles) && _path.length(0) > rrt_path_len + path_threshold) {
-			if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using previous path" << endl;
-			addText(QString("execute: reusing path"));
-			cmd.goalPosition = findGoalOnPath(pos, _path, full_obstacles);
-			cmd.pathLength = _path.length(pos);
-			cmd.planner = MotionCmd::Point;
-			drawPath(_path, Qt::yellow);
-			return;
+		if (!_path.hit(full_obstacles)) {
+//			const float path_len = _path.length(pos);
+//			if (path_len < rrt_path_len + path_threshold) {
+				if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using previous path" << endl;
+				addText(QString("execute: reusing path"));
+				Planning::Path sliced_path;
+				_path.startFrom(pos, sliced_path);
+				cmd.goalPosition = findGoalOnPath(pos, sliced_path, full_obstacles);
+				cmd.pathLength = sliced_path.length(pos) + 0.01;
+				cmd.planner = MotionCmd::Point;
+				drawPath(sliced_path, Qt::yellow);
+				drawPath(_path, Qt::black);
+				return;
+//			}
 		}
 	}
 
