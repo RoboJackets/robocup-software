@@ -79,7 +79,6 @@ public:
 
 	typedef enum {
 		RRT, 			/// moves to a point with the RRT planner
-		BEZIER,   /// moves using the bezier planner - broken
 		OVERRIDE  /// moves to a point without regard for obstacles
 	} MoveType;
 
@@ -155,19 +154,6 @@ public:
 	 * the robot reaches the end of the path.
 	 */
 	void move(const std::vector<Geometry2d::Point>& path, bool stopAtEnd=true);
-
-	/**
-	 * Move via a bezier curve, designed to allow for faster movement
-	 * The points specified are bezier control points, which define the
-	 * path taken.  Note: longer paths are more computationally expensive.
-	 *
-	 * To enable control point modification to allow for avoidance of obstacles,
-	 * set the enableAvoid flag to true, false otherwise.  The stop at end
-	 * flag works like in other move commands
-	 */
-	void bezierMove(const std::vector<Geometry2d::Point>& controls,
-			MotionCmd::OrientationType facing,
-			MotionCmd::PathEndType endpoint=MotionCmd::StopAtEnd);
 
 	/**
 	 * Apply direct motion commands to the motors - use only for calibration
@@ -251,11 +237,37 @@ public:
 	const ObstacleGroup& localObstacles() const { return _local_obstacles; }
 	void clearLocalObstacles() { _local_obstacles.clear(); }
 
-	// True if this robot intends to get close to an opponent
-	// (e.g. for stealing).
-	// This reduces the size of the opponent's obstacle.
-	// These are reset when this robot's role changes.
-	bool approachOpponent[Num_Shells];
+	// opponent approach interface
+
+	void approachAllOpponents(bool enable = true);
+	void avoidAllOpponents(bool enable = true);
+
+	/** checks if opponents are avoided at all */
+	bool avoidOpponent(unsigned shell_id) const;
+
+	/** @return true if we are able to approach opponents */
+	bool approachOpponent(unsigned shell_id) const;
+
+	/** returns the avoidance radius */
+	float avoidOpponentRadius(unsigned shell_id) const;
+
+	/** enable/disable for opponent avoidance */
+	void avoidOpponent(unsigned shell_id, bool enable_avoid);
+
+	/** enable/disable approach of opponents - diable uses larger avoidance radius */
+	void approachOpponent(unsigned shell_id, bool enable_approach);
+
+	void avoidOpponentRadius(unsigned shell_id, float radius);
+
+	// self approach interface
+
+	/** determines whether a robot will avoid another robot when it plans - use for priority */
+
+	void avoidAllTeammates(bool enable = true);
+	void avoidTeammate(unsigned shell_id, bool enable = true);
+	void avoidTeammateRadius(unsigned shell_id, float radius);
+	bool avoidTeammate(unsigned shell_id) const;
+	float avoidTeammateRadius(unsigned shell_id) const;
 
 	// True if this robot should not be used in plays (for mixed play)
 	bool exclude;
@@ -273,7 +285,7 @@ public:
 	/**
 	 * Convenience function for changing the approachOpponent flag given a robot key
 	 */
-	void approachOpp(Robot * opp, bool value);
+//	void approachOpp(Robot * opp, bool value);
 
 	const std::vector<void *> &commandTrace() const
 	{
@@ -298,6 +310,9 @@ public:
 
 	MotionControl motionControl;
 	
+	void newRevision(bool is_2011) { _newRevision = is_2011; }
+	bool newRevision() const { return _newRevision; }
+
 protected:
 	// Stores a stack trace in _commandTrace
 	void setCommandTrace();
@@ -306,7 +321,9 @@ protected:
 
 	std::vector<void *> _commandTrace;
 
-	uint64_t _lastChargedTime;
+	uint64_t _lastChargedTime; // TODO: make this a boost pointer to avoid update() function
+
+	bool _newRevision; /// true if this a 2011 robot, false otherwise
 
 	/** Planning components for delayed planning */
 //	bool _planning_complete; /// set to false by move commands, set to true if motionCmd is ready
