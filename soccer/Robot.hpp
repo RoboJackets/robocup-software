@@ -359,10 +359,9 @@ protected:
 	 * @param pose is the current robot pos
 	 * @param path is the path
 	 * @param obstacles are a set of obstacles to use
-	 * @param slice enables shortening a longer path to start from start position
 	 */
 	Geometry2d::Point findGoalOnPath(const Geometry2d::Point& pos, const Planning::Path& path,
-			const ObstacleGroup& obstacles = ObstacleGroup(), bool slice = false);
+			const ObstacleGroup& obstacles = ObstacleGroup());
 
 	/** executes RRT planning through a set of obstacles */
 	Planning::Path rrtReplan(const Geometry2d::Point& goal, const ObstacleGroup& obstacles);

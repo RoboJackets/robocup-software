@@ -133,10 +133,10 @@ void MotionControl::run()
 		motors[i] = c;
 	}
 	
-	if (maxMotor > Max_Wheel_Command)
-	{
-		printf("Motion clipped: %3d\n", maxMotor);
-	}
+//	if (maxMotor > Max_Wheel_Command)
+//	{
+//		printf("Motion clipped: %3d\n", maxMotor);
+//	}
 	
 	// Get the largest motor command that was actually set
 	maxMotor = min(maxMotor, Max_Wheel_Command);
