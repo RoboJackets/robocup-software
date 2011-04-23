@@ -182,9 +182,10 @@ void Planning::Path::startFrom(const Geometry2d::Point& pt, Planning::Path& resu
 
 	// slice path
 	// new path will be pt, [closest point on nearest segment], [i+1 to end]
-	Geometry2d::Point intersection_pt = best.nearestPoint(pt);
-	if (!pt.nearPoint(intersection_pt, 0.02));
+	if (!best.nearPoint(pt, 0.02)) {
+		Geometry2d::Point intersection_pt = best.nearestPoint(pt);
 		result.points.push_back(intersection_pt);
+	}
 	result.points.insert(result.points.end(), path_start, points.end());
 
 }
