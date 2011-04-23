@@ -163,10 +163,6 @@ void OurRobot::resetMotionCommand()
 
 	cmd = MotionCmd();
 
-	// DEBUG: replace NaNs with zero
-	if (isnan(cmd_vel.x) && isnan(cmd_vel.y))
-		cmd_vel = Geometry2d::Point(0.0, 0.0);
-
 	_local_obstacles.clear();
 
 }
@@ -406,27 +402,22 @@ ObstaclePtr OurRobot::createBallObstacle() const {
 }
 
 Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
-		const Planning::Path& path_full,	const ObstacleGroup& obstacles, bool slice) {
+		const Planning::Path& path,	const ObstacleGroup& obstacles) {
 		setCommandTrace();
 
 		// TODO: verify the use of going from the closest point - previously started at beginning
 
 		// empty path case - leave robot stationary
-		if (path_full.empty())
+		if (path.empty())
 			return pose;
 
 		// go to nearest point if only point or closest point is the goal
-		if (path_full.size() == 1)
-			return path_full.points[0];
+		if (path.size() == 1)
+			return path.points[0];
 
 		// can't mix, just go to endpoint
-		if (path_full.size() == 2)
-			return path_full.points[1];
-
-		// slice the path so that previous parts of the path are not used
-		Planning::Path path = path_full;
-		if (slice)
-			path_full.startFrom(pose, path);
+		if (path.size() == 2)
+			return path.points[1];
 
 		// All other cases: proportionally blend the next two points together for a smoother
 		// path, so long as it is still viable
@@ -435,7 +426,7 @@ Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 		Point p0 = pos,
 				  p1 = path.points[1],
 				  p2 = path.points[2];
-		float dist1 = p1.distTo(p1), dist2 = p1.distTo(p2);
+		float dist1 = p0.distTo(p1), dist2 = p0.distTo(p2);
 
 		// mix the next point between the first and second point
 		float scale = 1-Utils::clamp(dist1/dist2, 1.0, 0.0);
@@ -485,7 +476,7 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		return;
 	}
 
-	// if motion command complete and now allowment for planning - we're done
+	// if motion command complete or we are using a different planner - we're done
 	if (_planner_type != OurRobot::RRT) {
 		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: non-RRT planner" << endl;
 		return;
@@ -543,30 +534,33 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		return;
 	}
 
-	// create new a new path for comparision
-	// TODO: somehow do this less often
-	Planning::Path rrt_path = rrtReplan(*_delayed_goal, full_obstacles);
-	const float rrt_path_len = rrt_path.length(0);
-
 	// check if goal is close to previous goal to reuse path
 	Geometry2d::Point::Optional dest = _path.destination();
 	if (dest && _delayed_goal->nearPoint(*dest, 0.1)) {
-		if (!_path.hit(full_obstacles)) {
-//			const float path_len = _path.length(pos);
-//			if (path_len < rrt_path_len + path_threshold) {
-				if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using previous path" << endl;
-				addText(QString("execute: reusing path"));
-				Planning::Path sliced_path;
-				_path.startFrom(pos, sliced_path);
-				cmd.goalPosition = findGoalOnPath(pos, sliced_path, full_obstacles);
-				cmd.pathLength = sliced_path.length(pos) + 0.01;
-				cmd.planner = MotionCmd::Point;
-				drawPath(sliced_path, Qt::yellow);
-				drawPath(_path, Qt::black);
-				return;
-//			}
+		Planning::Path sliced_path;
+		_path.startFrom(pos, sliced_path);
+		if (!sliced_path.hit(full_obstacles)) {
+			addText(QString("execute: slicing path"));
+			cmd.goalPosition = findGoalOnPath(pos, sliced_path, full_obstacles);
+			cmd.pathLength = sliced_path.length(pos);
+			cmd.planner = MotionCmd::Point;
+			drawPath(sliced_path, Qt::yellow);
+			_state->drawLine(pos, cmd.goalPosition, Qt::black);
+			return;
+		} else if (!_path.hit(full_obstacles)) {
+			addText(QString("execute: reusing path"));
+			cmd.goalPosition = findGoalOnPath(pos, _path, full_obstacles);
+			cmd.pathLength = _path.length(pos);
+			cmd.planner = MotionCmd::Point;
+			drawPath(_path, Qt::yellow);
+			_state->drawLine(pos, cmd.goalPosition, Qt::black);
+			return;
 		}
 	}
+
+	// create new a new path for comparision
+	Planning::Path rrt_path = rrtReplan(*_delayed_goal, full_obstacles);
+	const float rrt_path_len = rrt_path.length(0);
 
 	// use the newly generated path
 	if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using new RRT path" << endl;
