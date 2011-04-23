@@ -145,7 +145,7 @@ void OurRobot::ballAvoidance(const BallAvoid& flag, boost::optional<float> radiu
 
 void OurRobot::resetMotionCommand()
 {
-	if (verbose) cout << "in OurRobot::resetMotionCommand()" << endl;
+	if (verbose && visible) cout << "in OurRobot::resetMotionCommand()" << endl;
 	robotText.clear();
 
 	// FIXME: these are moved to assignment to allow for commands from the previous frame to

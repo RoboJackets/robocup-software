@@ -91,7 +91,7 @@ public:
 		AVOID_PARAM,  /// will avoid the ball with a specific radius
 	} BallAvoid;
 
-	boost::shared_ptr<RobotConfig> config;
+	RobotConfig * config;
 
 	OurRobot(int shell, SystemState *state);
 
@@ -104,6 +104,7 @@ public:
 	bool hasChipper() const; /// true if robot can chip
 
 	// kicker readiness checks
+	// TODO: replace with boost::timer
 	bool charged() const; /// true if the kicker is ready
 	float kickTimer() const; /// returns the time since the kicker was last charged, 0.0 if ready
 
@@ -377,7 +378,6 @@ protected:
 
 	/** draws the contents of the _path variables */
 	void drawPath();
-
 };
 
 class OpponentRobot: public Robot

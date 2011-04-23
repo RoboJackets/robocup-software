@@ -160,6 +160,10 @@ int main (int argc, char* argv[])
 	Processor *processor = new Processor(&config, sim);
 	processor->blueTeam(blueTeam);
 	
+	MainWindow *win = new MainWindow;
+	win->configuration(&config);
+	win->processor(processor);
+	
 	// Load config file
 	QString error;
 	if (!config.load(cfgFile, error))
@@ -167,10 +171,6 @@ int main (int argc, char* argv[])
 		QMessageBox::critical(0, "Soccer",
 			QString("Can't read initial configuration %1:\n%2").arg(cfgFile, error));
 	}
-	
-	MainWindow *win = new MainWindow;
-	win->configuration(&config);
-	win->processor(processor);
 	
 	if (!playbook.isNull())
 	{
