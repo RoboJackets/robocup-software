@@ -27,11 +27,9 @@ void printPt(const Geometry2d::Point& pt, const string& s="") {
 /** Constant for timestamp to seconds */
 const float intTimeStampToFloat = 1000000.0f;
 
-Motion::RobotController::RobotController(Configuration *config, SystemState *state, int shell) :
-	_state(state),
-	_self(state->self[shell]),
-	_dynamics(state->self[shell]),
-	_lastTimestamp(Utils::timestamp()),
+Motion::RobotController::RobotController(OurRobot *robot) :
+	_state(robot->state()),
+	_self(robot),
 	_w(0),
 	_velFilter(Point(0.0, 0.0), 1),
 	_wFilter(0.0, 1)
@@ -66,193 +64,72 @@ void Motion::RobotController::proc()
 		_velFilter.setCoeffs(_self->config->motion.output_coeffs.values());
 		_wFilter.setCoeffs(_self->config->motion.output_coeffs.values());
 
-		if (_state->gameState.state == GameState::Halt)
+		// record the type of planner for future use
+		_plannerType = _self->cmd.planner;		// get the dynamics from the config
+
+		// set the correct PID parameters for angle
+		_anglePid.kp = _self->config->motion.angle.p;
+		_anglePid.ki = _self->config->motion.angle.i;
+		_anglePid.kd = _self->config->motion.angle.d;
+
+		// set coefficients for the output filters
+		_velFilter.setCoeffs(_self->config->motion.output_coeffs.values());
+		_wFilter.setCoeffs(_self->config->motion.output_coeffs.values());
+
+		// switch between planner types
+		switch(_self->cmd.planner) {
+
+		// handle direct velocity commands
+		case MotionCmd::DirectVelocity:
 		{
-			for (int i = 0; i < 4; ++i)
-			{
-				_self->radioTx.set_motors(i, 0);
-			}
+			// set the velocities from the gameplay module
+			_vel = _self->cmd.direct_trans_vel;
+			_w = _self->cmd.direct_ang_vel;
+
+			break;
 		}
-		else
+		// handle direct motor commands - just pass on to wheel controller
+		case MotionCmd::DirectMotor:
+			break;
+
+		// normal drive to point commands
+		case MotionCmd::Point:
 		{
-			// record the type of planner for future use
-			_plannerType = _self->cmd.planner;		// get the dynamics from the config
-
-			// set the correct PID parameters for angle
-			_anglePid.kp = _self->config->motion.angle.p;
-			_anglePid.ki = _self->config->motion.angle.i;
-			_anglePid.kd = _self->config->motion.angle.d;
-
-			// set coefficients for the output filters
-			_velFilter.setCoeffs(_self->config->motion.output_coeffs.values());
-			_wFilter.setCoeffs(_self->config->motion.output_coeffs.values());
-
-			// switch between planner types
-			switch(_self->cmd.planner) {
-
-			// handle direct velocity commands
-			case MotionCmd::DirectVelocity:
+			if (_self->cmd.pivot == MotionCmd::NoPivot)
 			{
-				// set the velocities from the gameplay module
-				_vel = _self->cmd.direct_trans_vel;
-				_w = _self->cmd.direct_ang_vel;
-
-				break;
+				genVelocity(_self->cmd.pathEnd);
 			}
-			// handle direct motor commands - just pass on to wheel controller
-			case MotionCmd::DirectMotor:
-				break;
-
-			// Catch force stop commands
-			case MotionCmd::ForceStop:
+			else // handle pivot
 			{
-				const float deltaT = (_state->timestamp - _lastTimestamp)/intTimeStampToFloat;
-				stop(deltaT);
+				//for now look at the ball
+				_self->cmd.face = MotionCmd::Continuous;
+				_self->cmd.goalOrientation = _self->cmd.pivotPoint;
+
+				// create the velocities
+				genVelocity(_self->cmd.pathEnd);
 			}
-
-			// normal drive to point commands
-			case MotionCmd::Point:
-			{
-				if (_self->cmd.pivot == MotionCmd::NoPivot)
-				{
-					genVelocity(_self->cmd.pathEnd);
-				}
-				else // handle pivot
-				{
-					//for now look at the ball
-					_self->cmd.face = MotionCmd::Continuous;
-					_self->cmd.goalOrientation = _self->cmd.pivotPoint;
-
-					// create the velocities
-					genVelocity(_self->cmd.pathEnd);
-				}
-				break;
-			}
-			}
-
-			// scale velocities due to rules
-			scaleVelocity();
-
-			// sanity check the velocities due to obstacles
-			const unsigned int LookAheadFrames = 5;
-			sanityCheck(LookAheadFrames);
-
-			// filter the velocities
-			if (verbose) cout << "before - w: " << _w << " vel: (" << _vel.x << ", " << _vel.y << ")" << endl;
-			_vel = _velFilter.filter(_vel);
-			_w = _wFilter.filter(_w);
-			if (verbose) cout << "after - w: " << _w << " vel: (" << _vel.x << ", " << _vel.y << ")" << endl;
-
-			_self->cmd_vel = _vel;
-			_self->cmd_w = _w;
+			break;
 		}
+		}
+
+		// scale velocities due to rules
+		scaleVelocity();
+
+		// sanity check the velocities due to obstacles
+		const unsigned int LookAheadFrames = 5;
+		sanityCheck(LookAheadFrames);
+
+		// filter the velocities
+		if (verbose) cout << "before - w: " << _w << " vel: (" << _vel.x << ", " << _vel.y << ")" << endl;
+		_vel = _velFilter.filter(_vel);
+		_w = _wFilter.filter(_w);
+		if (verbose) cout << "after - w: " << _w << " vel: (" << _vel.x << ", " << _vel.y << ")" << endl;
+
+		_self->cmd_vel = _vel;
+		_self->cmd_w = _w;
 	}
-	_lastTimestamp = _state->timestamp;
 
 	_procMutex.unlock();
-}
-
-#if 0
-//FIXME - Logging got rewritten and you can't get away with this anymore.
-//  Either use debug drawing or get rid of it (need drawBezier in SystemState?)
-void Robot::drawPath(QPainter& p)
-{
-	QMutexLocker ml(&_procMutex);
-
-	// Draw a line from the robot directly to its goal
-	p.setPen(Qt::darkRed);
-	p.drawLine(_self->pos.toQPointF(), _self->cmd.goalPosition.toQPointF());
-
-	_planner.draw(p);
-
-	// Draw path
-	p.setPen(Qt::red);
-	const std::vector<Geometry2d::Point>& path = _path.points;
-	const unsigned int n = path.size();
-	for (unsigned int i = 1; i < n; ++i)
-	{
-		p.drawLine(path[i - 1].toQPointF(), path[i].toQPointF());
-	}
-}
-
-void Robot::drawRRT(QPainter& p)
-{
-	// FIXME: this should be implemented at some point
-}
-
-void Robot::drawBezierTraj(QPainter& p) {
-
-	QMutexLocker ml(&_procMutex);
-	if (_plannerType == MotionCmd::Bezier && _bezierControls.size() > 0) {
-
-		// create the coefficients
-		vector<float> coeffs;
-		size_t degree = _bezierControls.size();
-		for (size_t i=0; i<degree; ++i) {
-			coeffs.push_back(binomialCoefficient(degree-1, i));
-		}
-
-		// draw a curved blue line for the trajectory
-		size_t nrBezierPts = 20;
-		float inc = 1.0/nrBezierPts;
-		Point prev = _bezierControls.front();
-		Point pt;
-		p.setPen(Qt::blue);
-		for (size_t i = 0; i<nrBezierPts; ++i) {
-			pt = evaluateBezier(inc * i, _bezierControls, coeffs);
-			p.drawLine(prev.toQPointF(), pt.toQPointF());
-			prev = pt;
-		}
-		p.drawLine(pt.toQPointF(), _bezierControls.back().toQPointF());
-	}
-}
-
-void Robot::drawBezierControl(QPainter& p) {
-	QMutexLocker ml(&_procMutex);
-	if (_plannerType == MotionCmd::Bezier && _bezierControls.size() > 0) {
-
-		// draw straight blue lines for control lines, and small circles for points
-		Point prev(-1.0, -1.0);
-		p.setPen(Qt::blue);
-		BOOST_FOREACH(Point pt, _bezierControls) {
-			p.drawEllipse(pt.toQPointF(), 10., 10.);
-			if (prev.y != -1.0) {
-				p.drawLine(prev.toQPointF(), pt.toQPointF());
-			}
-			prev = pt;
-		}
-	}
-}
-#endif
-
-void Motion::RobotController::stop(float dtime) {
-	// handle rotation with PID - force value to zero
-	_w = _anglePid.run(_w);
-
-	// force to zero if close
-	float ang_thresh = 0.2;
-	if (_w < ang_thresh)
-		_w = 0.0;
-	
-	//FIXME - Exploding numbers
-	_w = 0.0;
-
-	// get a model to use for approximating robot movement
-	const float robotAngle = _self->angle;
-	Dynamics::DynamicsInfo info = _dynamics.info(_vel.angle()*RadiansToDegrees - robotAngle, _w);
-
-	// find magnitude of the maximum deceleration
-	const float vv = info.deceleration * dtime;
-
-	// find the magnitude of the current velocity
-	const float vcur = _vel.mag();
-
-	// if we can go straight to zero, do it, otherwise drop by maximum deceleration
-	float vel_thresh = 0.5;
-	if (vcur < vel_thresh)
-		_vel = Geometry2d::Point(0.,0.);
-	else
-		_vel -= _vel.normalized()*vv;
 }
 
 void Motion::RobotController::scaleVelocity() {
@@ -505,69 +382,3 @@ void Motion::RobotController::genVelocity(MotionCmd::PathEndType ending)
 		_vel = dir * .4;
 	}
 }
-
-// TEMPORARILY DISABLED
-//void Robot::genBezierVelocity() {
-//	const bool verbose = false;
-//
-//	const float deltaT = (_state->timestamp - _lastTimestamp)/intTimeStampToFloat;
-//	// error handling
-//	size_t degree = _bezierControls.size();
-//	if (degree < 2) {
-//		stop(deltaT);
-//		cout << "Bezier curve of size: " << degree << "!" << endl;
-//		return;
-//	}
-//
-//	// generate coefficients
-//	vector<float> coeffs;
-//	for (size_t i=0; i<degree; ++i) {
-//		coeffs.push_back(binomialCoefficient(degree-1, i));
-//	}
-//
-//	// calculate length to allow for determination of time
-//	_bezierTotalLength = bezierLength(_bezierControls, coeffs);
-//
-//	// DEBUG: show the length of the trajectory
-//	_state->drawText(QString::number(_bezierTotalLength), Segment(_bezierControls.at(0), _bezierControls.at(1)).center(), Qt::blue);
-//
-//	// calculate numerical derivative by stepping ahead a fixed constant
-//	float lookAheadDist = 0.15; // in meters along path
-//	float dt = lookAheadDist/_bezierTotalLength;
-//
-//	float velGain = 3.0; // FIXME: should be dependent on the length of the curve
-//
-//	// calculate a target velocity for translation
-//	Point targetVel = evaluateBezierVelocity(dt, _bezierControls, coeffs);
-//
-//	// apply gain
-//	targetVel *= velGain;
-//
-//	// DEBUG: draw the targetVel
-//	Segment targetVelLine(pos(), pos() + targetVel);
-//	_state->drawLine(targetVelLine, Qt::red);
-//	// directly set the velocity
-//	_vel = targetVel;
-//
-//	float targetAngle = 0.0;
-//	if (_self->cmd.face == MotionCmd::Continuous) {
-//		// look further ahead for angle
-//		float WlookAheadDist = 0.30; // in meters along path // prev: 0.15ang_thresh
-//		float dtw = WlookAheadDist/_bezierTotalLength;
-//		targetAngle = evaluateBezierVelocity(dtw, _bezierControls, coeffs).angle();
-//	} else if (_self->cmd.face == MotionCmd::Endpoint) {
-//		targetAngle = (_bezierControls.at(degree-1) - _bezierControls.at(degree-2)).angle();
-//	}
-//
-//	// draw the intended facing
-//	_state->drawLine(Segment(pos(), pos() + Point::direction(targetAngle).normalized()), Qt::gray);
-//
-//	// Find the error (degrees)
-//	float angleErr = Utils::fixAngleDegrees(targetAngle*RadiansToDegrees - _self->angle);
-//
-//	// debug GUI for PID commands
-//	if (verbose) cout << "Current Kp: " << _anglePid.kp << endl;
-//
-//	// angular velocity is in degrees/sec
-//	_w = _anglePid.run(angleErr);
-//}

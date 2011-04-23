@@ -18,8 +18,7 @@
 
 #include <modeling/WorldModel.hpp>
 #include <gameplay/GameplayModule.hpp>
-#include <motion/PointControlModule.hpp>
-#include <motion/WheelControlModule.hpp>
+#include <motion/RobotController.hpp>
 #include <modeling/WorldModel.hpp>
 #include <RefereeModule.hpp>
 
@@ -62,8 +61,6 @@ Processor::Processor(Configuration *config, bool sim)
 	QMetaObject::connectSlotsByName(this);
 
 	_modelingModule = make_shared<Modeling::WorldModel>(&_state, config);
-	_pointControlModule = make_shared<Motion::PointControlModule>(&_state, config);
-	_wheelControlModule = make_shared<Motion::WheelControlModule>(&_state, config);
 	_refereeModule = make_shared<RefereeModule>(&_state);
 	_gameplayModule = make_shared<Gameplay::GameplayModule>(&_state);
 }
@@ -76,8 +73,6 @@ Processor::~Processor()
 	
 	//DEBUG - This is unnecessary, but lets us determine which one breaks.
 	_modelingModule.reset();
-	_pointControlModule.reset();
-	_wheelControlModule.reset();
 	_refereeModule.reset();
 	_gameplayModule.reset();
 }
@@ -418,16 +413,15 @@ void Processor::run()
 			_gameplayModule->run();
 		}
 
-		if (_pointControlModule)
+		// Run velocity controllers
+		BOOST_FOREACH(OurRobot *robot, _state.self)
 		{
-			_pointControlModule->run();
+			if (robot->visible)
+			{
+				robot->motionControl.run();
+			}
 		}
 
-		if (_wheelControlModule)
-		{
-			_wheelControlModule->run();
-		}
-		
 		////////////////
 		// Store logging information
 		
