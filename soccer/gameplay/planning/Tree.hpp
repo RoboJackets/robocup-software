@@ -7,8 +7,6 @@
 
 namespace Planning
 {
-	class Dynamics;
-	
 	/** base tree class for rrt trees
 	 *  Tree can be grown in different ways */
 	class Tree
@@ -77,23 +75,6 @@ namespace Planning
 			
 		protected:
 			const ObstacleGroup* _obstacles;
-	};
-	
-	/** tree that grows based on robot dynamics */
-	class DynamicsTree : public Tree
-	{
-		public:
-			void init(const Geometry2d::Point &pos, const Geometry2d::Point& vel, 
-				const ObstacleGroup* obstacles);
-			
-			Point* extend(Geometry2d::Point pt, Point* base = 0);
-			
-			//dynamics tree do not connect to points (yet)
-			bool connect(Geometry2d::Point pt) { return false; }
-			
-			const Dynamics* dynamics;
-			
-			float initAngle;
 	};
 	
 	/** tree that grows based on fixed distance step */

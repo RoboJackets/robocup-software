@@ -328,9 +328,6 @@ protected:
 	Planning::Path _path;	/// latest path
 	Planning::RRT::Planner *_planner;	/// single-robot RRT planner
 
-	/** robot dynamics information */
-	Planning::Dynamics *_dynamics;
-
 	// planning functions
 
 	/**

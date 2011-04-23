@@ -23,6 +23,12 @@ bool Gameplay::Behaviors::PivotKick::run()
 	// State changes
 	if (_state == State_Approach)
 	{
+		if (robot->pos.distTo(ball().pos) < Robot_Radius * 1.3)
+		{
+			_state = State_Capture;
+		}
+	} else if (_state == State_Capture)
+	{
 		if (robot->hasBall)
 		{
 			_state = State_Aim;
@@ -40,6 +46,12 @@ bool Gameplay::Behaviors::PivotKick::run()
 	if (_state == State_Approach)
 	{
 		robot->addText("Approach");
+		robot->kick(0);
+		robot->move(ball().pos - (target.pt[0] - ball().pos).normalized() * Robot_Radius * 2.0);
+		robot->face(ball().pos);
+	} else if (_state == State_Capture)
+	{
+		robot->addText("Capture");
 		robot->kick(0);
 		robot->move(ball().pos - (target.pt[0] - ball().pos).normalized() * Robot_Radius);
 		robot->face(ball().pos);

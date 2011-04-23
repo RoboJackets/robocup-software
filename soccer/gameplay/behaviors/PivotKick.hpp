@@ -26,6 +26,7 @@ namespace Gameplay
 				enum
 				{
 					State_Approach,
+					State_Capture,
 					State_Aim,
 					State_Done
 				} _state;

@@ -7,7 +7,6 @@
 #include <Geometry2d/Point.hpp>
 #include <framework/Obstacle.hpp>
 #include <framework/Path.hpp>
-#include <framework/Dynamics.hpp>
 
 #include <QPainter>
 
@@ -15,15 +14,13 @@
 
 namespace Planning
 {
-	class Dynamics;
-	
 	namespace RRT
 	{
 		/** generate a random point on the floor */
 		Geometry2d::Point randomPoint();
 		
 		class Planner
-		{			
+		{
 			public:
 				Planner();
 				
@@ -35,11 +32,6 @@ namespace Planning
 				void maxIterations(int value)
 				{
 					_maxIterations = value;
-				}
-				
-				void setDynamics(Dynamics* dynamics)
-				{
-					_dynamicsTree.dynamics = dynamics;
 				}
 				
 				//run the path planner
@@ -58,8 +50,6 @@ namespace Planning
 				void draw(QPainter& painter);
 		
 		protected:
-			DynamicsTree _dynamicsTree;
-			
 			FixedStepTree _fixedStepTree0;
 			FixedStepTree _fixedStepTree1;
 			
