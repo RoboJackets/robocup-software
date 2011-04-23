@@ -168,6 +168,8 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	printf("  Dark:  0x%03x\n", ball_sense_dark);
 	printf("  Delta: 0x%03x\n", ball_sense_light - ball_sense_dark);
 	
+	printf("Kicker: 0x%02x\n", kicker_status);
+	
 	printf("GIT version: %s\n", git_version);
 }
 

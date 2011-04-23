@@ -19,9 +19,12 @@ uint8_t reverse_packet[Reverse_Size];
 
 int_fast8_t wheel_command[4];
 uint_fast8_t dribble_command;
+uint_fast8_t kick_command;
 
 uint32_t rx_lost_time;
 int_fast8_t last_rssi;
+
+int in_reverse;
 
 // Last time the 5ms periodic code was executed
 unsigned int update_time;
@@ -29,7 +32,6 @@ unsigned int update_time;
 static int forward_packet_received()
 {
 	uint8_t bytes = radio_read(RXBYTES);
-	LED_TOGGLE(LED_RY);
 	
 	if (bytes != (Forward_Size + 2))
 	{
@@ -68,10 +70,7 @@ static int forward_packet_received()
 	LED_TOGGLE(LED_RG);
 	LED_OFF(LED_RR);
 	
-// 	uint8_t reverse_id = forward_packet[0] & 15;
-	
-	// Update sequence number history
-// 	uint8_t sequence = forward_packet[0] >> 4;
+	uint8_t reverse_id = forward_packet[0] & 15;
 	
 	// Clear motor commands in case this robot's ID does not appear in the packet
 	for (int i = 0; i < 4; ++i)
@@ -94,37 +93,39 @@ static int forward_packet_received()
 			// Convert the dribbler speed from the top four bits in a byte to seven bits
 			dribble_command = (forward_packet[offset + 4] & 0xf0) >> 1;
 			dribble_command |= dribble_command >> 4;
+			
+			kick_command = forward_packet[offset + 5];
 		}
 		offset += 6;
 	}
+	
+	//FIXME - Testing chipper with only one 2011 robot
+	if (forward_packet[0] & 0x80)
+	{
+		use_chipper = 1;
+	} else {
+		use_chipper = 0;
+	}
 
-#if 0
-	if (reverse_id == board_id)
+	if (reverse_id == robot_id)
 	{
 		// Build and send a reverse packet
 		radio_write(PKTLEN, Reverse_Size);
 		radio_command(SFTX);
 		
-		uint8_t fault = fpga_read(FPGA_Fault) & 0x1f;
-		
-		// Clear fault bits
-		fpga_write(FPGA_Fault, fault);
-		
-		reverse_packet[0] = (lost_packets << 4) | board_id;
+		reverse_packet[0] = robot_id;
 		reverse_packet[1] = last_rssi;
 		reverse_packet[2] = 0x00;
-		reverse_packet[3] = battery >> 2;
-		reverse_packet[4] = fpga_read(FPGA_Kicker_Status);
+		reverse_packet[3] = 0; //FIXME - Battery
+		reverse_packet[4] = kicker_status;
+		reverse_packet[5] = motor_faults;
 		
-		// Fault bits
-		reverse_packet[5] = fault;
-		
-		if (ball_present)
+		if (have_ball)
 		{
 			reverse_packet[5] |= 1 << 5;
 		}
 		
-		if (ball_sensor_fail)
+		if (failures & Fail_Ball)
 		{
 			reverse_packet[5] |= 1 << 6;
 		}
@@ -132,10 +133,10 @@ static int forward_packet_received()
 		reverse_packet[10] = 0;
 		for (int i = 0; i < 4; ++i)
 		{
-		    reverse_packet[6 + i] = last_tick[i];
-		    reverse_packet[10] |= (last_tick[i] & 0x300) >> (8 - i * 2);
+			reverse_packet[6 + i] = encoder[i];
+			reverse_packet[10] |= (encoder[i] & 0x300) >> (8 - i * 2);
 		}
-
+		
 		radio_select();
 		spi_xfer(TXFIFO | CC_BURST);
 		for (int i = 0; i < Reverse_Size; ++i)
@@ -143,7 +144,7 @@ static int forward_packet_received()
 			spi_xfer(reverse_packet[i]);
 		}
 		radio_deselect();
-
+		
 		// Start transmitting.  When this finishes, the radio will automatically switch to RX
 		// without calibrating (because it doesn't go through IDLE).
 		radio_command(STX);
@@ -153,11 +154,17 @@ static int forward_packet_received()
 		// Get ready to receive another forward packet
 		radio_command(SRX);
 	}
-#else
-	radio_command(SRX);
-#endif
 	
 	return 1;
+}
+
+void reverse_packet_sent()
+{
+	LED_TOGGLE(LED_RY);
+	radio_write(PKTLEN, Forward_Size);
+	radio_command(SRX);
+
+	in_reverse = 0;
 }
 
 #if 0
@@ -270,6 +277,8 @@ int main()
 	}
 	
 	// Main loop
+	in_reverse = 0;
+	int lost_radio_count = 0;
 	while (1)
 	{
 		// Reset the watchdog timer
@@ -304,11 +313,20 @@ int main()
 			if ((current_time - rx_lost_time) > 250)
 			{
 				rx_lost_time = current_time;
+				LED_OFF(LED_RY);
 				LED_OFF(LED_RG);
 				LED_TOGGLE(LED_RR);
-				radio_command(SIDLE);
-				radio_command(SFRX);
-				radio_command(SRX);
+				
+				++lost_radio_count;
+				if (lost_radio_count == 10)
+				{
+					lost_radio_count = 0;
+					radio_configure();
+				} else {
+					radio_command(SIDLE);
+					radio_command(SFRX);
+					radio_command(SRX);
+				}
 				
 				// Clear drive commands
 				for (int i = 0; i < 4; ++i)
@@ -318,12 +336,17 @@ int main()
 				dribble_command = 0;
 			}
 			
-			// Check for radiio packets
-			if (radio_gdo2())
+			// Check for radio packets
+			if (AT91C_BASE_PIOA->PIO_ISR & RADIO_INT && AT91C_BASE_PIOA->PIO_PDSR & RADIO_INT)
 			{
-				if (forward_packet_received() && controller && controller->received)
+				if (!in_reverse)
 				{
-					controller->received();
+					if (forward_packet_received() && controller && controller->received)
+					{
+						controller->received();
+					}
+				} else {
+					reverse_packet_sent();
 				}
 			}
 		}
@@ -347,6 +370,13 @@ int main()
 			}
 			dribble_out = 0;
 			
+			if (have_ball)
+			{
+				kick_strength = kick_command;
+			} else {
+				kick_strength = 0;
+			}
+			
 			// Read encoders
 			if (!(failures & Fail_FPGA))
 			{
@@ -363,6 +393,13 @@ int main()
 			if (!(failures & Fail_FPGA))
 			{
 				fpga_update();
+			}
+			
+			if (kicker_status & Kicker_Charged)
+			{
+				LED_ON(LED_LR);
+			} else {
+				LED_OFF(LED_LR);
 			}
 		}
 		

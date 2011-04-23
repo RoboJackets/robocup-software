@@ -9,6 +9,7 @@
 #include "Configuration.hpp"
 #include <Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
+#include <framework/RobotConfig.hpp>
 
 #include <QInputDialog>
 #include <QFileDialog>
@@ -42,6 +43,9 @@ MainWindow::MainWindow(QWidget *parent):
 	_processor = 0;
 	_autoExternalReferee = true;
 	_doubleFrameNumber = -1;
+	_robotConfig2008 = 0;
+	_robotConfig2011 = 0;
+	
 	_lastUpdateTime = Utils::timestamp();
 	_history.resize(2 * 60);
 	
@@ -138,6 +142,22 @@ void MainWindow::configuration(Configuration* config)
 {
 	_config = config;
 	_config->tree(_ui.configTree);
+
+	// Revision-specific configuration
+	_robotConfig2008 = new RobotConfig(config, "Rev2008");
+	_robotConfig2008->motion.output_coeffs.resize(4);
+	_robotConfig2008->motion.output_coeffs.set(0, 10);
+	
+	_robotConfig2011 = new RobotConfig(config, "Rev2011");
+	_robotConfig2011->motion.output_coeffs.resize(4);
+	_robotConfig2011->motion.output_coeffs.set(0, 10);
+	
+	for (size_t i = 0; i < Num_Shells; ++i)
+	{
+		_robot2011[i] = new ConfigBool(config, QString("Is2011/%1").arg(i));
+	}
+	
+	updateRobotConfigs();
 }
 
 void MainWindow::processor(Processor* value)
@@ -167,6 +187,20 @@ void MainWindow::processor(Processor* value)
 	_testResultTab = new TestResultTab();
 	_ui.tabWidget->addTab(_testResultTab, tr("Test Results"));
 //	_testResultTab->setup(_processor->gameplayModule()); // FIXME: this should actually exist
+	
+	updateRobotConfigs();
+}
+
+void MainWindow::updateRobotConfigs()
+{
+	if (_processor)
+	{
+		QMutexLocker lock(&_processor->loopMutex());
+		BOOST_FOREACH(OurRobot *robot, state()->self)
+		{
+			robot->config = (*_robot2011[robot->shell()]) ? _robotConfig2011 : _robotConfig2008;
+		}
+	}
 }
 
 void MainWindow::logFileChanged()
@@ -927,6 +961,11 @@ void MainWindow::on_refRedCardBlue_clicked()
 void MainWindow::on_refRedCardYellow_clicked()
 {
 	_processor->internalRefCommand(RefereeCommands::RedCardYellow);
+}
+
+void MainWindow::on_configTree_itemChanged(QTreeWidgetItem* item, int column)
+{
+	updateRobotConfigs();
 }
 
 void MainWindow::on_loadConfig_clicked()

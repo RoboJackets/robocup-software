@@ -20,18 +20,6 @@ static inline int radio_gdo2()
     return AT91C_BASE_PIOA->PIO_PDSR & RADIO_INT;
 }
 
-#if 0
-static inline uint8_t radio_int_gdo2()
-{
-    return fpga_read(FPGA_Interrupt) & FPGA_Interrupt_GDO2;
-}
-
-static inline void radio_clear_gdo2()
-{
-    fpga_write(FPGA_Interrupt, FPGA_Interrupt_GDO2);
-}
-#endif
-
 int radio_init();
 void radio_configure();
 uint8_t radio_command(uint8_t cmd);

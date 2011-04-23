@@ -15,6 +15,7 @@
 class PlayConfigTab;
 class TestResultTab;
 class StripChart;
+class ConfigBool;
 
 class MainWindow : public QMainWindow
 {
@@ -156,6 +157,7 @@ class MainWindow : public QMainWindow
 		void on_refRedCardYellow_clicked();
 		
 		// Configuration
+		void on_configTree_itemChanged(QTreeWidgetItem *item, int column);
 		void on_loadConfig_clicked();
 		void on_saveConfig_clicked();
 		
@@ -170,6 +172,9 @@ class MainWindow : public QMainWindow
 		} StatusType;
 		
 		void status(QString text, StatusType status);
+		
+		// Sets revision-dependent robot configuration
+		void updateRobotConfigs();
 		
 		Ui_MainWindow _ui;
 		
@@ -194,6 +199,10 @@ class MainWindow : public QMainWindow
 		QTreeWidgetItem *_elapsedTimeItem;
 		
 		bool _live;
+		
+		RobotConfig *_robotConfig2008;
+		RobotConfig *_robotConfig2011;
+		ConfigBool *_robot2011[Num_Shells];
 		
 		// This is used to update some status items less frequently than the full field view
 		int _updateCount;
