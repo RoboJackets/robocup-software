@@ -21,6 +21,10 @@ const float intTimeStampToFloat = 1000000.0f;
 //const float path_threshold = 2 * Robot_Diameter; // previous value
 const float path_threshold = 5.0;
 
+// thresholds for avoidance of opponents - either a normal (large) or an approach (small)
+const float Opp_Avoid_Small = Robot_Radius - 0.03;
+const float Opp_Avoid_Large = Robot_Radius - 0.01;
+
 const bool verbose = false;
 
 Robot::Robot(unsigned int shell, bool self)
@@ -50,7 +54,7 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	{
 		// TODO move thresholds elsewhere
 		_self_avoid_mask[i] = (i != (size_t) shell) ? Robot_Radius : -1.0;
-		_opp_avoid_mask[i] = Robot_Radius - 0.01;
+		_opp_avoid_mask[i] = Opp_Avoid_Large;
 	}
 
 	_planner->maxIterations(250);
@@ -315,6 +319,67 @@ void OurRobot::chip(uint8_t strength)
 bool OurRobot::charged() const
 {
 	return radioRx.charged();
+}
+
+void OurRobot::approachAllOpponents(bool enable) {
+	BOOST_FOREACH(float &ar, _opp_avoid_mask)
+		ar = (enable) ?  Opp_Avoid_Small : Opp_Avoid_Large;
+}
+void OurRobot::avoidAllOpponents(bool enable) {
+	BOOST_FOREACH(float &ar, _opp_avoid_mask)
+		ar = (enable) ?  -1.0 : Opp_Avoid_Large;
+}
+
+bool OurRobot::avoidOpponent(unsigned shell_id) const {
+	return _opp_avoid_mask[shell_id] > 0.0;
+}
+
+bool OurRobot::approachOpponent(unsigned shell_id) const {
+	return avoidOpponent(shell_id) && _opp_avoid_mask[shell_id] < Robot_Radius - 0.01;
+}
+
+float OurRobot::avoidOpponentRadius(unsigned shell_id) const {
+	return _opp_avoid_mask[shell_id];
+}
+
+void OurRobot::avoidOpponent(unsigned shell_id, bool enable_avoid) {
+	if (enable_avoid)
+		_opp_avoid_mask[shell_id] = Opp_Avoid_Large;
+	else
+		_opp_avoid_mask[shell_id] = -1.0;
+}
+
+void OurRobot::approachOpponent(unsigned shell_id, bool enable_approach) {
+	if (enable_approach)
+		_opp_avoid_mask[shell_id] = Opp_Avoid_Small;
+	else
+		_opp_avoid_mask[shell_id] = Opp_Avoid_Large;
+}
+
+void OurRobot::avoidOpponentRadius(unsigned shell_id, float radius) {
+	_opp_avoid_mask[shell_id] = radius;
+}
+
+void OurRobot::avoidAllTeammates(bool enable) {
+	for (size_t i=0; i<Num_Shells; ++i)
+		avoidTeammate(i, enable);
+}
+void OurRobot::avoidTeammate(unsigned shell_id, bool enable) {
+	if (shell_id != shell())
+		_self_avoid_mask[shell_id] = (enable) ? Robot_Radius : -1.0;
+}
+
+void OurRobot::avoidTeammateRadius(unsigned shell_id, float radius) {
+	if (shell_id != shell())
+		_self_avoid_mask[shell_id] = radius;
+}
+
+bool OurRobot::avoidTeammate(unsigned shell_id) const {
+	return _self_avoid_mask[shell_id] < Robot_Radius;
+}
+
+float OurRobot::avoidTeammateRadius(unsigned shell_id) const {
+	return _self_avoid_mask[shell_id];
 }
 
 ObstaclePtr OurRobot::createBallObstacle() const {
