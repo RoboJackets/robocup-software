@@ -1,0 +1,31 @@
+#!/usr/bin/env python
+
+import serial
+
+ser = serial.Serial('/dev/robot')
+
+# Make sure we're talking to the firmware
+ser.write('\x03')
+expect = 'Stop\r\n> '
+i = 0
+while i < len(expect):
+	ch = ser.read(1)
+	if ch != expect[i]:
+		i = 0
+	else:
+		i += 1
+
+def read_exactly(f, n):
+	data = ''
+	while len(data) < n:
+		data += f.read(n - len(data))
+	return data
+
+ser.write('run log_print\r')
+ser.readline()
+ser.readline()
+while True:
+	line = ser.readline()[:-2]
+	if line == 'DONE':
+		break
+	print line
