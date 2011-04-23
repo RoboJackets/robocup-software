@@ -426,11 +426,16 @@ Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 		Point p0 = pos,
 				  p1 = path.points[1],
 				  p2 = path.points[2];
-		float dist1 = p0.distTo(p1), dist2 = p0.distTo(p2);
+		float dist1 = p0.distTo(p1), dist2 = p1.distTo(p2);
 
 		// mix the next point between the first and second point
+		// if we are far away from p1, want scale to be closer to p1
+		// if we are close to p1, want scale to be closer to p2
 		float scale = 1-Utils::clamp(dist1/dist2, 1.0, 0.0);
 		Geometry2d::Point targetPos = p1 + (p2-p1)*scale;
+//		addText(QString("blend:scale=%1").arg(scale));
+//		addText(QString("blend:dist1=%1").arg(dist1));
+//		addText(QString("blend:dist2=%1").arg(dist2));
 
 		// check for collisions on blended path
 		Planning::Path smoothPath;
@@ -545,7 +550,8 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 			cmd.pathLength = sliced_path.length(pos);
 			cmd.planner = MotionCmd::Point;
 			drawPath(sliced_path, Qt::yellow);
-			_state->drawLine(pos, cmd.goalPosition, Qt::black);
+			Geometry2d::Point offset(0.01, 0.01);
+			_state->drawLine(pos + offset, cmd.goalPosition + offset, Qt::black);
 			return;
 		} else if (!_path.hit(full_obstacles)) {
 			addText(QString("execute: reusing path"));
