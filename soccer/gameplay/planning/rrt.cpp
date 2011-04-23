@@ -1,6 +1,7 @@
 // kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 // vim:ai ts=4 et
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
 #include <boost/foreach.hpp>
@@ -138,105 +139,8 @@ void RRT::Planner::run(
 		_bestPath = path;
 		return;
 	}
-
-	/// we now have a full path to follow
-	/// create a dynamics tree for the robot
-
-	std::vector<Geometry2d::Segment> edges;
-
-	unsigned int n = _bestPath.points.size();
-
-	for (unsigned int i = 0; i < (n - 1); ++i)
-	{
-		Geometry2d::Segment s(_bestPath.points[i], _bestPath.points[i+1]);
-		edges.push_back(s);
-	}
-
-	Geometry2d::Segment best;
-	float dist = -1;
-	unsigned int index = 0;
-	unsigned int i = 0;
-	BOOST_FOREACH(Geometry2d::Segment& s, edges)
-	{
-		const float d = s.distTo(start);
-
-		if (dist < 0 || d < dist)
-		{
-			index = i;
-			best = s;
-			dist = d;
-		}
-
-		i++;
-	}
-
-	/// dynamics based path
-
-	//add one to the segment index for the next best point index
-	index += 1;
-
-	//get the target point
-	Geometry2d::Point next0 = _bestPath.points[index];
-	Geometry2d::Point next1 = next0;
-	if (++index < n)
-	{
-		next1 = _bestPath.points[index];
-	}
-
-	Geometry2d::Point next2 = next1;
-	if (++index < n)
-	{
-		next2 = _bestPath.points[index];
-	}
-
-	Geometry2d::Point target = next1;
-
-	_dynamicsTree.init(start, vel, obstacles);
-	_dynamicsTree.step = .15;
-	_dynamicsTree.initAngle = angle;
-
-	// FIXME: Segfault in this loop
-	/// find a path to the goal
-	for (unsigned int i=0 ; i<_maxIterations ; ++i)
-	{
-		Geometry2d::Point r;
-
-		//random number to decide where new point comes from
-		const float random = drand48();
-
-		//probability of picking point on old path
-		const float n0Prob = .05;
-		const float n1Prob = .1 + n0Prob;
-		const float n2Prob = .05 + n1Prob;
-
-		if (random < n1Prob)
-		{
-			r = next0;
-		}
-		else if (random < n1Prob)
-		{
-			r = next1;
-		}
-		else if (random < n2Prob)
-		{
-			r = next2;
-		}
-		else
-		{
-			//use a random field point
-			r = randomPoint();
-		}
-
-		//TODO maybe check for point falling within certain range
-		//let us exit early
-		_dynamicsTree.extend(r); // Segfault is in here
-	}
-
-	Tree::Point* bestPoint = _dynamicsTree.nearest(target);
-	if (bestPoint)
-	{
-		_dynamicsTree.addPath(path, bestPoint);
-	}
+	
+	path = _bestPath;
 }
 
 void RRT::Planner::makePath()
@@ -260,11 +164,7 @@ void RRT::Planner::makePath()
 	//aka p1 to root
 	_fixedStepTree1.addPath(newPath, p1, true);
 
-	//if no obstacles, path will already be optimal
-	if (_obstacles)
-	{
-		optimize(newPath, _obstacles);
-	}
+	optimize(newPath, _obstacles);
 
 	/// check the path against the old one
 	bool hit = (_obstacles) ? _bestPath.hit(*_obstacles) : false;
@@ -358,4 +258,3 @@ void RRT::Planner::draw(QPainter& painter)
 	}
 #endif
 }
-

@@ -3,6 +3,7 @@
 #include <framework/Dynamics.hpp>
 #include <Utils.hpp>
 
+#include <stdio.h>
 #include <iostream>
 #include <boost/foreach.hpp>
 
@@ -132,95 +133,10 @@ Tree::Point* Tree::last() const
 	return points.back();
 }
 
-//// Dynamics Tree ////
-
-void DynamicsTree::init(const Geometry2d::Point &pos, const Geometry2d::Point& vel, 
-	const ObstacleGroup* obstacles)
-{
-	Tree::init(pos, obstacles);
-	
-	//setup initial velocity;
-	start()->vel = vel;
-	initAngle = 0;
-}
-
-Tree::Point* DynamicsTree::extend(Geometry2d::Point pt, Point* base)
-{
-	//if we don't have a base point, try to find a close point
-	//otherwise return
-	if (!base)
-	{
-		base = nearest(pt);
-		if (!base)
-		{
-			return 0;
-		}
-	}
-	
-	//time step
-	const float deltaT = step;
-
-	//difference between destination and nearest
-	const Geometry2d::Point diff = pt - base->pos;
-	
-	//angle from nearest to destination
-	const float angle = Utils::fixAngleDegrees(diff.angle() * RadiansToDegrees - initAngle - 90);
-	
-	//compute capabilities for our current state
-	//angle needs to be in robot space
-	//cout << "Getting dynamics info" << endl;
-	Dynamics::DynamicsInfo info = dynamics->info(angle, 0); //Segfault here
-	//cout << "after Getting dynamics info" << endl;
-
-	const float accel = info.acceleration;
-	const float vMax = info.velocity;
-	
-	Geometry2d::Point deltaV = diff.normalized() * accel * deltaT;
-	Geometry2d::Point vFinal = deltaV + base->vel;
-
-	//limit velocity to max in that direction
-	if (vFinal.mag() > vMax)
-	{
-		vFinal = vFinal.normalized() * vMax;
-	}
-	
-	Geometry2d::Point pos = base->pos + vFinal * deltaT;
-
-	// Check for obstacles.
-
-	// moveHit is the set of obstacles that this move touches.
-    // If this move touches any obstacles that the starting point didn't already touch,
-    // it has entered an obstacle and will be rejected.
-    ObstacleGroup moveHit;
-    if (_obstacles->hit(Geometry2d::Segment(pos, base->pos), moveHit))
-    {
-        // We only care if there are any items in moveHit that are not in point->hit, so
-        // we don't store the result of set_difference.
-        try
-        {
-            set_difference(moveHit.begin(), moveHit.end(), base->hit.begin(), 
-            	base->hit.end(), Utils::ExceptionIterator<ObstaclePtr>());
-        } catch (exception& e)
-        {
-            // We hit a new obstacle
-            return 0;
-        }
-    }
-
-    // Allow this point to be added to the tree
-	Point* p = new Point(pos, base);
-	p->vel = vFinal;
-	_obstacles->hit(p->pos, p->hit);
-	points.push_back(p);
-	
-	return p;
-}
-
 //// Fixed Step Tree ////
 Tree::Point* FixedStepTree::extend(Geometry2d::Point pt, Tree::Point* base)
 {
 	//if we don't have a base point, try to find a close point
-	//otherwise return
 	if (!base)
 	{
 		base = nearest(pt);

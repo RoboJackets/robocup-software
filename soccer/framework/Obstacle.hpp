@@ -63,22 +63,31 @@ public:
     }
 
     template<typename T>
-    bool hit(const T &obj, Optional hitSet = boost::none) const
+    bool hit(const T &obj, ObstacleGroup &hitSet) const
     {
         for (const_iterator it = begin(); it!=end(); ++it)
         {
             if ((*it)->hit(obj))
             {
-                if (hitSet)
-                {
-                    hitSet->add(*it);
-                } else {
-                    return true;
-                }
+				hitSet.add(*it);
             }
         }
 
-        return hitSet && !hitSet->empty();
+        return !hitSet.empty();
+    }
+
+    template<typename T>
+    bool hit(const T &obj) const
+    {
+        for (const_iterator it = begin(); it!=end(); ++it)
+        {
+            if ((*it)->hit(obj))
+            {
+				return true;
+            }
+        }
+
+        return false;
     }
 
 protected:

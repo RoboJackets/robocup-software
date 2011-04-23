@@ -45,7 +45,6 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	cmd_w = 0;
 	_lastChargedTime = 0;
 
-	_dynamics = new Planning::Dynamics(this);
 	_planner = new Planning::RRT::Planner();
 	for (size_t i = 0; i < Num_Shells; ++i)
 	{
@@ -55,7 +54,6 @@ OurRobot::OurRobot(int shell, SystemState *state):
 		_opp_avoid_mask[i] = Robot_Radius - 0.01;
 	}
 
-	_planner->setDynamics(_dynamics);
 	_planner->maxIterations(250);
 
 	radioTx.set_board_id(shell);
@@ -619,7 +617,6 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	// check if goal is close to previous goal to reuse path
 	Geometry2d::Point::Optional dest = _path.destination();
 	if (dest && _delayed_goal->nearPoint(*dest, 0.1)) {
-
 		// check if previous path is good enough to use - use if possible
 		if (!_path.hit(full_obstacles) && _path.length(0) > rrt_path_len + path_threshold) {
 			if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using previous path" << endl;
