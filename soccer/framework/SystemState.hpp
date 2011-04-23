@@ -81,10 +81,11 @@ class SystemState
 		{
 			return _debugLayers;
 		}
-		
-	private:
+
 		// Returns the number of a debug layer given its name
 		int findDebugLayer(QString layer);
+		
+	private:
 		
 		// Map from debug layer name to ID
 		typedef QMap<QString, int> DebugLayerMap;
