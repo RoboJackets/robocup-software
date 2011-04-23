@@ -28,12 +28,12 @@ void ObstacleGroup::clear()
 void ObstacleGroup::add(ObstaclePtr obs)
 {
 	if (obs)
-    _obstacles.push_back(obs);
+    _obstacles.insert(obs);
 }
 
 void ObstacleGroup::add(const ObstacleGroup& group)
 {
-	_obstacles.insert(_obstacles.end(), group._obstacles.begin(), group._obstacles.end());
+	_obstacles.insert(group._obstacles.begin(), group._obstacles.end());
 }
 
 ////////
