@@ -45,7 +45,7 @@ bool Gameplay::Behaviors::Idle::run()
 			r->face(ball().pos);
 			
 			// Avoid the ball even on our restart
-			r->avoidBall(true);
+			r->avoidBall(Field_CenterRadius);
 		}
 		
 		// Move to the next robot's position

@@ -256,13 +256,6 @@ void Gameplay::GameplayModule::run()
 
 	if (verbose) cout << "  Updating play" << endl;
 	updatePlay();
-	
-	// Run the current play
-	if (_currentPlay)
-	{
-		if (verbose) cout << "  Running play" << endl;
-		_playDone = !_currentPlay->run();
-	}
 
 	// Run the goalie
 	if (_goalie)
@@ -274,24 +267,27 @@ void Gameplay::GameplayModule::run()
 		}
 	}
 
+	// Run the current play
+	if (_currentPlay)
+	{
+		if (verbose) cout << "  Running play" << endl;
+		_playDone = !_currentPlay->run();
+	}
+
 	// determine global obstacles - field requirements
 	// Two versions - one set with goal area, another without for goalie
 	ObstacleGroup global_obstacles = globalObstacles();
 	ObstacleGroup obstacles_with_goal = global_obstacles;
 	obstacles_with_goal.add(_goalArea);
 
-	// execute motion planning for each robot - performs RRT once
+	// execute motion planning for each robot
 	BOOST_FOREACH(OurRobot* r, _state->self) {
 		if (r && r->visible) {
 			// set obstacles for the robots
 			if (_goalie && _goalie->robot && r->shell() == _goalie->robot->shell())
-				r->execute(global_obstacles);
+				r->execute(global_obstacles); // just for goalie
 			else
-				r->execute(obstacles_with_goal);
-
-			// DEBUG: look for NaNs
-			if (isnan(r->cmd_vel.x))
-				cout << "cmd_vel is NaN after robot execute()" << endl;
+				r->execute(obstacles_with_goal); // all other robots
 		}
 	}
 
