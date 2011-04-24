@@ -1,53 +1,12 @@
 <config>
  <Rev2008>
-  <motion>
-   <deg0>
-    <velocity value="1.44"/>
-    <acceleration value="4.0"/>
-    <deceleration value="1.8"/>
-   </deg0>
-   <deg45>
-    <velocity value="1.2"/>
-    <acceleration value="3.33"/>
-    <deceleration value="1.5"/>
-   </deg45>
-   <rotation>
-    <velocity value="100"/>
-    <acceleration value="50"/>
-    <deceleration value="0"/>
-   </rotation>
-   <angle>
-    <p value="2.75"/>
-    <i value="0"/>
-    <d value="0"/>
-   </angle>
-   <output_coeffs value="4"/>
-  </motion>
   <kicker>
    <m value="71.17"/>
    <b value="-2.7"/>
   </kicker>
-  <axle>
-   <item0>
-    <x value="1"/>
-    <y value="1"/>
-   </item0>
-   <item1>
-    <x value="1"/>
-    <y value="-1"/>
-   </item1>
-   <item2>
-    <x value="-1"/>
-    <y value="-1"/>
-   </item2>
-   <item3>
-    <x value="-1"/>
-    <y value="1"/>
-   </item3>
-  </axle>
   <trapTrans>
-   <velocity value="0"/>
-   <acceleration value="0"/>
+   <velocity value="5"/>
+   <acceleration value="5"/>
    <deceleration value="0"/>
   </trapTrans>
   <trapRot>
@@ -58,10 +17,10 @@
   <translation>
    <p value="10"/>
    <i value="0"/>
-   <d value="50"/>
+   <d value="40"/>
   </translation>
   <rotation>
-   <p value="0"/>
+   <p value="30"/>
    <i value="0"/>
    <d value="0"/>
   </rotation>
@@ -92,8 +51,8 @@
  </rbpfModelBallKicked>
  <Rev2011>
   <trapTrans>
-   <velocity value="0"/>
-   <acceleration value="0"/>
+   <velocity value="5"/>
+   <acceleration value="1.5"/>
    <deceleration value="0"/>
   </trapTrans>
   <trapRot>
@@ -104,10 +63,10 @@
   <translation>
    <p value="5"/>
    <i value="0"/>
-   <d value="0"/>
+   <d value="40"/>
   </translation>
   <rotation>
-   <p value="10"/>
+   <p value="12"/>
    <i value="0"/>
    <d value="0"/>
   </rotation>
