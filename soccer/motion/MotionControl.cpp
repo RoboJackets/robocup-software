@@ -45,7 +45,7 @@ void MotionControl::positionTrapezoidal()
 	
 	float targetSpeed;
 	
-	_robot->addText(QString("minStoppingDistance %1 %2").arg(minStoppingDistance).arg(curSpeed));
+// 	_robot->addText(QString("minStoppingDistance %1 %2").arg(minStoppingDistance).arg(curSpeed));
 	//FIXME - Predict speed changes over time
 	if (distanceLeft <= minStoppingDistance)
 	{
@@ -53,7 +53,7 @@ void MotionControl::positionTrapezoidal()
 		//FIXME - Calculate the value necessary to reach the goal, regardless of limit
 		float decel = config.deceleration;
 		targetSpeed = max(0.0f, curSpeed - decel * FrameTime);
-		_robot->addText(QString("decel to %1").arg(targetSpeed));
+// 		_robot->addText(QString("decel to %1").arg(targetSpeed));
 	} else if (curSpeed < config.velocity)
 	{
 		// Accelerate
@@ -63,11 +63,11 @@ void MotionControl::positionTrapezoidal()
 		} else {
 			targetSpeed = min((double)config.velocity, curSpeed + config.acceleration * FrameTime * 10);
 		}
-		_robot->addText(QString("accel to %1").arg(targetSpeed));
+// 		_robot->addText(QString("accel to %1").arg(targetSpeed));
 	} else {
 		// Constant velocity
 		targetSpeed = config.velocity;
-		_robot->addText(QString("cruise at %1").arg(targetSpeed));
+// 		_robot->addText(QString("cruise at %1").arg(targetSpeed));
 	}
 	
 	_worldVel = posErrorDir * targetSpeed;
@@ -95,28 +95,27 @@ void MotionControl::positionPD()
 	
 	Point newVel = posError * p + (posError - _lastPosError) * _robot->config->translation.d;
 	float newSpeed = newVel.mag();
-	_robot->addText(QString().sprintf("Speed %f %f", curSpeed, newSpeed));
-	_robot->addText(QString().sprintf("Range %f %f", minSpeed, maxSpeed));
-	if (newSpeed > maxSpeed && newSpeed > 1.0)
-	{
-		_robot->addText("Limited by accel/cruise");
-		_worldVel = newVel / newSpeed * maxSpeed;
-	} else if (newSpeed < minSpeed)
+	_robot->addText(QString().sprintf("Dist %f Speed %f %f", posError.mag(), curSpeed, newSpeed));
+// 	_robot->addText(QString().sprintf("Range %f %f", minSpeed, maxSpeed));
+	if (newSpeed < minSpeed)
 	{
 		_robot->addText("Limited by decel");
 		_worldVel = newVel / newSpeed * minSpeed;
+	} else if (newSpeed > maxSpeed && newSpeed > 1.0)
+	{
+		_robot->addText("Limited by accel/cruise");
+		_worldVel = newVel / newSpeed * maxSpeed;
 	} else {
-		_robot->addText("Unchanged");
+// 		_robot->addText("Unchanged");
 		_worldVel = newVel;
 	}
+	_robot->addText(QString().sprintf("Final vel %f %f", _worldVel.x, _worldVel.y));
 	
-	_robot->addText(QString().sprintf("pos %f %f", (double)_robot->config->translation.p, (double)_robot->config->translation.d));
 	_lastPosError = posError;
 }
 
 void MotionControl::anglePD()
 {
-	_robot->addText(QString().sprintf("angle %f %f", (double)_robot->config->rotation.p, (double)_robot->config->rotation.d));
 // 	_robot->state()->drawLine(_robot->pos, _robot->cmd.goalOrientation, Qt::black, "Motion");
 	Point dir = (_robot->cmd.goalOrientation - _robot->pos).normalized();
 	
