@@ -2,7 +2,7 @@
 
 #include "../../Play.hpp"
 
-#include "../../behaviors/PivotKick.hpp"
+#include "../../behaviors/Kick.hpp"
 
 namespace Gameplay
 {
@@ -13,6 +13,8 @@ namespace Plays
  * Useful for testing basic operation of the system, and should
  * probably only be used with 1-2 robots on the field, as it
  * will get chaotic
+ *
+ * Uses general Kick behavior
  */
 class DemoBasicAttack: public Play
 {
@@ -22,7 +24,7 @@ public:
 	virtual bool run();
 
 protected:
-	Behaviors::PivotKick _kicker;
+	Behaviors::Kick _kicker;
 };
 } // \Gameplay
 } // \Plays
