@@ -491,18 +491,6 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	full_obstacles.add(ball_obs);
 	full_obstacles.add(global_obstacles);
 
-	// if we are in full stopped mode, try to drive to ball
-	if (_state->gameState.state == GameState::Stop) {
-		addText(QString("execute: stopped"));
-		Planning::Path rrt_path = rrtReplan(_state->ball.pos, full_obstacles);
-		_path = rrt_path;
-		cmd.goalPosition = findGoalOnPath(pos, _path, full_obstacles);
-		cmd.pathLength = rrt_path.length(0);
-		cmd.planner = MotionCmd::Point;
-		drawPath(_path);
-		return;
-	}
-
 	// if no goal command robot to stop in place
 	if (!_delayed_goal) {
 		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: stopped" << endl;
