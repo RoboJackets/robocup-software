@@ -40,7 +40,7 @@ bool Gameplay::Behaviors::PivotKick::run()
 	bool behindBall = ((target.center() - robot->pos).dot(ball().pos - robot->pos) > 0);
 	if (_state == State_Approach)
 	{
-		robot->addText(QString("err %1").arg(err));
+		robot->addText(QString().sprintf("err %f", acos(err) * RadiansToDegrees));
 		if (robot->hasBall)
 		{
 			_state = State_Aim;
