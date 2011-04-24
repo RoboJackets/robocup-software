@@ -2,63 +2,57 @@
 
 #include <gameplay/Behavior.hpp>
 #include <gameplay/Window.hpp>
+#include <gameplay/behaviors/PivotKick.hpp>
+#include <gameplay/behaviors/LineKick.hpp>
 
 namespace Gameplay
 {
-	namespace Behaviors
+namespace Behaviors
+{
+
+/**
+ * Kick behavior will attempt to kick the ball at the goal, or downfield,
+ * incorporating switching between kick types and bump and trap mechanism
+ *
+ * Kicking is handled by subbehaviors, while shot selection is handled here
+ */
+class Kick: public SingleRobotBehavior
+{
+public:
+	Kick(GameplayModule *gameplay);
+
+	virtual bool run();
+
+	inline bool done() const { return _state == State_Done; }
+
+	/** sets the state back to default state */
+	void restart();
+
+	/** default target to full segment for opponent's goal */
+	void setTargetGoal();
+
+	void setTarget(const Geometry2d::Segment &seg);
+
+private:
+	typedef enum
 	{
-		class Kick: public SingleRobotBehavior
-		{
-			public:
-				Kick(GameplayModule *gameplay);
-				
-				virtual bool run();
+		State_PivotKick,   /// default kicking mode with aiming
+		State_LineKick,    /// faster kicking mode when opponents nearby
+		State_Bump,   		 /// when close to another robot, bump ball away
+		State_Trap,        /// when ball is moving quickly, go around behind the ball first
+		State_Done				 /// after a successful shot
+	} State;
 
-				inline bool done() const { return _state == State_Done; }
-				
-				void restart();
-				
-				void override(bool override) { _override = override; }
-                                
-                                // Kicks at the opponent's goal
-				void setTargetGoal();
-				
-				// Kicks at a robot (pass)
-				void setTarget(Robot *r);
-				
-				void setTarget(const Geometry2d::Segment &seg);
-	                        
-                                //Calculates where the robot should go in the case of a moving ball
-                                Geometry2d::Point calculateInterceptPoint();
+	State _state;
 
-			private:
-				enum State
-				{
-					State_Approach1,
-					State_Face, //Aligns the Robot's Dribbler with the ball (Eventually should be part of Approach1)
-                                        State_Approach2,
-					State_Aim,
-					State_Kick,
-					State_Done
-				};
-				
-				State _state;
-				float _lastError;
-                                int _approach1Timeout;
-                                int _faceTimeout;
-                                int _approach2Timeout;
-                                int _aimTimeout;
-                                bool _override;
+	// segment-specific kick
+	Geometry2d::Segment _target;
 
-				Geometry2d::Segment _target;
-			
-                                //The best segment of the _target that is able to be shot at
-                                Geometry2d::Segment _shotSegment;
+	// Subbehaviors
+	PivotKick _pivotKick;
+	LineKick _lineKick;
 
-				// Used to display expected kick trajectory after finishing
-				Geometry2d::Segment _kickSegment;
+};
 
-                                bool hasShot;
-		};
-	}
-}
+} // \namespace Behaviors
+} // \namespace Gameplay
