@@ -70,7 +70,7 @@ bool Kick::run() {
 	// check for shot on goal
 	bool badshot = false;
 	Geometry2d::Segment available_target;
-	if (!(findShot(_target, available_target, 0.04) 				/// try target first
+	if (!(findShot(_target, available_target, 0.1) 				/// try target first
 			  || findShot(goal_line, available_target, 0.5) 		/// try anywhere on goal line
 //			  || findShot(left_downfield, available_target, 0.5)  /// shot off edge of field
 //			  || findShot(right_downfield, available_target, 0.5)
@@ -81,26 +81,23 @@ bool Kick::run() {
 		available_target = _target;   /// if no other option, try kicking anyway
 	}
 
+	const Geometry2d::Point& rPos = robot->pos;
+	const float close_thresh = Robot_Radius + Ball_Radius + 0.10;
+
 	// disable obstacle avoidance if we are close to the ball
-	if (enable_pushing) {
-		if (robot->pos.nearPoint(ball().pos, Robot_Radius + Ball_Radius + 0.05)) {
-			robot->avoidOpponents(false);
-		} else {
-			robot->avoidOpponents(true);
-		}
-	} else {
+	if (enable_pushing && rPos.nearPoint(ball().pos, close_thresh))
+		robot->avoidOpponents(false);
+	else
 		robot->avoidOpponents(true);
-	}
 
 	// there are robots in the way and we are close, disable opponent obstacle avoidance
-	if (enable_pushing && badshot && (_pivotKick.aiming() || _pivotKick.capture())) {
+	if (enable_pushing && badshot && rPos.nearPoint(ball().pos, close_thresh)) {
 		robot->addText(QString("PushingOpponent"));
-		Geometry2d::Point rPos = robot->pos;
 		Geometry2d::Point push_goal = rPos + (_target.center() - rPos).normalized() * 2.0;
 
 		// drive forward through robots
 		robot->move(push_goal);
-		robot->face(ball().pos);
+		robot->face(_target.center());
 		return true;
 
 	} else {
