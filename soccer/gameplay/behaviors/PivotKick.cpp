@@ -97,7 +97,7 @@ bool Gameplay::Behaviors::PivotKick::run()
 		float delta = error - _lastError;
 		
 		robot->avoidBall(false);
-		if (error >= cos(1.5 * DegreesToRadians) || (error >= cos(5 * DegreesToRadians) && _lastDelta > 0 && delta <= 0))
+		if (error >= cos(0.5 * DegreesToRadians) || (error >= cos(5 * DegreesToRadians) && _lastDelta > 0 && delta <= 0))
 		{
 			robot->kick(255);
 		} else {

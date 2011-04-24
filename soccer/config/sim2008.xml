@@ -46,14 +46,14 @@
    </item3>
   </axle>
   <trapTrans>
-   <velocity value="0"/>
-   <acceleration value="0"/>
-   <deceleration value="0"/>
+   <velocity value="6"/>
+   <acceleration value="4"/>
+   <deceleration value="2"/>
   </trapTrans>
   <trapRot>
-   <velocity value="0"/>
-   <acceleration value="0"/>
-   <deceleration value="0"/>
+   <velocity value="3"/>
+   <acceleration value="1"/>
+   <deceleration value="1"/>
   </trapRot>
   <translation>
    <p value="40"/>

@@ -102,12 +102,12 @@
    <deceleration value="0"/>
   </trapRot>
   <translation>
-   <p value="15"/>
+   <p value="5"/>
    <i value="0"/>
-   <d value="50"/>
+   <d value="0"/>
   </translation>
   <rotation>
-   <p value="100"/>
+   <p value="10"/>
    <i value="0"/>
    <d value="0"/>
   </rotation>

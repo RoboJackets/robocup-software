@@ -75,13 +75,33 @@ void MotionControl::positionTrapezoidal()
 
 void MotionControl::positionPD()
 {
+	const float FrameTime = 1.0 / 60.0;
+	float maxSpeed = _worldVel.mag() + _robot->config->trapTrans.acceleration * FrameTime;
+	float cruise = _robot->config->trapTrans.velocity;
+	maxSpeed = min(cruise, maxSpeed);
+	float minSpeed = _worldVel.mag() - _robot->config->trapTrans.deceleration * FrameTime;
+	minSpeed = max(0.0f, minSpeed);
+	
 	Point posError = _robot->cmd.goalPosition - _robot->pos;
-	_worldVel = posError * _robot->config->translation.p + (posError - _lastPosError) * _robot->config->translation.d;
+	Point newVel = posError * _robot->config->translation.p + (posError - _lastPosError) * _robot->config->translation.d;
+	float newMag = newVel.mag();
+	if (newMag > maxSpeed)
+	{
+		_worldVel = newVel / newMag * maxSpeed;
+	} else if (newMag < minSpeed)
+	{
+		_worldVel = newVel / newMag * minSpeed;
+	} else {
+		_worldVel = newVel;
+	}
+	
+	_robot->addText(QString().sprintf("pos %f %f", (double)_robot->config->translation.p, (double)_robot->config->translation.d));
 	_lastPosError = posError;
 }
 
 void MotionControl::anglePD()
 {
+	_robot->addText(QString().sprintf("angle %f %f", (double)_robot->config->rotation.p, (double)_robot->config->rotation.d));
 // 	_robot->state()->drawLine(_robot->pos, _robot->cmd.goalOrientation, Qt::black, "Motion");
 	Point dir = (_robot->cmd.goalOrientation - _robot->pos).normalized();
 	
@@ -97,10 +117,10 @@ void MotionControl::run()
 	anglePD();
 	
 	// Scaling
-	_worldVel *= _robot->cmd.vScale;
-	_spin *= _robot->cmd.wScale;
+	Point scaledVel = _worldVel * _robot->cmd.vScale;
+	float scaledSpin = _spin * _robot->cmd.wScale;
 	
-	Point bodyVel = _worldVel.rotated(-_robot->angle);
+	Point bodyVel = scaledVel.rotated(-_robot->angle);
 	
 	//FIXME - These are all 2011 numbers
 	
@@ -169,7 +189,7 @@ void MotionControl::run()
 	maxNeg = max(maxNeg, -Max_Wheel_Command);
 	
 	// Add as much rotation as we can without overflow
-	int spinCommand = int(Max_Wheel_Command * _spin / Max_Wheel_Speed + 0.5);
+	int spinCommand = int(Max_Wheel_Command * scaledSpin / Max_Wheel_Speed + 0.5);
 	
 	if (spinCommand > 0 && (maxPos + spinCommand) > Max_Wheel_Command)
 	{
