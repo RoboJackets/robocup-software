@@ -41,8 +41,7 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	_motionControl(this),
 	_state(state)
 {
-	_ball_avoid = AVOID_SMALL;
-	_ball_avoid_radius = Ball_Avoid_Small;
+	_ball_avoid = Ball_Avoid_Small;
 	_delayed_goal = boost::none;
 	_planner_type = RRT;
 	exclude = false;
@@ -99,51 +98,6 @@ void OurRobot::avoidOpponents(bool enable) {
 		else a = -1.0;
 }
 
-bool OurRobot::willKick() const {
-	return _ball_avoid == OurRobot::KICK;
-}
-
-void OurRobot::willKick(bool enable) {
-	if (enable)
-		_ball_avoid = OurRobot::KICK;
-	else
-		_ball_avoid = OurRobot::AVOID_SMALL;
-}
-
-bool OurRobot::avoidBallLarge() const {
-	return _ball_avoid == OurRobot::AVOID_LARGE;
-}
-
-void OurRobot::avoidBallLarge(bool enable) {
-	if (enable)
-		_ball_avoid = OurRobot::AVOID_LARGE;
-	else
-		_ball_avoid = OurRobot::AVOID_SMALL;
-}
-
-bool OurRobot::avoidBall() const {
-	return _ball_avoid == AVOID_PARAM;
-}
-
-void OurRobot::avoidBall(bool enable, float radius) {
-	if (!enable)
-		_ball_avoid = AVOID_NONE;
-	else {
-		_ball_avoid = AVOID_PARAM;
-		_ball_avoid_radius = radius;
-	}
-}
-
-float OurRobot::avoidBallRadius() const {
-	return _ball_avoid_radius;
-}
-
-void OurRobot::ballAvoidance(const BallAvoid& flag, boost::optional<float> radius) {
-	_ball_avoid = flag;
-	if (radius)
-		_ball_avoid_radius = *radius;
-}
-
 void OurRobot::resetMotionCommand()
 {
 	if (verbose && visible) cout << "in OurRobot::resetMotionCommand()" << endl;
@@ -172,17 +126,6 @@ void OurRobot::resetMotionCommand()
 void OurRobot::stop()
 {
 	_delayed_goal = boost::none;
-}
-
-void OurRobot::avoid(const BallAvoid& ball, const RobotMask& opp_robots,
-		const RobotMask& self_robots, const ObstacleGroup& regions) {
-	_ball_avoid = ball;
-	_local_obstacles = regions;
-	_opp_avoid_mask = opp_robots;
-
-	// override the mask for this robot to ensure
-	_self_avoid_mask = self_robots;
-	_self_avoid_mask[shell()] = -1.0;
 }
 
 void OurRobot::move(Geometry2d::Point goal, bool stopAtEnd)
@@ -257,7 +200,6 @@ bool OurRobot::behindBall(const Geometry2d::Point& ballPos) const {
 	return ballTransformed.x < -Robot_Radius;
 }
 
-
 void OurRobot::setVScale(float scale) {
 	cmd.vScale = scale;
 }
@@ -300,14 +242,12 @@ void OurRobot::faceNone()
 
 void OurRobot::kick(uint8_t strength)
 {
-	_ball_avoid = KICK;
 	radioTx.set_kick(strength);
 	radioTx.set_use_chipper(false);
 }
 
 void OurRobot::chip(uint8_t strength)
 {
-	_ball_avoid = KICK;
 	radioTx.set_kick(strength);
 	radioTx.set_use_chipper(true);
 }
@@ -378,32 +318,29 @@ float OurRobot::avoidTeammateRadius(unsigned shell_id) const {
 	return _self_avoid_mask[shell_id];
 }
 
-ObstaclePtr OurRobot::createBallObstacle() const {
+void OurRobot::disableAvoidBall() {
+	_ball_avoid = -1.0;
+}
 
+void OurRobot::avoidBall(float radius) {
+	_ball_avoid = radius;
+}
+
+float OurRobot::avoidBall() const {
+	return _ball_avoid;
+}
+
+ObstaclePtr OurRobot::createBallObstacle() const {
 	// if game is stopped, large obstacle regardless of flags
 	if (_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart)
 		return ObstaclePtr(new CircleObstacle(_state->ball.pos, Field_CenterRadius));
 
-	// choose size of the obstacle
-	float radius = -1.0;
-	switch (_ball_avoid) {
-		case OurRobot::AVOID_LARGE:
-			radius = Field_CenterRadius;
-			break;
-		case OurRobot::AVOID_PARAM:
-			radius = _ball_avoid_radius;
-			break;
-		case OurRobot::AVOID_SMALL:
-			radius = Ball_Avoid_Small;
-			break;
-		default:
-			break;
-	}
-
-	if (radius < 0.0)
-		return ObstaclePtr(new CircleObstacle(_state->ball.pos, radius));
-	else
+	// create an obstacle if necessary
+	if (_ball_avoid > 0.0) {
+		return ObstaclePtr(new CircleObstacle(_state->ball.pos, _ball_avoid));
+	} else {
 		return ObstaclePtr();
+	}
 }
 
 Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
@@ -426,17 +363,6 @@ Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 			if (blend_verbose) addText(QString("blend:size2"));
 			return path.points[1];
 		}
-
-//		// find the closest point available
-//		const float next_point_thresh = 0.1;
-//		Geometry2d::Point result = path.points[0];
-//		for (size_t i=1; i<path.points.size(); ++i) {
-//			Geometry2d::Segment segClose(pose, result);
-//			if (result.nearPoint(pose, next_point_thresh) && !obstacles.hit(segClose))
-//				result = path.points[i];
-//			else
-//				break;
-//		}
 
 		// FIXME: this doesn't work well - gets stuck in some places
 		// All other cases: proportionally blend the next two points together for a smoother

@@ -82,14 +82,6 @@ public:
 		OVERRIDE  /// moves to a point without regard for obstacles
 	} MoveType;
 
-	typedef enum {
-		KICK,					/// will kick the ball when in range
-		AVOID_NONE,		/// will hit ball, but not kick
-		AVOID_LARGE,  /// will avoid the ball with large (0.5 meter) radius - needed for rules
-		AVOID_SMALL,  /// will avoid ball with small radius - needed for maneuvering
-		AVOID_PARAM,  /// will avoid the ball with a specific radius
-	} BallAvoid;
-
 	RobotConfig * config;
 
 	OurRobot(int shell, SystemState *state);
@@ -120,17 +112,6 @@ public:
 	bool behindBall(const Geometry2d::Point& ballPos) const;
 
 	// Commands
-
-	/**
-	 * Obstacle avoidance command - specifies how a robot will manage obstacles
-	 * Per robot avoidance uses a mask, where true treats the robot as an obstacle
-	 *
-	 * @param ball sets the ball avoidance parameters
-	 * @param opp_robots specifies handling of opponent robots with a mask
-	 * @param self_robots specifies handling of self robots with a mask
-	 * @param regions allows for explicit arbitrary obstacles
-	 */
-	void avoid(const BallAvoid& ball, const RobotMask& opp_robots, const RobotMask& self_robots, const ObstacleGroup& regions);
 
 	void setVScale(float scale = 1.0); /// scales the velocity
 	void setWScale(float scale = 0.5); /// scales the angular velocity
@@ -205,21 +186,12 @@ public:
 	bool willKick() const;
 	void willKick(bool enable);
 
-	// True if this robot should avoid the ball by 500mm.
-	// Used during our restart for robots that aren't going to kick
-	// (not strictly necessary).
-	bool avoidBallLarge() const;
-	void avoidBallLarge(bool enable);
-
 	// Add a custom radius avoidance of the ball
 	// creates an obstacle around the ball
-	bool avoidBall() const;  // true only for parameterized version
-	float avoidBallRadius() const;
-	void avoidBall(bool enable, float radius = Ball_Radius);
-
-	// general ball avoidance - easier to use than others
-	void ballAvoidance(const BallAvoid& flag, boost::optional<float> radius = boost::none);
-	BallAvoid ballAvoidance() const { return _ball_avoid; }
+	// if radius is 0 or less, it disables avoidance
+	void disableAvoidBall();
+	void avoidBall(float radius);
+	float avoidBall() const;
 
 	/**
 	 * Adds an obstacle to the local set of obstacles for avoidance
@@ -324,14 +296,13 @@ protected:
 	bool _newRevision; /// true if this a 2011 robot, false otherwise
 
 	/** Planning components for delayed planning */
-//	bool _planning_complete; /// set to false by move commands, set to true if motionCmd is ready
 	MoveType _planner_type;  /// movement class - set during move
-	BallAvoid _ball_avoid;   /// avoidance mode for the ball
-	float _ball_avoid_radius;   /// custom avoidance radius for the ball
 	boost::optional<Geometry2d::Point> _delayed_goal;   /// goal from move command
-	RobotMask _self_avoid_mask, _opp_avoid_mask;  /// masks for obstacle avoidance
 
+	// obstacle management
 	ObstacleGroup _local_obstacles; /// set of obstacles added by plays
+	RobotMask _self_avoid_mask, _opp_avoid_mask;  /// masks for obstacle avoidance
+	float _ball_avoid; /// radius of obstacle
 
 	Planning::Path _path;	/// latest path
 	Planning::RRT::Planner *_planner;	/// single-robot RRT planner
