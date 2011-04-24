@@ -18,6 +18,10 @@ namespace Gameplay
 					return _state == State_Done;
 				}
 				
+				bool aiming() const {
+					return _state == State_Aim;
+				}
+
 				void restart();
 				
 				Geometry2d::Segment target;

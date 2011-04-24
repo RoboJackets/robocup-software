@@ -14,10 +14,10 @@ _kicker(gameplay)
 
 bool Gameplay::Plays::DemoBasicAttack::run()
 {
-	set<OurRobot *> available = _gameplay->playRobots();
-	assignNearest(_kicker.robot, available, Geometry2d::Point());
-
 	Geometry2d::Point ballPos = ball().pos;
+
+	set<OurRobot *> available = _gameplay->playRobots();
+	assignNearest(_kicker.robot, available, ballPos);
 
 	// if we have kicked, we want to reset
 	if (_kicker.done() &&  ball().valid && 

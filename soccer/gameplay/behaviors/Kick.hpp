@@ -33,6 +33,9 @@ public:
 
 	void setTarget(const Geometry2d::Segment &seg);
 
+	/** find best segment on target, @return true if one exists, and returns segment in result */
+	bool findShot(const Geometry2d::Segment& segment, Geometry2d::Segment& result,
+			float min_segment_length = 0.1) const;
 private:
 	typedef enum
 	{
