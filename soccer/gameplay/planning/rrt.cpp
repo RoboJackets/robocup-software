@@ -232,15 +232,3 @@ void RRT::Planner::optimize(Planning::Path &path, const ObstacleGroup *obstacles
 
 	path.points = pts;
 }
-
-void RRT::Planner::draw(QPainter& painter)
-{
-	painter.setPen(Qt::gray);
-
-	int n = (int)_bestPath.points.size()-1;
-	for (int i=0 ; i<n ; ++i)
-	{
-		painter.drawLine(_bestPath.points[i].toQPointF(),
-				_bestPath.points[i+1].toQPointF());
-	}
-}
