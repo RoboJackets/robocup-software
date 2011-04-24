@@ -29,10 +29,15 @@ bool Gameplay::Behaviors::PivotKick::run()
 	// The direction we're facing
 	const Point dir = Point::direction(robot->angle * DegreesToRadians);
 	
+	if (robot->hasBall)
+	{
+		_lastBallTime = state()->timestamp;
+	}
+	
 	// State changes
 	Point toBall = (ball().pos - robot->pos).normalized();
 	float err = dir.dot(toBall);
-	bool facingBall = (err >= cos(20 * DegreesToRadians) && (target.center() - robot->pos).dot(ball().pos - robot->pos) > 0);
+	bool behindBall = ((target.center() - robot->pos).dot(ball().pos - robot->pos) > 0);
 	if (_state == State_Approach)
 	{
 		robot->addText(QString("err %1").arg(err));
@@ -42,7 +47,7 @@ bool Gameplay::Behaviors::PivotKick::run()
 			_lastError = 0;
 			_lastDelta = 0;
 			_ccw = ((target.pt[0] - ball().pos).cross(target.pt[1] - ball().pos) > 0);
-		} else if (facingBall)
+		} else if (err >= cos(20 * DegreesToRadians) && behindBall)
 		{
 			_state = State_Capture;
 		}
@@ -54,13 +59,13 @@ bool Gameplay::Behaviors::PivotKick::run()
 			_lastError = 0;
 			_lastDelta = 0;
 			_ccw = ((target.pt[0] - ball().pos).cross(target.pt[1] - ball().pos) > 0);
-		} else if (!facingBall)
+		} else if (err < cos(25 * DegreesToRadians) && !behindBall)
 		{
 			_state = State_Approach;
 		}
 	} else if (_state == State_Aim)
 	{
-		if (!robot->hasBall)
+		if ((!robot->hasBall && (state()->timestamp - _lastBallTime) > 500000) || !ball().pos.nearPoint(robot->pos, Robot_Radius * 1.2))
 		{
 			_state = State_Approach;
 		}
@@ -70,12 +75,12 @@ bool Gameplay::Behaviors::PivotKick::run()
 	state()->drawLine(ball().pos, target.pt[1], Qt::black);
 	
 	// Driving
-	robot->dribble(63);
+	robot->dribble(32);
 	robot->face(ball().pos);
 	if (_state == State_Approach)
 	{
 		robot->addText("Approach");
-		robot->avoidBall(0.25);
+		robot->avoidBall(Ball_Radius + 0.05);
 		robot->kick(0);
 		robot->move(ball().pos - (target.pt[0] - ball().pos).normalized() * Robot_Radius * 1.3);
 		robot->face(ball().pos);
@@ -91,6 +96,7 @@ bool Gameplay::Behaviors::PivotKick::run()
 	{
 		state()->drawLine(robot->pos, robot->pos + dir * 8, Qt::white);
 		state()->drawLine(ball().pos, target.center(), Qt::yellow);
+		state()->drawLine(robot->pos, (ball().pos - robot->pos).normalized() * 8, Qt::green);
 		
 		// See if it's time to kick
 		float error = dir.dot((target.center() - ball().pos).normalized());
@@ -100,6 +106,7 @@ bool Gameplay::Behaviors::PivotKick::run()
 		if (error >= cos(1.5 * DegreesToRadians) || (error >= cos(5 * DegreesToRadians) && _lastDelta > 0 && delta <= 0))
 		{
 			robot->kick(255);
+			robot->addText("KICK");
 		} else {
 			robot->kick(0);
 		}

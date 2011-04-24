@@ -75,13 +75,48 @@ void MotionControl::positionTrapezoidal()
 
 void MotionControl::positionPD()
 {
+	float curSpeed = _robot->vel.mag();
+	const float FrameTime = 1.0 / 60.0;
+	float maxSpeed = curSpeed + _robot->config->trapTrans.acceleration;
+	float cruise = _robot->config->trapTrans.velocity;
+	maxSpeed = min(maxSpeed, cruise);
+	float minSpeed = curSpeed - _robot->config->trapTrans.deceleration;
+	
+	float deadzone = 0.4f;
+	if (_robot->hasBall)
+	{
+		deadzone = 0.7f;
+	}
+	
+	minSpeed = max(deadzone, minSpeed);
+	
 	Point posError = _robot->cmd.goalPosition - _robot->pos;
-	_worldVel = posError * _robot->config->translation.p + (posError - _lastPosError) * _robot->config->translation.d;
+	float p = _robot->config->translation.p;
+	
+	Point newVel = posError * p + (posError - _lastPosError) * _robot->config->translation.d;
+	float newSpeed = newVel.mag();
+	_robot->addText(QString().sprintf("Speed %f %f", curSpeed, newSpeed));
+	_robot->addText(QString().sprintf("Range %f %f", minSpeed, maxSpeed));
+	if (newSpeed > maxSpeed && newSpeed > 1.0)
+	{
+		_robot->addText("Limited by accel/cruise");
+		_worldVel = newVel / newSpeed * maxSpeed;
+	} else if (newSpeed < minSpeed)
+	{
+		_robot->addText("Limited by decel");
+		_worldVel = newVel / newSpeed * minSpeed;
+	} else {
+		_robot->addText("Unchanged");
+		_worldVel = newVel;
+	}
+	
+	_robot->addText(QString().sprintf("pos %f %f", (double)_robot->config->translation.p, (double)_robot->config->translation.d));
 	_lastPosError = posError;
 }
 
 void MotionControl::anglePD()
 {
+	_robot->addText(QString().sprintf("angle %f %f", (double)_robot->config->rotation.p, (double)_robot->config->rotation.d));
 // 	_robot->state()->drawLine(_robot->pos, _robot->cmd.goalOrientation, Qt::black, "Motion");
 	Point dir = (_robot->cmd.goalOrientation - _robot->pos).normalized();
 	
@@ -97,10 +132,10 @@ void MotionControl::run()
 	anglePD();
 	
 	// Scaling
-	_worldVel *= _robot->cmd.vScale;
-	_spin *= _robot->cmd.wScale;
+	Point scaledVel = _worldVel * _robot->cmd.vScale;
+	float scaledSpin = _spin * _robot->cmd.wScale;
 	
-	Point bodyVel = _worldVel.rotated(-_robot->angle);
+	Point bodyVel = scaledVel.rotated(-_robot->angle);
 	
 	//FIXME - These are all 2011 numbers
 	
@@ -118,7 +153,7 @@ void MotionControl::run()
 	const float Max_Linear_Speed = Max_Wheel_Speed * Wheel_Radius;
 	
 	// Radius of circle containing the roller contact points (m)
-	const float Contact_Circle_Radius = 0.0812;
+// 	const float Contact_Circle_Radius = 0.0812;
 	
 	// Maximum angular speed without translation
 // 	const float Max_Angular_Speed = Max_Linear_Speed / (Contact_Circle_Radius * 2 * M_PI);
@@ -169,7 +204,7 @@ void MotionControl::run()
 	maxNeg = max(maxNeg, -Max_Wheel_Command);
 	
 	// Add as much rotation as we can without overflow
-	int spinCommand = int(Max_Wheel_Command * _spin / Max_Wheel_Speed + 0.5);
+	int spinCommand = int(Max_Wheel_Command * scaledSpin / Max_Wheel_Speed + 0.5);
 	
 	if (spinCommand > 0 && (maxPos + spinCommand) > Max_Wheel_Command)
 	{
