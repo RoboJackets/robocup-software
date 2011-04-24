@@ -178,7 +178,8 @@ Help('log_viewer: Stand-alone log viewer\n')
 # build unit tests and framework
 # Add new unit tests here
 tests = [
-	'tests/testExamples.cpp'
+	'tests/testExamples.cpp',
+	'tests/testPath.cpp'
 ]
 e.Append(LIBS=['gtest'])
 # NOTE: this links against all sources to avoid needing to actually check dependencies

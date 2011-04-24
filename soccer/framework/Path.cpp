@@ -151,7 +151,7 @@ Geometry2d::Segment Planning::Path::nearestSegment(const Geometry2d::Point &pt) 
 
 void Planning::Path::startFrom(const Geometry2d::Point& pt, Planning::Path& result) const {
 
-	// path will start at the last point
+	// path will start at the current robot pose
 	result.clear();
 	result.points.push_back(pt);
 
@@ -165,27 +165,28 @@ void Planning::Path::startFrom(const Geometry2d::Point& pt, Planning::Path& resu
 	}
 
 	// find where to start the path
-	Geometry2d::Segment best;
+	Geometry2d::Segment close_segment;
 	float dist = -1;
-	unsigned int i;
+	unsigned int i = (points.front().nearPoint(pt, 0.02)) ? 1 : 0;
 	vector<Geometry2d::Point>::const_iterator path_start = ++points.begin();
-	for (i = 0; i < (points.size() - 1); ++i)
-    {
+	for (; i < (points.size() - 1); ++i)
+	{
 		Geometry2d::Segment s(points[i], points[i+1]);
 		const float d = s.distTo(pt);
 		if (dist < 0 || d < dist)
 		{
-			best = s;
+			close_segment = s;
 			dist = d;
 		}
 	}
 
 	// slice path
 	// new path will be pt, [closest point on nearest segment], [i+1 to end]
-	if (!best.nearPoint(pt, 0.02)) {
-		Geometry2d::Point intersection_pt = best.nearestPoint(pt);
+	if (dist > 0.0 && dist < 0.02) {
+		Geometry2d::Point intersection_pt = close_segment.nearestPoint(pt);
 		result.points.push_back(intersection_pt);
 	}
+
 	result.points.insert(result.points.end(), path_start, points.end());
 
 }
