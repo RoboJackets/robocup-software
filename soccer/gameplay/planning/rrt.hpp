@@ -8,8 +8,6 @@
 #include <framework/Obstacle.hpp>
 #include <framework/Path.hpp>
 
-#include <QPainter>
-
 #include "Tree.hpp"
 
 namespace Planning
@@ -47,8 +45,6 @@ namespace Planning
 				/** returns the length of the best position planned path */
 				float fixedPathLength() const { return _bestPath.length(); }
 				
-				void draw(QPainter& painter);
-		
 		protected:
 			FixedStepTree _fixedStepTree0;
 			FixedStepTree _fixedStepTree1;

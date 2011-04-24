@@ -379,7 +379,7 @@ protected:
 	// rendering
 
 	//FIXME - This doesn't need to be in this class.  Put it in SystemState, along with other drawing?
-	void drawPath(const Planning::Path& path, const QColor &color = Qt::black);
+	void drawPath(const Planning::Path& path, const QColor &color = Qt::black, const QString &layer = "Motion");
 };
 
 class OpponentRobot: public Robot

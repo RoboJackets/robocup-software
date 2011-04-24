@@ -82,7 +82,7 @@ void MotionControl::positionPD()
 
 void MotionControl::anglePD()
 {
-	_robot->state()->drawLine(_robot->pos, _robot->cmd.goalOrientation, Qt::black, "Motion");
+// 	_robot->state()->drawLine(_robot->pos, _robot->cmd.goalOrientation, Qt::black, "Motion");
 	Point dir = (_robot->cmd.goalOrientation - _robot->pos).normalized();
 	
 	float error = Utils::fixAngleRadians(dir.angle() - _robot->angle * DegreesToRadians);

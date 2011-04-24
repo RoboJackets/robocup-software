@@ -464,11 +464,11 @@ Planning::Path OurRobot::rrtReplan(const Geometry2d::Point& goal,
 	return result;
 }
 
-void OurRobot::drawPath(const Planning::Path& path, const QColor &color) {
+void OurRobot::drawPath(const Planning::Path& path, const QColor &color, const QString &layer) {
 	Geometry2d::Point last = pos;
 	BOOST_FOREACH(Geometry2d::Point pt, path.points)
 	{
-		_state->drawLine(last, pt, color);
+		_state->drawLine(last, pt, color, layer);
 		last = pt;
 	}
 }

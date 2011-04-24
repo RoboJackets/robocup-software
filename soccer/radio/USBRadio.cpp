@@ -240,7 +240,6 @@ bool USBRadio::receive(Packet::RadioRx* packet)
 	
 	uint64_t rx_time = 0;
 	// Read a forward packet if one is available
-	//FIXME - Why is the timeout 1 instead of 0?
 	if (!_device->bulk_read(2, reverse_packet, sizeof(reverse_packet), 1))
 	{
 		return false;
