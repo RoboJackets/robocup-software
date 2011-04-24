@@ -126,6 +126,13 @@ bool Gameplay::Plays::TheirFreekick::run()
 		}
 	}
 
+	// adjust obstacles on markers
+	if (_marking1.robot && _marking2.robot) {
+		unsigned m1 = _marking1.robot->shell(), m2 = _marking2.robot->shell();
+		_marking1.robot->avoidTeammateRadius(m2, 0.5);
+		_marking2.robot->avoidTeammateRadius(m1, 0.5);
+	}
+
 	// execute default fullback "wall" behavior
 	_fullback1.run();
 	_fullback2.run();

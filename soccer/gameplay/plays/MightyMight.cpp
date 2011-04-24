@@ -60,6 +60,13 @@ bool Gameplay::Plays::MightyMight::run()
 	if (_kicker2.done())
 		_kicker2.restart();
 
+	// add obstacles - always bias to kicker1
+	if (_kicker1.robot && _kicker2.robot) {
+		unsigned k1 = _kicker1.robot->shell(), k2 = _kicker2.robot->shell();
+		_kicker1.robot->avoidTeammateRadius(k2, 0.8 * Robot_Radius);
+		_kicker2.robot->avoidTeammateRadius(k1, 0.5);
+	}
+
 	// execute kickers dumbly
 	if (_kicker1.robot) _kicker1.run();
 	if (_kicker2.robot) _kicker2.run();
