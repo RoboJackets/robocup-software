@@ -1,18 +1,18 @@
-#include "DemoBasicAttack.hpp"
+#include "DemoBasicLineAttack.hpp"
 
 #include <boost/foreach.hpp>
 
 using namespace std;
 
-REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoBasicAttack, "Demos")
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoBasicLineAttack, "Demos")
 
-Gameplay::Plays::DemoBasicAttack::DemoBasicAttack(GameplayModule *gameplay):
-Play(gameplay),
-_kicker(gameplay)
+Gameplay::Plays::DemoBasicLineAttack::DemoBasicLineAttack(GameplayModule *gameplay):
+	Play(gameplay),
+	_kicker(gameplay)
 {
 }
 
-bool Gameplay::Plays::DemoBasicAttack::run()
+bool Gameplay::Plays::DemoBasicLineAttack::run()
 {
 	set<OurRobot *> available = _gameplay->playRobots();
 	assignNearest(_kicker.robot, available, Geometry2d::Point());
@@ -27,6 +27,6 @@ bool Gameplay::Plays::DemoBasicAttack::run()
 	}
 
 	_kicker.run();
-
+	
 	return true;
 }
