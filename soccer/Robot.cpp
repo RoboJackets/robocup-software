@@ -384,12 +384,8 @@ ObstaclePtr OurRobot::createBallObstacle() const {
 	if (_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart)
 		return ObstaclePtr(new CircleObstacle(_state->ball.pos, Field_CenterRadius));
 
-	// no obstacle when kicking is enabled
-	if (_ball_avoid == KICK)
-		return ObstaclePtr();
-
 	// choose size of the obstacle
-	float radius = Ball_Avoid_Small;
+	float radius = -1.0;
 	switch (_ball_avoid) {
 		case OurRobot::AVOID_LARGE:
 			radius = Field_CenterRadius;
@@ -397,10 +393,17 @@ ObstaclePtr OurRobot::createBallObstacle() const {
 		case OurRobot::AVOID_PARAM:
 			radius = _ball_avoid_radius;
 			break;
-		default: // AVOID_SMALL
+		case OurRobot::AVOID_SMALL:
+			radius = Ball_Avoid_Small;
+			break;
+		default:
 			break;
 	}
-	return ObstaclePtr(new CircleObstacle(_state->ball.pos, radius));
+
+	if (radius < 0.0)
+		return ObstaclePtr(new CircleObstacle(_state->ball.pos, radius));
+	else
+		return ObstaclePtr();
 }
 
 Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
