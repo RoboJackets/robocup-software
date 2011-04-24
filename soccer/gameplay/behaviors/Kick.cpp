@@ -11,6 +11,9 @@ namespace Gameplay
 namespace Behaviors
 {
 
+// PARAMETERS
+const bool enable_pushing = true;
+
 Kick::Kick(GameplayModule *gameplay)
 	: SingleRobotBehavior(gameplay), _pivotKick(gameplay), _lineKick(gameplay)
 {
@@ -61,23 +64,50 @@ bool Kick::run() {
 	_lineKick.robot = robot;
 
 	const Segment goal_line(Point(Field_Width / 2, Field_Length), Point(-Field_Width / 2, Field_Length));
-	const Segment left_downfield(Point(-Field_Width / 2, Field_Length * 2.0/3.0), Point(-Field_Width / 2, Field_Length));
-	const Segment right_downfield(Point(Field_Width / 2, Field_Length * 2.0/3.0), Point(Field_Width / 2, Field_Length));
+	const Segment left_downfield(Point(-Field_Width / 2, Field_Length * 0.8), Point(-Field_Width / 2, Field_Length));
+	const Segment right_downfield(Point(Field_Width / 2, Field_Length * 0.8), Point(Field_Width / 2, Field_Length));
 
 	// check for shot on goal
+	bool badshot = false;
 	Geometry2d::Segment available_target;
-	if (!(findShot(_target, available_target, 0.04) ||				/// try target first
-			  findShot(goal_line, available_target, 0.5) ||				/// try anywhere on goal line
-			  findShot(left_downfield, available_target, 0.5) ||  /// shot off edge of field
-			  findShot(right_downfield, available_target, 0.5))) {
+	if (!(findShot(_target, available_target, 0.04) 				/// try target first
+			  || findShot(goal_line, available_target, 0.5) 		/// try anywhere on goal line
+//			  || findShot(left_downfield, available_target, 0.5)  /// shot off edge of field
+//			  || findShot(right_downfield, available_target, 0.5)
+			  ))
+	{
 		robot->addText(QString("Kick:no target"));
+		badshot = true;
 		available_target = _target;   /// if no other option, try kicking anyway
 	}
-	// FIXME: need to try bumping here
 
-	// use pivot only for now
-	_pivotKick.target = available_target;
-	return _pivotKick.run();
+	// disable obstacle avoidance if we are close to the ball
+	if (enable_pushing) {
+		if (robot->pos.nearPoint(ball().pos, Robot_Radius + Ball_Radius + 0.05)) {
+			robot->avoidOpponents(false);
+		} else {
+			robot->avoidOpponents(true);
+		}
+	} else {
+		robot->avoidOpponents(true);
+	}
+
+	// there are robots in the way and we are close, disable opponent obstacle avoidance
+	if (enable_pushing && badshot && (_pivotKick.aiming() || _pivotKick.capture())) {
+		robot->addText(QString("PushingOpponent"));
+		Geometry2d::Point rPos = robot->pos;
+		Geometry2d::Point push_goal = rPos + (_target.center() - rPos).normalized() * 2.0;
+
+		// drive forward through robots
+		robot->move(push_goal);
+		robot->face(ball().pos);
+		return true;
+
+	} else {
+		// use pivot only for now
+		_pivotKick.target = available_target;
+		return _pivotKick.run();
+	}
 }
 
 } // \namespace Behaviors

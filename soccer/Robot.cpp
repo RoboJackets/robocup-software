@@ -93,9 +93,11 @@ bool OurRobot::avoidOpponents() const {
 }
 
 void OurRobot::avoidOpponents(bool enable) {
-	BOOST_FOREACH(float a, _opp_avoid_mask)
-		if (enable) a = Robot_Radius - 0.03;
-		else a = -1.0;
+	BOOST_FOREACH(float &a, _opp_avoid_mask)
+		if (enable)
+			a = Robot_Radius - 0.03;
+		else
+			a = -1.0;
 }
 
 void OurRobot::resetMotionCommand()
