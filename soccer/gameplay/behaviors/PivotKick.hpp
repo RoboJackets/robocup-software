@@ -43,6 +43,7 @@ namespace Gameplay
 				float _lastError;
 				float _lastDelta;
 				uint64_t _lastBallTime;
+				float _accuracy;
 			};
 	}
 }
