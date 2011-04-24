@@ -75,14 +75,14 @@ bool Gameplay::Behaviors::PivotKick::run()
 	if (_state == State_Approach)
 	{
 		robot->addText("Approach");
-		robot->avoidBall(true, 0.25);
+		robot->avoidBall(0.25);
 		robot->kick(0);
 		robot->move(ball().pos - (target.pt[0] - ball().pos).normalized() * Robot_Radius * 1.3);
 		robot->face(ball().pos);
 	} else if (_state == State_Capture)
 	{
 		robot->addText("Capture");
-		robot->avoidBall(false);
+		robot->disableAvoidBall();
 		robot->kick(0);
 // 		robot->move(ball().pos - (target.pt[0] - ball().pos).normalized() * Robot_Radius);
 		robot->move(ball().pos);
@@ -96,8 +96,8 @@ bool Gameplay::Behaviors::PivotKick::run()
 		float error = dir.dot((target.center() - ball().pos).normalized());
 		float delta = error - _lastError;
 		
-		robot->avoidBall(false);
-		if (error >= cos(0.5 * DegreesToRadians) || (error >= cos(5 * DegreesToRadians) && _lastDelta > 0 && delta <= 0))
+		robot->disableAvoidBall();
+		if (error >= cos(1.5 * DegreesToRadians) || (error >= cos(5 * DegreesToRadians) && _lastDelta > 0 && delta <= 0))
 		{
 			robot->kick(255);
 		} else {
