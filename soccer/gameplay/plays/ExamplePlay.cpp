@@ -17,7 +17,7 @@ Gameplay::Plays::ExamplePlay::ExamplePlay(GameplayModule *gameplay):
 {
 }
 
-float Gameplay::Plays::ExamplePlay::score(GameplayModule *gameplay))
+float Gameplay::Plays::ExamplePlay::score(GameplayModule *gameplay)
 {
 	return 0;
 }
