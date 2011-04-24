@@ -22,6 +22,10 @@ namespace Gameplay
 					return _state == State_Aim;
 				}
 
+				bool capture() const {
+					return _state == State_Capture;
+				}
+
 				void restart();
 				
 				Geometry2d::Segment target;

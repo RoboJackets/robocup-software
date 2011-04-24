@@ -128,6 +128,15 @@ bool Gameplay::Plays::BasicOffense::run()
 	if (_striker.robot && _support.robot) {
 		unsigned striker = _striker.robot->shell();
 		_support.robot->avoidTeammateRadius(striker, 0.5);
+
+		// get out of ways of shots
+		if (_striker.robot->pos.nearPoint(ballProj, 0.2)) {
+			Polygon shot_obs;
+			shot_obs.vertices.push_back(Geometry2d::Point(Field_GoalWidth / 2, Field_Length));
+			shot_obs.vertices.push_back(Geometry2d::Point(-Field_GoalWidth / 2, Field_Length));
+			shot_obs.vertices.push_back(ballProj);
+			_support.robot->localObstacles(ObstaclePtr(new PolygonObstacle(shot_obs)));
+		}
 	}
 
 	// execute behaviors

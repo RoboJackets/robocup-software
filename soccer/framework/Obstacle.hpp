@@ -108,6 +108,9 @@ public:
 class PolygonObstacle: public Obstacle
 {
 public:
+		PolygonObstacle(){}
+		PolygonObstacle(const Geometry2d::Polygon& poly) : polygon(poly) {}
+
     bool hit(const Geometry2d::Point &pt) const;
     bool hit(const Geometry2d::Segment &seg) const;
 
