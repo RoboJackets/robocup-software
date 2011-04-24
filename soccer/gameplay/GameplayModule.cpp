@@ -120,11 +120,11 @@ void Gameplay::GameplayModule::createGoalie()
 
 void Gameplay::GameplayModule::removeGoalie()
 {
-	if (_goalie)
+/*	if (_goalie)
 	{
 		delete _goalie;
 		_goalie = 0;
-	}
+	}*/
 }
 
 void Gameplay::GameplayModule::updatePlay() {
@@ -250,6 +250,26 @@ void Gameplay::GameplayModule::run()
 		// The goalie behavior has priority for choosing robots because it must obey this rule,
 		// so the current play will be restarted in case the goalie stole one of its robots.
 		_goalie->assign(_playRobots);
+	}
+	
+	if (_playRobots.size() == 5)
+	{
+		printf("Too many robots on field: goalie %p\n", _goalie);
+		if (_goalie)
+		{
+			printf("  robot %p\n", _goalie->robot);
+			if (_goalie->robot)
+			{
+				printf("  shell %d\n", _goalie->robot->shell());
+			}
+		}
+		
+		// Make a new goalie
+		if (_goalie)
+		{
+			delete _goalie;
+		}
+  		_goalie = new Behaviors::Goalie(this);
 	}
 
 	_ballMatrix = Geometry2d::TransformMatrix::translate(_state->ball.pos);

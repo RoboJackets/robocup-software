@@ -38,10 +38,10 @@ void Gameplay::Behaviors::Goalie::assign(set<OurRobot *> &available)
 	{
 		// Take the robot nearest the goal
 		assignNearest(robot, available, Geometry2d::Point());
-	} else if (robot && !robot->visible)
+/*	} else if (robot && !robot->visible)
 	{
 		//FIXME - Goalie replacement
-		available.erase(robot);
+		available.erase(robot);*/
 	} else {
 		// Keep the current goalie, and prevent it from being used in a play
 		available.erase(robot);

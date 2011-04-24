@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 
+using namespace std;
 using namespace Geometry2d;
 
 Gameplay::Behaviors::PivotKick::PivotKick(GameplayModule *gameplay):
@@ -21,6 +22,11 @@ void Gameplay::Behaviors::PivotKick::restart()
 
 bool Gameplay::Behaviors::PivotKick::run()
 {
+	const float Initial_Accuracy = cos(20 * DegreesToRadians);
+	// Accuracy change per frame
+	const float Accuracy_Delta = 0.002;
+	const float FireNowThreshold = cos(3 * DegreesToRadians);
+	
 	if (!robot || !robot->visible)
 	{
 		return false;
@@ -51,6 +57,7 @@ bool Gameplay::Behaviors::PivotKick::run()
 		{
 			_state = State_Capture;
 		}
+		_accuracy = Initial_Accuracy;
 	} else if (_state == State_Capture)
 	{
 		if (robot->hasBall)
@@ -104,7 +111,7 @@ bool Gameplay::Behaviors::PivotKick::run()
 		float delta = error - _lastError;
 		
 		robot->disableAvoidBall();
-		if (error >= cos(1.5 * DegreesToRadians) || (error >= cos(5 * DegreesToRadians) && _lastDelta > 0 && delta <= 0))
+		if (error >= FireNowThreshold || (error >= _accuracy && _lastDelta > 0 && delta <= 0))
 		{
 			robot->kick(255);
 			robot->addText("KICK");
@@ -127,7 +134,10 @@ bool Gameplay::Behaviors::PivotKick::run()
 		robot->addText(QString("Aim %1 %2 %3").arg(
 			QString::number(acos(error) * RadiansToDegrees),
 			QString::number(delta),
-			QString::number(_lastDelta)));
+			QString::number(_accuracy)));
+		
+		_accuracy -= Accuracy_Delta;
+		_accuracy = max(0.0f, _accuracy);
 		
 		float angle = _ccw ? 10 : -10;
 		robot->move(Point::rotate(robot->pos, ball().pos, angle));

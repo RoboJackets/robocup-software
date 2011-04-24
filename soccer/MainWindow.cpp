@@ -421,7 +421,7 @@ void MainWindow::updateStatus()
 	if (!_processor->autonomous())
 	{
 		// No autonomous robots
-		status("STOPPED", Status_Warning);
+		status("DISABLED", Status_Warning);
 		return;
 	}
 	
