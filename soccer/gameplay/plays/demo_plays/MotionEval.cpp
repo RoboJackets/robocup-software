@@ -14,8 +14,8 @@ Gameplay::Plays::MotionEval::MotionEval(GameplayModule *gameplay):
 	
 	_target = 0;
 	_points.resize(2);
-	_points[0] = Point(-1, 1);
-	_points[1] = Point(1, 1);
+	_points[0] = Point(-1, 1.8);
+	_points[1] = Point(1, 1.8);
 }
 
 float Gameplay::Plays::MotionEval::score(GameplayModule *gameplay)
@@ -49,7 +49,7 @@ bool Gameplay::Plays::MotionEval::run()
 	
 	robot->addText(QString().sprintf("MotionEval %d %d", _target, _reached));
 	robot->move(p);
-	robot->face(p);
+	robot->face(_points[(_target + 1) % _points.size()]);
 	
 	return true;
 }

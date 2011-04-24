@@ -34,6 +34,7 @@ namespace Gameplay
 				bool _ccw;
 				float _lastError;
 				float _lastDelta;
+				uint64_t _lastBallTime;
 			};
 	}
 }

@@ -75,23 +75,38 @@ void MotionControl::positionTrapezoidal()
 
 void MotionControl::positionPD()
 {
+	float curSpeed = _robot->vel.mag();
 	const float FrameTime = 1.0 / 60.0;
-	float maxSpeed = _worldVel.mag() + _robot->config->trapTrans.acceleration * FrameTime;
+	float maxSpeed = curSpeed + _robot->config->trapTrans.acceleration;
 	float cruise = _robot->config->trapTrans.velocity;
-	maxSpeed = min(cruise, maxSpeed);
-	float minSpeed = _worldVel.mag() - _robot->config->trapTrans.deceleration * FrameTime;
-	minSpeed = max(0.0f, minSpeed);
+	maxSpeed = min(maxSpeed, cruise);
+	float minSpeed = curSpeed - _robot->config->trapTrans.deceleration;
+	
+	float deadzone = 0.4f;
+	if (_robot->hasBall)
+	{
+		deadzone = 0.7f;
+	}
+	
+	minSpeed = max(deadzone, minSpeed);
 	
 	Point posError = _robot->cmd.goalPosition - _robot->pos;
-	Point newVel = posError * _robot->config->translation.p + (posError - _lastPosError) * _robot->config->translation.d;
-	float newMag = newVel.mag();
-	if (newMag > maxSpeed)
+	float p = _robot->config->translation.p;
+	
+	Point newVel = posError * p + (posError - _lastPosError) * _robot->config->translation.d;
+	float newSpeed = newVel.mag();
+	_robot->addText(QString().sprintf("Speed %f %f", curSpeed, newSpeed));
+	_robot->addText(QString().sprintf("Range %f %f", minSpeed, maxSpeed));
+	if (newSpeed > maxSpeed && newSpeed > 1.0)
 	{
-		_worldVel = newVel / newMag * maxSpeed;
-	} else if (newMag < minSpeed)
+		_robot->addText("Limited by accel/cruise");
+		_worldVel = newVel / newSpeed * maxSpeed;
+	} else if (newSpeed < minSpeed)
 	{
-		_worldVel = newVel / newMag * minSpeed;
+		_robot->addText("Limited by decel");
+		_worldVel = newVel / newSpeed * minSpeed;
 	} else {
+		_robot->addText("Unchanged");
 		_worldVel = newVel;
 	}
 	
@@ -138,7 +153,7 @@ void MotionControl::run()
 	const float Max_Linear_Speed = Max_Wheel_Speed * Wheel_Radius;
 	
 	// Radius of circle containing the roller contact points (m)
-	const float Contact_Circle_Radius = 0.0812;
+// 	const float Contact_Circle_Radius = 0.0812;
 	
 	// Maximum angular speed without translation
 // 	const float Max_Angular_Speed = Max_Linear_Speed / (Contact_Circle_Radius * 2 * M_PI);
