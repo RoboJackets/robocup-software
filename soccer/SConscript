@@ -103,6 +103,8 @@ srcs = [
 #	'gameplay/plays/demo_plays/DemoBasicPassing.cpp',
 #	'gameplay/plays/demo_plays/DemoBasicOneTouchPassing.cpp',
 	'gameplay/plays/demo_plays/DemoBasicAttack.cpp',
+	'gameplay/plays/demo_plays/DemoBasicLineAttack.cpp',
+	'gameplay/plays/demo_plays/DemoBasicPivotAttack.cpp',
 #	'gameplay/plays/demo_plays/DemoBasicOneTouchAttack.cpp',
 #	'gameplay/plays/demo_plays/DemoBasicChipAttack.cpp #disabled until 2010 robots ready',
 #	'gameplay/plays/demo_plays/DemoBasicOneTouchChipAttack.cpp',
