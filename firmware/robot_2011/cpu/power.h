@@ -18,7 +18,7 @@
 
 // Minimum supply voltage, converted from millivolts.
 // This is determined by the minimum safe discharge voltage of the LiPo pack.
-#define MIN_SUPPLY_RAW	MV_TO_RAW(10000)
+#define MIN_SUPPLY_RAW	MV_TO_RAW(13500)
 
 // Maximum supply voltage, converted from millivolts.
 // This is determined by the maximum voltage that the TC4428's can tolerate.

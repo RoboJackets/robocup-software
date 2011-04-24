@@ -83,8 +83,6 @@ void power_update()
 // Called every main loop iteration to restart power-failure music
 void power_fail_music()
 {
-//FIXME - This is so annoying during testing
-#if 0
 	if (!music_playing && !power_music_disable)
 	{
 		// The order that these are checked indicates the priority of the failures:
@@ -102,5 +100,4 @@ void power_fail_music()
 			music_start(song_undervoltage);
 		}
 	}
-#endif
 }

@@ -46,7 +46,7 @@ class SystemState
 		
 		void drawLine(const Geometry2d::Point &p0, const Geometry2d::Point &p1, const QColor &color = Qt::black, const QString &layer = QString())
 		{
-			drawLine(Geometry2d::Line(p0, p1), color);
+			drawLine(Geometry2d::Line(p0, p1), color, layer);
 		}
 		
 		void drawCircle(const Geometry2d::Point &center, float radius, const QColor &color = Qt::black, const QString &layer = QString());
