@@ -2,7 +2,7 @@
 
 #include "../../Play.hpp"
 
-#include "../../behaviors/Kick.hpp"
+#include "../../behaviors/PivotKick.hpp"
 
 namespace Gameplay
 {
@@ -22,7 +22,7 @@ public:
 	virtual bool run();
 
 protected:
-	Behaviors::Kick _kicker;
+	Behaviors::PivotKick _kicker;
 };
 } // \Gameplay
 } // \Plays

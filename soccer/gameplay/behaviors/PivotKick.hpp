@@ -30,6 +30,10 @@ namespace Gameplay
 					State_Aim,
 					State_Done
 				} _state;
-		};
+				
+				bool _ccw;
+				float _lastError;
+				float _lastDelta;
+			};
 	}
 }
