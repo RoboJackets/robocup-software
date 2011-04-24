@@ -64,7 +64,7 @@ srcs = [
 	'gameplay/plays/MightyMight.cpp',
 	'gameplay/plays/BasicOffense.cpp',
 	'gameplay/plays/BasicOffense121.cpp',
-	'gameplay/plays/AggressiveOpen.cpp',
+#	'gameplay/plays/AggressiveOpen.cpp',
 #	'gameplay/plays/Offense.cpp',
 #	'gameplay/plays/ClearBall.cpp',
 #	'gameplay/plays/Defense.cpp',
