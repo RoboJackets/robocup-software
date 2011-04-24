@@ -122,6 +122,15 @@ bool Gameplay::Plays::BasicOffense121::run()
 		_support2.ratio(0.9);
 	}
 
+	// adjust obstacles on striker and support
+	if (_striker.robot) {
+		unsigned striker = _striker.robot->shell();
+		if (_support1.robot)
+			_support1.robot->avoidTeammateRadius(striker, 0.5);
+		if (_support2.robot)
+			_support2.robot->avoidTeammateRadius(striker, 0.5);
+	}
+
 	// execute behaviors
 	if (_striker.robot) _striker.run();
 	if (_support1.robot) _support1.run();
