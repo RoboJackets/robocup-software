@@ -405,6 +405,13 @@ Speed with constant command:
 \end_layout
 
 \begin_layout Standard
+\begin_inset Formula $\frac{b}{a}=\frac{\frac{k_{T}cV_{s}}{mR_{c}}-\frac{T_{L}}{m}}{\frac{k_{T}k_{b}}{mR_{c}}}=\frac{cV_{s}}{k_{b}}-\frac{R_{c}T_{L}}{k_{T}k_{b}}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \begin_inset Formula $\omega=\frac{b}{a}+c_{1}e^{-at}$
 \end_inset
 
@@ -554,18 +561,66 @@ Solve for
 \end_layout
 
 \begin_layout Standard
-Average speed:
+Consecutive periods:
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\bar{\omega}=\frac{1}{t}\int_{0}^{t}\frac{b}{a}+c_{1}e^{-ax}dx=\frac{b}{at}+\frac{c_{1}}{t}\int_{0}^{t}e^{-ax}dx=\frac{b}{at}+\frac{c_{1}}{t}\left(\frac{e^{-at}}{a}-1\right)$
+\begin_inset Formula $\omega_{1=}\frac{b_{0}}{a}\left(1-e^{-at}\right)+\omega_{0}e^{-at}$
 \end_inset
 
 
 \end_layout
 
 \begin_layout Standard
-\begin_inset Formula $\frac{b}{a}=\frac{\frac{k_{T}cV_{s}}{mR_{c}}-\frac{T_{L}}{m}}{\frac{k_{T}k_{b}}{mR_{c}}}=\frac{cV_{s}}{k_{b}}-\frac{R_{c}T_{L}}{k_{T}k_{b}}$
+\begin_inset Formula $\omega_{2=}\frac{b_{1}}{a}\left(1-e^{-at}\right)+\omega_{1}e^{-at}$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Average speed:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\bar{\omega}=\frac{1}{t}\int_{0}^{t}\frac{b}{a}+c_{1}e^{-ax}dx=\frac{b}{at}+\frac{c_{1}}{t}\int_{0}^{t}e^{-ax}dx=\frac{b}{at}+\frac{c_{1}}{t}\left(\frac{e^{-at}}{a}-\frac{1}{a}\right)$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\bar{\omega}=\frac{1}{t}\int_{0}^{t}\frac{b}{a}\left(1-e^{-ax}\right)+\omega_{0}e^{-ax}dx$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $=\frac{b}{at}\int_{0}^{t}\left(1-e^{-ax}\right)dx+\frac{\omega_{0}}{t}\int_{0}^{t}e^{-ax}dx$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\noun off
+\color none
+\begin_inset Formula $=\frac{b}{at}\left(t-\int_{0}^{t}e^{-ax}dx\right)+\frac{\omega_{0}}{t}\int_{0}^{t}e^{-ax}dx$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $=\frac{b}{a}-\left(\frac{b}{at}+\frac{\omega_{0}}{t}\right)\left(\frac{e^{-at}}{a}-\frac{1}{a}\right)$
 \end_inset
 
 
