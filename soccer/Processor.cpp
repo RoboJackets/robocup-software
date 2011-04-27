@@ -15,10 +15,11 @@
 #include <Joystick.hpp>
 #include <LogUtils.hpp>
 #include <BallSensor.hpp>
+#include <Robot.hpp>
 
+#include <motion/MotionControl.hpp>
 #include <modeling/WorldModel.hpp>
 #include <gameplay/GameplayModule.hpp>
-#include <motion/RobotController.hpp>
 #include <modeling/WorldModel.hpp>
 #include <RefereeModule.hpp>
 
@@ -418,7 +419,12 @@ void Processor::run()
 		{
 			if (robot->visible)
 			{
-				robot->runMotionControl();
+				if ((_manualID >= 0 && (int)robot->shell() == _manualID) || !_joystick->autonomous() || _state.gameState.halt())
+				{
+					robot->motionControl()->stopped();
+				}
+				
+				robot->motionControl()->run();
 			}
 		}
 

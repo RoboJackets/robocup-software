@@ -7,6 +7,7 @@
 #include <algorithm>
 
 using namespace std;
+using namespace Utils;
 using namespace Geometry2d;
 
 MotionControl::MotionControl(OurRobot *robot)
@@ -14,12 +15,16 @@ MotionControl::MotionControl(OurRobot *robot)
 	_robot = robot;
 
 	_robot->radioTx.set_board_id(_robot->shell());
-	for (int m = 0; m < 4; ++m)
+	for (int i = 0; i < 4; ++i)
 	{
+		_wheelVel[i] = 0;
+		_out[i] = 0;
+		_integral[i] = 0;
 		_robot->radioTx.add_motors(0);
 	}
 }
 
+#if 0
 void MotionControl::positionTrapezoidal()
 {
 	Point posError = _robot->cmd.goalPosition - _robot->pos;
@@ -72,11 +77,11 @@ void MotionControl::positionTrapezoidal()
 	
 	_worldVel = posErrorDir * targetSpeed;
 }
+#endif
 
 void MotionControl::positionPD()
 {
-	float curSpeed = _robot->vel.mag();
-	const float FrameTime = 1.0 / 60.0;
+	float curSpeed = _velocity.mag();
 	float maxSpeed = curSpeed + _robot->config->trapTrans.acceleration;
 	float cruise = _robot->config->trapTrans.velocity;
 	maxSpeed = min(maxSpeed, cruise);
@@ -87,6 +92,7 @@ void MotionControl::positionPD()
 	{
 		deadzone = 0.7f;
 	}
+	deadzone = 0;
 	
 	minSpeed = max(deadzone, minSpeed);
 	
@@ -95,21 +101,27 @@ void MotionControl::positionPD()
 	
 	Point newVel = posError * p + (posError - _lastPosError) * _robot->config->translation.d;
 	float newSpeed = newVel.mag();
-	_robot->addText(QString().sprintf("Dist %f Speed %f %f", posError.mag(), curSpeed, newSpeed));
-// 	_robot->addText(QString().sprintf("Range %f %f", minSpeed, maxSpeed));
-	if (newSpeed < minSpeed)
+	if (newSpeed)
 	{
-		_robot->addText("Limited by decel");
-		_worldVel = newVel / newSpeed * minSpeed;
-	} else if (newSpeed > maxSpeed && newSpeed > 1.0)
-	{
-		_robot->addText("Limited by accel/cruise");
-		_worldVel = newVel / newSpeed * maxSpeed;
+		_robot->addText(QString().sprintf("Dist %f Speed %f %f", posError.mag(), curSpeed, newSpeed));
+// 		_robot->addText(QString().sprintf("Range %f %f", minSpeed, maxSpeed));
+		if (newSpeed < minSpeed)
+		{
+			_robot->addText("Limited by decel");
+			_worldVel = newVel / newSpeed * minSpeed;
+		} else if (newSpeed > maxSpeed && newSpeed > 1.0)
+		{
+			_robot->addText("Limited by accel/cruise");
+			_worldVel = newVel / newSpeed * maxSpeed;
+		} else {
+	// 		_robot->addText("Unchanged");
+			_worldVel = newVel;
+		}
+		_robot->addText(QString().sprintf("Final vel %f %f", _worldVel.x, _worldVel.y));
 	} else {
-// 		_robot->addText("Unchanged");
-		_worldVel = newVel;
+		// Not trying to move
+		_worldVel = Point();
 	}
-	_robot->addText(QString().sprintf("Final vel %f %f", _worldVel.x, _worldVel.y));
 	
 	_lastPosError = posError;
 }
@@ -125,17 +137,16 @@ void MotionControl::anglePD()
 	_lastAngleError = error;
 }
 
+void MotionControl::stopped()
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		_integral[i] = 0;
+	}
+}
+
 void MotionControl::run()
 {
-	positionPD();
-	anglePD();
-	
-	// Scaling
-	Point scaledVel = _worldVel * _robot->cmd.vScale;
-	float scaledSpin = _spin * _robot->cmd.wScale;
-	
-	Point bodyVel = scaledVel.rotated(-_robot->angle);
-	
 	//FIXME - These are all 2011 numbers
 	
 	// The wheel angular velocity (rad/s) resulting from the largest wheel command
@@ -157,13 +168,6 @@ void MotionControl::run()
 	// Maximum angular speed without translation
 // 	const float Max_Angular_Speed = Max_Linear_Speed / (Contact_Circle_Radius * 2 * M_PI);
 	
-	// Limit speed so we at least go in the right direction
-	float s = bodyVel.mag();
-	if (s > Max_Linear_Speed)
-	{
-		bodyVel = bodyVel / s * Max_Linear_Speed;
-	}
-	
 	// Axle direction, pointing out of the robot
 	const Point axles[4] =
 	{
@@ -173,8 +177,82 @@ void MotionControl::run()
 		Point(-1, -1).normalized()
 	};
 	
+	_velocity = _robot->pos - _lastPos;
+	_lastPos = _robot->pos;
+	
+	float dtime = (_robot->state()->timestamp - _lastFrameTime) / 1.0e6;
+	_lastFrameTime = _robot->state()->timestamp;
+	_angularVelocity = fixAngleRadians((_robot->angle - _lastAngle) * DegreesToRadians) / dtime;
+	_lastAngle = _robot->angle;
+	
+	// Measure current wheel velocities (rad/s)
+	for (int i = 0; i < 4; ++i)
+	{
+		float newVel = axles[i].dot(_velocity) / Wheel_Radius + _angularVelocity * Robot_Radius / Wheel_Radius;
+		const float alpha = _robot->config->wheelAlpha;
+		_wheelVel[i] = newVel * alpha + _wheelVel[i] * (1.0 - alpha);
+	}
+	
+	positionPD();
+	anglePD();
+	
+	// Scaling
+	Point scaledVel = _worldVel * _robot->cmd.vScale;
+	float scaledSpin = _spin * _robot->cmd.wScale;
+	
+	Point bodyVel = scaledVel.rotated(-_robot->angle);
+	
+	if (_robot->cmd.planner == MotionCmd::DirectVelocity)
+	{
+		scaledSpin = _robot->cmd.direct_ang_vel;
+		bodyVel = _robot->cmd.direct_trans_vel;
+	}
+	//FIXME - Direct motor speeds
+	
+// 	scaledSpin = _robot->config->test;
+	
+	// Sanity check
+	if (!isfinite(scaledSpin) || !isfinite(bodyVel.x) || !isfinite(bodyVel.y))
+	{
+		_robot->addText(QString().sprintf("Non-normal motion results: rotate %f, translate %f, %f\n", scaledSpin, bodyVel.x, bodyVel.y));
+		scaledSpin = 0;
+		bodyVel = Point();
+	}
+	
+#if 1
+	// Experimental: wheel control through vision
+	
+// 	printf("target velocities %f and %f, %f\n", scaledSpin, bodyVel.x, bodyVel.y);
+	for (int i = 0; i < 4; ++i)
+	{
+		float w = axles[i].dot(bodyVel) / Wheel_Radius + scaledSpin * Robot_Radius / Wheel_Radius;
+		float error = _wheelVel[i] - w;
+		
+		_integral[i] += -error * _robot->config->wheel.i * dtime;
+		_integral[i] = max(-20.0f, min(20.0f, _integral[i]));
+		
+		_out[i] = w * _robot->config->wheel.p + _integral[i] + (error - _lastAngleError) * _robot->config->wheel.d;
+		if (_out[i] < -127)
+		{
+			_out[i] = -127;
+		} else if (_out[i] > 127)
+		{
+			_out[i] = 127;
+		}
+// 		printf("set %5.2f measured %5.2f err %5.2f int %5.2f command %3d\n", w, _wheelVel[i], error, _integral[i], (int)_out[i]);
+	}
+	
+#else
+	// This stuff works
+	
+	// Limit speed so we at least go in the right direction
+	float s = bodyVel.mag();
+	if (s > Max_Linear_Speed)
+	{
+		bodyVel = bodyVel / s * Max_Linear_Speed;
+	}
+	
 	// Set motor commands for linear motion
-	int motors[4];
 	int maxPos = 0;
 	int maxNeg = 0;
 	for (int i = 0; i < 4; ++i)
@@ -217,10 +295,11 @@ void MotionControl::run()
 	{
 		motors[i] += spinCommand;
 	}
-	
+#endif
+
 	// Store motor commands in the radio sub-packet
 	for (int i = 0; i < 4; ++i)
 	{
-		_robot->radioTx.set_motors(i, motors[i]);
+		_robot->radioTx.set_motors(i, _out[i]);
 	}
 }

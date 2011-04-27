@@ -5,8 +5,8 @@
    <b value="-2.7"/>
   </kicker>
   <trapTrans>
-   <velocity value="5"/>
-   <acceleration value="5"/>
+   <velocity value="10"/>
+   <acceleration value="2.5"/>
    <deceleration value="0"/>
   </trapTrans>
   <trapRot>
@@ -15,15 +15,22 @@
    <deceleration value="0"/>
   </trapRot>
   <translation>
-   <p value="10"/>
+   <p value="5"/>
    <i value="0"/>
-   <d value="40"/>
+   <d value="30"/>
   </translation>
   <rotation>
-   <p value="30"/>
+   <p value="2"/>
    <i value="0"/>
    <d value="0"/>
   </rotation>
+  <wheel>
+   <p value="1"/>
+   <i value="1.5"/>
+   <d value="0"/>
+  </wheel>
+  <wheelAlpha value="0.1"/>
+  <test value="1"/>
  </Rev2008>
  <RobotModel>
   <Position>
@@ -74,6 +81,13 @@
    <m value="1"/>
    <b value="0"/>
   </kicker>
+  <wheel>
+   <p value="0"/>
+   <i value="0"/>
+   <d value="0"/>
+  </wheel>
+  <wheelAlpha value="1"/>
+  <test value="0"/>
  </Rev2011>
  <Is2011>
   <item0 value="false"/>

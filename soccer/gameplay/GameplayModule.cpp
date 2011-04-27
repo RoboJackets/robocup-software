@@ -7,6 +7,7 @@
 #include <gameplay/Play.hpp>
 #include <Constants.hpp>
 #include <protobuf/LogFrame.pb.h>
+#include <Robot.hpp>
 
 #include <stdio.h>
 #include <iostream>

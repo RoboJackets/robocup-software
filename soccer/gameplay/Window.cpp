@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <Constants.hpp>
+#include <Robot.hpp>
 #include <framework/SystemState.hpp>
 #include <boost/foreach.hpp>
 

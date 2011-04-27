@@ -37,6 +37,9 @@ struct RobotConfig
 	Dynamics trapRot;
 	PID translation;
 	PID rotation;
+	PID wheel;
+	ConfigDouble wheelAlpha;
+	ConfigDouble test;
 	
 	Kicker kicker;
 };

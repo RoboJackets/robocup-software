@@ -27,6 +27,9 @@ RobotConfig::RobotConfig(Configuration* config, QString prefix):
 	trapRot(config, QString("%1/trapRot").arg(prefix)),
 	translation(config, QString("%1/translation").arg(prefix)),
 	rotation(config, QString("%1/rotation").arg(prefix)),
+	wheel(config, QString("%1/wheel").arg(prefix)),
+	wheelAlpha(config, QString("%1/wheelAlpha").arg(prefix), 1),
+	test(config, QString("%1/test").arg(prefix)),
 	kicker(config, QString("%1/kicker").arg(prefix))
 {
 }

@@ -2,6 +2,7 @@
 #include <gameplay/planning/bezier.hpp>
 #include <Utils.hpp>
 #include <LogUtils.hpp>
+#include <motion/MotionControl.hpp>
 #include <protobuf/LogFrame.pb.h>
 
 #include <stdio.h>
@@ -38,7 +39,6 @@ Robot::Robot(unsigned int shell, bool self)
 
 OurRobot::OurRobot(int shell, SystemState *state):
 	Robot(shell, true),
-	_motionControl(this),
 	_state(state)
 {
 	_ball_avoid = Ball_Avoid_Small;
@@ -49,6 +49,7 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	sensorConfidence = 0;
 	cmd_w = 0;
 	_lastChargedTime = 0;
+	_motionControl = new MotionControl(this);
 
 	_planner = new Planning::RRT::Planner();
 	for (size_t i = 0; i < Num_Shells; ++i)
@@ -59,6 +60,12 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	}
 
 	_planner->maxIterations(250);
+}
+
+OurRobot::~OurRobot()
+{
+	delete _motionControl;
+	delete _planner;
 }
 
 void OurRobot::addText(const QString& text, const QColor& qc)

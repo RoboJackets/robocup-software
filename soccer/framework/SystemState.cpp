@@ -3,6 +3,7 @@
 #include <protobuf/LogFrame.pb.h>
 #include <LogUtils.hpp>
 #include <framework/RobotConfig.hpp>
+#include <Robot.hpp>
 
 using namespace Packet;
 
