@@ -2,6 +2,7 @@
 
 #include "GameplayModule.hpp"
 #include <framework/SystemState.hpp>
+#include <Robot.hpp>
 
 namespace Gameplay
 {

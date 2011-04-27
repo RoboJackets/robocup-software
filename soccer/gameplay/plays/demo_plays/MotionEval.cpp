@@ -48,8 +48,9 @@ bool Gameplay::Plays::MotionEval::run()
 	}
 	
 	robot->addText(QString().sprintf("MotionEval %d %d", _target, _reached));
-	robot->move(p);
-	robot->face(_points[(_target + 1) % _points.size()]);
+ 	robot->move(p);
+// 	robot->face(_points[(_target + 1) % _points.size()]);
+	robot->face(ball().pos);
 	
 	return true;
 }

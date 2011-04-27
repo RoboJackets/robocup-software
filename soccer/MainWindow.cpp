@@ -10,6 +10,7 @@
 #include <Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
 #include <framework/RobotConfig.hpp>
+#include <Robot.hpp>
 
 #include <QInputDialog>
 #include <QFileDialog>

@@ -8,16 +8,16 @@
 #include <QColor>
 
 #include <Constants.hpp>
-#include <framework/SystemState.hpp>
 #include <framework/MotionCmd.hpp>
 #include <framework/Path.hpp>
 #include <gameplay/planning/rrt.hpp>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
-#include <motion/MotionControl.hpp>
+#include "Processor.hpp"
 
 class SystemState;
 class RobotConfig;
+class MotionControl;
 
 namespace Packet
 {
@@ -85,6 +85,7 @@ public:
 	RobotConfig * config;
 
 	OurRobot(int shell, SystemState *state);
+	~OurRobot();
 
 	void addText(const QString &text, const QColor &color = Qt::white);
 
@@ -271,9 +272,9 @@ public:
 	void newRevision(bool is_2011) { _newRevision = is_2011; }
 	bool newRevision() const { return _newRevision; }
 
-	void runMotionControl()
+	MotionControl *motionControl() const
 	{
-		_motionControl.run();
+		return _motionControl;
 	}
 	
 	SystemState *state() const
@@ -285,7 +286,7 @@ protected:
 	// Stores a stack trace in _commandTrace
 	void setCommandTrace();
 
-	MotionControl _motionControl;
+	MotionControl *_motionControl;
 	
 	SystemState *_state;
 

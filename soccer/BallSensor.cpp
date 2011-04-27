@@ -5,6 +5,7 @@
 
 #include <framework/SystemState.hpp>
 #include <gameplay/GameplayModule.hpp>
+#include <Robot.hpp>
 
 #include <boost/foreach.hpp>
 

@@ -11,6 +11,7 @@
 #include <Configuration.hpp>
 #include <Constants.hpp>
 #include <Utils.hpp>
+#include <Robot.hpp>
 
 // different options for ball model here
 #include "RBPFBallModel.hpp"
