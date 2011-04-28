@@ -148,6 +148,7 @@ void OurRobot::move(Geometry2d::Point goal, bool stopAtEnd)
 	_delayed_goal = goal;
 	_planner_type = RRT;
 	cmd.pathEnd = (stopAtEnd) ? MotionCmd::StopAtEnd : MotionCmd::FastAtEnd;
+	cmd.planner = MotionCmd::Point;
 }
 
 void OurRobot::move(const vector<Geometry2d::Point>& path, bool stopAtEnd)
@@ -471,6 +472,11 @@ void OurRobot::drawPath(const Planning::Path& path, const QColor &color, const Q
 }
 
 void OurRobot::execute(const ObstacleGroup& global_obstacles) {
+	if (cmd.planner != MotionCmd::Point)
+	{
+		return;
+	}
+	
 	setCommandTrace();
 
 	const bool enable_slice = false;
