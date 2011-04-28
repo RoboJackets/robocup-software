@@ -147,6 +147,21 @@ void MotionControl::stopped()
 
 void MotionControl::run()
 {
+	if (_robot->cmd.planner == MotionCmd::DirectMotor)
+	{
+		for (int i = 0; i < 4; ++i)
+		{
+			int out = 0;
+			if (i < _robot->cmd.direct_motor_cmds.size())
+			{
+				out = _robot->cmd.direct_motor_cmds[i];
+			}
+			
+			_robot->radioTx.set_motors(i, out);
+		}
+		return;
+	}
+	
 	//FIXME - These are all 2011 numbers
 	
 	// The wheel angular velocity (rad/s) resulting from the largest wheel command

@@ -121,11 +121,11 @@ void Gameplay::GameplayModule::createGoalie()
 
 void Gameplay::GameplayModule::removeGoalie()
 {
-/*	if (_goalie)
+	if (_goalie)
 	{
 		delete _goalie;
 		_goalie = 0;
-	}*/
+	}
 }
 
 void Gameplay::GameplayModule::updatePlay() {
