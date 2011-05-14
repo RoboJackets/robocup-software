@@ -75,6 +75,9 @@ if platform.machine() == 'x86_64':
 		elif issue[1] == '10.10':
 			compat_dir = Dir('#/SoccSim/lib/32-on-64/maverick')
 			protobuf_lib = compat_dir.File('libprotobuf.so.6')
+		elif issue[1] == '11.04':
+			compat_dir = Dir('#/SoccSim/lib/32-on-64/natty')
+			protobuf_lib = compat_dir.File('libprotobuf.so.6')
 		else:
 			raise '32-bit compatibility: Unsupported version of Ubuntu'
 		Default(env32.Install(exec_dir, protobuf_lib))
