@@ -14,9 +14,8 @@ using namespace LinAlg;
 // calculations: Inn (n x n Identity matrix), h, Yhat, S
 RbpfModel::RbpfModel(Modeling::RobotModel::RobotMap *robotMap)
 : n(NSIZE), m(MSIZE), s(SSIZE), F(n,n), H(s,n),
-  Q(n,n), R(s,s), _robotMap(robotMap), Inn(n,n), h(s), Yhat(s,1), S(s,s) {
-	Inn.clear(); h.clear(); Yhat.clear(); S.clear(); // zero out matrices
-	for(int i=0;i<n;i++){Inn(i,i)=1.0;} // initialize identity matrix
+  Q(n,n), R(s,s), _robotMap(robotMap), Inn(Matrix::Identity(n,n)),
+  h(Vector::Zero(s)), Yhat(Vector(s)), S(Matrix::Zero(s,s)) {
 }
 
 // performs EKF predict, storing the result in X and P
@@ -29,15 +28,15 @@ RbpfModel::RbpfModel(Modeling::RobotModel::RobotMap *robotMap)
 // TODO: for speed, temp matrices should be removed.
 void RbpfModel::predict(Vector &X, Matrix &P, Vector &U, double dt){
 	assert((int)X.size() == n);  // X must be of size (n x 1)
-	assert((int)P.size1() == n); // P must be of size (n x n)
-	assert((int)P.size2() == n); // P must be of size (n x n)
+	assert((int)P.rows() == n); // P must be of size (n x n)
+	assert((int)P.cols() == n); // P must be of size (n x n)
 	assert((int)U.size() == m); // U must be of size (m x 1)
 	// Xhat = f(X,U,dt), f() = state transition model
 	// P = F*P*F' + Q
 	computeTransitionJacobian(dt); // recompute F
 	transitionModel(X, U, dt); // X = f(X,U,dt)
-	Matrix FPFt = prod(F,P);
-	FPFt = prod(FPFt,trans(F));
+	Matrix FPFt = F * P;
+	FPFt *= F.transpose();
 	P = FPFt + Q;
 }
 
@@ -50,8 +49,8 @@ void RbpfModel::predict(Vector &X, Matrix &P, Vector &U, double dt){
 // TODO: for speed, temp matrices should be removed.
 void RbpfModel::update(Vector &X, Matrix &P, Vector &Z, double dt){
 	assert((int)X.size() == n);  // X must be of size (n x 1)
-	assert((int)P.size1() == n); // P must be of size (n x n)
-	assert((int)P.size2() == n); // P must be of size (n x n)
+	assert((int)P.rows() == n); // P must be of size (n x n)
+	assert((int)P.cols() == n); // P must be of size (n x n)
 	assert((int)Z.size() == s); // Z must be of size (s x 1)
 	// Yhat = Z - h(Xhat), h() = observation model
 	// S = H*P*H' + R
@@ -61,21 +60,24 @@ void RbpfModel::update(Vector &X, Matrix &P, Vector &Z, double dt){
 	computeObservationJacobian(dt); // recompute H
 	observationModel(X,h); // h = h(Xhat)
 	Yhat = Z-h;
-	S = prod(H,P);
-	S = prod(S,trans(H)) + R;
-	Matrix K = prod(P,trans(H));
-	Matrix Sinv(s,s);
-	if(InvertMatrix(S,Sinv)){
-		K = prod(K,Sinv);
-		X = X + prod(K,Yhat);
-		Matrix temp = Inn - prod(K,H);
-		P = prod(temp,P);
-	}else{
-		// S^{-1} could not be determined, throw exception
-		printf("S^-1 could not be calculated during EKF update in RbpfModel.update()");
-		bool inverseFound = false;
-		assert(inverseFound);
-	}
+	S = H*P*H.transpose() + R;
+
+	Matrix K = P * H.transpose() * S.inverse();
+	X += K * Yhat;
+	P = (Inn - K * H) * P;
+
+	// TODO: do we really ever have a case where this is not invertible?
+//	if(InvertMatrix(S,Sinv)){
+//		K = prod(K,Sinv);
+//		X = X + prod(K,Yhat);
+//		Matrix temp = Inn - prod(K,H);
+//		P = prod(temp,P);
+//	}else{
+//		// S^{-1} could not be determined, throw exception
+//		printf("S^-1 could not be calculated during EKF update in RbpfModel.update()");
+//		bool inverseFound = false;
+//		assert(inverseFound);
+//	}
 }
 
 // returns the previous predicted measurement, h (s x 1)

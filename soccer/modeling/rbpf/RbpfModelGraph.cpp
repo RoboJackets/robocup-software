@@ -23,7 +23,7 @@ RbpfModelGraph::~RbpfModelGraph() {
 // transition probabilities to zero.
 void RbpfModelGraph::addModel(RbpfModel* model){
 	modelVector.push_back(model); // add the node
-	adjacencyMatrix.resize(j+1,j+1, true); // resize transition probabilities
+	adjacencyMatrix.resize(j+1,j+1); // resize transition probabilities
 	for(int i=0; i<j+1; i++){ // ensure new transition probabilities are zero
 		adjacencyMatrix(i,j) = adjacencyMatrix(j,i) = 0.0;
 	}

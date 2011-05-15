@@ -1,7 +1,7 @@
 Import('*')
 
 srcs = [
-#	'main.cpp',  # don't include main here to allow for 
+#	'main.cpp',  # don't include main here to allow for separate test and run executables
 	'Processor.cpp',
 	'Logger.cpp',
 	'MainWindow.cpp',
@@ -132,7 +132,6 @@ srcs = [
 #	'modeling/EKFBallModel.cpp',
 #	'modeling/KalmanBallModel.cpp',      
 	'modeling/RobotModel.cpp',
-#	'modeling/BLASWrap/blaswrap.cpp',
 	'modeling/rbpf/Rbpf.cpp',
 	'modeling/rbpf/RbpfModel.cpp',
 	'modeling/rbpf/RbpfModelGraph.cpp',
@@ -158,7 +157,7 @@ uics = env.Uic4([
 
 e = env.Clone()
 e.Append(CPPPATH=['#/soccer', Dir('ui')])
-e.Append(LIBS=['blas', 'lapack', 'bfd', 'usb'])
+e.Append(LIBS=['bfd', 'usb'])
 
 # build soccer executable
 p = e.Program('soccer', ['main.cpp'] + srcs )
@@ -183,7 +182,8 @@ Help('log_viewer: Stand-alone log viewer\n')
 # Add new unit tests here
 tests = [
 	'tests/testExamples.cpp',
-	'tests/testPath.cpp'
+	'tests/testPath.cpp',
+	'tests/testEigen.cpp'
 ]
 e.Append(LIBS=['gtest'])
 # NOTE: this links against all sources to avoid needing to actually check dependencies
