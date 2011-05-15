@@ -30,8 +30,8 @@ public:
 	RbpfState(LinAlg::Vector _X, LinAlg::Matrix _P, int _modelIdx, double _w):
 		X(_X), P(_P), modelIdx(_modelIdx), weight(_w)
 	{
-		assert(X.size() == P.size1()); // P must be of size (n x n)
-		assert(X.size() == P.size2()); // P must be of size (n x n)
+		assert(X.size() == P.rows()); // P must be of size (n x n)
+		assert(X.size() == P.cols()); // P must be of size (n x n)
 		n = X.size();                  // size of Kalman Filter state
 	}
 

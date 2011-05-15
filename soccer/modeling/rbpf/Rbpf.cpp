@@ -18,8 +18,8 @@ using namespace LinAlg;
 //   k: the number of particles to be initialized.
 // initializes the particle vector, with k particle states
 Rbpf::Rbpf(Vector X, Matrix P, int _k) : k(_k), modelGraph() {
-	assert(X.size() == P.size1()); // P must be of size (n x n)
-	assert(X.size() == P.size2()); // P must be of size (n x n)
+	assert(X.size() == P.rows()); // P must be of size (n x n)
+	assert(X.size() == P.cols()); // P must be of size (n x n)
 	assert(k > 0);                 // Must have at least 1 particle state
 	n = X.size();                  // set size of state vector
 
@@ -38,8 +38,8 @@ Rbpf::~Rbpf() { }
 // convenience function for calling update(U,Z,dt) with no control input
 // note: assumes that control size (m) = 2 and measurement size (s) = 2
 void Rbpf::update(double x, double y, double dt){
-	Vector U(6); U.clear(); // control input
-	Vector Z(2); Z.clear(); // measurement
+	Vector U = Vector::Zero(6); // control input
+	Vector Z = Vector::Zero(2); // measurement
 	Z(0) = x; Z(1) = y;
 	update(U,Z,dt);
 }
@@ -98,8 +98,8 @@ void Rbpf::updateMultipleObs(double xs[], double ys[], double dts[], int numObs)
 	float weightSum;
 	RbpfModel* model;
 	RbpfState* tmpParticle;
-	Vector U(6); U.clear(); // control input
-	Vector Z(2); Z.clear(); // measurement
+	Vector U = Vector::Zero(6); // control input
+	Vector Z = Vector::Zero(2); // measurement
 	double dt;
 
 	for(int kIdx=0; kIdx<k; kIdx++){ // for each of the k particles
@@ -209,7 +209,9 @@ void Rbpf::addModel(RbpfModel* model){
 	// Each particle in tmpParticleVector simply contains space for temporary
 	// particles during the update step.  The values in each particle will be
 	// overwritten at each iteration, so the initial values do not matter.
-	int modelIdx = 0; Vector X(n); X.clear(); Matrix P(n,n); P.clear(); P*=0.0;
+	int modelIdx = 0;
+	Vector X = Vector::Zero(n);
+	Matrix P = Matrix::Zero(n,n);
 	for(int i=0; i<k; i++)
 		tmpParticleVector.push_back(new RbpfState(X, P, modelIdx, 0.0));
 }
