@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include <LinearAlgebra.hpp>
+#include "rbpfMatrices.h"
 
 class RbpfState {
 public:
@@ -27,12 +28,9 @@ public:
 	// _modelIdx: index of this particle's model
 	// _w: initial weight
 	//  n: size of Kalman Filter state
-	RbpfState(LinAlg::Vector _X, LinAlg::Matrix _P, int _modelIdx, double _w):
+	RbpfState(const rbpf::VectorNf& _X, const rbpf::MatrixNNf& _P, int _modelIdx, double _w):
 		X(_X), P(_P), modelIdx(_modelIdx), weight(_w)
 	{
-		assert(X.size() == P.rows()); // P must be of size (n x n)
-		assert(X.size() == P.cols()); // P must be of size (n x n)
-		n = X.size();                  // size of Kalman Filter state
 	}
 
 	// Copies one state into another. Note: this is not a copy constructor.
@@ -44,9 +42,9 @@ public:
 	// Used for printing this state to a stream
 	friend std::ostream& operator<<(std::ostream& out, const RbpfState &state);
 
-	int n;         // size of Kalman Filter state
-	LinAlg::Vector X;      // state vector (n x 1)
-	LinAlg::Matrix P;      // state covariance (n x n)
+	static const unsigned int n = NSIZE;         // size of Kalman Filter state
+	rbpf::VectorNf X;      // state vector (n x 1)
+	rbpf::MatrixNNf P;      // state covariance (n x n)
 	int modelIdx;  // index of this particle's model
 	double weight; // particle weight
 };

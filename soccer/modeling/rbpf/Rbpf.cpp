@@ -11,17 +11,15 @@
 //#include <boost/math/constants/constants.hpp> // Not in boost 1.37 that 9.04 people use
 
 using namespace LinAlg;
+using namespace rbpf;
 
 // Constructor: Rbpf(X, P, k)
 //   X: initial state, (n x 1)
 //   P: initial state covariance, (n x n)
 //   k: the number of particles to be initialized.
 // initializes the particle vector, with k particle states
-Rbpf::Rbpf(Vector X, Matrix P, int _k) : k(_k), modelGraph() {
-	assert(X.size() == P.rows()); // P must be of size (n x n)
-	assert(X.size() == P.cols()); // P must be of size (n x n)
+Rbpf::Rbpf(VectorNf X, MatrixNNf P, int _k) : k(_k), modelGraph() {
 	assert(k > 0);                 // Must have at least 1 particle state
-	n = X.size();                  // set size of state vector
 
 	// initialize particles
 	// because there are no models in the model graph, the initial model used
@@ -38,8 +36,8 @@ Rbpf::~Rbpf() { }
 // convenience function for calling update(U,Z,dt) with no control input
 // note: assumes that control size (m) = 2 and measurement size (s) = 2
 void Rbpf::update(double x, double y, double dt){
-	Vector U = Vector::Zero(6); // control input
-	Vector Z = Vector::Zero(2); // measurement
+	VectorMf U = Vector::Zero(6); // control input
+	VectorSf Z = Vector::Zero(2); // measurement
 	Z(0) = x; Z(1) = y;
 	update(U,Z,dt);
 }
@@ -50,7 +48,7 @@ void Rbpf::update(double x, double y, double dt){
 //                    update based on that assumption. If the resulting
 //                    probability is good, that assumption must have been true
 //                    and so we will end up resampling that particle.
-void Rbpf::update(Vector &U, Vector &Z, double dt){
+void Rbpf::update(VectorMf &U, VectorSf &Z, double dt){
 	int j = modelGraph.j; // number of models in modelGraph
 	int tmpPartIdx = 0;
 	float weightSum;
@@ -98,8 +96,8 @@ void Rbpf::updateMultipleObs(double xs[], double ys[], double dts[], int numObs)
 	float weightSum;
 	RbpfModel* model;
 	RbpfState* tmpParticle;
-	Vector U = Vector::Zero(6); // control input
-	Vector Z = Vector::Zero(2); // measurement
+	VectorNf U = VectorMf::Zero(); // control input
+	VectorSf Z = VectorSf::Zero(); // measurement
 	double dt;
 
 	for(int kIdx=0; kIdx<k; kIdx++){ // for each of the k particles
@@ -229,11 +227,11 @@ void Rbpf::setTransProb(int AIdx, int BIdx, double weight){
 // explicitly for the 2D case because inverting Sigma (in the general multi-
 // variate case) is expensive.
 // Compared against Matlab's mvnpdf() with several tests all passed.
-inline double Rbpf::gaussianPDF2D(Vector *X, Matrix *Sigma){
-	double sX2 = (*Sigma)(0,0), sY2 = (*Sigma)(1,1);
+inline double Rbpf::gaussianPDF2D(Eigen::Vector2f& X, Eigen::Matrix2f& Sigma){
+	double sX2 = Sigma(0,0), sY2 = Sigma(1,1);
 	double sX = sqrt(sX2), sY = sqrt(sY2);
-	double p = (*Sigma)(0,1)/(sX*sY); // just take p(1), assume Pos.Semi.Def.
-	double x = (*X)(0), y = (*X)(1);
+	double p = Sigma(0,1)/(sX*sY); // just take p(1), assume Pos.Semi.Def.
+	double x = X(0), y = X(1);
 	double expTerm = (-0.5/(1-p*p)) * ((x*x/sX2) + (y*y/sY2) - (2*p*x*y/(sX*sY)));
 	return (0.5/(M_PI*sX*sY*sqrt(1-p*p)))*std::exp(expTerm);
 }
