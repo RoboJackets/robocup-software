@@ -29,7 +29,6 @@
 #include <iostream>
 #include <fstream>
 #include <assert.h>
-#include <LinearAlgebra.hpp>
 #include "RbpfModel.hpp"
 
 // Class: RbpfModelRolling
@@ -40,9 +39,9 @@ public:
 	RbpfModelRolling();
 	virtual ~RbpfModelRolling();
 protected:
-	void transitionModel(LinAlg::Vector &X, LinAlg::Vector &U, double dt);
+	void transitionModel(rbpf::VectorNf &X, rbpf::VectorMf &U, double dt);
 	void computeTransitionJacobian(double dt);
-	void observationModel(LinAlg::Vector &X, LinAlg::Vector &out);
+	void observationModel(rbpf::VectorNf &X, rbpf::VectorSf &out);
 	void computeObservationJacobian(double dt);
 };
 
@@ -55,9 +54,9 @@ public:
 	RbpfModelKicked();
 	virtual ~RbpfModelKicked();
 protected:
-	void transitionModel(LinAlg::Vector &X, LinAlg::Vector &U, double dt);
+	void transitionModel(rbpf::VectorNf &X, rbpf::VectorMf &U, double dt);
 	void computeTransitionJacobian(double dt);
-	void observationModel(LinAlg::Vector &X, LinAlg::Vector &out);
+	void observationModel(rbpf::VectorNf &X, rbpf::VectorSf &out);
 	void computeObservationJacobian(double dt);
 };
 
@@ -69,9 +68,9 @@ public:
 	RbpfModelRollingFriction();
 	virtual ~RbpfModelRollingFriction();
 protected:
-	void transitionModel(LinAlg::Vector &X, LinAlg::Vector &U, double dt);
+	void transitionModel(rbpf::VectorNf &X, rbpf::VectorMf &U, double dt);
 	void computeTransitionJacobian(double dt);
-	void observationModel(LinAlg::Vector &X, LinAlg::Vector &out);
+	void observationModel(rbpf::VectorNf &X, rbpf::VectorSf &out);
 	void computeObservationJacobian(double dt);
 };
 

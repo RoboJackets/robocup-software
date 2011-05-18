@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "Eigen/Dense"
+#include <modeling/rbpf/rbpfMatrices.h>
 
 /* ************************************************************************* */
 TEST( testEigen, eigen_compilation ) {
@@ -7,5 +8,16 @@ TEST( testEigen, eigen_compilation ) {
 	Eigen::MatrixXd matrix2(2, 3);
 	matrix2 << 1.23, 1.23, 1.23, 1.23, 1.23, 1.23;
 	EXPECT_EQ(matrix1, matrix2);
+}
+
+/* ************************************************************************* */
+TEST( testEigen, identity ) {
+	using namespace rbpf;
+	MatrixSNf H;
+	H.setIdentity();
+	MatrixSNf expH;
+	expH << 1.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+					0.0, 1.0, 0.0, 0.0, 0.0, 0.0;
+	EXPECT_EQ(expH, H);
 }
 

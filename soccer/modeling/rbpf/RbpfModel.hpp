@@ -22,14 +22,8 @@
 #include <fstream>
 #include <assert.h>
 #include <LinearAlgebra.hpp>
+#include "rbpfMatrices.h"
 #include "../RobotModel.hpp"
-
-// Constants for state sizes across all models
-// If these are changed, make sure to modify the virtual functions, such as
-// transitionModel(), which are written assuming specific state sizes
-#define NSIZE 6 // size of state
-#define MSIZE 6 // size of control input
-#define SSIZE 2 // size of measurement
 
 class RbpfModel {
 public:
@@ -44,38 +38,38 @@ public:
 	// P: state covariance that will be updated (n x n)
 	// U: control input (m x 1)
 	// dt: change in time
-	void predict(LinAlg::Vector &X, LinAlg::Matrix &P, LinAlg::Vector &U, double dt);
+	void predict(rbpf::VectorNf &X, rbpf::MatrixNNf &P, rbpf::VectorMf &U, double dt);
 
 	// performs EKF update, storing the result in X and P
 	// X: state vector that will be updated (n x 1)
 	// P: state covariance that will be updated (n x n)
 	// Z: observation (s x 1)
 	// dt: change in time
-	virtual void update(LinAlg::Vector &X, LinAlg::Matrix &P, LinAlg::Vector &Z, double dt);
+	virtual void update(rbpf::VectorNf &X, rbpf::MatrixNNf &P, rbpf::VectorSf &Z, double dt);
 
 	// functions that pull new values in from config files
 	virtual void initializeQ()=0;
 	virtual void initializeR()=0;
 
 	// returns the previously predicted measurement, h (s x 1)
-	LinAlg::Vector* getPredictedMeasurement();
+	rbpf::VectorSf& getPredictedMeasurement() { return _h; }
 
 	// returns the previously calculated innovation, Yhat (s x 1)
-	LinAlg::Vector* getInnovation();
+	rbpf::VectorSf& getInnovation() { return _Yhat; }
 
 	// returns the previously calculated innovation, S (s x s)
-	LinAlg::Matrix* getInnovationCovariance();
+	rbpf::MatrixSSf& getInnovationCovariance() { return _S; }
 
-	const int n;    // size of state
-	const int m;    // size of control input
-	const int s;    // size of measurement
+	static const unsigned int n = NSIZE;    // size of state
+	static const unsigned int m = MSIZE;    // size of control input
+	static const unsigned int s = SSIZE;    // size of measurement
 
 protected:
 	// Function: transitionModel(&X,&U)
 	//   X: state vector that will be updated (n x 1)
 	//   U: control input (m x 1)
 	//   dt: change in time
-	virtual void transitionModel(LinAlg::Vector &X, LinAlg::Vector &U, double dt) = 0;
+	virtual void transitionModel(rbpf::VectorNf &X, rbpf::VectorMf &U, double dt) = 0;
 
 	// Computes the transition Jacobian and stores the result in F
 	// Must call before predict()
@@ -83,24 +77,24 @@ protected:
 
 	// X: state vector (n x 1)
 	// out: observation (s x 1)
-	virtual void observationModel(LinAlg::Vector &X, LinAlg::Vector &out) = 0;
+	virtual void observationModel(rbpf::VectorNf &X, rbpf::VectorSf &out) = 0;
 
 	// computes the Jacobian of the observation Model function, wrt the state
 	// and stores the result in H.
 	// Must call before update()
 	virtual void computeObservationJacobian(double dt) = 0;
 
-	LinAlg::Matrix F; // state transition Jacobian (df/dx) (n x n)
-	LinAlg::Matrix H; // observation Jacobian (dh/dx) (s x n)
-	LinAlg::Matrix Q; // process noise (n x n)
-	LinAlg::Matrix R; // measurement noise (s x s)
+	rbpf::MatrixNNf _F; // state transition Jacobian (df/dx) (n x n)
+	rbpf::MatrixSNf _H; // observation Jacobian (dh/dx) (s x n)
+	rbpf::MatrixNNf _Q; // process noise (n x n)
+	rbpf::MatrixSSf _R; // measurement noise (s x s)
 	Modeling::RobotModel::RobotMap *_robotMap; // set of robots for kicks/deflections
 
 	// variables used in intermediate calculations
-	LinAlg::Matrix Inn;  // identity matrix (n x n)
-	LinAlg::Vector h;    // predicted measurement (s x 1)
-	LinAlg::Vector Yhat; // innovation (s x 1)
-	LinAlg::Matrix S;    // innovation (or residual) covariance (s x s)
+	rbpf::MatrixNNf _Inn;  // identity matrix (n x n)
+	rbpf::VectorSf  _h;    // predicted measurement (s x 1)
+	rbpf::VectorSf  _Yhat; // innovation (s x 1)
+	rbpf::MatrixSSf _S;    // innovation (or residual) covariance (s x s)
 };
 
 #endif /* RBPFMODEL_HPP_ */
