@@ -10,6 +10,7 @@
 #include "control.h"
 #include "ball_sense.h"
 #include "fpga.h"
+#include "i2c.h"
 
 // Last forward packet
 uint8_t forward_packet[Forward_Size];
@@ -243,6 +244,9 @@ int main()
 	
 	// Check for low/high supply voltage
 	power_init();
+	
+	// Set up I2C
+	i2c_init();
 	
 	// Turn off LEDs
 	LED_OFF(LED_ALL);
