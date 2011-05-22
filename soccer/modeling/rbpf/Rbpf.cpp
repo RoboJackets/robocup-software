@@ -18,7 +18,7 @@ using namespace rbpf;
 //   P: initial state covariance, (n x n)
 //   k: the number of particles to be initialized.
 // initializes the particle vector, with k particle states
-Rbpf::Rbpf(VectorNf X, MatrixNNf P, int _k) : k(_k), modelGraph() {
+Rbpf::Rbpf(VectorNf X, MatrixNNf P, size_t _k) : k(_k), modelGraph() {
 	assert(k > 0);                 // Must have at least 1 particle state
 
 	// initialize particles
@@ -36,9 +36,8 @@ Rbpf::~Rbpf() { }
 // convenience function for calling update(U,Z,dt) with no control input
 // note: assumes that control size (m) = 2 and measurement size (s) = 2
 void Rbpf::update(double x, double y, double dt){
-	VectorMf U = Vector::Zero(6); // control input
-	VectorSf Z = Vector::Zero(2); // measurement
-	Z(0) = x; Z(1) = y;
+	VectorMf U = VectorMf::Zero(); // control input
+	VectorSf Z; Z << x, y; // measurement
 	update(U,Z,dt);
 }
 
@@ -111,7 +110,9 @@ void Rbpf::updateMultipleObs(double xs[], double ys[], double dts[], int numObs)
 				model = modelGraph.getModel(jIdx);
 				model->initializeQ(); // get latest params from config
 				model->initializeR();
-				tmpParticleVector.push_back(new RbpfState(Vector(n), Matrix(n,n), 0, 0.0));
+				VectorNf X; X.setZero();
+				MatrixNNf P; P.setZero();
+				tmpParticleVector.push_back(new RbpfState(X, P, 0, 0.0));
 				assert(tmpPartIdx < (int)tmpParticleVector.size());
 				tmpParticle = &tmpParticleVector[tmpPartIdx];
 				tmpParticle->copy(particleVector[kIdx]);
@@ -208,8 +209,8 @@ void Rbpf::addModel(RbpfModel* model){
 	// particles during the update step.  The values in each particle will be
 	// overwritten at each iteration, so the initial values do not matter.
 	int modelIdx = 0;
-	Vector X = Vector::Zero(n);
-	Matrix P = Matrix::Zero(n,n);
+	VectorNf X; X.setZero();
+	MatrixNNf P; P.setZero();
 	for(int i=0; i<k; i++)
 		tmpParticleVector.push_back(new RbpfState(X, P, modelIdx, 0.0));
 }
