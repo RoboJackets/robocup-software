@@ -38,14 +38,16 @@ protected:
 	ConfigDouble _processNoiseSqrdAcc;
 	ConfigDouble _measurementNoiseSqrd;
 	
-	void transitionModel(rbpf::VectorNf &X, rbpf::VectorMf &U, double dt);
+	void transitionModel(rbpf::VectorNf &X, const rbpf::VectorMf &U, double dt) const;
 	void computeTransitionJacobian(double dt);
-	void observationModel(rbpf::VectorNf &X, rbpf::VectorSf &out);
+	void observationModel(const rbpf::VectorNf &X, rbpf::VectorSf &out) const;
 	void computeObservationJacobian(double dt);
 
 	// initialization functions to pull from config file
 	virtual void initializeQ();
 	virtual void initializeR();
+public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 #endif /* RBPFMODELROLLING_HPP_ */

@@ -43,7 +43,7 @@ void RbpfModelKicked::initializeQ() {
 	_Q(0,0)=sP; _Q(1,1)=sP;
 	_Q(2,2)=sV; _Q(3,3)=sV;
 	_Q(4,4)=sA; _Q(5,5)=sA;
-//	Q(0,0)=sP; Q(0,1)=00; Q(0,2)=00; Q(0,3)=00; Q(0,4)=00; Q(0,5)=00;
+//	Q(0,0)=sP; Q(0,1)=00; Q(0,2)=00; Q(0,3)=00; Q(0,4)=00; Q(0l,5)=00;
 //	Q(1,0)=00; Q(1,1)=sP; Q(1,2)=00; Q(1,3)=00; Q(1,4)=00; Q(1,5)=00;
 //	Q(2,0)=00; Q(2,1)=00; Q(2,2)=sV; Q(2,3)=00; Q(2,4)=00; Q(2,5)=00;
 //	Q(3,0)=00; Q(3,1)=00; Q(3,2)=00; Q(3,3)=sV; Q(3,4)=00; Q(3,5)=00;
@@ -53,7 +53,7 @@ void RbpfModelKicked::initializeQ() {
 
 void RbpfModelKicked::initializeR() {
 	double sM = _measurementNoiseSqrd;
-	_R = MatrixSSf::Identity() * sM;
+	_R.setIdentity(); _R *= sM;
 }
 
 
@@ -65,7 +65,7 @@ void RbpfModelKicked::initParams() {
 RbpfModelKicked::~RbpfModelKicked(){}
 
 // computes the effect of U and dt on the state, and stores the result in F
-void RbpfModelKicked::transitionModel(VectorNf &X, VectorMf &U, double dt){
+void RbpfModelKicked::transitionModel(VectorNf &X, const VectorMf &U, double dt) const {
 	X(0) = X(0) + X(2)*dt + 0.5*X(4)*dt*dt ; // f(x) = x + vx*dt + 1/2*ax*dt^2
 	X(1) = X(1) + X(3)*dt + 0.5*X(5)*dt*dt ; // f(y) = y + vy*dt + 1/2*ay*dt^2
 	X(2) = X(2) + X(4)*dt;                   // f(vx) = vx + ax*dt
@@ -88,8 +88,10 @@ void RbpfModelKicked::computeTransitionJacobian(double dt){
 
 // calculates naive observation of the first s components of X, storing the
 // result in out. For RoboCup, this will correspond to the x and y of the ball
-void RbpfModelKicked::observationModel(VectorNf &X, VectorSf &out){
-	out = X.head<2>();
+void RbpfModelKicked::observationModel(const VectorNf &X, VectorSf &out) const {
+//	out = X.head<2>();
+	out(0) = X(0);
+	out(1) = X(1);
 }
 
 // computes the Jacobian of the observationModel function, wrt the state.
@@ -108,7 +110,7 @@ void RbpfModelKicked::computeObservationJacobian(double dt){
 // Note: does not consider orientation of robots, so kicking
 //       is possible from any direction.
 // Need to consider control input here.
-void RbpfModelKicked::update(VectorNf &X, MatrixNNf &P, VectorSf &Z, double dt){
+void RbpfModelKicked::update(VectorNf &X, MatrixNNf &P, const VectorSf &Z, double dt){
 	Geometry2d::Point bPos(X(0),X(1));
 	Geometry2d::Point rPos;
 	bool robotKicked = false;

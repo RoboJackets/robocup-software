@@ -6,8 +6,10 @@
  *  Author: Philip Rogers, Nov 15th 2009
  */
 
+#include <iostream>
 #include "RbpfModel.hpp"
 
+using namespace std;
 using namespace LinAlg;
 using namespace rbpf;
 
@@ -26,11 +28,9 @@ RbpfModel::RbpfModel(Modeling::RobotModel::RobotMap *robotMap)
 // dt: change in time
 // TODO: for speed, computeTransitionJacobian can be performed once per model.
 // TODO: for speed, the transpose of F can be computed once per model.
-// TODO: for speed, temp matrices should be removed.
-void RbpfModel::predict(VectorNf &X, MatrixNNf &P, VectorMf &U, double dt){
+void RbpfModel::predict(VectorNf &X, MatrixNNf &P, const VectorMf &U, double dt) const {
 	// Xhat = f(X,U,dt), f() = state transition model
 	// P = F*P*F' + Q
-	computeTransitionJacobian(dt); // recompute F
 	transitionModel(X, U, dt); // X = f(X,U,dt)
 	P = _F * P * _F.transpose() + _Q;
 }
@@ -41,19 +41,17 @@ void RbpfModel::predict(VectorNf &X, MatrixNNf &P, VectorMf &U, double dt){
 // Z: observation (s x 1)
 // dt: change in time
 // TODO: for speed, the transpose of H can be computed once per model.
-// TODO: for speed, temp matrices should be removed.
-void RbpfModel::update(VectorNf &X, MatrixNNf &P, VectorSf &Z, double dt){
+void RbpfModel::update(VectorNf &X, MatrixNNf &P, const VectorSf &Z, double dt) {
 	// Yhat = Z - h(Xhat), h() = observation model
 	// S = H*P*H' + R
 	// K = P*H'*S^{-1}
 	// Xhat = Xhat + K*Yhat
 	// P = (I - K*H)*P
-	computeObservationJacobian(dt); // recompute H
 	observationModel(X,_h); // h = h(Xhat)
 	_Yhat = Z-_h;
 	_S = _H*P*_H.transpose() + _R;
 
-	Matrix K = P * _H.transpose() * _S.inverse();
+	MatrixNSf K = P * _H.transpose() * _S.inverse();
 	X += K * _Yhat;
 	P = (_Inn - K * _H) * P;
 
@@ -74,29 +72,9 @@ void RbpfModel::update(VectorNf &X, MatrixNNf &P, VectorSf &Z, double dt){
 // overloaded operator for printing a model (debugging)
 // prints: F, H, Q, and R
 std::ostream& operator<<(std::ostream& out, const RbpfModel &model){
-	out << "F:" << std::endl;
-	for(size_t x=0; x<model.n; x++){
-		out << "\t";
-		for(size_t y=0; y<model.n; y++){out << model._F(x,y) << ", ";}
-		out << std::endl;
-	}
-	out << std::endl << "H:" << std::endl;
-	for(size_t x=0; x<model.s; x++){
-		out << "\t";
-		for(size_t y=0; y<model.n; y++){out << model._H(x,y) << ", ";}
-		out << std::endl;
-	}
-	out << std::endl << "Q:" << std::endl;
-	for(size_t x=0; x<model.n; x++){
-		out << "\t";
-		for(size_t y=0; y<model.n; y++){out << model._Q(x,y) << ", ";}
-		out << std::endl;
-	}
-	out << std::endl << "R:" << std::endl;
-	for(size_t x=0; x<model.s; x++){
-		out << "\t";
-		for(size_t y=0; y<model.s; y++){out << model._R(x,y) << ", ";}
-		out << std::endl;
-	}
+	out << "F:\n" << model._F << std::endl;
+	out << "H:\n" << model._H << std::endl;
+	out << "Q:\n" << model._Q << std::endl;
+	out << "R:\n" << model._R << std::endl;
 	return out;
 }

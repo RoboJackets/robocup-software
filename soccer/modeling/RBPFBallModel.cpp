@@ -14,15 +14,15 @@
 
 using namespace std;
 using namespace Geometry2d;
-using namespace LinAlg;
+using namespace rbpf;
 
 Modeling::RBPFBallModel::RBPFBallModel(RobotModel::RobotMap *robotMap, Configuration *config) :
 		BallModel(robotMap, config)
 {
 	// Construct initial state X (n x 1)
-	Vector X = Vector::Zero(6);
+	VectorNf X = VectorNf::Zero();
 	// Construct initial state covariance P (n x n)
-	Matrix P = Matrix::Identity(6,6) * 0.01;
+	MatrixNNf P; P.setIdentity(); P *= 0.01;
 	// Create Rbpf
 	int numParticles = 10; // Number of particles in filter
 	raoBlackwellizedParticleFilter = new Rbpf(X,P,numParticles);
@@ -46,7 +46,6 @@ Modeling::RBPFBallModel::~RBPFBallModel()
 void Modeling::RBPFBallModel::singleUpdate(float dtime) {
 	raoBlackwellizedParticleFilter->update(observedPos.x,observedPos.y,dtime);
 	RbpfState* bestState = raoBlackwellizedParticleFilter->getBestFilterState();
-	Point posOld = pos;
 	pos.x = bestState->X(0);
 	pos.y = bestState->X(1);
 	vel.x = bestState->X(2);

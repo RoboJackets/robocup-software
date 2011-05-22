@@ -1,3 +1,4 @@
+#if 0
 /*
  * RbpfAllModels.cpp
  *
@@ -27,7 +28,7 @@ RbpfModelRolling::RbpfModelRolling(){
 	_Q(2,2)=sV; _Q(3,3)=sV;
 	_Q(4,4)=sA; _Q(5,5)=sA;
 	// initialize measurement noise (s x s)
-	_R.setZero();
+	_R.setIdentity();
 	_R *= 0.1;
 }
 RbpfModelRolling::~RbpfModelRolling(){}
@@ -68,7 +69,7 @@ void RbpfModelRolling::observationModel(VectorNf &X, VectorSf &out){
 //   at initialization and does not need to be re-computed here.
 //   Call before using the observation Jacobian, H.
 void RbpfModelRolling::computeObservationJacobian(double dt){
-	_H.setIdentity();
+//	_H.setIdentity(); // TODO: find out whether this needed to be disabled
 }
 
 
@@ -93,7 +94,7 @@ RbpfModelKicked::RbpfModelKicked(){
 	_Q(2,2)=sV; _Q(3,3)=sV;
 	_Q(4,4)=sA; _Q(5,5)=sA;
 	// initialize measurement noise (s x s)
-	_R.setZero();
+	_R.setIdentity();
 	_R *= 0.1;
 }
 RbpfModelKicked::~RbpfModelKicked(){}
@@ -134,7 +135,7 @@ void RbpfModelKicked::observationModel(Vector &X, Vector &out){
 //   at initialization and does not need to be re-computed here.
 //   Call before using the observation Jacobian, H.
 void RbpfModelKicked::computeObservationJacobian(double dt){
-	_H.setIdentity();
+//	_H.setIdentity(); // TODO: find out whether this needed to be disabled
 }
 
 
@@ -189,7 +190,7 @@ void RbpfModelRollingFriction::computeTransitionJacobian(double dt){
 //   calculates naive observation of the first s components of X, storing the
 //   result in out. For RoboCup, this will correspond to the x and y of the ball
 void RbpfModelRollingFriction::observationModel(VectorNf &X, VectorSf &out){
-	out = X.block(0, s);
+	out = X.head<s>();
 //	for(int i=0; i<s; i++)
 //		out(i) = X(i);
 }
@@ -200,7 +201,8 @@ void RbpfModelRollingFriction::observationModel(VectorNf &X, VectorSf &out){
 //   at initialization and does not need to be re-computed here.
 //   Call before using the observation Jacobian, H.
 void RbpfModelRollingFriction::computeObservationJacobian(double dt){
-	_H.setIdentity();
+//	_H.setIdentity(); // TODO: find out if this needed to be disabled
 	//H(0,0)=1; H(0,1)=0; H(0,2)=0; H(0,3)=0; H(0,4)=0; H(0,5)=0; // dh(X)/dx
 	//H(1,0)=0; H(1,1)=1; H(1,2)=0; H(1,3)=0; H(1,4)=0; H(1,5)=0; // dh(X)/dy
 }
+#endif
