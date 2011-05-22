@@ -487,7 +487,9 @@ static void cmd_adc(int argc, const char *argv[], void *arg)
 	}
 	
 	if (argc)
+	{
 		AT91C_BASE_ADC->ADC_CR = AT91C_ADC_START;
+	}
 }
 
 static void cmd_run(int argc, const char *argv[], void *arg)
@@ -516,6 +518,38 @@ static void cmd_run(int argc, const char *argv[], void *arg)
 		{
 			controller->init(0, 0);
 		}
+	}
+}
+
+static void cmd_i2c_read(int argc, const char *argv[], void *arg)
+{
+	if (argc != 2)
+	{
+		printf("i2c_read <device> <reg>\n");
+		return;
+	}
+	
+	AT91C_BASE_TWI->TWI_MMR = (parse_uint32(argv[0]) << 16) | AT91C_TWI_MREAD | AT91C_TWI_IADRSZ_1_BYTE;
+	AT91C_BASE_TWI->TWI_IADR = parse_uint32(argv[1]);
+	AT91C_BASE_TWI->TWI_CR = AT91C_TWI_START | AT91C_TWI_STOP;
+	
+	//FIXME - Can't spin on SR (see errata chapter 40.18.7.4).  Must use interrupt.
+	uint32_t status;
+	while (1)
+	{
+		status = AT91C_BASE_TWI->TWI_SR;
+		if (status & (AT91C_TWI_RXRDY | AT91C_TWI_NACK))
+		{
+			break;
+		}
+	}
+	uint8_t result = AT91C_BASE_TWI->TWI_RHR;
+	while (!(AT91C_BASE_TWI->TWI_SR & AT91C_TWI_TXCOMP));
+	if (status & AT91C_TWI_NACK)
+	{
+		printf("NACK\n");
+	} else {
+		printf("0x%02x\n", result);
 	}
 }
 
@@ -550,6 +584,7 @@ const command_t commands[] =
 	{"tone", cmd_tone},
 	{"fail", cmd_fail},
 	{"adc", cmd_adc},
+	{"i2c_read", cmd_i2c_read},
 
 	// End of list placeholder
 	{0, 0}
