@@ -1,4 +1,4 @@
-/*
+/**
  * Rbpf.cpp
  *
  *  See: Rbpf.hpp for additional information.
@@ -6,10 +6,11 @@
  *  Author: Philip Rogers, Nov 15th 2009
  */
 
+#include <iostream>
 #include "Rbpf.hpp"
 #include <math.h>
-//#include <boost/math/constants/constants.hpp> // Not in boost 1.37 that 9.04 people use
 
+using namespace std;
 using namespace LinAlg;
 using namespace rbpf;
 
@@ -18,7 +19,7 @@ using namespace rbpf;
 //   P: initial state covariance, (n x n)
 //   k: the number of particles to be initialized.
 // initializes the particle vector, with k particle states
-Rbpf::Rbpf(VectorNf X, MatrixNNf P, size_t _k) : k(_k), modelGraph() {
+Rbpf::Rbpf(const VectorNf& X, const MatrixNNf& P, size_t _k) : k(_k), modelGraph() {
 	assert(k > 0);                 // Must have at least 1 particle state
 
 	// initialize particles
@@ -47,7 +48,7 @@ void Rbpf::update(double x, double y, double dt){
 //                    update based on that assumption. If the resulting
 //                    probability is good, that assumption must have been true
 //                    and so we will end up resampling that particle.
-void Rbpf::update(VectorMf &U, VectorSf &Z, double dt){
+void Rbpf::update(const VectorMf &U, const VectorSf &Z, double dt){
 	int j = modelGraph.j; // number of models in modelGraph
 	int tmpPartIdx = 0;
 	float weightSum;
@@ -63,6 +64,7 @@ void Rbpf::update(VectorMf &U, VectorSf &Z, double dt){
 			assert(tmpPartIdx < (int)tmpParticleVector.size());
 			tmpParticle = &tmpParticleVector[tmpPartIdx];
 			tmpParticle->copy(particleVector[kIdx]);
+			model->computeJacobians(dt);                        // update jacobians *before* predict/update
 			model->predict(tmpParticle->X,tmpParticle->P,U,dt); // EKF Predict
 			model->update(tmpParticle->X,tmpParticle->P,Z,dt);  // EKF Update
 
@@ -83,7 +85,7 @@ void Rbpf::update(VectorMf &U, VectorSf &Z, double dt){
 	}
 	resampleParticles(tmpParticleVector,particleVector,k);
 }
-RbpfModel* model;
+
 // Updates the filter given control input U, measurement Z, and delta t = dt
 // Note: this is for multiple observations (possibly from multiple cameras at diff times)
 // see: void Rbpf::update(Vector &U, Vector &Z, double dt) for more details
@@ -228,7 +230,7 @@ void Rbpf::setTransProb(int AIdx, int BIdx, double weight){
 // explicitly for the 2D case because inverting Sigma (in the general multi-
 // variate case) is expensive.
 // Compared against Matlab's mvnpdf() with several tests all passed.
-inline double Rbpf::gaussianPDF2D(Eigen::Vector2f& X, Eigen::Matrix2f& Sigma){
+inline double Rbpf::gaussianPDF2D(const rbpf::VectorSf& X, const rbpf::MatrixSSf& Sigma){
 	double sX2 = Sigma(0,0), sY2 = Sigma(1,1);
 	double sX = sqrt(sX2), sY = sqrt(sY2);
 	double p = Sigma(0,1)/(sX*sY); // just take p(1), assume Pos.Semi.Def.

@@ -1,3 +1,4 @@
+#if 0
 /*
  * RbpfAllModels.hpp
  *
@@ -43,6 +44,8 @@ protected:
 	void computeTransitionJacobian(double dt);
 	void observationModel(rbpf::VectorNf &X, rbpf::VectorSf &out);
 	void computeObservationJacobian(double dt);
+public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 // Class: RbpfModelKicked
@@ -58,6 +61,8 @@ protected:
 	void computeTransitionJacobian(double dt);
 	void observationModel(rbpf::VectorNf &X, rbpf::VectorSf &out);
 	void computeObservationJacobian(double dt);
+public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 // Class: RbpfModelRollingFriction
@@ -72,6 +77,9 @@ protected:
 	void computeTransitionJacobian(double dt);
 	void observationModel(rbpf::VectorNf &X, rbpf::VectorSf &out);
 	void computeObservationJacobian(double dt);
+public:
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 #endif /* RBPFALLMODELS_HPP_ */
+#endif

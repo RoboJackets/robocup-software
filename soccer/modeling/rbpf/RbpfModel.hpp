@@ -33,19 +33,26 @@ public:
 	// Used for printing this model to a stream (debugging)
 	friend std::ostream& operator<<(std::ostream& out, const RbpfModel &model);
 
+	// Calculates the jacobians for this time step
+	void computeJacobians(double dt) {
+		computeObservationJacobian(dt);
+		computeTransitionJacobian(dt);
+	}
+
 	// performs EKF predict, storing the result in X and P
 	// X: state vector that will be updated (n x 1)
 	// P: state covariance that will be updated (n x n)
 	// U: control input (m x 1)
 	// dt: change in time
-	void predict(rbpf::VectorNf &X, rbpf::MatrixNNf &P, rbpf::VectorMf &U, double dt);
+	void predict(rbpf::VectorNf &X, rbpf::MatrixNNf &P, const rbpf::VectorMf &U, double dt) const;
 
 	// performs EKF update, storing the result in X and P
 	// X: state vector that will be updated (n x 1)
 	// P: state covariance that will be updated (n x n)
 	// Z: observation (s x 1)
 	// dt: change in time
-	virtual void update(rbpf::VectorNf &X, rbpf::MatrixNNf &P, rbpf::VectorSf &Z, double dt);
+	// Updates Yhat and S
+	virtual void update(rbpf::VectorNf &X, rbpf::MatrixNNf &P, const rbpf::VectorSf &Z, double dt);
 
 	// functions that pull new values in from config files
 	virtual void initializeQ()=0;
@@ -69,7 +76,7 @@ protected:
 	//   X: state vector that will be updated (n x 1)
 	//   U: control input (m x 1)
 	//   dt: change in time
-	virtual void transitionModel(rbpf::VectorNf &X, rbpf::VectorMf &U, double dt) = 0;
+	virtual void transitionModel(rbpf::VectorNf &X, const rbpf::VectorMf &U, double dt) const = 0;
 
 	// Computes the transition Jacobian and stores the result in F
 	// Must call before predict()
@@ -77,7 +84,7 @@ protected:
 
 	// X: state vector (n x 1)
 	// out: observation (s x 1)
-	virtual void observationModel(rbpf::VectorNf &X, rbpf::VectorSf &out) = 0;
+	virtual void observationModel(const rbpf::VectorNf &X, rbpf::VectorSf &out) const = 0;
 
 	// computes the Jacobian of the observation Model function, wrt the state
 	// and stores the result in H.
