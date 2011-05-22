@@ -183,7 +183,8 @@ Help('log_viewer: Stand-alone log viewer\n')
 tests = [
 	'tests/testExamples.cpp',
 	'tests/testPath.cpp',
-	'tests/testEigen.cpp'
+	'tests/testEigen.cpp',
+	'tests/testRbpf.cpp'
 ]
 e.Append(LIBS=['gtest'])
 # NOTE: this links against all sources to avoid needing to actually check dependencies

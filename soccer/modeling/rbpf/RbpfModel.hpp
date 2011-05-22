@@ -95,6 +95,9 @@ protected:
 	rbpf::VectorSf  _h;    // predicted measurement (s x 1)
 	rbpf::VectorSf  _Yhat; // innovation (s x 1)
 	rbpf::MatrixSSf _S;    // innovation (or residual) covariance (s x s)
+public:
+	// Required for use of fixed size matrices as members
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 #endif /* RBPFMODEL_HPP_ */

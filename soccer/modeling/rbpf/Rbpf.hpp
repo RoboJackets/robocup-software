@@ -53,7 +53,7 @@ public:
 	// P: initial state covariance, (n x n)
 	// k: the number of particles to be initialized.
 	// Where n = size of Kalman Filter state
-	Rbpf(rbpf::VectorNf _X, rbpf::MatrixNNf _P, int _k);
+	Rbpf(rbpf::VectorNf _X, rbpf::MatrixNNf _P, size_t _k);
 
 	~Rbpf();
 

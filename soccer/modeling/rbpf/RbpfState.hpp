@@ -47,4 +47,7 @@ public:
 	rbpf::MatrixNNf P;      // state covariance (n x n)
 	int modelIdx;  // index of this particle's model
 	double weight; // particle weight
+
+	// Required for use of fixed size matrices as members
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
