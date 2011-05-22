@@ -24,7 +24,7 @@ fi
 
 echo "-- Installing normal packages"
 apt-get install build-essential qt4-dev-tools libboost-dev \
-	libusb-dev libblas-dev liblapack-dev libgtkmm-2.4-dev protobuf-compiler libprotobuf-dev \
+	libusb-dev libgtkmm-2.4-dev protobuf-compiler libprotobuf-dev \
 	libpcap-dev scons graphviz binutils-dev libqt4-opengl-dev python-pip python-dev \
 	avr-libc libgmp3-dev libmpfr-dev libmpc-dev texinfo curl texinfo dfu-programmer avrdude \
 	libreadline-dev libgtest0 libgtest-dev autoconf libtool autopoint flex bison openocd
