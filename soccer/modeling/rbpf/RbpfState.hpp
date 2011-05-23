@@ -28,7 +28,7 @@ public:
 	// _modelIdx: index of this particle's model
 	// _w: initial weight
 	//  n: size of Kalman Filter state
-	RbpfState(const rbpf::VectorNf& _X, const rbpf::MatrixNNf& _P, int _modelIdx, double _w);
+	RbpfState(const rbpf::VectorNd& _X, const rbpf::MatrixNNd& _P, int _modelIdx, double _w);
 
 	// Copies one state into another. Note: this is not a copy constructor.
 	void copy(const RbpfState &state)
@@ -40,8 +40,8 @@ public:
 	friend std::ostream& operator<<(std::ostream& out, const RbpfState &state);
 
 	static const unsigned int n = NSIZE;         // size of Kalman Filter state
-	rbpf::VectorNf X;      // state vector (n x 1)
-	rbpf::MatrixNNf P;      // state covariance (n x n)
+	rbpf::VectorNd X;      // state vector (n x 1)
+	rbpf::MatrixNNd P;      // state covariance (n x n)
 	int modelIdx;  // index of this particle's model
 	double weight; // particle weight
 

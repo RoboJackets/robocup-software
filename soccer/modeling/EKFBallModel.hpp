@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include "RobotModel.hpp"
 #include "BallModel.hpp"
-#include "ExtendedKalmanFilter.hpp"
+#include "kalman/ExtendedKalmanFilter.hpp"
 
 class Configuration;
 

@@ -16,8 +16,8 @@ using namespace rbpf;
 // initializes n, m, s, F, H, Q, R, and space used for intermediates
 // calculations: Inn (n x n Identity matrix), h, Yhat, S
 RbpfModel::RbpfModel(Modeling::RobotModel::RobotMap *robotMap)
-: _robotMap(robotMap), _Inn(MatrixNNf::Identity()),
-  _h(VectorSf::Zero()), _Yhat(VectorSf::Zero()), _S(MatrixSSf::Zero())
+: _robotMap(robotMap), _Inn(MatrixNNd::Identity()),
+  _h(VectorSd::Zero()), _Yhat(VectorSd::Zero()), _S(MatrixSSd::Zero())
 {
 }
 
@@ -28,7 +28,7 @@ RbpfModel::RbpfModel(Modeling::RobotModel::RobotMap *robotMap)
 // dt: change in time
 // TODO: for speed, computeTransitionJacobian can be performed once per model.
 // TODO: for speed, the transpose of F can be computed once per model.
-void RbpfModel::predict(VectorNf &X, MatrixNNf &P, const VectorMf &U, double dt) const {
+void RbpfModel::predict(VectorNd &X, MatrixNNd &P, const VectorMd &U, double dt) const {
 	// Xhat = f(X,U,dt), f() = state transition model
 	// P = F*P*F' + Q
 	transitionModel(X, U, dt); // X = f(X,U,dt)
@@ -41,7 +41,7 @@ void RbpfModel::predict(VectorNf &X, MatrixNNf &P, const VectorMf &U, double dt)
 // Z: observation (s x 1)
 // dt: change in time
 // TODO: for speed, the transpose of H can be computed once per model.
-void RbpfModel::update(VectorNf &X, MatrixNNf &P, const VectorSf &Z, double dt) {
+void RbpfModel::update(VectorNd &X, MatrixNNd &P, const VectorSd &Z, double dt) {
 	// Yhat = Z - h(Xhat), h() = observation model
 	// S = H*P*H' + R
 	// K = P*H'*S^{-1}
@@ -51,7 +51,7 @@ void RbpfModel::update(VectorNf &X, MatrixNNf &P, const VectorSf &Z, double dt) 
 	_Yhat = Z-_h;
 	_S = _H*P*_H.transpose() + _R;
 
-	MatrixNSf K = P * _H.transpose() * _S.inverse();
+	MatrixNSd K = P * _H.transpose() * _S.inverse();
 	X += K * _Yhat;
 	P = (_Inn - K * _H) * P;
 

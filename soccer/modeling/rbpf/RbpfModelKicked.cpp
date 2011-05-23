@@ -65,7 +65,7 @@ void RbpfModelKicked::initParams() {
 RbpfModelKicked::~RbpfModelKicked(){}
 
 // computes the effect of U and dt on the state, and stores the result in F
-void RbpfModelKicked::transitionModel(VectorNf &X, const VectorMf &U, double dt) const {
+void RbpfModelKicked::transitionModel(VectorNd &X, const VectorMd &U, double dt) const {
 	X(0) = X(0) + X(2)*dt + 0.5*X(4)*dt*dt ; // f(x) = x + vx*dt + 1/2*ax*dt^2
 	X(1) = X(1) + X(3)*dt + 0.5*X(5)*dt*dt ; // f(y) = y + vy*dt + 1/2*ay*dt^2
 	X(2) = X(2) + X(4)*dt;                   // f(vx) = vx + ax*dt
@@ -88,7 +88,7 @@ void RbpfModelKicked::computeTransitionJacobian(double dt){
 
 // calculates naive observation of the first s components of X, storing the
 // result in out. For RoboCup, this will correspond to the x and y of the ball
-void RbpfModelKicked::observationModel(const VectorNf &X, VectorSf &out) const {
+void RbpfModelKicked::observationModel(const VectorNd &X, VectorSd &out) const {
 //	out = X.head<2>();
 	out(0) = X(0);
 	out(1) = X(1);
@@ -110,7 +110,7 @@ void RbpfModelKicked::computeObservationJacobian(double dt){
 // Note: does not consider orientation of robots, so kicking
 //       is possible from any direction.
 // Need to consider control input here.
-void RbpfModelKicked::update(VectorNf &X, MatrixNNf &P, const VectorSf &Z, double dt){
+void RbpfModelKicked::update(VectorNd &X, MatrixNNd &P, const VectorSd &Z, double dt){
 	Geometry2d::Point bPos(X(0),X(1));
 	Geometry2d::Point rPos;
 	bool robotKicked = false;

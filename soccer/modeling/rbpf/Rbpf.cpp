@@ -19,7 +19,7 @@ using namespace rbpf;
 //   P: initial state covariance, (n x n)
 //   k: the number of particles to be initialized.
 // initializes the particle vector, with k particle states
-Rbpf::Rbpf(const VectorNf& X, const MatrixNNf& P, size_t _k) : k(_k), modelGraph() {
+Rbpf::Rbpf(const VectorNd& X, const MatrixNNd& P, size_t _k) : k(_k), modelGraph() {
 	assert(k > 0);                 // Must have at least 1 particle state
 
 	// initialize particles
@@ -37,8 +37,8 @@ Rbpf::~Rbpf() { }
 // convenience function for calling update(U,Z,dt) with no control input
 // note: assumes that control size (m) = 2 and measurement size (s) = 2
 void Rbpf::update(double x, double y, double dt){
-	VectorMf U = VectorMf::Zero(); // control input
-	VectorSf Z; Z << x, y; // measurement
+	VectorMd U = VectorMd::Zero(); // control input
+	VectorSd Z; Z << x, y; // measurement
 	update(U,Z,dt);
 }
 
@@ -48,7 +48,7 @@ void Rbpf::update(double x, double y, double dt){
 //                    update based on that assumption. If the resulting
 //                    probability is good, that assumption must have been true
 //                    and so we will end up resampling that particle.
-void Rbpf::update(const VectorMf &U, const VectorSf &Z, double dt){
+void Rbpf::update(const VectorMd &U, const VectorSd &Z, double dt){
 	int j = modelGraph.j; // number of models in modelGraph
 	int tmpPartIdx = 0;
 	float weightSum;
@@ -97,8 +97,8 @@ void Rbpf::updateMultipleObs(double xs[], double ys[], double dts[], int numObs)
 	float weightSum;
 	RbpfModel* model;
 	RbpfState* tmpParticle;
-	VectorNf U = VectorMf::Zero(); // control input
-	VectorSf Z = VectorSf::Zero(); // measurement
+	VectorNd U = VectorMd::Zero(); // control input
+	VectorSd Z = VectorSd::Zero(); // measurement
 	double dt;
 
 	for(int kIdx=0; kIdx<k; kIdx++){ // for each of the k particles
@@ -112,8 +112,8 @@ void Rbpf::updateMultipleObs(double xs[], double ys[], double dts[], int numObs)
 				model = modelGraph.getModel(jIdx);
 				model->initializeQ(); // get latest params from config
 				model->initializeR();
-				VectorNf X; X.setZero();
-				MatrixNNf P; P.setZero();
+				VectorNd X; X.setZero();
+				MatrixNNd P; P.setZero();
 				tmpParticleVector.push_back(new RbpfState(X, P, 0, 0.0));
 				assert(tmpPartIdx < (int)tmpParticleVector.size());
 				tmpParticle = &tmpParticleVector[tmpPartIdx];
@@ -211,8 +211,8 @@ void Rbpf::addModel(RbpfModel* model){
 	// particles during the update step.  The values in each particle will be
 	// overwritten at each iteration, so the initial values do not matter.
 	int modelIdx = 0;
-	VectorNf X; X.setZero();
-	MatrixNNf P; P.setZero();
+	VectorNd X; X.setZero();
+	MatrixNNd P; P.setZero();
 	for(int i=0; i<k; i++)
 		tmpParticleVector.push_back(new RbpfState(X, P, modelIdx, 0.0));
 }
@@ -230,7 +230,7 @@ void Rbpf::setTransProb(int AIdx, int BIdx, double weight){
 // explicitly for the 2D case because inverting Sigma (in the general multi-
 // variate case) is expensive.
 // Compared against Matlab's mvnpdf() with several tests all passed.
-inline double Rbpf::gaussianPDF2D(const rbpf::VectorSf& X, const rbpf::MatrixSSf& Sigma){
+inline double Rbpf::gaussianPDF2D(const rbpf::VectorSd& X, const rbpf::MatrixSSd& Sigma){
 	double sX2 = Sigma(0,0), sY2 = Sigma(1,1);
 	double sX = sqrt(sX2), sY = sqrt(sY2);
 	double p = Sigma(0,1)/(sX*sY); // just take p(1), assume Pos.Semi.Def.

@@ -24,7 +24,7 @@ std::ostream& operator<<(std::ostream& out, const RbpfState &state){
 	return out;
 }
 
-RbpfState::RbpfState(const rbpf::VectorNf& _X, const rbpf::MatrixNNf& _P, int _modelIdx, double _w):
+RbpfState::RbpfState(const rbpf::VectorNd& _X, const rbpf::MatrixNNd& _P, int _modelIdx, double _w):
 	X(_X), P(_P), modelIdx(_modelIdx), weight(_w)
 {
 	if (verbose) {
