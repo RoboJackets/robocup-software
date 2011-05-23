@@ -1,0 +1,35 @@
+<simulation>
+	<!-- testPass.xml: this is a test scenario for passing where
+		 the yellow team has a situation where passing should be
+		 performed.
+		 The blue team's defender is blocking the line of sight
+		 from yellow robot #1, and yellow robot #0 has a better shot-->
+	
+    <!-- if this line is not present, there will be no ball -->
+    <ball x="2.45" y="-1.63" />
+
+    <field />
+
+    <!-- configure blue team robots -->
+    <blue>
+        <robot id="0" x="3.0" y="-0.25" />
+        <robot id="1" x="2.6" y="-0.75" />
+	<robot id="2" x="2.8" y="-0.75" />
+        <!-- <robots qty="4" />-->
+        <kinematics />
+    </blue>
+
+    <yellow>
+    	<robot id="0" x="1.6" y="0.2" />
+        <robot id="1" x="1.6" y="-0.2" />
+    </yellow>
+
+    <vision>
+        <!-- noise, fps, dropout model -->
+    </vision>
+
+    <radio>
+        <!-- packet loss rate -->
+    </radio>
+
+</simulation>

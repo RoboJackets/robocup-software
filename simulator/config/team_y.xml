@@ -1,0 +1,27 @@
+<simulation>
+    <!-- if this line is not present, there will be no ball -->
+    <ball x="0" y="0" />
+
+    <field />
+
+    <!-- configure blue team robots -->
+    <blue>
+    </blue>
+
+    <yellow>
+        <robot id="0" x="-1.5" y="0" />
+        <robot id="1" x="-1" y="1" />
+        <robot id="2" x="-1" y="-1" />
+        <robot id="3" x="-2" y="1" />
+        <robot id="4" x="-2" y="-1" />
+    </yellow>
+
+    <vision>
+        <!-- noise, fps, dropout model -->
+    </vision>
+
+    <radio>
+        <!-- packet loss rate -->
+    </radio>
+
+</simulation>
