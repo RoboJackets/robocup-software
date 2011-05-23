@@ -36,12 +36,12 @@ protected:
 	ConfigDouble _processNoiseSqrdAcc;
 	ConfigDouble _measurementNoiseSqrd;
 	
-	void transitionModel(rbpf::VectorNf &X, const rbpf::VectorMf &U, double dt) const;
+	void transitionModel(rbpf::VectorNd &X, const rbpf::VectorMd &U, double dt) const;
 	void computeTransitionJacobian(double dt);
-	void observationModel(const rbpf::VectorNf &X, rbpf::VectorSf &out) const;
+	void observationModel(const rbpf::VectorNd &X, rbpf::VectorSd &out) const;
 	void computeObservationJacobian(double dt);
 
-	void update(rbpf::VectorNf &X, rbpf::MatrixNNf &P, const rbpf::VectorSf &Z, double dt);
+	void update(rbpf::VectorNd &X, rbpf::MatrixNNd &P, const rbpf::VectorSd &Z, double dt);
 
 	// initialization functions to pull from config file
 	virtual void initializeQ();

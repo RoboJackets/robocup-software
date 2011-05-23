@@ -10,7 +10,7 @@
 namespace LinAlg {
 
 	/** basic types for general linear algebra */
-	// dynamically sized components TODO: switch to fixed size
+	// dynamically sized components
 	typedef Eigen::VectorXf Vector;
 	typedef Eigen::MatrixXf Matrix;
 

@@ -63,7 +63,7 @@ void RbpfModelRolling::initParams() {
 RbpfModelRolling::~RbpfModelRolling(){}
 
 // computes the effect of U and dt on the state, and stores the result in F
-void RbpfModelRolling::transitionModel(VectorNf &X, const VectorMf &U, double dt) const {
+void RbpfModelRolling::transitionModel(VectorNd &X, const VectorMd &U, double dt) const {
 	X(0) += X(2)*dt + 0.5*X(4)*dt*dt ; // f(x) = x + vx*dt + 1/2*ax*dt^2
 	X(1) += X(3)*dt + 0.5*X(5)*dt*dt ; // f(y) = y + vy*dt + 1/2*ay*dt^2
 	X(2) += X(4)*dt;                   // f(vx) = vx + ax*dt
@@ -86,7 +86,7 @@ void RbpfModelRolling::computeTransitionJacobian(double dt) {
 
 // calculates naive observation of the first s components of X, storing the
 // result in out. For RoboCup, this will correspond to the x and y of the ball
-void RbpfModelRolling::observationModel(const VectorNf &X, VectorSf &out) const {
+void RbpfModelRolling::observationModel(const VectorNd &X, VectorSd &out) const {
 	out = X.head(2);
 }
 

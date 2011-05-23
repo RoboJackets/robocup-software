@@ -53,7 +53,7 @@ public:
 	// P: initial state covariance, (n x n)
 	// k: the number of particles to be initialized.
 	// Where n = size of Kalman Filter state
-	Rbpf(const rbpf::VectorNf& _X, const rbpf::MatrixNNf& _P, size_t _k);
+	Rbpf(const rbpf::VectorNd& _X, const rbpf::MatrixNNd& _P, size_t _k);
 
 	~Rbpf();
 
@@ -65,7 +65,7 @@ public:
 	// Z: measurement, (s x 1)
 	// dt: change in time
 	// Where m and s = size of the control and measurement input
-	void update(const rbpf::VectorNf &U, const rbpf::VectorSf &Z, double dt);
+	void update(const rbpf::VectorNd &U, const rbpf::VectorSd &Z, double dt);
 
 	// reinitialize the parameters from the config files - should be called each frame
 	void initParams();
@@ -95,7 +95,7 @@ protected:
 	// Evaluates the multivariate PDF of a centered (mean=0,0) 2D Gaussian dist.
 	// X: point to be evaluated (2 x 1)
 	// Sigma: covariance matrix (2 x 2)
-	inline double gaussianPDF2D(const rbpf::VectorSf& X, const rbpf::MatrixSSf& Sigma);
+	inline double gaussianPDF2D(const rbpf::VectorSd& X, const rbpf::MatrixSSd& Sigma);
 
 	// resample k particles from out, with respect to their weights
 	// NOTE: in vector has its weight changed

@@ -20,9 +20,9 @@ Modeling::RBPFBallModel::RBPFBallModel(RobotModel::RobotMap *robotMap, Configura
 		BallModel(robotMap, config)
 {
 	// Construct initial state X (n x 1)
-	VectorNf X = VectorNf::Zero();
+	VectorNd X = VectorNd::Zero();
 	// Construct initial state covariance P (n x n)
-	MatrixNNf P; P.setIdentity(); P *= 0.01;
+	MatrixNNd P; P.setIdentity(); P *= 0.01;
 	// Create Rbpf
 	int numParticles = 10; // Number of particles in filter
 	raoBlackwellizedParticleFilter = new Rbpf(X,P,numParticles);

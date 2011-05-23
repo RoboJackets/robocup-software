@@ -13,9 +13,9 @@ TEST( testEigen, eigen_compilation ) {
 /* ************************************************************************* */
 TEST( testEigen, identity ) {
 	using namespace rbpf;
-	MatrixSNf H;
+	MatrixSNd H;
 	H.setIdentity();
-	MatrixSNf expH;
+	MatrixSNd expH;
 	expH << 1.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 					0.0, 1.0, 0.0, 0.0, 0.0, 0.0;
 	EXPECT_EQ(expH, H);
