@@ -1,0 +1,25 @@
+Import('*')
+
+e = env.Clone()
+
+# Find uic output
+e.Append(CPPPATH='.')
+
+p = e.Program('simulator', [
+	'main.cpp',
+	'SimControl.cpp',
+	'Config.cpp',
+	'Physics/Env.cpp',
+	'Physics/Entity.cpp',
+	'Physics/Ball.cpp',
+	'Physics/Field.cpp',
+	'Physics/Robot.cpp'])
+
+uics = e.Uic4([
+	'SimControl.ui'
+])
+e.Depends(p, uics)
+
+Default(e.Install(exec_dir, p))
+Help('simulator: Simulator\n')
+
