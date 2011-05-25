@@ -8,7 +8,7 @@ Export('exec_dir')
 build_dir = Dir('#/build')
 Export('build_dir')
 
-env = Environment(tools=['default', 'textfile'])
+env = Environment(tools=['default', 'textfile'])deleted  
 
 # http://www.scons.org/wiki/GoFastButton
 env.Decider('MD5-timestamp')
@@ -21,8 +21,7 @@ env_base = env.Clone()
 Export('env_base')
 
 # C++ compiler
-# BOOST_UBLAS_NDEBUG turns off uBLAS debugging (very slow)
-env.MergeFlags('-O2 -g3 -Wall -DBOOST_UBLAS_NDEBUG')
+env.MergeFlags('-O2 -g3 -Wall -DNDEBUG')
 env.Append(CPPPATH = [Dir('#/common')])
 
 # Variables
