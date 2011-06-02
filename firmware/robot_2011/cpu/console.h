@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 #define MAX_COMMAND_SIZE	64
-#define MAX_COMMAND_ARGS	4
+#define MAX_COMMAND_ARGS	8
 
 typedef struct
 {
@@ -31,10 +31,9 @@ int console_run(void);
 
 void subcommand(int argc, const char *argv[], void *arg);
 
-// arg points to a write_int_t
-void cmd_write_int(int argc, const char *argv[], void *arg);
-
 // Parses a 32-bit unsigned integer from a string.
 // If the string starts with "0x", it is interpreted as hexadecimal.
 // Otherwise, it is interpreted as decimal.
 uint32_t parse_uint32(const char *str);
+
+int parse_int(const char *str);

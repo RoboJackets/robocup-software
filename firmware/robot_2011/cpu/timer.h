@@ -41,4 +41,4 @@ void delay_ms(int ms);
 // Simple timer handlers.
 // arg must point to a write_int_t
 void toggle_bits(void *arg);
-void write_int(void *arg);
+void write_uint(void *arg);

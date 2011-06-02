@@ -67,6 +67,9 @@ enum
 extern unsigned int failures;
 
 // Bits 0-4 correspond to motors 0-4 (see Motor_* above).
+extern uint8_t current_motor_faults;
+
+// Latched motor faults.  These are only cleared on reset or with the "fail" command.
 extern uint8_t motor_faults;
 
 // kicker_status bits
@@ -84,3 +87,6 @@ extern uint8_t kicker_status;
 
 // Periodic functions
 void check_usb_connection(void);
+
+// Returns nonzero if the USB console is usable (for printf, etc.)
+int usb_is_connected(void);

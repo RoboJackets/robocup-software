@@ -8,6 +8,7 @@
 unsigned int robot_id;
 unsigned int failures;
 uint8_t motor_faults;
+uint8_t current_motor_faults;
 uint8_t kicker_status;
 
 // Detects and handles USB connection/disconnection
@@ -48,4 +49,9 @@ void check_usb_connection()
 			controller = 0;
 		}
 	}
+}
+
+int usb_is_connected(void)
+{
+	return usb_state == USB_Working;
 }

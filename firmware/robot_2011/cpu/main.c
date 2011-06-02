@@ -1,4 +1,5 @@
 #include <board.h>
+#include <stdio.h>
 
 #include "timer.h"
 #include "console.h"
@@ -11,6 +12,7 @@
 #include "ball_sense.h"
 #include "fpga.h"
 #include "i2c.h"
+#include "stall.h"
 
 // Last forward packet
 uint8_t forward_packet[Forward_Size];
@@ -29,6 +31,8 @@ int in_reverse;
 
 // Last time the 5ms periodic code was executed
 unsigned int update_time;
+
+void (*debug_update)(void) = 0;
 
 static int forward_packet_received()
 {
@@ -280,6 +284,8 @@ int main()
 		controller->init(0, 0);
 	}
 	
+	stall_init();
+	
 	// Main loop
 	in_reverse = 0;
 	int lost_radio_count = 0;
@@ -367,6 +373,16 @@ int main()
 			power_update();
 			update_ball_sensor();
 			
+			// Read encoders
+			if (!(failures & Fail_FPGA))
+			{
+				fpga_update();
+			}
+			
+			// Detect stalled motors
+			// This must be done before clearing motor outputs because it uses the old values
+			stall_update();
+			
 			// Reset motor outputs in case the controller is broken
 			for (int i = 0; i < 4; ++i)
 			{
@@ -381,16 +397,24 @@ int main()
 				kick_strength = 0;
 			}
 			
-			// Read encoders
-			if (!(failures & Fail_FPGA))
-			{
-				fpga_update();
-			}
-			
 			// Run the controller, if there is one
 			if (controller && controller->update)
 			{
 				controller->update();
+			}
+			
+			// Clear the commands for unusable motors
+			uint8_t bad_motors = motor_faults | motor_stall;
+			for (int i = 0; i < 4; ++i)
+			{
+				if (bad_motors & (1 << i))
+				{
+					wheel_out[i] = 0;
+				}
+			}
+			if (bad_motors & (1 << Motor_Dribbler))
+			{
+				dribble_out = 0;
 			}
 			
 			// Send commands to and read status from the FPGA
@@ -404,6 +428,11 @@ int main()
 				LED_ON(LED_LR);
 			} else {
 				LED_OFF(LED_LR);
+			}
+			
+			if (usb_is_connected() && debug_update)
+			{
+				debug_update();
 			}
 		}
 		

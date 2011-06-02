@@ -47,7 +47,7 @@ module motor(
 	input [8:0] new_level,
 	
 	input [2:0] hall,
-	output [5:0] motor_out,
+	output reg [5:0] motor_out_s = 0,
 	output fault
 );
 
@@ -98,8 +98,17 @@ wire [5:0] com_out =
 // For CCW: high->low, low->high, 00->11 (off->off)
 wire [5:0] bridge_drive = direction ? ~com_out : com_out;
 
+wire [5:0] motor_out;
 half_bridge half_bridge[1:3](pwm_active, pwm_inverted, bridge_drive, motor_out);
 
-assign fault = (hall == 3'b000) || (hall == 3'b111);
+// Synchronize outputs to eliminate glitches
+always @(posedge clk) begin
+	motor_out_s <= motor_out;
+end
+
+// Detect bad hall-effect inputs.
+// It's still possible for one or two inputs to fail and not be detected here.
+// The CPU looks for stalled motors to detect that case.
+assign fault = (hall_sync == 3'b000) || (hall_sync == 3'b111);
 
 endmodule

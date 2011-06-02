@@ -125,7 +125,8 @@ void fpga_update()
 	encoder[1] = rx[3] | (rx[4] << 8);
 	encoder[2] = rx[5] | (rx[6] << 8);
 	encoder[3] = rx[7] | (rx[8] << 8);
-	motor_faults = rx[9];
+	current_motor_faults = rx[9];
+	motor_faults |= current_motor_faults;
 	kicker_status = rx[10];
 	
 	for (int i = 0; i < 4; ++i)

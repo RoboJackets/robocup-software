@@ -19,6 +19,7 @@
 #include "ball_sense.h"
 #include "adc.h"
 #include "fpga.h"
+#include "stall.h"
 
 static void cmd_help(int argc, const char *argv[], void *arg)
 {
@@ -79,6 +80,23 @@ static void print_supply(const char *label, int raw)
 	printf("%s: %d.%03dV\n", label, supply_mv / 1000, supply_mv % 1000);
 }
 
+static void print_motor_bits(uint8_t bits)
+{
+	if (bits)
+	{
+		for (int i = 0; i < 5; ++i)
+		{
+			if (bits & (1 << i))
+			{
+				putchar(' ');
+				printf(motor_names[i]);
+			}
+		}
+	} else {
+		printf(" None");
+	}
+}
+
 static void cmd_status(int argc, const char *argv[], void *arg)
 {
 	if (controller)
@@ -116,19 +134,11 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	print_supply("  Max", supply_max);
 	
 	printf("Motor faults: 0x%02x", motor_faults);
-	if (motor_faults)
-	{
-		for (int i = 0; i < 5; ++i)
-		{
-			if (motor_faults & (1 << i))
-			{
-				putchar(' ');
-				printf(motor_names[i]);
-			}
-		}
-	} else {
-		printf(" None");
-	}
+	print_motor_bits(motor_faults);
+	putchar('\n');
+	
+	printf("Motor stalls: 0x%02x", motor_stall);
+	print_motor_bits(motor_stall);
 	putchar('\n');
 	
 	printf("Motor out:");
@@ -421,6 +431,8 @@ static void cmd_last_rx(int argc, const char *argv[], void *arg)
 
 static void cmd_stfu(int argc, const char *argv[], void *arg)
 {
+	debug_update = 0;
+	
 	if (argc)
 	{
 		power_music_disable = parse_uint32(argv[0]);
@@ -462,13 +474,21 @@ static void cmd_tone(int argc, const char *argv[], void *arg)
 
 static void cmd_fail(int argc, const char *argv[], void *arg)
 {
-	if (argc != 1)
+	if (argc < 1 || argc > 3)
 	{
-		printf("fail <flags>\n");
+		printf("fail <flags> [<motor faults>] [<motor stalls>]\n");
 		return;
 	}
 	
 	failures = parse_uint32(argv[0]);
+	if (argc > 1)
+	{
+		motor_faults = current_motor_faults | parse_uint32(argv[1]);
+	}
+	if (argc > 2)
+	{
+		motor_stall = parse_uint32(argv[2]);
+	}
 }
 
 static void cmd_adc(int argc, const char *argv[], void *arg)
@@ -553,15 +573,32 @@ static void cmd_i2c_read(int argc, const char *argv[], void *arg)
 	}
 }
 
-static const write_int_t write_fpga_off = {&AT91C_BASE_PIOA->PIO_CODR, MCU_PROGB};
-static const write_int_t write_reset = {AT91C_RSTC_RCR, 0xa5000005};
+void cmd_write_uint(int argc, const char *argv[], void *arg)
+{
+	const write_uint_t *w = (const write_uint_t *)arg;
+	if (argc >= 1)
+	{
+		*w->ptr = parse_int(argv[0]);
+	} else {
+		*w->ptr = w->value;
+	}
+}
+
+static void debug_faults()
+{
+	printf("0x%02x %3d %5d\n", current_motor_faults, wheel_out[0], stall_counter[0]);
+}
+static const write_uint_t write_monitor_faults = {(unsigned int *)&debug_update, (unsigned int)debug_faults};
+
+static const write_uint_t write_fpga_off = {&AT91C_BASE_PIOA->PIO_CODR, MCU_PROGB};
+static const write_uint_t write_reset = {AT91C_RSTC_RCR, 0xa5000005};
 
 const command_t commands[] =
 {
 	{"help", cmd_help},
 	{"status", cmd_status},
 	{"reflash", cmd_reflash},
-	{"reset", cmd_write_int, (void *)&write_reset},
+	{"reset", cmd_write_uint, (void *)&write_reset},
 	{"rw", cmd_read_word},
 	{"ww", cmd_write_word},
 	{"stfu", cmd_stfu},
@@ -570,7 +607,7 @@ const command_t commands[] =
 	{"inputs", cmd_print_uint32, (void *)&AT91C_BASE_PIOA->PIO_PDSR},
 	{"timers", cmd_timers},
 	{"fpga_reset", cmd_fpga_reset},
-	{"fpga_off", cmd_write_int, (void *)&write_fpga_off},
+	{"fpga_off", cmd_write_uint, (void *)&write_fpga_off},
 	{"fpga_on", cmd_fpga_on},
 	{"fpga_test", cmd_fpga_test},
 	{"spi_test", cmd_spi_test},
@@ -585,6 +622,7 @@ const command_t commands[] =
 	{"fail", cmd_fail},
 	{"adc", cmd_adc},
 	{"i2c_read", cmd_i2c_read},
+	{"monitor_faults", cmd_write_uint, (void *)&write_monitor_faults},
 
 	// End of list placeholder
 	{0, 0}

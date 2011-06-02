@@ -5,6 +5,7 @@
 #include "main.h"
 #include "console.h"
 #include "power.h"
+#include "status.h"
 
 ////////
 
@@ -26,11 +27,11 @@ static void step_init(int argc, const char *argv[])
 {
 	if (argc == 2)
 	{
-		step_motor = parse_uint32(argv[0]);
-		step_level = parse_uint32(argv[1]);
+		step_motor = parse_int(argv[0]);
+		step_level = parse_int(argv[1]);
 	}
 	
-	if (argc != 2 || step_motor < 0 || step_motor > 3 || step_level < 0 || step_level > 127)
+	if (argc != 2 || step_motor < 0 || step_motor > 3 || step_level < -127 || step_level > 127)
 	{
 		printf("Usage: run step <motor 0..3> <level 0..127>\n");
 		controller = 0;
@@ -40,7 +41,7 @@ static void step_init(int argc, const char *argv[])
 static void step_update()
 {
 	int supply_mv = supply_raw * VBATT_NUM / VBATT_DIV;
-	printf("%2d.%03d %5d\n", supply_mv / 1000, supply_mv % 1000, encoder_delta[2]);
+	printf("%2d.%03d %5d\n", supply_mv / 1000, supply_mv % 1000, encoder_delta[step_motor]);
 	wheel_out[step_motor] = step_level;
 }
 
@@ -114,12 +115,83 @@ static void log_print()
 	printf("DONE\n");
 }
 
+////////
+
+static int kp = 0x60;
+static int kd = 0x30;
+static int last_out[4];
+static int last_error[4];
+static int pd_debug = -1;
+
+static void pd_init(int argc, const char *argv[])
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		last_out[i] = 0;
+		last_error[i] = 0;
+	}
+	
+	// First two parameters are coefficients
+	if (argc >= 2)
+	{
+		kp = parse_int(argv[0]);
+		kd = parse_int(argv[1]);
+	}
+	
+	// Third parameter is which motor to print
+	if (argc >= 3)
+	{
+		pd_debug = parse_int(argv[2]);
+	} else {
+		pd_debug = -1;
+	}
+}
+
+static void pd_update()
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		int setpoint = -wheel_command[i];
+		int speed = encoder_delta[i];
+		int error = setpoint - speed;
+		int delta_error = error - last_error[i];
+		last_error[i] = error;
+		int delta = error * kp + delta_error * kd;
+		last_out[i] += delta;
+		
+		// Don't accumulate output for broken motors, in case they start working
+		if (motor_faults & (1 << i))
+		{
+			last_out[i] = 0;
+		}
+		
+		// Clip to output limits
+		if (last_out[i] > 127 * 256)
+		{
+			last_out[i] = 127 * 256;
+		} else if (last_out[i] < -127 * 256)
+		{
+			last_out[i] = -127 * 256;
+		}
+		
+		if (i == pd_debug)
+		{
+			printf("%02x %08x %08x %08x\n", motor_faults, speed, delta, last_out[i]);
+		}
+		
+		wheel_out[i] = last_out[i] / 256;
+	}
+}
+
+////////
+
 const controller_info_t controllers[] =
 {
 	{"dumb", 0, 0, dumb_update},
 	{"step", step_init, 0, step_update},
 	{"log", log_init, 0, log_update},
 	{"log_print", 0, 0, log_print},
+	{"pd", pd_init, 0, pd_update},
 	
 	// End of table
 	{0, 0}

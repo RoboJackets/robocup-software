@@ -5,6 +5,7 @@
 
 #include "console.h"
 #include "write.h"
+#include "main.h"
 
 unsigned char usb_rx_buffer[64];
 // Amount of data in usb_rx_buffer.
@@ -175,6 +176,7 @@ int console_run()
 			if (ch == 3)
 			{
 				printf("Stop\n");
+				debug_update = 0;
 				ret = 0;
 				
 				// Clear the command buffer
@@ -228,12 +230,6 @@ int console_run()
 	return ret;
 }
 
-void cmd_write_int(int argc, const char *argv[], void *arg)
-{
-	const write_int_t *w = (const write_int_t *)arg;
-	*w->ptr = w->value;
-}
-
 uint32_t parse_uint32(const char *str)
 {
 	uint32_t value = 0;
@@ -276,6 +272,65 @@ uint32_t parse_uint32(const char *str)
 				break;
 			}
 		}
+	}
+	
+	return value;
+}
+
+int parse_int(const char *str)
+{
+	int32_t value = 0;
+	int negative = 0;
+	
+	if (str[0] == '-')
+	{
+		negative = 1;
+		++str;
+	}
+	
+	if (str[0] == '0' && str[1] == 'x')
+	{
+		// Hexadecimal
+		str += 2;
+		while (*str != 0)
+		{
+			char ch = *str++;
+			
+			value *= 16;
+			
+			if (ch >= '0' && ch <= '9')
+			{
+				value += ch - '0';
+			} else if (ch >= 'a' && ch <= 'f')
+			{
+				value += ch - 'a' + 10;
+			} else if (ch >= 'A' && ch <= 'F')
+			{
+				value += ch - 'A' + 10;
+			} else {
+				break;
+			}
+		}
+	} else {
+		// Decimal
+		while (*str != 0)
+		{
+			char ch = *str++;
+			
+			value *= 10;
+			
+			if (ch >= '0' && ch <= '9')
+			{
+				value += ch - '0';
+			} else {
+				break;
+			}
+		}
+	}
+	
+	if (negative)
+	{
+		value = -value;
 	}
 	
 	return value;
