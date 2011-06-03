@@ -41,6 +41,7 @@ module robocup (
 	output kcharge, kkick, kchip,
 	
 	// Microcontroller interface
+	input flash_ncs,
 	input fpga_ncs,
 	input mosi, sck,
 	inout miso

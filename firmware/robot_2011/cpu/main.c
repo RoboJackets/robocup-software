@@ -13,6 +13,7 @@
 #include "fpga.h"
 #include "i2c.h"
 #include "stall.h"
+#include "imu.h"
 
 // Last forward packet
 uint8_t forward_packet[Forward_Size];
@@ -222,7 +223,7 @@ int main()
 	AT91C_BASE_PIOA->PIO_SODR = BALL_LED;			// Turn off ball sensor LED
 	AT91C_BASE_PIOA->PIO_OER = LED_ALL | BALL_LED;	// Enable outputs
 	// Enable and disable pullups
-	AT91C_BASE_PIOA->PIO_PPUER = RADIO_INT | FLASH_NCS | MISO | ID0 | ID1 | ID2 | ID3 | DP1 | DP3 | DP4;
+	AT91C_BASE_PIOA->PIO_PPUER = RADIO_INT | RADIO_NCS | FPGA_NCS | FLASH_NCS | MISO | ID0 | ID1 | ID2 | ID3 | DP1 | DP2 | DP4;
 	AT91C_BASE_PIOA->PIO_PPUDR = VBUS | M2DIV | M3DIV | M5DIV | BALL_LED;
 	
 	// Set up MCU_PROGB as an open-drain output, initially high
@@ -251,6 +252,9 @@ int main()
 	
 	// Set up I2C
 	i2c_init();
+	
+	// Set up the IMU
+	imu_init();
 	
 	// Turn off LEDs
 	LED_OFF(LED_ALL);

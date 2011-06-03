@@ -167,7 +167,7 @@
 #define MISO		(1 << 12)
 #define MOSI		(1 << 13)
 #define SCK			(1 << 14)
-#define ID0			(1 << 15)
+#define ID2			(1 << 15)
 #define NCONNECT	(1 << 16)
 #define M5DIV		(1 << 17)
 #define M2DIV		(1 << 18)
@@ -176,12 +176,12 @@
 #define MCU_PROGB	(1 << 21)
 #define RADIO_NCS	(1 << 22)
 #define LED_RY		(1 << 23)
-#define ID3			(1 << 24)
+#define ID0			(1 << 24)
 #define ID1			(1 << 25)
-#define ID2			(1 << 26)
-#define DP4			(1 << 27)
-#define DP3			(1 << 28)
-#define DP1			(1 << 29)
+#define ID3			(1 << 26)
+#define DP1			(1 << 27)
+#define DP2			(1 << 28)
+#define DP4			(1 << 29)
 #define LED_LY		(1 << 30)
 #define VBUS		(1 << 31)
 
@@ -198,6 +198,11 @@
 #define LED_TOGGLE(x) {AT91C_BASE_PIOA->PIO_ODSR ^= (x);}
 
 #define LED_IS_ON(x) (!(AT91C_BASE_PIOA->PIO_ODSR & (x)))
+
+// I2C addresses
+#define I2C_IMU3000	0x69
+// The accelerometer is only available when the IMU3000 is in pass-through mode
+#define I2C_ACCEL	0x0f
 
 //------------------------------------------------------------------------------
 // Flash

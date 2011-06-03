@@ -1,6 +1,6 @@
 Import('*')
 
-chip = 'at91sam7s321'
+chip = 'at91sam7s256'
 
 # Definitions needed by at91lib
 defs = '-D%s -DTRACE_LEVEL=0 -DNOASSERT' % chip
@@ -89,6 +89,7 @@ robot_fw = arm_flash.Program('robocup.elf', [
 	'spi.c',
 	'radio.c',
 	'i2c.c',
+	'imu.c',
 	'stall.c',
 	'tools/reflash.c'
 ])

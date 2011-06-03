@@ -126,6 +126,10 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	{
 		printf(" BallSense");
 	}
+	if (failures & Fail_IMU)
+	{
+		printf(" IMU");
+	}
 	putchar('\n');
 	
 	printf("Power:\n");

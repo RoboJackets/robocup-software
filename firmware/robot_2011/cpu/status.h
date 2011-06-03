@@ -45,6 +45,12 @@ enum
 	
 	// Ball sensor dazzled
 	Fail_Ball_Dazzled		= 0x00008000,
+	
+	// Gyro/IMU processor
+	Fail_Gyro				= 0x00010000,
+	
+	// Accelerometer
+	Fail_Accelerometer		= 0x00020000
 };
 
 // Failure categories
@@ -52,6 +58,7 @@ enum
 #define Fail_Radio	(Fail_Radio_Interface | Fail_Radio_Int_Low | Fail_Radio_Int_High)
 #define Fail_Power	(Fail_Undervoltage | Fail_Overvoltage | Fail_Fuse)
 #define Fail_Ball	(Fail_Ball_Det_Open | Fail_Ball_Det_Short | Fail_Ball_LED_Open | Fail_Ball_Dazzled)
+#define Fail_IMU	(Fail_Gyro | Fail_Accelerometer)
 
 // Motor numbers
 // Drive motors 0-3 are labelled M1-M4 on the board.
