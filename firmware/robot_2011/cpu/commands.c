@@ -106,7 +106,7 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 		printf("No controller\n");
 	}
 	
-	printf("Robot ID %X\n", robot_id);
+	printf("Robot ID %d\n", robot_id);
 	printf("Reset type %x\n", (AT91C_BASE_SYS->RSTC_RSR >> 8) & 7);
 	
 	printf("Failures: 0x%08x", failures);
@@ -189,11 +189,16 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 
 static void cmd_timers(int argc, const char *argv[], void *arg)
 {
-	printf("timer_t    time       period\n");
-	//      0x01234567 0x01234567 0x01234567
-	for (timer_t *t = first_timer; t; t = t->next)
+	if (first_timer)
 	{
-		printf("%p 0x%08x 0x%08x\n", t, t->time, t->period);
+		printf("timer_t    time       period\n");
+		//      0x01234567 0x01234567 0x01234567
+		for (timer_t *t = first_timer; t; t = t->next)
+		{
+			printf("%p 0x%08x 0x%08x\n", t, t->time, t->period);
+		}
+	} else {
+		printf("(none)\n");
 	}
 }
 
@@ -417,7 +422,7 @@ static void cmd_radio_start(int argc, const char *argv[], void *arg)
 
 static void cmd_last_rx(int argc, const char *argv[], void *arg)
 {
- 	printf("RSSI %d dBm\n", (int)last_rssi / 2 - 74);
+	printf("RSSI %d dBm\n", (int)last_rssi / 2 - 74);
 	
 	printf("%02x %02x %02x\n", forward_packet[0], forward_packet[1], forward_packet[2]);
 	for (int i = 0; i < 5; ++i)

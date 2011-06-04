@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "control.h"
 #include "fpga.h"
@@ -6,6 +7,7 @@
 #include "console.h"
 #include "power.h"
 #include "status.h"
+#include "stall.h"
 
 ////////
 
@@ -117,6 +119,7 @@ static void log_print()
 
 ////////
 
+static const int Command_Rate_Limit = 40 * 256;
 static int kp = 0x60;
 static int kd = 0x30;
 static int last_out[4];
@@ -154,13 +157,28 @@ static void pd_update()
 		int setpoint = -wheel_command[i];
 		int speed = encoder_delta[i];
 		int error = setpoint - speed;
+
+		if (abs(error) <= 1)
+		{
+				error = 0;
+		}
+
 		int delta_error = error - last_error[i];
 		last_error[i] = error;
 		int delta = error * kp + delta_error * kd;
+		
+		// Limit the change between consecutive cycles to prevent excessive current
+		if (delta > Command_Rate_Limit)
+		{
+			delta = Command_Rate_Limit;
+		} else if (delta < -Command_Rate_Limit)
+		{
+			delta = -Command_Rate_Limit;
+		}
 		last_out[i] += delta;
 		
 		// Don't accumulate output for broken motors, in case they start working
-		if (motor_faults & (1 << i))
+		if ((motor_faults | motor_stall) & (1 << i))
 		{
 			last_out[i] = 0;
 		}
@@ -181,6 +199,9 @@ static void pd_update()
 		
 		wheel_out[i] = last_out[i] / 256;
 	}
+
+	//FIXME - Do we need speed control on the dribbler?
+	dribble_out = dribble_command;
 }
 
 ////////

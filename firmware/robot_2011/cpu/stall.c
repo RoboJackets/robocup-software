@@ -1,4 +1,4 @@
-//FIXME - Use hall counters instead so this works with the dribbler
+//FIXME - Use hall counters instead so this works with the dribbler and 2008 bases
 //	Does the dribbler need different parameters?
 
 #include <stdio.h>
@@ -32,10 +32,10 @@ static const int Stall_kCommand = 10;
 static const int Stall_Threshold = 30000;
 
 // The counter decays by this constant amount each cycle
-static const int Stall_Decay = 3;
+static const int Stall_Decay = 70;
 
 // Commands below this limit do not contribute to the counter
-static const int Stall_Deadband = 15;
+static const int Stall_Deadband = 60;
 
 uint8_t motor_stall;
 int stall_counter[5];

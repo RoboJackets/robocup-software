@@ -25,11 +25,6 @@ void update_ball_sensor()
 		//
 		// While the output is low, switch it to input.  If the LED is connected, it will
 		// quickly pull the pin high.  If the LED is open, the pin will stay low.
-		//
-		// I haven't found a way to also detect a shorted emitter without using another ADC
-		// channel, which we can't spare (to drive the LED directly it must be on PA0-3,
-		// none of which can be ADC inputs, and we don't have enough I/O to connect the LED to
-		// two pins).
 		AT91C_BASE_PIOA->PIO_CODR = BALL_LED;
 		AT91C_BASE_PIOA->PIO_ODR = BALL_LED;
 		if (!(AT91C_BASE_PIOA->PIO_PDSR & BALL_LED))
@@ -39,7 +34,7 @@ void update_ball_sensor()
 			failures &= ~Fail_Ball_LED_Open;
 		}
 		
-		// Drive the LED off
+		// Turn the LED off
 		LED_OFF(BALL_LED);
 		
 		// Make the pin output again

@@ -56,7 +56,7 @@ static int forward_packet_received()
 	}
 	
 	// Read status bytes
-	last_rssi = spi_xfer(SNOP);
+	last_rssi = (int8_t)spi_xfer(SNOP);
 	uint8_t status = spi_xfer(SNOP);
 	radio_deselect();
 	
@@ -394,6 +394,7 @@ int main()
 			}
 			dribble_out = 0;
 			
+			// Allow kicking if we have the ball
 			if (have_ball)
 			{
 				kick_strength = kick_command;
