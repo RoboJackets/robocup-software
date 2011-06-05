@@ -37,15 +37,22 @@ if arch != 0x70:
 	sys.exit(1)
 
 nvpsiz = (cidr >> 8) & 15
+user_start = 0x2000
 if nvpsiz == 3:
 	# 32k
 	Page_Bits = 7
 	Flash_Size = 32768
 	Num_Locks = 8
+	user_start = 0x1400
 elif nvpsiz == 5:
 	# 64k
 	Page_Bits = 7
 	Flash_Size = 65536
+	Num_Locks = 16
+elif nvpsiz == 9:
+	# 256k
+	Page_Bits = 8
+	Flash_Size = 262144
 	Num_Locks = 16
 else:
 	print >> sys.stderr, 'Unsupported flash size %d' % nvpsiz
@@ -122,8 +129,6 @@ if status & 0xffff0000:
 		sys.exit(1)
 
 reflash[16:20] = struct.pack('<I', len(data))
-#user_start = 0x2000
-user_start = 0x1400
 sam.writeData(RAM + user_start, str(reflash))
 sam.go(RAM + user_start)
 

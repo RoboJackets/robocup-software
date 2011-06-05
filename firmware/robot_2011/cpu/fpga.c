@@ -39,7 +39,6 @@ int fpga_init()
 			if (AT91C_BASE_PIOA->PIO_PDSR & FLASH_NCS)
 			{
 				// FLASH_NCS is high: the FPGA is done
-				//FIXME - Read version register
 				ret = 1;
 				goto good;
 			}
@@ -47,7 +46,11 @@ int fpga_init()
 		
 		// The FPGA took too long to configure.
 		// Configuration memory is probably empty/corrupt.
-		// Shut down the FPGA, since the MCU needs to become the SPI master
+		// It's also possible that the board is on a bench power supply
+		// with a low current limit and the supply voltage rose very slowly
+		// due to inrush current to the motor driver capacitors.
+		//
+		// Shut down the FPGA, since the MCU needs to become the SPI master.
 		AT91C_BASE_PIOA->PIO_CODR = MCU_PROGB;
 		
 		failures |= Fail_FPGA_Config;
@@ -125,7 +128,8 @@ void fpga_update()
 	encoder[1] = rx[3] | (rx[4] << 8);
 	encoder[2] = rx[5] | (rx[6] << 8);
 	encoder[3] = rx[7] | (rx[8] << 8);
-	motor_faults = rx[9];
+	current_motor_faults = rx[9];
+	motor_faults |= current_motor_faults;
 	kicker_status = rx[10];
 	
 	for (int i = 0; i < 4; ++i)

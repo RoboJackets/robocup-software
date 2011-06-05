@@ -41,6 +41,7 @@ module robocup (
 	output kcharge, kkick, kchip,
 	
 	// Microcontroller interface
+	input flash_ncs,
 	input fpga_ncs,
 	input mosi, sck,
 	inout miso
@@ -150,18 +151,24 @@ reg [7:0] kick_strength = 0;
 reg kick_select = 0;
 reg charge_enable = 0;
 
+// Watchdog timer for motor updates.
+// When this overflows, all motor outputs are reset.
+reg [21:0] watchdog = 0;
+
 always @(posedge sysclk) begin
 	if (ncs_s == 1 && spi_byte_count == 11) begin
+		watchdog <= 0;
+		
 		motor_speed_1 <= {spi_rx[1][0], spi_rx[0]};
-		motor_dir[1] = spi_rx[1][1];
+		motor_dir[1] <= spi_rx[1][1];
 		motor_speed_2 <= {spi_rx[3][0], spi_rx[2]};
-		motor_dir[2] = spi_rx[3][1];
+		motor_dir[2] <= spi_rx[3][1];
 		motor_speed_3 <= {spi_rx[5][0], spi_rx[4]};
-		motor_dir[3] = spi_rx[5][1];
+		motor_dir[3] <= spi_rx[5][1];
 		motor_speed_4 <= {spi_rx[7][0], spi_rx[6]};
-		motor_dir[4] = spi_rx[7][1];
+		motor_dir[4] <= spi_rx[7][1];
 		motor_speed_5 <= {spi_rx[9][0], spi_rx[8]};
-		motor_dir[5] = spi_rx[9][1];
+		motor_dir[5] <= spi_rx[9][1];
 		charge_enable <= spi_rx[9][7];
 		kick_select <= spi_rx[9][6];
 		kick_strength <= spi_rx[10];
@@ -169,6 +176,19 @@ always @(posedge sysclk) begin
 			kick_strobe <= 1;
 		end
 	end else begin
+		if (watchdog == 22'h3fffff) begin
+			// Watchdog timeout
+			motor_speed_1 <= 0;
+			motor_speed_2 <= 0;
+			motor_speed_3 <= 0;
+			motor_speed_4 <= 0;
+			motor_speed_5 <= 0;
+			charge_enable <= 0;
+			motor_dir <= 0;
+		end else begin
+			watchdog <= watchdog + 1;
+		end
+		
 		kick_strobe <= 0;
 	end
 end

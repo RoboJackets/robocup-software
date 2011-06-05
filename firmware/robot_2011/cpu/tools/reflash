@@ -34,7 +34,8 @@ data = f.read()
 f.close()
 
 # Pad data to page boundary
-Page_Size = 128
+#FIXME - 128 bytes for the '321 and '64 parts
+Page_Size = 256
 extra = len(data) % Page_Size
 if extra:
 	data += '\xff' * (Page_Size - extra)

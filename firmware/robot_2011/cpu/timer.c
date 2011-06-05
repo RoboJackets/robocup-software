@@ -99,12 +99,12 @@ void delay_ms(int ms)
 
 void toggle_bits(void *arg)
 {
-	const write_int_t *w = (const write_int_t *)arg;
+	const write_uint_t *w = (const write_uint_t *)arg;
 	*w->ptr ^= w->value;
 }
 
-void write_int(void *arg)
+void write_uint(void *arg)
 {
-	const write_int_t *w = (const write_int_t *)arg;
+	const write_uint_t *w = (const write_uint_t *)arg;
 	*w->ptr = w->value;
 }
