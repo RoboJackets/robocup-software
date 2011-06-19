@@ -95,7 +95,6 @@ void radio_configure()
 	radio_deselect();
 	
 	radio_write(IOCFG2, 6 | GDOx_INVERT);
-// 	radio_write(IOCFG2, 7);
 	
 	radio_write(PKTLEN, Forward_Size);
 	radio_command(SFRX);
