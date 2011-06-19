@@ -72,7 +72,7 @@ good:
 	uint8_t version = spi_xfer(0);
 	spi_deselect();
 	
-	if (version != 0x02)
+	if (version != 0x03)
 	{
 		failures |= Fail_FPGA_Version;
 	}
@@ -80,46 +80,22 @@ good:
 	return ret;
 }
 
-void fpga_update()
+void fpga_read_status()
 {
-	uint8_t tx[11] = {0}, rx[11];
-	
+        uint8_t rx[12];
+
 	// Save old encoder counts
 	int_fast16_t last_encoder[4];
 	for (int i = 0; i < 4; ++i)
 	{
 		last_encoder[i] = encoder[i];
 	}
-	
-	//FIXME - Select 2008/2010 mechanical base with switch DP0
-	for (int i = 0; i < 4; ++i)
-	{
-		int_fast8_t cmd = wheel_out[i];
-		if (cmd < 0)
-		{
-			cmd = -cmd;
-			tx[i * 2] = cmd << 2;
-			tx[i * 2 + 1] = cmd >> 6;
-			tx[i * 2 + 1] |= 2;
-		} else {
-			tx[i * 2] = cmd << 2;
-			tx[i * 2 + 1] = cmd >> 6;
-		}
-	}
-	tx[8] = dribble_out << 1;
-	tx[9] = (dribble_out >> 7) | 2;
-	tx[9] |= 0x80;	// Always enable kicker charging
-	if (use_chipper)
-	{
-		tx[9] |= 0x40;	// Select chipper
-	}
-	tx[10] = kick_strength;
-	
+
 	// Swap data with the FPGA
 	spi_select(NPCS_FPGA);
-	for (int i = 0; i < sizeof(tx); ++i)
+	for (int i = 0; i < sizeof(rx); ++i)
 	{
-		rx[i] = spi_xfer(tx[i]);
+		rx[i] = spi_xfer(0);
 	}
 	spi_deselect();
 	
@@ -136,4 +112,42 @@ void fpga_update()
 	{
 		encoder_delta[i] = (int16_t)(encoder[i] - last_encoder[i]);
 	}
+}
+
+void fpga_send_commands()
+{
+	uint8_t tx[12] = {0};
+
+	//FIXME - Select 2008/2010 mechanical base with switch DP0
+        tx[0] = 0x01;   // Command: set motor speeds
+	for (int i = 0; i < 4; ++i)
+	{
+		int_fast8_t cmd = wheel_out[i];
+		if (cmd < 0)
+		{
+			cmd = -cmd;
+			tx[i * 2 + 1] = cmd << 2;
+			tx[i * 2 + 2] = cmd >> 6;
+			tx[i * 2 + 2] |= 2;
+		} else {
+			tx[i * 2 + 1] = cmd << 2;
+			tx[i * 2 + 2] = cmd >> 6;
+		}
+	}
+	tx[9] = dribble_out << 1;
+	tx[10] = (dribble_out >> 7) | 2;
+	tx[10] |= 0x80;	// Always enable kicker charging
+	if (use_chipper)
+	{
+		tx[10] |= 0x40;	// Select chipper
+	}
+	tx[11] = kick_strength;
+	
+	// Swap data with the FPGA
+	spi_select(NPCS_FPGA);
+	for (int i = 0; i < sizeof(tx); ++i)
+	{
+		spi_xfer(tx[i]);
+	}
+	spi_deselect();
 }

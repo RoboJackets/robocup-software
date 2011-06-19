@@ -120,8 +120,8 @@ static void log_print()
 ////////
 
 static const int Command_Rate_Limit = 40 * 256;
-static int kp = 0x60;
-static int kd = 0x30;
+static int kp = 50;
+static int kd = 20;
 static int last_out[4];
 static int last_error[4];
 static int pd_debug = -1;

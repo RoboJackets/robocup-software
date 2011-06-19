@@ -380,7 +380,7 @@ int main()
 			// Read encoders
 			if (!(failures & Fail_FPGA))
 			{
-				fpga_update();
+				fpga_read_status();
 			}
 			
 			// Detect stalled motors
@@ -425,7 +425,7 @@ int main()
 			// Send commands to and read status from the FPGA
 			if (!(failures & Fail_FPGA))
 			{
-				fpga_update();
+				fpga_send_commands();
 			}
 			
 			if (kicker_status & Kicker_Charged)

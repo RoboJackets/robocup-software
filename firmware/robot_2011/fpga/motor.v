@@ -79,7 +79,7 @@ end
 // Apply dead time to the inverted side so if we are only using the active side
 // (fast decay driving or braking) it has no effect.
 // We need an extra bit in case of overflow.
-wire [9:0] pwm_inverted_threshold = {0, pwm_level} + dead_time;
+wire [9:0] pwm_inverted_threshold = {1'b0, pwm_level} + dead_time;
 
 wire pwm_active = (pwm_phase < pwm_level);
 wire pwm_inverted = (pwm_phase >= pwm_inverted_threshold);
