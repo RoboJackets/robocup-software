@@ -9,6 +9,8 @@
 #include "status.h"
 #include "stall.h"
 
+const controller_info_t *default_controller;
+
 ////////
 
 static void dumb_update()
@@ -209,10 +211,10 @@ static void pd_update()
 const controller_info_t controllers[] =
 {
 	{"dumb", 0, 0, dumb_update},
+	{"pd", pd_init, 0, pd_update},
 	{"step", step_init, 0, step_update},
 	{"log", log_init, 0, log_update},
 	{"log_print", 0, 0, log_print},
-	{"pd", pd_init, 0, pd_update},
 	
 	// End of table
 	{0, 0}

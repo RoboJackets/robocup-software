@@ -22,8 +22,8 @@ const uint8_t cc1101_regs[] =
     0x1c, 0x00,    // AGCCTRL1 - AGC control.
     0x1d, 0xb0,    // AGCCTRL0 - AGC control.
     0x07, 0x4c,          // PKTCTRL1
-    0x08, 0x04,          // PKTCTRL0
-    0x06, Forward_Size,   // PKTLEN
+    0x08, 0x05,          // PKTCTRL0
+    0x06, 0x3e,   // PKTLEN
 //    0x23, 0xea,    // FSCAL3   - Frequency synthesizer calibration.
 //    0x24, 0x2a,    // FSCAL2   - Frequency synthesizer calibration.
 //    0x25, 0x00,    // FSCAL1   - Frequency synthesizer calibration.
@@ -32,7 +32,7 @@ const uint8_t cc1101_regs[] =
 //    0x2c, 0x88,    // TEST2    - Various test settings.
 //    0x2d, 0x31,    // TEST1    - Various test settings.
 //    0x2e, 0x09,    // TEST0    - Various test settings.
-    0x03, 0x07,    // FIFOTHR  - RXFIFO and TXFIFO thresholds.
+    0x03, 0x0f,    // FIFOTHR  - RXFIFO and TXFIFO thresholds.
 //    0x00, 0x0b,    // IOCFG2   - GDO2 output pin configuration.
 //    0x02, 0x0c,    // IOCFG0D  - GDO0 output pin configuration. Refer to SmartRF� Studio User Manual for detailed pseudo register explanation.
 //    0x07, 0x04,    // PKTCTRL1 - Packet automation control.

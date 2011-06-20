@@ -65,6 +65,7 @@ void reflash_main(int total_size)
 	for (ptr = start; ptr < start + total_size;)
 	{
 		// Read one packet from the current bank
+		//FIXME - The page buffer wraps around and nothing here prevents overwriting earlier data
 		if (bank == 0)
 		{
 			while (!(AT91C_UDP_CSR[EP_OUT] & AT91C_UDP_RX_DATA_BK0)) wdt_reset();

@@ -10,5 +10,6 @@ SConscript('urjtag.scons')
 # Subdirectories
 
 SConscript('base_2009/SConscript')
+SConscript('base_2011/SConscript')
 SConscript('speedgate/SConscript')
 SConscript('robot_2011/SConscript')

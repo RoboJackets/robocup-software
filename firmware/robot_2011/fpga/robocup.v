@@ -124,7 +124,7 @@ wire sck_falling = (sck_d == 1 && sck_s == 0);
 // This does not apply to byte 0: that byte must be loaded whenever ncs_s == 1.
 wire spi_tx_setup = (sck_falling && spi_bit_count == 0);
 
-// The command byte is the first byte recieved
+// The command byte is the first byte received
 wire [7:0] spi_command = spi_rx[0];
 
 // SPI serdes logic

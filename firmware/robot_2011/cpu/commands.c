@@ -542,7 +542,7 @@ static void cmd_run(int argc, const char *argv[], void *arg)
 		printf("Not found\n");
 	} else {
 		// Start the default controller
-		controller = DEFAULT_CONTROLLER;
+		controller = default_controller;
 		if (controller && controller->init)
 		{
 			controller->init(0, 0);
@@ -593,6 +593,26 @@ void cmd_write_uint(int argc, const char *argv[], void *arg)
 	}
 }
 
+void cmd_read(int argc, const char *argv[], void *arg)
+{
+	if (argc != 2)
+	{
+		printf("read <address> <len>\n");
+		return;
+	}
+	
+	uint32_t addr = parse_uint32(argv[0]);
+	uint32_t len = parse_uint32(argv[1]);
+	for (uint32_t i = 0; i < len; ++i)
+	{
+		// Reset the watchdog timer
+		AT91C_BASE_WDTC->WDTC_WDCR = 0xa5000001;
+		
+		putchar(*(uint8_t *)addr);
+		++addr;
+	}
+}
+
 static void debug_faults()
 {
 	printf("0x%02x %3d %5d\n", current_motor_faults, wheel_out[0], stall_counter[0]);
@@ -632,6 +652,7 @@ const command_t commands[] =
 	{"adc", cmd_adc},
 	{"i2c_read", cmd_i2c_read},
 	{"monitor_faults", cmd_write_uint, (void *)&write_monitor_faults},
+	{"read", cmd_read},
 
 	// End of list placeholder
 	{0, 0}
