@@ -445,6 +445,17 @@ void handle_radio_rx()
     // Read RXFIFO (burst)
     radio_select();
     spi_write(RXFIFO | CC_READ | CC_BURST);
+	uint8_t pktlen = spi_write(SNOP);
+	
+	if (bytes != (pktlen + 3))
+	{
+		// Wrong number of bytes in FIFO - probably dropped data
+		radio_deselect();
+        radio_command(SRX);
+        clear_bit(PORTB, 7);
+        return;
+	}
+	
     while (bytes--)
     {
         UEDATX = spi_write(SNOP);
