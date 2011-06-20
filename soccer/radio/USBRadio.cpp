@@ -236,7 +236,7 @@ bool USBRadio::receive(Packet::RadioRx* packet)
 		}
 	}
 	
-	uint8_t reverse_packet[Reverse_Size + 2];
+	uint8_t reverse_packet[Reverse_Size + 3];
 	
 	uint64_t rx_time = 0;
 	// Read a forward packet if one is available
@@ -246,19 +246,19 @@ bool USBRadio::receive(Packet::RadioRx* packet)
 	}
 	rx_time = Utils::timestamp();
 
-	int board_id = reverse_packet[0] & 0x0f;
+	int board_id = reverse_packet[1] & 0x0f;
 	
 	packet->set_timestamp(rx_time);
 	packet->set_board_id(board_id);
-	packet->set_rssi((int8_t)reverse_packet[1] / 2.0);
-	packet->set_battery(reverse_packet[3] * 3.3 / 256.0 * 5.0);
-	packet->set_ball_sense(reverse_packet[5] & (1 << 5));
-	packet->set_charged(reverse_packet[4] & 1);
-	packet->set_motor_fault(reverse_packet[5] & 0x1f);
+	packet->set_rssi((int8_t)reverse_packet[2] / 2.0);
+	packet->set_battery(reverse_packet[4] * 3.3 / 256.0 * 5.0);
+	packet->set_ball_sense(reverse_packet[6] & (1 << 5));
+	packet->set_charged(reverse_packet[5] & 1);
+	packet->set_motor_fault(reverse_packet[6] & 0x1f);
 	
 	for (int i = 0; i < 4; ++i)
 	{
-		int value = reverse_packet[6 + i] | ((reverse_packet[10] >> (i * 2)) & 3) << 8;
+		int value = reverse_packet[7 + i] | ((reverse_packet[11] >> (i * 2)) & 3) << 8;
 		packet->add_encoders(value);
 	}
 	
