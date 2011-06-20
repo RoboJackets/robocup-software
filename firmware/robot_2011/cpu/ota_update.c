@@ -20,6 +20,26 @@ static int ota_commit;
 // Start of last page that was written to flash
 static uint32_t last_page_start;
 
+#define reply_timer_done() (AT91C_BASE_TC0->TC_SR & AT91C_TC_CPCS)
+
+void reply_timer_init()
+{
+	// TC0 is used for reply timing.
+	// Start the timer with the appropriate value in RC when a forward packet is received.
+	// The timer reaches RC and stops when the reverse packet needs to be sent.
+	//
+	// The reply timer runs at MCK/32 => 1.5MHz
+	AT91C_BASE_PMC->PMC_PCER = 1 << AT91C_ID_TC0;
+	AT91C_BASE_TC0->TC_CCR = AT91C_TC_CLKEN;
+	AT91C_BASE_TC0->TC_CMR = AT91C_TC_WAVE | AT91C_TC_WAVESEL_UP_AUTO | AT91C_TC_CPCSTOP | AT91C_TC_CLKS_TIMER_DIV3_CLOCK;
+}
+
+void reply_timer_start(uint16_t time)
+{
+	AT91C_BASE_TC0->TC_RC = time;
+	AT91C_BASE_TC0->TC_CCR = AT91C_TC_SWTRG;
+}
+
 __attribute__ ((section (".reflash")))
 void flash_write_page(int page)
 {
@@ -71,7 +91,10 @@ void ota_copy(int num_pages)
 // Returns nonzero if OTA mode should continue.
 static int ota_packet()
 {
+	LED_TOGGLE(LED_RG);
+	
 	// Go ahead and store our expected offset in the reply
+	ota_reply_len = 0;
 	ota_reply[1] = ota_data_len;
 	ota_reply[2] = ota_data_len >> 8;
 	ota_reply[3] = ota_data_len >> 16;
@@ -155,22 +178,35 @@ static int ota_packet()
 		}
 	}
 	
+	// If we are sending a reply, start the reply timer for the proper time slot
+	if (ota_reply_len)
+	{
+		// 2ms per slot
+		reply_timer_start(2999 * robot_id);
+	}
+	
 	return 1;
 }
 
 static void ota_main()
 {
 	LED_ON(LED_ALL);
+	LED_OFF(LED_RY);
 	
 	AT91C_BASE_MC->MC_FMR = 0x00340100;
 	
 	int lost_radio_count = 0;
-	// Other state is reset in ota_packet in response to the initial start command
+	reply_timer_init();
+	
+	// Reset state by processing the packet that got us here
+	ota_packet();
+	
 	while (1)
 	{
 		// Reset the watchdog timer
 		AT91C_BASE_WDTC->WDTC_WDCR = 0xa5000001;
 		
+		// Keep the radio working
 		if ((current_time - rx_lost_time) > 250)
 		{
 			rx_lost_time = current_time;
@@ -189,6 +225,7 @@ static void ota_main()
 			}
 		}
 		
+		// Check for radio data
 		if (radio_poll())
 		{
 			if (!ota_packet())
@@ -197,13 +234,14 @@ static void ota_main()
 			}
 		}
 		
-		//FIXME - Time slot
-		if (ota_reply_len)
+		// Send a reply in the proper time slot
+		if (ota_reply_len && reply_timer_done())
 		{
 			radio_transmit(ota_reply, ota_reply_len);
 			ota_reply_len = 0;
 		}
 		
+		// Copy data and reset after sending a final reply to the FINISH command
 		if (ota_commit && !radio_in_tx)
 		{
 			// Copy flash and reset
@@ -217,7 +255,6 @@ int ota_start()
 {
 	if (radio_rx_len == 2 && radio_rx_buf[0] == 0xc9 && radio_rx_buf[1] == 0xd5)
 	{
-		ota_packet();
 		ota_main();
 		return 1;
 	}

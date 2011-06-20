@@ -9,6 +9,16 @@
 #include "radio.h"
 #include "cc1101.h"
 
+typedef struct
+{
+	uint8_t len;
+	uint8_t data[64];
+} buffer_t;
+
+#define RX_QUEUE_SIZE 8
+buffer_t rx_queue[RX_QUEUE_SIZE];
+uint8_t rx_queue_write, rx_queue_read;
+
 // Nonzero when we are transmitting.
 // Used by GDO2 interrupt.
 volatile uint8_t in_tx = 0;
@@ -265,7 +275,7 @@ void usb_handle_setup()
                     UECONX = (1 << EPEN);       // Do this before other configuration
                     UEIENX = (1 << RXOUTE);
                     UECFG0X = (2 << EPTYPE0);
-                    UECFG1X = (3 << EPSIZE0);
+                    UECFG1X = (3 << EPSIZE0) | (1 << EPBK0);
                     set_bit(UECFG1X, ALLOC);
                     
                     // Endpoint 2: bulk IN
@@ -273,8 +283,9 @@ void usb_handle_setup()
                     //   Single buffer
                     UENUM = 2;
                     UECONX = (1 << EPEN);       // Do this before other configuration
+					UEIENX = 0;
                     UECFG0X = (2 << EPTYPE0) | (1 << EPDIR);
-                    UECFG1X = (3 << EPSIZE0);
+                    UECFG1X = (3 << EPSIZE0) | (1 << EPBK0);
                     set_bit(UECFG1X, ALLOC);
                     
                     set_bit(PORTB, 4);
@@ -407,75 +418,6 @@ void handle_ep1_rx()
     radio_write(MCSM0, radio_read(MCSM0) & 0x0f);
 }
 
-void handle_radio_rx()
-{
-    // The radio received a packet.
-    set_bit(PORTB, 7);
-    
-    // Reset the calibration timer
-    radio_timeout_enable();
-    
-    uint8_t bytes = radio_read(RXBYTES);
-    if (bytes == 0)
-    {
-        // No data means bad CRC, so the packet was flushed automatically.
-        radio_command(SRX);
-        clear_bit(PORTB, 7);
-        return;
-    }
-    
-    // Copy FREQEST to FREQOFF
-    radio_write(FSCTRL0, radio_read(FREQEST));
-    
-    // Select the bulk IN endpoint
-    UENUM = 2;
-    
-    // If there is data waiting to be sent, replace it
-    if (UESTA0X & 0x03)
-    {
-        // Kill the current bank
-        set_bit(UEINTX, RXOUTI);
-        loop_until_bit_is_clear(UEINTX, RXOUTI);
-        
-        // Reset the endpoint
-        UERST = 1 << 2;
-        UERST = 0;
-    }
-        
-    // Read RXFIFO (burst)
-    radio_select();
-    spi_write(RXFIFO | CC_READ | CC_BURST);
-	uint8_t pktlen = spi_write(SNOP);
-	
-	if (bytes != (pktlen + 3))
-	{
-		// Wrong number of bytes in FIFO - probably dropped data
-		radio_deselect();
-        radio_command(SRX);
-        clear_bit(PORTB, 7);
-        return;
-	}
-	
-	// Don't send the packet length to the host, since it will be implied in the USB transfer size
-	--bytes;
-	
-    while (bytes--)
-    {
-        UEDATX = spi_write(SNOP);
-        // We don't care about multiple packets because the FIFO size on the
-        // radio is the maximum USB packet size.
-    }
-    radio_deselect();
-    
-    // Mark the endpoint FIFO as ready to be sent
-    clear_bit(UEINTX, TXINI);
-    clear_bit(UEINTX, FIFOCON);
-    
-    clear_bit(PORTB, 7);
-
-    radio_command(SRX);
-}
-
 void handle_radio_tx()
 {
     // The radio finished transmitting a packet.
@@ -492,9 +434,119 @@ void handle_radio_tx()
     in_tx = 0;
     
     // Free the bank
+	UENUM = 1;
     clear_bit(UEINTX, FIFOCON);
-    
+
+	// Turn off the TX LED
     clear_bit(PORTB, 6);
+}
+
+void handle_radio_rx()
+{
+    // The radio received a packet.
+    
+    // Reset the calibration timer
+    radio_timeout_enable();
+    
+    uint8_t bytes = radio_read(RXBYTES);
+    if (bytes < 4)
+    {
+        // No data means bad CRC, so the packet was flushed automatically.
+        radio_command(SRX);
+        return;
+    }
+    
+    // Copy FREQEST to FREQOFF
+    radio_write(FSCTRL0, radio_read(FREQEST));
+    
+	// Get the next available RX buffer
+	buffer_t *buf = &rx_queue[rx_queue_write];
+	
+	if (buf->len)
+	{
+    UENUM = 2;
+	UEIENX = (1 << TXINE);
+		// All buffers are full, so discard this packet
+		set_bit(PORTB, 5);
+		radio_deselect();
+        radio_command(SFRX);
+        radio_command(SRX);
+		return;
+	}
+	
+    // Read RXFIFO (burst)
+    radio_select();
+    spi_write(RXFIFO | CC_READ | CC_BURST);
+	uint8_t pktlen = spi_write(SNOP);
+	
+	if (bytes != (pktlen + 3))
+	{
+		// Wrong number of bytes in FIFO - probably dropped data
+		radio_deselect();
+        radio_command(SFRX);
+        radio_command(SRX);
+        return;
+	}
+	
+	// Don't send the packet length to the host, since it will be implied in the USB transfer size
+	--bytes;
+	
+	rx_queue_write += 1;
+	if (rx_queue_write == RX_QUEUE_SIZE)
+	{
+		rx_queue_write = 0;
+	}
+	
+    set_bit(PORTB, 7);
+	buf->len = bytes;
+    for (uint8_t i = 0; i < bytes; ++i)
+    {
+        buf->data[i] = spi_write(SNOP);
+        // We don't care about multiple packets because the FIFO size on the
+        // radio is the maximum USB packet size.
+    }
+    radio_deselect();
+    
+	// Enable the transmit interrupt
+    UENUM = 2;
+	UEIENX = (1 << TXINE);
+
+//     clear_bit(PORTB, 7);
+
+    radio_command(SRX);
+}
+
+void handle_ep2_tx()
+{
+	// Ready to transmit data on IN endpoint 2
+	clear_bit(PORTB, 7);
+	clear_bit(PORTB, 5);
+	
+	buffer_t *buf = &rx_queue[rx_queue_read];
+	rx_queue_read += 1;
+	if (rx_queue_read == RX_QUEUE_SIZE)
+	{
+		rx_queue_read = 0;
+	}
+	
+	// Copy to the USB endpoint
+	for (uint8_t i = 0; i < buf->len; ++i)
+	{
+		UEDATX = buf->data[i];
+	}
+	
+	// Mark this buffer as empty
+	buf->len = 0;
+	
+    // Mark the endpoint FIFO as ready to be sent
+    clear_bit(UEINTX, TXINI);
+    clear_bit(UEINTX, FIFOCON);
+	
+	if (rx_queue[rx_queue_read].len == 0)
+	{
+		// Next buffer is empty - nothing to send
+		UEIENX = 0;
+	}
 }
 
 void device_gdo0_vect()
@@ -528,7 +580,7 @@ void device_gen_vect()
         // Enable the USB clock
         clear_bit(USBCON, FRZCLK);
         
-        // clear_bit the interrupt flag after starting the clock
+        // Clear the interrupt flag after starting the clock
         clear_bit(UDINT, WAKEUPI);
         
         // The USB controller will indicate end-of-reset soon.
@@ -537,7 +589,7 @@ void device_gen_vect()
     
     if (bit_is_set(UDINT, EORSTI))
     {
-        // USB reset
+        // End of USB reset
         clear_bit(UDINT, EORSTI);
         
         usb_free_endpoints();
@@ -556,7 +608,9 @@ void device_gen_vect()
         UECFG0X = 0;
         UECFG1X = (2 << EPSIZE0);
         set_bit(UECFG1X, ALLOC);
-    }
+		
+		// Other endpoints will be configured in response to the set_configuration request
+	}
     
     if (bit_is_set(UDINT, SUSPI))
     {
@@ -580,12 +634,25 @@ void device_com_vect()
     {
         handle_ep1_rx();
     }
+    
+    UENUM = 2;
+	if (bit_is_set(UEIENX, TXINE) && bit_is_set(UEINTX, TXINI))
+	{
+		handle_ep2_tx();
+	}
 }
 
 void device_main()
 {
     cli();
     
+	rx_queue_read = 0;
+	rx_queue_write = 0;
+	for (uint8_t i = 0; i < RX_QUEUE_SIZE; ++i)
+	{
+		rx_queue[i].len = 0;
+	}
+	
     // Device mode
     set_bit(UHWCON, UIMOD);
     

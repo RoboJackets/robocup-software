@@ -6,7 +6,7 @@
 uint8_t radio_rx_len;
 uint8_t radio_rx_buf[64];
 int_fast8_t last_rssi;
-int radio_in_tx = 0;
+volatile int radio_in_tx = 0;
 
 uint8_t radio_command(uint8_t cmd)
 {
@@ -109,7 +109,6 @@ void radio_configure()
 void radio_transmit(uint8_t* buf, int len)
 {
 	LED_ON(LED_RY);
-	radio_command(SFTX);
 	radio_select();
 	spi_xfer(TXFIFO | CC_BURST);
 	spi_xfer(len);

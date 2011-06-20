@@ -1,3 +1,5 @@
+// MCK is 48MHz.
+
 //FIXME - Ball sense status LED flashes briefly on reset when radio_configure takes a long time
 
 #include <board.h>
@@ -248,10 +250,7 @@ int main()
 	}
 	
 	// Read the encoders once so that the first encoder_delta values are all zero
-	if (!(failures & Fail_FPGA))
-	{
-		fpga_read_status();
-	}
+	fpga_read_status();
 	
 	stall_init();
 	
@@ -336,10 +335,7 @@ int main()
 			update_ball_sensor();
 			
 			// Read encoders
-			if (!(failures & Fail_FPGA))
-			{
-				fpga_read_status();
-			}
+			fpga_read_status();
 			
 			// Detect stalled motors
 			// This must be done before clearing motor outputs because it uses the old values
@@ -381,10 +377,7 @@ int main()
 			}
 			
 			// Send commands to and read status from the FPGA
-			if (!(failures & Fail_FPGA))
-			{
-				fpga_send_commands();
-			}
+			fpga_send_commands();
 			
 			if (kicker_status & Kicker_Charged)
 			{

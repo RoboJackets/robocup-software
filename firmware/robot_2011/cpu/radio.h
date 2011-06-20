@@ -13,7 +13,7 @@ extern uint8_t radio_rx_buf[];
 extern int_fast8_t last_rssi;
 
 // True if we are waiting for a transmission to finish
-extern int radio_in_tx;
+extern volatile int radio_in_tx;
 
 static inline void radio_select()
 {

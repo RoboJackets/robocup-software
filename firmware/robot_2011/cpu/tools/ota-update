@@ -36,7 +36,7 @@ cc1101_regs = (
     (0x22, 0x10),    # FREND0   - Front end RX configuration.
     (0x18, 0x08),    # MCSM0    - Main Radio Control State Machine configuration.
     (0x17, 0x00),    # MCSM1    - Main Radio Control State Machine configuration.
-    (0x19, 0x1d),    # FOCCFG   - Frequency Offset Compensation Configuration.
+    (0x19, 0x5d),    # FOCCFG   - Frequency Offset Compensation Configuration.
     (0x1a, 0x1c),    # BSCFG    - Bit synchronization Configuration.
     (0x1b, 0xc7),    # AGCCTRL2 - AGC control.
     (0x1c, 0x00),    # AGCCTRL1 - AGC control.
@@ -64,7 +64,7 @@ def send(buf):
 
 def receive():
 	try:
-		buf = device.bulkRead(2, 64, 50)
+		buf = device.bulkRead(2, 64, 100)
 	except USBError:
 		# Timeout
 		return None
@@ -81,13 +81,14 @@ def abort():
 robots = []
 for i in range(4):
 	send([0xc9, 0xd5])
-	rx = receive()
-	if rx and len(rx) == 1:
+	while True:
+		rx = receive()
+		if not rx:
+			break
 		robot_id = rx[0]
 		if not robot_id in robots:
 			robots.append(robot_id)
 			print 'Found robot %d' % robot_id
-	time.sleep(0.05)
 
 if len(sys.argv) != 2:
 	print >> sys.stderr, "Usage: %s <flash_image>" % sys.argv[0]
@@ -103,7 +104,7 @@ assert robots
 offset = 0
 Chunk_Size = 32  # Must be a multiple of 4 and a factor of the page size
 start = time.time()
-ack_count = 0
+tries = 0
 while offset < len(data):
 	if not debug:
 		print '\r%3d%%' % (offset * 100 / len(data)),
@@ -112,48 +113,48 @@ while offset < len(data):
 	n = min(Chunk_Size, len(data) - offset)
 	packet = [0x39, offset & 0xff, (offset >> 8) & 0xff, (offset >> 16) & 0xff] + data[offset:offset + n]
 	
-	if ack_count < 4 and False:
-		# Send without acknowledgement
-		if debug:
-			print len(packet), packet
-		send(packet)
+	if debug:
+		print len(packet), packet
+	
+	# Send this chunk
+	send(packet)
+	
+	# Wait for replies
+	ok = [False] * 16
+	num_ok = 0
+	while num_ok != len(robots):
+		rx = receive()
+		if not rx:
+			# Timeout
+			break
+		robot_id = rx[0] & 15
+		status = rx[0] >> 4
+		assert status == 0 or status == 4 or status == 8
+		remote_offset = rx[1] + rx[2] * 256 + rx[3] * 65536
+		if status == 4:
+			# Robot missed earlier data
+			print 'Robot %d is behind: sent %06x, up to %06x' % (robot_id, offset, remote_offset)
+			offset = min(offset, remote_offset)
+			assert remote_offset < offset
+		elif not ok[robot_id]:
+			# Acknowledgement
+			ok[robot_id] = True
+			num_ok += 1
+	
+	if num_ok == len(robots):
+		# All robots acknowledged this chunk, so go on to the next one
 		offset += Chunk_Size
-		ack_count += 1
+		tries = 0
 	else:
-		# Send and wait for acknowledgements
-		packet[0] |= 1
-		ack_count = 0
-		ok = [False] * 16
-		num_ok = 0
-		acked = False
-		for tries in range(5):
-			if debug:
-				print len(packet), packet
-			send(packet)
-			while num_ok < len(robots):
-				rx = receive()
-				if not rx:
-					# Timeout: at least one robot failed to respond
-					break
-				robot_id = rx[0] & 15
-				status = rx[0] >> 4
-				assert status == 0 or status == 8
-				if (status == 0 or status == 8) and not ok[robot_id]:
-					ok[robot_id] = True
-					num_ok += 1
-			if num_ok == len(robots):
-				acked = True
-				break
-			if debug:
-				print 'Attempt %d failed' % tries
-		if not acked:
+		# Timed out waiting for at least one acknowledgement
+		tries += 1
+		if tries == 10:
 			print 'Tried too many times'
 			for i in robots:
 				if not ok[i]:
 					print '  Robot %d did not respond' % i
 			abort()
 			sys.exit(1)
-		offset += Chunk_Size
 end = time.time()
 print '\rDone'
 print '%f bytes/s' % (float(len(data)) / (end - start))
@@ -163,14 +164,18 @@ n = len(data)
 packet = [0x6b, n & 0xff, (n >> 8) & 0xff, (n >> 16) & 0xff]
 num_ok = 0
 ok = [False] * 16
-for i in range(4):
+for tries in range(10):
 	send(packet)
-	rx = receive()
-	if rx:
+	while num_ok != len(robots):
+		rx = receive()
+		if not rx:
+			break
 		robot_id = rx[0] & 15
 		status = rx[0] >> 4
 		assert status == 0
 		if status == 0 and not ok[robot_id]:
 			ok[robot_id] = True
 			num_ok += 1
-assert num_ok == len(robots)
+	if num_ok == len(robots):
+		break
+print 'Got %d acknowledgements' % num_ok

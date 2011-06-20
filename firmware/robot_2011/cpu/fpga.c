@@ -82,7 +82,12 @@ good:
 
 void fpga_read_status()
 {
-        uint8_t rx[12];
+	if (failures & Fail_FPGA)
+	{
+		return;
+	}
+	
+	uint8_t rx[12];
 
 	// Save old encoder counts
 	int_fast16_t last_encoder[4];
@@ -116,6 +121,11 @@ void fpga_read_status()
 
 void fpga_send_commands()
 {
+	if (failures & Fail_FPGA)
+	{
+		return;
+	}
+	
 	uint8_t tx[12] = {0};
 
 	//FIXME - Select 2008/2010 mechanical base with switch DP0
