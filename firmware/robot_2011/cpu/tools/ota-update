@@ -4,13 +4,7 @@ import sys
 import time
 from usb import *
 
-if len(sys.argv) != 2:
-	print >> sys.stderr, "Usage: %s <flash_image>" % sys.argv[0]
-	sys.exit(1)
-
-f = file(sys.argv[1])
-data = [ord(x) for x in f.read()]
-f.close()
+debug = False
 
 device = None
 for bus in busses():
@@ -74,8 +68,7 @@ def receive():
 	except USBError:
 		# Timeout
 		return None
-	assert len(buf) == buf[0] + 3
-	return buf[1:-2]
+	return buf[:-2]
 
 configure()
 
@@ -95,19 +88,34 @@ for i in range(4):
 			robots.append(robot_id)
 			print 'Found robot %d' % robot_id
 	time.sleep(0.05)
+
+if len(sys.argv) != 2:
+	print >> sys.stderr, "Usage: %s <flash_image>" % sys.argv[0]
+	abort()
+	sys.exit(1)
+
+f = file(sys.argv[1])
+data = [ord(x) for x in f.read()]
+f.close()
+
 assert robots
 
 offset = 0
-Chunk_Size = 16  # Must be a multiple of 4 and a factor of the page size
+Chunk_Size = 32  # Must be a multiple of 4 and a factor of the page size
 start = time.time()
 ack_count = 0
 while offset < len(data):
+	if not debug:
+		print '\r%3d%%' % (offset * 100 / len(data)),
+		sys.stdout.flush()
+	
 	n = min(Chunk_Size, len(data) - offset)
 	packet = [0x39, offset & 0xff, (offset >> 8) & 0xff, (offset >> 16) & 0xff] + data[offset:offset + n]
 	
 	if ack_count < 4 and False:
 		# Send without acknowledgement
-		print len(packet), packet
+		if debug:
+			print len(packet), packet
 		send(packet)
 		offset += Chunk_Size
 		ack_count += 1
@@ -119,7 +127,8 @@ while offset < len(data):
 		num_ok = 0
 		acked = False
 		for tries in range(5):
-			print len(packet), packet
+			if debug:
+				print len(packet), packet
 			send(packet)
 			while num_ok < len(robots):
 				rx = receive()
@@ -135,7 +144,8 @@ while offset < len(data):
 			if num_ok == len(robots):
 				acked = True
 				break
-			print 'Attempt %d failed' % tries
+			if debug:
+				print 'Attempt %d failed' % tries
 		if not acked:
 			print 'Tried too many times'
 			for i in robots:
@@ -145,10 +155,22 @@ while offset < len(data):
 			sys.exit(1)
 		offset += Chunk_Size
 end = time.time()
+print '\rDone'
 print '%f bytes/s' % (float(len(data)) / (end - start))
 
 # Finish
-#FIXME - Wait for acknowledgements
+n = len(data)
+packet = [0x6b, n & 0xff, (n >> 8) & 0xff, (n >> 16) & 0xff]
+num_ok = 0
+ok = [False] * 16
 for i in range(4):
-	send([0x6b, 0x73])
-	time.sleep(0.05)
+	send(packet)
+	rx = receive()
+	if rx:
+		robot_id = rx[0] & 15
+		status = rx[0] >> 4
+		assert status == 0
+		if status == 0 and not ok[robot_id]:
+			ok[robot_id] = True
+			num_ok += 1
+assert num_ok == len(robots)

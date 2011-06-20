@@ -56,8 +56,6 @@ static int radio_check_version()
 
 int radio_init()
 {
-	radio_in_tx = 0;
-	
 	// Reset
 	delay_ms(50);
 	radio_command(SRES);
@@ -92,6 +90,7 @@ int radio_init()
 
 void radio_configure()
 {
+	radio_in_tx = 0;
 	radio_command(SIDLE);
 	
 	radio_select();
@@ -103,7 +102,6 @@ void radio_configure()
 	
 	radio_write(IOCFG2, 6 | GDOx_INVERT);
 	
-	radio_write(PKTLEN, Forward_Size);
 	radio_command(SFRX);
 	radio_command(SRX);
 }
@@ -111,6 +109,7 @@ void radio_configure()
 void radio_transmit(uint8_t* buf, int len)
 {
 	LED_ON(LED_RY);
+	radio_command(SFTX);
 	radio_select();
 	spi_xfer(TXFIFO | CC_BURST);
 	spi_xfer(len);
@@ -130,13 +129,15 @@ void radio_transmit(uint8_t* buf, int len)
 static void tx_finished()
 {
 	LED_OFF(LED_RY);
-	radio_command(SRX);
+// 	radio_command(SRX);
 
 	radio_in_tx = 0;
 }
 
 static int rx_finished()
 {
+	radio_write(FSCTRL0, radio_read(FREQEST));
+	
 	uint8_t bytes = radio_read(RXBYTES);
 	
 	if (bytes < 3)

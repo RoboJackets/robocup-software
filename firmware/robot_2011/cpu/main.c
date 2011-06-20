@@ -1,3 +1,5 @@
+//FIXME - Ball sense status LED flashes briefly on reset when radio_configure takes a long time
+
 #include <board.h>
 #include <stdio.h>
 #include <string.h>
@@ -89,8 +91,6 @@ static int handle_forward_packet()
 	if (reverse_id == robot_id)
 	{
 		// Build and send a reverse packet
-		radio_command(SFTX);
-		
 		reverse_packet[0] = robot_id;
 		reverse_packet[1] = last_rssi;
 		reverse_packet[2] = 0x00;

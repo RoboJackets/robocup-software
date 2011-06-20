@@ -613,6 +613,37 @@ void cmd_read(int argc, const char *argv[], void *arg)
 	}
 }
 
+void cmd_rx_test(int argc, const char *argv[], void *arg)
+{
+	radio_rx_len = 0;
+	usb_rx_start();
+	while (!usb_rx_len)
+	{
+		// Reset the watchdog timer
+		AT91C_BASE_WDTC->WDTC_WDCR = 0xa5000001;
+		
+		if (radio_poll())
+		{
+			printf("got %d\n", radio_rx_len);
+			for (int i = 0; i < radio_rx_len; ++i)
+			{
+				printf("%02x ", radio_rx_buf[i]);
+				if ((i & 7) == 7)
+				{
+					printf("\n");
+				}
+			}
+			if (radio_rx_len & 7)
+			{
+				printf("\n");
+			}
+			printf("\n");
+			radio_rx_len = 0;
+		}
+	}
+	usb_rx_start();
+}
+
 static void debug_faults()
 {
 	printf("0x%02x %3d %5d\n", current_motor_faults, wheel_out[0], stall_counter[0]);
@@ -653,6 +684,7 @@ const command_t commands[] =
 	{"i2c_read", cmd_i2c_read},
 	{"monitor_faults", cmd_write_uint, (void *)&write_monitor_faults},
 	{"read", cmd_read},
+	{"rx_test", cmd_rx_test},
 
 	// End of list placeholder
 	{0, 0}

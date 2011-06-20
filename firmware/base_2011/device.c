@@ -456,6 +456,9 @@ void handle_radio_rx()
         return;
 	}
 	
+	// Don't send the packet length to the host, since it will be implied in the USB transfer size
+	--bytes;
+	
     while (bytes--)
     {
         UEDATX = spi_write(SNOP);
