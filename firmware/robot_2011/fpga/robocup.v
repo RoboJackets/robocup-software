@@ -21,6 +21,7 @@
 `include "motor.v"
 `include "kicker.v"
 `include "encoder.v"
+`include "kicker_i2c.v"
 
 // Conventions:
 //  Hall effect sensor vectors are [2:0] which maps to {a, b, c}.
@@ -59,6 +60,7 @@ module robocup (
 	// Kicker
 	input kdone,
 	output kcharge, kkick, kchip,
+	inout ksda, kscl,
 	
 	// Microcontroller interface
 	input flash_ncs,
@@ -86,6 +88,8 @@ reg [8:0] motor_speed_4 = 0;
 reg [8:0] motor_speed_5 = 0;
 
 wire [7:0] kicker_status;
+wire [7:0] kicker_voltage;
+wire kicker_voltage_ok;
 
 // SPI interface
 
@@ -188,8 +192,8 @@ always @(posedge sysclk) begin
                         6: spi_dr <= encoder_capture_3[15:8];
                         7: spi_dr <= encoder_capture_4[7:0];
                         8: spi_dr <= encoder_capture_4[15:8];
-                        9: spi_dr <= {3'b000, motor_fault};
-                        10: spi_dr <= kicker_status;
+                        9: spi_dr <= {2'b00, ~kicker_voltage_ok, motor_fault};
+                        10: spi_dr <= kicker_voltage;
                         default: spi_dr <= 8'h00;
                         endcase
                 end else if (spi_command == 8'h01) begin
@@ -324,5 +328,12 @@ kicker kicker(sysclk, button_sync, kick_strobe, kick_strength, charge_enable & ~
 // Send the kick pulse to either the kicker or the chipper
 assign kkick = kick_pulse && (kick_select == 0);
 assign kchip = kick_pulse && (kick_select == 1);
+
+// Kicker voltage monitor
+wire scl_out, sda_out;
+kicker_i2c kicker_i2c(sysclk, scl_out, sda_out, ksda, kicker_voltage_ok, kicker_voltage);
+
+assign kscl = scl_out ? 1'bz : 1'b0;
+assign ksda = sda_out ? 1'bz : 1'b0;
 
 endmodule
