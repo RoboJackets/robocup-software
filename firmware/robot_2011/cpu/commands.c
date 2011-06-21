@@ -182,9 +182,8 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	printf("  Dark:  0x%03x\n", ball_sense_dark);
 	printf("  Delta: 0x%03x\n", ball_sense_light - ball_sense_dark);
 	
-	printf("Kicker: 0x%02x\n", kicker_status);
-	//FIXME - This should move to kicker status and we need another status byte for voltage
-	if (motor_faults & 0x20)
+	printf("Kicker: status 0x%02x  voltage 0x%02x\n", kicker_status, kicker_voltage);
+	if (!(kicker_status & 0x40))
 	{
 		printf("Voltage ADC failed\n");
 	}

@@ -133,6 +133,7 @@ always @(posedge sysclk) begin
 		State_Stop: begin
 			if (clock_div == SCL_Start) begin
 				sda_out <= 1;
+			end else if (clock_div == SCL_Setup) begin
 				state <= State_Start;
 			end
 		end

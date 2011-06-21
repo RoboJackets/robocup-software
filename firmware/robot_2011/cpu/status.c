@@ -10,6 +10,7 @@ unsigned int failures;
 uint8_t motor_faults;
 uint8_t current_motor_faults;
 uint8_t kicker_status;
+uint8_t kicker_voltage;
 
 // Detects and handles USB connection/disconnection
 enum

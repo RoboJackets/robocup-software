@@ -5,6 +5,9 @@
 #include "spi.h"
 #include "timer.h"
 
+// This must match LOGIC_VERSION in robocup.v
+#define LOGIC_VERSION 4
+
 uint_fast16_t encoder[4];
 int_fast16_t encoder_delta[4];
 
@@ -72,7 +75,7 @@ good:
 	uint8_t version = spi_xfer(0);
 	spi_deselect();
 	
-	if (version != 0x03)
+	if (version != LOGIC_VERSION)
 	{
 		failures |= Fail_FPGA_Version;
 	}
@@ -112,6 +115,7 @@ void fpga_read_status()
 	current_motor_faults = rx[9];
 	motor_faults |= current_motor_faults;
 	kicker_status = rx[10];
+	kicker_voltage = rx[11];
 	
 	for (int i = 0; i < 4; ++i)
 	{

@@ -70,7 +70,7 @@ module robocup (
 );
 
 // This is sent as the first byte of every SPI transfer
-localparam LOGIC_VERSION = 8'h03;
+localparam LOGIC_VERSION = 8'h04;
 
 // Status that can be read over SPI
 wire [5:1] motor_fault;
@@ -192,8 +192,9 @@ always @(posedge sysclk) begin
                         6: spi_dr <= encoder_capture_3[15:8];
                         7: spi_dr <= encoder_capture_4[7:0];
                         8: spi_dr <= encoder_capture_4[15:8];
-                        9: spi_dr <= {2'b00, ~kicker_voltage_ok, motor_fault};
-                        10: spi_dr <= kicker_voltage;
+                        9: spi_dr <= {3'b000, motor_fault};
+                        10: spi_dr <= kicker_status;
+						11: spi_dr <= kicker_voltage;
                         default: spi_dr <= 8'h00;
                         endcase
                 end else if (spi_command == 8'h01) begin
@@ -320,7 +321,7 @@ end
 
 // Kicker
 wire lockout;
-assign kicker_status = {2'b00, kick_select, charge_override, charge_enable, kcharge, lockout, done_sync};
+assign kicker_status = {1'b0, kicker_voltage_ok, kick_select, charge_override, charge_enable, kcharge, lockout, done_sync};
 
 wire kick_pulse;
 kicker kicker(sysclk, button_sync, kick_strobe, kick_strength, charge_enable & ~charge_override, kcharge, kick_pulse, lockout);
