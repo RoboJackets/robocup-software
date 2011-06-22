@@ -1,7 +1,5 @@
 #pragma once
 
-#define DEFAULT_CONTROLLER (&controllers[0])
-
 typedef struct
 {
 	// Name for the "run" command.
@@ -20,6 +18,7 @@ typedef struct
 	void (*update)(void);
 } controller_info_t;
 
+extern const controller_info_t *default_controller;
 extern const controller_info_t controllers[];
 
 // If not null, this function is called every update cycle to generate new motor commands.

@@ -91,6 +91,7 @@ enum
 };
 
 extern uint8_t kicker_status;
+extern uint8_t kicker_voltage;
 
 // Periodic functions
 void check_usb_connection(void);

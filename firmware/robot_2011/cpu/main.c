@@ -1,5 +1,10 @@
+// MCK is 48MHz.
+
+//FIXME - Ball sense status LED flashes briefly on reset when radio_configure takes a long time
+
 #include <board.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "timer.h"
 #include "console.h"
@@ -14,6 +19,7 @@
 #include "i2c.h"
 #include "stall.h"
 #include "imu.h"
+#include "ota_update.h"
 
 // Last forward packet
 uint8_t forward_packet[Forward_Size];
@@ -26,51 +32,22 @@ uint_fast8_t dribble_command;
 uint_fast8_t kick_command;
 
 uint32_t rx_lost_time;
-int_fast8_t last_rssi;
-
-int in_reverse;
 
 // Last time the 5ms periodic code was executed
 unsigned int update_time;
 
 void (*debug_update)(void) = 0;
 
-static int forward_packet_received()
+static int handle_forward_packet()
 {
-	uint8_t bytes = radio_read(RXBYTES);
-	
-	if (bytes != (Forward_Size + 2))
+	if (radio_rx_len != Forward_Size)
 	{
-		// Bad CRC, so the packet was flushed (or the radio got misconfigured).
 		radio_command(SFRX);
 		radio_command(SRX);
 		return 0;
 	}
 	
-	// Read the packet from the radio
-	radio_select();
-	spi_xfer(RXFIFO | CC_READ | CC_BURST);
-	for (int i = 0; i < Forward_Size; ++i)
-	{
-		forward_packet[i] = spi_xfer(SNOP);
-	}
-	
-	// Read status bytes
-	last_rssi = (int8_t)spi_xfer(SNOP);
-	uint8_t status = spi_xfer(SNOP);
-	radio_deselect();
-	
-	if (!(status & 0x80))
-	{
-		// Bad CRC
-		//
-		// Autoflush is supposed to be on so this should never happen.
-		// If we get here and autoflush is on, this means some bytes have been lost
-		// and the status byte isn't really the status byte.
-		radio_command(SFRX);
-		radio_command(SRX);
-		return 0;
-	}
+	memcpy(forward_packet, radio_rx_buf, Forward_Size);
 	
 	rx_lost_time = current_time;
 	LED_TOGGLE(LED_RG);
@@ -116,9 +93,6 @@ static int forward_packet_received()
 	if (reverse_id == robot_id)
 	{
 		// Build and send a reverse packet
-		radio_write(PKTLEN, Reverse_Size);
-		radio_command(SFTX);
-		
 		reverse_packet[0] = robot_id;
 		reverse_packet[1] = last_rssi;
 		reverse_packet[2] = 0x00;
@@ -143,34 +117,13 @@ static int forward_packet_received()
 			reverse_packet[10] |= (encoder[i] & 0x300) >> (8 - i * 2);
 		}
 		
-		radio_select();
-		spi_xfer(TXFIFO | CC_BURST);
-		for (int i = 0; i < Reverse_Size; ++i)
-		{
-			spi_xfer(reverse_packet[i]);
-		}
-		radio_deselect();
-		
-		// Start transmitting.  When this finishes, the radio will automatically switch to RX
-		// without calibrating (because it doesn't go through IDLE).
-		radio_command(STX);
-		
-		in_reverse = 1;
+		radio_transmit(reverse_packet, sizeof(reverse_packet));
 	} else {
 		// Get ready to receive another forward packet
 		radio_command(SRX);
 	}
 	
 	return 1;
-}
-
-void reverse_packet_sent()
-{
-	LED_TOGGLE(LED_RY);
-	radio_write(PKTLEN, Forward_Size);
-	radio_command(SRX);
-
-	in_reverse = 0;
 }
 
 #if 0
@@ -206,7 +159,7 @@ int main()
 {
 	// Set up watchdog timer
 	AT91C_BASE_WDTC->WDTC_WDCR = 0xa5000001;
-	AT91C_BASE_WDTC->WDTC_WDMR = AT91C_WDTC_WDRSTEN | AT91C_WDTC_WDDBGHLT | (0xfff << 16) | 0x0ff;
+	AT91C_BASE_WDTC->WDTC_WDMR = AT91C_WDTC_WDRSTEN | AT91C_WDTC_WDDBGHLT | AT91C_WDTC_WDDIS | (0xfff << 16) | 0x0ff;
 	
 	// Enable user reset (reset button)
 	AT91C_BASE_SYS->RSTC_RMR = 0xa5000000 | AT91C_RSTC_URSTEN;
@@ -264,7 +217,15 @@ int main()
 		music_start(song_startup);
 		
 		// Enough hardware is working, so act like a robot
-		controller = DEFAULT_CONTROLLER;
+		
+		// DP1 on => PD controller, off => dumb controller
+		if (AT91C_BASE_PIOA->PIO_PDSR & DP1)
+		{
+			default_controller = &controllers[0];
+		} else {
+			default_controller = &controllers[1];
+		}
+		controller = default_controller;
 	} else if (failures & Fail_Power)
 	{
 		// Dead battery (probably)
@@ -288,10 +249,12 @@ int main()
 		controller->init(0, 0);
 	}
 	
+	// Read the encoders once so that the first encoder_delta values are all zero
+	fpga_read_status();
+	
 	stall_init();
 	
 	// Main loop
-	in_reverse = 0;
 	int lost_radio_count = 0;
 	while (1)
 	{
@@ -327,7 +290,6 @@ int main()
 			if ((current_time - rx_lost_time) > 250)
 			{
 				rx_lost_time = current_time;
-				LED_OFF(LED_RY);
 				LED_OFF(LED_RG);
 				LED_TOGGLE(LED_RR);
 				
@@ -351,16 +313,11 @@ int main()
 			}
 			
 			// Check for radio packets
-			if (AT91C_BASE_PIOA->PIO_ISR & RADIO_INT && AT91C_BASE_PIOA->PIO_PDSR & RADIO_INT)
+			if (radio_poll())
 			{
-				if (!in_reverse)
+				if (!ota_start() && handle_forward_packet() && controller && controller->received)
 				{
-					if (forward_packet_received() && controller && controller->received)
-					{
-						controller->received();
-					}
-				} else {
-					reverse_packet_sent();
+					controller->received();
 				}
 			}
 		}
@@ -378,10 +335,7 @@ int main()
 			update_ball_sensor();
 			
 			// Read encoders
-			if (!(failures & Fail_FPGA))
-			{
-				fpga_update();
-			}
+			fpga_read_status();
 			
 			// Detect stalled motors
 			// This must be done before clearing motor outputs because it uses the old values
@@ -423,10 +377,7 @@ int main()
 			}
 			
 			// Send commands to and read status from the FPGA
-			if (!(failures & Fail_FPGA))
-			{
-				fpga_update();
-			}
+			fpga_send_commands();
 			
 			if (kicker_status & Kicker_Charged)
 			{

@@ -1,0 +1,181 @@
+#!/usr/bin/env python
+
+import sys
+import time
+from usb import *
+
+debug = False
+
+device = None
+for bus in busses():
+	for dev in bus.devices:
+		if dev.idVendor == 0x3141 and dev.idProduct == 0x0004:
+			device = dev.open()
+			break
+assert device
+
+device.setConfiguration(1)
+device.claimInterface(0)
+
+def autoCalibrate(enabled):
+	device.controlMsg(ENDPOINT_IN | TYPE_VENDOR, 4, None, enabled, 0)
+
+cc1101_regs = (
+    (0x0b, 0x0c),    # FSCTRL1  - Frequency synthesizer control.
+    (0x0d, 0x21),    # FREQ2    - Frequency control word, high byte.
+    (0x0e, 0x7b),    # FREQ1    - Frequency control word, middle byte.
+    (0x0f, 0x42),    # FREQ0    - Frequency control word, low byte.
+    (0x10, 0x2d),    # MDMCFG4  - Modem configuration.
+    (0x11, 0x2f),    # MDMCFG3  - Modem configuration.
+    (0x12, 0x13),    # MDMCFG2  - Modem configuration.
+    (0x13, 0x22),    # MDMCFG1  - Modem configuration.
+    (0x14, 0xe5),    # MDMCFG0  - Modem configuration.
+    (0x0a, 0x00),    # CHANNR   - Channel number.
+    (0x15, 0x62),    # DEVIATN  - Modem deviation setting (when FSK modulation is enabled).
+    (0x21, 0xb6),    # FREND1   - Front end RX configuration.
+    (0x22, 0x10),    # FREND0   - Front end RX configuration.
+    (0x18, 0x08),    # MCSM0    - Main Radio Control State Machine configuration.
+    (0x17, 0x00),    # MCSM1    - Main Radio Control State Machine configuration.
+    (0x19, 0x5d),    # FOCCFG   - Frequency Offset Compensation Configuration.
+    (0x1a, 0x1c),    # BSCFG    - Bit synchronization Configuration.
+    (0x1b, 0xc7),    # AGCCTRL2 - AGC control.
+    (0x1c, 0x00),    # AGCCTRL1 - AGC control.
+    (0x1d, 0xb0),    # AGCCTRL0 - AGC control.
+    (0x03, 0x0f),    # FIFOTHR  - RXFIFO and TXFIFO thresholds.
+    (0x07, 0x4c),    # PKTCTRL1 - Packet automation control.
+    (0x08, 0x05),    # PKTCTRL0 - Packet automation control.
+    (0x06, 0x3e)     # PKTLEN   - Packet length.
+)
+
+def command(value):
+	device.controlMsg(ENDPOINT_IN | TYPE_VENDOR, 2, None, 0, value)
+
+def writeRegister(addr, value):
+	device.controlMsg(ENDPOINT_IN | TYPE_VENDOR, 1, None, value, addr)
+
+def configure():
+	autoCalibrate(False)
+	for (addr, value) in cc1101_regs:
+		writeRegister(addr, value)
+	autoCalibrate(True)
+
+def send(buf):
+	device.bulkWrite(1, buf)
+
+def receive():
+	try:
+		buf = device.bulkRead(2, 64, 100)
+	except USBError:
+		# Timeout
+		return None
+	return buf[:-2]
+
+configure()
+
+def abort():
+	# Abort OTA
+	for i in range(4):
+		send([0x00, 0xff])
+		time.sleep(0.05)
+
+robots = []
+for i in range(4):
+	send([0xc9, 0xd5])
+	while True:
+		rx = receive()
+		if not rx:
+			break
+		robot_id = rx[0]
+		if not robot_id in robots:
+			robots.append(robot_id)
+			print 'Found robot %d' % robot_id
+
+if len(sys.argv) != 2:
+	print >> sys.stderr, "Usage: %s <flash_image>" % sys.argv[0]
+	abort()
+	sys.exit(1)
+
+f = file(sys.argv[1])
+data = [ord(x) for x in f.read()]
+f.close()
+
+assert robots
+
+offset = 0
+Chunk_Size = 32  # Must be a multiple of 4 and a factor of the page size
+start = time.time()
+tries = 0
+while offset < len(data):
+	if not debug:
+		print '\r%3d%%' % (offset * 100 / len(data)),
+		sys.stdout.flush()
+	
+	n = min(Chunk_Size, len(data) - offset)
+	packet = [0x39, offset & 0xff, (offset >> 8) & 0xff, (offset >> 16) & 0xff] + data[offset:offset + n]
+	
+	if debug:
+		print len(packet), packet
+	
+	# Send this chunk
+	send(packet)
+	
+	# Wait for replies
+	ok = [False] * 16
+	num_ok = 0
+	while num_ok != len(robots):
+		rx = receive()
+		if not rx:
+			# Timeout
+			break
+		robot_id = rx[0] & 15
+		status = rx[0] >> 4
+		assert status == 0 or status == 4 or status == 8
+		remote_offset = rx[1] + rx[2] * 256 + rx[3] * 65536
+		if status == 4:
+			# Robot missed earlier data
+			print 'Robot %d is behind: sent %06x, up to %06x' % (robot_id, offset, remote_offset)
+			offset = min(offset, remote_offset)
+			assert remote_offset < offset
+		elif not ok[robot_id]:
+			# Acknowledgement
+			ok[robot_id] = True
+			num_ok += 1
+	
+	if num_ok == len(robots):
+		# All robots acknowledged this chunk, so go on to the next one
+		offset += Chunk_Size
+		tries = 0
+	else:
+		# Timed out waiting for at least one acknowledgement
+		tries += 1
+		if tries == 10:
+			print 'Tried too many times'
+			for i in robots:
+				if not ok[i]:
+					print '  Robot %d did not respond' % i
+			abort()
+			sys.exit(1)
+end = time.time()
+print '\rDone'
+print '%f bytes/s' % (float(len(data)) / (end - start))
+
+# Finish
+n = len(data)
+packet = [0x6b, n & 0xff, (n >> 8) & 0xff, (n >> 16) & 0xff]
+num_ok = 0
+ok = [False] * 16
+for tries in range(10):
+	send(packet)
+	while num_ok != len(robots):
+		rx = receive()
+		if not rx:
+			break
+		robot_id = rx[0] & 15
+		status = rx[0] >> 4
+		assert status == 0
+		if status == 0 and not ok[robot_id]:
+			ok[robot_id] = True
+			num_ok += 1
+	if num_ok == len(robots):
+		break
+print 'Got %d acknowledgements' % num_ok

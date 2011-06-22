@@ -18,4 +18,5 @@ extern uint_fast8_t use_chipper;
 // Returns 0 on failure, 1 on successful configuration, or 2 if the FPGA was already configured.
 int fpga_init(void);
 
-void fpga_update(void);
+void fpga_read_status(void);
+void fpga_send_commands(void);

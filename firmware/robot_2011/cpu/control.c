@@ -9,6 +9,8 @@
 #include "status.h"
 #include "stall.h"
 
+const controller_info_t *default_controller;
+
 ////////
 
 static void dumb_update()
@@ -120,8 +122,8 @@ static void log_print()
 ////////
 
 static const int Command_Rate_Limit = 40 * 256;
-static int kp = 0x60;
-static int kd = 0x30;
+static int kp = 50;
+static int kd = 20;
 static int last_out[4];
 static int last_error[4];
 static int pd_debug = -1;
@@ -209,10 +211,10 @@ static void pd_update()
 const controller_info_t controllers[] =
 {
 	{"dumb", 0, 0, dumb_update},
+	{"pd", pd_init, 0, pd_update},
 	{"step", step_init, 0, step_update},
 	{"log", log_init, 0, log_update},
 	{"log_print", 0, 0, log_print},
-	{"pd", pd_init, 0, pd_update},
 	
 	// End of table
 	{0, 0}
