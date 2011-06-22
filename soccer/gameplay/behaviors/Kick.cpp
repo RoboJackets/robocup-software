@@ -11,11 +11,10 @@ namespace Gameplay
 namespace Behaviors
 {
 
-// PARAMETERS
-const bool enable_pushing = true;
-
 Kick::Kick(GameplayModule *gameplay)
-	: SingleRobotBehavior(gameplay), _pivotKick(gameplay), _lineKick(gameplay)
+	: SingleRobotBehavior(gameplay),
+		enableGoalLineShot(false), enableLeftDownfieldShot(false), enableRightDownfieldShot(false),
+		_pivotKick(gameplay), _lineKick(gameplay)
 {
 	_state = State_PivotKick;
 	setTargetGoal();
@@ -71,9 +70,9 @@ bool Kick::run() {
 	bool badshot = false;
 	Geometry2d::Segment available_target;
 	if (!(findShot(_target, available_target, 0.1) 				/// try target first
-			  || findShot(goal_line, available_target, 0.5) 		/// try anywhere on goal line
-//			  || findShot(left_downfield, available_target, 0.5)  /// shot off edge of field
-//			  || findShot(right_downfield, available_target, 0.5)
+			  || (enableGoalLineShot && findShot(goal_line, available_target, 0.5)) 		/// try anywhere on goal line
+			  || (enableLeftDownfieldShot && findShot(left_downfield, available_target, 0.5))  /// shot off edge of field
+			  || (enableRightDownfieldShot && findShot(right_downfield, available_target, 0.5))
 			  ))
 	{
 		robot->addText(QString("Kick:no target"));
@@ -85,13 +84,13 @@ bool Kick::run() {
 	const float close_thresh = Robot_Radius + Ball_Radius + 0.10;
 
 	// disable obstacle avoidance if we are close to the ball
-	if (enable_pushing && rPos.nearPoint(ball().pos, close_thresh))
+	if (enablePushing && rPos.nearPoint(ball().pos, close_thresh))
 		robot->avoidOpponents(false);
 	else
 		robot->avoidOpponents(true);
 
 	// there are robots in the way and we are close, disable opponent obstacle avoidance
-	if (enable_pushing && badshot && rPos.nearPoint(ball().pos, close_thresh)) {
+	if (enablePushing && badshot && rPos.nearPoint(ball().pos, close_thresh)) {
 		robot->addText(QString("PushingOpponent"));
 		Geometry2d::Point push_goal = rPos + (_target.center() - rPos).normalized() * 2.0;
 

@@ -1,4 +1,5 @@
 //FIXME - Port to libusb-1.0.  The API is better.
+//FIXME - Something hangs if PKTCTRL0==4 (fixed length packets).
 
 #include <stdio.h>
 #include <stdexcept>
