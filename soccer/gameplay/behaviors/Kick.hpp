@@ -36,6 +36,16 @@ public:
 	/** find best segment on target, @return true if one exists, and returns segment in result */
 	bool findShot(const Geometry2d::Segment& segment, Geometry2d::Segment& result,
 			float min_segment_length = 0.1) const;
+
+	/** simple flags to allow for backup targets if target not feasible */
+	// Default to off
+	bool enableGoalLineShot;				/// will try to kick anywhere through goal line
+	bool enableLeftDownfieldShot;   /// kick off left edge of far half field
+	bool enableRightDownfieldShot;  /// kick off rigth edge of far half field
+
+	/** simple flag to enable pushing of opponent robots if necessary */
+	bool enablePushing;    /// if true, disables collision detection on opponents
+
 private:
 	typedef enum
 	{

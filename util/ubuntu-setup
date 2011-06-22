@@ -31,7 +31,7 @@ apt-get install build-essential qt4-dev-tools libboost-dev \
 	libpcap-dev scons graphviz binutils-dev libqt4-opengl-dev python-pip python-dev \
 	avr-libc libgmp3-dev libmpfr-dev libmpc-dev texinfo curl texinfo dfu-programmer avrdude \
 	libreadline-dev libgtest0 libgtest-dev autoconf libtool autopoint flex bison openocd \
-	libbullet libbullet-dev
+	libbullet libbullet-dev iverilog gtkwave
 
 echo "-- Removing excessively old packages: if this causes a problem, kill it here and fix it yourself"
 apt-get remove python-git

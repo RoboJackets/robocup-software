@@ -13,7 +13,7 @@ env = Environment(tools=['default', 'textfile'])deleted
 # http://www.scons.org/wiki/GoFastButton
 env.Decider('MD5-timestamp')
 SetOption('max_drift', 1)
-SetOption('implicit_cache', 1)
+#SetOption('implicit_cache', 1)
 env.SourceCode(".", None)
 
 # Keep a plain environment for cross-compiling later

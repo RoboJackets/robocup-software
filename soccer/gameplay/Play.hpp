@@ -89,7 +89,10 @@ namespace Gameplay
 // Assignment functions
 //
 // These are used to find the best robot according to some criteria,
-// remove it from the available set, and store it in role.
+// remove it from the available set, and store it in role.  The capabilities
+// structure provides a set of requirements a robot must meet, such as
+// having a chipper, or the kicker being charged. Each robot will know its
+// capabilities.  Visibility is now included in requirements.
 //
 // If needVisible is true and the currently assigned robot is not visible,
 // a new robot will be selected.  If no robot can be selected, role
@@ -98,4 +101,5 @@ namespace Gameplay
 // Each assigner returns true iff the role has a usable robot.
 
 // Assigns the robot in nearest to <pt>
-bool assignNearest(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt, bool needVisible = true);
+bool assignNearest(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt,
+		const RobotCapabilities& requirements = RobotCapabilities());
