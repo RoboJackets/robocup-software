@@ -130,6 +130,10 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	{
 		printf(" IMU");
 	}
+	if (failures & Fail_Kicker)
+	{
+		printf(" Kicker");
+	}
 	putchar('\n');
 	
 	printf("Power:\n");
@@ -144,11 +148,12 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	printf("Motor stalls: 0x%02x", motor_stall);
 	print_motor_bits(motor_stall);
 	putchar('\n');
+	printf("  %5d %5d %5d %5d %5d\n", stall_counter[0], stall_counter[1], stall_counter[2], stall_counter[3], stall_counter[4]);
 	
 	printf("Motor out:");
 	for (int i = 0; i < 4; ++i)
 	{
-		printf(" 0x%02x", wheel_out[i]);
+		printf(" %4d", wheel_out[i]);
 	}
 	printf("\n");
 
@@ -648,9 +653,14 @@ void cmd_rx_test(int argc, const char *argv[], void *arg)
 	usb_rx_start();
 }
 
+void cmd_kicker_test(int argc, const char *argv[], void *arg)
+{
+	printf("0x%02x 0x%02x\n", kicker_test_v1, kicker_test_v2);
+}
+
 static void debug_faults()
 {
-	printf("0x%02x %3d %5d\n", current_motor_faults, wheel_out[0], stall_counter[0]);
+	printf("0x%02x %4d %5d %4d\n", current_motor_faults, wheel_out[0], stall_counter[0], encoder_delta[0]);
 }
 static const write_uint_t write_monitor_faults = {(unsigned int *)&debug_update, (unsigned int)debug_faults};
 
@@ -689,6 +699,7 @@ const command_t commands[] =
 	{"monitor_faults", cmd_write_uint, (void *)&write_monitor_faults},
 	{"read", cmd_read},
 	{"rx_test", cmd_rx_test},
+	{"kicker_test", cmd_kicker_test},
 
 	// End of list placeholder
 	{0, 0}

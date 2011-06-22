@@ -12,6 +12,10 @@ extern int_fast8_t dribble_out;
 extern uint_fast8_t kick_strength;
 extern uint_fast8_t use_chipper;
 
+// Nonzero if we want the kicker to charge.
+// This may be permanently overridden by the discharge button.
+extern uint_fast8_t kicker_charge;
+
 // Initializes and tests the FPGA.
 // This does not force the FPGA to reconfigure, but waits for it to finish.
 //

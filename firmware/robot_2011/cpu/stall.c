@@ -26,16 +26,16 @@
 static const int Stall_kSpeed = 10;
 
 // Coefficient for command
-static const int Stall_kCommand = 10;
+static const int Stall_kCommand = 2;
 
 // If the counter is above the threshold, the motor has stalled
-static const int Stall_Threshold = 30000;
+static const int Stall_Threshold = 50000;
 
 // The counter decays by this constant amount each cycle
-static const int Stall_Decay = 70;
+static const int Stall_Decay = 50;
 
 // Commands below this limit do not contribute to the counter
-static const int Stall_Deadband = 60;
+static const int Stall_Deadband = 100;
 
 uint8_t motor_stall;
 int stall_counter[5];
@@ -59,6 +59,7 @@ void stall_update(void)
 		{
 			command = 0;
 		}
+		
 		stall_counter[i] += command * Stall_kCommand - speed * Stall_kSpeed - Stall_Decay;
 		if (stall_counter[i] < 0)
 		{

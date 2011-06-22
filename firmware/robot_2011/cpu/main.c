@@ -20,6 +20,7 @@
 #include "stall.h"
 #include "imu.h"
 #include "ota_update.h"
+#include "main.h"
 
 // Last forward packet
 uint8_t forward_packet[Forward_Size];
@@ -28,10 +29,12 @@ uint8_t forward_packet[Forward_Size];
 uint8_t reverse_packet[Reverse_Size];
 
 int_fast8_t wheel_command[4];
-uint_fast8_t dribble_command;
+int_fast8_t dribble_command;
 uint_fast8_t kick_command;
 
 uint32_t rx_lost_time;
+
+uint8_t kicker_test_v1, kicker_test_v2;
 
 // Last time the 5ms periodic code was executed
 unsigned int update_time;
@@ -126,6 +129,67 @@ static int handle_forward_packet()
 	return 1;
 }
 
+uint8_t kicker_test_measure()
+{
+	// FPGA commands must be sent less than about 227ms apart or the FPGA watchdog timer
+	// will turn everything off.
+	kicker_charge = 1;
+	delay_ms(125);
+	fpga_send_commands();
+	delay_ms(125);
+	fpga_send_commands();
+	fpga_read_status();
+	return kicker_voltage;
+}
+
+// Determines whether the kicker can charge.
+// This sets Fail_Kicker_Charge in failures if not.
+// The most likely cause is an unplugged kicker or shorted IGBTs.
+void kicker_test()
+{
+	failures &= ~Fail_Kicker_Charge;
+	
+	// Make sure we can read from the kicker voltage ADC
+	fpga_read_status();
+	if ((failures & (Fail_Kicker_I2C | Fail_FPGA)) || (kicker_status & Kicker_Override))
+	{
+		// FPGA doesn't work, ADC doesn't work, or the kicker has been manually disabled.
+		// We can't test it, but the charger may still be usable.
+		return;
+	}
+	
+	// Clear motor commands
+	for (int i = 0; i < 4; ++i)
+	{
+		wheel_out[i] = 0;
+	}
+	dribble_out = 0;
+	
+	// Make two voltage measurements a small time apart.
+	// Run the charger just long enough to determine if it works.
+	int v1 = kicker_test_measure();
+	int v2 = kicker_test_measure();
+	
+	kicker_test_v1 = v1;
+	kicker_test_v2 = v2;
+	
+	if (	(v1 > 0xc8 || v2 > 0xc8)		// Voltage too high.  Caps are in danger.
+		||	(v1 < 0x08)						// Didn't start charging
+		||	(v1 < 0x40 && (v2 - v1) < 0x04)	// Voltage was low and didn't increase
+	)
+	{
+		failures |= Fail_Kicker_Charge;
+	}
+	
+	if (failures & Fail_Kicker_Charge)
+	{
+		// Turn off charging
+		kicker_charge = 0;
+	}
+	
+	// Leave kicker_charge on so we can use the kicker
+}
+
 #if 0
 // Use this main() to debug startup code, IRQ, or linker script problems.
 // You can change SConstruct to build for SRAM because linker garbage collection
@@ -209,15 +273,31 @@ int main()
 	// Set up the IMU
 	imu_init();
 	
+	// Test if the kicker works
+	kicker_test();
+	
 	// Turn off LEDs
 	LED_OFF(LED_ALL);
 	
+	// Play startup music
 	if (failures == 0)
 	{
+		// Everything's good
 		music_start(song_startup);
-		
-		// Enough hardware is working, so act like a robot
-		
+	} else if (failures & Fail_Power)
+	{
+		// Dead battery (probably)
+		power_fail_music();
+	} else {
+		// Something's wrong
+		music_start(song_failure);
+	}
+	
+	// Select the default controller if enough hardware is working.
+	// Some failures are acceptable at this point.
+	int showstoppers = failures & ~Fail_Kicker & ~Fail_IMU;
+	if (showstoppers == 0)
+	{
 		// DP1 on => PD controller, off => dumb controller
 		if (AT91C_BASE_PIOA->PIO_PDSR & DP1)
 		{
@@ -226,13 +306,6 @@ int main()
 			default_controller = &controllers[1];
 		}
 		controller = default_controller;
-	} else if (failures & Fail_Power)
-	{
-		// Dead battery (probably)
-		power_fail_music();
-	} else {
-		// We're a paperweight
-		music_start(song_failure);
 	}
 	
 	// Set up the radio.  After this, it will be able to transmit and receive.
@@ -244,6 +317,7 @@ int main()
 	
 	rx_lost_time = current_time;
 	
+	// Start the controller if one was selected
 	if (controller && controller->init)
 	{
 		controller->init(0, 0);
@@ -379,7 +453,8 @@ int main()
 			// Send commands to and read status from the FPGA
 			fpga_send_commands();
 			
-			if (kicker_status & Kicker_Charged)
+			//if (kicker_status & Kicker_Charged)
+			if (stall_counter[0] || stall_counter[1] || stall_counter[2] || stall_counter[3])
 			{
 				LED_ON(LED_LR);
 			} else {

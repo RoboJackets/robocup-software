@@ -16,6 +16,7 @@ int_fast8_t dribble_out;
 
 uint_fast8_t kick_strength;
 uint_fast8_t use_chipper;
+uint_fast8_t kicker_charge;
 
 int fpga_init()
 {
@@ -108,6 +109,10 @@ void fpga_read_status()
 	spi_deselect();
 	
 	// Unpack data from the FPGA's response
+	if (rx[0] != LOGIC_VERSION)
+	{
+		failures |= Fail_FPGA_Version;
+	}
 	encoder[0] = rx[1] | (rx[2] << 8);
 	encoder[1] = rx[3] | (rx[4] << 8);
 	encoder[2] = rx[5] | (rx[6] << 8);
@@ -116,6 +121,13 @@ void fpga_read_status()
 	motor_faults |= current_motor_faults;
 	kicker_status = rx[10];
 	kicker_voltage = rx[11];
+	
+	if (kicker_status & 0x40)
+	{
+		failures &= ~Fail_Kicker_I2C;
+	} else {
+		failures |= Fail_Kicker_I2C;
+	}
 	
 	for (int i = 0; i < 4; ++i)
 	{
@@ -133,7 +145,7 @@ void fpga_send_commands()
 	uint8_t tx[12] = {0};
 
 	//FIXME - Select 2008/2010 mechanical base with switch DP0
-        tx[0] = 0x01;   // Command: set motor speeds
+	tx[0] = 0x01;   // Command: set motor speeds
 	for (int i = 0; i < 4; ++i)
 	{
 		int_fast8_t cmd = wheel_out[i];
@@ -150,7 +162,10 @@ void fpga_send_commands()
 	}
 	tx[9] = dribble_out << 1;
 	tx[10] = (dribble_out >> 7) | 2;
-	tx[10] |= 0x80;	// Always enable kicker charging
+	if (kicker_charge)
+	{
+		tx[10] |= 0x80;
+	}
 	if (use_chipper)
 	{
 		tx[10] |= 0x40;	// Select chipper

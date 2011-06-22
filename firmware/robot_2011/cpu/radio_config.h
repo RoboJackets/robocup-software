@@ -23,6 +23,6 @@ const uint8_t cc1101_regs[] =
     0x1d, 0xb0,    // AGCCTRL0 - AGC control.
     0x07, 0x4c,    // PKTCTRL1
     0x08, 0x05,    // PKTCTRL0
-    0x06, 0xff,    // PKTLEN
+    0x06, 0x3d,    // PKTLEN
     0x03, 0x0f,    // FIFOTHR  - RXFIFO and TXFIFO thresholds.
 };
