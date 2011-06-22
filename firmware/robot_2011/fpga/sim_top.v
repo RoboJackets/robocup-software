@@ -1,11 +1,11 @@
-`timescale 100ns/100ns
+`timescale 100ns/10ns
 
-`include "top.v"
+`include "robocup.v"
 
 module main;
     reg clk = 0;
     
-    reg m1hall_a = 1, m1hall_b = 0, m1hall_c = 0;
+    reg m1hall_a = 0, m1hall_b = 0, m1hall_c = 0;
     reg m2hall_a = 0, m2hall_b = 0, m2hall_c = 0;
     reg m3hall_a = 0, m3hall_b = 0, m3hall_c = 0;
     reg m4hall_a = 0, m4hall_b = 0, m4hall_c = 0;
@@ -16,17 +16,18 @@ module main;
     wire m4a_h, m4a_l, m4b_h, m4b_l, m4c_h, m4c_l;
     wire m5a_h, m5a_l, m5b_h, m5b_l, m5c_h, m5c_l;
     wire m1enc_a, m1enc_b;
-	wire m2enc_a, m2enc_b;
-	wire m3enc_a, m3enc_b;
-	wire m4enc_a, m4enc_b;
+    wire m2enc_a, m2enc_b;
+    wire m3enc_a, m3enc_b;
+    wire m4enc_a, m4enc_b;
     
-	wire discharge = 0;
-	wire kdone, kcharge, kkick, kchip, kvdata, kidata, kncs, kclk, klimit, kspare;
-	reg fpga_ncs = 1, mosi = 0, sck = 0;
-	wire miso, flash_ncs;
-	wire fs0, fs1;
-	
-    robocup top(clk,
+    wire discharge = 0;
+    wire kdone, kcharge, kkick, kchip, kvdata, kidata, kncs, kclk, klimit, kspare;
+    reg fpga_ncs = 1, mosi = 0, sck = 0;
+    wire miso, flash_ncs;
+    wire fs0, fs1;
+    
+    robocup top(
+        clk,
         m1hall_a, m1hall_b, m1hall_c,
         m2hall_a, m2hall_b, m2hall_c,
         m3hall_a, m3hall_b, m3hall_c,
@@ -37,15 +38,14 @@ module main;
         m3a_h, m3a_l, m3b_h, m3b_l, m3c_h, m3c_l,
         m4a_h, m4a_l, m4b_h, m4b_l, m4c_h, m4c_l,
         m5a_h, m5a_l, m5b_h, m5b_l, m5c_h, m5c_l,
-		m1enc_a, m1enc_b,
-		m2enc_a, m2enc_b,
-		m3enc_a, m3enc_b,
-		m4enc_a, m4enc_b,
-		discharge,
-		kdone, kcharge, kkick, kchip, kvdata, kidata, kncs, kclk, klimit, kspare,
-		fpga_ncs,
-		fs0, fs1,
-		mosi, sck, miso, flash_ncs
+        m1enc_a, m1enc_b,
+        m2enc_a, m2enc_b,
+        m3enc_a, m3enc_b,
+        m4enc_a, m4enc_b,
+        discharge,
+        kdone, kcharge, kkick, kchip,
+        flash_ncs,
+        fpga_ncs, mosi, sck, miso
     );
 
     // Clock
@@ -57,41 +57,41 @@ module main;
     end
     
     task spi_on;
-		begin
-			fpga_ncs = 0; #2;
-		end
+        begin
+            fpga_ncs = 0; #2;
+        end
     endtask
     
     task spi_off;
-		begin
-			#2 fpga_ncs = 1; #2;
-		end
+        begin
+            #2 fpga_ncs = 1; #4;
+        end
     endtask
     
     task spi;
         input [7:0] in;
         
         begin
-			mosi = in[7]; #2 sck = 1; #2 sck = 0;
-			mosi = in[6]; #2 sck = 1; #2 sck = 0;
-			mosi = in[5]; #2 sck = 1; #2 sck = 0;
-			mosi = in[4]; #2 sck = 1; #2 sck = 0;
-			mosi = in[3]; #2 sck = 1; #2 sck = 0;
-			mosi = in[2]; #2 sck = 1; #2 sck = 0;
-			mosi = in[1]; #2 sck = 1; #2 sck = 0;
-			mosi = in[0]; #2 sck = 1; #2 sck = 0;
+            mosi = in[7]; #8 sck = 1; #8 sck = 0;
+            mosi = in[6]; #8 sck = 1; #8 sck = 0;
+            mosi = in[5]; #8 sck = 1; #8 sck = 0;
+            mosi = in[4]; #8 sck = 1; #8 sck = 0;
+            mosi = in[3]; #8 sck = 1; #8 sck = 0;
+            mosi = in[2]; #8 sck = 1; #8 sck = 0;
+            mosi = in[1]; #8 sck = 1; #8 sck = 0;
+            mosi = in[0]; #8 sck = 1; #8 sck = 0;
         end
     endtask
     
     initial begin
-		#1 spi_on();
+    #4.5 spi_on();
         spi(8'h68);
         spi(8'h79);
         spi(8'hbc);
         spi(8'hde);
         spi_off();
-		spi_on();
-        spi(8'h34);
+        spi_on();
+        spi(8'h01);
         spi(8'h0);
         spi(8'h0);
         spi(8'h0);

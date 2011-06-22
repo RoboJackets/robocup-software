@@ -182,7 +182,11 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	printf("  Dark:  0x%03x\n", ball_sense_dark);
 	printf("  Delta: 0x%03x\n", ball_sense_light - ball_sense_dark);
 	
-	printf("Kicker: 0x%02x\n", kicker_status);
+	printf("Kicker: status 0x%02x  voltage 0x%02x\n", kicker_status, kicker_voltage);
+	if (!(kicker_status & 0x40))
+	{
+		printf("Voltage ADC failed\n");
+	}
 	
 	printf("GIT version: %s\n", git_version);
 }
@@ -542,7 +546,7 @@ static void cmd_run(int argc, const char *argv[], void *arg)
 		printf("Not found\n");
 	} else {
 		// Start the default controller
-		controller = DEFAULT_CONTROLLER;
+		controller = default_controller;
 		if (controller && controller->init)
 		{
 			controller->init(0, 0);
@@ -593,6 +597,57 @@ void cmd_write_uint(int argc, const char *argv[], void *arg)
 	}
 }
 
+void cmd_read(int argc, const char *argv[], void *arg)
+{
+	if (argc != 2)
+	{
+		printf("read <address> <len>\n");
+		return;
+	}
+	
+	uint32_t addr = parse_uint32(argv[0]);
+	uint32_t len = parse_uint32(argv[1]);
+	for (uint32_t i = 0; i < len; ++i)
+	{
+		// Reset the watchdog timer
+		AT91C_BASE_WDTC->WDTC_WDCR = 0xa5000001;
+		
+		putchar(*(uint8_t *)addr);
+		++addr;
+	}
+}
+
+void cmd_rx_test(int argc, const char *argv[], void *arg)
+{
+	radio_rx_len = 0;
+	usb_rx_start();
+	while (!usb_rx_len)
+	{
+		// Reset the watchdog timer
+		AT91C_BASE_WDTC->WDTC_WDCR = 0xa5000001;
+		
+		if (radio_poll())
+		{
+			printf("got %d\n", radio_rx_len);
+			for (int i = 0; i < radio_rx_len; ++i)
+			{
+				printf("%02x ", radio_rx_buf[i]);
+				if ((i & 7) == 7)
+				{
+					printf("\n");
+				}
+			}
+			if (radio_rx_len & 7)
+			{
+				printf("\n");
+			}
+			printf("\n");
+			radio_rx_len = 0;
+		}
+	}
+	usb_rx_start();
+}
+
 static void debug_faults()
 {
 	printf("0x%02x %3d %5d\n", current_motor_faults, wheel_out[0], stall_counter[0]);
@@ -632,6 +687,8 @@ const command_t commands[] =
 	{"adc", cmd_adc},
 	{"i2c_read", cmd_i2c_read},
 	{"monitor_faults", cmd_write_uint, (void *)&write_monitor_faults},
+	{"read", cmd_read},
+	{"rx_test", cmd_rx_test},
 
 	// End of list placeholder
 	{0, 0}

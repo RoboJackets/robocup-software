@@ -8,6 +8,13 @@
 #define Forward_Size    31
 #define Reverse_Size    11
 
+extern uint8_t radio_rx_len;
+extern uint8_t radio_rx_buf[];
+extern int_fast8_t last_rssi;
+
+// True if we are waiting for a transmission to finish
+extern volatile int radio_in_tx;
+
 static inline void radio_select()
 {
 	spi_select(NPCS_RADIO);
@@ -26,8 +33,8 @@ uint8_t radio_command(uint8_t cmd);
 uint8_t radio_read(uint8_t addr);
 uint8_t radio_write(uint8_t addr, uint8_t value);
 
-// Disables the RX timeout timer
-void radio_timeout_disable();
+void radio_transmit(uint8_t *buf, int len);
 
-// Resets and enables the RX timeout timer
-void radio_timeout_enable();
+// Checks the radio for received data.
+// Returns nonzero and sets radio_rx_len and radio_rx_buf if a packet was successfully received.
+int radio_poll();

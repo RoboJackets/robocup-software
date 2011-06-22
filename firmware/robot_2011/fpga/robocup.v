@@ -1,6 +1,27 @@
+// Signal naming conventions:
+//	signal_s is a copy of the signal synchronized to the master clock.
+//		(only applies to signals sampled from inputs)
+//	signal_d is a copy of the signal delayed from signal_s by one clock.
+//	signal_d2 is a copy of the signal delayed from signal_s by two clocks.
+//
+// To prevent glitches:
+// All inputs MUST be synchronized before use.
+// All outputs MUST be driven directly from registers, not from combinational logic.
+// "always" blocks should only be clocked directly by sysclk (18.432MHz).
+//		The exception is when using an always block to write combinational logic.
+//		ALL registers must be synchronized to sysclk.  Do not use gated or divided clocks.
+//
+// "begin" and "end" should always be used where applicable to prevent stupid bugs.
+// I know it's ugly.
+//
+// Registers should always be initialized so that the design behaves the same in
+// simulation as on the real hardware.
+// Use includes rather than a project file to make integration into a simulation easier.
+
 `include "motor.v"
 `include "kicker.v"
 `include "encoder.v"
+`include "kicker_i2c.v"
 
 // Conventions:
 //  Hall effect sensor vectors are [2:0] which maps to {a, b, c}.
@@ -39,6 +60,7 @@ module robocup (
 	// Kicker
 	input kdone,
 	output kcharge, kkick, kchip,
+	inout ksda, kscl,
 	
 	// Microcontroller interface
 	input flash_ncs,
@@ -46,6 +68,9 @@ module robocup (
 	input mosi, sck,
 	inout miso
 );
+
+// This is sent as the first byte of every SPI transfer
+localparam LOGIC_VERSION = 8'h04;
 
 // Status that can be read over SPI
 wire [5:1] motor_fault;
@@ -63,87 +88,129 @@ reg [8:0] motor_speed_4 = 0;
 reg [8:0] motor_speed_5 = 0;
 
 wire [7:0] kicker_status;
+wire [7:0] kicker_voltage;
+wire kicker_voltage_ok;
 
 // SPI interface
+
+// Data register
 reg [7:0] spi_dr = 0;
+
+// Synchronized and delayed interface signals
 reg sck_s = 0, sck_d = 0;
 reg mosi_s = 0;
 reg ncs_s = 0;
-reg mosi_d = 0;
-reg [2:0] spi_bit_count = 0;
+reg ncs_d = 0;
 
-// Index of the byte in this SPI packet
+// Value of MOSI at the last SCK rising edge
+reg mosi_sampled = 0;
+
+// Index of the byte being received
 reg [3:0] spi_byte_count = 0;
 
-// Goes high for one cycle after each byte is received
-reg spi_strobe = 0;
+// Which bit in the current byte is being received
+reg [2:0] spi_bit_count = 0;
 
-reg [7:0] spi_rx[0:10];
+// High for one cycle after a transfer is started
+wire spi_start_strobe = (ncs_d == 1 && ncs_s == 0);
 
+// High for one cycle at the end of a transfer.
+// spi_byte_count is valid for this cycle.
+wire spi_end_strobe = (ncs_d == 0 && ncs_s == 1);
+
+// Received data
+reg [7:0] spi_rx[0:14];
+
+wire sck_rising = (sck_d == 0 && sck_s == 1);
+wire sck_falling = (sck_d == 1 && sck_s == 0);
+
+// High for one cycle when spi_dr needs to be loaded with the next byte to transmit.
+// This does not apply to byte 0: that byte must be loaded whenever ncs_s == 1.
+wire spi_tx_setup = (sck_falling && spi_bit_count == 0);
+
+// The command byte is the first byte received
+wire [7:0] spi_command = spi_rx[0];
+
+// SPI serdes logic
+//
+// This is designed for SPI mode 0 (clock idles low, data valid on rising edge).
+//
+// SCK must be at most sysclk/8.  This could be improved with an asynchronous shift
+// register, but I don't want to deal with synchronizing that to the other logic.
 always @(posedge sysclk) begin
 	// Synchronize SPI signals
 	sck_d <= sck_s;
 	sck_s <= sck;
 	mosi_s <= mosi;
 	ncs_s <= fpga_ncs;
-	
-	spi_strobe <= 0;
+	ncs_d <= ncs_s;
 	
 	if (ncs_s == 1) begin
 		// Reset when not selected
-		spi_dr <= 8'h02;	// RX byte 0: FPGA SPI interface version
 		spi_bit_count <= 0;
 		spi_byte_count <= 0;
 		spi_rx[0] <= 0;
 	end else begin
-		if (sck_d == 0 && sck_s == 1) begin
+		if (sck_rising) begin
 			// SCK rising edge: middle of a bit.  Sample MOSI.
-			mosi_d <= mosi_s;
+			mosi_sampled <= mosi_s;
+
+                        // Increment bit and byte counts
+			spi_bit_count <= spi_bit_count + 1;
+                        if (spi_bit_count == 7) begin
+                                spi_byte_count <= spi_byte_count + 1;
+                        end
 			
 			if (spi_bit_count == 7) begin
 				// Sampling the last bit of a byte.
-				spi_strobe <= 1;
-				
-				if (spi_byte_count <= 10) begin
+				if (spi_byte_count < 15) begin
 					spi_rx[spi_byte_count] <= {spi_dr[6:0], mosi_s};
 				end
 			end
-		end
-		
-		if (sck_d == 1 && sck_s == 0) begin
+		end else if (sck_falling) begin
 			// SCK falling edge: end of a bit.  Change MISO.
-			
-			spi_bit_count <= spi_bit_count + 1;
-			
-			if (spi_bit_count == 7) begin
-				// Just finished a byte
-				
-				// Set up to send the next byte.
-				// Note that spi_byte has not been incremented at this point,
-				// so the byte after the first byte (version, above) is spi_byte==0.
-				case (spi_byte_count)
-					0: spi_dr <= encoder_capture_1[7:0];
-					1: spi_dr <= encoder_capture_1[15:8];
-					2: spi_dr <= encoder_capture_2[7:0];
-					3: spi_dr <= encoder_capture_2[15:8];
-					4: spi_dr <= encoder_capture_3[7:0];
-					5: spi_dr <= encoder_capture_3[15:8];
-					6: spi_dr <= encoder_capture_4[7:0];
-					7: spi_dr <= encoder_capture_4[15:8];
-					8: spi_dr <= {3'b000, motor_fault[5:1]};
-					9: spi_dr <= kicker_status;
-					default: spi_dr <= 0;
-				endcase
-				
-				spi_byte_count <= spi_byte_count + 1;
-			end else begin
-				// End of a bit: shift on SCK falling edge
-				spi_dr <= {spi_dr[6:0], mosi_d};
+			if (spi_bit_count != 0) begin
+				// End of a bit: shift on SCK falling edge if not loading new data
+				spi_dr <= {spi_dr[6:0], mosi_sampled};
 			end
 		end
 	end
+
+        // SPI transmit logic
+        if (ncs_s == 1) begin
+	        // TX byte 0: FPGA SPI interface version
+       		spi_dr <= LOGIC_VERSION;
+        end else if (spi_tx_setup) begin
+                // Load transmit bytes after the first one
+                if (spi_command == 8'h00) begin
+                        case (spi_byte_count)
+                        1: spi_dr <= encoder_capture_1[7:0];
+                        2: spi_dr <= encoder_capture_1[15:8];
+                        3: spi_dr <= encoder_capture_2[7:0];
+                        4: spi_dr <= encoder_capture_2[15:8];
+                        5: spi_dr <= encoder_capture_3[7:0];
+                        6: spi_dr <= encoder_capture_3[15:8];
+                        7: spi_dr <= encoder_capture_4[7:0];
+                        8: spi_dr <= encoder_capture_4[15:8];
+                        9: spi_dr <= {3'b000, motor_fault};
+                        10: spi_dr <= kicker_status;
+						11: spi_dr <= kicker_voltage;
+                        default: spi_dr <= 8'h00;
+                        endcase
+                end else if (spi_command == 8'h01) begin
+                        case (spi_byte_count)
+                        1: spi_dr <= 8'h12;
+                        2: spi_dr <= 8'h34;
+                        default: spi_dr <= 8'h00;
+                        endcase
+                end else begin
+                        // Invalid command
+                        spi_dr <= 8'hee;
+                end
+	end
 end
 
+// Drive MISO only if we are selected
 assign miso = fpga_ncs ? 1'bz : spi_dr[7];
 
 reg kick_strobe = 0;
@@ -155,27 +222,45 @@ reg charge_enable = 0;
 // When this overflows, all motor outputs are reset.
 reg [21:0] watchdog = 0;
 
+// Capture all encoder counts together at the beginning of a transfer
+wire [15:0] encoder_1;
+wire [15:0] encoder_2;
+wire [15:0] encoder_3;
+wire [15:0] encoder_4;
+
 always @(posedge sysclk) begin
-	if (ncs_s == 1 && spi_byte_count == 11) begin
+	if (spi_start_strobe) begin
+		encoder_capture_1 <= encoder_1;
+		encoder_capture_2 <= encoder_2;
+		encoder_capture_3 <= encoder_3;
+		encoder_capture_4 <= encoder_4;
+	end
+end
+
+// SPI receive logic
+always @(posedge sysclk) begin
+	if (spi_end_strobe && spi_command == 8'h01 && spi_byte_count == 12) begin
+		// Finished receiving SPI command
 		watchdog <= 0;
 		
-		motor_speed_1 <= {spi_rx[1][0], spi_rx[0]};
-		motor_dir[1] <= spi_rx[1][1];
-		motor_speed_2 <= {spi_rx[3][0], spi_rx[2]};
-		motor_dir[2] <= spi_rx[3][1];
-		motor_speed_3 <= {spi_rx[5][0], spi_rx[4]};
-		motor_dir[3] <= spi_rx[5][1];
-		motor_speed_4 <= {spi_rx[7][0], spi_rx[6]};
-		motor_dir[4] <= spi_rx[7][1];
-		motor_speed_5 <= {spi_rx[9][0], spi_rx[8]};
-		motor_dir[5] <= spi_rx[9][1];
-		charge_enable <= spi_rx[9][7];
-		kick_select <= spi_rx[9][6];
-		kick_strength <= spi_rx[10];
-		if (spi_rx[10] != 0) begin
+		motor_speed_1 <= {spi_rx[2][0], spi_rx[1]};
+		motor_dir[1] <= spi_rx[2][1];
+		motor_speed_2 <= {spi_rx[4][0], spi_rx[3]};
+		motor_dir[2] <= spi_rx[4][1];
+		motor_speed_3 <= {spi_rx[6][0], spi_rx[5]};
+		motor_dir[3] <= spi_rx[6][1];
+		motor_speed_4 <= {spi_rx[8][0], spi_rx[7]};
+		motor_dir[4] <= spi_rx[8][1];
+		motor_speed_5 <= {spi_rx[10][0], spi_rx[9]};
+		motor_dir[5] <= spi_rx[10][1];
+		charge_enable <= spi_rx[10][7];
+		kick_select <= spi_rx[10][6];
+		kick_strength <= spi_rx[11];
+		if (spi_rx[11] != 0) begin
 			kick_strobe <= 1;
 		end
 	end else begin
+		watchdog <= watchdog + 1;
 		if (watchdog == 22'h3fffff) begin
 			// Watchdog timeout
 			motor_speed_1 <= 0;
@@ -185,8 +270,6 @@ always @(posedge sysclk) begin
 			motor_speed_5 <= 0;
 			charge_enable <= 0;
 			motor_dir <= 0;
-		end else begin
-			watchdog <= watchdog + 1;
 		end
 		
 		kick_strobe <= 0;
@@ -218,25 +301,10 @@ motor md_4(sysclk, pwm_phase, motor_dir[4], motor_speed_4, {m4hall_a, m4hall_b, 
 motor md_5(sysclk, pwm_phase, motor_dir[5], motor_speed_5, {m5hall_a, m5hall_b, m5hall_c}, {m5a_h, m5a_l, m5b_h, m5b_l, m5c_h, m5c_l}, motor_fault[5]);
 
 // Encoders
-wire [15:0] encoder_1;
-wire [15:0] encoder_2;
-wire [15:0] encoder_3;
-wire [15:0] encoder_4;
-
 encoder counter1(sysclk, {m1enc_a, m1enc_b}, encoder_1);
 encoder counter2(sysclk, {m2enc_a, m2enc_b}, encoder_2);
 encoder counter3(sysclk, {m3enc_a, m3enc_b}, encoder_3);
 encoder counter4(sysclk, {m4enc_a, m4enc_b}, encoder_4);
-
-// Capture all encoder counts together at the beginning of a transfer
-always @(posedge sysclk) begin
-	if (spi_strobe && spi_byte_count == 0) begin
-		encoder_capture_1 <= encoder_1;
-		encoder_capture_2 <= encoder_2;
-		encoder_capture_3 <= encoder_3;
-		encoder_capture_4 <= encoder_4;
-	end
-end
 
 // Button synchronization for firing kicker manually
 reg charge_override = 0;
@@ -253,7 +321,7 @@ end
 
 // Kicker
 wire lockout;
-assign kicker_status = {2'b00, kick_select, charge_override, charge_enable, kcharge, lockout, done_sync};
+assign kicker_status = {1'b0, kicker_voltage_ok, kick_select, charge_override, charge_enable, kcharge, lockout, done_sync};
 
 wire kick_pulse;
 kicker kicker(sysclk, button_sync, kick_strobe, kick_strength, charge_enable & ~charge_override, kcharge, kick_pulse, lockout);
@@ -261,5 +329,12 @@ kicker kicker(sysclk, button_sync, kick_strobe, kick_strength, charge_enable & ~
 // Send the kick pulse to either the kicker or the chipper
 assign kkick = kick_pulse && (kick_select == 0);
 assign kchip = kick_pulse && (kick_select == 1);
+
+// Kicker voltage monitor
+wire scl_out, sda_out;
+kicker_i2c kicker_i2c(sysclk, scl_out, sda_out, ksda, kicker_voltage_ok, kicker_voltage);
+
+assign kscl = scl_out ? 1'bz : 1'b0;
+assign ksda = sda_out ? 1'bz : 1'b0;
 
 endmodule

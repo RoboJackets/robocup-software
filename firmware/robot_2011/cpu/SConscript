@@ -6,7 +6,8 @@ chip = 'at91sam7s256'
 defs = '-D%s -DTRACE_LEVEL=0 -DNOASSERT' % chip
 
 arm.Append(CPPPATH=Dir('.').srcnode())
-arm.Append(CFLAGS=defs + ' -g -Wall -std=gnu99 -Werror')
+#arm.Append(CFLAGS=defs + ' -g -Wall -std=gnu99 -Werror')
+arm.Append(CFLAGS=defs + ' -g -Wall -std=gnu99')
 
 # Specify CPU explicitly since some GCC ARM builds may expect something more awesome by default.
 #
@@ -91,6 +92,7 @@ robot_fw = arm_flash.Program('robocup.elf', [
 	'i2c.c',
 	'imu.c',
 	'stall.c',
+	'ota_update.c',
 	'tools/reflash.c'
 ])
 Depends(robot_fw, flash_lds)

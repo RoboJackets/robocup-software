@@ -1,0 +1,21 @@
+Import('*')
+
+avr_usb = avr.Clone()
+avr_usb.Append(DEVICE='at90usb1287')
+avr_usb.Append(CFLAGS='-mmcu=${DEVICE}')
+avr_usb.Append(LINKFLAGS='-mmcu=${DEVICE}')
+
+avr_usb.Program('base_station.elf',
+	['base_station.c',
+	'radio.c',
+	'device.c',
+	'host.c'])
+
+hex = avr_usb.IHex('base_station.hex', 'base_station.elf')
+avr_usb.Alias('base2011', 'base_station.hex')
+Help('  base2011: Build 2011 base station firmware\n')
+
+avr_usb.Alias('base2011-prog', hex, Action('dfu-programmer ${DEVICE} erase && dfu-programmer ${DEVICE} flash --suppress-validation ${SOURCE} && dfu-programmer ${DEVICE} reset'))
+avr_usb.AlwaysBuild('base2011-prog')
+Help('  base2011-prog: Build and program 2011 base station firmware\n')
+Help('    (put device in bootloader mode first by holding PROG and pressing RESET)\n')
