@@ -83,7 +83,7 @@ bool Gameplay::Behaviors::PivotKick::run()
 	state()->drawLine(target, Qt::yellow);
 	
 	// Driving
-	robot->dribble(32);
+	robot->dribble(96);
 	robot->face(ball().pos);
 	if (_state == State_Approach)
 	{
