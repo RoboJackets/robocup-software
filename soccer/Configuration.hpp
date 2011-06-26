@@ -13,7 +13,7 @@ class ConfigItem
 {
 	public:
 		ConfigItem(Configuration *tree, const QString &name);
-		~ConfigItem();
+		virtual ~ConfigItem();
 		
 		// A ConfigItem's name is a sequence of path segments separated by '/'.
 		// The path is a list of these segments in order.

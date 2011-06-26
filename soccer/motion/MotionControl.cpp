@@ -3,6 +3,7 @@
 #include <Robot.hpp>
 #include <Utils.hpp>
 
+#include <cmath>
 #include <stdio.h>
 #include <algorithm>
 
@@ -149,7 +150,7 @@ void MotionControl::run()
 {
 	if (_robot->cmd.planner == MotionCmd::DirectMotor)
 	{
-		for (int i = 0; i < 4; ++i)
+		for (size_t i = 0; i < 4; ++i)
 		{
 			int out = 0;
 			if (i < _robot->cmd.direct_motor_cmds.size())
@@ -163,6 +164,7 @@ void MotionControl::run()
 	}
 	
 	//FIXME - These are all 2011 numbers
+	//FIXME set these through parameters/config
 	
 	// The wheel angular velocity (rad/s) resulting from the largest wheel command
 	//FIXME - Educated guess
@@ -233,33 +235,9 @@ void MotionControl::run()
 		scaledSpin = 0;
 		bodyVel = Point();
 	}
-	
-#if 1
-	// Experimental: wheel control through vision
-	
-// 	printf("target velocities %f and %f, %f\n", scaledSpin, bodyVel.x, bodyVel.y);
-	for (int i = 0; i < 4; ++i)
-	{
-		float w = axles[i].dot(bodyVel) / Wheel_Radius + scaledSpin * Robot_Radius / Wheel_Radius;
-		float error = _wheelVel[i] - w;
-		
-		_integral[i] += -error * _robot->config->wheel.i * dtime;
-		_integral[i] = max(-20.0f, min(20.0f, _integral[i]));
-		
-		_out[i] = w * _robot->config->wheel.p + _integral[i] + (error - _lastAngleError) * _robot->config->wheel.d;
-		if (_out[i] < -127)
-		{
-			_out[i] = -127;
-		} else if (_out[i] > 127)
-		{
-			_out[i] = 127;
-		}
-// 		printf("set %5.2f measured %5.2f err %5.2f int %5.2f command %3d\n", w, _wheelVel[i], error, _integral[i], (int)_out[i]);
-	}
-	
-#else
-	// This stuff works
-	
+
+	// position control through vision
+
 	// Limit speed so we at least go in the right direction
 	float s = bodyVel.mag();
 	if (s > Max_Linear_Speed)
@@ -288,7 +266,7 @@ void MotionControl::run()
 		c = max(-Max_Wheel_Command, c);
 		c = min(Max_Wheel_Command, c);
 		
-		motors[i] = c;
+		_out[i] = c;
 	}
 	
 	// Get the largest motor command that was actually set
@@ -308,9 +286,8 @@ void MotionControl::run()
 	
 	for (int i = 0; i < 4; ++i)
 	{
-		motors[i] += spinCommand;
+		_out[i] += spinCommand;
 	}
-#endif
 
 	// Store motor commands in the radio sub-packet
 	for (int i = 0; i < 4; ++i)

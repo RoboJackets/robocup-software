@@ -139,9 +139,14 @@ bool Gameplay::Behaviors::PivotKick::run()
 		_accuracy -= Accuracy_Delta;
 		_accuracy = max(0.0f, _accuracy);
 		
-		float angle = _ccw ? 10 : -10;
-		robot->move(Point::rotate(robot->pos, ball().pos, angle));
-		robot->face(ball().pos);
+		// manual pivot code
+//		float angle = _ccw ? 10 : -10;
+//		robot->move(Point::rotate(robot->pos, ball().pos, angle));
+//		robot->face(ball().pos);
+
+		// using pivot motion command
+		robot->pivot(ball().pos, _ccw, ball().pos.distTo(robot->pos));
+
 	} else {
 		robot->addText("Done");
 		return false;

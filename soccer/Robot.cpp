@@ -170,6 +170,37 @@ void OurRobot::move(const vector<Geometry2d::Point>& path, bool stopAtEnd)
 	cmd.pathEnd = (stopAtEnd) ? MotionCmd::StopAtEnd : MotionCmd::FastAtEnd;
 }
 
+void OurRobot::pivot(const Geometry2d::Point& center, bool dirCCW, double radius)
+{
+	// implement by rotating a point around the center
+	Circle circle(center, radius);
+	Point start_pt = circle.nearestPoint(pos);
+	Point aimDir = (pos - center).normalized();
+
+	// use tangential approximation: each movement will include move to circle and tangential movement
+	// FIXME choose a particular increment distance
+	double tangentDist = 0.3;
+	Point perp = (dirCCW) ? aimDir.perpCCW() : aimDir.perpCW(); // TODO verify this direction
+	Point target = circle.nearestPoint(start_pt + perp * tangentDist);
+
+	_state->drawCircle(center, radius);
+
+	// copy path from input
+	_path.clear();
+
+	// ensure RRT not used
+	_delayed_goal = boost::none;
+	_planner_type = OVERRIDE;
+
+	// convert to motion command
+	cmd.goalPosition = target;
+	cmd.pathLength = pos.distTo(target);
+	cmd.planner = MotionCmd::Point;
+	cmd.pathEnd = MotionCmd::FastAtEnd; // want to keep going beyond initial target
+	cmd.face = MotionCmd::Continuous;
+	cmd.goalOrientation = center; // face center at all times
+}
+
 void OurRobot::directVelocityCommands(const Geometry2d::Point& trans, double ang)
 {
 	// ensure RRT not used
