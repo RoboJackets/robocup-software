@@ -9,7 +9,6 @@ srcs = [
 	'Joystick.cpp',
 	'RefereeModule.cpp',
 	'PlayConfigTab.cpp',
-	'TestResultTab.cpp',
 	'FieldView.cpp',
 	'SimFieldView.cpp',
 	'Configuration.cpp',
@@ -154,8 +153,7 @@ srcs = [
 
 uics = env.Uic4([
 	'ui/MainWindow.ui',
-	'ui/PlayConfigTab.ui',
-	'ui/TestResultTab.ui'
+	'ui/PlayConfigTab.ui'
 ])
 
 e = env.Clone()

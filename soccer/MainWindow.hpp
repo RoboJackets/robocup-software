@@ -43,11 +43,6 @@ class MainWindow : public QMainWindow
 			return _playConfigTab;
 		}
 		
-		TestResultTab *testResultTab() const
-		{
-			return _testResultTab;
-		}
-
 		// Deselects all debug layers
 		void allDebugOff();
 		
@@ -192,8 +187,6 @@ class MainWindow : public QMainWindow
 		
 		PlayConfigTab *_playConfigTab;
 		
-		TestResultTab *_testResultTab;
-
 		// Tree items that are not in LogFrame
 		QTreeWidgetItem *_frameNumberItem;
 		QTreeWidgetItem *_elapsedTimeItem;
