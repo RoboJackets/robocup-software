@@ -74,6 +74,9 @@ namespace Geometry2d
         bool tangentPoints(const Geometry2d::Point &src, 
                 Geometry2d::Point* p1 = 0, Geometry2d::Point* p2 = 0) const;
         
+        // finds the point on the circle closest to P
+        Point nearestPoint(const Geometry2d::Point &P) const;
+
         Point center;
         
     protected:

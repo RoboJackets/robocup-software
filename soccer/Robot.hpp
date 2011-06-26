@@ -136,6 +136,13 @@ public:
 	void move(const std::vector<Geometry2d::Point>& path, bool stopAtEnd=true);
 
 	/**
+	 * Pivot around a point at a fixed radius and direction (CCW or CW).
+	 * Used primarily for aiming around a ball.  Note that this will
+	 * not handle obstacle avoidance.
+	 */
+	void pivot(const Geometry2d::Point& center, bool dirCCW, double radius);
+
+	/**
 	 * Apply direct motion commands to the motors - use only for calibration
 	 * Vector of speeds must have 4 elements - will pad with zeros otherwise
 	 * Only use this function for calibration
