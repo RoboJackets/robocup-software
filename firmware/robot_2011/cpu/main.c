@@ -21,6 +21,7 @@
 #include "imu.h"
 #include "ota_update.h"
 #include "main.h"
+#include "encoder_monitor.h"
 
 // Last forward packet
 uint8_t forward_packet[Forward_Size];
@@ -116,8 +117,8 @@ static int handle_forward_packet()
 		reverse_packet[10] = 0;
 		for (int i = 0; i < 4; ++i)
 		{
-			reverse_packet[6 + i] = encoder[i];
-			reverse_packet[10] |= (encoder[i] & 0x300) >> (8 - i * 2);
+			reverse_packet[6 + i] = encoder_count[i];
+			reverse_packet[10] |= (encoder_count[i] & 0x300) >> (8 - i * 2);
 		}
 		
 		radio_transmit(reverse_packet, sizeof(reverse_packet));
@@ -159,11 +160,10 @@ void kicker_test()
 	}
 	
 	// Clear motor commands
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
-		wheel_out[i] = 0;
+		motor_out[i] = 0;
 	}
-	dribble_out = 0;
 	
 	// Make two voltage measurements a small time apart.
 	// Run the charger just long enough to determine if it works.
@@ -411,16 +411,18 @@ int main()
 			// Read encoders
 			fpga_read_status();
 			
+			// Detect faulty or miswired encoders
+			encoder_monitor();
+			
 			// Detect stalled motors
 			// This must be done before clearing motor outputs because it uses the old values
 			stall_update();
 			
 			// Reset motor outputs in case the controller is broken
-			for (int i = 0; i < 4; ++i)
+			for (int i = 0; i < 5; ++i)
 			{
-				wheel_out[i] = 0;
+				motor_out[i] = 0;
 			}
-			dribble_out = 0;
 			
 			// Allow kicking if we have the ball
 			if (have_ball)
@@ -437,17 +439,13 @@ int main()
 			}
 			
 			// Clear the commands for unusable motors
-			uint8_t bad_motors = motor_faults | motor_stall;
-			for (int i = 0; i < 4; ++i)
+			uint8_t bad_motors = motor_faults | motor_stall | encoder_faults;
+			for (int i = 0; i < 5; ++i)
 			{
 				if (bad_motors & (1 << i))
 				{
-					wheel_out[i] = 0;
+					motor_out[i] = 0;
 				}
-			}
-			if (bad_motors & (1 << Motor_Dribbler))
-			{
-				dribble_out = 0;
 			}
 			
 			// Send commands to and read status from the FPGA

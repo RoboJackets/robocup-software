@@ -20,6 +20,7 @@
 #include "adc.h"
 #include "fpga.h"
 #include "stall.h"
+#include "encoder_monitor.h"
 
 static void cmd_help(int argc, const char *argv[], void *arg)
 {
@@ -145,42 +146,66 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	print_motor_bits(motor_faults);
 	putchar('\n');
 	
+	printf("Encoder faults: 0x%02x", encoder_faults);
+	print_motor_bits(encoder_faults);
+	putchar('\n');
+	
 	printf("Motor stalls: 0x%02x", motor_stall);
 	print_motor_bits(motor_stall);
 	putchar('\n');
-	printf("  %5d %5d %5d %5d %5d\n", stall_counter[0], stall_counter[1], stall_counter[2], stall_counter[3], stall_counter[4]);
 	
 	printf("Motor out:");
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
-		printf(" %4d", wheel_out[i]);
+		printf(" %6d", motor_out[i]);
 	}
 	printf("\n");
 
-	printf("Encoders:");
-	for (int i = 0; i < 4; ++i)
+	printf("    Stall:");
+	for (int i = 0; i < 5; ++i)
 	{
-		printf(" 0x%04x", encoder[i]);
+		printf(" %6d", stall_counter[i]);
 	}
 	printf("\n");
-	printf("   Delta:");
+	
+	printf("     Hall:");
+	for (int i = 0; i < 5; ++i)
+	{
+		printf(" 0x%04x", hall_count[i]);
+	}
+	printf("\n");
+	
+	printf("    dHall:");
+	for (int i = 0; i < 5; ++i)
+	{
+		printf(" 0x%04x", hall_delta[i]);
+	}
+	printf("\n");
+	
+	printf(" Encoders:");
+	for (int i = 0; i < 4; ++i)
+	{
+		printf(" 0x%04x", encoder_count[i]);
+	}
+	printf("\n");
+	printf("    Delta:");
 	for (int i = 0; i < 4; ++i)
 	{
 		printf(" %6d", encoder_delta[i]);
 	}
 	printf("\n");
-	printf(" Command:");
+	printf("  Command:");
 	for (int i = 0; i < 4; ++i)
 	{
 		printf(" %6d", wheel_command[i]);
 	}
-	printf(" %4d\n", dribble_command);
-	printf("  Output:");
-	for (int i = 0; i < 4; ++i)
+	printf(" %6d\n", dribble_command);
+	printf("   Output:");
+	for (int i = 0; i < 5; ++i)
 	{
-		printf(" %6d", wheel_out[i]);
+		printf(" %6d", motor_out[i]);
 	}
-	printf(" %4d\n", dribble_out);
+	printf("\n");
 	
 	printf("Ball sensor:\n");
 	printf("  Light: 0x%03x\n", ball_sense_light);
@@ -492,9 +517,9 @@ static void cmd_tone(int argc, const char *argv[], void *arg)
 
 static void cmd_fail(int argc, const char *argv[], void *arg)
 {
-	if (argc < 1 || argc > 3)
+	if (argc < 1 || argc > 4)
 	{
-		printf("fail <flags> [<motor faults>] [<motor stalls>]\n");
+		printf("fail <flags> [<motor faults>] [<motor stalls>] [<encoder_faults>]\n");
 		return;
 	}
 	
@@ -506,6 +531,10 @@ static void cmd_fail(int argc, const char *argv[], void *arg)
 	if (argc > 2)
 	{
 		motor_stall = parse_uint32(argv[2]);
+	}
+	if (argc > 3)
+	{
+		encoder_faults = parse_uint32(argv[3]);
 	}
 }
 
@@ -660,9 +689,15 @@ void cmd_kicker_test(int argc, const char *argv[], void *arg)
 
 static void debug_faults()
 {
-	printf("0x%02x %4d %5d %4d\n", current_motor_faults, wheel_out[0], stall_counter[0], encoder_delta[0]);
+	printf("0x%02x %4d %5d %4d\n", current_motor_faults, motor_out[0], stall_counter[0], encoder_delta[0]);
 }
 static const write_uint_t write_monitor_faults = {(unsigned int *)&debug_update, (unsigned int)debug_faults};
+
+static void debug_halls()
+{
+	printf("%3d %3d %3d %3d %3d\n", hall_count[0], hall_count[1], hall_count[2], hall_count[3], hall_count[4]);
+}
+static const write_uint_t write_monitor_halls = {(unsigned int *)&debug_update, (unsigned int)debug_halls};
 
 static const write_uint_t write_fpga_off = {&AT91C_BASE_PIOA->PIO_CODR, MCU_PROGB};
 static const write_uint_t write_reset = {AT91C_RSTC_RCR, 0xa5000005};
@@ -697,6 +732,7 @@ const command_t commands[] =
 	{"adc", cmd_adc},
 	{"i2c_read", cmd_i2c_read},
 	{"monitor_faults", cmd_write_uint, (void *)&write_monitor_faults},
+	{"monitor_halls", cmd_write_uint, (void *)&write_monitor_halls},
 	{"read", cmd_read},
 	{"rx_test", cmd_rx_test},
 	{"kicker_test", cmd_kicker_test},
