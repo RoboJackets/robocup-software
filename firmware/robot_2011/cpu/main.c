@@ -190,6 +190,47 @@ void kicker_test()
 	// Leave kicker_charge on so we can use the kicker
 }
 
+void flash(int led, int count)
+{
+	// This cycles at approximately 16Hz
+	int phase = (current_time >> 7) & 7;
+	
+	if ((phase & 1) == 0)
+	{
+		// Even phase
+		if ((phase >> 1) < count)
+		{
+			LED_ON(led);
+		} else {
+			LED_OFF(led);
+		}
+	} else {
+		// Odd phase
+		LED_OFF(led);
+	}
+}
+
+void update_leds()
+{
+	if (failures & Fail_Ball_Dazzled)
+	{
+		flash(LED_LY, 1);
+	} else if (failures & (Fail_Ball_Det_Open | Fail_Ball_Det_Short))
+	{
+		flash(LED_LY, 2);
+	} else if (failures & Fail_Ball_LED_Open)
+	{
+		flash(LED_LY, 3);
+	} else {
+		if (have_ball)
+		{
+			LED_ON(LED_LY);
+		} else {
+			LED_OFF(LED_LY);
+		}
+	}
+}
+
 #if 0
 // Use this main() to debug startup code, IRQ, or linker script problems.
 // You can change SConstruct to build for SRAM because linker garbage collection
@@ -467,6 +508,8 @@ int main()
 		
 		// Keep power failure music playing continuously
 		power_fail_music();
+		
+		update_leds();
 	}
 }
 

@@ -210,7 +210,7 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	printf("Ball sensor:\n");
 	printf("  Light: 0x%03x\n", ball_sense_light);
 	printf("  Dark:  0x%03x\n", ball_sense_dark);
-	printf("  Delta: 0x%03x\n", ball_sense_light - ball_sense_dark);
+	printf("  Delta: %5d\n", ball_sense_light - ball_sense_dark);
 	
 	printf("Kicker: status 0x%02x  voltage 0x%02x\n", kicker_status, kicker_voltage);
 	if (!(kicker_status & 0x40))
@@ -689,7 +689,7 @@ void cmd_kicker_test(int argc, const char *argv[], void *arg)
 
 static void debug_faults()
 {
-	printf("0x%02x %4d %5d %4d\n", current_motor_faults, motor_out[0], stall_counter[0], encoder_delta[0]);
+	printf("0x%02x 0x%08x\n", current_motor_faults, failures);
 }
 static const write_uint_t write_monitor_faults = {(unsigned int *)&debug_update, (unsigned int)debug_faults};
 
