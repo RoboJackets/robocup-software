@@ -131,6 +131,8 @@ wire spi_tx_setup = (sck_falling && spi_bit_count == 0);
 // The command byte is the first byte received
 wire [7:0] spi_command = spi_rx[0];
 
+reg [7:0] watchdog_overflow_count = 0;
+
 // SPI serdes logic
 //
 // This is designed for SPI mode 0 (clock idles low, data valid on rising edge).
@@ -199,8 +201,7 @@ always @(posedge sysclk) begin
                         endcase
                 end else if (spi_command == 8'h01) begin
                         case (spi_byte_count)
-                        1: spi_dr <= 8'h12;
-                        2: spi_dr <= 8'h34;
+                        1: spi_dr <= watchdog_overflow_count;
                         default: spi_dr <= 8'h00;
                         endcase
                 end else begin
@@ -260,7 +261,9 @@ always @(posedge sysclk) begin
 			kick_strobe <= 1;
 		end
 	end else begin
-		watchdog <= watchdog + 1;
+		if (watchdog == 22'h3ffffe) begin
+			watchdog_overflow_count <= watchdog_overflow_count + 1;
+		end
 		if (watchdog == 22'h3fffff) begin
 			// Watchdog timeout
 			motor_speed_1 <= 0;
@@ -270,6 +273,11 @@ always @(posedge sysclk) begin
 			motor_speed_5 <= 0;
 			charge_enable <= 0;
 			motor_dir <= 0;
+		end else begin
+			// NOTE - This counter used to overflow, repeatedly resetting motor commands
+			// about every 227ms.  The counter did not get reset on Xilinx Webpack 12.4 (!!!)
+			// but it does work if the counter saturates.  Both cases work on version 13.1
+			watchdog <= watchdog + 1;
 		end
 		
 		kick_strobe <= 0;
