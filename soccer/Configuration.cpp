@@ -22,7 +22,6 @@ ConfigItem::ConfigItem(Configuration *config, const QString& name)
 
 ConfigItem::~ConfigItem()
 {
-//	_config->_allItems.removeAll(this); // shouldn't be necessary
 	if (_treeItem)
 	{
 		//FIXME - Things are getting deleted in a non-GUI thread
@@ -38,11 +37,6 @@ void ConfigItem::valueChanged(const QString& str)
 		_treeItem->setText(1, str);
 	}
 }
-
-//void ConfigItem::addToTree()
-//{
-////	_config->addItem(this); // FIXME: replace
-//}
 
 void ConfigItem::setupItem()
 {

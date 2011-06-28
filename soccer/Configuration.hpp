@@ -10,6 +10,11 @@ class QTreeWidget;
 class QTreeWidgetItem;
 class Configuration;
 
+/**
+ * Base class for items in configuration: this is constructed through
+ * functions in the Configuration class which ensure new items are added
+ * to the tree properly
+ */
 class ConfigItem
 {
 protected:
@@ -31,8 +36,6 @@ public:
 		
 		// Called by Configuration when the user changes the value
 		virtual void setValue(const QString &str) = 0;
-		
-//		void addToTree();
 		
 	protected:
 		friend class Configuration;
