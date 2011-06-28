@@ -8,11 +8,13 @@
 // This must match LOGIC_VERSION in robocup.v
 #define LOGIC_VERSION 4
 
-uint_fast16_t encoder[4];
-int_fast16_t encoder_delta[4];
+int encoder_count[4];
+int encoder_delta[4];
 
-int_fast8_t wheel_out[4];
-int_fast8_t dribble_out;
+int hall_count[5];
+int hall_delta[5];
+
+int_fast8_t motor_out[5];
 
 uint_fast8_t kick_strength;
 uint_fast8_t use_chipper;
@@ -91,13 +93,19 @@ void fpga_read_status()
 		return;
 	}
 	
-	uint8_t rx[12];
+	uint8_t rx[17];
 
 	// Save old encoder counts
-	int_fast16_t last_encoder[4];
+	int last_encoder[4];
 	for (int i = 0; i < 4; ++i)
 	{
-		last_encoder[i] = encoder[i];
+		last_encoder[i] = encoder_count[i];
+	}
+	
+	int last_hall[5];
+	for (int i = 0; i < 5; ++i)
+	{
+		last_hall[i] = hall_count[i];
 	}
 
 	// Swap data with the FPGA
@@ -113,14 +121,19 @@ void fpga_read_status()
 	{
 		failures |= Fail_FPGA_Version;
 	}
-	encoder[0] = rx[1] | (rx[2] << 8);
-	encoder[1] = rx[3] | (rx[4] << 8);
-	encoder[2] = rx[5] | (rx[6] << 8);
-	encoder[3] = rx[7] | (rx[8] << 8);
+	encoder_count[0] = rx[1] | (rx[2] << 8);
+	encoder_count[1] = rx[3] | (rx[4] << 8);
+	encoder_count[2] = rx[5] | (rx[6] << 8);
+	encoder_count[3] = rx[7] | (rx[8] << 8);
 	current_motor_faults = rx[9];
 	motor_faults |= current_motor_faults;
 	kicker_status = rx[10];
 	kicker_voltage = rx[11];
+	hall_count[0] = rx[12];
+	hall_count[1] = rx[13];
+	hall_count[2] = rx[14];
+	hall_count[3] = rx[15];
+	hall_count[4] = rx[16];
 	
 	if (kicker_status & 0x40)
 	{
@@ -131,7 +144,12 @@ void fpga_read_status()
 	
 	for (int i = 0; i < 4; ++i)
 	{
-		encoder_delta[i] = (int16_t)(encoder[i] - last_encoder[i]);
+		encoder_delta[i] = (int16_t)(encoder_count[i] - last_encoder[i]);
+	}
+	
+	for (int i = 0; i < 5; ++i)
+	{
+		hall_delta[i] = (int8_t)(hall_count[i] - last_hall[i]);
 	}
 }
 
@@ -144,11 +162,10 @@ void fpga_send_commands()
 	
 	uint8_t tx[12] = {0};
 
-	//FIXME - Select 2008/2010 mechanical base with switch DP0
 	tx[0] = 0x01;   // Command: set motor speeds
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
-		int_fast8_t cmd = wheel_out[i];
+		int_fast8_t cmd = motor_out[i];
 		if (cmd < 0)
 		{
 			cmd = -cmd;
@@ -160,8 +177,6 @@ void fpga_send_commands()
 			tx[i * 2 + 2] = cmd >> 6;
 		}
 	}
-	tx[9] = dribble_out << 1;
-	tx[10] = (dribble_out >> 7) | 2;
 	if (kicker_charge)
 	{
 		tx[10] |= 0x80;

@@ -17,9 +17,9 @@ static void dumb_update()
 {
 	for (int i = 0; i < 4; ++i)
 	{
-		wheel_out[i] = -wheel_command[i];
+		motor_out[i] = -wheel_command[i];
 	}
-	dribble_out = dribble_command;
+	motor_out[4] = dribble_command >> 1;
 }
 
 ////////
@@ -35,7 +35,7 @@ static void step_init(int argc, const char *argv[])
 		step_level = parse_int(argv[1]);
 	}
 	
-	if (argc != 2 || step_motor < 0 || step_motor > 3 || step_level < -127 || step_level > 127)
+	if (argc != 2 || step_motor < 0 || step_motor > 4 || step_level < -127 || step_level > 127)
 	{
 		printf("Usage: run step <motor 0..3> <level 0..127>\n");
 		controller = 0;
@@ -46,7 +46,7 @@ static void step_update()
 {
 	int supply_mv = supply_raw * VBATT_NUM / VBATT_DIV;
 	printf("%2d.%03d %5d\n", supply_mv / 1000, supply_mv % 1000, encoder_delta[step_motor]);
-	wheel_out[step_motor] = step_level;
+	motor_out[step_motor] = step_level;
 }
 
 ////////
@@ -96,10 +96,10 @@ static void log_update()
 		}
 		++log_pos;
 		
-		wheel_out[0] = -log_level;
-		wheel_out[1] = -log_level;
-		wheel_out[2] = log_level;
-		wheel_out[3] = log_level;
+		motor_out[0] = -log_level;
+		motor_out[1] = -log_level;
+		motor_out[2] = log_level;
+		motor_out[3] = log_level;
 	}
 }
 
@@ -199,11 +199,11 @@ static void pd_update()
 			printf("%02x %08x %08x %08x\n", motor_faults, speed, delta, last_out[i]);
 		}
 		
-		wheel_out[i] = last_out[i] / 256;
+		motor_out[i] = last_out[i] / 256;
 	}
 
 	//FIXME - Do we need speed control on the dribbler?
-	dribble_out = dribble_command;
+	motor_out[4] = dribble_command;
 }
 
 ////////

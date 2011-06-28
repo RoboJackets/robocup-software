@@ -61,12 +61,6 @@ localparam OFF  = 2'b00;
 // (200ns dead time should be enough, so 2 should work).
 localparam dead_time = 10;
 
-// Synchronize the hall inputs to the clock
-reg [2:0] hall_sync;
-always @(posedge clk) begin
-	hall_sync <= hall;
-end
-
 reg direction = 0;
 reg [8:0] pwm_level = 0;
 always @(posedge clk) begin
@@ -86,13 +80,13 @@ wire pwm_inverted = (pwm_phase >= pwm_inverted_threshold);
 
 // Commutation
 wire [5:0] com_out =
-	(hall_sync == 3'b101) ? {HIGH, LOW,  OFF} :
-	(hall_sync == 3'b100) ? {HIGH, OFF,  LOW} :
-	(hall_sync == 3'b110) ? {OFF,  HIGH, LOW} :
-	(hall_sync == 3'b010) ? {LOW,  HIGH, OFF} :
-	(hall_sync == 3'b011) ? {LOW,  OFF,  HIGH} :
-	(hall_sync == 3'b001) ? {OFF,  LOW,  HIGH} :
-							{OFF,  OFF,  OFF};
+	(hall == 3'b101) ? {HIGH, LOW,  OFF} :
+	(hall == 3'b100) ? {HIGH, OFF,  LOW} :
+	(hall == 3'b110) ? {OFF,  HIGH, LOW} :
+	(hall == 3'b010) ? {LOW,  HIGH, OFF} :
+	(hall == 3'b011) ? {LOW,  OFF,  HIGH} :
+	(hall == 3'b001) ? {OFF,  LOW,  HIGH} :
+					   {OFF,  OFF,  OFF};
 
 // Direction
 // For CCW: high->low, low->high, 00->11 (off->off)
@@ -109,6 +103,6 @@ end
 // Detect bad hall-effect inputs.
 // It's still possible for one or two inputs to fail and not be detected here.
 // The CPU looks for stalled motors to detect that case.
-assign fault = (hall_sync == 3'b000) || (hall_sync == 3'b111);
+assign fault = (hall == 3'b000) || (hall == 3'b111);
 
 endmodule
