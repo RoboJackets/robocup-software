@@ -63,7 +63,7 @@ Processor::Processor(Configuration *config, bool sim)
 
 	_modelingModule = make_shared<Modeling::WorldModel>(&_state, config);
 	_refereeModule = make_shared<RefereeModule>(&_state);
-	_gameplayModule = make_shared<Gameplay::GameplayModule>(&_state);
+	_gameplayModule = make_shared<Gameplay::GameplayModule>(&_state, config);
 }
 
 Processor::~Processor()
