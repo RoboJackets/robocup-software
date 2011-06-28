@@ -9,7 +9,6 @@ srcs = [
 	'Joystick.cpp',
 	'RefereeModule.cpp',
 	'PlayConfigTab.cpp',
-	'TestResultTab.cpp',
 	'FieldView.cpp',
 	'SimFieldView.cpp',
 	'Configuration.cpp',
@@ -112,6 +111,9 @@ srcs = [
 #	'gameplay/plays/demo_plays/DemoKicks.cpp',
 	'gameplay/plays/demo_plays/KickWithClosestPlay.cpp',
 	'gameplay/plays/demo_plays/CalSpeed.cpp',
+	
+	# Tech Challenges
+	'gameplay/plays/demo_plays/NavChallenge2011.cpp',
 
 	# files that use the optimizer - disabled until new gtsam is in place
 #	'gameplay/behaviors/OptimizedPassing.cpp',
@@ -151,8 +153,7 @@ srcs = [
 
 uics = env.Uic4([
 	'ui/MainWindow.ui',
-	'ui/PlayConfigTab.ui',
-	'ui/TestResultTab.ui'
+	'ui/PlayConfigTab.ui'
 ])
 
 e = env.Clone()

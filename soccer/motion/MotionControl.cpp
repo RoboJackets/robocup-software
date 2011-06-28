@@ -83,10 +83,10 @@ void MotionControl::positionTrapezoidal()
 void MotionControl::positionPD()
 {
 	float curSpeed = _velocity.mag();
-	float maxSpeed = curSpeed + _robot->config->trapTrans.acceleration;
-	float cruise = _robot->config->trapTrans.velocity;
+	float maxSpeed = curSpeed + *_robot->config->trapTrans.acceleration;
+	float cruise = *_robot->config->trapTrans.velocity;
 	maxSpeed = min(maxSpeed, cruise);
-	float minSpeed = curSpeed - _robot->config->trapTrans.deceleration;
+	float minSpeed = curSpeed - *_robot->config->trapTrans.deceleration;
 	
 	float deadzone = 0.4f;
 	if (_robot->hasBall)
@@ -98,9 +98,9 @@ void MotionControl::positionPD()
 	minSpeed = max(deadzone, minSpeed);
 	
 	Point posError = _robot->cmd.goalPosition - _robot->pos;
-	float p = _robot->config->translation.p;
+	float p = *_robot->config->translation.p;
 	
-	Point newVel = posError * p + (posError - _lastPosError) * _robot->config->translation.d;
+	Point newVel = posError * p + (posError - _lastPosError) * *_robot->config->translation.d;
 	float newSpeed = newVel.mag();
 	if (newSpeed)
 	{
@@ -134,7 +134,7 @@ void MotionControl::anglePD()
 	
 	float error = Utils::fixAngleRadians(dir.angle() - _robot->angle * DegreesToRadians);
 	
-	_spin = error * _robot->config->rotation.p + (error - _lastAngleError) * _robot->config->rotation.d;
+	_spin = error * *_robot->config->rotation.p + (error - _lastAngleError) * *_robot->config->rotation.d;
 	_lastAngleError = error;
 }
 
@@ -206,7 +206,7 @@ void MotionControl::run()
 	for (int i = 0; i < 4; ++i)
 	{
 		float newVel = axles[i].dot(_velocity) / Wheel_Radius + _angularVelocity * Robot_Radius / Wheel_Radius;
-		const float alpha = _robot->config->wheelAlpha;
+		const float alpha = *_robot->config->wheelAlpha;
 		_wheelVel[i] = newVel * alpha + _wheelVel[i] * (1.0 - alpha);
 	}
 	

@@ -20,10 +20,10 @@ using namespace Modeling;
 // initializes: F, H, Q, R
 RbpfModelKicked::RbpfModelKicked(RobotModel::RobotMap *_robotMap, Configuration *config)
 	: RbpfModel(_robotMap),
-	_processNoiseSqrdPos(config, "rbpfModelBallKicked/Process Noise Position", 1.0),
-	_processNoiseSqrdVel(config, "rbpfModelBallKicked/Process Noise Velocity", 1.0),
-	_processNoiseSqrdAcc(config, "rbpfModelBallKicked/Process Noise Acceleration", 1000.0),
-	_measurementNoiseSqrd(config, "rbpfModelBallKicked/Measurement Noise Position", 0.01)
+	_processNoiseSqrdPos(config->createDouble("rbpfModelBallKicked/Process Noise Position", 1.0)),
+	_processNoiseSqrdVel(config->createDouble("rbpfModelBallKicked/Process Noise Velocity", 1.0)),
+	_processNoiseSqrdAcc(config->createDouble("rbpfModelBallKicked/Process Noise Acceleration", 1000.0)),
+	_measurementNoiseSqrd(config->createDouble("rbpfModelBallKicked/Measurement Noise Position", 0.01))
 {
 	// compute state transition Jacobian (df/dx) (n x n)
 	computeTransitionJacobian(0);
@@ -37,9 +37,9 @@ RbpfModelKicked::RbpfModelKicked(RobotModel::RobotMap *_robotMap, Configuration 
 }
 
 void RbpfModelKicked::initializeQ() {
-	double sP = _processNoiseSqrdPos;
-	double sV = _processNoiseSqrdVel;
-	double sA = _processNoiseSqrdAcc;
+	double sP = *_processNoiseSqrdPos;
+	double sV = *_processNoiseSqrdVel;
+	double sA = *_processNoiseSqrdAcc;
 	_Q(0,0)=sP; _Q(1,1)=sP;
 	_Q(2,2)=sV; _Q(3,3)=sV;
 	_Q(4,4)=sA; _Q(5,5)=sA;
@@ -52,7 +52,7 @@ void RbpfModelKicked::initializeQ() {
 }
 
 void RbpfModelKicked::initializeR() {
-	double sM = _measurementNoiseSqrd;
+	double sM = *_measurementNoiseSqrd;
 	_R.setIdentity(); _R *= sM;
 }
 
@@ -70,8 +70,8 @@ void RbpfModelKicked::transitionModel(VectorNd &X, const VectorMd &U, double dt)
 	X(1) = X(1) + X(3)*dt + 0.5*X(5)*dt*dt ; // f(y) = y + vy*dt + 1/2*ay*dt^2
 	X(2) = X(2) + X(4)*dt;                   // f(vx) = vx + ax*dt
 	X(3) = X(3) + X(5)*dt;                   // f(vy) = vy + ay*dt
-	X(4) = X(4);                             // f(ax) = ax
-	X(5) = X(5);                             // f(ay) = ay
+//	X(4) = X(4);                             // f(ax) = ax
+//	X(5) = X(5);                             // f(ay) = ay
 }
 
 // computes the Jacobian of the transitionModel function, wrt the state and

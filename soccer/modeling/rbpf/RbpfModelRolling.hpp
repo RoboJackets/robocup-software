@@ -33,10 +33,10 @@ public:
 	void initParams();
 
 protected:
-	ConfigDouble _processNoiseSqrdPos;
-	ConfigDouble _processNoiseSqrdVel;
-	ConfigDouble _processNoiseSqrdAcc;
-	ConfigDouble _measurementNoiseSqrd;
+	ConfigDouble::shared_ptr _processNoiseSqrdPos;
+	ConfigDouble::shared_ptr _processNoiseSqrdVel;
+	ConfigDouble::shared_ptr _processNoiseSqrdAcc;
+	ConfigDouble::shared_ptr _measurementNoiseSqrd;
 	
 	void transitionModel(rbpf::VectorNd &X, const rbpf::VectorMd &U, double dt) const;
 	void computeTransitionJacobian(double dt);
