@@ -681,6 +681,21 @@ void cmd_kicker_test(int argc, const char *argv[], void *arg)
 	printf("%d %d\n", kicker_test_v1, kicker_test_v2);
 }
 
+void cmd_drive_mode(int argc, const char *argv[], void *arg)
+{
+	if (argc != 2)
+	{
+		printf("drive_mode <motor 0..4> <mode 0..3>\n");
+		return;
+	}
+	
+	int n = parse_uint32(argv[0]);
+	if (n <= 4)
+	{
+		drive_mode[n] = parse_uint32(argv[1]);
+	}
+}
+
 static void debug_faults()
 {
 	printf("0x%02x 0x%08x\n", current_motor_faults, failures);
@@ -729,6 +744,7 @@ const command_t commands[] =
 	{"read", cmd_read},
 	{"rx_test", cmd_rx_test},
 	{"kicker_test", cmd_kicker_test},
+	{"drive_mode", cmd_drive_mode},
 
 	// End of list placeholder
 	{0, 0}

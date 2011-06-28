@@ -13,11 +13,13 @@ uint8_t forward_packet[Forward_Size];
 // Last reverse packet
 uint8_t reverse_packet[Reverse_Size];
 
-int_fast8_t wheel_command[4];
-int_fast8_t dribble_command;
-uint_fast8_t kick_command;
+int wheel_command[4];
+int dribble_command;
+int kick_command;
 
 uint32_t rx_lost_time;
+
+//FIXME - The protocol needs to be totally redesigned
 
 int handle_forward_packet()
 {
@@ -42,7 +44,7 @@ int handle_forward_packet()
 		wheel_command[i] = 0;
 	}
 	dribble_command = 0;
-
+	
 	// Get motor commands from the packet
 	int offset = 1;
 	for (int slot = 0; slot < 5; ++slot)
@@ -51,12 +53,14 @@ int handle_forward_packet()
 		{
 			for (int i = 0; i < 4; ++i)
 			{
-				wheel_command[i] = (int8_t)forward_packet[offset + i];
+				// Convert from seven bits to nine bits (signed)
+				int8_t byte = forward_packet[offset + i];
+				wheel_command[i] = (byte << 2) | ((byte >> 5) & 3);
 			}
 			
-			// Convert the dribbler speed from the top four bits in a byte to seven bits
-			dribble_command = (forward_packet[offset + 4] & 0xf0) >> 1;
-			dribble_command |= dribble_command >> 4;
+			// Convert the dribbler speed from the top four bits in a byte to nine bits
+			uint8_t four_bits = forward_packet[offset + 4] & 0xf0;
+			dribble_command = (four_bits << 1) | (four_bits >> 3) | (four_bits >> 7);
 			
 			kick_command = forward_packet[offset + 5];
 		}

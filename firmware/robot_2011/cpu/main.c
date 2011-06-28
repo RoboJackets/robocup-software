@@ -148,6 +148,12 @@ int main()
 	AT91C_BASE_PIOA->PIO_MDER = MCU_PROGB;
 	AT91C_BASE_PIOA->PIO_OER = MCU_PROGB;
 	
+	for (int i = 0; i < 4; ++i)
+	{
+		drive_mode[i] = DRIVE_SLOW_DECAY;
+	}
+	drive_mode[Motor_Dribbler] = DRIVE_FAST_DECAY;
+	
 	base2008 = !(AT91C_BASE_PIOA->PIO_PDSR & DP1);
 	
 	timer_init();

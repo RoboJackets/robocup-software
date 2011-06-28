@@ -36,9 +36,9 @@ static void step_init(int argc, const char *argv[])
 		step_level = parse_int(argv[1]);
 	}
 	
-	if (argc != 2 || step_motor < 0 || step_motor > 4 || step_level < -127 || step_level > 127)
+	if (argc != 2 || step_motor < 0 || step_motor > 4 || step_level < -MOTOR_MAX || step_level > MOTOR_MAX)
 	{
-		printf("Usage: run step <motor 0..3> <level 0..127>\n");
+		printf("Usage: run step <motor 0..3> <level>\n");
 		controller = 0;
 	}
 }
@@ -69,7 +69,7 @@ static void log_init(int argc, const char *argv[])
 	{
 		log_level = parse_uint32(argv[0]);
 	} else {
-		printf("Usage: run log <-127..127> [start]\n");
+		printf("Usage: run log <level> [start]\n");
 		controller = 0;
 	}
 	
@@ -122,9 +122,9 @@ static void log_print()
 
 ////////
 
-static const int Command_Rate_Limit = 40 * 256;
-static int kp = 40;
-static int kd = 40;
+static const int Command_Rate_Limit = 160 * 256;
+static int kp = 160;
+static int kd = 160;
 static int last_out[4];
 static int last_error[4];
 static int pd_debug = -1;
@@ -193,12 +193,12 @@ static void pd_update()
 		}
 		
 		// Clip to output limits
-		if (last_out[i] > 127 * 256)
+		if (last_out[i] > MOTOR_MAX * 256)
 		{
-			last_out[i] = 127 * 256;
-		} else if (last_out[i] < -127 * 256)
+			last_out[i] = MOTOR_MAX * 256;
+		} else if (last_out[i] < -MOTOR_MAX * 256)
 		{
-			last_out[i] = -127 * 256;
+			last_out[i] = -MOTOR_MAX * 256;
 		}
 		
 		if (i == pd_debug)

@@ -15,6 +15,7 @@ int hall_count[5];
 int hall_delta[5];
 
 int_fast8_t motor_out[5];
+int drive_mode[5];
 
 uint_fast8_t kick_strength;
 uint_fast8_t use_chipper;
@@ -187,12 +188,13 @@ void fpga_send_commands()
 		if (cmd < 0)
 		{
 			cmd = -cmd;
-			tx[i * 2 + 1] = cmd << 2;
-			tx[i * 2 + 2] = cmd >> 6;
-			tx[i * 2 + 2] |= 2;
+			tx[i * 2 + 1] = cmd;
+			tx[i * 2 + 2] = (cmd >> 8) & 1;
+			tx[i * 2 + 2] |= 2 | ((drive_mode[i] & 3) << 2);
 		} else {
-			tx[i * 2 + 1] = cmd << 2;
-			tx[i * 2 + 2] = cmd >> 6;
+			tx[i * 2 + 1] = cmd;
+			tx[i * 2 + 2] = (cmd >> 8) & 1;
+			tx[i * 2 + 2] |= (drive_mode[i] & 3) << 2;
 		}
 	}
 	if (kicker_charge)

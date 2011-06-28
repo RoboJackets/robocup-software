@@ -29,7 +29,7 @@ static const int Stall_kSpeed = 80;
 static const int Stall_kCommand = 1;
 
 // If the counter is above the threshold, the motor has stalled
-static const int Stall_Threshold = 127*200;
+static const int Stall_Threshold = MOTOR_MAX * 200;
 
 // The counter decays by this constant amount each cycle
 static const int Stall_Decay = 80;
