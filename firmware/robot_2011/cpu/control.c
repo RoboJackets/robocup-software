@@ -18,6 +18,12 @@ static void dumb_update()
 {
 	for (int i = 0; i < 4; ++i)
 	{
+		drive_mode[i] = DRIVE_SLOW_DECAY;
+	}
+	drive_mode[Motor_Dribbler] = DRIVE_FAST_DECAY;
+	
+	for (int i = 0; i < 4; ++i)
+	{
 		motor_out[i] = -wheel_command[i];
 	}
 	motor_out[4] = dribble_command >> 1;
@@ -48,6 +54,7 @@ static void step_update()
 	int supply_mv = supply_raw * VBATT_NUM / VBATT_DIV;
 	printf("%2d.%03d %5d\n", supply_mv / 1000, supply_mv % 1000, encoder_delta[step_motor]);
 	motor_out[step_motor] = step_level;
+	drive_mode[step_motor] = DRIVE_SLOW_DECAY;
 }
 
 ////////
@@ -158,8 +165,18 @@ static void pd_update()
 	if (base2008)
 	{
 		// Nope
+		for (int i = 0; i < 5; ++i)
+		{
+			drive_mode[i] = DRIVE_OFF;
+		}
 		return;
 	}
+	
+	for (int i = 0; i < 4; ++i)
+	{
+		drive_mode[i] = DRIVE_SLOW_DECAY;
+	}
+	drive_mode[Motor_Dribbler] = DRIVE_FAST_DECAY;
 	
 	for (int i = 0; i < 4; ++i)
 	{
