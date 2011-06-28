@@ -94,6 +94,8 @@ robot_fw = arm_flash.Program('robocup.elf', [
 	'stall.c',
 	'ota_update.c',
 	'encoder_monitor.c',
+	'kicker.c',
+	'radio_protocol.c',
 	'tools/reflash.c'
 ])
 Depends(robot_fw, flash_lds)

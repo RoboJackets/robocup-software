@@ -8,6 +8,7 @@
 #include "power.h"
 #include "status.h"
 #include "stall.h"
+#include "radio_protocol.h"
 
 const controller_info_t *default_controller;
 
@@ -154,6 +155,12 @@ static void pd_init(int argc, const char *argv[])
 
 static void pd_update()
 {
+	if (base2008)
+	{
+		// Nope
+		return;
+	}
+	
 	for (int i = 0; i < 4; ++i)
 	{
 		int setpoint = -wheel_command[i] * 3;
@@ -203,7 +210,7 @@ static void pd_update()
 	}
 
 	//FIXME - Do we need speed control on the dribbler?
-	motor_out[4] = dribble_command;
+	motor_out[4] = -dribble_command;
 }
 
 ////////

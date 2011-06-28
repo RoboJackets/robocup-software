@@ -9,6 +9,7 @@
 
 #include "encoder_monitor.h"
 #include "fpga.h"
+#include "status.h"
 
 uint8_t encoder_faults;
 
@@ -17,13 +18,27 @@ static const int Hall_Ticks_Per_Rev = 48;
 
 void encoder_monitor()
 {
-	for (int i = 0; i < 4; ++i)
+	if (base2008)
 	{
-		int enc_min = (hall_delta[i] - 2) * Encoder_Ticks_Per_Rev / Hall_Ticks_Per_Rev - 2;
-		int enc_max = (hall_delta[i] + 2) * Encoder_Ticks_Per_Rev / Hall_Ticks_Per_Rev + 2;
-		if (encoder_delta[i] < enc_min || encoder_delta[i] > enc_max)
+		// 2008: Make sure the encoder inputs are idle (allow one count for noise).
+		// If the switch is set to 2008 but on a 2011 base, this will kill all the motors.
+		for (int i = 0; i < 4; ++i)
 		{
-			encoder_faults |= 1 << i;
+			if (encoder_delta[i] < -1 || encoder_delta[i] > 1)
+			{
+				encoder_faults |= 1 << i;
+			}
+		}
+	} else {
+		// 2011: Make sure the encoders work
+		for (int i = 0; i < 4; ++i)
+		{
+			int enc_min = (hall_delta[i] - 2) * Encoder_Ticks_Per_Rev / Hall_Ticks_Per_Rev - 2;
+			int enc_max = (hall_delta[i] + 2) * Encoder_Ticks_Per_Rev / Hall_Ticks_Per_Rev + 2;
+			if (encoder_delta[i] < enc_min || encoder_delta[i] > enc_max)
+			{
+				encoder_faults |= 1 << i;
+			}
 		}
 	}
 }

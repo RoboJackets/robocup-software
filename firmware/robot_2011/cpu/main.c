@@ -22,173 +22,13 @@
 #include "ota_update.h"
 #include "main.h"
 #include "encoder_monitor.h"
-
-// Last forward packet
-uint8_t forward_packet[Forward_Size];
-
-// Last reverse packet
-uint8_t reverse_packet[Reverse_Size];
-
-int_fast8_t wheel_command[4];
-int_fast8_t dribble_command;
-uint_fast8_t kick_command;
-
-uint32_t rx_lost_time;
-
-uint8_t kicker_test_v1, kicker_test_v2;
+#include "kicker.h"
+#include "radio_protocol.h"
 
 // Last time the 5ms periodic code was executed
 unsigned int update_time;
 
 void (*debug_update)(void) = 0;
-
-static int handle_forward_packet()
-{
-	if (radio_rx_len != Forward_Size)
-	{
-		radio_command(SFRX);
-		radio_command(SRX);
-		return 0;
-	}
-	
-	memcpy(forward_packet, radio_rx_buf, Forward_Size);
-	
-	rx_lost_time = current_time;
-	LED_TOGGLE(LED_RG);
-	LED_OFF(LED_RR);
-	
-	uint8_t reverse_id = forward_packet[0] & 15;
-	
-	// Clear motor commands in case this robot's ID does not appear in the packet
-	for (int i = 0; i < 4; ++i)
-	{
-		wheel_command[i] = 0;
-	}
-	dribble_command = 0;
-
-	// Get motor commands from the packet
-	int offset = 1;
-	for (int slot = 0; slot < 5; ++slot)
-	{
-		if ((forward_packet[offset + 4] & 0x0f) == robot_id)
-		{
-			for (int i = 0; i < 4; ++i)
-			{
-				wheel_command[i] = (int8_t)forward_packet[offset + i];
-			}
-			
-			// Convert the dribbler speed from the top four bits in a byte to seven bits
-			dribble_command = (forward_packet[offset + 4] & 0xf0) >> 1;
-			dribble_command |= dribble_command >> 4;
-			
-			kick_command = forward_packet[offset + 5];
-		}
-		offset += 6;
-	}
-	
-	//FIXME - Testing chipper with only one 2011 robot
-	if (forward_packet[0] & 0x80)
-	{
-		use_chipper = 1;
-	} else {
-		use_chipper = 0;
-	}
-
-	if (reverse_id == robot_id)
-	{
-		// Build and send a reverse packet
-		reverse_packet[0] = robot_id;
-		reverse_packet[1] = last_rssi;
-		reverse_packet[2] = 0x00;
-		reverse_packet[3] = 0; //FIXME - Battery
-		reverse_packet[4] = kicker_status;
-		reverse_packet[5] = motor_faults;
-		
-		if (have_ball)
-		{
-			reverse_packet[5] |= 1 << 5;
-		}
-		
-		if (failures & Fail_Ball)
-		{
-			reverse_packet[5] |= 1 << 6;
-		}
-		
-		reverse_packet[10] = 0;
-		for (int i = 0; i < 4; ++i)
-		{
-			reverse_packet[6 + i] = encoder_count[i];
-			reverse_packet[10] |= (encoder_count[i] & 0x300) >> (8 - i * 2);
-		}
-		
-		radio_transmit(reverse_packet, sizeof(reverse_packet));
-	} else {
-		// Get ready to receive another forward packet
-		radio_command(SRX);
-	}
-	
-	return 1;
-}
-
-uint8_t kicker_test_measure()
-{
-	// FPGA commands must be sent less than about 227ms apart or the FPGA watchdog timer
-	// will turn everything off.
-	kicker_charge = 1;
-	delay_ms(125);
-	fpga_send_commands();
-	delay_ms(125);
-	fpga_send_commands();
-	fpga_read_status();
-	return kicker_voltage;
-}
-
-// Determines whether the kicker can charge.
-// This sets Fail_Kicker_Charge in failures if not.
-// The most likely cause is an unplugged kicker or shorted IGBTs.
-void kicker_test()
-{
-	failures &= ~Fail_Kicker_Charge;
-	
-	// Make sure we can read from the kicker voltage ADC
-	fpga_read_status();
-	if ((failures & (Fail_Kicker_I2C | Fail_FPGA)) || (kicker_status & Kicker_Override))
-	{
-		// FPGA doesn't work, ADC doesn't work, or the kicker has been manually disabled.
-		// We can't test it, but the charger may still be usable.
-		return;
-	}
-	
-	// Clear motor commands
-	for (int i = 0; i < 5; ++i)
-	{
-		motor_out[i] = 0;
-	}
-	
-	// Make two voltage measurements a small time apart.
-	// Run the charger just long enough to determine if it works.
-	int v1 = kicker_test_measure();
-	int v2 = kicker_test_measure();
-	
-	kicker_test_v1 = v1;
-	kicker_test_v2 = v2;
-	
-	if (	(v1 > 0xc8 || v2 > 0xc8)		// Voltage too high.  Caps are in danger.
-		||	(v1 < 0x08)						// Didn't start charging
-		||	(v1 < 0x40 && (v2 - v1) < 0x04)	// Voltage was low and didn't increase
-	)
-	{
-		failures |= Fail_Kicker_Charge;
-	}
-	
-	if (failures & Fail_Kicker_Charge)
-	{
-		// Turn off charging
-		kicker_charge = 0;
-	}
-	
-	// Leave kicker_charge on so we can use the kicker
-}
 
 void flash(int led, int count)
 {
@@ -212,6 +52,7 @@ void flash(int led, int count)
 
 void update_leds()
 {
+	// Ball sensor
 	if (failures & Fail_Ball_Dazzled)
 	{
 		flash(LED_LY, 1);
@@ -228,6 +69,24 @@ void update_leds()
 		} else {
 			LED_OFF(LED_LY);
 		}
+	}
+	
+	// Kicker
+	if (failures & Fail_Kicker_Charge)
+	{
+		flash(LED_LR, 2);
+	} else if (failures & Fail_Kicker_I2C)
+	{
+		flash(LED_LR, 3);
+	} else if (!(kicker_status & Kicker_Charging) || (kicker_status & Kicker_Override))
+	{
+		LED_OFF(LED_LR);
+	} else if (kicker_status & Kicker_Charged)
+	{
+		LED_ON(LED_LR);
+	} else if (kicker_status & Kicker_Charging)
+	{
+		flash(LED_LR, 1);
 	}
 }
 
@@ -289,6 +148,8 @@ int main()
 	AT91C_BASE_PIOA->PIO_MDER = MCU_PROGB;
 	AT91C_BASE_PIOA->PIO_OER = MCU_PROGB;
 	
+	base2008 = !(AT91C_BASE_PIOA->PIO_PDSR & DP1);
+	
 	timer_init();
 	
 	// At this point, the FPGA is presumed to be the SPI master.
@@ -340,7 +201,7 @@ int main()
 	if (showstoppers == 0)
 	{
 		// DP1 on => PD controller, off => dumb controller
-		if (AT91C_BASE_PIOA->PIO_PDSR & DP1)
+		if (base2008)
 		{
 			default_controller = &controllers[0];
 		} else {
@@ -455,6 +316,8 @@ int main()
 			// Detect faulty or miswired encoders
 			encoder_monitor();
 			
+			kicker_monitor();
+			
 			// Detect stalled motors
 			// This must be done before clearing motor outputs because it uses the old values
 			stall_update();
@@ -491,14 +354,6 @@ int main()
 			
 			// Send commands to and read status from the FPGA
 			fpga_send_commands();
-			
-			//if (kicker_status & Kicker_Charged)
-			if (stall_counter[0] || stall_counter[1] || stall_counter[2] || stall_counter[3])
-			{
-				LED_ON(LED_LR);
-			} else {
-				LED_OFF(LED_LR);
-			}
 			
 			if (usb_is_connected() && debug_update)
 			{

@@ -4,6 +4,7 @@
 #include "timer.h"
 #include "main.h"
 #include "status.h"
+#include "radio_protocol.h"
 
 // First page used for the temporary copy
 #define MIRROR_PAGE (AT91C_IFLASH_NB_OF_PAGES / 2)

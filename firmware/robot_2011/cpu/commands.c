@@ -21,6 +21,8 @@
 #include "fpga.h"
 #include "stall.h"
 #include "encoder_monitor.h"
+#include "kicker.h"
+#include "radio_protocol.h"
 
 static void cmd_help(int argc, const char *argv[], void *arg)
 {
@@ -100,6 +102,14 @@ static void print_motor_bits(uint8_t bits)
 
 static void cmd_status(int argc, const char *argv[], void *arg)
 {
+	if (base2008)
+	{
+		printf("2008");
+	} else {
+		printf("2011");
+	}
+	printf(" mechanical base\n");
+	
 	if (controller)
 	{
 		printf("Controller: %s\n", controller->name);
@@ -212,7 +222,7 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	printf("  Dark:  0x%03x\n", ball_sense_dark);
 	printf("  Delta: %5d\n", ball_sense_light - ball_sense_dark);
 	
-	printf("Kicker: status 0x%02x  voltage 0x%02x\n", kicker_status, kicker_voltage);
+	printf("Kicker: status 0x%02x  voltage %3d\n", kicker_status, kicker_voltage);
 	if (!(kicker_status & 0x40))
 	{
 		printf("Voltage ADC failed\n");
@@ -454,24 +464,6 @@ static void cmd_radio_start(int argc, const char *argv[], void *arg)
 	radio_command(SRX);
 }
 
-static void cmd_last_rx(int argc, const char *argv[], void *arg)
-{
-	printf("RSSI %d dBm\n", (int)last_rssi / 2 - 74);
-	
-	printf("%02x %02x %02x\n", forward_packet[0], forward_packet[1], forward_packet[2]);
-	for (int i = 0; i < 5; ++i)
-	{
-		int off = 3 + i * 5;
-		printf("%02x %02x %02x %02x %02x\n",
-			   forward_packet[off],
-			   forward_packet[off + 1],
-			   forward_packet[off + 2],
-			   forward_packet[off + 3],
-			   forward_packet[off + 4]);
-	}
-	putchar('\n');
-}
-
 static void cmd_stfu(int argc, const char *argv[], void *arg)
 {
 	debug_update = 0;
@@ -663,6 +655,7 @@ void cmd_rx_test(int argc, const char *argv[], void *arg)
 		if (radio_poll())
 		{
 			printf("got %d\n", radio_rx_len);
+			//printf("RSSI %d dBm\n", (int)last_rssi / 2 - 74);
 			for (int i = 0; i < radio_rx_len; ++i)
 			{
 				printf("%02x ", radio_rx_buf[i]);
@@ -684,7 +677,8 @@ void cmd_rx_test(int argc, const char *argv[], void *arg)
 
 void cmd_kicker_test(int argc, const char *argv[], void *arg)
 {
-	printf("0x%02x 0x%02x\n", kicker_test_v1, kicker_test_v2);
+	// Print the results of the power-on kicker test
+	printf("%d %d\n", kicker_test_v1, kicker_test_v2);
 }
 
 static void debug_faults()
@@ -725,7 +719,6 @@ const command_t commands[] =
 	{"spi_read", cmd_spi_read},
 	{"radio_configure", (void *)radio_configure},
 	{"radio_start", cmd_radio_start},
-	{"last_rx", cmd_last_rx},
 	{"music", cmd_music},
 	{"tone", cmd_tone},
 	{"fail", cmd_fail},

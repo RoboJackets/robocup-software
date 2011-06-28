@@ -4,6 +4,13 @@
 
 extern unsigned int robot_id;
 
+// If nonzero, we are on a 2008 base:
+//  - Motors run backwards (outside gears)
+//  - No encoders
+//  - No kicker voltage monitor (use KDONE instead)
+//  - No chipper
+extern int base2008;
+
 // Failure flags
 enum
 {
@@ -97,12 +104,3 @@ enum
 	Kicker_Chipping			= 0x20,
 	Kicker_I2C_OK			= 0x40
 };
-
-extern uint8_t kicker_status;
-extern uint8_t kicker_voltage;
-
-// Periodic functions
-void check_usb_connection(void);
-
-// Returns nonzero if the USB console is usable (for printf, etc.)
-int usb_is_connected(void);

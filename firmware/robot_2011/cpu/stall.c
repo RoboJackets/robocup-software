@@ -32,7 +32,7 @@ static const int Stall_kCommand = 1;
 static const int Stall_Threshold = 127*200;
 
 // The counter decays by this constant amount each cycle
-static const int Stall_Decay = 50;
+static const int Stall_Decay = 80;
 
 // Commands below this limit do not contribute to the counter
 static const int Stall_Deadband = 60;

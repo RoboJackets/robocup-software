@@ -37,3 +37,8 @@ void subcommand(int argc, const char *argv[], void *arg);
 uint32_t parse_uint32(const char *str);
 
 int parse_int(const char *str);
+
+void check_usb_connection(void);
+
+// Returns nonzero if the USB console is usable (for printf, etc.)
+int usb_is_connected(void);

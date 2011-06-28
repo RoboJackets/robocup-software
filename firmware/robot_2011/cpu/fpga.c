@@ -20,6 +20,9 @@ uint_fast8_t kick_strength;
 uint_fast8_t use_chipper;
 uint_fast8_t kicker_charge;
 
+uint8_t kicker_status;
+int kicker_voltage;
+
 int fpga_init()
 {
 	int ret;
@@ -128,7 +131,7 @@ void fpga_read_status()
 	current_motor_faults = rx[9];
 	motor_faults |= current_motor_faults;
 	kicker_status = rx[10];
-	kicker_voltage = rx[11];
+	kicker_voltage = (int)rx[11] * 33 * 101 / 2550;
 	hall_count[0] = rx[12];
 	hall_count[1] = rx[13];
 	hall_count[2] = rx[14];
@@ -150,6 +153,13 @@ void fpga_read_status()
 	for (int i = 0; i < 5; ++i)
 	{
 		hall_delta[i] = (int8_t)(hall_count[i] - last_hall[i]);
+		
+		if (base2008)
+		{
+			// The motor commands are reverse before being sent to the FPGA,
+			// so flip the hall speeds to match.
+			hall_delta[i] = -hall_delta[i];
+		}
 	}
 }
 
@@ -166,6 +176,14 @@ void fpga_send_commands()
 	for (int i = 0; i < 5; ++i)
 	{
 		int_fast8_t cmd = motor_out[i];
+		
+		// 2008 bases use outside gears so wheels spin the other way
+		if (base2008)
+		{
+			cmd = -cmd;
+		}
+		
+		// Convert to sign-magnitude
 		if (cmd < 0)
 		{
 			cmd = -cmd;

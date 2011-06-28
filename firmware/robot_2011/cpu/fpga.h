@@ -18,6 +18,9 @@ extern uint_fast8_t use_chipper;
 // This may be permanently overridden by the discharge button.
 extern uint_fast8_t kicker_charge;
 
+extern uint8_t kicker_status;
+extern int kicker_voltage;
+
 // Initializes and tests the FPGA.
 // This does not force the FPGA to reconfigure, but waits for it to finish.
 //
