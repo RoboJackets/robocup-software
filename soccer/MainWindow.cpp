@@ -149,7 +149,7 @@ void MainWindow::configuration(Configuration* config)
 	
 	for (size_t i = 0; i < Num_Shells; ++i)
 	{
-		_robot2011[i] = new ConfigBool(config, QString("Is2011/%1").arg(i));
+		_robot2011[i] = config->createBool(QString("Is2011/%1").arg(i));
 	}
 	
 	updateRobotConfigs();

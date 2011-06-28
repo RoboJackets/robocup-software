@@ -44,6 +44,9 @@ namespace Gameplay
 				float _lastDelta;
 				uint64_t _lastBallTime;
 				float _accuracy;
+
+				// configuration parameters
+				ConfigDouble::shared_ptr _pivotRadius;
 			};
 	}
 }

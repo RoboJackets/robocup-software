@@ -17,10 +17,10 @@ using namespace rbpf;
 // initializes: F, H, Q, R
 RbpfModelRolling::RbpfModelRolling(Modeling::RobotModel::RobotMap *_robotMap, Configuration *config):
 	RbpfModel(_robotMap),
-	_processNoiseSqrdPos(config, "rbpfModelBallRolling/Process Noise Position", 0.2),
-	_processNoiseSqrdVel(config, "rbpfModelBallRolling/Process Noise Velocity", 1.0),
-	_processNoiseSqrdAcc(config, "rbpfModelBallRolling/Process Noise Acceleration", 1000.0),
-	_measurementNoiseSqrd(config, "rbpfModelBallRolling/Measurement Noise Position", 0.01)
+	_processNoiseSqrdPos(config->createDouble("rbpfModelBallRolling/Process Noise Position", 0.2)),
+	_processNoiseSqrdVel(config->createDouble("rbpfModelBallRolling/Process Noise Velocity", 1.0)),
+	_processNoiseSqrdAcc(config->createDouble("rbpfModelBallRolling/Process Noise Acceleration", 1000.0)),
+	_measurementNoiseSqrd(config->createDouble("rbpfModelBallRolling/Measurement Noise Position", 0.01))
 {
 	// compute state transition Jacobian (df/dx) (n x n)
 	computeTransitionJacobian(0);
@@ -34,9 +34,9 @@ RbpfModelRolling::RbpfModelRolling(Modeling::RobotModel::RobotMap *_robotMap, Co
 }
 
 void RbpfModelRolling::initializeQ() {
-	double sP = _processNoiseSqrdPos;
-	double sV = _processNoiseSqrdVel;
-	double sA = _processNoiseSqrdAcc;
+	double sP = *_processNoiseSqrdPos;
+	double sV = *_processNoiseSqrdVel;
+	double sA = *_processNoiseSqrdAcc;
 	_Q.setIdentity();
 	_Q(0,0)=sP; _Q(1,1)=sP;
 	_Q(2,2)=sV; _Q(3,3)=sV;
@@ -50,7 +50,7 @@ void RbpfModelRolling::initializeQ() {
 }
 
 void RbpfModelRolling::initializeR() {
-	double sM = _measurementNoiseSqrd;
+	double sM = *_measurementNoiseSqrd;
 	_R.setIdentity();
 	_R *= sM;
 }

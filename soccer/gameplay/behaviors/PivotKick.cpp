@@ -6,7 +6,8 @@ using namespace std;
 using namespace Geometry2d;
 
 Gameplay::Behaviors::PivotKick::PivotKick(GameplayModule *gameplay):
-    SingleRobotBehavior(gameplay)
+    SingleRobotBehavior(gameplay),
+    _pivotRadius(gameplay->config()->createDouble("PivotKick/Pivot Aim Radius", Robot_Radius + Ball_Radius))
 {
 	_state = State_Approach;
 	_ccw = true;
@@ -140,9 +141,10 @@ bool Gameplay::Behaviors::PivotKick::run()
 		_accuracy = max(0.0f, _accuracy);
 
 		// FIXME: should the radius of the pivot be fixed?
-		
 		// using pivot motion command
-		robot->pivot(ball().pos, _ccw, ball().pos.distTo(robot->pos));
+		double pivotRadius = *_pivotRadius;
+		robot->pivot(ball().pos, _ccw, pivotRadius);
+//		robot->pivot(ball().pos, _ccw, ball().pos.distTo(robot->pos));
 
 	} else {
 		robot->addText("Done");
