@@ -23,19 +23,19 @@
 // motor windings burning out if speed control tries to drive the motor at high power.
 
 // Coefficient for speed
-static const int Stall_kSpeed = 10;
+static const int Stall_kSpeed = 80;
 
 // Coefficient for command
-static const int Stall_kCommand = 2;
+static const int Stall_kCommand = 1;
 
 // If the counter is above the threshold, the motor has stalled
-static const int Stall_Threshold = 50000;
+static const int Stall_Threshold = 127*200;
 
 // The counter decays by this constant amount each cycle
 static const int Stall_Decay = 50;
 
 // Commands below this limit do not contribute to the counter
-static const int Stall_Deadband = 100;
+static const int Stall_Deadband = 60;
 
 uint8_t motor_stall;
 int stall_counter[5];
@@ -51,28 +51,32 @@ void stall_init(void)
 
 void stall_update(void)
 {
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
-		int speed = abs(encoder_delta[i]);
-		int command = abs(wheel_out[i]);
-		if (command < Stall_Deadband)
+		// Don't look for stalls on motors that we already know can't be driven
+		if (!(motor_faults & (1 << i)))
 		{
-			command = 0;
-		}
-		
-		stall_counter[i] += command * Stall_kCommand - speed * Stall_kSpeed - Stall_Decay;
-		if (stall_counter[i] < 0)
-		{
-			stall_counter[i] = 0;
-		}
-		
-		if (stall_counter[i] >= Stall_Threshold)
-		{
-			// Prevent overflow and let the fail command reset the flag
-			stall_counter[i] = 0;
+			int speed = abs(hall_delta[i]);
+			int command = abs(motor_out[i]);
+			if (command < Stall_Deadband)
+			{
+				command = 0;
+			}
 			
-			// Mark this motor as stalled
-			motor_stall |= 1 << i;
+			stall_counter[i] += command * Stall_kCommand - speed * Stall_kSpeed - Stall_Decay;
+			if (stall_counter[i] < 0)
+			{
+				stall_counter[i] = 0;
+			}
+			
+			if (stall_counter[i] >= Stall_Threshold)
+			{
+				// Prevent overflow and let the fail command reset the flag
+				stall_counter[i] = 0;
+				
+				// Mark this motor as stalled
+				motor_stall |= 1 << i;
+			}
 		}
 	}
 }
