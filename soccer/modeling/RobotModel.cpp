@@ -10,12 +10,12 @@
 using namespace std;
 
 Modeling::RobotModel::Config::Config (Configuration* config):
-	posAlpha(config, "RobotModel/Position/Alpha", 1),
-	posBeta(config, "RobotModel/Position/Beta", 0),
-	posGamma(config, "RobotModel/Position/Gamma", 0),
-	angleAlpha(config, "RobotModel/Angle/Alpha", 1),
-	angleBeta(config, "RobotModel/Angle/Beta", 0),
-	angleGamma(config, "RobotModel/Angle/Gamma", 0)
+	posAlpha(config->createDouble("RobotModel/Position/Alpha", 1)),
+	posBeta(config->createDouble("RobotModel/Position/Beta", 0)),
+	posGamma(config->createDouble("RobotModel/Position/Gamma", 0)),
+	angleAlpha(config->createDouble("RobotModel/Angle/Alpha", 1)),
+	angleBeta(config->createDouble("RobotModel/Angle/Beta", 0)),
+	angleGamma(config->createDouble("RobotModel/Angle/Gamma", 0))
 {
 }
 
@@ -195,14 +195,14 @@ void Modeling::RobotModel::update(uint64_t cur_time)
 
 		// determine error using observations
 		Geometry2d::Point posError = observedPos - predictPos;
-		_pos = predictPos + posError * _config->posAlpha;
-		_vel = predictVel + posError * _config->posBeta / dtime;
-		_accel += posError * _config->posGamma / (dtime * dtime);
+		_pos = predictPos + posError * *_config->posAlpha;
+		_vel = predictVel + posError * *_config->posBeta / dtime;
+		_accel += posError * *_config->posGamma / (dtime * dtime);
 
 		float angleError = Utils::fixAngleDegrees(observedAngle - predictAngle);
-		_angle = Utils::fixAngleDegrees(predictAngle + angleError * _config->angleAlpha);
-		_angleVel = predictAngleVel + angleError * _config->angleBeta / dtime;
-		_angleAccel += angleError * _config->angleGamma / (dtime * dtime);
+		_angle = Utils::fixAngleDegrees(predictAngle + angleError * *_config->angleAlpha);
+		_angleVel = predictAngleVel + angleError * *_config->angleBeta / dtime;
+		_angleAccel += angleError * *_config->angleGamma / (dtime * dtime);
 
 	#else
 		/** Position **/

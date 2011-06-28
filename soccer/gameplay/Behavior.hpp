@@ -2,6 +2,7 @@
 
 #include "GameplayModule.hpp"
 #include <framework/SystemState.hpp>
+#include <Configuration.hpp>
 #include <Robot.hpp>
 
 namespace Gameplay
@@ -20,6 +21,11 @@ namespace Gameplay
 			SystemState *state() const
 			{
 				return _gameplay->state();
+			}
+
+			Configuration *config() const
+			{
+				return _gameplay->config();
 			}
 
 			// Called each frame when this behavior is current.

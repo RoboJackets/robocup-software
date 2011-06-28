@@ -15,6 +15,7 @@
 
 class OurRobot;
 class SystemState;
+class Configuration;
 
 namespace Gameplay
 {
@@ -29,7 +30,7 @@ namespace Gameplay
 	class GameplayModule
 	{
 		public:
-			GameplayModule(SystemState *state);
+			GameplayModule(SystemState *state, Configuration* config);
 			virtual ~GameplayModule();
 			
 			SystemState *state() const
@@ -37,6 +38,11 @@ namespace Gameplay
 				return _state;
 			}
 			
+			Configuration *config() const
+			{
+				return _config;
+			}
+
 			int manualID() const;
 			
 			void createGoalie();
@@ -94,6 +100,8 @@ namespace Gameplay
 			
 			SystemState *_state;
 			
+			Configuration *_config;
+
 			// The goalie behavior (may be null)
 			Behaviors::Goalie *_goalie;
 			

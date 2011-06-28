@@ -11,7 +11,7 @@
 // Role for tree column zero for storing ConfigItem pointers.
 static const int ConfigItemRole = Qt::UserRole;
 
-Q_DECLARE_METATYPE(ConfigItem *)
+Q_DECLARE_METATYPE(ConfigItem *) // FIXME: verify this
 
 ConfigItem::ConfigItem(Configuration *config, const QString& name)
 {
@@ -22,7 +22,6 @@ ConfigItem::ConfigItem(Configuration *config, const QString& name)
 
 ConfigItem::~ConfigItem()
 {
-	_config->_allItems.removeAll(this);
 	if (_treeItem)
 	{
 		//FIXME - Things are getting deleted in a non-GUI thread
@@ -39,11 +38,6 @@ void ConfigItem::valueChanged(const QString& str)
 	}
 }
 
-void ConfigItem::addToTree()
-{
-	_config->addItem(this);
-}
-
 void ConfigItem::setupItem()
 {
 	_treeItem->setText(1, toString());
@@ -55,7 +49,6 @@ ConfigBool::ConfigBool(Configuration* tree, QString name, bool value):
 	ConfigItem(tree, name)
 {
 	_value = value;
-	addToTree();
 }
 
 QString ConfigBool::toString()
@@ -100,7 +93,6 @@ ConfigInt::ConfigInt(Configuration *config, QString name, int value):
 	ConfigItem(config, name)
 {
 	_value = value;
-	addToTree();
 }
 
 QString ConfigInt::toString()
@@ -119,7 +111,6 @@ ConfigDouble::ConfigDouble(Configuration *config, QString name, double value):
 	ConfigItem(config, name)
 {
 	_value = value;
-	addToTree();
 }
 
 QString ConfigDouble::toString()
@@ -139,7 +130,6 @@ ConfigVectorElement::ConfigVectorElement(ConfigVector* vector, int index, Config
 {
 	_vector = vector;
 	_index = index;
-	addToTree();
 }
 
 void ConfigVectorElement::setValue(const QString& str)
@@ -157,7 +147,6 @@ QString ConfigVectorElement::toString()
 ConfigFloatVector::ConfigFloatVector(Configuration *config, QString name):
 	ConfigVector(config, name)
 {
-	addToTree();
 }
 
 void ConfigFloatVector::setValue(const QString& str)
@@ -232,7 +221,7 @@ Configuration::Configuration()
 	_doc.appendChild(_doc.createElement("config"));
 }
 
-void Configuration::addItem(ConfigItem* item)
+void Configuration::addItem(ConfigItem::shared_ptr item)
 {
 	_allItems.push_back(item);
 	
@@ -242,7 +231,7 @@ void Configuration::addItem(ConfigItem* item)
 	}
 }
 
-void Configuration::addToTree(ConfigItem *item)
+void Configuration::addToTree(ConfigItem::shared_ptr item)
 {
 	// Find the parent of this item by following the tree through all but the last item in the path
 	QTreeWidgetItem *parent = _tree->invisibleRootItem();
@@ -275,7 +264,7 @@ void Configuration::addToTree(ConfigItem *item)
 	// Create a tree item
 	item->_treeItem = new QTreeWidgetItem(parent);
 	item->_treeItem->setFlags(item->_treeItem->flags() | Qt::ItemIsEditable);
-	item->_treeItem->setData(0, ConfigItemRole, QVariant::fromValue(item));
+	item->_treeItem->setData(0, ConfigItemRole, QVariant::fromValue(item.get()));
 	item->_treeItem->setText(0, path.back());
 	item->setupItem();
 }
@@ -288,7 +277,7 @@ void Configuration::tree(QTreeWidget* tree)
 	connect(_tree, SIGNAL(itemChanged(QTreeWidgetItem *, int)), this, SLOT(itemChanged(QTreeWidgetItem *, int)));
 	
 	// Add items that were created before we got a tree
-	BOOST_FOREACH(ConfigItem *item, _allItems)
+	BOOST_FOREACH(ConfigItem::shared_ptr item, _allItems)
 	{
 		addToTree(item);
 	}
@@ -309,6 +298,79 @@ void Configuration::itemChanged(QTreeWidgetItem* item, int column)
 			ci->setValue(item->text(1));
 		}
 	}
+}
+
+ConfigItem::shared_ptr Configuration::nameLookup(const QString& name) const
+{
+	QStringList path = name.split('/');
+	BOOST_FOREACH(ConfigItem::shared_ptr item, _allItems)
+	{
+		if (item->path() == path)
+		{
+			return item;
+		}
+	}
+	return ConfigItem::shared_ptr();
+}
+
+ConfigDouble::shared_ptr Configuration::createDouble(const QString& name, double value)
+{
+	// if name already exists and of the same type, return
+	ConfigItem::shared_ptr exists = nameLookup(name);
+	if (exists)
+	{
+		// check type and return if matches
+		ConfigDouble::shared_ptr cd = boost::shared_dynamic_cast<ConfigDouble>(exists);
+		if (cd)
+		{
+			return cd;
+		}
+	}
+
+	// otherwise, create a new item, add it, and return a shared pointer
+	ConfigDouble::shared_ptr result(new ConfigDouble(this, name, value));
+	addItem(result);
+	return result;
+}
+
+ConfigBool::shared_ptr Configuration::createBool(const QString& name, bool value)
+{
+	// if name already exists and of the same type, return
+	ConfigItem::shared_ptr exists = nameLookup(name);
+	if (exists)
+	{
+		// check type and return if matches
+		ConfigBool::shared_ptr cd = boost::shared_dynamic_cast<ConfigBool>(exists);
+		if (cd)
+		{
+			return cd;
+		}
+	}
+
+	// otherwise, create a new item, add it, and return a shared pointer
+	ConfigBool::shared_ptr result(new ConfigBool(this, name, value));
+	addItem(result);
+	return result;
+}
+
+ConfigInt::shared_ptr Configuration::createInt(const QString& name, int value)
+{
+	// if name already exists and of the same type, return
+	ConfigItem::shared_ptr exists = nameLookup(name);
+	if (exists)
+	{
+		// check type and return if matches
+		ConfigInt::shared_ptr cd = boost::shared_dynamic_cast<ConfigInt>(exists);
+		if (cd)
+		{
+			return cd;
+		}
+	}
+
+	// otherwise, create a new item, add it, and return a shared pointer
+	ConfigInt::shared_ptr result(new ConfigInt(this, name, value));
+	addItem(result);
+	return result;
 }
 
 bool Configuration::load(const QString &filename, QString &error)
@@ -340,7 +402,7 @@ bool Configuration::load(const QString &filename, QString &error)
 	}
 	
 	_doc = newDoc;
-	BOOST_FOREACH(ConfigItem *item, _allItems)
+	BOOST_FOREACH(ConfigItem::shared_ptr item, _allItems)
 	{
 		QDomElement el = root;
 		BOOST_FOREACH(QString str, item->path())
@@ -390,7 +452,7 @@ bool Configuration::save(const QString &filename, QString &error)
 	
 	// Update the DOM
 	//FIXME - Remove superfluous vector elements
-	BOOST_FOREACH(ConfigItem *item, _allItems)
+	BOOST_FOREACH(ConfigItem::shared_ptr item, _allItems)
 	{
 		QDomElement el = root;
 		BOOST_FOREACH(QString str, item->path())

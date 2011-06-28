@@ -8,6 +8,7 @@
 #include <QTime>
 
 #include <FieldView.hpp>
+#include <Configuration.hpp>
 
 #include "Processor.hpp"
 #include "ui_MainWindow.h"
@@ -43,11 +44,6 @@ class MainWindow : public QMainWindow
 			return _playConfigTab;
 		}
 		
-		TestResultTab *testResultTab() const
-		{
-			return _testResultTab;
-		}
-
 		// Deselects all debug layers
 		void allDebugOff();
 		
@@ -192,8 +188,6 @@ class MainWindow : public QMainWindow
 		
 		PlayConfigTab *_playConfigTab;
 		
-		TestResultTab *_testResultTab;
-
 		// Tree items that are not in LogFrame
 		QTreeWidgetItem *_frameNumberItem;
 		QTreeWidgetItem *_elapsedTimeItem;
@@ -202,7 +196,7 @@ class MainWindow : public QMainWindow
 		
 		RobotConfig *_robotConfig2008;
 		RobotConfig *_robotConfig2011;
-		ConfigBool *_robot2011[Num_Shells];
+		ConfigBool::shared_ptr _robot2011[Num_Shells];
 		
 		// This is used to update some status items less frequently than the full field view
 		int _updateCount;
