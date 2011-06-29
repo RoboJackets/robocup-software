@@ -2,13 +2,13 @@
 
 #include <stdint.h>
 
+#include <libusb.h>
+
 #include "Radio.hpp"
 
 //FIXME - This needs to go somewhere common to this code, the robot firmware, and the base station test code.
 const unsigned int Forward_Size = 31;
 const unsigned int Reverse_Size = 11;
-
-class USB_Device;
 
 class USBRadio: public Radio
 {
@@ -17,20 +17,24 @@ public:
 	USBRadio();
 	~USBRadio();
 
-	USB_Device *device() const
-	{
-		return _device;
-	}
-	
 	virtual bool isOpen() const;
 	virtual void send(const Packet::RadioTx &packet);
-	virtual bool receive(Packet::RadioRx *packet);
-
+	virtual void receive();
+	
 protected:
-	USB_Device *_device;
-
+	libusb_context *_usb_context;
+	libusb_device_handle *_device;
+	
+	// Thes transfers is used to receive packets
+	static const int NumRXTransfers = 2;
+	libusb_transfer *_rxTransfers[NumRXTransfers];
+	uint8_t _rxBuffers[NumRXTransfers][Reverse_Size + 2];
+	
 	int _sequence;
 	bool _printedError;
+	
+	static void rxCompleted(struct libusb_transfer *transfer);
+	void handleRxData(uint8_t *buf);
 	
 	bool open();
 	
@@ -38,10 +42,6 @@ protected:
 	void command(uint8_t cmd);
 	void write(uint8_t reg, uint8_t value);
 	uint8_t read(uint8_t reg);
-	
-	// Sets the size of reverse packets.
-	// The base station firmware uses this when in receive mode.
-	void reverse_size(int size);
 	
 	// Turns on/off automatic calibration when there is no traffic
 	void auto_calibrate(bool enable);

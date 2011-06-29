@@ -360,12 +360,12 @@ void Processor::run()
 		}
 		
 		// Read radio reverse packets
-		RadioRx rx;
-		if (_radio->receive(&rx))
+		_radio->receive();
+		BOOST_FOREACH(const RadioRx &rx, _radio->reversePackets())
 		{
 			_state.logFrame->add_radio_rx()->CopyFrom(rx);
 			
-			curStatus.lastRadioRxTime = Utils::timestamp();
+			curStatus.lastRadioRxTime = rx.timestamp();
 			
 			// Store this packet in the appropriate robot
 			unsigned int board = rx.board_id();
@@ -376,6 +376,7 @@ void Processor::run()
 				_state.self[board]->radioRx.CopyFrom(rx);
 			}
 		}
+		_radio->clear();
 		
 		_loopMutex.lock();
 		
@@ -541,6 +542,10 @@ void Processor::sendRadioData()
 			break;
 		}
 	} while (_reverseId != giveUp);
+	if (_reverseId == giveUp && _manualID >= 0)
+	{
+		_reverseId = _manualID;
+	}
 	tx->set_reverse_board_id(_reverseId);
 	
 	// Halt overrides normal motion control, but not joystick

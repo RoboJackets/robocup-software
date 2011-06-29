@@ -11,7 +11,7 @@ public:
 	
 	virtual bool isOpen() const;
 	virtual void send(const Packet::RadioTx &packet);
-	virtual bool receive(Packet::RadioRx *packet);
+	virtual void receive();
 	
 private:
 	QUdpSocket _socket;

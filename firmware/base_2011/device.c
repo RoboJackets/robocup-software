@@ -26,9 +26,6 @@ volatile uint8_t in_tx = 0;
 // Used for putting words in descriptor byte arrays
 #define WORD(x) ((x) & 0xff), (((x) >> 8) & 0xff)
 
-// Size of reverse packets
-uint8_t reverse_size = 8;
-
 const uint8_t device_desc[] PROGMEM =
 {
     18,             // bLength
@@ -343,11 +340,6 @@ void usb_handle_setup()
                 } else {
                     radio_timeout_disable();
                 }
-                usb_write_packet();
-                break;
-            
-            case 5:     // Reverse packet size
-                reverse_size = req.wValue;
                 usb_write_packet();
                 break;
             
