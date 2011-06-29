@@ -142,7 +142,8 @@ void fpga_read_status()
 	if (kicker_status & 0x40)
 	{
 		failures &= ~Fail_Kicker_I2C;
-	} else {
+	} else if (!base2008)
+	{
 		failures |= Fail_Kicker_I2C;
 	}
 	

@@ -26,9 +26,7 @@ static void dumb_update()
 	
 	for (int i = 0; i < 4; ++i)
 	{
-		int8_t command = wheel_command[i];
-		int8_t out = (command << 2) | ((command >> 5) & 3);
-		motor_out[i] = -out;
+		motor_out[i] = -wheel_command[i] * 511 / 127;
 	}
 	motor_out[4] = dribble_command >> 1;
 }
