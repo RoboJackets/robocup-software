@@ -199,7 +199,7 @@ bool USBRadio::isOpen() const
 	return _device;
 }
 
-void USBRadio::send(const Packet::RadioTx& packet)
+void USBRadio::send(Packet::RadioTx& packet)
 {
 	if (!_device)
 	{
@@ -215,6 +215,7 @@ void USBRadio::send(const Packet::RadioTx& packet)
 	
 	// Build a forward packet
 	forward_packet[0] = (_sequence << 4) | reverse_board_id;
+	packet.set_sequence(_sequence);
 	
 	int offset = 1;
 	int self_bots = 0;
@@ -306,15 +307,22 @@ void USBRadio::handleRxData(uint8_t *buf)
 	
 	packet.set_timestamp(rx_time);
 	packet.set_board_id(board_id);
-	packet.set_rssi((int8_t)buf[1] / 2.0);
+	packet.set_rssi((int8_t)buf[1] / 2.0 - 74);
 	packet.set_battery(buf[3] * 3.3 / 256.0 * 5.0);
 	packet.set_ball_sense(buf[5] & (1 << 5));
 	packet.set_charged(buf[4] & 1);
 	packet.set_motor_fault(buf[5] & 0x1f);
+	packet.set_kicker_status(buf[4]);
+	packet.set_sequence(buf[0] >> 4);
 	
 	for (int i = 0; i < 4; ++i)
 	{
-		int value = buf[6 + i] | ((buf[10] >> (i * 2)) & 3) << 8;
+		int high = (buf[10] >> (i * 2)) & 3;
+		int16_t value = buf[6 + i] | (high << 8);
+		if (high & 2)
+		{
+			value |= 0xfc00;
+		}
 		packet.add_encoders(value);
 	}
 }

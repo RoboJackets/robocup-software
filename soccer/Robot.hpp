@@ -202,17 +202,12 @@ public:
 	}
 
 	/**
-	 * Apply direct motion commands to the motors - use only for calibration
-	 * Vector of speeds must have 4 elements - will pad with zeros otherwise
-	 * Only use this function for calibration
-	 */
-	void directMotorCommands(const std::vector<int8_t>& speeds);
-
-	/**
 	 * Move using direct velocity control by specifying
 	 * translational and angular velocity
 	 */
-	void directVelocityCommands(const Geometry2d::Point& trans, double ang);
+	void bodyVelocity(const Geometry2d::Point& v);
+	void worldVelocity(const Geometry2d::Point& v);
+	void angularVelocity(double w);
 
 	/*
 	 * Enable dribbler (note: can go both ways)

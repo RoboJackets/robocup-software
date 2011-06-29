@@ -596,7 +596,7 @@ void Processor::sendRadioData()
 
 	if (_radio)
 	{
-		_radio->send(_state.logFrame->radio_tx());
+		_radio->send(*_state.logFrame->mutable_radio_tx());
 	}
 }
 

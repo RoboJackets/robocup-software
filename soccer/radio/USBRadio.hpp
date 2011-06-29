@@ -18,7 +18,7 @@ public:
 	~USBRadio();
 
 	virtual bool isOpen() const;
-	virtual void send(const Packet::RadioTx &packet);
+	virtual void send(Packet::RadioTx &packet);
 	virtual void receive();
 	
 protected:

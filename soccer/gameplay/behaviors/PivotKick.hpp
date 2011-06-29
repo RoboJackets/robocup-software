@@ -44,6 +44,7 @@ namespace Gameplay
 				float _lastDelta;
 				uint64_t _lastBallTime;
 				float _accuracy;
+				bool _kicked;
 			};
 	}
 }

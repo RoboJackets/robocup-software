@@ -17,5 +17,8 @@ message RadioRx
 	// Motor fault bitmap
 	optional uint32 motor_fault = 7;
 
-	repeated uint32 encoders = 8;
+	repeated int32 encoders = 8;
+	
+	optional uint32 kicker_status = 9;
+	optional uint32 sequence = 10;
 }
