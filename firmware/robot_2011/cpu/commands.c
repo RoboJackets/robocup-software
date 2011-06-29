@@ -170,6 +170,13 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 		printf(" %6d", motor_out[i]);
 	}
 	printf("\n");
+	
+	printf("     Mode:");
+	for (int i = 0; i < 5; ++i)
+	{
+		printf(" %6d", drive_mode[i]);
+	}
+	printf("\n");
 
 	printf("    Stall:");
 	for (int i = 0; i < 5; ++i)
