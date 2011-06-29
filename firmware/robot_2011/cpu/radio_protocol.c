@@ -56,7 +56,6 @@ int handle_forward_packet()
 				// Convert from seven bits to nine bits (signed)
 				int8_t byte = forward_packet[offset + i];
 				wheel_command[i] = byte;
-// 				wheel_command[i] = (byte << 2) | ((byte >> 5) & 3); //FIXME - scale for dumb control
 			}
 			
 			// Convert the dribbler speed from the top four bits in a byte to nine bits

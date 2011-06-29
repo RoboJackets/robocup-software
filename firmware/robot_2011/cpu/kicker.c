@@ -28,6 +28,7 @@ void kicker_test()
 	if (base2008)
 	{
 		// Can't tell anything
+		kicker_charge = 1;
 		return;
 	}
 	
