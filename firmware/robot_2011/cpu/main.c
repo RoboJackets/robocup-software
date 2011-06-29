@@ -75,8 +75,9 @@ void update_leds()
 	if (failures & Fail_Kicker_Charge)
 	{
 		flash(LED_LR, 2);
-	} else if (failures & Fail_Kicker_I2C)
+	} else if (!base2008 && failures & Fail_Kicker_I2C)
 	{
+		// 2008 bases have no kicker ADC
 		flash(LED_LR, 3);
 	} else if (!(kicker_status & Kicker_Charging) || (kicker_status & Kicker_Override))
 	{
