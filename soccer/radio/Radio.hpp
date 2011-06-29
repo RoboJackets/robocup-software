@@ -7,7 +7,7 @@ class Radio
 {
 public:
 	virtual bool isOpen() const = 0;
-	virtual void send(const Packet::RadioTx &packet) = 0;
+	virtual void send(Packet::RadioTx &packet) = 0;
 	virtual void receive() = 0;
 
 	const std::vector<Packet::RadioRx> &reversePackets() const

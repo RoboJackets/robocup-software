@@ -128,9 +128,9 @@ void OurRobot::resetMotionCommand()
 	}
 
 	cmd = MotionCommand();
+	_delayed_goal = boost::none;
 
 	_local_obstacles.clear();
-
 }
 
 void OurRobot::stop()
@@ -172,10 +172,11 @@ void OurRobot::move(const vector<Geometry2d::Point>& path, bool stopAtEnd)
 
 void OurRobot::pivot(double w, double radius)
 {
-	directVelocityCommands(Point(0, -radius * w), w);
+	bodyVelocity(Point(0, -radius * w));
+	angularVelocity(w);
 }
 
-void OurRobot::directVelocityCommands(const Geometry2d::Point& trans, double ang)
+void OurRobot::bodyVelocity(const Geometry2d::Point& v)
 {
 	// ensure RRT not used
 	_delayed_goal = boost::none;
@@ -183,8 +184,23 @@ void OurRobot::directVelocityCommands(const Geometry2d::Point& trans, double ang
 
 	cmd.target = boost::none;
 	cmd.worldVel = boost::none;
-	cmd.bodyVel = trans;
-	cmd.angularVelocity = ang;
+	cmd.bodyVel = v;
+}
+
+void OurRobot::worldVelocity(const Geometry2d::Point& v)
+{
+	// ensure RRT not used
+	_delayed_goal = boost::none;
+	_planner_type = OVERRIDE;
+
+	cmd.target = boost::none;
+	cmd.worldVel = v;
+	cmd.bodyVel = boost::none;
+}
+
+void OurRobot::angularVelocity(double w)
+{
+	cmd.angularVelocity = w;
 }
 
 Geometry2d::Point OurRobot::pointInRobotSpace(const Geometry2d::Point& pt) const {

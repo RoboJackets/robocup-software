@@ -14,6 +14,7 @@ message RadioTx
 		optional bool use_chipper = 4;
 		repeated int32 motors = 5;
 	}
-		
+	
 	repeated Robot robots = 2;
+	optional uint32 sequence = 3;
 }

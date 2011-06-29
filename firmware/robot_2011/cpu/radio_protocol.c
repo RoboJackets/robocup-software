@@ -17,6 +17,8 @@ int wheel_command[4];
 int dribble_command;
 int kick_command;
 
+int sequence;
+
 uint32_t rx_lost_time;
 
 //FIXME - The protocol needs to be totally redesigned
@@ -36,6 +38,7 @@ int handle_forward_packet()
 	LED_TOGGLE(LED_RG);
 	LED_OFF(LED_RR);
 	
+	sequence = forward_packet[0] >> 4;
 	uint8_t reverse_id = forward_packet[0] & 15;
 	
 	// Clear motor commands in case this robot's ID does not appear in the packet
@@ -78,7 +81,7 @@ int handle_forward_packet()
 	if (reverse_id == robot_id)
 	{
 		// Build and send a reverse packet
-		reverse_packet[0] = robot_id;
+		reverse_packet[0] = robot_id | (sequence << 4);
 		reverse_packet[1] = last_rssi;
 		reverse_packet[2] = 0x00;
 		reverse_packet[3] = 0; //FIXME - Battery

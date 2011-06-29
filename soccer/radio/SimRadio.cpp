@@ -31,7 +31,7 @@ bool SimRadio::isOpen() const
 	return true;
 }
 
-void SimRadio::send(const Packet::RadioTx& packet)
+void SimRadio::send(Packet::RadioTx& packet)
 {
 	std::string out;
 	packet.SerializeToString(&out);
