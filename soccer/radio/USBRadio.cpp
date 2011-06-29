@@ -1,5 +1,4 @@
-//FIXME - Port to libusb-1.0.  The API is better.
-//FIXME - Something hangs if PKTCTRL0==4 (fixed length packets).
+//FIXME - Something hangs if PKTCTRL0==4 (fixed length packets) when variable-length packets are in use.
 
 #include <stdio.h>
 #include <stdexcept>
@@ -8,7 +7,6 @@
 
 #include <Utils.hpp>
 #include "USBRadio.hpp"
-#include "USB_Device.hpp"
 #include "cc1101.h"
 #include "radio_config.h"
 
@@ -16,45 +14,77 @@ using namespace std;
 using namespace boost;
 using namespace Packet;
 
+// Timeout for control transfers, in milliseconds
+static const int Control_Timeout = 100;
+
 USBRadio::USBRadio()
 {
 	_sequence = 0;
-	_device = 0;
 	_printedError = false;
+	_device = 0;
+	_usb_context = 0;
+	libusb_init(&_usb_context);
+	
+	for (int i = 0; i < NumRXTransfers; ++i)
+	{
+		_rxTransfers[i] = libusb_alloc_transfer(0);
+	}
 }
 
 USBRadio::~USBRadio()
 {
 	if (_device)
 	{
-		delete _device;
+		libusb_close(_device);
 	}
+	
+	for (int i = 0; i < NumRXTransfers; ++i)
+	{
+		libusb_free_transfer(_rxTransfers[i]);
+	}
+	
+	libusb_exit(_usb_context);
 }
 
 bool USBRadio::open()
 {
-	vector<USB_Device *> devs;
-	USB_Device::find_all(devs, 0x3141, 0x0004);
+	libusb_device **devices = 0;
+	ssize_t numDevices = libusb_get_device_list(_usb_context, &devices);
 	
-	if (devs.empty())
+	if (numDevices < 0)
+	{
+		fprintf(stderr, "libusb_get_device_list failed\n");
+		return false;
+	}
+	
+	int numRadios = 0;
+	for (int i = 0; i < numDevices; ++i)
+	{
+		struct libusb_device_descriptor desc;
+		int err = libusb_get_device_descriptor(devices[i], &desc);
+		if (err == 0 && desc.idVendor == 0x3141 && desc.idProduct == 0x0004)
+		{
+			++numRadios;
+			int err = libusb_open(devices[i], &_device);
+			if (err == 0)
+			{
+				break;
+			}
+		}
+	}
+	
+	libusb_free_device_list(devices, 1);
+	
+	if (!numRadios)
 	{
 		if (!_printedError)
 		{
-			fprintf(stderr, "USBRadio: No devices found\n");
+			fprintf(stderr, "USBRadio: No radio is connected\n");
 			_printedError = true;
 		}
 		return false;
 	}
 	
-	_device = 0;
-	BOOST_FOREACH(USB_Device *dev, devs)
-	{
-		if (dev->open())
-		{
-			_device = dev;
-			break;
-		}
-	}
 	if (!_device)
 	{
 		if (!_printedError)
@@ -65,25 +95,57 @@ bool USBRadio::open()
 		return false;
 	}
 	
-	if (!_device->set_default())
+	if (libusb_set_configuration(_device, 1))
 	{
 		if (!_printedError)
 		{
-			fprintf(stderr, "USBRadio: Can't set default config\n");
+			fprintf(stderr, "USBRadio: Can't set configuration\n");
+			_printedError = true;
+		}
+		return false;
+	}
+	
+	if (libusb_claim_interface(_device, 0))
+	{
+		if (!_printedError)
+		{
+			fprintf(stderr, "USBRadio: Can't claim interface\n");
 			_printedError = true;
 		}
 		return false;
 	}
 	
 	configure();
+	
+	// Start the receive transfers
+	for (int i = 0; i < NumRXTransfers; ++i)
+	{
+		libusb_fill_bulk_transfer(_rxTransfers[i], _device, LIBUSB_ENDPOINT_IN | 2, _rxBuffers[i], Reverse_Size + 2, rxCompleted, this, 0);
+		libusb_submit_transfer(_rxTransfers[i]);
+	}
+	
 	_printedError = false;
 	
 	return true;
 }
 
+void USBRadio::rxCompleted(libusb_transfer* transfer)
+{
+	USBRadio *radio = (USBRadio *)transfer->user_data;
+	
+	if (transfer->actual_length == Reverse_Size + 2)
+	{
+		// Parse the packet and add to the list of RadioRx's
+		radio->handleRxData(transfer->buffer);
+	}
+	
+	// Restart the transfer
+	libusb_submit_transfer(transfer);
+}
+
 void USBRadio::command(uint8_t cmd)
 {
-	if (!_device->control(USB_Device::Control_In | USB_Device::Control_Vendor, 2, 0, cmd))
+	if (libusb_control_transfer(_device, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR, 2, 0, cmd, 0, 0, Control_Timeout))
 	{
 		throw runtime_error("USBRadio::command control write failed");
 	}
@@ -91,7 +153,7 @@ void USBRadio::command(uint8_t cmd)
 
 void USBRadio::write(uint8_t reg, uint8_t value)
 {
-	if (!_device->control(USB_Device::Control_In | USB_Device::Control_Vendor, 1, value, reg))
+	if (libusb_control_transfer(_device, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR, 1, value, reg, 0, 0, Control_Timeout))
 	{
 		throw runtime_error("USBRadio::write control write failed");
 	}
@@ -100,20 +162,12 @@ void USBRadio::write(uint8_t reg, uint8_t value)
 uint8_t USBRadio::read(uint8_t reg)
 {
 	uint8_t value = 0;
-	if (!_device->control(USB_Device::Control_In | USB_Device::Control_Vendor, 3, 0, reg, &value, 1))
+	if (libusb_control_transfer(_device, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR, 3, 0, reg, &value, 1, Control_Timeout))
 	{
 		throw runtime_error("USBRadio::read control write failed");
 	}
 	
 	return value;
-}
-
-void USBRadio::reverse_size(int size)
-{
-	if (!_device->control(USB_Device::Control_In | USB_Device::Control_Vendor, 5, Reverse_Size, 0))
-	{
-		throw runtime_error("USBRadio::reverse_size control write failed");
-	}
 }
 
 void USBRadio::configure()
@@ -131,15 +185,13 @@ void USBRadio::configure()
 		write(cc1101_regs[i], cc1101_regs[i + 1]);
 	}
 
-	reverse_size(Reverse_Size);
-
 	auto_calibrate(true);
 }
 
 void USBRadio::auto_calibrate(bool enable)
 {
 	int flag = enable ? 1 : 0;
-	assert(_device->control(USB_Device::Control_In | USB_Device::Control_Vendor, 4, flag, 0));
+	assert(libusb_control_transfer(_device, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR, 4, flag, 0, 0, 0, Control_Timeout) == 0);
 }
 
 bool USBRadio::isOpen() const
@@ -217,51 +269,52 @@ void USBRadio::send(const Packet::RadioTx& packet)
 	}
 	
 	// Send the forward packet
-	if (!_device->bulk_write(1, forward_packet, sizeof(forward_packet)))
+	int sent = 0;
+	if (libusb_bulk_transfer(_device, LIBUSB_ENDPOINT_OUT | 1, forward_packet, sizeof(forward_packet), &sent, Control_Timeout) || sent != sizeof(forward_packet))
 	{
 		fprintf(stderr, "USBRadio: Bulk write failed\n");
-		delete _device;
+		libusb_close(_device);
 		_device = 0;
 	}
 	
 	_sequence = (_sequence + 1) & 7;
 }
 
-bool USBRadio::receive(Packet::RadioRx* packet)
+void USBRadio::receive()
 {
 	if (!_device)
 	{
 		if (!open())
 		{
-			return false;
+			return;
 		}
 	}
 	
-	uint8_t reverse_packet[Reverse_Size + 2];
-	
-	uint64_t rx_time = 0;
-	// Read a forward packet if one is available
-	if (!_device->bulk_read(2, reverse_packet, sizeof(reverse_packet), 1))
-	{
-		return false;
-	}
-	rx_time = Utils::timestamp();
+	// Handle USB events.  This will call callbacks.
+	struct timeval tv = {0, 0};
+	libusb_handle_events_timeout(_usb_context, &tv);
+}
 
-	int board_id = reverse_packet[0] & 0x0f;
+void USBRadio::handleRxData(uint8_t *buf)
+{
+	uint64_t rx_time = Utils::timestamp();
 	
-	packet->set_timestamp(rx_time);
-	packet->set_board_id(board_id);
-	packet->set_rssi((int8_t)reverse_packet[1] / 2.0);
-	packet->set_battery(reverse_packet[3] * 3.3 / 256.0 * 5.0);
-	packet->set_ball_sense(reverse_packet[5] & (1 << 5));
-	packet->set_charged(reverse_packet[4] & 1);
-	packet->set_motor_fault(reverse_packet[5] & 0x1f);
+	int board_id = buf[0] & 0x0f;
+	
+	_reversePackets.push_back(RadioRx());
+	RadioRx &packet = _reversePackets.back();
+	
+	packet.set_timestamp(rx_time);
+	packet.set_board_id(board_id);
+	packet.set_rssi((int8_t)buf[1] / 2.0);
+	packet.set_battery(buf[3] * 3.3 / 256.0 * 5.0);
+	packet.set_ball_sense(buf[5] & (1 << 5));
+	packet.set_charged(buf[4] & 1);
+	packet.set_motor_fault(buf[5] & 0x1f);
 	
 	for (int i = 0; i < 4; ++i)
 	{
-		int value = reverse_packet[6 + i] | ((reverse_packet[10] >> (i * 2)) & 3) << 8;
-		packet->add_encoders(value);
+		int value = buf[6 + i] | ((buf[10] >> (i * 2)) & 3) << 8;
+		packet.add_encoders(value);
 	}
-	
-	return true;
 }
