@@ -8,7 +8,6 @@
 #include <QColor>
 
 #include <Constants.hpp>
-#include <framework/MotionCmd.hpp>
 #include <framework/Path.hpp>
 #include <gameplay/planning/rrt.hpp>
 #include <protobuf/RadioTx.pb.h>
@@ -65,17 +64,72 @@ private:
 	bool _self;
 };
 
+class MotionTarget
+{
+public:
+	MotionTarget()
+	{
+		pathLength = 0;
+		pathEnd = StopAtEnd;
+	}
+	
+	Geometry2d::Point pos;
+	float pathLength;
+	
+	enum PathEndType
+	{
+		StopAtEnd = 0,
+		FastAtEnd = 1
+	};
+	PathEndType pathEnd;
+};
+
+class FaceTarget
+{
+public:
+	FaceTarget()
+	{
+		continuous = false;
+	}
+	
+	Geometry2d::Point pos;
+	bool continuous;
+};
+
+class MotionCommand
+{
+	public:
+		//FIXME - Remove pathLength and pathEnd.  Store a path in MotionCommand.  What about facing?
+		
+		// Any of these optionals may be set before motion control runs.
+		// Motion control will fill in the blanks.  This allows bypassing parts of motion control.
+		
+		boost::optional<MotionTarget> target;
+		boost::optional<FaceTarget> face;
+		
+		float vScale;
+		float wScale;
+		
+		// Velocity in world coordinates
+		boost::optional<Geometry2d::Point> worldVel;
+		
+		// Velocity in body coordinates (the front of the robot is +X)
+		boost::optional<Geometry2d::Point> bodyVel;
+		
+		// Angular velocity in rad/s counterclockwise
+		boost::optional<float> angularVelocity;
+		
+		MotionCommand()
+		{
+			vScale = 1.0;
+			wScale = 1.0;
+		}
+};
+
 class OurRobot: public Robot
 {
 public:
-	typedef boost::optional<Geometry2d::Point> OptionalPoint;
 	typedef boost::array<float,Num_Shells> RobotMask;
-	typedef enum {
-		NONE, 			 /// makes no attempt to adjust facing
-		CONTINUOUS,  /// change facing continously
-		CONSTANT,    /// specifies changing facing before moving, and keeps it constant throughout trajectory
-		ENDPOINT		 /// only handle facing at end (fastest)
-	} FacingType;
 
 	typedef enum {
 		RRT, 			/// moves to a point with the RRT planner
@@ -140,7 +194,12 @@ public:
 	 * Used primarily for aiming around a ball.  Note that this will
 	 * not handle obstacle avoidance.
 	 */
-	void pivot(const Geometry2d::Point& center, bool dirCCW, double radius);
+	void pivot(double w, double radius);
+	
+	void pivot(double w, const Geometry2d::Point& center)
+	{
+		pivot(w, (pos - center).mag());
+	}
 
 	/**
 	 * Apply direct motion commands to the motors - use only for calibration
@@ -261,7 +320,7 @@ public:
 	}
 
 	/** motion command - sent to point/wheel controllers, is valid when _planning_complete is true */
-	MotionCmd cmd;
+	MotionCommand cmd;
 
 	bool hasBall;
 
@@ -306,6 +365,7 @@ protected:
 	/** Planning components for delayed planning */
 	MoveType _planner_type;  /// movement class - set during move
 	boost::optional<Geometry2d::Point> _delayed_goal;   /// goal from move command
+	bool _stopAtEnd;
 
 	// obstacle management
 	ObstacleGroup _local_obstacles; /// set of obstacles added by plays
