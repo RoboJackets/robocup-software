@@ -222,13 +222,21 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	printf("  Dark:  0x%03x\n", ball_sense_dark);
 	printf("  Delta: %5d\n", ball_sense_light - ball_sense_dark);
 	
-	printf("Kicker: status 0x%02x  voltage %3d\n", kicker_status, kicker_voltage);
+	printf("Kicker: status 0x%02x %3dV\n", kicker_status, kicker_voltage);
 	if (!(kicker_status & 0x40))
 	{
 		printf("Voltage ADC failed\n");
 	}
 	
 	printf("GIT version: %s\n", git_version);
+	
+	//BEGIN DEBUG
+	printf("Encoder monitor:\n");
+	for (int i = 0; i < 5; ++i)
+	{
+		printf("%d %2d %3d %4d\n", i, em_err_hall[i], em_err_enc[i], em_err_out[i]);
+	}
+	//END DEBUG
 }
 
 static void cmd_timers(int argc, const char *argv[], void *arg)

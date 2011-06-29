@@ -9,6 +9,8 @@
 #include "status.h"
 #include "stall.h"
 #include "radio_protocol.h"
+#include "encoder_monitor.h"
+#include "stall.h"
 
 const controller_info_t *default_controller;
 
@@ -52,7 +54,22 @@ static void step_init(int argc, const char *argv[])
 static void step_update()
 {
 	int supply_mv = supply_raw * VBATT_NUM / VBATT_DIV;
-	printf("%2d.%03d %5d\n", supply_mv / 1000, supply_mv % 1000, encoder_delta[step_motor]);
+	printf("%2d.%03d %4d %3d", supply_mv / 1000, supply_mv % 1000, encoder_delta[step_motor], hall_delta[step_motor]);
+	
+	int failed = (motor_faults | encoder_faults | motor_stall) & (1 << step_motor);
+	if (failed)
+	{
+		printf(" *");
+	}
+	printf("\n");
+	
+	if (failed && encoder_delta[step_motor] == 0 && hall_delta[step_motor] == 0)
+	{
+		// Motor died
+		printf("Motor failed\n");
+		controller = 0;
+	}
+	
 	motor_out[step_motor] = step_level;
 	drive_mode[step_motor] = DRIVE_SLOW_DECAY;
 }

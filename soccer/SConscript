@@ -110,7 +110,7 @@ srcs = [
 #	'gameplay/plays/demo_plays/DemoBasicOneTouchChipAttack.cpp',
 #	'gameplay/plays/demo_plays/DemoKicks.cpp',
 	'gameplay/plays/demo_plays/KickWithClosestPlay.cpp',
-	'gameplay/plays/demo_plays/CalSpeed.cpp',
+#	'gameplay/plays/demo_plays/CalSpeed.cpp',
 	
 	# Tech Challenges
 	'gameplay/plays/demo_plays/NavChallenge2011.cpp',

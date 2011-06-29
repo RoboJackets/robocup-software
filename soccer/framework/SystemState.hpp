@@ -11,7 +11,6 @@
 #include <protobuf/RadioRx.pb.h>
 #include <GameState.hpp>
 #include <framework/Obstacle.hpp>
-#include <framework/MotionCmd.hpp>
 #include <Constants.hpp>
 
 class RobotConfig;

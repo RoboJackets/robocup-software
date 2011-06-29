@@ -18,70 +18,87 @@ MotionControl::MotionControl(OurRobot *robot)
 	_robot->radioTx.set_board_id(_robot->shell());
 	for (int i = 0; i < 4; ++i)
 	{
-		_wheelVel[i] = 0;
-		_out[i] = 0;
-		_integral[i] = 0;
 		_robot->radioTx.add_motors(0);
 	}
+	
+	_lastOutputSpeed = 0;
 }
 
-#if 0
 void MotionControl::positionTrapezoidal()
 {
-	Point posError = _robot->cmd.goalPosition - _robot->pos;
-
+	if (!_robot->cmd.target)
+	{
+		return;
+	}
+	
+	float dtime = (_robot->state()->timestamp - _lastFrameTime) / 1.0e6;
+	Point velocity = _robot->vel;
+// 	Point velocity = (_robot->pos - _lastPos) / dtime;
+	Point posError = _robot->cmd.target->pos - _robot->pos;
 	Point posErrorDir = posError.normalized();
 	
-	//FIXME - The velocity controller assumes that the robot is capable of infinite acceleration,
+	// The velocity controller assumes that the robot is capable of infinite acceleration,
 	// and thus the speed command will be executed completely (+noise) by the next frame.
 	
 	// Trapezoidal control
 	const RobotConfig::Dynamics &config = _robot->config->trapTrans;
+// 	float curSpeed = velocity.dot(posErrorDir);
 	float curSpeed = _robot->vel.mag();
+	float targetSpeed = 0;	//FIXME - If nonzero, more cases appear
 	
 	// Distance left to travel to reach goal
 	float distanceLeft = posError.mag();
 	
 	// How far would we travel if we decelerated at the limit?
-	float minStoppingTime = curSpeed / config.deceleration;
-	float minStoppingDistance = curSpeed * minStoppingTime + 0.5 * config.deceleration * minStoppingTime * minStoppingTime;
+	float minStoppingDistance = (curSpeed * curSpeed - targetSpeed * targetSpeed) / (2 * *config.deceleration);
 	
 	//FIXME - Frame time from Processor
-	const float FrameTime = 1.0 / 60.0;
+	const float Latency = 3.0 / 60.0;
 	
-	float targetSpeed;
+	float newSpeed;
 	
-// 	_robot->addText(QString("minStoppingDistance %1 %2").arg(minStoppingDistance).arg(curSpeed));
-	//FIXME - Predict speed changes over time
-	if (distanceLeft <= minStoppingDistance)
+	_robot->addText(QString("minStoppingDistance %1 %2").arg(minStoppingDistance).arg(distanceLeft));
+	_robot->addText(QString("curSpeed %1 %2 wanted %3").arg(curSpeed).arg(velocity.mag()).arg(_lastOutputSpeed));
+	//FIXME - Predict speed changes over time to compensate for latency
+	if (distanceLeft < minStoppingDistance)
+	{
+		// Try to stop on the target regardless of deceleration
+		double a = (curSpeed * curSpeed - targetSpeed * targetSpeed) / (2 * distanceLeft);
+		newSpeed = max(0.0, curSpeed - a * Latency);
+		_robot->addText(QString("decel hard to %1").arg(newSpeed));
+	} else if (distanceLeft <= minStoppingDistance * 1.1)
 	{
 		// Decelerate
-		//FIXME - Calculate the value necessary to reach the goal, regardless of limit
-		float decel = config.deceleration;
-		targetSpeed = max(0.0f, curSpeed - decel * FrameTime);
-// 		_robot->addText(QString("decel to %1").arg(targetSpeed));
-	} else if (curSpeed < config.velocity)
+		newSpeed = max(0.0, curSpeed - *config.deceleration * Latency);
+		_robot->addText(QString("decel to %1").arg(newSpeed));
+	} else if (curSpeed < *config.velocity)
 	{
 		// Accelerate
-		if (curSpeed <= 0.05)
-		{
-			targetSpeed = config.velocity;
-		} else {
-			targetSpeed = min((double)config.velocity, curSpeed + config.acceleration * FrameTime * 10);
-		}
-// 		_robot->addText(QString("accel to %1").arg(targetSpeed));
+// 		if (curSpeed < *config.velocity / 20)
+// 		{
+// 			newSpeed = *config.velocity / 4;
+// 		} else {
+			newSpeed = min((double)*config.velocity, curSpeed + *config.acceleration * Latency);
+// 		}
+		_robot->addText(QString("accel to %1").arg(newSpeed));
 	} else {
 		// Constant velocity
-		targetSpeed = config.velocity;
-// 		_robot->addText(QString("cruise at %1").arg(targetSpeed));
+		newSpeed = *config.velocity;
+		_robot->addText(QString("cruise at %1").arg(newSpeed));
 	}
 	
-	_worldVel = posErrorDir * targetSpeed;
+	_lastOutputSpeed = newSpeed;
+	_robot->cmd.worldVel = posErrorDir * newSpeed;
 }
-#endif
 
+#if 0
 void MotionControl::positionPD()
 {
+	if (!_robot->cmd.target)
+	{
+		return;
+	}
+	
 	float curSpeed = _velocity.mag();
 	float maxSpeed = curSpeed + *_robot->config->trapTrans.acceleration;
 	float cruise = *_robot->config->trapTrans.velocity;
@@ -126,64 +143,64 @@ void MotionControl::positionPD()
 	
 	_lastPosError = posError;
 }
+#endif
 
 void MotionControl::anglePD()
 {
+	if (!_robot->cmd.face)
+	{
+		return;
+	}
+	
 // 	_robot->state()->drawLine(_robot->pos, _robot->cmd.goalOrientation, Qt::black, "Motion");
-	Point dir = (_robot->cmd.goalOrientation - _robot->pos).normalized();
+	Point dir = (_robot->cmd.face->pos - _robot->pos).normalized();
 	
 	float error = Utils::fixAngleRadians(dir.angle() - _robot->angle * DegreesToRadians);
+// 	float error = Utils::fixAngleRadians(M_PI * *_robot->config->rotation.i - _robot->angle * DegreesToRadians);
 	
-	_spin = error * *_robot->config->rotation.p + (error - _lastAngleError) * *_robot->config->rotation.d;
+	_robot->cmd.angularVelocity = error * *_robot->config->rotation.p + (error - _lastAngleError) * *_robot->config->rotation.d;
 	_lastAngleError = error;
 }
 
 void MotionControl::stopped()
 {
-	for (int i = 0; i < 4; ++i)
-	{
-		_integral[i] = 0;
-	}
 }
 
 void MotionControl::run()
 {
-	if (_robot->cmd.planner == MotionCmd::DirectMotor)
-	{
-		for (size_t i = 0; i < 4; ++i)
-		{
-			int out = 0;
-			if (i < _robot->cmd.direct_motor_cmds.size())
-			{
-				out = _robot->cmd.direct_motor_cmds[i];
-			}
-			
-			_robot->radioTx.set_motors(i, out);
-		}
-		return;
-	}
-	
 	//FIXME - These are all 2011 numbers
 	//FIXME set these through parameters/config
 	
+	// The largest wheel command that can be transmitted
+	const int Max_Wheel_Command = 127;
+	
+	// How fast the robot speed control loop runs
+	// (speeds are measured on the robot in encoder ticks/iteration)
+	const int Robot_Control_Rate = 200;
+	
+	// Encoder ticks per revolution
+	const int Ticks_Per_Rev = 1440;
+	
+	// Speed command scale for the radio protocol.
+	// This reduces the maximum speed to a number that will fit in the forward packet.
+	const int Protocol_Scale = 3;
+	
+	const double Gear_Ratio = 4.5;
+	
 	// The wheel angular velocity (rad/s) resulting from the largest wheel command
-	//FIXME - Educated guess
-	const float Max_Wheel_Speed = 140;
+	const float Max_Wheel_Speed = 2 * M_PI * Max_Wheel_Command * Protocol_Scale * Robot_Control_Rate / (Ticks_Per_Rev * Gear_Ratio);
 	
 	// Effective wheel radius (m)
 	const float Wheel_Radius = 0.026;
-	
-	// The largest wheel command that can be transmitted
-	const int Max_Wheel_Command = 127;
 	
 	// Maximum linear speed without rotation (m/s)
 	const float Max_Linear_Speed = Max_Wheel_Speed * Wheel_Radius;
 	
 	// Radius of circle containing the roller contact points (m)
-// 	const float Contact_Circle_Radius = 0.0812;
+	const float Contact_Circle_Radius = 0.0812;
 	
 	// Maximum angular speed without translation
-// 	const float Max_Angular_Speed = Max_Linear_Speed / (Contact_Circle_Radius * 2 * M_PI);
+	const float Max_Angular_Speed = Max_Linear_Speed / Contact_Circle_Radius;
 	
 	// Axle direction, pointing out of the robot
 	const Point axles[4] =
@@ -194,39 +211,35 @@ void MotionControl::run()
 		Point(-1, -1).normalized()
 	};
 	
-	_velocity = _robot->pos - _lastPos;
-	_lastPos = _robot->pos;
+// 	_velocity = _robot->pos - _lastPos;
 	
-	float dtime = (_robot->state()->timestamp - _lastFrameTime) / 1.0e6;
-	_lastFrameTime = _robot->state()->timestamp;
-	_angularVelocity = fixAngleRadians((_robot->angle - _lastAngle) * DegreesToRadians) / dtime;
-	_lastAngle = _robot->angle;
+// 	float dtime = (_robot->state()->timestamp - _lastFrameTime) / 1.0e6;
+// 	_angularVelocity = fixAngleRadians((_robot->angle - _lastAngle) * DegreesToRadians) / dtime;
 	
-	// Measure current wheel velocities (rad/s)
-	for (int i = 0; i < 4; ++i)
-	{
-		float newVel = axles[i].dot(_velocity) / Wheel_Radius + _angularVelocity * Robot_Radius / Wheel_Radius;
-		const float alpha = *_robot->config->wheelAlpha;
-		_wheelVel[i] = newVel * alpha + _wheelVel[i] * (1.0 - alpha);
-	}
-	
-	positionPD();
+	positionTrapezoidal();
 	anglePD();
 	
 	// Scaling
-	Point scaledVel = _worldVel * _robot->cmd.vScale;
-	float scaledSpin = _spin * _robot->cmd.wScale;
-	
-	Point bodyVel = scaledVel.rotated(-_robot->angle);
-	
-	if (_robot->cmd.planner == MotionCmd::DirectVelocity)
+	if (_robot->cmd.worldVel)
 	{
-		scaledSpin = _robot->cmd.direct_ang_vel;
-		bodyVel = _robot->cmd.direct_trans_vel;
+		_robot->cmd.worldVel = *_robot->cmd.worldVel * _robot->cmd.vScale;
+		if (!_robot->cmd.bodyVel)
+		{
+			_robot->cmd.bodyVel = _robot->cmd.worldVel->rotated(-_robot->angle);
+		}
 	}
-	//FIXME - Direct motor speeds
+	if (!_robot->cmd.angularVelocity)
+	{
+		_robot->cmd.angularVelocity = 0;
+	}
+	float scaledSpin = min(*_robot->cmd.angularVelocity * _robot->cmd.wScale, Max_Angular_Speed);
 	
-// 	scaledSpin = _robot->config->test;
+	if (!_robot->cmd.bodyVel)
+	{
+		_robot->cmd.bodyVel = Point();
+	}
+	
+	Point &bodyVel = *_robot->cmd.bodyVel;
 	
 	// Sanity check
 	if (!isfinite(scaledSpin) || !isfinite(bodyVel.x) || !isfinite(bodyVel.y))
@@ -248,6 +261,7 @@ void MotionControl::run()
 	// Set motor commands for linear motion
 	int maxPos = 0;
 	int maxNeg = 0;
+	int out[4];
 	for (int i = 0; i < 4; ++i)
 	{
 		float w = axles[i].dot(bodyVel) / Wheel_Radius;
@@ -266,7 +280,7 @@ void MotionControl::run()
 		c = max(-Max_Wheel_Command, c);
 		c = min(Max_Wheel_Command, c);
 		
-		_out[i] = c;
+		out[i] = c;
 	}
 	
 	// Get the largest motor command that was actually set
@@ -274,7 +288,7 @@ void MotionControl::run()
 	maxNeg = max(maxNeg, -Max_Wheel_Command);
 	
 	// Add as much rotation as we can without overflow
-	int spinCommand = int(Max_Wheel_Command * scaledSpin / Max_Wheel_Speed + 0.5);
+	int spinCommand = int(Max_Wheel_Command * scaledSpin / Max_Angular_Speed + 0.5);
 	
 	if (spinCommand > 0 && (maxPos + spinCommand) > Max_Wheel_Command)
 	{
@@ -286,12 +300,16 @@ void MotionControl::run()
 	
 	for (int i = 0; i < 4; ++i)
 	{
-		_out[i] += spinCommand;
+		out[i] += spinCommand;
 	}
 
 	// Store motor commands in the radio sub-packet
 	for (int i = 0; i < 4; ++i)
 	{
-		_robot->radioTx.set_motors(i, _out[i]);
+		_robot->radioTx.set_motors(i, out[i]);
 	}
+	
+	_lastFrameTime = _robot->state()->timestamp;
+	_lastPos = _robot->pos;
+	_lastAngle = _robot->angle;
 }

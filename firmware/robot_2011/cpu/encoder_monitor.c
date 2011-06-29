@@ -11,10 +11,16 @@
 #include "fpga.h"
 #include "status.h"
 
-uint8_t encoder_faults;
-
 static const int Encoder_Ticks_Per_Rev = 1440;
 static const int Hall_Ticks_Per_Rev = 48;
+
+// Margin of error for each type of sensor.
+// The margins are different because the encoder count rate appears to vary due to shaft offset/angle error.
+static const int Hall_Margin = 6;
+static const int Encoder_Margin = 2;
+
+uint8_t encoder_faults;
+int em_err_hall[5], em_err_enc[5], em_err_out[5];
 
 void encoder_monitor()
 {
@@ -33,10 +39,14 @@ void encoder_monitor()
 		// 2011: Make sure the encoders work
 		for (int i = 0; i < 4; ++i)
 		{
-			int enc_min = (hall_delta[i] - 2) * Encoder_Ticks_Per_Rev / Hall_Ticks_Per_Rev - 2;
-			int enc_max = (hall_delta[i] + 2) * Encoder_Ticks_Per_Rev / Hall_Ticks_Per_Rev + 2;
+			int enc_min = (hall_delta[i] - Hall_Margin) * Encoder_Ticks_Per_Rev / Hall_Ticks_Per_Rev - Encoder_Margin;
+			int enc_max = (hall_delta[i] + Hall_Margin) * Encoder_Ticks_Per_Rev / Hall_Ticks_Per_Rev + Encoder_Margin;
 			if (encoder_delta[i] < enc_min || encoder_delta[i] > enc_max)
 			{
+				em_err_hall[i] = hall_delta[i];
+				em_err_enc[i] = encoder_delta[i];
+				em_err_out[i] = motor_out[i];
+				
 				encoder_faults |= 1 << i;
 			}
 		}

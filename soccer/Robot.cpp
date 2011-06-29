@@ -50,6 +50,7 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	cmd_w = 0;
 	_lastChargedTime = 0;
 	_motionControl = new MotionControl(this);
+	_stopAtEnd = false;
 
 	_planner = new Planning::RRT::Planner();
 	for (size_t i = 0; i < Num_Shells; ++i)
@@ -126,7 +127,7 @@ void OurRobot::resetMotionCommand()
 		radioTx.set_motors(i, 0);
 	}
 
-	cmd = MotionCmd();
+	cmd = MotionCommand();
 
 	_local_obstacles.clear();
 
@@ -147,8 +148,7 @@ void OurRobot::move(Geometry2d::Point goal, bool stopAtEnd)
 	addText(QString("move:(%1, %2)").arg(goal.x).arg(goal.y));
 	_delayed_goal = goal;
 	_planner_type = RRT;
-	cmd.pathEnd = (stopAtEnd) ? MotionCmd::StopAtEnd : MotionCmd::FastAtEnd;
-	cmd.planner = MotionCmd::Point;
+	_stopAtEnd = stopAtEnd;
 }
 
 void OurRobot::move(const vector<Geometry2d::Point>& path, bool stopAtEnd)
@@ -164,41 +164,15 @@ void OurRobot::move(const vector<Geometry2d::Point>& path, bool stopAtEnd)
 	_planner_type = OVERRIDE;
 
 	// convert to motion command
-	cmd.goalPosition = findGoalOnPath(pos, _path);
-	cmd.pathLength = _path.length(pos);
-	cmd.planner = MotionCmd::Point;
-	cmd.pathEnd = (stopAtEnd) ? MotionCmd::StopAtEnd : MotionCmd::FastAtEnd;
+	cmd.target = MotionTarget();
+	cmd.target->pos = findGoalOnPath(pos, _path);
+	cmd.target->pathLength = _path.length(pos);
+	cmd.target->pathEnd = (stopAtEnd) ? MotionTarget::StopAtEnd : MotionTarget::FastAtEnd;
 }
 
-void OurRobot::pivot(const Geometry2d::Point& center, bool dirCCW, double radius)
+void OurRobot::pivot(double w, double radius)
 {
-	// implement by rotating a point around the center
-	Circle circle(center, radius);
-	Point start_pt = circle.nearestPoint(pos);
-	Point aimDir = (pos - center).normalized();
-
-	// use tangential approximation: each movement will include move to circle and tangential movement
-	// FIXME choose a particular increment distance
-	double tangentDist = 0.3;
-	Point perp = (dirCCW) ? aimDir.perpCCW() : aimDir.perpCW(); // TODO verify this direction
-	Point target = circle.nearestPoint(start_pt + perp * tangentDist);
-
-	_state->drawCircle(center, radius);
-
-	// copy path from input
-	_path.clear();
-
-	// ensure RRT not used
-	_delayed_goal = boost::none;
-	_planner_type = OVERRIDE;
-
-	// convert to motion command
-	cmd.goalPosition = target;
-	cmd.pathLength = pos.distTo(target);
-	cmd.planner = MotionCmd::Point;
-	cmd.pathEnd = MotionCmd::FastAtEnd; // want to keep going beyond initial target
-	cmd.face = MotionCmd::Continuous;
-	cmd.goalOrientation = center; // face center at all times
+	directVelocityCommands(Point(0, -radius * w), w);
 }
 
 void OurRobot::directVelocityCommands(const Geometry2d::Point& trans, double ang)
@@ -207,18 +181,10 @@ void OurRobot::directVelocityCommands(const Geometry2d::Point& trans, double ang
 	_delayed_goal = boost::none;
 	_planner_type = OVERRIDE;
 
-	cmd.planner = MotionCmd::DirectVelocity;
-	cmd.direct_ang_vel = ang;
-	cmd.direct_trans_vel = trans;
-}
-
-void OurRobot::directMotorCommands(const vector<int8_t>& speeds) {
-	// ensure RRT not used
-	_delayed_goal = boost::none;
-	_planner_type = OVERRIDE;
-
-	cmd.planner = MotionCmd::DirectMotor;
-	cmd.direct_motor_cmds = speeds;
+	cmd.target = boost::none;
+	cmd.worldVel = boost::none;
+	cmd.bodyVel = trans;
+	cmd.angularVelocity = ang;
 }
 
 Geometry2d::Point OurRobot::pointInRobotSpace(const Geometry2d::Point& pt) const {
@@ -272,13 +238,14 @@ void OurRobot::dribble(int8_t speed)
 
 void OurRobot::face(Geometry2d::Point pt, bool continuous)
 {
-	cmd.goalOrientation = pt;
-	cmd.face = continuous ? MotionCmd::Endpoint : MotionCmd::Continuous;
+	cmd.face = FaceTarget();
+	cmd.face->pos = pt;
+	cmd.face->continuous = continuous;
 }
 
 void OurRobot::faceNone()
 {
-	cmd.face = MotionCmd::None;
+	cmd.face = boost::none;
 }
 
 void OurRobot::kick(uint8_t strength)
@@ -387,7 +354,7 @@ ObstaclePtr OurRobot::createBallObstacle() const {
 Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 		const Planning::Path& path,	const ObstacleGroup& obstacles) {
 		const bool blend_verbose = false;
-		setCommandTrace();
+// 		setCommandTrace();
 
 		// empty path case - leave robot stationary
 		if (path.empty())
@@ -482,7 +449,7 @@ Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 
 Planning::Path OurRobot::rrtReplan(const Geometry2d::Point& goal,
 		const ObstacleGroup& obstacles) {
-	setCommandTrace();
+// 	setCommandTrace();
 
 	// create a new path
 	Planning::Path result;
@@ -503,12 +470,7 @@ void OurRobot::drawPath(const Planning::Path& path, const QColor &color, const Q
 }
 
 void OurRobot::execute(const ObstacleGroup& global_obstacles) {
-	if (cmd.planner != MotionCmd::Point)
-	{
-		return;
-	}
-	
-	setCommandTrace();
+// 	setCommandTrace();
 
 	const bool enable_slice = false;
 
@@ -523,6 +485,9 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		return;
 	}
 
+	cmd.target = MotionTarget();
+	cmd.target->pathEnd = (_stopAtEnd) ? MotionTarget::StopAtEnd : MotionTarget::FastAtEnd;
+	
 	// create and visualize obstacles
 	ObstacleGroup full_obstacles(_local_obstacles);
 	ObstacleGroup
@@ -542,9 +507,8 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: stopped" << endl;
 		addText(QString("execute: no goal"));
 		_path = Planning::Path(pos);
-		cmd.goalPosition = pos;
-		cmd.pathLength = 0;
-		cmd.planner = MotionCmd::Point;
+		cmd.target->pos = pos;
+		cmd.target->pathLength = 0;
 		drawPath(_path);
 		return;
 	}
@@ -556,9 +520,8 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using straight line goal" << endl;
 		addText(QString("execute: straight_line"));
 		_path = straight_line;
-		cmd.goalPosition = *_delayed_goal;
-		cmd.pathLength = straight_line.length(0);
-		cmd.planner = MotionCmd::Point;
+		cmd.target->pos = *_delayed_goal;
+		cmd.target->pathLength = straight_line.length(0);
 		drawPath(straight_line, Qt::red);
 		return;
 	}
@@ -574,20 +537,18 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		_path.startFrom(pos, sliced_path);
 		if (enable_slice && !sliced_path.hit(full_obstacles)) {
 			addText(QString("execute: slicing path"));
-			cmd.goalPosition = findGoalOnPath(pos, sliced_path, full_obstacles);
-			cmd.pathLength = sliced_path.length(pos);
-			cmd.planner = MotionCmd::Point;
+			cmd.target->pos = findGoalOnPath(pos, sliced_path, full_obstacles);
+			cmd.target->pathLength = sliced_path.length(pos);
 			drawPath(sliced_path, Qt::cyan);
 			Geometry2d::Point offset(0.01, 0.01);
-			_state->drawLine(pos + offset, cmd.goalPosition + offset, Qt::black);
+			_state->drawLine(pos + offset, cmd.target->pos + offset, Qt::black);
 			return;
 		} else if (!_path.hit(full_obstacles)) {
 			addText(QString("execute: reusing path"));
-			cmd.goalPosition = findGoalOnPath(pos, _path, full_obstacles);
-			cmd.pathLength = _path.length(pos);
-			cmd.planner = MotionCmd::Point;
+			cmd.target->pos = findGoalOnPath(pos, _path, full_obstacles);
+			cmd.target->pathLength = _path.length(pos);
 			drawPath(_path, Qt::yellow);
-			_state->drawLine(pos, cmd.goalPosition, Qt::black);
+			_state->drawLine(pos, cmd.target->pos, Qt::black);
 			return;
 		}
 	}
@@ -597,9 +558,7 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	_path = rrt_path;
 	drawPath(rrt_path, Qt::magenta);
 	addText(QString("execute: RRT path %1").arg(full_obstacles.size()));
-	cmd.goalPosition = findGoalOnPath(pos, _path, full_obstacles);
-	cmd.pathLength = rrt_path_len;
-	cmd.planner = MotionCmd::Point;
+	cmd.target->pos = findGoalOnPath(pos, _path, full_obstacles);
+	cmd.target->pathLength = rrt_path_len;
 	return;
-
 }

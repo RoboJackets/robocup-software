@@ -55,7 +55,8 @@ int handle_forward_packet()
 			{
 				// Convert from seven bits to nine bits (signed)
 				int8_t byte = forward_packet[offset + i];
-				wheel_command[i] = (byte << 2) | ((byte >> 5) & 3);
+				wheel_command[i] = byte;
+// 				wheel_command[i] = (byte << 2) | ((byte >> 5) & 3); //FIXME - scale for dumb control
 			}
 			
 			// Convert the dribbler speed from the top four bits in a byte to nine bits
@@ -98,8 +99,8 @@ int handle_forward_packet()
 		reverse_packet[10] = 0;
 		for (int i = 0; i < 4; ++i)
 		{
-			reverse_packet[6 + i] = encoder_count[i];
-			reverse_packet[10] |= (encoder_count[i] & 0x300) >> (8 - i * 2);
+			reverse_packet[6 + i] = encoder_delta[i];
+			reverse_packet[10] |= (encoder_delta[i] & 0x300) >> (8 - i * 2);
 		}
 		
 		radio_transmit(reverse_packet, sizeof(reverse_packet));

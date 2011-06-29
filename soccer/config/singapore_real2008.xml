@@ -58,9 +58,9 @@
  </rbpfModelBallKicked>
  <Rev2011>
   <trapTrans>
-   <velocity value="5"/>
-   <acceleration value="1.5"/>
-   <deceleration value="0"/>
+   <velocity value="2.6"/>
+   <acceleration value="3.5"/>
+   <deceleration value="2.5"/>
   </trapTrans>
   <trapRot>
    <velocity value="0"/>
@@ -73,7 +73,7 @@
    <d value="40"/>
   </translation>
   <rotation>
-   <p value="12"/>
+   <p value="5"/>
    <i value="0"/>
    <d value="0"/>
   </rotation>
@@ -93,7 +93,7 @@
   <item0 value="false"/>
   <item1 value="false"/>
   <item2 value="false"/>
-  <item3 value="false"/>
+  <item3 value="true"/>
   <item4 value="false"/>
   <item5 value="false"/>
   <item6 value="false"/>
