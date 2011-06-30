@@ -303,6 +303,7 @@ void usb_handle_setup()
 				{
 					rx_queue[i].len = 0;
 				}
+				clear_bit(PORTB, 7);
                 
                 usb_write_packet();
                 break;
