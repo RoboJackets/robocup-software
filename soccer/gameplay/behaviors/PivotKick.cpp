@@ -7,20 +7,6 @@ using namespace Geometry2d;
 
 static const int Dribble_Speed = 127;
 
-// How far away from the ball the approach point is placed
-static const float Approach_Distance = 0.1;
-// Ball avoidance distance
-static const float Approach_Clearance = 0.1;
-// How close we must get to the approach point to proceed to Capture
-static const float Approach_Threshold = 0.1;
-
-// How fast we drive towards the ball
-static const double Capture_Speed = 0.3;
-// How long we must continuously hold the ball to proceed to Aim
-static const uint64_t Capture_Time_Threshold = 300 * 1000;
-// How much of Capture_Time_Threshold should be spent decelerating
-static const double Capture_Decel = 0.8;
-
 // Angular speed for aiming
 static const double Aim_Speed = 0.5 * M_PI;
 
@@ -34,19 +20,22 @@ static const float Accuracy_Delta = 0.000;
 static const float FireNowThreshold = cos(3 * DegreesToRadians);
 
 Gameplay::Behaviors::PivotKick::PivotKick(GameplayModule *gameplay):
-    SingleRobotBehavior(gameplay)
+    SingleRobotBehavior(gameplay), _capture(gameplay)
 {
 	restart();
 	
 	target.pt[0] = Point(Field_GoalWidth / 2, Field_Length);
 	target.pt[1] = Point(-Field_GoalWidth / 2, Field_Length);
+	_capture.target = target.pt[0];
 }
 
 void Gameplay::Behaviors::PivotKick::restart()
 {
-	_state = State_Approach;
+	_state = State_Capture;
 	_kicked = false;
 	_ccw = true;
+	_capture.restart();
+	_capture.target = target.pt[0];
 }
 
 bool Gameplay::Behaviors::PivotKick::run()
@@ -63,45 +52,16 @@ bool Gameplay::Behaviors::PivotKick::run()
 	
 	// State changes
 	Point toBall = (ball().pos - robot->pos).normalized();
-	float err = dir.dot(toBall);
-	bool behindBall = ((target.center() - robot->pos).dot(ball().pos - robot->pos) > 0);
-	Point approachPoint = ball().pos - (target.pt[0] - ball().pos).normalized() * Approach_Distance;
-	if (_state == State_Approach)
+	if (_state == State_Capture)
 	{
-		robot->addText(QString("err %1 %2").arg(err).arg(robot->pos.distTo(approachPoint)));
-		if (robot->hasBall)
+		if (_capture.done())
 		{
 			_state = State_Aim;
 			_lastError = 0;
 			_lastDelta = 0;
 			_ccw = ((target.pt[0] - ball().pos).cross(target.pt[1] - ball().pos) > 0);
-		} else if (robot->pos.nearPoint(approachPoint, Approach_Threshold) && err >= cos(10 * DegreesToRadians))
-		{
-			_state = State_Capture;
-			_lastBallTime = now;
 		}
 		_accuracy = Initial_Accuracy;
-	} else if (_state == State_Capture)
-	{
-		// _lastBallTime is the last time we did not have the ball
-		if (!robot->hasBall)
-		{
-			_lastBallTime = now;
-		}
-		
-		if (!behindBall)
-		{
-			_state = State_Approach;
-		}
-		
-		if ((now - _lastBallTime) >= Capture_Time_Threshold)
-		{
-			_state = State_Aim;
-			_lastError = 0;
-			_lastDelta = 0;
-			_ccw = dir.cross(target.center() - robot->pos) > 0;
-			_lastBallTime = now;
-		}
 	} else if (_state == State_Aim)
 	{
 		// _lastBallTime is the last time we had the ball
@@ -116,7 +76,8 @@ bool Gameplay::Behaviors::PivotKick::run()
 			{
 				_state = State_Done;
 			} else {
-				_state = State_Approach;
+				_state = State_Capture;
+				_capture.restart();
 			}
 		}
 	}
@@ -126,24 +87,13 @@ bool Gameplay::Behaviors::PivotKick::run()
 	state()->drawLine(target, Qt::yellow);
 	
 	// Driving
-	if (_state == State_Approach)
+	if (_state == State_Capture)
 	{
-		robot->addText("Approach");
-		robot->avoidBall(Approach_Clearance);
-		robot->move(approachPoint);
-		robot->face(ball().pos);
-	} else if (_state == State_Capture)
+		robot->addText("Capturing");
+		_capture.target = target.pt[0];
+		_capture.run();
+	}  else if (_state == State_Aim)
 	{
-		robot->addText("Capture");
-		
-		double speed = max(0.0, 1.0 - double(now - _lastBallTime) / double(Capture_Time_Threshold * Capture_Decel)) * Capture_Speed;
-		
-		robot->dribble(Dribble_Speed);
-		robot->worldVelocity(toBall * speed);
-		robot->face((ball().pos - robot->pos) * 1.2 + robot->pos);
-	} else if (_state == State_Aim)
-	{
-#if 0
 		state()->drawLine(robot->pos, robot->pos + dir * 8, Qt::white);
 		state()->drawLine(ball().pos, target.center(), Qt::yellow);
 		state()->drawLine(robot->pos, (ball().pos - robot->pos).normalized() * 8, Qt::green);
@@ -157,6 +107,8 @@ bool Gameplay::Behaviors::PivotKick::run()
 			robot->kick(255);
 			robot->addText("KICK");
 			_kicked = true;
+		} else {
+			robot->addText("Aim");
 		}
 		
 		_lastError = error;
@@ -181,7 +133,6 @@ bool Gameplay::Behaviors::PivotKick::run()
 		_accuracy = max(0.0f, _accuracy);
 
 		robot->pivot(Aim_Speed * (_ccw ? 1 : -1), ball().pos);
-#endif
 		robot->dribble(Dribble_Speed);
 	} else {
 		robot->addText("Done");

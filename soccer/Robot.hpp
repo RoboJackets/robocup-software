@@ -190,7 +190,8 @@ public:
 	void move(const std::vector<Geometry2d::Point>& path, bool stopAtEnd=true);
 
 	/**
-	 * Pivot around a point at a fixed radius and direction (CCW or CW).
+	 * Pivot around a point at a fixed radius and direction (CCW or CW),
+	 * specified by the magnitude of the angular velocity.
 	 * Used primarily for aiming around a ball.  Note that this will
 	 * not handle obstacle avoidance.
 	 */

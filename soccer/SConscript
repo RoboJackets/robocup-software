@@ -71,6 +71,7 @@ srcs = [
 
     # Core behaviors
 	'gameplay/behaviors/Move.cpp',
+	'gameplay/behaviors/Capture.cpp',
 	'gameplay/behaviors/Kickoff.cpp',
 	'gameplay/behaviors/Penalty.cpp',
 	'gameplay/behaviors/Idle.cpp',
@@ -102,6 +103,7 @@ srcs = [
 #	'gameplay/plays/demo_plays/DemoBasicPassing.cpp',
 #	'gameplay/plays/demo_plays/DemoBasicOneTouchPassing.cpp',
 	'gameplay/plays/demo_plays/DemoBasicAttack.cpp',
+	'gameplay/plays/demo_plays/DemoCapture.cpp',
 	'gameplay/plays/demo_plays/DemoBasicLineAttack.cpp',
 	'gameplay/plays/demo_plays/DemoBasicPivotAttack.cpp',
 #	'gameplay/plays/demo_plays/DemoBasicOneTouchAttack.cpp',
