@@ -5,8 +5,6 @@
 using namespace std;
 using namespace Geometry2d;
 
-static const int Dribble_Speed = 127;
-
 // Angular speed for aiming
 static const double Aim_Speed = 0.5 * M_PI;
 
@@ -36,6 +34,11 @@ void Gameplay::Behaviors::PivotKick::restart()
 	_ccw = true;
 	_capture.restart();
 	_capture.target = target.pt[0];
+	enable_kick = true;
+	enable_desparate_kick = true;
+	dribble_speed = 127;
+	use_chipper = false;
+	kick_power = 255;
 }
 
 bool Gameplay::Behaviors::PivotKick::run()
@@ -45,6 +48,9 @@ bool Gameplay::Behaviors::PivotKick::run()
 		return false;
 	}
 	
+	// force sub-behavior to have its robot assigned
+	_capture.robot = robot;
+
 	// The direction we're facing
 	const Point dir = Point::direction(robot->angle * DegreesToRadians);
 	
@@ -70,6 +76,7 @@ bool Gameplay::Behaviors::PivotKick::run()
 			_lastBallTime = now;
 		}
 		
+		// watch for ball leaving the robot
 		if ((!robot->hasBall && (state()->timestamp - _lastBallTime) > 500000) || !ball().pos.nearPoint(robot->pos, Kick_Completed_Threshold))
 		{
 			if (_kicked)
@@ -102,10 +109,17 @@ bool Gameplay::Behaviors::PivotKick::run()
 		float error = dir.dot((target.center() - ball().pos).normalized());
 		float delta = error - _lastError;
 		
-		if (error >= FireNowThreshold || (error >= _accuracy && _lastDelta > 0 && delta <= 0))
+		if (enable_kick && (error >= FireNowThreshold || (error >= _accuracy && _lastDelta > 0 && delta <= 0)))
 		{
-			robot->kick(255);
-			robot->addText("KICK");
+			if (use_chipper)
+			{
+				robot->chip(kick_power);
+				robot->addText("CHIP");
+			} else
+			{
+				robot->kick(kick_power);
+				robot->addText("KICK");
+			}
 			_kicked = true;
 		} else {
 			robot->addText("Aim");
@@ -133,7 +147,7 @@ bool Gameplay::Behaviors::PivotKick::run()
 		_accuracy = max(0.0f, _accuracy);
 
 		robot->pivot(Aim_Speed * (_ccw ? 1 : -1), ball().pos);
-		robot->dribble(Dribble_Speed);
+		robot->dribble(dribble_speed);
 	} else {
 		robot->addText("Done");
 		return false;
