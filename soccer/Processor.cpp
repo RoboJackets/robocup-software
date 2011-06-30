@@ -2,6 +2,7 @@
 // vim:ai ts=4 et
 
 #include "Processor.hpp"
+#include "VisionReceiver.hpp"
 #include "radio/SimRadio.hpp"
 #include "radio/USBRadio.hpp"
 
@@ -41,7 +42,6 @@ using namespace google::protobuf;
 Processor::Processor(Configuration *config, bool sim)
 {
 	_running = true;
-	_syncToVision = false;
 	_reverseId = 0;
 	_framePeriod = 1000000 / 60;
 	_manualID = -1;
@@ -176,31 +176,11 @@ bool Processor::joystickValid()
 
 void Processor::run()
 {
-	_visionSocket = new QUdpSocket;
 	_refereeSocket = new QUdpSocket;
 	
-	// Create vision socket
-	if (_simulation)
-	{
-		// The simulator doesn't multicast its vision.  Instead, it sends to two different ports.
-		// Try to bind to the first one and, if that fails, use the second one.
-		if (!_visionSocket->bind(SimVisionPort))
-		{
-			if (!_visionSocket->bind(SimVisionPort + 1))
-			{
-				throw runtime_error("Can't bind to either simulated vision port");
-			}
-		}
-	} else {
-		// Receive multicast packets from shared vision.
-		if (!_visionSocket->bind(SharedVisionPort, QUdpSocket::ShareAddress))
-		{
-			throw runtime_error("Can't bind to shared vision port");
-		}
-		
-		multicast_add(_visionSocket, SharedVisionAddress);
-	}
-
+	VisionReceiver vision(_simulation);
+	vision.start();
+	
 	// Create referee socket
 	if (!_refereeSocket->bind(RefereePort, QUdpSocket::ShareAddress))
 	{
@@ -261,74 +241,53 @@ void Processor::run()
 		
 		// Read vision packets
 		vector<const SSL_DetectionFrame *> rawVision;
-		int timeout = _framePeriod / 1000;
-		while (_syncToVision || _visionSocket->hasPendingDatagrams())
+		vector<VisionPacket *> visionPackets;
+		vision.getPackets(visionPackets);
+		BOOST_FOREACH(VisionPacket *packet, visionPackets)
 		{
-			if (_syncToVision)
-			{
-				struct pollfd pfd;
-				pfd.fd = _visionSocket->socketDescriptor();
-				pfd.events = POLLIN;
-				if (poll(&pfd, 1, timeout) == 0)
-				{
-					// Timeout
-					break;
-				}
-				timeout = 0;
-			}
+			SSL_WrapperPacket *log = _state.logFrame->add_raw_vision();
+			log->CopyFrom(packet->wrapper);
 			
-			string buf;
-			unsigned int n = _visionSocket->pendingDatagramSize();
-			buf.resize(n);
-			_visionSocket->readDatagram(&buf[0], n);
-			
-			SSL_WrapperPacket *packet = _state.logFrame->add_raw_vision();
-			if (!packet->ParseFromString(buf))
+			curStatus.lastVisionTime = packet->receivedTime;
+			if (packet->wrapper.has_detection())
 			{
-				printf("Bad vision packet of %d bytes\n", n);
-				continue;
-			}
-			
-			curStatus.lastVisionTime = Utils::timestamp();
-			if (packet->has_detection())
-			{
-				SSL_DetectionFrame *det = packet->mutable_detection();
+				SSL_DetectionFrame *det = packet->wrapper.mutable_detection();
 				
 				// Remove balls on the excluded half of the field
 				google::protobuf::RepeatedPtrField<SSL_DetectionBall> *balls = det->mutable_balls();
 				for (int i = 0; i < balls->size(); ++i)
 				{
-					float x = balls->Get(i).x();
-					//FIXME - OMG too many terms
-					if ((!_state.logFrame->use_opponent_half() && ((_defendPlusX && x < 0) || (!_defendPlusX && x > 0))) ||
-						(!_state.logFrame->use_our_half() && ((_defendPlusX && x > 0) || (!_defendPlusX && x < 0))))
-					{
-						balls->SwapElements(i, balls->size() - 1);
-						balls->RemoveLast();
-						--i;
-					}
+						float x = balls->Get(i).x();
+						//FIXME - OMG too many terms
+						if ((!_state.logFrame->use_opponent_half() && ((_defendPlusX && x < 0) || (!_defendPlusX && x > 0))) ||
+								(!_state.logFrame->use_our_half() && ((_defendPlusX && x > 0) || (!_defendPlusX && x < 0))))
+						{
+								balls->SwapElements(i, balls->size() - 1);
+								balls->RemoveLast();
+								--i;
+						}
 				}
 				
 				// Remove robots on the excluded half of the field
 				google::protobuf::RepeatedPtrField<SSL_DetectionRobot> *robots[2] =
 				{
-					det->mutable_robots_yellow(),
-					det->mutable_robots_blue()
+						det->mutable_robots_yellow(),
+						det->mutable_robots_blue()
 				};
 				
 				for (int team = 0; team < 2; ++team)
 				{
-					for (int i = 0; i < robots[team]->size(); ++i)
-					{
-						float x = robots[team]->Get(i).x();
-						if ((!_state.logFrame->use_opponent_half() && ((_defendPlusX && x < 0) || (!_defendPlusX && x > 0))) ||
-							(!_state.logFrame->use_our_half() && ((_defendPlusX && x > 0) || (!_defendPlusX && x < 0))))
+						for (int i = 0; i < robots[team]->size(); ++i)
 						{
-							robots[team]->SwapElements(i, robots[team]->size() - 1);
-							robots[team]->RemoveLast();
-							--i;
+								float x = robots[team]->Get(i).x();
+								if ((!_state.logFrame->use_opponent_half() && ((_defendPlusX && x < 0) || (!_defendPlusX && x > 0))) ||
+										(!_state.logFrame->use_our_half() && ((_defendPlusX && x > 0) || (!_defendPlusX && x < 0))))
+								{
+										robots[team]->SwapElements(i, robots[team]->size() - 1);
+										robots[team]->RemoveLast();
+										--i;
+								}
 						}
-					}
 				}
 				
 				rawVision.push_back(det);
@@ -515,17 +474,19 @@ void Processor::run()
 		int lastFrameTime = endTime - startTime;
 		if (lastFrameTime < _framePeriod)
 		{
-			if (!_syncToVision)
-			{
-				usleep(_framePeriod - lastFrameTime);
-			}
+			// Use system usleep, not QThread::usleep.
+			//
+			// QThread::usleep uses pthread_cond_wait which sometimes fails to unblock.
+			// This seems to depend on how many threads are blocked.
+			::usleep(_framePeriod - lastFrameTime);
 		} else {
 			printf("Processor took too long: %d us\n", lastFrameTime);
 		}
 	}
 	
+	vision.stop();
+	
 	delete _refereeSocket;
-	delete _visionSocket;
 }
 
 void Processor::sendRadioData()

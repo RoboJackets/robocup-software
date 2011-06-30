@@ -188,9 +188,6 @@ class Processor: public QThread
 		// This changes network communications.
 		bool _simulation;
 		
-		// If true, the processing loop waits to run until a vision packet is received.
-		bool _syncToVision;
-		
 		// True if we are blue.
 		// False if we are yellow.
 		bool _blueTeam;
@@ -232,7 +229,6 @@ class Processor: public QThread
 		Status _status;
 		
 		// Network sockets
-		QUdpSocket *_visionSocket;
 		QUdpSocket *_refereeSocket;
 
 		//modules

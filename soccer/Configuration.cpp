@@ -2,7 +2,6 @@
 
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
-#include <QThread>
 
 #include <stdio.h>
 #include <assert.h>
