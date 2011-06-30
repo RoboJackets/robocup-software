@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gameplay/Behavior.hpp>
+#include <gameplay/behaviors/Capture.hpp>
 
 namespace Gameplay
 {
@@ -31,14 +32,16 @@ namespace Gameplay
 				Geometry2d::Segment target;
 				
 			private:
+
 				enum
 				{
-					State_Approach,
 					State_Capture,
 					State_Aim,
 					State_Done
 				} _state;
 				
+				Capture _capture;
+
 				bool _ccw;
 				float _lastError;
 				float _lastDelta;
