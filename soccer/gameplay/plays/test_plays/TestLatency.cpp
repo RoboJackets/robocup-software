@@ -1,5 +1,6 @@
 #include "TestLatency.hpp"
 
+#include <Utils.hpp>
 #include <stdio.h>
 #include <boost/format.hpp>
 
@@ -12,38 +13,43 @@ Gameplay::Plays::TestLatency::TestLatency(GameplayModule *gameplay):
 	Play(gameplay)
 {
 	_startTime = Utils::timestamp();
-	_total = 0;
+	_lastTime = _startTime;
 	_lastAngle = 0;
-	_angle = 0;
+	_first = true;
 	
 	_file.open("latency.txt", fstream::out);
 }
 
 bool Gameplay::Plays::TestLatency::run()
 {
-	if (_gameplay->robots().empty())
+	if (_gameplay->playRobots().empty())
 	{
 		return false;
 	}
 	
-	uint64_t t = Utils::timestamp() - _startTime;
-	float w = sin(t / 1000000.0 * M_PI);
-	Robot *r = *_gameplay->robots().begin();
-	r->directVelocityCommands(Geometry2d::Point(), w * 80);
+	uint64_t now = state()->timestamp;
+	float dtime = (now - _lastTime) / 1000000.0f;
+	_lastTime = now;
 	
-	float a = r->angle();
-	float delta = a - _lastAngle;
-	if (delta < -180)
+	uint64_t t = now - _startTime;
+	float w = sin(t / 1000000.0 * M_PI) * 4 * M_PI;
+	OurRobot *robot = *_gameplay->playRobots().begin();
+	if (!robot->visible)
 	{
-		delta += 360;
-	} else if (delta > 180)
-	{
-		delta -= 360;
+		return false;
 	}
-	_angle += delta;
+	robot->angularVelocity(w);
+	
+	float a = robot->angle * M_PI / 180;
+	float delta = Utils::fixAngleRadians(a - _lastAngle) / dtime;
 	_lastAngle = a;
 	
-	_file << str(format("%f %f\n") % w % _angle);
+	if (_first)
+	{
+		_first = false;
+	} else {
+		_file << str(format("%f %f %f %f\n") % w % delta % robot->angle % dtime);
+	}
 	
 	return true;
 }
