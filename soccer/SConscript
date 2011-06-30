@@ -93,7 +93,7 @@ srcs = [
 	'gameplay/plays/test_plays/TestPathTracking.cpp',
 	
 	# Development tests
-#	'gameplay/plays/TestLatency.cpp',
+	'gameplay/plays/test_plays/TestLatency.cpp',
 
 	# demo plays/behaviors
 	'gameplay/plays/demo_plays/FollowTheLeader.cpp',
