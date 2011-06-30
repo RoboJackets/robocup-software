@@ -1,16 +1,19 @@
 #pragma once
 
 #include <gameplay/Behavior.hpp>
-#include <gameplay/behaviors/Capture.hpp>
 
 namespace Gameplay
 {
 	namespace Behaviors
 	{
-		class PivotKick: public SingleRobotBehavior
+		/**
+		 * Drives to the ball and gets it under control,
+		 * then (coarsely) pivots towards a goal
+		 */
+		class Capture: public SingleRobotBehavior
 		{
 			public:
-				PivotKick(GameplayModule *gameplay);
+			Capture(GameplayModule *gameplay);
 				
 				virtual bool run();
 				
@@ -18,36 +21,35 @@ namespace Gameplay
 				{
 					return _state == State_Done;
 				}
-				
-				bool aiming() const {
-					return _state == State_Aim;
+
+				bool approach() const {
+					return _state == State_Approach;
 				}
 
 				bool capture() const {
 					return _state == State_Capture;
 				}
 
+				bool pivoting() const {
+					return _state == State_Pivoting;
+				}
+
 				void restart();
 				
-				Geometry2d::Segment target;
+				/** goal for facing after trapping ball */
+				Geometry2d::Point target;
 				
 			private:
-
 				enum
 				{
+					State_Approach,
 					State_Capture,
-					State_Aim,
+					State_Pivoting,
 					State_Done
 				} _state;
 				
-				Capture _capture;
-
 				bool _ccw;
-				float _lastError;
-				float _lastDelta;
 				uint64_t _lastBallTime;
-				float _accuracy;
-				bool _kicked;
 			};
 	}
 }
