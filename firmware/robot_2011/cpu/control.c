@@ -18,11 +18,10 @@ const controller_info_t *default_controller;
 
 static void dumb_update()
 {
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
 		drive_mode[i] = DRIVE_SLOW_DECAY;
 	}
-	drive_mode[Motor_Dribbler] = DRIVE_FAST_DECAY;
 	
 	for (int i = 0; i < 4; ++i)
 	{
@@ -189,11 +188,10 @@ static void pd_update()
 		return;
 	}
 	
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
 		drive_mode[i] = DRIVE_SLOW_DECAY;
 	}
-	drive_mode[Motor_Dribbler] = DRIVE_FAST_DECAY;
 	
 	for (int i = 0; i < 4; ++i)
 	{

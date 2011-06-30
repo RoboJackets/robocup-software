@@ -296,6 +296,14 @@ void usb_handle_setup()
                     break;
                 }
                 
+                // Clear the packet queue
+                rx_queue_read = 0;
+				rx_queue_write = 0;
+				for (uint8_t i = 0; i < RX_QUEUE_SIZE; ++i)
+				{
+					rx_queue[i].len = 0;
+				}
+                
                 usb_write_packet();
                 break;
             
