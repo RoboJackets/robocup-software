@@ -3,7 +3,6 @@
 #include "../Play.hpp"
 
 #include <gameplay/behaviors/Kick.hpp>
-#include <gameplay/behaviors/positions/Forward.hpp>
 #include <gameplay/behaviors/positions/Fullback.hpp>
 #include <gameplay/behaviors/Move.hpp>
 #include <gameplay/PreventDoubleTouch.hpp>

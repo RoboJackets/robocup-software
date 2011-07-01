@@ -1,23 +1,23 @@
-#include "DemoBasicAttack.hpp"
+#include "DemoPivotAttack.hpp"
 
 #include <boost/foreach.hpp>
 
 using namespace std;
 
-REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoBasicAttack, "Demos")
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoPivotAttack, "Demos")
 
-Gameplay::Plays::DemoBasicAttack::DemoBasicAttack(GameplayModule *gameplay):
+Gameplay::Plays::DemoPivotAttack::DemoPivotAttack(GameplayModule *gameplay):
 Play(gameplay),
 _kicker(gameplay)
 {
 }
 
-bool Gameplay::Plays::DemoBasicAttack::run()
+bool Gameplay::Plays::DemoPivotAttack::run()
 {
-	Geometry2d::Point ballPos = ball().pos;
-
 	set<OurRobot *> available = _gameplay->playRobots();
-	assignNearest(_kicker.robot, available, ballPos);
+	assignNearest(_kicker.robot, available, Geometry2d::Point());
+
+	Geometry2d::Point ballPos = ball().pos;
 
 	// if we have kicked, we want to reset
 	if (_kicker.done() &&  ball().valid && 

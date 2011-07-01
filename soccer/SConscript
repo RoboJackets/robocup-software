@@ -39,16 +39,6 @@ srcs = [
 	'gameplay/planning/Tree.cpp',
 	'gameplay/planning/bezier.cpp',
 
-	# Optimization components - disabled for now
-	#'gameplay/optimizer/PassOptimizer.cpp',
-	#'gameplay/optimizer/PassConfig.cpp',
-	#'gameplay/optimizer/PassState.cpp',
-	#'gameplay/optimizer/AnalyticPassPlanner.cpp',
-	#'gameplay/optimizer/passOptimization.cpp',
-	#'gameplay/optimizer/DrivingFactors.cpp',
-	#'gameplay/optimizer/PassingFactors.cpp',
-	#'gameplay/optimizer/ShootingFactors.cpp',
-
 	# Restart plays
 	'gameplay/plays/OurKickoff.cpp',
 	'gameplay/plays/TheirKickoff.cpp',
@@ -62,32 +52,21 @@ srcs = [
 	'gameplay/plays/MightyMight.cpp',
 	'gameplay/plays/BasicOffense.cpp',
 	'gameplay/plays/BasicOffense121.cpp',
-#	'gameplay/plays/AggressiveOpen.cpp',
-#	'gameplay/plays/Offense.cpp',
-#	'gameplay/plays/ClearBall.cpp',
-#	'gameplay/plays/Defense.cpp',
-#	'gameplay/plays/DefendGoal.cpp',
-#	'gameplay/plays/OptimizedOffense.cpp',
 
-    # Core behaviors
+  # Core behaviors
 	'gameplay/behaviors/Move.cpp',
 	'gameplay/behaviors/Capture.cpp',
 	'gameplay/behaviors/Kickoff.cpp',
 	'gameplay/behaviors/Penalty.cpp',
 	'gameplay/behaviors/Idle.cpp',
 	'gameplay/behaviors/Kick.cpp',
-#	'gameplay/behaviors/OneTouchKick.cpp',
-#	'gameplay/behaviors/Intercept.cpp',
 	'gameplay/behaviors/Mark.cpp',
-#	'gameplay/behaviors/GoalDefender.cpp',
-#	'gameplay/behaviors/ZoneOffense.cpp',
 	'gameplay/behaviors/LineKick.cpp',
 	'gameplay/behaviors/PivotKick.cpp',
 
 	# Positions
 	'gameplay/behaviors/positions/Goalie.cpp',
 	'gameplay/behaviors/positions/Fullback.cpp',
-#	'gameplay/behaviors/positions/Forward.cpp',
 	
 	# Test framework for plays
 	'gameplay/TestFixture.cpp',
@@ -100,30 +79,16 @@ srcs = [
 	'gameplay/plays/demo_plays/FollowTheLeader.cpp',
 	'gameplay/plays/demo_plays/LineUp.cpp',
 	'gameplay/plays/demo_plays/MotionEval.cpp',
-#	'gameplay/plays/demo_plays/DemoBasicPassing.cpp',
-#	'gameplay/plays/demo_plays/DemoBasicOneTouchPassing.cpp',
-	'gameplay/plays/demo_plays/DemoBasicAttack.cpp',
+	'gameplay/plays/demo_plays/DemoPassing.cpp',
+	'gameplay/plays/demo_plays/DemoAttack.cpp',
 	'gameplay/plays/demo_plays/DemoCapture.cpp',
-	'gameplay/plays/demo_plays/DemoBasicLineAttack.cpp',
-	'gameplay/plays/demo_plays/DemoBasicPivotAttack.cpp',
-#	'gameplay/plays/demo_plays/DemoBasicOneTouchAttack.cpp',
-#	'gameplay/plays/demo_plays/DemoBasicChipAttack.cpp #disabled until 2010 robots ready',
-#	'gameplay/plays/demo_plays/DemoBasicOneTouchChipAttack.cpp',
-#	'gameplay/plays/demo_plays/DemoKicks.cpp',
+	'gameplay/plays/demo_plays/DemoLineAttack.cpp',
+	'gameplay/plays/demo_plays/DemoPivotAttack.cpp',
 	'gameplay/plays/demo_plays/KickWithClosestPlay.cpp',
 #	'gameplay/plays/demo_plays/CalSpeed.cpp',
 	
 	# Tech Challenges
 	'gameplay/plays/demo_plays/NavChallenge2011.cpp',
-
-	# files that use the optimizer - disabled until new gtsam is in place
-#	'gameplay/behaviors/OptimizedPassing.cpp',
-#	'gameplay/plays/demo_plays/DemoPassConfigOptimize.cpp',
-#	'gameplay/plays/demo_plays/DemoPassPlay.cpp',
-#	'gameplay/plays/demo_plays/DemoOptimizedPassPlay.cpp',
-
-	# files for pass experiments
-#	'gameplay/plays/demo_plays/DemoPassExperiment1.cpp',
 
 #	gameplay/behaviors/test/KickerCalibration.cpp',
 #	gameplay/behaviors/test/MotionLeader.cpp',

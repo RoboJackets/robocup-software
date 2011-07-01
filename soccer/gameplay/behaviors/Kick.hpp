@@ -31,6 +31,7 @@ public:
 	/** default target to full segment for opponent's goal */
 	void setTargetGoal();
 
+	/*** set a specific segment */
 	void setTarget(const Geometry2d::Segment &seg);
 
 	/** find best segment on target, @return true if one exists, and returns segment in result */
@@ -45,6 +46,11 @@ public:
 
 	/** simple flag to enable pushing of opponent robots if necessary */
 	bool enablePushing;    /// if true, disables collision detection on opponents
+
+	/** flags to allow for kicking styles	 */
+	bool use_chipper;
+	short dribbler_speed;
+	uint8_t kick_power;
 
 private:
 	typedef enum
