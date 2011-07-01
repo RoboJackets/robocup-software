@@ -14,17 +14,22 @@ namespace Plays
  * probably only be used with 1-2 robots on the field, as it
  * will get chaotic
  *
- * This variant uses chip kicking and only works for 2010 robots
+ * Uses parameters in the Config GUI to adjust flags
  */
-class DemoBasicChipAttack: public Play
+class DemoAttack: public Play
 {
 public:
-	DemoBasicChipAttack(GameplayModule *gameplay);
+	DemoAttack(GameplayModule *gameplay);
 
 	virtual bool run();
 
 protected:
 	Behaviors::Kick _kicker;
+
+	// parameters to set in the GUI
+	ConfigBool::shared_ptr _useChip;				// flag for chipping or kicking
+	ConfigInt::shared_ptr _dribblerSpeed;   // sets the aim/kick dribbler speed
+	ConfigInt::shared_ptr _kickPower;       // sets the speed to kick at
 };
 } // \Gameplay
 } // \Plays
