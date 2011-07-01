@@ -73,8 +73,8 @@ message LogFrame
 	// Which team are we playing as?
 	optional bool blue_team = 4;
 
-	// Timestamp when the loop started
-	optional uint64 start_time = 5;
+	// Time when robot commands are expected to take effect
+	optional uint64 command_time = 5;
 
 	// Debug graphics
 	repeated DebugPath debug_paths = 6;

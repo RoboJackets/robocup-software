@@ -341,7 +341,7 @@ void MainWindow::updateViews()
 	{
 		// Update non-message tree items
 		_frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole, frameNumber());
-		int elapsedMillis = (currentFrame->start_time() - _processor->firstLogTime + 500) / 1000;
+		int elapsedMillis = (currentFrame->command_time() - _processor->firstLogTime + 500) / 1000;
 		QTime elapsedTime = QTime().addMSecs(elapsedMillis);
 		_elapsedTimeItem->setText(ProtobufTree::Column_Value, elapsedTime.toString("hh:mm:ss.zzz"));
 		

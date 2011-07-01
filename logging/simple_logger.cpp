@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 		uint64_t startTime = Utils::timestamp();
 		
 		logFrame.Clear();
-		logFrame.set_start_time(startTime);
+		logFrame.set_command_time(startTime);
 		
 		// Check for user input (to exit)
 		struct pollfd pfd;

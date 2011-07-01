@@ -5,6 +5,7 @@
 #include "VisionReceiver.hpp"
 #include "radio/SimRadio.hpp"
 #include "radio/USBRadio.hpp"
+#include "modeling/BallTracker.hpp"
 
 #include <QMutexLocker>
 
@@ -19,9 +20,7 @@
 #include <Robot.hpp>
 
 #include <motion/MotionControl.hpp>
-#include <modeling/WorldModel.hpp>
 #include <gameplay/GameplayModule.hpp>
-#include <modeling/WorldModel.hpp>
 #include <RefereeModule.hpp>
 
 #include <boost/foreach.hpp>
@@ -36,7 +35,7 @@
 
 using namespace std;
 using namespace boost;
-using namespace Packet;
+using namespace Geometry2d;
 using namespace google::protobuf;
 
 Processor::Processor(Configuration *config, bool sim)
@@ -61,7 +60,7 @@ Processor::Processor(Configuration *config, bool sim)
 	
 	QMetaObject::connectSlotsByName(this);
 
-	_modelingModule = make_shared<Modeling::WorldModel>(&_state, config);
+	_ballTracker = make_shared<BallTracker>();
 	_refereeModule = make_shared<RefereeModule>(&_state);
 	_gameplayModule = make_shared<Gameplay::GameplayModule>(&_state, config);
 }
@@ -73,7 +72,6 @@ Processor::~Processor()
 	delete _joystick;
 	
 	//DEBUG - This is unnecessary, but lets us determine which one breaks.
-	_modelingModule.reset();
 	_refereeModule.reset();
 	_gameplayModule.reset();
 }
@@ -174,6 +172,43 @@ bool Processor::joystickValid()
 	return _joystick->valid();
 }
 
+void Processor::makeRobotObservations(vector<RobotObservation> &obs, const RepeatedPtrField<SSL_DetectionRobot> &robots, uint64_t time)
+{
+	obs.reserve(obs.size() + robots.size());
+	BOOST_FOREACH(const SSL_DetectionRobot &robot, robots)
+	{
+		obs.push_back(RobotObservation(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), robot.orientation(), time));
+	}
+}
+
+void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFrames)
+{
+	vector<BallObservation> ballObservations;
+	vector<RobotObservation> selfObservations;
+	vector<RobotObservation> oppObservations;
+	
+	BOOST_FOREACH(const SSL_DetectionFrame* frame, detectionFrames)
+	{
+		uint64_t time = frame->t_capture() * 1000000;
+		
+		// Add ball observations
+		ballObservations.reserve(ballObservations.size() + frame->balls().size());
+		BOOST_FOREACH(const SSL_DetectionBall &ball, frame->balls())
+		{
+			ballObservations.push_back(BallObservation(_worldToTeam * Point(ball.x() / 1000, ball.y() / 1000), time));
+		}
+		
+		// Add robot observations
+		const RepeatedPtrField<SSL_DetectionRobot> &selfRobots = _blueTeam ? frame->robots_blue() : frame->robots_yellow();
+		makeRobotObservations(selfObservations, selfRobots, time);
+		
+		const RepeatedPtrField<SSL_DetectionRobot> &oppRobots = _blueTeam ? frame->robots_yellow() : frame->robots_blue();
+		makeRobotObservations(oppObservations, oppRobots, time);
+	}
+	
+	_ballTracker->run(ballObservations, &_state);
+}
+
 void Processor::run()
 {
 	_refereeSocket = new QUdpSocket;
@@ -217,8 +252,8 @@ void Processor::run()
 		// Reset
 		
 		// Make a new log frame
-		_state.logFrame = make_shared<LogFrame>();
-		_state.logFrame->set_start_time(startTime);
+		_state.logFrame = make_shared<Packet::LogFrame>();
+		_state.logFrame->set_command_time(startTime);		//FIXME - Not right
 		_state.logFrame->set_use_our_half(_useOurHalf);
 		_state.logFrame->set_use_opponent_half(_useOpponentHalf);
 		_state.logFrame->set_manual_id(_manualID);
@@ -229,7 +264,7 @@ void Processor::run()
 		{
 			first = false;
 			
-			LogConfig *logConfig = _state.logFrame->mutable_log_config();
+			Packet::LogConfig *logConfig = _state.logFrame->mutable_log_config();
 			logConfig->set_generator("soccer");
 			logConfig->set_git_version_hash(git_version_hash);
 			logConfig->set_git_version_dirty(git_version_dirty);
@@ -240,7 +275,7 @@ void Processor::run()
 		// Inputs
 		
 		// Read vision packets
-		vector<const SSL_DetectionFrame *> rawVision;
+		vector<const SSL_DetectionFrame *> detectionFrames;
 		vector<VisionPacket *> visionPackets;
 		vision.getPackets(visionPackets);
 		BOOST_FOREACH(VisionPacket *packet, visionPackets)
@@ -252,6 +287,11 @@ void Processor::run()
 			if (packet->wrapper.has_detection())
 			{
 				SSL_DetectionFrame *det = packet->wrapper.mutable_detection();
+				
+				//FIXME - Account for network latency
+				double rt = packet->receivedTime / 1000000.0;
+				det->set_t_capture(rt - det->t_sent() + det->t_capture());
+				det->set_t_sent(rt);
 				
 				// Remove balls on the excluded half of the field
 				google::protobuf::RepeatedPtrField<SSL_DetectionBall> *balls = det->mutable_balls();
@@ -290,7 +330,7 @@ void Processor::run()
 						}
 				}
 				
-				rawVision.push_back(det);
+				detectionFrames.push_back(det);
 			}
 		}
 		
@@ -320,7 +360,7 @@ void Processor::run()
 		
 		// Read radio reverse packets
 		_radio->receive();
-		BOOST_FOREACH(const RadioRx &rx, _radio->reversePackets())
+		BOOST_FOREACH(const Packet::RadioRx &rx, _radio->reversePackets())
 		{
 			_state.logFrame->add_radio_rx()->CopyFrom(rx);
 			
@@ -341,29 +381,8 @@ void Processor::run()
 		
 		_joystick->update();
 		
-		_modelingModule->run(_blueTeam, rawVision);
-		
-		// Convert modeling output to team space
-		_state.ball.pos = _worldToTeam * _state.ball.pos;
-		_state.ball.vel = _worldToTeam.transformDirection(_state.ball.vel);
-		_state.ball.accel = _worldToTeam.transformDirection(_state.ball.accel);
-		
-		BOOST_FOREACH(Robot *robot, _state.self)
-		{
-			robot->pos = _worldToTeam * robot->pos;
-			robot->vel = _worldToTeam.transformDirection(robot->vel);
-			robot->angle = Utils::fixAngleDegrees(_teamAngle + robot->angle);
-		}
+		runModels(detectionFrames);
 
-                updateStatusOfBallSensors(state());
-		
-		BOOST_FOREACH(Robot *robot, _state.opp)
-		{
-			robot->pos = _worldToTeam * robot->pos;
-			robot->vel = _worldToTeam.transformDirection(robot->vel);
-			robot->angle = Utils::fixAngleDegrees(_teamAngle + robot->angle);
-		}
-		
 		if (_refereeModule)
 		{
 			_refereeModule->run();
@@ -405,7 +424,7 @@ void Processor::run()
 		{
 			if (r->visible)
 			{
-				LogFrame::Robot *log = _state.logFrame->add_self();
+				Packet::LogFrame::Robot *log = _state.logFrame->add_self();
 				*log->mutable_pos() = r->pos;
 				*log->mutable_vel() = r->vel;
 				*log->mutable_cmd_vel() = r->cmd_vel;
@@ -414,7 +433,7 @@ void Processor::run()
 				log->set_angle(r->angle);
 				log->set_ball_sense(r->hasBall);
 				
-				BOOST_FOREACH(const DebugText &t, r->robotText)
+				BOOST_FOREACH(const Packet::DebugText &t, r->robotText)
 				{
 					log->add_text()->CopyFrom(t);
 				}
@@ -435,7 +454,7 @@ void Processor::run()
 		{
 			if (r->visible)
 			{
-				LogFrame::Robot *log = _state.logFrame->add_opp();
+				Packet::LogFrame::Robot *log = _state.logFrame->add_opp();
 				*log->mutable_pos() = r->pos;
 				log->set_shell(r->shell());
 				log->set_angle(r->angle);
@@ -446,7 +465,7 @@ void Processor::run()
 		// Ball
 		if (_state.ball.valid)
 		{
-			LogFrame::Ball *log = _state.logFrame->mutable_ball();
+			Packet::LogFrame::Ball *log = _state.logFrame->mutable_ball();
 			*log->mutable_pos() = _state.ball.pos;
 			*log->mutable_vel() = _state.ball.vel;
 		}
@@ -491,7 +510,7 @@ void Processor::run()
 
 void Processor::sendRadioData()
 {
-	RadioTx *tx = _state.logFrame->mutable_radio_tx();
+	Packet::RadioTx *tx = _state.logFrame->mutable_radio_tx();
 	
 	// Cycle through reverse IDs for all visible robots
 	int giveUp = _reverseId;
@@ -515,7 +534,7 @@ void Processor::sendRadioData()
 		// Force all motor speeds to zero
 		BOOST_FOREACH(OurRobot *r, _state.self)
 		{
-			RadioTx::Robot &txRobot = r->radioTx;
+			Packet::RadioTx::Robot &txRobot = r->radioTx;
 			for (int m = 0; m < txRobot.motors_size(); ++m)
 			{
 				txRobot.set_motors(m, 0);
@@ -530,7 +549,7 @@ void Processor::sendRadioData()
 	{
 		if (r->visible)
 		{
-			RadioTx::Robot *txRobot = tx->add_robots();
+			Packet::RadioTx::Robot *txRobot = tx->add_robots();
 			
 			// Copy motor commands.
 			// Even if we are using the joystick, this sets board_id and the
@@ -550,7 +569,7 @@ void Processor::sendRadioData()
 	{
 		// The manual robot wasn't found by vision/modeling but we have room for it in the packet.
 		// This allows us to drive an off-field robot for testing or to drive a robot back onto the field.
-		RadioTx::Robot *txRobot = &_state.self[_manualID]->radioTx;
+		Packet::RadioTx::Robot *txRobot = &_state.self[_manualID]->radioTx;
 		_joystick->drive(txRobot);
 		tx->add_robots()->CopyFrom(*txRobot);
 	}

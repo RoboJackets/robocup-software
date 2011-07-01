@@ -1,6 +1,8 @@
 // kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
 // vim:ai ts=4 et
 
+//FIXME - Move a lot of stuff like blueTeam and worldToTeam to a globally accessible place
+
 #pragma once
 
 #include <QThread>
@@ -8,16 +10,20 @@
 #include <QMutexLocker>
 #include <QUdpSocket>
 
-#include <boost/shared_ptr.hpp>
-
 #include <protobuf/LogFrame.pb.h>
 #include <Network.hpp>
 #include <Logger.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
 #include <framework/SystemState.hpp>
+#include <modeling/RobotFilter.hpp>
+
+#include <boost/shared_ptr.hpp>
 
 class Configuration;
 class Joystick;
+class RefereeModule;
+class Radio;
+class BallTracker;
 
 namespace StateIdentification
 {
@@ -33,14 +39,6 @@ namespace Motion
 {
 	class RobotController;
 }
-
-namespace Modeling
-{
-	class WorldModel;
-}
-
-class RefereeModule;
-class Radio;
 
 /** handles processing for a team */
 class Processor: public QThread
@@ -175,6 +173,9 @@ class Processor: public QThread
 		/** send out the radio data for the radio program */
 		void sendRadioData();
 
+		void makeRobotObservations(std::vector<RobotObservation> &obs, const google::protobuf::RepeatedPtrField<SSL_DetectionRobot> &robots, uint64_t time);
+		void runModels(const std::vector<const SSL_DetectionFrame *> &detectionFrames);
+		
 		/** Used to start and stop the thread **/
 		volatile bool _running;
 
@@ -232,9 +233,9 @@ class Processor: public QThread
 		QUdpSocket *_refereeSocket;
 
 		//modules
-		boost::shared_ptr<Modeling::WorldModel> _modelingModule;
 		boost::shared_ptr<RefereeModule> _refereeModule;
 		boost::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
+		boost::shared_ptr<BallTracker> _ballTracker;
 
 		Joystick *_joystick;
 };

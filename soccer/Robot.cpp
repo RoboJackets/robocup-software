@@ -4,6 +4,7 @@
 #include <LogUtils.hpp>
 #include <motion/MotionControl.hpp>
 #include <protobuf/LogFrame.pb.h>
+#include <framework/SystemState.hpp>
 
 #include <stdio.h>
 #include <iostream>
@@ -31,6 +32,7 @@ const bool verbose = false;
 
 Robot::Robot(unsigned int shell, bool self)
 {
+	visible = false;
 	_shell = shell;
 	_self = self;
 	angle = 0;
