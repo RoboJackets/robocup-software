@@ -72,7 +72,7 @@ def BuildPackage(dir, filename, size, url, config_options):
 	return (unpack, configure, build)
 
 (unpack_binutils, config_binutils, build_binutils) = BuildPackage(binutils_package, binutils_file, binutils_size, binutils_url,
-	'--target=%s --enable-interwork --enable-multilib' % target)
+	'--target=%s --enable-interwork --enable-multilib --disable-werror' % target)
 
 (unpack_gcc, config_gcc, build_gcc) = BuildPackage(gcc_dir, gcc_file, gcc_size, gcc_url,
 	'--target=%s --with-newlib --enable-languages="c" --disable-threads '
