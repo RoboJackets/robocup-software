@@ -12,11 +12,11 @@
 #include <gameplay/planning/rrt.hpp>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
-#include "Processor.hpp"
 
 class SystemState;
 class RobotConfig;
 class MotionControl;
+class RobotFilter;
 
 namespace Packet
 {
@@ -52,6 +52,11 @@ public:
 	{
 		return _self;
 	}
+	
+	RobotFilter *filter() const
+	{
+		return _filter;
+	}
 
 	bool visible;
 	Geometry2d::Point pos;
@@ -62,6 +67,7 @@ public:
 private:
 	unsigned int _shell;
 	bool _self;
+	RobotFilter *_filter;
 };
 
 class MotionTarget

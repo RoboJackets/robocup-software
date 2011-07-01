@@ -1,4 +1,5 @@
 #include "MotionControl.hpp"
+#include <framework/SystemState.hpp>
 #include <framework/RobotConfig.hpp>
 #include <Robot.hpp>
 #include <Utils.hpp>
@@ -31,9 +32,7 @@ void MotionControl::positionTrapezoidal()
 		return;
 	}
 	
-	float dtime = (_robot->state()->timestamp - _lastFrameTime) / 1.0e6;
 	Point velocity = _robot->vel;
-// 	Point velocity = (_robot->pos - _lastPos) / dtime;
 	Point posError = _robot->cmd.target->pos - _robot->pos;
 	Point posErrorDir = posError.normalized();
 	

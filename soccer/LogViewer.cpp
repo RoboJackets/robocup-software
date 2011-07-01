@@ -147,7 +147,7 @@ void LogViewer::updateViews()
 	
 	// Update non-message tree items
 	_frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole, frameNumber());
-	int elapsedMillis = (currentFrame.start_time() - frames[0]->start_time() + 500) / 1000;
+	int elapsedMillis = (currentFrame.command_time() - frames[0]->command_time() + 500) / 1000;
 	QTime elapsedTime = QTime().addMSecs(elapsedMillis);
 	_elapsedTimeItem->setText(ProtobufTree::Column_Value, elapsedTime.toString("hh:mm:ss.zzz"));
 	
