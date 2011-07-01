@@ -61,7 +61,7 @@ bool Gameplay::Behaviors::Capture::run()
 	if (_state == State_Approach)
 	{
 		robot->addText(QString("err %1 %2").arg(err).arg(robot->pos.distTo(approachPoint)));
-		if (robot->hasBall)
+		if (robot->hasBall())
 		{
 			_state = State_Pivoting;
 			_ccw = ((target - ball().pos).cross(target - ball().pos) > 0);
@@ -73,7 +73,7 @@ bool Gameplay::Behaviors::Capture::run()
 	} else if (_state == State_Capture)
 	{
 		// _lastBallTime is the last time we did not have the ball
-		if (!robot->hasBall)
+		if (!robot->hasBall())
 		{
 			_lastBallTime = now;
 		}
@@ -85,22 +85,27 @@ bool Gameplay::Behaviors::Capture::run()
 		
 		if ((now - _lastBallTime) >= Capture_Time_Threshold)
 		{
-			_state = State_Pivoting;
+			if (ball().pos.nearPoint(robot->pos, Has_Ball_Dist) && err >= cos(20 * DegreesToRadians))
+			{
+				_state = State_Done;
+			} else {
+				_state = State_Pivoting;
+			}
 			_ccw = dir.cross(target - robot->pos) > 0;
 			_lastBallTime = now;
 		}
 	} else if (_state == State_Pivoting)
 	{
 		// _lastBallTime is the last time we had the ball
-		if (robot->hasBall)
+		if (robot->hasBall())
 		{
 			_lastBallTime = now;
 		}
 
-		if ((!robot->hasBall && (state()->timestamp - _lastBallTime) > 500000) || !ball().pos.nearPoint(robot->pos, Approach_Distance))
+		if ((!robot->hasBall() && (state()->timestamp - _lastBallTime) > 500000) || !ball().pos.nearPoint(robot->pos, Approach_Distance))
 		{
 			_state = State_Approach;
-		} else if (ball().pos.nearPoint(robot->pos, Has_Ball_Dist) && err <= cos(20 * DegreesToRadians))
+		} else if (ball().pos.nearPoint(robot->pos, Has_Ball_Dist) && err >= cos(20 * DegreesToRadians))
 		{
 			_state = State_Done;
 		}

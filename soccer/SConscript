@@ -15,7 +15,7 @@ srcs = [
 	'debug.cpp',
 	'StripChart.cpp',
 	'Robot.cpp',
-	'BallSensor.cpp',
+#	'BallSensor.cpp',
 	'VisionReceiver.cpp',
 
 	'radio/SimRadio.cpp',
@@ -96,6 +96,7 @@ srcs = [
 #	'modeling/WorldModel.cpp',
 	'modeling/BallTracker.cpp',
 	'modeling/BallFilter.cpp',
+	'modeling/RobotFilter.cpp',
 	
 #	'modeling/BallModel.cpp',
 #	'modeling/RBPFBallModel.cpp',

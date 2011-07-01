@@ -33,6 +33,7 @@ bool Gameplay::Plays::TestLatency::run()
 	
 	uint64_t t = now - _startTime;
 	float w = sin(t / 1000000.0 * M_PI) * 4 * M_PI;
+	float q = cos(t / 1000000.0 * M_PI) * 4 * M_PI;
 	OurRobot *robot = *_gameplay->playRobots().begin();
 	if (!robot->visible)
 	{
@@ -48,7 +49,7 @@ bool Gameplay::Plays::TestLatency::run()
 	{
 		_first = false;
 	} else {
-		_file << str(format("%f %f %f %f\n") % w % delta % robot->angle % dtime);
+		_file << str(format("%f %f %f %f %f %f\n") % w % q % delta % robot->angle % dtime % robot->angleVel);
 	}
 	
 	return true;

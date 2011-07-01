@@ -1,0 +1,17 @@
+#!/usr/bin/env python
+
+from math import *
+from numpy import *
+from matplotlib.pyplot import *
+
+t = loadtxt('latency.txt')
+s = t[:,0]
+c = t[:,1]
+d = t[:,2]
+sum_i = dot(s, d) / (len(s) * 2 * pi)
+sum_q = dot(c, d) / (len(c) * 2 * pi)
+mag = sqrt(sum_i * sum_i + sum_q * sum_q)
+angle = atan2(sum_i, sum_q)
+print mag, angle * 180 / pi
+plot(s, 'r', c, 'g', d, 'b')
+show()

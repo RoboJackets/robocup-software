@@ -38,10 +38,32 @@ class Planner;
 }
 }
 
-class Robot
+class RobotPose
+{
+public:
+	RobotPose():
+		visible(false),
+		angle(0),
+		angleVel(0),
+		time(0)
+	{
+	}
+	
+	bool visible;
+	Geometry2d::Point pos;
+	Geometry2d::Point vel;
+	float angle;
+	float angleVel;
+	
+	// Time at which this estimate is valid
+	uint64_t time;
+};
+
+class Robot: public RobotPose
 {
 public:
 	Robot(unsigned int shell, bool self);
+	~Robot();
 
 	unsigned int shell() const
 	{
@@ -57,12 +79,6 @@ public:
 	{
 		return _filter;
 	}
-
-	bool visible;
-	Geometry2d::Point pos;
-	Geometry2d::Point vel;
-	float angle;
-	float angleVel;
 
 private:
 	unsigned int _shell;
@@ -148,8 +164,6 @@ public:
 	~OurRobot();
 
 	void addText(const QString &text, const QColor &color = Qt::white);
-
-	bool haveBall() const; /// true if we have the ball
 
 	bool hasChipper() const; /// true if robot can chip
 
@@ -324,7 +338,7 @@ public:
 	/** motion command - sent to point/wheel controllers, is valid when _planning_complete is true */
 	MotionCommand cmd;
 
-	bool hasBall;
+	bool hasBall() const;
 
 	/** velocity specification for direct velocity control */
 	Geometry2d::Point cmd_vel;

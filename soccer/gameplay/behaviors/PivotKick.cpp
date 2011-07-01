@@ -36,7 +36,7 @@ void Gameplay::Behaviors::PivotKick::restart()
 	_capture.target = target.pt[0];
 	enable_kick = true;
 	enable_desparate_kick = true;
-	dribble_speed = 127;
+	dribble_speed = 50;
 	use_chipper = false;
 	kick_power = 255;
 }
@@ -71,13 +71,13 @@ bool Gameplay::Behaviors::PivotKick::run()
 	} else if (_state == State_Aim)
 	{
 		// _lastBallTime is the last time we had the ball
-		if (robot->hasBall)
+		if (robot->hasBall())
 		{
 			_lastBallTime = now;
 		}
 		
 		// watch for ball leaving the robot
-		if ((!robot->hasBall && (state()->timestamp - _lastBallTime) > 500000) || !ball().pos.nearPoint(robot->pos, Kick_Completed_Threshold))
+		if ((!robot->hasBall() && (state()->timestamp - _lastBallTime) > 500000) || !ball().pos.nearPoint(robot->pos, Kick_Completed_Threshold))
 		{
 			if (_kicked)
 			{
