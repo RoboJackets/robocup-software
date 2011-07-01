@@ -12,10 +12,10 @@ namespace Plays
  * Attack demo - choose one robot and target goal continuously
  * Uses the LineKick behavior
  */
-class DemoBasicLineAttack: public Play
+class DemoLineAttack: public Play
 {
 public:
-	DemoBasicLineAttack(GameplayModule *gameplay);
+	DemoLineAttack(GameplayModule *gameplay);
 
 	virtual bool run();
 

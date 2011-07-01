@@ -1,0 +1,11 @@
+The naming convention for the config files is as follows:
+[real|sim][2008|2011|Mixed](Field Location)
+
+The config should be specific to either the real robots or a simulation
+
+The model of robot used can be 2008-only, 2011-only, or Mixed, which uses both
+
+The field location allows configs for different scenarios, especially as
+carpets change between situations.  For normal testing at 14th street,
+use the "ShopField" settings, and for competitions on other fields, make 
+a new config to allow for adaptation of parameters.  

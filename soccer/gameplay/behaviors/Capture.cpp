@@ -151,6 +151,7 @@ bool Gameplay::Behaviors::Capture::run()
 		robot->dribble(Dribble_Speed);
 	} else {
 		robot->addText("Done");
+		robot->dribble(Dribble_Speed);
 		return false;
 	}
 	
