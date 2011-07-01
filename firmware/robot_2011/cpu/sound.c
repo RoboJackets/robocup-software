@@ -7,6 +7,30 @@ volatile int music_playing;
 
 // http://www.phy.mtu.edu/~suits/notefreqs.html
 
+const note_t song_victory[] =
+{
+        {PERIOD( 880), 100},
+        {PERIOD( 784), 100},
+        {PERIOD( 698), 100},
+        {PERIOD( 698), 100},
+        {PERIOD( 698), 100},
+        {PERIOD( 784), 100},
+        {PERIOD( 880), 100},
+        {PERIOD( 880), 100},
+        {PERIOD( 880), 100},
+        {PERIOD( 784), 100},
+        {PERIOD( 698), 100},
+        {PERIOD( 784), 100},
+        {PERIOD( 880), 100},
+        {PERIOD( 784), 100},
+        {PERIOD( 698), 100},
+	{PERIOD( 660), 100},
+        {PERIOD( 698), 100},
+        {0, 0}
+};
+
+
+
 const note_t song_startup[] =
 {
 	{PERIOD( 523), 100},
