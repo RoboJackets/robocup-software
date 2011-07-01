@@ -16,7 +16,7 @@
 
 <process>
 <name>Soccer</name>
-<command><arg>./soccer</arg><arg>-y</arg><arg>-pp</arg><arg>TestBasicAttack</arg><arg>-ng</arg><arg>-c</arg><arg>../config/real2008.xml</arg></command>
+<command><arg>./soccer</arg><arg>-y</arg><arg>-pp</arg><arg>TestAttack</arg><arg>-ng</arg><arg>-c</arg><arg>../config/real2008.xml</arg></command>
 <dir>/home/robojackets/robocup/software/soccer/bin</dir>
 </process>
 
