@@ -5,6 +5,7 @@
 #include <motion/MotionControl.hpp>
 #include <protobuf/LogFrame.pb.h>
 #include <framework/SystemState.hpp>
+#include <modeling/RobotFilter.hpp>
 
 #include <stdio.h>
 #include <iostream>
@@ -37,6 +38,14 @@ Robot::Robot(unsigned int shell, bool self)
 	_self = self;
 	angle = 0;
 	angleVel = 0;
+	
+	_filter = new RobotFilter();
+}
+
+Robot::~Robot()
+{
+	delete _filter;
+	_filter = 0;
 }
 
 OurRobot::OurRobot(int shell, SystemState *state):
@@ -47,7 +56,6 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	_delayed_goal = boost::none;
 	_planner_type = RRT;
 	exclude = false;
-	hasBall = false;
 	sensorConfidence = 0;
 	cmd_w = 0;
 	_lastChargedTime = 0;
@@ -579,4 +587,9 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	cmd.target->pos = findGoalOnPath(pos, _path, full_obstacles);
 	cmd.target->pathLength = rrt_path_len;
 	return;
+}
+
+bool OurRobot::hasBall() const
+{
+	return radioRx.ball_sense() && (Utils::timestamp() - radioRx.timestamp()) < 500000;
 }

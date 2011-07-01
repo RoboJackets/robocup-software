@@ -16,7 +16,6 @@
 #include <Utils.hpp>
 #include <Joystick.hpp>
 #include <LogUtils.hpp>
-#include <BallSensor.hpp>
 #include <Robot.hpp>
 
 #include <motion/MotionControl.hpp>
@@ -37,6 +36,8 @@ using namespace std;
 using namespace boost;
 using namespace Geometry2d;
 using namespace google::protobuf;
+
+static const uint64_t Command_Latency = 0;//88000;
 
 Processor::Processor(Configuration *config, bool sim)
 {
@@ -172,20 +173,9 @@ bool Processor::joystickValid()
 	return _joystick->valid();
 }
 
-void Processor::makeRobotObservations(vector<RobotObservation> &obs, const RepeatedPtrField<SSL_DetectionRobot> &robots, uint64_t time)
-{
-	obs.reserve(obs.size() + robots.size());
-	BOOST_FOREACH(const SSL_DetectionRobot &robot, robots)
-	{
-		obs.push_back(RobotObservation(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), robot.orientation(), time));
-	}
-}
-
 void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFrames)
 {
 	vector<BallObservation> ballObservations;
-	vector<RobotObservation> selfObservations;
-	vector<RobotObservation> oppObservations;
 	
 	BOOST_FOREACH(const SSL_DetectionFrame* frame, detectionFrames)
 	{
@@ -200,13 +190,41 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 		
 		// Add robot observations
 		const RepeatedPtrField<SSL_DetectionRobot> &selfRobots = _blueTeam ? frame->robots_blue() : frame->robots_yellow();
-		makeRobotObservations(selfObservations, selfRobots, time);
+		BOOST_FOREACH(const SSL_DetectionRobot &robot, selfRobots)
+		{
+			float angle = Utils::fixAngleDegrees(robot.orientation() * RadiansToDegrees + _teamAngle);
+			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angle, time);
+			unsigned int id = robot.robot_id();
+			if (id < _state.self.size())
+			{
+				_state.self[id]->filter()->update(&obs);
+			}
+		}
 		
 		const RepeatedPtrField<SSL_DetectionRobot> &oppRobots = _blueTeam ? frame->robots_yellow() : frame->robots_blue();
-		makeRobotObservations(oppObservations, oppRobots, time);
+		BOOST_FOREACH(const SSL_DetectionRobot &robot, oppRobots)
+		{
+			float angle = Utils::fixAngleDegrees(robot.orientation() * RadiansToDegrees + _teamAngle);
+			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angle, time);
+			unsigned int id = robot.robot_id();
+			if (id < _state.opp.size())
+			{
+				_state.opp[id]->filter()->update(&obs);
+			}
+		}
 	}
 	
 	_ballTracker->run(ballObservations, &_state);
+	
+	BOOST_FOREACH(Robot *robot, _state.self)
+	{
+		robot->filter()->predict(_state.logFrame->command_time(), robot);
+	}
+	
+	BOOST_FOREACH(Robot *robot, _state.opp)
+	{
+		robot->filter()->predict(_state.logFrame->command_time(), robot);
+	}
 }
 
 void Processor::run()
@@ -253,7 +271,7 @@ void Processor::run()
 		
 		// Make a new log frame
 		_state.logFrame = make_shared<Packet::LogFrame>();
-		_state.logFrame->set_command_time(startTime);		//FIXME - Not right
+		_state.logFrame->set_command_time(startTime + Command_Latency);
 		_state.logFrame->set_use_our_half(_useOurHalf);
 		_state.logFrame->set_use_opponent_half(_useOpponentHalf);
 		_state.logFrame->set_manual_id(_manualID);
@@ -431,7 +449,7 @@ void Processor::run()
 				log->set_cmd_w(r->cmd_w);
 				log->set_shell(r->shell());
 				log->set_angle(r->angle);
-				log->set_ball_sense(r->hasBall);
+				log->set_ball_sense(r->hasBall());
 				
 				BOOST_FOREACH(const Packet::DebugText &t, r->robotText)
 				{

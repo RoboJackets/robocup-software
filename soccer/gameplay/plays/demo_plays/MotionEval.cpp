@@ -33,7 +33,8 @@ bool Gameplay::Plays::MotionEval::run()
 		return false;
 	}
 	
-#if 0
+#if 1
+	// Move to points in sequence
 	const uint64_t now = _gameplay->state()->timestamp;
 	
 	Point p = _points[_target];
@@ -53,19 +54,19 @@ bool Gameplay::Plays::MotionEval::run()
 	robot->addText(QString().sprintf("MotionEval %d %d", _target, _reached));
 	state()->drawLine(_points[_target], _points[(_target - 1 + _points.size()) % _points.size()]);
  	robot->move(p);
-	robot->face(_points[(_target + 1) % _points.size()]);
+	robot->face(_points[_target]);
 // 	robot->face(ball().pos);
 #endif
 #if 0
 	// Pivot test
 	robot->dribble(31);
 	
-	if (robot->hasBall)
+	if (robot->hasBall())
 	{
 		_reached = true;
 	}
 	
-	if (_reached) //robot->hasBall)
+	if (_reached) //robot->hasBall())
 	{
 		robot->pivot(0.2 * M_PI, Ball_Radius + Robot_Radius);
 // 		robot->directVelocityCommands(Point(1, 1).normalized() * 0.2, 0);
@@ -75,7 +76,7 @@ bool Gameplay::Plays::MotionEval::run()
 	// Angular rate test
 	robot->directVelocityCommands(Point(), 2 * M_PI);
 #endif
-#if 1
+#if 0
 	// Ball capture test
 	if (state()->gameState.halt())
 	{
@@ -94,7 +95,7 @@ bool Gameplay::Plays::MotionEval::run()
 			robot->dribble(127);
 			robot->worldVelocity(toBall * 0.5);
 // 			int speed = min(127, 50 + (int)(now - startTime) * 127 * 2 / 1000000);
-			if (robot->hasBall)
+			if (robot->hasBall())
 			{
 				startTime = now;
 				_target = 1;

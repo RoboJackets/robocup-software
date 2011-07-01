@@ -13,6 +13,12 @@ public:
 	Geometry2d::Point pos;
 	float angle;
 	uint64_t time;
+	
+	// Compares the times on two observations.  Used for sorting.
+	bool operator<(const RobotObservation &other) const
+	{
+		return time < other.time;
+	}
 };
 
 class RobotFilter
@@ -28,5 +34,5 @@ public:
 	void predict(uint64_t time, Robot *robot);
 
 private:
-	Robot _estimate;
+	RobotPose _estimate;
 };

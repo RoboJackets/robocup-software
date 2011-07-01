@@ -173,7 +173,6 @@ class Processor: public QThread
 		/** send out the radio data for the radio program */
 		void sendRadioData();
 
-		void makeRobotObservations(std::vector<RobotObservation> &obs, const google::protobuf::RepeatedPtrField<SSL_DetectionRobot> &robots, uint64_t time);
 		void runModels(const std::vector<const SSL_DetectionFrame *> &detectionFrames);
 		
 		/** Used to start and stop the thread **/

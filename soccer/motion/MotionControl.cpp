@@ -52,7 +52,7 @@ void MotionControl::positionTrapezoidal()
 	float minStoppingDistance = (curSpeed * curSpeed - targetSpeed * targetSpeed) / (2 * *config.deceleration);
 	
 	//FIXME - Frame time from Processor
-	const float Latency = 3.0 / 60.0;
+	const float Latency = 0.088;
 	
 	float newSpeed;
 	
