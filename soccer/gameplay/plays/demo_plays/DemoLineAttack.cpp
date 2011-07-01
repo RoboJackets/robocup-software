@@ -1,18 +1,18 @@
-#include "DemoBasicPivotAttack.hpp"
+#include "DemoLineAttack.hpp"
 
 #include <boost/foreach.hpp>
 
 using namespace std;
 
-REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoBasicPivotAttack, "Demos")
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoLineAttack, "Demos")
 
-Gameplay::Plays::DemoBasicPivotAttack::DemoBasicPivotAttack(GameplayModule *gameplay):
-Play(gameplay),
-_kicker(gameplay)
+Gameplay::Plays::DemoLineAttack::DemoLineAttack(GameplayModule *gameplay):
+	Play(gameplay),
+	_kicker(gameplay)
 {
 }
 
-bool Gameplay::Plays::DemoBasicPivotAttack::run()
+bool Gameplay::Plays::DemoLineAttack::run()
 {
 	set<OurRobot *> available = _gameplay->playRobots();
 	assignNearest(_kicker.robot, available, Geometry2d::Point());
@@ -27,6 +27,6 @@ bool Gameplay::Plays::DemoBasicPivotAttack::run()
 	}
 
 	_kicker.run();
-
+	
 	return true;
 }

@@ -16,12 +16,15 @@ Kick::Kick(GameplayModule *gameplay)
 		enableGoalLineShot(false), enableLeftDownfieldShot(false), enableRightDownfieldShot(false),
 		_pivotKick(gameplay), _lineKick(gameplay)
 {
-	_state = State_PivotKick;
+	restart();
 	setTargetGoal();
 }
 
 void Kick::restart() {
 	_state = State_PivotKick;
+	use_chipper = false;
+	dribbler_speed = 127;
+	kick_power = 255;
 	_pivotKick.restart();
 	_lineKick.restart();
 }
@@ -102,6 +105,9 @@ bool Kick::run() {
 	} else {
 		// use pivot only for now
 		_pivotKick.target = available_target;
+		_pivotKick.dribble_speed = dribbler_speed;
+		_pivotKick.use_chipper = use_chipper;
+		_pivotKick.kick_power = kick_power;
 		return _pivotKick.run();
 	}
 }

@@ -12,10 +12,10 @@ namespace Plays
  * Demos continuous attack with a single robot
  * Uses the PivotKick behavior
  */
-class DemoBasicPivotAttack: public Play
+class DemoPivotAttack: public Play
 {
 public:
-	DemoBasicPivotAttack(GameplayModule *gameplay);
+	DemoPivotAttack(GameplayModule *gameplay);
 
 	virtual bool run();
 
