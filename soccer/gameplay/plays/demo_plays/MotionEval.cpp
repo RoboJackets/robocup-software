@@ -7,15 +7,21 @@ using namespace Geometry2d;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::MotionEval, "Demos")
 
+FILE *fp;
+
 Gameplay::Plays::MotionEval::MotionEval(GameplayModule *gameplay):
 	Play(gameplay)
 {
+	fp = fopen("test.txt", "wb");
+	_lastAngle = 0;
+	_lastTime = Utils::timestamp();
+	
 	_reached = false;
 	
 	_target = 0;
 	_points.resize(2);
-	_points[0] = Point(-1, 1.8);
-	_points[1] = Point(1, 1.8);
+	_points[0] = Point(-0.2, 1.0);
+	_points[1] = Point(0.2, 1.0);
 // 	_points[0] = Point(-1.3, 0.7);
 // 	_points[1] = Point(-1.3, 2.7);
 }
@@ -27,12 +33,17 @@ float Gameplay::Plays::MotionEval::score(GameplayModule *gameplay)
 
 bool Gameplay::Plays::MotionEval::run()
 {
+	if (_gameplay->playRobots().empty())
+	{
+		return false;
+	}
+	
 	OurRobot *robot = *_gameplay->playRobots().begin();
 	if (!robot || !robot->visible)
 	{
 		return false;
 	}
-	
+
 #if 1
 	// Move to points in sequence
 	const uint64_t now = _gameplay->state()->timestamp;

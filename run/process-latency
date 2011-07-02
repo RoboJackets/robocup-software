@@ -4,14 +4,54 @@ from math import *
 from numpy import *
 from matplotlib.pyplot import *
 
-t = loadtxt('latency.txt')
-s = t[:,0]
-c = t[:,1]
-d = t[:,2]
-sum_i = dot(s, d) / (len(s) * 2 * pi)
-sum_q = dot(c, d) / (len(c) * 2 * pi)
+import sys
+
+if len(sys.argv) == 2:
+	filename = sys.argv[1]
+else:
+	filename = 'latency.txt'
+
+data = loadtxt(filename)
+
+# Angular frequency of the overall test
+test_w = data[0, 0]
+# Maximum angular velocity of the robot
+robot_w = data[0, 1]
+
+print 'Test frequency (rad/s):', test_w
+print 'Robot speed (rad/s or m/s):', robot_w
+
+t = array(data[1:, 0])
+obs = array(data[1:, 1])
+
+print 'Test duration (s):', max(t)
+
+n = len(t)
+c = cos(t)
+s = sin(t)
+
+sum_i = dot(c, obs) / n * 2
+sum_q = dot(s, obs) / n * 2
 mag = sqrt(sum_i * sum_i + sum_q * sum_q)
 angle = atan2(sum_i, sum_q)
-print mag, angle * 180 / pi
-plot(s, 'r', c, 'g', d, 'b')
+print 'Observed magnitude (normalized):', mag / robot_w
+print 'Latency (degrees):', angle * 180 / pi
+print 'Latency (seconds):', angle / test_w
+
+ideal = sum_i * c + sum_q * s
+
+fy = abs(fft.rfft(obs))
+#plot(20*log10(fy/max(fy)))
+
+linear_speed_per_tick = 2 * pi * 200 * 0.026 / (1440 * 4.5) * 1.414
+angular_speed_per_tick = 2 * pi * 200 * 0.026 / (1440 * 4.5 * .0812)
+
+c = linear_speed_per_tick
+e0 = array(data[1:, 2]) * c
+e1 = array(data[1:, 3]) * c
+e2 = array(data[1:, 4]) * -c
+e3 = array(data[1:, 5]) * -c
+
+plot(obs, 'b', s * robot_w, 'r', ideal, 'g', e0, 'k', e1, 'k', e2, 'k', e3, 'k')
+#plot(s * robot_w, 'r', e0, 'k', e1, 'k', e2, 'k', e3, 'k')
 show()

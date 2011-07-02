@@ -25,6 +25,8 @@ namespace Gameplay
 				
 				bool _reached;
 				uint64_t _reachedTime;
+				float _lastAngle;
+				uint64_t _lastTime;
 		};
 	}
 }

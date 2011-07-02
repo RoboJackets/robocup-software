@@ -8,11 +8,15 @@
    <velocity value="10"/>
    <acceleration value="2.5"/>
    <deceleration value="0"/>
+   <predictTime value="0"/>
+   <responseTime value="0"/>
   </trapTrans>
   <trapRot>
    <velocity value="0"/>
    <acceleration value="0"/>
    <deceleration value="0"/>
+   <predictTime value="0"/>
+   <responseTime value="0"/>
   </trapRot>
   <translation>
    <p value="5"/>
@@ -61,11 +65,15 @@
    <velocity value="2.6"/>
    <acceleration value="3.5"/>
    <deceleration value="2.5"/>
+   <predictTime value="0.07"/>
+   <responseTime value="0.2"/>
   </trapTrans>
   <trapRot>
    <velocity value="0"/>
    <acceleration value="0"/>
    <deceleration value="0"/>
+   <predictTime value="0"/>
+   <responseTime value="0"/>
   </trapRot>
   <translation>
    <p value="5"/>
@@ -73,7 +81,7 @@
    <d value="40"/>
   </translation>
   <rotation>
-   <p value="5"/>
+   <p value="0"/>
    <i value="0"/>
    <d value="0"/>
   </rotation>

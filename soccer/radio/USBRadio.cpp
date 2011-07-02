@@ -15,7 +15,7 @@ using namespace boost;
 using namespace Packet;
 
 // Timeout for control transfers, in milliseconds
-static const int Control_Timeout = 100;
+static const int Control_Timeout = 1000;
 
 USBRadio::USBRadio()
 {

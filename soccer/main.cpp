@@ -5,6 +5,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <malloc.h>
+#include <assert.h>
 
 #include <QApplication>
 #include <QFile>
@@ -21,6 +23,90 @@
 #include "Configuration.hpp"
 
 using namespace std;
+
+//BEGIN memory debugging
+static void *(*old_malloc_hook)(size_t, const void *) = 0;
+static void *(*old_realloc_hook)(void *, size_t, const void *) = 0;
+static void (*old_free_hook)(void *, const void *) = 0;
+
+static void *md_malloc(size_t size, const void *caller);
+static void *md_realloc(void *ptr, size_t size, const void *caller);
+static void md_free(void *ptr, const void *caller);
+
+pthread_mutex_t md_mutex = PTHREAD_MUTEX_INITIALIZER;
+
+volatile bool barrier = false;
+
+static void *md_malloc(size_t size, const void *caller)
+{
+	pthread_mutex_lock(&md_mutex);
+	__malloc_hook = old_malloc_hook;
+	__realloc_hook = old_realloc_hook;
+	__free_hook = old_free_hook;
+	assert(!barrier);
+	barrier = true;
+	void *result = malloc(size);
+	old_malloc_hook = __malloc_hook;
+	__malloc_hook = md_malloc;
+	__realloc_hook = md_realloc;
+	__free_hook = md_free;
+	barrier = false;
+	pthread_mutex_unlock(&md_mutex);
+	return result;
+}
+
+static void *md_realloc(void *ptr, size_t size, const void *caller)
+{
+	pthread_mutex_lock(&md_mutex);
+	__malloc_hook = old_malloc_hook;
+	__realloc_hook = old_realloc_hook;
+	__free_hook = old_free_hook;
+	assert(!barrier);
+	barrier = true;
+	assert(size < 1048576 * 100);
+	void *result = realloc(ptr, size);
+	__malloc_hook = md_malloc;
+	__realloc_hook = md_realloc;
+	__free_hook = md_free;
+	barrier = false;
+	pthread_mutex_unlock(&md_mutex);
+	return result;
+}
+
+static void md_free(void *ptr, const void *caller)
+{
+	pthread_mutex_lock(&md_mutex);
+	__malloc_hook = old_malloc_hook;
+	__realloc_hook = old_realloc_hook;
+	__free_hook = old_free_hook;
+	assert(!barrier);
+	barrier = true;
+	if (!ptr)
+	{
+// 		printf("Free zero from %p\n", caller);
+	} else {
+		free(ptr);
+	}
+	__malloc_hook = md_malloc;
+	__realloc_hook = md_realloc;
+	__free_hook = md_free;
+	barrier = false;
+	pthread_mutex_unlock(&md_mutex);
+}
+
+static void md_init_hook()
+{
+	old_malloc_hook = __malloc_hook;
+	old_realloc_hook = __realloc_hook;
+	old_free_hook = __free_hook;
+	__malloc_hook = md_malloc;
+	__realloc_hook = md_realloc;
+	__free_hook = md_free;
+	fprintf(stderr, "Memory debugging initialized: %p %p %p\n", old_malloc_hook, old_realloc_hook, old_free_hook);
+}
+
+void (*__malloc_initialize_hook)(void) = md_init_hook;
+//END memory debugging
 
 void usage(const char* prog)
 {

@@ -22,7 +22,9 @@ struct RobotConfig
 		
 		ConfigDouble::shared_ptr velocity;
 		ConfigDouble::shared_ptr acceleration;
-		ConfigDouble::shared_ptr deceleration;
+// 		ConfigDouble::shared_ptr deceleration;
+		ConfigDouble::shared_ptr predictTime;
+		ConfigDouble::shared_ptr responseTime;
 	};
 	
 	struct Kicker
