@@ -63,6 +63,7 @@ srcs = [
 	'gameplay/behaviors/Kick.cpp',
 	'gameplay/behaviors/Mark.cpp',
 	'gameplay/behaviors/Yank.cpp',
+	'gameplay/behaviors/Fling.cpp',
 	'gameplay/behaviors/LineKick.cpp',
 	'gameplay/behaviors/PivotKick.cpp',
 
@@ -83,6 +84,7 @@ srcs = [
 	'gameplay/plays/demo_plays/DemoAttack.cpp',
 	'gameplay/plays/demo_plays/DemoCapture.cpp',
 	'gameplay/plays/demo_plays/DemoYank.cpp',
+	'gameplay/plays/demo_plays/DemoFling.cpp',
 	'gameplay/plays/demo_plays/DemoLineAttack.cpp',
 	'gameplay/plays/demo_plays/DemoPivotAttack.cpp',
 #	'gameplay/plays/demo_plays/CalSpeed.cpp',

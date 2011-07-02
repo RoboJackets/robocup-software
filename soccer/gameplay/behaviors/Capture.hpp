@@ -39,6 +39,9 @@ namespace Gameplay
 				/** goal for facing after trapping ball */
 				Geometry2d::Point target;
 				
+				// if true, will face the target point, otherwise skips to done when pivot is complete
+				bool enable_pivot;
+
 			private:
 				enum
 				{
