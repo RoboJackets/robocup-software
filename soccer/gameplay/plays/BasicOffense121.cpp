@@ -56,17 +56,6 @@ bool Gameplay::Plays::BasicOffense121::run()
 	assignNearest(_support1.robot, available, ballProj);
 	assignNearest(_support2.robot, available, ballProj);
 
-	//FIXME: remove hack when new robots can kick reliably
-	// swap robots so that striker is a 2008 robot
-	if (_striker.robot->newRevision()) {
-		if (_support1.robot)
-			swap(_striker.robot, _support1.robot);
-		else if (_support2.robot)
-			swap(_striker.robot, _support2.robot);
-		else if (_fullback.robot)
-			swap(_striker.robot, _fullback.robot);
-	}
-
 	// manually reset any kickers so they keep kicking
 	if (_striker.done())
 		_striker.restart();

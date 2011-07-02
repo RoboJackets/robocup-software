@@ -40,13 +40,6 @@ bool Gameplay::Plays::OurFreekick::run()
 	assignNearest(_fullback1.robot, available, Geometry2d::Point(-Field_GoalHeight/2.0, 0.0));
 	assignNearest(_fullback2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
 	
-	//FIXME: remove hack when new robots can kick reliably
-	// swap robots so that striker is a 2008 robot
-	if (_kicker.robot->newRevision()) {
-		if (_center.robot)
-			swap(_kicker.robot, _center.robot);
-	}
-
 // 	_kicker.aimType(Behaviors::Kick::ONETOUCH);
 // 	_kicker.setVScale(0.3, 0.2); // drive slowly until close to ball
 	_pdt.run();

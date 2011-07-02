@@ -64,7 +64,7 @@ bool Gameplay::Behaviors::LineKick::run()
 		state()->drawLine(ball().pos, target, Qt::white);
 		
 		//FIXME - We want to move in the direction of the target without path planning
-		robot->move(ball().pos + targetLine.delta() * 0.5);
+		robot->worldVelocity(targetLine.delta() * 5.0); // Full speed
 	} else {
 		robot->addText("Done");
 		return false;
