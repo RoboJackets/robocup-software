@@ -12,11 +12,12 @@ namespace Gameplay
 	{
 		/**
 		 * Offense with one main striker and a supporting robot that marks nearby robots
+		 * Acts as 1-1-2 field play (one forward, one midfield, two defenders)
 		 */
-		class BasicOffense: public Play
+		class BasicOffense112: public Play
 		{
 			public:
-				BasicOffense(GameplayModule *gameplay);
+				BasicOffense112(GameplayModule *gameplay);
 				
 				static float score(GameplayModule *gameplay);
 				virtual bool run();

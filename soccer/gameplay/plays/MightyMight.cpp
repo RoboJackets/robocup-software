@@ -36,24 +36,6 @@ bool Gameplay::Plays::MightyMight::run()
 	assignNearest(_kicker1.robot, available, ball().pos);
 	assignNearest(_kicker2.robot, available, ball().pos);
 
-	//FIXME: remove hack when new robots can kick reliably
-	// swap robots so that striker is a 2008 robot
-	if (_kicker1.robot->newRevision()) {
-		if (_kicker2.robot)
-			swap(_kicker1.robot, _kicker2.robot);
-		else if (_leftFullback.robot)
-			swap(_kicker1.robot, _leftFullback.robot);
-		else if (_rightFullback.robot)
-			swap(_kicker1.robot, _rightFullback.robot);
-	}	else if (_kicker2.robot->newRevision()) {
-			if (_kicker1.robot)
-				swap(_kicker2.robot, _kicker1.robot);
-			else if (_leftFullback.robot)
-				swap(_kicker2.robot, _leftFullback.robot);
-			else if (_rightFullback.robot)
-				swap(_kicker2.robot, _rightFullback.robot);
-	}
-
 	// manually reset any kickers so they keep kicking
 	if (_kicker1.done())
 		_kicker1.restart();

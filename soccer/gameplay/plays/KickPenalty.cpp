@@ -30,17 +30,6 @@ bool Gameplay::Plays::KickPenalty::run()
 	assignNearest(_idle1.robot, available, _idle1.target);
 	assignNearest(_idle2.robot, available, _idle2.target);
 	assignNearest(_idle3.robot, available, _idle3.target);
-	
-	//FIXME: remove hack when new robots can kick reliably
-	// swap robots so that striker is a 2008 robot
-	if (_kicker.robot->newRevision()) {
-		if (_idle1.robot)
-			swap(_kicker.robot, _idle1.robot);
-		else if (_idle2.robot)
-			swap(_kicker.robot, _idle2.robot);
-		else if (_idle3.robot)
-			swap(_kicker.robot, _idle3.robot);
-	}
 
 	_kicker.run();
 	_idle1.run();

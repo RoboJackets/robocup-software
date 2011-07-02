@@ -1,13 +1,13 @@
 #include <limits>
 #include <boost/foreach.hpp>
-#include "BasicOffense.hpp"
+#include "BasicOffense112.hpp"
 
 using namespace std;
 using namespace Geometry2d;
 
-REGISTER_PLAY_CATEGORY(Gameplay::Plays::BasicOffense, "Playing")
+REGISTER_PLAY_CATEGORY(Gameplay::Plays::BasicOffense112, "Playing")
 
-Gameplay::Plays::BasicOffense::BasicOffense(GameplayModule *gameplay):
+Gameplay::Plays::BasicOffense112::BasicOffense112(GameplayModule *gameplay):
 Play(gameplay),
 _leftFullback(gameplay, Behaviors::Fullback::Left),
 _rightFullback(gameplay, Behaviors::Fullback::Right),
@@ -22,14 +22,14 @@ _support(gameplay)
 
 }
 
-float Gameplay::Plays::BasicOffense::score ( Gameplay::GameplayModule* gameplay )
+float Gameplay::Plays::BasicOffense112::score ( Gameplay::GameplayModule* gameplay )
 {
 	// only run if we are playing and not in a restart
 	bool refApplicable = gameplay->state()->gameState.playing();
 	return refApplicable ? 0 : INFINITY;
 }
 
-bool Gameplay::Plays::BasicOffense::run()
+bool Gameplay::Plays::BasicOffense112::run()
 {
 	// handle assignments
 	set<OurRobot *> available = _gameplay->playRobots();
@@ -56,17 +56,6 @@ bool Gameplay::Plays::BasicOffense::run()
 	// choose offense, we want closest robot to ball to be striker
 	assignNearest(_striker.robot, available, ballProj);
 	assignNearest(_support.robot, available, ballProj);
-
-	//FIXME: remove hack when new robots can kick reliably
-	// swap robots so that striker is a 2008 robot
-// 	if (_striker.robot->newRevision()) {
-// 		if (_support.robot)
-// 			swap(_striker.robot, _support.robot);
-// 		else if (_rightFullback.robot)
-// 			swap(_striker.robot, _rightFullback.robot);
-// 		else
-// 			swap(_striker.robot, _leftFullback.robot);
-// 	}
 
 	// manually reset any kickers so they keep kicking
 	if (_striker.done())
