@@ -268,8 +268,8 @@ public:
 	// This is reset when this robot's role changes.
 	// This allows the robot to get close to the ball during a restart.
 	// if disabled, creates a small obstacle for the ball
-	bool willKick() const;
-	void willKick(bool enable);
+//	bool willKick() const;
+//	void willKick(bool enable);
 
 	// Add a custom radius avoidance of the ball
 	// creates an obstacle around the ball

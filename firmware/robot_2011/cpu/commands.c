@@ -494,7 +494,7 @@ static void cmd_stfu(int argc, const char *argv[], void *arg)
 	music_stop();
 }
 
-static const note_t *const test_songs[] = {song_startup, song_failure, song_overvoltage, song_undervoltage, song_fuse_blown};
+static const note_t *const test_songs[] = {song_startup, song_failure, song_overvoltage, song_undervoltage, song_fuse_blown, song_victory};
 #define NUM_TEST_SONGS (sizeof(test_songs) / sizeof(test_songs[0]))
 
 static void cmd_music(int argc, const char *argv[], void *arg)
