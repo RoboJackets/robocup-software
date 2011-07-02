@@ -39,6 +39,7 @@ void Gameplay::Behaviors::Capture::restart()
 {
 	_state = State_Approach;
 	_ccw = true;
+	enable_pivot = true;
 }
 
 bool Gameplay::Behaviors::Capture::run()
@@ -63,8 +64,14 @@ bool Gameplay::Behaviors::Capture::run()
 		robot->addText(QString("err %1 %2").arg(err).arg(robot->pos.distTo(approachPoint)));
 		if (robot->hasBall())
 		{
-			_state = State_Pivoting;
-			_ccw = ((target - ball().pos).cross(target - ball().pos) > 0);
+			if (enable_pivot)
+			{
+				_state = State_Pivoting;
+				_ccw = ((target - ball().pos).cross(target - ball().pos) > 0);
+			} else
+			{
+				_state = State_Done;
+			}
 		} else if (robot->pos.nearPoint(approachPoint, Approach_Threshold) && err >= cos(10 * DegreesToRadians))
 		{
 			_state = State_Capture;
@@ -85,7 +92,7 @@ bool Gameplay::Behaviors::Capture::run()
 		
 		if ((now - _lastBallTime) >= Capture_Time_Threshold)
 		{
-			if (ball().pos.nearPoint(robot->pos, Has_Ball_Dist) && err >= cos(20 * DegreesToRadians))
+			if (!enable_pivot || (ball().pos.nearPoint(robot->pos, Has_Ball_Dist) && err >= cos(20 * DegreesToRadians)))
 			{
 				_state = State_Done;
 			} else {
@@ -96,6 +103,11 @@ bool Gameplay::Behaviors::Capture::run()
 		}
 	} else if (_state == State_Pivoting)
 	{
+		if (!enable_pivot)
+		{
+			_state = State_Done;
+		}
+
 		// _lastBallTime is the last time we had the ball
 		if (robot->hasBall())
 		{
@@ -148,7 +160,7 @@ bool Gameplay::Behaviors::Capture::run()
 		{
 			_ccw = false;
 		}
-		robot->addText(QString("Pivot %1 %2 %3 %4").arg(
+		robot->addText(QString("Pivot %1 %2").arg(
 			QString::number(acos(error) * RadiansToDegrees),
 			QString::number(_ccw ? 1 : 0)));
 		

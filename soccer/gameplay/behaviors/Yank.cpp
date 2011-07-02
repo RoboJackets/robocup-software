@@ -12,7 +12,6 @@ Gameplay::Behaviors::Yank::Yank(GameplayModule *gameplay):
 	
 	target.pt[0] = Point(Field_GoalWidth / 2, Field_Length);
 	target.pt[1] = Point(-Field_GoalWidth / 2, Field_Length);
-	_capture.target = target.center();
 
 	_yank_travel_thresh = config()->createDouble("Yank/Ball Travel Threshold", 0.5);
 	_max_aim_error = config()->createDouble("Yank/Ball Max Trajectory Error", 0.3);
@@ -26,7 +25,7 @@ void Gameplay::Behaviors::Yank::restart()
 	_capture.restart();
 	_capture.target = target.center();
 	enable_yank = true;
-	dribble_speed = 50;
+	dribble_speed = 127;  // use maximum dribbler speed by default
 }
 
 bool Gameplay::Behaviors::Yank::run()
