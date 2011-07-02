@@ -11,6 +11,7 @@ Play(gameplay),
 _yank(gameplay)
 {
 	_dribblerSpeed = config()->createInt("DemoYank/Dribber Speed", 127);
+	_enableBump = config()->createBool("DemoYank/Enable Bump", false);
 }
 
 bool Gameplay::Plays::DemoYank::run()
@@ -29,6 +30,7 @@ bool Gameplay::Plays::DemoYank::run()
 
 	// set flags from parameters
 	_yank.dribble_speed = *_dribblerSpeed;
+	_yank.enable_bump = *_enableBump;
 
 	_yank.run();
 

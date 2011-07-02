@@ -37,11 +37,15 @@ namespace Gameplay
 				// and yanking
 				short dribble_speed;
 
+				// If true, adds a bump just before backing away to push the ball forward
+				bool enable_bump;
+
 			private:
 
 				enum
 				{
 					State_Capture,
+					State_Bump,
 					State_Yank,
 					State_Done
 				} _state;
@@ -49,12 +53,14 @@ namespace Gameplay
 				Capture _capture;
 
 				Geometry2d::Point _yankBallStart;   // position of the ball at the start of yank
+				Geometry2d::Point _yankRobotStart;  // position of the robot at start of yank
 
 				// tuning parameters
 				ConfigDouble::shared_ptr _yank_travel_thresh; // minimum distance the ball must travel to be done
 				ConfigDouble::shared_ptr _max_aim_error;      // maximum distance from yank line allowed
 				ConfigDouble::shared_ptr _backup_dist; 				// minimum distance to clear the ball before getting off line
 				ConfigDouble::shared_ptr _ball_clearance;     // distance the robot needs to get away from the line
+				ConfigDouble::shared_ptr _bump_distance;      // distance forward to move in a bump
 		};
 	}
 }
