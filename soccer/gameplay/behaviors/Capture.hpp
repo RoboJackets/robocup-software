@@ -53,6 +53,9 @@ namespace Gameplay
 				
 				bool _ccw;
 				uint64_t _lastBallTime;
+
+				// GUI Config parameters
+				ConfigDouble::shared_ptr _stationaryMaxSpeed; // largest ball speed in m/s to treat as stationary
 			};
 	}
 }
