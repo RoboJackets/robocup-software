@@ -136,7 +136,7 @@ bool Gameplay::Behaviors::Capture::run()
 		state()->drawLine(ball().pos, target, Qt::yellow);
 		state()->drawLine(robot->pos, (ball().pos - robot->pos).normalized() * 8, Qt::green);
 
-		// See if it's time to kick
+		// See if we've gotten close enough
 		float error = dir.dot((target - ball().pos).normalized());
 
 		// Decide which direction to rotate around the ball

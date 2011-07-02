@@ -1,0 +1,111 @@
+#include "Yank.hpp"
+
+#include <Utils.hpp>
+
+using namespace std;
+using namespace Geometry2d;
+
+Gameplay::Behaviors::Yank::Yank(GameplayModule *gameplay):
+    SingleRobotBehavior(gameplay), _capture(gameplay)
+{
+	restart();
+	
+	target.pt[0] = Point(Field_GoalWidth / 2, Field_Length);
+	target.pt[1] = Point(-Field_GoalWidth / 2, Field_Length);
+	_capture.target = target.center();
+
+	_yank_travel_thresh = config()->createDouble("Yank/Ball Travel Threshold", 0.5);
+	_max_aim_error = config()->createDouble("Yank/Ball Max Trajectory Error", 0.3);
+	_backup_dist = config()->createDouble("Yank/Backup Distance", 0.5);
+	_ball_clearance = config()->createDouble("Yank/Ball Clearance", Robot_Radius + Ball_Radius + 0.1);
+}
+
+void Gameplay::Behaviors::Yank::restart()
+{
+	_state = State_Capture;
+	_capture.restart();
+	_capture.target = target.center();
+	enable_yank = true;
+	dribble_speed = 50;
+}
+
+bool Gameplay::Behaviors::Yank::run()
+{
+	if (!robot || !robot->visible)
+	{
+		return false;
+	}
+	
+	// force sub-behavior to have its robot assigned
+	_capture.robot = robot;
+
+	// The direction we're facing
+	const Point dir = Point::direction(robot->angle * DegreesToRadians);
+	
+	// State changes
+	Point targetToBall = (ball().pos - target.center()).normalized();
+	Segment yankLine(target.center(), ball().pos), aimLine(ball().pos, ball().pos + targetToBall * 5.0);
+	if (_state == State_Capture)
+	{
+		if (_capture.done() && enable_yank)
+		{
+			_state = State_Yank;
+			_yankBallStart = ball().pos;
+		}
+	} else if (_state == State_Yank)
+	{
+		// we are done if ball has moved more than thresh past start point towards target
+		Segment fixedYankLine(target.center(), _yankBallStart);
+		if (!ball().pos.nearPoint(_yankBallStart, *_yank_travel_thresh) && fixedYankLine.nearPoint(ball().pos, *_max_aim_error))
+		{
+			_state = State_Done;
+		}
+
+		// if ball has gotten away, reset to capture
+		if (!fixedYankLine.nearPoint(ball().pos, *_max_aim_error)) {
+			_state = State_Capture;
+		}
+	}
+	
+	state()->drawLine(yankLine, Qt::red);
+	state()->drawLine(aimLine, Qt::black);
+	state()->drawLine(target, Qt::yellow);
+	
+	// Driving
+	if (_state == State_Capture)
+	{
+		robot->addText("Capturing");
+
+		// aim in opposite direction
+		_capture.target = aimLine.pt[1]; // opposite direction
+		_capture.run();
+	}  else if (_state == State_Yank)
+	{
+		robot->addText("Yanking");
+		Segment fixedYankLine(target.center(), _yankBallStart);
+		state()->drawLine(fixedYankLine, Qt::white);
+		
+		// if we are close to the ball, we must back up fast
+		if (ball().pos.nearPoint(robot->pos, *_backup_dist)) {
+			robot->avoidBall(-1.0);
+			robot->worldVelocity(fixedYankLine.delta() * 5.0);
+			robot->angularVelocity(0.0);
+		} else
+		{
+			// otherwise, get off of the yank line with path planning
+			robot->avoidBall(0.3);
+			// don't drive into the ball
+			robot->localObstacles(ObstaclePtr(new CircleObstacle(_yankBallStart, ball().pos.distTo(_yankBallStart) + Robot_Radius)));
+			// stay out of path of ball
+			robot->localObstacles(ObstaclePtr(new PolygonObstacle(Polygon(fixedYankLine, *_ball_clearance))));
+			robot->move(robot->pos, false); // let path planning clear the line
+		}
+
+		robot->dribble(dribble_speed);
+	} else {
+		robot->addText("Done");
+		return false;
+	}
+	
+	return true;
+}
