@@ -26,8 +26,9 @@ static const float Position_Uncertainty = 0.5;
 
 // Quickly removes element <i> from a vector without the preserving order of later elements
 template<class T>
-void fastRemove(T &v, int i)
+void fastRemove(T &v, unsigned int i)
 {
+	assert(i < v.size());
 	int last = v.size() - 1;
 	swap(v[i], v[last]);
 	v.resize(last);
@@ -88,9 +89,7 @@ void BallTracker::run(const vector< BallObservation >& obs, SystemState *state)
 		{
 			if (goodObs[i] == 0)
 			{
-				int last = goodObs.size() - 1;
-				swap(goodObs[i], goodObs[last]);
-				goodObs.resize(last);
+				fastRemove(goodObs, i);
 				--i;
 			}
 		}
@@ -188,6 +187,7 @@ void BallTracker::run(const vector< BallObservation >& obs, SystemState *state)
 		if ((now - _possibleTracks[i].obs.time) >= Drop_Possible_Track_Time)
 		{
 			fastRemove(_possibleTracks, i);
+			--i;
 		}
 	}
 	

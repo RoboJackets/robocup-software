@@ -12,7 +12,9 @@ RobotConfig::PID::PID(Configuration* config, QString prefix):
 RobotConfig::Dynamics::Dynamics(Configuration* config, QString prefix):
 	velocity(config->createDouble(QString("%1/velocity").arg(prefix))),
 	acceleration(config->createDouble(QString("%1/acceleration").arg(prefix))),
-	deceleration(config->createDouble(QString("%1/deceleration").arg(prefix)))
+// 	deceleration(config->createDouble(QString("%1/deceleration").arg(prefix))),
+	predictTime(config->createDouble(QString("%1/predictTime").arg(prefix))),
+	responseTime(config->createDouble(QString("%1/responseTime").arg(prefix)))
 {
 }
 

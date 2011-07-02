@@ -32,57 +32,57 @@ void MotionControl::positionTrapezoidal()
 		return;
 	}
 	
-	Point velocity = _robot->vel;
-	Point posError = _robot->cmd.target->pos - _robot->pos;
-	Point posErrorDir = posError.normalized();
-	
 	// The velocity controller assumes that the robot is capable of infinite acceleration,
 	// and thus the speed command will be executed completely (+noise) by the next frame.
 	
-	// Trapezoidal control
 	const RobotConfig::Dynamics &config = _robot->config->trapTrans;
+	float maxSpeed = *config.velocity;
+	float acceleration = *config.acceleration;
+// 	float deceleration = *config.deceleration;
+	float predictTime = *config.predictTime;
+	float responseTime = *config.responseTime;
+	
+	Point velocity = _robot->vel;
+	Point predictPos = _robot->pos + velocity * predictTime;
+	Point posError = _robot->cmd.target->pos - predictPos;
+	Point posErrorDir = posError.normalized();
+	
 // 	float curSpeed = velocity.dot(posErrorDir);
 	float curSpeed = _robot->vel.mag();
-	float targetSpeed = 0;	//FIXME - If nonzero, more cases appear
+// 	float targetSpeed = 0;	//FIXME - If nonzero, more cases appear
 	
 	// Distance left to travel to reach goal
 	float distanceLeft = posError.mag();
 	
 	// How far would we travel if we decelerated at the limit?
-	float minStoppingDistance = (curSpeed * curSpeed - targetSpeed * targetSpeed) / (2 * *config.deceleration);
+// 	float minStoppingDistance = (curSpeed * curSpeed - targetSpeed * targetSpeed) / (2 * deceleration);
 	
-	//FIXME - Frame time from Processor
-	const float Latency = 0.088;
+	// The speed we need to stop at the goal with unlimited acceleration
+	float stoppingSpeed = distanceLeft / responseTime;
 	
 	float newSpeed;
 	
-	_robot->addText(QString("minStoppingDistance %1 %2").arg(minStoppingDistance).arg(distanceLeft));
+// 	_robot->addText(QString("minStoppingDistance %1 %2").arg(minStoppingDistance).arg(distanceLeft));
 	_robot->addText(QString("curSpeed %1 %2 wanted %3").arg(curSpeed).arg(velocity.mag()).arg(_lastOutputSpeed));
-	//FIXME - Predict speed changes over time to compensate for latency
-	if (distanceLeft < minStoppingDistance)
+	if (stoppingSpeed < curSpeed && stoppingSpeed < maxSpeed)
 	{
 		// Try to stop on the target regardless of deceleration
-		double a = (curSpeed * curSpeed - targetSpeed * targetSpeed) / (2 * distanceLeft);
-		newSpeed = max(0.0, curSpeed - a * Latency);
-		_robot->addText(QString("decel hard to %1").arg(newSpeed));
-	} else if (distanceLeft <= minStoppingDistance * 1.1)
-	{
-		// Decelerate
-		newSpeed = max(0.0, curSpeed - *config.deceleration * Latency);
+		newSpeed = stoppingSpeed;
 		_robot->addText(QString("decel to %1").arg(newSpeed));
-	} else if (curSpeed < *config.velocity)
+// 	} else if (distanceLeft <= minStoppingDistance * 1.5)
+// 	{
+// 		// Decelerate
+// 		newSpeed = max(0.0f, curSpeed - deceleration * responseTime);
+// 		_robot->addText(QString("decel to %1").arg(newSpeed));
+	} else if (curSpeed < maxSpeed)
 	{
 		// Accelerate
-// 		if (curSpeed < *config.velocity / 20)
-// 		{
-// 			newSpeed = *config.velocity / 4;
-// 		} else {
-			newSpeed = min((double)*config.velocity, curSpeed + *config.acceleration * Latency);
-// 		}
+		newSpeed = min(maxSpeed, curSpeed + acceleration * responseTime);
+		newSpeed = min(newSpeed, stoppingSpeed);
 		_robot->addText(QString("accel to %1").arg(newSpeed));
 	} else {
 		// Constant velocity
-		newSpeed = *config.velocity;
+		newSpeed = maxSpeed;
 		_robot->addText(QString("cruise at %1").arg(newSpeed));
 	}
 	
@@ -90,7 +90,6 @@ void MotionControl::positionTrapezoidal()
 	_robot->cmd.worldVel = posErrorDir * newSpeed;
 }
 
-#if 0
 void MotionControl::positionPD()
 {
 	if (!_robot->cmd.target)
@@ -98,22 +97,14 @@ void MotionControl::positionPD()
 		return;
 	}
 	
-	float curSpeed = _velocity.mag();
-	float maxSpeed = curSpeed + *_robot->config->trapTrans.acceleration;
+	static const float Latency = 0.176;
+	
+	float curSpeed = _robot->vel.mag();
+	float maxSpeed = curSpeed + *_robot->config->trapTrans.acceleration * Latency;
 	float cruise = *_robot->config->trapTrans.velocity;
 	maxSpeed = min(maxSpeed, cruise);
-	float minSpeed = curSpeed - *_robot->config->trapTrans.deceleration;
 	
-	float deadzone = 0.4f;
-	if (_robot->hasBall)
-	{
-		deadzone = 0.7f;
-	}
-	deadzone = 0;
-	
-	minSpeed = max(deadzone, minSpeed);
-	
-	Point posError = _robot->cmd.goalPosition - _robot->pos;
+	Point posError = _robot->cmd.target->pos - _robot->pos;
 	float p = *_robot->config->translation.p;
 	
 	Point newVel = posError * p + (posError - _lastPosError) * *_robot->config->translation.d;
@@ -122,27 +113,22 @@ void MotionControl::positionPD()
 	{
 		_robot->addText(QString().sprintf("Dist %f Speed %f %f", posError.mag(), curSpeed, newSpeed));
 // 		_robot->addText(QString().sprintf("Range %f %f", minSpeed, maxSpeed));
-		if (newSpeed < minSpeed)
-		{
-			_robot->addText("Limited by decel");
-			_worldVel = newVel / newSpeed * minSpeed;
-		} else if (newSpeed > maxSpeed && newSpeed > 1.0)
+		if (newSpeed > maxSpeed && newSpeed > 1.0)
 		{
 			_robot->addText("Limited by accel/cruise");
-			_worldVel = newVel / newSpeed * maxSpeed;
+			_robot->cmd.worldVel = newVel / newSpeed * maxSpeed;
 		} else {
-	// 		_robot->addText("Unchanged");
-			_worldVel = newVel;
+// 			_robot->addText("Unchanged");
+			_robot->cmd.worldVel = newVel;
 		}
-		_robot->addText(QString().sprintf("Final vel %f %f", _worldVel.x, _worldVel.y));
+		_robot->addText(QString().sprintf("Final vel %f %f", _robot->cmd.worldVel->x, _robot->cmd.worldVel->y));
 	} else {
 		// Not trying to move
-		_worldVel = Point();
+		_robot->cmd.worldVel = Point();
 	}
 	
 	_lastPosError = posError;
 }
-#endif
 
 void MotionControl::anglePD()
 {
@@ -216,6 +202,7 @@ void MotionControl::run()
 // 	_angularVelocity = fixAngleRadians((_robot->angle - _lastAngle) * DegreesToRadians) / dtime;
 	
 	positionTrapezoidal();
+// 	positionPD();
 	anglePD();
 	
 	// Scaling

@@ -37,7 +37,7 @@ using namespace boost;
 using namespace Geometry2d;
 using namespace google::protobuf;
 
-static const uint64_t Command_Latency = 0;//88000;
+static const uint64_t Command_Latency = 0;
 
 Processor::Processor(Configuration *config, bool sim)
 {
@@ -193,7 +193,7 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 		BOOST_FOREACH(const SSL_DetectionRobot &robot, selfRobots)
 		{
 			float angle = Utils::fixAngleDegrees(robot.orientation() * RadiansToDegrees + _teamAngle);
-			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angle, time);
+			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angle, time, frame->frame_number());
 			unsigned int id = robot.robot_id();
 			if (id < _state.self.size())
 			{
@@ -205,7 +205,7 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 		BOOST_FOREACH(const SSL_DetectionRobot &robot, oppRobots)
 		{
 			float angle = Utils::fixAngleDegrees(robot.orientation() * RadiansToDegrees + _teamAngle);
-			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angle, time);
+			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angle, time, frame->frame_number());
 			unsigned int id = robot.robot_id();
 			if (id < _state.opp.size())
 			{
@@ -517,7 +517,7 @@ void Processor::run()
 			// This seems to depend on how many threads are blocked.
 			::usleep(_framePeriod - lastFrameTime);
 		} else {
-			printf("Processor took too long: %d us\n", lastFrameTime);
+//			printf("Processor took too long: %d us\n", lastFrameTime);
 		}
 	}
 	

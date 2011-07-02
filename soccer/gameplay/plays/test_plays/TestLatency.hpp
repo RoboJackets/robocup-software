@@ -16,8 +16,6 @@ namespace Gameplay
 
 			protected:
 				uint64_t _startTime;
-				uint64_t _lastTime;
-				float _lastAngle;
 				bool _first;
 				std::ofstream _file;
 		};

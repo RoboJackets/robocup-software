@@ -45,7 +45,8 @@ public:
 		visible(false),
 		angle(0),
 		angleVel(0),
-		time(0)
+		time(0),
+		visionFrame(0)
 	{
 	}
 	
@@ -57,6 +58,7 @@ public:
 	
 	// Time at which this estimate is valid
 	uint64_t time;
+	int visionFrame;
 };
 
 class Robot: public RobotPose
@@ -121,6 +123,12 @@ public:
 class MotionCommand
 {
 	public:
+		MotionCommand()
+		{
+			vScale = 1.0;
+			wScale = 1.0;
+		}
+
 		//FIXME - Remove pathLength and pathEnd.  Store a path in MotionCommand.  What about facing?
 		
 		// Any of these optionals may be set before motion control runs.
@@ -140,12 +148,6 @@ class MotionCommand
 		
 		// Angular velocity in rad/s counterclockwise
 		boost::optional<float> angularVelocity;
-		
-		MotionCommand()
-		{
-			vScale = 1.0;
-			wScale = 1.0;
-		}
 };
 
 class OurRobot: public Robot

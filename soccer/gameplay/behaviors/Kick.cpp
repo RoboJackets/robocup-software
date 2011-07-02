@@ -13,8 +13,12 @@ namespace Behaviors
 
 Kick::Kick(GameplayModule *gameplay)
 	: SingleRobotBehavior(gameplay),
-		enableGoalLineShot(false), enableLeftDownfieldShot(false), enableRightDownfieldShot(false),
-		_pivotKick(gameplay), _lineKick(gameplay)
+	enableGoalLineShot(false),
+	enableLeftDownfieldShot(false),
+	enableRightDownfieldShot(false),
+	enablePushing(false),
+	_pivotKick(gameplay),
+	_lineKick(gameplay)
 {
 	restart();
 	setTargetGoal();
