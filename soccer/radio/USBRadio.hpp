@@ -7,8 +7,8 @@
 #include "Radio.hpp"
 
 //FIXME - This needs to go somewhere common to this code, the robot firmware, and the base station test code.
-const unsigned int Forward_Size = 31;
-const unsigned int Reverse_Size = 11;
+const unsigned int Forward_Size = 36;
+const unsigned int Reverse_Size = 12;
 
 class USBRadio: public Radio
 {

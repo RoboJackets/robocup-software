@@ -211,10 +211,8 @@ void USBRadio::send(Packet::RadioTx& packet)
 	
 	uint8_t forward_packet[Forward_Size];
 	
-	int reverse_board_id = packet.reverse_board_id();
-	
 	// Build a forward packet
-	forward_packet[0] = (_sequence << 4) | reverse_board_id;
+	forward_packet[0] = _sequence;
 	packet.set_sequence(_sequence);
 	
 	int offset = 1;
@@ -224,10 +222,10 @@ void USBRadio::send(Packet::RadioTx& packet)
 	{
 		//FIXME - Read from both channels and merge
 		const RadioTx::Robot &robot = packet.robots(robot_id);
-		int board_id = robot.board_id();
+		int robot_id = robot.robot_id();
 		
 		int8_t m0, m1, m2, m3;
-		uint8_t kick, roller;
+		uint8_t kick, dribbler;
 		
 		self_bots++;
 		
@@ -237,25 +235,20 @@ void USBRadio::send(Packet::RadioTx& packet)
 		m0 = -robot.motors(3);
 		kick = robot.kick();
 		
-		//FIXME - Lame, for testing 2011 chipping
-		if (robot.use_chipper())
+		if (robot.dribbler() > 0)
 		{
-			forward_packet[0] |= 0x80;
-		}
-		
-		if (robot.roller() > 0)
-		{
-			roller = robot.roller() * 2;
+			dribbler = robot.dribbler() * 2;
 		} else {
-			roller = 0;
+			dribbler = 0;
 		}
 		
 		forward_packet[offset++] = m0;
 		forward_packet[offset++] = m1;
 		forward_packet[offset++] = m2;
 		forward_packet[offset++] = m3;
-		forward_packet[offset++] = (roller & 0xf0) | (board_id & 0x0f);
+		forward_packet[offset++] = (dribbler & 0xf0) | (robot_id & 0x0f);
 		forward_packet[offset++] = kick;
+		forward_packet[offset++] = robot.use_chipper() ? 0x80 : 0;
 	}
 	
 	// Unused slots
@@ -266,6 +259,7 @@ void USBRadio::send(Packet::RadioTx& packet)
 		forward_packet[offset++] = 0;
 		forward_packet[offset++] = 0;
 		forward_packet[offset++] = 0x0f;
+		forward_packet[offset++] = 0;
 		forward_packet[offset++] = 0;
 	}
 	
@@ -300,21 +294,28 @@ void USBRadio::handleRxData(uint8_t *buf)
 {
 	uint64_t rx_time = Utils::timestamp();
 	
-	int board_id = buf[0] & 0x0f;
-	
 	_reversePackets.push_back(RadioRx());
 	RadioRx &packet = _reversePackets.back();
 	
 	packet.set_timestamp(rx_time);
-	packet.set_board_id(board_id);
+	packet.set_sequence((buf[0] >> 4) & 7);
+	packet.set_robot_id(buf[0] & 0x0f);
 	packet.set_rssi((int8_t)buf[1] / 2.0 - 74);
-	packet.set_battery(buf[3] * 3.3 / 256.0 * 5.0);
-	packet.set_ball_sense(buf[5] & (1 << 5));
-	packet.set_charged(buf[4] & 1);
-	packet.set_motor_fault(buf[5] & 0x1f);
-	packet.set_kicker_status(buf[4]);
-	packet.set_sequence(buf[0] >> 4);
+	packet.set_battery(buf[2] / 10.0f);
+	packet.set_kicker_status(buf[3]);
 	
+	// Drive motor status
+	for (int i = 0; i < 4; ++i)
+	{
+		packet.add_motor_status(MotorStatus((buf[4] >> (i * 2)) & 3));
+	}
+	
+	// Dribbler status
+	packet.add_motor_status(MotorStatus(buf[5] & 3));
+	
+	packet.set_ball_sense_status(BallSenseStatus((buf[5] >> 2) & 3));
+	
+	// Encoders
 	for (int i = 0; i < 4; ++i)
 	{
 		int high = (buf[10] >> (i * 2)) & 3;
@@ -325,4 +326,6 @@ void USBRadio::handleRxData(uint8_t *buf)
 		}
 		packet.add_encoders(value);
 	}
+	
+	packet.set_kicker_voltage(buf[11]);
 }

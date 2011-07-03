@@ -341,6 +341,7 @@ public:
 	MotionCommand cmd;
 
 	bool hasBall() const;
+	bool kickerWorks() const;
 
 	/** velocity specification for direct velocity control */
 	Geometry2d::Point cmd_vel;

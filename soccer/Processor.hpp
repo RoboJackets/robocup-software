@@ -212,9 +212,6 @@ class Processor: public QThread
 		
 		bool _defendPlusX;
 		
-		/** Which robot will next send reverse data */
-		int _reverseId;
-		
 		// Processing period in microseconds
 		int _framePeriod;
 		

@@ -42,7 +42,6 @@ static const uint64_t Command_Latency = 0;
 Processor::Processor(Configuration *config, bool sim)
 {
 	_running = true;
-	_reverseId = 0;
 	_framePeriod = 1000000 / 60;
 	_manualID = -1;
 	_defendPlusX = false;
@@ -194,6 +193,7 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 		{
 			float angle = Utils::fixAngleDegrees(robot.orientation() * RadiansToDegrees + _teamAngle);
 			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angle, time, frame->frame_number());
+			obs.source = frame->camera_id();
 			unsigned int id = robot.robot_id();
 			if (id < _state.self.size())
 			{
@@ -206,6 +206,7 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 		{
 			float angle = Utils::fixAngleDegrees(robot.orientation() * RadiansToDegrees + _teamAngle);
 			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angle, time, frame->frame_number());
+			obs.source = frame->camera_id();
 			unsigned int id = robot.robot_id();
 			if (id < _state.opp.size())
 			{
@@ -385,7 +386,7 @@ void Processor::run()
 			curStatus.lastRadioRxTime = rx.timestamp();
 			
 			// Store this packet in the appropriate robot
-			unsigned int board = rx.board_id();
+			unsigned int board = rx.robot_id();
 			if (board < Num_Shells)
 			{
 				// We have to copy because the RX packet will survive past this frame
@@ -449,7 +450,12 @@ void Processor::run()
 				log->set_cmd_w(r->cmd_w);
 				log->set_shell(r->shell());
 				log->set_angle(r->angle);
-				log->set_ball_sense(r->hasBall());
+				log->set_kicker_voltage(r->radioRx.kicker_voltage());
+				log->set_charged(r->radioRx.kicker_status() & 0x01);
+				log->set_kicker_works(!(r->radioRx.kicker_status() & 0x90));
+				log->set_ball_sense_status(r->radioRx.ball_sense_status());
+				log->mutable_motor_status()->Clear();
+				log->mutable_motor_status()->MergeFrom(r->radioRx.motor_status());
 				
 				BOOST_FOREACH(const Packet::DebugText &t, r->robotText)
 				{
@@ -530,22 +536,6 @@ void Processor::sendRadioData()
 {
 	Packet::RadioTx *tx = _state.logFrame->mutable_radio_tx();
 	
-	// Cycle through reverse IDs for all visible robots
-	int giveUp = _reverseId;
-	do
-	{
-		_reverseId = (_reverseId + 1) % Num_Shells;
-		if (_state.self[_reverseId]->visible)
-		{
-			break;
-		}
-	} while (_reverseId != giveUp);
-	if (_reverseId == giveUp && _manualID >= 0)
-	{
-		_reverseId = _manualID;
-	}
-	tx->set_reverse_board_id(_reverseId);
-	
 	// Halt overrides normal motion control, but not joystick
 	if (!_joystick->autonomous() || _state.gameState.halt())
 	{
@@ -557,7 +547,7 @@ void Processor::sendRadioData()
 			{
 				txRobot.set_motors(m, 0);
 				txRobot.set_kick(0);
-				txRobot.set_roller(0);
+				txRobot.set_dribbler(0);
 			}
 		}
 	}
@@ -570,7 +560,7 @@ void Processor::sendRadioData()
 			Packet::RadioTx::Robot *txRobot = tx->add_robots();
 			
 			// Copy motor commands.
-			// Even if we are using the joystick, this sets board_id and the
+			// Even if we are using the joystick, this sets robot_id and the
 			// number of motors.
 			txRobot->CopyFrom(r->radioTx);
 			

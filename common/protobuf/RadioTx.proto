@@ -3,13 +3,10 @@ package Packet;
 // Packet going out from control program to radio program
 message RadioTx
 {
-	// Which board should return reverse data.  Must be on [0, 15].
-	required uint32 reverse_board_id = 1;
-
 	message Robot
 	{
-		required uint32 board_id = 1;
-		optional int32 roller = 2;
+		required uint32 robot_id = 1;
+		optional int32 dribbler = 2;
 		optional uint32 kick = 3;
 		optional bool use_chipper = 4;
 		repeated int32 motors = 5;

@@ -1,24 +1,36 @@
 package Packet;
 
+enum MotorStatus
+{
+	Good = 0;
+	Hall_Failure = 1;
+	Stalled = 2;
+	Encoder_Failure = 3;
+}
+
+enum BallSenseStatus
+{
+	NoBall = 0;
+	HasBall = 1;
+	Dazzled = 2;
+	Failed = 3;
+}
+
 // Packet going out from radio program to control program
 message RadioRx
 {
 	required uint64 timestamp = 1;
-	required uint32 board_id = 2;
+	required uint32 robot_id = 2;
 	optional float rssi = 3;
 	optional float battery = 4;
 	
-	// ball sensor
-	optional bool ball_sense = 5;
+	optional BallSenseStatus ball_sense_status = 5;
 	
-	// True if the kicker is fully charged
-	optional bool charged = 6 [default = true];
-	
-	// Motor fault bitmap
-	optional uint32 motor_fault = 7;
-
+	repeated MotorStatus  motor_status = 7;
 	repeated int32 encoders = 8;
 	
 	optional uint32 kicker_status = 9;
 	optional uint32 sequence = 10;
+	
+	optional uint32 kicker_voltage = 11;
 }
