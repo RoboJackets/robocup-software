@@ -163,6 +163,10 @@ class Processor: public QThread
 		// Time of the first LogFrame
 		uint64_t firstLogTime;
 		
+		// Access to RobotConfigs
+		RobotConfig * robotConfig2008;
+		RobotConfig * robotConfig2011;
+
 	protected:
 		void run();
 		

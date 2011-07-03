@@ -146,17 +146,20 @@ void MainWindow::configuration(Configuration* config)
 	// Revision-specific configuration
 	_robotConfig2008 = new RobotConfig(config, "Rev2008");
 	_robotConfig2011 = new RobotConfig(config, "Rev2011");
-	
-	updateRobotConfigs();
 }
 
 void MainWindow::processor(Processor* value)
 {
 	// This should only happen once
 	assert(!_processor);
+	assert(_robotConfig2008);
+	assert(_robotConfig2011);
 	
 	_processor = value;
 	
+	_processor->robotConfig2008 = _robotConfig2008;
+	_processor->robotConfig2011 = _robotConfig2011;
+
 	// External referee
 	on_externalReferee_toggled(_ui.externalReferee->isChecked());
 	
@@ -172,20 +175,6 @@ void MainWindow::processor(Processor* value)
 	_playConfigTab = new PlayConfigTab();
 	_ui.tabWidget->addTab(_playConfigTab, tr("Plays"));
 	_playConfigTab->setup(_processor->gameplayModule());
-	
-	updateRobotConfigs();
-}
-
-void MainWindow::updateRobotConfigs()
-{
-	if (_processor)
-	{
-		QMutexLocker lock(&_processor->loopMutex());
-		BOOST_FOREACH(OurRobot *robot, state()->self)
-		{
-			robot->config = (robot->newRevision()) ? _robotConfig2011 : _robotConfig2008;
-		}
-	}
 }
 
 void MainWindow::logFileChanged()
@@ -950,7 +939,6 @@ void MainWindow::on_refRedCardYellow_clicked()
 
 void MainWindow::on_configTree_itemChanged(QTreeWidgetItem* item, int column)
 {
-	updateRobotConfigs();
 }
 
 void MainWindow::on_loadConfig_clicked()

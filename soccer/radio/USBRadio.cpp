@@ -313,6 +313,14 @@ void USBRadio::handleRxData(uint8_t *buf)
 	// Dribbler status
 	packet.add_motor_status(MotorStatus(buf[5] & 3));
 	
+	// Hardware version
+	if (buf[5] & 4)
+	{
+		packet.set_hardware_version(RJ2008);
+	} else {
+		packet.set_hardware_version(RJ2011);
+	}
+
 	packet.set_ball_sense_status(BallSenseStatus((buf[5] >> 2) & 3));
 	
 	// Encoders
