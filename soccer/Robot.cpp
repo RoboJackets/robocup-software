@@ -286,11 +286,6 @@ void OurRobot::chip(uint8_t strength)
 	radioTx.set_use_chipper(true);
 }
 
-bool OurRobot::charged() const
-{
-	return (radioRx.kicker_status() & 0x01) && (Utils::timestamp() - radioRx.timestamp()) < 500000;
-}
-
 void OurRobot::approachAllOpponents(bool enable) {
 	BOOST_FOREACH(float &ar, _opp_avoid_mask)
 		ar = (enable) ?  Opp_Avoid_Small : Opp_Avoid_Large;
@@ -589,6 +584,11 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	return;
 }
 
+bool OurRobot::charged() const
+{
+	return (radioRx.kicker_status() & 0x01) && (Utils::timestamp() - radioRx.timestamp()) < 500000;
+}
+
 bool OurRobot::hasBall() const
 {
 	return radioRx.ball_sense_status() == Packet::HasBall && (Utils::timestamp() - radioRx.timestamp()) < 500000;
@@ -597,4 +597,24 @@ bool OurRobot::hasBall() const
 bool OurRobot::kickerWorks() const
 {
 	return !(radioRx.kicker_status() & 0x80) && (Utils::timestamp() - radioRx.timestamp()) < 500000;
+}
+
+float OurRobot::kickerVoltage() const
+{
+	if ((Utils::timestamp() - radioRx.timestamp()) < 500000)
+	{
+		return radioRx.kicker_voltage();
+	} else {
+		return 0;
+	}
+}
+
+Packet::HardwareVersion OurRobot::hardwareVersion() const
+{
+	if ((Utils::timestamp() - radioRx.timestamp()) < 500000)
+	{
+		return radioRx.hardware_version();
+	} else {
+		return Packet::Unknown;
+	}
 }
