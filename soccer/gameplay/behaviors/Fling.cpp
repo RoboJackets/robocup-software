@@ -5,14 +5,13 @@
 using namespace std;
 using namespace Geometry2d;
 
-static const double Pivot_Speed = 0.5 * M_PI;
-
 Gameplay::Behaviors::Fling::Fling(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay), _capture(gameplay)
 {
 	restart();
 	
 	_fling_travel_thresh = config()->createDouble("Fling/Ball Travel Threshold", 0.5);
+	_pivot_Speed = config()->createDouble("Fling/Pivot Speed", 0.5 * M_PI);
 }
 
 void Gameplay::Behaviors::Fling::restart()
@@ -104,7 +103,7 @@ bool Gameplay::Behaviors::Fling::run()
 			QString::number(acos(error) * RadiansToDegrees),
 			QString::number(_ccw ? 1 : 0)));
 
-		robot->pivot(Pivot_Speed * (_ccw ? 1 : -1), ball().pos);
+		robot->pivot(*_pivot_Speed * (_ccw ? 1 : -1), ball().pos);
 		robot->dribble(dribble_speed);
 
 	}  else if (_state == State_Fling)
