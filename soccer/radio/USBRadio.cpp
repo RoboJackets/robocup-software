@@ -248,7 +248,7 @@ void USBRadio::send(Packet::RadioTx& packet)
 		forward_packet[offset++] = m3;
 		forward_packet[offset++] = (dribbler & 0xf0) | (robot_id & 0x0f);
 		forward_packet[offset++] = kick;
-		forward_packet[offset++] = robot.use_chipper() ? 0x80 : 0;
+		forward_packet[offset++] = robot.use_chipper() ? 1 : 0;
 	}
 	
 	// Unused slots
