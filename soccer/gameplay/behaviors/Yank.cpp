@@ -109,7 +109,7 @@ bool Gameplay::Behaviors::Yank::run()
 		// if we are close to the ball, we must back up fast
 		if (ball().pos.nearPoint(robot->pos, *_backup_dist)) {
 			robot->avoidBall(-1.0);
-			robot->worldVelocity(fixedYankLine.delta() * 5.0);
+			robot->worldVelocity(fixedYankLine.delta() * -5.0);
 			robot->angularVelocity(0.0);
 		} else
 		{
