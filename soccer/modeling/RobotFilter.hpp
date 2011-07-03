@@ -6,13 +6,14 @@ class RobotObservation
 {
 public:
 	RobotObservation(Geometry2d::Point pos = Geometry2d::Point(), float angle = 0, uint64_t time = 0, int frame = 0):
-		pos(pos), angle(angle), time(time), frameNumber(frame)
+		pos(pos), angle(angle), time(time), source(-1), frameNumber(frame)
 	{
 	}
 
 	Geometry2d::Point pos;
 	float angle;
 	uint64_t time;
+	int source;
 	int frameNumber;
 	
 	// Compares the times on two observations.  Used for sorting.
@@ -35,5 +36,11 @@ public:
 	void predict(uint64_t time, Robot *robot);
 
 private:
-	RobotPose _estimate;
+	static const int Num_Cameras = 2;
+	
+	// Estimate for each camera
+	RobotPose _estimate[Num_Cameras];
+	
+	// Which camera we are using to track this robot, or -1 if it has not been seen recently
+	int _camera;
 };

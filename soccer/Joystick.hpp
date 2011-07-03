@@ -40,8 +40,8 @@ class Joystick: boost::noncopyable
 		std::vector<int> _button;
 
 		bool _autonomous;
-		int _roller;
-		int _stored_roller;
+		int _dribbler;
+		int _stored_dribbler;
 		
 		// D-pad
 		bool dUp()    const { return (_axis[5] < 0) ? true : false; }

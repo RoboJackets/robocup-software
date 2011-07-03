@@ -16,7 +16,7 @@ MotionControl::MotionControl(OurRobot *robot)
 {
 	_robot = robot;
 
-	_robot->radioTx.set_board_id(_robot->shell());
+	_robot->radioTx.set_robot_id(_robot->shell());
 	for (int i = 0; i < 4; ++i)
 	{
 		_robot->radioTx.add_motors(0);
