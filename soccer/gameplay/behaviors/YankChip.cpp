@@ -5,12 +5,6 @@
 using namespace std;
 using namespace Geometry2d;
 
-static const float Chip_Complete_Dist = 0.5;
-
-static const float Min_Ball_Velocity = 0.2;
-
-static const float Max_Yank_Dist = 0.2;
-
 Gameplay::Behaviors::YankChip::YankChip(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay), _capture(gameplay)
 {
@@ -18,8 +12,11 @@ Gameplay::Behaviors::YankChip::YankChip(GameplayModule *gameplay):
 	
 	target = Point(0.0, Field_Length);
 
-	_yank_travel_thresh = config()->createDouble("Yank/Ball Travel Threshold", 0.5);
-	_max_aim_error = config()->createDouble("Yank/Ball Max Trajectory Error", 0.3);
+	_yank_travel_thresh = config()->createDouble("YankChip/Ball Travel Threshold", 0.5);
+	_max_aim_error = config()->createDouble("YankChip/Ball Max Trajectory Error", 0.3);
+	_chip_Complete_Dist = config()->createDouble("YankChip/Chip Complete Distance", 0.5);
+	_min_Ball_Velocity = config()->createDouble("YankChip/Min Ball Velocity", 0.2);
+	_max_Yank_Dist = config()->createDouble("YankChip/Max Yank Dist", 0.2);
 }
 
 void Gameplay::Behaviors::YankChip::restart()
@@ -60,8 +57,8 @@ bool Gameplay::Behaviors::YankChip::run()
 	{
 		// if ball has gotten away or didn't move with us, reset to capture
 		if (!fixedYankLine.nearPoint(ball().pos, *_max_aim_error) ||
-				(ball().vel.mag() < Min_Ball_Velocity && !ball().pos.nearPoint(robot->pos, Max_Yank_Dist)) || // if stationary and too far away
-				(ball().vel.mag() > Min_Ball_Velocity && ball().vel.normalized().dot(-dir) >= cos(20 * DegreesToRadians))) { // if moving and in the wrong direction
+				(ball().vel.mag() < *_min_Ball_Velocity && !ball().pos.nearPoint(robot->pos, *_max_Yank_Dist)) || // if stationary and too far away
+				(ball().vel.mag() > *_min_Ball_Velocity && ball().vel.normalized().dot(-dir) >= cos(20 * DegreesToRadians))) { // if moving and in the wrong direction
 			_state = State_Capture;
 		}
 
@@ -74,13 +71,13 @@ bool Gameplay::Behaviors::YankChip::run()
 	} else if (_state == State_Chip)
 	{
 		// done after ball kicked
-		if (_kicked && !ball().pos.nearPoint(robot->pos, Chip_Complete_Dist))
+		if (_kicked && !ball().pos.nearPoint(robot->pos, *_chip_Complete_Dist))
 		{
 			_state = State_Done;
 		}
 
 		// if ball got too far away, reset
-		if (!_kicked && !ball().pos.nearPoint(robot->pos, Chip_Complete_Dist))
+		if (!_kicked && !ball().pos.nearPoint(robot->pos, *_chip_Complete_Dist))
 		{
 			_state = State_Capture;
 		}

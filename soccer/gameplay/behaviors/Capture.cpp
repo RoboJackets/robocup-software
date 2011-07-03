@@ -6,28 +6,6 @@
 using namespace std;
 using namespace Geometry2d;
 
-static const int Dribble_Speed = 127;
-
-// How far away from the ball the approach point is placed
-static const float Approach_Distance = 0.1;
-// Ball avoidance distance
-static const float Approach_Clearance = 0.1;
-// How close we must get to the approach point to proceed to Capture
-static const float Approach_Threshold = 0.1;
-
-// How fast we drive towards the ball
-static const double Capture_Speed = 0.3;
-// How long we must continuously hold the ball to proceed to Aim
-static const uint64_t Capture_Time_Threshold = 300 * 1000;
-// How much of Capture_Time_Threshold should be spent decelerating
-static const double Capture_Decel = 0.8;
-
-// How close the ball must be to count as captured properly
-static const double Has_Ball_Dist = 0.1;
-
-// Angular speed for Pivoting
-static const double Pivot_Speed = 0.5 * M_PI;
-
 Gameplay::Behaviors::Capture::Capture(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay)
 {
@@ -36,6 +14,15 @@ Gameplay::Behaviors::Capture::Capture(GameplayModule *gameplay):
 	target = Point(0, Field_Length); // center of goal
 
 	_stationaryMaxSpeed = config()->createDouble("Capture/Ball Speed Threshold", 0.5);
+	_approach_Distance = config()->createDouble("Capture/Approach Distance", 0.1);
+	_approach_Clearance = config()->createDouble("Capture/Approach Clearance", 0.05);
+	_approach_Threshold = config()->createDouble("Capture/Approach Threshold", 0.13);
+	_capture_Speed = config()->createDouble("Capture/Capture Speed", 0.3);
+	_capture_Time_Threshold = config()->createDouble("Capture/Capture Time Threshold", 300 * 1000);
+	_capture_Decel = config()->createDouble("Capture/Capture Decel", 0.8);
+	_has_Ball_Dist = config()->createDouble("Capture/Has Ball Distance", 0.1);
+	_pivot_Speed = config()->createDouble("Capture/Pivot Speed", 0.5 * M_PI);
+	_dribble_Speed = config()->createDouble("Capture/Dribbler Speed", 127);
 }
 
 void Gameplay::Behaviors::Capture::restart()
@@ -66,7 +53,7 @@ bool Gameplay::Behaviors::Capture::run()
 
 	// Target positioning for robot to trap the ball - if moving,
 	// stop ball first, otherwise
-	Point targetApproachPoint = ball().pos - (target - ball().pos).normalized() * Approach_Distance;
+	Point targetApproachPoint = ball().pos - (target - ball().pos).normalized() * *_approach_Distance;
 	Point approachPoint = targetApproachPoint;
 
 	// pick target based on velocity
@@ -90,7 +77,7 @@ bool Gameplay::Behaviors::Capture::run()
 			{
 				_state = State_Done;
 			}
-		} else if (robot->pos.nearPoint(approachPoint, Approach_Threshold) && err >= cos(10 * DegreesToRadians))
+		} else if (robot->pos.nearPoint(approachPoint, *_approach_Threshold) && err >= cos(10 * DegreesToRadians))
 		{
 			_state = State_Capture;
 			_lastBallTime = now;
@@ -108,9 +95,9 @@ bool Gameplay::Behaviors::Capture::run()
 			_state = State_Approach;
 		}
 		
-		if ((now - _lastBallTime) >= Capture_Time_Threshold)
+		if ((now - _lastBallTime) >= *_capture_Time_Threshold)
 		{
-			if (!enable_pivot || (ball().pos.nearPoint(robot->pos, Has_Ball_Dist) && err >= cos(20 * DegreesToRadians)))
+			if (!enable_pivot || (ball().pos.nearPoint(robot->pos, *_has_Ball_Dist) && err >= cos(20 * DegreesToRadians)))
 			{
 				_state = State_Done;
 			} else {
@@ -132,10 +119,10 @@ bool Gameplay::Behaviors::Capture::run()
 			_lastBallTime = now;
 		}
 
-		if ((!robot->hasBall() && (state()->timestamp - _lastBallTime) > 500000) || !ball().pos.nearPoint(robot->pos, Approach_Distance))
+		if ((!robot->hasBall() && (state()->timestamp - _lastBallTime) > 500000) || !ball().pos.nearPoint(robot->pos, *_approach_Distance))
 		{
 			_state = State_Approach;
-		} else if (ball().pos.nearPoint(robot->pos, Has_Ball_Dist) && err >= cos(20 * DegreesToRadians))
+		} else if (ball().pos.nearPoint(robot->pos, *_has_Ball_Dist) && err >= cos(20 * DegreesToRadians))
 		{
 			_state = State_Done;
 		}
@@ -147,16 +134,16 @@ bool Gameplay::Behaviors::Capture::run()
 	if (_state == State_Approach)
 	{
 		robot->addText("Approach");
-		robot->avoidBall(Approach_Clearance);
+		robot->avoidBall(*_approach_Clearance);
 		robot->move(approachPoint);
 		robot->face(ball().pos);
 	} else if (_state == State_Capture)
 	{
 		robot->addText("Capture");
 		
-		double speed = max(0.0, 1.0 - double(now - _lastBallTime) / double(Capture_Time_Threshold * Capture_Decel)) * Capture_Speed;
+		double speed = max(0.0, 1.0 - double(now - _lastBallTime) / double(*_capture_Time_Threshold * *_capture_Decel)) * *_capture_Speed;
 		
-		robot->dribble(Dribble_Speed);
+		robot->dribble(*_dribble_Speed);
 		robot->worldVelocity(toBall * speed);
 		robot->face((ball().pos - robot->pos) * 1.2 + robot->pos);
 	} else if (_state == State_Pivoting)
@@ -182,11 +169,11 @@ bool Gameplay::Behaviors::Capture::run()
 			QString::number(acos(error) * RadiansToDegrees),
 			QString::number(_ccw ? 1 : 0)));
 		
-		robot->pivot(Pivot_Speed * (_ccw ? 1 : -1), ball().pos);
-		robot->dribble(Dribble_Speed);
+		robot->pivot(*_pivot_Speed * (_ccw ? 1 : -1), ball().pos);
+		robot->dribble(*_dribble_Speed);
 	} else {
 		robot->addText("Done");
-		robot->dribble(Dribble_Speed);
+		robot->dribble(*_dribble_Speed);
 		return false;
 	}
 	
