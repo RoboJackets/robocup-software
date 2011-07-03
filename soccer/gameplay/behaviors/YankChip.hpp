@@ -7,10 +7,17 @@ namespace Gameplay
 {
 	namespace Behaviors
 	{
-		class Yank: public SingleRobotBehavior
+		/**
+		 * This behavior is designed to escape a slow-dancing scenario
+		 * by yanking the ball backwards.
+		 *
+		 * This is primarily a behavior to escape stuck balls, so
+		 *
+		 */
+		class YankChip: public SingleRobotBehavior
 		{
 			public:
-				Yank(GameplayModule *gameplay);
+				YankChip(GameplayModule *gameplay);
 				
 				virtual bool run();
 				
@@ -25,10 +32,13 @@ namespace Gameplay
 
 				void restart();
 				
-				// Default target is goal segment, but does not take into account
-				// obstacles.  Plays should use window evaluator to choose targets
-				Geometry2d::Segment target;
-				
+				// Point to try to face towards as a coarse aiming
+				Geometry2d::Point target;
+
+				// if false, just backs up and chips in the current direction
+				// use if no room for aiming
+				bool enable_aiming;
+
 				// If off, will stay in State_Capture until turned on - use for synchronizing
 				// with other robots.  Defaults to true
 				bool enable_yank;
@@ -37,20 +47,28 @@ namespace Gameplay
 				// and yanking
 				short dribble_speed;
 
-				// If true, adds a bump just before backing away to push the ball forward
-				bool enable_bump;
+				// The chip strength to chip over the robot
+				uint8_t chip_speed;
+
+				// the distance to back up before chipping
+				double backup_distance;
+
+				// opponent robot to chip over - if not available, will use initial ball position
+				OpponentRobot * oppRobot;
 
 			private:
 
 				enum
 				{
 					State_Capture,
-					State_Bump,
 					State_Yank,
+					State_Chip,
 					State_Done
 				} _state;
 				
 				Capture _capture;
+
+				bool _kicked;
 
 				Geometry2d::Point _yankBallStart;   // position of the ball at the start of yank
 				Geometry2d::Point _yankRobotStart;  // position of the robot at start of yank
@@ -58,9 +76,6 @@ namespace Gameplay
 				// tuning parameters
 				ConfigDouble::shared_ptr _yank_travel_thresh; // minimum distance the ball must travel to be done
 				ConfigDouble::shared_ptr _max_aim_error;      // maximum distance from yank line allowed
-				ConfigDouble::shared_ptr _backup_dist; 				// minimum distance to clear the ball before getting off line
-				ConfigDouble::shared_ptr _ball_clearance;     // distance the robot needs to get away from the line
-				ConfigDouble::shared_ptr _bump_distance;      // distance forward to move in a bump
 		};
 	}
 }

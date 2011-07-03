@@ -1,5 +1,6 @@
 #include "Capture.hpp"
 
+#include <framework/RobotConfig.hpp>
 #include <Utils.hpp>
 
 using namespace std;
@@ -33,6 +34,8 @@ Gameplay::Behaviors::Capture::Capture(GameplayModule *gameplay):
 	restart();
 	
 	target = Point(0, Field_Length); // center of goal
+
+	_stationaryMaxSpeed = config()->createDouble("Capture/Ball Speed Threshold", 0.5);
 }
 
 void Gameplay::Behaviors::Capture::restart()
@@ -56,9 +59,24 @@ bool Gameplay::Behaviors::Capture::run()
 	
 	// State changes
 	Point toBall = (ball().pos - robot->pos).normalized();
+	float ballDist = ball().pos.distTo(robot->pos);
 	float err = dir.dot(toBall);
+	float ballSpeed = ball().vel.mag();
 	bool behindBall = ((target - robot->pos).dot(ball().pos - robot->pos) > 0);
-	Point approachPoint = ball().pos - (target - ball().pos).normalized() * Approach_Distance;
+
+	// Target positioning for robot to trap the ball - if moving,
+	// stop ball first, otherwise
+	Point targetApproachPoint = ball().pos - (target - ball().pos).normalized() * Approach_Distance;
+	Point approachPoint = targetApproachPoint;
+
+	// pick target based on velocity
+	if (ballSpeed > *_stationaryMaxSpeed)
+	{
+		float interceptTime = ballDist / *robot->config->trapTrans.velocity;
+		Point trapApproachPoint = ball().pos + ball().vel * interceptTime; // TODO: check if accel term is necessary
+		Point approachPoint = trapApproachPoint;
+	}
+
 	if (_state == State_Approach)
 	{
 		robot->addText(QString("err %1 %2").arg(err).arg(robot->pos.distTo(approachPoint)));

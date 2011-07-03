@@ -27,6 +27,7 @@ protected:
 
 	// parameters to set in the GUI
 	ConfigInt::shared_ptr _dribblerSpeed;   // sets the aim/kick dribbler speed
+	ConfigBool::shared_ptr _enableBump;     // uses a bump before yanking
 };
 } // \Gameplay
 } // \Plays

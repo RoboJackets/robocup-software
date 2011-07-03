@@ -10,6 +10,10 @@ namespace Gameplay
 {
 	namespace Plays
 	{
+		/**
+		 * General Kickoff Play - just moves robots into position,
+		 * actual kicking handled by the Kickoff Behavior
+		 */
 		class OurKickoff: public Play
 		{
 			public:

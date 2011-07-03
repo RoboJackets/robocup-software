@@ -17,6 +17,7 @@ Gameplay::Behaviors::Yank::Yank(GameplayModule *gameplay):
 	_max_aim_error = config()->createDouble("Yank/Ball Max Trajectory Error", 0.3);
 	_backup_dist = config()->createDouble("Yank/Backup Distance", 0.5);
 	_ball_clearance = config()->createDouble("Yank/Ball Clearance", Robot_Radius + Ball_Radius + 0.1);
+	_bump_distance = config()->createDouble("Yank/Bump Travel Distance", 0.3);
 }
 
 void Gameplay::Behaviors::Yank::restart()
@@ -25,6 +26,7 @@ void Gameplay::Behaviors::Yank::restart()
 	_capture.restart();
 	_capture.target = target.center();
 	enable_yank = true;
+	enable_bump = false;
 	dribble_speed = 127;  // use maximum dribbler speed by default
 }
 
@@ -48,8 +50,21 @@ bool Gameplay::Behaviors::Yank::run()
 	{
 		if (_capture.done() && enable_yank)
 		{
-			_state = State_Yank;
 			_yankBallStart = ball().pos;
+			_yankRobotStart = robot->pos;
+			if (enable_bump)
+			{
+				_state = State_Bump;
+			} else
+			{
+				_state = State_Yank;
+			}
+		}
+	} else if (_state == State_Bump)
+	{
+		if (!_yankRobotStart.nearPoint(robot->pos, *_bump_distance))
+		{
+			_state = State_Yank;
 		}
 	} else if (_state == State_Yank)
 	{
@@ -66,6 +81,7 @@ bool Gameplay::Behaviors::Yank::run()
 		}
 	}
 	
+	Segment fixedYankLine(target.center(), _yankBallStart);
 	state()->drawLine(yankLine, Qt::red);
 	state()->drawLine(aimLine, Qt::black);
 	state()->drawLine(target, Qt::yellow);
@@ -78,10 +94,16 @@ bool Gameplay::Behaviors::Yank::run()
 		// aim in opposite direction
 		_capture.target = aimLine.pt[1]; // opposite direction
 		_capture.run();
+	}  else if (_state == State_Bump)
+	{
+		robot->addText("Bumping");
+		robot->avoidBall(-1.0);
+		robot->worldVelocity(fixedYankLine.delta() * -5.0);
+		robot->angularVelocity(0.0);
+
 	}  else if (_state == State_Yank)
 	{
 		robot->addText("Yanking");
-		Segment fixedYankLine(target.center(), _yankBallStart);
 		state()->drawLine(fixedYankLine, Qt::white);
 		
 		// if we are close to the ball, we must back up fast
