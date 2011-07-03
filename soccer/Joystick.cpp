@@ -26,8 +26,8 @@ Joystick::Joystick():
 	_mutex(QMutex::Recursive)
 {
 	_autonomous = true;
-	_roller = 0;
-	_stored_roller = 0;
+	_dribbler = 0;
+	_stored_dribbler = 0;
 	_fd = -1;
 	
 	if (!open())
@@ -235,20 +235,20 @@ void Joystick::drive(RadioTx::Robot *tx)
 
 	if (_button[6])
 	{
-		_roller = leftY;
+		_dribbler = leftY;
 
 		if (_button[4])
 		{
-			_stored_roller = leftY;
+			_stored_dribbler = leftY;
 		}
 	}
 
 	if (_button[4])
 	{
-		_roller = _stored_roller;
+		_dribbler = _stored_dribbler;
 	}
 
-	tx->set_roller(_roller);
+	tx->set_dribbler(_dribbler);
 	tx->set_kick((_button[7] | _button[5]) ? 255 : 0);
 	tx->set_use_chipper(_button[5]);
 }

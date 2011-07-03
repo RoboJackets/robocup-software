@@ -90,7 +90,7 @@ message LogFrame
 		required Point vel = 7;
 		required int32 shell = 2;
 		required float angle = 3;
-		optional bool ball_sense = 4;
+		optional BallSenseStatus ball_sense_status = 4;
 		
 		// Stack trace leading up to where the robot's final command was set
 		repeated uint64 command_trace = 5;
@@ -101,6 +101,12 @@ message LogFrame
 		optional Point cmd_vel = 8;
 		optional float cmd_w = 9;
 		
+		optional bool charged = 10;
+		optional float kicker_voltage = 11;
+		
+		repeated MotorStatus motor_status = 12;
+		
+		optional bool kicker_works = 13 [default = true];
 	}
 
 	message Ball

@@ -337,7 +337,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 	// Opponent robots
 	BOOST_FOREACH(const LogFrame::Robot &r, frame->opp())
 	{
-		drawRobot(p, !frame->blue_team(), r.shell(), qpointf(r.pos()), r.angle(), r.ball_sense());
+		drawRobot(p, !frame->blue_team(), r.shell(), qpointf(r.pos()), r.angle(), r.ball_sense_status() == HasBall);
 	}
 	
 	// Our robots
@@ -345,7 +345,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 	BOOST_FOREACH(const LogFrame::Robot &r, frame->self())
 	{
 		QPointF center = qpointf(r.pos());
-		drawRobot(p, frame->blue_team(), r.shell(), center, r.angle(), r.ball_sense());
+		drawRobot(p, frame->blue_team(), r.shell(), center, r.angle(), r.ball_sense_status() == HasBall);
 		
 		// Highlight the manually controlled robot
 		if (manualID == r.shell())

@@ -1,0 +1,73 @@
+Forward (base station to robot):
+
+Byte 0: Sequence number
+	Bits 7-5: Reserved
+	Bits 0-2: Sequence number
+Bytes 1+: Robot command slots, 6 bytes each
+	Byte +0: Back left motor speed
+	Byte +1: Front left motor speed
+	Byte +2: Front right motor speed
+	Byte +3: Back right motor speed
+	Byte +4:
+		Bits 7-4: Dribbler speed
+		Bits 3-0: Robot ID for this slot
+	Byte +5: Kick strength
+	Byte +6:
+		Bits 7-2: Reserved
+		Bit 1: Immediate kick
+			1=Kick immediately
+			0=Kick only when ball is present
+		Bit 0: Chip/kick select
+			1=Chip
+			0=Flat kick
+
+Reverse (robot to base station):
+Byte 0:
+	Bit 7: Reserved
+	Bits 6-4: Sequence number
+	Bits 3-0: Robot ID
+Byte 1: RSSI of last forward packet
+	Same format as from the CC1101:
+	dbm = packet[1] / 2 - 74
+Byte 2: Battery voltage, 0.1V/count
+Byte 3: Kicker status
+	Bit 7: Hardware failure
+	Bit 6: Kicker I2C ADC working
+	Bit 5: Chip selected
+	Bit 4: Manual override
+	Bit 3: Charge enabled
+	Bit 2: Charging
+	Bit 1: Charge lockout after kicking
+	Bit 0: Charge done
+Byte 4: Drive motor status
+	Bits 7-6: Back right status
+	Bits 5-4: Front right status
+	Bits 3-2: Front left status
+	Bits 1-0: Back left status
+	
+	Status values:
+		0: Good
+		1: Hall effect sensor failure
+		2: Motor stalled
+		3: Encoder failure
+	Lower values take priority.
+Byte 5:
+	Bits 7-5: Reserved
+	Bit 4: True if 2008 base
+	Bits 3-2: Ball sensor status
+		0: Working, no ball present
+		1: Working, ball present
+		2: Dazzled
+		3: Hardware failure
+	Bits 1-0: Dribbler status.  Same values as drive motor status.
+
+Byte 6: Back left encoder delta bits 7-0
+Byte 7: Front left encoder delta bits 7-0
+Byte 8: Front right encoder delta bits 7-0
+Byte 9: Back right encoder delta bits 7-0
+Byte 10:
+	Bits 7-6: Back right encoder delta bits 9-8
+	Bits 5-4: Front right encoder delta bits 9-8
+	Bits 3-2: Front left encoder delta bits 9-8
+	Bits 1-0: Back left encoder delta bits 9-8
+Byte 11: Kicker voltage, 1V/count
