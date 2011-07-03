@@ -167,7 +167,10 @@ public:
 
 	void addText(const QString &text, const QColor &color = Qt::white);
 
+	// Status flags for use with assignment
 	bool hasChipper() const; /// true if robot can chip
+	bool hasKicker() const;
+	bool hasEncoders() const;
 
 	// kicker readiness checks
 	// TODO: replace with boost::timer
