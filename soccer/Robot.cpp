@@ -252,19 +252,6 @@ void OurRobot::update() {
 	}
 }
 
-bool OurRobot::hasChipper() const
-{
-	return true; // FIXME: actually check this
-}
-
-bool OurRobot::hasKicker() const {
-	return true;// FIXME: actually check this
-}
-
-bool OurRobot::hasEncoders() const {
-	return true; // FIXME: actually check this
-}
-
 void OurRobot::dribble(int8_t speed)
 {
 	radioTx.set_dribbler(speed);
