@@ -290,6 +290,21 @@ void Processor::run()
 			logConfig->set_simulation(_simulation);
 		}
 		
+		BOOST_FOREACH(OurRobot *robot, _state.self)
+		{
+			switch (robot->hardwareVersion())
+			{
+			case Packet::RJ2008:
+				robot->config = robotConfig2008;
+				break;
+			case Packet::RJ2011:
+				robot->config = robotConfig2011;
+				break;
+			case Packet::Unknown:
+				robot->config = robotConfig2011; // FIXME: defaults to 2011 robots
+			}
+		}
+
 		////////////////
 		// Inputs
 		

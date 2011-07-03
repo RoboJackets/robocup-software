@@ -346,9 +346,6 @@ public:
 	//The confidence for this robot's ball sensor
 	int sensorConfidence;
 
-	void newRevision(bool is_2011) { _newRevision = is_2011; }
-	bool newRevision() const { return _newRevision; }
-
 	MotionControl *motionControl() const
 	{
 		return _motionControl;
@@ -370,8 +367,6 @@ protected:
 	std::vector<void *> _commandTrace;
 
 	uint64_t _lastChargedTime; // TODO: make this a boost pointer to avoid update() function
-
-	bool _newRevision; /// true if this a 2011 robot, false otherwise
 
 	/** Planning components for delayed planning */
 	MoveType _planner_type;  /// movement class - set during move
