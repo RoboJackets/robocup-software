@@ -167,13 +167,7 @@ public:
 
 	void addText(const QString &text, const QColor &color = Qt::white);
 
-	// Status flags for use with assignment
-	bool hasChipper() const; /// true if robot can chip
-	bool hasKicker() const;
-	bool hasEncoders() const;
-
 	// kicker readiness checks
-	// TODO: replace with boost::timer
 	bool charged() const; /// true if the kicker is ready
 	float kickTimer() const; /// returns the time since the kicker was last charged, 0.0 if ready
 
@@ -267,13 +261,6 @@ public:
 	bool avoidOpponents() const;
 	void avoidOpponents(bool enable);
 
-	// True if this robot intends to kick the ball.
-	// This is reset when this robot's role changes.
-	// This allows the robot to get close to the ball during a restart.
-	// if disabled, creates a small obstacle for the ball
-//	bool willKick() const;
-//	void willKick(bool enable);
-
 	// Add a custom radius avoidance of the ball
 	// creates an obstacle around the ball
 	// if radius is 0 or less, it disables avoidance
@@ -337,7 +324,7 @@ public:
 
 	const std::vector<void *> &commandTrace() const
 	{
-	return _commandTrace;
+		return _commandTrace;
 	}
 
 	/** motion command - sent to point/wheel controllers, is valid when _planning_complete is true */

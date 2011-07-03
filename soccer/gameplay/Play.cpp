@@ -80,7 +80,7 @@ bool assignNearest(OurRobot *&role, std::set<OurRobot*>& robots, Geometry2d::Poi
 }
 
 bool assignNearest(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt,
-		bool hasChipper, bool hasKicker, bool hasEncoders, bool needVisible)
+		bool hasChipper, bool kickerWorks, bool isCharged, bool is2011, bool needVisible)
 {
 	if (role && (!needVisible || role->visible))
 	{
@@ -94,9 +94,10 @@ bool assignNearest(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Po
 	BOOST_FOREACH(OurRobot *robot, robots)
 	{
 		// manage requirements
-		if ((!hasChipper || robot->hasChipper()) &&
-				(!hasKicker  || robot->hasKicker()) &&
-				(!hasEncoders || robot->hasEncoders()))
+		if ((!hasChipper || (robot->hardwareVersion() != Packet::RJ2008)) && // TODO: check for chipper for real
+				(!kickerWorks  || robot->kickerWorks()) &&
+				(!is2011 || (robot->hardwareVersion() != Packet::RJ2008)) &&
+				(!isCharged || robot->charged()))
 		{
 			continue; // robot fails requirements
 		}
