@@ -10,15 +10,19 @@ Gameplay::Plays::DemoPassing::DemoPassing(GameplayModule *gameplay):
 	_passer(gameplay),
 	_receiver(gameplay)
 {
-	set<OurRobot *> available = _gameplay->playRobots();
-	assignNearest(_passer.robot, available, Geometry2d::Point());
-	assignNearest(_receiver.robot, available, Geometry2d::Point());
-
-	_passer.setTarget(_receiver.robot->kickerBar());
 }
 
 bool Gameplay::Plays::DemoPassing::run()
 {
+	set<OurRobot *> available = _gameplay->playRobots();
+	if (!assignNearest(_passer.robot, available, Geometry2d::Point()) ||
+			assignNearest(_receiver.robot, available, Geometry2d::Point()))
+	{
+		return false;
+	}
+
+	_passer.setTarget(_receiver.robot->kickerBar());
+
 	_passer.robot->setVScale(0.8);
 	_passer.robot->setWScale(0.3);
 	bool done = _passer.done();

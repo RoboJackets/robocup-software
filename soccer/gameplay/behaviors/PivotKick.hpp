@@ -72,6 +72,19 @@ namespace Gameplay
 				uint64_t _lastBallTime;
 				float _accuracy;
 				bool _kicked;
+
+				// GUI Parameters
+				// Angular speed for aiming
+				ConfigDouble::shared_ptr _aim_Speed;
+
+				// If the ball is this far away from the robot after trying to kick, then
+				// the ball was kicked.
+				ConfigDouble::shared_ptr _kick_Completed_Threshold;
+
+				ConfigDouble::shared_ptr _initial_Accuracy;
+				// Accuracy change per frame
+				ConfigDouble::shared_ptr _accuracy_Delta;
+				ConfigDouble::shared_ptr _fireNowThreshold;
 			};
 	}
 }
