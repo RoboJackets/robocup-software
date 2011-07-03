@@ -76,6 +76,10 @@ namespace Gameplay
 				// tuning parameters
 				ConfigDouble::shared_ptr _yank_travel_thresh; // minimum distance the ball must travel to be done
 				ConfigDouble::shared_ptr _max_aim_error;      // maximum distance from yank line allowed
+
+				ConfigDouble::shared_ptr _chip_Complete_Dist;
+				ConfigDouble::shared_ptr _min_Ball_Velocity;
+				ConfigDouble::shared_ptr _max_Yank_Dist;
 		};
 	}
 }

@@ -196,7 +196,6 @@ class MainWindow : public QMainWindow
 		
 		RobotConfig *_robotConfig2008;
 		RobotConfig *_robotConfig2011;
-		ConfigBool::shared_ptr _robot2011[Num_Shells];
 		
 		// This is used to update some status items less frequently than the full field view
 		int _updateCount;

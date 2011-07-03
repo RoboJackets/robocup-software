@@ -147,11 +147,6 @@ void MainWindow::configuration(Configuration* config)
 	_robotConfig2008 = new RobotConfig(config, "Rev2008");
 	_robotConfig2011 = new RobotConfig(config, "Rev2011");
 	
-	for (size_t i = 0; i < Num_Shells; ++i)
-	{
-		_robot2011[i] = config->createBool(QString("Is2011/%1").arg(i));
-	}
-	
 	updateRobotConfigs();
 }
 
@@ -188,7 +183,6 @@ void MainWindow::updateRobotConfigs()
 		QMutexLocker lock(&_processor->loopMutex());
 		BOOST_FOREACH(OurRobot *robot, state()->self)
 		{
-			robot->newRevision(*_robot2011[robot->shell()]);
 			robot->config = (robot->newRevision()) ? _robotConfig2011 : _robotConfig2008;
 		}
 	}

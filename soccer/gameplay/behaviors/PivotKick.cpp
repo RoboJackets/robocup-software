@@ -5,18 +5,6 @@
 using namespace std;
 using namespace Geometry2d;
 
-// Angular speed for aiming
-static const double Aim_Speed = 0.5 * M_PI;
-
-// If the ball is this far away from the robot after trying to kick, then
-// the ball was kicked.
-static const double Kick_Completed_Threshold = 0.5;
-
-static const float Initial_Accuracy = cos(10 * DegreesToRadians);
-// Accuracy change per frame
-static const float Accuracy_Delta = 0.000;
-static const float FireNowThreshold = cos(3 * DegreesToRadians);
-
 Gameplay::Behaviors::PivotKick::PivotKick(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay), _capture(gameplay)
 {
@@ -25,6 +13,12 @@ Gameplay::Behaviors::PivotKick::PivotKick(GameplayModule *gameplay):
 	target.pt[0] = Point(Field_GoalWidth / 2, Field_Length);
 	target.pt[1] = Point(-Field_GoalWidth / 2, Field_Length);
 	_capture.target = target.pt[0];
+
+	_aim_Speed = config()->createDouble("PivotKick/Aim Speed", 0.5 * M_PI);
+	_kick_Completed_Threshold = config()->createDouble("PivotKick/Kick Completed Threshold", 0.5);
+	_initial_Accuracy = config()->createDouble("PivotKick/Initial Accuracy", cos(10 * DegreesToRadians));
+	_accuracy_Delta = config()->createDouble("PivotKick/Accuracy Delta", 0.000);
+	_fireNowThreshold = config()->createDouble("PivotKick/Fire Now Threshold", cos(3 * DegreesToRadians));
 }
 
 void Gameplay::Behaviors::PivotKick::restart()
@@ -67,7 +61,7 @@ bool Gameplay::Behaviors::PivotKick::run()
 			_lastDelta = 0;
 			_ccw = ((target.pt[0] - ball().pos).cross(target.pt[1] - ball().pos) > 0);
 		}
-		_accuracy = Initial_Accuracy;
+		_accuracy = *_initial_Accuracy;
 	} else if (_state == State_Aim)
 	{
 		// _lastBallTime is the last time we had the ball
@@ -77,7 +71,7 @@ bool Gameplay::Behaviors::PivotKick::run()
 		}
 		
 		// watch for ball leaving the robot
-		if ((!robot->hasBall() && (state()->timestamp - _lastBallTime) > 500000) || !ball().pos.nearPoint(robot->pos, Kick_Completed_Threshold))
+		if ((!robot->hasBall() && (state()->timestamp - _lastBallTime) > 500000) || !ball().pos.nearPoint(robot->pos, *_kick_Completed_Threshold))
 		{
 			if (_kicked)
 			{
@@ -109,7 +103,7 @@ bool Gameplay::Behaviors::PivotKick::run()
 		float error = dir.dot((target.center() - ball().pos).normalized());
 		float delta = error - _lastError;
 		
-		if (enable_kick && (error >= FireNowThreshold || (error >= _accuracy && _lastDelta > 0 && delta <= 0)))
+		if (enable_kick && (error >= *_fireNowThreshold || (error >= _accuracy && _lastDelta > 0 && delta <= 0)))
 		{
 			if (use_chipper)
 			{
@@ -143,10 +137,10 @@ bool Gameplay::Behaviors::PivotKick::run()
 			QString::number(_accuracy),
 			QString::number(_ccw ? 1 : 0)));
 		
-		_accuracy -= Accuracy_Delta;
+		_accuracy -= *_accuracy_Delta;
 		_accuracy = max(0.0f, _accuracy);
 
-		robot->pivot(Aim_Speed * (_ccw ? 1 : -1), ball().pos);
+		robot->pivot(*_aim_Speed * (_ccw ? 1 : -1), ball().pos);
 		robot->dribble(dribble_speed);
 	} else {
 		robot->addText("Done");

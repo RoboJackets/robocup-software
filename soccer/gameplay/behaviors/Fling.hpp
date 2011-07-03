@@ -59,6 +59,7 @@ namespace Gameplay
 
 				// tuning parameters
 				ConfigDouble::shared_ptr _fling_travel_thresh; // minimum distance the ball must travel to be done
+				ConfigDouble::shared_ptr _pivot_Speed;
 		};
 	}
 }
