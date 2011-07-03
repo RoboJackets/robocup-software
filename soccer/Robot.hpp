@@ -342,6 +342,8 @@ public:
 
 	bool hasBall() const;
 	bool kickerWorks() const;
+	float kickerVoltage() const;
+	Packet::HardwareVersion hardwareVersion() const;
 
 	/** velocity specification for direct velocity control */
 	Geometry2d::Point cmd_vel;

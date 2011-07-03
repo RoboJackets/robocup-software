@@ -345,7 +345,25 @@ void FieldView::drawTeamSpace(QPainter& p)
 	BOOST_FOREACH(const LogFrame::Robot &r, frame->self())
 	{
 		QPointF center = qpointf(r.pos());
-		drawRobot(p, frame->blue_team(), r.shell(), center, r.angle(), r.ball_sense_status() == HasBall);
+		
+		bool faulty = false;
+		if (r.ball_sense_status() == Dazzled || r.ball_sense_status() == Failed)
+		{
+			faulty = true;
+		}
+		if (!r.kicker_works())
+		{
+			faulty = true;
+		}
+		for (int i = 0; i < r.motor_status().size(); ++i)
+		{
+			if (r.motor_status(i) != Good)
+			{
+				faulty = true;
+			}
+		}
+		
+		drawRobot(p, frame->blue_team(), r.shell(), center, r.angle(), r.ball_sense_status() == HasBall, faulty);
 		
 		// Highlight the manually controlled robot
 		if (manualID == r.shell())
@@ -494,7 +512,7 @@ void FieldView::drawField(QPainter& p, const LogFrame *frame)
 	p.restore();
 }
 
-void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos, float theta, bool hasBall)
+void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos, float theta, bool hasBall, bool faulty)
 {
 	painter.setPen(Qt::white);
 	painter.setBrush(Qt::NoBrush);
@@ -505,7 +523,10 @@ void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos
 	
 	drawText(painter, QPointF(), QString::number(ID));
 	
-	if (blueRobot)
+	if (faulty)
+	{
+		painter.setPen(Qt::red);
+	} else if (blueRobot)
 	{
 		painter.setPen(Qt::blue);
 	} else {

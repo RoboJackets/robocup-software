@@ -16,6 +16,13 @@ enum BallSenseStatus
 	Failed = 3;
 }
 
+enum HardwareVersion
+{
+	Unknown = 0;
+	RJ2008 = 1;
+	RJ2011 = 2;
+}
+
 // Packet going out from radio program to control program
 message RadioRx
 {
@@ -33,4 +40,6 @@ message RadioRx
 	optional uint32 sequence = 10;
 	
 	optional uint32 kicker_voltage = 11;
+	
+	optional HardwareVersion hardware_version = 12;
 }
