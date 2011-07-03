@@ -237,13 +237,11 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	
 	printf("GIT version: %s\n", git_version);
 	
-	//BEGIN DEBUG
 	printf("Encoder monitor:\n");
 	for (int i = 0; i < 5; ++i)
 	{
 		printf("%d %2d %3d %4d\n", i, em_err_hall[i], em_err_enc[i], em_err_out[i]);
 	}
-	//END DEBUG
 }
 
 static void cmd_timers(int argc, const char *argv[], void *arg)
@@ -723,6 +721,12 @@ static void debug_halls()
 }
 static const write_uint_t write_monitor_halls = {(unsigned int *)&debug_update, (unsigned int)debug_halls};
 
+static void debug_charge()
+{
+	printf("%02x %3d\n", kicker_status, kicker_voltage);
+}
+static const write_uint_t write_monitor_charge = {(unsigned int *)&debug_update, (unsigned int)debug_charge};
+
 static const write_uint_t write_fpga_off = {&AT91C_BASE_PIOA->PIO_CODR, MCU_PROGB};
 static const write_uint_t write_reset = {AT91C_RSTC_RCR, 0xa5000005};
 
@@ -760,6 +764,7 @@ const command_t commands[] =
 	{"rx_test", cmd_rx_test},
 	{"kicker_test", cmd_kicker_test},
 	{"drive_mode", cmd_drive_mode},
+	{"monitor_charge", cmd_write_uint, (void *)&write_monitor_charge},
 
 	// End of list placeholder
 	{0, 0}

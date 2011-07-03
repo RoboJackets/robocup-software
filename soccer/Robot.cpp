@@ -128,7 +128,7 @@ void OurRobot::resetMotionCommand()
 	//	willKick = false;
 	//	avoidBall = false;
 
-	radioTx.set_roller(0);
+	radioTx.set_dribbler(0);
 	radioTx.set_kick(0);
 	radioTx.set_use_chipper(false);
 
@@ -259,7 +259,7 @@ bool OurRobot::hasChipper() const
 
 void OurRobot::dribble(int8_t speed)
 {
-	radioTx.set_roller(speed);
+	radioTx.set_dribbler(speed);
 }
 
 void OurRobot::face(Geometry2d::Point pt, bool continuous)
@@ -288,7 +288,7 @@ void OurRobot::chip(uint8_t strength)
 
 bool OurRobot::charged() const
 {
-	return radioRx.charged();
+	return (radioRx.kicker_status() & 0x01) && (Utils::timestamp() - radioRx.timestamp()) < 500000;
 }
 
 void OurRobot::approachAllOpponents(bool enable) {
@@ -591,5 +591,10 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 
 bool OurRobot::hasBall() const
 {
-	return radioRx.ball_sense() && (Utils::timestamp() - radioRx.timestamp()) < 500000;
+	return radioRx.ball_sense_status() == Packet::HasBall && (Utils::timestamp() - radioRx.timestamp()) < 500000;
+}
+
+bool OurRobot::kickerWorks() const
+{
+	return !(radioRx.kicker_status() & 0x80) && (Utils::timestamp() - radioRx.timestamp()) < 500000;
 }

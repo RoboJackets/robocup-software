@@ -5,9 +5,6 @@
 #include "spi.h"
 #include "cc1101.h"
 
-#define Forward_Size    31
-#define Reverse_Size    11
-
 extern uint8_t radio_rx_len;
 extern uint8_t radio_rx_buf[];
 extern int_fast8_t last_rssi;

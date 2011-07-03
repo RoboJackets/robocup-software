@@ -46,7 +46,10 @@ void power_update()
 			failures |= Fail_Undervoltage;
 		}
 	} else {
-		power_good_time = current_time;
+		if (supply_raw > LOW_SUPPLY_RAW)
+		{
+			power_good_time = current_time;
+		}
 		
 		// If the supply voltage ever gets too high, even briefly, there is a potential for the
 		// motor drivers to fail short.
@@ -95,7 +98,7 @@ void power_fail_music()
 		} else if (failures & Fail_Fuse)
 		{
 			music_start(song_fuse_blown);
-		} else if (failures & Fail_Undervoltage)
+		} else if ((failures & Fail_Undervoltage) || (supply_raw <= LOW_SUPPLY_RAW && (current_time - power_good_time) >= 1000))
 		{
 			music_start(song_undervoltage);
 		}

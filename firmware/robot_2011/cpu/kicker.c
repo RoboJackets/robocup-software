@@ -5,6 +5,9 @@
 
 int kicker_test_v1, kicker_test_v2;
 
+// First time the kicker was not fully charged
+int full_charge_time;
+
 static int kicker_test_measure()
 {
 	// FPGA commands must be sent less than about 227ms apart or the FPGA watchdog timer
@@ -81,14 +84,47 @@ void kicker_monitor()
 		// The only feedback we have is KDONE, which is already set
 		//FIXME - Charging timeout
 	} else {
+		static const int One = 256;
+		static const int Alpha = One / 4;
+		static const int One_Minus_Alpha = One - Alpha;
+		
+		static int vf = 0;
+		static int last_voltage = 0;
+		static int last_time = 0;
+		
 		// Use measured voltage instead of KDONE
 		if (kicker_voltage >= 230)
 		{
-			kicker_status |= Kicker_Charged;
+			if ((current_time - full_charge_time) >= 500)
+			{
+				kicker_status |= Kicker_Charged;
+			}
 		} else {
+			full_charge_time = current_time;
 			kicker_status &= ~Kicker_Charged;
 		}
 		
-		//FIXME - Look for charging failure
+		if (kicker_status & Kicker_Charging)
+		{
+			vf = kicker_voltage * Alpha + vf * One_Minus_Alpha / One;
+			
+			// Look for charging failure
+			if ((current_time - last_time) >= 500)
+			{
+				last_time = current_time;
+				int delta = vf - last_voltage;
+				last_voltage = vf;
+				
+				if (kicker_voltage < 200 && delta < 5 * One)
+				{
+					failures |= Fail_Kicker_Charge;
+					kicker_charge = 0;
+				}
+			}
+		} else {
+			vf = kicker_voltage * One;
+			last_time = current_time;
+			last_voltage = vf;
+		}
 	}
 }

@@ -151,7 +151,9 @@ int main()
 	
 	base2008 = !(AT91C_BASE_PIOA->PIO_PDSR & DP1);
 	
+	// More internal peripherals
 	timer_init();
+	reply_timer_init();
 	
 	// At this point, the FPGA is presumed to be the SPI master.
 	// Wait for it to configure and determine if it works.
@@ -287,6 +289,8 @@ int main()
 					wheel_command[i] = 0;
 				}
 				dribble_command = 0;
+				kick_command = 0;
+				use_chipper = 0;
 			}
 			
 			// Check for radio packets
@@ -297,6 +301,9 @@ int main()
 					controller->received();
 				}
 			}
+			
+			// Send a reply packet if the reply timer has expired
+			radio_reply();
 		}
 		
 		// Periodic activities
@@ -331,9 +338,11 @@ int main()
 			}
 			
 			// Allow kicking if we have the ball
-			if (have_ball)
+			if (have_ball || kick_immediate)
 			{
 				kick_strength = kick_command;
+				kick_immediate = 0;
+				kick_command = 0;
 			} else {
 				kick_strength = 0;
 			}
