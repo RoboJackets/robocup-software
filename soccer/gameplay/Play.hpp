@@ -99,3 +99,10 @@ namespace Gameplay
 
 // Assigns the robot in nearest to <pt>
 bool assignNearest(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt, bool needVisible = true);
+
+// Assigns the robot nearest to <pt>, with requirements for:
+//   hasChipper  - for anything that requires chipping
+//   hasKicker   - to handle broken kickers/dribbler
+//   hasEncoders - for behaviors needing speed and precision
+bool assignNearest(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt,
+		bool hasChipper, bool hasKicker, bool hasEncoders, bool needVisible = true);
