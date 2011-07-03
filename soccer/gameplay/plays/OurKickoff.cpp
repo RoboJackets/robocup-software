@@ -20,7 +20,7 @@ Gameplay::Plays::OurKickoff::OurKickoff(GameplayModule *gameplay):
 
 	// FIXME: find a better way of selecting targets - using endline to give choice
 //	_kicker.kick.setTargetGoal();
-	_kicker.kick.setTarget(Geometry2d::Segment(Geometry2d::Point(-Field_Width/2.0, Field_Length),
+	_kicker.kickTarget(Geometry2d::Segment(Geometry2d::Point(-Field_Width/2.0, Field_Length),
 											   Geometry2d::Point( Field_Width/2.0, Field_Length)));
 }
 
