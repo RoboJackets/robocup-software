@@ -170,14 +170,14 @@ class Processor: public QThread
 		// Time of the first LogFrame
 		uint64_t firstLogTime;
 		
-		// Access to RobotConfigs
-		static RobotConfig * robotConfig2008;
-		static RobotConfig * robotConfig2011;
-
 	protected:
 		void run();
 		
 	private:
+		// Configuration for different models of robots
+		static RobotConfig * robotConfig2008;
+		static RobotConfig * robotConfig2011;
+
 		// Adds motor values to a RadioTx::Robot
 		void addMotors(Packet::RadioTx::Robot *robot);
 		
