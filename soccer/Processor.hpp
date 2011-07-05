@@ -158,6 +158,11 @@ class Processor: public QThread
 			return _loopMutex;
 		}
 		
+		Radio *radio()
+		{
+			return _radio;
+		}
+		
 		////////
 		
 		// Time of the first LogFrame

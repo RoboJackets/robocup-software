@@ -3,15 +3,17 @@
 #include <QMutexLocker>
 #include <linux/joystick.h>
 #include <Geometry2d/Point.hpp>
+#include <Utils.hpp>
 
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
-// #include <string.h>
 #include <poll.h>
 #include <errno.h>
 
 using namespace Packet;
+
+static const uint64_t Dribble_Step_Time = 125 * 1000;
 
 static const char *devices[] =
 {
@@ -27,7 +29,8 @@ Joystick::Joystick():
 {
 	_autonomous = true;
 	_dribbler = 0;
-	_stored_dribbler = 0;
+	_dribblerOn = false;
+	_lastDribblerTime = 0;
 	_fd = -1;
 	
 	if (!open())
@@ -44,11 +47,14 @@ Joystick::~Joystick()
 bool Joystick::open()
 {
 	QMutexLocker locker(&_mutex);
+	
 	if (_fd >= 0)
 	{
 		// Already open
 		return true;
 	}
+	
+	reset();
 	
 	for (int i = 0; devices[i]; ++i)
 	{
@@ -168,10 +174,9 @@ void Joystick::drive(RadioTx::Robot *tx)
 		return;
 	}
 	
-	int leftX = _axis[0] / 256;
-	int leftY = -_axis[1] / 256;
-	int rightX = _axis[2] / 256;
-	int rightY = -_axis[3] / 256;
+	int leftX = _axis[Axis_Left_X] / 256;
+	int rightX = _axis[Axis_Right_X] / 256;
+	int rightY = -_axis[Axis_Right_Y] / 256;
 	
 	//input is vx, vy in robot space
 	Geometry2d::Point input(rightX, rightY);
@@ -235,20 +240,39 @@ void Joystick::drive(RadioTx::Robot *tx)
 
 	if (_button[6])
 	{
-		_dribbler = leftY;
-
-		if (_button[4])
-		{
-			_stored_dribbler = leftY;
-		}
-	}
-
-	if (_button[4])
+		_dribblerOn = false;
+	} else if (_button[4])
 	{
-		_dribbler = _stored_dribbler;
+		_dribblerOn = true;
+	}
+	
+	uint64_t now = Utils::timestamp();
+	if (_button[1])
+	{
+		if (_dribbler > 0 && (now - _lastDribblerTime) >= Dribble_Step_Time)
+		{
+			_dribbler -= 8;
+			_lastDribblerTime = now;
+		}
+	} else if (_button[3])
+	{
+		if (_dribbler < 120 && (now - _lastDribblerTime) >= Dribble_Step_Time)
+		{
+			_dribbler += 8;
+			_lastDribblerTime = now;
+		}
+	} else {
+		// Let dribbler speed change immediately
+		_lastDribblerTime = now - Dribble_Step_Time;
 	}
 
-	tx->set_dribbler(_dribbler);
+	tx->set_dribbler(_dribblerOn ? _dribbler : 0);
 	tx->set_kick((_button[7] | _button[5]) ? 255 : 0);
 	tx->set_use_chipper(_button[5]);
+}
+
+void Joystick::reset()
+{
+	QMutexLocker locker(&_mutex);
+	_dribblerOn = false;
 }
