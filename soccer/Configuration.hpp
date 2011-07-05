@@ -1,6 +1,5 @@
 #pragma once
 
-#include <boost/shared_ptr.hpp>
 #include <QFile>
 #include <QStringList>
 #include <vector>
@@ -9,6 +8,47 @@
 class QTreeWidget;
 class QTreeWidgetItem;
 class Configuration;
+class ConfigItem;
+
+class Configuration: public QObject
+{
+	Q_OBJECT;
+	
+	public:
+		Configuration();
+		
+		void tree(QTreeWidget *tree);
+		
+		QTreeWidget *tree() const
+		{
+			return _tree;
+		}
+
+		// name lookup - returns pointer if exists, null otherwise
+		ConfigItem *nameLookup(const QString& name) const;
+
+		bool load(const QString &filename, QString &error);
+		bool save(const QString &filename, QString &error);
+
+	protected Q_SLOTS:
+		void itemChanged(QTreeWidgetItem *item, int column);
+		
+	protected:
+		friend class ConfigItem;
+		
+		// Called by ConfigItem's constructor
+		void addItem(ConfigItem *item);
+		
+		void addToTree(ConfigItem *item);
+		
+		QList<ConfigItem *> _allItems;
+		
+		QTreeWidget *_tree;
+		
+		ConfigItem *configItem(QTreeWidgetItem *ti);
+		
+		QDomDocument _doc;
+};
 
 /**
  * Base class for items in configuration: this is constructed through
@@ -23,8 +63,6 @@ protected:
 public:
 		virtual ~ConfigItem();
 		
-		typedef boost::shared_ptr<ConfigItem> shared_ptr;
-
 		// A ConfigItem's name is a sequence of path segments separated by '/'.
 		// The path is a list of these segments in order.
 		const QStringList &path() const
@@ -39,6 +77,11 @@ public:
 		
 	protected:
 		friend class Configuration;
+		
+		void addItem()
+		{
+			_config->addItem(this);
+		}
 		
 		// Called when the tree item is first created
 		virtual void setupItem();
@@ -57,8 +100,6 @@ class ConfigBool: public ConfigItem
 		ConfigBool(Configuration *tree, QString name, bool value = false);
 
 	public:
-		typedef boost::shared_ptr<ConfigBool> shared_ptr;
-
 		bool value();
 		
 		operator bool()
@@ -89,8 +130,6 @@ class ConfigInt: public ConfigItem
 		ConfigInt(Configuration *tree, QString name, int value = 0);
 
 	public:
-		typedef boost::shared_ptr<ConfigInt> shared_ptr;
-
 		virtual QString toString();
 		virtual void setValue(const QString &str);
 		
@@ -123,12 +162,9 @@ class ConfigInt: public ConfigItem
 
 class ConfigDouble: public ConfigItem
 {
-	protected:
-		ConfigDouble(Configuration *tree, QString name, double value = 0);
-
 	public:
-		typedef boost::shared_ptr<ConfigDouble> shared_ptr;
-
+		ConfigDouble(Configuration *tree, QString name, double value = 0);
+		
 		virtual QString toString();
 		virtual void setValue(const QString &str);
 		
@@ -162,7 +198,6 @@ class ConfigDouble: public ConfigItem
 class ConfigVector: public ConfigItem
 {
 	public:
-		typedef boost::shared_ptr<ConfigVector> shared_ptr;
 		ConfigVector(Configuration *tree, QString name):
 			ConfigItem(tree, name)
 		{
@@ -175,8 +210,6 @@ class ConfigVector: public ConfigItem
 class ConfigVectorElement: public ConfigItem
 {
 	public:
-		typedef boost::shared_ptr<ConfigVectorElement> shared_ptr;
-
 		ConfigVectorElement(ConfigVector *vector, int index, Configuration *tree, QString name);
 		
 		virtual QString toString();
@@ -196,8 +229,6 @@ class ConfigVectorElement: public ConfigItem
 class ConfigFloatVector: public ConfigVector
 {
 	public:
-		typedef boost::shared_ptr<ConfigFloatVector> shared_ptr;
-
 		ConfigFloatVector(Configuration *tree, QString name);
 		
 		// The value of this item is the number of elements.  Each element is a child item.
@@ -220,53 +251,27 @@ class ConfigFloatVector: public ConfigVector
 		std::vector<ConfigVectorElement *> _items;
 };
 
-class Configuration: public QObject
+#define REGISTER_CONFIGURABLE(x) static ConfigurableImpl<x> x##__configurable;
+
+class Configurable
 {
-	Q_OBJECT;
+public:
+	Configurable();
 	
-	public:
-		Configuration();
-		
-		void tree(QTreeWidget *tree);
-		
-		QTreeWidget *tree() const
-		{
-			return _tree;
-		}
+	virtual void createConfiguration(Configuration *cfg) const = 0;
+	
+	static const std::list<Configurable *> &configurables();
+	
+private:
+	static std::list<Configurable *> *_configurables;
+};
 
-		// name lookup - returns pointer if exists, null otherwise
-		ConfigItem::shared_ptr nameLookup(const QString& name) const;
-
-		/**
-		 * Parameter creation functions add a new parameter if it doesn't
-		 * already exist, and returns a shared pointer to the parameter.
-		 *
-		 * This allows one-line access/creation of parameters anywhere
-		 * a Configuration is accessable
-		 */
-		ConfigDouble::shared_ptr createDouble(const QString& name, double value=0.0);
-		ConfigBool::shared_ptr createBool(const QString& name, bool value=false);
-		ConfigInt::shared_ptr createInt(const QString& name, int value=0);
-		
-		bool load(const QString &filename, QString &error);
-		bool save(const QString &filename, QString &error);
-
-	protected Q_SLOTS:
-		void itemChanged(QTreeWidgetItem *item, int column);
-		
-	protected:
-		friend class ConfigItem;
-		
-		// Called by ConfigItem's constructor
-		void addItem(ConfigItem::shared_ptr item);
-		
-		void addToTree(ConfigItem::shared_ptr item);
-		
-		QList<ConfigItem::shared_ptr> _allItems;
-		
-		QTreeWidget *_tree;
-		
-		ConfigItem *configItem(QTreeWidgetItem *ti);
-		
-		QDomDocument _doc;
+template<class T>
+class ConfigurableImpl: public Configurable
+{
+public:
+	virtual void createConfiguration(Configuration *cfg) const
+	{
+		T::createConfiguration(cfg);
+	}
 };
