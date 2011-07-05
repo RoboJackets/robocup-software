@@ -96,7 +96,14 @@ robot_fw = arm_flash.Program('robocup.elf', [
 	'encoder_monitor.c',
 	'kicker.c',
 	'radio_protocol.c',
-	'tools/reflash.c'
+	'tools/reflash.c',
+	'invensense/imuSetup.c',
+	'invensense/imuFIFO.c',
+	'invensense/imuMldl.c',
+	'invensense/imuMlsl.c',
+	'invensense/mlcontrol.c',
+	'invensense/dmpDefault.c',
+	'invensense/imuCompatibility.c'
 ])
 Depends(robot_fw, flash_lds)
 

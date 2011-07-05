@@ -103,7 +103,7 @@ const note_t song_fuse_blown[] =
 };
 
 void music_handler(void *arg);
-timer_t music_timer = {0, 0, music_handler};
+Timer music_timer = {0, 0, music_handler};
 
 void music_handler(void *arg)
 {

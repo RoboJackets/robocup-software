@@ -24,6 +24,12 @@
 #include "kicker.h"
 #include "radio_protocol.h"
 
+#include "invensense/imuSetup.h"
+#include "invensense/imuMlsl.h"
+#include "invensense/imuFIFO.h"
+#include "invensense/imuMldl.h"
+#include "invensense/mpuregs.h"
+
 static void cmd_help(int argc, const char *argv[], void *arg)
 {
 	printf("Commands:\n");
@@ -248,9 +254,9 @@ static void cmd_timers(int argc, const char *argv[], void *arg)
 {
 	if (first_timer)
 	{
-		printf("timer_t    time       period\n");
+		printf("Timer    time       period\n");
 		//      0x01234567 0x01234567 0x01234567
-		for (timer_t *t = first_timer; t; t = t->next)
+		for (Timer *t = first_timer; t; t = t->next)
 		{
 			printf("%p 0x%08x 0x%08x\n", t, t->time, t->period);
 		}
@@ -601,6 +607,7 @@ static void cmd_i2c_read(int argc, const char *argv[], void *arg)
 		return;
 	}
 	
+#if 0
 	AT91C_BASE_TWI->TWI_MMR = (parse_uint32(argv[0]) << 16) | AT91C_TWI_MREAD | AT91C_TWI_IADRSZ_1_BYTE;
 	AT91C_BASE_TWI->TWI_IADR = parse_uint32(argv[1]);
 	AT91C_BASE_TWI->TWI_CR = AT91C_TWI_START | AT91C_TWI_STOP;
@@ -622,6 +629,33 @@ static void cmd_i2c_read(int argc, const char *argv[], void *arg)
 		printf("NACK\n");
 	} else {
 		printf("0x%02x\n", result);
+	}
+#else
+	uint8_t result = 0;
+	if (MLSLSerialReadBurst(parse_uint32(argv[0]), parse_uint32(argv[1]), 1, &result) != ML_SUCCESS)
+	{
+		printf("NACK\n");
+	} else {
+		printf("0x%02x\n", result);
+	}
+#endif
+}
+
+static void cmd_i2c_write(int argc, const char *argv[], void *arg)
+{
+	if (argc != 3)
+	{
+		printf("i2c_read <device> <reg> <data>\n");
+		return;
+	}
+	
+// 	if (MLSLSerialWriteSingle(parse_uint32(argv[0]), parse_uint32(argv[1]), parse_uint32(argv[2])) != ML_SUCCESS)
+	uint8_t data = parse_uint32(argv[2]);
+	if (MLSLSerialWriteBurst(parse_uint32(argv[0]), parse_uint32(argv[1]), 1, &data) != ML_SUCCESS)
+	{
+		printf("NACK\n");
+	} else {
+		printf("OK\n");
 	}
 }
 
@@ -709,6 +743,63 @@ void cmd_drive_mode(int argc, const char *argv[], void *arg)
 	}
 }
 
+static void dataCallback()
+{
+}
+
+void cmd_imu_test(int argc, const char *argv[], void *arg)
+{
+	if (IMUopen() != ML_SUCCESS)
+	{
+		printf("IMUopen failed\n");
+		return;
+	}
+	
+#if 1
+	MLSetAuxSlaveAddr(KIONIX_AUX_SLAVEADDR);
+	float gyroCal[9] = {0};
+	float accelCal[9] = {0};
+	float gyroScale = 0.0, accelScale = 0.0;
+	memset(gyroCal,0,9*sizeof(gyroCal[0]));
+	gyroCal[0] = 1.0;
+	gyroCal[4] = 1.0;
+	gyroCal[8] = 1.0;
+	memset(accelCal,0,9*sizeof(accelCal[0]));
+	accelCal[0] = -1.0;
+	accelCal[4] = -1.0;
+	accelCal[8] =  1.0;
+
+	gyroScale = 2000.0f;
+	accelScale = 2.0f;
+
+	MLSetGyroCalibration(gyroScale, gyroCal);
+	MLSetAccelCalibration(accelScale, accelCal);
+#endif
+	
+#if 1
+	IMUsetBiasUpdateFunc(ML_ALL);
+	IMUsendQuaternionToFIFO(ML_32_BIT);
+	IMUsendGyroToFIFO(ML_ALL, ML_32_BIT);
+	IMUsendLinearAccelWorldToFIFO(ML_ALL, ML_32_BIT);
+	MLSetProcessedFIFOCallback(dataCallback);
+// 	IMUsetMotionCallback(motion);
+	IMUsetFIFORate(0);
+	IMUstart();
+#endif
+	
+	radio_rx_len = 0;
+	usb_rx_start();
+	while (!usb_rx_len)
+	{
+		// Reset the watchdog timer
+		AT91C_BASE_WDTC->WDTC_WDCR = 0xa5000001;
+		
+		printf("test\n");
+		IMUupdateData();
+	}
+	usb_rx_start();
+}
+
 static void debug_faults()
 {
 	printf("0x%02x 0x%08x\n", current_motor_faults, failures);
@@ -759,6 +850,7 @@ const command_t commands[] =
 	{"fail", cmd_fail},
 	{"adc", cmd_adc},
 	{"i2c_read", cmd_i2c_read},
+	{"i2c_write", cmd_i2c_write},
 	{"monitor_faults", cmd_write_uint, (void *)&write_monitor_faults},
 	{"monitor_halls", cmd_write_uint, (void *)&write_monitor_halls},
 	{"read", cmd_read},
@@ -766,6 +858,7 @@ const command_t commands[] =
 	{"kicker_test", cmd_kicker_test},
 	{"drive_mode", cmd_drive_mode},
 	{"monitor_charge", cmd_write_uint, (void *)&write_monitor_charge},
+	{"imu_test", cmd_imu_test},
 
 	// End of list placeholder
 	{0, 0}

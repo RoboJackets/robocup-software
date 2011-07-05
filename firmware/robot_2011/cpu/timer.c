@@ -4,7 +4,7 @@
 #include "timer.h"
 #include "write.h"
 
-timer_t *first_timer;
+Timer *first_timer;
 volatile unsigned int current_time;
 
 static void timer_interrupt()
@@ -18,8 +18,8 @@ static void timer_interrupt()
 	current_time += delta;
 	
 	// Run handlers for timers whose times have passed since the last interrupt
-	timer_t *prev = 0;
-	for (timer_t *t = first_timer; t; t = t->next)
+	Timer *prev = 0;
+	for (Timer *t = first_timer; t; t = t->next)
 	{
 		// Look at the time from the last interrupt to the timer's deadline.
 		// This accounts for multiple ticks per interrupt, even when current_time wraps around.
@@ -60,7 +60,7 @@ void timer_init()
 	AIC_EnableIT(1);
 }
 
-void timer_start(timer_t *t)
+void timer_start(Timer *t)
 {
 	AIC_DisableIT(1);
 	t->time += current_time;
@@ -69,14 +69,14 @@ void timer_start(timer_t *t)
 	AIC_EnableIT(1);
 }
 
-void timer_stop(timer_t *t)
+void timer_stop(Timer *t)
 {
 	AIC_DisableIT(1);
 	if (t == first_timer)
 	{
 		first_timer = t->next;
 	} else {
-		for (timer_t *prev = first_timer; prev; prev = prev->next)
+		for (Timer *prev = first_timer; prev; prev = prev->next)
 		{
 			if (prev->next == t)
 			{
