@@ -165,6 +165,8 @@ public:
 	OurRobot(int shell, SystemState *state);
 	~OurRobot();
 
+	void addStatusText();
+	
 	void addText(const QString &text, const QColor &color = Qt::white);
 
 	// kicker readiness checks
@@ -331,6 +333,7 @@ public:
 	MotionCommand cmd;
 
 	bool hasBall() const;
+	bool ballSenseWorks() const;
 	bool kickerWorks() const;
 	float kickerVoltage() const;
 	Packet::HardwareVersion hardwareVersion() const;

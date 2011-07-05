@@ -79,6 +79,58 @@ OurRobot::~OurRobot()
 	delete _planner;
 }
 
+void OurRobot::addStatusText()
+{
+	static const char *motorNames[] = {"BL", "FL", "FR", "BR", "DR"};
+	
+	// Motor status
+	if (radioRx.motor_status().size() == 5)
+	{
+		for (int i = 0; i < 5; ++i)
+		{
+			QString error;
+			switch (radioRx.motor_status(i))
+			{
+				case Packet::Hall_Failure:
+					error = "Hall fault";
+					break;
+				
+				case Packet::Stalled:
+					error = "Stall";
+					break;
+				
+				case Packet::Encoder_Failure:
+					error = "Encoder fault";
+					break;
+				
+				default:
+					break;
+			}
+			
+			if (!error.isNull())
+			{
+				addText(QString("%1: %2").arg(error, QString(motorNames[i])), Qt::red);
+			}
+		}
+	}
+	
+	if (!ballSenseWorks())
+	{
+		addText("Ball sense fault", Qt::red);
+	}
+	
+	if (!kickerWorks())
+	{
+		addText("Kicker fault", Qt::red);
+	}
+	
+	float battery = radioRx.battery();
+	if (battery <= 14.3f)
+	{
+		addText(QString("Low battery: %1V").arg(battery, 0, 'f', 1));
+	}
+}
+
 void OurRobot::addText(const QString& text, const QColor& qc)
 {
 	Packet::DebugText *dbg = new Packet::DebugText;
@@ -587,6 +639,11 @@ bool OurRobot::charged() const
 bool OurRobot::hasBall() const
 {
 	return radioRx.ball_sense_status() == Packet::HasBall && (Utils::timestamp() - radioRx.timestamp()) < 500000;
+}
+
+bool OurRobot::ballSenseWorks() const
+{
+	return radioRx.ball_sense_status() == Packet::NoBall || radioRx.ball_sense_status() == Packet::HasBall;
 }
 
 bool OurRobot::kickerWorks() const

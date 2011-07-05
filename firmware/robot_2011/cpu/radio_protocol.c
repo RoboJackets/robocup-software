@@ -134,7 +134,7 @@ int handle_forward_packet()
 		// Build and send a reverse packet
 		reply_buf[0] = robot_id | (sequence << 4);
 		reply_buf[1] = last_rssi;
-		reply_buf[2] = supply_raw >> 2;
+		reply_buf[2] = supply_raw * VBATT_NUM / VBATT_DIV / 100;
 		reply_buf[3] = kicker_status;
 		if (failures & Fail_Kicker)
 		{

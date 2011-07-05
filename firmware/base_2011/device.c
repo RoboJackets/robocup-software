@@ -425,7 +425,7 @@ void handle_radio_tx()
     // The state transition for TXOFF_MODE has started.
 
     // Go to RX
-    radio_command(SFRX);
+//     radio_command(SFRX);
     radio_command(SRX);
     
     // Reset and enable the RX timeout timer

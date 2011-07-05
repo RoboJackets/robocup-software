@@ -69,6 +69,8 @@ void ota_copy(int num_pages)
 // Returns nonzero if OTA mode should continue.
 static int ota_packet()
 {
+	rx_lost_time = current_time;
+	
 	LED_TOGGLE(LED_RG);
 	
 	// Go ahead and store our expected offset in the reply
@@ -110,7 +112,7 @@ static int ota_packet()
 			}
 			
 			ota_commit = 1;
-			reply_buf[0] = robot_id | 0x0f;
+			reply_buf[0] = robot_id | 0xf0;
 		}
 	} else if (radio_rx_len == 2 && radio_rx_buf[0] == 0x00 && radio_rx_buf[1] == 0xff)
 	{
@@ -161,6 +163,8 @@ static int ota_packet()
 	{
 		// 2ms per slot
 		reply_timer_start(3000 * robot_id);
+	} else {
+		radio_command(SRX);
 	}
 	
 	return 1;

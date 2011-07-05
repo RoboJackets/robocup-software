@@ -55,6 +55,9 @@ def configure():
 		writeRegister(addr, value)
 	autoCalibrate(True)
 
+def channel(n):
+	writeRegister(0x0a, n)
+
 def send(buf):
 	device.bulkWrite(1, buf)
 

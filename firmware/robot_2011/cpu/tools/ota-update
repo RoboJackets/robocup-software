@@ -2,6 +2,7 @@
 
 import sys
 import time
+from getopt import *
 
 from rc_radio import *
 
@@ -11,7 +12,26 @@ def abort():
 		send([0x00, 0xff])
 		time.sleep(0.05)
 
-robots = []
+ch = 0
+required = set()
+
+(args, filename) = getopt(sys.argv[1:], 'c:r:')
+for (name, value) in args:
+	if name == '-c':
+		ch = int(value)
+	elif name == '-r':
+		id_list = value
+		ranges = id_list.split(',')
+		for r in ranges:
+			if '-' in r:
+				(start, end) = r.split('-')
+				for i in range(int(start), int(end) + 1):
+					required.add(i)
+			else:
+				required.add(int(r))
+channel(ch)
+
+robots = set()
 for i in range(4):
 	send([0xc9, 0xd5])
 	while True:
@@ -20,15 +40,24 @@ for i in range(4):
 			break
 		robot_id = rx[0]
 		if not robot_id in robots:
-			robots.append(robot_id)
+			robots.add(robot_id)
 			print 'Found robot %d' % robot_id
-
-if len(sys.argv) != 2:
-	print >> sys.stderr, "Usage: %s <flash_image>" % sys.argv[0]
+if not robots:
+	print >> sys.stderr, 'Did not find any robots - check radio channel'
 	abort()
 	sys.exit(1)
 
-f = file(sys.argv[1])
+if required and robots != required:
+	print >> sys.stderr, 'Did not find expected set of robots'
+	abort()
+	sys.exit(1)
+
+if len(filename) != 1:
+	print >> sys.stderr, "Usage: %s [-c <channel>] [-r <robot IDs>] <flash_image>" % sys.argv[0]
+	abort()
+	sys.exit(1)
+
+f = file(filename[0])
 data = [ord(x) for x in f.read()]
 f.close()
 
@@ -105,8 +134,9 @@ for tries in range(10):
 			break
 		robot_id = rx[0] & 15
 		status = rx[0] >> 4
-		assert status == 0
-		if status == 0 and not ok[robot_id]:
+		assert status == 15
+		if status == 15 and not ok[robot_id]:
+			print 'Robot %d finished' % robot_id
 			ok[robot_id] = True
 			num_ok += 1
 	if num_ok == len(robots):

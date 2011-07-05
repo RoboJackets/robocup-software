@@ -107,6 +107,7 @@ message LogFrame
 		repeated MotorStatus motor_status = 12;
 		
 		optional bool kicker_works = 13 [default = true];
+		optional float battery_voltage = 14;
 	}
 
 	message Ball

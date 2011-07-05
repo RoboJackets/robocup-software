@@ -470,6 +470,7 @@ void Processor::run()
 				log->set_charged(r->radioRx.kicker_status() & 0x01);
 				log->set_kicker_works(!(r->radioRx.kicker_status() & 0x90));
 				log->set_ball_sense_status(r->radioRx.ball_sense_status());
+				log->set_battery_voltage(r->radioRx.battery());
 				log->mutable_motor_status()->Clear();
 				log->mutable_motor_status()->MergeFrom(r->radioRx.motor_status());
 				
