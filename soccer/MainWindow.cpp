@@ -6,6 +6,7 @@
 #include "PlayConfigTab.hpp"
 #include "RefereeModule.hpp"
 #include "Configuration.hpp"
+#include "radio/Radio.hpp"
 #include <Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
 #include <framework/RobotConfig.hpp>
@@ -38,7 +39,6 @@ void calcMinimumWidth(QWidget *widget, QString text)
 MainWindow::MainWindow(QWidget *parent):
 	QMainWindow(parent)
 {
-	_haveRadioChannel = false;
 	_updateCount = 0;
 	_processor = 0;
 	_autoExternalReferee = true;
@@ -132,6 +132,8 @@ MainWindow::MainWindow(QWidget *parent):
 	
 	_ui.splitter->setStretchFactor(0, 98);
 	_ui.splitter->setStretchFactor(1, 10);
+	
+	channel(0);
 
 	updateTimer.setSingleShot(true);
 	connect(&updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
@@ -207,20 +209,6 @@ void MainWindow::live(bool value)
 void MainWindow::updateViews()
 {
 	_refereeLabel->setText(_processor->refereeModule()->lastPacketDescription());
-	
-	// Radio channel
-	if (!_haveRadioChannel)
-	{
-		//FIXME - Not like this any more
-#if 0
-		int r = _processor->radio();
-		if (r >= 0)
-		{
-			_haveRadioChannel = true;
-			_ui.radioLabel->setText(QString("Radio %1").arg(r));
-		}
-#endif
-	}
 
 	int manual =_processor->manualID();
 	if ((manual >= 0 || _ui.manualID->isEnabled()) && !_processor->joystickValid())
@@ -555,6 +543,25 @@ void MainWindow::on_actionUseOurHalf_toggled(bool value)
 void MainWindow::on_actionUseOpponentHalf_toggled(bool value)
 {
 	_processor->useOpponentHalf(value);
+}
+
+void MainWindow::on_action904MHz_triggered()
+{
+	channel(0);
+}
+
+void MainWindow::on_action906MHz_triggered()
+{
+	channel(10);
+}
+
+void MainWindow::channel(int n)
+{
+	if (_processor && _processor->radio())
+	{
+		_processor->radio()->channel(n);
+	}
+	_ui.radioLabel->setText(QString("%1MHz").arg(904.0 + 0.2 * n, 0, 'f', 1));
 }
 
 void MainWindow::on_actionCenterBall_triggered()

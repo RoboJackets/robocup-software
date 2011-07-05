@@ -24,6 +24,7 @@ class Joystick: boost::noncopyable
 			return _autonomous;
 		}
 		
+		void reset();
 		void update();
 		void drive(Packet::RadioTx::Robot *tx);
 
@@ -41,7 +42,17 @@ class Joystick: boost::noncopyable
 
 		bool _autonomous;
 		int _dribbler;
-		int _stored_dribbler;
+		bool _dribblerOn;
+		
+		// Last time the dribbler speed changed
+		uint64_t _lastDribblerTime;
+		
+		static const int Axis_Left_X = 0;
+		static const int Axis_Left_Y = 1;
+		static const int Axis_Right_X = 2;
+		static const int Axis_Right_Y = 3;
+		static const int Axis_DPad_X = 4;
+		static const int Axis_DPad_Y = 5;
 		
 		// D-pad
 		bool dUp()    const { return (_axis[5] < 0) ? true : false; }

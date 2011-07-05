@@ -89,6 +89,7 @@ void Processor::manualID(int value)
 {
 	QMutexLocker locker(&_loopMutex);
 	_manualID = value;
+	_joystick->reset();
 }
 
 void Processor::blueTeam(bool value)

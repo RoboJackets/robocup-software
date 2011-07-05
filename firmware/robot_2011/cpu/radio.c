@@ -8,6 +8,8 @@ uint8_t radio_rx_buf[64];
 int_fast8_t last_rssi;
 volatile int radio_in_tx = 0;
 
+static int current_channel;
+
 uint8_t radio_command(uint8_t cmd)
 {
 	radio_select();
@@ -35,6 +37,12 @@ uint8_t radio_write(uint8_t addr, uint8_t value)
 	radio_deselect();
 	
 	return status;
+}
+
+void radio_channel(int n)
+{
+	current_channel = n;
+	radio_write(CHANNR, n);
 }
 
 // Waits for the radio's version byte to have the expected value.
@@ -101,6 +109,8 @@ void radio_configure()
 	radio_deselect();
 	
 	radio_write(IOCFG2, 6 | GDOx_INVERT);
+	
+	radio_channel(current_channel);
 	
 	radio_command(SFRX);
 	radio_command(SRX);

@@ -95,7 +95,7 @@ void kicker_monitor()
 		// Use measured voltage instead of KDONE
 		if (kicker_voltage >= 230)
 		{
-			if ((current_time - full_charge_time) >= 500)
+			if ((current_time - full_charge_time) >= 1000)
 			{
 				kicker_status |= Kicker_Charged;
 			}
@@ -109,7 +109,7 @@ void kicker_monitor()
 			vf = kicker_voltage * Alpha + vf * One_Minus_Alpha / One;
 			
 			// Look for charging failure
-			if ((current_time - last_time) >= 500)
+			if ((current_time - last_time) >= 1000)
 			{
 				last_time = current_time;
 				int delta = vf - last_voltage;

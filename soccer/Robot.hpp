@@ -230,7 +230,7 @@ public:
 	void angularVelocity(double w);
 
 	/*
-	 * Enable dribbler (note: can go both ways)
+	 * Enable dribbler (0 to 127)
 	 */
 	void dribble(int8_t speed);
 

@@ -149,7 +149,7 @@ int main()
 	AT91C_BASE_PIOA->PIO_MDER = MCU_PROGB;
 	AT91C_BASE_PIOA->PIO_OER = MCU_PROGB;
 	
-	base2008 = !(AT91C_BASE_PIOA->PIO_PDSR & DP1);
+	base2008 = SWITCHES & DP1;
 	
 	// More internal peripherals
 	timer_init();
@@ -210,7 +210,10 @@ int main()
 		} else {
 			default_controller = &controllers[1];
 		}
-		controller = default_controller;
+		if (!(SWITCHES & DP2))
+		{
+			controller = default_controller;
+		}
 	}
 	
 	// Set up the radio.  After this, it will be able to transmit and receive.
@@ -218,6 +221,15 @@ int main()
 	if (!(failures & Fail_Radio))
 	{
 		radio_configure();
+		
+		if (SWITCHES & DP4)
+		{
+			// Secondary channel
+			radio_channel(10);
+		} else {
+			// Primary channel
+			radio_channel(0);
+		}
 	}
 	
 	rx_lost_time = current_time;
@@ -244,21 +256,21 @@ int main()
 		check_usb_connection();
 		
 		// Read robot ID
-		uint32_t inputs = AT91C_BASE_PIOA->PIO_PDSR;
+		uint32_t inputs = SWITCHES;
 		robot_id = 0;
-		if (!(inputs & ID0))
+		if (inputs & ID0)
 		{
 			robot_id = 1;
 		}
-		if (!(inputs & ID1))
+		if (inputs & ID1)
 		{
 			robot_id |= 2;
 		}
-		if (!(inputs & ID2))
+		if (inputs & ID2)
 		{
 			robot_id |= 4;
 		}
-		if (!(inputs & ID3))
+		if (inputs & ID3)
 		{
 			robot_id |= 8;
 		}
