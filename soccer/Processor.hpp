@@ -60,6 +60,8 @@ class Processor: public QThread
 			uint64_t lastRadioRxTime;
 		};
 		
+		static void createConfiguration(Configuration *cfg);
+
 		Processor(bool sim);
 		virtual ~Processor();
 		
@@ -169,8 +171,8 @@ class Processor: public QThread
 		uint64_t firstLogTime;
 		
 		// Access to RobotConfigs
-		RobotConfig * robotConfig2008;
-		RobotConfig * robotConfig2011;
+		static RobotConfig * robotConfig2008;
+		static RobotConfig * robotConfig2011;
 
 	protected:
 		void run();

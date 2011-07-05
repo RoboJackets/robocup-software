@@ -243,13 +243,13 @@ int main (int argc, char* argv[])
 	
 	Configuration config;
 
+	Processor *processor = new Processor(sim);
+	processor->blueTeam(blueTeam);
+
 	BOOST_FOREACH(Configurable *obj, Configurable::configurables())
 	{
 		obj->createConfiguration(&config);
 	}
-	
-	Processor *processor = new Processor(sim);
-	processor->blueTeam(blueTeam);
 	
 	// Load config file
 	QString error;
