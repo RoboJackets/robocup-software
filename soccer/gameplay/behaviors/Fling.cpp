@@ -5,13 +5,27 @@
 using namespace std;
 using namespace Geometry2d;
 
+namespace Gameplay
+{
+	namespace Behaviors
+	{
+		REGISTER_CONFIGURABLE(Fling)
+	}
+}
+
+ConfigDouble *Gameplay::Behaviors::Fling::_fling_travel_thresh;
+ConfigDouble *Gameplay::Behaviors::Fling::_pivot_Speed;
+
+void Gameplay::Behaviors::Fling::createConfiguration(Configuration* cfg)
+{
+	_fling_travel_thresh  = new ConfigDouble(cfg, "Fling/Ball Travel Threshold", 0.5);
+	_pivot_Speed  = new ConfigDouble(cfg, "Fling/Pivot Speed", 0.5 * M_PI);
+}
+
 Gameplay::Behaviors::Fling::Fling(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay), _capture(gameplay)
 {
 	restart();
-	
-	_fling_travel_thresh = config()->createDouble("Fling/Ball Travel Threshold", 0.5);
-	_pivot_Speed = config()->createDouble("Fling/Pivot Speed", 0.5 * M_PI);
 }
 
 void Gameplay::Behaviors::Fling::restart()

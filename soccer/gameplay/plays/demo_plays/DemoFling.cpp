@@ -6,12 +6,27 @@ using namespace std;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoFling, "Demos")
 
+namespace Gameplay
+{
+	namespace Plays
+	{
+		REGISTER_CONFIGURABLE(DemoFling)
+	}
+}
+
+ConfigInt *Gameplay::Plays::DemoFling::_dribblerSpeed;
+ConfigDouble	 *Gameplay::Plays::DemoFling::_spinAngularSpeed;
+
+void Gameplay::Plays::DemoFling::createConfiguration(Configuration* cfg)
+{
+	_dribblerSpeed = new ConfigInt(cfg, "DemoFling/Dribber Speed", 127);
+	_spinAngularSpeed  = new ConfigDouble(cfg, "Fling/Spin Angular Speed", 2.0);
+}
+
 Gameplay::Plays::DemoFling::DemoFling(GameplayModule *gameplay):
 Play(gameplay),
 _fling(gameplay)
 {
-	_dribblerSpeed = config()->createInt("DemoFling/Dribber Speed", 127);
-	_spinAngularSpeed = config()->createDouble("Fling/Spin Angular Speed", 2.0);
 }
 
 bool Gameplay::Plays::DemoFling::run()

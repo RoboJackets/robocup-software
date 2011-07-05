@@ -6,13 +6,29 @@ using namespace std;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoAttack, "Demos")
 
+namespace Gameplay
+{
+	namespace Plays
+	{
+		REGISTER_CONFIGURABLE(DemoAttack)
+	}
+}
+
+ConfigBool *Gameplay::Plays::DemoAttack::_useChip;
+ConfigInt  *Gameplay::Plays::DemoAttack::_dribblerSpeed;
+ConfigInt  *Gameplay::Plays::DemoAttack::_kickPower;
+
+void Gameplay::Plays::DemoAttack::createConfiguration(Configuration* cfg)
+{
+	_useChip  = new ConfigBool(cfg, "DemoAttack/Enable Chipping", false);
+	_dribblerSpeed = new ConfigInt(cfg, "DemoAttack/Dribber Speed", 127);
+	_kickPower = new ConfigInt(cfg, "DemoAttack/Kicker Power", 127);
+}
+
 Gameplay::Plays::DemoAttack::DemoAttack(GameplayModule *gameplay):
 Play(gameplay),
 _kicker(gameplay)
 {
-	_useChip = config()->createBool("DemoAttack/Enable Chipping", false);
-	_dribblerSpeed = config()->createInt("DemoAttack/Dribber Speed", 127);
-	_kickPower = config()->createInt("DemoAttack/Kicker Power", 127);
 }
 
 bool Gameplay::Plays::DemoAttack::run()

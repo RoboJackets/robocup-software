@@ -18,6 +18,9 @@ namespace Plays
 class DemoYank: public Play
 {
 public:
+
+	static void createConfiguration(Configuration *cfg);
+
 	DemoYank(GameplayModule *gameplay);
 
 	virtual bool run();
@@ -26,8 +29,8 @@ protected:
 	Behaviors::Yank _yank;
 
 	// parameters to set in the GUI
-	ConfigInt::shared_ptr _dribblerSpeed;   // sets the aim/kick dribbler speed
-	ConfigBool::shared_ptr _enableBump;     // uses a bump before yanking
+	static ConfigInt *_dribblerSpeed;   // sets the aim/kick dribbler speed
+	static ConfigBool * _enableBump;     // uses a bump before yanking
 };
 } // \Gameplay
 } // \Plays

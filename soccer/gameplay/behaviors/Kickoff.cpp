@@ -3,16 +3,25 @@
 
 using namespace std;
 
+ConfigBool *Gameplay::Behaviors::Kickoff::_enableRandomKick;
+ConfigBool *Gameplay::Behaviors::Kickoff::_enableFling;
+ConfigBool *Gameplay::Behaviors::Kickoff::_enableChip;
+ConfigBool *Gameplay::Behaviors::Kickoff::_enableBumpYank;
+
+void Gameplay::Behaviors::Kickoff::createConfiguration(Configuration *cfg)
+{
+	_enableRandomKick = new ConfigBool(cfg, "Kickoff/Enable Random Kick Mode");
+	_enableFling = new ConfigBool(cfg, "Kickoff/Enable Flinging");
+	_enableChip = new ConfigBool(cfg, "Kickoff/Enable Chipping");
+	_enableBumpYank = new ConfigBool(cfg, "Kickoff/Enable BumpYank");
+}
+
 Gameplay::Behaviors::Kickoff::Kickoff(GameplayModule *gameplay):
 SingleRobotBehavior(gameplay),
 _kick(gameplay), _fling(gameplay), _yank(gameplay)
 {
 	mode = Mode_Kick;
 	_mode_chosen = false;
-	_enableRandomKick = config()->createBool("Kickoff/Enable Random Kick Mode");
-	_enableFling = config()->createBool("Kickoff/Enable Flinging");
-	_enableChip = config()->createBool("Kickoff/Enable Chipping");
-	_enableBumpYank = config()->createBool("Kickoff/Enable BumpYank");
 
 	// seed random number generator
 	srand(state()->timestamp);

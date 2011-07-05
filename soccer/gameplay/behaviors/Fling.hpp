@@ -12,6 +12,8 @@ namespace Gameplay
 			public:
 				Fling(GameplayModule *gameplay);
 				
+				static void createConfiguration(Configuration *cfg);
+
 				virtual bool run();
 				
 				bool done() const
@@ -58,8 +60,8 @@ namespace Gameplay
 				bool _ccw;
 
 				// tuning parameters
-				ConfigDouble::shared_ptr _fling_travel_thresh; // minimum distance the ball must travel to be done
-				ConfigDouble::shared_ptr _pivot_Speed;
+				static ConfigDouble *_fling_travel_thresh; // minimum distance the ball must travel to be done
+				static ConfigDouble *_pivot_Speed;
 		};
 	}
 }

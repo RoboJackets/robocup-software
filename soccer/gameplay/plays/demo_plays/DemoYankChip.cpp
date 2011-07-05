@@ -6,13 +6,29 @@ using namespace std;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoYankChip, "Demos")
 
+namespace Gameplay
+{
+	namespace Plays
+	{
+		REGISTER_CONFIGURABLE(DemoYankChip)
+	}
+}
+
+ConfigInt *Gameplay::Plays::DemoYankChip::_dribblerSpeed;
+ConfigDouble *Gameplay::Plays::DemoYankChip::_backupDist;
+ConfigBool *Gameplay::Plays::DemoYankChip::_useTarget;
+
+void Gameplay::Plays::DemoYankChip::createConfiguration(Configuration* cfg)
+{
+	_dribblerSpeed = new ConfigInt(cfg, "DemoYankChip/Dribber Speed", 127);
+	_backupDist  = new ConfigDouble(cfg, "DemoYankChip/Backup Distance", 0.4);
+	_useTarget  = new ConfigBool(cfg, "DemoYankChip/Enable Aiming", true);
+}
+
 Gameplay::Plays::DemoYankChip::DemoYankChip(GameplayModule *gameplay):
 Play(gameplay),
 _yank(gameplay)
 {
-	_dribblerSpeed = config()->createInt("DemoYankChip/Dribber Speed", 127);
-	_backupDist = config()->createDouble("DemoYankChip/Backup Distance", 0.4);
-	_useTarget = config()->createBool("DemoYankChip/Enable Aiming", true);
 }
 
 bool Gameplay::Plays::DemoYankChip::run()

@@ -146,21 +146,23 @@ void MainWindow::configuration(Configuration* config)
 	_config->tree(_ui.configTree);
 
 	// Revision-specific configuration
-	_robotConfig2008 = new RobotConfig(config, "Rev2008");
-	_robotConfig2011 = new RobotConfig(config, "Rev2011");
+//	_robotConfig2008 = new RobotConfig(config, "Rev2008");
+//	_robotConfig2011 = new RobotConfig(config, "Rev2011");
 }
 
 void MainWindow::processor(Processor* value)
 {
 	// This should only happen once
 	assert(!_processor);
-	assert(_robotConfig2008);
-	assert(_robotConfig2011);
+//	assert(_robotConfig2008);
+//	assert(_robotConfig2011);
 	
 	_processor = value;
 	
-	_processor->robotConfig2008 = _robotConfig2008;
-	_processor->robotConfig2011 = _robotConfig2011;
+//	Processor::robotConfig2008 = _robotConfig2008;
+//	Processor::robotConfig2011 = _robotConfig2011;
+	_robotConfig2008 = Processor::robotConfig2008;
+	_robotConfig2011 = Processor::robotConfig2011;
 
 	// External referee
 	on_externalReferee_toggled(_ui.externalReferee->isChecked());
