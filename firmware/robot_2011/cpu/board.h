@@ -204,6 +204,8 @@
 // The accelerometer is only available when the IMU3000 is in pass-through mode
 #define I2C_ACCEL	0x0f
 
+#define SWITCHES	(AT91C_BASE_PIOA->PIO_PDSR ^ (DP1 | DP2 | DP4 | ID0 | ID1 | ID2 | ID3))
+
 //------------------------------------------------------------------------------
 // Flash
 //------------------------------------------------------------------------------

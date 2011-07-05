@@ -734,6 +734,7 @@ const command_t commands[] =
 {
 	{"help", cmd_help},
 	{"status", cmd_status},
+	{"s", cmd_status},
 	{"reflash", cmd_reflash},
 	{"reset", cmd_write_uint, (void *)&write_reset},
 	{"rw", cmd_read_word},

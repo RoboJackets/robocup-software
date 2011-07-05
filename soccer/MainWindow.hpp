@@ -90,6 +90,10 @@ class MainWindow : public QMainWindow
 		void on_action180_triggered();
 		void on_action270_triggered();
 		
+		// Radio channels
+		void on_action904MHz_triggered();
+		void on_action906MHz_triggered();
+		
 		// Simulator commands
 		void on_actionCenterBall_triggered();
 		void on_actionStopBall_triggered();
@@ -168,9 +172,7 @@ class MainWindow : public QMainWindow
 		} StatusType;
 		
 		void status(QString text, StatusType status);
-		
-		// Sets revision-dependent robot configuration
-		void updateRobotConfigs();
+		void channel(int n);
 		
 		Ui_MainWindow _ui;
 		
@@ -212,7 +214,4 @@ class MainWindow : public QMainWindow
 		QLabel *_procFPS;
 		QLabel *_logMemory;
 		QLabel *_refereeLabel;
-
-		// True after the processor has chosen a radio channel and the label has been updated.
-		bool _haveRadioChannel;
 };

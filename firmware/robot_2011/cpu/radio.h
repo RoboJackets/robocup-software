@@ -30,6 +30,10 @@ uint8_t radio_command(uint8_t cmd);
 uint8_t radio_read(uint8_t addr);
 uint8_t radio_write(uint8_t addr, uint8_t value);
 
+// Sets the radio channel number (CHANNR register).
+// Only certain values are permissible, so check the radio configuraion and CC1101 datasheet.
+void radio_channel(int n);
+
 void radio_transmit(uint8_t *buf, int len);
 
 // Checks the radio for received data.
