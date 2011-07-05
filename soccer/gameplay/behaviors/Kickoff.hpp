@@ -29,6 +29,8 @@ namespace Gameplay
 			public:
 				Kickoff(GameplayModule *gameplay);
 				
+				static void createConfiguration(Configuration *cfg);
+
 				virtual bool run();
 
 				// MODE setting - this stores which play will be used
@@ -60,10 +62,10 @@ namespace Gameplay
 				void executeMode(); // runs the correct behavior
 
 				// GUI Parameters
-				ConfigBool::shared_ptr _enableRandomKick; // if true, chooses among allowable types
-				ConfigBool::shared_ptr _enableFling; // if true, allows for fling to be used - uses side
-				ConfigBool::shared_ptr _enableChip;  // if true, will try to chip at endline
-				ConfigBool::shared_ptr _enableBumpYank;  // if true, will bump forward and yank back - uses side
+				static ConfigBool * _enableRandomKick; // if true, chooses among allowable types
+				static ConfigBool * _enableFling; // if true, allows for fling to be used - uses side
+				static ConfigBool * _enableChip;  // if true, will try to chip at endline
+				static ConfigBool * _enableBumpYank;  // if true, will bump forward and yank back - uses side
 		};
 	}
 }

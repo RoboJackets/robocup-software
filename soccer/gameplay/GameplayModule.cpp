@@ -17,11 +17,10 @@
 using namespace std;
 using namespace boost;
 
-Gameplay::GameplayModule::GameplayModule(SystemState *state, Configuration *config):
+Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_mutex(QMutex::Recursive)
 {
 	_state = state;
-	_config = config;
 	_goalie = 0;
 	_currentPlayFactory = 0;
 	_playDone = false;

@@ -20,6 +20,7 @@
 
 #include <motion/MotionControl.hpp>
 #include <gameplay/GameplayModule.hpp>
+#include <framework/RobotConfig.hpp>
 #include <RefereeModule.hpp>
 
 #include <boost/foreach.hpp>
@@ -32,6 +33,8 @@
 #include <protobuf/RadioRx.pb.h>
 #include <git_version.h>
 
+REGISTER_CONFIGURABLE(Processor)
+
 using namespace std;
 using namespace boost;
 using namespace Geometry2d;
@@ -39,7 +42,16 @@ using namespace google::protobuf;
 
 static const uint64_t Command_Latency = 0;
 
-Processor::Processor(Configuration *config, bool sim)
+RobotConfig *Processor::robotConfig2008;
+RobotConfig *Processor::robotConfig2011;
+
+void Processor::createConfiguration(Configuration *cfg)
+{
+	robotConfig2008 = new RobotConfig(cfg, "Rev2008");
+	robotConfig2011 = new RobotConfig(cfg, "Rev2011");
+}
+
+Processor::Processor(bool sim)
 {
 	_running = true;
 	_framePeriod = 1000000 / 60;
@@ -62,7 +74,7 @@ Processor::Processor(Configuration *config, bool sim)
 
 	_ballTracker = make_shared<BallTracker>();
 	_refereeModule = make_shared<RefereeModule>(&_state);
-	_gameplayModule = make_shared<Gameplay::GameplayModule>(&_state, config);
+	_gameplayModule = make_shared<Gameplay::GameplayModule>(&_state);
 }
 
 Processor::~Processor()

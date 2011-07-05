@@ -10,6 +10,8 @@ namespace Gameplay
 		class Yank: public SingleRobotBehavior
 		{
 			public:
+			static void createConfiguration(Configuration *cfg);
+
 				Yank(GameplayModule *gameplay);
 				
 				virtual bool run();
@@ -56,11 +58,11 @@ namespace Gameplay
 				Geometry2d::Point _yankRobotStart;  // position of the robot at start of yank
 
 				// tuning parameters
-				ConfigDouble::shared_ptr _yank_travel_thresh; // minimum distance the ball must travel to be done
-				ConfigDouble::shared_ptr _max_aim_error;      // maximum distance from yank line allowed
-				ConfigDouble::shared_ptr _backup_dist; 				// minimum distance to clear the ball before getting off line
-				ConfigDouble::shared_ptr _ball_clearance;     // distance the robot needs to get away from the line
-				ConfigDouble::shared_ptr _bump_distance;      // distance forward to move in a bump
+				static ConfigDouble *_yank_travel_thresh; // minimum distance the ball must travel to be done
+				static ConfigDouble *_max_aim_error;      // maximum distance from yank line allowed
+				static ConfigDouble *_backup_dist; 				// minimum distance to clear the ball before getting off line
+				static ConfigDouble *_ball_clearance;     // distance the robot needs to get away from the line
+				static ConfigDouble *_bump_distance;      // distance forward to move in a bump
 		};
 	}
 }

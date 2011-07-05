@@ -18,6 +18,8 @@ namespace Plays
 class DemoFling: public Play
 {
 public:
+	static void createConfiguration(Configuration *cfg);
+
 	DemoFling(GameplayModule *gameplay);
 
 	virtual bool run();
@@ -26,8 +28,8 @@ protected:
 	Behaviors::Fling _fling;
 
 	// parameters to set in the GUI
-	ConfigInt::shared_ptr _dribblerSpeed;   // sets the aim/kick dribbler speed
-	ConfigDouble::shared_ptr _spinAngularSpeed; // how fast to spin when flinging
+	static ConfigInt *_dribblerSpeed;   // sets the aim/kick dribbler speed
+	static ConfigDouble *_spinAngularSpeed; // how fast to spin when flinging
 };
 } // \Gameplay
 } // \Plays

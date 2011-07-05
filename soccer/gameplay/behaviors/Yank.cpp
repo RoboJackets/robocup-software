@@ -5,6 +5,29 @@
 using namespace std;
 using namespace Geometry2d;
 
+namespace Gameplay
+{
+	namespace Behaviors
+	{
+		REGISTER_CONFIGURABLE(Yank)
+	}
+}
+
+ConfigDouble *Gameplay::Behaviors::Yank::_yank_travel_thresh;
+ConfigDouble *Gameplay::Behaviors::Yank::_max_aim_error;
+ConfigDouble *Gameplay::Behaviors::Yank::_backup_dist;
+ConfigDouble *Gameplay::Behaviors::Yank::_ball_clearance;
+ConfigDouble *Gameplay::Behaviors::Yank::_bump_distance;
+
+void Gameplay::Behaviors::Yank::createConfiguration(Configuration* cfg)
+{
+	_yank_travel_thresh  = new ConfigDouble(cfg, "Yank/Ball Travel Threshold", 0.5);
+	_max_aim_error  = new ConfigDouble(cfg, "Yank/Ball Max Trajectory Error", 0.3);
+	_backup_dist  = new ConfigDouble(cfg, "Yank/Backup Distance", 0.5);
+	_ball_clearance  = new ConfigDouble(cfg, "Yank/Ball Clearance", Robot_Radius + Ball_Radius + 0.1);
+	_bump_distance  = new ConfigDouble(cfg, "Yank/Bump Travel Distance", 0.3);
+}
+
 Gameplay::Behaviors::Yank::Yank(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay), _capture(gameplay)
 {
@@ -12,12 +35,6 @@ Gameplay::Behaviors::Yank::Yank(GameplayModule *gameplay):
 	
 	target.pt[0] = Point(Field_GoalWidth / 2, Field_Length);
 	target.pt[1] = Point(-Field_GoalWidth / 2, Field_Length);
-
-	_yank_travel_thresh = config()->createDouble("Yank/Ball Travel Threshold", 0.5);
-	_max_aim_error = config()->createDouble("Yank/Ball Max Trajectory Error", 0.3);
-	_backup_dist = config()->createDouble("Yank/Backup Distance", 0.5);
-	_ball_clearance = config()->createDouble("Yank/Ball Clearance", Robot_Radius + Ball_Radius + 0.1);
-	_bump_distance = config()->createDouble("Yank/Bump Travel Distance", 0.3);
 }
 
 void Gameplay::Behaviors::Yank::restart()
