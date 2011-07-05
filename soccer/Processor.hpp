@@ -60,7 +60,7 @@ class Processor: public QThread
 			uint64_t lastRadioRxTime;
 		};
 		
-		Processor(Configuration *config, bool sim);
+		Processor(bool sim);
 		virtual ~Processor();
 		
 		void stop();

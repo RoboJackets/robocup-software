@@ -39,7 +39,7 @@ using namespace google::protobuf;
 
 static const uint64_t Command_Latency = 0;
 
-Processor::Processor(Configuration *config, bool sim)
+Processor::Processor(bool sim)
 {
 	_running = true;
 	_framePeriod = 1000000 / 60;
@@ -62,7 +62,7 @@ Processor::Processor(Configuration *config, bool sim)
 
 	_ballTracker = make_shared<BallTracker>();
 	_refereeModule = make_shared<RefereeModule>(&_state);
-	_gameplayModule = make_shared<Gameplay::GameplayModule>(&_state, config);
+	_gameplayModule = make_shared<Gameplay::GameplayModule>(&_state);
 }
 
 Processor::~Processor()

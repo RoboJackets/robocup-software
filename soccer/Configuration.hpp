@@ -96,10 +96,9 @@ public:
 
 class ConfigBool: public ConfigItem
 {
-	protected:
-		ConfigBool(Configuration *tree, QString name, bool value = false);
-
 	public:
+	ConfigBool(Configuration *tree, QString name, bool value = false);
+
 		bool value();
 		
 		operator bool()
@@ -126,10 +125,9 @@ class ConfigBool: public ConfigItem
 
 class ConfigInt: public ConfigItem
 {
-	protected:
-		ConfigInt(Configuration *tree, QString name, int value = 0);
-
 	public:
+	ConfigInt(Configuration *tree, QString name, int value = 0);
+
 		virtual QString toString();
 		virtual void setValue(const QString &str);
 		

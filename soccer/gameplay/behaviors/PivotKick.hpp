@@ -81,12 +81,12 @@ namespace Gameplay
 
 				// If the ball is this far away from the robot after trying to kick, then
 				// the ball was kicked.
-				ConfigDouble::shared_ptr _kick_Completed_Threshold;
+				static ConfigDouble *_kick_Completed_Threshold;
 
-				ConfigDouble::shared_ptr _initial_Accuracy;
+				static ConfigDouble *_initial_Accuracy;
 				// Accuracy change per frame
-				ConfigDouble::shared_ptr _accuracy_Delta;
-				ConfigDouble::shared_ptr _fireNowThreshold;
+				static ConfigDouble *_accuracy_Delta;
+				static ConfigDouble *_fireNowThreshold;
 			};
 	}
 }

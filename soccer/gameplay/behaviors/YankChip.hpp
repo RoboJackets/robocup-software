@@ -17,6 +17,8 @@ namespace Gameplay
 		class YankChip: public SingleRobotBehavior
 		{
 			public:
+			static void createConfiguration(Configuration *cfg);
+
 				YankChip(GameplayModule *gameplay);
 				
 				virtual bool run();
@@ -74,12 +76,12 @@ namespace Gameplay
 				Geometry2d::Point _yankRobotStart;  // position of the robot at start of yank
 
 				// tuning parameters
-				ConfigDouble::shared_ptr _yank_travel_thresh; // minimum distance the ball must travel to be done
-				ConfigDouble::shared_ptr _max_aim_error;      // maximum distance from yank line allowed
+				static ConfigDouble *_yank_travel_thresh; // minimum distance the ball must travel to be done
+				static ConfigDouble *_max_aim_error;      // maximum distance from yank line allowed
 
-				ConfigDouble::shared_ptr _chip_Complete_Dist;
-				ConfigDouble::shared_ptr _min_Ball_Velocity;
-				ConfigDouble::shared_ptr _max_Yank_Dist;
+				static ConfigDouble *_chip_Complete_Dist;
+				static ConfigDouble *_min_Ball_Velocity;
+				static ConfigDouble *_max_Yank_Dist;
 		};
 	}
 }

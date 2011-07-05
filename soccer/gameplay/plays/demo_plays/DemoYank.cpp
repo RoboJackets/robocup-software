@@ -6,12 +6,27 @@ using namespace std;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoYank, "Demos")
 
+namespace Gameplay
+{
+	namespace Plays
+	{
+		REGISTER_CONFIGURABLE(DemoYank)
+	}
+}
+
+ConfigInt *Gameplay::Plays::DemoYank::_dribblerSpeed;
+ConfigBool *Gameplay::Plays::DemoYank::_enableBump;
+
+void Gameplay::Plays::DemoYank::createConfiguration(Configuration *cfg)
+{
+	_dribblerSpeed = new ConfigInt(cfg, "DemoYank/Dribber Speed", 127);
+	_enableBump  = new ConfigBool(cfg, "DemoYank/Enable Bump", false);
+}
+
 Gameplay::Plays::DemoYank::DemoYank(GameplayModule *gameplay):
 Play(gameplay),
 _yank(gameplay)
 {
-	_dribblerSpeed = config()->createInt("DemoYank/Dribber Speed", 127);
-	_enableBump = config()->createBool("DemoYank/Enable Bump", false);
 }
 
 bool Gameplay::Plays::DemoYank::run()

@@ -6,23 +6,45 @@
 using namespace std;
 using namespace Geometry2d;
 
+namespace Gameplay
+{
+	namespace Behaviors
+	{
+		REGISTER_CONFIGURABLE(Capture)
+	}
+}
+
+ConfigDouble *Gameplay::Behaviors::Capture::_stationaryMaxSpeed;
+ConfigDouble *Gameplay::Behaviors::Capture::_approach_Distance;
+ConfigDouble *Gameplay::Behaviors::Capture::_approach_Clearance;
+ConfigDouble *Gameplay::Behaviors::Capture::_approach_Threshold;
+ConfigDouble *Gameplay::Behaviors::Capture::_capture_Speed;
+ConfigDouble *Gameplay::Behaviors::Capture::_capture_Time_Threshold;
+ConfigDouble *Gameplay::Behaviors::Capture::_capture_Decel;
+ConfigDouble *Gameplay::Behaviors::Capture::_has_Ball_Dist;
+ConfigDouble *Gameplay::Behaviors::Capture::_pivot_Speed;
+ConfigDouble *Gameplay::Behaviors::Capture::_dribble_Speed;
+
+void Gameplay::Behaviors::Capture::createConfiguration(Configuration* cfg)
+{
+	_stationaryMaxSpeed = new ConfigDouble(cfg, "Capture/Ball Speed Threshold", 0.5);
+	_approach_Distance = new ConfigDouble(cfg, "Capture/Approach Distance", 0.1);
+	_approach_Clearance  = new ConfigDouble(cfg, "Capture/Approach Clearance", 0.05);
+	_approach_Threshold  = new ConfigDouble(cfg, "Capture/Approach Threshold", 0.13);
+	_capture_Speed  = new ConfigDouble(cfg, "Capture/Capture Speed", 0.3);
+	_capture_Time_Threshold  = new ConfigDouble(cfg, "Capture/Capture Time Threshold", 300 * 1000);
+	_capture_Decel  = new ConfigDouble(cfg, "Capture/Capture Decel", 0.8);
+	_has_Ball_Dist  = new ConfigDouble(cfg, "Capture/Has Ball Distance", 0.1);
+	_pivot_Speed  = new ConfigDouble(cfg, "Capture/Pivot Speed", 0.5 * M_PI);
+	_dribble_Speed  = new ConfigDouble(cfg, "Capture/Dribbler Speed", 127);
+}
+
 Gameplay::Behaviors::Capture::Capture(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay)
 {
 	restart();
 	
 	target = Point(0, Field_Length); // center of goal
-
-	_stationaryMaxSpeed = config()->createDouble("Capture/Ball Speed Threshold", 0.5);
-	_approach_Distance = config()->createDouble("Capture/Approach Distance", 0.1);
-	_approach_Clearance = config()->createDouble("Capture/Approach Clearance", 0.05);
-	_approach_Threshold = config()->createDouble("Capture/Approach Threshold", 0.13);
-	_capture_Speed = config()->createDouble("Capture/Capture Speed", 0.3);
-	_capture_Time_Threshold = config()->createDouble("Capture/Capture Time Threshold", 300 * 1000);
-	_capture_Decel = config()->createDouble("Capture/Capture Decel", 0.8);
-	_has_Ball_Dist = config()->createDouble("Capture/Has Ball Distance", 0.1);
-	_pivot_Speed = config()->createDouble("Capture/Pivot Speed", 0.5 * M_PI);
-	_dribble_Speed = config()->createDouble("Capture/Dribbler Speed", 127);
 }
 
 void Gameplay::Behaviors::Capture::restart()
