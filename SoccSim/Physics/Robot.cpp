@@ -378,7 +378,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
 	{
 		NxMotorDesc motorDesc;
 		_rollerJoint->getMotor(motorDesc);
-		motorDesc.velTarget = data->roller() * 10.0f / 255.0f;
+		motorDesc.velTarget = data->dribbler() * 10.0f / 255.0f;
 		_rollerJoint->setMotor(motorDesc);
 	}
 	
@@ -486,11 +486,11 @@ Packet::RadioRx Robot::radioRx() const
 	packet.set_timestamp(Utils::timestamp());
 	packet.set_battery(1.0f);
 	packet.set_rssi(1.0f);
-	packet.set_charged(chargerWorks && (Utils::timestamp() - _lastKicked) > RechargeTime);
+//	packet.set_charged(chargerWorks && (Utils::timestamp() - _lastKicked) > RechargeTime); // FIXME: fix kicker status
 	
 	BOOST_FOREACH(const Ball* ball, _env->balls())
 	{
-		packet.set_ball_sense(ballSense(ball) || !ballSensorWorks);
+		packet.set_ball_sense_status((ballSense(ball) || !ballSensorWorks) ? Packet::HasBall : Packet::NoBall);
 	}
 	
 	return packet;

@@ -425,26 +425,27 @@ void Env::handleRadioTx(int ch, const Packet::RadioTx& tx)
 			continue;
 		}
 		
-		Robot *r = robot(blue, cmd.board_id());
+		Robot *r = robot(blue, cmd.robot_id());
 		if (r)
 		{
 			r->radioTx(&cmd);
 		} else {
 			printf("Commanding nonexistant robot %s:%d\n",
 				blue ? "Blue" : "Yellow",
-				cmd.board_id());
+				cmd.robot_id()); // FIXME: verify functionality
 		}
 	}
 	
-	Robot *rev = robot(blue, tx.reverse_board_id());
-	if (rev)
-	{
-		Packet::RadioRx rx = rev->radioRx();
-		rx.set_board_id(tx.reverse_board_id());
-		
-		// Send the RX packet
-		std::string out;
-		rx.SerializeToString(&out);
-		_radioSocket[ch].writeDatagram(&out[0], out.size(), LocalAddress, RadioRxPort + ch);
-	}
+	// FIXME: radio protocol changed
+//	Robot *rev = robot(blue, tx.reverse_board_id());
+//	if (rev)
+//	{
+//		Packet::RadioRx rx = rev->radioRx();
+//		rx.set_board_id(tx.reverse_board_id());
+//
+//		// Send the RX packet
+//		std::string out;
+//		rx.SerializeToString(&out);
+//		_radioSocket[ch].writeDatagram(&out[0], out.size(), LocalAddress, RadioRxPort + ch);
+//	}
 }
