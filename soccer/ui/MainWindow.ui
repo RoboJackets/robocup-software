@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1080</width>
-    <height>700</height>
+    <height>711</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -434,7 +434,7 @@
         <item>
          <widget class="QLabel" name="radioLabel">
           <property name="text">
-           <string>Radio 0</string>
+           <string/>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -1561,7 +1561,7 @@
      <x>0</x>
      <y>0</y>
      <width>1080</width>
-     <height>23</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
@@ -1581,6 +1581,13 @@
     <property name="title">
      <string>&amp;Field</string>
     </property>
+    <widget class="QMenu" name="menu_Radio_channel">
+     <property name="title">
+      <string>&amp;Radio channel</string>
+     </property>
+     <addaction name="action904MHz"/>
+     <addaction name="action906MHz"/>
+    </widget>
     <addaction name="actionDefendMinusX"/>
     <addaction name="actionDefendPlusX"/>
     <addaction name="separator"/>
@@ -1589,6 +1596,7 @@
     <addaction name="separator"/>
     <addaction name="actionUseOurHalf"/>
     <addaction name="actionUseOpponentHalf"/>
+    <addaction name="menu_Radio_channel"/>
    </widget>
    <widget class="QMenu" name="menu_Simulator">
     <property name="title">
@@ -1802,6 +1810,16 @@
   <action name="actionStopRobots">
    <property name="text">
     <string>S&amp;top Robots</string>
+   </property>
+  </action>
+  <action name="action904MHz">
+   <property name="text">
+    <string>904MHz</string>
+   </property>
+  </action>
+  <action name="action906MHz">
+   <property name="text">
+    <string>906MHz</string>
    </property>
   </action>
  </widget>

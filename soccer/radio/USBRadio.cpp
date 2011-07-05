@@ -5,6 +5,8 @@
 #include <boost/format.hpp>
 #include <boost/foreach.hpp>
 
+#include <QMutexLocker>
+
 #include <Utils.hpp>
 #include "USBRadio.hpp"
 #include "cc1101.h"
@@ -185,6 +187,8 @@ void USBRadio::configure()
 		write(cc1101_regs[i], cc1101_regs[i + 1]);
 	}
 
+	write(CHANNR, _channel);
+
 	auto_calibrate(true);
 }
 
@@ -201,6 +205,7 @@ bool USBRadio::isOpen() const
 
 void USBRadio::send(Packet::RadioTx& packet)
 {
+	QMutexLocker lock(&_mutex);
 	if (!_device)
 	{
 		if (!open())
@@ -277,6 +282,8 @@ void USBRadio::send(Packet::RadioTx& packet)
 
 void USBRadio::receive()
 {
+	QMutexLocker lock(&_mutex);
+	
 	if (!_device)
 	{
 		if (!open())
@@ -336,4 +343,23 @@ void USBRadio::handleRxData(uint8_t *buf)
 	}
 	
 	packet.set_kicker_voltage(buf[11]);
+}
+
+void USBRadio::channel(int n)
+{
+	QMutexLocker lock(&_mutex);
+	
+	if (_device)
+	{
+		auto_calibrate(false);
+		
+		write(CHANNR, n);
+		
+		command(SIDLE);
+		command(SRX);
+		
+		auto_calibrate(true);
+	}
+	
+	Radio::channel(n);
 }

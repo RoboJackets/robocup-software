@@ -1,8 +1,8 @@
 #pragma once
 
 #include <stdint.h>
-
 #include <libusb.h>
+#include <QMutex>
 
 #include "Radio.hpp"
 
@@ -21,6 +21,8 @@ public:
 	virtual void send(Packet::RadioTx &packet);
 	virtual void receive();
 	
+	virtual void channel(int n);
+	
 protected:
 	libusb_context *_usb_context;
 	libusb_device_handle *_device;
@@ -30,6 +32,7 @@ protected:
 	libusb_transfer *_rxTransfers[NumRXTransfers];
 	uint8_t _rxBuffers[NumRXTransfers][Reverse_Size + 2];
 	
+	QMutex _mutex;
 	int _sequence;
 	bool _printedError;
 	
