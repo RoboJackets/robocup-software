@@ -33,7 +33,7 @@ message RadioRx
 	
 	optional BallSenseStatus ball_sense_status = 5;
 	
-	repeated MotorStatus  motor_status = 7;
+	repeated MotorStatus motor_status = 7;
 	repeated int32 encoders = 8;
 	
 	optional uint32 kicker_status = 9;

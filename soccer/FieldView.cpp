@@ -362,6 +362,10 @@ void FieldView::drawTeamSpace(QPainter& p)
 				faulty = true;
 			}
 		}
+		if (r.battery_voltage() <= 14.3f)
+		{
+			faulty = true;
+		}
 		
 		drawRobot(p, frame->blue_team(), r.shell(), center, r.angle(), r.ball_sense_status() == HasBall, faulty);
 		
