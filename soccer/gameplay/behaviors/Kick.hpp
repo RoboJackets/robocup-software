@@ -21,6 +21,8 @@ class Kick: public SingleRobotBehavior
 public:
 	Kick(GameplayModule *gameplay);
 
+	static void createConfiguration(Configuration *cfg);
+
 	virtual bool run();
 
 	inline bool done() const { return _state == State_Done; }

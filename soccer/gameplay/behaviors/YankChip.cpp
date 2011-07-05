@@ -5,18 +5,35 @@
 using namespace std;
 using namespace Geometry2d;
 
+namespace Gameplay
+{
+	namespace Behaviors
+	{
+		REGISTER_CONFIGURABLE(YankChip)
+	}
+}
+
+ConfigDouble *Gameplay::Behaviors::YankChip::_yank_travel_thresh;
+ConfigDouble *Gameplay::Behaviors::YankChip::_max_aim_error;
+ConfigDouble *Gameplay::Behaviors::YankChip::_chip_Complete_Dist;
+ConfigDouble *Gameplay::Behaviors::YankChip::_min_Ball_Velocity;
+ConfigDouble *Gameplay::Behaviors::YankChip::_max_Yank_Dist;
+
+void Gameplay::Behaviors::YankChip::createConfiguration(Configuration* cfg)
+{
+	_yank_travel_thresh  = new ConfigDouble(cfg, "YankChip/Ball Travel Threshold", 0.5);
+	_max_aim_error  = new ConfigDouble(cfg, "YankChip/Ball Max Trajectory Error", 0.3);
+	_chip_Complete_Dist  = new ConfigDouble(cfg, "YankChip/Chip Complete Distance", 0.5);
+	_min_Ball_Velocity  = new ConfigDouble(cfg, "YankChip/Min Ball Velocity", 0.2);
+	_max_Yank_Dist  = new ConfigDouble(cfg, "YankChip/Max Yank Dist", 0.2);
+}
+
 Gameplay::Behaviors::YankChip::YankChip(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay), _capture(gameplay)
 {
 	restart();
 	
 	target = Point(0.0, Field_Length);
-
-	_yank_travel_thresh = config()->createDouble("YankChip/Ball Travel Threshold", 0.5);
-	_max_aim_error = config()->createDouble("YankChip/Ball Max Trajectory Error", 0.3);
-	_chip_Complete_Dist = config()->createDouble("YankChip/Chip Complete Distance", 0.5);
-	_min_Ball_Velocity = config()->createDouble("YankChip/Min Ball Velocity", 0.2);
-	_max_Yank_Dist = config()->createDouble("YankChip/Max Yank Dist", 0.2);
 }
 
 void Gameplay::Behaviors::YankChip::restart()

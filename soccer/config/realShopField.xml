@@ -98,7 +98,7 @@
   <test value="0"/>
  </Rev2011>
  <Capture>
-  <Ball_Speed_Threshold value="0.5"/>
+  <Ball_Speed_Threshold value="0.6"/>
   <Approach_Distance value="0.1"/>
   <Approach_Clearance value="0.05"/>
   <Approach_Threshold value="0.13"/>

@@ -19,6 +19,8 @@ namespace Plays
 class DemoAttack: public Play
 {
 public:
+	static void createConfiguration(Configuration *cfg);
+
 	DemoAttack(GameplayModule *gameplay);
 
 	virtual bool run();
@@ -27,9 +29,9 @@ protected:
 	Behaviors::Kick _kicker;
 
 	// parameters to set in the GUI
-	ConfigBool::shared_ptr _useChip;				// flag for chipping or kicking
-	ConfigInt::shared_ptr _dribblerSpeed;   // sets the aim/kick dribbler speed
-	ConfigInt::shared_ptr _kickPower;       // sets the speed to kick at
+	static ConfigBool * _useChip;				// flag for chipping or kicking
+	static ConfigInt *_dribblerSpeed;   // sets the aim/kick dribbler speed
+	static ConfigInt *_kickPower;       // sets the speed to kick at
 };
 } // \Gameplay
 } // \Plays

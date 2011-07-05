@@ -16,6 +16,8 @@ namespace Plays
 class DemoYankChip: public Play
 {
 public:
+	static void createConfiguration(Configuration *cfg);
+
 	DemoYankChip(GameplayModule *gameplay);
 
 	virtual bool run();
@@ -24,9 +26,9 @@ protected:
 	Behaviors::YankChip _yank;
 
 	// parameters to set in the GUI
-	ConfigInt::shared_ptr _dribblerSpeed;   // sets the aim/kick dribbler speed
-	ConfigDouble::shared_ptr _backupDist;   // how to far backup before driving forward to chip
-	ConfigBool::shared_ptr _useTarget;      // flag to attempting aiming
+	static ConfigInt *_dribblerSpeed;   // sets the aim/kick dribbler speed
+	static ConfigDouble *_backupDist;   // how to far backup before driving forward to chip
+	static ConfigBool * _useTarget;      // flag to attempting aiming
 };
 } // \Gameplay
 } // \Plays

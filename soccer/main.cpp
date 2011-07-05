@@ -248,7 +248,7 @@ int main (int argc, char* argv[])
 		obj->createConfiguration(&config);
 	}
 	
-	Processor *processor = new Processor(&config, sim);
+	Processor *processor = new Processor(sim);
 	processor->blueTeam(blueTeam);
 	
 	// Load config file

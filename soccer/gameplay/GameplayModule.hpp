@@ -30,7 +30,7 @@ namespace Gameplay
 	class GameplayModule
 	{
 		public:
-			GameplayModule(SystemState *state, Configuration* config);
+			GameplayModule(SystemState *state);
 			virtual ~GameplayModule();
 			
 			SystemState *state() const
@@ -38,11 +38,6 @@ namespace Gameplay
 				return _state;
 			}
 			
-			Configuration *config() const
-			{
-				return _config;
-			}
-
 			int manualID() const;
 			
 			void createGoalie();
