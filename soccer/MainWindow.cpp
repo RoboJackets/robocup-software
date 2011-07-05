@@ -9,7 +9,6 @@
 #include "radio/Radio.hpp"
 #include <Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
-#include <framework/RobotConfig.hpp>
 #include <Robot.hpp>
 
 #include <QInputDialog>
@@ -43,8 +42,6 @@ MainWindow::MainWindow(QWidget *parent):
 	_processor = 0;
 	_autoExternalReferee = true;
 	_doubleFrameNumber = -1;
-	_robotConfig2008 = 0;
-	_robotConfig2011 = 0;
 	
 	_lastUpdateTime = Utils::timestamp();
 	_history.resize(2 * 60);
@@ -144,26 +141,15 @@ void MainWindow::configuration(Configuration* config)
 {
 	_config = config;
 	_config->tree(_ui.configTree);
-
-	// Revision-specific configuration
-//	_robotConfig2008 = new RobotConfig(config, "Rev2008");
-//	_robotConfig2011 = new RobotConfig(config, "Rev2011");
 }
 
 void MainWindow::processor(Processor* value)
 {
 	// This should only happen once
 	assert(!_processor);
-//	assert(_robotConfig2008);
-//	assert(_robotConfig2011);
 	
 	_processor = value;
 	
-//	Processor::robotConfig2008 = _robotConfig2008;
-//	Processor::robotConfig2011 = _robotConfig2011;
-	_robotConfig2008 = Processor::robotConfig2008;
-	_robotConfig2011 = Processor::robotConfig2011;
-
 	// External referee
 	on_externalReferee_toggled(_ui.externalReferee->isChecked());
 	

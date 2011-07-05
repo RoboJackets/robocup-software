@@ -196,9 +196,6 @@ class MainWindow : public QMainWindow
 		
 		bool _live;
 		
-		RobotConfig *_robotConfig2008;
-		RobotConfig *_robotConfig2011;
-		
 		// This is used to update some status items less frequently than the full field view
 		int _updateCount;
 		
