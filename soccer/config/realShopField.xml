@@ -1,15 +1,15 @@
 <config>
  <Rev2008>
   <kicker>
-   <m value="71.17"/>
-   <b value="-2.7"/>
+   <m value="1"/>
+   <b value="0"/>
   </kicker>
   <trapTrans>
-   <velocity value="2.6"/>
-   <acceleration value="3.5"/>
+   <velocity value="0"/>
+   <acceleration value="0"/>
    <deceleration value="0"/>
-   <predictTime value="0.07"/>
-   <responseTime value="0.2"/>
+   <predictTime value="0"/>
+   <responseTime value="0"/>
   </trapTrans>
   <trapRot>
    <velocity value="0"/>
@@ -19,22 +19,22 @@
    <responseTime value="0"/>
   </trapRot>
   <translation>
-   <p value="5"/>
+   <p value="0"/>
    <i value="0"/>
-   <d value="30"/>
+   <d value="0"/>
   </translation>
   <rotation>
-   <p value="3"/>
+   <p value="0"/>
    <i value="0"/>
    <d value="0"/>
   </rotation>
   <wheel>
-   <p value="1"/>
-   <i value="1.5"/>
+   <p value="0"/>
+   <i value="0"/>
    <d value="0"/>
   </wheel>
-  <wheelAlpha value="0.1"/>
-  <test value="1"/>
+  <wheelAlpha value="1"/>
+  <test value="0"/>
  </Rev2008>
  <RobotModel>
   <Position>
@@ -62,11 +62,11 @@
  </rbpfModelBallKicked>
  <Rev2011>
   <trapTrans>
-   <velocity value="2.6"/>
-   <acceleration value="3.5"/>
+   <velocity value="0"/>
+   <acceleration value="0"/>
    <deceleration value="2.5"/>
-   <predictTime value="0.07"/>
-   <responseTime value="0.2"/>
+   <predictTime value="0"/>
+   <responseTime value="0"/>
   </trapTrans>
   <trapRot>
    <velocity value="0"/>
@@ -76,12 +76,12 @@
    <responseTime value="0"/>
   </trapRot>
   <translation>
-   <p value="5"/>
+   <p value="0"/>
    <i value="0"/>
-   <d value="40"/>
+   <d value="0"/>
   </translation>
   <rotation>
-   <p value="3"/>
+   <p value="0"/>
    <i value="0"/>
    <d value="0"/>
   </rotation>
@@ -110,8 +110,8 @@
   <Dribbler_Speed value="127"/>
  </Capture>
  <PivotKick>
-  <Aim_Speed value="1.5708"/>
-  <Kick_Completed_Threshold value="0.5"/>
+  <Aim_Speed value="2"/>
+  <Kick_Completed_Threshold value="1"/>
   <Initial_Accuracy value="0.984808"/>
   <Accuracy_Delta value="0"/>
   <Fire_Now_Threshold value="0.99863"/>

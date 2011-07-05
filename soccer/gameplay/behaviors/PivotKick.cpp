@@ -5,6 +5,21 @@
 using namespace std;
 using namespace Geometry2d;
 
+namespace Gameplay
+{
+	namespace Behaviors
+	{
+		REGISTER_CONFIGURABLE(PivotKick)
+	}
+}
+
+ConfigDouble *Gameplay::Behaviors::PivotKick::_aim_Speed;
+
+void Gameplay::Behaviors::PivotKick::createConfiguration(Configuration* cfg)
+{
+	_aim_Speed = new ConfigDouble(cfg, "PivotKick/Aim Speed", 0.5 * M_PI);
+}
+
 Gameplay::Behaviors::PivotKick::PivotKick(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay), _capture(gameplay)
 {
@@ -14,11 +29,11 @@ Gameplay::Behaviors::PivotKick::PivotKick(GameplayModule *gameplay):
 	target.pt[1] = Point(-Field_GoalWidth / 2, Field_Length);
 	_capture.target = target.pt[0];
 
-	_aim_Speed = config()->createDouble("PivotKick/Aim Speed", 0.5 * M_PI);
-	_kick_Completed_Threshold = config()->createDouble("PivotKick/Kick Completed Threshold", 0.5);
-	_initial_Accuracy = config()->createDouble("PivotKick/Initial Accuracy", cos(10 * DegreesToRadians));
-	_accuracy_Delta = config()->createDouble("PivotKick/Accuracy Delta", 0.000);
-	_fireNowThreshold = config()->createDouble("PivotKick/Fire Now Threshold", cos(3 * DegreesToRadians));
+// 	_aim_Speed = config()->createDouble("PivotKick/Aim Speed", 0.5 * M_PI);
+// 	_kick_Completed_Threshold = config()->createDouble("PivotKick/Kick Completed Threshold", 0.5);
+// 	_initial_Accuracy = config()->createDouble("PivotKick/Initial Accuracy", cos(10 * DegreesToRadians));
+// 	_accuracy_Delta = config()->createDouble("PivotKick/Accuracy Delta", 0.000);
+// 	_fireNowThreshold = config()->createDouble("PivotKick/Fire Now Threshold", cos(3 * DegreesToRadians));
 }
 
 void Gameplay::Behaviors::PivotKick::restart()

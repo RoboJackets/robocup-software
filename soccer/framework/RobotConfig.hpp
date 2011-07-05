@@ -11,28 +11,28 @@ struct RobotConfig
 	{
 		PID(Configuration *config, QString prefix);
 		
-		ConfigDouble::shared_ptr p;
-		ConfigDouble::shared_ptr i;
-		ConfigDouble::shared_ptr d;
+		ConfigDouble *p;
+		ConfigDouble *i;
+		ConfigDouble *d;
 	};
 	
 	struct Dynamics
 	{
 		Dynamics(Configuration *config, QString prefix);
 		
-		ConfigDouble::shared_ptr velocity;
-		ConfigDouble::shared_ptr acceleration;
-// 		ConfigDouble::shared_ptr deceleration;
-		ConfigDouble::shared_ptr predictTime;
-		ConfigDouble::shared_ptr responseTime;
+		ConfigDouble *velocity;
+		ConfigDouble *acceleration;
+// 		ConfigDouble *deceleration;
+		ConfigDouble *predictTime;
+		ConfigDouble *responseTime;
 	};
 	
 	struct Kicker
 	{
 		Kicker(Configuration *config, QString prefix);
 		
-		ConfigDouble::shared_ptr m;
-		ConfigDouble::shared_ptr b;
+		ConfigDouble *m;
+		ConfigDouble *b;
 	};
 	
 	Dynamics trapTrans;
@@ -41,8 +41,5 @@ struct RobotConfig
 	PID rotation;
 	PID wheel;
 
-	ConfigDouble::shared_ptr wheelAlpha;
-	ConfigDouble::shared_ptr test;
-	
 	Kicker kicker;
 };

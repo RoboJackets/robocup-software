@@ -243,6 +243,11 @@ int main (int argc, char* argv[])
 	
 	Configuration config;
 
+	BOOST_FOREACH(Configurable *obj, Configurable::configurables())
+	{
+		obj->createConfiguration(&config);
+	}
+	
 	Processor *processor = new Processor(&config, sim);
 	processor->blueTeam(blueTeam);
 	

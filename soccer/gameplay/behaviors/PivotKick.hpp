@@ -12,6 +12,8 @@ namespace Gameplay
 			public:
 				PivotKick(GameplayModule *gameplay);
 				
+				static void createConfiguration(Configuration *cfg);
+				
 				virtual bool run();
 				
 				bool done() const
@@ -75,7 +77,7 @@ namespace Gameplay
 
 				// GUI Parameters
 				// Angular speed for aiming
-				ConfigDouble::shared_ptr _aim_Speed;
+				static ConfigDouble *_aim_Speed;
 
 				// If the ball is this far away from the robot after trying to kick, then
 				// the ball was kicked.
