@@ -54,13 +54,15 @@ public:
 	short dribbler_speed;
 	uint8_t kick_power;
 
+	// chipping parameters - should get calculated somehow
+	double minChipRange;
+	double maxChipRange;
+
 private:
 	typedef enum
 	{
 		State_PivotKick,   /// default kicking mode with aiming
 		State_LineKick,    /// faster kicking mode when opponents nearby
-		State_Bump,   		 /// when close to another robot, bump ball away
-		State_Trap,        /// when ball is moving quickly, go around behind the ball first
 		State_Done				 /// after a successful shot
 	} State;
 

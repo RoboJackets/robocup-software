@@ -32,6 +32,8 @@ protected:
 	static ConfigBool * _useChip;				// flag for chipping or kicking
 	static ConfigInt *_dribblerSpeed;   // sets the aim/kick dribbler speed
 	static ConfigInt *_kickPower;       // sets the speed to kick at
+	static ConfigDouble *_minChipRange; // minimum range at which to chip
+	static ConfigDouble *_maxChipRange; // maximum range at which to chip
 };
 } // \Gameplay
 } // \Plays

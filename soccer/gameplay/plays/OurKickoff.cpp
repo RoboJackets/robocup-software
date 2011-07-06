@@ -6,6 +6,19 @@ using namespace std;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::OurKickoff, "Restarts")
 
+namespace Gameplay
+{
+	namespace Plays
+	{
+		REGISTER_CONFIGURABLE(OurKickoff)
+	}
+}
+
+void Gameplay::Plays::OurKickoff::createConfiguration(Configuration *cfg)
+{
+
+}
+
 Gameplay::Plays::OurKickoff::OurKickoff(GameplayModule *gameplay):
 	Play(gameplay),
 	_kicker(gameplay),

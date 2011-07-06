@@ -16,6 +16,8 @@ namespace Gameplay
 		class BasicOffense121: public Play
 		{
 			public:
+				static void createConfiguration(Configuration *cfg);
+
 				BasicOffense121(GameplayModule *gameplay);
 				
 				static float score(GameplayModule *gameplay);

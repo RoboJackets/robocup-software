@@ -15,6 +15,11 @@ using namespace Geometry2d;
 
 static const float MaxX = Field_GoalWidth / 2.0f;
 
+void Gameplay::Behaviors::Goalie::createConfiguration(Configuration *cfg)
+{
+
+}
+
 Gameplay::Behaviors::Goalie::Goalie(GameplayModule *gameplay):
 	SingleRobotBehavior(gameplay),
 	_kick(gameplay)

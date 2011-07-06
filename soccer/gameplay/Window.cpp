@@ -12,6 +12,7 @@ Gameplay::WindowEvaluator::WindowEvaluator(SystemState *state)
 {
 	_state = state;
 	best = 0;
+	enable_chip = false;
 	_end = 0;
 	debug = false;
 }
@@ -72,6 +73,7 @@ void Gameplay::WindowEvaluator::run(Geometry2d::Point origin, const Geometry2d::
 	{
 		if (robot->visible)
 		{
+			// remove excluded robots
 			bool skip = false;
 			BOOST_FOREACH(const Geometry2d::Point &pt, exclude)
 			{
@@ -82,6 +84,16 @@ void Gameplay::WindowEvaluator::run(Geometry2d::Point origin, const Geometry2d::
 				}
 			}
 			
+			// remove robots in chip range
+			float d = robot->pos.distTo(origin);
+			if (enable_chip &&
+					d < chip_max_range - Robot_Radius &&
+					d > chip_min_range + Robot_Radius)
+			{
+				skip = true;
+				break;
+			}
+
 			if (!skip)
 			{
 				obstacleRobot(robot->pos);
@@ -103,6 +115,16 @@ void Gameplay::WindowEvaluator::run(Geometry2d::Point origin, const Geometry2d::
 				}
 			}
 			
+			// remove robots in chip range
+			float d = robot->pos.distTo(origin);
+			if (enable_chip &&
+					d < chip_max_range - Robot_Radius &&
+					d > chip_min_range + Robot_Radius)
+			{
+				skip = true;
+				break;
+			}
+
 			if (!skip)
 			{
 				obstacleRobot(robot->pos);

@@ -15,6 +15,7 @@ namespace Gameplay
 		class Goalie: public SingleRobotBehavior
 		{
 			public:
+				static void createConfiguration(Configuration *cfg);
 				Goalie(GameplayModule *gameplay);
 				virtual ~Goalie();
 

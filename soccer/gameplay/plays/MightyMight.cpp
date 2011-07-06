@@ -5,6 +5,19 @@ using namespace Geometry2d;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::MightyMight, "Playing")
 
+namespace Gameplay
+{
+	namespace Plays
+	{
+		REGISTER_CONFIGURABLE(MightyMight)
+	}
+}
+
+void Gameplay::Plays::MightyMight::createConfiguration(Configuration *cfg)
+{
+
+}
+
 Gameplay::Plays::MightyMight::MightyMight(GameplayModule *gameplay):
 	Play(gameplay),
 	_leftFullback(gameplay, Behaviors::Fullback::Left),

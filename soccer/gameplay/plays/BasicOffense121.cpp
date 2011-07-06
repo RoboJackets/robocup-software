@@ -7,6 +7,19 @@ using namespace Geometry2d;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::BasicOffense121, "Playing")
 
+namespace Gameplay
+{
+	namespace Plays
+	{
+		REGISTER_CONFIGURABLE(BasicOffense121)
+	}
+}
+
+void Gameplay::Plays::BasicOffense121::createConfiguration(Configuration *cfg)
+{
+
+}
+
 Gameplay::Plays::BasicOffense121::BasicOffense121(GameplayModule *gameplay):
 	Play(gameplay),
 	_fullback(gameplay, Behaviors::Fullback::Center),
