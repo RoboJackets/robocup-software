@@ -89,7 +89,6 @@ bool assignNearestFull(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d
 
 bool assignNearestKicker(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt)
 {
-	cout << "Assigning nearest kicker" << endl;
 	return assignNearest(role, robots, pt, true, false, true, true);
 }
 
@@ -103,11 +102,19 @@ bool assignNearestYank(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d
 	return assignNearest(role, robots, pt, false, false, true, true);
 }
 
+static bool meetsRequirements(OurRobot * robot,	bool hasKicker, bool hasChipper, bool hasDribbler, bool hasBallSense)
+{
+	return !((hasKicker    && (!robot->kickerWorks() || !*robot->status->kicker_enabled)) ||
+			(hasChipper   && (robot->hardwareVersion() == Packet::RJ2008 || !robot->kickerWorks() || !*robot->status->chipper_enabled)) ||
+			(hasDribbler  && (!*robot->status->dribbler_enabled || robot->radioRx.motor_status_size() != 5 || robot->radioRx.motor_status(4) != Packet::Good)) ||
+			(hasBallSense && (!*robot->status->ball_sense_enabled || !robot->ballSenseWorks())));
+}
+
 // General "AssignNearest" with a full set of constraints - true requires that it be met
 bool assignNearest(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt,
 		bool hasKicker, bool hasChipper, bool hasDribbler, bool hasBallSense)
 {
-		if (role && role->visible)
+		if (role && role->visible && meetsRequirements(role, hasKicker, hasChipper, hasDribbler, hasBallSense))
 		{
 			// Already has a usable robot
 			robots.erase(role);
@@ -119,19 +126,14 @@ bool assignNearest(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Po
 		BOOST_FOREACH(OurRobot *robot, robots)
 		{
 			// manage requirements
-			if ((hasKicker    && (!robot->kickerWorks() || *robot->status->kicker_enabled)) ||
-					(hasChipper   && (robot->hardwareVersion() == Packet::RJ2008 || !robot->kickerWorks() || !*robot->status->chipper_enabled)) ||
-					(hasDribbler  && (!*robot->status->dribbler_enabled || robot->radioRx.motor_status_size() != 5 || robot->radioRx.motor_status(4) != Packet::Good)) ||
-					(hasBallSense && (!*robot->status->ball_sense_enabled || !robot->ballSenseWorks())) || true)
+			if (meetsRequirements(robot, hasKicker, hasChipper, hasDribbler, hasBallSense))
 			{
-				continue; // robot fails requirements
-			}
-
-			float dsq = (robot->pos - pt).magsq();
-			if (bestDistSq < 0 || dsq < bestDistSq)
-			{
-				bestDistSq = dsq;
-				bestRobot = robot;
+				float dsq = (robot->pos - pt).magsq();
+				if (bestDistSq < 0 || dsq < bestDistSq)
+				{
+					bestDistSq = dsq;
+					bestRobot = robot;
+				}
 			}
 		}
 
