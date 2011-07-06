@@ -31,7 +31,7 @@ class FieldView : public QWidget
 		{
 			if (i < _layerVisible.size())
 			{
-				return true;
+				return _layerVisible[i];
 			} else {
 				return false;
 			}

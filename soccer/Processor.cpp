@@ -472,6 +472,8 @@ void Processor::run()
 		{
 			if (r->visible)
 			{
+				r->addStatusText();
+				
 				Packet::LogFrame::Robot *log = _state.logFrame->add_self();
 				*log->mutable_pos() = r->pos;
 				*log->mutable_vel() = r->vel;
@@ -479,13 +481,31 @@ void Processor::run()
 				log->set_cmd_w(r->cmd_w);
 				log->set_shell(r->shell());
 				log->set_angle(r->angle);
-				log->set_kicker_voltage(r->radioRx.kicker_voltage());
-				log->set_charged(r->radioRx.kicker_status() & 0x01);
-				log->set_kicker_works(!(r->radioRx.kicker_status() & 0x90));
-				log->set_ball_sense_status(r->radioRx.ball_sense_status());
-				log->set_battery_voltage(r->radioRx.battery());
+				
+				if (r->radioRx.has_kicker_voltage())
+				{
+					log->set_kicker_voltage(r->radioRx.kicker_voltage());
+				}
+				
+				if (r->radioRx.has_kicker_status())
+				{
+					log->set_charged(r->radioRx.kicker_status() & 0x01);
+					log->set_kicker_works(!(r->radioRx.kicker_status() & 0x90));
+				}
+				
+				if (r->radioRx.has_ball_sense_status())
+				{
+					log->set_ball_sense_status(r->radioRx.ball_sense_status());
+				}
+				
+				if (r->radioRx.has_battery())
+				{
+					log->set_battery_voltage(r->radioRx.battery());
+				}
+				
 				log->mutable_motor_status()->Clear();
 				log->mutable_motor_status()->MergeFrom(r->radioRx.motor_status());
+				
 				if (r->radioRx.has_quaternion())
 				{
 					log->mutable_quaternion()->Clear();
@@ -580,12 +600,11 @@ void Processor::sendRadioData()
 		BOOST_FOREACH(OurRobot *r, _state.self)
 		{
 			Packet::RadioTx::Robot &txRobot = r->radioTx;
-			for (int m = 0; m < txRobot.motors_size(); ++m)
-			{
-				txRobot.set_motors(m, 0);
-				txRobot.set_kick(0);
-				txRobot.set_dribbler(0);
-			}
+			txRobot.set_body_x(0);
+			txRobot.set_body_y(0);
+			txRobot.set_body_w(0);
+			txRobot.set_kick(0);
+			txRobot.set_dribbler(0);
 		}
 	}
 	

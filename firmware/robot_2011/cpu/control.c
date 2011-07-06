@@ -20,6 +20,14 @@ const controller_info_t *default_controller;
 
 static void dumb_update()
 {
+	int wheel_command[4] =
+	{
+		-cmd_body_x - cmd_body_y + cmd_body_w,
+		-cmd_body_x + cmd_body_y + cmd_body_w,
+		cmd_body_x + cmd_body_y + cmd_body_w,
+		cmd_body_x - cmd_body_y + cmd_body_w
+	};
+	
 	for (int i = 0; i < 5; ++i)
 	{
 		drive_mode[i] = DRIVE_SLOW_DECAY;
@@ -27,7 +35,7 @@ static void dumb_update()
 	
 	for (int i = 0; i < 4; ++i)
 	{
-		motor_out[i] = -wheel_command[i] * 511 / 127;
+		motor_out[i] = wheel_command[i] * (627 * 511) / (200 * 127);
 	}
 	motor_out[4] = dribble_command >> 1;
 }
@@ -195,9 +203,23 @@ static void pd_update()
 		drive_mode[i] = DRIVE_SLOW_DECAY;
 	}
 	
+	int wheel_command[4] =
+	{
+		-cmd_body_x - cmd_body_y + cmd_body_w,
+		-cmd_body_x + cmd_body_y + cmd_body_w,
+		cmd_body_x + cmd_body_y + cmd_body_w,
+		cmd_body_x - cmd_body_y + cmd_body_w
+	};
+	
 	for (int i = 0; i < 4; ++i)
 	{
-		int setpoint = -wheel_command[i] * 3;
+		// Input units: 0.008m/s
+		// Output units: encoder ticks/s
+		// 1440*4.5 ticks/rev
+		// 0.026*2*pi m/rev
+		// Input * 0.008*1440*4.5/(0.026*2*pi) = ticks/s
+		int setpoint = wheel_command[i] * 627 / 200;
+		
 		int speed = encoder_delta[i];
 		int error = setpoint - speed;
 

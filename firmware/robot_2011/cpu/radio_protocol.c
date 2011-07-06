@@ -17,7 +17,9 @@
 // Last forward packet
 uint8_t forward_packet[Forward_Size];
 
-int wheel_command[4];
+int cmd_body_x;
+int cmd_body_y;
+int cmd_body_w;
 int dribble_command;
 int kick_command;
 int kick_immediate;
@@ -96,10 +98,9 @@ int handle_forward_packet()
 	sequence = forward_packet[0] >> 4;
 	
 	// Clear motor commands in case this robot's ID does not appear in the packet
-	for (int i = 0; i < 4; ++i)
-	{
-		wheel_command[i] = 0;
-	}
+	cmd_body_x = 0;
+	cmd_body_y = 0;
+	cmd_body_w = 0;
 	dribble_command = 0;
 	
 	// Get motor commands from the packet
@@ -109,11 +110,23 @@ int handle_forward_packet()
 	{
 		if ((forward_packet[offset + 4] & 0x0f) == robot_id)
 		{
-			for (int i = 0; i < 4; ++i)
+			uint8_t more = forward_packet[offset + 3];
+			cmd_body_x = forward_packet[offset + 0] | ((more & 0x03) << 8);
+			cmd_body_y = forward_packet[offset + 1] | ((more & 0x0c) << 6);
+			cmd_body_w = forward_packet[offset + 2] | ((more & 0x30) << 4);
+			
+			// Sign extension
+			if (cmd_body_x & 0x200)
 			{
-				// Convert from seven bits to nine bits (signed)
-				int8_t byte = forward_packet[offset + i];
-				wheel_command[i] = byte;
+				cmd_body_x |= 0xfffffc00;
+			}
+			if (cmd_body_y & 0x200)
+			{
+				cmd_body_y |= 0xfffffc00;
+			}
+			if (cmd_body_w & 0x200)
+			{
+				cmd_body_w |= 0xfffffc00;
 			}
 			
 			// Convert the dribbler speed from the top four bits in a byte to nine bits

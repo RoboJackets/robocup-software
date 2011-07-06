@@ -273,7 +273,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 	// Debug lines
 	BOOST_FOREACH(const DebugPath& path, frame->debug_paths())
 	{
-		if (path.layer() < 0 || _layerVisible[path.layer()])
+		if (path.layer() < 0 || layerVisible(path.layer()))
 		{
 			p.setPen(qcolor(path.color()));
 			QPointF pts[path.points_size()];
@@ -288,7 +288,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 	// Debug circles
 	BOOST_FOREACH(const DebugCircle& c, frame->debug_circles())
 	{
-		if (c.layer() < 0 || _layerVisible[c.layer()])
+		if (c.layer() < 0 || layerVisible(c.layer()))
 		{
 			p.setPen(qcolor(c.color()));
 			p.drawEllipse(qpointf(c.center()), c.radius(), c.radius());
@@ -298,7 +298,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 	// Debug text
 	BOOST_FOREACH(const DebugText& text, frame->debug_texts())
 	{
-		if (text.layer() < 0 || _layerVisible[text.layer()])
+		if (text.layer() < 0 || layerVisible(text.layer()))
 		{
 			p.setPen(qcolor(text.color()));
 			drawText(p, qpointf(text.pos()), QString::fromStdString(text.text()), text.center());
@@ -309,7 +309,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 	p.setPen(Qt::NoPen);
 	BOOST_FOREACH(const DebugPath& path, frame->debug_polygons())
 	{
-		if (path.layer() < 0 || _layerVisible[path.layer()])
+		if (path.layer() < 0 || layerVisible(path.layer()))
 		{
 			if (path.points_size() < 3)
 			{
@@ -381,7 +381,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 		QPointF textPos = center - rtX * 0.2 - rtY * (Robot_Radius + 0.1);
 		BOOST_FOREACH(const DebugText& text, r.text())
 		{
-			if (text.layer() < 0 || _layerVisible[text.layer()])
+			if (text.layer() < 0 || layerVisible(text.layer()))
 			{
 				p.setPen(qcolor(text.color()));
 				drawText(p, textPos, QString::fromStdString(text.text()), false);

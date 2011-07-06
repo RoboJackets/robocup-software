@@ -124,10 +124,13 @@ void OurRobot::addStatusText()
 		addText("Kicker fault", Qt::red);
 	}
 	
-	float battery = radioRx.battery();
-	if (battery <= 14.3f)
+	if (radioRx.has_battery())
 	{
-		addText(QString("Low battery: %1V").arg(battery, 0, 'f', 1));
+		float battery = radioRx.battery();
+		if (battery <= 14.3f)
+		{
+			addText(QString("Low battery: %1V").arg(battery, 0, 'f', 1));
+		}
 	}
 }
 
@@ -180,14 +183,8 @@ void OurRobot::resetMotionCommand()
 	//	willKick = false;
 	//	avoidBall = false;
 
-	radioTx.set_dribbler(0);
-	radioTx.set_kick(0);
-	radioTx.set_use_chipper(false);
-
-	for (int i = 0; i < 4; ++i)
-	{
-		radioTx.set_motors(i, 0);
-	}
+	radioTx.Clear();
+	radioTx.set_robot_id(shell());
 
 	cmd = MotionCommand();
 	_delayed_goal = boost::none;
@@ -490,7 +487,7 @@ Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 		// mix the next point between the first and second point
 		// if we are far away from p1, want scale to be closer to p1
 		// if we are close to p1, want scale to be closer to p2
-		float scale = 1-Utils::clamp(dist1/dist2, 1.0, 0.0);
+		float scale = 1 - Utils::clamp(dist1/dist2, 0.0f, 1.0f);
 		Geometry2d::Point targetPos = p1 + (p2-p1)*scale;
 		if (blend_verbose) {
 			addText(QString("blend:scale=%1").arg(scale));
@@ -633,27 +630,27 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 
 bool OurRobot::charged() const
 {
-	return (radioRx.kicker_status() & 0x01) && (Utils::timestamp() - radioRx.timestamp()) < 500000;
+	return radioRx.has_kicker_status() && (radioRx.kicker_status() & 0x01) && (Utils::timestamp() - radioRx.timestamp()) < 500000;
 }
 
 bool OurRobot::hasBall() const
 {
-	return radioRx.ball_sense_status() == Packet::HasBall && (Utils::timestamp() - radioRx.timestamp()) < 500000;
+	return radioRx.has_ball_sense_status() && radioRx.ball_sense_status() == Packet::HasBall && (Utils::timestamp() - radioRx.timestamp()) < 500000;
 }
 
 bool OurRobot::ballSenseWorks() const
 {
-	return radioRx.ball_sense_status() == Packet::NoBall || radioRx.ball_sense_status() == Packet::HasBall;
+	return radioRx.has_ball_sense_status() && (radioRx.ball_sense_status() == Packet::NoBall || radioRx.ball_sense_status() == Packet::HasBall);
 }
 
 bool OurRobot::kickerWorks() const
 {
-	return !(radioRx.kicker_status() & 0x80) && (Utils::timestamp() - radioRx.timestamp()) < 500000;
+	return radioRx.has_kicker_status() && !(radioRx.kicker_status() & 0x80) && (Utils::timestamp() - radioRx.timestamp()) < 500000;
 }
 
 float OurRobot::kickerVoltage() const
 {
-	if ((Utils::timestamp() - radioRx.timestamp()) < 500000)
+	if (radioRx.has_kicker_voltage() && (Utils::timestamp() - radioRx.timestamp()) < 500000)
 	{
 		return radioRx.kicker_voltage();
 	} else {
@@ -673,7 +670,7 @@ Packet::HardwareVersion OurRobot::hardwareVersion() const
 
 boost::optional<Eigen::Quaternionf> OurRobot::quaternion() const
 {
-	if ((Utils::timestamp() - radioRx.timestamp()) < 50000)
+	if (radioRx.has_quaternion() && (Utils::timestamp() - radioRx.timestamp()) < 50000)
 	{
 		return Eigen::Quaternionf(
 			radioRx.quaternion().q0() / 16384.0,

@@ -207,7 +207,7 @@ int main()
 		power_fail_music();
 	} else {
 		// Something's wrong
-		music_start(song_failure);
+// 		music_start(song_failure);
 	}
 	
 	// Select the default controller if enough hardware is working.
@@ -308,10 +308,9 @@ int main()
 				}
 				
 				// Clear drive commands
-				for (int i = 0; i < 4; ++i)
-				{
-					wheel_command[i] = 0;
-				}
+				cmd_body_x = 0;
+				cmd_body_y = 0;
+				cmd_body_w = 0;
 				dribble_command = 0;
 				kick_command = 0;
 				use_chipper = 0;

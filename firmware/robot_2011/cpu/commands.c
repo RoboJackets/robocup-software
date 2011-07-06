@@ -168,6 +168,8 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	print_motor_bits(motor_stall);
 	putchar('\n');
 	
+	printf("Command: %4d %4d %4d %4d\n", cmd_body_x, cmd_body_y, cmd_body_w, dribble_command);
+	
 	printf("Motor out:");
 	for (int i = 0; i < 5; ++i)
 	{
@@ -215,12 +217,6 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 		printf(" %6d", encoder_delta[i]);
 	}
 	printf("\n");
-	printf("  Command:");
-	for (int i = 0; i < 4; ++i)
-	{
-		printf(" %6d", wheel_command[i]);
-	}
-	printf(" %6d\n", dribble_command);
 	printf("   Output:");
 	for (int i = 0; i < 5; ++i)
 	{
