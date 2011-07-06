@@ -7,6 +7,7 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <QColor>
 
+#include <Eigen/Geometry>
 #include <Constants.hpp>
 #include <framework/Path.hpp>
 #include <gameplay/planning/rrt.hpp>
@@ -187,6 +188,9 @@ public:
 	//FIXME - Function name and comment don't match
 	bool behindBall(const Geometry2d::Point& ballPos) const;
 
+	// Gets the robot quaternion.  Returns false (and does not change q) if not available.
+	boost::optional<Eigen::Quaternionf> quaternion() const;
+	
 	// Commands
 
 	void setVScale(float scale = 1.0); /// scales the velocity
