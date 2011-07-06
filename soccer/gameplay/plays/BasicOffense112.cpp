@@ -67,8 +67,8 @@ bool Gameplay::Plays::BasicOffense112::run()
 	}
 
 	// choose offense, we want closest robot to ball to be striker
-	assignNearest(_striker.robot, available, ballProj);
-	assignNearest(_support.robot, available, ballProj);
+	assignNearestKicker(_striker.robot, available, ballProj);
+	assignNearestKicker(_support.robot, available, ballProj);
 
 	// manually reset any kickers so they keep kicking
 	if (_striker.done())

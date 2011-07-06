@@ -2,6 +2,8 @@
 
 #include <Configuration.hpp>
 
+///////    RobotConfig
+
 RobotConfig::PID::PID(Configuration* config, QString prefix):
 	p(new ConfigDouble(config, QString("%1/p").arg(prefix))),
 	i(new ConfigDouble(config, QString("%1/i").arg(prefix))),
@@ -35,5 +37,15 @@ RobotConfig::RobotConfig(Configuration* config, QString prefix):
 }
 
 RobotConfig::~RobotConfig()
+{
+}
+
+///////    RobotStatus
+
+RobotStatus::RobotStatus(Configuration *config, QString prefix):
+	chipper_enabled(new ConfigBool(config, QString("%1/Chipper Enabled").arg(prefix), true)),
+	kicker_enabled(new ConfigBool(config, QString("%1/Kicker Enabled").arg(prefix), true)),
+	ball_sense_enabled(new ConfigBool(config, QString("%1/Ball Sense Enabled").arg(prefix), true)),
+	dribbler_enabled(new ConfigBool(config, QString("%1/Dribbler Enabled").arg(prefix), true))
 {
 }

@@ -20,6 +20,7 @@
 #include <boost/shared_ptr.hpp>
 
 class Configuration;
+class RobotStatus;
 class Joystick;
 class RefereeModule;
 class Radio;
@@ -177,6 +178,9 @@ class Processor: public QThread
 		// Configuration for different models of robots
 		static RobotConfig * robotConfig2008;
 		static RobotConfig * robotConfig2011;
+
+		// per-robot status configs
+		static std::vector<RobotStatus*> robotStatuses;
 
 		// Adds motor values to a RadioTx::Robot
 		void addMotors(Packet::RadioTx::Robot *robot);
