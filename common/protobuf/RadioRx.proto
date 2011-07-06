@@ -49,7 +49,7 @@ message RadioRx
 	
 	optional uint32 kicker_voltage = 11;
 	
-	optional HardwareVersion hardware_version = 12;
+	optional HardwareVersion hardware_version = 12 [default = Unknown];
 	
 	optional Quaternion quaternion = 13;
 }

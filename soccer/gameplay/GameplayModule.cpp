@@ -124,6 +124,7 @@ void Gameplay::GameplayModule::removeGoalie()
 {
 	if (_goalie)
 	{
+		printf("remove goalie\n");
 		delete _goalie;
 		_goalie = 0;
 	}

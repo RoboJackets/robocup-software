@@ -135,7 +135,7 @@ void USBRadio::rxCompleted(libusb_transfer* transfer)
 {
 	USBRadio *radio = (USBRadio *)transfer->user_data;
 	
-	if (transfer->actual_length == Reverse_Size + 2)
+	if (transfer->status == LIBUSB_TRANSFER_COMPLETED && transfer->actual_length == Reverse_Size + 2)
 	{
 		// Parse the packet and add to the list of RadioRx's
 		radio->handleRxData(transfer->buffer);
@@ -321,7 +321,7 @@ void USBRadio::handleRxData(uint8_t *buf)
 	packet.add_motor_status(MotorStatus(buf[5] & 3));
 	
 	// Hardware version
-	if (buf[5] & 4)
+	if (buf[5] & (1 << 4))
 	{
 		packet.set_hardware_version(RJ2008);
 	} else {
