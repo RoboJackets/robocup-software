@@ -16,6 +16,7 @@
 
 class SystemState;
 class RobotConfig;
+class RobotStatus;
 class MotionControl;
 class RobotFilter;
 
@@ -162,6 +163,7 @@ public:
 	} MoveType;
 
 	RobotConfig * config;
+	RobotStatus * status;
 
 	OurRobot(int shell, SystemState *state);
 	~OurRobot();

@@ -2,6 +2,9 @@
 
 #include <Configuration.hpp>
 
+/**
+ * Configuration per robot model
+ */
 struct RobotConfig
 {
 	RobotConfig(Configuration *config, QString prefix);
@@ -42,4 +45,20 @@ struct RobotConfig
 	PID wheel;
 
 	Kicker kicker;
+};
+
+
+/**
+ * Provides per-robot overrides for a robot
+ * Should be updated for hardware revision
+ */
+struct RobotStatus
+{
+	RobotStatus(Configuration *config, QString prefix);
+	~RobotStatus() {}
+
+	ConfigBool *chipper_enabled;
+	ConfigBool *kicker_enabled;
+	ConfigBool *ball_sense_enabled;
+	ConfigBool *dribbler_enabled;
 };

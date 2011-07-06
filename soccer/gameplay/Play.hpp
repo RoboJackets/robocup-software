@@ -98,12 +98,22 @@ namespace Gameplay
 // Each assigner returns true iff the role has a usable robot.
 
 // Assigns the robot in nearest to <pt>
-bool assignNearest(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt, bool needVisible = true);
+// places no constraints other than visibility
+bool assignNearest(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt);
 
-// Assigns the robot nearest to <pt>, with requirements for:
-//   hasChipper
-//   kickerWorks
-//   isCharged
-//   is2011
+// require kick/chip/dribble/sense
+bool assignNearestFull(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt);
+
+// Assigns the nearest robot that can dribble and kick
+bool assignNearestKicker(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt);
+
+// Assigns the nearest robot that can chip
+bool assignNearestChipper(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt);
+
+// Assigns the nearest robot that can yank
+bool assignNearestYank(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt);
+
+// General "AssignNearest" with a full set of constraints - true requires that it be met
 bool assignNearest(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt,
-		bool hasChipper, bool kickerWorks, bool isCharged, bool is2011, bool needVisible = true);
+		bool hasKicker, bool hasChipper, bool hasDribbler, bool hasBallSense);
+
