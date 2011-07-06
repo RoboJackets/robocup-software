@@ -25,6 +25,12 @@
 #include "kicker.h"
 #include "radio_protocol.h"
 
+#include "invensense/imuSetup.h"
+#include "invensense/imuMlsl.h"
+#include "invensense/imuFIFO.h"
+#include "invensense/imuMldl.h"
+#include "invensense/mpuregs.h"
+
 // Last time the 5ms periodic code was executed
 unsigned int update_time;
 
@@ -176,7 +182,11 @@ int main()
 	i2c_init();
 	
 	// Set up the IMU
-	imu_init();
+	if (!imu_init())
+	{
+		//FIXME - Test each chip individually
+		failures |= Fail_IMU;
+	}
 	
 	// Test if the kicker works
 	kicker_test();
@@ -322,6 +332,9 @@ int main()
 		if ((current_time - update_time) >= 5)
 		{
 			update_time = current_time;
+			
+			// Check for new IMU data
+			IMUupdateData();
 			
 			// Read ADC results
 			adc_update();

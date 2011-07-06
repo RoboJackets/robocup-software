@@ -1020,7 +1020,6 @@ tMLError MLDLDmpAccelInit()
     tMLError result = ML_SUCCESS;
 	unsigned char regs[4] = {0};
 
-	printf("aux %02x\n", mldlData.auxSlaveAddr);
     if (mldlData.auxSlaveAddr == KIONIX_AUX_SLAVEADDR)
 	{
         //must set MPUREG_ACCEL_BURST_ADDR high bit before accessing the accel chip
@@ -1045,36 +1044,6 @@ tMLError MLDLDmpAccelInit()
         result += MLSLSerialWriteSingle( mldlData.auxSlaveAddr, 0x21, 0x06 );   // DATA_CTRL_REG: output data rate
         result += MLSLSerialWriteSingle( mldlData.auxSlaveAddr, 0x29, 0x02 );   // WUF_TIMER:     wake-up timer
         result += MLDLSetI2CPassThrough( 0 );                                   // By-pass off
-	} else if (mldlData.auxSlaveAddr == ADXL345_AUX_SLAVEADDR)
-	{
-        //must set MPUREG_ACCEL_BURST_ADDR high bit before accessing the accel chip
-        //FIXME - What does this do?
-        result += MLSLSerialWriteSingle( mldlData.mpuSlaveAddr, MPUREG_ACCEL_BURST_ADDR, 0xb2);
-
-        // This appears to make the DMP read accelerometer data in little-endian byte order
-        regs[0] = 0;
-        regs[1] = 64;
-        regs[2] = 0;
-        regs[3] = 0;
-        result += MLDLSetMemoryMPU(KEY_D_1_236, 4, regs);
-		
-		assert(MLDLSetI2CPassThrough(1) == ML_SUCCESS);
-		
-		// Check accelerometer
-		uint8_t rx = 0;
-		assert(MLSLSerialReadSingle(mldlData.auxSlaveAddr, 0, &rx) == ML_SUCCESS);
-		assert(rx == 0xe5);
-		
-		// Data rate
-		assert(MLSLSerialWriteSingle(mldlData.auxSlaveAddr, 0x2c, 0x0b) == ML_SUCCESS);
-		
-		// Data format
-		assert(MLSLSerialWriteSingle(mldlData.auxSlaveAddr, 0x31, 0x0c) == ML_SUCCESS);
-		
-		// Start acceleration measurement
-		assert(MLSLSerialWriteSingle(mldlData.auxSlaveAddr, 0x2d, 0x08) == ML_SUCCESS);
-		
-		assert(MLDLSetI2CPassThrough(0) == ML_SUCCESS);
     } else {
         result = ML_ERROR;
     }

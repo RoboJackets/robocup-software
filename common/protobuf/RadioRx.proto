@@ -23,6 +23,14 @@ enum HardwareVersion
 	RJ2011 = 2;
 }
 
+message Quaternion
+{
+	required float q0 = 1;
+	required float q1 = 2;
+	required float q2 = 3;
+	required float q3 = 4;
+}
+
 // Packet going out from radio program to control program
 message RadioRx
 {
@@ -42,4 +50,6 @@ message RadioRx
 	optional uint32 kicker_voltage = 11;
 	
 	optional HardwareVersion hardware_version = 12;
+	
+	optional Quaternion quaternion = 13;
 }

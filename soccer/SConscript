@@ -132,7 +132,7 @@ uics = env.Uic4([
 
 e = env.Clone()
 e.Append(CPPPATH=['#/soccer', Dir('ui')])
-e.Append(LIBS=['bfd'])
+e.Append(LIBS=['bfd', 'GLU'])
 
 e.ParseConfig('pkg-config --cflags --libs libusb-1.0')
 

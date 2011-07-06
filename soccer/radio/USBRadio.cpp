@@ -329,7 +329,9 @@ void USBRadio::handleRxData(uint8_t *buf)
 	}
 
 	packet.set_ball_sense_status(BallSenseStatus((buf[5] >> 2) & 3));
+	packet.set_kicker_voltage(buf[6]);
 	
+#if 0
 	// Encoders
 	for (int i = 0; i < 4; ++i)
 	{
@@ -341,8 +343,20 @@ void USBRadio::handleRxData(uint8_t *buf)
 		}
 		packet.add_encoders(value);
 	}
-	
-	packet.set_kicker_voltage(buf[11]);
+#endif
+
+	if (buf[5] & (1 << 5))
+	{
+		// Quaternion
+		int16_t q0 = buf[7] | (buf[8] << 8);
+		int16_t q1 = buf[9] | (buf[10] << 8);
+		int16_t q2 = buf[11] | (buf[12] << 8);
+		int16_t q3 = buf[13] | (buf[14] << 8);
+		packet.mutable_quaternion()->set_q0(q0 / 16384.0);
+		packet.mutable_quaternion()->set_q1(q1 / 16384.0);
+		packet.mutable_quaternion()->set_q2(q2 / 16384.0);
+		packet.mutable_quaternion()->set_q3(q3 / 16384.0);
+	}
 }
 
 void USBRadio::channel(int n)
