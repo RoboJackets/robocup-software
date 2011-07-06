@@ -17,6 +17,7 @@ namespace Gameplay
 		class OurKickoff: public Play
 		{
 			public:
+				static void createConfiguration(Configuration *cfg);
 				OurKickoff(GameplayModule *gameplay);
 				
 				static float score(GameplayModule *gameplay);

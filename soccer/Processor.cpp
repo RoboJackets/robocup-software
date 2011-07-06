@@ -485,10 +485,12 @@ void Processor::run()
 				log->set_battery_voltage(r->radioRx.battery());
 				log->mutable_motor_status()->Clear();
 				log->mutable_motor_status()->MergeFrom(r->radioRx.motor_status());
-				log->mutable_quaternion()->Clear();
 				if (r->radioRx.has_quaternion())
 				{
+					log->mutable_quaternion()->Clear();
 					log->mutable_quaternion()->MergeFrom(r->radioRx.quaternion());
+				} else {
+					log->clear_quaternion();
 				}
 				
 				BOOST_FOREACH(const Packet::DebugText &t, r->robotText)

@@ -47,6 +47,9 @@ void Kick::setTarget(const Geometry2d::Segment &seg) {
 bool Kick::findShot(const Geometry2d::Segment& segment, Geometry2d::Segment& result, float min_segment_length) const {
 	// calculate available target segments
 	WindowEvaluator evaluator(state());
+	evaluator.enable_chip = use_chipper;
+	evaluator.chip_min_range = minChipRange;
+	evaluator.chip_max_range = maxChipRange;
 	evaluator.run(ball().pos, segment);
 	Window *window = evaluator.best;
 

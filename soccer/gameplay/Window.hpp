@@ -49,6 +49,11 @@ namespace Gameplay
 			// Any robots containing any of these points are ignored as obstacles.
 			std::vector<Geometry2d::Point> exclude;
 			
+			// if enabled, uses min/max range to remove obstacles that can be cleared with chip
+			bool enable_chip;
+			float chip_min_range; // set according externally
+			float chip_max_range;
+
 			const Geometry2d::Segment &target() const
 			{
 				return _target;

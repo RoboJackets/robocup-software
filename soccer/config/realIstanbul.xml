@@ -6,6 +6,8 @@
  </Fling>
  <DemoYankChip>
   <Backup_Distance value="0.4"/>
+  <Dribber_Speed value="127"/>
+  <Enable_Aiming value="true"/>
  </DemoYankChip>
  <PivotKick>
   <Aim_Speed value="1.5708"/>
@@ -75,10 +77,10 @@
  </Rev2008>
  <Rev2011>
   <trapTrans>
-   <velocity value="0"/>
-   <acceleration value="0"/>
+   <velocity value="2.5"/>
+   <acceleration value="2"/>
    <predictTime value="0"/>
-   <responseTime value="0"/>
+   <responseTime value="0.2"/>
   </trapTrans>
   <trapRot>
    <velocity value="0"/>
@@ -92,7 +94,7 @@
    <d value="0"/>
   </translation>
   <rotation>
-   <p value="0"/>
+   <p value="2"/>
    <i value="0"/>
    <d value="0"/>
   </rotation>
@@ -106,4 +108,18 @@
    <b value="0"/>
   </kicker>
  </Rev2011>
+ <DemoFling>
+  <Dribber_Speed value="127"/>
+ </DemoFling>
+ <DemoYank>
+  <Dribber_Speed value="127"/>
+  <Enable_Bump value="false"/>
+ </DemoYank>
+ <DemoAttack>
+  <Enable_Chipping value="false"/>
+  <Dribber_Speed value="127"/>
+  <Kicker_Power value="127"/>
+  <Minimum_Chip_Range value="0.4"/>
+  <Maximum_Chip_Range value="2.5"/>
+ </DemoAttack>
 </config>

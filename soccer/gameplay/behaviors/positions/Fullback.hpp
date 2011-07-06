@@ -10,6 +10,7 @@ namespace Gameplay
 		class Fullback: public Behavior
 		{
 			public:
+				static void createConfiguration(Configuration *cfg);
 
 				typedef enum
 				{
