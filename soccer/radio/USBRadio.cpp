@@ -345,6 +345,7 @@ void USBRadio::handleRxData(uint8_t *buf)
 	}
 #endif
 
+#if 0
 	if (buf[5] & (1 << 5))
 	{
 		// Quaternion
@@ -357,6 +358,7 @@ void USBRadio::handleRxData(uint8_t *buf)
 		packet.mutable_quaternion()->set_q2(q2 / 16384.0);
 		packet.mutable_quaternion()->set_q3(q3 / 16384.0);
 	}
+#endif
 }
 
 void USBRadio::channel(int n)

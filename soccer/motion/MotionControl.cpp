@@ -201,8 +201,8 @@ void MotionControl::run()
 // 	float dtime = (_robot->state()->timestamp - _lastFrameTime) / 1.0e6;
 // 	_angularVelocity = fixAngleRadians((_robot->angle - _lastAngle) * DegreesToRadians) / dtime;
 	
-	positionTrapezoidal();
-// 	positionPD();
+// 	positionTrapezoidal();
+	positionPD();
 	anglePD();
 	
 	// Scaling

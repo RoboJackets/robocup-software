@@ -120,8 +120,12 @@ void calcMinimumWidth(QWidget *widget, QString text)
 MainWindow::MainWindow(QWidget *parent):
 	QMainWindow(parent)
 {
+#if 0
 	demo = new QuaternionDemo(this);
 	demo->resize(640, 480);
+#else
+	demo = 0;
+#endif
 	
 	_updateCount = 0;
 	_processor = 0;

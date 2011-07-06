@@ -6,9 +6,7 @@ using namespace Geometry2d;
 
 // How long to coast a robot's position when it isn't visible
 static const float Coast_Time = 0.8;
-
 static const float Velocity_Alpha = 0.2;
-
 static const float Min_Frame_Time = 0.014;
 
 RobotFilter::RobotFilter()
@@ -33,10 +31,10 @@ void RobotFilter::update(const RobotObservation* obs)
 		_estimate[s].vel = Point();
 		_estimate[s].angleVel = 0;
 	} else {
-		Point newVel = (obs->pos - _estimate[s].pos) / dtime / 0.8;
+		Point newVel = (obs->pos - _estimate[s].pos) / dtime;
 		_estimate[s].vel = newVel * Velocity_Alpha + _estimate[s].vel * (1.0f - Velocity_Alpha);
 		
-		double newW = fixAngleDegrees(obs->angle - _estimate[s].angle) / dtime / 1.15;
+		double newW = fixAngleDegrees(obs->angle - _estimate[s].angle) / dtime;
 		_estimate[s].angleVel = newW * Velocity_Alpha + _estimate[s].angleVel * (1.0f - Velocity_Alpha);
 	}
 	_estimate[s].pos = obs->pos;
