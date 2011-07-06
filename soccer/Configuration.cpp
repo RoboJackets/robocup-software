@@ -50,6 +50,7 @@ ConfigBool::ConfigBool(Configuration* tree, QString name, bool value):
 	ConfigItem(tree, name)
 {
 	_value = value;
+	addItem();
 }
 
 QString ConfigBool::toString()
@@ -94,6 +95,7 @@ ConfigInt::ConfigInt(Configuration *config, QString name, int value):
 	ConfigItem(config, name)
 {
 	_value = value;
+	addItem();
 }
 
 QString ConfigInt::toString()
@@ -124,96 +126,6 @@ void ConfigDouble::setValue(const QString& str)
 {
 	_value = str.toDouble();
 }
-
-////////
-
-ConfigVectorElement::ConfigVectorElement(ConfigVector* vector, int index, Configuration* tree, QString name):
-	ConfigItem(tree, name)
-{
-	_vector = vector;
-	_index = index;
-}
-
-void ConfigVectorElement::setValue(const QString& str)
-{
-	_vector->setElement(_index, str);
-}
-
-QString ConfigVectorElement::toString()
-{
-	return _vector->getElement(_index);
-}
-
-////////
-
-ConfigFloatVector::ConfigFloatVector(Configuration *config, QString name):
-	ConfigVector(config, name)
-{
-}
-
-void ConfigFloatVector::setValue(const QString& str)
-{
-	// This happens either when the user changes the value of the vector's item
-	// (number of elements) or when the item is first created by addToTree().
-	// In either case, it creates child items as needed.
-	resize(str.toInt());
-}
-
-QString ConfigFloatVector::toString()
-{
-	return QString::number(_values.size());
-}
-
-void ConfigFloatVector::resize(unsigned int n)
-{
-	if (_treeItem)
-	{
-		_treeItem->setText(1, QString::number(n));
-		
-		// Delete extra items
-		for (unsigned int i = n; i < _items.size(); ++i)
-		{
-			delete _items[i];
-		}
-	}
-	
-	unsigned int oldSize = _items.size();
-	_values.resize(n);
-	
-	if (_treeItem)
-	{
-		_items.resize(n);
-		
-		// Create new items
-		for (unsigned int i = oldSize; i < n; ++i)
-		{
-			_items[i] = new ConfigVectorElement(this, i, _config, QString("%1/%2").arg(_path.join("/"), QString::number(i)));
-			_items[i]->valueChanged(QString::number(_values[i]));
-		}
-	}
-}
-
-void ConfigFloatVector::set(unsigned int i, float value)
-{
-	_values[i] = value;
-	
-	if (_treeItem)
-	{
-		_items[i]->valueChanged(QString::number(_values[i]));
-	}
-}
-
-QString ConfigFloatVector::getElement(int i)
-{
-	return QString::number(_values[i]);
-}
-
-void ConfigFloatVector::setElement(int i, const QString& str)
-{
-	_values[i] = str.toDouble();
-}
-
-////////
 
 Configuration::Configuration()
 {
