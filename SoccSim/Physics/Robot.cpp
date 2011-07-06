@@ -484,15 +484,33 @@ Packet::RadioRx Robot::radioRx() const
 	Packet::RadioRx packet;
 	
 	packet.set_timestamp(Utils::timestamp());
-	packet.set_battery(1.0f);
+	packet.set_battery(15.0f);
 	packet.set_rssi(1.0f);
-//	packet.set_charged(chargerWorks && (Utils::timestamp() - _lastKicked) > RechargeTime); // FIXME: fix kicker status
+	packet.set_kicker_status(((Utils::timestamp() - _lastKicked) > RechargeTime) ? 1 : 0);
 	
+	// FIXME: No.
 	BOOST_FOREACH(const Ball* ball, _env->balls())
 	{
 		packet.set_ball_sense_status((ballSense(ball) || !ballSensorWorks) ? Packet::HasBall : Packet::NoBall);
 	}
 	
+	// assume all motors working
+	for (size_t i=0; i<5; ++i)
+	{
+		packet.add_motor_status(Packet::Good);
+	}
+
+	if (_rev == rev2008)
+	{
+		packet.set_hardware_version(Packet::RJ2008);
+	} else if (_rev == rev2010) // FIXME: change to actual 2011
+	{
+		packet.set_hardware_version(Packet::RJ2011);
+	} else
+	{
+		packet.set_hardware_version(Packet::Unknown);
+	}
+
 	return packet;
 }
 
