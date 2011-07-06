@@ -181,13 +181,15 @@ int main()
 	// Set up I2C
 	i2c_init();
 	
+#if 0
 	// Set up the IMU
 	if (!imu_init())
 	{
 		//FIXME - Test each chip individually
 		failures |= Fail_IMU;
 	}
-	
+#endif
+
 	// Test if the kicker works
 	kicker_test();
 	
@@ -334,7 +336,7 @@ int main()
 			update_time = current_time;
 			
 			// Check for new IMU data
-			IMUupdateData();
+// 			IMUupdateData();
 			
 			// Read ADC results
 			adc_update();
