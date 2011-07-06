@@ -315,6 +315,7 @@ void Processor::run()
 				break;
 			case Packet::Unknown:
 				robot->config = robotConfig2011; // FIXME: defaults to 2011 robots
+				break;
 			}
 		}
 
