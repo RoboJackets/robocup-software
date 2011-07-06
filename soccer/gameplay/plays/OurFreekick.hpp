@@ -31,8 +31,8 @@ namespace Gameplay
 				static ConfigBool *_enableLeftDownfieldShot;
 				static ConfigBool *_enableRightDownfieldShot;
 				static ConfigBool *_enableChipper;
-				static ConfigBool *_minChipRange;
-				static ConfigBool *_maxChipRange;
+				static ConfigDouble *_minChipRange;
+				static ConfigDouble *_maxChipRange;
 		};
 	}
 }

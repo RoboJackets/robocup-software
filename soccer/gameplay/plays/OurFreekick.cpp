@@ -16,12 +16,17 @@ ConfigBool *Gameplay::Plays::OurFreekick::_enableGoalLineShot;
 ConfigBool *Gameplay::Plays::OurFreekick::_enableLeftDownfieldShot;
 ConfigBool *Gameplay::Plays::OurFreekick::_enableRightDownfieldShot;
 ConfigBool *Gameplay::Plays::OurFreekick::_enableChipper;
-ConfigBool *Gameplay::Plays::OurFreekick::_minChipRange;
-ConfigBool *Gameplay::Plays::OurFreekick::_maxChipRange;
+ConfigDouble *Gameplay::Plays::OurFreekick::_minChipRange;
+ConfigDouble *Gameplay::Plays::OurFreekick::_maxChipRange;
 
 void Gameplay::Plays::OurFreekick::createConfiguration(Configuration *cfg)
 {
-
+	_enableGoalLineShot = new ConfigBool(cfg, "OurFreekick/Enable GoalLine Shot", true);
+	_enableLeftDownfieldShot = new ConfigBool(cfg, "OurFreekick/Enable Left Downfield Shot", true);
+	_enableRightDownfieldShot = new ConfigBool(cfg, "OurFreekick/Enable Right Downfield Shot", true);
+	_enableChipper = new ConfigBool(cfg, "OurFreekick/Enable Chipper", true);
+	_minChipRange = new ConfigDouble(cfg, "OurFreekick/Min Chip Range", 0.3);
+	_maxChipRange = new ConfigDouble(cfg, "OurFreekick/Max Chip Range", 2.0);
 }
 
 Gameplay::Plays::OurFreekick::OurFreekick(GameplayModule *gameplay):
