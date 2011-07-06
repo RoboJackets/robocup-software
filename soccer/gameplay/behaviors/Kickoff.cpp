@@ -13,13 +13,17 @@ ConfigBool *Gameplay::Behaviors::Kickoff::_enableRandomKick;
 ConfigBool *Gameplay::Behaviors::Kickoff::_enableFling;
 ConfigBool *Gameplay::Behaviors::Kickoff::_enableChip;
 ConfigBool *Gameplay::Behaviors::Kickoff::_enableBumpYank;
+ConfigDouble *Gameplay::Behaviors::Kickoff::_chipMinRange;
+ConfigDouble *Gameplay::Behaviors::Kickoff::_chipMaxRange;
 
 void Gameplay::Behaviors::Kickoff::createConfiguration(Configuration *cfg)
 {
-	_enableRandomKick = new ConfigBool(cfg, "Kickoff/Enable Random Kick Mode");
-	_enableFling = new ConfigBool(cfg, "Kickoff/Enable Flinging");
-	_enableChip = new ConfigBool(cfg, "Kickoff/Enable Chipping");
-	_enableBumpYank = new ConfigBool(cfg, "Kickoff/Enable BumpYank");
+	_enableRandomKick = new ConfigBool(cfg, "Kickoff/Enable Random Kick Mode", false);
+	_enableFling = new ConfigBool(cfg, "Kickoff/Enable Flinging", false);
+	_enableChip = new ConfigBool(cfg, "Kickoff/Enable Chipping", false);
+	_enableBumpYank = new ConfigBool(cfg, "Kickoff/Enable BumpYank", false);
+	_chipMinRange = new ConfigDouble(cfg, "Kickoff/Chip Min Range", 0.3);
+	_chipMaxRange = new ConfigDouble(cfg, "Kickoff/Chip Max Range", 2.0);
 }
 
 Gameplay::Behaviors::Kickoff::Kickoff(GameplayModule *gameplay):
@@ -88,6 +92,8 @@ void Gameplay::Behaviors::Kickoff::executeMode() {
 		break;
 	case Mode_Chip:
 		_kick.use_chipper = true;
+		_kick.maxChipRange = *_chipMaxRange;
+		_kick.minChipRange = *_chipMinRange;
 		_kick.run();
 		break;
 	case Mode_FlingLeft:
