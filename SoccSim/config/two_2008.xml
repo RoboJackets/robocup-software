@@ -6,7 +6,7 @@
     </blue>
 
     <yellow>
-        <robot id="5" x="1.5" y="0" rev="2010" />
-        <robot id="6" x="1" y="1" rev="2010" />
+        <robot id="5" x="1.5" y="0" rev="2008" />
+        <robot id="6" x="1" y="1" rev="2008" />
     </yellow>
 </simulation>
