@@ -347,11 +347,11 @@ void FieldView::drawTeamSpace(QPainter& p)
 		QPointF center = qpointf(r.pos());
 		
 		bool faulty = false;
-		if (r.ball_sense_status() == Dazzled || r.ball_sense_status() == Failed)
+		if (r.has_ball_sense_status() && (r.ball_sense_status() == Dazzled || r.ball_sense_status() == Failed))
 		{
 			faulty = true;
 		}
-		if (!r.kicker_works())
+		if (r.has_kicker_works() && !r.kicker_works())
 		{
 			faulty = true;
 		}
@@ -362,7 +362,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 				faulty = true;
 			}
 		}
-		if (r.battery_voltage() <= 14.3f)
+		if (r.has_battery_voltage() && r.battery_voltage() <= 14.3f)
 		{
 			faulty = true;
 		}
