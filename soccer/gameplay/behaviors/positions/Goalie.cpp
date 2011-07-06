@@ -43,6 +43,12 @@ void Gameplay::Behaviors::Goalie::assign(set<OurRobot *> &available)
 	{
 		// Take the robot nearest the goal
 		assignNearest(robot, available, Geometry2d::Point());
+		if (robot)
+		{
+			printf("Goalie: no robot, took %d\n", robot->shell());
+		} else {
+			printf("Goalie: not assigned\n");
+		}
 /*	} else if (robot && !robot->visible)
 	{
 		//FIXME - Goalie replacement

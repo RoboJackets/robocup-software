@@ -115,6 +115,7 @@ void Gameplay::GameplayModule::createGoalie()
 {
 	if (!_goalie)
 	{
+		printf("create goalie\n");
   		_goalie = new Behaviors::Goalie(this);
 	}
 }
