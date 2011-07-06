@@ -11,6 +11,8 @@
 #include "radio_protocol.h"
 #include "encoder_monitor.h"
 #include "stall.h"
+#include "imu.h"
+#include "invensense/imuFIFO.h"
 
 const controller_info_t *default_controller;
 
@@ -247,6 +249,87 @@ static void pd_update()
 
 ////////
 
+static int tg_kp = 0;
+static int tg_kd = 0;
+static int tg_out = 0;
+static int tg_last_error = 0;
+
+static void test_gyro_init(int argc, const char *argv[])
+{
+	// First two parameters are coefficients
+	if (argc != 2)
+	{
+		printf("Usage: run test_gyro <kp> <kd>\n");
+		controller = 0;
+	}
+	
+	tg_kp = parse_int(argv[0]);
+	tg_kd = parse_int(argv[1]);
+	tg_out = 0;
+	tg_last_error = 0;
+}
+
+static void test_gyro_update()
+{
+	for (int i = 0; i < 4; ++i)
+	{
+		drive_mode[i] = DRIVE_SLOW_DECAY;
+	}
+	
+	long gyro[3] = {0};
+	if (imu_aligned)
+	{
+		IMUgetGyro(gyro);
+	}
+	
+	int setpoint = 0;//-wheel_command[i] * 3;
+	int speed = gyro[2] >> 12;
+	int error = setpoint - speed;
+
+	if (abs(error) <= 1)
+	{
+		error = 0;
+	}
+
+	int delta_error = error - tg_last_error;
+	tg_last_error = error;
+	int delta = error * tg_kp + delta_error * tg_kd;
+	
+	// Limit the change between consecutive cycles to prevent excessive current
+	if (delta > Command_Rate_Limit)
+	{
+		delta = Command_Rate_Limit;
+	} else if (delta < -Command_Rate_Limit)
+	{
+		delta = -Command_Rate_Limit;
+	}
+	tg_out += delta;
+	
+	// Don't accumulate output for broken motors, in case they start working
+	if ((motor_faults | motor_stall))
+	{
+		tg_out = 0;
+	}
+	
+	// Clip to output limits
+	static const int MAX = 40;
+	if (tg_out > MAX * 256)
+	{
+		tg_out = MAX * 256;
+	} else if (tg_out < -MAX * 256)
+	{
+		tg_out = -MAX * 256;
+	}
+	
+// 	printf("%5d %4d\n", speed, tg_out);
+	for (int i = 0; i < 4; ++i)
+	{
+		motor_out[i] = tg_out / 256;
+	}
+}
+
+////////
+
 const controller_info_t controllers[] =
 {
 	{"dumb", 0, 0, dumb_update},
@@ -254,6 +337,7 @@ const controller_info_t controllers[] =
 	{"step", step_init, 0, step_update},
 	{"log", log_init, 0, log_update},
 	{"log_print", 0, 0, log_print},
+	{"test_gyro", test_gyro_init, 0, test_gyro_update},
 	
 	// End of table
 	{0, 0}

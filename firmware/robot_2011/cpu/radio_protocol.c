@@ -185,7 +185,7 @@ int handle_forward_packet()
 			reply_buf[8 + i * 2] = quat[i] >> 24;
 		}
 		
-		reply_len = 15;
+		reply_len = 7;
 		reply_timer_start(3000 * reply_slot);
 	} else {
 		// Get ready to receive another forward packet

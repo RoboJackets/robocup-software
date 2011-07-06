@@ -84,9 +84,12 @@ void ConfigBool::setValue(const QString& str)
 
 void ConfigBool::setupItem()
 {
-	_treeItem->setCheckState(1, _value ? Qt::Checked : Qt::Unchecked);
-	//FIXME - Can't change the checkbox anymore.  Why not?
-	_treeItem->setFlags(_treeItem->flags() | Qt::ItemIsUserCheckable);
+	if (_treeItem)
+	{
+		_treeItem->setCheckState(1, _value ? Qt::Checked : Qt::Unchecked);
+		//FIXME - Can't change the checkbox anymore.  Why not?
+		_treeItem->setFlags(_treeItem->flags() | Qt::ItemIsUserCheckable);
+	}
 }
 
 ////////

@@ -20,10 +20,10 @@ Gameplay::Plays::MotionEval::MotionEval(GameplayModule *gameplay):
 	
 	_target = 0;
 	_points.resize(2);
-	_points[0] = Point(-0.2, 1.0);
-	_points[1] = Point(0.2, 1.0);
-// 	_points[0] = Point(-1.3, 0.7);
-// 	_points[1] = Point(-1.3, 2.7);
+// 	_points[0] = Point(-0.2, 1.0);
+// 	_points[1] = Point(0.2, 1.0);
+	_points[0] = Point(-1.3, 0.7);
+	_points[1] = Point(-1.3, 2.7);
 }
 
 float Gameplay::Plays::MotionEval::score(GameplayModule *gameplay)

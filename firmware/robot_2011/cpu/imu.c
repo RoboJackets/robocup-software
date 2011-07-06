@@ -51,7 +51,7 @@ int imu_init()
 	
 	IMUsetBiasUpdateFunc(ML_ALL);
 	IMUsendQuaternionToFIFO(ML_16_BIT);
-// 	IMUsendGyroToFIFO(ML_ALL, ML_16_BIT);
+	IMUsendGyroToFIFO(ML_ELEMENT_3, ML_16_BIT);
 // 	IMUsendLinearAccelWorldToFIFO(ML_ALL, ML_32_BIT);
 // 	MLSetProcessedFIFOCallback(dataCallback);
 	IMUsetMotionCallback(motionCallback);
