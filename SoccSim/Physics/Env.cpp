@@ -337,8 +337,8 @@ void Env::addRobot(bool blue, int id, Geometry2d::Point pos, Robot::Rev rev)
 	case Robot::rev2008:
 		printf("New 2008 Robot: %d : %f %f\n", id, pos.x, pos.y);
 		break;
-	case Robot::rev2010:
-		printf("New 2010 Robot: %d : %f %f\n", id, pos.x, pos.y);
+	case Robot::rev2011:
+		printf("New 2011 Robot: %d : %f %f\n", id, pos.x, pos.y);
 	}
 }
 

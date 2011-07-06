@@ -398,12 +398,6 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
 
 		float target = data->motors(i) / 127.0f * 1.2;
 		
-		// reverse for 2010 robots
-		if (_rev == rev2010)
-		{
-			target = -target;
-		}
-		
 		const float diff = target - current;
 		
 		const float force = 20.0f * diff;
@@ -446,7 +440,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
 
     	// determine the kick speed
     	float kickSpeed;
-    	bool chip = data->use_chipper();// && _rev == rev2010;
+    	bool chip = data->use_chipper();// && _rev == rev2011;
     	if (chip)
 		{
     		kickSpeed = data->kick() / 255.0f * maxChipSpeed;
@@ -503,7 +497,7 @@ Packet::RadioRx Robot::radioRx() const
 	if (_rev == rev2008)
 	{
 		packet.set_hardware_version(Packet::RJ2008);
-	} else if (_rev == rev2010) // FIXME: change to actual 2011
+	} else if (_rev == rev2011) // FIXME: change to actual 2011
 	{
 		packet.set_hardware_version(Packet::RJ2011);
 	} else
