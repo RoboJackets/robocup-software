@@ -66,6 +66,8 @@ namespace Gameplay
 				static ConfigBool * _enableFling; // if true, allows for fling to be used - uses side
 				static ConfigBool * _enableChip;  // if true, will try to chip at endline
 				static ConfigBool * _enableBumpYank;  // if true, will bump forward and yank back - uses side
+				static ConfigDouble *_chipMinRange;
+				static ConfigDouble *_chipMaxRange;
 		};
 	}
 }

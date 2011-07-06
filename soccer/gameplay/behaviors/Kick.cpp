@@ -29,6 +29,8 @@ void Kick::restart() {
 	use_chipper = false;
 	dribbler_speed = 127;
 	kick_power = 255;
+	minChipRange = 0.3;
+	maxChipRange = 0.5;
 	_pivotKick.restart();
 	_lineKick.restart();
 }
