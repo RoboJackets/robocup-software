@@ -3,6 +3,12 @@
 
 using namespace std;
 
+namespace Gameplay {
+namespace Behaviors {
+REGISTER_CONFIGURABLE(Kickoff)
+}
+}
+
 ConfigBool *Gameplay::Behaviors::Kickoff::_enableRandomKick;
 ConfigBool *Gameplay::Behaviors::Kickoff::_enableFling;
 ConfigBool *Gameplay::Behaviors::Kickoff::_enableChip;
