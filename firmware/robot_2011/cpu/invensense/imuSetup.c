@@ -980,6 +980,13 @@ unsigned char MLUpdateBias(void)
             biasTmp2[i] = (((long)regs[i*4]<<24)+((long)regs[i*4+1]<<16) + ((long)regs[i*4+2]<<8)+ ((long)regs[i*4+3]));
         }
         // Rotate bias vector by the transpose of the orientation matrix
+	// m0 m3 m6     in0   out0
+	// m1 m4 m7  *  in1 = out1
+	// m2 m5 m8     in2   ou2
+	// 
+	// out0 = in0 * m0 + in1 * m3 + in2 * m6
+	// out1 = in0 * m1 + in1 * m4 + in2 * m7
+	// out2 = in0 * m2 + in1 * m5 + in2 * m8
         for ( i=0; i<3; ++i ) {
             biasTmp[i] = (long)(biasTmp2[0] * (float)mlxData.mlGyroOrient[i] / (1L<<30) +
                 biasTmp2[1] * (float)mlxData.mlGyroOrient[i+3] / (1L<<30) +

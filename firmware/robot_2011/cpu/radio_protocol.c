@@ -7,11 +7,12 @@
 #include "power.h"
 #include "encoder_monitor.h"
 #include "stall.h"
+#include "imu.h"
+#include "invensense/imuFIFO.h"
 
 #include <string.h>
 
 #define Forward_Size    36
-#define Reverse_Size    12
 
 // Last forward packet
 uint8_t forward_packet[Forward_Size];
@@ -169,16 +170,22 @@ int handle_forward_packet()
 			reply_buf[5] |= 1 << 4;
 		}
 		
-		reply_buf[10] = 0;
-		for (int i = 0; i < 4; ++i)
+		if (imu_aligned)
 		{
-			reply_buf[6 + i] = encoder_delta[i];
-			reply_buf[10] |= (encoder_delta[i] & 0x300) >> (8 - i * 2);
+			reply_buf[5] |= 1 << 5;
 		}
 		
-		reply_buf[11] = kicker_voltage;
+		reply_buf[6] = kicker_voltage;
 		
-		reply_len = Reverse_Size;
+		long quat[4] = {0};
+		IMUgetQuaternion(quat);
+		for (int i = 0; i < 4; ++i)
+		{
+			reply_buf[7 + i * 2] = quat[i] >> 16;
+			reply_buf[8 + i * 2] = quat[i] >> 24;
+		}
+		
+		reply_len = 15;
 		reply_timer_start(3000 * reply_slot);
 	} else {
 		// Get ready to receive another forward packet

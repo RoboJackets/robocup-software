@@ -17,12 +17,15 @@ class PlayConfigTab;
 class TestResultTab;
 class StripChart;
 class ConfigBool;
+class QuaternionDemo;
 
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT;
 	
 	public:
+		QuaternionDemo *demo;
+		
 		MainWindow(QWidget *parent = 0);
 		
 		void configuration(Configuration *config);

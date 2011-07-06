@@ -23,12 +23,10 @@
 #include "encoder_monitor.h"
 #include "kicker.h"
 #include "radio_protocol.h"
-
-#include "invensense/imuSetup.h"
+#include "imu.h"
 #include "invensense/imuMlsl.h"
 #include "invensense/imuFIFO.h"
-#include "invensense/imuMldl.h"
-#include "invensense/mpuregs.h"
+#include "invensense/imuSetup.h"
 
 static void cmd_help(int argc, const char *argv[], void *arg)
 {
@@ -743,59 +741,19 @@ void cmd_drive_mode(int argc, const char *argv[], void *arg)
 	}
 }
 
-static void dataCallback()
-{
-}
-
 void cmd_imu_test(int argc, const char *argv[], void *arg)
 {
-	if (IMUopen() != ML_SUCCESS)
-	{
-		printf("IMUopen failed\n");
-		return;
-	}
-	
-#if 1
-	MLSetAuxSlaveAddr(KIONIX_AUX_SLAVEADDR);
-	float gyroCal[9] = {0};
-	float accelCal[9] = {0};
-	float gyroScale = 0.0, accelScale = 0.0;
-	memset(gyroCal,0,9*sizeof(gyroCal[0]));
-	gyroCal[0] = 1.0;
-	gyroCal[4] = 1.0;
-	gyroCal[8] = 1.0;
-	memset(accelCal,0,9*sizeof(accelCal[0]));
-	accelCal[0] = -1.0;
-	accelCal[4] = -1.0;
-	accelCal[8] =  1.0;
-
-	gyroScale = 2000.0f;
-	accelScale = 2.0f;
-
-	MLSetGyroCalibration(gyroScale, gyroCal);
-	MLSetAccelCalibration(accelScale, accelCal);
-#endif
-	
-#if 1
-	IMUsetBiasUpdateFunc(ML_ALL);
-	IMUsendQuaternionToFIFO(ML_32_BIT);
-	IMUsendGyroToFIFO(ML_ALL, ML_32_BIT);
-	IMUsendLinearAccelWorldToFIFO(ML_ALL, ML_32_BIT);
-	MLSetProcessedFIFOCallback(dataCallback);
-// 	IMUsetMotionCallback(motion);
-	IMUsetFIFORate(0);
-	IMUstart();
-#endif
-	
 	radio_rx_len = 0;
 	usb_rx_start();
 	while (!usb_rx_len)
 	{
-		// Reset the watchdog timer
-		AT91C_BASE_WDTC->WDTC_WDCR = 0xa5000001;
+		delay_ms(5);
 		
-		printf("test\n");
 		IMUupdateData();
+		
+		long quat[4] = {0};
+		IMUgetQuaternion(quat);
+		printf("%d %6d %6d %6d %6d\n", imu_aligned, (int)quat[0] >> 16, (int)quat[1] >> 16, (int)quat[2] >> 16, (int)quat[3] >> 16);
 	}
 	usb_rx_start();
 }

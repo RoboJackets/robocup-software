@@ -16,6 +16,9 @@
 #include <QActionGroup>
 #include <QMessageBox>
 
+#include <GL/glu.h>
+#include <Eigen/Geometry>
+
 #include <boost/foreach.hpp>
 
 #include <google/protobuf/descriptor.h>
@@ -24,10 +27,89 @@ using namespace std;
 using namespace boost;
 using namespace google::protobuf;
 using namespace Packet;
+using namespace Eigen;
 
 // Style sheets used for live/non-live controls
 QString LiveStyle("border:2px solid transparent");
 QString NonLiveStyle("border:2px solid red");
+
+class QuaternionDemo: public QGLWidget
+{
+public:
+	QuaternionDemo(QWidget *parent = 0);
+
+	bool initialized;
+	Eigen::Quaternionf ref;
+	Eigen::Quaternionf q;
+	
+protected:
+	void paintGL();
+};
+
+QuaternionDemo::QuaternionDemo(QWidget* parent)
+{
+	initialized = false;
+	ref = Quaternionf::Identity();
+}
+
+void QuaternionDemo::paintGL()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(60.0, (double)width() / height(), 0.1, 10);
+	
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glTranslatef(0, 0, -5);
+	
+	glRotatef(-90, 1, 0, 0);
+	glRotatef(90, 0, 0, 1);
+	
+	Transform<float, 3, Affine> t_ref(ref.conjugate());
+	glMultMatrixf(t_ref.data());
+	Transform<float, 3, Affine> t_q(q);
+	glMultMatrixf(t_q.data());
+	
+	glEnable(GL_DEPTH_TEST);
+	glBegin(GL_QUADS);
+		glColor3f(1, 1, 1);
+		glVertex3f(-1, -1, -1);
+		glVertex3f(1, -1, -1);
+		glVertex3f(1, 1, -1);
+		glVertex3f(-1, 1, -1);
+		
+		glColor3f(1, 0, 0);
+		glVertex3f(-1, -1, 1);
+		glVertex3f(1, -1, 1);
+		glVertex3f(1, 1, 1);
+		glVertex3f(-1, 1, 1);
+		
+		glColor3f(0, 1, 0);
+		glVertex3f(-1, -1, 1);
+		glVertex3f(-1, -1, -1);
+		glVertex3f(-1, 1, -1);
+		glVertex3f(-1, 1, 1);
+		
+		glColor3f(1, 0.5f, 0);
+		glVertex3f(1, -1, 1);
+		glVertex3f(1, -1, -1);
+		glVertex3f(1, 1, -1);
+		glVertex3f(1, 1, 1);
+		
+		glColor3f(0, 0, 1);
+		glVertex3f(-1, -1, 1);
+		glVertex3f(-1, -1, -1);
+		glVertex3f(1, -1, -1);
+		glVertex3f(1, -1, 1);
+		
+		glColor3f(1, 0, 0.5f);
+		glVertex3f(-1, 1, 1);
+		glVertex3f(-1, 1, -1);
+		glVertex3f(1, 1, -1);
+		glVertex3f(1, 1, 1);
+	glEnd();
+}
 
 void calcMinimumWidth(QWidget *widget, QString text)
 {
@@ -38,6 +120,9 @@ void calcMinimumWidth(QWidget *widget, QString text)
 MainWindow::MainWindow(QWidget *parent):
 	QMainWindow(parent)
 {
+	demo = new QuaternionDemo(this);
+	demo->resize(640, 480);
+	
 	_updateCount = 0;
 	_processor = 0;
 	_autoExternalReferee = true;
@@ -298,6 +383,30 @@ void MainWindow::updateViews()
 	
 	if (currentFrame)
 	{
+		if (demo && manual >= 0 && currentFrame->radio_rx().size() && currentFrame->radio_rx(0).has_quaternion())
+		{
+			const RadioRx *manualRx = 0;
+			BOOST_FOREACH(const RadioRx &rx, currentFrame->radio_rx())
+			{
+				if ((int)rx.robot_id() == manual)
+				{
+					manualRx = &rx;
+					break;
+				}
+			}
+			if (manualRx)
+			{
+				const Packet::Quaternion &q = manualRx->quaternion();
+				demo->q = Quaternionf(q.q0(), q.q1(), q.q2(), q.q3());
+				if (!demo->initialized)
+				{
+					demo->ref = demo->q;
+					demo->initialized = true;
+				}
+				demo->update();
+			}
+		}
+
 		// Update non-message tree items
 		_frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole, frameNumber());
 		int elapsedMillis = (currentFrame->command_time() - _processor->firstLogTime + 500) / 1000;
@@ -691,6 +800,16 @@ void MainWindow::on_actionTeamYellow_triggered()
 void MainWindow::on_manualID_currentIndexChanged(int value)
 {
 	_processor->manualID(value - 1);
+	if (demo)
+	{
+		if (value == 0)
+		{
+			demo->hide();
+		} else {
+			demo->show();
+			demo->initialized = false;
+		}
+	}
 }
 
 ////////

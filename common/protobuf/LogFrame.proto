@@ -108,6 +108,8 @@ message LogFrame
 		
 		optional bool kicker_works = 13 [default = true];
 		optional float battery_voltage = 14;
+		
+		optional Quaternion quaternion = 15;
 	}
 
 	message Ball

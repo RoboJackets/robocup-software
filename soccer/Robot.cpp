@@ -670,3 +670,17 @@ Packet::HardwareVersion OurRobot::hardwareVersion() const
 		return Packet::Unknown;
 	}
 }
+
+boost::optional<Eigen::Quaternionf> OurRobot::quaternion() const
+{
+	if ((Utils::timestamp() - radioRx.timestamp()) < 50000)
+	{
+		return Eigen::Quaternionf(
+			radioRx.quaternion().q0() / 16384.0,
+			radioRx.quaternion().q1() / 16384.0,
+			radioRx.quaternion().q2() / 16384.0,
+			radioRx.quaternion().q3() / 16384.0);
+	} else {
+		return boost::none;
+	}
+}
