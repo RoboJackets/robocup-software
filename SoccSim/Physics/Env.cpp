@@ -432,11 +432,19 @@ void Env::handleRadioTx(int ch, const Packet::RadioTx& tx)
 		} else {
 			printf("Commanding nonexistant robot %s:%d\n",
 				blue ? "Blue" : "Yellow",
-				cmd.robot_id()); // FIXME: verify functionality
+				cmd.robot_id());
 		}
+
+		Packet::RadioRx rx = r->radioRx();
+		rx.set_robot_id(r->shell);
+
+		// Send the RX packet
+		std::string out;
+		rx.SerializeToString(&out);
+		_radioSocket[ch].writeDatagram(&out[0], out.size(), LocalAddress, RadioRxPort + ch);
 	}
-	
-	// FIXME: radio protocol changed
+
+	// old interface
 //	Robot *rev = robot(blue, tx.reverse_board_id());
 //	if (rev)
 //	{
