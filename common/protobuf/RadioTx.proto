@@ -9,7 +9,13 @@ message RadioTx
 		optional int32 dribbler = 2;
 		optional uint32 kick = 3;
 		optional bool use_chipper = 4;
-		repeated int32 motors = 5;
+		
+		// Translational velocity in body coordinates, m/s
+		required float body_x = 6;
+		required float body_y = 7;
+		
+		// Angular velocity, rad/s
+		required float body_w = 8;
 	}
 	
 	repeated Robot robots = 2;

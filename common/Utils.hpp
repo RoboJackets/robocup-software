@@ -41,7 +41,9 @@ namespace Utils
 	}
 	
 	/** Handles saturation of a bounded value */
-	static inline float clamp(float value, float max, float min) {
+	template<class T>
+	float clamp(T value, T min, T max)
+	{
 		if (value > max)
 		{
 			return max;

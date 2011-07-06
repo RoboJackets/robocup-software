@@ -47,7 +47,7 @@ void Gameplay::Behaviors::Goalie::assign(set<OurRobot *> &available)
 		{
 			printf("Goalie: no robot, took %d\n", robot->shell());
 		} else {
-			printf("Goalie: not assigned\n");
+// 			printf("Goalie: not assigned\n");
 		}
 /*	} else if (robot && !robot->visible)
 	{

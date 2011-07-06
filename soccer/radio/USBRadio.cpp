@@ -15,6 +15,7 @@
 using namespace std;
 using namespace boost;
 using namespace Packet;
+using namespace Utils;
 
 // Timeout for control transfers, in milliseconds
 static const int Control_Timeout = 1000;
@@ -221,43 +222,38 @@ void USBRadio::send(Packet::RadioTx& packet)
 	packet.set_sequence(_sequence);
 	
 	int offset = 1;
-	int self_bots = 0;
-	int robot_id;
-	for (robot_id = 0; robot_id < 5 && robot_id < packet.robots_size(); ++robot_id)
+	int slot;
+	for (slot = 0; slot < 5 && slot < packet.robots_size(); ++slot)
 	{
-		//FIXME - Read from both channels and merge
-		const RadioTx::Robot &robot = packet.robots(robot_id);
+		const RadioTx::Robot &robot = packet.robots(slot);
 		int robot_id = robot.robot_id();
 		
-		int8_t m0, m1, m2, m3;
-		uint8_t kick, dribbler;
+		float bodyVelX = robot.body_x();
+		float bodyVelY = robot.body_y();
+		float bodyVelW = robot.body_w();
 		
-		self_bots++;
+		int outX = clamp((int)roundf(bodyVelX / 0.008), -511, 511);
+		int outY = clamp((int)roundf(bodyVelY / 0.008), -511, 511);
+		int outW = clamp((int)roundf(bodyVelW / (0.02 * M_PI)), -511, 511);
 		
-		m1 = -robot.motors(0);
-		m2 = -robot.motors(1);
-		m3 = -robot.motors(2);
-		m0 = -robot.motors(3);
-		kick = robot.kick();
+		uint8_t kick = robot.kick();
+		uint8_t dribbler = max(0, min(255, robot.dribbler() * 2));
 		
-		if (robot.dribbler() > 0)
-		{
-			dribbler = robot.dribbler() * 2;
-		} else {
-			dribbler = 0;
-		}
-		
-		forward_packet[offset++] = m0;
-		forward_packet[offset++] = m1;
-		forward_packet[offset++] = m2;
-		forward_packet[offset++] = m3;
+		forward_packet[offset++] = outX & 0xff;
+		forward_packet[offset++] = outY & 0xff;
+		forward_packet[offset++] = outW & 0xff;
+		forward_packet[offset++] =
+			((outX & 0x300) >> 8) |
+			((outY & 0x300) >> 6) |
+			((outW & 0x300) >> 4);
+			
 		forward_packet[offset++] = (dribbler & 0xf0) | (robot_id & 0x0f);
 		forward_packet[offset++] = kick;
 		forward_packet[offset++] = robot.use_chipper() ? 1 : 0;
 	}
 	
 	// Unused slots
-	for (; robot_id < 5; ++robot_id)
+	for (; slot < 5; ++slot)
 	{
 		forward_packet[offset++] = 0;
 		forward_packet[offset++] = 0;

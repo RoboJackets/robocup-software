@@ -119,7 +119,7 @@ srcs = [
 
 # Sources for motion module',
 	'motion/MotionControl.cpp',
-	'motion/Pid.cpp',
+#	'motion/Pid.cpp',
 	
 	'ui/main_icons.qrc',
 	'ui/log_icons.qrc'

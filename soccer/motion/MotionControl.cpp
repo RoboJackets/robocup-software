@@ -17,10 +17,6 @@ MotionControl::MotionControl(OurRobot *robot)
 	_robot = robot;
 
 	_robot->radioTx.set_robot_id(_robot->shell());
-	for (int i = 0; i < 4; ++i)
-	{
-		_robot->radioTx.add_motors(0);
-	}
 	
 	_lastOutputSpeed = 0;
 }
@@ -153,53 +149,8 @@ void MotionControl::stopped()
 
 void MotionControl::run()
 {
-	//FIXME - These are all 2011 numbers
-	//FIXME set these through parameters/config
-	
-	// The largest wheel command that can be transmitted
-	const int Max_Wheel_Command = 127;
-	
-	// How fast the robot speed control loop runs
-	// (speeds are measured on the robot in encoder ticks/iteration)
-	const int Robot_Control_Rate = 200;
-	
-	// Encoder ticks per revolution
-	const int Ticks_Per_Rev = 1440;
-	
-	// Speed command scale for the radio protocol.
-	// This reduces the maximum speed to a number that will fit in the forward packet.
-	const int Protocol_Scale = 3;
-	
-	const double Gear_Ratio = 4.5;
-	
-	// The wheel angular velocity (rad/s) resulting from the largest wheel command
-	const float Max_Wheel_Speed = 2 * M_PI * Max_Wheel_Command * Protocol_Scale * Robot_Control_Rate / (Ticks_Per_Rev * Gear_Ratio);
-	
-	// Effective wheel radius (m)
-	const float Wheel_Radius = 0.026;
-	
-	// Maximum linear speed without rotation (m/s)
-	const float Max_Linear_Speed = Max_Wheel_Speed * Wheel_Radius;
-	
-	// Radius of circle containing the roller contact points (m)
-	const float Contact_Circle_Radius = 0.0812;
-	
-	// Maximum angular speed without translation
-	const float Max_Angular_Speed = Max_Linear_Speed / Contact_Circle_Radius;
-	
-	// Axle direction, pointing out of the robot
-	const Point axles[4] =
-	{
-		Point(-1,  1).normalized(),
-		Point( 1,  1).normalized(),
-		Point( 1, -1).normalized(),
-		Point(-1, -1).normalized()
-	};
-	
-// 	_velocity = _robot->pos - _lastPos;
-	
-// 	float dtime = (_robot->state()->timestamp - _lastFrameTime) / 1.0e6;
-// 	_angularVelocity = fixAngleRadians((_robot->angle - _lastAngle) * DegreesToRadians) / dtime;
+	static const float Max_Linear_Speed = 0.008 * 511;
+	static const float Max_Angular_Speed = 511 * 0.02 * M_PI;
 	
 // 	positionTrapezoidal();
 	positionPD();
@@ -237,6 +188,8 @@ void MotionControl::run()
 
 	// position control through vision
 
+	//FIXME - Find limits based on translational direction and speed
+
 	// Limit speed so we at least go in the right direction
 	float s = bodyVel.mag();
 	if (s > Max_Linear_Speed)
@@ -244,56 +197,9 @@ void MotionControl::run()
 		bodyVel = bodyVel / s * Max_Linear_Speed;
 	}
 	
-	// Set motor commands for linear motion
-	int maxPos = 0;
-	int maxNeg = 0;
-	int out[4];
-	for (int i = 0; i < 4; ++i)
-	{
-		float w = axles[i].dot(bodyVel) / Wheel_Radius;
-		int c = roundf(Max_Wheel_Command * w / Max_Wheel_Speed);
-		
-		// Keep track of the largest motor commands before clipping
-		if (c > 0 && c > maxPos)
-		{
-			maxPos = c;
-		} else if (c < 0 && c < maxNeg)
-		{
-			maxNeg = c;
-		}
-		
-		// Clipping
-		c = max(-Max_Wheel_Command, c);
-		c = min(Max_Wheel_Command, c);
-		
-		out[i] = c;
-	}
-	
-	// Get the largest motor command that was actually set
-	maxPos = min(maxPos, Max_Wheel_Command);
-	maxNeg = max(maxNeg, -Max_Wheel_Command);
-	
-	// Add as much rotation as we can without overflow
-	int spinCommand = int(Max_Wheel_Command * scaledSpin / Max_Angular_Speed + 0.5);
-	
-	if (spinCommand > 0 && (maxPos + spinCommand) > Max_Wheel_Command)
-	{
-		spinCommand = Max_Wheel_Command - maxPos;
-	} else if (spinCommand < 0 && (maxNeg + spinCommand) < -Max_Wheel_Command)
-	{
-		spinCommand = -Max_Wheel_Command - maxNeg;
-	}
-	
-	for (int i = 0; i < 4; ++i)
-	{
-		out[i] += spinCommand;
-	}
-
-	// Store motor commands in the radio sub-packet
-	for (int i = 0; i < 4; ++i)
-	{
-		_robot->radioTx.set_motors(i, out[i]);
-	}
+	_robot->radioTx.set_body_x(bodyVel.x);
+	_robot->radioTx.set_body_y(bodyVel.y);
+	_robot->radioTx.set_body_w(scaledSpin);
 	
 	_lastFrameTime = _robot->state()->timestamp;
 	_lastPos = _robot->pos;

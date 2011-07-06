@@ -419,12 +419,6 @@ void Env::handleRadioTx(int ch, const Packet::RadioTx& tx)
 	{
 		const Packet::RadioTx::Robot &cmd = tx.robots(i);
 		
-		if (cmd.motors_size() != 4)
-		{
-			printf("ch %d r %d: Wrong number of motors: %d != 4\n", ch, i, cmd.motors_size());
-			continue;
-		}
-		
 		Robot *r = robot(blue, cmd.robot_id());
 		if (r)
 		{

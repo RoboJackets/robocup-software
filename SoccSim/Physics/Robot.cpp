@@ -81,7 +81,7 @@ Robot::Robot(Env* env, unsigned int id,  Robot::Rev rev) :
 	initKicker();
 #endif
 
-	//initWheels();
+// 	initWheels();
 }
 
 Robot::~Robot()
@@ -299,7 +299,7 @@ NxConvexMesh* Robot::cylinder(const float length, const float radius,
 
 		x = cos(angle * M_PI / 180.0) * radius;
 		y = sin(angle * M_PI / 180.0) * radius;
-        angle += increment;
+		angle += increment;
 
 		cyl[i + offset] = cyl[i];
 		cyl[i + offset].z += length;
@@ -352,20 +352,42 @@ float Robot::getAngle() const
 
 void Robot::radioTx(const Packet::RadioTx::Robot *data)
 {
-	//motors
-	#if 0
+	NxVec3 bodyVel(data->body_x(), data->body_y(), 0);
+	NxVec3 angularVel(0, 0, data->body_w());
+	
+	NxVec3 worldVel = _actor->getGlobalOrientation() * bodyVel;
+	
+	_actor->setLinearVelocity(worldVel);
+	_actor->setAngularVelocity(angularVel);
+	
+#if 0
+	// Wheels
+	Point bodyVel(data->body_x(), data->body_y());
+	
+	Geometry2d::Point axles[4] =
+	{
+		Point( .08,  .08).normalized(),
+		Point( .08, -.08).normalized(),
+		Point(-.08, -.08).normalized(),
+		Point(-.08,  .08).normalized()
+	};
+	
+	const float Wheel_Radius = 0.026;
+	const float Contact_Circle_Radius = 0.0812;
+	const float Robot_Linear_To_Wheel_Angular = 1.0 / Wheel_Radius;
+	const float Robot_Angular_To_Wheel_Angular = Contact_Circle_Radius / Wheel_Radius;
+	
 	for (int i = 0; i < 4; ++i)
 	{
 		NxMotorDesc motorDesc;
 		_motors[i]->getMotor(motorDesc);
 		
-		//create a velocity target based on the requested travel velocity
-		motorDesc.velTarget = 100.0f * data.motors[i] / 255.0f;
-
+		motorDesc.velTarget = axles[i].dot(bodyVel) * Robot_Linear_To_Wheel_Angular + data->body_w() * Robot_Angular_To_Wheel_Angular;
 		_motors[i]->setMotor(motorDesc);
 	}
-	#endif
+#endif
 	
+#if 0
 	Geometry2d::Point axles[4] =
 	{
 		Point( .08,  .08),
@@ -408,6 +430,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
 		NxVec3 f(fx,fy,0);
 		_actor->addForceAtLocalPos(f, p);
 	}
+#endif
     
     // Kicker
 #if 0

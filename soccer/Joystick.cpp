@@ -174,15 +174,15 @@ void Joystick::drive(RadioTx::Robot *tx)
 		return;
 	}
 	
-	int leftX = _axis[Axis_Left_X] / 256;
-	int rightX = _axis[Axis_Right_X] / 256;
-	int rightY = -_axis[Axis_Right_Y] / 256;
+	float leftX = _axis[Axis_Left_X] / 32768.0f;
+	float rightX = _axis[Axis_Right_X] / 32768.0f;
+	float rightY = -_axis[Axis_Right_Y] / 32768.0f;
 	
 	//input is vx, vy in robot space
 	Geometry2d::Point input(rightX, rightY);
 
 	//if using DPad, this is the input value
-	uint8_t mVal = 10 + (int8_t) (abs(rightY));
+	float mVal = fabs(rightY);
 
 	if (dUp())
 	{
@@ -204,40 +204,11 @@ void Joystick::drive(RadioTx::Robot *tx)
 		input.y = 0;
 		input.x = -mVal;
 	}
-
-	int max = 0;
-
-	static const Geometry2d::Point axles[4] =
-	{
-		Geometry2d::Point(1, -1),
-		Geometry2d::Point(-1, -1),
-		Geometry2d::Point(-1, 1),
-		Geometry2d::Point(1, 1)
-	};
 	
-	int motors[4] =	{ 0, 0, 0, 0 };
-	for (unsigned int i = 0; i < 4; ++i)
-	{
-		motors[i] = axles[i].perpCW().dot(input);
-		motors[i] -= leftX;
-
-		if (abs(motors[i]) > max)
-		{
-			max = abs(motors[i]);
-		}
-	}
-
-	float scale = 1.0f;
-	if (max > 127)
-	{
-		scale = 127.0f / max;
-	}
-
-	for (unsigned int i = 0; i < 4; ++i)
-	{
-		tx->set_motors(i, int8_t(scale * motors[i]));
-	}
-
+	tx->set_body_x(input.y);
+	tx->set_body_y(-input.x);
+	tx->set_body_w(-leftX * 4 * M_PI);
+	
 	if (_button[6])
 	{
 		_dribblerOn = false;
