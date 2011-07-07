@@ -31,18 +31,21 @@ void Gameplay::Plays::OurFreekick::createConfiguration(Configuration *cfg)
 
 Gameplay::Plays::OurFreekick::OurFreekick(GameplayModule *gameplay):
 	Play(gameplay),
-	_kicker(gameplay),
+//	_kicker(gameplay),
+	_bump(gameplay),
 	_center(gameplay),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
 	_fullback2(gameplay, Behaviors::Fullback::Right),
-	_pdt(gameplay, &_kicker)
+	_pdt(gameplay, &_bump)
+//	_pdt(gameplay, &_kicker)
 {
 	_center.target = _gameplay->centerMatrix() * Geometry2d::Point(0, 1.5);
 
 	// FIXME: find a better setting for kicking
 	// this target is an expanded version of the goal to give more options
-	_kicker.setTarget(Geometry2d::Segment(Geometry2d::Point(-Field_Width/3.0, Field_Length),
-										  Geometry2d::Point( Field_Width/3.0, Field_Length)));
+//	_kicker.setTarget(Geometry2d::Segment(Geometry2d::Point(-Field_Width/3.0, Field_Length),
+//										  Geometry2d::Point( Field_Width/3.0, Field_Length)));
+	_bump.target = Geometry2d::Point(0.0, Field_Length);
 
 	_fullback2.otherFullbacks.insert(&_fullback1);
 	_fullback1.otherFullbacks.insert(&_fullback2);
@@ -58,23 +61,24 @@ bool Gameplay::Plays::OurFreekick::run()
 {
 	set<OurRobot *> available = _gameplay->playRobots();
 	
-	bool chipper_available = true;
-	if (!assignNearestChipper(_kicker.robot, available, ball().pos))
-	{
-		chipper_available = false;
-		assignNearestKicker(_kicker.robot, available, ball().pos);
-	}
+//	bool chipper_available = true;
+//	if (!assignNearestChipper(_kicker.robot, available, ball().pos))
+//	{
+//		chipper_available = false;
+//		assignNearestKicker(_kicker.robot, available, ball().pos);
+//	}
 
 	// setup kicker from parameters - want to use chipper when possible
-	_kicker.enableGoalLineShot = *_enableGoalLineShot;
-	_kicker.enableLeftDownfieldShot = *_enableLeftDownfieldShot;
-	_kicker.enableRightDownfieldShot = *_enableRightDownfieldShot;
-	_kicker.use_chipper = chipper_available && *_enableChipper;
-	_kicker.minChipRange = *_minChipRange;
-	_kicker.maxChipRange = *_maxChipRange;
+//	_kicker.enableGoalLineShot = *_enableGoalLineShot;
+//	_kicker.enableLeftDownfieldShot = *_enableLeftDownfieldShot;
+//	_kicker.enableRightDownfieldShot = *_enableRightDownfieldShot;
+//	_kicker.use_chipper = chipper_available && *_enableChipper;
+//	_kicker.minChipRange = *_minChipRange;
+//	_kicker.maxChipRange = *_maxChipRange;
 
 	_pdt.backoff.robots.clear();
-	_pdt.backoff.robots.insert(_kicker.robot);
+	_pdt.backoff.robots.insert(_bump.robot);
+//	_pdt.backoff.robots.insert(_kicker.robot);
 	assignNearest(_center.robot, available, _center.target);
 	assignNearest(_fullback1.robot, available, Geometry2d::Point(-Field_GoalHeight/2.0, 0.0));
 	assignNearest(_fullback2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
