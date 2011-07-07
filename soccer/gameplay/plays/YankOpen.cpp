@@ -95,7 +95,7 @@ bool Gameplay::Plays::YankOpen::run()
 		_strikerBump.robot = _strikerYank.robot;
 		_strikerFling.robot = _strikerYank.robot;
 	}
-	assignNearest(_support.robot, available, ballProj);
+//	assignNearest(_support.robot, available, ballProj);
 
 	// find the nearest opponent to the striker
 	OpponentRobot* closestRobotToStriker = 0;
