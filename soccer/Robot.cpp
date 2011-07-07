@@ -405,8 +405,10 @@ float OurRobot::avoidBall() const {
 
 ObstaclePtr OurRobot::createBallObstacle() const {
 	// if game is stopped, large obstacle regardless of flags
-	if (_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart)
+	if (_state->gameState.state != GameState::Playing && !(_state->gameState.ourRestart || _state->gameState.theirPenalty()))
+	{
 		return ObstaclePtr(new CircleObstacle(_state->ball.pos, Field_CenterRadius));
+	}
 
 	// create an obstacle if necessary
 	if (_ball_avoid > 0.0) {
