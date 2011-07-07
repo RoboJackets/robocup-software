@@ -28,7 +28,7 @@ void Gameplay::Behaviors::Kickoff::createConfiguration(Configuration *cfg)
 
 Gameplay::Behaviors::Kickoff::Kickoff(GameplayModule *gameplay):
 SingleRobotBehavior(gameplay),
-_kick(gameplay), _fling(gameplay), _yank(gameplay)
+_bump(gameplay), _kick(gameplay), _fling(gameplay), _yank(gameplay)
 {
 	mode = Mode_Kick;
 	_mode_chosen = false;
@@ -42,17 +42,17 @@ void Gameplay::Behaviors::Kickoff::chooseMode() {
 	{
 		// add enabled modes to pool and pick one at random
 		vector<KickoffMode> modes;
-		modes.push_back(Mode_Kick);
+		modes.push_back(Mode_Kick); // really a bump
 		if (*_enableBumpYank)
 		{
 			modes.push_back(Mode_BumpYankLeft);
 			modes.push_back(Mode_BumpYankRight);
 		}
 
-		if (*_enableChip)
-		{
-			modes.push_back(Mode_Chip);
-		}
+//		if (*_enableChip)
+//		{
+//			modes.push_back(Mode_Chip);
+//		}
 
 		if (*_enableFling)
 		{
@@ -77,24 +77,26 @@ void Gameplay::Behaviors::Kickoff::chooseMode() {
 			mode = Mode_FlingRight;
 		}
 
-		if (*_enableChip)
-		{
-			mode = Mode_Chip;
-		}
+//		if (*_enableChip)
+//		{
+//			mode = Mode_Chip;
+//		}
 	}
 }
 
 void Gameplay::Behaviors::Kickoff::executeMode() {
 	switch (mode) {
 	case Mode_Kick:
-		_kick.use_chipper = false;
-		_kick.run();
+//		_kick.use_chipper = false;
+//		_kick.run();
+			_bump.target = Geometry2d::Point(0.0, Field_Length);
+			_bump.run();
 		break;
 	case Mode_Chip:
-		_kick.use_chipper = true;
-		_kick.maxChipRange = *_chipMaxRange;
-		_kick.minChipRange = *_chipMinRange;
-		_kick.run();
+//		_kick.use_chipper = true;
+//		_kick.maxChipRange = *_chipMaxRange;
+//		_kick.minChipRange = *_chipMinRange;
+//		_kick.run();
 		break;
 	case Mode_FlingLeft:
 		_fling.target = Geometry2d::Point(Field_Width / 2, Field_Length * .75);
@@ -129,6 +131,7 @@ bool Gameplay::Behaviors::Kickoff::run()
 	}
 
 	_kick.robot = robot;
+	_bump.robot = robot;
 	_fling.robot = robot;
 	_yank.robot = robot;
 
@@ -154,6 +157,7 @@ bool Gameplay::Behaviors::Kickoff::run()
 		// Need this in case the kickoff is restarted (transition from Ready to Setup).
 		// This should not normally happen but it helps with testing and sloppy referees.
 		_kick.restart();
+		_bump.restart();
 		break;
 
 	case GameState::Ready:
@@ -166,7 +170,8 @@ bool Gameplay::Behaviors::Kickoff::run()
 
 	switch (mode) {
 	case Mode_Kick:
-		robot->addText("Mode: Kick");
+		robot->addText("Mode: Bump");
+//		robot->addText("Mode: Kick");
 		break;
 	case Mode_Chip:
 		robot->addText("Mode: Chip");

@@ -5,6 +5,7 @@
 #include <gameplay/behaviors/Kick.hpp>
 #include <gameplay/behaviors/Fling.hpp>
 #include <gameplay/behaviors/Yank.hpp>
+#include <gameplay/behaviors/Bump.hpp>
 
 namespace Gameplay
 {
@@ -51,6 +52,7 @@ namespace Gameplay
 				}
 
 			private:
+				Behaviors::Bump _bump;
 				Behaviors::Kick _kick;
 				Behaviors::Fling _fling;
 				Behaviors::Yank _yank;

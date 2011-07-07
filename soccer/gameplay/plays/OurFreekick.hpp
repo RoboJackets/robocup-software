@@ -5,6 +5,7 @@
 #include <gameplay/behaviors/Kick.hpp>
 #include <gameplay/behaviors/positions/Fullback.hpp>
 #include <gameplay/behaviors/Move.hpp>
+#include <gameplay/behaviors/Bump.hpp>
 #include <gameplay/PreventDoubleTouch.hpp>
 
 namespace Gameplay
@@ -22,7 +23,9 @@ namespace Gameplay
 				virtual bool run();
 			
 			protected:
-				Behaviors::Kick _kicker;
+//				Behaviors::Kick _kicker;
+				Behaviors::Bump _bump;
+
 				Behaviors::Move _center;
 				Behaviors::Fullback _fullback1, _fullback2;
 				PreventDoubleTouch _pdt;
