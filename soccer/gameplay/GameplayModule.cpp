@@ -255,6 +255,7 @@ void Gameplay::GameplayModule::run()
 		_goalie->assign(_playRobots);
 	}
 	
+#if 0
 	if (_playRobots.size() == 5)
 	{
 		printf("Too many robots on field: goalie %p\n", _goalie);
@@ -272,8 +273,9 @@ void Gameplay::GameplayModule::run()
 		{
 			delete _goalie;
 		}
-  		_goalie = new Behaviors::Goalie(this);
+//   		_goalie = new Behaviors::Goalie(this);
 	}
+#endif
 
 	_ballMatrix = Geometry2d::TransformMatrix::translate(_state->ball.pos);
 
