@@ -6,6 +6,7 @@
 #include <gameplay/behaviors/Yank.hpp>
 #include <gameplay/behaviors/Fling.hpp>
 #include <gameplay/behaviors/Mark.hpp>
+#include <gameplay/behaviors/Bump.hpp>
 
 namespace Gameplay
 {
