@@ -20,7 +20,7 @@ ConfigDouble *Gameplay::Behaviors::LineKick::_setup_ball_avoid;
 void Gameplay::Behaviors::LineKick::createConfiguration(Configuration *cfg)
 {
 	_drive_around_dist = new ConfigDouble(cfg, "LineKick/Drive Around Dist", 0.25);
-	_face_ball = new ConfigBool(cfg, "LineKick/Face Ball (otherwise target)", true);
+	_face_ball = new ConfigBool(cfg, "LineKick/Face Ball otherwise target", true);
 	_setup_to_charge_thresh = new ConfigDouble(cfg, "LineKick/Charge Thresh", 0.1);
 	_escape_charge_thresh = new ConfigDouble(cfg, "LineKick/Escape Charge Thresh", 0.1);
 	_setup_ball_avoid = new ConfigDouble(cfg, "LineKick/Setup Ball Avoid", Ball_Radius * 2.0);
