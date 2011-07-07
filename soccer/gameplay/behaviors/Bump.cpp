@@ -21,7 +21,7 @@ ConfigDouble *Gameplay::Behaviors::Bump::_bump_complete_dist;
 void Gameplay::Behaviors::Bump::createConfiguration(Configuration *cfg)
 {
 	_drive_around_dist = new ConfigDouble(cfg, "Bump/Drive Around Dist", 0.25);
-	_face_ball = new ConfigBool(cfg, "Bump/Face Ball (otherwise target)", true);
+	_face_ball = new ConfigBool(cfg, "Bump/Face Ball otherwise target", true);
 	_setup_to_charge_thresh = new ConfigDouble(cfg, "Bump/Charge Thresh", 0.1);
 	_escape_charge_thresh = new ConfigDouble(cfg, "Bump/Escape Charge Thresh", 0.1);
 	_setup_ball_avoid = new ConfigDouble(cfg, "Bump/Setup Ball Avoid", Ball_Radius * 2.0);

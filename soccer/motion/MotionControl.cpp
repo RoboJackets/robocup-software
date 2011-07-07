@@ -214,9 +214,9 @@ void MotionControl::run()
 	float av = *_robot->config->trapTrans.acceleration;
 	float aw = *_robot->config->trapRot.acceleration;
 	
-	limitAccel(bodyVel.x, _lastBodyVel.x, av);
-	limitAccel(bodyVel.y, _lastBodyVel.y, av);
-// 	limitAccel(angularVel, _lastAngularVel, av);
+// 	limitAccel(bodyVel.x, _lastBodyVel.x, av);
+// 	limitAccel(bodyVel.y, _lastBodyVel.y, av);
+// 	limitAccel(angularVel, _lastAngularVel, aw);
 	
 	_lastBodyVel = bodyVel;
 	_lastAngularVel = angularVel;

@@ -221,7 +221,7 @@ bool Gameplay::Behaviors::Goalie::run()
 		
 		//goalie should not go into the goal
 		//vision can loose sight
-		float margin = Ball_Radius;
+		float margin = Ball_Radius * 4;
 		if (dest.y < Robot_Radius+margin)
 		{
 			dest.y = Robot_Radius+margin;
