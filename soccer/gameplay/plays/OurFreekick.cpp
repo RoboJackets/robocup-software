@@ -67,6 +67,7 @@ bool Gameplay::Plays::OurFreekick::run()
 //		chipper_available = false;
 //		assignNearestKicker(_kicker.robot, available, ball().pos);
 //	}
+	assignNearest(_bump.robot, available, ball().pos);
 
 	// setup kicker from parameters - want to use chipper when possible
 //	_kicker.enableGoalLineShot = *_enableGoalLineShot;
