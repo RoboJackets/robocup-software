@@ -25,7 +25,7 @@ public:
 
 	virtual bool run();
 
-	inline bool done() const { return _state == State_Done; }
+	inline bool done() const { return _done; }
 
 	/** sets the state back to default state */
 	void restart();
@@ -37,7 +37,7 @@ public:
 	void setTarget(const Geometry2d::Segment &seg);
 
 	/** find best segment on target, @return true if one exists, and returns segment in result */
-	bool findShot(const Geometry2d::Segment& segment, Geometry2d::Segment& result,
+	bool findShot(const Geometry2d::Segment& segment, Geometry2d::Segment& result, bool chipper,
 			float min_segment_length = 0.1) const;
 
 	/** simple flags to allow for backup targets if target not feasible */
@@ -50,6 +50,7 @@ public:
 	bool enablePushing;    /// if true, disables collision detection on opponents
 
 	/** flags to allow for kicking styles	 */
+	bool use_line_kick;
 	bool use_chipper;
 	short dribbler_speed;
 	uint8_t kick_power;
@@ -59,14 +60,7 @@ public:
 	double maxChipRange;
 
 private:
-	typedef enum
-	{
-		State_PivotKick,   /// default kicking mode with aiming
-		State_LineKick,    /// faster kicking mode when opponents nearby
-		State_Done				 /// after a successful shot
-	} State;
-
-	State _state;
+	bool _done;
 
 	// segment-specific kick
 	Geometry2d::Segment _target;
