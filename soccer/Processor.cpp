@@ -44,11 +44,17 @@ static const uint64_t Command_Latency = 0;
 
 RobotConfig *Processor::robotConfig2008;
 RobotConfig *Processor::robotConfig2011;
+std::vector<RobotStatus*> Processor::robotStatuses; // FIXME: verify that this is correct
 
 void Processor::createConfiguration(Configuration *cfg)
 {
 	robotConfig2008 = new RobotConfig(cfg, "Rev2008");
 	robotConfig2011 = new RobotConfig(cfg, "Rev2011");
+
+	for (size_t s = 0; s<Num_Shells; ++s)
+	{
+		robotStatuses.push_back(new RobotStatus(cfg, QString("Robot Statuses/Robot %1").arg(s)));
+	}
 }
 
 Processor::Processor(bool sim)
@@ -305,6 +311,7 @@ void Processor::run()
 		
 		BOOST_FOREACH(OurRobot *robot, _state.self)
 		{
+			// overall robot config
 			switch (robot->hardwareVersion())
 			{
 			case Packet::RJ2008:
@@ -317,6 +324,9 @@ void Processor::run()
 				robot->config = robotConfig2011; // FIXME: defaults to 2011 robots
 				break;
 			}
+
+			// per-robot configs
+			robot->status = robotStatuses.at(robot->shell());
 		}
 
 		////////////////
