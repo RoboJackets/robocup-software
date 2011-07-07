@@ -564,6 +564,7 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	_state->drawObstacles(self_obs, Qt::gray, QString("self_obstacles_%1").arg(shell()));
 	_state->drawObstacles(opp_obs, Qt::gray, QString("opp_obstacles_%1").arg(shell()));
 	_state->drawObstacle(ball_obs, Qt::gray, QString("ball_obstacles_%1").arg(shell()));
+	_state->drawObstacles(global_obstacles, Qt::gray, QString("field_obstacles_%1").arg(shell()));
 	full_obstacles.add(self_obs);
 	full_obstacles.add(opp_obs);
 	full_obstacles.add(ball_obs);
