@@ -25,6 +25,7 @@ void Gameplay::Behaviors::Fling::createConfiguration(Configuration* cfg)
 Gameplay::Behaviors::Fling::Fling(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay), _capture(gameplay)
 {
+	target = Point(0.0, Field_Length);
 	restart();
 }
 

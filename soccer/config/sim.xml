@@ -296,10 +296,11 @@
  <Bump>
   <Drive_Around_Dist value="0.25"/>
   <Face_Ball_otherwise_target value="true"/>
-  <Charge_Thresh value="0.1"/>
-  <Escape_Charge_Thresh value="0.1"/>
-  <Setup_Ball_Avoid value="0.043"/>
+  <Charge_Thresh value="0.08"/>
+  <Escape_Charge_Thresh value="0.15"/>
+  <Setup_Ball_Avoid value="0.3"/>
   <Bump_Complete_Distance value="0.5"/>
+  <Accel_Bias value="0.1"/>
  </Bump>
  <YankOpen>
   <Hystersis_Coeff value="0.5"/>
