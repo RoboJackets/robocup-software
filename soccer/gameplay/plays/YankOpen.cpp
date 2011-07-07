@@ -70,23 +70,19 @@ bool Gameplay::Plays::YankOpen::run()
 	const float dampen_factor = 0.9; // accounts for slowing over time
 	Geometry2d::Point ballProj = ball().pos + ball().vel * proj_time * dampen_factor;
 
-	// defense first - get closest to goal to choose sides properly
-	assignNearest(_leftFullback.robot, available, Geometry2d::Point(-Field_GoalWidth/2, 0.0));
-	assignNearest(_rightFullback.robot, available, Geometry2d::Point(Field_GoalWidth/2, 0.0));
-
 	// determine whether to change offense players
 	bool forward_reset = false;
-	if (_strikerYank.robot && _support.robot &&
-			_support.robot->pos.distTo(ballProj) < *_offense_hysteresis * _strikerYank.robot->pos.distTo(ballProj)) {
-		_strikerBump.robot = NULL;
-		_strikerYank.robot = NULL;
-		_strikerFling.robot = NULL;
-		_strikerBump.restart();
-		_strikerYank.restart();
-		_strikerFling.restart();
-		_support.robot = NULL;
-		forward_reset = true;
-	}
+//	if (_strikerYank.robot && //_support.robot &&
+//			_support.robot->pos.distTo(ballProj) < *_offense_hysteresis * _strikerYank.robot->pos.distTo(ballProj)) {
+//		_strikerBump.robot = NULL;
+//		_strikerYank.robot = NULL;
+//		_strikerFling.robot = NULL;
+//		_strikerBump.restart();
+//		_strikerYank.restart();
+//		_strikerFling.restart();
+//		_support.robot = NULL;
+//		forward_reset = true;
+//	}
 
 	// choose offense, we want closest robot to ball to be striker
 	// FIXME: need to assign more carefully to ensure that there is a robot available to kick
@@ -112,6 +108,10 @@ bool Gameplay::Plays::YankOpen::run()
 		}
 	}
 	bool striker_engaged = _strikerYank.robot && closestDistToStriker < *_support_backoff_thresh;
+
+	// defense first - get closest to goal to choose sides properly
+	assignNearest(_leftFullback.robot, available, Geometry2d::Point(-Field_GoalWidth/2, 0.0));
+	assignNearest(_rightFullback.robot, available, Geometry2d::Point(Field_GoalWidth/2, 0.0));
 
 	// pick as a mark target the furthest back opposing robot
 	// and adjust mark ratio based on field position
