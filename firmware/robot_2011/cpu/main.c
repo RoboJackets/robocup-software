@@ -207,7 +207,7 @@ int main()
 		power_fail_music();
 	} else {
 		// Something's wrong
-// 		music_start(song_failure);
+		music_start(song_failure);
 	}
 	
 	// Select the default controller if enough hardware is working.

@@ -44,20 +44,31 @@ static void dumb_update()
 
 static int step_motor;
 static int step_level = 0;
+static int step_threshold = 0;
+static int step_holdoff = 0;
 
 static void step_init(int argc, const char *argv[])
 {
-	if (argc == 2)
+	if (argc >= 2)
 	{
 		step_motor = parse_int(argv[0]);
 		step_level = parse_int(argv[1]);
 	}
 	
-	if (argc != 2 || step_motor < 0 || step_motor > 4 || step_level < -MOTOR_MAX || step_level > MOTOR_MAX)
+	if (argc >= 3)
 	{
-		printf("Usage: run step <motor 0..3> <level>\n");
+		step_threshold = parse_int(argv[2]);
+	} else {
+		step_threshold = 0;
+	}
+	
+	if (argc < 2 || step_motor < 0 || step_motor > 4 || step_level < -MOTOR_MAX || step_level > MOTOR_MAX)
+	{
+		printf("Usage: run step <motor 0..3> <level> [<low threshold>]\n");
 		controller = 0;
 	}
+	
+	step_holdoff = 0;
 }
 
 static void step_update()
@@ -71,6 +82,17 @@ static void step_update()
 		printf(" *");
 	}
 	printf("\n");
+
+	if (step_holdoff < 100)
+	{
+		++step_holdoff;
+	} else {
+		if (encoder_delta[step_motor] < step_threshold)
+		{
+			printf("Below %d\n", step_threshold);
+			step_level = 0;
+		}
+	}
 	
 	if (failed && encoder_delta[step_motor] == 0 && hall_delta[step_motor] == 0)
 	{

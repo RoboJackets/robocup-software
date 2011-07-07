@@ -22,9 +22,10 @@ private:
 	
 	OurRobot *_robot;
 	uint64_t _lastFrameTime;
-	float _lastOutputSpeed;
 	Geometry2d::Point _lastPos;
 	float _lastAngle;
 	Geometry2d::Point _lastPosError;
 	float _lastAngleError;
+	Geometry2d::Point _lastBodyVel;
+	float _lastAngularVel;
 };

@@ -62,11 +62,11 @@
  </rbpfModelBallKicked>
  <Rev2011>
   <trapTrans>
-   <velocity value="2.6"/>
-   <acceleration value="3.5"/>
+   <velocity value="1"/>
+   <acceleration value="0.1"/>
    <deceleration value="2.5"/>
-   <predictTime value="0"/>
-   <responseTime value="0"/>
+   <predictTime value="0.1"/>
+   <responseTime value="0.1"/>
   </trapTrans>
   <trapRot>
    <velocity value="0"/>
@@ -78,10 +78,10 @@
   <translation>
    <p value="5"/>
    <i value="0"/>
-   <d value="40"/>
+   <d value="0"/>
   </translation>
   <rotation>
-   <p value="5"/>
+   <p value="0"/>
    <i value="0"/>
    <d value="0"/>
   </rotation>
@@ -128,6 +128,8 @@
   <Enable_Chipping value="false"/>
   <Dribber_Speed value="127"/>
   <Kicker_Power value="127"/>
+  <Minimum_Chip_Range value="0.4"/>
+  <Maximum_Chip_Range value="2.5"/>
  </DemoAttack>
  <Yank>
   <Ball_Travel_Threshold value="0.5"/>
@@ -152,4 +154,142 @@
   <Backup_Distance value="0.4"/>
   <Enable_Aiming value="true"/>
  </DemoYankChip>
+ <LineKick>
+  <Drive_Around_Dist value="0.25"/>
+  <Charge_Thresh value="0.1"/>
+  <Escape_Charge_Thresh value="0.1"/>
+  <Setup_Ball_Avoid value="0.043"/>
+ </LineKick>
+ <Kickoff>
+  <Enable_Random_Kick_Mode value="false"/>
+  <Enable_Flinging value="false"/>
+  <Enable_Chipping value="false"/>
+  <Enable_BumpYank value="false"/>
+  <Chip_Min_Range value="0.3"/>
+  <Chip_Max_Range value="2"/>
+ </Kickoff>
+ <BasicOffense121>
+  <Hystersis_Coeff value="0.5"/>
+  <Support_Backoff_Dist value="1.5"/>
+  <Mark_Hystersis_Coeff value="0.9"/>
+  <Support_Avoid_Teammate_Dist value="0.5"/>
+  <Support_Avoid_Shot value="0.2"/>
+  <Offense_Support_Ratio value="0.7"/>
+  <Defense_Support_Ratio value="0.9"/>
+ </BasicOffense121>
+ <BasicOffense112>
+  <Hystersis_Coeff value="0.5"/>
+  <Support_Backoff_Dist value="1.5"/>
+  <Mark_Hystersis_Coeff value="0.9"/>
+  <Support_Avoid_Teammate_Dist value="0.5"/>
+  <Support_Avoid_Shot value="0.2"/>
+  <Offense_Support_Ratio value="0.7"/>
+  <Defense_Support_Ratio value="0.9"/>
+ </BasicOffense112>
+ <OurFreekick>
+  <Enable_GoalLine_Shot value="true"/>
+  <Enable_Left_Downfield_Shot value="true"/>
+  <Enable_Right_Downfield_Shot value="true"/>
+  <Enable_Chipper value="true"/>
+  <Min_Chip_Range value="0.3"/>
+  <Max_Chip_Range value="2"/>
+ </OurFreekick>
+ <Robot_Statuses>
+  <Robot_0>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_0>
+  <Robot_1>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_1>
+  <Robot_2>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_2>
+  <Robot_3>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_3>
+  <Robot_4>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_4>
+  <Robot_5>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_5>
+  <Robot_6>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_6>
+  <Robot_7>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_7>
+  <Robot_8>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_8>
+  <Robot_9>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_9>
+  <Robot_10>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_10>
+  <Robot_11>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_11>
+  <Robot_12>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_12>
+  <Robot_13>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_13>
+  <Robot_14>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_14>
+  <Robot_15>
+   <Chipper_Enabled value="true"/>
+   <Kicker_Enabled value="true"/>
+   <Ball_Sense_Enabled value="true"/>
+   <Dribbler_Enabled value="true"/>
+  </Robot_15>
+ </Robot_Statuses>
 </config>

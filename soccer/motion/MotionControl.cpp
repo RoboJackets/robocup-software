@@ -18,7 +18,7 @@ MotionControl::MotionControl(OurRobot *robot)
 
 	_robot->radioTx.set_robot_id(_robot->shell());
 	
-	_lastOutputSpeed = 0;
+	_lastAngularVel = 0;
 }
 
 void MotionControl::positionTrapezoidal()
@@ -59,7 +59,7 @@ void MotionControl::positionTrapezoidal()
 	float newSpeed;
 	
 // 	_robot->addText(QString("minStoppingDistance %1 %2").arg(minStoppingDistance).arg(distanceLeft));
-	_robot->addText(QString("curSpeed %1 %2 wanted %3").arg(curSpeed).arg(velocity.mag()).arg(_lastOutputSpeed));
+	_robot->addText(QString("curSpeed %1 %2").arg(curSpeed).arg(velocity.mag()));
 	if (stoppingSpeed < curSpeed && stoppingSpeed < maxSpeed)
 	{
 		// Try to stop on the target regardless of deceleration
@@ -82,7 +82,6 @@ void MotionControl::positionTrapezoidal()
 		_robot->addText(QString("cruise at %1").arg(newSpeed));
 	}
 	
-	_lastOutputSpeed = newSpeed;
 	_robot->cmd.worldVel = posErrorDir * newSpeed;
 }
 
@@ -93,10 +92,8 @@ void MotionControl::positionPD()
 		return;
 	}
 	
-	static const float Latency = 0.176;
-	
 	float curSpeed = _robot->vel.mag();
-	float maxSpeed = curSpeed + *_robot->config->trapTrans.acceleration * Latency;
+	float maxSpeed = curSpeed + *_robot->config->trapTrans.acceleration;
 	float cruise = *_robot->config->trapTrans.velocity;
 	maxSpeed = min(maxSpeed, cruise);
 	
@@ -107,9 +104,9 @@ void MotionControl::positionPD()
 	float newSpeed = newVel.mag();
 	if (newSpeed)
 	{
-		_robot->addText(QString().sprintf("Dist %f Speed %f %f", posError.mag(), curSpeed, newSpeed));
+		_robot->addText(QString().sprintf("Dist %f Speed cur %f new %f", posError.mag(), curSpeed, newSpeed));
 // 		_robot->addText(QString().sprintf("Range %f %f", minSpeed, maxSpeed));
-		if (newSpeed > maxSpeed && newSpeed > 1.0)
+		if (newSpeed > maxSpeed)
 		{
 			_robot->addText("Limited by accel/cruise");
 			_robot->cmd.worldVel = newVel / newSpeed * maxSpeed;
@@ -147,6 +144,19 @@ void MotionControl::stopped()
 {
 }
 
+void limitAccel(float &value, float last, float limit)
+{
+	float old = value;
+	if (value > 0 && (value - last) > limit)
+	{
+		value = last + limit;
+	} else if (value < 0 && (last - value) > limit)
+	{
+		value = last - limit;
+	}
+// 	printf("limit %f %f %f -> %f\n", old, last, limit, value);
+}
+
 void MotionControl::run()
 {
 	static const float Max_Linear_Speed = 0.008 * 511;
@@ -169,7 +179,7 @@ void MotionControl::run()
 	{
 		_robot->cmd.angularVelocity = 0;
 	}
-	float scaledSpin = min(*_robot->cmd.angularVelocity * _robot->cmd.wScale, Max_Angular_Speed);
+	float angularVel = min(*_robot->cmd.angularVelocity * _robot->cmd.wScale, Max_Angular_Speed);
 	
 	if (!_robot->cmd.bodyVel)
 	{
@@ -179,10 +189,10 @@ void MotionControl::run()
 	Point &bodyVel = *_robot->cmd.bodyVel;
 	
 	// Sanity check
-	if (!isfinite(scaledSpin) || !isfinite(bodyVel.x) || !isfinite(bodyVel.y))
+	if (!isfinite(angularVel) || !isfinite(bodyVel.x) || !isfinite(bodyVel.y))
 	{
-		_robot->addText(QString().sprintf("Non-normal motion results: rotate %f, translate %f, %f\n", scaledSpin, bodyVel.x, bodyVel.y));
-		scaledSpin = 0;
+		_robot->addText(QString().sprintf("Non-normal motion results: rotate %f, translate %f, %f\n", angularVel, bodyVel.x, bodyVel.y));
+		angularVel = 0;
 		bodyVel = Point();
 	}
 
@@ -197,9 +207,23 @@ void MotionControl::run()
 		bodyVel = bodyVel / s * Max_Linear_Speed;
 	}
 	
+	// Acceleration limit
+	Point dv = bodyVel - _lastBodyVel;
+	float dw = angularVel - _lastAngularVel;
+	
+	float av = *_robot->config->trapTrans.acceleration;
+	float aw = *_robot->config->trapRot.acceleration;
+	
+	limitAccel(bodyVel.x, _lastBodyVel.x, av);
+	limitAccel(bodyVel.y, _lastBodyVel.y, av);
+// 	limitAccel(angularVel, _lastAngularVel, av);
+	
+	_lastBodyVel = bodyVel;
+	_lastAngularVel = angularVel;
+	
 	_robot->radioTx.set_body_x(bodyVel.x);
 	_robot->radioTx.set_body_y(bodyVel.y);
-	_robot->radioTx.set_body_w(scaledSpin);
+	_robot->radioTx.set_body_w(angularVel);
 	
 	_lastFrameTime = _robot->state()->timestamp;
 	_lastPos = _robot->pos;
