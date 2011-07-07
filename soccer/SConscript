@@ -96,9 +96,10 @@ srcs = [
 	
 	# Tech Challenges
 	'gameplay/plays/demo_plays/NavChallenge2011.cpp',
+	'gameplay/plays/demo_plays/DynamicNavigationTC.cpp',
 
 #	'gameplay/behaviors/test/KickerCalibration.cpp',
-	'gameplay/behaviors/test/MotionLeader.cpp',
+#	'gameplay/behaviors/test/MotionLeader.cpp',
 
 # Sources for modeling module
 #	'modeling/WorldModel.cpp',

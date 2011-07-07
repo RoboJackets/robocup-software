@@ -369,6 +369,11 @@ void OurRobot::avoidOpponentRadius(unsigned shell_id, float radius) {
 	_opp_avoid_mask[shell_id] = radius;
 }
 
+void OurRobot::avoidAllOpponentRadius(float radius) {
+	BOOST_FOREACH(float &ar, _opp_avoid_mask)
+		ar = radius;
+}
+
 void OurRobot::avoidAllTeammates(bool enable) {
 	for (size_t i=0; i<Num_Shells; ++i)
 		avoidTeammate(i, enable);

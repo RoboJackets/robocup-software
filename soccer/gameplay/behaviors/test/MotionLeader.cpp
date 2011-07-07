@@ -1,9 +1,5 @@
 #include "MotionLeader.hpp"
 
-static const float Goal_X = 0.70;
-static const float Goal_Y = 0.70;
-static const float Center_X = 0.15;
-
 using namespace Geometry2d;
 
 Gameplay::Behaviors::MotionLeader::MotionLeader(GameplayModule *gameplay):
