@@ -117,7 +117,12 @@ bool Kick::run() {
 		_pivotKick.dribble_speed = dribbler_speed;
 		_pivotKick.use_chipper = use_chipper;
 		_pivotKick.kick_power = kick_power;
-		return _pivotKick.run();
+		bool result = _pivotKick.run();
+		if (_pivotKick.done())
+		{
+			_state = State_Done;
+		}
+		return result;
 	}
 }
 
