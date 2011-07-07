@@ -299,6 +299,9 @@ public:
 	/** returns the avoidance radius */
 	float avoidOpponentRadius(unsigned shell_id) const;
 
+	/** returns the avoidance radius */
+	void avoidAllOpponentRadius(float radius);
+
 	/** enable/disable for opponent avoidance */
 	void avoidOpponent(unsigned shell_id, bool enable_avoid);
 
