@@ -353,7 +353,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 		}
 		if (r.has_kicker_works() && !r.kicker_works())
 		{
-			faulty = true;
+// 			faulty = true;
 		}
 		for (int i = 0; i < r.motor_status().size(); ++i)
 		{
