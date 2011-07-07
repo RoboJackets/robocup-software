@@ -2,6 +2,9 @@
 #include "Play.hpp"
 
 #include <boost/foreach.hpp>
+#include <framework/RobotConfig.hpp>
+
+using namespace std;
 
 std::list<Gameplay::PlayFactory *> *Gameplay::PlayFactory::_factories = 0;
 
@@ -44,9 +47,9 @@ float Gameplay::Play::score(GameplayModule *gameplay)
 ////////
 // Assigners
 
-bool assignNearest(OurRobot *&role, std::set<OurRobot*>& robots, Geometry2d::Point pt, bool needVisible)
+bool assignNearest(OurRobot *&role, std::set<OurRobot*>& robots, Geometry2d::Point pt)
 {
-	if (role && (!needVisible || role->visible))
+	if (role && role->visible)
 	{
 		// Already has a usable robot
 		robots.erase(role);
@@ -79,47 +82,71 @@ bool assignNearest(OurRobot *&role, std::set<OurRobot*>& robots, Geometry2d::Poi
 	return role != 0;
 }
 
-bool assignNearest(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt,
-		bool hasChipper, bool kickerWorks, bool isCharged, bool is2011, bool needVisible)
+bool assignNearestFull(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt)
 {
-	if (role && (!needVisible || role->visible))
-	{
-		// Already has a usable robot
-		robots.erase(role);
-		return true;
-	}
+	return assignNearest(role, robots, pt, true, true, true, true);
+}
 
-	OurRobot *bestRobot = 0;
-	float bestDistSq = -1;
-	BOOST_FOREACH(OurRobot *robot, robots)
-	{
-		// manage requirements
-		if ((!hasChipper || (robot->hardwareVersion() != Packet::RJ2008)) && // TODO: check for chipper for real
-				(!kickerWorks  || robot->kickerWorks()) &&
-				(!is2011 || (robot->hardwareVersion() != Packet::RJ2008)) &&
-				(!isCharged || robot->charged()))
+bool assignNearestKicker(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt)
+{
+	return assignNearest(role, robots, pt, true, false, true, true);
+}
+
+bool assignNearestChipper(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt)
+{
+	return assignNearest(role, robots, pt, false, true, true, true);
+}
+
+bool assignNearestYank(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt)
+{
+	return assignNearest(role, robots, pt, false, false, true, true);
+}
+
+static bool meetsRequirements(OurRobot * robot,	bool hasKicker, bool hasChipper, bool hasDribbler, bool hasBallSense)
+{
+	return !((hasKicker    && (!robot->kickerWorks() || !*robot->status->kicker_enabled)) ||
+			(hasChipper   && (robot->hardwareVersion() == Packet::RJ2008 || !robot->kickerWorks() || !*robot->status->chipper_enabled)) ||
+			(hasDribbler  && (!*robot->status->dribbler_enabled || robot->radioRx.motor_status_size() != 5 || robot->radioRx.motor_status(4) != Packet::Good)) ||
+			(hasBallSense && (!*robot->status->ball_sense_enabled || !robot->ballSenseWorks())));
+}
+
+// General "AssignNearest" with a full set of constraints - true requires that it be met
+bool assignNearest(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt,
+		bool hasKicker, bool hasChipper, bool hasDribbler, bool hasBallSense)
+{
+		if (role && role->visible && meetsRequirements(role, hasKicker, hasChipper, hasDribbler, hasBallSense))
 		{
-			continue; // robot fails requirements
+			// Already has a usable robot
+			robots.erase(role);
+			return true;
 		}
 
-		float dsq = (robot->pos - pt).magsq();
-		if (bestDistSq < 0 || dsq < bestDistSq)
+		OurRobot *bestRobot = 0;
+		float bestDistSq = -1;
+		BOOST_FOREACH(OurRobot *robot, robots)
 		{
-			bestDistSq = dsq;
-			bestRobot = robot;
+			// manage requirements
+			if (meetsRequirements(robot, hasKicker, hasChipper, hasDribbler, hasBallSense))
+			{
+				float dsq = (robot->pos - pt).magsq();
+				if (bestDistSq < 0 || dsq < bestDistSq)
+				{
+					bestDistSq = dsq;
+					bestRobot = robot;
+				}
+			}
 		}
-	}
 
-	if (bestRobot)
-	{
-		role = bestRobot;
-		robots.erase(role);
+		if (bestRobot)
+		{
+			role = bestRobot;
+			robots.erase(role);
 
-		// set default flags - only gets reset at assignment, rather than each frame
-		role->avoidOpponents(true);
-		role->avoidAllTeammates(true);
-		role->avoidBall(Ball_Radius);
-	}
+			// set default flags - only gets reset at assignment, rather than each frame
+			role->avoidOpponents(true);
+			role->avoidAllTeammates(true);
+			role->avoidBall(Ball_Radius);
+		}
 
-	return role != 0;
+		return role != 0;
 }
