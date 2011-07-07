@@ -58,13 +58,18 @@ bool Gameplay::Plays::OurFreekick::run()
 {
 	set<OurRobot *> available = _gameplay->playRobots();
 	
-	assignNearest(_kicker.robot, available, ball().pos);
+	bool chipper_available = true;
+	if (!assignNearestChipper(_kicker.robot, available, ball().pos))
+	{
+		chipper_available = false;
+		assignNearestKicker(_kicker.robot, available, ball().pos);
+	}
 
 	// setup kicker from parameters - want to use chipper when possible
 	_kicker.enableGoalLineShot = *_enableGoalLineShot;
 	_kicker.enableLeftDownfieldShot = *_enableLeftDownfieldShot;
 	_kicker.enableRightDownfieldShot = *_enableRightDownfieldShot;
-	_kicker.use_chipper = *_enableChipper;
+	_kicker.use_chipper = chipper_available && *_enableChipper;
 	_kicker.minChipRange = *_minChipRange;
 	_kicker.maxChipRange = *_maxChipRange;
 

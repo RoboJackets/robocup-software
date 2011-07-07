@@ -15,9 +15,23 @@ namespace Gameplay
 	}
 }
 
+ConfigDouble *Gameplay::Plays::BasicOffense112::_offense_hysteresis;
+ConfigDouble *Gameplay::Plays::BasicOffense112::_support_backoff_thresh;
+ConfigDouble *Gameplay::Plays::BasicOffense112::_mark_hysteresis_coeff;
+ConfigDouble *Gameplay::Plays::BasicOffense112::_support_avoid_teammate_radius;
+ConfigDouble *Gameplay::Plays::BasicOffense112::_support_avoid_shot;
+ConfigDouble *Gameplay::Plays::BasicOffense112::_offense_support_ratio;
+ConfigDouble *Gameplay::Plays::BasicOffense112::_defense_support_ratio;
+
 void Gameplay::Plays::BasicOffense112::createConfiguration(Configuration *cfg)
 {
-
+	_offense_hysteresis = new ConfigDouble(cfg, "BasicOffense112/Hystersis Coeff", 0.50);
+	_support_backoff_thresh = new ConfigDouble(cfg, "BasicOffense112/Support Backoff Dist", 1.5);
+	_mark_hysteresis_coeff = new ConfigDouble(cfg, "BasicOffense112/Mark Hystersis Coeff", 0.9);
+	_support_avoid_teammate_radius = new ConfigDouble(cfg, "BasicOffense112/Support Avoid Teammate Dist", 0.5);
+	_support_avoid_shot = new ConfigDouble(cfg, "BasicOffense112/Support Avoid Shot", 0.2);
+	_offense_support_ratio = new ConfigDouble(cfg, "BasicOffense112/Offense Support Ratio", 0.7);
+	_defense_support_ratio = new ConfigDouble(cfg, "BasicOffense112/Defense Support Ratio", 0.9);
 }
 
 Gameplay::Plays::BasicOffense112::BasicOffense112(GameplayModule *gameplay):
@@ -57,22 +71,19 @@ bool Gameplay::Plays::BasicOffense112::run()
 	assignNearest(_rightFullback.robot, available, Geometry2d::Point(Field_GoalWidth/2, 0.0));
 
 	// determine whether to change offense players
-	const float coeff = 0.50; // Determines level of hysteresis
 	bool forward_reset = false;
 	if (_striker.robot && _support.robot &&
-			_support.robot->pos.distTo(ballProj) < coeff * _striker.robot->pos.distTo(ballProj)) {
+			_support.robot->pos.distTo(ballProj) < *_offense_hysteresis * _striker.robot->pos.distTo(ballProj)) {
 		_striker.robot = NULL;
 		_support.robot = NULL;
+		_striker.restart();
 		forward_reset = true;
 	}
 
 	// choose offense, we want closest robot to ball to be striker
+	// FIXME: need to assign more carefully to ensure that there is a robot available to kick
 	assignNearestKicker(_striker.robot, available, ballProj);
-	assignNearestKicker(_support.robot, available, ballProj);
-
-	// manually reset any kickers so they keep kicking
-	if (_striker.done())
-		_striker.restart();
+	assignNearest(_support.robot, available, ballProj);
 
 	// find the nearest opponent to the striker
 	OpponentRobot* closestRobotToStriker = 0;
@@ -88,8 +99,7 @@ bool Gameplay::Plays::BasicOffense112::run()
 			}
 		}
 	}
-	const float support_backoff_thresh = 1.5;
-	bool striker_engaged = _striker.robot && closestDistToStriker < support_backoff_thresh;
+	bool striker_engaged = _striker.robot && closestDistToStriker < *_support_backoff_thresh;
 
 	// pick as a mark target the furthest back opposing robot
 	// and adjust mark ratio based on field position
@@ -116,23 +126,22 @@ bool Gameplay::Plays::BasicOffense112::run()
 	}
 
 	// use hysteresis for changing of the robot
-	const float mark_coeff = 0.9; // how much of an improvement is necessary to switch
-	if (bestOpp && bestOpp->visible && (forward_reset || bestDist < cur_dist * mark_coeff))
+	if (bestOpp && bestOpp->visible && (forward_reset || bestDist < cur_dist * *_mark_hysteresis_coeff))
 		_support.markRobot(bestOpp);
 
 	// if we are further away, we can mark further from robot
 	if (ballProj.y > Field_Length/2.0 && nrOppClose)
-		_support.ratio(0.7);
+		_support.ratio(*_offense_support_ratio);
 	else
-		_support.ratio(0.9);
+		_support.ratio(*_defense_support_ratio);
 
 	// adjust obstacles on markers
 	if (_striker.robot && _support.robot) {
 		unsigned striker = _striker.robot->shell();
-		_support.robot->avoidTeammateRadius(striker, 0.5);
+		_support.robot->avoidTeammateRadius(striker, *_support_avoid_teammate_radius);
 
 		// get out of ways of shots
-		if (_striker.robot->pos.nearPoint(ballProj, 0.2)) {
+		if (_striker.robot->pos.nearPoint(ballProj, *_support_avoid_shot)) {
 			Polygon shot_obs;
 			shot_obs.vertices.push_back(Geometry2d::Point(Field_GoalWidth / 2, Field_Length));
 			shot_obs.vertices.push_back(Geometry2d::Point(-Field_GoalWidth / 2, Field_Length));
@@ -140,6 +149,10 @@ bool Gameplay::Plays::BasicOffense112::run()
 			_support.robot->localObstacles(ObstaclePtr(new PolygonObstacle(shot_obs)));
 		}
 	}
+
+	// manually reset any kickers so they keep kicking
+	if (_striker.done())
+		_striker.restart();
 
 	// execute behaviors
 	if (_striker.robot) _striker.run();

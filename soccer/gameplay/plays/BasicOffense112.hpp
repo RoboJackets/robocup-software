@@ -28,6 +28,14 @@ namespace Gameplay
 				Behaviors::Fullback _leftFullback, _rightFullback;
 				Behaviors::Kick _striker;
 				Behaviors::Mark _support;
+
+				static ConfigDouble *_offense_hysteresis;  // determines when to switch offense players
+				static ConfigDouble *_support_backoff_thresh;
+				static ConfigDouble *_mark_hysteresis_coeff;
+				static ConfigDouble *_support_avoid_teammate_radius;
+				static ConfigDouble *_support_avoid_shot;
+				static ConfigDouble *_offense_support_ratio;
+				static ConfigDouble *_defense_support_ratio;
 		};
 	}
 }
