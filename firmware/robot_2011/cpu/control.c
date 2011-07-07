@@ -14,6 +14,9 @@
 #include "imu.h"
 #include "invensense/imuFIFO.h"
 
+static const int Command_Rate_Limit = 10;
+static int last_out[4];
+
 const controller_info_t *default_controller;
 
 ////////
@@ -35,7 +38,25 @@ static void dumb_update()
 	
 	for (int i = 0; i < 4; ++i)
 	{
-		motor_out[i] = wheel_command[i] * (627 * 511) / (200 * 127);
+		int new_out = wheel_command[i] * 627 / 200;
+		if (new_out > MOTOR_MAX)
+		{
+			new_out = MOTOR_MAX;
+		} else if (new_out < -MOTOR_MAX)
+		{
+			new_out = -MOTOR_MAX;
+		}
+		
+		int delta = new_out - last_out[i];
+		if (delta > Command_Rate_Limit)
+		{
+			delta = Command_Rate_Limit;
+		} else if (delta < -Command_Rate_Limit)
+		{
+			delta = -Command_Rate_Limit;
+		}
+		motor_out[i] = last_out[i] + delta;
+		last_out[i] = motor_out[i];
 	}
 	motor_out[4] = dribble_command >> 1;
 }
@@ -177,10 +198,8 @@ static void log_print()
 
 ////////
 
-static const int Command_Rate_Limit = 160 * 256;
 static int kp = 160;
 static int kd = 160;
-static int last_out[4];
 static int last_error[4];
 static int pd_debug = -1;
 
@@ -255,12 +274,12 @@ static void pd_update()
 		int delta = error * kp + delta_error * kd;
 		
 		// Limit the change between consecutive cycles to prevent excessive current
-		if (delta > Command_Rate_Limit)
+		if (delta > Command_Rate_Limit * 256)
 		{
-			delta = Command_Rate_Limit;
-		} else if (delta < -Command_Rate_Limit)
+			delta = Command_Rate_Limit * 256;
+		} else if (delta < -Command_Rate_Limit * 256)
 		{
-			delta = -Command_Rate_Limit;
+			delta = -Command_Rate_Limit * 256;
 		}
 		last_out[i] += delta;
 		
@@ -340,12 +359,12 @@ static void test_gyro_update()
 	int delta = error * tg_kp + delta_error * tg_kd;
 	
 	// Limit the change between consecutive cycles to prevent excessive current
-	if (delta > Command_Rate_Limit)
+	if (delta > Command_Rate_Limit * 256)
 	{
-		delta = Command_Rate_Limit;
-	} else if (delta < -Command_Rate_Limit)
+		delta = Command_Rate_Limit * 256;
+	} else if (delta < -Command_Rate_Limit * 256)
 	{
-		delta = -Command_Rate_Limit;
+		delta = -Command_Rate_Limit * 256;
 	}
 	tg_out += delta;
 	

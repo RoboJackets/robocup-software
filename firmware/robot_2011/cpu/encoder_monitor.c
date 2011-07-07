@@ -19,7 +19,12 @@ static const int Hall_Ticks_Per_Rev = 48;
 static const int Hall_Margin = 6;
 static const int Encoder_Margin = 2;
 
+static const int Count_Bad = 10;
+static const int Count_Good = 1;
+static const int Failure_Threshold = 10 * 50;
+
 uint8_t encoder_faults;
+uint32_t encoder_fault_counter[5];
 int em_err_hall[5], em_err_enc[5], em_err_out[5];
 
 void encoder_monitor()
@@ -42,6 +47,19 @@ void encoder_monitor()
 			int enc_min = (hall_delta[i] - Hall_Margin) * Encoder_Ticks_Per_Rev / Hall_Ticks_Per_Rev - Encoder_Margin;
 			int enc_max = (hall_delta[i] + Hall_Margin) * Encoder_Ticks_Per_Rev / Hall_Ticks_Per_Rev + Encoder_Margin;
 			if (encoder_delta[i] < enc_min || encoder_delta[i] > enc_max)
+			{
+				if (encoder_fault_counter[i] < Failure_Threshold)
+				{
+					encoder_fault_counter[i] += 10;
+				}
+			} else {
+				if (encoder_fault_counter[i] > 0)
+				{
+					encoder_fault_counter[i] -= 1;
+				}
+			}
+			
+			if (encoder_fault_counter[i] >= Failure_Threshold)
 			{
 				em_err_hall[i] = hall_delta[i];
 				em_err_enc[i] = encoder_delta[i];
