@@ -31,9 +31,9 @@ namespace Gameplay
 				Behaviors::Mark _support;
 
 				// behaviors for the striker - switch between these
-				Behaviors::Yank _strikerYank;
-				Behaviors::Fling _strikerFling;
 				Behaviors::Bump _strikerBump;
+				Behaviors::Fling _strikerFling;
+				Behaviors::Yank _strikerYank;
 
 				static ConfigBool *_useYank;
 				static ConfigDouble *_offense_hysteresis;  // determines when to switch offense players

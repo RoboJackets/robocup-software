@@ -1,4 +1,5 @@
 #include <limits>
+#include <iostream>
 #include <boost/foreach.hpp>
 #include "YankOpen.hpp"
 
@@ -51,6 +52,10 @@ _strikerYank(gameplay)
 	// use constant value of mark threshold for now
 	_support.markLineThresh(1.0);
 
+	// set targets to the opponent's goal
+	static const Point goal_center(0.0, Field_Length);
+	_strikerBump.target = goal_center;
+	_strikerFling.target = goal_center;
 }
 
 float Gameplay::Plays::YankOpen::score ( Gameplay::GameplayModule* gameplay )
@@ -72,7 +77,7 @@ bool Gameplay::Plays::YankOpen::run()
 
 	// determine whether to change offense players
 	bool forward_reset = false;
-//	if (_strikerYank.robot && //_support.robot &&
+//	if (_strikerYank.robot && _support.robot &&
 //			_support.robot->pos.distTo(ballProj) < *_offense_hysteresis * _strikerYank.robot->pos.distTo(ballProj)) {
 //		_strikerBump.robot = NULL;
 //		_strikerYank.robot = NULL;
@@ -84,14 +89,12 @@ bool Gameplay::Plays::YankOpen::run()
 //		forward_reset = true;
 //	}
 
-	// choose offense, we want closest robot to ball to be striker
-	// FIXME: need to assign more carefully to ensure that there is a robot available to kick
+	// choose the striker first - need to ensure that
 	if (assignNearest(_strikerYank.robot, available, ballProj))
 	{
 		_strikerBump.robot = _strikerYank.robot;
 		_strikerFling.robot = _strikerYank.robot;
 	}
-//	assignNearest(_support.robot, available, ballProj);
 
 	// find the nearest opponent to the striker
 	OpponentRobot* closestRobotToStriker = 0;
@@ -109,9 +112,12 @@ bool Gameplay::Plays::YankOpen::run()
 	}
 	bool striker_engaged = _strikerYank.robot && closestDistToStriker < *_support_backoff_thresh;
 
-	// defense first - get closest to goal to choose sides properly
+	// defense after striker  - get closest to goal to choose sides properly
 	assignNearest(_leftFullback.robot, available, Geometry2d::Point(-Field_GoalWidth/2, 0.0));
 	assignNearest(_rightFullback.robot, available, Geometry2d::Point(Field_GoalWidth/2, 0.0));
+
+	// support last - marginally useful in this scenario
+	assignNearest(_support.robot, available, ballProj);
 
 	// pick as a mark target the furthest back opposing robot
 	// and adjust mark ratio based on field position
