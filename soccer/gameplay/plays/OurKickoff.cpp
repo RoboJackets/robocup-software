@@ -46,14 +46,15 @@ float Gameplay::Plays::OurKickoff::score (Gameplay::GameplayModule* gameplay)
 bool Gameplay::Plays::OurKickoff::run()
 {
 	set<OurRobot *> available = _gameplay->playRobots();
+//
+//	bool chipper_available = true;
+//	if (!assignNearestChipper(_kicker.robot, available, ball().pos))
+//	{
+//		chipper_available = false;
+//		assignNearestKicker(_kicker.robot, available, ball().pos);
+//	}
+	assignNearest(_kicker.robot, available, ball().pos);
 	
-	bool chipper_available = true;
-	if (!assignNearestChipper(_kicker.robot, available, ball().pos))
-	{
-		chipper_available = false;
-		assignNearestKicker(_kicker.robot, available, ball().pos);
-	}
-
 	_pdt.backoff.robots.clear();
 	_pdt.backoff.robots.insert(_kicker.robot);
 	assignNearest(_idle1.robot, available, _idle1.target);
