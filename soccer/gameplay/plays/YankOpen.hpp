@@ -35,6 +35,7 @@ namespace Gameplay
 				Behaviors::Fling _strikerFling;
 				Behaviors::Bump _strikerBump;
 
+				static ConfigBool *_useYank;
 				static ConfigDouble *_offense_hysteresis;  // determines when to switch offense players
 				static ConfigDouble *_support_backoff_thresh;
 				static ConfigDouble *_mark_hysteresis_coeff;

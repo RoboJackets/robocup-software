@@ -22,6 +22,7 @@ ConfigDouble *Gameplay::Plays::YankOpen::_support_avoid_teammate_radius;
 ConfigDouble *Gameplay::Plays::YankOpen::_support_avoid_shot;
 ConfigDouble *Gameplay::Plays::YankOpen::_offense_support_ratio;
 ConfigDouble *Gameplay::Plays::YankOpen::_defense_support_ratio;
+ConfigBool *Gameplay::Plays::YankOpen::_useYank;
 
 void Gameplay::Plays::YankOpen::createConfiguration(Configuration *cfg)
 {
@@ -32,6 +33,7 @@ void Gameplay::Plays::YankOpen::createConfiguration(Configuration *cfg)
 	_support_avoid_shot = new ConfigDouble(cfg, "YankOpen/Support Avoid Shot", 0.2);
 	_offense_support_ratio = new ConfigDouble(cfg, "YankOpen/Offense Support Ratio", 0.7);
 	_defense_support_ratio = new ConfigDouble(cfg, "YankOpen/Defense Support Ratio", 0.9);
+	_useYank = new ConfigBool(cfg, "YankOpen/Use Yank", false);
 }
 
 Gameplay::Plays::YankOpen::YankOpen(GameplayModule *gameplay):
@@ -169,7 +171,8 @@ bool Gameplay::Plays::YankOpen::run()
 
 	// execute behaviors
 //	if (_striker.robot) _striker.run(); // TODO: choose which one to run
-	if (_strikerYank.robot) _strikerYank.run(); // Just use one for now
+	if (*_useYank && _strikerYank.robot) _strikerYank.run();
+	if (!*_useYank && _strikerBump.robot) _strikerBump.run();
 	if (_support.robot) _support.run();
 	if (_leftFullback.robot) _leftFullback.run();
 	if (_rightFullback.robot) _rightFullback.run();
