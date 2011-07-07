@@ -123,8 +123,8 @@
   <Maximum_Chip_Range value="2.5"/>
  </DemoAttack>
  <Bump>
-  <Drive_Around_Dist value="0.25"/>
-  <Charge_Thresh value="0.1"/>
+  <Drive_Around_Dist value="0.35"/>
+  <Charge_Thresh value="0.05"/>
   <Escape_Charge_Thresh value="0.1"/>
   <Setup_Ball_Avoid value="0.043"/>
   <Bump_Complete_Distance value="0.5"/>
@@ -277,5 +277,6 @@
   <Support_Avoid_Shot value="0.2"/>
   <Offense_Support_Ratio value="0.7"/>
   <Defense_Support_Ratio value="0.9"/>
+  <Use_Yank value="false"/>
  </YankOpen>
 </config>
