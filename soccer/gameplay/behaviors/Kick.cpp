@@ -25,8 +25,9 @@ Kick::Kick(GameplayModule *gameplay)
 }
 
 void Kick::restart() {
-	_state = State_PivotKick;
+	_done = false;
 	use_chipper = false;
+	use_line_kick = false;
 	dribbler_speed = 127;
 	kick_power = 255;
 	minChipRange = 0.3;
@@ -46,10 +47,10 @@ void Kick::setTarget(const Geometry2d::Segment &seg) {
 	_pivotKick.target = _target;
 }
 
-bool Kick::findShot(const Geometry2d::Segment& segment, Geometry2d::Segment& result, float min_segment_length) const {
+bool Kick::findShot(const Geometry2d::Segment& segment, Geometry2d::Segment& result, bool chip, float min_segment_length) const {
 	// calculate available target segments
 	WindowEvaluator evaluator(state());
-	evaluator.enable_chip = use_chipper;
+	evaluator.enable_chip = chip;
 	evaluator.chip_min_range = minChipRange;
 	evaluator.chip_max_range = maxChipRange;
 	evaluator.run(ball().pos, segment);
@@ -111,8 +112,19 @@ bool Kick::run() {
 		robot->face(_target.center());
 		return true;
 
-	} else {
-		// use pivot only for now
+	} else if (use_line_kick)
+	{
+		_lineKick.target = available_target.center();
+		_lineKick.use_chipper = use_chipper;
+		_lineKick.kick_power = kick_power;
+		bool result = _lineKick.run();
+		if (_lineKick.done())
+		{
+			_done = true;
+		}
+		return result;
+	} else
+	{
 		_pivotKick.target = available_target;
 		_pivotKick.dribble_speed = dribbler_speed;
 		_pivotKick.use_chipper = use_chipper;
@@ -120,7 +132,7 @@ bool Kick::run() {
 		bool result = _pivotKick.run();
 		if (_pivotKick.done())
 		{
-			_state = State_Done;
+			_done = true;
 		}
 		return result;
 	}
