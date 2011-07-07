@@ -67,6 +67,7 @@ srcs = [
 	'gameplay/behaviors/Fling.cpp',
 	'gameplay/behaviors/LineKick.cpp',
 	'gameplay/behaviors/PivotKick.cpp',
+	'gameplay/behaviors/Bump.cpp',
 
 	# Positions
 	'gameplay/behaviors/positions/Goalie.cpp',
@@ -87,6 +88,7 @@ srcs = [
 	'gameplay/plays/demo_plays/DemoYank.cpp',
 	'gameplay/plays/demo_plays/DemoYankChip.cpp',
 	'gameplay/plays/demo_plays/DemoFling.cpp',
+	'gameplay/plays/demo_plays/DemoBump.cpp',
 	'gameplay/plays/demo_plays/DemoLineAttack.cpp',
 	'gameplay/plays/demo_plays/DemoPivotAttack.cpp',
 #	'gameplay/plays/demo_plays/CalSpeed.cpp',
