@@ -22,6 +22,7 @@ ConfigDouble *Gameplay::Plays::BasicOffense112::_support_avoid_teammate_radius;
 ConfigDouble *Gameplay::Plays::BasicOffense112::_support_avoid_shot;
 ConfigDouble *Gameplay::Plays::BasicOffense112::_offense_support_ratio;
 ConfigDouble *Gameplay::Plays::BasicOffense112::_defense_support_ratio;
+ConfigBool   *Gameplay::Plays::BasicOffense112::_use_line_kick;
 
 void Gameplay::Plays::BasicOffense112::createConfiguration(Configuration *cfg)
 {
@@ -32,6 +33,7 @@ void Gameplay::Plays::BasicOffense112::createConfiguration(Configuration *cfg)
 	_support_avoid_shot = new ConfigDouble(cfg, "BasicOffense112/Support Avoid Shot", 0.2);
 	_offense_support_ratio = new ConfigDouble(cfg, "BasicOffense112/Offense Support Ratio", 0.7);
 	_defense_support_ratio = new ConfigDouble(cfg, "BasicOffense112/Defense Support Ratio", 0.9);
+	_use_line_kick = new ConfigBool(cfg, "BasicOffense112/Enable Line Kick", true);
 }
 
 Gameplay::Plays::BasicOffense112::BasicOffense112(GameplayModule *gameplay):
@@ -46,7 +48,6 @@ _support(gameplay)
 
 	// use constant value of mark threshold for now
 	_support.markLineThresh(1.0);
-
 }
 
 float Gameplay::Plays::BasicOffense112::score ( Gameplay::GameplayModule* gameplay )
@@ -154,6 +155,9 @@ bool Gameplay::Plays::BasicOffense112::run()
 	// manually reset any kickers so they keep kicking
 	if (_striker.done())
 		_striker.restart();
+
+	// set flags for inner behaviors
+	_striker.use_line_kick = *_use_line_kick;
 
 	// execute behaviors
 	if (_striker.robot) _striker.run();
