@@ -11,25 +11,28 @@ namespace Gameplay
 	}
 }
 
-ConfigBool   *Gameplay::Behaviors::LineKick::_face_ball;
 ConfigDouble *Gameplay::Behaviors::LineKick::_drive_around_dist;
 ConfigDouble *Gameplay::Behaviors::LineKick::_setup_to_charge_thresh;
 ConfigDouble *Gameplay::Behaviors::LineKick::_escape_charge_thresh;
 ConfigDouble *Gameplay::Behaviors::LineKick::_setup_ball_avoid;
+ConfigDouble *Gameplay::Behaviors::LineKick::_accel_bias;
+ConfigDouble *Gameplay::Behaviors::LineKick::_facing_thresh;
 
 void Gameplay::Behaviors::LineKick::createConfiguration(Configuration *cfg)
 {
 	_drive_around_dist = new ConfigDouble(cfg, "LineKick/Drive Around Dist", 0.25);
-	_face_ball = new ConfigBool(cfg, "LineKick/Face Ball otherwise target", true);
 	_setup_to_charge_thresh = new ConfigDouble(cfg, "LineKick/Charge Thresh", 0.1);
 	_escape_charge_thresh = new ConfigDouble(cfg, "LineKick/Escape Charge Thresh", 0.1);
 	_setup_ball_avoid = new ConfigDouble(cfg, "LineKick/Setup Ball Avoid", Ball_Radius * 2.0);
+	_accel_bias = new ConfigDouble(cfg, "LineKick/Accel Bias", 0.1);
+	_facing_thresh = new ConfigDouble(cfg, "Bump/Facing Thresh - Deg", 10);
 }
 
 Gameplay::Behaviors::LineKick::LineKick(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay)
 {
 	_state = State_Setup;
+	target = Geometry2d::Point(0.0, Field_Length);
 }
 
 void Gameplay::Behaviors::LineKick::restart()
@@ -45,13 +48,18 @@ bool Gameplay::Behaviors::LineKick::run()
 	{
 		return false;
 	}
-	
+
 	Line targetLine(ball().pos, target);
+	const Point dir = Point::direction(robot->angle * DegreesToRadians);
+	double facing_thresh = cos(*_facing_thresh * DegreesToRadians);
+	double facing_err = dir.dot((target - ball().pos).normalized());
 	
 	// State changes
 	if (_state == State_Setup)
 	{
-		if (targetLine.distTo(robot->pos) <= *_setup_to_charge_thresh && targetLine.delta().dot(robot->pos - ball().pos) <= -Robot_Radius)
+		if (targetLine.distTo(robot->pos) <= *_setup_to_charge_thresh &&
+				targetLine.delta().dot(robot->pos - ball().pos) <= -Robot_Radius &&
+				facing_err >= facing_thresh)
 		{
 			_state = State_Charge;
 		}
@@ -69,27 +77,25 @@ bool Gameplay::Behaviors::LineKick::run()
 	{
 		// Move onto the line containing the ball and the_setup_ball_avoid target
 		robot->addText(QString("%1").arg(targetLine.delta().dot(robot->pos - ball().pos)));
+		Segment behind_line(ball().pos - targetLine.delta().normalized() * (*_drive_around_dist + Robot_Radius),
+				ball().pos - targetLine.delta().normalized() * 5.0);
 		if (targetLine.delta().dot(robot->pos - ball().pos) > -Robot_Radius)
 		{
 			// We're very close to or in front of the ball
 			robot->addText("In front");
 			robot->avoidBall(*_setup_ball_avoid);
-			robot->move(ball().pos - targetLine.delta().normalized() * *_drive_around_dist);
+			robot->move(ball().pos - targetLine.delta().normalized() * (*_drive_around_dist + Robot_Radius));
 		} else {
 			// We're behind the ball
 			robot->addText("Behind");
 			robot->avoidBall(*_setup_ball_avoid);
-			robot->move(targetLine.nearestPoint(robot->pos));
+			robot->move(behind_line.nearestPoint(robot->pos));
+			state()->drawLine(behind_line);
 		}
 
-		// DEBUG: use flag to change whether to face ball or target - target is more stable
-		if (*_face_ball)
-		{
-			robot->face(ball().pos);
-		} else
-		{
-			robot->face(target);
-		}
+		// face in a direction so that on impact, we aim at goal
+		Point delta_facing = target - ball().pos;
+		robot->face(robot->pos + delta_facing);
 
 		robot->kick(0);
 	} else if (_state == State_Charge)
@@ -105,8 +111,12 @@ bool Gameplay::Behaviors::LineKick::run()
 		state()->drawLine(robot->pos, target, Qt::white);
 		state()->drawLine(ball().pos, target, Qt::white);
 		
+		Point ballToTarget = (target - ball().pos).normalized();
+		Point driveDirection = (ball().pos - ballToTarget * Robot_Radius) - robot->pos;
+
 		//We want to move in the direction of the target without path planning
-		robot->worldVelocity(targetLine.delta() * 5.0); // Full speed
+		double speed =  robot->vel.mag() + *_accel_bias; // enough of a bias to force it to accelerate
+		robot->worldVelocity(driveDirection.normalized() * speed);
 		robot->angularVelocity(0.0);
 	} else {
 		robot->addText("Done");

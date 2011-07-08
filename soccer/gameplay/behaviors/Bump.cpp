@@ -18,6 +18,7 @@ ConfigDouble *Gameplay::Behaviors::Bump::_escape_charge_thresh;
 ConfigDouble *Gameplay::Behaviors::Bump::_setup_ball_avoid;
 ConfigDouble *Gameplay::Behaviors::Bump::_bump_complete_dist;
 ConfigDouble *Gameplay::Behaviors::Bump::_accel_bias;
+ConfigDouble *Gameplay::Behaviors::Bump::_facing_thresh;
 
 void Gameplay::Behaviors::Bump::createConfiguration(Configuration *cfg)
 {
@@ -28,6 +29,7 @@ void Gameplay::Behaviors::Bump::createConfiguration(Configuration *cfg)
 	_setup_ball_avoid = new ConfigDouble(cfg, "Bump/Setup Ball Avoid", 1.0);
 	_bump_complete_dist = new ConfigDouble(cfg, "Bump/Bump Complete Distance", 0.5);
 	_accel_bias = new ConfigDouble(cfg, "Bump/Accel Bias", 0.1);
+	_facing_thresh = new ConfigDouble(cfg, "Bump/Facing Thresh - Deg", 10);
 }
 
 Gameplay::Behaviors::Bump::Bump(GameplayModule *gameplay):
@@ -51,13 +53,16 @@ bool Gameplay::Behaviors::Bump::run()
 	
 	Line targetLine(ball().pos, target);
 	const Point dir = Point::direction(robot->angle * DegreesToRadians);
+	double facing_thresh = cos(*_facing_thresh * DegreesToRadians);
+	double facing_err = dir.dot((target - ball().pos).normalized());
+//	robot->addText(QString("Err:%1,T:%2").arg(facing_err).arg(facing_thresh));
 
 	// State changes
 	if (_state == State_Setup)
 	{
 		if (targetLine.distTo(robot->pos) <= *_setup_to_charge_thresh &&
 				targetLine.delta().dot(robot->pos - ball().pos) <= -Robot_Radius &&
-				dir.dot((target - ball().pos).normalized()) >= cos(15 * DegreesToRadians))
+				facing_err >= facing_thresh)
 		{
 			_state = State_Charge;
 		}
@@ -101,15 +106,6 @@ bool Gameplay::Behaviors::Bump::run()
 		Point delta_facing = target - ball().pos;
 		robot->face(robot->pos + delta_facing);
 
-		// DEBUG: use flag to change whether to face ball or into line
-//		if (*_face_ball)
-//		{
-//			robot->face(ball().pos);
-//		} else
-//		{
-//			robot->face(targetLine.nearestPoint(robot->pos)); // perpendicular to the line
-//		}
-
 	} else if (_state == State_Charge)
 	{
 		robot->addText("Charge!");
@@ -123,7 +119,6 @@ bool Gameplay::Behaviors::Bump::run()
 		//We want to move in the direction of the target without path planning
 		double speed =  robot->vel.mag() + *_accel_bias; // enough of a bias to force it to accelerate
 		robot->worldVelocity(driveDirection.normalized() * speed);
-//		robot->worldVelocity(targetLine.delta().normalized() * speed); // FIXME: this doesn't aim well
 		robot->angularVelocity(0.0);
 	} else {
 		robot->addText("Done");
