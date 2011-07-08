@@ -23,6 +23,7 @@ namespace Gameplay
 				virtual bool run();
 			
 			protected:
+				// Options for kicking the ball
 //				Behaviors::Kick _kicker;
 				Behaviors::Bump _bump;
 

@@ -176,9 +176,9 @@ bool Gameplay::Plays::YankOpen::run()
 	}
 
 	// execute behaviors
-//	if (_striker.robot) _striker.run(); // TODO: choose which one to run
 	if (*_useYank && _strikerYank.robot) _strikerYank.run();
 	if (!*_useYank && _strikerBump.robot) _strikerBump.run();
+
 	if (_support.robot) _support.run();
 	if (_leftFullback.robot) _leftFullback.run();
 	if (_rightFullback.robot) _rightFullback.run();
