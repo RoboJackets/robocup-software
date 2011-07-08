@@ -83,6 +83,16 @@ void OurRobot::addStatusText()
 {
 	static const char *motorNames[] = {"BL", "FL", "FR", "BR", "DR"};
 	
+	const QColor statusColor(255, 32, 32);
+	
+	if (!rxIsFresh())
+	{
+		addText("No RX", statusColor, "Status");
+		
+		// No more status is available
+		return;
+	}
+	
 	// Motor status
 	if (radioRx.motor_status().size() == 5)
 	{
@@ -109,19 +119,19 @@ void OurRobot::addStatusText()
 			
 			if (!error.isNull())
 			{
-				addText(QString("%1: %2").arg(error, QString(motorNames[i])), Qt::red);
+				addText(QString("%1: %2").arg(error, QString(motorNames[i])), statusColor, "Status");
 			}
 		}
 	}
 	
 	if (!ballSenseWorks())
 	{
-		addText("Ball sense fault", Qt::red);
+		addText("Ball sense fault", statusColor, "Status");
 	}
 	
 	if (!kickerWorks() && false)
 	{
-		addText("Kicker fault", Qt::red);
+		addText("Kicker fault", statusColor, "Status");
 	}
 	
 	if (radioRx.has_battery())
@@ -129,15 +139,15 @@ void OurRobot::addStatusText()
 		float battery = radioRx.battery();
 		if (battery <= 14.3f)
 		{
-			addText(QString("Low battery: %1V").arg(battery, 0, 'f', 1));
+			addText(QString("Low battery: %1V").arg(battery, 0, 'f', 1), statusColor, "Status");
 		}
 	}
 }
 
-void OurRobot::addText(const QString& text, const QColor& qc)
+void OurRobot::addText(const QString& text, const QColor& qc, const QString &layerPrefix)
 {
 	Packet::DebugText *dbg = new Packet::DebugText;
-	QString layer = QString("RobotText%1").arg(shell());
+	QString layer = layerPrefix + QString::number(shell());
 	dbg->set_layer(_state->findDebugLayer(layer));
 	dbg->set_text(text.toStdString());
 	dbg->set_color(color(qc));
@@ -640,27 +650,27 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 
 bool OurRobot::charged() const
 {
-	return radioRx.has_kicker_status() && (radioRx.kicker_status() & 0x01) && (Utils::timestamp() - radioRx.timestamp()) < 500000;
+	return radioRx.has_kicker_status() && (radioRx.kicker_status() & 0x01) && rxIsFresh();
 }
 
 bool OurRobot::hasBall() const
 {
-	return radioRx.has_ball_sense_status() && radioRx.ball_sense_status() == Packet::HasBall && (Utils::timestamp() - radioRx.timestamp()) < 500000;
+	return radioRx.has_ball_sense_status() && radioRx.ball_sense_status() == Packet::HasBall && rxIsFresh();
 }
 
 bool OurRobot::ballSenseWorks() const
 {
-	return radioRx.has_ball_sense_status() && (radioRx.ball_sense_status() == Packet::NoBall || radioRx.ball_sense_status() == Packet::HasBall);
+	return rxIsFresh() && radioRx.has_ball_sense_status() && (radioRx.ball_sense_status() == Packet::NoBall || radioRx.ball_sense_status() == Packet::HasBall);
 }
 
 bool OurRobot::kickerWorks() const
 {
-	return radioRx.has_kicker_status() && !(radioRx.kicker_status() & 0x80) && (Utils::timestamp() - radioRx.timestamp()) < 500000;
+	return radioRx.has_kicker_status() && !(radioRx.kicker_status() & 0x80) && rxIsFresh();
 }
 
 float OurRobot::kickerVoltage() const
 {
-	if (radioRx.has_kicker_voltage() && (Utils::timestamp() - radioRx.timestamp()) < 500000)
+	if (radioRx.has_kicker_voltage() && rxIsFresh())
 	{
 		return radioRx.kicker_voltage();
 	} else {
@@ -670,7 +680,7 @@ float OurRobot::kickerVoltage() const
 
 Packet::HardwareVersion OurRobot::hardwareVersion() const
 {
-	if ((Utils::timestamp() - radioRx.timestamp()) < 500000)
+	if (rxIsFresh())
 	{
 		return radioRx.hardware_version();
 	} else {
@@ -680,7 +690,7 @@ Packet::HardwareVersion OurRobot::hardwareVersion() const
 
 boost::optional<Eigen::Quaternionf> OurRobot::quaternion() const
 {
-	if (radioRx.has_quaternion() && (Utils::timestamp() - radioRx.timestamp()) < 50000)
+	if (radioRx.has_quaternion() && rxIsFresh(50000))
 	{
 		return Eigen::Quaternionf(
 			radioRx.quaternion().q0() / 16384.0,
@@ -690,4 +700,9 @@ boost::optional<Eigen::Quaternionf> OurRobot::quaternion() const
 	} else {
 		return boost::none;
 	}
+}
+
+bool OurRobot::rxIsFresh(uint64_t age) const
+{
+	return (Utils::timestamp() - radioRx.timestamp()) < age;
 }

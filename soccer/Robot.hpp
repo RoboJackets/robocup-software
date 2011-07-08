@@ -170,7 +170,7 @@ public:
 
 	void addStatusText();
 	
-	void addText(const QString &text, const QColor &color = Qt::white);
+	void addText(const QString &text, const QColor &color = Qt::white, const QString &layerPrefix = "RobotText");
 
 	// kicker readiness checks
 	bool charged() const; /// true if the kicker is ready
@@ -367,6 +367,8 @@ public:
 	{
 		return _state;
 	}
+
+	bool rxIsFresh(uint64_t age = 500000) const;
 
 protected:
 	// Stores a stack trace in _commandTrace
