@@ -90,22 +90,28 @@ bool Gameplay::Behaviors::LineKick::run()
 	{
 		// Move onto the line containing the ball and the_setup_ball_avoid target
 		robot->addText(QString("%1").arg(targetLine.delta().dot(robot->pos - ballPos)));
-		Segment behind_line(ballPos - targetLine.delta().normalized() * (*_drive_around_dist + Robot_Radius),
+		Point moveGoal = ballPos - targetLine.delta().normalized() * (*_drive_around_dist + Robot_Radius);
+
+		static const Segment left_field_edge(Point(-Field_Width / 2.0, 0.0), Point(-Field_Width / 2.0, Field_Length));
+		static const Segment right_field_edge(Point(Field_Width / 2.0, 0.0), Point(Field_Width / 2.0, Field_Length));
+
+		// Handle edge of field case
+		float field_edge_thresh = 0.3;
+		Segment behind_line(ballPos - targetLine.delta().normalized() * (*_drive_around_dist),
 				ballPos - targetLine.delta().normalized() * 1.0);
-		if (targetLine.delta().dot(robot->pos - ballPos) > -Robot_Radius)
+		state()->drawLine(behind_line);
+		Point intersection;
+		if (left_field_edge.nearPoint(ballPos, field_edge_thresh) && behind_line.intersects(left_field_edge, &intersection))
 		{
-			// We're very close to or in front of the ball
-			robot->addText("In front");
-			robot->avoidBall(*_setup_ball_avoid);
-			robot->move(ballPos - targetLine.delta().normalized() * (*_drive_around_dist + Robot_Radius));
-		} else
+			moveGoal = intersection;
+		} else if (right_field_edge.nearPoint(ballPos, field_edge_thresh) && behind_line.intersects(right_field_edge, &intersection))
 		{
-			// We're behind the ball
-			robot->addText("Behind");
-			robot->avoidBall(*_setup_ball_avoid);
-			robot->move(behind_line.nearestPoint(robot->pos));
-			state()->drawLine(behind_line);
+			moveGoal = intersection;
 		}
+
+		robot->addText("Setup");
+		robot->avoidBall(*_setup_ball_avoid);
+		robot->move(moveGoal);
 
 		// face in a direction so that on impact, we aim at goal
 		Point delta_facing = target - ballPos;
