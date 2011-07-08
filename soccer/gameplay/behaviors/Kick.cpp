@@ -66,6 +66,13 @@ bool Kick::findShot(const Geometry2d::Segment& segment, Geometry2d::Segment& res
 	}
 }
 
+void Kick::setLineKickVelocityScale(double scale_speed, double scale_acc, double scale_w)
+{
+	_lineKick.scaleSpeed = scale_speed;
+	_lineKick.scaleAcc = scale_acc;
+	_lineKick.scaleW = scale_w;
+}
+
 bool Kick::run() {
 	if (!robot || !robot->visible)
 	{
@@ -83,15 +90,27 @@ bool Kick::run() {
 	// check for shot on goal
 	bool badshot = false;
 	Geometry2d::Segment available_target;
-	if (!(findShot(_target, available_target, 0.1) 				/// try target first
-			  || (enableGoalLineShot && findShot(goal_line, available_target, 0.5)) 		/// try anywhere on goal line
-			  || (enableLeftDownfieldShot && findShot(left_downfield, available_target, 0.5))  /// shot off edge of field
-			  || (enableRightDownfieldShot && findShot(right_downfield, available_target, 0.5))
+	bool must_use_chip = false;
+	if (!(findShot(_target, available_target, false, 0.1) 				/// try target first with kicker
+			  || (enableGoalLineShot && findShot(goal_line, available_target, false, 0.5)) 		/// try anywhere on goal line
+			  || (enableLeftDownfieldShot && findShot(left_downfield, available_target, false, 0.5))  /// shot off edge of field
+			  || (enableRightDownfieldShot && findShot(right_downfield, available_target, false, 0.5))
 			  ))
 	{
-		robot->addText(QString("Kick:no target"));
+		robot->addText(QString("Kick: no kick target"));
 		badshot = true;
 		available_target = _target;   /// if no other option, try kicking anyway
+	} else if (use_chipper && (findShot(_target, available_target, true, 0.1)  				/// try target with chipper
+			  || (enableGoalLineShot && findShot(goal_line, available_target, true, 0.5)) 		/// try anywhere on goal line
+			  || (enableLeftDownfieldShot && findShot(left_downfield, available_target, true, 0.5))  /// shot off edge of field
+			  || (enableRightDownfieldShot && findShot(right_downfield, available_target, true, 0.5))
+			  ))
+	{
+		robot->addText(QString("Kick:chipping"));
+		available_target = _target;   /// if no other option, try kicking anyway
+		must_use_chip = true;
+	} else {
+		badshot = true;
 	}
 
 	const Geometry2d::Point& rPos = robot->pos;
@@ -116,7 +135,7 @@ bool Kick::run() {
 	} else if (use_line_kick)
 	{
 		_lineKick.target = available_target.center();
-		_lineKick.use_chipper = use_chipper;
+		_lineKick.use_chipper = must_use_chip;
 		_lineKick.kick_power = kick_power;
 		bool result = _lineKick.run();
 		if (_lineKick.done())
