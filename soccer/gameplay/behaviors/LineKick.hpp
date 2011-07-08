@@ -43,6 +43,8 @@ namespace Gameplay
 				static ConfigDouble *_accel_bias;
 				static ConfigDouble *_facing_thresh;
 				static ConfigDouble *_max_speed;
+				static ConfigDouble *_proj_time;
+				static ConfigDouble *_dampening;
 		};
 	}
 }
