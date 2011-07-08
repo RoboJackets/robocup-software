@@ -59,6 +59,9 @@ public:
 	double minChipRange;
 	double maxChipRange;
 
+	/** sets line kicking parameters */
+	void setLineKickVelocityScale(double scale_speed, double scale_acc, double scale_w);
+
 private:
 	bool _done;
 
