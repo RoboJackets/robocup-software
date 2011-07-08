@@ -53,7 +53,7 @@ Gameplay::Plays::OurFreekick::OurFreekick(GameplayModule *gameplay):
 float Gameplay::Plays::OurFreekick::score ( Gameplay::GameplayModule* gameplay )
 {
 	const GameState &gs = gameplay->state()->gameState;
-	return (gs.setupRestart() && gs.ourFreeKick()) ? 0 : INFINITY;
+	return (gs.setupRestart() && gs.ourFreeKick()) ? 10 : INFINITY;
 }
 
 bool Gameplay::Plays::OurFreekick::run()
