@@ -12,30 +12,29 @@ namespace Gameplay
 	namespace Plays
 	{
 		/**
-		 * Sends a goal kick towards the goal if its open with kicker,
-		 * otherwise, chips ball to opposite side of field
-		 * and sends another robot to go intercept
+		 * Sends a corner kick across the opponent's goal with
+		 * a
 		 */
-		class OurGoalKick: public Play
+		class OurCornerKick: public Play
 		{
 			public:
 				static void createConfiguration(Configuration *cfg);
 
-				OurGoalKick(GameplayModule *gameplay);
+				OurCornerKick(GameplayModule *gameplay);
 				
-				// same as free kick, but looks for direct and near our goal line
+				// same as free kick, but looks for direct and near their goal line
 				// 1 for good, INF otherwise
 				static float score(GameplayModule *gameplay);
 				virtual bool run();
 			
 			protected:
-				// always takes a chipper - will shoot if open shots
+				// always takes a chipper
 				Behaviors::Kick _kicker;
 				Behaviors::Move _center;
 				Behaviors::Fullback _fullback1, _fullback2;
 				PreventDoubleTouch _pdt;
 
-				static ConfigDouble *_downFieldRange;
+				static ConfigDouble *_targetSegmentWidth;
 				static ConfigDouble *_minChipRange;
 				static ConfigDouble *_maxChipRange;
 				static ConfigInt *_chipper_power;

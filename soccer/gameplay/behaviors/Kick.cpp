@@ -30,6 +30,7 @@ void Kick::restart() {
 	use_chipper = false;
 	use_line_kick = false;
 	override_aim = false;
+	forceChip = false;
 	dribbler_speed = 127;
 	kick_power = 255;
 	minChipRange = 0.3;
@@ -94,7 +95,7 @@ bool Kick::run() {
 	bool must_use_chip = false;
 	if (!override_aim)
 	{
-		if (!(findShot(_target, available_target, false, 0.1) 				/// try target first with kicker
+		if (!forceChip && !(findShot(_target, available_target, false, 0.1) 				/// try target first with kicker
 				|| (enableGoalLineShot && findShot(goal_line, available_target, false, 0.5)) 		/// try anywhere on goal line
 				|| (enableLeftDownfieldShot && findShot(left_downfield, available_target, false, 0.5))  /// shot off edge of field
 				|| (enableRightDownfieldShot && findShot(right_downfield, available_target, false, 0.5))

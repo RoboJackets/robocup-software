@@ -1,6 +1,8 @@
 goalie
 DefendPenalty
 OurFreekick
+OurGoalKick
+OurCornerKick
 KickPenalty
 TheirFreekick
 TheirKickoff
