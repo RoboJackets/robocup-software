@@ -73,6 +73,15 @@ bool Gameplay::Plays::OurFreekick::run()
 	}
 	_pdt.resetBehavior(&_kicker);
 
+	// choose targets for corner kick
+	if (_kicker.robot && _kicker.robot->pos.y > Field_Length * 0.8 && fabs(_kicker.robot->pos.x) > Field_Width * 0.7)
+		_kicker.setTarget(Geometry2d::Segment(
+				Geometry2d::Point(0.0, Field_Length * 0.9),
+				Geometry2d::Point(0.0, Field_Length)));
+	else
+		_kicker.setTargetGoal();
+
+
 	// setup kicker from parameters - want to use chipper when possible
 	_kicker.use_line_kick = true;
 	_kicker.enableGoalLineShot = *_enableGoalLineShot;
