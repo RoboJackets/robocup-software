@@ -25,6 +25,7 @@ Kick::Kick(GameplayModule *gameplay)
 }
 
 void Kick::restart() {
+	// chipping parameters - should get calculated somehow
 	_done = false;
 	use_chipper = false;
 	use_line_kick = false;

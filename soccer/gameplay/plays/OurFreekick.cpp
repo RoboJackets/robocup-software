@@ -31,13 +31,12 @@ void Gameplay::Plays::OurFreekick::createConfiguration(Configuration *cfg)
 
 Gameplay::Plays::OurFreekick::OurFreekick(GameplayModule *gameplay):
 	Play(gameplay),
-//	_kicker(gameplay),
+	_kicker(gameplay),
 	_bump(gameplay),
 	_center(gameplay),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
 	_fullback2(gameplay, Behaviors::Fullback::Right),
-	_pdt(gameplay, &_bump)
-//	_pdt(gameplay, &_kicker)
+	_pdt(gameplay, &_kicker)
 {
 	_center.target = _gameplay->centerMatrix() * Geometry2d::Point(0, 1.5);
 
@@ -61,21 +60,27 @@ bool Gameplay::Plays::OurFreekick::run()
 {
 	set<OurRobot *> available = _gameplay->playRobots();
 	
-//	bool chipper_available = true;
-//	if (!assignNearestChipper(_kicker.robot, available, ball().pos))
-//	{
-//		chipper_available = false;
-//		assignNearestKicker(_kicker.robot, available, ball().pos);
-//	}
-	assignNearest(_bump.robot, available, ball().pos);
+	bool chipper_available = true, kicker_available = true;
+	if (!assignNearestChipper(_kicker.robot, available, ball().pos))
+	{
+		chipper_available = false;
+		if (!assignNearestKicker(_kicker.robot, available, ball().pos))
+		{
+			kicker_available = false;
+			assignNearest(_bump.robot, available, ball().pos); // use bumping
+			_pdt.resetBehavior(&_bump);
+		}
+	}
+	_pdt.resetBehavior(&_kicker);
 
 	// setup kicker from parameters - want to use chipper when possible
-//	_kicker.enableGoalLineShot = *_enableGoalLineShot;
-//	_kicker.enableLeftDownfieldShot = *_enableLeftDownfieldShot;
-//	_kicker.enableRightDownfieldShot = *_enableRightDownfieldShot;
-//	_kicker.use_chipper = chipper_available && *_enableChipper;
-//	_kicker.minChipRange = *_minChipRange;
-//	_kicker.maxChipRange = *_maxChipRange;
+	_kicker.use_line_kick = true;
+	_kicker.enableGoalLineShot = *_enableGoalLineShot;
+	_kicker.enableLeftDownfieldShot = *_enableLeftDownfieldShot;
+	_kicker.enableRightDownfieldShot = *_enableRightDownfieldShot;
+	_kicker.use_chipper = chipper_available && *_enableChipper; // always use chipper when enabled
+	_kicker.minChipRange = *_minChipRange;
+	_kicker.maxChipRange = *_maxChipRange;
 
 	_pdt.backoff.robots.clear();
 	_pdt.backoff.robots.insert(_bump.robot);
