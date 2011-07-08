@@ -128,13 +128,15 @@ bool Gameplay::Behaviors::LineKick::run()
 		Point ballToTarget = (target - ballPos).normalized();
 		Point robotToBall = (ballPos - robot->pos).normalized();
 		Point driveDirection = robotToBall;
-//		Point driveDirection = (ballPos - ballToTarget * Robot_Radius) - robot->pos; // original attempt
 
-		//We want to move in the direction of the target without path planning
-		double speed = min(robot->vel.mag() + *_accel_bias, _max_speed->value()); // enough of a bias to force it to accelerate
+		// Drive directly into the ball
+		double speed = min(robot->vel.mag() + (*_accel_bias * scaleAcc), _max_speed->value()); // enough of a bias to force it to accelerate
 		robot->worldVelocity(driveDirection.normalized() * speed);
-		robot->setWScale(0.5);
-//		robot->angularVelocity(0.0);
+
+		// scale everything to adjust precision
+		robot->setWScale(scaleW);
+		robot->setVScale(scaleSpeed);
+
 		robot->face(ballPos);
 	} else {
 		robot->addText("Done");

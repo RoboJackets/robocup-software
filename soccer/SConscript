@@ -54,6 +54,7 @@ srcs = [
 	'gameplay/plays/BasicOffense112.cpp',
 	'gameplay/plays/BasicOffense121.cpp',
 	'gameplay/plays/YankOpen.cpp',
+	'gameplay/plays/EmptyGoal.cpp',
 
   # Core behaviors
 	'gameplay/behaviors/Move.cpp',

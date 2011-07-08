@@ -28,6 +28,11 @@ namespace Gameplay
 				bool use_chipper;
 				uint8_t kick_power;
 
+				// scale the kicking parameters to adjust speed/precision of the kick
+				float scaleSpeed;
+				float scaleAcc;
+				float scaleW;
+
 			private:
 				enum
 				{
