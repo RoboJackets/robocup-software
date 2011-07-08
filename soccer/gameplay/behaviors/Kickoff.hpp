@@ -38,10 +38,11 @@ namespace Gameplay
 				typedef enum {
 					Mode_Kick,
 					Mode_Chip,
-					Mode_FlingLeft,
-					Mode_FlingRight,
-					Mode_BumpYankLeft,
-					Mode_BumpYankRight
+					Mode_Bump,
+//					Mode_FlingLeft,   // FIXME: add back when these work
+//					Mode_FlingRight,
+//					Mode_BumpYankLeft,
+//					Mode_BumpYankRight
 				} KickoffMode;
 				KickoffMode mode;
 
@@ -51,11 +52,17 @@ namespace Gameplay
 					_kick.setTarget(target);
 				}
 
+				// flags controlled by top-level play
+				bool useRandomKick;
+				bool useKick;    // if disabled, these default to using bump
+				bool useChip;
+				bool allowRandomBump;   // adds bump to the random pool
+
 			private:
 				Behaviors::Bump _bump;
 				Behaviors::Kick _kick;
-				Behaviors::Fling _fling;
-				Behaviors::Yank _yank;
+//				Behaviors::Fling _fling;
+//				Behaviors::Yank _yank;
 
 				bool _mode_chosen; // true when mode has been chosen
 
@@ -64,10 +71,7 @@ namespace Gameplay
 				void executeMode(); // runs the correct behavior
 
 				// GUI Parameters
-				static ConfigBool * _enableRandomKick; // if true, chooses among allowable types
-				static ConfigBool * _enableFling; // if true, allows for fling to be used - uses side
 				static ConfigBool * _enableChip;  // if true, will try to chip at endline
-				static ConfigBool * _enableBumpYank;  // if true, will bump forward and yank back - uses side
 				static ConfigDouble *_chipMinRange;
 				static ConfigDouble *_chipMaxRange;
 		};

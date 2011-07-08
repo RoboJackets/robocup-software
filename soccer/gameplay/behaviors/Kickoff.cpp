@@ -9,56 +9,66 @@ REGISTER_CONFIGURABLE(Kickoff)
 }
 }
 
-ConfigBool *Gameplay::Behaviors::Kickoff::_enableRandomKick;
-ConfigBool *Gameplay::Behaviors::Kickoff::_enableFling;
 ConfigBool *Gameplay::Behaviors::Kickoff::_enableChip;
-ConfigBool *Gameplay::Behaviors::Kickoff::_enableBumpYank;
 ConfigDouble *Gameplay::Behaviors::Kickoff::_chipMinRange;
 ConfigDouble *Gameplay::Behaviors::Kickoff::_chipMaxRange;
 
 void Gameplay::Behaviors::Kickoff::createConfiguration(Configuration *cfg)
 {
-	_enableRandomKick = new ConfigBool(cfg, "Kickoff/Enable Random Kick Mode", false);
-	_enableFling = new ConfigBool(cfg, "Kickoff/Enable Flinging", false);
 	_enableChip = new ConfigBool(cfg, "Kickoff/Enable Chipping", false);
-	_enableBumpYank = new ConfigBool(cfg, "Kickoff/Enable BumpYank", false);
 	_chipMinRange = new ConfigDouble(cfg, "Kickoff/Chip Min Range", 0.3);
 	_chipMaxRange = new ConfigDouble(cfg, "Kickoff/Chip Max Range", 2.0);
 }
 
 Gameplay::Behaviors::Kickoff::Kickoff(GameplayModule *gameplay):
 SingleRobotBehavior(gameplay),
-_bump(gameplay), _kick(gameplay), _fling(gameplay), _yank(gameplay)
+_bump(gameplay), _kick(gameplay) //, _fling(gameplay), _yank(gameplay)
 {
-	mode = Mode_Kick;
+	mode = Mode_Bump;
 	_mode_chosen = false;
+
+	// default is bump
+	useRandomKick = false;
+	useKick = false;
+	useChip = false;
+	allowRandomBump = true;
 
 	// seed random number generator
 	srand(state()->timestamp);
 }
 
 void Gameplay::Behaviors::Kickoff::chooseMode() {
-	if (*_enableRandomKick)
+	if (useRandomKick)
 	{
 		// add enabled modes to pool and pick one at random
 		vector<KickoffMode> modes;
-		modes.push_back(Mode_Kick); // really a bump
-		if (*_enableBumpYank)
+
+		if (allowRandomBump)
 		{
-			modes.push_back(Mode_BumpYankLeft);
-			modes.push_back(Mode_BumpYankRight);
+			modes.push_back(Mode_Bump);
 		}
 
-//		if (*_enableChip)
+		if (useKick)
+		{
+			modes.push_back(Mode_Kick);
+		}
+
+//		if (*_enableBumpYank)
 //		{
-//			modes.push_back(Mode_Chip);
+//			modes.push_back(Mode_BumpYankLeft);
+//			modes.push_back(Mode_BumpYankRight);
 //		}
 
-		if (*_enableFling)
+		if (useChip && *_enableChip)
 		{
-			modes.push_back(Mode_FlingLeft);
-			modes.push_back(Mode_FlingRight);
+			modes.push_back(Mode_Chip);
 		}
+
+//		if (*_enableFling)
+//		{
+//			modes.push_back(Mode_FlingLeft);
+//			modes.push_back(Mode_FlingRight);
+//		}
 
 		random_shuffle(modes.begin(), modes.end());
 		mode = modes.front();
@@ -66,20 +76,27 @@ void Gameplay::Behaviors::Kickoff::chooseMode() {
 	} else
 	{
 		// if not random, pick first on list that is available
-		mode = Mode_Kick;
-		if (*_enableBumpYank)
+		mode = Mode_Bump;
+
+		if (useChip && *_enableChip)
 		{
-			mode = Mode_BumpYankLeft;
+			mode = Mode_Chip;
+			return;
 		}
 
-		if (*_enableFling)
+		if (useKick)
 		{
-			mode = Mode_FlingRight;
+			mode = Mode_Kick;
 		}
 
-//		if (*_enableChip)
+//		if (*_enableBumpYank)
 //		{
-//			mode = Mode_Chip;
+//			mode = Mode_BumpYankLeft;
+//		}
+//
+//		if (*_enableFling)
+//		{
+//			mode = Mode_FlingRight;
 //		}
 	}
 }
@@ -87,39 +104,41 @@ void Gameplay::Behaviors::Kickoff::chooseMode() {
 void Gameplay::Behaviors::Kickoff::executeMode() {
 	switch (mode) {
 	case Mode_Kick:
-//		_kick.use_chipper = false;
-//		_kick.run();
-			_bump.target = Geometry2d::Point(0.0, Field_Length);
-			_bump.run();
+		_kick.use_chipper = false;
+		_kick.run();
+		break;
+	case Mode_Bump:
+		_bump.target = Geometry2d::Point(0.0, Field_Length);
+		_bump.run();
 		break;
 	case Mode_Chip:
-//		_kick.use_chipper = true;
-//		_kick.maxChipRange = *_chipMaxRange;
-//		_kick.minChipRange = *_chipMinRange;
-//		_kick.run();
+		_kick.use_chipper = true;
+		_kick.maxChipRange = *_chipMaxRange;
+		_kick.minChipRange = *_chipMinRange;
+		_kick.run();
 		break;
-	case Mode_FlingLeft:
-		_fling.target = Geometry2d::Point(Field_Width / 2, Field_Length * .75);
-		_fling.run();
-		break;
-	case Mode_FlingRight:
-		_fling.target = Geometry2d::Point(-Field_Width / 2, Field_Length * .75);
-		_fling.run();
-		break;
-	case Mode_BumpYankLeft:
-		_yank.target = Geometry2d::Segment(
-				Geometry2d::Point(Field_Width / 2, Field_Length * .25),
-				Geometry2d::Point(            0.0, Field_Length * .25));
-		_yank.enable_bump = true;
-		_yank.run();
-		break;
-	case Mode_BumpYankRight:
-		_yank.target = Geometry2d::Segment(
-				Geometry2d::Point(-Field_Width / 2, Field_Length * .25),
-				Geometry2d::Point(             0.0, Field_Length * .25));
-		_yank.enable_bump = true;
-		_yank.run();
-		break;
+//	case Mode_FlingLeft:
+//		_fling.target = Geometry2d::Point(Field_Width / 2, Field_Length * .75);
+//		_fling.run();
+//		break;
+//	case Mode_FlingRight:
+//		_fling.target = Geometry2d::Point(-Field_Width / 2, Field_Length * .75);
+//		_fling.run();
+//		break;
+//	case Mode_BumpYankLeft:
+//		_yank.target = Geometry2d::Segment(
+//				Geometry2d::Point(Field_Width / 2, Field_Length * .25),
+//				Geometry2d::Point(            0.0, Field_Length * .25));
+//		_yank.enable_bump = true;
+//		_yank.run();
+//		break;
+//	case Mode_BumpYankRight:
+//		_yank.target = Geometry2d::Segment(
+//				Geometry2d::Point(-Field_Width / 2, Field_Length * .25),
+//				Geometry2d::Point(             0.0, Field_Length * .25));
+//		_yank.enable_bump = true;
+//		_yank.run();
+//		break;
 	}
 }
 
@@ -132,8 +151,8 @@ bool Gameplay::Behaviors::Kickoff::run()
 
 	_kick.robot = robot;
 	_bump.robot = robot;
-	_fling.robot = robot;
-	_yank.robot = robot;
+//	_fling.robot = robot;
+//	_yank.robot = robot;
 
 	// Use the real ball position if we have it.  Otherwise, assume the middle of the field.
 	Geometry2d::Point ballPos(0, Field_Length / 2);
@@ -170,24 +189,26 @@ bool Gameplay::Behaviors::Kickoff::run()
 
 	switch (mode) {
 	case Mode_Kick:
+		robot->addText("Mode: Kick");
+		break;
+	case Mode_Bump:
 		robot->addText("Mode: Bump");
-//		robot->addText("Mode: Kick");
 		break;
 	case Mode_Chip:
 		robot->addText("Mode: Chip");
 		break;
-	case Mode_FlingLeft:
-		robot->addText("Mode: FlingLeft");
-		break;
-	case Mode_FlingRight:
-		robot->addText("Mode: FlingRight");
-		break;
-	case Mode_BumpYankLeft:
-		robot->addText("Mode: BumpYankLeft");
-		break;
-	case Mode_BumpYankRight:
-		robot->addText("Mode: BumpYankRight");
-		break;
+//	case Mode_FlingLeft:
+//		robot->addText("Mode: FlingLeft");
+//		break;
+//	case Mode_FlingRight:
+//		robot->addText("Mode: FlingRight");
+//		break;
+//	case Mode_BumpYankLeft:
+//		robot->addText("Mode: BumpYankLeft");
+//		break;
+//	case Mode_BumpYankRight:
+//		robot->addText("Mode: BumpYankRight");
+//		break;
 	}
 
 	return gameState().state != GameState::Playing;
