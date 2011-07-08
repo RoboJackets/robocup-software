@@ -30,6 +30,7 @@ protected:
 
 	// parameters to set in the GUI
 	static ConfigBool * _useChip;				// flag for chipping or kicking
+	static ConfigBool * _useLineKick;   // switches to line kick mode
 	static ConfigInt *_dribblerSpeed;   // sets the aim/kick dribbler speed
 	static ConfigInt *_kickPower;       // sets the speed to kick at
 	static ConfigDouble *_minChipRange; // minimum range at which to chip
