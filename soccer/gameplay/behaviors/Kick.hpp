@@ -46,10 +46,12 @@ public:
 	bool enableLeftDownfieldShot;   /// kick off left edge of far half field
 	bool enableRightDownfieldShot;  /// kick off rigth edge of far half field
 
+	// overrides
 	bool override_aim;  /// if true, will shoot regardless of obstacles
 
 	/** simple flag to enable pushing of opponent robots if necessary */
 	bool enablePushing;    /// if true, disables collision detection on opponents
+	bool forceChip;        /// if true, will only chip
 
 	/** flags to allow for kicking styles	 */
 	bool use_line_kick;

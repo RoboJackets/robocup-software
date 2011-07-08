@@ -124,6 +124,7 @@ bool Gameplay::Plays::BasicOffense112::run()
 		}
 	}
 	if (!bestOpp && _support.robot) {
+		// FIXME: do something smarter here
 		_support.robot->addText("No mark target");
 	}
 
