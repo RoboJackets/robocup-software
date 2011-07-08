@@ -15,12 +15,17 @@ namespace Plays
 class DemoLineAttack: public Play
 {
 public:
+	static void createConfiguration(Configuration *cfg);
+
 	DemoLineAttack(GameplayModule *gameplay);
 
 	virtual bool run();
 
 protected:
 	Behaviors::LineKick _kicker;
+
+	static ConfigBool *_use_chipper;
+	static ConfigInt *_kick_power;
 };
 } // \Gameplay
 } // \Plays

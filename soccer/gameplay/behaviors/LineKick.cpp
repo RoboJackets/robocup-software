@@ -31,7 +31,7 @@ void Gameplay::Behaviors::LineKick::createConfiguration(Configuration *cfg)
 Gameplay::Behaviors::LineKick::LineKick(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay)
 {
-	_state = State_Setup;
+	restart();
 	target = Geometry2d::Point(0.0, Field_Length);
 }
 

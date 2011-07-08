@@ -6,6 +6,23 @@ using namespace std;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoLineAttack, "Demos")
 
+namespace Gameplay
+{
+	namespace Plays
+	{
+		REGISTER_CONFIGURABLE(DemoLineAttack)
+	}
+}
+
+ConfigBool *Gameplay::Plays::DemoLineAttack::_use_chipper;
+ConfigInt  *Gameplay::Plays::DemoLineAttack::_kick_power;
+
+void Gameplay::Plays::DemoLineAttack::createConfiguration(Configuration* cfg)
+{
+	_use_chipper  = new ConfigBool(cfg, "DemoLineAttack/Enable Chipping", false);
+	_kick_power = new ConfigInt(cfg, "DemoLineAttack/Kicker Power", 127);
+}
+
 Gameplay::Plays::DemoLineAttack::DemoLineAttack(GameplayModule *gameplay):
 	Play(gameplay),
 	_kicker(gameplay)
@@ -25,8 +42,11 @@ bool Gameplay::Plays::DemoLineAttack::run()
 	{
 		_kicker.restart();
 	}
+	
+	_kicker.use_chipper = *_use_chipper;
+	_kicker.kick_power = *_kick_power;
 
 	_kicker.run();
-	
+
 	return true;
 }
