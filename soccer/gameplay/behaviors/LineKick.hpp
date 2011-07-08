@@ -36,11 +36,12 @@ namespace Gameplay
 					State_Done
 				} _state;
 
-				static ConfigBool *_face_ball;
 				static ConfigDouble *_drive_around_dist;
 				static ConfigDouble *_setup_to_charge_thresh;
 				static ConfigDouble *_escape_charge_thresh;
 				static ConfigDouble *_setup_ball_avoid;
+				static ConfigDouble *_accel_bias;
+				static ConfigDouble *_facing_thresh;
 		};
 	}
 }

@@ -41,6 +41,7 @@ namespace Gameplay
 				static ConfigDouble *_escape_charge_thresh;
 				static ConfigDouble *_setup_ball_avoid;
 				static ConfigDouble *_bump_complete_dist;
+				static ConfigDouble *_facing_thresh;
 				static ConfigDouble *_accel_bias;
 		};
 	}
