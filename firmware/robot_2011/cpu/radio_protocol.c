@@ -95,7 +95,7 @@ int handle_forward_packet()
 	LED_TOGGLE(LED_RG);
 	LED_OFF(LED_RR);
 	
-	sequence = forward_packet[0] >> 4;
+	sequence = forward_packet[0] & 7;
 	
 	// Clear motor commands in case this robot's ID does not appear in the packet
 	cmd_body_x = 0;
