@@ -121,6 +121,7 @@
   <Kicker_Power value="127"/>
   <Minimum_Chip_Range value="0.4"/>
   <Maximum_Chip_Range value="2.5"/>
+  <Enable_LineKick value="false"/>
  </DemoAttack>
  <Bump>
   <Drive_Around_Dist value="0.35"/>
@@ -129,13 +130,20 @@
   <Setup_Ball_Avoid value="0.043"/>
   <Bump_Complete_Distance value="0.5"/>
   <Face_Ball_otherwise_target value="true"/>
+  <Accel_Bias value="0.1"/>
+  <Facing_Thresh_-_Deg value="10"/>
  </Bump>
  <LineKick>
-  <Drive_Around_Dist value="0.25"/>
+  <Drive_Around_Dist value="0.15"/>
   <Charge_Thresh value="0.1"/>
   <Escape_Charge_Thresh value="0.1"/>
-  <Setup_Ball_Avoid value="0.043"/>
+  <Setup_Ball_Avoid value="0.08"/>
   <Face_Ball_otherwise_target value="true"/>
+  <Accel_Bias value="0.0005"/>
+  <Facing_Thresh_-_Deg value="10"/>
+  <Max_Charge_Speed value="1"/>
+  <Ball_Project_Time value="0.3"/>
+  <Ball_Project_Dampening value="0.8"/>
  </LineKick>
  <Kickoff>
   <Enable_Random_Kick_Mode value="false"/>
@@ -279,4 +287,14 @@
   <Defense_Support_Ratio value="0.9"/>
   <Use_Yank value="false"/>
  </YankOpen>
+ <DynamicNavigationTC>
+  <Opponent_Avoid_Radius value="0.5"/>
+  <Goal_X value="0.7"/>
+  <Goal_Y value="0.7"/>
+  <Center_X value="0.15"/>
+ </DynamicNavigationTC>
+ <DemoLineAttack>
+  <Enable_Chipping value="false"/>
+  <Kicker_Power value="127"/>
+ </DemoLineAttack>
 </config>

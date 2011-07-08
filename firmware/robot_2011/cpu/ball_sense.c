@@ -12,7 +12,7 @@ static const int Dazzle_Threshold = 500;
 
 // The minimum difference between light and dark measurements that indicates the beam is not broken.
 //FIXME - This number is arbitrary and not based on experiment
-static const int Unbroken_Beam = 800;
+static const int Unbroken_Beam = 700;
 
 // How many consecutive cycles the detector input must be stuck at full scale for the
 // detector to be declared open-circuited.
