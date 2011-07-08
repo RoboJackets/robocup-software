@@ -207,7 +207,7 @@ void Joystick::drive(RadioTx::Robot *tx)
 	
 	tx->set_body_x(input.y);
 	tx->set_body_y(-input.x);
-	tx->set_body_w(-leftX * 4 * M_PI);
+	tx->set_body_w(-leftX * 1 * M_PI);
 	
 	if (_button[6])
 	{

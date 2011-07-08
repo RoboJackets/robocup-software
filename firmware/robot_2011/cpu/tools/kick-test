@@ -11,6 +11,6 @@ from rc_radio import *
 forward = [0] * 36
 forward[1 + 4] = int(sys.argv[1]);
 forward[1 + 5] = int(sys.argv[2]);
-forward[1 + 6] = 0x02;
+forward[1 + 6] = 0x03;
 
 send(forward)

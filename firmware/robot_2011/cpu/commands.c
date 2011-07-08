@@ -123,6 +123,7 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	
 	printf("Robot ID %d\n", robot_id);
 	printf("Reset type %x\n", (AT91C_BASE_SYS->RSTC_RSR >> 8) & 7);
+	printf("Current time: %d\n", current_time);
 	
 	printf("Failures: 0x%08x", failures);
 	if (failures & Fail_FPGA)
@@ -786,7 +787,6 @@ const command_t commands[] =
 	{"ww", cmd_write_word},
 	{"stfu", cmd_stfu},
 	{"run", cmd_run},
-	{"time", cmd_print_uint32, (void *)&current_time},
 	{"inputs", cmd_print_uint32, (void *)&AT91C_BASE_PIOA->PIO_PDSR},
 	{"timers", cmd_timers},
 	{"fpga_reset", cmd_fpga_reset},
