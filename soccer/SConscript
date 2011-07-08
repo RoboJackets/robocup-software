@@ -44,6 +44,7 @@ srcs = [
 	'gameplay/plays/OurKickoff.cpp',
 	'gameplay/plays/TheirKickoff.cpp',
 	'gameplay/plays/OurFreekick.cpp',
+	'gameplay/plays/OurGoalKick.cpp',
 	'gameplay/plays/TheirFreekick.cpp',
 	'gameplay/plays/KickPenalty.cpp',
 	'gameplay/plays/DefendPenalty.cpp',

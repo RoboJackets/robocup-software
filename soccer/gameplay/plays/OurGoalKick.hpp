@@ -12,33 +12,34 @@ namespace Gameplay
 {
 	namespace Plays
 	{
-		class OurFreekick: public Play
+		/**
+		 * Sends a goal kick towards the goal if its open with kicker,
+		 * otherwise, chips ball to opposite side of field
+		 * and sends another robot to go intercept
+		 */
+		class OurGoalKick: public Play
 		{
 			public:
 				static void createConfiguration(Configuration *cfg);
 
-				OurFreekick(GameplayModule *gameplay);
+				OurGoalKick(GameplayModule *gameplay);
 				
-				// this is a default free kick behavior - used for general restart kicks
-				// returns 10 if applicable - specialized plays handle corner and goal cases
+				// same as free kick, but looks for direct and near our goal line
+				// 1 for good, INF otherwise
 				static float score(GameplayModule *gameplay);
 				virtual bool run();
 			
 			protected:
-				// Options for kicking the ball
+				// always takes a chipper - will shoot if open shots
 				Behaviors::Kick _kicker;
-				Behaviors::Bump _bump;
-
 				Behaviors::Move _center;
 				Behaviors::Fullback _fullback1, _fullback2;
 				PreventDoubleTouch _pdt;
 
-				static ConfigBool *_enableGoalLineShot;
-				static ConfigBool *_enableLeftDownfieldShot;
-				static ConfigBool *_enableRightDownfieldShot;
-				static ConfigBool *_enableChipper;
+				static ConfigDouble *_downFieldRange;
 				static ConfigDouble *_minChipRange;
 				static ConfigDouble *_maxChipRange;
+				static ConfigInt *_chipper_power;
 		};
 	}
 }
