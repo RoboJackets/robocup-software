@@ -1,6 +1,7 @@
 #include "LineKick.hpp"
 #include <stdio.h>
 
+using namespace std;
 using namespace Geometry2d;
 
 namespace Gameplay
@@ -17,6 +18,7 @@ ConfigDouble *Gameplay::Behaviors::LineKick::_escape_charge_thresh;
 ConfigDouble *Gameplay::Behaviors::LineKick::_setup_ball_avoid;
 ConfigDouble *Gameplay::Behaviors::LineKick::_accel_bias;
 ConfigDouble *Gameplay::Behaviors::LineKick::_facing_thresh;
+ConfigDouble *Gameplay::Behaviors::LineKick::_max_speed;
 
 void Gameplay::Behaviors::LineKick::createConfiguration(Configuration *cfg)
 {
@@ -25,7 +27,8 @@ void Gameplay::Behaviors::LineKick::createConfiguration(Configuration *cfg)
 	_escape_charge_thresh = new ConfigDouble(cfg, "LineKick/Escape Charge Thresh", 0.1);
 	_setup_ball_avoid = new ConfigDouble(cfg, "LineKick/Setup Ball Avoid", Ball_Radius * 2.0);
 	_accel_bias = new ConfigDouble(cfg, "LineKick/Accel Bias", 0.1);
-	_facing_thresh = new ConfigDouble(cfg, "Bump/Facing Thresh - Deg", 10);
+	_facing_thresh = new ConfigDouble(cfg, "LineKick/Facing Thresh - Deg", 10);
+	_max_speed = new ConfigDouble(cfg, "LineKick/Max Charge Speed", 1.5);
 }
 
 Gameplay::Behaviors::LineKick::LineKick(GameplayModule *gameplay):
@@ -59,7 +62,8 @@ bool Gameplay::Behaviors::LineKick::run()
 	{
 		if (targetLine.distTo(robot->pos) <= *_setup_to_charge_thresh &&
 				targetLine.delta().dot(robot->pos - ball().pos) <= -Robot_Radius &&
-				facing_err >= facing_thresh)
+				facing_err >= facing_thresh &&
+				robot->vel.mag() < 0.05)
 		{
 			_state = State_Charge;
 		}
@@ -115,7 +119,7 @@ bool Gameplay::Behaviors::LineKick::run()
 		Point driveDirection = (ball().pos - ballToTarget * Robot_Radius) - robot->pos;
 
 		//We want to move in the direction of the target without path planning
-		double speed =  robot->vel.mag() + *_accel_bias; // enough of a bias to force it to accelerate
+		double speed = min(robot->vel.mag() + *_accel_bias, _max_speed->value()); // enough of a bias to force it to accelerate
 		robot->worldVelocity(driveDirection.normalized() * speed);
 		robot->angularVelocity(0.0);
 	} else {

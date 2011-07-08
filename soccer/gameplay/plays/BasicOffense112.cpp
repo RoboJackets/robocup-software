@@ -66,6 +66,9 @@ bool Gameplay::Plays::BasicOffense112::run()
 	const float dampen_factor = 0.9; // accounts for slowing over time
 	Geometry2d::Point ballProj = ball().pos + ball().vel * proj_time * dampen_factor;
 
+	// Get a striker first to ensure there a robot that can kick
+	assignNearestKicker(_striker.robot, available, ballProj);
+
 	// defense first - get closest to goal to choose sides properly
 	assignNearest(_leftFullback.robot, available, Geometry2d::Point(-Field_GoalWidth/2, 0.0));
 	assignNearest(_rightFullback.robot, available, Geometry2d::Point(Field_GoalWidth/2, 0.0));
@@ -81,8 +84,6 @@ bool Gameplay::Plays::BasicOffense112::run()
 	}
 
 	// choose offense, we want closest robot to ball to be striker
-	// FIXME: need to assign more carefully to ensure that there is a robot available to kick
-	assignNearestKicker(_striker.robot, available, ballProj);
 	assignNearest(_support.robot, available, ballProj);
 
 	// find the nearest opponent to the striker

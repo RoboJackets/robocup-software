@@ -42,6 +42,7 @@ namespace Gameplay
 				static ConfigDouble *_setup_ball_avoid;
 				static ConfigDouble *_accel_bias;
 				static ConfigDouble *_facing_thresh;
+				static ConfigDouble *_max_speed;
 		};
 	}
 }
