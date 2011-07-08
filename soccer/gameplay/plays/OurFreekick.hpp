@@ -24,7 +24,7 @@ namespace Gameplay
 			
 			protected:
 				// Options for kicking the ball
-//				Behaviors::Kick _kicker;
+				Behaviors::Kick _kicker;
 				Behaviors::Bump _bump;
 
 				Behaviors::Move _center;
