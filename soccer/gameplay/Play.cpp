@@ -104,9 +104,9 @@ bool assignNearestYank(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d
 
 static bool meetsRequirements(OurRobot * robot,	bool hasKicker, bool hasChipper, bool hasDribbler, bool hasBallSense)
 {
-	return !((hasKicker    && (!robot->kickerWorks() || !*robot->status->kicker_enabled)) ||
-			(hasChipper   && (robot->hardwareVersion() == Packet::RJ2008 || !robot->kickerWorks() || !*robot->status->chipper_enabled)) ||
-			(hasDribbler  && (!*robot->status->dribbler_enabled || robot->radioRx.motor_status_size() != 5 || robot->radioRx.motor_status(4) != Packet::Good)) ||
+	return !((hasKicker    && !robot->kicker_available()) ||
+			(hasChipper   && !robot->chipper_available()) ||
+			(hasDribbler  && !robot->dribbler_available()) ||
 			(hasBallSense && (!*robot->status->ball_sense_enabled || !robot->ballSenseWorks())));
 }
 

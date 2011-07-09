@@ -3,6 +3,7 @@
 #include "../Behavior.hpp"
 
 #include <gameplay/behaviors/Kick.hpp>
+#include <gameplay/behaviors/Bump.hpp>
 
 namespace Gameplay
 {
@@ -32,6 +33,7 @@ namespace Gameplay
 				// MODE setting - this stores which play will be used
 				typedef enum {
 					Mode_None,
+					Mode_Bump,
 					Mode_Kick,
 					Mode_KickLeftCorner,
 					Mode_KickRightCorner,
@@ -49,9 +51,11 @@ namespace Gameplay
 				bool useRandomKick;
 				uint8_t kickPower;
 				bool enableChip;
+				bool enableBump;
 
 			private:
 				Behaviors::Kick _kick;
+				Behaviors::Bump _bump;
 
 				void chooseMode(); // sets the mode at startup
 
