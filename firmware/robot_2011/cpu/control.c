@@ -14,7 +14,7 @@
 #include "imu.h"
 #include "invensense/imuFIFO.h"
 
-static const int Command_Rate_Limit = 20;
+static const int Command_Rate_Limit = 40;
 static int last_out[4];
 
 const controller_info_t *default_controller;
@@ -49,12 +49,12 @@ static void dumb_update()
 		}
 		
 		int delta = new_out - last_out[i];
-		if (delta > accel_limit)
+		if (delta > Command_Rate_Limit)
 		{
-			delta = accel_limit;
-		} else if (delta < -accel_limit)
+			delta = Command_Rate_Limit;
+		} else if (delta < -Command_Rate_Limit)
 		{
-			delta = -accel_limit;
+			delta = -Command_Rate_Limit;
 		}
 		motor_out[i] = last_out[i] + delta;
 		last_out[i] = motor_out[i];

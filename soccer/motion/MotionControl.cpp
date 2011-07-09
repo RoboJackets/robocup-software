@@ -104,7 +104,7 @@ void MotionControl::positionPD()
 	float newSpeed = newVel.mag();
 	if (newSpeed)
 	{
-		_robot->addText(QString().sprintf("Dist %f Speed cur %f new %f", posError.mag(), curSpeed, newSpeed));
+		_robot->addText(QString().sprintf("Dist %f Speed cur %f new %f max %f", posError.mag(), curSpeed, newSpeed, maxSpeed));
 // 		_robot->addText(QString().sprintf("Range %f %f", minSpeed, maxSpeed));
 		if (newSpeed > maxSpeed)
 		{
@@ -169,7 +169,7 @@ void MotionControl::run()
 	// Scaling
 	if (_robot->cmd.worldVel)
 	{
-		_robot->cmd.worldVel = *_robot->cmd.worldVel * _robot->cmd.vScale;
+// 		_robot->cmd.worldVel = *_robot->cmd.worldVel * _robot->cmd.vScale;
 		if (!_robot->cmd.bodyVel)
 		{
 			_robot->cmd.bodyVel = _robot->cmd.worldVel->rotated(-_robot->angle);
