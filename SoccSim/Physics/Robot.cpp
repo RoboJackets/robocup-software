@@ -356,9 +356,13 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
 	NxVec3 angularVel(0, 0, data->body_w());
 	
 	NxVec3 worldVel = _actor->getGlobalOrientation() * bodyVel;
-	
+
 	_actor->setLinearVelocity(worldVel);
 	_actor->setAngularVelocity(angularVel);
+	
+	// Get past friction
+	_actor->addLocalForce(bodyVel * 0.01, NX_VELOCITY_CHANGE);
+	_actor->addLocalTorque(angularVel * 0.01, NX_VELOCITY_CHANGE);
 	
 #if 0
 	// Wheels
