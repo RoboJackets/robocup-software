@@ -5,6 +5,7 @@
 #include <motion/MotionControl.hpp>
 #include <protobuf/LogFrame.pb.h>
 #include <framework/SystemState.hpp>
+#include <framework/RobotConfig.hpp>
 #include <modeling/RobotFilter.hpp>
 
 #include <stdio.h>
@@ -668,6 +669,35 @@ bool OurRobot::ballSenseWorks() const
 bool OurRobot::kickerWorks() const
 {
 	return radioRx.has_kicker_status() && !(radioRx.kicker_status() & 0x80) && rxIsFresh();
+}
+
+bool OurRobot::chipper_available() const
+{
+	return hardwareVersion() == Packet::RJ2011 && kickerWorks() && *status->chipper_enabled;
+}
+
+bool OurRobot::kicker_available() const
+{
+	return kickerWorks() && *status->kicker_enabled;
+}
+
+bool OurRobot::dribbler_available() const {
+	return *status->dribbler_enabled && radioRx.motor_status_size() == 5 && radioRx.motor_status(4) == Packet::Good;
+}
+
+bool OurRobot::driving_available(bool require_all) const
+{
+	if (radioRx.motor_status_size() != 5)
+		return false;
+	int c = 0;
+	for (int i=0; i<4; ++i)
+	{
+		if (radioRx.motor_status(i) == Packet::Good)
+		{
+			++c;
+		}
+	}
+	return (require_all) ? c == 4 : c == 3;
 }
 
 float OurRobot::kickerVoltage() const
