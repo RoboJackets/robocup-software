@@ -16,6 +16,9 @@ message RadioTx
 		
 		// Angular velocity, rad/s
 		required float body_w = 8;
+		
+		optional float accel = 9;
+		optional float decel = 10;
 	}
 	
 	repeated Robot robots = 2;

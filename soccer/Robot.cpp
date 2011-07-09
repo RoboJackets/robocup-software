@@ -195,6 +195,8 @@ void OurRobot::resetMotionCommand()
 
 	radioTx.Clear();
 	radioTx.set_robot_id(shell());
+	radioTx.set_accel(10);
+	radioTx.set_decel(10);
 
 	cmd = MotionCommand();
 	_delayed_goal = boost::none;
