@@ -47,37 +47,24 @@ bool Gameplay::Plays::OurKickoff::run()
 {
 	set<OurRobot *> available = _gameplay->playRobots();
 
-	bool chipper_available = true, kicker_available = true;
+	bool chipper_available = true;
 	if (!assignNearestChipper(_kicker.robot, available, ball().pos))
 	{
+		// just assumes kickable robot somewhere on field
 		chipper_available = false;
-		if (!assignNearestKicker(_kicker.robot, available, ball().pos))
-		{
-			kicker_available = false;
-			assignNearest(_kicker.robot, available, ball().pos);
-		}
+		assignNearestKicker(_kicker.robot, available, ball().pos);
+
+		// FIXME: add back the ability to bump
+//		if (!assignNearestKicker(_kicker.robot, available, ball().pos))
+//		{
+//			kicker_available = false;
+//			assignNearest(_kicker.robot, available, ball().pos);
+//		}
 	}
 	
 	// ensure kickoff behavior only uses working behaviors
-	if (chipper_available && kicker_available)
-	{
-		_kicker.useChip = true;
-		_kicker.useKick = true;
-		_kicker.useRandomKick = true;
-		_kicker.allowRandomBump = false;
-	} else if (chipper_available || kicker_available)
-	{
-		_kicker.useChip = chipper_available;
-		_kicker.useKick = kicker_available;
-		_kicker.useRandomKick = false;
-		_kicker.allowRandomBump = false;
-	} else
-	{
-		_kicker.useChip = chipper_available;
-		_kicker.useKick = kicker_available;
-		_kicker.useRandomKick = false;
-		_kicker.allowRandomBump = true;
-	}
+	_kicker.enableChip = chipper_available;
+	_kicker.useRandomKick = true;
 
 	_pdt.backoff.robots.clear();
 	_pdt.backoff.robots.insert(_kicker.robot);
