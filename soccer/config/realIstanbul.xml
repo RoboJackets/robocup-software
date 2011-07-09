@@ -77,8 +77,8 @@
  </Rev2008>
  <Rev2011>
   <trapTrans>
-   <velocity value="0.5"/>
-   <acceleration value="0.03"/>
+   <velocity value="2"/>
+   <acceleration value="0.5"/>
    <predictTime value="0"/>
    <responseTime value="0.2"/>
   </trapTrans>
@@ -89,12 +89,12 @@
    <responseTime value="0"/>
   </trapRot>
   <translation>
-   <p value="1"/>
+   <p value="2"/>
    <i value="0"/>
    <d value="0"/>
   </translation>
   <rotation>
-   <p value="1"/>
+   <p value="2"/>
    <i value="0"/>
    <d value="0"/>
   </rotation>
@@ -170,6 +170,7 @@
   <Support_Avoid_Shot value="0.2"/>
   <Offense_Support_Ratio value="0.7"/>
   <Defense_Support_Ratio value="0.9"/>
+  <Enable_Line_Kick value="true"/>
  </BasicOffense112>
  <OurFreekick>
   <Enable_GoalLine_Shot value="true"/>
@@ -297,4 +298,21 @@
   <Enable_Chipping value="false"/>
   <Kicker_Power value="127"/>
  </DemoLineAttack>
+ <EmptyGoal>
+  <Scale_Speed value="0.5"/>
+  <Scale_Accel value="0.5"/>
+  <Scale_W value="0.3"/>
+ </EmptyGoal>
+ <OurCornerKick>
+  <Chipper_Power value="127"/>
+  <Window_Width value="1.5125"/>
+  <Min_Chip_Range value="0.3"/>
+  <Max_Chip_Range value="3"/>
+ </OurCornerKick>
+ <OurGoalKick>
+  <Chipper_Power value="255"/>
+  <Downfield_Range value="3.025"/>
+  <Min_Chip_Range value="0.3"/>
+  <Max_Chip_Range value="3"/>
+ </OurGoalKick>
 </config>
