@@ -221,6 +221,11 @@ void USBRadio::send(Packet::RadioTx& packet)
 	forward_packet[0] = _sequence;
 	packet.set_sequence(_sequence);
 	
+	// Unit conversions
+	static const float Seconds_Per_Cycle = 0.005f;
+	static const float Meters_Per_Tick = 0.026f * 2 * M_PI / 6480.0f;
+	static const float Radians_Per_Tick = 0.026f * M_PI / (0.0812f * 3240.0f);
+	
 	int offset = 1;
 	int slot;
 	for (slot = 0; slot < 5 && slot < packet.robots_size(); ++slot)
@@ -228,13 +233,13 @@ void USBRadio::send(Packet::RadioTx& packet)
 		const RadioTx::Robot &robot = packet.robots(slot);
 		int robot_id = robot.robot_id();
 		
-		float bodyVelX = robot.body_x();
-		float bodyVelY = robot.body_y();
-		float bodyVelW = robot.body_w();
+		float bodyVelX = robot.body_x() * Seconds_Per_Cycle / Meters_Per_Tick / sqrtf(2);
+		float bodyVelY = robot.body_y() * Seconds_Per_Cycle / Meters_Per_Tick / sqrtf(2);
+		float bodyVelW = robot.body_w() * Seconds_Per_Cycle / Radians_Per_Tick;
 		
-		int outX = clamp((int)roundf(bodyVelX / 0.008), -511, 511);
-		int outY = clamp((int)roundf(bodyVelY / 0.008), -511, 511);
-		int outW = clamp((int)roundf(bodyVelW / (0.02 * M_PI)), -511, 511);
+		int outX = clamp((int)roundf(bodyVelX), -511, 511);
+		int outY = clamp((int)roundf(bodyVelY), -511, 511);
+		int outW = clamp((int)roundf(bodyVelW), -511, 511);
 		
 		uint8_t kick = robot.kick();
 		uint8_t dribbler = max(0, min(255, robot.dribbler() * 2));
@@ -250,6 +255,8 @@ void USBRadio::send(Packet::RadioTx& packet)
 		forward_packet[offset++] = (dribbler & 0xf0) | (robot_id & 0x0f);
 		forward_packet[offset++] = kick;
 		forward_packet[offset++] = robot.use_chipper() ? 1 : 0;
+		forward_packet[offset++] = robot.accel();
+		forward_packet[offset++] = robot.decel();
 	}
 	
 	// Unused slots
@@ -260,6 +267,8 @@ void USBRadio::send(Packet::RadioTx& packet)
 		forward_packet[offset++] = 0;
 		forward_packet[offset++] = 0;
 		forward_packet[offset++] = 0x0f;
+		forward_packet[offset++] = 0;
+		forward_packet[offset++] = 0;
 		forward_packet[offset++] = 0;
 		forward_packet[offset++] = 0;
 	}

@@ -1,3 +1,14 @@
+Physical units for 2011 robots:
+	Times are given in control cycles (5ms/cycle).
+	1440*4.5 = 6480 ticks/rev
+	Distances are given in encoder ticks.
+		0.026*2*pi m/rev / (1440*4.5 ticks/rev) = 0.026*2*pi/(1440*4.5) m/tick
+	Wheel angular distance:
+		(2*pi rad/rev) / (1440*4.5 ticks/rev) = pi/3240 rad/tick
+	Robot angular distance:
+		pi/3240 rad/tick * 0.026 / 0.0812 = pi*.026/(.0812*3240) robot-rad/tick
+		= 203/776000 rad/tick
+
 Forward (base station to robot):
 
 Byte 0: Sequence number
@@ -8,9 +19,6 @@ Bytes 1+: Robot command slots, 6 bytes each
 	Not all combinations of velocities that can be transmitted can be achieved.
 	The host is responsible for only sending achievable commands.
 	Other commands will be executed incorrectly.
-	
-	Linear velocity units: 8mm/s per count
-	Angular velocity units: 0.02*pi rad/s per count
 	
 	Byte +0: Body X (forward) velocity bits 7-0
 	Byte +1: Body Y (left) velocity bits 7-0
@@ -32,6 +40,8 @@ Bytes 1+: Robot command slots, 6 bytes each
 		Bit 0: Chip/kick select
 			1=Chip
 			0=Flat kick
+	Byte +7: Acceleration limit, ticks/cycle^2
+	Byte +8: Deceleration limit, ticks/cycle^2
 
 Reverse (robot to base station):
 Byte 0:

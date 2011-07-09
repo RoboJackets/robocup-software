@@ -12,6 +12,8 @@ extern int cmd_body_w;
 extern int dribble_command;		// -511 to 511
 extern int kick_command;		// 0 to 255
 extern int kick_immediate;
+extern int accel_limit;
+extern int decel_limit;
 
 extern uint32_t rx_lost_time;
 

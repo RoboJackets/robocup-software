@@ -12,7 +12,7 @@
 
 #include <string.h>
 
-#define Forward_Size    36
+#define Forward_Size    46
 
 // Last forward packet
 uint8_t forward_packet[Forward_Size];
@@ -23,6 +23,8 @@ int cmd_body_w;
 int dribble_command;
 int kick_command;
 int kick_immediate;
+int accel_limit;
+int decel_limit;
 
 int sequence;
 
@@ -136,11 +138,23 @@ int handle_forward_packet()
 			kick_command = forward_packet[offset + 5];
 			use_chipper = forward_packet[offset + 6] & 1;
 			kick_immediate = forward_packet[offset + 6] & 2;
+			accel_limit = forward_packet[offset + 7];
+			decel_limit = forward_packet[offset + 7];
 			
 			reply_slot = slot;
 			break;
 		}
-		offset += 7;
+		offset += 9;
+	}
+	
+	if (accel_limit > 40)
+	{
+		accel_limit = 40;
+	}
+	
+	if (decel_limit > 40)
+	{
+		decel_limit = 40;
 	}
 	
 	if (reply_slot >= 0)

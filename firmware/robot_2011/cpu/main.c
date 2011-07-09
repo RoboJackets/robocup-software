@@ -314,6 +314,8 @@ int main()
 				dribble_command = 0;
 				kick_command = 0;
 				use_chipper = 0;
+				accel_limit = 0;
+				decel_limit =  0;
 			}
 			
 			// Check for radio packets
