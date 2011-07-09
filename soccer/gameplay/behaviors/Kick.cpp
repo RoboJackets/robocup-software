@@ -2,14 +2,34 @@
 
 #include <stdio.h>
 #include <algorithm>
+#include <Utils.hpp>
 
 using namespace std;
 using namespace Geometry2d;
+
+namespace Gameplay {
+namespace Behaviors {
+REGISTER_CONFIGURABLE(Kick)
+}
+}
+
+ConfigDouble *Gameplay::Behaviors::Kick::_chip_min_range;
+ConfigDouble *Gameplay::Behaviors::Kick::_chip_max_range;
+ConfigInt *Gameplay::Behaviors::Kick::_chip_min_power;
+ConfigInt *Gameplay::Behaviors::Kick::_chip_max_power;
 
 namespace Gameplay
 {
 namespace Behaviors
 {
+
+void Gameplay::Behaviors::Kick::createConfiguration(Configuration *cfg)
+{
+	_chip_min_range = new ConfigDouble(cfg, "Kick/Chip Min Range", 0.3);
+	_chip_max_range	= new ConfigDouble(cfg, "Kick/Chip Max Range", 4.0);
+	_chip_min_power = new ConfigInt(cfg, "Kick/Chip Min Power", 100);
+	_chip_max_power = new ConfigInt(cfg, "Kick/Chip Max Power", 255);
+}
 
 Kick::Kick(GameplayModule *gameplay)
 	: SingleRobotBehavior(gameplay),
@@ -33,6 +53,7 @@ void Kick::restart() {
 	forceChip = false;
 	dribbler_speed = 127;
 	kick_power = 255;
+	chip_power = 255;
 	minChipRange = 0.3;
 	maxChipRange = 0.5;
 	_pivotKick.restart();
@@ -48,6 +69,15 @@ void Kick::setTargetGoal() {
 void Kick::setTarget(const Geometry2d::Segment &seg) {
 	_target = seg;
 	_pivotKick.target = _target;
+}
+
+void Kick::calculateChipPower(double dist)
+{
+	double range_area = *_chip_max_range - *_chip_min_range;
+	double ratio = (dist - *_chip_min_range)/range_area;
+	uint8_t power_area = *_chip_max_power - *_chip_min_power;
+	double power = ratio * (double) power_area + *_chip_min_power;
+	chip_power = (uint8_t) Utils::clamp((double) power, (double) _chip_min_power->value(), 255.0);
 }
 
 bool Kick::findShot(const Geometry2d::Segment& segment, Geometry2d::Segment& result, bool chip, float min_segment_length) const {
@@ -141,7 +171,7 @@ bool Kick::run() {
 	{
 		_lineKick.target = available_target.center();
 		_lineKick.use_chipper = must_use_chip;
-		_lineKick.kick_power = kick_power;
+		_lineKick.kick_power = (must_use_chip) ? chip_power : kick_power;
 		bool result = _lineKick.run();
 		if (_lineKick.done())
 		{
@@ -153,7 +183,7 @@ bool Kick::run() {
 		_pivotKick.target = available_target;
 		_pivotKick.dribble_speed = dribbler_speed;
 		_pivotKick.use_chipper = use_chipper;
-		_pivotKick.kick_power = kick_power;
+		_pivotKick.kick_power = (use_chipper) ? chip_power : kick_power;
 		bool result = _pivotKick.run();
 		if (_pivotKick.done())
 		{
