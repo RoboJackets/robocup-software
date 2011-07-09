@@ -3,6 +3,7 @@
 #include <framework/RobotConfig.hpp>
 
 using namespace std;
+using namespace Geometry2d;
 
 namespace Gameplay {
 namespace Behaviors {
@@ -140,6 +141,10 @@ bool Gameplay::Behaviors::Kickoff::run()
 		ballPos = ball().pos;
 	}
 
+	Segment goal;
+	goal.pt[0] = Point(Field_GoalWidth / 2, Field_Length);
+	goal.pt[1] = Point(-Field_GoalWidth / 2, Field_Length);
+
 	switch (gameState().state)
 	{
 	case GameState::Setup:
@@ -157,8 +162,20 @@ bool Gameplay::Behaviors::Kickoff::run()
 		break;
 
 	case GameState::Ready:
-		executeMode();
+	{
+		// check for straight shot
+		Geometry2d::Segment t;
+		if (_kick.findShot(goal, t, false, 0.2))
+		{
+			_kick.setTargetGoal();
+			_kick.use_chipper = false;
+			_kick.run();
+		} else
+		{
+			executeMode();
+		}
 		break;
+	}
 
 	default:
 		break;
