@@ -360,9 +360,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
 	_actor->setLinearVelocity(worldVel);
 	_actor->setAngularVelocity(angularVel);
 	
-	// Get past friction
-	_actor->addLocalForce(bodyVel * 0.01, NX_VELOCITY_CHANGE);
-	_actor->addLocalTorque(angularVel * 0.01, NX_VELOCITY_CHANGE);
+	_actor->wakeUp();
 	
 #if 0
 	// Wheels
