@@ -20,10 +20,12 @@ ConfigInt  *Gameplay::Plays::DemoAttack::_kickPower;
 ConfigDouble *Gameplay::Plays::DemoAttack::_minChipRange;
 ConfigDouble *Gameplay::Plays::DemoAttack::_maxChipRange;
 ConfigBool *Gameplay::Plays::DemoAttack::_useLineKick;
+ConfigBool *Gameplay::Plays::DemoAttack::_calculateChipPower;
 
 void Gameplay::Plays::DemoAttack::createConfiguration(Configuration* cfg)
 {
 	_useChip  = new ConfigBool(cfg, "DemoAttack/Enable Chipping", false);
+	_calculateChipPower = new ConfigBool(cfg, "DemoAttack/Calculate Chip Power", true);
 	_dribblerSpeed = new ConfigInt(cfg, "DemoAttack/Dribber Speed", 127);
 	_kickPower = new ConfigInt(cfg, "DemoAttack/Kicker Power", 127);
 	_minChipRange = new ConfigDouble(cfg, "DemoAttack/Minimum Chip Range", 0.4);
@@ -52,6 +54,9 @@ bool Gameplay::Plays::DemoAttack::run()
 	}
 
 	// set flags from parameters
+	if (_calculateChipPower->value())
+		_kicker.calculateChipPower(ball().pos.distTo(_kicker.target().center()));
+
 	_kicker.use_chipper = *_useChip;
 	_kicker.minChipRange = *_minChipRange;
 	_kicker.maxChipRange = *_maxChipRange;
