@@ -341,6 +341,13 @@ public:
 	/** motion command - sent to point/wheel controllers, is valid when _planning_complete is true */
 	MotionCommand cmd;
 
+	/** status evaluations for choosing robots in behaviors - combines multiple checks */
+	bool chipper_available() const;
+	bool kicker_available() const;
+	bool dribbler_available() const;
+	bool driving_available(bool require_all = true) const; // checks for motor faults - allows one wheel failure if require_all = false
+
+	// lower level status checks
 	bool hasBall() const;
 	bool ballSenseWorks() const;
 	bool kickerWorks() const;

@@ -24,7 +24,8 @@ void Gameplay::Behaviors::Kickoff::createConfiguration(Configuration *cfg)
 
 Gameplay::Behaviors::Kickoff::Kickoff(GameplayModule *gameplay):
 SingleRobotBehavior(gameplay),
-_kick(gameplay)
+_kick(gameplay),
+_bump(gameplay)
 {
 	mode = Mode_None;
 
@@ -32,6 +33,7 @@ _kick(gameplay)
 	useRandomKick = true;
 	kickPower = 255;
 	enableChip = true;
+	enableBump = false;
 
 	// seed random number generator
 	srand(state()->timestamp);
@@ -43,9 +45,12 @@ void Gameplay::Behaviors::Kickoff::chooseMode() {
 		// add enabled modes to pool and pick one at random
 		vector<KickoffMode> modes;
 
-		modes.push_back(Mode_Kick);
-		modes.push_back(Mode_KickRightCorner);
-		modes.push_back(Mode_KickLeftCorner);
+		if (robot->kickerWorks() && *robot->status->kicker_enabled)
+		{
+			modes.push_back(Mode_Kick);
+			modes.push_back(Mode_KickRightCorner);
+			modes.push_back(Mode_KickLeftCorner);
+		}
 
 		if (enableChip && *_enableChip && robot->hardwareVersion() == Packet::RJ2011 && robot->kickerWorks() && *robot->status->chipper_enabled)
 		{
@@ -54,13 +59,20 @@ void Gameplay::Behaviors::Kickoff::chooseMode() {
 			modes.push_back(Mode_ChipLeftCorner);
 		}
 
-		random_shuffle(modes.begin(), modes.end());
-		mode = modes.front();
+		// handle case where only option is bump
+		if (modes.empty())
+		{
+			mode = Mode_Bump;
+		} else
+		{
+			random_shuffle(modes.begin(), modes.end());
+			mode = modes.front();
+		}
 
 	} else
 	{
 		// if not random, pick first on list that is available
-		mode = Mode_Kick;
+		mode = (robot->kicker_available()) ? Mode_Kick : Mode_Bump;
 
 		if (enableChip && *_enableChip)
 		{
@@ -118,6 +130,10 @@ void Gameplay::Behaviors::Kickoff::executeMode() {
 		_kick.minChipRange = *_chipMinRange;
 		_kick.run();
 		break;
+	case Mode_Bump:
+		_bump.target = Point(0.0, Field_Length);
+		_bump.run();
+		break;
 	case Mode_None:
 		break;
 	}
@@ -131,6 +147,8 @@ bool Gameplay::Behaviors::Kickoff::run()
 	}
 
 	_kick.robot = robot;
+	_bump.robot = robot;
+
 	_kick.kick_power = kickPower;
 	_kick.use_line_kick = true;
 
@@ -165,7 +183,7 @@ bool Gameplay::Behaviors::Kickoff::run()
 	{
 		// check for straight shot
 		Geometry2d::Segment t;
-		if (_kick.findShot(goal, t, false, 0.2))
+		if (robot->kicker_available() && _kick.findShot(goal, t, false, 0.2))
 		{
 			_kick.setTargetGoal();
 			_kick.use_chipper = false;
@@ -189,8 +207,8 @@ bool Gameplay::Behaviors::Kickoff::run()
 		robot->addText("Mode: KickLeft");
 		break;
 	case Mode_KickRightCorner:
-			robot->addText("Mode: KickRight");
-			break;
+		robot->addText("Mode: KickRight");
+		break;
 	case Mode_Chip:
 		robot->addText("Mode: Chip");
 		break;
@@ -199,6 +217,9 @@ bool Gameplay::Behaviors::Kickoff::run()
 		break;
 	case Mode_ChipRightCorner:
 		robot->addText("Mode: ChipRight");
+		break;
+	case Mode_Bump:
+		robot->addText("Mode: Bump");
 		break;
 	case Mode_None:
 		robot->addText("Mode: None");

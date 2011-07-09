@@ -36,6 +36,9 @@ public:
 	/*** set a specific segment */
 	void setTarget(const Geometry2d::Segment &seg);
 
+	/** get current target */
+	Geometry2d::Segment target() const { return _target; }
+
 	/** find best segment on target, @return true if one exists, and returns segment in result */
 	bool findShot(const Geometry2d::Segment& segment, Geometry2d::Segment& result, bool chipper,
 			float min_segment_length = 0.1) const;
@@ -57,7 +60,13 @@ public:
 	bool use_line_kick;
 	bool use_chipper;
 	short dribbler_speed;
+
+	// set the kick/chip power directly
 	uint8_t kick_power;
+	uint8_t chip_power;
+
+	// calculate and set the chip power
+	void calculateChipPower(double dist);
 
 	// chipping parameters - should get calculated somehow
 	double minChipRange;
@@ -76,6 +85,11 @@ private:
 	PivotKick _pivotKick;
 	LineKick _lineKick;
 
+	// parameters for chip model
+	static ConfigDouble *_chip_min_range;
+	static ConfigDouble *_chip_max_range;
+	static ConfigInt *_chip_min_power;
+	static ConfigInt *_chip_max_power;
 };
 
 } // \namespace Behaviors

@@ -50,7 +50,7 @@ float Gameplay::Plays::OurCornerKick::score ( Gameplay::GameplayModule* gameplay
 	bool chipper_available = false;
 	BOOST_FOREACH(OurRobot * r, gameplay->playRobots())
 	{
-		if (r && r->hardwareVersion() == Packet::RJ2011 && r->kickerWorks() && *r->status->chipper_enabled)
+		if (r && r->chipper_available())
 		{
 			chipper_available = true;
 			break;
@@ -84,6 +84,7 @@ bool Gameplay::Plays::OurCornerKick::run()
 	_kicker.setTarget(target);
 	_kicker.use_chipper = true;
 	_kicker.use_line_kick = true;
+	_kicker.calculateChipPower(_center.target.distTo(ball().pos));
 	_kicker.kick_power = *_chipper_power;
 	_kicker.minChipRange = *_minChipRange;
 	_kicker.maxChipRange = *_maxChipRange;

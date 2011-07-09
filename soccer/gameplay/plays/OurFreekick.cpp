@@ -1,6 +1,7 @@
 #include "OurFreekick.hpp"
 
 using namespace std;
+using namespace Geometry2d;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::OurFreekick, "Restarts")
 
@@ -39,11 +40,6 @@ Gameplay::Plays::OurFreekick::OurFreekick(GameplayModule *gameplay):
 	_pdt(gameplay, &_kicker)
 {
 	_center.target = _gameplay->centerMatrix() * Geometry2d::Point(0, 1.5);
-
-	// FIXME: find a better setting for kicking
-	// this target is an expanded version of the goal to give more options
-//	_kicker.setTarget(Geometry2d::Segment(Geometry2d::Point(-Field_Width/3.0, Field_Length),
-//										  Geometry2d::Point( Field_Width/3.0, Field_Length)));
 	_bump.target = Geometry2d::Point(0.0, Field_Length);
 
 	_fullback2.otherFullbacks.insert(&_fullback1);
@@ -67,20 +63,17 @@ bool Gameplay::Plays::OurFreekick::run()
 		if (!assignNearestKicker(_kicker.robot, available, ball().pos))
 		{
 			kicker_available = false;
-			assignNearest(_bump.robot, available, ball().pos); // use bumping
+			assignNearest(_bump.robot, available, ball().pos);
 			_pdt.resetBehavior(&_bump);
 		}
 	}
 	_pdt.resetBehavior(&_kicker);
 
-	// choose targets for corner kick
-	if (_kicker.robot && _kicker.robot->pos.y > Field_Length * 0.8 && fabs(_kicker.robot->pos.x) > Field_Width * 0.7)
-		_kicker.setTarget(Geometry2d::Segment(
-				Geometry2d::Point(0.0, Field_Length * 0.9),
-				Geometry2d::Point(0.0, Field_Length)));
-	else
-		_kicker.setTargetGoal();
+	_kicker.setTargetGoal();
+	_kicker.calculateChipPower(ball().pos.distTo(Point(0.0, Field_Length)));
 
+	_bump.target = Point(0.0, Field_Length);
+	_bump.run();
 
 	// setup kicker from parameters - want to use chipper when possible
 	_kicker.use_line_kick = true;
@@ -92,12 +85,19 @@ bool Gameplay::Plays::OurFreekick::run()
 	_kicker.maxChipRange = *_maxChipRange;
 
 	_pdt.backoff.robots.clear();
-	_pdt.backoff.robots.insert(_bump.robot);
-//	_pdt.backoff.robots.insert(_kicker.robot);
+	_pdt.backoff.robots.insert(_kicker.robot);
 	assignNearest(_center.robot, available, _center.target);
 	assignNearest(_fullback1.robot, available, Geometry2d::Point(-Field_GoalHeight/2.0, 0.0));
 	assignNearest(_fullback2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
 	
+	if (!chipper_available && !kicker_available && _bump.robot)
+	{
+		_pdt.resetBehavior(&_bump);
+	} else
+	{
+		_pdt.resetBehavior(&_kicker);
+	}
+
 	_pdt.run();
 	_center.run();
 	_fullback1.run();
