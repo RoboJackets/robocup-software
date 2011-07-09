@@ -180,6 +180,10 @@ bool Gameplay::Plays::BasicOffense112::run()
 
 	// set flags for inner behaviors
 	_striker.use_line_kick = *_use_line_kick;
+	if (_striker.robot)
+	{
+		_striker.calculateChipPower(_striker.robot->pos.distTo(ball().pos));
+	}
 
 	// execute behaviors
 	if (_striker.robot) _striker.run();

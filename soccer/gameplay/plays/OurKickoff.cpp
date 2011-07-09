@@ -14,9 +14,13 @@ namespace Gameplay
 	}
 }
 
+ConfigInt *Gameplay::Plays::OurKickoff::_kick_power;
+ConfigInt *Gameplay::Plays::OurKickoff::_chip_power;
+
 void Gameplay::Plays::OurKickoff::createConfiguration(Configuration *cfg)
 {
-
+	_kick_power = new ConfigInt(cfg, "OurKickoff/Kick Power", 127);
+	_chip_power = new ConfigInt(cfg, "OurKickoff/Chip Power", 100);
 }
 
 Gameplay::Plays::OurKickoff::OurKickoff(GameplayModule *gameplay):
@@ -31,8 +35,6 @@ Gameplay::Plays::OurKickoff::OurKickoff(GameplayModule *gameplay):
 	_idle2.target = _gameplay->centerMatrix() * Geometry2d::Point(-0.7, -0.2);
 	_idle3.target = Geometry2d::Point(0, 1.5);
 
-	// FIXME: find a better way of selecting targets - using endline to give choice
-//	_kicker.kick.setTargetGoal();
 	_kicker.kickTarget(Geometry2d::Segment(Geometry2d::Point(-Field_Width/2.0, Field_Length),
 											   Geometry2d::Point( Field_Width/2.0, Field_Length)));
 }

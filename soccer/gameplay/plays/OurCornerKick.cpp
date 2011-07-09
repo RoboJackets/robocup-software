@@ -84,6 +84,7 @@ bool Gameplay::Plays::OurCornerKick::run()
 	_kicker.setTarget(target);
 	_kicker.use_chipper = true;
 	_kicker.use_line_kick = true;
+	_kicker.calculateChipPower(_center.target.distTo(ball().pos));
 	_kicker.kick_power = *_chipper_power;
 	_kicker.minChipRange = *_minChipRange;
 	_kicker.maxChipRange = *_maxChipRange;
