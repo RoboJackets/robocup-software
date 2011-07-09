@@ -27,7 +27,6 @@ namespace Gameplay
 				Behaviors::Kickoff _kicker;
 				Behaviors::Move _idle1, _idle2, _idle3;
 				PreventDoubleTouch _pdt;
-
 		};
 	}
 }

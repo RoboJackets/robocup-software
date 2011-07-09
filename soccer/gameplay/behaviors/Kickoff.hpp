@@ -3,9 +3,6 @@
 #include "../Behavior.hpp"
 
 #include <gameplay/behaviors/Kick.hpp>
-#include <gameplay/behaviors/Fling.hpp>
-#include <gameplay/behaviors/Yank.hpp>
-#include <gameplay/behaviors/Bump.hpp>
 
 namespace Gameplay
 {
@@ -19,9 +16,7 @@ namespace Gameplay
 		 * Modes:
 		 *  - Default: Pivot Kick: tries to kick at end line
 		 *  	- To force, disable other modes and randomness
-		 *  - Fling: tries to fling at a corner of the field
 		 *  - Chip: same as kick, but uses the chipper
-		 *  - BumpYank: like a yank, but with a bump first - target is one side of field
 		 *
 		 * Use the parameters to choose kickoff mode
 		 */
@@ -36,17 +31,15 @@ namespace Gameplay
 
 				// MODE setting - this stores which play will be used
 				typedef enum {
+					Mode_None,
 					Mode_Kick,
+					Mode_KickLeftCorner,
+					Mode_KickRightCorner,
 					Mode_Chip,
-					Mode_Bump,
-//					Mode_FlingLeft,   // FIXME: add back when these work
-//					Mode_FlingRight,
-//					Mode_BumpYankLeft,
-//					Mode_BumpYankRight
+					Mode_ChipLeftCorner,
+					Mode_ChipRightCorner,
 				} KickoffMode;
 				KickoffMode mode;
-
-				bool modeChosen() const { return _mode_chosen; }
 
 				void kickTarget(const Geometry2d::Segment& target) {
 					_kick.setTarget(target);
@@ -54,17 +47,11 @@ namespace Gameplay
 
 				// flags controlled by top-level play
 				bool useRandomKick;
-				bool useKick;    // if disabled, these default to using bump
-				bool useChip;
-				bool allowRandomBump;   // adds bump to the random pool
+				uint8_t kickPower;
+				bool enableChip;
 
 			private:
-				Behaviors::Bump _bump;
 				Behaviors::Kick _kick;
-//				Behaviors::Fling _fling;
-//				Behaviors::Yank _yank;
-
-				bool _mode_chosen; // true when mode has been chosen
 
 				void chooseMode(); // sets the mode at startup
 
