@@ -116,12 +116,13 @@
   <Enable_Bump value="false"/>
  </DemoYank>
  <DemoAttack>
-  <Enable_Chipping value="false"/>
+  <Enable_Chipping value="true"/>
   <Dribber_Speed value="127"/>
   <Kicker_Power value="127"/>
   <Minimum_Chip_Range value="0.4"/>
   <Maximum_Chip_Range value="2.5"/>
-  <Enable_LineKick value="false"/>
+  <Enable_LineKick value="true"/>
+  <Calculate_Chip_Power value="true"/>
  </DemoAttack>
  <Bump>
   <Drive_Around_Dist value="0.35"/>
@@ -139,9 +140,9 @@
   <Escape_Charge_Thresh value="0.1"/>
   <Setup_Ball_Avoid value="0.08"/>
   <Face_Ball_otherwise_target value="true"/>
-  <Accel_Bias value="0.0005"/>
+  <Accel_Bias value="0.2"/>
   <Facing_Thresh_-_Deg value="10"/>
-  <Max_Charge_Speed value="1"/>
+  <Max_Charge_Speed value="2"/>
   <Ball_Project_Time value="0.3"/>
   <Ball_Project_Dampening value="0.8"/>
  </LineKick>
@@ -212,8 +213,8 @@
    <Dribbler_Enabled value="true"/>
   </Robot_4>
   <Robot_5>
-   <Chipper_Enabled value="true"/>
-   <Kicker_Enabled value="true"/>
+   <Chipper_Enabled value="false"/>
+   <Kicker_Enabled value="false"/>
    <Ball_Sense_Enabled value="true"/>
    <Dribbler_Enabled value="true"/>
   </Robot_5>
@@ -315,4 +316,14 @@
   <Min_Chip_Range value="0.3"/>
   <Max_Chip_Range value="3"/>
  </OurGoalKick>
+ <Kick>
+  <Chip_Min_Range value="0.3"/>
+  <Chip_Max_Range value="3.5"/>
+  <Chip_Min_Power value="150"/>
+  <Chip_Max_Power value="255"/>
+ </Kick>
+ <OurKickoff>
+  <Kick_Power value="127"/>
+  <Chip_Power value="100"/>
+ </OurKickoff>
 </config>
