@@ -26,10 +26,10 @@
 #include "radio_protocol.h"
 
 #include "invensense/imuSetup.h"
-#include "invensense/imuMlsl.h"
-#include "invensense/imuFIFO.h"
-#include "invensense/imuMldl.h"
-#include "invensense/mpuregs.h"
+// #include "invensense/imuMlsl.h"
+// #include "invensense/imuFIFO.h"
+// #include "invensense/imuMldl.h"
+// #include "invensense/mpuregs.h"
 
 // Last time the 5ms periodic code was executed
 unsigned int update_time;
@@ -181,7 +181,7 @@ int main()
 	// Set up I2C
 	i2c_init();
 	
-#if 0
+#if 1
 	// Set up the IMU
 	if (!imu_init())
 	{
@@ -337,7 +337,7 @@ int main()
 			update_time = current_time;
 			
 			// Check for new IMU data
-// 			IMUupdateData();
+			IMUupdateData();
 			
 			// Read ADC results
 			adc_update();

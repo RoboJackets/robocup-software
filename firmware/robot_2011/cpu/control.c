@@ -307,8 +307,8 @@ static void pd_update()
 
 ////////
 
-static int tg_kp = 0;
-static int tg_kd = 0;
+static int tg_kp = 1;
+static int tg_kd = 5;
 static int tg_out = 0;
 static int tg_last_error = 0;
 
@@ -364,7 +364,7 @@ static void test_gyro_update()
 	tg_out += delta;
 	
 	// Don't accumulate output for broken motors, in case they start working
-	if ((motor_faults | motor_stall))
+	if ((motor_faults | motor_stall) || kick_command == 0)
 	{
 		tg_out = 0;
 	}
