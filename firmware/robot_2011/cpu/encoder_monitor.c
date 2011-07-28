@@ -50,12 +50,12 @@ void encoder_monitor()
 			{
 				if (encoder_fault_counter[i] < Failure_Threshold)
 				{
-					encoder_fault_counter[i] += 10;
+					encoder_fault_counter[i] += Count_Bad;
 				}
 			} else {
 				if (encoder_fault_counter[i] > 0)
 				{
-					encoder_fault_counter[i] -= 1;
+					encoder_fault_counter[i] -= Count_Good;
 				}
 			}
 			

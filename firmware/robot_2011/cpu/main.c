@@ -181,7 +181,7 @@ int main()
 	// Set up I2C
 	i2c_init();
 	
-#if 1
+#if 0
 	// Set up the IMU
 	if (!imu_init())
 	{

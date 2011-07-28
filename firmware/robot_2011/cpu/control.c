@@ -12,6 +12,7 @@
 #include "encoder_monitor.h"
 #include "stall.h"
 #include "imu.h"
+#include "timer.h"
 #include "invensense/imuFIFO.h"
 
 static const int Command_Rate_Limit = 40;
@@ -68,6 +69,15 @@ static int step_motor;
 static int step_level = 0;
 static int step_threshold = 0;
 static int step_holdoff = 0;
+static int step_last_time = 0;
+
+static void step_debug()
+{
+	int supply_mv = supply_raw * VBATT_NUM / VBATT_DIV;
+	int dtime = current_time - step_last_time;
+	step_last_time = current_time;
+	printf("%2d.%03d %4d %3d %3d %2d", supply_mv / 1000, supply_mv % 1000, encoder_delta[step_motor], hall_delta[step_motor], motor_out[step_motor], dtime);
+}
 
 static void step_init(int argc, const char *argv[])
 {
@@ -91,13 +101,12 @@ static void step_init(int argc, const char *argv[])
 	}
 	
 	step_holdoff = 0;
+	step_last_time = current_time;
+	debug_update = step_debug;
 }
 
 static void step_update()
 {
-	int supply_mv = supply_raw * VBATT_NUM / VBATT_DIV;
-	printf("%2d.%03d %4d %3d", supply_mv / 1000, supply_mv % 1000, encoder_delta[step_motor], hall_delta[step_motor]);
-	
 	int failed = (motor_faults | encoder_faults | motor_stall) & (1 << step_motor);
 	if (failed)
 	{
@@ -129,106 +138,43 @@ static void step_update()
 
 ////////
 
-#define Log_Count 100
-static int log_pos;
-static int log_level;
-static struct
-{
-	int16_t delta[4];
-} log_data[Log_Count];
-static uint8_t log_started;
-
-static void log_init(int argc, const char *argv[])
-{
-	log_pos = 0;
-	log_started = 0;
-	if (argc)
-	{
-		log_level = parse_uint32(argv[0]);
-	} else {
-		printf("Usage: run log <level> [start]\n");
-		controller = 0;
-	}
-	
-	if (argc > 1)
-	{
-		log_started = 1;
-	}
-}
-
-static void log_update()
-{
-	if (log_pos == Log_Count)
-	{
-		log_started = 0;
-	} else if (kick_strength)
-	{
-		log_started = 1;
-	}
-	
-	if (log_started)
-	{
-		for (int i = 0; i < 4; ++i)
-		{
-			log_data[log_pos].delta[i] = encoder_delta[i];
-		}
-		++log_pos;
-		
-		motor_out[0] = -log_level;
-		motor_out[1] = -log_level;
-		motor_out[2] = log_level;
-		motor_out[3] = log_level;
-	}
-}
-
-static void log_print()
-{
-	controller = 0;
-	printf("\n");
-	for (int i = 0; i < Log_Count; ++i)
-	{
-		printf("%3d", i);
-		for (int j = 0; j < 4; ++j)
-		{
-			printf(" %5d", log_data[i].delta[j]);
-		}
-		printf("\n");
-	}
-	printf("DONE\n");
-}
-
-////////
-
-static int kp = 160;
-static int kd = 160;
-static int last_error[4];
+static int kpid = 0;
+static int kp2d = 0;
+static int kd = 0;
+static int error1[4], error2[4];
 static int pd_debug = -1;
 
-static void pd_init(int argc, const char *argv[])
+static void pid_init(int argc, const char *argv[])
 {
 	for (int i = 0; i < 4; ++i)
 	{
 		last_out[i] = 0;
-		last_error[i] = 0;
 	}
 	
-	// First two parameters are coefficients
-	if (argc >= 2)
-	{
-		kp = parse_int(argv[0]);
-		kd = parse_int(argv[1]);
-	}
-	
-	// Third parameter is which motor to print
+	// First three parameters are coefficients
+	int kp = 160;
+	int ki = 160;
 	if (argc >= 3)
 	{
-		pd_debug = parse_int(argv[2]);
+		kp = parse_int(argv[0]);
+		ki = parse_int(argv[1]);
+		kd = parse_int(argv[2]);
+	}
+	
+	// Find coefficients for simplified differential form
+	kpid = kp + ki + kd;
+	kp2d = kp + 2 * kd;
+	
+	// Next parameter is which motor to print
+	if (argc >= 4)
+	{
+		pd_debug = parse_int(argv[3]);
 	} else {
 		pd_debug = -1;
 	}
 }
 
-static void pd_update()
+static void pid_update()
 {
 	if (base2008)
 	{
@@ -253,28 +199,36 @@ static void pd_update()
 		cmd_body_x - cmd_body_y + cmd_body_w
 	};
 	
+	const int Scale = 256;
+	const int Max_Command = MOTOR_MAX * Scale;
+	
 	for (int i = 0; i < 4; ++i)
 	{
-		int setpoint = wheel_command[i];
 		int speed = encoder_delta[i];
-		int error = setpoint - speed;
+		int error = wheel_command[i] - speed;
 
 		if (abs(error) <= 1)
 		{
 				error = 0;
 		}
 
-		int delta_error = error - last_error[i];
-		last_error[i] = error;
-		int delta = error * kp + delta_error * kd;
+		// Differential form: find the derivative of the controller's output:
+		//  delta = kp * delta_error + ki * error + kd * (delta_error - last_delta[i]);
+		// but simplified so that only the error history is stored.
+		// Limit it (to prevent excessive motor current), integrate it,
+		// and then limit the final output.
+		// This results in a natural and correct limit on the error integral
+		// and is simpler to implement than the more direct form:
+		//    out = kp * error + ki * error_integral[i] + kd * delta_error
+		int delta = kpid * error - kp2d * error1[i] + kd * error2[i];
 		
 		// Limit the change between consecutive cycles to prevent excessive current
-		if (delta > Command_Rate_Limit * 256)
+		if (delta > Command_Rate_Limit * Scale)
 		{
-			delta = Command_Rate_Limit * 256;
-		} else if (delta < -Command_Rate_Limit * 256)
+			delta = Command_Rate_Limit * Scale;
+		} else if (delta < -Command_Rate_Limit * Scale)
 		{
-			delta = -Command_Rate_Limit * 256;
+			delta = -Command_Rate_Limit * Scale;
 		}
 		last_out[i] += delta;
 		
@@ -285,20 +239,25 @@ static void pd_update()
 		}
 		
 		// Clip to output limits
-		if (last_out[i] > MOTOR_MAX * 256)
+		if (last_out[i] > Max_Command)
 		{
-			last_out[i] = MOTOR_MAX * 256;
-		} else if (last_out[i] < -MOTOR_MAX * 256)
+			last_out[i] = Max_Command;
+		} else if (last_out[i] < -Max_Command)
 		{
-			last_out[i] = -MOTOR_MAX * 256;
+			last_out[i] = -Max_Command;
 		}
 		
 		if (i == pd_debug)
 		{
-			printf("%02x %08x %08x %08x\n", motor_faults, speed, delta, last_out[i]);
+			printf("%04x %04x -> %08x %08x %08x -> %08x\n", wheel_command[i], speed, error, error1[i], error2[i], last_out[i]);
 		}
 		
-		motor_out[i] = last_out[i] / 256;
+		// Shift error history
+		error2[i] = error1[i];
+		error1[i] = error;
+		
+		// Convert the fixed point command to the final motor command
+		motor_out[i] = (last_out[i] + Scale / 2) / Scale;
 	}
 
 	//FIXME - Do we need speed control on the dribbler?
@@ -391,10 +350,8 @@ static void test_gyro_update()
 const controller_info_t controllers[] =
 {
 	{"dumb", 0, 0, dumb_update},
-	{"pd", pd_init, 0, pd_update},
+	{"pid", pid_init, 0, pid_update},
 	{"step", step_init, 0, step_update},
-	{"log", log_init, 0, log_update},
-	{"log_print", 0, 0, log_print},
 	{"test_gyro", test_gyro_init, 0, test_gyro_update},
 	
 	// End of table
