@@ -210,7 +210,7 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 		const RepeatedPtrField<SSL_DetectionRobot> &selfRobots = _blueTeam ? frame->robots_blue() : frame->robots_yellow();
 		BOOST_FOREACH(const SSL_DetectionRobot &robot, selfRobots)
 		{
-			float angle = Utils::fixAngleDegrees(robot.orientation() * RadiansToDegrees + _teamAngle);
+			float angle = fixAngleDegrees(robot.orientation() * RadiansToDegrees + _teamAngle);
 			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angle, time, frame->frame_number());
 			obs.source = frame->camera_id();
 			unsigned int id = robot.robot_id();
@@ -223,7 +223,7 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 		const RepeatedPtrField<SSL_DetectionRobot> &oppRobots = _blueTeam ? frame->robots_yellow() : frame->robots_blue();
 		BOOST_FOREACH(const SSL_DetectionRobot &robot, oppRobots)
 		{
-			float angle = Utils::fixAngleDegrees(robot.orientation() * RadiansToDegrees + _teamAngle);
+			float angle = fixAngleDegrees(robot.orientation() * RadiansToDegrees + _teamAngle);
 			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angle, time, frame->frame_number());
 			obs.source = frame->camera_id();
 			unsigned int id = robot.robot_id();
@@ -275,7 +275,7 @@ void Processor::run()
 	bool first = true;
 	while (_running)
 	{
-		uint64_t startTime = Utils::timestamp();
+		uint64_t startTime = timestamp();
 		int delta_us = startTime - curStatus.lastLoopTime;
 		_framerate = 1000000.0 / delta_us;
 		curStatus.lastLoopTime = startTime;
@@ -407,7 +407,7 @@ void Processor::run()
 			}
 			
 			// Log the referee packet, but only use it if external referee is enabled
-			curStatus.lastRefereeTime = Utils::timestamp();
+			curStatus.lastRefereeTime = timestamp();
 			_state.logFrame->add_raw_referee(str);
 			
 			if (_externalReferee)
@@ -580,7 +580,7 @@ void Processor::run()
 		////////////////
 		// Timing
 		
-		uint64_t endTime = Utils::timestamp();
+		uint64_t endTime = timestamp();
 		int lastFrameTime = endTime - startTime;
 		if (lastFrameTime < _framePeriod)
 		{

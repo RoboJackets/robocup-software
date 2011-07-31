@@ -74,7 +74,7 @@ namespace Gameplay
 			{
 				if (_name.isNull())
 				{
-					_name = Utils::className(typeid(X));
+					_name = className(typeid(X));
 				}
 				
 				return _name;

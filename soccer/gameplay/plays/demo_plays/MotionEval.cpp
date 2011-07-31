@@ -22,7 +22,7 @@ Gameplay::Plays::MotionEval::MotionEval(GameplayModule *gameplay):
 {
 	fp = fopen("test.txt", "wb");
 	_lastAngle = 0;
-	_lastTime = Utils::timestamp();
+	_lastTime = timestamp();
 	
 	_reached = false;
 	
@@ -146,7 +146,7 @@ bool Gameplay::Plays::MotionEval::run()
 	}
 	
 	static uint64_t startTime = 0;
-	uint64_t now = Utils::timestamp();
+	uint64_t now = timestamp();
 	
 	Geometry2d::Point toBall = (ball().pos - robot->pos).normalized();
 	

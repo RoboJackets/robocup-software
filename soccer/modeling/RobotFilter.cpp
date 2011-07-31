@@ -1,7 +1,6 @@
 #include "RobotFilter.hpp"
 #include <Utils.hpp>
 
-using namespace Utils;
 using namespace Geometry2d;
 
 // How long to coast a robot's position when it isn't visible

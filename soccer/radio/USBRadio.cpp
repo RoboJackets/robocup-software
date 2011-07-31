@@ -15,7 +15,6 @@
 using namespace std;
 using namespace boost;
 using namespace Packet;
-using namespace Utils;
 
 // Timeout for control transfers, in milliseconds
 static const int Control_Timeout = 1000;
@@ -304,7 +303,7 @@ void USBRadio::receive()
 
 void USBRadio::handleRxData(uint8_t *buf)
 {
-	uint64_t rx_time = Utils::timestamp();
+	uint64_t rx_time = timestamp();
 	
 	_reversePackets.push_back(RadioRx());
 	RadioRx &packet = _reversePackets.back();

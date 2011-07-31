@@ -178,7 +178,7 @@ void Modeling::RobotModel::update(uint64_t cur_time)
 	float bestError = std::numeric_limits<float>::infinity();
 	BOOST_FOREACH(const Observation_t& obs, _observations) {
 		float error = (obs.pos - predictPos).magsq()
-				+ fabs(Utils::fixAngleDegrees(obs.angle - predictAngle));
+				+ fabs(fixAngleDegrees(obs.angle - predictAngle));
 		if (error < bestError) {
 			observedPos = obs.pos;
 			observedAngle = obs.angle;
@@ -199,8 +199,8 @@ void Modeling::RobotModel::update(uint64_t cur_time)
 		_vel = predictVel + posError * *_config->posBeta / dtime;
 		_accel += posError * *_config->posGamma / (dtime * dtime);
 
-		float angleError = Utils::fixAngleDegrees(observedAngle - predictAngle);
-		_angle = Utils::fixAngleDegrees(predictAngle + angleError * *_config->angleAlpha);
+		float angleError = fixAngleDegrees(observedAngle - predictAngle);
+		_angle = fixAngleDegrees(predictAngle + angleError * *_config->angleAlpha);
 		_angleVel = predictAngleVel + angleError * *_config->angleBeta / dtime;
 		_angleAccel += angleError * *_config->angleGamma / (dtime * dtime);
 

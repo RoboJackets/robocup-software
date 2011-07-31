@@ -9,7 +9,6 @@
 #include <algorithm>
 
 using namespace std;
-using namespace Utils;
 using namespace Geometry2d;
 
 MotionControl::MotionControl(OurRobot *robot)
@@ -133,8 +132,8 @@ void MotionControl::anglePD()
 // 	_robot->state()->drawLine(_robot->pos, _robot->cmd.goalOrientation, Qt::black, "Motion");
 	Point dir = (_robot->cmd.face->pos - _robot->pos).normalized();
 	
-	float error = Utils::fixAngleRadians(dir.angle() - _robot->angle * DegreesToRadians);
-// 	float error = Utils::fixAngleRadians(M_PI * *_robot->config->rotation.i - _robot->angle * DegreesToRadians);
+	float error = fixAngleRadians(dir.angle() - _robot->angle * DegreesToRadians);
+// 	float error = fixAngleRadians(M_PI * *_robot->config->rotation.i - _robot->angle * DegreesToRadians);
 	
 	_robot->cmd.angularVelocity = error * *_robot->config->rotation.p + (error - _lastAngleError) * *_robot->config->rotation.d;
 	_lastAngleError = error;
@@ -146,7 +145,7 @@ void MotionControl::stopped()
 
 void limitAccel(float &value, float last, float limit)
 {
-	float old = value;
+//	float old = value;
 	if (value > 0 && (value - last) > limit)
 	{
 		value = last + limit;
@@ -209,10 +208,10 @@ void MotionControl::run()
 	
 	// Acceleration limit
 	Point dv = bodyVel - _lastBodyVel;
-	float dw = angularVel - _lastAngularVel;
+//	float dw = angularVel - _lastAngularVel;
 	
-	float av = *_robot->config->trapTrans.acceleration;
-	float aw = *_robot->config->trapRot.acceleration;
+//	float av = *_robot->config->trapTrans.acceleration;
+//	float aw = *_robot->config->trapRot.acceleration;
 	
 // 	limitAccel(bodyVel.x, _lastBodyVel.x, av);
 // 	limitAccel(bodyVel.y, _lastBodyVel.y, av);

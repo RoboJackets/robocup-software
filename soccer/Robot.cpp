@@ -304,13 +304,13 @@ void OurRobot::setWScale(float scale) {
 }
 
 float OurRobot::kickTimer() const {
-	return (charged()) ? 0.0 : intTimeStampToFloat * (float) (Utils::timestamp() - _lastChargedTime);
+	return (charged()) ? 0.0 : intTimeStampToFloat * (float) (timestamp() - _lastChargedTime);
 }
 
 void OurRobot::update() {
 	if (charged())
 	{
-		_lastChargedTime = Utils::timestamp();
+		_lastChargedTime = timestamp();
 	}
 }
 
@@ -507,7 +507,7 @@ Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 		// mix the next point between the first and second point
 		// if we are far away from p1, want scale to be closer to p1
 		// if we are close to p1, want scale to be closer to p2
-		float scale = 1 - Utils::clamp(dist1/dist2, 0.0f, 1.0f);
+		float scale = 1 - clamp(dist1/dist2, 0.0f, 1.0f);
 		Geometry2d::Point targetPos = p1 + (p2-p1)*scale;
 		if (blend_verbose) {
 			addText(QString("blend:scale=%1").arg(scale));
@@ -736,5 +736,5 @@ boost::optional<Eigen::Quaternionf> OurRobot::quaternion() const
 
 bool OurRobot::rxIsFresh(uint64_t age) const
 {
-	return (Utils::timestamp() - radioRx.timestamp()) < age;
+	return (timestamp() - radioRx.timestamp()) < age;
 }
