@@ -17,7 +17,7 @@ class AutoName
 			// because the subclass' vtable isn't in place.  Thus we have to find the name lazily.
 			if (_name.isNull())
 			{
-				_name = Utils::className(typeid(*this));
+				_name = className(typeid(*this));
 			}
 			
 			return _name;

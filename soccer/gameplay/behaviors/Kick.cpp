@@ -77,7 +77,7 @@ void Kick::calculateChipPower(double dist)
 	double ratio = (dist - *_chip_min_range)/range_area;
 	uint8_t power_area = *_chip_max_power - *_chip_min_power;
 	double power = ratio * (double) power_area + *_chip_min_power;
-	chip_power = (uint8_t) Utils::clamp((double) power, (double) _chip_min_power->value(), 255.0);
+	chip_power = (uint8_t) clamp((double) power, (double) _chip_min_power->value(), 255.0);
 }
 
 bool Kick::findShot(const Geometry2d::Segment& segment, Geometry2d::Segment& result, bool chip, float min_segment_length) const {

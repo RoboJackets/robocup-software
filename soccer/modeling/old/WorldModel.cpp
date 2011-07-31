@@ -19,7 +19,7 @@
 
 using namespace std;
 using namespace Modeling;
-using namespace Utils;
+
 using namespace google::protobuf;
 
 WorldModel::WorldModel(SystemState *state, Configuration *config) :
@@ -45,7 +45,7 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 	if (verbose) cout << "In WorldModel::run()" << endl;
 
 	// Add vision packets
-	uint64_t curTime = Utils::timestamp();
+	uint64_t curTime = timestamp();
 	if (verbose) cout << "Adding vision packets" << endl;
 	BOOST_FOREACH(const SSL_DetectionFrame* vision, rawVision)
 	{

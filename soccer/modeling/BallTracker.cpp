@@ -96,7 +96,7 @@ void BallTracker::run(const vector< BallObservation >& obs, SystemState *state)
 	}
 #endif
 
-	uint64_t now = Utils::timestamp();
+	uint64_t now = timestamp();
 	
 	//FIXME - What time?
 	uint64_t predictTime = now;

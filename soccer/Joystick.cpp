@@ -217,7 +217,7 @@ void Joystick::drive(RadioTx::Robot *tx)
 		_dribblerOn = true;
 	}
 	
-	uint64_t now = Utils::timestamp();
+	uint64_t now = timestamp();
 	if (_button[1])
 	{
 		if (_dribbler > 0 && (now - _lastDribblerTime) >= Dribble_Step_Time)

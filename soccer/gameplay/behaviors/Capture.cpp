@@ -64,7 +64,7 @@ bool Gameplay::Behaviors::Capture::run()
 	// The direction we're facing
 	const Point dir = Point::direction(robot->angle * DegreesToRadians);
 	
-	uint64_t now = Utils::timestamp();
+	uint64_t now = timestamp();
 	
 	// State changes
 	Point toBall = (ball().pos - robot->pos).normalized();

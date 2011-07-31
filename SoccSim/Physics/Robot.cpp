@@ -456,7 +456,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
      * max speeds guessed with science
      */
 
-    if (data->kick() && (Utils::timestamp() - _lastKicked) > RechargeTime && chargerWorks)
+    if (data->kick() && (timestamp() - _lastKicked) > RechargeTime && chargerWorks)
     {
     	// FIXME: make these parameters some place else
     	float maxKickSpeed = 5.0f, // m/s direct kicking speed
@@ -491,7 +491,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
             		printf("Robot %d kick %p by %f: %f, %f, %f\n", shell, ball, kickSpeed, kickVel.x, kickVel.y, kickVel.z);
 
                 ball->actor()->addForce(kickVel, NX_VELOCITY_CHANGE);
-                _lastKicked = Utils::timestamp();
+                _lastKicked = timestamp();
             }
         }
     }
@@ -502,10 +502,10 @@ Packet::RadioRx Robot::radioRx() const
 {
 	Packet::RadioRx packet;
 	
-	packet.set_timestamp(Utils::timestamp());
+	packet.set_timestamp(timestamp());
 	packet.set_battery(15.0f);
 	packet.set_rssi(1.0f);
-	packet.set_kicker_status(((Utils::timestamp() - _lastKicked) > RechargeTime) ? 1 : 0);
+	packet.set_kicker_status(((timestamp() - _lastKicked) > RechargeTime) ? 1 : 0);
 	
 	// FIXME: No.
 	BOOST_FOREACH(const Ball* ball, _env->balls())

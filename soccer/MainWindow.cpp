@@ -132,7 +132,7 @@ MainWindow::MainWindow(QWidget *parent):
 	_autoExternalReferee = true;
 	_doubleFrameNumber = -1;
 	
-	_lastUpdateTime = Utils::timestamp();
+	_lastUpdateTime = timestamp();
 	_history.resize(2 * 60);
 	
 	_ui.setupUi(this);
@@ -301,7 +301,7 @@ void MainWindow::updateViews()
 	}
 	
 	// Time since last update
-	uint64_t time = Utils::timestamp();
+	uint64_t time = timestamp();
 	int delta_us = time - _lastUpdateTime;
 	_lastUpdateTime = time;
 	double framerate = 1000000.0 / delta_us;
@@ -452,7 +452,7 @@ void MainWindow::updateStatus()
 	
 	// Get processing thread status
 	Processor::Status ps = _processor->status();
-	uint64_t curTime = Utils::timestamp();
+	uint64_t curTime = timestamp();
 	
 	// Determine if we are receiving packets from an external referee
 	bool haveExternalReferee = (curTime - ps.lastRefereeTime) < 500 * 1000;
