@@ -83,7 +83,10 @@ srcs = [
 	'gameplay/plays/test_plays/TestLatency.cpp',
 
 	# demo plays/behaviors
+	'gameplay/plays/demo_plays/TestPlay.cpp',
 	'gameplay/plays/demo_plays/FollowTheLeader.cpp',
+	'gameplay/plays/demo_plays/PassPlay.cpp',
+	'gameplay/plays/demo_plays/PassShootPlay.cpp',
 	'gameplay/plays/demo_plays/LineUp.cpp',
 	'gameplay/plays/demo_plays/MotionEval.cpp',
 	'gameplay/plays/demo_plays/DemoPassing.cpp',
@@ -96,7 +99,8 @@ srcs = [
 	'gameplay/plays/demo_plays/DemoLineAttack.cpp',
 	'gameplay/plays/demo_plays/DemoPivotAttack.cpp',
 #	'gameplay/plays/demo_plays/CalSpeed.cpp',
-	
+
+
 	# Tech Challenges
 	'gameplay/plays/demo_plays/NavChallenge2011.cpp',
 	'gameplay/plays/demo_plays/DynamicNavigationTC.cpp',
