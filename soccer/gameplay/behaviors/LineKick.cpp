@@ -131,9 +131,10 @@ bool Gameplay::Behaviors::LineKick::run()
 		{
 			robot->kick(kick_power);
 		}
+
+
 		state()->drawLine(robot->pos, target, Qt::white);
 		state()->drawLine(ballPos, target, Qt::white);
-		
 		Point ballToTarget = (target - ballPos).normalized();
 		Point robotToBall = (ballPos - robot->pos).normalized();
 		Point driveDirection = robotToBall;

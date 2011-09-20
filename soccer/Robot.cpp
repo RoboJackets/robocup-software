@@ -13,6 +13,7 @@
 #include <execinfo.h>
 #include <stdexcept>
 #include <boost/foreach.hpp>
+#include <QString>
 
 using namespace std;
 using namespace Geometry2d;
