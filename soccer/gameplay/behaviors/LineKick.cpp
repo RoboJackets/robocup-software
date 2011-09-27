@@ -21,6 +21,9 @@ ConfigDouble *Gameplay::Behaviors::LineKick::_facing_thresh;
 ConfigDouble *Gameplay::Behaviors::LineKick::_max_speed;
 ConfigDouble *Gameplay::Behaviors::LineKick::_proj_time;
 ConfigDouble *Gameplay::Behaviors::LineKick::_dampening;
+ConfigDouble *Gameplay::Behaviors::LineKick::_done_thresh;
+
+
 
 void Gameplay::Behaviors::LineKick::createConfiguration(Configuration *cfg)
 {
@@ -33,10 +36,12 @@ void Gameplay::Behaviors::LineKick::createConfiguration(Configuration *cfg)
 	_max_speed = new ConfigDouble(cfg, "LineKick/Max Charge Speed", 1.5);
 	_proj_time = new ConfigDouble(cfg, "LineKick/Ball Project Time", 0.4);
 	_dampening = new ConfigDouble(cfg, "LineKick/Ball Project Dampening", 0.8);
+	_done_thresh = new ConfigDouble(cfg, "LineKick/Done State Thresh", 0.11);
 }
 
 Gameplay::Behaviors::LineKick::LineKick(GameplayModule *gameplay):
-    SingleRobotBehavior(gameplay)
+    SingleRobotBehavior(gameplay),
+    ballClose(false)
 {
 	restart();
 	target = Geometry2d::Point(0.0, Field_Length);
@@ -50,6 +55,7 @@ void Gameplay::Behaviors::LineKick::restart()
 	scaleAcc = 1.0;
 	scaleSpeed = 1.0;
 	scaleW = 1.0;
+	ballClose = false;
 }
 
 bool Gameplay::Behaviors::LineKick::run()
@@ -58,17 +64,21 @@ bool Gameplay::Behaviors::LineKick::run()
 	{
 		return false;
 	}
-
 	// project the ball ahead to handle movement
 	double dt = *_proj_time;
 	Point ballPos = ball().pos + ball().vel * dt * _dampening->value();  // projecting
 //	Point ballPos = ball().pos; // no projecting
-
 	Line targetLine(ballPos, target);
 	const Point dir = Point::direction(robot->angle * DegreesToRadians);
 	double facing_thresh = cos(*_facing_thresh * DegreesToRadians);
 	double facing_err = dir.dot((target - ballPos).normalized());
 	
+
+	if(ballPos.distTo(robot->pos) <= *_done_thresh)
+	{
+		ballClose = true;
+	}
+
 	// State changes
 	if (_state == State_Setup)
 	{
@@ -79,12 +89,24 @@ bool Gameplay::Behaviors::LineKick::run()
 		{
 			_state = State_Charge;
 		}
+
+		//if the ball if further away than the back off distance for the setup stage
+		if(ballClose && ballPos.distTo(robot->pos) > *_drive_around_dist + Robot_Radius)
+		{
+			_state = State_Done;
+		}
 	} else if (_state == State_Charge)
 	{
 		if (Line(robot->pos, target).distTo(ballPos) > *_escape_charge_thresh)
 		{
 			// Ball is in a bad place
 			_state = State_Setup;
+		}
+
+		//if the ball if further away than the back off distance for the setup stage
+		if(ballClose && ballPos.distTo(robot->pos) > *_drive_around_dist + Robot_Radius)
+		{
+			_state = State_Done;
 		}
 	}
 	
@@ -121,6 +143,7 @@ bool Gameplay::Behaviors::LineKick::run()
 		robot->face(robot->pos + delta_facing);
 
 		robot->kick(0);
+
 	} else if (_state == State_Charge)
 	{
 		robot->addText("Charge!");
@@ -148,10 +171,10 @@ bool Gameplay::Behaviors::LineKick::run()
 		robot->setVScale(scaleSpeed);
 
 		robot->face(ballPos);
+
 	} else {
 		robot->addText("Done");
 		return false;
 	}
-	
 	return true;
 }
