@@ -25,6 +25,7 @@ bool Gameplay::Plays::TestPlay::run()
 		return false;
 	}
 	
+
 	float backoff = 0.0;
 	
 	// Make a list of robots, sorted by shell
@@ -61,7 +62,6 @@ bool Gameplay::Plays::TestPlay::run()
 		robots[i]->move(dest);
 		robots[i]->face(ballPos);
 	}
-	
 	
 	return true;
 }

@@ -42,12 +42,21 @@ bool Gameplay::Plays::PassPlay::run()
 //	_passer2.robot->move(Geometry2d::Point(0,Field_Length / 2));
 
 
-	if(_passer1HasBall)
+	if(_passer1HasBall /*&& (ball().pos.distTo(_passer1.robot->pos) < 0.5 || ball().vel.mag() < 0.1)*/)
 	{
-		_passer2.robot->face(ball().pos);
+		_passer2.robot->face(_passer1.robot->pos);
 
 		_passer1.setTarget(_passer2.robot->kickerBar());
-		_passer1.kick_power = 100;
+		_passer1.kick_power = 127;
+		_passer1.use_line_kick = true;
+		if(_passer1.robot->pos.distTo(_passer2.robot->pos) > Field_Length / 2)
+		{
+			//_passer1.kick_power = 255;
+		}
+		else
+		{
+			_passer1.kick_power = 127;
+		}
 		_passer1.run();
 
 		if(_passer1.done())
@@ -56,11 +65,21 @@ bool Gameplay::Plays::PassPlay::run()
 			_passer1HasBall = false;
 		}
 	}
-	else
+	else if( !_passer1HasBall /*&& (ball().pos.distTo(_passer2.robot->pos) < 0.5 || ball().vel.mag() < 0.1)*/)
 	{
-		_passer1.robot->face(ball().pos);
+		_passer1.robot->face(_passer2.robot->pos);
 		_passer2.setTarget(_passer1.robot->kickerBar());
-		_passer2.kick_power = 100;
+		_passer2.kick_power = 127;
+		_passer2.use_line_kick = true;
+		if(_passer2.robot->pos.distTo(_passer1.robot->pos) > Field_Length / 2)
+		{
+			//_passer2.kick_power = 255;
+		}
+		else
+		{
+			_passer2.kick_power = 127;
+		}
+
 		_passer2.run();
 		if(_passer2.done())
 		{
