@@ -9,6 +9,19 @@ using namespace Geometry2d;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::TheirFreekick, "Restarts")
 
+namespace Gameplay
+{
+	namespace Plays
+	{
+		REGISTER_CONFIGURABLE(TheirFreekick)
+	}
+}
+
+void Gameplay::Plays::TheirFreekick::createConfiguration(Configuration *cfg)
+{
+
+}
+
 Gameplay::Plays::TheirFreekick::TheirFreekick(GameplayModule *gameplay):
 	Play(gameplay),
 	_fullback1(gameplay, Behaviors::Fullback::Left),

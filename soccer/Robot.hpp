@@ -7,17 +7,18 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <QColor>
 
+#include <Eigen/Geometry>
 #include <Constants.hpp>
-#include <framework/MotionCmd.hpp>
 #include <framework/Path.hpp>
 #include <gameplay/planning/rrt.hpp>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
-#include "Processor.hpp"
 
 class SystemState;
 class RobotConfig;
+class RobotStatus;
 class MotionControl;
+class RobotFilter;
 
 namespace Packet
 {
@@ -39,10 +40,34 @@ class Planner;
 }
 }
 
-class Robot
+class RobotPose
+{
+public:
+	RobotPose():
+		visible(false),
+		angle(0),
+		angleVel(0),
+		time(0),
+		visionFrame(0)
+	{
+	}
+	
+	bool visible;
+	Geometry2d::Point pos;
+	Geometry2d::Point vel;
+	float angle;
+	float angleVel;
+	
+	// Time at which this estimate is valid
+	uint64_t time;
+	int visionFrame;
+};
+
+class Robot: public RobotPose
 {
 public:
 	Robot(unsigned int shell, bool self);
+	~Robot();
 
 	unsigned int shell() const
 	{
@@ -53,29 +78,84 @@ public:
 	{
 		return _self;
 	}
-
-	bool visible;
-	Geometry2d::Point pos;
-	Geometry2d::Point vel;
-	float angle;
-	float angleVel;
+	
+	RobotFilter *filter() const
+	{
+		return _filter;
+	}
 
 private:
 	unsigned int _shell;
 	bool _self;
+	RobotFilter *_filter;
+};
+
+class MotionTarget
+{
+public:
+	MotionTarget()
+	{
+		pathLength = 0;
+		pathEnd = StopAtEnd;
+	}
+	
+	Geometry2d::Point pos;
+	float pathLength;
+	
+	enum PathEndType
+	{
+		StopAtEnd = 0,
+		FastAtEnd = 1
+	};
+	PathEndType pathEnd;
+};
+
+class FaceTarget
+{
+public:
+	FaceTarget()
+	{
+		continuous = false;
+	}
+	
+	Geometry2d::Point pos;
+	bool continuous;
+};
+
+class MotionCommand
+{
+	public:
+		MotionCommand()
+		{
+			vScale = 1.0;
+			wScale = 1.0;
+		}
+
+		//FIXME - Remove pathLength and pathEnd.  Store a path in MotionCommand.  What about facing?
+		
+		// Any of these optionals may be set before motion control runs.
+		// Motion control will fill in the blanks.  This allows bypassing parts of motion control.
+		
+		boost::optional<MotionTarget> target;
+		boost::optional<FaceTarget> face;
+		
+		float vScale;
+		float wScale;
+		
+		// Velocity in world coordinates
+		boost::optional<Geometry2d::Point> worldVel;
+		
+		// Velocity in body coordinates (the front of the robot is +X)
+		boost::optional<Geometry2d::Point> bodyVel;
+		
+		// Angular velocity in rad/s counterclockwise
+		boost::optional<float> angularVelocity;
 };
 
 class OurRobot: public Robot
 {
 public:
-	typedef boost::optional<Geometry2d::Point> OptionalPoint;
 	typedef boost::array<float,Num_Shells> RobotMask;
-	typedef enum {
-		NONE, 			 /// makes no attempt to adjust facing
-		CONTINUOUS,  /// change facing continously
-		CONSTANT,    /// specifies changing facing before moving, and keeps it constant throughout trajectory
-		ENDPOINT		 /// only handle facing at end (fastest)
-	} FacingType;
 
 	typedef enum {
 		RRT, 			/// moves to a point with the RRT planner
@@ -83,18 +163,16 @@ public:
 	} MoveType;
 
 	RobotConfig * config;
+	RobotStatus * status;
 
 	OurRobot(int shell, SystemState *state);
 	~OurRobot();
 
-	void addText(const QString &text, const QColor &color = Qt::white);
-
-	bool haveBall() const; /// true if we have the ball
-
-	bool hasChipper() const; /// true if robot can chip
+	void addStatusText();
+	
+	void addText(const QString &text, const QColor &color = Qt::white, const QString &layerPrefix = "RobotText");
 
 	// kicker readiness checks
-	// TODO: replace with boost::timer
 	bool charged() const; /// true if the kicker is ready
 	float kickTimer() const; /// returns the time since the kicker was last charged, 0.0 if ready
 
@@ -112,6 +190,9 @@ public:
 	//FIXME - Function name and comment don't match
 	bool behindBall(const Geometry2d::Point& ballPos) const;
 
+	// Gets the robot quaternion.  Returns false (and does not change q) if not available.
+	boost::optional<Eigen::Quaternionf> quaternion() const;
+	
 	// Commands
 
 	void setVScale(float scale = 1.0); /// scales the velocity
@@ -136,20 +217,28 @@ public:
 	void move(const std::vector<Geometry2d::Point>& path, bool stopAtEnd=true);
 
 	/**
-	 * Apply direct motion commands to the motors - use only for calibration
-	 * Vector of speeds must have 4 elements - will pad with zeros otherwise
-	 * Only use this function for calibration
+	 * Pivot around a point at a fixed radius and direction (CCW or CW),
+	 * specified by the magnitude of the angular velocity.
+	 * Used primarily for aiming around a ball.  Note that this will
+	 * not handle obstacle avoidance.
 	 */
-	void directMotorCommands(const std::vector<int8_t>& speeds);
+	void pivot(double w, double radius);
+	
+	void pivot(double w, const Geometry2d::Point& center)
+	{
+		pivot(w, (pos - center).mag());
+	}
 
 	/**
 	 * Move using direct velocity control by specifying
 	 * translational and angular velocity
 	 */
-	void directVelocityCommands(const Geometry2d::Point& trans, double ang);
+	void bodyVelocity(const Geometry2d::Point& v);
+	void worldVelocity(const Geometry2d::Point& v);
+	void angularVelocity(double w);
 
 	/*
-	 * Enable dribbler (note: can go both ways)
+	 * Enable dribbler (0 to 127)
 	 */
 	void dribble(int8_t speed);
 
@@ -180,13 +269,6 @@ public:
 	bool avoidOpponents() const;
 	void avoidOpponents(bool enable);
 
-	// True if this robot intends to kick the ball.
-	// This is reset when this robot's role changes.
-	// This allows the robot to get close to the ball during a restart.
-	// if disabled, creates a small obstacle for the ball
-	bool willKick() const;
-	void willKick(bool enable);
-
 	// Add a custom radius avoidance of the ball
 	// creates an obstacle around the ball
 	// if radius is 0 or less, it disables avoidance
@@ -216,6 +298,9 @@ public:
 
 	/** returns the avoidance radius */
 	float avoidOpponentRadius(unsigned shell_id) const;
+
+	/** returns the avoidance radius */
+	void avoidAllOpponentRadius(float radius);
 
 	/** enable/disable for opponent avoidance */
 	void avoidOpponent(unsigned shell_id, bool enable_avoid);
@@ -250,13 +335,24 @@ public:
 
 	const std::vector<void *> &commandTrace() const
 	{
-	return _commandTrace;
+		return _commandTrace;
 	}
 
 	/** motion command - sent to point/wheel controllers, is valid when _planning_complete is true */
-	MotionCmd cmd;
+	MotionCommand cmd;
 
-	bool hasBall;
+	/** status evaluations for choosing robots in behaviors - combines multiple checks */
+	bool chipper_available() const;
+	bool kicker_available() const;
+	bool dribbler_available() const;
+	bool driving_available(bool require_all = true) const; // checks for motor faults - allows one wheel failure if require_all = false
+
+	// lower level status checks
+	bool hasBall() const;
+	bool ballSenseWorks() const;
+	bool kickerWorks() const;
+	float kickerVoltage() const;
+	Packet::HardwareVersion hardwareVersion() const;
 
 	/** velocity specification for direct velocity control */
 	Geometry2d::Point cmd_vel;
@@ -269,9 +365,6 @@ public:
 	//The confidence for this robot's ball sensor
 	int sensorConfidence;
 
-	void newRevision(bool is_2011) { _newRevision = is_2011; }
-	bool newRevision() const { return _newRevision; }
-
 	MotionControl *motionControl() const
 	{
 		return _motionControl;
@@ -281,6 +374,8 @@ public:
 	{
 		return _state;
 	}
+
+	bool rxIsFresh(uint64_t age = 500000) const;
 
 protected:
 	// Stores a stack trace in _commandTrace
@@ -294,11 +389,10 @@ protected:
 
 	uint64_t _lastChargedTime; // TODO: make this a boost pointer to avoid update() function
 
-	bool _newRevision; /// true if this a 2011 robot, false otherwise
-
 	/** Planning components for delayed planning */
 	MoveType _planner_type;  /// movement class - set during move
 	boost::optional<Geometry2d::Point> _delayed_goal;   /// goal from move command
+	bool _stopAtEnd;
 
 	// obstacle management
 	ObstacleGroup _local_obstacles; /// set of obstacles added by plays

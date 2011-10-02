@@ -10,9 +10,14 @@ namespace Gameplay
 {
 	namespace Plays
 	{
+		/**
+		 * General Kickoff Play - just moves robots into position,
+		 * actual kicking handled by the Kickoff Behavior
+		 */
 		class OurKickoff: public Play
 		{
 			public:
+				static void createConfiguration(Configuration *cfg);
 				OurKickoff(GameplayModule *gameplay);
 				
 				static float score(GameplayModule *gameplay);
@@ -22,6 +27,9 @@ namespace Gameplay
 				Behaviors::Kickoff _kicker;
 				Behaviors::Move _idle1, _idle2, _idle3;
 				PreventDoubleTouch _pdt;
+
+				static ConfigInt *_kick_power;
+				static ConfigInt *_chip_power;
 		};
 	}
 }

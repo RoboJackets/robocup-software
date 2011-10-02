@@ -26,10 +26,10 @@ namespace Geometry2d
 	public:
 		/** Constructors */
 		Pose(float x, float y, float theta)
-			: _pos(x, y), _angle(Utils::fixAngleRadians(theta)),
+			: _pos(x, y), _angle(fixAngleRadians(theta)),
 			  _transform(_pos, theta) {}
 		Pose(const Point& pos, float theta)
-			: _pos(pos), _angle(Utils::fixAngleRadians(theta)),
+			: _pos(pos), _angle(fixAngleRadians(theta)),
 			  _transform(pos, theta) {}
 
 

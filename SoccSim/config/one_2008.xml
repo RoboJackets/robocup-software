@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<simulation>
+    <ball x="0" y="0" />
+
+    <blue>
+    </blue>
+
+    <yellow>
+        <robot id="5" x="1.5" y="0" rev="2008"/>
+    </yellow>
+</simulation>

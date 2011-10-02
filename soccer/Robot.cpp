@@ -4,12 +4,16 @@
 #include <LogUtils.hpp>
 #include <motion/MotionControl.hpp>
 #include <protobuf/LogFrame.pb.h>
+#include <framework/SystemState.hpp>
+#include <framework/RobotConfig.hpp>
+#include <modeling/RobotFilter.hpp>
 
 #include <stdio.h>
 #include <iostream>
 #include <execinfo.h>
 #include <stdexcept>
 #include <boost/foreach.hpp>
+#include <QString>
 
 using namespace std;
 using namespace Geometry2d;
@@ -31,10 +35,19 @@ const bool verbose = false;
 
 Robot::Robot(unsigned int shell, bool self)
 {
+	visible = false;
 	_shell = shell;
 	_self = self;
 	angle = 0;
 	angleVel = 0;
+	
+	_filter = new RobotFilter();
+}
+
+Robot::~Robot()
+{
+	delete _filter;
+	_filter = 0;
 }
 
 OurRobot::OurRobot(int shell, SystemState *state):
@@ -45,11 +58,11 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	_delayed_goal = boost::none;
 	_planner_type = RRT;
 	exclude = false;
-	hasBall = false;
 	sensorConfidence = 0;
 	cmd_w = 0;
 	_lastChargedTime = 0;
 	_motionControl = new MotionControl(this);
+	_stopAtEnd = false;
 
 	_planner = new Planning::RRT::Planner();
 	for (size_t i = 0; i < Num_Shells; ++i)
@@ -68,10 +81,75 @@ OurRobot::~OurRobot()
 	delete _planner;
 }
 
-void OurRobot::addText(const QString& text, const QColor& qc)
+void OurRobot::addStatusText()
+{
+	static const char *motorNames[] = {"BL", "FL", "FR", "BR", "DR"};
+	
+	const QColor statusColor(255, 32, 32);
+	
+	if (!rxIsFresh())
+	{
+		addText("No RX", statusColor, "Status");
+		
+		// No more status is available
+		return;
+	}
+	
+	// Motor status
+	if (radioRx.motor_status().size() == 5)
+	{
+		for (int i = 0; i < 5; ++i)
+		{
+			QString error;
+			switch (radioRx.motor_status(i))
+			{
+				case Packet::Hall_Failure:
+					error = "Hall fault";
+					break;
+				
+				case Packet::Stalled:
+					error = "Stall";
+					break;
+				
+				case Packet::Encoder_Failure:
+					error = "Encoder fault";
+					break;
+				
+				default:
+					break;
+			}
+			
+			if (!error.isNull())
+			{
+				addText(QString("%1: %2").arg(error, QString(motorNames[i])), statusColor, "Status");
+			}
+		}
+	}
+	
+	if (!ballSenseWorks())
+	{
+		addText("Ball sense fault", statusColor, "Status");
+	}
+	
+	if (!kickerWorks() && false)
+	{
+		addText("Kicker fault", statusColor, "Status");
+	}
+	
+	if (radioRx.has_battery())
+	{
+		float battery = radioRx.battery();
+		if (battery <= 14.3f)
+		{
+			addText(QString("Low battery: %1V").arg(battery, 0, 'f', 1), statusColor, "Status");
+		}
+	}
+}
+
+void OurRobot::addText(const QString& text, const QColor& qc, const QString &layerPrefix)
 {
 	Packet::DebugText *dbg = new Packet::DebugText;
-	QString layer = QString("RobotText%1").arg(shell());
+	QString layer = layerPrefix + QString::number(shell());
 	dbg->set_layer(_state->findDebugLayer(layer));
 	dbg->set_text(text.toStdString());
 	dbg->set_color(color(qc));
@@ -117,19 +195,15 @@ void OurRobot::resetMotionCommand()
 	//	willKick = false;
 	//	avoidBall = false;
 
-	radioTx.set_roller(0);
-	radioTx.set_kick(0);
-	radioTx.set_use_chipper(false);
+	radioTx.Clear();
+	radioTx.set_robot_id(shell());
+	radioTx.set_accel(10);
+	radioTx.set_decel(10);
 
-	for (int i = 0; i < 4; ++i)
-	{
-		radioTx.set_motors(i, 0);
-	}
-
-	cmd = MotionCmd();
+	cmd = MotionCommand();
+	_delayed_goal = boost::none;
 
 	_local_obstacles.clear();
-
 }
 
 void OurRobot::stop()
@@ -147,8 +221,7 @@ void OurRobot::move(Geometry2d::Point goal, bool stopAtEnd)
 	addText(QString("move:(%1, %2)").arg(goal.x).arg(goal.y));
 	_delayed_goal = goal;
 	_planner_type = RRT;
-	cmd.pathEnd = (stopAtEnd) ? MotionCmd::StopAtEnd : MotionCmd::FastAtEnd;
-	cmd.planner = MotionCmd::Point;
+	_stopAtEnd = stopAtEnd;
 }
 
 void OurRobot::move(const vector<Geometry2d::Point>& path, bool stopAtEnd)
@@ -164,30 +237,43 @@ void OurRobot::move(const vector<Geometry2d::Point>& path, bool stopAtEnd)
 	_planner_type = OVERRIDE;
 
 	// convert to motion command
-	cmd.goalPosition = findGoalOnPath(pos, _path);
-	cmd.pathLength = _path.length(pos);
-	cmd.planner = MotionCmd::Point;
-	cmd.pathEnd = (stopAtEnd) ? MotionCmd::StopAtEnd : MotionCmd::FastAtEnd;
+	cmd.target = MotionTarget();
+	cmd.target->pos = findGoalOnPath(pos, _path);
+	cmd.target->pathLength = _path.length(pos);
+	cmd.target->pathEnd = (stopAtEnd) ? MotionTarget::StopAtEnd : MotionTarget::FastAtEnd;
 }
 
-void OurRobot::directVelocityCommands(const Geometry2d::Point& trans, double ang)
+void OurRobot::pivot(double w, double radius)
+{
+	bodyVelocity(Point(0, -radius * w));
+	angularVelocity(w);
+}
+
+void OurRobot::bodyVelocity(const Geometry2d::Point& v)
 {
 	// ensure RRT not used
 	_delayed_goal = boost::none;
 	_planner_type = OVERRIDE;
 
-	cmd.planner = MotionCmd::DirectVelocity;
-	cmd.direct_ang_vel = ang;
-	cmd.direct_trans_vel = trans;
+	cmd.target = boost::none;
+	cmd.worldVel = boost::none;
+	cmd.bodyVel = v;
 }
 
-void OurRobot::directMotorCommands(const vector<int8_t>& speeds) {
+void OurRobot::worldVelocity(const Geometry2d::Point& v)
+{
 	// ensure RRT not used
 	_delayed_goal = boost::none;
 	_planner_type = OVERRIDE;
 
-	cmd.planner = MotionCmd::DirectMotor;
-	cmd.direct_motor_cmds = speeds;
+	cmd.target = boost::none;
+	cmd.worldVel = v;
+	cmd.bodyVel = boost::none;
+}
+
+void OurRobot::angularVelocity(double w)
+{
+	cmd.angularVelocity = w;
 }
 
 Geometry2d::Point OurRobot::pointInRobotSpace(const Geometry2d::Point& pt) const {
@@ -219,35 +305,31 @@ void OurRobot::setWScale(float scale) {
 }
 
 float OurRobot::kickTimer() const {
-	return (charged()) ? 0.0 : intTimeStampToFloat * (float) (Utils::timestamp() - _lastChargedTime);
+	return (charged()) ? 0.0 : intTimeStampToFloat * (float) (timestamp() - _lastChargedTime);
 }
 
 void OurRobot::update() {
 	if (charged())
 	{
-		_lastChargedTime = Utils::timestamp();
+		_lastChargedTime = timestamp();
 	}
-}
-
-bool OurRobot::hasChipper() const
-{
-	return false;
 }
 
 void OurRobot::dribble(int8_t speed)
 {
-	radioTx.set_roller(speed);
+	radioTx.set_dribbler(speed);
 }
 
 void OurRobot::face(Geometry2d::Point pt, bool continuous)
 {
-	cmd.goalOrientation = pt;
-	cmd.face = continuous ? MotionCmd::Endpoint : MotionCmd::Continuous;
+	cmd.face = FaceTarget();
+	cmd.face->pos = pt;
+	cmd.face->continuous = continuous;
 }
 
 void OurRobot::faceNone()
 {
-	cmd.face = MotionCmd::None;
+	cmd.face = boost::none;
 }
 
 void OurRobot::kick(uint8_t strength)
@@ -260,11 +342,6 @@ void OurRobot::chip(uint8_t strength)
 {
 	radioTx.set_kick(strength);
 	radioTx.set_use_chipper(true);
-}
-
-bool OurRobot::charged() const
-{
-	return radioRx.charged();
 }
 
 void OurRobot::approachAllOpponents(bool enable) {
@@ -306,6 +383,11 @@ void OurRobot::avoidOpponentRadius(unsigned shell_id, float radius) {
 	_opp_avoid_mask[shell_id] = radius;
 }
 
+void OurRobot::avoidAllOpponentRadius(float radius) {
+	BOOST_FOREACH(float &ar, _opp_avoid_mask)
+		ar = radius;
+}
+
 void OurRobot::avoidAllTeammates(bool enable) {
 	for (size_t i=0; i<Num_Shells; ++i)
 		avoidTeammate(i, enable);
@@ -342,8 +424,10 @@ float OurRobot::avoidBall() const {
 
 ObstaclePtr OurRobot::createBallObstacle() const {
 	// if game is stopped, large obstacle regardless of flags
-	if (_state->gameState.state != GameState::Playing && !_state->gameState.ourRestart)
+	if (_state->gameState.state != GameState::Playing && !(_state->gameState.ourRestart || _state->gameState.theirPenalty()))
+	{
 		return ObstaclePtr(new CircleObstacle(_state->ball.pos, Field_CenterRadius));
+	}
 
 	// create an obstacle if necessary
 	if (_ball_avoid > 0.0) {
@@ -356,7 +440,7 @@ ObstaclePtr OurRobot::createBallObstacle() const {
 Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 		const Planning::Path& path,	const ObstacleGroup& obstacles) {
 		const bool blend_verbose = false;
-		setCommandTrace();
+// 		setCommandTrace();
 
 		// empty path case - leave robot stationary
 		if (path.empty())
@@ -424,7 +508,7 @@ Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 		// mix the next point between the first and second point
 		// if we are far away from p1, want scale to be closer to p1
 		// if we are close to p1, want scale to be closer to p2
-		float scale = 1-Utils::clamp(dist1/dist2, 1.0, 0.0);
+		float scale = 1 - clamp(dist1/dist2, 0.0f, 1.0f);
 		Geometry2d::Point targetPos = p1 + (p2-p1)*scale;
 		if (blend_verbose) {
 			addText(QString("blend:scale=%1").arg(scale));
@@ -451,7 +535,7 @@ Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 
 Planning::Path OurRobot::rrtReplan(const Geometry2d::Point& goal,
 		const ObstacleGroup& obstacles) {
-	setCommandTrace();
+// 	setCommandTrace();
 
 	// create a new path
 	Planning::Path result;
@@ -472,12 +556,7 @@ void OurRobot::drawPath(const Planning::Path& path, const QColor &color, const Q
 }
 
 void OurRobot::execute(const ObstacleGroup& global_obstacles) {
-	if (cmd.planner != MotionCmd::Point)
-	{
-		return;
-	}
-	
-	setCommandTrace();
+// 	setCommandTrace();
 
 	const bool enable_slice = false;
 
@@ -492,18 +571,24 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		return;
 	}
 
+	cmd.target = MotionTarget();
+	cmd.target->pathEnd = (_stopAtEnd) ? MotionTarget::StopAtEnd : MotionTarget::FastAtEnd;
+	
 	// create and visualize obstacles
 	ObstacleGroup full_obstacles(_local_obstacles);
 	ObstacleGroup
 		self_obs = createRobotObstacles(_state->self, _self_avoid_mask),
 		opp_obs = createRobotObstacles(_state->opp, _opp_avoid_mask);
-	ObstaclePtr ball_obs = createBallObstacle();
 	_state->drawObstacles(self_obs, Qt::gray, QString("self_obstacles_%1").arg(shell()));
 	_state->drawObstacles(opp_obs, Qt::gray, QString("opp_obstacles_%1").arg(shell()));
-	_state->drawObstacle(ball_obs, Qt::gray, QString("ball_obstacles_%1").arg(shell()));
+	if (_state->ball.valid)
+	{
+		ObstaclePtr ball_obs = createBallObstacle();
+		_state->drawObstacle(ball_obs, Qt::gray, QString("ball_obstacles_%1").arg(shell()));
+		full_obstacles.add(ball_obs);
+	}
 	full_obstacles.add(self_obs);
 	full_obstacles.add(opp_obs);
-	full_obstacles.add(ball_obs);
 	full_obstacles.add(global_obstacles);
 
 	// if no goal command robot to stop in place
@@ -511,9 +596,8 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: stopped" << endl;
 		addText(QString("execute: no goal"));
 		_path = Planning::Path(pos);
-		cmd.goalPosition = pos;
-		cmd.pathLength = 0;
-		cmd.planner = MotionCmd::Point;
+		cmd.target->pos = pos;
+		cmd.target->pathLength = 0;
 		drawPath(_path);
 		return;
 	}
@@ -525,9 +609,8 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using straight line goal" << endl;
 		addText(QString("execute: straight_line"));
 		_path = straight_line;
-		cmd.goalPosition = *_delayed_goal;
-		cmd.pathLength = straight_line.length(0);
-		cmd.planner = MotionCmd::Point;
+		cmd.target->pos = *_delayed_goal;
+		cmd.target->pathLength = straight_line.length(0);
 		drawPath(straight_line, Qt::red);
 		return;
 	}
@@ -543,20 +626,18 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		_path.startFrom(pos, sliced_path);
 		if (enable_slice && !sliced_path.hit(full_obstacles)) {
 			addText(QString("execute: slicing path"));
-			cmd.goalPosition = findGoalOnPath(pos, sliced_path, full_obstacles);
-			cmd.pathLength = sliced_path.length(pos);
-			cmd.planner = MotionCmd::Point;
+			cmd.target->pos = findGoalOnPath(pos, sliced_path, full_obstacles);
+			cmd.target->pathLength = sliced_path.length(pos);
 			drawPath(sliced_path, Qt::cyan);
 			Geometry2d::Point offset(0.01, 0.01);
-			_state->drawLine(pos + offset, cmd.goalPosition + offset, Qt::black);
+			_state->drawLine(pos + offset, cmd.target->pos + offset, Qt::black);
 			return;
 		} else if (!_path.hit(full_obstacles)) {
 			addText(QString("execute: reusing path"));
-			cmd.goalPosition = findGoalOnPath(pos, _path, full_obstacles);
-			cmd.pathLength = _path.length(pos);
-			cmd.planner = MotionCmd::Point;
+			cmd.target->pos = findGoalOnPath(pos, _path, full_obstacles);
+			cmd.target->pathLength = _path.length(pos);
 			drawPath(_path, Qt::yellow);
-			_state->drawLine(pos, cmd.goalPosition, Qt::black);
+			_state->drawLine(pos, cmd.target->pos, Qt::black);
 			return;
 		}
 	}
@@ -566,9 +647,95 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	_path = rrt_path;
 	drawPath(rrt_path, Qt::magenta);
 	addText(QString("execute: RRT path %1").arg(full_obstacles.size()));
-	cmd.goalPosition = findGoalOnPath(pos, _path, full_obstacles);
-	cmd.pathLength = rrt_path_len;
-	cmd.planner = MotionCmd::Point;
+	cmd.target->pos = findGoalOnPath(pos, _path, full_obstacles);
+	cmd.target->pathLength = rrt_path_len;
 	return;
+}
 
+bool OurRobot::charged() const
+{
+	return radioRx.has_kicker_status() && (radioRx.kicker_status() & 0x01) && rxIsFresh();
+}
+
+bool OurRobot::hasBall() const
+{
+	return radioRx.has_ball_sense_status() && radioRx.ball_sense_status() == Packet::HasBall && rxIsFresh();
+}
+
+bool OurRobot::ballSenseWorks() const
+{
+	return rxIsFresh() && radioRx.has_ball_sense_status() && (radioRx.ball_sense_status() == Packet::NoBall || radioRx.ball_sense_status() == Packet::HasBall);
+}
+
+bool OurRobot::kickerWorks() const
+{
+	return radioRx.has_kicker_status() && !(radioRx.kicker_status() & 0x80) && rxIsFresh();
+}
+
+bool OurRobot::chipper_available() const
+{
+	return hardwareVersion() == Packet::RJ2011 && kickerWorks() && *status->chipper_enabled;
+}
+
+bool OurRobot::kicker_available() const
+{
+	return kickerWorks() && *status->kicker_enabled;
+}
+
+bool OurRobot::dribbler_available() const {
+	return *status->dribbler_enabled && radioRx.motor_status_size() == 5 && radioRx.motor_status(4) == Packet::Good;
+}
+
+bool OurRobot::driving_available(bool require_all) const
+{
+	if (radioRx.motor_status_size() != 5)
+		return false;
+	int c = 0;
+	for (int i=0; i<4; ++i)
+	{
+		if (radioRx.motor_status(i) == Packet::Good)
+		{
+			++c;
+		}
+	}
+	return (require_all) ? c == 4 : c == 3;
+}
+
+float OurRobot::kickerVoltage() const
+{
+	if (radioRx.has_kicker_voltage() && rxIsFresh())
+	{
+		return radioRx.kicker_voltage();
+	} else {
+		return 0;
+	}
+}
+
+Packet::HardwareVersion OurRobot::hardwareVersion() const
+{
+	if (rxIsFresh())
+	{
+		return radioRx.hardware_version();
+	} else {
+		return Packet::Unknown;
+	}
+}
+
+boost::optional<Eigen::Quaternionf> OurRobot::quaternion() const
+{
+	if (radioRx.has_quaternion() && rxIsFresh(50000))
+	{
+		return Eigen::Quaternionf(
+			radioRx.quaternion().q0() / 16384.0,
+			radioRx.quaternion().q1() / 16384.0,
+			radioRx.quaternion().q2() / 16384.0,
+			radioRx.quaternion().q3() / 16384.0);
+	} else {
+		return boost::none;
+	}
+}
+
+bool OurRobot::rxIsFresh(uint64_t age) const
+{
+	return (timestamp() - radioRx.timestamp()) < age;
 }

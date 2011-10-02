@@ -21,9 +21,11 @@ class Kick: public SingleRobotBehavior
 public:
 	Kick(GameplayModule *gameplay);
 
+	static void createConfiguration(Configuration *cfg);
+
 	virtual bool run();
 
-	inline bool done() const { return _state == State_Done; }
+	inline bool done() const { return _done; }
 
 	/** sets the state back to default state */
 	void restart();
@@ -31,10 +33,14 @@ public:
 	/** default target to full segment for opponent's goal */
 	void setTargetGoal();
 
+	/*** set a specific segment */
 	void setTarget(const Geometry2d::Segment &seg);
 
+	/** get current target */
+	Geometry2d::Segment target() const { return _target; }
+
 	/** find best segment on target, @return true if one exists, and returns segment in result */
-	bool findShot(const Geometry2d::Segment& segment, Geometry2d::Segment& result,
+	bool findShot(const Geometry2d::Segment& segment, Geometry2d::Segment& result, bool chipper,
 			float min_segment_length = 0.1) const;
 
 	/** simple flags to allow for backup targets if target not feasible */
@@ -43,20 +49,34 @@ public:
 	bool enableLeftDownfieldShot;   /// kick off left edge of far half field
 	bool enableRightDownfieldShot;  /// kick off rigth edge of far half field
 
+	// overrides
+	bool override_aim;  /// if true, will shoot regardless of obstacles
+
 	/** simple flag to enable pushing of opponent robots if necessary */
 	bool enablePushing;    /// if true, disables collision detection on opponents
+	bool forceChip;        /// if true, will only chip
+
+	/** flags to allow for kicking styles	 */
+	bool use_line_kick;
+	bool use_chipper;
+	short dribbler_speed;
+
+	// set the kick/chip power directly
+	uint8_t kick_power;
+	uint8_t chip_power;
+
+	// calculate and set the chip power
+	void calculateChipPower(double dist);
+
+	// chipping parameters - should get calculated somehow
+	double minChipRange;
+	double maxChipRange;
+
+	/** sets line kicking parameters */
+	void setLineKickVelocityScale(double scale_speed, double scale_acc, double scale_w);
 
 private:
-	typedef enum
-	{
-		State_PivotKick,   /// default kicking mode with aiming
-		State_LineKick,    /// faster kicking mode when opponents nearby
-		State_Bump,   		 /// when close to another robot, bump ball away
-		State_Trap,        /// when ball is moving quickly, go around behind the ball first
-		State_Done				 /// after a successful shot
-	} State;
-
-	State _state;
+	bool _done;
 
 	// segment-specific kick
 	Geometry2d::Segment _target;
@@ -65,6 +85,11 @@ private:
 	PivotKick _pivotKick;
 	LineKick _lineKick;
 
+	// parameters for chip model
+	static ConfigDouble *_chip_min_range;
+	static ConfigDouble *_chip_max_range;
+	static ConfigInt *_chip_min_power;
+	static ConfigInt *_chip_max_power;
 };
 
 } // \namespace Behaviors

@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 using namespace std;
-using namespace Utils;
+
 using namespace Geometry2d;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::CalSpeed, "Demos")

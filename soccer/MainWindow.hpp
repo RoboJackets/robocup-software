@@ -8,6 +8,7 @@
 #include <QTime>
 
 #include <FieldView.hpp>
+#include <Configuration.hpp>
 
 #include "Processor.hpp"
 #include "ui_MainWindow.h"
@@ -16,12 +17,15 @@ class PlayConfigTab;
 class TestResultTab;
 class StripChart;
 class ConfigBool;
+class QuaternionDemo;
 
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT;
 	
 	public:
+		QuaternionDemo *demo;
+		
 		MainWindow(QWidget *parent = 0);
 		
 		void configuration(Configuration *config);
@@ -43,11 +47,6 @@ class MainWindow : public QMainWindow
 			return _playConfigTab;
 		}
 		
-		TestResultTab *testResultTab() const
-		{
-			return _testResultTab;
-		}
-
 		// Deselects all debug layers
 		void allDebugOff();
 		
@@ -93,6 +92,10 @@ class MainWindow : public QMainWindow
 		void on_action90_triggered();
 		void on_action180_triggered();
 		void on_action270_triggered();
+		
+		// Radio channels
+		void on_action904MHz_triggered();
+		void on_action906MHz_triggered();
 		
 		// Simulator commands
 		void on_actionCenterBall_triggered();
@@ -172,9 +175,7 @@ class MainWindow : public QMainWindow
 		} StatusType;
 		
 		void status(QString text, StatusType status);
-		
-		// Sets revision-dependent robot configuration
-		void updateRobotConfigs();
+		void channel(int n);
 		
 		Ui_MainWindow _ui;
 		
@@ -192,17 +193,11 @@ class MainWindow : public QMainWindow
 		
 		PlayConfigTab *_playConfigTab;
 		
-		TestResultTab *_testResultTab;
-
 		// Tree items that are not in LogFrame
 		QTreeWidgetItem *_frameNumberItem;
 		QTreeWidgetItem *_elapsedTimeItem;
 		
 		bool _live;
-		
-		RobotConfig *_robotConfig2008;
-		RobotConfig *_robotConfig2011;
-		ConfigBool *_robot2011[Num_Shells];
 		
 		// This is used to update some status items less frequently than the full field view
 		int _updateCount;
@@ -219,7 +214,4 @@ class MainWindow : public QMainWindow
 		QLabel *_procFPS;
 		QLabel *_logMemory;
 		QLabel *_refereeLabel;
-
-		// True after the processor has chosen a radio channel and the label has been updated.
-		bool _haveRadioChannel;
 };

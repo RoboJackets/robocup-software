@@ -11,7 +11,6 @@
 #include <protobuf/RadioRx.pb.h>
 #include <GameState.hpp>
 #include <framework/Obstacle.hpp>
-#include <framework/MotionCmd.hpp>
 #include <Constants.hpp>
 
 class RobotConfig;
@@ -28,12 +27,15 @@ struct Ball
 	Ball()
 	{
 		valid = false;
+		time = 0;
 	}
 	
 	Geometry2d::Point pos;
 	Geometry2d::Point vel;
-	Geometry2d::Point accel;
 	bool valid;
+	
+	// Time at which this estimate is valid
+	uint64_t time;
 };
 
 class SystemState

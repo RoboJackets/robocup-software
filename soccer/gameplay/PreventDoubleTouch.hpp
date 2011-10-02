@@ -22,6 +22,11 @@ namespace Gameplay
 				return _kicked;
 			}
 
+			void resetBehavior(SingleRobotBehavior *kicker)
+			{
+				_kicker = kicker;
+			}
+
 			Behaviors::Idle backoff;
 			
 		protected:

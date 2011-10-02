@@ -2,26 +2,60 @@
 
 #include <stdio.h>
 #include <algorithm>
+#include <Utils.hpp>
 
 using namespace std;
 using namespace Geometry2d;
+
+namespace Gameplay {
+namespace Behaviors {
+REGISTER_CONFIGURABLE(Kick)
+}
+}
+
+ConfigDouble *Gameplay::Behaviors::Kick::_chip_min_range;
+ConfigDouble *Gameplay::Behaviors::Kick::_chip_max_range;
+ConfigInt *Gameplay::Behaviors::Kick::_chip_min_power;
+ConfigInt *Gameplay::Behaviors::Kick::_chip_max_power;
 
 namespace Gameplay
 {
 namespace Behaviors
 {
 
+void Gameplay::Behaviors::Kick::createConfiguration(Configuration *cfg)
+{
+	_chip_min_range = new ConfigDouble(cfg, "Kick/Chip Min Range", 0.3);
+	_chip_max_range	= new ConfigDouble(cfg, "Kick/Chip Max Range", 4.0);
+	_chip_min_power = new ConfigInt(cfg, "Kick/Chip Min Power", 100);
+	_chip_max_power = new ConfigInt(cfg, "Kick/Chip Max Power", 255);
+}
+
 Kick::Kick(GameplayModule *gameplay)
 	: SingleRobotBehavior(gameplay),
-		enableGoalLineShot(false), enableLeftDownfieldShot(false), enableRightDownfieldShot(false),
-		_pivotKick(gameplay), _lineKick(gameplay)
+	enableGoalLineShot(false),
+	enableLeftDownfieldShot(false),
+	enableRightDownfieldShot(false),
+	enablePushing(false),
+	_pivotKick(gameplay),
+	_lineKick(gameplay)
 {
-	_state = State_PivotKick;
+	restart();
 	setTargetGoal();
 }
 
 void Kick::restart() {
-	_state = State_PivotKick;
+	// chipping parameters - should get calculated somehow
+	_done = false;
+	use_chipper = false;
+	use_line_kick = false;
+	override_aim = false;
+	forceChip = false;
+	dribbler_speed = 127;
+	kick_power = 255;
+	chip_power = 255;
+	minChipRange = 0.3;
+	maxChipRange = 0.5;
 	_pivotKick.restart();
 	_lineKick.restart();
 }
@@ -37,9 +71,21 @@ void Kick::setTarget(const Geometry2d::Segment &seg) {
 	_pivotKick.target = _target;
 }
 
-bool Kick::findShot(const Geometry2d::Segment& segment, Geometry2d::Segment& result, float min_segment_length) const {
+void Kick::calculateChipPower(double dist)
+{
+	double range_area = *_chip_max_range - *_chip_min_range;
+	double ratio = (dist - *_chip_min_range)/range_area;
+	uint8_t power_area = *_chip_max_power - *_chip_min_power;
+	double power = ratio * (double) power_area + *_chip_min_power;
+	chip_power = (uint8_t) clamp((double) power, (double) _chip_min_power->value(), 255.0);
+}
+
+bool Kick::findShot(const Geometry2d::Segment& segment, Geometry2d::Segment& result, bool chip, float min_segment_length) const {
 	// calculate available target segments
 	WindowEvaluator evaluator(state());
+	evaluator.enable_chip = chip;
+	evaluator.chip_min_range = minChipRange;
+	evaluator.chip_max_range = maxChipRange;
 	evaluator.run(ball().pos, segment);
 	Window *window = evaluator.best;
 
@@ -50,6 +96,13 @@ bool Kick::findShot(const Geometry2d::Segment& segment, Geometry2d::Segment& res
 	} else {
 		return false;
 	}
+}
+
+void Kick::setLineKickVelocityScale(double scale_speed, double scale_acc, double scale_w)
+{
+	_lineKick.scaleSpeed = scale_speed;
+	_lineKick.scaleAcc = scale_acc;
+	_lineKick.scaleW = scale_w;
 }
 
 bool Kick::run() {
@@ -68,16 +121,31 @@ bool Kick::run() {
 
 	// check for shot on goal
 	bool badshot = false;
-	Geometry2d::Segment available_target;
-	if (!(findShot(_target, available_target, 0.1) 				/// try target first
-			  || (enableGoalLineShot && findShot(goal_line, available_target, 0.5)) 		/// try anywhere on goal line
-			  || (enableLeftDownfieldShot && findShot(left_downfield, available_target, 0.5))  /// shot off edge of field
-			  || (enableRightDownfieldShot && findShot(right_downfield, available_target, 0.5))
-			  ))
+	Geometry2d::Segment available_target = _target;
+	bool must_use_chip = false;
+	if (!override_aim)
 	{
-		robot->addText(QString("Kick:no target"));
-		badshot = true;
-		available_target = _target;   /// if no other option, try kicking anyway
+		if (!forceChip && !(findShot(_target, available_target, false, 0.1) 				/// try target first with kicker
+				|| (enableGoalLineShot && findShot(goal_line, available_target, false, 0.5)) 		/// try anywhere on goal line
+				|| (enableLeftDownfieldShot && findShot(left_downfield, available_target, false, 0.5))  /// shot off edge of field
+				|| (enableRightDownfieldShot && findShot(right_downfield, available_target, false, 0.5))
+		))
+		{
+			robot->addText(QString("Kick: no kick target"));
+			badshot = true;
+			available_target = _target;   /// if no other option, try kicking anyway
+		} else if (use_chipper && (findShot(_target, available_target, true, 0.1)  				/// try target with chipper
+				|| (enableGoalLineShot && findShot(goal_line, available_target, true, 0.5)) 		/// try anywhere on goal line
+				|| (enableLeftDownfieldShot && findShot(left_downfield, available_target, true, 0.5))  /// shot off edge of field
+				|| (enableRightDownfieldShot && findShot(right_downfield, available_target, true, 0.5))
+		))
+		{
+			robot->addText(QString("Kick:chipping"));
+			available_target = _target;   /// if no other option, try kicking anyway
+			must_use_chip = true;
+		} else {
+			badshot = true;
+		}
 	}
 
 	const Geometry2d::Point& rPos = robot->pos;
@@ -99,10 +167,29 @@ bool Kick::run() {
 		robot->face(_target.center());
 		return true;
 
-	} else {
-		// use pivot only for now
+	} else if (use_line_kick)
+	{
+		_lineKick.target = available_target.center();
+		_lineKick.use_chipper = must_use_chip;
+		_lineKick.kick_power = (must_use_chip) ? chip_power : kick_power;
+		bool result = _lineKick.run();
+		if (_lineKick.done())
+		{
+			_done = true;
+		}
+		return result;
+	} else
+	{
 		_pivotKick.target = available_target;
-		return _pivotKick.run();
+		_pivotKick.dribble_speed = dribbler_speed;
+		_pivotKick.use_chipper = use_chipper;
+		_pivotKick.kick_power = (use_chipper) ? chip_power : kick_power;
+		bool result = _pivotKick.run();
+		if (_pivotKick.done())
+		{
+			_done = true;
+		}
+		return result;
 	}
 }
 

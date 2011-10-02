@@ -1,80 +1,102 @@
 #include "PivotKick.hpp"
 
-#include <stdio.h>
+#include <Utils.hpp>
 
 using namespace std;
 using namespace Geometry2d;
 
-Gameplay::Behaviors::PivotKick::PivotKick(GameplayModule *gameplay):
-    SingleRobotBehavior(gameplay)
+namespace Gameplay
 {
-	_state = State_Approach;
-	_ccw = true;
+	namespace Behaviors
+	{
+		REGISTER_CONFIGURABLE(PivotKick)
+	}
+}
+
+ConfigDouble *Gameplay::Behaviors::PivotKick::_aim_Speed;
+ConfigDouble *Gameplay::Behaviors::PivotKick::_kick_Completed_Threshold;
+ConfigDouble *Gameplay::Behaviors::PivotKick::_initial_Accuracy;
+ConfigDouble *Gameplay::Behaviors::PivotKick::_accuracy_Delta;
+ConfigDouble *Gameplay::Behaviors::PivotKick::_fireNowThreshold;
+
+void Gameplay::Behaviors::PivotKick::createConfiguration(Configuration* cfg)
+{
+	_aim_Speed = new ConfigDouble(cfg, "PivotKick/Aim Speed", 0.5 * M_PI);
+	_kick_Completed_Threshold = new ConfigDouble(cfg, "PivotKick/Kick Completed Threshold", 0.5);
+	_initial_Accuracy = new ConfigDouble(cfg, "PivotKick/Initial Accuracy", cos(10 * DegreesToRadians));
+	_accuracy_Delta  = new ConfigDouble(cfg, "PivotKick/Accuracy Delta", 0.000);
+	_fireNowThreshold  = new ConfigDouble(cfg, "PivotKick/Fire Now Threshold", cos(3 * DegreesToRadians));
+}
+
+Gameplay::Behaviors::PivotKick::PivotKick(GameplayModule *gameplay):
+    SingleRobotBehavior(gameplay), _capture(gameplay)
+{
+	restart();
 	
 	target.pt[0] = Point(Field_GoalWidth / 2, Field_Length);
 	target.pt[1] = Point(-Field_GoalWidth / 2, Field_Length);
+	_capture.target = target.pt[0];
 }
 
 void Gameplay::Behaviors::PivotKick::restart()
 {
-	_state = State_Approach;
+	_state = State_Capture;
+	_kicked = false;
+	_ccw = true;
+	_capture.restart();
+	_capture.target = target.pt[0];
+	enable_kick = true;
+	enable_desparate_kick = true;
+	dribble_speed = 50;
+	use_chipper = false;
+	kick_power = 255;
 }
 
 bool Gameplay::Behaviors::PivotKick::run()
 {
-	const float Initial_Accuracy = cos(20 * DegreesToRadians);
-	// Accuracy change per frame
-	const float Accuracy_Delta = 0.002;
-	const float FireNowThreshold = cos(3 * DegreesToRadians);
-	
 	if (!robot || !robot->visible)
 	{
 		return false;
 	}
 	
+	// force sub-behavior to have its robot assigned
+	_capture.robot = robot;
+
 	// The direction we're facing
 	const Point dir = Point::direction(robot->angle * DegreesToRadians);
 	
-	if (robot->hasBall)
-	{
-		_lastBallTime = state()->timestamp;
-	}
+	uint64_t now = timestamp();
 	
 	// State changes
 	Point toBall = (ball().pos - robot->pos).normalized();
-	float err = dir.dot(toBall);
-	bool behindBall = ((target.center() - robot->pos).dot(ball().pos - robot->pos) > 0);
-	if (_state == State_Approach)
+	if (_state == State_Capture)
 	{
-		robot->addText(QString().sprintf("err %f", acos(err) * RadiansToDegrees));
-		if (robot->hasBall)
+		if (_capture.done())
 		{
 			_state = State_Aim;
 			_lastError = 0;
 			_lastDelta = 0;
 			_ccw = ((target.pt[0] - ball().pos).cross(target.pt[1] - ball().pos) > 0);
-		} else if (err >= cos(20 * DegreesToRadians) && behindBall)
-		{
-			_state = State_Capture;
 		}
-		_accuracy = Initial_Accuracy;
-	} else if (_state == State_Capture)
-	{
-		if (robot->hasBall)
-		{
-			_state = State_Aim;
-			_lastError = 0;
-			_lastDelta = 0;
-			_ccw = ((target.pt[0] - ball().pos).cross(target.pt[1] - ball().pos) > 0);
-		} else if (err < cos(25 * DegreesToRadians) && !behindBall)
-		{
-			_state = State_Approach;
-		}
+		_accuracy = *_initial_Accuracy;
 	} else if (_state == State_Aim)
 	{
-		if ((!robot->hasBall && (state()->timestamp - _lastBallTime) > 500000) || !ball().pos.nearPoint(robot->pos, Robot_Radius * 1.2))
+		// _lastBallTime is the last time we had the ball
+		if (robot->hasBall())
 		{
-			_state = State_Approach;
+			_lastBallTime = now;
+		}
+		
+		// watch for ball leaving the robot
+		if ((!robot->hasBall() && (state()->timestamp - _lastBallTime) > 500000) || !ball().pos.nearPoint(robot->pos, *_kick_Completed_Threshold))
+		{
+			if (_kicked)
+			{
+				_state = State_Done;
+			} else {
+				_state = State_Capture;
+				_capture.restart();
+			}
 		}
 	}
 	
@@ -83,24 +105,12 @@ bool Gameplay::Behaviors::PivotKick::run()
 	state()->drawLine(target, Qt::yellow);
 	
 	// Driving
-	robot->dribble(32);
-	robot->face(ball().pos);
-	if (_state == State_Approach)
+	if (_state == State_Capture)
 	{
-		robot->addText("Approach");
-		robot->avoidBall(Ball_Radius + 0.05);
-		robot->kick(0);
-		robot->move(ball().pos - (target.pt[0] - ball().pos).normalized() * Robot_Radius * 1.3);
-		robot->face(ball().pos);
-	} else if (_state == State_Capture)
-	{
-		robot->addText("Capture");
-		robot->disableAvoidBall();
-		robot->kick(0);
-// 		robot->move(ball().pos - (target.pt[0] - ball().pos).normalized() * Robot_Radius);
-		robot->move(ball().pos);
-		robot->face((ball().pos - robot->pos) * 1.2 + robot->pos);
-	} else if (_state == State_Aim)
+		robot->addText("Capturing");
+		_capture.target = target.pt[0];
+		_capture.run();
+	}  else if (_state == State_Aim)
 	{
 		state()->drawLine(robot->pos, robot->pos + dir * 8, Qt::white);
 		state()->drawLine(ball().pos, target.center(), Qt::yellow);
@@ -110,13 +120,20 @@ bool Gameplay::Behaviors::PivotKick::run()
 		float error = dir.dot((target.center() - ball().pos).normalized());
 		float delta = error - _lastError;
 		
-		robot->disableAvoidBall();
-		if (error >= FireNowThreshold || (error >= _accuracy && _lastDelta > 0 && delta <= 0))
+		if (enable_kick && (error >= *_fireNowThreshold || (error >= _accuracy && _lastDelta > 0 && delta <= 0)))
 		{
-			robot->kick(255);
-			robot->addText("KICK");
+			if (use_chipper)
+			{
+				robot->chip(kick_power);
+				robot->addText("CHIP");
+			} else
+			{
+				robot->kick(kick_power);
+				robot->addText("KICK");
+			}
+			_kicked = true;
 		} else {
-			robot->kick(0);
+			robot->addText("Aim");
 		}
 		
 		_lastError = error;
@@ -131,17 +148,17 @@ bool Gameplay::Behaviors::PivotKick::run()
 		{
 			_ccw = false;
 		}
-		robot->addText(QString("Aim %1 %2 %3").arg(
+		robot->addText(QString("Aim %1 %2 %3 %4").arg(
 			QString::number(acos(error) * RadiansToDegrees),
 			QString::number(delta),
-			QString::number(_accuracy)));
+			QString::number(_accuracy),
+			QString::number(_ccw ? 1 : 0)));
 		
-		_accuracy -= Accuracy_Delta;
+		_accuracy -= *_accuracy_Delta;
 		_accuracy = max(0.0f, _accuracy);
-		
-		float angle = _ccw ? 10 : -10;
-		robot->move(Point::rotate(robot->pos, ball().pos, angle));
-		robot->face(ball().pos);
+
+		robot->pivot(*_aim_Speed * (_ccw ? 1 : -1), ball().pos);
+		robot->dribble(dribble_speed);
 	} else {
 		robot->addText("Done");
 		return false;

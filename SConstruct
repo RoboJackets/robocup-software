@@ -8,7 +8,7 @@ Export('exec_dir')
 build_dir = Dir('#/build')
 Export('build_dir')
 
-env = Environment(tools=['default', 'textfile'])deleted  
+env = Environment(tools=['default', 'textfile'])  
 
 # http://www.scons.org/wiki/GoFastButton
 env.Decider('MD5-timestamp')

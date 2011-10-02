@@ -16,6 +16,8 @@ namespace Gameplay
 		class BasicOffense121: public Play
 		{
 			public:
+				static void createConfiguration(Configuration *cfg);
+
 				BasicOffense121(GameplayModule *gameplay);
 				
 				static float score(GameplayModule *gameplay);
@@ -25,6 +27,14 @@ namespace Gameplay
 				Behaviors::Fullback _fullback;
 				Behaviors::Kick _striker;
 				Behaviors::Mark _support1, _support2;
+
+				static ConfigDouble *_offense_hysteresis;
+				static ConfigDouble *_support_backoff_thresh;
+				static ConfigDouble *_mark_hysteresis_coeff;
+				static ConfigDouble *_support_avoid_teammate_radius;
+				static ConfigDouble *_support_avoid_shot;
+				static ConfigDouble *_offense_support_ratio;
+				static ConfigDouble *_defense_support_ratio;
 		};
 	}
 }

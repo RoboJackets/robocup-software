@@ -1,0 +1,109 @@
+<config>
+ <Fling>
+  <Spin_Angular_Speed value="2"/>
+  <Ball_Travel_Threshold value="0.5"/>
+  <Pivot_Speed value="1.5708"/>
+ </Fling>
+ <DemoYankChip>
+  <Backup_Distance value="0.4"/>
+ </DemoYankChip>
+ <PivotKick>
+  <Aim_Speed value="1.5708"/>
+  <Kick_Completed_Threshold value="0.5"/>
+  <Initial_Accuracy value="0.984808"/>
+  <Accuracy_Delta value="0"/>
+  <Fire_Now_Threshold value="0.99863"/>
+ </PivotKick>
+ <YankChip>
+  <Ball_Travel_Threshold value="0.5"/>
+  <Ball_Max_Trajectory_Error value="0.3"/>
+  <Chip_Complete_Distance value="0.5"/>
+  <Min_Ball_Velocity value="0.2"/>
+  <Max_Yank_Dist value="0.2"/>
+ </YankChip>
+ <Yank>
+  <Ball_Travel_Threshold value="0.5"/>
+  <Ball_Max_Trajectory_Error value="0.3"/>
+  <Backup_Distance value="0.5"/>
+  <Ball_Clearance value="0.2115"/>
+  <Bump_Travel_Distance value="0.3"/>
+ </Yank>
+ <Capture>
+  <Ball_Speed_Threshold value="0.5"/>
+  <Approach_Distance value="0.1"/>
+  <Approach_Clearance value="0.05"/>
+  <Approach_Threshold value="0.13"/>
+  <Capture_Speed value="0.3"/>
+  <Capture_Time_Threshold value="300000"/>
+  <Capture_Decel value="0.8"/>
+  <Has_Ball_Distance value="0.1"/>
+  <Pivot_Speed value="1.5708"/>
+  <Dribbler_Speed value="127"/>
+ </Capture>
+ <Rev2008>
+  <trapTrans>
+   <velocity value="0"/>
+   <acceleration value="0"/>
+   <predictTime value="0"/>
+   <responseTime value="0"/>
+  </trapTrans>
+  <trapRot>
+   <velocity value="0"/>
+   <acceleration value="0"/>
+   <predictTime value="0"/>
+   <responseTime value="0"/>
+  </trapRot>
+  <translation>
+   <p value="0"/>
+   <i value="0"/>
+   <d value="0"/>
+  </translation>
+  <rotation>
+   <p value="0"/>
+   <i value="0"/>
+   <d value="0"/>
+  </rotation>
+  <wheel>
+   <p value="0"/>
+   <i value="0"/>
+   <d value="0"/>
+  </wheel>
+  <kicker>
+   <m value="1"/>
+   <b value="0"/>
+  </kicker>
+ </Rev2008>
+ <Rev2011>
+  <trapTrans>
+   <velocity value="0"/>
+   <acceleration value="0"/>
+   <predictTime value="0"/>
+   <responseTime value="0"/>
+  </trapTrans>
+  <trapRot>
+   <velocity value="0"/>
+   <acceleration value="0"/>
+   <predictTime value="0"/>
+   <responseTime value="0"/>
+  </trapRot>
+  <translation>
+   <p value="0"/>
+   <i value="0"/>
+   <d value="0"/>
+  </translation>
+  <rotation>
+   <p value="0"/>
+   <i value="0"/>
+   <d value="0"/>
+  </rotation>
+  <wheel>
+   <p value="0"/>
+   <i value="0"/>
+   <d value="0"/>
+  </wheel>
+  <kicker>
+   <m value="1"/>
+   <b value="0"/>
+  </kicker>
+ </Rev2011>
+</config>

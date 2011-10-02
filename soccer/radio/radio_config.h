@@ -23,5 +23,5 @@ const uint8_t cc1101_regs[] =
     0x03, 0x07,    // FIFOTHR  - RXFIFO and TXFIFO thresholds.
     0x07, 0x4c,    // PKTCTRL1 - Packet automation control.
     0x08, 0x05,    // PKTCTRL0 - Packet automation control.
-    0x06, 0xff,    // PKTLEN   - Packet length.
+    0x06, 0x3d,    // PKTLEN   - Packet length.
 };

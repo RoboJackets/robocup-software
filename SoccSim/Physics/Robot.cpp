@@ -81,7 +81,7 @@ Robot::Robot(Env* env, unsigned int id,  Robot::Rev rev) :
 	initKicker();
 #endif
 
-	//initWheels();
+// 	initWheels();
 }
 
 Robot::~Robot()
@@ -299,7 +299,7 @@ NxConvexMesh* Robot::cylinder(const float length, const float radius,
 
 		x = cos(angle * M_PI / 180.0) * radius;
 		y = sin(angle * M_PI / 180.0) * radius;
-        angle += increment;
+		angle += increment;
 
 		cyl[i + offset] = cyl[i];
 		cyl[i + offset].z += length;
@@ -352,20 +352,44 @@ float Robot::getAngle() const
 
 void Robot::radioTx(const Packet::RadioTx::Robot *data)
 {
-	//motors
-	#if 0
+	NxVec3 bodyVel(data->body_x(), data->body_y(), 0);
+	NxVec3 angularVel(0, 0, data->body_w());
+	
+	NxVec3 worldVel = _actor->getGlobalOrientation() * bodyVel;
+
+	_actor->setLinearVelocity(worldVel);
+	_actor->setAngularVelocity(angularVel);
+	
+	_actor->wakeUp();
+	
+#if 0
+	// Wheels
+	Point bodyVel(data->body_x(), data->body_y());
+	
+	Geometry2d::Point axles[4] =
+	{
+		Point( .08,  .08).normalized(),
+		Point( .08, -.08).normalized(),
+		Point(-.08, -.08).normalized(),
+		Point(-.08,  .08).normalized()
+	};
+	
+	const float Wheel_Radius = 0.026;
+	const float Contact_Circle_Radius = 0.0812;
+	const float Robot_Linear_To_Wheel_Angular = 1.0 / Wheel_Radius;
+	const float Robot_Angular_To_Wheel_Angular = Contact_Circle_Radius / Wheel_Radius;
+	
 	for (int i = 0; i < 4; ++i)
 	{
 		NxMotorDesc motorDesc;
 		_motors[i]->getMotor(motorDesc);
 		
-		//create a velocity target based on the requested travel velocity
-		motorDesc.velTarget = 100.0f * data.motors[i] / 255.0f;
-
+		motorDesc.velTarget = axles[i].dot(bodyVel) * Robot_Linear_To_Wheel_Angular + data->body_w() * Robot_Angular_To_Wheel_Angular;
 		_motors[i]->setMotor(motorDesc);
 	}
-	#endif
+#endif
 	
+#if 0
 	Geometry2d::Point axles[4] =
 	{
 		Point( .08,  .08),
@@ -378,7 +402,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
 	{
 		NxMotorDesc motorDesc;
 		_rollerJoint->getMotor(motorDesc);
-		motorDesc.velTarget = data->roller() * 10.0f / 255.0f;
+		motorDesc.velTarget = data->dribbler() * 10.0f / 255.0f;
 		_rollerJoint->setMotor(motorDesc);
 	}
 	
@@ -398,12 +422,6 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
 
 		float target = data->motors(i) / 127.0f * 1.2;
 		
-		// reverse for 2010 robots
-		if (_rev == rev2010)
-		{
-			target = -target;
-		}
-		
 		const float diff = target - current;
 		
 		const float force = 20.0f * diff;
@@ -414,6 +432,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
 		NxVec3 f(fx,fy,0);
 		_actor->addForceAtLocalPos(f, p);
 	}
+#endif
     
     // Kicker
 #if 0
@@ -437,7 +456,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
      * max speeds guessed with science
      */
 
-    if (data->kick() && (Utils::timestamp() - _lastKicked) > RechargeTime && chargerWorks)
+    if (data->kick() && (timestamp() - _lastKicked) > RechargeTime && chargerWorks)
     {
     	// FIXME: make these parameters some place else
     	float maxKickSpeed = 5.0f, // m/s direct kicking speed
@@ -446,7 +465,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
 
     	// determine the kick speed
     	float kickSpeed;
-    	bool chip = data->use_chipper();// && _rev == rev2010;
+    	bool chip = data->use_chipper();// && _rev == rev2011;
     	if (chip)
 		{
     		kickSpeed = data->kick() / 255.0f * maxChipSpeed;
@@ -472,7 +491,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
             		printf("Robot %d kick %p by %f: %f, %f, %f\n", shell, ball, kickSpeed, kickVel.x, kickVel.y, kickVel.z);
 
                 ball->actor()->addForce(kickVel, NX_VELOCITY_CHANGE);
-                _lastKicked = Utils::timestamp();
+                _lastKicked = timestamp();
             }
         }
     }
@@ -483,16 +502,34 @@ Packet::RadioRx Robot::radioRx() const
 {
 	Packet::RadioRx packet;
 	
-	packet.set_timestamp(Utils::timestamp());
-	packet.set_battery(1.0f);
+	packet.set_timestamp(timestamp());
+	packet.set_battery(15.0f);
 	packet.set_rssi(1.0f);
-	packet.set_charged(chargerWorks && (Utils::timestamp() - _lastKicked) > RechargeTime);
+	packet.set_kicker_status(((timestamp() - _lastKicked) > RechargeTime) ? 1 : 0);
 	
+	// FIXME: No.
 	BOOST_FOREACH(const Ball* ball, _env->balls())
 	{
-		packet.set_ball_sense(ballSense(ball) || !ballSensorWorks);
+		packet.set_ball_sense_status((ballSense(ball) || !ballSensorWorks) ? Packet::HasBall : Packet::NoBall);
 	}
 	
+	// assume all motors working
+	for (size_t i=0; i<5; ++i)
+	{
+		packet.add_motor_status(Packet::Good);
+	}
+
+	if (_rev == rev2008)
+	{
+		packet.set_hardware_version(Packet::RJ2008);
+	} else if (_rev == rev2011) // FIXME: change to actual 2011
+	{
+		packet.set_hardware_version(Packet::RJ2011);
+	} else
+	{
+		packet.set_hardware_version(Packet::Unknown);
+	}
+
 	return packet;
 }
 

@@ -11,7 +11,7 @@ class Robot : public Entity
 {
 	public:
 		typedef enum {
-			rev2010,
+			rev2011,
 			rev2008
 		} Rev;
 

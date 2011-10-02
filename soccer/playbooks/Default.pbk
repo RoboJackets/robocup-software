@@ -1,9 +1,11 @@
 goalie
 DefendPenalty
 OurFreekick
+OurGoalKick
+OurCornerKick
 KickPenalty
 TheirFreekick
 TheirKickoff
 Stopped
 OurKickoff
-BasicOffense
+BasicOffense112

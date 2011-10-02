@@ -9,18 +9,17 @@ srcs = [
 	'Joystick.cpp',
 	'RefereeModule.cpp',
 	'PlayConfigTab.cpp',
-	'TestResultTab.cpp',
 	'FieldView.cpp',
 	'SimFieldView.cpp',
 	'Configuration.cpp',
 	'debug.cpp',
 	'StripChart.cpp',
 	'Robot.cpp',
-	'BallSensor.cpp',
+#	'BallSensor.cpp',
+	'VisionReceiver.cpp',
 
 	'radio/SimRadio.cpp',
 	'radio/USBRadio.cpp',
-	'radio/USB_Device.cpp',
 
 	'framework/Obstacle.cpp',
 	'framework/Path.cpp',
@@ -41,20 +40,12 @@ srcs = [
 	'gameplay/planning/Tree.cpp',
 	'gameplay/planning/bezier.cpp',
 
-	# Optimization components - disabled for now
-	#'gameplay/optimizer/PassOptimizer.cpp',
-	#'gameplay/optimizer/PassConfig.cpp',
-	#'gameplay/optimizer/PassState.cpp',
-	#'gameplay/optimizer/AnalyticPassPlanner.cpp',
-	#'gameplay/optimizer/passOptimization.cpp',
-	#'gameplay/optimizer/DrivingFactors.cpp',
-	#'gameplay/optimizer/PassingFactors.cpp',
-	#'gameplay/optimizer/ShootingFactors.cpp',
-
 	# Restart plays
 	'gameplay/plays/OurKickoff.cpp',
 	'gameplay/plays/TheirKickoff.cpp',
 	'gameplay/plays/OurFreekick.cpp',
+	'gameplay/plays/OurGoalKick.cpp',
+	'gameplay/plays/OurCornerKick.cpp',
 	'gameplay/plays/TheirFreekick.cpp',
 	'gameplay/plays/KickPenalty.cpp',
 	'gameplay/plays/DefendPenalty.cpp',
@@ -62,88 +53,84 @@ srcs = [
 	
 	# Open gameplay plays
 	'gameplay/plays/MightyMight.cpp',
-	'gameplay/plays/BasicOffense.cpp',
+	'gameplay/plays/BasicOffense112.cpp',
 	'gameplay/plays/BasicOffense121.cpp',
-#	'gameplay/plays/AggressiveOpen.cpp',
-#	'gameplay/plays/Offense.cpp',
-#	'gameplay/plays/ClearBall.cpp',
-#	'gameplay/plays/Defense.cpp',
-#	'gameplay/plays/DefendGoal.cpp',
-#	'gameplay/plays/OptimizedOffense.cpp',
+	'gameplay/plays/YankOpen.cpp',
+	'gameplay/plays/EmptyGoal.cpp',
 
-    # Core behaviors
+  # Core behaviors
 	'gameplay/behaviors/Move.cpp',
+	'gameplay/behaviors/Capture.cpp',
 	'gameplay/behaviors/Kickoff.cpp',
 	'gameplay/behaviors/Penalty.cpp',
 	'gameplay/behaviors/Idle.cpp',
 	'gameplay/behaviors/Kick.cpp',
-#	'gameplay/behaviors/OneTouchKick.cpp',
-#	'gameplay/behaviors/Intercept.cpp',
 	'gameplay/behaviors/Mark.cpp',
-#	'gameplay/behaviors/GoalDefender.cpp',
-#	'gameplay/behaviors/ZoneOffense.cpp',
+	'gameplay/behaviors/Yank.cpp',
+	'gameplay/behaviors/YankChip.cpp',
+	'gameplay/behaviors/Fling.cpp',
 	'gameplay/behaviors/LineKick.cpp',
 	'gameplay/behaviors/PivotKick.cpp',
+	'gameplay/behaviors/Bump.cpp',
 
 	# Positions
 	'gameplay/behaviors/positions/Goalie.cpp',
 	'gameplay/behaviors/positions/Fullback.cpp',
-#	'gameplay/behaviors/positions/Forward.cpp',
 	
 	# Test framework for plays
 	'gameplay/TestFixture.cpp',
 	'gameplay/plays/test_plays/TestPathTracking.cpp',
-	
-	# Development tests
-#	'gameplay/plays/TestLatency.cpp',
+	'gameplay/plays/test_plays/TestLatency.cpp',
 
 	# demo plays/behaviors
+	'gameplay/plays/demo_plays/TestPlay.cpp',
 	'gameplay/plays/demo_plays/FollowTheLeader.cpp',
+	'gameplay/plays/demo_plays/PassPlay.cpp',
+	'gameplay/plays/demo_plays/PassShootPlay.cpp',
 	'gameplay/plays/demo_plays/LineUp.cpp',
 	'gameplay/plays/demo_plays/MotionEval.cpp',
-#	'gameplay/plays/demo_plays/DemoBasicPassing.cpp',
-#	'gameplay/plays/demo_plays/DemoBasicOneTouchPassing.cpp',
-	'gameplay/plays/demo_plays/DemoBasicAttack.cpp',
-	'gameplay/plays/demo_plays/DemoBasicLineAttack.cpp',
-	'gameplay/plays/demo_plays/DemoBasicPivotAttack.cpp',
-#	'gameplay/plays/demo_plays/DemoBasicOneTouchAttack.cpp',
-#	'gameplay/plays/demo_plays/DemoBasicChipAttack.cpp #disabled until 2010 robots ready',
-#	'gameplay/plays/demo_plays/DemoBasicOneTouchChipAttack.cpp',
-#	'gameplay/plays/demo_plays/DemoKicks.cpp',
-	'gameplay/plays/demo_plays/KickWithClosestPlay.cpp',
-	'gameplay/plays/demo_plays/CalSpeed.cpp',
+	'gameplay/plays/demo_plays/DemoPassing.cpp',
+	'gameplay/plays/demo_plays/DemoAttack.cpp',
+	'gameplay/plays/demo_plays/DemoCapture.cpp',
+	'gameplay/plays/demo_plays/DemoYank.cpp',
+	'gameplay/plays/demo_plays/DemoYankChip.cpp',
+	'gameplay/plays/demo_plays/DemoFling.cpp',
+	'gameplay/plays/demo_plays/DemoBump.cpp',
+	'gameplay/plays/demo_plays/DemoLineAttack.cpp',
+	'gameplay/plays/demo_plays/DemoPivotAttack.cpp',
+#	'gameplay/plays/demo_plays/CalSpeed.cpp',
 
-	# files that use the optimizer - disabled until new gtsam is in place
-#	'gameplay/behaviors/OptimizedPassing.cpp',
-#	'gameplay/plays/demo_plays/DemoPassConfigOptimize.cpp',
-#	'gameplay/plays/demo_plays/DemoPassPlay.cpp',
-#	'gameplay/plays/demo_plays/DemoOptimizedPassPlay.cpp',
 
-	# files for pass experiments
-#	'gameplay/plays/demo_plays/DemoPassExperiment1.cpp',
+	# Tech Challenges
+	'gameplay/plays/demo_plays/NavChallenge2011.cpp',
+	'gameplay/plays/demo_plays/DynamicNavigationTC.cpp',
 
-#	gameplay/behaviors/test/KickerCalibration.cpp',
-#	gameplay/behaviors/test/MotionLeader.cpp',
+#	'gameplay/behaviors/test/KickerCalibration.cpp',
+#	'gameplay/behaviors/test/MotionLeader.cpp',
 
 # Sources for modeling module
-	'modeling/WorldModel.cpp',
-	'modeling/BallModel.cpp',
-	'modeling/RBPFBallModel.cpp',
+#	'modeling/WorldModel.cpp',
+	'modeling/BallTracker.cpp',
+	'modeling/BallFilter.cpp',
+	'modeling/RobotFilter.cpp',
+	
+#	'modeling/BallModel.cpp',
+#	'modeling/RBPFBallModel.cpp',
 #	'modeling/EKFBallModel.cpp',
 #	'modeling/KalmanBallModel.cpp',      
-	'modeling/RobotModel.cpp',
-	'modeling/rbpf/Rbpf.cpp',
-	'modeling/rbpf/RbpfModel.cpp',
-	'modeling/rbpf/RbpfModelGraph.cpp',
-	'modeling/rbpf/RbpfState.cpp',
-	'modeling/rbpf/RbpfModelRolling.cpp',
-	'modeling/rbpf/RbpfModelKicked.cpp',
+#	'modeling/RobotModel.cpp',
+#	'modeling/rbpf/Rbpf.cpp',
+#	'modeling/rbpf/RbpfModel.cpp',
+#	'modeling/rbpf/RbpfModelGraph.cpp',
+#	'modeling/rbpf/RbpfState.cpp',
+#	'modeling/rbpf/RbpfModelRolling.cpp',
+#	'modeling/rbpf/RbpfModelKicked.cpp',
 #	'modeling/kalman/difference_kalman.cpp',
 #	'modeling/kalman/ExtendedKalmanFilter.cpp',
 
 # Sources for motion module',
 	'motion/MotionControl.cpp',
-	'motion/Pid.cpp',
+#	'motion/Pid.cpp',
 	
 	'ui/main_icons.qrc',
 	'ui/log_icons.qrc'
@@ -151,13 +138,14 @@ srcs = [
 
 uics = env.Uic4([
 	'ui/MainWindow.ui',
-	'ui/PlayConfigTab.ui',
-	'ui/TestResultTab.ui'
+	'ui/PlayConfigTab.ui'
 ])
 
 e = env.Clone()
 e.Append(CPPPATH=['#/soccer', Dir('ui')])
-e.Append(LIBS=['bfd', 'usb'])
+e.Append(LIBS=['bfd', 'GLU'])
+
+e.ParseConfig('pkg-config --cflags --libs libusb-1.0')
 
 # build soccer executable
 p = e.Program('soccer', ['main.cpp'] + srcs )
@@ -183,8 +171,8 @@ Help('log_viewer: Stand-alone log viewer\n')
 tests = [
 	'tests/testExamples.cpp',
 	'tests/testPath.cpp',
-	'tests/testEigen.cpp',
-	'tests/testRbpf.cpp'
+#	'tests/testEigen.cpp',
+#	'tests/testRbpf.cpp'
 ]
 e.Append(LIBS=['gtest'])
 # NOTE: this links against all sources to avoid needing to actually check dependencies

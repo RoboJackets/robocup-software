@@ -6,6 +6,23 @@ using namespace std;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::OurKickoff, "Restarts")
 
+namespace Gameplay
+{
+	namespace Plays
+	{
+		REGISTER_CONFIGURABLE(OurKickoff)
+	}
+}
+
+ConfigInt *Gameplay::Plays::OurKickoff::_kick_power;
+ConfigInt *Gameplay::Plays::OurKickoff::_chip_power;
+
+void Gameplay::Plays::OurKickoff::createConfiguration(Configuration *cfg)
+{
+	_kick_power = new ConfigInt(cfg, "OurKickoff/Kick Power", 127);
+	_chip_power = new ConfigInt(cfg, "OurKickoff/Chip Power", 100);
+}
+
 Gameplay::Plays::OurKickoff::OurKickoff(GameplayModule *gameplay):
 	Play(gameplay),
 	_kicker(gameplay),
@@ -18,9 +35,7 @@ Gameplay::Plays::OurKickoff::OurKickoff(GameplayModule *gameplay):
 	_idle2.target = _gameplay->centerMatrix() * Geometry2d::Point(-0.7, -0.2);
 	_idle3.target = Geometry2d::Point(0, 1.5);
 
-	// FIXME: find a better way of selecting targets - using endline to give choice
-//	_kicker.kick.setTargetGoal();
-	_kicker.kick.setTarget(Geometry2d::Segment(Geometry2d::Point(-Field_Width/2.0, Field_Length),
+	_kicker.kickTarget(Geometry2d::Segment(Geometry2d::Point(-Field_Width/2.0, Field_Length),
 											   Geometry2d::Point( Field_Width/2.0, Field_Length)));
 }
 
@@ -33,25 +48,32 @@ float Gameplay::Plays::OurKickoff::score (Gameplay::GameplayModule* gameplay)
 bool Gameplay::Plays::OurKickoff::run()
 {
 	set<OurRobot *> available = _gameplay->playRobots();
+
+	bool chipper_available = true;
+	if (!assignNearestChipper(_kicker.robot, available, ball().pos))
+	{
+		// just assumes kickable robot somewhere on field
+		chipper_available = false;
+		assignNearestKicker(_kicker.robot, available, ball().pos);
+
+		// FIXME: add back the ability to bump
+//		if (!assignNearestKicker(_kicker.robot, available, ball().pos))
+//		{
+//			kicker_available = false;
+//			assignNearest(_kicker.robot, available, ball().pos);
+//		}
+	}
 	
-	assignNearest(_kicker.robot, available, ball().pos);
+	// ensure kickoff behavior only uses working behaviors
+	_kicker.enableChip = chipper_available;
+	_kicker.useRandomKick = true;
+
 	_pdt.backoff.robots.clear();
 	_pdt.backoff.robots.insert(_kicker.robot);
 	assignNearest(_idle1.robot, available, _idle1.target);
 	assignNearest(_idle2.robot, available, _idle2.target);
 	assignNearest(_idle3.robot, available, _idle3.target);
 	
-	//FIXME: remove hack when new robots can kick reliably
-	// swap robots so that striker is a 2008 robot
-	if (_kicker.robot->newRevision()) {
-		if (_idle1.robot)
-			swap(_kicker.robot, _idle1.robot);
-		else if (_idle2.robot)
-			swap(_kicker.robot, _idle2.robot);
-		else if (_idle3.robot)
-			swap(_kicker.robot, _idle3.robot);
-	}
-
 	_idle1.face = ball().pos;
 	_idle2.face = ball().pos;
 	_idle3.face = ball().pos;
