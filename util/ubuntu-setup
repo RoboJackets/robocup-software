@@ -28,6 +28,9 @@ fi
 echo "-- Adding repository for bullet physics"
 add-apt-repository ppa:blk/ppa
 
+echo "-- Updating repositories"
+apt-get update
+
 echo "-- Installing normal packages"
 apt-get install build-essential qt4-dev-tools libboost-dev \
 	libusb-1.0-0-dev libgtkmm-2.4-dev protobuf-compiler libprotobuf-dev \
