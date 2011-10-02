@@ -158,8 +158,8 @@ public:
 	typedef boost::array<float,Num_Shells> RobotMask;
 
 	typedef enum {
-		RRT, 			/// moves to a point with the RRT planner
-		OVERRIDE  /// moves to a point without regard for obstacles
+		RRT, 			///< moves to a point with the RRT planner
+		OVERRIDE  ///< moves to a point without regard for obstacles
 	} MoveType;
 
 	RobotConfig * config;
