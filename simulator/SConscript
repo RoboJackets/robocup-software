@@ -2,6 +2,8 @@ Import('*')
 
 e = env.Clone()
 
+e.Append(CPPPATH=['/usr/include/bullet'])
+
 # Find uic output
 e.Append(CPPPATH='.')
 
@@ -19,6 +21,8 @@ uics = e.Uic4([
 	'SimControl.ui'
 ])
 e.Depends(p, uics)
+
+e.Append(LIBS=['BulletCollision', 'BulletDynamics'])
 
 Default(e.Install(exec_dir, p))
 Help('simulator: Provides simulation of SSL robots, using Bullet Physics\n')
