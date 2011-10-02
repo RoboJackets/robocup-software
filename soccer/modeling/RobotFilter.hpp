@@ -22,25 +22,27 @@ public:
 		return time < other.time;
 	}
 };
-
+/**
+ * adjusts robot vision for accuracy
+ */
 class RobotFilter
 {
 public:
 	RobotFilter();
 	
-	// Gives a new observation to the filter
+	/// Gives a new observation to the filter
 	void update(const RobotObservation *obs);
 	
-	// Generates a prediction of the ball's state at a given time in the future.
-	// This may clear robot->visible if the prediction is too long in the future to be reliable.
+	/// Generates a prediction of the ball's state at a given time in the future.
+	/// This may clear robot->visible if the prediction is too long in the future to be reliable.
 	void predict(uint64_t time, Robot *robot);
 
 private:
 	static const int Num_Cameras = 2;
 	
-	// Estimate for each camera
+	/// Estimate for each camera
 	RobotPose _estimate[Num_Cameras];
 	
-	// Which camera we are using to track this robot, or -1 if it has not been seen recently
+	/// Which camera we are using to track this robot, or -1 if it has not been seen recently
 	int _camera;
 };

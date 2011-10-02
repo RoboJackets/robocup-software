@@ -20,6 +20,7 @@ namespace Geometry2d
 			/**
 			default constrctor.
 			initializes point to (0,0)
+			usage as Point p = Point();
 			*/
 			Point()
 			{
@@ -29,6 +30,7 @@ namespace Geometry2d
 			/**
 			overloaded constructor.
 			sets the point to x,y
+			usage as Point p = Point(x,y);
 			@param x the x coordinate
 			@param y the y coordinate
 			*/
@@ -44,7 +46,9 @@ namespace Geometry2d
 				x = other.x();
 				y = other.y();
 			}
-			
+			/**
+			 * to draw stuff and interface with QT
+			 */
 			QPointF toQPointF() const
 			{
 				return QPointF(x, y);
@@ -57,22 +61,36 @@ namespace Geometry2d
 				out.set_y(y);
 				return out;
 			}
-			
+			/**
+			 * does vector addition
+			 * adds the + operator, shorthand
+			 */
 			Point operator+(Point other) const
 			{
 				return Point(x + other.x, y + other.y);
 			}
-
+			/**
+			 * see operator+
+			 * does vector subtraction, note the parameter
+			 * without parameter, it is the negative
+			 */
 			Point operator-(Point other) const
 			{
 				return Point(x - other.x, y - other.y);
 			}
 
+			/**
+			 * multiplies the point by a -1 vector
+			 */
 			Point operator-() const
 			{
 				return Point(-x, -y);
 			}
 
+			/**
+			 * see operator+
+			 * this modifies the value instead of returning a new value
+			 */
 			Point &operator+=(Point other)
 			{
 				x += other.x;
@@ -81,6 +99,10 @@ namespace Geometry2d
 				return *this;
 			}
 
+			/**
+			 * see operator-
+			 * this modifies the value instead of returning a new value
+			 */
 			Point &operator-=(Point other)
 			{
 				x -= other.x;
@@ -89,6 +111,10 @@ namespace Geometry2d
 				return *this;
 			}
 
+			/**
+			 * see operator*
+			 * this modifies the value instead of returning a new value
+			 */
 			Point &operator*=(float s)
 			{
 				x *= s;
@@ -97,6 +123,10 @@ namespace Geometry2d
 				return *this;
 			}
 
+			/**
+			 * see operator/
+			 * this modifies the value instead of returning a new value
+			 */
 			Point &operator/=(float s)
 			{
 				x /= s;
@@ -105,21 +135,35 @@ namespace Geometry2d
 				return *this;
 			}
 
+			/**
+			 * adds the / operator for vectors
+			 *  scalar division
+			 */
 			Point operator/(float s) const
 			{
 				return Point(x / s, y / s);
 			}
-
+			/**
+			 * adds the * operator for vectors
+			 * scalar multiplication
+			 */
 			Point operator*(float s) const
 			{
 				return Point(x * s, y * s);
 			}
 
+			/**
+			 * compares two points to see if both x and y are the same
+			 * adds the == operator
+			 */
 			bool operator==(Point other) const
 			{
 				return x == other.x && y == other.y;
 			}
 			
+			/**
+			 * this is the negation of operator operator !=
+			 */
 			bool operator!=(Point other) const
 			{
 				return x != other.x || y != other.y;
@@ -127,7 +171,7 @@ namespace Geometry2d
 			
 			/**
 			computes the dot product of this point and another.
-			behaves as if the poitns were 2d vectors
+			behaves as if the points were 2d vectors
 			@param p the second point
 			@return the dot product of the two
 			*/
@@ -156,6 +200,7 @@ namespace Geometry2d
 			
 			/**
 			computes magnitude squared
+			this is faster than mag()
 			@return the magnitude squared
 			*/
 			float magsq() const
@@ -164,7 +209,7 @@ namespace Geometry2d
 			}
 			
 			/**
-			rotates the point around another point by apecified angle in the CCW direction
+			rotates the point around another point by specified angle in the CCW direction
 			@param origin the point to rotate around
 			@param angle the angle in degrees
 			*/
@@ -186,7 +231,9 @@ namespace Geometry2d
 				y = newY;
 			}
 			
-			// Like rotate(), but returns a new point instead of changing *this
+			/**
+			 * Like rotate(), but returns a new point instead of changing *this
+			 */
 			Point rotated(float angle)
 			{
 				float newX = x * cos(angle * DegreesToRadians) - y * sin(angle * DegreesToRadians);

@@ -14,13 +14,15 @@ class QUdpSocket;
 class VisionPacket
 {
 public:
-	// Local time when the packet was received
+	/// Local time when the packet was received
 	uint64_t receivedTime;
 	
-	// protobuf message from the vision system
+	/// protobuf message from the vision system
 	SSL_WrapperPacket wrapper;
 };
-
+/**
+ * gets vision packets, vision-thread
+ */
 class VisionReceiver: public QThread
 {
 public:
@@ -28,11 +30,11 @@ public:
 
 	void stop();
 	
-	// Copies the vector of packets and then clears it.
-	// The vector contains only packets received since the last time this was called
-	// (or since the VisionReceiver was started, if getPackets has never been called).
-	//
-	// The caller is responsible for freeing the packets after this function returns.
+	/// Copies the vector of packets and then clears it.
+	/// The vector contains only packets received since the last time this was called
+	/// (or since the VisionReceiver was started, if getPackets has never been called).
+	///
+	/// The caller is responsible for freeing the packets after this function returns.
 	void getPackets(std::vector<VisionPacket *> &packets);
 	
 protected:
@@ -41,7 +43,7 @@ protected:
 	bool _simulation;
 	volatile bool _running;
 	
-	// This mutex protects the vector of packets
+	/// This mutex protects the vector of packets
 	QMutex _mutex;
 	std::vector<VisionPacket *> _packets;
 };

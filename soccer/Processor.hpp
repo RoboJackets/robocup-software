@@ -41,7 +41,9 @@ namespace Motion
 	class RobotController;
 }
 
-/** handles processing for a team */
+/** handles processing for a team
+ * mixes all the threads
+ * */
 class Processor: public QThread
 {
 	public:

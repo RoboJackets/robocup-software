@@ -21,18 +21,26 @@ using namespace Geometry2d;
 /** Constant for timestamp to seconds */
 const float intTimeStampToFloat = 1000000.0f;
 
-//The threshold necessary to change paths tuning required 
-//const float path_threshold = 2 * Robot_Diameter; // previous value
+///The threshold necessary to change paths tuning required
+///const float path_threshold = 2 * Robot_Diameter; // previous value
 const float path_threshold = 1.0;
 
-// thresholds for avoidance of opponents - either a normal (large) or an approach (small)
+/** thresholds for avoidance of opponents - either a normal (large) or an approach (small)*/
 const float Opp_Avoid_Small = Robot_Radius - 0.03;
+/** thresholds for avoidance of opponents - either a normal (large) or an approach (small)*/
 const float Opp_Avoid_Large = Robot_Radius - 0.01;
-
+/** threshold for avoiding the ball*/
 const float Ball_Avoid_Small = 2.0 * Ball_Radius;
-
+/**
+ * I think this is verbose comments in the simulator
+ */
 const bool verbose = false;
 
+/**
+ * super class for all robots
+ *@param shell this is a robot id number
+ *@param self is robot on our team?
+ */
 Robot::Robot(unsigned int shell, bool self)
 {
 	visible = false;
@@ -43,13 +51,19 @@ Robot::Robot(unsigned int shell, bool self)
 	
 	_filter = new RobotFilter();
 }
-
+/**
+ * deconstructor, deletesRobotFilter
+ */
 Robot::~Robot()
 {
 	delete _filter;
 	_filter = 0;
 }
-
+/**
+ * the class for robot that we use to manipulate robots
+ * @param shell the robot id
+ * @param state the pointer to the current system state object
+ */
 OurRobot::OurRobot(int shell, SystemState *state):
 	Robot(shell, true),
 	_state(state)
@@ -74,7 +88,9 @@ OurRobot::OurRobot(int shell, SystemState *state):
 
 	_planner->maxIterations(250);
 }
-
+/**
+ * ourrobot deconstructor, deletes motion control and planner
+ */
 OurRobot::~OurRobot()
 {
 	delete _motionControl;
