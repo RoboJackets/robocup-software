@@ -18,7 +18,9 @@ class TestResultTab;
 class StripChart;
 class ConfigBool;
 class QuaternionDemo;
-
+/**
+ * main gui thread class
+ */
 class MainWindow : public QMainWindow
 {
 	Q_OBJECT;
@@ -47,10 +49,10 @@ class MainWindow : public QMainWindow
 			return _playConfigTab;
 		}
 		
-		// Deselects all debug layers
+		/// Deselects all debug layers
 		void allDebugOff();
 		
-		// Selects all debug layers
+		/// Selects all debug layers
 		void allDebugOn();
 		
 		void live(bool value);
@@ -81,36 +83,36 @@ class MainWindow : public QMainWindow
 		void on_actionTeamBlue_triggered();
 		void on_manualID_currentIndexChanged(int value);
 		
-		// Field side
+		/// Field side
 		void on_actionDefendPlusX_triggered();
 		void on_actionDefendMinusX_triggered();
 		void on_actionUseOurHalf_toggled(bool value);
 		void on_actionUseOpponentHalf_toggled(bool value);
 		
-		// Field rotation
+		/// Field rotation
 		void on_action0_triggered();
 		void on_action90_triggered();
 		void on_action180_triggered();
 		void on_action270_triggered();
 		
-		// Radio channels
+		/// Radio channels
 		void on_action904MHz_triggered();
 		void on_action906MHz_triggered();
 		
-		// Simulator commands
+		/// Simulator commands
 		void on_actionCenterBall_triggered();
 		void on_actionStopBall_triggered();
 		void on_actionResetField_triggered();
 		void on_actionStopRobots_triggered();
 		
-		// Debug menu commands
+		/// Debug menu commands
 		void on_actionRestartUpdateTimer_triggered();
 		
-		// Gameplay menu
+		/// Gameplay menu
 		void on_menu_Gameplay_aboutToShow();
 		void on_actionSeed_triggered();
 		
-		// Log controls
+		/// Log controls
 		void on_playbackRate_sliderPressed();
 		void on_playbackRate_sliderMoved(int value);
 		void on_playbackRate_sliderReleased();
@@ -120,11 +122,11 @@ class MainWindow : public QMainWindow
 		void on_logNext_clicked();
 		void on_logLive_clicked();
 		
-		// Debug layers
+		/// Debug layers
 		void on_debugLayers_itemChanged(QListWidgetItem *item);
 		void on_debugLayers_customContextMenuRequested(const QPoint &pos);
 		
-		// Referee
+		/// Referee
 		void on_externalReferee_toggled(bool value);
 		void on_externalReferee_clicked(bool value);
 		
@@ -158,8 +160,8 @@ class MainWindow : public QMainWindow
 		void on_refYellowCardYellow_clicked();
 		void on_refRedCardBlue_clicked();
 		void on_refRedCardYellow_clicked();
-		
-		// Configuration
+
+		/// Configuration
 		void on_configTree_itemChanged(QTreeWidgetItem *item, int column);
 		void on_loadConfig_clicked();
 		void on_saveConfig_clicked();

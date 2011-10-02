@@ -7,7 +7,9 @@
 #include <stdexcept>
 #include <stdint.h>
 #include <vector>
-
+/**
+ * this is the class for the joystick control of the robots
+ */
 class Joystick: boost::noncopyable
 {
 	public:

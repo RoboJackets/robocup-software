@@ -1,0 +1,14 @@
+<simulation>
+    <blue>
+        <robot id="0" x="1" y="1" />
+    </blue>
+
+    <!-- Obstacle robots -->
+    <yellow>
+        <robot id="0" x="-2.275" y="0" />
+        <robot id="1" x="-2.775" y="0" />
+        <robot id="2" x="2.775" y="0" />
+        <robot id="3" x="2.275" y="0" />
+    </yellow>
+    
+</simulation>

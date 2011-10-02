@@ -16,24 +16,31 @@ namespace Planning
 	{
 		/** generate a random point on the floor */
 		Geometry2d::Point randomPoint();
-		
+		/**
+		 * RRT: http://en.wikipedia.org/wiki/Rapidly-exploring_random_tree
+		 * this plans the motion path for the robot
+		 */
 		class Planner
 		{
 			public:
 				Planner();
-				
+				/**
+				 * gets the maximum number of iterations for the RRT algorithm
+				 */
 				int maxIterations() const
 				{
 					return _maxIterations;
 				}
-				
+				/**
+				 * sets the maximum number of iterations for th RRT algorithm
+				 */
 				void maxIterations(int value)
 				{
 					_maxIterations = value;
 				}
 				
-				//run the path planner
-				//this will always populate path to be the path we need to travel
+				///run the path planner
+				///this will always populate path to be the path we need to travel
 				void run(
 						const Geometry2d::Point& start,
 						const float angle, 
@@ -52,15 +59,15 @@ namespace Planning
 			/** best goal point */
 			Geometry2d::Point _bestGoal;
 			
-			//best planned path
-			//this is a fixed step path
+			///best planned path
+			///this is a fixed step path
 			Planning::Path _bestPath;
 			
-			//maximum number of rrt iterations to run
-			//this does not include connect attemps
+			///maximum number of rrt iterations to run
+			///this does not include connect attempts
 			unsigned int _maxIterations;
 			
-			//latest obstacles
+			///latest obstacles
 			const ObstacleGroup* _obstacles;
 			
 			/** makes a path from the last point of each tree

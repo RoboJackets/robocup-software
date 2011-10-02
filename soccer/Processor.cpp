@@ -44,7 +44,7 @@ static const uint64_t Command_Latency = 0;
 
 RobotConfig *Processor::robotConfig2008;
 RobotConfig *Processor::robotConfig2011;
-std::vector<RobotStatus*> Processor::robotStatuses; // FIXME: verify that this is correct
+std::vector<RobotStatus*> Processor::robotStatuses; ///< FIXME: verify that this is correct
 
 void Processor::createConfiguration(Configuration *cfg)
 {
@@ -109,7 +109,10 @@ void Processor::manualID(int value)
 	_manualID = value;
 	_joystick->reset();
 }
-
+/**
+ * sets the team
+ * @param value the value indicates whether or not the current team is blue or yellow
+ */
 void Processor::blueTeam(bool value)
 {
 	// This is called from the GUI thread
@@ -118,7 +121,10 @@ void Processor::blueTeam(bool value)
 	_blueTeam = value;
 	_refereeModule->blueTeam(value);
 }
-
+/**
+ * changes the scores on the field
+ * @param ch the command representing who scored in a goal
+ */
 void Processor::internalRefCommand(char ch)
 {
 	QMutexLocker locker(&_loopMutex);
@@ -178,13 +184,17 @@ void Processor::internalRefCommand(char ch)
 	// Send the command to the referee handler
 	_refereeModule->command(ch);
 }
-
+/**
+ * @return true if the robots are on AI else the robots are on joystick
+ */
 bool Processor::autonomous()
 {
 	QMutexLocker lock(&_loopMutex);
 	return _joystick->autonomous();
 }
-
+/**
+ * I believe this checks whether or not there is a joystick
+ */
 bool Processor::joystickValid()
 {
 	QMutexLocker lock(&_loopMutex);
@@ -246,7 +256,9 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 		robot->filter()->predict(_state.logFrame->command_time(), robot);
 	}
 }
-
+/**
+ * program loop
+ */
 void Processor::run()
 {
 	_refereeSocket = new QUdpSocket;
@@ -273,6 +285,7 @@ void Processor::run()
 	Status curStatus;
 	
 	bool first = true;
+	//main loop
 	while (_running)
 	{
 		uint64_t startTime = timestamp();
