@@ -147,4 +147,3 @@ class RefereeModule
 		// Time the ball was first beyond KickThreshold from its original position
 		QTime _kickTime;
 };
- /
