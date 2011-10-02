@@ -34,10 +34,15 @@ struct Ball
 	Geometry2d::Point vel;
 	bool valid;
 	
-	// Time at which this estimate is valid
+	/// Time at which this estimate is valid
 	uint64_t time;
 };
-
+/**
+ * this has the debugging drawer for the gui
+ * but it also contains the game state, so this is passed game state information
+ * contains essentially everything data wise
+ * used in all threads, this is the class that is passed to for data
+ */
 class SystemState
 {
 	public:
@@ -60,14 +65,14 @@ class SystemState
 		uint64_t timestamp;
 		GameState gameState;
 		
-		// All possible robots.
-		// Robots that aren't on the field are present here because a robot may be removed and replaced,
-		// and that particular robot may be important (e.g. goalie).
-		//
-		// Plays need to keep Robot*'s around, so we can't just delete the robot since the play needs
-		// to see that it is no longer visible.  We don't want multiple Robots for the same shell because
-		// that would give the appearance that a new robot appeared when it was actually just pushed back on
-		// the field.
+		/// All possible robots.
+		/// Robots that aren't on the field are present here because a robot may be removed and replaced,
+		/// and that particular robot may be important (e.g. goalie).
+		///
+		/// Plays need to keep Robot*'s around, so we can't just delete the robot since the play needs
+		/// to see that it is no longer visible.  We don't want multiple Robots for the same shell because
+		/// that would give the appearance that a new robot appeared when it was actually just pushed back on
+		/// the field.
 		std::vector<OurRobot *> self;
 		std::vector<OpponentRobot *> opp;
 		
@@ -82,7 +87,7 @@ class SystemState
 			return _debugLayers;
 		}
 
-		// Returns the number of a debug layer given its name
+		/// Returns the number of a debug layer given its name
 		int findDebugLayer(QString layer);
 		
 	private:

@@ -4,6 +4,7 @@
 
 /**
  * Configuration per robot model
+ * includes movement, pid, kicker and status
  */
 struct RobotConfig
 {

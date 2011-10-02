@@ -9,22 +9,22 @@
 namespace RefereeCommands
 {
     ////////////////////////
-    // General gameplay
+    /// General gameplay
     
-    // All robots must stop moving immediately.
+    /// All robots must stop moving immediately.
     static const char Halt = 'H';
     
-    // Stops gameplay.  Robots may still move, but must stay 500mm away from ball.
+    /// Stops gameplay.  Robots may still move, but must stay 500mm away from ball.
     static const char Stop = 'S';
     
-    // Switches to normal gameplay.  May follow a Stop or restart command.
+    /// Switches to normal gameplay.  May follow a Stop or restart command.
     static const char ForceStart = 's';
     
-    // Allows a robot on the starting team to kick the ball.
+    /// Allows a robot on the starting team to kick the ball.
     static const char Ready = ' ';
     
     ////////////////////////
-    // Timing
+    /// Timing
     
     static const char FirstHalf = '1';
     static const char Halftime = 'h';
@@ -34,21 +34,21 @@ namespace RefereeCommands
     static const char PenaltyShootout = 'a';
     
     ////////////////////////
-    // Timeouts
-    //
-    // A timeout can end with Stop (ended by team) or TimeoutEnd (out of time).
+    /// Timeouts
+    ///
+    /// A timeout can end with Stop (ended by team) or TimeoutEnd (out of time).
     
     static const char TimeoutYellow = 't';
     static const char TimeoutBlue = 'T';
     
-    // Ran out of time in the timeout.
+    /// Ran out of time in the timeout.
     static const char TimeoutEnd = 'z';
     
-    // Ends the current timeout and resets the timeout time to its value at the beginning of the timeout.
+    /// Ends the current timeout and resets the timeout time to its value at the beginning of the timeout.
     static const char TimeoutCancel = 'c';
     
     ////////////////////////
-    // Goals scored
+    /// Goals scored
     
     static const char GoalYellow = 'g';
     static const char GoalBlue = 'G';
@@ -57,7 +57,7 @@ namespace RefereeCommands
     static const char SubtractGoalBlue = 'D';
     
     ////////////////////////
-    // Yellow/red cards
+    /// Yellow/red cards
     
     static const char YellowCardYellow = 'y';
     static const char YellowCardBlue = 'Y';
@@ -66,7 +66,7 @@ namespace RefereeCommands
     static const char RedCardBlue = 'R';
     
     ////////////////////////
-    // Restarts
+    /// Restarts
     
     static const char KickoffYellow = 'k';
     static const char KickoffBlue = 'K';
@@ -82,23 +82,25 @@ namespace RefereeCommands
 };
 
 class SystemState;
-
+/**
+ * this is the referee
+ */
 class RefereeModule
 {
 	public:
 		RefereeModule(SystemState *state);
 		
-		// Called periodically.  Checks vision data for ball movement.
+		/// Called periodically.  Checks vision data for ball movement.
 		void run();
 		
-		// Handles a packet from the referee.
+		/// Handles a packet from the referee.
 		void packet(const std::string &data);
 		
-		// Handles the command part of a packet.
-		// This is used by the GUI to simulate referee packets.
+		/// Handles the command part of a packet.
+		/// This is used by the GUI to simulate referee packets.
 		void command(char command);
 
-		// True if the ball has been kicked since the last restart began
+		/// True if the ball has been kicked since the last restart began
 		bool kicked() const
 		{
 			return _kickDetectState == Kicked;
@@ -119,13 +121,15 @@ class RefereeModule
 		
 		std::string _lastPacket;
 		QTime _lastPacketTime;
-
+		/**
+		 * @parm cmd the character of the command that the referee issues
+		 */
 		void refCommand(char cmd);
 		
-		// Moves to the ready state and sets up the ball kick detector
+		/// Moves to the ready state and sets up the ball kick detector
 		void ready();
 		
-		// Last counter value received or -1 if no packets have been processed
+		/// Last counter value received or -1 if no packets have been processed
 		int _counter;
 		
 		typedef enum
@@ -143,3 +147,4 @@ class RefereeModule
 		// Time the ball was first beyond KickThreshold from its original position
 		QTime _kickTime;
 };
+ /

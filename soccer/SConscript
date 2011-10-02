@@ -87,6 +87,7 @@ srcs = [
 	'gameplay/plays/demo_plays/FollowTheLeader.cpp',
 	'gameplay/plays/demo_plays/PassPlay.cpp',
 	'gameplay/plays/demo_plays/PassShootPlay.cpp',
+	'gameplay/plays/demo_plays/test.cpp',
 	'gameplay/plays/demo_plays/LineUp.cpp',
 	'gameplay/plays/demo_plays/MotionEval.cpp',
 	'gameplay/plays/demo_plays/DemoPassing.cpp',

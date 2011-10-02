@@ -1,5 +1,5 @@
-// kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
-// vim:ai ts=4 et
+/// kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
+/// vim:ai ts=4 et
 
 #include <gameplay/GameplayModule.hpp>
 #include <gameplay/Behavior.hpp>
@@ -16,7 +16,9 @@
 
 using namespace std;
 using namespace boost;
-
+/**
+ * handles gameplay: choosing plays, and doing them
+ */
 Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_mutex(QMutex::Recursive)
 {
@@ -29,7 +31,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_oppMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Length)) *
 				Geometry2d::TransformMatrix::rotate(180);
 
-	// Make an obstacle to cover the opponent's half of the field except for one robot diameter across the center line.
+	//// Make an obstacle to cover the opponent's half of the field except for one robot diameter across the center line.
 	PolygonObstacle *sidePolygon = new PolygonObstacle;
 	_sideObstacle = ObstaclePtr(sidePolygon);
 	float x = Field_Width / 2 + Field_Border;
@@ -133,37 +135,37 @@ void Gameplay::GameplayModule::removeGoalie()
 void Gameplay::GameplayModule::updatePlay() {
 	const bool verbose = false;
 
-	// important scenarios:
-	//  - no current plays - must pick a new one
-	//  - no available plays - must do nothing
-	//  - current play is fine, must be run
-	//  - current play has ended, must select new and run
-	//  - current play is not applicable/failed, must kill, select new and run
-	//  - new goalie, select new play (may reselect current play, which much be assigned new robots)
+	/// important scenarios:
+	///  - no current plays - must pick a new one
+	///  - no available plays - must do nothing
+	///  - current play is fine, must be run
+	///  - current play has ended, must select new and run
+	///  - current play is not applicable/failed, must kill, select new and run
+	///  - new goalie, select new play (may reselect current play, which much be assigned new robots)
 
-	// Update play scores.
-	// The GUI thread needs this for the Plays tab and we will use it later
-	// to determine the new play.
+	/// Update play scores.
+	/// The GUI thread needs this for the Plays tab and we will use it later
+	/// to determine the new play.
 	BOOST_FOREACH(PlayFactory *factory, PlayFactory::factories())
 	{
 	factory->lastScore = factory->score(this);
 	}
 
-	if (	_playDone || 							// New play if old one was complete
-			!_currentPlay ||						// There is no current play
-			isinf(_currentPlayFactory->lastScore) || // Current play doesn't apply anymore
-			!_currentPlayFactory->enabled			// Current play was disabled
+	if (	_playDone || 							/// New play if old one was complete
+			!_currentPlay ||						/// There is no current play
+			isinf(_currentPlayFactory->lastScore) || /// Current play doesn't apply anymore
+			!_currentPlayFactory->enabled			/// Current play was disabled
 	)
 	{
 		if (verbose) cout << "  Selecting a new play" << endl;
 		_playDone = false;
 
-		// Find the next play
+		/// Find the next play
 		PlayFactory *bestPlay = 0;
-		// Pick a new play
+		/// Pick a new play
 		float bestScore = 0;
 
-		// Find the best applicable play
+		/// Find the best applicable play
 		BOOST_FOREACH(PlayFactory *factory, PlayFactory::factories())
 		{
 			if (factory->enabled)
@@ -177,7 +179,7 @@ void Gameplay::GameplayModule::updatePlay() {
 			}
 		}
 
-		// Start the play if it's not current.
+		/// Start the play if it's not current.
 		if (bestPlay)
 		{
 			if (bestPlay != _currentPlayFactory)
@@ -186,13 +188,15 @@ void Gameplay::GameplayModule::updatePlay() {
 				_currentPlay = shared_ptr<Play>(_currentPlayFactory->create(this));
 			}
 		} else {
-			// No usable plays
+			/// No usable plays
 			_currentPlay.reset();
 			_currentPlayFactory = 0;
 		}
 	}
 }
-
+/**
+ * returns the group of obstacles for the field
+ */
 ObstacleGroup Gameplay::GameplayModule::globalObstacles() const {
 	ObstacleGroup obstacles;
 	if (_state->gameState.stayOnSide())
@@ -210,14 +214,16 @@ ObstacleGroup Gameplay::GameplayModule::globalObstacles() const {
 		obstacles.add(_opponentHalf);
 	}
 
-	// Add non floor obstacles
+	/// Add non floor obstacles
 	BOOST_FOREACH(const ObstaclePtr& ptr, _nonFloor)
 	{
 		obstacles.add(ptr);
 	}
 	return obstacles;
 }
-
+/**
+ * runs the current play
+ */
 void Gameplay::GameplayModule::run()
 {
 	QMutexLocker lock(&_mutex);
@@ -225,8 +231,8 @@ void Gameplay::GameplayModule::run()
 	bool verbose = false;
 	if (verbose) cout << "Starting GameplayModule::run()" << endl;
 
-	// perform state variable updates on robots
-	// Currently - only the timer for the kicker charger
+	/// perform state variable updates on robots
+	/// Currently - only the timer for the kicker charger
 	BOOST_FOREACH(OurRobot* robot, _state->self)
 	{
 		if (robot) {
@@ -235,7 +241,7 @@ void Gameplay::GameplayModule::run()
 		}
 	}
 
-	// Build a list of visible robots
+	/// Build a list of visible robots
 	_playRobots.clear();
 	BOOST_FOREACH(OurRobot *r, _state->self)
 	{
@@ -245,13 +251,13 @@ void Gameplay::GameplayModule::run()
 		}
 	}
 
-	// Assign the goalie and remove it from _playRobots
+	/// Assign the goalie and remove it from _playRobots
 	if (_goalie)
 	{
-		// The Goalie behavior is responsible for only selecting a robot which is allowed by the rules
-		// (no changing goalies at random times).
-		// The goalie behavior has priority for choosing robots because it must obey this rule,
-		// so the current play will be restarted in case the goalie stole one of its robots.
+		/// The Goalie behavior is responsible for only selecting a robot which is allowed by the rules
+		/// (no changing goalies at random times).
+		/// The goalie behavior has priority for choosing robots because it must obey this rule,
+		/// so the current play will be restarted in case the goalie stole one of its robots.
 		_goalie->assign(_playRobots);
 	}
 	
@@ -268,12 +274,12 @@ void Gameplay::GameplayModule::run()
 			}
 		}
 		
-		// Make a new goalie
+		/// Make a new goalie
 		if (_goalie)
 		{
 			delete _goalie;
 		}
-//   		_goalie = new Behaviors::Goalie(this);
+///   		_goalie = new Behaviors::Goalie(this);
 	}
 #endif
 
@@ -282,7 +288,7 @@ void Gameplay::GameplayModule::run()
 	if (verbose) cout << "  Updating play" << endl;
 	updatePlay();
 
-	// Run the goalie
+	/// Run the goalie
 	if (_goalie)
 	{
 		if (verbose) cout << "  Running goalie" << endl;
@@ -292,31 +298,31 @@ void Gameplay::GameplayModule::run()
 		}
 	}
 
-	// Run the current play
+	/// Run the current play
 	if (_currentPlay)
 	{
 		if (verbose) cout << "  Running play" << endl;
 		_playDone = !_currentPlay->run();
 	}
 
-	// determine global obstacles - field requirements
-	// Two versions - one set with goal area, another without for goalie
+	/// determine global obstacles - field requirements
+	/// Two versions - one set with goal area, another without for goalie
 	ObstacleGroup global_obstacles = globalObstacles();
 	ObstacleGroup obstacles_with_goal = global_obstacles;
 	obstacles_with_goal.add(_goalArea);
 
-	// execute motion planning for each robot
+	/// execute motion planning for each robot
 	BOOST_FOREACH(OurRobot* r, _state->self) {
 		if (r && r->visible) {
-			// set obstacles for the robots
+			/// set obstacles for the robots
 			if (_goalie && _goalie->robot && r->shell() == _goalie->robot->shell())
-				r->execute(global_obstacles); // just for goalie
+				r->execute(global_obstacles); /// just for goalie
 			else
-				r->execute(obstacles_with_goal); // all other robots
+				r->execute(obstacles_with_goal); /// all other robots
 		}
 	}
 
-	// visualize
+	/// visualize
 	if (_state->gameState.stayAwayFromBall() && _state->ball.valid)
 	{
 		_state->drawCircle(_state->ball.pos, Field_CenterRadius, Qt::black, "Rules");
