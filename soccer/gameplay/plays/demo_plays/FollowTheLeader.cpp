@@ -24,7 +24,7 @@ bool Gameplay::Plays::FollowTheLeader::run()
 		// No robots
 		return false;
 	}
-	
+	/*
 	float backoff = 0.1;
 	
 	// Make a list of robots, sorted by shell
@@ -42,7 +42,7 @@ bool Gameplay::Plays::FollowTheLeader::run()
 			break;
 		}
 	}
-	
+
 	if (manualID < 0)
 	{
 		// No manual robot: first robot follows the ball
@@ -55,15 +55,19 @@ bool Gameplay::Plays::FollowTheLeader::run()
 	
 	// robot[0] is manual.
 	// robot[i] follows robot[i-1].
+	Geometry2d::Point ballPos = ball().pos;
+	Geometry2d::Point RZeroPos = robots[0]->pos;
 	for (unsigned int i = 1; i < robots.size(); ++i)
-	{
+	{	Geometry2d::Point facingTheBall = ballPos - RZeroPos;
+
+		Geometry2d::Point temp = facingTheBall.perpCW().normalized();
 		Geometry2d::Point leader = robots[i - 1]->pos;
 		Geometry2d::Point cur = robots[i]->pos;
 		// Stay a small distance behind the leader
-		Geometry2d::Point dest = leader - (leader - cur).normalized() * (Robot_Diameter + backoff);
+		Geometry2d::Point dest = RZeroPos + temp * (Robot_Diameter + i* backoff);
 		robots[i]->move(dest);
-		robots[i]->face(leader);
-	}
+		robots[i]->face(ballPos);
+	}*/
 	
 	return true;
 }

@@ -27,6 +27,8 @@ namespace Gameplay
 				/** kick parameter flags */
 				bool use_chipper;
 				uint8_t kick_power;
+				bool kick_ready;
+				bool enable_kick;
 
 				// scale the kicking parameters to adjust speed/precision of the kick
 				float scaleSpeed;
@@ -42,6 +44,8 @@ namespace Gameplay
 				} _state;
 
 				bool ballClose;
+
+
 
 				static ConfigDouble *_drive_around_dist;
 				static ConfigDouble *_setup_to_charge_thresh;

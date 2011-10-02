@@ -17,6 +17,7 @@ namespace Gameplay
 ConfigBool *Gameplay::Plays::PassShootPlay::_shoot_use_chipper;
 ConfigBool *Gameplay::Plays::PassShootPlay::_shoot_use_line;
 ConfigBool *Gameplay::Plays::PassShootPlay::_pass_use_chipper;
+ConfigBool *Gameplay::Plays::PassShootPlay::_pass_use_line;
 ConfigInt  *Gameplay::Plays::PassShootPlay::_pass_kick_power;
 ConfigInt  *Gameplay::Plays::PassShootPlay::_shoot_kick_power;
 
@@ -32,10 +33,11 @@ Gameplay::Plays::PassShootPlay::PassShootPlay(GameplayModule *gameplay):
 
 void Gameplay::Plays::PassShootPlay::createConfiguration(Configuration* cfg)
 {
-	_shoot_use_line  = new ConfigBool(cfg, "PassShootPlay/Shooter Line Shot", false);
 	_shoot_use_chipper  = new ConfigBool(cfg, "PassShootPlay/Shooter Chipping", false);
+	_shoot_use_line  = new ConfigBool(cfg, "PassShootPlay/Shooter Line Shot", false);
 	_shoot_kick_power = new ConfigInt(cfg, "PassShootPlay/Shooter Power", 127);
 	_pass_use_chipper  = new ConfigBool(cfg, "PassShootPlay/Passer Chipping", false);
+	_pass_use_line  = new ConfigBool(cfg, "PassShootPlay/Passer Line Shot", false);
 	_pass_kick_power = new ConfigInt(cfg, "PassShootPlay/Passer Power", 127);
 }
 
@@ -68,7 +70,7 @@ bool Gameplay::Plays::PassShootPlay::run()
 		_kicker.robot->face(Geometry2d::Point(0, Field_Length));
 		_passer.setTarget(Geometry2d::Segment(_kicker.robot->pos, Geometry2d::Point(0, Field_Length)));
 		_passer.kick_power = *_pass_kick_power;
-		_passer.use_line_kick = true;
+		_passer.use_line_kick = *_pass_use_line;
 		_passer.run();
 
 		if(_passer.done())

@@ -75,6 +75,8 @@ namespace Gameplay
 				float _accuracy;
 				bool _kicked;
 
+				bool kick_ready;
+
 				// GUI Parameters
 				// Angular speed for aiming
 				static ConfigDouble *_aim_Speed;

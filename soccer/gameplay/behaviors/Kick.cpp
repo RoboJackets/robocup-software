@@ -172,6 +172,8 @@ bool Kick::run() {
 		_lineKick.target = available_target.center();
 		_lineKick.use_chipper = must_use_chip;
 		_lineKick.kick_power = (must_use_chip) ? chip_power : kick_power;
+		_lineKick.enable_kick = enableKick;
+		kickReady = _lineKick.kick_ready;
 		bool result = _lineKick.run();
 		if (_lineKick.done())
 		{
@@ -184,6 +186,7 @@ bool Kick::run() {
 		_pivotKick.dribble_speed = dribbler_speed;
 		_pivotKick.use_chipper = use_chipper;
 		_pivotKick.kick_power = (use_chipper) ? chip_power : kick_power;
+		_pivotKick.enable_kick = enableKick;
 		bool result = _pivotKick.run();
 		if (_pivotKick.done())
 		{
