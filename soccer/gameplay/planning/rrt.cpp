@@ -220,7 +220,7 @@ void RRT::Planner::optimize(Planning::Path &path, const ObstacleGroup *obstacles
 		obstacles->hit(Geometry2d::Segment(path.points[start], path.points[end]), newHit);
 		try
 		{
-			set_difference(newHit.begin(), newHit.end(), hit.begin(), hit.end(), Utils::ExceptionIterator<ObstaclePtr>());
+			set_difference(newHit.begin(), newHit.end(), hit.begin(), hit.end(), ExceptionIterator<ObstaclePtr>());
 		} catch (exception& e)
 		{
 			start = end - 1;

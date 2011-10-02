@@ -7,6 +7,33 @@ using namespace Geometry2d;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::BasicOffense121, "Playing")
 
+namespace Gameplay
+{
+	namespace Plays
+	{
+		REGISTER_CONFIGURABLE(BasicOffense121)
+	}
+}
+
+ConfigDouble *Gameplay::Plays::BasicOffense121::_offense_hysteresis;
+ConfigDouble *Gameplay::Plays::BasicOffense121::_support_backoff_thresh;
+ConfigDouble *Gameplay::Plays::BasicOffense121::_mark_hysteresis_coeff;
+ConfigDouble *Gameplay::Plays::BasicOffense121::_support_avoid_teammate_radius;
+ConfigDouble *Gameplay::Plays::BasicOffense121::_support_avoid_shot;
+ConfigDouble *Gameplay::Plays::BasicOffense121::_offense_support_ratio;
+ConfigDouble *Gameplay::Plays::BasicOffense121::_defense_support_ratio;
+
+void Gameplay::Plays::BasicOffense121::createConfiguration(Configuration *cfg)
+{
+	_offense_hysteresis = new ConfigDouble(cfg, "BasicOffense121/Hystersis Coeff", 0.50);
+	_support_backoff_thresh = new ConfigDouble(cfg, "BasicOffense121/Support Backoff Dist", 1.5);
+	_mark_hysteresis_coeff = new ConfigDouble(cfg, "BasicOffense121/Mark Hystersis Coeff", 0.9);
+	_support_avoid_teammate_radius = new ConfigDouble(cfg, "BasicOffense121/Support Avoid Teammate Dist", 0.5);
+	_support_avoid_shot = new ConfigDouble(cfg, "BasicOffense121/Support Avoid Shot", 0.2);
+	_offense_support_ratio = new ConfigDouble(cfg, "BasicOffense121/Offense Support Ratio", 0.7);
+	_defense_support_ratio = new ConfigDouble(cfg, "BasicOffense121/Defense Support Ratio", 0.9);
+}
+
 Gameplay::Plays::BasicOffense121::BasicOffense121(GameplayModule *gameplay):
 	Play(gameplay),
 	_fullback(gameplay, Behaviors::Fullback::Center),
@@ -40,11 +67,10 @@ bool Gameplay::Plays::BasicOffense121::run()
 	assignNearest(_fullback.robot, available, Geometry2d::Point(0.0, 0.0));
 
 	// determine whether to change offense players
-	const float coeff = 0.50; // Determines level of hysteresis
 	bool forward_reset = false;
 	if (_striker.robot && _support1.robot && _support2.robot &&
-		(_support1.robot->pos.distTo(ballProj) < coeff * _striker.robot->pos.distTo(ballProj) ||
-		 _support2.robot->pos.distTo(ballProj) < coeff * _striker.robot->pos.distTo(ballProj))) {
+		(_support1.robot->pos.distTo(ballProj) < *_offense_hysteresis * _striker.robot->pos.distTo(ballProj) ||
+		 _support2.robot->pos.distTo(ballProj) < *_offense_hysteresis * _striker.robot->pos.distTo(ballProj))) {
 		_striker.robot = NULL;
 		_support1.robot = NULL;
 		_support2.robot = NULL;
@@ -55,17 +81,6 @@ bool Gameplay::Plays::BasicOffense121::run()
 	assignNearest(_striker.robot, available, ballProj);
 	assignNearest(_support1.robot, available, ballProj);
 	assignNearest(_support2.robot, available, ballProj);
-
-	//FIXME: remove hack when new robots can kick reliably
-	// swap robots so that striker is a 2008 robot
-	if (_striker.robot->newRevision()) {
-		if (_support1.robot)
-			swap(_striker.robot, _support1.robot);
-		else if (_support2.robot)
-			swap(_striker.robot, _support2.robot);
-		else if (_fullback.robot)
-			swap(_striker.robot, _fullback.robot);
-	}
 
 	// manually reset any kickers so they keep kicking
 	if (_striker.done())
@@ -107,31 +122,30 @@ bool Gameplay::Plays::BasicOffense121::run()
 	}
 
 	// use hysteresis for changing of the robot
-	const float mark_coeff = 0.9; // how much of an improvement is necessary to switch
-	if (bestOpp1 && bestOpp1->visible && (forward_reset || bestDist1 < cur_dist1 * cur_dist1 * mark_coeff))
+	if (bestOpp1 && bestOpp1->visible && (forward_reset || bestDist1 < cur_dist1 * cur_dist1 * *_mark_hysteresis_coeff))
 		_support1.markRobot(bestOpp1);
-	if (bestOpp2 && bestOpp2->visible && (forward_reset || bestDist2 < cur_dist2 * cur_dist2 * mark_coeff))
+	if (bestOpp2 && bestOpp2->visible && (forward_reset || bestDist2 < cur_dist2 * cur_dist2 * *_mark_hysteresis_coeff))
 		_support2.markRobot(bestOpp2);
 
 	if (ballProj.y > Field_Length/2.0 && nrOppClose) {
-		_support1.ratio(0.7);
-		_support2.ratio(0.7);
+		_support1.ratio(*_offense_support_ratio);
+		_support2.ratio(*_offense_support_ratio);
 	}
 	else {
-		_support1.ratio(0.9);
-		_support2.ratio(0.9);
+		_support1.ratio(*_defense_support_ratio);
+		_support2.ratio(*_defense_support_ratio);
 	}
 
 	// adjust obstacles on striker and support
 	if (_striker.robot) {
 		unsigned striker = _striker.robot->shell();
 		if (_support1.robot)
-			_support1.robot->avoidTeammateRadius(striker, 0.5);
+			_support1.robot->avoidTeammateRadius(striker, *_support_avoid_teammate_radius);
 		if (_support2.robot)
-			_support2.robot->avoidTeammateRadius(striker, 0.5);
+			_support2.robot->avoidTeammateRadius(striker, *_support_avoid_teammate_radius);
 
 		// get out of ways of shots
-		if (_striker.robot->pos.nearPoint(ballProj, 0.2)) {
+		if (_striker.robot->pos.nearPoint(ballProj, *_support_avoid_shot)) {
 			Polygon shot_obs;
 			shot_obs.vertices.push_back(Geometry2d::Point(Field_GoalWidth / 2, Field_Length));
 			shot_obs.vertices.push_back(Geometry2d::Point(-Field_GoalWidth / 2, Field_Length));

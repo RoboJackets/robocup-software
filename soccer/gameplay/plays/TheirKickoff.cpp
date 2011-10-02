@@ -4,6 +4,19 @@ using namespace std;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::TheirKickoff, "Restarts")
 
+namespace Gameplay
+{
+	namespace Plays
+	{
+		REGISTER_CONFIGURABLE(TheirKickoff)
+	}
+}
+
+void Gameplay::Plays::TheirKickoff::createConfiguration(Configuration *cfg)
+{
+
+}
+
 Gameplay::Plays::TheirKickoff::TheirKickoff(GameplayModule *gameplay):
 	Play(gameplay),
 	_fullback1(gameplay, Behaviors::Fullback::Left),

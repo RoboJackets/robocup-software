@@ -7,6 +7,48 @@ volatile int music_playing;
 
 // http://www.phy.mtu.edu/~suits/notefreqs.html
 
+const note_t song_victory[] =
+{
+        {PERIOD( 3000), 500},
+	{0,		50},
+        {PERIOD( 2637), 200},
+	{0,		50},
+        {PERIOD( 2349), 500},
+	{0,		50},
+        {PERIOD( 2349), 500},
+	{0,		50},
+        {PERIOD( 2349), 500},
+	{0,		50},
+        {PERIOD( 2637), 200},
+	{0,		50},
+        {PERIOD( 3000), 500},
+	{0,		50},
+        {PERIOD( 3000), 200},
+	{0,		50},
+        {PERIOD( 3000), 500},
+	{0,		50},
+        {PERIOD( 2637), 200},
+	{0,		50},
+        {PERIOD( 2349), 200},
+	{0,		50},
+        {PERIOD( 2637), 200},
+	{0,		50},
+        {PERIOD( 3000), 200},
+	{0,		50},
+        {PERIOD( 2637), 200},
+	{0,		50},
+	{PERIOD( 2349), 500},
+	{0,		50},
+	{PERIOD( 2217), 200},
+	{0,		50},
+        {PERIOD( 2349), 1000},
+	{0,		50},
+	{PERIOD( 4699), 500},
+        {0, 0}
+};
+
+
+
 const note_t song_startup[] =
 {
 	{PERIOD( 523), 100},
@@ -61,7 +103,7 @@ const note_t song_fuse_blown[] =
 };
 
 void music_handler(void *arg);
-timer_t music_timer = {0, 0, music_handler};
+Timer music_timer = {0, 0, music_handler};
 
 void music_handler(void *arg)
 {

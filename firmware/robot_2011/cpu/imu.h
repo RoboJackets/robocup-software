@@ -1,3 +1,6 @@
 #pragma once
 
-void imu_init(void);
+extern int imu_aligned;
+
+int imu_init(void);
+void imu_poll(void);

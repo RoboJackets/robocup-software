@@ -5,7 +5,7 @@
 // All times are in milliseconds.
 // The current time is measured from initialization.
 
-typedef struct timer_t
+typedef struct Timer
 {
 	// The time at which the handler will be called.
 	// timer_start adds the current time to this when the timer is first added.
@@ -27,15 +27,15 @@ typedef struct timer_t
 	void *arg;
 	
 	// Next timer.  The list is singly-linked to save RAM.
-	struct timer_t *next;
-} timer_t;
+	struct Timer *next;
+} Timer;
 
-extern timer_t *first_timer;
+extern Timer *first_timer;
 extern volatile unsigned int  current_time;
 
 void timer_init(void);
-void timer_start(timer_t *t);
-void timer_stop(timer_t *t);
+void timer_start(Timer *t);
+void timer_stop(Timer *t);
 void delay_ms(int ms);
 
 // Simple timer handlers.

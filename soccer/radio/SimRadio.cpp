@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 using namespace std;
+using namespace Packet;
 
 static QHostAddress LocalAddress(QHostAddress::LocalHost);
 
@@ -30,16 +31,15 @@ bool SimRadio::isOpen() const
 	return true;
 }
 
-void SimRadio::send(const Packet::RadioTx& packet)
+void SimRadio::send(Packet::RadioTx& packet)
 {
 	std::string out;
 	packet.SerializeToString(&out);
 	_socket.writeDatagram(&out[0], out.size(), LocalAddress, RadioTxPort + _channel);
 }
 
-bool SimRadio::receive(Packet::RadioRx* packet)
+void SimRadio::receive()
 {
-	bool done = false;
 	while (_socket.hasPendingDatagrams())
 	{
 		unsigned int n = _socket.pendingDatagramSize();
@@ -47,14 +47,13 @@ bool SimRadio::receive(Packet::RadioRx* packet)
 		buf.resize(n);
 		_socket.readDatagram(&buf[0], n);
 		
-		if (!packet->ParseFromString(buf))
+		_reversePackets.push_back(RadioRx());
+		RadioRx &packet = _reversePackets.back();
+		
+		if (!packet.ParseFromString(buf))
 		{
 			printf("Bad radio packet of %d bytes\n", n);
 			continue;
 		}
-		
-		done = true;
 	}
-	
-	return done;
 }

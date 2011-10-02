@@ -12,6 +12,7 @@ namespace Gameplay
 		class TheirFreekick: public Play
 		{
 			public:
+				static void createConfiguration(Configuration *cfg);
 				TheirFreekick(GameplayModule *gameplay);
 				
 				static float score(GameplayModule *gameplay);

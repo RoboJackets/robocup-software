@@ -73,10 +73,10 @@ int main(int argc, char *argv[])
 	bool first = true;
 	while (true)
 	{
-		uint64_t startTime = Utils::timestamp();
+		uint64_t startTime = timestamp();
 		
 		logFrame.Clear();
-		logFrame.set_start_time(startTime);
+		logFrame.set_command_time(startTime);
 		
 		// Check for user input (to exit)
 		struct pollfd pfd;
@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
 			break;
 		}
 		
-		uint64_t endTime = Utils::timestamp();
+		uint64_t endTime = timestamp();
 		int lastFrameTime = endTime - startTime;
 		if (lastFrameTime < framePeriod)
 		{

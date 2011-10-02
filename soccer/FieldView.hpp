@@ -31,7 +31,7 @@ class FieldView : public QWidget
 		{
 			if (i < _layerVisible.size())
 			{
-				return true;
+				return _layerVisible[i];
 			} else {
 				return false;
 			}
@@ -65,7 +65,7 @@ class FieldView : public QWidget
 		
 		void drawText(QPainter& p, QPointF pos, QString text, bool center = true);
 		void drawField(QPainter& p, const Packet::LogFrame *frame);
-		void drawRobot(QPainter& p, bool blueRobot, int ID, QPointF pos, float theta, bool hasBall = false);
+		void drawRobot(QPainter& p, bool blueRobot, int ID, QPointF pos, float theta, bool hasBall = false, bool faulty = false);
 		void drawCoords(QPainter& p);
 
 	protected:

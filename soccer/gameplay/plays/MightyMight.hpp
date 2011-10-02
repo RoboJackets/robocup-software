@@ -15,6 +15,8 @@ namespace Gameplay
 		class MightyMight: public Play
 		{
 			public:
+				static void createConfiguration(Configuration *cfg);
+
 				MightyMight(GameplayModule *gameplay);
 				
 				static float score(GameplayModule *gameplay);

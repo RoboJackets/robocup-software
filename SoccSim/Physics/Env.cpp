@@ -337,8 +337,8 @@ void Env::addRobot(bool blue, int id, Geometry2d::Point pos, Robot::Rev rev)
 	case Robot::rev2008:
 		printf("New 2008 Robot: %d : %f %f\n", id, pos.x, pos.y);
 		break;
-	case Robot::rev2010:
-		printf("New 2010 Robot: %d : %f %f\n", id, pos.x, pos.y);
+	case Robot::rev2011:
+		printf("New 2011 Robot: %d : %f %f\n", id, pos.x, pos.y);
 	}
 }
 
@@ -419,32 +419,35 @@ void Env::handleRadioTx(int ch, const Packet::RadioTx& tx)
 	{
 		const Packet::RadioTx::Robot &cmd = tx.robots(i);
 		
-		if (cmd.motors_size() != 4)
-		{
-			printf("ch %d r %d: Wrong number of motors: %d != 4\n", ch, i, cmd.motors_size());
-			continue;
-		}
-		
-		Robot *r = robot(blue, cmd.board_id());
+		Robot *r = robot(blue, cmd.robot_id());
 		if (r)
 		{
 			r->radioTx(&cmd);
 		} else {
 			printf("Commanding nonexistant robot %s:%d\n",
 				blue ? "Blue" : "Yellow",
-				cmd.board_id());
+				cmd.robot_id());
 		}
-	}
-	
-	Robot *rev = robot(blue, tx.reverse_board_id());
-	if (rev)
-	{
-		Packet::RadioRx rx = rev->radioRx();
-		rx.set_board_id(tx.reverse_board_id());
-		
+
+		Packet::RadioRx rx = r->radioRx();
+		rx.set_robot_id(r->shell);
+
 		// Send the RX packet
 		std::string out;
 		rx.SerializeToString(&out);
 		_radioSocket[ch].writeDatagram(&out[0], out.size(), LocalAddress, RadioRxPort + ch);
 	}
+
+	// old interface
+//	Robot *rev = robot(blue, tx.reverse_board_id());
+//	if (rev)
+//	{
+//		Packet::RadioRx rx = rev->radioRx();
+//		rx.set_board_id(tx.reverse_board_id());
+//
+//		// Send the RX packet
+//		std::string out;
+//		rx.SerializeToString(&out);
+//		_radioSocket[ch].writeDatagram(&out[0], out.size(), LocalAddress, RadioRxPort + ch);
+//	}
 }

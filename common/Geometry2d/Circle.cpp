@@ -112,6 +112,10 @@ int Circle::intersects(const Line &line, Point *i) const
     }
 }
 
+Point Circle::nearestPoint(const Geometry2d::Point &P) const {
+	return (P-center).normalized() * _r + center;
+}
+
 bool Circle::tangentPoints(const Geometry2d::Point &src, 
 	Geometry2d::Point* p1, Geometry2d::Point* p2) const
 {

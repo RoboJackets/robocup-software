@@ -4,6 +4,13 @@
 
 extern unsigned int robot_id;
 
+// If nonzero, we are on a 2008 base:
+//  - Motors run backwards (outside gears)
+//  - No encoders
+//  - No kicker voltage monitor (use KDONE instead)
+//  - No chipper
+extern int base2008;
+
 // Failure flags
 enum
 {
@@ -50,7 +57,13 @@ enum
 	Fail_Gyro				= 0x00010000,
 	
 	// Accelerometer
-	Fail_Accelerometer		= 0x00020000
+	Fail_Accelerometer		= 0x00020000,
+	
+	// Kicker voltage monitor not responding
+	Fail_Kicker_I2C			= 0x00100000,
+	
+	// Kicker failed to charge (probably shorted IGBTs)
+	Fail_Kicker_Charge		= 0x00200000,
 };
 
 // Failure categories
@@ -59,6 +72,7 @@ enum
 #define Fail_Power	(Fail_Undervoltage | Fail_Overvoltage | Fail_Fuse)
 #define Fail_Ball	(Fail_Ball_Det_Open | Fail_Ball_Det_Short | Fail_Ball_LED_Open | Fail_Ball_Dazzled)
 #define Fail_IMU	(Fail_Gyro | Fail_Accelerometer)
+#define Fail_Kicker	(Fail_Kicker_I2C | Fail_Kicker_Charge)
 
 // Motor numbers
 // Drive motors 0-3 are labelled M1-M4 on the board.
@@ -87,14 +101,6 @@ enum
 	Kicker_Charging			= 0x04,
 	Kicker_Enabled			= 0x08,
 	Kicker_Override			= 0x10,
-	Kicker_Chipping			= 0x20
+	Kicker_Chipping			= 0x20,
+	Kicker_I2C_OK			= 0x40
 };
-
-extern uint8_t kicker_status;
-extern uint8_t kicker_voltage;
-
-// Periodic functions
-void check_usb_connection(void);
-
-// Returns nonzero if the USB console is usable (for printf, etc.)
-int usb_is_connected(void);

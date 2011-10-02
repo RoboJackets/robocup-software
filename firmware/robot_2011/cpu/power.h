@@ -20,6 +20,9 @@
 // This is determined by the minimum safe discharge voltage of the LiPo pack.
 #define MIN_SUPPLY_RAW	MV_TO_RAW(13500)
 
+// Voltage at which the low-battery music starts playing
+#define LOW_SUPPLY_RAW	MV_TO_RAW(14300)
+
 // Maximum supply voltage, converted from millivolts.
 // This is determined by the maximum voltage that the TC4428's can tolerate.
 // This has a large safety margin because we may not detect spikes from regenerative

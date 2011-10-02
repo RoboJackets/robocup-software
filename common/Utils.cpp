@@ -10,7 +10,7 @@ using namespace std;
 //   A class not in a namespace is <n><name> where <n> in the number of characters in <name>.
 //   A class in a namespace is N<a><namespace><b><namespace>...<n><classname>E,
 //   where each namespace name is preceeded by the number of characters in that name.
-QString Utils::typeName(const std::type_info &info)
+QString typeName(const std::type_info &info)
 {
 	const char *name = info.name();
 	QString out;
@@ -37,7 +37,7 @@ QString Utils::typeName(const std::type_info &info)
 }
 #endif
 
-QString Utils::className(const std::type_info &info)
+QString className(const std::type_info &info)
 {
 	// Use the class name, which is the part after the last colon.
 	QString fullName = typeName(info);

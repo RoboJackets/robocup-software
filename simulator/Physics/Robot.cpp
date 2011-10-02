@@ -53,30 +53,31 @@ float Robot::getAngle() const
 
 void Robot::radioTx(const Packet::RadioTx::Robot *data)
 {
-	Geometry2d::Point axles[4] =
-	{
-			Point( .08,  .08),
-			Point( .08, -.08),
-			Point(-.08, -.08),
-			Point(-.08,  .08)
-	};
+//	Geometry2d::Point axles[4] =
+//	{
+//			Point( .08,  .08),
+//			Point( .08, -.08),
+//			Point(-.08, -.08),
+//			Point(-.08,  .08)
+//	};
 
-	for (unsigned int i = 0 ; i < 4 ; ++i)
-	{
-		Point wheel(-axles[i].y, axles[i].x);
-		wheel = wheel.normalized();
-		wheel.rotate(Point(), getAngle());
-
-		float target = data->motors(i) / 127.0f * 1.2;
-
-		// reverse for 2010 robots
-		if (_rev == rev2010)
-		{
-			target = -target;
-		}
-
-		// TODO: apply force
-	}
+	// FIXME: interface for motors changed - now uses body velocities, rather than motor commands
+//	for (unsigned int i = 0 ; i < 4 ; ++i)
+//	{
+//		Point wheel(-axles[i].y, axles[i].x);
+//		wheel = wheel.normalized();
+//		wheel.rotate(Point(), getAngle());
+//
+//		float target = data->motors(i) / 127.0f * 1.2;
+//
+//		// reverse for 2010 robots
+//		if (_rev == rev2010)
+//		{
+//			target = -target;
+//		}
+//
+//		// TODO: apply force
+//	}
 
 	/** How we kick:
 	 * Kick speed will be zeroed if we are not kicking
@@ -84,38 +85,40 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
 	 * max speeds guessed with science
 	 */
 
-	if (data->kick() && (Utils::timestamp() - _lastKicked) > RechargeTime && chargerWorks)
-	{
-		// FIXME: make these parameters some place else
-		float maxKickSpeed = 5.0f, // m/s direct kicking speed
-				maxChipSpeed = 3.0f; // m/s chip kicking at the upwards angle
-//				chipAngle = 20.0f;   // angle (degrees) of upwards chip
-
-		// determine the kick speed
-		float kickSpeed;
-		bool chip = data->use_chipper();
-		if (chip)
-		{
-			kickSpeed = data->kick() / 255.0f * maxChipSpeed;
-		} else {
-			kickSpeed = data->kick() / 255.0f * maxKickSpeed;
-		}
-	}
+	// FIXME: rework this section to use information that we actually have
+//	if (data->kick() && (Utils::timestamp() - _lastKicked) > RechargeTime && chargerWorks)
+//	{
+//		// FIXME: make these parameters some place else
+//		float maxKickSpeed = 5.0f, // m/s direct kicking speed
+//				maxChipSpeed = 3.0f; // m/s chip kicking at the upwards angle
+////				chipAngle = 20.0f;   // angle (degrees) of upwards chip
+//
+//		// determine the kick speed
+//		float kickSpeed;
+//		bool chip = data->use_chipper();
+//		if (chip)
+//		{
+//			kickSpeed = data->kick() / 255.0f * maxChipSpeed;
+//		} else {
+//			kickSpeed = data->kick() / 255.0f * maxKickSpeed;
+//		}
+//	}
 }
 
 Packet::RadioRx Robot::radioRx() const
 {
 	Packet::RadioRx packet;
 
-	packet.set_timestamp(Utils::timestamp());
-	packet.set_battery(1.0f);
-	packet.set_rssi(1.0f);
-	packet.set_charged(chargerWorks && (Utils::timestamp() - _lastKicked) > RechargeTime);
-
-	BOOST_FOREACH(const Ball* ball, _env->balls())
-	{
-		packet.set_ball_sense(ballSense(ball) || !ballSensorWorks);
-	}
+	// FIXME: packet format changed - construct the return packet more carefully
+//	packet.set_timestamp(Utils::timestamp());
+//	packet.set_battery(1.0f);
+//	packet.set_rssi(1.0f);
+//	packet.set_charged(chargerWorks && (Utils::timestamp() - _lastKicked) > RechargeTime);
+//
+//	BOOST_FOREACH(const Ball* ball, _env->balls())
+//	{
+//		packet.set_ball_sense(ballSense(ball) || !ballSensorWorks);
+//	}
 
 	return packet;
 }

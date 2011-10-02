@@ -10,8 +10,8 @@ public:
 	SimRadio();
 	
 	virtual bool isOpen() const;
-	virtual void send(const Packet::RadioTx &packet);
-	virtual bool receive(Packet::RadioRx *packet);
+	virtual void send(Packet::RadioTx &packet);
+	virtual void receive();
 	
 private:
 	QUdpSocket _socket;

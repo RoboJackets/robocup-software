@@ -104,7 +104,7 @@ int main(int argc, char *argv[])
 			// so write everything we have.
 			
 			// Calculate the time this iteration would have started
-			frame.set_start_time(endTime - FramePeriod);
+			frame.set_command_time(endTime - FramePeriod);
 			
 			// Advance endTime to the next iteration.
 			endTime += FramePeriod;

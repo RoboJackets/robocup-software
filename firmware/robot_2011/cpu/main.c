@@ -20,110 +20,81 @@
 #include "stall.h"
 #include "imu.h"
 #include "ota_update.h"
+#include "main.h"
+#include "encoder_monitor.h"
+#include "kicker.h"
+#include "radio_protocol.h"
 
-// Last forward packet
-uint8_t forward_packet[Forward_Size];
-
-// Last reverse packet
-uint8_t reverse_packet[Reverse_Size];
-
-int_fast8_t wheel_command[4];
-uint_fast8_t dribble_command;
-uint_fast8_t kick_command;
-
-uint32_t rx_lost_time;
+#include "invensense/imuSetup.h"
+// #include "invensense/imuMlsl.h"
+// #include "invensense/imuFIFO.h"
+// #include "invensense/imuMldl.h"
+// #include "invensense/mpuregs.h"
 
 // Last time the 5ms periodic code was executed
 unsigned int update_time;
 
 void (*debug_update)(void) = 0;
 
-static int handle_forward_packet()
+void flash(int led, int count)
 {
-	if (radio_rx_len != Forward_Size)
+	// This cycles at approximately 16Hz
+	int phase = (current_time >> 7) & 7;
+	
+	if ((phase & 1) == 0)
 	{
-		radio_command(SFRX);
-		radio_command(SRX);
-		return 0;
-	}
-	
-	memcpy(forward_packet, radio_rx_buf, Forward_Size);
-	
-	rx_lost_time = current_time;
-	LED_TOGGLE(LED_RG);
-	LED_OFF(LED_RR);
-	
-	uint8_t reverse_id = forward_packet[0] & 15;
-	
-	// Clear motor commands in case this robot's ID does not appear in the packet
-	for (int i = 0; i < 4; ++i)
-	{
-		wheel_command[i] = 0;
-	}
-	dribble_command = 0;
-
-	// Get motor commands from the packet
-	int offset = 1;
-	for (int slot = 0; slot < 5; ++slot)
-	{
-		if ((forward_packet[offset + 4] & 0x0f) == robot_id)
+		// Even phase
+		if ((phase >> 1) < count)
 		{
-			for (int i = 0; i < 4; ++i)
-			{
-				wheel_command[i] = (int8_t)forward_packet[offset + i];
-			}
-			
-			// Convert the dribbler speed from the top four bits in a byte to seven bits
-			dribble_command = (forward_packet[offset + 4] & 0xf0) >> 1;
-			dribble_command |= dribble_command >> 4;
-			
-			kick_command = forward_packet[offset + 5];
+			LED_ON(led);
+		} else {
+			LED_OFF(led);
 		}
-		offset += 6;
-	}
-	
-	//FIXME - Testing chipper with only one 2011 robot
-	if (forward_packet[0] & 0x80)
-	{
-		use_chipper = 1;
 	} else {
-		use_chipper = 0;
+		// Odd phase
+		LED_OFF(led);
 	}
+}
 
-	if (reverse_id == robot_id)
+void update_leds()
+{
+	// Ball sensor
+	if (failures & Fail_Ball_Dazzled)
 	{
-		// Build and send a reverse packet
-		reverse_packet[0] = robot_id;
-		reverse_packet[1] = last_rssi;
-		reverse_packet[2] = 0x00;
-		reverse_packet[3] = 0; //FIXME - Battery
-		reverse_packet[4] = kicker_status;
-		reverse_packet[5] = motor_faults;
-		
+		flash(LED_LY, 1);
+	} else if (failures & (Fail_Ball_Det_Open | Fail_Ball_Det_Short))
+	{
+		flash(LED_LY, 2);
+	} else if (failures & Fail_Ball_LED_Open)
+	{
+		flash(LED_LY, 3);
+	} else {
 		if (have_ball)
 		{
-			reverse_packet[5] |= 1 << 5;
+			LED_ON(LED_LY);
+		} else {
+			LED_OFF(LED_LY);
 		}
-		
-		if (failures & Fail_Ball)
-		{
-			reverse_packet[5] |= 1 << 6;
-		}
-		
-		reverse_packet[10] = 0;
-		for (int i = 0; i < 4; ++i)
-		{
-			reverse_packet[6 + i] = encoder[i];
-			reverse_packet[10] |= (encoder[i] & 0x300) >> (8 - i * 2);
-		}
-		
-		radio_transmit(reverse_packet, sizeof(reverse_packet));
-	} else {
-		// Get ready to receive another forward packet
-		radio_command(SRX);
 	}
 	
-	return 1;
+	// Kicker
+	if (failures & Fail_Kicker_Charge)
+	{
+		flash(LED_LR, 2);
+	} else if (failures & Fail_Kicker_I2C)
+	{
+		// 2008 bases have no kicker ADC
+		flash(LED_LR, 3);
+	} else if (!(kicker_status & Kicker_Charging) || (kicker_status & Kicker_Override))
+	{
+		LED_OFF(LED_LR);
+	} else if (kicker_status & Kicker_Charged)
+	{
+		LED_ON(LED_LR);
+	} else if (kicker_status & Kicker_Charging)
+	{
+		flash(LED_LR, 1);
+	}
 }
 
 #if 0
@@ -159,7 +130,7 @@ int main()
 {
 	// Set up watchdog timer
 	AT91C_BASE_WDTC->WDTC_WDCR = 0xa5000001;
-	AT91C_BASE_WDTC->WDTC_WDMR = AT91C_WDTC_WDRSTEN | AT91C_WDTC_WDDBGHLT | AT91C_WDTC_WDDIS | (0xfff << 16) | 0x0ff;
+	AT91C_BASE_WDTC->WDTC_WDMR = AT91C_WDTC_WDRSTEN | AT91C_WDTC_WDDBGHLT | (0xfff << 16) | 0x0ff;
 	
 	// Enable user reset (reset button)
 	AT91C_BASE_SYS->RSTC_RMR = 0xa5000000 | AT91C_RSTC_URSTEN;
@@ -184,7 +155,11 @@ int main()
 	AT91C_BASE_PIOA->PIO_MDER = MCU_PROGB;
 	AT91C_BASE_PIOA->PIO_OER = MCU_PROGB;
 	
+	base2008 = SWITCHES & DP1;
+	
+	// More internal peripherals
 	timer_init();
+	reply_timer_init();
 	
 	// At this point, the FPGA is presumed to be the SPI master.
 	// Wait for it to configure and determine if it works.
@@ -206,33 +181,51 @@ int main()
 	// Set up I2C
 	i2c_init();
 	
+#if 0
 	// Set up the IMU
-	imu_init();
+	if (!imu_init())
+	{
+		//FIXME - Test each chip individually
+		failures |= Fail_IMU;
+	}
+#endif
+
+	// Test if the kicker works
+	kicker_test();
 	
 	// Turn off LEDs
 	LED_OFF(LED_ALL);
 	
+	// Play startup music
 	if (failures == 0)
 	{
+		// Everything's good
 		music_start(song_startup);
-		
-		// Enough hardware is working, so act like a robot
-		
-		// DP1 on => PD controller, off => dumb controller
-		if (AT91C_BASE_PIOA->PIO_PDSR & DP1)
-		{
-			default_controller = &controllers[0];
-		} else {
-			default_controller = &controllers[1];
-		}
-		controller = default_controller;
 	} else if (failures & Fail_Power)
 	{
 		// Dead battery (probably)
 		power_fail_music();
 	} else {
-		// We're a paperweight
+		// Something's wrong
 		music_start(song_failure);
+	}
+	
+	// Select the default controller if enough hardware is working.
+	// Some failures are acceptable at this point.
+	int showstoppers = failures & ~Fail_Kicker & ~Fail_IMU;
+	if (showstoppers == 0)
+	{
+		// DP1 on => PD controller, off => dumb controller
+		if (base2008)
+		{
+			default_controller = &controllers[0];
+		} else {
+			default_controller = &controllers[1];
+		}
+		if (!(SWITCHES & DP2))
+		{
+			controller = default_controller;
+		}
 	}
 	
 	// Set up the radio.  After this, it will be able to transmit and receive.
@@ -240,10 +233,20 @@ int main()
 	if (!(failures & Fail_Radio))
 	{
 		radio_configure();
+		
+		if (SWITCHES & DP4)
+		{
+			// Secondary channel
+			radio_channel(10);
+		} else {
+			// Primary channel
+			radio_channel(0);
+		}
 	}
 	
 	rx_lost_time = current_time;
 	
+	// Start the controller if one was selected
 	if (controller && controller->init)
 	{
 		controller->init(0, 0);
@@ -265,21 +268,21 @@ int main()
 		check_usb_connection();
 		
 		// Read robot ID
-		uint32_t inputs = AT91C_BASE_PIOA->PIO_PDSR;
+		uint32_t inputs = SWITCHES;
 		robot_id = 0;
-		if (!(inputs & ID0))
+		if (inputs & ID0)
 		{
 			robot_id = 1;
 		}
-		if (!(inputs & ID1))
+		if (inputs & ID1)
 		{
 			robot_id |= 2;
 		}
-		if (!(inputs & ID2))
+		if (inputs & ID2)
 		{
 			robot_id |= 4;
 		}
-		if (!(inputs & ID3))
+		if (inputs & ID3)
 		{
 			robot_id |= 8;
 		}
@@ -305,11 +308,14 @@ int main()
 				}
 				
 				// Clear drive commands
-				for (int i = 0; i < 4; ++i)
-				{
-					wheel_command[i] = 0;
-				}
+				cmd_body_x = 0;
+				cmd_body_y = 0;
+				cmd_body_w = 0;
 				dribble_command = 0;
+				kick_command = 0;
+				use_chipper = 0;
+				accel_limit = 0;
+				decel_limit =  0;
 			}
 			
 			// Check for radio packets
@@ -320,12 +326,18 @@ int main()
 					controller->received();
 				}
 			}
+			
+			// Send a reply packet if the reply timer has expired
+			radio_reply();
 		}
 		
 		// Periodic activities
 		if ((current_time - update_time) >= 5)
 		{
 			update_time = current_time;
+			
+			// Check for new IMU data
+			IMUupdateData();
 			
 			// Read ADC results
 			adc_update();
@@ -337,21 +349,28 @@ int main()
 			// Read encoders
 			fpga_read_status();
 			
+			// Detect faulty or miswired encoders
+			encoder_monitor();
+			
+			kicker_monitor();
+			
 			// Detect stalled motors
 			// This must be done before clearing motor outputs because it uses the old values
 			stall_update();
 			
 			// Reset motor outputs in case the controller is broken
-			for (int i = 0; i < 4; ++i)
+			for (int i = 0; i < 5; ++i)
 			{
-				wheel_out[i] = 0;
+				motor_out[i] = 0;
+				drive_mode[i] = DRIVE_OFF;
 			}
-			dribble_out = 0;
 			
 			// Allow kicking if we have the ball
-			if (have_ball)
+			if (have_ball || kick_immediate)
 			{
 				kick_strength = kick_command;
+				kick_immediate = 0;
+				kick_command = 0;
 			} else {
 				kick_strength = 0;
 			}
@@ -363,28 +382,18 @@ int main()
 			}
 			
 			// Clear the commands for unusable motors
-			uint8_t bad_motors = motor_faults | motor_stall;
-			for (int i = 0; i < 4; ++i)
+			uint8_t bad_motors = motor_faults | motor_stall | encoder_faults;
+			for (int i = 0; i < 5; ++i)
 			{
 				if (bad_motors & (1 << i))
 				{
-					wheel_out[i] = 0;
+					motor_out[i] = 0;
+					drive_mode[i] = DRIVE_OFF;
 				}
-			}
-			if (bad_motors & (1 << Motor_Dribbler))
-			{
-				dribble_out = 0;
 			}
 			
 			// Send commands to and read status from the FPGA
 			fpga_send_commands();
-			
-			if (kicker_status & Kicker_Charged)
-			{
-				LED_ON(LED_LR);
-			} else {
-				LED_OFF(LED_LR);
-			}
 			
 			if (usb_is_connected() && debug_update)
 			{
@@ -394,6 +403,8 @@ int main()
 		
 		// Keep power failure music playing continuously
 		power_fail_music();
+		
+		update_leds();
 	}
 }
 

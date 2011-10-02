@@ -9,7 +9,7 @@ const uint8_t cc1101_regs[] =
     0x12, 0x13,    // MDMCFG2  - Modem configuration.
     0x13, 0x22,    // MDMCFG1  - Modem configuration.
     0x14, 0xe5,    // MDMCFG0  - Modem configuration.
-    0x0a, 0x00,    // CHANNR   - Channel number.
+//     0x0a, 0x00,    // CHANNR   - Channel number.
     0x15, 0x62,    // DEVIATN  - Modem deviation setting (when FSK modulation is enabled).
     0x21, 0xb6,    // FREND1   - Front end RX configuration.
     0x22, 0x10,    // FREND0   - Front end RX configuration.
@@ -23,6 +23,6 @@ const uint8_t cc1101_regs[] =
     0x1d, 0xb0,    // AGCCTRL0 - AGC control.
     0x07, 0x4c,    // PKTCTRL1
     0x08, 0x05,    // PKTCTRL0
-    0x06, 0xff,    // PKTLEN
+    0x06, 0x3d,    // PKTLEN
     0x03, 0x0f,    // FIFOTHR  - RXFIFO and TXFIFO thresholds.
 };

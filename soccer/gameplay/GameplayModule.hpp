@@ -15,6 +15,7 @@
 
 class OurRobot;
 class SystemState;
+class Configuration;
 
 namespace Gameplay
 {
@@ -94,6 +95,8 @@ namespace Gameplay
 			
 			SystemState *_state;
 			
+			Configuration *_config;
+
 			// The goalie behavior (may be null)
 			Behaviors::Goalie *_goalie;
 			

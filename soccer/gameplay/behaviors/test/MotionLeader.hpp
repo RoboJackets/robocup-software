@@ -6,12 +6,12 @@ namespace Gameplay
 {
     namespace Behaviors
     {
-        class MotionLeader: public Behavior
+        class MotionLeader: public SingleRobotBehavior
         {
             public:
-                MotionLeader(GameplayModule *gameplay, Role *role);
+                MotionLeader(GameplayModule *gameplay);
 
-                virtual void run();
+                virtual bool run();
 
             protected:
                 ObstaclePtr centerObstacle[2];

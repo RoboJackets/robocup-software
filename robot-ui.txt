@@ -1,0 +1,29 @@
+LEDs, as seen from back of robot:
+   LR RR
+   LY RY
+   LG RG
+
+LR: Charger
+	Solid = Charged
+	1 flash = Charging
+	2 flashes = Charger failure (check kicker power and signal cables)
+	3 flashes = ADC failure (check kicker signal cable)
+LY: Ball sensor
+	Solid = Ball present
+	Off = Ball not present
+	1 flash = Dazzled (probably need to change thresholds)
+	2 flashes = Detector failure
+	3 flashes = LED failure
+LG: Power.  Depends on motor power (fused), 3.3V, and 5V.
+
+RR: No radio data
+RY: Radio TX (reverse)
+RG: Radio RX (forward)
+
+DIP switches:
+DP1: On=2008 base, Off=2011 base
+DP2: On=Disable all motors (for electronics debugging), Off=Normal operation
+DP3: On=Reload SAM-BA bootloader, Off=Normal operation
+	Set DP3 ON and power on.  Wait 10s.  Set DP3 OFF and power cycle.
+	Use "scons robot2011-prog-samba" to reload firmware.
+DP4: On=Secondary radio channel, Off=Primary radio channel

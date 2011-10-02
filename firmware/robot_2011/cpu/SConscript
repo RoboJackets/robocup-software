@@ -93,7 +93,17 @@ robot_fw = arm_flash.Program('robocup.elf', [
 	'imu.c',
 	'stall.c',
 	'ota_update.c',
-	'tools/reflash.c'
+	'encoder_monitor.c',
+	'kicker.c',
+	'radio_protocol.c',
+	'tools/reflash.c',
+	'invensense/imuSetup.c',
+	'invensense/imuFIFO.c',
+	'invensense/imuMldl.c',
+	'invensense/imuMlsl.c',
+	'invensense/mlcontrol.c',
+	'invensense/dmpDefault.c',
+	'invensense/imuCompatibility.c'
 ])
 Depends(robot_fw, flash_lds)
 
@@ -113,3 +123,7 @@ arm.Alias('robot2011-prog', 'robocup.bin', Action(File('tools/reflash').srcnode(
 AlwaysBuild('robot2011-prog')
 Help('  robot2011-prog: Build and program 2011 robot ARM firmware with USB console\n')
 Help('    (robot CPU must have working firmware)\n')
+
+arm.Alias('robot2011-ota', 'robocup.bin', Action(File('tools/ota-update').srcnode().path + ' $SOURCE'))
+AlwaysBuild('robot2011-ota')
+Help('  robot2011-ota: Program 2011 robots over the air\n')

@@ -11,6 +11,11 @@
 
 using namespace std;
 
+void Gameplay::Behaviors::Fullback::createConfiguration(Configuration *cfg)
+{
+
+}
+
 Gameplay::Behaviors::Fullback::Fullback(GameplayModule *gameplay, Side side):
 	Behavior(gameplay),
 	_winEval(gameplay->state()),

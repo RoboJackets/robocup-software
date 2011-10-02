@@ -23,6 +23,9 @@ typedef struct
 // Normal startup
 extern const note_t song_startup[];
 
+//Celebration 
+extern const note_t song_victory[];
+
 // Critical hardware failed at startup
 extern const note_t song_failure[];
 

@@ -3,15 +3,17 @@
 #include <QMutexLocker>
 #include <linux/joystick.h>
 #include <Geometry2d/Point.hpp>
+#include <Utils.hpp>
 
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
-// #include <string.h>
 #include <poll.h>
 #include <errno.h>
 
 using namespace Packet;
+
+static const uint64_t Dribble_Step_Time = 125 * 1000;
 
 static const char *devices[] =
 {
@@ -26,8 +28,9 @@ Joystick::Joystick():
 	_mutex(QMutex::Recursive)
 {
 	_autonomous = true;
-	_roller = 0;
-	_stored_roller = 0;
+	_dribbler = 0;
+	_dribblerOn = false;
+	_lastDribblerTime = 0;
 	_fd = -1;
 	
 	if (!open())
@@ -44,11 +47,14 @@ Joystick::~Joystick()
 bool Joystick::open()
 {
 	QMutexLocker locker(&_mutex);
+	
 	if (_fd >= 0)
 	{
 		// Already open
 		return true;
 	}
+	
+	reset();
 	
 	for (int i = 0; devices[i]; ++i)
 	{
@@ -168,16 +174,15 @@ void Joystick::drive(RadioTx::Robot *tx)
 		return;
 	}
 	
-	int leftX = _axis[0] / 256;
-	int leftY = -_axis[1] / 256;
-	int rightX = _axis[2] / 256;
-	int rightY = -_axis[3] / 256;
+	float leftX = _axis[Axis_Left_X] / 32768.0f;
+	float rightX = _axis[Axis_Right_X] / 32768.0f;
+	float rightY = -_axis[Axis_Right_Y] / 32768.0f;
 	
 	//input is vx, vy in robot space
 	Geometry2d::Point input(rightX, rightY);
 
 	//if using DPad, this is the input value
-	uint8_t mVal = 10 + (int8_t) (abs(rightY));
+	float mVal = fabs(rightY);
 
 	if (dUp())
 	{
@@ -199,56 +204,46 @@ void Joystick::drive(RadioTx::Robot *tx)
 		input.y = 0;
 		input.x = -mVal;
 	}
-
-	int max = 0;
-
-	static const Geometry2d::Point axles[4] =
-	{
-		Geometry2d::Point(1, -1),
-		Geometry2d::Point(-1, -1),
-		Geometry2d::Point(-1, 1),
-		Geometry2d::Point(1, 1)
-	};
 	
-	int motors[4] =	{ 0, 0, 0, 0 };
-	for (unsigned int i = 0; i < 4; ++i)
-	{
-		motors[i] = axles[i].perpCW().dot(input);
-		motors[i] -= leftX;
-
-		if (abs(motors[i]) > max)
-		{
-			max = abs(motors[i]);
-		}
-	}
-
-	float scale = 1.0f;
-	if (max > 127)
-	{
-		scale = 127.0f / max;
-	}
-
-	for (unsigned int i = 0; i < 4; ++i)
-	{
-		tx->set_motors(i, int8_t(scale * motors[i]));
-	}
-
+	tx->set_body_x(input.y);
+	tx->set_body_y(-input.x);
+	tx->set_body_w(-leftX * 1 * M_PI);
+	
 	if (_button[6])
 	{
-		_roller = leftY;
-
-		if (_button[4])
-		{
-			_stored_roller = leftY;
-		}
-	}
-
-	if (_button[4])
+		_dribblerOn = false;
+	} else if (_button[4])
 	{
-		_roller = _stored_roller;
+		_dribblerOn = true;
+	}
+	
+	uint64_t now = timestamp();
+	if (_button[1])
+	{
+		if (_dribbler > 0 && (now - _lastDribblerTime) >= Dribble_Step_Time)
+		{
+			_dribbler -= 8;
+			_lastDribblerTime = now;
+		}
+	} else if (_button[3])
+	{
+		if (_dribbler < 120 && (now - _lastDribblerTime) >= Dribble_Step_Time)
+		{
+			_dribbler += 8;
+			_lastDribblerTime = now;
+		}
+	} else {
+		// Let dribbler speed change immediately
+		_lastDribblerTime = now - Dribble_Step_Time;
 	}
 
-	tx->set_roller(_roller);
+	tx->set_dribbler(_dribblerOn ? _dribbler : 0);
 	tx->set_kick((_button[7] | _button[5]) ? 255 : 0);
 	tx->set_use_chipper(_button[5]);
+}
+
+void Joystick::reset()
+{
+	QMutexLocker locker(&_mutex);
+	_dribblerOn = false;
 }

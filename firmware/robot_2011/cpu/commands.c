@@ -20,6 +20,13 @@
 #include "adc.h"
 #include "fpga.h"
 #include "stall.h"
+#include "encoder_monitor.h"
+#include "kicker.h"
+#include "radio_protocol.h"
+#include "imu.h"
+#include "invensense/imuMlsl.h"
+#include "invensense/imuFIFO.h"
+#include "invensense/imuSetup.h"
 
 static void cmd_help(int argc, const char *argv[], void *arg)
 {
@@ -99,6 +106,14 @@ static void print_motor_bits(uint8_t bits)
 
 static void cmd_status(int argc, const char *argv[], void *arg)
 {
+	if (base2008)
+	{
+		printf("2008");
+	} else {
+		printf("2011");
+	}
+	printf(" mechanical base\n");
+	
 	if (controller)
 	{
 		printf("Controller: %s\n", controller->name);
@@ -108,6 +123,7 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	
 	printf("Robot ID %d\n", robot_id);
 	printf("Reset type %x\n", (AT91C_BASE_SYS->RSTC_RSR >> 8) & 7);
+	printf("Current time: %d\n", current_time);
 	
 	printf("Failures: 0x%08x", failures);
 	if (failures & Fail_FPGA)
@@ -130,6 +146,10 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	{
 		printf(" IMU");
 	}
+	if (failures & Fail_Kicker)
+	{
+		printf(" Kicker");
+	}
 	putchar('\n');
 	
 	printf("Power:\n");
@@ -141,63 +161,97 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	print_motor_bits(motor_faults);
 	putchar('\n');
 	
+	printf("Encoder faults: 0x%02x", encoder_faults);
+	print_motor_bits(encoder_faults);
+	putchar('\n');
+	
 	printf("Motor stalls: 0x%02x", motor_stall);
 	print_motor_bits(motor_stall);
 	putchar('\n');
 	
+	printf("Command: %4d %4d %4d %4d\n", cmd_body_x, cmd_body_y, cmd_body_w, dribble_command);
+	
 	printf("Motor out:");
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < 5; ++i)
 	{
-		printf(" 0x%02x", wheel_out[i]);
+		printf(" %6d", motor_out[i]);
+	}
+	printf("\n");
+	
+	printf("     Mode:");
+	for (int i = 0; i < 5; ++i)
+	{
+		printf(" %6d", drive_mode[i]);
 	}
 	printf("\n");
 
-	printf("Encoders:");
-	for (int i = 0; i < 4; ++i)
+	printf("    Stall:");
+	for (int i = 0; i < 5; ++i)
 	{
-		printf(" 0x%04x", encoder[i]);
+		printf(" %6d", stall_counter[i]);
 	}
 	printf("\n");
-	printf("   Delta:");
+	
+	printf("     Hall:");
+	for (int i = 0; i < 5; ++i)
+	{
+		printf(" 0x%04x", hall_count[i]);
+	}
+	printf("\n");
+	
+	printf("    dHall:");
+	for (int i = 0; i < 5; ++i)
+	{
+		printf(" 0x%04x", hall_delta[i]);
+	}
+	printf("\n");
+	
+	printf(" Encoders:");
+	for (int i = 0; i < 4; ++i)
+	{
+		printf(" 0x%04x", encoder_count[i]);
+	}
+	printf("\n");
+	printf("    Delta:");
 	for (int i = 0; i < 4; ++i)
 	{
 		printf(" %6d", encoder_delta[i]);
 	}
 	printf("\n");
-	printf(" Command:");
-	for (int i = 0; i < 4; ++i)
+	printf("   Output:");
+	for (int i = 0; i < 5; ++i)
 	{
-		printf(" %6d", wheel_command[i]);
+		printf(" %6d", motor_out[i]);
 	}
-	printf(" %4d\n", dribble_command);
-	printf("  Output:");
-	for (int i = 0; i < 4; ++i)
-	{
-		printf(" %6d", wheel_out[i]);
-	}
-	printf(" %4d\n", dribble_out);
+	printf("\n");
 	
 	printf("Ball sensor:\n");
 	printf("  Light: 0x%03x\n", ball_sense_light);
 	printf("  Dark:  0x%03x\n", ball_sense_dark);
-	printf("  Delta: 0x%03x\n", ball_sense_light - ball_sense_dark);
+	printf("  Delta: %5d\n", ball_sense_light - ball_sense_dark);
 	
-	printf("Kicker: status 0x%02x  voltage 0x%02x\n", kicker_status, kicker_voltage);
+	printf("Kicker: status 0x%02x %3dV\n", kicker_status, kicker_voltage);
 	if (!(kicker_status & 0x40))
 	{
 		printf("Voltage ADC failed\n");
 	}
 	
 	printf("GIT version: %s\n", git_version);
+	
+	printf("Encoder monitor:\n");
+	for (int i = 0; i < 5; ++i)
+	{
+		printf("%d %2d %3d %4d\n", i, em_err_hall[i], em_err_enc[i], em_err_out[i]);
+	}
 }
 
 static void cmd_timers(int argc, const char *argv[], void *arg)
 {
 	if (first_timer)
 	{
-		printf("timer_t    time       period\n");
+		printf("Timer    time       period\n");
 		//      0x01234567 0x01234567 0x01234567
-		for (timer_t *t = first_timer; t; t = t->next)
+		for (Timer *t = first_timer; t; t = t->next)
 		{
 			printf("%p 0x%08x 0x%08x\n", t, t->time, t->period);
 		}
@@ -424,24 +478,6 @@ static void cmd_radio_start(int argc, const char *argv[], void *arg)
 	radio_command(SRX);
 }
 
-static void cmd_last_rx(int argc, const char *argv[], void *arg)
-{
-	printf("RSSI %d dBm\n", (int)last_rssi / 2 - 74);
-	
-	printf("%02x %02x %02x\n", forward_packet[0], forward_packet[1], forward_packet[2]);
-	for (int i = 0; i < 5; ++i)
-	{
-		int off = 3 + i * 5;
-		printf("%02x %02x %02x %02x %02x\n",
-			   forward_packet[off],
-			   forward_packet[off + 1],
-			   forward_packet[off + 2],
-			   forward_packet[off + 3],
-			   forward_packet[off + 4]);
-	}
-	putchar('\n');
-}
-
 static void cmd_stfu(int argc, const char *argv[], void *arg)
 {
 	debug_update = 0;
@@ -457,7 +493,7 @@ static void cmd_stfu(int argc, const char *argv[], void *arg)
 	music_stop();
 }
 
-static const note_t *const test_songs[] = {song_startup, song_failure, song_overvoltage, song_undervoltage, song_fuse_blown};
+static const note_t *const test_songs[] = {song_startup, song_failure, song_overvoltage, song_undervoltage, song_fuse_blown, song_victory};
 #define NUM_TEST_SONGS (sizeof(test_songs) / sizeof(test_songs[0]))
 
 static void cmd_music(int argc, const char *argv[], void *arg)
@@ -487,9 +523,9 @@ static void cmd_tone(int argc, const char *argv[], void *arg)
 
 static void cmd_fail(int argc, const char *argv[], void *arg)
 {
-	if (argc < 1 || argc > 3)
+	if (argc < 1 || argc > 4)
 	{
-		printf("fail <flags> [<motor faults>] [<motor stalls>]\n");
+		printf("fail <flags> [<motor faults>] [<motor stalls>] [<encoder_faults>]\n");
 		return;
 	}
 	
@@ -501,6 +537,10 @@ static void cmd_fail(int argc, const char *argv[], void *arg)
 	if (argc > 2)
 	{
 		motor_stall = parse_uint32(argv[2]);
+	}
+	if (argc > 3)
+	{
+		encoder_faults = parse_uint32(argv[3]);
 	}
 }
 
@@ -562,6 +602,7 @@ static void cmd_i2c_read(int argc, const char *argv[], void *arg)
 		return;
 	}
 	
+#if 0
 	AT91C_BASE_TWI->TWI_MMR = (parse_uint32(argv[0]) << 16) | AT91C_TWI_MREAD | AT91C_TWI_IADRSZ_1_BYTE;
 	AT91C_BASE_TWI->TWI_IADR = parse_uint32(argv[1]);
 	AT91C_BASE_TWI->TWI_CR = AT91C_TWI_START | AT91C_TWI_STOP;
@@ -583,6 +624,33 @@ static void cmd_i2c_read(int argc, const char *argv[], void *arg)
 		printf("NACK\n");
 	} else {
 		printf("0x%02x\n", result);
+	}
+#else
+	uint8_t result = 0;
+	if (MLSLSerialReadBurst(parse_uint32(argv[0]), parse_uint32(argv[1]), 1, &result) != ML_SUCCESS)
+	{
+		printf("NACK\n");
+	} else {
+		printf("0x%02x\n", result);
+	}
+#endif
+}
+
+static void cmd_i2c_write(int argc, const char *argv[], void *arg)
+{
+	if (argc != 3)
+	{
+		printf("i2c_read <device> <reg> <data>\n");
+		return;
+	}
+	
+// 	if (MLSLSerialWriteSingle(parse_uint32(argv[0]), parse_uint32(argv[1]), parse_uint32(argv[2])) != ML_SUCCESS)
+	uint8_t data = parse_uint32(argv[2]);
+	if (MLSLSerialWriteBurst(parse_uint32(argv[0]), parse_uint32(argv[1]), 1, &data) != ML_SUCCESS)
+	{
+		printf("NACK\n");
+	} else {
+		printf("OK\n");
 	}
 }
 
@@ -629,6 +697,7 @@ void cmd_rx_test(int argc, const char *argv[], void *arg)
 		if (radio_poll())
 		{
 			printf("got %d\n", radio_rx_len);
+			//printf("RSSI %d dBm\n", (int)last_rssi / 2 - 74);
 			for (int i = 0; i < radio_rx_len; ++i)
 			{
 				printf("%02x ", radio_rx_buf[i]);
@@ -648,11 +717,67 @@ void cmd_rx_test(int argc, const char *argv[], void *arg)
 	usb_rx_start();
 }
 
+void cmd_kicker_test(int argc, const char *argv[], void *arg)
+{
+	// Print the results of the power-on kicker test
+	printf("%d %d\n", kicker_test_v1, kicker_test_v2);
+}
+
+void cmd_drive_mode(int argc, const char *argv[], void *arg)
+{
+	if (argc != 2)
+	{
+		printf("drive_mode <motor 0..4> <mode 0..3>\n");
+		return;
+	}
+	
+	int n = parse_uint32(argv[0]);
+	if (n <= 4)
+	{
+		drive_mode[n] = parse_uint32(argv[1]);
+	}
+}
+
+void cmd_imu_test(int argc, const char *argv[], void *arg)
+{
+	radio_rx_len = 0;
+	usb_rx_start();
+	while (!usb_rx_len)
+	{
+		delay_ms(5);
+		
+		IMUupdateData();
+		
+		long quat[4] = {0};
+		IMUgetQuaternion(quat);
+		printf("%d %6d %6d %6d %6d\n", imu_aligned, (int)quat[0] >> 16, (int)quat[1] >> 16, (int)quat[2] >> 16, (int)quat[3] >> 16);
+	}
+	usb_rx_start();
+}
+
 static void debug_faults()
 {
-	printf("0x%02x %3d %5d\n", current_motor_faults, wheel_out[0], stall_counter[0]);
+	printf("0x%02x 0x%08x\n", current_motor_faults, failures);
 }
 static const write_uint_t write_monitor_faults = {(unsigned int *)&debug_update, (unsigned int)debug_faults};
+
+static void debug_halls()
+{
+	printf("%3d %3d %3d %3d %3d\n", hall_count[0], hall_count[1], hall_count[2], hall_count[3], hall_count[4]);
+}
+static const write_uint_t write_monitor_halls = {(unsigned int *)&debug_update, (unsigned int)debug_halls};
+
+static void debug_charge()
+{
+	printf("%02x %3d\n", kicker_status, kicker_voltage);
+}
+static const write_uint_t write_monitor_charge = {(unsigned int *)&debug_update, (unsigned int)debug_charge};
+
+static void debug_ball()
+{
+	printf("0x%03x 0x%03x %4d\n", ball_sense_light, ball_sense_dark, ball_sense_light - ball_sense_dark);
+}
+static const write_uint_t write_monitor_ball = {(unsigned int *)&debug_update, (unsigned int)debug_ball};
 
 static const write_uint_t write_fpga_off = {&AT91C_BASE_PIOA->PIO_CODR, MCU_PROGB};
 static const write_uint_t write_reset = {AT91C_RSTC_RCR, 0xa5000005};
@@ -661,13 +786,13 @@ const command_t commands[] =
 {
 	{"help", cmd_help},
 	{"status", cmd_status},
+	{"s", cmd_status},
 	{"reflash", cmd_reflash},
 	{"reset", cmd_write_uint, (void *)&write_reset},
 	{"rw", cmd_read_word},
 	{"ww", cmd_write_word},
 	{"stfu", cmd_stfu},
 	{"run", cmd_run},
-	{"time", cmd_print_uint32, (void *)&current_time},
 	{"inputs", cmd_print_uint32, (void *)&AT91C_BASE_PIOA->PIO_PDSR},
 	{"timers", cmd_timers},
 	{"fpga_reset", cmd_fpga_reset},
@@ -680,15 +805,21 @@ const command_t commands[] =
 	{"spi_read", cmd_spi_read},
 	{"radio_configure", (void *)radio_configure},
 	{"radio_start", cmd_radio_start},
-	{"last_rx", cmd_last_rx},
 	{"music", cmd_music},
 	{"tone", cmd_tone},
 	{"fail", cmd_fail},
 	{"adc", cmd_adc},
 	{"i2c_read", cmd_i2c_read},
+	{"i2c_write", cmd_i2c_write},
 	{"monitor_faults", cmd_write_uint, (void *)&write_monitor_faults},
+	{"monitor_halls", cmd_write_uint, (void *)&write_monitor_halls},
 	{"read", cmd_read},
 	{"rx_test", cmd_rx_test},
+	{"kicker_test", cmd_kicker_test},
+	{"drive_mode", cmd_drive_mode},
+	{"monitor_charge", cmd_write_uint, (void *)&write_monitor_charge},
+	{"imu_test", cmd_imu_test},
+	{"monitor_ball", cmd_write_uint, (void *)&write_monitor_ball},
 
 	// End of list placeholder
 	{0, 0}

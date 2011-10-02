@@ -273,7 +273,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 	// Debug lines
 	BOOST_FOREACH(const DebugPath& path, frame->debug_paths())
 	{
-		if (path.layer() < 0 || _layerVisible[path.layer()])
+		if (path.layer() < 0 || layerVisible(path.layer()))
 		{
 			p.setPen(qcolor(path.color()));
 			QPointF pts[path.points_size()];
@@ -288,7 +288,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 	// Debug circles
 	BOOST_FOREACH(const DebugCircle& c, frame->debug_circles())
 	{
-		if (c.layer() < 0 || _layerVisible[c.layer()])
+		if (c.layer() < 0 || layerVisible(c.layer()))
 		{
 			p.setPen(qcolor(c.color()));
 			p.drawEllipse(qpointf(c.center()), c.radius(), c.radius());
@@ -298,7 +298,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 	// Debug text
 	BOOST_FOREACH(const DebugText& text, frame->debug_texts())
 	{
-		if (text.layer() < 0 || _layerVisible[text.layer()])
+		if (text.layer() < 0 || layerVisible(text.layer()))
 		{
 			p.setPen(qcolor(text.color()));
 			drawText(p, qpointf(text.pos()), QString::fromStdString(text.text()), text.center());
@@ -309,7 +309,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 	p.setPen(Qt::NoPen);
 	BOOST_FOREACH(const DebugPath& path, frame->debug_polygons())
 	{
-		if (path.layer() < 0 || _layerVisible[path.layer()])
+		if (path.layer() < 0 || layerVisible(path.layer()))
 		{
 			if (path.points_size() < 3)
 			{
@@ -337,7 +337,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 	// Opponent robots
 	BOOST_FOREACH(const LogFrame::Robot &r, frame->opp())
 	{
-		drawRobot(p, !frame->blue_team(), r.shell(), qpointf(r.pos()), r.angle(), r.ball_sense());
+		drawRobot(p, !frame->blue_team(), r.shell(), qpointf(r.pos()), r.angle(), r.ball_sense_status() == HasBall);
 	}
 	
 	// Our robots
@@ -345,7 +345,29 @@ void FieldView::drawTeamSpace(QPainter& p)
 	BOOST_FOREACH(const LogFrame::Robot &r, frame->self())
 	{
 		QPointF center = qpointf(r.pos());
-		drawRobot(p, frame->blue_team(), r.shell(), center, r.angle(), r.ball_sense());
+		
+		bool faulty = false;
+		if (r.has_ball_sense_status() && (r.ball_sense_status() == Dazzled || r.ball_sense_status() == Failed))
+		{
+			faulty = true;
+		}
+		if (r.has_kicker_works() && !r.kicker_works())
+		{
+// 			faulty = true;
+		}
+		for (int i = 0; i < r.motor_status().size(); ++i)
+		{
+			if (r.motor_status(i) != Good)
+			{
+				faulty = true;
+			}
+		}
+		if (r.has_battery_voltage() && r.battery_voltage() <= 14.3f)
+		{
+			faulty = true;
+		}
+		
+		drawRobot(p, frame->blue_team(), r.shell(), center, r.angle(), r.ball_sense_status() == HasBall, faulty);
 		
 		// Highlight the manually controlled robot
 		if (manualID == r.shell())
@@ -359,7 +381,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 		QPointF textPos = center - rtX * 0.2 - rtY * (Robot_Radius + 0.1);
 		BOOST_FOREACH(const DebugText& text, r.text())
 		{
-			if (text.layer() < 0 || _layerVisible[text.layer()])
+			if (text.layer() < 0 || layerVisible(text.layer()))
 			{
 				p.setPen(qcolor(text.color()));
 				drawText(p, textPos, QString::fromStdString(text.text()), false);
@@ -494,7 +516,7 @@ void FieldView::drawField(QPainter& p, const LogFrame *frame)
 	p.restore();
 }
 
-void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos, float theta, bool hasBall)
+void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos, float theta, bool hasBall, bool faulty)
 {
 	painter.setPen(Qt::white);
 	painter.setBrush(Qt::NoBrush);
@@ -505,7 +527,10 @@ void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos
 	
 	drawText(painter, QPointF(), QString::number(ID));
 	
-	if (blueRobot)
+	if (faulty)
+	{
+		painter.setPen(Qt::red);
+	} else if (blueRobot)
 	{
 		painter.setPen(Qt::blue);
 	} else {

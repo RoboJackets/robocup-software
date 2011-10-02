@@ -4,18 +4,20 @@
 #include "MainWindow.hpp"
 
 #include "PlayConfigTab.hpp"
-#include "TestResultTab.hpp"
 #include "RefereeModule.hpp"
 #include "Configuration.hpp"
+#include "radio/Radio.hpp"
 #include <Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
-#include <framework/RobotConfig.hpp>
 #include <Robot.hpp>
 
 #include <QInputDialog>
 #include <QFileDialog>
 #include <QActionGroup>
 #include <QMessageBox>
+
+#include <GL/glu.h>
+#include <Eigen/Geometry>
 
 #include <boost/foreach.hpp>
 
@@ -25,10 +27,89 @@ using namespace std;
 using namespace boost;
 using namespace google::protobuf;
 using namespace Packet;
+using namespace Eigen;
 
 // Style sheets used for live/non-live controls
 QString LiveStyle("border:2px solid transparent");
 QString NonLiveStyle("border:2px solid red");
+
+class QuaternionDemo: public QGLWidget
+{
+public:
+	QuaternionDemo(QWidget *parent = 0);
+
+	bool initialized;
+	Eigen::Quaternionf ref;
+	Eigen::Quaternionf q;
+	
+protected:
+	void paintGL();
+};
+
+QuaternionDemo::QuaternionDemo(QWidget* parent)
+{
+	initialized = false;
+	ref = Quaternionf::Identity();
+}
+
+void QuaternionDemo::paintGL()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(60.0, (double)width() / height(), 0.1, 10);
+	
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glTranslatef(0, 0, -5);
+	
+	glRotatef(-90, 1, 0, 0);
+	glRotatef(90, 0, 0, 1);
+	
+	Transform<float, 3, Affine> t_ref(ref.conjugate());
+	glMultMatrixf(t_ref.data());
+	Transform<float, 3, Affine> t_q(q);
+	glMultMatrixf(t_q.data());
+	
+	glEnable(GL_DEPTH_TEST);
+	glBegin(GL_QUADS);
+		glColor3f(1, 1, 1);
+		glVertex3f(-1, -1, -1);
+		glVertex3f(1, -1, -1);
+		glVertex3f(1, 1, -1);
+		glVertex3f(-1, 1, -1);
+		
+		glColor3f(1, 0, 0);
+		glVertex3f(-1, -1, 1);
+		glVertex3f(1, -1, 1);
+		glVertex3f(1, 1, 1);
+		glVertex3f(-1, 1, 1);
+		
+		glColor3f(0, 1, 0);
+		glVertex3f(-1, -1, 1);
+		glVertex3f(-1, -1, -1);
+		glVertex3f(-1, 1, -1);
+		glVertex3f(-1, 1, 1);
+		
+		glColor3f(1, 0.5f, 0);
+		glVertex3f(1, -1, 1);
+		glVertex3f(1, -1, -1);
+		glVertex3f(1, 1, -1);
+		glVertex3f(1, 1, 1);
+		
+		glColor3f(0, 0, 1);
+		glVertex3f(-1, -1, 1);
+		glVertex3f(-1, -1, -1);
+		glVertex3f(1, -1, -1);
+		glVertex3f(1, -1, 1);
+		
+		glColor3f(1, 0, 0.5f);
+		glVertex3f(-1, 1, 1);
+		glVertex3f(-1, 1, -1);
+		glVertex3f(1, 1, -1);
+		glVertex3f(1, 1, 1);
+	glEnd();
+}
 
 void calcMinimumWidth(QWidget *widget, QString text)
 {
@@ -39,15 +120,19 @@ void calcMinimumWidth(QWidget *widget, QString text)
 MainWindow::MainWindow(QWidget *parent):
 	QMainWindow(parent)
 {
-	_haveRadioChannel = false;
+#if 0
+	demo = new QuaternionDemo(this);
+	demo->resize(640, 480);
+#else
+	demo = 0;
+#endif
+	
 	_updateCount = 0;
 	_processor = 0;
 	_autoExternalReferee = true;
 	_doubleFrameNumber = -1;
-	_robotConfig2008 = 0;
-	_robotConfig2011 = 0;
 	
-	_lastUpdateTime = Utils::timestamp();
+	_lastUpdateTime = timestamp();
 	_history.resize(2 * 60);
 	
 	_ui.setupUi(this);
@@ -133,6 +218,8 @@ MainWindow::MainWindow(QWidget *parent):
 	
 	_ui.splitter->setStretchFactor(0, 98);
 	_ui.splitter->setStretchFactor(1, 10);
+	
+	channel(0);
 
 	updateTimer.setSingleShot(true);
 	connect(&updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
@@ -143,17 +230,6 @@ void MainWindow::configuration(Configuration* config)
 {
 	_config = config;
 	_config->tree(_ui.configTree);
-
-	// Revision-specific configuration
-	_robotConfig2008 = new RobotConfig(config, "Rev2008");
-	_robotConfig2011 = new RobotConfig(config, "Rev2011");
-	
-	for (size_t i = 0; i < Num_Shells; ++i)
-	{
-		_robot2011[i] = new ConfigBool(config, QString("Is2011/%1").arg(i));
-	}
-	
-	updateRobotConfigs();
 }
 
 void MainWindow::processor(Processor* value)
@@ -178,26 +254,6 @@ void MainWindow::processor(Processor* value)
 	_playConfigTab = new PlayConfigTab();
 	_ui.tabWidget->addTab(_playConfigTab, tr("Plays"));
 	_playConfigTab->setup(_processor->gameplayModule());
-
-	// Add Test Results tab
-	_testResultTab = new TestResultTab();
-	_ui.tabWidget->addTab(_testResultTab, tr("Test Results"));
-//	_testResultTab->setup(_processor->gameplayModule()); // FIXME: this should actually exist
-	
-	updateRobotConfigs();
-}
-
-void MainWindow::updateRobotConfigs()
-{
-	if (_processor)
-	{
-		QMutexLocker lock(&_processor->loopMutex());
-		BOOST_FOREACH(OurRobot *robot, state()->self)
-		{
-			robot->newRevision(*_robot2011[robot->shell()]);
-			robot->config = (robot->newRevision()) ? _robotConfig2011 : _robotConfig2008;
-		}
-	}
 }
 
 void MainWindow::logFileChanged()
@@ -230,20 +286,6 @@ void MainWindow::live(bool value)
 void MainWindow::updateViews()
 {
 	_refereeLabel->setText(_processor->refereeModule()->lastPacketDescription());
-	
-	// Radio channel
-	if (!_haveRadioChannel)
-	{
-		//FIXME - Not like this any more
-#if 0
-		int r = _processor->radio();
-		if (r >= 0)
-		{
-			_haveRadioChannel = true;
-			_ui.radioLabel->setText(QString("Radio %1").arg(r));
-		}
-#endif
-	}
 
 	int manual =_processor->manualID();
 	if ((manual >= 0 || _ui.manualID->isEnabled()) && !_processor->joystickValid())
@@ -259,7 +301,7 @@ void MainWindow::updateViews()
 	}
 	
 	// Time since last update
-	uint64_t time = Utils::timestamp();
+	uint64_t time = timestamp();
 	int delta_us = time - _lastUpdateTime;
 	_lastUpdateTime = time;
 	double framerate = 1000000.0 / delta_us;
@@ -345,9 +387,33 @@ void MainWindow::updateViews()
 	
 	if (currentFrame)
 	{
+		if (demo && manual >= 0 && currentFrame->radio_rx().size() && currentFrame->radio_rx(0).has_quaternion())
+		{
+			const RadioRx *manualRx = 0;
+			BOOST_FOREACH(const RadioRx &rx, currentFrame->radio_rx())
+			{
+				if ((int)rx.robot_id() == manual)
+				{
+					manualRx = &rx;
+					break;
+				}
+			}
+			if (manualRx)
+			{
+				const Packet::Quaternion &q = manualRx->quaternion();
+				demo->q = Quaternionf(q.q0(), q.q1(), q.q2(), q.q3());
+				if (!demo->initialized)
+				{
+					demo->ref = demo->q;
+					demo->initialized = true;
+				}
+				demo->update();
+			}
+		}
+
 		// Update non-message tree items
 		_frameNumberItem->setData(ProtobufTree::Column_Value, Qt::DisplayRole, frameNumber());
-		int elapsedMillis = (currentFrame->start_time() - _processor->firstLogTime + 500) / 1000;
+		int elapsedMillis = (currentFrame->command_time() - _processor->firstLogTime + 500) / 1000;
 		QTime elapsedTime = QTime().addMSecs(elapsedMillis);
 		_elapsedTimeItem->setText(ProtobufTree::Column_Value, elapsedTime.toString("hh:mm:ss.zzz"));
 		
@@ -386,7 +452,7 @@ void MainWindow::updateStatus()
 	
 	// Get processing thread status
 	Processor::Status ps = _processor->status();
-	uint64_t curTime = Utils::timestamp();
+	uint64_t curTime = timestamp();
 	
 	// Determine if we are receiving packets from an external referee
 	bool haveExternalReferee = (curTime - ps.lastRefereeTime) < 500 * 1000;
@@ -580,6 +646,25 @@ void MainWindow::on_actionUseOpponentHalf_toggled(bool value)
 	_processor->useOpponentHalf(value);
 }
 
+void MainWindow::on_action904MHz_triggered()
+{
+	channel(0);
+}
+
+void MainWindow::on_action906MHz_triggered()
+{
+	channel(10);
+}
+
+void MainWindow::channel(int n)
+{
+	if (_processor && _processor->radio())
+	{
+		_processor->radio()->channel(n);
+	}
+	_ui.radioLabel->setText(QString("%1MHz").arg(904.0 + 0.2 * n, 0, 'f', 1));
+}
+
 void MainWindow::on_actionCenterBall_triggered()
 {
 	SimCommand cmd;
@@ -719,6 +804,16 @@ void MainWindow::on_actionTeamYellow_triggered()
 void MainWindow::on_manualID_currentIndexChanged(int value)
 {
 	_processor->manualID(value - 1);
+	if (demo)
+	{
+		if (value == 0)
+		{
+			demo->hide();
+		} else {
+			demo->show();
+			demo->initialized = false;
+		}
+	}
 }
 
 ////////
@@ -962,7 +1057,6 @@ void MainWindow::on_refRedCardYellow_clicked()
 
 void MainWindow::on_configTree_itemChanged(QTreeWidgetItem* item, int column)
 {
-	updateRobotConfigs();
 }
 
 void MainWindow::on_loadConfig_clicked()

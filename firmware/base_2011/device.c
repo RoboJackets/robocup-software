@@ -26,9 +26,6 @@ volatile uint8_t in_tx = 0;
 // Used for putting words in descriptor byte arrays
 #define WORD(x) ((x) & 0xff), (((x) >> 8) & 0xff)
 
-// Size of reverse packets
-uint8_t reverse_size = 8;
-
 const uint8_t device_desc[] PROGMEM =
 {
     18,             // bLength
@@ -299,6 +296,15 @@ void usb_handle_setup()
                     break;
                 }
                 
+                // Clear the packet queue
+                rx_queue_read = 0;
+				rx_queue_write = 0;
+				for (uint8_t i = 0; i < RX_QUEUE_SIZE; ++i)
+				{
+					rx_queue[i].len = 0;
+				}
+				clear_bit(PORTB, 7);
+                
                 usb_write_packet();
                 break;
             
@@ -343,11 +349,6 @@ void usb_handle_setup()
                 } else {
                     radio_timeout_disable();
                 }
-                usb_write_packet();
-                break;
-            
-            case 5:     // Reverse packet size
-                reverse_size = req.wValue;
                 usb_write_packet();
                 break;
             
@@ -424,7 +425,7 @@ void handle_radio_tx()
     // The state transition for TXOFF_MODE has started.
 
     // Go to RX
-    radio_command(SFRX);
+//     radio_command(SFRX);
     radio_command(SRX);
     
     // Reset and enable the RX timeout timer
