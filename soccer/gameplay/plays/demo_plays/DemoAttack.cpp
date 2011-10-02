@@ -45,9 +45,8 @@ bool Gameplay::Plays::DemoAttack::run()
 
 	set<OurRobot *> available = _gameplay->playRobots();
 	assignNearest(_kicker.robot, available, ballPos);
-
 	// if we have kicked, we want to reset
-	if (_kicker.done() &&  ball().valid && 
+	if (_kicker.done() &&  ball().valid &&
 			(!ballPos.nearPoint(Geometry2d::Point(0, Field_Length), Field_ArcRadius)))
 	{
 		_kicker.restart();

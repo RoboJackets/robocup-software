@@ -6,4 +6,5 @@
 .pydevproject
 /gmon.out
 *.swp
+/.settings
 /api_docs
