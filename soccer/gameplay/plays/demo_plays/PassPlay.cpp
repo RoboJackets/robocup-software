@@ -6,6 +6,7 @@ using namespace std;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::PassPlay, "Demos")
 
+
 namespace Gameplay
 {
 	namespace Plays
