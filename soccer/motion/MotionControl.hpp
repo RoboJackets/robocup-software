@@ -4,8 +4,8 @@
 
 class OurRobot;
 
-// This class is responsible for everything stored in a RadioTx::Robot.
-// Each robot has one.
+/// This class is responsible for everything stored in a RadioTx::Robot.
+/// Each robot has one.
 class MotionControl
 {
 public:

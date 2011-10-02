@@ -9,7 +9,9 @@ class QTreeWidget;
 class QTreeWidgetItem;
 class Configuration;
 class ConfigItem;
-
+/**
+ * static variable for the program, extremely general
+ */
 class Configuration: public QObject
 {
 	Q_OBJECT;
@@ -194,7 +196,9 @@ class ConfigDouble: public ConfigItem
 };
 
 #define REGISTER_CONFIGURABLE(x) static ConfigurableImpl<x> x##__configurable;
-
+/**
+ *
+ */
 class Configurable
 {
 public:
@@ -207,7 +211,10 @@ public:
 private:
 	static std::list<Configurable *> *_configurables;
 };
-
+/**
+ * a template for making configurables
+ * the implementing object is responsible for handling configuration
+ */
 template<class T>
 class ConfigurableImpl: public Configurable
 {

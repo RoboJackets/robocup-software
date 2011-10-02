@@ -12,18 +12,28 @@
 
 #include <boost/shared_ptr.hpp>
 
+/**
+ * Obstacle class handles collision detection
+ */
 class Obstacle
 {
 public:
     Obstacle();
     virtual ~Obstacle();
-    
+    /**
+     * uses to underlying Geom2d class' nearPoint method
+     */
     virtual bool hit(const Geometry2d::Point &pt) const = 0;
+    /**
+     * uses the underlying Geom2D class' nearSegment method
+     */
     virtual bool hit(const Geometry2d::Segment &seg) const = 0;
 };
 
 typedef boost::shared_ptr<Obstacle> ObstaclePtr;
-
+/**
+ * this is a group of obstacles that are all compared to when doing colision detection
+ */
 class ObstacleGroup
 {
 public:
@@ -42,7 +52,13 @@ public:
     }
     
     void clear();
+    /**
+     * adds a boost shared pointer to an obstacle
+     */
     void add(ObstaclePtr obs);
+    /**
+     * adds another obstacle group
+     */
     void add(const ObstacleGroup& group);
     
     // STL Interface
@@ -104,7 +120,9 @@ public:
 
     Geometry2d::Circle circle;
 };
-
+/**
+ * collision object in the form of a polygon
+ */
 class PolygonObstacle: public Obstacle
 {
 public:

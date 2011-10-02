@@ -1,5 +1,7 @@
 #pragma once
-
+/**
+ * this is the set of rules that are in effect
+ */
 class GameState
 {
 public:
