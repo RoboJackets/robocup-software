@@ -49,6 +49,8 @@ public:
 	bool enableLeftDownfieldShot;   /// kick off left edge of far half field
 	bool enableRightDownfieldShot;  /// kick off rigth edge of far half field
 
+	bool enableKick; ///enables the ability to kick the ball
+	bool kickReady; ///true if robot is ready to kick the ball;
 	// overrides
 	bool override_aim;  /// if true, will shoot regardless of obstacles
 

@@ -84,6 +84,7 @@ srcs = [
 
 	# demo plays/behaviors
 	'gameplay/plays/demo_plays/TestPlay.cpp',
+	'gameplay/plays/demo_plays/FirstPlay.cpp',
 	'gameplay/plays/demo_plays/FollowTheLeader.cpp',
 	'gameplay/plays/demo_plays/PassPlay.cpp',
 	'gameplay/plays/demo_plays/PassShootPlay.cpp',

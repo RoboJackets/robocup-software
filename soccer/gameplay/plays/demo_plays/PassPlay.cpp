@@ -6,6 +6,20 @@ using namespace std;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::PassPlay, "Demos")
 
+namespace Gameplay
+{
+	namespace Plays
+	{
+		REGISTER_CONFIGURABLE(PassPlay)
+	}
+}
+
+ConfigBool *Gameplay::Plays::PassPlay::_use_chipper;
+ConfigBool *Gameplay::Plays::PassPlay::_use_line;
+ConfigInt *Gameplay::Plays::PassPlay::_kick_power;
+ConfigInt *Gameplay::Plays::PassPlay::_backup_time;
+ConfigDouble *Gameplay::Plays::PassPlay::_backup_speed;
+
 static bool shellLessThan(Robot *r1, Robot *r2)
 {
 	return r1->shell() < r2->shell();
@@ -14,9 +28,19 @@ static bool shellLessThan(Robot *r1, Robot *r2)
 Gameplay::Plays::PassPlay::PassPlay(GameplayModule *gameplay):
 	Play(gameplay),
 	_passer1(gameplay),
-	_passer2(gameplay),
-	_passer1HasBall(true)
+	_passer2(gameplay)
 {
+		readyTime = 0;
+		_passer1HasBall = true;
+}
+
+void Gameplay::Plays::PassPlay::createConfiguration(Configuration* cfg)
+{
+	_use_line  = new ConfigBool(cfg, "PassPlay/Line Shot", true);
+	_use_chipper  = new ConfigBool(cfg, "PassPlay/Chipping", false);
+	_kick_power = new ConfigInt(cfg, "PassPlay/Kick Power", 127);
+	_backup_time = new ConfigInt(cfg, "PassPlay/Backup Time", 1000);
+	_backup_speed = new ConfigDouble(cfg, "PassPlay/Backup Speed", 0.05);
 }
 
 bool Gameplay::Plays::PassPlay::run()
@@ -47,20 +71,29 @@ bool Gameplay::Plays::PassPlay::run()
 		_passer2.robot->face(_passer1.robot->pos);
 
 		_passer1.setTarget(_passer2.robot->kickerBar());
-		_passer1.kick_power = 127;
-		_passer1.use_line_kick = true;
-		if(_passer1.robot->pos.distTo(_passer2.robot->pos) > Field_Length / 2)
+		_passer1.kick_power = *_kick_power;
+		_passer1.use_line_kick = *_use_line;
+		_passer1.use_chipper = *_use_chipper;
+		_passer1.enableKick = false;
+		if(_passer1.kickReady)
 		{
-			//_passer1.kick_power = 255;
+			_passer2.robot->bodyVelocity(Geometry2d::Point(-(*_backup_speed),0));
+			_passer2.robot->angularVelocity(0);
+			if(readyTime == 0)
+			{
+				readyTime = timestamp();
+			}
+			else if((timestamp() - readyTime) > *_backup_time)
+			{
+				_passer1.enableKick = true;
+			}
 		}
-		else
-		{
-			_passer1.kick_power = 127;
-		}
+
 		_passer1.run();
 
 		if(_passer1.done())
 		{
+			readyTime = 0;
 			_passer1.restart();
 			_passer1HasBall = false;
 		}
@@ -69,20 +102,29 @@ bool Gameplay::Plays::PassPlay::run()
 	{
 		_passer1.robot->face(_passer2.robot->pos);
 		_passer2.setTarget(_passer1.robot->kickerBar());
-		_passer2.kick_power = 127;
-		_passer2.use_line_kick = true;
-		if(_passer2.robot->pos.distTo(_passer1.robot->pos) > Field_Length / 2)
+		_passer2.kick_power = *_kick_power;
+		_passer2.use_line_kick = *_use_line;
+		_passer2.use_chipper = *_use_chipper;
+		_passer2.enableKick = false;
+
+		if(_passer2.kickReady)
 		{
-			//_passer2.kick_power = 255;
-		}
-		else
-		{
-			_passer2.kick_power = 127;
+			_passer1.robot->bodyVelocity(Geometry2d::Point(-(*_backup_speed),0));
+			_passer1.robot->angularVelocity(0);
+			if(readyTime == 0)
+			{
+				readyTime = timestamp();
+			}
+			else if((timestamp() - readyTime) > *_backup_time)
+			{
+				_passer2.enableKick = true;
+			}
 		}
 
 		_passer2.run();
 		if(_passer2.done())
 		{
+			readyTime = 0;
 			_passer2.restart();
 			_passer1HasBall = true;
 		}

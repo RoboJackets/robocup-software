@@ -21,6 +21,7 @@ namespace Gameplay
 				bool _passerHasBall;
 
 				static ConfigBool *_pass_use_chipper;
+				static ConfigBool *_pass_use_line;
 				static ConfigBool *_shoot_use_chipper;
 				static ConfigBool *_shoot_use_line;
 				static ConfigInt *_pass_kick_power;

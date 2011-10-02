@@ -71,6 +71,7 @@ bool Gameplay::Behaviors::PivotKick::run()
 	Point toBall = (ball().pos - robot->pos).normalized();
 	if (_state == State_Capture)
 	{
+		kick_ready = false;
 		if (_capture.done())
 		{
 			_state = State_Aim;
@@ -120,20 +121,25 @@ bool Gameplay::Behaviors::PivotKick::run()
 		float error = dir.dot((target.center() - ball().pos).normalized());
 		float delta = error - _lastError;
 		
-		if (enable_kick && (error >= *_fireNowThreshold || (error >= _accuracy && _lastDelta > 0 && delta <= 0)))
+		if ((error >= *_fireNowThreshold || (error >= _accuracy && _lastDelta > 0 && delta <= 0)))
 		{
-			if (use_chipper)
+			if(enable_kick)
 			{
-				robot->chip(kick_power);
-				robot->addText("CHIP");
-			} else
-			{
-				robot->kick(kick_power);
-				robot->addText("KICK");
+				if (use_chipper)
+				{
+					robot->chip(kick_power);
+					robot->addText("CHIP");
+				} else
+				{
+					robot->kick(kick_power);
+					robot->addText("KICK");
+				}
+				_kicked = true;
 			}
-			_kicked = true;
+			kick_ready = true;
 		} else {
 			robot->addText("Aim");
+			kick_ready = false;
 		}
 		
 		_lastError = error;

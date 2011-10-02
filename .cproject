@@ -126,5 +126,33 @@
 			</profile>
 		</scannerConfigBuildInfo>
 	</storageModule>
+<<<<<<< Updated upstream
 	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+=======
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
+		<buildTargets>
+			<target name="build" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>scons</buildCommand>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>false</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
+			<target name="test" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>scons</buildCommand>
+				<buildTarget>test</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>false</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
+			<target name="soccer" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+				<buildCommand>scons</buildCommand>
+				<buildArguments>-u -j6</buildArguments>
+				<buildTarget>soccer</buildTarget>
+				<stopOnError>true</stopOnError>
+				<useDefaultCommand>false</useDefaultCommand>
+				<runAllBuilders>true</runAllBuilders>
+			</target>
+		</buildTargets>
+	</storageModule>
+>>>>>>> Stashed changes
 </cproject>

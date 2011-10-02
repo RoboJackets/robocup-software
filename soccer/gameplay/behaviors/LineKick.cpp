@@ -45,6 +45,7 @@ Gameplay::Behaviors::LineKick::LineKick(GameplayModule *gameplay):
 {
 	restart();
 	target = Geometry2d::Point(0.0, Field_Length);
+	enable_kick = true;
 }
 
 void Gameplay::Behaviors::LineKick::restart()
@@ -56,6 +57,7 @@ void Gameplay::Behaviors::LineKick::restart()
 	scaleSpeed = 1.0;
 	scaleW = 1.0;
 	ballClose = false;
+	kick_ready = false;
 }
 
 bool Gameplay::Behaviors::LineKick::run()
@@ -87,7 +89,16 @@ bool Gameplay::Behaviors::LineKick::run()
 				facing_err >= facing_thresh &&
 				robot->vel.mag() < 0.05)
 		{
-			_state = State_Charge;
+			if(enable_kick)
+			{
+				_state = State_Charge;
+			}
+			kick_ready = true;
+
+		}
+		else
+		{
+			kick_ready = false;
 		}
 
 		//if the ball if further away than the back off distance for the setup stage
@@ -126,7 +137,7 @@ bool Gameplay::Behaviors::LineKick::run()
 				ballPos - targetLine.delta().normalized() * 1.0);
 		state()->drawLine(behind_line);
 		Point intersection;
-		if (left_field_edge.nearPoint(ballPos, field_edge_thresh) && behind_line.intersects(left_field_edge, &intersection))
+		if (left_field_edge.nearPoint(ballPos, field_edge_thresh) && behind_line.intersects(left_field_edge, &intersection))   /// kick off left edge of far half fieldlPos, field_edge_thresh) && behind_line.intersects(left_field_edge, &intersection))
 		{
 			moveGoal = intersection;
 		} else if (right_field_edge.nearPoint(ballPos, field_edge_thresh) && behind_line.intersects(right_field_edge, &intersection))
