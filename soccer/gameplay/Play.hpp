@@ -4,27 +4,30 @@
 
 #include "Behavior.hpp"
 
-// This macro lets PlayConfigTab automagically populate its list of available plays.
-// It creates a PlayFactory for the given play class.
+/// This macro lets PlayConfigTab automagically populate its list of available plays.
+/// It creates a PlayFactory for the given play class.
 #define REGISTER_PLAY(x) static Gameplay::PlayFactoryImpl<x> __factory;
 #define REGISTER_PLAY_CATEGORY(x, c) static Gameplay::PlayFactoryImpl<x> __factory(c);
 
 namespace Gameplay
 {
 	class GameplayModule;
-	
+	/**
+	 * base class for implementing actual plays
+	 * includes functions to assist in finding robots
+	 */
 	class Play: public Behavior, public AutoName
 	{
 	public:
 		Play(GameplayModule *gameplay);
 		
-		// Every subclass of Play needs to override this function.
-		// Return INFINITY if the play cannot be used or a score (lower is better) used to select the best play.
+		/// Every subclass of Play needs to override this function.
+		/// Return INFINITY if the play cannot be used or a score (lower is better) used to select the best play.
 		static float score(GameplayModule *gameplay);
 	};
 	
-	// The list of factories has to hold a single (and thus non-templated) type, so we use this base class
-	// to add factories to the list of factories.
+	/// The list of factories has to hold a single (and thus non-templated) type, so we use this base class
+	/// to add factories to the list of factories.
 	class PlayFactory
 	{
 		public:
@@ -38,18 +41,18 @@ namespace Gameplay
 			
 			bool enabled;
 			
-			// Cached score() value from last gameplay iteration
+			/// Cached score() value from last gameplay iteration
 			float lastScore;
 			
 			static const std::list<PlayFactory *> &factories();
 			
 		protected:
-			// This has to be a pointer to a list because a static list may not be constructed before the factories
+			/// This has to be a pointer to a list because a static list may not be constructed before the factories
 			static std::list<PlayFactory *> *_factories;
 	};
 	
-	// This class is used to create a particular play.  It is created by REGISTER_PLAY and added to the
-	// factory list by PlayFactoryBase's constructor.
+	/// This class is used to create a particular play.  It is created by REGISTER_PLAY and added to the
+	/// factory list by PlayFactoryBase's constructor.
 	template<class X>
 	class PlayFactoryImpl: public PlayFactory
 	{
@@ -85,35 +88,37 @@ namespace Gameplay
 	};
 }
 
-////////
+////////////
 // Assignment functions
 //
 // These are used to find the best robot according to some criteria,
-// remove it from the available set, and store it in role.
+// remove it from the available set, and store it in role.  The capabilities
+// structure provides a set of requirements a robot must meet, such as
+// having a chipper, or the kicker being charged. Each robot will know its
+// capabilities.  Visibility is now included in requirements.
 //
 // If needVisible is true and the currently assigned robot is not visible,
 // a new robot will be selected.  If no robot can be selected, role
 // is unchanged and the function returns false.
 //
-// Each assigner returns true iff the role has a usable robot.
+/// Each assigner returns true iff the role has a usable robot.
 
-// Assigns the robot in nearest to <pt>
-// places no constraints other than visibility
+/// Assigns the robot in nearest to <pt>
+/// places no constraints other than visibility
 bool assignNearest(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt);
 
-// require kick/chip/dribble/sense
+/// require kick/chip/dribble/sense
 bool assignNearestFull(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt);
 
-// Assigns the nearest robot that can dribble and kick
+/// Assigns the nearest robot that can dribble and kick
 bool assignNearestKicker(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt);
 
-// Assigns the nearest robot that can chip
+/// Assigns the nearest robot that can chip
 bool assignNearestChipper(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt);
 
-// Assigns the nearest robot that can yank
+/// Assigns the nearest robot that can yank
 bool assignNearestYank(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt);
 
-// General "AssignNearest" with a full set of constraints - true requires that it be met
+/// General "AssignNearest" with a full set of constraints - true requires that it be met
 bool assignNearest(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Point pt,
 		bool hasKicker, bool hasChipper, bool hasDribbler, bool hasBallSense);
-

@@ -3,11 +3,11 @@
 
 using namespace RefereeCommands;
 
-// Distance in meters that the ball must travel for a kick to be detected
+/// Distance in meters that the ball must travel for a kick to be detected
 static const float KickThreshold = 0.150f;
 
-// How many milliseconds the ball must be more than KickThreshold meters away from
-// its position when the referee indicated Ready for us to detect the ball as having been kicked.
+/// How many milliseconds the ball must be more than KickThreshold meters away from
+/// its position when the referee indicated Ready for us to detect the ball as having been kicked.
 static const int KickVerifyTime_ms = 500;
 
 RefereeModule::RefereeModule(SystemState *state):
@@ -25,11 +25,11 @@ void RefereeModule::run()
 	
 	if (_state->ball.valid)
 	{
-		// Only run the kick detector when the ball is visible
+		/// Only run the kick detector when the ball is visible
 		switch (_kickDetectState)
 		{
 			case WaitForReady:
-				// Never kicked and not ready for a restart
+				/// Never kicked and not ready for a restart
 				break;
 				
 			case CapturePosition:
