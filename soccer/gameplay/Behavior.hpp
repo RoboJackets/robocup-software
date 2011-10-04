@@ -66,4 +66,18 @@ namespace Gameplay
 			
 			OurRobot *robot;
 	};
+
+	class TwoRobotBehavior: public Behavior
+	{
+		public:
+			TwoRobotBehavior(GameplayModule *gameplay):
+				Behavior(gameplay)
+			{
+				robot1 = 0;
+				robot2 = 0;
+			}
+
+			OurRobot *robot1;
+			OurRobot *robot2;
+	};
 }
