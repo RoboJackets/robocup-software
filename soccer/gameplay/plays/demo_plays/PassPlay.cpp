@@ -18,15 +18,11 @@ namespace Gameplay
 ConfigBool *Gameplay::Plays::PassPlay::_use_chipper;
 ConfigBool *Gameplay::Plays::PassPlay::_use_line;
 ConfigInt *Gameplay::Plays::PassPlay::_kick_power;
-ConfigInt *Gameplay::Plays::PassPlay::_backup_time;
-ConfigDouble *Gameplay::Plays::PassPlay::_backup_speed;
 
 Gameplay::Plays::PassPlay::PassPlay(GameplayModule *gameplay):
 	Play(gameplay),
-	_passer1(gameplay),
-	_passer2(gameplay)
+	_pass(gameplay)
 {
-		readyTime = 0;
 		_passer1HasBall = true;
 }
 
@@ -35,8 +31,6 @@ void Gameplay::Plays::PassPlay::createConfiguration(Configuration* cfg)
 	_use_line  = new ConfigBool(cfg, "PassPlay/Line Shot", true);
 	_use_chipper  = new ConfigBool(cfg, "PassPlay/Chipping", false);
 	_kick_power = new ConfigInt(cfg, "PassPlay/Kick Power", 127);
-	_backup_time = new ConfigInt(cfg, "PassPlay/Backup Time", 1000);
-	_backup_speed = new ConfigDouble(cfg, "PassPlay/Backup Speed", 0.05);
 }
 
 bool Gameplay::Plays::PassPlay::run()
@@ -48,83 +42,43 @@ bool Gameplay::Plays::PassPlay::run()
 		return false;
 	}
 	
-	if(!_passer1.robot || playRobots.find(_passer1.robot) == playRobots.end())
+	if(!_pass.robot1 || playRobots.find(_pass.robot1) == playRobots.end())
 	{
-		assignNearest(_passer1.robot,playRobots,ball().pos);
+		assignNearest(_pass.robot1,playRobots,ball().pos);
 
 	}
 
-	if(!_passer2.robot || playRobots.find(_passer2.robot) == playRobots.end())
+	if(!_pass.robot2 || playRobots.find(_pass.robot2) == playRobots.end())
 	{
-		assignNearest(_passer2.robot,playRobots,ball().pos);
-	}
-	
-//	_passer2.robot->move(Geometry2d::Point(0,Field_Length / 2));
-
-
-	if(_passer1HasBall /*&& (ball().pos.distTo(_passer1.robot->pos) < 0.5 || ball().vel.mag() < 0.1)*/)
-	{
-		_passer2.robot->face(_passer1.robot->pos);
-
-		_passer1.setTarget(_passer2.robot->kickerBar());
-		_passer1.kick_power = *_kick_power;
-		_passer1.use_line_kick = *_use_line;
-		_passer1.use_chipper = *_use_chipper;
-		_passer1.enableKick = false;
-		if(_passer1.kickReady)
-		{
-			_passer2.robot->bodyVelocity(Geometry2d::Point(-(*_backup_speed),0));
-			_passer2.robot->angularVelocity(0);
-			if(readyTime == 0)
-			{
-				readyTime = timestamp();
-			}
-			else if((timestamp() - readyTime) > *_backup_time)
-			{
-				_passer1.enableKick = true;
-			}
-		}
-
-		_passer1.run();
-
-		if(_passer1.done())
-		{
-			readyTime = 0;
-			_passer1.restart();
-			_passer1HasBall = false;
-		}
-	}
-	else if( !_passer1HasBall /*&& (ball().pos.distTo(_passer2.robot->pos) < 0.5 || ball().vel.mag() < 0.1)*/)
-	{
-		_passer1.robot->face(_passer2.robot->pos);
-		_passer2.setTarget(_passer1.robot->kickerBar());
-		_passer2.kick_power = *_kick_power;
-		_passer2.use_line_kick = *_use_line;
-		_passer2.use_chipper = *_use_chipper;
-		_passer2.enableKick = false;
-
-		if(_passer2.kickReady)
-		{
-			_passer1.robot->bodyVelocity(Geometry2d::Point(-(*_backup_speed),0));
-			_passer1.robot->angularVelocity(0);
-			if(readyTime == 0)
-			{
-				readyTime = timestamp();
-			}
-			else if((timestamp() - readyTime) > *_backup_time)
-			{
-				_passer2.enableKick = true;
-			}
-		}
-
-		_passer2.run();
-		if(_passer2.done())
-		{
-			readyTime = 0;
-			_passer2.restart();
-			_passer1HasBall = true;
-		}
+		assignNearest(_pass.robot2,playRobots,ball().pos);
 	}
 	
+	_pass.passPower = *_kick_power;
+	_pass.passUseChip = *_use_chipper;
+	_pass.passUseLine = *_use_line;
+
+	if(_passer1HasBall && _pass.done())
+	{
+
+		OurRobot *temp = _pass.robot1;
+		_pass.robot1 = _pass.robot2;
+		_pass.robot2 = temp;
+
+		_pass.reset();
+		_passer1HasBall = false;
+
+	}
+	else if( !_passer1HasBall && _pass.done())
+	{
+
+		OurRobot *temp = _pass.robot1;
+		_pass.robot1 = _pass.robot2;
+		_pass.robot2 = temp;
+		_pass.reset();
+		_passer1HasBall = true;
+
+	}
+	_pass.run();
+
 	return true;
 }
