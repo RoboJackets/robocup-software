@@ -72,6 +72,7 @@ srcs = [
 	'gameplay/behaviors/LineKick.cpp',
 	'gameplay/behaviors/PivotKick.cpp',
 	'gameplay/behaviors/Bump.cpp',
+	'gameplay/behaviors/PassReceive.cpp',
 
 	# Positions
 	'gameplay/behaviors/positions/Goalie.cpp',
@@ -84,7 +85,6 @@ srcs = [
 
 	# demo plays/behaviors
 	'gameplay/plays/demo_plays/TestPlay.cpp',
-	'gameplay/plays/demo_plays/FirstPlay.cpp',
 	'gameplay/plays/demo_plays/FollowTheLeader.cpp',
 	'gameplay/plays/demo_plays/PassPlay.cpp',
 	'gameplay/plays/demo_plays/PassShootPlay.cpp',

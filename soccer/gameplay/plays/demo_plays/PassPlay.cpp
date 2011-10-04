@@ -21,11 +21,6 @@ ConfigInt *Gameplay::Plays::PassPlay::_kick_power;
 ConfigInt *Gameplay::Plays::PassPlay::_backup_time;
 ConfigDouble *Gameplay::Plays::PassPlay::_backup_speed;
 
-static bool shellLessThan(Robot *r1, Robot *r2)
-{
-	return r1->shell() < r2->shell();
-}
-
 Gameplay::Plays::PassPlay::PassPlay(GameplayModule *gameplay):
 	Play(gameplay),
 	_passer1(gameplay),
