@@ -127,9 +127,6 @@
 			</profile>
 		</scannerConfigBuildInfo>
 	</storageModule>
-<<<<<<< Updated upstream
-	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
-=======
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
 		<buildTargets>
 			<target name="build" path="" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
@@ -155,5 +152,4 @@
 			</target>
 		</buildTargets>
 	</storageModule>
->>>>>>> Stashed changes
 </cproject>
