@@ -1,3 +1,8 @@
+//TODO: Prevent backup off the field
+//TODO: have receiver intercept ball
+//TODO: add kicked status for when kicked but not received yet?
+//TODO: add linear function for kicker power
+
 #include <iostream>
 #include "PassReceive.hpp"
 
@@ -18,7 +23,7 @@ ConfigDouble *Gameplay::Behaviors::PassReceive::_backup_speed;
 
 void Gameplay::Behaviors::PassReceive::createConfiguration(Configuration *cfg)
 {
-	_backup_time = new ConfigInt(cfg, "PassReceive/Backup Time", 1000);
+	_backup_time = new ConfigInt(cfg, "PassReceive/Backup Time", 100000);
 	_backup_speed = new ConfigDouble(cfg, "PassReceive/Backup Speed", 0.05);
 }
 
@@ -65,7 +70,7 @@ bool Gameplay::Behaviors::PassReceive::run()
 	}
 	else if(_state == State_Ready)
 	{
-		if(state()->timestamp - readyTime > *_backup_time)
+		if((state()->timestamp - rea127dyTime) > *_backup_time)
 		{
 			_state = State_Execute;
 		}
@@ -102,6 +107,8 @@ bool Gameplay::Behaviors::PassReceive::run()
 	}
 	else if(_state == State_Execute)
 	{
+		robot2->bodyVelocity(Geometry2d::Point(-(*_backup_speed),0));
+		robot2->angularVelocity(0);
 		_passer.enableKick = true;
 		_passer.run();
 	}
