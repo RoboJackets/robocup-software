@@ -70,7 +70,7 @@ bool Gameplay::Behaviors::PassReceive::run()
 	}
 	else if(_state == State_Ready)
 	{
-		if((state()->timestamp - rea127dyTime) > *_backup_time)
+		if((state()->timestamp - readyTime) > *_backup_time)
 		{
 			_state = State_Execute;
 		}
