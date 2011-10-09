@@ -65,7 +65,7 @@ using namespace std;
 //	barrier = true;
 //	assert(size < 1048576 * 100);
 //	void *result = realloc(ptr, size);
-//	__malloc_hook = md_malloc;
+//	__malloc_hook = md_malloc;a
 //	__realloc_hook = md_realloc;
 //	__free_hook = md_free;
 //	barrier = false;
