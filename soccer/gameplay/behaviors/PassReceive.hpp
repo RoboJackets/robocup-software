@@ -16,6 +16,7 @@ namespace Gameplay
 				virtual bool run();
 				void reset();
 				bool done();
+				uint8_t calcKickPower(int d);
 
 				bool passUseChip;
 				bool passUseLine;
@@ -28,6 +29,7 @@ namespace Gameplay
 
 				static ConfigInt *_backup_time;
 				static ConfigDouble *_backup_speed;
+				static ConfigDouble *_kick_power_constant;
 
 
 
