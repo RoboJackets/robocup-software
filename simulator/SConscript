@@ -22,7 +22,8 @@ uics = e.Uic4([
 ])
 e.Depends(p, uics)
 
-e.Append(LIBS=['BulletCollision', 'BulletDynamics'])
+# FIXME: Bullet PPA does not work for Ubuntu 11.10, so disabled temporarily
+# e.Append(LIBS=['BulletCollision', 'BulletDynamics'])
 
 Default(e.Install(exec_dir, p))
 Help('simulator: Provides simulation of SSL robots, using Bullet Physics\n')

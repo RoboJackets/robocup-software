@@ -25,8 +25,9 @@ if [ "$MACH" = "x86_64" ]; then
 	apt-get install libc6-dev-i386 g++-multilib ia32-libs
 fi
 
-echo "-- Adding repository for bullet physics"
-add-apt-repository ppa:blk/ppa
+# FIXME: find a ppa that supports 11.10
+#echo "-- Adding repository for bullet physics"
+#add-apt-repository ppa:blk/ppa
 
 echo "-- Updating repositories"
 apt-get update
