@@ -74,26 +74,19 @@ struct triangular_solver_selector<Lhs,Rhs,Side,Mode,NoUnrolling,1>
     // FIXME find a way to allow an inner stride if packet_traits<Scalar>::size==1
 
     bool useRhsDirectly = Rhs::InnerStrideAtCompileTime==1 || rhs.innerStride()==1;
-    RhsScalar* actualRhs;
-    if(useRhsDirectly)
-    {
-      actualRhs = &rhs.coeffRef(0);
-    }
-    else
-    {
-      actualRhs = ei_aligned_stack_new(RhsScalar,rhs.size());
+
+    ei_declare_aligned_stack_constructed_variable(RhsScalar,actualRhs,rhs.size(),
+                                                  (useRhsDirectly ? rhs.data() : 0));
+                                                  
+    if(!useRhsDirectly)
       MappedRhs(actualRhs,rhs.size()) = rhs;
-    }
 
     triangular_solve_vector<LhsScalar, RhsScalar, typename Lhs::Index, Side, Mode, LhsProductTraits::NeedToConjugate,
                             (int(Lhs::Flags) & RowMajorBit) ? RowMajor : ColMajor>
       ::run(actualLhs.cols(), actualLhs.data(), actualLhs.outerStride(), actualRhs);
 
     if(!useRhsDirectly)
-    {
       rhs = MappedRhs(actualRhs, rhs.size());
-      ei_aligned_stack_delete(RhsScalar, actualRhs, rhs.size());
-    }
   }
 };
 
@@ -187,7 +180,7 @@ void TriangularView<MatrixType,Mode>::solveInPlace(const MatrixBase<OtherDerived
   eigen_assert(cols() == rows());
   eigen_assert( (Side==OnTheLeft && cols() == other.rows()) || (Side==OnTheRight && cols() == other.cols()) );
   eigen_assert(!(Mode & ZeroDiag));
-  eigen_assert(Mode & (Upper|Lower));
+  eigen_assert((Mode & (Upper|Lower)) != 0);
 
   enum { copy = internal::traits<OtherDerived>::Flags & RowMajorBit  && OtherDerived::IsVectorAtCompileTime };
   typedef typename internal::conditional<copy,
