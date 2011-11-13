@@ -10,6 +10,7 @@
 #include <protobuf/SimCommand.pb.h>
 
 #include <sys/time.h>
+#include <stdexcept>
 #include <Constants.hpp>
 #include <Network.hpp>
 #include <boost/foreach.hpp>
@@ -23,7 +24,7 @@ static const QHostAddress LocalAddress(QHostAddress::LocalHost);
 static const QHostAddress MulticastAddress(SharedVisionAddress);
 
 const int Oversample = 1;
-
+extern "C"
 Env::Env()
 {
 	sendShared = false;
@@ -33,10 +34,10 @@ Env::Env()
 	ballVisibility = 100;
 	
 	//initialize the PhysX SDK
-	_physicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION);
+	_physicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION); // FAIL: sdk not created
 	assert(_physicsSDK);
 
-	NxReal myScale = 0.5f;
+	NxF32 myScale = 0.5f;
 	_physicsSDK->setParameter(NX_VISUALIZATION_SCALE, myScale);
 	//gPhysicsSDK->setParameter(NX_VISUALIZE_WORLD_AXES, 2.0f);
 	_physicsSDK->setParameter(NX_VISUALIZE_COLLISION_SHAPES, 1.0f);

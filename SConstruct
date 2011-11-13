@@ -21,7 +21,8 @@ env_base = env.Clone()
 Export('env_base')
 
 # C++ compiler
-env.MergeFlags('-O2 -g3 -Wall -DNDEBUG')
+env.MergeFlags('-O2 -g3 -Wall')
+# env.MergeFlags('-O2 -g3 -Wall -DNDEBUG')
 env.Append(CPPPATH = [Dir('#/common')])
 
 # Variables
