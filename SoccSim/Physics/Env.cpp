@@ -323,6 +323,7 @@ void Env::addBall(Geometry2d::Point pos)
 
 void Env::addRobot(bool blue, int id, Geometry2d::Point pos, Robot::Rev rev)
 {
+
 	Robot* r = new Robot(this, id, rev);
 	r->position(pos.x, pos.y);
 

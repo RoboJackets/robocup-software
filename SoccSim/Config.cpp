@@ -14,7 +14,6 @@ Config::Config(QString filename, Env* env) :
 	QFile configFile(filename);
 	
 	QDomDocument _doc;
-	
 	if (!configFile.open(QIODevice::ReadOnly))
 	{
 		throw std::runtime_error("Unable to open config file.");
@@ -38,15 +37,17 @@ Config::Config(QString filename, Env* env) :
 	}
 	
 	QDomElement element = root.firstChildElement();
-		
+
 	while (!element.isNull())
 	{
+
 		if (element.tagName() == QString("ball"))
 		{
 			float x = element.attribute("x").toFloat();
 			float y = element.attribute("y").toFloat();
-			
+
 			_env->addBall(Geometry2d::Point(x,y));
+
 		}
 		else if (element.tagName() == QString("blue"))
 		{
@@ -56,15 +57,20 @@ Config::Config(QString filename, Env* env) :
 		{
 			procTeam(element, false);
 		}
-		
+
 		element = element.nextSiblingElement();
+		
 	}
+
+
+
 }
 
 void Config::procTeam(QDomElement e, bool blue)
 {
+
 	QDomElement elem = e.firstChildElement();
-	
+
 	while (!elem.isNull())
 	{
 		if (elem.tagName() == "robot")
@@ -72,22 +78,28 @@ void Config::procTeam(QDomElement e, bool blue)
 			float x = elem.attribute("x").toFloat();
 			float y = elem.attribute("y").toFloat();
 			int id = elem.attribute("id").toInt();
-			
+
+
 			if (elem.hasAttribute("rev")) {
 				QString rev = elem.attribute("rev");
 				Robot::Rev r = Robot::rev2011;
+
+
 				if (rev.contains("2008"))
 				{
 				    r = Robot::rev2008;
 				} else if (rev.contains("2011")) {
 				    r = Robot::rev2011;
 				}
+
 				_env->addRobot(blue, id, Geometry2d::Point(x, y), r);
+
 			} else {
-				_env->addRobot(blue, id, Geometry2d::Point(x, y), Robot::rev2011);
+
+				_env->addRobot(blue, id, Geometry2d::Point(x, y), Robot::rev2011); //PROBLEM LINE
 			}
 		}
-		
+
 		elem = elem.nextSiblingElement();
 	}
 }
