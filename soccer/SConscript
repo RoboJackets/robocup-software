@@ -71,6 +71,7 @@ srcs = [
 	'gameplay/behaviors/Fling.cpp',
 	'gameplay/behaviors/LineKick.cpp',
 	'gameplay/behaviors/PivotKick.cpp',
+	'gameplay/behaviors/TouchKick.cpp',
 	'gameplay/behaviors/Bump.cpp',
 	'gameplay/behaviors/PassReceive.cpp',
 
@@ -99,6 +100,7 @@ srcs = [
 	'gameplay/plays/demo_plays/DemoBump.cpp',
 	'gameplay/plays/demo_plays/DemoLineAttack.cpp',
 	'gameplay/plays/demo_plays/DemoPivotAttack.cpp',
+	'gameplay/plays/TouchTest.cpp',
 #	'gameplay/plays/demo_plays/CalSpeed.cpp',
 
 

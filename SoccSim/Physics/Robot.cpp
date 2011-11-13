@@ -24,24 +24,28 @@ Geometry2d::Point toPoint(const NxVec3 &v)
 Robot::Robot(Env* env, unsigned int id,  Robot::Rev rev) :
 	Entity(env), shell(id), _rev(rev), _lastKicked(0)
 {
+
     _kickerJoint = 0;
     _rollerJoint = 0;
 	visibility = 100;
 	ballSensorWorks = true;
 	chargerWorks = true;
-    
+
 	//create entity
 	NxBodyDesc bodyDesc;
 	bodyDesc.mass = 5.0f;
 
 	//TODO fixme, use real shell mesh
 	#if 1
+
 	NxConvexShapeDesc shapeDesc;
-	shapeDesc.meshData = cylinder(Robot_Height,
+
+	shapeDesc.meshData = cylinder(Robot_Height, //PROBLEM LINE
 	        Robot_Radius, 20);
-	
+	printf("seg\n");
 	shapeDesc.localPose.t = NxVec3(0.0f, 0.0f, Robot_Height/2.0);
 	#endif
+
 	//NxBoxShapeDesc shapeDesc;
 	//shapeDesc.dimensions.set(0.2f,0.2f,0.2f);
 	//shapeDesc.localPose.t = NxVec3(0.0f, 0.0f, .2);
@@ -278,10 +282,12 @@ void Robot::initWheels()
 NxConvexMesh* Robot::cylinder(const float length, const float radius,
         const unsigned int sides)
 {
+
 	static NxCookingInterface *gCooking = NxGetCookingLib(
 	        NX_PHYSICS_SDK_VERSION);
 	assert(gCooking);
 	gCooking->NxInitCooking();
+
 
 	const NxU32 vertCount = (sides + 1) * 2;
 	const unsigned int offset = vertCount / 2;
@@ -293,6 +299,7 @@ NxConvexMesh* Robot::cylinder(const float length, const float radius,
 	float angle = 30;
 	float x = 0;
 	float y = 0;
+
 	for (unsigned int i = 0; i < offset; ++i)
 	{
 		cyl[i] = NxVec3(x, y, -length / 2.0);
@@ -314,8 +321,7 @@ NxConvexMesh* Robot::cylinder(const float length, const float radius,
 
 	MemoryStream buff;
 	assert(gCooking->NxCookConvexMesh(convexDesc, buff));
-
-	return _env->_physicsSDK->createConvexMesh(buff);
+	return _env->_physicsSDK->createConvexMesh(buff); //PROBLEM LINE
 }
 
 void Robot::position(float x, float y)

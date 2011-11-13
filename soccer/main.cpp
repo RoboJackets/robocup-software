@@ -126,8 +126,9 @@ void usage(const char* prog)
 int main (int argc, char* argv[])
 {
 	printf("Starting Soccer...\n");
-	debugInit(argv[0]);  // FIXME: re-enable debugging
-	
+
+//	debugInit(argv[0]);  // FIXME: re-enable debugging
+
 	// Seed the large random number generator
 	long int seed = 0;
 	int fd = open("/dev/random", O_RDONLY);
@@ -141,7 +142,8 @@ int main (int argc, char* argv[])
 	} else {
 		fprintf(stderr, "Can't open /dev/random, using zero seed: %m\n");
 	}
-	
+
+
 	QApplication app(argc, argv);
 
 	bool blueTeam = false;
@@ -231,6 +233,8 @@ int main (int argc, char* argv[])
 		}
 	}
 	
+
+
 	printf("Running on %s\n", sim ? "simulation" : "real hardware");
 	
 	printf("seed %016lx\n", seed);
