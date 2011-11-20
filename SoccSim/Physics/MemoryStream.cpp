@@ -13,10 +13,11 @@ NxU8 MemoryStream::readByte() const
 
 //	printf("In MemoryStream::readByte(): start\n");
 	NxU8 res = 0;
-	assert(sizeof(NxU8) == 1);
-	assert((_readLoc + 1) < _data.size());
-	memcpy(&res, &_data[_readLoc], 1);
-	_readLoc += 1;
+	const uint32_t s = sizeof(NxU8);
+	assert(s == 1);
+	assert((_readLoc + s) < _data.size());
+	memcpy(&res, &_data[_readLoc], s);
+	_readLoc += s;
 
 //	printf("In MemoryStream::readByte(): end\n");
 	return res;
@@ -28,17 +29,26 @@ NxU16 MemoryStream::readWord() const
 	//    return w;
 
 	NxU16 res = 0;
-	assert(sizeof(NxU16) == 2);
-	assert((_readLoc + sizeof(NxU16)) < _data.size());
-	memcpy(&res, &_data[_readLoc], sizeof(NxU16));
-	_readLoc += sizeof(NxU16);
+	const uint32_t s = sizeof(NxU16);
+	assert(2 == s);
+	assert((_readLoc + s) < _data.size());
+	memcpy(&res, &_data[_readLoc], s);
+	_readLoc += s;
 	return res;
 }
 
 NxU32 MemoryStream::readDword() const
 {
-	NxU32 d = read<NxU32>();
-	return d;
+//	NxU32 d = read<NxU32>();
+//	return d;
+
+	NxU32 res = 0;
+	const uint32_t s = sizeof(NxU32);
+	assert(s == 4);
+	assert((_readLoc + s) < _data.size());
+	memcpy(&res, &_data[_readLoc], s);
+	_readLoc += s;
+	return res;
 }
 
 NxF32 MemoryStream::readFloat() const
@@ -47,17 +57,26 @@ NxF32 MemoryStream::readFloat() const
 //	return f;
 
 	NxF32 res = 0;
-	assert(sizeof(NxF32) == 4);
-	assert((_readLoc + 4) < _data.size());
-	memcpy(&res, &_data[_readLoc], 4);
-	_readLoc += 4;
+	const uint32_t s = sizeof(NxF32);
+	assert(s == 4);
+	assert((_readLoc + s) < _data.size());
+	memcpy(&res, &_data[_readLoc], s);
+	_readLoc += s;
 	return res;
 }
 
 NxF64 MemoryStream::readDouble() const
 {
-	NxF64 f = read<NxF64>();
-	return f;
+//	NxF64 f = read<NxF64>();
+//	return f;
+
+	NxF64 res = 0;
+	const uint32_t s = sizeof(NxF64);
+	assert(s == 8);
+	assert((_readLoc + s) < _data.size());
+	memcpy(&res, &_data[_readLoc], s);
+	_readLoc += s;
+	return res;
 }
 
 void MemoryStream::readBuffer(void* buffer, NxU32 size) const
@@ -101,7 +120,7 @@ NxStream& MemoryStream::storeDouble(NxF64 f)
 
 NxStream& MemoryStream::storeBuffer(const void* buffer, NxU32 size)
 {
-	const unsigned int length = _data.size();
+	const size_t length = _data.size();
 	_data.resize(length + size);
 	memcpy(&_data[length], buffer, size);
 
