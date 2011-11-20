@@ -43,7 +43,7 @@ Env::Env()
 
 	_physicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION,
 	allocator, outputStream, desc, &errorCode);
-	printf("Error code from NxCreatePhysicsSDK(): %d\n", errorCode); // returns 1, cannot find the libraries
+	printf("Error code from NxCreatePhysicsSDK(): %d\n", errorCode); // returns 1, cannot find the drivers
 
 	// Error codes for creation
 //0: No errors occurred when creating the Physics SDK.
