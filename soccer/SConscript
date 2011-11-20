@@ -103,6 +103,8 @@ srcs = [
 	'gameplay/plays/TouchTest.cpp',
 #	'gameplay/plays/demo_plays/CalSpeed.cpp',
 
+  # Mechanical tests
+  'gameplay/plays/demo_plays/KickerEnduranceTest.cpp',
 
 	# Tech Challenges
 	'gameplay/plays/demo_plays/NavChallenge2011.cpp',

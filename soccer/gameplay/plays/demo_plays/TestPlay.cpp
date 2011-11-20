@@ -45,7 +45,7 @@ bool Gameplay::Plays::TestPlay::run()
 	robots[0]->face(ballPos);
 	
 	
-	int counter = 0;
+	unsigned int counter = 0;
 
 	if(robots.size() <= 4)
 	{
