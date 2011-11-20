@@ -17,7 +17,7 @@ e.Append(LIBPATH=physx_libpath)
 e.Append(LIBS=['NxCooking', 'PhysXCore', 'PhysXLoader'])
 
 # Flags required for PhysX on Linux
-e.MergeFlags('-DNX32 -DLINUX -DNX_DISABLE_FLUIDS')
+e.MergeFlags('-DNX32 -DLINUX -DCORELIB -DNX_DISABLE_FLUIDS')
 
 # Find uic output
 e.Append(CPPPATH='.')
