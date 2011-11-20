@@ -40,7 +40,7 @@ Robot::Robot(Env* env, unsigned int id,  Robot::Rev rev) :
 
 	NxConvexShapeDesc shapeDesc;
 
-	shapeDesc.meshData = cylinder(Robot_Height, //PROBLEM LINE
+	shapeDesc.meshData = cylinder(Robot_Height,
 	        Robot_Radius, 20);
 	printf("seg\n");
 	shapeDesc.localPose.t = NxVec3(0.0f, 0.0f, Robot_Height/2.0);
