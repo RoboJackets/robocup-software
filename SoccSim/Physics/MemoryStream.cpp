@@ -8,22 +8,17 @@ MemoryStream::MemoryStream() : _readLoc(0)
 // Loading API
 NxU8 MemoryStream::readByte() const
 {
-	//    NxU8 b = read<NxU8>(); // FIXME: segfault here
+	//    NxU8 b = read<NxU8>();
 	//    return b;
 
-	//	T res = 0;
-	//	assert((_readLoc + sizeof(T)) < _data.size());
-	//	memcpy(&res, &_data[_readLoc], sizeof(T));
-	//	_readLoc += sizeof(T);
-
-	printf("In MemoryStream::readByte(): start\n");
+//	printf("In MemoryStream::readByte(): start\n");
 	NxU8 res = 0;
 	assert(sizeof(NxU8) == 1);
 	assert((_readLoc + 1) < _data.size());
 	memcpy(&res, &_data[_readLoc], 1);
 	_readLoc += 1;
 
-	printf("In MemoryStream::readByte(): end\n");
+//	printf("In MemoryStream::readByte(): end\n");
 	return res;
 }
 
@@ -51,9 +46,10 @@ NxF32 MemoryStream::readFloat() const
 //	float f = read<float>();
 //	return f;
 
-	float res = 0;
+	NxF32 res = 0;
+	assert(sizeof(NxF32) == 4);
 	assert((_readLoc + 4) < _data.size());
-	memcpy(&res, &_data[_readLoc], sizeof(4));
+	memcpy(&res, &_data[_readLoc], 4);
 	_readLoc += 4;
 	return res;
 }

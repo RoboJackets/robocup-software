@@ -14,7 +14,7 @@ e.Append(CPPPATH=[
 
 # Link with PhysX libraries
 e.Append(LIBPATH=physx_libpath)
-e.Append(LIBS=['NxCooking', 'PhysXLoader'])
+e.Append(LIBS=['NxCooking', 'PhysXCore', 'PhysXLoader'])
 
 # Flags required for PhysX on Linux
 e.MergeFlags('-DNX32 -DLINUX -DNX_DISABLE_FLUIDS')
