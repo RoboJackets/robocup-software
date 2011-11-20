@@ -26,13 +26,14 @@ Gameplay::Plays::PassPlay::PassPlay(GameplayModule *gameplay):
 	_pass(gameplay)
 {
 		_passer1HasBall = true;
+		positiveX = ball().pos.x > 0;
 }
 
 void Gameplay::Plays::PassPlay::createConfiguration(Configuration* cfg)
 {
 	_use_line  = new ConfigBool(cfg, "PassPlay/Line Shot", true);
 	_use_chipper  = new ConfigBool(cfg, "PassPlay/Chipping", false);
-	_kick_power = new ConfigInt(cfg, "PassPlay/Kick Power", 127);
+	_kick_power = new ConfigInt(cfg, "PassPlay/Kick Power", 50);
 }
 
 bool Gameplay::Plays::PassPlay::run()
@@ -59,28 +60,43 @@ bool Gameplay::Plays::PassPlay::run()
 	_pass.passUseChip = *_use_chipper;
 	_pass.passUseLine = *_use_line;
 
-	if(_passer1HasBall && _pass.done())
+
+	if(ball().pos.x > 0)
 	{
+		if(!positiveX && _pass.kicked())
+		{
+			OurRobot *temp = _pass.robot1;
+			_pass.robot1 = _pass.robot2;
+			_pass.robot2 = temp;
+		}
 
-		OurRobot *temp = _pass.robot1;
-		_pass.robot1 = _pass.robot2;
-		_pass.robot2 = temp;
+		if(_pass.done())
+		{
+			_pass.reset();
+		}
 
-		_pass.reset();
-		_passer1HasBall = false;
-
+		_pass.setEnable(_pass.robot2->pos.distTo(Geometry2d::Point(-Field_Width / 5, Field_Length / 5)) < 0.5);
+		_pass.robot2->move(Geometry2d::Point(-Field_Width / 5, Field_Length / 5),true);
+		positiveX = true;
 	}
-	else if( !_passer1HasBall && _pass.done())
+	else
 	{
-
-		OurRobot *temp = _pass.robot1;
-		_pass.robot1 = _pass.robot2;
-		_pass.robot2 = temp;
-		_pass.reset();
-		_passer1HasBall = true;
-
+		if(positiveX && _pass.kicked())
+		{
+			OurRobot *temp = _pass.robot1;
+			_pass.robot1 = _pass.robot2;
+			_pass.robot2 = temp;
+		}
+		if(_pass.done())
+		{
+			_pass.reset();
+		}
+		_pass.setEnable(_pass.robot2->pos.distTo(Geometry2d::Point(Field_Width / 5, Field_Length / 5)) < 0.5);
+		_pass.robot2->move(Geometry2d::Point(Field_Width / 5, Field_Length / 5),true);
+		positiveX = false;
 	}
 	_pass.run();
+
 
 	return true;
 }

@@ -15,7 +15,9 @@ namespace Gameplay
 				
 				virtual bool run();
 				void reset();
+				void setEnable(bool b);
 				bool done();
+				bool kicked();
 				uint8_t calcKickPower(int d);
 
 				bool passUseChip;
@@ -24,11 +26,14 @@ namespace Gameplay
 				uint8_t passPower;
 				uint64_t backupTime;
 
+				bool enable;
+
 			protected:
 				Behaviors::Kick _passer;
 
 				static ConfigInt *_backup_time;
 				static ConfigDouble *_backup_speed;
+				static ConfigDouble *_done_thresh;
 				static ConfigDouble *_kick_power_constant;
 
 

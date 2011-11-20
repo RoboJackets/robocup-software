@@ -17,6 +17,7 @@ namespace Gameplay
 			protected:
 				Behaviors::PassReceive _pass;
 				bool _passer1HasBall;
+				bool positiveX;
 
 				static ConfigBool *_use_chipper;
 				static ConfigBool *_use_line;
