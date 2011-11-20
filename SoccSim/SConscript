@@ -40,7 +40,7 @@ uics = e.Uic4([
 e.Depends(p, uics)
 
 Default(e.Install(exec_dir, p))
-Help('soccsim: Older PhysX-based 32-bit Simulator\n')
+Help('SoccSim: Older PhysX-based 32-bit Simulator\n')
 
 # Copy PhysX libraries to the run directory
 Default(e.Install(exec_dir, physx_libpath.File('libNxCooking.so.1')))
