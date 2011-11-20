@@ -34,8 +34,28 @@ Env::Env()
 	ballVisibility = 100;
 	
 	//initialize the PhysX SDK
-	_physicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION); // FAIL: sdk not created
-	assert(_physicsSDK);
+	NxUserAllocator* allocator = NULL;
+	NxUserOutputStream* outputStream = NULL;
+	NxPhysicsSDKDesc desc = NxPhysicsSDKDesc();
+	NxSDKCreateError errorCode;
+
+//	_physicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION); // FAIL: sdk not created
+
+	_physicsSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION,
+	allocator, outputStream, desc, &errorCode);
+	printf("Error code from NxCreatePhysicsSDK(): %d\n", errorCode); // returns 1, cannot find the libraries
+
+	// Error codes for creation
+//0: No errors occurred when creating the Physics SDK.
+//1: Unable to find the PhysX libraries. The PhysX drivers are not installed correctly.
+//2: The application supplied a version number that does not match with the libraries.
+//3: The supplied SDK descriptor is invalid.
+//4: A PhysX card was found, but there are problems when communicating with the card.
+//5: A PhysX card was found, but it did not reset (or initialize) properly.
+//6: A PhysX card was found, but it is already in use by another application.
+//7: A PhysX card was found, but there are issues with loading the firmware.
+
+	assert(_physicsSDK); // Assertion currently fails
 
 	NxF32 myScale = 0.5f;
 	_physicsSDK->setParameter(NX_VISUALIZATION_SCALE, myScale);

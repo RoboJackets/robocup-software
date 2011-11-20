@@ -56,7 +56,9 @@ NOTE: Calls after the first will not change the allocator used in the SDK, but t
 \param desc Optional descriptor used to define hardware allocation parameters
 \param errorCode Optional error code output parameter
 */
-NXPHYSXLOADERDLL_API NxPhysicsSDK*	NX_CALL_CONV NxCreatePhysicsSDK(NxU32 sdkVersion, NxUserAllocator* allocator = NULL, NxUserOutputStream* outputStream = NULL, const NxPhysicsSDKDesc& desc = NxPhysicsSDKDesc(), NxSDKCreateError* errorCode=NULL);
+NXPHYSXLOADERDLL_API NxPhysicsSDK*	NX_CALL_CONV NxCreatePhysicsSDK(NxU32 sdkVersion,
+		NxUserAllocator* allocator = NULL, NxUserOutputStream* outputStream = NULL,
+		const NxPhysicsSDKDesc& desc = NxPhysicsSDKDesc(), NxSDKCreateError* errorCode=NULL);
 
 /**
 \brief Creates an instance of the physics SDK with an ID string for application identification.
