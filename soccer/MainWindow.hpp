@@ -26,7 +26,6 @@ class MainWindow : public QMainWindow
 	Q_OBJECT;
 	
 	public:
-		QuaternionDemo *demo;
 		
 		MainWindow(QWidget *parent = 0);
 		
@@ -105,8 +104,13 @@ class MainWindow : public QMainWindow
 		void on_actionResetField_triggered();
 		void on_actionStopRobots_triggered();
 		
+		/// Manual control commands
+		void on_actionDampedRotation_toggled(bool value);
+		void on_actionDampedTranslation_toggled(bool value);
+
 		/// Debug menu commands
 		void on_actionRestartUpdateTimer_triggered();
+		void on_actionQuaternion_Demo_toggled(bool value);
 		
 		/// Gameplay menu
 		void on_menu_Gameplay_aboutToShow();
@@ -183,6 +187,8 @@ class MainWindow : public QMainWindow
 		
 		Processor *_processor;
 		Configuration *_config;
+
+		QuaternionDemo *_quaternion_demo;
 		
 		// Log history, copied from Logger.
 		// This is used by other controls to get log data without having to copy it again from the Logger.

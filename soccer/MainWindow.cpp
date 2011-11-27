@@ -6,6 +6,7 @@
 #include "PlayConfigTab.hpp"
 #include "RefereeModule.hpp"
 #include "Configuration.hpp"
+#include "QuaternionDemo.hpp"
 #include "radio/Radio.hpp"
 #include <Utils.hpp>
 #include <gameplay/GameplayModule.hpp>
@@ -16,9 +17,7 @@
 #include <QActionGroup>
 #include <QMessageBox>
 
-#include <GL/glu.h>
-#include <Eigen/Geometry>
-
+#include <iostream>
 #include <boost/foreach.hpp>
 
 #include <google/protobuf/descriptor.h>
@@ -33,84 +32,6 @@ using namespace Eigen;
 QString LiveStyle("border:2px solid transparent");
 QString NonLiveStyle("border:2px solid red");
 
-class QuaternionDemo: public QGLWidget
-{
-public:
-	QuaternionDemo(QWidget *parent = 0);
-
-	bool initialized;
-	Eigen::Quaternionf ref;
-	Eigen::Quaternionf q;
-	
-protected:
-	void paintGL();
-};
-
-QuaternionDemo::QuaternionDemo(QWidget* parent)
-{
-	initialized = false;
-	ref = Quaternionf::Identity();
-}
-
-void QuaternionDemo::paintGL()
-{
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(60.0, (double)width() / height(), 0.1, 10);
-	
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glTranslatef(0, 0, -5);
-	
-	glRotatef(-90, 1, 0, 0);
-	glRotatef(90, 0, 0, 1);
-	
-	Transform<float, 3, Affine> t_ref(ref.conjugate());
-	glMultMatrixf(t_ref.data());
-	Transform<float, 3, Affine> t_q(q);
-	glMultMatrixf(t_q.data());
-	
-	glEnable(GL_DEPTH_TEST);
-	glBegin(GL_QUADS);
-		glColor3f(1, 1, 1);
-		glVertex3f(-1, -1, -1);
-		glVertex3f(1, -1, -1);
-		glVertex3f(1, 1, -1);
-		glVertex3f(-1, 1, -1);
-		
-		glColor3f(1, 0, 0);
-		glVertex3f(-1, -1, 1);
-		glVertex3f(1, -1, 1);
-		glVertex3f(1, 1, 1);
-		glVertex3f(-1, 1, 1);
-		
-		glColor3f(0, 1, 0);
-		glVertex3f(-1, -1, 1);
-		glVertex3f(-1, -1, -1);
-		glVertex3f(-1, 1, -1);
-		glVertex3f(-1, 1, 1);
-		
-		glColor3f(1, 0.5f, 0);
-		glVertex3f(1, -1, 1);
-		glVertex3f(1, -1, -1);
-		glVertex3f(1, 1, -1);
-		glVertex3f(1, 1, 1);
-		
-		glColor3f(0, 0, 1);
-		glVertex3f(-1, -1, 1);
-		glVertex3f(-1, -1, -1);
-		glVertex3f(1, -1, -1);
-		glVertex3f(1, -1, 1);
-		
-		glColor3f(1, 0, 0.5f);
-		glVertex3f(-1, 1, 1);
-		glVertex3f(-1, 1, -1);
-		glVertex3f(1, 1, -1);
-		glVertex3f(1, 1, 1);
-	glEnd();
-}
-
 void calcMinimumWidth(QWidget *widget, QString text)
 {
 	QRect rect = QFontMetrics(widget->font()).boundingRect(text);
@@ -120,12 +41,7 @@ void calcMinimumWidth(QWidget *widget, QString text)
 MainWindow::MainWindow(QWidget *parent):
 	QMainWindow(parent)
 {
-#if 0
-	demo = new QuaternionDemo(this);
-	demo->resize(640, 480);
-#else
-	demo = 0;
-#endif
+	_quaternion_demo = 0;
 	
 	_updateCount = 0;
 	_processor = 0;
@@ -387,7 +303,8 @@ void MainWindow::updateViews()
 	
 	if (currentFrame)
 	{
-		if (demo && manual >= 0 && currentFrame->radio_rx().size() && currentFrame->radio_rx(0).has_quaternion())
+		// Update the orientation demo view
+		if (_quaternion_demo && manual >= 0 && currentFrame->radio_rx().size() && currentFrame->radio_rx(0).has_quaternion())
 		{
 			const RadioRx *manualRx = 0;
 			BOOST_FOREACH(const RadioRx &rx, currentFrame->radio_rx())
@@ -401,13 +318,13 @@ void MainWindow::updateViews()
 			if (manualRx)
 			{
 				const Packet::Quaternion &q = manualRx->quaternion();
-				demo->q = Quaternionf(q.q0(), q.q1(), q.q2(), q.q3());
-				if (!demo->initialized)
+				_quaternion_demo->q = Quaternionf(q.q0(), q.q1(), q.q2(), q.q3());
+				if (!_quaternion_demo->initialized)
 				{
-					demo->ref = demo->q;
-					demo->initialized = true;
+					_quaternion_demo->ref = _quaternion_demo->q;
+					_quaternion_demo->initialized = true;
 				}
-				demo->update();
+				_quaternion_demo->update();
 			}
 		}
 
@@ -665,6 +582,8 @@ void MainWindow::channel(int n)
 	_ui.radioLabel->setText(QString("%1MHz").arg(904.0 + 0.2 * n, 0, 'f', 1));
 }
 
+// Simulator commands
+
 void MainWindow::on_actionCenterBall_triggered()
 {
 	SimCommand cmd;
@@ -713,6 +632,28 @@ void MainWindow::on_actionStopRobots_triggered() {
 	_ui.fieldView->sendSimCommand(cmd);
 }
 
+// Manual control commands
+
+void MainWindow::on_actionDampedRotation_toggled(bool value)
+{
+	cout << "DampedRotation is ";
+	if (value)
+		cout << "Enabled" << endl;
+	else
+		cout << "Disabled" << endl;
+	_processor->dampedRotation(value);
+}
+
+void MainWindow::on_actionDampedTranslation_toggled(bool value)
+{
+	cout << "DampedTranslation is ";
+	if (value)
+		cout << "Enabled" << endl;
+	else
+		cout << "Disabled" << endl;
+	_processor->dampedTranslation(value);
+}
+
 // Debug commands
 
 void MainWindow::on_actionRestartUpdateTimer_triggered()
@@ -720,6 +661,23 @@ void MainWindow::on_actionRestartUpdateTimer_triggered()
 	printf("Update timer: active %d, singleShot %d, interval %d\n", updateTimer.isActive(), updateTimer.isSingleShot(), updateTimer.interval());
 	updateTimer.stop();
 	updateTimer.start(30);
+}
+
+void MainWindow::on_actionQuaternion_Demo_toggled(bool value)
+{
+	if (value)
+	{
+		if (_quaternion_demo)
+			delete _quaternion_demo;
+		cout << "Starting Quaternion Demo" << endl;
+		_quaternion_demo = new QuaternionDemo(this);
+		_quaternion_demo->resize(640, 480);
+	} else
+	{
+		cout << "Stopping Quaternion Demo" << endl;
+		if (_quaternion_demo)
+			delete _quaternion_demo;
+	}
 }
 
 // Gameplay commands
@@ -804,14 +762,14 @@ void MainWindow::on_actionTeamYellow_triggered()
 void MainWindow::on_manualID_currentIndexChanged(int value)
 {
 	_processor->manualID(value - 1);
-	if (demo)
+	if (_quaternion_demo)
 	{
 		if (value == 0)
 		{
-			demo->hide();
+			_quaternion_demo->hide();
 		} else {
-			demo->show();
-			demo->initialized = false;
+			_quaternion_demo->show();
+			_quaternion_demo->initialized = false;
 		}
 	}
 }
