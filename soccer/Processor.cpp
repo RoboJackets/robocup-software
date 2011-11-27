@@ -109,6 +109,19 @@ void Processor::manualID(int value)
 	_manualID = value;
 	_joystick->reset();
 }
+
+void Processor::dampedRotation(bool value)
+{
+	QMutexLocker locker(&_loopMutex);
+	_joystick->dampedRotation(value);
+}
+
+void Processor::dampedTranslation(bool value)
+{
+	QMutexLocker locker(&_loopMutex);
+	_joystick->dampedTranslation(value);
+}
+
 /**
  * sets the team
  * @param value the value indicates whether or not the current team is blue or yellow
