@@ -36,6 +36,8 @@ static const char *devices[] =
 Joystick::Joystick():
 	_mutex(QMutex::Recursive)
 {
+	_dampedRotation = true;
+	_dampedTranslation = true;
 	_autonomous = true;
 	_dribbler = 0;
 	_dribblerOn = false;
