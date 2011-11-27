@@ -79,8 +79,8 @@ void Config::procTeam(QDomElement e, bool blue)
 				if (rev.contains("2008"))
 				{
 				    r = Robot::rev2008;
-				} else if (rev.contains("2010")) {
-				    r = Robot::rev2010;
+				} else if (rev.contains("2011")) {
+				    r = Robot::rev2011;
 				}
 				_env->addRobot(blue, id, Geometry2d::Point(x, y), r);
 			} else {
