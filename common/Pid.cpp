@@ -3,8 +3,6 @@
 #include <cstring>
 #include <stdio.h>
 
-using namespace Motion;
-
 Pid::Pid(float p, float i, float d, unsigned int windup) :
 	_windup(windup)
 {

@@ -90,6 +90,9 @@ class Processor: public QThread
 			return _manualID;
 		}
 		
+		void dampedRotation(bool value);
+		void dampedTranslation(bool value);
+
 		void blueTeam(bool value);
 		bool blueTeam() const
 		{
