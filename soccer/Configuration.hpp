@@ -203,6 +203,7 @@ class Configurable
 {
 public:
 	Configurable();
+	virtual ~Configurable() {}
 	
 	virtual void createConfiguration(Configuration *cfg) const = 0;
 	

@@ -15,7 +15,6 @@ srcs = [
 	'debug.cpp',
 	'StripChart.cpp',
 	'Robot.cpp',
-#	'BallSensor.cpp',
 	'VisionReceiver.cpp',
 
 	'radio/SimRadio.cpp',
@@ -100,7 +99,7 @@ srcs = [
 	'gameplay/plays/demo_plays/DemoBump.cpp',
 	'gameplay/plays/demo_plays/DemoLineAttack.cpp',
 	'gameplay/plays/demo_plays/DemoPivotAttack.cpp',
-	'gameplay/plays/TouchTest.cpp',
+	'gameplay/plays/demo_plays/DemoTouchKick.cpp',
 #	'gameplay/plays/demo_plays/CalSpeed.cpp',
 
   # Mechanical tests
@@ -110,15 +109,14 @@ srcs = [
 	'gameplay/plays/demo_plays/NavChallenge2011.cpp',
 	'gameplay/plays/demo_plays/DynamicNavigationTC.cpp',
 
-#	'gameplay/behaviors/test/KickerCalibration.cpp',
 #	'gameplay/behaviors/test/MotionLeader.cpp',
 
 # Sources for modeling module
-#	'modeling/WorldModel.cpp',
 	'modeling/BallTracker.cpp',
 	'modeling/BallFilter.cpp',
 	'modeling/RobotFilter.cpp',
 	
+#	'modeling/WorldModel.cpp',
 #	'modeling/BallModel.cpp',
 #	'modeling/RBPFBallModel.cpp',
 #	'modeling/EKFBallModel.cpp',
@@ -135,7 +133,6 @@ srcs = [
 
 # Sources for motion module',
 	'motion/MotionControl.cpp',
-#	'motion/Pid.cpp',
 	
 	'ui/main_icons.qrc',
 	'ui/log_icons.qrc'
@@ -176,8 +173,6 @@ Help('log_viewer: Stand-alone log viewer\n')
 tests = [
 	'tests/testExamples.cpp',
 	'tests/testPath.cpp',
-#	'tests/testEigen.cpp',
-#	'tests/testRbpf.cpp'
 ]
 e.Append(LIBS=['gtest'])
 # NOTE: this links against all sources to avoid needing to actually check dependencies
