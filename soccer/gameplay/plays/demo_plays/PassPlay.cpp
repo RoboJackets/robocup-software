@@ -63,11 +63,12 @@ bool Gameplay::Plays::PassPlay::run()
 
 	if(ball().pos.x > 0)
 	{
-		if(!positiveX && _pass.kicked())
+		if(!positiveX)
 		{
 			OurRobot *temp = _pass.robot1;
 			_pass.robot1 = _pass.robot2;
 			_pass.robot2 = temp;
+			_pass.reset();
 		}
 
 		if(_pass.done())
@@ -81,16 +82,19 @@ bool Gameplay::Plays::PassPlay::run()
 	}
 	else
 	{
-		if(positiveX && _pass.kicked())
+		if(positiveX)
 		{
 			OurRobot *temp = _pass.robot1;
 			_pass.robot1 = _pass.robot2;
 			_pass.robot2 = temp;
+			_pass.reset();
 		}
+
 		if(_pass.done())
 		{
 			_pass.reset();
 		}
+
 		_pass.setEnable(_pass.robot2->pos.distTo(Geometry2d::Point(Field_Width / 5, Field_Length / 5)) < 0.5);
 		_pass.robot2->move(Geometry2d::Point(Field_Width / 5, Field_Length / 5),true);
 		positiveX = false;

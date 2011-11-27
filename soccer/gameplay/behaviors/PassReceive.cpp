@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "PassReceive.hpp"
+#include <stdio.h>
 
 #include <algorithm>
 
@@ -25,8 +26,8 @@ void Gameplay::Behaviors::PassReceive::createConfiguration(Configuration *cfg)
 {
 	_backup_time = new ConfigInt(cfg, "PassReceive/Backup Time", 100000);
 	_backup_speed = new ConfigDouble(cfg, "PassReceive/Backup Speed", 0.05);
-	_done_thresh = new ConfigDouble(cfg, "PassReceive/Done Thresh", 0.1);
-	_kick_power_constant = new ConfigDouble(cfg, "PassReceive/Kick Power Constant", 10);
+	_done_thresh = new ConfigDouble(cfg, "PassReceive/Done Thresh", 0.2);
+	_kick_power_constant = new ConfigDouble(cfg, "PassReceive/Kick Power Constant", 15);
 }
 
 Gameplay::Behaviors::PassReceive::PassReceive(GameplayModule *gameplay):
@@ -62,7 +63,8 @@ void Gameplay::Behaviors::PassReceive::reset()
 
 uint8_t Gameplay::Behaviors::PassReceive::calcKickPower(int d)
 {
-	return d * (*_kick_power_constant);
+	return d * (*_kick_power_constant); //linear function
+	// return log(d) * *_kick_power_constant; log function
 }
 bool Gameplay::Behaviors::PassReceive::run()
 {
@@ -85,6 +87,7 @@ bool Gameplay::Behaviors::PassReceive::run()
 			_state = State_Ready;
 		}
 	}
+
 	else if(_state == State_Ready)
 	{
 		if((state()->timestamp - readyTime) > *_backup_time)
@@ -101,7 +104,7 @@ bool Gameplay::Behaviors::PassReceive::run()
 	}
 	else if(_state == State_Kicked)
 	{
-		if(ball().pos.distTo(robot2->pos) < *_done_thresh)
+		if(ball().pos.distTo(robot2->pos) < *_done_thresh || ball().vel.mag() <= 1)
 		{
 			_state = State_Done;
 		}
@@ -111,9 +114,11 @@ bool Gameplay::Behaviors::PassReceive::run()
 	_passer.setTarget(robot2->kickerBar());
 	robot2->face(_passer.robot->pos);
 
+
 	if(_state == State_Setup)
 	{
 		_passer.enableKick = false;
+		robot1->addText("Setup");
 		_passer.run();
 	}
 	else if(_state == State_Ready)
@@ -128,25 +133,43 @@ bool Gameplay::Behaviors::PassReceive::run()
 			robot2->bodyVelocity(Geometry2d::Point(-(*_backup_speed),0));
 			robot2->angularVelocity(0);
 		}
-
+		robot1->addText("Ready");
 		_passer.run();
+
 	}
 	else if(_state == State_Execute)
 	{
+
+		if(robot2->pos.y > 0 && robot2->pos.y < Field_Length && robot2->pos.x > -Field_Width && robot2->pos.x < Field_Width)
+		{
+			robot2->bodyVelocity(Geometry2d::Point(-(*_backup_speed),0));
+			robot2->angularVelocity(0);
+		}
+
 		_passer.enableKick = true;
 		_passer.kick_power = calcKickPower(robot1->pos.distTo(robot2->pos));
 		_passer.run();
+		robot1->addText("Execute");
 	}
 	else if(_state == State_Kicked)
 	{
+		/*intercept code....to slow
 		Geometry2d::Point p1 = ball().pos;
-		Geometry2d::Point p2 = ball().pos + ball().vel * 3;
+		Geometry2d::Point p2 = ball().pos + (ball().vel * 10);
 		Geometry2d::Point p3 = robot2->pos;
+		state()->drawLine(Geometry2d::Segment(p1,p2));
 
 		float u  = ((p3.x - p1.x) * (p2.x - p1.x) + (p3.y - p1.y) * (p2.y - p1.y)) / (p2 - p1).mag();
 
 		Geometry2d::Point intercept(p1.x + u * (p2.x - p1.x),p1.y + u * (p2.y - p1.y));
-		robot2->move(intercept, true);
+
+		if(ball().vel.mag() > 1)
+		{
+			robot2->move(intercept, true);
+		}
+		*/
+		robot2->move(ball().pos + ball().vel,true);
+		robot1->addText("Kicked");
 	}
 	else if(_state == State_Done)
 	{
