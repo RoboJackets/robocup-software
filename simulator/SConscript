@@ -3,11 +3,15 @@ Import('*')
 e = env.Clone()
 
 e.Append(CPPPATH=['/usr/include/bullet'])
+e.Append(LIBPATH=['/usr/lib'])
 
 # Find uic output
 e.Append(CPPPATH='.')
 
-p = e.Program('simulator', [
+e.Append(LIBS=['GL', 'GLU', 'BulletDynamics', 'BulletCollision', 'LinearMath'])
+#e.Append(LIBS=['/usr/lib/BulletDynamics.a', '/usr/lib/BulletCollision.a', '/usr/lib/LinearMath.a'])
+
+p1 = e.Program('simulator', [
 	'main.cpp',
 	'SimControl.cpp',
 	'Config.cpp',
@@ -20,10 +24,11 @@ p = e.Program('simulator', [
 uics = e.Uic4([
 	'SimControl.ui'
 ])
-e.Depends(p, uics)
+e.Depends(p1, uics)
 
-e.Append(LIBS=['BulletCollision', 'BulletDynamics'])
+# add demos for testing
+p2 = e.Program('bullet_demo', 'bullet_demo.cpp')
+Default(e.Install(exec_dir, p2))
 
-Default(e.Install(exec_dir, p))
+Default(e.Install(exec_dir, p1))
 Help('simulator: Provides simulation of SSL robots, using Bullet Physics\n')
-
