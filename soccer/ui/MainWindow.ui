@@ -1612,6 +1612,7 @@
      <string>&amp;Debug</string>
     </property>
     <addaction name="actionRestartUpdateTimer"/>
+    <addaction name="actionQuaternion_Demo"/>
    </widget>
    <widget class="QMenu" name="menu_Gameplay">
     <property name="title">
@@ -1620,11 +1621,19 @@
     <addaction name="actionSeed"/>
     <addaction name="actionUnforce"/>
    </widget>
+   <widget class="QMenu" name="menu_Manual">
+    <property name="title">
+     <string>&amp;Manual</string>
+    </property>
+    <addaction name="actionDampedRotation"/>
+    <addaction name="actionDampedTranslation"/>
+   </widget>
    <addaction name="menu_View"/>
    <addaction name="menu_Field"/>
    <addaction name="menu_Simulator"/>
    <addaction name="menu_Debug"/>
    <addaction name="menu_Gameplay"/>
+   <addaction name="menu_Manual"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="action0">
@@ -1820,6 +1829,42 @@
   <action name="action906MHz">
    <property name="text">
     <string>906MHz</string>
+   </property>
+  </action>
+  <action name="actionDampedRotation">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Damped &amp;Rotation</string>
+   </property>
+   <property name="toolTip">
+    <string>Enables dampening of rotation rates in manual control</string>
+   </property>
+  </action>
+  <action name="actionDampedTranslation">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Damped &amp;Translation</string>
+   </property>
+   <property name="toolTip">
+    <string>Enables dampening of manual translation control</string>
+   </property>
+  </action>
+  <action name="actionQuaternion_Demo">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Quaternion Demo</string>
    </property>
   </action>
  </widget>

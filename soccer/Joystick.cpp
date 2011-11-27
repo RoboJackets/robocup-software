@@ -15,6 +15,15 @@ using namespace Packet;
 
 static const uint64_t Dribble_Step_Time = 125 * 1000;
 
+// rates used by damping settings
+// Rotation in rad/s
+static const float Rotation_Max_Speed = 4 * M_PI;
+static const float Rotation_Max_Damped_Speed = 1 * M_PI;
+
+// Translation in m/s
+static const float Translation_Max_Speed = 3.0;
+static const float Translation_Max_Damped_Speed = 1.0;
+
 static const char *devices[] =
 {
 	"/dev/input/by-id/usb-Logitech_Logitech_Cordless_RumblePad_2-joystick",
@@ -174,8 +183,9 @@ void Joystick::drive(RadioTx::Robot *tx)
 		return;
 	}
 	
-	float leftX = _axis[Axis_Left_X] / 32768.0f;
-	float rightX = _axis[Axis_Right_X] / 32768.0f;
+	// applying dampening - scales each to [-1,1] range
+	float leftX =   _axis[Axis_Left_X]  / 32768.0f;
+	float rightX =  _axis[Axis_Right_X] / 32768.0f;
 	float rightY = -_axis[Axis_Right_Y] / 32768.0f;
 	
 	//input is vx, vy in robot space
@@ -205,9 +215,20 @@ void Joystick::drive(RadioTx::Robot *tx)
 		input.x = -mVal;
 	}
 	
-	tx->set_body_x(input.y);
-	tx->set_body_y(-input.x);
-	tx->set_body_w(-leftX * 1 * M_PI);
+	if (_dampedTranslation)
+	{
+		tx->set_body_x(input.y  * Translation_Max_Damped_Speed);
+		tx->set_body_y(-input.x * Translation_Max_Damped_Speed);
+	} else
+	{
+		tx->set_body_x(input.y  * Translation_Max_Speed);
+		tx->set_body_y(-input.x * Translation_Max_Speed);
+	}
+
+	if (_dampedRotation)
+		tx->set_body_w(-leftX * Rotation_Max_Damped_Speed);
+	else
+		tx->set_body_w(-leftX * Rotation_Max_Speed);
 	
 	if (_button[6])
 	{
@@ -247,3 +268,16 @@ void Joystick::reset()
 	QMutexLocker locker(&_mutex);
 	_dribblerOn = false;
 }
+
+void Joystick::dampedRotation(bool value)
+{
+	QMutexLocker locker(&_mutex);
+	_dampedRotation = value;
+}
+
+void Joystick::dampedTranslation(bool value)
+{
+	QMutexLocker locker(&_mutex);
+	_dampedTranslation = value;
+}
+

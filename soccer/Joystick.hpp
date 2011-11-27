@@ -30,6 +30,9 @@ class Joystick: boost::noncopyable
 		void update();
 		void drive(Packet::RadioTx::Robot *tx);
 
+		void dampedRotation(bool value);
+		void dampedTranslation(bool value);
+
 	private:
 		bool open();
 		void close();
@@ -46,6 +49,8 @@ class Joystick: boost::noncopyable
 		int _dribbler;
 		bool _dribblerOn;
 		
+		bool _dampedRotation, _dampedTranslation;
+
 		// Last time the dribbler speed changed
 		uint64_t _lastDribblerTime;
 		
