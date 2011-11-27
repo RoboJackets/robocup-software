@@ -6,11 +6,11 @@
 
     <!-- configure blue team robots -->
     <blue>
-        <robot id="5" x="1.5" y="0" rev="2010"/>
+        <robot id="5" x="1.5" y="0" rev="2011"/>
     </blue>
 
     <yellow>
-        <robot id="5" x="-1.5" y="0" rev="2010"/>
+        <robot id="5" x="-1.5" y="0" rev="2011"/>
     </yellow>
 
 </simulation>
