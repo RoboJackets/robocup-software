@@ -14,7 +14,6 @@ RobotConfig::PID::PID(Configuration* config, QString prefix):
 RobotConfig::Dynamics::Dynamics(Configuration* config, QString prefix):
 	velocity(new ConfigDouble(config, QString("%1/velocity").arg(prefix))),
 	acceleration(new ConfigDouble(config, QString("%1/acceleration").arg(prefix))),
-// 	deceleration(new ConfigDouble(config, QString("%1/deceleration").arg(prefix))),
 	predictTime(new ConfigDouble(config, QString("%1/predictTime").arg(prefix))),
 	responseTime(new ConfigDouble(config, QString("%1/responseTime").arg(prefix)))
 {

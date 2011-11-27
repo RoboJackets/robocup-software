@@ -1,23 +1,22 @@
 #pragma once
 
-#include "../Play.hpp"
+#include "../../Play.hpp"
 
-#include "../behaviors/TouchKick.hpp"
+#include "../../behaviors/TouchKick.hpp"
 
 namespace Gameplay
 {
 namespace Plays
 {
 /**
- * Attack demo - choose one robot and target goal continuously
- * Uses the LineKick behavior
+ * Tests the TouchKick behavior
  */
-class TouchTest: public Play
+class DemoTouchKick: public Play
 {
 public:
 	static void createConfiguration(Configuration *cfg);
 
-	TouchTest(GameplayModule *gameplay);
+	DemoTouchKick(GameplayModule *gameplay);
 
 	virtual bool run();
 

@@ -26,7 +26,6 @@ struct RobotConfig
 		
 		ConfigDouble *velocity;
 		ConfigDouble *acceleration;
-// 		ConfigDouble *deceleration;
 		ConfigDouble *predictTime;
 		ConfigDouble *responseTime;
 	};
