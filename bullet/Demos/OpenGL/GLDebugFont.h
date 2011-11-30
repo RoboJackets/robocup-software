@@ -1,6 +1,6 @@
 /*
 Bullet Continuous Collision Detection and Physics Library
-Copyright (c) 2003-2006 Erwin Coumans  http://continuousphysics.com/Bullet/
+Copyright (c) 2003-2009 Erwin Coumans  http://bulletphysics.org
 
 This software is provided 'as-is', without any express or implied warranty.
 In no event will the authors be held liable for any damages arising from the use of this software.
@@ -13,22 +13,17 @@ subject to the following restrictions:
 3. This notice may not be removed or altered from any source distribution.
 */
 
-#ifndef BT_DEMO_ENTRIES_H
-#define BT_DEMO_ENTRIES_H
+
+#ifndef BT_DEBUG_FONT_H
+#define BT_DEBUG_FONT_H
+
+#include "LinearMath/btVector3.h"
 
 
-class DemoApplication;
+void	GLDebugDrawStringInternal(int x,int y,const char* string,const btVector3& rgb, bool enableBlend, int spacing);
+void	GLDebugDrawStringInternal(int x,int y,const char* string,const btVector3& rgb);
+void	GLDebugDrawString(int x,int y,const char* string);
+void	GLDebugResetFont(int screenWidth,int screenHeight);
 
-typedef DemoApplication* DemoCreateFcn();
+#endif //BT_DEBUG_FONT_H
 
-struct btDemoEntry
-{
-	const char *name;
-	DemoCreateFcn *createFcn;
-};
-
-extern btDemoEntry g_demoEntries[];
-
-
-
-#endif //BT_DEMO_ENTRIES_H
