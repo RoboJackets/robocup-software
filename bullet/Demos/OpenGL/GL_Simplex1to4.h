@@ -1,7 +1,6 @@
-#ifdef _WINDOWS
 /*
 Bullet Continuous Collision Detection and Physics Library
-Copyright (c) 2003-2009 Erwin Coumans  http://bulletphysics.org
+Copyright (c) 2003-2006 Erwin Coumans  http://continuousphysics.com/Bullet/
 
 This software is provided 'as-is', without any express or implied warranty.
 In no event will the authors be held liable for any damages arising from the use of this software.
@@ -13,13 +12,29 @@ subject to the following restrictions:
 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
 3. This notice may not be removed or altered from any source distribution.
 */
+#ifndef GL_SIMPLEX_1TO4_H
+#define GL_SIMPLEX_1TO4_H
 
-#include "BasicDemo.h"
+#include "BulletCollision/CollisionShapes/btTetrahedronShape.h"
 
-///The 'createDemo' function is called from Bullet/Demos/OpenGL/Win32AppMain.cpp to instantiate this particular demo
-DemoApplication*	createDemo()
+#include "BulletCollision/NarrowPhaseCollision/btSimplexSolverInterface.h"
+
+///GL_Simplex1to4 is a class to debug a Simplex Solver with 1 to 4 points. 
+///Can be used by GJK.
+class GL_Simplex1to4 : public btBU_Simplex1to4
 {
-	return new BasicDemo();
-}
+	btSimplexSolverInterface*	m_simplexSolver;
 
-#endif
+	public:
+
+	GL_Simplex1to4();
+
+	void	calcClosest(btScalar* m);
+
+	void	setSimplexSolver(btSimplexSolverInterface* simplexSolver) {
+		m_simplexSolver = simplexSolver;
+	}
+
+};
+
+#endif //GL_SIMPLEX_1TO4_H
