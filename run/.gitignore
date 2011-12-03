@@ -1,7 +1,7 @@
 libprotobuf.so*
 soccsim
 simulator
-bullet_demo
+vehicle_demo
 soccer
 soccer_tests
 simple_logger

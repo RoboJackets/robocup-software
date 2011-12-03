@@ -1,0 +1,33 @@
+Import('env', 'exec_dir')
+
+env.Append(CPPPATH=['#/bullet/src'])
+
+# assemble sources 
+srcs = []
+
+# BulletCollision
+srcs.extend(Glob('src/BulletCollision/BroadphaseCollision/*.cpp'))
+srcs.extend(Glob('src/BulletCollision/CollisionDispatch/*.cpp'))
+srcs.extend(Glob('src/BulletCollision/CollisionShapes/*.cpp'))
+srcs.extend(Glob('src/BulletCollision/Gimpact/*.cpp'))
+srcs.extend(Glob('src/BulletCollision/NarrowPhaseCollision/*.cpp'))
+
+# BulletDynamics
+srcs.extend(Glob('src/BulletDynamics/Character/*.cpp'))
+srcs.extend(Glob('src/BulletDynamics/ConstraintSolver/*.cpp'))
+srcs.extend(Glob('src/BulletDynamics/Dynamics/*.cpp'))
+srcs.extend(Glob('src/BulletDynamics/Vehicle/*.cpp'))
+
+# Skipping BulletMultiThreaded
+
+# Bullet utilities
+srcs.extend(Glob('src/LinearMath/*.cpp'))
+srcs.extend(Glob('src/MiniCL/*.cpp'))
+srcs.extend(Glob('src/MiniCL/MiniCLTask/*.cpp'))
+
+# Demo code - used for drawing
+srcs.extend(Glob('Demos/OpenGL/*.cpp'))
+
+# Build a single library
+env.Library('bullet', srcs)
+
