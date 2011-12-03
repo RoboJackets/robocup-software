@@ -18,8 +18,8 @@ subject to the following restrictions:
 /// One todo is a basic engine model:
 /// A function that maps user input (throttle) into torque/force applied on the wheels
 /// with gears etc.
-#include "btBulletDynamicsCommon.h"
-#include "BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h"
+#include <btBulletDynamicsCommon.h>
+#include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
 
 //
 // By default, Bullet Vehicle uses Y as up axis.
@@ -46,7 +46,7 @@ subject to the following restrictions:
 
 #include "GL_ShapeDrawer.h"
 
-#include "GlutStuff.h"
+#include <GlutStuff.h>
 #include "VehicleDemo.h"
 
 const int maxProxies = 32766;

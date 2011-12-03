@@ -59,6 +59,7 @@ env.Append(LIBS=['common', 'protobuf'])
 
 # Search paths for native code
 env.Append(LIBPATH=[build_dir.Dir('common')])
+env.Append(LIBPATH=[build_dir.Dir('bullet')])
 env.Append(CPPPATH=[build_dir.Dir('common')])
 
 ## Hack up some compatibility on 64-bit systems
@@ -105,17 +106,23 @@ env.Append(CPPPATH=[build_dir.Dir('common')])
 # Use rpath to tell the dynamic linker where to find them.
 #env32.Append(RPATH=[Literal('\\$$ORIGIN')])
 
+# Copy the bullet libraries to the run directory
+# Use rpath to tell the dynamic linker where to find them.
+#env.Append(RPATH=[Literal('\\$$ORIGIN')])
+
 # Use SConscripts
 def do_build(dir, exports={}):
 	SConscript(dir + '/SConscript', exports=exports, variant_dir=build_dir.Dir(dir), duplicate=0)
 
 Export({'env': env, 'cross_32bit': False})
+
 do_build('common')
+do_build('bullet')
 
 #Export({'env': env32, 'cross_32bit': True})
 #do_build('SoccSim', {'env': env32})
 
-Export({'env': env, 'cross_32bit': False})
+#Export({'env': env, 'cross_32bit': False})
 
 # Build sslrefbox with its original makefile (no dependency checking)
 sslrefbox = env.Command('sslrefbox/sslrefbox', 'sslrefbox/Makefile', 'make -C sslrefbox')
@@ -123,5 +130,7 @@ Alias('sslrefbox', sslrefbox)
 Default(env.Install(exec_dir, 'sslrefbox/sslrefbox'))
 Help('sslrefbox: SSL referee box\n')
 
+# Build everything else
 for dir in ['logging', 'soccer', 'simulator', 'firmware']:
 	do_build(dir)
+

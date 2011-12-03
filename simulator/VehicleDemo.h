@@ -19,9 +19,9 @@ class btVehicleTuning;
 struct btVehicleRaycaster;
 class btCollisionShape;
 
-#include "BulletDynamics/Vehicle/btRaycastVehicle.h"
+#include <BulletDynamics/Vehicle/btRaycastVehicle.h>
 
-#include "GlutDemoApplication.h"
+#include <GlutDemoApplication.h>
 
 ///VehicleDemo shows how to setup and use the built-in raycast vehicle
 class VehicleDemo : public GlutDemoApplication

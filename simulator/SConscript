@@ -2,14 +2,32 @@ Import('*')
 
 e = env.Clone()
 
-e.Append(CPPPATH=['/usr/include/bullet'])
-e.Append(LIBPATH=['/usr/lib'])
+#bullet_path=Dir('#/build/lib/physx')
+#bullet_libpath = physx_path.Dir('lib')
+
+# Link with Bullet 
+#e.Append(LIBPATH=bullet_libpath)
+#e.Append(LIBS=['NxCooking', 'PhysXCore', 'PhysXLoader'])
+e.Append(CPPPATH=['#/bullet/src', '#/bullet/Demos/OpenGL'])
 
 # Find uic output
-e.Append(CPPPATH='.')
+e.Append(CPPPATH='ui')
 
-e.Append(LIBS=['GL', 'GLU', 'BulletDynamics', 'BulletCollision', 'LinearMath'])
-#e.Append(LIBS=['/usr/lib/BulletDynamics.a', '/usr/lib/BulletCollision.a', '/usr/lib/LinearMath.a'])
+# Add bullet libraries
+#e.Append(LIBS=[
+#	'OpenGLSupport',  
+#	'BulletDynamics', 
+#	'BulletCollision', 
+#	'LinearMath'])
+
+# Add all bullet libraries at once
+e.Append(LIBS=['bullet'])
+
+# add opengl libraries
+e.Append(LIBS=[    
+	'glut', 
+	'GL', 
+	'GLU'])
 
 p1 = e.Program('simulator', [
 	'main.cpp',
@@ -22,13 +40,14 @@ p1 = e.Program('simulator', [
 	'Physics/Robot.cpp'])
 
 uics = e.Uic4([
-	'SimControl.ui'
+	'ui/SimControl.ui'
 ])
 e.Depends(p1, uics)
 
-# add demos for testing
-p2 = e.Program('bullet_demo', 'bullet_demo.cpp')
-Default(e.Install(exec_dir, p2))
-
+# Simulator executable
 Default(e.Install(exec_dir, p1))
 Help('simulator: Provides simulation of SSL robots, using Bullet Physics\n')
+
+# add demos for testing
+p2 = e.Program('vehicle_demo', ['vehicle_demo.cpp', 'VehicleDemo.cpp'])
+Default(e.Install(exec_dir, p2))
