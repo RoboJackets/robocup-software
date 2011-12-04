@@ -1,4 +1,4 @@
-#include "VehicleDemo.h"
+#include "VehicleDemo.hpp"
 #include <GlutStuff.h>
 #include <GLDebugDrawer.h>
 #include <btBulletDynamicsCommon.h>

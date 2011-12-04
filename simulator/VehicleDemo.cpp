@@ -27,7 +27,7 @@
 #include "GL_ShapeDrawer.h"
 
 #include <GlutStuff.h>
-#include "VehicleDemo.h"
+#include "VehicleDemo.hpp"
 
 const int maxProxies = 32766;
 const int maxOverlap = 65535;
