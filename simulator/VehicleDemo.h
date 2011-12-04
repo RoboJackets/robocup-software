@@ -49,7 +49,7 @@ public:
 	class btDefaultCollisionConfiguration* m_collisionConfiguration;
 	class btTriangleIndexVertexArray* m_indexVertexArrays;
 
-	// ground?
+	// ground triangle vertices
 	btVector3* m_vertices;
 
 	// Camera components
@@ -80,6 +80,11 @@ public:
 
 	// physics initializations for objects
 	std::pair<btCollisionShape*, btTransform> addGround();
+	void addVehicle(btDynamicsWorld* m_dynamicsWorld,
+			btAlignedObjectArray<btCollisionShape*>& m_collisionShapes);
+
+	// rendering
+	void drawWheels(const btVector3& worldBoundsMin, const btVector3& worldBoundsMax);
 
 	static DemoApplication* Create() {
 		VehicleDemo* demo = new VehicleDemo();
