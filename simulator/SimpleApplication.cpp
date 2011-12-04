@@ -13,7 +13,7 @@
  3. This notice may not be removed or altered from any source distribution.
  */
 
-#include "DemoApplication.hpp"
+#include "SimpleApplication.hpp"
 #include "LinearMath/btIDebugDraw.h"
 #include "BulletDynamics/Dynamics/btDynamicsWorld.h"
 
@@ -31,12 +31,10 @@
 #include "LinearMath/btSerializer.h"
 #include "GLDebugFont.h"
 
-#include "GlutStuff.hpp"
-
 #include "BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h"
 #include "BulletDynamics/Dynamics/btRigidBody.h"
 
-static bool use6Dof = false;
+//static bool use6Dof = false;
 extern bool gDisableDeactivation;
 int numObjects = 0;
 const int maxNumObjects = 16384;
@@ -51,29 +49,19 @@ extern int gNumClampedCcdMotions;
 #ifdef SHOW_NUM_DEEP_PENETRATIONS 
 extern int gNumDeepPenetrationChecks;
 
-extern int gNumSplitImpulseRecoveries;
 extern int gNumGjkChecks;
-extern int gNumAlignedAllocs;
-extern int gNumAlignedFree;
-extern int gTotalBytesAlignedAllocs;
 
 #endif //
-
-DemoApplication::DemoApplication()
+SimpleApplication::SimpleApplication()
 //see btIDebugDraw.h for modes
 :
-		m_dynamicsWorld(0), m_pickConstraint(0),
-//		m_shootBoxShape(0),
-		m_cameraDistance(
-				15.0), m_debugMode(0), m_ele(20.f), m_azi(0.f), m_cameraPosition(0.f,
-				0.f, 0.f), m_cameraTargetPosition(0.f, 0.f, 0.f), m_mouseOldX(0), m_mouseOldY(
-				0), m_mouseButtons(0), m_modifierKeys(0), m_scaleBottom(0.5f), m_scaleFactor(
+		m_dynamicsWorld(0), m_shootBoxShape(0), m_cameraDistance(15.0), m_debugMode(
+				0), m_ele(20.f), m_azi(0.f), m_cameraPosition(0.f, 0.f, 0.f), m_cameraTargetPosition(
+				0.f, 0.f, 0.f), m_modifierKeys(0), m_scaleBottom(0.5f), m_scaleFactor(
 				2.f), m_cameraUp(0, 1, 0), m_forwardAxis(2), m_zoomStepSize(0.4), m_glutScreenWidth(
 				0), m_glutScreenHeight(0), m_frustumZNear(1.f), m_frustumZFar(10000.f), m_ortho(
-				0),
-//				m_ShootBoxInitialSpeed(40.f),
-				m_stepping(true), m_singleStep(false), m_idle(
-				false),
+				0), m_ShootBoxInitialSpeed(40.f), m_stepping(true), m_singleStep(false),
+//				m_idle(false),
 
 		m_enableshadows(false), m_sundirection(btVector3(1, -2, 1) * 1000), m_defaultContactProcessingThreshold(
 				BT_LARGE_FLOAT) {
@@ -85,24 +73,24 @@ DemoApplication::DemoApplication()
 	m_enableshadows = false;
 }
 
-DemoApplication::~DemoApplication() {
+SimpleApplication::~SimpleApplication() {
 #ifndef BT_NO_PROFILE
 	CProfileManager::Release_Iterator(m_profileIterator);
 #endif //BT_NO_PROFILE
-//	if (m_shootBoxShape)
-//		delete m_shootBoxShape;
+	if (m_shootBoxShape)
+		delete m_shootBoxShape;
 
 	if (m_shapeDrawer)
 		delete m_shapeDrawer;
 }
 
-void DemoApplication::overrideGLShapeDrawer(GL_ShapeDrawer* shapeDrawer) {
+void SimpleApplication::overrideGLShapeDrawer(GL_ShapeDrawer* shapeDrawer) {
 	shapeDrawer->enableTexture(m_shapeDrawer->hasTextureEnabled());
 	delete m_shapeDrawer;
 	m_shapeDrawer = shapeDrawer;
 }
 
-void DemoApplication::myinit(void) {
+void SimpleApplication::myinit(void) {
 
 	GLfloat light_ambient[] = { btScalar(0.2), btScalar(0.2), btScalar(0.2),
 			btScalar(1.0) };
@@ -140,23 +128,15 @@ void DemoApplication::myinit(void) {
 	//  glCullFace(GL_BACK);
 }
 
-void DemoApplication::setCameraDistance(float dist) {
+void SimpleApplication::setCameraDistance(float dist) {
 	m_cameraDistance = dist;
 }
 
-float DemoApplication::getCameraDistance() {
+float SimpleApplication::getCameraDistance() {
 	return m_cameraDistance;
 }
 
-void DemoApplication::toggleIdle() {
-	if (m_idle) {
-		m_idle = false;
-	} else {
-		m_idle = true;
-	}
-}
-
-void DemoApplication::updateCamera() {
+void SimpleApplication::updateCamera() {
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -219,46 +199,7 @@ void DemoApplication::updateCamera() {
 
 }
 
-const float STEPSIZE = 5;
-
-void DemoApplication::stepLeft() {
-	m_azi -= STEPSIZE;
-	if (m_azi < 0)
-		m_azi += 360;
-	updateCamera();
-}
-void DemoApplication::stepRight() {
-	m_azi += STEPSIZE;
-	if (m_azi >= 360)
-		m_azi -= 360;
-	updateCamera();
-}
-void DemoApplication::stepFront() {
-	m_ele += STEPSIZE;
-	if (m_ele >= 360)
-		m_ele -= 360;
-	updateCamera();
-}
-void DemoApplication::stepBack() {
-	m_ele -= STEPSIZE;
-	if (m_ele < 0)
-		m_ele += 360;
-	updateCamera();
-}
-void DemoApplication::zoomIn() {
-	m_cameraDistance -= btScalar(m_zoomStepSize);
-	updateCamera();
-	if (m_cameraDistance < btScalar(0.1))
-		m_cameraDistance = btScalar(0.1);
-
-}
-void DemoApplication::zoomOut() {
-	m_cameraDistance += btScalar(m_zoomStepSize);
-	updateCamera();
-
-}
-
-void DemoApplication::reshape(int w, int h) {
+void SimpleApplication::reshape(int w, int h) {
 	GLDebugResetFont(w, h);
 
 	m_glutScreenWidth = w;
@@ -268,7 +209,7 @@ void DemoApplication::reshape(int w, int h) {
 	updateCamera();
 }
 
-void DemoApplication::keyboardCallback(unsigned char key, int x, int y) {
+void SimpleApplication::keyboardCallback(unsigned char key, int x, int y) {
 	(void) x;
 	(void) y;
 
@@ -291,28 +232,6 @@ void DemoApplication::keyboardCallback(unsigned char key, int x, int y) {
 #else
 		exit(0);
 #endif
-		break;
-
-	case 'l':
-		stepLeft();
-		break;
-	case 'r':
-		stepRight();
-		break;
-	case 'f':
-		stepFront();
-		break;
-	case 'b':
-		stepBack();
-		break;
-	case 'z':
-		zoomIn();
-		break;
-	case 'x':
-		zoomOut();
-		break;
-	case 'i':
-		toggleIdle();
 		break;
 	case 'g':
 		m_enableshadows = !m_enableshadows;
@@ -462,25 +381,19 @@ void DemoApplication::keyboardCallback(unsigned char key, int x, int y) {
 
 }
 
-void DemoApplication::setDebugMode(int mode) {
+void SimpleApplication::setDebugMode(int mode) {
 	m_debugMode = mode;
 	if (getDynamicsWorld() && getDynamicsWorld()->getDebugDrawer())
 		getDynamicsWorld()->getDebugDrawer()->setDebugMode(mode);
 }
 
-void DemoApplication::moveAndDisplay() {
-	if (!m_idle)
-		clientMoveAndDisplay();
-	else
-		displayCallback();
-}
-
-void DemoApplication::displayCallback() {
+void SimpleApplication::moveAndDisplay() {
+	clientMoveAndDisplay();
 }
 
 #define NUM_SPHERES_ON_DIAGONAL 9
 
-void DemoApplication::setShootBoxShape() {
+void SimpleApplication::setShootBoxShape() {
 	if (!m_shootBoxShape) {
 		btBoxShape* box = new btBoxShape(btVector3(.5f, .5f, .5f));
 		box->initializePolyhedralFeatures();
@@ -488,7 +401,7 @@ void DemoApplication::setShootBoxShape() {
 	}
 }
 
-void DemoApplication::shootBox(const btVector3& destination) {
+void SimpleApplication::shootBox(const btVector3& destination) {
 
 	if (m_dynamicsWorld) {
 		float mass = 1.f;
@@ -528,7 +441,7 @@ btVector3 gHitPos(-1, -1, -1);
 float gOldPickingDist = 0.f;
 btRigidBody* pickedBody = 0; //for deactivation state
 
-btVector3 DemoApplication::getRayTo(int x, int y) {
+btVector3 SimpleApplication::getRayTo(int x, int y) {
 
 	if (m_ortho) {
 
@@ -593,283 +506,7 @@ btVector3 DemoApplication::getRayTo(int x, int y) {
 	return rayTo;
 }
 
-btScalar mousePickClamping = 30.f;
-
-void DemoApplication::mouseFunc(int button, int state, int x, int y) {
-	if (state == 0) {
-		m_mouseButtons |= 1 << button;
-	} else {
-		m_mouseButtons = 0;
-	}
-
-	m_mouseOldX = x;
-	m_mouseOldY = y;
-
-	updateModifierKeys();
-	if ((m_modifierKeys & BT_ACTIVE_ALT) && (state == 0)) {
-		return;
-	}
-
-	//printf("button %i, state %i, x=%i,y=%i\n",button,state,x,y);
-	//button 0, state 0 means left mouse down
-
-	btVector3 rayTo = getRayTo(x, y);
-
-	switch (button) {
-	case 2: {
-		if (state == 0) {
-
-			shootBox(rayTo);
-		}
-		break;
-	}
-		;
-	case 1: {
-
-		if (state == 0) {
-
-#if 0
-			//apply an impulse
-			if (m_dynamicsWorld)
-			{
-				btCollisionWorld::ClosestRayResultCallback rayCallback(m_cameraPosition,rayTo);
-				m_dynamicsWorld->rayTest(m_cameraPosition,rayTo,rayCallback);
-				if (rayCallback.hasHit())
-				{
-
-					btRigidBody* body = btRigidBody::upcast(rayCallback.m_collisionObject);
-					if (body)
-					{
-						body->setActivationState(ACTIVE_TAG);
-						btVector3 impulse = rayTo;
-						impulse.normalize();
-						float impulseStrength = 10.f;
-						impulse *= impulseStrength;
-						btVector3 relPos = rayCallback.m_hitPointWorld - body->getCenterOfMassPosition();
-						body->applyImpulse(impulse,relPos);
-					}
-				}
-			}
-#endif
-
-		} else {
-
-		}
-		break;
-	}
-	case 0: {
-		if (state == 0) {
-
-			//add a point to point constraint for picking
-			if (m_dynamicsWorld) {
-
-				btVector3 rayFrom;
-				if (m_ortho) {
-					rayFrom = rayTo;
-					rayFrom.setZ(-100.f);
-				} else {
-					rayFrom = m_cameraPosition;
-				}
-
-				btCollisionWorld::ClosestRayResultCallback rayCallback(rayFrom, rayTo);
-				m_dynamicsWorld->rayTest(rayFrom, rayTo, rayCallback);
-				if (rayCallback.hasHit()) {
-
-					btRigidBody* body = btRigidBody::upcast(
-							rayCallback.m_collisionObject);
-					if (body) {
-						//other exclusions?
-						if (!(body->isStaticObject() || body->isKinematicObject())) {
-							pickedBody = body;
-							pickedBody->setActivationState(DISABLE_DEACTIVATION);
-
-							btVector3 pickPos = rayCallback.m_hitPointWorld;
-							//printf("pickPos=%f,%f,%f\n",pickPos.getX(),pickPos.getY(),pickPos.getZ());
-
-							btVector3 localPivot = body->getCenterOfMassTransform().inverse()
-									* pickPos;
-
-							if (use6Dof) {
-								btTransform tr;
-								tr.setIdentity();
-								tr.setOrigin(localPivot);
-								btGeneric6DofConstraint* dof6 = new btGeneric6DofConstraint(
-										*body, tr, false);
-								dof6->setLinearLowerLimit(btVector3(0, 0, 0));
-								dof6->setLinearUpperLimit(btVector3(0, 0, 0));
-								dof6->setAngularLowerLimit(btVector3(0, 0, 0));
-								dof6->setAngularUpperLimit(btVector3(0, 0, 0));
-
-								m_dynamicsWorld->addConstraint(dof6);
-								m_pickConstraint = dof6;
-
-								dof6->setParam(BT_CONSTRAINT_STOP_CFM, 0.8, 0);
-								dof6->setParam(BT_CONSTRAINT_STOP_CFM, 0.8, 1);
-								dof6->setParam(BT_CONSTRAINT_STOP_CFM, 0.8, 2);
-								dof6->setParam(BT_CONSTRAINT_STOP_CFM, 0.8, 3);
-								dof6->setParam(BT_CONSTRAINT_STOP_CFM, 0.8, 4);
-								dof6->setParam(BT_CONSTRAINT_STOP_CFM, 0.8, 5);
-
-								dof6->setParam(BT_CONSTRAINT_STOP_ERP, 0.1, 0);
-								dof6->setParam(BT_CONSTRAINT_STOP_ERP, 0.1, 1);
-								dof6->setParam(BT_CONSTRAINT_STOP_ERP, 0.1, 2);
-								dof6->setParam(BT_CONSTRAINT_STOP_ERP, 0.1, 3);
-								dof6->setParam(BT_CONSTRAINT_STOP_ERP, 0.1, 4);
-								dof6->setParam(BT_CONSTRAINT_STOP_ERP, 0.1, 5);
-							} else {
-								btPoint2PointConstraint* p2p = new btPoint2PointConstraint(
-										*body, localPivot);
-								m_dynamicsWorld->addConstraint(p2p);
-								m_pickConstraint = p2p;
-								p2p->m_setting.m_impulseClamp = mousePickClamping;
-								//very weak constraint for picking
-								p2p->m_setting.m_tau = 0.001f;
-								/*
-								 p2p->setParam(BT_CONSTRAINT_CFM,0.8,0);
-								 p2p->setParam(BT_CONSTRAINT_CFM,0.8,1);
-								 p2p->setParam(BT_CONSTRAINT_CFM,0.8,2);
-								 p2p->setParam(BT_CONSTRAINT_ERP,0.1,0);
-								 p2p->setParam(BT_CONSTRAINT_ERP,0.1,1);
-								 p2p->setParam(BT_CONSTRAINT_ERP,0.1,2);
-								 */
-
-							}
-							use6Dof = !use6Dof;
-
-							//save mouse position for dragging
-							gOldPickingPos = rayTo;
-							gHitPos = pickPos;
-
-							gOldPickingDist = (pickPos - rayFrom).length();
-						}
-					}
-				}
-			}
-
-		} else {
-			removePickingConstraint();
-		}
-
-		break;
-
-	}
-	default: {
-	}
-	}
-
-}
-
-void DemoApplication::removePickingConstraint() {
-	if (m_pickConstraint && m_dynamicsWorld) {
-		m_dynamicsWorld->removeConstraint(m_pickConstraint);
-		delete m_pickConstraint;
-		//printf("removed constraint %i",gPickingConstraintId);
-		m_pickConstraint = 0;
-		pickedBody->forceActivationState(ACTIVE_TAG);
-		pickedBody->setDeactivationTime(0.f);
-		pickedBody = 0;
-	}
-}
-
-void DemoApplication::mouseMotionFunc(int x, int y) {
-
-	if (m_pickConstraint) {
-		//move the constraint pivot
-
-		if (m_pickConstraint->getConstraintType() == D6_CONSTRAINT_TYPE) {
-			btGeneric6DofConstraint* pickCon =
-					static_cast<btGeneric6DofConstraint*>(m_pickConstraint);
-			if (pickCon) {
-				//keep it at the same picking distance
-
-				btVector3 newRayTo = getRayTo(x, y);
-				btVector3 rayFrom;
-				btVector3 oldPivotInB = pickCon->getFrameOffsetA().getOrigin();
-
-				btVector3 newPivotB;
-				if (m_ortho) {
-					newPivotB = oldPivotInB;
-					newPivotB.setX(newRayTo.getX());
-					newPivotB.setY(newRayTo.getY());
-				} else {
-					rayFrom = m_cameraPosition;
-					btVector3 dir = newRayTo - rayFrom;
-					dir.normalize();
-					dir *= gOldPickingDist;
-
-					newPivotB = rayFrom + dir;
-				}
-				pickCon->getFrameOffsetA().setOrigin(newPivotB);
-			}
-
-		} else {
-			btPoint2PointConstraint* pickCon =
-					static_cast<btPoint2PointConstraint*>(m_pickConstraint);
-			if (pickCon) {
-				//keep it at the same picking distance
-
-				btVector3 newRayTo = getRayTo(x, y);
-				btVector3 rayFrom;
-				btVector3 oldPivotInB = pickCon->getPivotInB();
-				btVector3 newPivotB;
-				if (m_ortho) {
-					newPivotB = oldPivotInB;
-					newPivotB.setX(newRayTo.getX());
-					newPivotB.setY(newRayTo.getY());
-				} else {
-					rayFrom = m_cameraPosition;
-					btVector3 dir = newRayTo - rayFrom;
-					dir.normalize();
-					dir *= gOldPickingDist;
-
-					newPivotB = rayFrom + dir;
-				}
-				pickCon->setPivotB(newPivotB);
-			}
-		}
-	}
-
-	float dx, dy;
-	dx = btScalar(x) - m_mouseOldX;
-	dy = btScalar(y) - m_mouseOldY;
-
-	///only if ALT key is pressed (Maya style)
-	if (m_modifierKeys & BT_ACTIVE_ALT) {
-		if (m_mouseButtons & 2) {
-			btVector3 hor = getRayTo(0, 0) - getRayTo(1, 0);
-			btVector3 vert = getRayTo(0, 0) - getRayTo(0, 1);
-			btScalar multiplierX = btScalar(0.001);
-			btScalar multiplierY = btScalar(0.001);
-			if (m_ortho) {
-				multiplierX = 1;
-				multiplierY = 1;
-			}
-
-			m_cameraTargetPosition += hor * dx * multiplierX;
-			m_cameraTargetPosition += vert * dy * multiplierY;
-		}
-
-		if (m_mouseButtons & (2 << 2) && m_mouseButtons & 1) {
-		} else if (m_mouseButtons & 1) {
-			m_azi += dx * btScalar(0.2);
-			m_azi = fmodf(m_azi, btScalar(360.f));
-			m_ele += dy * btScalar(0.2);
-			m_ele = fmodf(m_ele, btScalar(180.f));
-		} else if (m_mouseButtons & 4) {
-			m_cameraDistance -= dy * btScalar(0.02f);
-			if (m_cameraDistance < btScalar(0.1))
-				m_cameraDistance = btScalar(0.1);
-
-		}
-	}
-
-	m_mouseOldX = x;
-	m_mouseOldY = y;
-	updateCamera();
-
-}
-
-btRigidBody* DemoApplication::localCreateRigidBody(float mass,
+btRigidBody* SimpleApplication::localCreateRigidBody(float mass,
 		const btTransform& startTransform, btCollisionShape* shape) {
 	btAssert((!shape || shape->getShapeType() != INVALID_SHAPE_PROXYTYPE));
 
@@ -903,7 +540,7 @@ btRigidBody* DemoApplication::localCreateRigidBody(float mass,
 }
 
 //See http://www.lighthouse3d.com/opengl/glut/index.php?bmpfontortho
-void DemoApplication::setOrthographicProjection() {
+void SimpleApplication::setOrthographicProjection() {
 
 	// switch to projection mode
 	glMatrixMode(GL_PROJECTION);
@@ -926,7 +563,7 @@ void DemoApplication::setOrthographicProjection() {
 
 }
 
-void DemoApplication::resetPerspectiveProjection() {
+void SimpleApplication::resetPerspectiveProjection() {
 
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
@@ -934,21 +571,17 @@ void DemoApplication::resetPerspectiveProjection() {
 	updateCamera();
 }
 
-extern CProfileIterator * m_profileIterator;
-
-void DemoApplication::displayProfileString(int xOffset, int yStart,
+void SimpleApplication::displayProfileString(int xOffset, int yStart,
 		char* message) {
 	glRasterPos3f(btScalar(xOffset), btScalar(yStart), btScalar(0));
 	GLDebugDrawString(xOffset, yStart, message);
 }
 
-void DemoApplication::showProfileInfo(int& xOffset, int& yStart, int yIncr) {
+void SimpleApplication::showProfileInfo(int& xOffset, int& yStart, int yIncr) {
 #ifndef BT_NO_PROFILE
 
 	static double time_since_reset = 0.f;
-	if (!m_idle) {
-		time_since_reset = CProfileManager::Get_Time_Since_Reset();
-	}
+	time_since_reset = CProfileManager::Get_Time_Since_Reset();
 
 	{
 		//recompute profiling data, and store profile strings
@@ -1014,11 +647,10 @@ void DemoApplication::showProfileInfo(int& xOffset, int& yStart, int yIncr) {
 
 	}
 #endif//BT_NO_PROFILE
-
 }
 
 //
-void DemoApplication::renderscene(int pass) {
+void SimpleApplication::renderscene(int pass) {
 	btScalar m[16];
 	btMatrix3x3 rot;
 	rot.setIdentity();
@@ -1086,7 +718,7 @@ void DemoApplication::renderscene(int pass) {
 }
 
 //
-void DemoApplication::renderme() {
+void SimpleApplication::renderme() {
 	myinit();
 
 	updateCamera();
@@ -1149,26 +781,6 @@ void DemoApplication::renderme() {
 
 			showProfileInfo(xOffset, yStart, yIncr);
 
-#ifdef USE_QUICKPROF
-
-			if ( getDebugMode() & btIDebugDraw::DBG_ProfileTimings)
-			{
-				static int counter = 0;
-				counter++;
-				std::map<std::string, hidden::ProfileBlock*>::iterator iter;
-				for (iter = btProfiler::mProfileBlocks.begin(); iter != btProfiler::mProfileBlocks.end(); ++iter)
-				{
-					char blockTime[128];
-					sprintf(blockTime, "%s: %lf",&((*iter).first[0]),btProfiler::getBlockTime((*iter).first, btProfiler::BLOCK_CYCLE_SECONDS)); //BLOCK_TOTAL_PERCENT));
-					glRasterPos3f(xOffset,yStart,0);
-					GLDebugDrawString(BMF_GetFont(BMF_kHelvetica10),blockTime);
-					yStart += yIncr;
-
-				}
-
-			}
-#endif //USE_QUICKPROF
-
 			resetPerspectiveProjection();
 		}
 
@@ -1182,8 +794,8 @@ void DemoApplication::renderme() {
 
 #include "BulletCollision/BroadphaseCollision/btAxisSweep3.h"
 
-void DemoApplication::clientResetScene() {
-	removePickingConstraint();
+void SimpleApplication::clientResetScene() {
+//	removePickingConstraint();
 
 #ifdef SHOW_NUM_DEEP_PENETRATIONS
 	gNumDeepPenetrationChecks = 0;
@@ -1245,7 +857,7 @@ void DemoApplication::clientResetScene() {
 
 }
 
-void DemoApplication::updateModifierKeys() {
+void SimpleApplication::updateModifierKeys() {
 	m_modifierKeys = 0;
 	if (glutGetModifiers() & GLUT_ACTIVE_ALT)
 		m_modifierKeys |= BT_ACTIVE_ALT;
@@ -1257,7 +869,7 @@ void DemoApplication::updateModifierKeys() {
 		m_modifierKeys |= BT_ACTIVE_SHIFT;
 }
 
-void DemoApplication::specialKeyboard(int key, int x, int y) {
+void SimpleApplication::specialKeyboard(int key, int x, int y) {
 	(void) x;
 	(void) y;
 
@@ -1288,27 +900,6 @@ void DemoApplication::specialKeyboard(int key, int x, int y) {
 		}
 		break;
 	}
-	case GLUT_KEY_LEFT:
-		stepLeft();
-		break;
-	case GLUT_KEY_RIGHT:
-		stepRight();
-		break;
-	case GLUT_KEY_UP:
-		stepFront();
-		break;
-	case GLUT_KEY_DOWN:
-		stepBack();
-		break;
-	case GLUT_KEY_PAGE_UP:
-		zoomIn();
-		break;
-	case GLUT_KEY_PAGE_DOWN:
-		zoomOut();
-		break;
-	case GLUT_KEY_HOME:
-		toggleIdle();
-		break;
 	default:
 		//        std::cout << "unused (special) key : " << key << std::endl;
 		break;
@@ -1318,6 +909,6 @@ void DemoApplication::specialKeyboard(int key, int x, int y) {
 
 }
 
-void DemoApplication::swapBuffers() {
+void SimpleApplication::swapBuffers() {
 	glutSwapBuffers();
 }

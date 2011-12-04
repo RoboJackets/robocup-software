@@ -39,11 +39,6 @@
 #include "GL/freeglut_ext.h" //to be able to return from glutMainLoop()
 #endif
 
-class DemoApplication;
-
-int glutmain(int argc, char **argv, int width, int height, const char* title,
-		DemoApplication* demoApp);
-
 #if defined(BT_USE_DOUBLE_PRECISION)
 #define btglLoadMatrix glLoadMatrixd
 #define btglMultMatrix glMultMatrixd

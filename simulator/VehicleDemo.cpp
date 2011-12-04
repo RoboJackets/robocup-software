@@ -26,7 +26,6 @@
 #include <stdio.h> //printf debugging
 #include "GL_ShapeDrawer.h"
 
-#include <GlutStuff.h>
 #include "VehicleDemo.hpp"
 
 const int maxProxies = 32766;
@@ -369,7 +368,7 @@ void VehicleDemo::renderme() {
 			worldBoundsMax);
 
 	_vehicle->drawWheels(m_shapeDrawer, worldBoundsMin, worldBoundsMax);
-	DemoApplication::renderme();
+	SimpleApplication::renderme();
 }
 
 void VehicleDemo::clientMoveAndDisplay() {
@@ -382,9 +381,9 @@ void VehicleDemo::clientMoveAndDisplay() {
 
 	if (m_dynamicsWorld) {
 		//during idle mode, just run 1 simulation step maximum
-		int maxSimSubSteps = m_idle ? 1 : 2;
-		if (m_idle)
-			dt = 1.0 / 420.f;
+		int maxSimSubSteps = 2;
+//		if (m_idle)
+//			dt = 1.0 / 420.f;
 
 //		int numSimSteps =
 			m_dynamicsWorld->stepSimulation(dt, maxSimSubSteps);
@@ -455,7 +454,7 @@ void VehicleDemo::specialKeyboardUp(int key, int x, int y) {
 		break;
 	}
 	default:
-		DemoApplication::specialKeyboardUp(key, x, y);
+		SimpleApplication::specialKeyboardUp(key, x, y);
 		break;
 	}
 }
@@ -480,7 +479,7 @@ void VehicleDemo::specialKeyboard(int key, int x, int y) {
 		break;
 	}
 	default:
-		DemoApplication::specialKeyboard(key, x, y);
+		SimpleApplication::specialKeyboard(key, x, y);
 		break;
 	}
 }
@@ -489,7 +488,7 @@ void VehicleDemo::updateCamera() {
 
 	//#define DISABLE_CAMERA 1
 #ifdef DISABLE_CAMERA
-	DemoApplication::updateCamera();
+	SimpleApplication::updateCamera();
 	return;
 #endif //DISABLE_CAMERA
 	glMatrixMode(GL_PROJECTION);
