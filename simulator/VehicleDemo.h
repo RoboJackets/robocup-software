@@ -25,7 +25,42 @@ class btCollisionShape;
 
 #include <GlutDemoApplication.h>
 
+class VehicleDemo;
+
 class Vehicle {
+public:
+
+	// physics components
+	btRigidBody* m_carChassis;
+	btRaycastVehicle::btVehicleTuning m_tuning;
+	btVehicleRaycaster* m_vehicleRayCaster;
+	btRaycastVehicle* m_vehicle;
+	btCollisionShape* m_wheelShape;
+
+	// links to the engine
+	btDynamicsWorld*		m_dynamicsWorld;
+	btAlignedObjectArray<btCollisionShape*>* m_collisionShapes;
+
+	Vehicle(btDynamicsWorld* world, btAlignedObjectArray<btCollisionShape*>* collision_shapes)
+	: m_carChassis(0), m_vehicle(0), m_wheelShape(0),
+	  m_dynamicsWorld(world), m_collisionShapes(collision_shapes)
+	{}
+
+	~Vehicle() {
+		delete m_vehicleRayCaster;
+		delete m_vehicle;
+		delete m_wheelShape;
+	}
+
+	void initPhysics(VehicleDemo* env);
+
+	void drawWheels(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax);
+
+	void move();
+
+	void resetScene();
+
+	void getWorldTransform(btTransform& chassisWorldTrans) const;
 
 };
 
@@ -33,12 +68,13 @@ class Vehicle {
 class VehicleDemo: public GlutDemoApplication {
 public:
 
-	// VehicleParts
-	btRigidBody* m_carChassis;
-	btRaycastVehicle::btVehicleTuning m_tuning;
-	btVehicleRaycaster* m_vehicleRayCaster;
-	btRaycastVehicle* m_vehicle;
-	btCollisionShape* m_wheelShape;
+//	// VehicleParts
+//	btRigidBody* m_carChassis;
+//	btRaycastVehicle::btVehicleTuning m_tuning;
+//	btVehicleRaycaster* m_vehicleRayCaster;
+//	btRaycastVehicle* m_vehicle;
+//	btCollisionShape* m_wheelShape;
+	Vehicle* _vehicle;
 
 	btAlignedObjectArray<btCollisionShape*> m_collisionShapes;
 
@@ -84,7 +120,7 @@ public:
 			btAlignedObjectArray<btCollisionShape*>& m_collisionShapes);
 
 	// rendering
-	void drawWheels(const btVector3& worldBoundsMin, const btVector3& worldBoundsMax);
+//	void drawWheels(const btVector3& worldBoundsMin, const btVector3& worldBoundsMax);
 
 	static DemoApplication* Create() {
 		VehicleDemo* demo = new VehicleDemo();
