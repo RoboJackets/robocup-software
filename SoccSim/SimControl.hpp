@@ -7,12 +7,12 @@
 class Env;
 class RobotTableModel;
 
-class SimControl: public QMainWindow
+class SimulatorWindow: public QMainWindow
 {
 	Q_OBJECT;
 	
 public:
-	SimControl(QWidget *parent = 0);
+	SimulatorWindow(QWidget *parent = 0);
 	
 	void env(Env *value);
 

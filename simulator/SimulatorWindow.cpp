@@ -1,4 +1,5 @@
-#include "SimControl.hpp"
+#include "SimulatorWindow.hpp"
+#include "SimViewer.hpp"
 #include "Physics/Env.hpp"
 
 #include <QAbstractTableModel>
@@ -134,25 +135,33 @@ private:
 	Env *_env;
 };
 
-SimControl::SimControl(QWidget* parent):
+////////////////////////////////////
+// SimulatorWindow class
+////////////////////////////////////
+SimulatorWindow::SimulatorWindow(QWidget* parent):
 	QMainWindow(parent)
 {
 	_env = 0;
 	
 	_ui.setupUi(this);
 	
+	// set up table
 	_model = new RobotTableModel();
 	_ui.robotTable->setModel(_model);
 	_ui.robotTable->resizeColumnsToContents();
+
+	// set up the viewer
+  _ui.viewerWidget = new SimViewer(_ui.splitter);
+  _ui.viewerWidget->setObjectName(QString::fromUtf8("viewerWidget"));
 }
 
-void SimControl::env(Env* value)
+void SimulatorWindow::env(Env* value)
 {
 	_env = value;
 	_model->env(value);
 }
 
-void SimControl::on_dropFrame_clicked()
+void SimulatorWindow::on_dropFrame_clicked()
 {
 	if (_env)
 	{
@@ -160,7 +169,7 @@ void SimControl::on_dropFrame_clicked()
 	}
 }
 
-void SimControl::on_ballVisibility_valueChanged(int value)
+void SimulatorWindow::on_ballVisibility_valueChanged(int value)
 {
 	if (_env)
 	{
