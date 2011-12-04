@@ -149,10 +149,6 @@ SimulatorWindow::SimulatorWindow(QWidget* parent):
 	_model = new RobotTableModel();
 	_ui.robotTable->setModel(_model);
 	_ui.robotTable->resizeColumnsToContents();
-
-	// set up the viewer
-  _ui.viewerWidget = new SimViewer(_ui.splitter);
-  _ui.viewerWidget->setObjectName(QString::fromUtf8("viewerWidget"));
 }
 
 void SimulatorWindow::env(Env* value)

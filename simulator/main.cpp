@@ -86,8 +86,8 @@ int main(int argc, char* argv[])
 	
 	int ret = app.exec();
 
+	// cleanup
 	delete env;
-
 	delete config;
 
 	return ret;
