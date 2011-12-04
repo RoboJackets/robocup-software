@@ -2,12 +2,7 @@ Import('*')
 
 e = env.Clone()
 
-#bullet_path=Dir('#/build/lib/physx')
-#bullet_libpath = physx_path.Dir('lib')
-
-# Link with Bullet 
-#e.Append(LIBPATH=bullet_libpath)
-#e.Append(LIBS=['NxCooking', 'PhysXCore', 'PhysXLoader'])
+# Include everything from bullet 
 e.Append(CPPPATH=['#/bullet/src', '#/bullet/Demos/OpenGL'])
 
 # Find uic output

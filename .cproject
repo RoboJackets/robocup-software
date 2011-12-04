@@ -28,7 +28,8 @@
 									<listOptionValue builtIn="false" value="/usr/include/boost"/>
 									<listOptionValue builtIn="false" value="/usr/include/qt4/Qt"/>
 									<listOptionValue builtIn="false" value="/usr/include/qt4/QtCore"/>
-									<listOptionValue builtIn="false" value="/usr/include/bullet"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Robocup/bullet/src}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/Robocup/bullet/Demos/OpenGL}&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.1595773352" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
