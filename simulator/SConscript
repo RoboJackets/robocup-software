@@ -48,5 +48,9 @@ Default(e.Install(exec_dir, p1))
 Help('simulator: Provides simulation of SSL robots, using Bullet Physics\n')
 
 # add demos for testing
-p2 = e.Program('vehicle_demo', ['vehicle_demo.cpp', 'VehicleDemo.cpp'])
+p2 = e.Program('vehicle_demo', [
+	'vehicle_demo.cpp', 
+	'VehicleDemo.cpp',
+	'DemoApplication.cpp',
+	'GlutStuff.cpp'])
 Default(e.Install(exec_dir, p2))
