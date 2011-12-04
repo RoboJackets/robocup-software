@@ -22,12 +22,6 @@
 /// with gears etc.
 #include <btBulletDynamicsCommon.h>
 
-int rightIndex = 0;
-int upIndex = 1;
-int forwardIndex = 2;
-btVector3 wheelDirectionCS0(0, -1, 0);
-btVector3 wheelAxleCS(-1, 0, 0);
-
 #include "GLDebugDrawer.h"
 #include <stdio.h> //printf debugging
 #include "GL_ShapeDrawer.h"
@@ -41,24 +35,6 @@ const int maxOverlap = 65535;
 ///btRaycastVehicle is the interface for the constraint that implements the raycast vehicle
 ///notice that for higher-quality slow-moving vehicles, another approach might be better
 ///implementing explicit hinged-wheel constraints with cylinder collision, rather then raycasts
-float gEngineForce = 0.f;
-float gBreakingForce = 0.f;
-
-float maxEngineForce = 1000.f; //this should be engine/velocity dependent
-float maxBreakingForce = 100.f;
-
-float gVehicleSteering = 0.f;
-float steeringIncrement = 0.04f;
-float steeringClamp = 0.3f;
-float wheelRadius = 0.5f;
-float wheelWidth = 0.4f;
-float wheelFriction = 1000; //BT_LARGE_FLOAT;
-float suspensionStiffness = 20.f;
-float suspensionDamping = 2.3f;
-float suspensionCompression = 4.4f;
-float rollInfluence = 0.1f; //1.0f;
-
-btScalar suspensionRestLength(0.6);
 
 #define CUBE_HALF_EXTENTS 1
 
@@ -67,7 +43,28 @@ using namespace std;
 ////////////////////////////////////
 // Vehicle class
 ////////////////////////////////////
+// static physics parameters
+static const float maxEngineForce = 1000.f; //this should be engine/velocity dependent
+static const float maxBreakingForce = 100.f;
+static const float steeringIncrement = 0.04f;
+static const float steeringClamp = 0.3f;
+static const float wheelRadius = 0.5f;
+static const float wheelWidth = 0.4f;
+static const float wheelFriction = 1000; //BT_LARGE_FLOAT;
+static const float suspensionStiffness = 20.f;
+static const float suspensionDamping = 2.3f;
+static const float suspensionCompression = 4.4f;
+static const float rollInfluence = 0.1f; //1.0f;
+static const btScalar suspensionRestLength = 0.6f;
+
 void Vehicle::initPhysics(VehicleDemo* env) {
+
+	// Assumes that Y is up
+	int rightIndex = 0;
+	int upIndex = 1;
+	int forwardIndex = 2;
+	btVector3 wheelDirectionCS0(0, -1, 0);
+	btVector3 wheelAxleCS(-1, 0, 0);
 
 	btCollisionShape* chassisShape = new btBoxShape(btVector3(1.f, 0.5f, 2.f));
 	m_collisionShapes->push_back(chassisShape);
@@ -142,6 +139,28 @@ void Vehicle::initPhysics(VehicleDemo* env) {
 			wheel.m_rollInfluence = rollInfluence;
 		}
 	}
+}
+
+void Vehicle::steerLeft() {
+	gVehicleSteering += steeringIncrement;
+	if (gVehicleSteering > steeringClamp)
+		gVehicleSteering = steeringClamp;
+}
+
+void Vehicle::steerRight() {
+	gVehicleSteering -= steeringIncrement;
+	if (gVehicleSteering < -steeringClamp)
+		gVehicleSteering = -steeringClamp;
+}
+
+void Vehicle::driveForward() {
+	gEngineForce = maxEngineForce;
+	gBreakingForce = 0.f;
+}
+
+void Vehicle::driveBackward() {
+	gBreakingForce = maxBreakingForce;
+	gEngineForce = 0.f;
 }
 
 void Vehicle::move() {
@@ -448,11 +467,11 @@ void VehicleDemo::clientResetScene() {
 void VehicleDemo::specialKeyboardUp(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_UP: {
-		gEngineForce = 0.f;
+		_vehicle->gEngineForce = 0.f;
 		break;
 	}
 	case GLUT_KEY_DOWN: {
-		gBreakingForce = 0.f;
+		_vehicle->gBreakingForce = 0.f;
 		break;
 	}
 	default:
@@ -465,27 +484,31 @@ void VehicleDemo::specialKeyboard(int key, int x, int y) {
 	//	printf("key = %i x=%i y=%i\n",key,x,y);
 	switch (key) {
 	case GLUT_KEY_LEFT: {
-		gVehicleSteering += steeringIncrement;
-		if (gVehicleSteering > steeringClamp)
-			gVehicleSteering = steeringClamp;
+		_vehicle->steerLeft();
+//		gVehicleSteering += steeringIncrement;
+//		if (gVehicleSteering > steeringClamp)
+//			gVehicleSteering = steeringClamp;
 
 		break;
 	}
 	case GLUT_KEY_RIGHT: {
-		gVehicleSteering -= steeringIncrement;
-		if (gVehicleSteering < -steeringClamp)
-			gVehicleSteering = -steeringClamp;
+		_vehicle->steerRight();
+//		gVehicleSteering -= steeringIncrement;
+//		if (gVehicleSteering < -steeringClamp)
+//			gVehicleSteering = -steeringClamp;
 
 		break;
 	}
 	case GLUT_KEY_UP: {
-		gEngineForce = maxEngineForce;
-		gBreakingForce = 0.f;
+		_vehicle->driveForward();
+//		gEngineForce = maxEngineForce;
+//		gBreakingForce = 0.f;
 		break;
 	}
 	case GLUT_KEY_DOWN: {
-		gBreakingForce = maxBreakingForce;
-		gEngineForce = 0.f;
+		_vehicle->driveBackward();
+//		gBreakingForce = maxBreakingForce;
+//		gEngineForce = 0.f;
 		break;
 	}
 	default:

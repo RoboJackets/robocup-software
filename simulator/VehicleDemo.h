@@ -37,6 +37,11 @@ public:
 	btRaycastVehicle* m_vehicle;
 	btCollisionShape* m_wheelShape;
 
+	// control inputs
+	float gEngineForce;
+	float gBreakingForce;
+	float gVehicleSteering;
+
 	// links to the engine
 	btDynamicsWorld*		m_dynamicsWorld;
 	btAlignedObjectArray<btCollisionShape*>* m_collisionShapes;
@@ -44,7 +49,11 @@ public:
 	Vehicle(btDynamicsWorld* world, btAlignedObjectArray<btCollisionShape*>* collision_shapes)
 	: m_carChassis(0), m_vehicle(0), m_wheelShape(0),
 	  m_dynamicsWorld(world), m_collisionShapes(collision_shapes)
-	{}
+	{
+		gEngineForce = 0.f;
+		gBreakingForce = 0.f;
+		gVehicleSteering = 0.f;
+	}
 
 	~Vehicle() {
 		delete m_vehicleRayCaster;
@@ -62,18 +71,19 @@ public:
 
 	void getWorldTransform(btTransform& chassisWorldTrans) const;
 
+	// bang-bang steering and throttle
+	void steerLeft();
+	void steerRight();
+	void driveForward();
+	void driveBackward();
+
 };
 
 ///VehicleDemo shows how to setup and use the built-in raycast vehicle
 class VehicleDemo: public GlutDemoApplication {
 public:
 
-//	// VehicleParts
-//	btRigidBody* m_carChassis;
-//	btRaycastVehicle::btVehicleTuning m_tuning;
-//	btVehicleRaycaster* m_vehicleRayCaster;
-//	btRaycastVehicle* m_vehicle;
-//	btCollisionShape* m_wheelShape;
+	// Add the vehicle
 	Vehicle* _vehicle;
 
 	btAlignedObjectArray<btCollisionShape*> m_collisionShapes;
@@ -118,9 +128,6 @@ public:
 	std::pair<btCollisionShape*, btTransform> addGround();
 	void addVehicle(btDynamicsWorld* m_dynamicsWorld,
 			btAlignedObjectArray<btCollisionShape*>& m_collisionShapes);
-
-	// rendering
-//	void drawWheels(const btVector3& worldBoundsMin, const btVector3& worldBoundsMax);
 
 	static DemoApplication* Create() {
 		VehicleDemo* demo = new VehicleDemo();
