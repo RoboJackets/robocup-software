@@ -23,7 +23,7 @@ class btCollisionShape;
 
 #include <BulletDynamics/Vehicle/btRaycastVehicle.h>
 
-#include "DemoApplication.hpp"
+#include "SimpleApplication.hpp"
 
 class VehicleDemo;
 
@@ -97,7 +97,7 @@ public:
 };
 
 ///VehicleDemo shows how to setup and use the built-in raycast vehicle
-class VehicleDemo: public DemoApplication {
+class VehicleDemo: public SimpleApplication {
 public:
 
 	// Drivable vehicle
@@ -144,7 +144,7 @@ public:
 	void addVehicle(btDynamicsWorld* m_dynamicsWorld,
 			btAlignedObjectArray<btCollisionShape*>& m_collisionShapes);
 
-	static DemoApplication* Create() {
+	static SimpleApplication* Create() {
 		VehicleDemo* demo = new VehicleDemo();
 		demo->myinit();
 		demo->initPhysics();

@@ -15,7 +15,7 @@
 
 #pragma once
 
-#include "GlutStuff.hpp"
+#include "GlutDefs.hpp"
 #include "GL_ShapeDrawer.h"
 
 #include <stdlib.h>
@@ -33,7 +33,7 @@ class btDynamicsWorld;
 class btRigidBody;
 class btTypedConstraint;
 
-class DemoApplication {
+class SimpleApplication {
 protected:
 	void displayProfileString(int xOffset, int yStart, char* message);
 	class CProfileIterator* m_profileIterator;
@@ -45,11 +45,6 @@ protected:
 	///this is the most important class
 	btDynamicsWorld* m_dynamicsWorld;
 
-	///constraint for mouse picking
-	btTypedConstraint* m_pickConstraint;
-
-	virtual void removePickingConstraint();
-
 	btCollisionShape* m_shootBoxShape;
 
 	float m_cameraDistance;
@@ -60,9 +55,6 @@ protected:
 	btVector3 m_cameraPosition;
 	btVector3 m_cameraTargetPosition; //look at
 
-	int m_mouseOldX;
-	int m_mouseOldY;
-	int m_mouseButtons;
 public:
 	int m_modifierKeys;
 protected:
@@ -85,7 +77,7 @@ protected:
 
 	bool m_stepping;
 	bool m_singleStep;
-	bool m_idle;
+//	bool m_idle;
 	int m_lastKey;
 
 	void showProfileInfo(int& xOffset, int& yStart, int yIncr);
@@ -98,9 +90,9 @@ protected:
 
 public:
 
-	DemoApplication();
+	SimpleApplication();
 
-	virtual ~DemoApplication();
+	virtual ~SimpleApplication();
 
 	btDynamicsWorld* getDynamicsWorld() {
 		return m_dynamicsWorld;
@@ -132,7 +124,7 @@ public:
 		return m_enableshadows;
 	}
 
-	int getDebugMode() {
+	int getDebugMode() const {
 		return m_debugMode;
 	}
 
@@ -150,8 +142,6 @@ public:
 	}
 
 	virtual void myinit();
-
-	void toggleIdle();
 
 	virtual void updateCamera();
 
@@ -209,32 +199,13 @@ public:
 
 	virtual void reshape(int w, int h);
 
-	virtual void mouseFunc(int button, int state, int x, int y);
-
-	virtual void mouseMotionFunc(int x, int y);
-
-	virtual void displayCallback();
+	virtual void displayCallback() {}
 
 	virtual void renderme();
 
 	virtual void swapBuffers();
 
 	virtual void updateModifierKeys();
-
-	void stepLeft();
-	void stepRight();
-	void stepFront();
-	void stepBack();
-	void zoomIn();
-	void zoomOut();
-
-	bool isIdle() const {
-		return m_idle;
-	}
-
-	void setIdle(bool idle) {
-		m_idle = idle;
-	}
 
 };
 
