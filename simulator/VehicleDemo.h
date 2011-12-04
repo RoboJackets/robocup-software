@@ -79,24 +79,39 @@ public:
 
 };
 
+class GroundSurface {
+public:
+	// Terrain components
+	class btTriangleIndexVertexArray* m_indexVertexArrays;
+	btVector3* m_vertices;
+
+	// links to the engine
+	btDynamicsWorld*		m_dynamicsWorld;
+	btAlignedObjectArray<btCollisionShape*>* m_collisionShapes;
+
+	GroundSurface(btDynamicsWorld* world, btAlignedObjectArray<btCollisionShape*>* collision_shapes);
+
+	~GroundSurface();
+
+	void initPhysics(VehicleDemo* env);
+};
+
 ///VehicleDemo shows how to setup and use the built-in raycast vehicle
 class VehicleDemo: public GlutDemoApplication {
 public:
 
-	// Add the vehicle
+	// Drivable vehicle
 	Vehicle* _vehicle;
 
-	btAlignedObjectArray<btCollisionShape*> m_collisionShapes;
+	// Ground
+	GroundSurface* _ground;
 
 	// Environment parts
+	btAlignedObjectArray<btCollisionShape*> m_collisionShapes;
 	class btBroadphaseInterface* m_overlappingPairCache;
 	class btCollisionDispatcher* m_dispatcher;
 	class btConstraintSolver* m_constraintSolver;
 	class btDefaultCollisionConfiguration* m_collisionConfiguration;
-	class btTriangleIndexVertexArray* m_indexVertexArrays;
-
-	// ground triangle vertices
-	btVector3* m_vertices;
 
 	// Camera components
 	float m_cameraHeight;

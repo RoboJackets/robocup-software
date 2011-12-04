@@ -212,12 +212,13 @@ void Vehicle::getWorldTransform(btTransform& chassisWorldTrans) const {
 }
 
 ////////////////////////////////////
-// VehicleDemo class
+// GroundSurface class
 ////////////////////////////////////
-pair<btCollisionShape*, btTransform> VehicleDemo::addGround()
+
+void GroundSurface::initPhysics(VehicleDemo* env)
 {
 	btCollisionShape* groundShape = new btBoxShape(btVector3(50, 3, 50));
-	m_collisionShapes.push_back(groundShape);
+	m_collisionShapes->push_back(groundShape);
 	btTransform tr;
 	tr.setIdentity();
 
@@ -270,17 +271,29 @@ pair<btCollisionShape*, btTransform> VehicleDemo::addGround()
 
 	tr.setOrigin(btVector3(0, -4.5f, 0));
 
-	m_collisionShapes.push_back(groundShape);
+	m_collisionShapes->push_back(groundShape);
 
 	//create ground object
-	localCreateRigidBody(0, tr, groundShape);
+	env->localCreateRigidBody(0, tr, groundShape);
+}
 
-	return make_pair(groundShape, tr);
+GroundSurface::GroundSurface(btDynamicsWorld* world, btAlignedObjectArray<btCollisionShape*>* collision_shapes)
+: m_indexVertexArrays(0), m_vertices(0), m_dynamicsWorld(world), m_collisionShapes(collision_shapes)
+{
+}
+
+GroundSurface::~GroundSurface() {
+	delete m_indexVertexArrays;
+	delete m_vertices;
 }
 
 ////////////////////////////////////
+// VehicleDemo class
+////////////////////////////////////
+
+////////////////////////////////////
 VehicleDemo::VehicleDemo() :
-	_vehicle(0), m_indexVertexArrays(0), m_vertices(0), m_cameraHeight(4.f),
+	_vehicle(0), _ground(0), m_cameraHeight(4.f),
 	m_minCameraDistance(3.f), m_maxCameraDistance(10.f) {
 	m_cameraPosition = btVector3(30, 30, 30);
 }
@@ -305,8 +318,7 @@ VehicleDemo::~VehicleDemo() {
 		delete shape;
 	}
 
-	delete m_indexVertexArrays;
-	delete m_vertices;
+	delete _ground;
 
 	//delete dynamics world
 	delete m_dynamicsWorld;
@@ -340,12 +352,8 @@ void VehicleDemo::initPhysics() {
 			m_overlappingPairCache, m_constraintSolver, m_collisionConfiguration);
 
 	// Set up the ground
-	btCollisionShape* groundShape;
-	btTransform groundTr;
-	boost::tie(groundShape, groundTr) = addGround();
-
-	//create ground object - static if mass is zero
-	localCreateRigidBody(0, groundTr, groundShape);
+	_ground = new GroundSurface(m_dynamicsWorld, &m_collisionShapes);
+	_ground->initPhysics(this);
 
 	// Set up the vehicle
 	_vehicle = new Vehicle(m_dynamicsWorld, &m_collisionShapes);
@@ -371,19 +379,6 @@ void VehicleDemo::clientMoveAndDisplay() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	_vehicle->move();
-//	{
-//		int wheelIndex = 2;
-//		m_vehicle->applyEngineForce(gEngineForce, wheelIndex);
-//		m_vehicle->setBrake(gBreakingForce, wheelIndex);
-//		wheelIndex = 3;
-//		m_vehicle->applyEngineForce(gEngineForce, wheelIndex);
-//		m_vehicle->setBrake(gBreakingForce, wheelIndex);
-//
-//		wheelIndex = 0;
-//		m_vehicle->setSteeringValue(gVehicleSteering, wheelIndex);
-//		wheelIndex = 1;
-//		m_vehicle->setSteeringValue(gVehicleSteering, wheelIndex);
-//	}
 
 	float dt = getDeltaTimeMicroseconds() * 0.000001f;
 
@@ -449,19 +444,6 @@ void VehicleDemo::displayCallback(void) {
 void VehicleDemo::clientResetScene() {
 	if (_vehicle)
 		_vehicle->resetScene();
-//	gVehicleSteering = 0.f;
-//	m_carChassis->setCenterOfMassTransform(btTransform::getIdentity());
-//	m_carChassis->setLinearVelocity(btVector3(0, 0, 0));
-//	m_carChassis->setAngularVelocity(btVector3(0, 0, 0));
-//	m_dynamicsWorld->getBroadphase()->getOverlappingPairCache()->cleanProxyFromPairs(
-//			m_carChassis->getBroadphaseHandle(), getDynamicsWorld()->getDispatcher());
-//	if (m_vehicle) {
-//		m_vehicle->resetSuspension();
-//		for (int i = 0; i < m_vehicle->getNumWheels(); i++) {
-//			//synchronize the wheels with the (interpolated) chassis worldtransform
-//			m_vehicle->updateWheelTransform(i, true);
-//		}
-//	}
 }
 
 void VehicleDemo::specialKeyboardUp(int key, int x, int y) {
@@ -485,30 +467,18 @@ void VehicleDemo::specialKeyboard(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_LEFT: {
 		_vehicle->steerLeft();
-//		gVehicleSteering += steeringIncrement;
-//		if (gVehicleSteering > steeringClamp)
-//			gVehicleSteering = steeringClamp;
-
 		break;
 	}
 	case GLUT_KEY_RIGHT: {
 		_vehicle->steerRight();
-//		gVehicleSteering -= steeringIncrement;
-//		if (gVehicleSteering < -steeringClamp)
-//			gVehicleSteering = -steeringClamp;
-
 		break;
 	}
 	case GLUT_KEY_UP: {
 		_vehicle->driveForward();
-//		gEngineForce = maxEngineForce;
-//		gBreakingForce = 0.f;
 		break;
 	}
 	case GLUT_KEY_DOWN: {
 		_vehicle->driveBackward();
-//		gBreakingForce = maxBreakingForce;
-//		gEngineForce = 0.f;
 		break;
 	}
 	default:
