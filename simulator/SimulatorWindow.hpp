@@ -2,17 +2,17 @@
 
 #include <QMainWindow>
 
-#include "ui_SimControl.h"
+#include "ui_SimulatorWindow.h"
 
 class Env;
 class RobotTableModel;
 
-class SimControl: public QMainWindow
+class SimulatorWindow: public QMainWindow
 {
 	Q_OBJECT;
 	
 public:
-	SimControl(QWidget *parent = 0);
+	SimulatorWindow(QWidget *parent = 0);
 	
 	void env(Env *value);
 
@@ -21,7 +21,7 @@ private slots:
 	void on_ballVisibility_valueChanged(int value);
 	
 private:
-	Ui_SimControl _ui;
+	Ui_SimulatorWindow _ui;
 	Env *_env;
 	RobotTableModel *_model;
 };

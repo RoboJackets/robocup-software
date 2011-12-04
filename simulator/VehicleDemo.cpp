@@ -290,8 +290,6 @@ GroundSurface::~GroundSurface() {
 ////////////////////////////////////
 // VehicleDemo class
 ////////////////////////////////////
-
-////////////////////////////////////
 VehicleDemo::VehicleDemo() :
 	_vehicle(0), _ground(0), m_cameraHeight(4.f),
 	m_minCameraDistance(3.f), m_maxCameraDistance(10.f) {

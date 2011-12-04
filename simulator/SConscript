@@ -26,7 +26,8 @@ e.Append(LIBS=[
 
 p1 = e.Program('simulator', [
 	'main.cpp',
-	'SimControl.cpp',
+	'SimulatorWindow.cpp',
+	'SimViewer.cpp',
 	'Config.cpp',
 	'Physics/Env.cpp',
 	'Physics/Entity.cpp',
@@ -35,7 +36,7 @@ p1 = e.Program('simulator', [
 	'Physics/Robot.cpp'])
 
 uics = e.Uic4([
-	'ui/SimControl.ui'
+	'ui/SimulatorWindow.ui'
 ])
 e.Depends(p1, uics)
 
