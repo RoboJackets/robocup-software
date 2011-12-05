@@ -291,8 +291,8 @@ GroundSurface::~GroundSurface() {
 ////////////////////////////////////
 VehicleDemo::VehicleDemo() :
 	_vehicle(0), _ground(0), m_cameraHeight(4.f),
-	m_minCameraDistance(3.f), m_maxCameraDistance(10.f) {
-	m_cameraPosition = btVector3(30, 30, 30);
+	m_minCameraDistance(3.f), m_maxCameraDistance(10.f)
+{
 }
 
 VehicleDemo::~VehicleDemo() {
@@ -356,7 +356,11 @@ void VehicleDemo::initPhysics() {
 	_vehicle = new Vehicle(m_dynamicsWorld, &m_collisionShapes);
 	_vehicle->initPhysics(this);
 
-	setCameraDistance(26.f);
+	// Set up the camera
+	_camera = new SimpleCamera;
+	_camera->setCameraPosition(btVector3(30, 30, 30));
+	_camera->setCameraDistance(26.f);
+	_camera->setDynamicsWorld(m_dynamicsWorld);
 }
 
 //to be implemented by the demo
@@ -367,8 +371,9 @@ void VehicleDemo::renderme() {
 	getDynamicsWorld()->getBroadphase()->getBroadphaseAabb(worldBoundsMin,
 			worldBoundsMax);
 
-	_vehicle->drawWheels(m_shapeDrawer, worldBoundsMin, worldBoundsMax);
-	SimpleApplication::renderme();
+	_vehicle->drawWheels(camera()->shapeDrawer(), worldBoundsMin, worldBoundsMax);
+
+	_camera->renderme(m_debugMode);
 }
 
 void VehicleDemo::clientMoveAndDisplay() {
@@ -382,33 +387,8 @@ void VehicleDemo::clientMoveAndDisplay() {
 	if (m_dynamicsWorld) {
 		//during idle mode, just run 1 simulation step maximum
 		int maxSimSubSteps = 2;
-//		if (m_idle)
-//			dt = 1.0 / 420.f;
-
-//		int numSimSteps =
-			m_dynamicsWorld->stepSimulation(dt, maxSimSubSteps);
-
-		//#define VERBOSE_FEEDBACK
-#ifdef VERBOSE_FEEDBACK
-		if (!numSimSteps)
-			printf("Interpolated transforms\n");
-		else
-		{
-			if (numSimSteps > maxSimSubSteps)
-			{
-				//detect dropping frames
-				printf("Dropped (%i) simulation steps out of %i\n",numSimSteps - maxSimSubSteps,numSimSteps);
-			} else
-			{
-				printf("Simulated (%i) steps\n",numSimSteps);
-			}
-		}
-#endif //VERBOSE_FEEDBACK
+		m_dynamicsWorld->stepSimulation(dt, maxSimSubSteps);
 	}
-
-#ifdef USE_QUICKPROF 
-	btProfiler::beginBlock("render");
-#endif //USE_QUICKPROF 
 
 	renderme();
 
@@ -416,13 +396,8 @@ void VehicleDemo::clientMoveAndDisplay() {
 	if (m_dynamicsWorld)
 		m_dynamicsWorld->debugDrawWorld();
 
-#ifdef USE_QUICKPROF 
-	btProfiler::endBlock("render");
-#endif 
-
 	glFlush();
 	glutSwapBuffers();
-
 }
 
 void VehicleDemo::displayCallback(void) {
@@ -485,26 +460,19 @@ void VehicleDemo::specialKeyboard(int key, int x, int y) {
 }
 
 void VehicleDemo::updateCamera() {
+	if (!_vehicle || !_camera) return;
 
-	//#define DISABLE_CAMERA 1
-#ifdef DISABLE_CAMERA
-	SimpleApplication::updateCamera();
-	return;
-#endif //DISABLE_CAMERA
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
+	// calculate where the camera should be
 	btTransform chassisWorldTrans;
 	_vehicle->getWorldTransform(chassisWorldTrans);
-//	m_carChassis->getMotionState()->getWorldTransform(chassisWorldTrans);
 
-	m_cameraTargetPosition = chassisWorldTrans.getOrigin();
+	btVector3 targetPosition = chassisWorldTrans.getOrigin();
+	btVector3 cameraPosition = camera()->getCameraPosition();
 
 	//interpolate the camera height
-	m_cameraPosition[1] = (15.0 * m_cameraPosition[1] + m_cameraTargetPosition[1]
-	                                                                           + m_cameraHeight) / 16.0;
+	cameraPosition[1] = (15.0 * cameraPosition[1] + targetPosition[1] + m_cameraHeight) / 16.0;
 
-	btVector3 camToObject = m_cameraTargetPosition - m_cameraPosition;
+	btVector3 camToObject = targetPosition - cameraPosition;
 
 	//keep distance between min and max distance
 	float cameraDistance = camToObject.length();
@@ -517,18 +485,13 @@ void VehicleDemo::updateCamera() {
 		correctionFactor = 0.15 * (m_maxCameraDistance - cameraDistance)
 						/ cameraDistance;
 	}
-	m_cameraPosition -= correctionFactor * camToObject;
+	cameraPosition -= correctionFactor * camToObject;
 
-	btScalar aspect = m_glutScreenWidth / (btScalar) m_glutScreenHeight;
-	glFrustum(-aspect, aspect, -1.0, 1.0, 1.0, 10000.0);
+	_camera->setCameraPosition(cameraPosition);
+	_camera->setCameraTargetPosition(targetPosition);
 
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	gluLookAt(m_cameraPosition[0], m_cameraPosition[1], m_cameraPosition[2],
-			m_cameraTargetPosition[0], m_cameraTargetPosition[1],
-			m_cameraTargetPosition[2], m_cameraUp.getX(), m_cameraUp.getY(),
-			m_cameraUp.getZ());
-
+	// rendering details
+	_camera->updateCamera(); // default camera
+//	_camera->chaseCamera(); // based on the original version
 }
 

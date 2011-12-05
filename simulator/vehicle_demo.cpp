@@ -21,7 +21,7 @@ static void glutSpecialKeyboardUpCallback(int key, int x, int y) {
 }
 
 static void glutReshapeCallback(int w, int h) {
-	gSimpleApplication->reshape(w, h);
+	gSimpleApplication->camera()->reshape(w, h);
 }
 
 static void glutMoveAndDisplayCallback() {
@@ -29,7 +29,7 @@ static void glutMoveAndDisplayCallback() {
 }
 
 static void glutDisplayCallback(void) {
-	gSimpleApplication->displayCallback();
+	gSimpleApplication->camera()->displayCallback();
 }
 
 int main(int argc, char** argv) {
@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
 	glutSetOption (GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
 #endif
 
-	gSimpleApplication->myinit();
+	gSimpleApplication->camera()->myinit();
 
 	glutKeyboardFunc(glutKeyboardCallback);
 	glutKeyboardUpFunc(glutKeyboardUpCallback);

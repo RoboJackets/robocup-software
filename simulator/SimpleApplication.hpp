@@ -15,9 +15,6 @@
 
 #pragma once
 
-#include "GlutDefs.hpp"
-#include "GL_ShapeDrawer.h"
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -33,59 +30,30 @@ class btDynamicsWorld;
 class btRigidBody;
 class btTypedConstraint;
 
+class SimpleCamera;
+
 class SimpleApplication {
 protected:
-	void displayProfileString(int xOffset, int yStart, char* message);
-	class CProfileIterator* m_profileIterator;
-
-protected:
-#ifdef USE_BT_CLOCK
+	// World dynamics model components
 	btClock m_clock;
-#endif //USE_BT_CLOCK
-	///this is the most important class
 	btDynamicsWorld* m_dynamicsWorld;
-
-	btCollisionShape* m_shootBoxShape;
-
-	float m_cameraDistance;
+	bool m_stepping;
+	bool m_singleStep;
+	int m_lastKey;
 	int m_debugMode;
 
-	float m_ele;
-	float m_azi;
-	btVector3 m_cameraPosition;
-	btVector3 m_cameraTargetPosition; //look at
+	// Shoot box?
+	btCollisionShape* m_shootBoxShape; // TODO: what does this do?
+	float m_ShootBoxInitialSpeed;
 
+	// Camera components
+	SimpleCamera* _camera;
+
+	// GUI components
 public:
 	int m_modifierKeys;
 protected:
 
-	float m_scaleBottom;
-	float m_scaleFactor;
-	btVector3 m_cameraUp;
-	int m_forwardAxis;
-	float m_zoomStepSize;
-
-	int m_glutScreenWidth;
-	int m_glutScreenHeight;
-
-	float m_frustumZNear;
-	float m_frustumZFar;
-
-	int m_ortho;
-
-	float m_ShootBoxInitialSpeed;
-
-	bool m_stepping;
-	bool m_singleStep;
-//	bool m_idle;
-	int m_lastKey;
-
-	void showProfileInfo(int& xOffset, int& yStart, int yIncr);
-	void renderscene(int pass);
-
-	GL_ShapeDrawer* m_shapeDrawer;
-	bool m_enableshadows;
-	btVector3 m_sundirection;
 	btScalar m_defaultContactProcessingThreshold;
 
 public:
@@ -100,76 +68,24 @@ public:
 
 	virtual void initPhysics() = 0;
 
-	virtual void setDrawClusters(bool drawClusters) {
-
-	}
-
-	void overrideGLShapeDrawer(GL_ShapeDrawer* shapeDrawer);
-
-	void setOrthographicProjection();
-	void resetPerspectiveProjection();
-
-	bool setTexturing(bool enable) {
-		return (m_shapeDrawer->enableTexture(enable));
-	}
-	bool setShadows(bool enable) {
-		bool p = m_enableshadows;
-		m_enableshadows = enable;
-		return (p);
-	}
-	bool getTexturing() const {
-		return m_shapeDrawer->hasTextureEnabled();
-	}
-	bool getShadows() const {
-		return m_enableshadows;
-	}
+	virtual void setDrawClusters(bool drawClusters) {}
 
 	int getDebugMode() const {
 		return m_debugMode;
 	}
 
+	SimpleCamera* camera() { return _camera; }
+
 	void setDebugMode(int mode);
 
-	void setAzi(float azi) {
-		m_azi = azi;
-	}
-
-	void setCameraUp(const btVector3& camUp) {
-		m_cameraUp = camUp;
-	}
-	void setCameraForwardAxis(int axis) {
-		m_forwardAxis = axis;
-	}
-
-	virtual void myinit();
-
-	virtual void updateCamera();
-
-	btVector3 getCameraPosition() {
-		return m_cameraPosition;
-	}
-	btVector3 getCameraTargetPosition() {
-		return m_cameraTargetPosition;
-	}
-
 	btScalar getDeltaTimeMicroseconds() {
-#ifdef USE_BT_CLOCK
 		btScalar dt = (btScalar) m_clock.getTimeMicroseconds();
 		m_clock.reset();
 		return dt;
-#else
-		return btScalar(16666.);
-#endif
-	}
-	void setFrustumZPlanes(float zNear, float zFar) {
-		m_frustumZNear = zNear;
-		m_frustumZFar = zFar;
 	}
 
 	///glut callbacks
 
-	float getCameraDistance();
-	void setCameraDistance(float dist);
 	void moveAndDisplay();
 
 	virtual void clientMoveAndDisplay() = 0;
@@ -180,8 +96,6 @@ public:
 	virtual void setShootBoxShape();
 	virtual void shootBox(const btVector3& destination);
 
-	btVector3 getRayTo(int x, int y);
-
 	btRigidBody* localCreateRigidBody(float mass,
 			const btTransform& startTransform, btCollisionShape* shape);
 
@@ -189,21 +103,11 @@ public:
 
 	virtual void keyboardCallback(unsigned char key, int x, int y);
 
-	virtual void keyboardUpCallback(unsigned char key, int x, int y) {
-	}
+	virtual void keyboardUpCallback(unsigned char key, int x, int y) {}
 
 	virtual void specialKeyboard(int key, int x, int y);
 
-	virtual void specialKeyboardUp(int key, int x, int y) {
-	}
-
-	virtual void reshape(int w, int h);
-
-	virtual void displayCallback() {}
-
-	virtual void renderme();
-
-	virtual void swapBuffers();
+	virtual void specialKeyboardUp(int key, int x, int y) {}
 
 	virtual void updateModifierKeys();
 

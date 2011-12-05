@@ -18,11 +18,13 @@
 class btVehicleTuning;
 struct btVehicleRaycaster;
 class btCollisionShape;
+class GL_ShapeDrawer;
 
 #include <map>
 
 #include <BulletDynamics/Vehicle/btRaycastVehicle.h>
 
+#include "SimpleCamera.hpp"
 #include "SimpleApplication.hpp"
 
 class VehicleDemo;
@@ -146,7 +148,7 @@ public:
 
 	static SimpleApplication* Create() {
 		VehicleDemo* demo = new VehicleDemo();
-		demo->myinit();
+		demo->camera()->myinit();
 		demo->initPhysics();
 		return demo;
 	}
