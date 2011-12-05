@@ -42,10 +42,6 @@ protected:
 	int m_lastKey;
 	int m_debugMode;
 
-	// Shoot box?
-	btCollisionShape* m_shootBoxShape; // TODO: what does this do?
-	float m_ShootBoxInitialSpeed;
-
 	// Camera components
 	SimpleCamera* _camera;
 
@@ -91,10 +87,6 @@ public:
 	virtual void clientMoveAndDisplay() = 0;
 
 	virtual void clientResetScene();
-
-	///Demo functions
-	virtual void setShootBoxShape();
-	virtual void shootBox(const btVector3& destination);
 
 	btRigidBody* localCreateRigidBody(float mass,
 			const btTransform& startTransform, btCollisionShape* shape);
