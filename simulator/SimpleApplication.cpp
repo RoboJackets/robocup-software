@@ -39,15 +39,13 @@
 ////////////////////////////////////
 
 SimpleApplication::SimpleApplication() :
-		m_dynamicsWorld(0), m_shootBoxShape(0), m_debugMode(0), m_modifierKeys(0),
-		m_ShootBoxInitialSpeed(40.f), m_stepping(true), m_singleStep(false),
-		m_defaultContactProcessingThreshold(BT_LARGE_FLOAT), _camera(0)
+		m_dynamicsWorld(0),m_stepping(true), m_singleStep(false),
+		m_debugMode(0), _camera(0), m_modifierKeys(0),
+		m_defaultContactProcessingThreshold(BT_LARGE_FLOAT)
 {
 }
 
 SimpleApplication::~SimpleApplication() {
-	if (m_shootBoxShape)
-		delete m_shootBoxShape;
 	if (_camera)
 		delete _camera;
 }
@@ -181,20 +179,6 @@ void SimpleApplication::keyboardCallback(unsigned char key, int x, int y) {
 		break;
 	}
 
-	case '.': {
-		shootBox(_camera->getRayTo(x, y)); //getCameraTargetPosition());
-		break;
-	}
-
-	case '+': {
-		m_ShootBoxInitialSpeed += 10.f;
-		break;
-	}
-	case '-': {
-		m_ShootBoxInitialSpeed -= 10.f;
-		break;
-	}
-
 	default:
 		//        std::cout << "unused key : " << key << std::endl;
 		break;
@@ -213,43 +197,6 @@ void SimpleApplication::setDebugMode(int mode) {
 
 void SimpleApplication::moveAndDisplay() {
 	clientMoveAndDisplay();
-}
-
-void SimpleApplication::setShootBoxShape() {
-	if (!m_shootBoxShape) {
-		btBoxShape* box = new btBoxShape(btVector3(.5f, .5f, .5f));
-		box->initializePolyhedralFeatures();
-		m_shootBoxShape = box;
-	}
-}
-
-void SimpleApplication::shootBox(const btVector3& destination) {
-	if (m_dynamicsWorld) {
-		float mass = 1.f;
-		btTransform startTransform;
-		startTransform.setIdentity();
-		btVector3 camPos = _camera->getCameraPosition();
-		startTransform.setOrigin(camPos);
-
-		setShootBoxShape();
-
-		btRigidBody* body = this->localCreateRigidBody(mass, startTransform,
-				m_shootBoxShape);
-		body->setLinearFactor(btVector3(1, 1, 1));
-		//body->setRestitution(1);
-
-		btVector3 linVel(destination[0] - camPos[0], destination[1] - camPos[1],
-				destination[2] - camPos[2]);
-		linVel.normalize();
-		linVel *= m_ShootBoxInitialSpeed;
-
-		body->getWorldTransform().setOrigin(camPos);
-		body->getWorldTransform().setRotation(btQuaternion(0, 0, 0, 1));
-		body->setLinearVelocity(linVel);
-		body->setAngularVelocity(btVector3(0, 0, 0));
-		body->setCcdMotionThreshold(0.5);
-		body->setCcdSweptSphereRadius(0.9f);
-	}
 }
 
 btRigidBody* SimpleApplication::localCreateRigidBody(float mass,
