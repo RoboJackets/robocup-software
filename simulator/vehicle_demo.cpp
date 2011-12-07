@@ -1,6 +1,4 @@
 #include "VehicleDemo.hpp"
-#include <GLDebugDrawer.h>
-#include <btBulletDynamicsCommon.h>
 
 static SimpleApplication* gSimpleApplication = 0;
 
@@ -36,9 +34,7 @@ int main(int argc, char** argv) {
 
 	// Set up demo
 	VehicleDemo* vehicleDemo = new VehicleDemo;
-	GLDebugDrawer gDebugDrawer;
 	vehicleDemo->initPhysics();
-	vehicleDemo->getDynamicsWorld()->setDebugDrawer(&gDebugDrawer);
 
 	// set up glut
 	gSimpleApplication = vehicleDemo;

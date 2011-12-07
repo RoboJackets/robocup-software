@@ -20,17 +20,13 @@ struct btVehicleRaycaster;
 class btCollisionShape;
 class GL_ShapeDrawer;
 
+#include "GlutCamera.hpp"
+
 #include <map>
 
 #include <BulletDynamics/Vehicle/btRaycastVehicle.h>
 
-#include "LinearMath/btVector3.h"
-#include "LinearMath/btMatrix3x3.h"
-#include "LinearMath/btTransform.h"
 #include "LinearMath/btQuickprof.h"
-#include "LinearMath/btAlignedObjectArray.h"
-
-#include "SimpleCamera.hpp"
 
 class btCollisionShape;
 class btDynamicsWorld;

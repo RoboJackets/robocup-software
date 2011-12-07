@@ -16,26 +16,15 @@
 #include <iostream>
 #include <stdexcept>
 
-#include "SimpleCamera.hpp"
+#include "GlutCamera.hpp"
+
 #include "LinearMath/btIDebugDraw.h"
-#include "BulletDynamics/Dynamics/btDynamicsWorld.h"
-
-#include "BulletDynamics/ConstraintSolver/btPoint2PointConstraint.h"//picking
-#include "BulletDynamics/ConstraintSolver/btGeneric6DofConstraint.h"//picking
-#include "BulletCollision/CollisionShapes/btCollisionShape.h"
-#include "BulletCollision/CollisionShapes/btBoxShape.h"
-#include "BulletCollision/CollisionShapes/btSphereShape.h"
-#include "BulletCollision/CollisionShapes/btCompoundShape.h"
-#include "BulletCollision/CollisionShapes/btUniformScalingShape.h"
-#include "BulletDynamics/ConstraintSolver/btConstraintSolver.h"
-#include "GL_ShapeDrawer.h"
-#include "LinearMath/btQuickprof.h"
 #include "LinearMath/btDefaultMotionState.h"
-#include "LinearMath/btSerializer.h"
-#include "GLDebugFont.h"
 
-#include "BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h"
+#include "BulletDynamics/Dynamics/btDynamicsWorld.h"
 #include "BulletDynamics/Dynamics/btRigidBody.h"
+
+#include "GLDebugFont.h"
 
 ////////////////////////////////////
 // GlutCamera class
@@ -51,7 +40,7 @@ GlutCamera::GlutCamera(btDynamicsWorld* world) :
 {
 	m_shapeDrawer = new GL_ShapeDrawer();
 	m_shapeDrawer->enableTexture(true);
-	m_enableshadows = false; // FIXME: possible problem with rendering?
+	m_enableshadows = false;
 }
 
 GlutCamera::~GlutCamera() {

@@ -20,33 +20,15 @@
 /// One todo is a basic engine model:
 /// A function that maps user input (throttle) into torque/force applied on the wheels
 /// with gears etc.
+
+#include "GlutCamera.hpp"
+#include "VehicleDemo.hpp"
+
 #include <btBulletDynamicsCommon.h>
-
-#include "SimpleCamera.hpp"
-
-#include "BulletCollision/BroadphaseCollision/btAxisSweep3.h"
-#include "BulletCollision/CollisionShapes/btCollisionShape.h"
-#include "BulletCollision/CollisionShapes/btBoxShape.h"
-#include "BulletCollision/CollisionShapes/btSphereShape.h"
-#include "BulletCollision/CollisionShapes/btCompoundShape.h"
-#include "BulletCollision/CollisionShapes/btUniformScalingShape.h"
-
-#include "LinearMath/btIDebugDraw.h"
-#include "LinearMath/btDefaultMotionState.h"
-#include "LinearMath/btSerializer.h"
-
-#include "BulletDynamics/Dynamics/btDynamicsWorld.h"
-#include "BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h"
-#include "BulletDynamics/Dynamics/btRigidBody.h"
-#include "BulletDynamics/ConstraintSolver/btConstraintSolver.h"
-#include "BulletDynamics/ConstraintSolver/btPoint2PointConstraint.h"//picking
-#include "BulletDynamics/ConstraintSolver/btGeneric6DofConstraint.h"//picking
 
 #include "GLDebugDrawer.h"
 #include <stdio.h> //printf debugging
 #include "GL_ShapeDrawer.h"
-
-#include "VehicleDemo.hpp"
 
 const int maxProxies = 32766;
 const int maxOverlap = 65535;
@@ -658,6 +640,9 @@ void VehicleDemo::initPhysics() {
 	_camera->setCameraPosition(btVector3(30, 30, 30));
 	_camera->setCameraDistance(26.f);
 	_camera->setDynamicsWorld(m_dynamicsWorld);
+
+	// Connect the debug drawer
+	m_dynamicsWorld->setDebugDrawer(_camera->debugDrawer());
 }
 
 //to be implemented by the demo

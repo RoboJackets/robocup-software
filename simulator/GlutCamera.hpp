@@ -15,18 +15,13 @@
 
 #pragma once
 
+#include <GLDebugDrawer.h>
 #include "GlutDefs.hpp"
 #include "GL_ShapeDrawer.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-
-#include "LinearMath/btVector3.h"
-#include "LinearMath/btMatrix3x3.h"
-#include "LinearMath/btTransform.h"
-#include "LinearMath/btQuickprof.h"
-#include "LinearMath/btAlignedObjectArray.h"
 
 class btCollisionShape;
 class btDynamicsWorld;
@@ -53,7 +48,9 @@ protected:
 	bool m_enableshadows;
 	btVector3 m_sundirection;
 
-	// connect to dynamics
+	GLDebugDrawer gDebugDrawer;
+
+	// connect to dynamics - not created internally
 	btDynamicsWorld* m_dynamicsWorld;
 
 public:
@@ -85,6 +82,7 @@ public:
 	btVector3 getCameraTargetPosition() const {	return m_cameraTargetPosition; }
 
 	GL_ShapeDrawer* shapeDrawer() { return m_shapeDrawer; }
+	GLDebugDrawer* debugDrawer() { return &gDebugDrawer; }
 
 	//	void overrideGLShapeDrawer(GL_ShapeDrawer* shapeDrawer); // FIXME: necessary?
 
