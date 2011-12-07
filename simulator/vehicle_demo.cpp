@@ -1,6 +1,6 @@
 #include "VehicleDemo.hpp"
 
-static SimpleApplication* gSimpleApplication = 0;
+static VehicleDemo* gSimpleApplication = 0;
 
 static void glutKeyboardCallback(unsigned char key, int x, int y) {
 	gSimpleApplication->keyboardCallback(key, x, y);
@@ -23,7 +23,7 @@ static void glutReshapeCallback(int w, int h) {
 }
 
 static void glutMoveAndDisplayCallback() {
-	gSimpleApplication->moveAndDisplay();
+	gSimpleApplication->clientMoveAndDisplay();
 }
 
 static void glutDisplayCallback(void) {

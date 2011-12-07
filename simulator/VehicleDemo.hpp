@@ -104,9 +104,22 @@ public:
 	void initPhysics(VehicleDemo* env);
 };
 
-class SimpleApplication {
-protected:
-	// World dynamics model components
+///VehicleDemo shows how to setup and use the built-in raycast vehicle
+class VehicleDemo {
+public:
+
+	// Drivable vehicle
+	Vehicle* _vehicle;
+
+	// Ground
+	GroundSurface* _ground;
+
+	// Dynamics/Collision Environment parts
+	btAlignedObjectArray<btCollisionShape*> m_collisionShapes;
+	class btBroadphaseInterface* m_overlappingPairCache;
+	class btCollisionDispatcher* m_dispatcher;
+	class btConstraintSolver* m_constraintSolver;
+	class btDefaultCollisionConfiguration* m_collisionConfiguration;
 	btClock m_clock;
 	btDynamicsWorld* m_dynamicsWorld;
 	bool m_stepping;
@@ -117,19 +130,20 @@ protected:
 	// Camera components
 	GlutCamera* _camera;
 
-public:
+	// Additional camera components
+	float m_cameraHeight;
+	float m_minCameraDistance;
+	float m_maxCameraDistance;
 
-	SimpleApplication();
+	VehicleDemo();
 
-	virtual ~SimpleApplication();
+	~VehicleDemo();
 
 	btDynamicsWorld* getDynamicsWorld() {
 		return m_dynamicsWorld;
 	}
 
-	virtual void initPhysics() = 0;
-
-	virtual void setDrawClusters(bool drawClusters) {}
+	void setDrawClusters(bool drawClusters) {}
 
 	int getDebugMode() const {
 		return m_debugMode;
@@ -145,83 +159,37 @@ public:
 		return dt;
 	}
 
-	///glut callbacks
+	void clientMoveAndDisplay();
 
-	void moveAndDisplay();
+	void clientResetScene();
 
-	virtual void clientMoveAndDisplay() = 0;
-
-	virtual void clientResetScene();
-
-	btRigidBody* localCreateRigidBody(float mass,
-			const btTransform& startTransform, btCollisionShape* shape);
-
-	///callback methods by glut
-
-	virtual void keyboardCallback(unsigned char key, int x, int y);
-
-	virtual void keyboardUpCallback(unsigned char key, int x, int y) {}
-
-	virtual void specialKeyboard(int key, int x, int y);
-
-	virtual void specialKeyboardUp(int key, int x, int y) {}
-
-};
-
-///VehicleDemo shows how to setup and use the built-in raycast vehicle
-class VehicleDemo: public SimpleApplication {
-public:
-
-	// Drivable vehicle
-	Vehicle* _vehicle;
-
-	// Ground
-	GroundSurface* _ground;
-
-	// Environment parts
-	btAlignedObjectArray<btCollisionShape*> m_collisionShapes;
-	class btBroadphaseInterface* m_overlappingPairCache;
-	class btCollisionDispatcher* m_dispatcher;
-	class btConstraintSolver* m_constraintSolver;
-	class btDefaultCollisionConfiguration* m_collisionConfiguration;
-
-	// Camera components
-	float m_cameraHeight;
-	float m_minCameraDistance;
-	float m_maxCameraDistance;
-
-	VehicleDemo();
-
-	virtual ~VehicleDemo();
-
-	virtual void clientMoveAndDisplay();
-
-	virtual void clientResetScene();
-
-	virtual void displayCallback();
+	void displayCallback();
 
 	///a very basic camera following the vehicle
-	virtual void updateCamera();
+	void updateCamera();
 
-	virtual void specialKeyboard(int key, int x, int y);
+	void specialKeyboard(int key, int x, int y);
 
-	virtual void specialKeyboardUp(int key, int x, int y);
+	void specialKeyboardUp(int key, int x, int y);
 
 	void renderme();
 
 	void initPhysics();
 
+	///glut callbacks
+
+	void keyboardCallback(unsigned char key, int x, int y);
+
+	void keyboardUpCallback(unsigned char key, int x, int y) {}
+
 	// physics initializations for objects
 	std::pair<btCollisionShape*, btTransform> addGround();
+
 	void addVehicle(btDynamicsWorld* m_dynamicsWorld,
 			btAlignedObjectArray<btCollisionShape*>& m_collisionShapes);
 
-	static SimpleApplication* Create() {
-		VehicleDemo* demo = new VehicleDemo();
-		demo->camera()->myinit();
-		demo->initPhysics();
-		return demo;
-	}
+	btRigidBody* localCreateRigidBody(float mass,
+			const btTransform& startTransform, btCollisionShape* shape);
 };
 
 #endif //VEHICLE_DEMO_H

@@ -289,34 +289,16 @@ GroundSurface::~GroundSurface() {
 }
 
 ////////////////////////////////////
-// SimpleApplication class
+// VehicleDemo class
 ////////////////////////////////////
 
-SimpleApplication::SimpleApplication() :
-		m_dynamicsWorld(0),m_stepping(true), m_singleStep(false),
-		m_debugMode(0),
-		m_defaultContactProcessingThreshold(BT_LARGE_FLOAT),
-		_camera(0)
-{
-}
-
-SimpleApplication::~SimpleApplication() {
-	if (_camera)
-		delete _camera;
-}
-
-void SimpleApplication::keyboardCallback(unsigned char key, int x, int y) {
+void VehicleDemo::keyboardCallback(unsigned char key, int x, int y) {
 	(void) x;
 	(void) y;
 
 	switch (key) {
 	case 'q':
-#ifdef BT_USE_FREEGLUT
-		//return from glutMainLoop(), detect memory leaks etc.
-		glutLeaveMainLoop();
-#else
 		exit(0);
-#endif
 		break;
 	case 'h':
 		if (m_debugMode & btIDebugDraw::DBG_NoHelpText)
@@ -442,17 +424,13 @@ void SimpleApplication::keyboardCallback(unsigned char key, int x, int y) {
 
 }
 
-void SimpleApplication::setDebugMode(int mode) {
+void VehicleDemo::setDebugMode(int mode) {
 	m_debugMode = mode;
 	if (getDynamicsWorld() && getDynamicsWorld()->getDebugDrawer())
 		getDynamicsWorld()->getDebugDrawer()->setDebugMode(mode);
 }
 
-void SimpleApplication::moveAndDisplay() {
-	clientMoveAndDisplay();
-}
-
-btRigidBody* SimpleApplication::localCreateRigidBody(float mass,
+btRigidBody* VehicleDemo::localCreateRigidBody(float mass,
 		const btTransform& startTransform, btCollisionShape* shape) {
 	btAssert((!shape || shape->getShapeType() != INVALID_SHAPE_PROXYTYPE));
 
@@ -485,91 +463,12 @@ btRigidBody* SimpleApplication::localCreateRigidBody(float mass,
 	return body;
 }
 
-void SimpleApplication::clientResetScene() {
-	int numObjects = 0;
-	int i;
-
-	if (m_dynamicsWorld) {
-		int numConstraints = m_dynamicsWorld->getNumConstraints();
-		for (i = 0; i < numConstraints; i++) {
-			m_dynamicsWorld->getConstraint(0)->setEnabled(true);
-		}
-		numObjects = m_dynamicsWorld->getNumCollisionObjects();
-
-		///create a copy of the array, not a reference!
-		btCollisionObjectArray copyArray =
-				m_dynamicsWorld->getCollisionObjectArray();
-
-		for (i = 0; i < numObjects; i++) {
-			btCollisionObject* colObj = copyArray[i];
-			btRigidBody* body = btRigidBody::upcast(colObj);
-			if (body) {
-				if (body->getMotionState()) {
-					btDefaultMotionState* myMotionState =
-							(btDefaultMotionState*) body->getMotionState();
-					myMotionState->m_graphicsWorldTrans =
-							myMotionState->m_startWorldTrans;
-					body->setCenterOfMassTransform(myMotionState->m_graphicsWorldTrans);
-					colObj->setInterpolationWorldTransform(
-							myMotionState->m_startWorldTrans);
-					colObj->forceActivationState(ACTIVE_TAG);
-					colObj->activate();
-					colObj->setDeactivationTime(0);
-					//colObj->setActivationState(WANTS_DEACTIVATION);
-				}
-				//removed cached contact points (this is not necessary if all objects have been removed from the dynamics world)
-				if (m_dynamicsWorld->getBroadphase()->getOverlappingPairCache())
-					m_dynamicsWorld->getBroadphase()->getOverlappingPairCache()->cleanProxyFromPairs(
-							colObj->getBroadphaseHandle(),
-							getDynamicsWorld()->getDispatcher());
-
-				btRigidBody* body = btRigidBody::upcast(colObj);
-				if (body && !body->isStaticObject()) {
-					btRigidBody::upcast(colObj)->setLinearVelocity(btVector3(0, 0, 0));
-					btRigidBody::upcast(colObj)->setAngularVelocity(btVector3(0, 0, 0));
-				}
-			}
-		}
-
-		///reset some internal cached data in the broadphase
-		m_dynamicsWorld->getBroadphase()->resetPool(
-				getDynamicsWorld()->getDispatcher());
-		m_dynamicsWorld->getConstraintSolver()->reset();
-	}
-}
-
-void SimpleApplication::specialKeyboard(int key, int x, int y) {
-	(void) x;
-	(void) y;
-
-	switch (key) {
-	case GLUT_KEY_END: {
-		int numObj = getDynamicsWorld()->getNumCollisionObjects();
-		if (numObj) {
-			btCollisionObject* obj =
-					getDynamicsWorld()->getCollisionObjectArray()[numObj - 1];
-
-			getDynamicsWorld()->removeCollisionObject(obj);
-			btRigidBody* body = btRigidBody::upcast(obj);
-			if (body && body->getMotionState()) {
-				delete body->getMotionState();
-			}
-			delete obj;
-		}
-		break;
-	}
-	default:
-		//        std::cout << "unused (special) key : " << key << std::endl;
-		break;
-	}
-	glutPostRedisplay();
-}
-
-////////////////////////////////////
-// VehicleDemo class
-////////////////////////////////////
 VehicleDemo::VehicleDemo() :
-	_vehicle(0), _ground(0), m_cameraHeight(4.f),
+	_vehicle(0), _ground(0),
+	m_dynamicsWorld(0), m_stepping(true), m_singleStep(false),
+	m_debugMode(0),
+	m_defaultContactProcessingThreshold(BT_LARGE_FLOAT),
+ _camera(0), m_cameraHeight(4.f),
 	m_minCameraDistance(3.f), m_maxCameraDistance(10.f)
 {
 }
@@ -612,6 +511,9 @@ VehicleDemo::~VehicleDemo() {
 	delete m_dispatcher;
 
 	delete m_collisionConfiguration;
+
+	if (_camera)
+		delete _camera;
 
 }
 
@@ -711,7 +613,6 @@ void VehicleDemo::specialKeyboardUp(int key, int x, int y) {
 		break;
 	}
 	default:
-		SimpleApplication::specialKeyboardUp(key, x, y);
 		break;
 	}
 }
@@ -736,7 +637,6 @@ void VehicleDemo::specialKeyboard(int key, int x, int y) {
 		break;
 	}
 	default:
-		SimpleApplication::specialKeyboard(key, x, y);
 		break;
 	}
 }
