@@ -38,12 +38,12 @@
 #include "BulletDynamics/Dynamics/btRigidBody.h"
 
 ////////////////////////////////////
-// SimpleCamera class
+// GlutCamera class
 ////////////////////////////////////
 
 using namespace std;
 
-SimpleCamera::SimpleCamera(btDynamicsWorld* world) :
+GlutCamera::GlutCamera(btDynamicsWorld* world) :
 		m_cameraDistance(15.0), m_ele(20.f), m_azi(0.f), m_cameraPosition(0.f, 0.f, 0.f),
 		m_cameraTargetPosition(0.f, 0.f, 0.f), m_scaleBottom(0.5f), m_scaleFactor(2.f),
 		m_cameraUp(0, 1, 0), m_forwardAxis(2), m_glutScreenWidth(0), m_glutScreenHeight(0),
@@ -54,12 +54,12 @@ SimpleCamera::SimpleCamera(btDynamicsWorld* world) :
 	m_enableshadows = false; // FIXME: possible problem with rendering?
 }
 
-SimpleCamera::~SimpleCamera() {
+GlutCamera::~GlutCamera() {
 	if (m_shapeDrawer)
 		delete m_shapeDrawer;
 }
 
-void SimpleCamera::reshape(int w, int h) {
+void GlutCamera::reshape(int w, int h) {
 	GLDebugResetFont(w, h);
 
 	m_glutScreenWidth = w;
@@ -69,7 +69,7 @@ void SimpleCamera::reshape(int w, int h) {
 	updateCamera();
 }
 
-void SimpleCamera::myinit(void) {
+void GlutCamera::myinit(void) {
 
 	GLfloat light_ambient[] = { btScalar(0.2), btScalar(0.2), btScalar(0.2),
 			btScalar(1.0) };
@@ -107,7 +107,7 @@ void SimpleCamera::myinit(void) {
 	//  glCullFace(GL_BACK);
 }
 
-void SimpleCamera::updateCamera() {
+void GlutCamera::updateCamera() {
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -170,7 +170,7 @@ void SimpleCamera::updateCamera() {
 
 }
 
-btVector3 SimpleCamera::getRayTo(int x, int y) {
+btVector3 GlutCamera::getRayTo(int x, int y) {
 
 	if (m_ortho) {
 
@@ -236,12 +236,12 @@ btVector3 SimpleCamera::getRayTo(int x, int y) {
 }
 
 
-void SimpleCamera::swapBuffers() {
+void GlutCamera::swapBuffers() {
 	glutSwapBuffers();
 }
 
 //See http://www.lighthouse3d.com/opengl/glut/index.php?bmpfontortho
-void SimpleCamera::setOrthographicProjection() {
+void GlutCamera::setOrthographicProjection() {
 
 	// switch to projection mode
 	glMatrixMode(GL_PROJECTION);
@@ -264,19 +264,19 @@ void SimpleCamera::setOrthographicProjection() {
 
 }
 
-void SimpleCamera::resetPerspectiveProjection() {
+void GlutCamera::resetPerspectiveProjection() {
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
 	glMatrixMode(GL_MODELVIEW);
 	updateCamera();
 }
 
-void SimpleCamera::displayProfileString(int xOffset, int yStart, char* message) {
+void GlutCamera::displayProfileString(int xOffset, int yStart, char* message) {
 	glRasterPos3f(btScalar(xOffset), btScalar(yStart), btScalar(0));
 	GLDebugDrawString(xOffset, yStart, message);
 }
 
-void SimpleCamera::renderscene(int pass, int debugMode) {
+void GlutCamera::renderscene(int pass, int debugMode) {
 //	throw runtime_error("Breaking at renderscene");
 	btScalar m[16];
 	btMatrix3x3 rot;
@@ -344,7 +344,7 @@ void SimpleCamera::renderscene(int pass, int debugMode) {
 	}
 }
 
-void SimpleCamera::renderme(int debugMode) {
+void GlutCamera::renderme(int debugMode) {
 	myinit();
 	updateCamera();
 	if (m_dynamicsWorld) {
@@ -398,7 +398,7 @@ void SimpleCamera::renderme(int debugMode) {
 
 }
 
-void SimpleCamera::chaseCamera() {
+void GlutCamera::chaseCamera() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
