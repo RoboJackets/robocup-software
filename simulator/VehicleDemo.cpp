@@ -22,6 +22,26 @@
 /// with gears etc.
 #include <btBulletDynamicsCommon.h>
 
+#include "SimpleCamera.hpp"
+
+#include "BulletCollision/BroadphaseCollision/btAxisSweep3.h"
+#include "BulletCollision/CollisionShapes/btCollisionShape.h"
+#include "BulletCollision/CollisionShapes/btBoxShape.h"
+#include "BulletCollision/CollisionShapes/btSphereShape.h"
+#include "BulletCollision/CollisionShapes/btCompoundShape.h"
+#include "BulletCollision/CollisionShapes/btUniformScalingShape.h"
+
+#include "LinearMath/btIDebugDraw.h"
+#include "LinearMath/btDefaultMotionState.h"
+#include "LinearMath/btSerializer.h"
+
+#include "BulletDynamics/Dynamics/btDynamicsWorld.h"
+#include "BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h"
+#include "BulletDynamics/Dynamics/btRigidBody.h"
+#include "BulletDynamics/ConstraintSolver/btConstraintSolver.h"
+#include "BulletDynamics/ConstraintSolver/btPoint2PointConstraint.h"//picking
+#include "BulletDynamics/ConstraintSolver/btGeneric6DofConstraint.h"//picking
+
 #include "GLDebugDrawer.h"
 #include <stdio.h> //printf debugging
 #include "GL_ShapeDrawer.h"
@@ -287,6 +307,283 @@ GroundSurface::~GroundSurface() {
 }
 
 ////////////////////////////////////
+// SimpleApplication class
+////////////////////////////////////
+
+SimpleApplication::SimpleApplication() :
+		m_dynamicsWorld(0),m_stepping(true), m_singleStep(false),
+		m_debugMode(0),
+		m_defaultContactProcessingThreshold(BT_LARGE_FLOAT),
+		_camera(0)
+{
+}
+
+SimpleApplication::~SimpleApplication() {
+	if (_camera)
+		delete _camera;
+}
+
+void SimpleApplication::keyboardCallback(unsigned char key, int x, int y) {
+	(void) x;
+	(void) y;
+
+	switch (key) {
+	case 'q':
+#ifdef BT_USE_FREEGLUT
+		//return from glutMainLoop(), detect memory leaks etc.
+		glutLeaveMainLoop();
+#else
+		exit(0);
+#endif
+		break;
+	case 'h':
+		if (m_debugMode & btIDebugDraw::DBG_NoHelpText)
+			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_NoHelpText);
+		else
+			m_debugMode |= btIDebugDraw::DBG_NoHelpText;
+		break;
+
+	case 'w':
+		if (m_debugMode & btIDebugDraw::DBG_DrawWireframe)
+			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_DrawWireframe);
+		else
+			m_debugMode |= btIDebugDraw::DBG_DrawWireframe;
+		break;
+
+	case 'p':
+		if (m_debugMode & btIDebugDraw::DBG_ProfileTimings)
+			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_ProfileTimings);
+		else
+			m_debugMode |= btIDebugDraw::DBG_ProfileTimings;
+		break;
+
+	case '=': {
+		int maxSerializeBufferSize = 1024 * 1024 * 5;
+		btDefaultSerializer* serializer = new btDefaultSerializer(
+				maxSerializeBufferSize);
+		//serializer->setSerializationFlags(BT_SERIALIZE_NO_DUPLICATE_ASSERT);
+		m_dynamicsWorld->serialize(serializer);
+		FILE* f2 = fopen("testFile.bullet", "wb");
+		fwrite(serializer->getBufferPointer(), serializer->getCurrentBufferSize(),
+				1, f2);
+		fclose(f2);
+		delete serializer;
+		break;
+
+	}
+
+	case 'm':
+		if (m_debugMode & btIDebugDraw::DBG_EnableSatComparison)
+			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_EnableSatComparison);
+		else
+			m_debugMode |= btIDebugDraw::DBG_EnableSatComparison;
+		break;
+
+	case 'n':
+		if (m_debugMode & btIDebugDraw::DBG_DisableBulletLCP)
+			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_DisableBulletLCP);
+		else
+			m_debugMode |= btIDebugDraw::DBG_DisableBulletLCP;
+		break;
+
+	case 't':
+		if (m_debugMode & btIDebugDraw::DBG_DrawText)
+			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_DrawText);
+		else
+			m_debugMode |= btIDebugDraw::DBG_DrawText;
+		break;
+	case 'y':
+		if (m_debugMode & btIDebugDraw::DBG_DrawFeaturesText)
+			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_DrawFeaturesText);
+		else
+			m_debugMode |= btIDebugDraw::DBG_DrawFeaturesText;
+		break;
+	case 'a':
+		if (m_debugMode & btIDebugDraw::DBG_DrawAabb)
+			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_DrawAabb);
+		else
+			m_debugMode |= btIDebugDraw::DBG_DrawAabb;
+		break;
+	case 'c':
+		if (m_debugMode & btIDebugDraw::DBG_DrawContactPoints)
+			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_DrawContactPoints);
+		else
+			m_debugMode |= btIDebugDraw::DBG_DrawContactPoints;
+		break;
+	case 'C':
+		if (m_debugMode & btIDebugDraw::DBG_DrawConstraints)
+			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_DrawConstraints);
+		else
+			m_debugMode |= btIDebugDraw::DBG_DrawConstraints;
+		break;
+	case 'L':
+		if (m_debugMode & btIDebugDraw::DBG_DrawConstraintLimits)
+			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_DrawConstraintLimits);
+		else
+			m_debugMode |= btIDebugDraw::DBG_DrawConstraintLimits;
+		break;
+
+	case 'd':
+		if (m_debugMode & btIDebugDraw::DBG_NoDeactivation)
+			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_NoDeactivation);
+		else
+			m_debugMode |= btIDebugDraw::DBG_NoDeactivation;
+		if (m_debugMode & btIDebugDraw::DBG_NoDeactivation) {
+			gDisableDeactivation = true;
+		} else {
+			gDisableDeactivation = false;
+		}
+		break;
+
+	case 's':
+		clientMoveAndDisplay();
+		break;
+		//    case ' ' : newRandom(); break;
+	case ' ':
+		clientResetScene();
+		break;
+	case '1': {
+		if (m_debugMode & btIDebugDraw::DBG_EnableCCD)
+			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_EnableCCD);
+		else
+			m_debugMode |= btIDebugDraw::DBG_EnableCCD;
+		break;
+	}
+
+	default:
+		//        std::cout << "unused key : " << key << std::endl;
+		break;
+	}
+
+	if (getDynamicsWorld() && getDynamicsWorld()->getDebugDrawer())
+		getDynamicsWorld()->getDebugDrawer()->setDebugMode(m_debugMode);
+
+}
+
+void SimpleApplication::setDebugMode(int mode) {
+	m_debugMode = mode;
+	if (getDynamicsWorld() && getDynamicsWorld()->getDebugDrawer())
+		getDynamicsWorld()->getDebugDrawer()->setDebugMode(mode);
+}
+
+void SimpleApplication::moveAndDisplay() {
+	clientMoveAndDisplay();
+}
+
+btRigidBody* SimpleApplication::localCreateRigidBody(float mass,
+		const btTransform& startTransform, btCollisionShape* shape) {
+	btAssert((!shape || shape->getShapeType() != INVALID_SHAPE_PROXYTYPE));
+
+	//rigidbody is dynamic if and only if mass is non zero, otherwise static
+	bool isDynamic = (mass != 0.f);
+
+	btVector3 localInertia(0, 0, 0);
+	if (isDynamic)
+		shape->calculateLocalInertia(mass, localInertia);
+
+	//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
+
+#define USE_MOTIONSTATE 1
+#ifdef USE_MOTIONSTATE
+	btDefaultMotionState* myMotionState = new btDefaultMotionState(
+			startTransform);
+
+	btRigidBody::btRigidBodyConstructionInfo cInfo(mass, myMotionState, shape,
+			localInertia);
+
+	btRigidBody* body = new btRigidBody(cInfo);
+	body->setContactProcessingThreshold(m_defaultContactProcessingThreshold);
+
+#else
+	btRigidBody* body = new btRigidBody(mass,0,shape,localInertia);
+	body->setWorldTransform(startTransform);
+#endif//
+	m_dynamicsWorld->addRigidBody(body);
+
+	return body;
+}
+
+void SimpleApplication::clientResetScene() {
+	int numObjects = 0;
+	int i;
+
+	if (m_dynamicsWorld) {
+		int numConstraints = m_dynamicsWorld->getNumConstraints();
+		for (i = 0; i < numConstraints; i++) {
+			m_dynamicsWorld->getConstraint(0)->setEnabled(true);
+		}
+		numObjects = m_dynamicsWorld->getNumCollisionObjects();
+
+		///create a copy of the array, not a reference!
+		btCollisionObjectArray copyArray =
+				m_dynamicsWorld->getCollisionObjectArray();
+
+		for (i = 0; i < numObjects; i++) {
+			btCollisionObject* colObj = copyArray[i];
+			btRigidBody* body = btRigidBody::upcast(colObj);
+			if (body) {
+				if (body->getMotionState()) {
+					btDefaultMotionState* myMotionState =
+							(btDefaultMotionState*) body->getMotionState();
+					myMotionState->m_graphicsWorldTrans =
+							myMotionState->m_startWorldTrans;
+					body->setCenterOfMassTransform(myMotionState->m_graphicsWorldTrans);
+					colObj->setInterpolationWorldTransform(
+							myMotionState->m_startWorldTrans);
+					colObj->forceActivationState(ACTIVE_TAG);
+					colObj->activate();
+					colObj->setDeactivationTime(0);
+					//colObj->setActivationState(WANTS_DEACTIVATION);
+				}
+				//removed cached contact points (this is not necessary if all objects have been removed from the dynamics world)
+				if (m_dynamicsWorld->getBroadphase()->getOverlappingPairCache())
+					m_dynamicsWorld->getBroadphase()->getOverlappingPairCache()->cleanProxyFromPairs(
+							colObj->getBroadphaseHandle(),
+							getDynamicsWorld()->getDispatcher());
+
+				btRigidBody* body = btRigidBody::upcast(colObj);
+				if (body && !body->isStaticObject()) {
+					btRigidBody::upcast(colObj)->setLinearVelocity(btVector3(0, 0, 0));
+					btRigidBody::upcast(colObj)->setAngularVelocity(btVector3(0, 0, 0));
+				}
+			}
+		}
+
+		///reset some internal cached data in the broadphase
+		m_dynamicsWorld->getBroadphase()->resetPool(
+				getDynamicsWorld()->getDispatcher());
+		m_dynamicsWorld->getConstraintSolver()->reset();
+	}
+}
+
+void SimpleApplication::specialKeyboard(int key, int x, int y) {
+	(void) x;
+	(void) y;
+
+	switch (key) {
+	case GLUT_KEY_END: {
+		int numObj = getDynamicsWorld()->getNumCollisionObjects();
+		if (numObj) {
+			btCollisionObject* obj =
+					getDynamicsWorld()->getCollisionObjectArray()[numObj - 1];
+
+			getDynamicsWorld()->removeCollisionObject(obj);
+			btRigidBody* body = btRigidBody::upcast(obj);
+			if (body && body->getMotionState()) {
+				delete body->getMotionState();
+			}
+			delete obj;
+		}
+		break;
+	}
+	default:
+		//        std::cout << "unused (special) key : " << key << std::endl;
+		break;
+	}
+	glutPostRedisplay();
+}
+
+////////////////////////////////////
 // VehicleDemo class
 ////////////////////////////////////
 VehicleDemo::VehicleDemo() :
@@ -357,7 +654,7 @@ void VehicleDemo::initPhysics() {
 	_vehicle->initPhysics(this);
 
 	// Set up the camera
-	_camera = new SimpleCamera;
+	_camera = new GlutCamera;
 	_camera->setCameraPosition(btVector3(30, 30, 30));
 	_camera->setCameraDistance(26.f);
 	_camera->setDynamicsWorld(m_dynamicsWorld);

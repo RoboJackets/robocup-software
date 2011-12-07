@@ -24,8 +24,18 @@ class GL_ShapeDrawer;
 
 #include <BulletDynamics/Vehicle/btRaycastVehicle.h>
 
+#include "LinearMath/btVector3.h"
+#include "LinearMath/btMatrix3x3.h"
+#include "LinearMath/btTransform.h"
+#include "LinearMath/btQuickprof.h"
+#include "LinearMath/btAlignedObjectArray.h"
+
 #include "SimpleCamera.hpp"
-#include "SimpleApplication.hpp"
+
+class btCollisionShape;
+class btDynamicsWorld;
+class btRigidBody;
+class btTypedConstraint;
 
 class VehicleDemo;
 
@@ -96,6 +106,70 @@ public:
 	~GroundSurface();
 
 	void initPhysics(VehicleDemo* env);
+};
+
+class SimpleApplication {
+protected:
+	// World dynamics model components
+	btClock m_clock;
+	btDynamicsWorld* m_dynamicsWorld;
+	bool m_stepping;
+	bool m_singleStep;
+	int m_debugMode;
+	btScalar m_defaultContactProcessingThreshold;
+
+	// Camera components
+	GlutCamera* _camera;
+
+public:
+
+	SimpleApplication();
+
+	virtual ~SimpleApplication();
+
+	btDynamicsWorld* getDynamicsWorld() {
+		return m_dynamicsWorld;
+	}
+
+	virtual void initPhysics() = 0;
+
+	virtual void setDrawClusters(bool drawClusters) {}
+
+	int getDebugMode() const {
+		return m_debugMode;
+	}
+
+	GlutCamera* camera() { return _camera; }
+
+	void setDebugMode(int mode);
+
+	btScalar getDeltaTimeMicroseconds() {
+		btScalar dt = (btScalar) m_clock.getTimeMicroseconds();
+		m_clock.reset();
+		return dt;
+	}
+
+	///glut callbacks
+
+	void moveAndDisplay();
+
+	virtual void clientMoveAndDisplay() = 0;
+
+	virtual void clientResetScene();
+
+	btRigidBody* localCreateRigidBody(float mass,
+			const btTransform& startTransform, btCollisionShape* shape);
+
+	///callback methods by glut
+
+	virtual void keyboardCallback(unsigned char key, int x, int y);
+
+	virtual void keyboardUpCallback(unsigned char key, int x, int y) {}
+
+	virtual void specialKeyboard(int key, int x, int y);
+
+	virtual void specialKeyboardUp(int key, int x, int y) {}
+
 };
 
 ///VehicleDemo shows how to setup and use the built-in raycast vehicle

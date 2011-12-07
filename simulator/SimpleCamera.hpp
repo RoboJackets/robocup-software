@@ -33,7 +33,7 @@ class btDynamicsWorld;
 class btRigidBody;
 class btTypedConstraint;
 
-class SimpleCamera {
+class GlutCamera {
 protected:
 	float m_cameraDistance;
 	float m_ele;
@@ -57,8 +57,8 @@ protected:
 	btDynamicsWorld* m_dynamicsWorld;
 
 public:
-	SimpleCamera(btDynamicsWorld* world = 0);
-	~SimpleCamera();
+	GlutCamera(btDynamicsWorld* world = 0);
+	~GlutCamera();
 
 	void setDynamicsWorld(btDynamicsWorld* world) { m_dynamicsWorld = world; }
 	btDynamicsWorld* getDynamicsWorld() { return m_dynamicsWorld; }
@@ -121,5 +121,5 @@ public:
 
 	void chaseCamera();
 
-}; // \class SimpleCamera
+}; // \class GlutCamera
 
