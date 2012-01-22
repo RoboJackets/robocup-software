@@ -25,19 +25,13 @@ if [ "$MACH" = "x86_64" ]; then
 	apt-get install libc6-dev-i386 g++-multilib ia32-libs
 fi
 
-echo "-- Adding repository for bullet physics"
-add-apt-repository ppa:openrave/testing
-
-echo "-- Updating repositories"
-apt-get update
-
 echo "-- Installing normal packages"
 apt-get install build-essential qt4-dev-tools libboost-dev \
 	libusb-1.0-0-dev libgtkmm-2.4-dev protobuf-compiler libprotobuf-dev \
 	libpcap-dev scons graphviz binutils-dev libqt4-opengl-dev python-pip python-dev \
 	avr-libc libgmp3-dev libmpfr-dev libmpc-dev texinfo curl texinfo dfu-programmer avrdude \
 	libreadline-dev libgtest-dev autoconf libtool autopoint flex bison openocd \
-  iverilog gtkwave picocom python-numpy python-matplotlib python-usb doxygen libbullet-dev 
+  iverilog gtkwave picocom python-numpy python-matplotlib python-usb doxygen 
 
 echo "-- Removing excessively old packages: if this causes a problem, kill it here and fix it yourself"
 apt-get remove python-git
