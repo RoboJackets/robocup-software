@@ -1,0 +1,9 @@
+Robocup Modified Version of Bullet Physics
+Current base version: 2.79, r2440
+
+Removed: 
+ - All dll files
+ - examples we aren't using
+ - Extras
+ - Any references to msvc or apple in CMakeLists.txt files
+

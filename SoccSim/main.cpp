@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
 	act.sa_handler = quit;
 	sigaction(SIGINT, &act, 0);
 	
-	SimControl win;
+	SimulatorWindow win;
 	win.env(env);
 	win.show();
 	

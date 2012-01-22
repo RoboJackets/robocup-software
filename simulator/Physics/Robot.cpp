@@ -70,8 +70,8 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
 //
 //		float target = data->motors(i) / 127.0f * 1.2;
 //
-//		// reverse for 2010 robots
-//		if (_rev == rev2010)
+//		// reverse for 2011 robots
+//		if (_rev == rev2011)
 //		{
 //			target = -target;
 //		}
