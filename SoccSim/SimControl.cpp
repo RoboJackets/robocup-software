@@ -134,7 +134,7 @@ private:
 	Env *_env;
 };
 
-SimControl::SimControl(QWidget* parent):
+SimulatorWindow::SimulatorWindow(QWidget* parent):
 	QMainWindow(parent)
 {
 	_env = 0;
@@ -146,13 +146,13 @@ SimControl::SimControl(QWidget* parent):
 	_ui.robotTable->resizeColumnsToContents();
 }
 
-void SimControl::env(Env* value)
+void SimulatorWindow::env(Env* value)
 {
 	_env = value;
 	_model->env(value);
 }
 
-void SimControl::on_dropFrame_clicked()
+void SimulatorWindow::on_dropFrame_clicked()
 {
 	if (_env)
 	{
@@ -160,7 +160,7 @@ void SimControl::on_dropFrame_clicked()
 	}
 }
 
-void SimControl::on_ballVisibility_valueChanged(int value)
+void SimulatorWindow::on_ballVisibility_valueChanged(int value)
 {
 	if (_env)
 	{

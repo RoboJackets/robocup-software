@@ -1,7 +1,5 @@
 #pragma once
 
-//#include <NxPhysics.h>
-
 #include <QVector>
 #include <QMap>
 #include <QTimer>

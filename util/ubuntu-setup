@@ -14,17 +14,6 @@ BASE=$(readlink -f $(dirname $0)/..)
 echo "-- Installing udev rules"
 cp -f $BASE/util/robocup.rules /etc/udev/rules.d/
 
-if [ "$MACH" = "x86_64" ]; then
-	echo "-- Detected a 64-bit system"
-
-	# Make dpkg install 32-bit PhysX packages on a 64-bit system
-	DPKG_FLAGS=--force-architecture
-
-	# 32-bit compatibility (simulator must build as 32-bit for PhysX)
-	echo "-- Installing 32-bit compatibility libraries"
-	apt-get install libc6-dev-i386 g++-multilib ia32-libs
-fi
-
 echo "-- Installing normal packages"
 apt-get install build-essential qt4-dev-tools libboost-dev \
 	libusb-1.0-0-dev libgtkmm-2.4-dev protobuf-compiler libprotobuf-dev \
