@@ -2,9 +2,9 @@
 #include <btBulletDynamicsCommon.h>
 
 #include "Entity.hpp"
-#include "Env.hpp"
+#include "Environment.hpp"
 
-Entity::Entity(Env* env) :
+Entity::Entity(Environment* env) :
     _env(env)
 {
     

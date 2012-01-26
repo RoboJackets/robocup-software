@@ -20,9 +20,6 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="SimViewer" name="viewer" native="true">
-       <layout class="QVBoxLayout" name="verticalLayout_5"/>
-      </widget>
       <widget class="QTabWidget" name="tabWidget">
        <property name="currentIndex">
         <number>0</number>
@@ -143,14 +140,6 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>SimViewer</class>
-   <extends>QWidget</extends>
-   <header location="global">SimViewer.hpp</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

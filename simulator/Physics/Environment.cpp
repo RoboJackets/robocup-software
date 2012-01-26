@@ -1,8 +1,14 @@
-#include "Env.hpp"
+#include "Environment.hpp"
 #include "Entity.hpp"
 #include "Ball.hpp"
 #include "Field.hpp"
 #include "Robot.hpp"
+
+#include <QDomDocument>
+#include <QDomAttr>
+#include <QDebug>
+#include <QFile>
+#include <stdexcept>
 
 #include <protobuf/messages_robocup_ssl_detection.pb.h>
 #include <protobuf/messages_robocup_ssl_geometry.pb.h>
@@ -24,14 +30,15 @@ static const QHostAddress MulticastAddress(SharedVisionAddress);
 
 const int Oversample = 1;
 
-Env::Env()
-{
-	sendShared = false;
-	_stepCount = 0;
-	_frameNumber = 0;
-	_dropFrame = false;
-	ballVisibility = 100;
+Environment::Environment(const QString& configFile, bool sendShared_)
+:	_dropFrame(false),
+ 	_frameNumber(0),
+ 	_stepCount(0),
+ 	sendShared(sendShared_),
+	ballVisibility(100) {
 	
+	loadConfigFile(configFile);
+
 	_field = new Field(this);
 
 	// Bind sockets
@@ -45,11 +52,97 @@ Env::Env()
 	_timer.start(16 / Oversample);
 }
 
-Env::~Env()
-{
+bool Environment::loadConfigFile(const QString& filename) {
+	//load the config file
+	QFile configFile(filename);
+
+	if (!configFile.exists())
+	{
+		fprintf(stderr, "Configuration file %s does not exist\n", (const char *)filename.toAscii());
+		return false;
+	}
+
+	QDomDocument _doc;
+
+	if (!configFile.open(QIODevice::ReadOnly))
+	{
+		throw std::runtime_error("Unable to open config file.");
+	}
+
+	if (!_doc.setContent(&configFile))
+	{
+		configFile.close();
+		throw std::runtime_error("Internal: unable to set document content.");
+	}
+	configFile.close();
+
+	//load rest of file
+	qDebug() << "Loading config: " << filename;
+
+	QDomElement root = _doc.documentElement();
+
+	if (root.isNull() || root.tagName() != QString("simulation"))
+	{
+		throw std::runtime_error("Document format: expected <motion> tag");
+	}
+
+	QDomElement element = root.firstChildElement();
+
+	while (!element.isNull())
+	{
+		if (element.tagName() == QString("ball"))
+		{
+			float x = element.attribute("x").toFloat();
+			float y = element.attribute("y").toFloat();
+
+			addBall(Geometry2d::Point(x,y));
+		}
+		else if (element.tagName() == QString("blue"))
+		{
+			procTeam(element, true);
+		}
+		else if (element.tagName() == QString("yellow"))
+		{
+			procTeam(element, false);
+		}
+
+		element = element.nextSiblingElement();
+	}
+
+	return true;
 }
 
-void Env::step()
+void Environment::procTeam(QDomElement e, bool blue) {
+	QDomElement elem = e.firstChildElement();
+
+	while (!elem.isNull())
+	{
+		if (elem.tagName() == "robot")
+		{
+			float x = elem.attribute("x").toFloat();
+			float y = elem.attribute("y").toFloat();
+			int id = elem.attribute("id").toInt();
+
+			if (elem.hasAttribute("rev")) {
+				QString rev = elem.attribute("rev");
+				Robot::Rev r = Robot::rev2008;
+				if (rev.contains("2008"))
+				{
+				    r = Robot::rev2008;
+				} else if (rev.contains("2011")) {
+				    r = Robot::rev2011;
+				}
+				addRobot(blue, id, Geometry2d::Point(x, y), r);
+			} else {
+				addRobot(blue, id, Geometry2d::Point(x, y), Robot::rev2008);
+			}
+		}
+
+		elem = elem.nextSiblingElement();
+	}
+}
+
+void Environment::step()
 {
 	// Check for SimCommands
 	while (_visionSocket.hasPendingDatagrams())
@@ -178,7 +271,7 @@ void Env::step()
 	}
 }
 
-void Env::sendVision()
+void Environment::sendVision()
 {
 	SSL_WrapperPacket wrapper;
 	SSL_DetectionFrame *det = wrapper.mutable_detection();
@@ -246,7 +339,7 @@ void Env::sendVision()
 	}
 }
 
-void Env::convert_robot(const Robot *robot, SSL_DetectionRobot *out)
+void Environment::convert_robot(const Robot *robot, SSL_DetectionRobot *out)
 {
 	Geometry2d::Point pos = robot->getPosition();
 	out->set_confidence(1);
@@ -258,7 +351,7 @@ void Env::convert_robot(const Robot *robot, SSL_DetectionRobot *out)
 	out->set_pixel_y(pos.y * 1000);
 }
 
-void Env::addBall(Geometry2d::Point pos)
+void Environment::addBall(Geometry2d::Point pos)
 {
 	Ball* b = new Ball(this);
 	b->position(pos.x, pos.y);
@@ -268,7 +361,7 @@ void Env::addBall(Geometry2d::Point pos)
 	printf("New Ball: %f %f\n", pos.x, pos.y);
 }
 
-void Env::addRobot(bool blue, int id, Geometry2d::Point pos, Robot::Rev rev)
+void Environment::addRobot(bool blue, int id, Geometry2d::Point pos, Robot::Rev rev)
 {
 	Robot* r = new Robot(this, id, rev);
 	r->position(pos.x, pos.y);
@@ -289,7 +382,7 @@ void Env::addRobot(bool blue, int id, Geometry2d::Point pos, Robot::Rev rev)
 	}
 }
 
-void Env::removeRobot(bool blue, int id) {
+void Environment::removeRobot(bool blue, int id) {
 	if (blue)
 	{
 		_blue.remove(id);
@@ -311,7 +404,7 @@ Geometry2d::Point gaussianPoint(int n, float scale)
 	return pt;
 }
 
-bool Env::occluded(Geometry2d::Point ball, Geometry2d::Point camera)
+bool Environment::occluded(Geometry2d::Point ball, Geometry2d::Point camera)
 {
 	float camZ = 4;
 	float ballZ = Ball_Radius;
@@ -344,7 +437,7 @@ bool Env::occluded(Geometry2d::Point ball, Geometry2d::Point camera)
 	return false;
 }
 
-Robot *Env::robot(bool blue, int board_id) const
+Robot *Environment::robot(bool blue, int board_id) const
 {
 	const QMap<unsigned int, Robot*> &robots = blue ? _blue : _yellow;
 	
@@ -356,7 +449,7 @@ Robot *Env::robot(bool blue, int board_id) const
 	}
 }
 
-void Env::handleRadioTx(int ch, const Packet::RadioTx& tx)
+void Environment::handleRadioTx(int ch, const Packet::RadioTx& tx)
 {
 	// Channel 0 is yellow.
 	// Channel 1 is blue.

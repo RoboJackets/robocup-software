@@ -1,6 +1,6 @@
 #include "SimulatorWindow.hpp"
 #include "SimViewer.hpp"
-#include "Physics/Env.hpp"
+#include "Physics/Environment.hpp"
 
 #include <QAbstractTableModel>
 
@@ -18,7 +18,7 @@ public:
 		_env = 0;
 	}
 	
-	void env(Env *value)
+	void env(Environment *value)
 	{
 		_env = value;
 		layoutChanged();
@@ -26,7 +26,7 @@ public:
 	
 	Robot *robotForRow(int row) const
 	{
-		const Env::RobotMap *map;
+		const Environment::RobotMap *map;
 		if (row < _env->yellow().size())
 		{
 			map = &_env->yellow();
@@ -34,7 +34,7 @@ public:
 			row -= _env->yellow().size();
 			map = &_env->blue();
 		}
-		Env::RobotMap::const_iterator i = map->begin();
+		Environment::RobotMap::const_iterator i = map->begin();
 		i += row;
 		return *i;
 	}
@@ -132,7 +132,7 @@ public:
 	}
 
 private:
-	Env *_env;
+	Environment *_env;
 };
 
 ////////////////////////////////////
@@ -151,7 +151,7 @@ SimulatorWindow::SimulatorWindow(QWidget* parent):
 	_ui.robotTable->resizeColumnsToContents();
 }
 
-void SimulatorWindow::env(Env* value)
+void SimulatorWindow::env(Environment* value)
 {
 	_env = value;
 	_model->env(value);

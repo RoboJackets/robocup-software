@@ -2,12 +2,12 @@
 
 #include <Geometry2d/Point.hpp>
 
-class Env;
+class Environment;
 
 class Entity
 {
 public:
-	Entity(Env *env);
+	Entity(Environment *env);
 	virtual ~Entity();
 
 	/** set position of the robot */
@@ -20,5 +20,5 @@ private:
 	Entity& operator &= (Entity&);
 
 protected:
-	Env* _env;
+	Environment* _env;
 };

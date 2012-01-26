@@ -1,11 +1,11 @@
 #include "Ball.hpp"
-#include "Env.hpp"
+#include "Environment.hpp"
 
 #include <Constants.hpp>
 
 #include <stdio.h>
 
-Ball::Ball(Env* env) :
+Ball::Ball(Environment* env) :
 	Entity(env)
 {
 }

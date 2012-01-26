@@ -5,7 +5,7 @@
 class Field : public Entity
 {
     public:
-        Field(Env* env);
+        Field(Environment* env);
         virtual ~Field();
         
         //does nothing for the field

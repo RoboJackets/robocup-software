@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Field::Field(Env* env) :
+Field::Field(Environment* env) :
 	Entity(env)
 {
 }
