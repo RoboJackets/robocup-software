@@ -15,7 +15,7 @@ class Robot : public Entity
 			rev2008
 		} Rev;
 
-		Robot(Env* env, unsigned int id, Robot::Rev rev);
+		Robot(Environment* env, unsigned int id, Robot::Rev rev);
 		virtual ~Robot();
 		
 		/** @return the world angle */

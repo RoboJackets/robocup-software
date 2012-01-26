@@ -1,6 +1,6 @@
 #include "Robot.hpp"
 #include "Ball.hpp"
-#include "Env.hpp"
+#include "Environment.hpp"
 
 #include <Utils.hpp>
 #include <Constants.hpp>
@@ -13,7 +13,7 @@
 
 using namespace Geometry2d;
 
-Robot::Robot(Env* env, unsigned int id,  Robot::Rev rev) :
+Robot::Robot(Environment* env, unsigned int id,  Robot::Rev rev) :
 			Entity(env), shell(id), _rev(rev), _lastKicked(0)
 {
 	visibility = 100;

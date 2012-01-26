@@ -4,7 +4,7 @@
 
 #include "ui_SimulatorWindow.h"
 
-class Env;
+class Environment;
 class RobotTableModel;
 
 class SimulatorWindow: public QMainWindow
@@ -14,7 +14,7 @@ class SimulatorWindow: public QMainWindow
 public:
 	SimulatorWindow(QWidget *parent = 0);
 	
-	void env(Env *value);
+	void env(Environment *value);
 
 private slots:
 	void on_dropFrame_clicked();
@@ -22,6 +22,6 @@ private slots:
 	
 private:
 	Ui_SimulatorWindow _ui;
-	Env *_env;
+	Environment *_env;
 	RobotTableModel *_model;
 };

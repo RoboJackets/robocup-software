@@ -1,5 +1,4 @@
-#include "Physics/Env.hpp"
-#include "Config.hpp"
+#include "Physics/Environment.hpp"
 #include "SimulatorWindow.hpp"
 
 #include <QApplication>
@@ -26,8 +25,6 @@ void usage(const char* prog)
 int main(int argc, char* argv[])
 {
 	QApplication app(argc, argv);
-
-	Env* env = new Env();
 
 	QString configFile = "simulator.cfg";
 	bool sendShared = false;
@@ -64,17 +61,9 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	env->sendShared = sendShared;
-	
-	if (!QFile(configFile).exists())
-	{
-		fprintf(stderr, "Configuration file %s does not exist\n", (const char *)configFile.toAscii());
-		return 1;
-	}
-	
-	Config* config = 0;
-	config = new Config(configFile, env);
+	Environment* env = new Environment(configFile, sendShared);
 
+	// FIXME: what does this do?
 	struct sigaction act;
 	memset(&act, 0, sizeof(act));
 	act.sa_handler = quit;
@@ -88,7 +77,6 @@ int main(int argc, char* argv[])
 
 	// cleanup
 	delete env;
-	delete config;
 
 	return ret;
 }

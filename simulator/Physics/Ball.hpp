@@ -5,7 +5,7 @@
 class Ball: public Entity
 {
 	public:
-		Ball(Env* env);
+		Ball(Environment* env);
 		virtual ~Ball();
 
 		virtual void position(float x, float y);
