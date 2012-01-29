@@ -32,11 +32,11 @@
 
 using namespace std;
 
-GlutCamera::GlutCamera(btDynamicsWorld* world) :
+GlutCamera::GlutCamera(SimEngine* engine) :
 		m_cameraDistance(15.0), m_ele(20.f), m_azi(0.f), m_cameraPosition(0.f, 0.f, 0.f),
 		m_cameraTargetPosition(0.f, 0.f, 0.f), m_scaleBottom(0.5f), m_scaleFactor(2.f),
 		m_cameraUp(0, 1, 0), m_forwardAxis(2), m_glutScreenWidth(0), m_glutScreenHeight(0),
-		m_frustumZNear(1.f), m_frustumZFar(10000.f), m_ortho(0), m_dynamicsWorld(world)
+		m_frustumZNear(1.f), m_frustumZFar(10000.f), m_ortho(0), _simEngine(engine)
 {
 	m_shapeDrawer = new GL_ShapeDrawer();
 	m_shapeDrawer->enableTexture(true);
@@ -270,10 +270,10 @@ void GlutCamera::renderscene(int pass, int debugMode) {
 	btScalar m[16];
 	btMatrix3x3 rot;
 	rot.setIdentity();
-	const int numObjects = m_dynamicsWorld->getNumCollisionObjects();
+	const int numObjects = _simEngine->m_dynamicsWorld->getNumCollisionObjects();
 	btVector3 wireColor(1, 0, 0);
 	for (int i = 0; i < numObjects; i++) {
-		btCollisionObject* colObj = m_dynamicsWorld->getCollisionObjectArray()[i];
+		btCollisionObject* colObj = _simEngine->m_dynamicsWorld->getCollisionObjectArray()[i];
 		btRigidBody* body = btRigidBody::upcast(colObj);
 		if (body && body->getMotionState()) {
 			btDefaultMotionState* myMotionState =
@@ -306,7 +306,7 @@ void GlutCamera::renderscene(int pass, int debugMode) {
 		}
 
 		btVector3 aabbMin, aabbMax;
-		m_dynamicsWorld->getBroadphase()->getBroadphaseAabb(aabbMin, aabbMax);
+		_simEngine->m_dynamicsWorld->getBroadphase()->getBroadphaseAabb(aabbMin, aabbMax);
 
 		aabbMin -= btVector3(BT_LARGE_FLOAT, BT_LARGE_FLOAT, BT_LARGE_FLOAT);
 		aabbMax += btVector3(BT_LARGE_FLOAT, BT_LARGE_FLOAT, BT_LARGE_FLOAT);
@@ -336,7 +336,7 @@ void GlutCamera::renderscene(int pass, int debugMode) {
 void GlutCamera::renderme(int debugMode) {
 	myinit();
 	updateCamera();
-	if (m_dynamicsWorld) {
+	if (_simEngine->m_dynamicsWorld) {
 		if (m_enableshadows) {
 			glClear(GL_STENCIL_BUFFER_BIT);
 			glEnable(GL_CULL_FACE);

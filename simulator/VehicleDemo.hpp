@@ -21,6 +21,7 @@ class btCollisionShape;
 class GL_ShapeDrawer;
 
 #include "GlutCamera.hpp"
+#include "Physics/SimEngine.hpp"
 
 #include <map>
 
@@ -51,12 +52,11 @@ public:
 	float gVehicleSteering;
 
 	// links to the engine
-	btDynamicsWorld*		m_dynamicsWorld;
-	btAlignedObjectArray<btCollisionShape*>* m_collisionShapes;
+	SimEngine *_simEngine;
 
-	Vehicle(btDynamicsWorld* world, btAlignedObjectArray<btCollisionShape*>* collision_shapes)
+	Vehicle(SimEngine* engine)
 	: m_carChassis(0), m_vehicle(0), m_wheelShape(0),
-	  m_dynamicsWorld(world), m_collisionShapes(collision_shapes)
+	  _simEngine(engine)
 	{
 		gEngineForce = 0.f;
 		gBreakingForce = 0.f;
@@ -69,7 +69,7 @@ public:
 		delete m_wheelShape;
 	}
 
-	void initPhysics(VehicleDemo* env);
+	void initPhysics();
 
 	void drawWheels(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax);
 
@@ -94,14 +94,13 @@ public:
 	btVector3* m_vertices;
 
 	// links to the engine
-	btDynamicsWorld*		m_dynamicsWorld;
-	btAlignedObjectArray<btCollisionShape*>* m_collisionShapes;
+	SimEngine *_simEngine;
 
-	GroundSurface(btDynamicsWorld* world, btAlignedObjectArray<btCollisionShape*>* collision_shapes);
+	GroundSurface(SimEngine *engine);
 
 	~GroundSurface();
 
-	void initPhysics(VehicleDemo* env);
+	void initPhysics();
 };
 
 ///VehicleDemo shows how to setup and use the built-in raycast vehicle
@@ -115,17 +114,7 @@ public:
 	GroundSurface* _ground;
 
 	// Dynamics/Collision Environment parts
-	btAlignedObjectArray<btCollisionShape*> m_collisionShapes;
-	class btBroadphaseInterface* m_overlappingPairCache;
-	class btCollisionDispatcher* m_dispatcher;
-	class btConstraintSolver* m_constraintSolver;
-	class btDefaultCollisionConfiguration* m_collisionConfiguration;
-	btClock m_clock;
-	btDynamicsWorld* m_dynamicsWorld;
-	bool m_stepping;
-	bool m_singleStep;
-	int m_debugMode;
-	btScalar m_defaultContactProcessingThreshold;
+	SimEngine* _simEngine;
 
 	// Camera components
 	GlutCamera* _camera;
@@ -140,24 +129,18 @@ public:
 	~VehicleDemo();
 
 	btDynamicsWorld* getDynamicsWorld() {
-		return m_dynamicsWorld;
+		return _simEngine->m_dynamicsWorld;
 	}
 
 	void setDrawClusters(bool drawClusters) {}
 
 	int getDebugMode() const {
-		return m_debugMode;
+		return _simEngine->m_debugMode;
 	}
 
 	GlutCamera* camera() { return _camera; }
 
 	void setDebugMode(int mode);
-
-	btScalar getDeltaTimeMicroseconds() {
-		btScalar dt = (btScalar) m_clock.getTimeMicroseconds();
-		m_clock.reset();
-		return dt;
-	}
 
 	void clientMoveAndDisplay();
 
@@ -187,9 +170,6 @@ public:
 
 	void addVehicle(btDynamicsWorld* m_dynamicsWorld,
 			btAlignedObjectArray<btCollisionShape*>& m_collisionShapes);
-
-	btRigidBody* localCreateRigidBody(float mass,
-			const btTransform& startTransform, btCollisionShape* shape);
 };
 
 #endif //VEHICLE_DEMO_H

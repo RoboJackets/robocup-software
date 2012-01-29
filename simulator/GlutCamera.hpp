@@ -23,6 +23,8 @@
 #include <stdio.h>
 #include <math.h>
 
+#include "Physics/SimEngine.hpp"
+
 class btCollisionShape;
 class btDynamicsWorld;
 class btRigidBody;
@@ -51,14 +53,11 @@ protected:
 	GLDebugDrawer gDebugDrawer;
 
 	// connect to dynamics - not created internally
-	btDynamicsWorld* m_dynamicsWorld;
+	SimEngine *_simEngine;
 
 public:
-	GlutCamera(btDynamicsWorld* world = 0);
+	GlutCamera(SimEngine* engine = 0);
 	~GlutCamera();
-
-	void setDynamicsWorld(btDynamicsWorld* world) { m_dynamicsWorld = world; }
-	btDynamicsWorld* getDynamicsWorld() { return m_dynamicsWorld; }
 
 	bool setTexturing(bool enable) { return (m_shapeDrawer->enableTexture(enable)); }
 	bool setShadows(bool enable) {
@@ -83,8 +82,6 @@ public:
 
 	GL_ShapeDrawer* shapeDrawer() { return m_shapeDrawer; }
 	GLDebugDrawer* debugDrawer() { return &gDebugDrawer; }
-
-	//	void overrideGLShapeDrawer(GL_ShapeDrawer* shapeDrawer); // FIXME: necessary?
 
 	void setFrustumZPlanes(float zNear, float zFar) {
 		m_frustumZNear = zNear;
