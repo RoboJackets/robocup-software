@@ -13,9 +13,9 @@ class Robot : public Entity
 		typedef enum {
 			rev2011,
 			rev2008
-		} Rev;
+		} RobotRevision;
 
-		Robot(Env* env, unsigned int id, Robot::Rev rev);
+		Robot(Env* env, unsigned int id, Robot::RobotRevision rev);
 		~Robot();
 		
 		/** @return the world angle */
@@ -56,7 +56,7 @@ class Robot : public Entity
 		NxRevoluteJoint* _motors[4];
 		NxD6Joint* _kickerJoint;
 		
-		Rev _rev;
+		RobotRevision _rev;
 
 		/** kicker charge status */
 		uint64_t _lastKicked;

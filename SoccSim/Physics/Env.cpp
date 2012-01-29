@@ -342,7 +342,7 @@ void Env::addBall(Geometry2d::Point pos)
 	printf("New Ball: %f %f\n", pos.x, pos.y);
 }
 
-void Env::addRobot(bool blue, int id, Geometry2d::Point pos, Robot::Rev rev)
+void Env::addRobot(bool blue, int id, Geometry2d::Point pos, Robot::RobotRevision rev)
 {
 
 	Robot* r = new Robot(this, id, rev);
