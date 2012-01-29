@@ -15,12 +15,6 @@
 
 #include <boost/tuple/tuple.hpp>
 
-/// September 2006: VehicleDemo is work in progress, this file is mostly just a placeholder
-/// This VehicleDemo file is very early in development, please check it later
-/// One todo is a basic engine model:
-/// A function that maps user input (throttle) into torque/force applied on the wheels
-/// with gears etc.
-
 #include "GlutCamera.hpp"
 #include "VehicleDemo.hpp"
 
@@ -58,7 +52,7 @@ static const float suspensionCompression = 4.4f;
 static const float rollInfluence = 0.1f; //1.0f;
 static const btScalar suspensionRestLength = 0.6f;
 
-void Vehicle::initPhysics(VehicleDemo* env) {
+void Vehicle::initPhysics() {
 
 	// Assumes that Y is up
 	int rightIndex = 0;
@@ -68,10 +62,10 @@ void Vehicle::initPhysics(VehicleDemo* env) {
 	btVector3 wheelAxleCS(-1, 0, 0);
 
 	btCollisionShape* chassisShape = new btBoxShape(btVector3(1.f, 0.5f, 2.f));
-	m_collisionShapes->push_back(chassisShape);
+	_simEngine->addCollisionShape(chassisShape);
 
 	btCompoundShape* compound = new btCompoundShape();
-	m_collisionShapes->push_back(compound);
+	_simEngine->addCollisionShape(compound);
 	btTransform localTrans;
 	localTrans.setIdentity();
 	//localTrans effectively shifts the center of mass with respect to the chassis
@@ -83,7 +77,7 @@ void Vehicle::initPhysics(VehicleDemo* env) {
 	vehicleTr.setIdentity();
 	vehicleTr.setOrigin(btVector3(0, 0.f, 0));
 
-	m_carChassis = env->localCreateRigidBody(800, vehicleTr, compound);
+	m_carChassis = _simEngine->localCreateRigidBody(800, vehicleTr, compound);
 	//m_carChassis->setDamping(0.2,0.2);
 
 	m_wheelShape = new btCylinderShapeX(
@@ -94,14 +88,14 @@ void Vehicle::initPhysics(VehicleDemo* env) {
 	/// create vehicle
 	{
 
-		m_vehicleRayCaster = new btDefaultVehicleRaycaster(m_dynamicsWorld);
+		m_vehicleRayCaster = new btDefaultVehicleRaycaster(_simEngine->m_dynamicsWorld);
 		m_vehicle = new btRaycastVehicle(m_tuning, m_carChassis,
 				m_vehicleRayCaster);
 
 		///never deactivate the vehicle
 		m_carChassis->setActivationState(DISABLE_DEACTIVATION);
 
-		m_dynamicsWorld->addVehicle(m_vehicle);
+		_simEngine->m_dynamicsWorld->addVehicle(m_vehicle);
 
 		float connectionHeight = 1.2f;
 
@@ -186,7 +180,7 @@ void Vehicle::drawWheels(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoun
 		m_vehicle->updateWheelTransform(i, true);
 		//draw wheels (cylinders)
 		m_vehicle->getWheelInfo(i).m_worldTransform.getOpenGLMatrix(m);
-		int debug_mode = m_dynamicsWorld->getDebugDrawer()->getDebugMode();
+		int debug_mode = _simEngine->m_dynamicsWorld->getDebugDrawer()->getDebugMode();
 		shapeDrawer->drawOpenGL(m, m_wheelShape, wheelColor, debug_mode,
 				worldBoundsMin, worldBoundsMax);
 	}
@@ -197,8 +191,8 @@ void Vehicle::resetScene() {
 	m_carChassis->setCenterOfMassTransform(btTransform::getIdentity());
 	m_carChassis->setLinearVelocity(btVector3(0, 0, 0));
 	m_carChassis->setAngularVelocity(btVector3(0, 0, 0));
-	m_dynamicsWorld->getBroadphase()->getOverlappingPairCache()->cleanProxyFromPairs(
-			m_carChassis->getBroadphaseHandle(), m_dynamicsWorld->getDispatcher());
+	_simEngine->m_dynamicsWorld->getBroadphase()->getOverlappingPairCache()->cleanProxyFromPairs(
+			m_carChassis->getBroadphaseHandle(), _simEngine->m_dynamicsWorld->getDispatcher());
 	if (m_vehicle) {
 		m_vehicle->resetSuspension();
 		for (int i = 0; i < m_vehicle->getNumWheels(); i++) {
@@ -216,10 +210,10 @@ void Vehicle::getWorldTransform(btTransform& chassisWorldTrans) const {
 // GroundSurface class
 ////////////////////////////////////
 
-void GroundSurface::initPhysics(VehicleDemo* env)
+void GroundSurface::initPhysics()
 {
 	btCollisionShape* groundShape = new btBoxShape(btVector3(50, 3, 50));
-	m_collisionShapes->push_back(groundShape);
+	_simEngine->addCollisionShape(groundShape);
 	btTransform tr;
 	tr.setIdentity();
 
@@ -272,14 +266,14 @@ void GroundSurface::initPhysics(VehicleDemo* env)
 
 	tr.setOrigin(btVector3(0, -4.5f, 0));
 
-	m_collisionShapes->push_back(groundShape);
+	_simEngine->addCollisionShape(groundShape);
 
 	//create ground object
-	env->localCreateRigidBody(0, tr, groundShape);
+	_simEngine->localCreateRigidBody(0, tr, groundShape);
 }
 
-GroundSurface::GroundSurface(btDynamicsWorld* world, btAlignedObjectArray<btCollisionShape*>* collision_shapes)
-: m_indexVertexArrays(0), m_vertices(0), m_dynamicsWorld(world), m_collisionShapes(collision_shapes)
+GroundSurface::GroundSurface(SimEngine *engine)
+: m_indexVertexArrays(0), m_vertices(0), _simEngine(engine)
 {
 }
 
@@ -300,105 +294,39 @@ void VehicleDemo::keyboardCallback(unsigned char key, int x, int y) {
 	case 'q':
 		exit(0);
 		break;
-	case 'h':
-		if (m_debugMode & btIDebugDraw::DBG_NoHelpText)
-			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_NoHelpText);
-		else
-			m_debugMode |= btIDebugDraw::DBG_NoHelpText;
-		break;
-
-	case 'w':
-		if (m_debugMode & btIDebugDraw::DBG_DrawWireframe)
-			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_DrawWireframe);
-		else
-			m_debugMode |= btIDebugDraw::DBG_DrawWireframe;
-		break;
-
-	case 'p':
-		if (m_debugMode & btIDebugDraw::DBG_ProfileTimings)
-			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_ProfileTimings);
-		else
-			m_debugMode |= btIDebugDraw::DBG_ProfileTimings;
-		break;
-
+	case 'h':	_simEngine->setDebug(btIDebugDraw::DBG_NoHelpText);	    break;
+	case 'w':	_simEngine->setDebug(btIDebugDraw::DBG_DrawWireframe);  break;
+	case 'p':	_simEngine->setDebug(btIDebugDraw::DBG_ProfileTimings);	break;
 	case '=': {
 		int maxSerializeBufferSize = 1024 * 1024 * 5;
 		btDefaultSerializer* serializer = new btDefaultSerializer(
 				maxSerializeBufferSize);
 		//serializer->setSerializationFlags(BT_SERIALIZE_NO_DUPLICATE_ASSERT);
-		m_dynamicsWorld->serialize(serializer);
+		_simEngine->m_dynamicsWorld->serialize(serializer);
 		FILE* f2 = fopen("testFile.bullet", "wb");
 		fwrite(serializer->getBufferPointer(), serializer->getCurrentBufferSize(),
 				1, f2);
 		fclose(f2);
 		delete serializer;
 		break;
-
 	}
-
-	case 'm':
-		if (m_debugMode & btIDebugDraw::DBG_EnableSatComparison)
-			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_EnableSatComparison);
-		else
-			m_debugMode |= btIDebugDraw::DBG_EnableSatComparison;
-		break;
-
-	case 'n':
-		if (m_debugMode & btIDebugDraw::DBG_DisableBulletLCP)
-			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_DisableBulletLCP);
-		else
-			m_debugMode |= btIDebugDraw::DBG_DisableBulletLCP;
-		break;
-
-	case 't':
-		if (m_debugMode & btIDebugDraw::DBG_DrawText)
-			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_DrawText);
-		else
-			m_debugMode |= btIDebugDraw::DBG_DrawText;
-		break;
-	case 'y':
-		if (m_debugMode & btIDebugDraw::DBG_DrawFeaturesText)
-			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_DrawFeaturesText);
-		else
-			m_debugMode |= btIDebugDraw::DBG_DrawFeaturesText;
-		break;
-	case 'a':
-		if (m_debugMode & btIDebugDraw::DBG_DrawAabb)
-			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_DrawAabb);
-		else
-			m_debugMode |= btIDebugDraw::DBG_DrawAabb;
-		break;
-	case 'c':
-		if (m_debugMode & btIDebugDraw::DBG_DrawContactPoints)
-			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_DrawContactPoints);
-		else
-			m_debugMode |= btIDebugDraw::DBG_DrawContactPoints;
-		break;
-	case 'C':
-		if (m_debugMode & btIDebugDraw::DBG_DrawConstraints)
-			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_DrawConstraints);
-		else
-			m_debugMode |= btIDebugDraw::DBG_DrawConstraints;
-		break;
-	case 'L':
-		if (m_debugMode & btIDebugDraw::DBG_DrawConstraintLimits)
-			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_DrawConstraintLimits);
-		else
-			m_debugMode |= btIDebugDraw::DBG_DrawConstraintLimits;
-		break;
+	case 'm': _simEngine->setDebug(btIDebugDraw::DBG_EnableSatComparison);  break;
+	case 'n':	_simEngine->setDebug(btIDebugDraw::DBG_DisableBulletLCP);		  break;
+	case 't':	_simEngine->setDebug(btIDebugDraw::DBG_DrawText);		          break;
+	case 'y':	_simEngine->setDebug(btIDebugDraw::DBG_DrawFeaturesText);		  break;
+	case 'a':	_simEngine->setDebug(btIDebugDraw::DBG_DrawAabb);             break;
+	case 'c':	_simEngine->setDebug(btIDebugDraw::DBG_DrawContactPoints);    break;
+	case 'C':	_simEngine->setDebug(btIDebugDraw::DBG_DrawConstraints);      break;
+	case 'L':	_simEngine->setDebug(btIDebugDraw::DBG_DrawConstraintLimits); break;
 
 	case 'd':
-		if (m_debugMode & btIDebugDraw::DBG_NoDeactivation)
-			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_NoDeactivation);
-		else
-			m_debugMode |= btIDebugDraw::DBG_NoDeactivation;
-		if (m_debugMode & btIDebugDraw::DBG_NoDeactivation) {
+		_simEngine->setDebug(btIDebugDraw::DBG_NoDeactivation);
+		if (_simEngine->m_debugMode & btIDebugDraw::DBG_NoDeactivation) {
 			gDisableDeactivation = true;
 		} else {
 			gDisableDeactivation = false;
 		}
 		break;
-
 	case 's':
 		clientMoveAndDisplay();
 		break;
@@ -406,13 +334,7 @@ void VehicleDemo::keyboardCallback(unsigned char key, int x, int y) {
 	case ' ':
 		clientResetScene();
 		break;
-	case '1': {
-		if (m_debugMode & btIDebugDraw::DBG_EnableCCD)
-			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_EnableCCD);
-		else
-			m_debugMode |= btIDebugDraw::DBG_EnableCCD;
-		break;
-	}
+	case '1':	_simEngine->setDebug(btIDebugDraw::DBG_EnableCCD); break;
 
 	default:
 		//        std::cout << "unused key : " << key << std::endl;
@@ -420,131 +342,58 @@ void VehicleDemo::keyboardCallback(unsigned char key, int x, int y) {
 	}
 
 	if (getDynamicsWorld() && getDynamicsWorld()->getDebugDrawer())
-		getDynamicsWorld()->getDebugDrawer()->setDebugMode(m_debugMode);
+		getDynamicsWorld()->getDebugDrawer()->setDebugMode(_simEngine->m_debugMode);
 
 }
 
 void VehicleDemo::setDebugMode(int mode) {
-	m_debugMode = mode;
+	_simEngine->m_debugMode = mode;
 	if (getDynamicsWorld() && getDynamicsWorld()->getDebugDrawer())
 		getDynamicsWorld()->getDebugDrawer()->setDebugMode(mode);
 }
 
-btRigidBody* VehicleDemo::localCreateRigidBody(float mass,
-		const btTransform& startTransform, btCollisionShape* shape) {
-	btAssert((!shape || shape->getShapeType() != INVALID_SHAPE_PROXYTYPE));
-
-	//rigidbody is dynamic if and only if mass is non zero, otherwise static
-	bool isDynamic = (mass != 0.f);
-
-	btVector3 localInertia(0, 0, 0);
-	if (isDynamic)
-		shape->calculateLocalInertia(mass, localInertia);
-
-	//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
-
-#define USE_MOTIONSTATE 1
-#ifdef USE_MOTIONSTATE
-	btDefaultMotionState* myMotionState = new btDefaultMotionState(
-			startTransform);
-
-	btRigidBody::btRigidBodyConstructionInfo cInfo(mass, myMotionState, shape,
-			localInertia);
-
-	btRigidBody* body = new btRigidBody(cInfo);
-	body->setContactProcessingThreshold(m_defaultContactProcessingThreshold);
-
-#else
-	btRigidBody* body = new btRigidBody(mass,0,shape,localInertia);
-	body->setWorldTransform(startTransform);
-#endif//
-	m_dynamicsWorld->addRigidBody(body);
-
-	return body;
-}
-
 VehicleDemo::VehicleDemo() :
 	_vehicle(0), _ground(0),
-	m_dynamicsWorld(0), m_stepping(true), m_singleStep(false),
-	m_debugMode(0),
-	m_defaultContactProcessingThreshold(BT_LARGE_FLOAT),
  _camera(0), m_cameraHeight(4.f),
 	m_minCameraDistance(3.f), m_maxCameraDistance(10.f)
 {
 }
 
 VehicleDemo::~VehicleDemo() {
-	//cleanup in the reverse order of creation/initialization
+	if (_simEngine)
+		delete _simEngine;
 
-	//remove the rigidbodies from the dynamics world and delete them
-	for (int i = m_dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--) {
-		btCollisionObject* obj = m_dynamicsWorld->getCollisionObjectArray()[i];
-		btRigidBody* body = btRigidBody::upcast(obj);
-		if (body && body->getMotionState()) {
-			delete body->getMotionState();
-		}
-		m_dynamicsWorld->removeCollisionObject(obj);
-		delete obj;
-	}
+	if (_ground)
+		delete _ground;
 
-	//delete collision shapes
-	for (int j = 0; j < m_collisionShapes.size(); j++) {
-		btCollisionShape* shape = m_collisionShapes[j];
-		delete shape;
-	}
-
-	delete _ground;
-
-	//delete dynamics world
-	delete m_dynamicsWorld;
-
-	//delete vehicle
-	delete _vehicle;
-
-	//delete solver
-	delete m_constraintSolver;
-
-	//delete broadphase
-	delete m_overlappingPairCache;
-
-	//delete dispatcher
-	delete m_dispatcher;
-
-	delete m_collisionConfiguration;
+	if (_vehicle)
+		delete _vehicle;
 
 	if (_camera)
 		delete _camera;
-
 }
 
 void VehicleDemo::initPhysics() {
 
 	// set up the simulation
-	m_collisionConfiguration = new btDefaultCollisionConfiguration();
-	m_dispatcher = new btCollisionDispatcher(m_collisionConfiguration);
-	btVector3 worldMin(-1000, -1000, -1000);
-	btVector3 worldMax(1000, 1000, 1000);
-	m_overlappingPairCache = new btAxisSweep3(worldMin, worldMax);
-	m_constraintSolver = new btSequentialImpulseConstraintSolver();
-	m_dynamicsWorld = new btDiscreteDynamicsWorld(m_dispatcher,
-			m_overlappingPairCache, m_constraintSolver, m_collisionConfiguration);
+	_simEngine = new SimEngine();
+	_simEngine->initPhysics();
 
 	// Set up the ground
-	_ground = new GroundSurface(m_dynamicsWorld, &m_collisionShapes);
-	_ground->initPhysics(this);
+	_ground = new GroundSurface(_simEngine);
+	_ground->initPhysics();
 
 	// Set up the vehicle
-	_vehicle = new Vehicle(m_dynamicsWorld, &m_collisionShapes);
-	_vehicle->initPhysics(this);
+	_vehicle = new Vehicle(_simEngine);
+	_vehicle->initPhysics();
 
 	// Set up the camera
-	_camera = new GlutCamera;
+	_camera = new GlutCamera(_simEngine);
 	_camera->setCameraPosition(btVector3(30, 30, 30));
 	_camera->setCameraDistance(26.f);
-	_camera->setDynamicsWorld(m_dynamicsWorld);
 
 	// Connect the debug drawer
-	m_dynamicsWorld->setDebugDrawer(_camera->debugDrawer());
+	_simEngine->m_dynamicsWorld->setDebugDrawer(_camera->debugDrawer());
 }
 
 //to be implemented by the demo
@@ -557,28 +406,22 @@ void VehicleDemo::renderme() {
 
 	_vehicle->drawWheels(camera()->shapeDrawer(), worldBoundsMin, worldBoundsMax);
 
-	_camera->renderme(m_debugMode);
+	_camera->renderme(_simEngine->m_debugMode);
 }
 
 void VehicleDemo::clientMoveAndDisplay() {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	// apply controls
 	_vehicle->move();
 
-	float dt = getDeltaTimeMicroseconds() * 0.000001f;
-
-	if (m_dynamicsWorld) {
-		//during idle mode, just run 1 simulation step maximum
-		int maxSimSubSteps = 2;
-		m_dynamicsWorld->stepSimulation(dt, maxSimSubSteps);
-	}
+	_simEngine->stepSimulation();
 
 	renderme();
 
 	//optional but useful: debug drawing
-	if (m_dynamicsWorld)
-		m_dynamicsWorld->debugDrawWorld();
+	_simEngine->debugDrawWorld();
 
 	glFlush();
 	glutSwapBuffers();
@@ -590,8 +433,7 @@ void VehicleDemo::displayCallback(void) {
 	renderme();
 
 	//optional but useful: debug drawing
-	if (m_dynamicsWorld)
-		m_dynamicsWorld->debugDrawWorld();
+	_simEngine->debugDrawWorld();
 
 	glFlush();
 	glutSwapBuffers();
