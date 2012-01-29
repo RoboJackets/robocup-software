@@ -6,19 +6,21 @@
 #include <stdio.h>
 
 Ball::Ball(Environment* env) :
-	Entity(env)
+Entity(env)
 {
 }
 
 Ball::~Ball()
 {
-	
+
 }
 
 void Ball::position(float x, float y)
 {
+	_pos = Geometry2d::Point(x,y);
 }
 
 void Ball::velocity(float x, float y)
 {
+	_vel = Geometry2d::Point(x,y);
 }

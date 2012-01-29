@@ -21,7 +21,7 @@ Geometry2d::Point toPoint(const NxVec3 &v)
     return Geometry2d::Point(v.x, v.y);
 }
 
-Robot::Robot(Env* env, unsigned int id,  Robot::Rev rev) :
+Robot::Robot(Env* env, unsigned int id,  Robot::RobotRevision rev) :
 	Entity(env), shell(id), _rev(rev), _lastKicked(0)
 {
 

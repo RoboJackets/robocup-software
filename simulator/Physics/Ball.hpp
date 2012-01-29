@@ -4,10 +4,16 @@
 
 class Ball: public Entity
 {
-	public:
-		Ball(Environment* env);
-		virtual ~Ball();
+private:
+	// temp state info
+	Geometry2d::Point _pos, _vel;
 
-		virtual void position(float x, float y);
-        void velocity(float x, float y);
+public:
+	Ball(Environment* env);
+	virtual ~Ball();
+
+	virtual void position(float x, float y);
+	void velocity(float x, float y);
+
+	virtual Geometry2d::Point getPosition() const { return _pos; }
 };
