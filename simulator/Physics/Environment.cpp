@@ -13,8 +13,8 @@
 #include <protobuf/messages_robocup_ssl_detection.pb.h>
 #include <protobuf/messages_robocup_ssl_geometry.pb.h>
 #include <protobuf/messages_robocup_ssl_wrapper.pb.h>
-#include <protobuf/SimCommand.pb.h>
 
+#include <iostream>
 #include <sys/time.h>
 #include <Constants.hpp>
 #include <Network.hpp>
@@ -35,7 +35,8 @@ Environment::Environment(const QString& configFile, bool sendShared_)
  	_frameNumber(0),
  	_stepCount(0),
  	sendShared(sendShared_),
-	ballVisibility(100) {
+	ballVisibility(100)
+{
 	
 	loadConfigFile(configFile);
 
@@ -43,8 +44,8 @@ Environment::Environment(const QString& configFile, bool sendShared_)
 
 	// Bind sockets
 	assert(_visionSocket.bind(SimCommandPort));
-	assert(_radioSocket[0].bind(RadioTxPort));
-	assert(_radioSocket[1].bind(RadioTxPort + 1));
+	assert(_radioSocketYellow.bind(RadioTxPort));
+	assert(_radioSocketBlue.bind(RadioTxPort + 1));
 	
 	gettimeofday(&_lastStepTime, 0);
 	
@@ -52,209 +53,44 @@ Environment::Environment(const QString& configFile, bool sendShared_)
 	_timer.start(16 / Oversample);
 }
 
-bool Environment::loadConfigFile(const QString& filename) {
-	//load the config file
-	QFile configFile(filename);
-
-	if (!configFile.exists())
-	{
-		fprintf(stderr, "Configuration file %s does not exist\n", (const char *)filename.toAscii());
-		return false;
-	}
-
-	QDomDocument _doc;
-
-	if (!configFile.open(QIODevice::ReadOnly))
-	{
-		throw std::runtime_error("Unable to open config file.");
-	}
-
-	if (!_doc.setContent(&configFile))
-	{
-		configFile.close();
-		throw std::runtime_error("Internal: unable to set document content.");
-	}
-	configFile.close();
-
-	//load rest of file
-	qDebug() << "Loading config: " << filename;
-
-	QDomElement root = _doc.documentElement();
-
-	if (root.isNull() || root.tagName() != QString("simulation"))
-	{
-		throw std::runtime_error("Document format: expected <motion> tag");
-	}
-
-	QDomElement element = root.firstChildElement();
-
-	while (!element.isNull())
-	{
-		if (element.tagName() == QString("ball"))
-		{
-			float x = element.attribute("x").toFloat();
-			float y = element.attribute("y").toFloat();
-
-			addBall(Geometry2d::Point(x,y));
-		}
-		else if (element.tagName() == QString("blue"))
-		{
-			procTeam(element, true);
-		}
-		else if (element.tagName() == QString("yellow"))
-		{
-			procTeam(element, false);
-		}
-
-		element = element.nextSiblingElement();
-	}
-
-	return true;
-}
-
-void Environment::procTeam(QDomElement e, bool blue) {
-	QDomElement elem = e.firstChildElement();
-
-	while (!elem.isNull())
-	{
-		if (elem.tagName() == "robot")
-		{
-			float x = elem.attribute("x").toFloat();
-			float y = elem.attribute("y").toFloat();
-			int id = elem.attribute("id").toInt();
-
-			if (elem.hasAttribute("rev")) {
-				QString rev = elem.attribute("rev");
-				Robot::Rev r = Robot::rev2008;
-				if (rev.contains("2008"))
-				{
-				    r = Robot::rev2008;
-				} else if (rev.contains("2011")) {
-				    r = Robot::rev2011;
-				}
-				addRobot(blue, id, Geometry2d::Point(x, y), r);
-			} else {
-				addRobot(blue, id, Geometry2d::Point(x, y), Robot::rev2008);
-			}
-		}
-
-		elem = elem.nextSiblingElement();
-	}
-}
-
 void Environment::step()
 {
+
 	// Check for SimCommands
 	while (_visionSocket.hasPendingDatagrams())
 	{
-		string buf;
-		unsigned int n = _visionSocket.pendingDatagramSize();
-		buf.resize(n);
-		_visionSocket.readDatagram(&buf[0], n);
-		
 		SimCommand cmd;
-		if (!cmd.ParseFromString(buf))
-		{
-			printf("Bad SimCommand of %d bytes\n", n);
+		if (!loadPacket<SimCommand>(_visionSocket, cmd))
 			continue;
-		}
-		
-		if (!_balls.empty())
-		{
-			if (cmd.has_ball_vel())
-			{
-				_balls[0]->velocity(cmd.ball_vel().x(), cmd.ball_vel().y());
-			}
-			if (cmd.has_ball_pos())
-			{
-				_balls[0]->position(cmd.ball_pos().x(), cmd.ball_pos().y());
-			}
-		}
-		
-		BOOST_FOREACH(const SimCommand::Robot &rcmd, cmd.robots())
-		{
-			const RobotMap &team = rcmd.blue_team() ? _blue : _yellow;
-			RobotMap::const_iterator i = team.find(rcmd.shell());
-			
-			if (i == team.end())
-			{
-				if (rcmd.has_pos())
-				{
-					// add a new robot
-					addRobot(rcmd.blue_team(), rcmd.shell(), rcmd.pos(), Robot::rev2008); // TODO: make this check robot revision
-				}
-				else
-				{
-					// if there's no position, we can't add a robot
-					printf("Trying to override non-existent robot %d:%d\n", rcmd.blue_team(), rcmd.shell());
-					continue;
-				}
-			}
-
-			// remove a robot if it is marked not visible
-			if (rcmd.has_visible() && !rcmd.visible()) {
-				removeRobot(rcmd.blue_team(), rcmd.shell());
-				continue;
-			}
-			
-			// change existing robots
-			Robot *robot = *i;
-			
-			if (rcmd.has_pos())
-			{
-				robot->position(rcmd.pos().x(), rcmd.pos().y());
-			}
-			
-			float new_w = 0.0;
-			if (rcmd.has_w())
-			{
-				new_w = rcmd.w();
-				if (!rcmd.has_vel())
-				{
-					robot->velocity(0.0, 0.0, new_w);
-				}
-			}
-
-			if (rcmd.has_vel())
-			{
-				robot->velocity(rcmd.vel().x(), rcmd.vel().y(), new_w);
-			}
-
-			if (cmd.has_reset() && cmd.reset()) {
-				// TODO: reset the robots to their initial config
-				printf("Resetting to initial config - NOT IMPLEMENTED");
-			}
-		}
+		handleSimCommand(cmd);
 	}
-	
-	// Check for RadioTx packets
-	for (int r = 0; r < 2; ++r)
+
+	// Check for RadioTx packets from blue team
+	while (_radioSocketBlue.hasPendingDatagrams())
 	{
-		QUdpSocket &s = _radioSocket[r];
-		while (s.hasPendingDatagrams())
-		{
-			string buf;
-			unsigned int n = s.pendingDatagramSize();
-			buf.resize(n);
-			s.readDatagram(&buf[0], n);
-			
-			RadioTx tx;
-			if (!tx.ParseFromString(buf))
-			{
-				printf("Bad RadioTx on %d of %d bytes\n", r, n);
-				continue;
-			}
-			
-			handleRadioTx(r, tx);
-		}
+		RadioTx tx;
+		if (!loadPacket<RadioTx>(_radioSocketBlue, tx))
+			continue;
+
+		handleRadioTx(true, tx);
 	}
 	
-	// Run physics
+	// Check for RadioTx packets from yellow team
+	while (_radioSocketYellow.hasPendingDatagrams())
+	{
+		RadioTx tx;
+		if (!loadPacket<RadioTx>(_radioSocketYellow, tx))
+			continue;
+		handleRadioTx(false, tx);
+	}
+
+	// timing
 	struct timeval tv;
 	gettimeofday(&tv, 0);
 	_lastStepTime = tv;
 
-	// TODO: execute simulation here
+	// execute simulation step
+	// TODO: execute
 
 	// Send vision data
 	++_stepCount;
@@ -267,6 +103,75 @@ void Environment::step()
 			_dropFrame = false;
 		} else {
 			sendVision();
+		}
+	}
+}
+
+void Environment::handleSimCommand(const Packet::SimCommand& cmd) {
+	if (!_balls.empty())
+	{
+		if (cmd.has_ball_vel())
+		{
+			_balls[0]->velocity(cmd.ball_vel().x(), cmd.ball_vel().y());
+		}
+		if (cmd.has_ball_pos())
+		{
+			_balls[0]->position(cmd.ball_pos().x(), cmd.ball_pos().y());
+		}
+	}
+
+	BOOST_FOREACH(const SimCommand::Robot &rcmd, cmd.robots())
+	{
+		const RobotMap &team = rcmd.blue_team() ? _blue : _yellow;
+		RobotMap::const_iterator i = team.find(rcmd.shell());
+
+		if (i == team.end())
+		{
+			if (rcmd.has_pos())
+			{
+				// add a new robot
+				addRobot(rcmd.blue_team(), rcmd.shell(), rcmd.pos(), Robot::rev2008); // TODO: make this check robot revision
+			}
+			else
+			{
+				// if there's no position, we can't add a robot
+				printf("Trying to override non-existent robot %d:%d\n", rcmd.blue_team(), rcmd.shell());
+				continue;
+			}
+		}
+
+		// remove a robot if it is marked not visible
+		if (rcmd.has_visible() && !rcmd.visible()) {
+			removeRobot(rcmd.blue_team(), rcmd.shell());
+			continue;
+		}
+
+		// change existing robots
+		Robot *robot = *i;
+
+		if (rcmd.has_pos())
+		{
+			robot->position(rcmd.pos().x(), rcmd.pos().y());
+		}
+
+		float new_w = 0.0;
+		if (rcmd.has_w())
+		{
+			new_w = rcmd.w();
+			if (!rcmd.has_vel())
+			{
+				robot->velocity(0.0, 0.0, new_w);
+			}
+		}
+
+		if (rcmd.has_vel())
+		{
+			robot->velocity(rcmd.vel().x(), rcmd.vel().y(), new_w);
+		}
+
+		if (cmd.has_reset() && cmd.reset()) {
+			// TODO: reset the robots to their initial config
+			printf("Resetting to initial config - NOT IMPLEMENTED");
 		}
 	}
 }
@@ -346,7 +251,7 @@ void Environment::convert_robot(const Robot *robot, SSL_DetectionRobot *out)
 	out->set_robot_id(robot->shell);
 	out->set_x(pos.x * 1000);
 	out->set_y(pos.y * 1000);
-	out->set_orientation(robot->getAngle() * DegreesToRadians);
+	out->set_orientation(robot->getAngle());
 	out->set_pixel_x(pos.x * 1000);
 	out->set_pixel_y(pos.y * 1000);
 }
@@ -361,10 +266,9 @@ void Environment::addBall(Geometry2d::Point pos)
 	printf("New Ball: %f %f\n", pos.x, pos.y);
 }
 
-void Environment::addRobot(bool blue, int id, Geometry2d::Point pos, Robot::Rev rev)
+void Environment::addRobot(bool blue, int id, const Geometry2d::Point& pos, Robot::RobotRevision rev)
 {
-	Robot* r = new Robot(this, id, rev);
-	r->position(pos.x, pos.y);
+	Robot* r = new Robot(this, id, rev, pos);
 
 	if (blue)
 	{
@@ -373,12 +277,14 @@ void Environment::addRobot(bool blue, int id, Geometry2d::Point pos, Robot::Rev 
 		_yellow.insert(id, r);
 	}
 
+	Geometry2d::Point actPos = r->getPosition();
+
 	switch (rev) {
 	case Robot::rev2008:
-		printf("New 2008 Robot: %d : %f %f\n", id, pos.x, pos.y);
+		printf("New 2008 Robot: %d : %f %f\n", id, actPos.x, actPos.y);
 		break;
 	case Robot::rev2011:
-		printf("New 2011 Robot: %d : %f %f\n", id, pos.x, pos.y);
+		printf("New 2011 Robot: %d : %f %f\n", id, actPos.x, actPos.y);
 	}
 }
 
@@ -409,6 +315,8 @@ bool Environment::occluded(Geometry2d::Point ball, Geometry2d::Point camera)
 	float camZ = 4;
 	float ballZ = Ball_Radius;
 	float intZ = Robot_Height;
+
+	// FIXME: use actual physics engine to determine line of sight
 
 	// Find where the line from the camera to the ball intersects the
 	// plane at the top of the robots.
@@ -449,12 +357,8 @@ Robot *Environment::robot(bool blue, int board_id) const
 	}
 }
 
-void Environment::handleRadioTx(int ch, const Packet::RadioTx& tx)
+void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx)
 {
-	// Channel 0 is yellow.
-	// Channel 1 is blue.
-	bool blue = ch;
-	
 	for (int i = 0; i < tx.robots_size(); ++i)
 	{
 		const Packet::RadioTx::Robot &cmd = tx.robots(i);
@@ -483,3 +387,95 @@ void Environment::handleRadioTx(int ch, const Packet::RadioTx& tx)
 //		_radioSocket[ch].writeDatagram(&out[0], out.size(), LocalAddress, RadioRxPort + ch);
 //	}
 }
+
+
+bool Environment::loadConfigFile(const QString& filename) {
+	//load the config file
+	QFile configFile(filename);
+
+	if (!configFile.exists())
+	{
+		fprintf(stderr, "Configuration file %s does not exist\n", (const char *)filename.toAscii());
+		return false;
+	}
+
+	QDomDocument _doc;
+
+	if (!configFile.open(QIODevice::ReadOnly))
+	{
+		throw std::runtime_error("Unable to open config file.");
+	}
+
+	if (!_doc.setContent(&configFile))
+	{
+		configFile.close();
+		throw std::runtime_error("Internal: unable to set document content.");
+	}
+	configFile.close();
+
+	//load rest of file
+	qDebug() << "Loading config: " << filename;
+
+	QDomElement root = _doc.documentElement();
+
+	if (root.isNull() || root.tagName() != QString("simulation"))
+	{
+		throw std::runtime_error("Document format: expected <motion> tag");
+	}
+
+	QDomElement element = root.firstChildElement();
+
+	while (!element.isNull())
+	{
+		if (element.tagName() == QString("ball"))
+		{
+			float x = element.attribute("x").toFloat();
+			float y = element.attribute("y").toFloat();
+
+			addBall(Geometry2d::Point(x,y));
+		}
+		else if (element.tagName() == QString("blue"))
+		{
+			procTeam(element, true);
+		}
+		else if (element.tagName() == QString("yellow"))
+		{
+			procTeam(element, false);
+		}
+
+		element = element.nextSiblingElement();
+	}
+
+	return true;
+}
+
+void Environment::procTeam(QDomElement e, bool blue) {
+	QDomElement elem = e.firstChildElement();
+
+	while (!elem.isNull())
+	{
+		if (elem.tagName() == "robot")
+		{
+			float x = elem.attribute("x").toFloat();
+			float y = elem.attribute("y").toFloat();
+			int id = elem.attribute("id").toInt();
+
+			if (elem.hasAttribute("rev")) {
+				QString rev = elem.attribute("rev");
+				Robot::RobotRevision r = Robot::rev2008;
+				if (rev.contains("2008"))
+				{
+				    r = Robot::rev2008;
+				} else if (rev.contains("2011")) {
+				    r = Robot::rev2011;
+				}
+				addRobot(blue, id, Geometry2d::Point(x, y), r);
+			} else {
+				addRobot(blue, id, Geometry2d::Point(x, y), Robot::rev2008);
+			}
+		}
+
+		elem = elem.nextSiblingElement();
+	}
+}
+

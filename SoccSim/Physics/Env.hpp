@@ -59,7 +59,7 @@ class Env : public QObject
 		void addBall(Geometry2d::Point pos);
 		
 		/** add a robot with id i to the environment @ pos */
-		void addRobot(bool blue, int id, Geometry2d::Point pos, Robot::Rev rev);
+		void addRobot(bool blue, int id, Geometry2d::Point pos, Robot::RobotRevision rev);
 		
 		/** removes a robot with id i from the environment */
 		void removeRobot(bool blue, int id);

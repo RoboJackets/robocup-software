@@ -14,7 +14,7 @@ public:
 	virtual void position(float x, float y) = 0;
 
 	/** @return the world position */
-	Geometry2d::Point getPosition() const;
+	virtual Geometry2d::Point getPosition() const;
 
 private:
 	Entity& operator &= (Entity&);

@@ -17,5 +17,6 @@ Entity::~Entity()
 Geometry2d::Point Entity::getPosition() const
 {
 	Geometry2d::Point result;
+	// placeholder
 	return result;
 }
