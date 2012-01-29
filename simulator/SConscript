@@ -16,7 +16,7 @@ e.Append(LIBS=['bullet'])
 
 # add opengl libraries
 e.Append(LIBS=[    
-	'glut', 
+	'glut',
 	'GL', 
 	'GLU'])
 
@@ -41,9 +41,9 @@ Help('simulator: Provides simulation of SSL robots, using Bullet Physics\n')
 
 # add demos for testing
 p2 = e.Program('vehicle_demo', [
-	'vehicle_demo.cpp', 
-	'VehicleDemo.cpp',
-  'Physics/SimEngine.cpp',
-	'GlutCamera.cpp'])
+	'demo/vehicle_demo.cpp', 
+	'demo/VehicleDemo.cpp',
+	'demo/GlutCamera.cpp',
+	'Physics/SimEngine.cpp'])
 Default(e.Install(exec_dir, p2))
 Help('vehicle_demo: Example code for bullet with simple GUI\n')

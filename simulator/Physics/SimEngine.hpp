@@ -16,8 +16,6 @@
 
 #include <map>
 
-#include <BulletDynamics/Vehicle/btRaycastVehicle.h>
-
 #include "LinearMath/btQuickprof.h"
 
 class btCollisionShape;
@@ -27,21 +25,19 @@ class btTypedConstraint;
 
 class SimEngine {
 public:
-	btAlignedObjectArray<btCollisionShape*> m_collisionShapes;
-	class btBroadphaseInterface* m_overlappingPairCache;
-	class btCollisionDispatcher* m_dispatcher;
-	class btConstraintSolver* m_constraintSolver;
-	class btDefaultCollisionConfiguration* m_collisionConfiguration;
-	btClock m_clock;
-	btDynamicsWorld* m_dynamicsWorld;
-	bool m_stepping;
-	bool m_singleStep;
-	int m_debugMode;
-	btScalar m_defaultContactProcessingThreshold;
+	btAlignedObjectArray<btCollisionShape*> _collisionShapes;
+	class btBroadphaseInterface* _overlappingPairCache;
+	class btCollisionDispatcher* _dispatcher;
+	class btConstraintSolver* _constraintSolver;
+	class btDefaultCollisionConfiguration* _collisionConfiguration;
+	btClock _clock;
+	btDynamicsWorld* _dynamicsWorld;
+	bool _stepping;
+	bool _singleStep;
+	int _debugMode;
+	btScalar _defaultContactProcessingThreshold;
 
-	SimEngine() :	m_dynamicsWorld(0), m_stepping(true), m_singleStep(false),
-			m_debugMode(0),
-			m_defaultContactProcessingThreshold(BT_LARGE_FLOAT) {}
+	SimEngine();
 
 	~SimEngine();
 
@@ -49,9 +45,7 @@ public:
 
 	void setDebug(const btIDebugDraw::DebugDrawModes& flag);
 
-	void addCollisionShape(btCollisionShape* shape) {
-		m_collisionShapes.push_back(shape);
-	}
+	void addCollisionShape(btCollisionShape* shape);
 
 	btRigidBody* localCreateRigidBody(float mass,
 			const btTransform& startTransform, btCollisionShape* shape);

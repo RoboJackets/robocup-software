@@ -15,14 +15,7 @@
 
 #include <boost/tuple/tuple.hpp>
 
-/// September 2006: VehicleDemo is work in progress, this file is mostly just a placeholder
-/// This VehicleDemo file is very early in development, please check it later
-/// One todo is a basic engine model:
-/// A function that maps user input (throttle) into torque/force applied on the wheels
-/// with gears etc.
-
-#include "GlutCamera.hpp"
-#include "VehicleDemo.hpp"
+#include <demo/GlutCamera.hpp>
 
 #include <btBulletDynamicsCommon.h>
 
@@ -33,69 +26,66 @@
 const int maxProxies = 32766;
 const int maxOverlap = 65535;
 
-///btRaycastVehicle is the interface for the constraint that implements the raycast vehicle
-///notice that for higher-quality slow-moving vehicles, another approach might be better
-///implementing explicit hinged-wheel constraints with cylinder collision, rather then raycasts
 
 #define CUBE_HALF_EXTENTS 1
 
 using namespace std;
 
-////////////////////////////////////
-// SimEngine class
-////////////////////////////////////
+SimEngine::SimEngine() :
+		_dynamicsWorld(0), _stepping(true), _singleStep(false),
+		_debugMode(0),	_defaultContactProcessingThreshold(BT_LARGE_FLOAT) {}
 
 void SimEngine::initPhysics() {
-	m_collisionConfiguration = new btDefaultCollisionConfiguration();
-	m_dispatcher = new btCollisionDispatcher(m_collisionConfiguration);
+	_collisionConfiguration = new btDefaultCollisionConfiguration();
+	_dispatcher = new btCollisionDispatcher(_collisionConfiguration);
 	btVector3 worldMin(-1000, -1000, -1000);
 	btVector3 worldMax(1000, 1000, 1000);
-	m_overlappingPairCache = new btAxisSweep3(worldMin, worldMax);
-	m_constraintSolver = new btSequentialImpulseConstraintSolver();
-	m_dynamicsWorld = new btDiscreteDynamicsWorld(m_dispatcher,
-			m_overlappingPairCache, m_constraintSolver, m_collisionConfiguration);
+	_overlappingPairCache = new btAxisSweep3(worldMin, worldMax);
+	_constraintSolver = new btSequentialImpulseConstraintSolver();
+	_dynamicsWorld = new btDiscreteDynamicsWorld(_dispatcher,
+			_overlappingPairCache, _constraintSolver, _collisionConfiguration);
 }
 
 SimEngine::~SimEngine() {
 	//cleanup in the reverse order of creation/initialization
 
 	//remove the rigidbodies from the dynamics world and delete them
-	for (int i = m_dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--) {
-		btCollisionObject* obj = m_dynamicsWorld->getCollisionObjectArray()[i];
+	for (int i = _dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--) {
+		btCollisionObject* obj = _dynamicsWorld->getCollisionObjectArray()[i];
 		btRigidBody* body = btRigidBody::upcast(obj);
 		if (body && body->getMotionState()) {
 			delete body->getMotionState();
 		}
-		m_dynamicsWorld->removeCollisionObject(obj);
+		_dynamicsWorld->removeCollisionObject(obj);
 		delete obj;
 	}
 
 	//delete collision shapes
-	for (int j = 0; j < m_collisionShapes.size(); j++) {
-		btCollisionShape* shape = m_collisionShapes[j];
+	for (int j = 0; j < _collisionShapes.size(); j++) {
+		btCollisionShape* shape = _collisionShapes[j];
 		delete shape;
 	}
 
 	//delete dynamics world
-	delete m_dynamicsWorld;
+	delete _dynamicsWorld;
 
 	//delete solver
-	delete m_constraintSolver;
+	delete _constraintSolver;
 
 	//delete broadphase
-	delete m_overlappingPairCache;
+	delete _overlappingPairCache;
 
 	//delete dispatcher
-	delete m_dispatcher;
+	delete _dispatcher;
 
-	delete m_collisionConfiguration;
+	delete _collisionConfiguration;
 }
 
 void SimEngine::setDebug(const btIDebugDraw::DebugDrawModes& flag) {
-	if (m_debugMode & flag)
-		m_debugMode = m_debugMode & (~flag);
+	if (_debugMode & flag)
+		_debugMode = _debugMode & (~flag);
 	else
-		m_debugMode |= flag;
+		_debugMode |= flag;
 }
 
 btRigidBody* SimEngine::localCreateRigidBody(float mass,
@@ -120,35 +110,39 @@ btRigidBody* SimEngine::localCreateRigidBody(float mass,
 			localInertia);
 
 	btRigidBody* body = new btRigidBody(cInfo);
-	body->setContactProcessingThreshold(m_defaultContactProcessingThreshold);
+	body->setContactProcessingThreshold(_defaultContactProcessingThreshold);
 
 #else
 	btRigidBody* body = new btRigidBody(mass,0,shape,localInertia);
 	body->setWorldTransform(startTransform);
 #endif//
-	m_dynamicsWorld->addRigidBody(body);
+	_dynamicsWorld->addRigidBody(body);
 
 	return body;
 }
 
+void SimEngine::addCollisionShape(btCollisionShape* shape) {
+	_collisionShapes.push_back(shape);
+}
+
 btScalar SimEngine::getDeltaTimeMicroseconds() {
-	btScalar dt = (btScalar) m_clock.getTimeMicroseconds();
-	m_clock.reset();
+	btScalar dt = (btScalar) _clock.getTimeMicroseconds();
+	_clock.reset();
 	return dt;
 }
 
 void SimEngine::stepSimulation() {
 	float dt = getDeltaTimeMicroseconds() * 0.000001f;
-	if (m_dynamicsWorld) {
+	if (_dynamicsWorld) {
 		//during idle mode, just run 1 simulation step maximum
 		int maxSimSubSteps = 2;
-		m_dynamicsWorld->stepSimulation(dt, maxSimSubSteps);
+		_dynamicsWorld->stepSimulation(dt, maxSimSubSteps);
 	}
 }
 
 void SimEngine::debugDrawWorld() {
-	if (m_dynamicsWorld)
-		m_dynamicsWorld->debugDrawWorld();
+	if (_dynamicsWorld)
+		_dynamicsWorld->debugDrawWorld();
 }
 
 

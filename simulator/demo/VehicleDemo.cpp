@@ -88,14 +88,14 @@ void Vehicle::initPhysics() {
 	/// create vehicle
 	{
 
-		m_vehicleRayCaster = new btDefaultVehicleRaycaster(_simEngine->m_dynamicsWorld);
+		m_vehicleRayCaster = new btDefaultVehicleRaycaster(_simEngine->_dynamicsWorld);
 		m_vehicle = new btRaycastVehicle(m_tuning, m_carChassis,
 				m_vehicleRayCaster);
 
 		///never deactivate the vehicle
 		m_carChassis->setActivationState(DISABLE_DEACTIVATION);
 
-		_simEngine->m_dynamicsWorld->addVehicle(m_vehicle);
+		_simEngine->_dynamicsWorld->addVehicle(m_vehicle);
 
 		float connectionHeight = 1.2f;
 
@@ -180,7 +180,7 @@ void Vehicle::drawWheels(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoun
 		m_vehicle->updateWheelTransform(i, true);
 		//draw wheels (cylinders)
 		m_vehicle->getWheelInfo(i).m_worldTransform.getOpenGLMatrix(m);
-		int debug_mode = _simEngine->m_dynamicsWorld->getDebugDrawer()->getDebugMode();
+		int debug_mode = _simEngine->_dynamicsWorld->getDebugDrawer()->getDebugMode();
 		shapeDrawer->drawOpenGL(m, m_wheelShape, wheelColor, debug_mode,
 				worldBoundsMin, worldBoundsMax);
 	}
@@ -191,8 +191,8 @@ void Vehicle::resetScene() {
 	m_carChassis->setCenterOfMassTransform(btTransform::getIdentity());
 	m_carChassis->setLinearVelocity(btVector3(0, 0, 0));
 	m_carChassis->setAngularVelocity(btVector3(0, 0, 0));
-	_simEngine->m_dynamicsWorld->getBroadphase()->getOverlappingPairCache()->cleanProxyFromPairs(
-			m_carChassis->getBroadphaseHandle(), _simEngine->m_dynamicsWorld->getDispatcher());
+	_simEngine->_dynamicsWorld->getBroadphase()->getOverlappingPairCache()->cleanProxyFromPairs(
+			m_carChassis->getBroadphaseHandle(), _simEngine->_dynamicsWorld->getDispatcher());
 	if (m_vehicle) {
 		m_vehicle->resetSuspension();
 		for (int i = 0; i < m_vehicle->getNumWheels(); i++) {
@@ -302,7 +302,7 @@ void VehicleDemo::keyboardCallback(unsigned char key, int x, int y) {
 		btDefaultSerializer* serializer = new btDefaultSerializer(
 				maxSerializeBufferSize);
 		//serializer->setSerializationFlags(BT_SERIALIZE_NO_DUPLICATE_ASSERT);
-		_simEngine->m_dynamicsWorld->serialize(serializer);
+		_simEngine->_dynamicsWorld->serialize(serializer);
 		FILE* f2 = fopen("testFile.bullet", "wb");
 		fwrite(serializer->getBufferPointer(), serializer->getCurrentBufferSize(),
 				1, f2);
@@ -321,7 +321,7 @@ void VehicleDemo::keyboardCallback(unsigned char key, int x, int y) {
 
 	case 'd':
 		_simEngine->setDebug(btIDebugDraw::DBG_NoDeactivation);
-		if (_simEngine->m_debugMode & btIDebugDraw::DBG_NoDeactivation) {
+		if (_simEngine->_debugMode & btIDebugDraw::DBG_NoDeactivation) {
 			gDisableDeactivation = true;
 		} else {
 			gDisableDeactivation = false;
@@ -342,12 +342,12 @@ void VehicleDemo::keyboardCallback(unsigned char key, int x, int y) {
 	}
 
 	if (getDynamicsWorld() && getDynamicsWorld()->getDebugDrawer())
-		getDynamicsWorld()->getDebugDrawer()->setDebugMode(_simEngine->m_debugMode);
+		getDynamicsWorld()->getDebugDrawer()->setDebugMode(_simEngine->_debugMode);
 
 }
 
 void VehicleDemo::setDebugMode(int mode) {
-	_simEngine->m_debugMode = mode;
+	_simEngine->_debugMode = mode;
 	if (getDynamicsWorld() && getDynamicsWorld()->getDebugDrawer())
 		getDynamicsWorld()->getDebugDrawer()->setDebugMode(mode);
 }
@@ -393,7 +393,7 @@ void VehicleDemo::initPhysics() {
 	_camera->setCameraDistance(26.f);
 
 	// Connect the debug drawer
-	_simEngine->m_dynamicsWorld->setDebugDrawer(_camera->debugDrawer());
+	_simEngine->_dynamicsWorld->setDebugDrawer(_camera->debugDrawer());
 }
 
 //to be implemented by the demo
@@ -406,7 +406,7 @@ void VehicleDemo::renderme() {
 
 	_vehicle->drawWheels(camera()->shapeDrawer(), worldBoundsMin, worldBoundsMax);
 
-	_camera->renderme(_simEngine->m_debugMode);
+	_camera->renderme(_simEngine->_debugMode);
 }
 
 void VehicleDemo::clientMoveAndDisplay() {

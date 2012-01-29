@@ -129,13 +129,13 @@ public:
 	~VehicleDemo();
 
 	btDynamicsWorld* getDynamicsWorld() {
-		return _simEngine->m_dynamicsWorld;
+		return _simEngine->_dynamicsWorld;
 	}
 
 	void setDrawClusters(bool drawClusters) {}
 
 	int getDebugMode() const {
-		return _simEngine->m_debugMode;
+		return _simEngine->_debugMode;
 	}
 
 	GlutCamera* camera() { return _camera; }

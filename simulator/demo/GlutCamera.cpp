@@ -270,10 +270,10 @@ void GlutCamera::renderscene(int pass, int debugMode) {
 	btScalar m[16];
 	btMatrix3x3 rot;
 	rot.setIdentity();
-	const int numObjects = _simEngine->m_dynamicsWorld->getNumCollisionObjects();
+	const int numObjects = _simEngine->_dynamicsWorld->getNumCollisionObjects();
 	btVector3 wireColor(1, 0, 0);
 	for (int i = 0; i < numObjects; i++) {
-		btCollisionObject* colObj = _simEngine->m_dynamicsWorld->getCollisionObjectArray()[i];
+		btCollisionObject* colObj = _simEngine->_dynamicsWorld->getCollisionObjectArray()[i];
 		btRigidBody* body = btRigidBody::upcast(colObj);
 		if (body && body->getMotionState()) {
 			btDefaultMotionState* myMotionState =
@@ -306,13 +306,13 @@ void GlutCamera::renderscene(int pass, int debugMode) {
 		}
 
 		btVector3 aabbMin, aabbMax;
-		_simEngine->m_dynamicsWorld->getBroadphase()->getBroadphaseAabb(aabbMin, aabbMax);
+		_simEngine->_dynamicsWorld->getBroadphase()->getBroadphaseAabb(aabbMin, aabbMax);
 
 		aabbMin -= btVector3(BT_LARGE_FLOAT, BT_LARGE_FLOAT, BT_LARGE_FLOAT);
 		aabbMax += btVector3(BT_LARGE_FLOAT, BT_LARGE_FLOAT, BT_LARGE_FLOAT);
 //		printf("aabbMin=(%f,%f,%f)\n",aabbMin.getX(),aabbMin.getY(),aabbMin.getZ());
 //		printf("aabbMax=(%f,%f,%f)\n",aabbMax.getX(),aabbMax.getY(),aabbMax.getZ());
-//		m_dynamicsWorld->getDebugDrawer()->drawAabb(aabbMin,aabbMax,btVector3(1,1,1));
+//		_dynamicsWorld->getDebugDrawer()->drawAabb(aabbMin,aabbMax,btVector3(1,1,1));
 
 		if (!(debugMode & btIDebugDraw::DBG_DrawWireframe)) {
 			switch (pass) {
@@ -336,7 +336,7 @@ void GlutCamera::renderscene(int pass, int debugMode) {
 void GlutCamera::renderme(int debugMode) {
 	myinit();
 	updateCamera();
-	if (_simEngine->m_dynamicsWorld) {
+	if (_simEngine->_dynamicsWorld) {
 		if (m_enableshadows) {
 			glClear(GL_STENCIL_BUFFER_BIT);
 			glEnable(GL_CULL_FACE);
