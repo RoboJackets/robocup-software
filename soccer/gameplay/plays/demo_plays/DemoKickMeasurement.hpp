@@ -1,6 +1,8 @@
 #pragma once
 
-#include <gameplay/Play.hpp>
+#include "../../Play.hpp"
+
+#include "../../behaviors/LineKick.hpp"
 
 namespace Gameplay
 {
