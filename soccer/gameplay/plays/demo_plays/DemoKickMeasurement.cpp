@@ -16,10 +16,10 @@ namespace Gameplay
 	}
 }
 
-ConfigBool *Gameplay::Plays::DemoLineAttack::_use_chipper;
-ConfigInt  *Gameplay::Plays::DemoLineAttack::_kick_power;
+ConfigBool *Gameplay::Plays::DemoKickMeasurement::_use_chipper;
+ConfigInt  *Gameplay::Plays::DemoKickMeasurement::_kick_power;
 
-void Gameplay::Plays::DemoLineAttack::createConfiguration(Configuration* cfg)
+void Gameplay::Plays::DemoKickMeasurement::createConfiguration(Configuration* cfg)
 {
 	_use_chipper  = new ConfigBool(cfg, "DemoKickMeasurement/Enable Chipping", false);
 	_kick_power = new ConfigInt(cfg, "DemoKickMeasurement/Kicker Power", 127);
@@ -53,16 +53,12 @@ bool Gameplay::Plays::DemoKickMeasurement::run()
 			velocity[msr_index] = ball().vel;
 			time[msr_index] = ball().time;
 			msr_index ++;
-		}
-	}
 
-	if(msr_index == 100){
-		for(int i=0; i<100; i++){
-			cout<<"Position: " + position[i];
-			cout<<"Velocity: " + velocity[i];
-			cout<<"Time: " + time[i];
+			printf("Ball Pos X: %f", ball().pos.x);
+			printf("Ball Pos Y: %f", ball().pos.y);
+			printf("Velocity X: %f", ball().vel.x);
+			printf("Velocity Y: %f", ball().vel.y);
 		}
-		return false;
 	}
 
 	_kicker.use_chipper = *_use_chipper;
