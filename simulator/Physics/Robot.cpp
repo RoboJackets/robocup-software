@@ -13,12 +13,16 @@
 
 using namespace Geometry2d;
 
-Robot::Robot(Environment* env, unsigned int id,  Robot::Rev rev) :
-			Entity(env), shell(id), _rev(rev), _lastKicked(0)
+Robot::Robot(Environment* env, unsigned int id,  Robot::RobotRevision rev, const Geometry2d::Point& pos) :
+			Entity(env), shell(id), _rev(rev), _pos(pos), _lastKicked(0)
 {
 	visibility = 100;
 	ballSensorWorks = true;
 	chargerWorks = true;
+
+	// temp state info
+	_theta = 0.0;
+	_omega = 0.0;
 
 }
 
@@ -40,15 +44,18 @@ void Robot::initWheels()
 
 void Robot::position(float x, float y)
 {
+	_pos = Geometry2d::Point(x,y);
 }
 
 void Robot::velocity(float x, float y, float w)
 {
+	_vel = Geometry2d::Point(x,y);
+	_omega = 0.0;
 }
 
 float Robot::getAngle() const
 {
-	return 0;
+	return _theta;
 }
 
 void Robot::radioTx(const Packet::RadioTx::Robot *data)

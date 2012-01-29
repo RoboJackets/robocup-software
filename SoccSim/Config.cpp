@@ -82,7 +82,7 @@ void Config::procTeam(QDomElement e, bool blue)
 
 			if (elem.hasAttribute("rev")) {
 				QString rev = elem.attribute("rev");
-				Robot::Rev r = Robot::rev2011;
+				Robot::RobotRevision r = Robot::rev2011;
 
 
 				if (rev.contains("2008"))

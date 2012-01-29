@@ -11,6 +11,8 @@
 
 #include <Geometry2d/Point.hpp>
 
+#include <protobuf/SimCommand.pb.h>
+
 #include "Ball.hpp"
 #include "Robot.hpp"
 #include "Field.hpp"
@@ -38,8 +40,8 @@ private:
 	// This timer causes physics to be stepped on a regular basis
 	QTimer _timer;
 
-	QUdpSocket _visionSocket;
-	QUdpSocket _radioSocket[2];
+	QUdpSocket _visionSocket;   ///< Simulated vision - can also receive commands from soccer
+	QUdpSocket _radioSocketBlue, _radioSocketYellow; ///< Connections for robots
 
 	struct timeval _lastStepTime;
 
@@ -56,8 +58,6 @@ public:
 
 	int ballVisibility;
 
-public:
-
 	Environment(const QString& configFile, bool sendShared_);
 
 	void dropFrame()
@@ -65,44 +65,56 @@ public:
 		_dropFrame = true;
 	}
 
-	const QVector<Ball*> &balls() const
-	{
-		return _balls;
-	}
+	const QVector<Ball*> &balls() const {	return _balls; }
 
-	const RobotMap &blue() const
-	{
-		return _blue;
-	}
-
-	const RobotMap &yellow() const
-	{
-		return _yellow;
-	}
+	const RobotMap &blue() const { return _blue; }
+	const RobotMap &yellow() const { return _yellow; }
 
 	/** add a ball @ pos */
 	void addBall(Geometry2d::Point pos);
 
 	/** add a robot with id i to the environment @ pos */
-	void addRobot(bool blue, int id, Geometry2d::Point pos, Robot::Rev rev);
+	void addRobot(bool blue, int id, const Geometry2d::Point& pos, Robot::RobotRevision rev);
 
 	/** removes a robot with id i from the environment */
 	void removeRobot(bool blue, int id);
 
 protected Q_SLOTS:
 
+	/**
+	 * Primary simulation step function - called by a timer at a fixed interval
+	 */
 	void step();
 
-	private:
+private:
 	Robot *robot(bool blue, int board_id) const;
 	static void convert_robot(const Robot *robot, SSL_DetectionRobot *out);
-	void handleRadioTx(int ch, const Packet::RadioTx& data);
+	void handleRadioTx(bool blue, const Packet::RadioTx& data);
+
+	void handleSimCommand(const Packet::SimCommand& cmd);
 
 	void sendVision();
+
+	// Packet handling
+	template<class PACKET>
+	bool loadPacket(QUdpSocket& socket, PACKET& packet) {
+		std::string buf;
+		unsigned int n = socket.pendingDatagramSize();
+		buf.resize(n);
+		socket.readDatagram(&buf[0], n);
+
+		if (!packet.ParseFromString(buf))
+		{
+			printf("Bad packet of %d bytes\n", n);
+			return false;
+		}
+		return true;
+	}
 
 	// Returns true if any robot occludes a ball from a camera's point of view.
 	bool occluded(Geometry2d::Point ball, Geometry2d::Point camera);
 
+	// Config file handling
 	bool loadConfigFile(const QString& filename);
 	void procTeam(QDomElement e, bool blue);
 };
