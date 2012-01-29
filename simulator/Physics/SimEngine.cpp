@@ -145,5 +145,10 @@ void SimEngine::debugDrawWorld() {
 		_dynamicsWorld->debugDrawWorld();
 }
 
+void SimEngine::addVehicle(btActionInterface* vehicle) {
+	if (_dynamicsWorld)
+		_dynamicsWorld->addVehicle(vehicle);
+}
+
 
 

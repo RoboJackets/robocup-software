@@ -21,10 +21,10 @@
 class btCollisionShape;
 class btDynamicsWorld;
 class btRigidBody;
-class btTypedConstraint;
+class btActionInterface;
 
 class SimEngine {
-public:
+protected:
 	btAlignedObjectArray<btCollisionShape*> _collisionShapes;
 	class btBroadphaseInterface* _overlappingPairCache;
 	class btCollisionDispatcher* _dispatcher;
@@ -37,11 +37,19 @@ public:
 	int _debugMode;
 	btScalar _defaultContactProcessingThreshold;
 
-	SimEngine();
+public:
 
+	/** creates a new engine - does not initialize until initPhysics() */
+	SimEngine();
 	~SimEngine();
 
+	/** actually initializes physics objects */
 	void initPhysics();
+
+	// access
+	btDynamicsWorld* dynamicsWorld() const { return _dynamicsWorld; }
+	int debugMode() const { return _debugMode; }
+	void debugMode(int mode) { _debugMode = mode; }
 
 	void setDebug(const btIDebugDraw::DebugDrawModes& flag);
 
@@ -52,8 +60,11 @@ public:
 
 	btScalar getDeltaTimeMicroseconds();
 
+	/** Key function for advancing the simulation forward in time */
 	void stepSimulation();
 
 	void debugDrawWorld();
+
+	void addVehicle(btActionInterface* vehicle);
 };
 
