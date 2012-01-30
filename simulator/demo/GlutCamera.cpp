@@ -33,26 +33,26 @@
 using namespace std;
 
 GlutCamera::GlutCamera(SimEngine* engine) :
-		m_cameraDistance(15.0), m_ele(20.f), m_azi(0.f), m_cameraPosition(0.f, 0.f, 0.f),
-		m_cameraTargetPosition(0.f, 0.f, 0.f), m_scaleBottom(0.5f), m_scaleFactor(2.f),
-		m_cameraUp(0, 1, 0), m_forwardAxis(2), m_glutScreenWidth(0), m_glutScreenHeight(0),
-		m_frustumZNear(1.f), m_frustumZFar(10000.f), m_ortho(0), _simEngine(engine)
+		_cameraDistance(15.0), _ele(20.f), _azi(0.f), _cameraPosition(0.f, 0.f, 0.f),
+		_cameraTargetPosition(0.f, 0.f, 0.f), _scaleBottom(0.5f), _scaleFactor(2.f),
+		_cameraUp(0, 1, 0), _forwardAxis(2), _glutScreenWidth(0), _glutScreenHeight(0),
+		_frustumZNear(1.f), _frustumZFar(10000.f), _ortho(0), _simEngine(engine)
 {
-	m_shapeDrawer = new GL_ShapeDrawer();
-	m_shapeDrawer->enableTexture(true);
-	m_enableshadows = false;
+	_shapeDrawer = new GL_ShapeDrawer();
+	_shapeDrawer->enableTexture(true);
+	_enableshadows = false;
 }
 
 GlutCamera::~GlutCamera() {
-	if (m_shapeDrawer)
-		delete m_shapeDrawer;
+	if (_shapeDrawer)
+		delete _shapeDrawer;
 }
 
 void GlutCamera::reshape(int w, int h) {
 	GLDebugResetFont(w, h);
 
-	m_glutScreenWidth = w;
-	m_glutScreenHeight = h;
+	_glutScreenWidth = w;
+	_glutScreenHeight = h;
 
 	glViewport(0, 0, w, h);
 	updateCamera();
@@ -100,44 +100,44 @@ void GlutCamera::updateCamera() {
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	btScalar rele = m_ele * btScalar(0.01745329251994329547); // rads per deg
-	btScalar razi = m_azi * btScalar(0.01745329251994329547); // rads per deg
+	btScalar rele = _ele * btScalar(0.01745329251994329547); // rads per deg
+	btScalar razi = _azi * btScalar(0.01745329251994329547); // rads per deg
 
-	btQuaternion rot(m_cameraUp, razi);
+	btQuaternion rot(_cameraUp, razi);
 
 	btVector3 eyePos(0, 0, 0);
-	eyePos[m_forwardAxis] = -m_cameraDistance;
+	eyePos[_forwardAxis] = -_cameraDistance;
 
 	btVector3 forward(eyePos[0], eyePos[1], eyePos[2]);
 	if (forward.length2() < SIMD_EPSILON) {
 		forward.setValue(1.f, 0.f, 0.f);
 	}
-	btVector3 right = m_cameraUp.cross(forward);
+	btVector3 right = _cameraUp.cross(forward);
 	btQuaternion roll(right, -rele);
 
 	eyePos = btMatrix3x3(rot) * btMatrix3x3(roll) * eyePos;
 
-	m_cameraPosition[0] = eyePos.getX();
-	m_cameraPosition[1] = eyePos.getY();
-	m_cameraPosition[2] = eyePos.getZ();
-	m_cameraPosition += m_cameraTargetPosition;
+	_cameraPosition[0] = eyePos.getX();
+	_cameraPosition[1] = eyePos.getY();
+	_cameraPosition[2] = eyePos.getZ();
+	_cameraPosition += _cameraTargetPosition;
 
-	if (m_glutScreenWidth == 0 && m_glutScreenHeight == 0)
+	if (_glutScreenWidth == 0 && _glutScreenHeight == 0)
 		return;
 
 	btScalar aspect;
 	btVector3 extents;
 
-	aspect = m_glutScreenWidth / (btScalar) m_glutScreenHeight;
+	aspect = _glutScreenWidth / (btScalar) _glutScreenHeight;
 	extents.setValue(aspect * 1.0f, 1.0f, 0);
 
-	if (m_ortho) {
+	if (_ortho) {
 		// reset matrix
 		glLoadIdentity();
 
-		extents *= m_cameraDistance;
-		btVector3 lower = m_cameraTargetPosition - extents;
-		btVector3 upper = m_cameraTargetPosition + extents;
+		extents *= _cameraDistance;
+		btVector3 lower = _cameraTargetPosition - extents;
+		btVector3 upper = _cameraTargetPosition + extents;
 		//gluOrtho2D(lower.x, upper.x, lower.y, upper.y);
 		glOrtho(lower.getX(), upper.getX(), lower.getY(), upper.getY(), -1000,
 				1000);
@@ -147,38 +147,38 @@ void GlutCamera::updateCamera() {
 		//glTranslatef(100,210,0);
 	} else {
 //		glFrustum (-aspect, aspect, -1.0, 1.0, 1.0, 10000.0);
-		glFrustum(-aspect * m_frustumZNear, aspect * m_frustumZNear,
-				-m_frustumZNear, m_frustumZNear, m_frustumZNear, m_frustumZFar);
+		glFrustum(-aspect * _frustumZNear, aspect * _frustumZNear,
+				-_frustumZNear, _frustumZNear, _frustumZNear, _frustumZFar);
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		gluLookAt(m_cameraPosition[0], m_cameraPosition[1], m_cameraPosition[2],
-				m_cameraTargetPosition[0], m_cameraTargetPosition[1],
-				m_cameraTargetPosition[2], m_cameraUp.getX(), m_cameraUp.getY(),
-				m_cameraUp.getZ());
+		gluLookAt(_cameraPosition[0], _cameraPosition[1], _cameraPosition[2],
+				_cameraTargetPosition[0], _cameraTargetPosition[1],
+				_cameraTargetPosition[2], _cameraUp.getX(), _cameraUp.getY(),
+				_cameraUp.getZ());
 	}
 
 }
 
 btVector3 GlutCamera::getRayTo(int x, int y) {
 
-	if (m_ortho) {
+	if (_ortho) {
 
 		btScalar aspect;
 		btVector3 extents;
-		aspect = m_glutScreenWidth / (btScalar) m_glutScreenHeight;
+		aspect = _glutScreenWidth / (btScalar) _glutScreenHeight;
 		extents.setValue(aspect * 1.0f, 1.0f, 0);
 
-		extents *= m_cameraDistance;
-		btVector3 lower = m_cameraTargetPosition - extents;
-		btVector3 upper = m_cameraTargetPosition + extents;
+		extents *= _cameraDistance;
+		btVector3 lower = _cameraTargetPosition - extents;
+		btVector3 upper = _cameraTargetPosition + extents;
 
-		btScalar u = x / btScalar(m_glutScreenWidth);
-		btScalar v = (m_glutScreenHeight - y) / btScalar(m_glutScreenHeight);
+		btScalar u = x / btScalar(_glutScreenWidth);
+		btScalar v = (_glutScreenHeight - y) / btScalar(_glutScreenHeight);
 
 		btVector3 p(0, 0, 0);
 		p.setValue((1.0f - u) * lower.getX() + u * upper.getX(),
 				(1.0f - v) * lower.getY() + v * upper.getY(),
-				m_cameraTargetPosition.getZ());
+				_cameraTargetPosition.getZ());
 		return p;
 	}
 
@@ -195,7 +195,7 @@ btVector3 GlutCamera::getRayTo(int x, int y) {
 	rayForward *= farPlane;
 
 	btVector3 rightOffset;
-	btVector3 vertical = m_cameraUp;
+	btVector3 vertical = _cameraUp;
 
 	btVector3 hor;
 	hor = rayForward.cross(vertical);
@@ -210,13 +210,13 @@ btVector3 GlutCamera::getRayTo(int x, int y) {
 
 	btScalar aspect;
 
-	aspect = m_glutScreenWidth / (btScalar) m_glutScreenHeight;
+	aspect = _glutScreenWidth / (btScalar) _glutScreenHeight;
 
 	hor *= aspect;
 
 	btVector3 rayToCenter = rayFrom + rayForward;
-	btVector3 dHor = hor * 1.f / float(m_glutScreenWidth);
-	btVector3 dVert = vertical * 1.f / float(m_glutScreenHeight);
+	btVector3 dHor = hor * 1.f / float(_glutScreenWidth);
+	btVector3 dVert = vertical * 1.f / float(_glutScreenHeight);
 
 	btVector3 rayTo = rayToCenter - 0.5f * hor + 0.5f * vertical;
 	rayTo += btScalar(x) * dHor;
@@ -241,7 +241,7 @@ void GlutCamera::setOrthographicProjection() {
 	// reset matrix
 	glLoadIdentity();
 	// set a 2D orthographic projection
-	gluOrtho2D(0, m_glutScreenWidth, 0, m_glutScreenHeight);
+	gluOrtho2D(0, _glutScreenWidth, 0, _glutScreenHeight);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
@@ -249,7 +249,7 @@ void GlutCamera::setOrthographicProjection() {
 	glScalef(1, -1, 1);
 	// mover the origin from the bottom left corner
 	// to the upper left corner
-	glTranslatef(btScalar(0), btScalar(-m_glutScreenHeight), btScalar(0));
+	glTranslatef(btScalar(0), btScalar(-_glutScreenHeight), btScalar(0));
 
 }
 
@@ -317,15 +317,15 @@ void GlutCamera::renderscene(int pass, int debugMode) {
 		if (!(debugMode & btIDebugDraw::DBG_DrawWireframe)) {
 			switch (pass) {
 			case 0:
-				m_shapeDrawer->drawOpenGL(m, colObj->getCollisionShape(), wireColor,
+				_shapeDrawer->drawOpenGL(m, colObj->getCollisionShape(), wireColor,
 						debugMode, aabbMin, aabbMax);
 				break;
 			case 1:
-				m_shapeDrawer->drawShadow(m, m_sundirection * rot,
+				_shapeDrawer->drawShadow(m, _sundirection * rot,
 						colObj->getCollisionShape(), aabbMin, aabbMax);
 				break;
 			case 2:
-				m_shapeDrawer->drawOpenGL(m, colObj->getCollisionShape(),
+				_shapeDrawer->drawOpenGL(m, colObj->getCollisionShape(),
 						wireColor * btScalar(0.3), 0, aabbMin, aabbMax);
 				break;
 			}
@@ -337,7 +337,7 @@ void GlutCamera::renderme(int debugMode) {
 	myinit();
 	updateCamera();
 	if (_simEngine->dynamicsWorld()) {
-		if (m_enableshadows) {
+		if (_enableshadows) {
 			glClear(GL_STENCIL_BUFFER_BIT);
 			glEnable(GL_CULL_FACE);
 			renderscene(0, debugMode);
@@ -391,14 +391,14 @@ void GlutCamera::chaseCamera() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	btScalar aspect = m_glutScreenWidth / (btScalar) m_glutScreenHeight;
+	btScalar aspect = _glutScreenWidth / (btScalar) _glutScreenHeight;
 	glFrustum(-aspect, aspect, -1.0, 1.0, 1.0, 10000.0);
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
-	gluLookAt(m_cameraPosition[0], m_cameraPosition[1], m_cameraPosition[2],
-			m_cameraTargetPosition[0], m_cameraTargetPosition[1],
-			m_cameraTargetPosition[2], m_cameraUp.getX(), m_cameraUp.getY(),
-			m_cameraUp.getZ());
+	gluLookAt(_cameraPosition[0], _cameraPosition[1], _cameraPosition[2],
+			_cameraTargetPosition[0], _cameraTargetPosition[1],
+			_cameraTargetPosition[2], _cameraUp.getX(), _cameraUp.getY(),
+			_cameraUp.getZ());
 }

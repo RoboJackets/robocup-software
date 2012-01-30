@@ -14,9 +14,8 @@
  */
 #pragma once
 
-#include <map>
-
-#include "LinearMath/btQuickprof.h"
+#include <btBulletDynamicsCommon.h>
+#include <LinearMath/btQuickprof.h>
 
 class btCollisionShape;
 class btDynamicsWorld;
