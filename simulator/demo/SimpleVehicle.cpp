@@ -51,7 +51,7 @@ void SimpleVehicle::initPhysics() {
 	_wheelShape = new btCylinderShapeX(
 			btVector3(wheelWidth, wheelRadius, wheelRadius));
 
-	resetScene();
+	resetScene(); // force initial physics state - everything stationary
 
 	/// create vehicle
 	{

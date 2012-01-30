@@ -129,8 +129,7 @@ void VehicleDemo::renderme() {
 	updateCamera();
 
 	btVector3 worldBoundsMin, worldBoundsMax;
-	getDynamicsWorld()->getBroadphase()->getBroadphaseAabb(worldBoundsMin,
-			worldBoundsMax);
+	getDynamicsWorld()->getBroadphase()->getBroadphaseAabb(worldBoundsMin, worldBoundsMax);
 
 	_vehicle->drawWheels(camera()->shapeDrawer(), worldBoundsMin, worldBoundsMax);
 
