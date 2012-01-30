@@ -32,25 +32,25 @@ class btTypedConstraint;
 
 class GlutCamera {
 protected:
-	float m_cameraDistance;
-	float m_ele;
-	float m_azi;
-	btVector3 m_cameraPosition;
-	btVector3 m_cameraTargetPosition; //look at
-	float m_scaleBottom;
-	float m_scaleFactor;
-	btVector3 m_cameraUp;
-	int m_forwardAxis;
-	int m_glutScreenWidth;
-	int m_glutScreenHeight;
-	float m_frustumZNear;
-	float m_frustumZFar;
-	int m_ortho;
-	GL_ShapeDrawer* m_shapeDrawer;
-	bool m_enableshadows;
-	btVector3 m_sundirection;
+	float _cameraDistance;
+	float _ele;
+	float _azi;
+	btVector3 _cameraPosition;
+	btVector3 _cameraTargetPosition; //look at
+	float _scaleBottom;
+	float _scaleFactor;
+	btVector3 _cameraUp;
+	int _forwardAxis;
+	int _glutScreenWidth;
+	int _glutScreenHeight;
+	float _frustumZNear;
+	float _frustumZFar;
+	int _ortho;
+	GL_ShapeDrawer* _shapeDrawer;
+	bool _enableshadows;
+	btVector3 _sundirection;
 
-	GLDebugDrawer gDebugDrawer;
+	GLDebugDrawer _debugDrawer;
 
 	// connect to dynamics - not created internally
 	SimEngine *_simEngine;
@@ -59,33 +59,33 @@ public:
 	GlutCamera(SimEngine* engine = 0);
 	~GlutCamera();
 
-	bool setTexturing(bool enable) { return (m_shapeDrawer->enableTexture(enable)); }
+	bool setTexturing(bool enable) { return (_shapeDrawer->enableTexture(enable)); }
 	bool setShadows(bool enable) {
-		bool p = m_enableshadows;
-		m_enableshadows = enable;
+		bool p = _enableshadows;
+		_enableshadows = enable;
 		return (p);
 	}
 
-	bool getTexturing() const { return m_shapeDrawer->hasTextureEnabled(); }
-	bool getShadows() const {	return m_enableshadows; }
+	bool getTexturing() const { return _shapeDrawer->hasTextureEnabled(); }
+	bool getShadows() const {	return _enableshadows; }
 
-	void setAzi(float azi) { m_azi = azi; }
+	void setAzi(float azi) { _azi = azi; }
 
-	void setCameraUp(const btVector3& camUp) { m_cameraUp = camUp; }
-	void setCameraForwardAxis(int axis) {	m_forwardAxis = axis;	}
+	void setCameraUp(const btVector3& camUp) { _cameraUp = camUp; }
+	void setCameraForwardAxis(int axis) {	_forwardAxis = axis;	}
 
-	void setCameraPosition(const btVector3& pos) { m_cameraPosition = pos; }
-	btVector3 getCameraPosition() const { return m_cameraPosition; }
+	void setCameraPosition(const btVector3& pos) { _cameraPosition = pos; }
+	btVector3 getCameraPosition() const { return _cameraPosition; }
 
-	void setCameraTargetPosition(const btVector3& pos) { m_cameraTargetPosition = pos; }
-	btVector3 getCameraTargetPosition() const {	return m_cameraTargetPosition; }
+	void setCameraTargetPosition(const btVector3& pos) { _cameraTargetPosition = pos; }
+	btVector3 getCameraTargetPosition() const {	return _cameraTargetPosition; }
 
-	GL_ShapeDrawer* shapeDrawer() { return m_shapeDrawer; }
-	GLDebugDrawer* debugDrawer() { return &gDebugDrawer; }
+	GL_ShapeDrawer* shapeDrawer() { return _shapeDrawer; }
+	GLDebugDrawer* debugDrawer() { return &_debugDrawer; }
 
 	void setFrustumZPlanes(float zNear, float zFar) {
-		m_frustumZNear = zNear;
-		m_frustumZFar = zFar;
+		_frustumZNear = zNear;
+		_frustumZFar = zFar;
 	}
 
 	virtual void myinit(); // initializes camera
@@ -93,8 +93,8 @@ public:
 	// performs camera updates - can be customized for different camera modes
 	virtual void updateCamera();
 
-	void setCameraDistance(float dist) { m_cameraDistance = dist; }
-	float getCameraDistance() const {	return m_cameraDistance; }
+	void setCameraDistance(float dist) { _cameraDistance = dist; }
+	float getCameraDistance() const {	return _cameraDistance; }
 
 	void renderscene(int pass, int debugMode);
 

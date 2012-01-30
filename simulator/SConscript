@@ -21,7 +21,7 @@ e.Append(LIBS=[
 	'GLU'])
 
 p1 = e.Program('simulator', [
-	'main.cpp',
+	'simulator.cpp',
 	'SimulatorWindow.cpp',
 	'SimViewer.cpp',
 	'Physics/Environment.cpp',
@@ -43,6 +43,8 @@ Help('simulator: Provides simulation of SSL robots, using Bullet Physics\n')
 p2 = e.Program('vehicle_demo', [
 	'demo/vehicle_demo.cpp', 
 	'demo/VehicleDemo.cpp',
+	'demo/SimpleVehicle.cpp',
+	'demo/GroundSurface.cpp',
 	'demo/GlutCamera.cpp',
 	'Physics/SimEngine.cpp'])
 Default(e.Install(exec_dir, p2))

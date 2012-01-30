@@ -12,16 +12,7 @@
  2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
  3. This notice may not be removed or altered from any source distribution.
  */
-#ifndef VEHICLE_DEMO_H
-#define VEHICLE_DEMO_H
-
-class btVehicleTuning;
-struct btVehicleRaycaster;
-class btCollisionShape;
-class GL_ShapeDrawer;
-
-#include "GlutCamera.hpp"
-#include "Physics/SimEngine.hpp"
+#pragma once
 
 #include <map>
 
@@ -29,86 +20,25 @@ class GL_ShapeDrawer;
 
 #include "LinearMath/btQuickprof.h"
 
+class btVehicleTuning;
+struct btVehicleRaycaster;
+class btCollisionShape;
+class GL_ShapeDrawer;
+
 class btCollisionShape;
 class btDynamicsWorld;
-class btRigidBody;
-class btTypedConstraint;
 
-class VehicleDemo;
-
-class Vehicle {
-public:
-
-	// physics components
-	btRigidBody* m_carChassis;
-	btRaycastVehicle::btVehicleTuning m_tuning;
-	btVehicleRaycaster* m_vehicleRayCaster;
-	btRaycastVehicle* m_vehicle;
-	btCollisionShape* m_wheelShape;
-
-	// control inputs
-	float gEngineForce;
-	float gBreakingForce;
-	float gVehicleSteering;
-
-	// links to the engine
-	SimEngine *_simEngine;
-
-	Vehicle(SimEngine* engine)
-	: m_carChassis(0), m_vehicle(0), m_wheelShape(0),
-	  _simEngine(engine)
-	{
-		gEngineForce = 0.f;
-		gBreakingForce = 0.f;
-		gVehicleSteering = 0.f;
-	}
-
-	~Vehicle() {
-		delete m_vehicleRayCaster;
-		delete m_vehicle;
-		delete m_wheelShape;
-	}
-
-	void initPhysics();
-
-	void drawWheels(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax);
-
-	void move();
-
-	void resetScene();
-
-	void getWorldTransform(btTransform& chassisWorldTrans) const;
-
-	// bang-bang steering and throttle
-	void steerLeft();
-	void steerRight();
-	void driveForward();
-	void driveBackward();
-
-};
-
-class GroundSurface {
-public:
-	// Terrain components
-	class btTriangleIndexVertexArray* m_indexVertexArrays;
-	btVector3* m_vertices;
-
-	// links to the engine
-	SimEngine *_simEngine;
-
-	GroundSurface(SimEngine *engine);
-
-	~GroundSurface();
-
-	void initPhysics();
-};
+class SimpleVehicle;
+class GroundSurface;
+class GlutCamera;
+class SimEngine;
 
 ///VehicleDemo shows how to setup and use the built-in raycast vehicle
 class VehicleDemo {
-public:
+protected:
 
 	// Drivable vehicle
-	Vehicle* _vehicle;
+	SimpleVehicle* _vehicle;
 
 	// Ground
 	GroundSurface* _ground;
@@ -120,23 +50,21 @@ public:
 	GlutCamera* _camera;
 
 	// Additional camera components
-	float m_cameraHeight;
-	float m_minCameraDistance;
-	float m_maxCameraDistance;
+	float _cameraHeight;
+	float _minCameraDistance;
+	float _maxCameraDistance;
+
+public:
 
 	VehicleDemo();
 
 	~VehicleDemo();
 
-	btDynamicsWorld* getDynamicsWorld() {
-		return _simEngine->dynamicsWorld();
-	}
+	btDynamicsWorld* getDynamicsWorld();
 
 	void setDrawClusters(bool drawClusters) {}
 
-	int getDebugMode() const {
-		return _simEngine->debugMode();
-	}
+	int getDebugMode() const;
 
 	GlutCamera* camera() { return _camera; }
 
@@ -148,7 +76,7 @@ public:
 
 	void displayCallback();
 
-	///a very basic camera following the vehicle
+	/// a very basic camera following the vehicle
 	void updateCamera();
 
 	void specialKeyboard(int key, int x, int y);
@@ -159,7 +87,7 @@ public:
 
 	void initPhysics();
 
-	///glut callbacks
+	/// glut callbacks
 
 	void keyboardCallback(unsigned char key, int x, int y);
 
@@ -172,4 +100,3 @@ public:
 			btAlignedObjectArray<btCollisionShape*>& m_collisionShapes);
 };
 
-#endif //VEHICLE_DEMO_H

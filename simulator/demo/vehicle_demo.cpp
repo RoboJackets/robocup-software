@@ -1,4 +1,5 @@
 #include "VehicleDemo.hpp"
+#include "GlutCamera.hpp"
 
 static VehicleDemo* gSimpleApplication = 0;
 
