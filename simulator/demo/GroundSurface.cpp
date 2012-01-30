@@ -1,37 +1,5 @@
-/*
- Bullet Continuous Collision Detection and Physics Library
- Copyright (c) 2003-2006 Erwin Coumans  http://continuousphysics.com/Bullet/
-
- This software is provided 'as-is', without any express or implied warranty.
- In no event will the authors be held liable for any damages arising from the use of this software.
- Permission is granted to anyone to use this software for any purpose,
- including commercial applications, and to alter it and redistribute it freely,
- subject to the following restrictions:
-
- 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
- 2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
- 3. This notice may not be removed or altered from any source distribution.
- */
-
-#include <boost/tuple/tuple.hpp>
-
-#include "GlutCamera.hpp"
+#include <Physics/SimEngine.hpp>
 #include "GroundSurface.hpp"
-
-#include <btBulletDynamicsCommon.h>
-
-#include "GLDebugDrawer.h"
-#include <stdio.h> //printf debugging
-#include "GL_ShapeDrawer.h"
-
-const int maxProxies = 32766;
-const int maxOverlap = 65535;
-
-///btRaycastVehicle is the interface for the constraint that implements the raycast vehicle
-///notice that for higher-quality slow-moving vehicles, another approach might be better
-///implementing explicit hinged-wheel constraints with cylinder collision, rather then raycasts
-
-#define CUBE_HALF_EXTENTS 1
 
 using namespace std;
 
