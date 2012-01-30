@@ -20,6 +20,11 @@ static const float suspensionCompression = 4.4f;
 static const float rollInfluence = 0.1f; //1.0f;
 static const btScalar suspensionRestLength = 0.6f;
 
+// structure parameters
+static const float box_len = 2.f;
+static const float box_width = 1.0;
+static const float box_height = 0.5;
+
 void SimpleVehicle::initPhysics() {
 
 	// Assumes that Y is up
@@ -29,7 +34,7 @@ void SimpleVehicle::initPhysics() {
 	btVector3 wheelDirectionCS0(0, -1, 0);
 	btVector3 wheelAxleCS(-1, 0, 0);
 
-	btCollisionShape* chassisShape = new btBoxShape(btVector3(1.f, 0.5f, 2.f));
+	btCollisionShape* chassisShape = new btBoxShape(btVector3(box_width, box_height, box_len));
 	_simEngine->addCollisionShape(chassisShape);
 
 	btCompoundShape* compound = new btCompoundShape();

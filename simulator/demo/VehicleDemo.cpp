@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "GlutCamera.hpp"
 #include "GroundSurface.hpp"
 #include "SimpleVehicle.hpp"
@@ -144,6 +146,12 @@ void VehicleDemo::clientMoveAndDisplay() {
 	_vehicle->move();
 
 	_simEngine->stepSimulation();
+
+	// print out the current position of the vehicle
+	btTransform pose;
+	_vehicle->getWorldTransform(pose);
+	btVector3 trans = pose.getOrigin();
+	cout << "Pose: x = " << trans.x() << " y = " << trans.y() << " z = " << trans.z() << endl;
 
 	renderme();
 
