@@ -13,21 +13,7 @@
  3. This notice may not be removed or altered from any source distribution.
  */
 
-#include <boost/tuple/tuple.hpp>
-
-#include <demo/GlutCamera.hpp>
-
-#include <btBulletDynamicsCommon.h>
-
-#include "GLDebugDrawer.h"
-#include <stdio.h> //printf debugging
-#include "GL_ShapeDrawer.h"
-
-const int maxProxies = 32766;
-const int maxOverlap = 65535;
-
-
-#define CUBE_HALF_EXTENTS 1
+#include <Physics/SimEngine.hpp>
 
 using namespace std;
 
