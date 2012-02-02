@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
 class QSlider;
 QT_END_NAMESPACE
 //! [0]
-class GLWidget;
+class SimRenderView;
 
 class Window : public QWidget
 {
@@ -62,7 +62,7 @@ protected:
 private:
     QSlider *createSlider();
 
-    GLWidget *glWidget;
+    SimRenderView *glWidget;
     QSlider *xSlider;
     QSlider *ySlider;
     QSlider *zSlider;
