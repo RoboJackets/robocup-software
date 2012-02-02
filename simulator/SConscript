@@ -51,8 +51,11 @@ Default(e.Install(exec_dir, p2))
 Help('vehicle_demo: Example code for bullet with simple GUI\n')
 
 # add demos for testing
-#p3 = e.Program('qt_vehicle_demo', [
-#	'viz_demo/qt_vehicle_demo.cpp' 
-#	])
-#Default(e.Install(exec_dir, p3))
-#Help('qt_vehicle_demo: Example code for bullet moved into Qt\n')
+p3 = e.Program('qt_vehicle_demo', [
+	'viz_demo/qt_vehicle_demo.cpp',
+	'viz_demo/glwidget.cpp',
+	'viz_demo/qtlogo.cpp',
+	'viz_demo/window.cpp'
+	])
+Default(e.Install(exec_dir, p3))
+Help('qt_vehicle_demo: Example code for bullet moved into Qt\n')
