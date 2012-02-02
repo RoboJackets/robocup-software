@@ -23,7 +23,7 @@ e.Append(LIBS=[
 p1 = e.Program('simulator', [
 	'simulator.cpp',
 	'SimulatorWindow.cpp',
-	'SimViewer.cpp',
+#	'SimViewer.cpp',
 	'Physics/Environment.cpp',
 	'Physics/Entity.cpp',
 	'Physics/Ball.cpp',
@@ -41,11 +41,18 @@ Help('simulator: Provides simulation of SSL robots, using Bullet Physics\n')
 
 # add demos for testing
 p2 = e.Program('vehicle_demo', [
-	'demo/vehicle_demo.cpp', 
-	'demo/VehicleDemo.cpp',
-	'demo/SimpleVehicle.cpp',
-	'demo/GroundSurface.cpp',
-	'demo/GlutCamera.cpp',
+	'bullet_demo/vehicle_demo.cpp', 
+	'bullet_demo/VehicleDemo.cpp',
+	'bullet_demo/SimpleVehicle.cpp',
+	'bullet_demo/GroundSurface.cpp',
+	'bullet_demo/GlutCamera.cpp',
 	'Physics/SimEngine.cpp'])
 Default(e.Install(exec_dir, p2))
 Help('vehicle_demo: Example code for bullet with simple GUI\n')
+
+# add demos for testing
+p3 = e.Program('qt_vehicle_demo', [
+	'viz_demo/qt_vehicle_demo.cpp' 
+	])
+Default(e.Install(exec_dir, p3))
+Help('qt_vehicle_demo: Example code for bullet moved into Qt\n')
