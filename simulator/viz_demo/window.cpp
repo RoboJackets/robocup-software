@@ -46,7 +46,7 @@
 //! [0]
 Window::Window()
 {
-    glWidget = new GLWidget;
+    glWidget = new SimRenderView;
 
     xSlider = createSlider();
     ySlider = createSlider();

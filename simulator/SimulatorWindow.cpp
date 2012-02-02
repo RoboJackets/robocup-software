@@ -1,5 +1,5 @@
 #include "SimulatorWindow.hpp"
-//#include "SimViewer.hpp"
+#include "SimRenderView.hpp"
 #include "Physics/Environment.hpp"
 
 #include <QAbstractTableModel>
@@ -149,6 +149,9 @@ SimulatorWindow::SimulatorWindow(QWidget* parent):
 	_model = new RobotTableModel();
 	_ui.robotTable->setModel(_model);
 	_ui.robotTable->resizeColumnsToContents();
+
+	// renderer setup
+	_render = _ui.renderViewWidget;
 }
 
 void SimulatorWindow::env(Environment* value)
