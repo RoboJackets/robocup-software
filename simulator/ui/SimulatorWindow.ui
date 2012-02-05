@@ -160,7 +160,7 @@
   <customwidget>
    <class>SimRenderView</class>
    <extends>QWidget</extends>
-   <header>SimRenderView.hpp</header>
+   <header>rendering/SimRenderView.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

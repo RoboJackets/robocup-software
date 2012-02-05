@@ -1,5 +1,5 @@
 #include "SimulatorWindow.hpp"
-#include "SimRenderView.hpp"
+#include "rendering/SimRenderView.hpp"
 #include "Physics/Environment.hpp"
 
 #include <QAbstractTableModel>
