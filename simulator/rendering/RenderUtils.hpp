@@ -18,10 +18,8 @@ static inline void qMultMatrix(const QMatrix4x4 &mat)
 {
 	if (sizeof(qreal) == sizeof(GLfloat))
 		glMultMatrixf((GLfloat*)mat.constData());
-#ifndef QT_OPENGL_ES
 	else if (sizeof(qreal) == sizeof(GLdouble))
 		glMultMatrixd((GLdouble*)mat.constData());
-#endif
 	else
 	{
 		GLfloat fmat[16];
@@ -33,11 +31,11 @@ static inline void qMultMatrix(const QMatrix4x4 &mat)
 }
 
 static inline QVector<QVector3D> extrude(const QVector<QVector3D> &verts, qreal depth)
-		{
+{
 	QVector<QVector3D> extr = verts;
 	for (int v = 0; v < extr.count(); ++v)
 		extr[v].setZ(extr[v].z() - depth);
 	return extr;
-		}
+}
 
 } // \namespace rendering

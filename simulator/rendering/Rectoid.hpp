@@ -11,7 +11,11 @@ struct Geometry;
 class Rectoid
 {
 public:
+
+	/** translate in 3D frame - z is up */
 	void translate(const QVector3D &t);
+
+	/** axis-angle rotations */
 	void rotate(qreal deg, QVector3D axis);
 
 	// No special Rectoid destructor - the parts are fetched out of this member
@@ -19,9 +23,11 @@ public:
 	QList<Patch*> parts;
 };
 
+// Subclasses for variations
 class RectPrism : public Rectoid
 {
 public:
+	/** centered at origin */
 	RectPrism(Geometry *g, qreal width, qreal height, qreal depth);
 };
 
