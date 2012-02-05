@@ -8,8 +8,9 @@ namespace rendering {
 
 void Rectoid::translate(const QVector3D &t)
 {
+	const QVector3D st = t * _scale;
 	for (int i = 0; i < parts.count(); ++i)
-		parts[i]->translate(t);
+		parts[i]->translate(st);
 }
 void Rectoid::rotate(qreal deg, QVector3D axis)
 {
@@ -19,8 +20,14 @@ void Rectoid::rotate(qreal deg, QVector3D axis)
 
 /// RectPrism
 
-RectPrism::RectPrism(Geometry *g, qreal width, qreal height, qreal depth)
+RectPrism::RectPrism(Geometry *g, qreal scale, qreal widthUn, qreal heightUn, qreal depthUn)
+: Rectoid(scale)
 {
+	// scale measurements
+	qreal width  = widthUn  * _scale;
+	qreal height = heightUn * _scale;
+	qreal depth  = depthUn  * _scale;
+
 	enum { bl, br, tr, tl };
 	Patch *fb = new Patch(g);
 	fb->setSmoothing(Patch::Faceted);
@@ -53,7 +60,8 @@ RectPrism::RectPrism(Geometry *g, qreal width, qreal height, qreal depth)
 
 /// RectTorus
 
-RectTorus::RectTorus(Geometry *g, qreal iRad, qreal oRad, qreal depth, int k)
+RectTorus::RectTorus(Geometry *g, qreal scale, qreal iRad, qreal oRad, qreal depth, int k)
+: Rectoid(scale)
 {
 	QVector<QVector3D> inside;
 	QVector<QVector3D> outside;
