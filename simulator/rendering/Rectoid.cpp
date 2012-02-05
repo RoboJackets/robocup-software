@@ -18,6 +18,12 @@ void Rectoid::rotate(qreal deg, QVector3D axis)
 		parts[i]->rotate(deg, axis);
 }
 
+void Rectoid::setColor(QColor c)
+{
+	for (int i = 0; i < parts.count(); ++i)
+		qSetColor(parts[i]->faceColor, c);
+}
+
 /// RectPrism
 
 RectPrism::RectPrism(Geometry *g, qreal scale, qreal widthUn, qreal heightUn, qreal depthUn)

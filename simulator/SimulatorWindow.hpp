@@ -23,6 +23,7 @@ private slots:
 	
 private:
 	Ui_SimulatorWindow _ui;
+
 	Environment *_env;
 	RobotTableModel *_model;
 	SimRenderView *_render;

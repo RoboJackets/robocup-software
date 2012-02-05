@@ -41,6 +41,19 @@ void VizObject::draw() const
 	glDisableClientState(GL_NORMAL_ARRAY);
 }
 
+///  Robot visualization
+RobotBody::RobotBody(QObject *parent)
+: VizObject(parent)
+{
+	buildGeometry();
+}
+
+void RobotBody::buildGeometry()
+{
+	// TODO: fill in
+}
+
+
 ///  Field visualization - all static objects
 RCField::RCField(QObject *parent)
 : VizObject(parent)
@@ -59,6 +72,7 @@ void RCField::buildGeometry()
 
 	// add main plane
 	RectPrism base(geom, scale, field_length, field_width, field_depth);
+	base.setColor(Qt::green);
 
 	// set up transforms
 	QVector3D onfield(0.f, 0.f, (0.5 * wall_height - 0.5 * field_depth));
@@ -67,19 +81,23 @@ void RCField::buildGeometry()
 	RectPrism longwall1(geom, scale, field_length, wall_thickness, wall_height);
 	longwall1.translate(onfield);
 	longwall1.translate(QVector3D(0.f, -0.5 * (field_width + wall_thickness), 0.f));
+	longwall1.setColor(Qt::white);
 
 	RectPrism longwall2(geom, scale, field_length, wall_thickness, wall_height);
 	longwall2.translate(onfield);
 	longwall2.translate(QVector3D(0.f, 0.5 * (field_width + wall_thickness), 0.f));
+	longwall2.setColor(Qt::white);
 
 	// add end-walls - cap corners
 	RectPrism shortwall1(geom, scale, wall_thickness, field_width + 2.f * wall_thickness, wall_height);
 	shortwall1.translate(onfield);
 	shortwall1.translate(QVector3D(-0.5 * (field_length + wall_thickness), 0.f, 0.f));
+	shortwall1.setColor(Qt::white);
 
 	RectPrism shortwall2(geom, scale, wall_thickness, field_width + 2.f * wall_thickness, wall_height);
 	shortwall2.translate(onfield);
 	shortwall2.translate(QVector3D( 0.5 * (field_length + wall_thickness), 0.f, 0.f));
+	shortwall2.setColor(Qt::white);
 
 	// assemble
 	parts << base.parts << longwall1.parts << longwall2.parts << shortwall1.parts << shortwall2.parts;
