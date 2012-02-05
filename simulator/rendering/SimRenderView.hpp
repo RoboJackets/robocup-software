@@ -3,7 +3,7 @@
 #include <QGLWidget>
 
 namespace rendering {
-class QtLogo;
+class VizObject;
 } // \namespace rendering
 
 class SimRenderView : public QGLWidget
@@ -35,7 +35,9 @@ protected:
 	void mouseMoveEvent(QMouseEvent *event);
 
 private:
-	rendering::QtLogo *logo;
+
+	QVector<rendering::VizObject*> _entities;
+
 	int xRot;
 	int yRot;
 	int zRot;

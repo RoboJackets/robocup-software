@@ -30,6 +30,18 @@ protected:
 };
 
 /**
+ * Field visualization - all static objects
+ */
+class RCField : public VizObject
+{
+public:
+	RCField(QObject *parent);
+	virtual ~RCField() {}
+
+	void buildGeometry();
+};
+
+/**
  * Qt Logo example visualization
  */
 class QtLogo : public VizObject

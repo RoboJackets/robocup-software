@@ -1,5 +1,3 @@
-#pragma once
-
 #include <QGLWidget>
 #include <QMatrix4x4>
 #include <QVector3D>

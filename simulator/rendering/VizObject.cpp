@@ -4,6 +4,8 @@
 #include "Patch.hpp"
 #include "RenderUtils.hpp"
 
+#include <Constants.hpp>
+
 using namespace rendering;
 
 /// VizObject Implementation
@@ -39,8 +41,30 @@ void VizObject::draw() const
 	glDisableClientState(GL_NORMAL_ARRAY);
 }
 
+///  Field visualization - all static objects
+RCField::RCField(QObject *parent)
+: VizObject(parent)
+{
+	buildGeometry();
+}
 
-///  Qt Logo ImplementationQObject(parent)
+void RCField::buildGeometry()
+{
+	static const qreal field_len = Field_Length + 2.f * Field_Border;
+	static const qreal field_width = Field_Width + 2.f * Field_Border;
+	static const qreal field_depth = 0.1;
+
+	// add main plane
+	RectPrism base(geom, field_len, field_width, field_depth);
+
+	// add lengthwise walls
+
+	// assemble
+	parts << base.parts;
+	geom->finalize();
+}
+
+///  Qt Logo Implementation
 
 QtLogo::QtLogo(QObject *parent, int divisions, qreal scale)
 : VizObject(parent), _divisions(divisions), _scale(scale)
@@ -55,10 +79,10 @@ void QtLogo::buildGeometry()
 	static const qreal bar_thickness = 0.113137;
 	static const qreal logo_depth = 0.10;
 
-	qreal cw = cross_width * _scale;
+	qreal cw = cross_width   * _scale;
 	qreal bt = bar_thickness * _scale;
-	qreal ld = logo_depth * _scale;
-	qreal th = tee_height *_scale;
+	qreal ld = logo_depth    * _scale;
+	qreal th = tee_height    *_scale;
 
 	RectPrism cross(geom, cw, bt, ld);
 	RectPrism stem(geom, bt, th, ld);

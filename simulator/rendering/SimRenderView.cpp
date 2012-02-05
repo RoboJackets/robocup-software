@@ -15,7 +15,6 @@ using namespace rendering;
 SimRenderView::SimRenderView(QWidget *parent)
     : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
-    logo = 0;
     xRot = 0;
     yRot = 0;
     zRot = 0;
@@ -26,6 +25,7 @@ SimRenderView::SimRenderView(QWidget *parent)
 
 SimRenderView::~SimRenderView()
 {
+	qDeleteAll(_entities);
 }
 
 QSize SimRenderView::minimumSizeHint() const
@@ -80,8 +80,20 @@ void SimRenderView::initializeGL()
 {
     qglClearColor(qtPurple.dark());
 
-    logo = new QtLogo(this, 64);
-    logo->setColor(qtGreen.dark());
+    // Add objects
+//    VizObject* logo = new QtLogo(this, 64);
+//    logo->setColor(qtGreen.dark());
+//    _entities.push_back(logo);
+
+    // Add a RoboCup Field
+    VizObject* field = new RCField(this);
+    _entities.push_back(field);
+
+    // Add a RoboCup Robot for each side
+    // TODO
+
+    // Add a Ball
+    // TODO
 
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -97,11 +109,17 @@ void SimRenderView::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    glTranslatef(0.0, 0.0, -10.0);
+
+    // Setup camera
+//    glTranslatef(0.0, 0.0, 6.0);
+    glTranslatef(0.0, 0.0, -10.0); // original
     glRotatef(xRot / 16.0, 1.0, 0.0, 0.0);
     glRotatef(yRot / 16.0, 0.0, 1.0, 0.0);
     glRotatef(zRot / 16.0, 0.0, 0.0, 1.0);
-    logo->draw();
+
+    // render all of the objects
+    for (int i=0; i<_entities.size(); ++i)
+    	_entities[i]->draw();
 }
 
 void SimRenderView::resizeGL(int width, int height)
@@ -111,11 +129,7 @@ void SimRenderView::resizeGL(int width, int height)
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-#ifdef QT_OPENGL_ES_1
-    glOrthof(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
-#else
     glOrtho(-0.5, +0.5, -0.5, +0.5, 4.0, 15.0);
-#endif
     glMatrixMode(GL_MODELVIEW);
 }
 
