@@ -4,11 +4,13 @@
 #include <math.h>
 
 #include "SimRenderView.hpp"
-#include "viz_demo/qtlogo.h"
+#include "VizObject.hpp"
 
 #ifndef GL_MULTISAMPLE
 #define GL_MULTISAMPLE  0x809D
 #endif
+
+using namespace rendering;
 
 SimRenderView::SimRenderView(QWidget *parent)
     : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)

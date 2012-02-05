@@ -25,8 +25,11 @@ e.Append(LIBS=[
 p1 = e.Program('simulator', [
 	'simulator.cpp',
 	'SimulatorWindow.cpp',
-	'SimRenderView.cpp',
-	'viz_demo/qtlogo.cpp',
+	'rendering/SimRenderView.cpp',
+	'rendering/Patch.cpp',
+	'rendering/Geometry.cpp',
+	'rendering/Rectoid.cpp',
+	'rendering/VizObject.cpp',
 	'Physics/Environment.cpp',
 	'Physics/Entity.cpp',
 	'Physics/Ball.cpp',
@@ -52,13 +55,3 @@ p2 = e.Program('vehicle_demo', [
 	'Physics/SimEngine.cpp'])
 Default(e.Install(exec_dir, p2))
 Help('vehicle_demo: Example code for bullet with simple GUI\n')
-
-## add demos for testing
-#p3 = e.Program('qt_vehicle_demo', [
-#	'viz_demo/qt_vehicle_demo.cpp',
-#	'viz_demo/glwidget.cpp',
-#	'viz_demo/qtlogo.cpp',
-#	'viz_demo/window.cpp'
-#	])
-#Default(e.Install(exec_dir, p3))
-#Help('qt_vehicle_demo: Example code for bullet moved into Qt\n')
