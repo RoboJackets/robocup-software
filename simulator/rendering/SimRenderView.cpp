@@ -110,9 +110,12 @@ void SimRenderView::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
+    // Default camera is top-down
+
     // Setup camera
-//    glTranslatef(0.0, 0.0, 6.0);
-    glTranslatef(0.0, 0.0, -10.0); // original
+    glTranslatef(0.0, 0.0, -10.0);
+
+    // axis-angle rotations
     glRotatef(xRot / 16.0, 1.0, 0.0, 0.0);
     glRotatef(yRot / 16.0, 0.0, 1.0, 0.0);
     glRotatef(zRot / 16.0, 0.0, 0.0, 1.0);

@@ -10,7 +10,12 @@ struct Geometry;
 
 class Rectoid
 {
+protected:
+	qreal _scale;
+
 public:
+
+	Rectoid(qreal scale) : _scale(scale) {}
 
 	/** translate in 3D frame - z is up */
 	void translate(const QVector3D &t);
@@ -28,13 +33,13 @@ class RectPrism : public Rectoid
 {
 public:
 	/** centered at origin */
-	RectPrism(Geometry *g, qreal width, qreal height, qreal depth);
+	RectPrism(Geometry *g, qreal scale, qreal width, qreal height, qreal depth);
 };
 
 class RectTorus : public Rectoid
 {
 public:
-	RectTorus(Geometry *g, qreal iRad, qreal oRad, qreal depth, int numSectors);
+	RectTorus(Geometry *g, qreal scale, qreal iRad, qreal oRad, qreal depth, int numSectors);
 };
 
 
