@@ -90,7 +90,9 @@ void SimRenderView::initializeGL()
     _entities.push_back(field);
 
     // Add a RoboCup Robot for each side
-    // TODO
+//    VizObject* robotBlue = new RobotBody(this);
+//    robotBlue->setColor(Qt::blue);
+//    _entities.push_back(robotBlue);
 
     // Add a Ball
     // TODO

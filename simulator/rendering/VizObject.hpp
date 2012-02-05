@@ -17,7 +17,7 @@ public:
 	VizObject(QObject *parent);
 	virtual ~VizObject();
 
-
+	/** sets color for all parts */
 	virtual void setColor(QColor c);
 	virtual void draw() const;
 
@@ -27,6 +27,18 @@ public:
 protected:
 	QList<Patch *> parts;
 	Geometry *geom;
+};
+
+/**
+ * Robot body class - solid colors
+ */
+class RobotBody : public VizObject
+{
+public:
+	RobotBody(QObject *parent);
+	virtual ~RobotBody() {}
+
+	void buildGeometry();
 };
 
 /**

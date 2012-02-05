@@ -23,6 +23,10 @@ public:
 	/** axis-angle rotations */
 	void rotate(qreal deg, QVector3D axis);
 
+	/** sets the color for all parts in this primitive */
+	void setColor(QColor c);
+
+
 	// No special Rectoid destructor - the parts are fetched out of this member
 	// variable, and destroyed by the new owner
 	QList<Patch*> parts;
