@@ -79,4 +79,20 @@ void Patch::addQuad(const QVector3D &a, const QVector3D &b,  const QVector3D &c,
 	}
 }
 
+// Assumes all in the same plane
+void Patch::addPolygon(const QVector<QVector3D>& vertices) {
+	const int n = vertices.size();
+	// pull out first 3 vertices to get a normal
+	if (n < 3) return;
+	const QVector3D& a(vertices[0]), b(vertices[1]), c(vertices[2]);
+	QVector3D norm = QVector3D::normal(a, b, c);
+
+	// only support smooth operations for polygons
+	Smoothing old = sm;
+	sm = Smooth;
+	for (int i=1; i<n-1; ++i)
+		addTri(vertices[0], vertices[i], vertices[i+1], norm);
+	sm = old;
+}
+
 } // \namespace rendering

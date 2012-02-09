@@ -42,6 +42,18 @@ public:
 };
 
 /**
+ * Ball object - a sphere that can rotate
+ */
+class Ball : public VizObject
+{
+public:
+	Ball(QObject *parent);
+	virtual ~Ball() {}
+
+	void buildGeometry();
+};
+
+/**
  * Field visualization - all static objects
  */
 class RCField : public VizObject

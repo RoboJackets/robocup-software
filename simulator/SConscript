@@ -28,7 +28,7 @@ p1 = e.Program('simulator', [
 	'rendering/SimRenderView.cpp',
 	'rendering/Patch.cpp',
 	'rendering/Geometry.cpp',
-	'rendering/Rectoid.cpp',
+	'rendering/Primitives.cpp',
 	'rendering/VizObject.cpp',
 	'Physics/Environment.cpp',
 	'Physics/Entity.cpp',

@@ -21,6 +21,7 @@ public:
 	void draw() const;
 	void addTri(const QVector3D &a, const QVector3D &b, const QVector3D &c, const QVector3D &n);
 	void addQuad(const QVector3D &a, const QVector3D &b,  const QVector3D &c, const QVector3D &d);
+	void addPolygon(const QVector<QVector3D>& vertices);
 
 	GLushort start;
 	GLushort count;

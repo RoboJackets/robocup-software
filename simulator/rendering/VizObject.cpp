@@ -1,6 +1,6 @@
 #include "VizObject.hpp"
 #include "Geometry.hpp"
-#include "Rectoid.hpp"
+#include "Primitives.hpp"
 #include "Patch.hpp"
 #include "RenderUtils.hpp"
 
@@ -50,9 +50,26 @@ RobotBody::RobotBody(QObject *parent)
 
 void RobotBody::buildGeometry()
 {
-	// TODO: fill in
+	static const qreal scale = 1.0;
+	static const size_t divisions = 16;
+
+	SSLRobotShape body(geom, scale, divisions);
+
+	parts << body.parts;
+	geom->finalize();
 }
 
+/// Ball
+Ball::Ball(QObject *parent)
+: VizObject(parent)
+{
+	buildGeometry();
+}
+
+void Ball::buildGeometry()
+{
+	// TODO: fill in
+}
 
 ///  Field visualization - all static objects
 RCField::RCField(QObject *parent)
