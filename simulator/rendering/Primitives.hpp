@@ -46,5 +46,10 @@ public:
 	RectTorus(Geometry *g, qreal scale, qreal iRad, qreal oRad, qreal depth, int numSectors);
 };
 
+class SSLRobotShape : public Rectoid
+{
+public:
+	SSLRobotShape(Geometry *g, qreal scale, int numSectors);
+};
 
 } // \namespace rendering

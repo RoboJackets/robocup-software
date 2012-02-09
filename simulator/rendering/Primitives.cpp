@@ -1,6 +1,7 @@
 #include "Patch.hpp"
-#include "Rectoid.hpp"
+#include "Primitives.hpp"
 #include "RenderUtils.hpp"
+#include <Constants.hpp>
 
 namespace rendering {
 
@@ -101,6 +102,47 @@ RectTorus::RectTorus(Geometry *g, qreal scale, qreal iRad, qreal oRad, qreal dep
 		os->addQuad(out_back[(i + 1) % k], out_back[i],
 				outside[i], outside[(i + 1) % k]);
 	parts << front << back << is << os;
+}
+
+/// Shape for a robot
+
+SSLRobotShape::SSLRobotShape(Geometry *g, qreal scale, int k)
+: Rectoid(scale)
+{
+	// scaled measurements
+	const qreal radius = Robot_Radius * _scale;
+	const qreal height = Robot_Height * _scale;
+
+	const qreal offset = 0.2;
+	// Create a simple cylinder for now
+	QVector<QVector3D> ring_top, ring_bottom;
+	for (int i = 0; i < k; ++i) {
+		qreal angle = (i * 2 * M_PI) / k;
+		qreal x = radius * qSin(angle);
+		qreal y = radius * qCos(angle);
+		ring_top.push_front(QVector3D(x, y, height + offset));
+		ring_bottom.push_back(QVector3D(x, y, offset));
+	}
+	ring_top.push_front(QVector3D(0.0, radius, height + offset));
+	ring_top.push_back(QVector3D(0.0, radius, offset));
+
+	// create 3 patches, with a single patch for the side
+	Patch *top = new Patch(g);
+	top->addPolygon(ring_top);
+	Patch *bottom = new Patch(g);
+	bottom->addPolygon(ring_bottom);
+
+	QVector3D vert_edge(0.0, 0.0, -height);
+	Patch *side = new Patch(g);
+	side->sm = Patch::Smooth;
+	for (int i=0; i<k; ++i)
+		side->addQuad(
+				ring_top[i], // top left
+				ring_top[i] + vert_edge, // bottom left
+				ring_top[i+1] + vert_edge, // bottom right
+				ring_top[i+1]); // top right
+
+	parts << top << bottom << side;
 }
 
 } // \namespace rendering
