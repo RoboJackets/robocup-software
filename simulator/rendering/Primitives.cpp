@@ -155,7 +155,7 @@ SSLRobotShape::SSLRobotShape(Geometry *g, qreal scale, int k)
 	const qreal height = Robot_Height * _scale;
 	const qreal flat_front_angle = M_PI_4; // assume x is forward on robot, rotation ccw to corner
 
-	const qreal offset = 0.2;
+	const qreal offset = height / 2.f;
 	// Create a simple cylinder for now
 	QVector<QVector3D> ring_top, ring_bottom;
 	qreal angle_increment = (2 * M_PI - 2 * flat_front_angle) / k;

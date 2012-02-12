@@ -15,12 +15,13 @@ using namespace rendering;
 SimRenderView::SimRenderView(QWidget *parent)
     : QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
 {
-    xRot = 0;
-    yRot = 0;
-    zRot = 0;
+    _xRot = 0;
+    _yRot = 0;
+    _zRot = 0;
 
-    qtGreen = QColor::fromCmykF(0.40, 0.0, 1.0, 0.0);
-    qtPurple = QColor::fromCmykF(0.39, 0.39, 0.0, 0.0);
+    _scale = 0.13;
+
+    _backgroundColor = QColor::fromCmykF(0.39, 0.39, 0.0, 0.0);
 }
 
 SimRenderView::~SimRenderView()
@@ -49,8 +50,8 @@ static void qNormalizeAngle(int &angle)
 void SimRenderView::setXRotation(int angle)
 {
     qNormalizeAngle(angle);
-    if (angle != xRot) {
-        xRot = angle;
+    if (angle != _xRot) {
+        _xRot = angle;
         emit xRotationChanged(angle);
         updateGL();
     }
@@ -59,8 +60,8 @@ void SimRenderView::setXRotation(int angle)
 void SimRenderView::setYRotation(int angle)
 {
     qNormalizeAngle(angle);
-    if (angle != yRot) {
-        yRot = angle;
+    if (angle != _yRot) {
+        _yRot = angle;
         emit yRotationChanged(angle);
         updateGL();
     }
@@ -69,8 +70,8 @@ void SimRenderView::setYRotation(int angle)
 void SimRenderView::setZRotation(int angle)
 {
     qNormalizeAngle(angle);
-    if (angle != zRot) {
-        zRot = angle;
+    if (angle != _zRot) {
+        _zRot = angle;
         emit zRotationChanged(angle);
         updateGL();
     }
@@ -78,19 +79,17 @@ void SimRenderView::setZRotation(int angle)
 
 void SimRenderView::initializeGL()
 {
-    qglClearColor(qtPurple.dark());
+    qglClearColor(_backgroundColor.dark());
 
     // Add objects
-//    VizObject* logo = new QtLogo(this, 64);
-//    logo->setColor(qtGreen.dark());
-//    _entities.push_back(logo);
 
     // Add a RoboCup Field
-    VizObject* field = new RCField(this);
+    VizObject* field = new RCField(this, _scale);
     _entities.push_back(field);
 
     // Add a RoboCup Robot for each side
-    VizObject* robotBlue = new RobotBody(this);
+    VizObject* robotBlue = new RobotBody(this, _scale);
+    robotBlue->translate(QVector3D(1.0, 0.0, 0.0));
     robotBlue->setColor(Qt::blue);
     _entities.push_back(robotBlue);
 
@@ -123,9 +122,9 @@ void SimRenderView::paintGL()
     glTranslatef(0.0, 0.0, -10.0);
 
     // axis-angle rotations
-    glRotatef(xRot / 16.0, 1.0, 0.0, 0.0);
-    glRotatef(yRot / 16.0, 0.0, 1.0, 0.0);
-    glRotatef(zRot / 16.0, 0.0, 0.0, 1.0);
+    glRotatef(_xRot / 16.0, 1.0, 0.0, 0.0);
+    glRotatef(_yRot / 16.0, 0.0, 1.0, 0.0);
+    glRotatef(_zRot / 16.0, 0.0, 0.0, 1.0);
 
     // render all of the objects
     for (int i=0; i<_entities.size(); ++i)
@@ -145,20 +144,20 @@ void SimRenderView::resizeGL(int width, int height)
 
 void SimRenderView::mousePressEvent(QMouseEvent *event)
 {
-    lastPos = event->pos();
+    _lastPos = event->pos();
 }
 
 void SimRenderView::mouseMoveEvent(QMouseEvent *event)
 {
-    int dx = event->x() - lastPos.x();
-    int dy = event->y() - lastPos.y();
+    int dx = event->x() - _lastPos.x();
+    int dy = event->y() - _lastPos.y();
 
     if (event->buttons() & Qt::LeftButton) {
-        setXRotation(xRot + 8 * dy);
-        setYRotation(yRot + 8 * dx);
+        setXRotation(_xRot + 8 * dy);
+        setYRotation(_yRot + 8 * dx);
     } else if (event->buttons() & Qt::RightButton) {
-        setXRotation(xRot + 8 * dy);
-        setZRotation(zRot + 8 * dx);
+        setXRotation(_xRot + 8 * dy);
+        setZRotation(_zRot + 8 * dx);
     }
-    lastPos = event->pos();
+    _lastPos = event->pos();
 }
