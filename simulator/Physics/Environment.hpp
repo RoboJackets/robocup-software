@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QVector>
+#include <QVector3D>
 #include <QMap>
 #include <QTimer>
 #include <QMutex>
@@ -37,6 +38,8 @@ private:
 	RobotMap _yellow;
 	QVector<Ball*> _balls;
 
+	QString _configFile; //< filename for the config file
+
 	// This timer causes physics to be stepped on a regular basis
 	QTimer _timer;
 
@@ -60,6 +63,9 @@ public:
 
 	Environment(const QString& configFile, bool sendShared_);
 
+	/** initializes the timer, loads robots */
+	void init();
+
 	void dropFrame()
 	{
 		_dropFrame = true;
@@ -79,7 +85,13 @@ public:
 	/** removes a robot with id i from the environment */
 	void removeRobot(bool blue, int id);
 
-protected Q_SLOTS:
+signals:
+	// connect to visualization for rendering
+	void setRobotPose(bool blue, int id, const QVector3D& pos, qreal angle, const QVector3D& axis);
+	void addNewRobot(bool blue, int id);
+	void removeExistingRobot(bool blue, int id);
+
+protected slots:
 
 	/**
 	 * Primary simulation step function - called by a timer at a fixed interval

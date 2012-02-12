@@ -63,14 +63,12 @@ int main(int argc, char* argv[])
 
 	Environment* env = new Environment(configFile, sendShared);
 
-	// FIXME: what does this do?
 	struct sigaction act;
 	memset(&act, 0, sizeof(act));
 	act.sa_handler = quit;
 	sigaction(SIGINT, &act, 0);
-	
-	SimulatorWindow win;
-	win.env(env);
+
+	SimulatorWindow win(env);
 	win.show();
 	
 	int ret = app.exec();

@@ -13,9 +13,7 @@ class SimulatorWindow: public QMainWindow
 	Q_OBJECT;
 
 public:
-	SimulatorWindow(QWidget *parent = 0);
-
-	void env(Environment *value);
+	SimulatorWindow(Environment *value, QWidget *parent = 0);
 
 private slots:
 	void on_dropFrame_clicked();

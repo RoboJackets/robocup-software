@@ -32,23 +32,25 @@ const int Oversample = 1;
 
 Environment::Environment(const QString& configFile, bool sendShared_)
 :	_dropFrame(false),
+ 	_configFile(configFile),
  	_frameNumber(0),
  	_stepCount(0),
  	sendShared(sendShared_),
-	ballVisibility(100)
+ 	ballVisibility(100)
 {
-	
-	loadConfigFile(configFile);
-
 	_field = new Field(this);
+}
+
+void Environment::init() {
+	loadConfigFile(_configFile);
 
 	// Bind sockets
 	assert(_visionSocket.bind(SimCommandPort));
 	assert(_radioSocketYellow.bind(RadioTxPort));
 	assert(_radioSocketBlue.bind(RadioTxPort + 1));
-	
+
 	gettimeofday(&_lastStepTime, 0);
-	
+
 	connect(&_timer, SIGNAL(timeout()), SLOT(step()));
 	_timer.start(16 / Oversample);
 }
@@ -74,7 +76,7 @@ void Environment::step()
 
 		handleRadioTx(true, tx);
 	}
-	
+
 	// Check for RadioTx packets from yellow team
 	while (_radioSocketYellow.hasPendingDatagrams())
 	{
@@ -97,7 +99,7 @@ void Environment::step()
 	if (_stepCount == Oversample)
 	{
 		_stepCount = 0;
-		
+
 		if (_dropFrame)
 		{
 			_dropFrame = false;
@@ -122,6 +124,7 @@ void Environment::handleSimCommand(const Packet::SimCommand& cmd) {
 
 	BOOST_FOREACH(const SimCommand::Robot &rcmd, cmd.robots())
 	{
+		bool blue = rcmd.blue_team();
 		const RobotMap &team = rcmd.blue_team() ? _blue : _yellow;
 		RobotMap::const_iterator i = team.find(rcmd.shell());
 
@@ -151,7 +154,16 @@ void Environment::handleSimCommand(const Packet::SimCommand& cmd) {
 
 		if (rcmd.has_pos())
 		{
-			robot->position(rcmd.pos().x(), rcmd.pos().y());
+			float x = rcmd.pos().x();
+			float y = rcmd.pos().y();
+			robot->position(x, y);
+
+			QVector3D pos3(x, y, 0.0);
+			QVector3D axis(0.0, 0.0, 1.0);
+			qreal angle = (blue) ? 90.f: -90.f;
+
+			// trigger signals
+			emit setRobotPose(blue, robot->shell, pos3, angle, axis);
 		}
 
 		float new_w = 0.0;
@@ -182,12 +194,12 @@ void Environment::sendVision()
 	SSL_DetectionFrame *det = wrapper.mutable_detection();
 	det->set_frame_number(_frameNumber++);
 	det->set_camera_id(0);
-	
+
 	struct timeval tv;
 	gettimeofday(&tv, 0);
 	det->set_t_capture(tv.tv_sec + (double)tv.tv_usec * 1.0e-6);
 	det->set_t_sent(det->t_capture());
-	
+
 	BOOST_FOREACH(Robot *robot, _yellow)
 	{
 		if ((rand() % 100) < robot->visibility)
@@ -196,7 +208,7 @@ void Environment::sendVision()
 			convert_robot(robot, out);
 		}
 	}
-	
+
 	BOOST_FOREACH(Robot *robot, _blue)
 	{
 		if ((rand() % 100) < robot->visibility)
@@ -205,7 +217,7 @@ void Environment::sendVision()
 			convert_robot(robot, out);
 		}
 	}
-	
+
 	Geometry2d::Point cam0(-Field_Length / 4, 0);
 	Geometry2d::Point cam1(Field_Length / 4, 0);
 
@@ -231,10 +243,10 @@ void Environment::sendVision()
 			out->set_pixel_y(ballPos.y * 1000);
 		}
 	}
-	
+
 	std::string buf;
 	wrapper.SerializeToString(&buf);
-	
+
 	if (sendShared)
 	{
 		_visionSocket.writeDatagram(&buf[0], buf.size(), MulticastAddress, SharedVisionPort);
@@ -286,6 +298,14 @@ void Environment::addRobot(bool blue, int id, const Geometry2d::Point& pos, Robo
 	case Robot::rev2011:
 		printf("New 2011 Robot: %d : %f %f\n", id, actPos.x, actPos.y);
 	}
+
+	QVector3D pos3(pos.x, pos.y, 0.0);
+	QVector3D axis(0.0, 0.0, 1.0);
+	qreal angle = (blue) ? 90.f: -90.f;
+
+	// trigger signals
+	emit addNewRobot(blue, id);
+	emit setRobotPose(blue, id, pos3, angle, axis);
 }
 
 void Environment::removeRobot(bool blue, int id) {
@@ -348,7 +368,7 @@ bool Environment::occluded(Geometry2d::Point ball, Geometry2d::Point camera)
 Robot *Environment::robot(bool blue, int board_id) const
 {
 	const QMap<unsigned int, Robot*> &robots = blue ? _blue : _yellow;
-	
+
 	if (robots.contains(board_id))
 	{
 		return robots[board_id];
@@ -362,30 +382,30 @@ void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx)
 	for (int i = 0; i < tx.robots_size(); ++i)
 	{
 		const Packet::RadioTx::Robot &cmd = tx.robots(i);
-		
+
 		Robot *r = robot(blue, cmd.robot_id());
 		if (r)
 		{
 			r->radioTx(&cmd);
 		} else {
 			printf("Commanding nonexistant robot %s:%d\n",
-				blue ? "Blue" : "Yellow",
-				cmd.robot_id());
+					blue ? "Blue" : "Yellow",
+							cmd.robot_id());
 		}
 	}
 
 	// FIXME: the interface changed for this part
-//	Robot *rev = robot(blue, tx.robot_id());
-//	if (rev)
-//	{
-//		Packet::RadioRx rx = rev->radioRx();
-//		rx.set_robot_id(tx.robot_id());
-//
-//		// Send the RX packet
-//		std::string out;
-//		rx.SerializeToString(&out);
-//		_radioSocket[ch].writeDatagram(&out[0], out.size(), LocalAddress, RadioRxPort + ch);
-//	}
+	//	Robot *rev = robot(blue, tx.robot_id());
+	//	if (rev)
+	//	{
+	//		Packet::RadioRx rx = rev->radioRx();
+	//		rx.set_robot_id(tx.robot_id());
+	//
+	//		// Send the RX packet
+	//		std::string out;
+	//		rx.SerializeToString(&out);
+	//		_radioSocket[ch].writeDatagram(&out[0], out.size(), LocalAddress, RadioRxPort + ch);
+	//	}
 }
 
 
@@ -465,9 +485,9 @@ void Environment::procTeam(QDomElement e, bool blue) {
 				Robot::RobotRevision r = Robot::rev2008;
 				if (rev.contains("2008"))
 				{
-				    r = Robot::rev2008;
+					r = Robot::rev2008;
 				} else if (rev.contains("2011")) {
-				    r = Robot::rev2011;
+					r = Robot::rev2011;
 				}
 				addRobot(blue, id, Geometry2d::Point(x, y), r);
 			} else {
