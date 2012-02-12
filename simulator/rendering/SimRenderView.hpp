@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <QGLWidget>
 
 namespace rendering {
@@ -22,10 +23,9 @@ public slots:
 	void setYRotation(int angle);
 	void setZRotation(int angle);
 
-signals:
-	void xRotationChanged(int angle);
-	void yRotationChanged(int angle);
-	void zRotationChanged(int angle);
+	void setRobotPose(bool blue, int id, const QVector3D& pos, qreal angle, const QVector3D& axis);
+	void addRobot(bool blue, int id);
+	void removeRobot(bool blue, int id);
 
 protected:
 	void initializeGL();
@@ -36,7 +36,8 @@ protected:
 
 private:
 
-	QVector<rendering::VizObject*> _entities;
+	QVector<rendering::VizObject*> _entities; // Store all generic entities
+	std::map<int, int> _blue, _yellow; // indices for robots
 
 	// camera position
 	int _xRot;

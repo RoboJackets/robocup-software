@@ -13,14 +13,9 @@ static const QString columnNames[] = {
 class RobotTableModel: public QAbstractTableModel
 {
 public:
-	RobotTableModel()
+	RobotTableModel(Environment *env)
+	: _env(env)
 	{
-		_env = 0;
-	}
-	
-	void env(Environment *value)
-	{
-		_env = value;
 		layoutChanged();
 	}
 	
@@ -138,26 +133,26 @@ private:
 ////////////////////////////////////
 // SimulatorWindow class
 ////////////////////////////////////
-SimulatorWindow::SimulatorWindow(QWidget* parent):
-	QMainWindow(parent)
+SimulatorWindow::SimulatorWindow(Environment *env, QWidget* parent):
+	QMainWindow(parent), _env(env)
 {
-	_env = 0;
-	
 	_ui.setupUi(this);
-	
-	// set up table
-	_model = new RobotTableModel();
-	_ui.robotTable->setModel(_model);
-	_ui.robotTable->resizeColumnsToContents();
 
 	// renderer setup
 	_render = _ui.renderViewWidget;
-}
 
-void SimulatorWindow::env(Environment* value)
-{
-	_env = value;
-	_model->env(value);
+	// connect renderer to simulator
+	connect(_env, SIGNAL(addNewRobot(bool,int)), _render, SLOT(addRobot(bool,int)));
+	connect(_env, SIGNAL(setRobotPose(bool,int,QVector3D,qreal,QVector3D)),
+			    _render, SLOT(setRobotPose(bool,int,QVector3D,qreal,QVector3D)));
+
+	// set up table
+	_model = new RobotTableModel(_env);
+	_ui.robotTable->setModel(_model);
+	_ui.robotTable->resizeColumnsToContents();
+
+	// start up environment
+	_env->init();
 }
 
 void SimulatorWindow::on_dropFrame_clicked()
