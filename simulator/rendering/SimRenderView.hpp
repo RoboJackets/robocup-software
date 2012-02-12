@@ -38,10 +38,14 @@ private:
 
 	QVector<rendering::VizObject*> _entities;
 
-	int xRot;
-	int yRot;
-	int zRot;
-	QPoint lastPos;
-	QColor qtGreen;
-	QColor qtPurple;
+	// camera position
+	int _xRot;
+	int _yRot;
+	int _zRot;
+
+	// rendering scale
+	qreal _scale;
+
+	QPoint _lastPos; //< tracking mouse events
+	QColor _backgroundColor;
 };
