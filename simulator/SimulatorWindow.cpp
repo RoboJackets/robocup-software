@@ -143,6 +143,7 @@ SimulatorWindow::SimulatorWindow(Environment *env, QWidget* parent):
 
 	// connect renderer to simulator
 	connect(_env, SIGNAL(addNewRobot(bool,int)), _render, SLOT(addRobot(bool,int)));
+	connect(_env, SIGNAL(removeExistingRobot(bool,int)), _render, SLOT(removeRobot(bool,int)));
 	connect(_env, SIGNAL(setRobotPose(bool,int,QVector3D,qreal,QVector3D)),
 			    _render, SLOT(setRobotPose(bool,int,QVector3D,qreal,QVector3D)));
 
