@@ -28,7 +28,6 @@ SimRenderView::SimRenderView(QWidget *parent)
 
 SimRenderView::~SimRenderView()
 {
-	// FIXME: verify that we never try to free a null pointer
 	qDeleteAll(_entities);
 }
 
@@ -97,14 +96,21 @@ void SimRenderView::addRobot(bool blue, int id) {
 		robot->setColor(Qt::blue);
 		_blue.insert(std::make_pair(id, _entities.size()));
 	} else {
-		robot->setColor(Qt::red);
+		robot->setColor(Qt::red); // FIXME: make this actually yellow
 		_yellow.insert(std::make_pair(id, _entities.size()));
 	}
 	_entities.push_back(robot);
 }
 
 void SimRenderView::removeRobot(bool blue, int id) {
-	// TODO: implement this
+	cout << "SimRenderView::removeRobot(): not implemented - do not use!" << endl;
+//	std::map<int, int>& lut = (blue) ? _blue : _yellow;
+//	std::map<int, int>::iterator it = lut.find(id);
+//	if (it != lut.end()) {
+//		int ent_id = it->second;
+//		delete _entities.at(ent_id);
+//		lut.erase(id);
+//	}
 }
 
 void SimRenderView::initializeGL()
