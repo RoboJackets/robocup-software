@@ -8,14 +8,14 @@ namespace rendering {
 class Patch;
 struct Geometry;
 
-class Rectoid
+class Primitive
 {
 protected:
 	qreal _scale;
 
 public:
 
-	Rectoid(qreal scale) : _scale(scale) {}
+	Primitive(qreal scale) : _scale(scale) {}
 
 	/** translate in 3D frame - z is up */
 	void translate(const QVector3D &t);
@@ -27,26 +27,32 @@ public:
 	void setColor(QColor c);
 
 
-	// No special Rectoid destructor - the parts are fetched out of this member
+	// No special Primitive destructor - the parts are fetched out of this member
 	// variable, and destroyed by the new owner
 	QList<Patch*> parts;
 };
 
 // Subclasses for variations
-class RectPrism : public Rectoid
+class RectPrism : public Primitive
 {
 public:
 	/** centered at origin */
 	RectPrism(Geometry *g, qreal scale, qreal width, qreal height, qreal depth);
 };
 
-class RectTorus : public Rectoid
+class RectTorus : public Primitive
 {
 public:
 	RectTorus(Geometry *g, qreal scale, qreal iRad, qreal oRad, qreal depth, int numSectors);
 };
 
-class SSLRobotShape : public Rectoid
+class Cylinder : public Primitive
+{
+public:
+	Cylinder(Geometry *g, qreal scale, qreal height, qreal radius, int numSectors);
+};
+
+class SSLRobotShape : public Primitive
 {
 public:
 	SSLRobotShape(Geometry *g, qreal scale, int numSectors);
