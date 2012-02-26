@@ -153,7 +153,6 @@ bool Gameplay::Behaviors::PassReceive::run()
 	}
 	else if(_state == State_Kicked)
 	{
-		/*intercept code....to slow
 		Geometry2d::Point p1 = ball().pos;
 		Geometry2d::Point p2 = ball().pos + (ball().vel * 10);
 		Geometry2d::Point p3 = robot2->pos;
@@ -163,12 +162,12 @@ bool Gameplay::Behaviors::PassReceive::run()
 
 		Geometry2d::Point intercept(p1.x + u * (p2.x - p1.x),p1.y + u * (p2.y - p1.y));
 
-		if(ball().vel.mag() > 1)
+		if(ball().vel.mag() > 0.5)
 		{
 			robot2->move(intercept, true);
 		}
-		*/
-		robot2->move(ball().pos + ball().vel,true);
+
+		//robot2->move(ball().pos + ball().vel,true);
 		robot1->addText("Kicked");
 	}
 	else if(_state == State_Done)
