@@ -13,7 +13,7 @@
 const size_t Num_Shells = 16;
 
 // Number of playing robots on one team
-const size_t Robots_Per_Team = 5;
+const size_t Robots_Per_Team = 6;
 
 const float Ball_Diameter = 0.043f;
 const float Ball_Radius = Ball_Diameter/2.0f;
@@ -30,11 +30,11 @@ const float Field_GoalDepth = 0.2f;
 const float Field_GoalHeight = 0.2f;
 
 /** Distance of the penalty marker from the goal line */
-const float Field_PenaltyDist = 0.450f;
+const float Field_PenaltyDist = 0.750f;
 const float Field_PenaltyDiam = 0.010f;
 
 /** Radius of the goal arcs */
-const float Field_ArcRadius = 0.5f;
+const float Field_ArcRadius = 0.8f;
 
 /** diameter of the center circle */
 const float Field_CenterRadius = 0.5f;

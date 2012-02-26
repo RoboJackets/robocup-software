@@ -22,6 +22,9 @@ Gameplay::Behaviors::Fullback::Fullback(GameplayModule *gameplay, Side side):
 	_side(side)
 {
 	robot = 0;
+	_blockRobot = 0;
+	_blockBall = true;
+
 	_state = Init;
 
 	_winEval.debug = false;
@@ -33,7 +36,7 @@ bool Gameplay::Behaviors::Fullback::run()
 	{
 		return false;
 	}
-	
+
 	// Do not avoid opponents when planning while we are close to the goal
 	const float oppAvoidThresh = 2.0; // meters radius of goal
 	if (robot->pos.nearPoint(Geometry2d::Point(), oppAvoidThresh))
@@ -41,9 +44,23 @@ bool Gameplay::Behaviors::Fullback::run()
 	else
 		robot->avoidOpponents(true);
 
+	// default behavior blocks ball path to goal
+	if(!_blockRobot){
+		_blockBall = true;
+	}
+
+	Geometry2d::Point blockTargetFuture;
+
 	// we multiply by 0.3 here to look 0.3s into the future when considering the ball position
 	// also, this will be used for where the robots will face
-	Geometry2d::Point ballFuture = ball().pos + ball().vel*0.3;
+	if(_blockRobot)
+	{
+		blockTargetFuture = _blockRobot->pos + _blockRobot->vel*0.3;
+	}
+	else if(_blockBall)
+	{
+		blockTargetFuture = ball().pos + ball().vel*0.3;
+	}
 
 	//goal line, for intersection detection
 	Geometry2d::Segment goalLine(Geometry2d::Point(-Field_GoalWidth / 2.0f, 0),
@@ -64,7 +81,7 @@ bool Gameplay::Behaviors::Fullback::run()
 		}
 	}
 	
-	_winEval.run(ballFuture, goalLine);
+	_winEval.run(blockTargetFuture, goalLine);
 	
 	Window* best = 0;
 
@@ -76,18 +93,26 @@ bool Gameplay::Behaviors::Fullback::run()
 	{
 		BOOST_FOREACH(Window* window, _winEval.windows)
 		{
-			if (_side == Left)
-			{
-				if (!best || window->segment.center().x < goalie->robot->pos.x)
-				{
-					best = window;
-				}
+			if(!best){
+				best = window;
 			}
-			else if (_side == Right)
+			else
 			{
-				if (!best || window->segment.center().x > goalie->robot->pos.x)
+				if (_side == Left)
 				{
-					best = window;
+					if (window->segment.center().x < goalie->robot->pos.x
+							&& window->segment.length() > best->segment.length())
+					{
+						best = window;
+					}
+				}
+				else if (_side == Right)
+				{
+					if (window->segment.center().x > goalie->robot->pos.x
+							&& window->segment.length() > best->segment.length())
+					{
+						best = window;
+					}
 				}
 			}
 		}
@@ -105,13 +130,23 @@ bool Gameplay::Behaviors::Fullback::run()
 			{
 				best = window;
 				bestDist = newDist;
-			}				
+			}
 		}
 	}
 	
 	if (best /*&& ((_side==Left&&ball().pos.x>=0) || (_side==Right&&ball().pos.x<0))*/)
 	{
-		Geometry2d::Segment shootLine(ball().pos, ball().pos + ball().vel.normalized() * 7.0);
+		Geometry2d::Segment shootLine;
+
+		if(_blockRobot)
+		{
+			Geometry2d::Point dir = Geometry2d::Point::direction(robot->angle * DegreesToRadians);
+			Geometry2d::Segment shootLine(_blockRobot->pos, _blockRobot->pos + dir* 7.0);
+		}
+		else if(_blockBall)
+		{
+			Geometry2d::Segment shootLine(ball().pos, ball().pos + ball().vel.normalized() * 7.0);
+		}
 		
 		Geometry2d::Segment& winSeg = best->segment;
 		
@@ -134,7 +169,7 @@ bool Gameplay::Behaviors::Fullback::run()
 				
 				Geometry2d::Circle arc(Geometry2d::Point(), radius);
 				
-				Geometry2d::Line shot(winSeg.center(), ballFuture);
+				Geometry2d::Line shot(winSeg.center(), blockTargetFuture);
 				Geometry2d::Point dest[2];
 				
 				bool intersected = shot.intersects(arc, &dest[0], &dest[1]);
@@ -180,6 +215,8 @@ bool Gameplay::Behaviors::Fullback::run()
 	}
 
 	// If ball sensor is tripped and we are not facing towards the goal, fire.
+	// WTF: how does this know that that ball sensor is trippe?
+	// TODO: add chipping option for clearing the ball
 	Geometry2d::Point backVec(1,0);
 	Geometry2d::Point backPos(-Field_Width/2,0);
 	Geometry2d::Point shotVec(ball().pos - robot->pos);
