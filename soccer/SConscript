@@ -101,6 +101,10 @@ srcs = [
 	'gameplay/plays/demo_plays/DemoLineAttack.cpp',
 	'gameplay/plays/demo_plays/DemoPivotAttack.cpp',
 	'gameplay/plays/demo_plays/DemoTouchKick.cpp',
+	
+	#Eric
+	'gameplay/plays/demo_plays/DemoKickMeasurement.cpp',
+	
 #	'gameplay/plays/demo_plays/CalSpeed.cpp',
 
   # Mechanical tests
