@@ -25,9 +25,9 @@ const float Field_Border = 0.25f;
 
 const float Field_LineWidth = 0.01f;
 
-const float Field_GoalWidth = 0.7f;
-const float Field_GoalDepth = 0.2f;
-const float Field_GoalHeight = 0.2f;
+const float Field_GoalWidth = 0.700f;
+const float Field_GoalDepth = 0.180f;
+const float Field_GoalHeight = 0.160f;
 
 /** Distance of the penalty marker from the goal line */
 const float Field_PenaltyDist = 0.750f;
