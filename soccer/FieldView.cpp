@@ -478,21 +478,21 @@ void FieldView::drawField(QPainter& p, const LogFrame *frame)
 	p.drawLine(QLineF(0, Field_Width/2,0, -Field_Width/2.0));
 	
 	//center circle
-	p.drawEllipse(QRectF(-Field_ArcRadius, -Field_ArcRadius, 
+	p.drawEllipse(QRectF(-Field_CenterRadius, -Field_CenterRadius, 
 		Field_CenterDiameter, Field_CenterDiameter));
 	
 	p.translate(-Field_Length/2.0, 0);
 	
 	//goal areas
-	p.drawArc(QRectF(-Field_ArcRadius, -Field_ArcRadius + .175, Field_CenterDiameter, Field_CenterDiameter), -90*16, 90*16);
-	p.drawArc(QRectF(-Field_ArcRadius, -Field_ArcRadius - .175, Field_CenterDiameter, Field_CenterDiameter), 90*16, -90*16);
-	p.drawLine(QLineF(Field_ArcRadius, -.175, Field_ArcRadius, .175));
+	p.drawArc(QRectF(-Field_ArcRadius, -Field_ArcRadius + Field_GoalFlat/2.f, 2.f * Field_ArcRadius, 2.f * Field_ArcRadius), -90*16, 90*16);
+	p.drawArc(QRectF(-Field_ArcRadius, -Field_ArcRadius - Field_GoalFlat/2.f, 2.f * Field_ArcRadius, 2.f * Field_ArcRadius), 90*16, -90*16);
+	p.drawLine(QLineF(Field_ArcRadius, -Field_GoalFlat/2.f, Field_ArcRadius, Field_GoalFlat/2.f));
 	
 	p.translate(Field_Length, 0);
 	
-	p.drawArc(QRectF(-Field_ArcRadius, -Field_ArcRadius + .175, Field_CenterDiameter, Field_CenterDiameter), -90*16, -90*16);
-	p.drawArc(QRectF(-Field_ArcRadius, -Field_ArcRadius - .175, Field_CenterDiameter, Field_CenterDiameter), 90*16, 90*16);
-	p.drawLine(QLineF(-Field_ArcRadius, -.175, -Field_ArcRadius, .175));
+	p.drawArc(QRectF(-Field_ArcRadius, -Field_ArcRadius + Field_GoalFlat/2.f, 2.f * Field_ArcRadius, 2.f * Field_ArcRadius), -90*16, -90*16);
+	p.drawArc(QRectF(-Field_ArcRadius, -Field_ArcRadius - Field_GoalFlat/2.f, 2.f * Field_ArcRadius, 2.f * Field_ArcRadius), 90*16, 90*16);
+	p.drawLine(QLineF(-Field_ArcRadius, -Field_GoalFlat/2.f, -Field_ArcRadius, Field_GoalFlat/2.f));
 		
 	// goals
 	float x[2] = {0, Field_GoalDepth};
