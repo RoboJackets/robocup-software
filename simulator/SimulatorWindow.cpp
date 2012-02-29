@@ -147,13 +147,13 @@ SimulatorWindow::SimulatorWindow(Environment *env, QWidget* parent):
 	connect(_env, SIGNAL(setRobotPose(bool,int,QVector3D,qreal,QVector3D)),
 			    _render, SLOT(setRobotPose(bool,int,QVector3D,qreal,QVector3D)));
 
+	// start up environment
+	_env->init();
+
 	// set up table
 	_model = new RobotTableModel(_env);
 	_ui.robotTable->setModel(_model);
 	_ui.robotTable->resizeColumnsToContents();
-
-	// start up environment
-	_env->init();
 }
 
 void SimulatorWindow::on_dropFrame_clicked()
