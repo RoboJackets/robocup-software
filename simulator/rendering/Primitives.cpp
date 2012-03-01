@@ -65,6 +65,50 @@ RectPrism::RectPrism(Geometry *g, qreal scale, qreal widthUn, qreal heightUn, qr
 	parts << fb << sides;
 }
 
+/// Sphere
+
+Sphere::Sphere(Geometry *g, qreal scale, qreal radius, int numSectors, int numRows)
+: Primitive(scale)
+{
+	// single point at top and bottom
+	QVector3D bottom(0.0, 0.0, -radius), top(0.0, 0.0, radius);
+
+	qreal ele_increment = M_PI / numRows;
+	qreal azi_increment = 2 * M_PI / numSectors;
+
+	Patch *body = new Patch(g);
+
+	// do bottom and connect to first ring
+	for (int i=0; i<numSectors; ++i) {
+		qreal row_height = - radius * qSin(ele_increment);
+		qreal row_radius = radius * qCos(ele_increment);
+		QVector3D b(row_radius * qSin(azi_increment * i  ), row_radius * qCos(azi_increment * i  ), row_height),
+							c(row_radius * qSin(azi_increment * i+1), row_radius * qCos(azi_increment * i+1), row_height);
+		body->addTri(bottom, b, c, QVector3D());
+	}
+
+	// loop over rows
+	for (int row=1; row<numRows-1; ++row) {
+		qreal row_height1 = - radius * qSin(ele_increment * row);
+		qreal row_height2 = - radius * qSin(ele_increment * row+1);
+		qreal row_radius1 =   radius * qCos(ele_increment * row);
+		qreal row_radius2 =   radius * qCos(ele_increment * row+1);
+		for (int i=0; i<numSectors; ++i) {
+			QVector3D
+				bl(row_radius1 * qSin(azi_increment * i  ), row_radius1 * qCos(azi_increment * i  ), row_height1),
+				ul(row_radius2 * qSin(azi_increment * i  ), row_radius2 * qCos(azi_increment * i  ), row_height2),
+				ur(row_radius2 * qSin(azi_increment * i+1), row_radius2 * qCos(azi_increment * i+1), row_height2),
+				br(row_radius1 * qSin(azi_increment * i+1), row_radius1 * qCos(azi_increment * i+1), row_height1);
+			body->addQuad(bl, ul, ur, br);
+		}
+	}
+
+	// do top and connect to ring
+	// FIXME: add this section
+
+	parts << body;
+}
+
 /// RectTorus
 
 RectTorus::RectTorus(Geometry *g, qreal scale, qreal iRad, qreal oRad, qreal depth, int k)

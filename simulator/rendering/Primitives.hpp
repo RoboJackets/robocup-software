@@ -58,4 +58,10 @@ public:
 	SSLRobotShape(Geometry *g, qreal scale, int numSectors);
 };
 
+class Sphere : public Primitive
+{
+public:
+	Sphere(Geometry *g, qreal scale, qreal radius, int numSectors, int numRows);
+};
+
 } // \namespace rendering
