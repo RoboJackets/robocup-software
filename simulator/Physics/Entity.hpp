@@ -10,7 +10,7 @@ public:
 	Entity(Environment *env);
 	virtual ~Entity();
 
-	/** set position of the robot */
+	/** set position in world frame */
 	virtual void position(float x, float y) = 0;
 
 	/** @return the world position */

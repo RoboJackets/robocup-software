@@ -234,7 +234,7 @@ namespace Geometry2d
 			/**
 			 * Like rotate(), but returns a new point instead of changing *this
 			 */
-			Point rotated(float angle)
+			Point rotated(float angle) const
 			{
 				float newX = x * cos(angle * DegreesToRadians) - y * sin(angle * DegreesToRadians);
 				float newY = y * cos(angle * DegreesToRadians) + x * sin(angle * DegreesToRadians);
@@ -339,5 +339,16 @@ namespace Geometry2d
 			
 			/** the y coordinate */
 			float y;
-	};
+	}; // \class Point
+
+	// global operations
+
+	/**
+	 * adds the * operator for vectors
+	 * scalar multiplication
+	 */
+	inline Point operator*(const float& s, const Point& pt)
+	{
+		return Point(pt.x * s, pt.y * s);
+	}
 }

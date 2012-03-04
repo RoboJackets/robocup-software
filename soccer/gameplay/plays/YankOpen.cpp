@@ -144,7 +144,7 @@ bool Gameplay::Plays::YankOpen::run()
 	}
 
 	// use hysteresis for changing of the robot
-	if (bestOpp && bestOpp->visible && (forward_reset || bestDist < cur_dist * *_mark_hysteresis_coeff))
+	if (bestOpp && bestOpp->visible && (forward_reset || bestDist < cur_dist * (float)*_mark_hysteresis_coeff))
 		_support.markRobot(bestOpp);
 
 	// if we are further away, we can mark further from robot
