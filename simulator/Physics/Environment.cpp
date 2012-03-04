@@ -386,9 +386,19 @@ void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx)
 		Robot *r = robot(blue, cmd.robot_id());
 		if (r)
 		{
+			// run controls update
 			r->radioTx(&cmd);
+
+			// trigger signals to update visualization
+			float facing = r->getAngle();
+			const Geometry2d::Point& pos2 = r->getPosition();
+			QVector3D pos3(pos2.x, pos2.y, 0.0);
+			QVector3D axis(0.0, 0.0, 1.0);
+			qreal angle = facing * RadiansToDegrees;
+
+			emit setRobotPose(blue, r->shell, pos3, angle, axis);
 		} else {
-			printf("Commanding nonexistant robot %s:%d\n",
+			printf("Commanding nonexistent robot %s:%d\n",
 					blue ? "Blue" : "Yellow",
 							cmd.robot_id());
 		}

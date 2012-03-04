@@ -135,7 +135,7 @@ void MotionControl::anglePD()
 	float error = fixAngleRadians(dir.angle() - _robot->angle * DegreesToRadians);
 // 	float error = fixAngleRadians(M_PI * *_robot->config->rotation.i - _robot->angle * DegreesToRadians);
 	
-	_robot->cmd.angularVelocity = error * *_robot->config->rotation.p + (error - _lastAngleError) * *_robot->config->rotation.d;
+	_robot->cmd.angularVelocity = error * (float)*_robot->config->rotation.p + (error - _lastAngleError) * (float)*_robot->config->rotation.d;
 	_lastAngleError = error;
 }
 
@@ -207,7 +207,7 @@ void MotionControl::run()
 	}
 	
 	// Acceleration limit
-	Point dv = bodyVel - _lastBodyVel;
+//	Point dv = bodyVel - _lastBodyVel;
 //	float dw = angularVel - _lastAngularVel;
 	
 //	float av = *_robot->config->trapTrans.acceleration;

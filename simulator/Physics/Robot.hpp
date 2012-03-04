@@ -22,10 +22,9 @@ public:
 	float getAngle() const;
 
 	// Entity interface
-	virtual void position(float x, float y);
-	void velocity(float x, float y, float w);
+	virtual void position(float x, float y); // world coords
+	void velocity(float x, float y, float w); // body coords
 	virtual Geometry2d::Point getPosition() const { return _pos; }
-
 
 	/** set control data */
 	void radioTx(const Packet::RadioTx::Robot *data);

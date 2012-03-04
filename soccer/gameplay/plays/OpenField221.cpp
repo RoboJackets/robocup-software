@@ -122,9 +122,9 @@ bool Gameplay::Plays::OpenField221::run()
 	}
 
 	// use hysteresis for changing of the robot
-	if (bestOpp1 && bestOpp1->visible && (forward_reset || bestDist1 < cur_dist1 * cur_dist1 * *_mark_hysteresis_coeff))
+	if (bestOpp1 && bestOpp1->visible && (forward_reset || bestDist1 < cur_dist1 * cur_dist1 * (float)*_mark_hysteresis_coeff))
 		_support1.markRobot(bestOpp1);
-	if (bestOpp2 && bestOpp2->visible && (forward_reset || bestDist2 < cur_dist2 * cur_dist2 * *_mark_hysteresis_coeff))
+	if (bestOpp2 && bestOpp2->visible && (forward_reset || bestDist2 < cur_dist2 * cur_dist2 * (float)*_mark_hysteresis_coeff))
 		_support2.markRobot(bestOpp2);
 
 	if (ballProj.y > Field_Length/2.0 && nrOppClose) {

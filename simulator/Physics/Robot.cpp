@@ -5,11 +5,9 @@
 #include <Utils.hpp>
 #include <Constants.hpp>
 
-#include <boost/foreach.hpp>
+#include <Geometry2d/TransformMatrix.hpp>
 
-#define ROLLER  1
-#define KICKER  0
-#define CHIPPER 0
+#include <boost/foreach.hpp>
 
 using namespace Geometry2d;
 
@@ -50,7 +48,7 @@ void Robot::position(float x, float y)
 void Robot::velocity(float x, float y, float w)
 {
 	_vel = Geometry2d::Point(x,y);
-	_omega = 0.0;
+	_omega = w;
 }
 
 float Robot::getAngle() const
@@ -60,31 +58,21 @@ float Robot::getAngle() const
 
 void Robot::radioTx(const Packet::RadioTx::Robot *data)
 {
-//	Geometry2d::Point axles[4] =
-//	{
-//			Point( .08,  .08),
-//			Point( .08, -.08),
-//			Point(-.08, -.08),
-//			Point(-.08,  .08)
-//	};
+	static const float dt = 0.016; // msec per frame
 
-	// FIXME: interface for motors changed - now uses body velocities, rather than motor commands
-//	for (unsigned int i = 0 ; i < 4 ; ++i)
-//	{
-//		Point wheel(-axles[i].y, axles[i].x);
-//		wheel = wheel.normalized();
-//		wheel.rotate(Point(), getAngle());
-//
-//		float target = data->motors(i) / 127.0f * 1.2;
-//
-//		// reverse for 2011 robots
-//		if (_rev == rev2011)
-//		{
-//			target = -target;
-//		}
-//
-//		// TODO: apply force
-//	}
+	// Simple control: directly copy velocities
+
+	// Update the position
+	const Point body_tvel(data->body_x(), data->body_y());
+	const TransformMatrix body_disp(dt * body_tvel, dt * data->body_w());
+	const TransformMatrix cur_pose(_pos, _omega);
+
+	TransformMatrix updated_pose = cur_pose * body_disp;
+	_pos = updated_pose.origin();
+	_theta = updated_pose.rotation();
+
+	_vel  = body_tvel.rotated(_theta);
+	_omega = data->body_w();
 
 	/** How we kick:
 	 * Kick speed will be zeroed if we are not kicking

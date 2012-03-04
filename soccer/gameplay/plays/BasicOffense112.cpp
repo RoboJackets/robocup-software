@@ -137,9 +137,9 @@ bool Gameplay::Plays::BasicOffense112::run()
 		}
 
 		if (ballProj.y > Field_Length/2.0 && nrOppClose)
-			support_goal.y = max(support_goal.y * *_offense_support_ratio, 0.3);
+			support_goal.y = max(support_goal.y * (double)*_offense_support_ratio, 0.3);
 		else
-			support_goal.y = max(support_goal.y * *_defense_support_ratio, 0.3);
+			support_goal.y = max(support_goal.y * (double)*_defense_support_ratio, 0.3);
 
 		_support.robot->move(support_goal);
 		_support.robot->face(ballProj);
@@ -148,7 +148,7 @@ bool Gameplay::Plays::BasicOffense112::run()
 
 	// use hysteresis for changing of the robot
 	float cur_dist = (_support.markRobot()) ? _support.markRobot()->pos.distTo(ballProj) : numeric_limits<float>::infinity();
-	if (bestOpp && bestOpp->visible && (forward_reset || bestDist < cur_dist * *_mark_hysteresis_coeff))
+	if (bestOpp && bestOpp->visible && (forward_reset || bestDist < cur_dist * (float)*_mark_hysteresis_coeff))
 	{
 		_support.markRobot(bestOpp);
 	}
