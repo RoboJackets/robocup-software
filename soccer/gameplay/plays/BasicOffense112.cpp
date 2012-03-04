@@ -126,7 +126,7 @@ bool Gameplay::Plays::BasicOffense112::run()
 			}
 		}
 	}
-	if (!bestOpp && _support.robot) {
+	if (!bestOpp && _support.robot && _striker.robot) {
 		// if nothing to mark, hang behind the striker on other side of the field
 		_support.robot->addText("Static Support");
 		Point support_goal = _striker.robot->pos;
