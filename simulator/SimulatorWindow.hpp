@@ -2,7 +2,7 @@
 
 #include <QMainWindow>
 
-#include "ui_SimulatorWindow.h"
+#include "ui_SimpleSimulatorWindow.h"
 
 class Environment;
 class RobotTableModel;
@@ -20,9 +20,9 @@ private slots:
 	void on_ballVisibility_valueChanged(int value);
 	
 private:
-	Ui_SimulatorWindow _ui;
+	Ui_SimpleSimulatorWindow _ui;
 
 	Environment *_env;
 	RobotTableModel *_model;
-	SimRenderView *_render;
+//	SimRenderView *_render;
 };

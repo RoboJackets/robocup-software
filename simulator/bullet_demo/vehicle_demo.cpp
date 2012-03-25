@@ -61,9 +61,6 @@ int main(int argc, char** argv) {
 	glutInitWindowPosition(0, 0);
 	glutInitWindowSize(width, height);
 	glutCreateWindow(title);
-#ifdef BT_USE_FREEGLUT
-	glutSetOption (GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
-#endif
 
 	gSimpleApplication->camera()->myinit();
 
