@@ -33,8 +33,10 @@ protected:
 	btConstraintArray			m_tmpSolverNonContactConstraintPool;
 	btConstraintArray			m_tmpSolverContactFrictionConstraintPool;
 	btAlignedObjectArray<int>	m_orderTmpConstraintPool;
+	btAlignedObjectArray<int>	m_orderNonContactConstraintPool;
 	btAlignedObjectArray<int>	m_orderFrictionConstraintPool;
 	btAlignedObjectArray<btTypedConstraint::btConstraintInfo1> m_tmpConstraintSizesPool;
+	int							m_maxOverrideNumSolverIterations;
 
 	void setupFrictionConstraint(	btSolverConstraint& solverConstraint, const btVector3& normalAxis,btRigidBody* solverBodyA,btRigidBody* solverBodyIdB,
 									btManifoldPoint& cp,const btVector3& rel_pos1,const btVector3& rel_pos2,
