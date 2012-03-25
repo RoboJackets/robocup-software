@@ -25,11 +25,16 @@ e.Append(LIBS=[
 p1 = e.Program('simulator', [
 	'simulator.cpp',
 	'SimulatorWindow.cpp',
-	'rendering/SimRenderView.cpp',
-	'rendering/Patch.cpp',
-	'rendering/Geometry.cpp',
-	'rendering/Primitives.cpp',
-	'rendering/VizObject.cpp',
+	#'rendering/SimRenderView.cpp',
+	#'rendering/Patch.cpp',
+	#'rendering/Geometry.cpp',
+	#'rendering/Primitives.cpp',
+	#'rendering/VizObject.cpp',
+	'bullet_demo/VehicleDemo.cpp',
+	'bullet_demo/SimpleVehicle.cpp',
+	'bullet_demo/GroundSurface.cpp',
+	'bullet_demo/GlutCamera.cpp',
+	'Physics/SimEngine.cpp',
 	'Physics/Environment.cpp',
 	'Physics/Entity.cpp',
 	'Physics/Ball.cpp',
@@ -37,7 +42,8 @@ p1 = e.Program('simulator', [
 	'Physics/Robot.cpp'])
 
 uics = e.Uic4([
-	'ui/SimulatorWindow.ui'
+	'ui/SimulatorWindow.ui',
+	'ui/SimpleSimulatorWindow.ui'
 ])
 e.Depends(p1, uics)
 
