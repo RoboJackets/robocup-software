@@ -39,6 +39,8 @@ public:
 	bool ballSensorWorks;
 	bool chargerWorks;
 
+	const RobotRevision& revision() const { return _rev; }
+
 private:
 	/** Functions to initialize physical objects */
 	void initRoller();
