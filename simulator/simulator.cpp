@@ -169,6 +169,10 @@ int main(int argc, char* argv[])
 	SimulatorWindow win(env);
 	win.show();
 
+	// start up environment
+	env->init();
+	// TODO: start as separate thread
+
 	if (enableGlut) {
 		bullet_thread = BulletDemoThread::shared_ptr(new BulletDemoThread(argc, argv));
 		bullet_thread->start();

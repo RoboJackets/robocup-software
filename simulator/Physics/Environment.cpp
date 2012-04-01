@@ -38,12 +38,12 @@ Environment::Environment(const QString& configFile, bool sendShared_)
  	sendShared(sendShared_),
  	ballVisibility(100)
 {
+	// NOTE: does not start simulation/thread until triggered
 	_field = new Field(this);
+	loadConfigFile(_configFile);
 }
 
 void Environment::init() {
-	loadConfigFile(_configFile);
-
 	// Bind sockets
 	assert(_visionSocket.bind(SimCommandPort));
 	assert(_radioSocketYellow.bind(RadioTxPort));
