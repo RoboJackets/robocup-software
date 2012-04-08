@@ -37,10 +37,6 @@ signals:
 	void dropframe();
 	void setBallVisibility(int value);
 
-  void setRobotVisibility(int visibility);
-  void setBallSensorWorks(bool works);
-  void setChargerWorks(bool works);
-
 private:
 	Ui_SimpleSimulatorWindow _ui;
 
