@@ -1,17 +1,13 @@
 #include "Physics/Environment.hpp"
 #include "SimulatorWindow.hpp"
+#include "SimulatorThread.hpp"
 
 #include <QApplication>
 #include <QFile>
 #include <QThread>
 
-#include <boost/shared_ptr.hpp>
-
 #include <stdio.h>
 #include <signal.h>
-
-#include <bullet_demo/VehicleDemo.hpp>
-#include <bullet_demo/GlutCamera.hpp>
 
 using namespace std;
 
@@ -28,90 +24,6 @@ void usage(const char* prog)
 	fprintf(stderr, "\t--glut  Use GLUT rendering\n");
 	fprintf(stderr, "\t--sv    Use shared vision multicast port\n");
 }
-
-static VehicleDemo* gSimpleApplication = 0;
-
-static void glutKeyboardCallback(unsigned char key, int x, int y) {
-	gSimpleApplication->keyboardCallback(key, x, y);
-}
-
-static void glutKeyboardUpCallback(unsigned char key, int x, int y) {
-	gSimpleApplication->keyboardUpCallback(key, x, y);
-}
-
-static void glutSpecialKeyboardCallback(int key, int x, int y) {
-	gSimpleApplication->specialKeyboard(key, x, y);
-}
-
-static void glutSpecialKeyboardUpCallback(int key, int x, int y) {
-	gSimpleApplication->specialKeyboardUp(key, x, y);
-}
-
-static void glutReshapeCallback(int w, int h) {
-	gSimpleApplication->camera()->reshape(w, h);
-}
-
-static void glutMoveAndDisplayCallback() {
-	gSimpleApplication->clientMoveAndDisplay();
-}
-
-static void glutDisplayCallback(void) {
-	gSimpleApplication->camera()->displayCallback();
-}
-
-/**
- * Create a new thread to act as a wrapper for the simulation
- */
-class BulletDemoThread : public QThread {
-protected:
-	char ** argv_;
-	int argc_;
-
-public:
-	typedef boost::shared_ptr<BulletDemoThread> shared_ptr;
-
-	/** need to pass arguments through to glut */
-	BulletDemoThread(int argc, char* argv[])
-	: argv_(argv), argc_(argc)
-	{
-
-	}
-
-private:
-	// Re-implement the run function to start the process
-	void run() {
-		// Set up demo
-		VehicleDemo* vehicleDemo = new VehicleDemo;
-		vehicleDemo->initPhysics();
-
-		// set up glut
-		gSimpleApplication = vehicleDemo;
-		int width = 640, height = 480;
-		const char* title = "Bullet Vehicle Demo";
-		glutInit(&argc_, argv_);
-		glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL);
-		glutInitWindowPosition(0, 0);
-		glutInitWindowSize(width, height);
-		glutCreateWindow(title);
-
-		gSimpleApplication->camera()->myinit();
-
-		glutKeyboardFunc(glutKeyboardCallback);
-		glutKeyboardUpFunc(glutKeyboardUpCallback);
-		glutSpecialFunc(glutSpecialKeyboardCallback);
-		glutSpecialUpFunc(glutSpecialKeyboardUpCallback);
-
-		glutReshapeFunc(glutReshapeCallback);
-		glutIdleFunc(glutMoveAndDisplayCallback);
-		glutDisplayFunc(glutDisplayCallback);
-
-		glutMoveAndDisplayCallback();
-
-		// Actually start loop
-		glutMainLoop();
-	}
-
-}; // \class BulletDemoThread
 
 int main(int argc, char* argv[])
 {
@@ -157,7 +69,7 @@ int main(int argc, char* argv[])
 	}
 
 	// create the thread for simulation
-	BulletDemoThread::shared_ptr bullet_thread;
+	SimulatorThread::shared_ptr bullet_thread;
 
 	Environment* env = new Environment(configFile, sendShared);
 
@@ -174,7 +86,7 @@ int main(int argc, char* argv[])
 	// TODO: start as separate thread
 
 	if (enableGlut) {
-		bullet_thread = BulletDemoThread::shared_ptr(new BulletDemoThread(argc, argv));
+		bullet_thread = SimulatorThread::shared_ptr(new SimulatorThread(argc, argv));
 		bullet_thread->start();
 	}
 	
