@@ -85,11 +85,11 @@ public:
 	/** removes a robot with id i from the environment */
 	void removeRobot(bool blue, int id);
 
-//signals:
-//	// connect to visualization for rendering
-//	void setRobotPose(bool blue, int id, const QVector3D& pos, qreal angle, const QVector3D& axis);
-//	void addNewRobot(bool blue, int id);
-//	void removeExistingRobot(bool blue, int id);
+signals:
+	// connect to visualization for rendering
+	void setRobotPose(bool blue, int id, const QVector3D& pos, qreal angle, const QVector3D& axis);
+	void addNewRobot(bool blue, int id);
+	void removeExistingRobot(bool blue, int id);
 
 public:
 
