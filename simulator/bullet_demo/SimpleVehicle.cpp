@@ -1,6 +1,6 @@
 #include "GL_ShapeDrawer.h"
 #include "SimpleVehicle.hpp"
-#include <Physics/SimEngine.hpp>
+#include <physics/SimEngine.hpp>
 
 #define CUBE_HALF_EXTENTS 1
 

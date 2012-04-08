@@ -36,12 +36,12 @@ p1 = e.Program('simulator', [
 	'bullet_demo/SimpleVehicle.cpp',
 	'bullet_demo/GroundSurface.cpp',
 	'bullet_demo/GlutCamera.cpp',
-	'Physics/SimEngine.cpp',
-	'Physics/Environment.cpp',
-	'Physics/Entity.cpp',
-	'Physics/Ball.cpp',
-	'Physics/Field.cpp',
-	'Physics/Robot.cpp'])
+	'physics/SimEngine.cpp',
+	'physics/Environment.cpp',
+	'physics/Entity.cpp',
+	'physics/Ball.cpp',
+	'physics/Field.cpp',
+	'physics/Robot.cpp'])
 
 uics = e.Uic4([
 	'ui/SimulatorWindow.ui',
@@ -54,12 +54,12 @@ Default(e.Install(exec_dir, p1))
 Help('simulator: Provides simulation of SSL robots, using Bullet Physics\n')
 
 # add demos for testing
-p2 = e.Program('vehicle_demo', [
-	'bullet_demo/vehicle_demo.cpp', 
-	'bullet_demo/VehicleDemo.cpp',
-	'bullet_demo/SimpleVehicle.cpp',
-	'bullet_demo/GroundSurface.cpp',
-	'bullet_demo/GlutCamera.cpp',
-	'Physics/SimEngine.cpp'])
-Default(e.Install(exec_dir, p2))
-Help('vehicle_demo: Example code for bullet with simple GUI\n')
+#p2 = e.Program('vehicle_demo', [
+#	'bullet_demo/vehicle_demo.cpp', 
+#	'bullet_demo/VehicleDemo.cpp',
+#	'bullet_demo/SimpleVehicle.cpp',
+#	'bullet_demo/GroundSurface.cpp',
+#	'bullet_demo/GlutCamera.cpp',
+#	'physics/SimEngine.cpp'])
+#Default(e.Install(exec_dir, p2))
+#Help('vehicle_demo: Example code for bullet with simple GUI\n')

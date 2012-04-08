@@ -1,6 +1,6 @@
 #include "SimulatorWindow.hpp"
 //#include "rendering/SimRenderView.hpp"
-#include "Physics/Environment.hpp"
+#include "physics/Environment.hpp"
 #include "RobotTableModel.hpp"
 
 #include <boost/foreach.hpp>

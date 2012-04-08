@@ -1,4 +1,4 @@
-#include <Physics/SimEngine.hpp>
+#include <physics/SimEngine.hpp>
 #include "GroundSurface.hpp"
 
 using namespace std;

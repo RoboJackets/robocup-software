@@ -33,13 +33,19 @@ static void glutDisplayCallback(void) {
 	gSimpleApplication->camera()->displayCallback();
 }
 
-SimulatorThread::SimulatorThread(int argc, char* argv[])
-: argv_(argv), argc_(argc)
+SimulatorThread::SimulatorThread(int argc, char* argv[], const QString& configFile, bool sendShared)
+: _argv(argv), _argc(argc), _env(new Environment(configFile, sendShared))
 {
+}
 
+SimulatorThread::~SimulatorThread() {
+	if (_env)
+		delete _env;
 }
 
 void SimulatorThread::run() {
+	_env->init();
+
 	// Set up demo
 	VehicleDemo* vehicleDemo = new VehicleDemo;
 	vehicleDemo->initPhysics();
@@ -48,7 +54,7 @@ void SimulatorThread::run() {
 	gSimpleApplication = vehicleDemo;
 	int width = 640, height = 480;
 	const char* title = "Bullet Vehicle Demo";
-	glutInit(&argc_, argv_);
+	glutInit(&_argc, _argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL);
 	glutInitWindowPosition(0, 0);
 	glutInitWindowSize(width, height);

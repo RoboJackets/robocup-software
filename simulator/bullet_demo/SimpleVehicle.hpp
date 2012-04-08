@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Physics/SimEngine.hpp>
+#include <physics/SimEngine.hpp>
 
 class SimpleVehicle {
 protected:

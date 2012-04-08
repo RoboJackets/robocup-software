@@ -2,7 +2,7 @@
 
 #include <map>
 
-#include <Physics/SimEngine.hpp>
+#include <physics/SimEngine.hpp>
 
 class btVehicleTuning;
 struct btVehicleRaycaster;
