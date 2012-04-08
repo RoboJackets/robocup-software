@@ -25,6 +25,7 @@ e.Append(LIBS=[
 p1 = e.Program('simulator', [
 	'simulator.cpp',
 	'SimulatorWindow.cpp',
+	'SimulatorThread.cpp',
 	'RobotTableModel.cpp',
 	#'rendering/SimRenderView.cpp',
 	#'rendering/Patch.cpp',
