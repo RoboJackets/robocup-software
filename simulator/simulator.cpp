@@ -1,4 +1,4 @@
-#include "Physics/Environment.hpp"
+#include "physics/Environment.hpp"
 #include "SimulatorWindow.hpp"
 #include "SimulatorThread.hpp"
 
@@ -21,7 +21,6 @@ void usage(const char* prog)
 {
 	fprintf(stderr, "usage: %s [-c <config file>] [--glut] [--sv]\n", prog);
 	fprintf(stderr, "\t--help  Show usage message\n");
-	fprintf(stderr, "\t--glut  Use GLUT rendering\n");
 	fprintf(stderr, "\t--sv    Use shared vision multicast port\n");
 }
 
@@ -31,7 +30,6 @@ int main(int argc, char* argv[])
 
 	QString configFile = "simulator.cfg";
 	bool sendShared = false;
-	bool enableGlut = false;
 
 	//loop arguments and look for config file
 	for (int i=1 ; i<argc ; ++i)
@@ -43,9 +41,6 @@ int main(int argc, char* argv[])
 		} else if (strcmp(argv[i], "--sv") == 0)
 		{
 			sendShared = true;
-		} else if (strcmp(argv[i], "--glut") == 0)
-		{
-			enableGlut = true;
 		} else if (strcmp(argv[i], "-c") == 0)
 		{
 			++i;
@@ -69,34 +64,22 @@ int main(int argc, char* argv[])
 	}
 
 	// create the thread for simulation
-	SimulatorThread::shared_ptr bullet_thread;
-
-	Environment* env = new Environment(configFile, sendShared);
+	SimulatorThread sim_thread(argc, argv, configFile, sendShared);
 
 	struct sigaction act;
 	memset(&act, 0, sizeof(act));
 	act.sa_handler = quit;
 	sigaction(SIGINT, &act, 0);
 
-	SimulatorWindow win(env);
+	// Create and initialize GUI with environment information
+	SimulatorWindow win(sim_thread.env());
 	win.show();
 
-	// start up environment
-	env->init();
-	// TODO: start as separate thread
-
-	if (enableGlut) {
-		bullet_thread = SimulatorThread::shared_ptr(new SimulatorThread(argc, argv));
-		bullet_thread->start();
-	}
-	
+	// start up threads
+	sim_thread.start();
 	int ret = app.exec();
 
-	// cleanup
-	delete env;
-
-	if (enableGlut)
-		bullet_thread->wait();
+	sim_thread.wait();
 
 	return ret;
 }

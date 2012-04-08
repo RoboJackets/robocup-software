@@ -2,7 +2,7 @@
 
 #include <QAbstractTableModel>
 
-#include "Physics/Environment.hpp"
+#include "physics/Environment.hpp"
 
 class Environment;
 

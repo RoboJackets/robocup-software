@@ -4,7 +4,7 @@
 #include <GLDebugDrawer.h>
 #include "GL_ShapeDrawer.h"
 
-#include "Physics/SimEngine.hpp"
+#include "physics/SimEngine.hpp"
 
 class btCollisionShape;
 class btDynamicsWorld;

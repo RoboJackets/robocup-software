@@ -4,7 +4,7 @@
 #include "GroundSurface.hpp"
 #include "SimpleVehicle.hpp"
 #include "VehicleDemo.hpp"
-#include <Physics/SimEngine.hpp>
+#include <physics/SimEngine.hpp>
 
 using namespace std;
 

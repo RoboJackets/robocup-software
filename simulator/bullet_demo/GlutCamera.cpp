@@ -1,5 +1,5 @@
 #include "GlutCamera.hpp"
-#include <Physics/SimEngine.hpp>
+#include <physics/SimEngine.hpp>
 #include "GLDebugFont.h"
 
 using namespace std;
