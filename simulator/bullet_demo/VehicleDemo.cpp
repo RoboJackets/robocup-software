@@ -1,10 +1,10 @@
 #include <iostream>
 
-#include "GlutCamera.hpp"
-#include "GroundSurface.hpp"
-#include "SimpleVehicle.hpp"
-#include "VehicleDemo.hpp"
+#include <physics/GlutCamera.hpp>
+#include <physics/GroundSurface.hpp>
+#include <physics/SimpleVehicle.hpp>
 #include <physics/SimEngine.hpp>
+#include "VehicleDemo.hpp"
 
 using namespace std;
 

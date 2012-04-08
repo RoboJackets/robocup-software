@@ -1,5 +1,5 @@
 #include <bullet_demo/VehicleDemo.hpp>
-#include <bullet_demo/GlutCamera.hpp>
+#include <physics/GlutCamera.hpp>
 
 #include <SimulatorThread.hpp>
 
