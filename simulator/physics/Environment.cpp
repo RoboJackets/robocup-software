@@ -43,7 +43,7 @@ Environment::Environment(const QString& configFile, bool sendShared_)
 	loadConfigFile(_configFile);
 }
 
-void Environment::init() {
+void Environment::connectSockets() {
 	// Bind sockets
 	assert(_visionSocket.bind(SimCommandPort));
 	assert(_radioSocketYellow.bind(RadioTxPort));
@@ -51,8 +51,8 @@ void Environment::init() {
 
 	gettimeofday(&_lastStepTime, 0);
 
-	connect(&_timer, SIGNAL(timeout()), SLOT(step()));
-	_timer.start(16 / Oversample);
+//	connect(&_timer, SIGNAL(timeout()), SLOT(step()));
+//	_timer.start(16 / Oversample);
 }
 
 void Environment::step()

@@ -75,11 +75,16 @@ int main(int argc, char* argv[])
 	SimulatorWindow win(sim_thread.env());
 	win.show();
 
+	// initialize socket connections separately
+	sim_thread.env()->connectSockets();
+
 	// start up threads
 	sim_thread.start();
 	int ret = app.exec();
 
+	// shut down sim_thread
 	sim_thread.wait();
+//	sim_thread.exit(0);
 
 	return ret;
 }
