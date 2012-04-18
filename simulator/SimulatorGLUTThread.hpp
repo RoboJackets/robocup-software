@@ -8,11 +8,6 @@
 
 #include <physics/SimEngine.hpp>
 
-//class btVehicleTuning;
-//struct btVehicleRaycaster;
-//class btCollisionShape;
-//class GL_ShapeDrawer;
-
 class btCollisionShape;
 class btDynamicsWorld;
 
@@ -25,7 +20,7 @@ class Environment;
 /**
  * Create a new thread to act as a wrapper for the simulation
  */
-class SimulatorThread : public QThread {
+class SimulatorGLUTThread : public QThread {
 	Q_OBJECT;
 
 protected:
@@ -52,12 +47,12 @@ protected:
 	float _maxCameraDistance;
 
 public:
-	typedef boost::shared_ptr<SimulatorThread> shared_ptr;
+	typedef boost::shared_ptr<SimulatorGLUTThread> shared_ptr;
 
 	/** need to pass arguments through to glut */
-	SimulatorThread(int argc, char* argv[], const QString& configFile, bool sendShared);
+	SimulatorGLUTThread(int argc, char* argv[], const QString& configFile, bool sendShared);
 
-	~SimulatorThread();
+	~SimulatorGLUTThread();
 
 	/** access environment */
 	Environment* env() { return _env; }
@@ -106,7 +101,7 @@ public:
 	void addVehicle(btDynamicsWorld* m_dynamicsWorld,
 			btAlignedObjectArray<btCollisionShape*>& m_collisionShapes);
 
-}; // \class SimulatorThread
+}; // \class SimulatorGLUTThread
 
 
 

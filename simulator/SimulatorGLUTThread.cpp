@@ -6,13 +6,13 @@
 #include <physics/SimEngine.hpp>
 #include <physics/Environment.hpp>
 
-#include <SimulatorThread.hpp>
+#include <SimulatorGLUTThread.hpp>
 
 using namespace std;
 
 // Hooks for GLUT
 
-static SimulatorThread* gSimpleApplication = 0;
+static SimulatorGLUTThread* gSimpleApplication = 0;
 
 static void glutKeyboardCallback(unsigned char key, int x, int y) {
 	gSimpleApplication->keyboardCallback(key, x, y);
@@ -42,15 +42,15 @@ static void glutDisplayCallback(void) {
 	gSimpleApplication->camera()->displayCallback();
 }
 
-// SimulatorThread implementation
+// SimulatorGLUTThread implementation
 
-SimulatorThread::SimulatorThread(int argc, char* argv[], const QString& configFile, bool sendShared)
+SimulatorGLUTThread::SimulatorGLUTThread(int argc, char* argv[], const QString& configFile, bool sendShared)
 : _argv(argv), _argc(argc), _env(new Environment(configFile, sendShared)), _vehicle(0), _ground(0),
   _camera(0), _cameraHeight(4.f),	_minCameraDistance(3.f), _maxCameraDistance(10.f)
 {
 }
 
-SimulatorThread::~SimulatorThread() {
+SimulatorGLUTThread::~SimulatorGLUTThread() {
 	if (_env)
 		delete _env;
 
@@ -67,11 +67,11 @@ SimulatorThread::~SimulatorThread() {
 		delete _camera;
 }
 
-void SimulatorThread::run() {
+void SimulatorGLUTThread::run() {
 //	_env->init();
 
 	// Set up demo
-//	_vehicleDemo = new SimulatorThread;
+//	_vehicleDemo = new SimulatorGLUTThread;
 	initPhysics();
 
 	// set up glut
@@ -101,7 +101,7 @@ void SimulatorThread::run() {
 	glutMainLoop();
 }
 
-void SimulatorThread::keyboardCallback(unsigned char key, int x, int y) {
+void SimulatorGLUTThread::keyboardCallback(unsigned char key, int x, int y) {
 	(void) x;
 	(void) y;
 
@@ -161,21 +161,21 @@ void SimulatorThread::keyboardCallback(unsigned char key, int x, int y) {
 
 }
 
-btDynamicsWorld* SimulatorThread::getDynamicsWorld() {
+btDynamicsWorld* SimulatorGLUTThread::getDynamicsWorld() {
 	return _simEngine->dynamicsWorld();
 }
 
-int SimulatorThread::getDebugMode() const {
+int SimulatorGLUTThread::getDebugMode() const {
 	return _simEngine->debugMode();
 }
 
-void SimulatorThread::setDebugMode(int mode) {
+void SimulatorGLUTThread::setDebugMode(int mode) {
 	_simEngine->debugMode(mode);
 	if (getDynamicsWorld() && getDynamicsWorld()->getDebugDrawer())
 		getDynamicsWorld()->getDebugDrawer()->setDebugMode(mode);
 }
 
-void SimulatorThread::initPhysics() {
+void SimulatorGLUTThread::initPhysics() {
 
 	// set up the simulation
 	_simEngine = new SimEngine();
@@ -198,7 +198,7 @@ void SimulatorThread::initPhysics() {
 	_simEngine->dynamicsWorld()->setDebugDrawer(_camera->debugDrawer());
 }
 
-void SimulatorThread::render() {
+void SimulatorGLUTThread::render() {
 	updateCamera();
 
 	btVector3 worldBoundsMin, worldBoundsMax;
@@ -209,7 +209,7 @@ void SimulatorThread::render() {
 	_camera->renderme(_simEngine->debugMode());
 }
 
-void SimulatorThread::clientMoveAndDisplay() {
+void SimulatorGLUTThread::clientMoveAndDisplay() {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -235,7 +235,7 @@ void SimulatorThread::clientMoveAndDisplay() {
 	glutSwapBuffers();
 }
 
-void SimulatorThread::displayCallback(void) {
+void SimulatorGLUTThread::displayCallback(void) {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	render();
@@ -247,12 +247,12 @@ void SimulatorThread::displayCallback(void) {
 	glutSwapBuffers();
 }
 
-void SimulatorThread::clientResetScene() {
+void SimulatorGLUTThread::clientResetScene() {
 	if (_vehicle)
 		_vehicle->resetScene();
 }
 
-void SimulatorThread::specialKeyboardUp(int key, int x, int y) {
+void SimulatorGLUTThread::specialKeyboardUp(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_UP: {
 		_vehicle->engineForce(0.f);
@@ -267,7 +267,7 @@ void SimulatorThread::specialKeyboardUp(int key, int x, int y) {
 	}
 }
 
-void SimulatorThread::specialKeyboard(int key, int x, int y) {
+void SimulatorGLUTThread::specialKeyboard(int key, int x, int y) {
 	//	printf("key = %i x=%i y=%i\n",key,x,y);
 	switch (key) {
 	case GLUT_KEY_LEFT: {
@@ -291,7 +291,7 @@ void SimulatorThread::specialKeyboard(int key, int x, int y) {
 	}
 }
 
-void SimulatorThread::updateCamera() {
+void SimulatorGLUTThread::updateCamera() {
 	if (!_vehicle || !_camera) return;
 
 	// calculate where the camera should be
