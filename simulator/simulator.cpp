@@ -1,6 +1,6 @@
 #include "physics/Environment.hpp"
 #include "SimulatorWindow.hpp"
-#include "SimulatorThread.hpp"
+#include "SimulatorGLUTThread.hpp"
 
 #include <QApplication>
 #include <QFile>
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 	}
 
 	// create the thread for simulation
-	SimulatorThread sim_thread(argc, argv, configFile, sendShared);
+	SimulatorGLUTThread sim_thread(argc, argv, configFile, sendShared);
 
 	struct sigaction act;
 	memset(&act, 0, sizeof(act));
