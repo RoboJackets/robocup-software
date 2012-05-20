@@ -1,4 +1,4 @@
-#include <iostream>
+#include <stdio.h>
 
 #include <physics/GlutCamera.hpp>
 #include <physics/GroundSurface.hpp>
@@ -191,8 +191,9 @@ void SimulatorGLUTThread::initPhysics() {
 
 	// Set up the camera
 	_camera = new GlutCamera(_simEngine);
-	_camera->setCameraPosition(btVector3(30, 30, 30));
-	_camera->setCameraDistance(26.f);
+	_camera->setCameraPosition(3*btVector3(10, 10, 10));//
+	_camera->setCameraDistance(10.f);//
+
 
 	// Connect the debug drawer
 	_simEngine->dynamicsWorld()->setDebugDrawer(_camera->debugDrawer());
@@ -220,11 +221,21 @@ void SimulatorGLUTThread::clientMoveAndDisplay() {
 	_simEngine->stepSimulation();
 	_env->step();
 
-	// print out the current position of the vehicle
-	btTransform pose;
-	_vehicle->getWorldTransform(pose);
-	btVector3 trans = pose.getOrigin();
-	cout << "Pose: x = " << trans.x() << " y = " << trans.y() << " z = " << trans.z() << endl;
+#define sim_debug 1
+#ifdef sim_debug
+	// print out current vel, ang vel, pos of vehicle
+	btRigidBody* m_chassisBody = _vehicle->carChassis();
+
+	btVector3 vel = m_chassisBody->getLinearVelocity();
+	btVector3 ang = m_chassisBody->getAngularVelocity();
+	btTransform pos;
+	m_chassisBody->getMotionState()->getWorldTransform(pos);
+	btVector3 trans = pos.getOrigin();
+
+	printf("lin vel x: %8.4f y: %8.4f z: %8.4f \n", vel[0], vel[1], vel[2]);
+	printf("ang vel x: %8.4f y: %8.4f z: %8.4f \n", ang[0], ang[1], ang[2]);
+	printf("pos     x: %8.4f y: %8.4f z: %8.4f \n", trans[0], trans[1], trans[2]);
+#endif
 
 	render();
 
@@ -261,6 +272,12 @@ void SimulatorGLUTThread::specialKeyboardUp(int key, int x, int y) {
 	case GLUT_KEY_DOWN: {
 		_vehicle->breakingForce(0.f);
 		break;
+	}
+	case GLUT_KEY_LEFT: {
+		_vehicle->engineForce(0.f);
+	}
+	case GLUT_KEY_RIGHT: {
+		_vehicle->engineForce(0.f);
 	}
 	default:
 		break;

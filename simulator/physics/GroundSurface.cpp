@@ -57,7 +57,7 @@ void GroundSurface::initPhysics()
 	groundShape = new btBvhTriangleMeshShape(_indexVertexArrays,
 			useQuantizedAabbCompression);
 
-	tr.setOrigin(btVector3(0, -4.5f, 0));
+	tr.setOrigin(btVector3(0, -1.5f, 0));//match ground to vehicle height
 
 	_simEngine->addCollisionShape(groundShape);
 
