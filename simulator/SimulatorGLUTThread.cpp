@@ -77,7 +77,7 @@ void SimulatorGLUTThread::run() {
 	// set up glut
 	gSimpleApplication = this;
 	int width = 640, height = 480;
-	const char* title = "Bullet Vehicle Demo";
+	const char* title = "Robocup Simulator";
 	glutInit(&_argc, _argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL);
 	glutInitWindowPosition(0, 0);
@@ -133,6 +133,14 @@ void SimulatorGLUTThread::keyboardCallback(unsigned char key, int x, int y) {
 	case 'c':	_simEngine->setDebug(btIDebugDraw::DBG_DrawContactPoints);    break;
 	case 'C':	_simEngine->setDebug(btIDebugDraw::DBG_DrawConstraints);      break;
 	case 'L':	_simEngine->setDebug(btIDebugDraw::DBG_DrawConstraintLimits); break;
+
+	//rotate/zoom camera
+	case 'j': _camera->setAzi(_camera->getAzi() + 10); break;
+	case 'l': _camera->setAzi(_camera->getAzi() - 10); break;
+	case 'k': _camera->setEle(_camera->getEle() - 10); break;
+	case 'i': _camera->setEle(_camera->getEle() + 10); break;
+	case 'u': _camera->setCameraDistance(_camera->getCameraDistance()+2); break;
+	case 'o': _camera->setCameraDistance(_camera->getCameraDistance()-2); break;
 
 	case 'd':
 		_simEngine->setDebug(btIDebugDraw::DBG_NoDeactivation);
@@ -191,8 +199,8 @@ void SimulatorGLUTThread::initPhysics() {
 
 	// Set up the camera
 	_camera = new GlutCamera(_simEngine);
-	_camera->setCameraPosition(3*btVector3(10, 10, 10));//
-	_camera->setCameraDistance(10.f);//
+	_camera->setCameraPosition(1*btVector3(10, 10, 10));//
+	_camera->setCameraDistance(15.f);//
 
 
 	// Connect the debug drawer
@@ -221,8 +229,8 @@ void SimulatorGLUTThread::clientMoveAndDisplay() {
 	_simEngine->stepSimulation();
 	_env->step();
 
-#define sim_debug 1
-#ifdef sim_debug
+//#define motion_debug 1
+#ifdef motion_debug
 	// print out current vel, ang vel, pos of vehicle
 	btRigidBody* m_chassisBody = _vehicle->carChassis();
 
@@ -238,6 +246,8 @@ void SimulatorGLUTThread::clientMoveAndDisplay() {
 #endif
 
 	render();
+
+	_env->renderScene();
 
 	//optional but useful: debug drawing
 	_simEngine->debugDrawWorld();
@@ -318,6 +328,12 @@ void SimulatorGLUTThread::updateCamera() {
 	btVector3 targetPosition = chassisWorldTrans.getOrigin();
 	btVector3 cameraPosition = camera()->getCameraPosition();
 
+//#define camera_debug 1
+#ifdef camera_debug
+	printf("target  x: %8.4f y: %8.4f z: %8.4f \n",targetPosition[0],targetPosition[1],targetPosition[2]);
+	printf("camera  x: %8.4f y: %8.4f z: %8.4f \n",cameraPosition[0],cameraPosition[1],cameraPosition[2]);
+#endif
+
 	//interpolate the camera height
 	cameraPosition[1] = (15.0 * cameraPosition[1] + targetPosition[1] + _cameraHeight) / 16.0;
 
@@ -336,12 +352,21 @@ void SimulatorGLUTThread::updateCamera() {
 	}
 	cameraPosition -= correctionFactor * camToObject;
 
+#ifdef camera_debug
+	printf("new cam x: %8.4f y: %8.4f z: %8.4f \n",cameraPosition[0],cameraPosition[1],cameraPosition[2]);
+#endif
+
 	_camera->setCameraPosition(cameraPosition);
 	_camera->setCameraTargetPosition(targetPosition);
+
+	//_camera->updateFreeCamera();
 
 	// rendering details
 	_camera->updateCamera(); // default camera
 //	_camera->chaseCamera(); // based on the original version
+
 }
+
+
 
 

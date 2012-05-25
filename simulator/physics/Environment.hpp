@@ -98,6 +98,9 @@ public:
 	 */
 	void step();
 
+	//render
+	void renderScene();
+
 private:
 	Robot *robot(bool blue, int board_id) const;
 	static void convert_robot(const Robot *robot, SSL_DetectionRobot *out);

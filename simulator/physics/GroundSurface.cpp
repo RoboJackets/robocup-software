@@ -5,8 +5,8 @@ using namespace std;
 
 void GroundSurface::initPhysics()
 {
-	btCollisionShape* groundShape = new btBoxShape(btVector3(50, 3, 50));
-	_simEngine->addCollisionShape(groundShape);
+	btCollisionShape* groundShape;// = new btBoxShape(btVector3(50, 3, 50));
+	//_simEngine->addCollisionShape(groundShape);
 	btTransform tr;
 	tr.setIdentity();
 
