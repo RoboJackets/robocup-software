@@ -66,6 +66,7 @@ public:
 	float breakingForce  () const { return _breakingForce;   }
 	float vehicleSteering() const { return _vehicleSteering; }
 	btRigidBody* carChassis() const { return _carChassis; }
+	btRaycastVehicle* vehicle() const { return _vehicle; }
 
 	// bang-bang steering and throttle
 	void steerLeft();

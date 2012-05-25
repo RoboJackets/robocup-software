@@ -243,6 +243,9 @@ void SimulatorGLUTThread::clientMoveAndDisplay() {
 	printf("lin vel x: %8.4f y: %8.4f z: %8.4f \n", vel[0], vel[1], vel[2]);
 	printf("ang vel x: %8.4f y: %8.4f z: %8.4f \n", ang[0], ang[1], ang[2]);
 	printf("pos     x: %8.4f y: %8.4f z: %8.4f \n", trans[0], trans[1], trans[2]);
+
+	trans = _vehicle->vehicle()->m_wheelInfo[0].m_worldTransform.getOrigin();
+	printf("wheel     x: %8.4f y: %8.4f z: %8.4f \n", trans[0], trans[1], trans[2]);
 #endif
 
 	render();
