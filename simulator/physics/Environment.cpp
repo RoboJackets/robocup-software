@@ -418,6 +418,10 @@ void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx)
 	//	}
 }
 
+void Environment::renderScene() {
+	_field->renderField();
+}
+
 
 bool Environment::loadConfigFile(const QString& filename) {
 	//load the config file

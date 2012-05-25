@@ -14,8 +14,8 @@ class btTypedConstraint;
 class GlutCamera {
 protected:
 	float _cameraDistance;
-	float _ele;
-	float _azi;
+	float _ele; //elevation
+	float _azi; //azimuth
 	btVector3 _cameraPosition;
 	btVector3 _cameraTargetPosition; //look at
 	float _scaleBottom;
@@ -51,6 +51,11 @@ public:
 	bool getShadows() const {	return _enableshadows; }
 
 	void setAzi(float azi) { _azi = azi; }
+	void setEle(float ele) { _ele = ele; }
+
+	float getEle() { return _ele; }
+	float getAzi() { return _azi; }
+
 
 	void setCameraUp(const btVector3& camUp) { _cameraUp = camUp; }
 	void setCameraForwardAxis(int axis) {	_forwardAxis = axis;	}

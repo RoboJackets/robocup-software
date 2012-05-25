@@ -14,14 +14,14 @@ static const float maxEngineForce = 3000.f; //this should be engine/velocity dep
 static const float maxBreakingForce = 100.f;
 static const float steeringIncrement = 0.04f;
 static const float steeringClamp = 0.3f;
-static const float wheelRadius = 0.5f;
-static const float wheelWidth = 0.4f;
+static const float wheelRadius = 0.5f/2.f;
+static const float wheelWidth = 0.4f/2.f;
 static const float wheelFriction = 1000; //BT_LARGE_FLOAT;
 static const float suspensionStiffness = 1000.f;
 static const float suspensionDamping = 2.3f;
 static const float suspensionCompression = 4.4f;
 static const float rollInfluence = 0.0f;
-static const btScalar suspensionRestLength = 0.99f;//0.6f
+static const btScalar suspensionRestLength = 0.99f/2.f;//0.6f
 
 static const btScalar maxVelocity = 10; //m/s? unused
 
@@ -37,11 +37,11 @@ void SimpleVehicle::initPhysics() {
 
 	//TODO: use convexhull for robot shape
 
-	btCylinderShape* cShape = new btCylinderShape(btVector3(Robot_Diameter, Robot_Height, Robot_Diameter));
+	btCylinderShape* cShape = new btCylinderShape(btVector3(Robot_Radius, Robot_Height/2.f, Robot_Radius));
 
 	cShape->setLocalScaling(btVector3(10,10,10));//radius: 0.9 , height: 1.5
 
-	cShape->setMargin(btScalar(0.004));
+	cShape->setMargin(btScalar(0.04));
 
 	btCollisionShape* chassisShape = cShape;
 
@@ -90,7 +90,7 @@ void SimpleVehicle::initPhysics() {
 		///Omni-wheels
 
 		//FL
-		btVector3 connectionPointCS0 = btVector3(0,connectionHeight,0.9+0.6).rotate(btVector3(0,1,0),3.141/4.f*1);
+		btVector3 connectionPointCS0 = btVector3(0,connectionHeight,0.8).rotate(btVector3(0,1,0),3.141/4.f*1);
 		wheelAxleCS = btVector3(0,0,1).rotate(btVector3(0,1,0), 3.141/4.f*1);
 		//Print FL loc
 		cout << "connectionPointCS0: x- " << connectionPointCS0.getX() <<
@@ -99,7 +99,7 @@ void SimpleVehicle::initPhysics() {
 				suspensionRestLength, wheelRadius, _tuning, isFrontWheel);
 
 		//FR
-		connectionPointCS0 = btVector3(0,connectionHeight,0.9+0.6).rotate(btVector3(0,1,0),3.141/4.f*-1);
+		connectionPointCS0 = btVector3(0,connectionHeight,0.8).rotate(btVector3(0,1,0),3.141/4.f*-1);
 		wheelAxleCS = btVector3(0,0,1).rotate(btVector3(0,1,0), 3.141/4.f*-1);
 		cout << "connectionPointCS0: x- " << connectionPointCS0.getX() <<
 						" y- " << connectionPointCS0.getY() << " z- " << connectionPointCS0.getZ() << endl;
@@ -107,7 +107,7 @@ void SimpleVehicle::initPhysics() {
 				suspensionRestLength, wheelRadius, _tuning, isFrontWheel);
 
 		//BR
-		connectionPointCS0 = btVector3(0,connectionHeight,0.9+0.6).rotate(btVector3(0,1,0),3.141/4.f*5);
+		connectionPointCS0 = btVector3(0,connectionHeight,0.8).rotate(btVector3(0,1,0),3.141/4.f*5);
 				wheelAxleCS = btVector3(0,0,1).rotate(btVector3(0,1,0), 3.141/4.f*5);
 		cout << "connectionPointCS0: x- " << connectionPointCS0.getX() <<
 						" y- " << connectionPointCS0.getY() << " z- " << connectionPointCS0.getZ() << endl;
@@ -116,7 +116,7 @@ void SimpleVehicle::initPhysics() {
 				suspensionRestLength, wheelRadius, _tuning, isFrontWheel);
 
 		//BL
-		connectionPointCS0 = btVector3(0,connectionHeight,0.9+0.6).rotate(btVector3(0,1,0),3.141/4.f*3);
+		connectionPointCS0 = btVector3(0,connectionHeight,0.8).rotate(btVector3(0,1,0),3.141/4.f*3);
 				wheelAxleCS = btVector3(0,0,1).rotate(btVector3(0,1,0), 3.141/4.f*3);
 		cout << "connectionPointCS0: x- " << connectionPointCS0.getX() <<
 						" y- " << connectionPointCS0.getY() << " z- " << connectionPointCS0.getZ() << endl;

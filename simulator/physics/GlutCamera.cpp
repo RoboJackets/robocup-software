@@ -70,6 +70,8 @@ void GlutCamera::myinit(void) {
 
 void GlutCamera::updateCamera() {
 
+//#define glut_debug 1
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	btScalar rele = _ele * btScalar(0.01745329251994329547); // rads per deg
@@ -129,8 +131,15 @@ void GlutCamera::updateCamera() {
 				_cameraUp.getZ());
 	}
 
+#ifdef glut_debug
+	printf("glut camera x: %8.4f y: %8.4f z: %8.4f \n",_cameraPosition[0],_cameraPosition[1],_cameraPosition[2]);
+	printf("glut target x: %8.4f y: %8.4f z: %8.4f \n",_cameraTargetPosition[0], _cameraTargetPosition[1],_cameraTargetPosition[2]);
+	printf("glut cam up x: %8.4f y: %8.4f z: %8.4f \n",_cameraUp.getX(), _cameraUp.getY(),_cameraUp.getZ());
+#endif
+
 }
 
+//
 btVector3 GlutCamera::getRayTo(int x, int y) {
 
 	if (_ortho) {
@@ -303,6 +312,7 @@ void GlutCamera::renderscene(int pass, int debugMode) {
 			}
 		}
 	}
+
 }
 
 void GlutCamera::renderme(int debugMode) {
