@@ -51,6 +51,6 @@ const float Sim_Robot_MouthWidth = Robot_MouthWidth*mtodm;
 const float Sim_Robot_Mass = 10; //mass is not scaled
 
 //FIXME: These are guessed
-const float Sim_Wheel_Diameter = 0.1f*mtodm;
+const float Sim_Wheel_Diameter = 0.05f*mtodm;
 const float Sim_Wheel_Radius = Sim_Wheel_Diameter/2.f;
-const float Sim_Wheel_Width = 0.4f*mtodm;
+const float Sim_Wheel_Width = 0.02f*mtodm;

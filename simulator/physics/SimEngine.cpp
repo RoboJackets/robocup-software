@@ -97,7 +97,6 @@ btRigidBody* SimEngine::localCreateRigidBody(float mass,
 
 	btRigidBody* body = new btRigidBody(cInfo);
 	body->setContactProcessingThreshold(_defaultContactProcessingThreshold);
-
 #else
 	btRigidBody* body = new btRigidBody(mass,0,shape,localInertia);
 	body->setWorldTransform(startTransform);
