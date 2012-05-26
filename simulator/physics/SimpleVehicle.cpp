@@ -3,6 +3,7 @@
 #include <physics/SimEngine.hpp>
 #include <physics/PhysicsConstants.hpp>
 #include <iostream>
+#include <math.h>
 
 #define CUBE_HALF_EXTENTS 1
 
@@ -36,11 +37,27 @@ void SimpleVehicle::initPhysics() {
 
 
 	//Robot chassis
-	//TODO: use convexhull for robot shape
-	btCylinderShape* cShape = new btCylinderShape(btVector3(Sim_Robot_Radius, Sim_Robot_Height/2.f, Sim_Robot_Radius));
-	//cShape->setMargin(btScalar(0.04));
+	/**
+	 * Convex hull of omni-bot
+	 */
 
-	btCollisionShape* chassisShape = cShape;
+	btConvexHullShape* convexShape = new btConvexHullShape();
+	int numPoints = 100;
+	float PI = 3.14159265;
+	float mrad = asin((Sim_Robot_MouthWidth/2.f)/Sim_Robot_Radius); //angle from mouth center to corner
+	//mrad = 0.767207; //aesthetic
+	float rad_incr = 2*(PI-mrad)/(float)numPoints;
+	float angle = mrad;
+	for(int i=0; i<=numPoints; i++){
+		//top and bottom points at angle around shell
+		btVector3* pt = new btVector3(Sim_Robot_Radius*sin(angle),Sim_Robot_Height/2.f,Sim_Robot_Radius*cos(angle));
+		btVector3* pb = new btVector3(Sim_Robot_Radius*sin(angle),-Sim_Robot_Height/2.f,Sim_Robot_Radius*cos(angle));
+		convexShape->addPoint(*pt);
+		convexShape->addPoint(*pb);
+		angle += rad_incr;
+	}
+
+	btCollisionShape* chassisShape = convexShape;
 	_simEngine->addCollisionShape(chassisShape);
 
 	btCompoundShape* compound = new btCompoundShape();
