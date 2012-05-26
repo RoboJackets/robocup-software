@@ -5,6 +5,9 @@
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
 
+#include "SimEngine.hpp"
+#include "SimRobot.hpp"
+
 class Ball;
 
 class Robot : public Entity
@@ -42,8 +45,12 @@ public:
 	const RobotRevision& revision() const { return _rev; }
 
 private:
+	SimRobot* _robot;
+
+public:
+
 	/** Functions to initialize physical objects */
-	void initPhysics();
+	void initPhysics(bool blue, SimEngine* engine);
 	void initRoller();
 	void initKicker();
 	void initWheels();
