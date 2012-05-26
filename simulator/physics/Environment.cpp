@@ -40,7 +40,7 @@ Environment::Environment(const QString& configFile, bool sendShared_)
 {
 	// NOTE: does not start simulation/thread until triggered
 	_field = new Field(this);
-	loadConfigFile(_configFile);
+	//loadConfigFile(_configFile); <- call delayed to load simEngine first
 }
 
 void Environment::connectSockets() {
@@ -282,8 +282,7 @@ void Environment::addRobot(bool blue, int id, const Geometry2d::Point& pos, Robo
 {
 	Robot* r = new Robot(this, id, rev, pos);
 
-	if (blue)
-	{
+	if (blue) {
 		_blue.insert(id, r);
 	} else {
 		_yellow.insert(id, r);
@@ -422,6 +421,9 @@ void Environment::renderScene() {
 	_field->renderField();
 }
 
+bool Environment::loadConfigFile(){
+	loadConfigFile(_configFile);
+}
 
 bool Environment::loadConfigFile(const QString& filename) {
 	//load the config file

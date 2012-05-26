@@ -18,6 +18,8 @@
 #include "Robot.hpp"
 #include "Field.hpp"
 
+#include "SimEngine.hpp"
+
 class SSL_DetectionRobot;
 
 class Environment : public QObject
@@ -53,6 +55,8 @@ private:
 
 	// How many physics steps have run since the last vision packet was sent
 	int _stepCount;
+
+	SimEngine* _simEngine;
 
 public:
 	// If true, send data to the shared vision multicast address.
@@ -100,6 +104,10 @@ public:
 
 	//render
 	void renderScene();
+
+	void setSimEngine(SimEngine* engine) { _simEngine = engine; }
+
+	bool loadConfigFile();
 
 private:
 	Robot *robot(bool blue, int board_id) const;

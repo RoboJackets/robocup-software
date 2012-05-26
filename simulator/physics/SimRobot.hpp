@@ -2,7 +2,7 @@
 
 #include <physics/SimEngine.hpp>
 
-class SimpleVehicle {
+class SimRobot {
 
 	//Wheel indices
 	static const int FL = 0;
@@ -29,7 +29,7 @@ protected:
 
 public:
 
-	SimpleVehicle(SimEngine* engine)
+	SimRobot(SimEngine* engine)
 	: _carChassis(0), _vehicle(0), _wheelShape(0),
 	  _simEngine(engine)
 	{
@@ -39,7 +39,7 @@ public:
 		_vehicleSteering = 0.f;
 	}
 
-	~SimpleVehicle() {
+	~SimRobot() {
 		delete _vehicleRayCaster;
 		delete _vehicle;
 		delete _wheelShape;

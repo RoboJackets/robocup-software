@@ -11,7 +11,7 @@
 class btCollisionShape;
 class btDynamicsWorld;
 
-class SimpleVehicle;
+class SimRobot;
 class GroundSurface;
 class GlutCamera;
 
@@ -30,7 +30,7 @@ protected:
 	Environment* _env;
 
 	// Drivable vehicle
-	SimpleVehicle* _vehicle;
+	SimRobot* _vehicle;
 
 	// Ground
 	GroundSurface* _ground;

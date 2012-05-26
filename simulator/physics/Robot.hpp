@@ -43,6 +43,7 @@ public:
 
 private:
 	/** Functions to initialize physical objects */
+	void initPhysics();
 	void initRoller();
 	void initKicker();
 	void initWheels();

@@ -2,7 +2,7 @@
 
 #include <physics/GlutCamera.hpp>
 #include <physics/GroundSurface.hpp>
-#include <physics/SimpleVehicle.hpp>
+#include <physics/SimRobot.hpp>
 #include <physics/SimEngine.hpp>
 #include <physics/Environment.hpp>
 
@@ -48,6 +48,7 @@ SimulatorGLUTThread::SimulatorGLUTThread(int argc, char* argv[], const QString& 
 : _argv(argv), _argc(argc), _env(new Environment(configFile, sendShared)), _vehicle(0), _ground(0),
   _camera(0), _cameraHeight(4.f),	_minCameraDistance(3.f), _maxCameraDistance(10.f)
 {
+	initPhysics();
 }
 
 SimulatorGLUTThread::~SimulatorGLUTThread() {
@@ -72,7 +73,7 @@ void SimulatorGLUTThread::run() {
 
 	// Set up demo
 //	_vehicleDemo = new SimulatorGLUTThread;
-	initPhysics();
+	//initPhysics();
 
 	// set up glut
 	gSimpleApplication = this;
@@ -189,12 +190,16 @@ void SimulatorGLUTThread::initPhysics() {
 	_simEngine = new SimEngine();
 	_simEngine->initPhysics();
 
+	// Set up environment
+	_env->setSimEngine(_simEngine);
+	_env->loadConfigFile();
+
 	// Set up the ground
 	_ground = new GroundSurface(_simEngine);
 	_ground->initPhysics();
 
 	// Set up the vehicle
-	_vehicle = new SimpleVehicle(_simEngine);
+	_vehicle = new SimRobot(_simEngine);
 	_vehicle->initPhysics();
 
 	// Set up the camera

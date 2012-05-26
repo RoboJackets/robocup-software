@@ -1,5 +1,5 @@
 #include "GL_ShapeDrawer.h"
-#include "SimpleVehicle.hpp"
+#include "SimRobot.hpp"
 #include <physics/SimEngine.hpp>
 #include <physics/PhysicsConstants.hpp>
 #include <iostream>
@@ -27,7 +27,7 @@ static const btScalar suspensionRestLength = 0.5f;//0.6f
 static const btScalar maxVelocity = 10; //m/s? unused
 
 
-void SimpleVehicle::initPhysics() {
+void SimRobot::initPhysics() {
 	// Assumes that Y is up
 	int rightIndex = 0;
 	int upIndex = 1;
@@ -40,12 +40,10 @@ void SimpleVehicle::initPhysics() {
 	/**
 	 * Convex hull of omni-bot
 	 */
-
 	btConvexHullShape* convexShape = new btConvexHullShape();
 	int numPoints = 100;
 	float PI = 3.14159265;
 	float mrad = asin((Sim_Robot_MouthWidth/2.f)/Sim_Robot_Radius); //angle from mouth center to corner
-	//mrad = 0.767207; //aesthetic
 	float rad_incr = 2*(PI-mrad)/(float)numPoints;
 	float angle = mrad;
 	for(int i=0; i<=numPoints; i++){
@@ -100,7 +98,6 @@ void SimpleVehicle::initPhysics() {
 
 
 		///Omni-wheels
-
 		//FL
 		btVector3 connectionPointCS0 = btVector3(0,connectionHeight,Sim_Robot_Radius-Sim_Wheel_Width/2.f).rotate(btVector3(0,1,0),3.141/4.f*1);
 		wheelAxleCS = btVector3(0,0,1).rotate(btVector3(0,1,0), 3.141/4.f*1);
@@ -137,17 +134,17 @@ void SimpleVehicle::initPhysics() {
 	}
 }
 
-void SimpleVehicle::steerLeft() {
+void SimRobot::steerLeft() {
 	engineForce(maxEngineForce);
 	_breakingForce = 0.f;
 }
 
-void SimpleVehicle::steerRight() {
+void SimRobot::steerRight() {
 	engineForce(-maxEngineForce);
 	_breakingForce = 0.f;
 }
 
-void SimpleVehicle::driveForward() {
+void SimRobot::driveForward() {
 	_engineForce[0] = -maxEngineForce;
 	_engineForce[1] = maxEngineForce;
 	_engineForce[2] = maxEngineForce;
@@ -155,12 +152,12 @@ void SimpleVehicle::driveForward() {
 	_breakingForce = 0.f;
 }
 
-void SimpleVehicle::driveBackward() {
+void SimRobot::driveBackward() {
 	_breakingForce = maxBreakingForce;
 	engineForce(0.f);
 }
 
-void SimpleVehicle::move() {
+void SimRobot::move() {
 	int wheelIndex = 2;
 	_vehicle->applyEngineForce(_engineForce[wheelIndex], wheelIndex);
 	_vehicle->setBrake(_breakingForce, wheelIndex);
@@ -176,7 +173,7 @@ void SimpleVehicle::move() {
 	_vehicle->setBrake(_breakingForce, wheelIndex);
 }
 
-void SimpleVehicle::drawWheels(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax) {
+void SimRobot::drawWheels(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax) {
 	btVector3 wheelColor(1, 0, 0);
 	btScalar m[16];
 	for (int i = 0; i < _vehicle->getNumWheels(); i++) {
@@ -190,7 +187,7 @@ void SimpleVehicle::drawWheels(GL_ShapeDrawer* shapeDrawer, const btVector3& wor
 	}
 }
 
-void SimpleVehicle::resetScene() {
+void SimRobot::resetScene() {
 	engineForce(0);
 	_vehicleSteering = 0.f;
 	_carChassis->setCenterOfMassTransform(((btDefaultMotionState* ) _carChassis->getMotionState())->m_startWorldTrans);
@@ -207,7 +204,7 @@ void SimpleVehicle::resetScene() {
 	}
 }
 
-void SimpleVehicle::getWorldTransform(btTransform& chassisWorldTrans) const {
+void SimRobot::getWorldTransform(btTransform& chassisWorldTrans) const {
 	_carChassis->getMotionState()->getWorldTransform(chassisWorldTrans);
 }
 
