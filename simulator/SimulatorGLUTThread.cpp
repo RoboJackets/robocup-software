@@ -200,7 +200,7 @@ void SimulatorGLUTThread::initPhysics() {
 
 	// Set up the vehicle
 	_vehicle = new SimRobot(_simEngine);
-	_vehicle->initPhysics();
+	_vehicle->initPhysics(true, btVector3(0,0,0));
 
 	// Set up the camera
 	_camera = new GlutCamera(_simEngine);

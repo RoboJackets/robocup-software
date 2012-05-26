@@ -1,8 +1,6 @@
-#include "GL_ShapeDrawer.h"
 #include "SimRobot.hpp"
 #include <physics/SimEngine.hpp>
-#include <physics/PhysicsConstants.hpp>
-#include <iostream>
+#include <stdio.h>
 #include <math.h>
 
 #define CUBE_HALF_EXTENTS 1
@@ -27,7 +25,7 @@ static const btScalar suspensionRestLength = 0.5f;//0.6f
 static const btScalar maxVelocity = 10; //m/s? unused
 
 
-void SimRobot::initPhysics() {
+void SimRobot::initPhysics(bool blue, const btVector3& pos) {
 	// Assumes that Y is up
 	int rightIndex = 0;
 	int upIndex = 1;
@@ -35,11 +33,7 @@ void SimRobot::initPhysics() {
 	btVector3 wheelDirectionCS0(0, -1, 0);
 	btVector3 wheelAxleCS;
 
-
-	//Robot chassis
-	/**
-	 * Convex hull of omni-bot
-	 */
+	// Create omni-bot chassis
 	btConvexHullShape* convexShape = new btConvexHullShape();
 	int numPoints = 100;
 	float PI = 3.14159265;
@@ -54,25 +48,24 @@ void SimRobot::initPhysics() {
 		convexShape->addPoint(*pb);
 		angle += rad_incr;
 	}
+	convexShape->initializePolyhedralFeatures();
 
 	btCollisionShape* chassisShape = convexShape;
 	_simEngine->addCollisionShape(chassisShape);
 
-	btCompoundShape* compound = new btCompoundShape();
-	_simEngine->addCollisionShape(compound);
-	btTransform localTrans;
-	localTrans.setIdentity();
-	//localTrans effectively shifts the center of mass with respect to the chassis
-	localTrans.setOrigin(btVector3(0, 0, 0));
+	// Color chassis
+	btVector3* color = new btVector3(1.f, 1.0f, 0.5f); //yellow
+	if(blue)
+		*color = btVector3(0.f,0.f,1.f);
+	chassisShape->setUserPointer(color);
 
-	compound->addChildShape(localTrans, chassisShape);
-
+	// Create raycast vehicle model
 	btTransform vehicleTr;
 	vehicleTr.setIdentity();
 	float connectionHeight = -0.1f;//Wheel connection height
-	vehicleTr.setOrigin(btVector3(0, Sim_Robot_Height/2.f-connectionHeight, 0));//spawn location in WS
+	vehicleTr.setOrigin(btVector3(0, Sim_Robot_Height/2.f-connectionHeight, 0)+pos);//spawn location in WS
 
-	_carChassis = _simEngine->localCreateRigidBody(800, vehicleTr, compound);
+	_carChassis = _simEngine->localCreateRigidBody(800, vehicleTr, chassisShape);
 	//_carChassis->setDamping(0.2,0.2);
 
 	_wheelShape = new btCylinderShapeX(

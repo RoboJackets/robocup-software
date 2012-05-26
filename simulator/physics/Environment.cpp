@@ -281,6 +281,7 @@ void Environment::addBall(Geometry2d::Point pos)
 void Environment::addRobot(bool blue, int id, const Geometry2d::Point& pos, Robot::RobotRevision rev)
 {
 	Robot* r = new Robot(this, id, rev, pos);
+	r->initPhysics(blue, _simEngine);
 
 	if (blue) {
 		_blue.insert(id, r);

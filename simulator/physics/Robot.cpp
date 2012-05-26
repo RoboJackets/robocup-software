@@ -28,6 +28,12 @@ Robot::~Robot()
 {
 }
 
+void Robot::initPhysics(bool blue, SimEngine* engine)
+{
+	_robot = new SimRobot(engine);
+	_robot->initPhysics(blue, btVector3(_pos.y,0,_pos.x)*mtodm);//map field coord to engine WS; x->z, y->x
+}
+
 void Robot::initRoller()
 {
 }

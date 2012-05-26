@@ -1,6 +1,8 @@
 #pragma once
 
 #include <physics/SimEngine.hpp>
+#include <physics/PhysicsConstants.hpp>
+#include "GL_ShapeDrawer.h"
 
 class SimRobot {
 
@@ -46,7 +48,7 @@ public:
 		delete _engineForce;
 	}
 
-	void initPhysics();
+	void initPhysics(bool blue, const btVector3& pos);
 
 	void drawWheels(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax);
 
@@ -55,6 +57,9 @@ public:
 	void resetScene();
 
 	void getWorldTransform(btTransform& chassisWorldTrans) const;
+
+	//utility
+	void position(float x, float y);
 
 	// access
 	void engineForce    (int wheelIndex, float val) { _engineForce[wheelIndex] = val; }
