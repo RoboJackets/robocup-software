@@ -104,7 +104,7 @@ public:
 	void step();
 
 	//render
-	void renderScene();
+	void renderScene(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax);
 
 	void setSimEngine(SimEngine* engine) { _simEngine = engine; }
 
