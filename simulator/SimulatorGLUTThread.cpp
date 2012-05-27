@@ -220,6 +220,8 @@ void SimulatorGLUTThread::render() {
 
 	_vehicle->drawWheels(camera()->shapeDrawer(), worldBoundsMin, worldBoundsMax);
 
+	_env->renderScene(camera()->shapeDrawer(), worldBoundsMin, worldBoundsMax);
+
 	_camera->renderme(_simEngine->debugMode());
 }
 
@@ -254,8 +256,6 @@ void SimulatorGLUTThread::clientMoveAndDisplay() {
 #endif
 
 	render();
-
-	_env->renderScene();
 
 	//optional but useful: debug drawing
 	_simEngine->debugDrawWorld();

@@ -121,7 +121,7 @@ void SimRobot::initPhysics(const bool& blue) {
 
 		// Position omni-wheels // Chassis orientation corrected for automatically in addWheel()
 		btVector3 connectPoint = btVector3(0,connectionHeight,Sim_Robot_Radius-Sim_Wheel_Width/2.f);
-		btVector3 forward = btVector3(0,0,1);
+		btVector3 forward = btVector3(0,0,1.0);
 		//FL
 		btVector3 connectionPointCS0 = connectPoint.rotate(btVector3(0,1,0),PI/4.f*1);
 		wheelAxleCS = forward.rotate(btVector3(0,1,0), PI/4.f*1);
@@ -196,7 +196,7 @@ void SimRobot::move() {
 	_vehicle->setBrake(_breakingForce, wheelIndex);
 }
 
-void SimRobot::drawWheels(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax) {
+void SimRobot::drawWheels(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax) const {
 	btVector3 wheelColor(1, 0, 0);
 	btScalar m[16];
 	for (int i = 0; i < _vehicle->getNumWheels(); i++) {

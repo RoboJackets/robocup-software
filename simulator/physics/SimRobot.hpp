@@ -49,7 +49,7 @@ public:
 
 	void initPhysics(const bool& blue);
 
-	void drawWheels(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax);
+	void drawWheels(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax) const;
 
 	void move();
 

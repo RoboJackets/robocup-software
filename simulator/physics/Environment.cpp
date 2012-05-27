@@ -419,12 +419,20 @@ void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx)
 	//	}
 }
 
-void Environment::renderScene() {
+void Environment::renderScene(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax) {
 	_field->renderField();
+	BOOST_FOREACH(Robot* r, _blue)
+	{
+		((SimRobot* )r)->drawWheels(shapeDrawer, worldBoundsMin, worldBoundsMax);
+	}
+	BOOST_FOREACH(Robot* r, _yellow)
+	{
+		((SimRobot* )r)->drawWheels(shapeDrawer, worldBoundsMin, worldBoundsMax);
+	}
 }
 
 bool Environment::loadConfigFile(){
-	loadConfigFile(_configFile);
+	return loadConfigFile(_configFile);
 }
 
 bool Environment::loadConfigFile(const QString& filename) {
