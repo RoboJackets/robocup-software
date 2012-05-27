@@ -38,14 +38,11 @@ public:
 		delete _wheelShape;
 	}
 
-public:
 	//Entity interface
 	virtual void position(float x, float y); // world coords
 	virtual void velocity(float x, float y, float w); // body coords
 	virtual Geometry2d::Point getPosition() const;
 	virtual float getAngle() const;
-
-public:
 
 	void initPhysics(const bool& blue);
 

@@ -24,3 +24,8 @@ void Ball::velocity(float x, float y)
 {
 	_vel = Geometry2d::Point(x,y);
 }
+
+Geometry2d::Point Ball::getPosition() const
+{
+	return _pos;
+}
