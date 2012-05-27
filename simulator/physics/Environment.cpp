@@ -3,6 +3,8 @@
 #include "Ball.hpp"
 #include "Field.hpp"
 #include "Robot.hpp"
+#include "SimRobot.hpp"
+#include "SimBall.hpp"
 
 #include <QDomDocument>
 #include <QDomAttr>
@@ -270,7 +272,8 @@ void Environment::convert_robot(const Robot *robot, SSL_DetectionRobot *out)
 
 void Environment::addBall(Geometry2d::Point pos)
 {
-	Ball* b = new Ball(this);
+	Ball* b = new SimBall(this);
+	((SimBall *) b)->initPhysics();
 	b->position(pos.x, pos.y);
 
 	_balls.append(b);

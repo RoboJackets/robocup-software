@@ -19,7 +19,8 @@
 #include "Field.hpp"
 
 #include "SimEngine.hpp"
-#include "SimRobot.hpp"
+#include "GL_ShapeDrawer.h"
+
 
 class SSL_DetectionRobot;
 
@@ -107,6 +108,8 @@ public:
 	void renderScene(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax);
 
 	void setSimEngine(SimEngine* engine) { _simEngine = engine; }
+
+	SimEngine* getSimEngine() { return _simEngine; }
 
 	bool loadConfigFile();
 

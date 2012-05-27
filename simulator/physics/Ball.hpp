@@ -2,6 +2,7 @@
 
 #include "Entity.hpp"
 
+
 class Ball: public Entity
 {
 private:
@@ -13,7 +14,7 @@ public:
 	virtual ~Ball();
 
 	virtual void position(float x, float y);
-	void velocity(float x, float y);
+	virtual void velocity(float x, float y);
 
-	virtual Geometry2d::Point getPosition() const { return _pos; }
+	virtual Geometry2d::Point getPosition() const;
 };
