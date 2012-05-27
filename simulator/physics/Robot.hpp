@@ -5,8 +5,6 @@
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
 
-#include "SimEngine.hpp"
-#include "SimRobot.hpp"
 
 class Ball;
 
@@ -18,16 +16,16 @@ public:
 		rev2008
 	} RobotRevision;
 
-	Robot(Environment* env, unsigned int id, Robot::RobotRevision rev, const Geometry2d::Point& pos);
+	Robot(Environment* env, unsigned int id, Robot::RobotRevision rev, const Geometry2d::Point& startPos);
 	virtual ~Robot();
 
 	/** @return the world angle */
-	float getAngle() const;
+	virtual float getAngle() const;
 
 	// Entity interface
 	virtual void position(float x, float y); // world coords
-	void velocity(float x, float y, float w); // body coords
-	virtual Geometry2d::Point getPosition() const { return _pos; }
+	virtual void velocity(float x, float y, float w); // body coords
+	virtual Geometry2d::Point getPosition() const;
 
 	/** set control data */
 	void radioTx(const Packet::RadioTx::Robot *data);
@@ -44,25 +42,21 @@ public:
 
 	const RobotRevision& revision() const { return _rev; }
 
-private:
-	SimRobot* _robot;
-
 public:
 
 	/** Functions to initialize physical objects */
-	void initPhysics(bool blue, SimEngine* engine);
-	void initRoller();
-	void initKicker();
-	void initWheels();
+	virtual void initPhysics(const bool& blue);
+	virtual void initRoller();
+	virtual void initKicker();
+	virtual void initWheels();
 	bool ballSense(const Ball *ball) const;
 
-private:
+protected:
 
 	RobotRevision _rev;
 
-	// temp state info
-	Geometry2d::Point _pos, _vel;
-	double _theta, _omega;
+	// state info
+	Geometry2d::Point _startPos;
 
 	/** kicker charge status */
 	uint64_t _lastKicked;

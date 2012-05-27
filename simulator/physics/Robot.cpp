@@ -11,27 +11,20 @@
 
 using namespace Geometry2d;
 
-Robot::Robot(Environment* env, unsigned int id,  Robot::RobotRevision rev, const Geometry2d::Point& pos) :
-			Entity(env), shell(id), _rev(rev), _pos(pos), _lastKicked(0)
+Robot::Robot(Environment* env, unsigned int id,  Robot::RobotRevision rev, const Geometry2d::Point& startPos) :
+			Entity(env), shell(id), _rev(rev), _startPos(startPos), _lastKicked(0)
 {
 	visibility = 100;
 	ballSensorWorks = true;
 	chargerWorks = true;
-
-	// temp state info
-	_theta = 0.0;
-	_omega = 0.0;
-
 }
 
 Robot::~Robot()
 {
 }
 
-void Robot::initPhysics(bool blue, SimEngine* engine)
+void Robot::initPhysics(const bool& blue)
 {
-	_robot = new SimRobot(engine);
-	_robot->initPhysics(blue, btVector3(_pos.y,0,_pos.x)*mtodm);//map field coord to engine WS; x->z, y->x
 }
 
 void Robot::initRoller()
@@ -46,20 +39,16 @@ void Robot::initWheels()
 {
 }
 
-void Robot::position(float x, float y)
-{
-	_pos = Geometry2d::Point(x,y);
+void Robot::position(float x, float y){ }
+
+void Robot::velocity(float x, float y, float z){ }
+
+Geometry2d::Point Robot::getPosition() const{
+	return _startPos;
 }
 
-void Robot::velocity(float x, float y, float w)
-{
-	_vel = Geometry2d::Point(x,y);
-	_omega = w;
-}
-
-float Robot::getAngle() const
-{
-	return _theta;
+float Robot::getAngle() const{
+	return 0;
 }
 
 void Robot::radioTx(const Packet::RadioTx::Robot *data)
@@ -69,7 +58,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
 	// Simple control: directly copy velocities
 
 	// Update the position
-	const Point body_tvel(data->body_x(), data->body_y());
+	/*const Point body_tvel(data->body_x(), data->body_y());
 	const TransformMatrix body_disp(dt * body_tvel, dt * data->body_w());
 	const TransformMatrix cur_pose(_pos, _omega);
 
@@ -78,7 +67,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
 	_theta = updated_pose.rotation();
 
 	_vel  = body_tvel.rotated(_theta);
-	_omega = data->body_w();
+	_omega = data->body_w();*/
 
 	/** How we kick:
 	 * Kick speed will be zeroed if we are not kicking

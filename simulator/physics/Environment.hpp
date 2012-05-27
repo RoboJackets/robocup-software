@@ -19,6 +19,7 @@
 #include "Field.hpp"
 
 #include "SimEngine.hpp"
+#include "SimRobot.hpp"
 
 class SSL_DetectionRobot;
 
