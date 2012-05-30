@@ -5,10 +5,10 @@
 using namespace std;
 
 GlutCamera::GlutCamera(SimEngine* engine) :
-		_cameraDistance(15.0), _ele(20.f), _azi(0.f), _cameraPosition(0.f, 0.f, 0.f),
+		_cameraDistance(1.0*scaling), _ele(20.f), _azi(0.f), _cameraPosition(0.f, 0.f, 0.f),
 		_cameraTargetPosition(0.f, 0.f, 0.f), _scaleBottom(0.5f), _scaleFactor(2.f),
 		_cameraUp(0, 1, 0), _forwardAxis(2), _glutScreenWidth(0), _glutScreenHeight(0),
-		_frustumZNear(1.f), _frustumZFar(10000.f), _ortho(0), _simEngine(engine)
+		_frustumZNear(.1f), _frustumZFar(1000.f), _ortho(0), _simEngine(engine)
 {
 	_shapeDrawer = new GL_ShapeDrawer();
 	_shapeDrawer->enableTexture(true);

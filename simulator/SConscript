@@ -32,16 +32,16 @@ p1 = e.Program('simulator', [
 	#'rendering/Geometry.cpp',
 	#'rendering/Primitives.cpp',
 	#'rendering/VizObject.cpp',
-	'physics/SimRobot.cpp',
+	#'physics/SimRobot.cpp',
 	'physics/SimBall.cpp',
-	'physics/GroundSurface.cpp',
 	'physics/GlutCamera.cpp',
 	'physics/SimEngine.cpp',
 	'physics/Environment.cpp',
 	'physics/Entity.cpp',
 	'physics/Ball.cpp',
 	'physics/Field.cpp',
-	'physics/Robot.cpp'])
+	'physics/Robot.cpp',
+	'physics/RobotBallController.cpp'])
 
 uics = e.Uic4([
 	'ui/SimulatorWindow.ui',

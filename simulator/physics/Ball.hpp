@@ -1,13 +1,18 @@
 #pragma once
 
 #include "Entity.hpp"
+#include <physics/SimEngine.hpp>
 
 
 class Ball: public Entity
 {
-private:
-	// temp state info
-	Geometry2d::Point _pos, _vel;
+protected:
+	// physics components
+	btRigidBody* _ball;
+	btCollisionShape* _ballShape;
+
+	// link to SimEngine
+	SimEngine* _simEngine;
 
 public:
 	Ball(Environment* env);
@@ -17,4 +22,8 @@ public:
 	virtual void velocity(float x, float y);
 
 	virtual Geometry2d::Point getPosition() const;
+
+	void initPhysics();
+
+	void resetScene();
 };

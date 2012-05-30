@@ -1,10 +1,7 @@
 #pragma once
 
 #include "Ball.hpp"
-
 #include <physics/SimEngine.hpp>
-#include <physics/PhysicsConstants.hpp>
-#include "GL_ShapeDrawer.h"
 
 
 class SimBall : public Ball
@@ -21,7 +18,6 @@ public:
 	SimBall(Environment* env);
 
 	~SimBall() {
-		delete _ballShape;
 	}
 
 	//Entity interface

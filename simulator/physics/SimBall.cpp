@@ -13,7 +13,7 @@ void SimBall::position(float x, float y) {
 		return;
 	btTransform trans;
 	trans.setIdentity();
-	trans.setOrigin(btVector3(y*mtodm,Sim_Ball_Radius,x*mtodm));
+	trans.setOrigin(btVector3(y*scaling,Sim_Ball_Radius,x*scaling));
 	_ball->setCenterOfMassTransform(trans);
 }
 
@@ -29,6 +29,7 @@ Geometry2d::Point SimBall::getPosition() const {
 void SimBall::initPhysics() {
 	// Create ball shape
 	btSphereShape* _sphereShape = new btSphereShape(Sim_Ball_Radius);
+	_sphereShape->setMargin(0.004*scaling);
 	_simEngine->addCollisionShape((btCollisionShape *) _sphereShape);
 
 	btVector3* color = new btVector3(1.0f,0.5f,0.f);
@@ -37,10 +38,19 @@ void SimBall::initPhysics() {
 	// Create rigid body
 	btTransform ballTr;
 	ballTr.setIdentity();
-	ballTr.setOrigin(btVector3(0,Sim_Ball_Radius+5,0));
+	ballTr.setOrigin(btVector3(Sim_Field_Width/2.f,Sim_Ball_Radius,0));
 
 	_ball = _simEngine->localCreateRigidBody(Sim_Ball_Mass,ballTr,_sphereShape);
 	_ball->setActivationState(DISABLE_DEACTIVATION);
+
+	_ball->setFriction(10.f); // doesn't work?
+	_ball->setDamping(0.5f,0.5f); // use damping for friction
+
+	//_ball->setCollisionFlags(_ball->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+
+	//enable CCD if the object moves more than 1 meter in one simulation frame
+	_ball->setCcdMotionThreshold(1);
+	_ball->setCcdSweptSphereRadius(0.2f);
 
 	resetScene();
 }

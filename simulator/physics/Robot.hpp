@@ -1,12 +1,15 @@
 #pragma once
 
 #include "Entity.hpp"
+#include "SimEngine.hpp"
 
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
 
 
 class Ball;
+class RobotBallController;
+class GL_ShapeDrawer;
 
 class Robot : public Entity
 {
@@ -16,52 +19,41 @@ public:
 		rev2008
 	} RobotRevision;
 
-	Robot(Environment* env, unsigned int id, Robot::RobotRevision rev, const Geometry2d::Point& startPos);
-	virtual ~Robot();
-
-	/** @return the world angle */
-	virtual float getAngle() const;
-
-	// Entity interface
-	virtual void position(float x, float y); // world coords
-	virtual void velocity(float x, float y, float w); // body coords
-	virtual Geometry2d::Point getPosition() const;
-
-	/** set control data */
-	void radioTx(const Packet::RadioTx::Robot *data);
-
-	/** get robot information data */
-	Packet::RadioRx radioRx() const;
-
-	/** assigned shell number */
+	// assigned shell number
 	unsigned int shell;
 
 	int visibility;
 	bool ballSensorWorks;
 	bool chargerWorks;
 
-	const RobotRevision& revision() const { return _rev; }
-
-public:
-
-	/** Functions to initialize physical objects */
-	virtual void initPhysics(const bool& blue);
-	virtual void initRoller();
-	virtual void initKicker();
-	virtual void initWheels();
-	bool ballSense(const Ball *ball) const;
-
 protected:
+	// physics components
+	btRigidBody* _robotChassis;
+	btRaycastVehicle::btVehicleTuning _tuning;
+	btVehicleRaycaster* _vehicleRayCaster;
+	btRaycastVehicle* _robotVehicle;
+	btCollisionShape* _wheelShape;
+
+	RobotBallController* _controller;
+
+	// control inputs
+	float _engineForce[4];
+	float _brakingForce;
+
+	// state info
+	btTransform _startTransform;
+
+	// links to the engine
+	SimEngine *_simEngine;
 
 	RobotRevision _rev;
 
-	// state info
-	Geometry2d::Point _startPos;
-
+	//FIXME: move into RobotBallController
 	/** kicker charge status */
 	uint64_t _lastKicked;
 	const static uint64_t RechargeTime = 6000000; // six seconds
 
+	//TODO: Use later?
 	/** center of roller from ground */
 	const static float RollerHeight = .03;
 	/** center of roller from center of robot */
@@ -77,4 +69,74 @@ protected:
 	const static float KickerFaceHeight = .005;
 	/** depth of the kicker plate */
 	const static float KickerLength = .03;
+
+public:
+	Robot(Environment* env, unsigned int id, Robot::RobotRevision rev, const Geometry2d::Point& startPos);
+	~Robot();
+
+	void initPhysics(const bool& blue);
+
+	// Entity interface
+	virtual void position(float x, float y); // world coords
+
+	virtual void velocity(float x, float y, float w); // body coords
+
+	virtual Geometry2d::Point getPosition() const;
+
+	virtual float getAngle() const;
+
+	const RobotRevision& revision() const { return _rev; }
+
+	bool ballSense(const Ball *ball) const;
+
+	const float* getEngineForce() const {
+		return _engineForce;
+	}
+
+	float getBrakingForce() const {
+		return _brakingForce;
+	}
+
+	btRigidBody* getRigidBody() const {
+		return _robotChassis;
+	}
+
+	SimEngine* getSimEngine() {
+		return _simEngine;
+	}
+
+	void getWorldTransform(btTransform& chassisWorldTrans) const;
+
+	void setEngineForce  (int wheelIndex, float val){
+		_engineForce[wheelIndex] = val;
+	}
+
+	void setEngineForce  (float val){
+		for(int i=0; i<4; i++){
+			_engineForce[i] = val;
+		}
+	}
+
+	void setBrakingForce (float val){
+		_brakingForce = val;
+	}
+
+	/** set control data */
+	void radioTx(const Packet::RadioTx::Robot *data);
+
+	/** get robot information data */
+	Packet::RadioRx radioRx() const;
+
+	void renderWheels(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax) const;
+
+	void applyEngineForces();
+
+	void resetScene();
+
+	// bang-bang steering and throttle
+	void steerLeft();
+	void steerRight();
+	void driveForward();
+	void driveBackward();
+
 };
