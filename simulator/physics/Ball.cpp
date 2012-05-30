@@ -57,6 +57,8 @@ void Ball::initPhysics() {
 	_ball->setCcdMotionThreshold(1);
 	_ball->setCcdSweptSphereRadius(0.2f);
 
+	_ball->getBroadphaseHandle()->m_collisionFilterGroup |= btBroadphaseProxy::SensorTrigger;
+
 	resetScene();
 }
 

@@ -154,7 +154,12 @@ void Robot::initPhysics(const bool& blue)
 		}
 	}
 
-	_robotChassis->getBroadphaseProxy()->m_collisionFilterGroup;
+
+	//Allow rotation only on y-axis
+	_robotChassis->setAngularFactor(btVector3(0,1,0));
+
+	//Disable collisions with the ball controller
+	_robotChassis->getBroadphaseHandle()->m_collisionFilterMask ^= btBroadphaseProxy::SensorTrigger;
 
 	resetScene(); // force initial physics state - everything stationary
 }
