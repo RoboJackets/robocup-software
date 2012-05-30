@@ -1,11 +1,8 @@
 #include <stdio.h>
 
 #include <physics/GlutCamera.hpp>
-#include <physics/GroundSurface.hpp>
-#include <physics/SimRobot.hpp>
-#include <physics/SimEngine.hpp>
+#include <physics/Robot.hpp>
 #include <physics/Environment.hpp>
-
 #include <SimulatorGLUTThread.hpp>
 
 using namespace std;
@@ -45,10 +42,10 @@ static void glutDisplayCallback(void) {
 // SimulatorGLUTThread implementation
 
 SimulatorGLUTThread::SimulatorGLUTThread(int argc, char* argv[], const QString& configFile, bool sendShared)
-: _argv(argv), _argc(argc), _env(new Environment(configFile, sendShared)), _vehicle(0), _ground(0),
+: _argv(argv), _argc(argc), _env(0), _vehicle(0),
   _camera(0), _cameraHeight(4.f),	_minCameraDistance(3.f), _maxCameraDistance(10.f)
 {
-	initPhysics();
+	initialize(configFile, sendShared);
 }
 
 SimulatorGLUTThread::~SimulatorGLUTThread() {
@@ -58,9 +55,6 @@ SimulatorGLUTThread::~SimulatorGLUTThread() {
 	if (_simEngine)
 		delete _simEngine;
 
-	if (_ground)
-		delete _ground;
-
 	if (_vehicle)
 		delete _vehicle;
 
@@ -69,15 +63,9 @@ SimulatorGLUTThread::~SimulatorGLUTThread() {
 }
 
 void SimulatorGLUTThread::run() {
-//	_env->init();
-
-	// Set up demo
-//	_vehicleDemo = new SimulatorGLUTThread;
-	//initPhysics();
-
 	// set up glut
 	gSimpleApplication = this;
-	int width = 640, height = 480;
+	int width = 800, height = 640;
 	const char* title = "Robocup Simulator";
 	glutInit(&_argc, _argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL);
@@ -140,8 +128,8 @@ void SimulatorGLUTThread::keyboardCallback(unsigned char key, int x, int y) {
 	case 'l': _camera->setAzi(_camera->getAzi() - 10); break;
 	case 'k': _camera->setEle(_camera->getEle() - 10); break;
 	case 'i': _camera->setEle(_camera->getEle() + 10); break;
-	case 'u': _camera->setCameraDistance(_camera->getCameraDistance()+2); break;
-	case 'o': _camera->setCameraDistance(_camera->getCameraDistance()-2); break;
+	case 'u': _camera->setCameraDistance(_camera->getCameraDistance()+.2); break;
+	case 'o': _camera->setCameraDistance(_camera->getCameraDistance()-.2); break;
 
 	case 'd':
 		_simEngine->setDebug(btIDebugDraw::DBG_NoDeactivation);
@@ -184,28 +172,22 @@ void SimulatorGLUTThread::setDebugMode(int mode) {
 		getDynamicsWorld()->getDebugDrawer()->setDebugMode(mode);
 }
 
-void SimulatorGLUTThread::initPhysics() {
+void SimulatorGLUTThread::initialize(const QString& configFile, bool sendShared) {
 
 	// set up the simulation
 	_simEngine = new SimEngine();
 	_simEngine->initPhysics();
 
 	// Set up environment
-	_env->setSimEngine(_simEngine);
-	_env->loadConfigFile();
-
-	// Set up the ground
-	_ground = new GroundSurface(_simEngine);
-	_ground->initPhysics();
+	_env = new Environment(configFile, sendShared, _simEngine);
 
 	// Set up the vehicle
-	_vehicle = new SimRobot(_env,0,Robot::rev2008,Geometry2d::Point(0,0),_simEngine);
+	_vehicle = new Robot(_env,0,Robot::rev2008,Geometry2d::Point(-1,0));
 	_vehicle->initPhysics(true);
 
 	// Set up the camera
 	_camera = new GlutCamera(_simEngine);
-	_camera->setCameraPosition(1*btVector3(10, 10, 10));//
-	_camera->setCameraDistance(15.f);//
+	_camera->setCameraPosition(scaling*btVector3(1, 1, 1));//
 
 
 	// Connect the debug drawer
@@ -218,7 +200,7 @@ void SimulatorGLUTThread::render() {
 	btVector3 worldBoundsMin, worldBoundsMax;
 	getDynamicsWorld()->getBroadphase()->getBroadphaseAabb(worldBoundsMin, worldBoundsMax);
 
-	_vehicle->drawWheels(camera()->shapeDrawer(), worldBoundsMin, worldBoundsMax);
+	_vehicle->renderWheels(camera()->shapeDrawer(), worldBoundsMin, worldBoundsMax);
 
 	_env->renderScene(camera()->shapeDrawer(), worldBoundsMin, worldBoundsMax);
 
@@ -230,7 +212,7 @@ void SimulatorGLUTThread::clientMoveAndDisplay() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	// apply controls
-	_vehicle->move();
+	_vehicle->applyEngineForces();
 
 	// simulation steps
 	_simEngine->stepSimulation();
@@ -284,18 +266,18 @@ void SimulatorGLUTThread::clientResetScene() {
 void SimulatorGLUTThread::specialKeyboardUp(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_UP: {
-		_vehicle->engineForce(0.f);
+		_vehicle->setEngineForce(0.f);
 		break;
 	}
 	case GLUT_KEY_DOWN: {
-		_vehicle->breakingForce(0.f);
+		_vehicle->setBrakingForce(0.f);
 		break;
 	}
 	case GLUT_KEY_LEFT: {
-		_vehicle->engineForce(0.f);
+		_vehicle->setEngineForce(0.f);
 	}
 	case GLUT_KEY_RIGHT: {
-		_vehicle->engineForce(0.f);
+		_vehicle->setEngineForce(0.f);
 	}
 	default:
 		break;

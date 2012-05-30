@@ -3,8 +3,6 @@
 #include "Ball.hpp"
 #include "Field.hpp"
 #include "Robot.hpp"
-#include "SimRobot.hpp"
-#include "SimBall.hpp"
 
 #include <QDomDocument>
 #include <QDomAttr>
@@ -32,17 +30,23 @@ static const QHostAddress MulticastAddress(SharedVisionAddress);
 
 const int Oversample = 1;
 
-Environment::Environment(const QString& configFile, bool sendShared_)
+Environment::Environment(const QString& configFile, bool sendShared_, SimEngine* engine)
 :	_dropFrame(false),
  	_configFile(configFile),
  	_frameNumber(0),
  	_stepCount(0),
+ 	_simEngine(engine),
  	sendShared(sendShared_),
  	ballVisibility(100)
 {
 	// NOTE: does not start simulation/thread until triggered
 	_field = new Field(this);
-	//loadConfigFile(_configFile); <- call delayed to load simEngine first
+	_field->initPhysics();
+	loadConfigFile(_configFile);
+}
+
+Environment::~Environment() {
+	delete _field;
 }
 
 void Environment::connectSockets() {
@@ -272,8 +276,8 @@ void Environment::convert_robot(const Robot *robot, SSL_DetectionRobot *out)
 
 void Environment::addBall(Geometry2d::Point pos)
 {
-	Ball* b = new SimBall(this);
-	((SimBall *) b)->initPhysics();
+	Ball* b = new Ball(this);
+	b->initPhysics();
 	b->position(pos.x, pos.y);
 
 	_balls.append(b);
@@ -283,7 +287,7 @@ void Environment::addBall(Geometry2d::Point pos)
 
 void Environment::addRobot(bool blue, int id, const Geometry2d::Point& pos, Robot::RobotRevision rev)
 {
-	Robot* r =  new SimRobot(this, id, rev, pos, _simEngine);
+	Robot* r =  new Robot(this, id, rev, pos);
 	printf("Add robot\n");
 	r->initPhysics(blue);
 
@@ -426,11 +430,11 @@ void Environment::renderScene(GL_ShapeDrawer* shapeDrawer, const btVector3& worl
 	_field->renderField();
 	BOOST_FOREACH(Robot* r, _blue)
 	{
-		((SimRobot* )r)->drawWheels(shapeDrawer, worldBoundsMin, worldBoundsMax);
+		r->renderWheels(shapeDrawer, worldBoundsMin, worldBoundsMax);
 	}
 	BOOST_FOREACH(Robot* r, _yellow)
 	{
-		((SimRobot* )r)->drawWheels(shapeDrawer, worldBoundsMin, worldBoundsMax);
+		r->renderWheels(shapeDrawer, worldBoundsMin, worldBoundsMax);
 	}
 }
 

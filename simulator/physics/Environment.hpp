@@ -36,8 +36,6 @@ private:
 	// Automatically cleared.
 	bool _dropFrame;
 
-	Field* _field;
-
 	RobotMap _blue;
 	RobotMap _yellow;
 	QVector<Ball*> _balls;
@@ -60,6 +58,8 @@ private:
 
 	SimEngine* _simEngine;
 
+	Field* _field;
+
 public:
 	// If true, send data to the shared vision multicast address.
 	// If false, send data to the two simulated vision addresses.
@@ -67,7 +67,9 @@ public:
 
 	int ballVisibility;
 
-	Environment(const QString& configFile, bool sendShared_);
+	Environment(const QString& configFile, bool sendShared_, SimEngine* engine);
+
+	~Environment();
 
 	/** initializes the timer, connects sockets */
 	void connectSockets();

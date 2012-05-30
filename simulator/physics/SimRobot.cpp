@@ -1,5 +1,5 @@
 #include "SimRobot.hpp"
-#include <physics/SimEngine.hpp>
+#include "GL_ShapeDrawer.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -15,7 +15,7 @@ static const float suspensionStiffness = 1000.f;
 static const float suspensionDamping = 2.3f;
 static const float suspensionCompression = 4.4f;
 static const float rollInfluence = 0.0f;
-static const btScalar suspensionRestLength = 0.5f;//0.6f
+static const btScalar suspensionRestLength = 0.05f*scaling;//0.6f
 
 
 void SimRobot::position(float x, float y){
@@ -23,7 +23,7 @@ void SimRobot::position(float x, float y){
 		return;
 	btTransform trans;
 	_carChassis->getMotionState()->getWorldTransform(trans);
-	trans.setOrigin(btVector3(y*mtodm,trans.getOrigin().y(),x*mtodm));//map field coord -> engine WS; x->z, y->x;
+	trans.setOrigin(btVector3(y*scaling,trans.getOrigin().y(),x*scaling));//map field coord -> engine WS; x->z, y->x;
 	_carChassis->setCenterOfMassTransform(trans);
 	if (_vehicle) {
 		_vehicle->resetSuspension();
@@ -42,7 +42,7 @@ Geometry2d::Point SimRobot::getPosition() const {
 	btTransform trans;
 	_carChassis->getMotionState()->getWorldTransform(trans);
 	btVector3 pos = trans.getOrigin();
-	return Geometry2d::Point(pos.z(),pos.x())/mtodm;
+	return Geometry2d::Point(pos.z(),pos.x())/scaling;
 }
 
 float SimRobot::getAngle() const{
@@ -78,6 +78,7 @@ void SimRobot::initPhysics(const bool& blue) {
 		angle += rad_incr;
 	}
 	convexShape->initializePolyhedralFeatures();
+	convexShape->setMargin(0.004*scaling);
 	_simEngine->addCollisionShape((btCollisionShape*)convexShape);
 
 	// Chassis color
@@ -91,8 +92,8 @@ void SimRobot::initPhysics(const bool& blue) {
 	vehicleTr.setIdentity();
 	if(blue)
 		vehicleTr.setRotation(btQuaternion(btVector3(0,1,0),PI));
-	float connectionHeight = -0.1f;//Wheel connection height
-	btVector3 pos = btVector3(_startPos.y,0,_startPos.x)*mtodm;//map field coord -> engine WS; x->z, y->x; m -> dm
+	float connectionHeight = -0.01f*scaling;//Wheel connection height
+	btVector3 pos = btVector3(_startPos.y,0,_startPos.x)*scaling;//map field coord -> engine WS; x->z, y->x; m -> dm
 	vehicleTr.setOrigin(btVector3(0, Sim_Robot_Height/2.f-connectionHeight, 0)+pos);//origin is at chassis center of mass loc by default
 
 	// Create chassis rigid body

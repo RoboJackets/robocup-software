@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Robot.hpp"
+#include "SimEngine.hpp"
 
-#include <physics/SimEngine.hpp>
-#include <physics/PhysicsConstants.hpp>
-#include "GL_ShapeDrawer.h"
+
+class GL_ShapeDrawer;
 
 class SimRobot : public Robot
 {
@@ -53,6 +53,8 @@ public:
 	void resetScene();
 
 	void getWorldTransform(btTransform& chassisWorldTrans) const;
+
+	SimEngine* getSimEngine() { return _simEngine; }
 
 	// access
 	void engineForce    (int wheelIndex, float val) { _engineForce[wheelIndex] = val; }

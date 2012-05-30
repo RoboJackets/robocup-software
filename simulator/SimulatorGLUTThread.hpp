@@ -11,8 +11,7 @@
 class btCollisionShape;
 class btDynamicsWorld;
 
-class SimRobot;
-class GroundSurface;
+class Robot;
 class GlutCamera;
 
 class Environment;
@@ -30,10 +29,7 @@ protected:
 	Environment* _env;
 
 	// Drivable vehicle
-	SimRobot* _vehicle;
-
-	// Ground
-	GroundSurface* _ground;
+	Robot* _vehicle;
 
 	// Dynamics/Collision Environment parts
 	SimEngine* _simEngine;
@@ -87,7 +83,7 @@ public:
 
 	void render();
 
-	void initPhysics();
+	void initialize(const QString& configFile, bool sendShared);
 
 	/// glut callbacks
 

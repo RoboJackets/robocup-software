@@ -16,11 +16,13 @@
 
 #include <btBulletDynamicsCommon.h>
 #include <LinearMath/btQuickprof.h>
+#include <physics/PhysicsConstants.hpp>
 
 class btCollisionShape;
 class btDynamicsWorld;
 class btRigidBody;
 class btActionInterface;
+
 
 class SimEngine {
 protected:
@@ -55,6 +57,9 @@ public:
 	void addCollisionShape(btCollisionShape* shape);
 
 	btRigidBody* localCreateRigidBody(float mass,
+			const btTransform& startTransform, btCollisionShape* shape);
+
+	btRigidBody* localCreateRobot(float mass,
 			const btTransform& startTransform, btCollisionShape* shape);
 
 	btScalar getDeltaTimeMicroseconds();
