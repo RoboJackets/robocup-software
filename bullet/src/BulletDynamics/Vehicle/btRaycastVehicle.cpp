@@ -693,17 +693,7 @@ void	btRaycastVehicle::updateFriction(btScalar	timeStep)
 				if (m_forwardImpulse[wheel] != btScalar(0.))
 				{
 
-					//m_chassisBody->applyImpulse(m_forwardWS[wheel]*(m_forwardImpulse[wheel]),rel_pos);
-
-
-					btVector3 forwardImpulse = m_forwardWS[wheel]*(m_forwardImpulse[wheel]);
-					m_chassisBody->applyCentralImpulse(forwardImpulse);
-
-					//remove torque in x and z ignored to prevent toppling
-					btVector3 torqueImpulse = rel_pos.cross(forwardImpulse*m_chassisBody->getLinearFactor());
-					torqueImpulse.setX(0);
-					torqueImpulse.setZ(0);
-					m_chassisBody->applyTorqueImpulse(torqueImpulse);
+					m_chassisBody->applyImpulse(m_forwardWS[wheel]*(m_forwardImpulse[wheel]),rel_pos);
 
 				}
 				if (m_sideImpulse[wheel] != btScalar(0.))

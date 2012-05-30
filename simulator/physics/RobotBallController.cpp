@@ -8,10 +8,10 @@
 //static constants (loosely guessed)
 static const float MouthWidth = 0.075*scaling;
 static const float MouthHeight = 0.06*scaling;//based off ball diam
-static const float MouthLength = 0.01*scaling*10;
+static const float MouthLength = 0.005*scaling;
 
 RobotBallController::RobotBallController(Robot* robot) :
-	_parent(robot), _simEngine(robot->getSimEngine()), _localMouthPos(0,0,0)
+	_ghostObject(0),_localMouthPos(0,0,0),_parent(robot), _simEngine(robot->getSimEngine())
 {
 }
 
@@ -40,20 +40,13 @@ void RobotBallController::initPhysics()
 	origin += _localMouthPos.rotate(ghostTr.getRotation().getAxis(),ghostTr.getRotation().getAngle());
 	ghostTr.setOrigin(origin);
 
-	//DEBUG
-	btTransform tr;
-	_parent->getWorldTransform(tr);
-	btVector3 p = tr.getOrigin();
-	printf("chassis origin x:%5.3f, y:%5.3f, z:%5.3f\n",p.x(),p.y(),p.z());
-	printf("ghost origin   x:%5.3f, y:%5.3f, z:%5.3f\n",origin.x(),origin.y(),origin.z());
-	///
-
 	_ghostObject->setWorldTransform(ghostTr);
 	_ghostObject->setCollisionShape(mouthShape);
-	_ghostObject->setCollisionFlags (btCollisionObject::CF_CHARACTER_OBJECT);
+	_ghostObject->setCollisionFlags (btCollisionObject::CF_NO_CONTACT_RESPONSE);
 
-	_simEngine->dynamicsWorld()->addCollisionObject(_ghostObject,btBroadphaseProxy::CharacterFilter,
-			btBroadphaseProxy::SensorTrigger);//FIXME
+	_simEngine->dynamicsWorld()->addCollisionObject(_ghostObject,btBroadphaseProxy::DefaultFilter, btBroadphaseProxy::SensorTrigger);
+
+	_simEngine->dynamicsWorld()->addAction(this);
 }
 
 
@@ -91,7 +84,7 @@ bool RobotBallController::detectBall ( btCollisionWorld* collisionWorld)
 					const btVector3& normalOnB = pt.m_normalWorldOnB;
 					/// work here
 
-
+					printf("Ball detected!\n");
 
 				}
 			}
