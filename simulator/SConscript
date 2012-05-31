@@ -32,8 +32,6 @@ p1 = e.Program('simulator', [
 	#'rendering/Geometry.cpp',
 	#'rendering/Primitives.cpp',
 	#'rendering/VizObject.cpp',
-	#'physics/SimRobot.cpp',
-	'physics/SimBall.cpp',
 	'physics/GlutCamera.cpp',
 	'physics/SimEngine.cpp',
 	'physics/Environment.cpp',
