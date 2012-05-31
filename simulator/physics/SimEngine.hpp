@@ -67,6 +67,8 @@ public:
 	/** Key function for advancing the simulation forward in time */
 	void stepSimulation();
 
+	btClock* getClock();
+
 	void debugDrawWorld();
 
 	void addVehicle(btActionInterface* vehicle);

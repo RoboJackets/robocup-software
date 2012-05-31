@@ -30,7 +30,7 @@ static const float robotWeight = 800;
 
 
 Robot::Robot(Environment* env, unsigned int id,  Robot::RobotRevision rev, const Geometry2d::Point& startPos) :
-			Entity(env), shell(id), _rev(rev), _lastKicked(0),_brakingForce(0),
+		shell(id), Entity(env), _rev(rev), _lastKicked(0),_brakingForce(0),
 			_robotChassis(0), _robotVehicle(0), _wheelShape(0), _simEngine(env->getSimEngine()),_controller(0)
 {
 	visibility = 100;
@@ -182,9 +182,12 @@ void Robot::position(float x, float y)
 	}
 }
 
-void Robot::velocity(float x, float y, float z)
+void Robot::velocity(float x, float y, float w)
 {
-	//Apply engine forces
+
+	_targetVel = btVector3(y,0,x)*scaling;
+	_targetRot = w;
+
 }
 
 Geometry2d::Point Robot::getPosition() const
@@ -288,6 +291,108 @@ void Robot::applyEngineForces() {
 	wheelIndex = 1;
 	_robotVehicle->applyEngineForce(_engineForce[wheelIndex], wheelIndex);
 	_robotVehicle->setBrake(_brakingForce, wheelIndex);
+}
+
+void Robot::applyEngineForces(float deltaTime) {
+
+	if(_targetVel.length() < SIMD_EPSILON && _targetRot == 0){
+
+		for(int i=0; i<4; i++){
+			_engineForce[i] = 0;
+		}
+
+	}else{
+		btTransform worldTr = _robotChassis->getWorldTransform();
+		btQuaternion worldRot = _robotChassis->getOrientation();
+
+//		printf("WS pos = (%5.3f,%5.3f,%5.3f)\n", worldTr.getOrigin()[0],worldTr.getOrigin()[1],worldTr.getOrigin()[2]);
+//		printf("WS rot = %5.3f\n", worldRot.getAngle());
+
+		//basis vectors for robot - directions of driving two opposite wheels "forward", i.e. towards z in CS
+		//f right as in northeast, f left as in northwest
+		btVector3 forwardRightCS =  btVector3(-1,0,1).normalize(); // pos x is left b/c y is up, very tricky
+		btVector3 forwardLeftCS  =  btVector3(1,0,1).normalize();
+
+//		printf("forwardRightCS = (%5.3f,%5.3f,%5.3f)\n",forwardRightCS[0],forwardRightCS[1],forwardRightCS[2]);
+//		printf("forwardLeftCS = (%5.3f,%5.3f,%5.3f)\n",forwardLeftCS[0],forwardLeftCS[1],forwardLeftCS[2]);
+
+
+		btVector3 robotVel = _robotChassis->getLinearVelocity();
+		robotVel.setY(0);
+
+//		printf("WS velocity  = (%5.3f,%5.3f,%5.3f)\n", robotVel[0], robotVel[1], robotVel[2]);
+
+		robotVel = robotVel.rotate(worldRot.getAxis(),-worldRot.getAngle());//undo world rotation
+
+//		printf("CS velocity = (%5.3f,%5.3f,%5.3f)\n", robotVel[0], robotVel[1], robotVel[2]);
+
+		btVector3  __rot   = _robotChassis->getAngularVelocity();
+		btScalar  robotRot = __rot.getY();
+
+//		printf("WS ang vel = %5.3f\n",robotRot);
+
+		//velocity delta projected onto forwardRight and forwardLeft
+		float velFR = (_targetVel-robotVel).dot(forwardRightCS);
+		float velFL = (_targetVel-robotVel).dot(forwardLeftCS);
+
+//		printf("error: %f\n",(_targetVel-robotVel).length());
+
+		float angFR = velFR/Sim_Wheel_Radius;
+		float angFL = velFL/Sim_Wheel_Radius;
+
+		float forceFR = angFR/deltaTime;
+		float forceFL = angFL/deltaTime;
+
+		//need to drive at max engine force to achieve target velocity
+
+		float rotVel  = (_targetRot-robotRot)*(Sim_Robot_Radius-Sim_Wheel_Width/2.f); //move to actually wheel loc //assume w is radians per seconds
+
+		float angVel  = rotVel/Sim_Wheel_Radius;
+
+		float forceRot = angVel/deltaTime;
+
+		//assign
+		//extremely quirky: all wheels turn counterclockwise w/r/t the center of the robot
+		_engineForce[FrontLeft]  = -forceFR/2 + forceRot/4;
+		_engineForce[FrontRight] = forceFL/2 + forceRot/4;
+
+		_engineForce[BackRight]  = forceFR/2 + forceRot/4;
+		_engineForce[BackLeft]   = -forceFL/2 + forceRot/4;
+
+		//multiply by mass to cancel /mass later
+		for(int i=0; i<4; i++){
+			_engineForce[i] *= robotWeight;
+		}
+
+		//scale forces
+		float max = 0;
+		float force;
+		for(int i=0; i<4; i++){
+			force = _engineForce[i] > 0 ? _engineForce[i] : -_engineForce[i];
+			if(force>maxEngineForce)
+				if(force>max)
+					max = force;
+		}
+
+		if(max){
+//			printf("Maximum exceeded!\n");
+			for(int i=0; i<4; i++)
+				_engineForce[i] *= maxEngineForce/max;
+		}
+	}
+
+	//apply forces
+	_robotVehicle->applyEngineForce(_engineForce[FrontLeft], FrontLeft);
+	_robotVehicle->setBrake(_brakingForce, FrontLeft);
+
+	_robotVehicle->applyEngineForce(_engineForce[FrontRight], FrontRight);
+	_robotVehicle->setBrake(_brakingForce, FrontRight);
+
+	_robotVehicle->applyEngineForce(_engineForce[BackRight], BackRight);
+	_robotVehicle->setBrake(_brakingForce, BackRight);
+
+	_robotVehicle->applyEngineForce(_engineForce[BackLeft], BackLeft);
+	_robotVehicle->setBrake(_brakingForce, BackLeft);
 }
 
 void Robot::renderWheels(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax) const {

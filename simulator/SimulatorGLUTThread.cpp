@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 #include <physics/GlutCamera.hpp>
-#include <physics/Robot.hpp>
+#include "physics/Robot.hpp"
 #include <physics/Environment.hpp>
 #include <SimulatorGLUTThread.hpp>
 
@@ -211,8 +211,11 @@ void SimulatorGLUTThread::clientMoveAndDisplay() {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	//get delta
+	float delta = _simEngine->getClock()->getTimeMicroseconds() * 0.000001f;
+
 	// apply controls
-	_vehicle->applyEngineForces();
+	_vehicle->applyEngineForces(delta);
 
 	// simulation steps
 	_simEngine->stepSimulation();
@@ -221,7 +224,7 @@ void SimulatorGLUTThread::clientMoveAndDisplay() {
 //#define motion_debug 1
 #ifdef motion_debug
 	// print out current vel, ang vel, pos of vehicle
-	btRigidBody* m_chassisBody = _vehicle->carChassis();
+	btRigidBody* m_chassisBody = _vehicle->getRigidBody();
 
 	btVector3 vel = m_chassisBody->getLinearVelocity();
 	btVector3 ang = m_chassisBody->getAngularVelocity();
@@ -233,7 +236,7 @@ void SimulatorGLUTThread::clientMoveAndDisplay() {
 	printf("ang vel x: %8.4f y: %8.4f z: %8.4f \n", ang[0], ang[1], ang[2]);
 	printf("pos     x: %8.4f y: %8.4f z: %8.4f \n", trans[0], trans[1], trans[2]);
 
-	trans = _vehicle->vehicle()->m_wheelInfo[0].m_worldTransform.getOrigin();
+	trans = _vehicle->getRaycastVehicle()->m_wheelInfo[0].m_worldTransform.getOrigin();
 	printf("wheel     x: %8.4f y: %8.4f z: %8.4f \n", trans[0], trans[1], trans[2]);
 #endif
 
@@ -266,18 +269,22 @@ void SimulatorGLUTThread::clientResetScene() {
 void SimulatorGLUTThread::specialKeyboardUp(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_UP: {
-		_vehicle->setEngineForce(0.f);
+		//_vehicle->setEngineForce(0.f);
+		_vehicle->velocity(0,0,0);
 		break;
 	}
 	case GLUT_KEY_DOWN: {
-		_vehicle->setBrakingForce(0.f);
+		//_vehicle->setBrakingForce(0.f);
+		_vehicle->velocity(0,0,0);
 		break;
 	}
 	case GLUT_KEY_LEFT: {
-		_vehicle->setEngineForce(0.f);
+		//_vehicle->setEngineForce(0.f);
+		_vehicle->velocity(0,0,0);
 	}
 	case GLUT_KEY_RIGHT: {
-		_vehicle->setEngineForce(0.f);
+		//_vehicle->setEngineForce(0.f);
+		_vehicle->velocity(0,0,0);
 	}
 	default:
 		break;
@@ -288,19 +295,23 @@ void SimulatorGLUTThread::specialKeyboard(int key, int x, int y) {
 	//	printf("key = %i x=%i y=%i\n",key,x,y);
 	switch (key) {
 	case GLUT_KEY_LEFT: {
-		_vehicle->steerLeft();
+		//_vehicle->steerLeft();
+		_vehicle->velocity(0,0,10);
 		break;
 	}
 	case GLUT_KEY_RIGHT: {
-		_vehicle->steerRight();
+		//_vehicle->steerRight();
+		_vehicle->velocity(0,0,-10);
 		break;
 	}
 	case GLUT_KEY_UP: {
-		_vehicle->driveForward();
+		//_vehicle->driveForward();
+		_vehicle->velocity(10,0,0);
 		break;
 	}
 	case GLUT_KEY_DOWN: {
-		_vehicle->driveBackward();
+		//_vehicle->driveBackward();
+		_vehicle->velocity(-10,0,0);
 		break;
 	}
 	default:

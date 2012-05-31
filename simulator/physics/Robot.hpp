@@ -14,6 +14,13 @@ class GL_ShapeDrawer;
 class Robot : public Entity
 {
 public:
+	enum WheelIndex {
+		FrontLeft  = 0,
+		FrontRight = 1,
+	    BackRight  = 2,
+	    BackLeft   = 3
+	};
+
 	typedef enum {
 		rev2011,
 		rev2008
@@ -27,6 +34,8 @@ public:
 	bool chargerWorks;
 
 protected:
+	RobotRevision _rev;
+
 	// physics components
 	btRigidBody* _robotChassis;
 	btRaycastVehicle::btVehicleTuning _tuning;
@@ -40,13 +49,14 @@ protected:
 	float _engineForce[4];
 	float _brakingForce;
 
+	btVector3 _targetVel;
+	btScalar  _targetRot;
+
 	// state info
 	btTransform _startTransform;
 
 	// links to the engine
 	SimEngine *_simEngine;
-
-	RobotRevision _rev;
 
 	//FIXME: move into RobotBallController
 	/** kicker charge status */
@@ -101,6 +111,10 @@ public:
 		return _robotChassis;
 	}
 
+	btRaycastVehicle* getRaycastVehicle() const {
+		return _robotVehicle;
+	}
+
 	SimEngine* getSimEngine() {
 		return _simEngine;
 	}
@@ -130,6 +144,8 @@ public:
 	void renderWheels(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax) const;
 
 	void applyEngineForces();
+
+	void applyEngineForces(float deltaTime);
 
 	void resetScene();
 
