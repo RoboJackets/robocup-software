@@ -153,6 +153,10 @@ btScalar SimEngine::getDeltaTimeMicroseconds() {
 	return dt;
 }
 
+btClock* SimEngine::getClock() {
+	return & _clock;
+}
+
 void SimEngine::stepSimulation() {
 	float dt = getDeltaTimeMicroseconds() * 0.000001f;
 	if (_dynamicsWorld) {
