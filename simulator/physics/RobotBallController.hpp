@@ -17,7 +17,7 @@ protected:
 	btVector3 _localMouthPos;
 
 	Robot* _parent;
-	Ball* _ball;
+	btRigidBody* _ball;
 
 	///links to the engine
 	SimEngine *_simEngine;

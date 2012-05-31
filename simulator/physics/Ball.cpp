@@ -54,10 +54,12 @@ void Ball::initPhysics() {
 	//_ball->setCollisionFlags(_ball->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 
 	//enable CCD if the object moves more than 1 meter in one simulation frame
-	_ball->setCcdMotionThreshold(1);
+	_ball->setCcdMotionThreshold(Sim_Ball_Radius/2.f);
 	_ball->setCcdSweptSphereRadius(0.2f);
 
 	_ball->getBroadphaseHandle()->m_collisionFilterGroup |= btBroadphaseProxy::SensorTrigger;
+
+	_ball->setRestitution(0);
 
 	resetScene();
 }

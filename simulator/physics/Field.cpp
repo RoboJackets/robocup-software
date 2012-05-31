@@ -84,6 +84,7 @@ void Field::initPhysics()
 	//create ground object
 	btRigidBody* ground = _simEngine->localCreateRigidBody(0, tr, groundShape);
 	ground->setFriction(10.0);
+	ground->setRestitution(0);
 
 	//create walls
 	const float halfWidth = 0.1*scaling;

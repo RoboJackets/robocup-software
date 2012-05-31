@@ -161,6 +161,8 @@ void Robot::initPhysics(const bool& blue)
 	//Disable collisions with the ball controller
 	_robotChassis->getBroadphaseHandle()->m_collisionFilterMask ^= btBroadphaseProxy::SensorTrigger;
 
+	_robotChassis->setRestitution(0);
+
 	resetScene(); // force initial physics state - everything stationary
 }
 
