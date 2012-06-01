@@ -97,8 +97,6 @@ public:
 
 	const RobotRevision& revision() const { return _rev; }
 
-	bool ballSense(const Ball *ball) const;
-
 	const float* getEngineForce() const {
 		return _engineForce;
 	}
@@ -113,6 +111,10 @@ public:
 
 	btRaycastVehicle* getRaycastVehicle() const {
 		return _robotVehicle;
+	}
+
+	RobotBallController* getRobotController() const {
+		return _controller;
 	}
 
 	SimEngine* getSimEngine() {

@@ -3,6 +3,8 @@
 #include <BulletDynamics/Dynamics/btActionInterface.h>
 #include "SimEngine.hpp"
 
+#include <stdint.h>
+
 class Robot;
 class Ball;
 class btPairCachingGhostObject;
@@ -11,6 +13,10 @@ class btPairCachingGhostObject;
 ///It uses a ghost object to test for collisions with the ball.
 class RobotBallController : public btActionInterface
 {
+public:
+	bool ballSensorWorks;
+	bool chargerWorks;
+
 protected:
 	btPairCachingGhostObject* _ghostObject;
 
@@ -21,6 +27,15 @@ protected:
 
 	///links to the engine
 	SimEngine *_simEngine;
+
+	/// kicker charge status
+	uint64_t _lastKicked;
+	const static uint64_t RechargeTime = 6000000; // six seconds
+
+	float _kickSpeed;
+
+	bool _kick;
+	bool _chip;
 
 public:
 	RobotBallController(Robot* robot);
@@ -42,5 +57,15 @@ public:
 	void dribblerStep();
 	void kickerStep();
 
+	bool hasBall(){
+		return _ball;
+	}
+
 	void syncMotionState(const btTransform& centerOfMassWorldTrans);
+
+	const uint64_t getLastKickTime(){
+		return _lastKicked;
+	}
+
+	void prepareKick(uint64_t power, bool chip);
 };
