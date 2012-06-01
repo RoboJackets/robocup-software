@@ -4,6 +4,7 @@
 #include "physics/Robot.hpp"
 #include <physics/Environment.hpp>
 #include <SimulatorGLUTThread.hpp>
+#include "physics/RobotBallController.hpp"
 
 using namespace std;
 
@@ -130,6 +131,10 @@ void SimulatorGLUTThread::keyboardCallback(unsigned char key, int x, int y) {
 	case 'i': _camera->setEle(_camera->getEle() + 10); break;
 	case 'u': _camera->setCameraDistance(_camera->getCameraDistance()+.2); break;
 	case 'o': _camera->setCameraDistance(_camera->getCameraDistance()-.2); break;
+
+	//kick/chip
+	case 'z': _vehicle->getRobotController()->prepareKick(255,false); break;
+	case 'x': _vehicle->getRobotController()->prepareKick(255,true); break;
 
 	case 'd':
 		_simEngine->setDebug(btIDebugDraw::DBG_NoDeactivation);

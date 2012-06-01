@@ -214,69 +214,40 @@ void Robot::getWorldTransform(btTransform& chassisWorldTrans) const
 
 void Robot::radioTx(const Packet::RadioTx::Robot *data)
 {
-	static const float dt = 0.016; // msec per frame
-
-	// Simple control: directly copy velocities
-
-	// Update the position
-	/*const Point body_tvel(data->body_x(), data->body_y());
-	const TransformMatrix body_disp(dt * body_tvel, dt * data->body_w());
-	const TransformMatrix cur_pose(_pos, _omega);
-
-	TransformMatrix updated_pose = cur_pose * body_disp;
-	_pos = updated_pose.origin();
-	_theta = updated_pose.rotation();
-
-	_vel  = body_tvel.rotated(_theta);
-	_omega = data->body_w();*/
-
-	/** How we kick:
-	 * Kick speed will be zeroed if we are not kicking
-	 * Otherwise we determine which direction we are kicking and kick that way, using
-	 * max speeds guessed with science
-	 */
-
-	// FIXME: rework this section to use information that we actually have
-//	if (data->kick() && (Utils::timestamp() - _lastKicked) > RechargeTime && chargerWorks)
-//	{
-//		// FIXME: make these parameters some place else
-//		float maxKickSpeed = 5.0f, // m/s direct kicking speed
-//				maxChipSpeed = 3.0f; // m/s chip kicking at the upwards angle
-////				chipAngle = 20.0f;   // angle (degrees) of upwards chip
-//
-//		// determine the kick speed
-//		float kickSpeed;
-//		bool chip = data->use_chipper();
-//		if (chip)
-//		{
-//			kickSpeed = data->kick() / 255.0f * maxChipSpeed;
-//		} else {
-//			kickSpeed = data->kick() / 255.0f * maxKickSpeed;
-//		}
-//	}
+	velocity(data->body_x(),data->body_y(), data->body_w());
+	_controller->prepareKick(data->kick(),data->use_chipper());
 }
 
 Packet::RadioRx Robot::radioRx() const
 {
 	Packet::RadioRx packet;
 
-	// FIXME: packet format changed - construct the return packet more carefully
-//	packet.set_timestamp(Utils::timestamp());
-//	packet.set_battery(1.0f);
-//	packet.set_rssi(1.0f);
-//	packet.set_charged(chargerWorks && (Utils::timestamp() - _lastKicked) > RechargeTime);
-//
-//	BOOST_FOREACH(const Ball* ball, _env->balls())
-//	{
-//		packet.set_ball_sense(ballSense(ball) || !ballSensorWorks);
-//	}
+	packet.set_timestamp(timestamp());
+	packet.set_battery(15.0f);
+	packet.set_rssi(1.0f);
+	packet.set_kicker_status(((timestamp() - _lastKicked) > RechargeTime) ? 1 : 0);
+
+	// FIXME: No.
+	packet.set_ball_sense_status((_controller->hasBall() || !_controller->ballSensorWorks) ? Packet::HasBall : Packet::NoBall);
+
+	// assume all motors working
+	for (size_t i=0; i<5; ++i)
+	{
+		packet.add_motor_status(Packet::Good);
+	}
+
+	if (_rev == rev2008)
+	{
+		packet.set_hardware_version(Packet::RJ2008);
+	} else if (_rev == rev2011) // FIXME: change to actual 2011
+	{
+		packet.set_hardware_version(Packet::RJ2011);
+	} else
+	{
+		packet.set_hardware_version(Packet::Unknown);
+	}
 
 	return packet;
-}
-
-bool Robot::ballSense(const Ball *ball) const
-{
-	return false;
 }
 
 void Robot::applyEngineForces() {
