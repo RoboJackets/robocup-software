@@ -28,7 +28,9 @@ void Ball::velocity(float x, float y) {
 }
 
 Geometry2d::Point Ball::getPosition() const {
-	return Geometry2d::Point();
+	const btTransform& tr = _ball->getWorldTransform();
+	btVector3 pos = tr.getOrigin()/scaling;
+	return Geometry2d::Point(pos.z(),pos.x());
 }
 
 void Ball::initPhysics() {

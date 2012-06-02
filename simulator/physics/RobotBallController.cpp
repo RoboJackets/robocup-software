@@ -140,7 +140,7 @@ void RobotBallController::dribblerStep()
 		btVector3 sensorPos = sensorTr.getOrigin();
 		sensorPos[1] = 0;
 
-		btVector3 target = robotPos+(sensorPos-robotPos)*0.99f;
+		btVector3 target = robotPos+(sensorPos-robotPos)*0.7f;
 
 		btVector3 ballPos = _ball->getCenterOfMassPosition();
 		ballPos[1] = 0;

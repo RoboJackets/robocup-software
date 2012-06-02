@@ -39,7 +39,8 @@ p1 = e.Program('simulator', [
 	'physics/Ball.cpp',
 	'physics/Field.cpp',
 	'physics/Robot.cpp',
-	'physics/RobotBallController.cpp'])
+	'physics/RobotBallController.cpp',
+	'physics/FastTimer.cpp'])
 
 uics = e.Uic4([
 	'ui/SimulatorWindow.ui',

@@ -134,17 +134,17 @@ bool RobotTableModel::setData(const QModelIndex &index, const QVariant &value, i
 	{
 	case 0:
 		robot->visibility = value.toInt();
-		emit setRobotVisibility(robot->visibility);
+		//emit setRobotVisibility(robot->visibility);
 		return true;
 
 	case 1:
 		robot->ballSensorWorks = value.toBool();
-		emit setBallSensorWorks(robot->ballSensorWorks);
+		//emit setBallSensorWorks(robot->ballSensorWorks);
 		return true;
 
 	case 2:
 		robot->chargerWorks = value.toBool();
-		emit setChargerWorks(robot->chargerWorks);
+		//emit setChargerWorks(robot->chargerWorks);
 		return true;
 	}
 

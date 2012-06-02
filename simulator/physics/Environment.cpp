@@ -57,8 +57,20 @@ void Environment::connectSockets() {
 
 	gettimeofday(&_lastStepTime, 0);
 
-//	connect(&_timer, SIGNAL(timeout()), SLOT(step()));
-//	_timer.start(16 / Oversample);
+	connect(&_timer, SIGNAL(timeout()), SLOT(step()));
+	_timer.start(16 / Oversample);
+}
+
+void Environment::preStep(float deltaTime){
+	BOOST_FOREACH(Robot *robot, _yellow)
+	{
+		robot->applyEngineForces(deltaTime);
+	}
+
+	BOOST_FOREACH(Robot *robot, _blue)
+	{
+		robot->applyEngineForces(deltaTime);
+	}
 }
 
 void Environment::step()
@@ -169,7 +181,7 @@ void Environment::handleSimCommand(const Packet::SimCommand& cmd) {
 			qreal angle = (blue) ? 90.f: -90.f;
 
 			// trigger signals
-			emit setRobotPose(blue, robot->shell, pos3, angle, axis);
+			//emit setRobotPose(blue, robot->shell, pos3, angle, axis);
 		}
 
 		float new_w = 0.0;
@@ -312,8 +324,8 @@ void Environment::addRobot(bool blue, int id, const Geometry2d::Point& pos, Robo
 	qreal angle = (blue) ? 90.f: -90.f;
 
 	// trigger signals
-	emit addNewRobot(blue, id);
-	emit setRobotPose(blue, id, pos3, angle, axis);
+	//emit addNewRobot(blue, id);
+	//emit setRobotPose(blue, id, pos3, angle, axis);
 }
 
 void Environment::removeRobot(bool blue, int id) {
@@ -404,7 +416,7 @@ void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx)
 			QVector3D axis(0.0, 0.0, 1.0);
 			qreal angle = facing * RadiansToDegrees;
 
-			emit setRobotPose(blue, r->shell, pos3, angle, axis);
+			//emit setRobotPose(blue, r->shell, pos3, angle, axis);
 		} else {
 			printf("Commanding nonexistent robot %s:%d\n",
 					blue ? "Blue" : "Yellow",

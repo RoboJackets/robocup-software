@@ -30,7 +30,7 @@ static const float robotWeight = 800;
 
 
 Robot::Robot(Environment* env, unsigned int id,  Robot::RobotRevision rev, const Geometry2d::Point& startPos) :
-		shell(id), Entity(env), _rev(rev), _lastKicked(0),_brakingForce(0),
+		shell(id), Entity(env), _rev(rev), _lastKicked(0),_brakingForce(0),_targetVel(0,0,0),_targetRot(0),
 			_robotChassis(0), _robotVehicle(0), _wheelShape(0), _simEngine(env->getSimEngine()),_controller(0)
 {
 	visibility = 100;
@@ -186,10 +186,12 @@ void Robot::position(float x, float y)
 
 void Robot::velocity(float x, float y, float w)
 {
-
 	_targetVel = btVector3(y,0,x)*scaling;
 	_targetRot = w;
 
+	//FIXME: hack
+	_targetVel *= 2;
+	_targetRot *= 2;
 }
 
 Geometry2d::Point Robot::getPosition() const
@@ -204,7 +206,7 @@ float Robot::getAngle() const
 {
 	btTransform tr;
 	getWorldTransform(tr);
-	return tr.getRotation().getAngle();
+	return tr.getRotation().getAxis()[1]*tr.getRotation().getAngle();
 }
 
 void Robot::getWorldTransform(btTransform& chassisWorldTrans) const
@@ -268,6 +270,8 @@ void Robot::applyEngineForces() {
 
 void Robot::applyEngineForces(float deltaTime) {
 
+//#define USE_ENGINE 1
+#ifdef USE_ENGINE
 	if(_targetVel.length() < SIMD_EPSILON && _targetRot == 0){
 
 		for(int i=0; i<4; i++){
@@ -319,7 +323,8 @@ void Robot::applyEngineForces(float deltaTime) {
 		//need to drive at max engine force to achieve target velocity
 
 		float rotVel  = (_targetRot-robotRot)*(Sim_Robot_Radius-Sim_Wheel_Width/2.f); //move to actually wheel loc //assume w is radians per seconds
-
+		//printf("target rot = %5.3f\n",_targetRot);
+		//fflush(stdout);
 		float angVel  = rotVel/Sim_Wheel_Radius;
 
 		float forceRot = angVel/deltaTime;
@@ -366,6 +371,13 @@ void Robot::applyEngineForces(float deltaTime) {
 
 	_robotVehicle->applyEngineForce(_engineForce[BackLeft], BackLeft);
 	_robotVehicle->setBrake(_brakingForce, BackLeft);
+#else
+	btVector3 vel(_targetVel);
+	vel = vel.rotate(_robotChassis->getWorldTransform().getRotation().getAxis(),
+						_robotChassis->getWorldTransform().getRotation().getAngle());
+	_robotChassis->setLinearVelocity(vel);
+	_robotChassis->setAngularVelocity(btVector3(0,1,0)*_targetRot);
+#endif
 }
 
 void Robot::renderWheels(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax) const {
