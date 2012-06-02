@@ -64,6 +64,7 @@ SimulatorGLUTThread::~SimulatorGLUTThread() {
 }
 
 void SimulatorGLUTThread::run() {
+
 	// set up glut
 	gSimpleApplication = this;
 	int width = 800, height = 640;
@@ -188,7 +189,7 @@ void SimulatorGLUTThread::initialize(const QString& configFile, bool sendShared)
 
 	// Set up the vehicle
 	_vehicle = new Robot(_env,0,Robot::rev2008,Geometry2d::Point(-1,0));
-	_vehicle->initPhysics(true);
+	_vehicle->initPhysics(false);
 
 	// Set up the camera
 	_camera = new GlutCamera(_simEngine);
@@ -223,8 +224,9 @@ void SimulatorGLUTThread::clientMoveAndDisplay() {
 	_vehicle->applyEngineForces(delta);
 
 	// simulation steps
+	_env->preStep(delta);
 	_simEngine->stepSimulation();
-	_env->step();
+	//_env->step();
 
 //#define motion_debug 1
 #ifdef motion_debug
@@ -243,6 +245,9 @@ void SimulatorGLUTThread::clientMoveAndDisplay() {
 
 	trans = _vehicle->getRaycastVehicle()->m_wheelInfo[0].m_worldTransform.getOrigin();
 	printf("wheel     x: %8.4f y: %8.4f z: %8.4f \n", trans[0], trans[1], trans[2]);
+
+	printf("angle = %5.3f\n",_vehicle->getAngle());
+	printf("position = (%5.3f,%5.3f)\n",_vehicle->getPosition().x,_vehicle->getPosition().y);
 #endif
 
 	render();
@@ -301,22 +306,22 @@ void SimulatorGLUTThread::specialKeyboard(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_LEFT: {
 		//_vehicle->steerLeft();
-		_vehicle->velocity(0,0,10);
+		_vehicle->velocity(0,0,3);
 		break;
 	}
 	case GLUT_KEY_RIGHT: {
 		//_vehicle->steerRight();
-		_vehicle->velocity(0,0,-10);
+		_vehicle->velocity(0,0,-3);
 		break;
 	}
 	case GLUT_KEY_UP: {
 		//_vehicle->driveForward();
-		_vehicle->velocity(10,0,0);
+		_vehicle->velocity(3,0,0);
 		break;
 	}
 	case GLUT_KEY_DOWN: {
 		//_vehicle->driveBackward();
-		_vehicle->velocity(-10,0,0);
+		_vehicle->velocity(-3,0,0);
 		break;
 	}
 	default:

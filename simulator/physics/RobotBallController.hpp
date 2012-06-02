@@ -58,7 +58,8 @@ public:
 	void kickerStep();
 
 	bool hasBall(){
-		return _ball;
+		printf("I have the ball!\n");
+		return _ball != 0;
 	}
 
 	void syncMotionState(const btTransform& centerOfMassWorldTrans);

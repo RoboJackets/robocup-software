@@ -17,7 +17,7 @@
 #include "Ball.hpp"
 #include "Robot.hpp"
 #include "Field.hpp"
-
+#include "FastTimer.hpp"
 #include "SimEngine.hpp"
 #include "GL_ShapeDrawer.h"
 
@@ -43,7 +43,7 @@ private:
 	QString _configFile; //< filename for the config file
 
 	// This timer causes physics to be stepped on a regular basis
-	QTimer _timer;
+	FastTimer _timer;
 
 	QUdpSocket _visionSocket;   ///< Simulated vision - can also receive commands from soccer
 	QUdpSocket _radioSocketBlue, _radioSocketYellow; ///< Connections for robots
@@ -99,12 +99,19 @@ signals:
 	void addNewRobot(bool blue, int id);
 	void removeExistingRobot(bool blue, int id);
 
+
+
 public:
+
+	void preStep(float deltaTime);
 
 	/**
 	 * Primary simulation step function - called by a timer at a fixed interval
 	 */
+protected Q_SLOTS:
 	void step();
+
+public:
 
 	//render
 	void renderScene(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax);

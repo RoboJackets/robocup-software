@@ -86,5 +86,5 @@ int main(int argc, char* argv[])
 	sim_thread.wait();
 //	sim_thread.exit(0);
 
-	return ret;
+	return 0;//ret;
 }
