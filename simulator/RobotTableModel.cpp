@@ -1,6 +1,7 @@
 #include <QColor>
 
 #include "RobotTableModel.hpp"
+#include <physics/RobotBallController.hpp>
 
 static const QString columnNames[] = {
 		"Visibility",
@@ -15,8 +16,8 @@ RobotTableModel::RobotTableModel(const Environment *env)
 			it != env->yellow().end(); ++it) {
 		unsigned int shell = it.key();
 		RobotID * r = new RobotID;
-		r->ballSensorWorks = it.value()->ballSensorWorks;
-		r->chargerWorks = it.value()->chargerWorks;
+		r->ballSensorWorks = it.value()->getRobotController()->ballSensorWorks;
+		r->chargerWorks = it.value()->getRobotController()->chargerWorks;
 		r->visibility = it.value()->visibility;
 		r->revision = it.value()->revision();
 		r->shell = shell;
@@ -27,8 +28,8 @@ RobotTableModel::RobotTableModel(const Environment *env)
 			it != env->blue().end(); ++it) {
 		unsigned int shell = it.key();
 		RobotID * r = new RobotID;
-		r->ballSensorWorks = it.value()->ballSensorWorks;
-		r->chargerWorks = it.value()->chargerWorks;
+		r->ballSensorWorks = it.value()->getRobotController()->ballSensorWorks;
+		r->chargerWorks = it.value()->getRobotController()->chargerWorks;
 		r->visibility = it.value()->visibility;
 		r->revision = it.value()->revision();
 		r->shell = shell;
