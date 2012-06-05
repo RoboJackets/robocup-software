@@ -56,10 +56,13 @@ void FastTimer::run()
         gettimeofday(&t, 0);
         useconds_t us = (t.tv_sec - start.tv_sec) * 1000000 + t.tv_usec - start.tv_usec;
         start = t;
+
         if (_us > us)
         {
-            usleep(_us);
+            usleep(_us-us);
+            gettimeofday(&start, 0);
         }
+
         QApplication::instance()->postEvent(this, new QEvent(QEvent::User));
         pthread_cond_wait(&_cond, &_mutex);
     }
