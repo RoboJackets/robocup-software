@@ -42,7 +42,7 @@ private:
 
 	QString _configFile; //< filename for the config file
 
-	// This timer causes physics to be stepped on a regular basis
+	// This timer causes environment to be stepped on a regular basis
 	FastTimer _timer;
 
 	QUdpSocket _visionSocket;   ///< Simulated vision - can also receive commands from soccer
@@ -93,20 +93,22 @@ public:
 	/** removes a robot with id i from the environment */
 	void removeRobot(bool blue, int id);
 
+	/** gets a robot with id from the environment */
+	Robot *robot(bool blue, int board_id) const;
+
 signals:
 	// connect to visualization for rendering
 	void setRobotPose(bool blue, int id, const QVector3D& pos, qreal angle, const QVector3D& axis);
 	void addNewRobot(bool blue, int id);
 	void removeExistingRobot(bool blue, int id);
 
-
-
 public:
 
+	//sets engine forces on robots before physics tick
 	void preStep(float deltaTime);
 
 	/**
-	 * Primary simulation step function - called by a timer at a fixed interval
+	 * Primary environment step function - called by a timer at a fixed interval
 	 */
 protected Q_SLOTS:
 	void step();
@@ -116,6 +118,8 @@ public:
 	//render
 	void renderScene(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax);
 
+	void resetScene();
+
 	void setSimEngine(SimEngine* engine) { _simEngine = engine; }
 
 	SimEngine* getSimEngine() { return _simEngine; }
@@ -123,7 +127,6 @@ public:
 	bool loadConfigFile();
 
 private:
-	Robot *robot(bool blue, int board_id) const;
 	static void convert_robot(const Robot *robot, SSL_DetectionRobot *out);
 	void handleRadioTx(bool blue, const Packet::RadioTx& data);
 

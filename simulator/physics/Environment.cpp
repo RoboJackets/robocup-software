@@ -391,7 +391,7 @@ Robot *Environment::robot(bool blue, int board_id) const
 
 	if (robots.contains(board_id))
 	{
-		return robots[board_id];
+		return robots.value(board_id,0);
 	} else {
 		return 0;
 	}
@@ -458,6 +458,21 @@ void Environment::renderScene(GL_ShapeDrawer* shapeDrawer, const btVector3& worl
 	BOOST_FOREACH(Robot* r, _yellow)
 	{
 		r->renderWheels(shapeDrawer, worldBoundsMin, worldBoundsMax);
+	}
+}
+
+void Environment::resetScene() {
+	BOOST_FOREACH(Robot* r, _blue)
+	{
+		r->resetScene();
+	}
+	BOOST_FOREACH(Robot* r, _yellow)
+	{
+		r->resetScene();
+	}
+	BOOST_FOREACH(Ball* b, _balls)
+	{
+		b->resetScene();
 	}
 }
 

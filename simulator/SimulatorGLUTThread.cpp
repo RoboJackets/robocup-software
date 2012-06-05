@@ -43,7 +43,7 @@ static void glutDisplayCallback(void) {
 // SimulatorGLUTThread implementation
 
 SimulatorGLUTThread::SimulatorGLUTThread(int argc, char* argv[], const QString& configFile, bool sendShared)
-: _argv(argv), _argc(argc), _env(0), _vehicle(0),
+: _argv(argv), _argc(argc), _env(0), _vehicle(0),_blue(false),
   _camera(0), _cameraHeight(4.f),	_minCameraDistance(3.f), _maxCameraDistance(10.f)
 {
 	initialize(configFile, sendShared);
@@ -64,7 +64,6 @@ SimulatorGLUTThread::~SimulatorGLUTThread() {
 }
 
 void SimulatorGLUTThread::run() {
-
 	// set up glut
 	gSimpleApplication = this;
 	int width = 800, height = 640;
@@ -125,6 +124,16 @@ void SimulatorGLUTThread::keyboardCallback(unsigned char key, int x, int y) {
 	case 'C':	_simEngine->setDebug(btIDebugDraw::DBG_DrawConstraints);      break;
 	case 'L':	_simEngine->setDebug(btIDebugDraw::DBG_DrawConstraintLimits); break;
 
+	//camera mode
+	case '1': _camera->setCameraMode(GlutCamera::SideLine); break;
+	case '2': _camera->setCameraMode(GlutCamera::Overhead); break;
+	case '3': _camera->setCameraMode(GlutCamera::BehindYellowGoal); break;
+	case '4': _camera->setCameraMode(GlutCamera::BehindBlueGoal); break;
+	case '5': _camera->setCameraMode(GlutCamera::TrackVehicle); _camera->setRobot(_vehicle); break;
+	case '6': _camera->setCameraMode(GlutCamera::TrackVehicle | GlutCamera::BehindVehicle); break;
+	case '7': _camera->setCameraMode(GlutCamera::TrackVehicle | GlutCamera::FrontOfVehicle); break;
+	case '\t': nextVehicle(); _camera->setRobot(_vehicle); break;
+
 	//rotate/zoom camera
 	case 'j': _camera->setAzi(_camera->getAzi() + 10); break;
 	case 'l': _camera->setAzi(_camera->getAzi() - 10); break;
@@ -134,8 +143,8 @@ void SimulatorGLUTThread::keyboardCallback(unsigned char key, int x, int y) {
 	case 'o': _camera->setCameraDistance(_camera->getCameraDistance()-.2); break;
 
 	//kick/chip
-	case 'z': _vehicle->getRobotController()->prepareKick(255,false); break;
-	case 'x': _vehicle->getRobotController()->prepareKick(255,true); break;
+	case 'z': if(_vehicle) _vehicle->getRobotController()->prepareKick(255,false); break;
+	case 'x': if(_vehicle) _vehicle->getRobotController()->prepareKick(255,true); break;
 
 	case 'd':
 		_simEngine->setDebug(btIDebugDraw::DBG_NoDeactivation);
@@ -152,7 +161,7 @@ void SimulatorGLUTThread::keyboardCallback(unsigned char key, int x, int y) {
 	case ' ':
 		clientResetScene();
 		break;
-	case '1':	_simEngine->setDebug(btIDebugDraw::DBG_EnableCCD); break;
+//	case '1':	_simEngine->setDebug(btIDebugDraw::DBG_EnableCCD); break;
 
 	default:
 		//        std::cout << "unused key : " << key << std::endl;
@@ -187,9 +196,7 @@ void SimulatorGLUTThread::initialize(const QString& configFile, bool sendShared)
 	// Set up environment
 	_env = new Environment(configFile, sendShared, _simEngine);
 
-	// Set up the vehicle
-	_vehicle = new Robot(_env,0,Robot::rev2008,Geometry2d::Point(-1,0));
-	_vehicle->initPhysics(false);
+	_vehicle = _env->robot(false,0);
 
 	// Set up the camera
 	_camera = new GlutCamera(_simEngine);
@@ -206,8 +213,6 @@ void SimulatorGLUTThread::render() {
 	btVector3 worldBoundsMin, worldBoundsMax;
 	getDynamicsWorld()->getBroadphase()->getBroadphaseAabb(worldBoundsMin, worldBoundsMax);
 
-	_vehicle->renderWheels(camera()->shapeDrawer(), worldBoundsMin, worldBoundsMax);
-
 	_env->renderScene(camera()->shapeDrawer(), worldBoundsMin, worldBoundsMax);
 
 	_camera->renderme(_simEngine->debugMode());
@@ -217,19 +222,17 @@ void SimulatorGLUTThread::clientMoveAndDisplay() {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//get delta
+	//get delta time
 	float delta = _simEngine->getClock()->getTimeMicroseconds() * 0.000001f;
-
-	// apply controls
-	_vehicle->applyEngineForces(delta);
 
 	// simulation steps
 	_env->preStep(delta);
 	_simEngine->stepSimulation();
-	//_env->step();
 
 //#define motion_debug 1
 #ifdef motion_debug
+	printf("Robot %d\n",_vehicle->shell);
+
 	// print out current vel, ang vel, pos of vehicle
 	btRigidBody* m_chassisBody = _vehicle->getRigidBody();
 
@@ -274,27 +277,31 @@ void SimulatorGLUTThread::displayCallback(void) {
 void SimulatorGLUTThread::clientResetScene() {
 	if (_vehicle)
 		_vehicle->resetScene();
+	if(_env)
+		_env->resetScene();
 }
 
 void SimulatorGLUTThread::specialKeyboardUp(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_UP: {
-		//_vehicle->setEngineForce(0.f);
-		_vehicle->velocity(0,0,0);
+		if(_vehicle)
+			_vehicle->velocity(0,0,0);
 		break;
 	}
 	case GLUT_KEY_DOWN: {
-		//_vehicle->setBrakingForce(0.f);
-		_vehicle->velocity(0,0,0);
+		if(_vehicle)
+			_vehicle->velocity(0,0,0);
 		break;
 	}
 	case GLUT_KEY_LEFT: {
-		//_vehicle->setEngineForce(0.f);
-		_vehicle->velocity(0,0,0);
+		if(_vehicle)
+			_vehicle->velocity(0,0,0);
+		break;
 	}
 	case GLUT_KEY_RIGHT: {
-		//_vehicle->setEngineForce(0.f);
-		_vehicle->velocity(0,0,0);
+		if(_vehicle)
+			_vehicle->velocity(0,0,0);
+		break;
 	}
 	default:
 		break;
@@ -305,23 +312,23 @@ void SimulatorGLUTThread::specialKeyboard(int key, int x, int y) {
 	//	printf("key = %i x=%i y=%i\n",key,x,y);
 	switch (key) {
 	case GLUT_KEY_LEFT: {
-		//_vehicle->steerLeft();
-		_vehicle->velocity(0,0,3);
+		if(_vehicle)
+			_vehicle->velocity(0,0,3);
 		break;
 	}
 	case GLUT_KEY_RIGHT: {
-		//_vehicle->steerRight();
-		_vehicle->velocity(0,0,-3);
+		if(_vehicle)
+			_vehicle->velocity(0,0,-3);
 		break;
 	}
 	case GLUT_KEY_UP: {
-		//_vehicle->driveForward();
-		_vehicle->velocity(3,0,0);
+		if(_vehicle)
+			_vehicle->velocity(3,0,0);
 		break;
 	}
 	case GLUT_KEY_DOWN: {
-		//_vehicle->driveBackward();
-		_vehicle->velocity(-3,0,0);
+		if(_vehicle)
+			_vehicle->velocity(-3,0,0);
 		break;
 	}
 	default:
@@ -330,52 +337,25 @@ void SimulatorGLUTThread::specialKeyboard(int key, int x, int y) {
 }
 
 void SimulatorGLUTThread::updateCamera() {
-	if (!_vehicle || !_camera) return;
+	if (!_camera) return;
+		_camera->updateCamera(); // default camera
+}
 
-	// calculate where the camera should be
-	btTransform chassisWorldTrans;
-	_vehicle->getWorldTransform(chassisWorldTrans);
+void SimulatorGLUTThread::nextVehicle() {
+	if(_vehicle){
+		Environment::RobotMap map;
+		if(_blue)
+			map = _env->blue();
+		else
+			map = _env->yellow();
 
-	btVector3 targetPosition = chassisWorldTrans.getOrigin();
-	btVector3 cameraPosition = camera()->getCameraPosition();
-
-//#define camera_debug 1
-#ifdef camera_debug
-	printf("target  x: %8.4f y: %8.4f z: %8.4f \n",targetPosition[0],targetPosition[1],targetPosition[2]);
-	printf("camera  x: %8.4f y: %8.4f z: %8.4f \n",cameraPosition[0],cameraPosition[1],cameraPosition[2]);
-#endif
-
-	//interpolate the camera height
-	cameraPosition[1] = (15.0 * cameraPosition[1] + targetPosition[1] + _cameraHeight) / 16.0;
-
-	btVector3 camToObject = targetPosition - cameraPosition;
-
-	//keep distance between min and max distance
-	float cameraDistance = camToObject.length();
-	float correctionFactor = 0.f;
-	if (cameraDistance < _minCameraDistance) {
-		correctionFactor = 0.15 * (_minCameraDistance - cameraDistance)
-						/ cameraDistance;
+		Environment::RobotMap::const_iterator i = map.find(_vehicle->shell);
+		++i;
+		if(i != map.end())
+			_vehicle = i.value();
+		else
+			_vehicle = map.begin().value();
 	}
-	if (cameraDistance > _maxCameraDistance) {
-		correctionFactor = 0.15 * (_maxCameraDistance - cameraDistance)
-						/ cameraDistance;
-	}
-	cameraPosition -= correctionFactor * camToObject;
-
-#ifdef camera_debug
-	printf("new cam x: %8.4f y: %8.4f z: %8.4f \n",cameraPosition[0],cameraPosition[1],cameraPosition[2]);
-#endif
-
-	_camera->setCameraPosition(cameraPosition);
-	_camera->setCameraTargetPosition(targetPosition);
-
-	//_camera->updateFreeCamera();
-
-	// rendering details
-	_camera->updateCamera(); // default camera
-//	_camera->chaseCamera(); // based on the original version
-
 }
 
 
