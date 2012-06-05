@@ -6,7 +6,6 @@
 #include "RobotBallController.hpp"
 
 #include <Utils.hpp>
-#include <Constants.hpp>
 #include <stdio.h>
 #include <math.h>
 
@@ -26,16 +25,16 @@ static const float suspensionDamping = 2.3f;
 static const float suspensionCompression = 4.4f;
 static const float rollInfluence = 0.0f;
 static const btScalar suspensionRestLength = 0.05f*scaling;//0.6f
-static const float robotWeight = 800;
+static const float robotWeight = 8*scaling;
 
 
 Robot::Robot(Environment* env, unsigned int id,  Robot::RobotRevision rev, const Geometry2d::Point& startPos) :
-		shell(id), Entity(env), _rev(rev), _lastKicked(0),_brakingForce(0),_targetVel(0,0,0),_targetRot(0),
-			_robotChassis(0), _robotVehicle(0), _wheelShape(0), _simEngine(env->getSimEngine()),_controller(0)
+	Entity(env),shell(id), _rev(rev),
+	_robotChassis(0), _robotVehicle(0), _wheelShape(0),_controller(0),
+	_brakingForce(0),_targetVel(0,0,0),_targetRot(0),
+	_simEngine(env->getSimEngine())
 {
 	visibility = 100;
-	ballSensorWorks = true;
-	chargerWorks = true;
 
 	_startTransform.setIdentity();
 	_startTransform.setOrigin(btVector3(startPos.y,0,startPos.x)*scaling);
@@ -161,7 +160,7 @@ void Robot::initPhysics(const bool& blue)
 	//Disable collisions with the ball controller
 	_robotChassis->getBroadphaseHandle()->m_collisionFilterMask ^= btBroadphaseProxy::SensorTrigger;
 
-	_robotChassis->setRestitution(0);
+	_robotChassis->setRestitution(0); //Disable bouncing
 
 	resetScene(); // force initial physics state - everything stationary
 }
@@ -186,12 +185,10 @@ void Robot::position(float x, float y)
 
 void Robot::velocity(float x, float y, float w)
 {
+	printf("Robot %d velocity %5.3f %5.3f w %5.3f\n",shell,x,y,w);
+
 	_targetVel = btVector3(y,0,x)*scaling;
 	_targetRot = w;
-
-	//FIXME: hack
-	_targetVel *= 2;
-	_targetRot *= 2;
 }
 
 Geometry2d::Point Robot::getPosition() const
@@ -217,7 +214,9 @@ void Robot::getWorldTransform(btTransform& chassisWorldTrans) const
 void Robot::radioTx(const Packet::RadioTx::Robot *data)
 {
 	velocity(data->body_x(),data->body_y(), data->body_w());
-	_controller->prepareKick(data->kick(),data->use_chipper());
+	if(data->kick()){
+		_controller->prepareKick(data->kick(),data->use_chipper());
+	}
 }
 
 Packet::RadioRx Robot::radioRx() const
@@ -227,7 +226,7 @@ Packet::RadioRx Robot::radioRx() const
 	packet.set_timestamp(timestamp());
 	packet.set_battery(15.0f);
 	packet.set_rssi(1.0f);
-	packet.set_kicker_status(((timestamp() - _lastKicked) > RechargeTime) ? 1 : 0);
+	packet.set_kicker_status(_controller->getKickerStatus());
 
 	// FIXME: No.
 	packet.set_ball_sense_status((_controller->hasBall() || !_controller->ballSensorWorks) ? Packet::HasBall : Packet::NoBall);
@@ -270,7 +269,7 @@ void Robot::applyEngineForces() {
 
 void Robot::applyEngineForces(float deltaTime) {
 
-//#define USE_ENGINE 1
+#define USE_ENGINE 1
 #ifdef USE_ENGINE
 	if(_targetVel.length() < SIMD_EPSILON && _targetRot == 0){
 
@@ -279,7 +278,7 @@ void Robot::applyEngineForces(float deltaTime) {
 		}
 
 	}else{
-		btTransform worldTr = _robotChassis->getWorldTransform();
+//		btTransform worldTr = _robotChassis->getWorldTransform();
 		btQuaternion worldRot = _robotChassis->getOrientation();
 
 //		printf("WS pos = (%5.3f,%5.3f,%5.3f)\n", worldTr.getOrigin()[0],worldTr.getOrigin()[1],worldTr.getOrigin()[2]);
@@ -287,7 +286,7 @@ void Robot::applyEngineForces(float deltaTime) {
 
 		//basis vectors for robot - directions of driving two opposite wheels "forward", i.e. towards z in CS
 		//f right as in northeast, f left as in northwest
-		btVector3 forwardRightCS =  btVector3(-1,0,1).normalize(); // pos x is left b/c y is up, very tricky
+		btVector3 forwardRightCS =  btVector3(-1,0,1).normalize(); // positive x is left b/c y is up, very tricky
 		btVector3 forwardLeftCS  =  btVector3(1,0,1).normalize();
 
 //		printf("forwardRightCS = (%5.3f,%5.3f,%5.3f)\n",forwardRightCS[0],forwardRightCS[1],forwardRightCS[2]);
@@ -303,8 +302,7 @@ void Robot::applyEngineForces(float deltaTime) {
 
 //		printf("CS velocity = (%5.3f,%5.3f,%5.3f)\n", robotVel[0], robotVel[1], robotVel[2]);
 
-		btVector3  __rot   = _robotChassis->getAngularVelocity();
-		btScalar  robotRot = __rot.getY();
+		btScalar  robotRot(_robotChassis->getAngularVelocity().getY());
 
 //		printf("WS ang vel = %5.3f\n",robotRot);
 
@@ -322,9 +320,9 @@ void Robot::applyEngineForces(float deltaTime) {
 
 		//need to drive at max engine force to achieve target velocity
 
-		float rotVel  = (_targetRot-robotRot)*(Sim_Robot_Radius-Sim_Wheel_Width/2.f); //move to actually wheel loc //assume w is radians per seconds
+		float rotVel  = (_targetRot-robotRot)*(Sim_Robot_Radius-Sim_Wheel_Width/2.f); //move to actual wheel loc
 		//printf("target rot = %5.3f\n",_targetRot);
-		//fflush(stdout);
+
 		float angVel  = rotVel/Sim_Wheel_Radius;
 
 		float forceRot = angVel/deltaTime;
@@ -337,7 +335,7 @@ void Robot::applyEngineForces(float deltaTime) {
 		_engineForce[BackRight]  = forceFR/2 + forceRot/4;
 		_engineForce[BackLeft]   = -forceFL/2 + forceRot/4;
 
-		//multiply by mass to cancel /mass later
+		//multiply by mass to cancel /mass out later in raycastvehicle
 		for(int i=0; i<4; i++){
 			_engineForce[i] *= robotWeight;
 		}
@@ -372,6 +370,7 @@ void Robot::applyEngineForces(float deltaTime) {
 	_robotVehicle->applyEngineForce(_engineForce[BackLeft], BackLeft);
 	_robotVehicle->setBrake(_brakingForce, BackLeft);
 #else
+//direct velocity caused jittering
 	btVector3 vel(_targetVel);
 	vel = vel.rotate(_robotChassis->getWorldTransform().getRotation().getAxis(),
 						_robotChassis->getWorldTransform().getRotation().getAngle());

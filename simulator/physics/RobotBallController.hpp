@@ -57,10 +57,8 @@ public:
 	void dribblerStep();
 	void kickerStep();
 
-	bool hasBall(){
-		printf("I have the ball!\n");
-		return _ball != 0;
-	}
+	bool hasBall();
+	bool getKickerStatus();
 
 	void syncMotionState(const btTransform& centerOfMassWorldTrans);
 

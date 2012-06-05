@@ -16,7 +16,8 @@ static const float MaxChipVelocity = 3*scaling;
 static const float ChipAngle = 0.34906585;//20 degree
 
 RobotBallController::RobotBallController(Robot* robot) :
-	_ghostObject(0),_localMouthPos(0,0,0),_parent(robot), _simEngine(robot->getSimEngine())
+	_ghostObject(0),_localMouthPos(0,0,0),_parent(robot),_ball(0),
+	_simEngine(robot->getSimEngine())
 {
 	ballSensorWorks = true;
 	chargerWorks = true;
@@ -192,6 +193,8 @@ void RobotBallController::kickerStep()
 		dir[1] = 0;
 		dir = dir.normalize();
 
+		printf("Robot kicked at (%5.f,%5.3f,%5.3f)*%5.3f\n",dir[0],dir[1],dir[2],_kickSpeed);
+
 		if(_chip){
 			btVector3 axis = dir.cross(btVector3(0,1,0));
 			dir = dir.rotate(axis,ChipAngle);
@@ -225,15 +228,31 @@ void RobotBallController::syncMotionState(const btTransform& centerOfMassWorldTr
 
 void RobotBallController::prepareKick(uint64_t power, bool chip){
 	if ((timestamp() - _lastKicked) > RechargeTime && chargerWorks)
+	{
+		printf("robot %d power = %d\n",_parent->shell,(int)power);
+		_kick = true;
+		// determine the kick speed
+		_chip = chip;// && _rev == rev2011;
+		if (_chip)
 		{
-			_kick = true;
-			// determine the kick speed
-			_chip = chip;// && _rev == rev2011;
-			if (_chip)
-			{
-				_kickSpeed = power / 255.0f * MaxChipVelocity;
-			} else {
-				_kickSpeed = power / 255.0f * MaxKickVelocity;
-			}
+			_kickSpeed = ((int)power) / 255.0f * MaxChipVelocity;
+		} else {
+			_kickSpeed = ((int)power) / 255.0f * MaxKickVelocity;
 		}
+	}
+}
+
+bool RobotBallController::hasBall(){
+	if(_ball){
+		printf("robot %d has ball\n");
+		return true;
+	}
+	else{
+		printf("robot doesn't not have ball\n");
+		return false;
+	}
+}
+
+bool RobotBallController::getKickerStatus(){
+	return (timestamp() - _lastKicked) > RechargeTime ? 1 : 0;
 }

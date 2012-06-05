@@ -30,8 +30,6 @@ public:
 	unsigned int shell;
 
 	int visibility;
-	bool ballSensorWorks;
-	bool chargerWorks;
 
 protected:
 	RobotRevision _rev;
@@ -57,11 +55,6 @@ protected:
 
 	// links to the engine
 	SimEngine *_simEngine;
-
-	//FIXME: move into RobotBallController
-	/** kicker charge status */
-	uint64_t _lastKicked;
-	const static uint64_t RechargeTime = 6000000; // six seconds
 
 	//TODO: Use later?
 	/** center of roller from ground */
