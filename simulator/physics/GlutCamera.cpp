@@ -1,18 +1,22 @@
 #include "GlutCamera.hpp"
 #include <physics/SimEngine.hpp>
+#include <physics/Robot.hpp>
 #include "GLDebugFont.h"
 
 using namespace std;
 
 GlutCamera::GlutCamera(SimEngine* engine) :
+		_mode(0),_vehicle(0),
 		_cameraDistance(1.0*scaling), _ele(20.f), _azi(0.f), _cameraPosition(0.f, 0.f, 0.f),
 		_cameraTargetPosition(0.f, 0.f, 0.f), _scaleBottom(0.5f), _scaleFactor(2.f),
 		_cameraUp(0, 1, 0), _forwardAxis(2), _glutScreenWidth(0), _glutScreenHeight(0),
 		_frustumZNear(.1f), _frustumZFar(1000.f), _ortho(0), _simEngine(engine)
 {
 	_shapeDrawer = new GL_ShapeDrawer();
-	_shapeDrawer->enableTexture(true);
+	_shapeDrawer->enableTexture(false);
 	_enableshadows = false;
+
+	setCameraMode(Overhead);
 }
 
 GlutCamera::~GlutCamera() {
@@ -31,7 +35,6 @@ void GlutCamera::reshape(int w, int h) {
 }
 
 void GlutCamera::myinit(void) {
-
 	GLfloat light_ambient[] = { btScalar(0.2), btScalar(0.2), btScalar(0.2),
 			btScalar(1.0) };
 	GLfloat light_diffuse[] = { btScalar(1.0), btScalar(1.0), btScalar(1.0),
@@ -68,14 +71,70 @@ void GlutCamera::myinit(void) {
 	//  glCullFace(GL_BACK);
 }
 
+void GlutCamera::setCameraMode(int mode){
+	_mode = mode;
+	if(_mode & SideLine){
+		_ele = 60;
+		_azi = 90;
+		_cameraTargetPosition = btVector3(-10,0,0);
+		_cameraDistance = 30;
+	}
+	if(_mode & Overhead){
+		_ele = 89.5;
+		_azi = 90;
+		_cameraTargetPosition = btVector3(0,0,0);
+		_cameraDistance = 30;
+	}
+	if(_mode & BehindYellowGoal){
+		_cameraDistance = Sim_Field_Length/4.f;
+		_cameraTargetPosition = btVector3(0,0,-Sim_Field_Length/2.f);
+		_ele = 50;
+		_azi = 0;
+	}
+	if(_mode & BehindBlueGoal){
+		_cameraDistance = Sim_Field_Length/4.f;
+		_cameraTargetPosition = btVector3(0,0,Sim_Field_Length/2.f);
+		_ele = 50;
+		_azi = 180;
+	}
+	if(_mode & TrackVehicle && _vehicle){
+		_ele = 20;
+		_cameraDistance = 10;
+	}
+	if(_mode & BehindVehicle && _vehicle){
+		//do later
+	}
+	if(_mode & FrontOfVehicle && _vehicle){
+		//do later
+	}
+	if(_mode & Orthogonal){
+
+	}
+	if(_mode & FreeMove){
+
+	}
+	if(_mode & Reset){
+		//do nothing
+	}
+}
+
 void GlutCamera::updateCamera() {
-
-//#define glut_debug 1
-
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	btScalar rele = _ele * btScalar(0.01745329251994329547); // rads per deg
 	btScalar razi = _azi * btScalar(0.01745329251994329547); // rads per deg
+
+	if((_mode & TrackVehicle) && _vehicle){
+		btTransform trans;
+		_vehicle->getRigidBody()->getMotionState()->getWorldTransform(trans);
+		_cameraTargetPosition = trans.getOrigin();
+		if(_mode & BehindVehicle){
+			razi = trans.getRotation().getAxis().getY()*trans.getRotation().getAngle();
+		}
+		if(_mode & FrontOfVehicle){
+			razi = 3.14159265+trans.getRotation().getAxis().getY()*trans.getRotation().getAngle();
+		}
+	}
 
 	btQuaternion rot(_cameraUp, razi);
 
@@ -130,13 +189,6 @@ void GlutCamera::updateCamera() {
 				_cameraTargetPosition[2], _cameraUp.getX(), _cameraUp.getY(),
 				_cameraUp.getZ());
 	}
-
-#ifdef glut_debug
-	printf("glut camera x: %8.4f y: %8.4f z: %8.4f \n",_cameraPosition[0],_cameraPosition[1],_cameraPosition[2]);
-	printf("glut target x: %8.4f y: %8.4f z: %8.4f \n",_cameraTargetPosition[0], _cameraTargetPosition[1],_cameraTargetPosition[2]);
-	printf("glut cam up x: %8.4f y: %8.4f z: %8.4f \n",_cameraUp.getX(), _cameraUp.getY(),_cameraUp.getZ());
-#endif
-
 }
 
 //

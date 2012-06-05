@@ -30,6 +30,7 @@ protected:
 
 	// Drivable vehicle
 	Robot* _vehicle;
+	bool _blue;
 
 	// Dynamics/Collision Environment parts
 	SimEngine* _simEngine;
@@ -76,6 +77,8 @@ public:
 	void displayCallback();
 
 	void updateCamera();
+
+	void nextVehicle();
 
 	void specialKeyboard(int key, int x, int y);
 

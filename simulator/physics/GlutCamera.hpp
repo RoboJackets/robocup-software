@@ -10,9 +10,28 @@ class btCollisionShape;
 class btDynamicsWorld;
 class btRigidBody;
 class btTypedConstraint;
+class Robot;
 
 class GlutCamera {
+public:
+	enum	CameraMode
+	{
+		SideLine = 1,
+		Overhead = 2,
+		BehindYellowGoal = 4,
+		BehindBlueGoal = 8,
+		TrackVehicle = 16,
+		BehindVehicle = 32,
+		FrontOfVehicle = 64,
+		FreeMove = 128,
+		Orthogonal = 256,
+		Reset = 0
+	};
+
 protected:
+	int _mode;
+	Robot* _vehicle;
+
 	float _cameraDistance;
 	float _ele; //elevation
 	float _azi; //azimuth
@@ -78,6 +97,11 @@ public:
 
 	// performs camera updates - can be customized for different camera modes
 	virtual void updateCamera();
+
+	void setCameraMode(int mode);
+	int getCameraMode() { return _mode; }
+
+	void setRobot(Robot* robot) { _vehicle = robot; }
 
 	void setCameraDistance(float dist) { _cameraDistance = dist; }
 	float getCameraDistance() const {	return _cameraDistance; }

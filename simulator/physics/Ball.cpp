@@ -45,7 +45,7 @@ void Ball::initPhysics() {
 	// Create rigid body
 	btTransform ballTr;
 	ballTr.setIdentity();
-	ballTr.setOrigin(btVector3(Sim_Field_Width/2.f,Sim_Ball_Radius,0));
+	ballTr.setOrigin(btVector3(0,Sim_Ball_Radius,0));
 
 	_ball = _simEngine->localCreateRigidBody(Sim_Ball_Mass,ballTr,_sphereShape);
 	_ball->setActivationState(DISABLE_DEACTIVATION);
