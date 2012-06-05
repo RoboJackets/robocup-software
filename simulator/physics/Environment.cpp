@@ -422,6 +422,17 @@ void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx)
 					blue ? "Blue" : "Yellow",
 							cmd.robot_id());
 		}
+
+		Packet::RadioRx rx = r->radioRx();
+		rx.set_robot_id(r->shell);
+
+		// Send the RX packet
+		std::string out;
+		rx.SerializeToString(&out);
+		if(blue)
+			_radioSocketBlue.writeDatagram(&out[0], out.size(), LocalAddress, RadioTxPort + 1);
+		else
+			_radioSocketYellow.writeDatagram(&out[0], out.size(), LocalAddress, RadioTxPort + 1);
 	}
 
 	// FIXME: the interface changed for this part
