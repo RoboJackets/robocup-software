@@ -430,9 +430,9 @@ void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx)
 		std::string out;
 		rx.SerializeToString(&out);
 		if(blue)
-			_radioSocketBlue.writeDatagram(&out[0], out.size(), LocalAddress, RadioTxPort + 1);
+			_radioSocketBlue.writeDatagram(&out[0], out.size(), LocalAddress, RadioRxPort + 1);
 		else
-			_radioSocketYellow.writeDatagram(&out[0], out.size(), LocalAddress, RadioTxPort + 1);
+			_radioSocketYellow.writeDatagram(&out[0], out.size(), LocalAddress, RadioRxPort);
 	}
 
 	// FIXME: the interface changed for this part
