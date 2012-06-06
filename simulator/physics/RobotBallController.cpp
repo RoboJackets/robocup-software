@@ -25,6 +25,7 @@ RobotBallController::RobotBallController(Robot* robot) :
 
 	_kick = false;
 	_chip = false;
+	_dribble = 1;
 }
 
 RobotBallController::~RobotBallController()
@@ -100,7 +101,7 @@ bool RobotBallController::detectBall ( btCollisionWorld* collisionWorld)
 
 void RobotBallController::dribblerStep()
 {
-	if(_ball){
+	if(_ball && _dribble){
 
 //#define USE_DIRECT_PLACEMENT 1
 #ifdef USE_DIRECT_PLACEMENT
@@ -229,7 +230,6 @@ void RobotBallController::syncMotionState(const btTransform& centerOfMassWorldTr
 void RobotBallController::prepareKick(uint64_t power, bool chip){
 	if ((timestamp() - _lastKicked) > RechargeTime && chargerWorks)
 	{
-		printf("robot %d power = %d\n",_parent->shell,(int)power);
 		_kick = true;
 		// determine the kick speed
 		_chip = chip;// && _rev == rev2011;
@@ -242,15 +242,13 @@ void RobotBallController::prepareKick(uint64_t power, bool chip){
 	}
 }
 
+void RobotBallController::prepareDribbler(uint64_t dribble){
+	//Fixme: no
+	_dribble = dribble;
+}
+
 bool RobotBallController::hasBall(){
-	if(_ball){
-		printf("robot %d has ball\n");
-		return true;
-	}
-	else{
-		printf("robot doesn't not have ball\n");
-		return false;
-	}
+	return _ball != 0;
 }
 
 bool RobotBallController::getKickerStatus(){

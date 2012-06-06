@@ -17,7 +17,7 @@ using namespace Geometry2d;
 
 //FIXME: parameters have no sensible interpretation
 // static physics parameters
-static const float maxEngineForce = 3000.f; //this should be engine/velocity dependent
+static const float maxEngineForce = 2000.f; //this should be engine/velocity dependent
 static const float maxBreakingForce = 100.f;
 static const float wheelFriction = 1000; //BT_LARGE_FLOAT;
 static const float suspensionStiffness = 1000.f;
@@ -185,8 +185,6 @@ void Robot::position(float x, float y)
 
 void Robot::velocity(float x, float y, float w)
 {
-	printf("Robot %d velocity %5.3f %5.3f w %5.3f\n",shell,x,y,w);
-
 	_targetVel = btVector3(y,0,x)*scaling;
 	_targetRot = w;
 }
@@ -217,6 +215,7 @@ void Robot::radioTx(const Packet::RadioTx::Robot *data)
 	if(data->kick()){
 		_controller->prepareKick(data->kick(),data->use_chipper());
 	}
+	_controller->prepareDribbler(data->dribbler());
 }
 
 Packet::RadioRx Robot::radioRx() const

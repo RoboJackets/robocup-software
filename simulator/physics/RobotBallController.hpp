@@ -36,6 +36,7 @@ protected:
 
 	bool _kick;
 	bool _chip;
+	uint64_t _dribble;
 
 public:
 	RobotBallController(Robot* robot);
@@ -67,4 +68,5 @@ public:
 	}
 
 	void prepareKick(uint64_t power, bool chip);
+	void prepareDribbler(uint64_t dribble);
 };
