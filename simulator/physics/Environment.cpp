@@ -198,11 +198,10 @@ void Environment::handleSimCommand(const Packet::SimCommand& cmd) {
 		{
 			robot->velocity(rcmd.vel().x(), rcmd.vel().y(), new_w);
 		}
+	}
 
-		if (cmd.has_reset() && cmd.reset()) {
-			// TODO: reset the robots to their initial config
-			printf("Resetting to initial config - NOT IMPLEMENTED");
-		}
+	if (cmd.has_reset() && cmd.reset()) {
+		resetScene();
 	}
 }
 

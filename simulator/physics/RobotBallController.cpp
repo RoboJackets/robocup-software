@@ -25,7 +25,7 @@ RobotBallController::RobotBallController(Robot* robot) :
 
 	_kick = false;
 	_chip = false;
-	_dribble = 1;
+	_dribble = 0;
 }
 
 RobotBallController::~RobotBallController()
