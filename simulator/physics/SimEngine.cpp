@@ -13,9 +13,14 @@
  3. This notice may not be removed or altered from any source distribution.
  */
 
-#include <Physics/SimEngine.hpp>
+#include <physics/SimEngine.hpp>
+#include <stdio.h>
+#include "RobotMotionState.hpp"
+#include "BulletCollision/CollisionDispatch/btGhostObject.h"
 
 using namespace std;
+
+
 
 SimEngine::SimEngine() :
 		_dynamicsWorld(0), _stepping(true), _singleStep(false),
@@ -30,6 +35,11 @@ void SimEngine::initPhysics() {
 	_constraintSolver = new btSequentialImpulseConstraintSolver();
 	_dynamicsWorld = new btDiscreteDynamicsWorld(_dispatcher,
 			_overlappingPairCache, _constraintSolver, _collisionConfiguration);
+	//
+	_dynamicsWorld->getSolverInfo().m_splitImpulse = true;
+	//We use ghost objects simulate the mouth of the robot, see RobotBallController
+	btGhostPairCallback* ghostPairCallback = new btGhostPairCallback();
+	_dynamicsWorld->getPairCache()->setInternalGhostPairCallback(ghostPairCallback);
 }
 
 SimEngine::~SimEngine() {
@@ -97,11 +107,37 @@ btRigidBody* SimEngine::localCreateRigidBody(float mass,
 
 	btRigidBody* body = new btRigidBody(cInfo);
 	body->setContactProcessingThreshold(_defaultContactProcessingThreshold);
-
 #else
 	btRigidBody* body = new btRigidBody(mass,0,shape,localInertia);
 	body->setWorldTransform(startTransform);
 #endif//
+	_dynamicsWorld->addRigidBody(body);
+
+	return body;
+}
+
+btRigidBody* SimEngine::localCreateRobot(float mass,
+		const btTransform& startTransform, btCollisionShape* shape)
+{
+	btAssert((!shape || shape->getShapeType() != INVALID_SHAPE_PROXYTYPE));
+
+	//rigidbody is dynamic if and only if mass is non zero, otherwise static
+	bool isDynamic = (mass != 0.f);
+
+	btVector3 localInertia(0, 0, 0);
+	if (isDynamic)
+		shape->calculateLocalInertia(mass, localInertia);
+
+	//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
+	btDefaultMotionState* myMotionState = new RobotMotionState(
+			startTransform);
+
+	btRigidBody::btRigidBodyConstructionInfo cInfo(mass, myMotionState, shape,
+			localInertia);
+
+	btRigidBody* body = new btRigidBody(cInfo);
+	body->setContactProcessingThreshold(_defaultContactProcessingThreshold);
+
 	_dynamicsWorld->addRigidBody(body);
 
 	return body;
@@ -115,6 +151,10 @@ btScalar SimEngine::getDeltaTimeMicroseconds() {
 	btScalar dt = (btScalar) _clock.getTimeMicroseconds();
 	_clock.reset();
 	return dt;
+}
+
+btClock* SimEngine::getClock() {
+	return & _clock;
 }
 
 void SimEngine::stepSimulation() {

@@ -1,8 +1,10 @@
-#include "Physics/Environment.hpp"
+#include "physics/Environment.hpp"
 #include "SimulatorWindow.hpp"
+#include "SimulatorGLUTThread.hpp"
 
 #include <QApplication>
 #include <QFile>
+#include <QThread>
 
 #include <stdio.h>
 #include <signal.h>
@@ -17,7 +19,7 @@ void quit(int signal)
 
 void usage(const char* prog)
 {
-	fprintf(stderr, "usage: %s [-c <config file>] [--sv]\n", prog);
+	fprintf(stderr, "usage: %s [-c <config file>] [--glut] [--sv]\n", prog);
 	fprintf(stderr, "\t--help  Show usage message\n");
 	fprintf(stderr, "\t--sv    Use shared vision multicast port\n");
 }
@@ -61,20 +63,28 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	Environment* env = new Environment(configFile, sendShared);
+	// create the thread for simulation
+	SimulatorGLUTThread sim_thread(argc, argv, configFile, sendShared);
 
 	struct sigaction act;
 	memset(&act, 0, sizeof(act));
 	act.sa_handler = quit;
 	sigaction(SIGINT, &act, 0);
 
-	SimulatorWindow win(env);
+	// Create and initialize GUI with environment information
+	SimulatorWindow win(sim_thread.env());
 	win.show();
-	
+
+	// initialize socket connections separately
+	sim_thread.env()->connectSockets();
+
+	// start up threads
+	sim_thread.start();
 	int ret = app.exec();
 
-	// cleanup
-	delete env;
+	// shut down sim_thread
+	sim_thread.wait();
+//	sim_thread.exit(0);
 
-	return ret;
+	return 0;//ret;
 }

@@ -16,11 +16,13 @@
 
 #include <btBulletDynamicsCommon.h>
 #include <LinearMath/btQuickprof.h>
+#include <physics/PhysicsConstants.hpp>
 
 class btCollisionShape;
 class btDynamicsWorld;
 class btRigidBody;
 class btActionInterface;
+
 
 class SimEngine {
 protected:
@@ -57,10 +59,15 @@ public:
 	btRigidBody* localCreateRigidBody(float mass,
 			const btTransform& startTransform, btCollisionShape* shape);
 
+	btRigidBody* localCreateRobot(float mass,
+			const btTransform& startTransform, btCollisionShape* shape);
+
 	btScalar getDeltaTimeMicroseconds();
 
 	/** Key function for advancing the simulation forward in time */
 	void stepSimulation();
+
+	btClock* getClock();
 
 	void debugDrawWorld();
 

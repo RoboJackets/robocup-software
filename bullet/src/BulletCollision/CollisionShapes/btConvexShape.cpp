@@ -43,7 +43,7 @@ btConvexShape::~btConvexShape()
 }
 
 
-void btConvexShape::project(const btTransform& trans, const btVector3& dir, float& min, float& max) const
+void btConvexShape::project(const btTransform& trans, const btVector3& dir, btScalar& min, btScalar& max) const
 {
 	btVector3 localAxis = dir*trans.getBasis();
 	btVector3 vtx1 = trans(localGetSupportingVertex(localAxis));
@@ -54,7 +54,7 @@ void btConvexShape::project(const btTransform& trans, const btVector3& dir, floa
 
 	if(min>max)
 	{
-		float tmp = min;
+		btScalar tmp = min;
 		min = max;
 		max = tmp;
 	}
@@ -244,7 +244,7 @@ btVector3 btConvexShape::localGetSupportVertexWithoutMarginNonVirtual (const btV
 			pos[capsuleUpAxis] = halfHeight;
 
 			//vtx = pos +vec*(radius);
-			vtx = pos +vec*capsuleShape->getLocalScalingNV()*(radius) - vec * capsuleShape->getMarginNV();
+			vtx = pos +vec*(radius) - vec * capsuleShape->getMarginNV();
 			newDot = vec.dot(vtx);
 			
 
@@ -259,7 +259,7 @@ btVector3 btConvexShape::localGetSupportVertexWithoutMarginNonVirtual (const btV
 			pos[capsuleUpAxis] = -halfHeight;
 
 			//vtx = pos +vec*(radius);
-			vtx = pos +vec*capsuleShape->getLocalScalingNV()*(radius) - vec * capsuleShape->getMarginNV();
+			vtx = pos +vec*(radius) - vec * capsuleShape->getMarginNV();
 			newDot = vec.dot(vtx);
 			if (newDot > maxDot)
 			{
