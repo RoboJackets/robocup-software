@@ -79,6 +79,10 @@ public:
 
 	void initPhysics(const bool& blue);
 
+public:
+
+	//the following are in field space, aka soccer's coordinate system
+
 	// Entity interface
 	virtual void position(float x, float y); // world coords
 
@@ -87,6 +91,17 @@ public:
 	virtual Geometry2d::Point getPosition() const;
 
 	virtual float getAngle() const;
+
+	// debug text interface
+	Geometry2d::Point getVelFS() const;
+
+	float getAngVelFS() const;
+
+	Geometry2d::Point getTargetVelFS() const;
+
+	float getTargetAngVelFS() const;
+
+public:
 
 	const RobotRevision& revision() const { return _rev; }
 

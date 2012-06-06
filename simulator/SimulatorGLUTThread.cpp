@@ -5,6 +5,7 @@
 #include <physics/Environment.hpp>
 #include <SimulatorGLUTThread.hpp>
 #include "physics/RobotBallController.hpp"
+#include <GLDebugFont.h>
 
 using namespace std;
 
@@ -91,6 +92,9 @@ void SimulatorGLUTThread::run() {
 	glutMainLoop();
 }
 
+static bool DisplayMotion = false;
+static bool DisplayState = true;
+
 void SimulatorGLUTThread::keyboardCallback(unsigned char key, int x, int y) {
 	(void) x;
 	(void) y;
@@ -120,7 +124,7 @@ void SimulatorGLUTThread::keyboardCallback(unsigned char key, int x, int y) {
 	case 't':	_simEngine->setDebug(btIDebugDraw::DBG_DrawText);		          break;
 	case 'y':	_simEngine->setDebug(btIDebugDraw::DBG_DrawFeaturesText);		  break;
 	case 'a':	_simEngine->setDebug(btIDebugDraw::DBG_DrawAabb);             break;
-	case 'c':	_simEngine->setDebug(btIDebugDraw::DBG_DrawContactPoints);    break;
+//	case 'c':	_simEngine->setDebug(btIDebugDraw::DBG_DrawContactPoints);    break;
 	case 'C':	_simEngine->setDebug(btIDebugDraw::DBG_DrawConstraints);      break;
 	case 'L':	_simEngine->setDebug(btIDebugDraw::DBG_DrawConstraintLimits); break;
 
@@ -145,6 +149,11 @@ void SimulatorGLUTThread::keyboardCallback(unsigned char key, int x, int y) {
 	//kick/chip
 	case 'z': if(_vehicle) _vehicle->getRobotController()->prepareKick(255,false); break;
 	case 'x': if(_vehicle) _vehicle->getRobotController()->prepareKick(255,true); break;
+	case 'c': if(_vehicle) _vehicle->getRobotController()->prepareDribbler(_vehicle->getRobotController()->getDribblePower() > 0 ? 0 : 127); break;
+
+	//debug
+	case 'b': DisplayState = DisplayState ? false : true; break;
+	case 'v': DisplayMotion = DisplayMotion ? false : true; break;
 
 	case 'd':
 		_simEngine->setDebug(btIDebugDraw::DBG_NoDeactivation);
@@ -229,6 +238,8 @@ void SimulatorGLUTThread::clientMoveAndDisplay() {
 	_env->preStep(delta);
 	_simEngine->stepSimulation();
 
+	render();
+
 //#define motion_debug 1
 #ifdef motion_debug
 	printf("Robot %d\n",_vehicle->shell);
@@ -251,9 +262,14 @@ void SimulatorGLUTThread::clientMoveAndDisplay() {
 
 	printf("angle = %5.3f\n",_vehicle->getAngle());
 	printf("position = (%5.3f,%5.3f)\n",_vehicle->getPosition().x,_vehicle->getPosition().y);
+#else
+	if(_vehicle){
+		int	xOffset = 10;
+		int yStart = 20;
+		int yIncr = 20;
+		showVehicleInfo(xOffset,yStart,yIncr);
+	}
 #endif
-
-	render();
 
 	//optional but useful: debug drawing
 	_simEngine->debugDrawWorld();
@@ -356,6 +372,77 @@ void SimulatorGLUTThread::nextVehicle() {
 		else
 			_vehicle = map.begin().value();
 	}
+}
+
+void SimulatorGLUTThread::displayProfileString(int xOffset,int yStart,char* message)
+{
+	glRasterPos3f(btScalar(xOffset),btScalar(yStart),btScalar(0));
+//	GLDebugDrawString(xOffset,yStart,message);
+	GLDebugDrawStringInternal(xOffset,yStart,message,btVector3(1,1,1),true,10);
+}
+
+void SimulatorGLUTThread::showVehicleInfo(int& xOffset,int& yStart, int yIncr)
+{
+	if(_simEngine->debugMode() & btIDebugDraw::DBG_NoHelpText)
+		return;
+
+	char robotText[128];
+
+	{
+		sprintf(robotText,"---                 Robot %2d                  ---", _vehicle->shell);
+		displayProfileString(xOffset,yStart,robotText);
+		yStart += yIncr;
+
+		sprintf(robotText,"press v-motion, b-state, h-hide, zxc-kick/chip/dribble, arrows-move");
+		displayProfileString(xOffset,yStart,robotText);
+		yStart += yIncr;
+
+		/*sprintf(robotText,"coordinate system is in field space");
+		displayProfileString(xOffset,yStart,robotText);
+		yStart += yIncr;*/
+	}
+
+	if(DisplayMotion)
+	{
+		sprintf(robotText,"linear velocity = (%+7.5f,%+7.5f)",_vehicle->getVelFS().x, _vehicle->getVelFS().y);
+		displayProfileString(xOffset,yStart,robotText);
+		yStart += yIncr;
+
+		sprintf(robotText,"angular velocity = %+7.5f",_vehicle->getAngVelFS());
+		displayProfileString(xOffset,yStart,robotText);
+		yStart += yIncr;
+	}
+
+	if(DisplayState)
+	{
+		/*sprintf(robotText,"---                 State %2d                  ---", _vehicle->shell);
+		displayProfileString(xOffset,yStart,robotText);
+		yStart += yIncr;*/
+
+		sprintf(robotText,"target linear = (% 7.5f,% 7.5f)",_vehicle->getTargetVelFS().x, _vehicle->getTargetVelFS().y);
+		displayProfileString(xOffset,yStart,robotText);
+		yStart += yIncr;
+
+		sprintf(robotText,"target angular = % 7.5f",_vehicle->getTargetAngVelFS());
+		displayProfileString(xOffset,yStart,robotText);
+		yStart += yIncr;
+
+		sprintf(robotText,"%s %s, power = %lu",_vehicle->getRobotController()->chipEnabled() ? "chip" : "kick",
+					_vehicle->getRobotController()->getKickerStatus() ? "ready" : "wait", _vehicle->getRobotController()->getKickPower());
+		displayProfileString(xOffset,yStart,robotText);
+		yStart += yIncr;
+
+		sprintf(robotText,"ball sense = %s, dribbler = %lu",_vehicle->getRobotController()->hasBall() ? "true" : "false",
+				_vehicle->getRobotController()->getDribblePower());
+		displayProfileString(xOffset,yStart,robotText);
+		yStart += yIncr;
+
+	}
+
+	sprintf(robotText,"-------------------------------------------------");
+	displayProfileString(xOffset,yStart,robotText);
+	yStart += yIncr;
+
 }
 
 

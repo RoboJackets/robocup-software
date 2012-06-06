@@ -80,6 +80,10 @@ public:
 
 	void nextVehicle();
 
+	void displayProfileString(int xOffset,int yStart,char* message);
+
+	void showVehicleInfo(int& xOffset,int& yStart, int yIncr);
+
 	void specialKeyboard(int key, int x, int y);
 
 	void specialKeyboardUp(int key, int x, int y);
