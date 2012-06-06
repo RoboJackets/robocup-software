@@ -194,7 +194,7 @@ void RobotBallController::kickerStep()
 		dir[1] = 0;
 		dir = dir.normalize();
 
-		printf("Robot kicked at (%5.f,%5.3f,%5.3f)*%5.3f\n",dir[0],dir[1],dir[2],_kickSpeed);
+		printf("Robot %d kicked at (%5.f,%5.3f,%5.3f)*%5.3f\n",_parent->shell,dir[0],dir[1],dir[2],_kickSpeed);
 
 		if(_chip){
 			btVector3 axis = dir.cross(btVector3(0,1,0));
@@ -207,13 +207,6 @@ void RobotBallController::kickerStep()
 		_chip = false;
 
 		_lastKicked = timestamp();
-
-		printf("Robot kicked ball!\n");
-
-//		if (_chip)
-//			printf("Robot %d chip %p by %f: %f, %f, %f\n", shell, ball, kickSpeed, kickVel.x, kickVel.y, kickVel.z);
-//		else
-//			printf("Robot %d kick %p by %f: %f, %f, %f\n", shell, ball, kickSpeed, kickVel.x, kickVel.y, kickVel.z);
 	}
 }
 
@@ -243,7 +236,6 @@ void RobotBallController::prepareKick(uint64_t power, bool chip){
 }
 
 void RobotBallController::prepareDribbler(uint64_t dribble){
-	//Fixme: no
 	_dribble = dribble;
 }
 

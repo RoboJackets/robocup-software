@@ -277,6 +277,8 @@ void Robot::applyEngineForces(float deltaTime) {
 		}
 
 	}else{
+		//
+
 //		btTransform worldTr = _robotChassis->getWorldTransform();
 		btQuaternion worldRot = _robotChassis->getOrientation();
 
@@ -314,8 +316,8 @@ void Robot::applyEngineForces(float deltaTime) {
 		float angFR = velFR/Sim_Wheel_Radius;
 		float angFL = velFL/Sim_Wheel_Radius;
 
-		float forceFR = angFR/deltaTime;
-		float forceFL = angFL/deltaTime;
+		float forceFR = angFR;///deltaTime;
+		float forceFL = angFL;///deltaTime;
 
 		//need to drive at max engine force to achieve target velocity
 
@@ -324,19 +326,24 @@ void Robot::applyEngineForces(float deltaTime) {
 
 		float angVel  = rotVel/Sim_Wheel_Radius;
 
-		float forceRot = angVel/deltaTime;
+		float forceRot = angVel;///deltaTime;
 
-		//assign
-		//extremely quirky: all wheels turn counterclockwise w/r/t the center of the robot
-		_engineForce[FrontLeft]  = -forceFR/2 + forceRot/4;
-		_engineForce[FrontRight] = forceFL/2 + forceRot/4;
+		//assign translational forces
+		//extremely quirky: all wheels turn counterclockwise w/ axis towards robot center
+		_engineForce[FrontLeft]  = -forceFR/2;
+		_engineForce[FrontRight] = forceFL/2;
 
-		_engineForce[BackRight]  = forceFR/2 + forceRot/4;
-		_engineForce[BackLeft]   = -forceFL/2 + forceRot/4;
+		_engineForce[BackRight]  = forceFR/2;
+		_engineForce[BackLeft]   = -forceFL/2;
 
 		//multiply by mass to cancel /mass out later in raycastvehicle
 		for(int i=0; i<4; i++){
 			_engineForce[i] *= robotWeight;
+		}
+
+		//assign rotational forces
+		for(int i=0; i<4; i++){
+			_engineForce[i] += forceRot/(4.f*_robotChassis->getInvInertiaDiagLocal().y());//cancel out inertia factors later
 		}
 
 		//scale forces
@@ -369,10 +376,11 @@ void Robot::applyEngineForces(float deltaTime) {
 	_robotVehicle->applyEngineForce(_engineForce[BackLeft], BackLeft);
 	_robotVehicle->setBrake(_brakingForce, BackLeft);
 #else
-//direct velocity caused jittering
 	btVector3 vel(_targetVel);
-	vel = vel.rotate(_robotChassis->getWorldTransform().getRotation().getAxis(),
-						_robotChassis->getWorldTransform().getRotation().getAngle());
+	btTransform trans;
+	_robotChassis->getMotionState()->getWorldTransform(trans);
+	vel = vel.rotate(trans.getRotation().getAxis(),
+						trans.getRotation().getAngle());
 	_robotChassis->setLinearVelocity(vel);
 	_robotChassis->setAngularVelocity(btVector3(0,1,0)*_targetRot);
 #endif
