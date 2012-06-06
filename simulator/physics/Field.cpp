@@ -78,7 +78,7 @@ void Field::initPhysics()
 	_simEngine->addCollisionShape(groundShape);
 
 	//color
-	btVector3* color = new btVector3(1.0f,1.0f,0.5f);
+	btVector3* color = new btVector3(0.5f,0.5f,0.5f);
 	groundShape->setUserPointer(color);
 
 	//create ground object

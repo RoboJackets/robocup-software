@@ -162,6 +162,8 @@ void Robot::initPhysics(const bool& blue)
 
 	_robotChassis->setRestitution(0); //Disable bouncing
 
+	//_robotChassis->setDamping(0.95f,0.95f); //mimic friction
+
 	resetScene(); // force initial physics state - everything stationary
 }
 
@@ -202,6 +204,26 @@ float Robot::getAngle() const
 	btTransform tr;
 	getWorldTransform(tr);
 	return tr.getRotation().getAxis()[1]*tr.getRotation().getAngle();
+}
+
+Geometry2d::Point Robot::getVelFS() const
+{
+	return Geometry2d::Point(_robotChassis->getLinearVelocity().z()/scaling,_robotChassis->getLinearVelocity().x()/scaling);
+}
+
+float Robot::getAngVelFS() const
+{
+	return _robotChassis->getAngularVelocity().y();
+}
+
+Geometry2d::Point Robot::getTargetVelFS() const
+{
+	return Geometry2d::Point(_targetVel.z()/scaling,_targetVel.x()/scaling);
+}
+
+float Robot::getTargetAngVelFS() const
+{
+	return _targetRot;
 }
 
 void Robot::getWorldTransform(btTransform& chassisWorldTrans) const

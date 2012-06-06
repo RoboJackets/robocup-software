@@ -16,7 +16,7 @@ GlutCamera::GlutCamera(SimEngine* engine) :
 	_shapeDrawer->enableTexture(false);
 	_enableshadows = false;
 
-	setCameraMode(Overhead);
+	setCameraMode(SideLine);
 }
 
 GlutCamera::~GlutCamera() {
@@ -74,7 +74,7 @@ void GlutCamera::myinit(void) {
 void GlutCamera::setCameraMode(int mode){
 	_mode = mode;
 	if(_mode & SideLine){
-		_ele = 60;
+		_ele = 40;
 		_azi = 90;
 		_cameraTargetPosition = btVector3(-10,0,0);
 		_cameraDistance = 30;
@@ -320,10 +320,6 @@ void GlutCamera::renderscene(int pass, int debugMode) {
 		btVector3 wireColor(1.f, 1.0f, 0.5f); //wants deactivation
 		if (i & 1)
 			wireColor = btVector3(0.f, 0.0f, 1.f);//
-		//color collision shapes
-		if(colObj->getCollisionShape()->getUserPointer()){
-			wireColor = *((btVector3 *)(colObj->getCollisionShape()->getUserPointer()));
-		}
 		///color differently for active, sleeping, wantsdeactivation states
 		if (colObj->getActivationState() == 1) //active
 				{
@@ -340,6 +336,10 @@ void GlutCamera::renderscene(int pass, int debugMode) {
 			} else {
 				wireColor += btVector3(0.f, 0.5f, 0.f);
 			}
+		}
+		//color collision shapes
+		if(colObj->getCollisionShape()->getUserPointer()){
+			wireColor = *((btVector3 *)(colObj->getCollisionShape()->getUserPointer()));
 		}
 
 		btVector3 aabbMin, aabbMax;

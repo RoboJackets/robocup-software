@@ -203,7 +203,7 @@ void RobotBallController::kickerStep()
 		_ball->clearForces();
 		_ball->setLinearVelocity(dir*_kickSpeed);
 
-		_kick = false;
+		_kick = 0;
 		_chip = false;
 
 		_lastKicked = timestamp();
@@ -223,7 +223,7 @@ void RobotBallController::syncMotionState(const btTransform& centerOfMassWorldTr
 void RobotBallController::prepareKick(uint64_t power, bool chip){
 	if ((timestamp() - _lastKicked) > RechargeTime && chargerWorks)
 	{
-		_kick = true;
+		_kick = power;
 		// determine the kick speed
 		_chip = chip;// && _rev == rev2011;
 		if (_chip)

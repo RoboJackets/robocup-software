@@ -34,7 +34,7 @@ protected:
 
 	float _kickSpeed;
 
-	bool _kick;
+	uint64_t _kick;
 	bool _chip;
 	uint64_t _dribble;
 
@@ -60,6 +60,10 @@ public:
 
 	bool hasBall();
 	bool getKickerStatus();
+
+	uint64_t getKickPower() { return _kick; }
+	bool chipEnabled() { return _chip; }
+	uint64_t getDribblePower() { return _dribble; }
 
 	void syncMotionState(const btTransform& centerOfMassWorldTrans);
 
