@@ -20,7 +20,7 @@ namespace Gameplay
 			
 			protected:
 				Behaviors::Penalty _kicker;
-				Behaviors::Move _idle1, _idle2, _idle3;
+				Behaviors::Move _idle1, _idle2, _idle3, _idle4;
 		};
 	}
 }
