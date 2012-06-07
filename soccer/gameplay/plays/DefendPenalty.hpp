@@ -18,7 +18,7 @@ namespace Gameplay
 				virtual bool run();
 			
 			protected:
-				Behaviors::Move _idle1, _idle2, _idle3, _idle4;
+				Behaviors::Move _idle1, _idle2, _idle3, _idle4, _idle5;
 		};
 	}
 }
