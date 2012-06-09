@@ -150,8 +150,10 @@ bool Gameplay::Plays::BasicOffense121::run()
 			shot_obs.vertices.push_back(Geometry2d::Point(Field_GoalWidth / 2, Field_Length));
 			shot_obs.vertices.push_back(Geometry2d::Point(-Field_GoalWidth / 2, Field_Length));
 			shot_obs.vertices.push_back(ballProj);
-			_support1.robot->localObstacles(ObstaclePtr(new PolygonObstacle(shot_obs)));
-			_support2.robot->localObstacles(ObstaclePtr(new PolygonObstacle(shot_obs)));
+			if(_support1.robot)
+				_support1.robot->localObstacles(ObstaclePtr(new PolygonObstacle(shot_obs)));
+			if(_support1.robot)
+				_support2.robot->localObstacles(ObstaclePtr(new PolygonObstacle(shot_obs)));
 		}
 	}
 
