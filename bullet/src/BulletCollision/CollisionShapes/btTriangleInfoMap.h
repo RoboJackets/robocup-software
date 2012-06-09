@@ -85,6 +85,7 @@ struct	btTriangleInfoMap : public btInternalTriangleInfoMap
 
 };
 
+///those fields have to be float and not btScalar for the serialization to work properly
 struct	btTriangleInfoData
 {
 	int			m_flags;

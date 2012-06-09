@@ -6,21 +6,23 @@
 
     <!-- configure blue team robots -->
     <blue>
-        <robot id="0" x="1.5" y="0" />
+        <robot id="0" x="1" y="0" />
         <robot id="1" x="1" y="1" />
         <robot id="2" x="1" y="-1" />
         <robot id="3" x="2" y="1" />
         <robot id="4" x="2" y="-1" />
+        <robot id="5" x="2" y="0" />
         <!-- <robots qty="4" />-->
         <kinematics /> <!-- want: velocity ...etc -->
     </blue>
 
     <yellow>
-        <robot id="0" x="-1.5" y="0" />
+        <robot id="0" x="-1" y="0" />
         <robot id="1" x="-1" y="1" />
         <robot id="2" x="-1" y="-1" />
         <robot id="3" x="-2" y="1" />
         <robot id="4" x="-2" y="-1" />
+        <robot id="5" x="-2" y="0" />
     </yellow>
 
     <vision>

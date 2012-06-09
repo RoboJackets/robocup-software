@@ -34,9 +34,8 @@ Gameplay::Plays::OurKickoff::OurKickoff(GameplayModule *gameplay):
 {
 	_idle1.target = _gameplay->centerMatrix() * Geometry2d::Point(0.7, -0.2);
 	_idle2.target = _gameplay->centerMatrix() * Geometry2d::Point(-0.7, -0.2);
-	_idle3.target = Geometry2d::Point(0, 1.5);
-	//FIXME: Place 6th robot in better position.
-	_idle4.target = Geometry2d::Point(0,3.0);
+	_idle3.target = Geometry2d::Point(0.2, 1.5);
+	_idle4.target = Geometry2d::Point(-0.2,1.5);
 
 	_kicker.kickTarget(Geometry2d::Segment(Geometry2d::Point(-Field_Width/2.0, Field_Length),
 											   Geometry2d::Point( Field_Width/2.0, Field_Length)));
