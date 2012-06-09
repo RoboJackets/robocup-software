@@ -22,11 +22,16 @@ Gameplay::Plays::MightyMight::MightyMight(GameplayModule *gameplay):
 	Play(gameplay),
 	_leftFullback(gameplay, Behaviors::Fullback::Left),
 	_rightFullback(gameplay, Behaviors::Fullback::Right),
+	_centerFullback(gameplay, Behaviors::Fullback::Center),
 	_kicker1(gameplay),
 	_kicker2(gameplay)
 {
 	_leftFullback.otherFullbacks.insert(&_rightFullback);
+	_leftFullback.otherFullbacks.insert(&_centerFullback);
 	_rightFullback.otherFullbacks.insert(&_leftFullback);
+	_rightFullback.otherFullbacks.insert(&_centerFullback);
+	_centerFullback.otherFullbacks.insert(&_rightFullback);
+	_centerFullback.otherFullbacks.insert(&_leftFullback);
 }
 
 float Gameplay::Plays::MightyMight::score ( Gameplay::GameplayModule* gameplay )
@@ -49,6 +54,9 @@ bool Gameplay::Plays::MightyMight::run()
 	assignNearest(_kicker1.robot, available, ball().pos);
 	assignNearest(_kicker2.robot, available, ball().pos);
 
+	// additional defense - if it exists
+	assignNearest(_centerFullback.robot, available, Geometry2d::Point());
+
 	// manually reset any kickers so they keep kicking
 	if (_kicker1.done())
 		_kicker1.restart();
@@ -69,6 +77,7 @@ bool Gameplay::Plays::MightyMight::run()
 	// run standard fullback behavior
 	if (_leftFullback.robot) _leftFullback.run();
 	if (_rightFullback.robot) _rightFullback.run();
+	if (_centerFullback.robot) _centerFullback.run();
 	
 	return true;
 }
