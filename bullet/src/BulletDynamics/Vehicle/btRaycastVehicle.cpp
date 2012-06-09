@@ -316,13 +316,13 @@ void btRaycastVehicle::updateVehicle( btScalar step )
 		}
 		btVector3 impulse = wheel.m_raycastInfo.m_contactNormalWS * suspensionForce * step;
 		btVector3 relpos = wheel.m_raycastInfo.m_contactPointWS - getRigidBody()->getCenterOfMassPosition();
-		
+
 		getRigidBody()->applyImpulse(impulse, relpos);
 	
 	}
 	
 
-	
+
 	updateFriction( step);
 
 	
@@ -347,7 +347,12 @@ void btRaycastVehicle::updateVehicle( btScalar step )
 			btScalar proj2 = fwd.dot(vel);
 			
 			wheel.m_deltaRotation = (proj2 * step) / (wheel.m_wheelsRadius);
-			wheel.m_rotation += wheel.m_deltaRotation;
+
+			//FIXME: unhack omni-wheel rotation
+			if(i==0 || i==3)
+				wheel.m_rotation -= wheel.m_deltaRotation;
+			if(i==1 || i==2)
+				wheel.m_rotation += wheel.m_deltaRotation;
 
 		} else
 		{
@@ -416,6 +421,7 @@ void	btRaycastVehicle::updateSuspension(btScalar deltaTime)
 	
 	for (int w_it=0; w_it<getNumWheels(); w_it++)
 	{
+
 		btWheelInfo &wheel_info = m_wheelInfo[w_it];
 		
 		if ( wheel_info.m_raycastInfo.m_isInContact )
@@ -520,9 +526,8 @@ btScalar calcRollingFriction(btWheelContactPoint& contactPoint)
 }
 
 
-
-
-btScalar sideFrictionStiffness2 = btScalar(1.0);
+//Allow omniwheels to slide sideways
+btScalar sideFrictionStiffness2 = btScalar(0.00);
 void	btRaycastVehicle::updateFriction(btScalar	timeStep)
 {
 
@@ -557,7 +562,7 @@ void	btRaycastVehicle::updateFriction(btScalar	timeStep)
 			{
 
 				btWheelInfo& wheelInfo = m_wheelInfo[i];
-					
+
 				class btRigidBody* groundObject = (class btRigidBody*) wheelInfo.m_raycastInfo.m_groundObject;
 
 				if (groundObject)
@@ -609,9 +614,13 @@ void	btRaycastVehicle::updateFriction(btScalar	timeStep)
 				if (wheelInfo.m_engineForce != 0.f)
 				{
 					rollingFriction = wheelInfo.m_engineForce* timeStep;
+
+					//TODO: cap maximum velocity
+
 				} else
 				{
-					btScalar defaultRollingFrictionImpulse = 0.f;
+					//FIXME: meaningful constants for rolling friction
+					btScalar defaultRollingFrictionImpulse = 100.f;
 					btScalar maxImpulse = wheelInfo.m_brake ? wheelInfo.m_brake : defaultRollingFrictionImpulse;
 					btWheelContactPoint contactPt(m_chassisBody,groundObject,wheelInfo.m_raycastInfo.m_contactPointWS,m_forwardWS[wheel],maxImpulse);
 					rollingFriction = calcRollingFriction(contactPt);
@@ -619,8 +628,6 @@ void	btRaycastVehicle::updateFriction(btScalar	timeStep)
 			}
 
 			//switch between active rolling (throttle), braking and non-active rolling friction (no throttle/break)
-			
-
 
 
 			m_forwardImpulse[wheel] = btScalar(0.);
@@ -685,7 +692,9 @@ void	btRaycastVehicle::updateFriction(btScalar	timeStep)
 
 				if (m_forwardImpulse[wheel] != btScalar(0.))
 				{
+
 					m_chassisBody->applyImpulse(m_forwardWS[wheel]*(m_forwardImpulse[wheel]),rel_pos);
+
 				}
 				if (m_sideImpulse[wheel] != btScalar(0.))
 				{
@@ -703,6 +712,7 @@ void	btRaycastVehicle::updateFriction(btScalar	timeStep)
 #else
 					rel_pos[m_indexUpAxis] *= wheelInfo.m_rollInfluence;
 #endif
+
 					m_chassisBody->applyImpulse(sideImp,rel_pos);
 
 					//apply friction impulse on the ground
@@ -711,7 +721,6 @@ void	btRaycastVehicle::updateFriction(btScalar	timeStep)
 			}
 		}
 
-	
 }
 
 

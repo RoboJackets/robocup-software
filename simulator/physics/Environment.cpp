@@ -30,20 +30,26 @@ static const QHostAddress MulticastAddress(SharedVisionAddress);
 
 const int Oversample = 1;
 
-Environment::Environment(const QString& configFile, bool sendShared_)
+Environment::Environment(const QString& configFile, bool sendShared_, SimEngine* engine)
 :	_dropFrame(false),
  	_configFile(configFile),
  	_frameNumber(0),
  	_stepCount(0),
+ 	_simEngine(engine),
  	sendShared(sendShared_),
  	ballVisibility(100)
 {
+	// NOTE: does not start simulation/thread until triggered
 	_field = new Field(this);
+	_field->initPhysics();
+	loadConfigFile(_configFile);
 }
 
-void Environment::init() {
-	loadConfigFile(_configFile);
+Environment::~Environment() {
+	delete _field;
+}
 
+void Environment::connectSockets() {
 	// Bind sockets
 	assert(_visionSocket.bind(SimCommandPort));
 	assert(_radioSocketYellow.bind(RadioTxPort));
@@ -53,6 +59,18 @@ void Environment::init() {
 
 	connect(&_timer, SIGNAL(timeout()), SLOT(step()));
 	_timer.start(16 / Oversample);
+}
+
+void Environment::preStep(float deltaTime){
+	BOOST_FOREACH(Robot *robot, _yellow)
+	{
+		robot->applyEngineForces(deltaTime);
+	}
+
+	BOOST_FOREACH(Robot *robot, _blue)
+	{
+		robot->applyEngineForces(deltaTime);
+	}
 }
 
 void Environment::step()
@@ -163,7 +181,7 @@ void Environment::handleSimCommand(const Packet::SimCommand& cmd) {
 			qreal angle = (blue) ? 90.f: -90.f;
 
 			// trigger signals
-			emit setRobotPose(blue, robot->shell, pos3, angle, axis);
+			//emit setRobotPose(blue, robot->shell, pos3, angle, axis);
 		}
 
 		float new_w = 0.0;
@@ -180,11 +198,10 @@ void Environment::handleSimCommand(const Packet::SimCommand& cmd) {
 		{
 			robot->velocity(rcmd.vel().x(), rcmd.vel().y(), new_w);
 		}
+	}
 
-		if (cmd.has_reset() && cmd.reset()) {
-			// TODO: reset the robots to their initial config
-			printf("Resetting to initial config - NOT IMPLEMENTED");
-		}
+	if (cmd.has_reset() && cmd.reset()) {
+		resetScene();
 	}
 }
 
@@ -271,6 +288,7 @@ void Environment::convert_robot(const Robot *robot, SSL_DetectionRobot *out)
 void Environment::addBall(Geometry2d::Point pos)
 {
 	Ball* b = new Ball(this);
+	b->initPhysics();
 	b->position(pos.x, pos.y);
 
 	_balls.append(b);
@@ -280,10 +298,11 @@ void Environment::addBall(Geometry2d::Point pos)
 
 void Environment::addRobot(bool blue, int id, const Geometry2d::Point& pos, Robot::RobotRevision rev)
 {
-	Robot* r = new Robot(this, id, rev, pos);
+	Robot* r =  new Robot(this, id, rev, pos);
+	printf("Add robot\n");
+	r->initPhysics(blue);
 
-	if (blue)
-	{
+	if (blue) {
 		_blue.insert(id, r);
 	} else {
 		_yellow.insert(id, r);
@@ -304,8 +323,8 @@ void Environment::addRobot(bool blue, int id, const Geometry2d::Point& pos, Robo
 	qreal angle = (blue) ? 90.f: -90.f;
 
 	// trigger signals
-	emit addNewRobot(blue, id);
-	emit setRobotPose(blue, id, pos3, angle, axis);
+	//emit addNewRobot(blue, id);
+	//emit setRobotPose(blue, id, pos3, angle, axis);
 }
 
 void Environment::removeRobot(bool blue, int id) {
@@ -371,7 +390,7 @@ Robot *Environment::robot(bool blue, int board_id) const
 
 	if (robots.contains(board_id))
 	{
-		return robots[board_id];
+		return robots.value(board_id,0);
 	} else {
 		return 0;
 	}
@@ -396,12 +415,23 @@ void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx)
 			QVector3D axis(0.0, 0.0, 1.0);
 			qreal angle = facing * RadiansToDegrees;
 
-			emit setRobotPose(blue, r->shell, pos3, angle, axis);
+			//emit setRobotPose(blue, r->shell, pos3, angle, axis);
 		} else {
 			printf("Commanding nonexistent robot %s:%d\n",
 					blue ? "Blue" : "Yellow",
 							cmd.robot_id());
 		}
+
+		Packet::RadioRx rx = r->radioRx();
+		rx.set_robot_id(r->shell);
+
+		// Send the RX packet
+		std::string out;
+		rx.SerializeToString(&out);
+		if(blue)
+			_radioSocketBlue.writeDatagram(&out[0], out.size(), LocalAddress, RadioRxPort + 1);
+		else
+			_radioSocketYellow.writeDatagram(&out[0], out.size(), LocalAddress, RadioRxPort);
 	}
 
 	// FIXME: the interface changed for this part
@@ -418,6 +448,36 @@ void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx)
 	//	}
 }
 
+void Environment::renderScene(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax) {
+	_field->renderField();
+	BOOST_FOREACH(Robot* r, _blue)
+	{
+		r->renderWheels(shapeDrawer, worldBoundsMin, worldBoundsMax);
+	}
+	BOOST_FOREACH(Robot* r, _yellow)
+	{
+		r->renderWheels(shapeDrawer, worldBoundsMin, worldBoundsMax);
+	}
+}
+
+void Environment::resetScene() {
+	BOOST_FOREACH(Robot* r, _blue)
+	{
+		r->resetScene();
+	}
+	BOOST_FOREACH(Robot* r, _yellow)
+	{
+		r->resetScene();
+	}
+	BOOST_FOREACH(Ball* b, _balls)
+	{
+		b->resetScene();
+	}
+}
+
+bool Environment::loadConfigFile(){
+	return loadConfigFile(_configFile);
+}
 
 bool Environment::loadConfigFile(const QString& filename) {
 	//load the config file

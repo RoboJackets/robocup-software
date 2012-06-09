@@ -2,29 +2,35 @@
 
 #include <map>
 
-#include <Physics/SimEngine.hpp>
+#include <QThread>
 
-class btVehicleTuning;
-struct btVehicleRaycaster;
-class btCollisionShape;
-class GL_ShapeDrawer;
+#include <boost/shared_ptr.hpp>
+
+#include <physics/SimEngine.hpp>
 
 class btCollisionShape;
 class btDynamicsWorld;
 
-class SimpleVehicle;
-class GroundSurface;
+class Robot;
 class GlutCamera;
 
-///VehicleDemo shows how to setup and use the built-in raycast vehicle
-class VehicleDemo {
+class Environment;
+
+/**
+ * Create a new thread to act as a wrapper for the simulation
+ */
+class SimulatorGLUTThread : public QThread {
+	Q_OBJECT;
+
 protected:
+	char ** _argv;
+	int _argc;
+
+	Environment* _env;
 
 	// Drivable vehicle
-	SimpleVehicle* _vehicle;
-
-	// Ground
-	GroundSurface* _ground;
+	Robot* _vehicle;
+	bool _blue;
 
 	// Dynamics/Collision Environment parts
 	SimEngine* _simEngine;
@@ -38,10 +44,21 @@ protected:
 	float _maxCameraDistance;
 
 public:
+	typedef boost::shared_ptr<SimulatorGLUTThread> shared_ptr;
 
-	VehicleDemo();
+	/** need to pass arguments through to glut */
+	SimulatorGLUTThread(int argc, char* argv[], const QString& configFile, bool sendShared);
 
-	~VehicleDemo();
+	~SimulatorGLUTThread();
+
+	/** access environment */
+	Environment* env() { return _env; }
+
+private:
+	// Re-implement the run function to start the process
+	void run();
+
+public:
 
 	btDynamicsWorld* getDynamicsWorld();
 
@@ -59,16 +76,21 @@ public:
 
 	void displayCallback();
 
-	/// a very basic camera following the vehicle
 	void updateCamera();
+
+	void nextVehicle();
+
+	void displayProfileString(int xOffset,int yStart,char* message);
+
+	void showVehicleInfo(int& xOffset,int& yStart, int yIncr);
 
 	void specialKeyboard(int key, int x, int y);
 
 	void specialKeyboardUp(int key, int x, int y);
 
-	void renderme();
+	void render();
 
-	void initPhysics();
+	void initialize(const QString& configFile, bool sendShared);
 
 	/// glut callbacks
 
@@ -81,5 +103,9 @@ public:
 
 	void addVehicle(btDynamicsWorld* m_dynamicsWorld,
 			btAlignedObjectArray<btCollisionShape*>& m_collisionShapes);
-};
+
+}; // \class SimulatorGLUTThread
+
+
+
 

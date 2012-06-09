@@ -17,6 +17,10 @@
 #include "Ball.hpp"
 #include "Robot.hpp"
 #include "Field.hpp"
+#include "FastTimer.hpp"
+#include "SimEngine.hpp"
+#include "GL_ShapeDrawer.h"
+
 
 class SSL_DetectionRobot;
 
@@ -32,16 +36,14 @@ private:
 	// Automatically cleared.
 	bool _dropFrame;
 
-	Field* _field;
-
 	RobotMap _blue;
 	RobotMap _yellow;
 	QVector<Ball*> _balls;
 
 	QString _configFile; //< filename for the config file
 
-	// This timer causes physics to be stepped on a regular basis
-	QTimer _timer;
+	// This timer causes environment to be stepped on a regular basis
+	FastTimer _timer;
 
 	QUdpSocket _visionSocket;   ///< Simulated vision - can also receive commands from soccer
 	QUdpSocket _radioSocketBlue, _radioSocketYellow; ///< Connections for robots
@@ -54,6 +56,10 @@ private:
 	// How many physics steps have run since the last vision packet was sent
 	int _stepCount;
 
+	SimEngine* _simEngine;
+
+	Field* _field;
+
 public:
 	// If true, send data to the shared vision multicast address.
 	// If false, send data to the two simulated vision addresses.
@@ -61,10 +67,12 @@ public:
 
 	int ballVisibility;
 
-	Environment(const QString& configFile, bool sendShared_);
+	Environment(const QString& configFile, bool sendShared_, SimEngine* engine);
 
-	/** initializes the timer, loads robots */
-	void init();
+	~Environment();
+
+	/** initializes the timer, connects sockets */
+	void connectSockets();
 
 	void dropFrame()
 	{
@@ -85,21 +93,40 @@ public:
 	/** removes a robot with id i from the environment */
 	void removeRobot(bool blue, int id);
 
+	/** gets a robot with id from the environment */
+	Robot *robot(bool blue, int board_id) const;
+
 signals:
 	// connect to visualization for rendering
 	void setRobotPose(bool blue, int id, const QVector3D& pos, qreal angle, const QVector3D& axis);
 	void addNewRobot(bool blue, int id);
 	void removeExistingRobot(bool blue, int id);
 
-protected slots:
+public:
+
+	//sets engine forces on robots before physics tick
+	void preStep(float deltaTime);
 
 	/**
-	 * Primary simulation step function - called by a timer at a fixed interval
+	 * Primary environment step function - called by a timer at a fixed interval
 	 */
+protected Q_SLOTS:
 	void step();
 
+public:
+
+	//render
+	void renderScene(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax);
+
+	void resetScene();
+
+	void setSimEngine(SimEngine* engine) { _simEngine = engine; }
+
+	SimEngine* getSimEngine() { return _simEngine; }
+
+	bool loadConfigFile();
+
 private:
-	Robot *robot(bool blue, int board_id) const;
 	static void convert_robot(const Robot *robot, SSL_DetectionRobot *out);
 	void handleRadioTx(bool blue, const Packet::RadioTx& data);
 

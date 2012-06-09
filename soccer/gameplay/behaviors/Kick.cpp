@@ -51,6 +51,7 @@ void Kick::restart() {
 	use_line_kick = false;
 	override_aim = false;
 	forceChip = false;
+	enableKick = true;
 	dribbler_speed = 127;
 	kick_power = 255;
 	chip_power = 255;

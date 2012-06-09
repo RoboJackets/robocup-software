@@ -73,6 +73,20 @@ CL_API_ENTRY cl_int CL_API_CALL clGetPlatformInfo(
 	}
 	switch(param_name)
 	{
+	case CL_PLATFORM_VERSION:
+		{
+			if(param_value_size < (strlen(spDriverVersion) + 1))
+			{
+				return CL_INVALID_VALUE; 
+			}
+			strcpy((char*)param_value, spDriverVersion);
+			if(param_value_size_ret != NULL)
+			{
+				*param_value_size_ret = strlen(spDriverVersion) + 1;
+			}
+			break;
+		}
+		case CL_PLATFORM_NAME:
 		case CL_PLATFORM_VENDOR	:
 			if(param_value_size < (strlen(spPlatformID) + 1))
 			{
@@ -632,7 +646,9 @@ extern CL_API_ENTRY cl_int CL_API_CALL clGetContextInfo(cl_context         /* co
 	return 0;
 }
 
-CL_API_ENTRY cl_context CL_API_CALL clCreateContextFromType(cl_context_properties * /* properties */,
+
+
+CL_API_ENTRY cl_context CL_API_CALL clCreateContextFromType(const cl_context_properties * /* properties */,
                         cl_device_type           device_type ,
                         void (*pfn_notify)(const char *, const void *, size_t, void *) /* pfn_notify */,
                         void *                  /* user_data */,
@@ -690,6 +706,28 @@ CL_API_ENTRY cl_context CL_API_CALL clCreateContextFromType(cl_context_propertie
 
 	*errcode_ret = 0;
 	return (cl_context)scheduler;
+}
+
+CL_API_ENTRY cl_int CL_API_CALL
+clGetDeviceIDs(cl_platform_id   /* platform */,
+               cl_device_type   /* device_type */, 
+               cl_uint          /* num_entries */, 
+               cl_device_id *   /* devices */, 
+               cl_uint *        /* num_devices */) CL_API_SUFFIX__VERSION_1_0
+{
+	return 0;
+}
+
+CL_API_ENTRY cl_context CL_API_CALL
+clCreateContext(const cl_context_properties *  properties ,
+                cl_uint                        num_devices ,
+                const cl_device_id *           devices ,
+                 void (*pfn_notify)(const char *, const void *, size_t, void *),
+                void *                         user_data ,
+                cl_int *                       errcode_ret ) CL_API_SUFFIX__VERSION_1_0
+{
+	
+	return	clCreateContextFromType(properties,CL_DEVICE_TYPE_ALL,pfn_notify,user_data,errcode_ret);
 }
 
 CL_API_ENTRY cl_int CL_API_CALL clReleaseContext(cl_context  context ) CL_API_SUFFIX__VERSION_1_0

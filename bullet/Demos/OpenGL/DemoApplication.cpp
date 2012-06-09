@@ -304,6 +304,7 @@ void DemoApplication::reshape(int w, int h)
 }
 
 
+
 void DemoApplication::keyboardCallback(unsigned char key, int x, int y)
 {
 	(void)x;
@@ -390,6 +391,12 @@ void DemoApplication::keyboardCallback(unsigned char key, int x, int y)
 			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_DisableBulletLCP);
 		else
 			m_debugMode |= btIDebugDraw::DBG_DisableBulletLCP;
+		break;
+    case 'N':
+		if (m_debugMode & btIDebugDraw::DBG_DrawNormals)
+			m_debugMode = m_debugMode & (~btIDebugDraw::DBG_DrawNormals);
+		else
+			m_debugMode |= btIDebugDraw::DBG_DrawNormals;
 		break;
 
 	case 't' : 
