@@ -27,7 +27,8 @@ Gameplay::Plays::TheirFreekick::TheirFreekick(GameplayModule *gameplay):
 	_fullback1(gameplay, Behaviors::Fullback::Left),
 	_fullback2(gameplay, Behaviors::Fullback::Right),
 	_marking1(gameplay),
-	_marking2(gameplay)
+	_marking2(gameplay),
+	_marking3(gameplay)
 {
 	_fullback1.otherFullbacks.insert(&_fullback2);
 	_fullback2.otherFullbacks.insert(&_fullback1);
@@ -36,6 +37,7 @@ Gameplay::Plays::TheirFreekick::TheirFreekick(GameplayModule *gameplay):
 	float r = 0.7;
 	_marking1.ratio(r);
 	_marking2.ratio(r);
+	_marking3.ratio(r);
 }
 
 float Gameplay::Plays::TheirFreekick::score ( Gameplay::GameplayModule* gameplay )
@@ -54,6 +56,7 @@ bool Gameplay::Plays::TheirFreekick::run()
 	//FIXME - How to choose?
 	assignNearest(_marking1.robot, available, Geometry2d::Point());
 	assignNearest(_marking2.robot, available, Geometry2d::Point());
+	assignNearest(_marking3.robot, available, Geometry2d::Point());
 	
 	if (!ball().valid)
 	{
@@ -114,6 +117,12 @@ bool Gameplay::Plays::TheirFreekick::run()
 			_marking2.robot->move(pos + (ballPos-pos).normalized() * (ballPos.distTo(pos) - Field_CenterRadius));
 			_marking2.robot->face(ballPos);
 		}
+		if (_marking3.robot)
+		{
+			Geometry2d::Point pos = _marking3.robot->pos;
+			_marking3.robot->move(pos + (ballPos-pos).normalized() * (ballPos.distTo(pos) - Field_CenterRadius));
+			_marking3.robot->face(ballPos);
+		}
 	} else if (open_opp.size() == 1) {
 		if (_marking1.robot)
 		{
@@ -126,6 +135,29 @@ bool Gameplay::Plays::TheirFreekick::run()
 			_marking2.robot->move(pos + (ballPos-pos).normalized() * (ballPos.distTo(pos) - Field_CenterRadius));
 			_marking2.robot->face(ballPos);
 		}
+		if (_marking3.robot)
+		{
+			Geometry2d::Point pos = _marking3.robot->pos;
+			_marking3.robot->move(pos + (ballPos-pos).normalized() * (ballPos.distTo(pos) - Field_CenterRadius));
+			_marking3.robot->face(ballPos);
+		}
+	} else if (open_opp.size() == 2) {
+		if (_marking1.robot)
+		{
+			_marking1.markRobot(open_opp.begin()->second);
+			_marking1.run();
+		}
+		if (_marking2.robot)
+		{
+			_marking2.markRobot((++open_opp.begin())->second);
+			_marking2.run();
+		}
+		if (_marking3.robot)
+		{
+			Geometry2d::Point pos = _marking3.robot->pos;
+			_marking3.robot->move(pos + (ballPos-pos).normalized() * (ballPos.distTo(pos) - Field_CenterRadius));
+			_marking3.robot->face(ballPos);
+		}
 	} else {
 		if (_marking1.robot)
 		{
@@ -137,6 +169,11 @@ bool Gameplay::Plays::TheirFreekick::run()
 			_marking2.markRobot((++open_opp.begin())->second);
 			_marking2.run();
 		}
+		if (_marking3.robot)
+		{
+			_marking3.markRobot((++(++open_opp.begin()))->second);
+			_marking3.run();
+		}
 	}
 
 	// adjust obstacles on markers
@@ -144,6 +181,13 @@ bool Gameplay::Plays::TheirFreekick::run()
 		unsigned m1 = _marking1.robot->shell(), m2 = _marking2.robot->shell();
 		_marking1.robot->avoidTeammateRadius(m2, 0.5);
 		_marking2.robot->avoidTeammateRadius(m1, 0.5);
+		if (_marking3.robot) {
+			unsigned m3 = _marking3.robot->shell();
+			_marking1.robot->avoidTeammateRadius(m3, 0.5);
+			_marking2.robot->avoidTeammateRadius(m3, 0.5);
+			_marking3.robot->avoidTeammateRadius(m1, 0.5);
+			_marking3.robot->avoidTeammateRadius(m2, 0.5);
+		}
 	}
 
 	// execute default fullback "wall" behavior

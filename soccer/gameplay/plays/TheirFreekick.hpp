@@ -21,9 +21,10 @@ namespace Gameplay
 			protected:
 				bool _assignedMark1;
 				bool _assignedMark2;
+				bool _assignedMark3;
 
 				Behaviors::Fullback _fullback1, _fullback2;
-				Behaviors::Mark _marking1, _marking2;
+				Behaviors::Mark _marking1, _marking2, _marking3;
 		};
 	}
 }
