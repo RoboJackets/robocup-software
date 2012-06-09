@@ -25,7 +25,7 @@ namespace Gameplay
 			protected:
 				bool _usingKicker1;
 
-				Behaviors::Fullback _leftFullback, _rightFullback;
+				Behaviors::Fullback _leftFullback, _rightFullback, _centerFullback;
 				Behaviors::Kick _kicker1, _kicker2;
 		};
 	}
