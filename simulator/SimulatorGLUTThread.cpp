@@ -205,7 +205,7 @@ void SimulatorGLUTThread::initialize(const QString& configFile, bool sendShared)
 	// Set up environment
 	_env = new Environment(configFile, sendShared, _simEngine);
 
-	_vehicle = _env->robot(false,0);
+	_vehicle = _env->yellow().begin().value();
 
 	// Set up the camera
 	_camera = new GlutCamera(_simEngine);
