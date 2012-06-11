@@ -221,6 +221,11 @@ void RobotBallController::syncMotionState(const btTransform& centerOfMassWorldTr
 }
 
 void RobotBallController::prepareKick(uint64_t power, bool chip){
+	if(!power){
+		_kick = power;
+		_chip = false;
+		_kickSpeed = 0;
+	}
 	if ((timestamp() - _lastKicked) > RechargeTime && chargerWorks)
 	{
 		_kick = power;
