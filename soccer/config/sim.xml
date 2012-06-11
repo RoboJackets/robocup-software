@@ -5,8 +5,8 @@
    <b value="-2.7"/>
   </kicker>
   <trapTrans>
-   <velocity value="10"/>
-   <acceleration value="2.5"/>
+   <velocity value="2"/>
+   <acceleration value="1.0"/>
    <deceleration value="0"/>
    <predictTime value="0"/>
    <responseTime value="0"/>
@@ -19,9 +19,9 @@
    <responseTime value="0"/>
   </trapRot>
   <translation>
-   <p value="5"/>
+   <p value="2"/>
    <i value="0"/>
-   <d value="30"/>
+   <d value="0"/>
   </translation>
   <rotation>
    <p value="2"/>
@@ -62,8 +62,8 @@
  </rbpfModelBallKicked>
  <Rev2011>
   <trapTrans>
-   <velocity value="10"/>
-   <acceleration value="2.5"/>
+   <velocity value="2"/>
+   <acceleration value="1.0"/>
    <deceleration value="0"/>
    <predictTime value="0"/>
    <responseTime value="0"/>
@@ -76,12 +76,12 @@
    <responseTime value="0"/>
   </trapRot>
   <translation>
-   <p value="5"/>
+   <p value="2"/>
    <i value="0"/>
    <d value="0"/>
   </translation>
   <rotation>
-   <p value="1"/>
+   <p value="2"/>
    <i value="0"/>
    <d value="0"/>
   </rotation>
