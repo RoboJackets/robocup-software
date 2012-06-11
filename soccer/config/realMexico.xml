@@ -1,114 +1,14 @@
 <config>
- <Rev2008>
-  <kicker>
-   <m value="71.17"/>
-   <b value="-2.7"/>
-  </kicker>
-  <trapTrans>
-   <velocity value="10"/>
-   <acceleration value="2.5"/>
-   <deceleration value="0"/>
-   <predictTime value="0"/>
-   <responseTime value="0"/>
-  </trapTrans>
-  <trapRot>
-   <velocity value="0"/>
-   <acceleration value="0"/>
-   <deceleration value="0"/>
-   <predictTime value="0"/>
-   <responseTime value="0"/>
-  </trapRot>
-  <translation>
-   <p value="5"/>
-   <i value="0"/>
-   <d value="30"/>
-  </translation>
-  <rotation>
-   <p value="2"/>
-   <i value="0"/>
-   <d value="0"/>
-  </rotation>
-  <wheel>
-   <p value="1"/>
-   <i value="1.5"/>
-   <d value="0"/>
-  </wheel>
-  <wheelAlpha value="0.1"/>
-  <test value="1"/>
- </Rev2008>
- <RobotModel>
-  <Position>
-   <Alpha value="1"/>
-   <Beta value="0.1"/>
-   <Gamma value="0"/>
-  </Position>
-  <Angle>
-   <Alpha value="1"/>
-   <Beta value="0.3"/>
-   <Gamma value="0"/>
-  </Angle>
- </RobotModel>
- <rbpfModelBallRolling>
-  <Process_Noise_Position value="0.05"/>
-  <Process_Noise_Velocity value="1"/>
-  <Process_Noise_Acceleration value="1"/>
-  <Measurement_Noise_Position value="0.01"/>
- </rbpfModelBallRolling>
- <rbpfModelBallKicked>
-  <Process_Noise_Position value="0.2"/>
-  <Process_Noise_Velocity value="1"/>
-  <Process_Noise_Acceleration value="10"/>
-  <Measurement_Noise_Position value="0.01"/>
- </rbpfModelBallKicked>
- <Rev2011>
-  <trapTrans>
-   <velocity value="10"/>
-   <acceleration value="2.5"/>
-   <deceleration value="0"/>
-   <predictTime value="0"/>
-   <responseTime value="0"/>
-  </trapTrans>
-  <trapRot>
-   <velocity value="0"/>
-   <acceleration value="0"/>
-   <deceleration value="0"/>
-   <predictTime value="0"/>
-   <responseTime value="0"/>
-  </trapRot>
-  <translation>
-   <p value="5"/>
-   <i value="0"/>
-   <d value="0"/>
-  </translation>
-  <rotation>
-   <p value="1"/>
-   <i value="0"/>
-   <d value="0"/>
-  </rotation>
-  <kicker>
-   <m value="1"/>
-   <b value="0"/>
-  </kicker>
-  <wheel>
-   <p value="0"/>
-   <i value="0"/>
-   <d value="0"/>
-  </wheel>
-  <wheelAlpha value="1"/>
-  <test value="0"/>
- </Rev2011>
- <Capture>
-  <Ball_Speed_Threshold value="0.5"/>
-  <Approach_Distance value="0.1"/>
-  <Approach_Clearance value="0.05"/>
-  <Approach_Threshold value="0.13"/>
-  <Capture_Speed value="0.3"/>
-  <Capture_Time_Threshold value="300000"/>
-  <Capture_Decel value="0.8"/>
-  <Has_Ball_Distance value="0.1"/>
+ <Fling>
+  <Spin_Angular_Speed value="2"/>
+  <Ball_Travel_Threshold value="0.5"/>
   <Pivot_Speed value="1.5708"/>
-  <Dribbler_Speed value="127"/>
- </Capture>
+ </Fling>
+ <DemoYankChip>
+  <Backup_Distance value="0.4"/>
+  <Dribber_Speed value="127"/>
+  <Enable_Aiming value="true"/>
+ </DemoYankChip>
  <PivotKick>
   <Aim_Speed value="1.5708"/>
   <Kick_Completed_Threshold value="0.5"/>
@@ -116,32 +16,6 @@
   <Accuracy_Delta value="0"/>
   <Fire_Now_Threshold value="0.99863"/>
  </PivotKick>
- <Fling>
-  <Ball_Travel_Threshold value="0.5"/>
-  <Pivot_Speed value="1.5708"/>
-  <Spin_Angular_Speed value="2"/>
- </Fling>
- <DemoFling>
-  <Dribber_Speed value="127"/>
- </DemoFling>
- <DemoAttack>
-  <Enable_Chipping value="false"/>
-  <Dribber_Speed value="127"/>
-  <Kicker_Power value="127"/>
-  <Minimum_Chip_Range value="0.4"/>
-  <Maximum_Chip_Range value="2.5"/>
- </DemoAttack>
- <Yank>
-  <Ball_Travel_Threshold value="0.5"/>
-  <Ball_Max_Trajectory_Error value="0.3"/>
-  <Backup_Distance value="0.5"/>
-  <Ball_Clearance value="0.2115"/>
-  <Bump_Travel_Distance value="0.3"/>
- </Yank>
- <DemoYank>
-  <Dribber_Speed value="127"/>
-  <Enable_Bump value="false"/>
- </DemoYank>
  <YankChip>
   <Ball_Travel_Threshold value="0.5"/>
   <Ball_Max_Trajectory_Error value="0.3"/>
@@ -149,17 +23,128 @@
   <Min_Ball_Velocity value="0.2"/>
   <Max_Yank_Dist value="0.2"/>
  </YankChip>
- <DemoYankChip>
+ <Yank>
+  <Ball_Travel_Threshold value="0.5"/>
+  <Ball_Max_Trajectory_Error value="0.3"/>
+  <Backup_Distance value="0.5"/>
+  <Ball_Clearance value="0.2115"/>
+  <Bump_Travel_Distance value="0.3"/>
+ </Yank>
+ <Capture>
+  <Ball_Speed_Threshold value="0.5"/>
+  <Approach_Distance value="0.1"/>
+  <Approach_Clearance value="0.05"/>
+  <Approach_Threshold value="0.19"/>
+  <Capture_Speed value="0.3"/>
+  <Capture_Time_Threshold value="50000"/>
+  <Capture_Decel value="0.8"/>
+  <Has_Ball_Distance value="0.1"/>
+  <Pivot_Speed value="1.5708"/>
+  <Dribbler_Speed value="105"/>
+ </Capture>
+ <Rev2008>
+  <trapTrans>
+   <velocity value="2"/>
+   <acceleration value="0.5"/>
+   <predictTime value="0"/>
+   <responseTime value="0.2"/>
+  </trapTrans>
+  <trapRot>
+   <velocity value="0"/>
+   <acceleration value="0"/>
+   <predictTime value="0"/>
+   <responseTime value="0"/>
+  </trapRot>
+  <translation>
+   <p value="2"/>
+   <i value="0"/>
+   <d value="0"/>
+  </translation>
+  <rotation>
+   <p value="2"/>
+   <i value="0"/>
+   <d value="0"/>
+  </rotation>
+  <wheel>
+   <p value="0"/>
+   <i value="0"/>
+   <d value="0"/>
+  </wheel>
+  <kicker>
+   <m value="1"/>
+   <b value="0"/>
+  </kicker>
+ </Rev2008>
+ <Rev2011>
+  <trapTrans>
+   <velocity value="2"/>
+   <acceleration value="0.5"/>
+   <predictTime value="0"/>
+   <responseTime value="0.2"/>
+  </trapTrans>
+  <trapRot>
+   <velocity value="0"/>
+   <acceleration value="0"/>
+   <predictTime value="0"/>
+   <responseTime value="0"/>
+  </trapRot>
+  <translation>
+   <p value="2"/>
+   <i value="0"/>
+   <d value="0"/>
+  </translation>
+  <rotation>
+   <p value="2"/>
+   <i value="0"/>
+   <d value="0"/>
+  </rotation>
+  <wheel>
+   <p value="0"/>
+   <i value="0"/>
+   <d value="0"/>
+  </wheel>
+  <kicker>
+   <m value="1"/>
+   <b value="0"/>
+  </kicker>
+ </Rev2011>
+ <DemoFling>
   <Dribber_Speed value="127"/>
-  <Backup_Distance value="0.4"/>
-  <Enable_Aiming value="true"/>
- </DemoYankChip>
- <LineKick>
-  <Drive_Around_Dist value="0.25"/>
-  <Charge_Thresh value="0.1"/>
+ </DemoFling>
+ <DemoYank>
+  <Dribber_Speed value="127"/>
+  <Enable_Bump value="false"/>
+ </DemoYank>
+ <DemoAttack>
+  <Enable_Chipping value="true"/>
+  <Dribber_Speed value="127"/>
+  <Kicker_Power value="127"/>
+  <Minimum_Chip_Range value="0.4"/>
+  <Maximum_Chip_Range value="2.5"/>
+  <Enable_LineKick value="true"/>
+  <Calculate_Chip_Power value="true"/>
+ </DemoAttack>
+ <Bump>
+  <Drive_Around_Dist value="0.35"/>
+  <Charge_Thresh value="0.05"/>
   <Escape_Charge_Thresh value="0.1"/>
   <Setup_Ball_Avoid value="0.043"/>
+  <Bump_Complete_Distance value="0.5"/>
   <Face_Ball_otherwise_target value="true"/>
+  <Accel_Bias value="0.1"/>
+  <Facing_Thresh_-_Deg value="10"/>
+ </Bump>
+ <LineKick>
+  <Drive_Around_Dist value="0.15"/>
+  <Charge_Thresh value="0.1"/>
+  <Escape_Charge_Thresh value="0.1"/>
+  <Setup_Ball_Avoid value="0.08"/>
+  <Face_Ball_otherwise_target value="true"/>
+  <Accel_Bias value="0.2"/>
+  <Facing_Thresh_-_Deg value="10"/>
+  <Max_Charge_Speed value="2"/>
+  <Ball_Project_Time value="0.3"/>
+  <Ball_Project_Dampening value="0.8"/>
  </LineKick>
  <Kickoff>
   <Enable_Random_Kick_Mode value="false"/>
@@ -186,6 +171,7 @@
   <Support_Avoid_Shot value="0.2"/>
   <Offense_Support_Ratio value="0.7"/>
   <Defense_Support_Ratio value="0.9"/>
+  <Enable_Line_Kick value="true"/>
  </BasicOffense112>
  <OurFreekick>
   <Enable_GoalLine_Shot value="true"/>
@@ -227,8 +213,8 @@
    <Dribbler_Enabled value="true"/>
   </Robot_4>
   <Robot_5>
-   <Chipper_Enabled value="true"/>
-   <Kicker_Enabled value="true"/>
+   <Chipper_Enabled value="false"/>
+   <Kicker_Enabled value="false"/>
    <Ball_Sense_Enabled value="true"/>
    <Dribbler_Enabled value="true"/>
   </Robot_5>
@@ -293,15 +279,6 @@
    <Dribbler_Enabled value="true"/>
   </Robot_15>
  </Robot_Statuses>
- <Bump>
-  <Drive_Around_Dist value="0.25"/>
-  <Face_Ball_otherwise_target value="true"/>
-  <Charge_Thresh value="0.08"/>
-  <Escape_Charge_Thresh value="0.15"/>
-  <Setup_Ball_Avoid value="0.3"/>
-  <Bump_Complete_Distance value="0.5"/>
-  <Accel_Bias value="0.1"/>
- </Bump>
  <YankOpen>
   <Hystersis_Coeff value="0.5"/>
   <Support_Backoff_Dist value="1.5"/>
@@ -312,4 +289,41 @@
   <Defense_Support_Ratio value="0.9"/>
   <Use_Yank value="false"/>
  </YankOpen>
+ <DynamicNavigationTC>
+  <Opponent_Avoid_Radius value="0.5"/>
+  <Goal_X value="0.7"/>
+  <Goal_Y value="0.7"/>
+  <Center_X value="0.15"/>
+ </DynamicNavigationTC>
+ <DemoLineAttack>
+  <Enable_Chipping value="false"/>
+  <Kicker_Power value="127"/>
+ </DemoLineAttack>
+ <EmptyGoal>
+  <Scale_Speed value="0.5"/>
+  <Scale_Accel value="0.5"/>
+  <Scale_W value="0.3"/>
+ </EmptyGoal>
+ <OurCornerKick>
+  <Chipper_Power value="127"/>
+  <Window_Width value="1.5125"/>
+  <Min_Chip_Range value="0.3"/>
+  <Max_Chip_Range value="3"/>
+ </OurCornerKick>
+ <OurGoalKick>
+  <Chipper_Power value="255"/>
+  <Downfield_Range value="3.025"/>
+  <Min_Chip_Range value="0.3"/>
+  <Max_Chip_Range value="3"/>
+ </OurGoalKick>
+ <Kick>
+  <Chip_Min_Range value="0.3"/>
+  <Chip_Max_Range value="3.5"/>
+  <Chip_Min_Power value="150"/>
+  <Chip_Max_Power value="255"/>
+ </Kick>
+ <OurKickoff>
+  <Kick_Power value="127"/>
+  <Chip_Power value="100"/>
+ </OurKickoff>
 </config>
