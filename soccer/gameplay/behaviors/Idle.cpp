@@ -46,6 +46,8 @@ bool Gameplay::Behaviors::Idle::run()
 			
 			// Avoid the ball even on our restart
 			r->avoidBall(Field_CenterRadius);
+			// Don't leave gaps
+			r->avoidAllTeammates(true);
 		}
 		
 		// Move to the next robot's position
