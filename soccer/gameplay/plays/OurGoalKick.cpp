@@ -32,7 +32,8 @@ void Gameplay::Plays::OurGoalKick::createConfiguration(Configuration *cfg)
 Gameplay::Plays::OurGoalKick::OurGoalKick(GameplayModule *gameplay):
 	Play(gameplay),
 	_kicker(gameplay),
-	_center(gameplay),
+	_center1(gameplay),
+	_center2(gameplay),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
 	_fullback2(gameplay, Behaviors::Fullback::Right),
 	_pdt(gameplay, &_kicker)
@@ -61,13 +62,14 @@ bool Gameplay::Plays::OurGoalKick::run()
 {
 	set<OurRobot *> available = _gameplay->playRobots();
 	
-	// pick the chip kicker - want to chip most of the time
+	// pick the chip kicker - will only chip, otherwise OurGoalKick will not run, see score()
 	if (!assignNearestChipper(_kicker.robot, available, ball().pos))
 	{
 		return false;
 	}
 
-	assignNearest(_center.robot, available, _center.target);
+	assignNearest(_center1.robot, available, _center1.target);
+	assignNearest(_center2.robot, available, _center2.target);
 
 	// choose a target for the kick
 	// if straight shot on goal is available, take it
@@ -85,8 +87,12 @@ bool Gameplay::Plays::OurGoalKick::run()
 		shot_obs.vertices.push_back(target.pt[0]);
 		shot_obs.vertices.push_back(target.pt[1]);
 		shot_obs.vertices.push_back(ball().pos);
-		_center.robot->localObstacles(ObstaclePtr(new PolygonObstacle(shot_obs)));
-		_center.target = Point(0.0, 1.5);
+		if(_center1.robot)
+			_center1.robot->localObstacles(ObstaclePtr(new PolygonObstacle(shot_obs)));
+		if(_center2.robot)
+			_center2.robot->localObstacles(ObstaclePtr(new PolygonObstacle(shot_obs)));
+		_center1.target = Point(0.0, 1.5);
+		_center2.target = Point(1.0, 1.5);
 	} else
 	{
 		// normal case: chip towards opposite (left/right) side
@@ -105,7 +111,8 @@ bool Gameplay::Plays::OurGoalKick::run()
 
 		// drive the center for a pass
 		double center_x_coord = (ball().pos.x < 0) ? 1.0 : -1.0;
-		_center.target = Point(center_x_coord, *_downFieldRange - Robot_Radius);
+		_center1.target = Point(center_x_coord, *_downFieldRange - Robot_Radius);
+		_center2.target = Point(center_x_coord, *_downFieldRange*3.0/2.0+Field_Length/2.0 - Robot_Radius);
 		_kicker.use_chipper = true;
 	}
 
@@ -121,7 +128,8 @@ bool Gameplay::Plays::OurGoalKick::run()
 	assignNearest(_fullback2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
 	
 	_pdt.run();
-	_center.run();
+	_center1.run();
+	_center2.run();
 	_fullback1.run();
 	_fullback2.run();
 	
