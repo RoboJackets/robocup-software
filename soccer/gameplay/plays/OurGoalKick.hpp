@@ -31,7 +31,8 @@ namespace Gameplay
 			protected:
 				// always takes a chipper - will shoot if open shots
 				Behaviors::Kick _kicker;
-				Behaviors::Move _center;
+				Behaviors::Move _center1;
+				Behaviors::Move _center2;
 				Behaviors::Fullback _fullback1, _fullback2;
 				PreventDoubleTouch _pdt;
 
