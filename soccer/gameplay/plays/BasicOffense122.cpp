@@ -203,7 +203,7 @@ bool Gameplay::Plays::BasicOffense122::run()
 			shot_obs.vertices.push_back(ballProj);
 			if(_support1.robot)
 				_support1.robot->localObstacles(ObstaclePtr(new PolygonObstacle(shot_obs)));
-			if(_support1.robot)
+			if(_support2.robot)
 				_support2.robot->localObstacles(ObstaclePtr(new PolygonObstacle(shot_obs)));
 		}
 	}
