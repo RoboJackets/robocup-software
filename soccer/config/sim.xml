@@ -178,7 +178,7 @@
   <Offense_Support_Ratio value="0.7"/>
   <Defense_Support_Ratio value="0.9"/>
  </BasicOffense121>
- <BasicOffense112>
+ <BasicOffense122>
   <Hystersis_Coeff value="0.5"/>
   <Support_Backoff_Dist value="1.5"/>
   <Mark_Hystersis_Coeff value="0.9"/>
@@ -186,7 +186,7 @@
   <Support_Avoid_Shot value="0.2"/>
   <Offense_Support_Ratio value="0.7"/>
   <Defense_Support_Ratio value="0.9"/>
- </BasicOffense112>
+ </BasicOffense122>
  <OurFreekick>
   <Enable_GoalLine_Shot value="true"/>
   <Enable_Left_Downfield_Shot value="true"/>
