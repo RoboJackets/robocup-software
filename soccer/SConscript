@@ -52,7 +52,7 @@ srcs = [
 	
 	# Open gameplay plays
 	'gameplay/plays/MightyMight.cpp',
-	'gameplay/plays/BasicOffense112.cpp',
+	'gameplay/plays/BasicOffense122.cpp',
 	'gameplay/plays/BasicOffense121.cpp',
 	'gameplay/plays/OpenField221.cpp',
 	'gameplay/plays/YankOpen.cpp',
