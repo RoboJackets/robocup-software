@@ -32,7 +32,8 @@ void Gameplay::Plays::OurCornerKick::createConfiguration(Configuration *cfg)
 Gameplay::Plays::OurCornerKick::OurCornerKick(GameplayModule *gameplay):
 	Play(gameplay),
 	_kicker(gameplay),
-	_center(gameplay),
+	_center1(gameplay),
+	_center2(gameplay),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
 	_fullback2(gameplay, Behaviors::Fullback::Right),
 	_pdt(gameplay, &_kicker)
@@ -40,7 +41,7 @@ Gameplay::Plays::OurCornerKick::OurCornerKick(GameplayModule *gameplay):
 	_fullback2.otherFullbacks.insert(&_fullback1);
 	_fullback1.otherFullbacks.insert(&_fullback2);
 
-	_center.target = Point(0.0, Field_Length /2.0);
+	_center1.target = Point(0.0, Field_Length /2.0);
 }
 
 float Gameplay::Plays::OurCornerKick::score ( Gameplay::GameplayModule* gameplay )
@@ -69,22 +70,27 @@ bool Gameplay::Plays::OurCornerKick::run()
 		return false;
 	}
 
-	assignNearest(_center.robot, available, Point(0.0, Field_Length));
+	assignNearest(_center1.robot, available, Point(-0.5, Field_Length));
+	assignNearest(_center2.robot, available, Point(0.5, Field_Length));
 
 	// choose a target for the kick
 	// if straight shot on goal is available, take it
 	float goal_x = (ball().pos.x < 0) ? Field_GoalWidth / 2.0 : -Field_GoalWidth / 2.0;
 	Segment target(Point(goal_x, Field_Length), Point(goal_x, Field_Length - *_targetSegmentWidth));
 
-	// camp other robot to receive "pass"
-	_center.target.x = (ball().pos.x < 0) ? Field_GoalWidth / 2.0 + 0.5 : -(Field_GoalWidth / 2.0 + 0.5);
-	_center.target.y = Field_Length - *_targetSegmentWidth / 2.0;
+	// camp first robot to receive "pass"
+	_center1.target.x = -(Field_GoalWidth / 2.0 + 0.5);
+	_center1.target.y = Field_Length - *_targetSegmentWidth / 2.0;
+
+	// camp second side for TODO: short "pass"
+	_center2.target.x = Field_GoalWidth / 2.0 + 0.5;
+	_center2.target.y = Field_Length - *_targetSegmentWidth / 2.0;
 
 	// setup kicker from parameters - want to use chipper when possible
 	_kicker.setTarget(target);
 	_kicker.use_chipper = true;
 	_kicker.use_line_kick = true;
-	_kicker.calculateChipPower(_center.target.distTo(ball().pos));
+	_kicker.calculateChipPower(_center1.target.distTo(ball().pos));
 	_kicker.kick_power = *_chipper_power;
 	_kicker.minChipRange = *_minChipRange;
 	_kicker.maxChipRange = *_maxChipRange;
@@ -95,7 +101,8 @@ bool Gameplay::Plays::OurCornerKick::run()
 	assignNearest(_fullback2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
 	
 	_pdt.run();
-	_center.run();
+	_center1.run();
+	_center2.run();
 	_fullback1.run();
 	_fullback2.run();
 	
