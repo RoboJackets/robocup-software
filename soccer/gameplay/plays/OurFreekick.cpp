@@ -19,6 +19,7 @@ ConfigBool *Gameplay::Plays::OurFreekick::_enableRightDownfieldShot;
 ConfigBool *Gameplay::Plays::OurFreekick::_enableChipper;
 ConfigDouble *Gameplay::Plays::OurFreekick::_minChipRange;
 ConfigDouble *Gameplay::Plays::OurFreekick::_maxChipRange;
+ConfigDouble *Gameplay::Plays::OurFreekick::_avoidShot;
 
 void Gameplay::Plays::OurFreekick::createConfiguration(Configuration *cfg)
 {
@@ -28,18 +29,21 @@ void Gameplay::Plays::OurFreekick::createConfiguration(Configuration *cfg)
 	_enableChipper = new ConfigBool(cfg, "OurFreekick/Enable Chipper", true);
 	_minChipRange = new ConfigDouble(cfg, "OurFreekick/Min Chip Range", 0.3);
 	_maxChipRange = new ConfigDouble(cfg, "OurFreekick/Max Chip Range", 2.0);
+	_avoidShot = new ConfigDouble(cfg, "OurFreekick/Avoid Shot", 0.3);
 }
 
 Gameplay::Plays::OurFreekick::OurFreekick(GameplayModule *gameplay):
 	Play(gameplay),
 	_kicker(gameplay),
 	_bump(gameplay),
-	_center(gameplay),
+	_center1(gameplay),
+	_center2(gameplay),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
 	_fullback2(gameplay, Behaviors::Fullback::Right),
 	_pdt(gameplay, &_kicker)
 {
-	_center.target = _gameplay->centerMatrix() * Geometry2d::Point(0, 1.5);
+	_center1.target = _gameplay->centerMatrix() * Geometry2d::Point(0, 1.5);
+	_center2.target = _gameplay->centerMatrix() * Geometry2d::Point(1, 1.5);
 	_bump.target = Geometry2d::Point(0.0, Field_Length);
 
 	_fullback2.otherFullbacks.insert(&_fullback1);
@@ -86,10 +90,23 @@ bool Gameplay::Plays::OurFreekick::run()
 
 	_pdt.backoff.robots.clear();
 	_pdt.backoff.robots.insert(_kicker.robot);
-	assignNearest(_center.robot, available, _center.target);
+	assignNearest(_center1.robot, available, _center1.target);
+	assignNearest(_center2.robot, available, _center2.target);
 	assignNearest(_fullback1.robot, available, Geometry2d::Point(-Field_GoalHeight/2.0, 0.0));
 	assignNearest(_fullback2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
-	
+
+	// get out of ways of shots
+	if (_kicker.robot->pos.nearPoint(ball().pos, *_avoidShot)) {
+		Polygon shot_obs;
+		shot_obs.vertices.push_back(Geometry2d::Point(Field_GoalWidth / 2, Field_Length));
+		shot_obs.vertices.push_back(Geometry2d::Point(-Field_GoalWidth / 2, Field_Length));
+		shot_obs.vertices.push_back(ball().pos);
+		if(_center1.robot)
+			_center1.robot->localObstacles(ObstaclePtr(new PolygonObstacle(shot_obs)));
+		if(_center2.robot)
+			_center2.robot->localObstacles(ObstaclePtr(new PolygonObstacle(shot_obs)));
+	}
+
 	if (!chipper_available && !kicker_available && _bump.robot)
 	{
 		_pdt.resetBehavior(&_bump);
@@ -99,7 +116,8 @@ bool Gameplay::Plays::OurFreekick::run()
 	}
 
 	_pdt.run();
-	_center.run();
+	_center1.run();
+	_center2.run();
 	_fullback1.run();
 	_fullback2.run();
 	
