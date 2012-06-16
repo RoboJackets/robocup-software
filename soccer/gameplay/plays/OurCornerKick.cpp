@@ -79,11 +79,11 @@ bool Gameplay::Plays::OurCornerKick::run()
 	Segment target(Point(goal_x, Field_Length), Point(goal_x, Field_Length - *_targetSegmentWidth));
 
 	// camp first robot to receive "pass"
-	_center1.target.x = -(Field_GoalWidth / 2.0 + 0.5);
+	_center1.target.x = (ball().pos.x < 0) ? Field_GoalWidth / 2.0 + 0.5 : -(Field_GoalWidth / 2.0 + 0.5);
 	_center1.target.y = Field_Length - *_targetSegmentWidth / 2.0;
 
 	// camp second side for TODO: short "pass"
-	_center2.target.x = Field_GoalWidth / 2.0 + 0.5;
+	_center2.target.x = (ball().pos.x < 0) ? -(Field_GoalWidth / 2.0 + 0.5) : Field_GoalWidth / 2.0 + 0.5 ;
 	_center2.target.y = Field_Length - *_targetSegmentWidth / 2.0;
 
 	// setup kicker from parameters - want to use chipper when possible
