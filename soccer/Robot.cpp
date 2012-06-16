@@ -462,6 +462,18 @@ Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 		if (path.empty())
 			return pose;
 
+		// find closest point on path to pose
+		float max = path.points[0].distTo(pose);
+		int ip = 0;
+		for (unsigned i=0; i<path.points.size(); i++) {
+			if (path.points[i].distTo(pose) < max) {
+				max = path.points[i].distTo(pose);
+				ip = i;
+			}
+		}
+
+		if (blend_verbose) addText(QString("cur pt %1=(%2,%3)").arg(ip).arg(path.points[ip].x).arg(path.points[ip].y));
+
 		// go to nearest point if only point or closest point is the goal
 		if (path.size() == 1) {
 			if (blend_verbose) addText(QString("blend:simple_path"));
@@ -474,17 +486,34 @@ Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 			return path.points[1];
 		}
 
-		// FIXME: this doesn't work well - gets stuck in some places
+		// FIXME: does not blend the last segment
 		// All other cases: proportionally blend the next two points together for a smoother
 		// path, so long as it is still viable
 
 		if (blend_verbose) addText(QString("blend:segments=%1").arg(path.points.size()-1));
 
 		// pull out relevant points
-		Point p0 = pos,
-				  p1 = path.points[1],
-				  p2 = path.points[2];
+		Point p0 = pos;
+		Point p1;
+		Point p2;
+
+		if (path.size() > ip+2) {
+			p1 = path.points[ip+1];
+			p2 = path.points[ip+2];
+		} else if (path.size() > ip+1) {
+			p1 = path.points[ip];
+			p2 = path.points[ip+1];
+		} else {
+			p1 = path.points[ip-1];
+			p2 = path.points[ip];
+		}
+
 		Geometry2d::Segment target_seg(p1, p2);
+
+		if (blend_verbose) addText(QString("pos=(%1,%2)").arg(pos.x,5).arg(pos.y,5));
+		if (blend_verbose) addText(QString("path[0]=(%1,%2)").arg(path.points[0].x).arg(path.points[0].y));
+		if (blend_verbose) addText(QString("p1=(%1,%2)").arg(p1.x,5).arg(p1.y,5));
+		if (blend_verbose) addText(QString("p2=(%1,%2)").arg(p2.x,5).arg(p2.y,5));
 
 		// final endpoint handling
 		if (target_seg.nearPointPerp(p0, 0.02) && p0.nearPoint(p2, 0.03)) {
@@ -494,9 +523,10 @@ Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 			} else {
 				// reset this segment to next one
 				if (blend_verbose) addText(QString("blend:reset_segment"));
-			  p1 = path.points[2],
-			  p2 = path.points[1];
-			  target_seg = Geometry2d::Segment(p1, p2);
+				Point temp(p1);
+				p1 = p2;
+				p2 = temp;
+				target_seg = Geometry2d::Segment(p1, p2);
 			}
 		}
 
