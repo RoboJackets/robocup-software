@@ -29,7 +29,7 @@ namespace Gameplay
 				Behaviors::Kick _kicker;
 				Behaviors::Bump _bump;
 
-				Behaviors::Move _center;
+				Behaviors::Move _center1, _center2;
 				Behaviors::Fullback _fullback1, _fullback2;
 				PreventDoubleTouch _pdt;
 
@@ -39,6 +39,7 @@ namespace Gameplay
 				static ConfigBool *_enableChipper;
 				static ConfigDouble *_minChipRange;
 				static ConfigDouble *_maxChipRange;
+				static ConfigDouble *_avoidShot;
 		};
 	}
 }
