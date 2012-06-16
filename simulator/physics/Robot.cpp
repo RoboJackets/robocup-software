@@ -290,6 +290,7 @@ void Robot::applyEngineForces() {
 
 void Robot::applyEngineForces(float deltaTime) {
 
+	// use this for finite acceleration, i.e. non-instantaneous
 #define USE_ENGINE 1
 #ifdef USE_ENGINE
 	if(_targetVel.length() < SIMD_EPSILON && _targetRot == 0){

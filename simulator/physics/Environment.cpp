@@ -299,7 +299,6 @@ void Environment::addBall(Geometry2d::Point pos)
 void Environment::addRobot(bool blue, int id, const Geometry2d::Point& pos, Robot::RobotRevision rev)
 {
 	Robot* r =  new Robot(this, id, rev, pos);
-	printf("Add robot\n");
 	r->initPhysics(blue);
 
 	if (blue) {

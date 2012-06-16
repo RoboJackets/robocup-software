@@ -155,6 +155,8 @@ void SimulatorGLUTThread::keyboardCallback(unsigned char key, int x, int y) {
 	case 'b': DisplayState = DisplayState ? false : true; break;
 	case 'v': DisplayMotion = DisplayMotion ? false : true; break;
 
+	case '.': (*(_env->balls().begin()))->velocity(0,0.1); break;
+
 	case 'd':
 		_simEngine->setDebug(btIDebugDraw::DBG_NoDeactivation);
 		if (_simEngine->debugMode() & btIDebugDraw::DBG_NoDeactivation) {
