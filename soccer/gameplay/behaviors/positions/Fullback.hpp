@@ -12,18 +12,18 @@ namespace Gameplay
 			public:
 				static void createConfiguration(Configuration *cfg);
 
-				typedef enum
+				enum  Role
 				{
 					//defense states
-					Init,
-					Marking,
-					MultiMark,
-					Intercept,
+					Marking = 1,
+					AreaMarking = 2,
+					MultiMark = 4,
+					Intercept = 8,
 					//offensive states
-					Support,
-					Receiving,
-					Passing
-				} State;
+					Support = 16,
+					Receiving = 32,
+					Passing = 64
+				};
 
 				typedef enum
 				{
@@ -32,19 +32,22 @@ namespace Gameplay
 					Right
 				} Side;
 
-				Fullback(GameplayModule *gameplay, Side side = Center);
+				Fullback(GameplayModule *gameplay, Side side = Center, int role = Marking);
 
 				virtual bool run();
 
 				/** set the robot to block the ball */
-				void blockBall(bool b){ _blockBall = b; }
+				void blockBall(){ _blockRobot = 0; }
 
 				/** set the robot to block an opp robot */
-				void blockRobot(OpponentRobot * robot) { _blockRobot = robot; _blockBall = false; }
+				void blockRobot(OpponentRobot * robot) { _blockRobot = robot; }
 				OpponentRobot * blockRobot() const { return _blockRobot;}
 
 				void side(Side s) { _side = s; }
 				Side side() const { return _side; }
+
+				void role(int r) { _roles = r; }
+				int role() const { return _roles; }
 
 				std::set<Fullback *> otherFullbacks;
 				
@@ -56,9 +59,13 @@ namespace Gameplay
 				Gameplay::WindowEvaluator _winEval;
 
 				Side _side;
-				State _state;
-				/** defaults to true */
-				bool _blockBall;
+				int _roles;
+				Role _state;
+
+				static ConfigDouble *_defend_goal_radius;
+				static ConfigDouble *_opponent_avoid_threshold;
+
+				OpponentRobot* findRobotToBlock(const Geometry2d::Rect& area);
 		};
 	}
 }
