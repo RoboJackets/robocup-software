@@ -14,6 +14,7 @@
 using namespace Packet;
 
 static const uint64_t Dribble_Step_Time = 125 * 1000;
+static const uint64_t Kicker_Step_Time = 125 * 1000;
 
 // rates used by damping settings
 // Rotation in rad/s
@@ -41,7 +42,9 @@ Joystick::Joystick():
 	_autonomous = true;
 	_dribbler = 0;
 	_dribblerOn = false;
+	_kicker = 0;
 	_lastDribblerTime = 0;
+	_lastKickerTime = 0;
 	_fd = -1;
 	
 	if (!open())
@@ -260,9 +263,33 @@ void Joystick::drive(RadioTx::Robot *tx)
 		_lastDribblerTime = now - Dribble_Step_Time;
 	}
 
+	if (_button[0])
+	{
+		if (_kicker > 0 && (now - _lastKickerTime) >= Kicker_Step_Time)
+		{
+			_kicker -= 8;
+			_lastKickerTime = now;
+		}
+	} else if (_button[2])
+	{
+		if (_kicker < 247 && (now - _lastKickerTime) >= Kicker_Step_Time)
+		{
+			_kicker += 8;
+			_lastKickerTime = now;
+		}
+	} else {
+		_lastKickerTime = now - Kicker_Step_Time;
+	}
+
 	tx->set_dribbler(_dribblerOn ? _dribbler : 0);
-	tx->set_kick((_button[7] | _button[5]) ? 255 : 0);
+	tx->set_kick((_button[7] | _button[5]) ? _kicker : 0);
 	tx->set_use_chipper(_button[5]);
+
+#define print_cmd 1
+#ifdef print_cmd
+	printf("Dribbler %d \n",_dribbler);
+	printf("Kick %d \n",_kicker);
+#endif
 }
 
 void Joystick::reset()

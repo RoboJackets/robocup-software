@@ -49,10 +49,13 @@ class Joystick: boost::noncopyable
 		int _dribbler;
 		bool _dribblerOn;
 		
+		int _kicker;
+
 		bool _dampedRotation, _dampedTranslation;
 
 		// Last time the dribbler speed changed
 		uint64_t _lastDribblerTime;
+		uint64_t _lastKickerTime;
 		
 		static const int Axis_Left_X = 0;
 		static const int Axis_Left_Y = 1;
