@@ -88,7 +88,7 @@ bool Kick::findShot(const Geometry2d::Segment& segment, Geometry2d::Segment& res
 	evaluator.chip_min_range = minChipRange;
 	evaluator.chip_max_range = maxChipRange;
 	evaluator.run(ball().pos, segment);
-	Window *window = evaluator.best;
+	Window *window = evaluator.best();
 
 	// check for output
 	if(window && window->segment.length() > min_segment_length)	{

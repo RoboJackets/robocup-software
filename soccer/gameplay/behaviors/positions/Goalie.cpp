@@ -118,10 +118,10 @@ bool Gameplay::Behaviors::Goalie::run()
 		_win->exclude.push_back(robot->pos);
 		_win->run(ball().pos, goalLine);
 		
-		Segment shootWindow = (_win->best) ? _win->best->segment : _win->target();
+		Segment shootWindow = (_win->best()) ? _win->best()->segment : _win->target();
 		
 		//if true, then all possibilities have already been blocked
-		bool noShot = !_win->best;
+		bool noShot = !_win->best();
 
 		//default shot line
 		Segment shootLine(shootWindow.center(), ball().pos);
