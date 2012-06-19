@@ -11,7 +11,7 @@ using namespace std;
 Gameplay::WindowEvaluator::WindowEvaluator(SystemState *state)
 {
 	_state = state;
-	best = 0;
+	_best = 0;
 	enable_chip = false;
 	_end = 0;
 	debug = false;
@@ -24,7 +24,7 @@ Gameplay::WindowEvaluator::~WindowEvaluator()
 
 void Gameplay::WindowEvaluator::clear()
 {
-	best = 0;
+	_best = 0;
 	BOOST_FOREACH(Window *w, windows)
 	{
 		delete w;
@@ -47,6 +47,23 @@ void Gameplay::WindowEvaluator::run(Geometry2d::Point origin, const Geometry2d::
 	Geometry2d::Segment seg(target + dir * Robot_Radius,
 							target - dir * Robot_Radius);
 	
+	run(origin, seg);
+}
+
+void Gameplay::WindowEvaluator::run(const Geometry2d::Segment &target, Geometry2d::Point origin, float dist)
+{
+	Geometry2d::Point dir1 = (target.pt[0]-origin).normalized();
+	Geometry2d::Point dir2 = (target.pt[1]-origin).normalized();
+
+	const float perp = target.distTo(origin);
+	const float scale1 = (target.pt[0]-origin).mag()/perp;
+	const float scale2 = (target.pt[1]-origin).mag()/perp;
+
+	//project
+	dist += perp;
+	Geometry2d::Segment seg(origin + dir1 * dist * scale1,
+							origin + dir2 * dist * scale2);
+
 	run(origin, seg);
 }
 
@@ -149,12 +166,12 @@ void Gameplay::WindowEvaluator::finish()
 	}
 
 	// Find the best (largest) window
-	best = 0;
+	_best = 0;
 	BOOST_FOREACH(Window *w, windows)
 	{
-		if (!best || w->segment.delta().magsq() > best->segment.delta().magsq())
+		if (!_best || w->segment.delta().magsq() > _best->segment.delta().magsq())
 		{
-			best = w;
+			_best = w;
 		}
 	}
 	
@@ -169,9 +186,9 @@ void Gameplay::WindowEvaluator::finish()
 				w->segment.pt[1]
 			};
 			QColor color(
-				(w == best) ? 255 : 0,
+				(w == _best) ? 255 : 0,
 				0,
-				(w == best) ? 0 : 255
+				(w == _best) ? 0 : 255
 			);
 			_state->drawPolygon(pts, 3, color, "Windows");
 		}

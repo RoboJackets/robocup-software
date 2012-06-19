@@ -21,9 +21,9 @@ namespace Gameplay
 				this->t0 = t0;
 				this->t1 = t1;
 			}
-			
+
 			float t0, t1;
-			
+
 			// Angles (in degrees) from origin along the edges of this window
 			float a0, a1;
 			
@@ -42,10 +42,6 @@ namespace Gameplay
 			// List of all windows
 			std::list<Window *> windows;
 			
-			// A pointer to the best window.
-			// This will be one of the windows in <windows>, or 0 if there are no windows.
-			Window *best;
-			
 			// Any robots containing any of these points are ignored as obstacles.
 			std::vector<Geometry2d::Point> exclude;
 			
@@ -54,11 +50,10 @@ namespace Gameplay
 			float chip_min_range; // set according externally
 			float chip_max_range;
 
-			const Geometry2d::Segment &target() const
-			{
-				return _target;
-			}
+			const Geometry2d::Segment &target() const { return _target; }
 			
+			const Geometry2d::Point& origin() const { return _origin; }
+
 			void clear();
 			
 			// Calculates the windows to a segment.
@@ -67,9 +62,14 @@ namespace Gameplay
 			// Calculates the windows to another robot
 			void run(Geometry2d::Point origin, const Geometry2d::Point &target);
 			
+			// Calculates open shot windows into a goal
+			void run(const Geometry2d::Segment &target, Geometry2d::Point origin, float dist);
+
 			// Calculates the windows to the opponent's goal
 			void run(Geometry2d::Point origin);
-			
+
+			Window* best() { return _best; }
+
 		protected:
 			Geometry2d::Point _origin;
 			Geometry2d::Segment _target;
@@ -77,6 +77,10 @@ namespace Gameplay
 			std::set<float> _edges;
 			SystemState *_state;
 			
+			// A pointer to the best window.
+			// This will be one of the windows in <windows>, or 0 if there are no windows.
+			Window *_best;
+
 			void finish();
 			void obstacleRobot(Geometry2d::Point pos);
 			void obstacleRange(float t0, float t1);
