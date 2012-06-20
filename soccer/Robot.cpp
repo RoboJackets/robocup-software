@@ -350,13 +350,15 @@ void OurRobot::faceNone()
 
 void OurRobot::kick(uint8_t strength)
 {
-	radioTx.set_kick(strength);
+	uint8_t max = *config->kicker.maxKick;
+	radioTx.set_kick(strength > max ? max : strength);
 	radioTx.set_use_chipper(false);
 }
 
 void OurRobot::chip(uint8_t strength)
 {
-	radioTx.set_kick(strength);
+	uint8_t max = *config->kicker.maxChip;
+	radioTx.set_kick(strength > max ? max : strength);
 	radioTx.set_use_chipper(true);
 }
 

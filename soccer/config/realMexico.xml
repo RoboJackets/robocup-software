@@ -71,8 +71,9 @@
    <d value="0"/>
   </wheel>
   <kicker>
-   <m value="1"/>
-   <b value="0"/>
+   <maxKick value="60"/>
+   <maxChip value="150"/>
+   <passKick value="50"/>
   </kicker>
  </Rev2008>
  <Rev2011>
@@ -104,8 +105,9 @@
    <d value="0"/>
   </wheel>
   <kicker>
-   <m value="1"/>
-   <b value="0"/>
+   <maxKick value="60"/>
+   <maxChip value="150"/>
+   <passKick value="50"/>
   </kicker>
  </Rev2011>
  <DemoFling>

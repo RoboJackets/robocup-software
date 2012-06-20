@@ -194,7 +194,7 @@ void RobotBallController::kickerStep()
 		dir[1] = 0;
 		dir = dir.normalize();
 
-		printf("Robot %d kicked at (%5.f,%5.3f,%5.3f)*%5.3f\n",_parent->shell,dir[0],dir[1],dir[2],_kickSpeed);
+		printf("Robot %d %s at (%5.3f,%5.3f) with power %lu, speed %5.3f \n",_parent->shell,_chip ? "chipped" : "kicked",dir[1]/scaling,dir[0]/scaling, _kick, _kickSpeed/scaling);
 
 		if(_chip){
 			btVector3 axis = dir.cross(btVector3(0,1,0));

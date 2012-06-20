@@ -1,8 +1,9 @@
 <config>
  <Rev2008>
   <kicker>
-   <m value="71.17"/>
-   <b value="-2.7"/>
+   <maxKick value="255"/>
+   <maxChip value="255"/>
+   <passKick value="255"/>
   </kicker>
   <trapTrans>
    <velocity value="2"/>
@@ -86,8 +87,9 @@
    <d value="0"/>
   </rotation>
   <kicker>
-   <m value="1"/>
-   <b value="0"/>
+   <maxKick value="255"/>
+   <maxChip value="255"/>
+   <passKick value="255"/>
   </kicker>
   <wheel>
    <p value="0"/>
