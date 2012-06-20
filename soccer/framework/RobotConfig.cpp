@@ -20,8 +20,9 @@ RobotConfig::Dynamics::Dynamics(Configuration* config, QString prefix):
 }
 
 RobotConfig::Kicker::Kicker(Configuration* config, QString prefix):
-	m(new ConfigDouble(config, QString("%1/m").arg(prefix), 1)),
-	b(new ConfigDouble(config, QString("%1/b").arg(prefix)))
+	maxKick(new ConfigDouble(config, QString("%1/maxKick").arg(prefix), 50)),
+	maxChip(new ConfigDouble(config, QString("%1/maxChip").arg(prefix), 50)),
+	passKick(new ConfigDouble(config, QString("%1/passKick").arg(prefix), 50))
 {
 }
 

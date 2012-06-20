@@ -34,8 +34,14 @@ struct RobotConfig
 	{
 		Kicker(Configuration *config, QString prefix);
 		
-		ConfigDouble *m;
-		ConfigDouble *b;
+		ConfigDouble *maxKick;
+		ConfigDouble *maxChip;
+		ConfigDouble *passKick;
+//		ConfigDouble *passVelocity;
+//		ConfigDouble *a0;
+//		ConfigDouble *a1;
+//		ConfigDouble *a2;
+//		ConfigDouble *a3;
 	};
 	
 	Dynamics trapTrans;
