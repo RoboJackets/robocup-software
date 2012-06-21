@@ -17,10 +17,14 @@ namespace Gameplay
 				{
 					State_Wait,
 					State_Setup,
+					State_Ready,
 					State_Grab,
 					State_Kick,
+					State_Measure,
 					State_Restart,
 				} State;
+
+				static void createConfiguration(Configuration *cfg);
 
 				KickMeasurement(GameplayModule *gameplay);
 
@@ -30,7 +34,9 @@ namespace Gameplay
 				uint64_t _time;
 				double _lastKickTime;
 				double _fireDelta;
+				double _lastGrabTime;
 				bool _kicked;
+				bool _grabbed;
 
 				std::ofstream _file;
 
@@ -44,7 +50,7 @@ namespace Gameplay
 			private:
 				State _state;
 
-
+				static ConfigBool   *_ready_signal;
 		};
 	}
 }
