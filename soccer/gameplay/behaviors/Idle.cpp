@@ -56,3 +56,32 @@ bool Gameplay::Behaviors::Idle::run()
 	
 	return false;
 }
+
+bool Gameplay::Behaviors::Idle::run(const Geometry2d::Segment& line)
+{
+	if (robots.empty())
+	{
+		// Leave the robots where they are
+		return false;
+	}
+
+	float length = line.length();
+
+	if (length/(float)robots.size() < Robot_Diameter)
+	{
+		// Can't fit on line
+		return false;
+	}
+
+	Geometry2d::Point loc = line.pt[0];
+
+	Geometry2d::Point incr = line.delta().normalized() * length / (float) robots.size();
+
+	BOOST_FOREACH(OurRobot* r, robots)
+	{
+		r->move(loc);
+		loc += incr;
+	}
+
+	return false;
+}
