@@ -83,19 +83,24 @@ bool Gameplay::Behaviors::TouchKick::run()
 			_state = State_Done;
 		}
 	}
-	
+
+
 	// Driving
 	if (_state == State_Setup)
 	{
 		robot->addText("Setup");
-		Geometry2d::Point ballToRobot;
+		Geometry2d::Point robotPos = robot->kickerBar().center();
+		Geometry2d::Point robotToBall;
 		Geometry2d::Point robotToTarget;
 		Geometry2d::Point targetPoint;
-		ballToRobot = (robot->pos - ballPos);
-		robotToTarget = (robot->pos - target);
-		targetPoint = (ballToRobot - (ballToRobot - robotToTarget) / 2);
+		robotToBall = (ballPos - robot->pos).normalized();
+		robotToTarget = (target - robot->pos).normalized();
+		targetPoint = robot->pos + (robotToBall + robotToTarget) / 2.f;
 		targetRot = targetPoint.angle();
 		robot->face(targetPoint);
+
+		Geometry2d::Segment targetLine(targetPoint, robot->pos);
+		state()->drawLine(robot->pos, targetPoint, Qt::white);
 
 	} else if (_state == State_Ready)
 	{
