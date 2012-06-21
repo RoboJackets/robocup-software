@@ -3,6 +3,7 @@
 #include "../../Play.hpp"
 
 #include "../../behaviors/TouchKick.hpp"
+#include "../../behaviors/Kick.hpp"
 
 namespace Gameplay
 {
@@ -22,6 +23,9 @@ public:
 
 protected:
 	Behaviors::TouchKick _kicker;
+	Behaviors::Kick _passer;
+
+	Geometry2d::Point _passTarget;
 
 	static ConfigBool *_use_chipper;
 	static ConfigInt *_kick_power;
