@@ -12,6 +12,9 @@ namespace Gameplay
                 Idle(GameplayModule *gameplay);
                 
                 virtual bool run();
+
+                // Lines up the robots
+                virtual bool run(const Geometry2d::Segment& line);
 				
 				std::set<OurRobot *> robots;
         };
