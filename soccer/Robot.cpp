@@ -707,6 +707,10 @@ bool OurRobot::charged() const
 
 bool OurRobot::hasBall() const
 {
+	//Ball sense can return false positives depending on lighting conditions
+	//FIXME: Guessed distance threshold, may require fixing
+	if(_state->ball.valid && _state->ball.pos.distTo(pos) > Robot_Radius + 0.3)
+		return false;
 	return radioRx.has_ball_sense_status() && radioRx.ball_sense_status() == Packet::HasBall && rxIsFresh();
 }
 
