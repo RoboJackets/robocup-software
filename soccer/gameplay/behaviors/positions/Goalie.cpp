@@ -61,7 +61,7 @@ void Gameplay::Behaviors::Goalie::assign(set<OurRobot *> &available)
 
 bool Gameplay::Behaviors::Goalie::run()
 {
-	// No goalie, return
+
 	if (!robot || !robot->visible)
 	{
 		return true;
