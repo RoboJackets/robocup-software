@@ -29,7 +29,10 @@ namespace Gameplay
 				typedef enum
 				{
 					Defend,
-					Clear
+					Block,
+					Clear,
+					SetupPenalty,
+					None
 				} State;
 				
 				WindowEvaluator* _win;
