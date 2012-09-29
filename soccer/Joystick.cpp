@@ -284,6 +284,7 @@ void Joystick::drive(RadioTx::Robot *tx)
 	tx->set_dribbler(_dribblerOn ? _dribbler : 0);
 	tx->set_kick((_button[7] | _button[5]) ? _kicker : 0);
 	tx->set_use_chipper(_button[5]);
+	tx->set_kick_immediate((_button[7] | _button[5]) ? 1 : 0);
 
 #define print_cmd 1
 #ifdef print_cmd
