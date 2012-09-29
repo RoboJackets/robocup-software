@@ -262,6 +262,11 @@ public:
 	 */
 	void chip(uint8_t strength);
 
+	/**
+	 * ignore ball sense and kick immediately
+	 */
+	void immediate(bool im);
+
 	boost::ptr_vector<Packet::DebugText> robotText;
 
 	// True if this robot will treat opponents as obstacles

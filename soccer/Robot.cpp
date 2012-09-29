@@ -362,6 +362,11 @@ void OurRobot::chip(uint8_t strength)
 	radioTx.set_use_chipper(true);
 }
 
+void OurRobot::immediate(bool im)
+{
+	radioTx.set_kick_immediate(im);
+}
+
 void OurRobot::approachAllOpponents(bool enable) {
 	BOOST_FOREACH(float &ar, _opp_avoid_mask)
 		ar = (enable) ?  Opp_Avoid_Small : Opp_Avoid_Large;
