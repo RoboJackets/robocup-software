@@ -100,7 +100,18 @@ void MotionControl::positionPD()
 	float p = *_robot->config->translation.p;
 	
 	Point newVel = posError * p + (posError - _lastPosError) * *_robot->config->translation.d;
+
+	Point deltaVel = (newVel - _robot->vel);
+	float accel = deltaVel.mag();
+	float maxAccel = *_robot->config->trapTrans.acceleration;
+	if(accel > maxAccel)
+	{
+		deltaVel = deltaVel / accel * maxAccel;
+	}
+	newVel = _robot->vel + deltaVel;
+
 	float newSpeed = newVel.mag();
+
 	if (newSpeed)
 	{
 		_robot->addText(QString().sprintf("Dist %f Speed cur %f new %f max %f", posError.mag(), curSpeed, newSpeed, maxSpeed));
