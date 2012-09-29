@@ -12,7 +12,7 @@
 
 #include <string.h>
 
-#define Forward_Size    46
+#define Forward_Size    55
 
 // Last forward packet
 uint8_t forward_packet[Forward_Size];

@@ -227,7 +227,7 @@ void USBRadio::send(Packet::RadioTx& packet)
 	
 	int offset = 1;
 	int slot;
-	for (slot = 0; slot < 5 && slot < packet.robots_size(); ++slot)
+	for (slot = 0; slot < 6 && slot < packet.robots_size(); ++slot)
 	{
 		const RadioTx::Robot &robot = packet.robots(slot);
 		int robot_id = robot.robot_id();
@@ -259,7 +259,7 @@ void USBRadio::send(Packet::RadioTx& packet)
 	}
 	
 	// Unused slots
-	for (; slot < 5; ++slot)
+	for (; slot < 6; ++slot)
 	{
 		forward_packet[offset++] = 0;
 		forward_packet[offset++] = 0;
