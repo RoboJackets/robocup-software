@@ -79,9 +79,33 @@ void Gameplay::Behaviors::Goalie::assign(set<OurRobot *> &available) {
 	}
 }
 
+bool Gameplay::Behaviors::Goalie::opponentsHavePossession() {
+	if(opponentWithBall())
+		return true;
+	else
+		return false;
+}
+
+Robot* Gameplay::Behaviors::Goalie::opponentWithBall()
+{
+	Robot* closest = 0;
+	float bestDist = 0;
+	BOOST_FOREACH(Robot *r, state()->opp){
+		float dist = r->pos.distTo(ball().pos);
+		if (!closest || dist < bestDist)
+		{
+			closest = r;
+			bestDist = dist;
+		}
+	}
+	if(closest && closest->pos.nearPoint(ball().pos, Robot_Diameter))
+		return closest;
+	else
+		return 0;
+}
+
 bool Gameplay::Behaviors::Goalie::run()
 {
-
 	if (!robot || !robot->visible)
 	{
 		return true;
@@ -95,22 +119,40 @@ bool Gameplay::Behaviors::Goalie::run()
 		_state = SetupPenalty;
 	else if(ballIsInGoalieBox(ball()))
 		_state = Clear;
+	else if(opponentsHavePossession())
+		_state = Block;
 	else
-		_state = None;
+		_state = Defend;
 
 	switch (_state)
 	{
 	case Defend:
 	{
 		robot->addText(QString("State: Defend"));
-		//TODO Defend state
 	}
 		break;
 
 	case Block:
 	{
 		robot->addText(QString("State: Block"));
-		//TODO Block state
+
+		Robot* opposingKicker = opponentWithBall();
+
+		Line shotLine = Line(opposingKicker->pos, ball().pos);
+		Circle blockCircle = Circle(Point(0,0), Field_GoalWidth/2.0f);
+
+		Point dest;
+		if(blockCircle.intersects(shotLine, &dest)) {
+			// shotLine intersects blockCircle
+			robot->move(dest, true);
+		} else {
+			// shotLine does not intersect blockCircle
+			Line blockLine = Line(Point(-MaxX,Robot_Radius), Point(MaxX,Robot_Radius));
+			blockLine.intersects(shotLine, &dest);
+			dest.x = min(MaxX, dest.x);
+			dest.x = max(-MaxX, dest.x);
+			robot->move(dest, true);
+		}
 	}
 		break;
 

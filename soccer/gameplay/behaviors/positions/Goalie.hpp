@@ -42,6 +42,9 @@ namespace Gameplay
 				State _state;
 				
 				unsigned int _index;
+			private:
+				bool opponentsHavePossession();
+				Robot* opponentWithBall();
 		};
 	}
 }
