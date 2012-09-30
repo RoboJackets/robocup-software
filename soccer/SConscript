@@ -85,6 +85,7 @@ srcs = [
 	'gameplay/plays/test_plays/TestLatency.cpp',
 	'gameplay/plays/test_plays/KickMeasurement.cpp',
 	'gameplay/plays/test_plays/TestLineKick.cpp',
+	'gameplay/plays/test_plays/TestDefense.cpp',
 	
 
 	# demo plays/behaviors
