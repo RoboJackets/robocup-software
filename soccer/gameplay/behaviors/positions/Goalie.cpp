@@ -13,6 +13,8 @@
 
 #include <Constants.hpp>
 
+#include <iostream>
+
 using namespace std;
 using namespace Geometry2d;
 
@@ -86,6 +88,16 @@ bool Gameplay::Behaviors::Goalie::opponentsHavePossession() {
 		return false;
 }
 
+float angleBetweenThreePoints(Point a, Point b, Point vertex)
+{
+	float VA = sqrt(powf(vertex.x-a.x,2) + powf(vertex.y-a.y,2));//Segment(vertex, a).length();
+	float VB = sqrt(powf(vertex.x-b.x,2) + powf(vertex.y-b.y,2));//Segment(vertex, b).length();
+	float AB = sqrt(powf(a.x-b.x,2) + powf(a.y-b.y,2));//Segment(a, b).length();
+	std::cout  << (VA*VA + VB*VB + AB*AB)/(2*VA*VB) << std::endl;
+	//std::cout << acosf((VA*VA + VB*VB + AB*AB)/(2*VA*VB));
+	return acosf((VA*VA + VB*VB + AB*AB)/(2*VA*VB));
+}
+
 Robot* Gameplay::Behaviors::Goalie::opponentWithBall()
 {
 	Robot* closest = 0;
@@ -98,10 +110,22 @@ Robot* Gameplay::Behaviors::Goalie::opponentWithBall()
 			bestDist = dist;
 		}
 	}
-	if(closest && closest->pos.nearPoint(ball().pos, Robot_Diameter))
+	float angle = 3.14 * (closest->angle / 180);
+	float theta = angleBetweenThreePoints(Point(closest->pos.x + cos(angle), closest->pos.y + sin(angle)),ball().pos,closest->pos);
+	float maxRadius = Robot_Diameter + Robot_Diameter*cos(theta);
+	//std::cout << theta << std::endl;
+	if(closest && closest->pos.nearPoint(ball().pos, maxRadius))
 		return closest;
 	else
 		return 0;
+}
+
+bool Gameplay::Behaviors::Goalie::ballIsMovingTowardsGoal()
+{
+	if(ball().vel.y < 0)
+		return true;
+	else
+		return false;
 }
 
 bool Gameplay::Behaviors::Goalie::run()
@@ -119,16 +143,23 @@ bool Gameplay::Behaviors::Goalie::run()
 		_state = SetupPenalty;
 	else if(ballIsInGoalieBox(ball()))
 		_state = Clear;
-	else if(opponentsHavePossession())
+	//else if(ballIsMovingTowardsGoal() && ball().vel.mag() > 0.2)
+	else if (opponentsHavePossession())
 		_state = Block;
 	else
 		_state = Defend;
+
+
+	//robot->addText(QString("Opp: %1").arg(this->opponentWithBall()->shell));
+
+	robot->face(ball().pos);
 
 	switch (_state)
 	{
 	case Defend:
 	{
 		robot->addText(QString("State: Defend"));
+		robot->move(Point(0, Robot_Radius));
 	}
 		break;
 
@@ -136,9 +167,11 @@ bool Gameplay::Behaviors::Goalie::run()
 	{
 		robot->addText(QString("State: Block"));
 
-		Robot* opposingKicker = opponentWithBall();
+		//Robot* opposingKicker = opponentWithBall();
+		//Line shotLine = Line(opposingKicker->pos, ball().pos);
 
-		Line shotLine = Line(opposingKicker->pos, ball().pos);
+		Line shotLine = Line(ball().pos, ball().pos + ball().vel.normalized());
+
 		Circle blockCircle = Circle(Point(0,0), Field_GoalWidth/2.0f);
 
 		Point dest;
@@ -211,6 +244,8 @@ bool Gameplay::Behaviors::Goalie::run()
 	}
 		break;
 	}
+	//clear the kick behavior
+	_kick.restart();
 
 	// ---------------------------------------------------------------------------------------------------------------------------------
 

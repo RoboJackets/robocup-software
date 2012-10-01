@@ -45,6 +45,7 @@ namespace Gameplay
 			private:
 				bool opponentsHavePossession();
 				Robot* opponentWithBall();
+				bool ballIsMovingTowardsGoal();
 		};
 	}
 }
