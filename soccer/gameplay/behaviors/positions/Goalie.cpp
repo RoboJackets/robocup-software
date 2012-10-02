@@ -90,12 +90,10 @@ bool Gameplay::Behaviors::Goalie::opponentsHavePossession() {
 
 float angleBetweenThreePoints(Point a, Point b, Point vertex)
 {
-	float VA = sqrt(powf(vertex.x-a.x,2) + powf(vertex.y-a.y,2));//Segment(vertex, a).length();
-	float VB = sqrt(powf(vertex.x-b.x,2) + powf(vertex.y-b.y,2));//Segment(vertex, b).length();
-	float AB = sqrt(powf(a.x-b.x,2) + powf(a.y-b.y,2));//Segment(a, b).length();
-	std::cout  << (VA*VA + VB*VB + AB*AB)/(2*VA*VB) << std::endl;
-	//std::cout << acosf((VA*VA + VB*VB + AB*AB)/(2*VA*VB));
-	return acosf((VA*VA + VB*VB + AB*AB)/(2*VA*VB));
+	float VA = sqrt(powf(vertex.x-a.x,2) + powf(vertex.y-a.y,2));
+	float VB = sqrt(powf(vertex.x-b.x,2) + powf(vertex.y-b.y,2));
+	float AB = sqrt(powf(a.x-b.x,2) + powf(a.y-b.y,2));
+	return acosf((VA*VA + VB*VB - AB*AB)/(2*VA*VB));
 }
 
 Robot* Gameplay::Behaviors::Goalie::opponentWithBall()
