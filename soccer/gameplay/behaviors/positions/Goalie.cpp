@@ -163,7 +163,7 @@ bool Gameplay::Behaviors::Goalie::run()
 		Line goalLine(Point(-MaxX, 0), Point(MaxX, 0));// Pick the largest available window between the ball and our goal, ignoring our goalie as an obstacle.
 		Line *goal = &goalLine;
 
-		Line ballPath(ball().pos, (ball().pos + ball().vel));
+		Line ballPath(ball().pos, (ball().pos + 5*ball().vel.normalized));
 		Point dest; //destination point- where robot needs to move to
 
 		//if the ball is traveling towards the goal
