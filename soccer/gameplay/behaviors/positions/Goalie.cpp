@@ -120,11 +120,10 @@ Robot* Gameplay::Behaviors::Goalie::opponentWithBall()
 
 bool Gameplay::Behaviors::Goalie::ballIsMovingTowardsGoal()
 {
-	Line goalLine(Point(-MaxX, 0), Point(MaxX, 0));
-	Line ballPath(ball().pos, (ball().pos + ball().vel.normalized));
-	Point dest; //destination point- where robot needs to move to
+	Segment goalLine(Point(-MaxX, 0), Point(MaxX, 0));
+	Segment ballPath(ball().pos, (ball().pos + 5*ball().vel.normalized()));
 	//if the ball is traveling towards the goal
-	return (ball().vel.magsq() > 0.02 && ballPath.intersects(goalLine, &dest));
+	return (ball().vel.magsq() > 0.02 && ballPath.intersects(goalLine));
 }
 
 bool Gameplay::Behaviors::Goalie::run()
@@ -140,11 +139,10 @@ bool Gameplay::Behaviors::Goalie::run()
 		_state = None;
 	else if(gameState().theirPenalty() && !gameState().playing())
 		_state = SetupPenalty;
-	else if (ballIsMovingTowardsGoal())
-			_state=Intercept;
 	else if(ballIsInGoalieBox(ball()))
 		_state = Clear;
-	//else if(ballIsMovingTowardsGoal() && ball().vel.mag() > 0.2)
+	else if (ballIsMovingTowardsGoal())
+			_state=Intercept;
 	else if (opponentsHavePossession())
 		_state = Block;
 	else
@@ -162,7 +160,9 @@ bool Gameplay::Behaviors::Goalie::run()
 	{
 		robot->addText(QString("State: Defend"));
 
+		float destx = ( ball().pos.x / Field_Width ) * MaxX;
 
+		robot->move(Point(destx, Robot_Radius), true);
 
 	}
 	break;
@@ -198,7 +198,7 @@ bool Gameplay::Behaviors::Goalie::run()
 		robot->addText(QString("State: Intercept"));
 
 		robot->face(ball().pos, true);
-		Line ballPath(ball().pos, (ball().pos + ball().vel.normalized));
+		Line ballPath(ball().pos, (ball().pos + ball().vel.normalized()));
 		Point dest; //destination point- where robot needs to move to
 		dest = ballPath.nearestPoint(robot->pos);
 		robot->move(dest, true);
@@ -211,12 +211,21 @@ bool Gameplay::Behaviors::Goalie::run()
 		//Ball is in defense area, get it out of there.
 		robot->dribble(50);
 
-		bool doneKicking = !_kick.run();
+//		Segment opponentGoal(Point(-MaxX, Field_Length), Point(MaxX, Field_Length));
+//		_win->clear();
+//		_win->run(ball().pos, opponentGoal);
+//		if(_win->best()) {
+//			_kick.setTarget(_win->best()->segment);
+//		} else {
+//			//TODO pass to one of our players
+//			_kick.setTargetGoal();
+//		}
 
-		//If I've finished kicking, the ball rolled out of the goalie box, or the ball went into the goal, end "Clear" state
-		if (doneKicking || !ballIsInGoalieBox(ball())) {
-			_state = Defend;
-		}
+		_kick.enableGoalLineShot = true;
+		_kick.enableLeftDownfieldShot = true;
+		_kick.enableRightDownfieldShot = true;
+
+		_kick.run();
 	}
 	break;
 
@@ -263,7 +272,7 @@ bool Gameplay::Behaviors::Goalie::run()
 	//clear the kick behavior
 	_kick.restart();
 
-	// ---------------------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------------------
 
 	/*	if (!ball().valid) {
 		//FIXME - Stay where we are, if we are near the goal (done @matt)
