@@ -157,7 +157,22 @@ bool Gameplay::Behaviors::Goalie::run()
 	case Defend:
 	{
 		robot->addText(QString("State: Defend"));
-		robot->move(Point(0, Robot_Radius));
+
+		//TODO Defend state
+		robot->face(ball().pos, true);
+		Line goalLine(Point(-MaxX, 0), Point(MaxX, 0));// Pick the largest available window between the ball and our goal, ignoring our goalie as an obstacle.
+		Line *goal = &goalLine;
+
+		Line ballPath(ball().pos, (ball().pos + ball().vel));
+		Point dest; //destination point- where robot needs to move to
+
+		//if the ball is traveling towards the goal
+		if (ball().vel.magsq() > 0.02 && ballPath.intersects(goalLine, &dest))
+		{
+			dest = goalLine.nearestPoint(robot->pos);
+			robot->move(dest, true);
+			// robot->dribble(50); EricC--I'm not sure why the robot is dribbling the ball here
+		}
 	}
 		break;
 
