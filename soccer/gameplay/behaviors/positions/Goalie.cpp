@@ -30,7 +30,8 @@ Gameplay::Behaviors::Goalie::Goalie(GameplayModule *gameplay) :
 	_win = new WindowEvaluator(_gameplay->state());
 	_win->debug = true;
 
-	_state = Defend;
+	_state = None;
+	_previousState = None;
 	robot = 0;
 	_index = 0;
 
@@ -142,14 +143,16 @@ bool Gameplay::Behaviors::Goalie::run()
 	else if(ballIsInGoalieBox(ball()))
 		_state = Clear;
 	else if (ballIsMovingTowardsGoal())
-			_state=Intercept;
+		_state=Intercept;
 	else if (opponentsHavePossession())
 		_state = Block;
 	else
 		_state = Defend;
 
+	if(_state != _previousState)
+		_kick.restart();
 
-	//robot->addText(QString("Opp: %1").arg(this->opponentWithBall()->shell));
+	_previousState = _state;
 
 	robot->face(ball().pos);
 
@@ -171,10 +174,10 @@ bool Gameplay::Behaviors::Goalie::run()
 	{
 		robot->addText(QString("State: Block"));
 
-		//Robot* opposingKicker = opponentWithBall();
-		//Line shotLine = Line(opposingKicker->pos, ball().pos);
+		Robot* opposingKicker = opponentWithBall();
+		Line shotLine = Line(opposingKicker->pos, ball().pos);
 
-		Line shotLine = Line(ball().pos, ball().pos + ball().vel.normalized());
+		//Line shotLine = Line(ball().pos, ball().pos + ball().vel.normalized());
 
 		Circle blockCircle = Circle(Point(0,0), Field_GoalWidth/2.0f);
 
@@ -207,19 +210,11 @@ bool Gameplay::Behaviors::Goalie::run()
 
 	case Clear:
 	{
+		if(_kick.done())
+			_kick.restart();
 		robot->addText(QString("State: Clear"));
 		//Ball is in defense area, get it out of there.
 		robot->dribble(50);
-
-//		Segment opponentGoal(Point(-MaxX, Field_Length), Point(MaxX, Field_Length));
-//		_win->clear();
-//		_win->run(ball().pos, opponentGoal);
-//		if(_win->best()) {
-//			_kick.setTarget(_win->best()->segment);
-//		} else {
-//			//TODO pass to one of our players
-//			_kick.setTargetGoal();
-//		}
 
 		_kick.enableGoalLineShot = true;
 		_kick.enableLeftDownfieldShot = true;
@@ -269,8 +264,6 @@ bool Gameplay::Behaviors::Goalie::run()
 	}
 	break;
 	}
-	//clear the kick behavior
-	_kick.restart();
 
 // ---------------------------------------------------------------------------------------------------------------------------------
 

@@ -40,7 +40,7 @@ namespace Gameplay
 				
 				Kick _kick;
 				
-				State _state;
+				State _state, _previousState;
 				
 				unsigned int _index;
 			private:
