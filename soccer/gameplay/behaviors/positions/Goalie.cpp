@@ -26,7 +26,7 @@ void Gameplay::Behaviors::Goalie::createConfiguration(Configuration *cfg) {
 }
 
 Gameplay::Behaviors::Goalie::Goalie(GameplayModule *gameplay) :
-		SingleRobotBehavior(gameplay), _kick(gameplay) {
+				SingleRobotBehavior(gameplay), _kick(gameplay) {
 	_win = new WindowEvaluator(_gameplay->state());
 	_win->debug = true;
 
@@ -69,9 +69,9 @@ void Gameplay::Behaviors::Goalie::assign(set<OurRobot *> &available) {
 		if (robot) {
 			printf("Goalie: no robot, took %d\n", robot->shell());
 		} else {
-// 			printf("Goalie: not assigned\n");
+			// 			printf("Goalie: not assigned\n");
 		}
-	/*	} else if (robot && !robot->visible)
+		/*	} else if (robot && !robot->visible)
 		{
 		 //FIXME - Goalie replacement
 		 available.erase(robot);*/
@@ -154,27 +154,13 @@ bool Gameplay::Behaviors::Goalie::run()
 
 	switch (_state)
 	{
+
 	case Defend:
 	{
 		robot->addText(QString("State: Defend"));
-
-		//TODO Defend state
-		robot->face(ball().pos, true);
-		Line goalLine(Point(-MaxX, 0), Point(MaxX, 0));// Pick the largest available window between the ball and our goal, ignoring our goalie as an obstacle.
-		Line *goal = &goalLine;
-
-		Line ballPath(ball().pos, (ball().pos + ball().vel));
-		Point dest; //destination point- where robot needs to move to
-
-		//if the ball is traveling towards the goal
-		if (ball().vel.magsq() > 0.02 && ballPath.intersects(goalLine, &dest))
-		{
-			dest = goalLine.nearestPoint(robot->pos);
-			robot->move(dest, true);
-			// robot->dribble(50); EricC--I'm not sure why the robot is dribbling the ball here
-		}
+		//TODO defend state
 	}
-		break;
+	break;
 
 	case Block:
 	{
@@ -200,7 +186,27 @@ bool Gameplay::Behaviors::Goalie::run()
 			robot->move(dest, true);
 		}
 	}
-		break;
+	break;
+
+	case Intercept:
+	{
+		robot->addText(QString("State: Defend"));
+
+		robot->face(ball().pos, true);
+		Line goalLine(Point(-MaxX, 0), Point(MaxX, 0));
+
+		Line ballPath(ball().pos, (ball().pos + ball().vel));
+		Point dest; //destination point- where robot needs to move to
+
+		//if the ball is traveling towards the goal
+		if (ball().vel.magsq() > 0.02 && ballPath.intersects(goalLine, &dest))
+		{
+			dest = goalLine.nearestPoint(robot->pos);
+			robot->move(dest, true);
+			// robot->dribble(50); EricC--I'm not sure why the robot is dribbling the ball here
+		}
+	}
+	break;
 
 	case Clear:
 	{
@@ -215,7 +221,7 @@ bool Gameplay::Behaviors::Goalie::run()
 			_state = Defend;
 		}
 	}
-		break;
+	break;
 
 	case SetupPenalty:
 	{
@@ -246,7 +252,7 @@ bool Gameplay::Behaviors::Goalie::run()
 			robot->move(Point(0, Robot_Radius), true);
 		}
 	}
-		break;
+	break;
 
 	case None:
 	{
@@ -255,14 +261,14 @@ bool Gameplay::Behaviors::Goalie::run()
 			robot->move(Geometry2d::Point(0, Robot_Radius));
 		}
 	}
-		break;
+	break;
 	}
 	//clear the kick behavior
 	_kick.restart();
 
 	// ---------------------------------------------------------------------------------------------------------------------------------
 
-/*	if (!ball().valid) {
+	/*	if (!ball().valid) {
 		//FIXME - Stay where we are, if we are near the goal (done @matt)
 		if(abs(robot->pos.x) > Field_GoalWidth/2.0f || robot->pos.y > Robot_Radius + margin) {
 			robot->move(Geometry2d::Point(0, Robot_Radius));
@@ -423,6 +429,6 @@ bool Gameplay::Behaviors::Goalie::run()
 		//clear the kick behavior
 		_kick.restart();
 	}
-*/
+	 */
 	return true;
 }
