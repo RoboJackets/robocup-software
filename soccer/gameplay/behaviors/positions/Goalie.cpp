@@ -159,7 +159,7 @@ bool Gameplay::Behaviors::Goalie::run()
 	{
 		robot->addText(QString("State: Defend"));
 
-		//TODO defend state
+
 
 	}
 	break;
