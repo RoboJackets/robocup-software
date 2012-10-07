@@ -30,6 +30,7 @@ namespace Gameplay
 				{
 					Defend,
 					Block,
+					Intercept,
 					Clear,
 					SetupPenalty,
 					None
