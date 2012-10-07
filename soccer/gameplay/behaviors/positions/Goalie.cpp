@@ -120,10 +120,11 @@ Robot* Gameplay::Behaviors::Goalie::opponentWithBall()
 
 bool Gameplay::Behaviors::Goalie::ballIsMovingTowardsGoal()
 {
-	if(ball().vel.y < 0)
-		return true;
-	else
-		return false;
+	Line goalLine(Point(-MaxX, 0), Point(MaxX, 0));
+	Line ballPath(ball().pos, (ball().pos + ball().vel.normalized));
+	Point dest; //destination point- where robot needs to move to
+	//if the ball is traveling towards the goal
+	return (ball().vel.magsq() > 0.02 && ballPath.intersects(goalLine, &dest));
 }
 
 bool Gameplay::Behaviors::Goalie::run()
@@ -139,6 +140,8 @@ bool Gameplay::Behaviors::Goalie::run()
 		_state = None;
 	else if(gameState().theirPenalty() && !gameState().playing())
 		_state = SetupPenalty;
+	else if (ballIsMovingTowardsGoal())
+			_state=Intercept;
 	else if(ballIsInGoalieBox(ball()))
 		_state = Clear;
 	//else if(ballIsMovingTowardsGoal() && ball().vel.mag() > 0.2)
@@ -192,21 +195,13 @@ bool Gameplay::Behaviors::Goalie::run()
 
 	case Intercept:
 	{
-		robot->addText(QString("State: Defend"));
+		robot->addText(QString("State: Intercept"));
 
 		robot->face(ball().pos, true);
-		Line goalLine(Point(-MaxX, 0), Point(MaxX, 0));
-
-		Line ballPath(ball().pos, (ball().pos + ball().vel));
+		Line ballPath(ball().pos, (ball().pos + ball().vel.normalized));
 		Point dest; //destination point- where robot needs to move to
-
-		//if the ball is traveling towards the goal
-		if (ball().vel.magsq() > 0.02 && ballPath.intersects(goalLine, &dest))
-		{
-			dest = goalLine.nearestPoint(robot->pos);
-			robot->move(dest, true);
-			// robot->dribble(50); EricC--I'm not sure why the robot is dribbling the ball here
-		}
+		dest = ballPath.nearestPoint(robot->pos);
+		robot->move(dest, true);
 	}
 	break;
 
