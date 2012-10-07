@@ -19,7 +19,6 @@ using namespace std;
 using namespace Geometry2d;
 
 static const float MaxX = Field_GoalWidth / 2.0f;
-static const float margin = /*Ball_Radius * 4*/ 0;
 
 void Gameplay::Behaviors::Goalie::createConfiguration(Configuration *cfg) {
 
@@ -140,10 +139,10 @@ bool Gameplay::Behaviors::Goalie::run()
 		_state = None;
 	else if(gameState().theirPenalty() && !gameState().playing())
 		_state = SetupPenalty;
-	else if(ballIsInGoalieBox(ball()))
-		_state = Clear;
 	else if (ballIsMovingTowardsGoal())
 		_state=Intercept;
+	else if(ballIsInGoalieBox(ball()))
+		_state = Clear;
 	else if (opponentsHavePossession())
 		_state = Block;
 	else
@@ -154,7 +153,9 @@ bool Gameplay::Behaviors::Goalie::run()
 
 	_previousState = _state;
 
-	robot->face(ball().pos);
+
+	robot->face(ball().pos, true);
+
 
 	switch (_state)
 	{
@@ -177,8 +178,6 @@ bool Gameplay::Behaviors::Goalie::run()
 		Robot* opposingKicker = opponentWithBall();
 		Line shotLine = Line(opposingKicker->pos, ball().pos);
 
-		//Line shotLine = Line(ball().pos, ball().pos + ball().vel.normalized());
-
 		Circle blockCircle = Circle(Point(0,0), Field_GoalWidth/2.0f);
 
 		Point dest;
@@ -200,9 +199,8 @@ bool Gameplay::Behaviors::Goalie::run()
 	{
 		robot->addText(QString("State: Intercept"));
 
-		robot->face(ball().pos, true);
-		Line ballPath(ball().pos, (ball().pos + ball().vel.normalized()));
-		Point dest; //destination point- where robot needs to move to
+		Segment ballPath(ball().pos, (ball().pos + 10*ball().vel.normalized()));
+		Point dest;
 		dest = ballPath.nearestPoint(robot->pos);
 		robot->move(dest, true);
 	}
@@ -215,6 +213,8 @@ bool Gameplay::Behaviors::Goalie::run()
 		robot->addText(QString("State: Clear"));
 		//Ball is in defense area, get it out of there.
 		robot->dribble(50);
+
+		_kick.forceChip = true;
 
 		_kick.enableGoalLineShot = true;
 		_kick.enableLeftDownfieldShot = true;
@@ -258,7 +258,7 @@ bool Gameplay::Behaviors::Goalie::run()
 	case None:
 	{
 		robot->addText(QString("State: None"));
-		if(abs(robot->pos.x) > Field_GoalWidth/2.0f || robot->pos.y > Robot_Radius + margin) {
+		if(abs(robot->pos.x) > Field_GoalWidth/2.0f || robot->pos.y > Robot_Radius) {
 			robot->move(Geometry2d::Point(0, Robot_Radius));
 		}
 	}
