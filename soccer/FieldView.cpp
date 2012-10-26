@@ -487,12 +487,16 @@ void FieldView::drawField(QPainter& p, const LogFrame *frame)
 	p.drawArc(QRectF(-Field_ArcRadius, -Field_ArcRadius + Field_GoalFlat/2.f, 2.f * Field_ArcRadius, 2.f * Field_ArcRadius), -90*16, 90*16);
 	p.drawArc(QRectF(-Field_ArcRadius, -Field_ArcRadius - Field_GoalFlat/2.f, 2.f * Field_ArcRadius, 2.f * Field_ArcRadius), 90*16, -90*16);
 	p.drawLine(QLineF(Field_ArcRadius, -Field_GoalFlat/2.f, Field_ArcRadius, Field_GoalFlat/2.f));
+	// Penalty Mark
+	p.drawEllipse(QRectF(-Field_PenaltyDiam/2.0f + Field_PenaltyDist, -Field_PenaltyDiam/2.0f, Field_PenaltyDiam, Field_PenaltyDiam));
 	
 	p.translate(Field_Length, 0);
 	
 	p.drawArc(QRectF(-Field_ArcRadius, -Field_ArcRadius + Field_GoalFlat/2.f, 2.f * Field_ArcRadius, 2.f * Field_ArcRadius), -90*16, -90*16);
 	p.drawArc(QRectF(-Field_ArcRadius, -Field_ArcRadius - Field_GoalFlat/2.f, 2.f * Field_ArcRadius, 2.f * Field_ArcRadius), 90*16, 90*16);
 	p.drawLine(QLineF(-Field_ArcRadius, -Field_GoalFlat/2.f, -Field_ArcRadius, Field_GoalFlat/2.f));
+	// Penalty Mark
+	p.drawEllipse(QRectF(-Field_PenaltyDiam/2.0f - Field_PenaltyDist, -Field_PenaltyDiam/2.0f, Field_PenaltyDiam, Field_PenaltyDiam));
 		
 	// goals
 	float x[2] = {0, Field_GoalDepth};
@@ -513,6 +517,7 @@ void FieldView::drawField(QPainter& p, const LogFrame *frame)
 	p.drawLine(QLineF(x[0], y[1], x[1], y[1]));
 	p.drawLine(QLineF(x[1], y[1], x[1], y[0]));
 	
+
 	p.restore();
 }
 
