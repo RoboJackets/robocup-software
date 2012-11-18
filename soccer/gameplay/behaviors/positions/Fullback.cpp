@@ -72,9 +72,9 @@ bool Gameplay::Behaviors::Fullback::run()
 	}
 
 	Geometry2d::Rect area(Geometry2d::Point(-Field_Width/2.f, Field_Length), Geometry2d::Point(Field_Width/2.f, 0));
-	if(_side == Right)
+	if(_side == Right && (_roles & AreaMarking))
 		area.pt[0].x = 0;
-	if(_side == Left)
+	if(_side == Left && (_roles & AreaMarking))
 		area.pt[1].x = 0;
 
 	// State changes

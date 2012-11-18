@@ -29,16 +29,24 @@ namespace Gameplay
 				typedef enum
 				{
 					Defend,
-					Clear
+					Block,
+					Intercept,
+					Clear,
+					SetupPenalty,
+					None
 				} State;
 				
 				WindowEvaluator* _win;
 				
 				Kick _kick;
 				
-				State _state;
+				State _state, _previousState;
 				
 				unsigned int _index;
+			private:
+				bool opponentsHavePossession();
+				Robot* opponentWithBall();
+				bool ballIsMovingTowardsGoal();
 		};
 	}
 }
