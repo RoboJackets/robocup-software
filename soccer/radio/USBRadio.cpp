@@ -122,7 +122,15 @@ bool USBRadio::open()
 	// Start the receive transfers
 	for (int i = 0; i < NumRXTransfers; ++i)
 	{
-		libusb_fill_bulk_transfer(_rxTransfers[i], _device, LIBUSB_ENDPOINT_IN | 2, _rxBuffers[i], Reverse_Size + 2, rxCompleted, this, 0);
+		// Populate the required libusb_transfer fields for a bulk transfer.
+		libusb_fill_bulk_transfer(_rxTransfers[i], 		   // the transfer to populate
+								  _device,				   // handle of the device that will handle the transfer
+								  LIBUSB_ENDPOINT_IN | 2,  // address of the endpoint where this transfer will be sent
+								  _rxBuffers[i], 		   // data buffer
+								  Reverse_Size + 2, 	   // length of data buffer
+								  rxCompleted,			   // callback function to be invoked on transfer completion
+								  this,					   // user data to pass to callback function
+								  0);					   // timeout for the transfer in milliseconds
 		libusb_submit_transfer(_rxTransfers[i]);
 	}
 	
