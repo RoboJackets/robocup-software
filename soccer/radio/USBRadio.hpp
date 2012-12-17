@@ -27,8 +27,9 @@ protected:
 	libusb_context *_usb_context;
 	libusb_device_handle *_device;
 	
-	// Thes transfers is used to receive packets
-	static const int NumRXTransfers = 2;
+	// These transfers are used to receive packets.
+	// Try increasing this constant for larger RX packet throughput.
+	static const int NumRXTransfers = 3;
 	libusb_transfer *_rxTransfers[NumRXTransfers];
 	uint8_t _rxBuffers[NumRXTransfers][Reverse_Size + 2];
 	
