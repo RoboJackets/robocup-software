@@ -2,9 +2,9 @@
 #include <pcap.h>
 #include <stdint.h>
 #include <fcntl.h>
-
 #include <protobuf/LogFrame.pb.h>
 #include <git_version.h>
+#include <unistd.h>
 
 using namespace std;
 using namespace Packet;
