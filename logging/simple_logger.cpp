@@ -10,6 +10,7 @@
 #include <Network.hpp>
 #include <Utils.hpp>
 
+#include <unistd.h>
 #include <fcntl.h>
 #include <poll.h>
 #include <termios.h>

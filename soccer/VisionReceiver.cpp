@@ -3,7 +3,7 @@
 #include <Network.hpp>
 #include <multicast.hpp>
 #include <Utils.hpp>
-
+#include <unistd.h>
 #include <QMutexLocker>
 #include <QUdpSocket>
 #include <stdexcept>
