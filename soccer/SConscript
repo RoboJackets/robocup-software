@@ -74,6 +74,10 @@ srcs = [
 	'gameplay/behaviors/TouchKick.cpp',
 	'gameplay/behaviors/Bump.cpp',
 	'gameplay/behaviors/PassReceive.cpp',
+	
+	# Tactics
+	'gameplay/tactics/StableLineKick.cpp',
+	'gameplay/tactics/SLKTest.cpp',
 
 	# Positions
 	'gameplay/behaviors/positions/Goalie.cpp',

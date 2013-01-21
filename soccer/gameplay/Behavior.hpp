@@ -58,10 +58,10 @@ namespace Gameplay
 	class SingleRobotBehavior: public Behavior
 	{
 		public:
-			SingleRobotBehavior(GameplayModule *gameplay):
-				Behavior(gameplay)
+			SingleRobotBehavior(GameplayModule *gameplay)
+				: Behavior(gameplay),
+				  robot(0)
 			{
-				robot = 0;
 			}
 			
 			OurRobot *robot;
@@ -70,14 +70,54 @@ namespace Gameplay
 	class TwoRobotBehavior: public Behavior
 	{
 		public:
-			TwoRobotBehavior(GameplayModule *gameplay):
-				Behavior(gameplay)
+			TwoRobotBehavior(GameplayModule *gameplay)
+				: Behavior(gameplay),
+				  robot1(0),
+				  robot2(0)
 			{
-				robot1 = 0;
-				robot2 = 0;
 			}
 
 			OurRobot *robot1;
 			OurRobot *robot2;
+	};
+
+	class PassingBehavior : public SingleRobotBehavior
+	{
+	public:
+		PassingBehavior(GameplayModule *gameplay)
+			: SingleRobotBehavior(gameplay),
+			  receiveTarget(0,0),
+			  receiver(0)
+		{
+		}
+
+		virtual bool done();
+		virtual bool kicking();
+		virtual bool setup();
+		virtual void restart();
+
+		Geometry2d::Point receiveTarget;
+
+		ReceivingBehavior *receiver;
+	};
+
+	class ReceivingBehavior : public SingleRobotBehavior
+	{
+	public:
+		ReceivingBehavior(GameplayModule *gameplay)
+			: SingleRobotBehavior(gameplay),
+			  receiveTarget(0,0),
+			  passer(0)
+		{
+		}
+
+		virtual bool done();
+		virtual bool success();
+		virtual bool ready();
+		virtual void restart();
+
+		Geometry2d::Point receiveTarget;
+
+		PassingBehavior *passer;
 	};
 }
