@@ -82,7 +82,6 @@ namespace Gameplay
 	};
 
 	class ReceivingBehavior;
-
 	class PassingBehavior : public SingleRobotBehavior
 	{
 	public:
