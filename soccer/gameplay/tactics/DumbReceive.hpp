@@ -1,11 +1,11 @@
 #pragma once
 
-#include "gameplay/Behavior.hpp"
+#include "gameplay/tactics/ActionBehavior.hpp"
 
 namespace Gameplay
 {
 
-class DumbReceive : public ReceivingBehavior
+class DumbReceive : public ActionBehavior
 {
 public:
 	static void createConfiguration(Configuration *cfg);
@@ -13,10 +13,12 @@ public:
 	DumbReceive(GameplayModule *gameplay);
 
 	bool run();
-	bool done();
+
+	bool isSettingUp();
+	bool isSetup();
+	bool isActing();
+	bool isDone();
 	void restart();
-	bool success();
-	bool ready();
 
 private:
 	enum State {
@@ -29,10 +31,13 @@ private:
 	// Return line up position
 	Geometry2d::Point receivePosition();
 
+	bool isAtReceivePosition();
+
 	bool isFailedReceive();
 
 	State _state;
 	bool _success;
+	uint64_t _kickDelta;
 
 	static ConfigDouble *_backoffDistance;
 	static ConfigDouble *_maxExecutionError;

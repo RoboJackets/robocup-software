@@ -14,7 +14,7 @@ bool Gameplay::Plays::SLKTest::run()
 
 	assignNearest(_kicker.robot, available, Geometry2d::Point());
 
-	if(_kicker.done()) {
+	if(_kicker.isDone()) {
 		_kicker.restart();
 	}
 

@@ -78,6 +78,8 @@ srcs = [
 	# Tactics
 	'gameplay/tactics/StableLineKick.cpp',
 	'gameplay/tactics/SLKTest.cpp',
+	'gameplay/tactics/ActionBehavior.cpp',
+	'gameplay/tactics/DumbReceive.cpp',
 
 	# Positions
 	'gameplay/behaviors/positions/Goalie.cpp',
