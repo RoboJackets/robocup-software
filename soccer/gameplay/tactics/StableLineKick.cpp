@@ -20,28 +20,29 @@ void Gameplay::StableLineKick::createConfiguration(Configuration *cfg)
 }
 
 Gameplay::StableLineKick::StableLineKick(GameplayModule *gameplay)
-	: PassingBehavior(gameplay),
+	: ActionBehavior(gameplay),
 	  _state(Setup)
 {
 }
 
-Gameplay::StableLineKick::~StableLineKick()
+bool Gameplay::StableLineKick::isSettingUp()
 {
+	return _state == Setup;
 }
 
-bool Gameplay::StableLineKick::done()
+bool Gameplay::StableLineKick::isSetup()
 {
-	return _state == Done;
+	return isAtPassPosition() && _state == Setup;
 }
 
-bool Gameplay::StableLineKick::kicking()
+bool Gameplay::StableLineKick::isActing()
 {
 	return _state == Kick;
 }
 
-bool Gameplay::StableLineKick::setup()
+bool Gameplay::StableLineKick::isDone()
 {
-	return _state == Setup;
+	return _state == Done;
 }
 
 void Gameplay::StableLineKick::restart()
@@ -55,7 +56,7 @@ Geometry2d::Point Gameplay::StableLineKick::passPosition()
 
 	// Assume the ball is stationary for easier computations.
 	Point ballPos = ball().pos;
-	Point passVector = (receiveTarget - ballPos).normalized();
+	Point passVector = (actionTarget - ballPos).normalized();
 	Point passPos = ballPos - passVector**_backoffDistance;
 
 	return passPos;
@@ -66,7 +67,7 @@ bool Gameplay::StableLineKick::isAtPassPosition()
 	using namespace Geometry2d;
 	float dist = passPosition().distTo(robot->pos);
 	Line passLine(robot->pos, robot->kickerBar().center());
-	float distAngle = passLine.distTo(receiveTarget);
+	float distAngle = passLine.distTo(actionTarget);
 	return dist < *_maxExecutionError && distAngle < *_maxExecutionError;
 }
 
@@ -74,7 +75,7 @@ bool Gameplay::StableLineKick::isOnPassPath()
 {
 	using namespace Geometry2d;
 
-	float distError = Line(passPosition(), receiveTarget).distTo(robot->pos);
+	float distError = Line(passPosition(), actionTarget).distTo(robot->pos);
 	float distBall = (ball().pos - robot->pos).mag();
 	return distError < *_maxExecutionError && distBall < *_backoffDistance;
 }
@@ -109,13 +110,13 @@ bool Gameplay::StableLineKick::run()
 			// Draw circle at pass position
 			state()->drawCircle(passPosition(), Robot_Radius + 0.05, Qt::yellow, QString("StableLineKick"));
 			// Draw line to show where robot is going to kick
-			float targetDist = (receiveTarget - ball().pos).mag() + Robot_Radius;
+			float targetDist = (actionTarget - ball().pos).mag() + Robot_Radius;
 			Point faceVector = (robot->kickerBar().center() - robot->pos).normalized();
 			state()->drawLine(robot->pos, robot->pos + faceVector*targetDist, Qt::yellow, QString("StableLineKick"));
 		} else if(_state == Kick) {
 			robot->addText(QString("SLK: Kick"), Qt::green, QString("StableLineKick"));
 			// Draw line to show where robot is going to kick
-			float targetDist = (receiveTarget - ball().pos).mag() + Robot_Radius;
+			float targetDist = (actionTarget - ball().pos).mag() + Robot_Radius;
 			Point faceVector = (robot->kickerBar().center() - robot->pos).normalized();
 			state()->drawLine(robot->pos, robot->pos + faceVector*targetDist, Qt::green, QString("StableLineKick"));
 		} else if(_state == Done) {
@@ -135,7 +136,7 @@ bool Gameplay::StableLineKick::run()
 		// because it modifies a OurRobot internal variable.
 		robot->disableAvoidBall();
 		// Move towards receive target to kick the ball on that path.
-		//robot->move(receiveTarget, false);
+		//robot->move(actionTarget, false);
 		Point driveVector = (ball().pos - robot->pos).normalized();
 		robot->worldVelocity(driveVector**_approachVelocity);
 		robot->face(ball().pos);

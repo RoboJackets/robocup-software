@@ -1,22 +1,23 @@
 #pragma once
 
-#include "gameplay/Behavior.hpp"
+#include "gameplay/tactics/ActionBehavior.hpp"
 
 namespace Gameplay
 {
 
-class StableLineKick : public PassingBehavior
+class StableLineKick : public ActionBehavior
 {
 public:
 	static void createConfiguration(Configuration *cfg);
 
 	StableLineKick(GameplayModule *gameplay);
-	~StableLineKick();
 
 	bool run();
-	bool done();
-	bool kicking();
-	bool setup();
+
+	bool isSettingUp();
+	bool isSetup();
+	bool isActing();
+	bool isDone();
 	void restart();
 
 private:
@@ -25,6 +26,9 @@ private:
 		Kick,
 		Done
 	};
+
+	// Super-class variable
+	// actionTarget == Point to receive pass
 
 	// Point to start passing from
 	Geometry2d::Point passPosition();
