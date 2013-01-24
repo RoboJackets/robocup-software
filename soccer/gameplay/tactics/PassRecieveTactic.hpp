@@ -1,6 +1,6 @@
 #pragma once
 
-#include <gameplay/Behavior.hpp>
+#include <gameplay/tactics/ActionBehavior.hpp>
 
 namespace Gameplay
 {
@@ -12,8 +12,10 @@ public:
 
 	bool run();
 
-	OurRobot *passer;
-	OurRobot *reciever;
+	bool positionsFilled();
+
+	ActionBehavior *passAction;
+	ActionBehavior *receiveAction;
 
 	Geometry2d::Point receiveTarget;
 

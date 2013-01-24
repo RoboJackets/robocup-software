@@ -31,6 +31,8 @@ private:
 	// Return line up position
 	Geometry2d::Point receivePosition();
 
+	float receivePositionError();
+
 	bool isAtReceivePosition();
 
 	bool isFailedReceive();

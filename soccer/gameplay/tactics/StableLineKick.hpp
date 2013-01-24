@@ -33,6 +33,9 @@ private:
 	// Point to start passing from
 	Geometry2d::Point passPosition();
 
+	float passPositionError();
+	float passPathError();
+
 	bool isAtPassPosition();  //
 	bool isOnPassPath();
 

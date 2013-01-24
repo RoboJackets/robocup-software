@@ -1,7 +1,7 @@
 #pragma once
 
 #include <gameplay/Play.hpp>
-#include <gameplay/tactics/StableLineKick.hpp>
+#include <gameplay/tactics/ActionBehavior.hpp>
 
 namespace Gameplay
 {
@@ -11,11 +11,13 @@ namespace Gameplay
 		{
 			public:
 				SLKTest(GameplayModule *gameplay);
+				~SLKTest();
 
 				virtual bool run();
 
 			protected:
-				StableLineKick _kicker;
+				ActionBehavior *_passer;
+				ActionBehavior *_receiver;
 		};
 	}
 }
