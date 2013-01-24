@@ -1,5 +1,6 @@
 #include "DumbReceive.hpp"
 #include "Utils.hpp"
+#include <math.h>
 
 namespace Gameplay { REGISTER_CONFIGURABLE(DumbReceive) }
 
@@ -13,7 +14,7 @@ void Gameplay::DumbReceive::createConfiguration(Configuration *cfg)
 {
 	_backoffDistance = new ConfigDouble(cfg, "DumbReceive/Backoff Distance", 0.078674155);
 	_maxExecutionError = new ConfigDouble(cfg, "DumbReceive/Max Execution Error", 0.01);
-	_kickTimeout = new ConfigDouble(cfg, "DumbReceive/Kick Timeout", 2.0);
+	_kickTimeout = new ConfigDouble(cfg, "DumbReceive/Kick Timeout", 3.0);
 
 	_debug = new ConfigBool(cfg, "StablePivotKick/Debug", true);
 }
@@ -86,12 +87,18 @@ Geometry2d::Point Gameplay::DumbReceive::receivePosition()
 	return receiveTarget;
 }
 
-bool Gameplay::DumbReceive::isAtReceivePosition()
+float Gameplay::DumbReceive::receivePositionError()
 {
 	using namespace Geometry2d;
 	float dist = (receivePosition() - robot->pos).mag();
-	float distAngle = Line(receivePosition(), robot->pos).distTo(ball().pos);
-	return dist < *_maxExecutionError && distAngle < *_maxExecutionError;
+	float distAngle = Line(receivePosition(), ball().pos).distTo(robot->pos);
+
+	return std::max(dist, distAngle);
+}
+
+bool Gameplay::DumbReceive::isAtReceivePosition()
+{
+	return receivePositionError() < *_maxExecutionError;
 }
 
 bool Gameplay::DumbReceive::run()
@@ -139,16 +146,19 @@ bool Gameplay::DumbReceive::run()
 	if(*_debug) {
 		if(_state == Setup) {
 			robot->addText(QString("DR: Setup"), Qt::yellow, QString("DumbReceive"));
+			robot->addText(QString("DR error: %1").arg(receivePositionError()), Qt::yellow, QString("DumbReceive"));
 			// Draw circle at pass position
 			state()->drawCircle(receivePosition(), Robot_Radius + 0.05, Qt::yellow, QString("DumbReceive"));
 		} else if(_state == Receive_PassKicking) {
 			robot->addText(QString("DR: Receive PassKicking"), Qt::yellow, QString("DumbReceive"));
 			// Draw circle at pass position
 			state()->drawCircle(receivePosition(), Robot_Radius + 0.05, Qt::yellow, QString("DumbReceive"));
+			robot->addText(QString("DR error: %1").arg(receivePositionError()), Qt::yellow, QString("DumbReceive"));
 			// Draw line to show where we think the ball is going to travel
 			state()->drawLine(ball().pos, receivePosition(), Qt::yellow, QString("DumbReceive"));
 		} else if(_state == Receive_PassDone) {
 			robot->addText(QString("DR: Receive PassDone"), Qt::green, QString("DumbReceive"));
+			robot->addText(QString("DR error: %1").arg(receivePositionError()), Qt::green, QString("DumbReceive"));
 			// Draw circle at pass position
 			state()->drawCircle(receivePosition(), Robot_Radius + 0.05, Qt::green, QString("DumbReceive"));
 			// Draw line to show where we think the ball is going to travel
