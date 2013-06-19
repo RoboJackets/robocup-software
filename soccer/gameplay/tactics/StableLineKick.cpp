@@ -1,4 +1,5 @@
 #include "StableLineKick.hpp"
+#include "PassReceiver.hpp"
 #include <math.h>
 
 namespace Gameplay { REGISTER_CONFIGURABLE(StableLineKick) }
@@ -12,9 +13,9 @@ ConfigBool *Gameplay::StableLineKick::_debug;
 
 void Gameplay::StableLineKick::createConfiguration(Configuration *cfg)
 {
-	_kickPower = new ConfigInt(cfg, "StableLineKick/Kick Power", 100);
+	_kickPower = new ConfigInt(cfg, "StableLineKick/Kick Power", 25);
 	_backoffDistance = new ConfigDouble(cfg, "StableLineKick/Backoff Distance", 0.2);
-	_maxExecutionError = new ConfigDouble(cfg, "StableLineKick/Max Execution Error", 0.01);
+	_maxExecutionError = new ConfigDouble(cfg, "StableLineKick/Max Execution Error", 0.015);
 	_approachVelocity = new ConfigDouble(cfg, "StableLineKick/Approach Velocity", 1.0);
 
 	_debug = new ConfigBool(cfg, "StablePivotKick/Debug", true);
@@ -100,10 +101,20 @@ bool Gameplay::StableLineKick::run()
 		return false;
 	}
 
+
+	if ( partner ) {
+		PassReceiver *rcvr = (PassReceiver *)partner;
+		rcvr->kickPoint = passPosition();
+
+		Point delta = ball().pos - robot->pos;
+		rcvr->kickAngle = delta.angle();
+	}
+
+
 	// State changing
 	if(_state == Setup) {
 		if(isAtPassPosition()) {
-			if(!partner || partner->isSetup()) {
+			if(!partner || partner->isSetup() ) {
 				_state = Kick;
 			}
 		}
@@ -156,6 +167,11 @@ bool Gameplay::StableLineKick::run()
 		Point driveVector = (ball().pos - robot->pos).normalized();
 		robot->worldVelocity(driveVector**_approachVelocity);
 		robot->face(ball().pos);
+
+		if ( partner ) {
+			PassReceiver *rcvr = (PassReceiver *)partner;
+			rcvr->partnerDidKick();
+		}
 	}
 
 
