@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Play.hpp"
-#include <gameplay/tactics/PassReceiver.hpp>
+#include <gameplay/tactics/DumbReceive.hpp>
 #include <gameplay/tactics/StablePass.hpp>
 #include <gameplay/behaviors/PivotKick.hpp>
 #include <gameplay/behaviors/positions/Fullback.hpp>
@@ -41,7 +41,7 @@ namespace Gameplay
 				PreventDoubleTouch _pdt;
 
 				StablePass _passer;
-				PassReceiver _receiver;
+				DumbReceive _receiver;
 
 				Behaviors::PivotKick _pivotKicker;
 

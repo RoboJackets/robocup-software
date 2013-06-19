@@ -15,6 +15,7 @@
   <Initial_Accuracy value="0.984808"/>
   <Accuracy_Delta value="0"/>
   <Fire_Now_Threshold value="0.99863"/>
+  <Max_Aim_Speed value="6.28319"/>
  </PivotKick>
  <YankChip>
   <Ball_Travel_Threshold value="0.5"/>
@@ -48,17 +49,19 @@
    <acceleration value="0.5"/>
    <predictTime value="0"/>
    <responseTime value="0.2"/>
+   <frictionOffset value="0.15"/>
   </trapTrans>
   <trapRot>
-   <velocity value="0"/>
-   <acceleration value="0"/>
+   <velocity value="3.14"/>
+   <acceleration value="1"/>
    <predictTime value="0"/>
    <responseTime value="0"/>
+   <frictionOffset value="0"/>
   </trapRot>
   <translation>
-   <p value="2"/>
+   <p value="2.75"/>
    <i value="0"/>
-   <d value="0"/>
+   <d value="0.45"/>
   </translation>
   <rotation>
    <p value="2"/>
@@ -82,17 +85,19 @@
    <acceleration value="0.5"/>
    <predictTime value="0"/>
    <responseTime value="0.2"/>
+   <frictionOffset value="0"/>
   </trapTrans>
   <trapRot>
-   <velocity value="0"/>
-   <acceleration value="0"/>
+   <velocity value="3.14"/>
+   <acceleration value="1"/>
    <predictTime value="0"/>
    <responseTime value="0"/>
+   <frictionOffset value="0"/>
   </trapRot>
   <translation>
    <p value="2"/>
    <i value="0"/>
-   <d value="0"/>
+   <d value="0.3"/>
   </translation>
   <rotation>
    <p value="2"/>
@@ -147,6 +152,7 @@
   <Max_Charge_Speed value="2"/>
   <Ball_Project_Time value="0.3"/>
   <Ball_Project_Dampening value="0.8"/>
+  <Done_State_Thresh value="0.11"/>
  </LineKick>
  <Kickoff>
   <Enable_Random_Kick_Mode value="false"/>
@@ -182,6 +188,7 @@
   <Enable_Chipper value="true"/>
   <Min_Chip_Range value="0.3"/>
   <Max_Chip_Range value="2"/>
+  <Avoid_Shot value="0.3"/>
  </OurFreekick>
  <Robot_Statuses>
   <Robot_0>
@@ -328,4 +335,117 @@
   <Kick_Power value="127"/>
   <Chip_Power value="100"/>
  </OurKickoff>
+ <BasicOffense122>
+  <Hystersis_Coeff value="0.5"/>
+  <Support_Backoff_Dist value="1.5"/>
+  <Mark_Hystersis_Coeff value="0.9"/>
+  <Support_Avoid_Teammate_Dist value="0.5"/>
+  <Support_Avoid_Shot value="0.2"/>
+  <Offense_Support_Ratio value="0.7"/>
+  <Defense_Support_Ratio value="0.9"/>
+  <Enable_Line_Kick value="true"/>
+ </BasicOffense122>
+ <OpenField221>
+  <Hystersis_Coeff value="0.5"/>
+  <Support_Backoff_Dist value="1.5"/>
+  <Mark_Hystersis_Coeff value="0.9"/>
+  <Support_Avoid_Teammate_Dist value="0.5"/>
+  <Support_Avoid_Shot value="0.2"/>
+  <Offense_Support_Ratio value="0.7"/>
+  <Defense_Support_Ratio value="0.9"/>
+ </OpenField221>
+ <Touch>
+  <Done_State_Thresh value="0.11"/>
+ </Touch>
+ <TouchKick>
+  <Rotate_Thresh value="0.1"/>
+  <Ball_Project_Time value="0.4"/>
+  <Ball_Project_Dampening value="0.8"/>
+ </TouchKick>
+ <PassReceive>
+  <Backup_Time value="100000"/>
+  <Backup_Speed value="0.05"/>
+  <Done_Thresh value="0.2"/>
+  <Kick_Power_Constant value="15"/>
+ </PassReceive>
+ <Fullback>
+  <Defend_Goal_Radius value="0.9"/>
+  <Opponent_Avoid_Threshold value="2"/>
+ </Fullback>
+ <StableLineKick>
+  <Kick_Power value="25"/>
+  <Backoff_Distance value="0.2"/>
+  <Max_Execution_Error value="0.015"/>
+  <Approach_Velocity value="1"/>
+ </StableLineKick>
+ <StablePivotKick>
+  <Debug value="true"/>
+ </StablePivotKick>
+ <DumbReceive>
+  <Backoff_Distance value="0.0786742"/>
+  <Max_Execution_Error value="0.015"/>
+  <Kick_Timeout value="3"/>
+ </DumbReceive>
+ <StableYank>
+  <Dribbler_Power value="150"/>
+  <Yank_Distance value="0.5"/>
+  <Aim_Error value="0.01"/>
+  <Move_Error value="0.2"/>
+  <Debug value="true"/>
+ </StableYank>
+ <KickMeasurement>
+  <Ready_Signal value="true"/>
+ </KickMeasurement>
+ <TestMinVelocity>
+  <X value="0"/>
+  <Y value="0"/>
+  <W value="1"/>
+  <SHELL value="11"/>
+ </TestMinVelocity>
+ <PassPlay>
+  <Line_Shot value="true"/>
+  <Chipping value="false"/>
+  <Kick_Power value="50"/>
+ </PassPlay>
+ <PassShootPlay>
+  <Shooter_Chipping value="false"/>
+  <Shooter_Line_Shot value="false"/>
+  <Shooter_Power value="127"/>
+  <Passer_Chipping value="false"/>
+  <Passer_Line_Shot value="false"/>
+  <Passer_Power value="127"/>
+ </PassShootPlay>
+ <TouchTest>
+  <Enable_Chipping value="false"/>
+  <Kicker_Power value="127"/>
+ </TouchTest>
+ <DemoKickMeasurement>
+  <Enable_Chipping value="false"/>
+  <Kicker_Power value="127"/>
+ </DemoKickMeasurement>
+ <KickerEnduranceTest>
+  <Enable_Chipping value="false"/>
+  <Kicker_Power value="127"/>
+  <Kick_Interval value="10"/>
+ </KickerEnduranceTest>
+ <PassReceiver>
+  <Backoff_Distance value="0.0786742"/>
+  <Max_Execution_Error value="0.015"/>
+  <Kick_Timeout value="5"/>
+  <Debug value="true"/>
+ </PassReceiver>
+ <StablePass>
+  <Pass_Position_Error value="0.015"/>
+  <Pass_Direction_Error value="0.1"/>
+  <Pass_Path_Error value="0.25"/>
+  <Kick_Power value="30"/>
+  <Backoff_Distance value="0.2"/>
+  <Approach_Velocity value="1"/>
+ </StablePass>
+ <OurCornerKick_Pass>
+  <Chipper_Power value="127"/>
+  <Window_Width value="1.5125"/>
+  <Min_Chip_Range value="0.3"/>
+  <Max_Chip_Range value="3"/>
+ </OurCornerKick_Pass>
 </config>
