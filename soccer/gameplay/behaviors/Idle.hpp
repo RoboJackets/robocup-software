@@ -10,6 +10,7 @@ namespace Gameplay
         {
             public:
                 Idle(GameplayModule *gameplay);
+            	~Idle();
                 
                 virtual bool run();
 

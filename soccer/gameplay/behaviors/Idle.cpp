@@ -9,6 +9,15 @@ Gameplay::Behaviors::Idle::Idle(GameplayModule *gameplay) :
 {
 }
 
+Gameplay::Behaviors::Idle::~Idle()
+{
+    BOOST_FOREACH(OurRobot* r, robots)
+    {
+        if(r)
+            r->avoidBall();
+    }
+}
+
 bool Gameplay::Behaviors::Idle::run()
 {
 	if (!ball().valid || robots.empty())
