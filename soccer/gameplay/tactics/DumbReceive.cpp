@@ -13,7 +13,7 @@ ConfigBool *Gameplay::DumbReceive::_debug;
 void Gameplay::DumbReceive::createConfiguration(Configuration *cfg)
 {
 	_backoffDistance = new ConfigDouble(cfg, "DumbReceive/Backoff Distance", 0.078674155);
-	_maxExecutionError = new ConfigDouble(cfg, "DumbReceive/Max Execution Error", 0.01);
+	_maxExecutionError = new ConfigDouble(cfg, "DumbReceive/Max Execution Error", 0.015);
 	_kickTimeout = new ConfigDouble(cfg, "DumbReceive/Kick Timeout", 3.0);
 
 	_debug = new ConfigBool(cfg, "StablePivotKick/Debug", true);

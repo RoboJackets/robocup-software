@@ -21,6 +21,8 @@ public:
 	virtual bool isDone() = 0;
 	virtual void restart() = 0;
 
+	virtual bool run() = 0;
+
 	Geometry2d::Point actionTarget;
 
 	ActionBehavior *partner;

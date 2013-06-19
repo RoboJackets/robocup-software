@@ -1,6 +1,6 @@
 #include "SLKTest.hpp"
 #include <gameplay/tactics/StableLineKick.hpp>
-#include <gameplay/tactics/DumbReceive.hpp>
+#include <gameplay/tactics/PassReceiver.hpp>
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::SLKTest, "Test")
 
@@ -10,7 +10,7 @@ Gameplay::Plays::SLKTest::SLKTest(GameplayModule *gameplay):
 	_receiver(0)
 {
 	_passer = new StableLineKick(gameplay);
-	_receiver = new DumbReceive(gameplay);
+	_receiver = new PassReceiver(gameplay);
 
 	Geometry2d::Point receiveTarget(1.5,0.8);
 
