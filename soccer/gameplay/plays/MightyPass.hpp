@@ -27,9 +27,12 @@ namespace Gameplay
 			protected:
 				//	FIXME: fullback? center?
 
-				std::map<OurRobot *, Behavior *> _behaviorsByFlexibleBot;
+				// std::map<OurRobot *, Behavior *> _behaviorsByFlexibleBot;
 
 
+				
+
+				Behaviors::Fullback _leftFullback, _rightFullback;
 
 
 
