@@ -50,7 +50,7 @@ bool Gameplay::Plays::TestLatency::run()
 	robot->worldVelocity(Point(w_i, 0));
 	double obs = robot->vel.x;
 #endif
-	_file << str(format("%f %f %d %d %d %d\n") % t % obs % robot->radioRx.encoders(0) % robot->radioRx.encoders(1) % robot->radioRx.encoders(2) % robot->radioRx.encoders(3));
+	_file << str(format("%f %f %d %d %d %d\n") % t % obs % robot->radioRx().encoders(0) % robot->radioRx().encoders(1) % robot->radioRx().encoders(2) % robot->radioRx().encoders(3));
 	
 	return true;
 }
