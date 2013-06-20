@@ -370,7 +370,7 @@ public:
 
 	void setRadioRx(Packet::RadioRx rx);
 
-	Packet::RadioRx radioRx() {
+	Packet::RadioRx &radioRx() {
 		return _radioRx;
 	}
 
