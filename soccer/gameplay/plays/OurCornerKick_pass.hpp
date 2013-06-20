@@ -33,7 +33,7 @@ namespace Gameplay
 				// Behaviors::Kick _kicker;
 				// Behaviors::Move _center1;
 				// Behaviors::Move _center2;
-				// Behaviors::Fullback _fullback1, _fullback2;
+				Behaviors::Fullback _fullback1, _fullback2;
 
 
 				bool _passDone;
@@ -41,7 +41,8 @@ namespace Gameplay
 				PreventDoubleTouch _pdt;
 
 				StablePass _passer;
-				DumbReceive _receiver;
+				DumbReceive _receiver1;
+				DumbReceive _receiver2;
 
 				Behaviors::PivotKick _pivotKicker;
 
