@@ -359,13 +359,20 @@ public:
 	float kickerVoltage() const;
 	Packet::HardwareVersion hardwareVersion() const;
 
+	uint64_t lastKickTime() const;
+
 	/** velocity specification for direct velocity control */
 	Geometry2d::Point cmd_vel;
 	float cmd_w;
 
 	/** radio packets */
 	Packet::RadioTx::Robot radioTx;
-	Packet::RadioRx radioRx;
+
+	void setRadioRx(Packet::RadioRx rx);
+
+	Packet::RadioRx radioRx() {
+		return _radioRx;
+	}
 
 	//The confidence for this robot's ball sensor
 	int sensorConfidence;
@@ -451,6 +458,12 @@ protected:
 
 	//FIXME - This doesn't need to be in this class.  Put it in SystemState, along with other drawing?
 	void drawPath(const Planning::Path& path, const QColor &color = Qt::black, const QString &layer = "Motion");
+
+private:
+	uint32_t _lastKickerStatus;
+	uint64_t _lastKickTime;
+
+	Packet::RadioRx _radioRx;
 };
 
 class OpponentRobot: public Robot
