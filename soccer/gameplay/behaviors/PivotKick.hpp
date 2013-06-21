@@ -77,6 +77,10 @@ namespace Gameplay
 
 				bool kick_ready;
 
+
+				uint64_t _lastKickTime;
+
+
 				// GUI Parameters
 				// Angular speed for aiming
 				static ConfigDouble *_aim_Speed;

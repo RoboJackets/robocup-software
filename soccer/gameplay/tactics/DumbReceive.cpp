@@ -116,9 +116,10 @@ bool Gameplay::DumbReceive::run()
 				_state = Receive_PassKicking;
 			} else if(partner && partner->isDone()) {
 				_state = Receive_PassDone;
-			} else if(!partner) {
-				_state = Receive_PassDone;
 			}
+			// else if(!partner) {
+			// 	_state = Receive_PassDone;
+			// }
 		}
 	} else if(_state == Receive_PassKicking) {
 		if(partner && partner->isSettingUp()) {
