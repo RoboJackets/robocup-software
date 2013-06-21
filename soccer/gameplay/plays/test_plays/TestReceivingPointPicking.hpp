@@ -10,7 +10,7 @@
 
 #include "../../Play.hpp"
 #include "../../behaviors/Move.hpp"
-#include "../../Window.hpp"
+#include "../../ReceivePointEvaluator.hpp"
 
 namespace Gameplay {
 namespace Plays {
@@ -18,13 +18,11 @@ namespace Plays {
 class TestReceivingPointPicking: public Gameplay::Play {
 public:
 	TestReceivingPointPicking(GameplayModule *gameplay);
-	Geometry2d::Point FindReceivingPoint(SystemState* state, Robot* robot, Geometry2d::Point ballPos, Geometry2d::Segment receivingLine);
 	virtual bool run();
 	~TestReceivingPointPicking();
 
 private:
 	GameplayModule* _gameplay;
-	OurRobot* _robot;
 	Behaviors::Move _move;
 };
 

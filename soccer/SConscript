@@ -33,6 +33,7 @@ srcs = [
 	'gameplay/Behavior.cpp',
 	'gameplay/Window.cpp',
 	'gameplay/PreventDoubleTouch.cpp',
+	'gameplay/ReceivePointEvaluator.cpp',
 
 	# Planning components',
 	'gameplay/planning/rrt.cpp',
