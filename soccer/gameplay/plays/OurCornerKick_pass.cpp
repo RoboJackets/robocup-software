@@ -32,16 +32,16 @@ void Gameplay::Plays::OurCornerKick_Pass::createConfiguration(Configuration *cfg
 Gameplay::Plays::OurCornerKick_Pass::OurCornerKick_Pass(GameplayModule *gameplay):
 	Play(gameplay),
 	_passer(gameplay),
-	_receiver(gameplay),
-	_pdt(gameplay, &_passer),
-	_pivotKicker(gameplay)
+	_receiver1(gameplay),
+	_receiver2(gameplay),
+	_fullback1(gameplay, Behaviors::Fullback::Left),
+	_fullback2(gameplay, Behaviors::Fullback::Right),
+	_pivotKicker(gameplay),
+	_pdt(gameplay, &_passer)
 {
 	// _center1.target = Point(0.0, Field_Length /2.0);
 
 	_passDone = false;
-
-	_passer.partner = &_receiver;
-	_receiver.partner = &_passer;
 }
 
 float Gameplay::Plays::OurCornerKick_Pass::score ( Gameplay::GameplayModule* gameplay )
@@ -61,9 +61,9 @@ float Gameplay::Plays::OurCornerKick_Pass::score ( Gameplay::GameplayModule* gam
 
 	chipper_available = true;	//	FIXME: hack
 
-	return true;	//	FIXME: mega hack
 
-	return (gs.setupRestart() && gs.ourDirect() && chipper_available && ballPos.y > (Field_Length - 1.0)) ? 1 : INFINITY;
+	// return (gs.setupRestart() && gs.ourDirect() && chipper_available && ballPos.y > (Field_Length - 1.5)) ? 1 : INFINITY;
+	return (gs.ourDirect() && chipper_available && ballPos.y > (Field_Length - 1.5)) ? 1 : INFINITY;
 }
 
 bool Gameplay::Plays::OurCornerKick_Pass::run()
@@ -103,49 +103,101 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 
 
 	if ( !_passDone ) {
-		if ( _receiver.isDone() ) {
+		if ( _receiver1.isDone() || _receiver2.isDone() ) {
 			_passDone = true;
 		}
 	}
 
 
+
+
 	//	if the pass isn't done yet, setup for the pass
 	if ( !_passDone ) {
-		Point passTarget(1.f, Field_Length - 1.0f);	//	FIXME: ?
+		Point passTarget1(-1.0f, Field_Length - 1.0f);	//	semi-arbitrarily-chosen points
+		Point passTarget2(1.0f, Field_Length - 1.0f);	//
 
-		_passer.actionTarget = passTarget;
-		_receiver.actionTarget = passTarget;
+
+
+		Point passerTarget;	//	FIXME: pick one of the two
+
+
+
+		bool firstIsBetter = false;
+
+		//	setup passer && receivers appropriately for the chosen point
+		if ( firstIsBetter ) {
+			passerTarget = passTarget1;
+
+			_passer.partner = &_receiver1;
+			_receiver1.partner = &_passer;
+
+			_receiver2.partner = NULL;
+			if ( _receiver2.robot ) _receiver2.robot->addText("Dummy");
+		} else {
+			passerTarget = passTarget2;
+
+			_passer.partner = &_receiver2;
+			_receiver2.partner = &_passer;
+
+			_receiver1.partner = NULL;
+		}
+
+
+		_passer.actionTarget = passerTarget;
+
+		_receiver1.actionTarget = passTarget1;
+		_receiver2.actionTarget = passTarget2;
+
 
 		assignNearest(_passer.robot, available, ball().pos);
-		assignNearest(_receiver.robot, available, passTarget);
+		assignNearest(_receiver1.robot, available, passTarget1);
+		assignNearest(_receiver2.robot, available, passTarget2);
 
 
 
 		_pdt.backoff.robots.clear();
 		_pdt.backoff.robots.insert(_passer.robot);
-		// assignNearest(_fullback1.robot, available, Geometry2d::Point(-Field_GoalHeight/2.0, 0.0));
-		// assignNearest(_fullback2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
-
+		
 		//	run passing behaviors
 		_pdt.run();	//	runs passer
-		_receiver.run();
-		if ( _receiver.robot ) _receiver.robot->dribble(60);
+		_receiver1.run();
+		_receiver2.run();
+
+		uint8_t dspeed = 60;
+		if ( _receiver1.robot ) _receiver1.robot->dribble(dspeed);
+		if ( _receiver2.robot ) _receiver2.robot->dribble(dspeed);
 	} else {
-		//	FIXME: setup pivot kicker
+
+
+		_pdt.backoff.robots.clear();
+
+
 
 		_passer.robot = NULL;
-		_receiver.robot = NULL;
+		_receiver1.robot = NULL;
 
 
-		// cout << "PivotKick!" << endl;
 
+
+		//	FIXME: setup pivot kicker
 
 		assignNearest(_pivotKicker.robot, available, ball().pos);
 
 		_pivotKicker.run();
 	}
 
+
+	assignNearest(_fullback1.robot, available, Geometry2d::Point(-Field_GoalHeight/2.0, 0.0));
+	assignNearest(_fullback2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
+
+	_fullback2.run();
+	_fullback1.run();
 	
 
-	return _pdt.keepRunning();
+	// if ( !_pdt.keepRunning() ) {
+	// 	cout << "OurCornerKick_Pass double touched! - play will terminate" << endl;
+	// }
+
+	// return _pdt.keepRunning();
+	return true;
 }

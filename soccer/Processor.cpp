@@ -456,7 +456,7 @@ void Processor::run()
 			{
 				// We have to copy because the RX packet will survive past this frame
 				// but LogFrame will not (the RadioRx in LogFrame will be reused).
-				_state.self[board]->radioRx.CopyFrom(rx);
+				_state.self[board]->radioRx().CopyFrom(rx);
 			}
 		}
 		_radio->clear();
@@ -518,34 +518,34 @@ void Processor::run()
 				log->set_shell(r->shell());
 				log->set_angle(r->angle);
 				
-				if (r->radioRx.has_kicker_voltage())
+				if (r->radioRx().has_kicker_voltage())
 				{
-					log->set_kicker_voltage(r->radioRx.kicker_voltage());
+					log->set_kicker_voltage(r->radioRx().kicker_voltage());
 				}
 				
-				if (r->radioRx.has_kicker_status())
+				if (r->radioRx().has_kicker_status())
 				{
-					log->set_charged(r->radioRx.kicker_status() & 0x01);
-					log->set_kicker_works(!(r->radioRx.kicker_status() & 0x90));
+					log->set_charged(r->radioRx().kicker_status() & 0x01);
+					log->set_kicker_works(!(r->radioRx().kicker_status() & 0x90));
 				}
 				
-				if (r->radioRx.has_ball_sense_status())
+				if (r->radioRx().has_ball_sense_status())
 				{
-					log->set_ball_sense_status(r->radioRx.ball_sense_status());
+					log->set_ball_sense_status(r->radioRx().ball_sense_status());
 				}
 				
-				if (r->radioRx.has_battery())
+				if (r->radioRx().has_battery())
 				{
-					log->set_battery_voltage(r->radioRx.battery());
+					log->set_battery_voltage(r->radioRx().battery());
 				}
 				
 				log->mutable_motor_status()->Clear();
-				log->mutable_motor_status()->MergeFrom(r->radioRx.motor_status());
+				log->mutable_motor_status()->MergeFrom(r->radioRx().motor_status());
 				
-				if (r->radioRx.has_quaternion())
+				if (r->radioRx().has_quaternion())
 				{
 					log->mutable_quaternion()->Clear();
-					log->mutable_quaternion()->MergeFrom(r->radioRx.quaternion());
+					log->mutable_quaternion()->MergeFrom(r->radioRx().quaternion());
 				} else {
 					log->clear_quaternion();
 				}
