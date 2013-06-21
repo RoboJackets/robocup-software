@@ -89,6 +89,8 @@ Geometry2d::Point Gameplay::DumbReceive::receivePosition()
 
 float Gameplay::DumbReceive::receivePositionError()
 {
+	if ( !robot ) return 100;
+	
 	using namespace Geometry2d;
 	float dist = (receivePosition() - robot->pos).mag();
 	float distAngle = Line(receivePosition(), ball().pos).distTo(robot->pos);
