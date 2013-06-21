@@ -383,7 +383,7 @@
  </StablePivotKick>
  <DumbReceive>
   <Backoff_Distance value="0.0786742"/>
-  <Max_Execution_Error value="0.015"/>
+  <Max_Execution_Error value="0.05"/>
   <Kick_Timeout value="3"/>
  </DumbReceive>
  <StableYank>
@@ -435,7 +435,7 @@
   <Debug value="true"/>
  </PassReceiver>
  <StablePass>
-  <Pass_Position_Error value="0.015"/>
+  <Pass_Position_Error value="0.05"/>
   <Pass_Direction_Error value="0.1"/>
   <Pass_Path_Error value="0.25"/>
   <Kick_Power value="30"/>
