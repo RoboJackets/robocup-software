@@ -184,6 +184,8 @@ void Gameplay::GameplayModule::updatePlay() {
 		{
 			if (bestPlay != _currentPlayFactory)
 			{
+				clearAvoidBallRadii();
+
 				_currentPlayFactory = bestPlay;
 				_currentPlay = shared_ptr<Play>(_currentPlayFactory->create(this));
 			}
@@ -194,6 +196,16 @@ void Gameplay::GameplayModule::updatePlay() {
 		}
 	}
 }
+
+void Gameplay::GameplayModule::clearAvoidBallRadii() {
+	BOOST_FOREACH(OurRobot* robot, _state->self)
+	{
+		if (robot) {
+			robot->disableAvoidBall();
+		}
+	}
+}
+
 /**
  * returns the group of obstacles for the field
  */

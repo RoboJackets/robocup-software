@@ -85,6 +85,10 @@ namespace Gameplay
 			{
 				return _playRobots;
 			}
+
+
+			void clearAvoidBallRadii();
+
 			
 		private:
 			friend class Play;
