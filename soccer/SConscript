@@ -33,6 +33,7 @@ srcs = [
 	'gameplay/Behavior.cpp',
 	'gameplay/Window.cpp',
 	'gameplay/PreventDoubleTouch.cpp',
+	'gameplay/ReceivePointEvaluator.cpp',
 
 	# Planning components',
 	'gameplay/planning/rrt.cpp',
@@ -106,6 +107,7 @@ srcs = [
 	# 'gameplay/plays/test_plays/TestPivotKick.cpp',
 	'gameplay/plays/test_plays/TestDefense.cpp',
     # 'gameplay/plays/test_plays/TestMinVelocity.cpp',
+    'gameplay/plays/test_plays/TestReceivingPointPicking.cpp',
 	
 	# MotionTests
 	# 'gameplay/plays/motion_testing/TestMotion.cpp',
