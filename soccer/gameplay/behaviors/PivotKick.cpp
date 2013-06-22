@@ -1,3 +1,4 @@
+//Eric is sleeping
 #include "PivotKick.hpp"
 
 #include <Utils.hpp>
@@ -19,6 +20,13 @@ ConfigDouble *Gameplay::Behaviors::PivotKick::_initial_Accuracy;
 ConfigDouble *Gameplay::Behaviors::PivotKick::_accuracy_Delta;
 ConfigDouble *Gameplay::Behaviors::PivotKick::_fireNowThreshold;
 
+ConfigDouble *Gameplay::Behaviors::PivotKick::_a0;
+ConfigDouble *Gameplay::Behaviors::PivotKick::_a1;
+ConfigDouble *Gameplay::Behaviors::PivotKick::_a2;
+ConfigDouble *Gameplay::Behaviors::PivotKick::_a3;
+ConfigDouble *Gameplay::Behaviors::PivotKick::_dribble_speed;
+
+
 void Gameplay::Behaviors::PivotKick::createConfiguration(Configuration* cfg)
 {
 	_aim_Speed = new ConfigDouble(cfg, "PivotKick/Aim Speed", 0.5 * M_PI);
@@ -26,6 +34,12 @@ void Gameplay::Behaviors::PivotKick::createConfiguration(Configuration* cfg)
 	_initial_Accuracy = new ConfigDouble(cfg, "PivotKick/Initial Accuracy", cos(10 * DegreesToRadians));
 	_accuracy_Delta  = new ConfigDouble(cfg, "PivotKick/Accuracy Delta", 0.000);
 	_fireNowThreshold  = new ConfigDouble(cfg, "PivotKick/Fire Now Threshold", cos(3 * DegreesToRadians));
+
+    _a0 = new ConfigDouble(cfg, "PivotKick/_a0", -78.3635);
+    _a1 = new ConfigDouble(cfg, "PivotKick/_a0", 3.30802);
+    _a2 = new ConfigDouble(cfg, "PivotKick/_a0", -0.0238479);
+    _a3 = new ConfigDouble(cfg, "PivotKick/_a0", 0.000613888);
+    _dribble_speed = new ConfigDouble(cfg, "PivotKick/Dribble Speed", 40);
 }
 
 Gameplay::Behaviors::PivotKick::PivotKick(GameplayModule *gameplay):
@@ -50,6 +64,20 @@ void Gameplay::Behaviors::PivotKick::restart()
 	dribble_speed = 50;
 	use_chipper = false;
 	kick_power = 255;
+}
+
+uint8_t Gameplay::Behaviors::PivotKick::compute_kickpower(double dist)
+{
+    double a0 = *_a0;
+    double a1 = *_a1;
+    double a2 = *_a2;
+    double a3 = *_a3;
+
+    double x = dist*(dist*(dist*(a3) + a2) + a1) + a0;
+
+    int kickpower = std::min(std::max(x, 0), 255);
+
+    return kickpower;
 }
 
 bool Gameplay::Behaviors::PivotKick::run()

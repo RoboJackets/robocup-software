@@ -57,6 +57,9 @@ namespace Gameplay
             // Default: 255 - full power
             uint8_t kick_power;
 
+            // Uses a cubic to map distance to kick power
+            uint8_t compute_kickpower(double dist);
+           
         private:
 
             enum
@@ -65,7 +68,7 @@ namespace Gameplay
                 State_Aim,
                 State_Done
             } _state;
-				
+
             Capture _capture;
 
             bool _ccw;
@@ -76,7 +79,6 @@ namespace Gameplay
             bool _kicked;
 
             bool kick_ready;
-
 
             uint64_t _lastKickTime;
 
@@ -93,7 +95,9 @@ namespace Gameplay
             static ConfigDouble *_accuracy_Delta;
             static ConfigDouble *_fireNowThreshold;
             
-            // 
+            // Chipper calibration
+            static ConfigDouble *_a0, *_a1, *_a2, *_a3; // constants of the cubic
+            static ConfigDouble *_dribble_speed; // dribble speed in order to map cubically
         };
 	}
 }
