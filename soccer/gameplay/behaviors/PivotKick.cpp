@@ -67,13 +67,10 @@ bool Gameplay::Behaviors::PivotKick::run()
 	
 	uint64_t now = timestamp();
 	
-
 	//	track kick time
 	if ( _state != State_Aim ) {
 		_lastKickTime = robot->lastKickTime();
 	}
-
-
 
 	// State changes
 	Point toBall = (ball().pos - robot->pos).normalized();
@@ -99,8 +96,8 @@ bool Gameplay::Behaviors::PivotKick::run()
 		// watch for ball leaving the robot
 		
 
-		//if ((!robot->hasBall() && (state()->timestamp - _lastBallTime) > 500000) || !ball().pos.nearPoint(robot->pos, *_kick_Completed_Threshold))
-		if ( robot->lastKickTime() > _lastKickTime )
+		if ((!robot->hasBall() && (state()->timestamp - _lastBallTime) > 500000) || !ball().pos.nearPoint(robot->pos, *_kick_Completed_Threshold))
+            //if ( robot->lastKickTime() > _lastKickTime )
 		{
 			if (_kicked)
 			{
