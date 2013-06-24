@@ -5,6 +5,8 @@
 #include "Window.hpp"
 #include "ReceivePointEvaluator.hpp"
 #include <Geometry2d/Segment.hpp>
+#include <boost/foreach.hpp>
+#include <Utils.hpp>
 
 
 
@@ -13,9 +15,7 @@ namespace Gameplay {
 
 	class PointEvaluator {
 	public:
-		virtual float evaluatePoint(Geometry2d::Point &pt) {
-			return 0;
-		}
+		virtual float evaluatePoint(Geometry2d::Point &pt) = 0;
 	};
 
 
@@ -30,9 +30,9 @@ namespace Gameplay {
 
 		}
 
-		// ShotVantagePointEvaluator(ShotVantagePointEvaluator &other) : _windowEvaluator(other->_state) {
+		ShotVantagePointEvaluator(ShotVantagePointEvaluator &other) : _windowEvaluator(other._windowEvaluator.state()) {
 
-		// }
+		}
 
 
 		virtual float evaluatePoint(Geometry2d::Point &pt) {
@@ -64,13 +64,51 @@ namespace Gameplay {
 
 
 
-	typedef float (*PointEvaluationFunction)(Geometry2d::Point &pt);
-
-	template<PointEvaluationFunction func>
-	class PointEvaluatorImpl : public PointEvaluator {
+	class PassReceivePointEvaluator : public PointEvaluator {
 	public:
+		PassReceivePointEvaluator(SystemState *state) : _windowEvaluator(state) {}
 
+		PassReceivePointEvaluator(PassReceivePointEvaluator &other) : _windowEvaluator(other._windowEvaluator.state()) {}
+
+
+		virtual float evaluatePoint(Geometry2d::Point &pt) {
+
+
+			//	FIXME: implement
+
+
+			return 0;
+		}
+
+		//	FIXME: ?
+		WindowEvaluator _windowEvaluator;
 	};
+
+
+	
+	//======================================================================	
+
+
+
+	class NotInGoalieBoxPointEvaluator : public PointEvaluator {
+	public:
+		virtual float evaluatePoint(Geometry2d::Point &pt) {
+			return ballIsInTheirGoalieBox(pt) ? -INFINITY : 0;
+		}
+	};
+
+
+	//======================================================================
+
+
+
+	// typedef float (*PointEvaluationFunction)(Geometry2d::Point &pt);
+
+	// template<PointEvaluationFunction func>
+	// class PointEvaluatorImpl : public PointEvaluator {
+	// public:
+
+	// };
 
 
 
@@ -86,8 +124,15 @@ namespace Gameplay {
 
 			if ( includeDefaultEvaluators ) {
 				//	vantage point on the goal
-				ShotVantagePointEvaluator shot(state);
+				ShotVantagePointEvaluator *shot = new ShotVantagePointEvaluator(state);
 				addPointEvaluator(shot);
+
+				//	invalidates the point if it's in the goalie box
+				NotInGoalieBoxPointEvaluator *notInGoalieBox = new NotInGoalieBoxPointEvaluator();
+				addPointEvaluator(notInGoalieBox);
+
+				PassReceivePointEvaluator *passEval = new PassReceivePointEvaluator(state);
+				addPointEvaluator(passEval);
 			}
 
 			setPointEvaluationSpacing(.1);	//	evaluate every 10cm
@@ -95,10 +140,26 @@ namespace Gameplay {
 			visualize = false;
 		}
 
+
+		~FieldEvaluator() {
+			removeAllPointEvaluators();
+		}
+
+
+		void removeAllPointEvaluators() {
+			BOOST_FOREACH(PointEvaluator *ptEval, _pointEvaluators) {
+				delete ptEval;
+			}
+			_pointEvaluators.clear();
+		}
+
+
+
 		bool visualize;
 
 
-		void addPointEvaluator(PointEvaluator &ptEval, float weight = 1) {
+		//	note: takes ownership of ptEval
+		void addPointEvaluator(PointEvaluator *ptEval, float weight = 1) {
 			_pointEvaluators.push_back(ptEval);
 			_pointEvaluatorWeights.push_back(weight);
 		}
@@ -108,16 +169,9 @@ namespace Gameplay {
 		float evaluatePoint(Geometry2d::Point &pt) {
 			float score = 0;
 			for ( int i = 0; i < _pointEvaluators.size(); i++ ) {
-				PointEvaluator &evaluator = _pointEvaluators[i];
+				PointEvaluator *evaluator = _pointEvaluators[i];
 				float weight = _pointEvaluatorWeights[i];
-				score += evaluator.evaluatePoint(pt) * weight;
-			}
-
-			if ( visualize ) {
-				float radius = Robot_Radius;
-				QColor color(255,0,0);
-
-				_systemState->drawCircle(pt, radius, color, "FieldEvaluator");
+				score += evaluator->evaluatePoint(pt) * weight;
 			}
 
 			return score;
@@ -152,6 +206,24 @@ namespace Gameplay {
 				}
 			}
 
+
+			if ( visualize ) {
+				for ( float x = rect.minx(); x < rect.maxx(); x += dx ) {
+					for ( float y = rect.miny(); y < rect.maxy(); y += dy ) {
+						Geometry2d::Point pt(x, y);
+						float score = evaluatePoint(pt);
+
+						float normalizedScore = score / maxScore;
+						normalizedScore = std::max(score, 0.0f);
+
+
+						QColor color(normalizedScore * 255, 0, (1 - normalizedScore)*255);
+						_systemState->drawCircle(pt, .02, color, "FieldEvaluator");
+					}
+				}
+			}
+
+
 			if ( scoreOut ) *scoreOut = maxScore;
 			return bestPoint;
 		}
@@ -159,7 +231,7 @@ namespace Gameplay {
 
 	private:
 		SystemState *_systemState;
-		std::vector<PointEvaluator> _pointEvaluators;
+		std::vector<PointEvaluator *> _pointEvaluators;
 		std::vector<float> _pointEvaluatorWeights;
 		float _evaluationSpacing;
 	};

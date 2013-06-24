@@ -54,7 +54,7 @@ float Gameplay::Plays::MightyPass::score ( Gameplay::GameplayModule* gameplay )
 
 bool Gameplay::Plays::MightyPass::run()
 {
-	Rect rect(Point(-Field_Width, 0), Point(Field_Width, Field_Length));
+	Rect rect(Point(-Field_Width / 2.0f, 0), Point(Field_Width / 2.0f, Field_Length));
 	_fieldEval.visualize = true;
 	_fieldEval.bestPointInRect(rect);
 
