@@ -19,6 +19,8 @@ bool Gameplay::Plays::DemoPivotAttack::run()
 
 	Geometry2d::Point ballPos = ball().pos;
 
+	_kicker.use_chipper = true;
+
 	// if we have kicked, we want to reset
 	if (_kicker.done() &&  ball().valid && 
 			(!ballPos.nearPoint(Geometry2d::Point(0, Field_Length), Field_ArcRadius)))
