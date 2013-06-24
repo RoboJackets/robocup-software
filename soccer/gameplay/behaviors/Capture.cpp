@@ -83,7 +83,7 @@ bool Gameplay::Behaviors::Capture::run()
 	{
 		float interceptTime = ballDist / *robot->config->trapTrans.velocity;
 		Point trapApproachPoint = ball().pos + ball().vel * interceptTime; // TODO: check if accel term is necessary
-		Point approachPoint = trapApproachPoint;
+		approachPoint = trapApproachPoint;
 	}
 
 	if (_state == State_Approach)
@@ -112,7 +112,7 @@ bool Gameplay::Behaviors::Capture::run()
 			_lastBallTime = now;
 		}
 		
-		if (!behindBall)
+		if (!behindBall || (robot->pos - ball().pos).mag() > *_approach_Threshold * 1.1)
 		{
 			_state = State_Approach;
 		}
