@@ -29,10 +29,6 @@ namespace Gameplay
 				virtual bool run();
 			
 			protected:
-				// always takes a chipper
-				// Behaviors::Kick _kicker;
-				// Behaviors::Move _center1;
-				// Behaviors::Move _center2;
 				Behaviors::Fullback _fullback1, _fullback2;
 
 
@@ -44,13 +40,7 @@ namespace Gameplay
 				DumbReceive _receiver1;
 				DumbReceive _receiver2;
 
-				Behaviors::PivotKick _pivotKicker;
-
-
 				static ConfigDouble *_targetSegmentWidth;
-				static ConfigDouble *_minChipRange;
-				static ConfigDouble *_maxChipRange;
-				static ConfigInt *_chipper_power;
 		};
 	}
 }

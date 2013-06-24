@@ -18,16 +18,10 @@ namespace Gameplay
 }
 
 ConfigDouble *Gameplay::Plays::OurCornerKick_Pass::_targetSegmentWidth;
-ConfigDouble *Gameplay::Plays::OurCornerKick_Pass::_minChipRange;
-ConfigDouble *Gameplay::Plays::OurCornerKick_Pass::_maxChipRange;
-ConfigInt *Gameplay::Plays::OurCornerKick_Pass::_chipper_power;
 
 void Gameplay::Plays::OurCornerKick_Pass::createConfiguration(Configuration *cfg)
 {
-	_chipper_power = new ConfigInt(cfg, "OurCornerKick_Pass/Chipper Power", 127);
 	_targetSegmentWidth = new ConfigDouble(cfg, "OurCornerKick_Pass/Window Width", Field_Length / 4.);
-	_minChipRange = new ConfigDouble(cfg, "OurCornerKick_Pass/Min Chip Range", 0.3);
-	_maxChipRange = new ConfigDouble(cfg, "OurCornerKick_Pass/Max Chip Range", 3.0);
 }
 
 Gameplay::Plays::OurCornerKick_Pass::OurCornerKick_Pass(GameplayModule *gameplay):
@@ -37,7 +31,6 @@ Gameplay::Plays::OurCornerKick_Pass::OurCornerKick_Pass(GameplayModule *gameplay
 	_receiver2(gameplay),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
 	_fullback2(gameplay, Behaviors::Fullback::Right),
-	_pivotKicker(gameplay),
 	_pdt(gameplay, &_passer)
 {
 	// _center1.target = Point(0.0, Field_Length /2.0);
@@ -205,24 +198,6 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 		uint8_t dspeed = 60;
 		if ( _receiver1.robot ) _receiver1.robot->dribble(dspeed);
 		if ( _receiver2.robot ) _receiver2.robot->dribble(dspeed);
-	} else {
-
-
-		_pdt.backoff.robots.clear();
-
-
-
-		_passer.robot = NULL;
-		_receiver1.robot = NULL;
-		_receiver2.robot = NULL;
-
-
-
-		//	FIXME: setup pivot kicker
-
-		assignNearest(_pivotKicker.robot, available, ball().pos);
-
-		_pivotKicker.run();
 	}
 
 
@@ -233,10 +208,5 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 	_fullback1.run();
 	
 
-	// if ( !_pdt.keepRunning() ) {
-	// 	cout << "OurCornerKick_Pass double touched! - play will terminate" << endl;
-	// }
-
-	// return _pdt.keepRunning();
-	return true;
+	return !_passDone;
 }
