@@ -34,6 +34,7 @@ srcs = [
 	'gameplay/Window.cpp',
 	'gameplay/PreventDoubleTouch.cpp',
 	'gameplay/ReceivePointEvaluator.cpp',
+	'gameplay/FieldEvaluator.cpp',
 
 	# Planning components',
 	'gameplay/planning/rrt.cpp',
@@ -60,6 +61,7 @@ srcs = [
 	'gameplay/plays/OpenField221.cpp',
 	'gameplay/plays/YankOpen.cpp',
 	'gameplay/plays/EmptyGoal.cpp',
+	'gameplay/plays/MightyPass.cpp',
 
   # Core behaviors
 	'gameplay/behaviors/Move.cpp',
