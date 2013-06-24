@@ -75,7 +75,7 @@ uint8_t Gameplay::Behaviors::PivotKick::compute_kickpower(double dist)
 
     double x = dist*(dist*(dist*(a3) + a2) + a1) + a0;
 
-    int kickpower = std::min(std::max(x, 0), 255);
+    int kickpower = std::min(std::max((int)x, 0), 255);
 
     return kickpower;
 }
