@@ -9,6 +9,8 @@
 
 #include <gameplay/behaviors/positions/Fullback.hpp>
 
+#include <gameplay/FieldEvaluator.hpp>
+
 
 namespace Gameplay
 {
@@ -25,6 +27,7 @@ namespace Gameplay
 				virtual bool run();
 				
 			protected:
+				FieldEvaluator _fieldEval;
 				//	FIXME: fullback? center?
 
 				// std::map<OurRobot *, Behavior *> _behaviorsByFlexibleBot;

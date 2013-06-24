@@ -2,6 +2,7 @@
 #include <framework/RobotConfig.hpp>
 #include <boost/foreach.hpp>
 #include <iostream>
+#include "../ReceivePointEvaluator.hpp"
 
 using namespace std;
 using namespace Geometry2d;
@@ -17,16 +18,10 @@ namespace Gameplay
 }
 
 ConfigDouble *Gameplay::Plays::OurCornerKick_Pass::_targetSegmentWidth;
-ConfigDouble *Gameplay::Plays::OurCornerKick_Pass::_minChipRange;
-ConfigDouble *Gameplay::Plays::OurCornerKick_Pass::_maxChipRange;
-ConfigInt *Gameplay::Plays::OurCornerKick_Pass::_chipper_power;
 
 void Gameplay::Plays::OurCornerKick_Pass::createConfiguration(Configuration *cfg)
 {
-	_chipper_power = new ConfigInt(cfg, "OurCornerKick_Pass/Chipper Power", 127);
 	_targetSegmentWidth = new ConfigDouble(cfg, "OurCornerKick_Pass/Window Width", Field_Length / 4.);
-	_minChipRange = new ConfigDouble(cfg, "OurCornerKick_Pass/Min Chip Range", 0.3);
-	_maxChipRange = new ConfigDouble(cfg, "OurCornerKick_Pass/Max Chip Range", 3.0);
 }
 
 Gameplay::Plays::OurCornerKick_Pass::OurCornerKick_Pass(GameplayModule *gameplay):
@@ -36,7 +31,6 @@ Gameplay::Plays::OurCornerKick_Pass::OurCornerKick_Pass(GameplayModule *gameplay
 	_receiver2(gameplay),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
 	_fullback2(gameplay, Behaviors::Fullback::Right),
-	_pivotKicker(gameplay),
 	_pdt(gameplay, &_passer)
 {
 	// _center1.target = Point(0.0, Field_Length /2.0);
@@ -63,7 +57,7 @@ float Gameplay::Plays::OurCornerKick_Pass::score ( Gameplay::GameplayModule* gam
 
 
 	// return (gs.setupRestart() && gs.ourDirect() && chipper_available && ballPos.y > (Field_Length - 1.5)) ? 1 : INFINITY;
-	return (gs.ourDirect() && chipper_available && ballPos.y > (Field_Length - 1.5)) ? 1 : INFINITY;
+	return (gs.ourDirect() && chipper_available && ballPos.y > (Field_Length - 2.5)) ? 1 : INFINITY;
 }
 
 bool Gameplay::Plays::OurCornerKick_Pass::run()
@@ -113,16 +107,54 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 
 	//	if the pass isn't done yet, setup for the pass
 	if ( !_passDone ) {
-		Point passTarget1(-1.0f, Field_Length - 1.0f);	//	semi-arbitrarily-chosen points
-		Point passTarget2(1.0f, Field_Length - 1.0f);	//
 
 
 
-		Point passerTarget;	//	FIXME: pick one of the two
+		//	Geometry2d::Point FindReceivingPoint(SystemState* state, Robot* robot, Geometry2d::Point ballPos, Geometry2d::Segment receivingLine);
+
+		Segment receiver1Segment(Point(-1.0f, Field_Length - 1.5f), Point(-2, Field_Length - 1.0f));
+		Segment receiver2Segment(Point(1.0f, Field_Length - 1.5f), Point(2.0f, Field_Length - 1.0f));
 
 
 
-		bool firstIsBetter = false;
+
+		Point passTarget1;
+		Point passTarget2;
+
+
+
+		if ( _receiver1.robot ) {
+			Point pt = ReceivePointEvaluator::FindReceivingPoint(state(), _receiver1.robot->pos, ball().pos, receiver1Segment);
+			passTarget1 = pt;
+
+			state()->drawLine(receiver1Segment.pt[0], receiver1Segment.pt[1], Qt::black);
+
+			// state()->drawCircle(passTarget1, )
+
+			// state()->drawCircle(receivePosition(), Robot_Radius + 0.05, Qt::yellow, QString("DumbReceive"));
+		} else {
+			passTarget1 = receiver1Segment.center();
+		}
+
+		if ( _receiver2.robot ) {
+			Point pt = ReceivePointEvaluator::FindReceivingPoint(state(), _receiver2.robot->pos, ball().pos, receiver2Segment);
+			passTarget2 = pt;
+
+			state()->drawLine(receiver2Segment.pt[0], receiver2Segment.pt[1], Qt::black);
+		} else {
+			passTarget2 = receiver2Segment.center();
+		}
+
+
+
+
+
+
+		Point passerTarget;
+
+
+
+		bool firstIsBetter = false;	//	FIXME: pick one of the two
 
 		//	setup passer && receivers appropriately for the chosen point
 		if ( firstIsBetter ) {
@@ -166,24 +198,6 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 		uint8_t dspeed = 60;
 		if ( _receiver1.robot ) _receiver1.robot->dribble(dspeed);
 		if ( _receiver2.robot ) _receiver2.robot->dribble(dspeed);
-	} else {
-
-
-		_pdt.backoff.robots.clear();
-
-
-
-		_passer.robot = NULL;
-		_receiver1.robot = NULL;
-
-
-
-
-		//	FIXME: setup pivot kicker
-
-		assignNearest(_pivotKicker.robot, available, ball().pos);
-
-		_pivotKicker.run();
 	}
 
 
@@ -194,10 +208,5 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 	_fullback1.run();
 	
 
-	// if ( !_pdt.keepRunning() ) {
-	// 	cout << "OurCornerKick_Pass double touched! - play will terminate" << endl;
-	// }
-
-	// return _pdt.keepRunning();
-	return true;
+	return !_passDone;
 }

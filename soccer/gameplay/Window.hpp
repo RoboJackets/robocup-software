@@ -70,6 +70,12 @@ namespace Gameplay
 
 			Window* best() { return _best; }
 
+
+			SystemState *state() {
+				return _state;
+			}
+
+
 		protected:
 			Geometry2d::Point _origin;
 			Geometry2d::Segment _target;
