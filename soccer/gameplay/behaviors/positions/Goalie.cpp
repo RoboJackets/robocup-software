@@ -40,28 +40,6 @@ Gameplay::Behaviors::Goalie::~Goalie() {
 	delete _win;
 }
 
-/** Checks whether or not the given ball is in the defense area. */
-bool ballIsInGoalieBox(Ball ball) {
-	if (abs(ball.pos.x) < Field_GoalFlat / 2.0f) // Ball is in center (rectangular) portion of defensive bubble
-	{
-		if (ball.pos.y > 0 && ball.pos.y < Field_ArcRadius) {
-			return true;
-		} else {
-			return false;
-		}
-	} else if (abs(ball.pos.x) < (Field_ArcRadius + Field_GoalFlat / 2.0f)) // Ball is in one of the side (arc) portions of defensive bubble
-	{
-		double adjusted_x = abs(ball.pos.x) - (Field_GoalFlat / 2.0f);
-		double max_y = sqrt( (Field_ArcRadius * Field_ArcRadius) - (adjusted_x * adjusted_x));
-		if (ball.pos.y > 0 && ball.pos.y <= max_y) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	return false;
-}
-
 void Gameplay::Behaviors::Goalie::assign(set<OurRobot *> &available) {
 	if (!robot) {
 		// Take the robot nearest the goal
@@ -141,7 +119,7 @@ bool Gameplay::Behaviors::Goalie::run()
 		_state = SetupPenalty;
 	else if (ballIsMovingTowardsGoal())
 		_state=Intercept;
-	else if(ballIsInGoalieBox(ball()))
+	else if(ballIsInGoalieBox(ball().pos))
 		_state = Clear;
 	else if (opponentsHavePossession())
 		_state = Block;
