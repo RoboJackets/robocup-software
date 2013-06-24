@@ -71,7 +71,7 @@ namespace Geometry2d
 			}
 			/**
 			 * see operator+
-			 * does vector subtraction, note the parameter
+			 * does vector subtraction, note the operator
 			 * without parameter, it is the negative
 			 */
 			Point operator-(Point other) const

@@ -10,6 +10,8 @@
 #include <stdexcept>
 #include <typeinfo>
 #include <QString>
+#include "Geometry2d/Point.hpp"
+#include "Constants.hpp"
 
 // Adjusts an angle in degrees to fit in [-180, 180].
 static inline float fixAngleDegrees(float a)
@@ -36,6 +38,28 @@ static inline float fixAngleRadians(float a)
 	} else {
 		return a;
 	}
+}
+
+/** Checks whether or not the given ball is in the defense area. */
+static inline bool ballIsInGoalieBox(Geometry2d::Point point) {
+	if (abs(point.x) < Field_GoalFlat / 2.0f) // Ball is in center (rectangular) portion of defensive bubble
+	{
+		if (point.y > 0 && point.y < Field_ArcRadius) {
+			return true;
+		} else {
+			return false;
+		}
+	} else if (abs(point.x) < (Field_ArcRadius + Field_GoalFlat / 2.0f)) // Ball is in one of the side (arc) portions of defensive bubble
+	{
+		double adjusted_x = abs(point.x) - (Field_GoalFlat / 2.0f);
+		double max_y = sqrt( (Field_ArcRadius * Field_ArcRadius) - (adjusted_x * adjusted_x));
+		if (point.y > 0 && point.y <= max_y) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	return false;
 }
 
 /** Handles saturation of a bounded value */
