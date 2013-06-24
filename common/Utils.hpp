@@ -62,6 +62,23 @@ static inline bool ballIsInGoalieBox(Geometry2d::Point point) {
 	return false;
 }
 
+
+
+static Geometry2d::Point fromOursToTheirs(Geometry2d::Point &pt) {
+	Geometry2d::Point c;
+	c.y = Field_Length - pt.y;
+	c.x = -pt.x;
+
+	return c;
+}
+
+static bool ballIsInTheirGoalieBox(Geometry2d::Point &pt) {
+	Geometry2d::Point converted = fromOursToTheirs(pt);
+	return ballIsInGoalieBox(converted);
+}
+
+
+
 /** Handles saturation of a bounded value */
 template<class T>
 float clamp(T value, T min, T max)
