@@ -2,6 +2,7 @@
 #include <framework/RobotConfig.hpp>
 #include <boost/foreach.hpp>
 #include <iostream>
+#include "../ReceivePointEvaluator.hpp"
 
 using namespace std;
 using namespace Geometry2d;
@@ -63,7 +64,7 @@ float Gameplay::Plays::OurCornerKick_Pass::score ( Gameplay::GameplayModule* gam
 
 
 	// return (gs.setupRestart() && gs.ourDirect() && chipper_available && ballPos.y > (Field_Length - 1.5)) ? 1 : INFINITY;
-	return (gs.ourDirect() && chipper_available && ballPos.y > (Field_Length - 1.5)) ? 1 : INFINITY;
+	return (gs.ourDirect() && chipper_available && ballPos.y > (Field_Length - 2.5)) ? 1 : INFINITY;
 }
 
 bool Gameplay::Plays::OurCornerKick_Pass::run()
@@ -113,16 +114,54 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 
 	//	if the pass isn't done yet, setup for the pass
 	if ( !_passDone ) {
-		Point passTarget1(-1.0f, Field_Length - 1.0f);	//	semi-arbitrarily-chosen points
-		Point passTarget2(1.0f, Field_Length - 1.0f);	//
 
 
 
-		Point passerTarget;	//	FIXME: pick one of the two
+		//	Geometry2d::Point FindReceivingPoint(SystemState* state, Robot* robot, Geometry2d::Point ballPos, Geometry2d::Segment receivingLine);
+
+		Segment receiver1Segment(Point(-1.0f, Field_Length - 1.5f), Point(-2, Field_Length - 1.0f));
+		Segment receiver2Segment(Point(1.0f, Field_Length - 1.5f), Point(2.0f, Field_Length - 1.0f));
 
 
 
-		bool firstIsBetter = false;
+
+		Point passTarget1;
+		Point passTarget2;
+
+
+
+		if ( _receiver1.robot ) {
+			Point pt = ReceivePointEvaluator::FindReceivingPoint(state(), _receiver1.robot->pos, ball().pos, receiver1Segment);
+			passTarget1 = pt;
+
+			state()->drawLine(receiver1Segment.pt[0], receiver1Segment.pt[1], Qt::black);
+
+			// state()->drawCircle(passTarget1, )
+
+			// state()->drawCircle(receivePosition(), Robot_Radius + 0.05, Qt::yellow, QString("DumbReceive"));
+		} else {
+			passTarget1 = receiver1Segment.center();
+		}
+
+		if ( _receiver2.robot ) {
+			Point pt = ReceivePointEvaluator::FindReceivingPoint(state(), _receiver2.robot->pos, ball().pos, receiver2Segment);
+			passTarget2 = pt;
+
+			state()->drawLine(receiver2Segment.pt[0], receiver2Segment.pt[1], Qt::black);
+		} else {
+			passTarget2 = receiver2Segment.center();
+		}
+
+
+
+
+
+
+		Point passerTarget;
+
+
+
+		bool firstIsBetter = false;	//	FIXME: pick one of the two
 
 		//	setup passer && receivers appropriately for the chosen point
 		if ( firstIsBetter ) {
@@ -175,7 +214,7 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 
 		_passer.robot = NULL;
 		_receiver1.robot = NULL;
-
+		_receiver2.robot = NULL;
 
 
 
