@@ -6,14 +6,18 @@
 
     <!-- configure blue team robots -->
     <blue>
+        <robot id="0" x="1.5" y="0.5" />
+        <robot id="1" x="1" y="0.5" />
+        <robot id="4" x="1" y="-0.5" />
+        <robot id="11" x="1.5" y="-0.5" />
     </blue>
 
 	<!-- configure yellow team robots -->
     <yellow>
         <robot id="0" x="-1.5" y="0.5" />
         <robot id="1" x="-1" y="0.5" />
-        <robot id="4" x="1" y="0.5" />
-        <robot id="11" x="1.5" y="0.5" />
+        <robot id="4" x="-1" y="-0.5" />
+        <robot id="11" x="-1.5" y="-0.5" />
     </yellow>
 
     <vision>
