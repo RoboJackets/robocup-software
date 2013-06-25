@@ -139,9 +139,14 @@ bool Gameplay::Behaviors::PivotKick::run()
 		_capture.run();
 	}  else if (_state == State_Aim)
 	{
+		/*WindowEvaluator we;
+		we.exclude.push_back(robot->pos);
+		we.run(ball().pos);
+		list<Window*> windows = we.windows;*/
+
 		state()->drawLine(robot->pos, robot->pos + dir * 8, Qt::white);
 		state()->drawLine(ball().pos, target.center(), Qt::yellow);
-		state()->drawLine(robot->pos, (ball().pos - robot->pos).normalized() * 8, Qt::green);
+		state()->drawLine(robot->pos, robot->pos + (ball().pos - robot->pos).normalized() * 8, Qt::green);
 		
 		// See if it's time to kick
 		float error = dir.dot((target.center() - ball().pos).normalized());
@@ -154,7 +159,10 @@ bool Gameplay::Behaviors::PivotKick::run()
 			{
 				if (use_chipper)
 				{
-					robot->chip(chipPowerForDistance(target.center().distTo(ball().pos)));
+					if(*_land_on_target)
+						robot->chip(chipPowerForDistance(target.center().distTo(ball().pos)));
+					else
+						robot->chip(kick_power);
 					robot->addText("CHIP");
 				} else
 				{
