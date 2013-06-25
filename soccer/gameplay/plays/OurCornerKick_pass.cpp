@@ -7,6 +7,10 @@
 using namespace std;
 using namespace Geometry2d;
 
+
+static const int requiredBotCount = 2;
+
+
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::OurCornerKick_Pass, "Restarts")
 
 namespace Gameplay
@@ -56,14 +60,20 @@ float Gameplay::Plays::OurCornerKick_Pass::score ( Gameplay::GameplayModule* gam
 	chipper_available = true;	//	FIXME: hack
 
 
+	bool enoughBots = gameplay->playRobots().size() >= requiredBotCount;
+
+
 	// return (gs.setupRestart() && gs.ourDirect() && chipper_available && ballPos.y > (Field_Length - 1.5)) ? 1 : INFINITY;
-	return (gs.ourDirect() && chipper_available && ballPos.y > (Field_Length - 2.5)) ? 1 : INFINITY;
+	return (enoughBots && gs.ourDirect() && chipper_available && ballPos.y > (Field_Length - 2.5)) ? 1 : INFINITY;
 }
 
 bool Gameplay::Plays::OurCornerKick_Pass::run()
 {
 	set<OurRobot *> available = _gameplay->playRobots();
 	
+
+	if ( available.size() < requiredBotCount ) return false;
+
 
 	// choose a target for the kick
 	// if straight shot on goal is available, take it
