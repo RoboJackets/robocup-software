@@ -110,6 +110,7 @@ srcs = [
 	'gameplay/plays/test_plays/TestDefense.cpp',
     # 'gameplay/plays/test_plays/TestMinVelocity.cpp',
     'gameplay/plays/test_plays/TestReceivingPointPicking.cpp',
+    'gameplay/plays/test_plays/RunAcrossTheField.cpp',
 	
 	# MotionTests
 	# 'gameplay/plays/motion_testing/TestMotion.cpp',

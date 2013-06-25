@@ -64,36 +64,11 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 {
 	set<OurRobot *> available = _gameplay->playRobots();
 	
-	// pick the chip kicker - want to chip most of the time
-	// if (!assignNearestChipper(_kicker.robot, available, ball().pos))
-	// {
-	// 	return false;
-	// }
-
-	// assignNearest(_center1.robot, available, Point(-0.5, Field_Length));
-	// assignNearest(_center2.robot, available, Point(0.5, Field_Length));
 
 	// choose a target for the kick
 	// if straight shot on goal is available, take it
 	float goal_x = (ball().pos.x < 0) ? Field_GoalWidth / 2.0 : -Field_GoalWidth / 2.0;
 	Segment target(Point(goal_x, Field_Length), Point(goal_x, Field_Length - *_targetSegmentWidth));
-
-	// camp first robot to receive "pass"
-	// _center1.target.x = (ball().pos.x < 0) ? Field_GoalWidth / 2.0 + 0.5 : -(Field_GoalWidth / 2.0 + 0.5);
-	// _center1.target.y = Field_Length - *_targetSegmentWidth / 2.0;
-
-	// camp second side for TODO: short "pass"
-	// _center2.target.x = (ball().pos.x < 0) ? -(Field_GoalWidth / 2.0 + 0.5) : Field_GoalWidth / 2.0 + 0.5 ;
-	// _center2.target.y = Field_Length - *_targetSegmentWidth / 2.0;
-
-	// setup kicker from parameters - want to use chipper when possible
-	// _kicker.setTarget(target);
-	// _kicker.use_chipper = true;
-	// _kicker.use_line_kick = true;
-	// _kicker.calculateChipPower(_center1.target.distTo(ball().pos));
-	// _kicker.kick_power = *_chipper_power;
-	// _kicker.minChipRange = *_minChipRange;
-	// _kicker.maxChipRange = *_maxChipRange;
 
 
 	if ( !_passDone ) {
@@ -103,13 +78,8 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 	}
 
 
-
-
 	//	if the pass isn't done yet, setup for the pass
 	if ( !_passDone ) {
-
-
-
 		//	Geometry2d::Point FindReceivingPoint(SystemState* state, Robot* robot, Geometry2d::Point ballPos, Geometry2d::Segment receivingLine);
 
 		Segment receiver1Segment(Point(-1.0f, Field_Length - 1.5f), Point(-2, Field_Length - 1.0f));
@@ -130,7 +100,6 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 			state()->drawLine(receiver1Segment.pt[0], receiver1Segment.pt[1], Qt::black);
 
 			// state()->drawCircle(passTarget1, )
-
 			// state()->drawCircle(receivePosition(), Robot_Radius + 0.05, Qt::yellow, QString("DumbReceive"));
 		} else {
 			passTarget1 = receiver1Segment.center();
@@ -144,8 +113,6 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 		} else {
 			passTarget2 = receiver2Segment.center();
 		}
-
-
 
 
 
