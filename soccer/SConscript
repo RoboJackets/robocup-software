@@ -65,6 +65,7 @@ srcs = [
 
   # Core behaviors
 	'gameplay/behaviors/Move.cpp',
+	'gameplay/behaviors/AimCapture.cpp',
 	'gameplay/behaviors/Capture.cpp',
 	'gameplay/behaviors/Kickoff.cpp',
 	'gameplay/behaviors/Penalty.cpp',

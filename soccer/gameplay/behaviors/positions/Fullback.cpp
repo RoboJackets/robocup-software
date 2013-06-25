@@ -364,7 +364,7 @@ bool Gameplay::Behaviors::Fullback::run()
 	Geometry2d::Point shotPos(robot->pos);
 	Geometry2d::Point backVecRot(backVec.perpCCW());
 	bool facingBackLine = (backVecRot.dot(shotVec) < 0);
-	if(!facingBackLine)
+	if(!facingBackLine && robot->hasBall())
 	{
 		if(robot->chipper_available())
 			robot->chip(255);
