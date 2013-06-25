@@ -101,8 +101,8 @@
  </Rev2011>
  <Capture>
   <Ball_Speed_Threshold value="0.5"/>
-  <Approach_Distance value="0.1"/>
-  <Approach_Clearance value="0.05"/>
+  <Approach_Distance value="0.15"/>
+  <Approach_Clearance value="0.08"/>
   <Approach_Threshold value="0.13"/>
   <Capture_Speed value="0.3"/>
   <Capture_Time_Threshold value="300000"/>
