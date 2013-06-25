@@ -104,7 +104,6 @@ bool Gameplay::Behaviors::YankChip::run()
 	if (_state == State_Capture)
 	{
 		robot->addText("Capturing");
-		_capture.enable_pivot = enable_aiming;
 		_capture.target = target;
 		_capture.run();
 	}  else if (_state == State_Yank)

@@ -73,9 +73,11 @@ bool Gameplay::Behaviors::Capture::run()
 	float ballSpeed = ball().vel.mag();
 	bool behindBall = ((target - robot->pos).dot(ball().pos - robot->pos) > 0);
 
+
+
 	// Target positioning for robot to trap the ball - if moving,
 	// stop ball first, otherwise
-	Point targetApproachPoint = ball().pos - (target - ball().pos).normalized() * *_approach_Distance;
+	Point targetApproachPoint = ball().pos - toBall * *_approach_Distance;
 	Point approachPoint = targetApproachPoint;
 
 	// pick target based on velocity
@@ -86,19 +88,18 @@ bool Gameplay::Behaviors::Capture::run()
 		approachPoint = trapApproachPoint;
 	}
 
+
 	if (_state == State_Approach)
 	{
 		robot->addText(QString("err %1 %2").arg(err).arg(robot->pos.distTo(approachPoint)));
 		if (robot->hasBall())
 		{
 			_state = State_Done;
-		} else if (robot->pos.nearPoint(approachPoint, *_approach_Threshold) && err >= cos(10 * DegreesToRadians))
-		{
+		} else if (robot->pos.nearPoint(approachPoint, *_approach_Threshold)) {
 			_state = State_Capture;
 			_lastBallTime = now;
 		}
-	} else if (_state == State_Capture)
-	{
+	} else if (_state == State_Capture) {
 		// _lastBallTime is the last time we did not have the ball
 		if (!robot->hasBall())
 		{
@@ -128,15 +129,14 @@ bool Gameplay::Behaviors::Capture::run()
 		robot->avoidBall(*_approach_Clearance);
 		robot->move(approachPoint);
 		robot->face(ball().pos);
-	} else if (_state == State_Capture)
-	{
+	} else if (_state == State_Capture) {
 		robot->addText("Capture");
 		
 		double speed = max(0.0, 1.0 - double(now - _lastBallTime) / double(*_capture_Time_Threshold * *_capture_Decel)) * *_capture_Speed;
 		
 		robot->dribble(*_dribble_Speed);
 		robot->worldVelocity(toBall * speed);
-		robot->face((ball().pos - robot->pos) * 1.2 + robot->pos);
+		robot->face(ball().pos);
 	} else {
 		robot->addText("Done");
 		robot->dribble(*_dribble_Speed);
