@@ -405,6 +405,12 @@ int main()
 		power_fail_music();
 		
 		update_leds();
+
+		if(sing)
+		{
+			music_start(song_victory);
+			sing = 0;
+		}
 	}
 }
 

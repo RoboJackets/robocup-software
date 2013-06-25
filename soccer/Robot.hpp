@@ -389,6 +389,15 @@ public:
 
 	bool rxIsFresh(uint64_t age = 500000) const;
 
+	/*
+	 * Starts the robot playing the fight song
+	 */
+	void sing()
+	{
+		addText("GO TECH!", QColor(255,0,255), "Sing");
+		radioTx.set_sing(true);
+	}
+
 protected:
 	// Stores a stack trace in _commandTrace
 	void setCommandTrace();
