@@ -23,6 +23,7 @@ message RadioTx
 		optional bool kick_immediate = 11;
 		
 		optional bool sing = 12;
+		optional bool anthem = 13;
 	}
 	
 	repeated Robot robots = 2;

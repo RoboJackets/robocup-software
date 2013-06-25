@@ -288,6 +288,8 @@ void Joystick::drive(RadioTx::Robot *tx)
 
 	if(_button[9])
 		tx->set_sing(true);
+	if(_button[8])
+		tx->set_anthem(true);
 
 #define print_cmd 0
 #if print_cmd
