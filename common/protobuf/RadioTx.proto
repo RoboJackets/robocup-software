@@ -21,6 +21,8 @@ message RadioTx
 		optional float decel = 10;
 		
 		optional bool kick_immediate = 11;
+		
+		optional bool sing = 12;
 	}
 	
 	repeated Robot robots = 2;

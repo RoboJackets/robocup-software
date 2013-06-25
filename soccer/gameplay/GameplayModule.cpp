@@ -347,4 +347,13 @@ void Gameplay::GameplayModule::run()
 		_playName = QString();
 	}
 	if (verbose) cout << "Finishing GameplayModule::run()" << endl;
+
+	if(_state->gameState.ourScore > _our_score_last_frame)
+	{
+		BOOST_FOREACH(OurRobot* r, _state->self)
+		{
+			r->sing();
+		}
+	}
+	_our_score_last_frame = _state->gameState.ourScore;
 }
