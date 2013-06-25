@@ -10,10 +10,10 @@ namespace Gameplay
 		 * Drives to the ball and gets it under control,
 		 * then (coarsely) pivots towards a goal
 		 */
-		class Capture: public SingleRobotBehavior
+		class AimCapture: public SingleRobotBehavior
 		{
 			public:
-			Capture(GameplayModule *gameplay);
+			AimCapture(GameplayModule *gameplay);
 				
 			static void createConfiguration(Configuration *cfg);
 
@@ -36,8 +36,15 @@ namespace Gameplay
 				
 				/** goal for facing after trapping ball */
 				Geometry2d::Point target;
+				
+				// if true, will face the target point, otherwise skips to done when pivot is complete
+				bool enable_pivot;
 
 			private:
+				float estimatedKickSpeed();
+				Geometry2d::Point calculateBallPseudoFinalMomentum(Geometry2d::Point &t);
+
+
 				enum
 				{
 					State_Approach,
@@ -45,8 +52,13 @@ namespace Gameplay
 					State_Done
 				} _state;
 				
-				bool _ccw;
-				uint64_t _lastBallTime;
+				// uint64_t _lastBallTime;
+
+
+				bool _hadBall;
+				uint64_t _ballHoldStartTime;
+				float _captureDist;
+
 
 				// GUI Config parameters
 				static ConfigDouble *_stationaryMaxSpeed; // largest ball speed in m/s to treat as stationary
@@ -71,8 +83,13 @@ namespace Gameplay
 				// How close the ball must be to count as captured properly
 				static ConfigDouble *_has_Ball_Dist;
 
+				// Angular speed for Pivoting
+				static ConfigDouble *_pivot_Speed;
+
 				// Dribbler speed during capture
 				static ConfigDouble *_dribble_Speed;
+
+				static ConfigDouble *_perp_approach_error_threshold;
 			};
 	}
 }
