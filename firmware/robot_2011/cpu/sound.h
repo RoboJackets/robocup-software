@@ -26,6 +26,9 @@ extern const note_t song_startup[];
 //Celebration 
 extern const note_t song_victory[];
 
+//Anthem
+extern const note_t song_national_anthem[];
+
 // Critical hardware failed at startup
 extern const note_t song_failure[];
 

@@ -26,6 +26,7 @@ int kick_immediate;
 int accel_limit;
 int decel_limit;
 int sing;
+int anthem;
 
 int sequence;
 
@@ -142,6 +143,7 @@ int handle_forward_packet()
 			accel_limit = forward_packet[offset + 7];
 			decel_limit = forward_packet[offset + 7];
 			sing = forward_packet[offset + 6] & 4;
+			anthem = forward_packet[offset + 6] & 8;
 			
 			reply_slot = slot;
 			break;

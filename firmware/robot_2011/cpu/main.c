@@ -411,6 +411,12 @@ int main()
 			music_start(song_victory);
 			sing = 0;
 		}
+
+		if(anthem)
+		{
+			music_start(song_national_anthem);
+			anthem = 0;
+		}
 	}
 }
 
