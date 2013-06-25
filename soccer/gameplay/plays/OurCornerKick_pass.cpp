@@ -60,7 +60,7 @@ float Gameplay::Plays::OurCornerKick_Pass::score ( Gameplay::GameplayModule* gam
 	chipper_available = true;	//	FIXME: hack
 
 
-	bool enoughBots = gameplay->playRobots().size() >= requiredBotCount;
+	bool enoughBots = gameplay->playRobots().size() >= 3;
 
 
 	// return (gs.setupRestart() && gs.ourDirect() && chipper_available && ballPos.y > (Field_Length - 1.5)) ? 1 : INFINITY;
