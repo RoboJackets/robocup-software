@@ -148,5 +148,5 @@ bool assignNearest(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Po
 			role->avoidBall(Ball_Radius);
 		}
 
-		return role != 0;
+		return role != 0 && meetsRequirements(role, hasKicker, hasChipper, hasDribbler, hasBallSense);
 }
