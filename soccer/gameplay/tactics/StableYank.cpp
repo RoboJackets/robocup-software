@@ -141,7 +141,6 @@ bool StableYank::run()
 	if(_state == Capture) {
 		_capture->robot = this->robot;
 		_capture->target = getCaptureTarget();
-		_capture->enable_pivot = true;
 		_capture->run();
 	} else if(_state == Aim) {
 		robot->face(getCaptureTarget());

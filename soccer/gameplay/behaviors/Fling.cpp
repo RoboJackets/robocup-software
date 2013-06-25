@@ -33,7 +33,6 @@ void Gameplay::Behaviors::Fling::restart()
 {
 	_state = State_Capture;
 	_capture.restart();
-	_capture.enable_pivot = false;
 	enable_fling = true;
 	dribble_speed = 50;
 	_ccw = true;
@@ -93,7 +92,6 @@ bool Gameplay::Behaviors::Fling::run()
 	if (_state == State_Capture)
 	{
 		robot->addText("Capturing");
-		_capture.enable_pivot = false;
 		_capture.run();
 	}  else if (_state == State_Pivot)
 	{
