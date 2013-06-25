@@ -59,7 +59,7 @@ float Gameplay::Plays::OurFreekick::score ( Gameplay::GameplayModule* gameplay )
 bool Gameplay::Plays::OurFreekick::run()
 {
 	set<OurRobot *> available = _gameplay->playRobots();
-	
+
 	bool chipper_available = true, kicker_available = true;
 	if (!assignNearestChipper(_kicker.robot, available, ball().pos))
 	{
@@ -96,7 +96,7 @@ bool Gameplay::Plays::OurFreekick::run()
 	assignNearest(_fullback2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
 
 	// get out of ways of shots
-	if (_kicker.robot->pos.nearPoint(ball().pos, *_avoidShot)) {
+	if (_kicker.robot && _kicker.robot->pos.nearPoint(ball().pos, *_avoidShot)) {
 		Polygon shot_obs;
 		shot_obs.vertices.push_back(Geometry2d::Point(Field_GoalWidth / 2, Field_Length));
 		shot_obs.vertices.push_back(Geometry2d::Point(-Field_GoalWidth / 2, Field_Length));

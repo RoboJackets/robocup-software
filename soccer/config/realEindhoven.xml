@@ -10,7 +10,7 @@
   <Enable_Aiming value="true"/>
  </DemoYankChip>
  <PivotKick>
-  <Aim_Speed value="1.5708"/>
+  <Aim_Speed value="1"/>
   <Kick_Completed_Threshold value="0.5"/>
   <Initial_Accuracy value="0.984808"/>
   <Accuracy_Delta value="0"/>
@@ -23,6 +23,7 @@
   <Dribble_Speed value="40"/>
   <Land_On_Target value="true"/>
   <Max_Chip_Distance value="2.5"/>
+  <Allow_Chipping value="true"/>
  </PivotKick>
  <YankChip>
   <Ball_Travel_Threshold value="0.5"/>
@@ -67,9 +68,9 @@
    <frictionOffset value="0"/>
   </trapRot>
   <translation>
-   <p value="2.75"/>
+   <p value="2"/>
    <i value="0"/>
-   <d value="0.45"/>
+   <d value="1.5"/>
   </translation>
   <rotation>
    <p value="2"/>
@@ -103,9 +104,9 @@
    <frictionOffset value="0"/>
   </trapRot>
   <translation>
-   <p value="2"/>
+   <p value="1.8"/>
    <i value="0"/>
-   <d value="0.3"/>
+   <d value="1.75"/>
   </translation>
   <rotation>
    <p value="2"/>
