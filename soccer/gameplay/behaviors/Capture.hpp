@@ -66,6 +66,9 @@ namespace Gameplay
 				// How close we must get to the approach point to proceed to Capture
 				static ConfigDouble *_approach_Threshold;
 
+				//	How far we must be away from the ball to switch from Capture back to Approach
+				static ConfigDouble *_approach_Threshold_Reverse;
+
 				// How fast we drive towards the ball
 				static ConfigDouble *_capture_Speed;
 				// How long we must continuously hold the ball to proceed to Aim

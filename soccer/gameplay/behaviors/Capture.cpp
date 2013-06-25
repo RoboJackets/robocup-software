@@ -18,6 +18,7 @@ ConfigDouble *Gameplay::Behaviors::Capture::_stationaryMaxSpeed;
 ConfigDouble *Gameplay::Behaviors::Capture::_approach_Distance;
 ConfigDouble *Gameplay::Behaviors::Capture::_approach_Clearance;
 ConfigDouble *Gameplay::Behaviors::Capture::_approach_Threshold;
+ConfigDouble *Gameplay::Behaviors::Capture::_approach_Threshold_Reverse;
 ConfigDouble *Gameplay::Behaviors::Capture::_capture_Speed;
 ConfigDouble *Gameplay::Behaviors::Capture::_capture_Time_Threshold;
 ConfigDouble *Gameplay::Behaviors::Capture::_capture_Decel;
@@ -37,6 +38,8 @@ void Gameplay::Behaviors::Capture::createConfiguration(Configuration* cfg)
 	_has_Ball_Dist  = new ConfigDouble(cfg, "Capture/Has Ball Distance", 0.1);
 	_pivot_Speed  = new ConfigDouble(cfg, "Capture/Pivot Speed", 0.5 * M_PI);
 	_dribble_Speed  = new ConfigDouble(cfg, "Capture/Dribbler Speed", 127);
+
+	_approach_Threshold_Reverse = new ConfigDouble(cfg, "Capture/Approach Threshold Reverse", .18);
 }
 
 Gameplay::Behaviors::Capture::Capture(GameplayModule *gameplay):
@@ -112,7 +115,7 @@ bool Gameplay::Behaviors::Capture::run()
 			_lastBallTime = now;
 		}
 		
-		if (!behindBall || (robot->pos - ball().pos).mag() > *_approach_Threshold * 1.1)
+		if (!behindBall || ballDist > *_approach_Threshold_Reverse)
 		{
 			_state = State_Approach;
 		}
