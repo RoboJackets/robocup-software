@@ -20,8 +20,8 @@ RunAcrossTheField::RunAcrossTheField(GameplayModule* gameplay):
 		_move(gameplay)
 {
 	_running = true;
-	A = Point(-Field_Width/2.0,2.0);
-	B = Point( /*Field_Width/2.*/0,2.0);
+	A = Point(-Field_Width/4.0,2.0);
+	B = Point( Field_Width/4.0,2.0);
 	T = A;
 	_hasSetT = false;
 }
