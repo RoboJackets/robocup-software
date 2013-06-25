@@ -98,8 +98,11 @@ void MotionControl::positionPD()
 	
 	Point posError = _robot->cmd.target->pos - _robot->pos;
 	float p = *_robot->config->translation.p;
+	float d = *_robot->config->translation.d;
 	
-	Point newVel = posError * p + (posError - _lastPosError) * *_robot->config->translation.d;
+	Point differentialError = (posError - _lastPosError) / (_robot->state()->timestamp - _lastFrameTime);
+
+	Point newVel =  ( posError * p ) + ( differentialError * d );
 
 	Point deltaVel = (newVel - _robot->vel);
 	float accel = deltaVel.mag();
