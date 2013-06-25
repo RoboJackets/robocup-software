@@ -131,7 +131,7 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 
 
 
-		bool firstIsBetter = false;	//	FIXME: pick one of the two
+		bool firstIsBetter = _receiver1.robot != NULL;	//	FIXME: pick one of the two
 
 		//	setup passer && receivers appropriately for the chosen point
 		if ( firstIsBetter ) {
