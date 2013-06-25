@@ -2,6 +2,7 @@
 #include "PivotKick.hpp"
 
 #include <Utils.hpp>
+#include <gameplay/Window.hpp>
 
 using namespace std;
 using namespace Geometry2d;
@@ -27,6 +28,7 @@ ConfigDouble *Gameplay::Behaviors::PivotKick::_a3;
 ConfigDouble *Gameplay::Behaviors::PivotKick::_max_chip_distance;
 ConfigDouble *Gameplay::Behaviors::PivotKick::_dribble_speed;
 ConfigBool *Gameplay::Behaviors::PivotKick::_land_on_target;
+ConfigBool *Gameplay::Behaviors::PivotKick::_allow_chipping;
 
 
 void Gameplay::Behaviors::PivotKick::createConfiguration(Configuration* cfg)
@@ -44,6 +46,7 @@ void Gameplay::Behaviors::PivotKick::createConfiguration(Configuration* cfg)
     _dribble_speed = new ConfigDouble(cfg, "PivotKick/Dribble Speed", 40);
     _land_on_target = new ConfigBool(cfg, "PivotKick/Land On Target", true);
     _max_chip_distance = new ConfigDouble(cfg, "PivotKick/Max Chip Distance", 2.5);
+    _allow_chipping = new ConfigBool(cfg, "PivotKick/Allow Chipping", true);
 }
 
 Gameplay::Behaviors::PivotKick::PivotKick(GameplayModule *gameplay):
@@ -54,6 +57,8 @@ Gameplay::Behaviors::PivotKick::PivotKick(GameplayModule *gameplay):
 	target.pt[0] = Point(Field_GoalWidth / 2, Field_Length);
 	target.pt[1] = Point(-Field_GoalWidth / 2, Field_Length);
 	_capture.target = target.pt[0];
+
+	use_windowing = true; // Defaults to windowing on.
 }
 
 void Gameplay::Behaviors::PivotKick::restart()
@@ -139,17 +144,27 @@ bool Gameplay::Behaviors::PivotKick::run()
 		_capture.run();
 	}  else if (_state == State_Aim)
 	{
-		/*WindowEvaluator we;
-		we.exclude.push_back(robot->pos);
-		we.run(ball().pos);
-		list<Window*> windows = we.windows;*/
+		Segment windowed_target = target;
+		if(use_windowing)
+		{
+			robot->addText("Evaling", QColor(255,255,255), "PivotKick");
+			WindowEvaluator we(state());
+			we.debug = true;
+			we.exclude.clear();
+			we.exclude.push_back(robot->pos);
+			we.run(ball().pos);
+			if(we.windows.size() > 0)
+			{
+				windowed_target = we.best()->segment;
+			}
+		}
 
 		state()->drawLine(robot->pos, robot->pos + dir * 8, Qt::white);
-		state()->drawLine(ball().pos, target.center(), Qt::yellow);
+		state()->drawLine(ball().pos, windowed_target.center(), Qt::yellow);
 		state()->drawLine(robot->pos, robot->pos + (ball().pos - robot->pos).normalized() * 8, Qt::green);
 		
 		// See if it's time to kick
-		float error = dir.dot((target.center() - ball().pos).normalized());
+		float error = dir.dot((windowed_target.center() - ball().pos).normalized());
 		float delta = error - _lastError;
 		
 		if ((error >= *_fireNowThreshold || (error >= _accuracy && _lastDelta > 0 && delta <= 0)))
@@ -157,10 +172,10 @@ bool Gameplay::Behaviors::PivotKick::run()
 
 			if(enable_kick)
 			{
-				if (use_chipper)
+				if (use_chipper && (*_allow_chipping))
 				{
 					if(*_land_on_target)
-						robot->chip(chipPowerForDistance(target.center().distTo(ball().pos)));
+						robot->chip(chipPowerForDistance(windowed_target.center().distTo(ball().pos)));
 					else
 						robot->chip(kick_power);
 					robot->addText("CHIP");
@@ -182,10 +197,10 @@ bool Gameplay::Behaviors::PivotKick::run()
 		
 		// Decide which direction to rotate around the ball
 		Point rb = ball().pos - robot->pos;
-		if (rb.cross(target.pt[0] - ball().pos) > 0)
+		if (rb.cross(windowed_target.pt[0] - ball().pos) > 0)
 		{
 			_ccw = true;
-		} else if ((target.pt[1] - ball().pos).cross(rb) > 0)
+		} else if ((windowed_target.pt[1] - ball().pos).cross(rb) > 0)
 		{
 			_ccw = false;
 		}
