@@ -30,17 +30,10 @@ Gameplay::Plays::MightyPass::MightyPass(GameplayModule *gameplay):
 	Play(gameplay),
 	_leftFullback(gameplay, Behaviors::Fullback::Left),
 	_rightFullback(gameplay, Behaviors::Fullback::Right),
-	// _centerFullback(gameplay, Behaviors::Fullback::Center),
-	// _kicker1(gameplay),
-	// _kicker2(gameplay),
 	_fieldEval(gameplay->state())
 {
 	_leftFullback.otherFullbacks.insert(&_rightFullback);
-	// _leftFullback.otherFullbacks.insert(&_centerFullback);
 	_rightFullback.otherFullbacks.insert(&_leftFullback);
-	// _rightFullback.otherFullbacks.insert(&_centerFullback);
-	// _centerFullback.otherFullbacks.insert(&_rightFullback);
-	// _centerFullback.otherFullbacks.insert(&_leftFullback);
 
 	_fieldEval.visualize = true; 
 }
@@ -157,40 +150,5 @@ bool Gameplay::Plays::MightyPass::run()
 
 // 	return dist * multiplier;
 // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// class MightyPassPlan : {
-
-// };
-
-
-// class MightyPassPlanAction :  {
-// public:
-
-
-// 	typedef enum {
-// 		MightyPassPlanActionTypeShoot,
-// 		MightyPassPlanActionTypePass,
-// 		MightyPassPlanActionTypeReposition
-// 	} MightyPassPlanActionType;
-
-
-// 	OurRobot *fromBot;
-// 	OurRobot *toBot;
-
-// 	float cost;
-// };
 
 
