@@ -56,9 +56,6 @@ namespace Gameplay
             // passing with lower power.
             // Default: 255 - full power
             uint8_t kick_power;
-
-            // Uses a cubic to map distance to kick power
-            uint8_t compute_kickpower(double dist);
            
         private:
 
@@ -97,7 +94,11 @@ namespace Gameplay
             
             // Chipper calibration
             static ConfigDouble *_a0, *_a1, *_a2, *_a3; // constants of the cubic
+            static ConfigDouble *_max_chip_distance; // Maximum chip distance the robot is capable of
             static ConfigDouble *_dribble_speed; // dribble speed in order to map cubically
+            static ConfigBool *_land_on_target;
+
+            int chipPowerForDistance(double distance);
         };
 	}
 }
