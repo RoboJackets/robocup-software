@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gameplay/Behavior.hpp>
+#include <gameplay/tactics/ChipCalibration.hpp>
 
 namespace Gameplay
 {
@@ -57,6 +58,9 @@ namespace Gameplay
 				static ConfigDouble *_proj_time;
 				static ConfigDouble *_dampening;
 				static ConfigDouble *_done_thresh;
+				static ConfigBool *_land_on_target;
+
+				ChipCalibration chip_calib;
 		};
 	}
 }

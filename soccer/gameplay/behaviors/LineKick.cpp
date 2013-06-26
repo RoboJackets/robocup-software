@@ -22,6 +22,7 @@ ConfigDouble *Gameplay::Behaviors::LineKick::_max_speed;
 ConfigDouble *Gameplay::Behaviors::LineKick::_proj_time;
 ConfigDouble *Gameplay::Behaviors::LineKick::_dampening;
 ConfigDouble *Gameplay::Behaviors::LineKick::_done_thresh;
+ConfigBool *Gameplay::Behaviors::LineKick::_land_on_target;
 
 
 
@@ -37,11 +38,13 @@ void Gameplay::Behaviors::LineKick::createConfiguration(Configuration *cfg)
 	_proj_time = new ConfigDouble(cfg, "LineKick/Ball Project Time", 0.4);
 	_dampening = new ConfigDouble(cfg, "LineKick/Ball Project Dampening", 0.8);
 	_done_thresh = new ConfigDouble(cfg, "LineKick/Done State Thresh", 0.11);
+	_land_on_target = new ConfigBool(cfg, "LineKick/Land On Target", false);
 }
 
 Gameplay::Behaviors::LineKick::LineKick(GameplayModule *gameplay):
     SingleRobotBehavior(gameplay),
-    ballClose(false)
+    ballClose(false),
+    chip_calib(gameplay)
 {
 	restart();
 	target = Geometry2d::Point(0.0, Field_Length);
@@ -158,14 +161,6 @@ bool Gameplay::Behaviors::LineKick::run()
 	} else if (_state == State_Charge)
 	{
 		robot->addText("Charge!");
-		if (use_chipper)
-		{
-			robot->chip(kick_power);
-		} else
-		{
-			robot->kick(kick_power);
-		}
-
 
 		state()->drawLine(robot->pos, target, Qt::white);
 		state()->drawLine(ballPos, target, Qt::white);
@@ -182,6 +177,17 @@ bool Gameplay::Behaviors::LineKick::run()
 		robot->setVScale(scaleSpeed);
 
 		robot->face(ballPos);
+
+		if (use_chipper)
+		{
+			uint8_t chip_power = kick_power;
+			if(*_land_on_target)
+				chip_power = chip_calib.chipPowerForDistance((target - ballPos).mag());
+			robot->chip(chip_power);
+		} else
+		{
+			robot->kick(kick_power);
+		}
 
 	} else {
 		robot->addText("Done");
