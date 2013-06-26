@@ -140,6 +140,7 @@ bool Gameplay::Behaviors::AimCapture::run()
 
 
 
+	bool closeToApproachPoint = robot->pos.distTo(initialApproachTarget);
 
 
 
@@ -147,7 +148,7 @@ bool Gameplay::Behaviors::AimCapture::run()
 	if ( _state == State_Done && !robot->hasBall() ) {
 		_state = State_Approach;
 	} else if ( _state == State_Approach ) {
-		if ( behindBall && closeToBall ) {
+		if ( behindBall && closeToApproachPoint ) {
 			_state = State_Capture;
 		}
 	} else if ( _state == State_Capture ) {
