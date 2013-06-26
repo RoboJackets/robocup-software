@@ -465,8 +465,8 @@
  </MightyPass>
  <AimCapture>
   <Ball_Speed_Threshold value="0.5"/>
-  <Approach_Distance value="0.1"/>
-  <Approach_Clearance value="0.05"/>
+  <Approach_Distance value="0.18"/>
+  <Approach_Clearance value="0.07"/>
   <Approach_Threshold value="0.13"/>
   <AimCapture_Speed value="0.3"/>
   <AimCapture_Time_Threshold value="300000"/>
