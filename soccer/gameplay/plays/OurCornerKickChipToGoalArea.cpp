@@ -62,8 +62,18 @@ bool OurCornerKick_ChipToGoalArea::run()
 	assignNearest(_center2.robot, available, Point( Field_Width/4.0, Field_Length));
 
 	// Set center targets
-	_center1.target = Point(-Robot_Diameter,Field_Length - 1.2);
-	_center2.target = Point( Robot_Diameter,Field_Length - 1.2);
+	if(ball().pos.x < 0)
+	{
+		_center1.target = Point(Field_ArcRadius + 0.5, Field_Length - Robot_Radius - 0.1);
+		_center2.target = Point(Field_ArcRadius + 0.5, Field_Length - Robot_Radius - Robot_Diameter - 0.2);
+	}
+	else
+	{
+		_center1.target = Point(-Field_ArcRadius - 0.5, Field_Length - Robot_Radius - 0.1);
+		_center2.target = Point(-Field_ArcRadius - 0.5, Field_Length - Robot_Radius - Robot_Diameter - 0.2);
+	}
+	_center1.face = ball().pos;
+	_center2.face = ball().pos;
 
 	state()->drawLine(_target.pt[0], _target.pt[1], QColor(255,255,0), "ChipToGoal");
 
@@ -77,7 +87,7 @@ bool OurCornerKick_ChipToGoalArea::run()
 	assignNearest(_fullback1.robot, available, Geometry2d::Point(-Field_GoalHeight/2.0, 0.0));
 	assignNearest(_fullback2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
 
-	_pdt.run();
+	_pdt.run(); // calls _kicker.run()
 	_center1.run();
 	_center2.run();
 	_fullback1.run();
