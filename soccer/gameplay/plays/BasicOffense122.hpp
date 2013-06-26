@@ -37,6 +37,7 @@ namespace Gameplay
 				static ConfigDouble *_offense_support_ratio;
 				static ConfigDouble *_defense_support_ratio;
 				static ConfigBool   *_use_line_kick;
+				static ConfigBool *_defense_first;
 		};
 	}
 }
