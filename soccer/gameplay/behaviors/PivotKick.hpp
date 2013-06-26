@@ -1,7 +1,7 @@
 #pragma once
 
 #include <gameplay/Behavior.hpp>
-#include <gameplay/behaviors/Capture.hpp>
+#include <gameplay/behaviors/AimCapture.hpp>
 
 namespace Gameplay
 {
@@ -69,7 +69,7 @@ namespace Gameplay
                 State_Done
             } _state;
 
-            Capture _capture;
+            AimCapture _capture;
 
             bool _ccw;
             float _lastError;

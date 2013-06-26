@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gameplay/Behavior.hpp>
+#include <Pid.hpp>
 
 namespace Gameplay
 {
@@ -60,6 +61,10 @@ namespace Gameplay
 				float _captureDist;
 
 
+				Pid _perpindicularPidController;
+				Pid _parallelPidController;
+
+
 				// GUI Config parameters
 				static ConfigDouble *_stationaryMaxSpeed; // largest ball speed in m/s to treat as stationary
 
@@ -88,8 +93,6 @@ namespace Gameplay
 
 				// Dribbler speed during capture
 				static ConfigDouble *_dribble_Speed;
-
-				static ConfigDouble *_perp_approach_error_threshold;
 			};
 	}
 }
