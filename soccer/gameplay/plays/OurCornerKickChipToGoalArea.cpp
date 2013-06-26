@@ -81,6 +81,8 @@ bool OurCornerKick_ChipToGoalArea::run()
 	_kicker.setTarget(_target);
 	_kicker.use_chipper = true;
 	_kicker.use_line_kick = false;
+	_kicker.minChipRange = 0;
+	_kicker.maxChipRange = ball().pos.distTo(_target.center());
 
 	_pdt.backoff.robots.clear();
 	_pdt.backoff.robots.insert(_kicker.robot);
