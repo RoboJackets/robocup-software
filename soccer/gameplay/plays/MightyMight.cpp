@@ -15,10 +15,12 @@ namespace Gameplay
 
 
 ConfigBool *Gameplay::Plays::MightyMight::_useLineKick;
+ConfigBool *Gameplay::Plays::MightyMight::_defenseFirst;
 
 void Gameplay::Plays::MightyMight::createConfiguration(Configuration *cfg)
 {
 	_useLineKick = new ConfigBool(cfg, "MightyMight/Use Line Kick", true);
+	_defenseFirst = new ConfigBool(cfg, "MightyMight/Defense First", true);
 }
 
 Gameplay::Plays::MightyMight::MightyMight(GameplayModule *gameplay):
@@ -49,13 +51,23 @@ bool Gameplay::Plays::MightyMight::run()
 	// handle assignments
 	set<OurRobot *> available = _gameplay->playRobots();
 
+	if(*_defenseFirst) {
 	// defense first - closest to goal
-	assignNearest(_leftFullback.robot, available, Geometry2d::Point());
-	assignNearest(_rightFullback.robot, available, Geometry2d::Point());
+		assignNearest(_leftFullback.robot, available, Geometry2d::Point());
+		assignNearest(_rightFullback.robot, available, Geometry2d::Point());
 
 	// choose offense, we want both robots to attack
-	assignNearest(_kicker1.robot, available, ball().pos);
-	assignNearest(_kicker2.robot, available, ball().pos);
+		assignNearest(_kicker1.robot, available, ball().pos);
+		assignNearest(_kicker2.robot, available, ball().pos);
+	} else {
+	// choose offense, we want both robots to attack
+		assignNearest(_kicker1.robot, available, ball().pos);
+		assignNearest(_kicker2.robot, available, ball().pos);
+
+	// defense first - closest to goal
+		assignNearest(_leftFullback.robot, available, Geometry2d::Point());
+		assignNearest(_rightFullback.robot, available, Geometry2d::Point());
+	}
 
 	// additional defense - if it exists
 	assignNearest(_centerFullback.robot, available, Geometry2d::Point());
