@@ -34,6 +34,17 @@ protected:
 	PreventDoubleTouch _pdt;
 
 	Geometry2d::Segment _target;
+
+	enum State {
+		Setup,
+		Kick,
+		Receive
+	};
+
+	State _state;
+
+	Geometry2d::Point ReceiveSetupPoint1;
+	Geometry2d::Point ReceiveSetupPoint2;
 };
 
 } /* namespace Plays */
