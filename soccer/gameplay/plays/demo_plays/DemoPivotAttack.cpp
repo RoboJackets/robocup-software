@@ -3,6 +3,7 @@
 #include <boost/foreach.hpp>
 
 using namespace std;
+using namespace Geometry2d;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::DemoPivotAttack, "Demos")
 
@@ -10,6 +11,7 @@ Gameplay::Plays::DemoPivotAttack::DemoPivotAttack(GameplayModule *gameplay):
 Play(gameplay),
 _kicker(gameplay)
 {
+	_kicker.target = Segment(Point(-Field_GoalWidth/2.0,Field_Length-0.1), Point(Field_GoalWidth/2.0,Field_Length-0.1));
 }
 
 bool Gameplay::Plays::DemoPivotAttack::run()
