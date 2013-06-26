@@ -23,6 +23,7 @@ ConfigDouble *Gameplay::Plays::BasicOffense122::_support_avoid_shot;
 ConfigDouble *Gameplay::Plays::BasicOffense122::_offense_support_ratio;
 ConfigDouble *Gameplay::Plays::BasicOffense122::_defense_support_ratio;
 ConfigBool   *Gameplay::Plays::BasicOffense122::_use_line_kick;
+ConfigBool   *Gameplay::Plays::BasicOffense122::_defense_first;
 
 void Gameplay::Plays::BasicOffense122::createConfiguration(Configuration *cfg)
 {
@@ -34,6 +35,7 @@ void Gameplay::Plays::BasicOffense122::createConfiguration(Configuration *cfg)
 	_offense_support_ratio = new ConfigDouble(cfg, "BasicOffense122/Offense Support Ratio", 0.7);
 	_defense_support_ratio = new ConfigDouble(cfg, "BasicOffense122/Defense Support Ratio", 0.9);
 	_use_line_kick = new ConfigBool(cfg, "BasicOffense122/Enable Line Kick", true);
+	_defense_first = new ConfigBool(cfg, "BasicOffense122/Defense First", true);
 }
 
 Gameplay::Plays::BasicOffense122::BasicOffense122(GameplayModule *gameplay):
@@ -72,17 +74,31 @@ bool Gameplay::Plays::BasicOffense122::run()
 	// Get a striker first to ensure there a robot that can kick
 	assignNearestKicker(_striker.robot, available, ballProj);
 
+	if(*_defense_first) {
 	// defense first - get closest to goal to choose sides properly
-	assignNearest(_leftFullback.robot, available, Geometry2d::Point(-Field_GoalWidth/2, 0.0));
-	assignNearest(_rightFullback.robot, available, Geometry2d::Point(Field_GoalWidth/2, 0.0));
+		assignNearest(_leftFullback.robot, available, Geometry2d::Point(-Field_GoalWidth/2, 0.0));
+		assignNearest(_rightFullback.robot, available, Geometry2d::Point(Field_GoalWidth/2, 0.0));
 
 	// choose offense, we want closest robot to ball to be striker
-	assignNearest(_support1.robot, available, ballProj);
-	if (_support1.robot)
-		_support1.robot->addText("Support 1");
-	assignNearest(_support2.robot, available, ballProj);
-	if (_support2.robot)
-		_support2.robot->addText("Support 2");
+		assignNearest(_support1.robot, available, ballProj);
+		if (_support1.robot)
+			_support1.robot->addText("Support 1");
+		assignNearest(_support2.robot, available, ballProj);
+		if (_support2.robot)
+			_support2.robot->addText("Support 2");
+	} else {
+	// choose offense, we want closest robot to ball to be striker
+		assignNearest(_support1.robot, available, ballProj);
+		if (_support1.robot)
+			_support1.robot->addText("Support 1");
+		assignNearest(_support2.robot, available, ballProj);
+		if (_support2.robot)
+			_support2.robot->addText("Support 2");
+		
+	// defense first - get closest to goal to choose sides properly
+		assignNearest(_leftFullback.robot, available, Geometry2d::Point(-Field_GoalWidth/2, 0.0));
+		assignNearest(_rightFullback.robot, available, Geometry2d::Point(Field_GoalWidth/2, 0.0));
+	}
 
 	// determine whether to change offense players
 	bool forward_reset = false;
