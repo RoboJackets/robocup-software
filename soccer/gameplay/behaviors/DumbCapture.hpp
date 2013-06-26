@@ -32,39 +32,21 @@ namespace Gameplay
 					return _state == State_Capture;
 				}
 
-				bool pivoting() const {
-					return _state == State_Pivoting;
-				}
-
 				void restart();
 				
 				/** goal for facing after trapping ball */
 				Geometry2d::Point target;
-				
-				// if true, will face the target point, otherwise skips to done when pivot is complete
-				bool enable_pivot;
 
 			private:
-				float estimatedKickSpeed();
-				Geometry2d::Point calculateBallPseudoFinalMomentum(Geometry2d::Point &t);
-
-
 				enum
 				{
 					State_Approach,
 					State_Capture,
-					State_Pivoting,
 					State_Done
 				} _state;
 				
 				bool _ccw;
 				uint64_t _lastBallTime;
-
-
-				bool _hadBall;
-				uint64_t _ballHoldStartTime;
-				float _captureDist;
-
 
 				// GUI Config parameters
 				static ConfigDouble *_stationaryMaxSpeed; // largest ball speed in m/s to treat as stationary
@@ -89,13 +71,8 @@ namespace Gameplay
 				// How close the ball must be to count as captured properly
 				static ConfigDouble *_has_Ball_Dist;
 
-				// Angular speed for Pivoting
-				static ConfigDouble *_pivot_Speed;
-
 				// Dribbler speed during capture
 				static ConfigDouble *_dribble_Speed;
-
-				static ConfigDouble *_perp_approach_error_threshold;
 			};
 	}
 }
