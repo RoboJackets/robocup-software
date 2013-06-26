@@ -102,6 +102,7 @@ srcs = [
 	'gameplay/tactics/CatPassDemo.cpp',
 	'gameplay/tactics/DumbReceive.cpp',
 	'gameplay/tactics/ChipCalibration.cpp',
+	'gameplay/tactics/LuckyKick.cpp',
 	
 	# Test framework for plays
 	'gameplay/TestFixture.cpp',

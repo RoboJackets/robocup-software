@@ -37,8 +37,10 @@ Kick::Kick(GameplayModule *gameplay)
 	enableLeftDownfieldShot(false),
 	enableRightDownfieldShot(false),
 	enablePushing(false),
+	take_open_kicks(true),
 	_pivotKick(gameplay),
-	_lineKick(gameplay)
+	_lineKick(gameplay),
+	lucky(gameplay)
 {
 	restart();
 	setTargetGoal();
@@ -158,6 +160,7 @@ bool Kick::run() {
 	else
 		robot->avoidOpponents(true);
 
+	bool result;
 	// there are robots in the way and we are close, disable opponent obstacle avoidance
 	if (enablePushing && badshot && rPos.nearPoint(ball().pos, close_thresh)) {
 		robot->addText(QString("PushingOpponent"));
@@ -166,7 +169,7 @@ bool Kick::run() {
 		// drive forward through robots
 		robot->move(push_goal);
 		robot->face(_target.center());
-		return true;
+		result = true;
 
 	} else if (use_line_kick)
 	{
@@ -180,7 +183,6 @@ bool Kick::run() {
 		{
 			_done = true;
 		}
-		return result;
 	} else
 	{
 		_pivotKick.target = available_target;
@@ -193,8 +195,19 @@ bool Kick::run() {
 		{
 			_done = true;
 		}
-		return result;
 	}
+	// Take opportunities!
+	if(take_open_kicks) {
+		Luck_Options opt = lucky.get_options();
+		bool ok = lucky.use_kick(robot, opt);
+		ok &= lucky.open_kick(robot, opt); // Checks if E open shot to goal
+		if(ok) {
+			robot->addText("Taking Opportunity!", Qt::magenta, "Kick");
+			robot->kick(255);
+		}
+	}
+
+	return result;
 }
 
 } // \namespace Behaviors
