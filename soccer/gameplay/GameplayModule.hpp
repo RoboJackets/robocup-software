@@ -147,5 +147,7 @@ namespace Gameplay
 			 */
 			ObstacleGroup globalObstacles() const;
 
+			int _our_score_last_frame;
+
 	};
 }

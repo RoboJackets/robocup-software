@@ -22,7 +22,7 @@ void ReceivePointEvaluator::createConfiguration(Configuration *cfg)
 	_visualize = new ConfigBool(cfg, "ReceivePointEvaulator/Visualize", false);
 }
 
-Point ReceivePointEvaluator::FindReceivingPoint(SystemState* state, Point receiverPos, Point ballPos, Segment receivingLine)
+Point ReceivePointEvaluator::FindReceivingPoint(SystemState* state, Point receiverPos, Point ballPos, Segment receivingLine, float* out_GoalWindowWidth)
 {
 	Segment goalSegment = Segment(Point(-Field_GoalWidth/2.0,6.05), Point(Field_GoalWidth/2.0,6.05));
 
@@ -33,7 +33,7 @@ Point ReceivePointEvaluator::FindReceivingPoint(SystemState* state, Point receiv
 	Segment line = receivingLine;
 
 	WindowEvaluator windower(state);
-	windower.debug = _visualize;
+	windower.debug = (*_visualize);
 	windower.clear();
 	windower.exclude.clear();
 	windower.exclude.push_back(receiverPos);
@@ -53,7 +53,7 @@ Point ReceivePointEvaluator::FindReceivingPoint(SystemState* state, Point receiv
 		iter++;
 		WindowEvaluator WE(state);
 		Point center = window->segment.center();
-		WE.debug = _visualize;
+		WE.debug = (*_visualize);
 		WE.clear();
 		WE.exclude.clear();
 		WE.exclude.push_back(receiverPos);
@@ -76,13 +76,14 @@ Point ReceivePointEvaluator::FindReceivingPoint(SystemState* state, Point receiv
 
 	iter = windows.begin();
 	float bestScore = -1;
-	Point bestCandidate;
+	Segment bestCandidate;
 	for(int i = 0; i < windows.size(); i++)
 	{
 		if(scores[i] == longestLength)
 		{
-			Point candidate = (*iter)->segment.center();
-			float dist = candidate.distTo(receiverPos);
+			Segment candidate = (*iter)->segment;
+			Point center = candidate.center();
+			float dist = receiverPos.distTo(center);//candidate.center().distTo(receiverPos);
 			if(bestScore == -1 || dist < bestScore)
 			{
 				bestScore = dist;
@@ -92,10 +93,13 @@ Point ReceivePointEvaluator::FindReceivingPoint(SystemState* state, Point receiv
 		iter++;
 	}
 
-	if(_visualize)
-		state->drawCircle(bestCandidate, Robot_Radius, QColor(255,0,0), "ReceivePointEval");
+	if((*_visualize))
+		state->drawCircle(bestCandidate.center(), Robot_Radius, QColor(255,0,0), "ReceivePointEval");
 
-	return bestCandidate;
+	if(out_GoalWindowWidth)
+		(*out_GoalWindowWidth) = longestLength;
+
+	return bestCandidate.center();
 }
 
 } /* namespace Gameplay */

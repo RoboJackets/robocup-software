@@ -20,7 +20,7 @@ public:
 
 	static void createConfiguration(Configuration* cfg);
 
-	static Geometry2d::Point FindReceivingPoint(SystemState* state, Geometry2d::Point receiverPos, Geometry2d::Point ballPos, Geometry2d::Segment receivingLine);
+	static Geometry2d::Point FindReceivingPoint(SystemState* state, Geometry2d::Point receiverPos, Geometry2d::Point ballPos, Geometry2d::Segment receivingLine, float* out_GoalWindowWidth=0);
 
 private:
 	static ConfigBool* _visualize;
