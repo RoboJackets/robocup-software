@@ -36,6 +36,8 @@ ConfigDouble *Gameplay::Behaviors::AimCapture::_capture_perp_p;
 ConfigDouble *Gameplay::Behaviors::AimCapture::_capture_parallel_p;
 
 
+ConfigDouble *Gameplay::Behaviors::AimCapture::_intercept_velocity_min;
+
 void Gameplay::Behaviors::AimCapture::createConfiguration(Configuration* cfg)
 {
 	_stationaryMaxSpeed = new ConfigDouble(cfg, "AimCapture/Ball Speed Threshold", 0.5);
@@ -50,6 +52,8 @@ void Gameplay::Behaviors::AimCapture::createConfiguration(Configuration* cfg)
 	_dribble_Speed  = new ConfigDouble(cfg, "AimCapture/Dribbler Speed", 127);
 
 	_approach_Threshold_Reverse = new ConfigDouble(cfg, "AimCapture/Approach Threshold Reverse", .18);
+
+	_intercept_velocity_min = new ConfigDouble(cfg, "AimCapture/Intercept Vel Min", .5);
 
 	_capture_perp_p = new ConfigDouble(cfg, "AimCapture/Capture Perp K_P", 3);
 	_capture_parallel_p = new ConfigDouble(cfg, "AimCapture/Capture Parallel K_P", 2);
@@ -80,6 +84,44 @@ Point Gameplay::Behaviors::AimCapture::calculateBallPseudoFinalMomentum(Point &t
 
 	return dir * estimatedKickSpeed() * BALL_MASS;
 }
+
+
+
+
+
+
+Point Gameplay::Behaviors::AimCapture::interceptTarget() {
+	Point receiveTarget;  // Point at which to place robot mouth
+	Point passVector;     // Direction of pass
+
+	Line passLine(ball().pos, ball().pos + ball().vel);
+	receiveTarget = passLine.nearestPoint(robot->pos);
+	// passVector = ball().vel;
+
+	return receiveTarget;
+}
+
+bool Gameplay::Behaviors::AimCapture::canIntercept() {
+	Point toBall = robot->pos - ball().pos;
+	bool ballTowardsUs = ball().vel.dot(toBall) > 0;
+
+	return ballTowardsUs && (ball().vel.mag() > *_intercept_velocity_min);
+}
+
+
+Point Gameplay::Behaviors::AimCapture::lineUpTarget() {
+
+	// Point approachDir = 
+
+	Point initialApproachTarget = ball().pos - approachDir * *_approach_Distance;
+}
+
+bool Gameplay::Behaviors::AimCapture::canApproach() {
+	
+	Segment(robot->pos, )
+}
+
+
 
 
 bool Gameplay::Behaviors::AimCapture::run()

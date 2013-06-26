@@ -97,6 +97,9 @@ namespace Gameplay
 
 				static ConfigDouble *_capture_perp_p;
 				static ConfigDouble *_capture_parallel_p;
+
+
+				static ConfigDouble *_intercept_velocity_min;
 			};
 	}
 }
