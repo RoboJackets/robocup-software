@@ -142,7 +142,7 @@ bool Gameplay::Behaviors::PivotKick::run()
 			we.exclude.clear();
 			we.exclude.push_back(robot->pos);
 			we.run(ball().pos, target);
-			if(we.windows.size() > 0)
+			if(we.windows.size() > 0 && we.best()->segment.length() > Ball_Diameter)
 			{
 				windowed_target = we.best()->segment;
 			}
@@ -186,10 +186,10 @@ bool Gameplay::Behaviors::PivotKick::run()
 		
 		// Decide which direction to rotate around the ball
 		Point rb = ball().pos - robot->pos;
-		if (rb.cross(windowed_target.pt[0] - ball().pos) > 0)
+		if (rb.cross(windowed_target.center() - ball().pos) > 0)
 		{
 			_ccw = true;
-		} else if ((windowed_target.pt[1] - ball().pos).cross(rb) > 0)
+		} else if ((windowed_target.center() - ball().pos).cross(rb) > 0)
 		{
 			_ccw = false;
 		}
