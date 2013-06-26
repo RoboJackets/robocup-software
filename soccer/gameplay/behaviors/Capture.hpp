@@ -45,10 +45,6 @@ namespace Gameplay
 				bool enable_pivot;
 
 			private:
-				float estimatedKickSpeed();
-				Geometry2d::Point calculateBallPseudoFinalMomentum(Geometry2d::Point &t);
-
-
 				enum
 				{
 					State_Approach,
@@ -59,12 +55,6 @@ namespace Gameplay
 				
 				bool _ccw;
 				uint64_t _lastBallTime;
-
-
-				bool _hadBall;
-				uint64_t _ballHoldStartTime;
-				float _captureDist;
-
 
 				// GUI Config parameters
 				static ConfigDouble *_stationaryMaxSpeed; // largest ball speed in m/s to treat as stationary
@@ -94,8 +84,6 @@ namespace Gameplay
 
 				// Dribbler speed during capture
 				static ConfigDouble *_dribble_Speed;
-
-				static ConfigDouble *_perp_approach_error_threshold;
 			};
 	}
 }
