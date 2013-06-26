@@ -280,6 +280,7 @@ public:
 	void disableAvoidBall();
 	void avoidBall(float radius);
 	float avoidBall() const;
+	void resetAvoidBall();	//	sets avoid ball radius to Ball_Avoid_Small
 
 	/**
 	 * Adds an obstacle to the local set of obstacles for avoidance

@@ -448,6 +448,10 @@ float OurRobot::avoidBall() const {
 	return _ball_avoid;
 }
 
+void OurRobot::resetAvoidBall() {
+	avoidBall(Ball_Avoid_Small);
+}
+
 ObstaclePtr OurRobot::createBallObstacle() const {
 	// if game is stopped, large obstacle regardless of flags
 	if (_state->gameState.state != GameState::Playing && !(_state->gameState.ourRestart || _state->gameState.theirPenalty()))
