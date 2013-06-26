@@ -97,7 +97,7 @@ Point ReceivePointEvaluator::FindReceivingPoint(SystemState* state, Point receiv
 		state->drawCircle(bestCandidate.center(), Robot_Radius, QColor(255,0,0), "ReceivePointEval");
 
 	if(out_GoalWindowWidth)
-		(*out_GoalWindowWidth) = bestCandidate.length();
+		(*out_GoalWindowWidth) = longestLength;
 
 	return bestCandidate.center();
 }
