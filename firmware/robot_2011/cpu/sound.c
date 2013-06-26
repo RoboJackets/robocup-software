@@ -3,6 +3,8 @@
 #include "sound.h"
 #include "timer.h"
 
+#include "songs/NationalAnthem.h"
+
 volatile int music_playing;
 
 // http://www.phy.mtu.edu/~suits/notefreqs.html
@@ -217,7 +219,8 @@ const note_t song_victory[] =
 		  {PERIOD(659), 150},
 		  {0, 150},
 		  {PERIOD(1318), 150},
-		  {0, 150}
+		  {0, 150},
+		  {0,0}
 };
 
 
