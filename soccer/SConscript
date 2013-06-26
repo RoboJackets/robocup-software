@@ -51,6 +51,7 @@ srcs = [
 	'gameplay/plays/KickPenalty.cpp',
 	'gameplay/plays/DefendPenalty.cpp',
 	'gameplay/plays/Stopped.cpp',
+	'gameplay/plays/OurCornerKickChipToGoalArea.cpp',
 
 	'gameplay/plays/OurCornerKick_pass.cpp',
 	
@@ -100,6 +101,7 @@ srcs = [
 	'gameplay/tactics/SLKTest.cpp',
 	'gameplay/tactics/CatPassDemo.cpp',
 	'gameplay/tactics/DumbReceive.cpp',
+	'gameplay/tactics/ChipCalibration.cpp',
 	
 	# Test framework for plays
 	'gameplay/TestFixture.cpp',
