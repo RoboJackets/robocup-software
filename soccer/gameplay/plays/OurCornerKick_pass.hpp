@@ -41,6 +41,9 @@ namespace Gameplay
 				DumbReceive _receiver2;
 
 				static ConfigDouble *_targetSegmentWidth;
+
+				bool _passingToFirstReceiver;
+				static ConfigDouble *_receiverChoiceHysterisis;
 		};
 	}
 }

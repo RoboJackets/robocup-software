@@ -51,6 +51,7 @@ srcs = [
 	'gameplay/plays/KickPenalty.cpp',
 	'gameplay/plays/DefendPenalty.cpp',
 	'gameplay/plays/Stopped.cpp',
+	'gameplay/plays/OurCornerKickChipToGoalArea.cpp',
 
 	'gameplay/plays/OurCornerKick_pass.cpp',
 	

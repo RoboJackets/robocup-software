@@ -130,6 +130,7 @@ bool Gameplay::Behaviors::PivotKick::run()
 		robot->addText("Capturing");
 		_capture.target = target.pt[0];
 		_capture.run();
+		robot->kick(0); // "Un-kick" to prevent accidental kicks
 	}  else if (_state == State_Aim)
 	{
 		Segment windowed_target = target;
@@ -140,7 +141,7 @@ bool Gameplay::Behaviors::PivotKick::run()
 			we.debug = true;
 			we.exclude.clear();
 			we.exclude.push_back(robot->pos);
-			we.run(ball().pos);
+			we.run(ball().pos, target);
 			if(we.windows.size() > 0)
 			{
 				windowed_target = we.best()->segment;
@@ -157,10 +158,10 @@ bool Gameplay::Behaviors::PivotKick::run()
 		
 		if ((error >= *_fireNowThreshold || (error >= _accuracy && _lastDelta > 0 && delta <= 0)))
 		{
-
 			if(enable_kick)
 			{
-				if (use_chipper && (*_allow_chipping))
+				robot->immediate(false);
+				if (robot->chipper_available() && use_chipper && (*_allow_chipping))
 				{
 					if(*_land_on_target)
 						robot->chip(chip_calib.chipPowerForDistance(windowed_target.center().distTo(ball().pos)));
@@ -209,6 +210,10 @@ bool Gameplay::Behaviors::PivotKick::run()
 
 	} else {
 		robot->addText("Done");
+		if (robot->chipper_available() && use_chipper && (*_allow_chipping))
+			robot->chip(0);
+		else
+			robot->kick(0);
 		return false;
 	}
 	

@@ -92,10 +92,12 @@ bool Gameplay::Behaviors::Capture::run()
 	if (_state == State_Approach)
 	{
 		robot->addText(QString("err %1 %2").arg(err).arg(robot->pos.distTo(approachPoint)));
+		robot->addText(QString("ball dist = %1").arg(ballDist));
+		robot->addText(QString("robot radius = %1").arg(Robot_Radius));
 		if (robot->hasBall())
 		{
 			_state = State_Done;
-		} else if (robot->pos.nearPoint(approachPoint, *_approach_Threshold)) {
+		} else if ((ballDist - *_approach_Distance) < *_approach_Threshold) {
 			_state = State_Capture;
 			_lastBallTime = now;
 		}
@@ -127,7 +129,7 @@ bool Gameplay::Behaviors::Capture::run()
 	{
 		robot->addText("Approach");
 		robot->avoidBall(*_approach_Clearance);
-		robot->move(approachPoint);
+		robot->move(ball().pos);
 		robot->face(ball().pos);
 	} else if (_state == State_Capture) {
 		robot->addText("Capture");

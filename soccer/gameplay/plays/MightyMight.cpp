@@ -13,9 +13,12 @@ namespace Gameplay
 	}
 }
 
+
+ConfigBool *Gameplay::Plays::MightyMight::_useLineKick;
+
 void Gameplay::Plays::MightyMight::createConfiguration(Configuration *cfg)
 {
-
+	_useLineKick = new ConfigBool(cfg, "MightyMight/Use Line Kick", true);
 }
 
 Gameplay::Plays::MightyMight::MightyMight(GameplayModule *gameplay):
@@ -69,6 +72,12 @@ bool Gameplay::Plays::MightyMight::run()
 		_kicker1.robot->avoidTeammateRadius(k2, 0.8 * Robot_Radius);
 		_kicker2.robot->avoidTeammateRadius(k1, 0.5);
 	}
+
+
+
+	_kicker1.use_line_kick = *_useLineKick;
+	_kicker2.use_line_kick = *_useLineKick;
+
 
 	// execute kickers dumbly
 	if (_kicker1.robot) _kicker1.run();
