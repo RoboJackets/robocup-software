@@ -4,6 +4,7 @@
 #include <gameplay/Window.hpp>
 #include <gameplay/behaviors/PivotKick.hpp>
 #include <gameplay/behaviors/LineKick.hpp>
+#include <gameplay/tactics/LuckyKick.hpp>
 
 namespace Gameplay
 {
@@ -63,6 +64,9 @@ public:
 	bool use_chipper;
 	short dribbler_speed;
 
+	/** flags to take opportunities **/
+	bool take_open_kicks;
+
 	// set the kick/chip power directly
 	uint8_t kick_power;
 	uint8_t chip_power;
@@ -92,6 +96,9 @@ private:
 	static ConfigDouble *_chip_max_range;
 	static ConfigInt *_chip_min_power;
 	static ConfigInt *_chip_max_power;
+
+	// Luck?
+	LuckyKick lucky;
 };
 
 } // \namespace Behaviors

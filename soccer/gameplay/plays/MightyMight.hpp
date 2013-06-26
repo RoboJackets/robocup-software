@@ -29,6 +29,7 @@ namespace Gameplay
 				Behaviors::Kick _kicker1, _kicker2;
 
 				static ConfigBool *_useLineKick;
+				static ConfigBool *_defenseFirst;
 		};
 	}
 }
