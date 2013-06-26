@@ -93,6 +93,10 @@ namespace Gameplay
 
 				// Dribbler speed during capture
 				static ConfigDouble *_dribble_Speed;
+
+
+				static ConfigDouble *_capture_perp_p;
+				static ConfigDouble *_capture_parallel_p;
 			};
 	}
 }

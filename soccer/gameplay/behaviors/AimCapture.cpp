@@ -32,6 +32,10 @@ ConfigDouble *Gameplay::Behaviors::AimCapture::_has_Ball_Dist;
 ConfigDouble *Gameplay::Behaviors::AimCapture::_pivot_Speed;
 ConfigDouble *Gameplay::Behaviors::AimCapture::_dribble_Speed;
 
+ConfigDouble *Gameplay::Behaviors::AimCapture::_capture_perp_p;
+ConfigDouble *Gameplay::Behaviors::AimCapture::_capture_parallel_p;
+
+
 void Gameplay::Behaviors::AimCapture::createConfiguration(Configuration* cfg)
 {
 	_stationaryMaxSpeed = new ConfigDouble(cfg, "AimCapture/Ball Speed Threshold", 0.5);
@@ -46,6 +50,9 @@ void Gameplay::Behaviors::AimCapture::createConfiguration(Configuration* cfg)
 	_dribble_Speed  = new ConfigDouble(cfg, "AimCapture/Dribbler Speed", 127);
 
 	_approach_Threshold_Reverse = new ConfigDouble(cfg, "AimCapture/Approach Threshold Reverse", .18);
+
+	_capture_perp_p = new ConfigDouble(cfg, "AimCapture/Capture Perp K_P", 3);
+	_capture_parallel_p = new ConfigDouble(cfg, "AimCapture/Capture Parallel K_P", 2);
 }
 
 Gameplay::Behaviors::AimCapture::AimCapture(GameplayModule *gameplay):
@@ -117,7 +124,7 @@ bool Gameplay::Behaviors::AimCapture::run()
 			_state = State_Capture;
 		}
 	} else if ( _state == State_Capture ) {
-		if ( !fairlyCloseToBall ) {
+		if ( !fairlyCloseToBall || !behindBall ) {
 			_state = State_Approach;
 		}
 	}
@@ -139,11 +146,15 @@ bool Gameplay::Behaviors::AimCapture::run()
 
 
 
+
+
+	Line approachLine(ball().pos - approachDir, ball().pos);
+
+
 	Point initialApproachTarget = ball().pos - approachDir * *_approach_Distance;
 	state()->drawCircle(initialApproachTarget, .02, Qt::blue);
 
 
-	Line approachLine(ball().pos - approachDir, ball().pos);
 	Point closestApproachLinePoint = approachLine.nearestPoint(robot->pos);
 
 
@@ -164,22 +175,24 @@ bool Gameplay::Behaviors::AimCapture::run()
 
 	if ( _state == State_Capture ) {
 
-		_perpindicularPidController.kp = 3;	//	FIXME: ?
+		_perpindicularPidController.kp = *_capture_perp_p;	//	FIXME: ?
 
 		Point perpCorrectionDir = Point(closestApproachLinePoint - robot->pos).normalized();
 		Point perpErrorCorrectionVel = perpApproachError * _perpindicularPidController.run(perpApproachError) * perpCorrectionDir;
 
 
-		_parallelPidController.kp = 2;	//	FIXME: ?
+		_parallelPidController.kp = *_capture_parallel_p;	//	FIXME: ?
 
 		float approachSpeed = *_capture_Speed;
 		Point approachVel = approachSpeed * approachDir;
 
 
 		Point botVel = ball().vel + approachVel + perpErrorCorrectionVel;
+		robot->addText(QString("botVel(%1, %2)").arg(botVel.x).arg(botVel.y));
+
 		robot->worldVelocity(botVel);
 	} else if ( _state == State_Approach ) {
-		robot->move(initialApproachTarget);	
+		robot->move(initialApproachTarget);
 	}
 	
 
@@ -208,12 +221,18 @@ bool Gameplay::Behaviors::AimCapture::run()
 	}
 
 	//	see if we've had the ball for long enough to consider it captured
-	if ( _hadBall ) {
-		uint64_t ballHoldDuration = timestamp() - _ballHoldStartTime;
-		if ( ballHoldDuration > *_capture_Time_Threshold ) {
-			_state = State_Done;
-			return false;
-		}
+	// if ( _hadBall ) {
+	// 	uint64_t ballHoldDuration = timestamp() - _ballHoldStartTime;
+	// 	if ( ballHoldDuration > 20 ) { //*_capture_Time_Threshold ) {
+	// 		_state = State_Done;
+	// 		return false;
+	// 	}
+	// }
+
+
+	if ( robot->hasBall() ) {
+		_state = State_Done;
+		return false;
 	}
 
 
@@ -230,149 +249,4 @@ bool Gameplay::Behaviors::AimCapture::run()
 
 
 	return true;
-
-
-	//======================================================================================
-
-
-
-
-
-	// // The direction we're facing
-	// const Point dir = Point::direction(robot->angle * DegreesToRadians);
-	
-	// uint64_t now = timestamp();
-	
-	// // State changes
-	// Point toBall = (ball().pos - robot->pos).normalized();
-	// float err = dir.dot(toBall);
-	// float ballSpeed = ball().vel.mag();
-
-	// // Target positioning for robot to trap the ball - if moving,
-	// // stop ball first, otherwise
-	// Point targetApproachPoint = ball().pos - (target - ball().pos).normalized() * *_approach_Distance;
-	// Point approachPoint = targetApproachPoint;
-
-	// // pick target based on velocity
-	// if (ballSpeed > *_stationaryMaxSpeed)
-	// {
-	// 	float interceptTime = ballDist / *robot->config->trapTrans.velocity;
-	// 	Point trapApproachPoint = ball().pos + ball().vel * interceptTime; // TODO: check if accel term is necessary
-	// 	approachPoint = trapApproachPoint;
-	// }////////////////////////////////////////////////////////////////////////
-
-	// if (_state == State_Approach)
-	// {
-	// 	robot->addText(QString("err %1 %2").arg(err).arg(robot->pos.distTo(approachPoint)));
-	// 	if (robot->hasBall())
-	// 	{
-	// 		if (enable_pivot)
-	// 		{
-	// 			_state = State_Pivoting;
-	// 			_ccw = ((target - ball().pos).cross(target - ball().pos) > 0);
-	// 		} else
-	// 		{
-	// 			_state = State_Done;
-	// 		}
-	// 	} else if (robot->pos.nearPoint(approachPoint, *_approach_Threshold) && err >= cos(10 * DegreesToRadians))
-	// 	{
-	// 		_state = State_Capture;
-	// 		_lastBallTime = now;
-	// 	}
-	// } else if (_state == State_Capture)
-	// {
-	// 	// _lastBallTime is the last time we did not have the ball
-	// 	if (!robot->hasBall())
-	// 	{
-	// 		_lastBallTime = now;
-	// 	}
-		
-	// 	if (!behindBall || ballDist > *_approach_Threshold_Reverse)
-	// 	{
-	// 		_state = State_Approach;
-	// 	}
-		
-	// 	if ((now - _lastBallTime) >= *_capture_Time_Threshold)
-	// 	{
-	// 		if (!enable_pivot || (ball().pos.nearPoint(robot->pos, *_has_Ball_Dist) && err >= cos(20 * DegreesToRadians)))
-	// 		{
-	// 			_state = State_Done;
-	// 		} else {
-	// 			_state = State_Pivoting;
-	// 		}
-	// 		_ccw = dir.cross(target - robot->pos) > 0;
-	// 		_lastBallTime = now;
-	// 	}
-	// } else if (_state == State_Pivoting)
-	// {
-	// 	if (!enable_pivot)
-	// 	{
-	// 		_state = State_Done;
-	// 	}
-
-	// 	// _lastBallTime is the last time we had the ball
-	// 	if (robot->hasBall())
-	// 	{
-	// 		_lastBallTime = now;
-	// 	}
-
-	// 	if ((!robot->hasBall() && (state()->timestamp - _lastBallTime) > 500000) || !ball().pos.nearPoint(robot->pos, *_approach_Distance))
-	// 	{
-	// 		_state = State_Approach;
-	// 	} else if (ball().pos.nearPoint(robot->pos, *_has_Ball_Dist) && err >= cos(20 * DegreesToRadians))
-	// 	{
-	// 		_state = State_Done;
-	// 	}
-	// }
-	
-	// state()->drawLine(ball().pos, target, Qt::red);
-	
-	// // Driving
-	// if (_state == State_Approach)
-	// {
-	// 	robot->addText("Approach");
-	// 	robot->avoidBall(*_approach_Clearance);
-	// 	robot->move(approachPoint);
-	// 	robot->face(ball().pos);
-	// } else if (_state == State_Capture)
-	// {
-	// 	robot->addText("AimCapture");
-		
-	// 	double speed = max(0.0, 1.0 - double(now - _lastBallTime) / double(*_capture_Time_Threshold * *_capture_Decel)) * *_capture_Speed;
-		
-	// 	robot->dribble(*_dribble_Speed);
-	// 	robot->worldVelocity(toBall * speed);
-	// 	robot->face((ball().pos - robot->pos) * 1.2 + robot->pos);
-	// } else if (_state == State_Pivoting)
-	// {
-	// 	robot->addText("Pivoting");
-	// 	state()->drawLine(robot->pos, robot->pos + dir * 8, Qt::white);
-	// 	state()->drawLine(ball().pos, target, Qt::yellow);
-	// 	state()->drawLine(robot->pos, (ball().pos - robot->pos).normalized() * 8, Qt::green);
-
-	// 	// See if we've gotten close enough
-	// 	float error = dir.dot((target - ball().pos).normalized());
-
-	// 	// Decide which direction to rotate around the ball
-	// 	Point rb = ball().pos - robot->pos;
-	// 	if (rb.cross(target - ball().pos) > 0)
-	// 	{
-	// 		_ccw = true;
-	// 	} else if ((target - ball().pos).cross(rb) > 0)
-	// 	{
-	// 		_ccw = false;
-	// 	}
-	// 	robot->addText(QString("Pivot %1 %2").arg(
-	// 		QString::number(acos(error) * RadiansToDegrees),
-	// 		QString::number(_ccw ? 1 : 0)));
-		
-	// 	robot->pivot(*_pivot_Speed * (_ccw ? 1 : -1), ball().pos);
-	// 	robot->dribble(*_dribble_Speed);
-	// } else {
-	// 	robot->addText("Done");
-	// 	robot->dribble(*_dribble_Speed);
-	// 	return false;
-	// }
-	
-	// return true;
 }
