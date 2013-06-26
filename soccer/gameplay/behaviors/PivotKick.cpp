@@ -21,12 +21,6 @@ ConfigDouble *Gameplay::Behaviors::PivotKick::_initial_Accuracy;
 ConfigDouble *Gameplay::Behaviors::PivotKick::_accuracy_Delta;
 ConfigDouble *Gameplay::Behaviors::PivotKick::_fireNowThreshold;
 
-ConfigDouble *Gameplay::Behaviors::PivotKick::_a0;
-ConfigDouble *Gameplay::Behaviors::PivotKick::_a1;
-ConfigDouble *Gameplay::Behaviors::PivotKick::_a2;
-ConfigDouble *Gameplay::Behaviors::PivotKick::_a3;
-ConfigDouble *Gameplay::Behaviors::PivotKick::_max_chip_distance;
-ConfigDouble *Gameplay::Behaviors::PivotKick::_dribble_speed;
 ConfigBool *Gameplay::Behaviors::PivotKick::_land_on_target;
 ConfigBool *Gameplay::Behaviors::PivotKick::_allow_chipping;
 
@@ -39,18 +33,12 @@ void Gameplay::Behaviors::PivotKick::createConfiguration(Configuration* cfg)
 	_accuracy_Delta  = new ConfigDouble(cfg, "PivotKick/Accuracy Delta", 0.000);
 	_fireNowThreshold  = new ConfigDouble(cfg, "PivotKick/Fire Now Threshold", cos(3 * DegreesToRadians));
 
-    _a0 = new ConfigDouble(cfg, "PivotKick/_a0", -78.3635);
-    _a1 = new ConfigDouble(cfg, "PivotKick/_a1", 3.30802);
-    _a2 = new ConfigDouble(cfg, "PivotKick/_a2", -0.0238479);
-    _a3 = new ConfigDouble(cfg, "PivotKick/_a3", 0.000613888);
-    _dribble_speed = new ConfigDouble(cfg, "PivotKick/Dribble Speed", 40);
     _land_on_target = new ConfigBool(cfg, "PivotKick/Land On Target", true);
-    _max_chip_distance = new ConfigDouble(cfg, "PivotKick/Max Chip Distance", 2.5);
     _allow_chipping = new ConfigBool(cfg, "PivotKick/Allow Chipping", true);
 }
 
 Gameplay::Behaviors::PivotKick::PivotKick(GameplayModule *gameplay):
-    SingleRobotBehavior(gameplay), _capture(gameplay)
+    SingleRobotBehavior(gameplay), _capture(gameplay), chip_calib(gameplay)
 {
 	restart();
 	
@@ -176,7 +164,7 @@ bool Gameplay::Behaviors::PivotKick::run()
 				if (robot->chipper_available() && use_chipper && (*_allow_chipping))
 				{
 					if(*_land_on_target)
-						robot->chip(chipPowerForDistance(windowed_target.center().distTo(ball().pos)));
+						robot->chip(chip_calib.chipPowerForDistance(windowed_target.center().distTo(ball().pos)));
 					else
 						robot->chip(kick_power);
 					robot->addText("CHIP");
@@ -216,7 +204,7 @@ bool Gameplay::Behaviors::PivotKick::run()
 
 		robot->pivot(*_aim_Speed * (_ccw ? 1 : -1), ball().pos);
 		if(use_chipper && _land_on_target)
-			robot->dribble((*_dribble_speed));
+			robot->dribble(chip_calib.dribble_speed());
 		else
 			robot->dribble(dribble_speed);
 
@@ -231,18 +219,4 @@ bool Gameplay::Behaviors::PivotKick::run()
 	
 	return true;
 
-}
-
-int Gameplay::Behaviors::PivotKick::chipPowerForDistance(double distance)
-{
-	if(distance >= (*_max_chip_distance))
-		return 255;
-	int x = 0;
-	double dist = (*_a0);
-	while(dist < distance && x <= 255)
-	{
-		x += 1;
-		dist = (*_a0) + (*_a1) * x + (*_a2) * x * x + (*_a3) * x * x * x;
-	}
-	return x;
 }
