@@ -22,10 +22,12 @@ namespace Gameplay
 }
 
 ConfigDouble *Gameplay::Plays::OurCornerKick_Pass::_targetSegmentWidth;
+ConfigDouble *Gameplay::Plays::OurCornerKick_Pass::_receiverChoiceHysterisis;
 
 void Gameplay::Plays::OurCornerKick_Pass::createConfiguration(Configuration *cfg)
 {
 	_targetSegmentWidth = new ConfigDouble(cfg, "OurCornerKick_Pass/Window Width", Field_Length / 4.);
+	_receiverChoiceHysterisis = new ConfigDouble(cfg, "OurCornerKick_Pass/Receiver Choice Hysterisis", 0);
 }
 
 Gameplay::Plays::OurCornerKick_Pass::OurCornerKick_Pass(GameplayModule *gameplay):
@@ -102,9 +104,13 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 		Point passTarget2;
 
 
+		float target1Score = -1;
+		float target2Score = -1;
+
+
 
 		if ( _receiver1.robot ) {
-			Point pt = ReceivePointEvaluator::FindReceivingPoint(state(), _receiver1.robot->pos, ball().pos, receiver1Segment);
+			Point pt = ReceivePointEvaluator::FindReceivingPoint(state(), _receiver1.robot->pos, ball().pos, receiver1Segment, &target1Score);
 			passTarget1 = pt;
 
 			state()->drawLine(receiver1Segment.pt[0], receiver1Segment.pt[1], Qt::black);
@@ -116,7 +122,7 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 		}
 
 		if ( _receiver2.robot ) {
-			Point pt = ReceivePointEvaluator::FindReceivingPoint(state(), _receiver2.robot->pos, ball().pos, receiver2Segment);
+			Point pt = ReceivePointEvaluator::FindReceivingPoint(state(), _receiver2.robot->pos, ball().pos, receiver2Segment, &target1Score);
 			passTarget2 = pt;
 
 			state()->drawLine(receiver2Segment.pt[0], receiver2Segment.pt[1], Qt::black);
@@ -130,8 +136,22 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 		Point passerTarget;
 
 
+		//	choose which receiver to pass to
+		bool firstIsBetter;
+		if ( target1Score == -1 ) {
+			firstIsBetter = false;
+		} else if ( target2Score == -1 ) {
+			firstIsBetter = true;
+		} else if ( _passingToFirstReceiver && (target2Score - target1Score) > *_receiverChoiceHysterisis ) {
+			firstIsBetter = false;
+		} else if ( !_passingToFirstReceiver && (target1Score - target2Score) > *_receiverChoiceHysterisis ) {
+			firstIsBetter = true;
+		} else {
+			firstIsBetter = _passingToFirstReceiver;
+		}
+		_passingToFirstReceiver = firstIsBetter;
 
-		bool firstIsBetter = _receiver1.robot != NULL;	//	FIXME: pick one of the two
+
 
 		//	setup passer && receivers appropriately for the chosen point
 		if ( firstIsBetter ) {
@@ -161,6 +181,12 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 		assignNearest(_passer.robot, available, ball().pos);
 		assignNearest(_receiver1.robot, available, passTarget1);
 		assignNearest(_receiver2.robot, available, passTarget2);
+
+
+		const GameState &gs = _gameplay->state()->gameState;
+		if ( gs.canKick() ) {
+			_passer.robot->disableAvoidBall();
+		}
 
 
 
