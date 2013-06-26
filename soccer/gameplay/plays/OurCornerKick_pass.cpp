@@ -199,8 +199,14 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 		_receiver2.run();
 
 		uint8_t dspeed = 60;
-		if ( _receiver1.robot ) _receiver1.robot->dribble(dspeed);
-		if ( _receiver2.robot ) _receiver2.robot->dribble(dspeed);
+		if ( _receiver1.robot ) {
+			_receiver1.robot->dribble(dspeed);
+			_receiver1.robot->kick(0);	//	undo kick
+		}
+		if ( _receiver2.robot ) {
+			_receiver2.robot->dribble(dspeed);
+			_receiver2.robot->kick(0);
+		}
 	}
 
 
