@@ -100,6 +100,7 @@ srcs = [
 	'gameplay/tactics/SLKTest.cpp',
 	'gameplay/tactics/CatPassDemo.cpp',
 	'gameplay/tactics/DumbReceive.cpp',
+	'gameplay/tactics/ChipCalibration.cpp',
 	
 	# Test framework for plays
 	'gameplay/TestFixture.cpp',
