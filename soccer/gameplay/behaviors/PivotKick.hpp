@@ -71,7 +71,7 @@ namespace Gameplay
                 State_Done
             } _state;
 
-            AimCapture _capture;
+            Capture _capture;
 
             bool _ccw;
             float _lastError;
