@@ -1,0 +1,41 @@
+/*
+ * OurCornerKickChipToGoalArea.hpp
+ *
+ *  Created on: Jun 26, 2013
+ *      Author: matt
+ */
+
+#ifndef OURCORNERKICKCHIPTOGOALAREA_HPP_
+#define OURCORNERKICKCHIPTOGOALAREA_HPP_
+
+#include "../Play.hpp"
+
+#include <gameplay/behaviors/Kick.hpp>
+#include <gameplay/behaviors/positions/Fullback.hpp>
+#include <gameplay/behaviors/Move.hpp>
+#include <gameplay/PreventDoubleTouch.hpp>
+
+namespace Gameplay {
+namespace Plays {
+
+class OurCornerKick_ChipToGoalArea: public Gameplay::Play {
+public:
+	OurCornerKick_ChipToGoalArea(GameplayModule* gameplay);
+	static float score(GameplayModule* gameplay);
+	virtual bool run();
+	~OurCornerKick_ChipToGoalArea();
+
+protected:
+	// always takes a chipper
+	Behaviors::Kick _kicker;
+	Behaviors::Move _center1;
+	Behaviors::Move _center2;
+	Behaviors::Fullback _fullback1, _fullback2;
+	PreventDoubleTouch _pdt;
+
+	Geometry2d::Segment _target;
+};
+
+} /* namespace Plays */
+} /* namespace Gameplay */
+#endif /* OURCORNERKICKCHIPTOGOALAREA_HPP_ */

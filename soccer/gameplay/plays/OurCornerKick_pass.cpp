@@ -183,6 +183,11 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 		assignNearest(_receiver2.robot, available, passTarget2);
 
 
+		_passer.robot->addText(QString("Using receiver %1").arg(firstIsBetter ? "L" : "R"));
+		_passer.robot->addText(QString("pt1(%1, %2").arg(passTarget1.x).arg(passTarget1.y));
+		_passer.robot->addText(QString("pt2(%1, %2)").arg(passTarget2.x).arg(passTarget2.y));
+
+
 		const GameState &gs = _gameplay->state()->gameState;
 		if ( gs.canKick() ) {
 			_passer.robot->disableAvoidBall();
@@ -199,9 +204,18 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 		_receiver2.run();
 
 		uint8_t dspeed = 60;
-		if ( _receiver1.robot ) _receiver1.robot->dribble(dspeed);
-		if ( _receiver2.robot ) _receiver2.robot->dribble(dspeed);
+		if ( _receiver1.robot ) {
+			_receiver1.robot->dribble(dspeed);
+			_receiver1.robot->kick(0);	//	undo kick
+		}
+		if ( _receiver2.robot ) {
+			_receiver2.robot->dribble(dspeed);
+			_receiver2.robot->kick(0);
+		}
 	}
+
+
+
 
 
 	assignNearest(_fullback1.robot, available, Geometry2d::Point(-Field_GoalHeight/2.0, 0.0));

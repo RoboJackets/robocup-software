@@ -2,6 +2,8 @@
 
 #include <gameplay/Behavior.hpp>
 #include <gameplay/behaviors/AimCapture.hpp>
+#include <gameplay/behaviors/Capture.hpp>
+#include <gameplay/tactics/ChipCalibration.hpp>
 
 namespace Gameplay
 {
@@ -96,13 +98,10 @@ namespace Gameplay
             static ConfigDouble *_fireNowThreshold;
             
             // Chipper calibration
-            static ConfigDouble *_a0, *_a1, *_a2, *_a3; // constants of the cubic
-            static ConfigDouble *_max_chip_distance; // Maximum chip distance the robot is capable of
-            static ConfigDouble *_dribble_speed; // dribble speed in order to map cubically
             static ConfigBool *_land_on_target;
             static ConfigBool *_allow_chipping; // Config value for forcing surface kicks.
 
-            int chipPowerForDistance(double distance);
+            ChipCalibration chip_calib;
         };
 	}
 }
