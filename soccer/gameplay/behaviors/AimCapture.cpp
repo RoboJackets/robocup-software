@@ -31,7 +31,6 @@ ConfigDouble *Gameplay::Behaviors::AimCapture::_capture_Decel;
 ConfigDouble *Gameplay::Behaviors::AimCapture::_has_Ball_Dist;
 ConfigDouble *Gameplay::Behaviors::AimCapture::_pivot_Speed;
 ConfigDouble *Gameplay::Behaviors::AimCapture::_dribble_Speed;
-ConfigDouble *Gameplay::Behaviors::AimCapture::_perp_approach_error_threshold;
 
 void Gameplay::Behaviors::AimCapture::createConfiguration(Configuration* cfg)
 {
@@ -47,8 +46,6 @@ void Gameplay::Behaviors::AimCapture::createConfiguration(Configuration* cfg)
 	_dribble_Speed  = new ConfigDouble(cfg, "AimCapture/Dribbler Speed", 127);
 
 	_approach_Threshold_Reverse = new ConfigDouble(cfg, "AimCapture/Approach Threshold Reverse", .18);
-
-	_perp_approach_error_threshold = new ConfigDouble(cfg, "AimCapture/Perp Approach Error Threshold", .04);
 }
 
 Gameplay::Behaviors::AimCapture::AimCapture(GameplayModule *gameplay):
@@ -109,7 +106,7 @@ bool Gameplay::Behaviors::AimCapture::run()
 	bool closeToBall = ballDist < *_approach_Distance;
 	bool fairlyCloseToBall = ballDist < *_approach_Distance * 1.3;	//	TODO: constant?
 
-	//	avoid ball if we're not behind it
+	
 	bool behindBall = ((target - robot->pos).dot(ball().pos - robot->pos) > 0);
 
 	//	state changes
@@ -126,25 +123,19 @@ bool Gameplay::Behaviors::AimCapture::run()
 	}
 
 
-
-
 	//	avoid ball while we're approaching
 	if ( _state == State_Approach ) {
-		robot->disableAvoidBall();
-	} else {
 		robot->avoidBall(*_approach_Clearance);
+	} else {
+		robot->disableAvoidBall();
 	}
 
 	//	only dribble when we're close to the ball
-	if ( _state = State_Capture ) {
+	if ( _state == State_Capture ) {
 		robot->dribble(*_dribble_Speed);
 	} else {
 		robot->dribble(0);
 	}
-
-
-
-
 
 
 
@@ -156,35 +147,41 @@ bool Gameplay::Behaviors::AimCapture::run()
 	Point closestApproachLinePoint = approachLine.nearestPoint(robot->pos);
 
 
-	// Point approachTarget = ball().pos - approachDir * _captureDist;
+	Point approachDiff = closestApproachLinePoint - robot->pos;
+
+	float perpApproachError = approachDiff.mag() * (approachDiff.dot(approachDir) > 0 ? 1 : -1);
+	robot->addText(QString("Perp err %1").arg(perpApproachError));
+	// robot->addText(QString("err %1 %2").arg(err).arg(robot->pos.distTo(approachPoint)));
 
 
-	float perpApproachError = approachLine.distTo(robot->pos);
 	float parallelApproachError = (initialApproachTarget - closestApproachLinePoint).mag();
 
 
-
-	float approachSpeed = *_capture_Speed;
-
-
-	
 
 
 
 
 
 	if ( _state == State_Capture ) {
-		const float perp_p = 1;
+
+		_perpindicularPidController.kp = 3;	//	FIXME: ?
+
 		Point perpCorrectionDir = Point(closestApproachLinePoint - robot->pos).normalized();
-		Point perpErrorCorrectionVel = perpApproachError * perp_p * perpCorrectionDir;
+		Point perpErrorCorrectionVel = perpApproachError * _perpindicularPidController.run(perpApproachError) * perpCorrectionDir;
+
+
+		_parallelPidController.kp = 2;	//	FIXME: ?
+
+		float approachSpeed = *_capture_Speed;
 		Point approachVel = approachSpeed * approachDir;
+
+
 		Point botVel = ball().vel + approachVel + perpErrorCorrectionVel;
 		robot->worldVelocity(botVel);
-	} else {
+	} else if ( _state == State_Approach ) {
 		robot->move(initialApproachTarget);	
 	}
 	
-
 
 
 	//	Robot Facing
@@ -218,6 +215,18 @@ bool Gameplay::Behaviors::AimCapture::run()
 			return false;
 		}
 	}
+
+
+
+	if ( _state == State_Approach ) {
+		robot->addText(QString("AC: Approach"));
+	} else if ( _state == State_Capture ) {
+		robot->addText(QString("AC: Capture"));
+	} else {
+		robot->addText(QString("AC: Done"));
+	}
+
+
 
 
 	return true;
