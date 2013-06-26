@@ -201,7 +201,7 @@ void Gameplay::GameplayModule::clearAvoidBallRadii() {
 	BOOST_FOREACH(OurRobot* robot, _state->self)
 	{
 		if (robot) {
-			robot->disableAvoidBall();
+			robot->resetAvoidBall();
 		}
 	}
 }
