@@ -186,13 +186,20 @@ bool Gameplay::Behaviors::Goalie::run()
 
 	case Clear:
 	{
+		Point target = ball().pos.normalized() * 10;
 		if(_kick.done())
 			_kick.restart();
 		robot->addText(QString("State: Clear"));
 		//Ball is in defense area, get it out of there.
 		robot->dribble(50);
 
-		_kick.forceChip = true;
+		_kick.setTarget(Segment(target, target));
+		if(robot->chipper_available())
+		{
+			_kick.forceChip = true;
+			_kick.use_chipper = true;
+		}
+		_kick.use_line_kick = true;
 
 		_kick.enableGoalLineShot = true;
 		_kick.enableLeftDownfieldShot = true;
