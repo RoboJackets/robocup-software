@@ -116,6 +116,33 @@ bool Gameplay::Behaviors::AimCapture::run()
 	
 	bool behindBall = ((target - robot->pos).dot(ball().pos - robot->pos) > 0);
 
+
+
+	Line approachLine(ball().pos - approachDir, ball().pos);
+
+
+	Point initialApproachTarget = ball().pos - approachDir * *_approach_Distance;
+	state()->drawCircle(initialApproachTarget, .02, Qt::blue);
+
+
+	Point closestApproachLinePoint = approachLine.nearestPoint(robot->pos);
+
+
+	Point approachDiff = closestApproachLinePoint - robot->pos;
+
+	float perpApproachError = approachDiff.mag() * (approachDiff.dot(approachDir) > 0 ? 1 : -1);
+	robot->addText(QString("Perp err %1").arg(perpApproachError));
+	// robot->addText(QString("err %1 %2").arg(err).arg(robot->pos.distTo(approachPoint)));
+
+
+	float parallelApproachError = (initialApproachTarget - closestApproachLinePoint).mag();
+
+
+
+
+
+
+
 	//	state changes
 	if ( _state == State_Done && !robot->hasBall() ) {
 		_state = State_Approach;
@@ -124,7 +151,7 @@ bool Gameplay::Behaviors::AimCapture::run()
 			_state = State_Capture;
 		}
 	} else if ( _state == State_Capture ) {
-		if ( !fairlyCloseToBall || !behindBall ) {
+		if ( !fairlyCloseToBall || !behindBall || std::abs(perpApproachError) > Robot_Radius ) {
 			_state = State_Approach;
 		}
 	}
@@ -148,26 +175,7 @@ bool Gameplay::Behaviors::AimCapture::run()
 
 
 
-	Line approachLine(ball().pos - approachDir, ball().pos);
-
-
-	Point initialApproachTarget = ball().pos - approachDir * *_approach_Distance;
-	state()->drawCircle(initialApproachTarget, .02, Qt::blue);
-
-
-	Point closestApproachLinePoint = approachLine.nearestPoint(robot->pos);
-
-
-	Point approachDiff = closestApproachLinePoint - robot->pos;
-
-	float perpApproachError = approachDiff.mag() * (approachDiff.dot(approachDir) > 0 ? 1 : -1);
-	robot->addText(QString("Perp err %1").arg(perpApproachError));
-	// robot->addText(QString("err %1 %2").arg(err).arg(robot->pos.distTo(approachPoint)));
-
-
-	float parallelApproachError = (initialApproachTarget - closestApproachLinePoint).mag();
-
-
+	
 
 
 
