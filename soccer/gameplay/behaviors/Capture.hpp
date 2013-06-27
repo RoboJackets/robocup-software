@@ -57,66 +57,33 @@ namespace Gameplay
 				uint64_t _lastBallTime;
 
 				// GUI Config parameters
-				// static ConfigDouble *_stationaryMaxSpeed; // largest ball speed in m/s to treat as stationary
+				static ConfigDouble *_stationaryMaxSpeed; // largest ball speed in m/s to treat as stationary
 
 				// How far away from the ball the approach point is placed
-				// static ConfigDouble *_approach_Distance;
+				static ConfigDouble *_approach_Distance;
 				// Ball avoidance distance
-				// static ConfigDouble *_approach_Clearance; // needs to be less than Approach_Threshold
+				static ConfigDouble *_approach_Clearance; // needs to be less than Approach_Threshold
 				// How close we must get to the approach point to proceed to Capture
-				// static ConfigDouble *_approach_Threshold;
+				static ConfigDouble *_approach_Threshold;
 
 				//	How far we must be away from the ball to switch from Capture back to Approach
-				// static ConfigDouble *_approach_Threshold_Reverse;
+				static ConfigDouble *_approach_Threshold_Reverse;
 
 				// How fast we drive towards the ball
-				// static ConfigDouble *_capture_Speed;
+				static ConfigDouble *_capture_Speed;
 				// How long we must continuously hold the ball to proceed to Aim
-				// static ConfigDouble *_capture_Time_Threshold;
+				static ConfigDouble *_capture_Time_Threshold;
 				// How much of Capture_Time_Threshold should be spent decelerating
-				// static ConfigDouble *_capture_Decel;
+				static ConfigDouble *_capture_Decel;
 
 				// How close the ball must be to count as captured properly
-				// static ConfigDouble *_has_Ball_Dist;
+				static ConfigDouble *_has_Ball_Dist;
 
 				// Angular speed for Pivoting
-				// static ConfigDouble *_pivot_Speed;
+				static ConfigDouble *_pivot_Speed;
 
 				// Dribbler speed during capture
-				// static ConfigDouble *_dribble_Speed;
-
-
-
-
-
-				//
-				//	things stolen from LineKick
-				//
-
-				bool ballClose;
-
-
-				bool use_dribbler;
-
-
-				// scale the kicking parameters to adjust speed/precision of the kick
-				float scaleSpeed;
-				float scaleAcc;
-				float scaleW;
-
-
-				static ConfigDouble *_drive_around_dist;
-				static ConfigDouble *_setup_to_charge_thresh;
-				static ConfigDouble *_escape_charge_thresh;
-				static ConfigDouble *_setup_ball_avoid;
-				static ConfigDouble *_accel_bias;
-				static ConfigDouble *_facing_thresh;
-				static ConfigDouble *_max_speed;
-				static ConfigDouble *_proj_time;
-				static ConfigDouble *_dampening;
-				static ConfigDouble *_done_thresh;
-
-				static ConfigDouble *_dribble_speed;
+				static ConfigDouble *_dribble_Speed;
 			};
 	}
 }

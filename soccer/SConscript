@@ -67,7 +67,7 @@ srcs = [
   # Core behaviors
 	'gameplay/behaviors/Move.cpp',
 #	'gameplay/behaviors/AimCapture.cpp',
-	'gameplay/behaviors/Capture.cpp',
+	#'gameplay/behaviors/Capture.cpp',
 	'gameplay/behaviors/Kickoff.cpp',
 	'gameplay/behaviors/Penalty.cpp',
 	'gameplay/behaviors/Idle.cpp',
@@ -81,6 +81,7 @@ srcs = [
 	'gameplay/behaviors/TouchKick.cpp',
 	'gameplay/behaviors/Bump.cpp',
 	'gameplay/behaviors/PassReceive.cpp',
+	'gameplay/behaviors/Capture.cpp',
 	
 	# MotionTests
 	# 'gameplay/plays/motion_testing/TestMotion.cpp',
