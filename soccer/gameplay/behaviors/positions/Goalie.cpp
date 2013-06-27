@@ -43,7 +43,9 @@ Gameplay::Behaviors::Goalie::~Goalie() {
 void Gameplay::Behaviors::Goalie::assign(set<OurRobot *> &available) {
 	if (!robot) {
 		// Take the robot nearest the goal
-		assignNearest(robot, available, Geometry2d::Point());
+		assignNearestChipper(robot, available, Geometry2d::Point());
+		if(!robot)
+			assignNearest(robot, available, Geometry2d::Point());
 		if (robot) {
 			printf("Goalie: no robot, took %d\n", robot->shell());
 		} else {
