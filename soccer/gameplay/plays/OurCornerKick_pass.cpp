@@ -62,7 +62,7 @@ float Gameplay::Plays::OurCornerKick_Pass::score ( Gameplay::GameplayModule* gam
 	chipper_available = true;	//	FIXME: hack
 
 
-	bool enoughBots = gameplay->playRobots().size() >= 3;
+	bool enoughBots = gameplay->playRobots().size() >= 2;
 
 
 	// return (gs.setupRestart() && gs.ourDirect() && chipper_available && ballPos.y > (Field_Length - 1.5)) ? 1 : INFINITY;
@@ -207,14 +207,20 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 		uint8_t dspeed = 60;
 		if ( _receiver1.robot ) {
 			_receiver1.robot->dribble(dspeed);
-			_receiver1.robot->kick(0);	//	undo kick
 		}
 		if ( _receiver2.robot ) {
 			_receiver2.robot->dribble(dspeed);
-			_receiver2.robot->kick(0);
 		}
 	}
 
+
+	//	unkick both receivers
+	if ( _receiver1.robot ) {
+		_receiver1.robot->unkick();
+	}
+	if ( _receiver2.robot ) {
+		_receiver2.robot->unkick();
+	}
 
 
 
