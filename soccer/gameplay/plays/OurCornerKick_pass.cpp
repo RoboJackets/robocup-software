@@ -66,7 +66,7 @@ float Gameplay::Plays::OurCornerKick_Pass::score ( Gameplay::GameplayModule* gam
 
 
 	// return (gs.setupRestart() && gs.ourDirect() && chipper_available && ballPos.y > (Field_Length - 1.5)) ? 1 : INFINITY;
-	return (enoughBots && gs.ourDirect() && chipper_available && ballPos.y > (Field_Length - 2.5)) ? 1 : INFINITY;
+	return (enoughBots && (gs.ourDirect() || gs.ourIndirect()) && chipper_available && ballPos.y > (Field_Length - 2.5)) ? 1 : INFINITY;
 }
 
 bool Gameplay::Plays::OurCornerKick_Pass::run()
@@ -94,9 +94,8 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 	if ( !_passDone ) {
 		//	Geometry2d::Point FindReceivingPoint(SystemState* state, Robot* robot, Geometry2d::Point ballPos, Geometry2d::Segment receivingLine);
 
-		Segment receiver1Segment(Point(-1.0f, Field_Length - 1.5f), Point(-2, Field_Length - 1.0f));
-		Segment receiver2Segment(Point(1.0f, Field_Length - 1.5f), Point(2.0f, Field_Length - 1.0f));
-
+		Segment receiver1Segment(Point(-0.3f, Field_Length - 1.7f), Point(-1.6f, Field_Length - 0.8f));
+		Segment receiver2Segment(Point(0.5f, Field_Length - 1.5f), Point(1.5f, Field_Length - 1.0f));
 
 
 
@@ -112,6 +111,7 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 		if ( _receiver1.robot ) {
 			Point pt = ReceivePointEvaluator::FindReceivingPoint(state(), _receiver1.robot->pos, ball().pos, receiver1Segment, &target1Score);
 			passTarget1 = pt;
+			if ( target1Score == -1 ) passTarget1 = receiver1Segment.center();
 
 			state()->drawLine(receiver1Segment.pt[0], receiver1Segment.pt[1], Qt::black);
 
@@ -124,6 +124,7 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 		if ( _receiver2.robot ) {
 			Point pt = ReceivePointEvaluator::FindReceivingPoint(state(), _receiver2.robot->pos, ball().pos, receiver2Segment, &target1Score);
 			passTarget2 = pt;
+			if ( target2Score == -1 ) passTarget2 = receiver2Segment.center();
 
 			state()->drawLine(receiver2Segment.pt[0], receiver2Segment.pt[1], Qt::black);
 		} else {
