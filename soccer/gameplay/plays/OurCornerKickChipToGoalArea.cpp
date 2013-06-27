@@ -140,14 +140,22 @@ bool OurCornerKick_ChipToGoalArea::run()
 		_kicker.robot->addText("CK State: Receive");
 		_kicker.robot->worldVelocity((ball().pos - _kicker.robot->pos).normalized() * 1.0);
 		_kicker.robot->face(ball().pos);
-		_center1.robot->worldVelocity((ball().pos - _center1.robot->pos).normalized() * 1.0);
-		_center1.robot->face(ball().pos);
-		_center2.robot->worldVelocity((ball().pos - _center2.robot->pos).normalized() * 1.0);
-		_center2.robot->face(ball().pos);
+		if(_center1.robot)
+		{
+			_center1.robot->worldVelocity((ball().pos - _center1.robot->pos).normalized() * 1.0);
+			_center1.robot->face(ball().pos);
+		}
+		if(_center2.robot)
+		{
+			_center2.robot->worldVelocity((ball().pos - _center2.robot->pos).normalized() * 1.0);
+			_center2.robot->face(ball().pos);
+		}
 
 		state()->drawCircle(_kicker.robot->pos, Robot_Radius + 0.15, QColor(255,0,255), "ChipToGoal");
-		state()->drawCircle(_center1.robot->pos, Robot_Radius + 0.15, QColor(255,0,255), "ChipToGoal");
-		state()->drawCircle(_center2.robot->pos, Robot_Radius + 0.15, QColor(255,0,255), "ChipToGoal");
+		if(_center1.robot)
+			state()->drawCircle(_center1.robot->pos, Robot_Radius + 0.15, QColor(255,0,255), "ChipToGoal");
+		if(_center2.robot)
+			state()->drawCircle(_center2.robot->pos, Robot_Radius + 0.15, QColor(255,0,255), "ChipToGoal");
 
 		break;
 	}
