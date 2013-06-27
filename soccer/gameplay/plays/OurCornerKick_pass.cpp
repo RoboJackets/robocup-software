@@ -99,7 +99,6 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 
 
 
-
 		Point passTarget1;
 		Point passTarget2;
 
@@ -112,6 +111,7 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 		if ( _receiver1.robot ) {
 			Point pt = ReceivePointEvaluator::FindReceivingPoint(state(), _receiver1.robot->pos, ball().pos, receiver1Segment, &target1Score);
 			passTarget1 = pt;
+			if ( target1Score == -1 ) passTarget1 = receiver1Segment.center();
 
 			state()->drawLine(receiver1Segment.pt[0], receiver1Segment.pt[1], Qt::black);
 
@@ -124,6 +124,7 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 		if ( _receiver2.robot ) {
 			Point pt = ReceivePointEvaluator::FindReceivingPoint(state(), _receiver2.robot->pos, ball().pos, receiver2Segment, &target1Score);
 			passTarget2 = pt;
+			if ( target2Score == -1 ) passTarget2 = receiver2Segment.center();
 
 			state()->drawLine(receiver2Segment.pt[0], receiver2Segment.pt[1], Qt::black);
 		} else {
