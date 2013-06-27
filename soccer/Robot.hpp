@@ -399,6 +399,16 @@ public:
 		radioTx.set_sing(true);
 	}
 
+	/*
+	 * Undoes any calls to kick() or chip().
+	 */
+	void unkick()
+	{
+		kick(0);
+		chip(0);
+		radioTx.set_use_chipper(false);
+	}
+
 protected:
 	// Stores a stack trace in _commandTrace
 	void setCommandTrace();
