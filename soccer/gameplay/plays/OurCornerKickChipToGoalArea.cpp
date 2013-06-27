@@ -42,7 +42,7 @@ float OurCornerKick_ChipToGoalArea::score(GameplayModule* gameplay)
 	bool chipper_available = false;
 	BOOST_FOREACH(OurRobot * r, gameplay->playRobots())
 	{
-		if (r && r->chipper_available())
+		if (r && r->hardwareVersion() == Packet::RJ2011)
 		{
 			chipper_available = true;
 			break;

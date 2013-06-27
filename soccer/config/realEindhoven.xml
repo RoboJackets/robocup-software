@@ -23,7 +23,7 @@
   <Dribble_Speed value="40"/>
   <Land_On_Target value="true"/>
   <Max_Chip_Distance value="2.5"/>
-  <Allow_Chipping value="true"/>
+  <Allow_Chipping value="false"/>
  </PivotKick>
  <YankChip>
   <Ball_Travel_Threshold value="0.5"/>
@@ -42,7 +42,7 @@
  <Capture>
   <Ball_Speed_Threshold value="0.5"/>
   <Approach_Distance value="0.15"/>
-  <Approach_Clearance value="0.14"/>
+  <Approach_Clearance value="0.1"/>
   <Approach_Threshold value="0.13"/>
   <Capture_Speed value="0.3"/>
   <Capture_Time_Threshold value="300000"/>
@@ -94,7 +94,7 @@
    <d value="0"/>
   </wheel>
   <kicker>
-   <maxKick value="60"/>
+   <maxKick value="255"/>
    <maxChip value="150"/>
    <passKick value="50"/>
   </kicker>
@@ -130,7 +130,7 @@
    <d value="0"/>
   </wheel>
   <kicker>
-   <maxKick value="60"/>
+   <maxKick value="255"/>
    <maxChip value="150"/>
    <passKick value="50"/>
   </kicker>
@@ -364,7 +364,7 @@
   <Support_Avoid_Shot value="0.2"/>
   <Offense_Support_Ratio value="0.7"/>
   <Defense_Support_Ratio value="0.9"/>
-  <Enable_Line_Kick value="true"/>
+  <Enable_Line_Kick value="false"/>
   <Defense_First value="true"/>
  </BasicOffense122>
  <OpenField221>
@@ -501,7 +501,7 @@
   <Roll_Distance value="0.1"/>
  </ChipCalibration>
  <MightyMight>
-  <Use_Line_Kick value="true"/>
+  <Use_Line_Kick value="false"/>
   <Defense_First value="true"/>
  </MightyMight>
  <LuckyKick>
