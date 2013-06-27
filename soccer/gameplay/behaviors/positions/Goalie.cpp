@@ -140,6 +140,8 @@ bool Gameplay::Behaviors::Goalie::run()
 
 	case Defend:
 	{
+		state()->drawLine(Point(-MaxX, Robot_Radius), Point(MaxX, Robot_Radius), QColor(255,255,0), "Goalie");
+
 		robot->addText(QString("State: Defend"));
 
 		float destx = ( ball().pos.x / Field_Width ) * MaxX;
@@ -186,7 +188,25 @@ bool Gameplay::Behaviors::Goalie::run()
 
 	case Clear:
 	{
-		Point target = ball().pos.normalized() * 10;
+		Segment ballToGoal(ball().pos, Point(0,0));
+		Point closest = ballToGoal.nearestPoint(robot->pos);
+		if(robot->pos.distTo(closest) > 0.10)
+		{
+			robot->move(closest);
+		}
+		else
+		{
+			robot->worldVelocity((ball().pos - robot->pos).normalized() * 1.0);
+		}
+		robot->dribble(40);
+		robot->face(ball().pos, true);
+		robot->radioTx.set_kick_immediate(false);
+		if(robot->hardwareVersion() == Packet::RJ2011)
+			robot->chip(255);
+		else
+			robot->kick(255);
+
+		/*Point target = ball().pos.normalized() * 10;
 		if(_kick.done())
 			_kick.restart();
 		robot->addText(QString("State: Clear"));
@@ -205,7 +225,7 @@ bool Gameplay::Behaviors::Goalie::run()
 		_kick.enableLeftDownfieldShot = true;
 		_kick.enableRightDownfieldShot = true;
 
-		_kick.run();
+		_kick.run();*/
 	}
 	break;
 
