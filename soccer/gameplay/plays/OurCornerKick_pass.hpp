@@ -32,6 +32,14 @@ namespace Gameplay
 				Behaviors::Fullback _fullback1, _fullback2;
 
 
+
+
+
+
+				uint64_t _startTime;
+				uint64_t _choosinessTimeout;	//	after this many microseconds?, we'll stop choosing between receive points and make it happen
+				bool _firstRun;
+
 				bool _passDone;
 
 				PreventDoubleTouch _pdt;
