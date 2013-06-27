@@ -160,7 +160,7 @@ bool Kick::run() {
 	else
 		robot->avoidOpponents(true);
 
-	bool result;
+	bool result = true;
 	// there are robots in the way and we are close, disable opponent obstacle avoidance
 	if (enablePushing && badshot && rPos.nearPoint(ball().pos, close_thresh)) {
 		robot->addText(QString("PushingOpponent"));
@@ -178,7 +178,7 @@ bool Kick::run() {
 		_lineKick.kick_power = (must_use_chip) ? chip_power : kick_power;
 		_lineKick.enable_kick = enableKick;
 		kickReady = _lineKick.kick_ready;
-		bool result = _lineKick.run();
+		result = _lineKick.run();
 		if (_lineKick.done())
 		{
 			_done = true;
@@ -190,7 +190,7 @@ bool Kick::run() {
 		_pivotKick.use_chipper = use_chipper;
 		_pivotKick.kick_power = (use_chipper) ? chip_power : kick_power;
 		_pivotKick.enable_kick = enableKick;
-		bool result = _pivotKick.run();
+		result = _pivotKick.run();
 		if (_pivotKick.done())
 		{
 			_done = true;
@@ -204,6 +204,9 @@ bool Kick::run() {
 		if(ok) {
 			robot->addText("Taking Opportunity!", Qt::magenta, "Kick");
 			robot->kick(255);
+
+			// We kicked, therefore exit
+			result = false;
 		}
 	}
 
