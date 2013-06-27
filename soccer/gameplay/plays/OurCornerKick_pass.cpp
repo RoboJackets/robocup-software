@@ -66,7 +66,7 @@ float Gameplay::Plays::OurCornerKick_Pass::score ( Gameplay::GameplayModule* gam
 
 
 	// return (gs.setupRestart() && gs.ourDirect() && chipper_available && ballPos.y > (Field_Length - 1.5)) ? 1 : INFINITY;
-	return (enoughBots && gs.ourDirect() && chipper_available && ballPos.y > (Field_Length - 2.5)) ? 1 : INFINITY;
+	return (enoughBots && (gs.ourDirect() || gs.ourIndirect()) && chipper_available && ballPos.y > (Field_Length - 2.5)) ? 1 : INFINITY;
 }
 
 bool Gameplay::Plays::OurCornerKick_Pass::run()
@@ -94,7 +94,7 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 	if ( !_passDone ) {
 		//	Geometry2d::Point FindReceivingPoint(SystemState* state, Robot* robot, Geometry2d::Point ballPos, Geometry2d::Segment receivingLine);
 
-		Segment receiver1Segment(Point(-0.5f, Field_Length - 1.5f), Point(-1.5f, Field_Length - 1.0f));
+		Segment receiver1Segment(Point(-0.3f, Field_Length - 1.7f), Point(-1.6f, Field_Length - 0.8f));
 		Segment receiver2Segment(Point(0.5f, Field_Length - 1.5f), Point(1.5f, Field_Length - 1.0f));
 
 
