@@ -51,6 +51,17 @@
   <Pivot_Speed value="1.5708"/>
   <Dribbler_Speed value="110"/>
   <Approach_Threshold_Reverse value="0.18"/>
+  <Drive_Around_Dist value="0.15"/>
+  <Charge_Thresh value="0.1"/>
+  <Escape_Charge_Thresh value="0.1"/>
+  <Setup_Ball_Avoid value="0.043"/>
+  <Accel_Bias value="0.1"/>
+  <Facing_Thresh_-_Deg value="10"/>
+  <Max_Charge_Speed value="0.5"/>
+  <Ball_Project_Time value="0.4"/>
+  <Ball_Project_Dampening value="0.8"/>
+  <Done_State_Thresh value="0.11"/>
+  <Dribble_Speed value="40"/>
  </Capture>
  <Rev2008>
   <trapTrans>
@@ -162,6 +173,7 @@
   <Ball_Project_Time value="0.3"/>
   <Ball_Project_Dampening value="0.8"/>
   <Done_State_Thresh value="0.11"/>
+  <Land_On_Target value="false"/>
  </LineKick>
  <Kickoff>
   <Enable_Random_Kick_Mode value="false"/>
@@ -353,6 +365,7 @@
   <Offense_Support_Ratio value="0.7"/>
   <Defense_Support_Ratio value="0.9"/>
   <Enable_Line_Kick value="true"/>
+  <Defense_First value="true"/>
  </BasicOffense122>
  <OpenField221>
   <Hystersis_Coeff value="0.5"/>
@@ -456,6 +469,7 @@
   <Window_Width value="1.5125"/>
   <Min_Chip_Range value="0.3"/>
   <Max_Chip_Range value="3"/>
+  <Receiver_Choice_Hysterisis value="0"/>
  </OurCornerKick_Pass>
  <ReceivePointEvaulator>
   <Visualize value="false"/>
@@ -486,4 +500,19 @@
   <Max_Chip_Distance value="2.5"/>
   <Roll_Distance value="0.1"/>
  </ChipCalibration>
+ <MightyMight>
+  <Use_Line_Kick value="true"/>
+  <Defense_First value="true"/>
+ </MightyMight>
+ <LuckyKick>
+  <Use_Chance value="true"/>
+  <Use_Kick value="true"/>
+  <Use_Pivot value="true"/>
+  <Use_Chip value="true"/>
+  <Use_Ballsense value="true"/>
+  <Use_Approach value="true"/>
+  <Debug value="true"/>
+  <Approach_Angle value="40"/>
+  <Approach_Dist value="0.1"/>
+ </LuckyKick>
 </config>
