@@ -2,7 +2,7 @@
 
 #include <gameplay/Behavior.hpp>
 //#include <gameplay/behaviors/AimCapture.hpp>
-#include <gameplay/behaviors/DumbCapture.hpp>
+#include <gameplay/behaviors/Capture.hpp>
 #include <gameplay/tactics/ChipCalibration.hpp>
 
 namespace Gameplay
@@ -71,7 +71,7 @@ namespace Gameplay
                 State_Done
             } _state;
 
-            DumbCapture _capture;
+            Capture _capture;
 
             bool _ccw;
             float _lastError;
