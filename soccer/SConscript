@@ -62,7 +62,7 @@ srcs = [
 	'gameplay/plays/OpenField221.cpp',
 	'gameplay/plays/YankOpen.cpp',
 	'gameplay/plays/EmptyGoal.cpp',
-	'gameplay/plays/MightyPass.cpp',
+	# 'gameplay/plays/MightyPass.cpp',
 
   # Core behaviors
 	'gameplay/behaviors/Move.cpp',
@@ -104,6 +104,7 @@ srcs = [
 	'gameplay/tactics/DumbReceive.cpp',
 	'gameplay/tactics/ChipCalibration.cpp',
 	'gameplay/tactics/LuckyKick.cpp',
+	'gameplay/tactics/PassingContext.cpp',
 	
 	# Test framework for plays
 	'gameplay/TestFixture.cpp',

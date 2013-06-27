@@ -8,6 +8,7 @@
 #include "ReceivePointEvaluator.hpp"
 #include "GameplayModule.hpp"
 #include "../../common/Constants.hpp"
+#include <vector>
 
 using namespace Geometry2d;
 using namespace std;
@@ -101,5 +102,49 @@ Point ReceivePointEvaluator::FindReceivingPoint(SystemState* state, Point receiv
 
 	return bestCandidate.center();
 }
+
+
+
+
+float ReceivePointEvaluator::ComputePassChannelWidth(SystemState *state, Segment &segment, OurRobot *excludeBot1, OurRobot *excludeBot2) {
+	float minDist = 100000;
+
+	//	FIXME: this method is bullshit, rewrite it
+
+
+	//	build a list of all of the bots
+	vector<Robot *> bots;
+
+	vector<OpponentRobot *> &them = state->opp;
+	vector<OpponentRobot *>::iterator themItr;
+	for ( themItr = them.begin(); themItr != them.end(); themItr++ ) {
+		Robot *robot = *themItr;
+		bots.push_back(robot);
+	}
+
+	vector<OurRobot *> &us = state->self;
+	vector<OurRobot *>::iterator usItr;
+	for ( usItr = us.begin(); usItr != us.end(); usItr++ ) {
+		Robot *robot = *usItr;
+		bots.push_back(robot);
+	}
+
+
+	// bots.insert(state->self.begin(), state->self.end());
+
+
+
+	vector<Robot *>::iterator itr;
+	for ( itr = bots.begin(); itr != bots.end(); itr++ ) {
+		if ( *itr != excludeBot1 && *itr != excludeBot2 ) {
+			float dist = segment.distTo((*itr)->pos);
+			if ( dist < minDist ) minDist = dist;
+		}
+	}
+
+	return minDist - Robot_Radius;
+}
+
+
 
 } /* namespace Gameplay */

@@ -7,6 +7,7 @@
 #include <gameplay/behaviors/positions/Fullback.hpp>
 #include <gameplay/behaviors/Move.hpp>
 #include <gameplay/PreventDoubleTouch.hpp>
+#include <gameplay/tactics/PassingContext.hpp>
 
 namespace Gameplay
 {
@@ -40,10 +41,9 @@ namespace Gameplay
 				uint64_t _choosinessTimeout;	//	after this many microseconds?, we'll stop choosing between receive points and make it happen
 				bool _firstRun;
 
-				bool _passDone;
-
 				PreventDoubleTouch _pdt;
 
+				PassingContext _passCtxt;
 				StablePass _passer;
 				DumbReceive _receiver1;
 				DumbReceive _receiver2;

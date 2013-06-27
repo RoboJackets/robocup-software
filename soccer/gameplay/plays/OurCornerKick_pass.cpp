@@ -37,11 +37,16 @@ Gameplay::Plays::OurCornerKick_Pass::OurCornerKick_Pass(GameplayModule *gameplay
 	_receiver2(gameplay),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
 	_fullback2(gameplay, Behaviors::Fullback::Right),
-	_pdt(gameplay, &_passer)
+	_pdt(gameplay, &_passer),
+	_passCtxt(gameplay, &_passer)
 {
 	// _center1.target = Point(0.0, Field_Length /2.0);
 
-	_passDone = false;
+	//	FIXME: setup pass ctxt
+
+	_passCtxt.addReceiver(&_receiver1);
+	_passCtxt.addReceiver(&_receiver2);
+
 	_firstRun = true;
 	_choosinessTimeout = 1000 * 5;
 }
@@ -89,151 +94,125 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 
 	// choose a target for the kick
 	// if straight shot on goal is available, take it
-	float goal_x = (ball().pos.x < 0) ? Field_GoalWidth / 2.0 : -Field_GoalWidth / 2.0;
-	Segment target(Point(goal_x, Field_Length), Point(goal_x, Field_Length - *_targetSegmentWidth));
+	// float goal_x = (ball().pos.x < 0) ? Field_GoalWidth / 2.0 : -Field_GoalWidth / 2.0;
+	// Segment target(Point(goal_x, Field_Length), Point(goal_x, Field_Length - *_targetSegmentWidth));
 
 
-	if ( !_passDone ) {
-		if ( _receiver1.isDone() || _receiver2.isDone() ) {
-			_passDone = true;
-		}
-	}
+	// if ( !_passDone ) {
+	// 	if ( _receiver1.done() || _receiver2.done() ) {
+	// 		_passDone = true;
+	// 	}
+	// }
 
 
 	//	if the pass isn't done yet, setup for the pass
-	if ( !_passDone ) {
+	if ( !_passCtxt.done() ) {
 		//	Geometry2d::Point FindReceivingPoint(SystemState* state, Robot* robot, Geometry2d::Point ballPos, Geometry2d::Segment receivingLine);
 
 		Segment receiver1Segment(Point(-0.3f, Field_Length - 1.7f), Point(-1.6f, Field_Length - 0.8f));
 		Segment receiver2Segment(Point(0.5f, Field_Length - 1.5f), Point(1.5f, Field_Length - 1.0f));
 
-
-
-		Point passTarget1;
-		Point passTarget2;
-
-
-		float target1Score = -1;
-		float target2Score = -1;
-
-
-
-
 		//	we've timed out!  stop thinking and start doing
 		bool needToGetOnTheBus = timestamp() - _startTime > _choosinessTimeout;
 
-
-		if ( _receiver1.robot ) {
-			if ( !needToGetOnTheBus ) passTarget1 = ReceivePointEvaluator::FindReceivingPoint(state(), _receiver1.robot->pos, ball().pos, receiver1Segment, &target1Score);;
-			if ( target1Score == -1 ) passTarget1 = receiver1Segment.center();
-
-			state()->drawLine(receiver1Segment.pt[0], receiver1Segment.pt[1], Qt::black);
-
-			// state()->drawCircle(passTarget1, )
-			// state()->drawCircle(receivePosition(), Robot_Radius + 0.05, Qt::yellow, QString("DumbReceive"));
-		} else {
-			passTarget1 = receiver1Segment.center();
-		}
-
-		if ( _receiver2.robot ) {
-			if ( !needToGetOnTheBus ) passTarget2 = ReceivePointEvaluator::FindReceivingPoint(state(), _receiver2.robot->pos, ball().pos, receiver2Segment, &target1Score);;
-			if ( target2Score == -1 ) passTarget2 = receiver2Segment.center();
-
-			state()->drawLine(receiver2Segment.pt[0], receiver2Segment.pt[1], Qt::black);
-		} else {
-			passTarget2 = receiver2Segment.center();
+		if ( !needToGetOnTheBus ) {
+			_passCtxt.chooseReceivePointForReceiverAlongSegment(&_receiver1, receiver1Segment);
+			_passCtxt.chooseReceivePointForReceiverAlongSegment(&_receiver2, receiver2Segment);
 		}
 
 
+		
 
-
-		Point passerTarget;
+		// Point passerTarget;
 
 
 		//	choose which receiver to pass to
-		bool firstIsBetter;
-		if ( target1Score == -1 ) {
-			firstIsBetter = false;
-		} else if ( target2Score == -1 ) {
-			firstIsBetter = true;
-		} else if ( _passingToFirstReceiver && (target2Score - target1Score) > *_receiverChoiceHysterisis ) {
-			firstIsBetter = false;
-		} else if ( !_passingToFirstReceiver && (target1Score - target2Score) > *_receiverChoiceHysterisis ) {
-			firstIsBetter = true;
-		} else {
-			firstIsBetter = _passingToFirstReceiver;
-		}
-		_passingToFirstReceiver = firstIsBetter;
+		// bool firstIsBetter;
+		// if ( target1Score == -1 ) {
+		// 	firstIsBetter = false;
+		// } else if ( target2Score == -1 ) {
+		// 	firstIsBetter = true;
+		// } else if ( _passingToFirstReceiver && (target2Score - target1Score) > *_receiverChoiceHysterisis ) {
+		// 	firstIsBetter = false;
+		// } else if ( !_passingToFirstReceiver && (target1Score - target2Score) > *_receiverChoiceHysterisis ) {
+		// 	firstIsBetter = true;
+		// } else {
+		// 	firstIsBetter = _passingToFirstReceiver;
+		// }
+		// _passingToFirstReceiver = firstIsBetter;
 
 
 
 		//	setup passer && receivers appropriately for the chosen point
-		if ( firstIsBetter ) {
-			passerTarget = passTarget1;
+		// if ( firstIsBetter ) {
+		// 	passerTarget = passTarget1;
 
-			_passer.partner = &_receiver1;
-			_receiver1.partner = &_passer;
+		// 	_passer.partner = &_receiver1;
+		// 	_receiver1.partner = &_passer;
 
-			_receiver2.partner = NULL;
-			if ( _receiver2.robot ) _receiver2.robot->addText("Dummy");
-		} else {
-			passerTarget = passTarget2;
+		// 	_receiver2.partner = NULL;
+		// 	if ( _receiver2.robot ) _receiver2.robot->addText("Dummy");
+		// } else {
+		// 	passerTarget = passTarget2;
 
-			_passer.partner = &_receiver2;
-			_receiver2.partner = &_passer;
+		// 	_passer.partner = &_receiver2;
+		// 	_receiver2.partner = &_passer;
 
-			_receiver1.partner = NULL;
-		}
+		// 	_receiver1.partner = NULL;
+		// }
 
 
-		_passer.actionTarget = passerTarget;
+		// _passer.actionTarget = passerTarget;
 
-		_receiver1.actionTarget = passTarget1;
-		_receiver2.actionTarget = passTarget2;
+		// _receiver1.actionTarget = passTarget1;
+		// _receiver2.actionTarget = passTarget2;
 
 
 		assignNearest(_passer.robot, available, ball().pos);
-		assignNearest(_receiver1.robot, available, passTarget1);
-		assignNearest(_receiver2.robot, available, passTarget2);
+		assignNearest(_receiver1.robot, available, _receiver1.actionTarget);
+		assignNearest(_receiver2.robot, available, _receiver2.actionTarget);
 
 
-		_passer.robot->addText(QString("Using receiver %1").arg(firstIsBetter ? "L" : "R"));
-		_passer.robot->addText(QString("pt1(%1, %2").arg(passTarget1.x).arg(passTarget1.y));
-		_passer.robot->addText(QString("pt2(%1, %2)").arg(passTarget2.x).arg(passTarget2.y));
+		// _passer.robot->addText(QString("Using receiver %1").arg(firstIsBetter ? "L" : "R"));
+		// _passer.robot->addText(QString("pt1(%1, %2").arg(passTarget1.x).arg(passTarget1.y));
+		// _passer.robot->addText(QString("pt2(%1, %2)").arg(passTarget2.x).arg(passTarget2.y));
 
 
-		const GameState &gs = _gameplay->state()->gameState;
-		if ( gs.canKick() ) {
-			_passer.robot->disableAvoidBall();
-		}
+		_passCtxt.run();
+
+
+		// const GameState &gs = _gameplay->state()->gameState;
+		// if ( gs.canKick() ) {
+		// 	_passer.robot->disableAvoidBall();
+		// }
 
 
 
-		_pdt.backoff.robots.clear();
-		_pdt.backoff.robots.insert(_passer.robot);
+		// _pdt.backoff.robots.clear();
+		// _pdt.backoff.robots.insert(_passer.robot);
 		
 		//	run passing behaviors
-		_pdt.run();	//	runs passer
-		_receiver1.run();
-		_receiver2.run();
+		// _pdt.run();	//	runs passer
+		// _receiver1.run();
+		// _receiver2.run();
 
-		uint8_t dspeed = 60;
-		if ( _receiver1.robot ) {
-			_receiver1.robot->dribble(dspeed);
-		}
-		if ( _receiver2.robot ) {
-			_receiver2.robot->dribble(dspeed);
-		}
+		// uint8_t dspeed = 60;
+		// if ( _receiver1.robot ) {
+		// 	_receiver1.robot->dribble(dspeed);
+		// }
+		// if ( _receiver2.robot ) {
+		// 	_receiver2.robot->dribble(dspeed);
+		// }
 	}
 
 
-	//	unkick both receivers
-	if ( _receiver1.robot ) {
-		_receiver1.robot->unkick();
-	}
-	if ( _receiver2.robot ) {
-		_receiver2.robot->unkick();
-	}
+	// //	unkick both receivers
+	// if ( _receiver1.robot ) {
+	// 	_receiver1.robot->unkick();
+	// }
+	// if ( _receiver2.robot ) {
+	// 	_receiver2.robot->unkick();
+	// }
 
 
 
@@ -245,5 +224,5 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 	_fullback1.run();
 	
 
-	return !_passDone;
+	return !_passCtxt.done();
 }
