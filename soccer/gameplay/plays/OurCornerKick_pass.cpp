@@ -94,8 +94,8 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 	if ( !_passDone ) {
 		//	Geometry2d::Point FindReceivingPoint(SystemState* state, Robot* robot, Geometry2d::Point ballPos, Geometry2d::Segment receivingLine);
 
-		Segment receiver1Segment(Point(-1.0f, Field_Length - 1.5f), Point(-2, Field_Length - 1.0f));
-		Segment receiver2Segment(Point(1.0f, Field_Length - 1.5f), Point(2.0f, Field_Length - 1.0f));
+		Segment receiver1Segment(Point(-0.5f, Field_Length - 1.5f), Point(-1.5f, Field_Length - 1.0f));
+		Segment receiver2Segment(Point(0.5f, Field_Length - 1.5f), Point(1.5f, Field_Length - 1.0f));
 
 
 
