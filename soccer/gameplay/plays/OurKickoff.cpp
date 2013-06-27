@@ -66,6 +66,8 @@ bool Gameplay::Plays::OurKickoff::run()
 //		}
 	}
 	
+	cout << _kicker.robot << endl;
+
 	// ensure kickoff behavior only uses working behaviors
 	_kicker.enableChip = chipper_available;
 	_kicker.useRandomKick = true;

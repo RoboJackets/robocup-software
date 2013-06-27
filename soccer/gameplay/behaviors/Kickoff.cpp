@@ -40,45 +40,46 @@ _bump(gameplay)
 }
 
 void Gameplay::Behaviors::Kickoff::chooseMode() {
-	if (useRandomKick)
-	{
-		// add enabled modes to pool and pick one at random
-		vector<KickoffMode> modes;
-
-		if (robot->kickerWorks() && *robot->status->kicker_enabled)
-		{
-			modes.push_back(Mode_Kick);
-			modes.push_back(Mode_KickRightCorner);
-			modes.push_back(Mode_KickLeftCorner);
-		}
-
-		if (enableChip && *_enableChip && robot->hardwareVersion() == Packet::RJ2011 && robot->kickerWorks() && *robot->status->chipper_enabled)
-		{
-			modes.push_back(Mode_Chip);
-			modes.push_back(Mode_ChipRightCorner);
-			modes.push_back(Mode_ChipLeftCorner);
-		}
-
-		// handle case where only option is bump
-		if (modes.empty())
-		{
-			mode = Mode_Bump;
-		} else
-		{
-			random_shuffle(modes.begin(), modes.end());
-			mode = modes.front();
-		}
-
-	} else
-	{
-		// if not random, pick first on list that is available
-		mode = (robot->kicker_available()) ? Mode_Kick : Mode_Bump;
-
-		if (enableChip && *_enableChip)
-		{
-			mode = Mode_Chip;
-		}
-	}
+	mode = Mode_Chip;
+//	if (useRandomKick)
+//	{
+//		// add enabled modes to pool and pick one at random
+//		vector<KickoffMode> modes;
+//
+//		if (robot->kickerWorks() && *robot->status->kicker_enabled)
+//		{
+//			modes.push_back(Mode_Kick);
+//			modes.push_back(Mode_KickRightCorner);
+//			modes.push_back(Mode_KickLeftCorner);
+//		}
+//
+//		if (enableChip && *_enableChip && robot->hardwareVersion() == Packet::RJ2011 && robot->kickerWorks() && *robot->status->chipper_enabled)
+//		{
+//			modes.push_back(Mode_Chip);
+//			modes.push_back(Mode_ChipRightCorner);
+//			modes.push_back(Mode_ChipLeftCorner);
+//		}
+//
+//		// handle case where only option is bump
+//		if (modes.empty())
+//		{
+//			mode = Mode_Bump;
+//		} else
+//		{
+//			random_shuffle(modes.begin(), modes.end());
+//			mode = modes.front();
+//		}
+//
+//	} else
+//	{
+//		// if not random, pick first on list that is available
+//		mode = (robot->kicker_available()) ? Mode_Kick : Mode_Bump;
+//
+//		if (enableChip && *_enableChip)
+//		{
+//			mode = Mode_Chip;
+//		}
+//	}
 }
 
 void Gameplay::Behaviors::Kickoff::executeMode() {
