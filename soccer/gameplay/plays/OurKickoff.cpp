@@ -65,8 +65,6 @@ bool Gameplay::Plays::OurKickoff::run()
 //			assignNearest(_kicker.robot, available, ball().pos);
 //		}
 	}
-	
-	cout << _kicker.robot << endl;
 
 	// ensure kickoff behavior only uses working behaviors
 	_kicker.enableChip = chipper_available;
