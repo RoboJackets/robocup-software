@@ -42,6 +42,8 @@ Gameplay::Plays::OurCornerKick_Pass::OurCornerKick_Pass(GameplayModule *gameplay
 	// _center1.target = Point(0.0, Field_Length /2.0);
 
 	_passDone = false;
+	_firstRun = true;
+	_choosinessTimeout = 1000 * 5;
 }
 
 float Gameplay::Plays::OurCornerKick_Pass::score ( Gameplay::GameplayModule* gameplay )
@@ -73,8 +75,16 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 {
 	set<OurRobot *> available = _gameplay->playRobots();
 	
+	//	start a timer as soon as the play starts ACTUALLY running
+	GameState::State gpState = _gameplay->state()->gameState.state;
+	if ( _firstRun && (gpState == GameState::Ready || gpState == GameState::Playing) ) {
+		_startTime = timestamp();
+		_firstRun = false;
+	}
+
 
 	if ( available.size() < requiredBotCount ) return false;
+
 
 
 	// choose a target for the kick
@@ -108,9 +118,13 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 
 
 
+
+		//	we've timed out!  stop thinking and start doing
+		bool needToGetOnTheBus = timestamp() - _startTime > _choosinessTimeout;
+
+
 		if ( _receiver1.robot ) {
-			Point pt = ReceivePointEvaluator::FindReceivingPoint(state(), _receiver1.robot->pos, ball().pos, receiver1Segment, &target1Score);
-			passTarget1 = pt;
+			if ( !needToGetOnTheBus ) passTarget1 = ReceivePointEvaluator::FindReceivingPoint(state(), _receiver1.robot->pos, ball().pos, receiver1Segment, &target1Score);;
 			if ( target1Score == -1 ) passTarget1 = receiver1Segment.center();
 
 			state()->drawLine(receiver1Segment.pt[0], receiver1Segment.pt[1], Qt::black);
@@ -122,8 +136,7 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 		}
 
 		if ( _receiver2.robot ) {
-			Point pt = ReceivePointEvaluator::FindReceivingPoint(state(), _receiver2.robot->pos, ball().pos, receiver2Segment, &target1Score);
-			passTarget2 = pt;
+			if ( !needToGetOnTheBus ) passTarget2 = ReceivePointEvaluator::FindReceivingPoint(state(), _receiver2.robot->pos, ball().pos, receiver2Segment, &target1Score);;
 			if ( target2Score == -1 ) passTarget2 = receiver2Segment.center();
 
 			state()->drawLine(receiver2Segment.pt[0], receiver2Segment.pt[1], Qt::black);
