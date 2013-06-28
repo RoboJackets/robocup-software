@@ -14,10 +14,10 @@ namespace Gameplay {
 
 
 
-ConfigDouble *Gameplay::PassingContext::_receiverChoiceHysterisis;
+ConfigDouble *Gameplay::PassingContext::_receiverChoiceHysteresis;
 
 void Gameplay::PassingContext::createConfiguration(Configuration *cfg) {
-	_receiverChoiceHysterisis = new ConfigDouble(cfg, "PassingContext/Receiver Choice Hysterisis", .2);	//	TODO: ?
+	_receiverChoiceHysteresis = new ConfigDouble(cfg, "PassingContext/Receiver Choice Hysteresis", .2);	//	TODO: ?
 }
 
 
@@ -154,7 +154,7 @@ void Gameplay::PassingContext::chooseReceiver(DumbReceive *rcvr) {
 
 		if ( _chosenReceiver ) {
 			float prevScore = _scoresByReceiver[_chosenReceiver];
-			if ( score - prevScore > *_receiverChoiceHysterisis ) _chooseReceiver(rcvr);
+			if ( score - prevScore > *_receiverChoiceHysteresis ) _chooseReceiver(rcvr);
 		} else {
 			_chooseReceiver(currentBest);
 		}

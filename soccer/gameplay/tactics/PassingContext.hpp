@@ -56,7 +56,7 @@ namespace Gameplay {
 
 		GameplayModule *_gameplay;
 
-		static ConfigDouble *_receiverChoiceHysterisis;
+		static ConfigDouble *_receiverChoiceHysteresis;
 	};
 
 }
