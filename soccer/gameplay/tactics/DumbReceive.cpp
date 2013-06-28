@@ -23,7 +23,8 @@ Gameplay::DumbReceive::DumbReceive(GameplayModule *gameplay)
 	: ActionBehavior(gameplay),
 	  _state(Setup),
 	  _success(false),
-	  _kickDelta(0)
+	  _kickDelta(0),
+	  timeout(4)
 {
 }
 
@@ -186,5 +187,13 @@ bool Gameplay::DumbReceive::run()
 	}
 
 
-	return true;
+	if ( _state != Receive_PassKicking ) {
+		timeout.reset();
+	} 
+	// else if ( timeout.isTimedOut() ) {
+	// 	_state = Receive_PassDone;
+	// 	robot->addText(QString("DR: Timed out"), Qt::red, QString("DumbReceive"));
+	// }
+
+	return _state != Receive_PassDone;
 }

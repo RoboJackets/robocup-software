@@ -1,6 +1,7 @@
 #pragma once
 
-#include "gameplay/tactics/ActionBehavior.hpp"
+#include <gameplay/tactics/ActionBehavior.hpp>
+#include "../../Timeout.hpp"
 
 namespace Gameplay
 {
@@ -20,6 +21,11 @@ public:
 	bool isDone();
 	void restart();
 
+
+
+
+	Timeout timeout;
+
 private:
 	enum State {
 		Setup,
@@ -27,6 +33,7 @@ private:
 		Receive_PassDone,
 		Done
 	};
+
 
 	// Return line up position
 	Geometry2d::Point receivePosition();
