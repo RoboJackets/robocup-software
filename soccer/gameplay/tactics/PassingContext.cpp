@@ -21,16 +21,11 @@ void Gameplay::PassingContext::createConfiguration(Configuration *cfg) {
 }
 
 
-
-
 Gameplay::PassingContext::PassingContext(GameplayModule *gameplay, StablePass *passer) : _pdt(gameplay, passer) {
 	setPasser(passer);
 	_passDone = false;
 	_gameplay = gameplay;
 }
-
-
-
 
 
 bool Gameplay::PassingContext::run() {
@@ -43,8 +38,6 @@ bool Gameplay::PassingContext::run() {
 			if ( rcvr->isDone() ) _passDone = true;
 		}
 	}
-	
-
 
 
 	if ( !_passDone ) {
@@ -57,14 +50,12 @@ bool Gameplay::PassingContext::run() {
 		}
 
 
-
 		//	run the passer
 		_pdt.backoff.robots.clear();
 		if ( _passer && _passer->robot ) {
 			_pdt.backoff.robots.insert(_passer->robot);
 			_pdt.run();
 		}
-
 
 
 		//	run all the receivers
@@ -79,12 +70,7 @@ bool Gameplay::PassingContext::run() {
 	}
 	
 
-
-
-
-
-	//	TODO: what if pdt says to stop running?
-	return !_passDone;
+	return !_passDone && _pdt.keepRunning();
 }
 
 void Gameplay::PassingContext::_unkickAllReceivers() {
@@ -247,5 +233,3 @@ void Gameplay::PassingContext::_updatePairing() {
 		}
 	}
 }
-
-
