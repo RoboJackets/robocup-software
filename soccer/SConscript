@@ -47,13 +47,13 @@ srcs = [
 	'gameplay/plays/OurFreekick.cpp',
 	'gameplay/plays/OurGoalKick.cpp',
 	'gameplay/plays/OurGoalKick2.cpp',
+	'gameplay/plays/OurGoalKick_Pass.cpp',
 	'gameplay/plays/OurCornerKick.cpp',
 	'gameplay/plays/TheirFreekick.cpp',
 	'gameplay/plays/KickPenalty.cpp',
 	'gameplay/plays/DefendPenalty.cpp',
 	'gameplay/plays/Stopped.cpp',
 	'gameplay/plays/OurCornerKickChipToGoalArea.cpp',
-
 	'gameplay/plays/OurCornerKick_pass.cpp',
 	
 	# Open gameplay plays
