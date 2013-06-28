@@ -129,8 +129,8 @@ bool OurCornerKick_ChipToGoalArea::run()
 		_pdt.run();
 
 		Point dir = ball().pos - _kicker.robot->pos;
-		_center1.target = _kicker.robot->pos + dir.normalized() * (3.0/4.0) * Field_Width;
-		_center2.target = _kicker.robot->pos + dir.normalized() * (3.0/4.0) * Field_Width;
+		_center1.target = _kicker.robot->pos + dir.normalized() * (4.0/5.0) * Field_Width;
+		_center2.target = _kicker.robot->pos + dir.normalized() * (4.0/5.0) * Field_Width;
 		_center1.run();
 		_center2.run();
 		break;

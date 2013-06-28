@@ -29,7 +29,7 @@ protected:
 	
 	// These transfers are used to receive packets.
 	// Try increasing this constant for larger RX packet throughput.
-	static const int NumRXTransfers = 3;
+	static const int NumRXTransfers = 4;
 	libusb_transfer *_rxTransfers[NumRXTransfers];
 	uint8_t _rxBuffers[NumRXTransfers][Reverse_Size + 2];
 	
