@@ -53,7 +53,13 @@ float Gameplay::Plays::OurGoalKick_Pass::score ( Gameplay::GameplayModule* gamep
 {
 	const GameState &gs = gameplay->state()->gameState;
 	Point ballPos = gameplay->state()->ball.pos;
-	return (gs.setupRestart() && gs.ourDirect() && ballPos.y < 1.5) ? 1 : INFINITY;
+
+	bool ballAtOurEnd = ballPos.y < 1.5;
+
+	int cmp = gameplay->playName().compare( QString("OurGoalKick_Pass") );
+	bool currentlyRunning = cmp == 0;
+
+	return (gs.ourDirect() && (ballAtOurEnd || currentlyRunning) ) ? 1 : INFINITY;;
 }
 
 bool Gameplay::Plays::OurGoalKick_Pass::run()
@@ -61,17 +67,11 @@ bool Gameplay::Plays::OurGoalKick_Pass::run()
 	set<OurRobot *> available = _gameplay->playRobots();
 
 
-
 	if ( !_passCtxt.done() ) {
-
-		//	FIXME: assign rcv points to the receivers
-
-
 		Point rcv1Target = Point(
 				-Field_Width * _field_width_mult->value() + _field_width_off->value(),
 				Field_Length * _field_length_mult->value() + _field_length_off->value()
 				);
-
 
 		Point rcv2Target = Point(
 				Field_Width * _field_width_mult->value() + _field_width_off->value(),
@@ -81,7 +81,6 @@ bool Gameplay::Plays::OurGoalKick_Pass::run()
 
 		_passCtxt.setReceivePointForReceiver(&_receiver1, rcv1Target);
 		_passCtxt.setReceivePointForReceiver(&_receiver2, rcv2Target);
-
 
 
 
@@ -101,5 +100,6 @@ bool Gameplay::Plays::OurGoalKick_Pass::run()
 	_fullback1.run();
 	_fullback2.run();
 	
+
 	return !_passCtxt.done();
 }
