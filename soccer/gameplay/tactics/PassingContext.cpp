@@ -25,6 +25,7 @@ Gameplay::PassingContext::PassingContext(GameplayModule *gameplay, StablePass *p
 	setPasser(passer);
 	_passDone = false;
 	_gameplay = gameplay;
+	_chosenReceiver = NULL;
 }
 
 
@@ -45,7 +46,7 @@ bool Gameplay::PassingContext::run() {
 
 		//	disable avoid ball if we're allowed to kick
 		const GameState &gs = _gameplay->state()->gameState;
-		if ( gs.canKick() && _passer ) {
+		if ( gs.canKick() && _passer && _passer->robot ) {
 			_passer->robot->disableAvoidBall();
 		}
 
