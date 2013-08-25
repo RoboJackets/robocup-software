@@ -1,0 +1,72 @@
+digraph RoboCup {
+	
+	node [shape=record];
+
+	label="Information Flow";
+
+
+
+	subgraph cluster0 {
+		cameras -> ssl_vision -> ssl_referee;
+
+		label="Field";
+	}
+	
+
+	ssl_vision -> gameplay_module [label="Google Protobuf sent over UDP"];
+	ssl_referee -> gameplay_module;
+
+
+	subgraph cluster1 {
+		gameplay_module -> path_planning [group=module];
+		motion_module -> radio_module [group=module];
+
+
+		path_planning -> motion_module;
+
+
+		label="Processor Modules";
+		
+
+
+		radio_module -> computer_radio;
+
+
+		label="Laptop"
+	}
+
+
+	computer_radio -> robot_radio;
+	robot_radio -> computer_radio;
+
+
+	subgraph cluster2 {
+
+		ball_sensor;
+
+
+		battery [style=dotted];
+		omni_wheels[style=dotted];
+		motors[style=dotted];
+		motors -> omni_wheels;
+
+
+		fpga -> chipper;
+		fpga -> kicker;
+		fpga -> dribbler;
+
+		robot_radio -> fpga;
+		fpga -> robot_radio;
+
+		capacitor_charge_sensor -> fpga;
+		ball_sensor -> fpga;
+
+
+		capacitor_charge_sensor;
+
+
+
+		label="Robot";
+	}
+}
+
