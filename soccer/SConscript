@@ -154,25 +154,8 @@ srcs = [
 	'modeling/BallTracker.cpp',
 	'modeling/BallFilter.cpp',
 	'modeling/RobotFilter.cpp',
-	# 'modeling/BasicPerceptions.cpp',
 	
 	
-	
-#	'modeling/WorldModel.cpp',
-#	'modeling/BallModel.cpp',
-#	'modeling/RBPFBallModel.cpp',
-#	'modeling/EKFBallModel.cpp',
-#	'modeling/KalmanBallModel.cpp',      
-#	'modeling/RobotModel.cpp',
-#	'modeling/rbpf/Rbpf.cpp',
-#	'modeling/rbpf/RbpfModel.cpp',
-#	'modeling/rbpf/RbpfModelGraph.cpp',
-#	'modeling/rbpf/RbpfState.cpp',
-#	'modeling/rbpf/RbpfModelRolling.cpp',
-#	'modeling/rbpf/RbpfModelKicked.cpp',
-#	'modeling/kalman/difference_kalman.cpp',
-#	'modeling/kalman/ExtendedKalmanFilter.cpp',
-
 # Sources for motion module',
 	'motion/MotionControl.cpp',
 	
@@ -210,16 +193,3 @@ env.Depends(p, env.Uic4('ui/LogViewer.ui'))
 Default(e.Install(exec_dir, p))
 Help('log_viewer: Stand-alone log viewer\n')
 
-# build unit tests and framework
-# Add new unit tests here
-#tests = [
-#	'tests/testExamples.cpp',
-#	'tests/testPath.cpp',
-#]
-#e.Append(LIBS=['gtest']) # FIXME: binary library does not exist in later versions of gtest
-## NOTE: this links against all sources to avoid needing to actually check dependencies
-#p = e.Program('soccer_tests', ['tests/gtest_main.cpp'] + tests + srcs)
-#Default(e.Install(exec_dir, p))
-#test_alias = e.Alias('test', [p], p[0].abspath)
-#AlwaysBuild(test_alias)
-#Help('test: Run tests\n')
