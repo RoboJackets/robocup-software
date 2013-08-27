@@ -52,7 +52,7 @@ env.Tool('qt4')
 env.EnableQt4Modules(['QtCore', 'QtGui', 'QtNetwork', 'QtXml', 'QtOpenGL'])
 
 # All executables need to link with the common library, which depends on protobuf
-env.Append(LIBS=['common', 'protobuf'])
+env.Append(LIBS=['common', 'protobuf', 'pthread', 'libGL'])
 
 # Make a new environment for code that must be 32-bit
 #env32 = env.Clone()
