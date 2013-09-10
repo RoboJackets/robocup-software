@@ -9,10 +9,13 @@
 				"bullet",
 				"site_scons",
 				"sslrefbox",
-				"downloads"
+				"downloads",
+				"watchdog"
 			],
 			"file_exclude_patterns": [
-				".*"
+				".*",
+				"DoxygenLayout.xml",
+				"Doxyfile"
 			]
 		}
 	],
