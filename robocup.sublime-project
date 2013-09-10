@@ -1,0 +1,30 @@
+{
+	"folders":
+	[
+		{
+			"follow_symlinks": true,
+			"path": "~/src/rj/software",
+			"folder_exclude_patterns": [
+				"build",
+				"bullet",
+				"site_scons",
+				"sslrefbox",
+				"downloads"
+			],
+			"file_exclude_patterns": [
+				".*"
+			]
+		}
+	],
+	"build_settings":
+	[
+		{
+			"name": "Scons",
+			"shell_cmd": ["scons"],
+			"working_dir": "./"
+		}
+	],
+	"settings": {
+		"tab_size": 4
+	}
+}
