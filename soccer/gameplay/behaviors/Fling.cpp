@@ -52,7 +52,7 @@ bool Gameplay::Behaviors::Fling::run()
 	const Point dir = Point::direction(robot->angle * DegreesToRadians);
 
 	// Geometry
-	Point toBall = (ball().pos - robot->pos).normalized();
+	// Point toBall = (ball().pos - robot->pos).normalized();
 	Segment flingLine(target, ball().pos);
 	Point toTarget = flingLine.delta().normalized();
 	float err = dir.dot(toTarget); // we want to be perpendicular to the fling line

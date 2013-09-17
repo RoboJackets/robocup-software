@@ -44,11 +44,11 @@ Point ReceivePointEvaluator::FindReceivingPoint(SystemState* state, Point receiv
 	list<Window*> windows = windower.windows;
 
 	double longestLength = -1;
-	int bestInd = 0;
+	// int bestInd = 0;
 
 	float* scores = new float[windows.size()];
 	list<Window*>::iterator iter = windows.begin();
-	for(int i = 0; i < windows.size(); i++)
+	for(unsigned int i = 0; i < windows.size(); i++)
 	{
 		Window* window = (*iter);
 		iter++;
@@ -66,7 +66,7 @@ Point ReceivePointEvaluator::FindReceivingPoint(SystemState* state, Point receiv
 			if(longestLength == -1 || scores[i] > longestLength)
 			{
 				longestLength = scores[i];
-				bestInd = i;
+				// bestInd = i;
 			}
 		}
 		else
@@ -78,7 +78,7 @@ Point ReceivePointEvaluator::FindReceivingPoint(SystemState* state, Point receiv
 	iter = windows.begin();
 	float bestScore = -1;
 	Segment bestCandidate;
-	for(int i = 0; i < windows.size(); i++)
+	for(unsigned int i = 0; i < windows.size(); i++)
 	{
 		if(scores[i] == longestLength)
 		{

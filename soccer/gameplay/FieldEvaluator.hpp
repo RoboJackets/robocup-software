@@ -15,6 +15,7 @@ namespace Gameplay {
 
 	class PointEvaluator {
 	public:
+		virtual ~PointEvaluator();
 		virtual float evaluatePoint(Geometry2d::Point &pt) = 0;
 	};
 
@@ -168,7 +169,7 @@ namespace Gameplay {
 
 		float evaluatePoint(Geometry2d::Point &pt) {
 			float score = 0;
-			for ( int i = 0; i < _pointEvaluators.size(); i++ ) {
+			for ( unsigned int i = 0; i < _pointEvaluators.size(); i++ ) {
 				PointEvaluator *evaluator = _pointEvaluators[i];
 				float weight = _pointEvaluatorWeights[i];
 				score += evaluator->evaluatePoint(pt) * weight;

@@ -89,7 +89,7 @@ bool Gameplay::Behaviors::TouchKick::run()
 	if (_state == State_Setup)
 	{
 		robot->addText("Setup");
-		Geometry2d::Point robotPos = robot->kickerBar().center();
+		// Geometry2d::Point robotPos = robot->kickerBar().center();
 		Geometry2d::Point robotToBall;
 		Geometry2d::Point robotToTarget;
 		Geometry2d::Point targetPoint;
