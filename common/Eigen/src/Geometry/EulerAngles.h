@@ -3,27 +3,14 @@
 //
 // Copyright (C) 2008 Gael Guennebaud <gael.guennebaud@inria.fr>
 //
-// Eigen is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 3 of the License, or (at your option) any later version.
-//
-// Alternatively, you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 2 of
-// the License, or (at your option) any later version.
-//
-// Eigen is distributed in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License or the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License and a copy of the GNU General Public License along with
-// Eigen. If not, see <http://www.gnu.org/licenses/>.
+// This Source Code Form is subject to the terms of the Mozilla
+// Public License v. 2.0. If a copy of the MPL was not distributed
+// with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #ifndef EIGEN_EULERANGLES_H
 #define EIGEN_EULERANGLES_H
+
+namespace Eigen { 
 
 /** \geometry_module \ingroup Geometry_Module
   *
@@ -45,6 +32,7 @@ template<typename Derived>
 inline Matrix<typename MatrixBase<Derived>::Scalar,3,1>
 MatrixBase<Derived>::eulerAngles(Index a0, Index a1, Index a2) const
 {
+  using std::atan2;
   /* Implemented from Graphics Gems IV */
   EIGEN_STATIC_ASSERT_MATRIX_SPECIFIC_SIZE(Derived,3,3)
 
@@ -60,31 +48,31 @@ MatrixBase<Derived>::eulerAngles(Index a0, Index a1, Index a2) const
   if (a0==a2)
   {
     Scalar s = Vector2(coeff(j,i) , coeff(k,i)).norm();
-    res[1] = internal::atan2(s, coeff(i,i));
+    res[1] = atan2(s, coeff(i,i));
     if (s > epsilon)
     {
-      res[0] = internal::atan2(coeff(j,i), coeff(k,i));
-      res[2] = internal::atan2(coeff(i,j),-coeff(i,k));
+      res[0] = atan2(coeff(j,i), coeff(k,i));
+      res[2] = atan2(coeff(i,j),-coeff(i,k));
     }
     else
     {
       res[0] = Scalar(0);
-      res[2] = (coeff(i,i)>0?1:-1)*internal::atan2(-coeff(k,j), coeff(j,j));
+      res[2] = (coeff(i,i)>0?1:-1)*atan2(-coeff(k,j), coeff(j,j));
     }
   }
   else
   {
     Scalar c = Vector2(coeff(i,i) , coeff(i,j)).norm();
-    res[1] = internal::atan2(-coeff(i,k), c);
+    res[1] = atan2(-coeff(i,k), c);
     if (c > epsilon)
     {
-      res[0] = internal::atan2(coeff(j,k), coeff(k,k));
-      res[2] = internal::atan2(coeff(i,j), coeff(i,i));
+      res[0] = atan2(coeff(j,k), coeff(k,k));
+      res[2] = atan2(coeff(i,j), coeff(i,i));
     }
     else
     {
       res[0] = Scalar(0);
-      res[2] = (coeff(i,k)>0?1:-1)*internal::atan2(-coeff(k,j), coeff(j,j));
+      res[2] = (coeff(i,k)>0?1:-1)*atan2(-coeff(k,j), coeff(j,j));
     }
   }
   if (!odd)
@@ -92,5 +80,6 @@ MatrixBase<Derived>::eulerAngles(Index a0, Index a1, Index a2) const
   return res;
 }
 
+} // end namespace Eigen
 
 #endif // EIGEN_EULERANGLES_H

@@ -4,27 +4,10 @@
 // Copyright (C) 2008-2010 Gael Guennebaud <gael.guennebaud@inria.fr>
 // Copyright (C) 2006-2010 Benoit Jacob <jacob.benoit.1@gmail.com>
 //
-// Eigen is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 3 of the License, or (at your option) any later version.
-//
-// Alternatively, you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 2 of
-// the License, or (at your option) any later version.
-//
-// Eigen is distributed in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License or the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License and a copy of the GNU General Public License along with
-// Eigen. If not, see <http://www.gnu.org/licenses/>.
+// This Source Code Form is subject to the terms of the Mozilla
+// Public License v. 2.0. If a copy of the MPL was not distributed
+// with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-#ifndef EIGEN_BLOCKMETHODS_H
-#define EIGEN_BLOCKMETHODS_H
 
 #ifndef EIGEN_PARSED_BY_DOXYGEN
 
@@ -47,6 +30,10 @@ template<int N> struct ConstNColsBlockXpr { typedef const Block<const Derived, i
 template<int N> struct NRowsBlockXpr { typedef Block<Derived, N, internal::traits<Derived>::ColsAtCompileTime, IsRowMajor> Type; };
 template<int N> struct ConstNRowsBlockXpr { typedef const Block<const Derived, N, internal::traits<Derived>::ColsAtCompileTime, IsRowMajor> Type; };
 
+typedef VectorBlock<Derived> SegmentReturnType;
+typedef const VectorBlock<const Derived> ConstSegmentReturnType;
+template<int Size> struct FixedSegmentReturnType { typedef VectorBlock<Derived, Size> Type; };
+template<int Size> struct ConstFixedSegmentReturnType { typedef const VectorBlock<const Derived, Size> Type; };
 
 #endif // not EIGEN_PARSED_BY_DOXYGEN
 
@@ -592,4 +579,169 @@ inline ConstRowXpr row(Index i) const
   return ConstRowXpr(derived(), i);
 }
 
-#endif // EIGEN_BLOCKMETHODS_H
+/** \returns a dynamic-size expression of a segment (i.e. a vector block) in *this.
+  *
+  * \only_for_vectors
+  *
+  * \param start the first coefficient in the segment
+  * \param vecSize the number of coefficients in the segment
+  *
+  * Example: \include MatrixBase_segment_int_int.cpp
+  * Output: \verbinclude MatrixBase_segment_int_int.out
+  *
+  * \note Even though the returned expression has dynamic size, in the case
+  * when it is applied to a fixed-size vector, it inherits a fixed maximal size,
+  * which means that evaluating it does not cause a dynamic memory allocation.
+  *
+  * \sa class Block, segment(Index)
+  */
+inline SegmentReturnType segment(Index start, Index vecSize)
+{
+  EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
+  return SegmentReturnType(derived(), start, vecSize);
+}
+
+
+/** This is the const version of segment(Index,Index).*/
+inline ConstSegmentReturnType segment(Index start, Index vecSize) const
+{
+  EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
+  return ConstSegmentReturnType(derived(), start, vecSize);
+}
+
+/** \returns a dynamic-size expression of the first coefficients of *this.
+  *
+  * \only_for_vectors
+  *
+  * \param vecSize the number of coefficients in the block
+  *
+  * Example: \include MatrixBase_start_int.cpp
+  * Output: \verbinclude MatrixBase_start_int.out
+  *
+  * \note Even though the returned expression has dynamic size, in the case
+  * when it is applied to a fixed-size vector, it inherits a fixed maximal size,
+  * which means that evaluating it does not cause a dynamic memory allocation.
+  *
+  * \sa class Block, block(Index,Index)
+  */
+inline SegmentReturnType head(Index vecSize)
+{
+  EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
+  return SegmentReturnType(derived(), 0, vecSize);
+}
+
+/** This is the const version of head(Index).*/
+inline ConstSegmentReturnType
+  head(Index vecSize) const
+{
+  EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
+  return ConstSegmentReturnType(derived(), 0, vecSize);
+}
+
+/** \returns a dynamic-size expression of the last coefficients of *this.
+  *
+  * \only_for_vectors
+  *
+  * \param vecSize the number of coefficients in the block
+  *
+  * Example: \include MatrixBase_end_int.cpp
+  * Output: \verbinclude MatrixBase_end_int.out
+  *
+  * \note Even though the returned expression has dynamic size, in the case
+  * when it is applied to a fixed-size vector, it inherits a fixed maximal size,
+  * which means that evaluating it does not cause a dynamic memory allocation.
+  *
+  * \sa class Block, block(Index,Index)
+  */
+inline SegmentReturnType tail(Index vecSize)
+{
+  EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
+  return SegmentReturnType(derived(), this->size() - vecSize, vecSize);
+}
+
+/** This is the const version of tail(Index).*/
+inline ConstSegmentReturnType tail(Index vecSize) const
+{
+  EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
+  return ConstSegmentReturnType(derived(), this->size() - vecSize, vecSize);
+}
+
+/** \returns a fixed-size expression of a segment (i.e. a vector block) in \c *this
+  *
+  * \only_for_vectors
+  *
+  * The template parameter \a Size is the number of coefficients in the block
+  *
+  * \param start the index of the first element of the sub-vector
+  *
+  * Example: \include MatrixBase_template_int_segment.cpp
+  * Output: \verbinclude MatrixBase_template_int_segment.out
+  *
+  * \sa class Block
+  */
+template<int Size>
+inline typename FixedSegmentReturnType<Size>::Type segment(Index start)
+{
+  EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
+  return typename FixedSegmentReturnType<Size>::Type(derived(), start);
+}
+
+/** This is the const version of segment<int>(Index).*/
+template<int Size>
+inline typename ConstFixedSegmentReturnType<Size>::Type segment(Index start) const
+{
+  EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
+  return typename ConstFixedSegmentReturnType<Size>::Type(derived(), start);
+}
+
+/** \returns a fixed-size expression of the first coefficients of *this.
+  *
+  * \only_for_vectors
+  *
+  * The template parameter \a Size is the number of coefficients in the block
+  *
+  * Example: \include MatrixBase_template_int_start.cpp
+  * Output: \verbinclude MatrixBase_template_int_start.out
+  *
+  * \sa class Block
+  */
+template<int Size>
+inline typename FixedSegmentReturnType<Size>::Type head()
+{
+  EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
+  return typename FixedSegmentReturnType<Size>::Type(derived(), 0);
+}
+
+/** This is the const version of head<int>().*/
+template<int Size>
+inline typename ConstFixedSegmentReturnType<Size>::Type head() const
+{
+  EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
+  return typename ConstFixedSegmentReturnType<Size>::Type(derived(), 0);
+}
+
+/** \returns a fixed-size expression of the last coefficients of *this.
+  *
+  * \only_for_vectors
+  *
+  * The template parameter \a Size is the number of coefficients in the block
+  *
+  * Example: \include MatrixBase_template_int_end.cpp
+  * Output: \verbinclude MatrixBase_template_int_end.out
+  *
+  * \sa class Block
+  */
+template<int Size>
+inline typename FixedSegmentReturnType<Size>::Type tail()
+{
+  EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
+  return typename FixedSegmentReturnType<Size>::Type(derived(), size() - Size);
+}
+
+/** This is the const version of tail<int>.*/
+template<int Size>
+inline typename ConstFixedSegmentReturnType<Size>::Type tail() const
+{
+  EIGEN_STATIC_ASSERT_VECTOR_ONLY(Derived)
+  return typename ConstFixedSegmentReturnType<Size>::Type(derived(), size() - Size);
+}
