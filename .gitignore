@@ -9,3 +9,5 @@
 /.settings
 /api_docs
 *~
+*.sublime-workspace
+
