@@ -1,0 +1,41 @@
+{
+	"folders":
+	[
+		{
+			"follow_symlinks": true,
+			"path": ".",
+			"folder_exclude_patterns": [
+				"build",
+				"bullet",
+				"site_scons",
+				"sslrefbox",
+				"downloads",
+				"watchdog"
+			],
+			"file_exclude_patterns": [
+				".*",
+				"DoxygenLayout.xml",
+				"Doxyfile"
+			]
+		}
+	],
+	"build_systems":
+	[
+		{
+			"name": "Scons",
+			"cmd": ["scons", "-j4"],
+			"working_dir": "${project_path}",
+			"file_regex": "^(.*)\\(([0-9]*)\\)(\\s:\\s)(.*)",
+			"variants": [
+				{
+					"working_dir": "${project_path}/run",
+					"name": "Run",
+					"cmd": "./soccer"
+				}
+			]
+		}
+	],
+	"settings": {
+		"tab_size": 4
+	}
+}
