@@ -39,10 +39,10 @@ bool Gameplay::Behaviors::Mark::run()
 	if (_markRobot && _markRobot->visible) {
 		// state data
 		Point ballPos = ball().pos,
-			  ballVel = ball().vel,
+			  // ballVel = ball().vel,
 			  pos = robot->pos,
-			  markPos = _markRobot->pos,
-			  markVel = _markRobot->vel;
+			  markPos = _markRobot->pos;
+			  // markVel = _markRobot->vel;
 		Point markLineDir = (ballPos-markPos).normalized();
 		Segment ballMarkLine(ballPos - markLineDir * Ball_Radius,
 				markPos + markLineDir * 2.0 * Robot_Radius);

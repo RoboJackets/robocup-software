@@ -158,7 +158,6 @@ bool Segment::nearPointPerp(const Point &point, float threshold) const {
     }
 
 	Point d1 = point - p1;
-	Point d2 = point - p2;
 
 	// Calculate the position between the endpoints of the point on
 	// the line nearest this point.

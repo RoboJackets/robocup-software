@@ -478,7 +478,7 @@ Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 
 		// find closest point on path to pose
 		float max = path.points[0].distTo(pose);
-		int ip = 0;
+		unsigned int ip = 0;
 		for (unsigned i=0; i<path.points.size(); i++) {
 			if (path.points[i].distTo(pose) < max) {
 				max = path.points[i].distTo(pose);

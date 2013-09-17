@@ -58,7 +58,7 @@ bool Gameplay::Behaviors::Yank::run()
 	_capture.robot = robot;
 
 	// The direction we're facing
-	const Point dir = Point::direction(robot->angle * DegreesToRadians);
+	// const Point dir = Point::direction(robot->angle * DegreesToRadians);
 	
 	// State changes
 	Point targetToBall = (ball().pos - target.center()).normalized();

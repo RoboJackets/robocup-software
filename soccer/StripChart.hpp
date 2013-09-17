@@ -20,6 +20,7 @@ namespace Chart
 {
 	struct Function
 	{
+		virtual ~Function() {}
 		virtual bool value(const Packet::LogFrame &frame, float &v) const = 0;
 	};
 	
