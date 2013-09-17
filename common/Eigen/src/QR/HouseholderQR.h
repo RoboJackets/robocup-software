@@ -5,27 +5,14 @@
 // Copyright (C) 2009 Benoit Jacob <jacob.benoit.1@gmail.com>
 // Copyright (C) 2010 Vincent Lejeune
 //
-// Eigen is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 3 of the License, or (at your option) any later version.
-//
-// Alternatively, you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 2 of
-// the License, or (at your option) any later version.
-//
-// Eigen is distributed in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License or the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License and a copy of the GNU General Public License along with
-// Eigen. If not, see <http://www.gnu.org/licenses/>.
+// This Source Code Form is subject to the terms of the Mozilla
+// Public License v. 2.0. If a copy of the MPL was not distributed
+// with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #ifndef EIGEN_QR_H
 #define EIGEN_QR_H
+
+namespace Eigen { 
 
 /** \ingroup QR_Module
   *
@@ -126,6 +113,14 @@ template<typename _MatrixType> class HouseholderQR
       return internal::solve_retval<HouseholderQR, Rhs>(*this, b.derived());
     }
 
+    /** This method returns an expression of the unitary matrix Q as a sequence of Householder transformations.
+      *
+      * The returned expression can directly be used to perform matrix products. It can also be assigned to a dense Matrix object.
+      * Here is an example showing how to recover the full or thin matrix Q, as well as how to perform matrix products using operator*:
+      *
+      * Example: \include HouseholderQR_householderQ.cpp
+      * Output: \verbinclude HouseholderQR_householderQ.out
+      */
     HouseholderSequenceType householderQ() const
     {
       eigen_assert(m_isInitialized && "HouseholderQR is not initialized.");
@@ -186,9 +181,10 @@ template<typename _MatrixType> class HouseholderQR
 template<typename MatrixType>
 typename MatrixType::RealScalar HouseholderQR<MatrixType>::absDeterminant() const
 {
+  using std::abs;
   eigen_assert(m_isInitialized && "HouseholderQR is not initialized.");
   eigen_assert(m_qr.rows() == m_qr.cols() && "You can't take the determinant of a non-square matrix!");
-  return internal::abs(m_qr.diagonal().prod());
+  return abs(m_qr.diagonal().prod());
 }
 
 template<typename MatrixType>
@@ -245,7 +241,6 @@ void householder_qr_inplace_blocked(MatrixQR& mat, HCoeffs& hCoeffs,
 {
   typedef typename MatrixQR::Index Index;
   typedef typename MatrixQR::Scalar Scalar;
-  typedef typename MatrixQR::RealScalar RealScalar;
   typedef Block<MatrixQR,Dynamic,Dynamic> BlockType;
 
   Index rows = mat.rows();
@@ -351,5 +346,6 @@ MatrixBase<Derived>::householderQr() const
   return HouseholderQR<PlainObject>(eval());
 }
 
+} // end namespace Eigen
 
 #endif // EIGEN_QR_H

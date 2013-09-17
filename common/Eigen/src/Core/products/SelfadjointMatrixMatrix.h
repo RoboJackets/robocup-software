@@ -3,27 +3,14 @@
 //
 // Copyright (C) 2009 Gael Guennebaud <gael.guennebaud@inria.fr>
 //
-// Eigen is free software; you can redistribute it and/or
-// modify it under the terms of the GNU Lesser General Public
-// License as published by the Free Software Foundation; either
-// version 3 of the License, or (at your option) any later version.
-//
-// Alternatively, you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 2 of
-// the License, or (at your option) any later version.
-//
-// Eigen is distributed in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
-// FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License or the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public
-// License and a copy of the GNU General Public License along with
-// Eigen. If not, see <http://www.gnu.org/licenses/>.
+// This Source Code Form is subject to the terms of the Mozilla
+// Public License v. 2.0. If a copy of the MPL was not distributed
+// with this file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 #ifndef EIGEN_SELFADJOINT_MATRIX_MATRIX_H
 #define EIGEN_SELFADJOINT_MATRIX_MATRIX_H
+
+namespace Eigen { 
 
 namespace internal {
 
@@ -224,7 +211,7 @@ struct product_selfadjoint_matrix<Scalar,Index,LhsStorageOrder,LhsSelfAdjoint,Co
     const Scalar* lhs, Index lhsStride,
     const Scalar* rhs, Index rhsStride,
     Scalar* res,       Index resStride,
-    Scalar alpha)
+    const Scalar& alpha)
   {
     product_selfadjoint_matrix<Scalar, Index,
       EIGEN_LOGICAL_XOR(RhsSelfAdjoint,RhsStorageOrder==RowMajor) ? ColMajor : RowMajor,
@@ -247,7 +234,18 @@ struct product_selfadjoint_matrix<Scalar,Index,LhsStorageOrder,true,ConjugateLhs
     const Scalar* _lhs, Index lhsStride,
     const Scalar* _rhs, Index rhsStride,
     Scalar* res,        Index resStride,
-    Scalar alpha)
+    const Scalar& alpha);
+};
+
+template <typename Scalar, typename Index,
+          int LhsStorageOrder, bool ConjugateLhs,
+          int RhsStorageOrder, bool ConjugateRhs>
+EIGEN_DONT_INLINE void product_selfadjoint_matrix<Scalar,Index,LhsStorageOrder,true,ConjugateLhs, RhsStorageOrder,false,ConjugateRhs,ColMajor>::run(
+    Index rows, Index cols,
+    const Scalar* _lhs, Index lhsStride,
+    const Scalar* _rhs, Index rhsStride,
+    Scalar* res,        Index resStride,
+    const Scalar& alpha)
   {
     Index size = rows;
 
@@ -314,7 +312,6 @@ struct product_selfadjoint_matrix<Scalar,Index,LhsStorageOrder,true,ConjugateLhs
       }
     }
   }
-};
 
 // matrix * selfadjoint product
 template <typename Scalar, typename Index,
@@ -328,7 +325,18 @@ struct product_selfadjoint_matrix<Scalar,Index,LhsStorageOrder,false,ConjugateLh
     const Scalar* _lhs, Index lhsStride,
     const Scalar* _rhs, Index rhsStride,
     Scalar* res,        Index resStride,
-    Scalar alpha)
+    const Scalar& alpha);
+};
+
+template <typename Scalar, typename Index,
+          int LhsStorageOrder, bool ConjugateLhs,
+          int RhsStorageOrder, bool ConjugateRhs>
+EIGEN_DONT_INLINE void product_selfadjoint_matrix<Scalar,Index,LhsStorageOrder,false,ConjugateLhs, RhsStorageOrder,true,ConjugateRhs,ColMajor>::run(
+    Index rows, Index cols,
+    const Scalar* _lhs, Index lhsStride,
+    const Scalar* _rhs, Index rhsStride,
+    Scalar* res,        Index resStride,
+    const Scalar& alpha)
   {
     Index size = cols;
 
@@ -366,7 +374,6 @@ struct product_selfadjoint_matrix<Scalar,Index,LhsStorageOrder,false,ConjugateLh
       }
     }
   }
-};
 
 } // end namespace internal
 
@@ -396,12 +403,12 @@ struct SelfadjointProductMatrix<Lhs,LhsMode,false,Rhs,RhsMode,false>
     RhsIsSelfAdjoint = (RhsMode&SelfAdjoint)==SelfAdjoint
   };
 
-  template<typename Dest> void scaleAndAddTo(Dest& dst, Scalar alpha) const
+  template<typename Dest> void scaleAndAddTo(Dest& dst, const Scalar& alpha) const
   {
     eigen_assert(dst.rows()==m_lhs.rows() && dst.cols()==m_rhs.cols());
 
-    const ActualLhsType lhs = LhsBlasTraits::extract(m_lhs);
-    const ActualRhsType rhs = RhsBlasTraits::extract(m_rhs);
+    typename internal::add_const_on_value_type<ActualLhsType>::type lhs = LhsBlasTraits::extract(m_lhs);
+    typename internal::add_const_on_value_type<ActualRhsType>::type rhs = RhsBlasTraits::extract(m_rhs);
 
     Scalar actualAlpha = alpha * LhsBlasTraits::extractScalarFactor(m_lhs)
                                * RhsBlasTraits::extractScalarFactor(m_rhs);
@@ -423,5 +430,7 @@ struct SelfadjointProductMatrix<Lhs,LhsMode,false,Rhs,RhsMode,false>
       );
   }
 };
+
+} // end namespace Eigen
 
 #endif // EIGEN_SELFADJOINT_MATRIX_MATRIX_H
