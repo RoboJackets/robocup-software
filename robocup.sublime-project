@@ -3,7 +3,7 @@
 	[
 		{
 			"follow_symlinks": true,
-			"path": "./",
+			"path": ".",
 			"folder_exclude_patterns": [
 				"build",
 				"bullet",
@@ -19,12 +19,20 @@
 			]
 		}
 	],
-	"build_settings":
+	"build_systems":
 	[
 		{
 			"name": "Scons",
-			"shell_cmd": ["scons"],
-			"working_dir": "./"
+			"cmd": ["scons", "-j4"],
+			"working_dir": "${project_path}",
+			"file_regex": "^(.*)\\(([0-9]*)\\)(\\s:\\s)(.*)",
+			"variants": [
+				{
+					"working_dir": "${project_path}/run",
+					"name": "Run",
+					"cmd": "./soccer"
+				}
+			]
 		}
 	],
 	"settings": {
