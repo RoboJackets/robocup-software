@@ -4,10 +4,8 @@
 using namespace std;
 using namespace Geometry2d;
 
-namespace Gameplay
-{
-	namespace Behaviors
-	{
+namespace Gameplay {
+	namespace Behaviors {
 		REGISTER_CONFIGURABLE(TouchKick)
 	}
 }
