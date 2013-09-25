@@ -2,7 +2,7 @@
 #include "PivotKick.hpp"
 
 #include <Utils.hpp>
-#include <gameplay/Window.hpp>
+#include <gameplay/evaluation/WindowEvaluator.hpp>
 
 using namespace std;
 using namespace Geometry2d;
