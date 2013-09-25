@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../Behavior.hpp"
-#include "../../Window.hpp"
+#include "../../evaluation/WindowEvaluator.hpp"
 
 namespace Gameplay
 {

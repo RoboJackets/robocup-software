@@ -6,7 +6,7 @@
 #include "Goalie.hpp"
 
 #include <gameplay/Play.hpp>
-#include <gameplay/Window.hpp>
+#include <gameplay/evaluation/WindowEvaluator.hpp>
 #include <Geometry2d/util.h>
 
 #include <boost/foreach.hpp>

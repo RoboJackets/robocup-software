@@ -10,7 +10,7 @@
 
 #include "../../Play.hpp"
 #include "../../behaviors/Move.hpp"
-#include "../../ReceivePointEvaluator.hpp"
+#include "../../evaluation/ReceivePointEvaluator.hpp"
 
 namespace Gameplay {
 namespace Plays {
