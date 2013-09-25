@@ -2,7 +2,7 @@
 
 #include <gameplay/behaviors/positions/Goalie.hpp>
 #include <Constants.hpp>
-#include <gameplay/Window.hpp>
+#include <gameplay/evaluation/WindowEvaluator.hpp>
 #include <Geometry2d/util.h>
 
 #include <vector>

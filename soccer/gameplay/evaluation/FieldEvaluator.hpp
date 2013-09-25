@@ -2,7 +2,7 @@
 #pragma once
 
 #include <vector>
-#include "Window.hpp"
+#include "WindowEvaluator.hpp"
 #include "ReceivePointEvaluator.hpp"
 #include <Geometry2d/Segment.hpp>
 #include <boost/foreach.hpp>

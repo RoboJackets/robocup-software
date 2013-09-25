@@ -31,10 +31,13 @@ srcs = [
 	'gameplay/GameplayModule.cpp',
 	'gameplay/Play.cpp',
 	'gameplay/Behavior.cpp',
-	'gameplay/Window.cpp',
 	'gameplay/PreventDoubleTouch.cpp',
-	'gameplay/ReceivePointEvaluator.cpp',
-	'gameplay/FieldEvaluator.cpp',
+
+	# Field evaluation
+	'gameplay/evaluation/WindowEvaluator.cpp',
+	'gameplay/evaluation/ReceivePointEvaluator.cpp',
+	'gameplay/evaluation/FieldEvaluator.cpp',
+
 
 	# Planning components',
 	'gameplay/planning/rrt.cpp',

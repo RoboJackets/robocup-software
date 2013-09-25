@@ -2,7 +2,7 @@
 #include <framework/RobotConfig.hpp>
 #include <boost/foreach.hpp>
 #include <iostream>
-#include "../ReceivePointEvaluator.hpp"
+#include "../evaluation/ReceivePointEvaluator.hpp"
 
 using namespace std;
 using namespace Geometry2d;

@@ -1,7 +1,7 @@
 #pragma once
 #include <gameplay/Behavior.hpp>
 #include <gameplay/behaviors/PivotKick.hpp>
-#include <gameplay/Window.hpp>
+#include <gameplay/evaluation/WindowEvaluator.hpp>
 #include <gameplay/tactics/LuckyKick.hpp>
 
 namespace Gameplay {
