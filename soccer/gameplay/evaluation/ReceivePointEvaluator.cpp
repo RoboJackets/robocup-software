@@ -6,8 +6,8 @@
  */
 
 #include "ReceivePointEvaluator.hpp"
-#include "GameplayModule.hpp"
-#include "../../common/Constants.hpp"
+#include "../GameplayModule.hpp"
+#include "../../../common/Constants.hpp"
 #include <vector>
 
 using namespace Geometry2d;

@@ -9,11 +9,11 @@
 #define RECEIVEPOINTEVALUATOR_HPP_
 
 
-#include "Window.hpp"
+#include "WindowEvaluator.hpp"
 #include <Configuration.hpp>
-#include "../framework/SystemState.hpp"
+#include "../../framework/SystemState.hpp"
 #include <Geometry2d/Segment.hpp>
-#include "../Robot.hpp"
+#include "../../Robot.hpp"
 
 namespace Gameplay {
 

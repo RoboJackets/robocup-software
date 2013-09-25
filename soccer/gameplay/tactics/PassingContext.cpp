@@ -1,6 +1,6 @@
 
 #include "PassingContext.hpp"
-#include <gameplay/ReceivePointEvaluator.hpp>
+#include <gameplay/evaluation/ReceivePointEvaluator.hpp>
 
 
 using namespace std;
