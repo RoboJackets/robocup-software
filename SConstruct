@@ -65,6 +65,9 @@ env.Append(CPPPATH=[build_dir.Dir('common')])
 
 Export({'env': env, 'cross_32bit': False})
 
+def do_build(dir, exports={}):
+	SConscript(dir + '/SConscript', exports=exports, variant_dir=build_dir.Dir(dir), duplicate=0)
+
 do_build('common')
 do_build('bullet')
 
