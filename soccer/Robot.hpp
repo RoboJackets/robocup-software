@@ -6,7 +6,6 @@
 #include <boost/array.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <QColor>
-
 #include <Eigen/Geometry>
 #include <Constants.hpp>
 #include <framework/Path.hpp>
@@ -22,22 +21,22 @@ class RobotFilter;
 
 namespace Packet
 {
-class DebugText;
-class LogFrame_Robot;
+	class DebugText;
+	class LogFrame_Robot;
 };
 
 namespace Gameplay
 {
-class GameplayModule;
-class Behavior;
+	class GameplayModule;
+	class Behavior;
 }
 
 namespace Planning
 {
-namespace RRT
-{
-class Planner;
-}
+	namespace RRT
+	{
+		class Planner;
+	}
 }
 
 class RobotPose
