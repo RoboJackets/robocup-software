@@ -3,6 +3,7 @@
 .sconsign.dblite
 .scons_variables
 /build
+/.build
 .pydevproject
 /gmon.out
 *.swp
