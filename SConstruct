@@ -1,11 +1,11 @@
 # Remove the build directory when cleaning
-Clean('.', '.build')
+Clean('.', 'build')
 
 # Where to put all executables
 exec_dir = Dir('#/run')
 Export('exec_dir')
 
-build_dir = Dir('#/.build')
+build_dir = Dir('#/build')
 Export('build_dir')
 
 env = Environment(tools=['default', 'textfile'])  
