@@ -1,7 +1,6 @@
 #pragma once
 
 #include <AutoName.hpp>
-
 #include "Behavior.hpp"
 
 /// This macro lets PlayConfigTab automagically populate its list of available plays.
