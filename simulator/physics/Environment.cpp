@@ -51,9 +51,15 @@ Environment::~Environment() {
 
 void Environment::connectSockets() {
 	// Bind sockets
-	assert(_visionSocket.bind(SimCommandPort));
-	assert(_radioSocketYellow.bind(RadioTxPort));
-	assert(_radioSocketBlue.bind(RadioTxPort + 1));
+	bool success = (
+		_visionSocket.bind(SimCommandPort)
+		&& _radioSocketYellow.bind(RadioTxPort)
+		&& _radioSocketBlue.bind(RadioTxPort + 1)
+	);
+	if ( !success ) {
+		printf("Unable to bind sockets.  Is there another instance of simulator already running?");
+		throw std::exception();
+	}
 
 	gettimeofday(&_lastStepTime, 0);
 
