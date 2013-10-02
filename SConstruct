@@ -1,5 +1,5 @@
 # Remove the build directory when cleaning
-Clean('.', '.build')
+Clean('.', 'build')
 
 # Where to put all executables
 exec_dir = Dir('#/run')
