@@ -69,6 +69,10 @@ public:
 	Robot(unsigned int shell, bool self);
 	~Robot();
 
+	/*
+	 * ID number for the robot.  This is the number that the dot pattern on the
+	 * top of the robot represents
+	 */
 	unsigned int shell() const
 	{
 		return _shell;
