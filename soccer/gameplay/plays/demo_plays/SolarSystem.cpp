@@ -8,10 +8,6 @@ using namespace Geometry2d;
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::SolarSystem, "Demos")
 
-static bool shellLessThan(Robot *r1, Robot *r2)
-{
-	return r1->shell() < r2->shell();
-}
 
 Gameplay::Plays::SolarSystem::SolarSystem(GameplayModule* gameplay):
 	Play(gameplay)
@@ -42,12 +38,11 @@ bool Gameplay::Plays::SolarSystem::run()
 	// Make a list of robots, sorted by shell
 	vector<OurRobot *> robots(playRobots.size());
 	copy(playRobots.begin(), playRobots.end(), robots.begin());
-	// sort(robots.begin(), robots.end(), shellLessThan);
 	
 
 	float radiusIncrement = .35;
 	float startRadius = 0;
-	const maxRadiusError = .05;
+	const float maxRadiusError = .05;
 
 
 	for (unsigned int i = 0; i < robots.size(); ++i)
@@ -56,7 +51,7 @@ bool Gameplay::Plays::SolarSystem::run()
 
 		float radius = startRadius + i * radiusIncrement;
 		Point offset = bot->pos - center;
-		Point direction = offset.direction();
+		Point direction = offset.normalized();
 		Point targetOffset = direction * radius;
 
 		Point targetLocation = center + targetOffset;
@@ -65,21 +60,20 @@ bool Gameplay::Plays::SolarSystem::run()
 		float error = errorVector.mag();
 
 
-		if ( error < maxRadiusError ) {
-			////////
+		if ( true ) {
+			//	alternate direction
+			float dTheta = 4;
+			if ( i % 2 == 0 ) {
+				dTheta *= -1;
+				// dTheta = dTheta * -1;
+			}
 
-
-			
-			
-
+			targetOffset.rotate(center, dTheta);
+			targetLocation = targetOffset + center;
+			bot->move(targetLocation);
 		} else {
-			////////////
+			bot->move(targetLocation);
 		}
-
-
-		Point dest = Point(-1.9 + i * 0.28, 2);
-		robots[i]->move(dest);
-		robots[i]->face(dest + Point(0, 1));
 	}
 	
 	return true;
