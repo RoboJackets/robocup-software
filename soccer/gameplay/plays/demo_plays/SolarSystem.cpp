@@ -49,6 +49,19 @@ bool Gameplay::Plays::SolarSystem::run()
 	{
 		OurRobot *bot = robots[i];
 
+		if ( i == 0 ) {
+			Point faceTarget(1, 0);
+
+			float angle = bot->angle;
+			angle -= 15;
+
+			faceTarget.rotate(angle);
+			faceTarget += center;
+
+			bot->face(faceTarget);
+		}
+
+
 		float radius = startRadius + i * radiusIncrement;
 		Point offset = bot->pos - center;
 		Point direction = offset.normalized();
@@ -68,12 +81,16 @@ bool Gameplay::Plays::SolarSystem::run()
 				// dTheta = dTheta * -1;
 			}
 
-			targetOffset.rotate(center, dTheta);
+			targetOffset.rotate(Point(0, 0), dTheta);
 			targetLocation = targetOffset + center;
 			bot->move(targetLocation);
 		} else {
 			bot->move(targetLocation);
 		}
+
+
+		state()->drawCircle(center, radius, Qt::red, "SolarSystem");
+
 	}
 	
 	return true;
