@@ -29,10 +29,7 @@ bool Gameplay::Plays::SolarSystem::run()
 	}
 	
 
-
 	Point center(0, 2);
-
-
 
 
 	// Make a list of robots, sorted by shell
@@ -40,8 +37,8 @@ bool Gameplay::Plays::SolarSystem::run()
 	copy(playRobots.begin(), playRobots.end(), robots.begin());
 	
 
-	float radiusIncrement = .35;
-	float startRadius = 0;
+	float radiusIncrement = .3;
+	float startRadius = 0.0001;
 	const float maxRadiusError = .05;
 
 
@@ -49,17 +46,17 @@ bool Gameplay::Plays::SolarSystem::run()
 	{
 		OurRobot *bot = robots[i];
 
-		if ( i == 0 ) {
-			Point faceTarget(1, 0);
+		// if ( i == 0 ) {
+		// 	Point faceTarget(1, 0);
 
-			float angle = bot->angle;
-			angle -= 15;
+		// 	float angle = bot->angle;
+		// 	angle -= 15;
 
-			faceTarget.rotate(angle);
-			faceTarget += center;
+		// 	faceTarget.rotate(angle);
+		// 	faceTarget += center;
 
-			bot->face(faceTarget);
-		}
+		// 	bot->face(faceTarget);
+		// }
 
 
 		float radius = startRadius + i * radiusIncrement;
@@ -75,16 +72,18 @@ bool Gameplay::Plays::SolarSystem::run()
 
 		if ( true ) {
 			//	alternate direction
-			float dTheta = 4;
+
+			float circumference = M_PI * powf(radius, 2);
+			//	set target point @dS meters around the circumference from the bot
+			const float dS = .08;
+			float dTheta = dS / circumference * 360;
+
 			if ( i % 2 == 0 ) {
 				dTheta *= -1;
-				// dTheta = dTheta * -1;
 			}
 
 			targetOffset.rotate(Point(0, 0), dTheta);
 			targetLocation = targetOffset + center;
-			bot->move(targetLocation);
-		} else {
 			bot->move(targetLocation);
 		}
 
