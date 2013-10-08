@@ -30,7 +30,7 @@ bool Gameplay::Plays::SolarSystem::run()
 	
 
 
-	Point center(0, 3);
+	Point center(0, 2);
 
 
 
