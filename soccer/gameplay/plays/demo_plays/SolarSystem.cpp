@@ -9,6 +9,20 @@ using namespace Geometry2d;
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::SolarSystem, "Demos")
 
 
+namespace Gameplay
+{
+	namespace Plays
+	{
+		REGISTER_CONFIGURABLE(SolarSystem)
+	}
+}
+
+ConfigDouble *Gameplay::Plays::SolarSystem::_speed;
+
+void Gameplay::Plays::SolarSystem::createConfiguration(Configuration *cfg) {
+	_speed = new ConfigDouble(cfg, "SolarSystem/speed", 0.08);
+}
+
 Gameplay::Plays::SolarSystem::SolarSystem(GameplayModule* gameplay):
 	Play(gameplay)
 {
@@ -75,8 +89,8 @@ bool Gameplay::Plays::SolarSystem::run()
 
 			float circumference = M_PI * powf(radius, 2);
 			//	set target point @dS meters around the circumference from the bot
-			const float dS = .08;
-			float dTheta = dS / circumference * 360;
+			// const float dS = .08;
+			float dTheta = *_speed / circumference * 360;
 
 			if ( i % 2 == 0 ) {
 				dTheta *= -1;
