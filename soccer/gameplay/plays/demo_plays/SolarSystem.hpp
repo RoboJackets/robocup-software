@@ -11,8 +11,12 @@ namespace Gameplay
 			public:
 				SolarSystem(GameplayModule *gameplay);
 
+				static void createConfiguration(Configuration *cfg);
+
 				static float score(GameplayModule *gameplay);
 				virtual bool run();
+
+				static ConfigDouble *_speed;
 		};
 	}
 }
