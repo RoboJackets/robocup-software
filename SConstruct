@@ -23,7 +23,7 @@ Export('env_base')
 # C++ compiler
 env.MergeFlags('-Wall -g -Wno-unused-function')  # debug version - don't use for competition use
 # env.MergeFlags('-O2 -g3 -Wall -DNDEBUG') # optimized version
-env.Append(CPPPATH = [Dir('#/common')])
+env.Append(CPPPATH = [Dir('#/common'), Dir('/usr/include/eigen3')])
 
 # Variables
 # Can't put this in build_dir because scons wants to read it before build_dir exists.
