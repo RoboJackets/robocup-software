@@ -2,6 +2,7 @@
 #include <board.h>
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
 
 #include "timer.h"
 #include "console.h"
@@ -740,6 +741,8 @@ void cmd_drive_mode(int argc, const char *argv[], void *arg)
 
 void cmd_imu_test(int argc, const char *argv[], void *arg)
 {
+	int max = 0, min = 0;
+
 	radio_rx_len = 0;
 	usb_rx_start();
 	while (!usb_rx_len)
@@ -751,6 +754,23 @@ void cmd_imu_test(int argc, const char *argv[], void *arg)
 		long quat[4] = {0};
 		IMUgetQuaternion(quat);
 		printf("%d %6d %6d %6d %6d\n", imu_aligned, (int)quat[0] >> 16, (int)quat[1] >> 16, (int)quat[2] >> 16, (int)quat[3] >> 16);
+
+		long acc[3] = {0};
+		IMUgetLinearAccelWorld(acc);
+
+		// float accFloat[3];
+		// accFloat[0] = (float)acc[0] / LONG_MAX * 2.0f;
+		// accFloat[1] = (float)acc[1] / LONG_MAX * 2.0f;
+		// accFloat[2] = (float)acc[2] / LONG_MAX * 2.0f;
+
+
+		for (int i=0; i < 3; i++) {
+			if ( acc[i] < min ) min = acc[i];
+			if ( acc[i] > max ) max = acc[i];
+		}
+
+		printf("Acc (x100): (%6d, %6d, %6d)\n", (acc[0] * 100) / SCALE_FACTOR,  (acc[1] * 100) / SCALE_FACTOR,  (acc[2] * 100) / SCALE_FACTOR);
+		printf("Acc min=%6d, max=%6d\n", min, max);
 	}
 	usb_rx_start();
 }
