@@ -7,8 +7,10 @@
 #include "invensense/mpuregs.h"
 
 #include <stdio.h>
+#include <limits.h>
 
 int imu_aligned;
+float linear_acceleration[3];
 
 static void motionCallback(uint16_t motionType)
 {
@@ -50,13 +52,34 @@ int imu_init()
 	MLSetAccelCalibration(accelScale, accelCal);
 	
 	IMUsetBiasUpdateFunc(ML_ALL);
-	IMUsendQuaternionToFIFO(ML_16_BIT);
+	IMUsendQuaternionToFIFO(ML_32_BIT);
 	IMUsendGyroToFIFO(ML_ELEMENT_3, ML_16_BIT);
-// 	IMUsendLinearAccelWorldToFIFO(ML_ALL, ML_32_BIT);
+	IMUsendLinearAccelWorldToFIFO(ML_ALL, ML_32_BIT);
 // 	MLSetProcessedFIFOCallback(dataCallback);
 	IMUsetMotionCallback(motionCallback);
 	IMUsetFIFORate(0);
 	IMUstart();
 	
 	return 1;
+}
+
+
+void imu_update() {
+	IMUupdateData();
+
+	//	read quaternion
+	//	units????
+	float quaternion[4];
+	IMUgetQuaternionFloat(quaternion);
+
+	//	read accelerations and convert int -> float.
+	//	units in linear_acceleration are in m/s^2
+	long acc[3] = {0};
+	IMUgetLinearAccelWorld(acc);
+	const int SCALE_FACTOR = 65535;
+	linear_acceleration[0] = (float)acc[0] / SCALE_FACTOR;
+	linear_acceleration[1] = (float)acc[1] / SCALE_FACTOR;
+	linear_acceleration[2] = (float)acc[2] / SCALE_FACTOR;
+
+	//	TODO: rotate linear acc using the quaternion
 }

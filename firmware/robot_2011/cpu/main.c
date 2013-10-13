@@ -33,6 +33,7 @@
 
 // Last time the 5ms periodic code was executed
 unsigned int update_time;
+unsigned int imu_update_time;
 
 void (*debug_update)(void) = 0;
 
@@ -181,7 +182,7 @@ int main()
 	// Set up I2C
 	i2c_init();
 	
-#if 0
+#if 1
 	// Set up the IMU
 	if (!imu_init())
 	{
@@ -331,13 +332,20 @@ int main()
 			radio_reply();
 		}
 		
+		
+		//	update IMU
+		if ((current_time - imu_update_time) >= 1) {
+			imu_update_time = current_time;
+			// Check for new IMU data
+			imu_update();
+		}
+
+
 		// Periodic activities
 		if ((current_time - update_time) >= 5)
 		{
 			update_time = current_time;
 			
-			// Check for new IMU data
-			IMUupdateData();
 			
 			// Read ADC results
 			adc_update();
