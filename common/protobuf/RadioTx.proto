@@ -3,6 +3,26 @@ package Packet;
 // Packet going out from control program to radio program
 message RadioTx
 {
+	message Point2d
+	{
+		required float x = 1;
+		required float y = 2;
+	}
+
+	message MotionPath
+	{
+		message MotionWaypoint
+		{
+			required Point2d pos = 1;
+			required Point2d vel = 2;
+
+			optional float angle = 3;
+			optional float angVel = 4;
+		}
+
+		repeated MotionWaypoint waypoints = 1;
+	}
+
 	message Robot
 	{
 		required uint32 robot_id = 1;
@@ -19,6 +39,12 @@ message RadioTx
 		
 		optional float accel = 9;
 		optional float decel = 10;
+
+		//	measurement from the camera
+		optional Point2d position = 14;
+		optional float latency = 15;
+
+		optional MotionPath target_path = 16;
 		
 		optional bool kick_immediate = 11;
 		
