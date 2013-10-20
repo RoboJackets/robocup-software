@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
+#include <math.h>
 
 #include "timer.h"
 #include "console.h"
@@ -751,9 +752,23 @@ void cmd_imu_test(int argc, const char *argv[], void *arg)
 		
 		IMUupdateData();
 		
-		long quat[4] = {0};
-		IMUgetQuaternion(quat);
-		printf("%d %6d %6d %6d %6d\n", imu_aligned, (int)quat[0] >> 16, (int)quat[1] >> 16, (int)quat[2] >> 16, (int)quat[3] >> 16);
+		float q[4] = {0};
+		IMUgetQuaternionFloat(q);
+		// printf("Quat (x100): %6d %6d %6d %6d\n", (int)quat[0], (int)quat[1], (int)quat[2], (int)quat[3]);
+
+
+		// long int gyro[3] = {0};
+		// IMUgetGyro(gyro);
+		// printf("Gyro: (%d, %d, %d)\n", gyro[0], gyro[1], gyro[2]);
+
+
+		float a = 2.0f*(q[0]*q[3] + q[1]*q[2]);
+		float b = 1.0f - 2.0f * ( powf(q[2], 2.0f) * powf(q[3], 2.0f));
+		float z = tanf(a/b);
+		printf("Z? (x100): %6d", (int)z*100);
+
+
+		// printf("size(int)=%d, size(long)=%d, size(short)=%d\n", sizeof(int), sizeof(long), sizeof(short));
 
 		long acc[3] = {0};
 		IMUgetLinearAccelWorld(acc);
@@ -768,6 +783,8 @@ void cmd_imu_test(int argc, const char *argv[], void *arg)
 			if ( acc[i] < min ) min = acc[i];
 			if ( acc[i] > max ) max = acc[i];
 		}
+
+		const int SCALE_FACTOR = 65536;
 
 		printf("Acc (x100): (%6d, %6d, %6d)\n", (acc[0] * 100) / SCALE_FACTOR,  (acc[1] * 100) / SCALE_FACTOR,  (acc[2] * 100) / SCALE_FACTOR);
 		printf("Acc min=%6d, max=%6d\n", min, max);

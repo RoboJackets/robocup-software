@@ -396,7 +396,7 @@ static Orientation last_vision_orientation;
 static Orientation current_velocity;	//	v_x, v_y, v_angle
 
 const int REMEMBERED_ORIENTATION_COUNT;
-static Orientation past_orientations[REMEMBERED_ORIENTATION_COUNT];
+// static Orientation past_orientations[REMEMBERED_ORIENTATION_COUNT];
 
 
 static void smart_update()
@@ -511,7 +511,7 @@ const controller_info_t controllers[] =
 	{"pid", pid_init, 0, pid_update},
 	{"step", step_init, 0, step_update},
 	{"test_gyro", test_gyro_init, 0, test_gyro_update},
-	{"smart", smart_init, smart_received, smart_update}
+	{"smart", smart_init, smart_received, smart_update},
 	
 	// End of table
 	{0, 0}

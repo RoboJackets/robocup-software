@@ -37,8 +37,10 @@ flash_lds = File('%s/flash.lds' % chip).srcnode()
 arm_flash = arm.Clone()
 arm_flash.Append(LINKFLAGS='-T' + flash_lds.path)
 
+arm_flash.Append(LIBPATH='/home/justbuchanan/src/rj/robocup/software/build/firmware/build/newlib-1.19.0/arm-elf/newlib/')
+
 # --Wl,--build-id: Enable build ID to allow the code to be identified independent of git version
-arm_flash.Append(LINKFLAGS='-Wl,--build-id')
+arm_flash.Append(LINKFLAGS='-Wl,--build-id -lm')
 
 # Build programming tools
 reflasher = arm_sram.Program('tools/reflash.elf', ['tools/sram_start.S', 'tools/reflash.o'])

@@ -76,12 +76,12 @@ def BuildPackage(dir, filename, size, url, config_options):
 
 (unpack_gcc, config_gcc, build_gcc) = BuildPackage(gcc_dir, gcc_file, gcc_size, gcc_url,
 	'--target=%s --with-newlib --enable-languages="c" --disable-threads '
-	'--disable-shared --with-headers=%s/source/%s/newlib/libc/include '
+	'--disable-shared --with-headers=%s/source/%s/newlib/libc/include --with-headers=%s/source/%s/newlib/ '
 	'--enable-interwork --enable-multilib --with-system-zlib --with-mode=thumb --with-arch=armv4t' %
 	(target, Dir('.').abspath, newlib_package))
 
 (unpack_newlib, config_newlib, build_newlib) = BuildPackage(newlib_package, newlib_file, newlib_size, newlib_url,
-	'--target=%s --enable-interwork --enable-multilib' % target)
+	'--target=%s --enable-interwork --enable-multilib --enable-newlib-hw-fp' % target)
 
 # Dependencies
 Depends(config_gcc, unpack_newlib)
