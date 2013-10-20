@@ -76,7 +76,7 @@ def BuildPackage(dir, filename, size, url, config_options):
 
 (unpack_gcc, config_gcc, build_gcc) = BuildPackage(gcc_dir, gcc_file, gcc_size, gcc_url,
 	'--target=%s --with-newlib --enable-languages="c" --disable-threads '
-	'--disable-shared --with-headers=%s/source/%s/newlib/libc/include --with-headers=%s/source/%s/newlib/ '
+	'--disable-shared --with-headers=%s/source/%s/newlib/libc/include'
 	'--enable-interwork --enable-multilib --with-system-zlib --with-mode=thumb --with-arch=armv4t' %
 	(target, Dir('.').abspath, newlib_package))
 
