@@ -2,8 +2,8 @@ Import('*')
 
 e = env.Clone()
 
-# Include everything from bullet 
-e.Append(CPPPATH=['#/bullet/src', '#/bullet/Demos/OpenGL'])
+# Include bullet headers for demo code for drawing with OpenGl 
+e.Append(CPPPATH=['./bullet_opengl'])
 
 # Find uic output
 e.Append(CPPPATH='ui')
@@ -11,18 +11,21 @@ e.Append(CPPPATH='ui')
 # Include headers in this folder
 e.Append(CPPPATH='.')
 
-# Add all bullet libraries at once
-e.Append(LIBS=['bullet'])
+# bullet library search path
+e.Append(CPPPATH=['/usr/include/bullet'])
 
 # add opengl libraries
 e.Append(LIBS=[    
 	'glut',
 	'GL', 
-	'GLU'])
+	'GLU',
+	'BulletDynamics',
+	'BulletCollision',
+	'LinearMath'])
 
 # Components for the simulator
 # Note: includes visualization demo parts for now
-p1 = e.Program('simulator', [
+SRC = [
 	'simulator.cpp',
 	'SimulatorWindow.cpp',
 	'SimulatorGLUTThread.cpp',
@@ -40,7 +43,25 @@ p1 = e.Program('simulator', [
 	'physics/Field.cpp',
 	'physics/Robot.cpp',
 	'physics/RobotBallController.cpp',
-	'physics/FastTimer.cpp'])
+	'physics/FastTimer.cpp',
+
+	# code for drawing bullet shapes with OpenGL
+	'bullet_opengl/GLDebugDrawer.cpp',
+	'bullet_opengl/GL_Simplex1to4.cpp',
+	'bullet_opengl/GlutDemoApplication.cpp',
+	'bullet_opengl/DemoApplication.cpp',
+	'bullet_opengl/GL_DialogWindow.cpp',
+	'bullet_opengl/GLDebugFont.cpp',
+	'bullet_opengl/GlutStuff.cpp',
+	'bullet_opengl/GL_ShapeDrawer.cpp',
+	'bullet_opengl/RenderTexture.cpp',
+	'bullet_opengl/GL_DialogDynamicsWorld.cpp',
+	'bullet_opengl/stb_image.cpp',
+]
+
+
+p1 = e.Program('simulator', SRC)
+
 
 uics = e.Uic4([
 	'ui/SimulatorWindow.ui',

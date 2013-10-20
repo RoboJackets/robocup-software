@@ -59,7 +59,6 @@ env.Append(LIBS=['common', 'protobuf', 'pthread', 'libGL'])
 
 # Search paths for native code
 env.Append(LIBPATH=[build_dir.Dir('common')])
-env.Append(LIBPATH=[build_dir.Dir('bullet')])
 env.Append(CPPPATH=[build_dir.Dir('common')])
 
 
@@ -69,7 +68,6 @@ def do_build(dir, exports={}):
 	SConscript(dir + '/SConscript', exports=exports, variant_dir=build_dir.Dir(dir), duplicate=0)
 
 do_build('common')
-do_build('bullet')
 
 
 # Build sslrefbox with its original makefile (no dependency checking)
