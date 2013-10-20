@@ -752,23 +752,28 @@ void cmd_imu_test(int argc, const char *argv[], void *arg)
 		
 		IMUupdateData();
 		
+		//Erases the last print statements
+		int numOfLines = 6;
+		for(int i = 0; i < numOfLines; i++)
+			printf("\033[F\033[J");
+
 		float q[4] = {0};
 		IMUgetQuaternionFloat(q);
-		// printf("Quat (x100): %6d %6d %6d %6d\n", (int)quat[0], (int)quat[1], (int)quat[2], (int)quat[3]);
+		printf("Quat (x100): %6d %6d %6d %6d\n", (int)(100*q[0]), (int)(100*q[1]), (int)(100*q[2]), (int)(100*q[3]));
 
 
-		// long int gyro[3] = {0};
-		// IMUgetGyro(gyro);
-		// printf("Gyro: (%d, %d, %d)\n", gyro[0], gyro[1], gyro[2]);
+		long int gyro[3] = {0};
+		IMUgetGyro(gyro);
+		printf("Gyro: (%d, %d, %d)\n", gyro[0], gyro[1], gyro[2]);
 
 
-		float a = 2.0f*(q[0]*q[3] + q[1]*q[2]);
-		float b = 1.0f - 2.0f * ( powf(q[2], 2.0f) * powf(q[3], 2.0f));
-		// float z = tanf(a/b);
-		// printf("Z? (x100): %6d", (int)z*100);
+		//float a = 2.0f*(q[0]*q[3] + q[1]*q[2]);
+		//float b = 1.0f - 2.0f * ( powf(q[2], 2.0f) * powf(q[3], 2.0f));
+		//float z = tanf(a/b);
+		//printf("Z? (x100): %6d", (int)z*100);
 
 
-		// printf("size(int)=%d, size(long)=%d, size(short)=%d\n", sizeof(int), sizeof(long), sizeof(short));
+		printf("size(int)=%d, size(long)=%d, size(short)=%d\n", sizeof(int), sizeof(long), sizeof(short));
 
 		long acc[3] = {0};
 		IMUgetLinearAccelWorld(acc);
@@ -786,7 +791,11 @@ void cmd_imu_test(int argc, const char *argv[], void *arg)
 
 		const int SCALE_FACTOR = 65536;
 
+		printf("AccWorld (x100): (%6d, %6d, %6d)\n", (acc[0] * 100) / SCALE_FACTOR,  (acc[1] * 100) / SCALE_FACTOR,  (acc[2] * 100) / SCALE_FACTOR);
+
+		IMUgetLinearAccel(acc);
 		printf("Acc (x100): (%6d, %6d, %6d)\n", (acc[0] * 100) / SCALE_FACTOR,  (acc[1] * 100) / SCALE_FACTOR,  (acc[2] * 100) / SCALE_FACTOR);
+
 		printf("Acc min=%6d, max=%6d\n", min, max);
 	}
 	usb_rx_start();
