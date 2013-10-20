@@ -61,9 +61,6 @@ env.Append(LIBS=['common', 'protobuf', 'pthread', 'libGL'])
 env.Append(LIBPATH=[build_dir.Dir('common')])
 env.Append(CPPPATH=[build_dir.Dir('common')])
 
-# bullet library search path
-env.Append(CPPPATH=['/usr/include/bullet'])
-
 
 Export({'env': env, 'cross_32bit': False})
 
