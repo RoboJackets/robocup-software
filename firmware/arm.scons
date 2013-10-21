@@ -36,10 +36,10 @@ host_env['ENV']['MAKEFLAGS'] = '-j%d' % GetOption('num_jobs')
 # newlib_file = '%s.tar.gz' % newlib_package
 # newlib_url = '%s/%s' % (mirror_newlib, newlib_file)
 
-target = 'arm-elf'
+target = 'arm-eabi'
 
 # Build packages
-def BuildPackage(dir, config_options):
+def BuildSubmodule(dir, config_options):
 
 	# if os.path.isfile(dl_target.abspath) and os.path.getsize(dl_target.abspath) == size:
 		# File is already present and complete
@@ -48,12 +48,16 @@ def BuildPackage(dir, config_options):
 		# Need to download file
 		# dl_file = host_env.Command(dl_target, '', 'curl %s -o ${TARGET}' % url)
 
-	source_dir = Dir('external/%s' % dir)
-	build_dir = Dir('build/%s' % dir)
+	submodule_dir = Dir('#/firmware/%s' % dir)
+	build_dir = Dir('%s' % dir)
+	# mkdir_build_dir = host_env.Command(build_dir, submodule_dir, 'mkdir -p ${TARGET}')
+	# Clean(mkdir_build_dir, build_dir)
+
+	# source_dir = Dir('external/%s' % dir)
+	# build_dir = Dir('build/%s' % dir)
 
 	# These files will be created after complicated steps are completed successfully
-	config_stamp = build_dir.File('.configured')
-	build_stamp = build_dir.File('.built')
+	# config_stamp = build_dir.File('.configured')
 	
 	# Unpack the source
 	# unpack = host_env.Command(source_dir.File('.unpacked'), dl_file,
@@ -61,34 +65,48 @@ def BuildPackage(dir, config_options):
 	# Depends(unpack, dl_file)
 	# Clean(unpack, source_dir)
 	
-	# Configure in a build directory
-	configure = host_env.Command(config_stamp, source_dir,
-		'cd ${TARGET.dir} && ${SOURCE.abspath}/configure --prefix=%s %s && touch ${TARGET.file}' % (Dir('install').abspath, config_options))
-	
+	# Configure in the source dir
+	# if the config completes successfully, it will create a Makefile
+	configure = host_env.Command('%s/Makefile' % build_dir, submodule_dir,
+		'cd ${TARGET.dir} && ${SOURCE.abspath}/configure --prefix=%s %s' % (Dir('install').abspath, config_options))
+	# Depends(configure, mkdir_build_dir)
+	# Clean(configure, '%/*' % build_dir)	#FIXME: uncomment, use Glob
+
 	# Build the package
-	build = host_env.Command(build_stamp, config_stamp, 'cd ${TARGET.dir} && make && make install && touch ${TARGET.file}')
+	build_stamp = build_dir.File('.built')
+	build = host_env.Command(build_stamp, '', 'cd ${TARGET.dir} && make && make install && touch ${TARGET.file}')
 	Clean(build, build_dir)
 	Depends(build, configure)
 	
 	return build
 
 
-
-arm_binutils = BuildPackage('external/binutils',
+arm_binutils = BuildSubmodule('external/binutils',
 	'--target=%s --enable-interwork --enable-multilib --disable-werror' % target)
 
-arm_gcc = BuildPackage('external/gcc',
+arm_gcc = BuildSubmodule('external/gcc',
 	'--target=%s --with-newlib --enable-languages="c" --disable-threads '
-	'--disable-shared --with-headers=%s/source/%s/newlib/libc/include'
+	'--disable-shared --with-headers=%s/source/newlib/libc/include'
 	'--enable-interwork --enable-multilib --with-system-zlib --with-mode=thumb --with-arch=armv4t' %
-	(target, Dir('.').abspath, newlib_package))
+	(target, Dir('.').abspath))
 
-arm_newlib = BuildPackage('external/newlib',
+# (unpack_gcc, config_gcc, build_gcc) = BuildPackage(gcc_dir, gcc_file, gcc_size, gcc_url,
+# 	'--target=%s --with-newlib --enable-languages="c" --disable-threads '
+# 	'--disable-shared --with-headers=%s/source/%s/newlib/libc/include '
+# 	'--enable-interwork --enable-multilib --with-system-zlib --with-mode=thumb --with-arch=armv4t' %
+# 	(target, Dir('.').abspath, newlib_package))
+
+
+
+arm_newlib = BuildSubmodule('external/newlib',
 	'--target=%s --enable-interwork --enable-multilib --enable-newlib-hw-fp' % target)
 
 
 # Aliases to allow specific parts of the toolchain to be rebuilt/cleaned
-Alias('arm-toolchain', ['arm_binutils', 'arm_gcc', 'arm_newlib'])
+Alias('arm-binutils', arm_binutils)
+Alias('arm-newlib', arm_newlib)
+Alias('arm-gcc', arm_gcc)
+Alias('arm-toolchain', ['arm-binutils', 'arm-gcc', 'arm-newlib'])
 
 # Help('  arm-toolchain: ARM %s, %s, and %s\n' % (binutils_package, gcc_package, newlib_package))
 
