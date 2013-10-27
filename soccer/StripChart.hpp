@@ -51,7 +51,7 @@ class StripChart: public QWidget
 		StripChart(QWidget *parent = 0);
 		~StripChart();
 		
-		void history(const std::vector<boost::shared_ptr<Packet::LogFrame> > *value)
+		void history(const std::vector<std::shared_ptr<Packet::LogFrame> > *value)
 		{
 			_history = value;
 		}
@@ -95,5 +95,5 @@ class StripChart: public QWidget
 		float _maxValue;
 		QColor _color;
 		
-		const std::vector<boost::shared_ptr<Packet::LogFrame> > *_history;
+		const std::vector<std::shared_ptr<Packet::LogFrame> > *_history;
 };

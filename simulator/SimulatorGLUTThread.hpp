@@ -44,7 +44,7 @@ protected:
 	float _maxCameraDistance;
 
 public:
-	typedef boost::shared_ptr<SimulatorGLUTThread> shared_ptr;
+	typedef std::shared_ptr<SimulatorGLUTThread> shared_ptr;
 
 	/** need to pass arguments through to glut */
 	SimulatorGLUTThread(int argc, char* argv[], const QString& configFile, bool sendShared);

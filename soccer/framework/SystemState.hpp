@@ -22,8 +22,9 @@ namespace Packet
 	class LogFrame;
 }
 
-struct Ball
+class Ball
 {
+public:
 	Ball()
 	{
 		valid = false;
@@ -77,7 +78,7 @@ class SystemState
 		std::vector<OpponentRobot *> opp;
 		
 		Ball ball;
-		boost::shared_ptr<Packet::LogFrame> logFrame;
+		std::shared_ptr<Packet::LogFrame> logFrame;
 		
 		SystemState();
 		~SystemState();

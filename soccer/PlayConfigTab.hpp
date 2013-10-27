@@ -20,7 +20,7 @@ class PlayConfigTab: public QWidget
 		PlayConfigTab(QWidget *parent = 0);
 		
 		// Called after GameplayModule is created to populate the list of available plays.
-		void setup(boost::shared_ptr<Gameplay::GameplayModule> gp);
+		void setup(std::shared_ptr<Gameplay::GameplayModule> gp);
 		
 		void load(QString filename);
 		
@@ -42,7 +42,7 @@ class PlayConfigTab: public QWidget
 		
 	private:
 		Ui_PlayConfig ui;
-		boost::shared_ptr<Gameplay::GameplayModule> _gameplay;
+		std::shared_ptr<Gameplay::GameplayModule> _gameplay;
 		
 		QIcon _iconRun;
 		

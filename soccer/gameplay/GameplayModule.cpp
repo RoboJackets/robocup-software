@@ -90,13 +90,13 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_goalArea.add(ObstaclePtr(new CircleObstacle(Geometry2d::Point(-halfFlat, 0), radius)));
 	_goalArea.add(ObstaclePtr(new CircleObstacle(Geometry2d::Point(halfFlat, 0), radius)));
 
-	_ourHalf = make_shared<PolygonObstacle>();
+	_ourHalf = std::make_shared<PolygonObstacle>();
 	_ourHalf->polygon.vertices.push_back(Geometry2d::Point(-x, -Field_Border));
 	_ourHalf->polygon.vertices.push_back(Geometry2d::Point(-x, y1));
 	_ourHalf->polygon.vertices.push_back(Geometry2d::Point(x, y1));
 	_ourHalf->polygon.vertices.push_back(Geometry2d::Point(x, -Field_Border));
 
-	_opponentHalf = make_shared<PolygonObstacle>();
+	_opponentHalf = std::make_shared<PolygonObstacle>();
 	_opponentHalf->polygon.vertices.push_back(Geometry2d::Point(-x, y1));
 	_opponentHalf->polygon.vertices.push_back(Geometry2d::Point(-x, y2));
 	_opponentHalf->polygon.vertices.push_back(Geometry2d::Point(x, y2));
@@ -187,7 +187,7 @@ void Gameplay::GameplayModule::updatePlay() {
 				clearAvoidBallRadii();
 
 				_currentPlayFactory = bestPlay;
-				_currentPlay = shared_ptr<Play>(_currentPlayFactory->create(this));
+				_currentPlay = std::shared_ptr<Play>(_currentPlayFactory->create(this));
 			}
 		} else {
 			/// No usable plays
