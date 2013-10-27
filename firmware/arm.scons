@@ -38,6 +38,13 @@ host_env['ENV']['MAKEFLAGS'] = '-j%d' % GetOption('num_jobs')
 
 target = 'arm-eabi'
 
+
+# ARM build environment
+arm = host_env.Clone()
+arm.Replace(CC='clang')
+arm.Replace(CXX='clang++')
+
+
 # Build packages
 def BuildSubmodule(dir, config_options):
 
@@ -68,13 +75,13 @@ def BuildSubmodule(dir, config_options):
 	# Configure in the source dir
 	# if the config completes successfully, it will create a Makefile
 	configure = host_env.Command('%s/Makefile' % build_dir, submodule_dir,
-		'cd ${TARGET.dir} && ${SOURCE.abspath}/configure --prefix=%s %s' % (Dir('install').abspath, config_options))
+		'cd ${TARGET.dir} && CC=clang ${SOURCE.abspath}/configure --prefix=%s %s' % (Dir('install').abspath, config_options))
 	# Depends(configure, mkdir_build_dir)
 	# Clean(configure, '%/*' % build_dir)	#FIXME: uncomment, use Glob
 
 	# Build the package
 	build_stamp = build_dir.File('.built')
-	build = host_env.Command(build_stamp, '', 'cd ${TARGET.dir} && make && make install && touch ${TARGET.file}')
+	build = host_env.Command(build_stamp, '', 'cd ${TARGET.dir} && CC=clang make && make install && touch ${TARGET.file}')
 	Clean(build, build_dir)
 	Depends(build, configure)
 	
@@ -105,7 +112,6 @@ arm_newlib = BuildSubmodule('external/newlib',
 # Aliases to allow specific parts of the toolchain to be rebuilt/cleaned
 Alias('arm-binutils', arm_binutils)
 Alias('arm-newlib', arm_newlib)
-# Alias('arm-gcc', arm_gcc)
 Alias('arm-toolchain', ['arm-binutils', 'arm-newlib'])
 
 # Help('  arm-toolchain: ARM %s, %s, and %s\n' % (binutils_package, gcc_package, newlib_package))
@@ -113,11 +119,6 @@ Alias('arm-toolchain', ['arm-binutils', 'arm-newlib'])
 # To remove the installed files, you must clean all of the toolchain.
 # The packages do not provide any way to uninstall files.
 Clean('arm-toolchain', Dir('install'))
-
-# ARM build environment
-arm = host_env.Clone()
-arm.Replace(CC='clang')
-arm.Replace(CXX='clang++')
 
 
 # target triple
