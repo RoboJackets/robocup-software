@@ -44,7 +44,7 @@ class ProtobufTree: public QTreeWidget
 		void collapseSubtree(QTreeWidgetItem *item);
 		
 		// This is only used for creating charts
-		void history(const std::vector<boost::shared_ptr<Packet::LogFrame> > *value)
+		void history(const std::vector<std::shared_ptr<Packet::LogFrame> > *value)
 		{
 			_history = value;
 		}
@@ -62,5 +62,5 @@ class ProtobufTree: public QTreeWidget
 		virtual void contextMenuEvent(QContextMenuEvent *e);
 		
 		bool _first;
-		const std::vector<boost::shared_ptr<Packet::LogFrame> > *_history;
+		const std::vector<std::shared_ptr<Packet::LogFrame> > *_history;
 };

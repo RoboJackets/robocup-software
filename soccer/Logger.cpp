@@ -7,7 +7,6 @@
 #include <stdio.h>
 
 using namespace std;
-using namespace boost;
 using namespace Packet;
 using namespace google::protobuf::io;
 

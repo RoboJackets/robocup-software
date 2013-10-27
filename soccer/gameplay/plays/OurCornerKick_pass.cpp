@@ -33,11 +33,11 @@ void Gameplay::Plays::OurCornerKick_Pass::createConfiguration(Configuration *cfg
 Gameplay::Plays::OurCornerKick_Pass::OurCornerKick_Pass(GameplayModule *gameplay):
 	Play(gameplay),
 	_passer(gameplay),
-	_receiver1(gameplay),
-	_receiver2(gameplay),
 	_fullback1(gameplay, Behaviors::Fullback::Left),
 	_fullback2(gameplay, Behaviors::Fullback::Right),
+	_receiver2(gameplay),
 	_pdt(gameplay, &_passer),
+	_receiver1(gameplay),
 	_passCtxt(gameplay, &_passer)
 {
 	// _center1.target = Point(0.0, Field_Length /2.0);

@@ -24,7 +24,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me)
 {
 	Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->posF();
 	
-	shared_ptr<LogFrame> frame = currentFrame();
+	std::shared_ptr<LogFrame> frame = currentFrame();
 	if (me->button() == Qt::LeftButton && frame)
 	{
 		_dragRobot = -1;
@@ -145,7 +145,7 @@ void SimFieldView::drawTeamSpace(QPainter& p)
 	FieldView::drawTeamSpace(p);
 
 	// Simulator drag-to-shoot
-	shared_ptr<LogFrame> frame = currentFrame();
+	std::shared_ptr<LogFrame> frame = currentFrame();
 	if (_dragMode == DRAG_SHOOT && frame)
 	{
 		p.setPen(Qt::white);

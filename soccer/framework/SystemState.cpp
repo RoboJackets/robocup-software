@@ -95,8 +95,8 @@ void SystemState::drawCircle(const Geometry2d::Point& center, float radius, cons
 }
 
 void SystemState::drawObstacle(const ObstaclePtr& obs, const QColor &color, const QString &layer) {
-	boost::shared_ptr<CircleObstacle> circObs = boost::shared_dynamic_cast<CircleObstacle>(obs);
-	boost::shared_ptr<PolygonObstacle> polyObs = boost::shared_dynamic_cast<PolygonObstacle>(obs);
+	std::shared_ptr<CircleObstacle> circObs = std::dynamic_pointer_cast<CircleObstacle>(obs);
+	std::shared_ptr<PolygonObstacle> polyObs = std::dynamic_pointer_cast<PolygonObstacle>(obs);
 	if (circObs)
 		drawCircle(circObs->circle.center, circObs->circle.radius(), color, layer);
 	else if (polyObs)

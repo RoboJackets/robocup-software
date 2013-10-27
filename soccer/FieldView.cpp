@@ -42,13 +42,13 @@ FieldView::FieldView(QWidget* parent) :
 	setAutoFillBackground(true);
 }
 
-shared_ptr<LogFrame> FieldView::currentFrame()
+std::shared_ptr<LogFrame> FieldView::currentFrame()
 {
 	if (_history && !_history->empty())
 	{
 		return _history->at(0);
 	} else {
-		return shared_ptr<LogFrame>();
+		return std::shared_ptr<LogFrame>();
 	}
 }
 
@@ -66,7 +66,7 @@ void FieldView::mouseDoubleClickEvent(QMouseEvent* e)
 {
 	Geometry2d::Point pos = _worldToTeam * _screenToWorld * e->posF();
 	
-	shared_ptr<LogFrame> frame = currentFrame();
+	std::shared_ptr<LogFrame> frame = currentFrame();
 	if (e->button() == Qt::LeftButton && frame)
 	{
 		BOOST_FOREACH(const LogFrame::Robot &r, frame->self())
@@ -111,7 +111,7 @@ void FieldView::paintEvent(QPaintEvent* e)
 	}
 	
 	// Get the latest LogFrame
-	const shared_ptr<LogFrame> frame = currentFrame();
+	const std::shared_ptr<LogFrame> frame = currentFrame();
 	
 	if (!frame)
 	{
@@ -276,12 +276,12 @@ void FieldView::drawTeamSpace(QPainter& p)
 		if (path.layer() < 0 || layerVisible(path.layer()))
 		{
 			p.setPen(qcolor(path.color()));
-			QPointF pts[path.points_size()];
+			std::vector<QPointF> pts;
 			for (int i = 0; i < path.points_size(); ++i)
 			{
-				pts[i] = qpointf(path.points(i));
+				pts.push_back( qpointf(path.points(i)) );
 			}
-			p.drawPolyline(pts, path.points_size());
+			p.drawPolyline(pts.data(), pts.size());
 		}
 	}
 
@@ -320,12 +320,12 @@ void FieldView::drawTeamSpace(QPainter& p)
 			QColor color = qcolor(path.color());
 			color.setAlpha(64);
 			p.setBrush(color);
-			QPointF pts[path.points_size()];
+			std::vector<QPointF> pts;
 			for (int i = 0; i < path.points_size(); ++i)
 			{
-				pts[i] = qpointf(path.points(i));
+				pts.push_back( qpointf(path.points(i)) );
 			}
-			p.drawConvexPolygon(pts, path.points_size());
+			p.drawConvexPolygon(pts.data(), pts.size());
 		}
 	}
 	p.setBrush(Qt::NoBrush);
@@ -500,7 +500,7 @@ void FieldView::drawField(QPainter& p, const LogFrame *frame)
 		
 	// goals
 	float x[2] = {0, Field_GoalDepth};
-	float y[2] = {Field_GoalWidth/2.0, -Field_GoalWidth/2.0};
+	float y[2] = {Field_GoalWidth/2.0f, -Field_GoalWidth/2.0f};
 	
 	bool flip = frame->blue_team() ^ frame->defend_plus_x();
 	

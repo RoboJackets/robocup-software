@@ -107,7 +107,7 @@ namespace Gameplay
 			std::set<OurRobot *> _playRobots;
 			
 			/// The current play
-			boost::shared_ptr<Play> _currentPlay;
+			std::shared_ptr<Play> _currentPlay;
 			
 			/// Factory which produced the current play
 			PlayFactory *_currentPlayFactory;
@@ -120,8 +120,8 @@ namespace Gameplay
 			Geometry2d::TransformMatrix _oppMatrix;
 			
 			/// Obstacles to prevent using half the field
-			boost::shared_ptr<PolygonObstacle> _ourHalf;
-			boost::shared_ptr<PolygonObstacle> _opponentHalf;
+			std::shared_ptr<PolygonObstacle> _ourHalf;
+			std::shared_ptr<PolygonObstacle> _opponentHalf;
 			
 			ObstaclePtr _sideObstacle;
 			

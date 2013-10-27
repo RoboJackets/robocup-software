@@ -20,7 +20,7 @@ namespace Modeling
 	class RobotModel
 	{
 		public:
-			typedef boost::shared_ptr<RobotModel> shared;
+			typedef std::shared_ptr<RobotModel> shared;
 			typedef std::map<unsigned int, RobotModel::shared> RobotMap;
 
 			// observations to be added from vision

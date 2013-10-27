@@ -18,7 +18,7 @@ bool Gameplay::Plays::DemoCapture::run()
 	set<OurRobot *> available = _gameplay->playRobots();
 	assignNearest(_capture.robot, available, Geometry2d::Point());
 
-	Geometry2d::Point ballPos = ball().pos;
+	// Geometry2d::Point ballPos = ball().pos;
 
 	// if we have captured the ball, reset to keep trying to capture
 	if (_capture.done() &&  ball().valid)
