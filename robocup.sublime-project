@@ -6,7 +6,6 @@
 			"path": ".",
 			"folder_exclude_patterns": [
 				"build",
-				"bullet",
 				"site_scons",
 				"sslrefbox",
 				"downloads",

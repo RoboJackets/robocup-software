@@ -32,7 +32,7 @@ FieldView::FieldView(QWidget* parent) :
 	showRawRobots = false;
 	showRawBalls = false;
 	showCoords = false;
-	_rotate = 0;
+	_rotate = 1;
 	_history = 0;
 
 	// Green background
