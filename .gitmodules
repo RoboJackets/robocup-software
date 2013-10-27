@@ -7,6 +7,3 @@
 [submodule "firmware/external/newlib"]
 	path = firmware/external/newlib
 	url = git://sourceware.org/git/newlib.git
-[submodule "firmware/external/gcc"]
-	path = firmware/external/gcc
-	url = git://gcc.gnu.org/git/gcc.git
