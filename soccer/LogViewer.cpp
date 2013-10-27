@@ -2,7 +2,6 @@
 #include <debug.hpp>
 
 #include <google/protobuf/io/zero_copy_stream_impl.h>
-#include <boost/make_shared.hpp>
 
 #include <QApplication>
 #include <QFile>
@@ -100,7 +99,7 @@ bool LogViewer::readFrames(const char *filename)
 			return false;
 		}
 		
-		shared_ptr<LogFrame> frame = make_shared<LogFrame>();
+		std::shared_ptr<LogFrame> frame = std::make_shared<LogFrame>();
 		frames.push_back(frame);
 		// Parse partial so we can recover from corrupt data
 		if (!frame->ParsePartialFromString(str))

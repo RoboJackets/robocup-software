@@ -30,7 +30,7 @@ PlayConfigTab::PlayConfigTab(QWidget *parent):
 	_iconRun = QIcon(":/icons/running.png");
 }
 
-void PlayConfigTab::setup(boost::shared_ptr<Gameplay::GameplayModule> gp)
+void PlayConfigTab::setup(std::shared_ptr<Gameplay::GameplayModule> gp)
 {
 	_gameplay = gp;
 	

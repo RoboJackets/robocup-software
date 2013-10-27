@@ -207,7 +207,7 @@ void BallTracker::run(const vector< BallObservation >& obs, SystemState *state)
 		{
 			if (_possibleTracks[i].current && _possibleTracks[i].numFrames >= 3)
 			{
-				_ballFilter = make_shared<BallFilter>();
+				_ballFilter = std::make_shared<BallFilter>();
 				
 				// First update and prediction
 				_ballFilter->update(&_possibleTracks[i].obs);

@@ -99,12 +99,12 @@ class Processor: public QThread
 			return _blueTeam;
 		}
 		
-		boost::shared_ptr<Gameplay::GameplayModule> gameplayModule() const
+		std::shared_ptr<Gameplay::GameplayModule> gameplayModule() const
 		{
 			return _gameplayModule;
 		}
 		
-		boost::shared_ptr<RefereeModule> refereeModule() const
+		std::shared_ptr<RefereeModule> refereeModule() const
 		{
 			return _refereeModule;
 		}
@@ -249,9 +249,9 @@ class Processor: public QThread
 		QUdpSocket *_refereeSocket;
 
 		//modules
-		boost::shared_ptr<RefereeModule> _refereeModule;
-		boost::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
-		boost::shared_ptr<BallTracker> _ballTracker;
+		std::shared_ptr<RefereeModule> _refereeModule;
+		std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
+		std::shared_ptr<BallTracker> _ballTracker;
 
 		Joystick *_joystick;
 };

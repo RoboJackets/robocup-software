@@ -283,7 +283,7 @@ void MainWindow::updateViews()
 	
 	// Check if any debug layers have been added
 	// (layers should never be removed)
-	const shared_ptr<LogFrame> liveFrame = _processor->logger().lastFrame();
+	const std::shared_ptr<LogFrame> liveFrame = _processor->logger().lastFrame();
 	if (liveFrame && liveFrame->debug_layers_size() > _ui.debugLayers->count())
 	{
 		// Add the missing layers and turn them on
@@ -299,7 +299,7 @@ void MainWindow::updateViews()
 	}
 	
 	// Get the frame at the log playback time
-	const shared_ptr<LogFrame> currentFrame = _history[0];
+	const std::shared_ptr<LogFrame> currentFrame = _history[0];
 	
 	if (currentFrame)
 	{

@@ -37,7 +37,7 @@ class FieldView : public QWidget
 			}
 		}
 		
-		void history(const std::vector<boost::shared_ptr<Packet::LogFrame> > *value)
+		void history(const std::vector<std::shared_ptr<Packet::LogFrame> > *value)
 		{
 			_history = value;
 		}
@@ -70,7 +70,7 @@ class FieldView : public QWidget
 
 	protected:
 		// Returns a pointer to the most recent frame, or null if none is available.
-		boost::shared_ptr<Packet::LogFrame> currentFrame();
+		std::shared_ptr<Packet::LogFrame> currentFrame();
 		
 		// Coordinate transformations
 		Geometry2d::TransformMatrix _screenToWorld;
@@ -83,7 +83,7 @@ class FieldView : public QWidget
 		// How many degrees to rotate text so it shows up the right way on screen
 		int _textRotation;
 		
-		const std::vector<boost::shared_ptr<Packet::LogFrame> > *_history;
+		const std::vector<std::shared_ptr<Packet::LogFrame> > *_history;
 		
 		QVector<bool> _layerVisible;
 };
