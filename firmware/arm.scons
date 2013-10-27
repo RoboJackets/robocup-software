@@ -84,11 +84,11 @@ def BuildSubmodule(dir, config_options):
 arm_binutils = BuildSubmodule('external/binutils',
 	'--target=%s --enable-interwork --enable-multilib --disable-werror' % target)
 
-arm_gcc = BuildSubmodule('external/gcc',
-	'--target=%s --with-newlib --enable-languages="c" --disable-threads '
-	'--disable-shared --with-headers=%s/source/newlib/libc/include'
-	'--enable-interwork --enable-multilib --with-system-zlib --with-mode=thumb --with-arch=armv4t' %
-	(target, Dir('.').abspath))
+# arm_gcc = BuildSubmodule('external/gcc',
+# 	'--target=%s --with-newlib --enable-languages="c" --disable-threads '
+# 	'--disable-shared --with-headers=%s/source/newlib/libc/include'
+# 	'--enable-interwork --enable-multilib --with-system-zlib --with-mode=thumb --with-arch=armv4t' %
+# 	(target, Dir('.').abspath))
 
 # (unpack_gcc, config_gcc, build_gcc) = BuildPackage(gcc_dir, gcc_file, gcc_size, gcc_url,
 # 	'--target=%s --with-newlib --enable-languages="c" --disable-threads '
@@ -105,8 +105,8 @@ arm_newlib = BuildSubmodule('external/newlib',
 # Aliases to allow specific parts of the toolchain to be rebuilt/cleaned
 Alias('arm-binutils', arm_binutils)
 Alias('arm-newlib', arm_newlib)
-Alias('arm-gcc', arm_gcc)
-Alias('arm-toolchain', ['arm-binutils', 'arm-gcc', 'arm-newlib'])
+# Alias('arm-gcc', arm_gcc)
+Alias('arm-toolchain', ['arm-binutils', 'arm-newlib'])
 
 # Help('  arm-toolchain: ARM %s, %s, and %s\n' % (binutils_package, gcc_package, newlib_package))
 
@@ -116,7 +116,20 @@ Clean('arm-toolchain', Dir('install'))
 
 # ARM build environment
 arm = host_env.Clone()
-arm.Replace(CC='arm-elf-gcc')
+arm.Replace(CC='clang')
+arm.Replace(CXX='clang++')
+
+
+# target triple
+arch = 'arm'
+sub = 'v4t'
+vendor = 'atmel'
+sys = 'none'
+abi = 'eabi'
+targetFlags = '-target %s%s-%s-%s-%s' % (arch, sub, vendor, sys, abi)
+arm.Append(CPPFLAGS=targetFlags)
+arm.Append(CFLAGS=targetFlags)
+
 
 arm.Append(BUILDERS={'Binary': Builder(
 	action='arm-elf-objcopy -O binary $SOURCE $TARGET',
