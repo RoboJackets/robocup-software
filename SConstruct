@@ -61,6 +61,13 @@ env.Append(LIBS=['common', 'protobuf', 'pthread', 'libGL'])
 env.Append(LIBPATH=[build_dir.Dir('common')])
 env.Append(CPPPATH=[build_dir.Dir('common')])
 
+# use clang++ instead of g++
+# clang tends to have more friendly error messages and faster compile times
+env.Replace(CXX='clang++')
+
+# Fix to allow clang to show messages in color
+import os
+env['ENV']['TERM'] = os.environ['TERM']
 
 Export({'env': env, 'cross_32bit': False})
 

@@ -21,7 +21,7 @@ apt-get install build-essential qt4-dev-tools libboost-dev \
 	avr-libc libgmp3-dev libmpfr-dev libmpc-dev texinfo curl texinfo dfu-programmer avrdude \
 	libreadline-dev libgtest-dev autoconf libtool autopoint flex bison openocd \
   iverilog gtkwave picocom python-numpy python-matplotlib python-usb doxygen \
-  freeglut3-dev libeigen3-dev
+  freeglut3-dev libeigen3-dev libbullet-dev clang
 
 echo "-- Removing excessively old packages: if this causes a problem, kill it here and fix it yourself"
 apt-get remove python-git
