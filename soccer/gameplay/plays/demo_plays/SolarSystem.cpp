@@ -53,7 +53,7 @@ bool Gameplay::Plays::SolarSystem::run()
 
 	float radiusIncrement = .3;
 	float startRadius = 0.0001;
-	const float maxRadiusError = .05;
+	// const float maxRadiusError = .05;
 
 
 	for (unsigned int i = 0; i < robots.size(); ++i)
@@ -80,8 +80,8 @@ bool Gameplay::Plays::SolarSystem::run()
 
 		Point targetLocation = center + targetOffset;
 
-		Point errorVector = bot->pos - targetLocation;
-		float error = errorVector.mag();
+		// Point errorVector = bot->pos - targetLocation;
+		// float error = errorVector.mag();
 
 
 		if ( true ) {

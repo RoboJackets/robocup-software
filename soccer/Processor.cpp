@@ -78,9 +78,9 @@ Processor::Processor(bool sim)
 	
 	QMetaObject::connectSlotsByName(this);
 
-	_ballTracker = make_shared<BallTracker>();
-	_refereeModule = make_shared<RefereeModule>(&_state);
-	_gameplayModule = make_shared<Gameplay::GameplayModule>(&_state);
+	_ballTracker = std::make_shared<BallTracker>();
+	_refereeModule = std::make_shared<RefereeModule>(&_state);
+	_gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_state);
 }
 
 Processor::~Processor()
@@ -316,7 +316,7 @@ void Processor::run()
 		// Reset
 		
 		// Make a new log frame
-		_state.logFrame = make_shared<Packet::LogFrame>();
+		_state.logFrame = std::make_shared<Packet::LogFrame>();
 		_state.logFrame->set_command_time(startTime + Command_Latency);
 		_state.logFrame->set_use_our_half(_useOurHalf);
 		_state.logFrame->set_use_opponent_half(_useOpponentHalf);

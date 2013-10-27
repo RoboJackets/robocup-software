@@ -45,5 +45,5 @@ private:
 	};
 	std::vector<PossibleTrack> _possibleTracks;
 	
-	boost::shared_ptr<BallFilter> _ballFilter;
+	std::shared_ptr<BallFilter> _ballFilter;
 };

@@ -27,7 +27,7 @@ class LogViewer: public QMainWindow
 		// This is called when 
 		bool readFrames(const char *filename);
 		
-		std::vector<boost::shared_ptr<Packet::LogFrame> > frames;
+		std::vector<std::shared_ptr<Packet::LogFrame> > frames;
 		
 	public Q_SLOTS:
 		void updateViews();
@@ -59,7 +59,7 @@ class LogViewer: public QMainWindow
 		
 		// Recent history.
 		// Yeah, it's copied, but if it works in soccer then it works here.
-		std::vector<boost::shared_ptr<Packet::LogFrame> > _history;
+		std::vector<std::shared_ptr<Packet::LogFrame> > _history;
 		
 		// Tree items that are not in LogFrame
 		QTreeWidgetItem *_frameNumberItem;

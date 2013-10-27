@@ -6,8 +6,9 @@
  * Configuration per robot model
  * includes movement, pid, kicker and status
  */
-struct RobotConfig
+class RobotConfig
 {
+public:
 	RobotConfig(Configuration *config, QString prefix);
 	~RobotConfig();
 	
@@ -58,8 +59,9 @@ struct RobotConfig
  * Provides per-robot overrides for a robot
  * Should be updated for hardware revision
  */
-struct RobotStatus
+class RobotStatus
 {
+public:
 	RobotStatus(Configuration *config, QString prefix);
 	~RobotStatus() {}
 
