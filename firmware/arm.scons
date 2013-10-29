@@ -10,31 +10,6 @@ host_env.AppendENVPath('PATH', Dir('install/bin').abspath)
 # to build it).
 host_env['ENV']['MAKEFLAGS'] = '-j%d' % GetOption('num_jobs')
 
-# mirror_gnu = 'http://www.gtlib.gatech.edu/pub/gnu/gnu'
-# mirror_newlib = 'ftp://sources.redhat.com/pub/newlib'
-
-# Package versions and size of complete file
-# Use gcc-core to avoid downloading huge things when we're not using C++
-# binutils_package = 'binutils-2.21'
-# binutils_size = 18742991
-# gcc_version = '4.5.2'
-# gcc_package = 'gcc-' + gcc_version
-# gcc_size = 28241468
-
-# newlib_package = 'newlib-2.0.0'
-# newlib_size = 15868470
-
-# downloads_dir = Dir('#/downloads')
-
-# binutils_file = '%s.tar.bz2' % binutils_package
-# binutils_url = '%s/binutils/%s' % (mirror_gnu, binutils_file)
-
-# gcc_file = 'gcc-core-%s.tar.bz2' % gcc_version
-# gcc_dir = 'gcc-' + gcc_version
-# gcc_url = '%s/gcc/%s/%s' % (mirror_gnu, gcc_dir, gcc_file)
-
-# newlib_file = '%s.tar.gz' % newlib_package
-# newlib_url = '%s/%s' % (mirror_newlib, newlib_file)
 
 target = 'arm-eabi'
 
@@ -45,32 +20,14 @@ arm.Replace(CC='clang')
 arm.Replace(CXX='clang++')
 
 
+sysroot_dir = Dir('root')
+
 # Build packages
 def BuildSubmodule(dir, config_options):
-
-	# if os.path.isfile(dl_target.abspath) and os.path.getsize(dl_target.abspath) == size:
-		# File is already present and complete
-	# dl_file = dl_target
-	# else:
-		# Need to download file
-		# dl_file = host_env.Command(dl_target, '', 'curl %s -o ${TARGET}' % url)
-
 	submodule_dir = Dir('#/firmware/%s' % dir)
 	build_dir = Dir('%s' % dir)
 	# mkdir_build_dir = host_env.Command(build_dir, submodule_dir, 'mkdir -p ${TARGET}')
 	# Clean(mkdir_build_dir, build_dir)
-
-	# source_dir = Dir('external/%s' % dir)
-	# build_dir = Dir('build/%s' % dir)
-
-	# These files will be created after complicated steps are completed successfully
-	# config_stamp = build_dir.File('.configured')
-	
-	# Unpack the source
-	# unpack = host_env.Command(source_dir.File('.unpacked'), dl_file,
-		# 'tar -C %s -xf ${SOURCE} && touch ${TARGET}' % Dir('source').abspath)
-	# Depends(unpack, dl_file)
-	# Clean(unpack, source_dir)
 	
 	# Configure in the source dir
 	# if the config completes successfully, it will create a Makefile
@@ -103,33 +60,34 @@ arm_binutils = BuildSubmodule('external/binutils',
 # 	'--enable-interwork --enable-multilib --with-system-zlib --with-mode=thumb --with-arch=armv4t' %
 # 	(target, Dir('.').abspath, newlib_package))
 
-
-
-arm_newlib = BuildSubmodule('external/newlib',
-	'--target=%s --enable-interwork --enable-multilib --enable-newlib-hw-fp' % target)
-
-
-# Aliases to allow specific parts of the toolchain to be rebuilt/cleaned
-Alias('arm-binutils', arm_binutils)
-Alias('arm-newlib', arm_newlib)
-Alias('arm-toolchain', ['arm-binutils', 'arm-newlib'])
-
-# Help('  arm-toolchain: ARM %s, %s, and %s\n' % (binutils_package, gcc_package, newlib_package))
-
-# To remove the installed files, you must clean all of the toolchain.
-# The packages do not provide any way to uninstall files.
-Clean('arm-toolchain', Dir('install'))
-
-
 # target triple
 arch = 'arm'
 sub = 'v4t'
 vendor = 'atmel'
 sys = 'none'
 abi = 'eabi'
-targetFlags = '-target %s%s-%s-%s-%s' % (arch, sub, vendor, sys, abi)
-arm.Append(CPPFLAGS=targetFlags)
-arm.Append(CFLAGS=targetFlags)
+targetFlags = '%s%s-%s-%s-%s' % (arch, sub, vendor, sys, abi)
+
+#FIXME: Relative
+sharedFlags = '--target %s --sysroot /home/justbuchanan/src/rj/robocup/software/build/firmware/root' % targetFlags
+
+arm.Append(CPPFLAGS=sharedFlags)
+arm.Append(CFLAGS=sharedFlags)
+
+arm_newlib = BuildSubmodule('external/newlib',
+	'--target %s --enable-interwork --enable-multilib --enable-newlib-hw-fp' % targetFlags)
+
+
+# Aliases to allow specific parts of the toolchain to be rebuilt/cleaned
+Alias('arm-binutils', arm_binutils)
+Alias('arm-newlib', arm_newlib)
+Alias('arm-toolchain', ['arm-binutils'])
+
+# Help('  arm-toolchain: ARM %s, %s, and %s\n' % (binutils_package, gcc_package, newlib_package))
+
+# To remove the installed files, you must clean all of the toolchain.
+# The packages do not provide any way to uninstall files.
+Clean('arm-toolchain', Dir('install'))
 
 
 arm.Append(BUILDERS={'Binary': Builder(
