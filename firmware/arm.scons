@@ -75,7 +75,7 @@ arm.Append(CPPFLAGS=sharedFlags)
 arm.Append(CFLAGS=sharedFlags)
 
 arm_newlib = BuildSubmodule('external/newlib',
-	'--target %s --enable-interwork --enable-multilib --enable-newlib-hw-fp' % targetFlags)
+	'--target %s --enable-interwork --enable-multilib --enable-newlib-hw-fp' % target)
 
 
 # Aliases to allow specific parts of the toolchain to be rebuilt/cleaned
