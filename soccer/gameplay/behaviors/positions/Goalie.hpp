@@ -21,7 +21,7 @@ namespace Gameplay
 
 				// Takes one robot out of <available> and makes it the goalie.
 				// This will be called every frame.
-				void assign(std::set<OurRobot *> &available);
+				void assign(std::set<OurRobot *> &available, int ID);
 				
 				virtual bool run();
 
