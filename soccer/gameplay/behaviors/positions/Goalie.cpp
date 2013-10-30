@@ -47,7 +47,7 @@ void Gameplay::Behaviors::Goalie::assign(set<OurRobot *> &available, int ID) {
 		robot = NULL;
 		std::cout << "Goalie removed." << std::endl;
 	}
-	else if(robot == NULL || (robot && robot->shell() != ID) )
+	else if(ID >= 0 && ( robot == NULL || (robot && robot->shell() != ID) ) )
 	{
 		BOOST_FOREACH(OurRobot *r, available)
 		{
@@ -56,8 +56,12 @@ void Gameplay::Behaviors::Goalie::assign(set<OurRobot *> &available, int ID) {
 				robot = r;
 				available.erase(robot);
 				std::cout << "Goalie assigned to robot " << ID << std::endl;
+				return;
 			}
 		}
+		std::cout << "Could not a robot with ID = " << ID << std::endl;
+		std::cout << "Goalie removed." << std::endl;
+		robot = NULL;
 	}
 }
 
