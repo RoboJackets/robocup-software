@@ -119,7 +119,7 @@ void Gameplay::GameplayModule::createGoalie()
 {
 	if (!_goalie)
 	{
-		printf("create goalie\n");
+		printf("Creating goalie behavior.\n");
   		_goalie = new Behaviors::Goalie(this);
 	}
 }
@@ -128,7 +128,7 @@ void Gameplay::GameplayModule::removeGoalie()
 {
 	if (_goalie)
 	{
-		printf("remove goalie\n");
+		printf("Removing goalie behavior.\n");
 		delete _goalie;
 		_goalie = 0;
 	}

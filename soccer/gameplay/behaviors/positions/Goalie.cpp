@@ -59,7 +59,7 @@ void Gameplay::Behaviors::Goalie::assign(set<OurRobot *> &available, int ID) {
 				return;
 			}
 		}
-		std::cout << "Could not a robot with ID = " << ID << std::endl;
+		std::cout << "Could not find a robot with ID = " << ID << std::endl;
 		std::cout << "Goalie removed." << std::endl;
 		robot = NULL;
 	}
