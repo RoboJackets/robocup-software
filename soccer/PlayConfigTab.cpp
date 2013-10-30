@@ -113,8 +113,6 @@ void PlayConfigTab::load(QString filename)
 			}
 		}
 	}
-
-	useGoalie(foundGoalie);
 }
 
 void PlayConfigTab::enable(QString name)
@@ -127,12 +125,6 @@ void PlayConfigTab::enable(QString name)
 		// This will cause itemChanged to be emitted, which will actually enable the play.
 		i.value()->setCheckState(0, Qt::Checked);
 	}
-}
-
-void PlayConfigTab::useGoalie(bool value)
-{
-	// ensure that the button for the goalie is checked appropriately
-	ui.goalie->setChecked(value);
 }
 
 void PlayConfigTab::on_save_clicked()

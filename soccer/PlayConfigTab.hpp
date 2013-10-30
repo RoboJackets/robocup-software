@@ -25,7 +25,6 @@ class PlayConfigTab: public QWidget
 		void load(QString filename);
 		
 		void enable(QString name);
-		void useGoalie(bool value);
 		
 		// Called periodically to update controls.
 		// This is not actually called once per frame.

@@ -91,7 +91,11 @@ namespace Gameplay
 
 			void goalieID(int value)
 			{
+				if(_goalieID == -1)
+					createGoalie();
 				_goalieID = value;
+				if(_goalieID == -1)
+					removeGoalie();
 			}
 			int goalieID()
 			{
