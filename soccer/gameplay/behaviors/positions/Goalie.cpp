@@ -40,24 +40,24 @@ Gameplay::Behaviors::Goalie::~Goalie() {
 	delete _win;
 }
 
-void Gameplay::Behaviors::Goalie::assign(set<OurRobot *> &available) {
-	if (!robot) {
-		// Take the robot nearest the goal
-		assignNearestChipper(robot, available, Geometry2d::Point());
-		if(!robot)
-			assignNearest(robot, available, Geometry2d::Point());
-		if (robot) {
-			printf("Goalie: no robot, took %d\n", robot->shell());
-		} else {
-			// 			printf("Goalie: not assigned\n");
-		}
-		/*	} else if (robot && !robot->visible)
+void Gameplay::Behaviors::Goalie::assign(set<OurRobot *> &available, int ID) {
+
+	if(robot && ID < 0)
+	{
+		robot = NULL;
+		std::cout << "Goalie removed." << std::endl;
+	}
+	else if(robot == NULL || (robot && robot->shell() != ID) )
+	{
+		BOOST_FOREACH(OurRobot *r, available)
 		{
-		 //FIXME - Goalie replacement
-		 available.erase(robot);*/
-	} else {
-		// Keep the current goalie, and prevent it from being used in a play
-		available.erase(robot);
+			if(r->shell() == ID)
+			{
+				robot = r;
+				available.erase(robot);
+				std::cout << "Goalie assigned to robot " << ID << std::endl;
+			}
+		}
 	}
 }
 

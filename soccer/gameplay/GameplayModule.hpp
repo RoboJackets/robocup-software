@@ -89,6 +89,15 @@ namespace Gameplay
 
 			void clearAvoidBallRadii();
 
+			void goalieID(int value)
+			{
+				_goalieID = value;
+			}
+			int goalieID()
+			{
+				return _goalieID;
+			}
+
 			
 		private:
 			friend class Play;
@@ -148,6 +157,9 @@ namespace Gameplay
 			ObstacleGroup globalObstacles() const;
 
 			int _our_score_last_frame;
+
+			// Board ID of the robot to assign the goalie position
+			int _goalieID;
 
 	};
 }
