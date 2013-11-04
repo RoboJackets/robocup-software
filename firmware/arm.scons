@@ -11,16 +11,17 @@ host_env.AppendENVPath('PATH', Dir('install/bin').abspath)
 host_env['ENV']['MAKEFLAGS'] = '-j%d' % GetOption('num_jobs')
 
 
-target = 'arm-eabi'
-
+target = 'arm-none-eabi'
+# note: was armv4t-none-eabi
 
 # ARM build environment
 arm = host_env.Clone()
-arm.Replace(CC='clang')
-arm.Replace(CXX='clang++')
+# arm.Replace(CC='clang')
+# arm.Replace(CXX='clang++')
 
 
-sysroot_dir = Dir('root')
+install_dir = Dir('install').abspath
+
 
 # Build packages
 def BuildSubmodule(dir, config_options):
@@ -32,27 +33,46 @@ def BuildSubmodule(dir, config_options):
 	# Configure in the source dir
 	# if the config completes successfully, it will create a Makefile
 	configure = host_env.Command('%s/Makefile' % build_dir, submodule_dir,
-		'cd ${TARGET.dir} && CC=clang ${SOURCE.abspath}/configure --prefix=%s %s' % (Dir('install').abspath, config_options))
+		'cd ${TARGET.dir} && '
+		'${SOURCE.abspath}/configure --prefix=%s %s' % (install_dir, config_options))
 	# Depends(configure, mkdir_build_dir)
 	# Clean(configure, '%/*' % build_dir)	#FIXME: uncomment, use Glob
 
 	# Build the package
 	build_stamp = build_dir.File('.built')
-	build = host_env.Command(build_stamp, '', 'cd ${TARGET.dir} && CC=clang make && make install && touch ${TARGET.file}')
+	build = host_env.Command(build_stamp, '',
+		'cd ${TARGET.dir} && '
+		'make && '
+		'make install && '
+		'touch ${TARGET.file}')
 	Clean(build, build_dir)
 	Depends(build, configure)
 	
-	return build
+	return configure, build
 
 
-arm_binutils = BuildSubmodule('external/binutils',
+config_binutils, build_binutils = BuildSubmodule('external/binutils',
 	'--target=%s --enable-interwork --enable-multilib --disable-werror' % target)
 
-# arm_gcc = BuildSubmodule('external/gcc',
-# 	'--target=%s --with-newlib --enable-languages="c" --disable-threads '
-# 	'--disable-shared --with-headers=%s/source/newlib/libc/include'
-# 	'--enable-interwork --enable-multilib --with-system-zlib --with-mode=thumb --with-arch=armv4t' %
-# 	(target, Dir('.').abspath))
+# * -enable-interwork # 
+config_gcc, build_gcc = BuildSubmodule('external/gcc',
+	'--target=%s '
+	'--with-newlib '	# use newlib instead of the gnu std lib
+	'--enable-languages="c" --disable-threads '
+	'--disable-shared --with-headers=%s/source/newlib/libc/include '
+	'--enable-interwork '	# allows for assembling Thumb and ARM code mixed into the same binaries
+	'--enable-multilib --with-system-zlib' %
+	(target, Dir('.').abspath))
+# extra options:  --with-mode=thumb --with-arch=armv4t
+
+Depends(build_gcc, build_binutils)
+
+config_newlib, build_newlib = BuildSubmodule('external/newlib',
+	'--target %s --enable-interwork --enable-multilib --enable-newlib-hw-fp' % target)
+
+
+Depends(build_gcc, config_newlib)
+
 
 # (unpack_gcc, config_gcc, build_gcc) = BuildPackage(gcc_dir, gcc_file, gcc_size, gcc_url,
 # 	'--target=%s --with-newlib --enable-languages="c" --disable-threads '
@@ -61,27 +81,25 @@ arm_binutils = BuildSubmodule('external/binutils',
 # 	(target, Dir('.').abspath, newlib_package))
 
 # target triple
-arch = 'arm'
-sub = 'v4t'
-vendor = 'atmel'
-sys = 'none'
-abi = 'eabi'
-targetFlags = '%s%s-%s-%s-%s' % (arch, sub, vendor, sys, abi)
+# arch = 'arm'
+# sub = 'v4t'
+# vendor = 'atmel'
+# sys = 'none'
+# abi = 'eabi'
+# targetFlags = '%s%s-%s-%s-%s' % (arch, sub, vendor, sys, abi)
 
 #FIXME: Relative
-sharedFlags = '--target %s --sysroot /home/justbuchanan/src/rj/robocup/software/build/firmware/root' % targetFlags
+# sharedFlags = '--target %s --sysroot /home/justbuchanan/src/rj/robocup/software/build/firmware/root' % targetFlags
 
-arm.Append(CPPFLAGS=sharedFlags)
-arm.Append(CFLAGS=sharedFlags)
-
-arm_newlib = BuildSubmodule('external/newlib',
-	'--target %s --enable-interwork --enable-multilib --enable-newlib-hw-fp' % target)
+# arm.Append(CPPFLAGS=sharedFlags)
+# arm.Append(CFLAGS=sharedFlags)
 
 
 # Aliases to allow specific parts of the toolchain to be rebuilt/cleaned
-Alias('arm-binutils', arm_binutils)
-Alias('arm-newlib', arm_newlib)
-Alias('arm-toolchain', ['arm-binutils'])
+Alias('arm-binutils', build_binutils)
+Alias('arm-newlib', build_newlib)
+Alias('arm-gcc', build_gcc)
+Alias('arm-toolchain', ['arm-binutils', 'arm-newlib', 'arm-gcc'])
 
 # Help('  arm-toolchain: ARM %s, %s, and %s\n' % (binutils_package, gcc_package, newlib_package))
 
