@@ -10,7 +10,7 @@ host_env.AppendENVPath('PATH', Dir('install/bin').abspath)
 # to build it).
 host_env['ENV']['MAKEFLAGS'] = '-j%d' % GetOption('num_jobs')
 
-
+# note: eabi = Embedded Application Binary Interface
 target = 'armv4t-none-eabi'
 # note: was armv4t-none-eabi
 
@@ -20,7 +20,7 @@ arm = host_env.Clone()
 # arm.Replace(CXX='clang++')
 
 
-install_dir = Dir('install').abspath
+install_dir = Dir('install')
 
 
 # Build packages
@@ -34,7 +34,7 @@ def BuildSubmodule(dir, config_options):
 	# if the config completes successfully, it will create a Makefile
 	configure = host_env.Command('%s/Makefile' % build_dir, submodule_dir,
 		'cd ${TARGET.dir} && '
-		'${SOURCE.abspath}/configure --prefix=%s %s' % (install_dir, config_options))
+		'${SOURCE.abspath}/configure --prefix=%s %s' % (install_dir.abspath, config_options))
 	# Depends(configure, mkdir_build_dir)
 	# Clean(configure, '%/*' % build_dir)	#FIXME: uncomment, use Glob
 
@@ -61,7 +61,7 @@ gcc_config_options = ('--target=%s '
 	'--enable-languages="c" --disable-threads '
 	'--disable-shared --with-headers=%s/source/newlib/libc/include '
 	'--enable-interwork '	# allows for assembling Thumb and ARM code mixed into the same binaries
-	'--enable-multilib --with-system-zlib' %
+	'--enable-multilib --with-system-zlib --disable-libunwind-exceptions' %
 	(target, Dir('.').abspath))
 
 # config_gcc, build_gcc = BuildSubmodule('external/gcc',
@@ -78,7 +78,7 @@ gcc_submodule_dir = Dir('#/firmware/external/gcc')
 # if the config completes successfully, it will create a Makefile
 config_gcc = host_env.Command('%s/Makefile' % gcc_build_dir, gcc_submodule_dir,
 	'cd ${TARGET.dir} && '
-	'${SOURCE.abspath}/configure --prefix=%s %s' % (install_dir, gcc_config_options))
+	'${SOURCE.abspath}/configure --prefix=%s %s' % (install_dir.abspath, gcc_config_options))
 # Depends(configure, mkdir_build_dir)
 # Clean(configure, '%/*' % build_dir)	#FIXME: uncomment, use Glob
 
@@ -86,14 +86,31 @@ Depends(config_gcc, build_binutils)
 
 # Build the gcc compiler
 gcc_build_stamp = gcc_build_dir.File('.built-compiler')
-build_gcc_compiler = host_env.Command(gcc_build_stamp, '',
+compile_gcc_compiler = host_env.Command(gcc_build_stamp, '',
 	'cd ${TARGET.dir} && '
 	'make all-gcc install-gcc && '
 	# 'make install && '
 	'touch ${TARGET.file}')
-Clean(build_gcc_compiler, build_dir)
-Depends(build_gcc_compiler, config_gcc)
+Clean(compile_gcc_compiler, build_dir)
+Depends(compile_gcc_compiler, config_gcc)
+# Depends(build_gcc_compiler, compile_gcc_compiler)
 
+# for some reason, Scons looks for a compiler ending in -cc, when the build process
+# actually names it ending in -gcc, so we symlink it
+gcc_compiler_symlink_dst = install_dir.File('bin/%s-%s' % (target, 'cc')).abspath
+gcc_compiler_symlink_src = install_dir.File('bin/%s-%s' % (target, 'gcc')).abspath
+symlink_gcc_compiler = host_env.Command(gcc_compiler_symlink_dst, '', 'ln -s ${SOURCE.abspath} ${TARGET.abspath}')
+
+# FIXME: make it do `ln -s ./armv4t-none-eabi-gcc-4.8.1 ./armv4t-none-eabi-cc`
+# FIXME: make it do cd build/firmware/install/bin && ln -s ./armv4t-none-eabi-objcopy arm-elf-objcopy
+
+
+
+Depends(symlink_gcc_compiler, compile_gcc_compiler)
+
+build_gcc_compiler = symlink_gcc_compiler
+
+# Depends(build_gcc_compiler, symlink_gcc_compiler)
 
 
 
