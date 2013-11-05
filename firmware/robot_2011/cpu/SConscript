@@ -16,7 +16,7 @@ arm.Append(CFLAGS=defs + ' -g -Wall -std=gnu99')
 #
 # For some reason I can't get libgcc to build with interworking, so I changed the startup code (the only
 # code that must be ARM) to call C code while in Thumb mode, so we don't need -mthumb-interwork.
-arm.Append(CFLAGS='-Os -integrated-as')	# note: used to include -mcpu=arm7tdmi 
+arm.Append(CFLAGS='-Os')	# note: used to include -mcpu=arm7tdmi 
 
 # AT91 headers are used for both C and assembly, so a define is used to hide C-specific parts.
 arm.Append(ASFLAGS=defs + ' -D__ASSEMBLY__ -Wall')

@@ -11,7 +11,7 @@ host_env.AppendENVPath('PATH', Dir('install/bin').abspath)
 host_env['ENV']['MAKEFLAGS'] = '-j%d' % GetOption('num_jobs')
 
 
-target = 'arm-none-eabi'
+target = 'armv4t-none-eabi'
 # note: was armv4t-none-eabi
 
 # ARM build environment
@@ -54,24 +54,75 @@ def BuildSubmodule(dir, config_options):
 config_binutils, build_binutils = BuildSubmodule('external/binutils',
 	'--target=%s --enable-interwork --enable-multilib --disable-werror' % target)
 
-# * -enable-interwork # 
-config_gcc, build_gcc = BuildSubmodule('external/gcc',
-	'--target=%s '
+
+
+gcc_config_options = ('--target=%s '
 	'--with-newlib '	# use newlib instead of the gnu std lib
 	'--enable-languages="c" --disable-threads '
 	'--disable-shared --with-headers=%s/source/newlib/libc/include '
 	'--enable-interwork '	# allows for assembling Thumb and ARM code mixed into the same binaries
 	'--enable-multilib --with-system-zlib' %
 	(target, Dir('.').abspath))
-# extra options:  --with-mode=thumb --with-arch=armv4t
 
-Depends(build_gcc, build_binutils)
+# config_gcc, build_gcc = BuildSubmodule('external/gcc',
+
+
+
+gcc_src_dir = Dir('#/firmware/%s' % 'external/gcc')
+gcc_build_dir = Dir('%s' % 'external/gcc')
+gcc_submodule_dir = Dir('#/firmware/external/gcc')
+# mkdir_build_dir = host_env.Command(build_dir, submodule_dir, 'mkdir -p ${TARGET}')
+# Clean(mkdir_build_dir, build_dir)
+
+# Configure in the source dir
+# if the config completes successfully, it will create a Makefile
+config_gcc = host_env.Command('%s/Makefile' % gcc_build_dir, gcc_submodule_dir,
+	'cd ${TARGET.dir} && '
+	'${SOURCE.abspath}/configure --prefix=%s %s' % (install_dir, gcc_config_options))
+# Depends(configure, mkdir_build_dir)
+# Clean(configure, '%/*' % build_dir)	#FIXME: uncomment, use Glob
+
+Depends(config_gcc, build_binutils)
+
+# Build the gcc compiler
+gcc_build_stamp = gcc_build_dir.File('.built-compiler')
+build_gcc_compiler = host_env.Command(gcc_build_stamp, '',
+	'cd ${TARGET.dir} && '
+	'make all-gcc install-gcc && '
+	# 'make install && '
+	'touch ${TARGET.file}')
+Clean(build_gcc_compiler, build_dir)
+Depends(build_gcc_compiler, config_gcc)
+
+
+
 
 config_newlib, build_newlib = BuildSubmodule('external/newlib',
 	'--target %s --enable-interwork --enable-multilib --enable-newlib-hw-fp' % target)
+# Depends(build_gcc, config_newlib)
+
+Depends(build_newlib, build_gcc_compiler)
+
+build_gcc_all = host_env.Command(gcc_build_dir.File('.built-all'), '', 
+	'cd ${TARGET.dir} && '
+	'make all install && '
+	'touch ${TARGET.file}')
+Depends(build_gcc_all, build_newlib)
 
 
-Depends(build_gcc, config_newlib)
+Alias('build-gcc', build_gcc_compiler)
+Alias('build-newlib', build_newlib)
+Alias('build-binutils', build_binutils)
+Alias('build-all-gcc', build_gcc_all)
+
+
+# extra options:  --with-mode=thumb --with-arch=armv4t
+
+# Depends(build_gcc, build_binutils)
+
+
+
+
 
 
 # (unpack_gcc, config_gcc, build_gcc) = BuildPackage(gcc_dir, gcc_file, gcc_size, gcc_url,
@@ -98,7 +149,7 @@ Depends(build_gcc, config_newlib)
 # Aliases to allow specific parts of the toolchain to be rebuilt/cleaned
 Alias('arm-binutils', build_binutils)
 Alias('arm-newlib', build_newlib)
-Alias('arm-gcc', build_gcc)
+Alias('arm-gcc', build_gcc_all)
 Alias('arm-toolchain', ['arm-binutils', 'arm-newlib', 'arm-gcc'])
 
 # Help('  arm-toolchain: ARM %s, %s, and %s\n' % (binutils_package, gcc_package, newlib_package))
