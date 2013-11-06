@@ -101,6 +101,8 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_opponentHalf->polygon.vertices.push_back(Geometry2d::Point(-x, y2));
 	_opponentHalf->polygon.vertices.push_back(Geometry2d::Point(x, y2));
 	_opponentHalf->polygon.vertices.push_back(Geometry2d::Point(x, y1));
+
+	_goalieID = -1;
 }
 
 Gameplay::GameplayModule::~GameplayModule()
@@ -117,7 +119,7 @@ void Gameplay::GameplayModule::createGoalie()
 {
 	if (!_goalie)
 	{
-		printf("create goalie\n");
+		printf("Creating goalie behavior.\n");
   		_goalie = new Behaviors::Goalie(this);
 	}
 }
@@ -126,7 +128,7 @@ void Gameplay::GameplayModule::removeGoalie()
 {
 	if (_goalie)
 	{
-		printf("remove goalie\n");
+		printf("Removing goalie behavior.\n");
 		delete _goalie;
 		_goalie = 0;
 	}
@@ -270,7 +272,7 @@ void Gameplay::GameplayModule::run()
 		/// (no changing goalies at random times).
 		/// The goalie behavior has priority for choosing robots because it must obey this rule,
 		/// so the current play will be restarted in case the goalie stole one of its robots.
-		_goalie->assign(_playRobots);
+		_goalie->assign(_playRobots, _goalieID);
 	}
 	
 #if 0

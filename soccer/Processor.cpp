@@ -110,6 +110,18 @@ void Processor::manualID(int value)
 	_joystick->reset();
 }
 
+void Processor::goalieID(int value)
+{
+	QMutexLocker locker(&_loopMutex);
+	_gameplayModule->goalieID(value);
+}
+
+int Processor::goalieID()
+{
+	QMutexLocker locker(&_loopMutex);
+	return _gameplayModule->goalieID();
+}
+
 void Processor::dampedRotation(bool value)
 {
 	QMutexLocker locker(&_loopMutex);

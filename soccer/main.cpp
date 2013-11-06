@@ -282,8 +282,6 @@ int main (int argc, char* argv[])
 		win->playConfigTab()->enable(str);
 	}
 	
-	win->playConfigTab()->useGoalie(goalie);
-	
 	if (!QDir("logs").exists())
 	{
 		fprintf(stderr, "No logs/ directory - not writing log file\n");

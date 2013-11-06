@@ -81,6 +81,7 @@ class MainWindow : public QMainWindow
 		void on_actionTeamYellow_triggered();
 		void on_actionTeamBlue_triggered();
 		void on_manualID_currentIndexChanged(int value);
+		void on_goalieID_currentIndexChanged(int value);
 		
 		/// Field side
 		void on_actionDefendPlusX_triggered();
