@@ -16,7 +16,7 @@ cp -f $BASE/util/robocup.rules /etc/udev/rules.d/
 
 echo "-- Installing required packages"
 # install all of the packages listed in required_packages.txt
-sed 's/#.*//;/^$/d' $BASE/util/required_packages.txt | xargs apt-get install
+apt-get install $(sed 's/#.*//;/^$/d' $BASE/util/required_packages.txt)
 
 echo "-- Removing excessively old packages: if this causes a problem, kill it here and fix it yourself"
 apt-get remove python-git
