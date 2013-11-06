@@ -90,6 +90,9 @@ class Processor: public QThread
 			return _manualID;
 		}
 		
+		void goalieID(int value);
+		int goalieID();
+
 		void dampedRotation(bool value);
 		void dampedTranslation(bool value);
 
@@ -229,7 +232,7 @@ class Processor: public QThread
 		
 		// Board ID of the robot to manually control or -1 if none
 		int _manualID;
-		
+
 		bool _defendPlusX;
 		
 		// Processing period in microseconds

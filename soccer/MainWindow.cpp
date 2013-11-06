@@ -135,6 +135,8 @@ MainWindow::MainWindow(QWidget *parent):
 	_ui.splitter->setStretchFactor(0, 98);
 	_ui.splitter->setStretchFactor(1, 10);
 	
+	connect(_ui.manualID, SIGNAL(currentIndexChanged(int)), this, SLOT(on_goalieID_currentIndexChanged(int)));
+
 	channel(0);
 
 	updateTimer.setSingleShot(true);
@@ -772,6 +774,11 @@ void MainWindow::on_manualID_currentIndexChanged(int value)
 			_quaternion_demo->initialized = false;
 		}
 	}
+}
+
+void MainWindow::on_goalieID_currentIndexChanged(int value)
+{
+	_processor->goalieID(value - 1);
 }
 
 ////////
