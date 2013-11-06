@@ -98,13 +98,12 @@ Depends(compile_gcc_compiler, config_gcc)
 # for some reason, Scons looks for a compiler ending in -cc, when the build process
 # actually names it ending in -gcc, so we symlink it
 gcc_compiler_symlink_dst = install_dir.File('bin/%s-%s' % (target, 'cc')).abspath
-gcc_compiler_symlink_src = install_dir.File('bin/%s-%s' % (target, 'gcc')).abspath
-symlink_gcc_compiler = host_env.Command(gcc_compiler_symlink_dst, '', 'ln -s ${SOURCE.abspath} ${TARGET.abspath}')
-
-# FIXME: make it do `ln -s ./armv4t-none-eabi-gcc-4.8.1 ./armv4t-none-eabi-cc`
-# FIXME: make it do cd build/firmware/install/bin && ln -s ./armv4t-none-eabi-objcopy arm-elf-objcopy
-
-
+# gcc_compiler_symlink_src = install_dir.File('bin/%s-%s' % (target, 'gcc')).abspath
+symlink_gcc_compiler = host_env.Command(gcc_compiler_symlink_dst, '',
+	'cd ${TARGET.dir} && '
+	'ln -s ./armv4t-none-eabi-gcc-4.8.1 ./armv4t-none-eabi-cc && '
+	'ln -s ./armv4t-none-eabi-objcopy ./arm-elf-objcopy')
+#FIXME: do the above symlinking correctly...
 
 Depends(symlink_gcc_compiler, compile_gcc_compiler)
 
