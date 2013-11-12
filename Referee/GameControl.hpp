@@ -1,5 +1,4 @@
-#ifndef _GAME_CONTROL_HPP
-#define _GAME_CONTROL_HPP
+#pragma once
 
 #include "GameInfo.hpp"
 #include "Serial.hpp"
@@ -270,5 +269,3 @@ class  GameControl {
         /** incremented if a new command was sent */
         unsigned int _lastCommandCounter;    
 };
-
-#endif /*_GAME_CONTROL_HPP_*/

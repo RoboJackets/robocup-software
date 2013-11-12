@@ -1,5 +1,4 @@
-#ifndef _UDP_BROADCAST_HPP
-#define _UDP_BROADCAST_HPP
+#pragma once
 
 #include <stdint.h>
 #include <string>
@@ -45,5 +44,3 @@ class UDP_Broadcast
 		/** sock used for socket creation */
 		int sock;
 };
-
-#endif /*_UDP_BROADCAST_HPP_*/

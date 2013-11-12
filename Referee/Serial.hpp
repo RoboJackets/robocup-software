@@ -1,5 +1,4 @@
-#ifndef _SERIAL_HPP
-#define _SERIAL_HPP
+#pragma once
 
 #include <cstdlib>
 #include <cstdio>
@@ -44,5 +43,3 @@ class Serial
 		int _fileDescriptor;
   	
 };
-
-#endif /*_SERIAL_HPP*/

@@ -1,5 +1,4 @@
-#ifndef COMMANDS_HPP
-#define COMMANDS_HPP
+#pragma once
 
 /* Baud rate */
 #define COMM_BAUD_RATE		   	9600
@@ -57,5 +56,3 @@
 
 // acceptable referee commands
 #define COMM_CMD_STRING      	"iIfFpPkKnrRyYdDgGcztTaoO2h1 HsS"
-
-#endif /*COMMANDS_HPP_*/
