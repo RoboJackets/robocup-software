@@ -30,11 +30,6 @@ SRC = [
 	'SimulatorWindow.cpp',
 	'SimulatorGLUTThread.cpp',
 	'RobotTableModel.cpp',
-	#'rendering/SimRenderView.cpp',
-	#'rendering/Patch.cpp',
-	#'rendering/Geometry.cpp',
-	#'rendering/Primitives.cpp',
-	#'rendering/VizObject.cpp',
 	'physics/GlutCamera.cpp',
 	'physics/SimEngine.cpp',
 	'physics/Environment.cpp',
@@ -72,4 +67,3 @@ e.Depends(p1, uics)
 # Simulator executable
 Default(e.Install(exec_dir, p1))
 Help('simulator: Provides simulation of SSL robots, using Bullet Physics\n')
-
