@@ -1,6 +1,6 @@
 #include "CatPassDemo.hpp"
-#include <gameplay/tactics/StablePass.hpp>
-#include <gameplay/tactics/DumbReceive.hpp>
+#include <gameplay/tactics/passing/StablePass.hpp>
+#include <gameplay/tactics/passing/DumbReceive.hpp>
 #include <iostream>
 
 #include <boost/foreach.hpp>

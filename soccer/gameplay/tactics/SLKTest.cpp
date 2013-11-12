@@ -1,6 +1,6 @@
 #include "SLKTest.hpp"
 #include <gameplay/tactics/StableLineKick.hpp>
-#include <gameplay/tactics/PassReceiver.hpp>
+#include <gameplay/tactics/passing/PassReceiver.hpp>
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::SLKTest, "Test")
 

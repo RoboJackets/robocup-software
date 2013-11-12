@@ -1,7 +1,7 @@
 #pragma once
 
-#include <gameplay/tactics/ActionBehavior.hpp>
-#include "../../Timeout.hpp"
+#include <gameplay/ActionBehavior.hpp>
+#include <Timeout.hpp>
 
 namespace Gameplay
 {

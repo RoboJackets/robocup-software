@@ -5,6 +5,8 @@
 namespace Gameplay
 {
 
+//	TODO: consider eliminating this class and putting its functionality into Action
+//	or some other Behavior class
 class ActionBehavior : public SingleRobotBehavior
 {
 public:

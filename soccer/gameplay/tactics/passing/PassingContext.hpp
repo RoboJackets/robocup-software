@@ -1,8 +1,8 @@
 
 #pragma once
 
-#include <gameplay/tactics/DumbReceive.hpp>
-#include <gameplay/tactics/StablePass.hpp>
+#include <gameplay/tactics/passing/DumbReceive.hpp>
+#include <gameplay/tactics/passing/StablePass.hpp>
 #include <gameplay/PreventDoubleTouch.hpp>
 #include <Geometry2d/Segment.hpp>
 

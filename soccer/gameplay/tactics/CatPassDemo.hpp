@@ -1,8 +1,8 @@
 #pragma once
 
 #include <gameplay/Play.hpp>
-#include <gameplay/tactics/ActionBehavior.hpp>
-#include <gameplay/tactics/PassReceiveTactic.hpp>
+#include <gameplay/ActionBehavior.hpp>
+#include <gameplay/tactics/passing/PassReceiveTactic.hpp>
 
 namespace Gameplay
 {

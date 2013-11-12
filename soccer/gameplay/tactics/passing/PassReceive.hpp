@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Behavior.hpp"
-#include "Kick.hpp"
+#include <gameplay/Behavior.hpp>
+#include <gameplay/behaviors/Kick.hpp>
 
 namespace Gameplay
 {
