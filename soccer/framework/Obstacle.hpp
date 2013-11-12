@@ -9,8 +9,7 @@
 
 #include <vector>
 #include <set>
-
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 /**
  * Obstacle class handles collision detection

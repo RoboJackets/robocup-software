@@ -8,7 +8,6 @@
 #include <QMutex>
 #include <QString>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 
 class OurRobot;

@@ -23,12 +23,12 @@
 
 #include <protobuf/LogFrame.pb.h>
 
-#include <boost/shared_ptr.hpp>
 #include <QString>
 #include <QMutexLocker>
 #include <QMutex>
 #include <vector>
 #include <algorithm>
+#include <memory>
 
 class Logger
 {
