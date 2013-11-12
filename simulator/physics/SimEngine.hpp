@@ -73,4 +73,3 @@ public:
 
 	void addVehicle(btActionInterface* vehicle);
 };
-
