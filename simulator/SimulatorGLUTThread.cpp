@@ -446,7 +446,3 @@ void SimulatorGLUTThread::showVehicleInfo(int& xOffset,int& yStart, int yIncr)
 	yStart += yIncr;
 
 }
-
-
-
-

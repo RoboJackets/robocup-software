@@ -53,6 +53,3 @@ public:
 private:
 	RobotIDMap _yellow, _blue;
 };
-
-
-

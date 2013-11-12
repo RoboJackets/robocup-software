@@ -61,9 +61,8 @@ void Robot::initPhysics(const bool& blue)
 	// Create robot chassis
 	btConvexHullShape* convexShape = new btConvexHullShape();
 	int numPoints = 50;
-	float PI = 3.14159265;
 	float mrad = asin((Sim_Robot_MouthWidth/2.f)/Sim_Robot_Radius); //angle from mouth center to corner
-	float rad_incr = 2*(PI-mrad)/(float)numPoints;
+	float rad_incr = 2*(M_PI-mrad)/(float)numPoints;
 	float angle = mrad;
 	for(int i=0; i<=numPoints; i++){
 		//top and bottom points at angle around shell
@@ -85,7 +84,7 @@ void Robot::initPhysics(const bool& blue)
 
 	// Init spawn location of robot in engine WS
 	if(blue)
-		_startTransform.setRotation(btQuaternion(btVector3(0,1,0),PI));
+		_startTransform.setRotation(btQuaternion(btVector3(0,1,0),M_PI));
 	float connectionHeight = -0.01f*scaling;//Wheel connection height
 	btVector3 robotCenter = btVector3(0, Sim_Robot_Height/2.f-connectionHeight, 0);
 	_startTransform.setOrigin(robotCenter+_startTransform.getOrigin());
@@ -122,23 +121,23 @@ void Robot::initPhysics(const bool& blue)
 		btVector3 connectPoint = btVector3(0,connectionHeight,Sim_Robot_Radius-Sim_Wheel_Width/2.f);
 		btVector3 forward = btVector3(0,0,1.0);
 		//FL
-		btVector3 connectionPointCS0 = connectPoint.rotate(btVector3(0,1,0),PI/4.f*1);
-		wheelAxleCS = forward.rotate(btVector3(0,1,0), PI/4.f*1);
+		btVector3 connectionPointCS0 = connectPoint.rotate(btVector3(0,1,0),M_PI/4.f*1);
+		wheelAxleCS = forward.rotate(btVector3(0,1,0), M_PI/4.f*1);
 		_robotVehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS,
 				suspensionRestLength, Sim_Wheel_Radius, _tuning, isFrontWheel);
 		//FR
-		connectionPointCS0 = connectPoint.rotate(btVector3(0,1,0),PI/4.f*-1);
-		wheelAxleCS = forward.rotate(btVector3(0,1,0), PI/4.f*-1);
+		connectionPointCS0 = connectPoint.rotate(btVector3(0,1,0),M_PI/4.f*-1);
+		wheelAxleCS = forward.rotate(btVector3(0,1,0), M_PI/4.f*-1);
 		_robotVehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS,
 				suspensionRestLength, Sim_Wheel_Radius, _tuning, isFrontWheel);
 		//BR
-		connectionPointCS0 = connectPoint.rotate(btVector3(0,1,0),PI/4.f*5);
-				wheelAxleCS = forward.rotate(btVector3(0,1,0), PI/4.f*5);
+		connectionPointCS0 = connectPoint.rotate(btVector3(0,1,0),M_PI/4.f*5);
+				wheelAxleCS = forward.rotate(btVector3(0,1,0), M_PI/4.f*5);
 		isFrontWheel = false;
 		_robotVehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS ,
 				suspensionRestLength, Sim_Wheel_Radius, _tuning, isFrontWheel);
 		//BL
-		connectionPointCS0 = connectPoint.rotate(btVector3(0,1,0),PI/4.f*3);
+		connectionPointCS0 = connectPoint.rotate(btVector3(0,1,0),M_PI/4.f*3);
 				wheelAxleCS = forward.rotate(btVector3(0,1,0), 3.141/4.f*3);
 		_robotVehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS,
 				suspensionRestLength, Sim_Wheel_Radius, _tuning, isFrontWheel);

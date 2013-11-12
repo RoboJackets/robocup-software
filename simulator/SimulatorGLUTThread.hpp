@@ -104,7 +104,3 @@ public:
 			btAlignedObjectArray<btCollisionShape*>& m_collisionShapes);
 
 }; // \class SimulatorGLUTThread
-
-
-
-
