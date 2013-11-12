@@ -23,7 +23,7 @@ doxygen
 libeigen3-dev
 
 # Bullet physics library - used in the robocup simulator
-libbullet-dev
+libbullet-dev=2.81-1~getdeb1
 
 # C/C++ compiler
 # tends to be faster and have more helpful error messages than gcc
