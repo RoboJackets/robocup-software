@@ -57,6 +57,9 @@ protected:
 
 	virtual void removePickingConstraint();
 
+	virtual void pickObject(const btVector3& pickPos, const class btCollisionObject* hitObj);
+
+
 	btCollisionShape*	m_shootBoxShape;
 
 	float	m_cameraDistance;
@@ -148,6 +151,11 @@ public:
 	void	setAzi(float azi)
 	{
 		m_azi = azi;
+	}
+
+	void	setEle(float ele)
+	{
+		m_ele = ele;
 	}
 	
 	void	setCameraUp(const btVector3& camUp)

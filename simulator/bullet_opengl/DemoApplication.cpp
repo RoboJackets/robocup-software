@@ -33,7 +33,7 @@ subject to the following restrictions:
 #include "LinearMath/btSerializer.h"
 #include "GLDebugFont.h"
 
-static bool use6Dof = false;
+
 extern bool gDisableDeactivation;
 int numObjects = 0;
 const int maxNumObjects = 16384;
@@ -326,6 +326,25 @@ void DemoApplication::keyboardCallback(unsigned char key, int x, int y)
 
 	switch (key) 
 	{
+	case 8:
+		{
+			int numObj = getDynamicsWorld()->getNumCollisionObjects();
+			if (numObj)
+			{
+				btCollisionObject* obj = getDynamicsWorld()->getCollisionObjectArray()[numObj-1];
+
+				getDynamicsWorld()->removeCollisionObject(obj);
+				btRigidBody* body = btRigidBody::upcast(obj);
+				if (body && body->getMotionState())
+				{
+					delete body->getMotionState();					
+				}
+				delete obj;
+
+
+			}
+			break;
+		}
 	case 'q' : 
 #ifdef BT_USE_FREEGLUT
 		//return from glutMainLoop(), detect memory leaks etc.
@@ -534,8 +553,8 @@ void	DemoApplication::setShootBoxShape ()
 {
 	if (!m_shootBoxShape)
 	{
-		btBoxShape* box = new btBoxShape(btVector3(.5f,.5f,.5f));
-		box->initializePolyhedralFeatures();
+		btBoxShape* box = new btBoxShape(btVector3(0.5,0.5,0.5));
+      //  box->initializePolyhedralFeatures();
 		m_shootBoxShape = box;
 	}
 }
@@ -566,7 +585,7 @@ void	DemoApplication::shootBox(const btVector3& destination)
 		body->setLinearVelocity(linVel);
 		body->setAngularVelocity(btVector3(0,0,0));
 		body->setCcdMotionThreshold(0.5);
-		body->setCcdSweptSphereRadius(0.9f);
+		body->setCcdSweptSphereRadius(0.4f);//value should be smaller (embedded) than the half extends of the box (see ::setShootBoxShape)
 //		printf("shootBox uid=%d\n", body->getBroadphaseHandle()->getUid());
 //		printf("camPos=%f,%f,%f\n",camPos.getX(),camPos.getY(),camPos.getZ());
 //		printf("destination=%f,%f,%f\n",destination.getX(),destination.getY(),destination.getZ());
@@ -578,7 +597,7 @@ void	DemoApplication::shootBox(const btVector3& destination)
 int gPickingConstraintId = 0;
 btVector3 gOldPickingPos;
 btVector3 gHitPos(-1,-1,-1);
-float gOldPickingDist  = 0.f;
+btScalar gOldPickingDist  = 0.f;
 btRigidBody* pickedBody = 0;//for deactivation state
 
 
@@ -754,83 +773,14 @@ void DemoApplication::mouseFunc(int button, int state, int x, int y)
 					if (rayCallback.hasHit())
 					{
 
+						btVector3 pickPos = rayCallback.m_hitPointWorld;
+						
+						pickObject(pickPos, rayCallback.m_collisionObject);
+						
+						gOldPickingPos = rayTo;
+						gHitPos = pickPos;
 
-						btRigidBody* body = const_cast<btRigidBody*>(btRigidBody::upcast(rayCallback.m_collisionObject));
-						if (body)
-						{
-							//other exclusions?
-							if (!(body->isStaticObject() || body->isKinematicObject()))
-							{
-								pickedBody = body;
-								pickedBody->setActivationState(DISABLE_DEACTIVATION);
-
-
-								btVector3 pickPos = rayCallback.m_hitPointWorld;
-								//printf("pickPos=%f,%f,%f\n",pickPos.getX(),pickPos.getY(),pickPos.getZ());
-
-
-								btVector3 localPivot = body->getCenterOfMassTransform().inverse() * pickPos;
-
-								
-
-								
-
-
-								if (use6Dof)
-								{
-									btTransform tr;
-									tr.setIdentity();
-									tr.setOrigin(localPivot);
-									btGeneric6DofConstraint* dof6 = new btGeneric6DofConstraint(*body, tr,false);
-									dof6->setLinearLowerLimit(btVector3(0,0,0));
-									dof6->setLinearUpperLimit(btVector3(0,0,0));
-									dof6->setAngularLowerLimit(btVector3(0,0,0));
-									dof6->setAngularUpperLimit(btVector3(0,0,0));
-
-									m_dynamicsWorld->addConstraint(dof6);
-									m_pickConstraint = dof6;
-
-									dof6->setParam(BT_CONSTRAINT_STOP_CFM,0.8,0);
-									dof6->setParam(BT_CONSTRAINT_STOP_CFM,0.8,1);
-									dof6->setParam(BT_CONSTRAINT_STOP_CFM,0.8,2);
-									dof6->setParam(BT_CONSTRAINT_STOP_CFM,0.8,3);
-									dof6->setParam(BT_CONSTRAINT_STOP_CFM,0.8,4);
-									dof6->setParam(BT_CONSTRAINT_STOP_CFM,0.8,5);
-
-									dof6->setParam(BT_CONSTRAINT_STOP_ERP,0.1,0);
-									dof6->setParam(BT_CONSTRAINT_STOP_ERP,0.1,1);
-									dof6->setParam(BT_CONSTRAINT_STOP_ERP,0.1,2);
-									dof6->setParam(BT_CONSTRAINT_STOP_ERP,0.1,3);
-									dof6->setParam(BT_CONSTRAINT_STOP_ERP,0.1,4);
-									dof6->setParam(BT_CONSTRAINT_STOP_ERP,0.1,5);
-								} else
-								{
-									btPoint2PointConstraint* p2p = new btPoint2PointConstraint(*body,localPivot);
-									m_dynamicsWorld->addConstraint(p2p);
-									m_pickConstraint = p2p;
-									p2p->m_setting.m_impulseClamp = mousePickClamping;
-									//very weak constraint for picking
-									p2p->m_setting.m_tau = 0.001f;
-/*
-									p2p->setParam(BT_CONSTRAINT_CFM,0.8,0);
-									p2p->setParam(BT_CONSTRAINT_CFM,0.8,1);
-									p2p->setParam(BT_CONSTRAINT_CFM,0.8,2);
-									p2p->setParam(BT_CONSTRAINT_ERP,0.1,0);
-									p2p->setParam(BT_CONSTRAINT_ERP,0.1,1);
-									p2p->setParam(BT_CONSTRAINT_ERP,0.1,2);
-									*/
-									
-
-								}
-								use6Dof = !use6Dof;
-
-								//save mouse position for dragging
-								gOldPickingPos = rayTo;
-								gHitPos = pickPos;
-
-								gOldPickingDist  = (pickPos-rayFrom).length();
-							}
-						}
+						gOldPickingDist  = (pickPos-rayFrom).length();
 					}
 				}
 
@@ -847,6 +797,78 @@ void DemoApplication::mouseFunc(int button, int state, int x, int y)
 		}
 	}
 
+}
+
+void DemoApplication::pickObject(const btVector3& pickPos, const btCollisionObject* hitObj)
+{
+	
+	btRigidBody* body = (btRigidBody*)btRigidBody::upcast(hitObj);
+	if (body)
+	{
+		//other exclusions?
+		if (!(body->isStaticObject() || body->isKinematicObject()))
+		{
+			pickedBody = body;
+			pickedBody->setActivationState(DISABLE_DEACTIVATION);
+
+
+			//printf("pickPos=%f,%f,%f\n",pickPos.getX(),pickPos.getY(),pickPos.getZ());
+
+
+			btVector3 localPivot = body->getCenterOfMassTransform().inverse() * pickPos;
+
+			if ((m_modifierKeys& BT_ACTIVE_SHIFT)!=0)
+			{
+				btTransform tr;
+				tr.setIdentity();
+				tr.setOrigin(localPivot);
+				btGeneric6DofConstraint* dof6 = new btGeneric6DofConstraint(*body, tr,false);
+				dof6->setLinearLowerLimit(btVector3(0,0,0));
+				dof6->setLinearUpperLimit(btVector3(0,0,0));
+				dof6->setAngularLowerLimit(btVector3(0,0,0));
+				dof6->setAngularUpperLimit(btVector3(0,0,0));
+
+				m_dynamicsWorld->addConstraint(dof6,true);
+				m_pickConstraint = dof6;
+
+				dof6->setParam(BT_CONSTRAINT_STOP_CFM,0.8,0);
+				dof6->setParam(BT_CONSTRAINT_STOP_CFM,0.8,1);
+				dof6->setParam(BT_CONSTRAINT_STOP_CFM,0.8,2);
+				dof6->setParam(BT_CONSTRAINT_STOP_CFM,0.8,3);
+				dof6->setParam(BT_CONSTRAINT_STOP_CFM,0.8,4);
+				dof6->setParam(BT_CONSTRAINT_STOP_CFM,0.8,5);
+
+				dof6->setParam(BT_CONSTRAINT_STOP_ERP,0.1,0);
+				dof6->setParam(BT_CONSTRAINT_STOP_ERP,0.1,1);
+				dof6->setParam(BT_CONSTRAINT_STOP_ERP,0.1,2);
+				dof6->setParam(BT_CONSTRAINT_STOP_ERP,0.1,3);
+				dof6->setParam(BT_CONSTRAINT_STOP_ERP,0.1,4);
+				dof6->setParam(BT_CONSTRAINT_STOP_ERP,0.1,5);
+			} else
+			{
+				btPoint2PointConstraint* p2p = new btPoint2PointConstraint(*body,localPivot);
+				m_dynamicsWorld->addConstraint(p2p,true);
+				m_pickConstraint = p2p;
+				p2p->m_setting.m_impulseClamp = mousePickClamping;
+				//very weak constraint for picking
+				p2p->m_setting.m_tau = 0.001f;
+	/*
+				p2p->setParam(BT_CONSTRAINT_CFM,0.8,0);
+				p2p->setParam(BT_CONSTRAINT_CFM,0.8,1);
+				p2p->setParam(BT_CONSTRAINT_CFM,0.8,2);
+				p2p->setParam(BT_CONSTRAINT_ERP,0.1,0);
+				p2p->setParam(BT_CONSTRAINT_ERP,0.1,1);
+				p2p->setParam(BT_CONSTRAINT_ERP,0.1,2);
+				*/
+									
+
+			}
+					
+			//save mouse position for dragging
+					
+		}
+	}
+						
 }
 
 void DemoApplication::removePickingConstraint()
@@ -1183,8 +1205,8 @@ void	DemoApplication::renderscene(int pass)
 			}
 		}
 
-		btVector3 aabbMin,aabbMax;
-		m_dynamicsWorld->getBroadphase()->getBroadphaseAabb(aabbMin,aabbMax);
+		btVector3 aabbMin(0,0,0),aabbMax(0,0,0);
+		//m_dynamicsWorld->getBroadphase()->getBroadphaseAabb(aabbMin,aabbMax);
 		
 		aabbMin-=btVector3(BT_LARGE_FLOAT,BT_LARGE_FLOAT,BT_LARGE_FLOAT);
 		aabbMax+=btVector3(BT_LARGE_FLOAT,BT_LARGE_FLOAT,BT_LARGE_FLOAT);

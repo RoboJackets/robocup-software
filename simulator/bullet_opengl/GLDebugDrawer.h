@@ -12,14 +12,13 @@ class GLDebugDrawer : public btIDebugDraw
 public:
 
 	GLDebugDrawer();
-
+	virtual ~GLDebugDrawer(); 
 
 	virtual void	drawLine(const btVector3& from,const btVector3& to,const btVector3& fromColor, const btVector3& toColor);
 
 	virtual void	drawLine(const btVector3& from,const btVector3& to,const btVector3& color);
 
 	virtual void	drawSphere (const btVector3& p, btScalar radius, const btVector3& color);
-	virtual void	drawBox (const btVector3& boxMin, const btVector3& boxMax, const btVector3& color, btScalar alpha);
 
 	virtual void	drawTriangle(const btVector3& a,const btVector3& b,const btVector3& c,const btVector3& color,btScalar alpha);
 	
