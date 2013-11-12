@@ -8,7 +8,7 @@
 #ifndef STABLEYANK_HPP_
 #define STABLEYANK_HPP_
 
-#include "ActionBehavior.hpp"
+#include <gameplay/ActionBehavior.hpp>
 #include <gameplay/behaviors/Capture.hpp>
 
 namespace Gameplay {

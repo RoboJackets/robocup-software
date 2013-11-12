@@ -84,7 +84,7 @@ srcs = [
 	'gameplay/behaviors/PivotKick.cpp',
 	'gameplay/behaviors/TouchKick.cpp',
 	'gameplay/behaviors/Bump.cpp',
-	'gameplay/behaviors/PassReceive.cpp',
+	'gameplay/tactics/passing/PassReceive.cpp',
 	'gameplay/behaviors/Capture.cpp',
 	
 	# MotionTests
@@ -96,19 +96,18 @@ srcs = [
 	'gameplay/behaviors/positions/Fullback.cpp',
 	
 	# Tactics
-	'gameplay/tactics/ActionBehavior.cpp',
-	'gameplay/tactics/PassReceiveTactic.cpp',
+	'gameplay/tactics/passing/PassReceiveTactic.cpp',
 	'gameplay/tactics/StableLineKick.cpp',
-	'gameplay/tactics/PassReceiver.cpp',
-    'gameplay/tactics/StablePass.cpp',
+	'gameplay/tactics/passing/PassReceiver.cpp',
+    'gameplay/tactics/passing/StablePass.cpp',
 	'gameplay/tactics/StableYank.cpp',
 	'gameplay/tactics/SYTest.cpp',
 	'gameplay/tactics/SLKTest.cpp',
 	'gameplay/tactics/CatPassDemo.cpp',
-	'gameplay/tactics/DumbReceive.cpp',
+	'gameplay/tactics/passing/DumbReceive.cpp',
 	'gameplay/tactics/ChipCalibration.cpp',
 	'gameplay/tactics/LuckyKick.cpp',
-	'gameplay/tactics/PassingContext.cpp',
+	'gameplay/tactics/passing/PassingContext.cpp',
 	
 	# Test framework for plays
 	'gameplay/TestFixture.cpp',
@@ -196,4 +195,3 @@ p = e.Program('log_viewer', [
 env.Depends(p, env.Uic4('ui/LogViewer.ui'))
 Default(e.Install(exec_dir, p))
 Help('log_viewer: Stand-alone log viewer\n')
-

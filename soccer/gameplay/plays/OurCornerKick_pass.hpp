@@ -1,13 +1,13 @@
 #pragma once
 
 #include "../Play.hpp"
-#include <gameplay/tactics/DumbReceive.hpp>
-#include <gameplay/tactics/StablePass.hpp>
+#include <gameplay/tactics/passing/DumbReceive.hpp>
+#include <gameplay/tactics/passing/StablePass.hpp>
 #include <gameplay/behaviors/PivotKick.hpp>
 #include <gameplay/behaviors/positions/Fullback.hpp>
 #include <gameplay/behaviors/Move.hpp>
 #include <gameplay/PreventDoubleTouch.hpp>
-#include <gameplay/tactics/PassingContext.hpp>
+#include <gameplay/tactics/passing/PassingContext.hpp>
 
 namespace Gameplay
 {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <gameplay/Play.hpp>
-#include <gameplay/behaviors/PassReceive.hpp>
+#include <gameplay/tactics/passing/PassReceive.hpp>
 namespace Gameplay
 {
 	namespace Plays

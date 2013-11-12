@@ -1,5 +1,5 @@
 #include "StableLineKick.hpp"
-#include "PassReceiver.hpp"
+#include <gameplay/tactics/passing/PassReceiver.hpp>
 #include <math.h>
 
 namespace Gameplay { REGISTER_CONFIGURABLE(StableLineKick) }

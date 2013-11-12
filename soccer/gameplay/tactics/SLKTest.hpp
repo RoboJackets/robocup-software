@@ -1,7 +1,7 @@
 #pragma once
 
 #include <gameplay/Play.hpp>
-#include <gameplay/tactics/ActionBehavior.hpp>
+#include <gameplay/ActionBehavior.hpp>
 
 namespace Gameplay
 {
