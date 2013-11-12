@@ -1,5 +1,4 @@
-#ifndef _CC1101_H_
-#define _CC1101_H_
+#pragma once
 
 /* Addresses */
 enum
@@ -116,5 +115,3 @@ enum
     TXOFF_TX        = 0x02,
     TXOFF_RX        = 0x03
 };
-
-#endif /* _CC1101_H_ */

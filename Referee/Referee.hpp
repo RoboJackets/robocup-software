@@ -1,5 +1,4 @@
-#ifndef _REFEREE_HPP
-#define _REFEREE_HPP
+#pragma once
 
 #include <ui_MainRef.h>
 #include <QTimer>
@@ -178,5 +177,3 @@ class Referee : public QMainWindow, Ui_MainWindow
 		static const int _timeOutMsecs=10*60*1000;
 
 };
-
-#endif /* _REFEREE_HPP */

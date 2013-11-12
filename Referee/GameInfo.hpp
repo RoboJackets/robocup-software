@@ -1,5 +1,4 @@
-#ifndef _GAME_INFO_HPP
-#define _GAME_INFO_HPP
+#pragma once
 
 #include <sstream>
 #include <cstdio>
@@ -351,6 +350,3 @@ class GameInfo {
 
 
 std::ostream &operator<<(std::ostream &s, const GameInfo &info);
-
-
-#endif /*_GAME_INFO_HPP_*/
