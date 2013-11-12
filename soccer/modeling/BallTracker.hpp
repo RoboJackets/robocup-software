@@ -1,7 +1,7 @@
 #pragma once
 
+#include <memory>
 #include <Geometry2d/Point.hpp>
-#include <boost/shared_ptr.hpp>
 
 class BallFilter;
 class SystemState;

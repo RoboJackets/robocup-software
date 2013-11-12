@@ -8,7 +8,7 @@
 #include <protobuf/LogFrame.pb.h>
 
 #include <set>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class Logger;
 

@@ -1,10 +1,9 @@
 #pragma once
 
 #include <map>
+#include <memory>
 
 #include <QThread>
-
-#include <boost/shared_ptr.hpp>
 
 #include <physics/SimEngine.hpp>
 

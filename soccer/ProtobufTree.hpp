@@ -1,9 +1,9 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 #include <QTreeWidget>
 #include <google/protobuf/message.h>
-#include <boost/shared_ptr.hpp>
 
 class QMainWindow;
 class QTimer;

@@ -4,7 +4,6 @@
 
 //#define KALMANMODEL
 
-#include <boost/shared_ptr.hpp>
 #include <Geometry2d/Point.hpp>
 #ifdef KALMANMODEL
 #include <cblas.h>

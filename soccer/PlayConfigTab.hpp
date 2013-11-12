@@ -1,9 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 #include <QWidget>
-
-#include <boost/shared_ptr.hpp>
 
 #include "ui_PlayConfigTab.h"
 
