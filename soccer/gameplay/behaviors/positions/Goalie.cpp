@@ -1,7 +1,3 @@
-// kate: indent-mode cstyle; indent-width 4; tab-width 4; space-indent false;
-// vim:ai ts=4 et
-
-//FIXME - The rules allow for changing the goalie only in certain circumstances.  Make sure we do this right.
 
 #include "Goalie.hpp"
 
