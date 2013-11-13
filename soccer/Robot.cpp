@@ -78,7 +78,7 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	_motionControl = new MotionControl(this);
 	_stopAtEnd = false;
 
-	_planner = new Planning::RRT::Planner();
+	_planner = new Planning::RRTPlanner();
 	_lastKickerStatus = 0;
 	_lastKickTime = 0;
 

@@ -33,10 +33,7 @@ namespace Gameplay
 
 namespace Planning
 {
-	namespace RRT
-	{
-		class Planner;
-	}
+	class RRTPlanner;
 }
 
 class RobotPose
@@ -435,7 +432,7 @@ protected:
 	float _ball_avoid; /// radius of obstacle
 
 	Planning::Path _path;	/// latest path
-	Planning::RRT::Planner *_planner;	/// single-robot RRT planner
+	Planning::RRTPlanner *_planner;	/// single-robot RRT planner
 
 	// planning functions
 
