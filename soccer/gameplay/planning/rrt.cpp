@@ -13,7 +13,7 @@
 using namespace std;
 using namespace Planning;
 
-Geometry2d::Point RRT::randomPoint()
+Geometry2d::Point Planning::randomPoint()
 {
 	float x = Floor_Width * (drand48() - 0.5f);
 	float y = Floor_Length * drand48() - Field_Border;
@@ -21,12 +21,12 @@ Geometry2d::Point RRT::randomPoint()
 	return Geometry2d::Point(x, y);
 }
 
-RRT::Planner::Planner()
+RRTPlanner::RRTPlanner()
 {
 	_maxIterations = 100;
 }
 
-void RRT::Planner::run(
+void RRTPlanner::run(
 		const Geometry2d::Point &start,
 		const float angle, 
 		const Geometry2d::Point &vel,
@@ -141,7 +141,7 @@ void RRT::Planner::run(
 	path = _bestPath;
 }
 
-void RRT::Planner::makePath()
+void RRTPlanner::makePath()
 {
 	Tree::Point* p0 = _fixedStepTree0.last();
 	Tree::Point* p1 = _fixedStepTree1.last();
@@ -188,7 +188,7 @@ void RRT::Planner::makePath()
 	}
 }
 
-void RRT::Planner::optimize(Planning::Path &path, const ObstacleGroup *obstacles)
+void RRTPlanner::optimize(Planning::Path &path, const ObstacleGroup *obstacles)
 {
 	unsigned int start = 0;
 
