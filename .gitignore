@@ -11,3 +11,6 @@
 *~
 *.sublime-workspace
 
+# OS X desktop garbage files
+.DS_Store
+
