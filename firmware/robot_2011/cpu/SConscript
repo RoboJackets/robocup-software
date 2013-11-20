@@ -43,11 +43,13 @@ flash_lds = File('%s/flash.lds' % chip).srcnode()
 arm_flash = arm.Clone()
 arm_flash.Append(LINKFLAGS='-T' + flash_lds.path)
 
-# note: The .S files (assemblY) are compiled with gcc, not with a plain assembler
+# note: The .S files (assemblY) are compiled with the gcc cross-compiler, not with a plain assembler
 #		because they contain C preprocessor macros (#define and such)
 crossCompiler = 'armv4t-none-eabi-gcc'
 arm_flash.Replace(CC=crossCompiler)
 arm_flash.Replace(CXX=crossCompiler)
+arm_sram.Replace(CC=crossCompiler)
+arm_sram.Replace(CXX=crossCompiler)
 
 # --Wl,--build-id: Enable build ID to allow the code to be identified independent of git version
 arm_flash.Append(LINKFLAGS='-Wl,--build-id -lm')

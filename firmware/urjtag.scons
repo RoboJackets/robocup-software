@@ -19,7 +19,8 @@ urjtag_autoconf = env.Command(urjtag_source_dir.File('configure'), urjtag_checko
 urjtag_configure = env.Command(urjtag_build_dir.File('.configured'), urjtag_autoconf,
 	'${SOURCE.dir.abspath}/configure --prefix=' + urjtag_install_dir.abspath + ' && touch ${TARGET.file}', chdir=1)
 urjtag_build = env.Command(urjtag_install_dir.Dir('bin').File('jtag'), urjtag_configure,
-	'cd ' + urjtag_build_dir.path + ' && make && make install')
+	'cd ' + urjtag_build_dir.path + ' && make && make install && rm -rf ../../.git')
+
 
 Alias('urjtag', urjtag_build)
 Clean('urjtag', urjtag_build_dir)
