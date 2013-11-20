@@ -3,7 +3,7 @@ import os
 
 class SAM7:
 	def __init__(self, device):
-		self.f = serial.Serial(device)
+		self.f = serial.Serial(device, timeout=10)
 	
 	def __del__(self):
 		self.close()
