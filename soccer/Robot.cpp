@@ -1,5 +1,5 @@
 #include <Robot.hpp>
-#include <gameplay/planning/bezier.hpp>
+#include <planning/bezier.hpp>
 #include <Utils.hpp>
 #include <LogUtils.hpp>
 #include <motion/MotionControl.hpp>

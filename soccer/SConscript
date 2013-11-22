@@ -40,9 +40,9 @@ srcs = [
 
 
 	# Planning components',
-	'gameplay/planning/rrt.cpp',
-	'gameplay/planning/Tree.cpp',
-	'gameplay/planning/bezier.cpp',
+	'planning/rrt.cpp',
+	'planning/Tree.cpp',
+	'planning/bezier.cpp',
 
 	# Restart plays
 	'gameplay/plays/OurKickoff.cpp',
