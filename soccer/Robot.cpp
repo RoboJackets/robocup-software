@@ -174,19 +174,6 @@ void OurRobot::addText(const QString& text, const QColor& qc, const QString &lay
 	robotText.push_back(dbg);
 }
 
-void OurRobot::setCommandTrace()
-{
-	void *trace[9];
-	int n = backtrace(trace, sizeof(trace) / sizeof(trace[0]));
-
-	// Skip the call into this function
-	_commandTrace.resize(n - 1);
-	for (int i = 0; i < n - 1; ++i)
-	{
-		_commandTrace[i] = trace[i + 1];
-	}
-}
-
 bool OurRobot::avoidOpponents() const {
 	// checks for avoiding all opponents
 	for (size_t i=0; i<Num_Shells; ++i)
@@ -469,7 +456,6 @@ ObstaclePtr OurRobot::createBallObstacle() const {
 Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 		const Planning::Path& path,	const ObstacleGroup& obstacles) {
 		const bool blend_verbose = false;
-// 		setCommandTrace();
 
 		// empty path case - leave robot stationary
 		if (path.empty())
@@ -592,10 +578,7 @@ Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 		return result;
 }
 
-Planning::Path OurRobot::rrtReplan(const Geometry2d::Point& goal,
-		const ObstacleGroup& obstacles) {
-// 	setCommandTrace();
-
+Planning::Path OurRobot::rrtReplan(const Geometry2d::Point& goal, const ObstacleGroup& obstacles) {
 	// create a new path
 	Planning::Path result;
 
@@ -606,8 +589,6 @@ Planning::Path OurRobot::rrtReplan(const Geometry2d::Point& goal,
 }
 
 void OurRobot::execute(const ObstacleGroup& global_obstacles) {
-// 	setCommandTrace();
-
 	const bool enable_slice = false;
 
 	// halt case - same as stopped
