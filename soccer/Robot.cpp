@@ -578,16 +578,6 @@ Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 		return result;
 }
 
-Planning::Path OurRobot::rrtReplan(const Geometry2d::Point& goal, const ObstacleGroup& obstacles) {
-	// create a new path
-	Planning::Path result;
-
-	// run the RRT planner to generate a new plan
-	_planner->run(pos, angle, vel, goal, &obstacles, result);
-
-	return result;
-}
-
 void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	const bool enable_slice = false;
 
@@ -647,7 +637,9 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	}
 
 	// create new a new path for comparision
-	Planning::Path rrt_path = rrtReplan(*_delayed_goal, full_obstacles);
+	Planning::Path rrt_path;
+	_planner->run(pos, angle, vel, *_delayed_goal, &full_obstacles, rrt_path);
+
 	const float rrt_path_len = rrt_path.length(0);
 
 	// check if goal is close to previous goal to reuse path
