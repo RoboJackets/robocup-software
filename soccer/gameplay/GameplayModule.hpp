@@ -2,7 +2,7 @@
 #pragma once
 
 #include <Geometry2d/Point.hpp>
-#include <framework/Obstacle.hpp>
+#include <planning/Obstacle.hpp>
 
 #include <set>
 #include <QMutex>
