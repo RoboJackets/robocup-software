@@ -52,13 +52,13 @@ int SystemState::findDebugLayer(QString layer)
 	}
 }
 
-void SystemState::drawPath(const Geometry2d::Point* pts, int n, const QColor& qc, const QString& layer)
+void SystemState::drawPath(const Planning::Path &path, const QColor& qc, const QString& layer)
 {
 	DebugPath *dbg = logFrame->add_debug_paths();
 	dbg->set_layer(findDebugLayer(layer));
-	for (int i = 0; i < n; ++i)
+	for (Geometry2d::Point pt : path.points)
 	{
-		*dbg->add_points() = pts[i];
+		*dbg->add_points() = pt;
 	}
 	dbg->set_color(color(qc));
 }
