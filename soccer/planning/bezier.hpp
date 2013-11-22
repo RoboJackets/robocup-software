@@ -4,7 +4,7 @@
  * Utilities for handling bezier curves
  */
 
-#include <framework/Path.hpp>
+#include <planning/Path.hpp>
 
 namespace Planning {
 

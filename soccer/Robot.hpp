@@ -8,8 +8,8 @@
 #include <QColor>
 #include <Eigen/Geometry>
 #include <Constants.hpp>
-#include <framework/Path.hpp>
-#include <gameplay/planning/rrt.hpp>
+#include <planning/Path.hpp>
+#include <planning/rrt.hpp>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
 
@@ -157,11 +157,6 @@ class OurRobot: public Robot
 public:
 	typedef boost::array<float,Num_Shells> RobotMask;
 
-	typedef enum {
-		RRT, 			///< moves to a point with the RRT planner
-		OVERRIDE  ///< moves to a point without regard for obstacles
-	} MoveType;
-
 	RobotConfig * config;
 	RobotStatus * status;
 
@@ -278,8 +273,8 @@ public:
 	// creates an obstacle around the ball
 	// if radius is 0 or less, it disables avoidance
 	void disableAvoidBall();
-	void avoidBall(float radius);
-	float avoidBall() const;
+	void avoidBallRadius(float radius);
+	float avoidBallRadius() const;
 	void resetAvoidBall();	//	sets avoid ball radius to Ball_Avoid_Small
 
 	/**
@@ -375,9 +370,6 @@ public:
 		return _radioRx;
 	}
 
-	//The confidence for this robot's ball sensor
-	int sensorConfidence;
-
 	MotionControl *motionControl() const
 	{
 		return _motionControl;
@@ -410,9 +402,6 @@ public:
 	}
 
 protected:
-	// Stores a stack trace in _commandTrace
-	void setCommandTrace();
-
 	MotionControl *_motionControl;
 	
 	SystemState *_state;
@@ -422,14 +411,14 @@ protected:
 	uint64_t _lastChargedTime; // TODO: make this a boost pointer to avoid update() function
 
 	/** Planning components for delayed planning */
-	MoveType _planner_type;  /// movement class - set during move
+	bool _usesPathPlanning;
 	boost::optional<Geometry2d::Point> _delayed_goal;   /// goal from move command
 	bool _stopAtEnd;
 
 	// obstacle management
 	ObstacleGroup _local_obstacles; /// set of obstacles added by plays
 	RobotMask _self_avoid_mask, _opp_avoid_mask;  /// masks for obstacle avoidance
-	float _ball_avoid; /// radius of obstacle
+	float _avoidBallRadius; /// radius of obstacle
 
 	Planning::Path _path;	/// latest path
 	Planning::RRTPlanner *_planner;	/// single-robot RRT planner
@@ -471,13 +460,6 @@ protected:
 	Geometry2d::Point findGoalOnPath(const Geometry2d::Point& pos, const Planning::Path& path,
 			const ObstacleGroup& obstacles = ObstacleGroup());
 
-	/** executes RRT planning through a set of obstacles */
-	Planning::Path rrtReplan(const Geometry2d::Point& goal, const ObstacleGroup& obstacles);
-
-	// rendering
-
-	//FIXME - This doesn't need to be in this class.  Put it in SystemState, along with other drawing?
-	void drawPath(const Planning::Path& path, const QColor &color = Qt::black, const QString &layer = "Motion");
 
 private:
 	uint32_t _lastKickerStatus;
