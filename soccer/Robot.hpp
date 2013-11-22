@@ -460,9 +460,6 @@ protected:
 	Geometry2d::Point findGoalOnPath(const Geometry2d::Point& pos, const Planning::Path& path,
 			const ObstacleGroup& obstacles = ObstacleGroup());
 
-	/** executes RRT planning through a set of obstacles */
-	Planning::Path rrtReplan(const Geometry2d::Point& goal, const ObstacleGroup& obstacles);
-
 
 private:
 	uint32_t _lastKickerStatus;
