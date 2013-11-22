@@ -72,7 +72,6 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	_delayed_goal = boost::none;
 	_usesPathPlanning = true;
 	exclude = false;
-	sensorConfidence = 0;
 	cmd_w = 0;
 	_lastChargedTime = 0;
 	_motionControl = new MotionControl(this);

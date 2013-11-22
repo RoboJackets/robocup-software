@@ -370,9 +370,6 @@ public:
 		return _radioRx;
 	}
 
-	//The confidence for this robot's ball sensor
-	int sensorConfidence;
-
 	MotionControl *motionControl() const
 	{
 		return _motionControl;
