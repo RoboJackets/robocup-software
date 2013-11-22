@@ -1,4 +1,4 @@
-#include <framework/Obstacle.hpp>
+#include <planning/Obstacle.hpp>
 #include <Constants.hpp>
 
 #include <boost/foreach.hpp>

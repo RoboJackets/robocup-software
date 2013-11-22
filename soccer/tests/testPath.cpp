@@ -1,6 +1,6 @@
 #include <iostream>
 #include <gtest/gtest.h>
-#include <framework/Path.hpp>
+#include <planning/Path.hpp>
 
 using namespace std;
 using namespace Geometry2d;

@@ -20,8 +20,8 @@ srcs = [
 	'radio/SimRadio.cpp',
 	'radio/USBRadio.cpp',
 
-	'framework/Obstacle.cpp',
-	'framework/Path.cpp',
+	'planning/Obstacle.cpp',
+	'planning/Path.cpp',
 	'framework/SystemState.cpp',
 	'framework/RobotConfig.cpp',
 

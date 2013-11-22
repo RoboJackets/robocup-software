@@ -3,7 +3,7 @@
 #include <list>
 
 #include <Geometry2d/Segment.hpp>
-#include <framework/Path.hpp>
+#include <planning/Path.hpp>
 
 namespace Planning
 {

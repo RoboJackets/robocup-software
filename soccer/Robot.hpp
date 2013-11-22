@@ -8,7 +8,7 @@
 #include <QColor>
 #include <Eigen/Geometry>
 #include <Constants.hpp>
-#include <framework/Path.hpp>
+#include <planning/Path.hpp>
 #include <planning/rrt.hpp>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
