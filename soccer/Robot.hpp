@@ -474,10 +474,6 @@ protected:
 	/** executes RRT planning through a set of obstacles */
 	Planning::Path rrtReplan(const Geometry2d::Point& goal, const ObstacleGroup& obstacles);
 
-	// rendering
-
-	//FIXME - This doesn't need to be in this class.  Put it in SystemState, along with other drawing?
-	void drawPath(const Planning::Path& path, const QColor &color = Qt::black, const QString &layer = "Motion");
 
 private:
 	uint32_t _lastKickerStatus;

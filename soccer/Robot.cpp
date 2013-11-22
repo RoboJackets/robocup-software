@@ -606,15 +606,6 @@ Planning::Path OurRobot::rrtReplan(const Geometry2d::Point& goal,
 	return result;
 }
 
-void OurRobot::drawPath(const Planning::Path& path, const QColor &color, const QString &layer) {
-	Geometry2d::Point last = pos;
-	BOOST_FOREACH(Geometry2d::Point pt, path.points)
-	{
-		_state->drawLine(last, pt, color, layer);
-		last = pt;
-	}
-}
-
 void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 // 	setCommandTrace();
 
@@ -658,7 +649,7 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		_path = Planning::Path(pos);
 		cmd.target->pos = pos;
 		cmd.target->pathLength = 0;
-		drawPath(_path);
+		_state->drawPath(_path);
 		return;
 	}
 
@@ -671,7 +662,7 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		_path = straight_line;
 		cmd.target->pos = *_delayed_goal;
 		cmd.target->pathLength = straight_line.length(0);
-		drawPath(straight_line, Qt::red);
+		_state->drawPath(straight_line, Qt::red);
 		return;
 	}
 
@@ -688,7 +679,7 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 			addText(QString("execute: slicing path"));
 			cmd.target->pos = findGoalOnPath(pos, sliced_path, full_obstacles);
 			cmd.target->pathLength = sliced_path.length(pos);
-			drawPath(sliced_path, Qt::cyan);
+			_state->drawPath(sliced_path, Qt::cyan);
 			Geometry2d::Point offset(0.01, 0.01);
 			_state->drawLine(pos + offset, cmd.target->pos + offset, Qt::black);
 			return;
@@ -696,7 +687,7 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 			addText(QString("execute: reusing path"));
 			cmd.target->pos = findGoalOnPath(pos, _path, full_obstacles);
 			cmd.target->pathLength = _path.length(pos);
-			drawPath(_path, Qt::yellow);
+			_state->drawPath(_path, Qt::yellow);
 			_state->drawLine(pos, cmd.target->pos, Qt::black);
 			return;
 		}
@@ -705,7 +696,7 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	// use the newly generated path
 	if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using new RRT path" << endl;
 	_path = rrt_path;
-	drawPath(rrt_path, Qt::magenta);
+	_state->drawPath(rrt_path, Qt::magenta);
 	addText(QString("execute: RRT path %1").arg(full_obstacles.size()));
 	cmd.target->pos = findGoalOnPath(pos, _path, full_obstacles);
 	cmd.target->pathLength = rrt_path_len;
