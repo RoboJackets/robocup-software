@@ -68,7 +68,7 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	Robot(shell, true),
 	_state(state)
 {
-	_ball_avoid = Ball_Avoid_Small;
+	resetAvoidBall();
 	_delayed_goal = boost::none;
 	_usesPathPlanning = true;
 	exclude = false;
@@ -437,19 +437,19 @@ float OurRobot::avoidTeammateRadius(unsigned shell_id) const {
 }
 
 void OurRobot::disableAvoidBall() {
-	_ball_avoid = -1.0;
+	_avoidBallRadius = -1.0;
 }
 
-void OurRobot::avoidBall(float radius) {
-	_ball_avoid = radius;
+void OurRobot::avoidBallRadius(float radius) {
+	_avoidBallRadius = radius;
 }
 
-float OurRobot::avoidBall() const {
-	return _ball_avoid;
+float OurRobot::avoidBallRadius() const {
+	return _avoidBallRadius;
 }
 
 void OurRobot::resetAvoidBall() {
-	avoidBall(Ball_Avoid_Small);
+	avoidBallRadius(Ball_Avoid_Small);
 }
 
 ObstaclePtr OurRobot::createBallObstacle() const {
@@ -460,8 +460,8 @@ ObstaclePtr OurRobot::createBallObstacle() const {
 	}
 
 	// create an obstacle if necessary
-	if (_ball_avoid > 0.0) {
-		return ObstaclePtr(new CircleObstacle(_state->ball.pos, _ball_avoid));
+	if (_avoidBallRadius > 0.0) {
+		return ObstaclePtr(new CircleObstacle(_state->ball.pos, _avoidBallRadius));
 	} else {
 		return ObstaclePtr();
 	}

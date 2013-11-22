@@ -110,7 +110,7 @@ bool Gameplay::Behaviors::YankChip::run()
 	{
 		robot->addText("Yanking");
 		state()->drawLine(fixedYankLine, Qt::white);
-		robot->avoidBall(-1.0);
+		robot->disableAvoidBall();
 		robot->worldVelocity(fixedYankLine.delta() * 5.0);
 		robot->angularVelocity(0.0);
 		robot->dribble(dribble_speed);
@@ -118,7 +118,7 @@ bool Gameplay::Behaviors::YankChip::run()
 	{
 		robot->addText("Chip");
 		state()->drawLine(fixedYankLine, Qt::red);
-		robot->avoidBall(-1.0);
+		robot->avoidBallRadius(-1.0);
 		robot->chip(chip_speed);
 		robot->dribble(dribble_speed);
 		robot->worldVelocity(fixedYankLine.delta() * -5.0);

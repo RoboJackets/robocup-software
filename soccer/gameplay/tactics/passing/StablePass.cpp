@@ -205,7 +205,7 @@ bool Gameplay::StablePass::run()
 	// Commands
 	if(_state == Setup) {
 
-		robot->avoidBall();
+		robot->resetAvoidBall();
 		robot->move(compute_PassPosition(), false);
 		robot->face(robot->pos + compute_PassDirection());
 
@@ -229,7 +229,7 @@ bool Gameplay::StablePass::run()
 
 	} else if(_state == Done) {
 
-		robot->avoidBall(2.0 * Ball_Radius);
+		robot->avoidBallRadius(2.0 * Ball_Radius);
 
 	}
 

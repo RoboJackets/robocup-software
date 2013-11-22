@@ -276,7 +276,7 @@ bool Gameplay::PassReceiver::run()
 
 
 	if ( _state == Positioning ) {
-		robot->avoidBall();
+		robot->resetAvoidBall();
 	} else {
 		robot->disableAvoidBall();
 	}
