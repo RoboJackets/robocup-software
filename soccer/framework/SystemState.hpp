@@ -11,7 +11,8 @@
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
 #include <GameState.hpp>
-#include <framework/Obstacle.hpp>
+#include <planning/Obstacle.hpp>
+#include <planning/Path.hpp>
 #include <Constants.hpp>
 
 class RobotConfig;
@@ -57,7 +58,7 @@ class SystemState
 		}
 		
 		void drawCircle(const Geometry2d::Point &center, float radius, const QColor &color = Qt::black, const QString &layer = QString());
-		void drawPath(const Geometry2d::Point *pts, int n, const QColor &color = Qt::black, const QString &layer = QString());
+		void drawPath(const Planning::Path& path, const QColor &color = Qt::black, const QString &layer = "Motion");
 		void drawPolygon(const Geometry2d::Point *pts, int n, const QColor &color = Qt::black, const QString &layer = QString());
 		void drawPolygon(const std::vector<Geometry2d::Point>& pts, const QColor &color = Qt::black, const QString &layer = QString());
 		void drawText(const QString &text, const Geometry2d::Point &pos, const QColor &color = Qt::black, const QString &layer = QString());

@@ -3,8 +3,8 @@
 
 #include <list>
 #include <Geometry2d/Point.hpp>
-#include <framework/Obstacle.hpp>
-#include <framework/Path.hpp>
+#include <planning/Obstacle.hpp>
+#include <planning/Path.hpp>
 
 #include "Tree.hpp"
 

@@ -1,5 +1,5 @@
 #include <Robot.hpp>
-#include <gameplay/planning/bezier.hpp>
+#include <planning/bezier.hpp>
 #include <Utils.hpp>
 #include <LogUtils.hpp>
 #include <motion/MotionControl.hpp>
@@ -68,11 +68,10 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	Robot(shell, true),
 	_state(state)
 {
-	_ball_avoid = Ball_Avoid_Small;
+	resetAvoidBall();
 	_delayed_goal = boost::none;
-	_planner_type = RRT;
+	_usesPathPlanning = true;
 	exclude = false;
-	sensorConfidence = 0;
 	cmd_w = 0;
 	_lastChargedTime = 0;
 	_motionControl = new MotionControl(this);
@@ -175,19 +174,6 @@ void OurRobot::addText(const QString& text, const QColor& qc, const QString &lay
 	robotText.push_back(dbg);
 }
 
-void OurRobot::setCommandTrace()
-{
-	void *trace[9];
-	int n = backtrace(trace, sizeof(trace) / sizeof(trace[0]));
-
-	// Skip the call into this function
-	_commandTrace.resize(n - 1);
-	for (int i = 0; i < n - 1; ++i)
-	{
-		_commandTrace[i] = trace[i + 1];
-	}
-}
-
 bool OurRobot::avoidOpponents() const {
 	// checks for avoiding all opponents
 	for (size_t i=0; i<Num_Shells; ++i)
@@ -239,7 +225,7 @@ void OurRobot::move(Geometry2d::Point goal, bool stopAtEnd)
 	if (verbose) cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", " << goal.y << ")" << endl;
 	addText(QString("move:(%1, %2)").arg(goal.x).arg(goal.y));
 	_delayed_goal = goal;
-	_planner_type = RRT;
+	_usesPathPlanning = true;
 	_stopAtEnd = stopAtEnd;
 }
 
@@ -253,7 +239,7 @@ void OurRobot::move(const vector<Geometry2d::Point>& path, bool stopAtEnd)
 
 	// ensure RRT not used
 	_delayed_goal = boost::none;
-	_planner_type = OVERRIDE;
+	_usesPathPlanning = false;
 
 	// convert to motion command
 	cmd.target = MotionTarget();
@@ -272,7 +258,7 @@ void OurRobot::bodyVelocity(const Geometry2d::Point& v)
 {
 	// ensure RRT not used
 	_delayed_goal = boost::none;
-	_planner_type = OVERRIDE;
+	_usesPathPlanning = false;
 
 	cmd.target = boost::none;
 	cmd.worldVel = boost::none;
@@ -283,7 +269,7 @@ void OurRobot::worldVelocity(const Geometry2d::Point& v)
 {
 	// ensure RRT not used
 	_delayed_goal = boost::none;
-	_planner_type = OVERRIDE;
+	_usesPathPlanning = false;
 
 	cmd.target = boost::none;
 	cmd.worldVel = v;
@@ -437,19 +423,19 @@ float OurRobot::avoidTeammateRadius(unsigned shell_id) const {
 }
 
 void OurRobot::disableAvoidBall() {
-	_ball_avoid = -1.0;
+	_avoidBallRadius = -1.0;
 }
 
-void OurRobot::avoidBall(float radius) {
-	_ball_avoid = radius;
+void OurRobot::avoidBallRadius(float radius) {
+	_avoidBallRadius = radius;
 }
 
-float OurRobot::avoidBall() const {
-	return _ball_avoid;
+float OurRobot::avoidBallRadius() const {
+	return _avoidBallRadius;
 }
 
 void OurRobot::resetAvoidBall() {
-	avoidBall(Ball_Avoid_Small);
+	avoidBallRadius(Ball_Avoid_Small);
 }
 
 ObstaclePtr OurRobot::createBallObstacle() const {
@@ -460,8 +446,8 @@ ObstaclePtr OurRobot::createBallObstacle() const {
 	}
 
 	// create an obstacle if necessary
-	if (_ball_avoid > 0.0) {
-		return ObstaclePtr(new CircleObstacle(_state->ball.pos, _ball_avoid));
+	if (_avoidBallRadius > 0.0) {
+		return ObstaclePtr(new CircleObstacle(_state->ball.pos, _avoidBallRadius));
 	} else {
 		return ObstaclePtr();
 	}
@@ -470,7 +456,6 @@ ObstaclePtr OurRobot::createBallObstacle() const {
 Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 		const Planning::Path& path,	const ObstacleGroup& obstacles) {
 		const bool blend_verbose = false;
-// 		setCommandTrace();
 
 		// empty path case - leave robot stationary
 		if (path.empty())
@@ -593,31 +578,7 @@ Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 		return result;
 }
 
-Planning::Path OurRobot::rrtReplan(const Geometry2d::Point& goal,
-		const ObstacleGroup& obstacles) {
-// 	setCommandTrace();
-
-	// create a new path
-	Planning::Path result;
-
-	// run the RRT planner to generate a new plan
-	_planner->run(pos, angle, vel, goal, &obstacles, result);
-
-	return result;
-}
-
-void OurRobot::drawPath(const Planning::Path& path, const QColor &color, const QString &layer) {
-	Geometry2d::Point last = pos;
-	BOOST_FOREACH(Geometry2d::Point pt, path.points)
-	{
-		_state->drawLine(last, pt, color, layer);
-		last = pt;
-	}
-}
-
 void OurRobot::execute(const ObstacleGroup& global_obstacles) {
-// 	setCommandTrace();
-
 	const bool enable_slice = false;
 
 	// halt case - same as stopped
@@ -626,8 +587,8 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	}
 
 	// if motion command complete or we are using a different planner - we're done
-	if (_planner_type != OurRobot::RRT) {
-		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: non-RRT planner" << endl;
+	if (!_usesPathPlanning) {
+		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: not using path planner" << endl;
 		return;
 	}
 
@@ -658,7 +619,7 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		_path = Planning::Path(pos);
 		cmd.target->pos = pos;
 		cmd.target->pathLength = 0;
-		drawPath(_path);
+		_state->drawPath(_path);
 		return;
 	}
 
@@ -671,12 +632,14 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		_path = straight_line;
 		cmd.target->pos = *_delayed_goal;
 		cmd.target->pathLength = straight_line.length(0);
-		drawPath(straight_line, Qt::red);
+		_state->drawPath(straight_line, Qt::red);
 		return;
 	}
 
 	// create new a new path for comparision
-	Planning::Path rrt_path = rrtReplan(*_delayed_goal, full_obstacles);
+	Planning::Path rrt_path;
+	_planner->run(pos, angle, vel, *_delayed_goal, &full_obstacles, rrt_path);
+
 	const float rrt_path_len = rrt_path.length(0);
 
 	// check if goal is close to previous goal to reuse path
@@ -688,7 +651,7 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 			addText(QString("execute: slicing path"));
 			cmd.target->pos = findGoalOnPath(pos, sliced_path, full_obstacles);
 			cmd.target->pathLength = sliced_path.length(pos);
-			drawPath(sliced_path, Qt::cyan);
+			_state->drawPath(sliced_path, Qt::cyan);
 			Geometry2d::Point offset(0.01, 0.01);
 			_state->drawLine(pos + offset, cmd.target->pos + offset, Qt::black);
 			return;
@@ -696,7 +659,7 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 			addText(QString("execute: reusing path"));
 			cmd.target->pos = findGoalOnPath(pos, _path, full_obstacles);
 			cmd.target->pathLength = _path.length(pos);
-			drawPath(_path, Qt::yellow);
+			_state->drawPath(_path, Qt::yellow);
 			_state->drawLine(pos, cmd.target->pos, Qt::black);
 			return;
 		}
@@ -705,7 +668,7 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	// use the newly generated path
 	if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using new RRT path" << endl;
 	_path = rrt_path;
-	drawPath(rrt_path, Qt::magenta);
+	_state->drawPath(rrt_path, Qt::magenta);
 	addText(QString("execute: RRT path %1").arg(full_obstacles.size()));
 	cmd.target->pos = findGoalOnPath(pos, _path, full_obstacles);
 	cmd.target->pathLength = rrt_path_len;

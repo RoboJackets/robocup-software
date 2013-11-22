@@ -149,7 +149,7 @@ bool Gameplay::Behaviors::LineKick::run()
 		}
 
 		robot->addText("Setup");
-		robot->avoidBall(*_setup_ball_avoid);
+		robot->avoidBallRadius(*_setup_ball_avoid);
 		robot->move(moveGoal);
 
 		// face in a direction so that on impact, we aim at goal
