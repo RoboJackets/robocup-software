@@ -70,7 +70,7 @@ OurRobot::OurRobot(int shell, SystemState *state):
 {
 	_ball_avoid = Ball_Avoid_Small;
 	_delayed_goal = boost::none;
-	_planner_type = RRT;
+	_usesPathPlanning = true;
 	exclude = false;
 	sensorConfidence = 0;
 	cmd_w = 0;
@@ -239,7 +239,7 @@ void OurRobot::move(Geometry2d::Point goal, bool stopAtEnd)
 	if (verbose) cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", " << goal.y << ")" << endl;
 	addText(QString("move:(%1, %2)").arg(goal.x).arg(goal.y));
 	_delayed_goal = goal;
-	_planner_type = RRT;
+	_usesPathPlanning = true;
 	_stopAtEnd = stopAtEnd;
 }
 
@@ -253,7 +253,7 @@ void OurRobot::move(const vector<Geometry2d::Point>& path, bool stopAtEnd)
 
 	// ensure RRT not used
 	_delayed_goal = boost::none;
-	_planner_type = OVERRIDE;
+	_usesPathPlanning = false;
 
 	// convert to motion command
 	cmd.target = MotionTarget();
@@ -272,7 +272,7 @@ void OurRobot::bodyVelocity(const Geometry2d::Point& v)
 {
 	// ensure RRT not used
 	_delayed_goal = boost::none;
-	_planner_type = OVERRIDE;
+	_usesPathPlanning = false;
 
 	cmd.target = boost::none;
 	cmd.worldVel = boost::none;
@@ -283,7 +283,7 @@ void OurRobot::worldVelocity(const Geometry2d::Point& v)
 {
 	// ensure RRT not used
 	_delayed_goal = boost::none;
-	_planner_type = OVERRIDE;
+	_usesPathPlanning = false;
 
 	cmd.target = boost::none;
 	cmd.worldVel = v;
@@ -617,8 +617,8 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	}
 
 	// if motion command complete or we are using a different planner - we're done
-	if (_planner_type != OurRobot::RRT) {
-		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: non-RRT planner" << endl;
+	if (!_usesPathPlanning) {
+		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: not using path planner" << endl;
 		return;
 	}
 

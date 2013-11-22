@@ -157,11 +157,6 @@ class OurRobot: public Robot
 public:
 	typedef boost::array<float,Num_Shells> RobotMask;
 
-	typedef enum {
-		RRT, 			///< moves to a point with the RRT planner
-		OVERRIDE  ///< moves to a point without regard for obstacles
-	} MoveType;
-
 	RobotConfig * config;
 	RobotStatus * status;
 
@@ -422,7 +417,7 @@ protected:
 	uint64_t _lastChargedTime; // TODO: make this a boost pointer to avoid update() function
 
 	/** Planning components for delayed planning */
-	MoveType _planner_type;  /// movement class - set during move
+	bool _usesPathPlanning;
 	boost::optional<Geometry2d::Point> _delayed_goal;   /// goal from move command
 	bool _stopAtEnd;
 
