@@ -154,7 +154,7 @@ bool Gameplay::StableLineKick::run()
 
 	// Commands
 	if(_state == Setup) {
-		robot->avoidBall();
+		robot->resetAvoidBall();
 		robot->move(passPosition(), false);
 		robot->face(ball().pos);
 	} else if(_state == Kick) {

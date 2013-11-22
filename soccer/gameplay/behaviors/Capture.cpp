@@ -159,7 +159,7 @@ bool Gameplay::Behaviors::Capture::run()
 	if (_state == State_Approach)
 	{
 		robot->addText("Approach");
-		robot->avoidBall(*_approach_Clearance);
+		robot->avoidBallRadius(*_approach_Clearance);
 		robot->move(approachPoint);
 		robot->face(ball().pos);
 	} else if (_state == State_Capture)

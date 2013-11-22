@@ -175,7 +175,7 @@ bool Gameplay::DumbReceive::run()
 
 	// Commands
 	if(_state == Setup) {
-		robot->avoidBall();
+		robot->resetAvoidBall();
 		robot->move(receivePosition(), false);
 		robot->face(ball().pos);
 	} else if(_state == Receive_PassKicking || _state == Receive_PassDone) {

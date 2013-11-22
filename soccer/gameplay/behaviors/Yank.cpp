@@ -114,7 +114,7 @@ bool Gameplay::Behaviors::Yank::run()
 	}  else if (_state == State_Bump)
 	{
 		robot->addText("Bumping");
-		robot->avoidBall(-1.0);
+		robot->avoidBallRadius(-1.0);
 		robot->worldVelocity(fixedYankLine.delta() * -5.0);
 		robot->angularVelocity(0.0);
 
@@ -125,13 +125,13 @@ bool Gameplay::Behaviors::Yank::run()
 		
 		// if we are close to the ball, we must back up fast
 		if (ball().pos.nearPoint(robot->pos, *_backup_dist)) {
-			robot->avoidBall(-1.0);
+			robot->avoidBallRadius(-1.0);
 			robot->worldVelocity(fixedYankLine.delta() * -5.0);
 			robot->angularVelocity(0.0);
 		} else
 		{
 			// otherwise, get off of the yank line with path planning
-			robot->avoidBall(0.3);
+			robot->avoidBallRadius(0.3);
 			// don't drive into the ball
 			robot->localObstacles(ObstaclePtr(new CircleObstacle(_yankBallStart, ball().pos.distTo(_yankBallStart) + Robot_Radius)));
 			// stay out of path of ball

@@ -273,8 +273,8 @@ public:
 	// creates an obstacle around the ball
 	// if radius is 0 or less, it disables avoidance
 	void disableAvoidBall();
-	void avoidBall(float radius);
-	float avoidBall() const;
+	void avoidBallRadius(float radius);
+	float avoidBallRadius() const;
 	void resetAvoidBall();	//	sets avoid ball radius to Ball_Avoid_Small
 
 	/**
@@ -424,7 +424,7 @@ protected:
 	// obstacle management
 	ObstacleGroup _local_obstacles; /// set of obstacles added by plays
 	RobotMask _self_avoid_mask, _opp_avoid_mask;  /// masks for obstacle avoidance
-	float _ball_avoid; /// radius of obstacle
+	float _avoidBallRadius; /// radius of obstacle
 
 	Planning::Path _path;	/// latest path
 	Planning::RRTPlanner *_planner;	/// single-robot RRT planner

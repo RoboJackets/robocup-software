@@ -92,12 +92,12 @@ bool Gameplay::Behaviors::Bump::run()
 		{
 			// We're very close to or in front of the ball
 			robot->addText("In front");
-			robot->avoidBall(*_setup_ball_avoid);
+			robot->avoidBallRadius(*_setup_ball_avoid);
 			robot->move(ball().pos - targetLine.delta().normalized() * (*_drive_around_dist + Robot_Radius));
 		} else {
 			// We're behind the ball
 			robot->addText("Behind");
-			robot->avoidBall(*_setup_ball_avoid);
+			robot->avoidBallRadius(*_setup_ball_avoid);
 			robot->move(behind_line.nearestPoint(robot->pos));
 			state()->drawLine(behind_line);
 		}

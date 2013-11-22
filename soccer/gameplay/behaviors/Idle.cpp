@@ -14,7 +14,7 @@ Gameplay::Behaviors::Idle::~Idle()
     BOOST_FOREACH(OurRobot* r, robots)
     {
         if(r)
-            r->avoidBall();
+            r->resetAvoidBall();
     }
 }
 
@@ -54,7 +54,7 @@ bool Gameplay::Behaviors::Idle::run()
 			r->face(ball().pos);
 			
 			// Avoid the ball even on our restart
-			r->avoidBall(Field_CenterRadius);
+			r->avoidBallRadius(Field_CenterRadius);
 			// Don't leave gaps
 			r->avoidAllTeammates(true);
 		}

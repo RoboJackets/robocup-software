@@ -76,7 +76,7 @@ bool assignNearest(OurRobot *&role, std::set<OurRobot*>& robots, Geometry2d::Poi
 		// set default flags - only gets reset at assignment, rather than each frame
 		role->avoidOpponents(true);
 		role->avoidAllTeammates(true);
-		role->avoidBall(Ball_Radius);
+		role->avoidBallRadius(Ball_Radius);
 	}
 	
 	return role != 0;
@@ -145,7 +145,7 @@ bool assignNearest(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Po
 			// set default flags - only gets reset at assignment, rather than each frame
 			role->avoidOpponents(true);
 			role->avoidAllTeammates(true);
-			role->avoidBall(Ball_Radius);
+			role->avoidBallRadius(Ball_Radius);
 		}
 
 		return role != 0 && meetsRequirements(role, hasKicker, hasChipper, hasDribbler, hasBallSense);
