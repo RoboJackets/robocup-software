@@ -402,9 +402,6 @@ public:
 	}
 
 protected:
-	// Stores a stack trace in _commandTrace
-	void setCommandTrace();
-
 	MotionControl *_motionControl;
 	
 	SystemState *_state;
