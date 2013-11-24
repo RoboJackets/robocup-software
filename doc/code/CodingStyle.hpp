@@ -4,11 +4,8 @@
 /// project. Style and convention are a strong recommendation and the tips are
 /// a suggestion.
 
-/// ! Always use header guards !
-/// Format: NAMESPACE_FILE_HPP
-/// If no namespace, then Format: _FILE_HPP
-#ifndef _CODING_STYLE_HPP
-#define _CODING_STYLE_HPP
+/// ! Always use pragma once to ensure that the file cant be over-included !
+#pragma once
 
 /// Includes should come right after the header guards
 #include <GlobalInclude>
@@ -106,5 +103,3 @@ class CodingStyle
 		
 		static char _privateStatic;
 }
-
-#endif /* _CODING_HPP */
