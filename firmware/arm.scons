@@ -12,7 +12,6 @@ host_env['ENV']['MAKEFLAGS'] = '-j%d' % GetOption('num_jobs')
 
 # note: eabi = Embedded Application Binary Interface
 target = 'armv4t-none-eabi'
-# note: was armv4t-none-eabi
 
 # ARM build environment
 arm = host_env.Clone()
