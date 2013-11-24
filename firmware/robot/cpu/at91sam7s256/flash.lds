@@ -56,39 +56,8 @@ SECTIONS
         . = ALIGN(4);
 		_ebuild_id = .;
         _efixed = .;
-
-        
-
-        /*
-        PROVIDE_HIDDEN (__exidx_start = .);
-        .ARM.exidx :
-        {
-            *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-        }
-        PROVIDE_HIDDEN (__exidx_end = .);
-        */
-
-
-
     } >flash
 
-    .ARM.extab 0 : { *(.ARM.extab) }
-    .ARM.exidx 0 : { *(.ARM.exidx) }
-
-    /*
-    Stolen from: www.state-machine.com/arm/Building_bare-metal_ARM_with_GNU.pdf.
-    Not entirely sure yet if it will work...
-    
-    .ARM.exidx :
-    {
-        __exidx_start = .;
-        *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-        __exidx_end = .;
-    } >sram;
-    _etext = .;
-    */
-
-    
 
     .relocate : AT (_efixed)
     {
