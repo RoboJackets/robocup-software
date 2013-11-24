@@ -45,7 +45,7 @@ arm_flash.Append(LINKFLAGS='-T' + flash_lds.path)
 
 # note: The .S files (assemblY) are compiled with the gcc cross-compiler, not with a plain assembler
 #		because they contain C preprocessor macros (#define and such)
-crossCompiler = 'armv4t-none-eabi-gcc'
+crossCompiler = 'arm-elf-gcc'
 arm_flash.Replace(CC=crossCompiler)
 arm_flash.Replace(CXX=crossCompiler)
 arm_sram.Replace(CC=crossCompiler)

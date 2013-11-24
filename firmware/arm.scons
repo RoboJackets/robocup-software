@@ -11,7 +11,7 @@ host_env.AppendENVPath('PATH', Dir('install/bin').abspath)
 host_env['ENV']['MAKEFLAGS'] = '-j%d' % GetOption('num_jobs')
 
 # note: eabi = Embedded Application Binary Interface
-target = 'armv4t-none-eabi'
+target = 'arm-elf'
 
 # ARM build environment
 arm = host_env.Clone()
@@ -102,17 +102,17 @@ symlink_gcc_compiler = host_env.Command(Dir('install/bin').File('%s-cc' % target
 Depends(symlink_gcc_compiler, compile_gcc_compiler)
 
 # symlink elf objcopy to the right name
-symlink_elf_objcopy = host_env.Command(install_dir.File('bin/arm-elf-objcopy'), '',
-	'cd ${TARGET.dir} && '
-	'ln -sf ./%s-objcopy arm-elf-objcopy' %
-	target)
-Depends(symlink_elf_objcopy, compile_gcc_compiler)
+# symlink_elf_objcopy = host_env.Command(install_dir.File('bin/arm-elf-objcopy'), '',
+# 	'cd ${TARGET.dir} && '
+# 	'ln -sf ./%s-objcopy arm-elf-objcopy' %
+# 	target)
+# Depends(symlink_elf_objcopy, compile_gcc_compiler)
 
 # newlib
 config_newlib, build_newlib = BuildSubmodule('external/newlib',
 	'--target %s --enable-interwork --enable-multilib --enable-newlib-hw-fp' % target)
 Depends(build_newlib, symlink_gcc_compiler)
-Depends(build_newlib, symlink_elf_objcopy)
+# Depends(build_newlib, symlink_elf_objcopy)
 
 # build the rest of gcc
 build_gcc_all = host_env.Command(gcc_build_dir.File('.built-all'), '', 
@@ -125,7 +125,7 @@ Depends(build_gcc_all, build_newlib)
 # Aliases to allow specific parts of the toolchain to be rebuilt/cleaned
 Alias('arm-binutils', build_binutils)
 Alias('arm-newlib', build_newlib)
-Alias('arm-gcc', [symlink_gcc_compiler, symlink_elf_objcopy, build_gcc_all])
+Alias('arm-gcc', [symlink_gcc_compiler, build_gcc_all])
 Alias('arm-toolchain', ['arm-binutils', 'arm-newlib', 'arm-gcc'])
 
 # To remove the installed files, you must clean all of the toolchain.
