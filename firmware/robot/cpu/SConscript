@@ -123,21 +123,38 @@ Depends(robot_fw, flash_lds)
 
 # Generate a bare binary for programming
 arm.Binary('robocup.bin', 'robocup.elf')
-Alias('robot2011', 'robocup.bin')
-Help('  robot2011: Build 2011 robot ARM firmware\n')
+Alias('robot', 'robocup.bin')
+Help('  robot: Build  robot ARM firmware\n')
 
 # Target to program with SAM-BA (blank chip)
-arm.Alias('robot2011-prog-samba', ['robocup.bin', samba_flash, 'tools/reflash.bin'], Action('./${SOURCES[1]} ${SOURCES[0]}'))
-AlwaysBuild('robot2011-prog-samba')
-Help('  robot2011-prog-samba: Build and program 2011 robot ARM firmware with SAM-BA\n')
+arm.Alias('robot-prog-samba', ['robocup.bin', samba_flash, 'tools/reflash.bin'], Action('./${SOURCES[1]} ${SOURCES[0]}'))
+AlwaysBuild('robot-prog-samba')
+Help('  robot-prog-samba: Build and program robot ARM firmware with SAM-BA\n')
 Help('    (robot CPU must have SAM-BA loaded)\n')
 
 # Target to program CPU with Robocup firmware already running
-arm.Alias('robot2011-prog', 'robocup.bin', Action(File('tools/reflash').srcnode().path + ' $SOURCE'))
-AlwaysBuild('robot2011-prog')
-Help('  robot2011-prog: Build and program 2011 robot ARM firmware with USB console\n')
+arm.Alias('robot-prog', 'robocup.bin', Action(File('tools/reflash').srcnode().path + ' $SOURCE'))
+AlwaysBuild('robot-prog')
+Help('  robot-prog: Build and program robot ARM firmware with USB console\n')
 Help('    (robot CPU must have working firmware)\n')
 
-arm.Alias('robot2011-ota', 'robocup.bin', Action(File('tools/ota-update').srcnode().path + ' $SOURCE'))
-AlwaysBuild('robot2011-ota')
-Help('  robot2011-ota: Program 2011 robots over the air\n')
+arm.Alias('robot-ota', 'robocup.bin', Action(File('tools/ota-update').srcnode().path + ' $SOURCE'))
+AlwaysBuild('robot-ota')
+Help('  robot-ota: Program robots over the air\n')
+
+
+
+# Depracated build targets
+#
+# Robot build targets used to all have the year 2011 in the target name
+# In the interest of not making our code look outdated and also to be clear
+# That this is the latest and greatest, I've removed the year.  For now, the old
+# names are aliased to the new names so everything still works.
+depracationInfo = (
+	('robot2011-prog', 'robot-prog'),
+	('robot2011-prog-samba', 'robot-prog-samba'),
+	('robot2011', 'robot'),
+	('robot2011-ota', 'robot-ota'))
+for oldName, newName in depracationInfo:
+	arm.Alias(oldName, newName)
+	Help('This build target is depracated, please use %s instead' % newName)
