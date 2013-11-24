@@ -14,7 +14,7 @@ host_env['ENV']['MAKEFLAGS'] = '-j%d' % GetOption('num_jobs')
 target = 'arm-elf'
 
 # Build packages
-def BuildPackage(dir, config_options):
+def BuildPackage(dir, config_options, make_cmd):
 	source_dir = Dir('#/firmware/external/%s' % dir)
 	build_dir = Dir('build/%s' % dir)
 
@@ -27,31 +27,45 @@ def BuildPackage(dir, config_options):
 		'cd ${TARGET.dir} && ${SOURCE.abspath}/configure --prefix=%s %s && touch ${TARGET.file}' % (Dir('install').abspath, config_options))
 	
 	# Build the package
-	build = host_env.Command(build_stamp, config_stamp, 'cd ${TARGET.dir} && make && make install && touch ${TARGET.file}')
+	build = host_env.Command(build_stamp, config_stamp, 'cd ${TARGET.dir} && %s && touch ${TARGET.file}' % make_cmd)
 	Clean(build, build_dir)
 	
 	return (configure, build)
 
 (config_binutils, build_binutils) = BuildPackage('binutils',
-	'--target=%s --enable-interwork --enable-multilib --disable-werror' % target)
+	'--target=%s --enable-interwork --enable-multilib --disable-werror' % target, 'make && make install')
 
-(config_gcc, build_gcc) = BuildPackage('gcc',
+(config_gcc, build_gcc_compiler) = BuildPackage('gcc',
 	'--target=%s --with-newlib --enable-languages="c" --disable-threads '
 	'--disable-shared --with-headers=%s '
 	'--enable-interwork --enable-multilib --with-system-zlib --with-mode=thumb --with-arch=armv4t' %
-	(target, Dir('#/firmware/external/newlib/newlib/libc/include/').abspath))
+	(target, Dir('#/firmware/external/newlib/newlib/libc/include/').abspath), 'make all-gcc install-gcc')
 
 (config_newlib, build_newlib) = BuildPackage('newlib',
-	'--target=%s --enable-interwork --enable-multilib' % target)
+	'--target=%s '
+	'--enable-interwork '
+	# '--with-float=soft '
+	# '--enable-soft-float '
+	'--enable-newlib-hw-fp '
+	'--enable-multilib' % target, 'make && make install')
+
+
+gcc_all_build_stamp = Dir('build/gcc').File('.built-all')
+build_gcc_all = host_env.Command(gcc_all_build_stamp, '', 'cd ${TARGET.dir} && make && make install && touch ${TARGET.file}')
+
+Depends(build_gcc_all, build_gcc_compiler)
+
+
+
 
 # Dependencies
 Depends(config_gcc, build_binutils)
-Depends(config_newlib, build_gcc)
+Depends(config_newlib, build_gcc_compiler)
 # Depends(config_gcc, config_newlib)
 
 # Aliases to allow specific parts of the toolchain to be rebuilt/cleaned
 Alias('arm-binutils', (config_binutils, build_binutils))
-Alias('arm-gcc', (config_gcc, build_gcc))
+Alias('arm-gcc', (config_gcc, build_gcc_all))
 Alias('arm-newlib', (config_newlib, build_newlib))
 Alias('arm-toolchain', ['arm-binutils', 'arm-gcc', 'arm-newlib'])
 
