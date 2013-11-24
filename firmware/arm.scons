@@ -10,129 +10,60 @@ host_env.AppendENVPath('PATH', Dir('install/bin').abspath)
 # to build it).
 host_env['ENV']['MAKEFLAGS'] = '-j%d' % GetOption('num_jobs')
 
-# note: eabi = Embedded Application Binary Interface
+
 target = 'arm-elf'
 
-# ARM build environment
-arm = host_env.Clone()
-arm.Replace(CC='arm-elf-gcc')
-
-install_dir = Dir('install')
-
 # Build packages
-def BuildSubmodule(dir, config_options):
-	submodule_dir = Dir('#/firmware/%s' % dir)
-	build_dir = Dir(dir)
-	
-	# Configure in the source dir
-	# if the config completes successfully, it will create a Makefile
-	configure = host_env.Command('%s/Makefile' % build_dir, submodule_dir,
-		'cd ${TARGET.dir} && '
-		'${SOURCE.abspath}/configure --prefix=%s %s' %
-		(install_dir.abspath, config_options))
-	Clean(configure, build_dir)
+def BuildPackage(dir, config_options):
+	source_dir = Dir('#/firmware/external/%s' % dir)
+	build_dir = Dir('build/%s' % dir)
 
-	# Build the package
+	# These files will be created after complicated steps are completed successfully
+	config_stamp = build_dir.File('.configured')
 	build_stamp = build_dir.File('.built')
-	build = host_env.Command(build_stamp, '',
-		'cd ${TARGET.dir} && '
-		'make && '
-		'make install && '
-		'touch ${TARGET.file}')
-	Clean(build, build_dir)
-	Depends(build, configure)
+
+	# Configure in a build directory
+	configure = host_env.Command(config_stamp, source_dir,
+		'cd ${TARGET.dir} && ${SOURCE.abspath}/configure --prefix=%s %s && touch ${TARGET.file}' % (Dir('install').abspath, config_options))
 	
-	return configure, build
+	# Build the package
+	build = host_env.Command(build_stamp, config_stamp, 'cd ${TARGET.dir} && make && make install && touch ${TARGET.file}')
+	Clean(build, build_dir)
+	
+	return (configure, build)
 
-#
-# In order:
-# * build binutils (using host compiler)
-# * build arm cross-compiler
-# * build newlib using the newly-created cross-compiler
-# * build the rest of gcc
-#
-
-# GNU binutils
-config_binutils, build_binutils = BuildSubmodule('external/binutils',
+(config_binutils, build_binutils) = BuildPackage('binutils',
 	'--target=%s --enable-interwork --enable-multilib --disable-werror' % target)
 
-# 
-gcc_config_options = ('--target=%s '
-	'--with-newlib '	# use newlib instead of the gnu std lib
-	'--enable-languages="c" --disable-threads '
-	'--disable-shared '
-	'--with-headers=%s/source/newlib/libc/include '
-	'--enable-interwork '	# allows for assembling Thumb and ARM code mixed into the same binaries
-	'--enable-multilib '
-	'--with-system-zlib '
-	'--disable-libunwind-exceptions' %
-	(target, Dir('.').abspath))
+(config_gcc, build_gcc) = BuildPackage('gcc',
+	'--target=%s --with-newlib --enable-languages="c" --disable-threads '
+	'--disable-shared --with-headers=%s '
+	'--enable-interwork --enable-multilib --with-system-zlib --with-mode=thumb --with-arch=armv4t' %
+	(target, Dir('#/firmware/external/newlib/newlib/libc/include/').abspath))
 
+(config_newlib, build_newlib) = BuildPackage('newlib',
+	'--target=%s --enable-interwork --enable-multilib' % target)
 
-gcc_build_dir = Dir('%s' % 'external/gcc')
-gcc_submodule_dir = Dir('#/firmware/external/gcc')
-
-
-# Configure in the source dir
-# if the config completes successfully, it will create a Makefile
-config_gcc = host_env.Command('%s/Makefile' % gcc_build_dir, gcc_submodule_dir,
-	'cd ${TARGET.dir} && '
-	'${SOURCE.abspath}/configure --prefix=%s %s' % (install_dir.abspath, gcc_config_options))
-Clean(config_gcc, gcc_build_dir)
-
-# build binutils before building gcc compiler
+# Dependencies
 Depends(config_gcc, build_binutils)
-
-# Build the gcc compiler
-gcc_build_stamp = gcc_build_dir.File('.built-compiler')
-compile_gcc_compiler = host_env.Command(gcc_build_stamp, '',
-	'cd ${TARGET.dir} && '
-	'make all-gcc install-gcc && '
-	'touch ${TARGET.file}')
-Clean(compile_gcc_compiler, gcc_build_dir)
-Depends(compile_gcc_compiler, config_gcc)
-
-# for some reason, Scons looks for a compiler ending in -cc, while the build process
-# actually names it ending in -gcc, so we symlink it
-# symlink gcc to the right name
-gcc_orig_name = '%s-gcc' % target
-symlink_gcc_compiler = host_env.Command(Dir('install/bin').File('%s-cc' % target), '',
-	'cd ${TARGET.dir} && '
-	'ln -sf ./%s %s-cc' %
-	(gcc_orig_name, target))
-Depends(symlink_gcc_compiler, compile_gcc_compiler)
-
-# symlink elf objcopy to the right name
-# symlink_elf_objcopy = host_env.Command(install_dir.File('bin/arm-elf-objcopy'), '',
-# 	'cd ${TARGET.dir} && '
-# 	'ln -sf ./%s-objcopy arm-elf-objcopy' %
-# 	target)
-# Depends(symlink_elf_objcopy, compile_gcc_compiler)
-
-# newlib
-config_newlib, build_newlib = BuildSubmodule('external/newlib',
-	'--target %s --enable-interwork --enable-multilib' % target)
-Depends(build_newlib, symlink_gcc_compiler)
-# Depends(build_newlib, symlink_elf_objcopy)
-
-# build the rest of gcc
-build_gcc_all = host_env.Command(gcc_build_dir.File('.built-all'), '', 
-	'cd ${TARGET.dir} && '
-	'make all install && '
-	'touch ${TARGET.file}')
-Depends(build_gcc_all, build_newlib)
-
+Depends(config_newlib, build_gcc)
+# Depends(config_gcc, config_newlib)
 
 # Aliases to allow specific parts of the toolchain to be rebuilt/cleaned
-Alias('arm-binutils', build_binutils)
-Alias('arm-newlib', build_newlib)
-Alias('arm-gcc', [symlink_gcc_compiler, build_gcc_all])
-Alias('arm-toolchain', ['arm-binutils', 'arm-newlib', 'arm-gcc'])
+Alias('arm-binutils', (config_binutils, build_binutils))
+Alias('arm-gcc', (config_gcc, build_gcc))
+Alias('arm-newlib', (config_newlib, build_newlib))
+Alias('arm-toolchain', ['arm-binutils', 'arm-gcc', 'arm-newlib'])
+
+Help('  arm-toolchain: ARM %s, %s, and %s\n' % ('binutils', 'gcc', 'newlib'))
 
 # To remove the installed files, you must clean all of the toolchain.
 # The packages do not provide any way to uninstall files.
 Clean('arm-toolchain', Dir('install'))
 
+# ARM build environment
+arm = host_env.Clone()
+arm.Replace(CC='arm-elf-gcc')
 
 arm.Append(BUILDERS={'Binary': Builder(
 	action='arm-elf-objcopy -O binary $SOURCE $TARGET',
