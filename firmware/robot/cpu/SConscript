@@ -16,7 +16,7 @@ arm.Append(CFLAGS=defs + ' -g -Wall -std=gnu99')
 #
 # For some reason I can't get libgcc to build with interworking, so I changed the startup code (the only
 # code that must be ARM) to call C code while in Thumb mode, so we don't need -mthumb-interwork.
-arm.Append(CFLAGS='-Os')	# note: used to include -mcpu=arm7tdmi 
+arm.Append(CFLAGS='-Os -mcpu=arm7tdmi')	# note: used to include -mcpu=arm7tdmi 
 
 # AT91 headers are used for both C and assembly, so a define is used to hide C-specific parts.
 arm.Append(ASFLAGS=defs + ' -D__ASSEMBLY__ -Wall')
@@ -43,13 +43,6 @@ flash_lds = File('%s/flash.lds' % chip).srcnode()
 arm_flash = arm.Clone()
 arm_flash.Append(LINKFLAGS='-T' + flash_lds.path)
 
-# note: The .S files (assemblY) are compiled with the gcc cross-compiler, not with a plain assembler
-#		because they contain C preprocessor macros (#define and such)
-crossCompiler = 'arm-elf-gcc'
-arm_flash.Replace(CC=crossCompiler)
-arm_flash.Replace(CXX=crossCompiler)
-arm_sram.Replace(CC=crossCompiler)
-arm_sram.Replace(CXX=crossCompiler)
 
 # --Wl,--build-id: Enable build ID to allow the code to be identified independent of git version
 arm_flash.Append(LINKFLAGS='-Wl,--build-id -lm')
@@ -150,11 +143,11 @@ Help('  robot-ota: Program robots over the air\n')
 # In the interest of not making our code look outdated and also to be clear
 # That this is the latest and greatest, I've removed the year.  For now, the old
 # names are aliased to the new names so everything still works.
-depracationInfo = (
+deprecationInfo = (
 	('robot2011-prog', 'robot-prog'),
 	('robot2011-prog-samba', 'robot-prog-samba'),
 	('robot2011', 'robot'),
 	('robot2011-ota', 'robot-ota'))
-for oldName, newName in depracationInfo:
+for oldName, newName in deprecationInfo:
 	arm.Alias(oldName, newName)
 	Help('This build target is depracated, please use %s instead' % newName)

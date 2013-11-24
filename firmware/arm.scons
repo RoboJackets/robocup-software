@@ -15,6 +15,7 @@ target = 'arm-elf'
 
 # ARM build environment
 arm = host_env.Clone()
+arm.Replace(CC='arm-elf-gcc')
 
 install_dir = Dir('install')
 
@@ -110,7 +111,7 @@ Depends(symlink_gcc_compiler, compile_gcc_compiler)
 
 # newlib
 config_newlib, build_newlib = BuildSubmodule('external/newlib',
-	'--target %s --enable-interwork --enable-multilib --enable-newlib-hw-fp' % target)
+	'--target %s --enable-interwork --enable-multilib' % target)
 Depends(build_newlib, symlink_gcc_compiler)
 # Depends(build_newlib, symlink_elf_objcopy)
 
