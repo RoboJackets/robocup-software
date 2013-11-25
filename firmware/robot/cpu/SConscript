@@ -45,7 +45,7 @@ arm_flash.Append(LINKFLAGS='-T' + flash_lds.path)
 
 
 # --Wl,--build-id: Enable build ID to allow the code to be identified independent of git version
-arm_flash.Append(LINKFLAGS='-Wl,--build-id -lm')
+arm_flash.Append(LINKFLAGS='-Wl,--build-id -lc -lm -lgcc -lc -lm -lgcc -lc -lm -lgcc')
 
 # Build programming tools
 reflasher = arm_sram.Program('tools/reflash.elf', ['tools/sram_start.S', 'tools/reflash.o'])
@@ -110,7 +110,8 @@ robot_fw = arm_flash.Program('robocup.elf', [
 	'invensense/imuMlsl.c',
 	'invensense/mlcontrol.c',
 	'invensense/dmpDefault.c',
-	'invensense/imuCompatibility.c'
+	'invensense/imuCompatibility.c',
+	'/home/justbuchanan/src/rj/robocup/software/build/firmware/install/arm-elf/lib/libm.a' 
 ])
 Depends(robot_fw, flash_lds)
 

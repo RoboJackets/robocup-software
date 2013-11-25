@@ -44,9 +44,9 @@ def BuildPackage(dir, config_options, make_cmd):
 (config_newlib, build_newlib) = BuildPackage('newlib',
 	'--target=%s '
 	'--enable-interwork '
-	# '--with-float=soft '
-	# '--enable-soft-float '
-	'--enable-newlib-hw-fp '
+	'--with-float=soft '
+	'--enable-soft-float '
+	# '--enable-newlib-hw-fp '
 	'--enable-multilib' % target, 'make && make install')
 
 
@@ -61,7 +61,6 @@ Depends(build_gcc_all, build_gcc_compiler)
 # Dependencies
 Depends(config_gcc, build_binutils)
 Depends(config_newlib, build_gcc_compiler)
-# Depends(config_gcc, config_newlib)
 
 # Aliases to allow specific parts of the toolchain to be rebuilt/cleaned
 Alias('arm-binutils', (config_binutils, build_binutils))
@@ -77,7 +76,8 @@ Clean('arm-toolchain', Dir('install'))
 
 # ARM build environment
 arm = host_env.Clone()
-arm.Replace(CC='arm-elf-gcc')
+arm.Replace(CC='%s-gcc' % target)
+arm.Replace(LIBPATH=Dir('#/build/firmware/install/%s/lib/' % target).abspath)
 
 arm.Append(BUILDERS={'Binary': Builder(
 	action='arm-elf-objcopy -O binary $SOURCE $TARGET',
