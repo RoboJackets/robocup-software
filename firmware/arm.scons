@@ -33,17 +33,35 @@ def BuildPackage(dir, config_options, make_cmd):
 	return (configure, build)
 
 (config_binutils, build_binutils) = BuildPackage('binutils',
-	'--target=%s --enable-interwork --enable-multilib --disable-werror' % target, 'make && make install')
+	'--target=%s '
+	'--enable-interwork '
+	'--enable-multilib '
+	'--with-gnu-ld '
+	'--with-gnu-as '
+	'--disable-werror' % target, 'make && make install')
 
 (config_gcc, build_gcc_compiler) = BuildPackage('gcc',
-	'--target=%s --with-newlib --enable-languages="c" --disable-threads '
-	'--disable-shared --with-headers=%s '
-	'--enable-interwork --enable-multilib --with-system-zlib --with-mode=thumb --with-arch=armv4t' %
+	'--target=%s '
+	'--with-newlib '
+	'--enable-languages="c" '
+	'--disable-threads '
+	'--disable-shared '
+	'--with-gnu-as '
+	'--with-gnu-ld '
+	'--with-headers=%s '
+	'--enable-interwork '
+	'--enable-multilib '
+	'--with-system-zlib '
+	'--with-mode=thumb '
+	'--with-arch=armv4t' %
 	(target, Dir('#/firmware/external/newlib/newlib/libc/include/').abspath), 'make all-gcc install-gcc')
 
 (config_newlib, build_newlib) = BuildPackage('newlib',
 	'--target=%s '
 	'--enable-interwork '
+	'--enable-multilib '
+	'--with-gnu-ld '
+	'--with-gnu-as '
 	'--with-float=soft '
 	'--enable-soft-float '
 	# '--enable-newlib-hw-fp '
