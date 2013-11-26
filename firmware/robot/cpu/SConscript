@@ -1,3 +1,5 @@
+import os
+
 Import('*')
 
 chip = 'at91sam7s256'
@@ -5,9 +7,7 @@ chip = 'at91sam7s256'
 # Definitions needed by at91lib
 defs = '-D%s -DTRACE_LEVEL=0 -DNOASSERT' % chip
 
-arm.Append(CPPPATH=Dir('.').srcnode())
-#arm.Append(CFLAGS=defs + ' -g -Wall -std=gnu99 -Werror')
-arm.Append(CFLAGS=defs + ' -g -Wall -std=gnu99')
+arm.Append(CFLAGS=defs + ' -g -Wall -std=gnu99 -Werror')
 
 # Specify CPU explicitly since some GCC ARM builds may expect something more awesome by default.
 #
@@ -45,7 +45,7 @@ arm_flash.Append(LINKFLAGS='-T' + flash_lds.path)
 
 
 # --Wl,--build-id: Enable build ID to allow the code to be identified independent of git version
-arm_flash.Append(LINKFLAGS='-Wl,--build-id -lm')
+arm_flash.Append(LINKFLAGS='-Wl,--build-id')
 
 # Build programming tools
 reflasher = arm_sram.Program('tools/reflash.elf', ['tools/sram_start.S', 'tools/reflash.o'])
