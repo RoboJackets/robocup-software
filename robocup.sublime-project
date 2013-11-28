@@ -9,7 +9,8 @@
 				"site_scons",
 				"sslrefbox",
 				"downloads",
-				"watchdog"
+				"watchdog",
+				"firmware/external"
 			],
 			"file_exclude_patterns": [
 				".*",
