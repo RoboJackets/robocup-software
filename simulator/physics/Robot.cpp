@@ -161,7 +161,7 @@ void Robot::initPhysics(const bool& blue)
 
 	_robotChassis->setRestitution(0); //Disable bouncing
 
-	//_robotChassis->setDamping(0.95f,0.95f); //mimic friction
+	_robotChassis->setDamping(0.95f,0.95f); //mimic friction
 
 	resetScene(); // force initial physics state - everything stationary
 }
