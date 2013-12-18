@@ -27,16 +27,7 @@
          <property name="spacing">
           <number>0</number>
          </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
+         <property name="margin">
           <number>0</number>
          </property>
          <item>
@@ -168,16 +159,7 @@
          <property name="spacing">
           <number>0</number>
          </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
+         <property name="margin">
           <number>0</number>
          </property>
          <item>
@@ -671,16 +653,7 @@
          <property name="spacing">
           <number>0</number>
          </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
+         <property name="margin">
           <number>0</number>
          </property>
          <item>
@@ -1694,7 +1667,7 @@
      <x>0</x>
      <y>0</y>
      <width>1080</width>
-     <height>20</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
@@ -1709,6 +1682,7 @@
     <addaction name="actionRawBalls"/>
     <addaction name="actionRawRobots"/>
     <addaction name="actionCoords"/>
+    <addaction name="actionDotPatterns"/>
    </widget>
    <widget class="QMenu" name="menu_Field">
     <property name="title">
@@ -2001,6 +1975,17 @@
    </property>
    <property name="text">
     <string>&amp;Quaternion Demo</string>
+   </property>
+  </action>
+  <action name="actionDotPatterns">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Dot Patterns</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggles display of robot shell dot patterns.</string>
    </property>
   </action>
  </widget>
