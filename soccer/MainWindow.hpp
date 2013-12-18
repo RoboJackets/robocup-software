@@ -76,6 +76,7 @@ class MainWindow : public QMainWindow
 		void on_actionRawBalls_toggled(bool state);
 		void on_actionRawRobots_toggled(bool state);
 		void on_actionCoords_toggled(bool state);
+        void on_actionDotPatterns_toggled(bool state);
 		void on_actionTeamYellow_triggered();
 		void on_actionTeamBlue_triggered();
 		void on_manualID_currentIndexChanged(int value);

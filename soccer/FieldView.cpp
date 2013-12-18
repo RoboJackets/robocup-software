@@ -32,6 +32,7 @@ FieldView::FieldView(QWidget* parent) :
 	showRawRobots = false;
 	showRawBalls = false;
 	showCoords = false;
+    showDotPatterns = false;
 	_rotate = 1;
 	_history = 0;
 
@@ -551,16 +552,19 @@ void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos
 	const float r = Robot_Radius;
 	painter.drawChord(QRectF(-r, -r, r * 2, r * 2), start, end);
 
-    painter.setPen(Qt::NoPen);
-    for(int i = 0; i < 4; i++)
+    if(showDotPatterns)
     {
-        painter.setBrush(QBrush(Dot_Pattern_Colors[ID][i]));
-        QPointF center;
-        center.setX( (i >= 2) ? Dots_Small_Offset : Dots_Large_Offset );
-        center.setX( center.x() * ( (i == 1 || i == 2) ? -1 : 1 ) );
-        center.setY( (i <= 1) ? Dots_Small_Offset : Dots_Large_Offset );
-        center.setY( center.y() * ( (i <= 1) ? -1 : 1 ) );
-        painter.drawEllipse(center, Dots_Radius, Dots_Radius);
+        painter.setPen(Qt::NoPen);
+        for(int i = 0; i < 4; i++)
+        {
+            painter.setBrush(QBrush(Dot_Pattern_Colors[ID][i]));
+            QPointF center;
+            center.setX( (i >= 2) ? Dots_Small_Offset : Dots_Large_Offset );
+            center.setX( center.x() * ( (i == 1 || i == 2) ? -1 : 1 ) );
+            center.setY( (i <= 1) ? Dots_Small_Offset : Dots_Large_Offset );
+            center.setY( center.y() * ( (i <= 1) ? -1 : 1 ) );
+            painter.drawEllipse(center, Dots_Radius, Dots_Radius);
+        }
     }
 	
 	if (hasBall)

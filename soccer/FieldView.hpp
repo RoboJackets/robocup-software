@@ -50,6 +50,7 @@ class FieldView : public QWidget
 		bool showRawRobots;
 		bool showRawBalls;
 		bool showCoords;
+        bool showDotPatterns;
 		
 		// Which robots will show a command trace
 		std::set<int> showCommandTrace;
