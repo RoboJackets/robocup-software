@@ -71,4 +71,5 @@ picocom
 python-numpy
 python-matplotlib
 python-usb
+python-git
 freeglut3-dev

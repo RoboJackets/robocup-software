@@ -18,8 +18,3 @@ echo "-- Installing required packages"
 # install all of the packages listed in required_packages.txt
 apt-get install $(sed 's/#.*//;/^$/d' $BASE/util/required_packages.txt)
 
-echo "-- Removing excessively old packages: if this causes a problem, kill it here and fix it yourself"
-apt-get remove python-git
-
-echo "-- Installing python packages"
-pip install GitPython
