@@ -14,8 +14,8 @@ host_env['ENV']['MAKEFLAGS'] = '-j%d' % GetOption('num_jobs')
 target = 'arm-elf'
 
 # Build packages
-bootstrap_prefix = Dir('bootstrap').abspath
-install_prefix = Dir('install').abspath
+bootstrap_prefix = Dir('bootstrap')
+install_prefix = Dir('install')
 def BuildPackage(dir, isBootstrap, config_options, make_cmd):
 	source_dir = Dir('#/firmware/external/%s' % dir)
 	
@@ -23,7 +23,7 @@ def BuildPackage(dir, isBootstrap, config_options, make_cmd):
 		build_dir = Dir('build-boot/%s' % dir)
 		prefix = bootstrap_prefix
 	else:
-		build_dir = Dir('build-install%s' % dir)
+		build_dir = Dir('build-install/%s' % dir)
 		prefix = install_prefix
 
 	# These files will be created after complicated steps are completed successfully
@@ -32,7 +32,7 @@ def BuildPackage(dir, isBootstrap, config_options, make_cmd):
 
 	# Configure in a build directory
 	configure = host_env.Command(config_stamp, source_dir,
-		'cd ${TARGET.dir} && ${SOURCE.abspath}/configure --prefix=%s %s && touch ${TARGET.file}' % (prefix, config_options))
+		'cd ${TARGET.dir} && ${SOURCE.abspath}/configure --prefix=%s %s && touch ${TARGET.file}' % (prefix.abspath, config_options))
 	
 	# Build the package
 	build = host_env.Command(build_stamp, config_stamp, 'cd ${TARGET.dir} && %s && touch ${TARGET.file}' % make_cmd)
@@ -72,9 +72,21 @@ Depends(config_gcc_boot, build_binutils_boot)
 	'--with-gnu-as '
 	'--enable-newlib-hw-fp '
 	'--enable-multilib'
-	% target, 'make all install')
+	% target,
+
+	'make all install '
+	'CC_FOR_TARGET=%s '
+	'AS_FOR_TARGET=%s '
+	'LD_FOR_TARGET=%s '
+	'AR_FOR_TARGET=%s '
+	'RANLIB_FOR_TARGET=%s '
+	% (bootstrap_prefix.File('bin/%s-gcc' % target).abspath,
+		bootstrap_prefix.File('bin/%s-as' % target).abspath,
+		bootstrap_prefix.File('bin/%s-ld' % target).abspath,
+		bootstrap_prefix.File('bin/%s-ar' % target).abspath,
+		bootstrap_prefix.File('bin/%s-ranlib' % target).abspath))
 Depends(config_newlib, build_gcc_compiler_boot)
-#FIXME: set env vars for make
+
 
 (config_binutils, build_binutils) = BuildPackage('binutils', False,
 	'--target=%s '
