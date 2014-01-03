@@ -14,9 +14,16 @@ host_env['ENV']['MAKEFLAGS'] = '-j%d' % GetOption('num_jobs')
 target = 'arm-elf'
 
 # Build packages
-def BuildPackage(dir, config_options, make_cmd):
+def BuildPackage(dir, isBootstrap, config_options, make_cmd):
 	source_dir = Dir('#/firmware/external/%s' % dir)
-	build_dir = Dir('build/%s' % dir)
+	
+	if isBootstrap:
+		build_dir = Dir('build-boot/%s' % dir)
+	else:
+		build_dir = Dir('build-install%s' % dir)
+		prefix = (Dir('install').abspath
+
+	# build_dir = isBootstrap ? Dir('build-boot/%s' % dir) : Dir('build-install/%s' % dir)
 
 	# These files will be created after complicated steps are completed successfully
 	config_stamp = build_dir.File('.configured')
@@ -24,7 +31,7 @@ def BuildPackage(dir, config_options, make_cmd):
 
 	# Configure in a build directory
 	configure = host_env.Command(config_stamp, source_dir,
-		'cd ${TARGET.dir} && ${SOURCE.abspath}/configure --prefix=%s %s && touch ${TARGET.file}' % (Dir('install').abspath, config_options))
+		'cd ${TARGET.dir} && ${SOURCE.abspath}/configure --prefix=%s %s && touch ${TARGET.file}' % (prefix, config_options))
 	
 	# Build the package
 	build = host_env.Command(build_stamp, config_stamp, 'cd ${TARGET.dir} && %s && touch ${TARGET.file}' % make_cmd)
@@ -32,7 +39,7 @@ def BuildPackage(dir, config_options, make_cmd):
 	
 	return (configure, build)
 
-(config_binutils, build_binutils) = BuildPackage('binutils',
+(config_binutils_boot, build_binutils_boot) = BuildPackage('binutils', False,
 	'--target=%s '
 	'--enable-interwork '
 	'--enable-multilib '
@@ -40,7 +47,7 @@ def BuildPackage(dir, config_options, make_cmd):
 	'--with-gnu-as '
 	'--disable-werror' % target, 'make && make install')
 
-(config_gcc, build_gcc_compiler) = BuildPackage('gcc',
+(config_gcc_boot, build_gcc_compiler) = BuildPackage('gcc', False,
 	'--target=%s '
 	'--with-newlib '
 	'--enable-languages="c" '
@@ -56,7 +63,7 @@ def BuildPackage(dir, config_options, make_cmd):
 	'--with-arch=armv4t' %
 	(target, Dir('#/firmware/external/newlib/newlib/libc/include/').abspath), 'make all-gcc install-gcc')
 
-(config_newlib, build_newlib) = BuildPackage('newlib',
+(config_newlib, build_newlib) = BuildPackage('newlib', False,
 	'--target=%s '
 	'--enable-interwork '
 	'--enable-multilib '
