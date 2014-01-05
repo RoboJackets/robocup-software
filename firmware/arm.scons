@@ -14,9 +14,17 @@ host_env['ENV']['MAKEFLAGS'] = '-j%d' % GetOption('num_jobs')
 target = 'arm-elf'
 
 # Build packages
-def BuildPackage(dir, config_options, make_cmd):
+bootstrap_prefix = Dir('bootstrap')
+install_prefix = Dir('install')
+def BuildPackage(dir, isBootstrap, config_options, make_cmd):
 	source_dir = Dir('#/firmware/external/%s' % dir)
-	build_dir = Dir('build/%s' % dir)
+	
+	if isBootstrap:
+		build_dir = Dir('build-boot/%s' % dir)
+		prefix = bootstrap_prefix
+	else:
+		build_dir = Dir('build-install/%s' % dir)
+		prefix = install_prefix
 
 	# These files will be created after complicated steps are completed successfully
 	config_stamp = build_dir.File('.configured')
@@ -24,69 +32,94 @@ def BuildPackage(dir, config_options, make_cmd):
 
 	# Configure in a build directory
 	configure = host_env.Command(config_stamp, source_dir,
-		'cd ${TARGET.dir} && ${SOURCE.abspath}/configure --prefix=%s %s && touch ${TARGET.file}' % (Dir('install').abspath, config_options))
+		'cd ${TARGET.dir} && ${SOURCE.abspath}/configure --prefix=%s %s && touch ${TARGET.file}' % (prefix.abspath, config_options))
 	
 	# Build the package
 	build = host_env.Command(build_stamp, config_stamp, 'cd ${TARGET.dir} && %s && touch ${TARGET.file}' % make_cmd)
+	Depends(build, configure)
 	Clean(build, build_dir)
 	
 	return (configure, build)
 
-(config_binutils, build_binutils) = BuildPackage('binutils',
+
+(config_binutils_boot, build_binutils_boot) = BuildPackage('binutils', True,
 	'--target=%s '
 	'--enable-interwork '
 	'--enable-multilib '
 	'--with-gnu-ld '
 	'--with-gnu-as '
-	'--disable-werror' % target, 'make && make install')
+	'--disable-werror'
+	% target, 'make && make install')
 
-(config_gcc, build_gcc_compiler) = BuildPackage('gcc',
+(config_gcc_boot, build_gcc_compiler_boot) = BuildPackage('gcc', True,
 	'--target=%s '
-	'--with-newlib '
+	'--without-headers '
 	'--enable-languages="c" '
 	'--disable-threads '
 	'--disable-shared '
 	'--with-gnu-as '
 	'--with-gnu-ld '
-	'--with-headers=%s '
 	'--enable-interwork '
-	'--enable-multilib '
 	'--with-system-zlib '
-	'--with-mode=thumb '
-	'--with-arch=armv4t' %
-	(target, Dir('#/firmware/external/newlib/newlib/libc/include/').abspath), 'make all-gcc install-gcc')
+	'--enable-multilib ' %
+	target, 'make all-gcc install-gcc')
+Depends(config_gcc_boot, build_binutils_boot)
 
-(config_newlib, build_newlib) = BuildPackage('newlib',
+(config_newlib, build_newlib) = BuildPackage('newlib', False,
 	'--target=%s '
 	'--enable-interwork '
+	'--with-gnu-ld '
+	'--with-gnu-as '
+	'--enable-newlib-hw-fp '
+	'--enable-multilib'
+	% target,
+
+	'make all install '
+	'CC_FOR_TARGET=%s '
+	'AS_FOR_TARGET=%s '
+	'LD_FOR_TARGET=%s '
+	'AR_FOR_TARGET=%s '
+	'RANLIB_FOR_TARGET=%s '
+	% (bootstrap_prefix.File('bin/%s-gcc' % target).abspath,
+		bootstrap_prefix.File('bin/%s-as' % target).abspath,
+		bootstrap_prefix.File('bin/%s-ld' % target).abspath,
+		bootstrap_prefix.File('bin/%s-ar' % target).abspath,
+		bootstrap_prefix.File('bin/%s-ranlib' % target).abspath))
+Depends(config_newlib, build_gcc_compiler_boot)
+
+
+(config_binutils, build_binutils) = BuildPackage('binutils', False,
+	'--target=%s '
 	'--enable-multilib '
 	'--with-gnu-ld '
 	'--with-gnu-as '
-	'--with-float=soft '
-	'--enable-soft-float '
-	# '--enable-newlib-hw-fp '
-	'--enable-multilib' % target, 'make && make install')
+	'--disable-werror '
+	'--enable-interwork '
+	% target, 'make all install')
+Depends(config_binutils, build_newlib)
 
-
-gcc_all_build_stamp = Dir('build/gcc').File('.built-all')
-build_gcc_all = host_env.Command(gcc_all_build_stamp, '', 'cd ${TARGET.dir} && make && make install && touch ${TARGET.file}')
-
-Depends(build_gcc_all, build_gcc_compiler)
-
-
-
-
-# Dependencies
+(config_gcc, build_gcc) = BuildPackage('gcc', False,
+	'--target=%s '
+	'--with-gnu-as '
+	'--with-gnu-ld '
+	'--enable-languages=c '
+	'--enable-multilib '
+	'--enable-interwork '
+	'--with-newlib '
+	'--with-system-zlib '
+	'--with-headers=%s '
+	'--disable-werror '
+	% (target, Dir('#/firmware/external/newlib/newlib/libc/include')), 'make all install')
 Depends(config_gcc, build_binutils)
-Depends(config_newlib, build_gcc_compiler)
+
 
 # Aliases to allow specific parts of the toolchain to be rebuilt/cleaned
-Alias('arm-binutils', (config_binutils, build_binutils))
-Alias('arm-gcc', (config_gcc, build_gcc_all))
-Alias('arm-newlib', (config_newlib, build_newlib))
+Alias('arm-binutils', build_binutils)
+Alias('arm-gcc', build_gcc)
+Alias('arm-newlib', build_newlib)
 Alias('arm-toolchain', ['arm-binutils', 'arm-gcc', 'arm-newlib'])
 
-Help('  arm-toolchain: ARM %s, %s, and %s\n' % ('binutils', 'gcc', 'newlib'))
+# Help('  arm-toolchain: ARM %s, %s, and %s\n' % ('arm-binutils', 'arm-gcc', 'arm-newlib'))
 
 # To remove the installed files, you must clean all of the toolchain.
 # The packages do not provide any way to uninstall files.
