@@ -1,4 +1,3 @@
-
 # GT RoboJackets RoboCup SSL
 
 The Georgia Tech RoboJackets team competes in the annual RoboCup Small Size League (SSL) competition.  This repository contains all of the software that we run on the main field laptop and on our robots.  More information on how our software works can be found on our [wiki](http://wiki.robojackets.org/w/RoboCup_Software) or on our [website](http://www.robojackets.org/).
@@ -69,5 +68,5 @@ $ util/ubuntu-setup
 $ scons
 ```
 
-[Scons](http://www.scons.org/) is a python-based build system that we use to compile the executables that make up our project.  After running scons, several programs will be placed in the **run** folder.
+[Scons](http://www.scons.org/) is a python-based build system that we use to compile the executables that make up our project.  After running scons, several programs will be placed in the **run** folder.  See the [soccer README](soccer/README.md) for instructions on running the soccer program.
 
