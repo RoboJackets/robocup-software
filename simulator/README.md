@@ -3,7 +3,7 @@
 
 The easiest way to try out the soccer program and test new plays is to use the simulator.
 
-![Screenshot of the simulator](../doc/screenshots/simulator.png "Simulator")
+![Screenshot of the simulator](../doc/images/simulator.png "Simulator")
 
 
 ## Command-line options
