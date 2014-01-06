@@ -29,3 +29,12 @@ $ ./soccer
 ```
 
 Also, make sure that the cameras and vision system are on.  If so, robots should show up within the soccer window at their correct locations.
+
+
+### Manual Control
+
+To run without using the AI/vision system, click the 'Manual' dropdown in the upper right of soccer and select the shell number of the robot you want to control with the joystick.
+
+Here's a diagram of the button layout for joystick control:
+
+![Joystick](../doc/images/joystick-layout.png "Joystick Controls")
