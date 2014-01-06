@@ -4,9 +4,9 @@
 This folder contains the higher-level strategy code for the soccer program.
 
 
-## GamePlayModule
+## GameplayModule
 
-The [GamePlayModule](./GamePlayModule.hpp) is the coordinator for all game logic.  Its main responsibilities include:
+The [GameplayModule](./GameplayModule.hpp) is the coordinator for all game logic.  Its main responsibilities include:
 
 * managing the Goalie
 * managing the joystick-controlled robot (if any)
