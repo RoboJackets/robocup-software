@@ -20,7 +20,7 @@ The soccer game is played between two teams of six robots each on a field with o
 
 ### soccer/
 
-The soccer folder contains the code to build the 'soccer' program, which is the main program in control when running our robots.  See the [README](soccer/README.md) in the /soccer folder for more info on what it does and how to use it.
+The soccer folder contains the code to build the 'soccer' program, which is the main program in control when running our robots.  See the [README](soccer/README.md) in the soccer/ folder for more info on what it does and how to use it.
 
 
 ### simulator/
@@ -30,7 +30,7 @@ Code for the RoboCup simulator is located here.  This allows us to quickly test 
 
 ### firmware/
 
-The firmware folder contains the code that runs on the robot (/soccer/robot) and on the radio base station.  See the firmware/robot [README](firmware/robot/README.md) for more info.
+The firmware folder contains the code that runs on the robot (soccer/robot) and on the radio base station.  See the firmware/robot [README](firmware/robot/README.md) for more info.
 
 
 ### common/
