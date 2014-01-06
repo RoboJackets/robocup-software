@@ -28,7 +28,7 @@ Code for the RoboCup simulator is located here.  This allows us to quickly test 
 
 ### firmware/
 
-The firmware folder contains the code that runs on the robot (/soccer/robot) and on the radio base station.
+The firmware folder contains the code that runs on the robot (/soccer/robot) and on the radio base station.  See the firmware/robot [README](firmware/robot/README.md) for more info.
 
 
 ### common/
