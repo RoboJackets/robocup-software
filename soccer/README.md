@@ -3,7 +3,7 @@
 
 The 'soccer' program is responsible for receiving data from the vision and referee computers and using the information to strategically command the robots on the field (or in the simulator).
 
-![Screenshot of the 'soccer' program](../doc/screenshots/soccer.png "Soccer")
+![Screenshot of the 'soccer' program](../doc/images/soccer.png "Soccer")
 
 
 ## Running with the simulator

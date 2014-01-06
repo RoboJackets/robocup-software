@@ -3,7 +3,7 @@
 
 The Georgia Tech RoboJackets team competes in the annual RoboCup Small Size League (SSL) competition.  This repository contains all of the software that we run on the main field laptop and on our robots.  More information on how our software works can be found on our [wiki](http://wiki.robojackets.org/w/RoboCup_Software) or on our [website](http://www.robojackets.org/).
 
-![Screenshot of the 'soccer' program](doc/screenshots/soccer.png "Soccer")
+![Screenshot of the 'soccer' program](doc/images/soccer.png "Soccer")
 
 
 ## The Competition
