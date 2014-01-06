@@ -767,13 +767,11 @@ void cmd_imu_test(int argc, const char *argv[], void *arg)
 		printf("Gyro: (%d, %d, %d)\n", gyro[0], gyro[1], gyro[2]);
 
 
-		float a = 2.0f*(q[0]*q[3] + q[1]*q[2]);
-		float b = 1.0f - 2.0f * ( powf(q[2], 2.0f) * powf(q[3], 2.0f));
-		double z = tan((float)(a/b));
-		printf("Z? (x100): %d", z*100);
-
-
-		printf("size(int)=%d, size(long)=%d, size(short)=%d\n", sizeof(int), sizeof(long), sizeof(short));
+		// float a = 2.0f*(q[0]*q[3] + q[1]*q[2]);
+		// float b = 1.0f - 2.0f * ( powf(q[2], 2.0f) * powf(q[3], 2.0f));
+		// double z = tan((float)(a/b));
+		// printf("Z? (x100): %d", z*100);
+		// printf("size(int)=%d, size(long)=%d, size(short)=%d\n", sizeof(int), sizeof(long), sizeof(short));
 
 		long acc[3] = {0};
 		IMUgetLinearAccelWorld(acc);

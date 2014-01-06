@@ -112,8 +112,7 @@ robot_fw = arm_flash.Program('robocup.elf', [
 	'invensense/imuMlsl.c',
 	'invensense/mlcontrol.c',
 	'invensense/dmpDefault.c',
-	'invensense/imuCompatibility.c',
-	'/home/justbuchanan/src/rj/robocup/software/build/firmware/install/arm-elf/lib/libm.a' 
+	'invensense/imuCompatibility.c'
 ])
 Depends(robot_fw, flash_lds)
 
