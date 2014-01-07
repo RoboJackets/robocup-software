@@ -7,7 +7,3 @@ before_install:
   - sudo ./util/ubuntu-setup
 
 script: scons
-
-notifications:
-  email:
-    - justbuchanan@gmail.com
