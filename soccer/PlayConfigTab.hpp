@@ -34,7 +34,6 @@ class PlayConfigTab: public QWidget
 	private Q_SLOTS:
 		void on_load_clicked();
 		void on_save_clicked();
-		void on_goalie_toggled(bool checked);
 		void on_plays_itemChanged(QTreeWidgetItem *item);
 		void on_plays_customContextMenuRequested(const QPoint &pos);
 		

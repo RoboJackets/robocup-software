@@ -156,16 +156,6 @@ void PlayConfigTab::on_save_clicked()
 	}
 }
 
-void PlayConfigTab::on_goalie_toggled(bool checked)
-{
-	if (checked)
-	{
-		_gameplay->createGoalie();
-	} else {
-		_gameplay->removeGoalie();
-	}
-}
-
 void PlayConfigTab::frameUpdate()
 {
 	BOOST_FOREACH(QTreeWidgetItem *item, _nameItemMap)
