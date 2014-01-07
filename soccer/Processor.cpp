@@ -18,7 +18,7 @@
 
 #include <motion/MotionControl.hpp>
 #include <gameplay/GameplayModule.hpp>
-#include <framework/RobotConfig.hpp>
+#include <RobotConfig.hpp>
 #include <RefereeModule.hpp>
 
 #include <boost/foreach.hpp>

@@ -1,5 +1,5 @@
 #include "OurGoalKick2.hpp"
-#include <framework/RobotConfig.hpp>
+#include <RobotConfig.hpp>
 #include <boost/foreach.hpp>
 #include <iostream>
 

@@ -1,6 +1,6 @@
 #include "Kickoff.hpp"
 #include <algorithm>
-#include <framework/RobotConfig.hpp>
+#include <RobotConfig.hpp>
 
 using namespace std;
 using namespace Geometry2d;

@@ -11,7 +11,7 @@
 
 #include "WindowEvaluator.hpp"
 #include <Configuration.hpp>
-#include "../../framework/SystemState.hpp"
+#include "../../SystemState.hpp"
 #include <Geometry2d/Segment.hpp>
 #include "../../Robot.hpp"
 

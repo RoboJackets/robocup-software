@@ -1,6 +1,6 @@
 #include "MotionControl.hpp"
-#include <framework/SystemState.hpp>
-#include <framework/RobotConfig.hpp>
+#include <SystemState.hpp>
+#include <RobotConfig.hpp>
 #include <Robot.hpp>
 #include <Utils.hpp>
 

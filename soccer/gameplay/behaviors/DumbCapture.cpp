@@ -1,6 +1,6 @@
 #include "Capture.hpp"
 
-#include <framework/RobotConfig.hpp>
+#include <RobotConfig.hpp>
 #include <Utils.hpp>
 
 using namespace std;

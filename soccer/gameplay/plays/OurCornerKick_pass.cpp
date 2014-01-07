@@ -1,5 +1,5 @@
 #include "OurCornerKick_pass.hpp"
-#include <framework/RobotConfig.hpp>
+#include <RobotConfig.hpp>
 #include <boost/foreach.hpp>
 #include <iostream>
 #include "../evaluation/ReceivePointEvaluator.hpp"
