@@ -4,8 +4,8 @@
 #include <LogUtils.hpp>
 #include <motion/MotionControl.hpp>
 #include <protobuf/LogFrame.pb.h>
-#include <framework/SystemState.hpp>
-#include <framework/RobotConfig.hpp>
+#include <SystemState.hpp>
+#include <RobotConfig.hpp>
 #include <modeling/RobotFilter.hpp>
 
 #include <stdio.h>

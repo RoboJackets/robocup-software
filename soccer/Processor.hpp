@@ -12,7 +12,7 @@
 #include <Network.hpp>
 #include <Logger.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
-#include <framework/SystemState.hpp>
+#include <SystemState.hpp>
 #include <modeling/RobotFilter.hpp>
 
 class Configuration;

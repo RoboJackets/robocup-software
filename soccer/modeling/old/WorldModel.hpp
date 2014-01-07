@@ -6,7 +6,7 @@
 #include <map>
 
 #include <protobuf/messages_robocup_ssl_detection.pb.h>
-#include <framework/SystemState.hpp>
+#include <SystemState.hpp>
 #include <Configuration.hpp>
 #include "RobotModel.hpp"
 

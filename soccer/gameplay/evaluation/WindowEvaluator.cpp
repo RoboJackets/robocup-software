@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <Constants.hpp>
 #include <Robot.hpp>
-#include <framework/SystemState.hpp>
+#include <SystemState.hpp>
 #include <boost/foreach.hpp>
 
 using namespace std;

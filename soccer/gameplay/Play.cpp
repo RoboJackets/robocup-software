@@ -2,7 +2,7 @@
 #include "Play.hpp"
 
 #include <boost/foreach.hpp>
-#include <framework/RobotConfig.hpp>
+#include <RobotConfig.hpp>
 
 using namespace std;
 

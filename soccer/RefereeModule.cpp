@@ -1,5 +1,5 @@
 #include <RefereeModule.hpp>
-#include <framework/SystemState.hpp>
+#include <SystemState.hpp>
 
 using namespace RefereeCommands;
 

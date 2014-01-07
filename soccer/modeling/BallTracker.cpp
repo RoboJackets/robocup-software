@@ -3,7 +3,7 @@
 
 #include <Utils.hpp>
 #include <Processor.hpp>
-#include <framework/SystemState.hpp>
+#include <SystemState.hpp>
 
 #include <boost/make_shared.hpp>
 

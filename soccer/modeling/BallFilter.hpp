@@ -1,6 +1,6 @@
 #pragma once
 
-#include <framework/SystemState.hpp>
+#include <SystemState.hpp>
 
 #include <stdint.h>
 

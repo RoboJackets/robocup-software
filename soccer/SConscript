@@ -22,8 +22,8 @@ srcs = [
 
 	'planning/Obstacle.cpp',
 	'planning/Path.cpp',
-	'framework/SystemState.cpp',
-	'framework/RobotConfig.cpp',
+	'SystemState.cpp',
+	'RobotConfig.cpp',
 
 # Sources for gameplay module
 

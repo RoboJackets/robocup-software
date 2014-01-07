@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GameplayModule.hpp"
-#include <framework/SystemState.hpp>
+#include <SystemState.hpp>
 #include <Configuration.hpp>
 #include <Robot.hpp>
 
