@@ -49,7 +49,9 @@ Here's a quick guide to getting this RoboCup project setup on your computer.  We
 1) Clone the repository
 
 ```
-$ git clone git://github.com/RoboJackets/robocup-software
+# note: if you're not a RoboJackets member, use this address instead:
+# git://github.com/RoboJackets/robocup-software
+$ git clone git@github.com:RoboJackets/robocup-software
 ```
 
 
