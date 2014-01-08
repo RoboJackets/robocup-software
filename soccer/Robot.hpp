@@ -226,7 +226,9 @@ public:
 
 	/**
 	 * Move using direct velocity control by specifying
-	 * translational and angular velocity
+	 * translational and angular velocity.
+	 * 
+	 * All velocities are in m/s
 	 */
 	void bodyVelocity(const Geometry2d::Point& v);
 	void worldVelocity(const Geometry2d::Point& v);
