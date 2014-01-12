@@ -105,7 +105,7 @@ void Robot::initPhysics(const bool& blue)
 	// Create raycast vehicle
 	{
 		_vehicleRayCaster = new btDefaultVehicleRaycaster(_simEngine->dynamicsWorld());
-		_robotVehicle = new btRaycastVehicle(_tuning, _robotChassis, _vehicleRayCaster);
+		_robotVehicle = new RaycastVehicle(_tuning, _robotChassis, _vehicleRayCaster);
 
 		// Never deactivate the vehicle
 		_robotChassis->setActivationState(DISABLE_DEACTIVATION);
