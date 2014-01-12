@@ -1,4 +1,3 @@
-
 # robot firmware
 
 This folder contains the firmware that runs on the robots themselves.  The cpu/ folder contains the c code that runs on the ARM microprocessor and the fpga/ folder contains the verilog code for the on-board fpga.
@@ -26,5 +25,5 @@ The computer will then rebuild the firmware if necessary, then load it onto all 
 1. Set DIP switch 3 on the robot to ON
 1. Wait 10 seconds
 1. Turn DIP switch 3 off
-1. Turn the robot off and then back off again
+1. Turn the robot off and then back on again
 1. Run `$ scons robot-prog-samba` to load the firmware
