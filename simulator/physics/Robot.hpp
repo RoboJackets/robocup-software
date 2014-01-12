@@ -6,6 +6,7 @@
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
 
+#include "RaycastVehicle.hpp"
 
 class Ball;
 class RobotBallController;
@@ -36,9 +37,9 @@ protected:
 
 	// physics components
 	btRigidBody* _robotChassis;
-	btRaycastVehicle::btVehicleTuning _tuning;
+	RaycastVehicle::btVehicleTuning _tuning;
 	btVehicleRaycaster* _vehicleRayCaster;
-	btRaycastVehicle* _robotVehicle;
+	RaycastVehicle* _robotVehicle;
 	btCollisionShape* _wheelShape;
 
 	RobotBallController* _controller;
@@ -117,7 +118,7 @@ public:
 		return _robotChassis;
 	}
 
-	btRaycastVehicle* getRaycastVehicle() const {
+	RaycastVehicle* getRaycastVehicle() const {
 		return _robotVehicle;
 	}
 

@@ -36,6 +36,7 @@ SRC = [
 	'physics/Entity.cpp',
 	'physics/Ball.cpp',
 	'physics/Field.cpp',
+    'physics/RaycastVehicle.cpp',
 	'physics/Robot.cpp',
 	'physics/RobotBallController.cpp',
 	'physics/FastTimer.cpp',
