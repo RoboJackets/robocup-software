@@ -1,12 +1,3 @@
 [submodule "firmware/urjtag"]
 	path = firmware/urjtag
 	url = git://urjtag.git.sourceforge.net/gitroot/urjtag/urjtag
-[submodule "firmware/external/binutils"]
-	path = firmware/external/binutils
-	url = https://gnu.googlesource.com/binutils
-[submodule "firmware/external/newlib"]
-	path = firmware/external/newlib
-	url = git://sourceware.org/git/newlib.git
-[submodule "firmware/external/gcc"]
-	path = firmware/external/gcc
-	url = git://gcc.gnu.org/git/gcc.git
