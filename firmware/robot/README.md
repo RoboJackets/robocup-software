@@ -26,4 +26,4 @@ The computer will then rebuild the firmware if necessary, then load it onto all 
 1. Wait 10 seconds
 1. Turn DIP switch 3 off
 1. Turn the robot off and then back on again
-1. Run `$ scons robot-prog-samba` to load the firmware
+1. Run `$ sudo scons robot-prog-samba` to load the firmware
