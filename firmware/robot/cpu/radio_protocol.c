@@ -110,7 +110,7 @@ int handle_forward_packet()
 	// Get motor commands from the packet
 	int offset = 1;
 	int reply_slot = -1;
-	for (int slot = 0; slot < 5; ++slot)
+	for (int slot = 0; slot < 6; ++slot)
 	{
 		if ((forward_packet[offset + 4] & 0x0f) == robot_id)
 		{
