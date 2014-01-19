@@ -152,6 +152,7 @@ int main (int argc, char* argv[])
 	bool goalie = true;
 	bool sim = false;
 	bool log = true;
+    QString radioFreq;
 	
 	for (int i=1 ; i<argc; ++i)
 	{
@@ -180,6 +181,17 @@ int main (int argc, char* argv[])
 		{
 			log = false;
 		}
+        else if(strcmp(var, "-freq") == 0)
+        {
+            if(i+1 >= argc)
+            {
+                printf("No radio frequency specified after -freq");
+                usage(argv[0]);
+            }
+
+            i++;
+            radioFreq = argv[i];
+        }
 		else if(strcmp(var, "-c") == 0)
 		{
 			if (i+1 >= argc)
@@ -223,7 +235,7 @@ int main (int argc, char* argv[])
 			
 			i++;
 			playbook = argv[i];
-		}
+        }
 		else
 		{
 			printf("Not a valid flag: %s\n", argv[i]);
@@ -293,6 +305,17 @@ int main (int argc, char* argv[])
 			printf("Failed to open %s: %m\n", (const char *)logFile.toAscii());
 		}
 	}
+
+    if(!radioFreq.isEmpty())
+    {
+        if(radioFreq == "904")
+            win->setRadioChannel(RadioChannels::MHz_904);
+        else if(radioFreq == "906")
+            win->setRadioChannel(RadioChannels::MHz_906);
+        else
+            printf("Cannot recognize radio frequency : %s\n", radioFreq.toStdString().c_str());
+    }
+
 	win->logFileChanged();
 	
 	processor->start();

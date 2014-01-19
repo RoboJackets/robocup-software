@@ -1053,3 +1053,16 @@ void MainWindow::on_saveConfig_clicked()
 		}
 	}
 }
+
+void MainWindow::setRadioChannel(RadioChannels channel)
+{
+    switch(channel)
+    {
+    case RadioChannels::MHz_904:
+        this->on_action904MHz_triggered();
+        break;
+    case RadioChannels::MHz_906:
+        this->on_action906MHz_triggered();
+        break;
+    }
+}

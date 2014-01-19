@@ -16,6 +16,13 @@ class TestResultTab;
 class StripChart;
 class ConfigBool;
 class QuaternionDemo;
+
+enum RadioChannels
+{
+    MHz_904,
+    MHz_906
+};
+
 /**
  * main gui thread class
  */
@@ -66,8 +73,10 @@ class MainWindow : public QMainWindow
 		
 		// Call this to update the status bar when the log file has changed
 		void logFileChanged();
+
+        void setRadioChannel(RadioChannels channel);
 		
-		QTimer updateTimer;
+        QTimer updateTimer;
 		
 	private Q_SLOTS:
 		void updateViews();
@@ -180,8 +189,8 @@ class MainWindow : public QMainWindow
 			Status_Fail
 		} StatusType;
 		
-		void status(QString text, StatusType status);
-		void channel(int n);
+        void status(QString text, StatusType status);
+        void channel(int n);
 		
 		Ui_MainWindow _ui;
 		
