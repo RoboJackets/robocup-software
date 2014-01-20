@@ -182,6 +182,8 @@ int main()
 	// Set up I2C
 	i2c_init();
 	
+// FIXME: Enabling this may cause the "all-the-lights"/"no-beep" bug
+// (is it timing related?).
 #if 0
 	// Set up the IMU
 	if (!imu_init())
