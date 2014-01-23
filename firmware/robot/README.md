@@ -5,7 +5,7 @@ This folder contains the firmware that runs on the robots themselves.  The cpu/ 
 
 ## Building and Installing
 
-There are two ways to load the firmware onto the robot: over USB and over the radio.
+There are two main ways to load the firmware onto the robot: over USB and over the radio.  If the robot already has working firmware and you'd like to load a new version, you can use the regular USB install.  Otherwise, you'll have to program it using SAMBA
 
 
 ### Over-The-Air Install
@@ -19,7 +19,13 @@ $ scons robot-ota
 The computer will then rebuild the firmware if necessary, then load it onto all robots that are turned on and within radio range.
 
 
-### USB Install
+### Regular USB Install
+
+1. Turn on the robot and plug it into your computer with a micro USB cord
+2. Run `$ sudo scons robot-prog`
+
+
+### USB SAMBA Install
 
 1. Turn on the robot and plug it into your computer with a micro USB cord
 1. Set DIP switch 3 on the robot to ON
