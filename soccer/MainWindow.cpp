@@ -133,7 +133,7 @@ MainWindow::MainWindow(QWidget *parent):
 	_ui.splitter->setStretchFactor(0, 98);
 	_ui.splitter->setStretchFactor(1, 10);
 	
-	connect(_ui.manualID, SIGNAL(currentIndexChanged(int)), this, SLOT(on_goalieID_currentIndexChanged(int)));
+	connect(_ui.manualID, SIGNAL(currentIndexChanged(int)), this, SLOT(on_manualID_currentIndexChanged(int)));
 
 	channel(0);
 
