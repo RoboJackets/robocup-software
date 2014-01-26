@@ -257,7 +257,7 @@ void Gameplay::GameplayModule::run()
 	_playRobots.clear();
 	BOOST_FOREACH(OurRobot *r, _state->self)
 	{
-		if (r->visible && !r->exclude)
+		if (r->visible && !r->exclude && r->rxIsFresh())
 		{
 			_playRobots.insert(r);
 		}
