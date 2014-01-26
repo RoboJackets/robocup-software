@@ -572,11 +572,15 @@ void MainWindow::on_actionUseOpponentHalf_toggled(bool value)
 void MainWindow::on_action904MHz_triggered()
 {
 	channel(0);
+    _ui.action904MHz->setChecked(true);
+    _ui.action906MHz->setChecked(false);
 }
 
 void MainWindow::on_action906MHz_triggered()
 {
 	channel(10);
+    _ui.action904MHz->setChecked(false);
+    _ui.action906MHz->setChecked(true);
 }
 
 void MainWindow::channel(int n)
