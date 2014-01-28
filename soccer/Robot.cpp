@@ -1,5 +1,4 @@
 #include <Robot.hpp>
-#include <planning/bezier.hpp>
 #include <Utils.hpp>
 #include <LogUtils.hpp>
 #include <motion/MotionControl.hpp>
