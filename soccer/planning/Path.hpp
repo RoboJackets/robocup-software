@@ -7,6 +7,9 @@
 
 namespace Planning
 {
+	/**
+	 *	Represents a path as a series of 2d points
+	 */
 	class Path
 	{
 		public:

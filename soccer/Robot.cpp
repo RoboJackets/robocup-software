@@ -324,11 +324,10 @@ void OurRobot::dribble(int8_t speed)
 	radioTx.set_dribbler(speed);
 }
 
-void OurRobot::face(Geometry2d::Point pt, bool continuous)
+void OurRobot::face(Geometry2d::Point pt)
 {
 	cmd.face = FaceTarget();
 	cmd.face->pos = pt;
-	cmd.face->continuous = continuous;
 }
 
 void OurRobot::faceNone()

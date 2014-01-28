@@ -134,7 +134,7 @@ bool Gameplay::Behaviors::Goalie::run()
 	_previousState = _state;
 
 
-	robot->face(ball().pos, true);
+	robot->face(ball().pos);
 
 
 	switch (_state)
@@ -201,7 +201,7 @@ bool Gameplay::Behaviors::Goalie::run()
 			robot->worldVelocity((ball().pos - robot->pos).normalized() * 1.0);
 		}
 		robot->dribble(40);
-		robot->face(ball().pos, true);
+		robot->face(ball().pos);
 		robot->radioTx.set_kick_immediate(false);
 		if(robot->hardwareVersion() == Packet::RJ2011)
 			robot->chip(255);

@@ -15,7 +15,7 @@ MotionControl::MotionControl(OurRobot *robot)
 {
 	_robot = robot;
 
-	_robot->radioTx.set_robot_id(_robot->shell());
+	_robot->radioTx.set_robot_id(_robot->shell());	//	FIXME: why is this here?
 	
 	_lastAngularVel = 0;
 }
@@ -151,10 +151,6 @@ void MotionControl::anglePD()
 	
 	_robot->cmd.angularVelocity = error * (float)*_robot->config->rotation.p + (error - _lastAngleError) * (float)*_robot->config->rotation.d;
 	_lastAngleError = error;
-}
-
-void MotionControl::stopped()
-{
 }
 
 void limitAccel(float &value, float last, float limit)

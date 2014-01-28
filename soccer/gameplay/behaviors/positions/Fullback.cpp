@@ -347,7 +347,7 @@ bool Gameplay::Behaviors::Fullback::run()
 	// if needTask, face the ball
 	if(needTask)
 	{
-		robot->face(ball().pos, true);
+		robot->face(ball().pos);
 	}
 
 	// Turn dribbler on when ball is near
