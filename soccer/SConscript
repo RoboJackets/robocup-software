@@ -42,7 +42,6 @@ srcs = [
 	# Planning components',
 	'planning/rrt.cpp',
 	'planning/Tree.cpp',
-	'planning/bezier.cpp',
 
 	# Restart plays
 	'gameplay/plays/OurKickoff.cpp',
