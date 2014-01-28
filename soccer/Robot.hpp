@@ -74,11 +74,17 @@ public:
 		return _shell;
 	}
 
+	/**
+	 * Check whether or not this robot is on our team
+	 */
 	bool self() const
 	{
 		return _self;
 	}
 	
+	/**
+	 * Get the robot's position filter.
+	 */
 	RobotFilter *filter() const
 	{
 		return _filter;
