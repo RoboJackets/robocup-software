@@ -283,7 +283,7 @@ bool Gameplay::PassReceiver::run()
 
 	//	if we're positioning, receiving, or positioned...
 	robot->move(targetCenterPosition(), false);
-	robot->face(getFacePoint(), false);
+	robot->face(getFacePoint());
 
 
 	return true;

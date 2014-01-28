@@ -110,16 +110,13 @@ public:
 	PathEndType pathEnd;
 };
 
-class FaceTarget
-{
+class FaceTarget {
 public:
-	FaceTarget()
-	{
-		continuous = false;
-	}
-	
+
+	/**
+	 * The point on the field that the robot should attempt to face towards
+	 */	
 	Geometry2d::Point pos;
-	bool continuous;
 };
 
 class MotionCommand
@@ -142,13 +139,13 @@ class MotionCommand
 		float vScale;
 		float wScale;
 		
-		// Velocity in world coordinates
+		/// Velocity in world coordinates
 		boost::optional<Geometry2d::Point> worldVel;
 		
-		// Velocity in body coordinates (the front of the robot is +X)
+		/// Velocity in body coordinates (the front of the robot is +X)
 		boost::optional<Geometry2d::Point> bodyVel;
 		
-		// Angular velocity in rad/s counterclockwise
+		/// Angular velocity in rad/s counterclockwise
 		boost::optional<float> angularVelocity;
 };
 
@@ -242,7 +239,7 @@ public:
 	/**
 	 * Face a point while remaining in place
 	 */
-	void face(Geometry2d::Point pt, bool continuous = false);
+	void face(Geometry2d::Point pt);
 
 	/**
 	 * Remove the facing command
