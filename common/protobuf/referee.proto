@@ -1,0 +1,135 @@
+// Each UDP packet contains one of these messages.
+message SSL_Referee {
+	// The UNIX timestamp when the packet was sent, in microseconds.
+	// Divide by 1,000,000 to get a time_t.
+	required uint64 packet_timestamp = 1;
+
+	// These are the "coarse" stages of the game.
+	enum Stage {
+		// The first half is about to start.
+		// A kickoff is called within this stage.
+		// This stage ends with the NORMAL_START.
+		NORMAL_FIRST_HALF_PRE = 0;
+		// The first half of the normal game, before half time.
+		NORMAL_FIRST_HALF = 1;
+		// Half time between first and second halves.
+		NORMAL_HALF_TIME = 2;
+		// The second half is about to start.
+		// A kickoff is called within this stage.
+		// This stage ends with the NORMAL_START.
+		NORMAL_SECOND_HALF_PRE = 3;
+		// The second half of the normal game, after half time.
+		NORMAL_SECOND_HALF = 4;
+		// The break before extra time.
+		EXTRA_TIME_BREAK = 5;
+		// The first half of extra time is about to start.
+		// A kickoff is called within this stage.
+		// This stage ends with the NORMAL_START.
+		EXTRA_FIRST_HALF_PRE = 6;
+		// The first half of extra time.
+		EXTRA_FIRST_HALF = 7;
+		// Half time between first and second extra halves.
+		EXTRA_HALF_TIME = 8;
+		// The second half of extra time is about to start.
+		// A kickoff is called within this stage.
+		// This stage ends with the NORMAL_START.
+		EXTRA_SECOND_HALF_PRE = 9;
+		// The second half of extra time.
+		EXTRA_SECOND_HALF = 10;
+		// The break before penalty shootout.
+		PENALTY_SHOOTOUT_BREAK = 11;
+		// The penalty shootout.
+		PENALTY_SHOOTOUT = 12;
+		// The game is over.
+		POST_GAME = 13;
+	}
+	required Stage stage = 2;
+
+	// The number of microseconds left in the stage.
+	// The following stages have this value; the rest do not:
+	// NORMAL_FIRST_HALF
+	// NORMAL_HALF_TIME
+	// NORMAL_SECOND_HALF
+	// EXTRA_TIME_BREAK
+	// EXTRA_FIRST_HALF
+	// EXTRA_HALF_TIME
+	// EXTRA_SECOND_HALF
+	// PENALTY_SHOOTOUT_BREAK
+	//
+	// If the stage runs over its specified time, this value
+	// becomes negative.
+	optional sint32 stage_time_left = 3;
+
+	// These are the "fine" states of play on the field.
+	enum Command {
+		// All robots should completely stop moving.
+		HALT = 0;
+		// Robots must keep 50 cm from the ball.
+		STOP = 1;
+		// A prepared kickoff or penalty may now be taken.
+		NORMAL_START = 2;
+		// The ball is dropped and free for either team.
+		FORCE_START = 3;
+		// The yellow team may move into kickoff position.
+		PREPARE_KICKOFF_YELLOW = 4;
+		// The blue team may move into kickoff position.
+		PREPARE_KICKOFF_BLUE = 5;
+		// The yellow team may move into penalty position.
+		PREPARE_PENALTY_YELLOW = 6;
+		// The blue team may move into penalty position.
+		PREPARE_PENALTY_BLUE = 7;
+		// The yellow team may take a direct free kick.
+		DIRECT_FREE_YELLOW = 8;
+		// The blue team may take a direct free kick.
+		DIRECT_FREE_BLUE = 9;
+		// The yellow team may take an indirect free kick.
+		INDIRECT_FREE_YELLOW = 10;
+		// The blue team may take an indirect free kick.
+		INDIRECT_FREE_BLUE = 11;
+		// The yellow team is currently in a timeout.
+		TIMEOUT_YELLOW = 12;
+		// The blue team is currently in a timeout.
+		TIMEOUT_BLUE = 13;
+		// The yellow team just scored a goal.
+		// For information only.
+		// For rules compliance, teams must treat as STOP.
+		GOAL_YELLOW = 14;
+		// The blue team just scored a goal.
+		GOAL_BLUE = 15;
+	}
+	required Command command = 4;
+
+	// The number of commands issued since startup (mod 2^32).
+	required uint32 command_counter = 5;
+
+	// The UNIX timestamp when the command was issued, in microseconds.
+	// This value changes only when a new command is issued, not on each packet.
+	required uint64 command_timestamp = 6;
+
+	// Information about a single team.
+	message TeamInfo {
+		// The team's name (empty string if operator has not typed anything).
+		required string name = 1;
+		// The number of goals scored by the team during normal play and overtime.
+		required uint32 score = 2;
+		// The number of red cards issued to the team since the beginning of the game.
+		required uint32 red_cards = 3;
+		// The amount of time (in microseconds) left on each yellow card issued to the team.
+		// If no yellow cards are issued, this array has no elements.
+		// Otherwise, times are ordered from smallest to largest.
+		repeated uint32 yellow_card_times = 4 [packed=true];
+		// The total number of yellow cards ever issued to the team.
+		required uint32 yellow_cards = 5;
+		// The number of timeouts this team can still call.
+		// If in a timeout right now, that timeout is excluded.
+		required uint32 timeouts = 6;
+		// The number of microseconds of timeout this team can use.
+		required uint32 timeout_time = 7;
+		// The pattern number of this team's goalie.
+		required uint32 goalie = 8;
+	}
+
+	// Information about the two teams.
+	required TeamInfo yellow = 7;
+	required TeamInfo blue = 8;
+}
