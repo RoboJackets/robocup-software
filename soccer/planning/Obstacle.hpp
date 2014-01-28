@@ -20,16 +20,15 @@ public:
     Obstacle();
     virtual ~Obstacle();
     /**
-     * uses to underlying Geom2d class' nearPoint method
+     * Test whether a given point intersects the obstacle
      */
     virtual bool hit(const Geometry2d::Point &pt) const = 0;
     /**
-     * uses the underlying Geom2D class' nearSegment method
+     * Test whether a given segment intersects the obstacle
      */
     virtual bool hit(const Geometry2d::Segment &seg) const = 0;
 };
 
-typedef std::shared_ptr<Obstacle> ObstaclePtr;
 /**
  * this is a group of obstacles that are all compared to when doing colision detection
  */
@@ -37,36 +36,34 @@ class ObstacleGroup
 {
 public:
 	typedef boost::optional<ObstacleGroup> Optional;
-
-	// STL typedefs
-	typedef std::set<ObstaclePtr>::const_iterator const_iterator;
-	typedef std::set<ObstaclePtr>::iterator iterator;
-	typedef ObstaclePtr value_type;
+    typedef std::shared_ptr<Obstacle> ObstaclePtr;
 
     ~ObstacleGroup();
     
-    const std::set<ObstaclePtr> &obstacles() const
+    /**
+     * Returns a std::set of the encapsulated obstacles
+     */
+    const std::set< ObstaclePtr > &obstacles() const
     {
         return _obstacles;
     }
     
-    void clear();
     /**
-     * adds a boost shared pointer to an obstacle
+     * Removes all obstacles
+     */
+    void clear();
+
+    /**
+     * Adds a pointer to an obstacle
      */
     void add(ObstaclePtr obs);
+
     /**
-     * adds another obstacle group
+     * Adds another obstacle group
      */
     void add(const ObstacleGroup& group);
     
-    // STL Interface
-    const_iterator begin() const { return _obstacles.begin(); }
-    const_iterator end() const { return _obstacles.end(); }
-
-    iterator begin() { return _obstacles.begin(); }
-    iterator end() { return _obstacles.end(); }
-
+    
     unsigned int size() const
     {
         return _obstacles.size();
@@ -77,6 +74,13 @@ public:
     	return _obstacles.empty();
     }
 
+    /**
+     * Checks if a given object hits obstacles in the group
+     *
+     * @param obj The object to collision test
+     * @param hitSet A set to add the colliding obstacles to
+     * @return A bool telling whether or not there were any collisions
+     */
     template<typename T>
     bool hit(const T &obj, ObstacleGroup &hitSet) const
     {
@@ -91,6 +95,12 @@ public:
         return !hitSet.empty();
     }
 
+    /**
+     * Checks if a given obstacle its obstacles in the group
+     *
+     * @param obj The object to collision test
+     * @return A bool telling whether or not there were any collisions
+     */
     template<typename T>
     bool hit(const T &obj) const
     {
@@ -104,6 +114,20 @@ public:
 
         return false;
     }
+
+
+    // STL typedefs
+    typedef std::set<ObstaclePtr>::const_iterator const_iterator;
+    typedef std::set<ObstaclePtr>::iterator iterator;
+    typedef ObstaclePtr value_type;
+    
+    // STL Interface
+    const_iterator begin() const { return _obstacles.begin(); }
+    const_iterator end() const { return _obstacles.end(); }
+
+    iterator begin() { return _obstacles.begin(); }
+    iterator end() { return _obstacles.end(); }
+
 
 protected:
     std::set<ObstaclePtr> _obstacles;
@@ -119,6 +143,7 @@ public:
 
     Geometry2d::Circle circle;
 };
+
 /**
  * collision object in the form of a polygon
  */
