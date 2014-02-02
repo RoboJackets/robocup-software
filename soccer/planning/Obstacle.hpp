@@ -29,6 +29,9 @@ public:
     virtual bool hit(const Geometry2d::Segment &seg) const = 0;
 };
 
+
+typedef std::shared_ptr<Obstacle> ObstaclePtr;
+
 /**
  * this is a group of obstacles that are all compared to when doing colision detection
  */
@@ -36,7 +39,6 @@ class ObstacleGroup
 {
 public:
 	typedef boost::optional<ObstacleGroup> Optional;
-    typedef std::shared_ptr<Obstacle> ObstaclePtr;
 
     ~ObstacleGroup();
     
