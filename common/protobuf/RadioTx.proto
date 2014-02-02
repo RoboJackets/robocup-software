@@ -1,7 +1,6 @@
 package Packet;
 
 import "Point.proto";
-import "MotionPath.proto";
 
 // Packet going out from control program to radio program
 message RadioTx
@@ -26,8 +25,6 @@ message RadioTx
 		//	measurement from the camera
 		optional Point position = 14;
 		optional float latency = 15;
-
-		optional MotionPath target_path = 16;
 		
 		optional bool kick_immediate = 11;
 		
