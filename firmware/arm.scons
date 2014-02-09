@@ -63,7 +63,7 @@ def BuildPackage(dir, filename, size, url, config_options):
 	
 	# Configure in a build directory
 	configure = host_env.Command(config_stamp, source_dir,
-		'cd ${TARGET.dir} && ${SOURCE.abspath}/configure --prefix=%s %s && touch ${TARGET.file}' % (Dir('install').abspath, config_options))
+		'cd ${TARGET.dir} && ${SOURCE.abspath}/configure --prefix=%s %s && echo "MAKEINFO = :" >> Makefile && touch ${TARGET.file}' % (Dir('install').abspath, config_options))
 	
 	# Build the package
 	build = host_env.Command(build_stamp, config_stamp, 'cd ${TARGET.dir} && make && make install && touch ${TARGET.file}')
