@@ -35,6 +35,8 @@
 unsigned int update_time;
 unsigned int imu_update_time;
 
+#define ENABLE_IMU 0
+
 void (*debug_update)(void) = 0;
 
 void flash(int led, int count)
@@ -184,7 +186,7 @@ int main()
 	
 // FIXME: Enabling this may cause the "all-the-lights"/"no-beep" bug
 // (is it timing related?).
-#if 0
+#if ENABLE_IMU
 	// Set up the IMU
 	if (!imu_init())
 	{
@@ -213,7 +215,7 @@ int main()
 		music_start(song_failure);
 	}
 	
-	// Select the default controller if enough hardware is working.
+	// Select the default motion controller if enough hardware is working.
 	// Some failures are acceptable at this point.
 	int showstoppers = failures & ~Fail_Kicker & ~Fail_IMU;
 	if (showstoppers == 0)
@@ -232,7 +234,6 @@ int main()
 	}
 	
 	// Set up the radio.  After this, it will be able to transmit and receive.
-	//FIXME - Multiple channels
 	if (!(failures & Fail_Radio))
 	{
 		radio_configure();
@@ -334,16 +335,17 @@ int main()
 			radio_reply();
 		}
 		
-		
+		#if ENABLE_IMU
 		//	update IMU
 		if ((current_time - imu_update_time) >= 1) {
 			imu_update_time = current_time;
 			// Check for new IMU data
 			imu_update();
 		}
+		#endif
 
 
-		// Periodic activities
+		// Periodic activities (every 5ms)
 		if ((current_time - update_time) >= 5)
 		{
 			update_time = current_time;
