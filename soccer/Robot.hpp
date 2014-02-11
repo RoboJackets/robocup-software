@@ -105,6 +105,7 @@ public:
 		pathEnd = StopAtEnd;
 	}
 	
+	///	The point on the field that the robot should get to
 	Geometry2d::Point pos;
 	float pathLength;
 	
