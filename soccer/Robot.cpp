@@ -420,6 +420,9 @@ float OurRobot::avoidTeammateRadius(unsigned shell_id) const {
 	return _self_avoid_mask[shell_id];
 }
 
+
+#pragma mark Ball Avoidance
+
 void OurRobot::disableAvoidBall() {
 	_avoidBallRadius = -1.0;
 }
@@ -450,6 +453,9 @@ ObstaclePtr OurRobot::createBallObstacle() const {
 		return ObstaclePtr();
 	}
 }
+
+
+#pragma mark Motion
 
 Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
 		const Planning::Path& path,	const ObstacleGroup& obstacles) {
