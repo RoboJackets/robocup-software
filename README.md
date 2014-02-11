@@ -72,3 +72,11 @@ $ scons
 
 [Scons](http://www.scons.org/) is a python-based build system that we use to compile the executables that make up our project.  After running scons, several programs will be placed in the **run** folder.  See the [soccer README](soccer/README.md) for instructions on running the soccer program.
 
+
+## Documentation
+
+We use [Doxygen](www.doxygen.org) for documentation.  This allows us to convert specially-formatted comments within code files into a nifty website that lets us easily see how things are laid out.  Our compiled doxygen documentation can be found here:
+
+http://robojackets.github.io/robocup-software/
+
+Note: The doxygen documentation site above is currently updated manually (pushing new code to master doesn't update our documentation site).  Checkout the `gh-pages` branch and take a look at the README to see how this is handled.
