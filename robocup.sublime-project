@@ -13,9 +13,7 @@
 				"firmware/external"
 			],
 			"file_exclude_patterns": [
-				".*",
-				"DoxygenLayout.xml",
-				"Doxyfile"
+				".*"
 			]
 		}
 	],
