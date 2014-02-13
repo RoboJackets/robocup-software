@@ -12,4 +12,5 @@ Each robot has a dot pattern on top that lets the vision system recognize which 
 
 Here's an image of all of the dot patterns.  Shell number 0 is the upper-left and they increase as they go right, then down.
 
-[Dot Patterns](dot_patterns.png)
+![Dot Patterns](dot_patterns.png)
+
