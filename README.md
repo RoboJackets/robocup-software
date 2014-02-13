@@ -19,7 +19,7 @@ The soccer game is played between two teams of six robots each on a field with o
 
 ### soccer/
 
-The soccer folder contains the code to build the 'soccer' program, which is the main program in control when running our robots.  See the [README](soccer/README.md) in the soccer/ folder for more info on what it does and how to use it.
+The soccer folder contains the code to build the 'soccer' program, which is the main program in control when running our robots.
 
 
 ### simulator/
@@ -70,7 +70,7 @@ $ util/ubuntu-setup
 $ scons
 ```
 
-[Scons](http://www.scons.org/) is a python-based build system that we use to compile the executables that make up our project.  After running scons, several programs will be placed in the **run** folder.  See the [soccer README](soccer/README.md) for instructions on running the soccer program.
+[Scons](http://www.scons.org/) is a python-based build system that we use to compile the executables that make up our project.  After running scons, several programs will be placed in the **run** folder.  See the [soccer docs](http://robojackets.github.io/robocup-software/md_soccer_doc__soccer.html) for instructions on running the soccer program.
 
 
 ## Documentation
