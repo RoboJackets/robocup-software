@@ -1,8 +1,3 @@
-/**
- *  Example play: This is a template for a play.
- *  To use, implement the functions and add the necessary member variables
- *  and do a test replacement for ExamplePlay with whatever name you want.
- */
 
 #include "ExamplePlay.hpp"
 

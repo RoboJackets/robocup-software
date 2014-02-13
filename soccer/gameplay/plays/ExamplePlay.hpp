@@ -1,9 +1,3 @@
-/**
- *  Example play: This is a template for a play.
- *  To use, implement the functions and add the necessary member variables
- *  and do a test replacement for ExamplePlay with whatever name you want.
- */
-
 #pragma once
 
 #include <gameplay/Play.hpp>
@@ -12,6 +6,11 @@ namespace Gameplay
 {
 	namespace Plays
 	{
+		/**
+		 *  Example play: This is a template for a play.
+		 *  To use, implement the functions and add the necessary member variables
+		 *  and do a test replacement for ExamplePlay with whatever name you want.
+		 */
 		class ExamplePlay: public Play
 		{
 			public:
@@ -24,7 +23,7 @@ namespace Gameplay
 				virtual bool run();
 
 			protected:
-				// Insert sub behaviors here as member variables
+				//	TODO: Insert sub behaviors here as member variables
 		};
 	}
 }

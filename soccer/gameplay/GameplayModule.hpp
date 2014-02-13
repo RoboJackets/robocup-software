@@ -14,6 +14,11 @@ class OurRobot;
 class SystemState;
 class Configuration;
 
+/**
+ * @brief Higher-level logic for soccer
+ * @details The Gameplay namespace contains things like Plays, Behaviors, Tactics
+ * and the GameplayModule.
+ */
 namespace Gameplay
 {
 	class Play;
@@ -24,6 +29,16 @@ namespace Gameplay
 		class Goalie;
 	}
 	
+	/**
+	 * @brief Coordinator of high-level logic
+	 * 
+	 * @details Its main responsibilities include:
+	 * - managing the Goalie
+	 * - managing the joystick-controlled robot (if any)
+	 * - maintaining a list of global field obstacles
+	 * - choosing which Play to run
+	 * - running the current play
+	 */
 	class GameplayModule
 	{
 		public:
@@ -35,6 +50,13 @@ namespace Gameplay
 				return _state;
 			}
 			
+			virtual void run();
+			
+			/**
+			 * @brief ID of joystick-controlled robot
+			 * @details This is just a convenience method.  The Processor is the one in charge
+			 * of managing manualID.
+			 */
 			int manualID() const;
 			
 			void createGoalie();
@@ -44,47 +66,6 @@ namespace Gameplay
 			{
 				return _goalie;
 			}
-			
-			virtual void run();
-			
-			////////////
-			// Useful matrices:
-			// Each of these converts coordinates in some other system to team space.
-			// Use them in a play or behavior like this:
-			//   team = _gameplay->oppMatrix() * Geometry2d::Point(1, 0);
-			
-			/// Centered on the ball
-			Geometry2d::TransformMatrix ballMatrix() const
-			{
-				return _ballMatrix;
-			}
-			
-			/// Center of the field
-			Geometry2d::TransformMatrix centerMatrix() const
-			{
-				return _centerMatrix;
-			}
-			
-			/// Opponent's coordinates
-			Geometry2d::TransformMatrix oppMatrix() const
-			{
-				return _oppMatrix;
-			}
-			
-			/// Returns the name of the current play
-			QString playName()
-			{
-				return _playName;
-			}
-			
-			/// All robots on our team that are usable by plays
-			const std::set<OurRobot *> &playRobots() const
-			{
-				return _playRobots;
-			}
-
-
-			void clearAvoidBallRadii();
 
 			void goalieID(int value)
 			{
@@ -98,6 +79,63 @@ namespace Gameplay
 			{
 				return _goalieID;
 			}
+			
+
+			/**
+			 * @defgroup matrices Coordinate Conversion Matrices
+			 * Each of these matrices converts coordinates from some other system
+			 * to team space.
+			 * 
+			 * Example:
+			 * team = _gameplay->oppMatrix() * Geometry2d::Point(1, 0);
+			 */
+
+			
+			/**
+			 * Centered on the ball
+			 * @ingroup matrices
+			 */
+			Geometry2d::TransformMatrix ballMatrix() const
+			{
+				return _ballMatrix;
+			}
+			
+			/**
+			 * Center of the field
+			 * @ingroup matrices
+			 */
+			Geometry2d::TransformMatrix centerMatrix() const
+			{
+				return _centerMatrix;
+			}
+			
+			/**
+			 * Opponent's coordinates
+			 * @ingroup matrices
+			 */
+			Geometry2d::TransformMatrix oppMatrix() const
+			{
+				return _oppMatrix;
+			}
+			
+			/**
+			 * Returns the name of the current play
+			 */
+			QString playName()
+			{
+				return _playName;
+			}
+			
+			/// All robots on our team that are usable by plays
+			const std::set<OurRobot *> &playRobots() const
+			{
+				return _playRobots;
+			}
+
+			/**
+			 * @brief Resets the avoidBallRadius for each OurRobot
+			 */
+			void clearAvoidBallRadii();
 
 			
 		private:
@@ -135,10 +173,10 @@ namespace Gameplay
 			
 			ObstaclePtr _sideObstacle;
 			
-			///outside of the floor boundaries
+			///	outside of the floor boundaries
 			ObstaclePtr _nonFloor[4];
 			
-			///goal area
+			///	goal area
 			ObstacleGroup _goalArea;
 			
 			/// Name of the current play
