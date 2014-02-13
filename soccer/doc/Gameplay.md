@@ -1,18 +1,11 @@
 
-# gameplay
+# Gameplay
 
-This folder contains the higher-level strategy code for the soccer program.
+The Gameplay namespace contains most of the higher-level logic of the `soccer` program.
 
 
-## GameplayModule
+Gameplay::GameplayModule
 
-The [GameplayModule](./GameplayModule.hpp) is the coordinator for all game logic.  Its main responsibilities include:
-
-* managing the Goalie
-* managing the joystick-controlled robot (if any)
-* maintaining a list of global field obstacles
-* choosing which Play to run
-* running the current play
 
 
 ## Play Structure
@@ -24,9 +17,9 @@ The high-level strategy code is organized to be as modular as possible.  To do t
 
 Behaviors are simple actions.  A few examples are:
 
-* **Move** - navigates the robot to a specified (x,y) coordinate on the field
-* **LineKick** - given a target line segment to hit, it lines the robot up behind the ball, approaches it, then kicks it towards the target
-* **Capture** - drives the robot towards the ball, turns the dribbler on, and attempts to bring the ball under its posession
+* **Gameplay::Behaviors::Move** - navigates the robot to a specified (x,y) coordinate on the field
+* **Gameplay::Behaviors::LineKick** - given a target line segment to hit, it lines the robot up behind the ball, approaches it, then kicks it towards the target
+* **Gameplay::Behaviors::Capture** - drives the robot towards the ball, turns the dribbler on, and attempts to bring the ball under its posession
 
 
 ### Tactic
@@ -53,7 +46,7 @@ In order to add a custom play to the system, you must make a new play class, and
 
 ### Create a subclass of Play
 
-Copy the ExamplePlay class (both hpp and cpp files) with your new play class name. Change all occurrences of ExamplePlay.
+Copy the Gameplay::Plays::ExamplePlay class (both hpp and cpp files) with your new play class name. Change all occurrences of ExamplePlay.
 
 Play classes go in `soccer/gameplay/plays`, and demo-only plays should go in `soccer/gameplay/plays/demo_plays`.
 
@@ -67,6 +60,6 @@ Note: Only one play class can be present in a source file. This is a limitation 
 
 ### Add the source files to scons
 
-Add an entry for the new .ccp file to [soccer/SConscript](../SConscript) in the `srcs` array.
+Add an entry for the new .ccp file to `soccer/SConscript` in the `srcs` array.
 
 The play should now be available in the play selection tab of the soccer user interface, and can be enabled or disabled like the other plays.

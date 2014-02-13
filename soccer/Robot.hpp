@@ -36,6 +36,12 @@ namespace Planning
 	class RRTPlanner;
 }
 
+/**
+ * @brief Contains robot motion state data
+ * @details This class contains data that comes from the vision system 
+ * including position data and which camera this robot was seen by and
+ * what time it was last seen.
+ */
 class RobotPose
 {
 public:
@@ -65,7 +71,7 @@ public:
 	Robot(unsigned int shell, bool self);
 	~Robot();
 
-	/*
+	/**
 	 * ID number for the robot.  This is the number that the dot pattern on the
 	 * top of the robot represents
 	 */
@@ -96,6 +102,9 @@ private:
 	RobotFilter *_filter;
 };
 
+/**
+ * @brief Specifies a location that a robot should attempt to get to
+ */
 class MotionTarget
 {
 public:
@@ -117,6 +126,11 @@ public:
 	PathEndType pathEnd;
 };
 
+/**
+ * @brief Specifies which direction a robot should face
+ * @details A face target consists of a 2d point on the field that a robot should
+ *          face towards.
+ */
 class FaceTarget {
 public:
 
@@ -161,8 +175,8 @@ class OurRobot: public Robot
 public:
 	typedef boost::array<float,Num_Shells> RobotMask;
 
-	RobotConfig * config;
-	RobotStatus * status;
+	RobotConfig *config;
+	RobotStatus *status;
 
 	OurRobot(int shell, SystemState *state);
 	~OurRobot();
@@ -300,7 +314,7 @@ public:
 	/** checks if opponents are avoided at all */
 	bool avoidOpponent(unsigned shell_id) const;
 
-	/** @return true if we are able to approach opponents */
+	/** @return true if we are able to approach the given opponent */
 	bool approachOpponent(unsigned shell_id) const;
 
 	/** returns the avoidance radius */
@@ -388,7 +402,7 @@ public:
 
 	bool rxIsFresh(uint64_t age = 500000) const;
 
-	/*
+	/**
 	 * Starts the robot playing the fight song
 	 */
 	void sing()
@@ -397,7 +411,7 @@ public:
 		radioTx.set_sing(true);
 	}
 
-	/*
+	/**
 	 * Undoes any calls to kick() or chip().
 	 */
 	void unkick()
@@ -474,6 +488,11 @@ private:
 	Packet::RadioRx _radioRx;
 };
 
+/**
+ * @brief A robot that is not on our team
+ * @details This is a subclass of Robot, but really doesn't provide
+ * any extra functionality.
+ */
 class OpponentRobot: public Robot
 {
 public:

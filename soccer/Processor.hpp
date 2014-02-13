@@ -37,9 +37,21 @@ namespace Motion
 	class RobotController;
 }
 
-/** handles processing for a team
- * mixes all the threads
- * */
+/**
+ * @brief Brings all the pieces together
+ * 
+ * @details The processor ties together all the moving parts for controlling
+ * a team of soccer robots.  Its responsibities include:
+ * - receiving and handling vision packets (see VisionReceiver)
+ * - receiving and handling referee packets (see RefereeModule)
+ * - radio IO (see Radio)
+ * - running the BallTracker
+ * - running the Gameplay::GameplayModule
+ * - running the Logger
+ * - handling the Configuration
+ * - handling the Joystick
+ * - running motion control for each robot (see OurRobot#motionControl)
+ */
 class Processor: public QThread
 {
 	public:
@@ -86,7 +98,15 @@ class Processor: public QThread
 			return _manualID;
 		}
 		
+		/**
+		 * @brief Set the shell ID of the goalie
+		 * @details The rules require us to specify at the start of a match/period which
+		 * robot will be the goalie.  A value of -1 indicates that there is no one assigned.
+		 */
 		void goalieID(int value);
+		/**
+		 * @brief Shell ID of the goalie robot
+		 */
 		int goalieID();
 
 		void dampedRotation(bool value);
@@ -237,7 +257,7 @@ class Processor: public QThread
 		// True if we are using external referee packets
 		bool _externalReferee;
 		
-		// Measured framerate
+		/// Measured framerate
 		float _framerate;
 		
 		// This is used by the GUI to indicate status of the processing loop and network
