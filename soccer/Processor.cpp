@@ -284,26 +284,18 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
  */
 void Processor::run()
 {
-	_refereeSocket = new QUdpSocket;
-	
 	VisionReceiver vision(_simulation);
 	vision.start();
 	
 	// Create referee socket
-	if (!_refereeSocket->bind(RefereePort, QUdpSocket::ShareAddress))
-	{
+	_refereeSocket = new QUdpSocket;
+	if (!_refereeSocket->bind(RefereePort, QUdpSocket::ShareAddress)) {
 		throw runtime_error("Can't bind to referee port");
 	}
-	
 	multicast_add(_refereeSocket, RefereeAddress);
 
 	// Create radio socket
-	if (_simulation)
-	{
-		_radio = new SimRadio();
-	} else {
-		_radio = new USBRadio();
-	}
+	_radio = _simulation ? new SimRadio() : new USBRadio();
 	
 	Status curStatus;
 	
@@ -391,37 +383,37 @@ void Processor::run()
 				google::protobuf::RepeatedPtrField<SSL_DetectionBall> *balls = det->mutable_balls();
 				for (int i = 0; i < balls->size(); ++i)
 				{
-						float x = balls->Get(i).x();
-						//FIXME - OMG too many terms
-						if ((!_state.logFrame->use_opponent_half() && ((_defendPlusX && x < 0) || (!_defendPlusX && x > 0))) ||
-								(!_state.logFrame->use_our_half() && ((_defendPlusX && x > 0) || (!_defendPlusX && x < 0))))
-						{
-								balls->SwapElements(i, balls->size() - 1);
-								balls->RemoveLast();
-								--i;
-						}
+					float x = balls->Get(i).x();
+					//FIXME - OMG too many terms
+					if ((!_state.logFrame->use_opponent_half() && ((_defendPlusX && x < 0) || (!_defendPlusX && x > 0))) ||
+							(!_state.logFrame->use_our_half() && ((_defendPlusX && x > 0) || (!_defendPlusX && x < 0))))
+					{
+						balls->SwapElements(i, balls->size() - 1);
+						balls->RemoveLast();
+						--i;
+					}
 				}
 				
 				// Remove robots on the excluded half of the field
 				google::protobuf::RepeatedPtrField<SSL_DetectionRobot> *robots[2] =
 				{
-						det->mutable_robots_yellow(),
-						det->mutable_robots_blue()
+					det->mutable_robots_yellow(),
+					det->mutable_robots_blue()
 				};
 				
 				for (int team = 0; team < 2; ++team)
 				{
-						for (int i = 0; i < robots[team]->size(); ++i)
+					for (int i = 0; i < robots[team]->size(); ++i)
+					{
+						float x = robots[team]->Get(i).x();
+						if ((!_state.logFrame->use_opponent_half() && ((_defendPlusX && x < 0) || (!_defendPlusX && x > 0))) ||
+								(!_state.logFrame->use_our_half() && ((_defendPlusX && x > 0) || (!_defendPlusX && x < 0))))
 						{
-								float x = robots[team]->Get(i).x();
-								if ((!_state.logFrame->use_opponent_half() && ((_defendPlusX && x < 0) || (!_defendPlusX && x > 0))) ||
-										(!_state.logFrame->use_our_half() && ((_defendPlusX && x > 0) || (!_defendPlusX && x < 0))))
-								{
-										robots[team]->SwapElements(i, robots[team]->size() - 1);
-										robots[team]->RemoveLast();
-										--i;
-								}
+							robots[team]->SwapElements(i, robots[team]->size() - 1);
+							robots[team]->RemoveLast();
+							--i;
 						}
+					}
 				}
 				
 				detectionFrames.push_back(det);
@@ -633,6 +625,7 @@ void Processor::run()
 	vision.stop();
 	
 	delete _refereeSocket;
+	_refereeSocket = nullptr;
 }
 
 void Processor::sendRadioData()

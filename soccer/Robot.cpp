@@ -58,11 +58,10 @@ Robot::~Robot()
 	delete _filter;
 	_filter = 0;
 }
-/**
- * the class for robot that we use to manipulate robots
- * @param shell the robot id
- * @param state the pointer to the current system state object
- */
+
+
+#pragma mark OurRobot
+
 OurRobot::OurRobot(int shell, SystemState *state):
 	Robot(shell, true),
 	_state(state)
@@ -455,128 +454,128 @@ ObstaclePtr OurRobot::createBallObstacle() const {
 #pragma mark Motion
 
 Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
-		const Planning::Path& path,	const ObstacleGroup& obstacles) {
-		const bool blend_verbose = false;
+	const Planning::Path& path,	const ObstacleGroup& obstacles) {
+	const bool blend_verbose = false;
 
-		// empty path case - leave robot stationary
-		if (path.empty())
-			return pose;
+	// empty path case - leave robot stationary
+	if (path.empty())
+		return pose;
 
-		// find closest point on path to pose
-		float max = path.points[0].distTo(pose);
-		unsigned int ip = 0;
-		for (unsigned i=0; i<path.points.size(); i++) {
-			if (path.points[i].distTo(pose) < max) {
-				max = path.points[i].distTo(pose);
-				ip = i;
-			}
+	// find closest point on path to pose
+	float max = path.points[0].distTo(pose);
+	unsigned int ip = 0;
+	for (unsigned i=0; i<path.points.size(); i++) {
+		if (path.points[i].distTo(pose) < max) {
+			max = path.points[i].distTo(pose);
+			ip = i;
 		}
+	}
 
-		if (blend_verbose) addText(QString("cur pt %1=(%2,%3)").arg(ip).arg(path.points[ip].x).arg(path.points[ip].y));
+	if (blend_verbose) addText(QString("cur pt %1=(%2,%3)").arg(ip).arg(path.points[ip].x).arg(path.points[ip].y));
 
-		// go to nearest point if only point or closest point is the goal
-		if (path.size() == 1) {
-			if (blend_verbose) addText(QString("blend:simple_path"));
-			return path.points[0];
-		}
+	// go to nearest point if only point or closest point is the goal
+	if (path.size() == 1) {
+		if (blend_verbose) addText(QString("blend:simple_path"));
+		return path.points[0];
+	}
 
-		// can't mix, just go to endpoint
-		if (path.size() == 2) {
-			if (blend_verbose) addText(QString("blend:size2"));
-			return path.points[1];
-		}
+	// can't mix, just go to endpoint
+	if (path.size() == 2) {
+		if (blend_verbose) addText(QString("blend:size2"));
+		return path.points[1];
+	}
 
-		// FIXME: does not blend the last segment
-		// All other cases: proportionally blend the next two points together for a smoother
-		// path, so long as it is still viable
+	// FIXME: does not blend the last segment
+	// All other cases: proportionally blend the next two points together for a smoother
+	// path, so long as it is still viable
 
-		if (blend_verbose) addText(QString("blend:segments=%1").arg(path.points.size()-1));
+	if (blend_verbose) addText(QString("blend:segments=%1").arg(path.points.size()-1));
 
-		// pull out relevant points
-		Point p0 = pos;
-		Point p1;
-		Point p2;
+	// pull out relevant points
+	Point p0 = pos;
+	Point p1;
+	Point p2;
 
-		if (path.size() > ip+2) {
-			p1 = path.points[ip+1];
-			p2 = path.points[ip+2];
-		} else if (path.size() > ip+1) {
-			p1 = path.points[ip];
-			p2 = path.points[ip+1];
-		} else {
-			p1 = path.points[ip-1];
-			p2 = path.points[ip];
-		}
+	if (path.size() > ip+2) {
+		p1 = path.points[ip+1];
+		p2 = path.points[ip+2];
+	} else if (path.size() > ip+1) {
+		p1 = path.points[ip];
+		p2 = path.points[ip+1];
+	} else {
+		p1 = path.points[ip-1];
+		p2 = path.points[ip];
+	}
 
-		Geometry2d::Segment target_seg(p1, p2);
+	Geometry2d::Segment target_seg(p1, p2);
 
-		if (blend_verbose) addText(QString("pos=(%1,%2)").arg(pos.x,5).arg(pos.y,5));
-		if (blend_verbose) addText(QString("path[0]=(%1,%2)").arg(path.points[0].x).arg(path.points[0].y));
-		if (blend_verbose) addText(QString("p1=(%1,%2)").arg(p1.x,5).arg(p1.y,5));
-		if (blend_verbose) addText(QString("p2=(%1,%2)").arg(p2.x,5).arg(p2.y,5));
+	if (blend_verbose) addText(QString("pos=(%1,%2)").arg(pos.x,5).arg(pos.y,5));
+	if (blend_verbose) addText(QString("path[0]=(%1,%2)").arg(path.points[0].x).arg(path.points[0].y));
+	if (blend_verbose) addText(QString("p1=(%1,%2)").arg(p1.x,5).arg(p1.y,5));
+	if (blend_verbose) addText(QString("p2=(%1,%2)").arg(p2.x,5).arg(p2.y,5));
 
-		// final endpoint handling
-		if (target_seg.nearPointPerp(p0, 0.02) && p0.nearPoint(p2, 0.03)) {
-			if (2 == path.size()-1) {
-				if (blend_verbose) addText(QString("blend:at_end"));
-				return p2;
-			} else {
-				// reset this segment to next one
-				if (blend_verbose) addText(QString("blend:reset_segment"));
-				Point temp(p1);
-				p1 = p2;
-				p2 = temp;
-				target_seg = Geometry2d::Segment(p1, p2);
-			}
-		}
-
-		float dist1 = p0.distTo(p1), dist2 = p1.distTo(p2);
-		if (blend_verbose) addText(QString("blend:d1=%1,d2=%2").arg(dist1).arg(dist2));
-
-		// endpoint handling
-		if (dist1 < 0.02) {
-			if (blend_verbose) addText(QString("blend:dist1small=%1").arg(dist1));
-			return p2; /// just go to next point
-		}
-
-		// short segment handling
-		if (p1.distTo(p2) < 0.05) {
-			if (blend_verbose) addText(QString("blend:dist2small=%1").arg(dist2));
-			return p2; /// just go to next point
-		}
-
-		// close to segment - go to end of segment
-		if (target_seg.nearPoint(p0, 0.03)) {
-			if (blend_verbose) addText(QString("blend:closeToSegment"));
+	// final endpoint handling
+	if (target_seg.nearPointPerp(p0, 0.02) && p0.nearPoint(p2, 0.03)) {
+		if (2 == path.size()-1) {
+			if (blend_verbose) addText(QString("blend:at_end"));
 			return p2;
+		} else {
+			// reset this segment to next one
+			if (blend_verbose) addText(QString("blend:reset_segment"));
+			Point temp(p1);
+			p1 = p2;
+			p2 = temp;
+			target_seg = Geometry2d::Segment(p1, p2);
 		}
+	}
 
-		// mix the next point between the first and second point
-		// if we are far away from p1, want scale to be closer to p1
-		// if we are close to p1, want scale to be closer to p2
-		float scale = 1 - clamp(dist1/dist2, 0.0f, 1.0f);
-		Geometry2d::Point targetPos = p1 + (p2-p1)*scale;
-		if (blend_verbose) {
-			addText(QString("blend:scale=%1").arg(scale));
-			addText(QString("blend:dist1=%1").arg(dist1));
-			addText(QString("blend:dist2=%1").arg(dist2));
-		}
+	float dist1 = p0.distTo(p1), dist2 = p1.distTo(p2);
+	if (blend_verbose) addText(QString("blend:d1=%1,d2=%2").arg(dist1).arg(dist2));
 
-		// check for collisions on blended path
-		Geometry2d::Segment shortcut(p0, targetPos);
+	// endpoint handling
+	if (dist1 < 0.02) {
+		if (blend_verbose) addText(QString("blend:dist1small=%1").arg(dist1));
+		return p2; /// just go to next point
+	}
 
-		Geometry2d::Point result = p1;
-		if (!obstacles.hit(shortcut)) {
-			if (blend_verbose) addText(QString("blend:shortcut_succeed"));
-			result = targetPos;
-		} else if (result.nearPoint(pose, 0.05)) {
-			if (blend_verbose) addText(QString("blend:shortcut_failed"));
-			result = result + (result-pose).normalized() * 0.10;
-		}
+	// short segment handling
+	if (p1.distTo(p2) < 0.05) {
+		if (blend_verbose) addText(QString("blend:dist2small=%1").arg(dist2));
+		return p2; /// just go to next point
+	}
 
-		if (blend_verbose) addText(QString("point (%1, %2)").arg(result.x).arg(result.y));
+	// close to segment - go to end of segment
+	if (target_seg.nearPoint(p0, 0.03)) {
+		if (blend_verbose) addText(QString("blend:closeToSegment"));
+		return p2;
+	}
 
-		return result;
+	// mix the next point between the first and second point
+	// if we are far away from p1, want scale to be closer to p1
+	// if we are close to p1, want scale to be closer to p2
+	float scale = 1 - clamp(dist1/dist2, 0.0f, 1.0f);
+	Geometry2d::Point targetPos = p1 + (p2-p1)*scale;
+	if (blend_verbose) {
+		addText(QString("blend:scale=%1").arg(scale));
+		addText(QString("blend:dist1=%1").arg(dist1));
+		addText(QString("blend:dist2=%1").arg(dist2));
+	}
+
+	// check for collisions on blended path
+	Geometry2d::Segment shortcut(p0, targetPos);
+
+	Geometry2d::Point result = p1;
+	if (!obstacles.hit(shortcut)) {
+		if (blend_verbose) addText(QString("blend:shortcut_succeed"));
+		result = targetPos;
+	} else if (result.nearPoint(pose, 0.05)) {
+		if (blend_verbose) addText(QString("blend:shortcut_failed"));
+		result = result + (result-pose).normalized() * 0.10;
+	}
+
+	if (blend_verbose) addText(QString("point (%1, %2)").arg(result.x).arg(result.y));
+
+	return result;
 }
 
 void OurRobot::execute(const ObstacleGroup& global_obstacles) {
@@ -640,7 +639,6 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	Planning::Path rrt_path;
 	_planner->run(pos, angle, vel, *_delayed_goal, &full_obstacles, rrt_path);
 
-	const float rrt_path_len = rrt_path.length(0);
 
 	// check if goal is close to previous goal to reuse path
 	Geometry2d::Point::Optional dest = _path.destination();
@@ -671,7 +669,7 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	_state->drawPath(rrt_path, Qt::magenta);
 	addText(QString("execute: RRT path %1").arg(full_obstacles.size()));
 	cmd.target->pos = findGoalOnPath(pos, _path, full_obstacles);
-	cmd.target->pathLength = rrt_path_len;
+	cmd.target->pathLength = _path.length(0);
 	return;
 }
 
