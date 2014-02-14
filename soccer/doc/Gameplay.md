@@ -10,7 +10,40 @@ Gameplay::GameplayModule
 
 ## Play Structure
 
-The high-level strategy code is organized to be as modular as possible.  To do this, it's been split up into three main parts: **Behaviors**, **Tactics**, and **Plays**.
+The high-level strategy code is organized to be as modular as possible.  To do this, it's been split up into three main parts: **Behaviors**, **Tactics**, and **Plays**.  The GameplayModule has one Goalie (optionally) and one Play.
+
+\dot
+digraph play_structure {
+    subgraph cluster_gameplay {
+        label = "GameplayModule";
+        node [shape = record];
+        Gameplay [label = "{self|{<r0>|<r1>|<r2>|<r3>|<r4>|<r5>}}"];
+    }
+
+    Robot0, Robot1, Robot2, Robot3, Robot4, Robot5 [label = "Robot", shape=ellipse];
+
+    node [shape = box];
+    Gameplay:r0 -> Goalie;
+    Goalie -> Robot0;
+
+    Gameplay:r1 -> Play;
+    Gameplay:r2 -> Play;
+    Gameplay:r3 -> Play;
+    Gameplay:r4 -> Play;
+    Gameplay:r5 -> Play;
+
+    node [shape=record];
+    Behavior1, Behavior2, Behavior3 [label="Behavior"];
+    Behavior4 [label="{Behavior|{<r3>|<r4>}}"];
+
+    Play -> Behavior1 -> Robot1;
+    Play -> Behavior2 -> Robot2;
+    Play -> Behavior3 -> Robot3;
+    Play -> Behavior4;
+    Behavior4:r3 -> Robot4;
+    Behavior4:r4 -> Robot5;
+}
+\enddot
 
 
 ### Behavior
@@ -31,12 +64,12 @@ Currently our distinction between Behaviors and Tactics isn't overly clear...  T
 
 Plays are the highest-level actions and there is only one active at any given time.  Plays are responsible for coordinating actions amongst all available robots.  Plays are generally made up of Behaviors and Tactics.  A few example plays are:
 
-* **OurFreeKick**
-* **TheirFreeKick**
-* **OurCornerKick**
-* **OurGoalKick**
-* **Stopped**
-* **MightyMight** - our main offensive play
+* Gameplay::Plays::OurFreekick
+* Gameplay::Plays::TheirFreekick
+* Gameplay::Plays::OurCornerKick
+* Gameplay::Plays::OurGoalKick
+* Gameplay::Plays::Stopped
+* Gameplay::Plays::MightyMight - our main offensive play
 
 
 ## Creating a Play
