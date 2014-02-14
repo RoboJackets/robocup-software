@@ -105,22 +105,10 @@ private:
 /**
  * @brief Specifies a location that a robot should attempt to get to
  */
-class MotionTarget
-{
+class MotionTarget {
 public:
-	MotionTarget()
-	{
-		pathLength = 0;
-	}
-	
 	///	The point on the field that the robot should get to
 	Geometry2d::Point pos;
-
-	/**
-	 * @brief Length of path in meters
-	 * @details This is set by the path planner after it plans where the robot will go.
-	 */
-	float pathLength;
 };
 
 /**
@@ -130,10 +118,7 @@ public:
  */
 class FaceTarget {
 public:
-
-	/**
-	 * The point on the field that the robot should attempt to face towards
-	 */	
+	///	The point on the field that the robot should attempt to face towards
 	Geometry2d::Point pos;
 };
 
@@ -146,8 +131,6 @@ class MotionCommand
 			wScale = 1.0;
 		}
 
-		//FIXME - Remove pathLength.  Store a path in MotionCommand.  What about facing?
-		
 		// Any of these optionals may be set before motion control runs.
 		// Motion control will fill in the blanks.  This allows bypassing parts of motion control.
 		
