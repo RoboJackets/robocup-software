@@ -118,7 +118,7 @@ void SystemState::drawLine(const Geometry2d::Line& line, const QColor& qc, const
 	dbg->set_color(color(qc));
 }
 
-void SystemState::drawLine(const Geometry2d::Point &p0, const Geometry2d::Point &p1, const QColor &color = Qt::black, const QString &layer
+void SystemState::drawLine(const Geometry2d::Point &p0, const Geometry2d::Point &p1, const QColor &color, const QString &layer)
 {
 	drawLine(Geometry2d::Line(p0, p1), color, layer);
 }

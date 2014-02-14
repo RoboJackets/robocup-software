@@ -213,7 +213,7 @@ void OurRobot::stop()
 	_delayed_goal = boost::none;
 }
 
-void OurRobot::move(Geometry2d::Point goal)
+void OurRobot::move(Geometry2d::Point goal, bool stopAtEnd)
 {
 	if (!visible)
 		return;
@@ -225,7 +225,7 @@ void OurRobot::move(Geometry2d::Point goal)
 	_usesPathPlanning = true;
 }
 
-void OurRobot::move(const vector<Geometry2d::Point>& path)
+void OurRobot::move(const vector<Geometry2d::Point>& path, bool stopAtEnd)
 {
 	_state->drawLine(path.back(), pos);
 

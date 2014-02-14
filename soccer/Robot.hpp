@@ -212,13 +212,15 @@ public:
 
 	/**
 	 * @brief Move to a given point using the default RRT planner
+	 * @param stopAtEnd UNUSED
 	 */
-	void move(Geometry2d::Point goal);
+	void move(Geometry2d::Point goal, bool stopAtEnd = false);
 
 	/**
 	 * @brief Move along a path for waypoint-based control
+	 * @param stopAtEnd UNUSED
 	 */
-	void move(const std::vector<Geometry2d::Point>& path);
+	void move(const std::vector<Geometry2d::Point>& path, bool stopAtEnd = false);
 
 	/**
 	 * Pivot around a point at a fixed radius and direction (CCW or CW),
