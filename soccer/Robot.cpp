@@ -74,7 +74,6 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	cmd_w = 0;
 	_lastChargedTime = 0;
 	_motionControl = new MotionControl(this);
-	_stopAtEnd = false;
 
 	_planner = new Planning::RRTPlanner();
 	_lastKickerStatus = 0;
@@ -215,7 +214,7 @@ void OurRobot::stop()
 	_delayed_goal = boost::none;
 }
 
-void OurRobot::move(Geometry2d::Point goal, bool stopAtEnd)
+void OurRobot::move(Geometry2d::Point goal)
 {
 	if (!visible)
 		return;
@@ -225,10 +224,9 @@ void OurRobot::move(Geometry2d::Point goal, bool stopAtEnd)
 	addText(QString("move:(%1, %2)").arg(goal.x).arg(goal.y));
 	_delayed_goal = goal;
 	_usesPathPlanning = true;
-	_stopAtEnd = stopAtEnd;
 }
 
-void OurRobot::move(const vector<Geometry2d::Point>& path, bool stopAtEnd)
+void OurRobot::move(const vector<Geometry2d::Point>& path)
 {
 	_state->drawLine(path.back(), pos);
 
@@ -244,7 +242,6 @@ void OurRobot::move(const vector<Geometry2d::Point>& path, bool stopAtEnd)
 	cmd.target = MotionTarget();
 	cmd.target->pos = findGoalOnPath(pos, _path);
 	cmd.target->pathLength = _path.length(pos);
-	cmd.target->pathEnd = (stopAtEnd) ? MotionTarget::StopAtEnd : MotionTarget::FastAtEnd;
 }
 
 void OurRobot::pivot(double w, double radius)
@@ -597,7 +594,6 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	}
 
 	cmd.target = MotionTarget();
-	cmd.target->pathEnd = (_stopAtEnd) ? MotionTarget::StopAtEnd : MotionTarget::FastAtEnd;
 	
 	// create and visualize obstacles
 	ObstacleGroup full_obstacles(_local_obstacles);

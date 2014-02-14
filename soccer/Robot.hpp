@@ -111,19 +111,16 @@ public:
 	MotionTarget()
 	{
 		pathLength = 0;
-		pathEnd = StopAtEnd;
 	}
 	
 	///	The point on the field that the robot should get to
 	Geometry2d::Point pos;
+
+	/**
+	 * @brief Length of path in meters
+	 * @details This is set by the path planner after it plans where the robot will go.
+	 */
 	float pathLength;
-	
-	enum PathEndType
-	{
-		StopAtEnd = 0,
-		FastAtEnd = 1
-	};
-	PathEndType pathEnd;
 };
 
 /**
@@ -149,7 +146,7 @@ class MotionCommand
 			wScale = 1.0;
 		}
 
-		//FIXME - Remove pathLength and pathEnd.  Store a path in MotionCommand.  What about facing?
+		//FIXME - Remove pathLength.  Store a path in MotionCommand.  What about facing?
 		
 		// Any of these optionals may be set before motion control runs.
 		// Motion control will fill in the blanks.  This allows bypassing parts of motion control.
@@ -226,18 +223,14 @@ public:
 	void stop();
 
 	/**
-	 * Move to a given point using the default RRT planner
+	 * @brief Move to a given point using the default RRT planner
 	 */
-	void move(Geometry2d::Point goal, bool stopAtEnd=false);
+	void move(Geometry2d::Point goal);
 
 	/**
-	 * Move along a path for waypoint-based control
-	 * If not set to stop at end, the planner will send the robot
-	 * traveling in whatever direction it was moving in at the end of the path.
-	 * This should only be used when there will be another command when
-	 * the robot reaches the end of the path.
+	 * @brief Move along a path for waypoint-based control
 	 */
-	void move(const std::vector<Geometry2d::Point>& path, bool stopAtEnd=true);
+	void move(const std::vector<Geometry2d::Point>& path);
 
 	/**
 	 * Pivot around a point at a fixed radius and direction (CCW or CW),
@@ -443,7 +436,6 @@ protected:
 	/** Planning components for delayed planning */
 	bool _usesPathPlanning;
 	boost::optional<Geometry2d::Point> _delayed_goal;   /// goal from move command
-	bool _stopAtEnd;
 
 	// obstacle management
 	ObstacleGroup _local_obstacles; /// set of obstacles added by plays
