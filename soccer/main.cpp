@@ -117,6 +117,7 @@ void usage(const char* prog)
 	fprintf(stderr, "\t-pp <play>: enable named play\n");
 	fprintf(stderr, "\t-ng:        no goalie\n");
 	fprintf(stderr, "\t-sim:       use simulator\n");
+	fprintf(stderr, "\t-freq:      specify radio frequency (906 or 904)\n");
 	fprintf(stderr, "\t-nolog:     don't write log files\n");
 	exit(1);
 }
