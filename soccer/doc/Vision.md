@@ -5,6 +5,28 @@
 
 The RoboCup field has two cameras above the field (one over each half), which are connected to a league-provided 'vision computer'.  This computer takes in images from the two cameras (at about 60Hz) and uses the [ssl-vision](https://code.google.com/p/ssl-vision/) program for image processing.  It then sends out (x,y) coordinates of all of the robots and the ball over the network (in protobuf packets over UDP) to the two teams' field computers.
 
+\dot
+digraph vision {
+	rankdir=LR;
+
+	subgraph cluster_vision_computer {
+		label="Vision Computer";
+
+		SSL_Vision [label="ssl-vision"];
+	}
+
+	{Camera0, Camera1} -> SSL_Vision [label="Firewire"];
+
+	subgraph cluster_field_computer {
+		label="Field Computer";
+
+		soccer;
+	}
+
+	SSL_Vision -> soccer [label="protobuf over UDP"];
+}
+\enddot
+
 
 ## Dot Patterns
 
