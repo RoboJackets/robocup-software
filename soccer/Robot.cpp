@@ -240,7 +240,6 @@ void OurRobot::move(const vector<Geometry2d::Point>& path)
 	// convert to motion command
 	cmd.target = MotionTarget();
 	cmd.target->pos = findGoalOnPath(pos, _path);
-	cmd.target->pathLength = _path.length(pos);
 }
 
 void OurRobot::pivot(double w, double radius)
@@ -617,7 +616,6 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		addText(QString("execute: no goal"));
 		_path = Planning::Path(pos);
 		cmd.target->pos = pos;
-		cmd.target->pathLength = 0;
 		_state->drawPath(_path);
 		return;
 	}
@@ -630,7 +628,6 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		addText(QString("execute: straight_line"));
 		_path = straight_line;
 		cmd.target->pos = *_delayed_goal;
-		cmd.target->pathLength = straight_line.length(0);
 		_state->drawPath(straight_line, Qt::red);
 		return;
 	}
@@ -648,7 +645,6 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		if (enable_slice && !sliced_path.hit(full_obstacles)) {
 			addText(QString("execute: slicing path"));
 			cmd.target->pos = findGoalOnPath(pos, sliced_path, full_obstacles);
-			cmd.target->pathLength = sliced_path.length(pos);
 			_state->drawPath(sliced_path, Qt::cyan);
 			Geometry2d::Point offset(0.01, 0.01);
 			_state->drawLine(pos + offset, cmd.target->pos + offset, Qt::black);
@@ -656,7 +652,6 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 		} else if (!_path.hit(full_obstacles)) {
 			addText(QString("execute: reusing path"));
 			cmd.target->pos = findGoalOnPath(pos, _path, full_obstacles);
-			cmd.target->pathLength = _path.length(pos);
 			_state->drawPath(_path, Qt::yellow);
 			_state->drawLine(pos, cmd.target->pos, Qt::black);
 			return;
@@ -669,7 +664,6 @@ void OurRobot::execute(const ObstacleGroup& global_obstacles) {
 	_state->drawPath(rrt_path, Qt::magenta);
 	addText(QString("execute: RRT path %1").arg(full_obstacles.size()));
 	cmd.target->pos = findGoalOnPath(pos, _path, full_obstacles);
-	cmd.target->pathLength = _path.length(0);
 	return;
 }
 
