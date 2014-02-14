@@ -170,6 +170,16 @@ class MotionCommand
 		boost::optional<float> angularVelocity;
 };
 
+/**
+ * @brief A robot on our team
+ * @details This extends Robot and provides methods for interacting with our robots.
+ * A few things this class is responsible for:
+ * - specifying target position, velocity, angle, etc
+ * - kicking and chipping the ball
+ * - keeping track of which hardware revision this bot is
+ * - avoidance of the ball and other robots (this info is fed to the path planner)
+ * - playing the GT fight song
+ */
 class OurRobot: public Robot
 {
 public:
@@ -403,7 +413,7 @@ public:
 	bool rxIsFresh(uint64_t age = 500000) const;
 
 	/**
-	 * Starts the robot playing the fight song
+	 * @brief Starts the robot playing the fight song
 	 */
 	void sing()
 	{
@@ -412,7 +422,7 @@ public:
 	}
 
 	/**
-	 * Undoes any calls to kick() or chip().
+	 * @brief Undoes any calls to kick() or chip().
 	 */
 	void unkick()
 	{
@@ -496,8 +506,5 @@ private:
 class OpponentRobot: public Robot
 {
 public:
-	OpponentRobot(unsigned int shell):
-		Robot(shell, false)
-	{
-	}
+	OpponentRobot(unsigned int shell): Robot(shell, false) {}
 };

@@ -3,8 +3,8 @@
 #include <Configuration.hpp>
 
 /**
- * Configuration per robot model
- * includes movement, pid, kicker and status
+ * @brief Configuration per robot model
+ * @details Includes movement, pid, kicker and status
  */
 class RobotConfig
 {
