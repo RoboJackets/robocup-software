@@ -38,6 +38,7 @@ namespace Gameplay
 	 * - maintaining a list of global field obstacles
 	 * - choosing which Play to run
 	 * - running the current play
+	 * - executing path planning for each OurRobot
 	 */
 	class GameplayModule
 	{

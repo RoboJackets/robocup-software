@@ -185,6 +185,11 @@ public:
 	RobotConfig *config;
 	RobotStatus *status;
 
+	/**
+	 * @brief Construct a new OurRobot
+	 * @param shell The robot ID
+	 * @param state A pointer to the global system state object
+	 */
 	OurRobot(int shell, SystemState *state);
 	~OurRobot();
 

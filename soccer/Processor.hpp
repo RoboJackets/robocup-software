@@ -205,9 +205,6 @@ class Processor: public QThread
 
 		// per-robot status configs
 		static std::vector<RobotStatus*> robotStatuses;
-
-		// Adds motor values to a RadioTx::Robot
-		void addMotors(Packet::RadioTx::Robot *robot);
 		
 		/** send out the radio data for the radio program */
 		void sendRadioData();
