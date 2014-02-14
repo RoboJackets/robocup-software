@@ -38,7 +38,7 @@ int SystemState::findDebugLayer(QString layer)
 		layer = "Debug";
 	}
 	
-	DebugLayerMap::const_iterator i = _debugLayerMap.find(layer);
+	QMap<QString, int>::const_iterator i = _debugLayerMap.find(layer);
 	if (i == _debugLayerMap.end())
 	{
 		// New layer
@@ -116,6 +116,11 @@ void SystemState::drawLine(const Geometry2d::Line& line, const QColor& qc, const
 	*dbg->add_points() = line.pt[0];
 	*dbg->add_points() = line.pt[1];
 	dbg->set_color(color(qc));
+}
+
+void SystemState::drawLine(const Geometry2d::Point &p0, const Geometry2d::Point &p1, const QColor &color = Qt::black, const QString &layer
+{
+	drawLine(Geometry2d::Line(p0, p1), color, layer);
 }
 
 void SystemState::drawText(const QString& text, const Geometry2d::Point& pos, const QColor& qc, const QString &layer)

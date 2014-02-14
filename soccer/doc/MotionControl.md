@@ -20,4 +20,4 @@ The following classes play a role in motion control on the computer:
 
 ## Robot-side
 
-The robots receive instructions from the field computer in the form of protobuf packets sent over the radio.  The spec for these can be found
+The robots receive instructions from the field computer in the form of protobuf packets sent over the radio.  See control.{h, c} to see how the motion control code works.  The control code is called from the main() runloop.

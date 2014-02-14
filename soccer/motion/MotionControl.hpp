@@ -5,8 +5,8 @@
 class OurRobot;
 
 /**
- * This class handles the computer-side motion control for the robots.
- * It is responsible for most of what gets sent out in a RadioTx packet.
+ * @brief Handles computer-side motion control
+ * @details It is responsible for most of what gets sent out in a RadioTx packet.
  */
 class MotionControl
 {
