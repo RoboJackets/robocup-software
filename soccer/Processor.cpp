@@ -295,7 +295,7 @@ void Processor::run()
 	multicast_add(_refereeSocket, RefereeAddress);
 
 	// Create radio socket
-	_radio = _simulation ? new SimRadio() : new USBRadio();
+	_radio = _simulation ? (Radio *)new SimRadio() : (Radio *)new USBRadio();
 	
 	Status curStatus;
 	
