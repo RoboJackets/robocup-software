@@ -15,7 +15,7 @@ MotionControl::MotionControl(OurRobot *robot)
 {
 	_robot = robot;
 
-	_robot->radioTx.set_robot_id(_robot->shell());	//	FIXME: why is this here?
+	_robot->radioTx.set_robot_id(_robot->shell());
 	
 	_lastAngularVel = 0;
 }
