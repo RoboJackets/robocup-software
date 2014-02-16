@@ -6,10 +6,8 @@
 #include <QThread>
 #include <QMutex>
 #include <QMutexLocker>
-#include <QUdpSocket>
 
 #include <protobuf/LogFrame.pb.h>
-#include <Network.hpp>
 #include <Logger.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
 #include <SystemState.hpp>
@@ -260,9 +258,6 @@ class Processor: public QThread
 		// This is used by the GUI to indicate status of the processing loop and network
 		QMutex _statusMutex;
 		Status _status;
-		
-		// Network sockets
-		QUdpSocket *_refereeSocket;
 
 		//modules
 		std::shared_ptr<RefereeModule> _refereeModule;
