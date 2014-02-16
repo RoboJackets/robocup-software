@@ -5,6 +5,8 @@
 #include <QTime>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QUdpSocket>
+#include <Network.hpp>
 
 namespace RefereeCommands
 {
@@ -89,6 +91,8 @@ class RefereeModule
 {
 	public:
 		RefereeModule(SystemState *state);
+
+		~RefereeModule();
 		
 		/// Called periodically.  Checks vision data for ball movement.
 		void run();
@@ -113,6 +117,8 @@ class RefereeModule
 		}
 		
 		QString lastPacketDescription();
+
+		bool UseExternalReferee;
 		
 	protected:
 		QMutex _mutex;
@@ -146,4 +152,7 @@ class RefereeModule
 		
 		// Time the ball was first beyond KickThreshold from its original position
 		QTime _kickTime;
+
+	private:
+		QUdpSocket *_refereeSocket;
 };

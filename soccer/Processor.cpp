@@ -10,7 +10,6 @@
 #include <poll.h>
 #include <multicast.hpp>
 #include <Constants.hpp>
-#include <Network.hpp>
 #include <Utils.hpp>
 #include <Joystick.hpp>
 #include <LogUtils.hpp>
@@ -286,13 +285,6 @@ void Processor::run()
 {
 	VisionReceiver vision(_simulation);
 	vision.start();
-	
-	// Create referee socket
-	_refereeSocket = new QUdpSocket;
-	if (!_refereeSocket->bind(RefereePort, QUdpSocket::ShareAddress)) {
-		throw runtime_error("Can't bind to referee port");
-	}
-	multicast_add(_refereeSocket, RefereeAddress);
 
 	// Create radio socket
 	_radio = _simulation ? (Radio *)new SimRadio() : (Radio *)new USBRadio();
@@ -417,30 +409,6 @@ void Processor::run()
 				}
 				
 				detectionFrames.push_back(det);
-			}
-		}
-		
-		// Read referee packets
-		while (_refereeSocket->hasPendingDatagrams())
-		{
-			unsigned int n = _refereeSocket->pendingDatagramSize();
-			string str(6, 0);
-			_refereeSocket->readDatagram(&str[0], str.size());
-			
-			// Check the size after receiving to discard bad packets
-			if (n != str.size())
-			{
-				printf("Bad referee packet of %d bytes\n", n);
-				continue;
-			}
-			
-			// Log the referee packet, but only use it if external referee is enabled
-			curStatus.lastRefereeTime = timestamp();
-			_state.logFrame->add_raw_referee(str);
-			
-			if (_externalReferee)
-			{
-				_refereeModule->packet(str);
 			}
 		}
 		
@@ -614,9 +582,6 @@ void Processor::run()
 	}
 	
 	vision.stop();
-	
-	delete _refereeSocket;
-	_refereeSocket = nullptr;
 }
 
 void Processor::sendRadioData()
