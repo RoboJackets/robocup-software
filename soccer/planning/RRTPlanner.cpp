@@ -5,7 +5,7 @@
 #include <boost/foreach.hpp>
 #include <algorithm>
 
-#include "rrt.hpp"
+#include "RRTPlanner.hpp"
 
 #include <Constants.hpp>
 #include <Utils.hpp>

@@ -9,7 +9,7 @@
 #include <Eigen/Geometry>
 #include <Constants.hpp>
 #include <planning/Path.hpp>
-#include <planning/rrt.hpp>
+#include <planning/RRTPlanner.hpp>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
 
