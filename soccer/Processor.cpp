@@ -439,7 +439,10 @@ void Processor::run()
 
 		if (_refereeModule)
 		{
+			_refereeModule->UseExternalReferee = _externalReferee;
 			_refereeModule->run();
+			curStatus.lastRefereeTime =_refereeModule->lastPacketTime();
+			// set curStatus.lastRefereeTime;
 		}
 		
 		if (_gameplayModule)

@@ -3,6 +3,7 @@
 #include <multicast.hpp>
 #include <stdexcept>
 #include <LogUtils.hpp>
+#include <Utils.hpp>
 
 using namespace RefereeCommands;
 
@@ -36,7 +37,7 @@ RefereeModule::~RefereeModule()
 void RefereeModule::run()
 {
 	QMutexLocker locker(&_mutex);
-	
+
 	// Read incoming packets
 	while(_refereeSocket->hasPendingDatagrams())
 	{
@@ -227,6 +228,7 @@ void RefereeModule::packet(const std::string &packet)
 	
 	_lastPacket = packet;
 	_lastPacketTime = QTime::currentTime();
+	_lastPacketTime_t = timestamp();
 	
 	int cmd = packet[0];
 	uint8_t newCounter = packet[1];
