@@ -115,6 +115,11 @@ class RefereeModule
 			QMutexLocker locker(&_mutex);
 			_blueTeam = value;
 		}
+
+		time_t lastPacketTime()
+		{
+			return _lastPacketTime_t;
+		}
 		
 		QString lastPacketDescription();
 
@@ -155,4 +160,5 @@ class RefereeModule
 
 	private:
 		QUdpSocket *_refereeSocket;
+		time_t _lastPacketTime_t;
 };
