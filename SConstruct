@@ -83,13 +83,6 @@ def do_build(dir, exports={}):
 
 do_build('common')
 
-
-# Build sslrefbox with its original makefile (no dependency checking)
-sslrefbox = env.Command('sslrefbox/sslrefbox', 'sslrefbox/Makefile', 'make -C sslrefbox')
-Alias('sslrefbox', sslrefbox)
-Default(env.Install(exec_dir, 'sslrefbox/sslrefbox'))
-Help('sslrefbox: SSL referee box\n')
-
 # Build everything else
 for dir in ['logging', 'soccer', 'simulator', 'firmware', 'test']:
 	do_build(dir)

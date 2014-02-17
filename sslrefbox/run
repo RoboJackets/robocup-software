@@ -1,4 +1,0 @@
-#!/bin/bash
-DIR=$(readlink -f $(dirname $BASH_SOURCE))
-cd $DIR
-./sslrefbox
