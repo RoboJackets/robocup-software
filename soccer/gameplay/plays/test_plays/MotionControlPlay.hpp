@@ -23,7 +23,15 @@ namespace Gameplay
 				virtual bool run();
 
 			protected:
-				//	TODO: Insert sub behaviors here as member variables
+				bool testStarted;
+				OurRobot *robot;
+
+				/** Whether we're going from ptA to ptB or ptB to ptA */
+				bool reverseLap;
+				float lapStartTime;
+				float lastTime;
+				float lastVelocityCommand;
+				float lastPosition;
 		};
 	}
 }
