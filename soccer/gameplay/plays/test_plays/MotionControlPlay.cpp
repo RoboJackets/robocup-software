@@ -37,7 +37,7 @@ bool Gameplay::Plays::MotionControlPlay::run()
 			testStarted = true;
 
 			//	record start time.  we convert microseconds to seconds
-			lapStartTime = (float)timestamp() / 1000000.0;
+			lapStartTime = timestamp();
 
 			lastTime = lapStartTime;
 		} else {
@@ -66,7 +66,7 @@ bool Gameplay::Plays::MotionControlPlay::run()
 	float timeAtMaxSpeed = distAtMaxSpeed / maxSpeed;
 
 	//	how long we've been on this lap
-	float timeIntoLap = ((float)timestamp() / 1000000.0f) - lapStartTime;
+	float timeIntoLap = (float)((timestamp() - lapStartTime) / 1000000.0f);
 	float dt = lastTime - timeIntoLap;
 	float velocityError = robot->vel.x - lastVelocityCommand *0.5;
 
@@ -77,7 +77,7 @@ bool Gameplay::Plays::MotionControlPlay::run()
 		targetX = 0.5 * maxAcceleration * timeIntoLap * timeIntoLap;
 		targetSpeed = maxAcceleration * timeIntoLap;
 
-		robot->addText("Ramp up");
+		robot->addText(QString("%1").arg(timeIntoLap));
 	} else if (timeIntoLap < (rampTime + timeAtMaxSpeed)) {	//	at plateau, going max speed
 		targetX = rampDist + maxSpeed * (timeIntoLap - rampTime);
 		targetSpeed = maxSpeed;
@@ -90,7 +90,7 @@ bool Gameplay::Plays::MotionControlPlay::run()
 
 		robot->addText("Ramp down");
 	}
-
+	robot->addText(QString("%1").arg(timeIntoLap));
 	//	what the robot SHOULD be doing right now at time t = @timeIntoLap
 	Point targetPos(ptA.x + targetX, ptA.y);
 	Point targetVel(targetSpeed, 0);

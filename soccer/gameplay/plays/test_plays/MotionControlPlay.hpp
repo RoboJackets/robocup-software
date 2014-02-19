@@ -28,7 +28,7 @@ namespace Gameplay
 
 				/** Whether we're going from ptA to ptB or ptB to ptA */
 				bool reverseLap;
-				float lapStartTime;
+				uint64_t lapStartTime;
 				float lastTime;
 				float lastVelocityCommand;
 				float lastPosition;
