@@ -4,10 +4,27 @@
 using namespace std;
 using namespace Geometry2d;
 
+
+namespace Gameplay {
+	namespace Plays {
+		REGISTER_CONFIGURABLE(MotionControlPlay);
+	}
+}
+
+ConfigDouble *Gameplay::Plays::MotionControlPlay::_pid_p;
+ConfigDouble *Gameplay::Plays::MotionControlPlay::_pid_i;
+ConfigDouble *Gameplay::Plays::MotionControlPlay::_pid_d;
+
+void Gameplay::Plays::MotionControlPlay::createConfiguration(Configuration *cfg) {
+	_pid_p = new ConfigDouble(cfg, "MotionControlPlay/pid_p", 1);
+	_pid_i = new ConfigDouble(cfg, "MotionControlPlay/pid_i");
+	_pid_d = new ConfigDouble(cfg, "MotionControlPlay/pid_d");
+}
+
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::MotionControlPlay, "Test")
 
 Gameplay::Plays::MotionControlPlay::MotionControlPlay(GameplayModule *gameplay):
-	Play(gameplay) {
+	Play(gameplay), _pidController(1, 0, 0) {
 		testStarted = false;
 }
 
@@ -38,8 +55,6 @@ bool Gameplay::Plays::MotionControlPlay::run()
 
 			//	record start time.  we convert microseconds to seconds
 			lapStartTime = timestamp();
-
-			lastTime = lapStartTime;
 		} else {
 			return true;
 		}
@@ -52,8 +67,6 @@ bool Gameplay::Plays::MotionControlPlay::run()
 	float maxSpeed = 1.0;
 	float maxAcceleration = 1.0;
 
-	// float pathDuration;	//	TODO
-
 	//	when we're speeding up and slowing down - the sides of the trapezoid
 	float rampTime = maxSpeed / maxAcceleration;
 	float rampDist = 0.5 * maxAcceleration * powf(rampTime, 2.0);	//	Sf = 1/2*a*t^2
@@ -64,12 +77,9 @@ bool Gameplay::Plays::MotionControlPlay::run()
 
 	//	how long we've been on this lap
 	float timeIntoLap = (float)((timestamp() - lapStartTime) / 1000000.0f);
-	float dt = lastTime - timeIntoLap;
-	float velocityError = robot->vel.x - lastVelocityCommand *0.5;
 
 	float targetX;
 	float targetSpeed;
-	float outputSpeed;
 	if (timeIntoLap < rampTime) {	//	we're speeding up
 		targetX = 0.5 * maxAcceleration * timeIntoLap * timeIntoLap;
 		targetSpeed = maxAcceleration * timeIntoLap;
@@ -97,25 +107,23 @@ bool Gameplay::Plays::MotionControlPlay::run()
 
 
 	//	draw
-	state()->drawCircle(targetPos, 1, Qt::blue);
-
+	state()->drawCircle(targetPos, .04, Qt::blue);
+	state()->drawLine(ptA, ptB, Qt::blue);
 
 	//	errorz
 	Point posError = targetPos - robot->pos;
 	Point velError = targetVel - robot->vel;
 
+	//	pid config
+	_pidController.kp = *_pid_p;
+	_pidController.ki = *_pid_i;
+	_pidController.kd = *_pid_d;
 
-
-
-	float correctedVelocity = targetSpeed + posError.mag() * .2;
-
-	outputSpeed = velocityError + correctedVelocity;
-	lastVelocityCommand = outputSpeed;
-	Point vel(targetSpeed, 0);
+	//	controller
+	float correctedVelocity = targetSpeed + _pidController.run(velError.mag());
+	Point vel(correctedVelocity, 0);
 	//	set the robot's velocity
 	robot->worldVelocity(vel);
 
-
-	lastTime = timeIntoLap;
 	return true;
 }
