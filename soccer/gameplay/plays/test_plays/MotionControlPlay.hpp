@@ -7,9 +7,9 @@ namespace Gameplay
 	namespace Plays
 	{
 		/**
-		 *  Example play: This is a template for a play.
-		 *  To use, implement the functions and add the necessary member variables
-		 *  and do a test replacement for ExamplePlay with whatever name you want.
+		 * This is a test play to try out some motion control ideas.  It currently just runs a
+		 * trapezoidal motion/velocity profile on a single robot on our side of the field, making
+		 * it more from one side to the other.
 		 */
 		class MotionControlPlay: public Play
 		{

@@ -45,9 +45,6 @@ bool Gameplay::Plays::MotionControlPlay::run()
 		}
 	}
 
-	//	TODO: set lap start time
-	//	TOD: reverse lap after each completion
-
 
 	float totalDist = (ptA - ptB).mag();
 
@@ -55,7 +52,7 @@ bool Gameplay::Plays::MotionControlPlay::run()
 	float maxSpeed = 1.0;
 	float maxAcceleration = 1.0;
 
-	float pathDuration;	//	TODO
+	// float pathDuration;	//	TODO
 
 	//	when we're speeding up and slowing down - the sides of the trapezoid
 	float rampTime = maxSpeed / maxAcceleration;
@@ -82,18 +79,26 @@ bool Gameplay::Plays::MotionControlPlay::run()
 		targetX = rampDist + maxSpeed * (timeIntoLap - rampTime);
 		targetSpeed = maxSpeed;
 		robot->addText("Plateau");
-	} else {	//	we're slowing down
+	} else if (timeIntoLap < timeAtMaxSpeed + rampTime*2) {	//	we're slowing down
 		float deccelTime = timeIntoLap - (rampTime + timeAtMaxSpeed);
 		targetX = rampDist + distAtMaxSpeed + 
 					maxSpeed * deccelTime - 0.5 * maxAcceleration * deccelTime * deccelTime;
 		targetSpeed = maxSpeed - deccelTime * maxAcceleration;
 
 		robot->addText("Ramp down");
+	} else {
+		//	restart for another lap
+		testStarted = false;
 	}
 	robot->addText(QString("%1").arg(timeIntoLap));
 	//	what the robot SHOULD be doing right now at time t = @timeIntoLap
 	Point targetPos(ptA.x + targetX, ptA.y);
 	Point targetVel(targetSpeed, 0);
+
+
+	//	draw
+	state()->drawCircle(targetPos, 1, Qt::blue);
+
 
 	//	errorz
 	Point posError = targetPos - robot->pos;
@@ -106,7 +111,6 @@ bool Gameplay::Plays::MotionControlPlay::run()
 
 	outputSpeed = velocityError + correctedVelocity;
 	lastVelocityCommand = outputSpeed;
-	//Point vel(outputSpeed, 0);
 	Point vel(targetSpeed, 0);
 	//	set the robot's velocity
 	robot->worldVelocity(vel);
