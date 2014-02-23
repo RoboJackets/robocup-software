@@ -1,6 +1,0 @@
-cmake_minimum_required(VERSION 2.6)
-include(FindLibXml2)
-include_directories(${LIBXML2_INCLUDE_DIR})
-add_definitions(-O2 -Wall -g ${LIBXML2_DEFINITIONS})
-add_executable(watchdog watchdog.cpp process.cpp stats.cpp comm.cpp errno_error.cpp log.cpp config.cpp)
-target_link_libraries(watchdog ${LIBXML2_LIBRARIES} statgrab pthread)

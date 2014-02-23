@@ -1,6 +1,0 @@
-1) Install boa
-2) Edit boa.conf (two places) and rc.local (one place) to reflect correct software directory.
-3) Copy boa.conf to /etc/boa/boa.conf
-4) Copy rc.local to /etc/rc.local
-5) Reboot
-
