@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gameplay/Play.hpp>
+#include <Pid.hpp>
 
 namespace Gameplay
 {
@@ -22,6 +23,8 @@ namespace Gameplay
 				/** Called every frame */
 				virtual bool run();
 
+				static void createConfiguration(Configuration *cfg);
+
 			protected:
 				bool testStarted;
 				OurRobot *robot;
@@ -29,9 +32,12 @@ namespace Gameplay
 				/** Whether we're going from ptA to ptB or ptB to ptA */
 				bool reverseLap;
 				uint64_t lapStartTime;
-				float lastTime;
-				float lastVelocityCommand;
-				float lastPosition;
+
+				Pid _pidController;
+
+				static ConfigDouble *_pid_p;
+				static ConfigDouble *_pid_i;
+				static ConfigDouble *_pid_d;
 		};
 	}
 }
