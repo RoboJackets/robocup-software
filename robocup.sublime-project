@@ -29,7 +29,7 @@
 				{
 					"working_dir": "${project_path}/run",
 					"name": "Run",
-					"cmd": "./soccer"
+					"cmd": ["./soccer", "-sim"]
 				}
 			]
 		}
