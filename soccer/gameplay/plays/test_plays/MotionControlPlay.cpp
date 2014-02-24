@@ -23,10 +23,41 @@ void Gameplay::Plays::MotionControlPlay::createConfiguration(Configuration *cfg)
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::MotionControlPlay, "Test")
 
+//	NOTE: doesn't handle triangle case
+bool trapezoid(float pathLength, float maxSpeed, float maxAcc, float timeIntoLap, float &distOut, float &speedOut) {
+	//	when we're speeding up and slowing down - the sides of the trapezoid
+	float rampTime = maxSpeed / maxAcc;
+	float rampDist = 0.5 * maxAcc * powf(rampTime, 2.0);	//	Sf = 1/2*a*t^2
+
+	//	when we're going at max speed
+	float distAtMaxSpeed = (pathLength - 2.0 * rampDist);
+	float timeAtMaxSpeed = distAtMaxSpeed / maxSpeed;
+
+	if (timeIntoLap < rampTime) {	//	we're speeding up
+		distOut = 0.5 * maxAcc * timeIntoLap * timeIntoLap;
+		speedOut = maxAcc * timeIntoLap;
+	} else if (timeIntoLap < (rampTime + timeAtMaxSpeed)) {	//	at plateau, going max speed
+		distOut = rampDist + maxSpeed * (timeIntoLap - rampTime);
+		speedOut = maxSpeed;
+	} else if (timeIntoLap < timeAtMaxSpeed + rampTime*2) {	//	we're slowing down
+		float deccelTime = timeIntoLap - (rampTime + timeAtMaxSpeed);
+		distOut = rampDist + distAtMaxSpeed + 
+					maxSpeed * deccelTime - 0.5 * maxAcc * deccelTime * deccelTime;
+		speedOut = maxSpeed - deccelTime * maxAcc;
+	} else {
+		//	restart for another lap
+		return false;
+	}
+
+	return true;
+}
+
+
 Gameplay::Plays::MotionControlPlay::MotionControlPlay(GameplayModule *gameplay):
-	Play(gameplay), _pidController(1, 0, 0) {
+	Play(gameplay), _pidControllerX(1, 0, 0), _pidControllerY(1, 0, 0) {
 		testStarted = false;
 
+#if 0
 		path = [](float timeIntoLap, Point &targetPos, Point &targetVel) {
 			//	path geometry
 			float fudgeFactor = .15;
@@ -36,47 +67,52 @@ Gameplay::Plays::MotionControlPlay::MotionControlPlay(GameplayModule *gameplay):
 
 			float totalDist = (ptA - ptB).mag();
 
-			//	using trapezoidal velocity profile (m/s)
-			float maxSpeed = 1.0;
-			float maxAcceleration = 1.0;
+			float pos, vel;
+			bool notDone = trapezoid(
+				totalDist,		//	length of path
+				1.0,			//	max speed
+				1.0,			//	max acc
+				timeIntoLap,	//	time
+				pos,			//	pos out
+				vel 			//	vel out
+				);
 
-			//	when we're speeding up and slowing down - the sides of the trapezoid
-			float rampTime = maxSpeed / maxAcceleration;
-			float rampDist = 0.5 * maxAcceleration * powf(rampTime, 2.0);	//	Sf = 1/2*a*t^2
-
-			//	when we're going at max speed
-			float distAtMaxSpeed = (totalDist - 2.0 * rampDist);
-			float timeAtMaxSpeed = distAtMaxSpeed / maxSpeed;
-
-			float targetX;
-			float targetSpeed;
-			if (timeIntoLap < rampTime) {	//	we're speeding up
-				targetX = 0.5 * maxAcceleration * timeIntoLap * timeIntoLap;
-				targetSpeed = maxAcceleration * timeIntoLap;
-
-				// robot->addText(QString("%1").arg(timeIntoLap));
-			} else if (timeIntoLap < (rampTime + timeAtMaxSpeed)) {	//	at plateau, going max speed
-				targetX = rampDist + maxSpeed * (timeIntoLap - rampTime);
-				targetSpeed = maxSpeed;
-				// robot->addText("Plateau");
-			} else if (timeIntoLap < timeAtMaxSpeed + rampTime*2) {	//	we're slowing down
-				float deccelTime = timeIntoLap - (rampTime + timeAtMaxSpeed);
-				targetX = rampDist + distAtMaxSpeed + 
-							maxSpeed * deccelTime - 0.5 * maxAcceleration * deccelTime * deccelTime;
-				targetSpeed = maxSpeed - deccelTime * maxAcceleration;
-
-				// robot->addText("Ramp down");
-			} else {
-				//	restart for another lap
-				return false;
-			}
-			// robot->addText(QString("%1").arg(timeIntoLap));
 			//	what the robot SHOULD be doing right now at time t = @timeIntoLap
-			targetPos = Point(ptA.x + targetX, ptA.y);
-			targetVel = Point(targetSpeed, 0);
+			targetPos = Point(ptA.x + pos, ptA.y);
+			targetVel = Point(vel, 0);
 
-			return true;
+			return notDone;
 		};
+
+#else
+		//	circular path
+		path = [](float timeIntoLap, Point &targetPos, Point &targetVel) {
+			const float r = 0.5;
+			const Point center(0, Field_Length / 2.0);
+			const float circumference = 2.0*M_PI*r;
+
+			float dist, vel;
+			bool notDone = trapezoid(
+				circumference,	//	length of path
+				1.0,			//	max speed
+				1.0,			//	max acc
+				timeIntoLap,	//	time
+				dist,			//	dist
+				vel				//	vel
+				);
+
+			float angle = dist / circumference * 2.0 * M_PI;
+
+			targetPos = Point(r, 0);
+			targetPos.rotate(RadiansToDegrees*angle);
+			targetPos += center;
+
+			targetVel = Point(0, vel);
+			targetVel.rotate(RadiansToDegrees*angle);
+
+			return notDone;
+		};
+#endif
 }
 
 float Gameplay::Plays::MotionControlPlay::score(GameplayModule *gameplay) {
@@ -124,19 +160,24 @@ bool Gameplay::Plays::MotionControlPlay::run()
 	// state()->drawLine(ptA, ptB, Qt::blue);
 
 	//	errorz
-	Point posError = targetPos - robot->pos;
+	// Point posError = targetPos - robot->pos;
 	Point velError = targetVel - robot->vel;
 
 	//	pid config
-	_pidController.kp = *_pid_p;
-	_pidController.ki = *_pid_i;
-	_pidController.kd = *_pid_d;
+	_pidControllerX.kp = *_pid_p;
+	_pidControllerX.ki = *_pid_i;
+	_pidControllerX.kd = *_pid_d;
+	_pidControllerY.kp = *_pid_p;
+	_pidControllerY.ki = *_pid_i;
+	_pidControllerY.kd = *_pid_d;
 
 	//	controller
-	float correctedVelocity = targetVel.x + _pidController.run(velError.mag());
-	Point vel(correctedVelocity, 0);
-	//	set the robot's velocity
-	robot->worldVelocity(vel);
+	Point correctedVelocity(
+		targetVel.x + _pidControllerX.run(velError.x),
+		targetVel.y + _pidControllerY.run(velError.y)
+		);
+		 // = targetVel + _pidController.run(velError.mag())*velError / velError.mag();
+	robot->worldVelocity(correctedVelocity);
 
 	return true;
 }
