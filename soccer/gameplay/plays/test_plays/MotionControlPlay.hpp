@@ -41,7 +41,8 @@ namespace Gameplay
 				bool reverseLap;
 				uint64_t lapStartTime;
 
-				Pid _pidController;
+				Pid _pidControllerX;
+				Pid _pidControllerY;
 
 				static ConfigDouble *_pid_p;
 				static ConfigDouble *_pid_i;
