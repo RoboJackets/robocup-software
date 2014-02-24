@@ -25,6 +25,14 @@ namespace Gameplay
 
 				static void createConfiguration(Configuration *cfg);
 
+				/**
+				 * @param 1 The time (in seconds) since starting the path
+				 * @param 2 target position out
+				 * @param 3 target velocity out
+				 * @return whether or not the path exists at the given time
+				 */
+				std::function<bool(float, Geometry2d::Point &, Geometry2d::Point &)> path;
+
 			protected:
 				bool testStarted;
 				OurRobot *robot;
