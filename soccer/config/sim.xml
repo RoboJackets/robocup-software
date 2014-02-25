@@ -512,4 +512,46 @@
   <Max_Chip_Distance value="2.5"/>
   <Roll_Distance value="2.5"/>
  </ChipCalibration>
+ <OurGoalKick2>
+  <Chipper_Power value="255"/>
+  <Kicker_Power value="255"/>
+  <Downfield_Range value="3.025"/>
+  <Min_Chip_Range value="0.3"/>
+  <Max_Chip_Range value="3"/>
+  <Centers_Length_Multiplier value="0.6"/>
+  <Centers_Length_Offset value="0"/>
+  <Centers_Width_Multiplier value="0.15"/>
+  <Centers_Width_Offset value="0"/>
+ </OurGoalKick2>
+ <OurGoalKick_Pass>
+  <Kicker_Power value="255"/>
+  <Downfield_Range value="3.025"/>
+  <Centers_Length_Multiplier value="0.6"/>
+  <Centers_Length_Offset value="0"/>
+  <Centers_Width_Multiplier value="0.15"/>
+  <Centers_Width_Offset value="0"/>
+ </OurGoalKick_Pass>
+ <LuckyKick>
+  <Use_Chance value="true"/>
+  <Use_Kick value="true"/>
+  <Use_Pivot value="true"/>
+  <Use_Chip value="true"/>
+  <Use_Ballsense value="true"/>
+  <Use_Approach value="true"/>
+  <Debug value="true"/>
+  <Approach_Angle value="40"/>
+  <Approach_Dist value="0.1"/>
+ </LuckyKick>
+ <PassingContext>
+  <Receiver_Choice_Hysteresis value="0.2"/>
+ </PassingContext>
+ <SolarSystem>
+  <speed value="0.08"/>
+ </SolarSystem>
+ <MotionControlPlay>
+  <pid_p value="6"/>
+  <pid_i value="0.0001"/>
+  <pid_d value="0.5"/>
+  <vel_mult value="2.3"/>
+ </MotionControlPlay>
 </config>

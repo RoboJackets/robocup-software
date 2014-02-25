@@ -47,6 +47,7 @@ namespace Gameplay
 				static ConfigDouble *_pid_p;
 				static ConfigDouble *_pid_i;
 				static ConfigDouble *_pid_d;
+				static ConfigDouble *_v_p;
 		};
 	}
 }
