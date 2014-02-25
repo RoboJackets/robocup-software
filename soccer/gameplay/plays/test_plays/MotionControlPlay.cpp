@@ -57,7 +57,7 @@ Gameplay::Plays::MotionControlPlay::MotionControlPlay(GameplayModule *gameplay):
 	Play(gameplay), _pidControllerX(1, 0, 0), _pidControllerY(1, 0, 0) {
 		testStarted = false;
 
-#if 0
+#if 1
 		path = [](float timeIntoLap, Point &targetPos, Point &targetVel) {
 			//	path geometry
 			float fudgeFactor = .15;
@@ -160,21 +160,22 @@ bool Gameplay::Plays::MotionControlPlay::run()
 	// state()->drawLine(ptA, ptB, Qt::blue);
 
 	//	errorz
-	// Point posError = targetPos - robot->pos;
-	Point velError = targetVel - robot->vel;
+	Point posError = targetPos - robot->pos;
+	// Point velError = targetVel - robot->vel;
 
 	//	pid config
 	_pidControllerX.kp = *_pid_p;
 	_pidControllerX.ki = *_pid_i;
 	_pidControllerX.kd = *_pid_d;
+
 	_pidControllerY.kp = *_pid_p;
 	_pidControllerY.ki = *_pid_i;
 	_pidControllerY.kd = *_pid_d;
 
 	//	controller
 	Point correctedVelocity(
-		targetVel.x + _pidControllerX.run(velError.x),
-		targetVel.y + _pidControllerY.run(velError.y)
+		targetVel.x + _pidControllerX.run(posError.x),
+		targetVel.y + _pidControllerY.run(posError.y)
 		);
 		 // = targetVel + _pidController.run(velError.mag())*velError / velError.mag();
 	robot->worldVelocity(correctedVelocity);
