@@ -130,8 +130,9 @@ bool Gameplay::Behaviors::PassReceive::run()
 
 		if(robot2->pos.y > 0 && robot2->pos.y < Field_Length && robot2->pos.x > -Field_Width && robot2->pos.x < Field_Width)
 		{
-			robot2->bodyVelocity(Geometry2d::Point(-(*_backup_speed),0));
-			robot2->angularVelocity(0);
+			#warning This used to be bodyVelocity - need to convert to worldVelicity Command
+			robot2->worldVelocity(Geometry2d::Point(-(*_backup_speed),0));
+			robot2->face(ball().pos);
 		}
 		robot1->addText("Ready");
 		_passer.run();
@@ -142,8 +143,9 @@ bool Gameplay::Behaviors::PassReceive::run()
 
 		if(robot2->pos.y > 0 && robot2->pos.y < Field_Length && robot2->pos.x > -Field_Width && robot2->pos.x < Field_Width)
 		{
-			robot2->bodyVelocity(Geometry2d::Point(-(*_backup_speed),0));
-			robot2->angularVelocity(0);
+			#warning This used to be bodyVelocity - need to convert to worldVelicity Command
+			robot2->worldVelocity(Geometry2d::Point(-(*_backup_speed),0));
+			robot2->face(ball().pos);
 		}
 
 		_passer.enableKick = true;

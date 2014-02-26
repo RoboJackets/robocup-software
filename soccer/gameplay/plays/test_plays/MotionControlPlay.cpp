@@ -26,35 +26,6 @@ void Gameplay::Plays::MotionControlPlay::createConfiguration(Configuration *cfg)
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::MotionControlPlay, "Test")
 
-//	NOTE: doesn't handle triangle case
-bool trapezoid(float pathLength, float maxSpeed, float maxAcc, float timeIntoLap, float &distOut, float &speedOut) {
-	//	when we're speeding up and slowing down - the sides of the trapezoid
-	float rampTime = maxSpeed / maxAcc;
-	float rampDist = 0.5 * maxAcc * powf(rampTime, 2.0);	//	Sf = 1/2*a*t^2
-
-	//	when we're going at max speed
-	float distAtMaxSpeed = (pathLength - 2.0 * rampDist);
-	float timeAtMaxSpeed = distAtMaxSpeed / maxSpeed;
-
-	if (timeIntoLap < rampTime) {	//	we're speeding up
-		distOut = 0.5 * maxAcc * timeIntoLap * timeIntoLap;
-		speedOut = maxAcc * timeIntoLap;
-	} else if (timeIntoLap < (rampTime + timeAtMaxSpeed)) {	//	at plateau, going max speed
-		distOut = rampDist + maxSpeed * (timeIntoLap - rampTime);
-		speedOut = maxSpeed;
-	} else if (timeIntoLap < timeAtMaxSpeed + rampTime*2) {	//	we're slowing down
-		float deccelTime = timeIntoLap - (rampTime + timeAtMaxSpeed);
-		distOut = rampDist + distAtMaxSpeed + 
-					maxSpeed * deccelTime - 0.5 * maxAcc * deccelTime * deccelTime;
-		speedOut = maxSpeed - deccelTime * maxAcc;
-	} else {
-		//	restart for another lap
-		return false;
-	}
-
-	return true;
-}
-
 
 Gameplay::Plays::MotionControlPlay::MotionControlPlay(GameplayModule *gameplay):
 	Play(gameplay), _pidControllerX(1, 0, 0), _pidControllerY(1, 0, 0) {
@@ -73,8 +44,8 @@ Gameplay::Plays::MotionControlPlay::MotionControlPlay(GameplayModule *gameplay):
 			float pos, vel;
 			bool notDone = trapezoid(
 				totalDist,		//	length of path
-				1.0,			//	max speed
-				1.0,			//	max acc
+				2.0,			//	max speed
+				1.5,			//	max acc
 				timeIntoLap,	//	time
 				pos,			//	pos out
 				vel 			//	vel out
@@ -91,13 +62,13 @@ Gameplay::Plays::MotionControlPlay::MotionControlPlay(GameplayModule *gameplay):
 		//	circular path
 		path = [](float timeIntoLap, Point &targetPos, Point &targetVel) {
 			const float r = 0.5;
-			const Point center(0, Field_Length / 2.0);
+			const Point center(0, Field_Length / 2.0 - r - 0.1);
 			const float circumference = 2.0*M_PI*r;
 
 			float dist, vel;
 			bool notDone = trapezoid(
 				circumference,	//	length of path
-				1.0,			//	max speed
+				0.75,			//	max speed
 				1.0,			//	max acc
 				timeIntoLap,	//	time
 				dist,			//	dist
@@ -147,7 +118,6 @@ bool Gameplay::Plays::MotionControlPlay::run()
 			return true;
 		}
 	}
-
 
 	//	how long we've been on this lap
 	float timeIntoLap = (float)((timestamp() - lapStartTime) / 1000000.0f);

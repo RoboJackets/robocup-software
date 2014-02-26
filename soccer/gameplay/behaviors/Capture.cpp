@@ -194,7 +194,7 @@ bool Gameplay::Behaviors::Capture::run()
 			QString::number(acos(error) * RadiansToDegrees),
 			QString::number(_ccw ? 1 : 0)));
 		
-		robot->pivot(*_pivot_Speed * (_ccw ? 1 : -1), ball().pos);
+		robot->face(ball().pos);
 		robot->dribble(*_dribble_Speed);
 	} else {
 		robot->addText("Done");

@@ -44,7 +44,8 @@ bool Gameplay::Plays::TestLatency::run()
 	double t = (state()->timestamp - _startTime) / 1000000.0 * test_w;
 	double w_i = sin(t) * robot_w;
 #if 1
-	robot->angularVelocity(w_i);
+	#warning angularVelocity() was depracated, so this doesn't do what it used to anymore
+	// robot->angularVelocity(w_i);
 	double obs = robot->angleVel * M_PI / 180.0;
 #else
 	robot->worldVelocity(Point(w_i, 0));

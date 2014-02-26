@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Geometry2d/Point.hpp>
+#include <Pid.hpp>
 
 class OurRobot;
 
@@ -26,16 +27,9 @@ public:
 	void run();
 	
 private:
-	void positionPD();
-	void positionTrapezoidal();
-	void anglePD();
-	
 	OurRobot *_robot;
 	uint64_t _lastFrameTime;
-	Geometry2d::Point _lastPos;
-	float _lastAngle;
-	Geometry2d::Point _lastPosError;
-	float _lastAngleError;
-	Geometry2d::Point _lastBodyVel;
-	float _lastAngularVel;
+
+	Pid _positionController;
+	Pid _angleController;
 };
