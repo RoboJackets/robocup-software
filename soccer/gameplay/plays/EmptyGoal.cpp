@@ -74,8 +74,7 @@ bool Gameplay::Plays::EmptyGoal::run()
 	_striker.use_line_kick = true;
 	_striker.setTargetGoal();
 	_striker.use_chipper = false;
-	_striker.setLineKickVelocityScale(*_scale_speed, *_scale_acc, *_scale_w);
-
+	
 	// execute behaviors
 	if (_striker.robot) _striker.run();
 	if (_leftFullback.robot) _leftFullback.run();

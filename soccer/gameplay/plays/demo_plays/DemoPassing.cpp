@@ -23,8 +23,6 @@ bool Gameplay::Plays::DemoPassing::run()
 
 	_passer.setTarget(_receiver.robot->kickerBar());
 
-	_passer.robot->setVScale(0.8);
-	_passer.robot->setWScale(0.3);
 	bool done = _passer.done();
 	if (done)
 	{
