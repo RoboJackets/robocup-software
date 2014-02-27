@@ -69,5 +69,17 @@ namespace Planning
 			
 			// Set of points in the path - used as waypoints
 			std::vector<Geometry2d::Point> points;
+
+			/**
+			 * A path describes the position and velocity a robot should be at for a
+			 * particular time interval.  This methd evalates the path at a given time and
+			 * returns the target position and velocity of the robot.
+			 *
+			 * @param t Time (in seconds) since the robot started the path
+			 * @param targetPosOut The position the robot would ideally be at at the given time
+			 * @param targetVelOut The target velocity of the robot at the given time
+			 * @return true if the path is valid at time @t, false if you've gone past the end
+			 */
+			bool evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut);
 	};
 }
