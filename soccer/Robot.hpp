@@ -108,14 +108,21 @@ private:
  * For position: set EITHER @motionTarget OR @targetWorldVel.
  * For angle: set EITHER @targetAngleVel OR @faceTarget.
  */
-class MotionConstraints {
-public:
+struct MotionConstraints {
+
+	/**
+	 * Position
+	 */
 
 	///	A point on the field that the robot should use path-planning to get to
 	boost::optional<Geometry2d::Point> targetPos;
 	
 	/// Set the velocity in world coordinates directly (circumvents path planning)
 	boost::optional<Geometry2d::Point> targetWorldVel;
+
+	/**
+	 * Angle
+	 */
 	
 	/// Angular velocity in rad/s counterclockwise
 	boost::optional<float> targetAngleVel;
@@ -374,8 +381,11 @@ protected:
 	MotionConstraints _motionConstraints;
 
 	Planning::RRTPlanner *_planner;	/// single-robot RRT planner
-	Planning::Path _path;	/// latest path
+	boost::optional<Planning::Path> _path;	/// latest path
 	uint64_t _pathStartTime;
+	
+	boost::optional<Planning::AnglePath> _anglePath;
+	uint64_t _anglePathStartTime;
 
 
 	/**
@@ -400,19 +410,6 @@ protected:
 	 * Creates an obstacle for the ball if necessary
 	 */
 	ObstaclePtr createBallObstacle() const;
-
-	/**
-	 * Given a path, finds the first local goal through mixing to create
-	 * a point target for the PointController.  Finds the closest point
-	 * on the path, and mixes from there
-	 *
-	 * @param pose is the current robot pos
-	 * @param path is the path
-	 * @param obstacles are a set of obstacles to use
-	 */
-	//	FIXME: remove
-	// Geometry2d::Point findGoalOnPath(const Geometry2d::Point& pos, const Planning::Path& path,
-	// 		const ObstacleGroup& obstacles = ObstacleGroup());
 
 
 private:
