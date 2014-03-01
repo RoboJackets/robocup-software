@@ -69,7 +69,6 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	resetAvoidBall();
 	_delayed_goal = boost::none;
 	_usesPathPlanning = true;
-	exclude = false;
 	cmd_w = 0;
 	_lastChargedTime = 0;
 	_motionControl = new MotionControl(this);

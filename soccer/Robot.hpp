@@ -334,9 +334,6 @@ public:
 	bool avoidTeammate(unsigned shell_id) const;
 	float avoidTeammateRadius(unsigned shell_id) const;
 
-	// True if this robot should not be used in plays (for mixed play)
-	bool exclude;
-
 	// gameplay interface - interface for delayed update/planning
 
 	/**
