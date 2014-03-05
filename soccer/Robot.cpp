@@ -542,6 +542,12 @@ ObstaclePtr OurRobot::createBallObstacle() const {
 // 	return result;
 // }
 
+
+void OurRobot::setPath(Planning::Path path) {
+		_pathStartTime = timestamp();
+		_path = path;
+}
+
 //	FIXME: this method doesn't do quite what its new name says
 void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 	const bool enable_slice = false;
@@ -578,7 +584,7 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 	if (!_motionConstraints.targetPos) {
 		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: stopped" << endl;
 		addText(QString("execute: no goal"));
-		_path = Planning::Path(pos);
+		setPath(Planning::Path(pos));
 		_state->drawPath(_path);
 		return;
 	}
@@ -586,10 +592,10 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 	// create default path for comparison - switch if available
 	Planning::Path straight_line(pos, *_motionConstraints.targetPos);
 	Geometry2d::Segment straight_seg(pos, *_motionConstraints.targetPos);
-	if (!full_obstacles.hit(straight_seg)) {
+	if (!full_obstacles.hit(straight_seg) && _path.size()!=2) {
 		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using straight line goal" << endl;
 		addText(QString("execute: straight_line"));
-		_path = straight_line;
+		setPath(straight_line);
 		_state->drawPath(straight_line, Qt::red);
 		return;
 	}
@@ -618,7 +624,9 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 
 	// use the newly generated path
 	if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using new RRT path" << endl;
-	_path = rrt_path;
+	
+	setPath(rrt_path);
+
 	_state->drawPath(_path, Qt::magenta);
 	addText(QString("execute: RRT path %1").arg(full_obstacles.size()));
 	return;
