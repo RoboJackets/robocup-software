@@ -1,6 +1,7 @@
 
 #include "Path.hpp"
 #include "Utils.hpp"
+#include "motion/TrapezoidalMotion.hpp"
 
 #include <stdexcept>
 
@@ -225,6 +226,48 @@ float Planning::Path::length(const Geometry2d::Point &pt) const
 	return length;
 }
 
-bool Planning::Path::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const {
+bool Planning::Path::getPoint(float distance ,Geometry2d::Point &position, Geometry2d::Point &direction) const
+{
+	if (points.empty())
+	{
+		return false;
+	}
+	for (unsigned int i = 0; i < (points.size() - 1); ++i)
+    {
+    	Geometry2d::Point vector(points[i + 1] - points[i]);
+		//Geometry2d::Segment s(points[i], points[i+1]);
+		
+		float vectorLength = vector.mag();
+		distance -= vectorLength;
+		
+		if(distance<=0) 
+		{
+			distance += vectorLength;
+			position = points[i] + (vector * (distance / vectorLength));
+			direction = vector.normalized();
+			return true;
+		}
+	}
+	return false;
+
+}
+
+bool Planning::Path::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const
+{	//static const float Max_Linear_Speed = 0.008 * 511;
+	//static const float Max_Angular_Speed = 511 * 0.02 * M_PI;
+	static const float Max_Linear_Speed = 1;
+	static const float Max_Acceleration = 1.5;
+	float linearPos;
+	float linearSpeed;
+
+	TrapezoidalMotion( length(), Max_Linear_Speed, Max_Acceleration, t, 0, 0, linearPos, linearSpeed);
+
+	Geometry2d::Point direction;
+	if(!getPoint(linearPos, targetPosOut, direction))
+	{
+		return false;
+	}
+
+	targetVelOut = direction * linearSpeed;
 	return true;
 }
