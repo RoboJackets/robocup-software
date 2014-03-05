@@ -183,6 +183,8 @@ public:
 	const Planning::Path &path() const {
 		return _path;
 	}
+	
+	void setPath(Planning::Path path);
 
 	//	FIXME: document
 	void setMotionConstraints(const MotionConstraints &constraints);
