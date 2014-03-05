@@ -8,11 +8,20 @@ bool TrapezoidalMotion(
 	float maxSpeed,
 	float maxAcc,
 	float timeIntoLap,
-	float currentSpeed,
-	float finalSpeed,
+	float startSpeed,	//	USEME
+	float finalSpeed,	//	USEME
 	float &posOut,
 	float &speedOut)
-{
+{//	FIXME: triangle case!
+
+
+
+
+
+
+
+
+
 	//	when we're speeding up and slowing down - the sides of the trapezoid
 	float rampTime = maxSpeed / maxAcc;
 	float rampDist = 0.5 * maxAcc * powf(rampTime, 2.0);	//	Sf = 1/2*a*t^2
