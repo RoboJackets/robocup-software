@@ -82,5 +82,7 @@ namespace Planning
 			 */
 			//	FIXME: implement
 			bool evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const;
+			bool getPoint(float distance ,Geometry2d::Point &position, Geometry2d::Point &direction) const;
+
 	};
 }
