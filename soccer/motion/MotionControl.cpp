@@ -377,10 +377,17 @@ void MotionControl::run() {
 		targetVel.y += _positionYController.run(posError.y);
 
 		//	draw target pt
-		_robot->state()->drawCircle(targetPos, .04, Qt::blue, "MotionControl");
+		_robot->state()->drawCircle(targetPos, .04, Qt::red, "MotionControl");
+		_robot->state()->drawLine(targetPos, targetPos + targetVel
+				, Qt::blue, "velocity");
+		_robot->state()->drawText(QString("%1").arg(timeIntoPath), targetPos, Qt::black, "time");
 
+		//convert from world to body coordinates
+		targetVel = targetVel.rotated(-_robot->angle);
 		//	set radioTx values
 		_robot->radioTx.set_body_x(targetVel.x);
 		_robot->radioTx.set_body_y(targetVel.y);
+
+	
 	}
 }
