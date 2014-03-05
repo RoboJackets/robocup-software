@@ -8,13 +8,30 @@ bool TrapezoidalMotion(
 	float maxSpeed,
 	float maxAcc,
 	float timeIntoLap,
-	float currentSpeed,
+	float startSpeed,
 	float finalSpeed,
 	float &posOut,
 	float &speedOut)
 {
 	//	when we're speeding up and slowing down - the sides of the trapezoid
 	float rampTime = maxSpeed / maxAcc;
+	if(rampTime * maxSpeed > pathLength) {
+		float rampDist = pathLength / 2.0;
+		rampTime = sqrt(pathLength / maxAcc);
+		maxSpeed = rampTime * maxAcc;
+		if (timeIntoLap < rampTime) {	//	we're speeding up
+			posOut = 0.5 * maxAcc * timeIntoLap * timeIntoLap;
+			speedOut = maxAcc * timeIntoLap;
+		} else if (timeIntoLap < rampTime * 2.0) {
+			float deccelTime = timeIntoLap - (rampTime);
+			posOut = rampDist +	maxSpeed * deccelTime - 0.5 * maxAcc * deccelTime * deccelTime;
+			speedOut = maxSpeed - deccelTime * maxAcc;
+		} else {
+			//	restart for another lap
+			return false;
+		}
+		return true;
+	}
 	float rampDist = 0.5 * maxAcc * powf(rampTime, 2.0);	//	Sf = 1/2*a*t^2
 
 	//	when we're going at max speed
