@@ -176,6 +176,14 @@ public:
 	
 	// Commands
 
+	const MotionConstraints &motionConstraints() const {
+		return _motionConstraints;
+	}
+
+	const Planning::Path &path() const {
+		return _path;
+	}
+
 	//	FIXME: document
 	void setMotionConstraints(const MotionConstraints &constraints);
 
@@ -191,6 +199,13 @@ public:
 	 */
 	void move(const Geometry2d::Point &goal, bool stopAtEnd = false);
 
+	uint64_t pathStartTime() const {
+		return _pathStartTime;
+	}
+
+	/**
+	 * Sets the worldVelocity in the robot's MotionConstraints
+	 */
 	void worldVelocity(const Geometry2d::Point &targetWorldVel);
 
 	/*

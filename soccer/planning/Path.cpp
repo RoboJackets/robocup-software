@@ -224,3 +224,7 @@ float Planning::Path::length(const Geometry2d::Point &pt) const
 	
 	return length;
 }
+
+bool Planning::Path::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const {
+	return true;
+}

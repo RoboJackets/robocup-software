@@ -5,25 +5,6 @@ using namespace std;
 using namespace Geometry2d;
 
 
-namespace Gameplay {
-	namespace Plays {
-		REGISTER_CONFIGURABLE(MotionControlPlay);
-	}
-}
-
-ConfigDouble *Gameplay::Plays::MotionControlPlay::_pid_p;
-ConfigDouble *Gameplay::Plays::MotionControlPlay::_pid_i;
-ConfigDouble *Gameplay::Plays::MotionControlPlay::_pid_d;
-ConfigDouble *Gameplay::Plays::MotionControlPlay::_v_p;
-
-void Gameplay::Plays::MotionControlPlay::createConfiguration(Configuration *cfg) {
-	_pid_p = new ConfigDouble(cfg, "MotionControlPlay/pid_p", 6.5);
-	_pid_i = new ConfigDouble(cfg, "MotionControlPlay/pid_i", 0.0001);
-	_pid_d = new ConfigDouble(cfg, "MotionControlPlay/pid_d", 2);
-
-	_v_p = new ConfigDouble(cfg, "MotionControlPlay/vel_mult", 1);
-}
-
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::MotionControlPlay, "Test")
 
 

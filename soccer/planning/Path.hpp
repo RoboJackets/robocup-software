@@ -80,6 +80,7 @@ namespace Planning
 			 * @param targetVelOut The target velocity of the robot at the given time
 			 * @return true if the path is valid at time @t, false if you've gone past the end
 			 */
-			bool evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut);
+			//	FIXME: implement
+			bool evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const;
 	};
 }

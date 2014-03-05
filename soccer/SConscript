@@ -142,7 +142,7 @@ srcs = [
 	'gameplay/plays/demo_plays/DemoTouchKick.cpp',
 	'gameplay/plays/demo_plays/DemoKickMeasurement.cpp',
 	'gameplay/plays/demo_plays/SolarSystem.cpp',
-	'gameplay/plays/test_plays/MotionControlPlay.cpp',
+	# 'gameplay/plays/test_plays/MotionControlPlay.cpp',
 
     # Mechanical tests
     'gameplay/plays/demo_plays/KickerEnduranceTest.cpp',
@@ -161,6 +161,7 @@ srcs = [
 	
 # Sources for motion module',
 	'motion/MotionControl.cpp',
+	'motion/TrapezoidalMotion.cpp',
 	
 	'ui/main_icons.qrc',
 	'ui/log_icons.qrc'

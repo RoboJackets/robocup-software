@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Configuration.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Pid.hpp>
 
@@ -26,10 +27,23 @@ public:
 	 */
 	void run();
 	
+
+	static void createConfiguration(Configuration *cfg);
+
 private:
 	OurRobot *_robot;
-	uint64_t _lastFrameTime;
 
-	Pid _positionController;
+	Pid _positionXController;
+	Pid _positionYController;
 	Pid _angleController;
+
+	static ConfigDouble *_pid_pos_p;
+	static ConfigDouble *_pid_pos_i;
+	static ConfigDouble *_pid_pos_d;
+	static ConfigDouble *_vel_mult;
+
+	static ConfigDouble *_pid_angle_p;
+	static ConfigDouble *_pid_angle_i;
+	static ConfigDouble *_pid_angle_d;
+	static ConfigDouble *_angle_vel_mult;
 };
