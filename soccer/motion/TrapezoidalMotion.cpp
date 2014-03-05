@@ -8,8 +8,8 @@ bool TrapezoidalMotion(
 	float maxSpeed,
 	float maxAcc,
 	float timeIntoLap,
-	float startSpeed,
-	float finalSpeed,
+	float startSpeed,	//	USEME
+	float finalSpeed,	//	USEME
 	float &posOut,
 	float &speedOut)
 {
