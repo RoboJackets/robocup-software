@@ -36,15 +36,16 @@ bool TrapezoidalMotion(
 		rampTime = sqrt(pathLength / maxAcc);
 		maxSpeed = rampTime * maxAcc;
 		if (timeIntoLap < rampTime) {	//	we're speeding up
-			posOut = 0.5 * maxAcc * timeIntoLap * timeIntoLap;
-			speedOut = maxAcc * timeIntoLap;
+			posOut = startSpeed * timeIntoLap + 0.5 * maxAcc * timeIntoLap * timeIntoLap;
+			speedOut = startSpeed + maxAcc * timeIntoLap;
 		} else if (timeIntoLap <= rampTime * 2.0) {
 			rampDist = ((maxSpeed + startSpeed) / 2) * rampTime;
 			float deccelTime = timeIntoLap - (rampTime);
 			posOut = rampDist +	maxSpeed * deccelTime - 0.5 * maxAcc * deccelTime * deccelTime;
 			speedOut = maxSpeed - deccelTime * maxAcc;
 		} else {
-			//	restart for another lap
+			posOut = pathLength;
+			speedOut = 0;
 			return false;
 		}
 		return true;
@@ -54,8 +55,8 @@ bool TrapezoidalMotion(
 		float timeAtMaxSpeed = distAtMaxSpeed / maxSpeed;
 
 		if (timeIntoLap < rampTime) {	//	we're speeding up
-			posOut = 0.5 * maxAcc * timeIntoLap * timeIntoLap;
-			speedOut = maxAcc * timeIntoLap;
+			posOut = startSpeed * timeIntoLap + 0.5 * maxAcc * timeIntoLap * timeIntoLap;
+			speedOut = startSpeed + maxAcc * timeIntoLap;
 		} else if (timeIntoLap <= (rampTime + timeAtMaxSpeed)) {	//	at plateau, going max speed
 			posOut = rampDist + maxSpeed * (timeIntoLap - rampTime);
 			speedOut = maxSpeed;
@@ -65,7 +66,8 @@ bool TrapezoidalMotion(
 						maxSpeed * deccelTime - 0.5 * maxAcc * deccelTime * deccelTime;
 			speedOut = maxSpeed - deccelTime * maxAcc;
 		} else {
-			//	restart for another lap
+			posOut = pathLength;
+			speedOut = 0;
 			return false;
 		}
 
