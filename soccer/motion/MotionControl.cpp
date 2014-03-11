@@ -169,9 +169,9 @@ void MotionControl::run() {
 		bool pathValidNow = _robot->path().evaluate(timeIntoPath, targetPos, targetVel);
 
 		if (!pathValidNow) {
-			//	FIXME: what do if path invalid? stop?
-		}
-
+			targetVel.x = 0;
+			targetVel.y = 0;
+		} 
 		//	tracking error
 		Point posError = targetPos - _robot->pos;
 
@@ -194,6 +194,6 @@ void MotionControl::run() {
 		_robot->radioTx.set_body_x(targetVel.x);
 		_robot->radioTx.set_body_y(targetVel.y);
 
-	
+		
 	}
 }
