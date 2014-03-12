@@ -159,8 +159,6 @@ void MotionControl::run() {
 		//	Path following
 		//
 
-		//	FIXME: make sure there's a legit path
-
 		//	convert from microseconds to seconds
 		float timeIntoPath = (float)((timestamp() - _robot->pathStartTime()) / 1000000.0f);
 
@@ -184,16 +182,14 @@ void MotionControl::run() {
 
 		//	draw target pt
 		_robot->state()->drawCircle(targetPos, .04, Qt::red, "MotionControl");
-		_robot->state()->drawLine(targetPos, targetPos + targetVel
-				, Qt::blue, "velocity");
+		_robot->state()->drawLine(targetPos, targetPos + targetVel, Qt::blue, "velocity");
 		_robot->state()->drawText(QString("%1").arg(timeIntoPath), targetPos, Qt::black, "time");
 
 		//convert from world to body coordinates
 		targetVel = targetVel.rotated(-_robot->angle);
+		
 		//	set radioTx values
 		_robot->radioTx.set_body_x(targetVel.x);
 		_robot->radioTx.set_body_y(targetVel.y);
-
-		
 	}
 }
