@@ -260,17 +260,21 @@ void Planning::Path::setEndSpeed(float speed) {
 	endSpeed = speed;
 }
 
+float Planning::Path::getStartSpeed() const {
+	return startSpeed;
+}
+
 
 bool Planning::Path::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const
 {	//static const float Max_Linear_Speed = 0.008 * 511;
 	//static const float Max_Angular_Speed = 511 * 0.02 * M_PI;
-	static const float Linear_Start_Speed = 0;
-	static const float Max_Linear_Speed = 3;
+	//static const float Linear_Start_Speed = 0;
+	static const float Max_Linear_Speed = 1.5;
 	static const float Max_Acceleration = 2;
 	float linearPos;
 	float linearSpeed;
 
-	bool isDone = TrapezoidalMotion( length(), Max_Linear_Speed, Max_Acceleration, t, Linear_Start_Speed, 0, linearPos, linearSpeed);
+	bool isDone = TrapezoidalMotion( length(), Max_Linear_Speed, Max_Acceleration, t, startSpeed, 0, linearPos, linearSpeed);
 
 	Geometry2d::Point direction;
 	if(!getPoint(linearPos, targetPosOut, direction))
