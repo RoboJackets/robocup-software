@@ -187,7 +187,7 @@ void OurRobot::avoidOpponents(bool enable) {
 			a = -1.0;
 }
 
-void OurRobot::resetMotionConstraints() {
+void OurRobot::resetForNextIteration() {
 	if (verbose && visible) cout << "in OurRobot::resetMotionCommand()" << endl;
 	robotText.clear();	//	FIXME: this doesn't belong here, but it was in the previous version of this method
 	
@@ -196,11 +196,11 @@ void OurRobot::resetMotionConstraints() {
 	radioTx.set_accel(10);
 	radioTx.set_decel(10);
 
-	//	FIXME: clear path?
-
-	_motionConstraints = MotionConstraints();
-
 	_local_obstacles.clear();
+}
+
+void OurRobot::resetMotionConstraints() {
+	_motionConstraints = MotionConstraints();
 }
 
 void OurRobot::stop() {
@@ -215,7 +215,21 @@ void OurRobot::move(const Geometry2d::Point &goal, bool stopAtEnd)
 	// sets flags for future movement
 	if (verbose) cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", " << goal.y << ")" << endl;
 	addText(QString("move:(%1, %2)").arg(goal.x).arg(goal.y));
-	_motionConstraints.targetPos = goal;
+	
+	//	only invalidate path if move() is being called with a new goal or one wasn't set previously
+	if (!_motionConstraints.targetPos || !_motionConstraints.targetPos->nearPoint(goal, 0.02)) {
+		addText("Invalidated old path");
+		
+		if (_motionConstraints.targetPos) {
+			addText(QString("Old goal: (%1, %2)").arg(goal.x, goal.y));
+			addText(QString("New goal: (%1, %2)").arg(_motionConstraints.targetPos->x, _motionConstraints.targetPos->y));
+		} else {
+			addText("Old goal was null");
+		}
+		
+		_motionConstraints.targetPos = goal;
+		_pathInvalidated = true;
+	}
 }
 
 // void OurRobot::pivot(double w, double radius)
@@ -541,14 +555,12 @@ ObstaclePtr OurRobot::createBallObstacle() const {
 
 // 	return result;
 // }
-void OurRobot::resetPathStartTime() {
-	_pathStartTime = timestamp();
-	_path.setStartSpeed(vel.mag());
-}
 
 void OurRobot::setPath(Planning::Path path) {
-	resetPathStartTime();	
 	_path = path;
+	_pathInvalidated = false;
+	_pathStartTime = timestamp();
+	_path.setStartSpeed(vel.mag());
 }
 
 //	FIXME: this method doesn't do quite what its new name says
@@ -611,10 +623,10 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 	Planning::Path rrt_path;
 	_planner->run(pos, angle, vel, *_motionConstraints.targetPos, &full_obstacles, rrt_path);
 
-
 	// check if goal is close to previous goal to reuse path
 	Geometry2d::Point::Optional dest = _path.destination();
-	if (dest && _motionConstraints.targetPos->nearPoint(*dest, 0.1)) {
+	if (dest && !_pathInvalidated) {
+		addText("Reusing path");
 		Planning::Path sliced_path;
 		_path.startFrom(pos, sliced_path);
 		if (enable_slice && !sliced_path.hit(full_obstacles)) {

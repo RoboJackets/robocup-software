@@ -8,8 +8,8 @@ bool TrapezoidalMotion(
 	float maxSpeed,
 	float maxAcc,
 	float timeIntoLap,
-	float startSpeed,	//	USEME
-	float finalSpeed,	//	USEME
+	float startSpeed,
+	float finalSpeed,
 	float &posOut,
 	float &speedOut)
 {
@@ -23,12 +23,14 @@ bool TrapezoidalMotion(
 	float rampDist = (rampTime * aveRampSpeed);
 	float downDist = (downTime * aveDownSpeed);
 	if(rampDist + downDist >= pathLength) {
-		/*d = (maxSpeed + startSpeed) / 2.0 * rampTime + (maxSpeed + finalSpeed) / 2.0 * downTime;
+		/*
+		d = (maxSpeed + startSpeed) / 2.0 * rampTime + (maxSpeed + finalSpeed) / 2.0 * downTime;
 		d = (maxSpeed + startSpeed) / 2.0 *(maxSpeed - startSpeed) / maxAcc +
 				(maxSpeed + finalSpeed) / 2.0 * (maxSpeed - finalSpeed) / maxAcc;
 		d = (maxSpeed^2 - startSpeed^2) / (2.0 * maxAcc) + (maxSpeed^2 - finalSpeed^2) / (2.0 * maxAcc);
 		(2.0 * maxAcc) * d = maxSpeed^2 - startSpeed^2 + maxSpeed^2 - finalSpeed^2
-		maxSpeed^2 = maxAcc * d  - (startSpeed^2 + finalSpeed^2) / 2*/
+		maxSpeed^2 = maxAcc * d  - (startSpeed^2 + finalSpeed^2) / 2
+		*/
 		maxSpeed = sqrt(maxAcc * pathLength - (startSpeed * startSpeed + finalSpeed * finalSpeed) / 2);
 		rampTime = (maxSpeed - startSpeed) / maxAcc;
 		downTime = (maxSpeed - finalSpeed) / maxAcc;

@@ -186,10 +186,12 @@ public:
 
 	//  FIXME: document
 	void setPath(Planning::Path path);
-	void resetPathStartTime();
 
 	//	FIXME: document
 	void setMotionConstraints(const MotionConstraints &constraints);
+
+	///	clears old radioTx stuff, resets robot debug text, and clears local obstacles
+	void resetForNextIteration();
 
 	///	clears all fields in the robot's MotionConstraints object, causing the robot to stop
 	void resetMotionConstraints();
@@ -395,6 +397,10 @@ protected:
 	Planning::RRTPlanner *_planner;	/// single-robot RRT planner
 	Planning::Path _path;	/// latest path
 	uint64_t _pathStartTime;
+
+	///	whenever the constraints for the robot path are changed, this is set to true to trigger a replan
+	bool _pathInvalidated;
+	
 
 
 	/**

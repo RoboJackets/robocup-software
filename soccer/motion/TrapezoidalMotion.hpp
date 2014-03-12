@@ -18,7 +18,7 @@ bool TrapezoidalMotion(
 	float maxSpeed,
 	float maxAcc,
 	float timeIntoLap,
-	float startSpeed,	//	FIXME: currently ignored
-	float finalSpeed,	//	FIXME: currently ignored
+	float startSpeed,
+	float finalSpeed,
 	float &posOut,
 	float &speedOut);
