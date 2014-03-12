@@ -85,6 +85,7 @@ namespace Planning
 			bool getPoint(float distance ,Geometry2d::Point &position, Geometry2d::Point &direction) const;
 			void setStartSpeed(float speed);
 			void setEndSpeed(float speed);
+			float getStartSpeed() const;
 		private:
 			float startSpeed = 0;
 			float endSpeed = 0;
