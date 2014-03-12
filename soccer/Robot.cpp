@@ -604,28 +604,13 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 		return;
 	}
 
-	// create default path for comparison - switch if available
-	Planning::Path straight_line(pos, *_motionConstraints.targetPos);
-	Geometry2d::Segment straight_seg(pos, *_motionConstraints.targetPos);
-	if (!full_obstacles.hit(straight_seg)) {
-
-		if(_path.size() == 2) {
-			return;
-		}
-		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using straight line goal" << endl;
-		addText(QString("execute: straight_line"));
-		setPath(straight_line);
-		_state->drawPath(straight_line, Qt::red);
-		return;
-	}
-
-	// create new a new path for comparision
-	Planning::Path rrt_path;
-	_planner->run(pos, angle, vel, *_motionConstraints.targetPos, &full_obstacles, rrt_path);
+	//	if this number of microseconds passes since our last path plan, we automatically replan
+	const uint64_t kPathExpirationInterval = 1500000;	//	1.5 seconds
+	bool pathExpired = (timestamp() - _pathStartTime) > kPathExpirationInterval;
 
 	// check if goal is close to previous goal to reuse path
 	Geometry2d::Point::Optional dest = _path.destination();
-	if (dest && !_pathInvalidated) {
+	if (dest && !_pathInvalidated && !pathExpired) {
 		addText("Reusing path");
 		Planning::Path sliced_path;
 		_path.startFrom(pos, sliced_path);
@@ -639,14 +624,15 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 			_state->drawPath(_path, Qt::yellow);
 			return;
 		}
-		//return; //addText(QString("crap"));
-	} 
-
-		addText(QString("crap"));
-	// use the newly generated path
-	if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using new RRT path" << endl;
-	
-	setPath(rrt_path);
+	} else {
+		// use the newly generated path
+		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using new RRT path" << endl;
+		
+		// create new a new path
+		Planning::Path newlyPlannedPath;
+		_planner->run(pos, angle, vel, *_motionConstraints.targetPos, &full_obstacles, newlyPlannedPath);
+		setPath(newlyPlannedPath);
+	}
 
 	_state->drawPath(_path, Qt::magenta);
 	addText(QString("execute: RRT path %1").arg(full_obstacles.size()));
