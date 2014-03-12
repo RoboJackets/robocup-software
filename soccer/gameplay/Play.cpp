@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Play.hpp"
+#include <Robot.hpp>
 
 #include <boost/foreach.hpp>
 #include <RobotConfig.hpp>
