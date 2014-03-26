@@ -120,6 +120,11 @@ void MotionControl::run() {
 		//	PID on angle
 		float targetW = _angleController.run(angleError);
 
+		_robot->addText(QString("targetW: %1").arg(targetW));
+		_robot->addText(QString("angleError: %1").arg(angleError));
+		_robot->addText(QString("targetGlobalAngle: %1").arg(targetAngleFinal));
+		_robot->addText(QString("angle: %1").arg(_robot->angle));
+
 		//	radio cmd
 		_robot->radioTx.set_body_w(targetW);
 	} else {
