@@ -112,28 +112,13 @@ void MotionControl::run() {
 
 		//	FIXME: explain units: radians vs degrees
 
-		//	use bang-bang to get from our current angle to the target angle
+		//	TODO: use bang-bang to get from our current angle to the target angle?
 
 		float targetAngleFinal = (*constraints.faceTarget - _robot->pos).angle();
-		float angleDiff = targetAngleFinal - _robot->angle;
-
-		float unused, targetW;	//	FIXME: trapezoid
-		TrapezoidalMotion(
-			angleDiff,
-			1,					//	FIXME: max angular speed
-			2,					//	FIXME: set max angular acc
-			.001,				//	time into trapezoid
-			_robot->angleVel,	//	current angular vel
-			0,					//	final angular speed of zero
-			unused,				//	target pos out (unused)
-			targetW);			//	according to trapezoid, the speed we should be going right now
-
-		//	w multiplier
-		targetW *= *_angle_vel_mult;
+		float angleError = targetAngleFinal - _robot->angle;
 
 		//	PID on angle
-		float angleError = 0;	//	TODO: actually take angle error into account
-		targetW += _angleController.run(angleError);
+		targetW = _angleController.run(angleError);
 
 		//	radio cmd
 		_robot->radioTx.set_body_w(targetW);
