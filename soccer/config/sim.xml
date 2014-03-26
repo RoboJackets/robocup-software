@@ -548,10 +548,4 @@
  <SolarSystem>
   <speed value="0.08"/>
  </SolarSystem>
- <MotionControlPlay>
-  <pid_p value="6"/>
-  <pid_i value="0.0001"/>
-  <pid_d value="0.5"/>
-  <vel_mult value="2.3"/>
- </MotionControlPlay>
 </config>
