@@ -33,9 +33,9 @@ void MotionControl::createConfiguration(Configuration *cfg) {
 	_pid_pos_d = new ConfigDouble(cfg, "MotionControl/pos/PID_d", 2);
 	_vel_mult = new ConfigDouble(cfg, "MotionControl/pos/Velocity Multiplier", 1);
 
-	_pid_angle_p	= new ConfigDouble(cfg, "MotionControl/angle/PID_p");
-	_pid_angle_i	= new ConfigDouble(cfg, "MotionControl/angle/PID_i");
-	_pid_angle_d	= new ConfigDouble(cfg, "MotionControl/angle/PID_d");
+	_pid_angle_p	= new ConfigDouble(cfg, "MotionControl/angle/PID_p", 1);
+	_pid_angle_i	= new ConfigDouble(cfg, "MotionControl/angle/PID_i", 0.00001);
+	_pid_angle_d	= new ConfigDouble(cfg, "MotionControl/angle/PID_d", 0.001);
 	_angle_vel_mult	= new ConfigDouble(cfg, "MotionControl/angle/Velocity Multiplier");
 }
 
@@ -118,7 +118,7 @@ void MotionControl::run() {
 		float angleError = targetAngleFinal - _robot->angle;
 
 		//	PID on angle
-		targetW = _angleController.run(angleError);
+		float targetW = _angleController.run(angleError);
 
 		//	radio cmd
 		_robot->radioTx.set_body_w(targetW);
