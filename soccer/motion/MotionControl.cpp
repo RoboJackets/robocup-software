@@ -42,7 +42,7 @@ void MotionControl::createConfiguration(Configuration *cfg) {
 
 #pragma mark MotionControl
 
-MotionControl::MotionControl(OurRobot *robot) {
+MotionControl::MotionControl(OurRobot *robot) : _angleController(0, 0, 0, 50) {
 	_robot = robot;
 
 	_robot->radioTx.set_robot_id(_robot->shell());
@@ -114,8 +114,15 @@ void MotionControl::run() {
 
 		//	TODO: use bang-bang to get from our current angle to the target angle?
 
-		float targetAngleFinal = (*constraints.faceTarget - _robot->pos).angle();
+		float targetAngleFinal = (*constraints.faceTarget - _robot->pos).angle() * 180.0 / M_PI;
 		float angleError = targetAngleFinal - _robot->angle;
+
+		while (angleError > 180) {
+			angleError -= 360;
+		} 
+		while (angleError < -180) {
+			angleError += 360;
+		}
 
 		//	PID on angle
 		float targetW = _angleController.run(angleError);
