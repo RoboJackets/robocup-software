@@ -1,6 +1,7 @@
 #pragma once
 
 #include <gameplay/Play.hpp>
+#include <Timeout.hpp>
 
 namespace Gameplay
 {
@@ -18,6 +19,9 @@ namespace Gameplay
 				virtual bool run();
 
 			protected:
+				bool _targetingLeft;
+				bool _arrived;
+				Timeout _stabilizeTimeout;
 		};
 	}
 }
