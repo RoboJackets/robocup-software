@@ -14,7 +14,7 @@ bool TrapezoidalMotion(
 {
 	//	when we're speeding up and slowing down - the sides of the trapezoid
 	startSpeed = fmin(startSpeed,maxSpeed);
-	finalSpeed = fmax(finalSpeed,maxSpeed);
+	finalSpeed = fmin(finalSpeed,maxSpeed);
 	float rampDeltaSpeed = maxSpeed - startSpeed;
 	float downDeltaSpeed = maxSpeed - finalSpeed;
 	float rampTime = rampDeltaSpeed / maxAcc;
