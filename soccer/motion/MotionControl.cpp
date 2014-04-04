@@ -131,7 +131,7 @@ void MotionControl::run() {
 
 
 		float targetW;
-		/*float targetAngle;
+		float targetAngle;
 		TrapezoidalMotion(
 			abs(angleError),	//	dist
 			90,	//	max deg/sec
@@ -150,7 +150,7 @@ void MotionControl::run() {
 		if(angleError<0) {
 			targetW = - targetW;
 		}
-		targetW = _angleController.run(targetAngle);*/
+		targetW = _angleController.run(targetAngle);
 
 
 		targetW = _angleController.run(angleError);
@@ -161,10 +161,10 @@ void MotionControl::run() {
 				targetW = -(*_max_angle_w);
 			}
 		}
-		_robot->addText(QString("targetW: %1").arg(targetW));
+	/*	_robot->addText(QString("targetW: %1").arg(targetW));
 		_robot->addText(QString("angleError: %1").arg(angleError));
 		_robot->addText(QString("targetGlobalAngle: %1").arg(targetAngleFinal));
-		_robot->addText(QString("angle: %1").arg(_robot->angle));
+		_robot->addText(QString("angle: %1").arg(_robot->angle));*/
 
 		//	radio cmd
 		_robot->radioTx.set_body_w(targetW);
@@ -182,8 +182,9 @@ void MotionControl::run() {
 			_robot->radioTx.set_body_x(0);
 			_robot->radioTx.set_body_y(0);
 		} else {
-			_robot->radioTx.set_body_x(constraints.targetWorldVel->x);
-			_robot->radioTx.set_body_y(constraints.targetWorldVel->y);
+			Point velRotated = constraints.targetWorldVel->rotated(-_robot->angle);
+			_robot->radioTx.set_body_x(velRotated.x);
+			_robot->radioTx.set_body_y(velRotated.y);
 		}
 	} else {
 		Point velRotated = _robot->vel.rotated(-_robot->angle);
@@ -198,7 +199,7 @@ void MotionControl::run() {
 		//	evaluate path - where should we be right now?
 		
 		bool pathValidNow = _robot->path().evaluate(timeIntoPath, targetPos, targetVel);
-
+		_robot->addText(QString("targetVel %1 %2").arg(targetVel.x).arg(targetVel.y) );
 		if (!pathValidNow) {
 			targetVel.x = 0;
 			targetVel.y = 0;
