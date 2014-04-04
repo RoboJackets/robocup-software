@@ -84,6 +84,6 @@ Default(env.Install(exec_dir, 'sslrefbox/sslrefbox'))
 Help('sslrefbox: SSL referee box\n')
 
 # Build everything else
-for dir in ['logging', 'soccer', 'simulator', 'firmware']:
+for dir in ['logging', 'soccer', 'simulator', 'firmware', 'test']:
 	do_build(dir)
 
