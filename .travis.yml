@@ -4,9 +4,12 @@ compiler: clang
 submodules: false
 
 before_install:
+  - wget -q -O - http://archive.getdeb.net/getdeb-archive.key | sudo apt-key add -
+  - sudo sh -c 'echo "deb http://archive.getdeb.net/ubuntu raring-getdeb games" >> /etc/apt/sources.list.d/getdeb.list'
+  - sudo apt-get update
   - sudo ./util/ubuntu-setup
 
-script: scons
+script: scons test
 
 notifications:
-  email: false
+  email: true
