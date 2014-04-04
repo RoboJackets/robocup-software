@@ -67,8 +67,6 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	_state(state)
 {
 	resetAvoidBall();
-	exclude = false;
-
 	_lastChargedTime = 0;
 	_lastKickerStatus = 0;
 	_lastKickTime = 0;
