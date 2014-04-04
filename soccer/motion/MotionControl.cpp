@@ -28,7 +28,11 @@ ConfigDouble *MotionControl::_pid_angle_p;
 ConfigDouble *MotionControl::_pid_angle_i;
 ConfigDouble *MotionControl::_pid_angle_d;
 ConfigDouble *MotionControl::_angle_vel_mult;
+<<<<<<< HEAD
 Point targetPos, targetVel;
+=======
+ConfigDouble *MotionControl::_max_angle_w;
+>>>>>>> origin/motion-control-angle
 
 void MotionControl::createConfiguration(Configuration *cfg) {
 	_pid_pos_p = new ConfigDouble(cfg, "MotionControl/pos/PID_p", 6.5);
@@ -40,12 +44,13 @@ void MotionControl::createConfiguration(Configuration *cfg) {
 	_pid_angle_i	= new ConfigDouble(cfg, "MotionControl/angle/PID_i", 0.00001);
 	_pid_angle_d	= new ConfigDouble(cfg, "MotionControl/angle/PID_d", 0.001);
 	_angle_vel_mult	= new ConfigDouble(cfg, "MotionControl/angle/Velocity Multiplier");
+	_max_angle_w	= new ConfigDouble(cfg, "MotionControl/angle/Max w", 10);
 }
 
 
 #pragma mark MotionControl
 
-MotionControl::MotionControl(OurRobot *robot) {
+MotionControl::MotionControl(OurRobot *robot) : _angleController(0, 0, 0, 50) {
 	_robot = robot;
 
 	_robot->radioTx.set_robot_id(_robot->shell());
@@ -55,7 +60,7 @@ MotionControl::MotionControl(OurRobot *robot) {
 
 //	FIXME: we should use RobotDynamics instead
 static const float Max_Linear_Speed = 0.008 * 511;
-static const float Max_Angular_Speed = 511 * 0.02 * M_PI;
+// static const float Max_Angular_Speed = 511 * 0.02 * M_PI;
 
 
 
@@ -117,12 +122,48 @@ void MotionControl::run() {
 
 		//	TODO: use bang-bang to get from our current angle to the target angle?
 
-		float targetAngleFinal = (*constraints.faceTarget - _robot->pos).angle();
+		float targetAngleFinal = (*constraints.faceTarget - _robot->pos).angle() * 180.0 / M_PI;
 		float angleError = targetAngleFinal - _robot->angle;
 
-		//	PID on angle
-		float targetW = _angleController.run(angleError);
+		while (angleError > 180) {
+			angleError -= 360;
+		} 
+		while (angleError < -180) {
+			angleError += 360;
+		}
 
+
+		float targetW;
+		/*float targetAngle;
+		TrapezoidalMotion(
+			abs(angleError),	//	dist
+			90,	//	max deg/sec
+			30,	//	max deg/sec^2
+			0.1 ,	//	time into path
+			_robot->angleVel,
+			0,		//	final speed
+			targetAngle,
+			targetW
+			);
+
+
+		targetW *= *_angle_vel_mult;
+
+		//	PID on angle
+		if(angleError<0) {
+			targetW = - targetW;
+		}
+		targetW = _angleController.run(targetAngle);*/
+
+
+		targetW = _angleController.run(angleError);
+		if(abs(targetW) > (*_max_angle_w)) {
+			if(targetW>0) {
+				targetW = (*_max_angle_w);
+			} else {
+				targetW = -(*_max_angle_w);
+			}
+		}
 		_robot->addText(QString("targetW: %1").arg(targetW));
 		_robot->addText(QString("angleError: %1").arg(angleError));
 		_robot->addText(QString("targetGlobalAngle: %1").arg(targetAngleFinal));

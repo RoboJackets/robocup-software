@@ -25,16 +25,20 @@ bool Gameplay::Plays::AngleControlTest::run() {
 
 	set<OurRobot *> available = _gameplay->playRobots();
 	assignNearest(_robot, available, pt);
-	_robot->move(pt);
 
 	//	abort if no robot
 	if (!_robot) return false;
 
+	_robot->move(pt);
+
 	//	if we timeout (keep in mind times are in microsec), we face the next target
 	if (timestamp() - _targetStartTime > 5000000) {
-		_targetIndex = _targetIndex + 1 % _targets.size();
+		_targetIndex = (_targetIndex + 1) % _targets.size();
 		_targetStartTime = timestamp();
 	}
+
+
+	// _robot->addText(QString("targetIndex: %1").arg(_targetIndex));
 
 
 	Point target = _targets[_targetIndex];
