@@ -46,4 +46,5 @@ private:
 	static ConfigDouble *_pid_angle_i;
 	static ConfigDouble *_pid_angle_d;
 	static ConfigDouble *_angle_vel_mult;
+	static ConfigDouble *_max_angle_w;
 };
