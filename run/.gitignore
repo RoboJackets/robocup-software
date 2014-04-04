@@ -10,6 +10,7 @@ radio
 convert_tcpdump
 sslrefbox
 gamecontrol
+test-runner
 referee.sav
 *.txt
 *.dot
