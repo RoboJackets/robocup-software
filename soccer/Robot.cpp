@@ -606,11 +606,25 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 
 	//	if this number of microseconds passes since our last path plan, we automatically replan
 	const uint64_t kPathExpirationInterval = 1500000;	//	1.5 seconds
-	bool pathExpired = (timestamp() - _pathStartTime) > kPathExpirationInterval;
+	if ((timestamp() - _pathStartTime) > kPathExpirationInterval) {
+		_pathInvalidated = true;
+	}
+
+	//	invalidate path if it hits obstacles
+	if (_path.hit(full_obstacles)) {
+		_pathInvalidated = true;
+	}
+
+	//	if the destination of the current path is greater than 1cm away from the target destination,
+	//	we invalidate the path.  this situation could arise if during a previous planning, the target point
+	//	was blocked by an obstacle
+	if (dest && (_path.points.last() - dest).mag() > 0.01) {
+		_pathInvalidated = true;
+	}
 
 	// check if goal is close to previous goal to reuse path
 	Geometry2d::Point::Optional dest = _path.destination();
-	if (dest && !_pathInvalidated && !pathExpired) {
+	if (dest && !_pathInvalidated) {
 		addText("Reusing path");
 		Planning::Path sliced_path;
 		_path.startFrom(pos, sliced_path);
@@ -618,10 +632,6 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 			addText(QString("execute: slicing path"));
 			_state->drawPath(sliced_path, Qt::cyan);
 			Geometry2d::Point offset(0.01, 0.01);
-			return;
-		} else if (!_path.hit(full_obstacles)) {
-			addText(QString("execute: reusing path"));
-			_state->drawPath(_path, Qt::yellow);
 			return;
 		}
 	} else {
