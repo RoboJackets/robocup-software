@@ -249,7 +249,7 @@ void Gameplay::GameplayModule::run()
 	{
 		if (robot) {
 			robot->update();
-			robot->resetMotionConstraints();
+			robot->resetForNextIteration();
 		}
 	}
 

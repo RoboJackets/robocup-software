@@ -37,7 +37,7 @@ bool Gameplay::Plays::LineUp::run()
 	
 	for (unsigned int i = 0; i < robots.size(); ++i)
 	{
-		Geometry2d::Point dest = Geometry2d::Point(-1.9 + i * 0.28, 0.2);
+		Geometry2d::Point dest = Geometry2d::Point(-1.9, 0.2 + i * 0.32);
 		robots[i]->move(dest);
 		robots[i]->face(dest + Geometry2d::Point(0, 1));
 	}

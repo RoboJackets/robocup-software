@@ -183,8 +183,22 @@ public:
 	
 	// Commands
 
+	const MotionConstraints &motionConstraints() const {
+		return _motionConstraints;
+	}
+
+	const Planning::Path &path() const {
+		return _path;
+	}
+
+	//  FIXME: document
+	void setPath(Planning::Path path);
+
 	//	FIXME: document
 	void setMotionConstraints(const MotionConstraints &constraints);
+
+	///	clears old radioTx stuff, resets robot debug text, and clears local obstacles
+	void resetForNextIteration();
 
 	///	clears all fields in the robot's MotionConstraints object, causing the robot to stop
 	void resetMotionConstraints();
@@ -198,6 +212,13 @@ public:
 	 */
 	void move(const Geometry2d::Point &goal, bool stopAtEnd = false);
 
+	uint64_t pathStartTime() const {
+		return _pathStartTime;
+	}
+
+	/**
+	 * Sets the worldVelocity in the robot's MotionConstraints
+	 */
 	void worldVelocity(const Geometry2d::Point &targetWorldVel);
 
 	/*
@@ -386,6 +407,10 @@ protected:
 	
 	boost::optional<Planning::AnglePath> _anglePath;
 	uint64_t _anglePathStartTime;
+
+	///	whenever the constraints for the robot path are changed, this is set to true to trigger a replan
+	bool _pathInvalidated;
+	
 
 
 	/**

@@ -650,7 +650,7 @@ void host_gdo2_vect()
     clear_bit(PORTB, 6);
 }
 
-const prog_uint8_t cc1101_regs[] =
+const uint8_t cc1101_regs[] =
 {
     0x0b, 0x0c,    // FSCTRL1  - Frequency synthesizer control.
 //    0x0c, 0x00,    // FSCTRL0  - Frequency synthesizer control.
