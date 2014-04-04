@@ -143,6 +143,7 @@ srcs = [
 	'gameplay/plays/demo_plays/DemoKickMeasurement.cpp',
 	'gameplay/plays/demo_plays/SolarSystem.cpp',
 	'gameplay/plays/test_plays/AngleControlTest.cpp',
+	'gameplay/plays/demo_plays/RunLaps.cpp',
 
     # Mechanical tests
     'gameplay/plays/demo_plays/KickerEnduranceTest.cpp',
