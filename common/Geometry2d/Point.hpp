@@ -69,6 +69,18 @@ namespace Geometry2d
 			{
 				return Point(x + other.x, y + other.y);
 			}
+
+			/**
+			 * see operator+
+			 * does vector division, note the operator
+			 * without parameter, it is the negative
+			 */
+			Point operator/(Point other) const
+			{
+				return Point(x / other.x, y / other.y);
+			}
+
+
 			/**
 			 * see operator+
 			 * does vector subtraction, note the operator
