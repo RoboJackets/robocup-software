@@ -187,7 +187,7 @@ void OurRobot::avoidOpponents(bool enable) {
 			a = -1.0;
 }
 
-void OurRobot::resetMotionConstraints() {
+void OurRobot::resetForNextIteration() {
 	if (verbose && visible) cout << "in OurRobot::resetMotionCommand()" << endl;
 	robotText.clear();	//	FIXME: this doesn't belong here, but it was in the previous version of this method
 	
@@ -196,11 +196,11 @@ void OurRobot::resetMotionConstraints() {
 	radioTx.set_accel(10);
 	radioTx.set_decel(10);
 
-	//	FIXME: clear path?
-
-	_motionConstraints = MotionConstraints();
-
 	_local_obstacles.clear();
+}
+
+void OurRobot::resetMotionConstraints() {
+	_motionConstraints = MotionConstraints();
 }
 
 void OurRobot::stop() {
@@ -215,7 +215,21 @@ void OurRobot::move(const Geometry2d::Point &goal, bool stopAtEnd)
 	// sets flags for future movement
 	if (verbose) cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", " << goal.y << ")" << endl;
 	addText(QString("move:(%1, %2)").arg(goal.x).arg(goal.y));
-	_motionConstraints.targetPos = goal;
+	
+	//	only invalidate path if move() is being called with a new goal or one wasn't set previously
+	if (!_motionConstraints.targetPos || !_motionConstraints.targetPos->nearPoint(goal, 0.02)) {
+		addText("Invalidated old path");
+		
+		if (_motionConstraints.targetPos) {
+			addText(QString("Old goal: (%1, %2)").arg(goal.x, goal.y));
+			addText(QString("New goal: (%1, %2)").arg(_motionConstraints.targetPos->x, _motionConstraints.targetPos->y));
+		} else {
+			addText("Old goal was null");
+		}
+		
+		_motionConstraints.targetPos = goal;
+		_pathInvalidated = true;
+	}
 }
 
 // void OurRobot::pivot(double w, double radius)
@@ -542,6 +556,13 @@ ObstaclePtr OurRobot::createBallObstacle() const {
 // 	return result;
 // }
 
+void OurRobot::setPath(Planning::Path path) {
+	_path = path;
+	_pathInvalidated = false;
+	_pathStartTime = timestamp();
+	_path.setStartSpeed(vel.mag());
+}
+
 //	FIXME: this method doesn't do quite what its new name says
 void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 	const bool enable_slice = false;
@@ -578,30 +599,33 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 	if (!_motionConstraints.targetPos) {
 		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: stopped" << endl;
 		addText(QString("execute: no goal"));
-		_path = Planning::Path(pos);
+		setPath(Planning::Path(pos));
 		_state->drawPath(_path);
 		return;
 	}
 
-	// create default path for comparison - switch if available
-	Planning::Path straight_line(pos, *_motionConstraints.targetPos);
-	Geometry2d::Segment straight_seg(pos, *_motionConstraints.targetPos);
-	if (!full_obstacles.hit(straight_seg)) {
-		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using straight line goal" << endl;
-		addText(QString("execute: straight_line"));
-		_path = straight_line;
-		_state->drawPath(straight_line, Qt::red);
-		return;
+	//	if this number of microseconds passes since our last path plan, we automatically replan
+	const uint64_t kPathExpirationInterval = 1500000;	//	1.5 seconds
+	if ((timestamp() - _pathStartTime) > kPathExpirationInterval) {
+		_pathInvalidated = true;
 	}
 
-	// create new a new path for comparision
-	Planning::Path rrt_path;
-	_planner->run(pos, angle, vel, *_motionConstraints.targetPos, &full_obstacles, rrt_path);
+	//	invalidate path if it hits obstacles
+	if (_path.hit(full_obstacles)) {
+		_pathInvalidated = true;
+	}
 
+	//	if the destination of the current path is greater than 1cm away from the target destination,
+	//	we invalidate the path.  this situation could arise if during a previous planning, the target point
+	//	was blocked by an obstacle
+	if (dest && (_path.points.last() - dest).mag() > 0.01) {
+		_pathInvalidated = true;
+	}
 
 	// check if goal is close to previous goal to reuse path
 	Geometry2d::Point::Optional dest = _path.destination();
-	if (dest && _motionConstraints.targetPos->nearPoint(*dest, 0.1)) {
+	if (dest && !_pathInvalidated) {
+		addText("Reusing path");
 		Planning::Path sliced_path;
 		_path.startFrom(pos, sliced_path);
 		if (enable_slice && !sliced_path.hit(full_obstacles)) {
@@ -609,16 +633,17 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 			_state->drawPath(sliced_path, Qt::cyan);
 			Geometry2d::Point offset(0.01, 0.01);
 			return;
-		} else if (!_path.hit(full_obstacles)) {
-			addText(QString("execute: reusing path"));
-			_state->drawPath(_path, Qt::yellow);
-			return;
 		}
+	} else {
+		// use the newly generated path
+		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using new RRT path" << endl;
+		
+		// create new a new path
+		Planning::Path newlyPlannedPath;
+		_planner->run(pos, angle, vel, *_motionConstraints.targetPos, &full_obstacles, newlyPlannedPath);
+		setPath(newlyPlannedPath);
 	}
 
-	// use the newly generated path
-	if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using new RRT path" << endl;
-	_path = rrt_path;
 	_state->drawPath(_path, Qt::magenta);
 	addText(QString("execute: RRT path %1").arg(full_obstacles.size()));
 	return;
