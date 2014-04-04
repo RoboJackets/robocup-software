@@ -19,5 +19,5 @@ echo "-- Installing required packages"
 apt-get install $(sed 's/#.*//;/^$/d' $BASE/util/required_packages.txt)
 
 # remove old version of git python
-yes | pip uninstall GitPython
+yes | pip install GitPython
 
