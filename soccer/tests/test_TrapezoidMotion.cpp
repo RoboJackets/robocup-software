@@ -44,3 +44,26 @@ TEST(TrapezoidalMotion, End) {
 	EXPECT_NEAR(posOut, 10, 0.001) << "Position should stay at end of path after path finishes";
 	EXPECT_EQ(pathValid, false);
 }
+
+
+//	this path is too short for us to get to maxSpeed,
+//	so it ends up being a triangular velocity profile,
+//	rather than a trapezoid
+bool triangle1(float t, float &posOut, float &speedOut) {
+	return TrapezoidalMotion(2,	//	pathLength
+		4,			//	maxSpeed
+		0.5,		//	maxAcc
+		t,			//	timeIntoLap
+		0,			//	startSpeed
+		0,			//	finalSpeed
+		posOut,		//	&posOut
+		speedOut);	//	&speedOut
+}
+
+TEST(TrapezoidalMotionTriangle, RampUp) {
+	float posOut, speedOut;
+	bool pathValid = triangle1(1, posOut, speedOut);
+	EXPECT_EQ(pathValid, true);
+	EXPECT_NEAR(posOut, 0.5*0.5, 0.001);
+	EXPECT_NEAR(speedOut, 0.5, 0.001);
+}
