@@ -10,21 +10,18 @@ rename_gtest = e.Command('#/test/gtest/make/libgtest.a', gtest_main_a, 'cd test/
 # add all test .cpp files here
 test_srcs = [
 	'example_test.cpp',
-	# '#soccer/tests/'
-	# '#/soccer/tests/testExamples.cpp',
-	# '#/soccer/tests/testPath.cpp',
-	'#/soccer/planning/Path.cpp',
-	'#/soccer/motion/TrapezoidalMotion.cpp',
-	'#/soccer/planning/Obstacle.cpp'
+	'../soccer/planning/Path.cpp',
+	'../soccer/motion/TrapezoidalMotion.cpp',
+	'../soccer/planning/Obstacle.cpp'
 ]
-test_srcs += Glob('#/soccer/tests/*.cpp')
+test_srcs += Glob('../soccer/tests/*.cpp')
 
 e.Append(LIBS=['gtest'])
-e.Append(LIBPATH=['#/test/gtest/make'])
-e.Append(CPPPATH=['#/test/gtest/include'])
+e.Append(LIBPATH=['../test/gtest/make'])
+e.Append(CPPPATH=['../test/gtest/include'])
 
 # include paths
-e.Append(CPPPATH=['#/soccer'])
+e.Append(CPPPATH=['../soccer'])
 
 # build the program that runs the tests
 test_runner = e.Program('test-runner', test_srcs)
@@ -32,7 +29,7 @@ e.Depends(test_runner, rename_gtest);
 install_test_runner = e.Install(exec_dir, test_runner)
 
 # make a 'test' command so that 'scons test' builds the tests and runs them
-test = e.Command('fasdfdasfdsfdsfdasf',
+test = e.Command('file-that-doesnt-exist',
 	exec_dir.File('test-runner'),
 	'%s' % exec_dir.File('test-runner'))
 AlwaysBuild(test)
