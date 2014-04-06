@@ -429,139 +429,13 @@ ObstaclePtr OurRobot::createBallObstacle() const {
 
 #pragma mark Motion
 
-// Geometry2d::Point OurRobot::findGoalOnPath(const Geometry2d::Point& pose,
-// 	const Planning::Path& path,	const ObstacleGroup& obstacles) {
-// 	const bool blend_verbose = false;
-
-// 	// empty path case - leave robot stationary
-// 	if (path.empty())
-// 		return pose;
-
-// 	// find closest point on path to pose
-// 	float max = path.points[0].distTo(pose);
-// 	unsigned int ip = 0;
-// 	for (unsigned i=0; i<path.points.size(); i++) {
-// 		if (path.points[i].distTo(pose) < max) {
-// 			max = path.points[i].distTo(pose);
-// 			ip = i;
-// 		}
-// 	}
-
-// 	if (blend_verbose) addText(QString("cur pt %1=(%2,%3)").arg(ip).arg(path.points[ip].x).arg(path.points[ip].y));
-
-// 	// go to nearest point if only point or closest point is the goal
-// 	if (path.size() == 1) {
-// 		if (blend_verbose) addText(QString("blend:simple_path"));
-// 		return path.points[0];
-// 	}
-
-// 	// can't mix, just go to endpoint
-// 	if (path.size() == 2) {
-// 		if (blend_verbose) addText(QString("blend:size2"));
-// 		return path.points[1];
-// 	}
-
-// 	// FIXME: does not blend the last segment
-// 	// All other cases: proportionally blend the next two points together for a smoother
-// 	// path, so long as it is still viable
-
-// 	if (blend_verbose) addText(QString("blend:segments=%1").arg(path.points.size()-1));
-
-// 	// pull out relevant points
-// 	Point p0 = pos;
-// 	Point p1;
-// 	Point p2;
-
-// 	if (path.size() > ip+2) {
-// 		p1 = path.points[ip+1];
-// 		p2 = path.points[ip+2];
-// 	} else if (path.size() > ip+1) {
-// 		p1 = path.points[ip];
-// 		p2 = path.points[ip+1];
-// 	} else {
-// 		p1 = path.points[ip-1];
-// 		p2 = path.points[ip];
-// 	}
-
-// 	Geometry2d::Segment target_seg(p1, p2);
-
-// 	if (blend_verbose) addText(QString("pos=(%1,%2)").arg(pos.x,5).arg(pos.y,5));
-// 	if (blend_verbose) addText(QString("path[0]=(%1,%2)").arg(path.points[0].x).arg(path.points[0].y));
-// 	if (blend_verbose) addText(QString("p1=(%1,%2)").arg(p1.x,5).arg(p1.y,5));
-// 	if (blend_verbose) addText(QString("p2=(%1,%2)").arg(p2.x,5).arg(p2.y,5));
-
-// 	// final endpoint handling
-// 	if (target_seg.nearPointPerp(p0, 0.02) && p0.nearPoint(p2, 0.03)) {
-// 		if (2 == path.size()-1) {
-// 			if (blend_verbose) addText(QString("blend:at_end"));
-// 			return p2;
-// 		} else {
-// 			// reset this segment to next one
-// 			if (blend_verbose) addText(QString("blend:reset_segment"));
-// 			Point temp(p1);
-// 			p1 = p2;
-// 			p2 = temp;
-// 			target_seg = Geometry2d::Segment(p1, p2);
-// 		}
-// 	}
-
-// 	float dist1 = p0.distTo(p1), dist2 = p1.distTo(p2);
-// 	if (blend_verbose) addText(QString("blend:d1=%1,d2=%2").arg(dist1).arg(dist2));
-
-// 	// endpoint handling
-// 	if (dist1 < 0.02) {
-// 		if (blend_verbose) addText(QString("blend:dist1small=%1").arg(dist1));
-// 		return p2; /// just go to next point
-// 	}
-
-// 	// short segment handling
-// 	if (p1.distTo(p2) < 0.05) {
-// 		if (blend_verbose) addText(QString("blend:dist2small=%1").arg(dist2));
-// 		return p2; /// just go to next point
-// 	}
-
-// 	// close to segment - go to end of segment
-// 	if (target_seg.nearPoint(p0, 0.03)) {
-// 		if (blend_verbose) addText(QString("blend:closeToSegment"));
-// 		return p2;
-// 	}
-
-// 	// mix the next point between the first and second point
-// 	// if we are far away from p1, want scale to be closer to p1
-// 	// if we are close to p1, want scale to be closer to p2
-// 	float scale = 1 - clamp(dist1/dist2, 0.0f, 1.0f);
-// 	Geometry2d::Point targetPos = p1 + (p2-p1)*scale;
-// 	if (blend_verbose) {
-// 		addText(QString("blend:scale=%1").arg(scale));
-// 		addText(QString("blend:dist1=%1").arg(dist1));
-// 		addText(QString("blend:dist2=%1").arg(dist2));
-// 	}
-
-// 	// check for collisions on blended path
-// 	Geometry2d::Segment shortcut(p0, targetPos);
-
-// 	Geometry2d::Point result = p1;
-// 	if (!obstacles.hit(shortcut)) {
-// 		if (blend_verbose) addText(QString("blend:shortcut_succeed"));
-// 		result = targetPos;
-// 	} else if (result.nearPoint(pose, 0.05)) {
-// 		if (blend_verbose) addText(QString("blend:shortcut_failed"));
-// 		result = result + (result-pose).normalized() * 0.10;
-// 	}
-
-// 	if (blend_verbose) addText(QString("point (%1, %2)").arg(result.x).arg(result.y));
-
-// 	return result;
-// }
-
 void OurRobot::setPath(Planning::Path path) {
 	_path = path;
 	_pathInvalidated = false;
 	_pathStartTime = timestamp();
-	_path.setStartSpeed(vel.mag());
+	_path->setStartSpeed(vel.mag());
 }
 
-//	FIXME: this method doesn't do quite what its new name says
 void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 	const bool enable_slice = false;
 
@@ -598,9 +472,12 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: stopped" << endl;
 		addText(QString("execute: no goal"));
 		setPath(Planning::Path(pos));
-		_state->drawPath(_path);
+		_state->drawPath(*_path);
 		return;
 	}
+
+
+	Geometry2d::Point::Optional dest = _path->destination();
 
 	//	if this number of microseconds passes since our last path plan, we automatically replan
 	const uint64_t kPathExpirationInterval = 1500000;	//	1.5 seconds
@@ -609,23 +486,22 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 	}
 
 	//	invalidate path if it hits obstacles
-	if (_path.hit(full_obstacles)) {
+	if (_path->hit(full_obstacles)) {
 		_pathInvalidated = true;
 	}
 
 	//	if the destination of the current path is greater than 1cm away from the target destination,
 	//	we invalidate the path.  this situation could arise if during a previous planning, the target point
 	//	was blocked by an obstacle
-	if (dest && (_path.points.last() - dest).mag() > 0.01) {
+	if (dest && (_path->points.back() - *dest).mag() > 0.01) {
 		_pathInvalidated = true;
 	}
 
 	// check if goal is close to previous goal to reuse path
-	Geometry2d::Point::Optional dest = _path.destination();
 	if (dest && !_pathInvalidated) {
 		addText("Reusing path");
 		Planning::Path sliced_path;
-		_path.startFrom(pos, sliced_path);
+		_path->startFrom(pos, sliced_path);
 		if (enable_slice && !sliced_path.hit(full_obstacles)) {
 			addText(QString("execute: slicing path"));
 			_state->drawPath(sliced_path, Qt::cyan);
@@ -642,7 +518,7 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 		setPath(newlyPlannedPath);
 	}
 
-	_state->drawPath(_path, Qt::magenta);
+	_state->drawPath(*_path, Qt::magenta);
 	addText(QString("execute: RRT path %1").arg(full_obstacles.size()));
 	return;
 }

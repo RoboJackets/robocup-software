@@ -188,7 +188,7 @@ public:
 	}
 
 	const Planning::Path &path() const {
-		return _path;
+		return *_path;
 	}
 
 	//  FIXME: document
@@ -401,13 +401,9 @@ protected:
 	Planning::RRTPlanner *_planner;	/// single-robot RRT planner
 	boost::optional<Planning::Path> _path;	/// latest path
 	uint64_t _pathStartTime;
-	
-	boost::optional<Planning::AnglePath> _anglePath;
-	uint64_t _anglePathStartTime;
 
 	///	whenever the constraints for the robot path are changed, this is set to true to trigger a replan
 	bool _pathInvalidated;
-	
 
 
 	/**
