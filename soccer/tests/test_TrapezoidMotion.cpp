@@ -4,8 +4,6 @@
 #include <motion/TrapezoidalMotion.hpp>
 #include <math.h>
 
-#define FLOAT_APPROX_EQ(a, b) (ABS((a) - (b)) < 0.001)
-
 
 bool trapezoid1(float t, float &posOut, float &speedOut) {
 	return TrapezoidalMotion(10,	//	pathLength
