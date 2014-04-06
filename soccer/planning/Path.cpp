@@ -31,7 +31,7 @@ float Planning::Path::length(unsigned int start) const
     return length;
 }
 
-Geometry2d::Point::Optional Planning::Path::start() const
+boost::optional<Geometry2d::Point> Planning::Path::start() const
 {
 		if (points.empty())
 			return boost::none;
@@ -39,7 +39,7 @@ Geometry2d::Point::Optional Planning::Path::start() const
 			return points.front();
 }
 
-Geometry2d::Point::Optional Planning::Path::destination() const
+boost::optional<Geometry2d::Point> Planning::Path::destination() const
 {
 		if (points.empty())
 			return boost::none;

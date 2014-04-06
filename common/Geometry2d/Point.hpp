@@ -15,8 +15,6 @@ namespace Geometry2d
 	class Point
 	{
 		public:
-			typedef boost::optional<Point> Optional;
-
 			/**
 			default constrctor.
 			initializes point to (0,0)
