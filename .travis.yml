@@ -9,7 +9,7 @@ before_install:
   - sudo apt-get update
   - sudo ./util/ubuntu-setup
 
-script: scons test
+script: scons && scons test
 
 notifications:
   email: true
