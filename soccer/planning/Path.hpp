@@ -55,13 +55,13 @@ namespace Planning
 			float distanceTo(const Geometry2d::Point &pt) const;
 			
 			// Returns the start of the path
-			Geometry2d::Point::Optional start() const;
+			boost::optional<Geometry2d::Point> start() const;
 
 			// Returns a new path starting from a given point
 			void startFrom(const Geometry2d::Point& pt, Planning::Path& result) const;
 
 			//Returns the destination of this path (the last point in the points array)
-			Geometry2d::Point::Optional destination() const;
+			boost::optional<Geometry2d::Point> destination() const;
 
 			// Returns true if the path never touches an obstacle or additionally, when exitObstacles is true, if the path
 			// starts out in an obstacle but leaves and never re-enters any obstacle.

@@ -477,7 +477,7 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 	}
 
 
-	Geometry2d::Point::Optional dest = _path->destination();
+	boost::optional<Geometry2d::Point> dest = _path->destination();
 
 	//	if this number of microseconds passes since our last path plan, we automatically replan
 	const uint64_t kPathExpirationInterval = 1500000;	//	1.5 seconds
