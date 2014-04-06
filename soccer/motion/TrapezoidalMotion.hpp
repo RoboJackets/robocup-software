@@ -12,7 +12,6 @@
  * @param speedOut The speed to be at at the given time
  * @return true if the trapezoid is valid at the given time, false otherwise
  */
-//	TODO: handle triangle case
 bool TrapezoidalMotion(
 	float pathLength,
 	float maxSpeed,
