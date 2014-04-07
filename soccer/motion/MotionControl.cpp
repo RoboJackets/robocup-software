@@ -177,7 +177,7 @@ void MotionControl::run() {
 	////////////////////////////////////////////////////////////////////
 
 	//	if no target position is given, we don't have a path to follow
-	if (!constraints.targetPos) {
+	if (!_robot->path()) {
 		if (!constraints.targetWorldVel) {
 			_robot->radioTx.set_body_x(0);
 			_robot->radioTx.set_body_y(0);
@@ -198,7 +198,7 @@ void MotionControl::run() {
 
 		//	evaluate path - where should we be right now?
 		
-		bool pathValidNow = _robot->path().evaluate(timeIntoPath, targetPos, targetVel);
+		bool pathValidNow = _robot->path()->evaluate(timeIntoPath, targetPos, targetVel);
 		_robot->addText(QString("targetVel %1 %2").arg(targetVel.x).arg(targetVel.y) );
 		if (!pathValidNow) {
 			targetVel.x = 0;
