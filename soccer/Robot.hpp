@@ -321,10 +321,6 @@ public:
 	//	FIXME: rewrite comment to describe new behavior
 	void replanIfNeeded(const ObstacleGroup& global_obstacles);
 
-	const std::vector<void *> &commandTrace() const
-	{
-		return _commandTrace;
-	}
 
 	/** status evaluations for choosing robots in behaviors - combines multiple checks */
 	bool chipper_available() const;
@@ -388,8 +384,6 @@ protected:
 	MotionControl *_motionControl;
 	
 	SystemState *_state;
-
-	std::vector<void *> _commandTrace;
 
 	// obstacle management
 	ObstacleGroup _local_obstacles; /// set of obstacles added by plays
