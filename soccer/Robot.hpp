@@ -344,11 +344,6 @@ public:
 	 */
 	void execute(const ObstacleGroup& global_obstacles);
 
-	const std::vector<void *> &commandTrace() const
-	{
-		return _commandTrace;
-	}
-
 	/** motion command - sent to point/wheel controllers, is valid when _planning_complete is true */
 	MotionCommand cmd;
 
@@ -415,8 +410,6 @@ protected:
 	MotionControl *_motionControl;
 	
 	SystemState *_state;
-
-	std::vector<void *> _commandTrace;
 
 	uint64_t _lastChargedTime; // TODO: make this a boost pointer to avoid update() function
 
