@@ -63,29 +63,6 @@ void FieldView::rotate(int value)
 	update();
 }
 
-void FieldView::mouseDoubleClickEvent(QMouseEvent* e)
-{
-	Geometry2d::Point pos = _worldToTeam * _screenToWorld * e->posF();
-	
-	std::shared_ptr<LogFrame> frame = currentFrame();
-	if (e->button() == Qt::LeftButton && frame)
-	{
-		BOOST_FOREACH(const LogFrame::Robot &r, frame->self())
-		{
-			if (pos.nearPoint(r.pos(), Robot_Radius))
-			{
-				if (showCommandTrace.find(r.shell()) != showCommandTrace.end())
-				{
-					showCommandTrace.erase(r.shell());
-				} else {
-					showCommandTrace.insert(r.shell());
-				}
-				break;
-			}
-		}
-	}
-}
-
 void FieldView::paintEvent(QPaintEvent* e)
 {
 	QPainter p(this);
@@ -386,17 +363,6 @@ void FieldView::drawTeamSpace(QPainter& p)
 			{
 				p.setPen(qcolor(text.color()));
 				drawText(p, textPos, QString::fromStdString(text.text()), false);
-				textPos -= rtY * 0.1;
-			}
-		}
-		
-		// Command trace
-		if (showCommandTrace.find(r.shell()) != showCommandTrace.end())
-		{
-			QStringList strs = debugTrace(r.command_trace());
-			BOOST_FOREACH(const QString &str, strs)
-			{
-				drawText(p, textPos, str, false);
 				textPos -= rtY * 0.1;
 			}
 		}
