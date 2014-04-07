@@ -81,3 +81,8 @@ We use [Doxygen](www.doxygen.org) for documentation.  This allows us to convert 
 http://robojackets.github.io/robocup-software/
 
 Note: The doxygen documentation site above is currently updated manually (pushing new code to master doesn't update our documentation site).  Checkout the `gh-pages` branch and take a look at the README to see how this is handled.
+
+
+## Testing
+
+We use [gtest](https://code.google.com/p/googletest/) for unit-testing our software, which can be run by running `scons test`.  To add a test to be run with the rest of the bunch, add it to the test sources variable in [test/SConscript](test/SConscript).
