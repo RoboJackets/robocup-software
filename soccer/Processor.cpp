@@ -556,15 +556,6 @@ void Processor::run()
 				{
 					log->add_text()->CopyFrom(t);
 				}
-				
-				// Copy command trace, converting to uint64
-				const vector<void *> &src = r->commandTrace();
-				RepeatedField<uint64> *dst = log->mutable_command_trace();
-				dst->Reserve(src.size());
-				for (unsigned int j = 0; j < src.size(); ++j)
-				{
-					dst->Add((uint64)src[j]);
-				}
 			}
 		}
 		
