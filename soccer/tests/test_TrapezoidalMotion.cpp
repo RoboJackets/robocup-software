@@ -58,7 +58,7 @@ bool triangle1(float t, float &posOut, float &speedOut) {
 		speedOut);	//	&speedOut
 }
 
-TEST(TrapezoidalMotionTriangle, RampUp) {
+TEST(TrapezoidalMotion, TriangleRampUp) {
 	float posOut, speedOut;
 	bool pathValid = triangle1(1, posOut, speedOut);
 	EXPECT_EQ(pathValid, true);
