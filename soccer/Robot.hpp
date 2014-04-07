@@ -187,8 +187,8 @@ public:
 		return _motionConstraints;
 	}
 
-	const Planning::Path &path() const {
-		return *_path;
+	const boost::optional<Planning::Path> &path() const {
+		return _path;
 	}
 
 	//  FIXME: document
