@@ -16,13 +16,15 @@ bool TrapezoidalMotion(
 	//	we do this by calculating the full ramp-up and ramp-down, then seeing
 	//	if the distance travelled is too great.  If it's gone too far, this is the "triangle case"
 
+	startSpeed = fmin(startSpeed, maxSpeed);
+	finalSpeed = fmin(finalSpeed, maxSpeed);
 	float rampUpTime = (maxSpeed - startSpeed) / maxAcc;
 	float plateauTime;
 	float rampDownTime = (finalSpeed - maxSpeed) / -maxAcc;
 
-	float rampUpDist = rampUpTime * (startSpeed + (maxSpeed + startSpeed)/2.0);
+	float rampUpDist = rampUpTime * (startSpeed + (maxSpeed - startSpeed)/2.0);
 	float plateauDist;
-	float rampDownDist = rampDownTime * (maxSpeed + (maxSpeed + finalSpeed)/2.0);
+	float rampDownDist = rampDownTime * (maxSpeed + (maxSpeed - finalSpeed)/2.0);
 
 
 	if (rampUpDist + rampDownDist > pathLength) {
@@ -39,8 +41,8 @@ bool TrapezoidalMotion(
 
 		rampUpTime = (maxSpeed - startSpeed) / maxAcc;
 		rampDownTime = (finalSpeed - maxSpeed) / -maxAcc;
-		rampUpDist = (startSpeed + (maxSpeed + startSpeed)/2) * rampUpTime;
-		rampDownDist = (finalSpeed + (maxSpeed + finalSpeed)/2) * rampDownTime;
+		rampUpDist = (startSpeed + (maxSpeed - startSpeed)/2) * rampUpTime;
+		rampDownDist = (finalSpeed + (maxSpeed - finalSpeed)/2) * rampDownTime;
 
 		//	no plateau
 		plateauTime = 0;
