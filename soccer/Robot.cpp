@@ -437,8 +437,6 @@ void OurRobot::setPath(Planning::Path path) {
 }
 
 void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
-	const bool enable_slice = false;
-
 	// halt case - same as stopped
 	if (_state->gameState.state == GameState::Halt) {
 		return;
@@ -506,10 +504,11 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 		addText("Reusing path");
 		Planning::Path sliced_path;
 		_path->startFrom(pos, sliced_path);
+
+		const bool enable_slice = false;
 		if (enable_slice && !sliced_path.hit(full_obstacles)) {
 			addText(QString("execute: slicing path"));
 			_state->drawPath(sliced_path, Qt::cyan);
-			Geometry2d::Point offset(0.01, 0.01);
 			return;
 		}
 	} else {
