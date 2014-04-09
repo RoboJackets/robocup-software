@@ -477,7 +477,7 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 	}
 
 
-	boost::optional<Geometry2d::Point> dest = _path->destination();
+	Geometry2d::Point dest = *_motionConstraints.targetPos;
 
 	//	if this number of microseconds passes since our last path plan, we automatically replan
 	const uint64_t kPathExpirationInterval = 1500000;	//	1.5 seconds
@@ -486,19 +486,23 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 	}
 
 	//	invalidate path if it hits obstacles
-	if (_path->hit(full_obstacles)) {
+	if (_path && _path->hit(full_obstacles)) {
 		_pathInvalidated = true;
 	}
 
 	//	if the destination of the current path is greater than 1cm away from the target destination,
 	//	we invalidate the path.  this situation could arise if during a previous planning, the target point
 	//	was blocked by an obstacle
-	if (dest && (_path->points.back() - *dest).mag() > 0.01) {
+	if (_path && (_path->points.back() - dest).mag() > 0.01) {
+		_pathInvalidated = true;
+	}
+
+	if (!_path) {
 		_pathInvalidated = true;
 	}
 
 	// check if goal is close to previous goal to reuse path
-	if (dest && !_pathInvalidated) {
+	if (!_pathInvalidated) {
 		addText("Reusing path");
 		Planning::Path sliced_path;
 		_path->startFrom(pos, sliced_path);
