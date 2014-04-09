@@ -22,7 +22,7 @@ RefereeModule::RefereeModule(SystemState *state):
 	_kickDetectState = WaitForReady;
 	_blueTeam = false;
 	_refereeSocket = new QUdpSocket;
-	if(!_refereeSocket->bind(RefereePort, QUdpSocket::ShareAddress)) {
+	if(!_refereeSocket->bind(LegacyRefereePort, QUdpSocket::ShareAddress)) {
 		throw std::runtime_error("Can't bind to the referee port.");
 	}
 	multicast_add(_refereeSocket, RefereeAddress);

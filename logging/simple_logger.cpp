@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 	
 	// Create referee socket
 	QUdpSocket refereeSocket;
-	if (!refereeSocket.bind(RefereePort, QUdpSocket::ShareAddress))
+	if (!refereeSocket.bind(LegacyRefereePort, QUdpSocket::ShareAddress))
 	{
 		printf("Can't bind to referee port");
 		return 1;
