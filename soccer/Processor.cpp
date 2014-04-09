@@ -19,6 +19,7 @@
 #include <gameplay/GameplayModule.hpp>
 #include <RobotConfig.hpp>
 #include <RefereeModule.hpp>
+#include <NewRefereeModule.hpp>
 
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
@@ -286,6 +287,9 @@ void Processor::run()
 	VisionReceiver vision(_simulation);
 	vision.start();
 
+	NewRefereeModule newRefMod;
+	newRefMod.start();
+
 	// Create radio socket
 	_radio = _simulation ? (Radio *)new SimRadio() : (Radio *)new USBRadio();
 	
@@ -440,7 +444,7 @@ void Processor::run()
 		if (_refereeModule)
 		{
 			_refereeModule->UseExternalReferee = _externalReferee;
-			_refereeModule->run();
+			//_refereeModule->run();
 			curStatus.lastRefereeTime =_refereeModule->lastPacketTime();
 			// set curStatus.lastRefereeTime;
 		}
