@@ -253,7 +253,7 @@ void OurRobot::worldVelocity(const Geometry2d::Point& v)
 	_motionConstraints.targetPos = boost::none;
 	_motionConstraints.targetWorldVel = v;
 
-	//	FIXME: clear Path?
+	_path.reset();
 }
 
 // void OurRobot::angularVelocity(double w)
