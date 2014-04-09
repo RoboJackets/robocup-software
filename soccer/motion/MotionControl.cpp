@@ -177,7 +177,7 @@ void MotionControl::run() {
 	////////////////////////////////////////////////////////////////////
 
 	//	if no target position is given, we don't have a path to follow
-	if (!constraints.targetPos) {
+	if (!_robot->path()) {
 		if (!constraints.targetWorldVel) {
 			_robot->radioTx.set_body_x(0);
 			_robot->radioTx.set_body_y(0);
