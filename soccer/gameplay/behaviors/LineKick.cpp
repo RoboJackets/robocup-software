@@ -169,7 +169,7 @@ bool Gameplay::Behaviors::LineKick::run()
 		double speed = min(robot->vel.mag() + *_accel_bias, _max_speed->value()); // enough of a bias to force it to accelerate
 		robot->worldVelocity(driveDirection.normalized() * speed);
 
-		robot->face(ballPos);
+		robot->face(target);
 
 		if (use_chipper)
 		{
