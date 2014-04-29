@@ -52,11 +52,7 @@ class FieldView : public QWidget
 		bool showCoords;
         bool showDotPatterns;
 		
-		// Which robots will show a command trace
-		std::set<int> showCommandTrace;
-		
 	protected:
-		virtual void mouseDoubleClickEvent(QMouseEvent* e);
 		virtual void paintEvent(QPaintEvent* e);
 		virtual void resizeEvent(QResizeEvent *e);
 		
