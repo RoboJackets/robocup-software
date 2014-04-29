@@ -57,30 +57,27 @@ protected:
 	// links to the engine
 	SimEngine *_simEngine;
 
-	//TODO: Use later?
 	/** center of roller from ground */
-	const static float RollerHeight = .03;
+	constexpr static float RollerHeight = .03;
 	/** center of roller from center of robot */
-	const static float RollerOffset = .065;
+	constexpr static float RollerOffset = .065;
 	/** roller length */
-	const static float RollerLength = .07;
+	constexpr static float RollerLength = .07;
 	/** radius of the roller */
-	const static float RollerRadius = .01;
+	constexpr static float RollerRadius = .01;
 
 	/** width of the kicker face */
-	const static float KickerFaceWidth = .05;
+	constexpr static float KickerFaceWidth = .05;
 	/** height of the kicker face */
-	const static float KickerFaceHeight = .005;
+	constexpr static float KickerFaceHeight = .005;
 	/** depth of the kicker plate */
-	const static float KickerLength = .03;
+	constexpr static float KickerLength = .03;
 
 public:
 	Robot(Environment* env, unsigned int id, Robot::RobotRevision rev, const Geometry2d::Point& startPos);
 	~Robot();
 
 	void initPhysics(const bool& blue);
-
-public:
 
 	//the following are in field space, aka soccer's coordinate system
 

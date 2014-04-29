@@ -1,0 +1,3 @@
+# don't track the compiled gtest stuff
+gtest/make/*.o
+gtest/make/*.a

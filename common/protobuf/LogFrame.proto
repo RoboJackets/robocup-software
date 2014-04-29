@@ -92,9 +92,6 @@ message LogFrame
 		required float angle = 3;
 		optional BallSenseStatus ball_sense_status = 4;
 		
-		// Stack trace leading up to where the robot's final command was set
-		repeated uint64 command_trace = 5;
-		
 		repeated DebugText text = 6;
 		
 		// only during commands
