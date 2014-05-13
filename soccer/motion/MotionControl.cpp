@@ -17,8 +17,6 @@ using namespace Geometry2d;
 
 REGISTER_CONFIGURABLE(MotionControl);
 
-Point gearRatio;
-
 ConfigDouble *MotionControl::_pid_pos_p;
 ConfigDouble *MotionControl::_pid_pos_i;
 ConfigDouble *MotionControl::_pid_pos_d;
@@ -186,17 +184,20 @@ void MotionControl::run() {
 			_robot->radioTx.set_body_y(velRotated.y);
 		}
 	} else {
-		Point velRotated = _robot->vel.rotated(-_robot->angle);
-		gearRatio = velRotated/targetVel;
 		//
 		//	Path following
 		//
+
+		Point targetPos, targetVel;
+		Point velRotated = _robot->vel.rotated(-_robot->angle);
+		
+		Point gearRatio = velRotated/targetVel;
+		_robot->addText(QString("ratio %1 %2").arg(gearRatio.x).arg(gearRatio.y));
 
 		//	convert from microseconds to seconds
 		float timeIntoPath = (float)((timestamp() - _robot->pathStartTime()) / 1000000.0f);
 
 		//	evaluate path - where should we be right now?
-		Point targetPos, targetVel;
 		bool pathValidNow = _robot->path()->evaluate(timeIntoPath, targetPos, targetVel);
 		_robot->addText(QString("targetVel %1 %2").arg(targetVel.x).arg(targetVel.y) );
 		if (!pathValidNow) {
@@ -217,7 +218,7 @@ void MotionControl::run() {
 		_robot->state()->drawCircle(targetPos, .04, Qt::red, "MotionControl");
 		_robot->state()->drawLine(targetPos, targetPos + targetVel, Qt::blue, "velocity");
 		_robot->state()->drawText(QString("%1").arg(timeIntoPath), targetPos, Qt::black, "time");
-		_robot->addText(QString("ratio %1 %2").arg(gearRatio.x).arg(gearRatio.y));
+
 		//convert from world to body coordinates
 		targetVel = targetVel.rotated(-_robot->angle);
 		
