@@ -28,7 +28,6 @@ ConfigDouble *MotionControl::_pid_angle_p;
 ConfigDouble *MotionControl::_pid_angle_i;
 ConfigDouble *MotionControl::_pid_angle_d;
 ConfigDouble *MotionControl::_angle_vel_mult;
-Point targetPos, targetVel;
 ConfigDouble *MotionControl::_max_angle_w;
 
 void MotionControl::createConfiguration(Configuration *cfg) {
@@ -197,7 +196,7 @@ void MotionControl::run() {
 		float timeIntoPath = (float)((timestamp() - _robot->pathStartTime()) / 1000000.0f);
 
 		//	evaluate path - where should we be right now?
-		
+		Point targetPos, targetVel;
 		bool pathValidNow = _robot->path()->evaluate(timeIntoPath, targetPos, targetVel);
 		_robot->addText(QString("targetVel %1 %2").arg(targetVel.x).arg(targetVel.y) );
 		if (!pathValidNow) {
