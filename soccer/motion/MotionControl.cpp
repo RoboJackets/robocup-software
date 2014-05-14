@@ -48,6 +48,7 @@ MotionControl::MotionControl(OurRobot *robot) : _angleController(0, 0, 0, 50) {
 	_robot = robot;
 
 	_robot->radioTx.set_robot_id(_robot->shell());
+	_lastTimeCmd = -1;
 }
 
 
@@ -173,22 +174,20 @@ void MotionControl::run() {
 	//	Position control ///////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 
+	Point targetVel;
+
 	//	if no target position is given, we don't have a path to follow
 	if (!_robot->path()) {
 		if (!constraints.targetWorldVel) {
-			_robot->radioTx.set_body_x(0);
-			_robot->radioTx.set_body_y(0);
+			targetVel = Point(0, 0);
 		} else {
-			Point velRotated = constraints.targetWorldVel->rotated(-_robot->angle);
-			_robot->radioTx.set_body_x(velRotated.x);
-			_robot->radioTx.set_body_y(velRotated.y);
+			targetVel = constraints.targetWorldVel->rotated(-_robot->angle);
 		}
 	} else {
 		//
 		//	Path following
 		//
-
-		Point targetPos, targetVel;
+		
 		Point velRotated = _robot->vel.rotated(-_robot->angle);
 		
 		Point gearRatio = velRotated/targetVel;
@@ -198,6 +197,7 @@ void MotionControl::run() {
 		float timeIntoPath = (float)((timestamp() - _robot->pathStartTime()) / 1000000.0f);
 
 		//	evaluate path - where should we be right now?
+		Point targetPos;
 		bool pathValidNow = _robot->path()->evaluate(timeIntoPath, targetPos, targetVel);
 		_robot->addText(QString("targetVel %1 %2").arg(targetVel.x).arg(targetVel.y) );
 		if (!pathValidNow) {
@@ -219,11 +219,32 @@ void MotionControl::run() {
 		_robot->state()->drawLine(targetPos, targetPos + targetVel, Qt::blue, "velocity");
 		_robot->state()->drawText(QString("%1").arg(timeIntoPath), targetPos, Qt::black, "time");
 
-		//convert from world to body coordinates
+		//	convert from world to body coordinates
 		targetVel = targetVel.rotated(-_robot->angle);
-		
-		//	set radioTx values
-		_robot->radioTx.set_body_x(targetVel.x);
-		_robot->radioTx.set_body_y(targetVel.y);
 	}
+
+
+	float maxVel = 1, maxAccel = 1;
+
+	// Limit Velocity
+	targetVel.clamp(maxVel);
+
+	// Limit Acceleration
+	if (_lastTimeCmd == -1) {
+		targetVel.clamp(maxAccel);
+	} else {
+		float dt = (float)((timestamp() - _lastTimeCmd) / 1000000.0f);
+		Point targetAccel = (targetVel - _lastVelCmd) / dt ;
+		targetAccel.clamp(maxAccel);
+
+		targetVel = _lastVelCmd + targetAccel * dt; 
+	}
+
+	//	set radioTx values
+	_robot->radioTx.set_body_x(targetVel.x);
+	_robot->radioTx.set_body_y(targetVel.y);
+
+	//	track these values so we can limit acceleration
+	_lastVelCmd = targetVel;
+	_lastTimeCmd = timestamp();
 }

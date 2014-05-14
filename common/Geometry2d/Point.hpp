@@ -217,6 +217,15 @@ namespace Geometry2d
 			{
 				return x * x + y * y;
 			}
+
+			void clamp(float max)
+			{	
+				if (mag() > max) {
+					float ratio = mag() / max;
+					x = x / ratio;
+					y = y / ratio;
+				}
+			}
 			
 			/**
 			rotates the point around another point by specified angle in the CCW direction
