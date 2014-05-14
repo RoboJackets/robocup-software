@@ -33,6 +33,9 @@ public:
 private:
 	OurRobot *_robot;
 
+	Geometry2d::Point _lastVelCmd;
+	long _lastTimeCmd;
+
 	Pid _positionXController;
 	Pid _positionYController;
 	Pid _angleController;
