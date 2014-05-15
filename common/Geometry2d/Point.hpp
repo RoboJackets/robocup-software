@@ -218,6 +218,10 @@ namespace Geometry2d
 				return x * x + y * y;
 			}
 
+			/**
+			 * @brief Restricts the point to a given magnitude
+			 * @param max The magnitude to restrict the vector
+			 */
 			void clamp(float max)
 			{	
 				if (mag() > max) {
