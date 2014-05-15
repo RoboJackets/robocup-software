@@ -48,7 +48,7 @@ MotionControl::MotionControl(OurRobot *robot) : _angleController(0, 0, 0, 50) {
 	_robot = robot;
 
 	_robot->radioTx.set_robot_id(_robot->shell());
-	_lastTimeCmd = -1;
+	_lastCmdTime = -1;
 }
 
 
@@ -188,11 +188,7 @@ void MotionControl::run() {
 		//	Path following
 		//
 		
-		Point velRotated = _robot->vel.rotated(-_robot->angle);
 		
-		Point gearRatio = velRotated/targetVel;
-		_robot->addText(QString("ratio %1 %2").arg(gearRatio.x).arg(gearRatio.y));
-
 		//	convert from microseconds to seconds
 		float timeIntoPath = (float)((timestamp() - _robot->pathStartTime()) / 1000000.0f);
 
@@ -230,21 +226,29 @@ void MotionControl::run() {
 	targetVel.clamp(maxVel);
 
 	// Limit Acceleration
-	if (_lastTimeCmd == -1) {
+	if (_lastCmdTime == -1) {
 		targetVel.clamp(maxAccel);
 	} else {
-		float dt = (float)((timestamp() - _lastTimeCmd) / 1000000.0f);
+		float dt = (float)((timestamp() - _lastCmdTime) / 1000000.0f);
 		Point targetAccel = (targetVel - _lastVelCmd) / dt ;
 		targetAccel.clamp(maxAccel);
 
 		targetVel = _lastVelCmd + targetAccel * dt; 
 	}
 
+	this->_targetVel(targetVel);
+}
+
+void MotionControl::stopped() {
+	_targetVel(Point(0, 0));
+}
+
+void MotionControl::_targetVel(Point targetVel) {
 	//	set radioTx values
 	_robot->radioTx.set_body_x(targetVel.x);
 	_robot->radioTx.set_body_y(targetVel.y);
 
 	//	track these values so we can limit acceleration
 	_lastVelCmd = targetVel;
-	_lastTimeCmd = timestamp();
+	_lastCmdTime = timestamp();
 }
