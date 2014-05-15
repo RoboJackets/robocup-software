@@ -28,6 +28,9 @@ ConfigDouble *MotionControl::_pid_angle_d;
 ConfigDouble *MotionControl::_angle_vel_mult;
 ConfigDouble *MotionControl::_max_angle_w;
 
+ConfigDouble *MotionControl::_max_acceleration;
+ConfigDouble *MotionControl::_max_velocity;
+
 void MotionControl::createConfiguration(Configuration *cfg) {
 	_pid_pos_p = new ConfigDouble(cfg, "MotionControl/pos/PID_p", 6.5);
 	_pid_pos_i = new ConfigDouble(cfg, "MotionControl/pos/PID_i", 0.0001);
@@ -39,6 +42,9 @@ void MotionControl::createConfiguration(Configuration *cfg) {
 	_pid_angle_d	= new ConfigDouble(cfg, "MotionControl/angle/PID_d", 0.001);
 	_angle_vel_mult	= new ConfigDouble(cfg, "MotionControl/angle/Velocity Multiplier");
 	_max_angle_w	= new ConfigDouble(cfg, "MotionControl/angle/Max w", 10);
+
+	_max_acceleration	= new ConfigDouble(cfg, "MotionControl/Max Acceleration", 0.5);
+	_max_velocity		= new ConfigDouble(cfg, "MotionControl/Max Velocity", 2.0);
 }
 
 
@@ -52,44 +58,13 @@ MotionControl::MotionControl(OurRobot *robot) : _angleController(0, 0, 0, 50) {
 }
 
 
-
 //	FIXME: we should use RobotDynamics instead
-static const float Max_Linear_Speed = 0.008 * 511;
 // static const float Max_Angular_Speed = 511 * 0.02 * M_PI;
-
-
-
-// void limitAccel(float &value, float last, float limit)
-// {
-// //	float old = value;
-// 	if (value > 0 && (value - last) > limit)
-// 	{
-// 		value = last + limit;
-// 	} else if (value < 0 && (last - value) > limit)
-// 	{
-// 		value = last - limit;
-// 	}
-// }
-
-// 	// Acceleration limit
-// //	Point dv = bodyVel - _lastBodyVel;
-// //	float dw = angularVel - _lastAngularVel;
-	
-// //	float av = *_robot->config->trapTrans.acceleration;
-// //	float aw = *_robot->config->trapRot.acceleration;
-	
-// // 	limitAccel(bodyVel.x, _lastBodyVel.x, av);
-// // 	limitAccel(bodyVel.y, _lastBodyVel.y, av);
-// // 	limitAccel(angularVel, _lastAngularVel, aw);
 
 
 
 void MotionControl::run() {
 	if (!_robot) return;
-
-	//	FIXME: acceleration limiting?
-
-	//	FIXME: reset controller when we set a new path?
 
 	const MotionConstraints &constraints = _robot->motionConstraints();
 
@@ -219,23 +194,6 @@ void MotionControl::run() {
 		targetVel = targetVel.rotated(-_robot->angle);
 	}
 
-
-	float maxVel = 1, maxAccel = 1;
-
-	// Limit Velocity
-	targetVel.clamp(maxVel);
-
-	// Limit Acceleration
-	if (_lastCmdTime == -1) {
-		targetVel.clamp(maxAccel);
-	} else {
-		float dt = (float)((timestamp() - _lastCmdTime) / 1000000.0f);
-		Point targetAccel = (targetVel - _lastVelCmd) / dt ;
-		targetAccel.clamp(maxAccel);
-
-		targetVel = _lastVelCmd + targetAccel * dt; 
-	}
-
 	this->_targetVel(targetVel);
 }
 
@@ -244,6 +202,21 @@ void MotionControl::stopped() {
 }
 
 void MotionControl::_targetVel(Point targetVel) {
+	// Limit Velocity
+	targetVel.clamp(*_max_velocity);
+
+	// Limit Acceleration
+	if (_lastCmdTime == -1) {
+		targetVel.clamp(*_max_acceleration);
+	} else {
+		float dt = (float)((timestamp() - _lastCmdTime) / 1000000.0f);
+		Point targetAccel = (targetVel - _lastVelCmd) / dt ;
+		targetAccel.clamp(*_max_acceleration);
+
+		targetVel = _lastVelCmd + targetAccel * dt; 
+	}
+
+
 	//	set radioTx values
 	_robot->radioTx.set_body_x(targetVel.x);
 	_robot->radioTx.set_body_y(targetVel.y);
