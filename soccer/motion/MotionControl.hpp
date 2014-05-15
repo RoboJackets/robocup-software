@@ -41,6 +41,7 @@ private:
 
 	OurRobot *_robot;
 
+	//	these are tracked so we can limit robot acceleration
 	Geometry2d::Point _lastVelCmd;	//	the last velocity command that we sent to the robot
 	long _lastCmdTime;	//	the time in microseconds when the last velocity command was sent
 
@@ -58,4 +59,7 @@ private:
 	static ConfigDouble *_pid_angle_d;
 	static ConfigDouble *_angle_vel_mult;
 	static ConfigDouble *_max_angle_w;
+
+	static ConfigDouble *_max_acceleration;
+	static ConfigDouble *_max_velocity;
 };
