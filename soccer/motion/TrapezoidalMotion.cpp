@@ -12,69 +12,74 @@ bool TrapezoidalMotion(
 	float &posOut,
 	float &speedOut)
 {
-	//	when we're speeding up and slowing down - the sides of the trapezoid
-	startSpeed = fmin(startSpeed,maxSpeed);
-	finalSpeed = fmin(finalSpeed,maxSpeed);
-	float rampDeltaSpeed = maxSpeed - startSpeed;
-	float downDeltaSpeed = maxSpeed - finalSpeed;
-	float rampTime = rampDeltaSpeed / maxAcc;
-	float downTime = downDeltaSpeed / maxAcc;
-	float aveRampSpeed = rampDeltaSpeed / 2.0 + startSpeed;
-	float aveDownSpeed = downDeltaSpeed / 2.0 + finalSpeed;
-	float rampDist = (rampTime * aveRampSpeed);
-	float downDist = (downTime * aveDownSpeed);
-	if(rampDist + downDist >= pathLength) {
-		/*
-		d = (maxSpeed + startSpeed) / 2.0 * rampTime + (maxSpeed + finalSpeed) / 2.0 * downTime;
-		d = (maxSpeed + startSpeed) / 2.0 *(maxSpeed - startSpeed) / maxAcc +
-				(maxSpeed + finalSpeed) / 2.0 * (maxSpeed - finalSpeed) / maxAcc;
-		d = (maxSpeed^2 - startSpeed^2) / (2.0 * maxAcc) + (maxSpeed^2 - finalSpeed^2) / (2.0 * maxAcc);
-		d = ((maxSpeed^2 - startSpeed^2)  + (maxSpeed^2 - finalSpeed^2)) / (2.0 * maxAcc);
-		(2.0 * maxAcc) * d = maxSpeed^2 - startSpeed^2 + maxSpeed^2 - finalSpeed^2;
-		(2.0 * maxAcc) * d = 2*(maxSpeed^2) - finalSpeed^2 - startSpeed^2 
-		(2.0 * maxAcc) * d + finalSpeed^2 + startSpeed^2 = 2*(maxSpeed^2)
-		(maxAcc) * d + (finalSpeed^2 + startSpeed^2)/2  = (maxSpeed^2)
-		(maxSpeed) = sqrt((maxAcc) * d + (finalSpeed^2 + startSpeed^2)/2)
-		*/
-		maxSpeed = sqrt(maxAcc * pathLength + ((startSpeed * startSpeed + finalSpeed * finalSpeed) / 2));
-		rampTime = (maxSpeed - startSpeed) / maxAcc;
-		downTime = (maxSpeed - finalSpeed) / maxAcc;
-		if (timeIntoLap < rampTime) {	//	we're speeding up
-			posOut = startSpeed * timeIntoLap + 0.5 * maxAcc * timeIntoLap * timeIntoLap;
-			speedOut = startSpeed + maxAcc * timeIntoLap;
-		} else if (timeIntoLap < rampTime + downTime) {
-			rampDist = ((maxSpeed + startSpeed) / 2) * rampTime;
-			float deccelTime = timeIntoLap - (rampTime);
-			posOut = rampDist + maxSpeed * deccelTime - 0.5 * maxAcc * deccelTime * deccelTime;
-			speedOut = maxSpeed - deccelTime * maxAcc;
-		} else {
-			posOut = pathLength;
-			speedOut = finalSpeed;
-			return false;
-		}
+	//	begin by assuming that there's enough time to get up to full speed
+	//	we do this by calculating the full ramp-up and ramp-down, then seeing
+	//	if the distance travelled is too great.  If it's gone too far, this is the "triangle case"
+
+	startSpeed = fmin(startSpeed, maxSpeed);
+	finalSpeed = fmin(finalSpeed, maxSpeed);
+	float rampUpTime = (maxSpeed - startSpeed) / maxAcc;
+	float plateauTime;
+	float rampDownTime = (finalSpeed - maxSpeed) / -maxAcc;
+
+	float rampUpDist = rampUpTime * (startSpeed + maxSpeed) / 2.0;
+	float plateauDist;
+	float rampDownDist = rampDownTime * (maxSpeed + finalSpeed) / 2.0;
+
+
+	if (rampUpDist + rampDownDist > pathLength) {
+		//	triangle case: we don't ever hit full speed
+		
+		//	calculate what max speed we actually reach (it's less than the parameter passed in)
+		//	we write an equation for pathLength given maxSpeed, then solve for maxSpeed
+		//		rampUpTime = (maxSpeed - startSpeed) / maxAcc;
+		//		rampDownTime = (finalSpeed - maxSpeed) / -maxAcc;
+		//		pathLength = (startSpeed + maxSpeed)/2*rampUpTime
+		//						+ (maxSpeed + finalSpeed)/2*rampDownTime;
+		//		//	we then solve for maxSpeed
+		// maxSpeed = sqrt(pathLength*maxAcc + startSpeed*startSpeed + finalSpeed*finalSpeed);
+		maxSpeed = sqrt((2*maxAcc*pathLength + powf(startSpeed, 2) + powf(finalSpeed, 2)) / 2.0);
+
+		rampUpTime = (maxSpeed - startSpeed) / maxAcc;
+		rampDownTime = (finalSpeed - maxSpeed) / -maxAcc;
+		rampUpDist = (startSpeed + maxSpeed) / 2.0 * rampUpTime;
+		rampDownDist = (finalSpeed + maxSpeed) / 2.0 * rampDownTime;
+
+		//	no plateau
+		plateauTime = 0;
+		plateauDist = 0;
+	} else {
+		//	trapezoid case: there's a time where we go at maxSpeed for a bit
+		plateauDist = pathLength - (rampUpDist + rampDownDist);
+		plateauTime = plateauDist / maxSpeed;
+	}
+
+
+	if (timeIntoLap < 0) {
+		///	not even started on the path yet
+		posOut = 0;
+		speedOut = startSpeed;
+		return false;
+	} else if (timeIntoLap < rampUpTime) {
+		///	on the ramp-up, we're accelerating at @maxAcc
+		posOut = 0.5*maxAcc*timeIntoLap*timeIntoLap + startSpeed*timeIntoLap;
+		speedOut = startSpeed + maxAcc*timeIntoLap;
+		return true;
+	} else if (timeIntoLap < rampUpTime + plateauTime) {
+		///	we're on the plateau
+		posOut = rampUpDist + (timeIntoLap - rampUpTime)*maxSpeed;
+		speedOut = maxSpeed;
+		return true;
+	} else if (timeIntoLap < rampUpTime + plateauTime + rampDownTime) {
+		///	we're on the ramp down
+		float timeIntoRampDown = timeIntoLap - (rampUpTime + plateauTime);
+		posOut = 0.5*(-maxAcc)*timeIntoRampDown*timeIntoRampDown + maxSpeed*timeIntoRampDown + (rampUpDist + plateauDist);
+		speedOut = maxSpeed - maxAcc*timeIntoRampDown;
 		return true;
 	} else {
-		//	when we're going at max speed
-		float distAtMaxSpeed = (pathLength - rampDist - downDist);
-		float timeAtMaxSpeed = distAtMaxSpeed / maxSpeed;
-
-		if (timeIntoLap < rampTime) {	//	we're speeding up
-			posOut = startSpeed * timeIntoLap + 0.5 * maxAcc * timeIntoLap * timeIntoLap;
-			speedOut = startSpeed + maxAcc * timeIntoLap;
-		} else if (timeIntoLap <= (rampTime + timeAtMaxSpeed)) {	//	at plateau, going max speed
-			posOut = rampDist + maxSpeed * (timeIntoLap - rampTime);
-			speedOut = maxSpeed;
-		} else if (timeIntoLap <= timeAtMaxSpeed + rampTime + downTime) {	//	we're slowing down
-			float deccelTime = timeIntoLap - (rampTime + timeAtMaxSpeed);
-			posOut = rampDist + distAtMaxSpeed + 
-						maxSpeed * deccelTime - 0.5 * maxAcc * deccelTime * deccelTime;
-			speedOut = maxSpeed - deccelTime * maxAcc;
-		} else {
-			posOut = pathLength;
-			speedOut = finalSpeed;
-			return false;
-		}
-
-		return true;
+		///	past the end of the path
+		posOut = pathLength;
+		speedOut = finalSpeed;
+		return false;
 	}
 }
