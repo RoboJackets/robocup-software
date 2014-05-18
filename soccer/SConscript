@@ -25,141 +25,39 @@ srcs = [
 	'SystemState.cpp',
 	'RobotConfig.cpp',
 
-# Sources for gameplay module
-
 	# Core gameplay components',
 	'gameplay/GameplayModule.cpp',
 	'gameplay/Play.cpp',
 	'gameplay/Behavior.cpp',
 	'gameplay/PreventDoubleTouch.cpp',
+	'gameplay/behaviors/positions/Goalie.cpp',
+	'gameplay/behaviors/Idle.cpp',
+	'gameplay/behaviors/Kick.cpp',
+	'gameplay/tactics/LuckyKick.cpp',
+	'gameplay/behaviors/PivotKick.cpp',
+	'gameplay/behaviors/LineKick.cpp',
+	'gameplay/tactics/ChipCalibration.cpp',
+	'gameplay/behaviors/Capture.cpp',
+
 
 	# Field evaluation
 	'gameplay/evaluation/WindowEvaluator.cpp',
 	'gameplay/evaluation/ReceivePointEvaluator.cpp',
 	'gameplay/evaluation/FieldEvaluator.cpp',
 
-
 	# Planning components',
 	'planning/RRTPlanner.cpp',
 	'planning/Tree.cpp',
 
-	# Restart plays
-	'gameplay/plays/OurKickoff.cpp',
-	'gameplay/plays/TheirKickoff.cpp',
-	'gameplay/plays/OurFreekick.cpp',
-	'gameplay/plays/OurGoalKick.cpp',
-	'gameplay/plays/OurGoalKick2.cpp',
-	'gameplay/plays/OurGoalKick_Pass.cpp',
-	'gameplay/plays/OurCornerKick.cpp',
-	'gameplay/plays/TheirFreekick.cpp',
-	'gameplay/plays/KickPenalty.cpp',
-	'gameplay/plays/DefendPenalty.cpp',
-	'gameplay/plays/Stopped.cpp',
-	'gameplay/plays/OurCornerKickChipToGoalArea.cpp',
-	'gameplay/plays/OurCornerKick_pass.cpp',
-	
-	# Open gameplay plays
-	'gameplay/plays/MightyMight.cpp',
-	'gameplay/plays/BasicOffense122.cpp',
-	'gameplay/plays/BasicOffense121.cpp',
-	'gameplay/plays/OpenField221.cpp',
-	'gameplay/plays/YankOpen.cpp',
-	'gameplay/plays/EmptyGoal.cpp',
-	# 'gameplay/plays/MightyPass.cpp',
+	# Sources for motion module',
+	'motion/MotionControl.cpp',
 
-  # Core behaviors
-	'gameplay/behaviors/Move.cpp',
-#	'gameplay/behaviors/AimCapture.cpp',
-	#'gameplay/behaviors/Capture.cpp',
-	'gameplay/behaviors/Kickoff.cpp',
-	'gameplay/behaviors/Penalty.cpp',
-	'gameplay/behaviors/Idle.cpp',
-	'gameplay/behaviors/Kick.cpp',
-	'gameplay/behaviors/Mark.cpp',
-	'gameplay/behaviors/Yank.cpp',
-	'gameplay/behaviors/YankChip.cpp',
-	'gameplay/behaviors/Fling.cpp',
-	'gameplay/behaviors/LineKick.cpp',
-	'gameplay/behaviors/PivotKick.cpp',
-	'gameplay/behaviors/TouchKick.cpp',
-	'gameplay/behaviors/Bump.cpp',
-	'gameplay/tactics/passing/PassReceive.cpp',
-	'gameplay/behaviors/Capture.cpp',
-	
-	# MotionTests
-	# 'gameplay/plays/motion_testing/TestMotion.cpp',
-	# 'gameplay/plays/motion_testing/TrackBallTest.cpp',
 
-	# Positions
-	'gameplay/behaviors/positions/Goalie.cpp',
-	'gameplay/behaviors/positions/Fullback.cpp',
-	
-	# Tactics
-	'gameplay/tactics/passing/PassReceiveTactic.cpp',
-	'gameplay/tactics/StableLineKick.cpp',
-	'gameplay/tactics/passing/PassReceiver.cpp',
-    'gameplay/tactics/passing/StablePass.cpp',
-	'gameplay/tactics/StableYank.cpp',
-	'gameplay/tactics/SYTest.cpp',
-	'gameplay/tactics/SLKTest.cpp',
-	'gameplay/tactics/CatPassDemo.cpp',
-	'gameplay/tactics/passing/DumbReceive.cpp',
-	'gameplay/tactics/ChipCalibration.cpp',
-	'gameplay/tactics/LuckyKick.cpp',
-	'gameplay/tactics/passing/PassingContext.cpp',
-	
-	# Test framework for plays
-	'gameplay/TestFixture.cpp',
-	'gameplay/plays/test_plays/TestPathTracking.cpp',
-	'gameplay/plays/test_plays/TestLatency.cpp',
-	'gameplay/plays/test_plays/KickMeasurement.cpp',
-	'gameplay/plays/test_plays/TestLineKick.cpp',
-	# 'gameplay/plays/test_plays/TestPivotKick.cpp',
-	'gameplay/plays/test_plays/TestDefense.cpp',
-    # 'gameplay/plays/test_plays/TestMinVelocity.cpp',
-    'gameplay/plays/test_plays/TestReceivingPointPicking.cpp',
-    'gameplay/plays/test_plays/RunAcrossTheField.cpp',
-	
-	# MotionTests
-	# 'gameplay/plays/motion_testing/TestMotion.cpp',
-
-	# demo plays/behaviors
-	'gameplay/plays/demo_plays/TestPlay.cpp',
-	'gameplay/plays/demo_plays/FollowTheLeader.cpp',
-	'gameplay/plays/demo_plays/PassPlay.cpp',
-	'gameplay/plays/demo_plays/PassShootPlay.cpp',
-	'gameplay/plays/demo_plays/LineUp.cpp',
-	'gameplay/plays/demo_plays/MotionEval.cpp',
-	'gameplay/plays/demo_plays/DemoPassing.cpp',
-	'gameplay/plays/demo_plays/DemoAttack.cpp',
-	'gameplay/plays/demo_plays/DemoCapture.cpp',
-	'gameplay/plays/demo_plays/DemoYank.cpp',
-	'gameplay/plays/demo_plays/DemoYankChip.cpp',
-	'gameplay/plays/demo_plays/DemoFling.cpp',
-	'gameplay/plays/demo_plays/DemoBump.cpp',
-	'gameplay/plays/demo_plays/DemoLineAttack.cpp',
-	'gameplay/plays/demo_plays/DemoPivotAttack.cpp',
-	'gameplay/plays/demo_plays/DemoTouchKick.cpp',
-	'gameplay/plays/demo_plays/DemoKickMeasurement.cpp',
-	'gameplay/plays/demo_plays/SolarSystem.cpp',
-
-    # Mechanical tests
-    'gameplay/plays/demo_plays/KickerEnduranceTest.cpp',
-
-	# Tech Challenges
-	'gameplay/plays/demo_plays/NavChallenge2011.cpp',
-	'gameplay/plays/demo_plays/DynamicNavigationTC.cpp',
-
-#	'gameplay/behaviors/test/MotionLeader.cpp',
-
-# Sources for modeling module
+	# Sources for modeling module
 	'modeling/BallTracker.cpp',
 	'modeling/BallFilter.cpp',
 	'modeling/RobotFilter.cpp',
 	
-	
-# Sources for motion module',
-	'motion/MotionControl.cpp',
 	
 	'ui/main_icons.qrc',
 	'ui/log_icons.qrc'
