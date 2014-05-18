@@ -6,6 +6,23 @@
 #include <stdexcept>
 
 using namespace std;
+using namespace Planning;
+
+
+#pragma mark Config
+
+REGISTER_CONFIGURABLE(Path);
+
+ConfigDouble *Planning::Path::_max_acceleration;
+ConfigDouble *Planning::Path::_max_speed;
+
+void Planning::Path::createConfiguration(Configuration *cfg) {
+    _max_acceleration = new ConfigDouble(cfg, "PathPlanner/Max Acceleration", 1);
+    _max_speed = new ConfigDouble(cfg, "PathPlanner/Max Velocity", 2.0);
+}
+
+
+#pragma mark Path
 
 Planning::Path::Path(const Geometry2d::Point& p0) {
 	points.push_back(p0);
@@ -267,12 +284,10 @@ float Planning::Path::getStartSpeed() const {
 
 bool Planning::Path::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const
 {
-	static const float Max_Linear_Speed = 1.5;
-	static const float Max_Acceleration = 2;
 	float linearPos;
 	float linearSpeed;
 
-	bool pathIsValid = TrapezoidalMotion( length(), Max_Linear_Speed, Max_Acceleration, t, startSpeed, 0, linearPos, linearSpeed);
+	bool pathIsValid = TrapezoidalMotion( length(), *_max_speed, *_max_acceleration, t, startSpeed, 0, linearPos, linearSpeed);
 
 	Geometry2d::Point direction;
 	if(!getPoint(linearPos, targetPosOut, direction)) {

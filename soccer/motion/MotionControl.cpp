@@ -43,7 +43,7 @@ void MotionControl::createConfiguration(Configuration *cfg) {
 	_angle_vel_mult	= new ConfigDouble(cfg, "MotionControl/angle/Velocity Multiplier");
 	_max_angle_w	= new ConfigDouble(cfg, "MotionControl/angle/Max w", 10);
 
-	_max_acceleration	= new ConfigDouble(cfg, "MotionControl/Max Acceleration", 0.5);
+	_max_acceleration	= new ConfigDouble(cfg, "MotionControl/Max Acceleration", 1.5);
 	_max_velocity		= new ConfigDouble(cfg, "MotionControl/Max Velocity", 2.0);
 }
 

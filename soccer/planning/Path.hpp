@@ -4,6 +4,7 @@
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
 #include "Obstacle.hpp"
+#include <Configuration.hpp>
 
 namespace Planning
 {
@@ -85,8 +86,16 @@ namespace Planning
 			void setStartSpeed(float speed);
 			void setEndSpeed(float speed);
 			float getStartSpeed() const;
+
+
+			static void createConfiguration(Configuration *cfg);
+
+
 		private:
 			float startSpeed = 0;
 			float endSpeed = 0;
+
+			static ConfigDouble *_max_acceleration;
+			static ConfigDouble *_max_speed;
 	};
 }
