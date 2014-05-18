@@ -213,9 +213,13 @@ void MotionControl::_targetVel(Point targetVel) {
 		Point targetAccel = (targetVel - _lastVelCmd) / dt ;
 		targetAccel.clamp(*_max_acceleration);
 
-		targetVel = _lastVelCmd + targetAccel * dt; 
+		targetVel = _lastVelCmd + targetAccel * dt;
 	}
 
+	//	make sure we don't send any bad values
+	if (isnan(targetVel.x) || isnan(targetVel.y)) {
+		targetVel = Point(0,0);
+	}
 
 	//	set radioTx values
 	_robot->radioTx.set_body_x(targetVel.x);
