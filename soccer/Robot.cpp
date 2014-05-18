@@ -488,6 +488,21 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 		_pathInvalidated = true;
 	}
 
+	//  invalidate path if current position is more than 15cm from the planned point
+
+	if (_path) {
+		float maxDist = 0.15;
+		Point targetPathPos;
+		Point targetVel;
+		float timeIntoPath = (float) ((timestamp() - _pathStartTime) / 1000000.0f);
+		_path->evaluate(timeIntoPath, targetPathPos, targetVel);
+		float errorPath = (targetPathPos - pos).mag();
+		if (errorPath > maxDist) {
+			_pathInvalidated = true;
+		}
+	}
+	
+	
 	//	if the destination of the current path is greater than 1cm away from the target destination,
 	//	we invalidate the path.  this situation could arise if during a previous planning, the target point
 	//	was blocked by an obstacle
