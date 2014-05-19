@@ -119,7 +119,7 @@ bool Gameplay::Behaviors::Bump::run()
 		//We want to move in the direction of the target without path planning
 		double speed =  robot->vel.mag() + *_accel_bias; // enough of a bias to force it to accelerate
 		robot->worldVelocity(driveDirection.normalized() * speed);
-		robot->angularVelocity(0.0);
+		robot->face(ball().pos);
 	} else {
 		robot->addText("Done");
 		return false;
