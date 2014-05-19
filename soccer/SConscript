@@ -39,6 +39,8 @@ srcs = [
 	'gameplay/tactics/ChipCalibration.cpp',
 	'gameplay/behaviors/Capture.cpp',
 
+	# python
+	'python/EmbeddedInstance.cpp',
 
 	# Field evaluation
 	'gameplay/evaluation/WindowEvaluator.cpp',
@@ -72,6 +74,10 @@ uics = env.Uic4([
 e = env.Clone()
 e.Append(CPPPATH=['#/soccer', Dir('ui')])
 e.Append(LIBS=['bfd', 'GLU'])
+
+# python stuff
+e.Append(LIBS=['boost_python-py33'])
+e.ParseConfig('pkg-config --cflags --libs python3')
 
 e.ParseConfig('pkg-config --cflags --libs libusb-1.0')
 
