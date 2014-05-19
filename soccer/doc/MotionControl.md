@@ -10,10 +10,8 @@ Motion Control encompasses the tasks related to moving physical robots on the fi
 
 The following classes play a role in motion control on the computer:
 
-* FaceTarget
-* MotionTarget
+* MotionConstraints
 * OurRobot
-* MotionCommand
 * MotionControl
 * Pid
 
@@ -26,7 +24,7 @@ Here's a basic outline of how the motion control system currently works:
 		* `Play.run()`
 			* `Behavior.run()`
 				* `OurRobot.move(2dpoint)`
-					* sets `targetPosition` in `OurRobot._motionConstraints`
+					* sets `targetPos` in `OurRobot._motionConstraints`
 		* `OurRobot.replanIfNeeded()`
 			* looks at _motionConstraints and uses RRTPlanner to generate a new plan if needed
 	* `OurRobot.motionControl().run()`
