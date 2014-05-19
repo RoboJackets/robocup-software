@@ -22,5 +22,6 @@ log_info
 libNxCooking.so.1
 libPhysXCore.so.1
 libPhysXLoader.so.1
+robocup.so
 
 /qt_vehicle_demo

@@ -74,6 +74,9 @@ e.Append(LIBS=['bfd', 'GLU'])
 
 e.ParseConfig('pkg-config --cflags --libs libusb-1.0')
 
+# build python module that the python side of things will import
+SConscript('python/SConscript')
+
 # build soccer executable
 p = e.Program('soccer', ['main.cpp'] + srcs )
 env.Depends(p, uics)
