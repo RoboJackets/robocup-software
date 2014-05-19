@@ -41,6 +41,7 @@ srcs = [
 
 	# python
 	'python/EmbeddedInstance.cpp',
+	'python/robocup-py.cpp',
 
 	# Field evaluation
 	'gameplay/evaluation/WindowEvaluator.cpp',
@@ -80,9 +81,6 @@ e.Append(LIBS=['boost_python-py33'])
 e.ParseConfig('pkg-config --cflags --libs python3')
 
 e.ParseConfig('pkg-config --cflags --libs libusb-1.0')
-
-# build python module that the python side of things will import
-SConscript('python/SConscript')
 
 # build soccer executable
 p = e.Program('soccer', ['main.cpp'] + srcs )

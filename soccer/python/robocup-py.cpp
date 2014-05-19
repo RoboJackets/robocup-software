@@ -1,4 +1,5 @@
-#include <boost/python.hpp>
+#include "robocup-py.hpp"
+
 using namespace boost::python;
 
 #include <Geometry2d/Point.hpp>
