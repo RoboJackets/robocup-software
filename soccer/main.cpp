@@ -20,6 +20,9 @@
 //#include "debug.hpp"
 #include "Configuration.hpp"
 
+
+#include "python/EmbeddedInstance.hpp"	//	TODO: remove
+
 using namespace std;
 
 ////BEGIN memory debugging
@@ -322,6 +325,10 @@ int main (int argc, char* argv[])
 	processor->start();
 	
 	win->showMaximized();
+
+
+	//	TODO: remove
+	EmbeddedInstance::initialize();
 
 	int ret = app.exec();
 	processor->stop();
