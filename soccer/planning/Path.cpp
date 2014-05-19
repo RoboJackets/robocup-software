@@ -13,12 +13,12 @@ using namespace Planning;
 
 REGISTER_CONFIGURABLE(Path);
 
-ConfigDouble *Planning::Path::_max_acceleration;
-ConfigDouble *Planning::Path::_max_speed;
+ConfigDouble *Path::_max_acceleration;
+ConfigDouble *Path::_max_speed;
 
-void Planning::Path::createConfiguration(Configuration *cfg) {
-    _max_acceleration = new ConfigDouble(cfg, "PathPlanner/Max Acceleration", 1);
-    _max_speed = new ConfigDouble(cfg, "PathPlanner/Max Velocity", 2.0);
+void Path::createConfiguration(Configuration *cfg) {
+    _max_acceleration   = new ConfigDouble(cfg, "PathPlanner/Max Acceleration", 1);
+    _max_speed          = new ConfigDouble(cfg, "PathPlanner/Max Velocity", 2.0);
 }
 
 
