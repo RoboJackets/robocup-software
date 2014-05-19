@@ -5,6 +5,7 @@ Import('*')
 e = env.Clone()
 
 e.Append(LIBS=['boost_python-py33'])
+e.Append(CPPPATH=['#/soccer'])
 e.ParseConfig('pkg-config --cflags python3')
 
 # name the output 'robocup.so', not 'librobocup.so'
