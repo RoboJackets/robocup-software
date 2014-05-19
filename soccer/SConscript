@@ -51,6 +51,7 @@ srcs = [
 
 	# Sources for motion module',
 	'motion/MotionControl.cpp',
+	'motion/TrapezoidalMotion.cpp',
 
 
 	# Sources for modeling module

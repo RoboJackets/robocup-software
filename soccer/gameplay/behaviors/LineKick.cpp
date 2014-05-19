@@ -56,9 +56,6 @@ void Gameplay::Behaviors::LineKick::restart()
 	_state = State_Setup;
 	use_chipper = false;
 	kick_power = 255;
-	scaleAcc = 1.0;
-	scaleSpeed = 1.0;
-	scaleW = 1.0;
 	ballClose = false;
 	kick_ready = false;
 }
@@ -169,14 +166,10 @@ bool Gameplay::Behaviors::LineKick::run()
 		Point driveDirection = robotToBall;
 
 		// Drive directly into the ball
-		double speed = min(robot->vel.mag() + (*_accel_bias * scaleAcc), _max_speed->value()); // enough of a bias to force it to accelerate
+		double speed = min(robot->vel.mag() + *_accel_bias, _max_speed->value()); // enough of a bias to force it to accelerate
 		robot->worldVelocity(driveDirection.normalized() * speed);
 
-		// scale everything to adjust precision
-		robot->setWScale(scaleW);
-		robot->setVScale(scaleSpeed);
-
-		robot->face(ballPos);
+		robot->face(target);
 
 		if (use_chipper)
 		{
