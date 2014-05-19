@@ -202,7 +202,7 @@ bool Gameplay::Behaviors::PivotKick::run()
 		_accuracy -= *_accuracy_Delta;
 		_accuracy = max(0.0f, _accuracy);
 
-		robot->pivot(*_aim_Speed * (_ccw ? 1 : -1), ball().pos);
+		robot->face(ball().pos);
 		if(use_chipper && _land_on_target)
 			robot->dribble(chip_calib.dribble_speed());
 		else

@@ -102,52 +102,33 @@ private:
 	RobotFilter *_filter;
 };
 
-/**
- * @brief Specifies a location that a robot should attempt to get to
- */
-class MotionTarget {
-public:
-	///	The point on the field that the robot should get to
-	Geometry2d::Point pos;
-};
 
 /**
- * @brief Specifies which direction a robot should face
- * @details A face target consists of a 2d point on the field that a robot should
- *          face towards.
+ * This class contains the motion constraints that the high-level logic sets for a robot.
+ * For position: set EITHER @motionTarget OR @targetWorldVel.
+ * For angle: set EITHER @targetAngleVel OR @faceTarget.
  */
-class FaceTarget {
-public:
-	///	The point on the field that the robot should attempt to face towards
-	Geometry2d::Point pos;
-};
+struct MotionConstraints {
 
-class MotionCommand
-{
-	public:
-		MotionCommand()
-		{
-			vScale = 1.0;
-			wScale = 1.0;
-		}
+	/**
+	 * Position
+	 */
 
-		// Any of these optionals may be set before motion control runs.
-		// Motion control will fill in the blanks.  This allows bypassing parts of motion control.
-		
-		boost::optional<MotionTarget> target;
-		boost::optional<FaceTarget> face;
-		
-		float vScale;
-		float wScale;
-		
-		/// Velocity in world coordinates
-		boost::optional<Geometry2d::Point> worldVel;
-		
-		/// Velocity in body coordinates (the front of the robot is +X)
-		boost::optional<Geometry2d::Point> bodyVel;
-		
-		/// Angular velocity in rad/s counterclockwise
-		boost::optional<float> angularVelocity;
+	///	A point on the field that the robot should use path-planning to get to
+	boost::optional<Geometry2d::Point> targetPos;
+	
+	/// Set the velocity in world coordinates directly (circumvents path planning)
+	boost::optional<Geometry2d::Point> targetWorldVel;
+
+	/**
+	 * Angle
+	 */
+	
+	/// Angular velocity in rad/s counterclockwise
+	boost::optional<float> targetAngleVel;
+
+	///	A global point on the field that the robot should face towards
+	boost::optional<Geometry2d::Point> faceTarget;
 };
 
 /**
@@ -160,8 +141,7 @@ class MotionCommand
  * - avoidance of the ball and other robots (this info is fed to the path planner)
  * - playing the GT fight song
  */
-class OurRobot: public Robot
-{
+class OurRobot: public Robot {
 public:
 	typedef boost::array<float,Num_Shells> RobotMask;
 
@@ -203,9 +183,25 @@ public:
 	
 	// Commands
 
-	void setVScale(float scale = 1.0); /// scales the velocity
-	void setWScale(float scale = 0.5); /// scales the angular velocity
-	void resetMotionCommand();  /// resets all motion commands for the robot
+	const MotionConstraints &motionConstraints() const {
+		return _motionConstraints;
+	}
+
+	const boost::optional<Planning::Path> &path() const {
+		return _path;
+	}
+
+	//  FIXME: document
+	void setPath(Planning::Path path);
+
+	//	FIXME: document
+	void setMotionConstraints(const MotionConstraints &constraints);
+
+	///	clears old radioTx stuff, resets robot debug text, and clears local obstacles
+	void resetForNextIteration();
+
+	///	clears all fields in the robot's MotionConstraints object, causing the robot to stop
+	void resetMotionConstraints();
 
 	/** Stop the robot */
 	void stop();
@@ -214,36 +210,16 @@ public:
 	 * @brief Move to a given point using the default RRT planner
 	 * @param stopAtEnd UNUSED
 	 */
-	void move(Geometry2d::Point goal, bool stopAtEnd = false);
+	void move(const Geometry2d::Point &goal, bool stopAtEnd = false);
 
-	/**
-	 * @brief Move along a path for waypoint-based control
-	 * @param stopAtEnd UNUSED
-	 */
-	void move(const std::vector<Geometry2d::Point>& path, bool stopAtEnd = false);
-
-	/**
-	 * Pivot around a point at a fixed radius and direction (CCW or CW),
-	 * specified by the magnitude of the angular velocity.
-	 * Used primarily for aiming around a ball.  Note that this will
-	 * not handle obstacle avoidance.
-	 */
-	void pivot(double w, double radius);
-	
-	void pivot(double w, const Geometry2d::Point& center)
-	{
-		pivot(w, (pos - center).mag());
+	uint64_t pathStartTime() const {
+		return _pathStartTime;
 	}
 
 	/**
-	 * Move using direct velocity control by specifying
-	 * translational and angular velocity.
-	 * 
-	 * All velocities are in m/s
+	 * Sets the worldVelocity in the robot's MotionConstraints
 	 */
-	void bodyVelocity(const Geometry2d::Point& v);
-	void worldVelocity(const Geometry2d::Point& v);
-	void angularVelocity(double w);
+	void worldVelocity(const Geometry2d::Point &targetWorldVel);
 
 	/*
 	 * Enable dribbler (0 to 127)
@@ -253,7 +229,7 @@ public:
 	/**
 	 * Face a point while remaining in place
 	 */
-	void face(Geometry2d::Point pt);
+	void face(const Geometry2d::Point &pt);
 
 	/**
 	 * Remove the facing command
@@ -342,10 +318,9 @@ public:
 	 *
 	 * Needs a set of global obstacles to use - assuming field regions and goal
 	 */
-	void execute(const ObstacleGroup& global_obstacles);
+	//	FIXME: rewrite comment to describe new behavior
+	void replanIfNeeded(const ObstacleGroup& global_obstacles);
 
-	/** motion command - sent to point/wheel controllers, is valid when _planning_complete is true */
-	MotionCommand cmd;
 
 	/** status evaluations for choosing robots in behaviors - combines multiple checks */
 	bool chipper_available() const;
@@ -361,10 +336,6 @@ public:
 	Packet::HardwareVersion hardwareVersion() const;
 
 	uint64_t lastKickTime() const;
-
-	/** velocity specification for direct velocity control */
-	Geometry2d::Point cmd_vel;
-	float cmd_w;
 
 	/** radio packets */
 	Packet::RadioTx::Robot radioTx;
@@ -385,6 +356,9 @@ public:
 		return _state;
 	}
 
+	/**
+	 * @param age Time (in microseconds) that defines non-fresh
+	 */
 	bool rxIsFresh(uint64_t age = 500000) const;
 
 	/**
@@ -411,21 +385,20 @@ protected:
 	
 	SystemState *_state;
 
-	uint64_t _lastChargedTime; // TODO: make this a boost pointer to avoid update() function
-
-	/** Planning components for delayed planning */
-	bool _usesPathPlanning;
-	boost::optional<Geometry2d::Point> _delayed_goal;   /// goal from move command
-
 	// obstacle management
 	ObstacleGroup _local_obstacles; /// set of obstacles added by plays
 	RobotMask _self_avoid_mask, _opp_avoid_mask;  /// masks for obstacle avoidance
-	float _avoidBallRadius; /// radius of obstacle
+	float _avoidBallRadius; /// radius of ball obstacle
 
-	Planning::Path _path;	/// latest path
+	MotionConstraints _motionConstraints;
+
 	Planning::RRTPlanner *_planner;	/// single-robot RRT planner
+	boost::optional<Planning::Path> _path;	/// latest path
+	uint64_t _pathStartTime;
 
-	// planning functions
+	///	whenever the constraints for the robot path are changed, this is set to true to trigger a replan
+	bool _pathInvalidated;
+
 
 	/**
 	 * Creates a set of obstacles from a given robot team mask,
@@ -450,22 +423,11 @@ protected:
 	 */
 	ObstaclePtr createBallObstacle() const;
 
-	/**
-	 * Given a path, finds the first local goal through mixing to create
-	 * a point target for the PointController.  Finds the closest point
-	 * on the path, and mixes from there
-	 *
-	 * @param pose is the current robot pos
-	 * @param path is the path
-	 * @param obstacles are a set of obstacles to use
-	 */
-	Geometry2d::Point findGoalOnPath(const Geometry2d::Point& pos, const Planning::Path& path,
-			const ObstacleGroup& obstacles = ObstacleGroup());
-
 
 private:
 	uint32_t _lastKickerStatus;
 	uint64_t _lastKickTime;
+	uint64_t _lastChargedTime;
 
 	Packet::RadioRx _radioRx;
 };
@@ -475,8 +437,7 @@ private:
  * @details This is a subclass of Robot, but really doesn't provide
  * any extra functionality.
  */
-class OpponentRobot: public Robot
-{
+class OpponentRobot: public Robot {
 public:
 	OpponentRobot(unsigned int shell): Robot(shell, false) {}
 };

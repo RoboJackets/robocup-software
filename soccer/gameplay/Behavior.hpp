@@ -5,6 +5,7 @@
 #include <Configuration.hpp>
 #include <Robot.hpp>
 
+
 namespace Gameplay
 {
 	class Behavior

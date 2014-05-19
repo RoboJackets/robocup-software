@@ -249,7 +249,7 @@ void Gameplay::GameplayModule::run()
 	{
 		if (robot) {
 			robot->update();
-			robot->resetMotionCommand();
+			robot->resetForNextIteration();
 		}
 	}
 
@@ -328,9 +328,9 @@ void Gameplay::GameplayModule::run()
 		if (r && r->visible) {
 			/// set obstacles for the robots
 			if (_goalie && _goalie->robot && r->shell() == _goalie->robot->shell())
-				r->execute(global_obstacles); /// just for goalie
+				r->replanIfNeeded(global_obstacles); /// just for goalie
 			else
-				r->execute(obstacles_with_goal); /// all other robots
+				r->replanIfNeeded(obstacles_with_goal); /// all other robots
 		}
 	}
 

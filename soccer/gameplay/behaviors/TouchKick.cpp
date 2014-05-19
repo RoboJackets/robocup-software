@@ -37,9 +37,6 @@ void Gameplay::Behaviors::TouchKick::restart()
 	_state = State_Setup;
 	use_chipper = false;
 	kick_power = 255;
-	scaleAcc = 1.0;
-	scaleSpeed = 1.0;
-	scaleW = 1.0;
 	ballClose = false;
 }
 
