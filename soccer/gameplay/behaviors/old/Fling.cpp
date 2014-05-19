@@ -126,7 +126,10 @@ bool Gameplay::Behaviors::Fling::run()
 		
 		// choose the direction of the spin
 		float w = (robot->pointInRobotSpace(target).y > 0) ? spin_speed : -1.0 * spin_speed;
-		robot->angularVelocity(w);
+		
+		// robot->angularVelocity(w);
+		//	FIXME: when angularVelocity() was removed, this behavior got broken :(
+		//		if someone would show it some love and use the new motion commands here, that'd be great!
 
 	} else {
 		robot->addText("Done");

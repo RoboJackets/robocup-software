@@ -1,10 +1,28 @@
 
 #include "Path.hpp"
 #include "Utils.hpp"
+#include "motion/TrapezoidalMotion.hpp"
 
 #include <stdexcept>
 
 using namespace std;
+using namespace Planning;
+
+
+#pragma mark Config
+
+REGISTER_CONFIGURABLE(Path);
+
+ConfigDouble *Path::_max_acceleration;
+ConfigDouble *Path::_max_speed;
+
+void Path::createConfiguration(Configuration *cfg) {
+    _max_acceleration   = new ConfigDouble(cfg, "PathPlanner/Max Acceleration", 1);
+    _max_speed          = new ConfigDouble(cfg, "PathPlanner/Max Velocity", 2.0);
+}
+
+
+#pragma mark Path
 
 Planning::Path::Path(const Geometry2d::Point& p0) {
 	points.push_back(p0);
@@ -30,7 +48,7 @@ float Planning::Path::length(unsigned int start) const
     return length;
 }
 
-Geometry2d::Point::Optional Planning::Path::start() const
+boost::optional<Geometry2d::Point> Planning::Path::start() const
 {
 		if (points.empty())
 			return boost::none;
@@ -38,7 +56,7 @@ Geometry2d::Point::Optional Planning::Path::start() const
 			return points.front();
 }
 
-Geometry2d::Point::Optional Planning::Path::destination() const
+boost::optional<Geometry2d::Point> Planning::Path::destination() const
 {
 		if (points.empty())
 			return boost::none;
@@ -223,4 +241,60 @@ float Planning::Path::length(const Geometry2d::Point &pt) const
 	}
 	
 	return length;
+}
+
+bool Planning::Path::getPoint(float distance ,Geometry2d::Point &position, Geometry2d::Point &direction) const
+{
+	if (points.empty())
+	{
+		return false;
+	}
+	for (unsigned int i = 0; i < (points.size() - 1); ++i)
+    {
+    	Geometry2d::Point vector(points[i + 1] - points[i]);
+		//Geometry2d::Segment s(points[i], points[i+1]);
+		
+		float vectorLength = vector.mag();
+		distance -= vectorLength;
+		
+		if(distance<=0) 
+		{
+			distance += vectorLength;
+			position = points[i] + (vector * (distance / vectorLength));
+			direction = vector.normalized();
+			return true;
+		}
+	}
+	return false;
+
+}
+
+void Planning::Path::setStartSpeed(float speed) {
+	startSpeed = speed;
+}
+
+void Planning::Path::setEndSpeed(float speed) {
+	endSpeed = speed;
+}
+
+float Planning::Path::getStartSpeed() const {
+	return startSpeed;
+}
+
+
+bool Planning::Path::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const
+{
+	float linearPos;
+	float linearSpeed;
+
+	bool pathIsValid = TrapezoidalMotion( length(), *_max_speed, *_max_acceleration, t, startSpeed, 0, linearPos, linearSpeed);
+
+	Geometry2d::Point direction;
+	if(!getPoint(linearPos, targetPosOut, direction)) {
+		return false;
+	}
+
+	targetVelOut = direction * linearSpeed;
+
+	return pathIsValid;
 }

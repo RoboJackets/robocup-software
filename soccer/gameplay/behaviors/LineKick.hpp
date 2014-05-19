@@ -31,11 +31,6 @@ namespace Gameplay
 				bool kick_ready;
 				bool enable_kick;
 
-				// scale the kicking parameters to adjust speed/precision of the kick
-				float scaleSpeed;
-				float scaleAcc;
-				float scaleW;
-
 			private:
 				enum
 				{

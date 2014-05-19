@@ -515,8 +515,8 @@ void Processor::run()
 				Packet::LogFrame::Robot *log = _state.logFrame->add_self();
 				*log->mutable_pos() = r->pos;
 				*log->mutable_vel() = r->vel;
-				*log->mutable_cmd_vel() = r->cmd_vel;
-				log->set_cmd_w(r->cmd_w);
+				// *log->mutable_cmd_vel() = r->cmd_vel;
+				// log->set_cmd_w(r->cmd_w);
 				log->set_shell(r->shell());
 				log->set_angle(r->angle);
 				
