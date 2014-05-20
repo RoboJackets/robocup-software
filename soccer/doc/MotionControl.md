@@ -10,10 +10,8 @@ Motion Control encompasses the tasks related to moving physical robots on the fi
 
 The following classes play a role in motion control on the computer:
 
-* FaceTarget
-* MotionTarget
+* MotionConstraints
 * OurRobot
-* MotionCommand
 * MotionControl
 * Pid
 
@@ -26,16 +24,10 @@ Here's a basic outline of how the motion control system currently works:
 		* `Play.run()`
 			* `Behavior.run()`
 				* `OurRobot.move(2dpoint)`
-					* sets value of `_delayed_goal`
-		* `OurRobot.execute()`
-			* feeds _delayed_goal to the RRT planner to replan (if necessary)
-			* sets `cmd.target.pos` using `findGoalOnPath()`
-			* `findGoalOnPath()` finds the point on `_path` closest to the robot's current position, then moves it along the path a bit so the robot follows the path
+					* sets `targetPos` in `OurRobot._motionConstraints`
+		* `OurRobot.replanIfNeeded()`
+			* looks at _motionConstraints and uses RRTPlanner to generate a new plan if needed
 	* `OurRobot.motionControl().run()`
-		* `positionPD()`
-			* sets the velocities in the robot's MotionCommand
-		* `anglePD()`
-			* sets angularVelocity of robot's MotionCommand
 		* sets body_x, body_y, and body_w on the robot's `RadioTx::Robot` packet
 	* `Processor.sendRadioData()`
 		* builds the RadioTx packet by conglomerating each `OurRobot`'s `RadioTx::Robot` packet

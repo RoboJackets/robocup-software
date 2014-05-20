@@ -15,8 +15,6 @@ namespace Geometry2d
 	class Point
 	{
 		public:
-			typedef boost::optional<Point> Optional;
-
 			/**
 			default constrctor.
 			initializes point to (0,0)
@@ -69,6 +67,18 @@ namespace Geometry2d
 			{
 				return Point(x + other.x, y + other.y);
 			}
+
+			/**
+			 * see operator+
+			 * does vector division, note the operator
+			 * without parameter, it is the negative
+			 */
+			Point operator/(Point other) const
+			{
+				return Point(x / other.x, y / other.y);
+			}
+
+
 			/**
 			 * see operator+
 			 * does vector subtraction, note the operator
@@ -206,6 +216,19 @@ namespace Geometry2d
 			float magsq() const
 			{
 				return x * x + y * y;
+			}
+
+			/**
+			 * @brief Restricts the point to a given magnitude
+			 * @param max The magnitude to restrict the vector
+			 */
+			void clamp(float max)
+			{	
+				if (mag() > max) {
+					float ratio = mag() / max;
+					x = x / ratio;
+					y = y / ratio;
+				}
 			}
 			
 			/**

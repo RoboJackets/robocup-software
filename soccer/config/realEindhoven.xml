@@ -537,4 +537,22 @@
  <PassingContext>
   <Receiver_Choice_Hysteresis value="0.2"/>
  </PassingContext>
+ <SolarSystem>
+  <speed value="0.08"/>
+ </SolarSystem>
+ <MotionControl>
+  <pos>
+   <PID_p value="6.5"/>
+   <PID_i value="0.0001"/>
+   <PID_d value="2"/>
+   <Velocity_Multiplier value="1"/>
+  </pos>
+  <angle>
+   <PID_p value="0.1"/>
+   <PID_i value="0.0001"/>
+   <PID_d value="0"/>
+   <Velocity_Multiplier value="0"/>
+   <Max_w value="5"/>
+  </angle>
+ </MotionControl>
 </config>

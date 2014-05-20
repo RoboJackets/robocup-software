@@ -33,9 +33,6 @@ namespace Gameplay
 
 				// scale the kicking parameters to adjust speed/precision of the kick
 				float targetRot;
-				float scaleSpeed;
-				float scaleAcc;
-				float scaleW;
 
 			private:
 				enum
