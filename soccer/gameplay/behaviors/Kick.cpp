@@ -101,13 +101,6 @@ bool Kick::findShot(const Geometry2d::Segment& segment, Geometry2d::Segment& res
 	}
 }
 
-void Kick::setLineKickVelocityScale(double scale_speed, double scale_acc, double scale_w)
-{
-	_lineKick.scaleSpeed = scale_speed;
-	_lineKick.scaleAcc = scale_acc;
-	_lineKick.scaleW = scale_w;
-}
-
 bool Kick::run() {
 	if (!robot || !robot->visible)
 	{

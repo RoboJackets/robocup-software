@@ -4,6 +4,7 @@
 
 using namespace std;
 using namespace Geometry2d;
+using namespace Planning;
 
 /* ************************************************************************* */
 TEST( testPath, nearestSegment) {
@@ -85,5 +86,29 @@ TEST( testPath, startFrom3 ) {
 	ASSERT_EQ(5, act.size());
 	EXPECT_TRUE(pt == act.points[0]);
 //	EXPECT_TRUE(p1 == act.points[1]); // fails
+}
+
+TEST(Path, evaluate) {
+	Point p0(1,1), p1(1, 2), p2(2, 2);
+
+	Path path;
+	path.points.push_back(p0);
+	path.points.push_back(p1);
+	path.points.push_back(p2);
+
+	Point posOut, velOut;
+	bool pathValid;
+
+	//	path should be invalid and at start state when t < 0
+	pathValid = path.evaluate(-1, posOut, velOut);
+	EXPECT_FLOAT_EQ((posOut - p0).mag(), 0);
+	EXPECT_FLOAT_EQ((velOut).mag(), 0);
+	EXPECT_FALSE(pathValid);
+
+	//	path should be invalid and at end state when t > duration
+	pathValid = path.evaluate(1000, posOut, velOut);
+	EXPECT_FLOAT_EQ((posOut - p2).mag(), 0);
+	EXPECT_FLOAT_EQ(velOut.mag(), 0);
+	EXPECT_FALSE(pathValid);
 }
 
