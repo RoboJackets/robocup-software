@@ -1,5 +1,4 @@
 #include <LogViewer.hpp>
-#include <debug.hpp>
 
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 
@@ -23,8 +22,6 @@ void usage(const char *prog)
 
 int main(int argc, char *argv[])
 {
-	debugInit("soccer");
-	
 	QApplication app(argc, argv);
 	
 	if (argc != 2)

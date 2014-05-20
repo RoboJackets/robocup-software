@@ -12,7 +12,6 @@ srcs = [
 	'FieldView.cpp',
 	'SimFieldView.cpp',
 	'Configuration.cpp',
-	'debug.cpp',
 	'StripChart.cpp',
 	'Robot.cpp',
 	'VisionReceiver.cpp',
@@ -191,7 +190,6 @@ p = e.Program('log_viewer', [
 	'FieldView.cpp',
 	'ProtobufTree.cpp',
 	'StripChart.cpp',
-	'debug.cpp',
 	'ui/log_icons.qrc'
 ])
 env.Depends(p, env.Uic4('ui/LogViewer.ui'))

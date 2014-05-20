@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 
-#include <debug.hpp>
 #include <Network.hpp>
 #include <LogUtils.hpp>
 #include <Constants.hpp>
