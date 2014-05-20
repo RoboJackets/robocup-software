@@ -17,7 +17,6 @@
 
 #include "PlayConfigTab.hpp"
 #include "MainWindow.hpp"
-//#include "debug.hpp"
 #include "Configuration.hpp"
 
 
@@ -128,8 +127,6 @@ void usage(const char* prog)
 int main (int argc, char* argv[])
 {
 	printf("Starting Soccer...\n");
-
-//	debugInit(argv[0]);  // FIXME: re-enable debugging
 
 	// Seed the large random number generator
 	long int seed = 0;
