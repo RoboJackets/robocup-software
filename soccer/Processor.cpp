@@ -487,9 +487,9 @@ void Processor::run()
 				if ((_manualID >= 0 && (int)robot->shell() == _manualID) || !_joystick->autonomous() || _state.gameState.halt())
 				{
 					robot->motionControl()->stopped();
-				}
-				
-				robot->motionControl()->run();
+				} else {
+					robot->motionControl()->run();	
+				}	
 			}
 		}
 
