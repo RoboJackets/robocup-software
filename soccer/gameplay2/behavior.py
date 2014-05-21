@@ -6,7 +6,7 @@ import fsm
 # FIXME: parent and child behaviors?
 
 
-# a Behavior is an action that a SINGLE robot performs
+# a Behavior is an abstract superclass for skill, play, etc
 class Behavior(fsm.StateMachine):
 
     # These are the core states of the Behavior class
@@ -103,14 +103,6 @@ class Behavior(fsm.StateMachine):
     @property
     def is_continuous(self):
         return self._is_continuous
-
-
-    @property
-    def robot(self):
-        return self._robot
-    @robot.setter
-    def robot(self, value):
-        self._robot = value
 
 
     def __str__(self):
