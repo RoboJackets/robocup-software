@@ -1,5 +1,8 @@
 import logging
 from enum import Enum
+import graphviz as gv
+import subprocess
+
 
 
 # generic hierarchial state machine class
@@ -50,11 +53,11 @@ class StateMachine:
 
 
     # if you add a transition that already exists, the old one will be overwritten
-    def add_transition(self, from_state, to_state, condition):
+    def add_transition(self, from_state, to_state, condition, event_name):
         if from_state not in self._transitions:
             self._transitions[from_state] = {}
 
-        self._transitions[from_state][to_state] = condition
+        self._transitions[from_state][to_state] = {'condition': condition, 'name': event_name}
 
 
     # sets @state to the new_state given
@@ -62,7 +65,7 @@ class StateMachine:
     def transition(self, new_state):
         method_name = "on_enter_" + new_state.name
         try:
-            getattr(self, method_name)()    # call the transition TO method if it exists
+            getattr(self, method_name)['condition']()    # call the transition TO method if it exists
         except AttributeError:
             pass
 
@@ -89,6 +92,31 @@ class StateMachine:
             state = self._state_hierarchy[state]
 
         return None
+
+
+    # returns a graphviz.Digraph object
+    def as_graphviz(self):
+        g = gv.Digraph(self.__class__.__name__)
+
+        for state in self._state_hierarchy:
+            g.node(state.name)
+
+        for start in self._transitions:
+            for end, event in self._transitions[start].items():
+                g.edge(start.name, end.name, label=event['name'])
+
+        return g
+
+
+    # returns a buffer containing the source code needed to generate a representative graphviz graph
+    def to_graphviz(self):
+        return self.as_graphviz().source.encode('latin-1')
+
+
+    # writes a png file of the graphviz output to the specified location
+    def write_diagram_png(self, filename):
+        p = subprocess.Popen(['dot', '-Tpng', '-o' + filename], stdin=subprocess.PIPE)
+        p.communicate(input=self.to_graphviz())
 
 
     @property

@@ -16,10 +16,10 @@ class PivotKick(Behavior):
 		self.add_state(PivotKick.State.aiming, Behavior.State.running)
 		self.add_state(PivotKick.State.kicking, Behavior.State.running)
 
-		self.add_transition(Behavior.State.start, PivotKick.State.capturing, lambda: True)
-		self.add_transition(PivotKick.State.capturing, PivotKick.State.aiming, lambda: True)
-		self.add_transition(PivotKick.State.aiming, PivotKick.State.kicking, lambda: True)
-		self.add_transition(PivotKick.State.kicking, Behavior.State.completed, lambda: True)
+		self.add_transition(Behavior.State.start, PivotKick.State.capturing, lambda: True, 'dummy')
+		self.add_transition(PivotKick.State.capturing, PivotKick.State.aiming, lambda: True, 'dummy')
+		self.add_transition(PivotKick.State.aiming, PivotKick.State.kicking, lambda: True, 'dummy')
+		self.add_transition(PivotKick.State.kicking, Behavior.State.completed, lambda: True, 'dummy')
 
 
 	def execute_capturing(self):

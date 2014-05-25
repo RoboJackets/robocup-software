@@ -24,14 +24,16 @@ class TimedBehavior(Behavior):
         self._time_limit = time_limit
         self._start_time = None
 
-        self.add_transition(Behavior.State.start, Behavior.State.running, lambda: True)
+        self.add_transition(Behavior.State.start, Behavior.State.running, lambda: True, 'immediately')
         self.add_transition(Behavior.State.running, TimedBehavior.State.timed_out,
             lambda:
-                time.time() - self.start_time > self.time_limit
+                time.time() - self.start_time > self.time_limit,
+            'time runs out'
             )
         self.add_transition(Behavior.State.running, Behavior.State.completed,
             lambda:
-                self.behavior.is_in_state(Behavior.State.completed)
+                self.behavior.is_in_state(Behavior.State.completed),
+            'subbehavior completed'
             )
 
 
