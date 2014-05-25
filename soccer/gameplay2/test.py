@@ -6,6 +6,12 @@ from behavior_sequence import *
 from time import *
 
 
+
+
+for b in [PivotKick(), BehaviorSequence([PivotKick()]), TimedBehavior(PivotKick(), 2)]:
+	b.write_diagram_png(b.__class__.__name__ + '.png')
+
+
 seq2 = BehaviorSequence([PivotKick(), PivotKick(), PivotKick()])
 bhvr = BehaviorSequence([PivotKick(), TimedBehavior(PivotKick(), 5.8), PivotKick(), seq2])
 bhvr.robot = 1
