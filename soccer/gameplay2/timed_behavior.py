@@ -24,26 +24,32 @@ class TimedBehavior(Behavior):
         self._time_limit = time_limit
         self._start_time = None
 
+        self.add_transition(Behavior.State.start, Behavior.State.running, lambda: True)
+        self.add_transition(Behavior.State.running, TimedBehavior.State.timed_out,
+            lambda:
+                time.time() - self.start_time > self.time_limit
+            )
+        self.add_transition(Behavior.State.running, Behavior.State.completed,
+            lambda:
+                self.behavior.is_in_state(Behavior.State.completed)
+            )
+
+
+    def on_enter_timed_out(self):
+        self.behavior.terminate()
+
 
     def execute_start(self):
         self._start_time = time.time()
-        self.transition(Behavior.State.running)
 
 
     def execute_running(self):
-        if self.behavior.is_done_running():
-            self.transition(self.behavior.behavior_state)
-        else:
-            if time.time() - self.start_time > self.time_limit:
-                self.transition(TimedBehavior.State.timed_out)
-                self.behavior.terminate()
-            else:
-                self.behavior.run()
+        self.behavior.run()
 
 
-    def terminate(self):
-        self.behavior.terminate()
-        super().terminate()
+    def on_enter_cancelled(self):
+        if not self.behavior.is_done_running():
+            self.behavior.terminate()
 
 
     @property

@@ -21,23 +21,28 @@ class BehaviorSequence(Behavior):
         self._behaviors = behaviors
         self._current_behavior_index = 0
 
+        self.add_transition(Behavior.State.start, Behavior.State.running, lambda: True)
+        self.add_transition(Behavior.State.running, Behavior.State.completed,
+            lambda:
+                self._current_behavior_index >= len(self.behaviors)
+            )
+        self.add_transition(Behavior.State.running, Behavior.State.failed,
+            lambda:
+                self.current_behavior != None and self.current_behavior.is_in_state(Behavior.State.failed)
+            )
+
+
+    def on_enter_failed(self):
+        # cancel all subsequent behaviors
+        for i in range(self.current_behavior_index + 1, len(self.behaviors)):
+            self.behaviors[i].terminate()
+
 
     def execute_running(self):
         if not self.current_behavior.is_done_running():
             self.current_behavior.run()
-        else:
-            if self.current_behavior.is_in_state(Behavior.State.failed):
-                self.transition(Behavior.State.failed)
-
-                # cancel all subsequent behaviors
-                for i in range(self.current_behavior_index + 1, len(self.behaviors)):
-                    self.behaviors[i].terminate()
-
-                # FIXME: cancel all subsequent behaviors
-            elif self.current_behavior.is_in_state(Behavior.State.completed):
-                self._current_behavior_index += 1
-                if self._current_behavior_index >= len(self.behaviors):
-                    self.transition(Behavior.State.completed)
+        elif self.current_behavior.is_in_state(Behavior.State.completed):
+            self._current_behavior_index += 1
 
 
     def terminate(self):
@@ -66,6 +71,8 @@ class BehaviorSequence(Behavior):
     @property
     def current_behavior(self):
         if self.is_done_running() or self.state == Behavior.State.start:
+            return None
+        elif self.current_behavior_index >= len(self.behaviors):
             return None
         else:
             return self.behaviors[self.current_behavior_index]
