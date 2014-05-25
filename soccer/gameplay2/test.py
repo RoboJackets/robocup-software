@@ -7,7 +7,7 @@ from time import *
 
 
 seq2 = BehaviorSequence([PivotKick(), PivotKick(), PivotKick()])
-bhvr = BehaviorSequence([PivotKick(), TimedBehavior(PivotKick(), 6.8), PivotKick(), seq2])
+bhvr = BehaviorSequence([PivotKick(), TimedBehavior(PivotKick(), 5.8), PivotKick(), seq2])
 bhvr.robot = 1
 while not bhvr.is_done_running():
     print(str(bhvr) + "\n")

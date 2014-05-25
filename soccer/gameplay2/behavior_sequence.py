@@ -71,12 +71,12 @@ class BehaviorSequence(Behavior):
             return self.behaviors[self.current_behavior_index]
 
 
-    # when the sequence's robot gets set, we need to set it for all sub-behaviors
-    @Behavior.robot.setter
-    def robot(self, value):
-        self._robot = value
-        for bhvr in self.behaviors:
-            bhvr.robot = value
+    # # when the sequence's robot gets set, we need to set it for all sub-behaviors
+    # @Behavior.robot.setter
+    # def robot(self, value):
+    #     self._robot = value
+    #     for bhvr in self.behaviors:
+    #         bhvr.robot = value
 
 
     def __str__(self):

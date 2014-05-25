@@ -33,7 +33,6 @@ class Behavior(fsm.StateMachine):
 
         self._state = Behavior.State.start;
         self._is_continuous = continuous
-        self._robot = None
 
 
     def add_state(self, state, parent_state=None):
@@ -63,7 +62,7 @@ class Behavior(fsm.StateMachine):
         # FIXME: if a transition occurs during run(), we should call the new
         # state's execute method so there's not a "propogation delay" for state transitions
 
-        if self.robot != None and self.state != None:
+        if self.state != None:
             method_name = "execute_" + self.state.name
             state_method = None
             try:

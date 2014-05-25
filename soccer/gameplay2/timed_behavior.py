@@ -61,12 +61,6 @@ class TimedBehavior(Behavior):
         return self._behavior
 
 
-    @Behavior.robot.setter
-    def robot(self, robot):
-        self._robot = robot
-        self.behavior.robot = robot
-
-
     def __str__(self):
         return super().__str__() + "\n\t" + str(self.behavior)
 
