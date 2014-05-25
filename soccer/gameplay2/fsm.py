@@ -113,7 +113,7 @@ class StateMachine:
 
             if not has_children:
                 enclosing_graph = subgraphs[self._state_hierarchy[state]]
-                enclosing_graph.node(state.name)
+                enclosing_graph.node(state.name, label=state.__module__ + "::" + state.name)
 
         for state, subgraph in subgraphs.items():
             if state != None:
