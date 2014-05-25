@@ -42,10 +42,10 @@ class Behavior(fsm.StateMachine):
 
     # default implementation of the start state just takes us to the running state
     def execute_start(self):
-        self.transition(Behavior.State.running)
+        pass
 
     def execute_running(self):
-        raise NotImplementedError()
+        pass
 
     def execute_failed(self):
         pass
@@ -55,22 +55,6 @@ class Behavior(fsm.StateMachine):
     
     def execute_cancelled(self):
         pass
-
-
-    # calls execute_STATENAME()
-    def run(self):
-        # FIXME: if a transition occurs during run(), we should call the new
-        # state's execute method so there's not a "propogation delay" for state transitions
-
-        if self.state != None:
-            method_name = "execute_" + self.state.name
-            state_method = None
-            try:
-                state_method = getattr(self, method_name)
-            except AttributeError:
-                raise NotImplementedError("Behavior '" + self.__class__.__name__ + "' needs to implement '" + method_name + "()'")
-
-            state_method()
 
 
     def is_done_running(self):
