@@ -42,8 +42,8 @@ class StateMachine:
 
         # transition if an 'event' fires
         next_states = []
-        for next_state, condition in self._transitions[self.state].items():
-            if condition():
+        for next_state, transition in self._transitions[self.state].items():
+            if transition['condition']():
                 next_states += [next_state]
 
         if len(next_states) > 1:
@@ -65,7 +65,7 @@ class StateMachine:
     def transition(self, new_state):
         method_name = "on_enter_" + new_state.name
         try:
-            getattr(self, method_name)['condition']()    # call the transition TO method if it exists
+            getattr(self, method_name)()    # call the transition TO method if it exists
         except AttributeError:
             pass
 
