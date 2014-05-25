@@ -21,15 +21,15 @@ class BehaviorSequence(Behavior):
         self._behaviors = behaviors
         self._current_behavior_index = 0
 
-        self.add_transition(Behavior.State.start, Behavior.State.running, lambda: True)
+        self.add_transition(Behavior.State.start, Behavior.State.running, lambda: True, 'immediately')
         self.add_transition(Behavior.State.running, Behavior.State.completed,
             lambda:
-                self._current_behavior_index >= len(self.behaviors)
-            )
+                self._current_behavior_index >= len(self.behaviors),
+            'all subbehaviors complete')
         self.add_transition(Behavior.State.running, Behavior.State.failed,
             lambda:
-                self.current_behavior != None and self.current_behavior.is_in_state(Behavior.State.failed)
-            )
+                self.current_behavior != None and self.current_behavior.is_in_state(Behavior.State.failed),
+            'subbehavior fails')
 
 
     def on_enter_failed(self):
