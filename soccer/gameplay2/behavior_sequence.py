@@ -45,17 +45,12 @@ class BehaviorSequence(Behavior):
             self._current_behavior_index += 1
 
 
-    def terminate(self):
-        if self.is_done_running():
-            logging.warn("Attempt to terminate behavior that's already done running")
-        else:
-            first_to_cancel = self.current_behavior_index
-            if self.current_behavior != None and self.current_behavior.is_done_running():
-                first_to_cancel += 1
-            for i in range(first_to_cancel, len(self.behaviors)):
-                self.behaviors[i].terminate()
-
-            self.transition(Behavior.State.cancelled)
+    def on_enter_cancelled(self):
+        first_to_cancel = self.current_behavior_index
+        if self.current_behavior != None and self.current_behavior.is_done_running():
+            first_to_cancel += 1
+        for i in range(first_to_cancel, len(self.behaviors)):
+            self.behaviors[i].terminate()
 
 
     @property
