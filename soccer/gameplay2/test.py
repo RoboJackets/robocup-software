@@ -1,9 +1,9 @@
 from behavior import *
 from fsm import *
-from pivot_kick import *
 from timed_behavior import *
 from behavior_sequence import *
-from capture import *
+from skills.pivot_kick import *
+from skills.capture import *
 from time import *
 
 
