@@ -14,7 +14,8 @@ class StateMachine:
         self._state_hierarchy = {}
         self._transitions = {}
         self._start_state = start_state
-        self._state = self.start_state
+        self._state = None
+        self.transition(self._start_state)
 
 
     @property
