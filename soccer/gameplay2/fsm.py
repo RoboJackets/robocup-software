@@ -66,8 +66,16 @@ class StateMachine:
 
 
     # sets @state to the new_state given
+    # calls 'on_exit_STATENAME()' if it exists
     # calls 'on_enter_STATENAME()' if it exists
     def transition(self, new_state):
+        if self.state != None:
+            method_name = "on_exit_" + self.state.name
+            try:
+                getattr(self, method_name)()    # call the transition FROM method if it exists
+            except AttributeError:
+                pass
+
         method_name = "on_enter_" + new_state.name
         try:
             getattr(self, method_name)()    # call the transition TO method if it exists
