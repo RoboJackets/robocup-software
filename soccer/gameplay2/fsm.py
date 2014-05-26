@@ -4,17 +4,22 @@ import graphviz as gv
 import subprocess
 
 
-
 # generic hierarchial state machine class
 # states can have substates.  If the machine is in a state, then it is also implicitly in that state's parent state
 # this basically provides for polymorphism/subclassing of state machines
 class StateMachine:
 
-    def __init__(self):
+    def __init__(self, start_state):
         # stores all states in the form _state_hierarchy[state] = parent_state
         self._state_hierarchy = {}
-        self._state = None
         self._transitions = {}
+        self._start_state = start_state
+        self._state = self.start_state
+
+
+    @property
+    def start_state(self):
+        return self._start_state
 
 
     def add_state(self, state, parent_state=None):
@@ -113,7 +118,8 @@ class StateMachine:
 
             if not has_children:
                 enclosing_graph = subgraphs[self._state_hierarchy[state]]
-                enclosing_graph.node(state.name, label=state.__module__ + "::" + state.name)
+                shape = 'diamond' if state == self.start_state else 'ellipse'
+                enclosing_graph.node(state.name, label=state.__module__ + "::" + state.name, shape=shape)
 
         for state, subgraph in subgraphs.items():
             if state != None:

@@ -22,7 +22,7 @@ class Behavior(fsm.StateMachine):
 
 
     def __init__(self, continuous):
-        super().__init__()
+        super().__init__(start_state=Behavior.State.start)
         # add base states for Behavior
         self.add_state(Behavior.State.start)
         self.add_state(Behavior.State.running)
@@ -31,7 +31,6 @@ class Behavior(fsm.StateMachine):
             self.add_state(Behavior.State.failed)
             self.add_state(Behavior.State.cancelled)
 
-        self._state = Behavior.State.start;
         self._is_continuous = continuous
 
 
