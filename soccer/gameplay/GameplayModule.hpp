@@ -21,14 +21,6 @@ class Configuration;
  */
 namespace Gameplay
 {
-	class Play;
-	class PlayFactory;
-	
-	namespace Behaviors
-	{
-		class Goalie;
-	}
-	
 	/**
 	 * @brief Coordinator of high-level logic
 	 * 
@@ -43,7 +35,7 @@ namespace Gameplay
 	{
 		public:
 			GameplayModule(SystemState *state);
-			virtual ~GameplayModule();
+			virtual ~GameplayModule() {}
 			
 			SystemState *state() const
 			{
@@ -52,21 +44,10 @@ namespace Gameplay
 			
 			virtual void run();
 			
-			void createGoalie();
-			void removeGoalie();
-			
-			Behaviors::Goalie *goalie() const
-			{
-				return _goalie;
-			}
 
 			void goalieID(int value)
 			{
-				if(_goalieID == -1)
-					createGoalie();
 				_goalieID = value;
-				if(_goalieID == -1)
-					removeGoalie();
 			}
 			int goalieID()
 			{
@@ -116,7 +97,7 @@ namespace Gameplay
 			 */
 			QString playName()
 			{
-				return _playName;
+				return QString();	//	FIXME: implement
 			}
 			
 			/// All robots on our team that are usable by plays
@@ -141,20 +122,8 @@ namespace Gameplay
 			SystemState *_state;
 			
 			Configuration *_config;
-
-			/// The goalie behavior (may be null)
-			Behaviors::Goalie *_goalie;
 			
 			std::set<OurRobot *> _playRobots;
-			
-			/// The current play
-			std::shared_ptr<Play> _currentPlay;
-			
-			/// Factory which produced the current play
-			PlayFactory *_currentPlayFactory;
-			
-			/// True if the current play is finished and a new one should be selected during the next frame
-			bool _playDone;
 			
 			Geometry2d::TransformMatrix _ballMatrix;
 			Geometry2d::TransformMatrix _centerMatrix;
@@ -171,17 +140,8 @@ namespace Gameplay
 			
 			///	goal area
 			ObstacleGroup _goalArea;
-			
-			/// Name of the current play
-			QString _playName;
 
 			/// utility functions
-
-			/**
-			 * Checks the current play to determine if it is necessary to find a new one,
-			 * and performs necessary updates
-			 */
-			void updatePlay();
 
 			/**
 			 * Returns the current set of global obstacles, including the field
@@ -190,8 +150,7 @@ namespace Gameplay
 
 			int _our_score_last_frame;
 
-			// Board ID of the robot to assign the goalie position
+			// Shell ID of the robot to assign the goalie position
 			int _goalieID;
-
 	};
 }
