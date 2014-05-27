@@ -12,4 +12,4 @@ before_install:
 script: scons && scons test
 
 notifications:
-  email: justbuchanan@gmail.com
+  email: false
