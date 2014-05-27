@@ -11,7 +11,8 @@
 				"downloads",
 				"watchdog",
 				"firmware/external",
-				"api_docs"
+				"api_docs",
+				"__pycache__"
 			],
 			"file_exclude_patterns": [
 				".*"
