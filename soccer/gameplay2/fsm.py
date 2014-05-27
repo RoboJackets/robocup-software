@@ -48,9 +48,10 @@ class StateMachine:
 
         # transition if an 'event' fires
         next_states = []
-        for next_state, transition in self._transitions[self.state].items():
-            if transition['condition']():
-                next_states += [next_state]
+        if self.state in self._transitions:
+            for next_state, transition in self._transitions[self.state].items():
+                if transition['condition']():
+                    next_states += [next_state]
 
         if len(next_states) > 1:
             raise RuntimeError("Ambiguous fsm transitions from state'" + str(self.state) + "'.  The following states are reachable now: " + str(next_states))
