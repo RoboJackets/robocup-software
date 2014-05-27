@@ -5,8 +5,8 @@
  *      Author: matt
  */
 
-#include "ReceivePointEvaluator.hpp"
 #include "../GameplayModule.hpp"
+#include "ReceivePointEvaluator.hpp"
 #include "../../../common/Constants.hpp"
 #include <vector>
 

@@ -1,6 +1,10 @@
 
 #pragma once
 
+//	note: for an odd Qt-related issue, this python include has to come before
+//			the Qt includes (because of the 'slots' macro)
+#include <boost/python.hpp>
+
 #include <Geometry2d/Point.hpp>
 #include <planning/Obstacle.hpp>
 

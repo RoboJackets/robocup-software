@@ -1,4 +1,5 @@
 
+#include <gameplay/GameplayModule.hpp>
 #include "MainWindow.hpp"
 
 #include "PlayConfigTab.hpp"
@@ -7,7 +8,6 @@
 #include "QuaternionDemo.hpp"
 #include "radio/Radio.hpp"
 #include <Utils.hpp>
-#include <gameplay/GameplayModule.hpp>
 #include <Robot.hpp>
 
 #include <QInputDialog>

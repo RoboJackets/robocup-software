@@ -11,7 +11,6 @@
 #include <boost/make_shared.hpp>
 
 //	for python stuff
-#include <boost/python.hpp>
 #include <gameplay2/robocup-py.hpp>
 
 using namespace std;

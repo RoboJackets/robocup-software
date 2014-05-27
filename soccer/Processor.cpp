@@ -1,4 +1,5 @@
 
+#include <gameplay/GameplayModule.hpp>
 #include "Processor.hpp"
 #include "VisionReceiver.hpp"
 #include "radio/SimRadio.hpp"
@@ -17,7 +18,6 @@
 #include <Robot.hpp>
 
 #include <motion/MotionControl.hpp>
-#include <gameplay/GameplayModule.hpp>
 #include <RobotConfig.hpp>
 #include <RefereeModule.hpp>
 
