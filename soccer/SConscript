@@ -26,8 +26,7 @@ srcs = [
 
 	# Core gameplay components',
 	'gameplay/GameplayModule.cpp',
-	'python/EmbeddedInstance.cpp',
-	'python/robocup-py.cpp',
+	'gameplay2/robocup-py.cpp',
 
 	# Field evaluation
 	'gameplay/evaluation/WindowEvaluator.cpp',
