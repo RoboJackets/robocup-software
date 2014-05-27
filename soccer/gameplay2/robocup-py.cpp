@@ -1,4 +1,5 @@
 #include "robocup-py.hpp"
+#include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
 using namespace boost::python;
 
@@ -43,6 +44,10 @@ BOOST_PYTHON_MODULE(robocup)
 	class_<Ball>("Ball", init<>())
 		.def_readonly("pos", &Ball::pos)
 		.def_readonly("vel", &Ball::vel)
+	;
+
+	class_<std::vector<OurRobot *> >("OurRobotVector")
+		.def(vector_indexing_suite<std::vector<OurRobot> >())
 	;
 
 	class_<SystemState>("SystemState")

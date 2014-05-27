@@ -96,6 +96,10 @@ public:
 		return _filter;
 	}
 
+	bool operator==(const Robot &other) {
+		return shell() == other.shell();
+	}
+
 private:
 	unsigned int _shell;
 	bool _self;

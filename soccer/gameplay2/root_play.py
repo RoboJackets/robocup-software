@@ -1,5 +1,6 @@
 from play import *
 from behavior import *
+from plays.line_up import *
 import logging
 
 
@@ -14,9 +15,18 @@ class RootPlay(Play):
         self.add_transition(Behavior.State.start, Behavior.State.running, lambda: True, 'immediately')
 
 
+    def on_enter_running(self):
+        self._play = LineUp()
+
+
     def execute_running(self):
-        logging.info("RootPlay running...")
-        pass
+        # print("RootPlay running...")
+        if self.play != None:
+            self.play.run()
+
+
+    def on_exit_running(self):
+        self._play = None
 
 
     @property
@@ -27,3 +37,19 @@ class RootPlay(Play):
     @property
     def goalie_behavior(self):
         return self._goalie_behavior
+
+
+    @Play.robots.setter
+    def robots(self, robots):
+        # FIXME: assign goalie
+
+        #FIXME: call superclass setter?
+        self._robots = robots
+
+        print("root play set robots: " + str(robots))
+        for r in robots:
+            print("\trobot: " + str(r))
+
+        # pass robots to play
+        if self.play != None:
+            self.play.robots = robots
