@@ -123,12 +123,6 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
         object robocup_module((handle<>(PyImport_ImportModule("robocup"))));
         _mainPyNamespace["robocup"] = robocup_module;
 
-        //	FIXME: remove this hello world bullshit
-        handle<>ignored((PyRun_String("print(\"Hello world\")\np = robocup.Point(1, 2)\nprint(p)",
-            Py_file_input,
-            _mainPyNamespace.ptr(),
-            _mainPyNamespace.ptr())));
-
         //	FIXME: make this a relative path
         //	add gameplay directory to python import path (so import XXX) will look in the right directory
         handle<>ignored2((PyRun_String("import sys; sys.path.append('/home/robojackets/src/robocup-software-dev/soccer/gameplay2')",
@@ -283,6 +277,8 @@ void Gameplay::GameplayModule::run()
 	bool verbose = false;
 	if (verbose) cout << "Starting GameplayModule::run()" << endl;
 
+	_ballMatrix = Geometry2d::TransformMatrix::translate(_state->ball.pos);
+
 	/// perform state variable updates on robots
 	/// Currently - only the timer for the kicker charger
 	BOOST_FOREACH(OurRobot* robot, _state->self)
@@ -303,7 +299,16 @@ void Gameplay::GameplayModule::run()
 		}
 	}
 
-	_ballMatrix = Geometry2d::TransformMatrix::translate(_state->ball.pos);
+	//	FIXME: remove manualID robot?
+
+	//	tell python land what robots are available for gameplay
+	try {
+		vector<OurRobot*> *playRobotsVector = new vector<OurRobot*>(_playRobots.begin(), _playRobots.end());
+		getRootPlay().attr("robots") = playRobotsVector;
+	} catch (error_already_set) {
+        PyErr_Print();
+        throw new runtime_error("Error trying to run root play");
+    }
 
 	/// Run the current play
 	if (verbose) cout << "  Running play" << endl;
