@@ -113,7 +113,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
         PyImport_AppendInittab("robocup", &PyInit_robocup);
 
 
-        Py_Initialize();
+        Py_InitializeEx(0);
 
 
         object main_module((handle<>(borrowed(PyImport_AddModule("__main__")))));
