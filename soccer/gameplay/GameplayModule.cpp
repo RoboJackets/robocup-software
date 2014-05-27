@@ -1,11 +1,9 @@
 
 #include <gameplay/GameplayModule.hpp>
-#include <gameplay/Behavior.hpp>
-#include <gameplay/behaviors/positions/Goalie.hpp>
-#include <gameplay/Play.hpp>
 #include <Constants.hpp>
 #include <protobuf/LogFrame.pb.h>
 #include <Robot.hpp>
+#include <SystemState.hpp>
 
 #include <stdio.h>
 #include <iostream>
@@ -21,9 +19,6 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_mutex(QMutex::Recursive)
 {
 	_state = state;
-	_goalie = 0;
-	_currentPlayFactory = 0;
-	_playDone = false;
 
 	_centerMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Length / 2));
 	_oppMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Length)) *
@@ -103,11 +98,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_goalieID = -1;
 }
 
-Gameplay::GameplayModule::~GameplayModule()
-{
-	removeGoalie();
-}
-
+/*
 void Gameplay::GameplayModule::createGoalie()
 {
 	if (!_goalie)
@@ -191,6 +182,7 @@ void Gameplay::GameplayModule::updatePlay() {
 		}
 	}
 }
+*/
 
 void Gameplay::GameplayModule::clearAvoidBallRadii() {
 	BOOST_FOREACH(OurRobot* robot, _state->self)
@@ -258,59 +250,11 @@ void Gameplay::GameplayModule::run()
 		}
 	}
 
-	/// Assign the goalie and remove it from _playRobots
-	if (_goalie)
-	{
-		/// The Goalie behavior is responsible for only selecting a robot which is allowed by the rules
-		/// (no changing goalies at random times).
-		/// The goalie behavior has priority for choosing robots because it must obey this rule,
-		/// so the current play will be restarted in case the goalie stole one of its robots.
-		_goalie->assign(_playRobots, _goalieID);
-	}
-	
-#if 0
-	if (_playRobots.size() == 5)
-	{
-		printf("Too many robots on field: goalie %p\n", _goalie);
-		if (_goalie)
-		{
-			printf("  robot %p\n", _goalie->robot);
-			if (_goalie->robot)
-			{
-				printf("  shell %d\n", _goalie->robot->shell());
-			}
-		}
-		
-		/// Make a new goalie
-		if (_goalie)
-		{
-			delete _goalie;
-		}
-///   		_goalie = new Behaviors::Goalie(this);
-	}
-#endif
-
 	_ballMatrix = Geometry2d::TransformMatrix::translate(_state->ball.pos);
 
-	if (verbose) cout << "  Updating play" << endl;
-	updatePlay();
-
-	/// Run the goalie
-	if (_goalie)
-	{
-		if (verbose) cout << "  Running goalie" << endl;
-		if (_goalie->robot && _goalie->robot->visible)
-		{
-			_goalie->run();
-		}
-	}
-
 	/// Run the current play
-	if (_currentPlay)
-	{
-		if (verbose) cout << "  Running play" << endl;
-		_playDone = !_currentPlay->run();
-	}
+	if (verbose) cout << "  Running play" << endl;
+	//	FIXME: call into python land to run the play
 
 	/// determine global obstacles - field requirements
 	/// Two versions - one set with goal area, another without for goalie
@@ -322,7 +266,7 @@ void Gameplay::GameplayModule::run()
 	BOOST_FOREACH(OurRobot* r, _state->self) {
 		if (r && r->visible) {
 			/// set obstacles for the robots
-			if (_goalie && _goalie->robot && r->shell() == _goalie->robot->shell())
+			if (r->shell() == _goalieID)
 				r->replanIfNeeded(global_obstacles); /// just for goalie
 			else
 				r->replanIfNeeded(obstacles_with_goal); /// all other robots
@@ -335,12 +279,6 @@ void Gameplay::GameplayModule::run()
 		_state->drawCircle(_state->ball.pos, Field_CenterRadius, Qt::black, "Rules");
 	}
 
-	if (_currentPlay)
-	{
-		_playName = _currentPlay->name();
-	} else {
-		_playName = QString();
-	}
 	if (verbose) cout << "Finishing GameplayModule::run()" << endl;
 
 	if(_state->gameState.ourScore > _our_score_last_frame)

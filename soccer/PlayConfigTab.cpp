@@ -1,6 +1,6 @@
 #include <PlayConfigTab.hpp>
+#include <gameplay/GameplayModule.hpp>
 
-#include <gameplay/Play.hpp>
 #include <boost/foreach.hpp>
 
 #include <QFileDialog>
@@ -12,13 +12,12 @@ using namespace std;
 using namespace boost;
 using namespace Gameplay;
 
-Q_DECLARE_METATYPE(PlayFactory *)
-
+//	FIXME: re-enable this once the python stuff is figured out
 // Gets the Play for a list item
-PlayFactory *factory_for_item(QTreeWidgetItem *item)
-{
-	return item->data(0, Qt::UserRole).value<PlayFactory *>();
-}
+// PlayFactory *factory_for_item(QTreeWidgetItem *item)
+// {
+// 	return item->data(0, Qt::UserRole).value<PlayFactory *>();
+// }
 
 PlayConfigTab::PlayConfigTab(QWidget *parent):
 	QWidget(parent)
@@ -37,35 +36,36 @@ void PlayConfigTab::setup(std::shared_ptr<Gameplay::GameplayModule> gp)
 	typedef QMap<QString, QTreeWidgetItem *> CatMap;
 	CatMap categories;
 	
-	BOOST_FOREACH(PlayFactory *factory, PlayFactory::factories())
-	{
-		QTreeWidgetItem *parent;
-		if (!factory->category.isNull())
-		{
-			CatMap::iterator i = categories.find(factory->category);
-			if (i == categories.end())
-			{
-				// New category
-				parent = new QTreeWidgetItem();
-				parent->setText(0, factory->category);
-				ui.plays->addTopLevelItem(parent);
-				categories[factory->category] = parent;
-			} else {
-				// Existing category
-				parent = i.value();
-			}
-		} else {
-			parent = ui.plays->invisibleRootItem();
-		}
+	//	FIXME: re-enable this once the python stuff is figured out
+	// BOOST_FOREACH(PlayFactory *factory, PlayFactory::factories())
+	// {
+	// 	QTreeWidgetItem *parent;
+	// 	if (!factory->category.isNull())
+	// 	{
+	// 		CatMap::iterator i = categories.find(factory->category);
+	// 		if (i == categories.end())
+	// 		{
+	// 			// New category
+	// 			parent = new QTreeWidgetItem();
+	// 			parent->setText(0, factory->category);
+	// 			ui.plays->addTopLevelItem(parent);
+	// 			categories[factory->category] = parent;
+	// 		} else {
+	// 			// Existing category
+	// 			parent = i.value();
+	// 		}
+	// 	} else {
+	// 		parent = ui.plays->invisibleRootItem();
+	// 	}
 		
-		QTreeWidgetItem *item = new QTreeWidgetItem(parent);
-		item->setData(0, Qt::UserRole, QVariant::fromValue(factory));
-		item->setText(0, factory->name());
-		item->setCheckState(0, Qt::Unchecked);
-		item->setIcon(1, QIcon());
+	// 	QTreeWidgetItem *item = new QTreeWidgetItem(parent);
+	// 	item->setData(0, Qt::UserRole, QVariant::fromValue(factory));
+	// 	item->setText(0, factory->name());
+	// 	item->setCheckState(0, Qt::Unchecked);
+	// 	item->setIcon(1, QIcon());
 		
-		_nameItemMap[factory->name()] = item;
-	}
+	// 	_nameItemMap[factory->name()] = item;
+	// }
 	
 	ui.plays->sortItems(0, Qt::AscendingOrder);
 	ui.plays->expandAll();
@@ -141,39 +141,42 @@ void PlayConfigTab::on_save_clicked()
 	QTextStream ts(&file);
 
 	// if there is a goalie, write to file
-	if (_gameplay->goalie())
+	if (_gameplay->goalieID() != -1)
 	{
 		ts << "goalie\n";
 	}
 
-	// Write the names of all enabled plays
-	BOOST_FOREACH(PlayFactory *factory, PlayFactory::factories())
-	{
-		if (factory->enabled)
-		{
-			ts << factory->name() << "\n";
-		}
-	}
+	//	FIXME: re-enable this once the python stuff is figured out
+	// // Write the names of all enabled plays
+	// BOOST_FOREACH(PlayFactory *factory, PlayFactory::factories())
+	// {
+	// 	if (factory->enabled)
+	// 	{
+	// 		ts << factory->name() << "\n";
+	// 	}
+	// }
 }
 
 void PlayConfigTab::frameUpdate()
 {
-	BOOST_FOREACH(QTreeWidgetItem *item, _nameItemMap)
-	{
-		PlayFactory *factory = factory_for_item(item);
-		item->setIcon(1, isinf(factory->lastScore) ? QIcon() : _iconRun);
-	}
+	//	FIXME: re-enable this once the python stuff is figured out
+	// BOOST_FOREACH(QTreeWidgetItem *item, _nameItemMap)
+	// {
+	// 	PlayFactory *factory = factory_for_item(item);
+	// 	item->setIcon(1, isinf(factory->lastScore) ? QIcon() : _iconRun);
+	// }
 }
 
 void PlayConfigTab::on_plays_itemChanged(QTreeWidgetItem* item)
 {
-	PlayFactory *factory = factory_for_item(item);
-	if (!factory)
-	{
-		return;
-	}
+	//	FIXME: re-enable this once the python stuff is figured out
+	// PlayFactory *factory = factory_for_item(item);
+	// if (!factory)
+	// {
+	// 	return;
+	// }
 	
-	factory->enabled = (item->checkState(0) == Qt::Checked);
+	// factory->enabled = (item->checkState(0) == Qt::Checked);
 }
 
 void PlayConfigTab::on_plays_customContextMenuRequested(const QPoint& pos)

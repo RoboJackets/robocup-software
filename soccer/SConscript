@@ -26,19 +26,6 @@ srcs = [
 
 	# Core gameplay components',
 	'gameplay/GameplayModule.cpp',
-	'gameplay/Play.cpp',
-	'gameplay/Behavior.cpp',
-	'gameplay/PreventDoubleTouch.cpp',
-	'gameplay/behaviors/positions/Goalie.cpp',
-	'gameplay/behaviors/Idle.cpp',
-	'gameplay/behaviors/Kick.cpp',
-	'gameplay/tactics/LuckyKick.cpp',
-	'gameplay/behaviors/PivotKick.cpp',
-	'gameplay/behaviors/LineKick.cpp',
-	'gameplay/tactics/ChipCalibration.cpp',
-	'gameplay/behaviors/Capture.cpp',
-
-	# python
 	'python/EmbeddedInstance.cpp',
 	'python/robocup-py.cpp',
 
