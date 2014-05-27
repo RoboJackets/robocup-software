@@ -1,5 +1,5 @@
-#include <PlayConfigTab.hpp>
 #include <gameplay/GameplayModule.hpp>
+#include <PlayConfigTab.hpp>
 
 #include <boost/foreach.hpp>
 
