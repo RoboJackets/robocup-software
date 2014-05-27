@@ -113,19 +113,36 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
         PyImport_AppendInittab("robocup", &PyInit_robocup);
 
 
+        //	we use Py_InitializeEx(0) instead of regular Py_Initialize() so that Ctrl-C kills soccer as expected
         Py_InitializeEx(0);
 
 
         object main_module((handle<>(borrowed(PyImport_AddModule("__main__")))));
-        object main_namespace = main_module.attr("__dict__");
+        _mainPyNamespace = main_module.attr("__dict__");
 
         object robocup_module((handle<>(PyImport_ImportModule("robocup"))));
-        main_namespace["robocup"] = robocup_module;
+        _mainPyNamespace["robocup"] = robocup_module;
 
+        //	FIXME: remove this hello world bullshit
         handle<>ignored((PyRun_String("print(\"Hello world\")\np = robocup.Point(1, 2)\nprint(p)",
             Py_file_input,
-            main_namespace.ptr(),
-            main_namespace.ptr())));
+            _mainPyNamespace.ptr(),
+            _mainPyNamespace.ptr())));
+
+        //	FIXME: make this a relative path
+        //	add gameplay directory to python import path (so import XXX) will look in the right directory
+        handle<>ignored2((PyRun_String("import sys; sys.path.append('/home/robojackets/src/robocup-software-dev/soccer/gameplay2')",
+            Py_file_input,
+            _mainPyNamespace.ptr(),
+            _mainPyNamespace.ptr())));
+
+
+        //	instantiate the root play
+        handle<>ignored3((PyRun_String("from root_play import *; root_play = RootPlay()",
+            Py_file_input,
+            _mainPyNamespace.ptr(),
+            _mainPyNamespace.ptr())));
+
 
     } catch (error_already_set) {
         PyErr_Print();
@@ -255,6 +272,7 @@ ObstacleGroup Gameplay::GameplayModule::globalObstacles() const {
 	}
 	return obstacles;
 }
+
 /**
  * runs the current play
  */
@@ -289,7 +307,12 @@ void Gameplay::GameplayModule::run()
 
 	/// Run the current play
 	if (verbose) cout << "  Running play" << endl;
-	//	FIXME: call into python land to run the play
+	try {
+		getRootPlay().attr("run")();
+	} catch (error_already_set) {
+        PyErr_Print();
+        throw new runtime_error("Error trying to run root play");
+    }
 
 	/// determine global obstacles - field requirements
 	/// Two versions - one set with goal area, another without for goalie
@@ -324,4 +347,11 @@ void Gameplay::GameplayModule::run()
 		}
 	}
 	_our_score_last_frame = _state->gameState.ourScore;
+}
+
+
+#pragma mark python
+
+boost::python::object Gameplay::GameplayModule::getRootPlay() {
+	return _mainPyNamespace["root_play"];
 }

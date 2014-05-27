@@ -115,10 +115,13 @@ namespace Gameplay
 			 */
 			void clearAvoidBallRadii();
 
+
+		protected:
+
+			boost::python::object getRootPlay();
+
 			
 		private:
-			friend class Play;
-			
 			/// This protects all of Gameplay.
 			/// This is held while plays are running.
 			QMutex _mutex;
@@ -156,5 +159,9 @@ namespace Gameplay
 
 			// Shell ID of the robot to assign the goalie position
 			int _goalieID;
+
+
+			//	python
+			boost::python::object _mainPyNamespace;
 	};
 }
