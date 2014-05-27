@@ -1,5 +1,6 @@
 from play import *
 from behavior import *
+import logging
 
 
 # the RootPlay is basically the python-side of the c++ GameplayModule
@@ -11,6 +12,11 @@ class RootPlay(Play):
         self._play = None
 
         self.add_transition(Behavior.State.start, Behavior.State.running, lambda: True, 'immediately')
+
+
+    def execute_running(self):
+        logging.info("RootPlay running...")
+        pass
 
 
     @property

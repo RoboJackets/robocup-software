@@ -4,10 +4,11 @@ from timed_behavior import *
 from behavior_sequence import *
 from skills.pivot_kick import *
 from skills.capture import *
+from skills.move import *
 from time import *
 
 
-for b in [PivotKick(), BehaviorSequence([PivotKick()]), TimedBehavior(PivotKick(), 2), Capture()]:
+for b in [PivotKick(), BehaviorSequence([PivotKick()]), TimedBehavior(PivotKick(), 2), Capture(), Move()]:
 	b.write_diagram_png('diagrams/' + b.__class__.__name__ + '.png')
 
 
