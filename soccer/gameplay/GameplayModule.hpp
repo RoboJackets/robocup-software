@@ -34,7 +34,6 @@ namespace Gameplay
 	 * 
 	 * @details Its main responsibilities include:
 	 * - managing the Goalie
-	 * - managing the joystick-controlled robot (if any)
 	 * - maintaining a list of global field obstacles
 	 * - choosing which Play to run
 	 * - running the current play
@@ -52,13 +51,6 @@ namespace Gameplay
 			}
 			
 			virtual void run();
-			
-			/**
-			 * @brief ID of joystick-controlled robot
-			 * @details This is just a convenience method.  The Processor is the one in charge
-			 * of managing manualID.
-			 */
-			int manualID() const;
 			
 			void createGoalie();
 			void removeGoalie();
