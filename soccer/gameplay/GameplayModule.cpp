@@ -138,6 +138,12 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
             _mainPyNamespace.ptr())));
 
 
+        #error fix this problem, it segfaults here
+		handle<>ignored4((PyRun_String("p = robocup.Point(1, 2); p = robocup.Point(1, 1); p = robocup.Point(3, 4)",
+            Py_file_input,
+            _mainPyNamespace.ptr(),
+            _mainPyNamespace.ptr())));
+
     } catch (error_already_set) {
         PyErr_Print();
         throw new runtime_error("Unable to initialize embedded python interpreter");
@@ -301,14 +307,7 @@ void Gameplay::GameplayModule::run()
 
 	//	FIXME: remove manualID robot?
 
-	//	tell python land what robots are available for gameplay
-	try {
-		vector<OurRobot*> *playRobotsVector = new vector<OurRobot*>(_playRobots.begin(), _playRobots.end());
-		getRootPlay().attr("robots") = playRobotsVector;
-	} catch (error_already_set) {
-        PyErr_Print();
-        throw new runtime_error("Error trying to run root play");
-    }
+	#warning set the gameplay robots for the python-side of things here
 
 	/// Run the current play
 	if (verbose) cout << "  Running play" << endl;

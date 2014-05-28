@@ -9,6 +9,12 @@ using namespace boost::python;
 #include <protobuf/LogFrame.pb.h>
 
 
+//	this is here so boost can work with std::shared_ptr
+template<class T> T * get_pointer( std::shared_ptr<T> const& p) {
+	return p.get();
+}
+
+
 /**
  * The code in this block wraps up c++ classes and makes them
  * accessible to python in the 'robocup' module.
@@ -46,8 +52,8 @@ BOOST_PYTHON_MODULE(robocup)
 		.def_readonly("vel", &Ball::vel)
 	;
 
-	class_<std::vector<OurRobot *> >("OurRobotVector")
-		.def(vector_indexing_suite<std::vector<OurRobot> >())
+	class_<std::vector<OurRobot *> >("vector_OurRobot")
+		.def(vector_indexing_suite<std::vector<OurRobot *> >())
 	;
 
 	class_<SystemState>("SystemState")
