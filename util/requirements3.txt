@@ -1,4 +1,5 @@
 # python requirements
 
 graphviz
+enum34
 
