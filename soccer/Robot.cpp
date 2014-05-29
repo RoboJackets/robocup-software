@@ -90,8 +90,8 @@ OurRobot::OurRobot(int shell, SystemState *state):
  */
 OurRobot::~OurRobot()
 {
-	delete _motionControl;
-	delete _planner;
+	if (_motionControl) delete _motionControl;
+	if (_planner) delete _planner;
 }
 
 void OurRobot::addStatusText()

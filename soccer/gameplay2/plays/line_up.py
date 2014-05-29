@@ -1,6 +1,7 @@
 from play import *
 from behavior import *
 from skills.move import Move
+import robocup
 
 
 class LineUp(Play):
@@ -26,13 +27,14 @@ class LineUp(Play):
 
     @Play.robots.setter
     def robots(self, robots):
-        super()._set_robots(robots)
+        # super()._set_robots(robots)
+        self._robots = robots
 
         # build a list of Points for where the robots should go
         start_x = -1.0
         start_y = 0.5
         spacing_y = 0.25
-        points = [Point(start_x, start_y + i * spacing_y) for i in range(0, len(robots))]
+        points = [robocup.Point(start_x, start_y + i * spacing_y) for i in range(0, len(robots))]
 
         self.subbehaviors = [Move(pt) for pt in points]
 
@@ -42,6 +44,7 @@ class LineUp(Play):
 
 
     def execute_running(self):
+        print("LineUp running...")
         if self.subbehaviors != None:
             for subbehavior in self.subbehaviors:
                 subbehavior.run()

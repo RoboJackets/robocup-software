@@ -43,7 +43,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def_readwrite("angle_vel", &Robot::angleVel)
 	;
 
-	class_<OurRobot, bases<Robot> >("OurRobot", init<int, SystemState*>());
+	class_<OurRobot, std::shared_ptr<OurRobot>, bases<Robot> >("OurRobot", init<int, SystemState*>());
 
 	class_<OpponentRobot, bases<Robot> >("OpponentRobot", init<int>());
 
@@ -52,8 +52,8 @@ BOOST_PYTHON_MODULE(robocup)
 		.def_readonly("vel", &Ball::vel)
 	;
 
-	class_<std::vector<OurRobot *> >("vector_OurRobot")
-		.def(vector_indexing_suite<std::vector<OurRobot *> >())
+	class_<std::vector<std::shared_ptr<OurRobot> >, std::shared_ptr<std::vector<std::shared_ptr<OurRobot> > > >("vector_OurRobot")
+		.def(vector_indexing_suite<std::vector<std::shared_ptr<OurRobot> > >())
 	;
 
 	class_<SystemState>("SystemState")
