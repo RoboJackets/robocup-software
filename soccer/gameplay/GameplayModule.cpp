@@ -136,14 +136,6 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
             Py_file_input,
             _mainPyNamespace.ptr(),
             _mainPyNamespace.ptr())));
-
-
-        #error fix this problem, it segfaults here
-		handle<>ignored4((PyRun_String("p = robocup.Point(1, 2); p = robocup.Point(1, 1); p = robocup.Point(3, 4)",
-            Py_file_input,
-            _mainPyNamespace.ptr(),
-            _mainPyNamespace.ptr())));
-
     } catch (error_already_set) {
         PyErr_Print();
         throw new runtime_error("Unable to initialize embedded python interpreter");
@@ -307,7 +299,19 @@ void Gameplay::GameplayModule::run()
 
 	//	FIXME: remove manualID robot?
 
-	#warning set the gameplay robots for the python-side of things here
+	try {
+		std::vector< std::shared_ptr<OurRobot> > *botVector = new vector< std::shared_ptr<OurRobot> >();
+		for (auto itr = _playRobots.begin(); itr != _playRobots.end(); itr++) {
+			botVector->push_back(std::shared_ptr<OurRobot>(*itr));
+		}
+
+		cout << "setting robots" << endl;
+		std::shared_ptr< std::vector< std::shared_ptr<OurRobot> > > bots(botVector);
+		getRootPlay().attr("robots") = bots;
+	} catch (error_already_set) {
+		PyErr_Print();
+		throw new runtime_error("Error trying to send robots to python");
+	}
 
 	/// Run the current play
 	if (verbose) cout << "  Running play" << endl;
