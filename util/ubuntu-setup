@@ -22,4 +22,4 @@ apt-get install $(sed 's/#.*//;/^$/d' $BASE/util/required_packages.txt)
 yes | easy_install GitPython
 
 # install python3 requirements
-pip3 install -r requirements3.txt
+pip3 install -r $BASE/util/requirements3.txt
