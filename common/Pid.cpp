@@ -24,6 +24,7 @@ Pid::~Pid()
 	if (_oldErr)
 	{
 		delete[] _oldErr;
+		_oldErr = nullptr;
 	}
 }
 
@@ -35,7 +36,7 @@ void Pid::setWindup(unsigned int w)
 		_oldErr = new float[_windup];
 		memset(_oldErr, 0, sizeof(float)*_windup);
 	} else {
-		if (_oldErr) delete _oldErr;
+		if (_oldErr) delete[] _oldErr;
 		_oldErr = nullptr;
 	}
 }
