@@ -48,6 +48,7 @@ avrdude
 python-pip
 python-dev
 python3
+python3-dev
 
 # for the high-level python interface for soccer
 libboost-python-dev
