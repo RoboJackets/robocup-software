@@ -1,7 +1,7 @@
 from enum import Enum
 import fsm
 
-# role allocation parameters?  return a MotionConstraints object?  accept a MotionConstraints object?
+# role allocation parameters?
 # FIXME: what if it's done running, but still pending success evaluation??
 # FIXME: parent and child behaviors?
 
@@ -37,23 +37,6 @@ class Behavior(fsm.StateMachine):
     def add_state(self, state, parent_state=None):
         super().add_state(state, parent_state)
         #TODO: raise exception if @state doesn't have a Behavior.State ancestor
-
-
-    # default implementation of the start state just takes us to the running state
-    def execute_start(self):
-        pass
-
-    def execute_running(self):
-        pass
-
-    def execute_failed(self):
-        pass
-
-    def execute_completed(self):
-        pass
-    
-    def execute_cancelled(self):
-        pass
 
 
     def is_done_running(self):
