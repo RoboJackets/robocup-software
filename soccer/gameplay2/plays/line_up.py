@@ -36,6 +36,8 @@ class LineUp(Play):
         spacing_y = 0.25
         points = [robocup.Point(start_x, start_y + i * spacing_y) for i in range(0, len(robots))]
 
+        print("LineUp set destinations: " + str(points))
+
         self.subbehaviors = [Move(pt) for pt in points]
 
         # FIXME: assign behaviors more smartly
@@ -47,6 +49,7 @@ class LineUp(Play):
         print("LineUp running...")
         if self.subbehaviors != None:
             for subbehavior in self.subbehaviors:
+                print("\trunning subbehavior")
                 subbehavior.run()
 
 
@@ -57,3 +60,4 @@ class LineUp(Play):
     @subbehaviors.setter
     def subbehaviors(self, value):
         self._subbehaviors = value
+        self.transition(Behavior.State.running)

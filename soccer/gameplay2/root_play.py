@@ -20,8 +20,9 @@ class RootPlay(Play):
 
 
     def execute_running(self):
-        # print("RootPlay running...")
+        print("RootPlay running...")
         if self.play != None:
+            print(str(self.play))
             self.play.run()
 
 
@@ -47,8 +48,8 @@ class RootPlay(Play):
         self._robots = robots
 
         print("root play set robots: " + str(robots))
-        for r in robots:
-            print("\trobot: " + str(r))
+        # for r in robots:
+        #     print("\trobot: " + str(r))
 
         # pass robots to play
         if self.play != None:

@@ -300,14 +300,13 @@ void Gameplay::GameplayModule::run()
 	//	FIXME: remove manualID robot?
 
 	try {
+		//	vector of shared pointers to pass to python
 		std::vector< std::shared_ptr<OurRobot> > *botVector = new vector< std::shared_ptr<OurRobot> >();
 		for (auto itr = _playRobots.begin(); itr != _playRobots.end(); itr++) {
 			botVector->push_back(std::shared_ptr<OurRobot>(*itr));
 		}
 
-		cout << "setting robots" << endl;
-		std::shared_ptr< std::vector< std::shared_ptr<OurRobot> > > bots(botVector);
-		getRootPlay().attr("robots") = bots;
+		getRootPlay().attr("robots") = botVector;
 	} catch (error_already_set) {
 		PyErr_Print();
 		throw new runtime_error("Error trying to send robots to python");
