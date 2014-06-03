@@ -301,9 +301,9 @@ void Gameplay::GameplayModule::run()
 
 	try {
 		//	vector of shared pointers to pass to python
-		std::vector< std::shared_ptr<OurRobot> > *botVector = new vector< std::shared_ptr<OurRobot> >();
+		std::vector<OurRobot *> *botVector = new std::vector<OurRobot *>();
 		for (auto itr = _playRobots.begin(); itr != _playRobots.end(); itr++) {
-			botVector->push_back(std::shared_ptr<OurRobot>(*itr));
+			botVector->push_back(*itr);
 		}
 
 		getRootPlay().attr("robots") = botVector;
