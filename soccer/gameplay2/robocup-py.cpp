@@ -1,5 +1,7 @@
 #include "robocup-py.hpp"
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
+#include <string>
+#include <sstream>
 
 using namespace boost::python;
 
@@ -14,6 +16,29 @@ template<class T> T * get_pointer( std::shared_ptr<T> const& p) {
 	return p.get();
 }
 
+std::string Point_repr(Geometry2d::Point *thiss) {
+	std::ostringstream ss;
+	ss << "Point(";
+	ss << thiss->x;
+	ss << ", ";
+	ss << thiss->y;
+	ss << ")";
+	
+	std::string repr(ss.str());
+	return repr;
+}
+
+std::string Robot_repr(Robot *thiss) {
+	std::ostringstream ss;
+	ss << (thiss->self() ? "us[" : "them[");
+	ss << thiss->shell();
+	ss << "], pos=";
+	ss << Point_repr(&(thiss->pos));
+
+	std::string repr(ss.str());
+	return repr;
+}
+
 
 /**
  * The code in this block wraps up c++ classes and makes them
@@ -24,6 +49,7 @@ BOOST_PYTHON_MODULE(robocup)
 	class_<Geometry2d::Point>("Point", init<float, float>())
 		.def_readwrite("x", &Geometry2d::Point::x)
 		.def_readwrite("y", &Geometry2d::Point::y)
+		.def("__repr__", &Point_repr)
 	;
 
 	//	TODO: add the rest of GameState stuff here
@@ -41,6 +67,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def_readwrite("vel", &Robot::vel)
 		.def_readwrite("angle", &Robot::angle)
 		.def_readwrite("angle_vel", &Robot::angleVel)
+		.def("__repr__", &Robot_repr);
 	;
 
 	class_<OurRobot, std::shared_ptr<OurRobot>, bases<Robot> >("OurRobot", init<int, SystemState*>());

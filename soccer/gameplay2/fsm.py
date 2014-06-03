@@ -33,9 +33,9 @@ class StateMachine:
     # if one evaluates to true, we transition to it
     # if more than one evaluates to true, we throw a RuntimeError
     def run(self):
+        s1 = self.state
+
         # call execute_STATENAME
-        # FIXME: if a transition occurs during run(), we should call the new
-        # state's execute method so there's not a "propogation delay" for state transitions
         if self.state != None:
             method_name = "execute_" + self.state.name
             state_method = None
@@ -57,6 +57,13 @@ class StateMachine:
             raise RuntimeError("Ambiguous fsm transitions from state'" + str(self.state) + "'.  The following states are reachable now: " + str(next_states))
         elif len(next_states) == 1:
             self.transition(next_states[0])
+
+        # if a transition occurred during the run, we'll run again
+        # note: this could potentially cause infinite recursion (although it shouldn't)
+        if s1 != self.state:
+            self.run()
+
+
 
 
     # if you add a transition that already exists, the old one will be overwritten
