@@ -27,3 +27,11 @@ Some classes that will only exist in python land:
 * Play
 * Behavior
 * PassingContext
+
+
+
+## IMPORTANT
+
+There are a few rules that you have to follow in order for the auto-reloading and play-registry systems to work.
+
+* Only one play can be defined for play file (you can put as many skills as you want in a skill file though)
