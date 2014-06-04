@@ -1,5 +1,5 @@
 # python requirements
 
-graphviz
+graphviz # make pretty graphs/diagrams
 enum34
-
+watchdog # file-system event notifications
