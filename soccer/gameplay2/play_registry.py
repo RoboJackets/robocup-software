@@ -18,6 +18,18 @@ class PlayRegistry():
         return self._root
     
 
+    # the module path is a list
+    # for a demo play called RunAround, module_path = ['demo', 'run_around']
+    # (note that we left out 'plays' - every play is assumed to be in a descendent module of it)
+    def insert(self, module_path, play_class):
+        category = self.root
+
+        # iterate up to the last one (the last one is just an underscored,
+        # lowercased version of the play's name and we don't display it in the tree)
+        for module in module_path[:-1]:
+            if 
+
+
     # returns a list of all plays in the tree that are currently enabled
     def get_enabled_plays(self):
         raise NotImplementedError()
@@ -35,19 +47,19 @@ class PlayRegistry():
 
     class Node():
 
+        def __init__(self, module_name, play_class):
+            self._module_name = module_name
+            self._play_class = play_class
+            self._enabled = True
+
+
         @property
         def module_name(self):
             return self._module_name
-        @module_name.setter
-        def module_name(self, value):
-            self._module_name = value
 
         @property
         def play_class(self):
             return self._play_class
-        @play_class.setter
-        def play_class(self, value):
-            self._play_class = value
         
         @property
         def enabled(self):
@@ -55,5 +67,3 @@ class PlayRegistry():
         @enabled.setter
         def enabled(self, value):
             self._enabled = value
-
-
