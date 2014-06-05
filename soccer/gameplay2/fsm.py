@@ -41,10 +41,9 @@ class StateMachine:
             state_method = None
             try:
                 state_method = getattr(self, method_name)
+                state_method()
             except AttributeError:
-                raise NotImplementedError("Fsm '" + self.__class__.__name__ + "' needs to implement '" + method_name + "()'")
-
-            state_method()
+                pass
 
         # transition if an 'event' fires
         next_states = []
