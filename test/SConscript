@@ -28,10 +28,18 @@ test_runner = e.Program('test-runner', test_srcs)
 e.Depends(test_runner, rename_gtest);
 install_test_runner = e.Install(exec_dir, test_runner)
 
-# make a 'test' command so that 'scons test' builds the tests and runs them
-test = e.Command('file-that-doesnt-exist',
+
+testCpp = e.Command('file-that-doesnt-exist',
 	exec_dir.File('test-runner'),
 	'%s' % exec_dir.File('test-runner'))
-AlwaysBuild(test)
-e.Depends(test, install_test_runner)
-e.Depends(test, test_runner)
+e.Depends(testCpp, install_test_runner)
+e.Depends(testCpp, test_runner)
+
+
+pythonTestRunner = Dir("#/soccer/gameplay2").File('run_tests.sh')
+testPython = e.Command('file-that-doesnt-exist2',
+    pythonTestRunner,
+    'cd soccer/gameplay2; ./run_tests.sh')
+
+# make a 'test' command so that 'scons test' builds the tests and runs them
+test = e.Alias('test', [testPython, testCpp])
