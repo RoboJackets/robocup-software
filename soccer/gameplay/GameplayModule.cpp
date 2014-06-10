@@ -141,6 +141,18 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
     }
 }
 
+void Gameplay::GameplayModule::setupUI() {
+	try {
+	    handle<>ignored3((PyRun_String("import ui.main; ui.main.setup()",
+	        Py_file_input,
+	        _mainPyNamespace.ptr(),
+	        _mainPyNamespace.ptr())));
+	} catch (error_already_set) {
+		PyErr_Print();
+		throw new runtime_error("Error trying to setup python-based UI");
+	}
+}
+
 /*
 void Gameplay::GameplayModule::createGoalie()
 {

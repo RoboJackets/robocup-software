@@ -48,6 +48,7 @@ namespace Gameplay
 			
 			virtual void run();
 			
+			void setupUI();
 
 			void goalieID(int value)
 			{

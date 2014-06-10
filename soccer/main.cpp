@@ -1,4 +1,6 @@
 
+#include <gameplay/GameplayModule.hpp>
+
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -15,7 +17,6 @@
 
 #include <boost/foreach.hpp>
 
-#include "PlayConfigTab.hpp"
 #include "MainWindow.hpp"
 #include "Configuration.hpp"
 
@@ -277,20 +278,6 @@ int main (int argc, char* argv[])
 	win->configuration(&config);
 	win->processor(processor);
 	
-	if (!playbook.isNull())
-	{
-		win->playConfigTab()->load(playbook);
-	} else if (extraPlays.empty())
-	{
-		// Try to load a default playbook
-		win->playConfigTab()->load("default.pbk");
-	}
-	
-	BOOST_FOREACH(const QString &str, extraPlays)
-	{
-		win->playConfigTab()->enable(str);
-	}
-	
 	if (!QDir("logs").exists())
 	{
 		fprintf(stderr, "No logs/ directory - not writing log file\n");
@@ -321,6 +308,7 @@ int main (int argc, char* argv[])
 	
 	win->showMaximized();
 
+	processor->gameplayModule()->setupUI();
 
 	int ret = app.exec();
 	processor->stop();
