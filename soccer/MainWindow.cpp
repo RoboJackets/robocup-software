@@ -165,11 +165,6 @@ void MainWindow::processor(Processor* value)
 	} else {
 		_ui.actionTeamYellow->trigger();
 	}
-	
-	// Add Plays tab
-	_playConfigTab = new PlayConfigTab();
-	_ui.tabWidget->addTab(_playConfigTab, tr("Plays"));
-	_playConfigTab->setup(_processor->gameplayModule());
 }
 
 void MainWindow::logFileChanged()
