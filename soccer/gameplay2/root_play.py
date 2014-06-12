@@ -20,9 +20,9 @@ class RootPlay(Play):
 
 
     def execute_running(self):
-        print("RootPlay running...")
+        # print("RootPlay running...")
         if self.play != None:
-            print(str(self.play))
+            # print(str(self.play))
             self.play.run()
 
 
