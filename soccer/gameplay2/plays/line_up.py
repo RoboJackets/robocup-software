@@ -36,7 +36,7 @@ class LineUp(Play):
         spacing_y = 0.25
         points = [robocup.Point(start_x, start_y + i * spacing_y) for i in range(0, len(robots))]
 
-        print("LineUp set destinations: " + str(points))
+        # print("LineUp set destinations: " + str(points))
 
         self.subbehaviors = [Move(pt) for pt in points]
 
@@ -46,7 +46,7 @@ class LineUp(Play):
 
 
     def execute_running(self):
-        print("LineUp running...")
+        # print("LineUp running...")
         if self.subbehaviors != None:
             for subbehavior in self.subbehaviors:
                 print("\trunning subbehavior")
