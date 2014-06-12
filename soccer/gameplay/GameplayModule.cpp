@@ -115,42 +115,44 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 
         //	we use Py_InitializeEx(0) instead of regular Py_Initialize() so that Ctrl-C kills soccer as expected
         Py_InitializeEx(0);
+        PyEval_InitThreads(); {
+	        object main_module((handle<>(borrowed(PyImport_AddModule("__main__")))));
+	        _mainPyNamespace = main_module.attr("__dict__");
+
+	        object robocup_module((handle<>(PyImport_ImportModule("robocup"))));
+	        _mainPyNamespace["robocup"] = robocup_module;
+
+	        //	add gameplay directory to python import path (so import XXX) will look in the right directory
+	        handle<>ignored2((PyRun_String("import sys; sys.path.append('../soccer/gameplay2')",
+	            Py_file_input,
+	            _mainPyNamespace.ptr(),
+	            _mainPyNamespace.ptr())));
 
 
-        object main_module((handle<>(borrowed(PyImport_AddModule("__main__")))));
-        _mainPyNamespace = main_module.attr("__dict__");
-
-        object robocup_module((handle<>(PyImport_ImportModule("robocup"))));
-        _mainPyNamespace["robocup"] = robocup_module;
-
-        //	add gameplay directory to python import path (so import XXX) will look in the right directory
-        handle<>ignored2((PyRun_String("import sys; sys.path.append('../soccer/gameplay2')",
-            Py_file_input,
-            _mainPyNamespace.ptr(),
-            _mainPyNamespace.ptr())));
-
-
-        //	instantiate the root play
-        handle<>ignored3((PyRun_String("from root_play import *; root_play = RootPlay()",
-            Py_file_input,
-            _mainPyNamespace.ptr(),
-            _mainPyNamespace.ptr())));
+	        //	instantiate the root play
+	        handle<>ignored3((PyRun_String("import main; main.init()",
+	            Py_file_input,
+	            _mainPyNamespace.ptr(),
+	            _mainPyNamespace.ptr())));
+        } PyEval_ReleaseLock();
     } catch (error_already_set) {
         PyErr_Print();
         throw new runtime_error("Unable to initialize embedded python interpreter");
-    }
+    } 
 }
 
 void Gameplay::GameplayModule::setupUI() {
-	try {
-	    handle<>ignored3((PyRun_String("import ui.main; ui.main.setup()",
-	        Py_file_input,
-	        _mainPyNamespace.ptr(),
-	        _mainPyNamespace.ptr())));
-	} catch (error_already_set) {
-		PyErr_Print();
-		throw new runtime_error("Error trying to setup python-based UI");
-	}
+	PyGILState_STATE state = PyGILState_Ensure(); {
+		try {
+		    handle<>ignored3((PyRun_String("import ui.main; ui.main.setup()",
+		        Py_file_input,
+		        _mainPyNamespace.ptr(),
+		        _mainPyNamespace.ptr())));
+		} catch (error_already_set) {
+			PyErr_Print();
+			throw new runtime_error("Error trying to setup python-based UI");
+		}
+	} PyGILState_Release(state);
 }
 
 /*
@@ -310,27 +312,32 @@ void Gameplay::GameplayModule::run()
 
 	//	FIXME: remove manualID robot?
 
-	try {
-		//	vector of shared pointers to pass to python
-		std::vector<OurRobot *> *botVector = new std::vector<OurRobot *>();
-		for (auto itr = _playRobots.begin(); itr != _playRobots.end(); itr++) {
-			botVector->push_back(*itr);
+	PyGILState_STATE state = PyGILState_Ensure(); {
+		try {
+			//	vector of shared pointers to pass to python
+			std::vector<OurRobot *> *botVector = new std::vector<OurRobot *>();
+			for (auto itr = _playRobots.begin(); itr != _playRobots.end(); itr++) {
+				botVector->push_back(*itr);
+			}
+
+			// getRootPlay().attr("robots") = botVector;
+		} catch (error_already_set) {
+			PyErr_Print();
+			throw new runtime_error("Error trying to send robots to python");
 		}
 
-		getRootPlay().attr("robots") = botVector;
-	} catch (error_already_set) {
-		PyErr_Print();
-		throw new runtime_error("Error trying to send robots to python");
-	}
-
-	/// Run the current play
-	if (verbose) cout << "  Running play" << endl;
-	try {
-		getRootPlay().attr("run")();
-	} catch (error_already_set) {
-        PyErr_Print();
-        throw new runtime_error("Error trying to run root play");
-    }
+		/// Run the current play
+		if (verbose) cout << "  Running play" << endl;
+		try {
+			handle<>ignored3((PyRun_String("main.run()",
+		        Py_file_input,
+		        _mainPyNamespace.ptr(),
+		        _mainPyNamespace.ptr())));
+		} catch (error_already_set) {
+	        PyErr_Print();
+	        throw new runtime_error("Error trying to run root play");
+	    }
+	} PyGILState_Release(state);
 
 	/// determine global obstacles - field requirements
 	/// Two versions - one set with goal area, another without for goalie
@@ -371,5 +378,5 @@ void Gameplay::GameplayModule::run()
 #pragma mark python
 
 boost::python::object Gameplay::GameplayModule::getRootPlay() {
-	return _mainPyNamespace["root_play"];
+	return _mainPyNamespace["root_play"]();
 }
