@@ -1,6 +1,8 @@
 import root_play as root_play_module
 import play_registry as play_registry_module
+import play, skill
 import fs_watcher
+import recursive_import
 import logging
 
 import plays.line_up    # FIXME: remove
@@ -21,7 +23,14 @@ def init():
     # init play registry
     global _play_registry
     _play_registry = play_registry_module.PlayRegistry()
-    _play_registry.insert(['abc', 'line_up'], plays.line_up.LineUp)
+
+    # load all plays
+    play_classes = recursive_import.recursive_import_classes(['plays'], play.Play)
+    for entry in play_classes:
+        # keep in mind that @entry is a tuple
+        mod_path = entry[0][1:]
+        _play_registry.insert(mod_path, entry[1])
+
 
     #TODO: init fs watching
 
