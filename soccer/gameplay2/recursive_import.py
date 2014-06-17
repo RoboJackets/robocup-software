@@ -20,7 +20,6 @@ def recursive_import_classes(base_path, module_path, parent_class):
         raise AssertionError('module_path must be a list of strings')
 
     path = base_path + '/' + '/'.join(module_path)
-    print("path = " + path)
     for loader, module_name, is_pkg in pkgutil.walk_packages([path]):
         new_module_path = module_path + [module_name]
 

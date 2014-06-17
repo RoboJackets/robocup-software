@@ -38,6 +38,9 @@ class FsWatcher(Observer):
     # the handler calls _notify on its parent FsWatcher
     def _notify(self, event_type, path):
         name, file_ext = os.path.splitext(path)
+        name = name.decode('utf-8')
+        file_ext = file_ext.decode('utf-8')
+        
         if file_ext == '.py':
             # remove the prefix @root from @subpath
             root = os.path.abspath(self.root_path)
