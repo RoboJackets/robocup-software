@@ -13,18 +13,19 @@ import inspect
 # list of module names telling where @class came from.
 # This is used in the system for importing plays.
 # An example entry in the returned list could be: `(['plays', 'offense', 'mighty_might'], plays.offense.MightyMight)`
-def recursive_import_classes(module_path, parent_class):
+def recursive_import_classes(base_path, module_path, parent_class):
     classes = []
 
     if not isinstance(module_path, list):
         raise AssertionError('module_path must be a list of strings')
 
-    path = '/'.join(module_path)
+    path = base_path + '/' + '/'.join(module_path)
+    print("path = " + path)
     for loader, module_name, is_pkg in pkgutil.walk_packages([path]):
         new_module_path = module_path + [module_name]
 
         if is_pkg:
-            classes.append(recursive_import_classes(new_module_path, parent_class))
+            classes += recursive_import_classes(base_path, new_module_path, parent_class)
         else:
             module = importlib.import_module('.'.join(new_module_path))
             entry = (new_module_path, find_subclasses(module, parent_class)[0])
@@ -45,7 +46,7 @@ def find_subclasses(module, parent_class):
 if __name__ == '__main__':
     print("finding plays...")
     import play
-    results = recursive_import_classes(['plays'], play.Play)
+    results = recursive_import_classes('.', ['plays'], play.Play)
     print("imports:")
     for res in results:
         print("\t" + str(res))
