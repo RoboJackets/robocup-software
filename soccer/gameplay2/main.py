@@ -25,14 +25,18 @@ def init():
     _play_registry = play_registry_module.PlayRegistry()
 
     # load all plays
-    play_classes = recursive_import.recursive_import_classes(['plays'], play.Play)
+    play_classes = recursive_import.recursive_import_classes('../soccer/gameplay2', ['plays'], play.Play)
+    print(str(play_classes))
     for entry in play_classes:
         # keep in mind that @entry is a tuple
         mod_path = entry[0][1:]
         _play_registry.insert(mod_path, entry[1])
 
 
-    watcher = fs_watcher.FsWatcher()
+    watcher = fs_watcher.FsWatcher('./')
+
+    def fswatch_callback(event_type, module_path):
+        print('.'.joinmodule_path + " " + event_type)
 
 
 
