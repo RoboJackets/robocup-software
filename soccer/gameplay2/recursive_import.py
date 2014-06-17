@@ -11,7 +11,7 @@ import inspect
 # Returns a list of tuples of the form (module_path, class) where class
 # is a subclass of parent_class and module_path is a
 # list of module names telling where @class came from.
-# This is used in the system for importing plays and behaviors.
+# This is used in the system for importing plays.
 # An example entry in the returned list could be: `(['plays', 'offense', 'mighty_might'], plays.offense.MightyMight)`
 def recursive_import_classes(module_path, parent_class):
     classes = []
@@ -27,19 +27,25 @@ def recursive_import_classes(module_path, parent_class):
             classes.append(recursive_import_classes(new_module_path, parent_class))
         else:
             module = importlib.import_module('.'.join(new_module_path))
-            for name, obj in inspect.getmembers(module):
-                if inspect.isclass(obj) and issubclass(obj, parent_class) and obj != parent_class:
-                    print('module: ' + str(module))
-                    classes.append((new_module_path, obj))
+            entry = (new_module_path, find_subclasses(module, parent_class)[0])
+            classes.append(entry)
+    return classes
 
+
+# Returns a list of all subclasses of @parent_class that are found in @module
+def find_subclasses(module, parent_class):
+    classes = []
+    for name, obj in inspect.getmembers(module):
+        if inspect.isclass(obj) and issubclass(obj, parent_class) and obj != parent_class:
+            # print('module: ' + str(module))
+            classes.append(obj)
     return classes
 
 
 if __name__ == '__main__':
-    # import play
-    # results = recursive_import_classes(['plays'], play.Play)
-    import skill
-    results = recursive_import_classes(['skills'], skill.Skill)
+    print("finding plays...")
+    import play
+    results = recursive_import_classes(['plays'], play.Play)
     print("imports:")
     for res in results:
         print("\t" + str(res))
