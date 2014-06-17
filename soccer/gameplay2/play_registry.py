@@ -211,7 +211,7 @@ class PlayRegistry(QtCore.QAbstractItemModel):
 
 
     def flags(self, index):
-        return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
+        return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEditable
 
 
     def data(self, index, role):
@@ -240,7 +240,9 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             return QModelIndex()
         else:
             node = index.internalPointer()
-            if node.parent == None:
+            if node == None:
+                return None
+            elif node.parent == None:
                 parentRow = 0
             else:
                 parentRow = node.parent.row
