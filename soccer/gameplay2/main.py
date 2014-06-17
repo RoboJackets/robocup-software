@@ -32,6 +32,10 @@ def init():
         _play_registry.insert(mod_path, entry[1])
 
 
+    watcher = fs_watcher.FsWatcher()
+
+
+
     #TODO: init fs watching
 
     _has_initialized = True
