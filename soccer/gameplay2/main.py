@@ -8,6 +8,10 @@ import logging
 import plays.line_up    # FIXME: remove
 
 
+GAMEPLAY_DIR = '../soccer/gameplay2'
+
+
+
 # main init method for the python side of things
 _has_initialized = False
 def init():
@@ -25,22 +29,22 @@ def init():
     _play_registry = play_registry_module.PlayRegistry()
 
     # load all plays
-    play_classes = recursive_import.recursive_import_classes('../soccer/gameplay2', ['plays'], play.Play)
-    print(str(play_classes))
+    play_classes = recursive_import.recursive_import_classes(GAMEPLAY_DIR, ['plays'], play.Play)
     for entry in play_classes:
         # keep in mind that @entry is a tuple
         mod_path = entry[0][1:]
         _play_registry.insert(mod_path, entry[1])
 
 
-    watcher = fs_watcher.FsWatcher('./')
-
+    # this callback lets us do cool stuff when our python files change on disk
     def fswatch_callback(event_type, module_path):
-        print('.'.joinmodule_path + " " + event_type)
+        print('.'.join(module_path) + " " + event_type)
+        # TODO: implement for real
 
-
-
-    #TODO: init fs watching
+    # start up filesystem-watching
+    watcher = fs_watcher.FsWatcher(GAMEPLAY_DIR)
+    watcher.subscribe(fswatch_callback)
+    watcher.start()
 
     _has_initialized = True
 
