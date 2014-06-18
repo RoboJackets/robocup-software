@@ -37,10 +37,9 @@ class FsWatcher(Observer):
 
     # the handler calls _notify on its parent FsWatcher
     def _notify(self, event_type, path):
+        path = path.decode('utf-8')
+
         name, file_ext = os.path.splitext(path)
-        name = name.decode('utf-8')
-        file_ext = file_ext.decode('utf-8')
-        
         if file_ext == '.py':
             # remove the prefix @root from @subpath
             root = os.path.abspath(self.root_path)
@@ -54,6 +53,10 @@ class FsWatcher(Observer):
                 subpath, last_piece = os.path.split(subpath)
                 modpath.insert(0, last_piece)
                 if subpath == '' or subpath == '/': break
+
+            # ignore changes to __init__.py files
+            if modpath[-1] == '__init__':
+                return
 
             logging.debug("module '" + '.'.join(modpath) + "' " + event_type)
 

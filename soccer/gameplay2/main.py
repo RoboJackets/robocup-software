@@ -4,17 +4,21 @@ import play, skill
 import fs_watcher
 import recursive_import
 import logging
+import importlib
+import imp
+import sys
 
-import plays.line_up    # FIXME: remove
 
-
+# soccer is run from the `run` folder, so we provide a relative path to where the python files live
 GAMEPLAY_DIR = '../soccer/gameplay2'
-
 
 
 # main init method for the python side of things
 _has_initialized = False
 def init():
+    # by default, the logger only shows messages at the WARNING level or greater
+    logging.getLogger().setLevel(logging.INFO)
+
     global _has_initialized
     if _has_initialized:
         logging.warn("main robocoup python init() method called twice - ignoring")
@@ -38,8 +42,65 @@ def init():
 
     # this callback lets us do cool stuff when our python files change on disk
     def fswatch_callback(event_type, module_path):
-        print('.'.join(module_path) + " " + event_type)
-        # TODO: implement for real
+        # the top-level folders we care about watching
+        autoloadables = ['plays', 'skills', 'tactics']
+
+        if module_path[0] in autoloadables:
+            logging.info('.'.join(module_path) + " " + event_type)
+
+            is_play = module_path[0] == 'plays'
+
+            if event_type == 'created':
+                if is_play:
+                    # we load the module and register the play class it contains with the play registry
+                    # this makes it automatically show up in the play config tab in the gui
+                    module = importlib.import_module('.'.join(module_path))
+                    try:
+                        play_class = recursive_import.find_subclasses(module, play.Play)[0]
+                        _play_registry.insert(module_path[1:], play_class) # note: skipping index zero of module_path cuts off the 'plays' part
+                    except IndexError as e:
+                        # we'll get an IndexError exception if the module didn't contain any Plays
+                        # FIXME: instead, we should unload the module and just log a warning
+                        raise Exception("Error: python files within the plays directory must contain a subclass of play.Play")
+            elif event_type == 'modified':
+                try:
+                    # reload the module
+                    containing_dict = sys.modules
+                    for modname in module_path[:-1]:
+                        containing_dict = containing_dict[modname].__dict__
+                    module = containing_dict[module_path[-1]]
+                    module = imp.reload(module)
+
+                    # re-register the new play class
+                    # FIXME: this logic should go inside the play_registry
+                    play_reg_node = _play_registry.node_for_module_path(module_path[1:])
+                    play_reg_node.play_class = recursive_import.find_subclasses(module, play.Play)[0]
+                    # _play_registry.modelReset.emit()
+
+                    logging.info("reloaded module '" + '.'.join(module_path))
+
+                    # FIXME: implemement
+                    # if (is_play and current_play.class == this_play_class) or not is_play:
+                    #     # TODO: kill current play
+
+                    # print("reloaded the module!")
+
+                    if not is_play:
+                        #FIXME: reset goalie behavior instance
+                        pass
+                except Exception as e:
+                    logging.error("EXCEPTION in modified: " + repr(e))
+                    raise
+            elif event_type == 'deleted':
+                if is_play:
+                    # TODO: remove from play registry
+
+                # FIXME: unload the module
+                # FIXME: kill current play
+                pass
+            else:
+                raise AssertionError("Unknown FsWatcher event type: '" + event_type + "'")
+
 
     # start up filesystem-watching
     watcher = fs_watcher.FsWatcher(GAMEPLAY_DIR)

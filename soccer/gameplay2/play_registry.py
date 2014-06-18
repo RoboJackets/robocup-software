@@ -1,4 +1,5 @@
 from PyQt4 import QtCore, QtGui
+import logging
 
 
 # The play registry keeps a tree of all plays in the 'plays' folder (and its subfolders)
@@ -29,13 +30,18 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         # iterate up to the last one (the last one is just an underscored,
         # lowercased version of the play's name and we don't display it in the tree)
         for module in module_path[:-1]:
-            if module not in category.children:
+            if not category.has_child_with_name(module):
                 subcategory = PlayRegistry.Category(category, module)
                 category.appendChild(subcategory)
             category = category[module]
 
         playNode = PlayRegistry.Node(module_path[-1], play_class)
+        # if playNode.module_name in category:
+        #     raise AssertionError("There's already a play registered for the given module path")
         category.appendChild(playNode)
+
+        # note: this is a shitty way to do this - we should really only reload part of the model
+        self.modelReset.emit()
 
 
     def delete(self, module_path, play_class):
@@ -54,6 +60,9 @@ class PlayRegistry(QtCore.QAbstractItemModel):
                     del catStack[idx+1][module_path[-2 - idx]]
         except KeyError:
             raise KeyError("Unable to find the specified play")
+
+        # note: this is a shitty way to do this - we should really only reload part of the model
+        self.modelReset.emit()
 
 
     # returns a list of all plays in the tree that are currently enabled
@@ -95,6 +104,19 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         return "PlayRegistry:\n-------------\n" + _cat_str(self.root, 0)
 
 
+    # module_path is a list like ['demo', 'my_demo']
+    # returns a Node or None if it can't find it
+    def node_for_module_path(self, module_path):
+        category = self.root
+        for module_name in module_path[:-1]:
+            category = category[module_name]
+
+        for child in category.children:
+            if isinstance(child, PlayRegistry.Node):
+                if child.module_name == module_path[-1]:
+                    return child
+
+        return None
 
 
     class Category():
@@ -188,6 +210,9 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         @property
         def play_class(self):
             return self._play_class
+        @play_class.setter
+        def play_class(self, value):
+            self._play_class = value
         
         @property
         def enabled(self):
