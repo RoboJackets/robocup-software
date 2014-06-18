@@ -34,6 +34,12 @@ Some classes that will only exist in python land:
 
 Not all python code is auto-reloaded, only the stuff in the 'skills', 'plays', and 'tactics' folders (and their subfolders).  There are a few rules that you have to follow in order for the auto-reloading and play-registry systems to work.
 
+Note for sublime text users: by default, sublime saves files atomically by editing a copy, then swapping it out for the original when it's "saved".  This screws up the `watchdog` python package we're using to watch for filesystem events.  You can fix this by disabling this feature in your sublime settings:
+
+`"atomic_save": false`
+
+
 * Only one play can be defined for play file (you can put as many skills as you want in a skill file though)
 * Don't use `from xxxx import yyyy` where yyyy is not a module, use `import xxxx`.  This has to do with how python handles modules and the classes loaded from those modules.  If you do it the wrong way, when a play file changes on disk and we reload it as a module, the `yyyy` that you imported from the module earlier won't get reloaded.
 * Each subdirectory that is autoloaded must have an empty __init__.py file so that python recognizes it as a package.  For example, if you add a new folder 'offense' in the 'plays' folder, you must put an __init__.py there.
+* Because of the way the `imp.reload()` function works in python, you CAN NOT change the name of a play class while soccer is running.  Change its code, not its name.
