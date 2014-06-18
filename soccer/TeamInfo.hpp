@@ -28,6 +28,17 @@ public:
 	// The pattern number of this team's goalie.
 	uint goalie;
 
+	TeamInfo()
+		: name(""),
+		  score(0),
+		  red_cards(0),
+		  yellow_cards(0),
+		  timeouts_left(0),
+		  timeout_time(0),
+		  goalie(0)
+	{
+	}
+
 	void ParseRefboxPacket(SSL_Referee_TeamInfo packet)
 	{
 		name = packet.name();
