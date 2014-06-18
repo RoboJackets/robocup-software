@@ -377,13 +377,118 @@ void Processor::run()
 		
 		runModels(detectionFrames);
 
-		/*if (_refereeModule)
+		_state.gameState.ourScore = blueTeam() ? newRefMod.blue_info.score : newRefMod.yellow_info.score;
+		_state.gameState.theirScore = blueTeam() ? newRefMod.yellow_info.score : newRefMod.blue_info.score;
+		switch(newRefMod.stage)
 		{
-			_refereeModule->UseExternalReferee = _externalReferee;
-			//_refereeModule->run();
-			curStatus.lastRefereeTime =_refereeModule->lastPacketTime();
-			// set curStatus.lastRefereeTime;
-		}*/
+		case Stage::NORMAL_FIRST_HALF_PRE:
+			_state.gameState.period = GameState::FirstHalf;
+			break;
+		case Stage::NORMAL_FIRST_HALF:
+			_state.gameState.period = GameState::FirstHalf;
+			break;
+		case Stage::NORMAL_HALF_TIME:
+			_state.gameState.period = GameState::Halftime;
+			break;
+		case Stage::NORMAL_SECOND_HALF_PRE:
+			_state.gameState.period = GameState::SecondHalf;
+			break;
+		case Stage::NORMAL_SECOND_HALF:
+			_state.gameState.period = GameState::SecondHalf;
+			break;
+		case Stage::EXTRA_TIME_BREAK:
+			_state.gameState.period = GameState::FirstHalf;
+			break;
+		case Stage::EXTRA_FIRST_HALF_PRE:
+			_state.gameState.period = GameState::Overtime1;
+			break;
+		case Stage::EXTRA_FIRST_HALF:
+			_state.gameState.period = GameState::Overtime1;
+			break;
+		case Stage::EXTRA_HALF_TIME:
+			_state.gameState.period = GameState::Halftime;
+			break;
+		case Stage::EXTRA_SECOND_HALF_PRE:
+			_state.gameState.period = GameState::Overtime2;
+			break;
+		case Stage::EXTRA_SECOND_HALF:
+			_state.gameState.period = GameState::Overtime2;
+			break;
+		case Stage::PENALTY_SHOOTOUT_BREAK:
+			_state.gameState.period = GameState::PenaltyShootout;
+			break;
+		case Stage::PENALTY_SHOOTOUT:
+			_state.gameState.period = GameState::PenaltyShootout;
+			break;
+		case Stage::POST_GAME:
+			_state.gameState.period = GameState::Overtime2;
+			break;
+		}
+		switch(newRefMod.command)
+		{
+		case Command::HALT:
+			_state.gameState.state = GameState::Halt;
+			break;
+		case Command::STOP:
+			_state.gameState.state = GameState::Stop;
+			break;
+		case Command::NORMAL_START:
+			_state.gameState.state = GameState::Ready;
+			break;
+		case Command::FORCE_START:
+			_state.gameState.state = GameState::Playing;
+			break;
+		case Command::PREPARE_KICKOFF_YELLOW:
+			_state.gameState.state = GameState::Setup;
+			_state.gameState.restart = GameState::Kickoff;
+			_state.gameState.ourRestart = !blueTeam();
+			break;
+		case Command::PREPARE_KICKOFF_BLUE:
+			_state.gameState.state = GameState::Setup;
+			_state.gameState.restart = GameState::Kickoff;
+			_state.gameState.ourRestart = blueTeam();
+			break;
+		case Command::PREPARE_PENALTY_YELLOW:
+			_state.gameState.state = GameState::Setup;
+			_state.gameState.restart = GameState::Penalty;
+			_state.gameState.ourRestart = !blueTeam();
+			break;
+		case Command::PREPARE_PENALTY_BLUE:
+			_state.gameState.state = GameState::Setup;
+			_state.gameState.restart = GameState::Penalty;
+			_state.gameState.ourRestart = blueTeam();
+			break;
+		case Command::DIRECT_FREE_YELLOW:
+			_state.gameState.state = GameState::Setup;
+			_state.gameState.restart = GameState::Direct;
+			_state.gameState.ourRestart = !blueTeam();
+			break;
+		case Command::DIRECT_FREE_BLUE:
+			_state.gameState.state = GameState::Setup;
+			_state.gameState.restart = GameState::Direct;
+			_state.gameState.ourRestart = blueTeam();
+			break;
+		case Command::INDIRECT_FREE_YELLOW:
+			_state.gameState.state = GameState::Setup;
+			_state.gameState.restart = GameState::Indirect;
+			_state.gameState.ourRestart = !blueTeam();
+			break;
+		case Command::INDIRECT_FREE_BLUE:
+			_state.gameState.state = GameState::Setup;
+			_state.gameState.restart = GameState::Indirect;
+			_state.gameState.ourRestart = blueTeam();
+			break;
+		case Command::TIMEOUT_YELLOW:
+			_state.gameState.state = GameState::Halt;
+			break;
+		case Command::TIMEOUT_BLUE:
+			_state.gameState.state = GameState::Halt;
+			break;
+		case Command::GOAL_YELLOW:
+			break;
+		case Command::GOAL_BLUE:
+			break;
+		}
 		
 		if (_gameplayModule)
 		{
