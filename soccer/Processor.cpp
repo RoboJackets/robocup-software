@@ -18,8 +18,6 @@
 #include <motion/MotionControl.hpp>
 #include <gameplay/GameplayModule.hpp>
 #include <RobotConfig.hpp>
-#include <RefereeModule.hpp>
-#include <NewRefereeModule.hpp>
 
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
@@ -77,7 +75,7 @@ Processor::Processor(bool sim)
 	QMetaObject::connectSlotsByName(this);
 
 	_ballTracker = std::make_shared<BallTracker>();
-	_refereeModule = std::make_shared<RefereeModule>(&_state);
+	_refereeModule = std::make_shared<NewRefereeModule>();
 	_gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_state);
 }
 
@@ -88,7 +86,7 @@ Processor::~Processor()
 	delete _joystick;
 	
 	//DEBUG - This is unnecessary, but lets us determine which one breaks.
-	_refereeModule.reset();
+	//_refereeModule.reset();
 	_gameplayModule.reset();
 }
 
@@ -142,71 +140,9 @@ void Processor::blueTeam(bool value)
 	QMutexLocker locker(&_loopMutex);
 	
 	_blueTeam = value;
-	_refereeModule->blueTeam(value);
+	//_refereeModule->blueTeam(value);
 }
-/**
- * changes the scores on the field
- * @param ch the command representing who scored in a goal
- */
-void Processor::internalRefCommand(char ch)
-{
-	QMutexLocker locker(&_loopMutex);
-	
-	// Change scores
-	switch (ch)
-	{
-		case RefereeCommands::GoalBlue:
-			if (blueTeam())
-			{
-				++state()->gameState.ourScore;
-			} else {
-				++state()->gameState.theirScore;
-			}
-			break;
-		
-		case RefereeCommands::SubtractGoalBlue:
-			if (blueTeam())
-			{
-				if (state()->gameState.ourScore)
-				{
-					--state()->gameState.ourScore;
-				}
-			} else {
-				if (state()->gameState.theirScore)
-				{
-					--state()->gameState.theirScore;
-				}
-			}
-			break;
-		
-		case RefereeCommands::GoalYellow:
-			if (blueTeam())
-			{
-				++state()->gameState.theirScore;
-			} else {
-				++state()->gameState.ourScore;
-			}
-			break;
-		
-		case RefereeCommands::SubtractGoalYellow:
-			if (blueTeam())
-			{
-				if (state()->gameState.theirScore)
-				{
-					--state()->gameState.theirScore;
-				}
-			} else {
-				if (state()->gameState.ourScore)
-				{
-					--state()->gameState.ourScore;
-				}
-			}
-			break;
-	}
-	
-	// Send the command to the referee handler
-	_refereeModule->command(ch);
-}
+
 /**
  * @return true if the robots are on AI else the robots are on joystick
  */
@@ -441,13 +377,13 @@ void Processor::run()
 		
 		runModels(detectionFrames);
 
-		if (_refereeModule)
+		/*if (_refereeModule)
 		{
 			_refereeModule->UseExternalReferee = _externalReferee;
 			//_refereeModule->run();
 			curStatus.lastRefereeTime =_refereeModule->lastPacketTime();
 			// set curStatus.lastRefereeTime;
-		}
+		}*/
 		
 		if (_gameplayModule)
 		{

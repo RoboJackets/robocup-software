@@ -138,41 +138,6 @@ class MainWindow : public QMainWindow
 		/// Debug layers
 		void on_debugLayers_itemChanged(QListWidgetItem *item);
 		void on_debugLayers_customContextMenuRequested(const QPoint &pos);
-		
-		/// Referee
-		void on_externalReferee_toggled(bool value);
-		void on_externalReferee_clicked(bool value);
-		
-		void on_refHalt_clicked();
-		void on_refStop_clicked();
-		void on_refReady_clicked();
-		void on_refForceStart_clicked();
-		void on_refKickoffBlue_clicked();
-		void on_refKickoffYellow_clicked();
-		void on_refFirstHalf_clicked();
-		void on_refOvertime1_clicked();
-		void on_refHalftime_clicked();
-		void on_refOvertime2_clicked();
-		void on_refSecondHalf_clicked();
-		void on_refPenaltyShootout_clicked();
-		void on_refTimeoutBlue_clicked();
-		void on_refTimeoutYellow_clicked();
-		void on_refTimeoutEnd_clicked();
-		void on_refTimeoutCancel_clicked();
-		void on_refDirectBlue_clicked();
-		void on_refDirectYellow_clicked();
-		void on_refIndirectBlue_clicked();
-		void on_refIndirectYellow_clicked();
-		void on_refPenaltyBlue_clicked();
-		void on_refPenaltyYellow_clicked();
-		void on_refGoalBlue_clicked();
-		void on_refSubtractGoalBlue_clicked();
-		void on_refGoalYellow_clicked();
-		void on_refSubtractGoalYellow_clicked();
-		void on_refYellowCardBlue_clicked();
-		void on_refYellowCardYellow_clicked();
-		void on_refRedCardBlue_clicked();
-		void on_refRedCardYellow_clicked();
 
 		/// Configuration
 		void on_configTree_itemChanged(QTreeWidgetItem *item, int column);
@@ -230,5 +195,4 @@ class MainWindow : public QMainWindow
 		QLabel *_viewFPS;
 		QLabel *_procFPS;
 		QLabel *_logMemory;
-		QLabel *_refereeLabel;
 };

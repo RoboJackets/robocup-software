@@ -60,13 +60,6 @@ MainWindow::MainWindow(QWidget *parent):
 	_live = false;
 	live(true);
 	
-	_refereeLabel = new QLabel();
-	_refereeLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-	_refereeLabel->setToolTip("Last Referee Packet");
-	_refereeLabel->setAlignment(Qt::AlignCenter);
-	calcMinimumWidth(_refereeLabel, "XXXXXXXXXXXXXXXX");
-	statusBar()->addPermanentWidget(_refereeLabel);
-	
 	_currentPlay = new QLabel();
 	_currentPlay->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 	_currentPlay->setToolTip("Current Play");
@@ -109,12 +102,12 @@ MainWindow::MainWindow(QWidget *parent):
 	_ui.debugLayers->setContextMenuPolicy(Qt::CustomContextMenu);
 	
 	// Connect shortcut buttons to regular referee buttons
-	connect(_ui.fastHalt, SIGNAL(clicked()), _ui.refHalt, SLOT(click()));
+	/*connect(_ui.fastHalt, SIGNAL(clicked()), _ui.refHalt, SLOT(click()));
 	connect(_ui.fastStop, SIGNAL(clicked()), _ui.refStop, SLOT(click()));
 	connect(_ui.fastReady, SIGNAL(clicked()), _ui.refReady, SLOT(click()));
 	connect(_ui.fastForceStart, SIGNAL(clicked()), _ui.refForceStart, SLOT(click()));
 	connect(_ui.fastKickoffBlue, SIGNAL(clicked()), _ui.refKickoffBlue, SLOT(click()));
-	connect(_ui.fastKickoffYellow, SIGNAL(clicked()), _ui.refKickoffYellow, SLOT(click()));
+	connect(_ui.fastKickoffYellow, SIGNAL(clicked()), _ui.refKickoffYellow, SLOT(click()));*/
 	
 	QActionGroup *teamGroup = new QActionGroup(this);
 	teamGroup->addAction(_ui.actionTeamBlue);
@@ -156,7 +149,7 @@ void MainWindow::processor(Processor* value)
 	_processor = value;
 	
 	// External referee
-	on_externalReferee_toggled(_ui.externalReferee->isChecked());
+	//on_externalReferee_toggled(_ui.externalReferee->isChecked());
 	
 	// Team
 	if (_processor->blueTeam())
@@ -201,8 +194,6 @@ void MainWindow::live(bool value)
 
 void MainWindow::updateViews()
 {
-	_refereeLabel->setText(_processor->refereeModule()->lastPacketDescription());
-
 	int manual =_processor->manualID();
 	if ((manual >= 0 || _ui.manualID->isEnabled()) && !_processor->joystickValid())
 	{
@@ -374,10 +365,10 @@ void MainWindow::updateStatus()
 	// Determine if we are receiving packets from an external referee
 	bool haveExternalReferee = (curTime - ps.lastRefereeTime) < 500 * 1000;
 	
-	if (_autoExternalReferee && haveExternalReferee && !_ui.externalReferee->isChecked())
+	/*if (_autoExternalReferee && haveExternalReferee && !_ui.externalReferee->isChecked())
 	{
 		_ui.externalReferee->setChecked(true);
-	}
+	}*/
 	
 	// Is the processing thread running?
 	if (curTime - ps.lastLoopTime > 100 * 1000)
@@ -430,7 +421,7 @@ void MainWindow::updateStatus()
 		if (_autoExternalReferee && _processor->externalReferee())
 		{
 			// Automatically turn off external referee
-			_ui.externalReferee->setChecked(false);
+			//_ui.externalReferee->setChecked(false);
 		} else {
 			// In simulation, we will often run without a referee, so just make it a warning.
 			// There is a separate status for non-simulation with internal referee.
@@ -848,184 +839,6 @@ void MainWindow::on_debugLayers_itemChanged(QListWidgetItem* item)
 		_ui.fieldView->layerVisible(layer, item->checkState() == Qt::Checked);
 	}
 	_ui.fieldView->update();
-}
-
-////////
-// Referee controls
-
-void MainWindow::on_externalReferee_clicked(bool value)
-{
-	// The user has taken control of external/internal referee selection.
-	_autoExternalReferee = false;
-}
-
-void MainWindow::on_externalReferee_toggled(bool value)
-{
-	_processor->externalReferee(value);
-	
-	// Enable/disable buttons in the Referee tab
-	QList<QPushButton *> buttons = _ui.refereeTab->findChildren<QPushButton *>();
-	BOOST_FOREACH(QPushButton *btn, buttons)
-	{
-		btn->setEnabled(!value);
-	}
-
-	// Enable/disable shortcut buttons
-	buttons = _ui.refShortcuts->findChildren<QPushButton *>();
-	BOOST_FOREACH(QPushButton *btn, buttons)
-	{
-		btn->setEnabled(!value);
-	}
-}
-
-void MainWindow::on_refHalt_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::Halt);
-}
-
-void MainWindow::on_refReady_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::Ready);
-}
-
-void MainWindow::on_refStop_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::Stop);
-}
-
-void MainWindow::on_refForceStart_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::ForceStart);
-}
-
-void MainWindow::on_refFirstHalf_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::FirstHalf);
-}
-
-void MainWindow::on_refOvertime1_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::Overtime1);
-}
-
-void MainWindow::on_refHalftime_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::Halftime);
-}
-
-void MainWindow::on_refOvertime2_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::Overtime2);
-}
-
-void MainWindow::on_refSecondHalf_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::SecondHalf);
-}
-
-void MainWindow::on_refPenaltyShootout_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::PenaltyShootout);
-}
-
-void MainWindow::on_refTimeoutBlue_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::TimeoutBlue);
-}
-
-void MainWindow::on_refTimeoutYellow_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::TimeoutYellow);
-}
-
-void MainWindow::on_refTimeoutEnd_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::TimeoutEnd);
-}
-
-void MainWindow::on_refTimeoutCancel_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::TimeoutCancel);
-}
-
-void MainWindow::on_refKickoffBlue_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::KickoffBlue);
-}
-
-void MainWindow::on_refKickoffYellow_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::KickoffYellow);
-}
-
-void MainWindow::on_refDirectBlue_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::DirectBlue);
-}
-
-void MainWindow::on_refDirectYellow_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::DirectYellow);
-}
-
-void MainWindow::on_refIndirectBlue_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::IndirectBlue);
-}
-
-void MainWindow::on_refIndirectYellow_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::IndirectYellow);
-}
-
-void MainWindow::on_refPenaltyBlue_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::PenaltyBlue);
-}
-
-void MainWindow::on_refPenaltyYellow_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::PenaltyYellow);
-}
-
-void MainWindow::on_refGoalBlue_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::GoalBlue);
-}
-
-void MainWindow::on_refSubtractGoalBlue_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::SubtractGoalBlue);
-}
-
-void MainWindow::on_refGoalYellow_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::GoalYellow);
-}
-
-void MainWindow::on_refSubtractGoalYellow_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::SubtractGoalYellow);
-}
-
-void MainWindow::on_refYellowCardBlue_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::YellowCardBlue);
-}
-
-void MainWindow::on_refYellowCardYellow_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::YellowCardYellow);
-}
-
-void MainWindow::on_refRedCardBlue_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::RedCardBlue);
-}
-
-void MainWindow::on_refRedCardYellow_clicked()
-{
-	_processor->internalRefCommand(RefereeCommands::RedCardYellow);
 }
 
 void MainWindow::on_configTree_itemChanged(QTreeWidgetItem* item, int column)
