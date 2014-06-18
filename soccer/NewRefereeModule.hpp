@@ -104,6 +104,7 @@ class NewRefereeModule: public QThread
 {
 public:
 	NewRefereeModule();
+	~NewRefereeModule();
 
 	void stop();
 

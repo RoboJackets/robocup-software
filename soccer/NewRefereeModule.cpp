@@ -11,8 +11,15 @@
 using namespace std;
 
 NewRefereeModule::NewRefereeModule()
+	: stage(NORMAL_FIRST_HALF_PRE),
+	  command(HALT),
+	  _running(false)
 {
-	_running = false;
+}
+
+NewRefereeModule::~NewRefereeModule()
+{
+	this->stop();
 }
 
 void NewRefereeModule::stop()
