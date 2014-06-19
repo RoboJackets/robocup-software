@@ -77,27 +77,28 @@ def init():
                     play_reg_node.play_class = recursive_import.find_subclasses(module, play.Play)[0]
                     # _play_registry.modelReset.emit()
 
-                    logging.info("reloaded module '" + '.'.join(module_path))
+                    logging.info("reloaded module '" + '.'.join(module_path) + "'")
 
-                    # FIXME: implemement
-                    # if (is_play and current_play.class == this_play_class) or not is_play:
-                    #     # TODO: kill current play
-
-                    # print("reloaded the module!")
-
+                    # kill currently-running stuff if needed
                     if not is_play:
-                        #FIXME: reset goalie behavior instance
-                        pass
+                        _root_play.drop_current_play()
+                        _root_play.drop_goalie_behavior()
+                    elif is_play and root_play != None and root_play.__class__.__name__ == play_reg_node.play_class.__name__:
+                        _root_play.drop_current_play()
+
                 except Exception as e:
-                    logging.error("EXCEPTION in modified: " + repr(e))
-                    raise
+                    logging.error("EXCEPTION in file modified event: " + repr(e))
+                    raise e
             elif event_type == 'deleted':
                 if is_play:
-                    # TODO: remove from play registry
+                    node = _play_registry.node_for_module_path(module_path[1:])
+                    if _root_play.play != None and _root_play.play.__class__.__name__ == node.play_class.__name__:
+                        _root_play.drop_current_play()
 
-                # FIXME: unload the module
-                # FIXME: kill current play
-                pass
+                    _play_registry.delete(module_path[1:])
+                else:
+                    _root_play.drop_current_play()
+                    _root_play.drop_goalie_behavior()
             else:
                 raise AssertionError("Unknown FsWatcher event type: '" + event_type + "'")
 
