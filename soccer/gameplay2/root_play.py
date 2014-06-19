@@ -21,19 +21,22 @@ class RootPlay(Play, QtCore.QObject):
     play_changed = QtCore.pyqtSignal("QString")
 
 
-    def on_enter_running(self):
-        self._play = LineUp()
-
-
     def execute_running(self):
         # TODO: do goalie stuff
         if self.play == None:
             # select the play with the largest value for score()
-            self.play = max(main.play_registry().get_enabled_plays(), key=lambda p: p.score())
+            try:
+                play_class = max(main.play_registry().get_enabled_plays(), key=lambda p: p.score())
+                self.play = play_class()
+            except Exception as e:
+                logging.error("Exception occurred during play selection: " + str(e))
+            
+            logging.info("Chose new play: '" + self.play.__class__.__name__ + "'")
+
         if self.play != None:
             try:
                 self.play.run()
-            except Error as e:
+            except Exception as e:
                 logging.error("Play '" + self.play.__class__.__name__ + "' encountered exception: " + str(e) + ". aborting and reselecting play...")
 
 
@@ -48,7 +51,7 @@ class RootPlay(Play, QtCore.QObject):
 
     # this is called when the goalie behavior must be reloaded (for example when the goalie.py file is modified)
     def drop_goalie_behavior(self):
-        self._goalie_behavior = None
+        self.goalie_behavior = None
 
 
     @property
@@ -57,6 +60,8 @@ class RootPlay(Play, QtCore.QObject):
     @play.setter
     def play(self, value):
         self._play = value
+        if self._play != None:
+            self._play.robots = self.robots
         # change notification so ui can update if necessary
         self.play_changed.emit(self._play.__class__.__name__ if self._play != None else "(No Play)")
 
@@ -64,6 +69,9 @@ class RootPlay(Play, QtCore.QObject):
     @property
     def goalie_behavior(self):
         return self._goalie_behavior
+    @goalie_behavior.setter
+    def goalie_behavior(self, value):
+        self._goalie_behavior = value
 
 
     @Play.robots.setter
@@ -72,10 +80,6 @@ class RootPlay(Play, QtCore.QObject):
 
         #FIXME: call superclass setter?
         self._robots = robots
-
-        print("root play set robots: " + str(robots))
-        # for r in robots:
-        #     print("\trobot: " + str(r))
 
         # pass robots to play
         if self.play != None:
