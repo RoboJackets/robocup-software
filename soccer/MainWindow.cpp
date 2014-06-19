@@ -100,15 +100,7 @@ MainWindow::MainWindow(QWidget *parent):
 	_elapsedTimeItem->setData(ProtobufTree::Column_Tag, Qt::DisplayRole, -1);
 	
 	_ui.debugLayers->setContextMenuPolicy(Qt::CustomContextMenu);
-	
-	// Connect shortcut buttons to regular referee buttons
-	/*connect(_ui.fastHalt, SIGNAL(clicked()), _ui.refHalt, SLOT(click()));
-	connect(_ui.fastStop, SIGNAL(clicked()), _ui.refStop, SLOT(click()));
-	connect(_ui.fastReady, SIGNAL(clicked()), _ui.refReady, SLOT(click()));
-	connect(_ui.fastForceStart, SIGNAL(clicked()), _ui.refForceStart, SLOT(click()));
-	connect(_ui.fastKickoffBlue, SIGNAL(clicked()), _ui.refKickoffBlue, SLOT(click()));
-	connect(_ui.fastKickoffYellow, SIGNAL(clicked()), _ui.refKickoffYellow, SLOT(click()));*/
-	
+
 	QActionGroup *teamGroup = new QActionGroup(this);
 	teamGroup->addAction(_ui.actionTeamBlue);
 	teamGroup->addAction(_ui.actionTeamYellow);
@@ -901,4 +893,34 @@ void MainWindow::setRadioChannel(RadioChannels channel)
         this->on_action906MHz_triggered();
         break;
     }
+}
+
+void MainWindow::on_fastHalt_clicked()
+{
+	_processor->refereeModule()->command = NewRefereeModuleEnums::HALT;
+}
+
+void MainWindow::on_fastStop_clicked()
+{
+	_processor->refereeModule()->command = NewRefereeModuleEnums::STOP;
+}
+
+void MainWindow::on_fastReady_clicked()
+{
+	_processor->refereeModule()->command = NewRefereeModuleEnums::NORMAL_START;
+}
+
+void MainWindow::on_fastForceStart_clicked()
+{
+	_processor->refereeModule()->command = NewRefereeModuleEnums::FORCE_START;
+}
+
+void MainWindow::on_fastKickoffBlue_clicked()
+{
+	_processor->refereeModule()->command = NewRefereeModuleEnums::PREPARE_KICKOFF_BLUE;
+}
+
+void MainWindow::on_fastKickoffYellow_clicked()
+{
+	_processor->refereeModule()->command = NewRefereeModuleEnums::PREPARE_KICKOFF_YELLOW;
 }
