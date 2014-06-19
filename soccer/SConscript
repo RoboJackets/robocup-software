@@ -8,7 +8,6 @@ srcs = [
 	'ProtobufTree.cpp',
 	'Joystick.cpp',
 	'RefereeModule.cpp',
-	'PlayConfigTab.cpp',
 	'FieldView.cpp',
 	'SimFieldView.cpp',
 	'Configuration.cpp',
@@ -53,8 +52,7 @@ srcs = [
 ]
 
 uics = env.Uic4([
-	'ui/MainWindow.ui',
-	'ui/PlayConfigTab.ui'
+	'ui/MainWindow.ui'
 ])
 
 e = env.Clone()
