@@ -76,6 +76,7 @@ Processor::Processor(bool sim)
 
 	_ballTracker = std::make_shared<BallTracker>();
 	_refereeModule = std::make_shared<NewRefereeModule>();
+	_refereeModule->start();
 	_gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_state);
 }
 
@@ -222,9 +223,6 @@ void Processor::run()
 {
 	VisionReceiver vision(_simulation);
 	vision.start();
-
-	NewRefereeModule newRefMod;
-	newRefMod.start();
 
 	// Create radio socket
 	_radio = _simulation ? (Radio *)new SimRadio() : (Radio *)new USBRadio();
@@ -377,9 +375,10 @@ void Processor::run()
 		
 		runModels(detectionFrames);
 
-		_state.gameState.ourScore = blueTeam() ? newRefMod.blue_info.score : newRefMod.yellow_info.score;
-		_state.gameState.theirScore = blueTeam() ? newRefMod.yellow_info.score : newRefMod.blue_info.score;
-		switch(newRefMod.stage)
+		_state.gameState.ourScore = blueTeam() ? _refereeModule->blue_info.score : _refereeModule->yellow_info.score;
+		_state.gameState.theirScore = blueTeam() ? _refereeModule->yellow_info.score : _refereeModule->blue_info.score;
+		using namespace NewRefereeModuleEnums;
+		switch(_refereeModule->stage)
 		{
 		case Stage::NORMAL_FIRST_HALF_PRE:
 			_state.gameState.period = GameState::FirstHalf;
@@ -424,7 +423,7 @@ void Processor::run()
 			_state.gameState.period = GameState::Overtime2;
 			break;
 		}
-		switch(newRefMod.command)
+		switch(_refereeModule->command)
 		{
 		case Command::HALT:
 			_state.gameState.state = GameState::Halt;

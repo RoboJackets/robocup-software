@@ -12,6 +12,8 @@
 
 class QUdpSocket;
 
+namespace NewRefereeModuleEnums
+{
 // These are the "coarse" stages of the game.
 enum Stage {
 	// The first half is about to start.
@@ -52,6 +54,8 @@ enum Stage {
 	POST_GAME = 13
 };
 
+std::string stringFromStage(Stage s);
+
 // These are the "fine" states of play on the field.
 enum Command {
 	// All robots should completely stop moving.
@@ -90,6 +94,9 @@ enum Command {
 	GOAL_BLUE = 15
 };
 
+std::string stringFromCommand(Command c);
+}
+
 class NewRefereePacket
 {
 public:
@@ -110,8 +117,8 @@ public:
 
 	void getPackets(std::vector<NewRefereePacket *> &packets);
 
-	Stage stage;
-	Command command;
+	NewRefereeModuleEnums::Stage stage;
+	NewRefereeModuleEnums::Command command;
 
 	// The UNIX timestamp when the packet was sent, in microseconds.
 	// Divide by 1,000,000 to get a time_t.
