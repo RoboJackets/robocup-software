@@ -382,6 +382,7 @@ public:
 		kick(0);
 		chip(0);
 		radioTx.set_use_chipper(false);
+		radioTx.set_kick_immediate(false);
 	}
 
 protected:
