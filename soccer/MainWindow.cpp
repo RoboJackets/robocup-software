@@ -2,7 +2,6 @@
 #include <gameplay/GameplayModule.hpp>
 #include "MainWindow.hpp"
 
-#include "PlayConfigTab.hpp"
 #include "RefereeModule.hpp"
 #include "Configuration.hpp"
 #include "QuaternionDemo.hpp"
