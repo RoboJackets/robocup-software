@@ -71,6 +71,7 @@ MainWindow::MainWindow(QWidget *parent):
 	_currentPlay->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 	_currentPlay->setToolTip("Current Play");
 	_currentPlay->setAlignment(Qt::AlignCenter);
+	_currentPlay->setObjectName("current_play_name");
 	calcMinimumWidth(_currentPlay, "XXXXXXXXXXXXXXXX");
 	statusBar()->addPermanentWidget(_currentPlay);
 	
@@ -216,14 +217,6 @@ void MainWindow::updateViews()
 	int delta_us = time - _lastUpdateTime;
 	_lastUpdateTime = time;
 	double framerate = 1000000.0 / delta_us;
-	
-	// Status bar
-	QString play = _processor->gameplayModule()->playName();
-	if (play.isNull())
-	{
-		play = "(no play)";
-	}
-	_currentPlay->setText(play);
 	
 	++_updateCount;
 	if (_updateCount == 4)

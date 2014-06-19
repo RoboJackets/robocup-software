@@ -100,9 +100,9 @@ namespace Gameplay
 			/**
 			 * Returns the name of the current play
 			 */
-			QString playName()
-			{
-				return QString();	//	FIXME: implement
+			QString playName() {
+				#warning playName() isn't implemented, which means our logfiles won't record it
+				return QString();
 			}
 			
 			/// All robots on our team that are usable by plays

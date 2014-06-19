@@ -1,6 +1,7 @@
 import ui.play_config_tab
 import logging
 from PyQt4 import QtCore, QtGui
+import main
 
 
 def getMainWindow():
@@ -32,5 +33,11 @@ def setup():
     tabs.insertTab(0, pcTab, 'Plays')
 
     logging.debug("Inserted PlayConfigTab at index zero")
+
+    # bind the play label in the ui to the name of the current play
+    play_name_label = win.findChild(QtGui.QLabel, 'current_play_name')
+    main.root_play().play_changed.connect(play_name_label.setText)
+
+    main.root_play().play = None
 
     _has_setup_ui = True

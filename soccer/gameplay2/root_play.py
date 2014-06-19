@@ -2,17 +2,23 @@ from play import *
 from behavior import *
 from plays.line_up import *
 import logging
+from PyQt4 import QtCore
+import main
 
 
 # the RootPlay is basically the python-side of the c++ GameplayModule
 # it coordinates the selection of the 'actual' play and handles the goalie behavior
-class RootPlay(Play):
+class RootPlay(Play, QtCore.QObject):
 
     def __init__(self):
-        super().__init__(continuous=True)
+        QtCore.QObject.__init__(self)
+        Play.__init__(self, continuous=True)
         self._play = None
 
         self.add_transition(Behavior.State.start, Behavior.State.running, lambda: True, 'immediately')
+
+
+    play_changed = QtCore.pyqtSignal("QString")
 
 
     def on_enter_running(self):
@@ -51,7 +57,8 @@ class RootPlay(Play):
     @play.setter
     def play(self, value):
         self._play = value
-        # TODO: update play label in gui
+        # change notification so ui can update if necessary
+        self.play_changed.emit(self._play.__class__.__name__ if self._play != None else "(No Play)")
 
 
     @property

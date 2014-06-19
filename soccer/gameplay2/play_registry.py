@@ -69,7 +69,7 @@ class PlayRegistry(QtCore.QAbstractItemModel):
     # iterates over all of the Nodes registered in the tree
     def __iter__(self):
         def _recursive_iter(category):
-            for child in category.children():
+            for child in category.children:
                 if isinstance(child, PlayRegistry.Node):
                     yield child
                 else:
