@@ -3,11 +3,6 @@
 #include <AutoName.hpp>
 #include "Behavior.hpp"
 
-/// This macro lets PlayConfigTab automagically populate its list of available plays.
-/// It creates a PlayFactory for the given play class.
-#define REGISTER_PLAY(x) static Gameplay::PlayFactoryImpl<x> __factory;
-#define REGISTER_PLAY_CATEGORY(x, c) static Gameplay::PlayFactoryImpl<x> __factory(c);
-
 namespace Gameplay
 {
 	class GameplayModule;

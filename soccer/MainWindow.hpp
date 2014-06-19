@@ -11,7 +11,6 @@
 #include "Processor.hpp"
 #include "ui_MainWindow.h"
 
-class PlayConfigTab;
 class TestResultTab;
 class StripChart;
 class ConfigBool;
@@ -46,11 +45,6 @@ class MainWindow : public QMainWindow
 		SystemState *state()
 		{
 			return _processor->state();
-		}
-		
-		PlayConfigTab *playConfigTab() const
-		{
-			return _playConfigTab;
 		}
 		
 		/// Deselects all debug layers
@@ -207,8 +201,6 @@ class MainWindow : public QMainWindow
 		// This is cleared by manually changing the checkbox or after the
 		// first referee packet is seen and the box is automatically checked.
 		bool _autoExternalReferee;
-		
-		PlayConfigTab *_playConfigTab;
 		
 		// Tree items that are not in LogFrame
 		QTreeWidgetItem *_frameNumberItem;
