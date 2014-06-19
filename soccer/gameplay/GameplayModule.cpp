@@ -320,7 +320,7 @@ void Gameplay::GameplayModule::run()
 				botVector->push_back(*itr);
 			}
 
-			// getRootPlay().attr("robots") = botVector;
+			getRootPlay().attr("robots") = botVector;
 		} catch (error_already_set) {
 			PyErr_Print();
 			throw new runtime_error("Error trying to send robots to python");
@@ -378,5 +378,5 @@ void Gameplay::GameplayModule::run()
 #pragma mark python
 
 boost::python::object Gameplay::GameplayModule::getRootPlay() {
-	return _mainPyNamespace["root_play"]();
+	return _mainPyNamespace["main"].attr("root_play")();
 }
