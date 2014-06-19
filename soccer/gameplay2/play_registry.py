@@ -183,7 +183,7 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         def __init__(self, module_name, play_class):
             self._module_name = module_name
             self._play_class = play_class
-            self._enabled = True
+            self._enabled = False
 
 
         @property
