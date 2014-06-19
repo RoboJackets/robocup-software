@@ -265,9 +265,6 @@ void MainWindow::updateViews()
 	// Update status indicator
 	updateStatus();
 	
-	// Update play list
-	_playConfigTab->frameUpdate();
-	
 	// Check if any debug layers have been added
 	// (layers should never be removed)
 	const std::shared_ptr<LogFrame> liveFrame = _processor->logger().lastFrame();
