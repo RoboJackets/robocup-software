@@ -143,6 +143,14 @@ class MainWindow : public QMainWindow
 		void on_configTree_itemChanged(QTreeWidgetItem *item, int column);
 		void on_loadConfig_clicked();
 		void on_saveConfig_clicked();
+
+		// Fast Ref Buttons
+		void on_fastHalt_clicked();
+		void on_fastStop_clicked();
+		void on_fastReady_clicked();
+		void on_fastForceStart_clicked();
+		void on_fastKickoffBlue_clicked();
+		void on_fastKickoffYellow_clicked();
 		
 	private:
 		void updateStatus();
