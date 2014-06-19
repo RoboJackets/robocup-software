@@ -21,7 +21,14 @@ env_base = env.Clone()
 Export('env_base')
 
 # C++ compiler
-env.MergeFlags('-Wall -g -Wno-unused-function -Wno-reorder -Wno-gnu -std=c++11 -Wno-deprecated-register')  # debug version - don't use for competition use
+env.MergeFlags('-Wall -g -Wno-unused-function -Wno-reorder -Wno-gnu -std=c++11')  # debug version - don't use for competition use
+
+# Newer compilers have deprecated the 'register' keyword
+# To suppress warnings about 'register' being used in some of our dependencies, we pass this flag
+# However, older compilers don't recognize this flag and give us warnings for trying to suppress non-existant warnings
+# we'll leave this commented out for now and add it back once we're all using a newer compiler
+# env.MergeFlags('-Wno-deprecated-register')
+
 # env.MergeFlags('-O2 -g3 -Wall -DNDEBUG') # optimized version
 env.Append(CPPPATH = [Dir('#/common'), Dir('/usr/include/eigen3')])
 
