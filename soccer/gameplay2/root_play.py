@@ -20,6 +20,7 @@ class RootPlay(Play):
 
 
     def execute_running(self):
+        # TODO: do goalie stuff
         if self.play == None:
             # select the play with the largest value for score()
             self.play = max(main.play_registry().get_enabled_plays(), key=lambda p: p.score())
@@ -37,6 +38,11 @@ class RootPlay(Play):
     # this is used to force a reselection of a play
     def drop_current_play(self):
         self.play = None
+
+
+    # this is called when the goalie behavior must be reloaded (for example when the goalie.py file is modified)
+    def drop_goalie_behavior(self):
+        self._goalie_behavior = None
 
 
     @property

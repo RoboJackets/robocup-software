@@ -44,22 +44,18 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         self.modelReset.emit()
 
 
-    def delete(self, module_path, play_class):
-        catStack = [self.root]
-        try:
-            for module in module_path[:-1]:
-                catStack.append(catStack[-1][module])
-            
-            # remove the play
-            del catStack[-1][play_class.__name__]
+    def delete(self, module_path):
+        node = self.node_for_module_path(module_path)
+        del node.parent[node.name]
 
-            # remove any categories where this play was the only entry
-            catStack.reverse()
-            for idx, category in enumerate(catStack[:-1]):
-                if len(category.children) == 0:
-                    del catStack[idx+1][module_path[-2 - idx]]
-        except KeyError:
-            raise KeyError("Unable to find the specified play")
+        # remove any categories where this play was the only entry
+        node = node.parent
+        while node.parent != None:
+            if len(node.children) == 0:
+                del node.parent[node.name]
+                node = node.parent
+            else:
+                break
 
         # note: this is a shitty way to do this - we should really only reload part of the model
         self.modelReset.emit()
@@ -133,7 +129,7 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             return self._name
 
 
-        def __del__(self, name):
+        def __delitem__(self, name):
             for idx, child in enumerate(self.children):
                 if child.name == name:
                     del self.children[idx]
