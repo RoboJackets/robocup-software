@@ -20,19 +20,32 @@ class RootPlay(Play):
 
 
     def execute_running(self):
-        # print("RootPlay running...")
+        if self.play == None:
+            # select the play with the largest value for score()
+            self.play = max(main.play_registry().get_enabled_plays(), key=lambda p: p.score())
         if self.play != None:
-            # print(str(self.play))
-            self.play.run()
+            try:
+                self.play.run()
+            except Error as e:
+                logging.error("Play '" + self.play.__class__.__name__ + "' encountered exception: " + str(e) + ". aborting and reselecting play...")
 
 
     def on_exit_running(self):
         self._play = None
 
 
+    # this is used to force a reselection of a play
+    def drop_current_play(self):
+        self.play = None
+
+
     @property
     def play(self):
         return self._play
+    @play.setter
+    def play(self, value):
+        self._play = value
+        # TODO: update play label in gui
 
 
     @property
