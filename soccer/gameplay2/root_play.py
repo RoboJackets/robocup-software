@@ -1,9 +1,9 @@
 from play import *
 from behavior import *
-from plays.line_up import *
 import logging
 from PyQt4 import QtCore
 import main
+import tactics.roles.goalie
 
 
 # the RootPlay is basically the python-side of the c++ GameplayModule
