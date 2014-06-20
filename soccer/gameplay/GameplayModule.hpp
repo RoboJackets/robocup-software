@@ -50,10 +50,7 @@ namespace Gameplay
 			
 			void setupUI();
 
-			void goalieID(int value)
-			{
-				_goalieID = value;
-			}
+			void goalieID(int value);
 			int goalieID()
 			{
 				return _goalieID;
@@ -120,6 +117,9 @@ namespace Gameplay
 		protected:
 
 			boost::python::object getRootPlay();
+
+			///	gets the instance of the main.py module that's loaded at GameplayModule
+			boost::python::object getMainModule();
 
 			
 		private:
