@@ -87,6 +87,7 @@ BOOST_PYTHON_MODULE(robocup)
 	class_<Ball>("Ball", init<>())
 		.def_readonly("pos", &Ball::pos)
 		.def_readonly("vel", &Ball::vel)
+		.def_readonly("valid", &Ball::valid)
 	;
 
 	class_<std::vector<OurRobot *> >("vector_OurRobot")
