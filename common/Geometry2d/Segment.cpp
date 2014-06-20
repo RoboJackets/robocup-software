@@ -85,6 +85,16 @@ bool Segment::intersects(const Segment &other, Point *intr) const
 	return true;
 }
 
+std::shared_ptr<Point> Segment::intersection(const Segment &other) {
+	Point pointOut;
+	bool doesIt = intersects(other, &pointOut);
+	if (doesIt) {
+		return std::make_shared<Point>(pointOut);
+	} else {
+		return nullptr;
+	}
+}
+
 bool Segment::intersects(const Circle& circle) const
 {
 	Point pCir(circle.center.x, circle.center.y);

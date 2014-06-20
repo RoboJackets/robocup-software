@@ -60,6 +60,10 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("__repr__", &Point_repr)
 	;
 
+	class_<Geometry2d::Segment>("Segment", init<Geometry2d::Point, Geometry2d::Point>())
+		.def("center", &Geometry2d::Segment::center)
+	;
+
 	//	TODO: add the rest of GameState stuff here
 	//		I'm holding off for now because GameState needs some attention on the C++
 	//		side of things before we spread its shortcomings into the python world too...
@@ -84,7 +88,7 @@ BOOST_PYTHON_MODULE(robocup)
 
 	class_<OpponentRobot, bases<Robot> >("OpponentRobot", init<int>());
 
-	class_<Ball>("Ball", init<>())
+	class_<Ball, std::shared_ptr<Ball> >("Ball", init<>())
 		.def_readonly("pos", &Ball::pos)
 		.def_readonly("vel", &Ball::vel)
 		.def_readonly("valid", &Ball::valid)
