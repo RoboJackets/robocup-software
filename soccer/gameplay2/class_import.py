@@ -13,6 +13,10 @@ import inspect
 # list of module names telling where @class came from.
 # This is used in the system for importing plays.
 # An example entry in the returned list could be: `(['plays', 'offense', 'mighty_might'], plays.offense.MightyMight)`
+#
+# FIXME: clarify module_path vs base_path better
+# FIXME: fix so that we can import multiple classes from a single file
+#
 def recursive_import_classes(base_path, module_path, parent_class):
     classes = []
 

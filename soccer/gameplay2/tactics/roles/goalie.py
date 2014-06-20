@@ -133,7 +133,7 @@ class Goalie(tactic.Tactic):
 
 
     def execute_intercept(self):
-        ball_path = Segment(main.ball().pos,
+        ball_path = robocup.Segment(main.ball().pos,
                             main.ball().pos + 10*main.ball().vel.normalized())
         dest = ball_path.nearest_point(robot.pos)
         robot.move_to(dest)
