@@ -96,6 +96,9 @@ TEST(Path, evaluate) {
 	path.points.push_back(p1);
 	path.points.push_back(p2);
 
+	Configuration config;
+	path.createConfiguration(&config);
+
 	Point posOut, velOut;
 	bool pathValid;
 
