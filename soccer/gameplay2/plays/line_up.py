@@ -30,19 +30,20 @@ class LineUp(Play):
         # super()._set_robots(robots)
         self._robots = robots
 
-        # build a list of Points for where the robots should go
-        start_x = -1.0
-        start_y = 0.5
-        spacing_y = 0.25
-        points = [robocup.Point(start_x, start_y + i * spacing_y) for i in range(0, len(robots))]
+        if robots != None:
+            # build a list of Points for where the robots should go
+            start_x = -1.0
+            start_y = 0.5
+            spacing_y = 0.25
+            points = [robocup.Point(start_x, start_y + i * spacing_y) for i in range(0, len(robots))]
 
-        # print("LineUp set destinations: " + str(points))
+            # print("LineUp set destinations: " + str(points))
 
-        self.subbehaviors = [Move(pt) for pt in points]
+            self.subbehaviors = [Move(pt) for pt in points]
 
-        # FIXME: assign behaviors more smartly
-        for i in range(0, len(robots)):
-            self.subbehaviors[i].robot = self.robots[i]
+            # FIXME: assign behaviors more smartly
+            for i in range(0, len(robots)):
+                self.subbehaviors[i].robot = self.robots[i]
 
 
     def execute_running(self):
