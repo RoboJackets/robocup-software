@@ -1,5 +1,4 @@
 import robocup
-from robocup.geometry2d import *
 import tactic
 import behavior
 import constants
@@ -10,8 +9,8 @@ import math
 class Goalie(tactic.Tactic):
 
     MaxX = constants.Field.GoalWidth / 2.0
-    RobotSegment = Segment(Point(-Goalie.MaxX, constants.Robot.Radius)
-                            Point(Goalie.MaxX, constants.Robot.Radius))
+    RobotSegment = robocup.Segment(robocup.Point(-MaxX, constants.Robot.Radius),
+                                    robocup.Point(MaxX, constants.Robot.Radius))
 
     class State(enum.Enum):
         defend = 1          # TODO: clarify difference between block and defend
@@ -115,7 +114,7 @@ class Goalie(tactic.Tactic):
 
 
     def execute_clear(self):
-        ball_to_goal = Segment(main.ball().pos, Point(0, 0))
+        ball_to_goal = robocup.Segment(main.ball().pos, Point(0, 0))
         closest = ball_to_goal.nearest_point(robot.pos)
 
         if (robot.pos - closest).mag() > 0.10:
