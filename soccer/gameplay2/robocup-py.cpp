@@ -107,7 +107,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("move_to", &OurRobot_move_to)
 	;
 
-	class_<OpponentRobot, bases<Robot> >("OpponentRobot", init<int>());
+	class_<OpponentRobot, std::shared_ptr<OpponentRobot>, bases<Robot> >("OpponentRobot", init<int>());
 
 	class_<Ball, std::shared_ptr<Ball> >("Ball", init<>())
 		.def_readonly("pos", &Ball::pos)
@@ -117,6 +117,10 @@ BOOST_PYTHON_MODULE(robocup)
 
 	class_<std::vector<OurRobot *> >("vector_OurRobot")
 		.def(vector_indexing_suite<std::vector<OurRobot *> >())
+	;
+
+	class_<std::vector<OpponentRobot *> >("vector_OpponentRobot")
+		.def(vector_indexing_suite<std::vector<OpponentRobot *> >())
 	;
 
 	class_<SystemState>("SystemState")
