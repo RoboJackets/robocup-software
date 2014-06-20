@@ -129,3 +129,17 @@ _play_registry = None
 def play_registry():
     global _play_registry
     return _play_registry
+
+
+
+# set by the C++ GameplayModule
+############################################################
+
+_game_state = None
+@property
+def game_state(self):
+    return self._game_state
+@game_state.setter
+def game_state(self, value):
+    self._game_state = value
+

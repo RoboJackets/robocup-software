@@ -64,12 +64,33 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("center", &Geometry2d::Segment::center)
 	;
 
-	//	TODO: add the rest of GameState stuff here
 	//		I'm holding off for now because GameState needs some attention on the C++
 	//		side of things before we spread its shortcomings into the python world too...
 	class_<GameState>("GameState")
 		.def_readonly("our_score", &GameState::ourScore)
 		.def_readonly("their_score", &GameState::theirScore)
+		.def("is_halted", &GameState::halt)
+		.def("is_stopped", &GameState::stopped)
+		.def("is_playing", &GameState::playing)
+		.def("is_kickoff", &GameState::kickoff)
+		.def("is_penalty", &GameState::penalty)
+		.def("is_direct", &GameState::direct)
+		.def("is_indirect", &GameState::indirect)
+		.def("is_our_kickoff", &GameState::ourKickoff)
+		.def("is_our_penalty", &GameState::ourPenalty)
+		.def("is_our_direct", &GameState::ourDirect)
+		.def("is_our_indirect", &GameState::ourIndirect)
+		.def("is_our_free_kick", &GameState::ourFreeKick)
+		.def("is_their_kickoff", &GameState::theirKickoff)
+		.def("is_their_penalty", &GameState::theirPenalty)
+		.def("is_their_direct", &GameState::theirDirect)
+		.def("is_their_indirect", &GameState::theirIndirect)
+		.def("is_their_free_kick", &GameState::theirFreeKick)
+		.def("is_setup_restart", &GameState::setupRestart)
+		.def("can_kick", &GameState::canKick)
+		.def("stay_away_from_ball", &GameState::stayAwayFromBall)
+		.def("stay_on_side", &GameState::stayOnSide)
+		.def("stay_behind_penalty_line", &GameState::stayBehindPenaltyLine)
 	;
 
 	class_<Robot>("Robot", init<int, bool>())
