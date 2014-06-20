@@ -18,6 +18,8 @@
 #include <iostream>
 #include <boost/foreach.hpp>
 
+#include <ctime>
+
 #include <google/protobuf/descriptor.h>
 
 using namespace std;
@@ -186,6 +188,7 @@ void MainWindow::live(bool value)
 
 void MainWindow::updateViews()
 {
+
 	int manual =_processor->manualID();
 	if ((manual >= 0 || _ui.manualID->isEnabled()) && !_processor->joystickValid())
 	{
@@ -323,6 +326,25 @@ void MainWindow::updateViews()
 			// Items have been added, so sort again on tag number
 			_ui.logTree->sortItems(ProtobufTree::Column_Tag, Qt::AscendingOrder);
 		}
+	}
+
+	if(std::time(0) - (_processor->refereeModule()->sent_time/1000000) > 1)
+	{
+		_ui.fastHalt->setEnabled(true);
+		_ui.fastStop->setEnabled(true);
+		_ui.fastReady->setEnabled(true);
+		_ui.fastForceStart->setEnabled(true);
+		_ui.fastKickoffBlue->setEnabled(true);
+		_ui.fastKickoffYellow->setEnabled(true);
+	}
+	else
+	{
+		_ui.fastHalt->setEnabled(false);
+		_ui.fastStop->setEnabled(false);
+		_ui.fastReady->setEnabled(false);
+		_ui.fastForceStart->setEnabled(false);
+		_ui.fastKickoffBlue->setEnabled(false);
+		_ui.fastKickoffYellow->setEnabled(false);
 	}
 
 	_ui.refStage->setText(NewRefereeModuleEnums::stringFromStage(_processor->refereeModule()->stage).c_str());
