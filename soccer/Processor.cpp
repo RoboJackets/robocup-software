@@ -11,7 +11,6 @@
 #include <poll.h>
 #include <multicast.hpp>
 #include <Constants.hpp>
-#include <Network.hpp>
 #include <Utils.hpp>
 #include <Joystick.hpp>
 #include <LogUtils.hpp>
@@ -19,7 +18,6 @@
 
 #include <motion/MotionControl.hpp>
 #include <RobotConfig.hpp>
-#include <RefereeModule.hpp>
 
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
@@ -77,7 +75,8 @@ Processor::Processor(bool sim)
 	QMetaObject::connectSlotsByName(this);
 
 	_ballTracker = std::make_shared<BallTracker>();
-	_refereeModule = std::make_shared<RefereeModule>(&_state);
+	_refereeModule = std::make_shared<NewRefereeModule>();
+	_refereeModule->start();
 	_gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_state);
 }
 
@@ -88,7 +87,7 @@ Processor::~Processor()
 	delete _joystick;
 	
 	//DEBUG - This is unnecessary, but lets us determine which one breaks.
-	_refereeModule.reset();
+	//_refereeModule.reset();
 	_gameplayModule.reset();
 }
 
@@ -142,71 +141,9 @@ void Processor::blueTeam(bool value)
 	QMutexLocker locker(&_loopMutex);
 	
 	_blueTeam = value;
-	_refereeModule->blueTeam(value);
+	//_refereeModule->blueTeam(value);
 }
-/**
- * changes the scores on the field
- * @param ch the command representing who scored in a goal
- */
-void Processor::internalRefCommand(char ch)
-{
-	QMutexLocker locker(&_loopMutex);
-	
-	// Change scores
-	switch (ch)
-	{
-		case RefereeCommands::GoalBlue:
-			if (blueTeam())
-			{
-				++state()->gameState.ourScore;
-			} else {
-				++state()->gameState.theirScore;
-			}
-			break;
-		
-		case RefereeCommands::SubtractGoalBlue:
-			if (blueTeam())
-			{
-				if (state()->gameState.ourScore)
-				{
-					--state()->gameState.ourScore;
-				}
-			} else {
-				if (state()->gameState.theirScore)
-				{
-					--state()->gameState.theirScore;
-				}
-			}
-			break;
-		
-		case RefereeCommands::GoalYellow:
-			if (blueTeam())
-			{
-				++state()->gameState.theirScore;
-			} else {
-				++state()->gameState.ourScore;
-			}
-			break;
-		
-		case RefereeCommands::SubtractGoalYellow:
-			if (blueTeam())
-			{
-				if (state()->gameState.theirScore)
-				{
-					--state()->gameState.theirScore;
-				}
-			} else {
-				if (state()->gameState.ourScore)
-				{
-					--state()->gameState.ourScore;
-				}
-			}
-			break;
-	}
-	
-	// Send the command to the referee handler
-	_refereeModule->command(ch);
-}
+
 /**
  * @return true if the robots are on AI else the robots are on joystick
  */
@@ -286,13 +223,6 @@ void Processor::run()
 {
 	VisionReceiver vision(_simulation);
 	vision.start();
-	
-	// Create referee socket
-	_refereeSocket = new QUdpSocket;
-	if (!_refereeSocket->bind(RefereePort, QUdpSocket::ShareAddress)) {
-		throw runtime_error("Can't bind to referee port");
-	}
-	multicast_add(_refereeSocket, RefereeAddress);
 
 	// Create radio socket
 	_radio = _simulation ? (Radio *)new SimRadio() : (Radio *)new USBRadio();
@@ -420,30 +350,6 @@ void Processor::run()
 			}
 		}
 		
-		// Read referee packets
-		while (_refereeSocket->hasPendingDatagrams())
-		{
-			unsigned int n = _refereeSocket->pendingDatagramSize();
-			string str(6, 0);
-			_refereeSocket->readDatagram(&str[0], str.size());
-			
-			// Check the size after receiving to discard bad packets
-			if (n != str.size())
-			{
-				printf("Bad referee packet of %d bytes\n", n);
-				continue;
-			}
-			
-			// Log the referee packet, but only use it if external referee is enabled
-			curStatus.lastRefereeTime = timestamp();
-			_state.logFrame->add_raw_referee(str);
-			
-			if (_externalReferee)
-			{
-				_refereeModule->packet(str);
-			}
-		}
-		
 		// Read radio reverse packets
 		_radio->receive();
 		BOOST_FOREACH(const Packet::RadioRx &rx, _radio->reversePackets())
@@ -469,9 +375,118 @@ void Processor::run()
 		
 		runModels(detectionFrames);
 
-		if (_refereeModule)
+		_state.gameState.ourScore = blueTeam() ? _refereeModule->blue_info.score : _refereeModule->yellow_info.score;
+		_state.gameState.theirScore = blueTeam() ? _refereeModule->yellow_info.score : _refereeModule->blue_info.score;
+		using namespace NewRefereeModuleEnums;
+		switch(_refereeModule->stage)
 		{
-			_refereeModule->run();
+		case Stage::NORMAL_FIRST_HALF_PRE:
+			_state.gameState.period = GameState::FirstHalf;
+			break;
+		case Stage::NORMAL_FIRST_HALF:
+			_state.gameState.period = GameState::FirstHalf;
+			break;
+		case Stage::NORMAL_HALF_TIME:
+			_state.gameState.period = GameState::Halftime;
+			break;
+		case Stage::NORMAL_SECOND_HALF_PRE:
+			_state.gameState.period = GameState::SecondHalf;
+			break;
+		case Stage::NORMAL_SECOND_HALF:
+			_state.gameState.period = GameState::SecondHalf;
+			break;
+		case Stage::EXTRA_TIME_BREAK:
+			_state.gameState.period = GameState::FirstHalf;
+			break;
+		case Stage::EXTRA_FIRST_HALF_PRE:
+			_state.gameState.period = GameState::Overtime1;
+			break;
+		case Stage::EXTRA_FIRST_HALF:
+			_state.gameState.period = GameState::Overtime1;
+			break;
+		case Stage::EXTRA_HALF_TIME:
+			_state.gameState.period = GameState::Halftime;
+			break;
+		case Stage::EXTRA_SECOND_HALF_PRE:
+			_state.gameState.period = GameState::Overtime2;
+			break;
+		case Stage::EXTRA_SECOND_HALF:
+			_state.gameState.period = GameState::Overtime2;
+			break;
+		case Stage::PENALTY_SHOOTOUT_BREAK:
+			_state.gameState.period = GameState::PenaltyShootout;
+			break;
+		case Stage::PENALTY_SHOOTOUT:
+			_state.gameState.period = GameState::PenaltyShootout;
+			break;
+		case Stage::POST_GAME:
+			_state.gameState.period = GameState::Overtime2;
+			break;
+		}
+		switch(_refereeModule->command)
+		{
+		case Command::HALT:
+			_state.gameState.state = GameState::Halt;
+			break;
+		case Command::STOP:
+			_state.gameState.state = GameState::Stop;
+			break;
+		case Command::NORMAL_START:
+			_state.gameState.state = GameState::Ready;
+			break;
+		case Command::FORCE_START:
+			_state.gameState.state = GameState::Playing;
+			break;
+		case Command::PREPARE_KICKOFF_YELLOW:
+			_state.gameState.state = GameState::Setup;
+			_state.gameState.restart = GameState::Kickoff;
+			_state.gameState.ourRestart = !blueTeam();
+			break;
+		case Command::PREPARE_KICKOFF_BLUE:
+			_state.gameState.state = GameState::Setup;
+			_state.gameState.restart = GameState::Kickoff;
+			_state.gameState.ourRestart = blueTeam();
+			break;
+		case Command::PREPARE_PENALTY_YELLOW:
+			_state.gameState.state = GameState::Setup;
+			_state.gameState.restart = GameState::Penalty;
+			_state.gameState.ourRestart = !blueTeam();
+			break;
+		case Command::PREPARE_PENALTY_BLUE:
+			_state.gameState.state = GameState::Setup;
+			_state.gameState.restart = GameState::Penalty;
+			_state.gameState.ourRestart = blueTeam();
+			break;
+		case Command::DIRECT_FREE_YELLOW:
+			_state.gameState.state = GameState::Setup;
+			_state.gameState.restart = GameState::Direct;
+			_state.gameState.ourRestart = !blueTeam();
+			break;
+		case Command::DIRECT_FREE_BLUE:
+			_state.gameState.state = GameState::Setup;
+			_state.gameState.restart = GameState::Direct;
+			_state.gameState.ourRestart = blueTeam();
+			break;
+		case Command::INDIRECT_FREE_YELLOW:
+			_state.gameState.state = GameState::Setup;
+			_state.gameState.restart = GameState::Indirect;
+			_state.gameState.ourRestart = !blueTeam();
+			break;
+		case Command::INDIRECT_FREE_BLUE:
+			_state.gameState.state = GameState::Setup;
+			_state.gameState.restart = GameState::Indirect;
+			_state.gameState.ourRestart = blueTeam();
+			break;
+		case Command::TIMEOUT_YELLOW:
+			_state.gameState.state = GameState::Halt;
+			break;
+		case Command::TIMEOUT_BLUE:
+			_state.gameState.state = GameState::Halt;
+			break;
+		case Command::GOAL_YELLOW:
+			break;
+		case Command::GOAL_BLUE:
+			break;
 		}
 		
 		if (_gameplayModule)
@@ -614,9 +629,6 @@ void Processor::run()
 	}
 	
 	vision.stop();
-	
-	delete _refereeSocket;
-	_refereeSocket = nullptr;
 }
 
 void Processor::sendRadioData()
