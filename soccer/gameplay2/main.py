@@ -2,7 +2,7 @@ import root_play as root_play_module
 import play_registry as play_registry_module
 import play, skill
 import fs_watcher
-import recursive_import
+import class_import
 import logging
 import importlib
 import imp
@@ -33,7 +33,7 @@ def init():
     _play_registry = play_registry_module.PlayRegistry()
 
     # load all plays
-    play_classes = recursive_import.recursive_import_classes(GAMEPLAY_DIR, ['plays'], play.Play)
+    play_classes = class_import.recursive_import_classes(GAMEPLAY_DIR, ['plays'], play.Play)
     for entry in play_classes:
         # keep in mind that @entry is a tuple
         mod_path = entry[0][1:]
@@ -56,7 +56,7 @@ def init():
                     # this makes it automatically show up in the play config tab in the gui
                     module = importlib.import_module('.'.join(module_path))
                     try:
-                        play_class = recursive_import.find_subclasses(module, play.Play)[0]
+                        play_class = class_import.find_subclasses(module, play.Play)[0]
                         _play_registry.insert(module_path[1:], play_class) # note: skipping index zero of module_path cuts off the 'plays' part
                     except IndexError as e:
                         # we'll get an IndexError exception if the module didn't contain any Plays
@@ -74,7 +74,7 @@ def init():
                     # re-register the new play class
                     # FIXME: this logic should go inside the play_registry
                     play_reg_node = _play_registry.node_for_module_path(module_path[1:])
-                    play_reg_node.play_class = recursive_import.find_subclasses(module, play.Play)[0]
+                    play_reg_node.play_class = class_import.find_subclasses(module, play.Play)[0]
                     # _play_registry.modelReset.emit()
 
                     logging.info("reloaded module '" + '.'.join(module_path) + "'")
