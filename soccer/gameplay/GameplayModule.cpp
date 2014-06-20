@@ -340,6 +340,8 @@ void Gameplay::GameplayModule::run()
 			getRootPlay().attr("robots") = botVector;
 
 			getMainModule().attr("game_state") = _state->gameState;
+
+			getMainModule().attr("ball") = _state->ball();
 		} catch (error_already_set) {
 			PyErr_Print();
 			throw new runtime_error("Error trying to pass robots and/or ball and/or game state to python");
