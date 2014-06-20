@@ -143,3 +143,12 @@ def game_state(self):
 def game_state(self, value):
     self._game_state = value
 
+_ball = None
+@property
+def ball(self):
+    return self._ball
+@ball.setter
+def ball(self, value):
+    self._ball = value
+
+
