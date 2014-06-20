@@ -5,6 +5,7 @@ import logging
 from PyQt4 import QtCore
 import main
 import tactics.roles.goalie
+import traceback
 
 
 # the RootPlay is basically the python-side of the c++ GameplayModule
@@ -29,6 +30,8 @@ class RootPlay(Play, QtCore.QObject):
         if main.game_state.is_stopped() and self.play.__class__ != plays.stopped.Stopped:
             self.play = plays.stopped.Stopped()
             logging.info("Switched to Stopped play")
+        elif not main.game_state.is_stopped() and self.play.__class__ == plays.stopped.Stopped:
+            self.play = None
         elif self.play == None:
             # select the play with the largest value for score()
             try:
@@ -40,6 +43,7 @@ class RootPlay(Play, QtCore.QObject):
                     self.play = None
             except Exception as e:
                 logging.error("Exception occurred during play selection: " + str(e))
+                traceback.print_exc()
             if self.play != None:
                 logging.info("Chose new play: '" + self.play.__class__.__name__ + "'")
 
