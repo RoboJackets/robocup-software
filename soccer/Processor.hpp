@@ -6,19 +6,17 @@
 #include <QThread>
 #include <QMutex>
 #include <QMutexLocker>
-#include <QUdpSocket>
 
 #include <protobuf/LogFrame.pb.h>
-#include <Network.hpp>
 #include <Logger.hpp>
 #include <Geometry2d/TransformMatrix.hpp>
 #include <SystemState.hpp>
 #include <modeling/RobotFilter.hpp>
+#include <NewRefereeModule.hpp>
 
 class Configuration;
 class RobotStatus;
 class Joystick;
-class RefereeModule;
 class Radio;
 class BallTracker;
 
@@ -123,7 +121,7 @@ class Processor: public QThread
 			return _gameplayModule;
 		}
 		
-		std::shared_ptr<RefereeModule> refereeModule() const
+		std::shared_ptr<NewRefereeModule> refereeModule() const
 		{
 			return _refereeModule;
 		}
@@ -145,9 +143,6 @@ class Processor: public QThread
 			QMutexLocker lock(&_statusMutex);
 			return _status;
 		}
-		
-		// Simulates a command from the referee
-		void internalRefCommand(char ch);
 		
 		float framerate()
 		{
@@ -260,12 +255,9 @@ class Processor: public QThread
 		// This is used by the GUI to indicate status of the processing loop and network
 		QMutex _statusMutex;
 		Status _status;
-		
-		// Network sockets
-		QUdpSocket *_refereeSocket;
 
 		//modules
-		std::shared_ptr<RefereeModule> _refereeModule;
+		std::shared_ptr<NewRefereeModule> _refereeModule;
 		std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
 		std::shared_ptr<BallTracker> _ballTracker;
 

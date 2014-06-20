@@ -8,6 +8,7 @@ srcs = [
 	'ProtobufTree.cpp',
 	'Joystick.cpp',
 	'RefereeModule.cpp',
+	'NewRefereeModule.cpp',
 	'FieldView.cpp',
 	'SimFieldView.cpp',
 	'Configuration.cpp',
