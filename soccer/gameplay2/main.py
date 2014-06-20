@@ -151,4 +151,21 @@ def ball(self):
 def ball(self, value):
     self._ball = value
 
+_our_robots = None
+@property
+def our_robots(self):
+    return self._our_robots
+@our_robots.setter
+def our_robots(self, value):
+    root_play().robots = value
+    self._our_robots = value
+
+_their_robots = None
+@property
+def their_robots(self):
+    return self._their_robots
+@their_robots.setter
+def their_robots(self, value):
+    self._their_robots = value
+
 

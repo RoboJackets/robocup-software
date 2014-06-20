@@ -336,12 +336,17 @@ void Gameplay::GameplayModule::run()
 			for (auto itr = _playRobots.begin(); itr != _playRobots.end(); itr++) {
 				botVector->push_back(*itr);
 			}
+			getMainModule().attr("our_robots") = botVector;
 
-			getRootPlay().attr("robots") = botVector;
+			std::vector<OpponentRobot *> *theirBotVector = new std::vector<OpponentRobot *>();
+			for (auto itr = _state->opp.begin(); itr != _state->opp.end(); itr++) {
+				theirBotVector->push_back(*itr);
+			}
+			getMainModule().attr("their_robots") = theirBotVector;
 
 			getMainModule().attr("game_state") = _state->gameState;
 
-			getMainModule().attr("ball") = _state->ball();
+			getMainModule().attr("ball") = _state->ball;
 		} catch (error_already_set) {
 			PyErr_Print();
 			throw new runtime_error("Error trying to pass robots and/or ball and/or game state to python");
