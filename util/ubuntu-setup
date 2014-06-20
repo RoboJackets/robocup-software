@@ -21,5 +21,8 @@ apt-get install $(sed 's/#.*//;/^$/d' $BASE/util/required_packages.txt)
 # remove old version of git python
 yes | easy_install GitPython
 
+# get pip the old way
+easy_install3 pip
+
 # install python3 requirements
 pip3 install -r $BASE/util/requirements3.txt
