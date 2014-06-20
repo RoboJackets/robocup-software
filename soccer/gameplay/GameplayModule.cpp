@@ -241,6 +241,23 @@ void Gameplay::GameplayModule::updatePlay() {
 }
 */
 
+void Gameplay::GameplayModule::goalieID(int value)
+{
+	_goalieID = value;
+
+	//	pass this value to python
+	PyGILState_STATE state = PyGILState_Ensure(); {
+		try {
+			getRootPlay().attr("goalie_id") = _goalieID;
+		} catch (error_already_set) {
+			cout << "PYTHON ERROR!!!" << endl;
+			PyErr_Print();
+			cout << "END PYTHON ERROR" << endl;
+			throw new runtime_error("Error trying to set python goalie_id on root_play");
+		}
+	} PyGILState_Release(state);
+}
+
 void Gameplay::GameplayModule::clearAvoidBallRadii() {
 	BOOST_FOREACH(OurRobot* robot, _state->self)
 	{
@@ -323,7 +340,7 @@ void Gameplay::GameplayModule::run()
 			getRootPlay().attr("robots") = botVector;
 		} catch (error_already_set) {
 			PyErr_Print();
-			throw new runtime_error("Error trying to send robots to python");
+			throw new runtime_error("Error trying to pass robots and/or ball to python");
 		}
 
 		/// Run the current play
@@ -378,5 +395,9 @@ void Gameplay::GameplayModule::run()
 #pragma mark python
 
 boost::python::object Gameplay::GameplayModule::getRootPlay() {
-	return _mainPyNamespace["main"].attr("root_play")();
+	return getMainModule().attr("root_play")();
+}
+
+boost::python::object Gameplay::GameplayModule::getMainModule() {
+	return _mainPyNamespace["main"];
 }

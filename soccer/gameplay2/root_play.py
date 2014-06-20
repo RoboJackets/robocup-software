@@ -14,6 +14,7 @@ class RootPlay(Play, QtCore.QObject):
         QtCore.QObject.__init__(self)
         Play.__init__(self, continuous=True)
         self._play = None
+        self._goalie_id = None
 
         self.add_transition(Behavior.State.start, Behavior.State.running, lambda: True, 'immediately')
 
@@ -26,12 +27,16 @@ class RootPlay(Play, QtCore.QObject):
         if self.play == None:
             # select the play with the largest value for score()
             try:
-                play_class = max(main.play_registry().get_enabled_plays(), key=lambda p: p.score())
-                self.play = play_class()
+                enabled_plays = main.play_registry().get_enabled_plays()
+                if len(enabled_plays) > 0:
+                    play_class = max(enabled_plays, key=lambda p: p.score())
+                    self.play = play_class()
+                else:
+                    self.play = None
             except Exception as e:
                 logging.error("Exception occurred during play selection: " + str(e))
-            
-            logging.info("Chose new play: '" + self.play.__class__.__name__ + "'")
+            if self.play != None:
+                logging.info("Chose new play: '" + self.play.__class__.__name__ + "'")
 
         if self.play != None:
             try:
@@ -64,6 +69,17 @@ class RootPlay(Play, QtCore.QObject):
             self._play.robots = self.robots
         # change notification so ui can update if necessary
         self.play_changed.emit(self._play.__class__.__name__ if self._play != None else "(No Play)")
+
+
+    # the c++ GameplayModule reaches through the language portal and sets this
+    # note that in c++, a value of -1 indicates no assigned goalie, in python we represent the same thing with None
+    @property
+    def goalie_id(self):
+        return self._goalie_id
+    @goalie_id.setter
+    def goalie_id(self, value):
+        self._goalie_id = None if value == -1 else value
+        logging.info("goalie_id set to: " + str(self._goalie_id))
 
 
     @property
