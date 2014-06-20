@@ -1,5 +1,6 @@
 from play import *
 from behavior import *
+import plays.stopped
 import logging
 from PyQt4 import QtCore
 import main
@@ -24,7 +25,11 @@ class RootPlay(Play, QtCore.QObject):
 
     def execute_running(self):
         # TODO: do goalie stuff
-        if self.play == None:
+
+        if main.game_state.is_stopped() and self.play.__class__ != plays.stopped.Stopped:
+            self.play = plays.stopped.Stopped()
+            logging.info("Switched to Stopped play")
+        elif self.play == None:
             # select the play with the largest value for score()
             try:
                 enabled_plays = main.play_registry().get_enabled_plays()
