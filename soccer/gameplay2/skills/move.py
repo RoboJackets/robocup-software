@@ -1,9 +1,9 @@
-from skill import *
-from behavior import *
+import skill
+import behavior
 
 
 # wraps up OurRobot.move() into a Skill so we can use it in the play system more easily
-class Move(Skill):
+class Move(skill.Skill):
 
     def __init__(self, pos=None):
         super().__init__(continuous=False)
@@ -11,8 +11,8 @@ class Move(Skill):
         self.threshold = 0.05
         self.pos = pos
 
-        self.add_transition(Behavior.State.start, Behavior.State.running, lambda: True, 'immediately')
-        self.add_transition(Behavior.State.running, Behavior.State.completed,
+        self.add_transition(behavior.Behavior.State.start, behavior.Behavior.State.running, lambda: True, 'immediately')
+        self.add_transition(behavior.Behavior.State.running, behavior.Behavior.State.completed,
             lambda:
                 self.robot != None and
                 self.pos != None and

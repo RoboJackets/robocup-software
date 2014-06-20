@@ -1,18 +1,18 @@
-from play import *
-from behavior import *
-from skills.move import Move
+import play
+import behavior
+import skills.move
 import robocup
 
 
-class LineUp(Play):
+class LineUp(play.Play):
 
     def __init__(self):
         super().__init__(continuous=False)
 
         self._subbehaviors = None
 
-        self.add_transition(Behavior.State.start, Behavior.State.running, lambda: True, 'immediately')
-        self.add_transition(Behavior.State.running, Behavior.State.completed,
+        self.add_transition(behavior.Behavior.State.start, behavior.Behavior.State.running, lambda: True, 'immediately')
+        self.add_transition(behavior.Behavior.State.running, behavior.Behavior.State.completed,
             lambda: self.all_subbehaviors_completed(),
             'all robots reach target positions'
             )
@@ -20,12 +20,12 @@ class LineUp(Play):
 
     def all_subbehaviors_completed(self):
         if self.subbehaviors != None:
-            return all([b.behavior_state == Behavior.State.completed for b in self.subbehaviors])
+            return all([b.behavior_state == behavior.Behavior.State.completed for b in self.subbehaviors])
         else:
             return True
 
 
-    @Play.robots.setter
+    @play.Play.robots.setter
     def robots(self, robots):
         # super()._set_robots(robots)
         self._robots = robots
@@ -60,4 +60,4 @@ class LineUp(Play):
     @subbehaviors.setter
     def subbehaviors(self, value):
         self._subbehaviors = value
-        self.transition(Behavior.State.running)
+        self.transition(behavior.Behavior.State.running)
