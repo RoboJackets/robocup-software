@@ -42,7 +42,7 @@ Plays coordinate the whole team of robots (minus the goalie) by combining Skills
 
 ## IMPORTANT
 
-Not all python code is auto-reloaded, only the stuff in the 'skills', 'plays', and 'tactics' folders (and their subfolders).  There are a few rules that you have to follow in order for the auto-reloading and play-registry systems to work.
+Not all python code is auto-reloaded, only the stuff in the 'skills', 'plays', 'tactics', and 'evaluation' folders (and their subfolders).  There are a few rules that you have to follow in order for the auto-reloading and play-registry systems to work.
 
 Note for Sublime Text users: by default, sublime saves files atomically by editing a copy, then swapping it out for the original when it's "saved".  This screws up the `watchdog` python package we're using to watch for filesystem events.  You can fix this by disabling this feature in your sublime settings: Preferences -> User: `"atomic_save": false`.
 

@@ -43,7 +43,7 @@ def init():
     # this callback lets us do cool stuff when our python files change on disk
     def fswatch_callback(event_type, module_path):
         # the top-level folders we care about watching
-        autoloadables = ['plays', 'skills', 'tactics']
+        autoloadables = ['plays', 'skills', 'tactics', 'evaluation']
 
         if module_path[0] in autoloadables:
             logging.info('.'.join(module_path) + " " + event_type)
