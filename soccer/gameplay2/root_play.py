@@ -27,15 +27,19 @@ class RootPlay(Play, QtCore.QObject):
     def execute_running(self):
         # TODO: do goalie stuff
 
+        enabled_plays = main.play_registry().get_enabled_plays()
+
         if main.game_state.is_stopped() and self.play.__class__ != plays.stopped.Stopped:
             self.play = plays.stopped.Stopped()
             logging.info("Switched to Stopped play")
         elif not main.game_state.is_stopped() and self.play.__class__ == plays.stopped.Stopped:
             self.play = None
-        elif self.play == None:
+        elif self.play != None and self.play.__class__ not in enabled_plays:
+            self.play = None
+
+        if self.play == None:
             # select the play with the largest value for score()
             try:
-                enabled_plays = main.play_registry().get_enabled_plays()
                 if len(enabled_plays) > 0:
                     play_class = max(enabled_plays, key=lambda p: p.score())
                     self.play = play_class()
@@ -49,6 +53,7 @@ class RootPlay(Play, QtCore.QObject):
 
         if self.play != None:
             try:
+                self.play.robots = self.robots
                 self.play.run()
             except Exception as e:
                 logging.error("Play '" + self.play.__class__.__name__ + "' encountered exception: " + str(e) + ". aborting and reselecting play...")
