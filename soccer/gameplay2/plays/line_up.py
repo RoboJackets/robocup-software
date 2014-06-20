@@ -16,6 +16,10 @@ class LineUp(Play):
             lambda: self.all_subbehaviors_completed(),
             'all robots reach target positions'
             )
+        self.add_transition(Behavior.State.completed,
+            Behavior.State.running,
+            lambda: not self.all_subbehaviors_completed(),
+            lambda: 'robots arent lined up')
 
 
     def all_subbehaviors_completed(self):
