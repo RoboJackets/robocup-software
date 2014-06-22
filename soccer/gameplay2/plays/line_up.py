@@ -11,15 +11,18 @@ class LineUp(play.Play):
 
         self._subbehaviors = None
 
-        self.add_transition(behavior.Behavior.State.start, behavior.Behavior.State.running, lambda: True, 'immediately')
-        self.add_transition(behavior.Behavior.State.running, behavior.Behavior.State.completed,
+        self.add_transition(behavior.Behavior.State.start,
+            behavior.Behavior.State.running,
+            lambda: True,
+            'immediately')
+        self.add_transition(behavior.Behavior.State.running,
+            behavior.Behavior.State.completed,
             lambda: self.all_subbehaviors_completed(),
-            'all robots reach target positions'
-            )
-        self.add_transition(Behavior.State.completed,
-            Behavior.State.running,
+            'all robots reach target positions')
+        self.add_transition(behavior.Behavior.State.completed,
+            behavior.Behavior.State.running,
             lambda: not self.all_subbehaviors_completed(),
-            lambda: 'robots arent lined up')
+            'robots arent lined up')
 
 
     def all_subbehaviors_completed(self):
