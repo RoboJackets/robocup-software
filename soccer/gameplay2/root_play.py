@@ -132,4 +132,3 @@ class RootPlay(Play, QtCore.QObject):
             except Exception as e:
                 logging.error("Error trying to set robots on play '" + self.play.__class__.__name__ + "': " + str(e))
                 self.play = None
-            self.play.robots = robots
