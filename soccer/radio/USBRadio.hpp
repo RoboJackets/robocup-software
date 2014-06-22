@@ -24,14 +24,15 @@ class USBRadio: public Radio
 {
 public:
 	// n identifies which base station to use.
-	USBRadio();
-	~USBRadio();
+    USBRadio();
+    ~USBRadio();
 
 	virtual bool isOpen() const;
 	virtual void send(Packet::RadioTx &packet);
 	virtual void receive();
 	
 	virtual void channel(int n);
+    void switchTeam(bool) { }
 	
 protected:
 	libusb_context *_usb_context;
