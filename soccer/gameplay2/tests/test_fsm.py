@@ -19,7 +19,7 @@ class MyFsm(fsm.StateMachine):
         self.add_state(MyFsm.State.start)
         self.add_state(MyFsm.State.running)
         self.add_state(MyFsm.State.done)
-        self.add_state(MyFsm.SubState.running_substate)
+        self.add_state(MyFsm.SubState.running_substate, MyFsm.State.running)
 
         self.add_transition(MyFsm.State.start,
             MyFsm.SubState.running_substate,
@@ -68,3 +68,11 @@ class TestFsm(unittest.TestCase):
         ]
 
         self.assertTrue(expected_log == fsm._log)
+
+
+    def test_ancestor_chain(self):
+        """see if the ancestors_of_state() method works"""
+
+        fsm = MyFsm()
+        self.assertEqual(fsm.ancestors_of_state(MyFsm.State.done), [])
+        self.assertEqual(fsm.ancestors_of_state(MyFsm.SubState.running_substate), [MyFsm.State.running])
