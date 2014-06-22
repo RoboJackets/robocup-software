@@ -20,10 +20,8 @@ class Capture(skill.Skill):
         self.add_transition(Capture.State.course_approach, Capture.State.fine_approach,
             lambda:
                 True,
-            'dist to ball < threshold'
-            )
+            'dist to ball < threshold')
         self.add_transition(Capture.State.fine_approach, behavior.Behavior.State.completed,
             lambda:
                 True,
-            'has ball'
-            )
+            'has ball')
