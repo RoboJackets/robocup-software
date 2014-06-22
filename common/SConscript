@@ -7,6 +7,7 @@ srcs.extend(Glob('protobuf/*.pb.cc'))
 srcs.extend(Glob('*.cpp'))
 srcs.extend(Glob('Geometry2d/*.cpp'))
 
+env.Append(CPPFLAGS=['-fPIC'])
 env.Library('common', srcs)
 
 # Make common a Python package
