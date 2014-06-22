@@ -133,4 +133,4 @@ class RootPlay(Play, QtCore.QObject):
         return self._robots
     @robots.setter
     def robots(self, robots):
-        self._robots = robots if isinstance(robots, list) else []
+        self._robots = robots if robots != None else []

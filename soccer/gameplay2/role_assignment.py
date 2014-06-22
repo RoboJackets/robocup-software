@@ -93,6 +93,11 @@ RobotChangeCost = 1.0
 # returns a tree with the same structure as @role_reqs, but the leaf nodes have (RoleRequirements, OurRobot) tuples instead of just RoleRequirements objects
 def assign_roles(robots, role_reqs):
 
+    # check for empty requrest set
+    if len(role_reqs) == 0:
+        return {}
+
+
     # first we flatten the role_reqs tree structure into a simple list of RoleRequirements
     role_reqs_list = []
     tree_mapping = {}   # holds key paths so we can map the flattened list back into the tree at the end
@@ -122,6 +127,11 @@ def assign_roles(robots, role_reqs):
         role_reqs_list = required_roles + optional_roles[0:-overflow]
 
 
+    if len(robots) == 0:
+        print("no robots available to assign")
+        return {}
+
+
     # build the cost matrix
     cost_matrix = []
     for robot in robots:
@@ -129,7 +139,7 @@ def assign_roles(robots, role_reqs):
         for req in role_reqs_list:
             cost = 0
 
-            if req.required_shell_id != None and req.required_shell_id != robot.shell_id:
+            if req.required_shell_id != None and req.required_shell_id != robot.shell_id():
                 cost = float("inf")
             elif req.has_chipper == True and robot.has_chipper == False:
                 cost = float("inf")

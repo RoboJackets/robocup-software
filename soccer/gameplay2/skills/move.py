@@ -46,5 +46,5 @@ class Move(skill.Skill):
 
     def role_requirements(self):
         reqs = super().role_requirements()
-        reqs.pos = pos
+        reqs.pos = self.pos
         return reqs

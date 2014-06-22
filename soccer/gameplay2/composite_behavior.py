@@ -1,4 +1,6 @@
 import behavior
+import single_robot_behavior
+import role_assignment
 import re
 
 
@@ -43,7 +45,8 @@ class CompositeBehavior(behavior.Behavior):
     def execute_running(self):
         # run each subbehavior
         for name in self._subbehavior_info:
-            bhvr = self._subbehavior_info[name]
+            info = self._subbehavior_info[name]
+            bhvr = info['behavior']
             if isinstance(bhvr, single_robot_behavior.SingleRobotBehavior):
                 if bhvr.robot != None:
                     # only run single robot behaviors when they have a robot
@@ -59,7 +62,7 @@ class CompositeBehavior(behavior.Behavior):
         for name, info in self._subbehavior_info.items():
             r = info['behavior'].role_requirements()
             # r could be a RoleRequirements or a dict forming a subtree
-            if isinstance(r, RoleRequirements):
+            if isinstance(r, role_assignment.RoleRequirements):
                 r.required = info['required']
                 r.priority = info['priority']
             # FIXME: should required and priority propogate if it's a tree?
@@ -83,7 +86,7 @@ class CompositeBehavior(behavior.Behavior):
             # indent the subbehavior's description
             indent = '    '
             subdesc = str(bhvr)
-            subdesc = indent + re.sub(r'/n', indent, subdesc)
+            subdesc = "\n" + indent + re.sub(r'/n', indent, subdesc)
             desc += subdesc
 
         return desc
