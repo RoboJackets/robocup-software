@@ -22,7 +22,6 @@ class Move(skill.Skill):
 
 
     def execute_running(self):
-        print("Move-ing")
         if self.pos != None and self.robot != None:
             self.robot.move_to(self.pos)
 

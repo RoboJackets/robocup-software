@@ -248,7 +248,7 @@ void Gameplay::GameplayModule::goalieID(int value)
 	//	pass this value to python
 	PyGILState_STATE state = PyGILState_Ensure(); {
 		try {
-			getRootPlay().attr("goalie_id") = _goalieID;
+			getRootPlay().attr("set_goalie_id")(_goalieID);
 		} catch (error_already_set) {
 			cout << "PYTHON ERROR!!!" << endl;
 			PyErr_Print();
@@ -336,17 +336,17 @@ void Gameplay::GameplayModule::run()
 			for (auto itr = _playRobots.begin(); itr != _playRobots.end(); itr++) {
 				botVector->push_back(*itr);
 			}
-			getMainModule().attr("our_robots") = botVector;
+			getMainModule().attr("set_our_robots")(botVector);
 
 			std::vector<OpponentRobot *> *theirBotVector = new std::vector<OpponentRobot *>();
 			for (auto itr = _state->opp.begin(); itr != _state->opp.end(); itr++) {
 				theirBotVector->push_back(*itr);
 			}
-			getMainModule().attr("their_robots") = theirBotVector;
+			getMainModule().attr("set_their_robots")(theirBotVector);
 
-			getMainModule().attr("game_state") = _state->gameState;
+			getMainModule().attr("set_game_state")(_state->gameState);
 
-			getMainModule().attr("ball") = _state->ball;
+			getMainModule().attr("set_ball")(_state->ball);
 		} catch (error_already_set) {
 			PyErr_Print();
 			throw new runtime_error("Error trying to pass robots and/or ball and/or game state to python");

@@ -136,36 +136,34 @@ def play_registry():
 ############################################################
 
 _game_state = None
-@property
-def game_state(self):
-    return self._game_state
-@game_state.setter
-def game_state(self, value):
-    self._game_state = value
+def game_state():
+    global _game_state
+    return _game_state
+def set_game_state(value):
+    global _game_state
+    _game_state = value
 
 _ball = None
-@property
-def ball(self):
-    return self._ball
-@ball.setter
-def ball(self, value):
-    self._ball = value
+def ball():
+    global _ball
+    return _ball
+def set_ball(value):
+    global _ball
+    _ball = value
 
 _our_robots = None
-@property
-def our_robots(self):
-    return self._our_robots
-@our_robots.setter
-def our_robots(self, value):
+def our_robots():
+    global _our_robots
+    return _our_robots
+def set_our_robots(value):
+    global _our_robots
     root_play().robots = value
-    self._our_robots = value
+    _our_robots = value
 
 _their_robots = None
-@property
-def their_robots(self):
-    return self._their_robots
-@their_robots.setter
-def their_robots(self, value):
-    self._their_robots = value
-
-
+def their_robots():
+    global _their_robots
+    return _their_robots
+def set_their_robots(value):
+    global _their_robots
+    _their_robots = value
