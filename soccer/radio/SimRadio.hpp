@@ -14,7 +14,8 @@ public:
 
 	virtual bool isOpen() const;
 	virtual void send(Packet::RadioTx &packet);
-	virtual void receive();
+    virtual void receive();
+    virtual void switchTeam(bool blueTeam);
 	
 private:
 	QUdpSocket _socket;

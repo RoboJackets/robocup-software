@@ -181,7 +181,7 @@ class Processor: public QThread
 		}
 		
 		Radio *radio()
-		{
+        {
 			return _radio;
 		}
 		
