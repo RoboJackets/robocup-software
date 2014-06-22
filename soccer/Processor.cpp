@@ -225,7 +225,7 @@ void Processor::run()
 	vision.start();
 
 	// Create radio socket
-	_radio = _simulation ? (Radio *)new SimRadio() : (Radio *)new USBRadio();
+    _radio = _simulation ? (Radio *)new SimRadio(_blueTeam) : (Radio *)new USBRadio();
 	
 	Status curStatus;
 	

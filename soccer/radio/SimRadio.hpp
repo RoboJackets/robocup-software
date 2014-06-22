@@ -10,8 +10,8 @@
 class SimRadio: public Radio
 {
 public:
-	SimRadio();
-	
+    SimRadio(bool blueTeam = false);
+
 	virtual bool isOpen() const;
 	virtual void send(Packet::RadioTx &packet);
 	virtual void receive();

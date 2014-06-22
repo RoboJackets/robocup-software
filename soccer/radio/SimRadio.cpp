@@ -8,21 +8,13 @@ using namespace Packet;
 
 static QHostAddress LocalAddress(QHostAddress::LocalHost);
 
-SimRadio::SimRadio()
+SimRadio::SimRadio(bool blueTeam)
 {
-	// No channel specified.
-	// Pick the first available one.
-	if (_socket.bind(RadioRxPort))
-	{
-		_channel = 0;
-	} else {
-		if (_socket.bind(RadioRxPort + 1))
-		{
-			_channel = 1;
-		} else {
-			throw runtime_error("Can't bind to either radio port");
-		}
-	}
+    _channel = blueTeam ? 1 : 0;
+    if(!_socket.bind(RadioRxPort + _channel))
+    {
+        throw runtime_error(QString("Can't bind to the %s team's radio port.").arg(blueTeam ? "blue" : "yellow").toStdString());
+    }
 }
 
 bool SimRadio::isOpen() const
