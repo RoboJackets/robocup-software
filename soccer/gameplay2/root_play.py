@@ -27,29 +27,43 @@ class RootPlay(Play, QtCore.QObject):
     def execute_running(self):
         # TODO: do goalie stuff
 
-        enabled_plays = main.play_registry().get_enabled_plays()
-
-        if main.game_state.is_stopped() and self.play.__class__ != plays.stopped.Stopped:
-            self.play = plays.stopped.Stopped()
-            logging.info("Switched to Stopped play")
-        elif not main.game_state.is_stopped() and self.play.__class__ == plays.stopped.Stopped:
+        if main.game_state.is_stopped():
+            if not isinstance(self.play, plays.stopped.Stopped):
+                logging.info("Running 'Stopped' play due to game state change")
+                self.play = plays.stopped.Stopped()
+        elif main.game_state.is_halted():
             self.play = None
-        elif self.play != None and self.play.__class__ not in enabled_plays:
-            self.play = None
+        else:
+            enabled_plays = main.play_registry().get_enabled_plays()
 
-        if self.play == None:
-            # select the play with the largest value for score()
-            try:
-                if len(enabled_plays) > 0:
-                    play_class = max(enabled_plays, key=lambda p: p.score())
-                    self.play = play_class()
-                else:
-                    self.play = None
-            except Exception as e:
-                logging.error("Exception occurred during play selection: " + str(e))
-                traceback.print_exc()
+            # see if we need to kill current play
             if self.play != None:
-                logging.info("Chose new play: '" + self.play.__class__.__name__ + "'")
+                if self.play.__class__ not in enabled_plays:
+                    logging.info("Current play '" + self.play.__class__.__name__ + "'" + " no longer enabled, aborting")
+                    self.play = None
+                elif self.play.is_done_running():
+                    logging.info("Current play '" + self.play.__class__.__name__ + "'" + " finished running")
+                    self.play = None
+
+            if self.play == None:
+                try:
+                    if main.game_state.is_halted():
+                        # don't run a play, we're halted
+                        pass
+                    if main.game_state.is_stopped():
+                        self.play = plays.stopped.Stopped()
+                    elif len(enabled_plays) > 0:
+                        # select the play with the largest value for score()
+                        play_class = max(enabled_plays, key=lambda p: p.score())
+                        self.play = play_class()
+                    else:
+                        # there's no available plays to run
+                        pass
+                except Exception as e:
+                    logging.error("Exception occurred during play selection: " + str(e))
+                    traceback.print_exc()
+                if self.play != None:
+                    logging.info("Chose new play: '" + self.play.__class__.__name__ + "'")
 
         if self.play != None:
             try:
