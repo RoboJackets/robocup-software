@@ -36,13 +36,12 @@ class StateMachine:
 
         # call execute_STATENAME
         if self.state != None:
-            method_name = "execute_" + self.state.name
-            state_method = None
-            try:
-                state_method = getattr(self, method_name)
-                state_method()
-            except AttributeError:
-                pass
+            for state in self.ancestors_of_state(self.state) + [self.state]:
+                method_name = "execute_" + state.name
+                try:
+                    state_method = getattr(self, method_name)()
+                except AttributeError:
+                    pass
 
         if self.state == None:
             self.transition(self.start_state)
@@ -80,17 +79,19 @@ class StateMachine:
     # calls 'on_enter_STATENAME()' if it exists
     def transition(self, new_state):
         if self.state != None:
-            method_name = "on_exit_" + self.state.name
+            for state in self.ancestors_of_state(self.state) + [self.state]:
+                method_name = "on_exit_" + state.name
+                try:
+                    getattr(self, method_name)()    # call the transition FROM method if it exists
+                except AttributeError:
+                    pass
+
+        for state in self.ancestors_of_state(new_state) + [new_state]:
+            method_name = "on_enter_" + state.name
             try:
-                getattr(self, method_name)()    # call the transition FROM method if it exists
+                getattr(self, method_name)()    # call the transition TO method if it exists
             except AttributeError:
                 pass
-
-        method_name = "on_enter_" + new_state.name
-        try:
-            getattr(self, method_name)()    # call the transition TO method if it exists
-        except AttributeError:
-            pass
 
         self._state = new_state
 

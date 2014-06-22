@@ -60,14 +60,17 @@ class TestFsm(unittest.TestCase):
             "on_enter_start",
             "execute_start",
             "on_exit_start",
+            "on_enter_running",
             "on_enter_running_substate",
+            "execute_running",
             "execute_running_substate",
+            "on_exit_running",
             "on_exit_running_substate",
             "on_enter_done",
             "execute_done"
         ]
 
-        self.assertTrue(expected_log == fsm._log)
+        self.assertEqual(expected_log, fsm._log)
 
 
     def test_ancestor_chain(self):
