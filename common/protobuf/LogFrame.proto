@@ -137,4 +137,8 @@ message LogFrame
 	
 	// results from testing
 	repeated TestResult testResults = 20;
+
+	//	the description of the behavior tree
+	//	should show the hierarchy of behaviors and each behavior's state
+	optional string behavior_tree = 21;
 }
