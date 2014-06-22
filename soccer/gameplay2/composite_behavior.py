@@ -55,8 +55,14 @@ class CompositeBehavior(behavior.Behavior):
     # returns a tree of role_requirements
     def role_requirements(self):
         reqs = {}
-        for name, bhvr in self.subbehaviors_by_name().items():
-            reqs[name] = bhvr.role_requirements()
+        for name, info in self._subbehavior_info.items():
+            r = info['behavior'].role_requirements()
+            # r could be a RoleRequirements or a dict forming a subtree
+            if isinstance(r, RoleRequirements):
+                r.required = info['required']
+                r.priority = info['priority']
+            # FIXME: should required and priority propogate if it's a tree?
+            reqs[name] = r
         return reqs
 
 

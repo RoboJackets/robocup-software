@@ -70,19 +70,13 @@ class RootPlay(Play, QtCore.QObject):
 
         # Role Assignment
         ################################################################################
-        role_assignment.assign_roles(self.robots, self.role_requirements())
+        assignments = role_assignment.assign_roles(self.robots, self.role_requirements())
+        self.assign_roles(assignments)
 
 
         # Run subbehaviors
         ################################################################################
         super().execute_running()
-        # if self.play != None:
-        #     try:
-        #         self.play.robots = self.robots
-        #         self.play.run()
-        #     except Exception as e:
-        #         logging.error("Play '" + self.play.__class__.__name__ + "' encountered exception: " + str(e) + ". aborting and reselecting play...")
-        #         traceback.print_
 
 
     # this is used to force a reselection of a play
@@ -102,15 +96,15 @@ class RootPlay(Play, QtCore.QObject):
         return self._play
     @play.setter
     def play(self, value):
-        raise NotImplementedError() # FIXME: fix implementation to do it the CompositeBehavior way
-        self._play = value
+        # trash old play
         if self.play != None:
-            try:
-                self.play.robots = self.robots
-            except Exception as e:
-                logging.error("Error trying to set robots on play '" + self.play.__class__.__name__ + "': " + str(e))
-                traceback.print_exc()
-                self.play = None
+            self.remove_subbehavior('play')
+            self._play = None
+
+        if value != None:
+            self._play = value
+            self.add_subbehavior(value, name='play', required=True)
+
         # change notification so ui can update if necessary
         self.play_changed.emit(self.play.__class__.__name__ if self._play != None else "(No Play)")
 
