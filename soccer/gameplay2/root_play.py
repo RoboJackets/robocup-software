@@ -71,6 +71,7 @@ class RootPlay(Play, QtCore.QObject):
                 self.play.run()
             except Exception as e:
                 logging.error("Play '" + self.play.__class__.__name__ + "' encountered exception: " + str(e) + ". aborting and reselecting play...")
+                traceback.print_exc()
 
 
     # this is used to force a reselection of a play
@@ -94,6 +95,7 @@ class RootPlay(Play, QtCore.QObject):
                 self.play.robots = self.robots
             except Exception as e:
                 logging.error("Error trying to set robots on play '" + self.play.__class__.__name__ + "': " + str(e))
+                traceback.print_exc()
                 self.play = None
         # change notification so ui can update if necessary
         self.play_changed.emit(self.play.__class__.__name__ if self._play != None else "(No Play)")
@@ -131,4 +133,5 @@ class RootPlay(Play, QtCore.QObject):
                 self.play.robots = self.robots
             except Exception as e:
                 logging.error("Error trying to set robots on play '" + self.play.__class__.__name__ + "': " + str(e))
+                traceback.print_exc()
                 self.play = None

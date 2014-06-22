@@ -103,7 +103,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("__repr__", &Robot_repr);
 	;
 
-	class_<OurRobot, std::shared_ptr<OurRobot>, bases<Robot> >("OurRobot", init<int, SystemState*>())
+	class_<OurRobot, OurRobot *, std::shared_ptr<OurRobot>, bases<Robot> >("OurRobot", init<int, SystemState*>())
 		.def("move_to", &OurRobot_move_to)
 	;
 

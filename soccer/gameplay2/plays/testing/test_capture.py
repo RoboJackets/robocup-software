@@ -1,6 +1,10 @@
 import play
 import behavior
+import skills.move
+import skills.capture
 import enum
+import robocup
+
 
 # this test repeatedly runs the capture behavior
 # it gets SetupDistFromBall away from the ball, then runs the capture behavior.  This repeats forever
@@ -12,6 +16,7 @@ class TestCapture(play.Play):
 
     def __init__(self):
         super().__init__(continuous=True)
+        print("TESTCAPTURE INIT")
 
         self._robot = None
         self._robot_id = None
@@ -27,27 +32,31 @@ class TestCapture(play.Play):
 
         self.add_transition(TestCapture.State.setup,
             TestCapture.State.capturing,
-            lambda: self.sub_behavior.behavior_state() == behavior.Behavior.State.completed,
+            lambda: self.sub_behavior.behavior_state == behavior.Behavior.State.completed,
             'robot away from ball')
 
-        self.add_transition(TestCapture.State.capturing,
-            TestCapture.State.setup,
-            lambda: self.sub_behavior.behavior_state() == behavior.Behavior.State.completed,
-            'successful capture')
+        # self.add_transition(TestCapture.State.capturing,
+        #     TestCapture.State.setup,
+        #     lambda: self.sub_behavior.behavior_state == behavior.Behavior.State.completed,
+        #     'successful capture')
 
 
     def on_enter_capturing(self):
+        print("ENTER CAPTURE")
         self.sub_behavior = skills.capture.Capture()
         self.sub_behavior.robot = self.robot
     def on_exit_capturing(self):
+        print("EXIT CAPTURE")
         self.sub_behavior = None
 
 
     def on_enter_setup(self):
+        print("ENTER SETUP")
         self.sub_behavior = skills.move.Move()
         self.sub_behavior.pos = robocup.Point(0, 0)
         self.sub_behavior.robot = self.robot
     def on_exit_setup(self):
+        print("EXIT SETUP")
         self.sub_behavior = None
 
 
@@ -99,6 +108,6 @@ class TestCapture(play.Play):
         return self._sub_behavior
     @sub_behavior.setter
     def sub_behavior(self, value):
-        self._capture_behavior = value
+        self._sub_behavior = value
     
 
