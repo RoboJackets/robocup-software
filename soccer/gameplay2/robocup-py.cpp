@@ -30,10 +30,12 @@ std::string Point_repr(Geometry2d::Point *thiss) {
 
 std::string Robot_repr(Robot *thiss) {
 	std::ostringstream ss;
+	ss << "<Robot ";
 	ss << (thiss->self() ? "us[" : "them[");
 	ss << thiss->shell();
 	ss << "], pos=";
 	ss << Point_repr(&(thiss->pos));
+	ss << ">";
 
 	std::string repr(ss.str());
 	return repr;

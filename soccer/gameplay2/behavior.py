@@ -71,7 +71,8 @@ class Behavior(fsm.StateMachine):
 
 
     def __str__(self):
-        return self.__class__.__name__ + "::" + self.state.name
+        state_desc = self.state.name if self.state != None else ""
+        return self.__class__.__name__ + "::" + state_desc
 
 
     # Returns a tree of RoleRequirements keyed by subbehavior reference name

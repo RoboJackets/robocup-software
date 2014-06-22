@@ -1,7 +1,13 @@
 import behavior
+import role_assignment
 
 
 class SingleRobotBehavior(behavior.Behavior):
+
+    def __init__(self, continuous):
+        super().__init__(continuous)
+        self._robot = None
+
 
     def execute_running(self):
         super().execute_running()
@@ -20,7 +26,7 @@ class SingleRobotBehavior(behavior.Behavior):
     def role_requirements(self):
         reqs = role_assignment.RoleRequirements()
         if self.robot != None:
-            reqs.previous_shell_id = self.robot.shell_id
+            reqs.previous_shell_id = self.robot.shell_id()
         return reqs
 
 
@@ -33,4 +39,4 @@ class SingleRobotBehavior(behavior.Behavior):
 
 
     def __str__(self):
-        return super().__str__() + "[robot=" + str(self.robot.shell_id) if self.robot != None else "None"
+        return super().__str__() + "[robot=" + str(self.robot.shell_id()) if self.robot != None else "None" + "]"
