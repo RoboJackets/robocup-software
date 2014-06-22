@@ -72,3 +72,16 @@ class Behavior(fsm.StateMachine):
 
     def __str__(self):
         return self.__class__.__name__ + "::" + self.state.name
+
+
+    # Returns a tree of RoleRequirements keyed by subbehavior reference name
+    # This is used by the dynamic role assignment system to
+    # intelligently select which robot will run which behavior
+    def role_requirements(self):
+        raise NotImplementedError()
+
+
+    # assignments is a tree of (RoleRequirements, OurRobot) tuples
+    # Same tree structure as the role_requirements() return value, but tuples instead of RoleRequirements as leaf nodes
+    def assign_roles(self, assignments):
+        raise NotImplementedError()

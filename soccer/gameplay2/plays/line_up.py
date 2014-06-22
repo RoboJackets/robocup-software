@@ -9,8 +9,6 @@ class LineUp(play.Play):
     def __init__(self):
         super().__init__(continuous=False)
 
-        self._subbehaviors = None
-
         self.add_transition(behavior.Behavior.State.start,
             behavior.Behavior.State.running,
             lambda: True,
@@ -24,44 +22,17 @@ class LineUp(play.Play):
             lambda: not self.all_subbehaviors_completed(),
             'robots arent lined up')
 
+        # add subbehaviors for all robots, instructing them to line up
+        start_x = -1.0
+        start_y = 0.5
+        spacing_y = 0.25
+        for i in range(6):
+            pt = robocup.Point(start_x, start_y + i * spacing_y)
+            self.add_subbehavior(skills.move.Move(pt),
+                name="robot" + str(i),
+                required=False,
+                priority=6 - i)
+
 
     def all_subbehaviors_completed(self):
-        if self.subbehaviors != None:
-            return all([b.behavior_state == behavior.Behavior.State.completed for b in self.subbehaviors])
-        else:
-            return True
-
-
-    @play.Play.robots.setter
-    def robots(self, robots):
-        # super()._set_robots(robots)
-        self._robots = robots
-
-        if robots != None:
-            # build a list of Points for where the robots should go
-            start_x = -1.0
-            start_y = 0.5
-            spacing_y = 0.25
-            points = [robocup.Point(start_x, start_y + i * spacing_y) for i in range(0, len(robots))]
-
-            self.subbehaviors = [skills.move.Move(pt) for pt in points]
-
-            # FIXME: assign behaviors more smartly
-            for i in range(0, len(robots)):
-                self.subbehaviors[i].robot = self.robots[i]
-
-
-    def execute_running(self):
-        if self.subbehaviors != None:
-            for subbehavior in self.subbehaviors:
-                subbehavior.run()
-
-
-    # a list of Move behaviors
-    @property
-    def subbehaviors(self):
-        return self._subbehaviors
-    @subbehaviors.setter
-    def subbehaviors(self, value):
-        self._subbehaviors = value
-        self.transition(behavior.Behavior.State.running)
+        return all([b.behavior_state == behavior.Behavior.State.completed or b.robot == None for b in self.all_subbehaviors()])
