@@ -15,7 +15,6 @@ class StateMachine:
         self._transitions = {}
         self._start_state = start_state
         self._state = None
-        self.transition(self._start_state)
 
 
     @property
@@ -45,17 +44,20 @@ class StateMachine:
             except AttributeError:
                 pass
 
-        # transition if an 'event' fires
-        next_states = []
-        if self.state in self._transitions:
-            for next_state, transition in self._transitions[self.state].items():
-                if transition['condition']():
-                    next_states += [next_state]
+        if self.state == None:
+            self.transition(self.start_state)
+        else:
+            # transition if an 'event' fires
+            next_states = []
+            if self.state in self._transitions:
+                for next_state, transition in self._transitions[self.state].items():
+                    if transition['condition']():
+                        next_states += [next_state]
 
-        if len(next_states) > 1:
-            raise RuntimeError("Ambiguous fsm transitions from state'" + str(self.state) + "'.  The following states are reachable now: " + str(next_states))
-        elif len(next_states) == 1:
-            self.transition(next_states[0])
+            if len(next_states) > 1:
+                raise RuntimeError("Ambiguous fsm transitions from state'" + str(self.state) + "'.  The following states are reachable now: " + str(next_states))
+            elif len(next_states) == 1:
+                self.transition(next_states[0])
 
         # if a transition occurred during the run, we'll run again
         # note: this could potentially cause infinite recursion (although it shouldn't)
@@ -113,6 +115,18 @@ class StateMachine:
             state = self._state_hierarchy[state]
 
         return None
+
+
+    # returns a list of the ancestors of the given state
+    # if B is a child state of A and C is a child state of B, ancestors_of_state(C) == [A, B]
+    # if @state has no ancestors, returns an empty list
+    def ancestors_of_state(self, state):
+        ancestors = []
+        state = self._state_hierarchy[state]
+        while state != None:
+            ancestors.insert(0, state)
+            state = self._state_hierarchy[state]
+        return ancestors
 
 
     # returns a graphviz.Digraph object
