@@ -32,13 +32,13 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         for module in module_path[:-1]:
             if not category.has_child_with_name(module):
                 subcategory = PlayRegistry.Category(category, module)
-                category.appendChild(subcategory)
+                category.append_child(subcategory)
             category = category[module]
 
         playNode = PlayRegistry.Node(module_path[-1], play_class)
         # if playNode.module_name in category:
         #     raise AssertionError("There's already a play registered for the given module path")
-        category.appendChild(playNode)
+        category.append_child(playNode)
 
         # note: this is a shitty way to do this - we should really only reload part of the model
         self.modelReset.emit()
@@ -137,7 +137,7 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             raise KeyError("Attempt to delete a child node that doesn't exist")
 
 
-        def appendChild(self, child):
+        def append_child(self, child):
             self.children.append(child)
             child.parent = self
 

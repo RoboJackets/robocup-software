@@ -12,7 +12,7 @@ class TestPlayRegistry(unittest.TestCase):
     def test_delete(self):
         pr = play_registry.PlayRegistry()
         pr.insert(['line_up'], plays.line_up.LineUp)
-        pr.delete(['line_up'], plays.line_up.LineUp)
+        pr.delete(['line_up'])
         self.assertFalse(plays.line_up.LineUp in pr)
 
     def test_nested_insert(self):
@@ -25,6 +25,6 @@ class TestPlayRegistry(unittest.TestCase):
 
         pr = play_registry.PlayRegistry()
         pr.insert(['demo', 'line_up'], plays.line_up.LineUp)
-        self.assertTrue('demo' in pr.root)
-        pr.delete(['demo', 'line_up'], plays.line_up.LineUp)
-        self.assertFalse('demo' in pr.root)
+        self.assertEqual(len(pr.root.children), 1)
+        pr.delete(['demo', 'line_up'])
+        self.assertEqual(len(pr.root.children), 0)
