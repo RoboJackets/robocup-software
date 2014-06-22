@@ -359,6 +359,10 @@ void Gameplay::GameplayModule::run()
 		        Py_file_input,
 		        _mainPyNamespace.ptr(),
 		        _mainPyNamespace.ptr())));
+
+			//	record the state of our behavior tree
+			std::string bhvrTreeDesc = extract<std::string>(getRootPlay().attr("__str__")());
+			_state->logFrame->set_behavior_tree(bhvrTreeDesc);
 		} catch (error_already_set) {
 	        PyErr_Print();
 	        throw new runtime_error("Error trying to run root play");

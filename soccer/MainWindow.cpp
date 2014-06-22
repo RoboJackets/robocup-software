@@ -183,7 +183,6 @@ void MainWindow::live(bool value)
 
 void MainWindow::updateViews()
 {
-
 	int manual =_processor->manualID();
 	if ((manual >= 0 || _ui.manualID->isEnabled()) && !_processor->joystickValid())
 	{
@@ -310,6 +309,9 @@ void MainWindow::updateViews()
 			// Items have been added, so sort again on tag number
 			_ui.logTree->sortItems(ProtobufTree::Column_Tag, Qt::AscendingOrder);
 		}
+
+		//	update the behavior tree view
+		_ui.behaviorTree->setPlainText(QString::fromStdString(currentFrame->behavior_tree()));
 	}
 
 	if(std::time(0) - (_processor->refereeModule()->sent_time/1000000) > 1)
