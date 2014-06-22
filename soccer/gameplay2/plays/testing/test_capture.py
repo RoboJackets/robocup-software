@@ -16,11 +16,6 @@ class TestCapture(play.Play):
 
     def __init__(self):
         super().__init__(continuous=True)
-        print("TESTCAPTURE INIT")
-
-        self._robot = None
-        self._robot_id = None
-        self._sub_behavior = None
 
         self.add_state(TestCapture.State.setup, behavior.Behavior.State.running)
         self.add_state(TestCapture.State.capturing, behavior.Behavior.State.running)
@@ -42,72 +37,14 @@ class TestCapture(play.Play):
 
 
     def on_enter_capturing(self):
-        print("ENTER CAPTURE")
-        self.sub_behavior = skills.capture.Capture()
-        self.sub_behavior.robot = self.robot
+        self.add_subbehavior(skills.capture.Capture(), name='capture', required=True)
     def on_exit_capturing(self):
-        print("EXIT CAPTURE")
-        self.sub_behavior = None
+        self.remove_subbehavior('capture')
 
 
     def on_enter_setup(self):
-        print("ENTER SETUP")
-        self.sub_behavior = skills.move.Move()
-        self.sub_behavior.pos = robocup.Point(0, 0)
-        self.sub_behavior.robot = self.robot
+        m = skills.move.Move()
+        m.pos = robocup.Point(0, 0)
+        self.add_subbehavior(m, name='move', required=True)
     def on_exit_setup(self):
-        print("EXIT SETUP")
-        self.sub_behavior = None
-
-
-    def execute_running(self):
-        self.sub_behavior.run()
-
-
-    @property
-    def robot_id(self):
-        return self._robot_id
-    @robot_id.setter
-    def robot_id(self, value):
-        self._robot_id = value
-    
-
-    @property
-    def robot(self):
-        return self._robot
-    @robot.setter
-    def robot(self, value):
-        self._robot = value
-        if self.sub_behavior != None:
-            self.sub_behavior.robot = value
-    
-
-    @play.Play.robots.setter
-    def robots(self, robots):
-        self._robots = robots
-
-        if robots == None:
-            self.robot_id = None
-
-        # use our previous bot if possible
-        if self.robot_id != None:
-            previous_bot_arr = [bot for bot in robots if bot.shell_id == self.robot_id]
-            if len(previous_bot_arr) == 1:
-                self.robot = previous_bot_arr[0]
-            else:
-                self.robot_id = None
-
-        if self.robot_id == None:
-            if len(robots) > 0:
-                self.robot = robots[0]
-                self.robot_id = self.robot.shell_id
-
-
-    @property
-    def sub_behavior(self):
-        return self._sub_behavior
-    @sub_behavior.setter
-    def sub_behavior(self, value):
-        self._sub_behavior = value
-    
-
+        self.remove_subbehavior('move')
