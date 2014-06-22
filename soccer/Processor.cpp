@@ -138,10 +138,15 @@ void Processor::dampedTranslation(bool value)
 void Processor::blueTeam(bool value)
 {
 	// This is called from the GUI thread
-	QMutexLocker locker(&_loopMutex);
-	
-	_blueTeam = value;
-	//_refereeModule->blueTeam(value);
+    QMutexLocker locker(&_loopMutex);
+
+    if(_blueTeam != value)
+    {
+        _blueTeam = value;
+        if(_radio)
+            _radio->switchTeam(_blueTeam);
+        //_refereeModule->blueTeam(value);
+    }
 }
 
 /**
@@ -224,7 +229,7 @@ void Processor::run()
 	VisionReceiver vision(_simulation);
 	vision.start();
 
-	// Create radio socket
+    // Create radio socket
     _radio = _simulation ? (Radio *)new SimRadio(_blueTeam) : (Radio *)new USBRadio();
 	
 	Status curStatus;
@@ -633,7 +638,7 @@ void Processor::run()
 
 void Processor::sendRadioData()
 {
-	Packet::RadioTx *tx = _state.logFrame->mutable_radio_tx();
+    Packet::RadioTx *tx = _state.logFrame->mutable_radio_tx();
 	
 	// Halt overrides normal motion control, but not joystick
 	if (!_joystick->autonomous() || _state.gameState.halt())
@@ -681,7 +686,7 @@ void Processor::sendRadioData()
 	}
 
 	if (_radio)
-	{
+    {
 		_radio->send(*_state.logFrame->mutable_radio_tx());
 	}
 }

@@ -13,7 +13,7 @@ SimRadio::SimRadio(bool blueTeam)
     _channel = blueTeam ? 1 : 0;
     if(!_socket.bind(RadioRxPort + _channel))
     {
-        throw runtime_error(QString("Can't bind to the %s team's radio port.").arg(blueTeam ? "blue" : "yellow").toStdString());
+        throw runtime_error(QString("Can't bind to the %1 team's radio port.").arg(blueTeam ? "blue" : "yellow").toStdString());
     }
 }
 
@@ -48,4 +48,14 @@ void SimRadio::receive()
 			continue;
 		}
 	}
+}
+
+void SimRadio::switchTeam(bool blueTeam)
+{
+    _socket.close();
+    _channel = blueTeam ? 1 : 0;
+    if(!_socket.bind(RadioRxPort + _channel))
+    {
+        throw runtime_error(QString("Can't bind to the %1 team's radio port.").arg(blueTeam ? "blue" : "yellow").toStdString());
+    }
 }
