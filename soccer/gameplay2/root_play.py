@@ -5,6 +5,7 @@ import logging
 from PyQt4 import QtCore
 import main
 import tactics.roles.goalie
+import role_assignment
 import traceback
 
 
@@ -25,7 +26,8 @@ class RootPlay(Play, QtCore.QObject):
 
 
     def execute_running(self):
-        # TODO: do goalie stuff
+        # Play Selection
+        ################################################################################
 
         if main.game_state().is_stopped():
             if not isinstance(self.play, plays.stopped.Stopped):
@@ -65,22 +67,33 @@ class RootPlay(Play, QtCore.QObject):
                 if self.play != None:
                     logging.info("Chose new play: '" + self.play.__class__.__name__ + "'")
 
-        if self.play != None:
-            try:
-                self.play.robots = self.robots
-                self.play.run()
-            except Exception as e:
-                logging.error("Play '" + self.play.__class__.__name__ + "' encountered exception: " + str(e) + ". aborting and reselecting play...")
-                traceback.print_exc()
+
+        # Role Assignment
+        ################################################################################
+        role_assignment.assign_roles(self.robots, self.role_requirements())
+
+
+        # Run subbehaviors
+        ################################################################################
+        super().execute_running()
+        # if self.play != None:
+        #     try:
+        #         self.play.robots = self.robots
+        #         self.play.run()
+        #     except Exception as e:
+        #         logging.error("Play '" + self.play.__class__.__name__ + "' encountered exception: " + str(e) + ". aborting and reselecting play...")
+        #         traceback.print_
 
 
     # this is used to force a reselection of a play
     def drop_current_play(self):
+        raise NotImplementedError() # FIXME: fix implementation to do it the CompositeBehavior wayexc()
         self.play = None
 
 
     # this is called when the goalie behavior must be reloaded (for example when the goalie.py file is modified)
     def drop_goalie_behavior(self):
+        raise NotImplementedError() # FIXME: fix implementation to do it the CompositeBehavior way
         self.goalie_behavior = None
 
 
@@ -89,6 +102,7 @@ class RootPlay(Play, QtCore.QObject):
         return self._play
     @play.setter
     def play(self, value):
+        raise NotImplementedError() # FIXME: fix implementation to do it the CompositeBehavior way
         self._play = value
         if self.play != None:
             try:
@@ -120,18 +134,9 @@ class RootPlay(Play, QtCore.QObject):
         self._goalie_behavior = value
 
 
-    @Play.robots.setter
+    @property
+    def robots(self):
+        return self._robots
+    @robots.setter
     def robots(self, robots):
-        # FIXME: assign goalie
-
-        #FIXME: call superclass setter?
-        self._robots = robots
-
-        # pass robots to play
-        if self.play != None:
-            try:
-                self.play.robots = self.robots
-            except Exception as e:
-                logging.error("Error trying to set robots on play '" + self.play.__class__.__name__ + "': " + str(e))
-                traceback.print_exc()
-                self.play = None
+        self._robots = robots if isinstance(robots, list) else []

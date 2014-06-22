@@ -1,12 +1,13 @@
 import robocup
 import tactic
+import single_robot_behavior
 import behavior
 import constants
 import enum
 import math
 
 
-class Goalie(tactic.Tactic):
+class Goalie(tactic.Tactic, single_robot_behavior.SingleRobotBehavior):
 
     MaxX = constants.Field.GoalWidth / 2.0
     RobotSegment = robocup.Segment(robocup.Point(-MaxX, constants.Robot.Radius),
@@ -160,3 +161,17 @@ class Goalie(tactic.Tactic):
         dest_x = main.ball().pos.x / constants.Field.Width * Goalie.MaxX
         robot.move_to(Point(dest_x, constants.Robot.Radius))
 
+
+    def role_requirements(self):
+        reqs = super().role_requirements()
+        reqs.required_shell_id = self.shell_id
+        return reqs
+
+
+    @property
+    def shell_id(self):
+        return self._shell_id
+    @shell_id.setter
+    def shell_id(self, value):
+        self._shell_id = value
+    

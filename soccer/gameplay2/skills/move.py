@@ -42,3 +42,9 @@ class Move(skill.Skill):
     @threshold.setter
     def threshold(self, value):
         self._threshold = value
+
+
+    def role_requirements(self):
+        reqs = super().role_requirements()
+        reqs.pos = pos
+        return reqs

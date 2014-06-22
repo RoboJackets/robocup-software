@@ -1,7 +1,7 @@
-from behavior import *
+import composite_behavior
 
 
-class Play(Behavior):
+class Play(composite_behavior.CompositeBehavior):
 
     def __init__(self, continuous):
         super().__init__(continuous)
@@ -12,12 +12,3 @@ class Play(Behavior):
     @classmethod
     def score(cls):
         return 0
-        
-
-    @property
-    def robots(self):
-        return self._robots
-    @robots.setter
-    def robots(self, value):
-        self._robots = value
-    
