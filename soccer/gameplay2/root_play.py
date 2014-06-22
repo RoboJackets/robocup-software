@@ -27,11 +27,11 @@ class RootPlay(Play, QtCore.QObject):
     def execute_running(self):
         # TODO: do goalie stuff
 
-        if main.game_state.is_stopped():
+        if main.game_state().is_stopped():
             if not isinstance(self.play, plays.stopped.Stopped):
                 logging.info("Running 'Stopped' play due to game state change")
                 self.play = plays.stopped.Stopped()
-        elif main.game_state.is_halted():
+        elif main.game_state().is_halted():
             self.play = None
         else:
             enabled_plays = main.play_registry().get_enabled_plays()
@@ -47,10 +47,10 @@ class RootPlay(Play, QtCore.QObject):
 
             if self.play == None:
                 try:
-                    if main.game_state.is_halted():
+                    if main.game_state().is_halted():
                         # don't run a play, we're halted
                         pass
-                    if main.game_state.is_stopped():
+                    if main.game_state().is_stopped():
                         self.play = plays.stopped.Stopped()
                     elif len(enabled_plays) > 0:
                         # select the play with the largest value for score()
@@ -73,10 +73,6 @@ class RootPlay(Play, QtCore.QObject):
                 logging.error("Play '" + self.play.__class__.__name__ + "' encountered exception: " + str(e) + ". aborting and reselecting play...")
 
 
-    def on_exit_running(self):
-        self._play = None
-
-
     # this is used to force a reselection of a play
     def drop_current_play(self):
         self.play = None
@@ -93,10 +89,14 @@ class RootPlay(Play, QtCore.QObject):
     @play.setter
     def play(self, value):
         self._play = value
-        if self._play != None:
-            self._play.robots = self.robots
+        if self.play != None:
+            try:
+                self.play.robots = self.robots
+            except Exception as e:
+                logging.error("Error trying to set robots on play '" + self.play.__class__.__name__ + "': " + str(e))
+                self.play = None
         # change notification so ui can update if necessary
-        self.play_changed.emit(self._play.__class__.__name__ if self._play != None else "(No Play)")
+        self.play_changed.emit(self.play.__class__.__name__ if self._play != None else "(No Play)")
 
 
     # the c++ GameplayModule reaches through the language portal and sets this
@@ -127,4 +127,9 @@ class RootPlay(Play, QtCore.QObject):
 
         # pass robots to play
         if self.play != None:
+            try:
+                self.play.robots = self.robots
+            except Exception as e:
+                logging.error("Error trying to set robots on play '" + self.play.__class__.__name__ + "': " + str(e))
+                self.play = None
             self.play.robots = robots
