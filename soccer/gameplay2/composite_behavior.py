@@ -1,4 +1,5 @@
 import behavior
+import re
 
 
 # a composite behavior is one that has 1+ subbehaviors
@@ -75,4 +76,14 @@ class CompositeBehavior(behavior.Behavior):
 
 
     def __str__(self):
-        raise NotImplementedError()
+        desc = super().__str__()
+
+        for name in self._subbehavior_info:
+            bhvr = self._subbehavior_info[name]['behavior']
+            # indent the subbehavior's description
+            indent = '    '
+            subdesc = str(bhvr)
+            subdesc = indent + re.sub(r'/n', indent, subdesc)
+            desc += subdesc
+
+        return desc
