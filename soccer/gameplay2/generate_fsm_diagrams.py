@@ -27,6 +27,6 @@ for behavior_type in ['skills', 'tactics', 'plays']:
             mkdir_p(dirpath)
             filepath = dirpath + "/" + klass.__name__ + ".png"
             klass().write_diagram_png(filepath)
-            logging.info("generated " + filepath)
+            print("generated " + filepath)
         except Exception as e:
             logging.error("Error generating fsm diagram for behavior '" + klass.__name__ + "':" + str(e))
