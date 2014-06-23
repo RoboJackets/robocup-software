@@ -56,7 +56,7 @@ class RootPlay(Play, QtCore.QObject):
                         self.play = plays.stopped.Stopped()
                     elif len(enabled_plays) > 0:
                         # select the play with the largest value for score()
-                        play_class = max(enabled_plays, key=lambda p: p.score())
+                        play_class = min(enabled_plays, key=lambda p: p.score())
                         self.play = play_class()
                     else:
                         # there's no available plays to run

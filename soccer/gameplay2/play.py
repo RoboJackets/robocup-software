@@ -8,7 +8,7 @@ class Play(composite_behavior.CompositeBehavior):
         self._robots = None
 
 
-    # TODO: clarify what this does and what the values mean.  is higher or lower more likely to get picked?
+    # Return float("inf") if the play cannot be used or a score (lower is better) used to select the best play.
     @classmethod
     def score(cls):
-        return 0
+        return 10
