@@ -483,6 +483,10 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 		_pathInvalidated = true;
 	}
 
+	if (!_path) {
+		_pathInvalidated = true;
+	}
+
 	//	invalidate path if it hits obstacles
 	if (_path && _path->hit(full_obstacles)) {
 		_pathInvalidated = true;
@@ -510,10 +514,6 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 		_pathInvalidated = true;
 	}
 
-	if (!_path) {
-		_pathInvalidated = true;
-	}
-
 	// check if goal is close to previous goal to reuse path
 	if (!_pathInvalidated) {
 		addText("Reusing path");
@@ -528,12 +528,20 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 		}
 	} else {
 		// use the newly generated path
-		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using new RRT path" << endl;
+		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: using new RRT path" << endl;
 		
-		// create a new path
-		Planning::Path newlyPlannedPath;
-		_planner->run(pos, angle, vel, *_motionConstraints.targetPos, &full_obstacles, newlyPlannedPath);
-		setPath(newlyPlannedPath);
+		//	try a straight line path first
+		Geometry2d::Segment straight_seg(pos, *_motionConstraints.targetPos);
+		if (!full_obstacles.hit(straight_seg)) {
+			addText(QString("planner: straight_line"));
+			Planning::Path straightLine(pos, *_motionConstraints.targetPos);
+			setPath(straightLine);
+		} else {
+			//	rrt-planned path
+			Planning::Path newlyPlannedPath;
+			_planner->run(pos, angle, vel, *_motionConstraints.targetPos, &full_obstacles, newlyPlannedPath);
+			setPath(newlyPlannedPath);
+		}
 	}
 
 	_state->drawPath(*_path, Qt::magenta);
