@@ -27,6 +27,10 @@ class CompositeBehavior(behavior.Behavior):
         del self._subbehavior_info[name]
 
 
+    def has_subbehavior_with_name(self, name):
+        return name in self._subbehavior_info
+
+
     def subbehavior_with_name(self, name):
         return self._subbehavior_info[name]['behavior']
 
