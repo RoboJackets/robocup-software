@@ -102,6 +102,9 @@ def assign_roles(robots, role_reqs):
     role_reqs_list = []
     tree_mapping = {}   # holds key paths so we can map the flattened list back into the tree at the end
 
+    # The input and output to assign_roles() are in a tree form that maps to the behavior tree that we're assigning robots for
+    # To do our calculations though, we need to have a flat list of RoleRequirements to match to our list of robots
+    # The flatten_tree() method does this and keeps track of how to rebuild the tree so we can do so at the end
     def flatten_tree(tree, path_prefix=[]):
         for key, subtree in tree.items():
             if isinstance(subtree, dict):
@@ -128,7 +131,6 @@ def assign_roles(robots, role_reqs):
 
 
     if len(robots) == 0:
-        print("no robots available to assign")
         return {}
 
 
