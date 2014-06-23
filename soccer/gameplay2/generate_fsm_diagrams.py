@@ -2,6 +2,10 @@ import logging
 import class_import
 import fsm
 import os, errno
+import sys
+
+
+sys.path.append('../../run')
 
 
 def mkdir_p(path):

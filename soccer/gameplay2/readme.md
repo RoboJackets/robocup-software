@@ -52,3 +52,11 @@ Note for Sublime Text users: by default, sublime saves files atomically by editi
 * Each subdirectory that is autoloaded must have an empty \_\_init\_\_.py file so that python recognizes it as a package.  For example, if you add a new folder 'offense' in the 'plays' folder, you must put an \_\_init\_\_.py there.
 * Because of the way the `imp.reload()` function works in python, you CAN NOT change the name of a play class while soccer is running.  Change its code, not its name.
 * Unloading a module that has previously been imported is not supported in python.  This means that if you delete the file for a skill, the program will continue running as if nothing has changed.  If you delete a play, it will be removed from the play registry and will not be run anymore (although the module will still be loaded in memory).
+
+
+
+# Common Errors
+
+## No module named 'robocup'
+
+The 'robocup' module is compiled from the robocup-py.cpp source file.  It is compiled as part of the `soccer` executable and passed into the python interpreter at runtime.  Thus, any python code loaded by `soccer` is able to `import robocup` and it'll work.  Python code that runs independent of `soccer`, has to link against the standalone module, which is placed at `run/robocup.so`.  In order for python to see it though, you'll have to make sure to add the run folder to the PYTHONPATH variable.
