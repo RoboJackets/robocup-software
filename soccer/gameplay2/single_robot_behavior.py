@@ -39,4 +39,4 @@ class SingleRobotBehavior(behavior.Behavior):
 
 
     def __str__(self):
-        return super().__str__() + "[robot=" + str(self.robot.shell_id()) if self.robot != None else "None" + "]"
+        return super().__str__() + "[robot=" + (str(self.robot.shell_id()) if self.robot != None else "None") + "]"
