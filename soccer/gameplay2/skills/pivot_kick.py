@@ -1,4 +1,5 @@
 import skill
+import behavior
 import constants
 import robocup
 from enum import Enum
@@ -8,8 +9,8 @@ class PivotKick(skill.Skill):
 
     # tunable parameters
     ################################################################################
-    AimSpeed
-    AimThreshold
+    AimSpeed = 1 # FIXME: bogus value
+    AimThreshold = 1 # FIXME: bogus value
 
 
 
