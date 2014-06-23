@@ -81,14 +81,14 @@ class RootPlay(Play, QtCore.QObject):
 
     # this is used to force a reselection of a play
     def drop_current_play(self):
-        raise NotImplementedError() # FIXME: fix implementation to do it the CompositeBehavior wayexc()
         self.play = None
 
 
     # this is called when the goalie behavior must be reloaded (for example when the goalie.py file is modified)
     def drop_goalie_behavior(self):
-        raise NotImplementedError() # FIXME: fix implementation to do it the CompositeBehavior way
-        self.goalie_behavior = None
+        if self.has_subbehavior_with_name('goalie'):
+            self.remove_subbehavior('goalie')
+        self.setup_goalie_if_needed()
 
 
     @property
@@ -117,15 +117,22 @@ class RootPlay(Play, QtCore.QObject):
     @goalie_id.setter
     def goalie_id(self, value):
         self._goalie_id = None if value == -1 else value
+        self.setup_goalie_if_needed()
         logging.info("goalie_id set to: " + str(self._goalie_id))
 
 
-    @property
-    def goalie_behavior(self):
-        return self._goalie_behavior
-    @goalie_behavior.setter
-    def goalie_behavior(self, value):
-        self._goalie_behavior = value
+    def setup_goalie_if_needed(self):
+        if self.goalie_id == None:
+            self.remove_subbehavior('goalie')
+        else:
+            if self.has_subbehavior_with_name('goalie'):
+                goalie = self.subbehavior_with_name('goalie')
+            else:
+                goalie = tactics.roles.goalie.Goalie()
+                # FIXME: add goalie with high priority?
+                self.add_subbehavior(goalie, 'goalie', required=True)
+
+            goalie.shell_id = self.goalie_id
 
 
     @property
