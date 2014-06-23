@@ -4,7 +4,7 @@ import plays.stopped
 import logging
 from PyQt4 import QtCore
 import main
-import tactics.roles.goalie
+import tactics.positions.goalie
 import role_assignment
 import traceback
 
@@ -128,7 +128,7 @@ class RootPlay(Play, QtCore.QObject):
             if self.has_subbehavior_with_name('goalie'):
                 goalie = self.subbehavior_with_name('goalie')
             else:
-                goalie = tactics.roles.goalie.Goalie()
+                goalie = tactics.positions.goalie.Goalie()
                 # FIXME: add goalie with high priority?
                 self.add_subbehavior(goalie, 'goalie', required=True)
 
