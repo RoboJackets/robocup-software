@@ -530,7 +530,7 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 		// use the newly generated path
 		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: using new RRT path" << endl;
 		
-		// create new a new path
+		// create a new path
 		Planning::Path newlyPlannedPath;
 		_planner->run(pos, angle, vel, *_motionConstraints.targetPos, &full_obstacles, newlyPlannedPath);
 		setPath(newlyPlannedPath);
