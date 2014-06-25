@@ -141,7 +141,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
     } 
 }
 
-void Gameplay::GameplayModule::~GameplayModule() {
+Gameplay::GameplayModule::~GameplayModule() {
 	Py_Finalize();
 }
 
