@@ -2,6 +2,7 @@
 
 #include <boost/optional.hpp>
 
+#include <Geometry2d/CompositeShape.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Circle.hpp>
 #include <Geometry2d/Segment.hpp>
@@ -14,7 +15,7 @@
 /**
  * Obstacle class handles collision detection
  */
-class Obstacle
+class Obstacle : public Geometry2d::CompositeShape
 {
 public:
     Obstacle();
@@ -22,13 +23,16 @@ public:
     /**
      * Test whether a given point intersects the obstacle
      */
-    virtual bool hit(const Geometry2d::Point &pt) const = 0;
+    virtual bool hit(const Geometry2d::Point &pt) const {
+        return containsPoint(pt);
+    }
     /**
      * Test whether a given segment intersects the obstacle
      */
     virtual bool hit(const Geometry2d::Segment &seg) const = 0;
 };
 
+//  TODO: move this functionality into CompositeShape, then delete the class
 /**
  * this is a group of obstacles that are all compared to when doing colision detection
  */
@@ -46,21 +50,6 @@ public:
     {
         return _obstacles;
     }
-    
-    /**
-     * Removes all obstacles
-     */
-    void clear();
-
-    /**
-     * Adds a pointer to an obstacle
-     */
-    void add(ObstaclePtr obs);
-
-    /**
-     * Adds another obstacle group
-     */
-    void add(const ObstacleGroup& group);
     
     
     unsigned int size() const
@@ -93,27 +82,6 @@ public:
 
         return !hitSet.empty();
     }
-
-    /**
-     * Checks if a given obstacle its obstacles in the group
-     *
-     * @param obj The object to collision test
-     * @return A bool telling whether or not there were any collisions
-     */
-    template<typename T>
-    bool hit(const T &obj) const
-    {
-        for (const_iterator it = begin(); it!=end(); ++it)
-        {
-            if ((*it)->hit(obj))
-            {
-				return true;
-            }
-        }
-
-        return false;
-    }
-
 
     // STL typedefs
     typedef std::set<ObstaclePtr>::const_iterator const_iterator;
