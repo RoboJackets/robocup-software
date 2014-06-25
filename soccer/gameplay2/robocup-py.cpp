@@ -75,7 +75,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("center", &Geometry2d::Segment::center)
 	;
 
-	class_<Geometry2d::Rect>("Rect"), init<Geometry2d::Point, Geometry2d::Point>())
+	class_<Geometry2d::Rect>("Rect", init<Geometry2d::Point, Geometry2d::Point>())
 		.def("contains_rect", &Rect_contains_rect)
 		.def("contains_point", &Rect_contains_point)
 		.def("min_x", &Geometry2d::Rect::minx)
