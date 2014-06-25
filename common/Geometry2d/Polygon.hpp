@@ -2,12 +2,13 @@
 
 #include <vector>
 
+#include "Shape.hpp"
 #include "Rect.hpp"
 #include "Segment.hpp"
 
 namespace Geometry2d
 {
-    class Polygon
+    class Polygon : public Shape
     {
     public:
         Polygon() {}

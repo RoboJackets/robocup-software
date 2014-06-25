@@ -1,11 +1,12 @@
 #pragma once
 
+#include "Shape.hpp"
 #include "Point.hpp"
 #include "Line.hpp"
 
 namespace Geometry2d
 {
-    class Circle
+    class Circle : public Shape
     {
     public:
         Circle()
