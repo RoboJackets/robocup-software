@@ -22,7 +22,7 @@ class Move(single_robot_behavior.SingleRobotBehavior):
 
 
     def execute_running(self):
-        if self.pos != None and self.robot != None:
+        if self.pos != None:
             self.robot.move_to(self.pos)
 
 
