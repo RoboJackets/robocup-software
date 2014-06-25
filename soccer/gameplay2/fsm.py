@@ -158,7 +158,7 @@ class StateMachine:
 
         for start in self._transitions:
             for end, event in self._transitions[start].items():
-                g.edge(start.name, end.name, label=event['name'])
+                g.edge(start.name, end.name, label=event['name'], decorate='True')
 
         return g
 
