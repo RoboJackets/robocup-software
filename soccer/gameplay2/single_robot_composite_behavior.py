@@ -10,7 +10,7 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior, co
     # we over-ride this to enforce the rule that there can't be more than one subbehavior
     def add_subbehavior(self, bhvr, name, required=True, priority=100):
         if self.has_subbehaviors():
-            raise AssertionError("Attempt to add more than one subbehavior to CompositeSingleRobotBehavior")
+            raise AssertionError("Attempt to add more than one subbehavior to SingleRobotCompositeBehavior")
         super().add_subbehavior(bhvr, name, required, priority)
 
 

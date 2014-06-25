@@ -1,6 +1,6 @@
 import root_play as root_play_module
 import play_registry as play_registry_module
-import play, skill
+import play
 import fs_watcher
 import class_import
 import logging

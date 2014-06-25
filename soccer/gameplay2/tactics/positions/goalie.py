@@ -1,13 +1,12 @@
 import robocup
-import tactic
-import single_robot_behavior
+import single_robot_composite_behavior
 import behavior
 import constants
 import enum
 import math
 
 
-class Goalie(tactic.Tactic, single_robot_behavior.SingleRobotBehavior):
+class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     MaxX = constants.Field.GoalWidth / 2.0
     RobotSegment = robocup.Segment(robocup.Point(-MaxX, constants.Robot.Radius),
@@ -23,7 +22,7 @@ class Goalie(tactic.Tactic, single_robot_behavior.SingleRobotBehavior):
 
 
     def __init__(self):
-        tactic.Tactic.__init__(self, continuous=True)
+        super().__init__(continuous=True)
 
         for substate in Goalie.State:
             self.add_state(substate, behavior.Behavior.State.running)

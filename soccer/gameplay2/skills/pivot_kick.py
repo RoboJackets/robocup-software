@@ -1,11 +1,11 @@
-import skill
+import single_robot_behavior
 import behavior
 import constants
 import robocup
 from enum import Enum
 
 
-class PivotKick(skill.Skill):
+class PivotKick(single_robot_behavior.SingleRobotBehavior):
 
     # tunable parameters
     ################################################################################
