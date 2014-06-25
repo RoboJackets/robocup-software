@@ -29,9 +29,6 @@ public:
     virtual bool hit(const Geometry2d::Segment &seg) const = 0;
 };
 
-
-typedef std::shared_ptr<Obstacle> ObstaclePtr;
-
 /**
  * this is a group of obstacles that are all compared to when doing colision detection
  */
@@ -133,30 +130,4 @@ public:
 
 protected:
     std::set<ObstaclePtr> _obstacles;
-};
-
-class CircleObstacle: public Obstacle
-{
-public:
-    CircleObstacle(Geometry2d::Point center, float radius);
-    
-    bool hit(const Geometry2d::Point &pt) const;
-    bool hit(const Geometry2d::Segment &seg) const;
-
-    Geometry2d::Circle circle;
-};
-
-/**
- * collision object in the form of a polygon
- */
-class PolygonObstacle: public Obstacle
-{
-public:
-		PolygonObstacle(){}
-		PolygonObstacle(const Geometry2d::Polygon& poly) : polygon(poly) {}
-
-    bool hit(const Geometry2d::Point &pt) const;
-    bool hit(const Geometry2d::Segment &seg) const;
-
-    Geometry2d::Polygon polygon;
 };
