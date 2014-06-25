@@ -81,7 +81,7 @@ public:
 	/** @ingroup drawing_functions */
 	void drawText(const QString &text, const Geometry2d::Point &pos, const QColor &color = Qt::black, const QString &layer = QString());
 	/** @ingroup drawing_functions */
-	void drawObstacle(const ObstaclePtr& obs, const QColor &color = Qt::black, const QString &layer = QString());
+	void drawObstacle(const std::shared_ptr<Obstacle>& obs, const QColor &color = Qt::black, const QString &layer = QString());
 	/** @ingroup drawing_functions */
 	void drawObstacles(const ObstacleGroup& group, const QColor &color = Qt::black, const QString &layer = QString());
 	

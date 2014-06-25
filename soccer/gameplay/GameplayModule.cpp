@@ -29,7 +29,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 
 	//// Make an obstacle to cover the opponent's half of the field except for one robot diameter across the center line.
 	PolygonObstacle *sidePolygon = new PolygonObstacle;
-	_sideObstacle = ObstaclePtr(sidePolygon);
+	_sideObstacle = std::shared_ptr<Obstacle>(sidePolygon);
 	float x = Field_Width / 2 + Field_Border;
 	const float y1 = Field_Length / 2;
 	const float y2 = Field_Length + Field_Border;
@@ -50,7 +50,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(-x, y-1));
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x, y-1));
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x, y));
-	_nonFloor[0] = ObstaclePtr(floorObstacle);
+	_nonFloor[0] = std::shared_ptr<Obstacle>(floorObstacle);
 
 	y = Field_Length + Field_Border;
 	floorObstacle = new PolygonObstacle;
@@ -58,7 +58,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(-x, y+1));
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x, y+1));
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x, y));
-	_nonFloor[1] = ObstaclePtr(floorObstacle);
+	_nonFloor[1] = std::shared_ptr<Obstacle>(floorObstacle);
 
 	y = Floor_Length;
 	floorObstacle = new PolygonObstacle;
@@ -66,14 +66,14 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(-x-1, -deadspace));
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(-x-1, y));
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(-x, y));
-	_nonFloor[2] = ObstaclePtr(floorObstacle);
+	_nonFloor[2] = std::shared_ptr<Obstacle>(floorObstacle);
 
 	floorObstacle = new PolygonObstacle;
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x, -deadspace));
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x+1, -deadspace));
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x+1, y));
 	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x, y));
-	_nonFloor[3] = ObstaclePtr(floorObstacle);
+	_nonFloor[3] = std::shared_ptr<Obstacle>(floorObstacle);
 
 	PolygonObstacle* goalArea = new PolygonObstacle;
 	const float halfFlat = Field_GoalFlat/2.0;
@@ -82,9 +82,9 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	goalArea->polygon.vertices.push_back(Geometry2d::Point(-halfFlat, radius));
 	goalArea->polygon.vertices.push_back(Geometry2d::Point( halfFlat, radius));
 	goalArea->polygon.vertices.push_back(Geometry2d::Point( halfFlat, 0));
-	_goalArea.add(ObstaclePtr(goalArea));
-	_goalArea.add(ObstaclePtr(new CircleObstacle(Geometry2d::Point(-halfFlat, 0), radius)));
-	_goalArea.add(ObstaclePtr(new CircleObstacle(Geometry2d::Point(halfFlat, 0), radius)));
+	_goalArea.add(std::shared_ptr<Obstacle>(goalArea));
+	_goalArea.add(std::shared_ptr<Obstacle>(new CircleObstacle(Geometry2d::Point(-halfFlat, 0), radius)));
+	_goalArea.add(std::shared_ptr<Obstacle>(new CircleObstacle(Geometry2d::Point(halfFlat, 0), radius)));
 
 	_ourHalf = std::make_shared<PolygonObstacle>();
 	_ourHalf->polygon.vertices.push_back(Geometry2d::Point(-x, -Field_Border));
@@ -292,7 +292,7 @@ ObstacleGroup Gameplay::GameplayModule::globalObstacles() const {
 	}
 
 	/// Add non floor obstacles
-	BOOST_FOREACH(const ObstaclePtr& ptr, _nonFloor)
+	BOOST_FOREACH(const std::shared_ptr<Obstacle>& ptr, _nonFloor)
 	{
 		obstacles.add(ptr);
 	}

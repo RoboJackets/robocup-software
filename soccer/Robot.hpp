@@ -274,7 +274,7 @@ public:
 	 * Adds an obstacle to the local set of obstacles for avoidance
 	 * Cleared after every frame
 	 */
-	void localObstacles(const ObstaclePtr& obs) { _local_obstacles.add(obs); }
+	void localObstacles(const std::shared_ptr<Obstacle>& obs) { _local_obstacles.add(obs); }
 	void localObstacles(const ObstacleGroup& obs) { _local_obstacles.add(obs); }
 	const ObstacleGroup& localObstacles() const { return _local_obstacles; }
 	void clearLocalObstacles() { _local_obstacles.clear(); }
@@ -419,14 +419,14 @@ protected:
 		ObstacleGroup result;
 		for (size_t i=0; i<RobotMask::size(); ++i)
 			if (mask[i] > 0 && robots[i] && robots[i]->visible)
-				result.add(ObstaclePtr(new CircleObstacle(robots[i]->pos, mask[i])));
+				result.add(std::shared_ptr<Obstacle>(new CircleObstacle(robots[i]->pos, mask[i])));
 		return result;
 	}
 
 	/**
 	 * Creates an obstacle for the ball if necessary
 	 */
-	ObstaclePtr createBallObstacle() const;
+	std::shared_ptr<Obstacle> createBallObstacle() const;
 
 
 private:

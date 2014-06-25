@@ -94,7 +94,7 @@ void SystemState::drawCircle(const Geometry2d::Point& center, float radius, cons
 	dbg->set_color(color(qc));
 }
 
-void SystemState::drawObstacle(const ObstaclePtr& obs, const QColor &color, const QString &layer) {
+void SystemState::drawObstacle(const std::shared_ptr<Obstacle>& obs, const QColor &color, const QString &layer) {
 	std::shared_ptr<CircleObstacle> circObs = std::dynamic_pointer_cast<CircleObstacle>(obs);
 	std::shared_ptr<PolygonObstacle> polyObs = std::dynamic_pointer_cast<PolygonObstacle>(obs);
 	if (circObs)
@@ -105,7 +105,7 @@ void SystemState::drawObstacle(const ObstaclePtr& obs, const QColor &color, cons
 
 void SystemState::drawObstacles(const ObstacleGroup& group, const QColor &color, const QString &layer)
 {
-	BOOST_FOREACH(const ObstaclePtr& obs, group)
+	BOOST_FOREACH(const std::shared_ptr<Obstacle>& obs, group)
 		drawObstacle(obs, color, layer);
 }
 

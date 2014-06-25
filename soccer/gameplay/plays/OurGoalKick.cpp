@@ -88,9 +88,9 @@ bool Gameplay::Plays::OurGoalKick::run()
 		shot_obs.vertices.push_back(target.pt[1]);
 		shot_obs.vertices.push_back(ball().pos);
 		if(_center1.robot)
-			_center1.robot->localObstacles(ObstaclePtr(new PolygonObstacle(shot_obs)));
+			_center1.robot->localObstacles(std::shared_ptr<Obstacle>(new PolygonObstacle(shot_obs)));
 		if(_center2.robot)
-			_center2.robot->localObstacles(ObstaclePtr(new PolygonObstacle(shot_obs)));
+			_center2.robot->localObstacles(std::shared_ptr<Obstacle>(new PolygonObstacle(shot_obs)));
 		_center1.target = Point(0.0, 1.5);
 		_center2.target = Point(1.0, 1.5);
 	} else

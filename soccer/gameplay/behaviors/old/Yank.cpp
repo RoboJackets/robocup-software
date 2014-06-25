@@ -133,9 +133,9 @@ bool Gameplay::Behaviors::Yank::run()
 			// otherwise, get off of the yank line with path planning
 			robot->avoidBallRadius(0.3);
 			// don't drive into the ball
-			robot->localObstacles(ObstaclePtr(new CircleObstacle(_yankBallStart, ball().pos.distTo(_yankBallStart) + Robot_Radius)));
+			robot->localObstacles(std::shared_ptr<Obstacle>(new CircleObstacle(_yankBallStart, ball().pos.distTo(_yankBallStart) + Robot_Radius)));
 			// stay out of path of ball
-			robot->localObstacles(ObstaclePtr(new PolygonObstacle(Polygon(fixedYankLine, *_ball_clearance))));
+			robot->localObstacles(std::shared_ptr<Obstacle>(new PolygonObstacle(Polygon(fixedYankLine, *_ball_clearance))));
 			robot->move(robot->pos, false); // let path planning clear the line
 		}
 

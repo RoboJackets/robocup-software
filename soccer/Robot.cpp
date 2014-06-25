@@ -411,18 +411,18 @@ void OurRobot::resetAvoidBall() {
 	avoidBallRadius(Ball_Avoid_Small);
 }
 
-ObstaclePtr OurRobot::createBallObstacle() const {
+std::shared_ptr<Obstacle> OurRobot::createBallObstacle() const {
 	// if game is stopped, large obstacle regardless of flags
 	if (_state->gameState.state != GameState::Playing && !(_state->gameState.ourRestart || _state->gameState.theirPenalty()))
 	{
-		return ObstaclePtr(new CircleObstacle(_state->ball.pos, Field_CenterRadius));
+		return std::shared_ptr<Obstacle>(new CircleObstacle(_state->ball.pos, Field_CenterRadius));
 	}
 
 	// create an obstacle if necessary
 	if (_avoidBallRadius > 0.0) {
-		return ObstaclePtr(new CircleObstacle(_state->ball.pos, _avoidBallRadius));
+		return std::shared_ptr<Obstacle>(new CircleObstacle(_state->ball.pos, _avoidBallRadius));
 	} else {
-		return ObstaclePtr();
+		return std::shared_ptr<Obstacle>();
 	}
 }
 
@@ -457,7 +457,7 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 	_state->drawObstacles(opp_obs, Qt::gray, QString("opp_obstacles_%1").arg(shell()));
 	if (_state->ball.valid)
 	{
-		ObstaclePtr ball_obs = createBallObstacle();
+		std::shared_ptr<Obstacle> ball_obs = createBallObstacle();
 		_state->drawObstacle(ball_obs, Qt::gray, QString("ball_obstacles_%1").arg(shell()));
 		full_obstacles.add(ball_obs);
 	}
