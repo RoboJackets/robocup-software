@@ -83,7 +83,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("max_x", &Geometry2d::Rect::maxx)
 		.def("max_y", &Geometry2d::Rect::maxy)
 		.def("near_point", &Geometry2d::Rect::nearPoint)
-		.def("intersects_rect", &Geometry2d::intersects)
+		.def("intersects_rect", &Geometry2d::Rect::intersects)
 	;
 
 	//		I'm holding off for now because GameState needs some attention on the C++
