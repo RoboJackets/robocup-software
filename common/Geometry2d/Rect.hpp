@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Shape.hpp"
 #include "Point.hpp"
 #include "util.h"
 
@@ -9,7 +10,7 @@ namespace Geometry2d
 {
 	class Segment;
 	
-	class Rect
+	class Rect : public Shape
 	{
 		public:
 			Rect() {}

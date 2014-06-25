@@ -11,7 +11,7 @@ def is_moving_towards_our_goal():
     #     return (ball().vel.magsq() > 0.02 && ballPath.intersects(goalLine));
     # }
 
-def is_in_our_goalie_box():
+def is_in_our_goalie_zone():
     raise NotImplementedError()
 
 
