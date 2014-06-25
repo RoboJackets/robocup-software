@@ -18,7 +18,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         intercept = 3
         clear = 4           # kick/chip the ball out if it's in our goal zone
         setup_penalty = 5   # get in place for a penalty shot
-        chill = 6           # if we can't see the ball, don't do shit
+        chill = 6           # if we can't see the ball, we just sit in the center in front of our goal
 
 
     def __init__(self):
@@ -52,7 +52,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                 lambda: main.game_state().their_penalty() and not main.game_state().playing(),
                 "opponent penalty shot about to happen")
 
-        for state in [s for s in non_chill_states if s != Goalie.State.setup_penalty]:
+        for state in non_chill_states:
             self.add_transition(state,
                 Goalie.State.intercept,
                 lambda: evaluation.ball.is_moving_towards_our_goal(),
@@ -61,27 +61,17 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         for state in non_chill_states:
             self.add_transition(state,
                 Goalie.State.clear,
-                lambda: evaluation.ball.is_in_our_goalie_box(),
-                "ball in our goalie box")
+                lambda: evaluation.ball.is_in_our_goalie_box() and
+                        not evaluation.ball.is_moving_towards_our_goal(),
+                "ball in our goalie box, but not headed toward goal")
 
-
-        # FIXME: I've only half-implemented the transitions here and they're not quite right...
-        # Here's the C++ code we're trying to replicate:
-        # if(!ball().valid)
-        #     _state = None;
-        # else if(gameState().theirPenalty() && !gameState().playing())
-        #     _state = SetupPenalty;
-        # else if (ballIsMovingTowardsGoal())
-        #     _state=Intercept;
-        # else if(ballIsInGoalieBox(ball().pos))
-        #     _state = Clear;
-        # else if (opponentsHavePossession())
-        #     _state = Block;
-        # else
-        #     _state = Defend;
-
-        # if(_state != _previousState)
-        #     _kick.restart();
+        for state in non_chill_states:
+            self.add_transition(state,
+                Goalie.State.defend,
+                lambda: not evaluation.ball.is_in_our_goalie_box() and
+                        not evaluation.ball.is_moving_towards_our_goal() and
+                        evaluation.ball.opponent_with_ball() == None,
+                'not much going on')
 
 
 
@@ -113,23 +103,36 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         robot.move_to(dest)
 
 
-    def execute_clear(self):
-        ball_to_goal = robocup.Segment(main.ball().pos, Point(0, 0))
-        closest = ball_to_goal.nearest_point(robot.pos)
+    # The below is the old C++ code ported to python - instead of using this I've (justin) replaced it with the pivot kick behavior
+    # remove this old stuff once we verify that the new behavior works well
+    # def execute_clear(self):
+    #     ball_to_goal = robocup.Segment(main.ball().pos, Point(0, 0))
+    #     closest = ball_to_goal.nearest_point(robot.pos)
 
-        if (robot.pos - closest).mag() > 0.10:
-            robot.move_to(closest)
-        else:
-            robot.set_world_vel(main.ball().pos - robot.pos).normalized() * 1.0
+    #     if (robot.pos - closest).mag() > 0.10:
+    #         robot.move_to(closest)
+    #     else:
+    #         robot.set_world_vel(main.ball().pos - robot.pos).normalized() * 1.0
 
-        robot.dribble(40)
-        robot.face(main.ball().pos())
-        robot.unkick()
+    #     robot.dribble(40)
+    #     robot.face(main.ball().pos())
+    #     robot.unkick()
 
-        if robot.has_chipper():
-            robot.chip(255)
-        else:
-            robot.kick(255)
+    #     if robot.has_chipper():
+    #         robot.chip(255)
+    #     else:
+    #         robot.kick(255)
+
+    def on_enter_clear(self):
+        kick = pivot_kick.PivotKick()
+        # FIXME: config pivot kick
+        # FIXME: enable chipping!
+        # FIXME: if the goalie has a fault, resort to bump
+        self.add_subbehavior('kick-clear', kick, required=True)
+
+
+    def on_exit_clear(self):
+        self.remove_behavior('kick-clear')
 
 
     def execute_intercept(self):
@@ -173,4 +176,3 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     @shell_id.setter
     def shell_id(self, value):
         self._shell_id = value
-    
