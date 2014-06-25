@@ -1,9 +1,9 @@
-import skill
+import single_robot_behavior
 import behavior
 
 
 # wraps up OurRobot.move() into a Skill so we can use it in the play system more easily
-class Move(skill.Skill):
+class Move(single_robot_behavior.SingleRobotBehavior):
 
     def __init__(self, pos=None):
         super().__init__(continuous=False)

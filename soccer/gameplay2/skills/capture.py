@@ -1,9 +1,9 @@
+import single_robot_behavior
 import behavior
-import skill
 from enum import Enum
 
 
-class Capture(skill.Skill):
+class Capture(single_robot_behavior.SingleRobotBehavior):
 
     class State(Enum):
         course_approach = 1
