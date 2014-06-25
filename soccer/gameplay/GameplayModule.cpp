@@ -141,6 +141,10 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
     } 
 }
 
+void Gameplay::GameplayModule::~GameplayModule() {
+	Py_Finalize();
+}
+
 void Gameplay::GameplayModule::setupUI() {
 	PyGILState_STATE state = PyGILState_Ensure(); {
 		try {
