@@ -61,14 +61,14 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         for state in non_chill_states:
             self.add_transition(state,
                 Goalie.State.clear,
-                lambda: evaluation.ball.is_in_our_goalie_box() and
+                lambda: evaluation.ball.is_in_our_goalie_zone() and
                         not evaluation.ball.is_moving_towards_our_goal(),
                 "ball in our goalie box, but not headed toward goal")
 
         for state in non_chill_states:
             self.add_transition(state,
                 Goalie.State.defend,
-                lambda: not evaluation.ball.is_in_our_goalie_box() and
+                lambda: not evaluation.ball.is_in_our_goalie_zone() and
                         not evaluation.ball.is_moving_towards_our_goal() and
                         evaluation.ball.opponent_with_ball() == None,
                 'not much going on')

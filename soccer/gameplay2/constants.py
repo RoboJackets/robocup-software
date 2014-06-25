@@ -1,3 +1,4 @@
+import robocup
 
 
 class Robot:
@@ -34,3 +35,7 @@ class Field:
     Border = 0.25
     FloorLength = Length + 2.0 * Border;
     FloorWidth = Width + 2.0 * Border;
+
+    # TODO: make these out of rectangles and circles, then we can check if the ball is in there
+    OurGoalShape = None
+    TheirGoalShape = None
