@@ -55,7 +55,7 @@ class StateMachine:
 
             if len(next_states) > 1:
                 logging.warn("Ambiguous fsm transitions from state'" + str(self.state) + "'.  The following states are reachable now: " + str(next_states) + ";  Proceeding by taking the first option.")
-            self.transition(next_states[0])
+                self.transition(next_states[0])
 
         # if a transition occurred during the run, we'll run again
         # note: this could potentially cause infinite recursion (although it shouldn't)
