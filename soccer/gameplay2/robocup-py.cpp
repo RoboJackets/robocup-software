@@ -47,14 +47,21 @@ void OurRobot_move_to(OurRobot *thiss, Geometry2d::Point *to) {
 	thiss->move(*to);
 }
 
-void Rect_contains_rect(Geometry2d::Rect *thiss, Geometry2d::Rect *other) {
+void OurRobot_set_avoid_ball_radius(OurRobot *self, float radius) {
+	self->avoidBallRadius(radius);
+}
+
+bool Rect_contains_rect(Geometry2d::Rect *thiss, Geometry2d::Rect *other) {
 	return thiss->contains(*other);
 }
 
-void Rect_contains_point(Geometry2d::Rect *thiss, Geometry2d::Point *pt) {
+bool Rect_contains_point(Geometry2d::Rect *thiss, Geometry2d::Point *pt) {
 	return thiss->contains(*pt);
 }
 
+void Point_rotate(Geometry2d::Point *self, Geometry2d::Point *origin, float angle) {
+	self->rotate(*origin, angle);
+}
 
 /**
  * The code in this block wraps up c++ classes and makes them
@@ -69,13 +76,15 @@ BOOST_PYTHON_MODULE(robocup)
 		.def(self + self)
 		.def("mag", &Geometry2d::Point::mag)
 		.def("__repr__", &Point_repr)
+		.def("normalized", &Geometry2d::Point::normalized)
+		.def("rotate", &Point_rotate)
 	;
 
 	class_<Geometry2d::Segment>("Segment", init<Geometry2d::Point, Geometry2d::Point>())
 		.def("center", &Geometry2d::Segment::center)
 	;
 
-	class_<Geometry2d::Rect>("Rect"), init<Geometry2d::Point, Geometry2d::Point>())
+	class_<Geometry2d::Rect>("Rect", init<Geometry2d::Point, Geometry2d::Point>())
 		.def("contains_rect", &Rect_contains_rect)
 		.def("contains_point", &Rect_contains_point)
 		.def("min_x", &Geometry2d::Rect::minx)
@@ -83,7 +92,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("max_x", &Geometry2d::Rect::maxx)
 		.def("max_y", &Geometry2d::Rect::maxy)
 		.def("near_point", &Geometry2d::Rect::nearPoint)
-		.def("intersects_rect", &Geometry2d::intersects)
+		.def("intersects_rect", &Geometry2d::Rect::intersects)
 	;
 
 	//		I'm holding off for now because GameState needs some attention on the C++
@@ -122,11 +131,14 @@ BOOST_PYTHON_MODULE(robocup)
 		.def_readwrite("vel", &Robot::vel)
 		.def_readwrite("angle", &Robot::angle)
 		.def_readwrite("angle_vel", &Robot::angleVel)
-		.def("__repr__", &Robot_repr);
+		.def("__repr__", &Robot_repr)
 	;
 
 	class_<OurRobot, OurRobot *, std::shared_ptr<OurRobot>, bases<Robot> >("OurRobot", init<int, SystemState*>())
 		.def("move_to", &OurRobot_move_to)
+		.def("face", &OurRobot::face)
+		.def("set_avoid_ball_radius", &OurRobot_set_avoid_ball_radius)
+		.def("avoid_all_teammates", &OurRobot::avoidAllTeammates)
 	;
 
 	class_<OpponentRobot, std::shared_ptr<OpponentRobot>, bases<Robot> >("OpponentRobot", init<int>());
