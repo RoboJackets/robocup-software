@@ -47,11 +47,11 @@ void OurRobot_move_to(OurRobot *thiss, Geometry2d::Point *to) {
 	thiss->move(*to);
 }
 
-void Rect_contains_rect(Geometry2d::Rect *thiss, Geometry2d::Rect *other) {
+bool Rect_contains_rect(Geometry2d::Rect *thiss, Geometry2d::Rect *other) {
 	return thiss->contains(*other);
 }
 
-void Rect_contains_point(Geometry2d::Rect *thiss, Geometry2d::Point *pt) {
+bool Rect_contains_point(Geometry2d::Rect *thiss, Geometry2d::Point *pt) {
 	return thiss->contains(*pt);
 }
 
