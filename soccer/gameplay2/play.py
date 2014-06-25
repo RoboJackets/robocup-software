@@ -5,7 +5,6 @@ class Play(composite_behavior.CompositeBehavior):
 
     def __init__(self, continuous):
         super().__init__(continuous)
-        self._robots = None
 
 
     # Return float("inf") if the play cannot be used or a score (lower is better) used to select the best play.
