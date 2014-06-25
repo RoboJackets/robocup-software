@@ -6,6 +6,7 @@
 using namespace boost::python;
 
 #include <Geometry2d/Point.hpp>
+#include <Geometry2d/Rect.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
 #include <protobuf/LogFrame.pb.h>
@@ -46,6 +47,14 @@ void OurRobot_move_to(OurRobot *thiss, Geometry2d::Point *to) {
 	thiss->move(*to);
 }
 
+void Rect_contains_rect(Geometry2d::Rect *thiss, Geometry2d::Rect *other) {
+	return thiss->contains(*other);
+}
+
+void Rect_contains_point(Geometry2d::Rect *thiss, Geometry2d::Point *pt) {
+	return thiss->contains(*pt);
+}
+
 
 /**
  * The code in this block wraps up c++ classes and makes them
@@ -64,6 +73,17 @@ BOOST_PYTHON_MODULE(robocup)
 
 	class_<Geometry2d::Segment>("Segment", init<Geometry2d::Point, Geometry2d::Point>())
 		.def("center", &Geometry2d::Segment::center)
+	;
+
+	class_<Geometry2d::Rect>("Rect"), init<Geometry2d::Point, Geometry2d::Point>())
+		.def("contains_rect", &Rect_contains_rect)
+		.def("contains_point", &Rect_contains_point)
+		.def("min_x", &Geometry2d::Rect::minx)
+		.def("min_y", &Geometry2d::Rect::miny)
+		.def("max_x", &Geometry2d::Rect::maxx)
+		.def("max_y", &Geometry2d::Rect::maxy)
+		.def("near_point", &Geometry2d::Rect::nearPoint)
+		.def("intersects_rect", &Geometry2d::intersects)
 	;
 
 	//		I'm holding off for now because GameState needs some attention on the C++
