@@ -124,6 +124,8 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     #         robot.kick(255)
 
     def on_enter_clear(self):
+        # FIXME: what we really want is a less-precise LineKick
+        #           this will require a Capture behavior that doesn't wait for the ball to stop
         kick = pivot_kick.PivotKick()
         # FIXME: config pivot kick
         # FIXME: enable chipping!
