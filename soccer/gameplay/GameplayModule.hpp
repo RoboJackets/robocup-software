@@ -141,10 +141,10 @@ namespace Gameplay
 			std::shared_ptr<PolygonObstacle> _ourHalf;
 			std::shared_ptr<PolygonObstacle> _opponentHalf;
 			
-			ObstaclePtr _sideObstacle;
+			std::shared_ptr<Obstacle> _sideObstacle;
 			
 			///	outside of the floor boundaries
-			ObstaclePtr _nonFloor[4];
+			std::shared_ptr<Obstacle> _nonFloor[4];
 			
 			///	goal area
 			ObstacleGroup _goalArea;

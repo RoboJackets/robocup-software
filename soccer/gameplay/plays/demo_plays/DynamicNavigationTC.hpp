@@ -18,9 +18,9 @@ namespace Gameplay
 
 			private:
 
-        ObstaclePtr centerObstacle[2];
-        ObstaclePtr quadrantObstacle[4];
-        ObstaclePtr goalObstacle[2];
+        std::shared_ptr<Obstacle> centerObstacle[2];
+        std::shared_ptr<Obstacle> quadrantObstacle[4];
+        std::shared_ptr<Obstacle> goalObstacle[2];
 
 				static ConfigDouble *_opp_avoid_radius;
 				static ConfigDouble *_goal_X;

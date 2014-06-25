@@ -12,14 +12,14 @@ Gameplay::Behaviors::MotionLeader::MotionLeader(GameplayModule *gameplay):
         c->polygon.vertices.push_back(Point(-Center_X, 5.3));
         c->polygon.vertices.push_back(Point(-Center_X, 0.75));
         c->polygon.vertices.push_back(Point(Center_X, 0.75));
-        centerObstacle[0] = ObstaclePtr(c);
+        centerObstacle[0] = std::shared_ptr<Obstacle>(c);
 
         c = new PolygonObstacle;
         c->polygon.vertices.push_back(Point(Center_X / 4, 5.3));
         c->polygon.vertices.push_back(Point(-Center_X / 4, 5.3));
         c->polygon.vertices.push_back(Point(-Center_X / 4, 0.75));
         c->polygon.vertices.push_back(Point(Center_X / 4, 0.75));
-        centerObstacle[1] = ObstaclePtr(c);
+        centerObstacle[1] = std::shared_ptr<Obstacle>(c);
     }
 
     {
@@ -31,14 +31,14 @@ Gameplay::Behaviors::MotionLeader::MotionLeader(GameplayModule *gameplay):
 		c->polygon.vertices.push_back(Point(-width, -depth));
 		c->polygon.vertices.push_back(Point(width, -depth));
 		c->polygon.vertices.push_back(Point(width, 0));
-		goalObstacle[0] = ObstaclePtr(c);
+		goalObstacle[0] = std::shared_ptr<Obstacle>(c);
 
 		c = new PolygonObstacle;
 		c->polygon.vertices.push_back(Point(-width, Field_Length));
 		c->polygon.vertices.push_back(Point(-width, Field_Length+depth));
 		c->polygon.vertices.push_back(Point(width, Field_Length+depth));
 		c->polygon.vertices.push_back(Point(width, Field_Length));
-		goalObstacle[1] = ObstaclePtr(c);
+		goalObstacle[1] = std::shared_ptr<Obstacle>(c);
     }
 
     {
@@ -56,28 +56,28 @@ Gameplay::Behaviors::MotionLeader::MotionLeader(GameplayModule *gameplay):
         q->polygon.vertices.push_back(Point(0, y1));
         q->polygon.vertices.push_back(Point(0, y2));
         q->polygon.vertices.push_back(Point(x, y2));
-        quadrantObstacle[0] = ObstaclePtr(q);
+        quadrantObstacle[0] = std::shared_ptr<Obstacle>(q);
 
         q = new PolygonObstacle;
         q->polygon.vertices.push_back(Point(0, y1));
         q->polygon.vertices.push_back(Point(-x, y1));
         q->polygon.vertices.push_back(Point(-x, y2));
         q->polygon.vertices.push_back(Point(0, y2));
-        quadrantObstacle[1] = ObstaclePtr(q);
+        quadrantObstacle[1] = std::shared_ptr<Obstacle>(q);
 
         q = new PolygonObstacle;
         q->polygon.vertices.push_back(Point(0, 0));
         q->polygon.vertices.push_back(Point(-x, 0));
         q->polygon.vertices.push_back(Point(-x, y1));
         q->polygon.vertices.push_back(Point(0, y1));
-        quadrantObstacle[2] = ObstaclePtr(q);
+        quadrantObstacle[2] = std::shared_ptr<Obstacle>(q);
 
         q = new PolygonObstacle;
         q->polygon.vertices.push_back(Point(x, 0));
         q->polygon.vertices.push_back(Point(0, 0));
         q->polygon.vertices.push_back(Point(0, y1));
         q->polygon.vertices.push_back(Point(x, y1));
-        quadrantObstacle[3] = ObstaclePtr(q);
+        quadrantObstacle[3] = std::shared_ptr<Obstacle>(q);
     }
 }
 

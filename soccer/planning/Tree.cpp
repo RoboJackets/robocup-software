@@ -171,7 +171,7 @@ Tree::Point* FixedStepTree::extend(Geometry2d::Point pt, Tree::Point* base)
 		try
 		{
 			set_difference(moveHit.begin(), moveHit.end(), base->hit.begin(), 
-				base->hit.end(), ExceptionIterator<ObstaclePtr>());
+				base->hit.end(), ExceptionIterator<std::shared_ptr<Obstacle>>());
 		} catch (exception& e)
 		{
 			// We hit a new obstacle

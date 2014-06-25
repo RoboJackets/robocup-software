@@ -11,5 +11,5 @@ namespace Geometry2d {
         virtual ~Shape() {}
 
         virtual bool containsPoint(const Point &pt) const;
-    }
+    };
 }

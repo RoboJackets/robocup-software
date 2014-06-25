@@ -106,7 +106,7 @@ bool Planning::Path::hit(const ObstacleGroup &obstacles, unsigned int start) con
         obstacles.hit(Geometry2d::Segment(points[i], points[i + 1]), newHit);
         try
         {
-            set_difference(newHit.begin(), newHit.end(), hit.begin(), hit.end(), ExceptionIterator<ObstaclePtr>());
+            set_difference(newHit.begin(), newHit.end(), hit.begin(), hit.end(), ExceptionIterator<std::shared_ptr<Obstacle>>());
         } catch (exception& e)
         {
             // Going into a new obstacle
