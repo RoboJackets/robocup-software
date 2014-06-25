@@ -15,6 +15,17 @@ def is_in_our_goalie_box():
     raise NotImplementedError()
 
 
+# The ball's motion follows the equation X(t) = X_i + V_i*t - 0.5*(c*g)*t^2
+def predict(X_i, V_i, t):
+    raise NotImplementedError("The value of the coefficient of rolling friction between the ball and the field hasn't been set")
+    c = 1       # The coefficient of rolling for a golf ball on the field's felt surface
+    g = 9.81    # gravitational coefficient (m/s^2)
+    m = 0.04593 # mass of golf ball (kg)
+
+    return X_i + (V_i * t) - (0.5 * c * g * t**2)
+
+
+
 # returns a Robot or None indicating which opponent has the ball
 def opponent_with_ball():
     raise NotImplementedError()
