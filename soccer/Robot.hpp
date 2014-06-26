@@ -274,8 +274,7 @@ public:
 	 * Adds an obstacle to the local set of obstacles for avoidance
 	 * Cleared after every frame
 	 */
-	void localObstacles(const std::shared_ptr<Obstacle>& obs) { _local_obstacles.add(obs); }
-	void localObstacles(const Geometry2d::CompositeShape& obs) { _local_obstacles.add(obs); }
+	void localObstacles(const std::shared_ptr<Geometry2d::Shape>& obs) { _local_obstacles.add(obs); }
 	const Geometry2d::CompositeShape& localObstacles() const { return _local_obstacles; }
 	void clearLocalObstacles() { _local_obstacles.clear(); }
 
@@ -419,14 +418,14 @@ protected:
 		Geometry2d::CompositeShape result;
 		for (size_t i=0; i<RobotMask::size(); ++i)
 			if (mask[i] > 0 && robots[i] && robots[i]->visible)
-				result.add(std::shared_ptr<Shape>(new Circle(robots[i]->pos, mask[i])));
+				result.add(std::shared_ptr<Geometry2d::Shape>(new Geometry2d::Circle(robots[i]->pos, mask[i])));
 		return result;
 	}
 
 	/**
 	 * Creates an obstacle for the ball if necessary
 	 */
-	std::shared_ptr<Shape> createBallObstacle() const;
+	std::shared_ptr<Geometry2d::Shape> createBallObstacle() const;
 
 
 private:

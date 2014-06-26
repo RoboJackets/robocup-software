@@ -2,6 +2,7 @@
 
 #include "Point.hpp"
 #include "Shape.hpp"
+#include "Segment.hpp"
 #include <vector>
 #include <memory>
 #include <set>
@@ -15,7 +16,7 @@ namespace Geometry2d {
      */
     class CompositeShape {
     public:
-        CompositeShape(std::shared_ptr<Shape> shape) {
+        CompositeShape(const std::shared_ptr<Shape> shape) {
             _subshapes.push_back(shape);
         }
 
@@ -27,7 +28,7 @@ namespace Geometry2d {
 
         virtual bool containsPoint(const Point &pt) const;
 
-        void add(std::shared_ptr<Shape> shape);
+        void add(const std::shared_ptr<Shape> shape);
 
         const std::vector<std::shared_ptr<Shape> > &subshapes() const {
             return _subshapes;
@@ -64,6 +65,14 @@ namespace Geometry2d {
             }
 
             return !hitSet.empty();
+        }
+
+        bool hit(const Point &pt, std::set<std::shared_ptr<Shape> > &hitSet) const {
+            return hit<Point>(pt, hitSet);
+        }
+
+        bool hit(const Segment &pt, std::set<std::shared_ptr<Shape> > &hitSet) const {
+            return hit<Segment>(pt, hitSet);
         }
 
 

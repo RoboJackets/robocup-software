@@ -5,6 +5,8 @@
 //			the Qt includes (because of the 'slots' macro)
 #include <boost/python.hpp>
 
+#include <Geometry2d/TransformMatrix.hpp>
+#include <Geometry2d/Polygon.hpp>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/CompositeShape.hpp>
 
@@ -138,13 +140,13 @@ namespace Gameplay
 			Geometry2d::TransformMatrix _oppMatrix;
 			
 			/// Obstacles to prevent using half the field
-			std::shared_ptr<PolygonObstacle> _ourHalf;
-			std::shared_ptr<PolygonObstacle> _opponentHalf;
+			std::shared_ptr<Geometry2d::Polygon> _ourHalf;
+			std::shared_ptr<Geometry2d::Polygon> _opponentHalf;
 			
-			std::shared_ptr<Obstacle> _sideObstacle;
+			std::shared_ptr<Geometry2d::Shape> _sideObstacle;
 			
 			///	outside of the floor boundaries
-			std::shared_ptr<Obstacle> _nonFloor[4];
+			std::shared_ptr<Geometry2d::Shape> _nonFloor[4];
 			
 			///	goal area
 			Geometry2d::CompositeShape _goalArea;
