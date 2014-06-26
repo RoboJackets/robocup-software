@@ -46,6 +46,15 @@ bool Rect::contains(const Point &point) const
 	return point.x >= minx && point.x <= maxx && point.y >= miny && point.y <= maxy;
 }
 
+bool Rect::hit(const Segment &seg) const {
+	return contains(seg.pt[0])
+			|| contains(seg.pt[1])
+			|| seg.intersects(Segment(Point(minx(), miny()), Point(minx(), maxy())))
+			|| seg.intersects(Segment(Point(minx(), miny()), Point(maxx(), miny())))
+			|| seg.intersects(Segment(Point(minx(), maxy()), Point(maxx(), maxy())))
+			|| seg.intersects(Segment(Point(maxx(), maxy()), Point(maxx(), miny())));
+}
+
 void Rect::expand(const Point &p)
 {
 	pt[0].x = min(pt[0].x, p.x);

@@ -97,16 +97,16 @@ bool Planning::Path::hit(const Geometry2d::CompositeShape &obstacles, unsigned i
     }
     
     // The set of obstacles the starting point was inside of
-    Geometry2d::CompositeShape hit;
+    std::set<std::shared_ptr<Geometry2d::Shape> > hit;
     obstacles.hit(points[start], hit);
     
     for (unsigned int i = start; i < (points.size() - 1); ++i)
     {
-        Geometry2d::CompositeShape newHit;
+        std::set<std::shared_ptr<Geometry2d::Shape> > newHit;
         obstacles.hit(Geometry2d::Segment(points[i], points[i + 1]), newHit);
         try
         {
-            set_difference(newHit.begin(), newHit.end(), hit.begin(), hit.end(), ExceptionIterator<std::shared_ptr<Obstacle>>());
+            set_difference(newHit.begin(), newHit.end(), hit.begin(), hit.end(), ExceptionIterator<std::shared_ptr<Geometry2d::Shape>>());
         } catch (exception& e)
         {
             // Going into a new obstacle

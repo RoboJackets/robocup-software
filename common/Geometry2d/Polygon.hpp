@@ -30,6 +30,9 @@ namespace Geometry2d
         bool contains(const Point &pt) const;
         bool intersects(const Rect &rect) const;
         bool intersects(const Polygon &other) const;
+
+        bool hit(const Geometry2d::Point &pt) const;
+        bool hit(const Geometry2d::Segment &seg) const;
         
         /// Returns true if this polygon contains any vertex of other.
         bool containsVertex(const Polygon &other) const;

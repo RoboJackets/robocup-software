@@ -163,7 +163,7 @@ Tree::Point* FixedStepTree::extend(Geometry2d::Point pt, Tree::Point* base)
 	// moveHit is the set of obstacles that this move touches.
 	// If this move touches any obstacles that the starting point didn't already touch,
 	// it has entered an obstacle and will be rejected.
-	Geometry2d::CompositeShape moveHit;
+	std::set<shared_ptr<Geometry2d::Shape> > moveHit;
 	if (_obstacles->hit(Geometry2d::Segment(pos, base->pos), moveHit))
 	{
 		// We only care if there are any items in moveHit that are not in point->hit, so
@@ -171,7 +171,7 @@ Tree::Point* FixedStepTree::extend(Geometry2d::Point pt, Tree::Point* base)
 		try
 		{
 			set_difference(moveHit.begin(), moveHit.end(), base->hit.begin(), 
-				base->hit.end(), ExceptionIterator<std::shared_ptr<Obstacle>>());
+				base->hit.end(), ExceptionIterator<std::shared_ptr<Geometry2d::Shape>>());
 		} catch (exception& e)
 		{
 			// We hit a new obstacle

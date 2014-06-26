@@ -3,7 +3,7 @@
 
 #include <list>
 #include <Geometry2d/Point.hpp>
-#include <planning/Obstacle.hpp>
+#include <Geometry2d/CompositeShape.hpp>
 #include <planning/Path.hpp>
 
 #include "Tree.hpp"

@@ -1,4 +1,6 @@
 #include "Circle.hpp"
+#include "Segment.hpp"
+#include <Constants.hpp>
 
 using namespace Geometry2d;
 
@@ -164,4 +166,14 @@ bool Circle::tangentPoints(const Geometry2d::Point &src,
 	}
 	
 	return true;
+}
+
+bool Circle::hit(const Geometry2d::Point &pt) const
+{
+    return pt.nearPoint(center, radius() + Robot_Radius);
+}
+
+bool Circle::hit(const Geometry2d::Segment &seg) const
+{
+    return seg.nearPoint(center, radius() + Robot_Radius);
 }

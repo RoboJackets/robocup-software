@@ -206,7 +206,7 @@ void RRTPlanner::optimize(Planning::Path &path, const Geometry2d::CompositeShape
 	pts.insert(pts.end(), begin, begin + start);
 
 	// The set of obstacles the starting point was inside of
-	Geometry2d::CompositeShape hit;
+	std::set<shared_ptr<Geometry2d::Shape> > hit;
 
 	again:
 	obstacles->hit(path.points[start], hit);
@@ -214,11 +214,11 @@ void RRTPlanner::optimize(Planning::Path &path, const Geometry2d::CompositeShape
 	// [start, start + 1] is guaranteed not to have a collision because it's already in the path.
 	for (unsigned int end = start + 2; end < path.points.size(); ++end)
 	{
-		Geometry2d::CompositeShape newHit;
+		std::set<shared_ptr<Geometry2d::Shape> > newHit;
 		obstacles->hit(Geometry2d::Segment(path.points[start], path.points[end]), newHit);
 		try
 		{
-			set_difference(newHit.begin(), newHit.end(), hit.begin(), hit.end(), ExceptionIterator<std::shared_ptr<Obstacle>>());
+			set_difference(newHit.begin(), newHit.end(), hit.begin(), hit.end(), ExceptionIterator<std::shared_ptr<Geometry2d::Shape>>());
 		} catch (exception& e)
 		{
 			start = end - 1;

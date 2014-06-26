@@ -30,6 +30,9 @@ namespace Geometry2d {
 
         void add(const std::shared_ptr<Shape> shape);
 
+        /// adds @compShape's subshapes to the receiver
+        void add(const CompositeShape &compShape);
+
         const std::vector<std::shared_ptr<Shape> > &subshapes() const {
             return _subshapes;
         }
@@ -65,6 +68,26 @@ namespace Geometry2d {
             }
 
             return !hitSet.empty();
+        }
+
+        /**
+         * Checks if a given shape is in it
+         *
+         * @param obj The object to collision test
+         * @return A bool telling whether or not there were any collisions
+         */
+        template<typename T>
+        bool hit(const T &obj) const
+        {
+            for (const_iterator it = begin(); it!=end(); ++it)
+            {
+                if ((*it)->hit(obj))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         bool hit(const Point &pt, std::set<std::shared_ptr<Shape> > &hitSet) const {
