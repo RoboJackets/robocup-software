@@ -10,8 +10,6 @@
 
 namespace Geometry2d
 {	
-	class Rect;
-	
 	class Segment: public Line
 	{
 		public:
