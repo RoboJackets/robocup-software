@@ -24,6 +24,8 @@ class RootPlay(Play, QtCore.QObject):
     play_changed = QtCore.pyqtSignal("QString")
 
     def execute_running(self):
+        print("root play running")
+
         # Play Selection
         ################################################################################
 
@@ -74,11 +76,19 @@ class RootPlay(Play, QtCore.QObject):
 
         # Run subbehaviors
         ################################################################################
+        # try:
+        #     super().spin()
+        # except Exception as e:
+        #     logging.error("Exception occurred in RootPlay.run(), ignoring for now: " + str(e))
+        #     traceback.print_exc()
+
+    def spin(self):
+        print("root play spin, state = " + str(self.state))
         try:
-            super().execute_running()
+            super().spin()
         except Exception as e:
             logging.error("Exception occurred in RootPlay.run(), ignoring for now: " + str(e))
-
+            traceback.print_exc()
 
     # this is used to force a reselection of a play
     def drop_current_play(self):
@@ -97,6 +107,7 @@ class RootPlay(Play, QtCore.QObject):
         return self._play
     @play.setter
     def play(self, value):
+        print("play set to: " + str(value))
         # trash old play
         if self.play != None:
             self.remove_subbehavior('play')

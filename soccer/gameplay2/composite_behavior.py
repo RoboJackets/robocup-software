@@ -45,19 +45,19 @@ class CompositeBehavior(behavior.Behavior):
     def all_subbehaviors(self):
         return [self._subbehavior_info[name]['behavior'] for name in self._subbehavior_info]
 
-
-    def execute_running(self):
-        # run each subbehavior
+    def spin(self):
+        super().spin()
+        # spin each subbehavior
         for name in self._subbehavior_info:
             info = self._subbehavior_info[name]
             bhvr = info['behavior']
             if isinstance(bhvr, single_robot_behavior.SingleRobotBehavior):
                 if bhvr.robot != None:
-                    # only run single robot behaviors when they have a robot
-                    bhvr.run()
+                    # only spin single robot behaviors when they have a robot
+                    bhvr.spin()
             else:
-                # multi-robot behaviors always get run
-                bhvr.run()
+                # multi-robot behaviors always get spun
+                bhvr.spin()
 
 
     # returns a tree of role_requirements
