@@ -12,7 +12,7 @@ namespace Geometry2d {
         Shape() {}
         virtual ~Shape() {}
 
-        virtual bool containsPoint(const Point &pt) const;
+        // virtual bool containsPoint(const Point &pt) const = 0;
 
         /// collision-detection
         virtual bool hit(const Point &pt) const = 0;

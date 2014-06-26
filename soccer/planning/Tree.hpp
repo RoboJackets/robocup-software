@@ -23,7 +23,7 @@ namespace Planning
 					Geometry2d::Point pos;
 					
 					// Which obstacles contain this point
-					Geometry2d::CompositeShape hit;
+					std::set<std::shared_ptr<Geometry2d::Shape>> hit;
 					
 					//velocity information (used by dynamic tree)
 					Geometry2d::Point vel;
