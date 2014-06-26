@@ -3,7 +3,7 @@
 
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Segment.hpp>
-#include "Obstacle.hpp"
+#include <Geometry2d/CompositeShape.hpp>
 #include <Configuration.hpp>
 
 namespace Planning

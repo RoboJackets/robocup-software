@@ -419,14 +419,14 @@ protected:
 		Geometry2d::CompositeShape result;
 		for (size_t i=0; i<RobotMask::size(); ++i)
 			if (mask[i] > 0 && robots[i] && robots[i]->visible)
-				result.add(std::shared_ptr<Obstacle>(new CircleObstacle(robots[i]->pos, mask[i])));
+				result.add(std::shared_ptr<Shape>(new Circle(robots[i]->pos, mask[i])));
 		return result;
 	}
 
 	/**
 	 * Creates an obstacle for the ball if necessary
 	 */
-	std::shared_ptr<Obstacle> createBallObstacle() const;
+	std::shared_ptr<Shape> createBallObstacle() const;
 
 
 private:
