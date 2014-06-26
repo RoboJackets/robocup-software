@@ -18,12 +18,10 @@ class RootPlay(Play, QtCore.QObject):
         Play.__init__(self, continuous=True)
         self._play = None
         self._goalie_id = None
-
         self.add_transition(Behavior.State.start, Behavior.State.running, lambda: True, 'immediately')
 
 
     play_changed = QtCore.pyqtSignal("QString")
-
 
     def execute_running(self):
         # Play Selection

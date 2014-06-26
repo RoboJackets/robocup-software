@@ -1,21 +1,19 @@
 import play
-import tactics.idle
+import behavior
+import tactics.circle_up
 import robocup
+import main
 
 class TestIdle(play.Play):
 
 	def __init__(self):
 		super().__init__(continuous=True)
-		print("init 2\n")
-		self.add_transition(behavior.Behavior.State.start,
-			behavior.Behavior.State.running,
-			lambda: True,
-			"immediately")
-		print("init test idle\n")
-		c = 0
-		for robot in vector_OurRobot:
-			print(str(c))
-			i = idle()
-			i.robots.append(robot)
-			self.add_subbehavior(i, name="robot"+str(c), required=False, priority=len(vector_OurRobot-c))
-			c += 1
+		self.add_transition(behavior.Behavior.State.start, behavior.Behavior.State.running, lambda: True, "immediately")
+
+	def on_enter_running(self):
+		print("enter")
+		self.add_subbehavior(tactics.circle_up.CircleUp(), name='CircleUp', required=True)
+
+	def on_exit_running(self):
+		print("exit")
+		self.remove_subbehavior('CircleUp')
