@@ -436,7 +436,7 @@ void OurRobot::setPath(Planning::Path path) {
 	_path->setStartSpeed(vel.mag());
 }
 
-void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
+void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles) {
 	// halt case - same as stopped
 	if (_state->gameState.state == GameState::Halt) {
 		return;
@@ -449,8 +449,8 @@ void OurRobot::replanIfNeeded(const ObstacleGroup& global_obstacles) {
 	}
 	
 	// create and visualize obstacles
-	ObstacleGroup full_obstacles(_local_obstacles);
-	ObstacleGroup
+	Geometry2d::CompositeShape full_obstacles(_local_obstacles);
+	Geometry2d::CompositeShape
 		self_obs = createRobotObstacles(_state->self, _self_avoid_mask),
 		opp_obs = createRobotObstacles(_state->opp, _opp_avoid_mask);
 	_state->drawObstacles(self_obs, Qt::gray, QString("self_obstacles_%1").arg(shell()));

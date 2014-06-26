@@ -88,7 +88,7 @@ int Planning::Path::nearestIndex(const Geometry2d::Point &pt) const
 	return index;
 }
 
-bool Planning::Path::hit(const ObstacleGroup &obstacles, unsigned int start) const
+bool Planning::Path::hit(const Geometry2d::CompositeShape &obstacles, unsigned int start) const
 {
     if (start >= points.size())
     {
@@ -97,12 +97,12 @@ bool Planning::Path::hit(const ObstacleGroup &obstacles, unsigned int start) con
     }
     
     // The set of obstacles the starting point was inside of
-    ObstacleGroup hit;
+    Geometry2d::CompositeShape hit;
     obstacles.hit(points[start], hit);
     
     for (unsigned int i = start; i < (points.size() - 1); ++i)
     {
-        ObstacleGroup newHit;
+        Geometry2d::CompositeShape newHit;
         obstacles.hit(Geometry2d::Segment(points[i], points[i + 1]), newHit);
         try
         {

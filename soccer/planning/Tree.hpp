@@ -23,7 +23,7 @@ namespace Planning
 					Geometry2d::Point pos;
 					
 					// Which obstacles contain this point
-					ObstacleGroup hit;
+					Geometry2d::CompositeShape hit;
 					
 					//velocity information (used by dynamic tree)
 					Geometry2d::Point vel;
@@ -45,7 +45,7 @@ namespace Planning
 			/** cleanup the tree */
 			void clear();
 			
-			void init(const Geometry2d::Point &start, const ObstacleGroup *obstacles);
+			void init(const Geometry2d::Point &start, const Geometry2d::CompositeShape *obstacles);
 			
 			/** find the point of the tree closest to @a pt */
 			Point* nearest(Geometry2d::Point pt);
@@ -74,7 +74,7 @@ namespace Planning
 			std::list<Point*> points;
 			
 		protected:
-			const ObstacleGroup* _obstacles;
+			const Geometry2d::CompositeShape* _obstacles;
 	};
 	
 	/** tree that grows based on fixed distance step */

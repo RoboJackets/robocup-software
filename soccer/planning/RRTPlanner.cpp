@@ -31,7 +31,7 @@ void RRTPlanner::run(
 		const float angle, 
 		const Geometry2d::Point &vel,
 		const Geometry2d::Point &goal,
-		const ObstacleGroup *obstacles,
+		const Geometry2d::CompositeShape *obstacles,
 		Planning::Path &path)
 {
 	//clear any old path
@@ -188,7 +188,7 @@ void RRTPlanner::makePath()
 	}
 }
 
-void RRTPlanner::optimize(Planning::Path &path, const ObstacleGroup *obstacles)
+void RRTPlanner::optimize(Planning::Path &path, const Geometry2d::CompositeShape *obstacles)
 {
 	unsigned int start = 0;
 
@@ -206,7 +206,7 @@ void RRTPlanner::optimize(Planning::Path &path, const ObstacleGroup *obstacles)
 	pts.insert(pts.end(), begin, begin + start);
 
 	// The set of obstacles the starting point was inside of
-	ObstacleGroup hit;
+	Geometry2d::CompositeShape hit;
 
 	again:
 	obstacles->hit(path.points[start], hit);
@@ -214,7 +214,7 @@ void RRTPlanner::optimize(Planning::Path &path, const ObstacleGroup *obstacles)
 	// [start, start + 1] is guaranteed not to have a collision because it's already in the path.
 	for (unsigned int end = start + 2; end < path.points.size(); ++end)
 	{
-		ObstacleGroup newHit;
+		Geometry2d::CompositeShape newHit;
 		obstacles->hit(Geometry2d::Segment(path.points[start], path.points[end]), newHit);
 		try
 		{

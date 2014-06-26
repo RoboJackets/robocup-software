@@ -19,7 +19,6 @@ srcs = [
 	'radio/SimRadio.cpp',
 	'radio/USBRadio.cpp',
 
-	'planning/Obstacle.cpp',
 	'planning/Path.cpp',
 	'SystemState.cpp',
 	'RobotConfig.cpp',

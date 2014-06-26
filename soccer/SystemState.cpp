@@ -94,20 +94,20 @@ void SystemState::drawCircle(const Geometry2d::Point& center, float radius, cons
 	dbg->set_color(color(qc));
 }
 
-void SystemState::drawObstacle(const std::shared_ptr<Obstacle>& obs, const QColor &color, const QString &layer) {
-	std::shared_ptr<CircleObstacle> circObs = std::dynamic_pointer_cast<CircleObstacle>(obs);
-	std::shared_ptr<PolygonObstacle> polyObs = std::dynamic_pointer_cast<PolygonObstacle>(obs);
-	if (circObs)
-		drawCircle(circObs->circle.center, circObs->circle.radius(), color, layer);
-	else if (polyObs)
-		drawPolygon(polyObs->polygon.vertices, color, layer);
-}
+// void SystemState::drawObstacle(const std::shared_ptr<Obstacle>& obs, const QColor &color, const QString &layer) {
+// 	std::shared_ptr<CircleObstacle> circObs = std::dynamic_pointer_cast<CircleObstacle>(obs);
+// 	std::shared_ptr<PolygonObstacle> polyObs = std::dynamic_pointer_cast<PolygonObstacle>(obs);
+// 	if (circObs)
+// 		drawCircle(circObs->circle.center, circObs->circle.radius(), color, layer);
+// 	else if (polyObs)
+// 		drawPolygon(polyObs->polygon.vertices, color, layer);
+// }
 
-void SystemState::drawObstacles(const ObstacleGroup& group, const QColor &color, const QString &layer)
-{
-	BOOST_FOREACH(const std::shared_ptr<Obstacle>& obs, group)
-		drawObstacle(obs, color, layer);
-}
+// void SystemState::drawObstacles(const Geometry2d::CompositeShape& group, const QColor &color, const QString &layer)
+// {
+// 	BOOST_FOREACH(const std::shared_ptr<Obstacle>& obs, group)
+// 		drawObstacle(obs, color, layer);
+// }
 
 void SystemState::drawLine(const Geometry2d::Line& line, const QColor& qc, const QString &layer)
 {
