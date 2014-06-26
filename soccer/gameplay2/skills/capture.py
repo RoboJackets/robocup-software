@@ -16,12 +16,15 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.add_state(Capture.State.course_approach, behavior.Behavior.State.running)
         self.add_state(Capture.State.fine_approach, behavior.Behavior.State.running)
 
-        self.add_transition(behavior.Behavior.State.start, Capture.State.course_approach, lambda: True, 'immediately')
-        self.add_transition(Capture.State.course_approach, Capture.State.fine_approach,
-            lambda:
-                True,
+        self.add_transition(behavior.Behavior.State.start,
+            Capture.State.course_approach,
+            lambda: True,
+            'immediately')
+        self.add_transition(Capture.State.course_approach,
+            Capture.State.fine_approach,
+            lambda: True,
             'dist to ball < threshold')
-        self.add_transition(Capture.State.fine_approach, behavior.Behavior.State.completed,
-            lambda:
-                True,
+        self.add_transition(Capture.State.fine_approach,
+            behavior.Behavior.State.completed,
+            lambda: True,
             'has ball')
