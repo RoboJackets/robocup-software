@@ -117,7 +117,7 @@ def run():
         raise AssertionError("Error: must call init() before run()")
 
     if root_play() != None:
-        root_play().run()
+        root_play().spin()
 
 
 _root_play = None
