@@ -16,6 +16,12 @@ void Geometry2d::CompositeShape::add(std::shared_ptr<Shape> shape) {
     }
 }
 
+void Geometry2d::CompositeShape::add(const CompositeShape &compShape) {
+    for (auto shape : compShape.subshapes()) {
+        add(shape);
+    }
+}
+
 void Geometry2d::CompositeShape::clear() {
     _subshapes.clear();
 }

@@ -66,7 +66,7 @@ namespace Planning
 
 			// Returns true if the path never touches an obstacle or additionally, when exitObstacles is true, if the path
 			// starts out in an obstacle but leaves and never re-enters any obstacle.
-			bool hit(const std::shared_ptr<Geometry2d::CompositeShape>, unsigned int start = 0) const;
+			bool hit(const Geometry2d::CompositeShape &shape, unsigned int start = 0) const;
 			
 			// Set of points in the path - used as waypoints
 			std::vector<Geometry2d::Point> points;

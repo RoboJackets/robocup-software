@@ -17,6 +17,8 @@ using namespace std;
 using namespace boost;
 using namespace boost::python;
 
+using namespace Geometry2d;
+
 
 Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_mutex(QMutex::Recursive)
@@ -28,75 +30,75 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 				Geometry2d::TransformMatrix::rotate(180);
 
 	//// Make an obstacle to cover the opponent's half of the field except for one robot diameter across the center line.
-	PolygonObstacle *sidePolygon = new PolygonObstacle;
-	_sideObstacle = std::shared_ptr<Obstacle>(sidePolygon);
+	Polygon *sidePolygon = new Polygon;
+	_sideObstacle = std::shared_ptr<Shape>(sidePolygon);
 	float x = Field_Width / 2 + Field_Border;
 	const float y1 = Field_Length / 2;
 	const float y2 = Field_Length + Field_Border;
 	const float r = Field_CenterRadius;
-	sidePolygon->polygon.vertices.push_back(Geometry2d::Point(-x, y1));
-	sidePolygon->polygon.vertices.push_back(Geometry2d::Point(-r, y1));
-	sidePolygon->polygon.vertices.push_back(Geometry2d::Point(0, y1 + r));
-	sidePolygon->polygon.vertices.push_back(Geometry2d::Point(r, y1));
-	sidePolygon->polygon.vertices.push_back(Geometry2d::Point(x, y1));
-	sidePolygon->polygon.vertices.push_back(Geometry2d::Point(x, y2));
-	sidePolygon->polygon.vertices.push_back(Geometry2d::Point(-x, y2));
+	sidePolygon->vertices.push_back(Geometry2d::Point(-x, y1));
+	sidePolygon->vertices.push_back(Geometry2d::Point(-r, y1));
+	sidePolygon->vertices.push_back(Geometry2d::Point(0, y1 + r));
+	sidePolygon->vertices.push_back(Geometry2d::Point(r, y1));
+	sidePolygon->vertices.push_back(Geometry2d::Point(x, y1));
+	sidePolygon->vertices.push_back(Geometry2d::Point(x, y2));
+	sidePolygon->vertices.push_back(Geometry2d::Point(-x, y2));
 
 	float y = -Field_Border;
 	float deadspace = Field_Border;
 	x = Floor_Width/2.0f;
-	PolygonObstacle* floorObstacle = new PolygonObstacle;
-	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(-x, y));
-	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(-x, y-1));
-	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x, y-1));
-	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x, y));
-	_nonFloor[0] = std::shared_ptr<Obstacle>(floorObstacle);
+	Polygon* floorObstacle = new Polygon;
+	floorObstacle->vertices.push_back(Geometry2d::Point(-x, y));
+	floorObstacle->vertices.push_back(Geometry2d::Point(-x, y-1));
+	floorObstacle->vertices.push_back(Geometry2d::Point(x, y-1));
+	floorObstacle->vertices.push_back(Geometry2d::Point(x, y));
+	_nonFloor[0] = std::shared_ptr<Shape>(floorObstacle);
 
 	y = Field_Length + Field_Border;
-	floorObstacle = new PolygonObstacle;
-	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(-x, y));
-	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(-x, y+1));
-	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x, y+1));
-	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x, y));
-	_nonFloor[1] = std::shared_ptr<Obstacle>(floorObstacle);
+	floorObstacle = new Polygon;
+	floorObstacle->vertices.push_back(Geometry2d::Point(-x, y));
+	floorObstacle->vertices.push_back(Geometry2d::Point(-x, y+1));
+	floorObstacle->vertices.push_back(Geometry2d::Point(x, y+1));
+	floorObstacle->vertices.push_back(Geometry2d::Point(x, y));
+	_nonFloor[1] = std::shared_ptr<Shape>(floorObstacle);
 
 	y = Floor_Length;
-	floorObstacle = new PolygonObstacle;
-	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(-x, -deadspace));
-	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(-x-1, -deadspace));
-	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(-x-1, y));
-	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(-x, y));
-	_nonFloor[2] = std::shared_ptr<Obstacle>(floorObstacle);
+	floorObstacle = new Polygon;
+	floorObstacle->vertices.push_back(Geometry2d::Point(-x, -deadspace));
+	floorObstacle->vertices.push_back(Geometry2d::Point(-x-1, -deadspace));
+	floorObstacle->vertices.push_back(Geometry2d::Point(-x-1, y));
+	floorObstacle->vertices.push_back(Geometry2d::Point(-x, y));
+	_nonFloor[2] = std::shared_ptr<Shape>(floorObstacle);
 
-	floorObstacle = new PolygonObstacle;
-	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x, -deadspace));
-	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x+1, -deadspace));
-	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x+1, y));
-	floorObstacle->polygon.vertices.push_back(Geometry2d::Point(x, y));
-	_nonFloor[3] = std::shared_ptr<Obstacle>(floorObstacle);
+	floorObstacle = new Polygon;
+	floorObstacle->vertices.push_back(Geometry2d::Point(x, -deadspace));
+	floorObstacle->vertices.push_back(Geometry2d::Point(x+1, -deadspace));
+	floorObstacle->vertices.push_back(Geometry2d::Point(x+1, y));
+	floorObstacle->vertices.push_back(Geometry2d::Point(x, y));
+	_nonFloor[3] = std::shared_ptr<Shape>(floorObstacle);
 
-	PolygonObstacle* goalArea = new PolygonObstacle;
+	Polygon* goalArea = new Polygon;
 	const float halfFlat = Field_GoalFlat/2.0;
 	const float radius = Field_ArcRadius;
-	goalArea->polygon.vertices.push_back(Geometry2d::Point(-halfFlat, 0));
-	goalArea->polygon.vertices.push_back(Geometry2d::Point(-halfFlat, radius));
-	goalArea->polygon.vertices.push_back(Geometry2d::Point( halfFlat, radius));
-	goalArea->polygon.vertices.push_back(Geometry2d::Point( halfFlat, 0));
-	_goalArea.add(std::shared_ptr<Obstacle>(goalArea));
-	_goalArea.add(std::shared_ptr<Obstacle>(new CircleObstacle(Geometry2d::Point(-halfFlat, 0), radius)));
-	_goalArea.add(std::shared_ptr<Obstacle>(new CircleObstacle(Geometry2d::Point(halfFlat, 0), radius)));
+	goalArea->vertices.push_back(Geometry2d::Point(-halfFlat, 0));
+	goalArea->vertices.push_back(Geometry2d::Point(-halfFlat, radius));
+	goalArea->vertices.push_back(Geometry2d::Point( halfFlat, radius));
+	goalArea->vertices.push_back(Geometry2d::Point( halfFlat, 0));
+	_goalArea.add(std::shared_ptr<Shape>(goalArea));
+	_goalArea.add(std::shared_ptr<Shape>(new Circle(Geometry2d::Point(-halfFlat, 0), radius)));
+	_goalArea.add(std::shared_ptr<Shape>(new Circle(Geometry2d::Point(halfFlat, 0), radius)));
 
-	_ourHalf = std::make_shared<PolygonObstacle>();
-	_ourHalf->polygon.vertices.push_back(Geometry2d::Point(-x, -Field_Border));
-	_ourHalf->polygon.vertices.push_back(Geometry2d::Point(-x, y1));
-	_ourHalf->polygon.vertices.push_back(Geometry2d::Point(x, y1));
-	_ourHalf->polygon.vertices.push_back(Geometry2d::Point(x, -Field_Border));
+	_ourHalf = std::make_shared<Polygon>();
+	_ourHalf->vertices.push_back(Geometry2d::Point(-x, -Field_Border));
+	_ourHalf->vertices.push_back(Geometry2d::Point(-x, y1));
+	_ourHalf->vertices.push_back(Geometry2d::Point(x, y1));
+	_ourHalf->vertices.push_back(Geometry2d::Point(x, -Field_Border));
 
-	_opponentHalf = std::make_shared<PolygonObstacle>();
-	_opponentHalf->polygon.vertices.push_back(Geometry2d::Point(-x, y1));
-	_opponentHalf->polygon.vertices.push_back(Geometry2d::Point(-x, y2));
-	_opponentHalf->polygon.vertices.push_back(Geometry2d::Point(x, y2));
-	_opponentHalf->polygon.vertices.push_back(Geometry2d::Point(x, y1));
+	_opponentHalf = std::make_shared<Polygon>();
+	_opponentHalf->vertices.push_back(Geometry2d::Point(-x, y1));
+	_opponentHalf->vertices.push_back(Geometry2d::Point(-x, y2));
+	_opponentHalf->vertices.push_back(Geometry2d::Point(x, y2));
+	_opponentHalf->vertices.push_back(Geometry2d::Point(x, y1));
 
 	_goalieID = -1;
 
@@ -292,7 +294,7 @@ Geometry2d::CompositeShape Gameplay::GameplayModule::globalObstacles() const {
 	}
 
 	/// Add non floor obstacles
-	BOOST_FOREACH(const std::shared_ptr<Obstacle>& ptr, _nonFloor)
+	BOOST_FOREACH(const std::shared_ptr<Shape>& ptr, _nonFloor)
 	{
 		obstacles.add(ptr);
 	}

@@ -63,6 +63,13 @@ namespace Geometry2d
 			bool contains(const Point &other) const;
 			bool contains(const Rect &other) const;
 
+
+	        bool hit(const Point &pt) const {
+	        	return contains(pt);
+	        }
+
+	        bool hit(const Segment &seg) const;
+
 			Point center() const { return (pt[0] + pt[1]) / 2; }
 
 			void expand(const Point &pt);

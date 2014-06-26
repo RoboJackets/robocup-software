@@ -4,6 +4,7 @@
 #include <LogUtils.hpp>
 #include <RobotConfig.hpp>
 #include <Robot.hpp>
+#include <Geometry2d/Polygon.hpp>
 
 using namespace Packet;
 
@@ -94,20 +95,20 @@ void SystemState::drawCircle(const Geometry2d::Point& center, float radius, cons
 	dbg->set_color(color(qc));
 }
 
-// void SystemState::drawObstacle(const std::shared_ptr<Obstacle>& obs, const QColor &color, const QString &layer) {
-// 	std::shared_ptr<CircleObstacle> circObs = std::dynamic_pointer_cast<CircleObstacle>(obs);
-// 	std::shared_ptr<PolygonObstacle> polyObs = std::dynamic_pointer_cast<PolygonObstacle>(obs);
-// 	if (circObs)
-// 		drawCircle(circObs->circle.center, circObs->circle.radius(), color, layer);
-// 	else if (polyObs)
-// 		drawPolygon(polyObs->polygon.vertices, color, layer);
-// }
+void SystemState::drawShape(const std::shared_ptr<Geometry2d::Shape>& obs, const QColor &color, const QString &layer) {
+	std::shared_ptr<Geometry2d::Circle> circObs = std::dynamic_pointer_cast<Geometry2d::Circle>(obs);
+	std::shared_ptr<Geometry2d::Polygon> polyObs = std::dynamic_pointer_cast<Geometry2d::Polygon>(obs);
+	if (circObs)
+		drawCircle(circObs->center, circObs->radius(), color, layer);
+	else if (polyObs)
+		drawPolygon(polyObs->vertices, color, layer);
+}
 
-// void SystemState::drawObstacles(const Geometry2d::CompositeShape& group, const QColor &color, const QString &layer)
-// {
-// 	BOOST_FOREACH(const std::shared_ptr<Obstacle>& obs, group)
-// 		drawObstacle(obs, color, layer);
-// }
+void SystemState::drawCompositeShape(const Geometry2d::CompositeShape& group, const QColor &color, const QString &layer)
+{
+	BOOST_FOREACH(const std::shared_ptr<Geometry2d::Shape>& obs, group)
+		drawShape(obs, color, layer);
+}
 
 void SystemState::drawLine(const Geometry2d::Line& line, const QColor& qc, const QString &layer)
 {

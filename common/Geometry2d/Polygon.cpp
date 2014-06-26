@@ -1,4 +1,5 @@
 #include "Polygon.hpp"
+#include <Constants.hpp>
 
 Geometry2d::Polygon::Polygon(const Geometry2d::Rect &rect)
 {
@@ -169,4 +170,14 @@ bool Geometry2d::Polygon::contains(const Geometry2d::Point &pt) const
     }
     
     return count != 0;
+}
+
+bool Geometry2d::Polygon::hit(const Geometry2d::Point &pt) const
+{
+    return nearPoint(pt, Robot_Radius);
+}
+
+bool Geometry2d::Polygon::hit(const Geometry2d::Segment &seg) const
+{
+    return nearSegment(seg, Robot_Radius);
 }

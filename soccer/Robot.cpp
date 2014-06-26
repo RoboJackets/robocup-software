@@ -411,18 +411,18 @@ void OurRobot::resetAvoidBall() {
 	avoidBallRadius(Ball_Avoid_Small);
 }
 
-std::shared_ptr<Obstacle> OurRobot::createBallObstacle() const {
+std::shared_ptr<Geometry2d::Shape> OurRobot::createBallObstacle() const {
 	// if game is stopped, large obstacle regardless of flags
 	if (_state->gameState.state != GameState::Playing && !(_state->gameState.ourRestart || _state->gameState.theirPenalty()))
 	{
-		return std::shared_ptr<Obstacle>(new CircleObstacle(_state->ball.pos, Field_CenterRadius));
+		return std::shared_ptr<Geometry2d::Shape>(new Circle(_state->ball.pos, Field_CenterRadius));
 	}
 
 	// create an obstacle if necessary
 	if (_avoidBallRadius > 0.0) {
-		return std::shared_ptr<Obstacle>(new CircleObstacle(_state->ball.pos, _avoidBallRadius));
+		return std::shared_ptr<Geometry2d::Shape>(new Circle(_state->ball.pos, _avoidBallRadius));
 	} else {
-		return std::shared_ptr<Obstacle>();
+		return std::shared_ptr<Geometry2d::Shape>();
 	}
 }
 
@@ -453,12 +453,12 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	Geometry2d::CompositeShape
 		self_obs = createRobotObstacles(_state->self, _self_avoid_mask),
 		opp_obs = createRobotObstacles(_state->opp, _opp_avoid_mask);
-	_state->drawObstacles(self_obs, Qt::gray, QString("self_obstacles_%1").arg(shell()));
-	_state->drawObstacles(opp_obs, Qt::gray, QString("opp_obstacles_%1").arg(shell()));
+	_state->drawCompositeShape(self_obs, Qt::gray, QString("self_obstacles_%1").arg(shell()));
+	_state->drawCompositeShape(opp_obs, Qt::gray, QString("opp_obstacles_%1").arg(shell()));
 	if (_state->ball.valid)
 	{
-		std::shared_ptr<Obstacle> ball_obs = createBallObstacle();
-		_state->drawObstacle(ball_obs, Qt::gray, QString("ball_obstacles_%1").arg(shell()));
+		std::shared_ptr<Geometry2d::Shape> ball_obs = createBallObstacle();
+		_state->drawShape(ball_obs, Qt::gray, QString("ball_obstacles_%1").arg(shell()));
 		full_obstacles.add(ball_obs);
 	}
 	full_obstacles.add(self_obs);

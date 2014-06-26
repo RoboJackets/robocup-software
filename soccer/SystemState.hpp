@@ -11,7 +11,6 @@
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
 #include <GameState.hpp>
-#include <planning/Obstacle.hpp>
 #include <planning/Path.hpp>
 #include <Constants.hpp>
 
@@ -81,9 +80,9 @@ public:
 	/** @ingroup drawing_functions */
 	void drawText(const QString &text, const Geometry2d::Point &pos, const QColor &color = Qt::black, const QString &layer = QString());
 	/** @ingroup drawing_functions */
-	// void drawObstacle(const std::shared_ptr<Obstacle>& obs, const QColor &color = Qt::black, const QString &layer = QString());
+	void drawShape(const std::shared_ptr<Geometry2d::Shape>& obs, const QColor &color = Qt::black, const QString &layer = QString());
 	/** @ingroup drawing_functions */
-	// void drawObstacles(const Geometry2d::CompositeShape& group, const QColor &color = Qt::black, const QString &layer = QString());
+	void drawCompositeShape(const Geometry2d::CompositeShape& group, const QColor &color = Qt::black, const QString &layer = QString());
 	
 	uint64_t timestamp;
 	GameState gameState;

@@ -156,7 +156,6 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("draw_circle", &SystemState::drawCircle)
 		.def("draw_path", &SystemState::drawPath)
 		.def("draw_text", &SystemState::drawText)
-		.def("draw_obstacle", &SystemState::drawObstacle)
-		.def("draw_obstacles", &SystemState::drawObstacles)
+		.def("draw_shape", &SystemState::drawShape)
 	;
 }

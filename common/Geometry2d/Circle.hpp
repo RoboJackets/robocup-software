@@ -62,9 +62,9 @@ namespace Geometry2d
         
         bool contains(const Point &pt) const;
 
-        bool hit(const Point &pt) const {
-            return contains(pt);
-        }
+        bool hit(const Point &pt) const;
+
+        bool hit(const Segment &pt) const;
         
         // Returns the number of points at which this circle intersects the given circle.
         // i must be null or point to two points.
