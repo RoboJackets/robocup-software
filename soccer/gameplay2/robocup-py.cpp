@@ -78,6 +78,8 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("__repr__", &Point_repr)
 		.def("normalized", &Geometry2d::Point::normalized)
 		.def("rotate", &Point_rotate)
+		.def(self * float())
+		.def(self / float())
 	;
 
 	class_<Geometry2d::Segment>("Segment", init<Geometry2d::Point, Geometry2d::Point>())
