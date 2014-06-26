@@ -1,7 +1,7 @@
 #include "CompositeShape.hpp"
 
-bool Geometry2d::CompositeShape::containsPoint(const Point &pt) {
-    for (auto subshape in _subshapes) {
+bool Geometry2d::CompositeShape::containsPoint(const Point &pt) const {
+    for (auto subshape : _subshapes) {
         if (subshape->containsPoint(pt)) return true;
     }
     return false;
@@ -9,7 +9,7 @@ bool Geometry2d::CompositeShape::containsPoint(const Point &pt) {
 
 void Geometry2d::CompositeShape::addSubshape(std::shared_ptr<Shape> shape) {
     if (shape) {
-        _subshapes->push_back(shape);
+        _subshapes.push_back(shape);
     }
 }
 

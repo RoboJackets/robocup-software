@@ -274,8 +274,8 @@ void Gameplay::GameplayModule::clearAvoidBallRadii() {
 /**
  * returns the group of obstacles for the field
  */
-ObstacleGroup Gameplay::GameplayModule::globalObstacles() const {
-	ObstacleGroup obstacles;
+Geometry2d::CompositeShape Gameplay::GameplayModule::globalObstacles() const {
+	Geometry2d::CompositeShape obstacles;
 	if (_state->gameState.stayOnSide())
 	{
 		obstacles.add(_sideObstacle);
@@ -375,8 +375,8 @@ void Gameplay::GameplayModule::run()
 
 	/// determine global obstacles - field requirements
 	/// Two versions - one set with goal area, another without for goalie
-	ObstacleGroup global_obstacles = globalObstacles();
-	ObstacleGroup obstacles_with_goal = global_obstacles;
+	Geometry2d::CompositeShape global_obstacles = globalObstacles();
+	Geometry2d::CompositeShape obstacles_with_goal = global_obstacles;
 	obstacles_with_goal.add(_goalArea);
 
 	/// execute motion planning for each robot

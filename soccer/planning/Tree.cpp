@@ -57,7 +57,7 @@ void Tree::clear()
     points.clear();
 }
 
-void Tree::init(const Geometry2d::Point& start, const ObstacleGroup* obstacles)
+void Tree::init(const Geometry2d::Point& start, const Geometry2d::CompositeShape* obstacles)
 {
 	clear();
 	
@@ -163,7 +163,7 @@ Tree::Point* FixedStepTree::extend(Geometry2d::Point pt, Tree::Point* base)
 	// moveHit is the set of obstacles that this move touches.
 	// If this move touches any obstacles that the starting point didn't already touch,
 	// it has entered an obstacle and will be rejected.
-	ObstacleGroup moveHit;
+	Geometry2d::CompositeShape moveHit;
 	if (_obstacles->hit(Geometry2d::Segment(pos, base->pos), moveHit))
 	{
 		// We only care if there are any items in moveHit that are not in point->hit, so

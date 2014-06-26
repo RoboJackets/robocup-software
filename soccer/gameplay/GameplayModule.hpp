@@ -147,14 +147,14 @@ namespace Gameplay
 			std::shared_ptr<Obstacle> _nonFloor[4];
 			
 			///	goal area
-			ObstacleGroup _goalArea;
+			Geometry2d::CompositeShape _goalArea;
 
 			/// utility functions
 
 			/**
 			 * Returns the current set of global obstacles, including the field
 			 */
-			ObstacleGroup globalObstacles() const;
+			Geometry2d::CompositeShape globalObstacles() const;
 
 			int _our_score_last_frame;
 

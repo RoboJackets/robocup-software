@@ -42,7 +42,7 @@ namespace Planning
 					const float angle, 
 					const Geometry2d::Point& vel, 
 					const Geometry2d::Point& goal, 
-					const ObstacleGroup* obstacles, 
+					const Geometry2d::CompositeShape* obstacles, 
 					Planning::Path &path);
 			
 			/** returns the length of the best position planned path */
@@ -64,7 +64,7 @@ namespace Planning
 		unsigned int _maxIterations;
 		
 		///latest obstacles
-		const ObstacleGroup* _obstacles;
+		const Geometry2d::CompositeShape* _obstacles;
 		
 		/** makes a path from the last point of each tree
 		 *  If the points don't match up...fail!
@@ -73,6 +73,6 @@ namespace Planning
 		void makePath();
 		
 		/** optimize the path */
-		void optimize(Planning::Path &path, const ObstacleGroup *obstacles);
+		void optimize(Planning::Path &path, const Geometry2d::CompositeShape *obstacles);
 	};
 }

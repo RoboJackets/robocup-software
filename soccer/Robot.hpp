@@ -275,8 +275,8 @@ public:
 	 * Cleared after every frame
 	 */
 	void localObstacles(const std::shared_ptr<Obstacle>& obs) { _local_obstacles.add(obs); }
-	void localObstacles(const ObstacleGroup& obs) { _local_obstacles.add(obs); }
-	const ObstacleGroup& localObstacles() const { return _local_obstacles; }
+	void localObstacles(const Geometry2d::CompositeShape& obs) { _local_obstacles.add(obs); }
+	const Geometry2d::CompositeShape& localObstacles() const { return _local_obstacles; }
 	void clearLocalObstacles() { _local_obstacles.clear(); }
 
 	// opponent approach interface
@@ -323,7 +323,7 @@ public:
 	 * Needs a set of global obstacles to use - assuming field regions and goal
 	 */
 	//	FIXME: rewrite comment to describe new behavior
-	void replanIfNeeded(const ObstacleGroup& global_obstacles);
+	void replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles);
 
 
 	/** status evaluations for choosing robots in behaviors - combines multiple checks */
@@ -391,7 +391,7 @@ protected:
 	SystemState *_state;
 
 	// obstacle management
-	ObstacleGroup _local_obstacles; /// set of obstacles added by plays
+	Geometry2d::CompositeShape _local_obstacles; /// set of obstacles added by plays
 	RobotMask _self_avoid_mask, _opp_avoid_mask;  /// masks for obstacle avoidance
 	float _avoidBallRadius; /// radius of ball obstacle
 
@@ -415,8 +415,8 @@ protected:
 	 * @param robots is the set of robots to use to create a mask - either self or opp from _state
 	 */
 	template<class ROBOT>
-	ObstacleGroup createRobotObstacles(const std::vector<ROBOT*>& robots, const RobotMask& mask) const {
-		ObstacleGroup result;
+	Geometry2d::CompositeShape createRobotObstacles(const std::vector<ROBOT*>& robots, const RobotMask& mask) const {
+		Geometry2d::CompositeShape result;
 		for (size_t i=0; i<RobotMask::size(); ++i)
 			if (mask[i] > 0 && robots[i] && robots[i]->visible)
 				result.add(std::shared_ptr<Obstacle>(new CircleObstacle(robots[i]->pos, mask[i])));

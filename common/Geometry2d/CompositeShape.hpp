@@ -1,21 +1,27 @@
 #pragma once
 
 #include "Point.hpp"
+#include "Shape.hpp"
 #include <vector>
 #include <memory>
+#include <set>
 
+class Obstacle;
 
 namespace Geometry2d {
 
-    class CompositeShape {
+    /**
+     * A Geometry2d::CompositeShape is a Shape that is made up of other shapes.
+     */
+    class Geometry2d::CompositeShape {
     public:
-        CompositeShape(std::shared_ptr<Shape> shape) {
+        Geometry2d::CompositeShape(std::shared_ptr<Shape> shape) {
             _subshapes.push_back(shape);
         }
 
-        CompositeShape() {}
+        Geometry2d::CompositeShape() {}
 
-        virtual ~CompositeShape() {
+        virtual ~Geometry2d::CompositeShape() {
             clear();
         }
 
@@ -47,13 +53,13 @@ namespace Geometry2d {
          * @return A bool telling whether or not there were any collisions
          */
         template<typename T>
-        bool hit(const T &obj, std::set<std::shared_ptr<Obstacle> > &hitSet) const
+        bool hit(const T &obj, std::set<std::shared_ptr<Shape> > &hitSet) const
         {
             for (const_iterator it = begin(); it != end(); ++it)
             {
                 if ((*it)->hit(obj))
                 {
-                    hitSet.add(*it);
+                    hitSet.insert(*it);
                 }
             }
 
@@ -62,19 +68,19 @@ namespace Geometry2d {
 
 
         // STL typedefs
-        typedef std::set<std::shared_ptr<Obstacle> >::const_iterator const_iterator;
-        typedef std::set<std::shared_ptr<Obstacle> >::iterator iterator;
-        typedef std::shared_ptr<Obstacle> value_type;
+        typedef std::vector<std::shared_ptr<Shape> >::const_iterator const_iterator;
+        typedef std::vector<std::shared_ptr<Shape> >::iterator iterator;
+        typedef std::shared_ptr<Shape> value_type;
         
         // STL Interface
-        const_iterator begin() const { return _obstacles.begin(); }
-        const_iterator end() const { return _obstacles.end(); }
+        const_iterator begin() const { return _subshapes.begin(); }
+        const_iterator end() const { return _subshapes.end(); }
 
-        iterator begin() { return _obstacles.begin(); }
-        iterator end() { return _obstacles.end(); }
+        iterator begin() { return _subshapes.begin(); }
+        iterator end() { return _subshapes.end(); }
 
 
     private:
-        std::vector<shared_ptr<Shape> > _subshapes;
-    }
+        std::vector<std::shared_ptr<Shape> > _subshapes;
+    };
 }
