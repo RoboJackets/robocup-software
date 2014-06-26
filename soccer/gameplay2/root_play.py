@@ -74,7 +74,10 @@ class RootPlay(Play, QtCore.QObject):
 
         # Run subbehaviors
         ################################################################################
-        super().execute_running()
+        try:
+            super().execute_running()
+        except Exception as e:
+            logging.error("Exception occurred in RootPlay.run(), ignoring for now: " + str(e))
 
 
     # this is used to force a reselection of a play
