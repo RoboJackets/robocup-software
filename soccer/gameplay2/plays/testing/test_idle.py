@@ -11,7 +11,7 @@ class TestIdle(play.Play):
         self.add_transition(behavior.Behavior.State.start, behavior.Behavior.State.running, lambda: True, "immediately")
 
     def on_enter_running(self):
-            self.add_subbehavior(tactics.circle_up.CircleUp(), name='CircleUp', required=True)
+    	self.add_subbehavior(tactics.circle_up.CircleUp(), name='CircleUp', required=True)
 
     def on_exit_running(self):
         self.remove_subbehavior('CircleUp')

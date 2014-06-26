@@ -31,17 +31,20 @@ class StateMachine:
     # checks transition conditions for all edges leading away from the current state
     # if one evaluates to true, we transition to it
     # if more than one evaluates to true, we throw a RuntimeError
-    def run(self):
+    def spin(self):
         s1 = self.state
 
         # call execute_STATENAME
         if self.state != None:
             for state in self.ancestors_of_state(self.state) + [self.state]:
                 method_name = "execute_" + state.name
+                state_method = None
                 try:
-                    state_method = getattr(self, method_name)()
+                    state_method = getattr(self, method_name)
                 except AttributeError:
                     pass
+                if state_method is not None:
+                    state_method()
 
         if self.state == None:
             self.transition(self.start_state)
@@ -58,10 +61,10 @@ class StateMachine:
             if len(next_states) > 0:
                 self.transition(next_states[0])
 
-        # if a transition occurred during the run, we'll run again
+        # if a transition occurred during the spin, we'll spin again
         # note: this could potentially cause infinite recursion (although it shouldn't)
         if s1 != self.state:
-            self.run()
+            self.spin()
 
 
 
@@ -81,17 +84,23 @@ class StateMachine:
         if self.state != None:
             for state in self.ancestors_of_state(self.state) + [self.state]:
                 method_name = "on_exit_" + state.name
+                state_method = None
                 try:
-                    getattr(self, method_name)()    # call the transition FROM method if it exists
+                    state_method = getattr(self, method_name)    # call the transition FROM method if it exists
                 except AttributeError:
                     pass
+                if state_method is not None:
+                    state_method()
 
         for state in self.ancestors_of_state(new_state) + [new_state]:
             method_name = "on_enter_" + state.name
+            state_method = None
             try:
-                getattr(self, method_name)()    # call the transition TO method if it exists
+                state_method = getattr(self, method_name)    # call the transition TO method if it exists
             except AttributeError:
                 pass
+            if state_method is not None:
+                state_method()
 
         self._state = new_state
 
