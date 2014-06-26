@@ -51,6 +51,10 @@ void OurRobot_set_avoid_ball_radius(OurRobot *self, float radius) {
 	self->avoidBallRadius(radius);
 }
 
+void OurRobot_approach_opponent(OurRobot *self, unsigned shell_id, bool enable_approach) {
+	self->approachOpponent(shell_id, enable_approach);
+}
+
 bool Rect_contains_rect(Geometry2d::Rect *thiss, Geometry2d::Rect *other) {
 	return thiss->contains(*other);
 }
@@ -97,6 +101,8 @@ BOOST_PYTHON_MODULE(robocup)
 	class_<Geometry2d::Segment, bases<Geometry2d::Line> >("Segment", init<Geometry2d::Point, Geometry2d::Point>())
 		.def("center", &Geometry2d::Segment::center)
 		.def("length", &Geometry2d::Segment::length)
+		.def("dist_to", &Geometry2d::Segment::distTo)
+		.def("nearest_point", &Geometry2d::Segment::nearestPoint)
 	;
 
 	class_<Geometry2d::Rect>("Rect", init<Geometry2d::Point, Geometry2d::Point>())
@@ -146,6 +152,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def_readwrite("vel", &Robot::vel)
 		.def_readwrite("angle", &Robot::angle)
 		.def_readwrite("angle_vel", &Robot::angleVel)
+		.def_readwrite("visible", &Robot::visible)
 		.def("__repr__", &Robot_repr)
 	;
 
@@ -154,6 +161,8 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("face", &OurRobot::face)
 		.def("set_avoid_ball_radius", &OurRobot_set_avoid_ball_radius)
 		.def("avoid_all_teammates", &OurRobot::avoidAllTeammates)
+		.def("add_text", &OurRobot::addText)
+		.def("approach_opponent", &OurRobot_approach_opponent)
 	;
 
 	class_<OpponentRobot, std::shared_ptr<OpponentRobot>, bases<Robot> >("OpponentRobot", init<int>());
