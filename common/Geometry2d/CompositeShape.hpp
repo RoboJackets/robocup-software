@@ -13,21 +13,21 @@ namespace Geometry2d {
     /**
      * A Geometry2d::CompositeShape is a Shape that is made up of other shapes.
      */
-    class Geometry2d::CompositeShape {
+    class CompositeShape {
     public:
-        Geometry2d::CompositeShape(std::shared_ptr<Shape> shape) {
+        CompositeShape(std::shared_ptr<Shape> shape) {
             _subshapes.push_back(shape);
         }
 
-        Geometry2d::CompositeShape() {}
+        CompositeShape() {}
 
-        virtual ~Geometry2d::CompositeShape() {
+        virtual ~CompositeShape() {
             clear();
         }
 
         virtual bool containsPoint(const Point &pt) const;
 
-        void addSubshape(std::shared_ptr<Shape> shape);
+        void add(std::shared_ptr<Shape> shape);
 
         const std::vector<std::shared_ptr<Shape> > &subshapes() const {
             return _subshapes;

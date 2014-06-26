@@ -6,7 +6,7 @@
 #include <boost/python.hpp>
 
 #include <Geometry2d/Point.hpp>
-#include <planning/Obstacle.hpp>
+#include <Geometry2d/CompositeShape.hpp>
 
 #include <set>
 #include <QMutex>
