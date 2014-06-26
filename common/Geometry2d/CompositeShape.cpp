@@ -5,7 +5,7 @@ using namespace Geometry2d;
 
 bool Geometry2d::CompositeShape::containsPoint(const Point &pt) const {
     for (auto subshape : _subshapes) {
-        if (subshape->containsPoint(pt)) return true;
+        if (subshape->hit(pt)) return true;
     }
     return false;
 }
