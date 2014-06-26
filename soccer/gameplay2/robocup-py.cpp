@@ -63,6 +63,14 @@ void Point_rotate(Geometry2d::Point *self, Geometry2d::Point *origin, float angl
 	self->rotate(*origin, angle);
 }
 
+boost::python::tuple Line_wrap_pt(Geometry2d::Line *self) {
+	boost::python::list a;
+	for (int i = 0; i < 2; i++) {
+		a.append(self->pt[i]);
+	}
+	return boost::python::tuple(a);
+}
+
 /**
  * The code in this block wraps up c++ classes and makes them
  * accessible to python in the 'robocup' module.
@@ -82,8 +90,13 @@ BOOST_PYTHON_MODULE(robocup)
 		.def(self / float())
 	;
 
-	class_<Geometry2d::Segment>("Segment", init<Geometry2d::Point, Geometry2d::Point>())
+	class_<Geometry2d::Line>("Line", init<Geometry2d::Point, Geometry2d::Point>())
+		.add_property("pt", Line_wrap_pt)
+	;
+
+	class_<Geometry2d::Segment, bases<Geometry2d::Line> >("Segment", init<Geometry2d::Point, Geometry2d::Point>())
 		.def("center", &Geometry2d::Segment::center)
+		.def("length", &Geometry2d::Segment::length)
 	;
 
 	class_<Geometry2d::Rect>("Rect", init<Geometry2d::Point, Geometry2d::Point>())

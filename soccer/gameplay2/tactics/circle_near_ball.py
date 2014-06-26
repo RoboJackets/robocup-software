@@ -7,7 +7,7 @@ import role_assignment
 import robocup
 import main
 
-class CircleUp(composite_behavior.CompositeBehavior):
+class CircleNearBall(composite_behavior.CompositeBehavior):
 
     def __init__(self):
         super().__init__(continuous=True)
