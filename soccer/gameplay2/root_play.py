@@ -24,7 +24,6 @@ class RootPlay(Play, QtCore.QObject):
     play_changed = QtCore.pyqtSignal("QString")
 
     def execute_running(self):
-        print("root play running")
 
         # Play Selection
         ################################################################################
@@ -83,7 +82,6 @@ class RootPlay(Play, QtCore.QObject):
         #     traceback.print_exc()
 
     def spin(self):
-        print("root play spin, state = " + str(self.state))
         try:
             super().spin()
         except Exception as e:
@@ -107,7 +105,6 @@ class RootPlay(Play, QtCore.QObject):
         return self._play
     @play.setter
     def play(self, value):
-        print("play set to: " + str(value))
         # trash old play
         if self.play != None:
             self.remove_subbehavior('play')
