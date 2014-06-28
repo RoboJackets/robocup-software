@@ -75,6 +75,10 @@ boost::python::tuple Line_wrap_pt(Geometry2d::Line *self) {
 	return boost::python::tuple(a);
 }
 
+void State_draw_line(SystemState *self, Geometry2d::Line &line, QColor color = Qt::black, QString layer = QString()) {
+	self->drawLine(line, color, layer);
+}
+
 /**
  * The code in this block wraps up c++ classes and makes them
  * accessible to python in the 'robocup' module.
@@ -193,5 +197,6 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("draw_path", &SystemState::drawPath)
 		.def("draw_text", &SystemState::drawText)
 		.def("draw_shape", &SystemState::drawShape)
+		.def("draw_line", &State_draw_line)
 	;
 }

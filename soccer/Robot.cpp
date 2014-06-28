@@ -43,6 +43,7 @@ const bool verbose = false;
 Robot::Robot(unsigned int shell, bool self)
 {
 	visible = false;
+	std::cout << "const " << shell << std::endl;
 	_shell = shell;
 	_self = self;
 	angle = 0;

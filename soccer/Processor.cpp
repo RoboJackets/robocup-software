@@ -238,6 +238,7 @@ void Processor::run()
 	//main loop
 	while (_running)
 	{
+		std::cout << "matt1" << std::endl;
 		uint64_t startTime = timestamp();
 		int delta_us = startTime - curStatus.lastLoopTime;
 		_framerate = 1000000.0 / delta_us;
