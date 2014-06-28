@@ -92,6 +92,8 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("rotate", &Point_rotate)
 		.def(self * float())
 		.def(self / float())
+		.def("perp_ccw", &Geometry2d::Point::perpCCW)
+		.def("perp_cw", &Geometry2d::Point::perpCW)
 	;
 
 	class_<Geometry2d::Line>("Line", init<Geometry2d::Point, Geometry2d::Point>())
