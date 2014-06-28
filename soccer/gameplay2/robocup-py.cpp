@@ -17,25 +17,25 @@ template<class T> T * get_pointer( std::shared_ptr<T> const& p) {
 	return p.get();
 }
 
-std::string Point_repr(Geometry2d::Point *thiss) {
+std::string Point_repr(Geometry2d::Point *self) {
 	std::ostringstream ss;
 	ss << "Point(";
-	ss << thiss->x;
+	ss << self->x;
 	ss << ", ";
-	ss << thiss->y;
+	ss << self->y;
 	ss << ")";
 	
 	std::string repr(ss.str());
 	return repr;
 }
 
-std::string Robot_repr(Robot *thiss) {
+std::string Robot_repr(Robot *self) {
 	std::ostringstream ss;
 	ss << "<Robot ";
-	ss << (thiss->self() ? "us[" : "them[");
-	ss << thiss->shell();
+	ss << (self->self() ? "us[" : "them[");
+	ss << self->shell();
 	ss << "], pos=";
-	ss << Point_repr(&(thiss->pos));
+	ss << Point_repr(&(self->pos));
 	ss << ">";
 
 	std::string repr(ss.str());
@@ -43,8 +43,8 @@ std::string Robot_repr(Robot *thiss) {
 }
 
 
-void OurRobot_move_to(OurRobot *thiss, Geometry2d::Point *to) {
-	thiss->move(*to);
+void OurRobot_move_to(OurRobot *self, Geometry2d::Point *to) {
+	self->move(*to);
 }
 
 void OurRobot_set_avoid_ball_radius(OurRobot *self, float radius) {
@@ -55,12 +55,12 @@ void OurRobot_approach_opponent(OurRobot *self, unsigned shell_id, bool enable_a
 	self->approachOpponent(shell_id, enable_approach);
 }
 
-bool Rect_contains_rect(Geometry2d::Rect *thiss, Geometry2d::Rect *other) {
-	return thiss->contains(*other);
+bool Rect_contains_rect(Geometry2d::Rect *self, Geometry2d::Rect *other) {
+	return self->contains(*other);
 }
 
-bool Rect_contains_point(Geometry2d::Rect *thiss, Geometry2d::Point *pt) {
-	return thiss->contains(*pt);
+bool Rect_contains_point(Geometry2d::Rect *self, Geometry2d::Point *pt) {
+	return self->contains(*pt);
 }
 
 void Point_rotate(Geometry2d::Point *self, Geometry2d::Point *origin, float angle) {
@@ -75,14 +75,17 @@ boost::python::tuple Line_wrap_pt(Geometry2d::Line *self) {
 	return boost::python::tuple(a);
 }
 
-std::shared_ptr<Geometry2d::Point> Line_line_intersection(Geometry2d::Line *self, Geometry2d::Line *other) {
+//	returns None or a Geometry2d::Point
+boost::python::object Line_line_intersection(Geometry2d::Line *self, Geometry2d::Line *other) {
 	Geometry2d::Point pt;
-	if (self->intersects(*other)) {
-		return std::make_shared<Geometry2d::Point>(pt);
+	if (self->intersects(*other, &pt)) {
+		boost::python::object obj(pt);
+		return obj;
 	} else {
-		return nullptr;
+		//	return None
+		return boost::python::object();
 	}
-}
+};
 
 
 /**
@@ -92,6 +95,7 @@ std::shared_ptr<Geometry2d::Point> Line_line_intersection(Geometry2d::Line *self
 BOOST_PYTHON_MODULE(robocup)
 {
 	class_<Geometry2d::Point>("Point", init<float, float>())
+		.def(init<const Geometry2d::Point &>())
 		.def_readwrite("x", &Geometry2d::Point::x)
 		.def_readwrite("y", &Geometry2d::Point::y)
 		.def(self - self)
@@ -105,6 +109,8 @@ BOOST_PYTHON_MODULE(robocup)
 		.def(self / float())
 		.def("perp_ccw", &Geometry2d::Point::perpCCW)
 		.def("perp_cw", &Geometry2d::Point::perpCW)
+		.def("angle", &Geometry2d::Point::angle)
+		.def("dot", &Geometry2d::Point::dot)
 	;
 
 	class_<Geometry2d::Line>("Line", init<Geometry2d::Point, Geometry2d::Point>())
@@ -131,8 +137,6 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("intersects_rect", &Geometry2d::Rect::intersects)
 	;
 
-	//		I'm holding off for now because GameState needs some attention on the C++
-	//		side of things before we spread its shortcomings into the python world too...
 	class_<GameState>("GameState")
 		.def_readonly("our_score", &GameState::ourScore)
 		.def_readonly("their_score", &GameState::theirScore)

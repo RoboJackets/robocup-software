@@ -1,4 +1,11 @@
 import robocup
+import math
+
+
+
+DegreesToRadians = math.pi / 180.0
+RadiansToDegrees = 180.0 / math.pi
+
 
 
 class Robot:
@@ -41,7 +48,7 @@ class Field:
     TheirGoalShape = None
 
 
-    TheirGoalSegment = robocup.Segment(robocup.Point(constants.Field.GoalWidth / 2.0, constants.Field.Length),
-                                        robocup.Point(-constants.Field.GoalWidth / 2.0, constants.Field.Length))
-    OurGoalSegment = robocup.Segment(robocup.Point(constants.Field.GoalWidth / 2.0, 0),
-                                        robocup.Point(-constants.Field.GoalWidth / 2.0, 0))
+    TheirGoalSegment = robocup.Segment(robocup.Point(GoalWidth / 2.0, Length),
+                                        robocup.Point(-GoalWidth / 2.0, Length))
+    OurGoalSegment = robocup.Segment(robocup.Point(GoalWidth / 2.0, 0),
+                                        robocup.Point(-GoalWidth / 2.0, 0))

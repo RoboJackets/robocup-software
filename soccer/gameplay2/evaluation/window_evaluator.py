@@ -1,13 +1,16 @@
 import robocup
 import constants
+import main
 
 
 # A window is a triangle.  WindowEvaluator creates zero or more Windows.
 # One vertex is the origin passed to run().
 # The side opposite this origin is a part of the original target segment.
 class Window:
-    pass
 
+    def __init__(self, t0, t1):
+        self.t0 = t0
+        self.t1 = t1
 
 
     # a0 and a1 are the angles from the shot-point to @segment
@@ -174,8 +177,8 @@ class WindowEvaluator:
         n = (bot_pos - origin).normalized()
         t = n.perp_ccw()
         r = constants.Robot.Radius + constants.Ball.Radius
-        seg = robocup.Segment(pos - n*constants.Robot.Radius + t * r,
-                                pos - n*constants.Robot.Radius - t * r)
+        seg = robocup.Segment(bot_pos - n*constants.Robot.Radius + t * r,
+                                bot_pos - n*constants.Robot.Radius - t * r)
 
         end = target.delta().magsq()
         extent = [0, end]
@@ -214,9 +217,9 @@ class WindowEvaluator:
             if bot not in self.excluded_robots and bot.visible:
                 d = (bot.pos - origin).mag()
                 # whether or not we can chip over this bot
-                chip_overable self.chip_enabled and
-                    (d < self.chip_max_range - constants.Robot.Radius)
-                    and (d > self.chip_min_range + constants.Robot.Radius)
+                chip_overable = (self.chip_enabled
+                                and (d < self.chip_max_range - constants.Robot.Radius)
+                                and (d > self.chip_min_range + constants.Robot.Radius))
 
                 if not chip_overable:
                     self.obstacle_robot(windows, origin, target, bot.pos)
@@ -232,7 +235,7 @@ class WindowEvaluator:
         best = max(windows, key=lambda w: w.segment.delta().magsq())
 
         # draw the windows if we're in debug mode
-        if debug:
+        if self.debug:
             for w in windows:
                 pts = [origin, w.segment.pt[0], w.segment.pt[1]]
                 color = QColor(255, 0, 0) if w == best else QColor(0, 255)
