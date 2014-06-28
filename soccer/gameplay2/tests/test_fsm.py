@@ -54,7 +54,7 @@ class TestFsm(unittest.TestCase):
 
         fsm = MyFsm()
         while fsm.state != MyFsm.State.done:
-            fsm.run()
+            fsm.spin()
 
         expected_log = [
             "on_enter_start",
