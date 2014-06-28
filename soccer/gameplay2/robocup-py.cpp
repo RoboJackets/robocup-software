@@ -75,6 +75,16 @@ boost::python::tuple Line_wrap_pt(Geometry2d::Line *self) {
 	return boost::python::tuple(a);
 }
 
+std::shared_ptr<Geometry2d::Point> Line_line_intersection(Geometry2d::Line *self, Geometry2d::Line *other) {
+	Geometry2d::Point pt;
+	if (self->intersects(*other)) {
+		return std::make_shared<Geometry2d::Point>(pt);
+	} else {
+		return nullptr;
+	}
+}
+
+
 /**
  * The code in this block wraps up c++ classes and makes them
  * accessible to python in the 'robocup' module.
@@ -87,6 +97,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def(self - self)
 		.def(self + self)
 		.def("mag", &Geometry2d::Point::mag)
+		.def("magsq", &Geometry2d::Point::magsq)
 		.def("__repr__", &Point_repr)
 		.def("normalized", &Geometry2d::Point::normalized)
 		.def("rotate", &Point_rotate)
@@ -98,6 +109,8 @@ BOOST_PYTHON_MODULE(robocup)
 
 	class_<Geometry2d::Line>("Line", init<Geometry2d::Point, Geometry2d::Point>())
 		.add_property("pt", Line_wrap_pt)
+		.def("delta", &Geometry2d::Line::delta)
+		.def("line_intersection", &Line_line_intersection)
 	;
 
 	class_<Geometry2d::Segment, bases<Geometry2d::Line> >("Segment", init<Geometry2d::Point, Geometry2d::Point>())
