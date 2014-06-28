@@ -221,8 +221,6 @@ class WindowEvaluator:
                 if not chip_overable:
                     self.obstacle_robot(windows, origin, target, bot.pos)
 
-        # TODO: return windows, find best, finalize
-
         # set the segment and angles for each window
         p0 = target.pt[0]
         delta = target.delta() / end
