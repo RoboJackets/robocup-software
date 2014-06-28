@@ -44,7 +44,11 @@ class Field:
     FloorWidth = Width + 2.0 * Border;
 
     # TODO: make these out of rectangles and circles, then we can check if the ball is in there
-    OurGoalShape = None
+    OurGoalZoneShape = robocup.CompositeShape()
+    OurGoalZoneShape.add_shape(robocup.Circle(robocup.Point(-GoalFlat / 2.0, 0), ArcRadius))
+    OurGoalZoneShape.add_shape(robocup.Circle(robocup.Point(GoalFlat / 2.0, 0), ArcRadius))
+    OurGoalZoneShape.add_shape(robocup.Rect(robocup.Point(-GoalFlat / 2.0, ArcRadius), robocup.Point(GoalFlat / 2.0, 0)))
+
     TheirGoalShape = None
 
 
