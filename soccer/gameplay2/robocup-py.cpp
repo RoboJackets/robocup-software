@@ -7,6 +7,7 @@ using namespace boost::python;
 
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Rect.hpp>
+#include <Geometry2d/CompositeShape.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
 #include <protobuf/LogFrame.pb.h>
@@ -65,6 +66,10 @@ bool Rect_contains_point(Geometry2d::Rect *self, Geometry2d::Point *pt) {
 
 void Point_rotate(Geometry2d::Point *self, Geometry2d::Point *origin, float angle) {
 	self->rotate(*origin, angle);
+}
+
+void CompositeShape_add_shape(Geometry2d::CompositeShape *self, std::shared_ptr<Geometry2d::Shape> shape) {
+	self->add(shape);
 }
 
 boost::python::tuple Line_wrap_pt(Geometry2d::Line *self) {
@@ -128,13 +133,23 @@ BOOST_PYTHON_MODULE(robocup)
 
 	class_<Geometry2d::Rect>("Rect", init<Geometry2d::Point, Geometry2d::Point>())
 		.def("contains_rect", &Rect_contains_rect)
-		.def("contains_point", &Rect_contains_point)
 		.def("min_x", &Geometry2d::Rect::minx)
 		.def("min_y", &Geometry2d::Rect::miny)
 		.def("max_x", &Geometry2d::Rect::maxx)
 		.def("max_y", &Geometry2d::Rect::maxy)
 		.def("near_point", &Geometry2d::Rect::nearPoint)
 		.def("intersects_rect", &Geometry2d::Rect::intersects)
+		.def("contains_point", &Geometry2d::Shape::containsPoint)
+	;
+
+	class_<Geometry2d::Circle>("Circle", init<Geometry2d::Point, float>());
+
+	class_<Geometry2d::CompositeShape>("CompositeShape", init<>())
+		.def("clear", &Geometry2d::CompositeShape::clear)
+		.def("is_empty", &Geometry2d::CompositeShape::empty)
+		.def("size", &Geometry2d::CompositeShape::size)
+		.def("add_shape", &CompositeShape_add_shape)
+		.def("contains_point", &Geometry2d::Shape::containsPoint)
 	;
 
 	class_<GameState>("GameState")
