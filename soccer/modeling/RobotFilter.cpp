@@ -1,5 +1,6 @@
 #include "RobotFilter.hpp"
 #include <Utils.hpp>
+#include <iostream>
 
 using namespace Geometry2d;
 
@@ -22,6 +23,7 @@ void RobotFilter::update(const RobotObservation* obs)
 	}
 	
 	int s = obs->source;
+	std::cout << s << "\t" << obs->time << "\t" << _estimate[s].time << std::endl;
 	double dtime = (obs->time - _estimate[s].time) / 1000000.0f;
 	bool reset = _estimate[s].time == 0 || (dtime > Coast_Time);
 	
@@ -49,6 +51,7 @@ void RobotFilter::predict(uint64_t time, Robot* robot)
 	double bestDTime = 0;
 	for (int s = 0; s < Num_Cameras; ++s)
 	{
+		std::cout << s << "!" << std::endl;
 		double dtime = (time - _estimate[s].time) / 1000000.0f;
 		if (_estimate[s].visible && (bestSource < 0 || dtime < bestDTime))
 		{
