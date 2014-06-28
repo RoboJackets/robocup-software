@@ -39,3 +39,9 @@ class Field:
     # TODO: make these out of rectangles and circles, then we can check if the ball is in there
     OurGoalShape = None
     TheirGoalShape = None
+
+
+    TheirGoalSegment = robocup.Segment(robocup.Point(constants.Field.GoalWidth / 2.0, constants.Field.Length),
+                                        robocup.Point(-constants.Field.GoalWidth / 2.0, constants.Field.Length))
+    OurGoalSegment = robocup.Segment(robocup.Point(constants.Field.GoalWidth / 2.0, 0),
+                                        robocup.Point(-constants.Field.GoalWidth / 2.0, 0))
