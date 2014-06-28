@@ -34,27 +34,24 @@ namespace Gameplay
 	class WindowEvaluator
 	{
 		public:
-			WindowEvaluator(SystemState *state);
-			~WindowEvaluator();
-			
-			bool debug;
+			// bool debug;
 			
 			// List of all windows
-			std::list<Window *> windows;
+			// std::list<Window *> windows;
 			
 			// Any robots containing any of these points are ignored as obstacles.
 			std::vector<Geometry2d::Point> exclude;
 			
 			// if enabled, uses min/max range to remove obstacles that can be cleared with chip
-			bool enable_chip;
-			float chip_min_range; // set according externally
-			float chip_max_range;
+			// bool enable_chip;
+			// float chip_min_range; // set according externally
+			// float chip_max_range;
 
 			const Geometry2d::Segment &target() const { return _target; }
 			
 			const Geometry2d::Point& origin() const { return _origin; }
 
-			void clear();
+			// void clear();
 			
 			// Calculates the windows to a segment.
 			void run(Geometry2d::Point origin, const Geometry2d::Segment &target);
@@ -68,12 +65,12 @@ namespace Gameplay
 			// Calculates the windows to the opponent's goal
 			void run(Geometry2d::Point origin);
 
-			Window* best() { return _best; }
+			// Window* best() { return _best; }
 
 
-			SystemState *state() {
-				return _state;
-			}
+			// SystemState *state() {
+			// 	return _state;
+			// }
 
 
 		protected:
@@ -81,11 +78,11 @@ namespace Gameplay
 			Geometry2d::Segment _target;
 			float _end;
 			std::set<float> _edges;
-			SystemState *_state;
+			// SystemState *_state;
 			
 			// A pointer to the best window.
 			// This will be one of the windows in <windows>, or 0 if there are no windows.
-			Window *_best;
+			// Window *_best;
 
 			void finish();
 			void obstacleRobot(Geometry2d::Point pos);

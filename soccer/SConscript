@@ -28,9 +28,8 @@ srcs = [
 	'gameplay2/robocup-py.cpp',
 
 	# Field evaluation
-	'gameplay/evaluation/WindowEvaluator.cpp',
-	'gameplay/evaluation/ReceivePointEvaluator.cpp',
-	'gameplay/evaluation/FieldEvaluator.cpp',
+	# 'gameplay/evaluation/ReceivePointEvaluator.cpp',
+	# 'gameplay/evaluation/FieldEvaluator.cpp',
 
 	# Planning components',
 	'planning/RRTPlanner.cpp',

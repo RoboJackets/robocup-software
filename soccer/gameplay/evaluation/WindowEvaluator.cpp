@@ -10,26 +10,9 @@ using namespace std;
 
 Gameplay::WindowEvaluator::WindowEvaluator(SystemState *state)
 {
-	_state = state;
-	_best = 0;
 	enable_chip = false;
 	_end = 0;
 	debug = false;
-}
-
-Gameplay::WindowEvaluator::~WindowEvaluator()
-{
-	clear();
-}
-
-void Gameplay::WindowEvaluator::clear()
-{
-	_best = 0;
-	BOOST_FOREACH(Window *w, windows)
-	{
-		delete w;
-	}
-	windows.clear();
 }
 
 void Gameplay::WindowEvaluator::run(Geometry2d::Point origin)
@@ -74,7 +57,6 @@ void Gameplay::WindowEvaluator::run(Geometry2d::Point origin, const Geometry2d::
 	
 	_end = target.delta().magsq();
 	
-	clear();
 	
 	if (_end == 0)
 	{
@@ -149,11 +131,12 @@ void Gameplay::WindowEvaluator::run(Geometry2d::Point origin, const Geometry2d::
 		}
 	}
 	
-	finish();
-}
 
-void Gameplay::WindowEvaluator::finish()
-{
+
+
+
+	//	finish
+
 	const Geometry2d::Point &p0 = _target.pt[0];
 	Geometry2d::Point delta = _target.delta() / _end;
 	BOOST_FOREACH(Window *w, windows)
