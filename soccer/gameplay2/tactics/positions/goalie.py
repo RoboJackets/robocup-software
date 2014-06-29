@@ -2,6 +2,8 @@ import robocup
 import single_robot_composite_behavior
 import behavior
 import constants
+import evaluation.ball
+import main
 import enum
 import math
 
@@ -49,7 +51,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         for state in non_chill_states:
             self.add_transition(state,
                 Goalie.State.setup_penalty,
-                lambda: main.game_state().their_penalty() and not main.game_state().playing(),
+                lambda: main.game_state().is_their_penalty() and not main.game_state().playing(),
                 "opponent penalty shot about to happen")
 
         for state in non_chill_states:
@@ -77,14 +79,13 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     # note that execute_running() gets called BEFORE any of the execute_SUBSTATE methods gets called
     def execute_running(self):
-        super().execute_running()
-        if robot != None:
-            robot.face(main.ball().pos)
+        if self.robot != None:
+            self.robot.face(main.ball().pos)
 
 
     def execute_chill(self):
         if self.robot != None:
-            robot.move_to(Point(0, constants.Robot.Radius))
+            self.robot.move_to(robocup.Point(0, constants.Robot.Radius))
 
 
     def execute_setup_penalty(self):
@@ -96,7 +97,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         dest = shot_line.intersection(Goalie.RobotSegment)
         if dest == None:
-            robot.move_to(Point(0, constants.Robot.Radius))
+            robot.move_to(robocup.Point(0, constants.Robot.Radius))
         else:
             dest.x = max(-Goalie.MaxX + constants.Robot.Radius, dest.x)
             dest.y = min(Goalie.MaxX - constants.Robot.Radius, dest.x)
@@ -163,12 +164,18 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def execute_defend(self):
         dest_x = main.ball().pos.x / constants.Field.Width * Goalie.MaxX
-        robot.move_to(Point(dest_x, constants.Robot.Radius))
+        self.robot.move_to(robocup.Point(dest_x, constants.Robot.Radius))
 
 
     def role_requirements(self):
         reqs = super().role_requirements()
-        reqs.required_shell_id = self.shell_id
+
+        if isinstance(reqs, role_requirements.RoleRequirements):
+            reqs.required_shell_id = self.shell_id
+        else:
+            for sub_bhvr_name in reqs:
+                reqs[sub_bhvr_name].required_shell_id = self.shell_id
+
         return reqs
 
 

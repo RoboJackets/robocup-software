@@ -1,3 +1,7 @@
+import main
+import robocup
+import constants
+import math
 
 
 def is_moving_towards_our_goal():
@@ -6,7 +10,10 @@ def is_moving_towards_our_goal():
 
 
 def is_in_our_goalie_zone():
-    raise NotImplementedError()
+    if main.ball() != None:
+        return constants.Field.OurGoalZoneShape.contains_point(main.ball().pos)
+    else:
+        return False
 
 
 # The ball's motion follows the equation X(t) = X_i + V_i*t - 0.5*(c*g)*t^2
@@ -25,7 +32,8 @@ def opponent_with_ball():
     def angle_btw_three_pts(a, b, vertex):
         VA = math.sqrt( (vertex.x - a.x)**2 + (vertex.y - a.y)**2 )
         VB = math.sqrt( (vertex.x - b.x)**2 + (vertex.y - b.y)**2 )
-        return math.acosf((VA*VA + VB*VB - AB*AB)/(2*VA*VB))
+        AB = math.sqrt( (a.x - b.x)**2 + (a.y - b.y)**2 )
+        return math.acos((VA*VA + VB*VB - AB*AB)/(2*VA*VB))
 
     closest_bot = None
     closest_dist = float("inf")
@@ -35,13 +43,13 @@ def opponent_with_ball():
             if dist < closest_dist:
                 closest_bot, closest_dist = bot, dist
 
-    angle = closest_bot.angle * DegreesToRadians
+    angle = closest_bot.angle * constants.DegreesToRadians
     theta = angle_btw_three_pts(closest_bot.pos + robocup.Point(math.cos(angle), math.sin(angle)),
                                 main.ball().pos,
                                 closest_bot.pos)
     max_radius = constants.Robot.Radius * (2.0 + 2.0*math.cos(theta))
 
-    if closest and closest.pos.near_point(ball().pos, max_radius):
-        return closest
+    if closest_bot and closest_bot.pos.near_point(main.ball().pos, max_radius):
+        return closest_bot
     else:
         return None

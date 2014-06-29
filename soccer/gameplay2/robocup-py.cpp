@@ -116,6 +116,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("perp_cw", &Geometry2d::Point::perpCW)
 		.def("angle", &Geometry2d::Point::angle)
 		.def("dot", &Geometry2d::Point::dot)
+		.def("near_point", &Geometry2d::Point::nearPoint)
 	;
 
 	class_<Geometry2d::Line>("Line", init<Geometry2d::Point, Geometry2d::Point>())
@@ -202,7 +203,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("approach_opponent", &OurRobot_approach_opponent)
 	;
 
-	class_<OpponentRobot, std::shared_ptr<OpponentRobot>, bases<Robot> >("OpponentRobot", init<int>());
+	class_<OpponentRobot, OpponentRobot *, std::shared_ptr<OpponentRobot>, bases<Robot> >("OpponentRobot", init<int>());
 
 	class_<Ball, std::shared_ptr<Ball> >("Ball", init<>())
 		.def_readonly("pos", &Ball::pos)
