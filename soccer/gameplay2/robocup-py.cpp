@@ -129,6 +129,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.add_property("pt", Line_wrap_pt)
 		.def("delta", &Geometry2d::Line::delta)
 		.def("line_intersection", &Line_line_intersection)
+		.def("dist_to", &Geometry2d::Line::distTo)
 	;
 
 	class_<Geometry2d::Segment, Geometry2d::Segment*, bases<Geometry2d::Line> >("Segment", init<Geometry2d::Point, Geometry2d::Point>())

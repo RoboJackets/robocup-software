@@ -8,6 +8,13 @@ RadiansToDegrees = 180.0 / math.pi
 
 
 
+
+class Colors:
+    White = (255, 255, 255)
+    Black = (0, 0, 0)
+
+
+
 class Robot:
     Radius = 0.09
 
