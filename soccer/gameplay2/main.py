@@ -174,5 +174,4 @@ def system_state():
     return _system_state
 def set_system_state(value):
     global _system_state
-    print(value.timestamp)
     _system_state = value
