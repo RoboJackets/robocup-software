@@ -10,7 +10,6 @@ class SingleRobotBehavior(behavior.Behavior):
 
 
     def execute_running(self):
-        super().execute_running()
         if self.robot == None:
             raise AssertionError("Error: execute_running() called on a single robot behavior that doesn't have a robot!")
 
