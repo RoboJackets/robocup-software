@@ -254,7 +254,7 @@ void Gameplay::GameplayModule::goalieID(int value)
 	//	pass this value to python
 	PyGILState_STATE state = PyGILState_Ensure(); {
 		try {
-			getRootPlay().attr("set_goalie_id")(_goalieID);
+			getRootPlay().attr("goalie_id") = _goalieID;
 		} catch (error_already_set) {
 			cout << "PYTHON ERROR!!!" << endl;
 			PyErr_Print();

@@ -30,10 +30,10 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior, co
 
     def assign_roles(self, assignments):
         if self.has_subbehaviors():
-            single_robot_behavior.SingleRobotBehavior.assign_roles(self, assignments)
-        else:
             composite_behavior.CompositeBehavior.assign_roles(self, assignments)
             self.robot = assignments.values()[0][1]
+        else:
+            single_robot_behavior.SingleRobotBehavior.assign_roles(self, assignments)
 
 
     def __str__(self):
