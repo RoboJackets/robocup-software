@@ -554,5 +554,11 @@
    <Velocity_Multiplier value="0"/>
    <Max_w value="5"/>
   </angle>
+  <Max_Acceleration value="4"/>
+  <Max_Velocity value="4"/>
  </MotionControl>
+ <PathPlanner>
+  <Max_Acceleration value="1"/>
+  <Max_Velocity value="2"/>
+ </PathPlanner>
 </config>
