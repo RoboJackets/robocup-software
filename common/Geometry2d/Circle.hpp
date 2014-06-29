@@ -21,7 +21,15 @@ namespace Geometry2d
             _r = r;
             _rsq = -1;
         }
+
+        Circle(const Circle &other) {
+            center = other.center;
+            _r = other.radius();
+        }
+
+        Shape *clone() const;
         
+
         // Both radius and radius-squared are stored, since some operations are more
         // efficient with one or the other.
         // As long as one is specified, the other is calculated lazily.
@@ -60,7 +68,7 @@ namespace Geometry2d
             _rsq = -1;
         }
         
-        bool contains(const Point &pt) const;
+        bool containsPoint(const Point &pt) const;
 
         bool hit(const Point &pt) const;
 
