@@ -11,7 +11,6 @@ rename_gtest = e.Command('#/test/gtest/make/libgtest.a', gtest_main_a, 'cd test/
 test_srcs = [
 	'../soccer/planning/Path.cpp',
 	'../soccer/motion/TrapezoidalMotion.cpp',
-	'../soccer/planning/Obstacle.cpp',
     '../soccer/Configuration.cpp',
 ]
 test_srcs += Glob('../soccer/tests/*.cpp')
