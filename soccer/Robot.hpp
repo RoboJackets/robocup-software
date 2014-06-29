@@ -77,8 +77,7 @@ public:
 	 */
 	unsigned int shell() const
 	{
-		std::cout << "ret " << _shell << std::endl;
-		return std::min(_shell, (unsigned int)15);
+		return _shell;
 	}
 
 	/**
