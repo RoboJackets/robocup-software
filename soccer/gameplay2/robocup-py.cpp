@@ -43,7 +43,6 @@ std::string Robot_repr(Robot *self) {
 	return repr;
 }
 
-
 void OurRobot_move_to(OurRobot *self, Geometry2d::Point *to) {
 	self->move(*to);
 }
@@ -92,6 +91,13 @@ boost::python::object Line_line_intersection(Geometry2d::Line *self, Geometry2d:
 	}
 };
 
+void State_draw_line(SystemState *self, const Geometry2d::Line *line, boost::python::tuple rgb, const std::string &layer) {
+	float r = extract<float>(rgb[0]);
+	float g = extract<float>(rgb[1]);
+	float b = extract<float>(rgb[2]);
+
+	self->drawLine(*line, QColor(r, g, b), QString::fromStdString(layer));
+}
 
 /**
  * The code in this block wraps up c++ classes and makes them
@@ -119,13 +125,13 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("near_point", &Geometry2d::Point::nearPoint)
 	;
 
-	class_<Geometry2d::Line>("Line", init<Geometry2d::Point, Geometry2d::Point>())
+	class_<Geometry2d::Line, Geometry2d::Line*>("Line", init<Geometry2d::Point, Geometry2d::Point>())
 		.add_property("pt", Line_wrap_pt)
 		.def("delta", &Geometry2d::Line::delta)
 		.def("line_intersection", &Line_line_intersection)
 	;
 
-	class_<Geometry2d::Segment, bases<Geometry2d::Line> >("Segment", init<Geometry2d::Point, Geometry2d::Point>())
+	class_<Geometry2d::Segment, Geometry2d::Segment*, bases<Geometry2d::Line> >("Segment", init<Geometry2d::Point, Geometry2d::Point>())
 		.def("center", &Geometry2d::Segment::center)
 		.def("length", &Geometry2d::Segment::length)
 		.def("dist_to", &Geometry2d::Segment::distTo)
@@ -219,7 +225,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def(vector_indexing_suite<std::vector<OpponentRobot *> >())
 	;
 
-	class_<SystemState>("SystemState")
+	class_<SystemState, SystemState *>("SystemState")
 		.def_readonly("our_robots", &SystemState::self)
 		.def_readonly("their_robots", &SystemState::opp)
 		.def_readonly("ball", &SystemState::ball)
@@ -231,5 +237,6 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("draw_path", &SystemState::drawPath)
 		.def("draw_text", &SystemState::drawText)
 		.def("draw_shape", &SystemState::drawShape)
+		.def("draw_line", &State_draw_line)
 	;
 }

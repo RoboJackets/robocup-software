@@ -1,5 +1,6 @@
 #include "RobotFilter.hpp"
 #include <Utils.hpp>
+#include <iostream>
 
 using namespace Geometry2d;
 

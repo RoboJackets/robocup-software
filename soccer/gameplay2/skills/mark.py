@@ -3,6 +3,7 @@ import behavior
 import robocup
 import main
 import constants
+from PyQt4 import QtCore, QtGui
 
 class Mark(single_robot_behavior.SingleRobotBehavior):
 
@@ -25,7 +26,8 @@ class Mark(single_robot_behavior.SingleRobotBehavior):
 		mark_line_dir = (ball_pos - mark_pos).normalized()
 		ball_mark_line = robocup.Segment(ball_pos - mark_line_dir * constants.Ball.Radius, mark_pos + mark_line_dir * 2.0 * constants.Robot.Radius)
 
-		# TODO draw ball_mark_line
+		# main.system_state().draw_line(ball_mark_line, QtGui.QColor(0,0,255), "Mark")
+		main.system_state().draw_line(ball_mark_line, (0,0,255), "Mark")
 
 		# TODO add text "mark"
 
@@ -37,6 +39,7 @@ class Mark(single_robot_behavior.SingleRobotBehavior):
 			target_point = ball_pos + (mark_pos - ball_pos).normalized() * self.ratio * ball_mark_line.length()
 
 		# TODO draw circle
+		# main.system_state().draw_circle(self._mark_robot.pos, constants.Robot.Radius * 1.2, QtGui.QColor(0, 127, 255), "Mark")
 
 		self.robot.approach_opponent(self.mark_robot.shell_id(), True)
 		self.robot.move_to(target_point)
