@@ -26,7 +26,15 @@ namespace Geometry2d
         {
             init(seg, r, length);
         }
+
+        Polygon(const Polygon &other) : vertices(other.vertices) {}
+
+        Shape *clone() const;
         
+        bool containsPoint(const Point &pt) const {
+            return contains(pt);
+        }
+
         bool contains(const Point &pt) const;
         bool intersects(const Rect &rect) const;
         bool intersects(const Polygon &other) const;

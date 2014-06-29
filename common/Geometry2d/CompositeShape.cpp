@@ -3,9 +3,13 @@
 using namespace Geometry2d;
 
 
+Shape *CompositeShape::clone() const {
+    return new CompositeShape(*this);
+}
+
 bool Geometry2d::CompositeShape::containsPoint(const Point &pt) const {
     for (auto subshape : _subshapes) {
-        if (subshape->hit(pt)) return true;
+        if (subshape->containsPoint(pt)) return true;
     }
     return false;
 }

@@ -1,7 +1,10 @@
 #include "Polygon.hpp"
 #include <Constants.hpp>
 
-Geometry2d::Polygon::Polygon(const Geometry2d::Rect &rect)
+using namespace Geometry2d;
+
+
+Polygon::Polygon(const Rect &rect)
 {
     vertices.resize(4);
     vertices[0] = rect.pt[0];
@@ -10,9 +13,13 @@ Geometry2d::Polygon::Polygon(const Geometry2d::Rect &rect)
     vertices[3] = Point(rect.pt[0].x, rect.pt[1].y);
 }
 
-void Geometry2d::Polygon::init(const Geometry2d::Segment &seg, float r, float length)
+Shape *Polygon::clone() const {
+    return new Polygon(*this);
+}
+
+void Polygon::init(const Segment &seg, float r, float length)
 {
-    Geometry2d::Point dir;
+    Point dir;
     if (length)
     {
         dir = seg.delta() / length;
@@ -21,8 +28,8 @@ void Geometry2d::Polygon::init(const Geometry2d::Segment &seg, float r, float le
         dir = Point(1, 0);
     }
     
-    Geometry2d::Point v = dir * r;
-    Geometry2d::Point u = v.perpCCW();
+    Point v = dir * r;
+    Point u = v.perpCCW();
     
     vertices.resize(4);
     vertices[0] = seg.pt[0] - u - v;
@@ -31,9 +38,9 @@ void Geometry2d::Polygon::init(const Geometry2d::Segment &seg, float r, float le
     vertices[3] = seg.pt[1] - u + v;
 }
 
-Geometry2d::Rect Geometry2d::Polygon::bbox() const
+Rect Polygon::bbox() const
 {
-    Geometry2d::Rect rect(vertices[0]);
+    Rect rect(vertices[0]);
     
     for (unsigned int i = 1; i < vertices.size(); ++i)
     {
@@ -43,17 +50,17 @@ Geometry2d::Rect Geometry2d::Polygon::bbox() const
     return rect;
 }
 
-bool Geometry2d::Polygon::intersects(const Geometry2d::Rect &rect) const
+bool Polygon::intersects(const Rect &rect) const
 {
-    return intersects(Geometry2d::Polygon(rect));
+    return intersects(Polygon(rect));
 }
 
-bool Geometry2d::Polygon::intersects(const Geometry2d::Polygon &other) const
+bool Polygon::intersects(const Polygon &other) const
 {
     return containsVertex(other) || other.containsVertex(*this);
 }
 
-bool Geometry2d::Polygon::containsVertex(const Geometry2d::Polygon &other) const
+bool Polygon::containsVertex(const Polygon &other) const
 {
     for (unsigned int i = 0; i < other.vertices.size(); ++i)
     {
@@ -66,7 +73,7 @@ bool Geometry2d::Polygon::containsVertex(const Geometry2d::Polygon &other) const
     return false;
 }
 
-bool Geometry2d::Polygon::nearPoint(const Geometry2d::Point &pt, float threshold) const
+bool Polygon::nearPoint(const Point &pt, float threshold) const
 {
     if (contains(pt))
     {
@@ -76,7 +83,7 @@ bool Geometry2d::Polygon::nearPoint(const Geometry2d::Point &pt, float threshold
     unsigned int i = vertices.size() - 1;
     for (unsigned int j = 0; j < vertices.size(); ++j)
     {
-        Geometry2d::Segment edge(vertices[i], vertices[j]);
+        Segment edge(vertices[i], vertices[j]);
         if (edge.nearPoint(pt, threshold))
         {
             return true;
@@ -88,7 +95,7 @@ bool Geometry2d::Polygon::nearPoint(const Geometry2d::Point &pt, float threshold
     return false;
 }
 
-bool Geometry2d::Polygon::nearSegment(const Geometry2d::Segment &seg, float threshold) const
+bool Polygon::nearSegment(const Segment &seg, float threshold) const
 {
     if (contains(seg.pt[0]) || contains(seg.pt[1]))
     {
@@ -98,7 +105,7 @@ bool Geometry2d::Polygon::nearSegment(const Geometry2d::Segment &seg, float thre
     unsigned int i = vertices.size() - 1;
     for (unsigned int j = 0; j < vertices.size(); ++j)
     {
-        Geometry2d::Segment edge(vertices[i], vertices[j]);
+        Segment edge(vertices[i], vertices[j]);
         if (edge.nearSegment(seg, threshold))
         {
             return true;
@@ -110,7 +117,7 @@ bool Geometry2d::Polygon::nearSegment(const Geometry2d::Segment &seg, float thre
     return false;
 }
 
-bool Geometry2d::Polygon::contains(const Geometry2d::Point &pt) const
+bool Polygon::contains(const Point &pt) const
 {
     //FIXME (Ben) - Replace this with the optimized wrap-number test.
     
@@ -172,12 +179,12 @@ bool Geometry2d::Polygon::contains(const Geometry2d::Point &pt) const
     return count != 0;
 }
 
-bool Geometry2d::Polygon::hit(const Geometry2d::Point &pt) const
+bool Polygon::hit(const Point &pt) const
 {
     return nearPoint(pt, Robot_Radius);
 }
 
-bool Geometry2d::Polygon::hit(const Geometry2d::Segment &seg) const
+bool Polygon::hit(const Segment &seg) const
 {
     return nearSegment(seg, Robot_Radius);
 }

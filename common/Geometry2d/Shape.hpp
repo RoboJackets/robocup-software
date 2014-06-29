@@ -7,17 +7,41 @@ namespace Geometry2d {
 
     class Segment;
 
+    /**
+     * The shape class provides the interface to all shapes that are subclasses.
+     * 
+     * We expose this class and its subclasses to python through boost python, which unfortunately
+     * handles abstract base classes very strangely.  The only way I could get inheritance to work properly
+     * with boost was to provide implementations for the methods in this class even though
+     * we'd prefer them to be pure virtual (not implemented in this class).
+     */
     class Shape {
     public:
         Shape() {}
         virtual ~Shape() {}
 
-        bool containsPoint(const Point &pt) {
-            return hit(pt);
+        virtual Shape *clone() const {
+            throw "nope";
+            return nullptr;
         }
 
+        virtual bool containsPoint(const Point &pt) const {
+            throw "nope";
+            return false;
+        }
+
+
         /// collision-detection
-        virtual bool hit(const Point &pt) const = 0;
-        virtual bool hit(const Segment &seg) const = 0;
+
+        virtual bool hit(const Point &pt) const {
+            throw "nope";
+            return false;
+        }
+
+        virtual bool hit(const Segment &seg) const {
+            throw "nope";
+            return false;
+        }
+
     };
 }

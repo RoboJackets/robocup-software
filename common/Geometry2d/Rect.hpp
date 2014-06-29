@@ -26,6 +26,13 @@ namespace Geometry2d
 				pt[1] = p2;
 			}
 
+			Rect(const Rect &other) {
+				pt[0] = other.pt[0];
+				pt[1] = other.pt[1];
+			}
+
+			Shape *clone() const;
+
 			Rect &operator+=(const Point &offset)
 			{
 				pt[0] += offset;
@@ -62,6 +69,10 @@ namespace Geometry2d
 			
 			bool contains(const Point &other) const;
 			bool contains(const Rect &other) const;
+
+			bool containsPoint(const Point &other) const {
+				return contains(other);
+			}
 
 
 	        bool hit(const Point &pt) const {

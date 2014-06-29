@@ -5,6 +5,10 @@
 using namespace std;
 using namespace Geometry2d;
 
+Shape *Rect::clone() const {
+	return new Rect(*this);
+}
+
 bool Rect::intersects(const Rect &other) const
 {
 	if (other.maxx() < minx() || other.minx() > maxx() || other.maxy() < miny() || other.miny() > maxy())

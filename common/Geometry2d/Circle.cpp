@@ -4,6 +4,11 @@
 
 using namespace Geometry2d;
 
+
+Shape *Circle::clone() const {
+    return new Circle(*this);
+}
+
 int Circle::intersects(Circle &other, Point *i) const
 {
     // http://local.wasp.uwa.edu.au/~pbourke/geometry/2circle/
@@ -112,6 +117,10 @@ int Circle::intersects(const Line &line, Point *i) const
         
         return 2;
     }
+}
+
+bool Circle::containsPoint(const Point &pt) const {
+    return (pt - center).mag() < radius();
 }
 
 Point Circle::nearestPoint(const Geometry2d::Point &P) const {

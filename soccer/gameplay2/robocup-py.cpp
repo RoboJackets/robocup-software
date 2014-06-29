@@ -68,8 +68,8 @@ void Point_rotate(Geometry2d::Point *self, Geometry2d::Point *origin, float angl
 	self->rotate(*origin, angle);
 }
 
-void CompositeShape_add_shape(Geometry2d::CompositeShape *self, std::shared_ptr<Geometry2d::Shape> shape) {
-	self->add(shape);
+void CompositeShape_add_shape(Geometry2d::CompositeShape *self, Geometry2d::Shape *shape) {
+	self->add(std::shared_ptr<Geometry2d::Shape>( shape->clone() ));
 }
 
 boost::python::tuple Line_wrap_pt(Geometry2d::Line *self) {
@@ -131,7 +131,10 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("nearest_point", &Geometry2d::Segment::nearestPoint)
 	;
 
-	class_<Geometry2d::Rect>("Rect", init<Geometry2d::Point, Geometry2d::Point>())
+	class_<Geometry2d::Shape, boost::noncopyable>("Shape")
+	;
+
+	class_<Geometry2d::Rect, bases<Geometry2d::Shape> >("Rect", init<Geometry2d::Point, Geometry2d::Point>())
 		.def("contains_rect", &Rect_contains_rect)
 		.def("min_x", &Geometry2d::Rect::minx)
 		.def("min_y", &Geometry2d::Rect::miny)
@@ -139,17 +142,17 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("max_y", &Geometry2d::Rect::maxy)
 		.def("near_point", &Geometry2d::Rect::nearPoint)
 		.def("intersects_rect", &Geometry2d::Rect::intersects)
-		.def("contains_point", &Geometry2d::Shape::containsPoint)
+		.def("contains_point", &Geometry2d::Rect::containsPoint)
 	;
 
-	class_<Geometry2d::Circle>("Circle", init<Geometry2d::Point, float>());
+	class_<Geometry2d::Circle, bases<Geometry2d::Shape> >("Circle", init<Geometry2d::Point, float>());
 
-	class_<Geometry2d::CompositeShape>("CompositeShape", init<>())
+	class_<Geometry2d::CompositeShape, bases<Geometry2d::Shape> >("CompositeShape", init<>())
 		.def("clear", &Geometry2d::CompositeShape::clear)
 		.def("is_empty", &Geometry2d::CompositeShape::empty)
 		.def("size", &Geometry2d::CompositeShape::size)
 		.def("add_shape", &CompositeShape_add_shape)
-		.def("contains_point", &Geometry2d::Shape::containsPoint)
+		.def("contains_point", &Geometry2d::CompositeShape::containsPoint)
 	;
 
 	class_<GameState>("GameState")

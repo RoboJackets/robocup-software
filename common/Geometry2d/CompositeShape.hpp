@@ -14,7 +14,7 @@ namespace Geometry2d {
     /**
      * A Geometry2d::CompositeShape is a Shape that is made up of other shapes.
      */
-    class CompositeShape {
+    class CompositeShape : public Shape {
     public:
         CompositeShape(const std::shared_ptr<Shape> shape) {
             _subshapes.push_back(shape);
@@ -25,6 +25,14 @@ namespace Geometry2d {
         virtual ~CompositeShape() {
             clear();
         }
+
+        CompositeShape(const CompositeShape &other) {
+            for (auto itr : other) {
+                _subshapes.push_back(std::shared_ptr<Shape>((*itr).clone()));
+            }
+        }
+
+        Shape *clone() const;
 
         virtual bool containsPoint(const Point &pt) const;
 
@@ -70,6 +78,14 @@ namespace Geometry2d {
             return !hitSet.empty();
         }
 
+        bool hit(const Point &pt, std::set<std::shared_ptr<Shape> > &hitSet) const {
+            return hit<Point>(pt, hitSet);
+        }
+
+        bool hit(const Segment &seg, std::set<std::shared_ptr<Shape> > &hitSet) const {
+            return hit<Segment>(seg, hitSet);
+        }
+
         /**
          * Checks if a given shape is in it
          *
@@ -90,12 +106,12 @@ namespace Geometry2d {
             return false;
         }
 
-        bool hit(const Point &pt, std::set<std::shared_ptr<Shape> > &hitSet) const {
-            return hit<Point>(pt, hitSet);
+        bool hit(const Point &pt) const {
+            return hit<Point>(pt);
         }
 
-        bool hit(const Segment &pt, std::set<std::shared_ptr<Shape> > &hitSet) const {
-            return hit<Segment>(pt, hitSet);
+        bool hit(const Segment &seg) const {
+            return hit<Segment>(seg);
         }
 
 
