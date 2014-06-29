@@ -4,6 +4,7 @@ import constants
 import main
 import enum
 import robocup
+import math
 
 
 # pushes the ball by bumping into it
@@ -46,7 +47,7 @@ class Bump(single_robot_behavior.SingleRobotBehavior):
         # FIXME: this condition was never setup in the C++ one...
         self.add_transition(Bump.State.charge,
             behavior.Behavior.State.completed,
-            lambda: False,
+            lambda: (main.ball().pos - self.robot.pos).mag() < (constants.Robot.Radius + constants.Ball.Radius + 0.03),
             'ball has been bumped')
 
         self.add_transition(Bump.State.charge,
@@ -73,16 +74,16 @@ class Bump(single_robot_behavior.SingleRobotBehavior):
     def execute_lineup(self):
         target_line = self.target_line()
         target_dir = target_line.delta().normalized()
-        behind_line = robocup.Segment(ball().pos - target_dir * (Bump.DriveAroundDist + constants.Robot.Radius),
+        behind_line = robocup.Segment(main.ball().pos - target_dir * (Bump.DriveAroundDist + constants.Robot.Radius),
             main.ball().pos - target_dir * 5.0)
         if target_line.delta().dot(self.robot.pos - main.ball().pos) > -constants.Robot.Radius:
             # we're very close to or in front of the ball
             self.robot.set_avoid_ball_radius(Bump.LineupBallAvoidRadius)
-            self.robot.move_to(ball().pos - target_dir * (Bump.DriveAroundDist + constants.Robot.Radius))
+            self.robot.move_to(main.ball().pos - target_dir * (Bump.DriveAroundDist + constants.Robot.Radius))
         else:
             self.robot.set_avoid_ball_radius(Bump.LineupBallAvoidRadius)
             self.robot.move_to(behind_line.nearest_point(self.robot.pos))
-            main.system_state().draw_line(behind_line, constants.Colors.black, "Bump")
+            main.system_state().draw_line(behind_line, constants.Colors.Black, "Bump")
 
         delta_facing = self.target - main.ball().pos
         self.robot.face(self.robot.pos + delta_facing)
@@ -96,16 +97,16 @@ class Bump(single_robot_behavior.SingleRobotBehavior):
             constants.Colors.White,
             "bump")
 
-        ball2target = (target - main.ball().pos).normalized()
+        ball2target = (self.target - main.ball().pos).normalized()
         drive_dir = (main.ball().pos - ball2target * constants.Robot.Radius) - self.robot.pos
 
         # we want to drive toward the ball without using the path planner
         # we do this by setting the speed directly
         # AccelBias forces us to accelerate a bit more
-        speed = self.robot.vel.mag() + AccelBias
+        speed = self.robot.vel.mag() + Bump.AccelBias
 
         self.robot.set_world_vel(drive_dir.normalized() * speed)
-        self.robot.face(ball().pos)
+        self.robot.face(main.ball().pos)
 
 
     # the Point we're trying to bump the ball towards
