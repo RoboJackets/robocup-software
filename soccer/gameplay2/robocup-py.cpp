@@ -203,6 +203,7 @@ BOOST_PYTHON_MODULE(robocup)
 
 	class_<OurRobot, OurRobot *, std::shared_ptr<OurRobot>, bases<Robot> >("OurRobot", init<int, SystemState*>())
 		.def("move_to", &OurRobot_move_to)
+		.def("set_world_vel", &OurRobot::worldVelocity)
 		.def("face", &OurRobot::face)
 		.def("set_avoid_ball_radius", &OurRobot_set_avoid_ball_radius)
 		.def("avoid_all_teammates", &OurRobot::avoidAllTeammates)
