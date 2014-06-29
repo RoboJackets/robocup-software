@@ -167,3 +167,11 @@ def their_robots():
 def set_their_robots(value):
     global _their_robots
     _their_robots = value
+
+_system_state = None
+def system_state():
+    global _system_state
+    return _system_state
+def set_system_state(value):
+    global _system_state
+    _system_state = value
