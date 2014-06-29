@@ -15,3 +15,5 @@
 # OS X desktop garbage files
 .DS_Store
 
+# Qt Creator
+*.creator.user
