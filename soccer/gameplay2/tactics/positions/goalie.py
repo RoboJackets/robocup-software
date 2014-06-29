@@ -3,6 +3,7 @@ import single_robot_composite_behavior
 import behavior
 import constants
 import evaluation.ball
+import skills
 import main
 import enum
 import math
@@ -127,7 +128,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def on_enter_clear(self):
         # FIXME: what we really want is a less-precise LineKick
         #           this will require a Capture behavior that doesn't wait for the ball to stop
-        kick = pivot_kick.PivotKick()
+        kick = skills.pivot_kick.PivotKick()
         # FIXME: config pivot kick
         # FIXME: enable chipping!
         # FIXME: if the goalie has a fault, resort to bump
