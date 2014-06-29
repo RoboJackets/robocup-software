@@ -1,5 +1,9 @@
 #include <RefereeModule.hpp>
 #include <SystemState.hpp>
+#include <multicast.hpp>
+#include <stdexcept>
+#include <LogUtils.hpp>
+#include <Utils.hpp>
 
 using namespace RefereeCommands;
 
@@ -17,12 +21,47 @@ RefereeModule::RefereeModule(SystemState *state):
 	_counter = -1;
 	_kickDetectState = WaitForReady;
 	_blueTeam = false;
+	_refereeSocket = new QUdpSocket;
+	if(!_refereeSocket->bind(LegacyRefereePort, QUdpSocket::ShareAddress)) {
+		throw std::runtime_error("Can't bind to the referee port.");
+	}
+	multicast_add(_refereeSocket, RefereeAddress);
+}
+
+RefereeModule::~RefereeModule()
+{
+	delete _refereeSocket;
+	_refereeSocket = nullptr;
 }
 
 void RefereeModule::run()
 {
 	QMutexLocker locker(&_mutex);
-	
+
+	// Read incoming packets
+	while(_refereeSocket->hasPendingDatagrams())
+	{
+		unsigned int n = _refereeSocket->pendingDatagramSize();
+		std::string str(6,0);
+		_refereeSocket->readDatagram(&str[0], str.size());
+
+		// Check the size after receiving to discard bad packets
+		if (n != str.size())
+		{
+			printf("Bad referee packet of %d bytes\n", n);
+			continue;
+		}
+
+		// Log the referee packet, but only use it if external referee is enabled
+		// curStatus.lastRefereeTime = timestamp();
+		_state->logFrame->add_raw_referee(str);
+
+		if (UseExternalReferee)
+		{
+			packet(str);
+		}
+	}
+
 	if (_state->ball.valid)
 	{
 		/// Only run the kick detector when the ball is visible
@@ -189,6 +228,7 @@ void RefereeModule::packet(const std::string &packet)
 	
 	_lastPacket = packet;
 	_lastPacketTime = QTime::currentTime();
+	_lastPacketTime_t = timestamp();
 	
 	int cmd = packet[0];
 	uint8_t newCounter = packet[1];
