@@ -74,6 +74,14 @@ boost::python::tuple Line_wrap_pt(Geometry2d::Line *self) {
 	return boost::python::tuple(a);
 }
 
+void State_draw_circle(SystemState *self, const Geometry2d::Point *center, float radius, boost::python::tuple rgb, const std::string &layer) {
+	float r = extract<float>(rgb[0]);
+	float g = extract<float>(rgb[1]);
+	float b = extract<float>(rgb[2]);
+
+	self->drawCircle(*center, radius, QColor(r,g,b), QString::fromStdString(layer));
+}
+
 void State_draw_line(SystemState *self, const Geometry2d::Line *line, boost::python::tuple rgb, const std::string &layer) {
 	float r = extract<float>(rgb[0]);
 	float g = extract<float>(rgb[1]);
@@ -196,7 +204,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def_readonly("timestamp", &SystemState::timestamp)
 
 		//	debug drawing methods
-		.def("draw_circle", &SystemState::drawCircle)
+		.def("draw_circle", &State_draw_circle)
 		.def("draw_path", &SystemState::drawPath)
 		.def("draw_text", &SystemState::drawText)
 		.def("draw_shape", &SystemState::drawShape)
