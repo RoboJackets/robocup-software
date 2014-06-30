@@ -55,6 +55,14 @@ void OurRobot_approach_opponent(OurRobot *self, unsigned shell_id, bool enable_a
 	self->approachOpponent(shell_id, enable_approach);
 }
 
+void OutRobot_add_text(OurRobot *self, const std::string &text, boost::python::tuple rgb, const std::string &layerPrefix) {
+	float r = extract<float>(rgb[0]);
+	float g = extract<float>(rgb[1]);
+	float b = extract<float>(rgb[2]);
+
+	self->addText(QString::fromStdString(text), QColor(r,g,b), QString::fromStdString(layerPrefix));
+}
+
 bool Rect_contains_rect(Geometry2d::Rect *self, Geometry2d::Rect *other) {
 	return self->contains(*other);
 }
@@ -77,6 +85,14 @@ boost::python::tuple Line_wrap_pt(Geometry2d::Line *self) {
 		a.append(self->pt[i]);
 	}
 	return boost::python::tuple(a);
+}
+
+void State_draw_circle(SystemState *self, const Geometry2d::Point *center, float radius, boost::python::tuple rgb, const std::string &layer) {
+	float r = extract<float>(rgb[0]);
+	float g = extract<float>(rgb[1]);
+	float b = extract<float>(rgb[2]);
+
+	self->drawCircle(*center, radius, QColor(r,g,b), QString::fromStdString(layer));
 }
 
 //	returns None or a Geometry2d::Point
@@ -207,7 +223,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("face", &OurRobot::face)
 		.def("set_avoid_ball_radius", &OurRobot_set_avoid_ball_radius)
 		.def("avoid_all_teammates", &OurRobot::avoidAllTeammates)
-		.def("add_text", &OurRobot::addText)
+		.def("add_text", &OutRobot_add_text)
 		.def("approach_opponent", &OurRobot_approach_opponent)
 	;
 
@@ -235,7 +251,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def_readonly("timestamp", &SystemState::timestamp)
 
 		//	debug drawing methods
-		.def("draw_circle", &SystemState::drawCircle)
+		.def("draw_circle", &State_draw_circle)
 		.def("draw_path", &SystemState::drawPath)
 		.def("draw_text", &SystemState::drawText)
 		.def("draw_shape", &SystemState::drawShape)
