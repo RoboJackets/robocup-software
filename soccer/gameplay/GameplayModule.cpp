@@ -352,7 +352,7 @@ void Gameplay::GameplayModule::run()
 
 			getMainModule().attr("set_game_state")(_state->gameState);
 
-			getMainModule().attr("set_system_state")(_state);
+			getMainModule().attr("set_system_state")(&_state);
 
 			getMainModule().attr("set_ball")(_state->ball);
 		} catch (error_already_set) {
