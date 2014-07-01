@@ -153,6 +153,14 @@ public:
         return state == Setup || state == Ready;
     }
     
+    bool inSetupState() const {
+        return state == Setup;
+    }
+
+    bool inReadyState() const {
+        return state == Ready;
+    }
+    
     // One of our robots can kick the ball
     bool canKick() const
     {
