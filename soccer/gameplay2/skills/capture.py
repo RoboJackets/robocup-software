@@ -1,9 +1,20 @@
 import single_robot_behavior
 import behavior
 from enum import Enum
+import main
+import evaluation
+import constants
 
 
 class Capture(single_robot_behavior.SingleRobotBehavior):
+
+    # tunable config values
+    CourseApproachErrorThresh = 0.8
+    CourseApproachDist = 0.11
+    CourseApproachAvoidBall = 0.05
+    DribbleSpeed = 100
+    FineApproachSpeed = 0.4
+
 
     class State(Enum):
         course_approach = 1
@@ -20,11 +31,73 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             Capture.State.course_approach,
             lambda: True,
             'immediately')
+
         self.add_transition(Capture.State.course_approach,
             Capture.State.fine_approach,
-            lambda: True,
+            lambda: self.bot_in_approach_pos(),
             'dist to ball < threshold')
+
         self.add_transition(Capture.State.fine_approach,
             behavior.Behavior.State.completed,
-            lambda: True,
+            lambda: self.robot.has_ball(),
             'has ball')
+
+        self.add_transition(Capture.State.course_approach,
+            Capture.State.fine_approach,
+            lambda: (main.ball().pos - self.robot.pos).mag() > Capture.CourseApproachDist * 1.5,
+            'ball ran away')
+
+
+    def bot_in_approach_pos(self):
+        bot2ball = main.ball().pos - self.robot.pos
+        ball2bot = bot2ball * -1
+        approach_vec = self.approach_vector()
+
+        return (ball2bot.normalized().dot(approach_vec) > Capture.CourseApproachErrorThresh and
+                bot2ball.mag() < Capture.CourseApproachDist * 1.5)
+
+    # normalized vector pointing from the ball to the point the robot should get to in course_aproach
+    def approach_vector(self):
+        if main.ball().vel.mag() > 0.03:
+            # ball's moving, get on the side it's moving towards
+            return main.ball().vel.normalized()
+        else:
+            return (self.robot.pos - main.ball().pos).normalized()
+
+
+    def find_intercept_point(self):
+        approach_vec = self.approach_vector()
+
+        # sample every 5 cm in the -approach_vector direction from the ball
+        pos = None
+        for i in range(50):
+            dist = i * 0.05
+            pos = main.ball().pos + approach_vec * dist
+            ball_time = evaluation.ball.rev_predict(main.ball().vel, dist - Capture.CourseApproachDist) # how long will it take the ball to get there
+            bot_time = (pos - self.robot.pos).mag() * 6 # FIXME: evaluate trapezoid
+
+            # print('bot: ' + str(bot_time) + ';;; ball: ' + str(ball_time))
+
+            if bot_time < ball_time:
+                break
+
+        return pos
+
+
+    def execute_course_approach(self):
+        # don't hit the ball on accident
+        self.robot.set_avoid_ball_radius(Capture.CourseApproachAvoidBall)
+        pos = self.find_intercept_point()
+        self.robot.face(main.ball().pos)
+        if pos != None:
+            main.system_state().draw_circle(pos, constants.Ball.Radius, constants.Colors.White, "Capture")
+            self.robot.move_to(pos)
+
+
+    def execute_fine_approach(self):
+        self.robot.disable_avoid_ball()
+        self.robot.set_dribble_speed(Capture.DribbleSpeed)
+        self.robot.face(main.ball().pos)
+
+        bot2ball = (main.ball().pos - self.robot.pos).normalized()
+        self.robot.set_world_vel(bot2ball * Capture.FineApproachSpeed)

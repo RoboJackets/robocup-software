@@ -16,15 +16,28 @@ def is_in_our_goalie_zone():
         return False
 
 
+FrictionCoefficient = 1 # FIXME: this is a bullshit value
+GravitationalCoefficient = 9.81 # in m/s^2
+
 # The ball's motion follows the equation X(t) = X_i + V_i*t - 0.5*(c*g)*t^2
 def predict(X_i, V_i, t):
-    raise NotImplementedError("The value of the coefficient of rolling friction between the ball and the field hasn't been set")
-    c = 1       # The coefficient of rolling for a golf ball on the field's felt surface
-    g = 9.81    # gravitational coefficient (m/s^2)
-    m = 0.04593 # mass of golf ball (kg)
+    return X_i + (V_i * t) - (0.5 * FrictionCoefficient * GravitationalCoefficient * t**2)
 
-    return X_i + (V_i * t) - (0.5 * c * g * t**2)
 
+def rev_predict(V_i, dist):
+    """predict how much time it will take the ball to travel the given distance"""
+
+    # use the quadratic formula (a^2x + bx + c = 0 -> (-b +/- sqrt(b^2-4ac)) / 2a)
+    a = -0.5 * FrictionCoefficient * GravitationalCoefficient
+    b = V_i.mag()
+    c = -dist
+
+    # we ignore the second solution because it doesn't make sense in this context
+    b4ac = b**2 - 4 * a * c
+    if b4ac > 0:
+        return (-b + math.sqrt(b4ac)) / 2 * a
+    else:
+        return float("inf")
 
 
 # returns a Robot or None indicating which opponent has the ball

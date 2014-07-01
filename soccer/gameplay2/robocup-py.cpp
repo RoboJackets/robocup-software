@@ -2,6 +2,7 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <string>
 #include <sstream>
+#include <iostream>
 
 using namespace boost::python;
 
@@ -223,9 +224,12 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("set_world_vel", &OurRobot::worldVelocity)
 		.def("face", &OurRobot::face)
 		.def("set_avoid_ball_radius", &OurRobot_set_avoid_ball_radius)
+		.def("disable_avoid_ball", &OurRobot::disableAvoidBall)
 		.def("avoid_all_teammates", &OurRobot::avoidAllTeammates)
 		.def("add_text", &OutRobot_add_text)
 		.def("approach_opponent", &OurRobot_approach_opponent)
+		.def("set_dribble_speed", &OurRobot::dribble)
+		.def("has_ball", &OurRobot::hasBall)
 	;
 
 	class_<OpponentRobot, OpponentRobot *, std::shared_ptr<OpponentRobot>, bases<Robot> >("OpponentRobot", init<int>());

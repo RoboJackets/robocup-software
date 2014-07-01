@@ -71,13 +71,14 @@ def init():
                     module = containing_dict[module_path[-1]]
                     module = imp.reload(module)
 
-                    # re-register the new play class
-                    # FIXME: this logic should go inside the play_registry
-                    play_reg_node = _play_registry.node_for_module_path(module_path[1:])
-                    play_reg_node.play_class = class_import.find_subclasses(module, play.Play)[0]
-                    # _play_registry.modelReset.emit()
-
                     logging.info("reloaded module '" + '.'.join(module_path) + "'")
+
+                    if is_play:
+                        # re-register the new play class
+                        # FIXME: this logic should go inside the play_registry
+                        play_reg_node = _play_registry.node_for_module_path(module_path[1:])
+                        play_reg_node.play_class = class_import.find_subclasses(module, play.Play)[0]
+                        # _play_registry.modelReset.emit()
 
                     # kill currently-running stuff if needed
                     if not is_play:
