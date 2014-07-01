@@ -1,6 +1,65 @@
 import single_robot_composite_behavior
+import behavior
 import main
+import enum
+import robocup
+import skills
 
 
 class Penalty(single_robot_composite_behavior.SingleRobotCompositeBehavior):
-    pass
+
+    class State(enum.Enum):
+        waiting = 1
+        setup = 2
+        ready = 3
+
+
+    def __init__(self):
+        super().__init__(continuous=False)
+
+        for substate in Penalty.State:
+            self.add_state(substate, behavior.Behavior.State.running)
+
+        self.add_transition(behavior.Behavior.State.start,
+            Penalty.State.waiting,
+            lambda: True,
+            'immediately')
+
+        self.add_transition(Penalty.State.waiting,
+            Penalty.State.setup,
+            lambda: main.game_state().is_setup_state(),
+            'ref says time to setup')
+
+        for state in [Penalty.State.waiting, Penalty.State.setup]:
+            self.add_transition(state,
+                Penalty.State.ready,
+                lambda: main.game_state().is_ready_state(),
+                'ref says ready')
+
+        self.add_transition(Penalty.State.ready,
+            behavior.Behavior.State.completed,
+            lambda: self.subbehavior_with_name('kick').state == behavior.Behavior.State.completed,
+            'done kicking')
+
+
+    def execute_waiting(self):
+        self.robot.face(main.ball().pos)
+
+
+    def execute_setup(self):
+        penalty_mark = robocup.Point(0, constants.Field.Length - constants.Field.PenaltyDist)
+        backoff = 0.5
+        if main.ball().pos.near_point(penalty_mark, 0.5):
+            self.robot.move_to(main.ball().pos + (main.ball().pos - robocup.Point(0, constants.Field.Length).normalized()) * backoff)
+        else:
+            self.robot.move_to(penalty_mark - robocup.Point(0, backoff))
+
+        self.robot.face(main.ball().pos)
+
+
+    def on_enter_ready(self):
+        kick = skills.kick.Kick()
+        self.add_subbehavior(kick, 'kick', required=True, priority=100)
+
+    def on_exit_ready(self):
+        self.remove_subbehavior('kick')
