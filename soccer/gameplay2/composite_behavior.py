@@ -90,7 +90,7 @@ class CompositeBehavior(behavior.Behavior):
             # indent the subbehavior's description
             indent = '    '
             subdesc = str(bhvr)
-            subdesc = "\n" + indent + re.sub(r'/n', indent, subdesc)
+            subdesc = "\n" + indent + re.sub(r'\n', '\n' + indent, subdesc)
             desc += subdesc
 
         return desc
