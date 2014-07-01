@@ -38,6 +38,4 @@ def setup():
     play_name_label = win.findChild(QtGui.QLabel, 'current_play_name')
     main.root_play().play_changed.connect(play_name_label.setText)
 
-    main.root_play().play = None
-
     _has_setup_ui = True
