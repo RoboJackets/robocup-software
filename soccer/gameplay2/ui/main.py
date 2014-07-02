@@ -31,6 +31,7 @@ def setup():
 
     tabs = win.findChild(QtGui.QTabWidget, 'tabWidget')
     tabs.insertTab(0, pcTab, 'Plays')
+    tabs.setCurrentIndex(0)
 
     logging.debug("Inserted PlayConfigTab at index zero")
 
