@@ -14,6 +14,15 @@ using namespace boost::python;
 #include <protobuf/LogFrame.pb.h>
 
 
+
+/**
+ * NOTES FOR WRAPPER FUNCTIONS/METHODS
+ * 
+ * Keep in mind that pointer parameters will be be nullptr/NULL if the value
+ * from python was None.  Check for this case so that we don't segfault.
+ */
+
+
 //	this is here so boost can work with std::shared_ptr
 template<class T> T * get_pointer( std::shared_ptr<T> const& p) {
 	return p.get();
@@ -88,14 +97,6 @@ boost::python::tuple Line_wrap_pt(Geometry2d::Line *self) {
 	return boost::python::tuple(a);
 }
 
-void State_draw_circle(SystemState *self, const Geometry2d::Point *center, float radius, boost::python::tuple rgb, const std::string &layer) {
-	float r = extract<float>(rgb[0]);
-	float g = extract<float>(rgb[1]);
-	float b = extract<float>(rgb[2]);
-
-	self->drawCircle(*center, radius, QColor(r,g,b), QString::fromStdString(layer));
-}
-
 //	returns None or a Geometry2d::Point
 boost::python::object Line_line_intersection(Geometry2d::Line *self, Geometry2d::Line *other) {
 	Geometry2d::Point pt;
@@ -108,12 +109,21 @@ boost::python::object Line_line_intersection(Geometry2d::Line *self, Geometry2d:
 	}
 };
 
-void State_draw_line(SystemState *self, const Geometry2d::Line *line, boost::python::tuple rgb, const std::string &layer) {
+
+QColor Color_from_tuple(const boost::python::tuple &colorTuple) {
 	float r = extract<float>(rgb[0]);
 	float g = extract<float>(rgb[1]);
 	float b = extract<float>(rgb[2]);
 
-	self->drawLine(*line, QColor(r, g, b), QString::fromStdString(layer));
+	return QColor(r, g, b);
+}
+
+void State_draw_circle(SystemState *self, const Geometry2d::Point *center, float radius, boost::python::tuple rgb, const std::string &layer) {
+	self->drawCircle(*center, radius, Color_from_tuple(rgb), QString::fromStdString(layer));
+}
+
+void State_draw_line(SystemState *self, const Geometry2d::Line *line, boost::python::tuple rgb, const std::string &layer) {
+	self->drawLine(*line, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
 /**
