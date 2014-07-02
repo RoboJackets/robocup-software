@@ -240,6 +240,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("approach_opponent", &OurRobot_approach_opponent)
 		.def("set_dribble_speed", &OurRobot::dribble)
 		.def("has_ball", &OurRobot::hasBall)
+		.def("just_kicked", &OurRobot::justKicked)
 	;
 
 	class_<OpponentRobot, OpponentRobot *, std::shared_ptr<OpponentRobot>, bases<Robot> >("OpponentRobot", init<int>());

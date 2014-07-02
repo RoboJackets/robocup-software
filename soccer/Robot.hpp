@@ -240,6 +240,17 @@ public:
 	 */
 	void faceNone();
 
+
+	/**
+	 * KICKING/CHIPPING
+	 * 
+	 * When we call kick() or chip(), it doesn't happen immediately.
+	 * It primes the kicker or chipper to kick at the designated power the next time
+	 * the bot senses that it has the ball.  Once this happens, we record the time
+	 * of the actual kick.
+	 */
+
+
 	/**
 	 * enable kick when ready at a given strength
 	 */
@@ -249,6 +260,24 @@ public:
 	 * enable chip when ready at a given strength
 	 */
 	void chip(uint8_t strength);
+
+	/**
+	 * @brief Undoes any calls to kick() or chip().
+	 */
+	void unkick()
+	{
+		kick(0);
+		chip(0);
+		radioTx.set_use_chipper(false);
+		radioTx.set_kick_immediate(false);
+	}
+
+	uint64_t lastKickTime() const;
+
+	//	checks if the bot has kicked/chipped very recently.
+	bool justKicked() {
+		return timestamp() - lastKickTime() < 250000;
+	}
 
 	/**
 	 * ignore ball sense and kick immediately
@@ -338,8 +367,6 @@ public:
 	float kickerVoltage() const;
 	Packet::HardwareVersion hardwareVersion() const;
 
-	uint64_t lastKickTime() const;
-
 	/** radio packets */
 	Packet::RadioTx::Robot radioTx;
 
@@ -371,17 +398,6 @@ public:
 	{
 		addText("GO TECH!", QColor(255,0,255), "Sing");
 		radioTx.set_sing(true);
-	}
-
-	/**
-	 * @brief Undoes any calls to kick() or chip().
-	 */
-	void unkick()
-	{
-		kick(0);
-		chip(0);
-		radioTx.set_use_chipper(false);
-		radioTx.set_kick_immediate(false);
 	}
 
 protected:
