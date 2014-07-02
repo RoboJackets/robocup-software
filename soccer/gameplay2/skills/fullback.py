@@ -5,6 +5,7 @@ import robocup
 import evaluation.window_evaluator
 import main
 from enum import Enum
+import math
 
 class Fullback(single_robot_behavior.SingleRobotBehavior):
 
@@ -83,7 +84,7 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 		windows = self._win_eval.eval_pt_to_seg(target, goal_line)[0]
 
 		best = None
-		goalie = main.our_robot_with_id(main.root_play.goalie_id)
+		goalie = main.our_robot_with_id(main.root_play().goalie_id)
 
 		if goalie is not None and self.side is not Fullback.Side.center:
 			for window in windows:
@@ -96,7 +97,7 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 		else:
 			best_dist = 0
 			for window in windows:
-				seg = robocup.Segment(window.segment.center, main.ball().pos)
+				seg = robocup.Segment(window.segment.center(), main.ball().pos)
 				new_dist = seg.dist_to(self.robot.pos)
 				if best is None or new_dist < best_dist:
 					best = window
@@ -115,7 +116,7 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 		if best is not None:
 			winseg = best.segment
 			if main.ball().vel.magsq() > 0.03 and winseg.intersects_seg(shoot_line):
-				self.robot.move(shoot_line.near_point(self.robot.pos))
+				self.robot.move_to(shoot_line.nearest_point(self.robot.pos))
 				self.robot.face_none()
 			else:
 				winsize = winseg.length()
@@ -123,14 +124,14 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 				if winsize < constants.Ball.Radius:
 					need_task = True
 				else:
-					arc = robocup.Circle(robocup.Point(0,0), sefl._defend_goal_radius)
+					arc = robocup.Circle(robocup.Point(0,0), self._defend_goal_radius)
 					shot = robocup.Line(winseg.center(), target)
 					dest = [robocup.Point(0,0), robocup.Point(0,0)]
 
 					intersected, dest[0], dest[1] = shot.intersects_circle(arc)
 
 					if intersected:
-						self.robot.move(dest[0] if dest[0].y > 0 else dest[1])
+						self.robot.move_to(dest[0] if dest[0].y > 0 else dest[1])
 						if self.block_robot is not None:
 							self.robot.face(self.block_robot.pos)
 						else:
@@ -138,12 +139,12 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 					else:
 						need_task = True
 		if need_task:
-			robot.face(main.ball().pos)
+			self.robot.face(main.ball().pos)
 
 		if main.ball().pos.y < constants.Field.Length / 2:
-			robot.dribble(255)
+			self.robot.set_dribble_speed(255)
 
-		backvec = robocup.Point(1,0)
+		backVec = robocup.Point(1,0)
 		backPos = robocup.Point(-constants.Field.Width / 2, 0)
 		shotVec = robocup.Point(main.ball().pos - self.robot.pos)
 		backVecRot = robocup.Point(backVec.perp_ccw())

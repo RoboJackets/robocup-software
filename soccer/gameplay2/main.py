@@ -134,7 +134,7 @@ def play_registry():
 # returns the first robot in our robots with matching ID,
 # or None if no robots have the given ID
 def our_robot_with_id(ID):
-    return next([r for r in _our_robots if r.shell_id is ID], None)
+    return next(iter([r for r in _our_robots if r.shell_id is ID]), None)
 
 # set by the C++ GameplayModule
 ############################################################
