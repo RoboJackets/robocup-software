@@ -18,6 +18,12 @@ class Colors:
 class Robot:
     Radius = 0.09
 
+    class Dribbler:
+        MaxPower = 127
+
+    class Chipper:
+        MaxPower = 255  # FIXME: is this correct?
+
 
 class Ball:
     Radius = 0.0215
@@ -51,13 +57,15 @@ class Field:
     FloorLength = Length + 2.0 * Border;
     FloorWidth = Width + 2.0 * Border;
 
-    # TODO: make these out of rectangles and circles, then we can check if the ball is in there
     OurGoalZoneShape = robocup.CompositeShape()
     OurGoalZoneShape.add_shape(robocup.Circle(robocup.Point(-GoalFlat / 2.0, 0), ArcRadius))
     OurGoalZoneShape.add_shape(robocup.Circle(robocup.Point(GoalFlat / 2.0, 0), ArcRadius))
     OurGoalZoneShape.add_shape(robocup.Rect(robocup.Point(-GoalFlat / 2.0, ArcRadius), robocup.Point(GoalFlat / 2.0, 0)))
 
-    TheirGoalShape = None
+    TheirGoalShape = robocup.CompositeShape()
+    TheirGoalShape.add_shape(robocup.Circle(robocup.Point(-GoalFlat / 2.0, Length), ArcRadius))
+    TheirGoalShape.add_shape(robocup.Circle(robocup.Point(GoalFlat / 2.0, Length), ArcRadius))
+    TheirGoalShape.add_shape(robocup.Rect(robocup.Point(-GoalFlat / 2.0, Length), robocup.Point(GoalFlat / 2.0, Length - ArcRadius)))
 
 
     TheirGoalSegment = robocup.Segment(robocup.Point(GoalWidth / 2.0, Length),
