@@ -1,18 +1,14 @@
 import single_robot_behavior
 import behavior
-import constants
+import skills.aim
+import skills.capture
 import robocup
+import constants
 from enum import Enum
 
 
+# PivotKick drives up to the ball and captures it, then aims at a specified target and kicks/chips
 class PivotKick(single_robot_behavior.SingleRobotBehavior):
-
-    # tunable parameters
-    ################################################################################
-    AimSpeed = 1 # FIXME: bogus value
-    AimThreshold = 1 # FIXME: bogus value
-
-
 
     class State(Enum):
         capturing = 1
@@ -29,51 +25,44 @@ class PivotKick(single_robot_behavior.SingleRobotBehavior):
         self.add_transition(behavior.Behavior.State.start,
             PivotKick.State.capturing,
             lambda: True,
-            'immediate')
+            'immediately')
         self.add_transition(PivotKick.State.capturing,
             PivotKick.State.aiming,
-            lambda: True,
+            lambda: self.subbehavior_with_name('capture').state == behavior.Behavior.State.completed,
             'has ball')
         self.add_transition(PivotKick.State.aiming,
             PivotKick.State.kicking,
-            lambda: True,
-            'aim error < threshold')
+            lambda: self.subbehavior_with_name('aim').state == aim.Aim.State.aimed and self.enable_kick,
+            'aim error < threshold and kick enabled')
         self.add_transition(PivotKick.State.kicking,
             behavior.Behavior.State.completed,
-            lambda: True,
+            lambda: self.robot.just_kicked(),
             'kick complete')
 
         self.add_transition(PivotKick.State.aiming,
             PivotKick.State.capturing,
-            lambda: False,
+            lambda: self.subbehavior_with_name('aim').state == behavior.Behavior.State.failed,
             'fumble')
         self.add_transition(PivotKick.State.kicking,
             PivotKick.State.capturing,
-            lambda: False,
+            lambda: self.subbehavior_with_name('aim').state == behavior.Behavior.State.failed and not self.robot.just_kicked(),
             'fumble')
 
 
         # default parameters
-        self.target_segment = robocup.Segment(robocup.Point(constants.Field.Length, -constants.Field.GoalWidth / 2.0),
-                                                robocup.Point(constants.Field.Length, constants.Field.GoalWidth / 2.0))
+        self.target_segment = constants.Field.TheirGoalSegment
         self.user_chipper = False
-
-        self.kick_power = 255
-        self.dribbler_speed = 50
-
-
-    def execute_capturing(self):
-        pass
-
-    def execute_aiming(self):
-        pass
-
-    def execute_kicking(self):
-        pass
+        self.kick_power = constants.Robot.Kicker.MaxPower
+        self.chip_power = constants.Robot.Chipper.MaxPower
+        self.dribbler_power = constants.Robot.Dribbler.MaxPower
+        self.enable_kick = True
 
 
     # defaults to opponent's goal
+    # NOTE: PivotKick doesn't do windowing or smart shooting at this target
+    #       The parent behavior should set this target smartly (probably based on results from WindowEvaluator)
     # FIXME: does it aim at the center? anywhere?
+    # FIXME: the C++ version had windowing optionally baked in - let's do this too
     @property
     def target_segment(self):
         return self._target_segment
@@ -84,17 +73,19 @@ class PivotKick(single_robot_behavior.SingleRobotBehavior):
 
     # The speed to drive the dribbler at during aiming
     # If high, adds lift to kick
-    # Default: full speed
+    # Default: full power
+    # FIXME: defaulting to full power probably isn't the best - the C++ version sais full power in the header then actually used 50.  maybe use half speed?
     @property
-    def dribbler_speed(self):
-        return self._dribbler_speed
-    @dribbler_speed.setter
-    def dribbler_speed(self, value):
-        self._dribbler_speed = value
+    def dribbler_power(self):
+        return self._dribbler_power
+    @dribbler_power.setter
+    def dribbler_power(self, value):
+        self._dribbler_power = value
 
 
     # If false, uses straight kicker, if true, uses chipper
     # Default: false
+    # FIXME: should we require the robot to use a chipper or just use it if available?
     @property
     def use_chipper(self):
         return self._use_chipper
@@ -103,15 +94,83 @@ class PivotKick(single_robot_behavior.SingleRobotBehavior):
         self._use_chipper = value
 
 
-    # Allows for different kicker settings, such as for
+    # Allows for different kicker/chipper settings, such as for
     # passing with lower power.
-    # Default: 255 - full power
+    # Default: full power
     @property
     def kick_power(self):
         return self._kick_power
     @kick_power.setter
     def kick_power(self, value):
         self._kick_power = value
+    @property
+    def chip_power(self):
+        return self._chip_power
+    @chip_power.setter
+    def chip_power(self, value):
+        self._chip_power = value
+    
 
+
+    # If set to False, will get all ready to go, but won't kick/chip just yet
+    # Can be used to synchronize between behaviors
+    # Defaults to True
+    @property
+    def enable_kick(self):
+        return self._enable_kick
+    @enable_kick.setter
+    def enable_kick(self, value):
+        self._enable_kick = value
+
+
+    def remove_aim_behavior(self):
+        if self.has_subbehavior_with_name('aim'):
+            self.remove_subbehavior_with_name('aim')
+
+
+    def on_enter_capturing(self):
+        self.remove_aim_behavior()
+        self.robot.unkick()
+        capture = skills.capture.Capture()
+        self.add_subbehavior(capture, 'capture', required=True)
+        # FIXME: tell capture to approach from a certain direction so we're already lined up?
+    def on_exit_capturing(self):
+        self.remove_subbehavior('capture')
+
+
+
+    def set_aim_params(self):
+        # TODO: do it
+        pass
+
+    def on_enter_aiming(self):
+        if not self.has_subbehavior_with_name('aim'):
+            aim = skills.aim.Aim()
+            self.add_subbehavior(aim, 'aim', required=True)
+            self.set_aim_params()
+    def execute_aiming(self):
+        self.set_aim_params()
+    def on_exit_aiming(self):
+        # we don't remove the 'aim' subbehavior here because if we're going to the
+        # kicking state, we want to keep it around
+        pass
+
+
+    def execute_kicking(self):
+        if self.use_chipper and self.robot.has_chipper():
+            self.robot.chip(self.chip_power)
+        else:
+            self.robot.kick(self.kick_power)
+
+
+    def on_exit_running(self):
+        self.remove_aim_behavior()
+
+
+    def role_requirements(self):
+        reqs = super().role_requirements()
+        # FIXME: require chipper? prefer chipper?
+        # FIXME: require ball carrying / kicking abilities
+        return reqs
 
 

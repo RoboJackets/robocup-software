@@ -22,7 +22,10 @@ class Robot:
         MaxPower = 127
 
     class Chipper:
-        MaxPower = 255  # FIXME: is this correct?
+        MaxPower = 255
+
+    class Kicker:
+        MaxPower = 255
 
 
 class Ball:
