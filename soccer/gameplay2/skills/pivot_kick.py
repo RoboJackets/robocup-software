@@ -51,7 +51,8 @@ class PivotKick(single_robot_behavior.SingleRobotBehavior):
 
         # default parameters
         self.target_segment = constants.Field.TheirGoalSegment
-        self.user_chipper = False
+        self.use_windowing = True
+        self.use_chipper = False
         self.kick_power = constants.Robot.Kicker.MaxPower
         self.chip_power = constants.Robot.Chipper.MaxPower
         self.dribbler_power = constants.Robot.Dribbler.MaxPower
@@ -61,14 +62,24 @@ class PivotKick(single_robot_behavior.SingleRobotBehavior):
     # defaults to opponent's goal
     # NOTE: PivotKick doesn't do windowing or smart shooting at this target
     #       The parent behavior should set this target smartly (probably based on results from WindowEvaluator)
-    # FIXME: does it aim at the center? anywhere?
-    # FIXME: the C++ version had windowing optionally baked in - let's do this too
+    # if use_windowing is True, chooses the best place to aim along the segment, otherwise aims at the center
     @property
     def target_segment(self):
         return self._target_segment
     @target_segment.setter
     def target_segment(self, value):
         self._target_segment = value
+
+
+    # if True, uses the window evaluator to choose the best place to aim at target_segment
+    # Default: True
+    # FIXME: right now when using windowing, we don't take into account chipping over bots
+    @property
+    def use_windowing(self):
+        return self._use_windowing
+    @use_windowing.setter
+    def use_windowing(self, value):
+        self._use_windowing = value
 
 
     # The speed to drive the dribbler at during aiming
@@ -84,8 +95,7 @@ class PivotKick(single_robot_behavior.SingleRobotBehavior):
 
 
     # If false, uses straight kicker, if true, uses chipper
-    # Default: false
-    # FIXME: should we require the robot to use a chipper or just use it if available?
+    # Default: False
     @property
     def use_chipper(self):
         return self._use_chipper
@@ -140,8 +150,10 @@ class PivotKick(single_robot_behavior.SingleRobotBehavior):
 
 
     def set_aim_params(self):
-        # TODO: do it
-        pass
+        aim = self.subbehavior_with_name('aim')
+        aim.use_windowing = self.use_windowing
+        aim.target = self.target_segment
+
 
     def on_enter_aiming(self):
         if not self.has_subbehavior_with_name('aim'):
@@ -157,6 +169,7 @@ class PivotKick(single_robot_behavior.SingleRobotBehavior):
 
 
     def execute_kicking(self):
+        self.set_aim_params()
         if self.use_chipper and self.robot.has_chipper():
             self.robot.chip(self.chip_power)
         else:
