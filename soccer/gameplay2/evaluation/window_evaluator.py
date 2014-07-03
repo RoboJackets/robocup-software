@@ -138,7 +138,7 @@ class WindowEvaluator:
         return self.eval_pt_to_seg(origin, constants.Field.TheirGoalSegment)
 
 
-    # t0 and t1 are distances from segment.pt[0] along the segment
+    # t0 and t1 are distances from segment.get_pt(0) along the segment
     # we use these to remove windows and pieces of windows that are blocked
     # modifies @windows in place
     def obstacle_range(self, windows, t0, t1):
@@ -186,12 +186,12 @@ class WindowEvaluator:
         extent = [0, end]
 
         for i in range(2):
-            edge = robocup.Line(origin, seg.pt[i])
+            edge = robocup.Line(origin, seg.get_pt(i))
             d = edge.delta().magsq()
 
             intersect = edge.line_intersection(target)
             if intersect != None and (intersect - origin).dot(edge.delta()) > d:
-                t = (intersect - target.pt[0]).dot(target.delta())
+                t = (intersect - target.get_pt(0)).dot(target.delta())
                 if t < 0:
                     extent[i] = 0
                 elif t > end:
@@ -225,20 +225,20 @@ class WindowEvaluator:
                     self.obstacle_robot(windows, origin, target, bot.pos)
 
         # set the segment and angles for each window
-        p0 = target.pt[0]
+        p0 = target.get_pt(0)
         delta = target.delta() / end
 
         for w in windows:
             w.segment = robocup.Segment(p0 + delta * w.t0, p0 + delta * w.t1)
-            w.a0 = (w.segment.pt[0] - origin).angle() * constants.RadiansToDegrees
-            w.a1 = (w.segment.pt[1] - origin).angle() * constants.RadiansToDegrees
+            w.a0 = (w.segment.get_pt(0) - origin).angle() * constants.RadiansToDegrees
+            w.a1 = (w.segment.get_pt(1) - origin).angle() * constants.RadiansToDegrees
 
         best = max(windows, key=lambda w: w.segment.delta().magsq()) if len(windows) > 0 else None
 
         # draw the windows if we're in debug mode
         if self.debug:
             for w in windows:
-                pts = [origin, w.segment.pt[0], w.segment.pt[1]]
+                pts = [origin, w.segment.get_pt(0), w.segment.get_pt(1)]
                 color = QColor(255, 0, 0) if w == best else QColor(0, 255)
                 main.system_state().draw_polygon(pts, 3, color, "Windows")
 

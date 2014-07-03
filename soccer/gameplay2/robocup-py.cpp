@@ -84,20 +84,12 @@ void CompositeShape_add_shape(Geometry2d::CompositeShape *self, Geometry2d::Shap
 	self->add(std::shared_ptr<Geometry2d::Shape>( shape->clone() ));
 }
 
-boost::python::tuple Line_wrap_pt(Geometry2d::Line *self) {
-	boost::python::list a;
-	for (int i = 0; i < 2; i++) {
-		a.append(self->pt[i]);
-	}
-	return boost::python::tuple(a);
+Geometry2d::Point* Line_get_pt(Geometry2d::Line *self, int index) {
+	return &(self->pt[index]);
 }
 
-boost::python::tuple Rect_wrap_pt(Geometry2d::Rect *self) {
-	boost::python::list a;
-	for (int i = 0; i < 2; i++) {
-		a.append(self->pt[i]);
-	}
-	return boost::python::tuple(a);
+Geometry2d::Point* Rect_get_pt(Geometry2d::Rect *self, int index) {
+	return &(self->pt[index]);
 }
 
 bool Segment_intersects_segment(Geometry2d::Segment *self, Geometry2d::Segment *other) {
@@ -148,7 +140,7 @@ void State_draw_line(SystemState *self, const Geometry2d::Line *line, boost::pyt
  */
 BOOST_PYTHON_MODULE(robocup)
 {
-	class_<Geometry2d::Point>("Point", init<float, float>())
+	class_<Geometry2d::Point, Geometry2d::Point*>("Point", init<float, float>())
 		.def(init<const Geometry2d::Point &>())
 		.def_readwrite("x", &Geometry2d::Point::x)
 		.def_readwrite("y", &Geometry2d::Point::y)
@@ -172,11 +164,11 @@ BOOST_PYTHON_MODULE(robocup)
 	;
 
 	class_<Geometry2d::Line, Geometry2d::Line*>("Line", init<Geometry2d::Point, Geometry2d::Point>())
-		.add_property("pt", &Line_wrap_pt)
 		.def("delta", &Geometry2d::Line::delta)
 		.def("line_intersection", &Line_line_intersection)
 		.def("dist_to", &Geometry2d::Line::distTo)
 		.def("intersects_circle", &Line_intersects_circle)
+		.def("get_pt", &Line_get_pt, return_value_policy<reference_existing_object>())
 	;
 
 	class_<Geometry2d::Segment, Geometry2d::Segment*, bases<Geometry2d::Line> >("Segment", init<Geometry2d::Point, Geometry2d::Point>())
@@ -191,7 +183,6 @@ BOOST_PYTHON_MODULE(robocup)
 	;
 
 	class_<Geometry2d::Rect, bases<Geometry2d::Shape> >("Rect", init<Geometry2d::Point, Geometry2d::Point>())
-		.add_property("pt", &Rect_wrap_pt)
 		.def("contains_rect", &Rect_contains_rect)
 		.def("min_x", &Geometry2d::Rect::minx)
 		.def("min_y", &Geometry2d::Rect::miny)
@@ -200,6 +191,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("near_point", &Geometry2d::Rect::nearPoint)
 		.def("intersects_rect", &Geometry2d::Rect::intersects)
 		.def("contains_point", &Geometry2d::Rect::containsPoint)
+		.def("get_pt", &Rect_get_pt, return_value_policy<reference_existing_object>())
 	;
 
 	class_<Geometry2d::Circle, bases<Geometry2d::Shape> >("Circle", init<Geometry2d::Point, float>());
