@@ -153,6 +153,7 @@ class PivotKick(single_robot_behavior.SingleRobotBehavior):
         aim = self.subbehavior_with_name('aim')
         aim.use_windowing = self.use_windowing
         aim.target = self.target_segment
+        aim.dribbler_power = self.dribbler_power
 
 
     def on_enter_aiming(self):
