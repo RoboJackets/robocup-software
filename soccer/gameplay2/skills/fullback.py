@@ -21,8 +21,8 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 	def __init__(self, side):
 		super().__init__(continuous=True)
 		self._block_robot = None
-		self._side = side
 		self._area = None
+		self._side = side
 		self._opponent_avoid_threshold = 2.0
 		self._defend_goal_radius = 0.9
 		self._win_eval = evaluation.window_evaluator.WindowEvaluator()
@@ -30,9 +30,9 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 		self._area = robocup.Rect(robocup.Point(-constants.Field.Width/2.0, constants.Field.Length),
 			robocup.Point(constants.Field.Width/2.0, 0))
 		if self._side is Fullback.Side.right:
-			self._area.pt[0].x = 0
+			self._area.get_pt(0).x = 0
 		if self._side is Fullback.Side.left:
-			self._area.pt[1].x = 0
+			self._area.get_pt(1).x = 0
 
 		self.add_state(Fullback.State.marking, behavior.Behavior.State.running)
 		self.add_state(Fullback.State.area_marking, behavior.Behavior.State.running)
@@ -47,11 +47,12 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 			"if ball not in area and no robot to block")
 		self.add_transition(Fullback.State.area_marking, 
 			Fullback.State.marking,
-			lambda: self._area.contains_point(main.ball().pos) or self.find_robot_to_block is not None,
+			lambda: self._area.contains_point(main.ball().pos) or self.find_robot_to_block() is not None,
 			"if ball or opponent enters my area")
 
 	def execute_marking(self):
 		self.robot.add_text("Marking", (255,255,255), "RobotText")
+		main.system_state().draw_line(robocup.Line(self._area.get_pt(0), self._area.get_pt(1)), (127,0,255), "Fullback")
 		self.block_robot = self.find_robot_to_block()
 		if self.block_robot is not None:
 			self.robot.add_text("Blocking Robot " + str(self.block_robot.shell_id()), (255,255,255), "RobotText")
@@ -155,9 +156,76 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 			else:
 				self.robot.kick(255)
 
-	def exectute_area_marking(self):
+	def execute_area_marking(self):
 		self.robot.add_text("AreaMarking", (255,255,255), "RobotText")
-		# TODO implement
+		if self.robot.pos.near_point(robocup.Point(0,0), self._opponent_avoid_threshold):
+			self.robot.set_avoid_opponents(False)
+		else:
+			self.robot.set_avoid_opponents(True)
+		goal_target = robocup.Point(0, -constants.Field.GoalDepth/2.0)
+		goal_line = robocup.Segment(robocup.Point(-constants.Field.GoalWidth/2.0,0),
+			robocup.Point(constants.Field.GoalWidth/2.0,0))
+
+		if self.side is Fullback.Side.left:
+			goal_line.get_pt(1).x = 0
+			goal_line.get_pt(1).y = 0
+		if self.side is Fullback.Side.right:
+			goal_line.get_pt(0).x = 0
+			goal_line.get_pt(0).y = 0
+
+		for robot in main.system_state().their_robots:
+			self._win_eval.excluded_robots.append(robot)
+
+		if main.root_play().goalie_id is not None:
+			self._win_eval.excluded_robots.append(main.our_robot_with_id(main.root_play().goalie_id))
+
+		# TODO (cpp line 186)
+		# windows = self._win_eval.
+		windows = []
+
+		best = None
+		angle = 0.0
+		for window in windows:
+			if best is None:
+				best = window
+				angle = window.a0 - window.a1
+			elif window.a0 - window.a1 > angle:
+				best = window
+				angle = window.a0 - window.a1
+
+		shootline = robocup.Segment(robocup.Point(0,0), robocup.Point(0,0))
+		if best is not None:
+			angle = (best.a0 + best.a1)/2.0
+			shootline = robocup.Segment(self._win_eval.origin(), robocup.Point.direction(angle * (math.pi / 180.0)))
+			main.system_state().draw_line(shootline, (255,0,0), "Fullback")
+
+		need_task = False
+		if best is not None:
+			winseg = best.segment
+			arc = robocup.Circle(robocup.Point(0,0), self._defend_goal_radius)
+			shot = robocup.Line(shootline.pt[0], shootline.pt[1])
+			dest = [robocup.Point(0,0), robocup.Point(0,0)]
+			intersected, dest[0], dest[1] = shot.intersects_circle(arc)
+			if intersected:
+				self.robot.move_to(dest[0] if dest[0].y > 0 else dest[1])
+			else:
+				need_task = True
+		if need_task:
+			self.robot.face(main.ball().pos)
+
+		if main.ball().pos.y < constants.Field.Length / 2.0:
+			self.robot.set_dribble_speed(255)
+
+		backVec = robocup.Point(1,0)
+		backPos = robocup.Point(-constants.Field.Width / 2, 0)
+		shotVec = robocup.Point(main.ball().pos - self.robot.pos)
+		backVecRot = robocup.Point(backVec.perp_ccw())
+		facing_back_line = ( backVecRot.dot(shotVec) < 0 )
+		if not facing_back_line and self.robot.has_ball():
+			if self.robot.chipper_available():
+				self.robot.chip(255)
+			else:
+				self.robot.kick(255)
 
 	def find_robot_to_block(self):
 		target = None
@@ -180,3 +248,9 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 	@side.setter
 	def side(self, value):
 		self._side = value
+		self._area = robocup.Rect(robocup.Point(-constants.Field.Width/2.0, constants.Field.Length),
+			robocup.Point(constants.Field.Width/2.0, 0))
+		if self._side is Fullback.Side.right:
+			self._area.get_pt(0).x = 0
+		if self._side is Fullback.Side.left:
+			self._area.get_pt(1).x = 0
