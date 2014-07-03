@@ -228,7 +228,7 @@ public:
 	/*
 	 * Enable dribbler (0 to 127)
 	 */
-	void dribble(int8_t speed);
+	void dribble(uint8_t speed);
 
 	/**
 	 * Face a point while remaining in place

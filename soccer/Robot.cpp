@@ -292,7 +292,7 @@ void OurRobot::update() {
 	}
 }
 
-void OurRobot::dribble(int8_t speed)
+void OurRobot::dribble(uint8_t speed)
 {
 	radioTx.set_dribbler(speed);
 }
