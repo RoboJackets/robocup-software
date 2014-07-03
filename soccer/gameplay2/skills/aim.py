@@ -140,8 +140,8 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
             self._shot_point = aim_line.line_intersection(target_line)    # this is the point along target_line that we'll hit if we shoot now
 
         # error
-        if self._aim_target_point not None and self._shot_point not None:
-            self._error = (self._aim_target_point - shot_point).mag() if shot_point not None else float("inf") # distance in meters off that we'll be if we shoot right now
+        if self._aim_target_point != None and self._shot_point != None:
+            self._error = (self._aim_target_point - shot_point).mag() if shot_point != None else float("inf") # distance in meters off that we'll be if we shoot right now
         else:
             self._error = float("inf")
 
@@ -154,13 +154,13 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         self.robot.set_dribbler_speed(self.dribbler_speed)
 
         # draw current shot line
-        if self._shot_point not None:
+        if self._shot_point != None:
             color = constants.Colors.Green if self.is_aimed() else constants.Colors.Red
             main.system_state().draw_line(robocup.Line(self.robot.pos, self._shot_point), color, "Aim")
             main.system_state().draw_circle(self._shot_point, 0.02, color, "Aim")
 
         # draw where we're supposed to be aiming
-        if self._aim_target_point not None:
+        if self._aim_target_point != None:
             main.system_state().draw_circle(self._aim_target_point, 0.02, constants.Colors.Blue, "Aim")
             if isinstance(self.target, robocup.Segment):
                 main.system_state().draw_line(self.target, constants.Colors.Blue, "Aim")
