@@ -186,8 +186,8 @@ void OurRobot::avoidOpponents(bool enable) {
 }
 
 void OurRobot::resetForNextIteration() {
-	if (verbose && visible) cout << "in OurRobot::resetMotionCommand()" << endl;
-	robotText.clear();	//	FIXME: this doesn't belong here, but it was in the previous version of this method
+	if (verbose && visible) cout << "in OurRobot::resetForNextIteration()" << endl;
+	robotText.clear();
 	
 	radioTx.Clear();
 	radioTx.set_robot_id(shell());
@@ -195,6 +195,8 @@ void OurRobot::resetForNextIteration() {
 	radioTx.set_decel(10);
 
 	_local_obstacles.clear();
+	resetMotionConstraints();
+	unkick();
 }
 
 void OurRobot::resetMotionConstraints() {
