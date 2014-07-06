@@ -8,12 +8,20 @@ RadiansToDegrees = 180.0 / math.pi
 
 
 
+
+class Colors:
+    White = (255, 255, 255)
+    Black = (0, 0, 0)
+
+
+
 class Robot:
     Radius = 0.09
 
 
 class Ball:
     Radius = 0.0215
+    Mass = 0.04593 # mass of golf ball (kg)
     
 
 class Field:

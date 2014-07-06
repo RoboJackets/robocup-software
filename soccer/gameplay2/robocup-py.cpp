@@ -2,6 +2,7 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <string>
 #include <sstream>
+#include <iostream>
 
 using namespace boost::python;
 
@@ -55,6 +56,18 @@ void OurRobot_approach_opponent(OurRobot *self, unsigned shell_id, bool enable_a
 	self->approachOpponent(shell_id, enable_approach);
 }
 
+void OurRobot_add_text(OurRobot *self, const std::string &text, boost::python::tuple rgb, const std::string &layerPrefix) {
+	float r = extract<float>(rgb[0]);
+	float g = extract<float>(rgb[1]);
+	float b = extract<float>(rgb[2]);
+
+	self->addText(QString::fromStdString(text), QColor(r,g,b), QString::fromStdString(layerPrefix));
+}
+
+void OurRobot_set_avoid_opponents(OurRobot *self, bool value) {
+	self->avoidOpponents(value);
+}
+
 bool Rect_contains_rect(Geometry2d::Rect *self, Geometry2d::Rect *other) {
 	return self->contains(*other);
 }
@@ -71,12 +84,24 @@ void CompositeShape_add_shape(Geometry2d::CompositeShape *self, Geometry2d::Shap
 	self->add(std::shared_ptr<Geometry2d::Shape>( shape->clone() ));
 }
 
-boost::python::tuple Line_wrap_pt(Geometry2d::Line *self) {
-	boost::python::list a;
-	for (int i = 0; i < 2; i++) {
-		a.append(self->pt[i]);
-	}
-	return boost::python::tuple(a);
+Geometry2d::Point* Line_get_pt(Geometry2d::Line *self, int index) {
+	return &(self->pt[index]);
+}
+
+Geometry2d::Point* Rect_get_pt(Geometry2d::Rect *self, int index) {
+	return &(self->pt[index]);
+}
+
+bool Segment_intersects_segment(Geometry2d::Segment *self, Geometry2d::Segment *other) {
+	return self->intersects(*other);
+}
+
+void State_draw_circle(SystemState *self, const Geometry2d::Point *center, float radius, boost::python::tuple rgb, const std::string &layer) {
+	float r = extract<float>(rgb[0]);
+	float g = extract<float>(rgb[1]);
+	float b = extract<float>(rgb[2]);
+
+	self->drawCircle(*center, radius, QColor(r,g,b), QString::fromStdString(layer));
 }
 
 //	returns None or a Geometry2d::Point
@@ -90,6 +115,16 @@ boost::python::object Line_line_intersection(Geometry2d::Line *self, Geometry2d:
 		return boost::python::object();
 	}
 };
+
+boost::python::tuple Line_intersects_circle(Geometry2d::Line *self, Geometry2d::Circle *circle) {
+	Geometry2d::Point a, b;
+	bool intersects = self->intersects(*circle, &a, &b);
+	boost::python::list lst;
+	lst.append(intersects);
+	lst.append(a);
+	lst.append(b);
+	return boost::python::tuple(lst);
+}
 
 void State_draw_line(SystemState *self, const Geometry2d::Line *line, boost::python::tuple rgb, const std::string &layer) {
 	float r = extract<float>(rgb[0]);
@@ -105,7 +140,7 @@ void State_draw_line(SystemState *self, const Geometry2d::Line *line, boost::pyt
  */
 BOOST_PYTHON_MODULE(robocup)
 {
-	class_<Geometry2d::Point>("Point", init<float, float>())
+	class_<Geometry2d::Point, Geometry2d::Point*>("Point", init<float, float>())
 		.def(init<const Geometry2d::Point &>())
 		.def_readwrite("x", &Geometry2d::Point::x)
 		.def_readwrite("y", &Geometry2d::Point::y)
@@ -123,12 +158,17 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("angle", &Geometry2d::Point::angle)
 		.def("dot", &Geometry2d::Point::dot)
 		.def("near_point", &Geometry2d::Point::nearPoint)
+		.def("dist_to", &Geometry2d::Point::distTo)
+		.def("direction", &Geometry2d::Point::direction)
+		.staticmethod("direction")
 	;
 
 	class_<Geometry2d::Line, Geometry2d::Line*>("Line", init<Geometry2d::Point, Geometry2d::Point>())
-		.add_property("pt", Line_wrap_pt)
 		.def("delta", &Geometry2d::Line::delta)
 		.def("line_intersection", &Line_line_intersection)
+		.def("dist_to", &Geometry2d::Line::distTo)
+		.def("intersects_circle", &Line_intersects_circle)
+		.def("get_pt", &Line_get_pt, return_value_policy<reference_existing_object>())
 	;
 
 	class_<Geometry2d::Segment, Geometry2d::Segment*, bases<Geometry2d::Line> >("Segment", init<Geometry2d::Point, Geometry2d::Point>())
@@ -136,6 +176,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("length", &Geometry2d::Segment::length)
 		.def("dist_to", &Geometry2d::Segment::distTo)
 		.def("nearest_point", &Geometry2d::Segment::nearestPoint)
+		.def("intersects_seg", &Segment_intersects_segment)
 	;
 
 	class_<Geometry2d::Shape, boost::noncopyable>("Shape")
@@ -150,6 +191,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("near_point", &Geometry2d::Rect::nearPoint)
 		.def("intersects_rect", &Geometry2d::Rect::intersects)
 		.def("contains_point", &Geometry2d::Rect::containsPoint)
+		.def("get_pt", &Rect_get_pt, return_value_policy<reference_existing_object>())
 	;
 
 	class_<Geometry2d::Circle, bases<Geometry2d::Shape> >("Circle", init<Geometry2d::Point, float>());
@@ -182,7 +224,8 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("is_their_direct", &GameState::theirDirect)
 		.def("is_their_indirect", &GameState::theirIndirect)
 		.def("is_their_free_kick", &GameState::theirFreeKick)
-		.def("is_setup_restart", &GameState::setupRestart)
+		.def("is_setup_state", &GameState::inSetupState)
+		.def("is_ready_state", &GameState::inReadyState)
 		.def("can_kick", &GameState::canKick)
 		.def("stay_away_from_ball", &GameState::stayAwayFromBall)
 		.def("stay_on_side", &GameState::stayOnSide)
@@ -202,11 +245,19 @@ BOOST_PYTHON_MODULE(robocup)
 
 	class_<OurRobot, OurRobot *, std::shared_ptr<OurRobot>, bases<Robot> >("OurRobot", init<int, SystemState*>())
 		.def("move_to", &OurRobot_move_to)
+		.def("set_world_vel", &OurRobot::worldVelocity)
 		.def("face", &OurRobot::face)
 		.def("set_avoid_ball_radius", &OurRobot_set_avoid_ball_radius)
+		.def("disable_avoid_ball", &OurRobot::disableAvoidBall)
 		.def("avoid_all_teammates", &OurRobot::avoidAllTeammates)
-		.def("add_text", &OurRobot::addText)
+		.def("add_text", &OurRobot_add_text)
 		.def("approach_opponent", &OurRobot_approach_opponent)
+		.def("set_avoid_opponents", &OurRobot_set_avoid_opponents)
+		.def("set_dribble_speed", &OurRobot::dribble)
+		.def("has_ball", &OurRobot::hasBall)
+		.def("chipper_available", &OurRobot::chipper_available)
+		.def("face_none", &OurRobot::faceNone)
+		.def("kick", &OurRobot::kick)
 	;
 
 	class_<OpponentRobot, OpponentRobot *, std::shared_ptr<OpponentRobot>, bases<Robot> >("OpponentRobot", init<int>());
@@ -233,7 +284,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def_readonly("timestamp", &SystemState::timestamp)
 
 		//	debug drawing methods
-		.def("draw_circle", &SystemState::drawCircle)
+		.def("draw_circle", &State_draw_circle)
 		.def("draw_path", &SystemState::drawPath)
 		.def("draw_text", &SystemState::drawText)
 		.def("draw_shape", &SystemState::drawShape)
