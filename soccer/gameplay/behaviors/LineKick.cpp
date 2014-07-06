@@ -167,6 +167,12 @@ bool Gameplay::Behaviors::LineKick::run()
 
 		// Drive directly into the ball
 		double speed = min(robot->vel.mag() + *_accel_bias, _max_speed->value()); // enough of a bias to force it to accelerate
+		
+
+
+
+
+
 		robot->worldVelocity(driveDirection.normalized() * speed);
 
 		robot->face(target);

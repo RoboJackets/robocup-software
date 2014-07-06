@@ -203,7 +203,7 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 		if best is not None:
 			winseg = best.segment
 			arc = robocup.Circle(robocup.Point(0,0), self._defend_goal_radius)
-			shot = robocup.Line(shootline.pt[0], shootline.pt[1])
+			shot = robocup.Line(shootline.get_pt(0), shootline.get_pt(1))
 			dest = [robocup.Point(0,0), robocup.Point(0,0)]
 			intersected, dest[0], dest[1] = shot.intersects_circle(arc)
 			if intersected:

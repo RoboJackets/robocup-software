@@ -18,7 +18,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
 
 
     def __init__(self):
-        super().__init__(continuous=False)
+        super().__init__()
         self.add_state(PivotKick.State.capturing, behavior.Behavior.State.running)
         self.add_state(PivotKick.State.aiming, behavior.Behavior.State.running)
         self.add_state(PivotKick.State.kicking, behavior.Behavior.State.running)

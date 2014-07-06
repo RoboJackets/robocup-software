@@ -28,7 +28,7 @@ class LineKick(skills._kick._Kick):
 
 
     def __init__(self):
-        super().__init__(continuous=False)
+        super().__init__()
         self.target_point = constants.Field.TheirGoalSegment.center()
 
         for state in LineKick.State:
@@ -90,10 +90,15 @@ class LineKick(skills._kick._Kick):
         main.system_state().draw_line(robocup.Line(self.robot.pos, self.target_point), constants.Colors.White, "LineKick")
         main.system_state().draw_line(robocup.Line(main.ball().pos, self.target_point), constants.Colors.White, "LineKick")
 
+        # drive directly into the ball
         ball2target = (self.target_point - main.ball().pos).normalized()
         robot2ball = (main.ball().pos, self.robot.pos).normalized()
-        drive_dir = robot2ball
-
-        # drive directly into the ball
         speed = min(self.robot.vel.mag() + LineKick.AccelBias, MaxChargeSpeed)
-        self.robot.set_world_vel(# TODO)
+        self.robot.set_world_vel(robot2ball.normalized() * speed)
+        
+        self.robot.face(self.target_point)
+
+        if self.use_chipper:
+            self.robot.chip(self.chip_power)
+        else:
+            self.kick(self.kick_power)

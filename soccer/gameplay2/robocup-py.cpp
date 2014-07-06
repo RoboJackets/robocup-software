@@ -28,6 +28,14 @@ template<class T> T * get_pointer( std::shared_ptr<T> const& p) {
 	return p.get();
 }
 
+QColor Color_from_tuple(const boost::python::tuple &rgb) {
+	float r = extract<float>(rgb[0]);
+	float g = extract<float>(rgb[1]);
+	float b = extract<float>(rgb[2]);
+
+	return QColor(r, g, b);
+}
+
 std::string Point_repr(Geometry2d::Point *self) {
 	std::ostringstream ss;
 	ss << "Point(";
@@ -66,11 +74,7 @@ void OurRobot_approach_opponent(OurRobot *self, unsigned shell_id, bool enable_a
 }
 
 void OurRobot_add_text(OurRobot *self, const std::string &text, boost::python::tuple rgb, const std::string &layerPrefix) {
-	float r = extract<float>(rgb[0]);
-	float g = extract<float>(rgb[1]);
-	float b = extract<float>(rgb[2]);
-
-	self->addText(QString::fromStdString(text), QColor(r,g,b), QString::fromStdString(layerPrefix));
+	self->addText(QString::fromStdString(text), Color_from_tuple(rgb), QString::fromStdString(layerPrefix));
 }
 
 void OurRobot_set_avoid_opponents(OurRobot *self, bool value) {
@@ -125,14 +129,6 @@ boost::python::tuple Line_intersects_circle(Geometry2d::Line *self, Geometry2d::
 	lst.append(a);
 	lst.append(b);
 	return boost::python::tuple(lst);
-}
-
-QColor Color_from_tuple(const boost::python::tuple &colorTuple) {
-	float r = extract<float>(rgb[0]);
-	float g = extract<float>(rgb[1]);
-	float b = extract<float>(rgb[2]);
-
-	return QColor(r, g, b);
 }
 
 void State_draw_circle(SystemState *self, const Geometry2d::Point *center, float radius, boost::python::tuple rgb, const std::string &layer) {
