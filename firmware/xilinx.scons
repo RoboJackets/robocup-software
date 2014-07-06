@@ -45,7 +45,6 @@ if xilinx_versions:
 	import platform
 	machine = platform.machine()
 	if machine == 'x86_64':
-                # FIXME - Should be lin64, but the 64-bit tools crash on Ubuntu 11.04.
 		platform_dir = 'lin64'
 	elif machine == 'x86':
 		platform_dir = 'lin'
