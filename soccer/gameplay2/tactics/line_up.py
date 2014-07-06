@@ -30,11 +30,11 @@ class LineUp(composite_behavior.CompositeBehavior):
                 robocup.Point(-constants.Field.Width/2 + constants.Robot.Radius, constants.Robot.Radius),
                 robocup.Point(-constants.Field.Width/2 + constants.Robot.Radius, (constants.Robot.Radius * 2 + 0.1)*6))
 
-        self.diff = (self._line.pt[1] - self._line.pt[0]).normalized() * ( self._line.length() / 6.0)
+        self.diff = (self._line.get_pt(1) - self._line.get_pt(0)).normalized() * ( self._line.length() / 6.0)
 
         # add subbehaviors for all robots, instructing them to line up
         for i in range(6):
-            pt = self._line.pt[0] + ( self.diff * float(i)  )
+            pt = self._line.get_pt(0) + ( self.diff * float(i)  )
             self.add_subbehavior(skills.move.Move(pt),
                 name="robot" + str(i),
                 required=False,
@@ -45,7 +45,7 @@ class LineUp(composite_behavior.CompositeBehavior):
 
     def execute_running(self):
         for i in range(6):
-            pt = self._line.pt[0] + ( self.diff * float(i) )
+            pt = self._line.get_pt(0) + ( self.diff * float(i) )
             self.subbehavior_with_name("robot" + str(i)).pos = pt
 
     @property
@@ -54,4 +54,4 @@ class LineUp(composite_behavior.CompositeBehavior):
     @line.setter
     def line(self, value):
         self._line = value
-        self.diff = (self._line.pt[1] - self._line.pt[0]).normalized() * ( self._line.length() / 6.0)
+        self.diff = (self._line.get_pt(1) - self._line.get_pt(0)).normalized() * ( self._line.length() / 6.0)

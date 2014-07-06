@@ -1,5 +1,6 @@
 import single_robot_behavior
 import behavior
+import constants
 import enum
 
 
@@ -165,7 +166,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
             if isinstance(self.target, robocup.Segment):
                 main.system_state().draw_line(self.target, constants.Colors.Blue, "Aim")
                 for i in range(2):
-                    main.system_state().draw_line(robocup.Line(self.robot.pos, self.target.pt[i]), constants.Colors.Blue, "Aim")
+                    main.system_state().draw_line(robocup.Line(self.robot.pos, self.target.get_pt()[i]), constants.Colors.Blue, "Aim")
 
 
     def __str__(self):
