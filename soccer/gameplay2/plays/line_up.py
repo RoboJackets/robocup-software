@@ -24,8 +24,9 @@ class LineUp(play.Play):
             'robots arent lined up')
 
         x = -(constants.Field.Width/2 - constants.Robot.Radius)
+        y_start = 0.2
         line = robocup.Segment(
-                robocup.Point(x, constants.Robot.Radius),
-                robocup.Point(x, (constants.Robot.Radius * 2 + 0.1)*6))
+                robocup.Point(x, constants.Robot.Radius + y_start),
+                robocup.Point(x, (constants.Robot.Radius * 2 + 0.1)*6 + y_start))
         l = tactics.line_up.LineUp(line)
         self.add_subbehavior(l, name="LineUp", required=True)
