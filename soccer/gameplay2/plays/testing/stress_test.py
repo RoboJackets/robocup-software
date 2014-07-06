@@ -3,6 +3,7 @@ import skills
 import robocup
 import behavior
 import constants
+import main
 
 
 # Makes a robot continually run laps
@@ -33,6 +34,11 @@ class StressTest(play.Play):
 
 
     def execute_running(self):
+        # draw laps
+        # indices = list(range(len(self.points))) + [0]
+        # for i in range(len(indices)):
+        main.system_state().draw_line(robocup.Line(self.points[0], self.points[1]), (255,0,0), "StressTest")
+
         m = self.subbehavior_with_name('move')
         if m.state == behavior.Behavior.State.completed:
             # increment index
