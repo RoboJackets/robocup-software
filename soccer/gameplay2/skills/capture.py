@@ -42,9 +42,9 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             lambda: self.robot.has_ball(),
             'has ball')
 
-        self.add_transition(Capture.State.course_approach,
-            Capture.State.fine_approach,
-            lambda: (main.ball().pos - self.robot.pos).mag() > Capture.CourseApproachDist * 1.5,
+        self.add_transition(Capture.State.fine_approach,
+            Capture.State.course_approach,
+            lambda: main.ball().pos.dist_to(self.robot.pos) > Capture.CourseApproachDist * 1.5,
             'ball ran away')
 
 
