@@ -7,7 +7,6 @@ import robocup
 
 
 # this test repeatedly runs the capture behavior
-# it gets SetupDistFromBall away from the ball, then runs the capture behavior.  This repeats forever
 class TestCapture(play.Play):
 
     class State(enum.Enum):
@@ -27,24 +26,24 @@ class TestCapture(play.Play):
 
         self.add_transition(TestCapture.State.setup,
             TestCapture.State.capturing,
-            lambda: self.sub_behavior.behavior_state == behavior.Behavior.State.completed,
+            lambda: self.subbehavior_with_name('move').state == behavior.Behavior.State.completed,
             'robot away from ball')
 
-        # self.add_transition(TestCapture.State.capturing,
-        #     TestCapture.State.setup,
-        #     lambda: self.sub_behavior.behavior_state == behavior.Behavior.State.completed,
-        #     'successful capture')
+        self.add_transition(TestCapture.State.capturing,
+            TestCapture.State.setup,
+            lambda: self.subbehavior_with_name('capture').state == behavior.Behavior.State.completed,
+            'successful capture')
 
 
     def on_enter_capturing(self):
-        self.add_subbehavior(skills.capture.Capture(), name='capture', required=True)
+        self.add_subbehavior(skills.capture.Capture(), 'capture', required=True)
     def on_exit_capturing(self):
         self.remove_subbehavior('capture')
 
 
     def on_enter_setup(self):
         m = skills.move.Move()
-        m.pos = robocup.Point(0, 0)
-        self.add_subbehavior(m, name='move', required=True)
+        m.pos = robocup.Point(0, 1.1)
+        self.add_subbehavior(m, 'move', required=True)
     def on_exit_setup(self):
         self.remove_subbehavior('move')

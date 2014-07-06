@@ -136,7 +136,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	            Py_file_input,
 	            _mainPyNamespace.ptr(),
 	            _mainPyNamespace.ptr())));
-        } PyEval_ReleaseLock();
+        } PyThreadState* st = PyEval_SaveThread(); //PyEval_ReleaseLock();
     } catch (error_already_set) {
         PyErr_Print();
         throw new runtime_error("Unable to initialize embedded python interpreter");
@@ -352,7 +352,7 @@ void Gameplay::GameplayModule::run()
 
 			getMainModule().attr("set_game_state")(_state->gameState);
 
-			getMainModule().attr("set_system_state")(_state);
+			getMainModule().attr("set_system_state")(&_state);
 
 			getMainModule().attr("set_ball")(_state->ball);
 		} catch (error_already_set) {
