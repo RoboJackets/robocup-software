@@ -7,10 +7,15 @@ import constants
 
 class LineUp(composite_behavior.CompositeBehavior):
 
+    y_start = 0.15  # sometimes we have issues if we're right in the corner, so we move it up a bit
+    DefaultLine = robocup.Segment(
+        robocup.Point(-constants.Field.Width/2 + constants.Robot.Radius, constants.Robot.Radius + y_start),
+        robocup.Point(-constants.Field.Width/2 + constants.Robot.Radius, (constants.Robot.Radius * 2 + 0.1 + y_start)*6))
+
     def __init__(self, line=None):
         super().__init__(continuous=False)
 
-        self._line = line
+        self.line = line if line != None else LineUp.DefaultLine
 
         self.add_transition(behavior.Behavior.State.start,
             behavior.Behavior.State.running,
@@ -24,13 +29,6 @@ class LineUp(composite_behavior.CompositeBehavior):
             behavior.Behavior.State.running,
             lambda: not self.all_subbehaviors_completed(),
             'robots arent lined up')
-
-        if self._line is None:
-            self._line = robocup.Segment(
-                robocup.Point(-constants.Field.Width/2 + constants.Robot.Radius, constants.Robot.Radius),
-                robocup.Point(-constants.Field.Width/2 + constants.Robot.Radius, (constants.Robot.Radius * 2 + 0.1)*6))
-
-        self.diff = (self._line.get_pt(1) - self._line.get_pt(0)).normalized() * ( self._line.length() / 6.0)
 
         # add subbehaviors for all robots, instructing them to line up
         for i in range(6):
