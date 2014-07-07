@@ -82,6 +82,8 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	Robot(shell, true),
 	_state(state)
 {
+	_cmdText = new std::stringstream();
+
 	resetAvoidBall();
 	_lastChargedTime = 0;
 	_lastKickerStatus = 0;
@@ -99,6 +101,7 @@ OurRobot::OurRobot(int shell, SystemState *state):
 		_opp_avoid_mask[i] = Opp_Avoid_Large;
 	}
 
+	_clearCmdText();
 }
 
 /**
@@ -108,6 +111,7 @@ OurRobot::~OurRobot()
 {
 	if (_motionControl) delete _motionControl;
 	if (_planner) delete _planner;
+	delete _cmdText;
 }
 
 void OurRobot::addStatusText()
@@ -201,10 +205,21 @@ void OurRobot::avoidOpponents(bool enable) {
 			a = -1.0;
 }
 
+std::string OurRobot::getCmdText() const {
+	return _cmdText->str();
+}
+
+void OurRobot::_clearCmdText() {
+	_cmdText->str("");
+	_cmdText->clear();
+}
+
 void OurRobot::resetForNextIteration() {
-	if (verbose && visible) cout << "in OurRobot::resetForNextIteration()" << endl;
+	if (verbose && visible) cout << "in OurRobot::resetForNextIteration()" << std::endl;
 	robotText.clear();
-	
+
+	_clearCmdText();
+
 	radioTx.Clear();
 	radioTx.set_robot_id(shell());
 	radioTx.set_accel(10);
@@ -216,7 +231,7 @@ void OurRobot::resetForNextIteration() {
 
 	_local_obstacles.clear();
 	resetMotionConstraints();
-	unkick();
+	_unkick();
 }
 
 void OurRobot::resetMotionConstraints() {
@@ -225,6 +240,8 @@ void OurRobot::resetMotionConstraints() {
 
 void OurRobot::stop() {
 	resetMotionConstraints();
+
+	*_cmdText << "stop()\n";
 }
 
 void OurRobot::move(const Geometry2d::Point &goal, float endSpeed)
@@ -233,7 +250,7 @@ void OurRobot::move(const Geometry2d::Point &goal, float endSpeed)
 		return;
 
 	// sets flags for future movement
-	if (verbose) cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", " << goal.y << ")" << endl;
+	if (verbose) cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", " << goal.y << ")" << std::endl;
 	addText(QString("move:(%1, %2)").arg(goal.x).arg(goal.y));
 	
 	_motionConstraints.targetPos = goal;
@@ -253,6 +270,11 @@ void OurRobot::move(const Geometry2d::Point &goal, float endSpeed)
 	// 	_motionConstraints.targetPos = goal;
 	// 	_pathInvalidated = true;
 	// }
+
+	*_cmdText << "move(" << goal.x << ", " << goal.y << ")\n";
+	if (endSpeed != 0) {
+		*_cmdText << "setEndSpeed(" << endSpeed << ")\n";
+	}
 }
 
 void OurRobot::worldVelocity(const Geometry2d::Point& v)
@@ -261,6 +283,8 @@ void OurRobot::worldVelocity(const Geometry2d::Point& v)
 	_motionConstraints.targetWorldVel = v;
 
 	_path.reset();
+
+	*_cmdText << "worldVel(" << v.x << ", " << v.y << ")\n";
 }
 
 Geometry2d::Point OurRobot::pointInRobotSpace(const Geometry2d::Point& pt) const {
@@ -290,33 +314,65 @@ float OurRobot::kickTimer() const {
 void OurRobot::dribble(uint8_t speed)
 {
 	radioTx.set_dribbler(speed);
+
+	*_cmdText << "dribble(" << (float)speed << ")\n";
 }
 
 void OurRobot::face(const Geometry2d::Point &pt)
 {
 	_motionConstraints.faceTarget = pt;
+
+	*_cmdText << "face(" << pt.x << ", " << pt.y << ")\n";
 }
 
 void OurRobot::faceNone()
 {
 	_motionConstraints.faceTarget = boost::none;
+
+	*_cmdText << "faceNone()\n";
 }
 
 void OurRobot::kick(uint8_t strength)
 {
+	_kick(strength);
+
+	*_cmdText << "kick(" << (float)strength << ")\n";
+}
+
+void OurRobot::chip(uint8_t strength)
+{
+	_chip(strength);
+
+	*_cmdText << "chip(" << (float)strength << ")\n";
+}
+
+void OurRobot::_kick(uint8_t strength) {
 	uint8_t max = *config->kicker.maxKick;
 	radioTx.set_kick(strength > max ? max : strength);
 	radioTx.set_use_chipper(false);
 }
 
-void OurRobot::chip(uint8_t strength)
-{
+void OurRobot::_chip(uint8_t strength) {
 	uint8_t max = *config->kicker.maxChip;
 	radioTx.set_kick(strength > max ? max : strength);
 	radioTx.set_use_chipper(true);
 }
 
-void OurRobot::immediate(bool im)
+void OurRobot::_unkick() {
+	_kick(0);
+	_chip(0);
+	radioTx.set_use_chipper(false);
+	radioTx.set_kick_immediate(false);
+}
+
+void OurRobot::unkick()
+{
+	_unkick();
+
+	*_cmdText << "unkick()\n";
+}
+
+void OurRobot::kickImmediately(bool im)
 {
 	radioTx.set_kick_immediate(im);
 }
@@ -391,11 +447,13 @@ float OurRobot::avoidTeammateRadius(unsigned shell_id) const {
 #pragma mark Ball Avoidance
 
 void OurRobot::disableAvoidBall() {
-	_avoidBallRadius = -1.0;
+	avoidBallRadius(-1);
 }
 
 void OurRobot::avoidBallRadius(float radius) {
 	_avoidBallRadius = radius;
+
+	*_cmdText << "avoidBall(" << radius << ")\n";
 }
 
 float OurRobot::avoidBallRadius() const {
@@ -447,7 +505,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 	// if motion command complete or we are using a different planner - we're done
 	if (!_motionConstraints.targetPos) {
-		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: no move target" << endl;
+		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: no move target" << std::endl;
 		return;
 	}
 
@@ -470,7 +528,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 	// if no goal command robot to stop in place
 	if (!_motionConstraints.targetPos) {
-		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: stopped" << endl;
+		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: stopped" << std::endl;
 		addText(QString("replan: no goal"));
 		setPath(Planning::Path(pos));
 		_state->drawPath(*_path);
@@ -526,7 +584,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		addText("Reusing path");
 	} else {
 		// use the newly generated path
-		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: using new RRT path" << endl;
+		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: using new RRT path" << std::endl;
 		
 		//	try a straight line path first
 		Geometry2d::Segment straight_seg(pos, *_motionConstraints.targetPos);
@@ -637,13 +695,9 @@ bool OurRobot::rxIsFresh(uint64_t age) const
 	return (timestamp() - _radioRx.timestamp()) < age;
 }
 
-
-
-
 uint64_t OurRobot::lastKickTime() const {
 	return _lastKickTime;
 }
-
 
 void OurRobot::setRadioRx(Packet::RadioRx rx) {
 	_radioRx = rx;

@@ -1,5 +1,6 @@
 import behavior
 import role_assignment
+import re
 
 
 class SingleRobotBehavior(behavior.Behavior):
@@ -38,4 +39,12 @@ class SingleRobotBehavior(behavior.Behavior):
 
 
     def __str__(self):
-        return super().__str__() + "[robot=" + (str(self.robot.shell_id()) if self.robot != None else "None") + "]"
+        desc = super().__str__()
+        desc += "[robot=" + (str(self.robot.shell_id()) if self.robot != None else "None") + "]"
+        if self.robot != None:
+            indent = '    '
+            cmd_text = self.robot.get_cmd_text()[:-1]
+            if len(cmd_text) > 0:
+                cmd_text = re.sub(r'\n', '\n' + indent, '\n' + cmd_text)
+            desc += cmd_text
+        return desc
