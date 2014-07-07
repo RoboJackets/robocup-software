@@ -264,6 +264,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("chipper_available", &OurRobot::chipper_available)
 		.def("face_none", &OurRobot::faceNone)
 		.def("kick", &OurRobot::kick)
+		.def("get_cmd_text", &OurRobot::getCmdText)
 	;
 
 	class_<OpponentRobot, OpponentRobot *, std::shared_ptr<OpponentRobot>, bases<Robot> >("OpponentRobot", init<int>());

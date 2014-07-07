@@ -270,13 +270,7 @@ public:
 	/**
 	 * @brief Undoes any calls to kick() or chip().
 	 */
-	void unkick()
-	{
-		kick(0);
-		chip(0);
-		radioTx.set_use_chipper(false);
-		radioTx.set_kick_immediate(false);
-	}
+	void unkick();
 
 	uint64_t lastKickTime() const;
 
@@ -285,10 +279,17 @@ public:
 		return timestamp() - lastKickTime() < 250000;
 	}
 
+
+	/**
+	 * Gets a string representing the series of commands called on the robot this iteration.
+	 * Contains face(), move(), etc - used to display in the BehaviorTree tab in soccer
+	 */
+	std::string getCmdText() const;
+
 	/**
 	 * ignore ball sense and kick immediately
 	 */
-	void immediate(bool im);
+	void kickImmediately(bool im);
 
 	boost::ptr_vector<Packet::DebugText> robotText;
 
@@ -451,11 +452,24 @@ protected:
 
 
 private:
+	void _kick(uint8_t strength);
+	void _chip(uint8_t strength);
+	void _unkick();
+
 	uint32_t _lastKickerStatus;
 	uint64_t _lastKickTime;
 	uint64_t _lastChargedTime;
 
 	Packet::RadioRx _radioRx;
+
+	/**
+	 * We build a string of commands such as face(), move(), etc at each iteration
+	 * Then display this in the BehaviorTree tab in soccer
+	 */
+	//	note: originally this was not a pointer, but I got weird errors about a deleted copy constructor...
+	std::stringstream *_cmdText;
+
+	void _clearCmdText();
 };
 
 /**
