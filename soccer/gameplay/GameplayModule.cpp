@@ -318,7 +318,6 @@ void Gameplay::GameplayModule::run()
 	BOOST_FOREACH(OurRobot* robot, _state->self)
 	{
 		if (robot) {
-			robot->update();
 			robot->resetForNextIteration();
 		}
 	}
