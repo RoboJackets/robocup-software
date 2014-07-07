@@ -115,6 +115,8 @@ private:
  */
 struct MotionConstraints {
 
+	MotionConstraints();
+
 	/**
 	 * Position
 	 */
@@ -134,6 +136,21 @@ struct MotionConstraints {
 
 	///	A global point on the field that the robot should face towards
 	boost::optional<Geometry2d::Point> faceTarget;
+
+	///	The speed we should be going when we reach the end of the path
+	float endSpeed = 0;
+
+	/**
+	 * Each instance has a set of speed/acceleration limits that are used for path following
+	 * They default to the global config values defined below, but can be overridden by setting these.
+	 * This is useful for going slower while carrying the ball or when trying to do precise movements.
+	 */
+	float maxSpeed;
+	float maxAcceleration;
+
+	static void createConfiguration(Configuration *cfg);
+	static ConfigDouble *_max_acceleration;
+	static ConfigDouble *_max_speed;
 };
 
 /**
@@ -196,12 +213,6 @@ public:
 		return _path;
 	}
 
-	//  FIXME: document
-	void setPath(Planning::Path path);
-
-	//	FIXME: document
-	void setMotionConstraints(const MotionConstraints &constraints);
-
 	///	clears old radioTx stuff, resets robot debug text, and clears local obstacles
 	void resetForNextIteration();
 
@@ -213,9 +224,9 @@ public:
 
 	/**
 	 * @brief Move to a given point using the default RRT planner
-	 * @param stopAtEnd UNUSED
+	 * @param endSpeed - the speed we should be going when we reach the end of the path
 	 */
-	void move(const Geometry2d::Point &goal, bool stopAtEnd = false);
+	void move(const Geometry2d::Point &goal, float endSpeed = 0);
 
 	uint64_t pathStartTime() const {
 		return _pathStartTime;
@@ -346,12 +357,9 @@ public:
 	// gameplay interface - interface for delayed update/planning
 
 	/**
-	 * Executes last motion command, retrieves the necessary set of
-	 * obstacles, and performs planning
-	 *
-	 * Needs a set of global obstacles to use - assuming field regions and goal
+	 * Replans the path if needed.
+	 * Sets some parameters on the path.
 	 */
-	//	FIXME: rewrite comment to describe new behavior
 	void replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles);
 
 
@@ -414,6 +422,9 @@ protected:
 	MotionConstraints _motionConstraints;
 
 	Planning::RRTPlanner *_planner;	/// single-robot RRT planner
+
+	void setPath(Planning::Path path);
+
 	boost::optional<Planning::Path> _path;	/// latest path
 	uint64_t _pathStartTime;
 

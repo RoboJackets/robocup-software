@@ -54,7 +54,25 @@ Robot::Robot(unsigned int shell, bool self)
 Robot::~Robot()
 {
 	delete _filter;
-	_filter = 0;
+	_filter = nullptr;
+}
+
+
+#pragma mark MotionConstraints
+
+REGISTER_CONFIGURABLE(MotionConstraints);
+
+ConfigDouble *MotionConstraints::_max_acceleration;
+ConfigDouble *MotionConstraints::_max_speed;
+
+void MotionConstraints::createConfiguration(Configuration *cfg) {
+    _max_acceleration   = new ConfigDouble(cfg, "MotionConstraints/Max Acceleration", 1);
+    _max_speed          = new ConfigDouble(cfg, "MotionConstraints/Max Velocity", 2.0);
+}
+
+MotionConstraints::MotionConstraints() {
+	maxSpeed = *_max_speed;
+	maxAcceleration = *_max_acceleration;
 }
 
 
@@ -205,7 +223,7 @@ void OurRobot::stop() {
 	resetMotionConstraints();
 }
 
-void OurRobot::move(const Geometry2d::Point &goal, bool stopAtEnd)
+void OurRobot::move(const Geometry2d::Point &goal, float endSpeed)
 {
 	if (!visible)
 		return;
@@ -215,6 +233,7 @@ void OurRobot::move(const Geometry2d::Point &goal, bool stopAtEnd)
 	addText(QString("move:(%1, %2)").arg(goal.x).arg(goal.y));
 	
 	_motionConstraints.targetPos = goal;
+	_motionConstraints.endSpeed = endSpeed;
 
 	// //	only invalidate path if move() is being called with a new goal or one wasn't set previously
 	// if (!_motionConstraints.targetPos || !_motionConstraints.targetPos->nearPoint(goal, 0.02)) {
@@ -232,24 +251,6 @@ void OurRobot::move(const Geometry2d::Point &goal, bool stopAtEnd)
 	// }
 }
 
-// void OurRobot::pivot(double w, double radius)
-// {
-// 	bodyVelocity(Point(0, -radius * w));
-// 	angularVelocity(w);
-// }
-
-// void OurRobot::bodyVelocity(const Geometry2d::Point& v)
-// {
-
-// 	// ensure RRT not used
-// 	_delayed_goal = boost::none;
-// 	_usesPathPlanning = false;
-
-// 	cmd.target = boost::none;
-// 	cmd.worldVel = boost::none;
-// 	cmd.bodyVel = v;
-// }
-
 void OurRobot::worldVelocity(const Geometry2d::Point& v)
 {
 	_motionConstraints.targetPos = boost::none;
@@ -257,11 +258,6 @@ void OurRobot::worldVelocity(const Geometry2d::Point& v)
 
 	_path.reset();
 }
-
-// void OurRobot::angularVelocity(double w)
-// {
-// 	cmd.angularVelocity = w;
-// }
 
 Geometry2d::Point OurRobot::pointInRobotSpace(const Geometry2d::Point& pt) const {
 	Point p = pt;
@@ -284,7 +280,7 @@ bool OurRobot::behindBall(const Geometry2d::Point& ballPos) const {
 }
 
 float OurRobot::kickTimer() const {
-	return (charged()) ? 0.0 : intTimeStampToFloat * (float) (timestamp() - _lastChargedTime);
+	return (charged()) ? 0.0 : (float)(timestamp() - _lastChargedTime) * TimestampToSecs;
 }
 
 void OurRobot::update() {
@@ -436,10 +432,14 @@ void OurRobot::setPath(Planning::Path path) {
 	_pathInvalidated = false;
 	_pathStartTime = timestamp();
 
+	_path->endSpeed = _motionConstraints.endSpeed;
+	_path->maxSpeed = _motionConstraints.maxSpeed;
+	_path->maxAcceleration = _motionConstraints.maxAcceleration;
+
 	//	start velocity is the speed we're going in the direction of the target start velocity
 	Geometry2d::Point posOut, velOut;
 	_path->evaluate(0.05, posOut, velOut);
-	_path->setStartSpeed(vel.dot(velOut.normalized()));
+	_path->startSpeed = vel.dot(velOut.normalized());
 }
 
 void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles) {
@@ -543,8 +543,12 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		}
 	}
 
+
+	_path->maxSpeed = _motionConstraints.maxSpeed;
+	_path->endSpeed = _motionConstraints.endSpeed;
+	_path->maxAcceleration = _motionConstraints.maxAcceleration;
+
 	_state->drawPath(*_path, Qt::magenta);
-	// addText(QString("replanIfNeeded: RRT path %1").arg(full_obstacles.size()));
 	return;
 }
 

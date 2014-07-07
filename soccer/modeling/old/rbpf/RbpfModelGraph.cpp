@@ -34,7 +34,7 @@ void RbpfModelGraph::addModel(RbpfModel* model){
 // note: An exception will be thrown if modelIndex is not in the models vector
 RbpfModel* RbpfModelGraph::getModel(int modelIndex){
 	if(modelIndex<0 || modelIndex>=j){
-		throw "Attempted to access invalid model in RbpfModelGraph";
+		throw std::runtime_error("Attempted to access invalid model in RbpfModelGraph");
 	}else{
 		return &modelVector[modelIndex];
 	}

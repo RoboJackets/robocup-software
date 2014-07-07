@@ -57,8 +57,7 @@ void Environment::connectSockets() {
 		&& _radioSocketBlue.bind(RadioTxPort + 1)
 	);
 	if ( !success ) {
-		printf("Unable to bind sockets.  Is there another instance of simulator already running?");
-		throw std::exception();
+		throw std::runtime_error("Unable to bind sockets.  Is there another instance of simulator already running?");
 	}
 
 	gettimeofday(&_lastStepTime, 0);

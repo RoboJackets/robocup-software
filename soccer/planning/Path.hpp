@@ -83,19 +83,15 @@ namespace Planning
 			 */
 			bool evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const;
 			bool getPoint(float distance ,Geometry2d::Point &position, Geometry2d::Point &direction) const;
-			void setStartSpeed(float speed);
-			void setEndSpeed(float speed);
-			float getStartSpeed() const;
-
 
 			static void createConfiguration(Configuration *cfg);
 
 
-		private:
 			float startSpeed = 0;
 			float endSpeed = 0;
 
-			static ConfigDouble *_max_acceleration;
-			static ConfigDouble *_max_speed;
+			///	note: you MUST set these before calling evaluate or else it'll throw an exception
+			float maxSpeed = -1;
+			float maxAcceleration = -1;
 	};
 }
