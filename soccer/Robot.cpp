@@ -435,7 +435,11 @@ void OurRobot::setPath(Planning::Path path) {
 	_path = path;
 	_pathInvalidated = false;
 	_pathStartTime = timestamp();
-	_path->setStartSpeed(vel.mag());
+
+	//	start velocity is the speed we're going in the direction of the target start velocity
+	Geometry2d::Point posOut, velOut;
+	_path->evaluate(0.05, posOut, velOut);
+	_path->setStartSpeed(vel.dot(velOut.normalized()));
 }
 
 void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles) {
