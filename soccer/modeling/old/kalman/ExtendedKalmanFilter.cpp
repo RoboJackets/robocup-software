@@ -48,7 +48,7 @@ void Modeling::ExtendedKalmanFilter::update(Vector &Z){
 		_P = ublas::prod(_Inn - ublas::prod(K,_H),_P);
 	}else{
 		// S^{-1} could not be determined, throw exception
-		throw "S^{-1} could not be determined in Extended Kalman Filter";
+		throw std::runtime_error("S^{-1} could not be determined in Extended Kalman Filter");
 	}
 }
 

@@ -169,7 +169,10 @@ void MotionControl::run() {
 
 		//	evaluate path - where should we be right now?
 		Point targetPos;
-		bool pathValidNow = _robot->path()->evaluate(timeIntoPath, targetPos, targetVel);
+		bool pathValidNow = _robot->path()->evaluate(
+			timeIntoPath,
+			targetPos,
+			targetVel);
 		_robot->addText(QString("targetVel %1 %2").arg(targetVel.x).arg(targetVel.y) );
 		if (!pathValidNow) {
 			targetVel.x = 0;

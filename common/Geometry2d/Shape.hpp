@@ -21,12 +21,12 @@ namespace Geometry2d {
         virtual ~Shape() {}
 
         virtual Shape *clone() const {
-            throw "nope";
+            throw std::runtime_error("Unimplemented method");
             return nullptr;
         }
 
         virtual bool containsPoint(const Point &pt) const {
-            throw "nope";
+            throw std::runtime_error("Unimplemented method");
             return false;
         }
 
@@ -34,12 +34,12 @@ namespace Geometry2d {
         /// collision-detection
 
         virtual bool hit(const Point &pt) const {
-            throw "nope";
+            throw std::runtime_error("Unimplemented method");
             return false;
         }
 
         virtual bool hit(const Segment &seg) const {
-            throw "nope";
+            throw std::runtime_error("Unimplemented method");
             return false;
         }
 
