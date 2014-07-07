@@ -22,6 +22,10 @@ class StateMachine:
         return self._start_state
 
 
+    def restart(self):
+        self.transition(self.start_state)
+
+
     def add_state(self, state, parent_state=None):
         if not isinstance(state, Enum):
             raise TypeError("State should be an Enum type")
