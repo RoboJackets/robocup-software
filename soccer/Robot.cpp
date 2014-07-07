@@ -17,12 +17,9 @@
 using namespace std;
 using namespace Geometry2d;
 
-/** Constant for timestamp to seconds */
-const float intTimeStampToFloat = 1000000.0f;
-
-///The threshold necessary to change paths tuning required
-///const float path_threshold = 2 * Robot_Diameter; // previous value
-const float path_threshold = 1.0;
+///	timestamp() returns the current time in microseconds.  Multiply by this constant to get to seconds.
+const float TimestampToSecs = 1.0f / 1000000.0f;
+const float SecsToTimestamp = 1.0f / TimestampToSecs;
 
 /** thresholds for avoidance of opponents - either a normal (large) or an approach (small)*/
 const float Opp_Avoid_Small = Robot_Radius - 0.03;
@@ -487,7 +484,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	Geometry2d::Point dest = *_motionConstraints.targetPos;
 
 	// //	if this number of microseconds passes since our last path plan, we automatically replan
-	// const uint64_t kPathExpirationInterval = 1500000;	//	1.5 seconds
+	// const uint64_t kPathExpirationInterval = 1.5 * SecsToTimestamp;
 	// if ((timestamp() - _pathStartTime) > kPathExpirationInterval) {
 	// 	_pathInvalidated = true;
 	// }
@@ -511,7 +508,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		float maxDist = 0.15;
 		Point targetPathPos;
 		Point targetVel;
-		float timeIntoPath = (float) ((timestamp() - _pathStartTime) / 1000000.0f);
+		float timeIntoPath = ((float)(timestamp() - _pathStartTime)) * TimestampToSecs;
 		_path->evaluate(timeIntoPath, targetPathPos, targetVel);
 		float pathError = (targetPathPos - pos).mag();
 		if (pathError > maxDist) {
@@ -622,7 +619,7 @@ Packet::HardwareVersion OurRobot::hardwareVersion() const
 
 boost::optional<Eigen::Quaternionf> OurRobot::quaternion() const
 {
-	if (_radioRx.has_quaternion() && rxIsFresh(50000))
+	if (_radioRx.has_quaternion() && rxIsFresh(0.05 * SecsToTimestamp))
 	{
 		return Eigen::Quaternionf(
 			_radioRx.quaternion().q0() / 16384.0,
