@@ -16,11 +16,11 @@ class LineUp(play.Play):
             'immediately')
         self.add_transition(behavior.Behavior.State.running,
             behavior.Behavior.State.completed,
-            lambda: self.subbehavior_with_name("LineUp").State is behavior.Behavior.State.completed,
+            lambda: self.subbehavior_with_name("LineUp").state == behavior.Behavior.State.completed,
             'all robots reach target positions')
         self.add_transition(behavior.Behavior.State.completed,
             behavior.Behavior.State.running,
-            lambda: self.subbehavior_with_name("LineUp").State is behavior.Behavior.State.running,
+            lambda: self.subbehavior_with_name("LineUp").state == behavior.Behavior.State.running,
             'robots arent lined up')
 
         x = -(constants.Field.Width/2 - constants.Robot.Radius)

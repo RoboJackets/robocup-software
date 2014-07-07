@@ -56,13 +56,16 @@ def opponent_with_ball():
             if dist < closest_dist:
                 closest_bot, closest_dist = bot, dist
 
+    if closest_bot == None:
+        return None
+
     angle = closest_bot.angle * constants.DegreesToRadians
     theta = angle_btw_three_pts(closest_bot.pos + robocup.Point(math.cos(angle), math.sin(angle)),
                                 main.ball().pos,
                                 closest_bot.pos)
     max_radius = constants.Robot.Radius * (2.0 + 2.0*math.cos(theta))
 
-    if closest_bot and closest_bot.pos.near_point(main.ball().pos, max_radius):
+    if closest_bot.pos.near_point(main.ball().pos, max_radius):
         return closest_bot
     else:
         return None

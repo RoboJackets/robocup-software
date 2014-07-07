@@ -5,6 +5,7 @@ import fs_watcher
 import class_import
 import logging
 import importlib
+import traceback
 import imp
 import sys
 
@@ -89,6 +90,7 @@ def init():
 
                 except Exception as e:
                     logging.error("EXCEPTION in file modified event: " + repr(e))
+                    traceback.print_exc()
                     raise e
             elif event_type == 'deleted':
                 if is_play:

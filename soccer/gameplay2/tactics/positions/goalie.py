@@ -1,6 +1,7 @@
 import robocup
 import single_robot_composite_behavior
 import behavior
+import role_assignment
 import constants
 import evaluation.ball
 import skills
@@ -171,7 +172,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def role_requirements(self):
         reqs = super().role_requirements()
 
-        if isinstance(reqs, role_requirements.RoleRequirements):
+        if isinstance(reqs, role_assignment.RoleRequirements):
             reqs.required_shell_id = self.shell_id
         else:
             for sub_bhvr_name in reqs:
