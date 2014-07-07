@@ -210,6 +210,10 @@ void OurRobot::resetForNextIteration() {
 	radioTx.set_accel(10);
 	radioTx.set_decel(10);
 
+	if (charged()) {
+		_lastChargedTime = timestamp();
+	}
+
 	_local_obstacles.clear();
 	resetMotionConstraints();
 	unkick();
@@ -281,13 +285,6 @@ bool OurRobot::behindBall(const Geometry2d::Point& ballPos) const {
 
 float OurRobot::kickTimer() const {
 	return (charged()) ? 0.0 : (float)(timestamp() - _lastChargedTime) * TimestampToSecs;
-}
-
-void OurRobot::update() {
-	if (charged())
-	{
-		_lastChargedTime = timestamp();
-	}
 }
 
 void OurRobot::dribble(uint8_t speed)

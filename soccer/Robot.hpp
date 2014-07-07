@@ -186,12 +186,6 @@ public:
 	bool charged() const; /// true if the kicker is ready
 	float kickTimer() const; /// returns the time since the kicker was last charged, 0.0 if ready
 
-	/**
-	 * state variable updates - includes timers, etc.  Called each frame
-	 */
-	//FIXME - Remove
-	void update();
-
 	const Geometry2d::Segment kickerBar() const; /// segment for the location of the kicker
 	Geometry2d::Point pointInRobotSpace(const Geometry2d::Point& pt) const; /// converts a point to the frame of reference of robot
 
