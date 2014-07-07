@@ -31,7 +31,8 @@ const float Opp_Avoid_Large = Robot_Radius - 0.01;
 /** threshold for avoiding the ball*/
 const float Ball_Avoid_Small = 2.0 * Ball_Radius;
 /**
- * I think this is verbose comments in the simulator
+ * When verbose is true, a lot of extra debug info is printed
+ * to the console about path planning, etc
  */
 const bool verbose = false;
 
@@ -452,7 +453,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 	// if motion command complete or we are using a different planner - we're done
 	if (!_motionConstraints.targetPos) {
-		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: no move target" << endl;
+		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: no move target" << endl;
 		return;
 	}
 
@@ -475,7 +476,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 	// if no goal command robot to stop in place
 	if (!_motionConstraints.targetPos) {
-		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: stopped" << endl;
+		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: stopped" << endl;
 		addText(QString("replan: no goal"));
 		setPath(Planning::Path(pos));
 		_state->drawPath(*_path);
@@ -546,7 +547,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	}
 
 	_state->drawPath(*_path, Qt::magenta);
-	// addText(QString("execute: RRT path %1").arg(full_obstacles.size()));
+	// addText(QString("replanIfNeeded: RRT path %1").arg(full_obstacles.size()));
 	return;
 }
 
