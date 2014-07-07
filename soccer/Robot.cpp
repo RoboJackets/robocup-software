@@ -216,20 +216,22 @@ void OurRobot::move(const Geometry2d::Point &goal, bool stopAtEnd)
 	if (verbose) cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", " << goal.y << ")" << endl;
 	addText(QString("move:(%1, %2)").arg(goal.x).arg(goal.y));
 	
-	//	only invalidate path if move() is being called with a new goal or one wasn't set previously
-	if (!_motionConstraints.targetPos || !_motionConstraints.targetPos->nearPoint(goal, 0.02)) {
-		addText("Invalidated old path");
+	_motionConstraints.targetPos = goal;
+
+	// //	only invalidate path if move() is being called with a new goal or one wasn't set previously
+	// if (!_motionConstraints.targetPos || !_motionConstraints.targetPos->nearPoint(goal, 0.02)) {
+	// 	addText("Invalidated old path");
 		
-		if (_motionConstraints.targetPos) {
-			addText(QString("Old goal: (%1, %2)").arg(goal.x, goal.y));
-			addText(QString("New goal: (%1, %2)").arg(_motionConstraints.targetPos->x, _motionConstraints.targetPos->y));
-		} else {
-			addText("Old goal was null");
-		}
+	// 	if (_motionConstraints.targetPos) {
+	// 		addText(QString("Old goal: (%1, %2)").arg(goal.x, goal.y));
+	// 		addText(QString("New goal: (%1, %2)").arg(_motionConstraints.targetPos->x, _motionConstraints.targetPos->y));
+	// 	} else {
+	// 		addText("Old goal was null");
+	// 	}
 		
-		_motionConstraints.targetPos = goal;
-		_pathInvalidated = true;
-	}
+	// 	_motionConstraints.targetPos = goal;
+	// 	_pathInvalidated = true;
+	// }
 }
 
 // void OurRobot::pivot(double w, double radius)
@@ -450,10 +452,10 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 	// if motion command complete or we are using a different planner - we're done
 	if (!_motionConstraints.targetPos) {
-		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: not using path planner" << endl;
+		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: no move target" << endl;
 		return;
 	}
-	
+
 	// create and visualize obstacles
 	Geometry2d::CompositeShape full_obstacles(_local_obstacles);
 	Geometry2d::CompositeShape
@@ -474,7 +476,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	// if no goal command robot to stop in place
 	if (!_motionConstraints.targetPos) {
 		if (verbose) cout << "in OurRobot::execute() for robot [" << shell() << "]: stopped" << endl;
-		addText(QString("execute: no goal"));
+		addText(QString("replan: no goal"));
 		setPath(Planning::Path(pos));
 		_state->drawPath(*_path);
 		return;
@@ -483,31 +485,35 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 	Geometry2d::Point dest = *_motionConstraints.targetPos;
 
-	//	if this number of microseconds passes since our last path plan, we automatically replan
-	const uint64_t kPathExpirationInterval = 1500000;	//	1.5 seconds
-	if ((timestamp() - _pathStartTime) > kPathExpirationInterval) {
-		_pathInvalidated = true;
-	}
+	// //	if this number of microseconds passes since our last path plan, we automatically replan
+	// const uint64_t kPathExpirationInterval = 1500000;	//	1.5 seconds
+	// if ((timestamp() - _pathStartTime) > kPathExpirationInterval) {
+	// 	_pathInvalidated = true;
+	// }
 
 	if (!_path) {
 		_pathInvalidated = true;
 	}
 
+
+	Planning::Path newlyPlannedPath;
+	_planner->run(pos, angle, vel, *_motionConstraints.targetPos, &full_obstacles, newlyPlannedPath);
+
 	//	invalidate path if it hits obstacles
-	if (_path && _path->hit(full_obstacles)) {
+	//	TODO: it would be better to compare WHICH obstacles the old and new paths hit rather than just looking at IF they hit obstacles
+	if (_path && _path->hit(full_obstacles) && !newlyPlannedPath.hit(full_obstacles)) {
 		_pathInvalidated = true;
 	}
 
 	//  invalidate path if current position is more than 15cm from the planned point
-
 	if (_path) {
 		float maxDist = 0.15;
 		Point targetPathPos;
 		Point targetVel;
 		float timeIntoPath = (float) ((timestamp() - _pathStartTime) / 1000000.0f);
 		_path->evaluate(timeIntoPath, targetPathPos, targetVel);
-		float errorPath = (targetPathPos - pos).mag();
-		if (errorPath > maxDist) {
+		float pathError = (targetPathPos - pos).mag();
+		if (pathError > maxDist) {
 			_pathInvalidated = true;
 		}
 	}
@@ -516,22 +522,13 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	//	if the destination of the current path is greater than 1cm away from the target destination,
 	//	we invalidate the path.  this situation could arise if during a previous planning, the target point
 	//	was blocked by an obstacle
-	if (_path && (_path->points.back() - dest).mag() > 0.01) {
+	if (_path && (_path->points.back() - dest).mag() > 0.02) {
 		_pathInvalidated = true;
 	}
 
 	// check if goal is close to previous goal to reuse path
 	if (!_pathInvalidated) {
 		addText("Reusing path");
-		Planning::Path sliced_path;
-		_path->startFrom(pos, sliced_path);
-
-		const bool enable_slice = false;
-		if (enable_slice && !sliced_path.hit(full_obstacles)) {
-			addText(QString("execute: slicing path"));
-			_state->drawPath(sliced_path, Qt::cyan);
-			return;
-		}
 	} else {
 		// use the newly generated path
 		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: using new RRT path" << endl;
@@ -544,14 +541,12 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 			setPath(straightLine);
 		} else {
 			//	rrt-planned path
-			Planning::Path newlyPlannedPath;
-			_planner->run(pos, angle, vel, *_motionConstraints.targetPos, &full_obstacles, newlyPlannedPath);
 			setPath(newlyPlannedPath);
 		}
 	}
 
 	_state->drawPath(*_path, Qt::magenta);
-	addText(QString("execute: RRT path %1").arg(full_obstacles.size()));
+	// addText(QString("execute: RRT path %1").arg(full_obstacles.size()));
 	return;
 }
 
