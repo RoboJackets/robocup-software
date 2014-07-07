@@ -305,7 +305,7 @@ int main (int argc, char* argv[])
 	
 	processor->start();
 	
-	win->showMaximized();
+	win->show();
 
 	processor->gameplayModule()->setupUI();
 
