@@ -18,7 +18,7 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 		center = 2
 		right = 3
 
-	def __init__(self, side):
+	def __init__(self, side=Side.center):
 		super().__init__(continuous=True)
 		self._block_robot = None
 		self._area = None
