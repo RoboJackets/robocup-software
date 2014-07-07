@@ -12,6 +12,7 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior, co
         if self.has_subbehaviors():
             raise AssertionError("Attempt to add more than one subbehavior to SingleRobotCompositeBehavior")
         super().add_subbehavior(bhvr, name, required, priority)
+        self.robot_shell_id = None
 
 
     def has_subbehaviors(self):
@@ -29,11 +30,20 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior, co
 
 
     def assign_roles(self, assignments):
+        oldBot = self.robot
         if self.has_subbehaviors():
             composite_behavior.CompositeBehavior.assign_roles(self, assignments)
             self.robot = assignments.values()[0][1]
         else:
             single_robot_behavior.SingleRobotBehavior.assign_roles(self, assignments)
+
+        # Most single robot composite behaviors assume (rightly so) that the robot they're
+        # dealing with won't change. PivotKick for example runs the Capture skill, then
+        # the Aim skill to do its stuff. It'd be pretty weird if the robot executing Aim
+        # was different from the one that just ran Capture. Here we just restart the behavior
+        # If it gets assigned a new robot.
+        if oldBot != None and oldBot.shell_id() != self.robot.shell_id():
+            self.restart()
 
 
     def __str__(self):
