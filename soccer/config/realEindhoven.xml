@@ -555,7 +555,7 @@
    <Max_w value="5"/>
   </angle>
   <Max_Acceleration value="1.5"/>
-  <Max_Velocity value="2"/>
+  <Max_Velocity value="3.5"/>
  </MotionControl>
  <PathPlanner>
   <Max_Acceleration value="1"/>
