@@ -591,9 +591,28 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		_pathInvalidated = true;
 	}
 
+
+	//	try a straight path EVERY time
+	if (_path && _path->points.size() > 2) {
+		//	try a straight line path first
+		Geometry2d::Segment straight_seg(pos, *_motionConstraints.targetPos);
+		if (!full_obstacles.hit(straight_seg)) {
+			addText(QString("planner: pre-emptive straight_line"));
+			Planning::Path straightLine(pos, *_motionConstraints.targetPos);
+			setPath(straightLine);
+			_pathInvalidated = false;
+		}
+	}
+
+	
+
+
 	// check if goal is close to previous goal to reuse path
 	if (!_pathInvalidated) {
 		addText("Reusing path");
+		// for (auto itr : _path->points) {
+		// 	cout << "\t(" << itr.x << ", " << itr.y << ")" << endl;
+		// }
 	} else {
 		// use the newly generated path
 		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: using new RRT path" << std::endl;
