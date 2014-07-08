@@ -76,7 +76,8 @@ MotionConstraints::MotionConstraints() {
 
 OurRobot::OurRobot(int shell, SystemState *state):
 	Robot(shell, true),
-	_state(state)
+	_state(state),
+	_recentPathChangeTimes(PathChangeHistoryBufferSize)
 {
 	_cmdText = new std::stringstream();
 
@@ -489,19 +490,34 @@ void OurRobot::setPath(Planning::Path path) {
 
 	//	start velocity is the speed we're going in the direction of the target start velocity
 	Geometry2d::Point posOut, velOut;
-	_path->evaluate(0.05, posOut, velOut);
-	_path->startSpeed = vel.dot(velOut.normalized());
+	_path->startSpeed = 0;
+	_path->evaluate(0.01, posOut, velOut);
+
+	//	we don't let the start speed go below zero
+	//	in reality we should allow for it, but motion control isn't there yet and negative values cause more error
+	float startSpeed = vel.dot(velOut.normalized());
+	_path->startSpeed = max<float>(startSpeed, 0);
+
+	_recentPathChangeTimes.push_back(_pathStartTime);
+}
+
+bool OurRobot::isRepeatedlyChangingPaths() const {
+	if (_recentPathChangeTimes.size() == _recentPathChangeTimes.capacity()) {
+		uint64_t dt_ms = _recentPathChangeTimes.front() - _recentPathChangeTimes.back();
+
+		//	the 1/60 is because we run at about 60Hz
+		//	the 1.5 is sort of a fudge factor - we're basically checking if we've changed paths for the last N frames within an error margin
+		return dt_ms < (PathChangeHistoryBufferSize * 1.0/60.0 * 1.5) * SecsToTimestamp;
+	} else {
+		return false;
+	}
 }
 
 void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles) {
-	// halt case - same as stopped
-	if (_state->gameState.state == GameState::Halt) {
-		return;
-	}
+	if (_state->gameState.state == GameState::Halt || !_motionConstraints.targetPos) {
+		//	clear our history of path change times
+		_recentPathChangeTimes.clear();
 
-	// if motion command complete or we are using a different planner - we're done
-	if (!_motionConstraints.targetPos) {
-		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: no move target" << std::endl;
 		return;
 	}
 
