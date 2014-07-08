@@ -167,6 +167,12 @@ void MotionControl::run() {
 		//	convert from microseconds to seconds
 		float timeIntoPath = ((float)(timestamp() - _robot->pathStartTime())) * TimestampToSecs;
 
+		//	if the path is getting rapidly changed, we cheat so that the robot actually moves
+		//	see OurRobot._recentPathChangeTimes for more info
+		if (_robot->isRepeatedlyChangingPaths()) {
+			timeIntoPath = max<float>(timeIntoPath, OurRobot::PathChangeHistoryBufferSize * 1.0f/60.0f * 0.8);
+		}
+
 		//	evaluate path - where should we be right now?
 		Point targetPos;
 		bool pathValidNow = _robot->path()->evaluate(
