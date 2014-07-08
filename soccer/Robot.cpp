@@ -17,10 +17,6 @@
 using namespace std;
 using namespace Geometry2d;
 
-///	timestamp() returns the current time in microseconds.  Multiply by this constant to get to seconds.
-const float TimestampToSecs = 1.0f / 1000000.0f;
-const float SecsToTimestamp = 1.0f / TimestampToSecs;
-
 /** thresholds for avoidance of opponents - either a normal (large) or an approach (small)*/
 const float Opp_Avoid_Small = Robot_Radius - 0.03;
 /** thresholds for avoidance of opponents - either a normal (large) or an approach (small)*/
