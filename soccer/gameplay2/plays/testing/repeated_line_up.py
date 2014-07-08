@@ -22,24 +22,24 @@ class RepeatedLineUp(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
 
-        self.side_time = time.time()
+        self.side_start = time.time()
 
         for state in RepeatedLineUp.State:
             self.add_state(state, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-            RepeatedLineUp.State.left,
+            RepeatedLineUp.State.right,
             lambda: True,
             'immediately')
 
         self.add_transition(RepeatedLineUp.State.left,
             RepeatedLineUp.State.pause,
-            lambda: self.subbehavior_with_name('LineUp').state == behavior.Behavior.State.completed and (time.time() - self.side_time) > 0.2,
+            lambda: self.subbehavior_with_name('LineUp').state == behavior.Behavior.State.completed and time.time() - self.side_start > 1,
             'made it to left')
 
         self.add_transition(RepeatedLineUp.State.right,
             RepeatedLineUp.State.pause,
-            lambda: self.subbehavior_with_name('LineUp').state == behavior.Behavior.State.completed and (time.time() - self.side_time) > 0.2,
+            lambda: self.subbehavior_with_name('LineUp').state == behavior.Behavior.State.completed and time.time() - self.side_start > 1,
             'made it to right')
 
         self.add_transition(RepeatedLineUp.State.pause,
@@ -69,12 +69,6 @@ class RepeatedLineUp(play.Play):
     def on_enter_pause(self):
         self.pause_start_time = time.time()
 
-    def execute_pause(self):
-        print("time = " + str(time.time()))
-        time_up = (time.time() - self.pause_start_time) > RepeatedLineUp.Pause
-        print("timeup? " + str(time_up))
-    # and self.prev_side == RepeatedLineUp.State.righ
-
 
     # x_multiplier is a 1 or -1 to indicate which side of the field to be on
     # 1 is right, -1 is left
@@ -84,3 +78,4 @@ class RepeatedLineUp(play.Play):
         line = robocup.Segment(
                 robocup.Point(x, constants.Robot.Radius + y_start),
                 robocup.Point(x, (constants.Robot.Radius * 2.3 + 0.1)*6 + y_start))
+        return line
