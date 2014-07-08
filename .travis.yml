@@ -16,6 +16,7 @@ before_install:
   - echo "deb http://archive.ubuntu.com/ubuntu/ saucy main" > /etc/apt/sources.list.d/saucy.list
 
   - sudo apt-get update
+
   - sudo ./util/ubuntu-setup
 
 script: scons && scons test
