@@ -40,7 +40,7 @@ void MotionControl::createConfiguration(Configuration *cfg) {
 	_pid_angle_p	= new ConfigDouble(cfg, "MotionControl/angle/PID_p", 1);
 	_pid_angle_i	= new ConfigDouble(cfg, "MotionControl/angle/PID_i", 0.00001);
 	_pid_angle_d	= new ConfigDouble(cfg, "MotionControl/angle/PID_d", 0.001);
-	_angle_vel_mult	= new ConfigDouble(cfg, "MotionControl/angle/Velocity Multiplier");
+	_angle_vel_mult	= new ConfigDouble(cfg, "MotionControl/angle/Velocity Multiplier", 0.5);
 	// _max_angle_w	= new ConfigDouble(cfg, "MotionControl/angle/Max w", 10);
 
 	_max_acceleration	= new ConfigDouble(cfg, "MotionControl/Max Acceleration", 1.5);
@@ -123,7 +123,7 @@ void MotionControl::run() {
 
 		//	limit W
 		if (abs(targetW) > (constraints.maxAngleSpeed)) {
-			if(targetW>0) {
+			if (targetW > 0) {
 				targetW = (constraints.maxAngleSpeed);
 			} else {
 				targetW = -(constraints.maxAngleSpeed);
