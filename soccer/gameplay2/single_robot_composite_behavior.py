@@ -23,7 +23,7 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior, co
         if self.has_subbehaviors():
             reqs = composite_behavior.CompositeBehavior.role_requirements(self)
             if self.robot != None:
-                reqs.previous_shell_id = self.robot.shell_id()
+                list(reqs.values())[0].previous_shell_id = self.robot.shell_id()
             return reqs
         else:
             return single_robot_behavior.SingleRobotBehavior.role_requirements(self)
@@ -33,7 +33,7 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior, co
         oldBot = self.robot
         if self.has_subbehaviors():
             composite_behavior.CompositeBehavior.assign_roles(self, assignments)
-            self.robot = assignments.values()[0][1]
+            self.robot = list(assignments.values())[0][1]
         else:
             single_robot_behavior.SingleRobotBehavior.assign_roles(self, assignments)
 

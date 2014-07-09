@@ -34,7 +34,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
             'has ball')
         self.add_transition(PivotKick.State.aiming,
             PivotKick.State.kicking,
-            lambda: self.subbehavior_with_name('aim').state == aim.Aim.State.aimed and self.enable_kick,
+            lambda: self.subbehavior_with_name('aim').state == skills.aim.Aim.State.aimed and self.enable_kick,
             'aim error < threshold and kick enabled')
         self.add_transition(PivotKick.State.kicking,
             behavior.Behavior.State.completed,
@@ -69,7 +69,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
 
     def remove_aim_behavior(self):
         if self.has_subbehavior_with_name('aim'):
-            self.remove_subbehavior_with_name('aim')
+            self.remove_subbehavior('aim')
 
 
     def on_enter_capturing(self):
@@ -84,7 +84,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
 
     def set_aim_params(self):
         aim = self.subbehavior_with_name('aim')
-        aim.target = self.aim_target_point
+        aim.target_point = self.aim_target_point
         aim.dribbler_power = self.dribbler_power
 
 
@@ -113,4 +113,3 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
 
     def on_exit_running(self):
         self.remove_aim_behavior()
-

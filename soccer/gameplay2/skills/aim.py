@@ -1,5 +1,8 @@
 import single_robot_behavior
 import behavior
+import main
+import robocup
+import math
 import constants
 import enum
 
@@ -99,7 +102,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
     # returns True if we're aimed at our target within our error thresholds and we're not rotating too fast
     def is_aimed(self):
-        return self._error < self.error_threshold and self.robot.ang_vel < self.max_steady_ang_vel
+        return self._error < self.error_threshold and self.robot.angle_vel < self.max_steady_ang_vel
 
 
     # we're aiming at a particular point on our target segment, what is this point?
@@ -111,12 +114,13 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         else:
             ball2target = self.target_point - main.ball().pos
             target_line = robocup.Line(self.target_point, self.target_point + ball2target.perp_ccw()) # line perpendicular to aim_line that passes through the target
+            angle_rad = self.robot.angle * constants.DegreesToRadians
             aim_line = robocup.Line(self.robot.pos, robocup.Point(math.cos(angle_rad), math.sin(angle_rad)))
             self._shot_point = aim_line.line_intersection(target_line)    # this is the point along target_line that we'll hit if we shoot now
 
         # error
         if self.target_point != None and self._shot_point != None:
-            self._error = (self.target_point - shot_point).mag() if shot_point != None else float("inf") # distance in meters off that we'll be if we shoot right now
+            self._error = (self.target_point - self._shot_point).mag() if self._shot_point != None else float("inf") # distance in meters off that we'll be if we shoot right now
         else:
             self._error = float("inf")
 
@@ -125,7 +129,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         self.recalculate()
 
         self.robot.face(self.target_point)
-        self.robot.set_dribbler_speed(self.dribbler_speed)
+        self.robot.set_dribble_speed(self.dribbler_speed)
 
         # draw current shot line
         if self._shot_point != None:
@@ -136,10 +140,6 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         # draw where we're supposed to be aiming
         if self.target_point != None:
             main.system_state().draw_circle(self.target_point, 0.02, constants.Colors.Blue, "Aim")
-            if isinstance(self.target, robocup.Segment):
-                main.system_state().draw_line(self.target, constants.Colors.Blue, "Aim")
-                for i in range(2):
-                    main.system_state().draw_line(robocup.Line(self.robot.pos, self.target.get_pt()[i]), constants.Colors.Blue, "Aim")
 
 
     def __str__(self):

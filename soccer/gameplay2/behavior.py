@@ -27,9 +27,8 @@ class Behavior(fsm.StateMachine):
         self.add_state(Behavior.State.start)
         self.add_state(Behavior.State.running)
         self.add_state(Behavior.State.completed)
-        if not continuous:
-            self.add_state(Behavior.State.failed)
-            self.add_state(Behavior.State.cancelled)
+        self.add_state(Behavior.State.failed)
+        self.add_state(Behavior.State.cancelled)
 
         self._is_continuous = continuous
 
