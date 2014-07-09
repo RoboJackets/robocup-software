@@ -87,33 +87,39 @@ class StateMachine:
     def transition(self, new_state):
         if self.state != None:
             for state in self.ancestors_of_state(self.state) + [self.state]:
-                method_name = "on_exit_" + state.name
+                if not self.state_is_substate(new_state, state):
+                    method_name = "on_exit_" + state.name
+                    state_method = None
+                    try:
+                        state_method = getattr(self, method_name)    # call the transition FROM method if it exists
+                    except AttributeError:
+                        pass
+                    if state_method is not None:
+                        state_method()
+
+        for state in self.ancestors_of_state(new_state) + [new_state]:
+            if not self.state_is_substate(self.state, state):
+                method_name = "on_enter_" + state.name
                 state_method = None
                 try:
-                    state_method = getattr(self, method_name)    # call the transition FROM method if it exists
+                    state_method = getattr(self, method_name)    # call the transition TO method if it exists
                 except AttributeError:
                     pass
                 if state_method is not None:
                     state_method()
-
-        for state in self.ancestors_of_state(new_state) + [new_state]:
-            method_name = "on_enter_" + state.name
-            state_method = None
-            try:
-                state_method = getattr(self, method_name)    # call the transition TO method if it exists
-            except AttributeError:
-                pass
-            if state_method is not None:
-                state_method()
 
         self._state = new_state
 
 
     # traverses the state hierarchy to see if it's in @state or one of @state's descendent states
     def is_in_state(self, state):
-        ancestor = self.state
+        return self.state_is_substate(self.state, state)
+
+
+    def state_is_substate(self, state, possible_parent):
+        ancestor = state
         while ancestor != None:
-            if state == ancestor: return True
+            if possible_parent == ancestor: return True
             ancestor = self._state_hierarchy[ancestor]
 
         return False
