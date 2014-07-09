@@ -55,7 +55,13 @@ def init():
                 if is_play:
                     # we load the module and register the play class it contains with the play registry
                     # this makes it automatically show up in the play config tab in the gui
-                    module = importlib.import_module('.'.join(module_path))
+                    try:
+                        module = importlib.import_module('.'.join(module_path))
+                    except:
+                        logging.error("Error reloading module '" + '.'.join(module_path) + "': e")
+                        traceback.print_exc()
+                        return
+
                     try:
                         play_class = class_import.find_subclasses(module, play.Play)[0]
                         _play_registry.insert(module_path[1:], play_class) # note: skipping index zero of module_path cuts off the 'plays' part
@@ -70,7 +76,12 @@ def init():
                     for modname in module_path[:-1]:
                         containing_dict = containing_dict[modname].__dict__
                     module = containing_dict[module_path[-1]]
-                    module = imp.reload(module)
+                    try:
+                        module = imp.reload(module)
+                    except:
+                        logging.error("Error reloading module '" + '.'.join(module_path) + "': e")
+                        traceback.print_exc()
+                        return
 
                     logging.info("reloaded module '" + '.'.join(module_path) + "'")
 
