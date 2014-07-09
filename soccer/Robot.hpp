@@ -160,6 +160,10 @@ public:
 		return _motionConstraints;
 	}
 
+	MotionConstraints &motionConstraints() {
+		return _motionConstraints;
+	}
+
 	const boost::optional<Planning::Path> &path() const {
 		return _path;
 	}
@@ -195,11 +199,6 @@ public:
 	 */
 	void worldVelocity(const Geometry2d::Point &targetWorldVel);
 
-	/*
-	 * Enable dribbler (0 to 127)
-	 */
-	void dribble(uint8_t speed);
-
 	/**
 	 * Face a point while remaining in place
 	 */
@@ -209,6 +208,19 @@ public:
 	 * Remove the facing command
 	 */
 	void faceNone();
+
+	/**
+	 * The robot pivots around it's mouth toward the given target
+	 */
+	void pivot(const Geometry2d::Point &pivotTarget);
+
+
+
+
+	/*
+	 * Enable dribbler (0 to 127)
+	 */
+	void dribble(uint8_t speed);
 
 
 	/**

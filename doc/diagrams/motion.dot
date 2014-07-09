@@ -5,7 +5,6 @@ digraph Motion {
         label="High-level Commands";
 
         move_cmd [label="move()"];
-        pivot_cmd [label="pivot()"];
         pivotTo_cmd [label="pivotTarget()"];
         face_cmd [label="face()"];
         worldVel_cmd [label="worldVel()"];
@@ -15,10 +14,11 @@ digraph Motion {
     {
         node [color=blue];
 
-        posTarget, velTarget;
-        faceTarget, targetAngleVel;
+        posTarget [label="target S"];
+        velTarget [label="target S'"];
+        faceTarget [label="target theta"];
+        targetAngleVel [label="target theta'"];
         pivotTarget;
-        pivotRate;
     }
 
     path;
@@ -26,34 +26,33 @@ digraph Motion {
     subgraph cluster_RobotCommand {
         label="Robot Command";
 
-        vel, angleVel;
+        vel [label="S'"];
+        angleVel [label="theta'"];
     }
 
-    {
+    /*{
         node [shape=rect];
 
         path_constraints [label="startSpeed\nmaxSpeed\nendSpeed\nmaxAccel"];
         angleVel_constraints [label="maxAngleVel\nmaxAngleAcc"];
         path_to_vel_constraints [label="error\nPID"];
         targetAngleVel_to_angleVel_constraints [label="PID"];
-    }
+    }*/
 
     move_cmd -> posTarget;
     pivotTo_cmd -> pivotTarget;
-    pivot_cmd -> pivotRate -> {velTarget, angleVel_constraints};
     face_cmd -> {faceTarget};
     worldVel_cmd -> velTarget;
     stop_cmd -> {velTarget, targetAngleVel};
 
 
     velTarget -> vel;
-    targetAngleVel -> targetAngleVel_to_angleVel_constraints -> angleVel;
+    targetAngleVel -> angleVel;
 
-    posTarget -> path_constraints -> path;
-    path -> path_to_vel_constraints -> vel;
+    posTarget -> path;
+    path -> vel;
 
-    faceTarget -> angleVel_constraints -> angleVel;
+    faceTarget -> angleVel;
 
-    c [shape=rect, label="maxAngleVel\nmaxAngleAcc"];
-    pivotTarget -> c -> {vel, angleVel};
+    pivotTarget -> {vel, angleVel};
 }
