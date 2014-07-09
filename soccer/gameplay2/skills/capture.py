@@ -10,10 +10,10 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     # tunable config values
     CourseApproachErrorThresh = 0.8
-    CourseApproachDist = 0.11
+    CourseApproachDist = 0.12
     CourseApproachAvoidBall = 0.05
     DribbleSpeed = 100
-    FineApproachSpeed = 0.4
+    FineApproachSpeed = 0.2
 
 
     class State(Enum):
@@ -58,7 +58,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     # normalized vector pointing from the ball to the point the robot should get to in course_aproach
     def approach_vector(self):
-        if main.ball().vel.mag() > 0.03:
+        if main.ball().vel.mag() > 0.25:
             # ball's moving, get on the side it's moving towards
             return main.ball().vel.normalized()
         else:

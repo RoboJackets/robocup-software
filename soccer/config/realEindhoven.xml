@@ -551,8 +551,7 @@
    <PID_p value="0.1"/>
    <PID_i value="0.0001"/>
    <PID_d value="0"/>
-   <Velocity_Multiplier value="0"/>
-   <Max_w value="5"/>
+   <Velocity_Multiplier value="0.5"/>
   </angle>
   <Max_Acceleration value="1.5"/>
   <Max_Velocity value="3.5"/>
