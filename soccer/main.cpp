@@ -107,6 +107,13 @@ using namespace std;
 //void (*__malloc_initialize_hook)(void) = md_init_hook;
 ////END memory debugging
 
+
+//  we use this to catch Ctrl+C and kill the program
+void signal_handler(int signum) {
+    exit(signum);
+}
+
+
 void usage(const char* prog)
 {
 	fprintf(stderr, "usage: %s [options...]\n", prog);
@@ -126,6 +133,9 @@ void usage(const char* prog)
 int main (int argc, char* argv[])
 {
 	printf("Starting Soccer...\n");
+
+    //  register our signal handler
+    signal(SIGINT, signal_handler);
 
 	// Seed the large random number generator
 	long int seed = 0;
@@ -242,7 +252,6 @@ int main (int argc, char* argv[])
 			usage(argv[0]);
 		}
 	}
-	
 
 
 	printf("Running on %s\n", sim ? "simulation" : "real hardware");
