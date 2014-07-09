@@ -109,13 +109,13 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
     def recalculate(self):
         # find the point we're actually aiming at that's on the line going through target_point
         # and perpendicular to the line from the ball to target_point
-        if self.target_point is None:
+        if self.target_point == None:
             self._shot_point = None
         else:
             ball2target = self.target_point - main.ball().pos
             target_line = robocup.Line(self.target_point, self.target_point + ball2target.perp_ccw()) # line perpendicular to aim_line that passes through the target
             angle_rad = self.robot.angle * constants.DegreesToRadians
-            aim_line = robocup.Line(self.robot.pos, robocup.Point(math.cos(angle_rad), math.sin(angle_rad)))
+            aim_line = robocup.Line(self.robot.pos, self.robot.pos + robocup.Point(math.cos(angle_rad), math.sin(angle_rad)))
             self._shot_point = aim_line.line_intersection(target_line)    # this is the point along target_line that we'll hit if we shoot now
 
         # error
@@ -128,7 +128,9 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
     def execute_running(self):
         self.recalculate()
 
-        self.robot.face(self.target_point)
+        # slowly pivot toward the target
+        self.robot.set_max_angle_speed(5)
+        self.robot.pivot(self.target_point)
         self.robot.set_dribble_speed(self.dribbler_speed)
 
         # draw current shot line

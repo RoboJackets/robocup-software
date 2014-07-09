@@ -26,7 +26,7 @@ ConfigDouble *MotionControl::_pid_angle_p;
 ConfigDouble *MotionControl::_pid_angle_i;
 ConfigDouble *MotionControl::_pid_angle_d;
 ConfigDouble *MotionControl::_angle_vel_mult;
-ConfigDouble *MotionControl::_max_angle_w;
+// ConfigDouble *MotionControl::_max_angle_w;
 
 ConfigDouble *MotionControl::_max_acceleration;
 ConfigDouble *MotionControl::_max_velocity;
@@ -41,7 +41,7 @@ void MotionControl::createConfiguration(Configuration *cfg) {
 	_pid_angle_i	= new ConfigDouble(cfg, "MotionControl/angle/PID_i", 0.00001);
 	_pid_angle_d	= new ConfigDouble(cfg, "MotionControl/angle/PID_d", 0.001);
 	_angle_vel_mult	= new ConfigDouble(cfg, "MotionControl/angle/Velocity Multiplier");
-	_max_angle_w	= new ConfigDouble(cfg, "MotionControl/angle/Max w", 10);
+	// _max_angle_w	= new ConfigDouble(cfg, "MotionControl/angle/Max w", 10);
 
 	_max_acceleration	= new ConfigDouble(cfg, "MotionControl/Max Acceleration", 1.5);
 	_max_velocity		= new ConfigDouble(cfg, "MotionControl/Max Velocity", 2.0);
@@ -56,11 +56,6 @@ MotionControl::MotionControl(OurRobot *robot) : _angleController(0, 0, 0, 50) {
 	_robot->radioTx.set_robot_id(_robot->shell());
 	_lastCmdTime = -1;
 }
-
-
-//	FIXME: we should use RobotDynamics instead
-// static const float Max_Angular_Speed = 511 * 0.02 * M_PI;
-
 
 
 void MotionControl::run() {
@@ -80,21 +75,20 @@ void MotionControl::run() {
 	_angleController.kd = *_pid_angle_d;
 
 
+
 	//	Angle control //////////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 
+	float targetW = 0;
 	if (constraints.targetAngleVel) {
-		float wMult = *_angle_vel_mult;
-		_robot->radioTx.set_body_w((*constraints.targetAngleVel) * wMult);
-	} else if (constraints.faceTarget) {
+		targetW = *constraints.targetAngleVel;
+	} else if (constraints.faceTarget || constraints.pivotTarget) {
+		const Geometry2d::Point &targetPt = constraints.pivotTarget ? *constraints.pivotTarget : *constraints.faceTarget;
 
-		//	FIXME: explain units: radians vs degrees
-
-		//	TODO: use bang-bang to get from our current angle to the target angle?
-
-		float targetAngleFinal = (*constraints.faceTarget - _robot->pos).angle() * 180.0 / M_PI;
+		float targetAngleFinal = (targetPt - _robot->pos).angle() * RadiansToDegrees;
 		float angleError = targetAngleFinal - _robot->angle;
 
+		//	don't go the long way around to get to our final angle
 		while (angleError > 180) {
 			angleError -= 360;
 		} 
@@ -103,47 +97,62 @@ void MotionControl::run() {
 		}
 
 
-		float targetW;
-		float targetAngle;
-		TrapezoidalMotion(
-			abs(angleError),	//	dist
-			90,	//	max deg/sec
-			30,	//	max deg/sec^2
-			0.1 ,	//	time into path
-			_robot->angleVel,
-			0,		//	final speed
-			targetAngle,
-			targetW
-			);
+		// float targetW;
+		// float targetAngle;
+		// TrapezoidalMotion(
+		// 	abs(angleError),					//	dist
+		// 	motionConstraints.maxAngleSpeed,	//	max deg/sec
+		// 	30,									//	max deg/sec^2
+		// 	0.1 ,								//	time into path
+		// 	_robot->angleVel,					//	start speed
+		// 	0,									//	final speed
+		// 	targetAngle,
+		// 	targetW 							//	ignored
+		// 	);
 
 
-		targetW *= *_angle_vel_mult;
-
-		//	PID on angle
-		if(angleError<0) {
-			targetW = - targetW;
-		}
-		targetW = _angleController.run(targetAngle);
+		// //	PID on angle
+		// if(angleError<0) {
+		// 	targetW = - targetW;
+		// }
+		// targetW = _angleController.run(targetAngle);
 
 
 		targetW = _angleController.run(angleError);
-		if(abs(targetW) > (*_max_angle_w)) {
+
+
+		//	limit W
+		if (abs(targetW) > (constraints.maxAngleSpeed)) {
 			if(targetW>0) {
-				targetW = (*_max_angle_w);
+				targetW = (constraints.maxAngleSpeed);
 			} else {
-				targetW = -(*_max_angle_w);
+				targetW = -(constraints.maxAngleSpeed);
 			}
 		}
-	/*	_robot->addText(QString("targetW: %1").arg(targetW));
+		
+		/*
+		_robot->addText(QString("targetW: %1").arg(targetW));
 		_robot->addText(QString("angleError: %1").arg(angleError));
 		_robot->addText(QString("targetGlobalAngle: %1").arg(targetAngleFinal));
-		_robot->addText(QString("angle: %1").arg(_robot->angle));*/
-
-		//	radio cmd
-		_robot->radioTx.set_body_w(targetW);
-	} else {
-		_robot->radioTx.set_body_w(0);
+		_robot->addText(QString("angle: %1").arg(_robot->angle));
+		*/
 	}
+
+	_targetAngleVel(targetW);
+
+
+	// handle body velocity for pivot command
+	if (constraints.pivotTarget) {
+		float r = Robot_Radius;
+		float speed = r * targetW;
+		Point vel(0, -speed);
+		vel.rotate(_robot->angle);
+
+		_targetVel(vel);
+
+		return; //	pivot handles both angle and position
+	}
+
 
 
 	//	Position control ///////////////////////////////////////////////
@@ -186,9 +195,6 @@ void MotionControl::run() {
 		//	tracking error
 		Point posError = targetPos - _robot->pos;
 
-		//	velocity multiplier
-		targetVel *= *_vel_mult;
-
 		//	PID on position
 		targetVel.x += _positionXController.run(posError.x);
 		targetVel.y += _positionYController.run(posError.y);
@@ -207,6 +213,14 @@ void MotionControl::run() {
 
 void MotionControl::stopped() {
 	_targetVel(Point(0, 0));
+	_targetAngleVel(0);
+}
+
+void MotionControl::_targetAngleVel(float angleVel) {
+	//	velocity multiplier
+	angleVel *= *_angle_vel_mult;
+
+	_robot->radioTx.set_body_w(angleVel);
 }
 
 void MotionControl::_targetVel(Point targetVel) {
@@ -229,11 +243,14 @@ void MotionControl::_targetVel(Point targetVel) {
 		targetVel = Point(0,0);
 	}
 
-	//	set radioTx values
-	_robot->radioTx.set_body_x(targetVel.x);
-	_robot->radioTx.set_body_y(targetVel.y);
-
 	//	track these values so we can limit acceleration
 	_lastVelCmd = targetVel;
 	_lastCmdTime = timestamp();
+
+	//	velocity multiplier
+	targetVel *= *_vel_mult;
+
+	//	set radioTx values
+	_robot->radioTx.set_body_x(targetVel.x);
+	_robot->radioTx.set_body_y(targetVel.y);
 }

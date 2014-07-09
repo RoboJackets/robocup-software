@@ -265,6 +265,12 @@ void OurRobot::worldVelocity(const Geometry2d::Point& v)
 	*_cmdText << "worldVel(" << v.x << ", " << v.y << ")\n";
 }
 
+void OurRobot::pivot(const Geometry2d::Point &pivotTarget) {
+	_motionConstraints.pivotTarget = pivotTarget;
+
+	*_cmdText << "pivot(" << pivotTarget.x << ", " << pivotTarget.y << ")\n";
+}
+
 Geometry2d::Point OurRobot::pointInRobotSpace(const Geometry2d::Point& pt) const {
 	Point p = pt;
 	p.rotate(pos, -angle);
