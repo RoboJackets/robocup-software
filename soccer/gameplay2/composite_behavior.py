@@ -41,6 +41,10 @@ class CompositeBehavior(behavior.Behavior):
             by_name[name] = self._subbehavior_info[name]['behavior']
         return by_name
 
+    def remove_all_subbehaviors(self):
+        for name in self._subbehavior_info:
+            self.remove_subbehavior(name)
+
 
     def all_subbehaviors(self):
         return [self._subbehavior_info[name]['behavior'] for name in self._subbehavior_info]

@@ -30,13 +30,6 @@ class LineUp(composite_behavior.CompositeBehavior):
             lambda: not self.all_subbehaviors_completed(),
             'robots arent lined up')
 
-        # add subbehaviors for all robots, instructing them to line up
-        for i in range(6):
-            pt = self._line.get_pt(0) + ( self.diff * float(i)  )
-            self.add_subbehavior(skills.move.Move(pt),
-                name="robot" + str(i),
-                required=False,
-                priority=6 - i)
 
     def all_subbehaviors_completed(self):
         return all([b.behavior_state == behavior.Behavior.State.completed or b.robot == None for b in self.all_subbehaviors()])
@@ -53,3 +46,12 @@ class LineUp(composite_behavior.CompositeBehavior):
     def line(self, value):
         self._line = value
         self.diff = (self._line.get_pt(1) - self._line.get_pt(0)).normalized() * ( self._line.length() / 6.0)
+
+        # add subbehaviors for all robots, instructing them to line up
+        self.remove_all_subbehaviors()
+        for i in range(6):
+            pt = self._line.get_pt(0) + ( self.diff * float(i)  )
+            self.add_subbehavior(skills.move.Move(pt),
+                name="robot" + str(i),
+                required=False,
+                priority=6 - i)

@@ -5,6 +5,7 @@
 #include <boost/optional.hpp>
 #include <boost/array.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
+#include <boost/circular_buffer.hpp>
 #include <QColor>
 #include <Eigen/Geometry>
 #include <Constants.hpp>
@@ -225,6 +226,13 @@ public:
 	uint64_t pathStartTime() const {
 		return _pathStartTime;
 	}
+
+	/**
+	 * Check to see if our path has been constantly updated for the past few cycles.
+	 * See _recentPathChangeTimes for more info
+	 * MotionControl calls this method to see if we're 'stuck' and can compensate for it.
+	 */
+	bool isRepeatedlyChangingPaths() const;
 
 	/**
 	 * Sets the worldVelocity in the robot's MotionConstraints
@@ -449,6 +457,28 @@ protected:
 	 * Creates an obstacle for the ball if necessary
 	 */
 	std::shared_ptr<Geometry2d::Shape> createBallObstacle() const;
+
+
+protected:
+	friend class MotionControl;
+
+	/**
+	 * There are a couple cases where the robot's path gets updated very often (almost every iteration):
+	 * * the current path is blocked by an obstacle
+	 * * the move() target keeps changing
+	 *
+	 * This causes the _pathStartTime to constantly be reset and motion control looks about zero seconds
+	 * into the planned path and sends the robot a velocity command that's really really tiny, causing
+	 * it to barely move at all.
+	 * 
+	 * Our solution to this is to track the last N path change times in a circular buffer so we can tell if
+	 * we're hitting this scenario.  If so, we can compensate, by having motion control look further into
+	 * the path when commanding the robot.
+	 */
+	boost::circular_buffer<uint64_t> _recentPathChangeTimes;
+
+	///	the size of _recentPathChangeTimes
+	static const int PathChangeHistoryBufferSize = 10;
 
 
 private:

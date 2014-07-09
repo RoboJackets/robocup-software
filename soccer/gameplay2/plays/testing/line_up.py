@@ -23,7 +23,7 @@ class LineUp(play.Play):
             lambda: self.subbehavior_with_name("LineUp").state == behavior.Behavior.State.running,
             'robots arent lined up')
 
-        x = -(constants.Field.Width/2 - constants.Robot.Radius)
+        x = (constants.Field.Width/2 - constants.Robot.Radius*2)
         y_start = 0.2
         line = robocup.Segment(
                 robocup.Point(x, constants.Robot.Radius + y_start),
