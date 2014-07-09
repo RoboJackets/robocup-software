@@ -1,0 +1,52 @@
+digraph Motion {
+    label="Motion Dataflow";
+
+    subgraph cluster_highlevel {
+        label="High-level Commands";
+
+        move_cmd [label="move()"];
+        pivot_cmd [label="pivot()"];
+        pivotTo_cmd [label="pivotTarget()"];
+        face_cmd [label="face()"];
+        worldVel_cmd [label="worldVel()"];
+        stop_cmd [label="stop()"];
+    }
+
+    {
+        node [color=blue];
+
+        posTarget, vel;
+        angleTarget, angleVel;
+        pivotTarget;
+    }
+
+    path;
+    angleVel;
+    pivotTarget;
+    wheelVelCmd [label="Wheel Commands"];
+
+    {
+        node [shape=rect];
+
+        path_constraints [label="startSpeed\nmaxSpeed\nendSpeed\nmaxAccel"];
+        angleVel_constraints [label="maxAngleVel\nmaxAngleAcc\nPID"];
+        path_to_vel_constraints [label="error\nPID"];
+    }
+
+    move_cmd -> posTarget;
+    pivotTo_cmd -> pivotTarget;
+    pivot_cmd -> {vel, angleVel_constraints};
+    face_cmd -> {angleTarget};
+    worldVel_cmd -> vel;
+    stop_cmd -> {vel, angleVel};
+
+
+    posTarget -> path_constraints -> path;
+    path -> path_to_vel_constraints -> vel;
+
+    angleTarget -> angleVel_constraints -> angleVel;
+
+    {vel, angleVel} -> wheelVelCmd;
+
+    pivotTarget -> {vel, angleVel_constraints};
+}
