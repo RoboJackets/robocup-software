@@ -37,6 +37,7 @@ srcs = [
 
 	# Sources for motion module',
 	'motion/MotionControl.cpp',
+	'MotionConstraints.cpp',
 	'motion/TrapezoidalMotion.cpp',
 
 
