@@ -248,7 +248,6 @@ void OurRobot::move(const Geometry2d::Point &goal, float endSpeed)
 
 	// sets flags for future movement
 	if (verbose) cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", " << goal.y << ")" << std::endl;
-	addText(QString("move:(%1, %2)").arg(goal.x).arg(goal.y));
 	
 	_motionConstraints.targetPos = goal;
 	_motionConstraints.endSpeed = endSpeed;
