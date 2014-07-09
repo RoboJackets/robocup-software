@@ -9,6 +9,7 @@ from enum import Enum
 
 
 # PivotKick drives up to the ball and captures it, then aims at a specified target and kicks/chips
+# Note: PivotKick recalculates aim_target_point from the target at every iteration
 class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, skills._kick._Kick):
 
     class State(Enum):
@@ -51,34 +52,8 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
 
 
         # default parameters
-        self.target_segment = constants.Field.TheirGoalSegment
-        self.use_windowing = True
         self.dribbler_power = constants.Robot.Dribbler.MaxPower
         
-
-
-    # defaults to opponent's goal
-    # NOTE: PivotKick doesn't do windowing or smart shooting at this target
-    #       The parent behavior should set this target smartly (probably based on results from WindowEvaluator)
-    # if use_windowing is True, chooses the best place to aim along the segment, otherwise aims at the center
-    @property
-    def target_segment(self):
-        return self._target_segment
-    @target_segment.setter
-    def target_segment(self, value):
-        self._target_segment = value
-
-
-    # if True, uses the window evaluator to choose the best place to aim at target_segment
-    # Default: True
-    # FIXME: right now when using windowing, we don't take into account chipping over bots
-    @property
-    def use_windowing(self):
-        return self._use_windowing
-    @use_windowing.setter
-    def use_windowing(self, value):
-        self._use_windowing = value
-
 
     # The speed to drive the dribbler at during aiming
     # If high, adds lift to kick
@@ -109,8 +84,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
 
     def set_aim_params(self):
         aim = self.subbehavior_with_name('aim')
-        aim.use_windowing = self.use_windowing
-        aim.target = self.target_segment
+        aim.target = self.aim_target_point
         aim.dribbler_power = self.dribbler_power
 
 
@@ -120,6 +94,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
             self.add_subbehavior(aim, 'aim', required=True)
             self.set_aim_params()
     def execute_aiming(self):
+        self.recalculate_aim_target_point()
         self.set_aim_params()
     def on_exit_aiming(self):
         # we don't remove the 'aim' subbehavior here because if we're going to the
@@ -128,6 +103,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
 
 
     def execute_kicking(self):
+        self.recalculate_aim_target_point()
         self.set_aim_params()
         if self.use_chipper and self.robot.has_chipper():
             self.robot.chip(self.chip_power)

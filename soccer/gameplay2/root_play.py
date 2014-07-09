@@ -131,8 +131,9 @@ class RootPlay(Play, QtCore.QObject):
 
 
     def setup_goalie_if_needed(self):
-        if self.goalie_id == None and self.has_subbehavior_with_name('goalie'):
-            self.remove_subbehavior('goalie')
+        if self.goalie_id == None:
+            if self.has_subbehavior_with_name('goalie'):
+                self.remove_subbehavior('goalie')
         else:
             if self.has_subbehavior_with_name('goalie'):
                 goalie = self.subbehavior_with_name('goalie')

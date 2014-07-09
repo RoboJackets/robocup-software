@@ -3,6 +3,7 @@ import class_import
 import fsm
 import os, errno
 import sys
+import traceback
 
 
 sys.path.append('../../run')
@@ -34,3 +35,4 @@ for behavior_type in ['skills', 'tactics', 'plays']:
             print("generated " + filepath)
         except Exception as e:
             logging.error("Error generating fsm diagram for behavior '" + klass.__name__ + "':" + str(e))
+            traceback.print_exc()
