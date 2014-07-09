@@ -1,4 +1,6 @@
 import single_robot_behavior
+import robocup
+import evaluation.window_evaluator
 import constants
 
 
@@ -12,6 +14,62 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
         self.use_chipper = False
         self.kick_power = constants.Robot.Kicker.MaxPower
         self.chip_power = constants.Robot.Chipper.MaxPower
+
+        self.use_windowing = True
+        self.target = constants.Field.TheirGoalSegment
+
+        # cached calculated values
+        self._aim_target_point = None # this is what our calculations on the given target boil down to
+
+
+
+    # if True, uses the window evaluator to choose the best place to aim at target_segment
+    # Default: True
+    # FIXME: right now when using windowing, we don't take into account chipping over bots
+    @property
+    def use_windowing(self):
+        return self._use_windowing
+    @use_windowing.setter
+    def use_windowing(self, value):
+        self._use_windowing = value
+
+
+    # The thing we're trying to kick at
+    # can be a Segment or a Point
+    # setting this property automatically recalculates the target_aim_point
+    # Default: the opponent's goal segment
+    @property
+    def target(self):
+        return self._target
+    @target.setter
+    def target(self, value):
+        self._target = value
+        self.recalculate_aim_target_point()
+
+
+    # We calculate the point we're ACTUALLY going to aim at based on the target Segment/Point and other parameters
+    # This is that point
+    @property
+    def aim_target_point(self):
+        return self._aim_target_point
+
+
+    # we're aiming at a particular point on our target segment, what is this point?
+    def recalculate_aim_target_point(self):
+        if self.robot != None:
+            # find the point we want to aim at
+            if isinstance(self.target, robocup.Point):
+                self._aim_target_point = self.target
+            elif isinstance(self.target, robocup.Segment):
+                if self.use_windowing:
+                    # FIXME: what if the parent behavior of Aim wants to set other conditions on the window evaluator such as chipping or excluded bots?
+                    win_eval = evaluation.window_evaluator.WindowEvaluator()
+                    windows, best = win_eval.eval_pt_to_seg(self.robot.pos, self.target)
+                    self._aim_target_point = best.center()
+                else:
+                    self._aim_target_point = self.target.center()
+            else:
+                raise AssertionError("Expected Point or Segment, found: " + str(self.target))
 
 
     # Allows for different kicker/chipper settings, such as for
