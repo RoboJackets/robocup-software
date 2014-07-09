@@ -37,7 +37,8 @@ class FsWatcher(Observer):
 
     # the handler calls _notify on its parent FsWatcher
     def _notify(self, event_type, path):
-        path = path.decode('utf-8')
+        if not isinstance(path, str):
+            path = path.decode('utf-8')
 
         name, file_ext = os.path.splitext(path)
         if file_ext == '.py':
