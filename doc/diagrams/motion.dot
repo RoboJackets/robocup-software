@@ -15,38 +15,45 @@ digraph Motion {
     {
         node [color=blue];
 
-        posTarget, vel;
-        angleTarget, angleVel;
+        posTarget, velTarget;
+        faceTarget, targetAngleVel;
         pivotTarget;
+        pivotRate;
     }
 
     path;
-    angleVel;
-    pivotTarget;
-    wheelVelCmd [label="Wheel Commands"];
+
+    subgraph cluster_RobotCommand {
+        label="Robot Command";
+
+        vel, angleVel;
+    }
 
     {
         node [shape=rect];
 
         path_constraints [label="startSpeed\nmaxSpeed\nendSpeed\nmaxAccel"];
-        angleVel_constraints [label="maxAngleVel\nmaxAngleAcc\nPID"];
+        angleVel_constraints [label="maxAngleVel\nmaxAngleAcc"];
         path_to_vel_constraints [label="error\nPID"];
+        targetAngleVel_to_angleVel_constraints [label="PID"];
     }
 
     move_cmd -> posTarget;
     pivotTo_cmd -> pivotTarget;
-    pivot_cmd -> {vel, angleVel_constraints};
-    face_cmd -> {angleTarget};
-    worldVel_cmd -> vel;
-    stop_cmd -> {vel, angleVel};
+    pivot_cmd -> pivotRate -> {velTarget, angleVel_constraints};
+    face_cmd -> {faceTarget};
+    worldVel_cmd -> velTarget;
+    stop_cmd -> {velTarget, targetAngleVel};
 
+
+    velTarget -> vel;
+    targetAngleVel -> targetAngleVel_to_angleVel_constraints -> angleVel;
 
     posTarget -> path_constraints -> path;
     path -> path_to_vel_constraints -> vel;
 
-    angleTarget -> angleVel_constraints -> angleVel;
+    faceTarget -> angleVel_constraints -> angleVel;
 
-    {vel, angleVel} -> wheelVelCmd;
-
-    pivotTarget -> {vel, angleVel_constraints};
+    c [shape=rect, label="maxAngleVel\nmaxAngleAcc"];
+    pivotTarget -> c -> {vel, angleVel};
 }
