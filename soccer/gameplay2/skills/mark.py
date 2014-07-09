@@ -27,8 +27,6 @@ class Mark(single_robot_behavior.SingleRobotBehavior):
 
 		main.system_state().draw_line(ball_mark_line, (0,0,255), "Mark")
 
-		self.robot.add_text("Mark", (255,255,255), "RobotText");
-
 		mark_line_dist = ball_mark_line.dist_to(pos)
 		target_point = None
 		if mark_line_dist > self.mark_line_thresh:

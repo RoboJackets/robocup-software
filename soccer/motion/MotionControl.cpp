@@ -179,7 +179,6 @@ void MotionControl::run() {
 			timeIntoPath,
 			targetPos,
 			targetVel);
-		_robot->addText(QString("targetVel %1 %2").arg(targetVel.x).arg(targetVel.y) );
 		if (!pathValidNow) {
 			targetVel.x = 0;
 			targetVel.y = 0;
