@@ -45,37 +45,25 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
             'error > threshold or rotating too fast')
 
 
-        self.use_windowing = True
-        self.target = constants.Field.TheirGoalSegment
+        self.target_point = constants.Field.TheirGoalSegment.center()
         self.error_threshold = 0.03
         self.max_steady_ang_vel = 10
         self.dribbler_speed = constants.Robot.Dribbler.MaxPower
 
         # several different methods rely on these values, which are expensive to calculate
         # we recalculate in execute_running() and cache them in these ivars
-        self._aim_target_point = None   # the specific point we're aiming at on the target segment
         self._shot_point = None # the point on the target line we'd hit if we shot now
         self._error = float("inf")
 
 
-    # If target is a Segment and use_windowing is True, it uses the window evaluator to find the best place to aim at on the Segment
-    # Default: True
+    # The target Point that we're aiming at
+    # Default: the center of the opponent's goal segment
     @property
-    def use_windowing(self):
-        return self._use_windowing
-    @use_windowing.setter
-    def use_windowing(self, value):
-        self._use_windowing = value
-
-
-    # The target Segment or Point that we're aiming at
-    # Default: the opponent's goal segment
-    @property
-    def target(self):
-        return self._target
-    @target.setter
-    def target(self, value):
-        self._target = value
+    def target_point(self):
+        return self._target_point
+    @target_point.setter
+    def target_point(self, value):
+        self._target_point = value
 
 
     # error threshold is the max distance that we can be off to the side of the target
@@ -116,42 +104,27 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
     # we're aiming at a particular point on our target segment, what is this point?
     def recalculate(self):
-        # find the point we want to aim at
-        if isinstance(self.target, robocup.Point):
-            self._aim_target_point = self.target
-        elif isinstance(self.target, robocup.Segment):
-            if use_windowing:
-                # FIXME: what if the parent behavior of Aim wants to set other conditions on the window evaluator such as chipping or excluded bots?
-                win_eval = evaluation.window_evaluator.WindowEvaluator()
-                windows, best = win_eval.eval_pt_to_seg(self.robot.pos, self.target)
-                self._aim_target_point = best.center()
-            else:
-                self._aim_target_point = self.target.center()
-        else:
-            raise AssertionError("Expected Point or Segment, found: " + str(self.target))
-
-        # find the point we're actually aiming at that's on the line going through aim_target_point
-        # and perpendicular to the line from the ball to aim_target_point
-        if self._aim_target_point is None:
+        # find the point we're actually aiming at that's on the line going through target_point
+        # and perpendicular to the line from the ball to target_point
+        if self.target_point is None:
             self._shot_point = None
         else:
-            ball2target = self._aim_target_point - main.ball().pos
-            target_line = robocup.Line(self._aim_target_point, self._aim_target_point + ball2target.perp_ccw()) # line perpendicular to aim_line that passes through the target
+            ball2target = self.target_point - main.ball().pos
+            target_line = robocup.Line(self.target_point, self.target_point + ball2target.perp_ccw()) # line perpendicular to aim_line that passes through the target
             aim_line = robocup.Line(self.robot.pos, robocup.Point(math.cos(angle_rad), math.sin(angle_rad)))
             self._shot_point = aim_line.line_intersection(target_line)    # this is the point along target_line that we'll hit if we shoot now
 
         # error
-        if self._aim_target_point != None and self._shot_point != None:
-            self._error = (self._aim_target_point - shot_point).mag() if shot_point != None else float("inf") # distance in meters off that we'll be if we shoot right now
+        if self.target_point != None and self._shot_point != None:
+            self._error = (self.target_point - shot_point).mag() if shot_point != None else float("inf") # distance in meters off that we'll be if we shoot right now
         else:
             self._error = float("inf")
-
 
 
     def execute_running(self):
         self.recalculate()
 
-        self.robot.face(self._aim_target_point)
+        self.robot.face(self.target_point)
         self.robot.set_dribbler_speed(self.dribbler_speed)
 
         # draw current shot line
@@ -161,8 +134,8 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
             main.system_state().draw_circle(self._shot_point, 0.02, color, "Aim")
 
         # draw where we're supposed to be aiming
-        if self._aim_target_point != None:
-            main.system_state().draw_circle(self._aim_target_point, 0.02, constants.Colors.Blue, "Aim")
+        if self.target_point != None:
+            main.system_state().draw_circle(self.target_point, 0.02, constants.Colors.Blue, "Aim")
             if isinstance(self.target, robocup.Segment):
                 main.system_state().draw_line(self.target, constants.Colors.Blue, "Aim")
                 for i in range(2):

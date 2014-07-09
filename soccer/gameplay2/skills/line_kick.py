@@ -7,6 +7,7 @@ import enum
 
 # lines up with the ball and the target, then drives up and kicks
 # this differs from PivotKick which gets the ball first, then aims
+# Note: LineKick recalculates the target_aim_point ONLY when the target point/segment changes
 class LineKick(skills._kick._Kick):
 
     # tuneable constants
@@ -19,7 +20,6 @@ class LineKick(skills._kick._Kick):
     MaxChargeSpeed = 1.5
     BallProjectTime = 0.4
     DoneStateThresh = 0.11
-    LandOnTarget = False
 
 
     class State(enum.Enum):
@@ -29,7 +29,6 @@ class LineKick(skills._kick._Kick):
 
     def __init__(self):
         super().__init__()
-        self.target_point = constants.Field.TheirGoalSegment.center()
 
         for state in LineKick.State:
             self.add_state(state, behavior.Behavior.State.running)
@@ -40,21 +39,9 @@ class LineKick(skills._kick._Kick):
             'immediately')
 
 
-
-    # where we're trying to kick
-    # Default: the center of their goal
-    @property
-    def target_point(self):
-        return self._target_point
-    @target_point.setter
-    def target_point(self, value):
-        self._target_point = value
-
-
     def recalculate(self):
-        self._target_line = robocup.Line(main.ball().pos, self.target_point)
-
-        bot_dir = robocup.Point.direction(self.robot.angle * constants.DegreesToRadians)
+        self._target_line = robocup.Line(main.ball().pos, self.aim_target_point)
+        # FIXME: errors?
 
 
     def execute_running(self):
@@ -82,21 +69,21 @@ class LineKick(skills._kick._Kick):
 
         self.robot.set_avoid_ball_radius(LineKick.SetupBallAvoid)
         self.robot.move_to(move_goal)
-        self.robot.face(self.robot.pos + (self.target_point - main.ball().pos))
+        self.robot.face(self.robot.pos + (self.aim_target_point - main.ball().pos))
         self.robot.unkick()
 
 
     def execute_charge(self):
-        main.system_state().draw_line(robocup.Line(self.robot.pos, self.target_point), constants.Colors.White, "LineKick")
-        main.system_state().draw_line(robocup.Line(main.ball().pos, self.target_point), constants.Colors.White, "LineKick")
+        main.system_state().draw_line(robocup.Line(self.robot.pos, self.aim_target_point), constants.Colors.White, "LineKick")
+        main.system_state().draw_line(robocup.Line(main.ball().pos, self.aim_target_point), constants.Colors.White, "LineKick")
 
         # drive directly into the ball
-        ball2target = (self.target_point - main.ball().pos).normalized()
+        ball2target = (self.aim_target_point - main.ball().pos).normalized()
         robot2ball = (main.ball().pos, self.robot.pos).normalized()
         speed = min(self.robot.vel.mag() + LineKick.AccelBias, MaxChargeSpeed)
         self.robot.set_world_vel(robot2ball.normalized() * speed)
         
-        self.robot.face(self.target_point)
+        self.robot.face(self.aim_target_point)
 
         if self.use_chipper:
             self.robot.chip(self.chip_power)
