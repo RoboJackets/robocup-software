@@ -32,9 +32,11 @@ void Pid::setWindup(unsigned int w)
 {
 	if (w > 0)
 	{
-		_windup = w;
-		_oldErr = new float[_windup];
-		memset(_oldErr, 0, sizeof(float)*_windup);
+		if (w != _windup) {
+			_windup = w;
+			_oldErr = new float[_windup];
+			memset(_oldErr, 0, sizeof(float)*_windup);
+		}
 	} else {
 		if (_oldErr) delete[] _oldErr;
 		_oldErr = nullptr;
