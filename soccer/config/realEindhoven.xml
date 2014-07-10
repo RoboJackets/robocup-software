@@ -549,10 +549,10 @@
    <PID_i_windup value="0"/>
   </pos>
   <angle>
-   <PID_p value="0.1"/>
-   <PID_i value="0.0001"/>
-   <PID_d value="0"/>
-   <Velocity_Multiplier value="0.5"/>
+   <PID_p value="0.17"/>
+   <PID_i value="0.002"/>
+   <PID_d value="0.05"/>
+   <Velocity_Multiplier value="0.3"/>
   </angle>
   <Max_Acceleration value="1.2"/>
   <Max_Velocity value="3"/>
@@ -564,5 +564,6 @@
  <MotionConstraints>
   <Max_Acceleration value="0.8"/>
   <Max_Velocity value="2"/>
+  <Max_Angle_Speed value="25"/>
  </MotionConstraints>
 </config>
