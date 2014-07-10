@@ -5,6 +5,7 @@ import robocup
 import math
 import constants
 import enum
+import time
 
 
 # The Aim skill is used when a robot has the ball to aim at a particular target
@@ -34,7 +35,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         for state in Aim.State:
             self.add_transition(state,
                 behavior.Behavior.State.failed,
-                lambda: not self.robot.has_ball(),
+                lambda: self.fumbled(),
                 'fumble')
 
         self.add_transition(Aim.State.aiming,
@@ -49,9 +50,11 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
 
         self.target_point = constants.Field.TheirGoalSegment.center()
-        self.error_threshold = 0.03
-        self.max_steady_ang_vel = 10
-        self.dribbler_speed = constants.Robot.Dribbler.MaxPower
+        self.error_threshold = 0.04
+        self.max_steady_ang_vel = 2
+        self.dribbler_speed = int(constants.Robot.Dribbler.MaxPower / 2.0)
+
+        self.last_ball_time = 0
 
         # several different methods rely on these values, which are expensive to calculate
         # we recalculate in execute_running() and cache them in these ivars
@@ -97,12 +100,16 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         return self._dribbler_speed
     @dribbler_speed.setter
     def dribbler_speed(self, value):
-        self._dribbler_speed = value
+        self._dribbler_speed = int(value)
         
 
     # returns True if we're aimed at our target within our error thresholds and we're not rotating too fast
     def is_aimed(self):
         return self._error < self.error_threshold and self.robot.angle_vel < self.max_steady_ang_vel
+
+
+    def fumbled(self):
+        return not self.robot.has_ball() and time.time() - self.last_ball_time > 0.3
 
 
     # we're aiming at a particular point on our target segment, what is this point?
@@ -126,6 +133,9 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
 
     def execute_running(self):
+        if self.robot.has_ball():
+            self.last_ball_time = time.time()
+
         self.recalculate()
 
         # slowly pivot toward the target
