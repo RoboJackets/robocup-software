@@ -542,10 +542,11 @@
  </SolarSystem>
  <MotionControl>
   <pos>
-   <PID_p value="6.5"/>
-   <PID_i value="0.0001"/>
-   <PID_d value="2"/>
-   <Velocity_Multiplier value="1"/>
+   <PID_p value="2.2"/>
+   <PID_i value="0"/>
+   <PID_d value="0"/>
+   <Velocity_Multiplier value="1.2"/>
+   <PID_i_windup value="0"/>
   </pos>
   <angle>
    <PID_p value="0.1"/>
@@ -553,8 +554,8 @@
    <PID_d value="0"/>
    <Velocity_Multiplier value="0.5"/>
   </angle>
-  <Max_Acceleration value="1.5"/>
-  <Max_Velocity value="3.5"/>
+  <Max_Acceleration value="1.2"/>
+  <Max_Velocity value="3"/>
  </MotionControl>
  <PathPlanner>
   <Max_Acceleration value="1"/>
@@ -563,5 +564,6 @@
  <MotionConstraints>
   <Max_Acceleration value="0.8"/>
   <Max_Velocity value="2"/>
+  <Max_Angle_Speed_(deg_per_s) value="80"/>
  </MotionConstraints>
 </config>

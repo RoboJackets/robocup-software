@@ -557,14 +557,20 @@
    <PID_p value="6.5"/>
    <PID_i value="0.0001"/>
    <PID_d value="2"/>
-   <Velocity_Multiplier value="1"/>
+   <Velocity_Multiplier value="1.3"/>
   </pos>
   <angle>
    <PID_p value="1"/>
    <PID_i value="1e-05"/>
    <PID_d value="0.001"/>
+   <Velocity_Multiplier value="0.5"/>
   </angle>
   <Max_Acceleration value="2"/>
   <Max_Velocity value="2.5"/>
  </MotionControl>
+ <MotionConstraints>
+  <Max_Acceleration value="1"/>
+  <Max_Velocity value="2"/>
+  <Max_Angle_Speed_(deg_per_s) value="80"/>
+ </MotionConstraints>
 </config>
