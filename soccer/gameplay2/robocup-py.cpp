@@ -248,11 +248,11 @@ BOOST_PYTHON_MODULE(robocup)
 		.def_readwrite("vel", &Robot::vel)
 		.def_readwrite("angle", &Robot::angle)
 		.def_readwrite("angle_vel", &Robot::angleVel)
-		.def_readwrite("visible", &Robot::visible)
 		.def("__repr__", &Robot_repr)
 	;
 
 	class_<OurRobot, OurRobot *, std::shared_ptr<OurRobot>, bases<Robot> >("OurRobot", init<int, SystemState*>())
+		.def_readwrite("visible", &Robot::visible)
 		.def("move_to", &OurRobot_move_to)
 		.def("set_world_vel", &OurRobot::worldVelocity)
 		.def("face", &OurRobot::face)

@@ -345,7 +345,10 @@ void Gameplay::GameplayModule::run()
 
 			std::vector<OpponentRobot *> *theirBotVector = new std::vector<OpponentRobot *>();
 			for (auto itr = _state->opp.begin(); itr != _state->opp.end(); itr++) {
-				theirBotVector->push_back(*itr);
+				OpponentRobot *bot = *itr;
+				if (bot && bot->visible) {
+					theirBotVector->push_back(bot);
+				}
 			}
 			getMainModule().attr("set_their_robots")(theirBotVector);
 
