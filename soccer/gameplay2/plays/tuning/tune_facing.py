@@ -100,7 +100,7 @@ class Facer(single_robot_behavior.SingleRobotBehavior):
     def __init__(self):
         super().__init__(continuous=True)
 
-        self.angle = -90
+        self.angle = 90
         self.point = robocup.Point(0, constants.Field.Length / 4.0)
         self.face_target = self.point + robocup.Point(math.cos(self.angle * constants.DegreesToRadians), math.sin(self.angle * constants.DegreesToRadians))
 

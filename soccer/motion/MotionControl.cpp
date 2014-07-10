@@ -148,8 +148,9 @@ void MotionControl::run() {
 	// handle body velocity for pivot command
 	if (constraints.pivotTarget) {
 		float r = Robot_Radius;
-		float speed = r * targetW;
-		Point vel(0, -speed);
+		const float FudgeFactor = 0.01f;
+		float speed = r * targetW * RadiansToDegrees * FudgeFactor;
+		Point vel(speed, 0);
 		vel.rotate(_robot->angle);
 
 		_targetVel(vel);

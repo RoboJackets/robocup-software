@@ -501,6 +501,11 @@ bool OurRobot::isRepeatedlyChangingPaths() const {
 }
 
 void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles) {
+	if (!_motionConstraints.targetPos) {
+		_path = boost::none;
+		return;
+	}
+
 	if (_state->gameState.state == GameState::Halt || !_motionConstraints.targetPos) {
 		//	clear our history of path change times
 		_recentPathChangeTimes.clear();

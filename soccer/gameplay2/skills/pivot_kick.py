@@ -5,6 +5,7 @@ import skills.aim
 import skills.capture
 import robocup
 import constants
+import main
 from enum import Enum
 
 
@@ -64,7 +65,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
         return self._dribbler_power
     @dribbler_power.setter
     def dribbler_power(self, value):
-        self._dribbler_power = value
+        self._dribbler_power = int(value)
 
 
     def remove_aim_behavior(self):
@@ -96,6 +97,11 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
     def execute_aiming(self):
         self.recalculate_aim_target_point()
         self.set_aim_params()
+
+        if isinstance(self.target, robocup.Segment):
+            for i in range(2):
+                main.system_state().draw_line(robocup.Line(main.ball().pos, self.target.get_pt(i)), constants.Colors.Blue, "PivotKick")
+
     def on_exit_aiming(self):
         # we don't remove the 'aim' subbehavior here because if we're going to the
         # kicking state, we want to keep it around
