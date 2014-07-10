@@ -19,6 +19,7 @@ REGISTER_CONFIGURABLE(MotionControl);
 
 ConfigDouble *MotionControl::_pid_pos_p;
 ConfigDouble *MotionControl::_pid_pos_i;
+ConfigInt    * MotionControl::_pid_pos_i_windup;
 ConfigDouble *MotionControl::_pid_pos_d;
 ConfigDouble *MotionControl::_vel_mult;
 
@@ -34,6 +35,7 @@ ConfigDouble *MotionControl::_max_velocity;
 void MotionControl::createConfiguration(Configuration *cfg) {
 	_pid_pos_p = new ConfigDouble(cfg, "MotionControl/pos/PID_p", 6.5);
 	_pid_pos_i = new ConfigDouble(cfg, "MotionControl/pos/PID_i", 0.0001);
+	_pid_pos_i_windup = new ConfigInt(cfg, "MotionControl/pos/PID_i_windup", 0);
 	_pid_pos_d = new ConfigDouble(cfg, "MotionControl/pos/PID_d", 2);
 	_vel_mult = new ConfigDouble(cfg, "MotionControl/pos/Velocity Multiplier", 1);
 
@@ -66,9 +68,11 @@ void MotionControl::run() {
 	//	update PID parameters
 	_positionXController.kp = *_pid_pos_p;
 	_positionXController.ki = *_pid_pos_i;
+	_positionXController.setWindup(*_pid_pos_i_windup);
 	_positionXController.kd = *_pid_pos_d;
 	_positionYController.kp = *_pid_pos_p;
 	_positionYController.ki = *_pid_pos_i;
+	_positionYController.setWindup(*_pid_pos_i_windup);
 	_positionYController.kd = *_pid_pos_d;
 	_angleController.kp = *_pid_angle_p;
 	_angleController.ki = *_pid_angle_i;

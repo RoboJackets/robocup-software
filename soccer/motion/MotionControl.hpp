@@ -55,6 +55,7 @@ private:
 
 	static ConfigDouble *_pid_pos_p;
 	static ConfigDouble *_pid_pos_i;
+	static ConfigInt    *_pid_pos_i_windup;
 	static ConfigDouble *_pid_pos_d;
 	static ConfigDouble *_vel_mult;
 
