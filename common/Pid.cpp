@@ -2,9 +2,12 @@
 
 #include <cstring>
 #include <stdio.h>
+#include <iostream>
 
-Pid::Pid(float p, float i, float d, unsigned int windup) :
-	_windup(windup)
+using namespace std;
+
+
+Pid::Pid(float p, float i, float d, unsigned int windup)
 {
 	_windupLoc = 0;
 	_errSum = 0;
@@ -16,7 +19,8 @@ Pid::Pid(float p, float i, float d, unsigned int windup) :
 	ki = i;
 	kd = d;
 	
-	setWindup(_windup);
+	_windup = 0;
+	setWindup(windup);
 }
 
 Pid::~Pid()
@@ -55,13 +59,10 @@ float Pid::run(const float err)
 		_errSum -= _oldErr[_windupLoc];
 		_oldErr[_windupLoc] = err;
 	
-		if (++_windupLoc > _windup)
-		{
-			_windupLoc = 0;
-		}
+		_windupLoc = (_windupLoc + 1) % _windup;
 	}
-	
-	return err * kp + _errSum * ki + dErr * kd;
+
+	return (err * kp) + (_errSum * ki) + (dErr * kd);
 }
 
 void Pid::clearWindup()

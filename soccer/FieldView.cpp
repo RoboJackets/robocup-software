@@ -177,7 +177,7 @@ void FieldView::drawWorldSpace(QPainter& p)
 
 				const SSL_DetectionFrame &detect = wrapper.detection();
 
-				float alpha = 1.0f - (float)i / pastLocationCount;
+				float alpha = 0.6f * (1.0f - (float)i / pastLocationCount);
 
 				QColor blue = Qt::blue;
 				blue.setAlphaF(alpha);
