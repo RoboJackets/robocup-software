@@ -20,6 +20,10 @@ class RootPlay(Play, QtCore.QObject):
         self._goalie_id = None
         self.add_transition(Behavior.State.start, Behavior.State.running, lambda: True, 'immediately')
 
+        # if a play fails for some reason, we can temporarily blacklist it, which removes it from play
+        # selection for the next iteration, then enables it again
+        self.temporarily_blacklisted_play_class = None
+
 
     play_changed = QtCore.pyqtSignal("QString")
 
@@ -36,6 +40,11 @@ class RootPlay(Play, QtCore.QObject):
             self.play = None
         else:
             enabled_plays = main.play_registry().get_enabled_plays()
+
+            # handle temporary blacklisting
+            # we remove the blacklisted play class from selection for this iteration, then unblacklist it
+            enabled_plays = [p for p in enabled_plays if p != self.temporarily_blacklisted_play_class]
+            self.temporarily_blacklisted_play_class = None
 
             # see if we need to kill current play
             if self.play != None:
