@@ -69,6 +69,10 @@ void OurRobot_set_avoid_ball_radius(OurRobot *self, float radius) {
 	self->avoidBallRadius(radius);
 }
 
+void OurRobot_set_avoid_teammate_radius(OurRobot *self, unsigned shellID, float radius) {
+	self->avoidTeammateRadius(shellID, radius);
+}
+
 void OurRobot_set_max_angle_speed(OurRobot *self, float maxAngleSpeed) {
 	self->motionConstraints().maxAngleSpeed = maxAngleSpeed;
 }
@@ -259,7 +263,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("pivot", &OurRobot::pivot)
 		.def("set_max_angle_speed", OurRobot_set_max_angle_speed)
 		.def("set_avoid_ball_radius", &OurRobot_set_avoid_ball_radius)
-		.def("set_avoid_teammate_radius", &OurRobot::avoidTeammateRadius)
+		.def("set_avoid_teammate_radius", OurRobot_set_avoid_teammate_radius)
 		.def("disable_avoid_ball", &OurRobot::disableAvoidBall)
 		.def("avoid_all_teammates", &OurRobot::avoidAllTeammates)
 		.def("add_text", &OurRobot_add_text)
