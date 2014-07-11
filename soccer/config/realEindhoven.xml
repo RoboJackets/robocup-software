@@ -356,17 +356,6 @@
   <Kick_Power value="127"/>
   <Chip_Power value="100"/>
  </OurKickoff>
- <BasicOffense122>
-  <Hystersis_Coeff value="0.5"/>
-  <Support_Backoff_Dist value="1.5"/>
-  <Mark_Hystersis_Coeff value="0.9"/>
-  <Support_Avoid_Teammate_Dist value="0.5"/>
-  <Support_Avoid_Shot value="0.2"/>
-  <Offense_Support_Ratio value="0.7"/>
-  <Defense_Support_Ratio value="0.9"/>
-  <Enable_Line_Kick value="false"/>
-  <Defense_First value="true"/>
- </BasicOffense122>
  <OpenField221>
   <Hystersis_Coeff value="0.5"/>
   <Support_Backoff_Dist value="1.5"/>
