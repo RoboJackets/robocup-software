@@ -121,8 +121,20 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         else:
             ball2target = self.target_point - main.ball().pos
             target_line = robocup.Line(self.target_point, self.target_point + ball2target.perp_ccw()) # line perpendicular to aim_line that passes through the target
-            angle_rad = self.robot.angle * constants.DegreesToRadians
-            aim_line = robocup.Line(self.robot.pos, self.robot.pos + robocup.Point(math.cos(angle_rad), math.sin(angle_rad)))
+            
+            # ideally the angle we're aiming at would be the angle of the robot, but the bot doesn't kick straight
+            # it tends to kick in the direction of the side of the mouth that the ball is in
+            # we draw a line from the center of the bot through the ball and a line along the angle the bot is facing
+            # our 'actual' aim line is somewhere in-between the two
+            bot_angle_rad = self.robot.angle * constants.DegreesToRadians
+            ball_angle_rad = (main.ball().pos - self.robot.pos).angle()
+            ball_angle_bias = 0.8
+            aim_angle = ball_angle_rad*ball_angle_bias + (1.0 - ball_angle_bias)*bot_angle_rad
+            
+            # the line we're aiming down
+            angle_pt = robocup.Point(math.cos(aim_angle), math.sin(aim_angle))
+            aim_line = robocup.Line(self.robot.pos, main.ball().pos)
+            
             self._shot_point = aim_line.line_intersection(target_line)    # this is the point along target_line that we'll hit if we shoot now
 
         # error
