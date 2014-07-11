@@ -277,6 +277,8 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("kick", &OurRobot::kick)
 		.def("unkick", &OurRobot::unkick)
 		.def("get_cmd_text", &OurRobot::getCmdText)
+		.def("ball_sense_works", &OurRobot::ballSenseWorks)
+		.def("kicker_works", &OurRobot::kickerWorks)
 	;
 
 	class_<OpponentRobot, OpponentRobot *, std::shared_ptr<OpponentRobot>, bases<Robot> >("OpponentRobot", init<int>());

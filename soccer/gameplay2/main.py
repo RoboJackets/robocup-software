@@ -1,6 +1,7 @@
 import root_play as root_play_module
 import play_registry as play_registry_module
 import play
+import evaluation.double_touch
 import fs_watcher
 import class_import
 import logging
@@ -130,6 +131,9 @@ def run():
     if not _has_initialized:
         raise AssertionError("Error: must call init() before run()")
 
+    # run double-touch tracker
+    evaluation.double_touch.run()
+
     if root_play() != None:
         root_play().spin()
 
@@ -158,6 +162,7 @@ def game_state():
     return _game_state
 def set_game_state(value):
     global _game_state
+    logging.warn("NOT IMPLEMENTED: In certain cases, we need to reset() the double touch rule")
     _game_state = value
 
 _ball = None
