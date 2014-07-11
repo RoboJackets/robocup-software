@@ -3,6 +3,7 @@ import behavior
 import robocup
 import skills
 import tactics
+import constants
 
 
 # sends a goal kick towards the goal if it's open
@@ -45,7 +46,7 @@ class OurGoalkick(play.Play):
         self.add_subbehavior(fullback1, 'fullback1', required=False, priority=3)
         
         fullback1 = tactics.positions.fullback.Fullback(side=tactics.positions.fullback.Fullback.Side.right)
-        self.add_subbehavior(fullback1, 'fullback1', required=False, priority=2)
+        self.add_subbehavior(fullback1, 'fullback2', required=False, priority=2)
 
 
 
