@@ -50,7 +50,7 @@ class OurCornerKick(play.Play):
     # note: the old C++ version of this play required a chipper
     def score(self):
         gs = main.game_state()
-        chipper_available = any([bot.has_chipper() and bot.shell_id() != main.goalie_id() for bot in main.our_robots()])
+        chipper_available = any([bot.has_chipper() and bot.shell_id() != main.root_play().goalie_id() for bot in main.our_robots()])
 
         raise NotImplementedError("old one required a chipper, do we want that here too?")
 
