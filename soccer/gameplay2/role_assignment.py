@@ -7,7 +7,7 @@ class RoleRequirements:
     def __init__(self):
         self.pos = None
         self.has_ball = False
-        self.has_chipper = False
+        self.chipper_preference_weight = 0
         self.required_shell_id = None
         self.previous_shell_id = None
         self.required = False
@@ -31,12 +31,17 @@ class RoleRequirements:
         self._has_ball = value
 
 
+    # rather than having a 'has_chipper' property, we have a property for the weight
+    # * a value of float("inf") means that a chipper is required
+    # * a value of 0 means we don't care if it has a chipper or not
+    # * a value in-between means we want one, but it's not essential
+    # This weight is added to the assignment cost for a robot
     @property
-    def has_chipper(self):
-        return self._has_chipper
-    @has_chipper.setter
-    def has_chipper(self, value):
-        self._has_chipper = value
+    def chipper_preference_weight(self):
+        return self._chipper_preference_weight
+    @chipper_preference_weight.setter
+    def chipper_preference_weight(self, value):
+        self._chipper_preference_weight = value
 
 
     # if True, requires that the robot has a working ball sensor, a working kicker,
@@ -95,6 +100,10 @@ PositionCostMultiplier = 1.0
 
 # how much penalty is there for switching robots mid-play
 RobotChangeCost = 1.0
+
+# a default weight for preferring a chipper
+# this is tunable
+PreferChipper = 5
 
 
 # uses the munkres/hungarian algorithm to find the optimal role assignments
@@ -156,8 +165,6 @@ def assign_roles(robots, role_reqs):
 
             if req.required_shell_id != None and req.required_shell_id != robot.shell_id():
                 cost = float("inf")
-            elif req.has_chipper == True and robot.has_chipper == False:
-                cost = float("inf")
             elif req.has_ball == True and robot.has_ball() == False:
                 cost = float("inf")
             elif req.require_kicking and (robot.shell_id() == evaluation.double_touch.forbiden_ball_toucher() or not robot.kicker_works() or not robot.ball_sense_works()):
@@ -167,6 +174,8 @@ def assign_roles(robots, role_reqs):
                     cost += PositionCostMultiplier * (req.pos - robot.pos).mag()
                 if req.previous_shell_id != None and req.previous_shell_id != robot.shell_id:
                     cost += RobotChangeCost
+                if not robot.has_chipper():
+                    cost += reqs.chipper_preference_weight
 
             cost_row.append(cost)
         cost_matrix.append(cost_row)
