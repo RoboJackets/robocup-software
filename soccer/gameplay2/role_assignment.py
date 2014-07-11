@@ -160,7 +160,7 @@ def assign_roles(robots, role_reqs):
                 cost = float("inf")
             elif req.has_ball == True and robot.has_ball() == False:
                 cost = float("inf")
-            elif req.require_kicking and (robot.shell_id() == evaluation.double_touch.forbiden_ball_toucher() || !robot.kicker_works() || !robot.ball_sense_works()):
+            elif req.require_kicking and (robot.shell_id() == evaluation.double_touch.forbiden_ball_toucher() or not robot.kicker_works() or not robot.ball_sense_works()):
                 cost = float("inf")
             else:
                 if req.pos != None:
