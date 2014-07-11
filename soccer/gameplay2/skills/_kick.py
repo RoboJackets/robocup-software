@@ -116,7 +116,6 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
 
     def role_requirements(self):
         reqs = super().role_requirements()
+        reqs.require_kicking = True
         # TODO: prefer chipper?
-        # FIXME: require ball carrying / kicking abilities
         return reqs
-

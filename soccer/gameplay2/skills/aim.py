@@ -172,3 +172,8 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         desc += "\n    err thresh=" + str(self.error_threshold) + "m"
         return desc
 
+
+    def role_requirements(self):
+        reqs = super().role_requirements()
+        reqs.require_kicking = True
+        return reqs

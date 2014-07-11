@@ -101,3 +101,9 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         bot2ball = (main.ball().pos - self.robot.pos).normalized()
         self.robot.set_world_vel(bot2ball * Capture.FineApproachSpeed)
+
+
+    def role_requirements(self):
+        reqs = super().role_requirements()
+        reqs.require_kicking = True
+        return reqs
