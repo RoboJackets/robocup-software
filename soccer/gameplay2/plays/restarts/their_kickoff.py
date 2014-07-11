@@ -26,6 +26,7 @@ class TheirKickoff(play.Play):
         self.add_subbehavior(circle_up, 'circle_up')
 
 
-    def score(self):
+    @classmethod
+    def score(cls):
         gs = main.game_state()
         return 0 if gs.is_setup_state() and gs.is_their_kickoff() else float("inf")

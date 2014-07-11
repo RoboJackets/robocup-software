@@ -50,7 +50,8 @@ class OurGoalKick(play.Play):
 
 
 
-    def score(self):
+    @classmethod
+    def score(cls):
         gs = main.game_state()
         return 0 if (gs.is_setup_state() and gs.is_our_direct() and main.ball().pos.y < 1.0) else float("inf")
 

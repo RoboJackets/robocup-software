@@ -60,9 +60,7 @@ class RootPlay(Play, QtCore.QObject):
                     if main.game_state().is_halted():
                         # don't run a play, we're halted
                         pass
-                    if main.game_state().is_stopped():
-                        self.play = plays.stopped.Stopped()
-                    elif len(enabled_plays) > 0:
+                    if len(enabled_plays) > 0:
                         # select the play with the largest value for score()
                         play_class = min(enabled_plays, key=lambda p: p.score())
                         self.play = play_class()

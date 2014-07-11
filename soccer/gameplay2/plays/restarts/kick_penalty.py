@@ -25,6 +25,7 @@ class KickPenalty(play.Play):
         line_up = tactics.line_up.LineUp(line)
 
 
-    def score(self):
+    @classmethod
+    def score(cls):
         gs = main.game_state()
         return 0.0 if gs.is_setup_state() and gs.is_our_penalty() else float("inf")
