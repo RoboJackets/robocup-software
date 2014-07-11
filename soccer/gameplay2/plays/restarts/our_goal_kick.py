@@ -9,8 +9,8 @@ import constants
 # sends a goal kick towards the goal if it's open
 # otherwise, chips/kicks the ball to opposite side of field and
 # sends another robot to go intercept
-# NOTE: this is a por of the C++ OurGoalkick2, NOT OurGoalkick (it was trashed)
-class OurGoalkick(play.Play):
+# NOTE: this is a por of the C++ OurGoalKick2, NOT OurGoalKick (it was trashed)
+class OurGoalKick(play.Play):
 
     # tunable params
     MinChipRange = 0.3
@@ -30,8 +30,8 @@ class OurGoalkick(play.Play):
 
         kicker = skills.line_kick.LineKick()
         kicker.use_chipper = True
-        kicker.kick_power = OurGoalkick.KickerPower
-        kicker.chip_power = OurGoalkick.ChipperPower
+        kicker.kick_power = OurGoalKick.KickerPower
+        kicker.chip_power = OurGoalKick.ChipperPower
         self.add_subbehavior(kicker, 'kicker', required=True, priority=6)
 
 
@@ -63,8 +63,8 @@ class OurGoalkick(play.Play):
         # see if we have a direct shot on their goal
         win_eval = evaluation.window_evaluator.WindowEvaluator()
         win_eval.enable_chip = kicker.robot != None and kicker.robot.has_chipper()
-        win_eval.min_chip_range = OurGoalkick.MinChipRange
-        win_eval.max_chip_range = OurGoalkick.MaxChipRange
+        win_eval.min_chip_range = OurGoalKick.MinChipRange
+        win_eval.max_chip_range = OurGoalKick.MaxChipRange
         windows, best = win_eval.run(main.ball().pos, constants.Field.TheirGoalSegment)
 
         # note: the min length value is tunable

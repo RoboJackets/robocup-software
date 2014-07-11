@@ -7,7 +7,7 @@ import constants
 import robocup
 
 
-class OurFreekick(play.Play):
+class OurFreeKick(play.Play):
 
     def __init__(self):
         super().__init__(continuous=True)
