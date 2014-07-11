@@ -4,7 +4,7 @@ import tactics.positions.fullback
 import skills.mark
 
 
-class TheirFreekick(play.Play):
+class TheirFreeKick(play.Play):
 
     def __init__(self):
         super().__init__(continuous=True)
