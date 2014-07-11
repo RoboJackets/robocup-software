@@ -27,7 +27,7 @@ def update():
     #         _forbidden_ball_toucher = bot.shell_id()
 
     global _forbidden_ball_toucher
-    raise NotImplementedError()
+    logging.warn("NOT IMPLEMENTED: double_touch.update()")
 
 
 # returns the shell id of the robot that is'nt allowed to touch the ball right now
