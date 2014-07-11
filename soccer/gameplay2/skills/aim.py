@@ -128,7 +128,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
             # our 'actual' aim line is somewhere in-between the two
             bot_angle_rad = self.robot.angle * constants.DegreesToRadians
             ball_angle_rad = (main.ball().pos - self.robot.pos).angle()
-            ball_angle_bias = 0.8
+            ball_angle_bias = 0.8   # NOTE: THIS IS TUNABLE
             aim_angle = ball_angle_rad*ball_angle_bias + (1.0 - ball_angle_bias)*bot_angle_rad
             
             # the line we're aiming down
