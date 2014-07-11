@@ -10,7 +10,7 @@ class TheirKickoff(play.Play):
     def __init__(self):
         super().__init__(continuous=True)
 
-        self.add_trantition(behavior.Behavior.State.start,
+        self.add_transition(behavior.Behavior.State.start,
             behavior.Behavior.State.running,
             lambda: True,
             'immediately')
@@ -28,4 +28,4 @@ class TheirKickoff(play.Play):
 
     def score(self):
         gs = main.game_state()
-        return 0 if gs.is_setup_state() and gs.is_their_kickoff()
+        return 0 if gs.is_setup_state() and gs.is_their_kickoff() else float("inf")
