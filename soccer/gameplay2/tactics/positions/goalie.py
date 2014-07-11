@@ -131,7 +131,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         #           this will require a Capture behavior that doesn't wait for the ball to stop
         kick = skills.pivot_kick.PivotKick()
         # FIXME: config pivot kick
-        # FIXME: enable chipping!
+        kick.use_chipper = True
         # FIXME: if the goalie has a fault, resort to bump
         self.add_subbehavior('kick-clear', kick, required=True)
 

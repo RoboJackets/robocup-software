@@ -104,8 +104,11 @@ class Basic122(play.Play):
                 else:
                     support_goal.y = max(support_goal.y * DefenseSupportRatio, 0.3)
 
-                support1.robot.move(support_goal)
-                support1.robot.face(ball_proj)
+
+                # NOTE: the old code called these move commands here INSTEAD of running the mark behavior
+                # if we wanted to do that, we'd have to remove Mark as a subbehavior...
+                # support1.robot.move(support_goal)
+                # support1.robot.face(ball_proj)
 
 
         # sit around and do jack shit...

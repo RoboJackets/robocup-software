@@ -67,18 +67,22 @@ class TheirFreeKick(play.Play):
         # Decide what each marking robot should do
         # @open_opps contains the robots we want to mark (if any)
         # any robot that isn't assigned a mark_robot will move towards the ball
-        # note: subbehaviors are executed before their superbehaviors, so the move() and face() here override the mark behavior's normal control
         for i, mark_i in enumerate(self.marks):
             if mark_i.robot != None:
                 if i < len(open_opps_and_dists):
                     # mark the opponent
                     mark_i.mark_robot = open_opps_and_dists[i](0)
                 else:
-                    # move towards the ball and face it, but don't get within field center's radius
-                    pos = mark_i.robot.pos
-                    target = pos + (ball_pos - pos).normalized() * (ball_pos.dist_to(pos) - constants.Field.CenterRadius)
-                    mark_i.robot.move(target)
-                    mark_i.face(ball_pos)
+                    pass
+                    # NOTE: the old code ran these motion commands INSTEAD of running the mark command
+                    # we could do that, but it'd require removing the subbehavior and re-adding a move or something...
+
+                    # # move towards the ball and face it, but don't get within field center's radius
+                    # pos = mark_i.robot.pos
+                    # target = pos + (ball_pos - pos).normalized() * (ball_pos.dist_to(pos) - constants.Field.CenterRadius)
+                    
+                    # mark_i.robot.move(target)
+                    # mark_i.face(ball_pos)
 
 
         # tell the marking robots to avoid eachother more than normal
