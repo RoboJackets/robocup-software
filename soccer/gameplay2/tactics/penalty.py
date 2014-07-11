@@ -1,6 +1,7 @@
 import single_robot_composite_behavior
 import behavior
 import main
+import role_assignment
 import enum
 import robocup
 import skills
@@ -63,3 +64,12 @@ class Penalty(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def on_exit_ready(self):
         self.remove_subbehavior('kick')
+
+
+    # prefer to get assigned robot closest to ball
+    def role_requirements(self):
+        reqs = super().role_requirements()
+        if isinstance(reqs, role_assignment.RoleRequirements):
+            reqs.pos = main.ball().pos
+
+        return reqs
