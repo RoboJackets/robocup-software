@@ -151,7 +151,7 @@ def game_state():
     return _game_state
 def set_game_state(value):
     global _game_state
-    raise NotImplementedError("In certain cases, we need to reset() the double touch rule")
+    logging.warn("NOT IMPLEMENTED: In certain cases, we need to reset() the double touch rule")
     _game_state = value
 
 _ball = None
