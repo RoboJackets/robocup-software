@@ -69,17 +69,17 @@ class RootPlay(Play, QtCore.QObject):
 
         # Role Assignment
         ################################################################################
-        assignments = role_assignment.assign_roles(self.robots, self.role_requirements())
-        self.assign_roles(assignments)
+        assignments = None
+        try:
+            assignments = role_assignment.assign_roles(self.robots, self.role_requirements())
+        except role_assignment.ImpossibleAssignmentError as e:
+            logging.error("Unable to satisfy role assignment constraints.  Dropping and temp. blacklisting current play...")
+            self.drop_current_play(temporarily_blacklist=True)
+
+        if assignments != None:
+            self.assign_roles(assignments)
 
 
-        # Run subbehaviors
-        ################################################################################
-        # try:
-        #     super().spin()
-        # except Exception as e:
-        #     logging.error("Exception occurred in RootPlay.run(), ignoring for now: " + str(e))
-        #     traceback.print_exc()
 
     def spin(self):
         try:
@@ -89,7 +89,8 @@ class RootPlay(Play, QtCore.QObject):
             traceback.print_exc()
 
     # this is used to force a reselection of a play
-    def drop_current_play(self):
+    def drop_current_play(self, temporarily_blacklist=False):
+        self.temporarily_blacklisted_play_class = self.play.__class__
         self.play = None
 
 
