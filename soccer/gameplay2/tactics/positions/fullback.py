@@ -150,7 +150,7 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 		backVecRot = robocup.Point(backVec.perp_ccw())
 		facing_back_line = ( backVecRot.dot(shotVec) < 0 )
 		if not facing_back_line and self.robot.has_ball():
-			if self.robot.chipper_available():
+			if self.robot.has_chipper():
 				self.robot.chip(255)
 			else:
 				self.robot.kick(255)
@@ -220,7 +220,7 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 		backVecRot = robocup.Point(backVec.perp_ccw())
 		facing_back_line = ( backVecRot.dot(shotVec) < 0 )
 		if not facing_back_line and self.robot.has_ball():
-			if self.robot.chipper_available():
+			if self.robot.has_chipper():
 				self.robot.chip(255)
 			else:
 				self.robot.kick(255)

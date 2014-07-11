@@ -14,7 +14,8 @@ class Stopped(play.Play):
             'immediately')
 
 
-    def score(self):
+    @classmethod
+    def score(cls):
         return 0 if main.game_state().is_stopped() else float("inf")
 
 

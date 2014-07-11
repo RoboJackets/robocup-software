@@ -130,12 +130,17 @@ def run():
     if not _has_initialized:
         raise AssertionError("Error: must call init() before run()")
 
-    # run double-touch tracker
-    import evaluation.double_touch
-    evaluation.double_touch.run()
+    try:
+        # run double-touch tracker
+        import evaluation.double_touch
+        evaluation.double_touch.update()
 
-    if root_play() != None:
-        root_play().spin()
+        if root_play() != None:
+            root_play().spin()
+    except:
+        exc = sys.exec_info()[0]
+        logging.error("Exception occurred in main.run(): " + str(exc) + "ignoring for now")
+        traceback.print_exc()
 
 
 _root_play = None
@@ -162,7 +167,6 @@ def game_state():
     return _game_state
 def set_game_state(value):
     global _game_state
-    logging.warn("NOT IMPLEMENTED: In certain cases, we need to reset() the double touch rule")
     _game_state = value
 
 _ball = None

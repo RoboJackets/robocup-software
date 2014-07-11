@@ -46,7 +46,8 @@ class OurKickoff(play.Play):
 
 
 
-    def score(self):
+    @classmethod
+    def score(cls):
         gs = main.game_state()
         return 0 if gs.is_setup_state() and gs.is_our_kickoff() else float("inf")
 

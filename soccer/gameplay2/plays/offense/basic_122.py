@@ -44,7 +44,8 @@ class Basic122(play.Play):
 
 
 
-    def score(self):
+    @classmethod
+    def score(cls):
         return 0 if main.game_state().is_playing() else float("inf")
 
 

@@ -175,7 +175,7 @@ def assign_roles(robots, role_reqs):
                 if req.previous_shell_id != None and req.previous_shell_id != robot.shell_id:
                     cost += RobotChangeCost
                 if not robot.has_chipper():
-                    cost += reqs.chipper_preference_weight
+                    cost += req.chipper_preference_weight
 
             cost_row.append(cost)
         cost_matrix.append(cost_row)

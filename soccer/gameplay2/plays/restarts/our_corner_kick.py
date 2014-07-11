@@ -48,7 +48,8 @@ class OurCornerKick(play.Play):
 
 
     # note: the old C++ version of this play required a chipper
-    def score(self):
+    @classmethod
+    def score(cls):
         gs = main.game_state()
         chipper_available = any([bot.has_chipper() and bot.shell_id() != main.root_play().goalie_id() for bot in main.our_robots()])
 

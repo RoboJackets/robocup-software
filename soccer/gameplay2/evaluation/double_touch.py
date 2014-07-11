@@ -1,3 +1,5 @@
+import logging
+
 
 # This module implements our observance of the double-touch rule
 #
