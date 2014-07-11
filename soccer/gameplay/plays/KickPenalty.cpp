@@ -2,7 +2,7 @@
 
 using namespace std;
 
-REGISTER_PLAY_CATEGORY(Gameplay::Plays::KickPenalty, "Restarts")
+// REGISTER_PLAY_CATEGORY(Gameplay::Plays::KickPenalty, "Restarts")
 
 Gameplay::Plays::KickPenalty::KickPenalty(GameplayModule *gameplay):
 	Play(gameplay),
