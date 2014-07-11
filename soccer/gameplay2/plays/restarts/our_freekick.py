@@ -4,6 +4,7 @@ import skills.move
 import skills.pivot_kick
 import tactics.positions.fullback
 import constants
+import robocup
 
 
 class OurFreekick(play.Play):
@@ -25,9 +26,9 @@ class OurFreekick(play.Play):
 
         # add two 'centers' that just move to fixed points
         center1 = skills.move.Move(robocup.Point(0, 1.5))
-        self.add_subbehavior(center_i, 'center1', required=False, priority=4)
+        self.add_subbehavior(center1, 'center1', required=False, priority=4)
         center2 = skills.move.Move(robocup.Point(0, 1.5))
-        self.add_subbehavior(center_i, 'center2', required=False, priority=3)
+        self.add_subbehavior(center1, 'center2', required=False, priority=3)
 
         fullback1 = tactics.positions.fullback.Fullback(side=tactics.positions.fullback.Fullback.Side.left)
         self.add_subbehavior(fullback1, 'fullback1', required=False, priority=2)
