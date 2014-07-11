@@ -1,4 +1,5 @@
 import munkres
+import evaluation.double_touch
 
 
 class RoleRequirements:
@@ -11,6 +12,7 @@ class RoleRequirements:
         self.previous_shell_id = None
         self.required = False
         self.priority = 0
+        self.require_kicking = False
 
 
     @property
@@ -35,6 +37,17 @@ class RoleRequirements:
     @has_chipper.setter
     def has_chipper(self, value):
         self._has_chipper = value
+
+
+    # if True, requires that the robot has a working ball sensor, a working kicker,
+    # and isn't forbidden from touching the ball by the double touch rules
+    # Default: False
+    @property
+    def require_kicking(self):
+        return self._require_kicking
+    @require_kicking.setter
+    def require_kicking(self, value):
+        self._require_kicking = value
 
 
     @property
@@ -146,6 +159,8 @@ def assign_roles(robots, role_reqs):
             elif req.has_chipper == True and robot.has_chipper == False:
                 cost = float("inf")
             elif req.has_ball == True and robot.has_ball() == False:
+                cost = float("inf")
+            elif req.require_kicking and (robot.shell_id() == evaluation.double_touch.forbiden_ball_toucher() || !robot.kicker_works() || !robot.ball_sense_works()):
                 cost = float("inf")
             else:
                 if req.pos != None:
