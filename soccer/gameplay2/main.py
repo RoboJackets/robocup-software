@@ -1,7 +1,6 @@
 import root_play as root_play_module
 import play_registry as play_registry_module
 import play
-import evaluation.double_touch
 import fs_watcher
 import class_import
 import logging
@@ -132,6 +131,7 @@ def run():
         raise AssertionError("Error: must call init() before run()")
 
     # run double-touch tracker
+    import evaluation.double_touch
     evaluation.double_touch.run()
 
     if root_play() != None:

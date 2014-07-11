@@ -1,5 +1,3 @@
-import evaluation.ball
-
 
 # This module implements our observance of the double-touch rule
 #
@@ -22,6 +20,7 @@ def reset():
 
 # At each iteration, you must call `update()` to do tracking of the rule
 def update():
+    import evaluation.ball
     # for bot in main.our_robots():
     #     if bot.just_kicked():
     #         _forbidden_ball_toucher = bot.shell_id()
