@@ -117,5 +117,6 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
     def role_requirements(self):
         reqs = super().role_requirements()
         reqs.require_kicking = True
-        # TODO: prefer chipper?
+        if self.use_chipper:
+            reqs.chipper_preference_weight = role_assignment.PreferChipper
         return reqs
