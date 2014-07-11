@@ -2,6 +2,7 @@ import behavior
 import single_robot_behavior
 import role_assignment
 import re
+import sys
 
 
 # a composite behavior is one that has 1+ subbehaviors
@@ -41,6 +42,7 @@ class CompositeBehavior(behavior.Behavior):
             by_name[name] = self._subbehavior_info[name]['behavior']
         return by_name
 
+
     def remove_all_subbehaviors(self):
         for name in self._subbehavior_info:
             self.remove_subbehavior(name)
@@ -49,19 +51,36 @@ class CompositeBehavior(behavior.Behavior):
     def all_subbehaviors(self):
         return [self._subbehavior_info[name]['behavior'] for name in self._subbehavior_info]
 
+
     def spin(self):
         super().spin()
         # spin each subbehavior
         for name in self._subbehavior_info:
             info = self._subbehavior_info[name]
             bhvr = info['behavior']
-            if isinstance(bhvr, single_robot_behavior.SingleRobotBehavior):
-                if bhvr.robot != None:
-                    # only spin single robot behaviors when they have a robot
+
+            # multi-robot behaviors always get spun
+            # only spin single robot behaviors when they have a robot
+            should_spin = True
+            if isinstance(bhvr, single_robot_behavior.SingleRobotBehavior) and bhvr.robot == None:
+                should_spin = False
+
+            # try executing the subbehavior
+            # if it throws an exception, catch it and pass it to the exception handler, which subclasses can override
+            if should_spin:
+                try:
                     bhvr.spin()
-            else:
-                # multi-robot behaviors always get spun
-                bhvr.spin()
+                except:
+                    exc = sys.exc_info()[0]
+                    self.handle_subbehavior_exception(name, exc)
+
+
+    # this is called whenever a subbehavior throws an exception during spin()
+    # subclasses of CompositeBehavior can override this to perform custom actions, such as removing the offending subbehavior
+    # the default implementation logs the exception and re-raises it
+    def handle_subbehavior_exception(self, name, exception):
+        logging.error("Exception occurred when spinning subbehavior named '" + name + "': " + str(exception))
+        raise exception
 
 
     # returns a tree of role_requirements
