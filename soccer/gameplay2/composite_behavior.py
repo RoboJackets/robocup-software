@@ -1,6 +1,8 @@
 import behavior
 import single_robot_behavior
 import role_assignment
+import traceback
+import logging
 import re
 import sys
 
@@ -55,7 +57,7 @@ class CompositeBehavior(behavior.Behavior):
     def spin(self):
         super().spin()
         # spin each subbehavior
-        for name in self._subbehavior_info:
+        for name in list(self._subbehavior_info.keys()):
             info = self._subbehavior_info[name]
             bhvr = info['behavior']
 
@@ -80,7 +82,8 @@ class CompositeBehavior(behavior.Behavior):
     # the default implementation logs the exception and re-raises it
     def handle_subbehavior_exception(self, name, exception):
         logging.error("Exception occurred when spinning subbehavior named '" + name + "': " + str(exception))
-        raise exception
+        traceback.print_exc()
+        raise
 
 
     # returns a tree of role_requirements

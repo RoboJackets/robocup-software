@@ -138,7 +138,7 @@ def run():
         if root_play() != None:
             root_play().spin()
     except:
-        exc = sys.exec_info()[0]
+        exc = sys.exc_info()[0]
         logging.error("Exception occurred in main.run(): " + str(exc) + "ignoring for now")
         traceback.print_exc()
 

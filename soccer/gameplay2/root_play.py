@@ -91,7 +91,8 @@ class RootPlay(Play, QtCore.QObject):
             logging.error("Goalie encountered an exception: " + str(exception) + ".  Reloading goalie behavior")
             self.drop_goalie_behavior()
         else:
-            logging.error("Play encountered an exception: " + str(exception) + ".  Dropping and temp. blacklisting current play...")
+            logging.error("Play '" + self.play.__class__.__name__ + "' encountered an exception: " + str(exception) + ".  Dropping and temp. blacklisting current play...")
+            traceback.print_exc()
             self.drop_current_play(temporarily_blacklist=True)
 
 

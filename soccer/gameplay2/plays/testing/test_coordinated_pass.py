@@ -3,7 +3,6 @@ import tactics.coordinated_pass
 import tactics.behavior_sequence
 import robocup
 import constants
-import tactics.behavior_sequence
 
 
 class TestCoordinatedPass(play.Play):
