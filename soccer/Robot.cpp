@@ -722,13 +722,9 @@ uint64_t OurRobot::lastKickTime() const {
 	return _lastKickTime;
 }
 
-void OurRobot::setRadioRx(Packet::RadioRx rx) {
-	_radioRx = rx;
-
-	if ( rx.kicker_status() < _lastKickerStatus ) {
+void OurRobot::radioRxUpdated() {
+	if ( _radioRx.kicker_status() < _lastKickerStatus ) {
 		_lastKickTime = timestamp();
 	}
-	_lastKickerStatus = rx.kicker_status();
-	//	FIXME: implement
+	_lastKickerStatus = _radioRx.kicker_status();
 }
-

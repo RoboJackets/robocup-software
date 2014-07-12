@@ -252,7 +252,7 @@ public:
 
 	//	checks if the bot has kicked/chipped very recently.
 	bool justKicked() {
-		return timestamp() - lastKickTime() < 250000;
+		return timestamp() - lastKickTime() < 0.25 * SecsToTimestamp;
 	}
 
 
@@ -350,8 +350,6 @@ public:
 	/** radio packets */
 	Packet::RadioTx::Robot radioTx;
 
-	void setRadioRx(Packet::RadioRx rx);
-
 	Packet::RadioRx &radioRx() {
 		return _radioRx;
 	}
@@ -425,6 +423,12 @@ protected:
 	 * Creates an obstacle for the ball if necessary
 	 */
 	std::shared_ptr<Geometry2d::Shape> createBallObstacle() const;
+
+protected:
+	friend class Processor;
+
+	///	The processor mutates RadioRx in place and calls this afterwards to let it know that it changed
+	void radioRxUpdated();
 
 
 protected:

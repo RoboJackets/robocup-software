@@ -370,6 +370,7 @@ void Processor::run()
 				// We have to copy because the RX packet will survive past this frame
 				// but LogFrame will not (the RadioRx in LogFrame will be reused).
 				_state.self[board]->radioRx().CopyFrom(rx);
+				_state.self[board]->radioRxUpdated();
 			}
 		}
 		_radio->clear();
