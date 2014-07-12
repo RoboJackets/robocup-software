@@ -1,8 +1,9 @@
 import composite_behavior
 import behavior
+import skills.pivot_kick
+import skills.pass_receive
 import enum
 import robocup
-import main
 
 
 # This handles passing from one bot to another
