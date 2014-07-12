@@ -20,20 +20,20 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
     PositionYErrorThreshold = 0.06
 
     # how much we're allowed to be off side-to-side from the pass line
-    PositionXErrorThreshold = 0.02
+    PositionXErrorThreshold = 0.03
 
     DribbleSpeed = 50
 
     # we have to be going slower than this to be considered 'steady'
-    SteadyMaxVel = 0.02
-    SteadyMaxAngleVel = 2   # degrees / second
+    SteadyMaxVel = 0.04
+    SteadyMaxAngleVel = 3   # degrees / second
 
 
 
     class State(enum.Enum):
         aligning = 1    # we're aligning with the planned receive point
         aligned = 2     # being in this state signals that we're ready for the kicker to kick
-        receiving = 2   # the ball's been kicked and we're adjusting based on where the ball's moving
+        receiving = 3   # the ball's been kicked and we're adjusting based on where the ball's moving
 
 
     def __init__(self):
@@ -55,7 +55,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(PassReceive.State.aligned,
             PassReceive.State.aligning,
-            lambda: not self.errors_below_thresholds(),
+            lambda: not self.errors_below_thresholds() or not self.is_steady(),
             'not in receive position')
 
         for state in [PassReceive.State.aligning, PassReceive.State.aligned]:
@@ -66,7 +66,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(PassReceive.State.receiving,
             behavior.Behavior.State.completed,
-            lambda: self.has_ball(),
+            lambda: self.robot.has_ball(),
             'ball received!')
 
         self.add_transition(PassReceive.State.receiving,
@@ -105,8 +105,10 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
         pass_dir = (self._pass_line.get_pt(0) - self._pass_line.get_pt(1)).normalized()
 
         pos_error = self.robot.pos - self._target_pos
-        x_error = pos_error.dot(pos_error.perp_ccw())
-        y_error = pos_error.dot(pos_error)
+        x_error = pos_error.dot(pass_dir.perp_ccw())
+        y_error = pos_error.dot(pass_dir)
+
+        # print("angle_err=" + str(self._angle_error) + "; x_err=" + str(x_error) + "; y_err=" + str(y_error))
 
         return (self._angle_error < PassReceive.FaceAngleErrorThreshold
             and x_error < PassReceive.PositionXErrorThreshold
@@ -162,3 +164,11 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
 
     def execute_receiving(self):
         self.set_dribble_speed(PassReceive.DribbleSpeed)
+
+
+
+    def role_requirements(self):
+        # prefer a robot that's already near the receive position
+        reqs = super().role_requirements()
+        reqs.pos = self.receive_point
+        return reqs

@@ -132,8 +132,14 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
             aim_angle = ball_angle_rad*ball_angle_bias + (1.0 - ball_angle_bias)*bot_angle_rad
             
             # the line we're aiming down
-            angle_pt = robocup.Point(math.cos(aim_angle), math.sin(aim_angle))
-            aim_line = robocup.Line(self.robot.pos, main.ball().pos)
+            angle_dir = robocup.Point(math.cos(aim_angle), math.sin(aim_angle))
+            aim_line = robocup.Line(self.robot.pos, self.robot.pos + angle_dir)
+
+            # we need to change our face target a bit to account for the difference between bot angle and aim angle
+            face_angle_offset = bot_angle_rad - aim_angle
+            target_angle_rad = (self.target_point - self.robot.pos).angle()
+            face_dir_offset = robocup.Point.direction(target_angle_rad + face_angle_offset)
+            self._face_target = self.robot.pos + face_dir_offset
             
             self._shot_point = aim_line.line_intersection(target_line)    # this is the point along target_line that we'll hit if we shoot now
 
@@ -152,7 +158,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
         # slowly pivot toward the target
         self.robot.set_max_angle_speed(5)
-        self.robot.pivot(self.target_point)
+        self.robot.pivot(self._face_target)
         self.robot.set_dribble_speed(self.dribbler_speed)
 
         # draw current shot line

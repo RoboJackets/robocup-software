@@ -84,13 +84,13 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
         return self._kick_power
     @kick_power.setter
     def kick_power(self, value):
-        self._kick_power = value
+        self._kick_power = int(value)
     @property
     def chip_power(self):
         return self._chip_power
     @chip_power.setter
     def chip_power(self, value):
-        self._chip_power = value
+        self._chip_power = int(value)
 
 
     # If false, uses straight kicker, if true, uses chipper (if available)

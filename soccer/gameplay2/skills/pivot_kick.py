@@ -22,9 +22,9 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
 
     def __init__(self):
         super().__init__()
-        self.add_state(PivotKick.State.capturing, behavior.Behavior.State.running)
-        self.add_state(PivotKick.State.aiming, behavior.Behavior.State.running)
-        self.add_state(PivotKick.State.kicking, behavior.Behavior.State.running)
+
+        for state in PivotKick.State:
+            self.add_state(state, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
             PivotKick.State.capturing,
@@ -42,7 +42,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
         
         self.add_transition(PivotKick.State.aimed,
             PivotKick.State.kicking,
-            lambda: self.kick_enabled,
+            lambda: self.enable_kick,
             'kick enabled')
 
         self.add_transition(PivotKick.State.kicking,
@@ -51,6 +51,10 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
             'kick complete')
 
         self.add_transition(PivotKick.State.aiming,
+            PivotKick.State.capturing,
+            lambda: self.subbehavior_with_name('aim').state == behavior.Behavior.State.failed,
+            'fumble')
+        self.add_transition(PivotKick.State.aimed,
             PivotKick.State.capturing,
             lambda: self.subbehavior_with_name('aim').state == behavior.Behavior.State.failed,
             'fumble')
