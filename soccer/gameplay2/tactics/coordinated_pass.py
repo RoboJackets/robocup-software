@@ -2,22 +2,27 @@ import composite_behavior
 import behavior
 import skills.pivot_kick
 import skills.pass_receive
-import enum
+import constants
 import robocup
+import main
+import enum
 
 
 # This handles passing from one bot to another
 # Simply run it and set it's receive point, the rest is handled for you
 # It starts out by assigning a kicker and a receiver and instructing them to lineup for the pass
 # Once they're aligned, the kicker kicks and the receiver adjusts itself based on the ball's movement
-# Note: due to mechanical limitations, a kicker often gets stuck trying to adjust its angle while it's just outside of it's
+# TODO: # Note: due to mechanical limitations, a kicker often gets stuck trying to adjust its angle while it's just outside of it's
 #       aim error threshold.  If this happens, the CoordinatedPass will adjust the receive point slightly
 #       because it's easier to move the receiver over a bit than have the kicker adjust its angle.  This solves
 #       the problem of having a pass get stuck indefinitely while the kicker sits there not moving.
-# If an opponent blocks the pass channel, it will wait until it moves - you can cancel it at this point if you wish
+# TODO: # If an opponent blocks the pass channel, it will wait until it moves - you can cancel it at this point if you wish
 # As soon as the kicker kicks, it is no longer and is released by this behavior so other behaviors can be assigned to it
 # If the receiver gets the ball, CoordinatedPass transitions to the completed state, otherwise it goes to the failed state
 class CoordinatedPass(composite_behavior.CompositeBehavior):
+
+    KickPower = 25
+
 
     class State(enum.Enum):
         preparing = 1   # the kicker is aiming and the receiver is getting ready
@@ -50,10 +55,10 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
             lambda: self.subbehavior_with_name('kicker').state == behavior.Behavior.State.completed,
             'kicker kicked')
 
-        self.add_transition(CoordinatedPass.State.kicking,
-            CoordinatedPass.State.preparing,
-            lambda: self.subbehavior_with_name('kicker').state == behavior.Behavior.State.aiming,
-            'kicker misaligned')
+        # self.add_transition(CoordinatedPass.State.kicking,
+        #     CoordinatedPass.State.preparing,
+        #     lambda: self.subbehavior_with_name('kicker').state == behavior.Behavior.State.aiming,
+        #     'kicker misaligned')
 
         self.add_transition(CoordinatedPass.State.receiving,
             behavior.Behavior.State.completed,
@@ -76,8 +81,11 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self._receive_point = value
 
         # set receive_point for kicker and receiver (if present)
-        for bhvr in self.all_subbehaviors():
-            bhvr.receive_point = value
+        if self.has_subbehavior_with_name('kicker'):
+            self.subbehavior_with_name('kicker').target = self.receive_point
+        if self.has_subbehavior_with_name('receiver'):
+            self.subbehavior_with_name('receiver').receive_point = self.receive_point
+
 
 
     def on_enter_running(self):
@@ -86,19 +94,33 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self.add_subbehavior(receiver, 'receiver', required=True)
 
 
+    def execute_running(self):
+        if self.receive_point != None:
+            main.system_state().draw_circle(self.receive_point, 0.03, constants.Colors.Blue, "Pass")
+            main.system_state().draw_line(robocup.Line(main.ball().pos, self.receive_point), constants.Colors.Blue, "Pass")
+
+
     def on_exit_running(self):
         self.remove_subbehavior('receiver')
 
 
+    def on_enter_kicking(self):
+        self.subbehavior_with_name('kicker').enable_kick = True
+
+
     def on_enter_preparing(self):
         kicker = skills.pivot_kick.PivotKick()
-        kicker.receive_point = self.receive_point
+        kicker.target = self.receive_point
+        kicker.kick_power = CoordinatedPass.KickPower
+        kicker.enable_kick = False # we'll re-enable kick once both bots are ready
         self.add_subbehavior(kicker, 'kicker', required=True)
 
 
     def on_enter_receiving(self):
         # once the ball's been kicked, the kicker can go relax or do another job
         self.remove_subbehavior('kicker')
+
+        self.behavior_with_name('receiver').ball_kicked = True
 
 
 

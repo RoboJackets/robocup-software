@@ -1,10 +1,6 @@
 from enum import Enum
 import fsm
 
-# role allocation parameters?
-# FIXME: what if it's done running, but still pending success evaluation??
-# FIXME: parent and child behaviors?
-
 
 # a Behavior is an abstract superclass for Skill, Play, etc
 class Behavior(fsm.StateMachine):
