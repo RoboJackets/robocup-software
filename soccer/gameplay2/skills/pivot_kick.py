@@ -16,7 +16,8 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
     class State(Enum):
         capturing = 1
         aiming = 2
-        kicking = 3
+        aimed = 3
+        kicking = 4
 
 
     def __init__(self):
@@ -33,10 +34,17 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
             PivotKick.State.aiming,
             lambda: self.subbehavior_with_name('capture').state == behavior.Behavior.State.completed,
             'has ball')
+
         self.add_transition(PivotKick.State.aiming,
+            PivotKick.State.aimed,
+            lambda: self.subbehavior_with_name('aim').state == skills.aim.Aim.State.aimed,
+            'aim error < threshold')
+        
+        self.add_transition(PivotKick.State.aimed,
             PivotKick.State.kicking,
-            lambda: self.subbehavior_with_name('aim').state == skills.aim.Aim.State.aimed and self.enable_kick,
-            'aim error < threshold and kick enabled')
+            lambda: self.kick_enabled,
+            'kick enabled')
+
         self.add_transition(PivotKick.State.kicking,
             behavior.Behavior.State.completed,
             lambda: self.robot.just_kicked(),
