@@ -40,12 +40,12 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(Aim.State.aiming,
             Aim.State.aimed,
-            lambda: self.is_aimed(),
+            lambda: (self.is_aimed() and self.is_steady()) and not self.fumbled(),
             'error < threshold and not rotating too fast')
 
         self.add_transition(Aim.State.aimed,
             Aim.State.aiming,
-            lambda: not self.is_aimed(),
+            lambda: not self.is_aimed() or not self.is_steady(),
             'error > threshold or rotating too fast')
 
 
@@ -60,6 +60,8 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         # we recalculate in execute_running() and cache them in these ivars
         self._shot_point = None # the point on the target line we'd hit if we shot now
         self._error = float("inf")
+
+        self._last_unsteady_time = time.time()
 
 
     # The target Point that we're aiming at
@@ -101,11 +103,15 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
     @dribbler_speed.setter
     def dribbler_speed(self, value):
         self._dribbler_speed = int(value)
-        
+
 
     # returns True if we're aimed at our target within our error thresholds and we're not rotating too fast
     def is_aimed(self):
-        return self._error < self.error_threshold and self.robot.angle_vel < self.max_steady_ang_vel
+        return self._error < self.error_threshold
+
+
+    def is_steady(self):
+        return time.time() - self._last_unsteady_time < 0.2
 
 
     def fumbled(self):
@@ -114,6 +120,10 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
     # we're aiming at a particular point on our target segment, what is this point?
     def recalculate(self):
+        if self.robot.angle_vel > self.max_steady_ang_vel:
+            self._last_unsteady_time = time.time()
+
+
         # find the point we're actually aiming at that's on the line going through target_point
         # and perpendicular to the line from the ball to target_point
         if self.target_point == None:
@@ -128,11 +138,11 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
             # our 'actual' aim line is somewhere in-between the two
             bot_angle_rad = self.robot.angle * constants.DegreesToRadians
             ball_angle_rad = (main.ball().pos - self.robot.pos).angle()
-            ball_angle_bias = 0.8   # NOTE: THIS IS TUNABLE
+            ball_angle_bias = 0.6   # NOTE: THIS IS TUNABLE
             aim_angle = ball_angle_rad*ball_angle_bias + (1.0 - ball_angle_bias)*bot_angle_rad
             
             # the line we're aiming down
-            angle_dir = robocup.Point(math.cos(aim_angle), math.sin(aim_angle))
+            angle_dir = robocup.Point.direction(aim_angle)
             aim_line = robocup.Line(self.robot.pos, self.robot.pos + angle_dir)
 
             # we need to change our face target a bit to account for the difference between bot angle and aim angle

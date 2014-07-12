@@ -120,7 +120,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         # once the ball's been kicked, the kicker can go relax or do another job
         self.remove_subbehavior('kicker')
 
-        self.behavior_with_name('receiver').ball_kicked = True
+        self.subbehavior_with_name('receiver').ball_kicked = True
 
 
 
