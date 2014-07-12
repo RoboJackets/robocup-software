@@ -4,6 +4,7 @@ import robocup
 import constants
 import main
 import enum
+import time
 
 
 # PassReceive accepts a receive_point as a parameter and gets setup there to catch the ball
@@ -22,11 +23,14 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
     # how much we're allowed to be off side-to-side from the pass line
     PositionXErrorThreshold = 0.03
 
-    DribbleSpeed = 50
+    DribbleSpeed = 70
 
     # we have to be going slower than this to be considered 'steady'
     SteadyMaxVel = 0.04
     SteadyMaxAngleVel = 3   # degrees / second
+
+    # after this amount of time has elapsed after the kick and we haven't received the ball, we failed :(
+    ReceiveTimeout = 1.3
 
 
 
@@ -38,6 +42,11 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
 
     def __init__(self):
         super().__init__(continuous=False)
+
+        self.ball_kicked = False
+        self._target_pos = None
+        self._ball_kick_time = 0
+
 
         for state in PassReceive.State:
             self.add_state(state, behavior.Behavior.State.running)
@@ -55,7 +64,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(PassReceive.State.aligned,
             PassReceive.State.aligning,
-            lambda: not self.errors_below_thresholds() or not self.is_steady(),
+            lambda: (not self.errors_below_thresholds() or not self.is_steady()) and not self.ball_kicked,
             'not in receive position')
 
         for state in [PassReceive.State.aligning, PassReceive.State.aligned]:
@@ -71,7 +80,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(PassReceive.State.receiving,
             behavior.Behavior.State.failed,
-            lambda: False, # FIXME: see if the ball bounced off of us or went past us
+            lambda: time.time() - self._ball_kick_time > PassReceive.ReceiveTimeout,
             'ball missed :(')
 
 
@@ -84,6 +93,8 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
     @ball_kicked.setter
     def ball_kicked(self, value):
         self._ball_kicked = value
+        if value:
+            self._ball_kick_time = time.time()
     
 
     # The point that the receiver should expect the ball to hit it's mouth
@@ -143,10 +154,14 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
         angle_rad = self.robot.angle * constants.DegreesToRadians
         self._angle_error = target_angle_rad - angle_rad
 
-        # FIXME: target pos is wrong after the ball has been kicked
-        #        need to calculate an ACTUAL receive point
+
+        if self.ball_kicked:
+            actual_receive_point = self._pass_line.nearest_point(self.robot.pos)
+        else:
+            actual_receive_point = self.receive_point
+
         pass_line_dir = (self._pass_line.get_pt(1) - self._pass_line.get_pt(0)).normalized()
-        self._target_pos = self.receive_point + pass_line_dir * constants.Robot.Radius
+        self._target_pos = actual_receive_point + pass_line_dir * constants.Robot.Radius
 
 
 
@@ -159,16 +174,17 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
         self.recalculate()
 
         self.robot.face(main.ball().pos)
-        self.robot.move_to(self._target_pos)
+        if self._target_pos != None:
+            self.robot.move_to(self._target_pos)
 
-
-    def execute_receiving(self):
-        self.set_dribble_speed(PassReceive.DribbleSpeed)
-
+        # we used to only dribble in the receiving state, but it seemed not to work...
+        # maybe not enough time to get up and spinning?
+        self.robot.set_dribble_speed(PassReceive.DribbleSpeed)
 
 
     def role_requirements(self):
         # prefer a robot that's already near the receive position
         reqs = super().role_requirements()
-        reqs.pos = self.receive_point
+        if self._target_pos != None:
+            reqs.pos = self._target_pos
         return reqs

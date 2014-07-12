@@ -182,6 +182,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("dist_to", &Geometry2d::Line::distTo)
 		.def("intersects_circle", &Line_intersects_circle)
 		.def("get_pt", &Line_get_pt, return_value_policy<reference_existing_object>())
+		.def("nearest_point", &Geometry2d::Line::nearestPoint)
 	;
 
 	class_<Geometry2d::Segment, Geometry2d::Segment*, bases<Geometry2d::Line> >("Segment", init<Geometry2d::Point, Geometry2d::Point>())
