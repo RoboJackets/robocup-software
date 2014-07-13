@@ -66,6 +66,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
 
         # default parameters
         self.dribbler_power = constants.Robot.Dribbler.MaxPower
+        self.desperate_timeout = float("inf")
         
 
     # The speed to drive the dribbler at during aiming
@@ -79,6 +80,16 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
     def dribbler_power(self, value):
         self._dribbler_power = int(value)
 
+
+    # sets the timeout on the underlying Aim behavior (doesn't affect the capture phase)
+    # Default: inf
+    @property
+    def desperate_timeout(self):
+        return self._desperate_timeout
+    @desperate_timeout.setter
+    def desperate_timeout(self, value):
+        self._desperate_timeout = value
+    
 
     def remove_aim_behavior(self):
         if self.has_subbehavior_with_name('aim'):
@@ -99,6 +110,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
         aim = self.subbehavior_with_name('aim')
         aim.target_point = self.aim_target_point
         aim.dribbler_power = self.dribbler_power
+        aim.desperate_timeout = self.desperate_timeout
 
 
     def on_enter_aiming(self):
