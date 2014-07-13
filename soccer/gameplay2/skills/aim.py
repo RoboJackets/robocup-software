@@ -40,12 +40,12 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(Aim.State.aiming,
             Aim.State.aimed,
-            lambda: ((self.is_aimed() and self.is_steady()) and not self.fumbled()) or self.is_desparate(),
-            'error < threshold and not rotating too fast or desparate')
+            lambda: ((self.is_aimed() and self.is_steady()) and not self.fumbled()) or self.is_desperate(),
+            'error < threshold and not rotating too fast or desperate')
 
         self.add_transition(Aim.State.aimed,
             Aim.State.aiming,
-            lambda: (not self.is_aimed() or not self.is_steady()) and not self.is_desparate(),
+            lambda: (not self.is_aimed() or not self.is_steady()) and not self.is_desperate(),
             'error > threshold or rotating too fast')
 
 
@@ -179,7 +179,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         self._start_time = time.time()
 
 
-    def is_desparate(self):
+    def is_desperate(self):
         return time.time() - self._start_time > self.desperate_timeout
 
 
