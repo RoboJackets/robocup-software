@@ -94,6 +94,22 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
     @desperate_timeout.setter
     def desperate_timeout(self, value):
         self._desperate_timeout = value
+
+
+    # The point near the target point that we're currently aimed at, whether we want to be or not
+    # If we kicked right now, the ball would pass through this point
+    def current_shot_point(self):
+        if self.has_subbehavior_with_name('aim'):
+            return self.subbehavior_with_name('aim').current_shot_point()
+        else:
+            return None
+
+
+    def is_steady(self):
+        if self.has_subbehavior_with_name('aim'):
+            return self.subbehavior_with_name('aim').is_steady()
+        else:
+            return None
     
 
     def remove_aim_behavior(self):

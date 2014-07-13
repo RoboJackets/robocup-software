@@ -4,15 +4,17 @@ import skills.pivot_kick
 import skills.pass_receive
 import constants
 import robocup
+import time
 import main
 import enum
+import logging
 
 
 # This handles passing from one bot to another
 # Simply run it and set it's receive point, the rest is handled for you
 # It starts out by assigning a kicker and a receiver and instructing them to lineup for the pass
 # Once they're aligned, the kicker kicks and the receiver adjusts itself based on the ball's movement
-# TODO: # Note: due to mechanical limitations, a kicker often gets stuck trying to adjust its angle while it's just outside of it's
+# Note: due to mechanical limitations, a kicker often gets stuck trying to adjust its angle while it's just outside of it's
 #       aim error threshold.  If this happens, the CoordinatedPass will adjust the receive point slightly
 #       because it's easier to move the receiver over a bit than have the kicker adjust its angle.  This solves
 #       the problem of having a pass get stuck indefinitely while the kicker sits there not moving.
@@ -21,7 +23,7 @@ import enum
 # If the receiver gets the ball, CoordinatedPass transitions to the completed state, otherwise it goes to the failed state
 class CoordinatedPass(composite_behavior.CompositeBehavior):
 
-    KickPower = 35 # was25
+    KickPower = 30 # was25
 
 
     class State(enum.Enum):
@@ -103,6 +105,30 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         kicker.kick_power = CoordinatedPass.KickPower
         kicker.enable_kick = False # we'll re-enable kick once both bots are ready
         self.add_subbehavior(kicker, 'kicker', required=True)
+
+        # receive point renegotiation
+        self._last_unsteady_time = None
+        self._has_renegotiated_receive_point = False
+
+
+    def execute_preparing(self):
+        kicker = self.subbehavior_with_name('kicker')
+
+        # receive point renegotiation
+        # if the kicker sits there aiming close to target and gets stuck,
+        # we set the receive point to the point the kicker is currently aiming at
+        if kicker.current_shot_point() != None and not self._has_renegotiated_receive_point:
+            if (not kicker.is_steady()
+                and kicker.state == skills.pivot_kick.PivotKick.State.aiming):
+                self._last_unsteady_time = time.time()
+
+            if (self._last_unsteady_time != None
+                and time.time() - self._last_unsteady_time > 1
+                and kicker.current_shot_point().dist_to(self.receive_point) < 0.1):
+                # renegotiate receive_point
+                logging.info("Pass renegotiated RCV PT")
+                self.receive_point = kicker.current_shot_point()
+                self._has_renegotiated_receive_point = True
 
 
     def on_enter_receiving(self):

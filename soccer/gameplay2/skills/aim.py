@@ -50,8 +50,8 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
 
         self.target_point = constants.Field.TheirGoalSegment.center()
-        self.error_threshold = 0.04
-        self.max_steady_ang_vel = 2
+        self.error_threshold = 0.05
+        self.max_steady_ang_vel = 3.5
         self.dribbler_speed = int(constants.Robot.Dribbler.MaxPower / 2.0)
 
         self.last_ball_time = 0
@@ -131,6 +131,10 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
     def fumbled(self):
         return not self.robot.has_ball() and time.time() - self.last_ball_time > 0.3
+
+
+    def current_shot_point(self):
+        return self._shot_point
 
 
     # we're aiming at a particular point on our target segment, what is this point?
@@ -215,6 +219,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         desc = super().__str__()
         desc += "\n    err=" + str(self._error) + "m"
         desc += "\n    err thresh=" + str(self.error_threshold) + "m"
+        desc += "\n    steady=" + str(self.is_steady())
         return desc
 
 
