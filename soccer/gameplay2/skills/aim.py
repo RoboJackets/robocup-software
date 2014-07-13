@@ -40,12 +40,12 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(Aim.State.aiming,
             Aim.State.aimed,
-            lambda: (self.is_aimed() and self.is_steady()) and not self.fumbled(),
-            'error < threshold and not rotating too fast')
+            lambda: ((self.is_aimed() and self.is_steady()) and not self.fumbled()) or self.is_desparate(),
+            'error < threshold and not rotating too fast or desparate')
 
         self.add_transition(Aim.State.aimed,
             Aim.State.aiming,
-            lambda: not self.is_aimed() or not self.is_steady(),
+            lambda: (not self.is_aimed() or not self.is_steady()) and not self.is_desparate(),
             'error > threshold or rotating too fast')
 
 
@@ -62,6 +62,10 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         self._error = float("inf")
 
         self._last_unsteady_time = time.time()
+
+        # track start time so we can use desperate timeout
+        self._start_time = 0
+        self.desperate_timeout = float("inf")
 
 
     # The target Point that we're aiming at
@@ -103,6 +107,17 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
     @dribbler_speed.setter
     def dribbler_speed(self, value):
         self._dribbler_speed = int(value)
+
+
+    # After this amount of time has elapsed, it will go into 'aimed' mode regardless of error thresholds,
+    # Default: float("inf")
+    @property
+    def desperate_timeout(self):
+        return self._desperate_timeout
+    @desperate_timeout.setter
+    def desperate_timeout(self, value):
+        self._desperate_timeout = value
+    
 
 
     # returns True if we're aimed at our target within our error thresholds and we're not rotating too fast
@@ -158,6 +173,14 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
             self._error = (self.target_point - self._shot_point).mag() if self._shot_point != None else float("inf") # distance in meters off that we'll be if we shoot right now
         else:
             self._error = float("inf")
+
+
+    def on_enter_start(self):
+        self._start_time = time.time()
+
+
+    def is_desparate(self):
+        return time.time() - self._start_time > self.desperate_timeout
 
 
     def execute_running(self):
