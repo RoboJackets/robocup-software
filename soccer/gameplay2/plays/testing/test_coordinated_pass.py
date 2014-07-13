@@ -24,13 +24,20 @@ class TestCoordinatedPass(play.Play):
         self.add_subbehavior(pass_bhvr, 'pass')
 
 
+
+    def reset_receive_point(self):
+        pass_bhvr = self.subbehavior_with_name('pass')
+        x = TestCoordinatedPass.ReceiveXCoord if main.ball().pos.x < 0 else -TestCoordinatedPass.ReceiveXCoord
+        pass_bhvr.receive_point = robocup.Point(x, TestCoordinatedPass.ReceiveYCoord)
+
+
     def execute_running(self):
         pass_bhvr = self.subbehavior_with_name('pass')
 
         if pass_bhvr.is_done_running():
             pass_bhvr.restart()
+            self.reset_receive_point()
 
         if pass_bhvr.receive_point == None:
-            x = TestCoordinatedPass.ReceiveXCoord if main.ball().pos.x < 0 else -TestCoordinatedPass.ReceiveXCoord
-            pass_bhvr.receive_point = robocup.Point(x, TestCoordinatedPass.ReceiveYCoord)
+            self.reset_receive_point()
             

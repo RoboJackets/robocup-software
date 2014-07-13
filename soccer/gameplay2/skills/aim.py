@@ -135,7 +135,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
     # we're aiming at a particular point on our target segment, what is this point?
     def recalculate(self):
-        if self.robot.angle_vel > self.max_steady_ang_vel:
+        if abs(self.robot.angle_vel) > self.max_steady_ang_vel:
             self._last_unsteady_time = time.time()
 
 
