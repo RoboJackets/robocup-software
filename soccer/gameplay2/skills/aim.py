@@ -166,7 +166,13 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
             face_dir_offset = robocup.Point.direction(target_angle_rad + face_angle_offset)
             self._face_target = self.robot.pos + face_dir_offset
             
-            self._shot_point = aim_line.line_intersection(target_line)    # this is the point along target_line that we'll hit if we shoot now
+            # self._shot_poitn is the point along target_line that we'll hit if we shoot now
+            # We check to make sure we're not facing backwards from where we want to be or else
+            # the line intersection will return us a point 180 degrees off from our aim angle
+            if angle_dir.dot(ball2target) < 0:
+                self._shot_point = None
+            else:
+                self._shot_point = aim_line.line_intersection(target_line)
 
         # error
         if self.target_point != None and self._shot_point != None:
