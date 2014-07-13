@@ -58,7 +58,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     # normalized vector pointing from the ball to the point the robot should get to in course_aproach
     def approach_vector(self):
-        if main.ball().vel.mag() > 0.25:
+        if main.ball().vel.mag() > 0.25 and self.robot.pos.dist_to(main.ball()) > 0.2:
             # ball's moving, get on the side it's moving towards
             return main.ball().vel.normalized()
         else:
@@ -74,9 +74,9 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             dist = i * 0.05
             pos = main.ball().pos + approach_vec * dist
             ball_time = evaluation.ball.rev_predict(main.ball().vel, dist - Capture.CourseApproachDist) # how long will it take the ball to get there
-            bot_time = (pos - self.robot.pos).mag() * 6 # FIXME: evaluate trapezoid
+            bot_time = (pos - self.robot.pos).mag() * 9.0 # FIXME: evaluate trapezoid
 
-            # print('bot: ' + str(bot_time) + ';;; ball: ' + str(ball_time))
+            # print('bot: ' + str(bot_time) + ';; ball: ' + str(ball_time))
 
             if bot_time < ball_time:
                 break

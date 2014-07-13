@@ -99,11 +99,11 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         dest = shot_line.intersection(Goalie.RobotSegment)
         if dest == None:
-            robot.move_to(robocup.Point(0, constants.Robot.Radius))
+            self.robot.move_to(robocup.Point(0, constants.Robot.Radius))
         else:
             dest.x = max(-Goalie.MaxX + constants.Robot.Radius, dest.x)
             dest.y = min(Goalie.MaxX - constants.Robot.Radius, dest.x)
-        robot.move_to(dest)
+        self.robot.move_to(dest)
 
 
     # The below is the old C++ code ported to python - instead of using this I've (justin) replaced it with the pivot kick behavior
@@ -142,9 +142,9 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def execute_intercept(self):
         ball_path = robocup.Segment(main.ball().pos,
-                            main.ball().pos + 10*main.ball().vel.normalized())
-        dest = ball_path.nearest_point(robot.pos)
-        robot.move_to(dest)
+                            main.ball().pos + main.ball().vel.normalized()*10.0)
+        dest = ball_path.nearest_point(self.robot.pos)
+        self.robot.move_to(dest)
 
 
     def execute_block(self):
@@ -154,14 +154,14 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         dest = block_circle.intersection(shot_line)
         if dest != None:
-            robot.move_to(dest)
+            self.robot.move_to(dest)
         else:
             block_line = Line(Point(-Goalie.MaxX, constants.Robot.Radius),
                                 Point(Goalie.MaxX, constants.Robot.Radius))
             dest = block_line.intersection(shot_line)
             dest.x = min(Goalie.MaxX, dest.x)
             dest.x = max(-Goalie.MaxX, dest.x)
-            robot.move_to(dest)
+            self.robot.move_to(dest)
 
 
     def execute_defend(self):

@@ -89,6 +89,7 @@ class RootPlay(Play, QtCore.QObject):
     def handle_subbehavior_exception(self, name, exception):
         if name == 'goalie':
             logging.error("Goalie encountered an exception: " + str(exception) + ".  Reloading goalie behavior")
+            traceback.print_exc()
             self.drop_goalie_behavior()
         else:
             logging.error("Play '" + self.play.__class__.__name__ + "' encountered an exception: " + str(exception) + ".  Dropping and temp. blacklisting current play...")
