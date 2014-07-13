@@ -59,7 +59,7 @@ Robot::~Robot()
 OurRobot::OurRobot(int shell, SystemState *state):
 	Robot(shell, true),
 	_state(state),
-	_recentPathChangeTimes(PathChangeHistoryBufferSize)
+	_pathChangeHistory(PathChangeHistoryBufferSize)
 {
 	_cmdText = new std::stringstream();
 
@@ -196,6 +196,8 @@ void OurRobot::_clearCmdText() {
 void OurRobot::resetForNextIteration() {
 	if (verbose && visible) cout << "in OurRobot::resetForNextIteration()" << std::endl;
 	robotText.clear();
+
+	_didSetPathThisIteration = false;
 
 	_clearCmdText();
 
@@ -467,6 +469,8 @@ std::shared_ptr<Geometry2d::Shape> OurRobot::createBallObstacle() const {
 #pragma mark Motion
 
 void OurRobot::setPath(Planning::Path path) {
+	_didSetPathThisIteration = true;
+
 	_path = path;
 	_pathInvalidated = false;
 	_pathStartTime = timestamp();
@@ -484,20 +488,19 @@ void OurRobot::setPath(Planning::Path path) {
 	//	in reality we should allow for it, but motion control isn't there yet and negative values cause more error
 	float startSpeed = vel.dot(velOut.normalized());
 	_path->startSpeed = max<float>(startSpeed, 0);
-
-	_recentPathChangeTimes.push_back(_pathStartTime);
 }
 
-bool OurRobot::isRepeatedlyChangingPaths() const {
-	if (_recentPathChangeTimes.size() == _recentPathChangeTimes.capacity()) {
-		uint64_t dt_ms = _recentPathChangeTimes.front() - _recentPathChangeTimes.back();
-
-		//	the 1/60 is because we run at about 60Hz
-		//	the 1.5 is sort of a fudge factor - we're basically checking if we've changed paths for the last N frames within an error margin
-		return dt_ms < (PathChangeHistoryBufferSize * 1.0/60.0 * 1.5) * SecsToTimestamp;
-	} else {
-		return false;
+int OurRobot::consecutivePathChangeCount() const {
+	int count = 0;
+	for (auto itr = _pathChangeHistory.begin(); itr != _pathChangeHistory.end(); itr++) {
+		if (*itr) {
+			count++;
+		} else {
+			break;
+		}
 	}
+
+	return count > 0 ? count - 1 : 0;
 }
 
 void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles) {
@@ -508,7 +511,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 	if (_state->gameState.state == GameState::Halt || !_motionConstraints.targetPos) {
 		//	clear our history of path change times
-		_recentPathChangeTimes.clear();
+		_pathChangeHistory.clear();
 
 		return;
 	}
@@ -576,10 +579,10 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	}
 	
 	
-	//	if the destination of the current path is greater than 1cm away from the target destination,
+	//	if the destination of the current path is greater than X m away from the target destination,
 	//	we invalidate the path.  this situation could arise if during a previous planning, the target point
 	//	was blocked by an obstacle
-	if (_path && (_path->points.back() - dest).mag() > 0.02) {
+	if (_path && (_path->points.back() - dest).mag() > 0.005) {
 		_pathInvalidated = true;
 	}
 
@@ -627,6 +630,9 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	_path->maxAcceleration = _motionConstraints.maxAcceleration;
 
 	_state->drawPath(*_path, Qt::magenta);
+
+	_pathChangeHistory.push_back(_didSetPathThisIteration);
+
 	return;
 }
 
