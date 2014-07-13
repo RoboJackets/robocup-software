@@ -21,7 +21,7 @@ import enum
 # If the receiver gets the ball, CoordinatedPass transitions to the completed state, otherwise it goes to the failed state
 class CoordinatedPass(composite_behavior.CompositeBehavior):
 
-    KickPower = 25
+    KickPower = 35 # was25
 
 
     class State(enum.Enum):
@@ -55,11 +55,6 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
             lambda: self.subbehavior_with_name('kicker').state == behavior.Behavior.State.completed,
             'kicker kicked')
 
-        # self.add_transition(CoordinatedPass.State.kicking,
-        #     CoordinatedPass.State.preparing,
-        #     lambda: self.subbehavior_with_name('kicker').state == behavior.Behavior.State.aiming,
-        #     'kicker misaligned')
-
         self.add_transition(CoordinatedPass.State.receiving,
             behavior.Behavior.State.completed,
             lambda: self.subbehavior_with_name('receiver').state == behavior.Behavior.State.completed,
@@ -92,12 +87,6 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         receiver = skills.pass_receive.PassReceive()
         receiver.receive_point = self.receive_point
         self.add_subbehavior(receiver, 'receiver', required=True)
-
-
-    def execute_running(self):
-        if self.receive_point != None:
-            main.system_state().draw_circle(self.receive_point, 0.03, constants.Colors.Blue, "Pass")
-            main.system_state().draw_line(robocup.Line(main.ball().pos, self.receive_point), constants.Colors.Blue, "Pass")
 
 
     def on_exit_running(self):

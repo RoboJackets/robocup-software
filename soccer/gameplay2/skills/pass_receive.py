@@ -30,7 +30,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
     SteadyMaxAngleVel = 3   # degrees / second
 
     # after this amount of time has elapsed after the kick and we haven't received the ball, we failed :(
-    ReceiveTimeout = 1.3
+    ReceiveTimeout = 2
 
 
 
@@ -59,7 +59,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(PassReceive.State.aligning,
             PassReceive.State.aligned,
-            lambda: self.errors_below_thresholds() and self.is_steady(),
+            lambda: self.errors_below_thresholds() and self.is_steady() and not self.ball_kicked,
             'steady and in position to receive')
 
         self.add_transition(PassReceive.State.aligned,
@@ -113,23 +113,25 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
         if self.receive_point == None:
             return False
 
-        return (self._angle_error < PassReceive.FaceAngleErrorThreshold
-            and self._x_error < PassReceive.PositionXErrorThreshold
-            and self._y_error < PassReceive.PositionYErrorThreshold)
+        return (abs(self._angle_error) < PassReceive.FaceAngleErrorThreshold
+            and abs(self._x_error) < PassReceive.PositionXErrorThreshold
+            and abs(self._y_error) < PassReceive.PositionYErrorThreshold)
 
 
     def is_steady(self):
         return (self.robot.vel.mag() < PassReceive.SteadyMaxVel
-            and self.robot.angle_vel < PassReceive.SteadyMaxAngleVel)
+            and abs(self.robot.angle_vel) < PassReceive.SteadyMaxAngleVel)
 
 
     # calculates:
     # self._pass_line - the line from the ball along where we think we're going
     # self._target_pos - where the bot should be
     # self._angle_error - difference in where we're facing and where we want to face (in radians)
+    # self._x_error
+    # self._y_error
     def recalculate(self):
         # can't do squat if we don't know what we're supposed to do
-        if self.receive_point == None:
+        if self.receive_point == None or self.robot == None:
             return
 
 
@@ -137,7 +139,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
 
         if self.ball_kicked:
             # when the ball's in motion, the line is based on the ball's velocity
-            self._pass_line = robocup.Line(ball.pos, ball.pos + ball.vel)
+            self._pass_line = robocup.Line(ball.pos, ball.pos + ball.vel*10)
         else:
             # if the ball hasn't been kicked yet, we assume it's going to go through the receive point
             self._pass_line = robocup.Line(ball.pos, self.receive_point)
@@ -159,7 +161,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
         # vector pointing down the pass line toward the kicker
         pass_dir = (self._pass_line.get_pt(0) - self._pass_line.get_pt(1)).normalized()
 
-        pos_error = self.robot.pos - self._target_pos
+        pos_error = self._target_pos - self.robot.pos
         self._x_error = pos_error.dot(pass_dir.perp_ccw())
         self._y_error = pos_error.dot(pass_dir)
 
@@ -172,27 +174,40 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
 
     def execute_running(self):
         self.recalculate()
-
         self.robot.face(main.ball().pos)
+
+        if self._pass_line != None:
+            main.system_state().draw_line(self._pass_line, constants.Colors.Blue, "Pass")
+            main.system_state().draw_circle(self._target_pos, 0.03, constants.Colors.Blue, "Pass")
+
+
+
+    def execute_aligning(self):
         if self._target_pos != None:
             self.robot.move_to(self._target_pos)
 
-        # we used to only dribble in the receiving state, but it seemed not to work...
-        # maybe not enough time to get up and spinning?
+
+    def execute_receiving(self):
         self.robot.set_dribble_speed(PassReceive.DribbleSpeed)
+
+        # don't use the move_to() command here, we need more precision, less obstacle avoidance
+        pos_error = self._target_pos - self.robot.pos
+        vel = pos_error * 3.0
+        self.robot.set_world_vel(vel)
 
 
     def role_requirements(self):
         # prefer a robot that's already near the receive position
         reqs = super().role_requirements()
-        if self._target_pos != None:
-            reqs.pos = self._target_pos
+        if self.receive_point != None:
+            reqs.pos = self.receive_point
         return reqs
 
 
     def __str__(self):
         desc = super().__str__()
-        if self.receive_point != None:
+        if self.receive_point != None and self.robot != None:
+            desc += "\n    target_pos=" + str(self._target_pos)
             desc += "\n    angle_err=" + str(self._angle_error)
             desc += "\n    x_err=" + str(self._x_error)
             desc += "\n    y_err=" + str(self._y_error)

@@ -44,7 +44,7 @@ class TestPivotKick(play.Play):
 
     def ball_kickable(self):
         # print("kickable")
-        return main.ball().valid and main.ball().pos.y > constants.Field.ArcRadius + constants.Robot.Radius * 1.5
+        return main.ball().valid # and main.ball().pos.y > constants.Field.ArcRadius + constants.Robot.Radius * 1.5
 
 
     def on_enter_kicking(self):
