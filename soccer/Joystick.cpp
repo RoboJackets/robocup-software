@@ -39,7 +39,6 @@ Joystick::Joystick():
 {
 	_dampedRotation = true;
 	_dampedTranslation = true;
-	_autonomous = true;
 	_dribbler = 0;
 	_dribblerOn = false;
 	_kicker = 0;
@@ -157,20 +156,8 @@ void Joystick::update()
 		if (event.type == JS_EVENT_BUTTON)
 		{
 			_button[event.number] = event.value;
-			
-			if (event.value)
-			{
-				// Button press
-				int n = event.number + 1;
-				if (n == 1)
-				{
-					_autonomous = true;
-				} else if (n == 3)
-				{
-					_autonomous = false;
-				}
-			}
-		} else if (event.type == JS_EVENT_AXIS)
+		}
+		else if (event.type == JS_EVENT_AXIS)
 		{
 			// Store analog data
 			_axis[event.number] = event.value;
