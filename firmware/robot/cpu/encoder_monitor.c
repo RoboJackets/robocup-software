@@ -31,15 +31,20 @@ void encoder_monitor()
 {
 	if (base2008)
 	{
-		// 2008: Make sure the encoder inputs are idle (allow one count for noise).
-		// If the switch is set to 2008 but on a 2011 base, this will kill all the motors.
-		for (int i = 0; i < 4; ++i)
-		{
-			if (encoder_delta[i] < -1 || encoder_delta[i] > 1)
-			{
-				encoder_faults |= 1 << i;
-			}
-		}
+		//	IMPORTANT!
+		//	The below safety check was disabled for the 2014 competition to allow us to run our 2011 robots
+		//	in 2008 mode.  It is a hack that should be reverted after competition.
+		//	See GitHub issues #47 and #79 for more info.
+
+		// // 2008: Make sure the encoder inputs are idle (allow one count for noise).
+		// // If the switch is set to 2008 but on a 2011 base, this will kill all the motors.
+		// for (int i = 0; i < 4; ++i)
+		// {
+		// 	if (encoder_delta[i] < -1 || encoder_delta[i] > 1)
+		// 	{
+		// 		encoder_faults |= 1 << i;
+		// 	}
+		// }
 	} else {
 		// 2011: Make sure the encoders work
 		for (int i = 0; i < 4; ++i)
