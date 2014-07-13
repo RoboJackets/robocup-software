@@ -96,14 +96,6 @@ namespace Gameplay
 				return _oppMatrix;
 			}
 			
-			/**
-			 * Returns the name of the current play
-			 */
-			QString playName() {
-				#warning playName() isn't implemented, which means our logfiles won't record it
-				return QString();
-			}
-			
 			/// All robots on our team that are usable by plays
 			const std::set<OurRobot *> &playRobots() const
 			{

@@ -517,8 +517,6 @@ void Processor::run()
 		////////////////
 		// Store logging information
 		
-		_state.logFrame->set_play(_gameplayModule->playName().toStdString());
-		
 		// Debug layers
 		const QStringList &layers = _state.debugLayers();
 		BOOST_FOREACH(const QString &str, layers)
