@@ -40,30 +40,26 @@ void stall_update(void)
 {
 	for (int i = 0; i < 5; ++i)
 	{
-		// Don't look for stalls on motors that we already know can't be driven
-		if (!(motor_faults & (1 << i)))
+		int speed = abs(hall_delta[i]);
+		int command = abs(motor_out[i]);
+		if (command < Stall_Deadband)
 		{
-			int speed = abs(hall_delta[i]);
-			int command = abs(motor_out[i]);
-			if (command < Stall_Deadband)
-			{
-				command = 0;
-			}
+			command = 0;
+		}
+		
+		stall_counter[i] += command * Stall_kCommand - speed * Stall_kSpeed - Stall_Decay;
+		if (stall_counter[i] < 0)
+		{
+			stall_counter[i] = 0;
+		}
+		
+		if (stall_counter[i] >= Stall_Threshold)
+		{
+			// Prevent overflow and let the fail command reset the flag
+			stall_counter[i] = 0;
 			
-			stall_counter[i] += command * Stall_kCommand - speed * Stall_kSpeed - Stall_Decay;
-			if (stall_counter[i] < 0)
-			{
-				stall_counter[i] = 0;
-			}
-			
-			if (stall_counter[i] >= Stall_Threshold)
-			{
-				// Prevent overflow and let the fail command reset the flag
-				stall_counter[i] = 0;
-				
-				// Mark this motor as stalled
-				motor_stall |= 1 << i;
-			}
+			// Mark this motor as stalled
+			motor_stall |= 1 << i;
 		}
 	}
 }

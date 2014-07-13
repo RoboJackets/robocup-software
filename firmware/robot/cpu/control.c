@@ -107,7 +107,7 @@ static void step_init(int argc, const char *argv[])
 
 static void step_update()
 {
-	int failed = (motor_faults | encoder_faults | motor_stall) & (1 << step_motor);
+	int failed = (encoder_faults | motor_stall) & (1 << step_motor);
 	if (failed)
 	{
 		printf(" *");
@@ -234,7 +234,7 @@ static void pid_update()
 		last_out[i] += delta;
 		
 		// Don't accumulate output for broken motors, in case they start working
-		if ((motor_faults | motor_stall) & (1 << i))
+		if ((motor_stall) & (1 << i))
 		{
 			last_out[i] = 0;
 		}
@@ -324,7 +324,7 @@ static void test_gyro_update()
 	tg_out += delta;
 	
 	// Don't accumulate output for broken motors, in case they start working
-	if ((motor_faults | motor_stall) || kick_command == 0)
+	if ((motor_stall) || kick_command == 0)
 	{
 		tg_out = 0;
 	}

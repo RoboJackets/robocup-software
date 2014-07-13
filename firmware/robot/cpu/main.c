@@ -394,7 +394,7 @@ int main()
 			}
 			
 			// Clear the commands for unusable motors
-			uint8_t bad_motors = motor_faults | motor_stall | encoder_faults;
+			uint8_t bad_motors = motor_stall | encoder_faults;
 			for (int i = 0; i < 5; ++i)
 			{
 				if (bad_motors & (1 << i))
