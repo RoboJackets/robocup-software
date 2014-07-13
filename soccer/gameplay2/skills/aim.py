@@ -181,7 +181,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
             self._error = float("inf")
 
 
-    def on_enter_start(self):
+    def on_exit_start(self):
         self._start_time = time.time()
 
 

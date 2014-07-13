@@ -50,6 +50,7 @@ class TestPivotKick(play.Play):
     def on_enter_kicking(self):
         kick = skills.pivot_kick.PivotKick()
         kick.target = constants.Field.OurGoalSegment
+        kick.desperate_timeout = 3
         self.add_subbehavior(kick, 'kick', required=True)
     def on_exit_kicking(self):
         self.remove_subbehavior('kick')
