@@ -332,14 +332,17 @@ void Gameplay::GameplayModule::run()
 		}
 	}
 
-	//	FIXME: remove manualID robot?
-
 	PyGILState_STATE state = PyGILState_Ensure(); {
 		try {
 			//	vector of shared pointers to pass to python
 			std::vector<OurRobot *> *botVector = new std::vector<OurRobot *>();
 			for (auto itr = _playRobots.begin(); itr != _playRobots.end(); itr++) {
-				botVector->push_back(*itr);
+				OurRobot *ourBot = *itr;
+				//	don't attempt to drive the robot that's joystick-controlled
+				//	FIXME: exclude manual id robot
+				// if (ourBot->shell() != MANUAL_ID) {
+					botVector->push_back(ourBot);
+				// }
 			}
 			getMainModule().attr("set_our_robots")(botVector);
 

@@ -150,14 +150,6 @@ void Processor::blueTeam(bool value)
 }
 
 /**
- * @return true if the robots are on AI else the robots are on joystick
- */
-bool Processor::autonomous()
-{
-	QMutexLocker lock(&_loopMutex);
-	return _joystick->autonomous();
-}
-/**
  * I believe this checks whether or not there is a joystick
  */
 bool Processor::joystickValid()
@@ -505,7 +497,7 @@ void Processor::run()
 		{
 			if (robot->visible)
 			{
-				if ((_manualID >= 0 && (int)robot->shell() == _manualID) || !_joystick->autonomous() || _state.gameState.halt())
+				if ((_manualID >= 0 && (int)robot->shell() == _manualID) || _state.gameState.halt())
 				{
 					robot->motionControl()->stopped();
 				} else {
@@ -640,7 +632,7 @@ void Processor::sendRadioData()
     Packet::RadioTx *tx = _state.logFrame->mutable_radio_tx();
 	
 	// Halt overrides normal motion control, but not joystick
-	if (!_joystick->autonomous() || _state.gameState.halt())
+	if (_state.gameState.halt())
 	{
 		// Force all motor speeds to zero
 		BOOST_FOREACH(OurRobot *r, _state.self)

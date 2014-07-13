@@ -408,17 +408,6 @@ void MainWindow::updateStatus()
 		return;
 	}
 	
-	// Manual checks happen as soon as we can be expected to have vision.
-	// Vision is not required for manual driving, but I think it's more likely
-	// that you will stop on purpose when vision doesn't work than you will
-	// want to switch between autonomous and manual without vision.
-	if (!_processor->autonomous())
-	{
-		// No autonomous robots
-		status("DISABLED", Status_Warning);
-		return;
-	}
-	
 	if (_processor->manualID() >= 0)
 	{
 		// Mixed auto/manual control

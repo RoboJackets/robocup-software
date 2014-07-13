@@ -21,11 +21,6 @@ class Joystick: boost::noncopyable
 			return _fd >= 0;
 		}
 		
-		bool autonomous() const
-		{
-			return _autonomous;
-		}
-		
 		void reset();
 		void update();
 		void drive(Packet::RadioTx::Robot *tx);
@@ -45,7 +40,6 @@ class Joystick: boost::noncopyable
 		std::vector<int> _axis;
 		std::vector<int> _button;
 
-		bool _autonomous;
 		int _dribbler;
 		bool _dribblerOn;
 		
