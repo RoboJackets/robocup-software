@@ -37,7 +37,7 @@ private:
 	//	sets the target velocity in the robot's radio packet
 	//	this method is used by both run() and stopped() and does the
 	//	velocity and acceleration limiting and conversion to robot velocity "units"
-	void _targetVel(Geometry2d::Point targetVel);
+	void _targetBodyVel(Geometry2d::Point targetVel);
 
 	///	sets the target angle velocity in the robot's radio packet
 	///	does velocity limiting and conversion to robot velocity "units"
@@ -70,4 +70,8 @@ private:
 	static ConfigDouble *_max_velocity;
 
 	static ConfigDouble *_path_jitter_compensation_factor;
+
+	//	when pivoting, we multiply the calculated x-velocity
+	//	of the robot by this value before sending it to the robot
+	static ConfigDouble *_pivot_vel_multiplier;
 };
