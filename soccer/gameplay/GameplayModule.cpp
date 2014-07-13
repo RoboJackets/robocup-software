@@ -365,14 +365,28 @@ void Gameplay::GameplayModule::run()
 		/// Run the current play
 		if (verbose) cout << "  Running play" << endl;
 		try {
+			/*
+			 We wrap this in a try catch block because main.run() should NEVER throw an exception.
+			 There are exception handlers setup on the python side of the setup - anything not handled
+			 there should crash the program.
+
+			 The part where we get the behavior tree description is wrapped in its own try/catch
+			 because if it fails, we don't want to crash the program.
+			 */
+
 			handle<>ignored3((PyRun_String("main.run()",
 		        Py_file_input,
 		        _mainPyNamespace.ptr(),
 		        _mainPyNamespace.ptr())));
 
-			//	record the state of our behavior tree
-			std::string bhvrTreeDesc = extract<std::string>(getRootPlay().attr("__str__")());
-			_state->logFrame->set_behavior_tree(bhvrTreeDesc);
+			try {
+				//	record the state of our behavior tree
+				std::string bhvrTreeDesc = extract<std::string>(getRootPlay().attr("__str__")());
+				_state->logFrame->set_behavior_tree(bhvrTreeDesc);
+			}
+			catch (error_already_set) {
+	        	PyErr_Print();
+			}
 		} catch (error_already_set) {
 	        PyErr_Print();
 	        throw new runtime_error("Error trying to run root play");
