@@ -129,6 +129,8 @@ message LogFrame
 	optional bool defend_plus_x = 16;
 
 	// Name of the current play
+	// NOTE: with the transition to a python-based gameplay system, we no longer log this.
+	//       Instead, we log the "Behavior Tree", which has the play name and all subbehavior names.
 	optional string play = 17;
 	
 	// True if using each half of the field
