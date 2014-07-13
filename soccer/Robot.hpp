@@ -188,11 +188,12 @@ public:
 	}
 
 	/**
-	 * Check to see if our path has been constantly updated for the past few cycles.
-	 * See _recentPathChangeTimes for more info
-	 * MotionControl calls this method to see if we're 'stuck' and can compensate for it.
+	 * The number of consecutive times since now that we've set our path to something new.  This
+	 * causes issues in Motion Control because the path start time is constantly reset, so we track
+	 * it here and compensate for it in MotionControl.
+	 * See _pathChangeHistory for more info
 	 */
-	bool isRepeatedlyChangingPaths() const;
+	int consecutivePathChangeCount() const;
 
 	/**
 	 * Sets the worldVelocity in the robot's MotionConstraints
@@ -213,7 +214,6 @@ public:
 	 * The robot pivots around it's mouth toward the given target
 	 */
 	void pivot(const Geometry2d::Point &pivotTarget);
-
 
 
 
@@ -443,14 +443,16 @@ protected:
 	 * into the planned path and sends the robot a velocity command that's really really tiny, causing
 	 * it to barely move at all.
 	 * 
-	 * Our solution to this is to track the last N path change times in a circular buffer so we can tell if
+	 * Our solution to this is to track the last N path changes in a circular buffer so we can tell if
 	 * we're hitting this scenario.  If so, we can compensate, by having motion control look further into
 	 * the path when commanding the robot.
 	 */
-	boost::circular_buffer<uint64_t> _recentPathChangeTimes;
+	boost::circular_buffer<bool> _pathChangeHistory;	//	tracks whether or not we got a new path for the last N iterations
 
-	///	the size of _recentPathChangeTimes
+	///	the size of _pathChangeHistory
 	static const int PathChangeHistoryBufferSize = 10;
+
+	bool _didSetPathThisIteration;
 
 
 private:

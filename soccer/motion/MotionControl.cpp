@@ -32,6 +32,8 @@ ConfigDouble *MotionControl::_angle_vel_mult;
 ConfigDouble *MotionControl::_max_acceleration;
 ConfigDouble *MotionControl::_max_velocity;
 
+ConfigDouble *MotionControl::_path_jitter_compensation_factor;
+
 void MotionControl::createConfiguration(Configuration *cfg) {
 	_pid_pos_p = new ConfigDouble(cfg, "MotionControl/pos/PID_p", 6.5);
 	_pid_pos_i = new ConfigDouble(cfg, "MotionControl/pos/PID_i", 0.0001);
@@ -47,6 +49,8 @@ void MotionControl::createConfiguration(Configuration *cfg) {
 
 	_max_acceleration	= new ConfigDouble(cfg, "MotionControl/Max Acceleration", 1.5);
 	_max_velocity		= new ConfigDouble(cfg, "MotionControl/Max Velocity", 2.0);
+
+	_path_jitter_compensation_factor = new ConfigDouble(cfg, "MotionControl/PathJitterCompensationFactor", 2.5);
 }
 
 
@@ -183,9 +187,16 @@ void MotionControl::run() {
 
 		//	if the path is getting rapidly changed, we cheat so that the robot actually moves
 		//	see OurRobot._recentPathChangeTimes for more info
-		if (_robot->isRepeatedlyChangingPaths()) {
-			timeIntoPath = max<float>(timeIntoPath, OurRobot::PathChangeHistoryBufferSize * 1.0f/60.0f * 0.8);
-		}
+		// if (_robot->isRepeatedlyChangingPaths()) {
+		// 	timeIntoPath = max<float>(timeIntoPath, OurRobot::PathChangeHistoryBufferSize * 1.0f/60.0f * 0.8);
+		// 	cout << "Compensating!  new t = " << timeIntoPath << endl;
+		// }
+
+		//	the 0.9 is a fudge factor
+		//	we do this to compensate for lost command cycles
+		double factor = *_path_jitter_compensation_factor;
+		timeIntoPath += _robot->consecutivePathChangeCount() * 1.0f/60.0f * factor;
+
 
 		//	evaluate path - where should we be right now?
 		Point targetPos;
