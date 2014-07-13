@@ -34,6 +34,8 @@ ConfigDouble *MotionControl::_max_velocity;
 
 ConfigDouble *MotionControl::_path_jitter_compensation_factor;
 
+ConfigDouble *MotionControl::_pivot_vel_multiplier;
+
 void MotionControl::createConfiguration(Configuration *cfg) {
 	_pid_pos_p = new ConfigDouble(cfg, "MotionControl/pos/PID_p", 6.5);
 	_pid_pos_i = new ConfigDouble(cfg, "MotionControl/pos/PID_i", 0.0001);
@@ -51,6 +53,8 @@ void MotionControl::createConfiguration(Configuration *cfg) {
 	_max_velocity		= new ConfigDouble(cfg, "MotionControl/Max Velocity", 2.0);
 
 	_path_jitter_compensation_factor = new ConfigDouble(cfg, "MotionControl/PathJitterCompensationFactor", 2.5);
+
+	_pivot_vel_multiplier = new ConfigDouble(cfg, "MotionControl/PivotVelMultiplier", 05);
 }
 
 
@@ -152,12 +156,14 @@ void MotionControl::run() {
 	// handle body velocity for pivot command
 	if (constraints.pivotTarget) {
 		float r = Robot_Radius;
-		const float FudgeFactor = 0.01f;
+		const float FudgeFactor = *_pivot_vel_multiplier;
 		float speed = r * targetW * RadiansToDegrees * FudgeFactor;
 		Point vel(speed, 0);
-		vel.rotate(_robot->angle);
 
-		_targetVel(vel);
+		//	the robot body coordinate system is wierd...
+		vel.rotate(-90);
+
+		_targetBodyVel(vel);
 
 		return; //	pivot handles both angle and position
 	}
@@ -207,7 +213,7 @@ void MotionControl::run() {
 		if (!pathValidNow) {
 			targetVel.x = 0;
 			targetVel.y = 0;
-		} 
+		}
 		//	tracking error
 		Point posError = targetPos - _robot->pos;
 
@@ -224,11 +230,11 @@ void MotionControl::run() {
 		targetVel = targetVel.rotated(-_robot->angle);
 	}
 
-	this->_targetVel(targetVel);
+	this->_targetBodyVel(targetVel);
 }
 
 void MotionControl::stopped() {
-	_targetVel(Point(0, 0));
+	_targetBodyVel(Point(0, 0));
 	_targetAngleVel(0);
 }
 
@@ -239,7 +245,7 @@ void MotionControl::_targetAngleVel(float angleVel) {
 	_robot->radioTx.set_body_w(angleVel);
 }
 
-void MotionControl::_targetVel(Point targetVel) {
+void MotionControl::_targetBodyVel(Point targetVel) {
 	// Limit Velocity
 	targetVel.clamp(*_max_velocity);
 
