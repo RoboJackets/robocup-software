@@ -6,7 +6,7 @@ import math
 
 def is_moving_towards_our_goal():
     ball_path = robocup.Segment(main.ball().pos, (main.ball().pos + main.ball().vel.normalized()))
-    return main.ball().vel.magsq() > 0.02 and ball_path.intersects(constants.Field.OurGoalSegment)
+    return main.ball().vel.magsq() > 0.02 and ball_path.line_intersection(constants.Field.OurGoalSegment) != None
 
 
 def is_in_our_goalie_zone():
@@ -16,7 +16,7 @@ def is_in_our_goalie_zone():
         return False
 
 
-FrictionCoefficient = 1 # FIXME: this is a bullshit value
+FrictionCoefficient = 0.04148
 GravitationalCoefficient = 9.81 # in m/s^2
 
 # The ball's motion follows the equation X(t) = X_i + V_i*t - 0.5*(c*g)*t^2
