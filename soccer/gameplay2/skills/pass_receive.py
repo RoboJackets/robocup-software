@@ -105,6 +105,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
     @receive_point.setter
     def receive_point(self, value):
         self._receive_point = value
+        self.recalculate()
 
 
     # returns True if we're facing the right direction and in the right position and steady
@@ -112,18 +113,9 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
         if self.receive_point == None:
             return False
 
-        # vector pointing down the pass line toward the kicker
-        pass_dir = (self._pass_line.get_pt(0) - self._pass_line.get_pt(1)).normalized()
-
-        pos_error = self.robot.pos - self._target_pos
-        x_error = pos_error.dot(pass_dir.perp_ccw())
-        y_error = pos_error.dot(pass_dir)
-
-        # print("angle_err=" + str(self._angle_error) + "; x_err=" + str(x_error) + "; y_err=" + str(y_error))
-
         return (self._angle_error < PassReceive.FaceAngleErrorThreshold
-            and x_error < PassReceive.PositionXErrorThreshold
-            and y_error < PassReceive.PositionYErrorThreshold)
+            and self._x_error < PassReceive.PositionXErrorThreshold
+            and self._y_error < PassReceive.PositionYErrorThreshold)
 
 
     def is_steady(self):
@@ -164,6 +156,14 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
         self._target_pos = actual_receive_point + pass_line_dir * constants.Robot.Radius
 
 
+        # vector pointing down the pass line toward the kicker
+        pass_dir = (self._pass_line.get_pt(0) - self._pass_line.get_pt(1)).normalized()
+
+        pos_error = self.robot.pos - self._target_pos
+        self._x_error = pos_error.dot(pass_dir.perp_ccw())
+        self._y_error = pos_error.dot(pass_dir)
+
+
 
     def on_exit_start(self):
         # reset
@@ -188,3 +188,12 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
         if self._target_pos != None:
             reqs.pos = self._target_pos
         return reqs
+
+
+    def __str__(self):
+        desc = super().__str__()
+        if self.receive_point != None:
+            desc += "\n    angle_err=" + str(self._angle_error)
+            desc += "\n    x_err=" + str(self._x_error)
+            desc += "\n    y_err=" + str(self._y_error)
+        return desc
