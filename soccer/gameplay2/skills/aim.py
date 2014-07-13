@@ -126,7 +126,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
 
     def is_steady(self):
-        return time.time() - self._last_unsteady_time < 0.2
+        return time.time() - self._last_unsteady_time > 0.2
 
 
     def fumbled(self):
