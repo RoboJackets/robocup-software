@@ -53,7 +53,7 @@ void Processor::createConfiguration(Configuration *cfg)
 	}
 }
 
-Processor::Processor(bool sim)
+Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive)
 {
 	_running = true;
 	_framePeriod = 1000000 / 60;

@@ -35,6 +35,35 @@ namespace Motion
 	class RobotController;
 }
 
+
+
+class DebugQMutex: public QMutex {
+public:
+	DebugQMutex(QMutex::RecursionMode mode = QMutex::NonRecursive) : QMutex(mode) {}
+
+	void lock() {
+		// printf("thread %ld tries to lock\n", QThread::currentThreadId());
+		QMutex::lock();
+	}
+
+	bool tryLock() {
+		// printf("tryLock\n");
+		return QMutex::tryLock();
+	}
+
+	bool tryLock(int timeout) {
+		// printf("tryLock\n");
+		return QMutex::tryLock(timeout);
+	}
+
+	void unlock() {
+		QMutex::unlock();
+		// printf("thread %ld unlocked\n", QThread::currentThreadId());
+	}
+};
+
+
+
 /**
  * @brief Brings all the pieces together
  * 
@@ -225,7 +254,7 @@ class Processor: public QThread
 		
 		// Locked when processing loop stuff is happening (not when blocked for timing or I/O).
 		// This is public so the GUI thread can lock it to access SystemState, etc.
-		QMutex _loopMutex;
+		DebugQMutex _loopMutex;
 		
 		/** global system state */
 		SystemState _state;
