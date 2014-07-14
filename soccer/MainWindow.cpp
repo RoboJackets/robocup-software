@@ -117,8 +117,8 @@ MainWindow::MainWindow(QWidget *parent):
 	rotateGroup->addAction(_ui.action180);
 	rotateGroup->addAction(_ui.action270);
 	
-	_ui.splitter->setStretchFactor(0, 98);
-	_ui.splitter->setStretchFactor(1, 10);
+	_ui.splitter->setStretchFactor(0, 88);
+	_ui.splitter->setStretchFactor(1, 20);
 	
 	connect(_ui.manualID, SIGNAL(currentIndexChanged(int)), this, SLOT(on_manualID_currentIndexChanged(int)));
 
