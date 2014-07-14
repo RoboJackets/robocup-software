@@ -123,7 +123,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
                 self._last_unsteady_time = time.time()
 
             if (self._last_unsteady_time != None
-                and time.time() - self._last_unsteady_time > 1
+                and time.time() - self._last_unsteady_time > 0.75
                 and kicker.current_shot_point().dist_to(self.receive_point) < 0.1):
                 # renegotiate receive_point
                 logging.info("Pass renegotiated RCV PT")
