@@ -545,6 +545,8 @@
   </angle>
   <Max_Acceleration value="1.2"/>
   <Max_Velocity value="3"/>
+  <PathJitterCompensationFactor value="2.5"/>
+  <PivotVelMultiplier value="0.006"/>
  </MotionControl>
  <PathPlanner>
   <Max_Acceleration value="1"/>
