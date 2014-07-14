@@ -27,7 +27,7 @@ class Stopped(play.Play):
         self.add_subbehavior(right, 'right_fullback', required=False, priority=49)
 
         idle = tactics.circle_near_ball.CircleNearBall()
-        self.add_subbehavior('circle_up', idle, required=False, priority=1)
+        self.add_subbehavior(idle, 'circle_up', required=False, priority=1)
 
 
     def on_exit_running(self):
