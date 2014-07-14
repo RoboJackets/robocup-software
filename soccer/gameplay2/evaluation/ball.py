@@ -7,10 +7,8 @@ import math
 def is_moving_towards_our_goal():
     # see if the ball is moving much
     if main.ball().vel.mag() > 0.04:
-        ctr2goal = robocup.Point(0, constants.Field.Length / 2.0).normalized()
-
         # see if it's moving somewhat towards our goal
-        if main.ball().vel.dot(ctr2goal) > 0:
+        if main.ball().vel.dot(robocup.Point(0, -1)) > 0:
             ball_path = robocup.Segment(main.ball().pos, (main.ball().pos + main.ball().vel.normalized()))
             pt = ball_path.line_intersection(constants.Field.OurGoalSegment)
             return pt != None and abs(pt.x) < constants.Field.GoalWidth / 2.0
