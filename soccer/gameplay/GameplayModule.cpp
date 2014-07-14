@@ -20,6 +20,7 @@ using namespace boost::python;
 using namespace Geometry2d;
 
 
+
 Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_mutex(QMutex::Recursive)
 {
@@ -136,7 +137,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	            Py_file_input,
 	            _mainPyNamespace.ptr(),
 	            _mainPyNamespace.ptr())));
-        } PyThreadState* st = PyEval_SaveThread(); //PyEval_ReleaseLock();
+        } PyEval_SaveThread();
     } catch (error_already_set) {
         PyErr_Print();
         throw new runtime_error("Unable to initialize embedded python interpreter");

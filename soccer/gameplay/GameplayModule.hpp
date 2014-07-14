@@ -18,7 +18,7 @@
 
 class OurRobot;
 class SystemState;
-class Configuration;
+
 
 /**
  * @brief Higher-level logic for soccer
@@ -122,8 +122,6 @@ namespace Gameplay
 			QMutex _mutex;
 			
 			SystemState *_state;
-			
-			Configuration *_config;
 			
 			std::set<OurRobot *> _playRobots;
 			
