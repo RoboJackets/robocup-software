@@ -3,6 +3,7 @@ import behavior
 import constants
 import robocup
 import enum
+import main
 
 
 # lines up with the ball and the target, then drives up and kicks
@@ -38,10 +39,18 @@ class LineKick(skills._kick._Kick):
             lambda: True,
             'immediately')
 
+        self.add_transition(LineKick.State.setup,
+            LineKick.State.charge,
+            lambda: self._target_line.dist_to(self.robot.pos) < self.ChargeThresh,
+            "robot on line")
+
 
     def recalculate(self):
         self._target_line = robocup.Line(main.ball().pos, self.aim_target_point)
         # FIXME: errors?
+
+    def on_exit_start(self):
+        super().recalculate_aim_target_point()
 
 
     def execute_running(self):
@@ -79,8 +88,8 @@ class LineKick(skills._kick._Kick):
 
         # drive directly into the ball
         ball2target = (self.aim_target_point - main.ball().pos).normalized()
-        robot2ball = (main.ball().pos, self.robot.pos).normalized()
-        speed = min(self.robot.vel.mag() + LineKick.AccelBias, MaxChargeSpeed)
+        robot2ball = (main.ball().pos - self.robot.pos).normalized()
+        speed = min(self.robot.vel.mag() + LineKick.AccelBias, self.MaxChargeSpeed)
         self.robot.set_world_vel(robot2ball.normalized() * speed)
         
         self.robot.face(self.aim_target_point)

@@ -3,7 +3,7 @@ import robocup
 import evaluation.window_evaluator
 import constants
 import main
-
+import role_assignment
 
 # this is the abstract superclass for PivotKick and LineKick
 class _Kick(single_robot_behavior.SingleRobotBehavior):
