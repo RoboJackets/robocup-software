@@ -44,6 +44,11 @@ class LineKick(skills._kick._Kick):
             lambda: self._target_line.dist_to(self.robot.pos) < self.ChargeThresh,
             "robot on line")
 
+        self.add_transition(LineKick.State.charge,
+            behavior.Behavior.State.completed,
+            lambda: self.robot is not None and self.robot.just_kicked(),
+            "robot kicked")
+
 
     def recalculate(self):
         self._target_line = robocup.Line(main.ball().pos, self.aim_target_point)
