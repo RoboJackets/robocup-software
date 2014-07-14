@@ -26,6 +26,10 @@ class Basic122(play.Play):
         super().__init__(continuous=False)  # FIXME: continuous?
 
         striker = skills.pivot_kick.PivotKick()
+        striker.add_transition(behavior.Behavior.State.completed,
+            behavior.Behavior.State.start,
+            lambda: True,
+            "immediately")
         self.add_subbehavior(striker, 'striker', required=False, priority=5)
 
         left = tactics.positions.fullback.Fullback(tactics.positions.fullback.Fullback.Side.left)
