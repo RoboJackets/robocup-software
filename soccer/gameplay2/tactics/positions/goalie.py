@@ -133,7 +133,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         # FIXME: config pivot kick
         kick.use_chipper = True
         # FIXME: if the goalie has a fault, resort to bump
-        self.add_subbehavior('kick-clear', kick, required=True)
+        self.add_subbehavior(kick, 'kick-clear', required=True)
 
 
     def on_exit_clear(self):
