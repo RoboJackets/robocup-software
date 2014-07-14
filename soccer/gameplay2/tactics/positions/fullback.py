@@ -51,7 +51,7 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 			"if ball or opponent enters my area")
 
 	def execute_marking(self):
-		main.system_state().draw_line(robocup.Line(self._area.get_pt(0), self._area.get_pt(1)), (127,0,255), "Fullback")
+		#main.system_state().draw_line(robocup.Line(self._area.get_pt(0), self._area.get_pt(1)), (127,0,255), "Fullback")
 		self.block_robot = self.find_robot_to_block()
 		if self.block_robot is not None:
 			self.robot.add_text("Blocking Robot " + str(self.block_robot.shell_id()), (255,255,255), "RobotText")
