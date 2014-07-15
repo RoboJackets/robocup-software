@@ -229,6 +229,8 @@ void Gameplay::GameplayModule::run()
 
 	_ballMatrix = Geometry2d::TransformMatrix::translate(_state->ball.pos);
 
+	clearAvoidBallRadii();
+
 	/// perform state variable updates on robots
 	/// Currently - only the timer for the kicker charger
 	BOOST_FOREACH(OurRobot* robot, _state->self)
