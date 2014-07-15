@@ -189,7 +189,7 @@ void MotionControl::run() {
 		
 		
 		//	convert from microseconds to seconds
-		float timeIntoPath = ((float)(timestamp() - _robot->pathStartTime())) * TimestampToSecs;
+		float timeIntoPath = ((float)(timestamp() - _robot->pathStartTime())) * TimestampToSecs + 1.0/60.0;
 
 		//	if the path is getting rapidly changed, we cheat so that the robot actually moves
 		//	see OurRobot._recentPathChangeTimes for more info
