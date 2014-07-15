@@ -25,11 +25,7 @@ srcs = [
 
 	# Core gameplay components',
 	'gameplay/GameplayModule.cpp',
-	'gameplay2/robocup-py.cpp',
-
-	# Field evaluation
-	# 'gameplay/evaluation/ReceivePointEvaluator.cpp',
-	# 'gameplay/evaluation/FieldEvaluator.cpp',
+	'gameplay/robocup-py.cpp',
 
 	# Planning components',
 	'planning/RRTPlanner.cpp',
@@ -40,12 +36,10 @@ srcs = [
 	'MotionConstraints.cpp',
 	'motion/TrapezoidalMotion.cpp',
 
-
 	# Sources for modeling module
 	'modeling/BallTracker.cpp',
 	'modeling/BallFilter.cpp',
 	'modeling/RobotFilter.cpp',
-	
 	
 	'ui/main_icons.qrc',
 	'ui/log_icons.qrc'
