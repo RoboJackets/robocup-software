@@ -90,10 +90,10 @@ class RoleRequirements:
 
 
 
-# given a role requirements tree (with RoleRequirements as leaves, not result tuples),
+# given a role requirements tree (with RoleRequirements or assignment tuples as leaves),
 # yields all of the RoleRequiements objects
 def iterate_role_requirements_tree_leaves(reqs_tree):
-    if isinstance(reqs_tree, RoleRequirements):
+    if isinstance(reqs_tree, RoleRequirements) or isinstance(reqs_tree, tuple):
         yield reqs_tree
     else:
         for subtree in reqs_tree.values():

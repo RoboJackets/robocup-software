@@ -74,7 +74,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             dist = i * 0.05
             pos = main.ball().pos + approach_vec * dist
             ball_time = evaluation.ball.rev_predict(main.ball().vel, dist - Capture.CourseApproachDist) # how long will it take the ball to get there
-            bot_time = (pos - self.robot.pos).mag() * 9.0 # FIXME: evaluate trapezoid
+            bot_time = (pos - self.robot.pos).mag() * 10.0 # FIXME: evaluate trapezoid
 
             # print('bot: ' + str(bot_time) + ';; ball: ' + str(ball_time))
 
@@ -100,7 +100,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.robot.face(main.ball().pos)
 
         bot2ball = (main.ball().pos - self.robot.pos).normalized()
-        self.robot.set_world_vel(bot2ball * Capture.FineApproachSpeed)
+        self.robot.set_world_vel(bot2ball * Capture.FineApproachSpeed + main.ball().vel)
 
 
     def role_requirements(self):
