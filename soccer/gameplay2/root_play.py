@@ -46,24 +46,36 @@ class RootPlay(Play, QtCore.QObject):
             enabled_plays = [p for p in enabled_plays if p != self.temporarily_blacklisted_play_class]
             self.temporarily_blacklisted_play_class = None
 
-            # see if we need to kill current play
+            # see if we need to kill current play or if it's done running
             if self.play != None:
                 if self.play.__class__ not in enabled_plays:
-                    logging.info("Current play '" + self.play.__class__.__name__ + "'" + " no longer enabled, aborting")
+                    logging.info("Current play '" + self.play.__class__.__name__ + "' no longer enabled, aborting")
+                    self.play.terminate()
                     self.play = None
                 elif self.play.is_done_running():
-                    logging.info("Current play '" + self.play.__class__.__name__ + "'" + " finished running")
+                    logging.info("Current play '" + self.play.__class__.__name__ + "' finished running")
+                    self.play = None
+                elif self.play.__class__.score() == float("inf"):
+                    logging.info("Current play '" + self.play.__class__.__name__ + "' no longer applicable, ending")
+                    self.play.terminate()
                     self.play = None
 
             if self.play == None:
                 try:
-                    if main.game_state().is_halted():
-                        # don't run a play, we're halted
-                        pass
                     if len(enabled_plays) > 0:
-                        # select the play with the largest value for score()
-                        play_class = min(enabled_plays, key=lambda p: p.score())
-                        self.play = play_class()
+                        # select the play with the smallest value for score()
+
+                        # calculate scores for all of the plays
+                        scores = {}
+                        for p_class in enabled_plays:
+                            scores[p_class] = p_class.score()
+
+                        # this gets the key for the min value in the dictionary (play class with lowest score)
+                        play_class = min(scores, key=scores.get)
+
+                        # run the play with the lowest score, as long as it isn't inf
+                        if scores[play_class] != float("inf"):
+                            self.play = play_class()
                     else:
                         # there's no available plays to run
                         pass
