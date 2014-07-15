@@ -172,11 +172,8 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def role_requirements(self):
         reqs = super().role_requirements()
 
-        if isinstance(reqs, role_assignment.RoleRequirements):
+        for reqs in role_assignment.iterate_role_requirements_tree_leaves(reqs):
             reqs.required_shell_id = self.shell_id
-        else:
-            for sub_bhvr_name in reqs:
-                reqs[sub_bhvr_name].required_shell_id = self.shell_id
 
         return reqs
 
