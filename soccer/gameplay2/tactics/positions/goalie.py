@@ -137,7 +137,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
 
     def on_exit_clear(self):
-        self.remove_behavior('kick-clear')
+        self.remove_subbehavior('kick-clear')
 
 
     def execute_intercept(self):
@@ -172,8 +172,8 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def role_requirements(self):
         reqs = super().role_requirements()
 
-        for reqs in role_assignment.iterate_role_requirements_tree_leaves(reqs):
-            reqs.required_shell_id = self.shell_id
+        for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
+            req.required_shell_id = self.shell_id
 
         return reqs
 
