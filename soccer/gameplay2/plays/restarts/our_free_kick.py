@@ -5,6 +5,7 @@ import skills.pivot_kick
 import tactics.positions.fullback
 import constants
 import robocup
+import main
 
 
 class OurFreeKick(play.Play):
@@ -36,12 +37,17 @@ class OurFreeKick(play.Play):
         fullback2 = tactics.positions.fullback.Fullback(side=tactics.positions.fullback.Fullback.Side.left)
         self.add_subbehavior(fullback2, 'fullback2', required=False, priority=1)
 
+        self.add_transition(behavior.Behavior.State.running,
+            behavior.Behavior.State.completed,
+            lambda: kicker.is_done_running(),
+            'kicker completes')
+
 
 
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 10 if gs.is_setup_state() and gs.is_our_freekick() else float("inf")
+        return 10 if gs.is_setup_state() and gs.is_our_free_kick() else float("inf")
 
 
 
@@ -54,3 +60,5 @@ class OurFreeKick(play.Play):
         if kicker.robot != None and kicker.robot.pos.near_point(main.ball().pos, 0.3):
             pass
             # FIXME: add shot channel obstacle for the other robots
+
+    
