@@ -1,5 +1,6 @@
 import single_robot_behavior
 import composite_behavior
+import role_assignment
 
 
 # This class is used for behaviors that apply to a single ROBOT and may have up to one subbehavior at any time
@@ -23,7 +24,9 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior, co
         if self.has_subbehaviors():
             reqs = composite_behavior.CompositeBehavior.role_requirements(self)
             if self.robot != None:
-                list(reqs.values())[0].previous_shell_id = self.robot.shell_id()
+                for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
+                    req.previous_shell_id = self.robot.shell_id()
+
             return reqs
         else:
             return single_robot_behavior.SingleRobotBehavior.role_requirements(self)
@@ -33,7 +36,11 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior, co
         oldBot = self.robot
         if self.has_subbehaviors():
             composite_behavior.CompositeBehavior.assign_roles(self, assignments)
-            self.robot = list(assignments.values())[0][1]
+
+            # extract robot from the one leaf in the tree
+            # we don't know how deep the tree is, which is why we use the tree leaf iterator
+            for assignment_tuple in role_assignment.iterate_role_requirements_tree_leaves(assignments):
+                self.robot = assignment_tuple[1]
         else:
             single_robot_behavior.SingleRobotBehavior.assign_roles(self, assignments)
 
