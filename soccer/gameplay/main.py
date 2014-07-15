@@ -11,7 +11,7 @@ import sys
 
 
 # soccer is run from the `run` folder, so we provide a relative path to where the python files live
-GAMEPLAY_DIR = '../soccer/gameplay2'
+GAMEPLAY_DIR = '../soccer/gameplay'
 
 
 # main init method for the python side of things

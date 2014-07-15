@@ -11,7 +11,7 @@
 #include <boost/make_shared.hpp>
 
 //	for python stuff
-#include <gameplay2/robocup-py.hpp>
+#include "robocup-py.hpp"
 
 using namespace std;
 using namespace boost;
@@ -126,7 +126,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	        _mainPyNamespace["robocup"] = robocup_module;
 
 	        //	add gameplay directory to python import path (so import XXX) will look in the right directory
-	        handle<>ignored2((PyRun_String("import sys; sys.path.append('../soccer/gameplay2')",
+	        handle<>ignored2((PyRun_String("import sys; sys.path.append('../soccer/gameplay')",
 	            Py_file_input,
 	            _mainPyNamespace.ptr(),
 	            _mainPyNamespace.ptr())));

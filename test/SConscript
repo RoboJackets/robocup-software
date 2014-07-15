@@ -35,10 +35,10 @@ e.Depends(testCpp, install_test_runner)
 e.Depends(testCpp, test_runner)
 
 
-pythonTestRunner = Dir("#/soccer/gameplay2").File('run_tests.sh')
+pythonTestRunner = Dir("#/soccer/gameplay").File('run_tests.sh')
 testPython = e.Command('file-that-doesnt-exist2',
     pythonTestRunner,
-    'cd soccer/gameplay2; ./run_tests.sh')
+    'cd soccer/gameplay; ./run_tests.sh')
 
 # make a 'test' command so that 'scons test' builds the tests and runs them
 test = e.Alias('test', [testPython, testCpp])
