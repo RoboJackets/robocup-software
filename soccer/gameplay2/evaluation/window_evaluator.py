@@ -159,8 +159,8 @@ class WindowEvaluator:
                 del windows[i]
             elif t0 > w.t0 and t1 < w.t1:
                 # the window fully contains the obstacle, so we split the window
-                w.t1 = t0
                 w2 = Window(t1, w.t1)
+                w.t1 = t0
                 windows.insert(i+1, w2)
                 i += 2
             elif t0 > w.t0 and t0 < w.t1:
