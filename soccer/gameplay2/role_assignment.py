@@ -90,6 +90,17 @@ class RoleRequirements:
 
 
 
+# given a role requirements tree (with RoleRequirements as leaves, not result tuples),
+# yields all of the RoleRequiements objects
+def iterate_role_requirements_tree_leaves(reqs_tree):
+    if isinstance(reqs_tree, RoleRequirements):
+        yield reqs_tree
+    else:
+        for subtree in reqs_tree.values():
+            yield from iterate_role_requirements_tree_leaves(subtree)
+
+
+
 # This error is thrown by assign_roles() when given an impossible assignment scenario
 class ImpossibleAssignmentError(RuntimeError): pass
 
