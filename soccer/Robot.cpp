@@ -447,6 +447,15 @@ float OurRobot::avoidTeammateRadius(unsigned shell_id) const {
 	return _self_avoid_mask[shell_id];
 }
 
+void OurRobot::shieldFromTeammates(float radius) {
+	for (OurRobot *teammate : state()->self) {
+		if (teammate) {
+			teammate->avoidTeammateRadius(shell(), radius);
+		}
+	}
+}
+
+
 
 #pragma mark Ball Avoidance
 

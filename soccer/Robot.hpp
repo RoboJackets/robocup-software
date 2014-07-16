@@ -329,6 +329,12 @@ public:
 	bool avoidTeammate(unsigned shell_id) const;
 	float avoidTeammateRadius(unsigned shell_id) const;
 
+	/**
+	 * Sets the avoid radius of all teammates to @radius for this robot.
+	 * This is useful to easily keep our teammates from bumping the ball carrier.
+	 */
+	void shieldFromTeammates(float radius);
+
 	// gameplay interface - interface for delayed update/planning
 
 	/**
