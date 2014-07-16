@@ -112,3 +112,18 @@ class LineKick(skills._kick._Kick):
             self.robot.chip(self.chip_power)
         else:
             self.kick(self.kick_power)
+
+
+    def role_requirements(self):
+        reqs = super().role_requirements()
+
+        # try to be near the ball
+        if main.ball().valid:
+            reqs.pos = main.ball().pos
+
+        reqs.require_kicking = True
+
+        if self.user_chipper:
+            reqs.chipper_preference_weight = role_assignment.PreferChipper
+
+        return reqs
