@@ -11,3 +11,7 @@ class Play(composite_behavior.CompositeBehavior):
     @classmethod
     def score(cls):
         return 10
+
+    @classmethod
+    def is_restart(cls):
+    	return False
