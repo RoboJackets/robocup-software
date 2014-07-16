@@ -34,7 +34,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(Capture.State.course_approach,
             Capture.State.fine_approach,
-            lambda: self.bot_in_approach_pos(),
+            lambda: self.bot_in_approach_pos() and main.ball().valid,
             'dist to ball < threshold')
 
         self.add_transition(Capture.State.fine_approach,
@@ -44,7 +44,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(Capture.State.fine_approach,
             Capture.State.course_approach,
-            lambda: main.ball().pos.dist_to(self.robot.pos) > Capture.CourseApproachDist * 1.5,
+            lambda: main.ball().pos.dist_to(self.robot.pos) > Capture.CourseApproachDist * 1.5 or not main.ball().valid,
             'ball ran away')
 
 
@@ -94,7 +94,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.robot.set_avoid_ball_radius(Capture.CourseApproachAvoidBall)
         pos = self.find_intercept_point()
         self.robot.face(main.ball().pos)
-        if pos != None:
+        if pos != None and main.ball().valid:
             main.system_state().draw_circle(pos, constants.Ball.Radius, constants.Colors.White, "Capture")
             self.robot.move_to(pos)
 
