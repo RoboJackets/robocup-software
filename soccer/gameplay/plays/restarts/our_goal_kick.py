@@ -55,6 +55,10 @@ class OurGoalKick(play.Play):
         gs = main.game_state()
         return 0 if (gs.is_setup_state() and gs.is_our_direct() and main.ball().pos.y < 1.0) else float("inf")
 
+    @classmethod
+    def is_restart(cls):
+        return True
+
 
     def execute_running(self):
         kicker = self.subbehavior_with_name('kicker')
