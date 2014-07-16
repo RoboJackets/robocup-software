@@ -71,7 +71,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
 
         # default parameters
         self.dribbler_power = constants.Robot.Dribbler.MaxPower
-        self.desperate_timeout = float("inf")
+        self.aim_params = {'desperate_timeout': float("inf")}
         
 
     # The speed to drive the dribbler at during aiming
@@ -86,14 +86,15 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
         self._dribbler_power = int(value)
 
 
-    # sets the timeout on the underlying Aim behavior (doesn't affect the capture phase)
-    # Default: inf
+    # if you want to set custom error thresholds, etc to be used during aiming,
+    # set this to a dictionary with the appropriate keys and values
+    # default: {'desperate_timeout': float("inf")}
     @property
-    def desperate_timeout(self):
-        return self._desperate_timeout
-    @desperate_timeout.setter
-    def desperate_timeout(self, value):
-        self._desperate_timeout = value
+    def aim_params(self):
+        return self._aim_params
+    @aim_params.setter
+    def aim_params(self, value):
+        self._aim_params = value
 
 
     # The point near the target point that we're currently aimed at, whether we want to be or not
@@ -121,6 +122,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
         self.remove_aim_behavior()
         self.robot.unkick()
         capture = skills.capture.Capture()
+        capture.dribbler_power = self.dribbler_power
         self.add_subbehavior(capture, 'capture', required=True)
         # FIXME: tell capture to approach from a certain direction so we're already lined up?
     def on_exit_capturing(self):
@@ -131,7 +133,8 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
         aim = self.subbehavior_with_name('aim')
         aim.target_point = self.aim_target_point
         aim.dribbler_power = self.dribbler_power
-        aim.desperate_timeout = self.desperate_timeout
+        for key, value in self.aim_params.items():
+            setattr(aim, key, value)
 
 
     def on_enter_aiming(self):

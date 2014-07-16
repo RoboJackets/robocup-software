@@ -80,7 +80,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
     # error threshold is the max distance that we can be off to the side of the target
     # and be considered to have a good aim at it
-    # Default: 0.03m
+    # Default: 0.05m
     @property
     def error_threshold(self):
         return self._error_threshold

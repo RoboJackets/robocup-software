@@ -56,20 +56,20 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                 lambda: main.game_state().is_their_penalty() and not main.game_state().playing(),
                 "opponent penalty shot about to happen")
 
-        for state in non_chill_states:
+        for state in [s2 for s2 in non_chill_states if s2 != Goalie.State.intercept]:
             self.add_transition(state,
                 Goalie.State.intercept,
                 lambda: evaluation.ball.is_moving_towards_our_goal(),
                 "ball coming towards our goal")
 
-        for state in non_chill_states:
+        for state in [s2 for s2 in non_chill_states if s2 != Goalie.State.clear]:
             self.add_transition(state,
                 Goalie.State.clear,
                 lambda: evaluation.ball.is_in_our_goalie_zone() and
                         not evaluation.ball.is_moving_towards_our_goal(),
                 "ball in our goalie box, but not headed toward goal")
 
-        for state in non_chill_states:
+        for state in [s2 for s2 in non_chill_states if s2 != Goalie.State.defend]:
             self.add_transition(state,
                 Goalie.State.defend,
                 lambda: not evaluation.ball.is_in_our_goalie_zone() and
@@ -130,9 +130,21 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         # FIXME: what we really want is a less-precise LineKick
         #           this will require a Capture behavior that doesn't wait for the ball to stop
         kick = skills.pivot_kick.PivotKick()
-        # FIXME: config pivot kick
+
+        # TODO: the below dribble speed is best for a 2011 bot
+        # kick.dribble_speed = constants.Robot.Dribbler.MaxPower / 3.5
+
+        # we use low error thresholds here
+        # the goalie isn't trying to make a shot, he just wants get the ball the **** out of there
+        kick.aim_params['error_threshold'] = 1.0
+        kick.aim_params['max_steady_ang_vel'] = 12
+
+        # chip
+        kick.chip_power = constants.Robot.Chipper.MaxPower
         kick.use_chipper = True
+
         # FIXME: if the goalie has a fault, resort to bump
+
         self.add_subbehavior(kick, 'kick-clear', required=True)
 
 
