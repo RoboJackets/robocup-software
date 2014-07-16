@@ -236,6 +236,10 @@ void OurRobot::move(const Geometry2d::Point &goal, float endSpeed)
 	_motionConstraints.targetPos = goal;
 	_motionConstraints.endSpeed = endSpeed;
 
+	//	reset conflicting motion commands
+	_motionConstraints.pivotTarget = boost::none;
+	_motionConstraints.targetWorldVel = boost::none;
+
 	// //	only invalidate path if move() is being called with a new goal or one wasn't set previously
 	// if (!_motionConstraints.targetPos || !_motionConstraints.targetPos->nearPoint(goal, 0.02)) {
 	// 	addText("Invalidated old path");
@@ -269,6 +273,11 @@ void OurRobot::worldVelocity(const Geometry2d::Point& v)
 
 void OurRobot::pivot(const Geometry2d::Point &pivotTarget) {
 	_motionConstraints.pivotTarget = pivotTarget;
+
+	//	reset other conflicting motion commands
+	_motionConstraints.targetPos = boost::none;
+	_motionConstraints.targetWorldVel = boost::none;
+	_motionConstraints.faceTarget = boost::none;
 
 	*_cmdText << "pivot(" << pivotTarget.x << ", " << pivotTarget.y << ")\n";
 }
@@ -307,6 +316,9 @@ void OurRobot::dribble(uint8_t speed)
 void OurRobot::face(const Geometry2d::Point &pt)
 {
 	_motionConstraints.faceTarget = pt;
+
+	//	reset conflicting motion commands
+	_motionConstraints.pivotTarget = boost::none;
 
 	*_cmdText << "face(" << pt.x << ", " << pt.y << ")\n";
 }
