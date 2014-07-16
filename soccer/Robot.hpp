@@ -290,7 +290,11 @@ public:
 	const Geometry2d::CompositeShape& localObstacles() const { return _local_obstacles; }
 	void clearLocalObstacles() { _local_obstacles.clear(); }
 
+
+
 	// opponent approach interface
+
+	void resetAvoidRobotRadii();
 
 	void approachAllOpponents(bool enable = true);
 	void avoidAllOpponents(bool enable = true);
