@@ -24,6 +24,7 @@ class DebugWindowEvaluator(play.Play):
         seg = constants.Field.OurGoalSegment
 
         win_eval = evaluation.window_evaluator.WindowEvaluator()
+        win_eval.debug = True
         windows, best = win_eval.eval_pt_to_seg(pt, seg)
 
         main.system_state().draw_circle(pt, 0.03, constants.Colors.Blue, "DebugWindows")
