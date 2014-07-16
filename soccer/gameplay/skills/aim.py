@@ -157,9 +157,13 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
             # our 'actual' aim line is somewhere in-between the two
             bot_angle_rad = self.robot.angle * constants.DegreesToRadians
             ball_angle_rad = (main.ball().pos - self.robot.pos).angle()
+            # if the ball angle rad is off by too much, we probably lost sight of it and are going off last known position
+            # if we detect this big of an error, we just default to using bot_angle_rad
+            if abs(ball_angle_rad - bot_angle_rad) > math.pi / 3.0:
+                ball_angle_rad = bot_angle_rad
             ball_angle_bias = 0.6   # NOTE: THIS IS TUNABLE
             aim_angle = ball_angle_rad*ball_angle_bias + (1.0 - ball_angle_bias)*bot_angle_rad
-            
+
             # the line we're aiming down
             angle_dir = robocup.Point.direction(aim_angle)
             aim_line = robocup.Line(self.robot.pos, self.robot.pos + angle_dir)
