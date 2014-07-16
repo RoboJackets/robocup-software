@@ -50,8 +50,9 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
 
         self.target_point = constants.Field.TheirGoalSegment.center()
-        self.error_threshold = 0.05
-        self.max_steady_ang_vel = 3.5
+        self.error_threshold = 0.06
+        self.max_steady_ang_vel = 4
+        self.min_steady_duration = 0.1
         self.dribbler_speed = int(constants.Robot.Dribbler.MaxPower / 2.0)
 
         self.last_ball_time = 0
@@ -117,7 +118,15 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
     @desperate_timeout.setter
     def desperate_timeout(self, value):
         self._desperate_timeout = value
-    
+
+
+    # we have to be going less than max_steady_angle_vel for this amount of time to be considered steady
+    @property
+    def min_steady_duration(self):
+        return self._min_steady_duration
+    @min_steady_duration.setter
+    def min_steady_duration(self, value):
+        self._min_steady_duration = value
 
 
     # returns True if we're aimed at our target within our error thresholds and we're not rotating too fast
@@ -126,7 +135,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
 
 
     def is_steady(self):
-        return time.time() - self._last_unsteady_time > 0.2
+        return time.time() - self._last_unsteady_time > self.min_steady_duration
 
 
     def fumbled(self):
