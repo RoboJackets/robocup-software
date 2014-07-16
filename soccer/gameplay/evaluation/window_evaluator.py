@@ -182,6 +182,9 @@ class WindowEvaluator:
         seg = robocup.Segment(bot_pos - n*constants.Robot.Radius + t * r,
                                 bot_pos - n*constants.Robot.Radius - t * r)
 
+        if self.debug:
+            main.system_state().draw_line(seg, constants.Colors.Red, "debug")
+
         end = target.delta().magsq()
         extent = [0, end]
 
@@ -190,7 +193,7 @@ class WindowEvaluator:
             d = edge.delta().magsq()
 
             intersect = edge.line_intersection(target)
-            if intersect != None and (intersect - origin).dot(edge.delta()) > d:
+            if intersect != None:
                 t = (intersect - target.get_pt(0)).dot(target.delta())
                 if t < 0:
                     extent[i] = 0
@@ -235,11 +238,11 @@ class WindowEvaluator:
 
         best = max(windows, key=lambda w: w.segment.delta().magsq()) if len(windows) > 0 else None
 
-        # draw the windows if we're in debug mode
-        if self.debug:
-            for w in windows:
-                pts = [origin, w.segment.get_pt(0), w.segment.get_pt(1)]
-                color = QColor(255, 0, 0) if w == best else QColor(0, 255)
-                main.system_state().draw_polygon(pts, 3, color, "Windows")
+        # # draw the windows if we're in debug mode
+        # if self.debug:
+        #     for w in windows:
+        #         pts = [origin, w.segment.get_pt(0), w.segment.get_pt(1)]
+        #         color = (255, 0, 0) if w == best else (0, 255, 0)
+        #         main.system_state().draw_polygon(pts, 3, color, "Windows")
 
         return windows, best
