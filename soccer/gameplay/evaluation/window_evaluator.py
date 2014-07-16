@@ -72,8 +72,8 @@ class WindowEvaluator:
 
         # TODO: these are currently config values on the C++ side
         #       eventually we should tie back into that
-        self.chip_max_range = 0.3
-        self.chip_min_range = 4.0
+        self.max_chip_range = 0.3
+        self.min_chip_range = 4.0
 
         self.excluded_robots = []
 
@@ -99,18 +99,18 @@ class WindowEvaluator:
         self._chip_enabled = value
     
     @property
-    def chip_min_range(self):
-        return self._chip_min_range
-    @chip_min_range.setter
-    def chip_min_range(self, value):
-        self._chip_min_range = value
+    def min_chip_range(self):
+        return self._min_chip_range
+    @min_chip_range.setter
+    def min_chip_range(self, value):
+        self._min_chip_range = value
     
     @property
-    def chip_max_range(self):
-        return self._chip_max_range
-    @chip_max_range.setter
-    def chip_max_range(self, value):
-        self._chip_max_range = value
+    def max_chip_range(self):
+        return self._max_chip_range
+    @max_chip_range.setter
+    def max_chip_range(self, value):
+        self._max_chip_range = value
 
 
     # A list of robots that we'll pretend don't
@@ -219,8 +219,8 @@ class WindowEvaluator:
                 d = (bot.pos - origin).mag()
                 # whether or not we can chip over this bot
                 chip_overable = (self.chip_enabled
-                                and (d < self.chip_max_range - constants.Robot.Radius)
-                                and (d > self.chip_min_range + constants.Robot.Radius))
+                                and (d < self.max_chip_range - constants.Robot.Radius)
+                                and (d > self.min_chip_range + constants.Robot.Radius))
                 if not chip_overable:
                     self.obstacle_robot(windows, origin, target, bot.pos)
 
