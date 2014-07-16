@@ -29,3 +29,7 @@ class KickPenalty(play.Play):
     def score(cls):
         gs = main.game_state()
         return 0.0 if gs.is_setup_state() and gs.is_our_penalty() else float("inf")
+
+    @classmethod
+    def is_restart(cls):
+        return True

@@ -34,6 +34,10 @@ class TheirFreeKick(play.Play):
         gs = main.game_state()
         return 0 if gs.is_setup_state() and gs.is_their_freekick() else float("inf")
 
+    @classmethod
+    def is_restart(cls):
+        return True
+
 
     def execute_running(self):
         # abort if we can't see the ball
