@@ -460,7 +460,7 @@ protected:
 	boost::circular_buffer<bool> _pathChangeHistory;	//	tracks whether or not we got a new path for the last N iterations
 
 	///	the size of _pathChangeHistory
-	static const int PathChangeHistoryBufferSize = 20;
+	static const int PathChangeHistoryBufferSize = 10;
 
 	bool _didSetPathThisIteration;
 
