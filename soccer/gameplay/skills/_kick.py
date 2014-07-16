@@ -65,6 +65,7 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
                 if self.use_windowing:
                     # FIXME: what if the parent behavior of Aim wants to set other conditions on the window evaluator such as chipping or excluded bots?
                     win_eval = evaluation.window_evaluator.WindowEvaluator()
+                    win_eval.chip_enabled = self.robot.has_chipper() and self.use_chipper
                     windows, best = win_eval.eval_pt_to_seg(main.ball().pos, self.target)
                     if best != None:
                         self._aim_target_point = best.segment.center()
