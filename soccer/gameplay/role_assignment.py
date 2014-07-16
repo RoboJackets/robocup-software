@@ -20,6 +20,8 @@ class RoleRequirements:
         return self._pos
     @pos.setter
     def pos(self, value):
+        if value != None and not isinstance(value, robocup.Point):
+            raise TypeError("Unexpected type for pos: " + str(value))
         self._pos = value
 
 
@@ -28,6 +30,8 @@ class RoleRequirements:
         return self._has_ball
     @has_ball.setter
     def has_ball(self, value):
+        if value != None and not isinstance(value, bool):
+            raise TypeError("Unexpected type for has_ball: " + str(value))
         self._has_ball = value
 
 
@@ -60,6 +64,8 @@ class RoleRequirements:
         return self._required_shell_id
     @required_shell_id.setter
     def required_shell_id(self, value):
+        if value != None and not isinstance(value, int):
+            raise TypeError("Unexpected type for required_shell_id: " + str(value))
         self._required_shell_id = value
 
 
@@ -68,6 +74,8 @@ class RoleRequirements:
         return self._previous_shell_id
     @previous_shell_id.setter
     def previous_shell_id(self, value):
+        if value != None and not isinstance(value, int):
+            raise TypeError("Unexpected type for previous_shell_id: " + str(value))
         self._previous_shell_id = value
 
 

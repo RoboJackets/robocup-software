@@ -4,6 +4,7 @@ import constants
 import robocup
 import enum
 import main
+import role_assignment
 
 
 # lines up with the ball and the target, then drives up and kicks
@@ -123,7 +124,7 @@ class LineKick(skills._kick._Kick):
 
         reqs.require_kicking = True
 
-        if self.user_chipper:
+        if self.use_chipper:
             reqs.chipper_preference_weight = role_assignment.PreferChipper
 
         return reqs
