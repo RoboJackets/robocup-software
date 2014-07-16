@@ -5,6 +5,9 @@
 #include "radio.h"
 #include "cc1101.h"
 
+
+void led_test();
+
 ISR(TIMER1_OVF_vect)
 {
     // RX timeout: recalibrate
@@ -38,7 +41,7 @@ void fail(uint8_t flash)
 {
     TCCR1B = (1 << WGM12) | 3;
     OCR1A = 20833;
-    
+
     while (1)
     {
         loop_until_bit_is_set(TIFR1, OCF1A);
@@ -63,7 +66,7 @@ void radio_init()
         radio_deselect();
     } while (version != 0x04);
     PORTB &= ~0xf0;
-    
+
     // Test GDO0 high
     radio_write(IOCFG0, 0x2f | GDOx_INVERT);
     if (!bit_is_set(PINE, 4))
@@ -77,7 +80,7 @@ void radio_init()
     if (bit_is_set(PINE, 4))
     {
         PORTB |= 0x40;
-        fail(0x10);
+        fail(0x10); //  fails here
     }
     
     // Test GDO2 high

@@ -53,6 +53,9 @@ e = env.Clone()
 e.Append(CPPPATH=['#/soccer', Dir('ui')])
 e.Append(LIBS=['bfd', 'GLU'])
 
+# numerical analysis
+e.Append(LIBS=['alglib'])
+
 # python stuff
 e.Append(LIBS=['boost_python-py33'])
 e.ParseConfig('pkg-config --cflags --libs python3')

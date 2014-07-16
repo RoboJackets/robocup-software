@@ -63,9 +63,9 @@ void led_test()
     leds = 0x10;
     do
     {
-        PORTB = output | leds;
-        loop_until_bit_is_set(TIFR1, OCF1A);
-        set_bit(TIFR1, OCF1A);
+        PORTB = output | leds;                  //  turn the led on
+        loop_until_bit_is_set(TIFR1, OCF1A);    //  wait until timer fires
+        set_bit(TIFR1, OCF1A);                  //  reset the timer
         leds <<= 1;
     } while (leds);
     PORTB = output;
@@ -119,7 +119,8 @@ int main()
     
     // Set SPI mode 0 (clock idles low, data sampled on rising edge)
     SPCR = (1 << SPE) | (1 << MSTR) | (1 << SPR0);
-    
+
+
     // Initialize radio
     radio_init();
     
@@ -130,8 +131,7 @@ int main()
     EIFR = (1 << 4) | (1 << 5); // Clear any stale interrupt
     EIMSK = (1 << 4) | (1 << 5);// Enable interrupts
     
-    led_test();
-    
+
     sei();
     
     while (1)

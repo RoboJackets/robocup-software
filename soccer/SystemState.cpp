@@ -6,6 +6,9 @@
 #include <Robot.hpp>
 #include <Geometry2d/Polygon.hpp>
 
+
+#include <interpolation.h>
+
 using namespace Packet;
 
 SystemState::SystemState()
@@ -55,6 +58,29 @@ int SystemState::findDebugLayer(QString layer)
 
 void SystemState::drawPath(const Planning::Path &path, const QColor& qc, const QString& layer)
 {
+	std::vector<double> X(path.size()), Y(path.size());
+	for (int i = 0; i < path.size(); i++) {
+		X[i] = path.points[i].x;
+		Y[i] = path.points[i].y;
+	}
+
+	alglib::real_1d_array AX, AY;
+	AX.setcontent(X.size(), &(X[0]));
+	AY.setcontent(Y.size(), &(Y[0]));
+
+	alglib::spline1dinterpolant spline;
+	alglib::spline1dbuildcubic(AX, AY, X.size(), 2, 0.0, 2, 0.0, spline);
+
+	for (int i = -50; i < 250; i++) {
+		double x = 0.01*i;
+		Geometry2d::Point pt(x, alglib::spline1dcalc(spline, x));
+		drawCircle(pt, 0.005, Qt::blue);
+	}
+
+
+
+
+
 	DebugPath *dbg = logFrame->add_debug_paths();
 	dbg->set_layer(findDebugLayer(layer));
 	for (Geometry2d::Point pt : path.points)
