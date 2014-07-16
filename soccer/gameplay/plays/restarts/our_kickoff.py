@@ -7,6 +7,7 @@ import constants
 import enum
 import role_assignment
 
+
 class OurKickoff(play.Play):
 
     KickPower = 127
@@ -74,7 +75,7 @@ class OurKickoff(play.Play):
 
     def on_enter_kick(self):
         if self.subbehavior_with_name('move').robot is not None:
-            self._kicker_shell_id = self.subbehavior_with_name('move').robot.shell_id
+            self._kicker_shell_id = self.subbehavior_with_name('move').robot.shell_id()
         self.remove_subbehavior('move')
         kicker = skills.line_kick.LineKick()
         kicker.target = constants.Field.TheirGoalSegment

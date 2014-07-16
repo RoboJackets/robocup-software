@@ -3,6 +3,7 @@ import skills._kick
 import behavior
 import skills.aim
 import skills.capture
+import role_assignment
 import robocup
 import constants
 import main
