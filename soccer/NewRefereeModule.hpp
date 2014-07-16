@@ -5,11 +5,13 @@
 
 #include <QThread>
 #include <QMutex>
+#include <QTime>
 
 #include <vector>
 
 #include <stdint.h>
 #include "GameState.hpp"
+#include "SystemState.hpp"
 
 class QUdpSocket;
 
@@ -111,14 +113,16 @@ public:
 class NewRefereeModule: public QThread
 {
 public:
-	NewRefereeModule();
+	NewRefereeModule(SystemState &state);
 	~NewRefereeModule();
 
 	void stop();
 
 	void getPackets(std::vector<NewRefereePacket *> &packets);
 
-	void updateGameState(GameState &state, bool blueTeam);
+	bool kicked() {
+		return _kickDetectState == Kicked;
+	}
 
 	NewRefereeModuleEnums::Stage stage;
 	NewRefereeModuleEnums::Command command;
@@ -152,11 +156,33 @@ public:
 	TeamInfo yellow_info;
 	TeamInfo blue_info;
 
+	void updateGameState(bool blueTeam);
+
+	void spinKickWatcher();
+
 protected:
 	virtual void run();
 
 	volatile bool _running;
 
+	void ready();
+
+	typedef enum
+	{
+		WaitForReady,
+		CapturePosition,
+		WaitForKick,
+		VerifyKick,
+		Kicked
+	} KickDetectState;
+	KickDetectState _kickDetectState;
+	
+	Geometry2d::Point _readyBallPos;
+	
+	// Time the ball was first beyond KickThreshold from its original position
+	QTime _kickTime;
+
 	QMutex _mutex;
 	std::vector<NewRefereePacket *> _packets;
+	SystemState &_state;
 };

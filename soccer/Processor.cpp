@@ -75,7 +75,7 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive)
 	QMetaObject::connectSlotsByName(this);
 
 	_ballTracker = std::make_shared<BallTracker>();
-	_refereeModule = std::make_shared<NewRefereeModule>();
+	_refereeModule = std::make_shared<NewRefereeModule>(_state);
 	_refereeModule->start();
 	_gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_state);
 }
@@ -374,7 +374,8 @@ void Processor::run()
 		runModels(detectionFrames);
 
 		// Update gamestate w/ referee data
-		_refereeModule->updateGameState(_state.gameState, blueTeam());
+		_refereeModule->updateGameState(blueTeam());
+		_refereeModule->spinKickWatcher();
 		
 		if (_gameplayModule)
 		{
