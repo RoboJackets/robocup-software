@@ -23,6 +23,7 @@ class RootPlay(Play, QtCore.QObject):
         # if a play fails for some reason, we can temporarily blacklist it, which removes it from play
         # selection for the next iteration, then enables it again
         self.temporarily_blacklisted_play_class = None
+        self._currently_restarting = False
 
 
     play_changed = QtCore.pyqtSignal("QString")
@@ -36,10 +37,11 @@ class RootPlay(Play, QtCore.QObject):
             if not isinstance(self.play, plays.stopped.Stopped):
                 logging.info("Running 'Stopped' play due to game state change")
                 self.play = plays.stopped.Stopped()
+                self._currently_restarting = True
         elif main.game_state().is_halted():
             self.play = None
         else:
-            enabled_plays = main.play_registry().get_enabled_plays()
+            enabled_plays = [p for p in main.play_registry().get_enabled_plays() if not p.is_restart() or ( p.is_restart() and self._currently_restarting)]
 
             # handle temporary blacklisting
             # we remove the blacklisted play class from selection for this iteration, then unblacklist it
@@ -54,6 +56,8 @@ class RootPlay(Play, QtCore.QObject):
                     self.play = None
                 elif self.play.is_done_running():
                     logging.info("Current play '" + self.play.__class__.__name__ + "' finished running")
+                    if self.play.is_restart:
+                        self._currently_restarting = False
                     self.play = None
                 elif self.play.__class__.score() == float("inf"):
                     logging.info("Current play '" + self.play.__class__.__name__ + "' no longer applicable, ending")

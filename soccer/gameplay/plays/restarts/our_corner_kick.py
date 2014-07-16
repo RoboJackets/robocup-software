@@ -50,7 +50,6 @@ class OurCornerKick(play.Play):
             self.kicker.is_done_running,
             'kicker is done')
 
-    # note: the old C++ version of this play required a chipper
     @classmethod
     def score(cls):
         gs = main.game_state()
@@ -59,6 +58,10 @@ class OurCornerKick(play.Play):
             return 0
         else:
             return float("inf")
+
+    @classmethod
+    def is_restart(cls):
+        return True
 
     def execute_running(self):
         # setup the kicker target
