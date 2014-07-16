@@ -173,6 +173,9 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
 
 
     def execute_running(self):
+        # make sure teammates don't bump into us
+        self.robot.shield_from_teammates(constants.Robot.Radius * 2.0)
+
         self.recalculate()
         self.robot.face(main.ball().pos)
 
