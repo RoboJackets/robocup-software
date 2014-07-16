@@ -1,5 +1,6 @@
 import munkres
 import evaluation.double_touch
+import robocup
 
 
 class RoleRequirements:
