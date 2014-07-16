@@ -5,7 +5,7 @@ import skills.line_kick
 import main
 import constants
 import enum
-
+import role_assignment
 
 class OurKickoff(play.Play):
 
@@ -19,6 +19,8 @@ class OurKickoff(play.Play):
 
     def __init__(self):
         super().__init__(continuous=False)
+
+        self._kicker_shell_id = None
 
         for state in OurKickoff.State:
             self.add_state(state, behavior.Behavior.State.running)
@@ -71,6 +73,8 @@ class OurKickoff(play.Play):
                 center.robot.face(main.ball().pos)
 
     def on_enter_kick(self):
+        if self.subbehavior_with_name('move').robot is not None:
+            self._kicker_shell_id = self.subbehavior_with_name('move').robot.shell_id
         self.remove_subbehavior('move')
         kicker = skills.line_kick.LineKick()
         kicker.target = constants.Field.TheirGoalSegment
@@ -84,3 +88,10 @@ class OurKickoff(play.Play):
         for center in self.centers:
             if center.robot is not None:
                 center.robot.face(main.ball().pos)
+
+    def role_requirements(self):
+        reqs = super().role_requirements()
+        if 'kicker' in reqs:
+            for r in role_assignment.iterate_role_requirements_tree_leaves(reqs['kicker']):
+                r.previous_shell_id = self._kicker_shell_id
+        return reqs
