@@ -145,3 +145,119 @@ void NewRefereeModule::run()
 
 	}
 }
+
+void NewRefereeModule::updateGameState(GameState &state, bool blueTeam) {
+	state.ourScore = blueTeam ? blue_info.score : yellow_info.score;
+	state.theirScore = blueTeam ? yellow_info.score : blue_info.score;
+	using namespace NewRefereeModuleEnums;
+	switch(stage)
+	{
+	case Stage::NORMAL_FIRST_HALF_PRE:
+		state.period = GameState::FirstHalf;
+		break;
+	case Stage::NORMAL_FIRST_HALF:
+		state.period = GameState::FirstHalf;
+		break;
+	case Stage::NORMAL_HALF_TIME:
+		state.period = GameState::Halftime;
+		break;
+	case Stage::NORMAL_SECOND_HALF_PRE:
+		state.period = GameState::SecondHalf;
+		break;
+	case Stage::NORMAL_SECOND_HALF:
+		state.period = GameState::SecondHalf;
+		break;
+	case Stage::EXTRA_TIME_BREAK:
+		state.period = GameState::FirstHalf;
+		break;
+	case Stage::EXTRA_FIRST_HALF_PRE:
+		state.period = GameState::Overtime1;
+		break;
+	case Stage::EXTRA_FIRST_HALF:
+		state.period = GameState::Overtime1;
+		break;
+	case Stage::EXTRA_HALF_TIME:
+		state.period = GameState::Halftime;
+		break;
+	case Stage::EXTRA_SECOND_HALF_PRE:
+		state.period = GameState::Overtime2;
+		break;
+	case Stage::EXTRA_SECOND_HALF:
+		state.period = GameState::Overtime2;
+		break;
+	case Stage::PENALTY_SHOOTOUT_BREAK:
+		state.period = GameState::PenaltyShootout;
+		break;
+	case Stage::PENALTY_SHOOTOUT:
+		state.period = GameState::PenaltyShootout;
+		break;
+	case Stage::POST_GAME:
+		state.period = GameState::Overtime2;
+		break;
+	}
+	switch(command)
+	{
+	case Command::HALT:
+		state.state = GameState::Halt;
+		break;
+	case Command::STOP:
+		state.state = GameState::Stop;
+		break;
+	case Command::NORMAL_START:
+		state.state = GameState::Ready;
+		break;
+	case Command::FORCE_START:
+		state.state = GameState::Playing;
+		break;
+	case Command::PREPARE_KICKOFF_YELLOW:
+		state.state = GameState::Setup;
+		state.restart = GameState::Kickoff;
+		state.ourRestart = !blueTeam;
+		break;
+	case Command::PREPARE_KICKOFF_BLUE:
+		state.state = GameState::Setup;
+		state.restart = GameState::Kickoff;
+		state.ourRestart = blueTeam;
+		break;
+	case Command::PREPARE_PENALTY_YELLOW:
+		state.state = GameState::Setup;
+		state.restart = GameState::Penalty;
+		state.ourRestart = !blueTeam;
+		break;
+	case Command::PREPARE_PENALTY_BLUE:
+		state.state = GameState::Setup;
+		state.restart = GameState::Penalty;
+		state.ourRestart = blueTeam;
+		break;
+	case Command::DIRECT_FREE_YELLOW:
+		state.state = GameState::Setup;
+		state.restart = GameState::Direct;
+		state.ourRestart = !blueTeam;
+		break;
+	case Command::DIRECT_FREE_BLUE:
+		state.state = GameState::Setup;
+		state.restart = GameState::Direct;
+		state.ourRestart = blueTeam;
+		break;
+	case Command::INDIRECT_FREE_YELLOW:
+		state.state = GameState::Setup;
+		state.restart = GameState::Indirect;
+		state.ourRestart = !blueTeam;
+		break;
+	case Command::INDIRECT_FREE_BLUE:
+		state.state = GameState::Setup;
+		state.restart = GameState::Indirect;
+		state.ourRestart = blueTeam;
+		break;
+	case Command::TIMEOUT_YELLOW:
+		state.state = GameState::Halt;
+		break;
+	case Command::TIMEOUT_BLUE:
+		state.state = GameState::Halt;
+		break;
+	case Command::GOAL_YELLOW:
+		break;
+	case Command::GOAL_BLUE:
+		break;
+	}
+}

@@ -9,6 +9,7 @@
 #include <vector>
 
 #include <stdint.h>
+#include "GameState.hpp"
 
 class QUdpSocket;
 
@@ -116,6 +117,8 @@ public:
 	void stop();
 
 	void getPackets(std::vector<NewRefereePacket *> &packets);
+
+	void updateGameState(GameState &state, bool blueTeam);
 
 	NewRefereeModuleEnums::Stage stage;
 	NewRefereeModuleEnums::Command command;
