@@ -73,12 +73,7 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	_planner = new Planning::RRTPlanner();
 	_planner->maxIterations(250);
 
-	for (size_t i = 0; i < Num_Shells; ++i)
-	{
-		// TODO move thresholds elsewhere
-		_self_avoid_mask[i] = (i != (size_t) shell) ? Robot_Radius : -1.0;
-		_opp_avoid_mask[i] = Opp_Avoid_Large;
-	}
+	resetAvoidRobotRadii();
 
 	_clearCmdText();
 }
@@ -373,6 +368,17 @@ void OurRobot::unkick()
 void OurRobot::kickImmediately(bool im)
 {
 	radioTx.set_kick_immediate(im);
+}
+
+
+#pragma mark Robot Avoidance
+
+void OurRobot::resetAvoidRobotRadii() {
+	for (size_t i = 0; i < Num_Shells; ++i) {
+		// TODO move thresholds elsewhere
+		_self_avoid_mask[i] = (i != (size_t) shell()) ? Robot_Radius : -1.0;
+		_opp_avoid_mask[i] = Opp_Avoid_Large;
+	}
 }
 
 void OurRobot::approachAllOpponents(bool enable) {

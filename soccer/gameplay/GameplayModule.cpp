@@ -180,15 +180,6 @@ void Gameplay::GameplayModule::goalieID(int value)
 	} PyGILState_Release(state);
 }
 
-void Gameplay::GameplayModule::clearAvoidBallRadii() {
-	BOOST_FOREACH(OurRobot* robot, _state->self)
-	{
-		if (robot) {
-			robot->resetAvoidBall();
-		}
-	}
-}
-
 /**
  * returns the group of obstacles for the field
  */
@@ -229,13 +220,13 @@ void Gameplay::GameplayModule::run()
 
 	_ballMatrix = Geometry2d::TransformMatrix::translate(_state->ball.pos);
 
-	clearAvoidBallRadii();
 
-	/// perform state variable updates on robots
-	/// Currently - only the timer for the kicker charger
+	///	prepare each bot for the next iteration by resetting temporary things
 	BOOST_FOREACH(OurRobot* robot, _state->self)
 	{
 		if (robot) {
+			robot->resetAvoidBall();
+			robot->resetAvoidRobotRadii();
 			robot->resetForNextIteration();
 		}
 	}

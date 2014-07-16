@@ -102,11 +102,6 @@ namespace Gameplay
 				return _playRobots;
 			}
 
-			/**
-			 * @brief Resets the avoidBallRadius for each OurRobot
-			 */
-			void clearAvoidBallRadii();
-
 
 		protected:
 
