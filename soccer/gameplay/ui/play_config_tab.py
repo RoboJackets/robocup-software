@@ -7,3 +7,4 @@ class PlayConfigTab(QtGui.QTreeView):
         super().__init__()
         self.setModel(main.play_registry())
         self.expandAll()
+        self.resizeColumnToContents(0)

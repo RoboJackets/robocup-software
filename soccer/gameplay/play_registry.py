@@ -61,9 +61,21 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         self.modelReset.emit()
 
 
+    # cache and calculate the score() function for each play class
+    def recalculate_scores(self):
+        self.root.recalculate_scores()
+
+        for node in self:
+            row = node.parent.children.index(node)
+            col = 1
+            parent = node.parent
+            index = self.createIndex(row, col, node)
+            self.dataChanged.emit(index, index) # , [QtCore.Qt.DisplayRole]
+
+
     # returns a list of all plays in the tree that are currently enabled
-    def get_enabled_plays(self):
-        return [node.play_class for node in self if node.enabled]
+    def get_enabled_plays_and_scores(self):
+        return [(node.play_class, node.last_score) for node in self if node.enabled]
 
 
     # iterates over all of the Nodes registered in the tree
@@ -129,6 +141,11 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             return self._name
 
 
+        def recalculate_scores(self):
+            for child in self._children:
+                child.recalculate_scores()
+
+
         def __delitem__(self, name):
             for idx, child in enumerate(self.children):
                 if child.name == name:
@@ -177,13 +194,13 @@ class PlayRegistry(QtCore.QAbstractItemModel):
 
 
 
-
     class Node():
 
         def __init__(self, module_name, play_class):
             self._module_name = module_name
             self._play_class = play_class
             self._enabled = False
+            self._last_score = float("inf")
 
 
         @property
@@ -218,6 +235,15 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             self._enabled = value
 
 
+        def recalculate_scores(self):
+            self._last_score = self.play_class.score()
+
+
+        @property
+        def last_score(self):
+            return self._last_score
+
+
         def __str__(self):
             return self.play_class.__name__ + " " + ("[ENABLED]" if self.enabled else "[DISABLED]")
 
@@ -227,22 +253,35 @@ class PlayRegistry(QtCore.QAbstractItemModel):
     # Note: a lot of the QAbstractModel-specific implementation is borrowed from here:
     # http://www.hardcoded.net/articles/using_qtreeview_with_qabstractitemmodel.htm
 
+    # two columsn: 'Play', 'Score'
     def columnCount(self, parent):
-        return 1
+        return 2
 
 
     def flags(self, index):
-        return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEditable
+        if index.column() == 0:
+            return QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEditable
+        else:
+            return QtCore.Qt.ItemIsEnabled
 
 
     def data(self, index, role):
         if not index.isValid():
             return None
         node = index.internalPointer()
-        if role == QtCore.Qt.DisplayRole and index.column() == 0:
-            return node.name
+        if role == QtCore.Qt.DisplayRole:
+            if index.column() == 0:
+                return node.name
+            elif index.column() == 1:
+                if isinstance(node, PlayRegistry.Node):
+                    return str(node.play_class.score())
+                else:
+                    return None
         elif role == QtCore.Qt.CheckStateRole and isinstance(node, PlayRegistry.Node):
-            return node.enabled
+            if index.column() == 0:
+                return node.enabled
+            else:
+                return None
         return None
 
 
@@ -258,7 +297,7 @@ class PlayRegistry(QtCore.QAbstractItemModel):
 
     def parent(self, index):
         if not index.isValid():
-            return QModelIndex()
+            return QtCore.QModelIndex()
         else:
             node = index.internalPointer()
             if node == None:
@@ -267,19 +306,25 @@ class PlayRegistry(QtCore.QAbstractItemModel):
                 parentRow = 0
             else:
                 parentRow = node.parent.row
-            return self.createIndex(parentRow, 0, node.parent)    # FIXME: is this right?
+            return self.createIndex(parentRow, index.column(), node.parent)
 
 
     def index(self, row, column, parent):
         if not parent.isValid():
             return self.createIndex(row, column, self.root.children[row])
         parentNode = parent.internalPointer()
-        return self.createIndex(row, column, parentNode.children[row])
+        if parentNode != None:
+            return self.createIndex(row, column, parentNode.children[row])
+        else:
+            return QtCore.QModelIndex()
 
 
     def headerData(self, section, orientation, role):
-        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole and section == 0:
-            return 'Play'
+        if orientation == QtCore.Qt.Horizontal and role == QtCore.Qt.DisplayRole:
+            if section == 0:
+                return 'Play'
+            else:
+                return 'Score'
         return None
 
 
