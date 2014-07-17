@@ -115,7 +115,7 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 		need_task = False
 		if best is not None:
 			winseg = best.segment
-			if main.ball().vel.magsq() > 0.03 and winseg.intersects_seg(shoot_line):
+			if main.ball().vel.magsq() > 0.03 and winseg.segment_intersection(shoot_line) != None:
 				self.robot.move_to(shoot_line.nearest_point(self.robot.pos))
 				self.robot.face_none()
 			else:
