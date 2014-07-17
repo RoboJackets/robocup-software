@@ -147,6 +147,18 @@ void State_draw_line(SystemState *self, const Geometry2d::Line *line, boost::pyt
 	self->drawLine(*line, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
+boost::python::list Circle_intersects_line(Geometry2d::Circle *self, const Geometry2d::Line *line) {
+	boost::python::list lst;
+
+	Geometry2d::Point intersectionPoints[2];
+	int numIntersects = self->intersects(*line, intersectionPoints);
+	for(int i = 0; i < numIntersects; i++) {
+		lst.append(intersectionPoints[i]);
+	}
+
+	return lst;
+}
+
 /**
  * The code in this block wraps up c++ classes and makes them
  * accessible to python in the 'robocup' module.
@@ -209,7 +221,9 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("get_pt", &Rect_get_pt, return_value_policy<reference_existing_object>())
 	;
 
-	class_<Geometry2d::Circle, bases<Geometry2d::Shape> >("Circle", init<Geometry2d::Point, float>());
+	class_<Geometry2d::Circle, bases<Geometry2d::Shape> >("Circle", init<Geometry2d::Point, float>())
+		.def("intersects_line", &Circle_intersects_line)
+	;
 
 	class_<Geometry2d::CompositeShape, bases<Geometry2d::Shape> >("CompositeShape", init<>())
 		.def("clear", &Geometry2d::CompositeShape::clear)
