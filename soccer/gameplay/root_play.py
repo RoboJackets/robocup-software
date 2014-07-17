@@ -56,7 +56,7 @@ class RootPlay(Play, QtCore.QObject):
 
             # see if we need to kill current play or if it's done running
             if self.play != None:
-                if self.play.__class__ not in enabled_plays_and_scores:
+                if self.play.__class__ not in map(lambda tup: tup[0], enabled_plays_and_scores):
                     logging.info("Current play '" + self.play.__class__.__name__ + "' no longer enabled, aborting")
                     self.play.terminate()
                     self.play = None

@@ -26,7 +26,6 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
 
     # if True, uses the window evaluator to choose the best place to aim at target_segment
     # Default: True
-    # FIXME: right now when using windowing, we don't take into account chipping over bots
     @property
     def use_windowing(self):
         return self._use_windowing
