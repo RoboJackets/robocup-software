@@ -180,8 +180,8 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
                 r.pos = main.ball().pos
 
             if self.use_chipper:
-                reqs.chipper_preference_weight = role_assignment.PreferChipper
+                r.chipper_preference_weight = role_assignment.PreferChipper
                 
-            reqs.require_kicking = True
+            r.require_kicking = True
 
         return reqs
