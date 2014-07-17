@@ -4,6 +4,7 @@ import robocup
 import skills
 import tactics
 import constants
+import main
 
 
 # sends a goal kick towards the goal if it's open
