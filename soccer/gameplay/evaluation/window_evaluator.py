@@ -193,7 +193,7 @@ class WindowEvaluator:
             d = edge.delta().magsq()
 
             intersect = edge.line_intersection(target)
-            if intersect != None:
+            if intersect != None and (intersect - origin).dot(edge.delta()) > d:
                 t = (intersect - target.get_pt(0)).dot(target.delta())
                 if t < 0:
                     extent[i] = 0
