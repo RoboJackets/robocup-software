@@ -3,6 +3,7 @@ import behavior
 import robocup
 import tactics.positions.fullback
 import tactics.circle_near_ball
+import main
 
 
 class TheirKickoff(play.Play):

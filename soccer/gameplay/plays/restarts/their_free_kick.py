@@ -2,6 +2,7 @@ import play
 import behavior
 import tactics.positions.fullback
 import skills.mark
+import main
 
 
 class TheirFreeKick(play.Play):

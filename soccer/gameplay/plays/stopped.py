@@ -1,6 +1,7 @@
 import play
 import behavior
 import tactics
+import main
 
 
 # when we get the Stopped command from the referee,
