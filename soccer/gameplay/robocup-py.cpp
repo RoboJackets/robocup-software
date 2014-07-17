@@ -113,8 +113,15 @@ Geometry2d::Point* Rect_get_pt(Geometry2d::Rect *self, int index) {
 	return &(self->pt[index]);
 }
 
-bool Segment_intersects_segment(Geometry2d::Segment *self, Geometry2d::Segment *other) {
-	return self->intersects(*other);
+boost::python::object Segment_segment_intersection(Geometry2d::Segment *self, Geometry2d::Segment *other) {
+	Geometry2d::Point pt;
+	if (self->intersects(*other, &pt)) {
+		boost::python::object obj(pt);
+		return obj;
+	} else {
+		//	return None
+		return boost::python::object();
+	}
 }
 
 //	returns None or a Geometry2d::Point
@@ -202,7 +209,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("length", &Geometry2d::Segment::length)
 		.def("dist_to", &Geometry2d::Segment::distTo)
 		.def("nearest_point", &Geometry2d::Segment::nearestPoint)
-		.def("intersects_seg", &Segment_intersects_segment)
+		.def("segment_intersection", &Segment_segment_intersection)
 		.def("near_point", &Geometry2d::Segment::nearPoint)
 	;
 
