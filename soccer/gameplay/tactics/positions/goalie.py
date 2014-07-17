@@ -17,13 +17,18 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                                     robocup.Point(MaxX, constants.Robot.Radius))
 
     class State(enum.Enum):
-        defend = 1          # TODO: clarify difference between block and defend
+        """Normal gameplay, stay towards the side of the goal that the ball is on."""
+        defend = 1
+        """Opponent has a ball and is prepping a shot we should block."""
         block = 2
+        """The ball is moving towards our goal and we should catch it."""
         intercept = 3
-        clear = 4           # kick/chip the ball out if it's in our goal zone
-        setup_penalty = 5   # get in place for a penalty shot
-        chill = 6           # if we can't see the ball, we just sit in the center in front of our goal
-
+        """Get the ball out of our defense area."""
+        clear = 4
+        """Prepare to block the opponent's penalty shot"""
+        setup_penalty = 5
+        """Keep calm and wait for the ball to be valid."""
+        chill = 6
 
     def __init__(self):
         super().__init__(continuous=True)
@@ -53,13 +58,13 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         for state in non_chill_states:
             self.add_transition(state,
                 Goalie.State.setup_penalty,
-                lambda: main.game_state().is_their_penalty() and not main.game_state().playing(),
-                "opponent penalty shot about to happen")
+                lambda: main.game_state().is_their_penalty() and main.game_state().is_setup(),
+                "setting up for opponent penalty")
 
         for state in [s2 for s2 in non_chill_states if s2 != Goalie.State.intercept]:
             self.add_transition(state,
                 Goalie.State.intercept,
-                lambda: evaluation.ball.is_moving_towards_our_goal(),
+                lambda: evaluation.ball.is_moving_towards_our_goal() and evaluation.ball.opponent_with_ball() == None,
                 "ball coming towards our goal")
 
         for state in [s2 for s2 in non_chill_states if s2 != Goalie.State.clear]:
@@ -76,6 +81,14 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                         not evaluation.ball.is_moving_towards_our_goal() and
                         evaluation.ball.opponent_with_ball() == None,
                 'not much going on')
+
+        for state in [s2 for s2 in non_chill_states if s2 != Goalie.State.block]:
+            self.add_transition(state,
+                Goalie.State.block,
+                lambda: not evaluation.ball.is_in_our_goalie_zone() and
+                        not evaluation.ball.is_moving_towards_our_goal() and
+                        evaluation.ball.opponent_with_ball() != None,
+                "opponents have possession")
 
 
 
@@ -157,22 +170,25 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         dest = ball_path.nearest_point(self.robot.pos)
         self.robot.move_to(dest)
 
-
     def execute_block(self):
-        opposing_kicker = evaluation.opponent_with_ball()
-        shot_line = Line(opposing_kicker.pos, main.ball().pos)
-        block_circle = Circle(Point(0, 0), constants.Field.GoalWidth / 2.0)
+        opposing_kicker = evaluation.ball.opponent_with_ball()
+        if opposing_kicker is not None:
+            shot_line = robocup.Line(opposing_kicker.pos, main.ball().pos)
+            block_circle = robocup.Circle(robocup.Point(0, 0), constants.Field.GoalWidth / 2.0)
 
-        dest = block_circle.intersection(shot_line)
-        if dest != None:
-            self.robot.move_to(dest)
+            intersection_points = block_circle.intersects_line(shot_line)
+            if len(intersection_points) > 0:
+                dest = intersection_points[0]
+                self.robot.move_to(dest)
+            else:
+                block_line = robocup.Line(robocup.Point(-Goalie.MaxX, constants.Robot.Radius),
+                                    robocup.Point(Goalie.MaxX, constants.Robot.Radius))
+                dest = block_line.line_intersection(shot_line)
+                dest.x = min(Goalie.MaxX, dest.x)
+                dest.x = max(-Goalie.MaxX, dest.x)
+                self.robot.move_to(dest)
         else:
-            block_line = Line(Point(-Goalie.MaxX, constants.Robot.Radius),
-                                Point(Goalie.MaxX, constants.Robot.Radius))
-            dest = block_line.intersection(shot_line)
-            dest.x = min(Goalie.MaxX, dest.x)
-            dest.x = max(-Goalie.MaxX, dest.x)
-            self.robot.move_to(dest)
+            self.robot.move_to(robocup.Point(0,constants.Robot.Radius))
 
 
     def execute_defend(self):
