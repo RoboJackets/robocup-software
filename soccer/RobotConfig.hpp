@@ -4,54 +4,42 @@
 
 /**
  * @brief Configuration per robot model
- * @details Includes movement, pid, kicker and status
  */
-class RobotConfig
-{
+class RobotConfig {
 public:
 	RobotConfig(Configuration *config, QString prefix);
 	~RobotConfig();
 	
-	struct PID
-	{
+	struct PID {
 		PID(Configuration *config, QString prefix);
 		
 		ConfigDouble *p;
 		ConfigDouble *i;
+		ConfigInt *i_windup;	///	how many past errors to store.  -1 means store all
 		ConfigDouble *d;
 	};
-	
-	struct Dynamics
-	{
-		Dynamics(Configuration *config, QString prefix);
-		
-		ConfigDouble *velocity;
-		ConfigDouble *acceleration;
-		ConfigDouble *predictTime;
-		ConfigDouble *responseTime;
-	};
-	
-	struct Kicker
-	{
+
+	struct Kicker {
 		Kicker(Configuration *config, QString prefix);
-		
+
+		///	these limits are applied before sending the actual commands to the robots
 		ConfigDouble *maxKick;
 		ConfigDouble *maxChip;
-		ConfigDouble *passKick;
-//		ConfigDouble *passVelocity;
-//		ConfigDouble *a0;
-//		ConfigDouble *a1;
-//		ConfigDouble *a2;
-//		ConfigDouble *a3;
+		// ConfigDouble *passKick;
 	};
 	
-	Dynamics trapTrans;
-	Dynamics trapRot;
 	PID translation;
 	PID rotation;
-	PID wheel;
 
 	Kicker kicker;
+
+	///	convert from real units to bot "units"
+	ConfigDouble *velMultiplier;
+	ConfigDouble *angleVelMultiplier;
+
+	//	when pivoting, we multiply the calculated x-velocity
+	//	of the robot by this value before sending it to the robot
+	ConfigDouble *pivotVelMultiplier;
 };
 
 
@@ -59,8 +47,7 @@ public:
  * Provides per-robot overrides for a robot
  * Should be updated for hardware revision
  */
-class RobotStatus
-{
+class RobotStatus {
 public:
 	RobotStatus(Configuration *config, QString prefix);
 	~RobotStatus() {}
