@@ -303,7 +303,8 @@ float OurRobot::kickTimer() const {
 
 void OurRobot::dribble(uint8_t speed)
 {
-	radioTx.set_dribbler(speed);
+	uint8_t scaled = *config->dribbler.multiplier * speed;
+	radioTx.set_dribbler(scaled);
 
 	*_cmdText << "dribble(" << (float)speed << ")\n";
 }
