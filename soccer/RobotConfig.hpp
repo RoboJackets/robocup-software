@@ -27,11 +27,20 @@ public:
 		ConfigDouble *maxChip;
 		// ConfigDouble *passKick;
 	};
+
+	struct Dribbler {
+		Dribbler(Configuration *config, QString prefix);
+
+		///	dribber values are multiplied by this before being sent to the robot
+		///	this was added because 2011 bots needed lower dribbler values than the 2008 model
+		ConfigDouble *multiplier;
+	};
 	
 	PID translation;
 	PID rotation;
 
 	Kicker kicker;
+	Dribbler dribbler;
 
 	///	convert from real units to bot "units"
 	ConfigDouble *velMultiplier;
