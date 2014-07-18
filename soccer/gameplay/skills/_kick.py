@@ -17,6 +17,7 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
         self.chip_power = constants.Robot.Chipper.MaxPower
 
         self.use_windowing = True
+        self.win_eval_params = {}
         self.target = constants.Field.TheirGoalSegment
 
         # cached calculated values
@@ -32,6 +33,17 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
     @use_windowing.setter
     def use_windowing(self, value):
         self._use_windowing = value
+
+
+    # these params are passed to the window evaluator using setattr()
+    # Default: {}
+    @property
+    def win_eval_params(self):
+        return self._win_eval_params
+    @win_eval_params.setter
+    def win_eval_params(self, value):
+        self._win_eval_params = value
+    
 
 
     # The thing we're trying to kick at
@@ -62,8 +74,9 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
                 self._aim_target_point = self.target
             elif isinstance(self.target, robocup.Segment):
                 if self.use_windowing:
-                    # FIXME: what if the parent behavior of Aim wants to set other conditions on the window evaluator such as chipping or excluded bots?
                     win_eval = evaluation.window_evaluator.WindowEvaluator()
+                    for key, value in self.win_eval_params.items():
+                        setattr(win_eval, key, value)
                     win_eval.chip_enabled = self.robot.has_chipper() and self.use_chipper
                     windows, best = win_eval.eval_pt_to_seg(main.ball().pos, self.target)
                     if best != None:
