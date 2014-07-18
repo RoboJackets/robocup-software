@@ -19,8 +19,6 @@ using namespace Geometry2d;
 
 /** thresholds for avoidance of opponents - either a normal (large) or an approach (small)*/
 const float Opp_Avoid_Small = Robot_Radius - 0.03;
-/** thresholds for avoidance of opponents - either a normal (large) or an approach (small)*/
-const float Opp_Avoid_Large = Robot_Radius - 0.01;
 /** threshold for avoiding the ball*/
 const float Ball_Avoid_Small = 2.0 * Ball_Radius;
 /**
@@ -55,6 +53,18 @@ Robot::~Robot()
 
 
 #pragma mark OurRobot
+
+REGISTER_CONFIGURABLE(OurRobot)
+
+ConfigDouble *_selfAvoidRadius;
+ConfigDouble *_oppAvoidRadius;
+ConfigDouble *_oppGoalieAvoidRadius;
+
+void OurRobot::createConfiguration(Configuration *cfg) {
+	_selfAvoidRadius = new ConfigDouble("PathPlanner/selfAvoidRadius", Robot_Radius);
+	_oppAvoidRadius = new ConfigDouble("PathPlanner/oppAvoidRadius", Robot_Radius - 0.01);
+	_oppGoalieAvoidRadius = new ConfigDouble("PathPlanner/oppGoalieAvoidRadius", Robot_Radius + 0.05);
+}
 
 OurRobot::OurRobot(int shell, SystemState *state):
 	Robot(shell, true),
@@ -376,20 +386,19 @@ void OurRobot::kickImmediately(bool im)
 
 void OurRobot::resetAvoidRobotRadii() {
 	for (size_t i = 0; i < Num_Shells; ++i) {
-		// TODO move thresholds elsewhere
-		_self_avoid_mask[i] = (i != (size_t) shell()) ? Robot_Radius : -1.0;
-		_opp_avoid_mask[i] = Opp_Avoid_Large;
+		_self_avoid_mask[i] = (i != (size_t) shell()) ? *_selfAvoidRadius : -1.0;
+		_opp_avoid_mask[i] = (i == THEIR_GOALIE_ID) ? *_oppGoalieAvoidRadius : *_oppAvoidRadius;
 	}
 }
 
-void OurRobot::approachAllOpponents(bool enable) {
-	BOOST_FOREACH(float &ar, _opp_avoid_mask)
-		ar = (enable) ?  Opp_Avoid_Small : Opp_Avoid_Large;
-}
-void OurRobot::avoidAllOpponents(bool enable) {
-	BOOST_FOREACH(float &ar, _opp_avoid_mask)
-		ar = (enable) ?  -1.0 : Opp_Avoid_Large;
-}
+// void OurRobot::approachAllOpponents(bool enable) {
+// 	BOOST_FOREACH(float &ar, _opp_avoid_mask)
+// 		ar = (enable) ?  Opp_Avoid_Small : Opp_Avoid_Large;
+// }
+// void OurRobot::avoidAllOpponents(bool enable) {
+// 	BOOST_FOREACH(float &ar, _opp_avoid_mask)
+// 		ar = (enable) ?  -1.0 : Opp_Avoid_Large;
+// }
 
 bool OurRobot::avoidOpponent(unsigned shell_id) const {
 	return _opp_avoid_mask[shell_id] > 0.0;
@@ -405,7 +414,7 @@ float OurRobot::avoidOpponentRadius(unsigned shell_id) const {
 
 void OurRobot::avoidOpponent(unsigned shell_id, bool enable_avoid) {
 	if (enable_avoid)
-		_opp_avoid_mask[shell_id] = Opp_Avoid_Large;
+		_opp_avoid_mask[shell_id] = *_oppAvoidRadius;
 	else
 		_opp_avoid_mask[shell_id] = -1.0;
 }
@@ -414,7 +423,7 @@ void OurRobot::approachOpponent(unsigned shell_id, bool enable_approach) {
 	if (enable_approach)
 		_opp_avoid_mask[shell_id] = Opp_Avoid_Small;
 	else
-		_opp_avoid_mask[shell_id] = Opp_Avoid_Large;
+		_opp_avoid_mask[shell_id] = *_oppAvoidRadius;
 }
 
 void OurRobot::avoidOpponentRadius(unsigned shell_id, float radius) {
@@ -426,10 +435,10 @@ void OurRobot::avoidAllOpponentRadius(float radius) {
 		ar = radius;
 }
 
-void OurRobot::avoidAllTeammates(bool enable) {
-	for (size_t i=0; i<Num_Shells; ++i)
-		avoidTeammate(i, enable);
-}
+// void OurRobot::avoidAllTeammates(bool enable) {
+// 	for (size_t i=0; i<Num_Shells; ++i)
+// 		avoidTeammate(i, enable);
+// }
 void OurRobot::avoidTeammate(unsigned shell_id, bool enable) {
 	if (shell_id != shell())
 		_self_avoid_mask[shell_id] = (enable) ? Robot_Radius : -1.0;
