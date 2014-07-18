@@ -86,6 +86,10 @@ public:
     {
         return restart == Penalty;
     }
+
+    bool isOurRestart() const {
+        return ourRestart;
+    }
     
     bool direct() const
     {
