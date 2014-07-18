@@ -13,8 +13,7 @@ class OurRobot;
  * on will set the values in that robot's RadioTx packet directly whenever run()
  * or stopped() is called.
  */
-class MotionControl
-{
+class MotionControl {
 public:
 	MotionControl(OurRobot *robot);
 	
@@ -52,26 +51,9 @@ private:
 	Pid _positionXController;
 	Pid _positionYController;
 	Pid _angleController;
-
-	static ConfigDouble *_pid_pos_p;
-	static ConfigDouble *_pid_pos_i;
-	static ConfigInt    *_pid_pos_i_windup;
-	static ConfigDouble *_pid_pos_d;
-	static ConfigDouble *_vel_mult;
-
-	static ConfigDouble *_pid_angle_p;
-	static ConfigDouble *_pid_angle_i;
-	static ConfigDouble *_pid_angle_d;
-	static ConfigDouble *_angle_vel_mult;
 	
-	// static ConfigDouble *_max_angle_w;
-
 	static ConfigDouble *_max_acceleration;
 	static ConfigDouble *_max_velocity;
 
 	static ConfigDouble *_path_jitter_compensation_factor;
-
-	//	when pivoting, we multiply the calculated x-velocity
-	//	of the robot by this value before sending it to the robot
-	static ConfigDouble *_pivot_vel_multiplier;
 };
