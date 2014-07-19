@@ -141,8 +141,6 @@ class Defender(single_robot_behavior.SingleRobotBehavior):
 		if need_task:
 			self.robot.face(main.ball().pos)
 
-		if main.ball().pos.y < constants.Field.Length / 2:
-			self.robot.set_dribble_speed(255)
 
 		backVec = robocup.Point(1,0)
 		backPos = robocup.Point(-constants.Field.Width / 2, 0)
