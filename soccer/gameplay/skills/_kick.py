@@ -125,3 +125,28 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
     @enable_kick.setter
     def enable_kick(self, value):
         self._enable_kick = value
+
+
+    # creates a polygon obstacle from the ball to the target
+    # this obstacle applies to all robots except the kicker and anything specified in the excluded_robots parameter
+    # NOTE: this method is not called by _kick, it's up to subclasses/superbehaviors to call it
+    def add_shot_obstacle(self, excluded_robots=[]):
+        pt = self.aim_target_point
+        if pt != None:
+            # segment centered at the target point that's @width wide and perpendicular to the shot
+            shot_perp = (main.ball().pos - pt).perp_ccw().normalized()
+            width = 0.2
+            a = pt + shot_perp * width / 2.0
+            b = pt - shot_perp * width / 2.0
+
+            # build the obstacle polygon
+            obs = robocup.Polygon()
+            obs.add_vertex(main.ball().pos)
+            obs.add_vertex(a)
+            obs.add_vertex(b)
+
+            # tell the bots to not go there
+            excluded_robots.append(self.robot)
+            for bot in main.our_robots():
+                if bot not in excluded_robots:
+                    bot.add_local_obstacle(obs)

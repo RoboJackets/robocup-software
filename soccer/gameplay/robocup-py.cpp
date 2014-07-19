@@ -9,6 +9,7 @@ using namespace boost::python;
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Rect.hpp>
 #include <Geometry2d/CompositeShape.hpp>
+#include <Geometry2d/Polygon.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
 #include <protobuf/LogFrame.pb.h>
@@ -65,6 +66,13 @@ void OurRobot_move_to(OurRobot *self, Geometry2d::Point *to) {
 	self->move(*to);
 }
 
+void OurRobot_add_local_obstacle(OurRobot *self, Geometry2d::Shape *obs) {
+	if (obs != nullptr) {
+		std::shared_ptr<Geometry2d::Shape> sharedObs(obs->clone());
+		self->localObstacles(sharedObs);
+	}
+}
+
 void OurRobot_set_avoid_ball_radius(OurRobot *self, float radius) {
 	self->avoidBallRadius(radius);
 }
@@ -103,6 +111,12 @@ void Point_rotate(Geometry2d::Point *self, Geometry2d::Point *origin, float angl
 
 void CompositeShape_add_shape(Geometry2d::CompositeShape *self, Geometry2d::Shape *shape) {
 	self->add(std::shared_ptr<Geometry2d::Shape>( shape->clone() ));
+}
+
+void Polygon_add_vertex(Geometry2d::Polygon *self, Geometry2d::Point *pt) {
+	if (pt != nullptr) {
+		self->addVertex(*pt);
+	}
 }
 
 Geometry2d::Point* Line_get_pt(Geometry2d::Line *self, int index) {
@@ -240,6 +254,10 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("contains_point", &Geometry2d::CompositeShape::containsPoint)
 	;
 
+	class_<Geometry2d::Polygon, bases<Geometry2d::Shape> >("Polygon", init<>())
+		.def("add_vertex", &Polygon_add_vertex);
+	;
+
 	class_<GameState>("GameState")
 		.def_readonly("our_score", &GameState::ourScore)
 		.def_readonly("their_score", &GameState::theirScore)
@@ -304,6 +322,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("get_cmd_text", &OurRobot::getCmdText)
 		.def("ball_sense_works", &OurRobot::ballSenseWorks)
 		.def("kicker_works", &OurRobot::kickerWorks)
+		.def("add_local_obstacle", &OurRobot_add_local_obstacle)
 	;
 
 	class_<OpponentRobot, OpponentRobot *, std::shared_ptr<OpponentRobot>, bases<Robot> >("OpponentRobot", init<int>());
