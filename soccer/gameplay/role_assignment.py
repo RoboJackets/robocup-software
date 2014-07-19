@@ -206,8 +206,8 @@ def assign_roles(robots, role_reqs):
     # 
     # check for rows of all infs
     for row in cost_matrix:
-    if all(val == float("inf") for val in row):
-        raise KeyError()
+        if all(val == float("inf") for val in row):
+            raise KeyError()
     # if more than one column, check for columns of all infs
     col_count = len(cost_matrix)
     if col_count > 1:
