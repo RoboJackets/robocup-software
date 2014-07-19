@@ -31,7 +31,6 @@ namespace Packet
 namespace Gameplay
 {
 	class GameplayModule;
-	class Behavior;
 }
 
 namespace Planning
@@ -296,8 +295,8 @@ public:
 
 	void resetAvoidRobotRadii();
 
-	void approachAllOpponents(bool enable = true);
-	void avoidAllOpponents(bool enable = true);
+	// void approachAllOpponents(bool enable = true);
+	// void avoidAllOpponents(bool enable = true);
 
 	/** checks if opponents are avoided at all */
 	bool avoidOpponent(unsigned shell_id) const;
@@ -323,7 +322,7 @@ public:
 
 	/** determines whether a robot will avoid another robot when it plans - use for priority */
 
-	void avoidAllTeammates(bool enable = true);
+	// void avoidAllTeammates(bool enable = true);
 	void avoidTeammate(unsigned shell_id, bool enable = true);
 	void avoidTeammateRadius(unsigned shell_id, float radius);
 	bool avoidTeammate(unsigned shell_id) const;
@@ -387,6 +386,10 @@ public:
 		addText("GO TECH!", QColor(255,0,255), "Sing");
 		radioTx.set_sing(true);
 	}
+
+
+	static void createConfiguration(Configuration *cfg);
+	
 
 protected:
 	MotionControl *_motionControl;
@@ -484,6 +487,12 @@ private:
 	std::stringstream *_cmdText;
 
 	void _clearCmdText();
+
+
+	///	default values for avoid radii
+	static ConfigDouble *_selfAvoidRadius;
+	static ConfigDouble *_oppAvoidRadius;
+	static ConfigDouble *_oppGoalieAvoidRadius;
 };
 
 /**
