@@ -25,18 +25,18 @@ void Gameplay::Plays::MightyMight::createConfiguration(Configuration *cfg)
 
 Gameplay::Plays::MightyMight::MightyMight(GameplayModule *gameplay):
 	Play(gameplay),
-	_leftFullback(gameplay, Behaviors::Fullback::Left),
-	_rightFullback(gameplay, Behaviors::Fullback::Right),
-	_centerFullback(gameplay, Behaviors::Fullback::Center),
+	_leftDefender(gameplay, Behaviors::Defender::Left),
+	_rightDefender(gameplay, Behaviors::Defender::Right),
+	_centerDefender(gameplay, Behaviors::Defender::Center),
 	_kicker1(gameplay),
 	_kicker2(gameplay)
 {
-	_leftFullback.otherFullbacks.insert(&_rightFullback);
-	_leftFullback.otherFullbacks.insert(&_centerFullback);
-	_rightFullback.otherFullbacks.insert(&_leftFullback);
-	_rightFullback.otherFullbacks.insert(&_centerFullback);
-	_centerFullback.otherFullbacks.insert(&_rightFullback);
-	_centerFullback.otherFullbacks.insert(&_leftFullback);
+	_leftDefender.otherDefenders.insert(&_rightDefender);
+	_leftDefender.otherDefenders.insert(&_centerDefender);
+	_rightDefender.otherDefenders.insert(&_leftDefender);
+	_rightDefender.otherDefenders.insert(&_centerDefender);
+	_centerDefender.otherDefenders.insert(&_rightDefender);
+	_centerDefender.otherDefenders.insert(&_leftDefender);
 }
 
 float Gameplay::Plays::MightyMight::score ( Gameplay::GameplayModule* gameplay )
@@ -53,8 +53,8 @@ bool Gameplay::Plays::MightyMight::run()
 
 	if(*_defenseFirst) {
 	// defense first - closest to goal
-		assignNearest(_leftFullback.robot, available, Geometry2d::Point());
-		assignNearest(_rightFullback.robot, available, Geometry2d::Point());
+		assignNearest(_leftDefender.robot, available, Geometry2d::Point());
+		assignNearest(_rightDefender.robot, available, Geometry2d::Point());
 
 	// choose offense, we want both robots to attack
 		assignNearest(_kicker1.robot, available, ball().pos);
@@ -65,12 +65,12 @@ bool Gameplay::Plays::MightyMight::run()
 		assignNearest(_kicker2.robot, available, ball().pos);
 
 	// defense first - closest to goal
-		assignNearest(_leftFullback.robot, available, Geometry2d::Point());
-		assignNearest(_rightFullback.robot, available, Geometry2d::Point());
+		assignNearest(_leftDefender.robot, available, Geometry2d::Point());
+		assignNearest(_rightDefender.robot, available, Geometry2d::Point());
 	}
 
 	// additional defense - if it exists
-	assignNearest(_centerFullback.robot, available, Geometry2d::Point());
+	assignNearest(_centerDefender.robot, available, Geometry2d::Point());
 
 	// manually reset any kickers so they keep kicking
 	if (_kicker1.done())
@@ -95,10 +95,10 @@ bool Gameplay::Plays::MightyMight::run()
 	if (_kicker1.robot) _kicker1.run();
 	if (_kicker2.robot) _kicker2.run();
 
-	// run standard fullback behavior
-	if (_leftFullback.robot) _leftFullback.run();
-	if (_rightFullback.robot) _rightFullback.run();
-	if (_centerFullback.robot) _centerFullback.run();
+	// run standard defender behavior
+	if (_leftDefender.robot) _leftDefender.run();
+	if (_rightDefender.robot) _rightDefender.run();
+	if (_centerDefender.robot) _centerDefender.run();
 	
 	return true;
 }

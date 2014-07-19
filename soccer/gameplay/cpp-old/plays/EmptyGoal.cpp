@@ -28,12 +28,12 @@ void Gameplay::Plays::EmptyGoal::createConfiguration(Configuration *cfg)
 
 Gameplay::Plays::EmptyGoal::EmptyGoal(GameplayModule *gameplay):
 Play(gameplay),
-_leftFullback(gameplay, Behaviors::Fullback::Left),
-_rightFullback(gameplay, Behaviors::Fullback::Right),
+_leftDefender(gameplay, Behaviors::Defender::Left),
+_rightDefender(gameplay, Behaviors::Defender::Right),
 _striker(gameplay)
 {
-	_leftFullback.otherFullbacks.insert(&_rightFullback);
-	_rightFullback.otherFullbacks.insert(&_leftFullback);
+	_leftDefender.otherDefenders.insert(&_rightDefender);
+	_rightDefender.otherDefenders.insert(&_leftDefender);
 }
 
 float Gameplay::Plays::EmptyGoal::score ( Gameplay::GameplayModule* gameplay )
@@ -57,8 +57,8 @@ bool Gameplay::Plays::EmptyGoal::run()
 	assignNearestKicker(_striker.robot, available, ballProj);
 
 	// defense first - get closest to goal to choose sides properly
-	assignNearest(_leftFullback.robot, available, Geometry2d::Point(-Field_GoalWidth/2, 0.0));
-	assignNearest(_rightFullback.robot, available, Geometry2d::Point(Field_GoalWidth/2, 0.0));
+	assignNearest(_leftDefender.robot, available, Geometry2d::Point(-Field_GoalWidth/2, 0.0));
+	assignNearest(_rightDefender.robot, available, Geometry2d::Point(Field_GoalWidth/2, 0.0));
 
 	if (!available.empty())
 	{
@@ -77,8 +77,8 @@ bool Gameplay::Plays::EmptyGoal::run()
 	
 	// execute behaviors
 	if (_striker.robot) _striker.run();
-	if (_leftFullback.robot) _leftFullback.run();
-	if (_rightFullback.robot) _rightFullback.run();
+	if (_leftDefender.robot) _leftDefender.run();
+	if (_rightDefender.robot) _rightDefender.run();
 
 	return true;
 }

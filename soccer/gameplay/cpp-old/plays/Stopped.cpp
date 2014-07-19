@@ -9,11 +9,11 @@ REGISTER_PLAY_CATEGORY(Gameplay::Plays::Stopped, "Restarts")
 Gameplay::Plays::Stopped::Stopped(GameplayModule *gameplay):
 	Play(gameplay),
 	_idle(gameplay),
-	_left(gameplay, Behaviors::Fullback::Left),
-	_right(gameplay, Behaviors::Fullback::Right)
+	_left(gameplay, Behaviors::Defender::Left),
+	_right(gameplay, Behaviors::Defender::Right)
 {
-	_left.otherFullbacks.insert(&_right);
-	_right.otherFullbacks.insert(&_left);
+	_left.otherDefenders.insert(&_right);
+	_right.otherDefenders.insert(&_left);
 }
 
 float Gameplay::Plays::Stopped::score(Gameplay::GameplayModule* gameplay)

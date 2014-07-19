@@ -11,7 +11,7 @@
 #include "../Play.hpp"
 
 #include <gameplay/behaviors/Kick.hpp>
-#include <gameplay/behaviors/positions/Fullback.hpp>
+#include <gameplay/behaviors/positions/Defender.hpp>
 #include <gameplay/behaviors/Move.hpp>
 #include <gameplay/PreventDoubleTouch.hpp>
 
@@ -30,7 +30,7 @@ protected:
 	Behaviors::Kick _kicker;
 	Behaviors::Move _center1;
 	Behaviors::Move _center2;
-	Behaviors::Fullback _fullback1, _fullback2;
+	Behaviors::Defender _defender1, _defender2;
 	PreventDoubleTouch _pdt;
 
 	Geometry2d::Segment _target;

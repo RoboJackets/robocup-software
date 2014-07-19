@@ -21,16 +21,16 @@ class Stopped(play.Play):
 
 
     def on_enter_running(self):
-        left = tactics.positions.fullback.Fullback()
-        self.add_subbehavior(left, 'left_fullback', required=False, priority=50)
+        left = tactics.positions.defender.Defender()
+        self.add_subbehavior(left, 'left_defender', required=False, priority=50)
 
-        right = tactics.positions.fullback.Fullback()
-        self.add_subbehavior(right, 'right_fullback', required=False, priority=49)
+        right = tactics.positions.defender.Defender()
+        self.add_subbehavior(right, 'right_defender', required=False, priority=49)
 
         idle = tactics.circle_near_ball.CircleNearBall()
         self.add_subbehavior(idle, 'circle_up', required=False, priority=1)
 
 
     def on_exit_running(self):
-        for name in ['circle_up', 'right_fullback', 'left_fullback']:
+        for name in ['circle_up', 'right_defender', 'left_defender']:
             self.remove_subbehavior(name)
