@@ -131,10 +131,6 @@ def run():
         raise AssertionError("Error: must call init() before run()")
 
     try:
-        # run double-touch tracker
-        import evaluation.double_touch
-        evaluation.double_touch.update()
-
         if root_play() != None:
             root_play().spin()
     except:

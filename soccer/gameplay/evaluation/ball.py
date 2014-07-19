@@ -49,14 +49,7 @@ def rev_predict(V_i, dist):
 
 # returns a Robot or None indicating which opponent has the ball
 def opponent_with_ball():
-    def angle_btw_three_pts(a, b, vertex):
-        VA = math.sqrt( (vertex.x - a.x)**2 + (vertex.y - a.y)**2 )
-        VB = math.sqrt( (vertex.x - b.x)**2 + (vertex.y - b.y)**2 )
-        AB = math.sqrt( (a.x - b.x)**2 + (a.y - b.y)**2 )
-        return math.acos((VA*VA + VB*VB - AB*AB)/(2*VA*VB))
-
-    closest_bot = None
-    closest_dist = float("inf")
+    closest_bot, closest_dist = None, float("inf")
     for bot in main.their_robots():
         if bot.visible:
             dist = (bot.pos - main.ball().pos).mag()
@@ -65,14 +58,27 @@ def opponent_with_ball():
 
     if closest_bot == None:
         return None
+    else:
+        if robot_has_ball(closest_bot):
+            return closest_bot
+        else:
+            return None
 
-    angle = closest_bot.angle * constants.DegreesToRadians
-    theta = angle_btw_three_pts(closest_bot.pos + robocup.Point(math.cos(angle), math.sin(angle)),
+
+
+# based on face angle and distance, determines if the robot has the ball
+def robot_has_ball(robot):
+    def angle_btw_three_pts(a, b, vertex):
+        VA = math.sqrt( (vertex.x - a.x)**2 + (vertex.y - a.y)**2 )
+        VB = math.sqrt( (vertex.x - b.x)**2 + (vertex.y - b.y)**2 )
+        AB = math.sqrt( (a.x - b.x)**2 + (a.y - b.y)**2 )
+        return math.acos((VA*VA + VB*VB - AB*AB)/(2*VA*VB))
+
+
+    angle = robot.angle * constants.DegreesToRadians
+    theta = angle_btw_three_pts(robot.pos + robocup.Point(math.cos(angle), math.sin(angle)),
                                 main.ball().pos,
-                                closest_bot.pos)
+                                robot.pos)
     max_radius = constants.Robot.Radius * (2.0 + 2.0*math.cos(theta))
 
-    if closest_bot.pos.near_point(main.ball().pos, max_radius):
-        return closest_bot
-    else:
-        return None
+    return robot.pos.near_point(main.ball().pos, max_radius)

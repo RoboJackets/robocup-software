@@ -4,6 +4,7 @@ import plays.stopped
 import logging
 from PyQt4 import QtCore
 import main
+import evaluation.double_touch
 import tactics.positions.goalie
 import role_assignment
 import traceback
@@ -29,6 +30,9 @@ class RootPlay(Play, QtCore.QObject):
     play_changed = QtCore.pyqtSignal("QString")
 
     def execute_running(self):
+        # update double touch tracker
+        evaluation.double_touch.tracker().spin()
+
         # cache and calculate the score() function for each play class
         main.play_registry().recalculate_scores()
 
@@ -71,6 +75,9 @@ class RootPlay(Play, QtCore.QObject):
                     self.play = None
 
             if self.play == None:
+                # reset the double-touch tracker
+                evaluation.double_touch.tracker().restart()
+
                 try:
                     if len(enabled_plays_and_scores) > 0:
                         # select the play with the smallest value for score()

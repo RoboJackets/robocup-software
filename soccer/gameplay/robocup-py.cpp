@@ -284,6 +284,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("stay_away_from_ball", &GameState::stayAwayFromBall)
 		.def("stay_on_side", &GameState::stayOnSide)
 		.def("stay_behind_penalty_line", &GameState::stayBehindPenaltyLine)
+		.def("is_our_restart", &GameState::isOurRestart)
 	;
 
 	class_<Robot>("Robot", init<int, bool>())
