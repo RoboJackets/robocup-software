@@ -50,7 +50,7 @@ class OurFreeKick(play.Play):
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 10 if gs.is_setup_state() and gs.is_our_free_kick() else float("inf")
+        return 0 if gs.is_setup_state() and gs.is_our_free_kick() else float("inf")
 
     @classmethod
     def is_restart(cls):
