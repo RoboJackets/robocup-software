@@ -201,20 +201,27 @@ def assign_roles(robots, role_reqs):
         cost_matrix.append(cost_row)
 
 
+    print("role len: " + str(len(role_reqs_list)))
+    print("robot len: " + str(len(robots)))
+    print("cost_matrix: " + str(cost_matrix))
+
+
     # There's a bug in the munkres package that causes it to infinite loop if we give a cost matrix with a row of all infs or a column of all infs
     # Eventually, I'll fix it and submit a fix to them, but for now this'll do
     # 
     # check for rows of all infs
-    for row in cost_matrix:
-        if all(val == float("inf") for val in row):
-            raise KeyError()
+    row_count = len(cost_matrix)
+    if row_count > 1:
+        for row in cost_matrix:
+            if all(val == float("inf") for val in row):
+                raise ImpossibleAssignmentError("No assignments possible that satisfy all constraints")
     # if more than one column, check for columns of all infs
-    col_count = len(cost_matrix)
+    col_count = len(cost_matrix[0])
     if col_count > 1:
         for c in range(len(cost_matrix[0])):
             col = [row[c] for row in cost_matrix]
             if all(val == float("inf") for val in col):
-                raise KeyError()
+                raise ImpossibleAssignmentError("No assignments possible that satisfy all constraints")
 
     # # FIXME: priority?????
 
