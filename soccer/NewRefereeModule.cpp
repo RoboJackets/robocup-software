@@ -316,6 +316,8 @@ void NewRefereeModule::updateGameState(bool blueTeam) {
 	{
 		_state.gameState.state = GameState::Playing;
 	}
+	_state.gameState.OurInfo = blueTeam ? blue_info : yellow_info;
+	_state.gameState.TheirInfo = blueTeam ? yellow_info : blue_info;
 }
 
 void NewRefereeModule::ready() {
