@@ -183,7 +183,6 @@ void Environment::handleSimCommand(const Packet::SimCommand& cmd) {
 
 			QVector3D pos3(x, y, 0.0);
 			QVector3D axis(0.0, 0.0, 1.0);
-			qreal angle = (blue) ? 90.f: -90.f;
 
 			// trigger signals
 			//emit setRobotPose(blue, robot->shell, pos3, angle, axis);
@@ -324,7 +323,6 @@ void Environment::addRobot(bool blue, int id, const Geometry2d::Point& pos, Robo
 
 	QVector3D pos3(pos.x, pos.y, 0.0);
 	QVector3D axis(0.0, 0.0, 1.0);
-	qreal angle = (blue) ? 90.f: -90.f;
 
 	// trigger signals
 	//emit addNewRobot(blue, id);
@@ -417,7 +415,6 @@ void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx)
 			const Geometry2d::Point& pos2 = r->getPosition();
 			QVector3D pos3(pos2.x, pos2.y, 0.0);
 			QVector3D axis(0.0, 0.0, 1.0);
-			qreal angle = facing * RadiansToDegrees;
 
 			//emit setRobotPose(blue, r->shell, pos3, angle, axis);
 		} else {
