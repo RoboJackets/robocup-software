@@ -103,20 +103,20 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 					best = window
 					best_dist = new_dist
 
-		shoot_line = None
+		shoot_seg = None
 		if best is not None:
 			if self.block_robot is not None:
 				dirvec = robocup.Point.direction(self.block_robot.angle * (math.pi/180.0))
-				shoot_line = robocup.Segment(self.block_robot.pos,
+				shoot_seg = robocup.Segment(self.block_robot.pos,
 					self.block_robot.pos + dirvec*7.0)
 			else:
-				shoot_line = robocup.Segment(main.ball().pos, main.ball().pos + main.ball().vel.normalized() * 7.0)
+				shoot_seg = robocup.Segment(main.ball().pos, main.ball().pos + main.ball().vel.normalized() * 7.0)
 
 		need_task = False
 		if best is not None:
 			winseg = best.segment
-			if main.ball().vel.magsq() > 0.03 and winseg.segment_intersection(shoot_line) != None:
-				self.robot.move_to(shoot_line.nearest_point(self.robot.pos))
+			if main.ball().vel.magsq() > 0.03 and winseg.segment_intersection(shoot_seg) != None:
+				self.robot.move_to(shoot_seg.nearest_point(self.robot.pos))
 				self.robot.face_none()
 			else:
 				winsize = winseg.length()
