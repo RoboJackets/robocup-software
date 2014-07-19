@@ -37,7 +37,7 @@ class RoleRequirements:
 
 
     # rather than having a 'has_chipper' property, we have a property for the weight
-    # * a value of float("inf") means that a chipper is required
+    # * a value of MaxWeight means that a chipper is required
     # * a value of 0 means we don't care if it has a chipper or not
     # * a value in-between means we want one, but it's not essential
     # This weight is added to the assignment cost for a robot
@@ -114,6 +114,9 @@ def iterate_role_requirements_tree_leaves(reqs_tree):
 class ImpossibleAssignmentError(RuntimeError): pass
 
 
+# the munkres library doesn't like infinity, so we use this instead
+MaxWeight = 10000000
+
 
 # multiply this by the distance between two points to get the cost
 PositionCostMultiplier = 1.0
@@ -184,11 +187,11 @@ def assign_roles(robots, role_reqs):
             cost = 0
 
             if req.required_shell_id != None and req.required_shell_id != robot.shell_id():
-                cost = float("inf")
+                cost = MaxWeight
             elif req.has_ball == True and robot.has_ball() == False:
-                cost = float("inf")
+                cost = MaxWeight
             elif req.require_kicking and (robot.shell_id() == evaluation.double_touch.tracker().forbidden_ball_toucher() or not robot.kicker_works() or not robot.ball_sense_works()):
-                cost = float("inf")
+                cost = MaxWeight
             else:
                 if req.pos != None:
                     cost += PositionCostMultiplier * (req.pos - robot.pos).mag()
@@ -200,25 +203,6 @@ def assign_roles(robots, role_reqs):
             cost_row.append(cost)
         cost_matrix.append(cost_row)
 
-
-    # There's a bug in the munkres package that causes it to infinite loop if we give a cost matrix with a row of all infs or a column of all infs
-    # Eventually, I'll fix it and submit a fix to them, but for now this'll do
-    # 
-    # check for rows of all infs
-    row_count = len(cost_matrix)
-    if row_count > 1:
-        for row in cost_matrix:
-            if all(val == float("inf") for val in row):
-                raise ImpossibleAssignmentError("No assignments possible that satisfy all constraints")
-    # if more than one column, check for columns of all infs
-    col_count = len(cost_matrix[0])
-    if col_count > 1:
-        for c in range(len(cost_matrix[0])):
-            col = [row[c] for row in cost_matrix]
-            if all(val == float("inf") for val in col):
-                raise ImpossibleAssignmentError("No assignments possible that satisfy all constraints")
-
-    # # FIXME: priority?????
 
     # solve
     solver = munkres.Munkres()
@@ -247,7 +231,7 @@ def assign_roles(robots, role_reqs):
         parent[tree_path[-1]] = (reqs, bot)
 
 
-    if total == float("inf"):
+    if total > MaxWeight:
         raise ImpossibleAssignmentError("No assignments possible that satisfy all constraints")
 
     return results
