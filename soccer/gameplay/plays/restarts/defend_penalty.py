@@ -24,7 +24,7 @@ class DefendPenalty(play.Play):
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 0.0 if gs.is_their_penalty() and gs.is_setup_state() else float("inf")
+        return 0 if gs.is_their_penalty() and gs.is_setup_state() else float("inf")
 
     @classmethod
     def is_restart(cls):
