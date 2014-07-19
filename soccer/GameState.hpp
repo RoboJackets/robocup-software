@@ -1,4 +1,6 @@
 #pragma once
+#include "TeamInfo.hpp"
+
 /**
  * this is the set of rules that are in effect
  */
@@ -47,6 +49,9 @@ public:
     
     // Time in seconds remaining in the current period
     int secondsRemaining;
+
+    TeamInfo OurInfo;
+    TeamInfo TheirInfo;
     
     GameState()
     {
