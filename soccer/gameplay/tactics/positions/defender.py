@@ -10,8 +10,8 @@ import math
 class Defender(single_robot_behavior.SingleRobotBehavior):
 
 	class State(Enum):
-		marking = 1
-		area_marking = 2
+		marking = 1 		# gets between a particular opponent and the goal.  stays closer to the goal
+		area_marking = 2 	# chilling out in a zone waiting to mark an opponent.  doesn't do this much
 
 	class Side(Enum):
 		left = 1
