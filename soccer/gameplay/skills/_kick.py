@@ -23,6 +23,7 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
         # cached calculated values
         self._aim_target_point = None # this is what our calculations on the given target boil down to
 
+        self.shot_obstacle_ignoring_robots = []
 
 
     # if True, uses the window evaluator to choose the best place to aim at target_segment
@@ -57,6 +58,19 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
     def target(self, value):
         self._target = value
         self.recalculate_aim_target_point()
+
+
+    # A list of robots that the shot obstacle doesn't apply to
+    # Note: the shot obstacle already doesn't apply to the kicker, you don't have to specify that here
+    # Default: []
+    @property
+    def shot_obstacle_ignoring_robots(self):
+        return self._shot_obstacle_ignoring_robots
+    @shot_obstacle_ignoring_robots.setter
+    def shot_obstacle_ignoring_robots(self, value):
+        if value == None:
+            value = []
+        self._shot_obstacle_ignoring_robots = value
 
 
     # We calculate the point we're ACTUALLY going to aim at based on the target Segment/Point and other parameters
@@ -150,3 +164,7 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
             for bot in main.our_robots():
                 if bot not in excluded_robots:
                     bot.add_local_obstacle(obs)
+
+
+    def execute_running(self):
+        self.add_shot_obstacle(self.shot_obstacle_ignoring_robots)

@@ -116,6 +116,15 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self._has_renegotiated_receive_point = False
 
 
+    def execute_running(self):
+        # The shot obstacle doesn't apply to the receiver
+        if self.has_subbehavior_with_name('kicker'):
+            kicker = self.subbehavior_with_name('kicker')
+            receiver = self.subbehavior_with_name('receiver')
+            kicker.shot_obstacle_ignoring_robots = [receiver.robot]
+
+
+
     def execute_preparing(self):
         kicker = self.subbehavior_with_name('kicker')
 

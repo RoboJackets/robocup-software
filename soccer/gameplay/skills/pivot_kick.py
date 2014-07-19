@@ -96,7 +96,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
     @aim_params.setter
     def aim_params(self, value):
         self._aim_params = value
-
+    
 
     # The point near the target point that we're currently aimed at, whether we want to be or not
     # If we kicked right now, the ball would pass through this point
@@ -138,13 +138,18 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
             setattr(aim, key, value)
 
 
+    def execute_running(self):
+        self.recalculate_aim_target_point()
+        super().execute_running()
+
+
     def on_enter_aiming(self):
         if not self.has_subbehavior_with_name('aim'):
             aim = skills.aim.Aim()
             self.add_subbehavior(aim, 'aim', required=True)
             self.set_aim_params()
+
     def execute_aiming(self):
-        self.recalculate_aim_target_point()
         self.set_aim_params()
 
         if isinstance(self.target, robocup.Segment):
@@ -158,7 +163,6 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
 
 
     def execute_kicking(self):
-        self.recalculate_aim_target_point()
         self.set_aim_params()
         if self.use_chipper and self.robot.has_chipper():
             self.robot.chip(self.chip_power)

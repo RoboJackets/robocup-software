@@ -70,6 +70,7 @@ class LineKick(skills._kick._Kick):
 
     def execute_running(self):
         self.recalculate()
+        super().execute_running()
 
 
     def execute_setup(self):
