@@ -4,7 +4,7 @@
 #include <gameplay/tactics/passing/DumbReceive.hpp>
 #include <gameplay/tactics/passing/StablePass.hpp>
 #include <gameplay/behaviors/PivotKick.hpp>
-#include <gameplay/behaviors/positions/Fullback.hpp>
+#include <gameplay/behaviors/positions/Defender.hpp>
 #include <gameplay/behaviors/Move.hpp>
 #include <gameplay/PreventDoubleTouch.hpp>
 #include <gameplay/tactics/passing/PassingContext.hpp>
@@ -30,7 +30,7 @@ namespace Gameplay
 				virtual bool run();
 			
 			protected:
-				Behaviors::Fullback _fullback1, _fullback2;
+				Behaviors::Defender _defender1, _defender2;
 
 
 

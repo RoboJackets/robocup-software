@@ -2,7 +2,7 @@ import play
 import behavior
 import skills.move
 import skills.pivot_kick
-import tactics.positions.fullback
+import tactics.positions.defender
 import constants
 import robocup
 import main
@@ -34,11 +34,11 @@ class OurFreeKick(play.Play):
         center2 = skills.move.Move(robocup.Point(0, 1.5))
         self.add_subbehavior(center1, 'center2', required=False, priority=3)
 
-        fullback1 = tactics.positions.fullback.Fullback(side=tactics.positions.fullback.Fullback.Side.left)
-        self.add_subbehavior(fullback1, 'fullback1', required=False, priority=2)
+        defender1 = tactics.positions.defender.Defender(side=tactics.positions.defender.Defender.Side.left)
+        self.add_subbehavior(defender1, 'defender1', required=False, priority=2)
 
-        fullback2 = tactics.positions.fullback.Fullback(side=tactics.positions.fullback.Fullback.Side.left)
-        self.add_subbehavior(fullback2, 'fullback2', required=False, priority=1)
+        defender2 = tactics.positions.defender.Defender(side=tactics.positions.defender.Defender.Side.left)
+        self.add_subbehavior(defender2, 'defender2', required=False, priority=1)
 
         self.add_transition(behavior.Behavior.State.running,
             behavior.Behavior.State.completed,
