@@ -145,7 +145,15 @@ class RootPlay(Play, QtCore.QObject):
 
         if value != None:
             self._play = value
+
+            # see if this play handles the goalie by itself
+            if value.__class__.handles_goalie():
+                self.drop_goalie_behavior()
+
             self.add_subbehavior(value, name='play', required=True)
+
+        # make sure somebody handles the goalie
+        self.setup_goalie_if_needed()
 
         # change notification so ui can update if necessary
         self.play_changed.emit(self.play.__class__.__name__ if self._play != None else "(No Play)")
@@ -170,12 +178,14 @@ class RootPlay(Play, QtCore.QObject):
         else:
             if self.has_subbehavior_with_name('goalie'):
                 goalie = self.subbehavior_with_name('goalie')
-            else:
+            elif self.play == None or not self.play.__class__.handles_goalie():
                 goalie = tactics.positions.goalie.Goalie()
-                # FIXME: add goalie with high priority?
                 self.add_subbehavior(goalie, 'goalie', required=True)
+            else:
+                goalie = None
 
-            goalie.shell_id = self.goalie_id
+            if goalie != None:
+                goalie.shell_id = self.goalie_id
 
 
     @property
