@@ -46,6 +46,9 @@ public:
 	ConfigDouble *velMultiplier;
 	ConfigDouble *angleVelMultiplier;
 
+	///	we multiply this by the bot's acceleration and add this to the output targetVel
+	ConfigDouble *accelerationMultiplier;
+
 	//	when pivoting, we multiply the calculated x-velocity
 	//	of the robot by this value before sending it to the robot
 	ConfigDouble *pivotVelMultiplier;
