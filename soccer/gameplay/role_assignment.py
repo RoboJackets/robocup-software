@@ -201,11 +201,6 @@ def assign_roles(robots, role_reqs):
         cost_matrix.append(cost_row)
 
 
-    print("role len: " + str(len(role_reqs_list)))
-    print("robot len: " + str(len(robots)))
-    print("cost_matrix: " + str(cost_matrix))
-
-
     # There's a bug in the munkres package that causes it to infinite loop if we give a cost matrix with a row of all infs or a column of all infs
     # Eventually, I'll fix it and submit a fix to them, but for now this'll do
     # 
