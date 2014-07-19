@@ -16,7 +16,7 @@ class LineKick(skills._kick._Kick):
     DriveAroundDist = 0.15
     ChargeThresh = 0.1
     EscapeChargeThresh = 0.1
-    SetupBallAvoid = 0.08
+    SetupBallAvoid = 0.15
     AccelBias = 0.2
     FacingThresh = 10   # angle in degrees
     MaxChargeSpeed = 1.5
@@ -43,7 +43,7 @@ class LineKick(skills._kick._Kick):
 
         self.add_transition(LineKick.State.setup,
             LineKick.State.charge,
-            lambda: ( not self.robot_is_between_ball_and_target() ) and self._target_line.dist_to(self.robot.pos) < self.ChargeThresh,
+            lambda: ( not self.robot_is_between_ball_and_target() ) and self._target_line.dist_to(self.robot.pos) < self.ChargeThresh and not self.robot.just_kicked(),
             "robot on line")
 
         self.add_transition(LineKick.State.charge,
@@ -113,7 +113,7 @@ class LineKick(skills._kick._Kick):
         if self.use_chipper:
             self.robot.chip(self.chip_power)
         else:
-            self.kick(self.kick_power)
+            self.robot.kick(self.kick_power)
 
 
     def role_requirements(self):
