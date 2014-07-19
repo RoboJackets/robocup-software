@@ -247,15 +247,15 @@ void Environment::sendVision()
 	{
 		Geometry2d::Point ballPos = b->getPosition();
 
-		bool occ;
-		if (ballPos.x < 0)
-		{
-			occ = occluded(ballPos, cam0);
-		} else {
-			occ = occluded(ballPos, cam1);
-		}
+		// bool occ;
+		// if (ballPos.x < 0)
+		// {
+		// 	occ = occluded(ballPos, cam0);
+		// } else {
+		// 	occ = occluded(ballPos, cam1);
+		// }
 
-		if (!occ && (rand() % 100) < ballVisibility)
+		if ((rand() % 100) < ballVisibility)
 		{
 			SSL_DetectionBall *out = det->add_balls();
 			out->set_confidence(1);
