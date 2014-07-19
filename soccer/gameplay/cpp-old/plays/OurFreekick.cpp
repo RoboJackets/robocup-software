@@ -38,16 +38,16 @@ Gameplay::Plays::OurFreekick::OurFreekick(GameplayModule *gameplay):
 	_bump(gameplay),
 	_center1(gameplay),
 	_center2(gameplay),
-	_fullback1(gameplay, Behaviors::Fullback::Left),
-	_fullback2(gameplay, Behaviors::Fullback::Right),
+	_defender1(gameplay, Behaviors::Defender::Left),
+	_defender2(gameplay, Behaviors::Defender::Right),
 	_pdt(gameplay, &_kicker)
 {
 	_center1.target = _gameplay->centerMatrix() * Geometry2d::Point(0, 1.5);
 	_center2.target = _gameplay->centerMatrix() * Geometry2d::Point(1, 1.5);
 	_bump.target = Geometry2d::Point(0.0, Field_Length);
 
-	_fullback2.otherFullbacks.insert(&_fullback1);
-	_fullback1.otherFullbacks.insert(&_fullback2);
+	_defender2.otherDefenders.insert(&_defender1);
+	_defender1.otherDefenders.insert(&_defender2);
 }
 
 float Gameplay::Plays::OurFreekick::score ( Gameplay::GameplayModule* gameplay )
@@ -92,8 +92,8 @@ bool Gameplay::Plays::OurFreekick::run()
 	_pdt.backoff.robots.insert(_kicker.robot);
 	assignNearest(_center1.robot, available, _center1.target);
 	assignNearest(_center2.robot, available, _center2.target);
-	assignNearest(_fullback1.robot, available, Geometry2d::Point(-Field_GoalHeight/2.0, 0.0));
-	assignNearest(_fullback2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
+	assignNearest(_defender1.robot, available, Geometry2d::Point(-Field_GoalHeight/2.0, 0.0));
+	assignNearest(_defender2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
 
 	// get out of ways of shots
 	if (_kicker.robot && _kicker.robot->pos.nearPoint(ball().pos, *_avoidShot)) {
@@ -118,8 +118,8 @@ bool Gameplay::Plays::OurFreekick::run()
 	_pdt.run();
 	_center1.run();
 	_center2.run();
-	_fullback1.run();
-	_fullback2.run();
+	_defender1.run();
+	_defender2.run();
 	
 	return _pdt.keepRunning();
 }

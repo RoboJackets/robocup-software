@@ -2,7 +2,7 @@
 
 #include "../Play.hpp"
 
-#include <gameplay/behaviors/positions/Fullback.hpp>
+#include <gameplay/behaviors/positions/Defender.hpp>
 #include <gameplay/behaviors/Kick.hpp>
 
 namespace Gameplay
@@ -25,7 +25,7 @@ namespace Gameplay
 			protected:
 				bool _usingKicker1;
 
-				Behaviors::Fullback _leftFullback, _rightFullback, _centerFullback;
+				Behaviors::Defender _leftDefender, _rightDefender, _centerDefender;
 				Behaviors::Kick _kicker1, _kicker2;
 
 				static ConfigBool *_useLineKick;

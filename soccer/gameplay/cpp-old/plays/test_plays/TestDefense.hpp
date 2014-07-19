@@ -1,7 +1,7 @@
 #pragma once
 
 #include <gameplay/Play.hpp>
-#include <gameplay/behaviors/positions/Fullback.hpp>
+#include <gameplay/behaviors/positions/Defender.hpp>
 
 namespace Gameplay
 {
@@ -15,8 +15,8 @@ namespace Gameplay
 				virtual bool run();
 
 			protected:
-				Behaviors::Fullback _fullbackLeft;
-				Behaviors::Fullback _fullbackRight;
+				Behaviors::Defender _defenderLeft;
+				Behaviors::Defender _defenderRight;
 		};
 	}
 }

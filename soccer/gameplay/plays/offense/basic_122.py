@@ -32,10 +32,10 @@ class Basic122(play.Play):
             "immediately")
         self.add_subbehavior(striker, 'striker', required=False, priority=5)
 
-        left = tactics.positions.fullback.Fullback(tactics.positions.fullback.Fullback.Side.left)
+        left = tactics.positions.defender.Defender(tactics.positions.defender.Defender.Side.left)
         self.add_subbehavior(left, 'left', required=False, priority=1)
 
-        right = tactics.positions.fullback.Fullback(tactics.positions.fullback.Fullback.Side.right)
+        right = tactics.positions.defender.Defender(tactics.positions.defender.Defender.Side.right)
         self.add_subbehavior(right, 'right', required=False, priority=3)
 
         support1 = skills.mark.Mark()
@@ -75,7 +75,7 @@ class Basic122(play.Play):
         striker_engaged = striker.robot != None and closest_dist_to_striker < Basic122.SupportBackoffThresh
 
 
-        # pick out which opponents our fullbacks should 'mark'
+        # pick out which opponents our defenders should 'mark'
         # TODO: explain
         nrOppClose = 0
         bestOpp1, bestOpp2 = None, None

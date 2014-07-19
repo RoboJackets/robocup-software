@@ -4,7 +4,7 @@
 
 #include <gameplay/PreventDoubleTouch.hpp>
 #include <gameplay/behaviors/Kick.hpp>
-#include <gameplay/behaviors/positions/Fullback.hpp>
+#include <gameplay/behaviors/positions/Defender.hpp>
 #include <gameplay/behaviors/Move.hpp>
 #include <gameplay/tactics/passing/PassingContext.hpp>
 #include <gameplay/tactics/passing/DumbReceive.hpp>
@@ -30,7 +30,7 @@ namespace Gameplay
 			protected:
 				StablePass _passer;
 				DumbReceive _receiver1, _receiver2;
-				Behaviors::Fullback _fullback1, _fullback2;
+				Behaviors::Defender _defender1, _defender2;
 
 				PassingContext _passCtxt;
 

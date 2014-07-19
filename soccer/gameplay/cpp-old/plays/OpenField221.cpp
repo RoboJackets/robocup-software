@@ -36,7 +36,7 @@ void Gameplay::Plays::OpenField221::createConfiguration(Configuration *cfg)
 
 Gameplay::Plays::OpenField221::OpenField221(GameplayModule *gameplay):
 	Play(gameplay),
-	_fullback(gameplay, Behaviors::Fullback::Center),
+	_defender(gameplay, Behaviors::Defender::Center),
 	_striker(gameplay),
 	_support1(gameplay),
 	_support2(gameplay)
@@ -64,7 +64,7 @@ bool Gameplay::Plays::OpenField221::run()
 	Geometry2d::Point ballProj = ball().pos + ball().vel * proj_time * dampen_factor;
 
 	// defense first
-	assignNearest(_fullback.robot, available, Geometry2d::Point(0.0, 0.0));
+	assignNearest(_defender.robot, available, Geometry2d::Point(0.0, 0.0));
 
 	// determine whether to change offense players
 	bool forward_reset = false;
@@ -160,7 +160,7 @@ bool Gameplay::Plays::OpenField221::run()
 	if (_striker.robot) _striker.run();
 	if (_support1.robot) _support1.run();
 	if (_support2.robot) _support2.run();
-	if (_fullback.robot) _fullback.run();
+	if (_defender.robot) _defender.run();
 	
 	return true;
 }

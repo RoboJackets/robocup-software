@@ -43,11 +43,11 @@ class OurGoalKick(play.Play):
         self.add_subbehavior(center2, 'center2', required=False, priority=4)
 
 
-        fullback1 = tactics.positions.fullback.Fullback(side=tactics.positions.fullback.Fullback.Side.left)
-        self.add_subbehavior(fullback1, 'fullback1', required=False, priority=3)
+        defender1 = tactics.positions.defender.Defender(side=tactics.positions.defender.Defender.Side.left)
+        self.add_subbehavior(defender1, 'defender1', required=False, priority=3)
         
-        fullback1 = tactics.positions.fullback.Fullback(side=tactics.positions.fullback.Fullback.Side.right)
-        self.add_subbehavior(fullback1, 'fullback2', required=False, priority=2)
+        defender1 = tactics.positions.defender.Defender(side=tactics.positions.defender.Defender.Side.right)
+        self.add_subbehavior(defender1, 'defender2', required=False, priority=2)
 
 
 

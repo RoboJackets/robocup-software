@@ -7,7 +7,7 @@ import main
 from enum import Enum
 import math
 
-class Fullback(single_robot_behavior.SingleRobotBehavior):
+class Defender(single_robot_behavior.SingleRobotBehavior):
 
 	class State(Enum):
 		marking = 1
@@ -29,29 +29,29 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 
 		self._area = robocup.Rect(robocup.Point(-constants.Field.Width/2.0, constants.Field.Length),
 			robocup.Point(constants.Field.Width/2.0, 0))
-		if self._side is Fullback.Side.right:
+		if self._side is Defender.Side.right:
 			self._area.get_pt(0).x = 0
-		if self._side is Fullback.Side.left:
+		if self._side is Defender.Side.left:
 			self._area.get_pt(1).x = 0
 
-		self.add_state(Fullback.State.marking, behavior.Behavior.State.running)
-		self.add_state(Fullback.State.area_marking, behavior.Behavior.State.running)
+		self.add_state(Defender.State.marking, behavior.Behavior.State.running)
+		self.add_state(Defender.State.area_marking, behavior.Behavior.State.running)
 
 		self.add_transition(behavior.Behavior.State.start,
-			Fullback.State.marking,
+			Defender.State.marking,
 			lambda: True,
 			"immediately")
-		self.add_transition(Fullback.State.marking,
-			Fullback.State.area_marking,
+		self.add_transition(Defender.State.marking,
+			Defender.State.area_marking,
 			lambda: not self._area.contains_point(main.ball().pos) and self.block_robot is None,
 			"if ball not in area and no robot to block")
-		self.add_transition(Fullback.State.area_marking, 
-			Fullback.State.marking,
+		self.add_transition(Defender.State.area_marking, 
+			Defender.State.marking,
 			lambda: self._area.contains_point(main.ball().pos) or self.find_robot_to_block() is not None,
 			"if ball or opponent enters my area")
 
 	def execute_marking(self):
-		#main.system_state().draw_line(robocup.Line(self._area.get_pt(0), self._area.get_pt(1)), (127,0,255), "Fullback")
+		#main.system_state().draw_line(robocup.Line(self._area.get_pt(0), self._area.get_pt(1)), (127,0,255), "Defender")
 		self.block_robot = self.find_robot_to_block()
 		if self.block_robot is not None:
 			self.robot.add_text("Blocking Robot " + str(self.block_robot.shell_id()), (255,255,255), "RobotText")
@@ -71,9 +71,9 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 
 		self._win_eval.excluded_robots = [self.robot]
 
-		# TODO fullbacks should register themselves with some static list on init
+		# TODO defenders should register themselves with some static list on init
 		# TODO make this happen in python-land
-		# BOOST_FOREACH(Fullback *f, otherFullbacks)
+		# BOOST_FOREACH(Defender *f, otherDefenders)
 		# {
 		# 	if (f->robot)
 		# 	{
@@ -86,13 +86,13 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 		best = None
 		goalie = main.our_robot_with_id(main.root_play().goalie_id)
 
-		if goalie is not None and self.side is not Fullback.Side.center:
+		if goalie is not None and self.side is not Defender.Side.center:
 			for window in windows:
 				if best is None:
 					best = window
-				elif self.side is Fullback.Side.left and window.segment.center.x < goalie.pos.x and window.segment.length > best.segment.length:
+				elif self.side is Defender.Side.left and window.segment.center.x < goalie.pos.x and window.segment.length > best.segment.length:
 					best = window
-				elif self.side is Fullback.Side.right and window.segment.center.x > goalie.pos.x and window.segment.length > best.segment.length:
+				elif self.side is Defender.Side.right and window.segment.center.x > goalie.pos.x and window.segment.length > best.segment.length:
 					best = window
 		else:
 			best_dist = 0
@@ -164,10 +164,10 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 		goal_line = robocup.Segment(robocup.Point(-constants.Field.GoalWidth/2.0,0),
 			robocup.Point(constants.Field.GoalWidth/2.0,0))
 
-		if self.side is Fullback.Side.left:
+		if self.side is Defender.Side.left:
 			goal_line.get_pt(1).x = 0
 			goal_line.get_pt(1).y = 0
-		if self.side is Fullback.Side.right:
+		if self.side is Defender.Side.right:
 			goal_line.get_pt(0).x = 0
 			goal_line.get_pt(0).y = 0
 
@@ -195,7 +195,7 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 		if best is not None:
 			angle = (best.a0 + best.a1)/2.0
 			shootline = robocup.Segment(self._win_eval.origin(), robocup.Point.direction(angle * (math.pi / 180.0)))
-			main.system_state().draw_line(shootline, (255,0,0), "Fullback")
+			main.system_state().draw_line(shootline, (255,0,0), "Defender")
 
 		need_task = False
 		if best is not None:
@@ -248,7 +248,7 @@ class Fullback(single_robot_behavior.SingleRobotBehavior):
 		self._side = value
 		self._area = robocup.Rect(robocup.Point(-constants.Field.Width/2.0, constants.Field.Length),
 			robocup.Point(constants.Field.Width/2.0, 0))
-		if self._side is Fullback.Side.right:
+		if self._side is Defender.Side.right:
 			self._area.get_pt(0).x = 0
-		if self._side is Fullback.Side.left:
+		if self._side is Defender.Side.left:
 			self._area.get_pt(1).x = 0

@@ -3,7 +3,7 @@
 #include "../Play.hpp"
 
 #include <gameplay/behaviors/Kick.hpp>
-#include <gameplay/behaviors/positions/Fullback.hpp>
+#include <gameplay/behaviors/positions/Defender.hpp>
 #include <gameplay/behaviors/Move.hpp>
 #include <gameplay/behaviors/Bump.hpp>
 #include <gameplay/PreventDoubleTouch.hpp>
@@ -30,7 +30,7 @@ namespace Gameplay
 				Behaviors::Bump _bump;
 
 				Behaviors::Move _center1, _center2;
-				Behaviors::Fullback _fullback1, _fullback2;
+				Behaviors::Defender _defender1, _defender2;
 				PreventDoubleTouch _pdt;
 
 				static ConfigBool *_enableGoalLineShot;
