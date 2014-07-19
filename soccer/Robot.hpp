@@ -295,8 +295,8 @@ public:
 
 	void resetAvoidRobotRadii();
 
-	// void approachAllOpponents(bool enable = true);
-	// void avoidAllOpponents(bool enable = true);
+	void approachAllOpponents(bool enable = true);
+	void avoidAllOpponents(bool enable = true);
 
 	/** checks if opponents are avoided at all */
 	bool avoidOpponent(unsigned shell_id) const;
@@ -322,7 +322,7 @@ public:
 
 	/** determines whether a robot will avoid another robot when it plans - use for priority */
 
-	// void avoidAllTeammates(bool enable = true);
+	void avoidAllTeammates(bool enable = true);
 	void avoidTeammate(unsigned shell_id, bool enable = true);
 	void avoidTeammateRadius(unsigned shell_id, float radius);
 	bool avoidTeammate(unsigned shell_id) const;
