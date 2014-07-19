@@ -40,14 +40,14 @@ void Gameplay::Plays::BasicOffense122::createConfiguration(Configuration *cfg)
 
 Gameplay::Plays::BasicOffense122::BasicOffense122(GameplayModule *gameplay):
 Play(gameplay),
-_leftFullback(gameplay, Behaviors::Fullback::Left),
-_rightFullback(gameplay, Behaviors::Fullback::Right),
+_leftDefender(gameplay, Behaviors::Defender::Left),
+_rightDefender(gameplay, Behaviors::Defender::Right),
 _striker(gameplay),
 _support1(gameplay),
 _support2(gameplay)
 {
-	_leftFullback.otherFullbacks.insert(&_rightFullback);
-	_rightFullback.otherFullbacks.insert(&_leftFullback);
+	_leftDefender.otherDefenders.insert(&_rightDefender);
+	_rightDefender.otherDefenders.insert(&_leftDefender);
 
 	// use constant value of mark threshold for now
 	_support1.markLineThresh(1.0);
@@ -76,8 +76,8 @@ bool Gameplay::Plays::BasicOffense122::run()
 
 	if(*_defense_first) {
 	// defense first - get closest to goal to choose sides properly
-		assignNearest(_leftFullback.robot, available, Geometry2d::Point(-Field_GoalWidth/2, 0.0));
-		assignNearest(_rightFullback.robot, available, Geometry2d::Point(Field_GoalWidth/2, 0.0));
+		assignNearest(_leftDefender.robot, available, Geometry2d::Point(-Field_GoalWidth/2, 0.0));
+		assignNearest(_rightDefender.robot, available, Geometry2d::Point(Field_GoalWidth/2, 0.0));
 
 	// choose offense, we want closest robot to ball to be striker
 		assignNearest(_support1.robot, available, ballProj);
@@ -96,8 +96,8 @@ bool Gameplay::Plays::BasicOffense122::run()
 			_support2.robot->addText("Support 2");
 		
 	// defense first - get closest to goal to choose sides properly
-		assignNearest(_leftFullback.robot, available, Geometry2d::Point(-Field_GoalWidth/2, 0.0));
-		assignNearest(_rightFullback.robot, available, Geometry2d::Point(Field_GoalWidth/2, 0.0));
+		assignNearest(_leftDefender.robot, available, Geometry2d::Point(-Field_GoalWidth/2, 0.0));
+		assignNearest(_rightDefender.robot, available, Geometry2d::Point(Field_GoalWidth/2, 0.0));
 	}
 
 	// determine whether to change offense players
@@ -239,8 +239,8 @@ bool Gameplay::Plays::BasicOffense122::run()
 	if (_striker.robot) _striker.run();
 	if (marking_active_1 && _support1.robot) _support1.run();
 	if (marking_active_2 && _support2.robot) _support2.run();
-	if (_leftFullback.robot) _leftFullback.run();
-	if (_rightFullback.robot) _rightFullback.run();
+	if (_leftDefender.robot) _leftDefender.run();
+	if (_rightDefender.robot) _rightDefender.run();
 
 	return true;
 }

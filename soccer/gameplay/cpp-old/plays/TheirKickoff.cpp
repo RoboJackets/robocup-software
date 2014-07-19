@@ -19,12 +19,12 @@ void Gameplay::Plays::TheirKickoff::createConfiguration(Configuration *cfg)
 
 Gameplay::Plays::TheirKickoff::TheirKickoff(GameplayModule *gameplay):
 	Play(gameplay),
-	_fullback1(gameplay, Behaviors::Fullback::Left),
-	_fullback2(gameplay, Behaviors::Fullback::Right),
+	_defender1(gameplay, Behaviors::Defender::Left),
+	_defender2(gameplay, Behaviors::Defender::Right),
 	_idle(gameplay)
 {
-	_fullback1.otherFullbacks.insert(&_fullback2);
-	_fullback2.otherFullbacks.insert(&_fullback1);
+	_defender1.otherDefenders.insert(&_defender2);
+	_defender2.otherDefenders.insert(&_defender1);
 }
 
 float Gameplay::Plays::TheirKickoff::score ( Gameplay::GameplayModule* gameplay )
@@ -37,12 +37,12 @@ bool Gameplay::Plays::TheirKickoff::run()
 {
 	set<OurRobot *> available = _gameplay->playRobots();
 	
-	assignNearest(_fullback1.robot, available, Geometry2d::Point());
-	assignNearest(_fullback2.robot, available, Geometry2d::Point());
+	assignNearest(_defender1.robot, available, Geometry2d::Point());
+	assignNearest(_defender2.robot, available, Geometry2d::Point());
 	_idle.robots = available;
 	
-	_fullback1.run();
-	_fullback2.run();
+	_defender1.run();
+	_defender2.run();
 	_idle.run();
 	
 	return true;

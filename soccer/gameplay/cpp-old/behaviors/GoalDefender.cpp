@@ -76,10 +76,10 @@ bool Gameplay::Behaviors::GoalDefender::run()
 	/*
 	_winEval->exclude.push_back(Behavior::robot()->pos());
 
-	//exclude robots that arn't the fullback
+	//exclude robots that arn't the defender
 	//_winEval->run(ball().pos, goalLine);
 
-	BOOST_FOREACH(Fullback *f, otherFullbacks)
+	BOOST_FOREACH(Defender *f, otherDefenders)
 	{
 		if (f->robot())
 		{

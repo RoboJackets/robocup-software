@@ -2,7 +2,7 @@
 
 #include "../Play.hpp"
 #include <gameplay/behaviors/Idle.hpp>
-#include <gameplay/behaviors/positions/Fullback.hpp>
+#include <gameplay/behaviors/positions/Defender.hpp>
 
 namespace Gameplay
 {
@@ -18,7 +18,7 @@ namespace Gameplay
 			
 			protected:
 				Behaviors::Idle _idle;
-				Behaviors::Fullback _left, _right;
+				Behaviors::Defender _left, _right;
 		};
 	}
 }
