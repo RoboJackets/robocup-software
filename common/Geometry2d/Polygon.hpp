@@ -51,6 +51,10 @@ namespace Geometry2d
         Rect bbox() const;
         
         std::vector<Point> vertices;
+
+        void addVertex(const Point &pt) {
+            vertices.push_back(pt);
+        }
     
     protected:
         /// Used by constructors
