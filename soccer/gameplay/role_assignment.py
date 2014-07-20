@@ -167,13 +167,14 @@ def assign_roles(robots, role_reqs):
     optional_roles = sorted([r for r in role_reqs_list if not r.required], reverse=True, key=lambda r: r.priority)
 
     # make sure there's enough robots
+    unassigned_role_requirements = []   # roles that won't be assigned because there aren't enough bots
     if len(required_roles) > len(robots):
         raise ImpossibleAssignmentError("More required roles than available robots")
     elif len(role_reqs_list) > len(robots):
         # remove the lowest priority optional roles so we have as many bots as roles we're trying to fill
         overflow = len(role_reqs_list) - len(robots)
         role_reqs_list = required_roles + optional_roles[0:-overflow]
-
+        unassigned_role_requirements = optional_roles[len(optional_roles) - overflow:]
 
     if len(robots) == 0:
         return {}
@@ -211,6 +212,17 @@ def assign_roles(robots, role_reqs):
 
     results = {}
 
+    def insert_into_results(results, tree_mapping, role_reqs, robot):
+        # get the keypath of this entry so we can insert back into the tree
+        tree_path = tree_mapping[role_reqs]
+        parent = results
+        for key in tree_path[:-1]:
+            if key not in parent:
+                parent[key] = {}
+            parent = parent[key]
+        parent[tree_path[-1]] = (role_reqs, robot)
+
+
     # build assignments mapping
     assignments = {}
     total = 0
@@ -220,15 +232,13 @@ def assign_roles(robots, role_reqs):
         bot = robots[row]
         reqs = role_reqs_list[col]
 
-        # get the keypath of this entry so we can insert back into the tree
-        tree_path = tree_mapping[reqs]
+        # add entry to results tree
+        insert_into_results(results, tree_mapping, reqs, bot)
 
-        parent = results
-        for key in tree_path[:-1]:
-            if key not in parent:
-                parent[key] = {}
-            parent = parent[key]
-        parent[tree_path[-1]] = (reqs, bot)
+
+    # insert None for each role that we didn't assign
+    for reqs in unassigned_role_requirements:
+        insert_into_results(results, tree_mapping, reqs, None)
 
 
     if total > MaxWeight:
