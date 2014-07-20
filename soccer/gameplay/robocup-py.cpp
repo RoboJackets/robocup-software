@@ -225,6 +225,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("nearest_point", &Geometry2d::Segment::nearestPoint)
 		.def("segment_intersection", &Segment_segment_intersection)
 		.def("near_point", &Geometry2d::Segment::nearPoint)
+		.def("__str__", &Geometry2d::Segment::toString)
 	;
 
 	class_<Geometry2d::Shape, boost::noncopyable>("Shape")

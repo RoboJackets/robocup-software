@@ -120,7 +120,7 @@ class LineKick(skills._kick._Kick):
         reqs = super().role_requirements()
         # try to be near the ball
         if main.ball().valid:
-            reqs.pos = main.ball().pos
+            reqs.destination_shape = main.ball().pos
         reqs.require_kicking = True
         if self.use_chipper:
             reqs.chipper_preference_weight = role_assignment.PreferChipper
