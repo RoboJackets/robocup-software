@@ -4,7 +4,8 @@ import skills
 import tactics
 import main
 import robocup
-
+import evaluation
+import constants
 
 class Basic122(play.Play):
 
@@ -26,6 +27,12 @@ class Basic122(play.Play):
         super().__init__(continuous=False)  # FIXME: continuous?
 
         striker = skills.pivot_kick.PivotKick()
+
+        self.add_transition(behavior.Behavior.State.start,
+            behavior.Behavior.State.running,
+            lambda: True,
+            "immediately")
+
         striker.add_transition(behavior.Behavior.State.completed,
             behavior.Behavior.State.start,
             lambda: True,
@@ -96,7 +103,8 @@ class Basic122(play.Play):
 
         # handle the case of having no good robots to mark
         if bestOpp1 == None and support1.robot != None:
-            support1.add_text("No mark target")
+            support1.mark_robot = None
+            support1.robot.add_text("No mark target")
             if striker.robot != None:
                 support1.add_text("Static Support")
                 support_goal = striker.robot.pos
@@ -109,18 +117,28 @@ class Basic122(play.Play):
                 else:
                     support_goal.y = max(support_goal.y * DefenseSupportRatio, 0.3)
 
-
-                # NOTE: the old code called these move commands here INSTEAD of running the mark behavior
-                # if we wanted to do that, we'd have to remove Mark as a subbehavior...
-                # support1.robot.move(support_goal)
-                # support1.robot.face(ball_proj)
-
+                support1.robot.move(support_goal)
+                support1.robot.face(ball_proj)
 
         # sit around and do jack shit...
         # TODO: make it do something useful
         if bestOpp2 == None and support2.robot != None:
+            support2.mark_robot = None
             support2.robot.add_text("No mark target")
+            if striker.robot != None:
+                support2.add_text("Static Support")
+                support_goal = striker.robot.pos
+                support_goal.x *= -1.0
+                if math.abs(support_goal.x) < 0.2:
+                    support_goal.x = -1.0 if support_goal.x < 0 else 1.0
 
+                if ball_proj.y > constants.Field.Length / 2.0 and nrOppClose > 0:
+                    support_goal.y = max(support_goal.y * OffenseSupportRatio, 0.3)
+                else:
+                    support_goal.y = max(support_goal.y * DefenseSupportRatio, 0.3)
+
+                support2.robot.move(support_goal)
+                support2.robot.face(ball_proj)
 
         # reassign support robots' mark targets based on dist sq and hysteresis coeff
         new_dists = [bestDistSq1, bestDistSq2]
@@ -128,7 +146,7 @@ class Basic122(play.Play):
         for i in range(2):
             support = supports[i]
             if new_bots[i] != None:
-                cur_dist_sq = (support.mark_robot.pos - ball_proj.pos).magsq() if support.mark_robot else float("inf")
+                cur_dist_sq = (support.mark_robot.pos - ball_proj).magsq() if support.mark_robot else float("inf")
                 if new_dists[i] < cur_dist_sq * Basic122.MarkHysteresisCoeff:
                     support.mark_robot = new_bots[i]
 
@@ -146,7 +164,7 @@ class Basic122(play.Play):
                 if supp.robot != None:
                     supp.robot.set_avoid_teammate_radius(striker.robot.shell_id(), Basic122.SupportAvoidTeammateRadius)
 
-            raise NotImplementedError("Make support robots avoid the shot channel")
+            # raise NotImplementedError("Make support robots avoid the shot channel")
             # FROM C++:
             # Polygon shot_obs;
             # shot_obs.vertices.push_back(Geometry2d::Point(Field_GoalWidth / 2, Field_Length));

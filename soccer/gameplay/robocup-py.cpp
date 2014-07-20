@@ -225,6 +225,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("nearest_point", &Geometry2d::Segment::nearestPoint)
 		.def("segment_intersection", &Segment_segment_intersection)
 		.def("near_point", &Geometry2d::Segment::nearPoint)
+		.def("__str__", &Geometry2d::Segment::toString)
 	;
 
 	class_<Geometry2d::Shape, boost::noncopyable>("Shape")
@@ -296,6 +297,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def_readwrite("angle_vel", &Robot::angleVel)
         .def_readonly("visible", &Robot::visible)
 		.def("__repr__", &Robot_repr)
+		.def("__eq__", &Robot::equals)
 	;
 
 	class_<OurRobot, OurRobot *, std::shared_ptr<OurRobot>, bases<Robot> >("OurRobot", init<int, SystemState*>())

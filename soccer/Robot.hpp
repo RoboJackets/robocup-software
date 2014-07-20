@@ -99,7 +99,11 @@ public:
 	}
 
 	bool operator==(const Robot &other) {
-		return shell() == other.shell();
+		return shell() == other.shell() && self() == other.self();
+	}
+
+	bool equals(const Robot &other) {
+		return *this == other;
 	}
 
 private:

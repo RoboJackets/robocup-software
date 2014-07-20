@@ -47,7 +47,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 
 	float y = -Field_Border;
 	float deadspace = Field_Border;
-	x = Field_Width/2.0f;
+	x = Floor_Width/2.0f;
 	Polygon* floorObstacle = new Polygon;
 	floorObstacle->vertices.push_back(Geometry2d::Point(-x, y));
 	floorObstacle->vertices.push_back(Geometry2d::Point(-x, y-1));
@@ -63,7 +63,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	floorObstacle->vertices.push_back(Geometry2d::Point(x, y));
 	_nonFloor[1] = std::shared_ptr<Shape>(floorObstacle);
 
-	y = Field_Length;
+	y = Floor_Length;
 	floorObstacle = new Polygon;
 	floorObstacle->vertices.push_back(Geometry2d::Point(-x, -deadspace));
 	floorObstacle->vertices.push_back(Geometry2d::Point(-x-1, -deadspace));
@@ -199,11 +199,6 @@ Geometry2d::CompositeShape Gameplay::GameplayModule::globalObstacles() const {
 	{
 		obstacles.add(_opponentHalf);
 	}
-
-
-
-
-
 
 	/// Add non floor obstacles
 	BOOST_FOREACH(const std::shared_ptr<Shape>& ptr, _nonFloor)
