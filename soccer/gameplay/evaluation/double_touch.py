@@ -3,6 +3,7 @@ import fsm
 import main
 import logging
 import enum
+import evaluation
 
 
 # This module implements our observance of the double-touch rule

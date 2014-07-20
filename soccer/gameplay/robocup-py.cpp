@@ -296,6 +296,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def_readwrite("angle_vel", &Robot::angleVel)
         .def_readonly("visible", &Robot::visible)
 		.def("__repr__", &Robot_repr)
+		.def("__eq__", &Robot::equals)
 	;
 
 	class_<OurRobot, OurRobot *, std::shared_ptr<OurRobot>, bases<Robot> >("OurRobot", init<int, SystemState*>())
