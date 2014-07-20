@@ -6,7 +6,7 @@ import math
 
 def is_moving_towards_our_goal():
     # see if the ball is moving much
-    if main.ball().vel.mag() > 0.04:
+    if main.ball().vel.mag() > 0.3:
         # see if it's moving somewhat towards our goal
         if main.ball().vel.dot(robocup.Point(0, -1)) > 0:
             ball_path = robocup.Segment(main.ball().pos, (main.ball().pos + main.ball().vel.normalized()))
