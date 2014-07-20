@@ -76,7 +76,7 @@ class DoubleTouchTracker(fsm.StateMachine):
     # returns True if a bot other than the kicker is touching the ball
     def other_robot_touching_ball(self):
         max_radius = constants.Robot.Radius + constants.Ball.Radius + 0.03
-        for bot in main.our_robots() + main.their_robots():
+        for bot in list(main.our_robots()) + list(main.their_robots()):
             if bot.visible and (not bot.is_ours() or not bot.shell_id() == self.kicker_shell_id):
                 if bot.pos.near_point(main.ball().pos, max_radius):
                     return True
