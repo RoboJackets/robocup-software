@@ -138,7 +138,7 @@ PreferChipper = 5
 # returns a tree with the same structure as @role_reqs, but the leaf nodes have (RoleRequirements, OurRobot) tuples instead of just RoleRequirements objects
 def assign_roles(robots, role_reqs):
 
-    # check for empty requrest set
+    # check for empty request set
     if len(role_reqs) == 0:
         return {}
 
