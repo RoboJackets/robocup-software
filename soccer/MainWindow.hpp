@@ -100,6 +100,10 @@ class MainWindow : public QMainWindow
 		/// Radio channels
 		void on_action904MHz_triggered();
 		void on_action906MHz_triggered();
+
+		/// Vision port
+		void on_actionVisionFirst_Half_triggered();
+		void on_actionVisionSecond_Half_triggered();
 		
 		/// Simulator commands
 		void on_actionCenterBall_triggered();

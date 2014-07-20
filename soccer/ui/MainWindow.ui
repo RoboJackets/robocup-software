@@ -27,7 +27,16 @@
          <property name="spacing">
           <number>0</number>
          </property>
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item>
@@ -159,7 +168,16 @@
          <property name="spacing">
           <number>0</number>
          </property>
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item>
@@ -653,7 +671,16 @@
          <property name="spacing">
           <number>0</number>
          </property>
-         <property name="margin">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
           <number>0</number>
          </property>
          <item>
@@ -1044,7 +1071,7 @@
      <x>0</x>
      <y>0</y>
      <width>1080</width>
-     <height>25</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
@@ -1072,6 +1099,13 @@
      <addaction name="action904MHz"/>
      <addaction name="action906MHz"/>
     </widget>
+    <widget class="QMenu" name="menuVision_Channel">
+     <property name="title">
+      <string>Vision Channel</string>
+     </property>
+     <addaction name="actionVisionFirst_Half"/>
+     <addaction name="actionVisionSecond_Half"/>
+    </widget>
     <addaction name="actionDefendMinusX"/>
     <addaction name="actionDefendPlusX"/>
     <addaction name="separator"/>
@@ -1081,6 +1115,7 @@
     <addaction name="actionUseOurHalf"/>
     <addaction name="actionUseOpponentHalf"/>
     <addaction name="menu_Radio_channel"/>
+    <addaction name="menuVision_Channel"/>
    </widget>
    <widget class="QMenu" name="menu_Simulator">
     <property name="title">
@@ -1364,6 +1399,25 @@
    </property>
    <property name="toolTip">
     <string>Toggles display of robot shell dot patterns.</string>
+   </property>
+  </action>
+  <action name="actionVisionFirst_Half">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>First Half</string>
+   </property>
+  </action>
+  <action name="actionVisionSecond_Half">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Second Half</string>
    </property>
   </action>
  </widget>

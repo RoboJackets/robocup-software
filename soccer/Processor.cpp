@@ -1,7 +1,6 @@
 
 #include <gameplay/GameplayModule.hpp>
 #include "Processor.hpp"
-#include "VisionReceiver.hpp"
 #include "radio/SimRadio.hpp"
 #include "radio/USBRadio.hpp"
 #include "modeling/BallTracker.hpp"
@@ -78,6 +77,7 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive)
 	_refereeModule = std::make_shared<NewRefereeModule>(_state);
 	_refereeModule->start();
 	_gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_state);
+	vision.simulation = _simulation;
 }
 
 Processor::~Processor()
@@ -218,7 +218,6 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
  */
 void Processor::run()
 {
-	VisionReceiver vision(_simulation);
 	vision.start();
 
     // Create radio socket
@@ -585,4 +584,17 @@ void Processor::defendPlusX(bool value)
 
 	_worldToTeam = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Length / 2.0f));
 	_worldToTeam *= Geometry2d::TransformMatrix::rotate(_teamAngle);
+}
+
+void Processor::changeVisionChannel(int port)
+{
+	_loopMutex.lock();
+
+	vision.stop();
+
+	vision.simulation = _simulation;
+	vision.port = port;
+	vision.start();
+
+	_loopMutex.unlock();
 }
