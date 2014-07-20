@@ -10,8 +10,8 @@ import math
 class Defender(single_robot_behavior.SingleRobotBehavior):
 
 	class State(Enum):
-		marking = 1
-		area_marking = 2
+		marking = 1 		# gets between a particular opponent and the goal.  stays closer to the goal
+		area_marking = 2 	# chilling out in a zone waiting to mark an opponent.  doesn't do this much
 
 	class Side(Enum):
 		left = 1
@@ -141,8 +141,6 @@ class Defender(single_robot_behavior.SingleRobotBehavior):
 		if need_task:
 			self.robot.face(main.ball().pos)
 
-		if main.ball().pos.y < constants.Field.Length / 2:
-			self.robot.set_dribble_speed(255)
 
 		backVec = robocup.Point(1,0)
 		backPos = robocup.Point(-constants.Field.Width / 2, 0)
