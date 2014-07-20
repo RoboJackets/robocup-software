@@ -8,7 +8,8 @@ from enum import Enum
 import math
 import tactics.positions.goalie
 
-class Defence(composite_behavior.CompositeBehavior):
+
+class Defense(composite_behavior.CompositeBehavior):
 
 
 	def __init__(self):
