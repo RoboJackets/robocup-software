@@ -20,6 +20,7 @@
 #include <ctime>
 
 #include <google/protobuf/descriptor.h>
+#include <Network.hpp>
 
 using namespace std;
 using namespace boost;
@@ -922,4 +923,18 @@ void MainWindow::on_fastKickoffBlue_clicked()
 void MainWindow::on_fastKickoffYellow_clicked()
 {
 	_processor->refereeModule()->command = NewRefereeModuleEnums::PREPARE_KICKOFF_YELLOW;
+}
+
+void MainWindow::on_actionVisionFirst_Half_triggered()
+{
+	_processor->changeVisionChannel(SharedVisionPortFirstHalf);
+	_ui.actionVisionFirst_Half->setChecked(true);
+	_ui.actionVisionSecond_Half->setChecked(false);
+}
+
+void MainWindow::on_actionVisionSecond_Half_triggered()
+{
+	_processor->changeVisionChannel(SharedVisionPortSecondHalf);
+	_ui.actionVisionFirst_Half->setChecked(false);
+	_ui.actionVisionSecond_Half->setChecked(true);
 }

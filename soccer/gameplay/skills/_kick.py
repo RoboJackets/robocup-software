@@ -160,9 +160,8 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
             obs.add_vertex(b)
 
             # tell the bots to not go there
-            excluded_robots.append(self.robot)
             for bot in main.our_robots():
-                if bot not in excluded_robots:
+                if bot not in excluded_robots + [self.robot]:
                     bot.add_local_obstacle(obs)
 
 
