@@ -3,10 +3,12 @@ import evaluation.double_touch
 import robocup
 
 
+# TODO arbitrary cost lambda property
+
 class RoleRequirements:
 
     def __init__(self):
-        self.pos = None
+        self.destination_shape = None
         self.has_ball = False
         self.chipper_preference_weight = 0
         self.required_shell_id = None
@@ -17,13 +19,13 @@ class RoleRequirements:
 
 
     @property
-    def pos(self):
-        return self._pos
-    @pos.setter
-    def pos(self, value):
-        if value != None and not isinstance(value, robocup.Point):
-            raise TypeError("Unexpected type for pos: " + str(value))
-        self._pos = value
+    def destination_shape(self):
+        return self._destination_shape
+    @destination_shape.setter
+    def destination_shape(self, value):
+        if value != None and not ( isinstance(value, robocup.Point) or isinstance(value, robocup.Segment) ):
+            raise TypeError("Unexpected type for destination_shape: " + str(value))
+        self._destination_shape = value
 
 
     @property
@@ -194,8 +196,8 @@ def assign_roles(robots, role_reqs):
             elif req.require_kicking and (robot.shell_id() == evaluation.double_touch.tracker().forbidden_ball_toucher() or not robot.kicker_works() or not robot.ball_sense_works()):
                 cost = MaxWeight
             else:
-                if req.pos != None:
-                    cost += PositionCostMultiplier * (req.pos - robot.pos).mag()
+                if req.destination_shape != None:
+                    cost += PositionCostMultiplier * req.destination_shape.dist_to(robot.pos)
                 if req.previous_shell_id != None and req.previous_shell_id != robot.shell_id:
                     cost += RobotChangeCost
                 if not robot.has_chipper():
