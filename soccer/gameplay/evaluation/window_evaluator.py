@@ -76,6 +76,7 @@ class WindowEvaluator:
         self.min_chip_range = 4.0
 
         self.excluded_robots = []
+        self.hypothetical_robot_locations = []
 
 
     # Defaults to False
@@ -121,6 +122,17 @@ class WindowEvaluator:
     @excluded_robots.setter
     def excluded_robots(self, value):
         self._excluded_robots = value if value != None else []
+
+
+    # a list of robocup.Point objects
+    # the window evaluator adds robot obstacles at these locations
+    @property
+    def hypothetical_robot_locations(self):
+        return self._hypothetical_robot_locations
+    @hypothetical_robot_locations.setter
+    def hypothetical_robot_locations(self, value):
+        self._hypothetical_robot_locations = value if value != None else []
+    
 
 
     # calculate open windows to another robot
@@ -223,15 +235,17 @@ class WindowEvaluator:
         windows = [Window(0, end)]
 
         # apply the obstacles
-        for bot in list(main.our_robots()) + list(main.their_robots()):
-            if bot not in self.excluded_robots and bot.visible:
-                d = (bot.pos - origin).mag()
-                # whether or not we can chip over this bot
-                chip_overable = (self.chip_enabled
-                                and (d < self.max_chip_range - constants.Robot.Radius)
-                                and (d > self.min_chip_range + constants.Robot.Radius))
-                if not chip_overable:
-                    self.obstacle_robot(windows, origin, target, bot.pos)
+        bot_locations = map((list(main.our_robots()) + list(main.their_robots()), key=pos))
+        bot_locations = filter(bot_locations, key=lambda bot: bot not in self.excluded_robots and bot.visible)
+        bot_locations.extend(self.hypothetical_robot_locations())
+        for pos in bot_locations:
+            d = (pos - origin).mag()
+            # whether or not we can chip over this bot
+            chip_overable = (self.chip_enabled
+                            and (d < self.max_chip_range - constants.Robot.Radius)
+                            and (d > self.min_chip_range + constants.Robot.Radius))
+            if not chip_overable:
+                self.obstacle_robot(windows, origin, target, pos)
 
         # set the segment and angles for each window
         p0 = target.get_pt(0)
