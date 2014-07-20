@@ -65,7 +65,7 @@ class OurKickoff(play.Play):
         return True
 
     def on_enter_setup(self):
-        mover = skills.move.Move(robocup.Point(0, constants.Field.Length / 2.0 - 0.15))
+        mover = skills.move.Move(robocup.Point(0, constants.Field.Length / 2.0 - 0.30))
         self.add_subbehavior(mover, 'move', required=False, priority=5)
 
     def execute_setup(self):
