@@ -235,9 +235,9 @@ class WindowEvaluator:
         windows = [Window(0, end)]
 
         # apply the obstacles
-        bot_locations = map((list(main.our_robots()) + list(main.their_robots()), key=pos))
-        bot_locations = filter(bot_locations, key=lambda bot: bot not in self.excluded_robots and bot.visible)
-        bot_locations.extend(self.hypothetical_robot_locations())
+        bots = filter(lambda bot: bot not in self.excluded_robots and bot.visible, (list(main.our_robots()) + list(main.their_robots())))
+        bot_locations = list(map(lambda bot: bot.pos, bots))
+        bot_locations.extend(self.hypothetical_robot_locations)
         for pos in bot_locations:
             d = (pos - origin).mag()
             # whether or not we can chip over this bot

@@ -168,6 +168,10 @@ void State_draw_line(SystemState *self, const Geometry2d::Line *line, boost::pyt
 	self->drawLine(*line, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
+void State_draw_text(SystemState *self, const std::string &text, Geometry2d::Point *pos, boost::python::tuple rgb, const std::string &layer) {
+	self->drawText(QString::fromStdString(text), *pos, Color_from_tuple(rgb), QString::fromStdString(layer));
+}
+
 boost::python::list Circle_intersects_line(Geometry2d::Circle *self, const Geometry2d::Line *line) {
 	boost::python::list lst;
 
@@ -353,7 +357,7 @@ BOOST_PYTHON_MODULE(robocup)
 		//	debug drawing methods
 		.def("draw_circle", &State_draw_circle)
 		.def("draw_path", &SystemState::drawPath)
-		.def("draw_text", &SystemState::drawText)
+		.def("draw_text", &State_draw_text)
 		.def("draw_shape", &SystemState::drawShape)
 		.def("draw_line", &State_draw_line)
 	;
