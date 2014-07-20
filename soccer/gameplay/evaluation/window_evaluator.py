@@ -137,6 +137,9 @@ class WindowEvaluator:
     def eval_pt_to_opp_goal(self, origin):
         return self.eval_pt_to_seg(origin, constants.Field.TheirGoalSegment)
 
+    def eval_pt_to_our_goal(self, origin):
+        return self.eval_pt_to_seg(origin, constants.Field.OurGoalSegment)
+
 
     # t0 and t1 are distances from segment.get_pt(0) along the segment
     # we use these to remove windows and pieces of windows that are blocked
@@ -214,6 +217,9 @@ class WindowEvaluator:
         if end == 0:
             return [], None
 
+        if self.debug:
+            main.system_state().draw_line(target, constants.Colors.Blue, "Debug")
+
         windows = [Window(0, end)]
 
         # apply the obstacles
@@ -237,6 +243,10 @@ class WindowEvaluator:
             w.a1 = (w.segment.get_pt(1) - origin).angle() * constants.RadiansToDegrees
 
         best = max(windows, key=lambda w: w.segment.delta().magsq()) if len(windows) > 0 else None
+
+        if self.debug and best is not None:
+            main.system_state().draw_line(best.segment, constants.Colors.Green, "Debug")
+            main.system_state().draw_line(robocup.Line(origin, best.segment.center()), constants.Colors.Green, "Debug")
 
         # # draw the windows if we're in debug mode
         # if self.debug:

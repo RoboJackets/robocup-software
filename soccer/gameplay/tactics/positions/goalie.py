@@ -8,7 +8,7 @@ import skills
 import main
 import enum
 import math
-
+import evaluation
 
 class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
@@ -168,15 +168,21 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def execute_block(self):
         opposing_kicker = evaluation.ball.opponent_with_ball()
         if opposing_kicker is not None:
-            shot_line = robocup.Line(opposing_kicker.pos, main.ball().pos)
-            block_line = robocup.Line(robocup.Point(-Goalie.MaxX/2, constants.Robot.Radius),
-                                robocup.Point(Goalie.MaxX/2, constants.Robot.Radius))
-            dest = block_line.line_intersection(shot_line)
-            dest.x = min(Goalie.MaxX, dest.x)
-            dest.x = max(-Goalie.MaxX, dest.x)
-            self.robot.move_to(dest)
-        else:
-            self.robot.move_to(robocup.Point(0,constants.Robot.Radius))
+            winEval = evaluation.window_evaluator.WindowEvaluator()
+            winEval.debug = True
+            winEval.excluded_robots = [self.robot]
+            best = winEval.eval_pt_to_our_goal(main.ball().pos)[1]
+            if best is not None:
+                shot_line = robocup.Line(opposing_kicker.pos, main.ball().pos)
+                block_line = robocup.Line(robocup.Point(best.segment.get_pt(0).x - constants.Robot.Radius, constants.Robot.Radius),
+                                    robocup.Point(best.segment.get_pt(1).x + constants.Robot.Radius, constants.Robot.Radius))
+                main.system_state().draw_line(block_line, (255,0,0), "Debug")
+                dest = block_line.line_intersection(shot_line)
+                dest.x = min(Goalie.MaxX, dest.x)
+                dest.x = max(-Goalie.MaxX, dest.x)
+                self.robot.move_to(dest)
+                return
+        self.robot.move_to(robocup.Point(0,constants.Robot.Radius))
 
 
     def execute_defend(self):
