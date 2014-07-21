@@ -104,9 +104,9 @@ class Basic122(play.Play):
         # handle the case of having no good robots to mark
         if bestOpp1 == None and support1.robot != None:
             support1.mark_robot = None
-            support1.robot.add_text("No mark target")
+            support1.robot.add_text("No mark target", (255,255,255), "RobotText")
             if striker.robot != None:
-                support1.add_text("Static Support")
+                support1.add_text("Static Support", (255,255,255), "RobotText")
                 support_goal = striker.robot.pos
                 support_goal.x *= -1.0
                 if math.abs(support_goal.x) < 0.2:
@@ -124,9 +124,9 @@ class Basic122(play.Play):
         # TODO: make it do something useful
         if bestOpp2 == None and support2.robot != None:
             support2.mark_robot = None
-            support2.robot.add_text("No mark target")
+            support2.robot.add_text("No mark target", (255,255,255), "RobotText")
             if striker.robot != None:
-                support2.add_text("Static Support")
+                support2.add_text("Static Support", (255,255,255), "RobotText")
                 support_goal = striker.robot.pos
                 support_goal.x *= -1.0
                 if math.abs(support_goal.x) < 0.2:

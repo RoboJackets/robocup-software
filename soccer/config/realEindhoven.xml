@@ -16,7 +16,7 @@
    <velMultiplier value="0.3"/>
   </rotation>
   <kicker>
-   <maxKick value="255"/>
+   <maxKick value="40"/>
    <maxChip value="150"/>
   </kicker>
   <pivot>
@@ -43,7 +43,7 @@
    <velMultiplier value="0.3"/>
   </rotation>
   <kicker>
-   <maxKick value="255"/>
+   <maxKick value="120"/>
    <maxChip value="150"/>
   </kicker>
   <pivot>
@@ -164,6 +164,7 @@
   <Max_Acceleration value="1.2"/>
   <Max_Velocity value="3"/>
   <PathJitterCompensationFactor value="2"/>
+  <PathChangeBoost value="0.5"/>
  </MotionControl>
  <PathPlanner>
   <Max_Acceleration value="1"/>

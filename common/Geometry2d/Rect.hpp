@@ -97,5 +97,11 @@ namespace Geometry2d
 			bool intersects(const Rect &other) const;
 			
 			Point pt[2];
+
+			std::string toString() {
+				std::stringstream str;
+				str << "Line<" << pt[0] << ", " << pt[1] << ">";
+				return str.str();
+			}
 	};
 }

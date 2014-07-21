@@ -18,6 +18,7 @@
 class Configuration;
 class RobotStatus;
 class Joystick;
+struct JoystickControlValues;
 class Radio;
 class BallTracker;
 
@@ -64,7 +65,6 @@ public:
 };
 
 
-
 /**
  * @brief Brings all the pieces together
  * 
@@ -108,6 +108,8 @@ class Processor: public QThread
 		
 		bool autonomous();
 		bool joystickValid();
+
+		JoystickControlValues joystickControlValues();
 		
 		void externalReferee(bool value)
 		{

@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include <boost/foreach.hpp>
 #include <QString>
+#include <cmath>
 
 using namespace std;
 using namespace Geometry2d;
@@ -358,6 +359,18 @@ void OurRobot::_kick(uint8_t strength) {
 
 void OurRobot::_chip(uint8_t strength) {
 	uint8_t max = *config->kicker.maxChip;
+	// TODO make sure we're not about to chip over the middle line.
+	Segment robot_face_line = Segment(pos, pos + 6*Point(cos(angle), sin(angle)));
+	Segment mid_field_line = Segment(Point(-Field_Width/2,Field_Length/2), Point(Field_Width/2,Field_Length/2));
+	if(robot_face_line.intersects(mid_field_line))
+	{
+		float dist = mid_field_line.distTo(pos);
+		int power = min(strength, chipPowerForDistance(dist));
+		if(power == 0)
+			_kick(strength);
+		else
+			strength = power;
+	}
 	radioTx.set_kick(strength > max ? max : strength);
 	radioTx.set_use_chipper(true);
 }
@@ -770,4 +783,17 @@ void OurRobot::radioRxUpdated() {
 		_lastKickTime = timestamp();
 	}
 	_lastKickerStatus = _radioRx.kicker_status();
+}
+
+double OurRobot::distanceToChipLanding(int chipPower) {
+	return max(0., min(190., *(config->chipper.calibrationSlope) * chipPower + *(config->chipper.calibrationOffset)));
+}
+
+uint8_t OurRobot::chipPowerForDistance(double distance) {
+	double b = *(config->chipper.calibrationOffset) / 2.;
+	if(distance < b)
+		return 0;
+	if(distance > distanceToChipLanding(255))
+		return 255;
+	return 0.5 * distance + b;
 }

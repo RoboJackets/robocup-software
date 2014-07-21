@@ -285,6 +285,67 @@ void Joystick::drive(RadioTx::Robot *tx)
 #endif
 }
 
+JoystickControlValues Joystick::getJoystickControlValues()
+{
+	QMutexLocker locker(&_mutex);
+	JoystickControlValues vals;
+
+	// applying dampening - scales each to [-1,1] range
+	float leftX =   _axis[Axis_Left_X]  / 32768.0f;
+	float rightX =  _axis[Axis_Right_X] / 32768.0f;
+	float rightY = -_axis[Axis_Right_Y] / 32768.0f;
+	
+	//input is vx, vy in robot space
+	Geometry2d::Point input(rightX, rightY);
+
+	//if using DPad, this is the input value
+	float mVal = fabs(rightY);
+
+	if (dUp())
+	{
+		input.y = mVal;
+		input.x = 0;
+	}
+	else if (dDown())
+	{
+		input.y = -mVal;
+		input.x = 0;
+	}
+	else if (dRight())
+	{
+		input.y = 0;
+		input.x = mVal;
+	}
+	else if (dLeft())
+	{
+		input.y = 0;
+		input.x = -mVal;
+	}
+	
+	if (_dampedTranslation)
+	{
+		vals.bodyX = input.y  * Translation_Max_Damped_Speed;
+		vals.bodyY = -input.x * Translation_Max_Damped_Speed;
+	} else
+	{
+		vals.bodyX = input.y  * Translation_Max_Speed;
+		vals.bodyY = -input.x * Translation_Max_Speed;
+	}
+
+	if (_dampedRotation)
+		vals.bodyW = -leftX * Rotation_Max_Damped_Speed;
+	else
+		vals.bodyW = -leftX * Rotation_Max_Speed;
+
+	vals.kickPower = _kicker;
+	vals.dribblerPower = _dribbler;
+	vals.kick = _button[7] | _button[5];
+	vals.dribble = _dribblerOn;
+	vals.chip = _button[5];
+
+	return vals;
+}
+
 void Joystick::reset()
 {
 	QMutexLocker locker(&_mutex);

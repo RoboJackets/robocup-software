@@ -365,6 +365,11 @@ namespace Geometry2d
 				return str.str();
 			}
 
+			friend std::ostream& operator<< (std::ostream &stream, Point &point) {
+				stream << point.toString();
+				return stream;
+			}
+
 			/** the x coordinate */
 			float x;
 			

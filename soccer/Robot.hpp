@@ -394,6 +394,8 @@ public:
 
 	static void createConfiguration(Configuration *cfg);
 	
+	double distanceToChipLanding(int chipPower);
+	uint8_t chipPowerForDistance(double distance);
 
 protected:
 	MotionControl *_motionControl;

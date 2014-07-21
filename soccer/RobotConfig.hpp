@@ -35,12 +35,20 @@ public:
 		///	this was added because 2011 bots needed lower dribbler values than the 2008 model
 		ConfigDouble *multiplier;
 	};
+
+	struct Chipper {
+		Chipper(Configuration *config, QString prefix);
+
+		ConfigDouble *calibrationSlope;
+		ConfigDouble *calibrationOffset;
+	};
 	
 	PID translation;
 	PID rotation;
 
 	Kicker kicker;
 	Dribbler dribbler;
+	Chipper chipper;
 
 	///	convert from real units to bot "units"
 	ConfigDouble *velMultiplier;
