@@ -44,23 +44,7 @@ class SubmissiveDefender(single_robot_composite_behavior.SingleRobotCompositeBeh
     # if no block_line is specified, blocks the ball
     def execute_marking(self):
         move = self.subbehavior_with_name('move')
-        # we move somewhere along this arc to mark our 'block_line'
-        arc = robocup.Circle(robocup.Point(0,0), self._defend_goal_radius)
-        # TODO: use the real shape instead of this arc approximation
-
-        default_pt = arc.nearest_point(robocup.Point(0, constants.Field.Length / 2.0))
-
-        target = main.ball().pos
-        if self.block_line != None:
-            intersects, pt1, pt2 = self.block_line.intersects_circle(arc)
-
-            if intersects:
-                # choose the pt farther from the goal
-                move.pos = max([pt1, pt2], key=lambda p: p.dist_to(robocup.Point(0, 0)))
-            else:
-                move.pos = default_pt
-        else:
-            move.pos = default_pt
+        move.pos = self.move_target
 
 
     def on_exit_marking(self):
@@ -74,6 +58,31 @@ class SubmissiveDefender(single_robot_composite_behavior.SingleRobotCompositeBeh
     @block_line.setter
     def block_line(self, value):
         self._block_line = value
+
+        # we move somewhere along this arc to mark our 'block_line'
+        arc = robocup.Circle(robocup.Point(0,0), self._defend_goal_radius)
+        # TODO: use the real shape instead of this arc approximation
+
+        default_pt = arc.nearest_point(robocup.Point(0, constants.Field.Length / 2.0))
+
+        target = main.ball().pos
+        if self.block_line != None:
+            intersects, pt1, pt2 = self.block_line.intersects_circle(arc)
+
+            if intersects:
+                # choose the pt farther from the goal
+                self._move_target = max([pt1, pt2], key=lambda p: p.dist_to(robocup.Point(0, 0)))
+            else:
+                self._move_target = default_pt
+        else:
+            self._move_target = default_pt
+
+
+
+    # where the bot plans to move in order to block the block_line
+    @property
+    def move_target(self):
+        return self._move_target
 
 
     def role_requirements(self):

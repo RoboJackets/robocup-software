@@ -90,6 +90,7 @@ class Defense(composite_behavior.CompositeBehavior):
                 self.ball_acquire_chance = 1.0
                 self.shot_chance = 1.0
                 self.assigned_handlers = []
+                self.best_shot_window = None
 
 
             # an OpponentRobot or Point
@@ -162,15 +163,57 @@ class Defense(composite_behavior.CompositeBehavior):
 
 
 
+        def set_block_lines_for_threat_handlers(threat):
+            if len(threat.assigned_handlers) == 0:
+                return
 
-        def recalculate_threat_shot(threat):
-            excluded_behaviors = filter(lambda bhvr: bhvr not in threat.assigned_handlers, [goalie, defender1, defender2])
+            if threat.best_shot_window != None:
+                center_line = robocup.Line(threat.pos, threat.best_shot_window.segment.center())
+            else:
+                center_line = robocup.Line(threat.pos, constants.Field.OurGoalSegment.center())
+
+            # find the angular width that each defender can block.  We then space these out accordingly
+            angle_widths = []
+            for handler in threat.assigned_handlers:
+                dist_from_threat = handler.robot.pos.dist_to(threat.pos)
+                w = 2.0 * math.atan2(constants.Robot.Radius, dist_from_threat)
+                angle_widths.append(w)
+
+            # start on one edge of our available angle coverage and work counter-clockwise,
+            # assigning block lines to the bots as we go
+            spacing = 0.04  # spacing between each bot in radians
+            total_angle_coverage = sum(angle_widths) + (len(angle_widths) - 1)*spacing
+            start_vec = center_line.delta().normalized()
+            start_vec.rotate(robocup.Point(0,0), -total_angle_coverage / 2.0)
+            for i in range(len(angle_widths)):
+                w = angle_widths[i]
+                start_vec.rotate(robocup.Point(0,0), w/2.0)
+                handler.block_line = robocup.Line(threat.pos, threat.pos + start_vec * 10)
+                start_vec.rotate(robocup.Point(0,0), w/2.0 + spacing)
 
 
+
+        def recalculate_threat_shot(threat_index):
+            if not isinstance(threat_index, int):
+                raise TypeError("threat_index should be an int")
+
+            # ignore all defenders
+            excluded_robots = []
+            for t in threats:
+                excluded_robots.extend(map(lambda bhvr: bhvr.robot, t.assigned_handlers))
+
+            # behaviors before this threat are counted as obstacles in their TARGET position (where we've
+            # assigned them to go, not where they are right now)
+            hypothetical_obstacles = []
+            for t in threats[0:threat_index]:
+                hypothetical_obstacles.extend(map(lambda bhvr: bhvr.move_target, t.assigned_handlers))
+
+            threat = threats[threat_index]
             threat.shot_chance, threat.best_shot_window = evaluation.shot.eval_shot(
                 pos=threat.pos,
                 target=constants.Field.OurGoalSegment,
-                windowing_excludes=map(lambda bhvr: bhvr.robot, unused_threat_handlers),
+                windowing_excludes=excluded_robots,
+                hypothetical_robot_locations=hypothetical_obstacles,
                 debug=False)
 
 
@@ -214,12 +257,13 @@ class Defense(composite_behavior.CompositeBehavior):
                             potential_receivers.append( (opp, 1.0) )
 
                 # choose the receiver with the smallest angle from the ball travel line
-                best_receiver_tuple = min(potential_receivers, key=lambda rcrv_tuple: rcrv_tuple[1])
-                if best_receiver_tuple != None:
-                    receiver_threat = Threat(best_receiver_tuple[0])
-                    receiver_threat.ball_acquire_chance = 0.9   # note: this value is arbitrary
-                    receiver_threat.shot_chance = 0.9   # FIXME: calculate this
-                    threats.append(receiver_threat)
+                if len(potential_receivers) > 0:
+                    best_receiver_tuple = min(potential_receivers, key=lambda rcrv_tuple: rcrv_tuple[1])
+                    if best_receiver_tuple != None:
+                        receiver_threat = Threat(best_receiver_tuple[0])
+                        receiver_threat.ball_acquire_chance = 0.9   # note: this value is arbitrary
+                        receiver_threat.shot_chance = 0.9   # FIXME: calculate this
+                        threats.append(receiver_threat)
 
         else:
             # primary threat is the ball or the opponent holding it
@@ -259,7 +303,7 @@ class Defense(composite_behavior.CompositeBehavior):
                     pass_chance = 0.8 * (best.segment.length() / receive_seg.length())**2
                 else:
                     # give it a small chance because the obstacles in the way could move soon and we don't want to consider it a zero threat
-                    pass_chance = 0.2
+                    pass_chance = 0.4
 
 
                 # record the threat
@@ -285,9 +329,9 @@ class Defense(composite_behavior.CompositeBehavior):
             for opp in potential_threats:
                 # record the threat
                 lurker = Threat(opp)
-                lurker.ball_acquire_chance = 0.2 # note: this is a bullshit value
-                recalculate_threat_shot(lurker)
+                lurker.ball_acquire_chance = 0.5 # note: this is a bullshit value
                 threats.append(lurker)
+                recalculate_threat_shot(len(threats) - 1)
 
 
         # only consider the top three threats
@@ -298,19 +342,18 @@ class Defense(composite_behavior.CompositeBehavior):
         # assign all of our defenders to do something
         while len(unused_threat_handlers) > 0:
             # prioritize by threat score, highest first
-            threats.sort(key=lambda threat: threat.score, reverse=True)
-
-            top_threat = threats[0]
+            top_threat = max(threats, key=lambda threat: threat.score)
 
             # assign the next handler to this threat
             handler = unused_threat_handlers[0]
             top_threat.assigned_handlers.append(handler)
             del unused_threat_handlers[0]
 
+            # reassign the block line for each handler of this threat
+            set_block_lines_for_threat_handlers(top_threat)
+
             # recalculate the shot now that we have
-            recalculate_threat_shot(top_threat)
-            # FIXME: add obstacles for where the robots are intended to be placed
-            # raise NotImplementedError("which obstacles count here")
+            recalculate_threat_shot(0)
 
 
         # tell the bots where to move / what to block and draw some debug stuff
@@ -318,7 +361,7 @@ class Defense(composite_behavior.CompositeBehavior):
 
             # recalculate, including all current bots
             # FIXME: do we want this?
-            recalculate_threat_shot(threat)
+            # recalculate_threat_shot(idx)
 
             # the line they'll be shooting down/on
             if threat.best_shot_window != None:
@@ -332,20 +375,26 @@ class Defense(composite_behavior.CompositeBehavior):
                 handler.robot.add_text("Marking: " + str(threat.source), constants.Colors.White, "Defense")
                 # FIXME: choose block_objects collaboratively (so there's no overlap)
                 handler.block_line = shot_line
+                main.system_state().draw_line(handler.block_line, constants.Colors.Blue, "Defense")
+
 
             # draw some debug stuff
             if threat.best_shot_window != None:
                 for i in range(2):
                     edge = robocup.Segment(threat.pos, threat.best_shot_window.segment.get_pt(i))
-                    main.system_state().draw_line(edge, constants.Colors.Blue, "Defense")
-                main.system_state().draw_line(threat.best_shot_window.segment, constants.Colors.Blue, "Defense")
-                main.system_state().draw_text("Shot: " + str(int(threat.shot_chance * 100.0)) + "%", shot_line.center(), constants.Colors.White, "Defense")
+                    main.system_state().draw_line(edge, constants.Colors.Red, "Defense")
+                main.system_state().draw_line(threat.best_shot_window.segment, constants.Colors.Red, "Defense")
+
+                chance, best_window = evaluation.shot.eval_shot(threat.pos, constants.Field.OurGoalSegment)
+
+                main.system_state().draw_text("Shot: " + str(int(threat.shot_chance * 100.0)) + "% / " + str(int(chance*100)) + "%", shot_line.center(), constants.Colors.White, "Defense")
             
             # draw pass lines
             if idx > 0:
                 pass_line = robocup.Segment(main.ball().pos, threat.pos)
-                main.system_state().draw_line(pass_line, constants.Colors.Blue, "Defense")
+                main.system_state().draw_line(pass_line, constants.Colors.Red, "Defense")
                 main.system_state().draw_text("Pass: " + str(int(threat.ball_acquire_chance * 100.0)) + "%", pass_line.center(), constants.Colors.White, "Defense")
+
 
         self.threats = threats
 

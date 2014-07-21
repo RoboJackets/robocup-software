@@ -71,6 +71,18 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
     def block_line(self, value):
         self._block_line = value
 
+        if self.block_line == None:
+            self._move_target = SubmissiveGoalie.RobotSegment.center()
+        else:
+            self._move_target = self.block_line.line_intersection(SubmissiveGoalie.RobotSegment)
+
+
+    # The point we'll be going to in order to block the given block_line
+    @property
+    def move_target(self):
+        return self._move_target
+
+
 
     # note that execute_running() gets called BEFORE any of the execute_SUBSTATE methods gets called
     def execute_running(self):
@@ -126,11 +138,8 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
 
     def execute_block(self):
         move = self.subbehavior_with_name('move')
-
-        if self.block_line == None:
-            move.pos = SubmissiveGoalie.RobotSegment.center()
-        else:
-            move.pos = self.block_line.line_intersection(SubmissiveGoalie.RobotSegment)
+        move.pos = self.move_target
+       
 
 
     def on_exit_block(self):
