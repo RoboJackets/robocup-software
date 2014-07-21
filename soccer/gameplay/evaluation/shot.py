@@ -8,9 +8,10 @@ import math
 # the chance of shot success is a value from 0 to 1
 # @param windowing_excludes - A list of robots to exclude from the window evaluator
 # if debug is True, it draws some stuff on the field - TODO: which stuff?
-def eval_shot(pos, target=constants.Field.TheirGoalSegment, windowing_excludes=[], debug=False):
+def eval_shot(pos, target=constants.Field.TheirGoalSegment, windowing_excludes=[], hypothetical_robot_locations=[], debug=False):
     win_eval = evaluation.window_evaluator.WindowEvaluator()
     win_eval.excluded_robots = windowing_excludes
+    win_eval.hypothetical_robot_locations = hypothetical_robot_locations
     windows, best = win_eval.eval_pt_to_seg(pos, target)
 
     if best != None:
