@@ -8,6 +8,7 @@ using namespace boost::python;
 
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/Rect.hpp>
+#include <Geometry2d/Circle.hpp>
 #include <Geometry2d/CompositeShape.hpp>
 #include <Geometry2d/Polygon.hpp>
 #include <Robot.hpp>
@@ -249,6 +250,7 @@ BOOST_PYTHON_MODULE(robocup)
 
 	class_<Geometry2d::Circle, bases<Geometry2d::Shape> >("Circle", init<Geometry2d::Point, float>())
 		.def("intersects_line", &Circle_intersects_line)
+		.def("nearest_point", &Geometry2d::Circle::nearestPoint)
 	;
 
 	class_<Geometry2d::CompositeShape, bases<Geometry2d::Shape> >("CompositeShape", init<>())
