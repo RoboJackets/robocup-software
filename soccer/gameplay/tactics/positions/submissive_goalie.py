@@ -17,11 +17,12 @@ import evaluation
 class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     MaxX = constants.Field.GoalWidth / 2.0
+    SegmentY = constants.Robot.Radius + 0.05
 
     # The segment we stay on during the 'block' state
     # It's right in front of the goal
-    RobotSegment = robocup.Segment(robocup.Point(-MaxX, constants.Robot.Radius),
-                                    robocup.Point(MaxX, constants.Robot.Radius))
+    RobotSegment = robocup.Segment(robocup.Point(-MaxX, SegmentY),
+                                    robocup.Point(MaxX, SegmentY))
 
     class State(enum.Enum):
         "Actively blocking based on a given threat"
