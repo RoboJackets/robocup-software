@@ -164,7 +164,7 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 	
 	BOOST_FOREACH(const SSL_DetectionFrame* frame, detectionFrames)
 	{
-		uint64_t time = frame->t_capture() * 1000000;
+		uint64_t time = frame->t_capture() * SecsToTimestamp;
 		
 		// Add ball observations
 		ballObservations.reserve(ballObservations.size() + frame->balls().size());
