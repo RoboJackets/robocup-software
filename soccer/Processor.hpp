@@ -13,6 +13,7 @@
 #include <SystemState.hpp>
 #include <modeling/RobotFilter.hpp>
 #include <NewRefereeModule.hpp>
+#include "VisionReceiver.hpp"
 
 class Configuration;
 class RobotStatus;
@@ -213,6 +214,8 @@ class Processor: public QThread
         {
 			return _radio;
 		}
+
+		void changeVisionChannel(int port);
 		
 		////////
 		
@@ -291,4 +294,6 @@ class Processor: public QThread
 		std::shared_ptr<BallTracker> _ballTracker;
 
 		Joystick *_joystick;
+
+		VisionReceiver vision;
 };

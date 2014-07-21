@@ -54,7 +54,7 @@ class OurCornerKick(play.Play):
     def score(cls):
         gs = main.game_state()
 
-        if gs.is_setup_state() and gs.is_our_direct() and  main.ball().pos.y > ( constants.Field.Length - 1.0 ):
+        if gs.is_ready_state() and gs.is_our_direct() and  main.ball().pos.y > ( constants.Field.Length - 1.0 ):
             return 0
         else:
             return float("inf")

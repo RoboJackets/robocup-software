@@ -4,6 +4,7 @@
 #include <boost/optional.hpp>
 #include <QPointF>
 #include <protobuf/Point.pb.h>
+#include <sstream>
 
 #include "util.h"
 
@@ -357,6 +358,13 @@ namespace Geometry2d
 				return x * other.y - y * other.x;
 			}
 			
+			std::string toString()
+			{
+				std::stringstream str;
+				str << "Point(" << x << ", " << y << ")";
+				return str.str();
+			}
+
 			/** the x coordinate */
 			float x;
 			

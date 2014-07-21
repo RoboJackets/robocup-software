@@ -1,6 +1,5 @@
 #include "VisionReceiver.hpp"
 
-#include <Network.hpp>
 #include <multicast.hpp>
 #include <Utils.hpp>
 #include <unistd.h>
@@ -10,10 +9,11 @@
 
 using namespace std;
 
-VisionReceiver::VisionReceiver(bool sim)
+VisionReceiver::VisionReceiver(bool sim, int port)
 {
-	_simulation = sim;
+	simulation = sim;
 	_running = false;
+	this->port = port;
 }
 
 void VisionReceiver::stop()
@@ -35,7 +35,7 @@ void VisionReceiver::run()
 	QUdpSocket socket;
 	
 	// Create vision socket
-	if (_simulation)
+	if (simulation)
 	{
 		// The simulator doesn't multicast its vision.  Instead, it sends to two different ports.
 		// Try to bind to the first one and, if that fails, use the second one.
@@ -48,7 +48,7 @@ void VisionReceiver::run()
 		}
 	} else {
 		// Receive multicast packets from shared vision.
-		if (!socket.bind(SharedVisionPort, QUdpSocket::ShareAddress))
+		if (!socket.bind(port, QUdpSocket::ShareAddress))
 		{
 			throw runtime_error("Can't bind to shared vision port");
 		}
@@ -73,8 +73,8 @@ void VisionReceiver::run()
 		}
 		
 		QHostAddress host;
-		quint16 port = 0;
-		qint64 size = socket.readDatagram(buf, sizeof(buf), &host, &port);
+		quint16 portNumber = 0;
+		qint64 size = socket.readDatagram(buf, sizeof(buf), &host, &portNumber);
 		if (size < 1)
 		{
 			fprintf(stderr, "VisionReceiver: %s\n", (const char *)socket.errorString().toAscii());
@@ -90,7 +90,7 @@ void VisionReceiver::run()
 		packet->receivedTime = timestamp();
 		if (!packet->wrapper.ParseFromArray(buf, size))
 		{
-			fprintf(stderr, "VisionReceiver: got bad packet of %d bytes from %s:%d\n", (int)size, (const char *)host.toString().toAscii(), port);
+			fprintf(stderr, "VisionReceiver: got bad packet of %d bytes from %s:%d\n", (int)size, (const char *)host.toString().toAscii(), portNumber);
 			continue;
 		}
 		
