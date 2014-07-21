@@ -101,6 +101,9 @@ class OurKickoff(play.Play):
 
     def role_requirements(self):
         reqs = super().role_requirements()
+        if 'move' in reqs:
+            for r in role_assignment.iterate_role_requirements_tree_leaves(reqs['move']):
+                r.chipper_preference_weight = role_assignment.PreferChipper
         if 'kicker' in reqs:
             for r in role_assignment.iterate_role_requirements_tree_leaves(reqs['kicker']):
                 r.previous_shell_id = self._kicker_shell_id
