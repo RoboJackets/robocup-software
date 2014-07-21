@@ -203,7 +203,7 @@ void MotionControl::run() {
 		Point accelFactor = acceleration * 60.0f * (*_robot->config->accelerationMultiplier);
 
 
-		cout << "accelFactor: (" << accelFactor.x << ", " << accelFactor.y << ")" << endl;
+		// cout << "accelFactor: (" << accelFactor.x << ", " << accelFactor.y << ")" << endl;
 
 		targetVel += accelFactor;
 
@@ -222,7 +222,7 @@ void MotionControl::run() {
 		_robot->state()->drawLine(targetPos, targetPos + targetVel, Qt::blue, "velocity");
 		_robot->state()->drawText(QString("%1").arg(timeIntoPath), targetPos, Qt::black, "time");
 
-		cout << "targetVel: (" << targetVel.x << ", " << targetVel.y << ")" << endl;
+		// cout << "targetVel: (" << targetVel.x << ", " << targetVel.y << ")" << endl;
 
 		//	convert from world to body coordinates
 		targetVel = targetVel.rotated(-_robot->angle);
