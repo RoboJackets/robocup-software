@@ -167,6 +167,8 @@ class Defense(composite_behavior.CompositeBehavior):
             if len(threat.assigned_handlers) == 0:
                 return
 
+            print("Setting block lines\n------------------")
+
             if threat.best_shot_window != None:
                 center_line = robocup.Line(threat.pos, threat.best_shot_window.segment.center())
             else:
@@ -179,17 +181,20 @@ class Defense(composite_behavior.CompositeBehavior):
                 w = 2.0 * math.atan2(constants.Robot.Radius, dist_from_threat)
                 angle_widths.append(w)
 
+
+            print("Angle widths: " + str(angle_widths))
+
             # start on one edge of our available angle coverage and work counter-clockwise,
             # assigning block lines to the bots as we go
             spacing = 0.04  # spacing between each bot in radians
             total_angle_coverage = sum(angle_widths) + (len(angle_widths) - 1)*spacing
             start_vec = center_line.delta().normalized()
-            start_vec.rotate(robocup.Point(0,0), -total_angle_coverage / 2.0)
+            start_vec.rotate(robocup.Point(0,0), (-total_angle_coverage / 2.0) * constants.RadiansToDegrees)
             for i in range(len(angle_widths)):
                 w = angle_widths[i]
-                start_vec.rotate(robocup.Point(0,0), w/2.0)
+                start_vec.rotate(robocup.Point(0,0), w/2.0 * constants.RadiansToDegrees)
                 handler.block_line = robocup.Line(threat.pos, threat.pos + start_vec * 10)
-                start_vec.rotate(robocup.Point(0,0), w/2.0 + spacing)
+                start_vec.rotate(robocup.Point(0,0), (w/2.0 + spacing) * constants.RadiansToDegrees)
 
 
 
