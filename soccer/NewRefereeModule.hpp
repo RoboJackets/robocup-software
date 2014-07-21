@@ -185,4 +185,7 @@ protected:
 	QMutex _mutex;
 	std::vector<NewRefereePacket *> _packets;
 	SystemState &_state;
+
+	NewRefereeModuleEnums::Command prev_command;
+	NewRefereeModuleEnums::Stage prev_stage;
 };

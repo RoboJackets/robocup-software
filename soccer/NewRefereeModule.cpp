@@ -312,6 +312,14 @@ void NewRefereeModule::updateGameState(bool blueTeam) {
 	case Command::GOAL_BLUE:
 		break;
 	}
+
+	if(command != prev_command)
+		std::cout << "REFEREE: Command = " << stringFromCommand(command) << std::endl;
+	prev_command = command;
+	if(stage != prev_stage)
+		std::cout << "REFEREE: Stage = " << stringFromStage(stage) << std::endl;
+	prev_stage = stage;
+
 	if (_state.gameState.state == GameState::Ready && kicked())
 	{
 		_state.gameState.state = GameState::Playing;
