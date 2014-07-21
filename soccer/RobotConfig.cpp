@@ -30,7 +30,8 @@ RobotConfig::RobotConfig(Configuration* config, QString prefix):
 	dribbler(config, QString("%1/dribbler").arg(prefix)),
 	pivotVelMultiplier(new ConfigDouble(config, QString("%1/pivot/velMultiplier").arg(prefix))),
 	velMultiplier(new ConfigDouble(config, QString("%1/translation/velMultiplier").arg(prefix))),
-	angleVelMultiplier(new ConfigDouble(config, QString("%1/rotation/velMultiplier").arg(prefix)))
+	angleVelMultiplier(new ConfigDouble(config, QString("%1/rotation/velMultiplier").arg(prefix))),
+	accelerationMultiplier(new ConfigDouble(config, QString("%1/translation/accelMultiplier").arg(prefix)))
 {
 }
 
