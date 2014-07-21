@@ -21,6 +21,7 @@
 
 #include <google/protobuf/descriptor.h>
 #include <Network.hpp>
+#include <Joystick.hpp>
 
 using namespace std;
 using namespace boost;
@@ -191,10 +192,24 @@ void MainWindow::updateViews()
 		_ui.manualID->setCurrentIndex(0);
 		_processor->manualID(-1);
 		_ui.manualID->setEnabled(false);
+		_ui.tabWidget->setTabEnabled(2, false);
 	} else if (!_ui.manualID->isEnabled() && _processor->joystickValid())
 	{
 		// Joystick reconnected
 		_ui.manualID->setEnabled(true);
+		_ui.joystickTab->setVisible(true);
+		_ui.tabWidget->setTabEnabled(2, true);
+	}
+	if(manual >= 0) {
+		JoystickControlValues vals = _processor->joystickControlValues();
+		_ui.joystickBodyXLabel->setText(tr("%1").arg(vals.bodyX));
+		_ui.joystickBodyYLabel->setText(tr("%1").arg(vals.bodyY));
+		_ui.joystickBodyWLabel->setText(tr("%1").arg(vals.bodyW));
+		_ui.joystickKickPowerLabel->setText(tr("%1").arg(vals.kickPower));
+		_ui.joystickDibblerPowerLabel->setText(tr("%1").arg(vals.dribblerPower));
+		_ui.joystickKickCheckBox->setChecked(vals.kick);
+		_ui.joystickChipCheckBox->setChecked(vals.chip);
+		_ui.joystickDribblerCheckBox->setChecked(vals.dribble);
 	}
 	
 	// Time since last update

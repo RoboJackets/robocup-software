@@ -158,6 +158,10 @@ bool Processor::joystickValid()
 	return _joystick->valid();
 }
 
+JoystickControlValues Processor::joystickControlValues() {
+	return _joystick->getJoystickControlValues();
+}
+
 void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFrames)
 {
 	vector<BallObservation> ballObservations;
