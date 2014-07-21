@@ -27,6 +27,8 @@ class SubmissiveDefender(single_robot_composite_behavior.SingleRobotCompositeBeh
         # self._opponent_avoid_threshold = 2.0
         self._defend_goal_radius = 0.9
 
+        self.block_line = None
+
         self.add_state(SubmissiveDefender.State.marking, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
@@ -70,8 +72,9 @@ class SubmissiveDefender(single_robot_composite_behavior.SingleRobotCompositeBeh
             intersects, pt1, pt2 = self.block_line.intersects_circle(arc)
 
             if intersects:
+                # print("CIRCLE INTERSECTS: " + str([pt1, pt2]))
                 # choose the pt farther from the goal
-                self._move_target = max([pt1, pt2], key=lambda p: p.dist_to(robocup.Point(0, 0)))
+                self._move_target = max([pt1, pt2], key=lambda p: p.y)
             else:
                 self._move_target = default_pt
         else:
