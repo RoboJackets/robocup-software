@@ -23,7 +23,7 @@ class LineKick(skills._kick._Kick):
     BallProjectTime = 0.4
     DoneStateThresh = 0.11
     WrongSideOfBallThresh = 0.1
-
+    ClosenessThreshold = constants.Robot.Radius + 0.04
 
     class State(enum.Enum):
         setup = 1
@@ -32,6 +32,8 @@ class LineKick(skills._kick._Kick):
 
     def __init__(self):
         super().__init__()
+
+        self._got_close = False
 
         for state in LineKick.State:
             self.add_state(state, behavior.Behavior.State.running)
@@ -48,7 +50,7 @@ class LineKick(skills._kick._Kick):
 
         self.add_transition(LineKick.State.charge,
             behavior.Behavior.State.completed,
-            lambda: self.robot is not None and self.robot.just_kicked(),
+            lambda: self.robot is not None and self._got_close and self.robot.just_kicked(),
             "robot kicked")
 
         self.add_transition(LineKick.State.charge,
@@ -109,11 +111,15 @@ class LineKick(skills._kick._Kick):
         self.robot.set_world_vel(robot2ball.normalized() * speed)
         
         self.robot.face(self.aim_target_point)
+        
+        if main.ball().pos.dist_to(self.robot.pos) < LineKick.ClosenessThreshold:
+            self._got_close = True
 
-        if self.use_chipper:
-            self.robot.chip(self.chip_power)
-        else:
-            self.robot.kick(self.kick_power)
+        if self._got_close:
+            if self.use_chipper:
+                self.robot.chip(self.chip_power)
+            else:
+                self.robot.kick(self.kick_power)
 
 
     def role_requirements(self):
