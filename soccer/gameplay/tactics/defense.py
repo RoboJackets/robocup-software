@@ -177,15 +177,15 @@ class Defense(composite_behavior.CompositeBehavior):
 
 
 
-            print("Setting block lines...")
-            print("    handlers: " + str(threat.assigned_handlers))
+            # print("Setting block lines...")
+            # print("    handlers: " + str(threat.assigned_handlers))
 
             if threat.best_shot_window != None:
                 center_line = robocup.Line(threat.pos, threat.best_shot_window.segment.center())
             else:
                 center_line = robocup.Line(threat.pos, constants.Field.OurGoalSegment.center())
 
-            print('    center_line: ' + str(center_line.get_pt(0)) + ", " + str(center_line.get_pt(1)))
+            # print('    center_line: ' + str(center_line.get_pt(0)) + ", " + str(center_line.get_pt(1)))
 
 
             # find the angular width that each defender can block.  We then space these out accordingly
@@ -195,7 +195,7 @@ class Defense(composite_behavior.CompositeBehavior):
                 w = 2.0 * math.atan2(constants.Robot.Radius, dist_from_threat)
                 angle_widths.append(w)
 
-            print("    angle widths: " + str(angle_widths))
+            # print("    angle widths: " + str(angle_widths))
 
             # print("Angle widths: " + str(angle_widths))
 
@@ -210,7 +210,7 @@ class Defense(composite_behavior.CompositeBehavior):
                 w = angle_widths[i]
                 start_vec.rotate(robocup.Point(0,0), w/2.0 * constants.RadiansToDegrees)
                 handler.block_line = robocup.Line(threat.pos, threat.pos + start_vec * 10)
-                print("    blockline[" + str(i) + "]=" + str(handler.block_line.get_pt(0)) + ", " + str(handler.block_line.get_pt(1)))
+                # print("    blockline[" + str(i) + "]=" + str(handler.block_line.get_pt(0)) + ", " + str(handler.block_line.get_pt(1)))
                 start_vec.rotate(robocup.Point(0,0), (w/2.0 + spacing) * constants.RadiansToDegrees)
 
 
