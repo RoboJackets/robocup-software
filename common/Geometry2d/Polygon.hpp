@@ -55,6 +55,15 @@ namespace Geometry2d
         void addVertex(const Point &pt) {
             vertices.push_back(pt);
         }
+
+        std::string toString() {
+            std::stringstream str;
+            str << "Polygon<";
+            for(int i = 0; i < vertices.size(); i++)
+                str << vertices[i] << ", ";
+            str << ">";
+            return str.str();
+        }
     
     protected:
         /// Used by constructors
