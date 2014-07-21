@@ -150,6 +150,9 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         kick.chip_power = constants.Robot.Chipper.MaxPower
         kick.use_chipper = True
 
+        kick.target = robocup.Segment(robocup.Point(-constants.Field.Width/2, constants.Field.Length),
+            robocup.Point(constants.Field.Width/2, constants.Field.Length))
+
         # FIXME: if the goalie has a fault, resort to bump
 
         self.add_subbehavior(kick, 'kick-clear', required=True)
@@ -159,11 +162,18 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.remove_subbehavior('kick-clear')
 
 
+    def on_enter_intercept(self):
+        i = skills.intercept.Intercept()
+        self.add_subbehavior(i, 'intercept', required=True)
+
     def execute_intercept(self):
         ball_path = robocup.Segment(main.ball().pos,
                             main.ball().pos + main.ball().vel.normalized()*10.0)
         dest = ball_path.nearest_point(self.robot.pos)
         self.robot.move_to(dest)
+
+    def on_exit_intercept(self):
+        self.remove_subbehavior('intercept')
 
     def execute_block(self):
         opposing_kicker = evaluation.ball.opponent_with_ball()

@@ -50,5 +50,5 @@ class Move(single_robot_behavior.SingleRobotBehavior):
 
     def role_requirements(self):
         reqs = super().role_requirements()
-        reqs.pos = self.pos
+        reqs.destination_shape = self.pos
         return reqs
