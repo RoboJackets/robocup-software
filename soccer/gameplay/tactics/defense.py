@@ -12,6 +12,7 @@ import tactics.positions.submissive_defender
 
 
 # TODO: clear free balls
+# TODO: handle the case where the ball is invalid
 
 
 # The Defense tactic handles goalie and defender placement to defend the goal
@@ -20,7 +21,6 @@ import tactics.positions.submissive_defender
 # The old defense strategy had a goalie and two defenders that didn't coordinate with eachother
 # and tended to overlap and not get an optimal positioning - this tactic handles the coordination
 class Defense(composite_behavior.CompositeBehavior):
-
 
     # defender_priorities should have a length of two and contains the priorities for the two defender
     def __init__(self, defender_priorities=[20, 19]):
@@ -164,6 +164,9 @@ class Defense(composite_behavior.CompositeBehavior):
 
 
         def recalculate_threat_shot(threat):
+            excluded_behaviors = filter(lambda bhvr: bhvr not in threat.assigned_handlers, [goalie, defender1, defender2])
+
+
             threat.shot_chance, threat.best_shot_window = evaluation.shot.eval_shot(
                 pos=threat.pos,
                 target=constants.Field.OurGoalSegment,
@@ -317,14 +320,21 @@ class Defense(composite_behavior.CompositeBehavior):
             # FIXME: do we want this?
             recalculate_threat_shot(threat)
 
+            # the line they'll be shooting down/on
+            if threat.best_shot_window != None:
+                shot_line = robocup.Segment(threat.pos, threat.best_shot_window.segment.center())
+            else:
+                shot_line = robocup.Segment(threat.pos, robocup.Point(0, 0))
+
 
             # debug output
             for handler in threat.assigned_handlers:
-                handler.robot.add_text("Blocking threat: " + str(threat.source), constants.Colors.White, "Defense")
+                handler.robot.add_text("Marking: " + str(threat.source), constants.Colors.White, "Defense")
+                # FIXME: choose block_objects collaboratively (so there's no overlap)
+                handler.block_line = shot_line
 
             # draw some debug stuff
             if threat.best_shot_window != None:
-                shot_line = robocup.Segment(threat.pos, threat.best_shot_window.segment.center())
                 for i in range(2):
                     edge = robocup.Segment(threat.pos, threat.best_shot_window.segment.get_pt(i))
                     main.system_state().draw_line(edge, constants.Colors.Blue, "Defense")
@@ -337,4 +347,12 @@ class Defense(composite_behavior.CompositeBehavior):
                 main.system_state().draw_line(pass_line, constants.Colors.Blue, "Defense")
                 main.system_state().draw_text("Pass: " + str(int(threat.ball_acquire_chance * 100.0)) + "%", pass_line.center(), constants.Colors.White, "Defense")
 
-            # FIXME: assign positions, etc
+        self.threats = threats
+
+
+
+    # def __str__(self):
+    #     desc = super().__str__()
+    #     for t in threats:
+    #         desc += 
+
