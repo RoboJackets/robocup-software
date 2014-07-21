@@ -37,13 +37,7 @@ class Basic122(play.Play):
             behavior.Behavior.State.start,
             lambda: True,
             "immediately")
-        self.add_subbehavior(striker, 'striker', required=False, priority=5)
-
-        left = tactics.positions.defender.Defender(tactics.positions.defender.Defender.Side.left)
-        self.add_subbehavior(left, 'left', required=False, priority=1)
-
-        right = tactics.positions.defender.Defender(tactics.positions.defender.Defender.Side.right)
-        self.add_subbehavior(right, 'right', required=False, priority=3)
+        self.add_subbehavior(striker, 'striker', required=False, priority=1)
 
         support1 = skills.mark.Mark()
         support1.mark_line_thresh = 1.0
@@ -51,14 +45,17 @@ class Basic122(play.Play):
 
         support2 = skills.mark.Mark()
         support2.mark_line_thresh = 1.0
-        self.add_subbehavior(support2, 'support2', required=False, priority=4)
+        self.add_subbehavior(support2, 'support2', required=False, priority=3)
 
-
+        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False,)
 
     @classmethod
     def score(cls):
         return 0 if main.game_state().is_playing() else float("inf")
 
+    @classmethod
+    def handles_goalie(cls):
+        return True
 
     def execute_running(self):
         striker = self.subbehavior_with_name('striker')
