@@ -25,6 +25,10 @@
   <dribbler>
    <multiplier value="1"/>
   </dribbler>
+  <chipper>
+   <calibSlope value="2.20227"/>
+   <calibOffset value="70.0727"/>
+  </chipper>
  </Rev2008>
  <Rev2011>
   <translation>
@@ -52,6 +56,10 @@
   <dribbler>
    <multiplier value="0.75"/>
   </dribbler>
+  <chipper>
+   <calibSlope value="2.20227"/>
+   <calibOffset value="70.0727"/>
+  </chipper>
  </Rev2011>
  <Robot_Statuses>
   <Robot_0>
@@ -164,7 +172,7 @@
   <Max_Acceleration value="1.2"/>
   <Max_Velocity value="3"/>
   <PathJitterCompensationFactor value="2"/>
-  <PathChangeBoost value="0.5"/>
+  <PathChangeBoost value="0.1"/>
  </MotionControl>
  <PathPlanner>
   <Max_Acceleration value="1"/>

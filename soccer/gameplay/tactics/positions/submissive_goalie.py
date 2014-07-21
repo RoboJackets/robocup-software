@@ -47,12 +47,12 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
         non_block_states = [s for s in SubmissiveGoalie.State if s != SubmissiveGoalie.State.block]
 
 
-        for state in [s2 for s2 in non_block_states if s2 != SubmissiveGoalie.State.intercept]:
-            self.add_transition(state,
-                SubmissiveGoalie.State.intercept,
-                lambda: evaluation.ball.is_moving_towards_our_goal() and
-                        not self.robot_is_facing_our_goal(evaluation.ball.opponent_with_ball()),
-                "ball coming towards our goal")
+        # for state in [s2 for s2 in non_block_states if s2 != SubmissiveGoalie.State.intercept]:
+        #     self.add_transition(state,
+        #         SubmissiveGoalie.State.intercept,
+        #         lambda: evaluation.ball.is_moving_towards_our_goal() and
+        #                 not self.robot_is_facing_our_goal(evaluation.ball.opponent_with_ball()),
+        #         "ball coming towards our goal")
 
         for state in [s2 for s2 in SubmissiveGoalie.State if s2 != SubmissiveGoalie.State.clear]:
             self.add_transition(state,
@@ -79,6 +79,8 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
             self._move_target = SubmissiveGoalie.RobotSegment.center()
         else:
             self._move_target = self.block_line.line_intersection(SubmissiveGoalie.RobotSegment)
+
+        self._move_target.x = min(max(self._move_target.x, -SubmissiveGoalie.MaxX), SubmissiveGoalie.MaxX)
 
 
     # The point we'll be going to in order to block the given block_line

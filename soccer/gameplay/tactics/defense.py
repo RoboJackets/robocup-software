@@ -192,7 +192,7 @@ class Defense(composite_behavior.CompositeBehavior):
             angle_widths = []
             for handler in threat.assigned_handlers:
                 dist_from_threat = handler.robot.pos.dist_to(threat.pos)
-                w = 2.0 * math.atan2(constants.Robot.Radius, dist_from_threat)
+                w = min(2.0 * math.atan2(constants.Robot.Radius, dist_from_threat), 0.15)
                 angle_widths.append(w)
 
             # print("    angle widths: " + str(angle_widths))
@@ -378,7 +378,7 @@ class Defense(composite_behavior.CompositeBehavior):
             # only deal with top two threats
             threats_to_block = threats[0:2]
 
-            print('threats to block: ' + str(list(map(lambda t: t.source, threats_to_block))))
+            # print('threats to block: ' + str(list(map(lambda t: t.source, threats_to_block))))
             threat_idx = 0
             while len(unused_threat_handlers) > 0:
                 threats_to_block[threat_idx].assigned_handlers.append(unused_threat_handlers[0])
