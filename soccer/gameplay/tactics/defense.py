@@ -175,15 +175,17 @@ class Defense(composite_behavior.CompositeBehavior):
                         del threat.assigned_handlers[idx]
                         threat.assigned_handlers.insert(1, goalie)
 
-            # print("handlers: " + str(threat.assigned_handlers))
 
 
-            # print("Setting block lines...")
+            print("Setting block lines...")
+            print("    handlers: " + str(threat.assigned_handlers))
 
             if threat.best_shot_window != None:
                 center_line = robocup.Line(threat.pos, threat.best_shot_window.segment.center())
             else:
                 center_line = robocup.Line(threat.pos, constants.Field.OurGoalSegment.center())
+
+            print('    center_line: ' + str(center_line.get_pt(0)) + ", " + str(center_line.get_pt(1)))
 
 
             # find the angular width that each defender can block.  We then space these out accordingly
@@ -193,7 +195,7 @@ class Defense(composite_behavior.CompositeBehavior):
                 w = 2.0 * math.atan2(constants.Robot.Radius, dist_from_threat)
                 angle_widths.append(w)
 
-            # print("angle widths: " + str(angle_widths))
+            print("    angle widths: " + str(angle_widths))
 
             # print("Angle widths: " + str(angle_widths))
 
@@ -208,7 +210,7 @@ class Defense(composite_behavior.CompositeBehavior):
                 w = angle_widths[i]
                 start_vec.rotate(robocup.Point(0,0), w/2.0 * constants.RadiansToDegrees)
                 handler.block_line = robocup.Line(threat.pos, threat.pos + start_vec * 10)
-                # print("blockline[" + str(i) + "]=" + str(handler.block_line.get_pt(0)) + ", " + str(handler.block_line.get_pt(1)))
+                print("    blockline[" + str(i) + "]=" + str(handler.block_line.get_pt(0)) + ", " + str(handler.block_line.get_pt(1)))
                 start_vec.rotate(robocup.Point(0,0), (w/2.0 + spacing) * constants.RadiansToDegrees)
 
 
@@ -367,21 +369,45 @@ class Defense(composite_behavior.CompositeBehavior):
         # print("Unused handlers: " + str(unused_threat_handlers))
         # print("---------------------")
 
-        # assign all of our defenders to do something
-        while len(unused_threat_handlers) > 0:
-            # prioritize by threat score, highest first
-            top_threat = threats[0] # FIXME: max(threats, key=lambda threat: threat.score)
 
-            # assign the next handler to this threat
-            handler = unused_threat_handlers[0]
-            top_threat.assigned_handlers.append(handler)
-            del unused_threat_handlers[0]
 
-            # reassign the block line for each handler of this threat
-            set_block_lines_for_threat_handlers(top_threat)
 
-            # recalculate the shot now that we have
-            recalculate_threat_shot(0)
+        smart = False
+        if not smart:
+
+            # only deal with top two threats
+            threats_to_block = threats[0:2]
+
+            print('threats to block: ' + str(list(map(lambda t: t.source, threats_to_block))))
+            threat_idx = 0
+            while len(unused_threat_handlers) > 0:
+                threats_to_block[threat_idx].assigned_handlers.append(unused_threat_handlers[0])
+                del unused_threat_handlers[0]
+
+                threat_idx = (threat_idx + 1) % len(threats_to_block)
+                
+
+            for t_idx, t in enumerate(threats_to_block):
+                recalculate_threat_shot(t_idx)
+                set_block_lines_for_threat_handlers(t)
+
+
+        else:
+            # assign all of our defenders to do something
+            while len(unused_threat_handlers) > 0:
+                # prioritize by threat score, highest first
+                top_threat = max(threats, key=lambda threat: threat.score)
+
+                # assign the next handler to this threat
+                handler = unused_threat_handlers[0]
+                top_threat.assigned_handlers.append(handler)
+                del unused_threat_handlers[0]
+
+                # reassign the block line for each handler of this threat
+                set_block_lines_for_threat_handlers(top_threat)
+
+                # recalculate the shot now that we have
+                recalculate_threat_shot(0)
 
         # print("**ASSIGNMENT DONE**")
         # for idx, threat in enumerate(threats):

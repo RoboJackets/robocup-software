@@ -62,6 +62,10 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
                 "ball in our goalie box, but not headed toward goal")
 
 
+        self.block_line = None
+
+
+
     # the line we expect a threat to shoot from
     # sits on the intersection of this line and the goalie segment
     @property
