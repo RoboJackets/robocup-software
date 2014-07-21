@@ -49,7 +49,7 @@ class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior, co
         # the Aim skill to do its stuff. It'd be pretty weird if the robot executing Aim
         # was different from the one that just ran Capture. Here we just restart the behavior
         # If it gets assigned a new robot.
-        if oldBot != None and oldBot.shell_id() != self.robot.shell_id():
+        if oldBot != None and self.robot != None and oldBot.shell_id() != self.robot.shell_id():
             self.restart()
 
 
