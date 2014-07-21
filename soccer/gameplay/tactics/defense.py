@@ -11,6 +11,14 @@ import tactics.positions.submissive_goalie
 import tactics.positions.submissive_defender
 
 
+# TODO: clear free balls
+
+
+# The Defense tactic handles goalie and defender placement to defend the goal
+# It does lots of window and shot evaluation to figure out which 'threats' are the
+# most important to block, then assigns blocking positions to the bots
+# The old defense strategy had a goalie and two defenders that didn't coordinate with eachother
+# and tended to overlap and not get an optimal positioning - this tactic handles the coordination
 class Defense(composite_behavior.CompositeBehavior):
 
 
