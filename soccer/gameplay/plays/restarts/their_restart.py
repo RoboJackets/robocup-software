@@ -16,11 +16,7 @@ class TheirRestart(play.Play):
             'immediately')
 
 
-        defender1 = tactics.positions.defender.Defender(tactics.positions.defender.Defender.Side.left)
-        self.add_subbehavior(defender1, 'defender1', required=False, priority=5)
-
-        defender2 = tactics.positions.defender.Defender(tactics.positions.defender.Defender.Side.right)
-        self.add_subbehavior(defender2, 'defender2', required=False, priority=4)
+        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False,)
 
         self.marks = []
         for i in range(3):
@@ -37,6 +33,10 @@ class TheirRestart(play.Play):
 
     @classmethod
     def is_restart(cls):
+        return True
+
+    @classmethod
+    def handles_goalie(cls):
         return True
 
 

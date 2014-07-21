@@ -17,11 +17,7 @@ class TheirKickoff(play.Play):
             'immediately')
 
 
-        defender1 = tactics.positions.defender.Defender(tactics.positions.defender.Defender.Side.left)
-        self.add_subbehavior(defender1, 'defender1', priority=102)
-
-        defender2 = tactics.positions.defender.Defender(tactics.positions.defender.Defender.Side.right)
-        self.add_subbehavior(defender2, 'defender2', priority=101)
+        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
 
         circle_up = tactics.circle_near_ball.CircleNearBall()
         self.add_subbehavior(circle_up, 'circle_up')
@@ -34,4 +30,8 @@ class TheirKickoff(play.Play):
 
     @classmethod
     def is_restart(cls):
+        return True
+
+    @classmethod
+    def handles_goalie(cls):
         return True
