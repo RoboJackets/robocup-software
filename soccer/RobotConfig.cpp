@@ -23,11 +23,18 @@ RobotConfig::Dribbler::Dribbler(Configuration *config, QString prefix):
 {
 }
 
+RobotConfig::Chipper::Chipper(Configuration *config, QString prefix):
+	calibrationSlope(new ConfigDouble(config, QString("%1/calibSlope").arg(prefix), 2.20227272727)),
+	calibrationOffset(new ConfigDouble(config, QString("%1/calibOffset").arg(prefix), 70.0727272727))
+{
+}
+
 RobotConfig::RobotConfig(Configuration* config, QString prefix):
 	translation(config, QString("%1/translation").arg(prefix)),
 	rotation(config, QString("%1/rotation").arg(prefix)),
 	kicker(config, QString("%1/kicker").arg(prefix)),
 	dribbler(config, QString("%1/dribbler").arg(prefix)),
+	chipper(config, QString("%1/chipper").arg(prefix)),
 	pivotVelMultiplier(new ConfigDouble(config, QString("%1/pivot/velMultiplier").arg(prefix))),
 	velMultiplier(new ConfigDouble(config, QString("%1/translation/velMultiplier").arg(prefix))),
 	angleVelMultiplier(new ConfigDouble(config, QString("%1/rotation/velMultiplier").arg(prefix))),
