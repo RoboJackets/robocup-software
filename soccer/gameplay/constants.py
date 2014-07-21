@@ -53,7 +53,7 @@ class Field:
     PenaltyDist = 0.750
     PenaltyDiam = 0.010
 
-    # flat area for defence markings 
+    # flat area for defense markings 
     GoalFlat = 0.35
 
     # Radius of the goal arcs 
