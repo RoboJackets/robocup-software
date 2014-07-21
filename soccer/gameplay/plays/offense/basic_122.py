@@ -27,6 +27,10 @@ class Basic122(play.Play):
         super().__init__(continuous=False)  # FIXME: continuous?
 
         striker = skills.pivot_kick.PivotKick()
+        striker.aim_params['error_threshold'] = 0.15
+        striker.aim_params['max_steady_ang_vel'] = 7
+        striker.aim_params['min_steady_duration'] = 0.1
+        striker.aim_params['desperate_timeout'] = 2.5
 
         self.add_transition(behavior.Behavior.State.start,
             behavior.Behavior.State.running,
