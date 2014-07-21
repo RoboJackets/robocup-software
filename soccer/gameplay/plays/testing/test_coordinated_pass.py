@@ -9,7 +9,7 @@ import main
 
 class TestCoordinatedPass(play.Play):
 
-    ReceiveXCoord = constants.Field.Width * 1.0/3.0
+    ReceiveXCoord = 1
     ReceiveYCoord = constants.Field.Length / 2.0 * 1.0/3.0
 
     def __init__(self):

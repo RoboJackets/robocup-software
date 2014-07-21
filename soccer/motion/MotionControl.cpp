@@ -199,17 +199,19 @@ void MotionControl::run() {
 		//	acceleration factor
 		Point nextTargetVel, _;
 		_robot->path()->evaluate(timeIntoPath + 1.0/60.0, _, nextTargetVel);
-		Point accelFactor = (nextTargetVel - targetVel) * (*_robot->config->accelerationMultiplier);
+		Point acceleration = (nextTargetVel - targetVel) / 60.0f;
+		Point accelFactor = acceleration * 60.0f * (*_robot->config->accelerationMultiplier);
 
-		//	path change boost
-		if (_robot->consecutivePathChangeCount() > 0) {
-			float boost = *_path_change_boost;
-			targetVel += targetVel.normalized() * boost;
-		}
 
 		// cout << "accelFactor: (" << accelFactor.x << ", " << accelFactor.y << ")" << endl;
 
 		targetVel += accelFactor;
+
+		//	path change boost
+		if (_robot->consecutivePathChangeCount() > 0) {
+			float boost = *_path_change_boost;
+			targetVel += acceleration * boost;
+		}
 
 		//	PID on position
 		targetVel.x += _positionXController.run(posError.x);
