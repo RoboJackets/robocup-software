@@ -1,6 +1,6 @@
 import play
 import behavior
-import tactics.defence
+import tactics.defense
 import robocup
 import main
 
