@@ -15,7 +15,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     MaxX = constants.Field.GoalWidth / 2.0
     RobotSegment = robocup.Segment(robocup.Point(-MaxX, constants.Robot.Radius),
                                     robocup.Point(MaxX, constants.Robot.Radius))
-    OpponentFacingThreshold = math.pi / 8.
+    OpponentFacingThreshold = math.pi / 8.0
 
     class State(enum.Enum):
         """Normal gameplay, stay towards the side of the goal that the ball is on."""
@@ -179,7 +179,6 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         opposing_kicker = evaluation.ball.opponent_with_ball()
         if opposing_kicker is not None:
             winEval = evaluation.window_evaluator.WindowEvaluator()
-            winEval.debug = True
             winEval.excluded_robots = [self.robot]
             best = winEval.eval_pt_to_our_goal(main.ball().pos)[1]
             if best is not None:

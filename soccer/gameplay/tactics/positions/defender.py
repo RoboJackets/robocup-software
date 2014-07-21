@@ -54,7 +54,8 @@ class Defender(single_robot_behavior.SingleRobotBehavior):
 		#main.system_state().draw_line(robocup.Line(self._area.get_pt(0), self._area.get_pt(1)), (127,0,255), "Defender")
 		self.block_robot = self.find_robot_to_block()
 		if self.block_robot is not None:
-			self.robot.add_text("Blocking Robot " + str(self.block_robot.shell_id()), (255,255,255), "RobotText")
+			# self.robot.add_text("Blocking Robot " + str(self.block_robot.shell_id()), (255,255,255), "RobotText")
+			pass
 		if self.robot.pos.near_point(robocup.Point(0,0), self._opponent_avoid_threshold):
 			self.robot.set_avoid_opponents(False)
 		else:
