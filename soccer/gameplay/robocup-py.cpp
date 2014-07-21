@@ -153,19 +153,30 @@ boost::python::object Line_line_intersection(Geometry2d::Line *self, Geometry2d:
 
 boost::python::tuple Line_intersects_circle(Geometry2d::Line *self, Geometry2d::Circle *circle) {
 	Geometry2d::Point a, b;
-	bool intersects = self->intersects(*circle, &a, &b);
 	boost::python::list lst;
-	lst.append(intersects);
-	lst.append(a);
-	lst.append(b);
+
+	if (circle == nullptr) {
+		lst.append(false);
+	} else {
+		bool intersects = self->intersects(*circle, &a, &b);
+		lst.append(intersects);
+		lst.append(a);
+		lst.append(b);
+	}
 	return boost::python::tuple(lst);
 }
 
 void State_draw_circle(SystemState *self, const Geometry2d::Point *center, float radius, boost::python::tuple rgb, const std::string &layer) {
+	if (!center) {
+		return;
+	}
 	self->drawCircle(*center, radius, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
 void State_draw_line(SystemState *self, const Geometry2d::Line *line, boost::python::tuple rgb, const std::string &layer) {
+	if (!line) {
+		return;
+	}
 	self->drawLine(*line, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
