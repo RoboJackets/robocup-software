@@ -1,6 +1,7 @@
 #ifndef TEAMINFO_HPP
 #define TEAMINFO_HPP
 
+#include <iostream>
 #include <string>
 #include <vector>
 #include <protobuf/referee.pb.h>
@@ -46,7 +47,7 @@ public:
 		red_cards = packet.red_cards();
 		yellow_cards = packet.yellow_cards();
 		yellow_card_times.resize(yellow_cards);
-		for(int i = 0; i < yellow_cards; i++)
+		for(int i = 0; i < packet.yellow_card_times_size(); i++)
 			yellow_card_times[i] = packet.yellow_card_times(i);
 		timeouts_left = packet.timeouts();
 		timeout_time = packet.timeout_time();
