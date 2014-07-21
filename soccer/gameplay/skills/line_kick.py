@@ -76,10 +76,10 @@ class LineKick(skills._kick._Kick):
     def execute_setup(self):
         move_goal = main.ball().pos - self._target_line.delta().normalized() * (LineKick.DriveAroundDist + constants.Robot.Radius)
 
-        left_field_edge = robocup.Segment(robocup.Point(-constants.Field.Width / 2.0, 0),
-            robocup.Point(-constants.Field.Width / 2.0, constants.Field.Length))
-        right_field_edge = robocup.Segment(robocup.Point(constants.Field.Width / 2.0, 0),
-            robocup.Point(constants.Field.Width / 2.0, constants.Field.Length))
+        left_field_edge = robocup.Segment(robocup.Point(-constants.Field.Width / 2.0 - constants.Robot.Radius, 0),
+            robocup.Point(-constants.Field.Width / 2.0 - constants.Robot.Radius, constants.Field.Length))
+        right_field_edge = robocup.Segment(robocup.Point(constants.Field.Width / 2.0 + constants.Robot.Radius, 0),
+            robocup.Point(constants.Field.Width / 2.0 + constants.Robot.Radius, constants.Field.Length))
 
         # handle the case when the ball is near the field's edge
         field_edge_thresh = 0.3
@@ -120,7 +120,7 @@ class LineKick(skills._kick._Kick):
         reqs = super().role_requirements()
         # try to be near the ball
         if main.ball().valid:
-            reqs.pos = main.ball().pos
+            reqs.destination_shape = main.ball().pos
         reqs.require_kicking = True
         if self.use_chipper:
             reqs.chipper_preference_weight = role_assignment.PreferChipper

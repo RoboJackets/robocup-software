@@ -21,10 +21,10 @@ class Stopped(play.Play):
 
 
     def on_enter_running(self):
-        left = tactics.positions.defender.Defender()
+        left = tactics.positions.defender.Defender(side=tactics.positions.defender.Defender.Side.left)
         self.add_subbehavior(left, 'left_defender', required=False, priority=50)
 
-        right = tactics.positions.defender.Defender()
+        right = tactics.positions.defender.Defender(side=tactics.positions.defender.Defender.Side.right)
         self.add_subbehavior(right, 'right_defender', required=False, priority=49)
 
         idle = tactics.circle_near_ball.CircleNearBall()

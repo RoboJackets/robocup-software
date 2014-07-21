@@ -28,7 +28,7 @@ GravitationalCoefficient = 9.81 # in m/s^2
 
 # The ball's motion follows the equation X(t) = X_i + V_i*t - 0.5*(c*g)*t^2
 def predict(X_i, V_i, t):
-    return X_i + (V_i * t) - (0.5 * FrictionCoefficient * GravitationalCoefficient * t**2)
+    return X_i + (V_i * t) - (V_i.normalized() * 0.5 * FrictionCoefficient * GravitationalCoefficient * t**2)
 
 
 def rev_predict(V_i, dist):

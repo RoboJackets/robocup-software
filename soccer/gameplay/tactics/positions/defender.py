@@ -153,6 +153,9 @@ class Defender(single_robot_behavior.SingleRobotBehavior):
 			else:
 				self.robot.kick(255)
 
+	"""
+	TODO comment
+	"""
 	def execute_area_marking(self):
 		if self.robot.pos.near_point(robocup.Point(0,0), self._opponent_avoid_threshold):
 			self.robot.set_avoid_opponents(False)

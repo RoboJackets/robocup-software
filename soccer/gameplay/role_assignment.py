@@ -3,10 +3,12 @@ import evaluation.double_touch
 import robocup
 
 
+# TODO arbitrary cost lambda property
+
 class RoleRequirements:
 
     def __init__(self):
-        self.pos = None
+        self.destination_shape = None
         self.has_ball = False
         self.chipper_preference_weight = 0
         self.required_shell_id = None
@@ -17,13 +19,13 @@ class RoleRequirements:
 
 
     @property
-    def pos(self):
-        return self._pos
-    @pos.setter
-    def pos(self, value):
-        if value != None and not isinstance(value, robocup.Point):
-            raise TypeError("Unexpected type for pos: " + str(value))
-        self._pos = value
+    def destination_shape(self):
+        return self._destination_shape
+    @destination_shape.setter
+    def destination_shape(self, value):
+        if value != None and not ( isinstance(value, robocup.Point) or isinstance(value, robocup.Segment) ):
+            raise TypeError("Unexpected type for destination_shape: " + str(value))
+        self._destination_shape = value
 
 
     @property
@@ -138,7 +140,7 @@ PreferChipper = 5
 # returns a tree with the same structure as @role_reqs, but the leaf nodes have (RoleRequirements, OurRobot) tuples instead of just RoleRequirements objects
 def assign_roles(robots, role_reqs):
 
-    # check for empty requrest set
+    # check for empty request set
     if len(role_reqs) == 0:
         return {}
 
@@ -167,13 +169,14 @@ def assign_roles(robots, role_reqs):
     optional_roles = sorted([r for r in role_reqs_list if not r.required], reverse=True, key=lambda r: r.priority)
 
     # make sure there's enough robots
+    unassigned_role_requirements = []   # roles that won't be assigned because there aren't enough bots
     if len(required_roles) > len(robots):
         raise ImpossibleAssignmentError("More required roles than available robots")
     elif len(role_reqs_list) > len(robots):
         # remove the lowest priority optional roles so we have as many bots as roles we're trying to fill
         overflow = len(role_reqs_list) - len(robots)
         role_reqs_list = required_roles + optional_roles[0:-overflow]
-
+        unassigned_role_requirements = optional_roles[len(optional_roles) - overflow:]
 
     if len(robots) == 0:
         return {}
@@ -193,8 +196,8 @@ def assign_roles(robots, role_reqs):
             elif req.require_kicking and (robot.shell_id() == evaluation.double_touch.tracker().forbidden_ball_toucher() or not robot.kicker_works() or not robot.ball_sense_works()):
                 cost = MaxWeight
             else:
-                if req.pos != None:
-                    cost += PositionCostMultiplier * (req.pos - robot.pos).mag()
+                if req.destination_shape != None:
+                    cost += PositionCostMultiplier * req.destination_shape.dist_to(robot.pos)
                 if req.previous_shell_id != None and req.previous_shell_id != robot.shell_id:
                     cost += RobotChangeCost
                 if not robot.has_chipper():
@@ -211,6 +214,17 @@ def assign_roles(robots, role_reqs):
 
     results = {}
 
+    def insert_into_results(results, tree_mapping, role_reqs, robot):
+        # get the keypath of this entry so we can insert back into the tree
+        tree_path = tree_mapping[role_reqs]
+        parent = results
+        for key in tree_path[:-1]:
+            if key not in parent:
+                parent[key] = {}
+            parent = parent[key]
+        parent[tree_path[-1]] = (role_reqs, robot)
+
+
     # build assignments mapping
     assignments = {}
     total = 0
@@ -220,15 +234,13 @@ def assign_roles(robots, role_reqs):
         bot = robots[row]
         reqs = role_reqs_list[col]
 
-        # get the keypath of this entry so we can insert back into the tree
-        tree_path = tree_mapping[reqs]
+        # add entry to results tree
+        insert_into_results(results, tree_mapping, reqs, bot)
 
-        parent = results
-        for key in tree_path[:-1]:
-            if key not in parent:
-                parent[key] = {}
-            parent = parent[key]
-        parent[tree_path[-1]] = (reqs, bot)
+
+    # insert None for each role that we didn't assign
+    for reqs in unassigned_role_requirements:
+        insert_into_results(results, tree_mapping, reqs, None)
 
 
     if total > MaxWeight:

@@ -54,7 +54,7 @@ class OurGoalKick(play.Play):
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 0 if (gs.is_setup_state() and gs.is_our_direct() and main.ball().pos.y < 1.0) else float("inf")
+        return 0 if (gs.is_ready_state() and gs.is_our_direct() and main.ball().pos.y < 1.0) else float("inf")
 
     @classmethod
     def is_restart(cls):

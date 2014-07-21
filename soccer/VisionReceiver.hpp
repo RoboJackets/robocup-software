@@ -8,6 +8,7 @@
 #include <vector>
 
 #include <stdint.h>
+#include <Network.hpp>
 
 class QUdpSocket;
 
@@ -26,7 +27,7 @@ public:
 class VisionReceiver: public QThread
 {
 public:
-	VisionReceiver(bool sim);
+	VisionReceiver(bool sim = false, int port = SharedVisionPortFirstHalf);
 
 	void stop();
 	
@@ -36,11 +37,13 @@ public:
 	///
 	/// The caller is responsible for freeing the packets after this function returns.
 	void getPackets(std::vector<VisionPacket *> &packets);
+
+	bool simulation;
+	int port;
 	
 protected:
 	virtual void run();
 	
-	bool _simulation;
 	volatile bool _running;
 	
 	/// This mutex protects the vector of packets

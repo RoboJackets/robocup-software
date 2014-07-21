@@ -70,6 +70,6 @@ class Penalty(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def role_requirements(self):
         reqs = super().role_requirements()
         if isinstance(reqs, role_assignment.RoleRequirements):
-            reqs.pos = main.ball().pos
+            reqs.destination_shape = main.ball().pos
 
         return reqs
