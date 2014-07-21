@@ -91,6 +91,12 @@ namespace Geometry2d
         Point nearestPoint(const Geometry2d::Point &P) const;
 
         Point center;
+
+        std::string toString() {
+            std::stringstream str;
+            str << "Circle<" << center << ", " << radius() << ">";
+            return str.str();
+        }
         
     protected:
         // Radius

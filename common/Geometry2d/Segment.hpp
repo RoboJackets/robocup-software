@@ -55,6 +55,10 @@ namespace Geometry2d
 			//	This was added to be used with python code, but is useful in c++ as well
 			std::shared_ptr<Point> intersection(const Segment &other);
 
-			std::string toString();
+			std::string toString() {
+				std::stringstream str;
+				str << "Line<" << pt[0] << ", " << pt[1] << ">";
+				return str.str();
+			}
 	};
 }

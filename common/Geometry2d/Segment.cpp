@@ -210,9 +210,3 @@ bool Segment::nearSegment(const Segment &other, float threshold) const
            intersects(other);
     return ret;
 }
-
-std::string Segment::toString() {
-	std::stringstream str;
-	str << "Segment<" << pt[0].toString() << ", " << pt[1].toString() << ">";
-	return str.str();
-}

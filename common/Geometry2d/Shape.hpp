@@ -43,5 +43,16 @@ namespace Geometry2d {
             return false;
         }
 
+        virtual std::string toString() {
+            std::stringstream str;
+            str << "Shape";
+            return str.str();
+        }
+
+        friend std::ostream& operator<< (std::ostream &stream, Shape &shape) {
+            stream << shape.toString();
+            return stream;
+        }
+
     };
 }
