@@ -360,11 +360,12 @@ void OurRobot::_kick(uint8_t strength) {
 void OurRobot::_chip(uint8_t strength) {
 	uint8_t max = *config->kicker.maxChip;
 	// TODO make sure we're not about to chip over the middle line.
-	Segment robot_face_line = Segment(pos, pos + 6*Point(cos(angle), sin(angle)));
+	Segment robot_face_line = Segment(pos, pos + 10*Point::direction(angle * M_PI / 180.));
 	Segment mid_field_line = Segment(Point(-Field_Width/2,Field_Length/2), Point(Field_Width/2,Field_Length/2));
-	if(robot_face_line.intersects(mid_field_line))
+	Point intersection;
+	if(robot_face_line.intersects(mid_field_line, &intersection))
 	{
-		float dist = mid_field_line.distTo(pos);
+		float dist = intersection.distTo(pos);
 		int power = min(strength, chipPowerForDistance(dist));
 		if(power == 0)
 			_kick(strength);
