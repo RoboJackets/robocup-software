@@ -2,7 +2,7 @@ import play
 import behavior
 import skills.move
 import skills.pivot_kick
-import tactics.positions.defender
+import tactics.defense
 import constants
 import robocup
 import main
@@ -34,11 +34,7 @@ class OurFreeKick(play.Play):
         center2 = skills.move.Move(robocup.Point(0, 1.5))
         self.add_subbehavior(center1, 'center2', required=False, priority=3)
 
-        defender1 = tactics.positions.defender.Defender(side=tactics.positions.defender.Defender.Side.left)
-        self.add_subbehavior(defender1, 'defender1', required=False, priority=2)
-
-        defender2 = tactics.positions.defender.Defender(side=tactics.positions.defender.Defender.Side.left)
-        self.add_subbehavior(defender2, 'defender2', required=False, priority=1)
+        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
 
         self.add_transition(behavior.Behavior.State.running,
             behavior.Behavior.State.completed,
@@ -54,6 +50,10 @@ class OurFreeKick(play.Play):
 
     @classmethod
     def is_restart(cls):
+        return True
+
+    @classmethod
+    def handles_goalie(cls):
         return True
 
     
