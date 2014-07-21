@@ -127,6 +127,26 @@ namespace Geometry2d {
         iterator begin() { return _subshapes.begin(); }
         iterator end() { return _subshapes.end(); }
 
+        std::string toString() {
+            std::stringstream str;
+            str << "Composite<";
+            for(int i = 0; i < _subshapes.size(); i++)
+            {
+                str << _subshapes[i]->toString() << ", ";
+            }
+
+
+            return str.str();
+        }
+
+        std::shared_ptr<Shape> operator[] (unsigned int index) {
+            return _subshapes[index];
+        }
+
+        std::shared_ptr<Shape> operator[] (unsigned int index) const {
+            return _subshapes[index];
+        }
+
 
     private:
         std::vector<std::shared_ptr<Shape> > _subshapes;
