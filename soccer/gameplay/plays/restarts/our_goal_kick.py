@@ -43,11 +43,7 @@ class OurGoalKick(play.Play):
         self.add_subbehavior(center2, 'center2', required=False, priority=4)
 
 
-        defender1 = tactics.positions.defender.Defender(side=tactics.positions.defender.Defender.Side.left)
-        self.add_subbehavior(defender1, 'defender1', required=False, priority=3)
-        
-        defender1 = tactics.positions.defender.Defender(side=tactics.positions.defender.Defender.Side.right)
-        self.add_subbehavior(defender1, 'defender2', required=False, priority=2)
+        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
 
 
 
@@ -58,6 +54,10 @@ class OurGoalKick(play.Play):
 
     @classmethod
     def is_restart(cls):
+        return True
+
+    @classmethod
+    def handles_goalie(cls):
         return True
 
 

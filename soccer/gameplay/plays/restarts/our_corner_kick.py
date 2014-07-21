@@ -38,12 +38,7 @@ class OurCornerKick(play.Play):
         self.center2 = skills.move.Move()
         self.add_subbehavior(self.center2, 'center2', required=False, priority=3)
 
-
-        defender1 = tactics.positions.defender.Defender(side=tactics.positions.defender.Defender.Side.left)
-        self.add_subbehavior(defender1, 'defender1', required=False, priority=2)
-
-        defender2 = tactics.positions.defender.Defender(side=tactics.positions.defender.Defender.Side.left)
-        self.add_subbehavior(defender2, 'defender2', required=False, priority=1)
+        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
 
         self.add_transition(behavior.Behavior.State.running,
             behavior.Behavior.State.completed,
@@ -62,6 +57,11 @@ class OurCornerKick(play.Play):
     @classmethod
     def is_restart(cls):
         return True
+
+    @classmethod
+    def handles_goalie(cls):
+        return True
+
 
     def execute_running(self):
         # setup the kicker target

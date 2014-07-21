@@ -2,6 +2,7 @@ import play
 import behavior
 import robocup
 import skills.line_kick
+import tactics.defense
 import main
 import constants
 import enum
@@ -45,15 +46,18 @@ class OurKickoff(play.Play):
         # TODO: verify that these values are right - I'm fuzzy on my matrix multiplication...
         idle_positions = [
             robocup.Point(0.7, constants.Field.Length / 2.0 - 0.2),
-            robocup.Point(-0.7, constants.Field.Length / 2.0 - 0.2),
-            robocup.Point(0.2, 1.5),
-            robocup.Point(-0.2, 1.5)
+            robocup.Point(-0.7, constants.Field.Length / 2.0 - 0.2)
         ]
         self.centers = []
         for i, pos_i in enumerate(idle_positions):
             center_i = skills.move.Move(pos_i)
             self.add_subbehavior(center_i, 'center' + str(i), required=False, priority=4-i)
             self.centers.append(center_i)
+
+
+        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
+
+
 
     @classmethod
     def score(cls):
@@ -63,6 +67,11 @@ class OurKickoff(play.Play):
     @classmethod
     def is_restart(cls):
         return True
+
+    @classmethod
+    def handles_goalie(cls):
+        return True
+
 
     def on_enter_setup(self):
         mover = skills.move.Move(robocup.Point(0, constants.Field.Length / 2.0 - 0.30))
