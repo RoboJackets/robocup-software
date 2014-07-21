@@ -55,5 +55,6 @@ private:
 	static ConfigDouble *_max_acceleration;
 	static ConfigDouble *_max_velocity;
 
-	static ConfigDouble *_path_jitter_compensation_factor;
+	//	if the path just changed, we add this boost to the output velocity command (before velocity scaling to bot 'units')
+	static ConfigDouble *_path_change_boost;
 };
