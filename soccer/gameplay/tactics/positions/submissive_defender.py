@@ -14,46 +14,22 @@ class SubmissiveDefender(single_robot_behavior.SingleRobotBehavior):
 
 	class State(Enum):
 		marking = 1 		# gets between a particular opponent and the goal.  stays closer to the goal
-		area_marking = 2 	# chilling out in a zone waiting to mark an opponent.  doesn't do this much
+		# TODO: add clear state to get and kick a free ball
 
 
-	class Side(Enum):
-		left = 1
-		center = 2
-		right = 3
-
-
-	def __init__(self, side=Side.center):
+	def __init__(self):
 		super().__init__(continuous=True)
-		self._block_robot = None
-		self._area = None
-		self._side = side
+		self._block_object = None
 		self._opponent_avoid_threshold = 2.0
 		self._defend_goal_radius = 0.9
-		self._win_eval = evaluation.window_evaluator.WindowEvaluator()
-
-		self._area = robocup.Rect(robocup.Point(-constants.Field.Width/2.0, constants.Field.Length),
-			robocup.Point(constants.Field.Width/2.0, 0))
-		if self._side is SubmissiveDefender.Side.right:
-			self._area.get_pt(0).x = 0
-		if self._side is SubmissiveDefender.Side.left:
-			self._area.get_pt(1).x = 0
 
 		self.add_state(SubmissiveDefender.State.marking, behavior.Behavior.State.running)
-		self.add_state(SubmissiveDefender.State.area_marking, behavior.Behavior.State.running)
 
 		self.add_transition(behavior.Behavior.State.start,
 			SubmissiveDefender.State.marking,
 			lambda: True,
 			"immediately")
-		self.add_transition(SubmissiveDefender.State.marking,
-			SubmissiveDefender.State.area_marking,
-			lambda: not self._area.contains_point(main.ball().pos) and self.block_robot is None,
-			"if ball not in area and no robot to block")
-		self.add_transition(SubmissiveDefender.State.area_marking, 
-			SubmissiveDefender.State.marking,
-			lambda: self._area.contains_point(main.ball().pos) or self.find_robot_to_block() is not None,
-			"if ball or opponent enters my area")
+
 
 	def execute_marking(self):
 		#main.system_state().draw_line(robocup.Line(self._area.get_pt(0), self._area.get_pt(1)), (127,0,255), "SubmissiveDefender")
@@ -77,15 +53,6 @@ class SubmissiveDefender(single_robot_behavior.SingleRobotBehavior):
 
 		self._win_eval.excluded_robots = [self.robot]
 
-		# TODO defenders should register themselves with some static list on init
-		# TODO make this happen in python-land
-		# BOOST_FOREACH(SubmissiveDefender *f, otherSubmissiveDefenders)
-		# {
-		# 	if (f->robot)
-		# 	{
-		# 		_winEval.exclude.push_back(f->robot->pos);
-		# 	}
-		# }
 
 		windows = self._win_eval.eval_pt_to_seg(target, goal_line)[0]
 
@@ -159,103 +126,32 @@ class SubmissiveDefender(single_robot_behavior.SingleRobotBehavior):
 			else:
 				self.robot.kick(255)
 
-	"""
-	TODO comment
-	"""
-	def execute_area_marking(self):
-		if self.robot.pos.near_point(robocup.Point(0,0), self._opponent_avoid_threshold):
-			self.robot.set_avoid_opponents(False)
-		else:
-			self.robot.set_avoid_opponents(True)
-		goal_target = robocup.Point(0, -constants.Field.GoalDepth/2.0)
-		goal_line = robocup.Segment(robocup.Point(-constants.Field.GoalWidth/2.0,0),
-			robocup.Point(constants.Field.GoalWidth/2.0,0))
 
-		if self.side is SubmissiveDefender.Side.left:
-			goal_line.get_pt(1).x = 0
-			goal_line.get_pt(1).y = 0
-		if self.side is SubmissiveDefender.Side.right:
-			goal_line.get_pt(0).x = 0
-			goal_line.get_pt(0).y = 0
-
-		for robot in main.system_state().their_robots:
-			self._win_eval.excluded_robots.append(robot)
-
-		if main.root_play().goalie_id is not None:
-			self._win_eval.excluded_robots.append(main.our_robot_with_id(main.root_play().goalie_id))
-
-		# TODO (cpp line 186)
-		# windows = self._win_eval.
-		windows = []
-
-		best = None
-		angle = 0.0
-		for window in windows:
-			if best is None:
-				best = window
-				angle = window.a0 - window.a1
-			elif window.a0 - window.a1 > angle:
-				best = window
-				angle = window.a0 - window.a1
-
-		shootline = robocup.Segment(robocup.Point(0,0), robocup.Point(0,0))
-		if best is not None:
-			angle = (best.a0 + best.a1)/2.0
-			shootline = robocup.Segment(self._win_eval.origin(), robocup.Point.direction(angle * (math.pi / 180.0)))
-			main.system_state().draw_line(shootline, (255,0,0), "SubmissiveDefender")
-
-		need_task = False
-		if best is not None:
-			winseg = best.segment
-			arc = robocup.Circle(robocup.Point(0,0), self._defend_goal_radius)
-			shot = robocup.Line(shootline.get_pt(0), shootline.get_pt(1))
-			dest = [robocup.Point(0,0), robocup.Point(0,0)]
-			intersected, dest[0], dest[1] = shot.intersects_circle(arc)
-			if intersected:
-				self.robot.move_to(dest[0] if dest[0].y > 0 else dest[1])
-			else:
-				need_task = True
-		if need_task:
-			self.robot.face(main.ball().pos)
-
-		if main.ball().pos.y < constants.Field.Length / 2.0:
-			self.robot.set_dribble_speed(255)
-
-		backVec = robocup.Point(1,0)
-		backPos = robocup.Point(-constants.Field.Width / 2, 0)
-		shotVec = robocup.Point(main.ball().pos - self.robot.pos)
-		backVecRot = robocup.Point(backVec.perp_ccw())
-		facing_back_line = ( backVecRot.dot(shotVec) < 0 )
-		if not facing_back_line and self.robot.has_ball():
-			if self.robot.has_chipper():
-				self.robot.chip(255)
-			else:
-				self.robot.kick(255)
-
-	def find_robot_to_block(self):
-		target = None
-		for robot in main.system_state().their_robots:
-			if robot.visible and self._area.contains_point(robot.pos):
-				if target is None or target.pos.dist_to(main.ball().pos) > robot.pos.dist_to(main.ball().pos):
-					target = robot
-		return target
-
+	# the thing we should be blocking
+	# could be an OpponentRobot or a Point
 	@property 
-	def block_robot(self):
-		return self._block_robot
-	@block_robot.setter
-	def block_robot(self, value):
-		self._block_robot = value
+	def block_object(self):
+		return self._block_object
+	@block_object.setter
+	def block_object(self, value):
+		self._block_object = value
 
-	@property 
-	def side(self):
-		return self._side
-	@side.setter
-	def side(self, value):
-		self._side = value
-		self._area = robocup.Rect(robocup.Point(-constants.Field.Width/2.0, constants.Field.Length),
-			robocup.Point(constants.Field.Width/2.0, 0))
-		if self._side is SubmissiveDefender.Side.right:
-			self._area.get_pt(0).x = 0
-		if self._side is SubmissiveDefender.Side.left:
-			self._area.get_pt(1).x = 0
+
+	# @property 
+	# def side(self):
+	# 	return self._side
+	# @side.setter
+	# def side(self, value):
+	# 	self._side = value
+	# 	self._area = robocup.Rect(robocup.Point(-constants.Field.Width/2.0, constants.Field.Length),
+	# 		robocup.Point(constants.Field.Width/2.0, 0))
+	# 	if self._side is SubmissiveDefender.Side.right:
+	# 		self._area.get_pt(0).x = 0
+	# 	if self._side is SubmissiveDefender.Side.left:
+	# 		self._area.get_pt(1).x = 0
+
+
+	def role_requirements(self):
+		reqs = super().role_requirements()
+		# FIXME: be smarter
+		return reqs
