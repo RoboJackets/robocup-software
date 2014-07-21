@@ -20,13 +20,13 @@ REGISTER_CONFIGURABLE(MotionControl);
 ConfigDouble *MotionControl::_max_acceleration;
 ConfigDouble *MotionControl::_max_velocity;
 
-ConfigDouble *MotionControl::_path_jitter_compensation_factor;
+ConfigDouble *MotionControl::_path_change_boost;
 
 void MotionControl::createConfiguration(Configuration *cfg) {
 	_max_acceleration	= new ConfigDouble(cfg, "MotionControl/Max Acceleration", 1.5);
 	_max_velocity		= new ConfigDouble(cfg, "MotionControl/Max Velocity", 2.0);
 
-	_path_jitter_compensation_factor = new ConfigDouble(cfg, "MotionControl/PathJitterCompensationFactor", 2.5);
+	_path_change_boost = new ConfigDouble(cfg, "MotionControl/PathChangeBoost", 0.5);
 }
 
 
@@ -174,10 +174,12 @@ void MotionControl::run() {
 		//	we do this to compensate for lost command cycles
 		// double factor = *_path_jitter_compensation_factor;
 		// timeIntoPath += _robot->consecutivePathChangeCount() * 1.0f/60.0f * factor;
-		cout << "------" << endl;
-		cout << "path.startSpeed: " << _robot->path()->startSpeed << endl;
-		cout << "botVel: (" << _robot->vel.x << ", " << _robot->vel.x << ")" << endl;
-		cout << "timeIntoPath: " << timeIntoPath << endl;
+		// cout << "------" << endl;
+		// cout << "path.startSpeed: " << _robot->path()->startSpeed << endl;
+		// cout << "botVel: (" << _robot->vel.x << ", " << _robot->vel.x << ")" << endl;
+		// cout << "timeIntoPath: " << timeIntoPath << endl;
+
+
 
 
 
@@ -198,6 +200,12 @@ void MotionControl::run() {
 		Point nextTargetVel, _;
 		_robot->path()->evaluate(timeIntoPath + 1.0/60.0, _, nextTargetVel);
 		Point accelFactor = (nextTargetVel - targetVel) * (*_robot->config->accelerationMultiplier);
+
+		//	path change boost
+		if (_robot->consecutivePathChangeCount() > 0) {
+			float boost = *_path_change_boost;
+			targetVel += targetVel.normalized() * boost;
+		}
 
 		cout << "accelFactor: (" << accelFactor.x << ", " << accelFactor.y << ")" << endl;
 
