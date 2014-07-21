@@ -37,8 +37,8 @@ class Ball:
     
 
 class Field:
-    Length = 6.55
-    Width = 4.55
+    Length = 6.5
+    Width = 4.455
 
     # diameter of the center circle 
     CenterRadius = 0.5

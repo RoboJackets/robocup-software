@@ -195,7 +195,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
 
         # don't use the move_to() command here, we need more precision, less obstacle avoidance
         pos_error = self._target_pos - self.robot.pos
-        vel = pos_error * 3.0
+        vel = pos_error * 3.5
         self.robot.set_world_vel(vel)
 
 
