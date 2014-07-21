@@ -1,6 +1,6 @@
 import play
 import behavior
-import tactics
+import tactics.defense
 import main
 
 
@@ -14,23 +14,17 @@ class Stopped(play.Play):
             lambda: True,
             'immediately')
 
+        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
+
+        idle = tactics.circle_near_ball.CircleNearBall()
+        self.add_subbehavior(idle, 'circle_up', required=False, priority=1)
+
 
     @classmethod
     def score(cls):
         return 0 if main.game_state().is_stopped() else float("inf")
 
 
-    def on_enter_running(self):
-        left = tactics.positions.defender.Defender(side=tactics.positions.defender.Defender.Side.left)
-        self.add_subbehavior(left, 'left_defender', required=False, priority=50)
-
-        right = tactics.positions.defender.Defender(side=tactics.positions.defender.Defender.Side.right)
-        self.add_subbehavior(right, 'right_defender', required=False, priority=49)
-
-        idle = tactics.circle_near_ball.CircleNearBall()
-        self.add_subbehavior(idle, 'circle_up', required=False, priority=1)
-
-
-    def on_exit_running(self):
-        for name in ['circle_up', 'right_defender', 'left_defender']:
-            self.remove_subbehavior(name)
+    @classmethod
+    def handles_goalie(self):
+        return True

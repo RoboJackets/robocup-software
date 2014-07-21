@@ -17,11 +17,12 @@ import evaluation
 class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     MaxX = constants.Field.GoalWidth / 2.0
+    SegmentY = constants.Robot.Radius + 0.05
 
     # The segment we stay on during the 'block' state
     # It's right in front of the goal
-    RobotSegment = robocup.Segment(robocup.Point(-MaxX, constants.Robot.Radius),
-                                    robocup.Point(MaxX, constants.Robot.Radius))
+    RobotSegment = robocup.Segment(robocup.Point(-MaxX, SegmentY),
+                                    robocup.Point(MaxX, SegmentY))
 
     class State(enum.Enum):
         "Actively blocking based on a given threat"
@@ -60,6 +61,11 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
                 lambda: evaluation.ball.is_in_our_goalie_zone() and
                         not evaluation.ball.is_moving_towards_our_goal(),
                 "ball in our goalie box, but not headed toward goal")
+
+        self.add_transition(SubmissiveGoalie.State.clear,
+            SubmissiveGoalie.State.block,
+            lambda: not evaluation.ball.is_in_our_goalie_zone(),
+            'ball leaves goal')
 
 
         self.block_line = None
