@@ -201,7 +201,7 @@ class Defense(composite_behavior.CompositeBehavior):
 
             # start on one edge of our available angle coverage and work counter-clockwise,
             # assigning block lines to the bots as we go
-            spacing = 0.01 if len(threat.assigned_handlers) < 3 else -0.03  # spacing between each bot in radians
+            spacing = 0.01 if len(threat.assigned_handlers) < 3 else 0.0  # spacing between each bot in radians
             total_angle_coverage = sum(angle_widths) + (len(angle_widths) - 1)*spacing
             start_vec = center_line.delta().normalized()
             start_vec.rotate(robocup.Point(0,0), -((total_angle_coverage / 2.0) * constants.RadiansToDegrees))
