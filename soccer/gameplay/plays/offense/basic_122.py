@@ -6,6 +6,7 @@ import main
 import robocup
 import evaluation
 import constants
+import math
 
 class Basic122(play.Play):
 
@@ -110,13 +111,13 @@ class Basic122(play.Play):
                 support1.add_text("Static Support", (255,255,255), "RobotText")
                 support_goal = striker.robot.pos
                 support_goal.x *= -1.0
-                if math.abs(support_goal.x) < 0.2:
+                if abs(support_goal.x) < 0.2:
                     support_goal.x = -1.0 if support_goal.x < 0 else 1.0
 
                 if ball_proj.y > constants.Field.Length / 2.0 and nrOppClose > 0:
-                    support_goal.y = max(support_goal.y * OffenseSupportRatio, 0.3)
+                    support_goal.y = max(support_goal.y * Basic122.OffenseSupportRatio, 0.3)
                 else:
-                    support_goal.y = max(support_goal.y * DefenseSupportRatio, 0.3)
+                    support_goal.y = max(support_goal.y * Basic122.DefenseSupportRatio, 0.3)
 
                 support1.robot.move(support_goal)
                 support1.robot.face(ball_proj)
@@ -127,18 +128,18 @@ class Basic122(play.Play):
             support2.mark_robot = None
             support2.robot.add_text("No mark target", (255,255,255), "RobotText")
             if striker.robot != None:
-                support2.add_text("Static Support", (255,255,255), "RobotText")
+                support2.robot.add_text("Static Support", (255,255,255), "RobotText")
                 support_goal = striker.robot.pos
                 support_goal.x *= -1.0
-                if math.abs(support_goal.x) < 0.2:
+                if abs(support_goal.x) < 0.2:
                     support_goal.x = -1.0 if support_goal.x < 0 else 1.0
 
                 if ball_proj.y > constants.Field.Length / 2.0 and nrOppClose > 0:
-                    support_goal.y = max(support_goal.y * OffenseSupportRatio, 0.3)
+                    support_goal.y = max(support_goal.y * Basic122.OffenseSupportRatio, 0.3)
                 else:
-                    support_goal.y = max(support_goal.y * DefenseSupportRatio, 0.3)
+                    support_goal.y = max(support_goal.y * Basic122.DefenseSupportRatio, 0.3)
 
-                support2.robot.move(support_goal)
+                support2.robot.move_to(support_goal)
                 support2.robot.face(ball_proj)
 
         # reassign support robots' mark targets based on dist sq and hysteresis coeff
