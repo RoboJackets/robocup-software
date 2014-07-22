@@ -61,11 +61,12 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
                         not evaluation.ball.is_moving_towards_our_goal(),
                 "ball in our goalie box, but not headed toward goal")
 
-        self.add_transition(SubmissiveGoalie.State.clear,
-            SubmissiveGoalie.State.block,
-            lambda: not evaluation.ball.is_in_our_goalie_zone() and 
-                    not evaluation.ball.is_moving_towards_our_goal(),
-            'ball leaves goal')
+        for state in non_block_states:
+            self.add_transition(state,
+                SubmissiveGoalie.State.block,
+                lambda: not evaluation.ball.is_in_our_goalie_zone() and 
+                        not evaluation.ball.is_moving_towards_our_goal(),
+                'ball not in goal or moving towards it')
 
 
         self.block_line = None
