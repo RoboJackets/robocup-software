@@ -77,9 +77,10 @@ class Defense(composite_behavior.CompositeBehavior):
         goalie = self.subbehavior_with_name('goalie')
         defender1 = self.subbehavior_with_name('defender1')
         defender2 = self.subbehavior_with_name('defender2')
+        behaviors = [goalie, defender1, defender2]
 
         # if we don't have any bots to work with, don't waste time calculating
-        if all(bhvr.robot == None for bhvr in [goalie, defender1, defender2]):
+        if all(bhvr.robot == None for bhvr in behaviors):
             return
 
 
@@ -220,9 +221,7 @@ class Defense(composite_behavior.CompositeBehavior):
                 raise TypeError("threat_index should be an int")
 
             # ignore all defenders
-            excluded_robots = []
-            for t in threats:
-                excluded_robots.extend(map(lambda bhvr: bhvr.robot, t.assigned_handlers))
+            excluded_robots = list(map(lambda bhvr: bhvr.robot, behaviors))
 
             # behaviors before this threat are counted as obstacles in their TARGET position (where we've
             # assigned them to go, not where they are right now)
