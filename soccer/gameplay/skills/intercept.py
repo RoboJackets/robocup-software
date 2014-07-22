@@ -26,6 +26,7 @@ class Intercept(single_robot_behavior.SingleRobotBehavior):
                 self.target_pos = self.shape_constraint.segment_intersection(self.ball_line())
                 if self.target_pos is None:
                     self.target_pos = self.ball_line().nearest_point(self.robot.pos)
+                    self.target_pos = self.shape_constraint.nearest_point(self.target_pos)
                 main.system_state().draw_line(self.shape_constraint, (0,255,0), "Debug")
             else:
                 self.target_pos = self.ball_line().nearest_point(self.robot.pos)
