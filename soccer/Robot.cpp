@@ -633,7 +633,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	//	if the destination of the current path is greater than X m away from the target destination,
 	//	we invalidate the path.  this situation could arise if during a previous planning, the target point
 	//	was blocked by an obstacle
-	if (_path && (_path->points.back() - dest).mag() > 0.005) {
+	if (_path && (_path->points.back() - dest).mag() > 0.025) {
 		_pathInvalidated = true;
 	}
 
