@@ -19,11 +19,13 @@ def eval_shot(pos, target=constants.Field.TheirGoalSegment, windowing_excludes=[
         shot_dist = shot_vector.mag()
 
         angle_between_shot_and_window = abs(shot_vector.angle() - best.segment.delta().angle())
-        if angle_between_shot_and_window > math.pi / 2.0:
+        while angle_between_shot_and_window > math.pi / 2.0:
             angle_between_shot_and_window -= math.pi / 2.0
 
         # we don't care about the segment length, we care about the width of the corresponding segment perpendicular to the shot line
-        perp_seg_length = math.sin(angle_between_shot_and_window) * best.segment.length()
+        perp_seg_length = abs(math.sin(angle_between_shot_and_window)) * best.segment.length()
+
+        # print("theta=" + str(angle_between_shot_and_window) + "; perplen=" + str(perp_seg_length) + "; windowlen=" + str(best.segment.length()))
 
         # the 'width' of the shot in radians
         angle = abs(math.atan2(perp_seg_length, shot_dist))
