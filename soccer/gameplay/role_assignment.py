@@ -128,7 +128,7 @@ RobotChangeCost = 1.0
 
 # a default weight for preferring a chipper
 # this is tunable
-PreferChipper = 5
+PreferChipper = 2.5
 
 
 # uses the munkres/hungarian algorithm to find the optimal role assignments
