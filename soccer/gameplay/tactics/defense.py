@@ -378,6 +378,10 @@ class Defense(composite_behavior.CompositeBehavior):
 
 
 
+        # limit threats to save on calculation
+        threats = threats[0:len(behaviors)]
+
+
         # calculate shot for all threats
         for i in range(len(threats)):
             recalculate_threat_shot(i)
@@ -385,7 +389,7 @@ class Defense(composite_behavior.CompositeBehavior):
 
 
 
-        def recalculate_defended_shots():
+        def recalculate_defended_shot(threat):
             placed_handlers = []
             for t in threats:
                 placed_handlers.extend(t.assigned_handlers)
@@ -394,16 +398,16 @@ class Defense(composite_behavior.CompositeBehavior):
             hypothetical_obstacles = list(map(lambda handler: handler.move_target, placed_handlers))
 
             # recalculate defended shot score
-            for t in threats:
-                t.defended_shot_chance, best_window = evaluation.shot.eval_shot(t.pos,
-                    constants.Field.OurGoalSegment,
-                    windowing_excludes=list(main.our_robots()),
-                    hypothetical_robot_locations=hypothetical_obstacles)
+            threat.defended_shot_chance, best_window = evaluation.shot.eval_shot(threat.pos,
+                constants.Field.OurGoalSegment,
+                windowing_excludes=list(main.our_robots()),
+                hypothetical_robot_locations=hypothetical_obstacles)
 
 
 
         # gotta do this before looking at assigning handlers
-        recalculate_defended_shots()
+        for t in threats:
+            recalculate_defended_shot(t)
 
 
         # assign all of our defenders to do something
@@ -420,7 +424,7 @@ class Defense(composite_behavior.CompositeBehavior):
             set_block_lines_for_threat_handlers(top_threat)
 
             # now that we've assigned a new handler, we have to recalculate ALL threat shots
-            recalculate_defended_shots()
+            recalculate_defended_shot(top_threat)
 
 
         # tell the bots where to move / what to block and draw some debug stuff
