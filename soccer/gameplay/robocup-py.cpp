@@ -77,6 +77,22 @@ std::string Robot_repr(Robot *self) {
 	return repr;
 }
 
+Geometry2d::Point Robot_pos(Robot *self) {
+	return self->pos;
+}
+
+Geometry2d::Point Robot_vel(Robot *self) {
+	return self->vel;
+}
+
+float Robot_angle(Robot *self) {
+	return self->angle;
+}
+
+float Robot_angle_vel(Robot *self) {
+	return self->angleVel;
+}
+
 void OurRobot_move_to(OurRobot *self, Geometry2d::Point *to) {
 	if(to == nullptr)
 		throw NullArgumentException("to");
@@ -348,11 +364,11 @@ BOOST_PYTHON_MODULE(robocup)
 	class_<Robot>("Robot", init<int, bool>())
 		.def("shell_id", &Robot::shell)
 		.def("is_ours", &Robot::self, "whether or not this robot is on our team")
-		.def_readwrite("pos", &Robot::pos, "position vector of the robot in meters")
-		.def_readwrite("vel", &Robot::vel, "velocity vector of the robot in m/s")
-		.def_readwrite("angle", &Robot::angle, "angle of the robot in degrees")
-		.def_readwrite("angle_vel", &Robot::angleVel, "angular velocity in degrees per second")
-        .def_readonly("visible", &Robot::visible)
+		.add_property("pos", &Robot_pos, "position vector of the robot in meters")
+		.add_property("vel", &Robot_vel, "velocity vector of the robot in m/s")
+		.add_property("angle", &Robot_angle, "angle of the robot in degrees")
+		.add_property("angle_vel", &Robot_angle_vel, "angular velocity in degrees per second")
+        .add_property("visible", &Robot::visible)
 		.def("__repr__", &Robot_repr)
 		.def("__eq__", &Robot::equals)
 	;
