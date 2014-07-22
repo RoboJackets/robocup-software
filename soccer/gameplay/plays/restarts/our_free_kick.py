@@ -21,7 +21,7 @@ class OurFreeKick(play.Play):
 
         # FIXME: this could also be a PivotKick
         kicker = skills.line_kick.LineKick()
-        kicker.use_chipper = True
+        # kicker.use_chipper = True
         kicker.min_chip_range = 0.3
         kicker.max_chip_range = 3.0
         kicker.target = constants.Field.TheirGoalSegment

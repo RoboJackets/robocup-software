@@ -88,7 +88,7 @@ class OurKickoff(play.Play):
         self.remove_subbehavior('move')
         kicker = skills.line_kick.LineKick()
         kicker.target = constants.Field.TheirGoalSegment
-        kicker.use_chipper = True
+        # kicker.use_chipper = True
         kicker.kick_power = OurKickoff.KickPower
         kicker.chip_power = OurKickoff.ChipPower
         self.add_subbehavior(kicker, 'kicker', required=True, priority=5)

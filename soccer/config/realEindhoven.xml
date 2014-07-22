@@ -169,10 +169,10 @@
   <Roll_Distance value="0.1"/>
  </ChipCalibration>
  <MotionControl>
-  <Max_Acceleration value="1.2"/>
+  <Max_Acceleration value="1.5"/>
   <Max_Velocity value="3"/>
   <PathJitterCompensationFactor value="2"/>
-  <PathChangeBoost value="0.1"/>
+  <PathChangeBoost value="50"/>
  </MotionControl>
  <PathPlanner>
   <Max_Acceleration value="1"/>
@@ -182,8 +182,8 @@
   <oppGoalieAvoidRadius value="0.14"/>
  </PathPlanner>
  <MotionConstraints>
-  <Max_Acceleration value="0.7"/>
-  <Max_Velocity value="1.8"/>
+  <Max_Acceleration value="0.9"/>
+  <Max_Velocity value="2.3"/>
   <Max_Angle_Speed value="25"/>
  </MotionConstraints>
 </config>

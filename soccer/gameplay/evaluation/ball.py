@@ -10,8 +10,13 @@ def is_moving_towards_our_goal():
         # see if it's moving somewhat towards our goal
         if main.ball().vel.dot(robocup.Point(0, -1)) > 0:
             ball_path = robocup.Segment(main.ball().pos, (main.ball().pos + main.ball().vel.normalized()))
-            pt = ball_path.line_intersection(constants.Field.OurGoalSegment)
-            return pt != None and abs(pt.x) < constants.Field.GoalWidth / 2.0
+
+            fudge_factor = 0.05
+            WiderGoalSegment = robocup.Segment(robocup.Point(constants.Field.GoalWidth / 2.0 + fudge_factor, 0),
+                                        robocup.Point(-constants.Field.GoalWidth / 2.0 - fudge_factor, 0))
+
+            pt = ball_path.line_intersection(WiderGoalSegment)
+            return pt != None and abs(pt.x) < WiderGoalSegment.delta().mag() / 2.0
 
     return False
 
