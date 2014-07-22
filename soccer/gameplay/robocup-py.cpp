@@ -79,10 +79,10 @@ void OurRobot_move_to(OurRobot *self, Geometry2d::Point *to) {
 }
 
 void OurRobot_add_local_obstacle(OurRobot *self, Geometry2d::Shape *obs) {
-	if (obs != nullptr) {
-		std::shared_ptr<Geometry2d::Shape> sharedObs(obs->clone());
-		self->localObstacles(sharedObs);
-	}
+	if(obs == nullptr)
+		throw NullArgumentException("obs");
+	std::shared_ptr<Geometry2d::Shape> sharedObs(obs->clone());
+	self->localObstacles(sharedObs);
 }
 
 void OurRobot_set_avoid_ball_radius(OurRobot *self, float radius) {
@@ -110,25 +110,33 @@ void OurRobot_set_avoid_opponents(OurRobot *self, bool value) {
 }
 
 bool Rect_contains_rect(Geometry2d::Rect *self, Geometry2d::Rect *other) {
+	if(other == nullptr)
+		throw NullArgumentException("other");
 	return self->contains(*other);
 }
 
 bool Rect_contains_point(Geometry2d::Rect *self, Geometry2d::Point *pt) {
+	if(pt == nullptr)
+		throw NullArgumentException("pt");
 	return self->contains(*pt);
 }
 
 void Point_rotate(Geometry2d::Point *self, Geometry2d::Point *origin, float angle) {
+	if(origin == nullptr)
+		throw NullArgumentException("origin");
 	self->rotate(*origin, angle);
 }
 
 void CompositeShape_add_shape(Geometry2d::CompositeShape *self, Geometry2d::Shape *shape) {
+	if(shape == nullptr)
+		throw NullArgumentException("shape");
 	self->add(std::shared_ptr<Geometry2d::Shape>( shape->clone() ));
 }
 
 void Polygon_add_vertex(Geometry2d::Polygon *self, Geometry2d::Point *pt) {
-	if (pt != nullptr) {
-		self->addVertex(*pt);
-	}
+	if(pt == nullptr)
+		throw NullArgumentException("pt");
+	self->addVertex(*pt);
 }
 
 Geometry2d::Point* Line_get_pt(Geometry2d::Line *self, int index) {
@@ -140,6 +148,8 @@ Geometry2d::Point* Rect_get_pt(Geometry2d::Rect *self, int index) {
 }
 
 boost::python::object Segment_segment_intersection(Geometry2d::Segment *self, Geometry2d::Segment *other) {
+	if(other == nullptr)
+		throw NullArgumentException("other");
 	Geometry2d::Point pt;
 	if (self->intersects(*other, &pt)) {
 		boost::python::object obj(pt);
@@ -152,6 +162,8 @@ boost::python::object Segment_segment_intersection(Geometry2d::Segment *self, Ge
 
 //	returns None or a Geometry2d::Point
 boost::python::object Line_line_intersection(Geometry2d::Line *self, Geometry2d::Line *other) {
+	if(other == nullptr)
+		throw NullArgumentException("other");
 	Geometry2d::Point pt;
 	if (self->intersects(*other, &pt)) {
 		boost::python::object obj(pt);
@@ -163,39 +175,40 @@ boost::python::object Line_line_intersection(Geometry2d::Line *self, Geometry2d:
 };
 
 boost::python::tuple Line_intersects_circle(Geometry2d::Line *self, Geometry2d::Circle *circle) {
+	if(circle == nullptr)
+		throw NullArgumentException("circle");
 	Geometry2d::Point a, b;
 	boost::python::list lst;
 
-	if (circle == nullptr) {
-		lst.append(false);
-	} else {
-		bool intersects = self->intersects(*circle, &a, &b);
-		lst.append(intersects);
-		lst.append(a);
-		lst.append(b);
-	}
+	bool intersects = self->intersects(*circle, &a, &b);
+	lst.append(intersects);
+	lst.append(a);
+	lst.append(b);
+
 	return boost::python::tuple(lst);
 }
 
 void State_draw_circle(SystemState *self, const Geometry2d::Point *center, float radius, boost::python::tuple rgb, const std::string &layer) {
-	if (!center) {
-		return;
-	}
+	if(center == nullptr)
+		throw NullArgumentException("center");
 	self->drawCircle(*center, radius, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
 void State_draw_line(SystemState *self, const Geometry2d::Line *line, boost::python::tuple rgb, const std::string &layer) {
-	if (!line) {
-		return;
-	}
+	if(line == nullptr)
+		throw NullArgumentException("line");
 	self->drawLine(*line, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
 void State_draw_text(SystemState *self, const std::string &text, Geometry2d::Point *pos, boost::python::tuple rgb, const std::string &layer) {
+	if(pos == nullptr)
+		throw NullArgumentException("pos");
 	self->drawText(QString::fromStdString(text), *pos, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
 boost::python::list Circle_intersects_line(Geometry2d::Circle *self, const Geometry2d::Line *line) {
+	if(line == nullptr)
+		throw NullArgumentException("line");
 	boost::python::list lst;
 
 	Geometry2d::Point intersectionPoints[2];
