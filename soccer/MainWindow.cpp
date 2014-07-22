@@ -330,7 +330,7 @@ void MainWindow::updateViews()
 		_ui.behaviorTree->setPlainText(QString::fromStdString(currentFrame->behavior_tree()));
 	}
 
-	if(std::time(0) - (_processor->refereeModule()->sent_time/1000000) > 1)
+	if(std::time(0) - (_processor->refereeModule()->received_time/1000000) > 1)
 	{
 		_ui.fastHalt->setEnabled(true);
 		_ui.fastStop->setEnabled(true);
