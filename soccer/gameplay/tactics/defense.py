@@ -111,6 +111,7 @@ class Defense(composite_behavior.CompositeBehavior):
             
 
             # a list of our behaviors that will be defending against this threat
+            # as of now only Defender and Goalie
             @property
             def assigned_handlers(self):
                 return self._assigned_handlers
@@ -131,13 +132,14 @@ class Defense(composite_behavior.CompositeBehavior):
             
 
             # our estimate of the chance of this threat making its shot on the goal given that it gets/has the ball
+            # NOTE: this is calculated excluding all of our robots on the field as obstacles
             @property
             def shot_chance(self):
                 return self._shot_chance
             @shot_chance.setter
             def shot_chance(self, value):
                 self._shot_chance = value
-
+            
 
             # his best window on our goal
             @property
@@ -177,16 +179,10 @@ class Defense(composite_behavior.CompositeBehavior):
                         threat.assigned_handlers.insert(1, goalie)
 
 
-
-            # print("Setting block lines...")
-            # print("    handlers: " + str(threat.assigned_handlers))
-
             if threat.best_shot_window != None:
                 center_line = robocup.Line(threat.pos, threat.best_shot_window.segment.center())
             else:
                 center_line = robocup.Line(threat.pos, constants.Field.OurGoalSegment.center())
-
-            # print('    center_line: ' + str(center_line.get_pt(0)) + ", " + str(center_line.get_pt(1)))
 
 
             # find the angular width that each defender can block.  We then space these out accordingly
@@ -196,9 +192,6 @@ class Defense(composite_behavior.CompositeBehavior):
                 w = min(2.0 * math.atan2(constants.Robot.Radius, dist_from_threat), 0.15)
                 angle_widths.append(w)
 
-            # print("    angle widths: " + str(angle_widths))
-
-            # print("Angle widths: " + str(angle_widths))
 
             # start on one edge of our available angle coverage and work counter-clockwise,
             # assigning block lines to the bots as we go
@@ -211,7 +204,6 @@ class Defense(composite_behavior.CompositeBehavior):
                 w = angle_widths[i]
                 start_vec.rotate(robocup.Point(0,0), w/2.0 * constants.RadiansToDegrees)
                 handler.block_line = robocup.Line(threat.pos, threat.pos + start_vec * 10)
-                # print("    blockline[" + str(i) + "]=" + str(handler.block_line.get_pt(0)) + ", " + str(handler.block_line.get_pt(1)))
                 start_vec.rotate(robocup.Point(0,0), (w/2.0 + spacing) * constants.RadiansToDegrees)
 
 
@@ -220,8 +212,8 @@ class Defense(composite_behavior.CompositeBehavior):
             if not isinstance(threat_index, int):
                 raise TypeError("threat_index should be an int")
 
-            # ignore all defenders
-            excluded_robots = list(map(lambda bhvr: bhvr.robot, behaviors))
+            # ignore all of our robots
+            excluded_robots = list(main.our_robots())
 
             # behaviors before this threat are counted as obstacles in their TARGET position (where we've
             # assigned them to go, not where they are right now)
@@ -234,7 +226,7 @@ class Defense(composite_behavior.CompositeBehavior):
                 pos=threat.pos,
                 target=constants.Field.OurGoalSegment,
                 windowing_excludes=excluded_robots,
-                hypothetical_robot_locations=hypothetical_obstacles,
+                hypothetical_robot_locations=[],
                 debug=False)
 
 
@@ -364,6 +356,13 @@ class Defense(composite_behavior.CompositeBehavior):
         threats.sort(key=lambda threat: threat.score, reverse=True)
         threats = threats[0:3]
 
+        print("sorted threats:")
+        for idx, t in enumerate(threats):
+            print("t[" + str(idx) + "]: " + str(t.source) + "shot: " + str(t.shot_chance) + "; pass:" + str(t.ball_acquire_chance) + "; score:" + str(t.score))
+
+
+        # print("sorted threat scores: " + str(list(map(lambda t: str(t.score) + " " + str(t.source), threats))))
+
 
         # print("Unused handlers: " + str(unused_threat_handlers))
         # print("---------------------")
@@ -408,10 +407,6 @@ class Defense(composite_behavior.CompositeBehavior):
                 # recalculate the shot now that we have
                 recalculate_threat_shot(0)
 
-        # print("**ASSIGNMENT DONE**")
-        # for idx, threat in enumerate(threats):
-        #     print("[" + str(idx) + "] " + str(threat.assigned_handlers))
-
 
         # tell the bots where to move / what to block and draw some debug stuff
         for idx, threat in enumerate(threats):
@@ -450,14 +445,3 @@ class Defense(composite_behavior.CompositeBehavior):
                 pass_line = robocup.Segment(main.ball().pos, threat.pos)
                 main.system_state().draw_line(pass_line, constants.Colors.Red, "Defense")
                 main.system_state().draw_text("Pass: " + str(int(threat.ball_acquire_chance * 100.0)) + "%", pass_line.center(), constants.Colors.White, "Defense")
-
-
-        self.threats = threats
-
-
-
-    # def __str__(self):
-    #     desc = super().__str__()
-    #     for t in threats:
-    #         desc += 
-
