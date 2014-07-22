@@ -78,3 +78,6 @@ class Field:
                                         robocup.Point(-GoalWidth / 2.0, Length))
     OurGoalSegment = robocup.Segment(robocup.Point(GoalWidth / 2.0, 0),
                                         robocup.Point(-GoalWidth / 2.0, 0))
+
+    TheirHalf = robocup.Rect(robocup.Point(-Width/2, Length), robocup.Point(Width/2, Length/2))
+    OurHalf = robocup.Rect(robocup.Point(-Width/2, 0), robocup.Point(Width/2, Length/2))
