@@ -15,7 +15,25 @@ using namespace boost::python;
 #include <SystemState.hpp>
 #include <protobuf/LogFrame.pb.h>
 
+#include <boost/python/exception_translator.hpp>
+#include <exception>
 
+/**
+ * These functions make sure errors on the c++
+ * side get passed up through python.
+ */
+
+struct NullArgumentException : public std::exception {
+	std::string argument_name;
+	NullArgumentException() : argument_name("") {}
+	NullArgumentException(std::string name) : argument_name(name) {}
+	virtual const char* what() const throw(){ return ("'" + argument_name + "'' was 'None'.").c_str(); }
+};
+
+void translateException(NullArgumentException const& e)
+{
+    PyErr_SetString(PyExc_RuntimeError, e.what());
+}
 
 /**
  * NOTES FOR WRAPPER FUNCTIONS/METHODS
@@ -23,7 +41,6 @@ using namespace boost::python;
  * Keep in mind that pointer parameters will be be nullptr/NULL if the value
  * from python was None.  Check for this case so that we don't segfault.
  */
-
 
 //	this is here so boost can work with std::shared_ptr
 template<class T> T * get_pointer( std::shared_ptr<T> const& p) {
@@ -39,15 +56,7 @@ QColor Color_from_tuple(const boost::python::tuple &rgb) {
 }
 
 std::string Point_repr(Geometry2d::Point *self) {
-	std::ostringstream ss;
-	ss << "Point(";
-	ss << self->x;
-	ss << ", ";
-	ss << self->y;
-	ss << ")";
-	
-	std::string repr(ss.str());
-	return repr;
+	return self->toString();
 }
 
 std::string Robot_repr(Robot *self) {
@@ -64,6 +73,8 @@ std::string Robot_repr(Robot *self) {
 }
 
 void OurRobot_move_to(OurRobot *self, Geometry2d::Point *to) {
+	if(to == nullptr)
+		throw NullArgumentException("to");
 	self->move(*to);
 }
 
@@ -202,6 +213,8 @@ boost::python::list Circle_intersects_line(Geometry2d::Circle *self, const Geome
  */
 BOOST_PYTHON_MODULE(robocup)
 {
+	boost::python::register_exception_translator<NullArgumentException>(&translateException);
+
 	class_<Geometry2d::Point, Geometry2d::Point*>("Point", init<float, float>())
 		.def(init<const Geometry2d::Point &>())
 		.def_readwrite("x", &Geometry2d::Point::x)
