@@ -39,7 +39,7 @@ class Defense(composite_behavior.CompositeBehavior):
 
         goalie = tactics.positions.submissive_goalie.SubmissiveGoalie()
         goalie.shell_id = main.root_play().goalie_id
-        self.add_subbehavior(goalie, "goalie", required=True)
+        self.add_subbehavior(goalie, "goalie", required=False)
 
 
         # add defenders at the specified priority levels
@@ -69,7 +69,8 @@ class Defense(composite_behavior.CompositeBehavior):
         goalie = self.subbehavior_with_name("goalie")
         goalie.shell_id = main.root_play().goalie_id
         if goalie.shell_id == None:
-            raise RuntimeError("Defense tactic requires a goalie id to be set")
+            print("WARNING: No Goalie Selected")
+            # raise RuntimeError("Defense tactic requires a goalie id to be set")
 
 
     # TODO: move a lot of this code into modules in the evaluation folder
