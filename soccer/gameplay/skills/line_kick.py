@@ -22,7 +22,6 @@ class LineKick(skills._kick._Kick):
     MaxChargeSpeed = 1.5
     BallProjectTime = 0.4
     DoneStateThresh = 0.11
-    WrongSideOfBallThresh = 0.1
     ClosenessThreshold = constants.Robot.Radius + 0.04
 
     class State(enum.Enum):
@@ -55,12 +54,12 @@ class LineKick(skills._kick._Kick):
 
         self.add_transition(LineKick.State.charge,
             LineKick.State.setup,
-            self.robot_is_between_ball_and_target,
+            lambda: self.robot_is_between_ball_and_target() or self._target_line.dist_to(self.robot.pos) > self.ChargeThresh,
             "robot between ball and target")
 
     def robot_is_between_ball_and_target(self):
         return self.robot is not None and \
-            robocup.Segment(main.ball().pos, self.aim_target_point).dist_to(self.robot.pos) < self.WrongSideOfBallThresh
+            self.robot.pos.dist_to(self.aim_target_point) < main.ball().pos.dist_to(self.aim_target_point)
 
     def recalculate(self):
         self._target_line = robocup.Line(main.ball().pos, self.aim_target_point)
