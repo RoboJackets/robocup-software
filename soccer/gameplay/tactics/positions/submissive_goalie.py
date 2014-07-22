@@ -58,7 +58,9 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
             self.add_transition(state,
                 SubmissiveGoalie.State.clear,
                 lambda: evaluation.ball.is_in_our_goalie_zone() and
-                        not evaluation.ball.is_moving_towards_our_goal(),
+                        not evaluation.ball.is_moving_towards_our_goal() and
+                        main.ball().vel.mag() < 0.4 and
+                        evaluation.ball.opponent_with_ball() is None,
                 "ball in our goalie box, but not headed toward goal")
 
         for state in non_block_states:
@@ -159,7 +161,6 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
 
         for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
             req.required_shell_id = self.shell_id
-
         return reqs
 
 
