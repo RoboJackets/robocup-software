@@ -18,14 +18,15 @@ def eval_shot(pos, target=constants.Field.TheirGoalSegment, windowing_excludes=[
         shot_vector = best.segment.center() - pos
         shot_dist = shot_vector.mag()
 
+        # get the angle between the shot vector and the target segment, then normalize and positivize it
         angle_between_shot_and_window = abs(shot_vector.angle() - best.segment.delta().angle())
-        while angle_between_shot_and_window > math.pi / 2.0:
-            angle_between_shot_and_window -= math.pi / 2.0
+        while abs(angle_between_shot_and_window) > math.pi:
+            angle_between_shot_and_window -= math.pi
+        angle_between_shot_and_window = abs(angle_between_shot_and_window)
+
 
         # we don't care about the segment length, we care about the width of the corresponding segment perpendicular to the shot line
         perp_seg_length = abs(math.sin(angle_between_shot_and_window)) * best.segment.length()
-
-        # print("theta=" + str(angle_between_shot_and_window) + "; perplen=" + str(perp_seg_length) + "; windowlen=" + str(best.segment.length()))
 
         # the 'width' of the shot in radians
         angle = abs(math.atan2(perp_seg_length, shot_dist))
@@ -38,7 +39,6 @@ def eval_shot(pos, target=constants.Field.TheirGoalSegment, windowing_excludes=[
         dist_score = 1.0 - (shot_dist / longest_possible_shot)
         shot_chance = 0.6*angle_score + 0.4*dist_score  # note: the weights are fairly arbitrary and can be tuned
 
-        # print('angle_score=' + str(int(angle_score * 100)) + "; distscore='" + str(dist_score*100))
 
         if debug:
             # raise NotImplementedError("Draw the shot chance on the line")
