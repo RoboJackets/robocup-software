@@ -42,7 +42,7 @@ class Basic122(play.Play):
             behavior.Behavior.State.start,
             lambda: True,
             "immediately")
-        self.add_subbehavior(striker, 'striker', required=False, priority=1)
+        self.add_subbehavior(striker, 'striker', required=False, priority=3)
 
         support1 = skills.mark.Mark()
         support1.mark_line_thresh = 1.0
@@ -50,7 +50,7 @@ class Basic122(play.Play):
 
         support2 = skills.mark.Mark()
         support2.mark_line_thresh = 1.0
-        self.add_subbehavior(support2, 'support2', required=False, priority=3)
+        self.add_subbehavior(support2, 'support2', required=False, priority=1)
 
         self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
 
@@ -108,7 +108,7 @@ class Basic122(play.Play):
             support1.mark_robot = None
             support1.robot.add_text("No mark target", (255,255,255), "RobotText")
             if striker.robot != None:
-                support1.add_text("Static Support", (255,255,255), "RobotText")
+                support1.robot.add_text("Static Support", (255,255,255), "RobotText")
                 support_goal = striker.robot.pos
                 support_goal.x *= -1.0
                 if abs(support_goal.x) < 0.2:
@@ -119,7 +119,7 @@ class Basic122(play.Play):
                 else:
                     support_goal.y = max(support_goal.y * Basic122.DefenseSupportRatio, 0.3)
 
-                support1.robot.move(support_goal)
+                support1.robot.move_to(support_goal)
                 support1.robot.face(ball_proj)
 
         # sit around and do jack shit...

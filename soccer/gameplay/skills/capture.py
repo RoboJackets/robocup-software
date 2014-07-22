@@ -10,7 +10,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     # tunable config values
     CourseApproachErrorThresh = 0.8
-    CourseApproachDist = 0.15
+    CourseApproachDist = 0.18
     CourseApproachAvoidBall = 0.10
     DribbleSpeed = 100
     FineApproachSpeed = 0.2
