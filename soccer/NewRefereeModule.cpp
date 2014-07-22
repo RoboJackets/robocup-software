@@ -129,6 +129,7 @@ void NewRefereeModule::run()
 
 		NewRefereePacket *packet = new NewRefereePacket;
 		packet->receivedTime = timestamp();
+		this->received_time = packet->receivedTime;
 		if(!packet->wrapper.ParseFromArray(buf, size))
 		{
 			fprintf(stderr, "NewRefereeModule: got bad packet of %d bytes from %s:%d\n", (int)size, (const char *)host.toString().toAscii(), port);

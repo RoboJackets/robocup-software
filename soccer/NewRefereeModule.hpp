@@ -130,6 +130,7 @@ public:
 	// The UNIX timestamp when the packet was sent, in microseconds.
 	// Divide by 1,000,000 to get a time_t.
 	uint64_t sent_time;
+	uint64_t received_time;
 
 	// The number of microseconds left in the stage.
 	// The following stages have this value; the rest do not:
