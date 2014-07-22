@@ -33,11 +33,11 @@ def eval_shot(pos, target=constants.Field.TheirGoalSegment, windowing_excludes=[
 
         # the wider available angle the shot has, the more likely it will make it
         # the farther the shot has to travel, the more likely that defenders can block it in time
-        ShotAngleBaseline = (math.pi / 16.0)    # note: this angle choice is fairly arbitrary - feel free to tune it
+        ShotAngleBaseline = (math.pi / 20.0)    # note: this angle choice is fairly arbitrary - feel free to tune it
         angle_score = min(angle / ShotAngleBaseline, 1.0)
         longest_possible_shot = math.sqrt(constants.Field.Length**2 + constants.Field.Width)
         dist_score = 1.0 - (shot_dist / longest_possible_shot)
-        shot_chance = 0.6*angle_score + 0.4*dist_score  # note: the weights are fairly arbitrary and can be tuned
+        shot_chance = 0.7*angle_score + 0.3*dist_score  # note: the weights are fairly arbitrary and can be tuned
 
 
         if debug:
