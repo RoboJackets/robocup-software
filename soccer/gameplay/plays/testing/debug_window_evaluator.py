@@ -25,10 +25,4 @@ class DebugWindowEvaluator(play.Play):
 
         win_eval = evaluation.window_evaluator.WindowEvaluator()
         win_eval.debug = True
-        windows, best = win_eval.eval_pt_to_seg(pt, seg)
-
-        main.system_state().draw_circle(pt, 0.03, constants.Colors.Blue, "DebugWindows")
-        main.system_state().draw_line(seg, constants.Colors.Blue, "DebugWindows")
-        if best != None:
-            main.system_state().draw_line(best.segment, constants.Colors.Green, "DebugWindows")
-            main.system_state().draw_line(robocup.Line(pt, best.segment.center()), constants.Colors.Green, "DebugWindows")
+        win_eval.eval_pt_to_seg(pt, seg)
