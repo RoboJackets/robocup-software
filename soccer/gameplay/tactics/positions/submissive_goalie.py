@@ -48,7 +48,7 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
         non_block_states = [s for s in SubmissiveGoalie.State if s != SubmissiveGoalie.State.block]
 
 
-        for state in [s2 for s2 in non_block_states if s2 != SubmissiveGoalie.State.intercept]:
+        for state in [s2 for s2 in SubmissiveGoalie.State if s2 != SubmissiveGoalie.State.intercept]:
             self.add_transition(state,
                 SubmissiveGoalie.State.intercept,
                 lambda: evaluation.ball.is_moving_towards_our_goal(),
@@ -63,7 +63,8 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
 
         self.add_transition(SubmissiveGoalie.State.clear,
             SubmissiveGoalie.State.block,
-            lambda: not evaluation.ball.is_in_our_goalie_zone(),
+            lambda: not evaluation.ball.is_in_our_goalie_zone() and 
+                    not evaluation.ball.is_moving_towards_our_goal(),
             'ball leaves goal')
 
 
@@ -131,13 +132,8 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
 
     def on_enter_intercept(self):
         i = skills.intercept.Intercept()
+        i.shape_constraint = SubmissiveGoalie.RobotSegment
         self.add_subbehavior(i, 'intercept', required=True)
-
-    def execute_intercept(self):
-        ball_path = robocup.Segment(main.ball().pos,
-                            main.ball().pos + main.ball().vel.normalized()*10.0)
-        dest = ball_path.nearest_point(self.robot.pos)
-        self.robot.move_to(dest)
 
     def on_exit_intercept(self):
         self.remove_subbehavior('intercept')
