@@ -2,6 +2,7 @@ import composite_behavior
 import behavior
 import constants
 import robocup
+import role_assignment
 import evaluation.window_evaluator
 import evaluation.shot
 import main
@@ -27,11 +28,6 @@ class Defense(composite_behavior.CompositeBehavior):
         super().__init__(continuous=True)
 
 
-        # we could make the Defense tactic have more or less defenders, but right now we only support two
-        if len(defender_priorities) != 2:
-            raise RuntimeError("defender_priorities should have a length of two")
-
-
         self.add_transition(behavior.Behavior.State.start,
             behavior.Behavior.State.running,
             lambda:True,
@@ -43,9 +39,11 @@ class Defense(composite_behavior.CompositeBehavior):
 
 
         # add defenders at the specified priority levels
-        for num, priority in enumerate(defender_priorities):
-            defender = tactics.positions.submissive_defender.SubmissiveDefender()
-            self.add_subbehavior(defender, 'defender' + str(num+1), required=False, priority=priority)
+        self.defenders = []
+        for idx, priority in enumerate(defender_priorities):
+            d = tactics.positions.submissive_defender.SubmissiveDefender()
+            self.add_subbehavior(d, 'defender' + str(idx+1), required=False, priority=priority)
+            self.defenders.append(d)
 
 
         self.debug = True
@@ -62,6 +60,15 @@ class Defense(composite_behavior.CompositeBehavior):
         self._debug = value
     
 
+    # A list of our defender behaviors
+    @property
+    def defenders(self):
+        return self._defenders
+    @defenders.setter
+    def defenders(self, value):
+        self._defenders = value
+    
+
 
     def execute_running(self):
         self.recalculate()
@@ -75,9 +82,8 @@ class Defense(composite_behavior.CompositeBehavior):
     # TODO: move a lot of this code into modules in the evaluation folder
     def recalculate(self):
         goalie = self.subbehavior_with_name('goalie')
-        defender1 = self.subbehavior_with_name('defender1')
-        defender2 = self.subbehavior_with_name('defender2')
-        behaviors = [goalie, defender1, defender2]
+        behaviors = [goalie]
+        behaviors.extend(self.defenders)
 
         # if we don't have any bots to work with, don't waste time calculating
         if all(bhvr.robot == None for bhvr in behaviors):
@@ -90,6 +96,7 @@ class Defense(composite_behavior.CompositeBehavior):
                 self.source = source
                 self.ball_acquire_chance = 1.0
                 self.shot_chance = 1.0
+                self.defended_shot_chance = 1.0
                 self.assigned_handlers = []
                 self.best_shot_window = None
 
@@ -139,6 +146,16 @@ class Defense(composite_behavior.CompositeBehavior):
             @shot_chance.setter
             def shot_chance(self, value):
                 self._shot_chance = value
+
+
+            # our estimate of the shot chance given the placement of the defenders already assigned
+            @property
+            def defended_shot_chance(self):
+                return self._defended_shot_chance
+            @defended_shot_chance.setter
+            def defended_shot_chance(self, value):
+                self._defended_shot_chance = value
+            
             
 
             # his best window on our goal
@@ -156,13 +173,21 @@ class Defense(composite_behavior.CompositeBehavior):
             @property
             def score(self):
                 return self.ball_acquire_chance * self.shot_chance
+
+
+            # the risk of this threat after accounting for the threat handlers assigned so far
+            # should be between 0 and 1
+            @property
+            def defended_score(self):
+                return self.ball_acquire_chance * self.defended_shot_chance
+            
             
         
 
         # available behaviors we have to assign to threats
         # only look at ones that have robots
         # as we handle threats, we remove the handlers from this list
-        unused_threat_handlers = list(filter(lambda bhvr: bhvr.robot != None, [goalie, defender1, defender2]))
+        unused_threat_handlers = list(filter(lambda bhvr: bhvr.robot != None, behaviors))
 
 
 
@@ -170,24 +195,26 @@ class Defense(composite_behavior.CompositeBehavior):
             if len(threat.assigned_handlers) == 0:
                 return
 
-            # make sure goalie is in the middle
-            if len(threat.assigned_handlers) > 1:
-                if goalie in threat.assigned_handlers:
-                    idx = threat.assigned_handlers.index(goalie)
-                    if idx != 1:
-                        del threat.assigned_handlers[idx]
-                        threat.assigned_handlers.insert(1, goalie)
-
-
             if threat.best_shot_window != None:
                 center_line = robocup.Line(threat.pos, threat.best_shot_window.segment.center())
             else:
                 center_line = robocup.Line(threat.pos, constants.Field.OurGoalSegment.center())
 
 
+            handlers_to_place = []
+            handlers_to_place.extend(threat.assigned_handlers)
+
+            # if there's 3+ handlers and one of them is the goalie, the goalie should be placed on the shot center line
+            if len(handlers_to_place) > 2 and goalie in handlers_to_place:
+                idx = handlers_to_place.index(goalie)
+                del handlers_to_place[idx]
+                goalie.block_line = center_line
+
+
+
             # find the angular width that each defender can block.  We then space these out accordingly
             angle_widths = []
-            for handler in threat.assigned_handlers:
+            for handler in handlers_to_place:
                 dist_from_threat = handler.robot.pos.dist_to(threat.pos)
                 w = min(2.0 * math.atan2(constants.Robot.Radius, dist_from_threat), 0.15)
                 angle_widths.append(w)
@@ -195,12 +222,12 @@ class Defense(composite_behavior.CompositeBehavior):
 
             # start on one edge of our available angle coverage and work counter-clockwise,
             # assigning block lines to the bots as we go
-            spacing = 0.01 if len(threat.assigned_handlers) < 3 else 0.0  # spacing between each bot in radians
+            spacing = 0.01 if len(handlers_to_place) < 3 else 0.02  # spacing between each bot in radians
             total_angle_coverage = sum(angle_widths) + (len(angle_widths) - 1)*spacing
             start_vec = center_line.delta().normalized()
             start_vec.rotate(robocup.Point(0,0), -((total_angle_coverage / 2.0) * constants.RadiansToDegrees))
             for i in range(len(angle_widths)):
-                handler = threat.assigned_handlers[i]
+                handler = handlers_to_place[i]
                 w = angle_widths[i]
                 start_vec.rotate(robocup.Point(0,0), w/2.0 * constants.RadiansToDegrees)
                 handler.block_line = robocup.Line(threat.pos, threat.pos + start_vec * 10)
@@ -212,8 +239,6 @@ class Defense(composite_behavior.CompositeBehavior):
             if not isinstance(threat_index, int):
                 raise TypeError("threat_index should be an int")
 
-            # ignore all of our robots
-            excluded_robots = list(main.our_robots())
 
             # behaviors before this threat are counted as obstacles in their TARGET position (where we've
             # assigned them to go, not where they are right now)
@@ -225,11 +250,12 @@ class Defense(composite_behavior.CompositeBehavior):
             threat.shot_chance, threat.best_shot_window = evaluation.shot.eval_shot(
                 pos=threat.pos,
                 target=constants.Field.OurGoalSegment,
-                windowing_excludes=excluded_robots,
+                windowing_excludes=list(main.our_robots()), # ignore all of our robots
                 hypothetical_robot_locations=[],
                 debug=False)
 
 
+        # this will contain all of our perceived threats
         threats = []
 
 
@@ -347,65 +373,54 @@ class Defense(composite_behavior.CompositeBehavior):
             for opp in potential_threats:
                 # record the threat
                 lurker = Threat(opp)
-                lurker.ball_acquire_chance = 0.5 # note: this is a bullshit value
+                lurker.ball_acquire_chance = 0.6 # note: this is a bullshit value
                 threats.append(lurker)
-                recalculate_threat_shot(len(threats) - 1)
 
 
-        # only consider the top three threats
-        threats.sort(key=lambda threat: threat.score, reverse=True)
-        threats = threats[0:3]
 
-        # print("sorted threats:")
-        # for idx, t in enumerate(threats):
-        #     print("t[" + str(idx) + "]: " + str(t.source) + "shot: " + str(t.shot_chance) + "; pass:" + str(t.ball_acquire_chance) + "; score:" + str(t.score))
-
-
-        # print("sorted threat scores: " + str(list(map(lambda t: str(t.score) + " " + str(t.source), threats))))
-
-
-        # print("Unused handlers: " + str(unused_threat_handlers))
-        # print("---------------------")
+        # calculate shot for all threats
+        for i in range(len(threats)):
+            recalculate_threat_shot(i)
 
 
 
 
-        smart = False
-        if not smart:
+        def recalculate_defended_shots():
+            placed_handlers = []
+            for t in threats:
+                placed_handlers.extend(t.assigned_handlers)
 
-            # only deal with top two threats
-            threats_to_block = threats[0:2]
+            # the locations we're planning on having defenders at
+            hypothetical_obstacles = list(map(lambda handler: handler.move_target, placed_handlers))
 
-            # print('threats to block: ' + str(list(map(lambda t: t.source, threats_to_block))))
-            threat_idx = 0
-            while len(unused_threat_handlers) > 0:
-                threats_to_block[threat_idx].assigned_handlers.append(unused_threat_handlers[0])
-                del unused_threat_handlers[0]
-
-                threat_idx = (threat_idx + 1) % len(threats_to_block)
-                
-
-            for t_idx, t in enumerate(threats_to_block):
-                recalculate_threat_shot(t_idx)
-                set_block_lines_for_threat_handlers(t)
+            # recalculate defended shot score
+            for t in threats:
+                t.defended_shot_chance, best_window = evaluation.shot.eval_shot(t.pos,
+                    constants.Field.OurGoalSegment,
+                    windowing_excludes=list(main.our_robots()),
+                    hypothetical_robot_locations=hypothetical_obstacles)
 
 
-        else:
-            # assign all of our defenders to do something
-            while len(unused_threat_handlers) > 0:
-                # prioritize by threat score, highest first
-                top_threat = max(threats, key=lambda threat: threat.score)
 
-                # assign the next handler to this threat
-                handler = unused_threat_handlers[0]
-                top_threat.assigned_handlers.append(handler)
-                del unused_threat_handlers[0]
+        # gotta do this before looking at assigning handlers
+        recalculate_defended_shots()
 
-                # reassign the block line for each handler of this threat
-                set_block_lines_for_threat_handlers(top_threat)
 
-                # recalculate the shot now that we have
-                recalculate_threat_shot(0)
+        # assign all of our defenders to do something
+        while len(unused_threat_handlers) > 0:
+            # prioritize by threat score, highest first
+            top_threat = max(threats, key=lambda threat: threat.defended_score)
+
+            # assign the next handler to this threat
+            handler = unused_threat_handlers[0]
+            top_threat.assigned_handlers.append(handler)
+            del unused_threat_handlers[0]
+
+            # reassign the block line for each handler of this threat
+            set_block_lines_for_threat_handlers(top_threat)
+
+            # now that we've assigned a new handler, we have to recalculate ALL threat shots
+            recalculate_defended_shots()
 
 
         # tell the bots where to move / what to block and draw some debug stuff
@@ -429,7 +444,6 @@ class Defense(composite_behavior.CompositeBehavior):
                     main.system_state().draw_circle(handler.move_target, 0.02, constants.Colors.Blue, "Defense")
 
 
-                # draw some debug stuff
                 if threat.best_shot_window != None:
                     # draw shot triangle
                     pts = [threat.pos, threat.best_shot_window.segment.get_pt(0), threat.best_shot_window.segment.get_pt(1)]
@@ -437,12 +451,22 @@ class Defense(composite_behavior.CompositeBehavior):
                     main.system_state().draw_polygon(pts, shot_color, "Defense")
                     main.system_state().draw_line(threat.best_shot_window.segment, constants.Colors.Red, "Defense")
 
-                    chance, best_window = evaluation.shot.eval_shot(threat.pos, constants.Field.OurGoalSegment)
+                    # show the threat risk before and after handler placement
+                    main.system_state().draw_text("Shot: " + str(int(threat.shot_chance * 100.0)) + "% / " + str(int(threat.defended_shot_chance*100)) + "%", shot_line.center(), constants.Colors.White, "Defense")
 
-                    main.system_state().draw_text("Shot: " + str(int(threat.shot_chance * 100.0)) + "% / " + str(int(chance*100)) + "%", shot_line.center(), constants.Colors.White, "Defense")
-                
                 # draw pass lines
                 if idx > 0:
                     pass_line = robocup.Segment(main.ball().pos, threat.pos)
                     main.system_state().draw_line(pass_line, constants.Colors.Red, "Defense")
                     main.system_state().draw_text("Pass: " + str(int(threat.ball_acquire_chance * 100.0)) + "%", pass_line.center(), constants.Colors.White, "Defense")
+
+
+
+    def role_requirements(self):
+        reqs = super().role_requirements()
+        # remove the 'previous_shell_id' property for each defender - we want things to happen faster
+        for name, subtree in reqs.items():
+            if name != 'goalie':
+                for req in role_assignment.iterate_role_requirements_tree_leaves(subtree):
+                    req.previous_shell_id = None
+        return reqs
