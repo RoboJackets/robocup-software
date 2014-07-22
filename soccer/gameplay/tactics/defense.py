@@ -430,17 +430,16 @@ class Defense(composite_behavior.CompositeBehavior):
 
             # debug output
             for handler in threat.assigned_handlers:
-                handler.robot.add_text("Marking: " + str(threat.source), constants.Colors.White, "Defense")
-                # FIXME: choose block_objects collaboratively (so there's no overlap)
-                # handler.block_line = shot_line
-                main.system_state().draw_line(handler.block_line, constants.Colors.Blue, "Defense")
+                # handler.robot.add_text("Marking: " + str(threat.source), constants.Colors.White, "Defense")
+                main.system_state().draw_circle(handler.move_target, 0.02, constants.Colors.Blue, "Defense")
 
 
             # draw some debug stuff
             if threat.best_shot_window != None:
-                for i in range(2):
-                    edge = robocup.Segment(threat.pos, threat.best_shot_window.segment.get_pt(i))
-                    main.system_state().draw_line(edge, constants.Colors.Red, "Defense")
+                # draw shot triangle
+                pts = [threat.pos, threat.best_shot_window.segment.get_pt(0), threat.best_shot_window.segment.get_pt(1)]
+                shot_color = (255, 0, 0, 150)   # translucent red
+                main.system_state().draw_polygon(pts, shot_color, "Defense")
                 main.system_state().draw_line(threat.best_shot_window.segment, constants.Colors.Red, "Defense")
 
                 chance, best_window = evaluation.shot.eval_shot(threat.pos, constants.Field.OurGoalSegment)

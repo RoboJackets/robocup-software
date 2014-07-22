@@ -35,7 +35,12 @@ QColor Color_from_tuple(const boost::python::tuple &rgb) {
 	float g = extract<float>(rgb[1]);
 	float b = extract<float>(rgb[2]);
 
-	return QColor(r, g, b);
+	if (len(rgb) == 4) {
+		float a = extract<float>(rgb[3]);
+		return QColor(r, g, b, a);
+	} else {
+		return QColor(r, g, b);
+	}
 }
 
 std::string Point_repr(Geometry2d::Point *self) {
@@ -184,6 +189,15 @@ void State_draw_text(SystemState *self, const std::string &text, Geometry2d::Poi
 	self->drawText(QString::fromStdString(text), *pos, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
+void State_draw_polygon(SystemState *self, boost::python::list points, boost::python::tuple rgb, const std::string &layer) {
+	std::vector<Geometry2d::Point> ptVec;
+	for (int i = 0; i < len(points); i++) {
+		ptVec.push_back(boost::python::extract<Geometry2d::Point>(points[i]));
+	}
+
+	self->drawPolygon(ptVec, Color_from_tuple(rgb), QString::fromStdString(layer));
+}
+
 boost::python::list Circle_intersects_line(Geometry2d::Circle *self, const Geometry2d::Line *line) {
 	boost::python::list lst;
 
@@ -307,11 +321,11 @@ BOOST_PYTHON_MODULE(robocup)
 
 	class_<Robot>("Robot", init<int, bool>())
 		.def("shell_id", &Robot::shell)
-		.def("is_ours", &Robot::self)
-		.def_readwrite("pos", &Robot::pos)
-		.def_readwrite("vel", &Robot::vel)
-		.def_readwrite("angle", &Robot::angle)
-		.def_readwrite("angle_vel", &Robot::angleVel)
+		.def("is_ours", &Robot::self, "whether or not this robot is on our team")
+		.def_readwrite("pos", &Robot::pos, "position vector of the robot in meters")
+		.def_readwrite("vel", &Robot::vel, "velocity vector of the robot in m/s")
+		.def_readwrite("angle", &Robot::angle, "angle of the robot in degrees")
+		.def_readwrite("angle_vel", &Robot::angleVel, "angular velocity in degrees per second")
         .def_readonly("visible", &Robot::visible)
 		.def("__repr__", &Robot_repr)
 		.def("__eq__", &Robot::equals)
@@ -338,8 +352,8 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("face_none", &OurRobot::faceNone)
 		.def("kick", &OurRobot::kick)
 		.def("chip", &OurRobot::chip)
-		.def("unkick", &OurRobot::unkick)
-		.def("get_cmd_text", &OurRobot::getCmdText)
+		.def("unkick", &OurRobot::unkick, "clears any prevous kick command sent to the robot")
+		.def("get_cmd_text", &OurRobot::getCmdText, "gets the string containing a list of commands sent to the robot, such as face(), move_to(), etc.")
 		.def("ball_sense_works", &OurRobot::ballSenseWorks)
 		.def("kicker_works", &OurRobot::kickerWorks)
 		.def("add_local_obstacle", &OurRobot_add_local_obstacle)
@@ -374,5 +388,6 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("draw_text", &State_draw_text)
 		.def("draw_shape", &SystemState::drawShape)
 		.def("draw_line", &State_draw_line)
+		.def("draw_polygon", &State_draw_polygon)
 	;
 }
