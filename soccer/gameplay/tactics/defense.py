@@ -356,9 +356,9 @@ class Defense(composite_behavior.CompositeBehavior):
         threats.sort(key=lambda threat: threat.score, reverse=True)
         threats = threats[0:3]
 
-        print("sorted threats:")
-        for idx, t in enumerate(threats):
-            print("t[" + str(idx) + "]: " + str(t.source) + "shot: " + str(t.shot_chance) + "; pass:" + str(t.ball_acquire_chance) + "; score:" + str(t.score))
+        # print("sorted threats:")
+        # for idx, t in enumerate(threats):
+        #     print("t[" + str(idx) + "]: " + str(t.source) + "shot: " + str(t.shot_chance) + "; pass:" + str(t.ball_acquire_chance) + "; score:" + str(t.score))
 
 
         # print("sorted threat scores: " + str(list(map(lambda t: str(t.score) + " " + str(t.source), threats))))
@@ -423,25 +423,26 @@ class Defense(composite_behavior.CompositeBehavior):
 
 
             # debug output
-            for handler in threat.assigned_handlers:
-                # handler.robot.add_text("Marking: " + str(threat.source), constants.Colors.White, "Defense")
-                main.system_state().draw_circle(handler.move_target, 0.02, constants.Colors.Blue, "Defense")
+            if self.debug:
+                for handler in threat.assigned_handlers:
+                    # handler.robot.add_text("Marking: " + str(threat.source), constants.Colors.White, "Defense")
+                    main.system_state().draw_circle(handler.move_target, 0.02, constants.Colors.Blue, "Defense")
 
 
-            # draw some debug stuff
-            if threat.best_shot_window != None:
-                # draw shot triangle
-                pts = [threat.pos, threat.best_shot_window.segment.get_pt(0), threat.best_shot_window.segment.get_pt(1)]
-                shot_color = (255, 0, 0, 150)   # translucent red
-                main.system_state().draw_polygon(pts, shot_color, "Defense")
-                main.system_state().draw_line(threat.best_shot_window.segment, constants.Colors.Red, "Defense")
+                # draw some debug stuff
+                if threat.best_shot_window != None:
+                    # draw shot triangle
+                    pts = [threat.pos, threat.best_shot_window.segment.get_pt(0), threat.best_shot_window.segment.get_pt(1)]
+                    shot_color = (255, 0, 0, 150)   # translucent red
+                    main.system_state().draw_polygon(pts, shot_color, "Defense")
+                    main.system_state().draw_line(threat.best_shot_window.segment, constants.Colors.Red, "Defense")
 
-                chance, best_window = evaluation.shot.eval_shot(threat.pos, constants.Field.OurGoalSegment)
+                    chance, best_window = evaluation.shot.eval_shot(threat.pos, constants.Field.OurGoalSegment)
 
-                main.system_state().draw_text("Shot: " + str(int(threat.shot_chance * 100.0)) + "% / " + str(int(chance*100)) + "%", shot_line.center(), constants.Colors.White, "Defense")
-            
-            # draw pass lines
-            if idx > 0:
-                pass_line = robocup.Segment(main.ball().pos, threat.pos)
-                main.system_state().draw_line(pass_line, constants.Colors.Red, "Defense")
-                main.system_state().draw_text("Pass: " + str(int(threat.ball_acquire_chance * 100.0)) + "%", pass_line.center(), constants.Colors.White, "Defense")
+                    main.system_state().draw_text("Shot: " + str(int(threat.shot_chance * 100.0)) + "% / " + str(int(chance*100)) + "%", shot_line.center(), constants.Colors.White, "Defense")
+                
+                # draw pass lines
+                if idx > 0:
+                    pass_line = robocup.Segment(main.ball().pos, threat.pos)
+                    main.system_state().draw_line(pass_line, constants.Colors.Red, "Defense")
+                    main.system_state().draw_text("Pass: " + str(int(threat.ball_acquire_chance * 100.0)) + "%", pass_line.center(), constants.Colors.White, "Defense")
