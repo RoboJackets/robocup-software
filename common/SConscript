@@ -14,17 +14,17 @@ env.Library('common', srcs)
 #env.Textfile('__init__.py', source=[''])
 
 # Write the git commit hash to a source file for versioning logs
-import git
+import pygit2
 
-repo = git.Repo(Dir('#').path)
+repo = pygit2.Repository(Dir('#/.git').abspath)
 
 env.Textfile('git_version.h',
 	['static const char git_version_hash[] = "@hash@";',
 	 'static bool git_version_dirty = @dirty@;',
 	 ''],
 	SUBST_DICT=(
-		('@hash@', repo.head.commit.hexsha),
-		('@dirty@', str(repo.is_dirty()).lower())
+                ('@hash@', repo.head.target),
+		('@dirty@', str(len(repo.diff('HEAD')) > 0).lower())
 	)
 )
 
@@ -33,7 +33,7 @@ env.Textfile('git_version.py',
 	 'git_version_dirty = @dirty@',
 	 ''],
 	SUBST_DICT=(
-		('@hash@', repo.head.commit.hexsha),
-		('@dirty@', repo.is_dirty())
+		('@hash@', repo.head.target),
+		('@dirty@', len(repo.diff('HEAD')) > 0)
 	)
 )
