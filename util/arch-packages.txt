@@ -1,0 +1,36 @@
+
+# python 3
+python
+python-pip
+
+
+scons
+# TODO: uncomment these once scons git stuff is figured out
+python2
+python2-pip
+#libgit2
+#python-pygit2
+
+
+qt5-base
+qt5-tools
+qwtplot3d
+
+python-pyqt4
+
+doxygen
+
+bullet
+freeglut
+
+eigen
+
+clang
+
+boost
+boost-libs
+
+protobuf
+
+graphviz
+

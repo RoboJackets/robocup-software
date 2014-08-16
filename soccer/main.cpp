@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <malloc.h>
 #include <assert.h>
+#include <signal.h>
 
 #include <QApplication>
 #include <QFile>

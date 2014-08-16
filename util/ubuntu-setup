@@ -16,7 +16,7 @@ cp -f $BASE/util/robocup.rules /etc/udev/rules.d/
 
 echo "-- Installing required packages"
 # install all of the packages listed in required_packages.txt
-apt-get install $(sed 's/#.*//;/^$/d' $BASE/util/required_packages.txt)
+apt-get install $(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)
 
 # remove old version of git python
 yes | easy_install GitPython
