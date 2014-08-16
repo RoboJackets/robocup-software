@@ -12,9 +12,9 @@ class Facer(single_robot_behavior.SingleRobotBehavior):
     def __init__(self):
         super().__init__(continuous=True)
 
-        self.angle = 90
+        self.angle = math.pi / 2.0
         self.point = robocup.Point(0, constants.Field.Length / 4.0)
-        self.face_target = self.point + robocup.Point(math.cos(self.angle * constants.DegreesToRadians), math.sin(self.angle * constants.DegreesToRadians))
+        self.face_target = self.point + robocup.Point(math.cos(self.angle), math.sin(self.angle))
 
         self.add_transition(behavior.Behavior.State.start,
             behavior.Behavior.State.running,
@@ -33,7 +33,7 @@ class Facer(single_robot_behavior.SingleRobotBehavior):
 
     def execute_running(self):
         self.robot.move_to(self.point)
-        self.robot.set_max_angle_speed(10)
+        self.robot.set_max_angle_speed(10 * constants.DegreesToRadians)
         self.robot.face(self.face_target)
 
 

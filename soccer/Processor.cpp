@@ -181,8 +181,8 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 		const RepeatedPtrField<SSL_DetectionRobot> &selfRobots = _blueTeam ? frame->robots_blue() : frame->robots_yellow();
 		BOOST_FOREACH(const SSL_DetectionRobot &robot, selfRobots)
 		{
-			float angle = fixAngleDegrees(robot.orientation() * RadiansToDegrees + _teamAngle);
-			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angle, time, frame->frame_number());
+			float angleRad = fixAngleRadians(robot.orientation() + _teamAngle);
+			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angleRad, time, frame->frame_number());
 			obs.source = frame->camera_id();
 			unsigned int id = robot.robot_id();
 			if (id < _state.self.size())
@@ -194,8 +194,8 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 		const RepeatedPtrField<SSL_DetectionRobot> &oppRobots = _blueTeam ? frame->robots_yellow() : frame->robots_blue();
 		BOOST_FOREACH(const SSL_DetectionRobot &robot, oppRobots)
 		{
-			float angle = fixAngleDegrees(robot.orientation() * RadiansToDegrees + _teamAngle);
-			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angle, time, frame->frame_number());
+			float angleRad = fixAngleRadians(robot.orientation() + _teamAngle);
+			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angleRad, time, frame->frame_number());
 			obs.source = frame->camera_id();
 			unsigned int id = robot.robot_id();
 			if (id < _state.opp.size())
@@ -581,9 +581,9 @@ void Processor::defendPlusX(bool value)
 
 	if (_defendPlusX)
 	{
-		_teamAngle = -90;
+		_teamAngle = -M_PI_2;
 	} else {
-		_teamAngle = 90;
+		_teamAngle = M_PI_2;
 	}
 
 	_worldToTeam = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Length / 2.0f));

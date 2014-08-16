@@ -11,7 +11,7 @@ public:
 	}
 
 	Geometry2d::Point pos;
-	float angle;
+	float angle;	//	in radians
 	uint64_t time;
 	int source;
 	int frameNumber;

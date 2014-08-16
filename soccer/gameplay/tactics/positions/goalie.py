@@ -122,7 +122,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def execute_setup_penalty(self):
         pt = Point(0, Field_PenaltyDist)
         penalty_kicker = min(main.opponent_robots(), key=lambda r: (r.pos - pt).mag())
-        angle_rad = penalty_kicker.angle * constants.DegreesToRadians
+        angle_rad = penalty_kicker.angle
         shot_line = Line(penalty_kicker.pos, penalty_kicker.pos + robocup.Point.direction(angle_rad))
 
         dest = shot_line.intersection(Goalie.RobotSegment)
