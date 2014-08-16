@@ -164,7 +164,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
             # it tends to kick in the direction of the side of the mouth that the ball is in
             # we draw a line from the center of the bot through the ball and a line along the angle the bot is facing
             # our 'actual' aim line is somewhere in-between the two
-            bot_angle_rad = self.robot.angle * constants.DegreesToRadians
+            bot_angle_rad = self.robot.angle
             ball_angle_rad = (main.ball().pos - self.robot.pos).angle()
             # if the ball angle rad is off by too much, we probably lost sight of it and are going off last known position
             # if we detect this big of an error, we just default to using bot_angle_rad

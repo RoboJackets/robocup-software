@@ -145,7 +145,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
             self._pass_line = robocup.Line(ball.pos, self.receive_point)
 
         target_angle_rad = (ball.pos - self.robot.pos).angle()
-        angle_rad = self.robot.angle * constants.DegreesToRadians
+        angle_rad = self.robot.angle
         self._angle_error = target_angle_rad - angle_rad
 
 

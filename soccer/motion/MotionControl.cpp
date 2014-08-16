@@ -69,15 +69,15 @@ void MotionControl::run() {
 	} else if (constraints.faceTarget || constraints.pivotTarget) {
 		const Geometry2d::Point &targetPt = constraints.pivotTarget ? *constraints.pivotTarget : *constraints.faceTarget;
 
-		float targetAngleFinal = (targetPt - _robot->pos).angle() * RadiansToDegrees;
+		float targetAngleFinal = (targetPt - _robot->pos).angle();
 		float angleError = targetAngleFinal - _robot->angle;
 
 		//	don't go the long way around to get to our final angle
-		while (angleError > 180) {
-			angleError -= 360;
+		while (angleError > M_PI) {
+			angleError -= M_PI * 2.0;
 		} 
-		while (angleError < -180) {
-			angleError += 360;
+		while (angleError < -M_PI) {
+			angleError += M_PI * 2.0;
 		}
 
 
@@ -133,7 +133,7 @@ void MotionControl::run() {
 		Point vel(speed, 0);
 
 		//	the robot body coordinate system is wierd...
-		vel.rotate(-90);
+		vel.rotate(-M_PI_2);
 
 		_targetBodyVel(vel);
 
@@ -240,7 +240,8 @@ void MotionControl::_targetAngleVel(float angleVel) {
 	//	velocity multiplier
 	angleVel *= *_robot->config->angleVelMultiplier;
 
-	_robot->radioTx.set_body_w(angleVel);
+	//	the robot firmware still speaks degrees, so that's how we send it over
+	_robot->radioTx.set_body_w(angleVel * RadiansToDegrees);
 }
 
 void MotionControl::_targetBodyVel(Point targetVel) {

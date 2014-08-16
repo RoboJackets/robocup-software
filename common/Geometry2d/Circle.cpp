@@ -157,19 +157,18 @@ bool Circle::tangentPoints(const Geometry2d::Point &src,
 	{
 		//source is outside of circle
 		const float theta = asin(_r/dist);
-		const float degT = theta * 180.0f / M_PI;
 		
 		if (p1)
 		{
 			Point final = center;
-			final.rotate(src, degT);
+			final.rotate(src, theta);
 			*p1 = final;
 		}
 		
 		if (p2)
 		{
 			Point final = center;
-			final.rotate(src, -degT);
+			final.rotate(src, -theta);
 			*p2 = final;
 		}
 	}

@@ -112,7 +112,7 @@ void FieldView::paintEvent(QPaintEvent* e)
 	// Make coordinate transformations
 	_screenToWorld = Geometry2d::TransformMatrix();
 	_screenToWorld *= Geometry2d::TransformMatrix::scale(Floor_Length, Floor_Width);
-	_screenToWorld *= Geometry2d::TransformMatrix::rotate(-_rotate * 90);
+	_screenToWorld *= Geometry2d::TransformMatrix::rotate(-_rotate * M_PI / 2.0);
 	_screenToWorld *= Geometry2d::TransformMatrix::scale(1.0 / width(), -1.0 / height());
 	_screenToWorld *= Geometry2d::TransformMatrix::translate(-width() / 2.0, -height() / 2.0);
 	
@@ -120,17 +120,17 @@ void FieldView::paintEvent(QPaintEvent* e)
 	_worldToTeam *= Geometry2d::TransformMatrix::translate(0, Field_Length / 2.0f);
 	if (frame->defend_plus_x())
 	{
-		_worldToTeam *= Geometry2d::TransformMatrix::rotate(-90);
+		_worldToTeam *= Geometry2d::TransformMatrix::rotate(-M_PI / 2.0);
 	} else {
-		_worldToTeam *= Geometry2d::TransformMatrix::rotate(90);
+		_worldToTeam *= Geometry2d::TransformMatrix::rotate(M_PI / 2.0);
 	}
 	
 	_teamToWorld = Geometry2d::TransformMatrix();
 	if (frame->defend_plus_x())
 	{
-		_teamToWorld *= Geometry2d::TransformMatrix::rotate(90);
+		_teamToWorld *= Geometry2d::TransformMatrix::rotate(M_PI / 2.0);
 	} else {
-		_teamToWorld *= Geometry2d::TransformMatrix::rotate(-90);
+		_teamToWorld *= Geometry2d::TransformMatrix::rotate(-M_PI / 2.0);
 	}
 	_teamToWorld *= Geometry2d::TransformMatrix::translate(0, -Field_Length / 2.0f);
 	
@@ -220,14 +220,14 @@ void FieldView::drawWorldSpace(QPainter& p)
 				BOOST_FOREACH(const SSL_DetectionRobot& r, detect.robots_blue())
 				{
 					QPointF pos(r.x() / 1000, r.y() / 1000);
-					drawRobot(p, true, r.robot_id(), pos, r.orientation() * RadiansToDegrees);
+					drawRobot(p, true, r.robot_id(), pos, r.orientation());
 // 					p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000), Robot_Radius, Robot_Radius);
 				}
 				
 				BOOST_FOREACH(const SSL_DetectionRobot& r, detect.robots_yellow())
 				{
 					QPointF pos(r.x() / 1000, r.y() / 1000);
-					drawRobot(p, false, r.robot_id(), pos, r.orientation() * RadiansToDegrees);
+					drawRobot(p, false, r.robot_id(), pos, r.orientation());
 // 					p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000), Robot_Radius, Robot_Radius);
 				}
 			}
@@ -548,7 +548,7 @@ void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos
 		painter.setBrush(Qt::yellow);
 	}
 	
-	painter.rotate(theta+90);
+	painter.rotate(theta * RadiansToDegrees + 90);
 	
 	int span = 40;
 	

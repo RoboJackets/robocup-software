@@ -80,7 +80,7 @@ def robot_has_ball(robot):
         return math.acos((VA*VA + VB*VB - AB*AB)/(2*VA*VB))
 
 
-    angle = robot.angle * constants.DegreesToRadians
+    angle = robot.angle
     theta = angle_btw_three_pts(robot.pos + robocup.Point(math.cos(angle), math.sin(angle)),
                                 main.ball().pos,
                                 robot.pos)

@@ -14,7 +14,7 @@ class Pivoter(single_robot_behavior.SingleRobotBehavior):
 
         self.angle = 0
         point = robocup.Point(0, constants.Field.Length / 4.0)
-        self.face_target = point + robocup.Point(math.cos(self.angle * constants.DegreesToRadians), math.sin(self.angle * constants.DegreesToRadians))
+        self.face_target = point + robocup.Point(math.cos(self.angle), math.sin(self.angle))
 
         self.add_transition(behavior.Behavior.State.start,
             behavior.Behavior.State.running,
@@ -32,7 +32,7 @@ class Pivoter(single_robot_behavior.SingleRobotBehavior):
     #     self._point = value
 
     def execute_running(self):
-        self.robot.set_max_angle_speed(5)
+        self.robot.set_max_angle_speed(5 * constants.DegreesToRadians)
         self.robot.pivot(self.face_target)
 
 
@@ -57,5 +57,4 @@ class TunePivoting(play.Play):
     def execute_running(self):
         rotater = self.subbehavior_with_name('rotater')
         if rotater.robot != None:
-            # rotater.robot.set_max_angle_speed(5)
             rotater.robot.set_dribble_speed(int(constants.Robot.Dribbler.MaxPower / 3))
