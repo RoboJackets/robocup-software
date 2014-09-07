@@ -1,4 +1,3 @@
-import root_play as root_play_module
 import play_registry as play_registry_module
 import play
 import fs_watcher
@@ -27,6 +26,7 @@ def init():
 
     # init root play
     global _root_play
+    import root_play as root_play_module
     _root_play = root_play_module.RootPlay()
 
     # init play registry

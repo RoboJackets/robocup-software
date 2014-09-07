@@ -176,6 +176,6 @@
  <MotionConstraints>
   <Max_Acceleration value="1"/>
   <Max_Velocity value="2.2"/>
-  <Max_Angle_Speed value="25"/>
+  <Max_Angle_Speed value="0.436"/>
  </MotionConstraints>
 </config>

@@ -18,7 +18,7 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
         # Define circle to circle up on
         radius = constants.Field.CenterRadius + constants.Robot.Radius + 0.01
 
-        perRobot = (2 * constants.Robot.Radius* 1.25) / radius * (180.0 / math.pi)
+        perRobot = (2 * constants.Robot.Radius* 1.25) / radius
 
         ball_pos = main.ball().pos if main.ball() != None else robocup.Point(constants.Field.Width / 2, constants.Field.Length / 2)
 
