@@ -227,6 +227,40 @@ void RRTPlanner::optimize(Planning::Path &path, const Geometry2d::CompositeShape
 	}
 	// Done with the path
 	pts.push_back(path.points.back());
-
 	path.points = pts;
+	quarticBezier(path, obstacles);
 }
+
+Geometry2d::Point pow(float x, Geometry2d::Point &p1)
+{
+	return Geometry2d::Point(pow(x, p1.x))
+}
+
+void RRTPlanner::quarticBezier (Planning::Path &path, const Geometry2d::CompositeShape *obstacles)
+{
+	vector<Geometry2d::Point> pts;
+	reverse(path.points.begin(), path.points.end());
+	Geometry2d::Point p1, p2, p3, p4;
+	p1 = path.points.front();
+	p1 = path.points[1];
+	p4 = path.points[0];
+
+	int interpolations = 10;
+
+	for (int i=0; i++; i<path.points.size()) // access by reference to avoid copying
+    {
+    	p4 = path.points[i];
+    	p0 = path.points[i+1];
+    	p2 = p1/40.0 - (1.5/40.0)*p4;
+    	p3 = 8.0*p2 + 0.5 * p4;
+    	p1 = (0.5)*p0 + 8.0*p2;
+
+    	for (int j=0; j<=interpolations; j++)
+    	{
+    		float t = (float)j / (float)(interpolations);
+    		Point
+    	}
+
+    }
+}
+
