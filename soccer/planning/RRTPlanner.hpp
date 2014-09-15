@@ -5,6 +5,7 @@
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/CompositeShape.hpp>
 #include <planning/Path.hpp>
+#include <MotionConstraints.hpp>
 
 #include "Tree.hpp"
 
@@ -41,7 +42,7 @@ namespace Planning
 					const Geometry2d::Point& start,
 					const float angle, 
 					const Geometry2d::Point& vel, 
-					const Geometry2d::Point& goal, 
+					const MotionConstraints &motionConstraints,
 					const Geometry2d::CompositeShape* obstacles, 
 					Planning::Path &path);
 			
@@ -49,6 +50,8 @@ namespace Planning
 			float fixedPathLength() const { return _bestPath.length(); }
 			
 	protected:
+		MotionConstraints _motionConstraints;
+
 		FixedStepTree _fixedStepTree0;
 		FixedStepTree _fixedStepTree1;
 		
@@ -72,7 +75,13 @@ namespace Planning
 		 *  to the start of tree1 */
 		void makePath();
 		
+		void quarticBezier(Planning::Path &path, const Geometry2d::CompositeShape *obstacles);
+
+		void cubicBezier(Planning::Path &path, const Geometry2d::CompositeShape *obstacles);
 		/** optimize the path */
 		void optimize(Planning::Path &path, const Geometry2d::CompositeShape *obstacles);
+
+		Eigen::VectorXd cubicBezierCalc (double vi, double vf, std::vector<double> &points, 
+									std::vector<double> &ks, std::vector<double> &ks2);
 	};
 }
