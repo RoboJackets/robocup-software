@@ -36,6 +36,9 @@ namespace Planning
 			
 			// Returns the length of the path starting at point (start).
 			float length(unsigned int start = 0) const;
+
+			//TODO: write javadoc
+			float length(unsigned int start, unsigned int end) const;
 			
 			/** returns the length of the path from the closet point found to @a pt */
 			float length(const Geometry2d::Point &pt) const;
@@ -70,6 +73,8 @@ namespace Planning
 			
 			// Set of points in the path - used as waypoints
 			std::vector<Geometry2d::Point> points;
+			std::vector<Geometry2d::Point> vels;
+			std::vector<float> times;
 
 			/**
 			 * A path describes the position and velocity a robot should be at for a
@@ -82,8 +87,10 @@ namespace Planning
 			 * @return true if the path is valid at time @t, false if you've gone past the end
 			 */
 			bool evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const;
-			bool getPoint(float distance ,Geometry2d::Point &position, Geometry2d::Point &direction) const;
 
+			//TODO javadoc everything
+			bool getPoint(float distance ,Geometry2d::Point &position, Geometry2d::Point &direction) const;
+			float getTime(int) const;
 			static void createConfiguration(Configuration *cfg);
 
 

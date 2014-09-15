@@ -21,3 +21,14 @@ bool TrapezoidalMotion(
 	float finalSpeed,
 	float &posOut,
 	float &speedOut);
+
+namespace Trapezoidal
+{
+	float getTime(
+		float pathLength,
+		float maxSpeed,
+		float maxAcc,
+		float pos,
+		float startSpeed,
+		float finalSpeed);
+}
