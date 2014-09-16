@@ -39,7 +39,8 @@ void RRTPlanner::run(
 {
 	Geometry2d::Point goal = *motionConstraints.targetPos;
 	_motionConstraints = motionConstraints;
-	
+	vi = vel;
+
 	//clear any old path
 	path.clear();
 
@@ -168,7 +169,7 @@ void RRTPlanner::makePath()
 	//add the goal tree in reverse
 	//aka p1 to root
 	_fixedStepTree1.addPath(newPath, p1, true);
-
+	newPath.vi = vi;
 	optimize(newPath, _obstacles);
 
 	/// check the path against the old one
@@ -184,15 +185,21 @@ void RRTPlanner::makePath()
 	/// 3. start changed -- maybe (Roman)
 	/// 3. new path is better
 	/// 4. old path not valid (hits obstacles)
-	if (_bestPath.points.empty() ||
-			(hit) ||
-			//(_bestPath.points.front() != _fixedStepTree0.start()->pos) ||
-			(_bestPath.points.back() != _fixedStepTree1.start()->pos) ||
-			(newPath.length() < _bestPath.length()))
-	{
+	//if (_bestPath.points.empty() ||
+	//		(hit) ||
+	//		//(_bestPath.points.front() != _fixedStepTree0.start()->pos) ||
+	//		(_bestPath.points.back() != _fixedStepTree1.start()->pos) ||
+	//		(newPath.length() < _bestPath.length()))
+	//{
 		_bestPath = newPath;
-		return;
-	}
+	//	return;
+	//}
+	/*
+	else 
+	{
+		_bestPath.vi = vi;
+		cubicBezier(_bestPath, _obstacles);	
+	}*/
 }
 
 void RRTPlanner::optimize(Planning::Path &path, const Geometry2d::CompositeShape *obstacles)
@@ -294,9 +301,9 @@ void RRTPlanner::cubicBezier (Planning::Path &path, const Geometry2d::CompositeS
 	}
 
 	//TODO: Get the actual values
-	Geometry2d::Point vi(0,0);
-	
 	Geometry2d::Point vf(0,0);
+	
+	Geometry2d::Point vi = path.vi;
 
 	vector<double> pointsX(length);
 	vector<double> pointsY(length);

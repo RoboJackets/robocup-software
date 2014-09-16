@@ -62,6 +62,7 @@ namespace Planning
 		///this is a fixed step path
 		Planning::Path _bestPath;
 		
+		Geometry2d::Point vi;
 		///maximum number of rrt iterations to run
 		///this does not include connect attempts
 		unsigned int _maxIterations;
