@@ -93,6 +93,8 @@ namespace Planning
 			float getTime(int) const;
 			static void createConfiguration(Configuration *cfg);
 
+			Geometry2d::Point vi;
+			Geometry2d::Point vf;
 
 			float startSpeed = 0;
 			float endSpeed = 0;
