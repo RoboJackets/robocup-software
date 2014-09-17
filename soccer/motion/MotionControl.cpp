@@ -214,9 +214,12 @@ void MotionControl::run() {
 		}
 
 		//	PID on position
+		//cout<<targetVel.x <<endl;
+	
+		cout<<posError.x;
 		targetVel.x += _positionXController.run(posError.x);
 		targetVel.y += _positionYController.run(posError.y);
-
+		//cout<<targetVel.x ;
 		//	draw target pt
 		_robot->state()->drawCircle(targetPos, .04, Qt::red, "MotionControl");
 		_robot->state()->drawLine(targetPos, targetPos + targetVel, Qt::blue, "velocity");
