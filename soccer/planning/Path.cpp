@@ -306,13 +306,24 @@ bool Planning::Path::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry
 	targetVelOut = direction * linearSpeed;
 	*/
 	//cout<<times.size()<<endl;
-	if (times.size()<=1) {
+	if (times.size()==0) {
+		targetPosOut = Geometry2d::Point(0,0);
+		targetVelOut = Geometry2d::Point(0,0);
+		return false;
+	}
+	if (times.size()==1) {
 		targetPosOut = points[0];
 		targetVelOut = Geometry2d::Point(0,0);
 		cout<< "wow"<<endl;
 		return false;
 	}
 	int i=0;
+	if (times[0]>t)
+	{
+		targetPosOut = points[0];
+		targetVelOut = vels[0];
+		return true;
+	}
 	while (times[i]<=t)
 	{
 		if (times[i]==t) {
@@ -329,8 +340,16 @@ bool Planning::Path::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry
 			return false;
 		}
 	}
-	cout<<"ok "<<i<<" "<<vels[i].x<<" "<<vels[i].y<<endl;
-	float constant = (t-times[i-1])/(times[i] - times[i-1]);
+	float deltaT = (times[i] - times[i-1]);
+	if (deltaT==0)
+	{
+		targetPosOut = points[i];
+		targetVelOut = vels[i];
+		return true;
+	}
+	float constant = (t-times[i-1])/deltaT;
+	//cout<<"ok "<<i<<" "<<vels[i].x<<" "<<vels[i].y<<" "<<constant<<endl;
+
 	targetPosOut = points[i-1]*(1-constant) + points[i]*(constant);
 	targetVelOut = vels[i-1]*(1-constant) + vels[i]*(constant);
 
