@@ -325,7 +325,7 @@ void RRTPlanner::cubicBezier (Planning::Path &path, const Geometry2d::CompositeS
 	}
 	
 	VectorXd solutionX = cubicBezierCalc(vi.x, vf.x, pointsX, ks, ks2);
-	VectorXd solutionY = cubicBezierCalc(vi.x, vf.y, pointsY, ks, ks2);
+	VectorXd solutionY = cubicBezierCalc(vi.y, vf.y, pointsY, ks, ks2);
 	
 	Geometry2d::Point p0, p1, p2, p3;
 	vector<Geometry2d::Point> pts;
@@ -379,6 +379,7 @@ void RRTPlanner::cubicBezier (Planning::Path &path, const Geometry2d::CompositeS
 VectorXd RRTPlanner::cubicBezierCalc (double vi, double vf, vector<double> &points, 
 									vector<double> &ks, vector<double> &ks2)
 {
+	cout<< vi<<endl;
 	int curvesNum = points.size() - 1;
 
 
@@ -386,7 +387,7 @@ VectorXd RRTPlanner::cubicBezierCalc (double vi, double vf, vector<double> &poin
 	{
 		
 		VectorXd vector(2);
-		vector[0] = vi/(3*ks[0]) + points[0];
+		vector[0] = vi/(3.0*ks[0]) + points[0];
 		vector[1] = points[curvesNum] - vf/(3*ks[curvesNum-1]);
 		return vector;
 	}
@@ -397,7 +398,7 @@ VectorXd RRTPlanner::cubicBezierCalc (double vi, double vf, vector<double> &poin
 		MatrixXd equations = MatrixXd::Zero(matrixSize, matrixSize);
 		VectorXd answer(matrixSize);
 		equations(0,0) = 1;
-		answer(0) = vi/(3*ks[0]) + points[0];
+		answer(0) = vi/(3.0*ks[0]) + points[0];
 		equations(1,matrixSize-1) = 1;
 		answer(1) = points[curvesNum] - vf/(3*ks[curvesNum-1]);
 		
