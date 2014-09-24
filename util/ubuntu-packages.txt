@@ -22,9 +22,6 @@ doxygen
 # linear algebra library
 libeigen3-dev
 
-# Bullet physics library - used in the robocup simulator
-libbullet-dev
-
 # C/C++ compiler
 # tends to be faster and have more helpful error messages than gcc
 clang
@@ -78,4 +75,3 @@ picocom
 python-numpy
 python-matplotlib
 python-usb
-freeglut3-dev
