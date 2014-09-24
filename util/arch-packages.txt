@@ -20,9 +20,6 @@ python-pyqt4
 
 doxygen
 
-bullet
-freeglut
-
 eigen
 
 clang

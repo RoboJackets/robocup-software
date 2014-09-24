@@ -84,6 +84,6 @@ def do_build(dir, exports={}):
 do_build('common')
 
 # Build everything else
-for dir in ['logging', 'soccer', 'simulator', 'firmware', 'test']:
+for dir in ['logging', 'soccer', 'firmware', 'test']:
 	do_build(dir)
 
