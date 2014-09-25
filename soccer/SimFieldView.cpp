@@ -22,7 +22,7 @@ SimFieldView::SimFieldView(QWidget* parent): FieldView(parent)
 
 void SimFieldView::mousePressEvent(QMouseEvent* me)
 {
-	Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->posF();
+	Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->pos();
 	
 	std::shared_ptr<LogFrame> frame = currentFrame();
 	if (me->button() == Qt::LeftButton && frame)
@@ -49,7 +49,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me)
 		
 		if (_dragRobot < 0)
 		{
-			placeBall(me->posF());
+			placeBall(me->pos());
 		}
 		
 		_dragMode = DRAG_PLACE;
@@ -85,7 +85,7 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me)
 	switch (_dragMode)
 	{
 		case DRAG_SHOOT:
-			_dragTo = _worldToTeam * _screenToWorld * me->posF();
+			_dragTo = _worldToTeam * _screenToWorld * me->pos();
 			break;
 		
 		case DRAG_PLACE:
@@ -95,12 +95,12 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me)
 				SimCommand::Robot *r = cmd.add_robots();
 				r->set_shell(_dragRobot);
 				r->set_blue_team(_dragRobotBlue);
-				r->mutable_pos()->CopyFrom(_screenToWorld * me->posF());
+				r->mutable_pos()->CopyFrom(_screenToWorld * me->pos());
 				r->mutable_vel()->set_x(0);
 				r->mutable_vel()->set_y(0);
 				sendSimCommand(cmd);
 			} else {
-				placeBall(me->posF());
+				placeBall(me->pos());
 			}
 			break;
 		

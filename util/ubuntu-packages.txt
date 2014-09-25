@@ -4,8 +4,9 @@
 #   script is run
 
 
-# Scons - build system where the "makefiles" are python scripts
-scons
+# Build system
+cmake
+ninja
 
 # QT
 qt4-dev-tools
