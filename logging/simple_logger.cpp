@@ -60,14 +60,14 @@ int main(int argc, char *argv[])
 	multicast_add(&refereeSocket, RefereeAddress);
 	
 	// Create log file
-	int fd = creat(logFile.toAscii(), 0666);
+	int fd = creat(logFile.toLocal8Bit(), 0666);
 	if (fd < 0)
 	{
-		printf("Can't create %s: %m\n", (const char *)logFile.toAscii());
+		printf("Can't create %s: %m\n", (const char *)logFile.toLocal8Bit());
 		return 1;
 	}
 	
-	printf("Writing to %s\n", (const char *)logFile.toAscii());
+	printf("Writing to %s\n", (const char *)logFile.toLocal8Bit());
 	
 	// Main loop
 	LogFrame logFrame;

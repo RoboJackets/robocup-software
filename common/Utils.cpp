@@ -29,7 +29,7 @@ QString typeName(const std::type_info &info)
 		{
 			out += "::";
 		}
-		out += QString::fromAscii(next, len);
+		out += QString::fromLocal8Bit(next, len);
 		name = next + len;
 	}
 	

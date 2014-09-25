@@ -718,7 +718,7 @@ void MainWindow::on_actionSeed_triggered()
 	QString text = QInputDialog::getText(this, "Set Random Seed", "Hexadecimal seed:");
 	if (!text.isNull())
 	{
-		long seed = strtol(text.toAscii(), 0, 16);
+		long seed = strtol(text.toLocal8Bit(), 0, 16);
 		printf("seed %016lx\n", seed);
 		srand48(seed);
 	}

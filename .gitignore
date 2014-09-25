@@ -17,3 +17,6 @@
 
 # Qt Creator
 *.creator.user
+
+# IntelliJ
+.idea
