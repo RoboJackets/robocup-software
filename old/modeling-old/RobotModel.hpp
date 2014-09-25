@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <memory>
 
 //#define KALMANMODEL
 
@@ -32,12 +33,12 @@ namespace Modeling
 			{
 				Config(Configuration *config);
 				
-				ConfigDouble::shared_ptr posAlpha;
-				ConfigDouble::shared_ptr posBeta;
-				ConfigDouble::shared_ptr posGamma;
-				ConfigDouble::shared_ptr angleAlpha;
-				ConfigDouble::shared_ptr angleBeta;
-				ConfigDouble::shared_ptr angleGamma;
+				ConfigDouble posAlpha;
+				ConfigDouble posBeta;
+				ConfigDouble posGamma;
+				ConfigDouble angleAlpha;
+				ConfigDouble angleBeta;
+				ConfigDouble angleGamma;
 			};
 			
 			RobotModel(Config *config, int s);

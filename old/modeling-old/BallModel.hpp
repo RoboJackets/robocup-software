@@ -2,10 +2,11 @@
 #pragma once
 
 #include <stdint.h>
+#include <memory>
+#include <vector>
 
 #include <Geometry2d/Point.hpp>
 #include "RobotModel.hpp"
-#include <vector>
 
 class Configuration;
 
