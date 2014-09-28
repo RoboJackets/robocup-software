@@ -13,7 +13,7 @@ qt5-base
 qt5-tools
 qwtplot3d
 
-python-pyqt4
+python-pyqt5
 
 # Documentation
 doxygen
