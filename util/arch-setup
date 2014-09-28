@@ -15,7 +15,4 @@ cp -f $BASE/util/robocup.rules /etc/udev/rules.d/
 echo "-- Installing required packages"
 pacman -S --needed --noconfirm $(sed 's/#.*//;/^$/d' $BASE/util/arch-packages.txt)
 
-# required for scons
-sudo pip2 install cffi pygit2
-
 pip install -r $BASE/util/requirements3.txt
