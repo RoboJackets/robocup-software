@@ -20,11 +20,5 @@ echo "-- Installing required packages"
 # install all of the packages listed in required_packages.txt
 apt-get install $(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)
 
-# remove old version of git python
-yes | easy_install GitPython
-
-# get pip the old way
-easy_install3 pip
-
 # install python3 requirements
 pip3 install -r $BASE/util/requirements3.txt
