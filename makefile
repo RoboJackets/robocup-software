@@ -9,5 +9,9 @@ all-ninja:
 	mkdir -p build
 	cd build; cmake -GNinja .. && ninja
 
+test:
+	mkdir -p build;
+	cd build; cmake .. && make test
+
 clean:
 	rm -r build
