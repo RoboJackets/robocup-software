@@ -29,26 +29,33 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 qt5_wrap_ui(SOCCER_UIS_HDRS ${SOCCER_UIS})
 
 
-# Python
-find_package(PythonInterp REQUIRED)
-find_package(PythonLibs REQUIRED)
-include_directories(${PYTHON_INCLUDE_DIRS})
-
-
 # 'soccer' program
 add_executable(soccer ${SOCCER_SRC} ${SOCCER_UIS_HDRS})
+
+
+# Python
+find_package(PythonInterp 3.2 REQUIRED)
+target_link_libraries(soccer ${PYTHON_LIBRARIES})
+find_package(PythonLibs 3.2 REQUIRED)
+include_directories(${PYTHON_INCLUDE_DIRS})
+target_link_libraries(soccer ${PYTHON_LIBRARIES})
 
 # Qt
 qt5_use_modules(soccer Widgets Xml Core OpenGL Network)
 
 # Google Protobuf
 target_link_libraries(soccer protobuf)
+target_link_libraries(soccer proto_messages)
 
 # OpenGL
 target_link_libraries(soccer GL GLU glut)
 
 # Boost Python
-target_link_libraries(soccer boost_python3 python3)
+set(Boost_USE_STATIC_LIBS   OFF)
+set(Boost_USE_MULTITHREADED ON)
+set(Boost_USE_STATIC_RUNTIME OFF)
+find_package(Boost COMPONENTS system python-py34 REQUIRED)
+target_link_libraries(soccer ${Boost_LIBRARIES})
 
 # libusb
 find_package(libusb-1.0 REQUIRED)
