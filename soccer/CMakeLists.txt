@@ -1,6 +1,4 @@
 
-
-
 file(GLOB SOCCER_SRC
     "*.cpp"
     "config/*.cpp"
@@ -43,8 +41,8 @@ target_link_libraries(soccer ${PYTHON_LIBRARIES})
 # Qt
 qt5_use_modules(soccer Widgets Xml Core OpenGL Network)
 
-# Google Protobuf
-target_link_libraries(soccer proto_messages)
+# Our 'common' library
+target_link_libraries(soccer common)
 
 # OpenGL
 target_link_libraries(soccer GL GLU glut)
