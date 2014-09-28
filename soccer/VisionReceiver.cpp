@@ -35,12 +35,10 @@ void VisionReceiver::run() {
         // The simulator doesn't multicast its vision.  Instead, it sends to two
         // different ports.
         // Try to bind to the first one and, if that fails, use the second one.
-        if (!socket.bind(SimVisionPort)) {
-            if (!socket.bind(SimVisionPort + 1)) {
-                throw runtime_error(
-                    "Can't bind to either simulated vision port");
-            }
+        if (!socket.bind(SimVisionPort, QUdpSocket::ShareAddress)) {
+            throw runtime_error("Can't bind to shared vision port");
         }
+        multicast_add(&socket, SharedVisionAddress);
     } else {
         // Receive multicast packets from shared vision.
         if (!socket.bind(port, QUdpSocket::ShareAddress)) {

@@ -88,7 +88,11 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive) {
     _gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_state);
     _pathPlanner = std::unique_ptr<Planning::MultiRobotPathPlanner>(
         new Planning::IndependentMultiRobotPathPlanner());
-    vision.simulation = _simulation;
+    //vision.simulation = _simulation;
+    vision.simulation = false;
+    if(sim) {
+        vision.port = SimVisionPort;
+    }
 }
 
 Processor::~Processor() {

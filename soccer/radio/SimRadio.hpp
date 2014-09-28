@@ -5,7 +5,7 @@
 #include "Radio.hpp"
 
 /**
- * @brief Radio IO with robots in the simulator
+ * @brief Radio IO with robots in the grSimulator
  */
 class SimRadio : public Radio {
 public:
