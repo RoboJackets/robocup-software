@@ -12,7 +12,7 @@ all-ninja:
 tests:
 	mkdir -p build;
 	cd build; cmake .. && make
-	run/run_tests
+	run/run_tests && cd soccer/gameplay; ./run_tests.sh
 
 clean:
 	rm -r build
