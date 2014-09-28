@@ -9,8 +9,8 @@ cmake
 ninja
 
 # QT
-qt4-dev-tools
-libqt4-opengl-dev
+qt5-default
+qttools5-dev-tools
 
 # required for compiling gcc
 libgmp3-dev
