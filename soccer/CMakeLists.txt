@@ -9,9 +9,10 @@ file(GLOB SOCCER_SRC
     "radio/*.cpp"
     )
 
-# the LogViewer executable has a main() in its file, so we exclude it headers
-# when we build the executable later, we'll add it back in
+# Exclude the two files that include a main() function - we'll add those in later for their respective executables
 list(REMOVE_ITEM SOCCER_SRC "${CMAKE_CURRENT_SOURCE_DIR}/LogViewer.cpp")
+list(REMOVE_ITEM SOCCER_SRC "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
+
 
 include_directories("${PROJECT_SOURCE_DIR}/common")
 include_directories("${PROJECT_BINARY_DIR}/common")
@@ -26,12 +27,13 @@ qt5_add_resources(SOCCER_RSRC ui/main_icons.qrc)
 
 
 # 'soccer' program
-add_executable(soccer ${SOCCER_SRC} ${SOCCER_UIS} ${SOCCER_RSRC})
+set(SOCCER_EXE_SRC ${SOCCER_SRC})
+list(APPEND SOCCER_EXE_SRC "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
+add_executable(soccer ${SOCCER_EXE_SRC} ${SOCCER_UIS} ${SOCCER_RSRC})
 
 
 # Python
 find_package(PythonInterp 3.2 REQUIRED)
-target_link_libraries(soccer ${PYTHON_LIBRARIES})
 find_package(PythonLibs 3.2 REQUIRED)
 include_directories(${PYTHON_INCLUDE_DIRS})
 target_link_libraries(soccer ${PYTHON_LIBRARIES})
@@ -73,3 +75,14 @@ set(LOG_VIEWER_SRC
 add_executable(log_viewer ${LOG_VIEWER_SRC} ${LOG_VIEWER_UI} ${LOG_VIEWER_RSRC})
 qt5_use_modules(log_viewer Widgets OpenGL)
 target_link_libraries(log_viewer common)
+
+
+# Build stand-alone python module
+add_library(robocup SHARED ${SOCCER_SRC})
+set_target_properties(robocup PROPERTIES PREFIX "")
+
+target_link_libraries(robocup common)
+target_link_libraries(robocup ${PYTHON_LIBRARIES})
+qt5_use_modules(robocup Widgets Xml Core OpenGL Network)
+target_link_libraries(robocup ${LIBUSB_1_LIBRARIES})
+target_link_libraries(robocup ${Boost_LIBRARIES})
