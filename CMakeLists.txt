@@ -15,6 +15,7 @@ find_package(Qt5Widgets)
 
 # Google Protobuf
 find_package(Protobuf REQUIRED)
+include_directories(${PROTOBUF_INCLUDE_DIR})
 
 # Eigen - used for linear algebra
 find_package(Eigen3 REQUIRED)
