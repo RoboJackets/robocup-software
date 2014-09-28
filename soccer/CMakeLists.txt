@@ -13,22 +13,20 @@ file(GLOB SOCCER_SRC
 # when we build the executable later, we'll add it back in
 list(REMOVE_ITEM SOCCER_SRC "${CMAKE_CURRENT_SOURCE_DIR}/LogViewer.cpp")
 
-# headers from 'common'
 include_directories("${PROJECT_SOURCE_DIR}/common")
 include_directories("${PROJECT_BINARY_DIR}/common")
-
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
-
-file(GLOB SOCCER_UIS "./ui/*.ui")
-file(GLOB SOCCER_QT_QRC "./ui/*.qrc")
-
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-qt5_wrap_ui(SOCCER_UIS_HDRS ${SOCCER_UIS})
+file(GLOB SOCCER_UIS "./ui/*.ui")
+qt5_wrap_ui(SOCCER_UIS ${SOCCER_UIS})
+
+
+qt5_add_resources(SOCCER_RSRC ui/main_icons.qrc)
 
 
 # 'soccer' program
-add_executable(soccer ${SOCCER_SRC} ${SOCCER_UIS_HDRS})
+add_executable(soccer ${SOCCER_SRC} ${SOCCER_UIS} ${SOCCER_RSRC})
 
 
 # Python
@@ -61,3 +59,17 @@ target_link_libraries(soccer ${LIBUSB_1_LIBRARIES})
 
 # Other
 target_link_libraries(soccer pthread bfd)
+
+
+# build the 'log_viewer' program
+qt5_add_resources(LOG_VIEWER_RSRC ui/log_icons.qrc)
+qt5_wrap_ui(LOG_VIEWER_UI ui/LogViewer.ui)
+set(LOG_VIEWER_SRC
+    "LogViewer.cpp"
+    "FieldView.cpp"
+   	"ProtobufTree.cpp"
+   	"StripChart.cpp"
+)
+add_executable(log_viewer ${LOG_VIEWER_SRC} ${LOG_VIEWER_UI} ${LOG_VIEWER_RSRC})
+qt5_use_modules(log_viewer Widgets OpenGL)
+target_link_libraries(log_viewer common)
