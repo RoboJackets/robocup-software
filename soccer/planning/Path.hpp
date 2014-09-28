@@ -84,9 +84,6 @@ namespace Planning
 			bool evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const;
 			bool getPoint(float distance ,Geometry2d::Point &position, Geometry2d::Point &direction) const;
 
-			static void createConfiguration(Configuration *cfg);
-
-
 			float startSpeed = 0;
 			float endSpeed = 0;
 
