@@ -44,7 +44,6 @@ target_link_libraries(soccer ${PYTHON_LIBRARIES})
 qt5_use_modules(soccer Widgets Xml Core OpenGL Network)
 
 # Google Protobuf
-target_link_libraries(soccer protobuf)
 target_link_libraries(soccer proto_messages)
 
 # OpenGL
