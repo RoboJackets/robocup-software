@@ -2,7 +2,7 @@ from play import *
 from behavior import *
 import plays.stopped
 import logging
-from PyQt4 import QtCore
+from PyQt5 import QtCore
 import main
 import evaluation.double_touch
 import tactics.positions.goalie
