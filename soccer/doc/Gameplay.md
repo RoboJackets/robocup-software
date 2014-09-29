@@ -1,6 +1,8 @@
 
 # Gameplay
 
+NOTE: This document is old - this is how we used to setup plays before we switched to python.  We will soon replace this with the relevant instructions for the new python gameplay system.
+
 The Gameplay namespace contains most of the higher-level logic of the `soccer` program.
 
 

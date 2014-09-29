@@ -67,10 +67,12 @@ $ util/ubuntu-setup
 3) Build the project
 
 ```
-$ scons
+$ make
 ```
 
-[Scons](http://www.scons.org/) is a python-based build system that we use to compile the executables that make up our project.  After running scons, several programs will be placed in the **run** folder.  See the [soccer docs](http://robojackets.github.io/robocup-software/md_soccer_doc__soccer.html) for instructions on running the soccer program.
+We use CMake as our build system and have a simple `makefile` setup that invokes CMake.
+
+After running `make`, several programs will be placed in the **run** folder.  See the [soccer docs](http://robojackets.github.io/robocup-software/md_soccer_doc__soccer.html) for instructions on running the soccer program.
 
 
 ## Documentation
