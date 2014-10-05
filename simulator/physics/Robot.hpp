@@ -1,5 +1,5 @@
 #pragma once
-
+#include <Pid.hpp>
 #include "Entity.hpp"
 #include "SimEngine.hpp"
 
@@ -31,6 +31,9 @@ public:
 	unsigned int shell;
 
 	int visibility;
+
+	Pid velX; //TOUSE
+	Pid velY; //TOUSE
 
 protected:
 	RobotRevision _rev;
