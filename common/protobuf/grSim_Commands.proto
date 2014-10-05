@@ -1,0 +1,21 @@
+message grSim_Robot_Command {
+required uint32 id = 1;
+required float kickspeedx = 2;
+required float kickspeedz = 3;
+required float veltangent = 4;
+required float velnormal  = 5;
+required float velangular = 6;
+required bool spinner = 7;
+required bool wheelsspeed = 8;
+optional float wheel1 = 9;
+optional float wheel2 = 10;
+optional float wheel3 = 11;
+optional float wheel4 = 12;
+}
+
+message grSim_Commands {
+required double timestamp = 1;
+required bool isteamyellow = 2;
+repeated grSim_Robot_Command robot_commands = 3;
+}
+
