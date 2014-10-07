@@ -54,13 +54,15 @@ public:
 		time(0),
 		visionFrame(0)
 	{
+		// normalize angle so it's always positive
+		while (angle < 0) angle += 2.0 * M_PI;
 	}
 	
 	bool visible;
 	Geometry2d::Point pos;
 	Geometry2d::Point vel;
-	float angle;	///	angle in degrees.  0 degrees means the robot is aimed along the x-axis
-	float angleVel;
+	float angle;	///	angle in radians.  0 radians means the robot is aimed along the x-axis
+	float angleVel;	///	angular velocity in radians/sec
 	
 	// Time at which this estimate is valid
 	uint64_t time;
