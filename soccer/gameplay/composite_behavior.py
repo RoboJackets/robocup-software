@@ -46,7 +46,8 @@ class CompositeBehavior(behavior.Behavior):
 
 
     def remove_all_subbehaviors(self):
-        for name in self._subbehavior_info:
+        subbehaviorNames = list(self._subbehavior_info.keys())
+        for name in subbehaviorNames:
             self.remove_subbehavior(name)
 
 

@@ -11,7 +11,8 @@
 #include <QString>
 #include "Geometry2d/Point.hpp"
 #include "Constants.hpp"
-
+//#include <iostream>
+#include <math.h>
 using namespace std;
 
 
@@ -23,7 +24,10 @@ using namespace std;
  */
 static inline float fixAngleRadians(float a)
 {
+	a= remainder(a, 2*M_PI);
+	//cout<<"angle "<<a<<endl;
 	while (a < -M_PI) a += 2.0*M_PI;
+
 	while (a > M_PI) a -= 2.0*M_PI;
 	return a;
 }
