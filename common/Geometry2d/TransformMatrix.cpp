@@ -59,9 +59,8 @@ TransformMatrix TransformMatrix::mirrorAroundPoint(const Point &center)
 
 float TransformMatrix::rotation() const
 {
-	float angle = atan2(_m[4], _m[1]) / DegreesToRadians - 90;
-	if (angle < 0)
-		angle += 360;
+	float angle = atan2(_m[4], _m[1]) - M_PI_2;
+	if (angle < 0) angle += 2.0 * M_PI;
 
 	return angle;
 }

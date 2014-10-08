@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Point.hpp"
+#include <stdexcept>
 
 
 namespace Geometry2d {

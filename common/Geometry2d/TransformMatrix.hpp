@@ -138,11 +138,11 @@ namespace Geometry2d
 			}
 
 
-			// Rotation in degrees around origin
+			// Rotation in radians around origin
 			static TransformMatrix rotate(float angle)
 			{
-				float c = cos(angle * DegreesToRadians);
-				float s = sin(angle * DegreesToRadians);
+				float c = cos(angle);
+				float s = sin(angle);
 
 				return TransformMatrix(c, -s, 0,
 									   s, c, 0);
@@ -162,7 +162,7 @@ namespace Geometry2d
 									   0, y, 0);
 			}
 
-			// Returns a matrix to rotate <angle> degrees CCW around <center>.
+			// Returns a matrix to rotate <angle> radians CCW around <center>.
 			static TransformMatrix rotateAroundPoint(const Point &center, float angle);
 
 			// Returns a matrix to reflect along the line parallel to the Y-axis containing <center>.
