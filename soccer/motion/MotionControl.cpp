@@ -210,7 +210,7 @@ void MotionControl::run() {
 		//	PID on position
 		//cout<<targetVel.x <<endl;
 	
-		cout<<posError.x;
+		//cout<<posError.x;
 		targetVel.x += _positionXController.run(posError.x);
 		targetVel.y += _positionYController.run(posError.y);
 		//cout<<targetVel.x ;
