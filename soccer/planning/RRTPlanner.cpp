@@ -379,7 +379,7 @@ void RRTPlanner::cubicBezier (Planning::Path &path, const Geometry2d::CompositeS
 VectorXd RRTPlanner::cubicBezierCalc (double vi, double vf, vector<double> &points, 
 									vector<double> &ks, vector<double> &ks2)
 {
-	cout<< vi<<endl;
+	//cout<< vi<<endl;
 	int curvesNum = points.size() - 1;
 
 
