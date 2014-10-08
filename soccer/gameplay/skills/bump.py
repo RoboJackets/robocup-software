@@ -11,12 +11,12 @@ import math
 class Bump(single_robot_behavior.SingleRobotBehavior):
 
     # tuneable constants
-    DriveAroundDist = 0.35          # how far away from the ball we should stay in the lineup state
-    LineupBallAvoidRadius = 0.043   # ball avoid radius
-    FacingThresh = 10               # angle in degrees that we must be less than away from the ball
-    AccelBias = 0.1                 # how much to add to our desired speed
-    EscapeChargeThresh = 0.1        # if we're off by this much, we go back to the lineup state
-    LineupToChargeThresh = 0.05     # how close we have to be to our target line to enter the charge state
+    DriveAroundDist = 0.35                          # how far away from the ball we should stay in the lineup state
+    LineupBallAvoidRadius = 0.043                   # ball avoid radius
+    FacingThresh = 10 * constants.DegreesToRadians  # angle in radians that we must be less than away from the ball
+    AccelBias = 0.1                                 # how much to add to our desired speed
+    EscapeChargeThresh = 0.1                        # if we're off by this much, we go back to the lineup state
+    LineupToChargeThresh = 0.05                     # how close we have to be to our target line to enter the charge state
 
 
     class State(enum.Enum):
@@ -57,9 +57,9 @@ class Bump(single_robot_behavior.SingleRobotBehavior):
 
 
     def facing_err_above_threshold(self):
-        dirVec = robocup.Point(math.cos(self.robot.angle * constants.DegreesToRadians),
-            math.sin(self.robot.angle * constants.DegreesToRadians))
-        facing_thresh = math.cos(Bump.FacingThresh * constants.DegreesToRadians)
+        dirVec = robocup.Point(math.cos(self.robot.angle),
+            math.sin(self.robot.angle))
+        facing_thresh = math.cos(Bump.FacingThresh)
         facing_err = dirVec.dot( (self.target - main.ball().pos).normalized() )
         # NOTE: yes, the comparator is backwards, that's the way it was in the c++ one...
         # TODO: remove the above note and clarify what's going on

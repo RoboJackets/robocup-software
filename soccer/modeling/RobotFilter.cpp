@@ -34,7 +34,7 @@ void RobotFilter::update(const RobotObservation* obs)
 		Point newVel = (obs->pos - _estimate[s].pos) / dtime;
 		_estimate[s].vel = newVel * Velocity_Alpha + _estimate[s].vel * (1.0f - Velocity_Alpha);
 		
-		double newW = fixAngleDegrees(obs->angle - _estimate[s].angle) / dtime;
+		double newW = fixAngleRadians(obs->angle - _estimate[s].angle) / dtime;
 		_estimate[s].angleVel = newW * Velocity_Alpha + _estimate[s].angleVel * (1.0f - Velocity_Alpha);
 	}
 	_estimate[s].pos = obs->pos;
@@ -66,7 +66,7 @@ void RobotFilter::predict(uint64_t time, Robot* robot)
 	
 	robot->pos = _estimate[bestSource].pos + _estimate[bestSource].vel * bestDTime;
 	robot->vel = _estimate[bestSource].vel;
-	robot->angle = fixAngleDegrees(_estimate[bestSource].angle + _estimate[bestSource].angleVel * bestDTime);
+	robot->angle = fixAngleRadians(_estimate[bestSource].angle + _estimate[bestSource].angleVel * bestDTime);
 	robot->angleVel = _estimate[bestSource].angleVel;
 	robot->visible = _estimate[bestSource].visible && bestDTime < Coast_Time;
 }

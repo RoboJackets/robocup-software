@@ -199,13 +199,13 @@ class Defense(composite_behavior.CompositeBehavior):
             spacing = 0.01 if len(threat.assigned_handlers) < 3 else 0.0  # spacing between each bot in radians
             total_angle_coverage = sum(angle_widths) + (len(angle_widths) - 1)*spacing
             start_vec = center_line.delta().normalized()
-            start_vec.rotate(robocup.Point(0,0), -((total_angle_coverage / 2.0) * constants.RadiansToDegrees))
+            start_vec.rotate(robocup.Point(0,0), -total_angle_coverage / 2.0)
             for i in range(len(angle_widths)):
                 handler = threat.assigned_handlers[i]
                 w = angle_widths[i]
-                start_vec.rotate(robocup.Point(0,0), w/2.0 * constants.RadiansToDegrees)
+                start_vec.rotate(robocup.Point(0,0), w/2.0)
                 handler.block_line = robocup.Line(threat.pos, threat.pos + start_vec * 10)
-                start_vec.rotate(robocup.Point(0,0), (w/2.0 + spacing) * constants.RadiansToDegrees)
+                start_vec.rotate(robocup.Point(0,0), w/2.0 + spacing)
 
 
 

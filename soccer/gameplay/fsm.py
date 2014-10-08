@@ -68,7 +68,7 @@ class StateMachine:
         # if a transition occurred during the spin, we'll spin again
         # note: this could potentially cause infinite recursion (although it shouldn't)
         if s1 != self.state:
-            self.spin()
+            StateMachine.spin(self)
 
 
 
@@ -85,6 +85,7 @@ class StateMachine:
     # calls 'on_exit_STATENAME()' if it exists
     # calls 'on_enter_STATENAME()' if it exists
     def transition(self, new_state):
+        # print("TRANSITION: " + str(self.__class__.__name__) + ": " + str(self.state) + " -> " + str(new_state))
         if self.state != None:
             for state in self.ancestors_of_state(self.state) + [self.state]:
                 if not self.state_is_substate(new_state, state):

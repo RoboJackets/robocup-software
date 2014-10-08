@@ -28,7 +28,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 
 	_centerMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Length / 2));
 	_oppMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Length)) *
-				Geometry2d::TransformMatrix::rotate(180);
+				Geometry2d::TransformMatrix::rotate(M_PI);
 
 	//// Make an obstacle to cover the opponent's half of the field except for one robot diameter across the center line.
 	Polygon *sidePolygon = new Polygon;
