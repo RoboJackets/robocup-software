@@ -34,6 +34,10 @@ class CompositeBehavior(behavior.Behavior):
         return name in self._subbehavior_info
 
 
+    def has_subbehaviors(self):
+        return len(self._subbehavior_info) > 0
+
+
     def subbehavior_with_name(self, name):
         return self._subbehavior_info[name]['behavior']
 
