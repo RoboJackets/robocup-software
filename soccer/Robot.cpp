@@ -569,9 +569,12 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 	// create and visualize obstacles
 	Geometry2d::CompositeShape full_obstacles(_local_obstacles);
+	//Add's our robots as obstacles only if they're within a certain distance from our robot.
+	//This distance increases with velocity.
 	Geometry2d::CompositeShape
-		self_obs = createRobotObstacles(_state->self, _self_avoid_mask),
+		self_obs = createRobotObstacles(_state->self, _self_avoid_mask, this->pos, 0.6 + this->vel.mag()),
 		opp_obs = createRobotObstacles(_state->opp, _opp_avoid_mask);
+
 	_state->drawCompositeShape(self_obs, Qt::gray, QString("self_obstacles_%1").arg(shell()));
 	_state->drawCompositeShape(opp_obs, Qt::gray, QString("opp_obstacles_%1").arg(shell()));
 	if (_state->ball.valid)
@@ -580,7 +583,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		_state->drawShape(ball_obs, Qt::gray, QString("ball_obstacles_%1").arg(shell()));
 		full_obstacles.add(ball_obs);
 	}
-	//full_obstacles.add(self_obs);
+	full_obstacles.add(self_obs);
 	full_obstacles.add(opp_obs);
 	full_obstacles.add(global_obstacles);
 
@@ -628,7 +631,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		_path->evaluate(timeIntoPath, targetPathPos, targetVel);
 		float pathError = (targetPathPos - pos).mag();
 		state()->drawCircle(targetPathPos, maxDist, Qt::green, "MotionControl");
-		addText(QString("time: %1").arg(timeIntoPath));
+		addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
 		addText(QString("%1").arg(pathError));
 		if (pathError > maxDist) {
 			_pathInvalidated = true;

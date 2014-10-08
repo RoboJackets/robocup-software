@@ -440,6 +440,30 @@ protected:
 		return result;
 	}
 
+
+	/**
+	 * Only adds obstacles within the checkRadius of the passed in position
+	 * Creates a set of obstacles from a given robot team mask,
+	 * where mask values < 0 create no obstacle, and larger values
+	 * create an obstacle of a given radius
+	 *
+	 * NOTE: mask must not be set for this robot
+	 *
+	 * @param robots is the set of robots to use to create a mask - either self or opp from _state
+	 */
+	template<class ROBOT>
+	Geometry2d::CompositeShape createRobotObstacles(const std::vector<ROBOT*>& robots, const RobotMask& mask,
+				 Geometry2d::Point currentPosition, float checkRadius) const {
+		Geometry2d::CompositeShape result;
+		for (size_t i=0; i<RobotMask::size(); ++i)
+			if (mask[i] > 0 && robots[i] && robots[i]->visible) {
+				if (currentPosition.distTo(robots[i]->pos)<=checkRadius) {
+					result.add(std::shared_ptr<Geometry2d::Shape>(new Geometry2d::Circle(robots[i]->pos, mask[i])));
+				}
+			}
+		return result;
+	}
+
 	/**
 	 * Creates an obstacle for the ball if necessary
 	 */
