@@ -8,6 +8,10 @@ cmake
 ninja
 clang
 
+# required to compile gcc toolchain for ARM
+mpfr
+gmp
+libmpc
 
 qt5-base
 qt5-tools
