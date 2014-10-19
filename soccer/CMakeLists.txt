@@ -31,7 +31,13 @@ include_directories(${PYTHON_INCLUDE_DIRS})
 set(Boost_USE_STATIC_LIBS   OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost COMPONENTS system python3 REQUIRED)
+find_package(Boost COMPONENTS system REQUIRED)
+
+# This package is named 'python3' on Arch and 'python-py34 on Ubuntu'
+find_package(Boost COMPONENTS python3)
+if (NOT Boost_python3_FOUND)
+    find_package(Boost COMPONENTS python-py34 REQUIRED)
+endif()
 
 # libusb
 include_directories(${LIBUSB_1_INCLUDE_DIRS})
