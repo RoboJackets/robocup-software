@@ -22,6 +22,9 @@ python-pyqt5
 # Documentation
 doxygen
 
+bullet
+freeglut
+
 eigen
 
 boost
