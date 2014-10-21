@@ -258,6 +258,8 @@ BOOST_PYTHON_MODULE(robocup)
 {
 	boost::python::register_exception_translator<NullArgumentException>(&translateException);
 
+	def("fix_angle_radians", &fixAngleRadians);
+
 	class_<Geometry2d::Point, Geometry2d::Point*>("Point", init<float, float>())
 		.def(init<const Geometry2d::Point &>())
 		.def_readwrite("x", &Geometry2d::Point::x)

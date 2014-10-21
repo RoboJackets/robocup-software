@@ -69,16 +69,10 @@ void MotionControl::run() {
 	} else if (constraints.faceTarget || constraints.pivotTarget) {
 		const Geometry2d::Point &targetPt = constraints.pivotTarget ? *constraints.pivotTarget : *constraints.faceTarget;
 
+		//	fixing the angle ensures that we don't go the long way around to get to our final angle
 		float targetAngleFinal = (targetPt - _robot->pos).angle();
-		float angleError = targetAngleFinal - _robot->angle;
+		float angleError = fixAngleRadians(targetAngleFinal - _robot->angle);
 
-		//	don't go the long way around to get to our final angle
-		while (angleError > M_PI) {
-			angleError -= M_PI * 2.0;
-		} 
-		while (angleError < -M_PI) {
-			angleError += M_PI * 2.0;
-		}
 
 
 		// float targetW;

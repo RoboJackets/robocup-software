@@ -18,6 +18,22 @@ class RoleRequirements:
         self.require_kicking = False
 
 
+    def __str__(self):
+        props = []
+        props += "has_ball=" + str(self.has_ball)
+        if self.destination_shape != None:
+            props += "pos=" + str(self.destination_shape)
+        props += "chip_pref=" + str(self.chipper_preference_weight)
+        if self.required_shell_id != None:
+            props += "required_id=" + str(self.required_shell_id)
+        if self.previous_shell_id != None:
+            props += "prev_id=" + str(self.previous_shell_id)
+        props += "required=" + str(self.required)
+        props += "can_kick=" + str(self.require_kicking)
+
+        return "; ".join(props)
+
+
     @property
     def destination_shape(self):
         return self._destination_shape
