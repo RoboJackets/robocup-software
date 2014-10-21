@@ -1,0 +1,52 @@
+digraph Soccer {
+    node [shape=record];
+
+    subgraph cluster_3 {
+        label="Field Computer / soccer";
+
+        Processor;
+        VisionReceiver [label="{Vision Receiver | The vision receiver listens for\n vision packets and parses them\n as they come in.  Each time a\n packet comes in, the data\n is fed into a set of particle filters.}"];
+
+
+        RefereeeModule [label="{Referee Module | The ref module listens for\n packets from the referee and\n parses them as they come in.\n  The parsed ref commands are\n stored in the GameState object}"];
+
+        RefereeeModule -> GameState;
+
+
+        {GameState, Robot, Ball} -> GameplayModule;
+
+
+        GameplayModule [label="{GameplayModule | The gameplay module contains a\n python interpreter that runs our\n highlevel code.  One play is\n selected at a time and it is\n executed at 60Hz.}"];
+
+
+        GameplayModule -> PathPlanner -> MotionControl;
+
+        subgraph cluster_4 {
+            label="SystemState";
+
+            Ball, Robot, GameState;
+        }
+
+        Joystick -> MotionControl;
+
+        VisionReceiver -> {RobotFilter, BallFilter};
+        RobotFilter -> Robot;
+        BallFilter -> Ball;
+    }
+
+
+    ssl_vision [label="{SSL Vision | The vision system takes\n in images from cameras\n and processes them, resulting\n in x,y coordinates of the\n robots and ball.}"];
+    
+
+    ssl_refbox [label="{SSL Refbox | The refbox contains a series of}"];
+
+
+    VisionPacket [label="{Vision Packet | Vision packets are sent\n over UDP formattted as\n Google Protobuf messages}"];
+
+    RefereePacket [label="{Referee Packet | Referee packets are sent\n over ??? formatted as\n Google Protobuf messages}"];
+
+    ssl_vision -> VisionPacket -> VisionReceiver;
+
+
+    ssl_refbox -> RefereePacket -> RefereeeModule;
+}
