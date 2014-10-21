@@ -181,7 +181,7 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
         for r in role_assignment.iterate_role_requirements_tree_leaves(reqs):
             # try to be near the ball
             if main.ball().valid:
-                r.pos = main.ball().pos
+                r.destination_shape = main.ball().pos
             if self.use_chipper:
                 r.chipper_preference_weight = role_assignment.PreferChipper
             r.require_kicking = True
