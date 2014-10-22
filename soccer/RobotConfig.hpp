@@ -25,6 +25,7 @@ public:
 		///	these limits are applied before sending the actual commands to the robots
 		ConfigDouble *maxKick;
 		ConfigDouble *maxChip;
+		ConfigDouble *speedToStrength;
 		// ConfigDouble *passKick;
 	};
 

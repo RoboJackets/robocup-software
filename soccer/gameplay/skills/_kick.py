@@ -13,7 +13,7 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
 
         self.enable_kick = True
         self.use_chipper = False
-        self.kick_power = constants.Robot.Kicker.MaxPower
+        self.kick_power = 100.0
         self.chip_power = constants.Robot.Chipper.MaxPower
 
         self.use_windowing = True

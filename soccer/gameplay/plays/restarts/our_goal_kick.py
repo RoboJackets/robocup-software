@@ -16,7 +16,7 @@ class OurGoalKick(play.Play):
     # tunable params
     MinChipRange = 0.3
     MaxChipRange = 3.0
-    KickerPower = constants.Robot.Kicker.MaxPower
+    KickerPower = 100.0
     ChipperPower = constants.Robot.Chipper.MaxPower
 
 

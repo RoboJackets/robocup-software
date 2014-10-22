@@ -11,7 +11,7 @@ import role_assignment
 
 class OurKickoff(play.Play):
 
-    KickPower = 127
+    KickPower = 50.0
     ChipPower = 100
 
 
