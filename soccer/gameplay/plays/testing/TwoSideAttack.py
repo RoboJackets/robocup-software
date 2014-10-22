@@ -56,8 +56,10 @@ class TwoSideAttack(play.Play):
 			robocup.Point(constants.Field.Width/4.0, 3*constants.Field.Length/4.0)
 		]
 
+
 	def all_subbehaviors_completed(self):
 		return all([bhvr.is_done_running() for bhvr in self.all_subbehaviors()])
+
 
 	def on_enter_setup(self):
 		# Add subbehaviors based on information
@@ -72,30 +74,30 @@ class TwoSideAttack(play.Play):
 		self.to_exclude = [to_exclude_0.robot, to_exclude_1.robot]
 		self.remove_all_subbehaviors()
 
+
 	def on_enter_passing(self):
 		# Do shot evaluation here
 		rob_0_chance = evaluation.shot.eval_shot(self.robot_points[0], windowing_excludes=self.to_exclude)
 		rob_1_chance = evaluation.shot.eval_shot(self.robot_points[1], windowing_excludes=self.to_exclude)
-
 
 		if rob_0_chance[0] > rob_1_chance[0]:
 			robot_pos = 0
 		else:
 			robot_pos = 1
 
-
-
 		self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.robot_points[robot_pos]), 'pass')
+
 		
 	def on_exit_passing(self):
 		self.remove_all_subbehaviors()
 
-	def on_enter_kicking(self):
 
+	def on_enter_kicking(self):
 		kick = skills.pivot_kick.PivotKick()
 		kick.target = constants.Field.TheirGoalSegment
 		kick.aim_params['desperate_timeout'] = 3
 		self.add_subbehavior(kick, 'kick', required=False)
+
 
 	def on_exit_kicking(self):
 		self.remove_all_subbehaviors()
