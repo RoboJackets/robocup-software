@@ -239,9 +239,19 @@ public:
 
 
 	/**
-	 * enable kick when ready at a given strength
+	 * enable kick when ready at a given strength (0.0 - 100.0)
 	 */
-	void kick(uint8_t strength);
+	void kick(float strength);
+
+	/**
+	 * enable kick when ready at a given strength (0-255)
+	 */
+	void kickLevel(unsigned char strength);
+
+	/**
+	 * enable kick when ready at a given meters/second
+	 */
+	//TODO void kickSpeed(float strength);
 
 	/**
 	 * enable chip when ready at a given strength

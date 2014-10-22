@@ -337,7 +337,30 @@ void OurRobot::faceNone()
 	*_cmdText << "faceNone()\n";
 }
 
-void OurRobot::kick(uint8_t strength)
+void OurRobot::kick(float strength)
+{
+	double maxKick = *config->kicker.maxKick;
+	_kick((int)(strength/100.0*((float)maxKick)));
+
+	*_cmdText << "kick(" << (float)strength << "%)\n";
+}	
+/*
+TODO
+void OurRobot::kickSpeed(float strength)
+{
+	double conversion = *config->kicker.speedToStrength;
+	if (conversion <= 0) {
+		throw "You can't called kick(float) without setting the conversion config";
+	}
+
+	int str = (int)(conversion * (double)strength);
+	_kick(strength);
+
+	*_cmdText << "kick(" << (float)strength << "m/s" << ")\n";
+}
+*/
+
+void OurRobot::kickLevel(uint8_t strength)
 {
 	_kick(strength);
 

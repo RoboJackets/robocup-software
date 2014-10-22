@@ -152,7 +152,7 @@ class Defender(single_robot_behavior.SingleRobotBehavior):
 			if self.robot.has_chipper():
 				self.robot.chip(255)
 			else:
-				self.robot.kick(255)
+				self.robot.kick(100.0)
 
 	"""
 	TODO comment
@@ -225,7 +225,7 @@ class Defender(single_robot_behavior.SingleRobotBehavior):
 			if self.robot.has_chipper():
 				self.robot.chip(255)
 			else:
-				self.robot.kick(255)
+				self.robot.kick(100.0)
 
 	def find_robot_to_block(self):
 		target = None
