@@ -15,11 +15,11 @@ import tactics.positions.submissive_defender
 # TODO: handle the case where the ball is invalid
 
 
-# The Defense tactic handles goalie and defender placement to defend the goal
+## The Defense tactic handles goalie and defender placement to defend the goal
 # It does lots of window and shot evaluation to figure out which 'threats' are the
 # most important to block, then assigns blocking positions to the bots
 # The old defense strategy had a goalie and two defenders that didn't coordinate with eachother
-# and tended to overlap and not get an optimal positioning - this tactic handles the coordination
+# and tended to overlap and not get an optimal positioning - this tactic handles the coordination.
 class Defense(composite_behavior.CompositeBehavior):
 
     # defender_priorities should have a length of two and contains the priorities for the two defender
@@ -52,7 +52,7 @@ class Defense(composite_behavior.CompositeBehavior):
 
 
 
-    # draws some pretty cool shit on the field if set to True
+    ## draws some pretty cool shit on the field if set to True
     # default: True
     @property
     def debug(self):

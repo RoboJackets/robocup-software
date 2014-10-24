@@ -7,7 +7,7 @@ import main
 import role_assignment
 
 
-# lines up with the ball and the target, then drives up and kicks
+## lines up with the ball and the target, then drives up and kicks
 # this differs from PivotKick which gets the ball first, then aims
 # Note: LineKick recalculates the target_aim_point ONLY when the target point/segment changes
 class LineKick(skills._kick._Kick):
@@ -57,13 +57,16 @@ class LineKick(skills._kick._Kick):
             lambda: self.robot_is_between_ball_and_target() or self._target_line.dist_to(self.robot.pos) > self.ChargeThresh,
             "robot between ball and target")
 
+
     def robot_is_between_ball_and_target(self):
         return self.robot is not None and \
             self.robot.pos.dist_to(self.aim_target_point) < main.ball().pos.dist_to(self.aim_target_point)
 
+
     def recalculate(self):
         self._target_line = robocup.Line(main.ball().pos, self.aim_target_point)
         # FIXME: errors?
+
 
     def on_exit_start(self):
         super().recalculate_aim_target_point()

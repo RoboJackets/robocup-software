@@ -7,7 +7,7 @@ import robocup
 import math
 
 
-# pushes the ball by bumping into it
+## pushes the ball by bumping into it
 class Bump(single_robot_behavior.SingleRobotBehavior):
 
     # tuneable constants
@@ -54,6 +54,15 @@ class Bump(single_robot_behavior.SingleRobotBehavior):
             Bump.State.lineup,
             lambda: robocup.Line(self.robot.pos, self.target).dist_to(main.ball().pos) > Bump.EscapeChargeThresh,
             'bad ball placement')
+
+
+    ## the Point we're trying to bump the ball towards
+    @property
+    def target(self):
+        return self._target
+    @target.setter
+    def target(self, value):
+        self._target = value
 
 
     def facing_err_above_threshold(self):
@@ -107,12 +116,3 @@ class Bump(single_robot_behavior.SingleRobotBehavior):
 
         self.robot.set_world_vel(drive_dir.normalized() * speed)
         self.robot.face(main.ball().pos)
-
-
-    # the Point we're trying to bump the ball towards
-    @property
-    def target(self):
-        return self._target
-    @target.setter
-    def target(self, value):
-        self._target = value
