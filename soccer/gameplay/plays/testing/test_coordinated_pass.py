@@ -7,6 +7,7 @@ import constants
 import main
 
 
+## Continually runs a coordinated pass to opposite sides of the field
 class TestCoordinatedPass(play.Play):
 
     ReceiveXCoord = 1
