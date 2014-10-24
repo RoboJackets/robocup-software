@@ -7,6 +7,8 @@ set -e
 
 GIT_BRANCH=$(git branch | sed -n -e "s/^\* \(.*\)/\1/p")
 
+echo "git branch: $GIT_BRANCH"
+
 if [ "$GIT_BRANCH" = "master" ]; then 
     git config --global user.name "$GIT_USERNAME"
     git config --global user.email $GIT_EMAIL

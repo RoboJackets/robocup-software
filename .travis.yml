@@ -12,7 +12,6 @@ env:
 
 before_install:
   # auto-update documentation site
-  - sudo apt-get install doxygen
   - './autoupdate-docs-travis.sh'
 
   # we have to get the games PPA so we can install libbullet-dev
