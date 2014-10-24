@@ -79,8 +79,7 @@ We use [Doxygen](www.doxygen.org) for documentation.  This allows us to convert 
 
 http://robojackets.github.io/robocup-software/
 
-Note: The doxygen documentation site above is currently updated manually (pushing new code to master doesn't update our documentation site).  Checkout the `gh-pages` branch and take a look at the README to see how this is handled.
-
+Note: The doxygen documentation site above is updated automacally using travis-ci.  See our .travis.yml file for more info.
 
 ## Testing
 
