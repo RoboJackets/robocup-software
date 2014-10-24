@@ -115,10 +115,14 @@ $(document).ready(function(){initNavTree('classplay__registry_1_1_play_registry.
 <div class="title">play_registry.PlayRegistry Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Holds references to all Play subclasses and their enabled state The play registry keeps a tree of all plays in the 'plays' folder (and its subfolders) Our old system required programmatically registering plays into categories, but the new system just uses the filesystem hierarchy for this.  
+ <a href="classplay__registry_1_1_play_registry.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classplay__registry_1_1_play_registry_1_1_category.html">Category</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Categories correspond to filesystem directories.  <a href="classplay__registry_1_1_play_registry_1_1_category.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classplay__registry_1_1_play_registry_1_1_node.html">Node</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -141,7 +145,8 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>delete</b></td></tr>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>recalculate_scores</b></td></tr>
 <tr class="separator:a792b33f1b64b7a8dc2af64abba024349"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98bf1c7a816ff782d87585436817d8c6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a98bf1c7a816ff782d87585436817d8c6"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>get_enabled_plays_and_scores</b></td></tr>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classplay__registry_1_1_play_registry.html#a98bf1c7a816ff782d87585436817d8c6">get_enabled_plays_and_scores</a></td></tr>
+<tr class="memdesc:a98bf1c7a816ff782d87585436817d8c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a list of all plays in the tree that are currently enabled. <br /></td></tr>
 <tr class="separator:a98bf1c7a816ff782d87585436817d8c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac0220d9c900261fb0b4caf73a589ec5b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac0220d9c900261fb0b4caf73a589ec5b"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>__iter__</b></td></tr>
@@ -180,7 +185,12 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>headerData</b></td></t
 def&#160;</td><td class="memItemRight" valign="bottom"><b>setData</b></td></tr>
 <tr class="separator:acf892a6692450866ba0f592abe4b0bbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Holds references to all Play subclasses and their enabled state The play registry keeps a tree of all plays in the 'plays' folder (and its subfolders) Our old system required programmatically registering plays into categories, but the new system just uses the filesystem hierarchy for this. </p>
+<p>The registry has methods for loading and unloading plays (for when files change on disk)</p>
+<p>It also tracks which plays are enabled</p>
+<p>This is a subclass of QAbstractItemModel so that we can easily attach a UI </p>
+</div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for play_registry.PlayRegistry:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
@@ -199,7 +209,7 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>setData</b></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>play_registry</b></li><li class="navelem"><a class="el" href="classplay__registry_1_1_play_registry.html">PlayRegistry</a></li>
-    <li class="footer">Generated on Fri Oct 24 2014 15:30:02 for GT RoboCup SSL by
+    <li class="footer">Generated on Fri Oct 24 2014 19:25:25 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

@@ -115,10 +115,14 @@ $(document).ready(function(){initNavTree('classbehavior_1_1_behavior.html','');}
 <div class="title">behavior.Behavior Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><a class="el" href="classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. ">Behavior</a> is an abstract superclass for Skill, Play, etc.  
+ <a href="classbehavior_1_1_behavior.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior_1_1_state.html">State</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">These are the core states of the <a class="el" href="classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. ">Behavior</a> class Subclasses may extend this by adding substates of the following.  <a href="classbehavior_1_1_behavior_1_1_state.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -130,25 +134,31 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b></td></tr>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>add_state</b></td></tr>
 <tr class="separator:a241439a73b02d47245ec722608ad7c8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae03dad787210b1b6a592f24f2742cd90"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae03dad787210b1b6a592f24f2742cd90"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>is_done_running</b></td></tr>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#ae03dad787210b1b6a592f24f2742cd90">is_done_running</a></td></tr>
+<tr class="memdesc:ae03dad787210b1b6a592f24f2742cd90"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether or not the <a class="el" href="classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. ">Behavior</a> is running Because we use hierarchial state machines, a behavior never be in the "running", but may be in a substate of it This is a convenience method to check whether or not the play is running. <br /></td></tr>
 <tr class="separator:ae03dad787210b1b6a592f24f2742cd90"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a484771fee6b59e5475905eeaa8d95c7e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a484771fee6b59e5475905eeaa8d95c7e"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>terminate</b></td></tr>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#a484771fee6b59e5475905eeaa8d95c7e">terminate</a></td></tr>
+<tr class="memdesc:a484771fee6b59e5475905eeaa8d95c7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transitions the <a class="el" href="classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. ">Behavior</a> into a terminal state (either completed or cancelled) <br /></td></tr>
 <tr class="separator:a484771fee6b59e5475905eeaa8d95c7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae960426568ca52d8128c88f3e7bb6d54"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae960426568ca52d8128c88f3e7bb6d54"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>behavior_state</b></td></tr>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#ae960426568ca52d8128c88f3e7bb6d54">behavior_state</a></td></tr>
+<tr class="memdesc:ae960426568ca52d8128c88f3e7bb6d54"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns a state in <a class="el" href="classbehavior_1_1_behavior_1_1_state.html" title="These are the core states of the Behavior class Subclasses may extend this by adding substates of the...">Behavior.State</a> that represents what the behaviors is doing use this instead of the  property if you want to avoid dealing with custom subclass substates <br /></td></tr>
 <tr class="separator:ae960426568ca52d8128c88f3e7bb6d54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a773f990afb15c9a7b079b3a3dc7d72ae"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a773f990afb15c9a7b079b3a3dc7d72ae"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>is_continuous</b></td></tr>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#a773f990afb15c9a7b079b3a3dc7d72ae">is_continuous</a></td></tr>
+<tr class="memdesc:a773f990afb15c9a7b079b3a3dc7d72ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. ">Behavior</a>'s termination behavior noncontinuous: a behavior that accomplishes a specific task, then completes (example: shooting at the goal) continuous: a behavior that continually runs until told to stop (example: zone defense) <br /></td></tr>
 <tr class="separator:a773f990afb15c9a7b079b3a3dc7d72ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a53d5f7c2d3e3010ae915be524cb6859c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a53d5f7c2d3e3010ae915be524cb6859c"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>__str__</b></td></tr>
 <tr class="separator:a53d5f7c2d3e3010ae915be524cb6859c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a345077b34bccd014b1d134e4b494b547"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a345077b34bccd014b1d134e4b494b547"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>role_requirements</b></td></tr>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#a345077b34bccd014b1d134e4b494b547">role_requirements</a></td></tr>
+<tr class="memdesc:a345077b34bccd014b1d134e4b494b547"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a tree of RoleRequirements keyed by subbehavior reference name This is used by the dynamic role assignment system to intelligently select which robot will run which behavior. <br /></td></tr>
 <tr class="separator:a345077b34bccd014b1d134e4b494b547"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a702d925510cc813f2a6334e3cec94dae"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a702d925510cc813f2a6334e3cec94dae"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>assign_roles</b></td></tr>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#a702d925510cc813f2a6334e3cec94dae">assign_roles</a></td></tr>
+<tr class="memdesc:a702d925510cc813f2a6334e3cec94dae"><td class="mdescLeft">&#160;</td><td class="mdescRight">assignments is a tree of (RoleRequirements, <a class="el" href="class_our_robot.html" title="A robot on our team. ">OurRobot</a>) tuples Same tree structure as the <a class="el" href="classbehavior_1_1_behavior.html#a345077b34bccd014b1d134e4b494b547" title="Returns a tree of RoleRequirements keyed by subbehavior reference name This is used by the dynamic ro...">role_requirements()</a> return value, but tuples instead of RoleRequirements as leaf nodes <br /></td></tr>
 <tr class="separator:a702d925510cc813f2a6334e3cec94dae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classfsm_1_1_state_machine"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classfsm_1_1_state_machine')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classfsm_1_1_state_machine.html">fsm.StateMachine</a></td></tr>
 <tr class="memitem:afdea72a04c29ae99249dc4418e292837 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afdea72a04c29ae99249dc4418e292837"></a>
@@ -158,13 +168,16 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b></td></tr>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>start_state</b></td></tr>
 <tr class="separator:af3e2e0512b96a8a6218d85ab416713bb inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae31e10d29d64d1f68c6289114f30288c inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae31e10d29d64d1f68c6289114f30288c"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>restart</b></td></tr>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfsm_1_1_state_machine.html#ae31e10d29d64d1f68c6289114f30288c">restart</a></td></tr>
+<tr class="memdesc:ae31e10d29d64d1f68c6289114f30288c inherit pub_methods_classfsm_1_1_state_machine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the FSM back into the start state. <br /></td></tr>
 <tr class="separator:ae31e10d29d64d1f68c6289114f30288c inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb77bc1efbfb9c4ca3ccf5f1aa6d23c5 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adb77bc1efbfb9c4ca3ccf5f1aa6d23c5"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>add_state</b></td></tr>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfsm_1_1_state_machine.html#adb77bc1efbfb9c4ca3ccf5f1aa6d23c5">add_state</a></td></tr>
+<tr class="memdesc:adb77bc1efbfb9c4ca3ccf5f1aa6d23c5 inherit pub_methods_classfsm_1_1_state_machine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a new state (which can optionally be a substate of an existing state) <br /></td></tr>
 <tr class="separator:adb77bc1efbfb9c4ca3ccf5f1aa6d23c5 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb4f0d680dd3d3f5cdf7f69bd89df640 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb4f0d680dd3d3f5cdf7f69bd89df640"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>spin</b></td></tr>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfsm_1_1_state_machine.html#abb4f0d680dd3d3f5cdf7f69bd89df640">spin</a></td></tr>
+<tr class="memdesc:abb4f0d680dd3d3f5cdf7f69bd89df640 inherit pub_methods_classfsm_1_1_state_machine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the FSM checks transition conditions for all edges leading away from the current state if one evaluates to true, we transition to it if more than one evaluates to true, we throw a RuntimeError. <br /></td></tr>
 <tr class="separator:abb4f0d680dd3d3f5cdf7f69bd89df640 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9e2d8719f2a2c72cd84a37b43d83302 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af9e2d8719f2a2c72cd84a37b43d83302"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>add_transition</b></td></tr>
@@ -204,7 +217,9 @@ Additional Inherited Members</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><b>state</b></td></tr>
 <tr class="separator:a4de8b41f0948cb8743b018cab59b8b94 inherit pub_attribs_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p><a class="el" href="classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. ">Behavior</a> is an abstract superclass for Skill, Play, etc. </p>
+</div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for behavior.Behavior:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
@@ -212,29 +227,29 @@ Additional Inherited Members</h2></td></tr>
  <div class="center">
   <img src="classbehavior_1_1_behavior.png" usemap="#behavior.Behavior_map" alt=""/>
   <map id="behavior.Behavior_map" name="behavior.Behavior_map">
-<area href="classfsm_1_1_state_machine.html" alt="fsm.StateMachine" shape="rect" coords="782,0,1163,24"/>
-<area href="classcomposite__behavior_1_1_composite_behavior.html" alt="composite_behavior.CompositeBehavior" shape="rect" coords="0,112,381,136"/>
+<area href="classfsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="fsm.StateMachine" shape="rect" coords="782,0,1163,24"/>
+<area href="classcomposite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="composite_behavior.CompositeBehavior" shape="rect" coords="0,112,381,136"/>
 <area href="classsingle__robot__behavior_1_1_single_robot_behavior.html" alt="single_robot_behavior.SingleRobotBehavior" shape="rect" coords="782,112,1163,136"/>
-<area href="classtimed__behavior_1_1_timed_behavior.html" alt="timed_behavior.TimedBehavior" shape="rect" coords="1173,112,1554,136"/>
-<area href="classplay_1_1_play.html" alt="play.Play" shape="rect" coords="391,168,772,192"/>
-<area href="classsingle__robot__composite__behavior_1_1_single_robot_composite_behavior.html" alt="single_robot_composite_behavior.SingleRobotCompositeBehavior" shape="rect" coords="391,224,772,248"/>
+<area href="classtimed__behavior_1_1_timed_behavior.html" title="TimedBehavior wraps a subbehavior and allows us to easily place a time limit on it. " alt="timed_behavior.TimedBehavior" shape="rect" coords="1173,112,1554,136"/>
+<area href="classplay_1_1_play.html" title="A play coordinates the entire team of robots Only play runs at a time By default, the RootPlay (which..." alt="play.Play" shape="rect" coords="391,168,772,192"/>
+<area href="classsingle__robot__composite__behavior_1_1_single_robot_composite_behavior.html" title="Behavior that applies to a single ROBOT and may have up to one subbehavior at any time Most of the im..." alt="single_robot_composite_behavior.SingleRobotCompositeBehavior" shape="rect" coords="391,224,772,248"/>
 <area href="classtactics_1_1behavior__sequence_1_1_behavior_sequence.html" alt="tactics.behavior_sequence.BehaviorSequence" shape="rect" coords="391,280,772,304"/>
-<area href="classtactics_1_1circle__near__ball_1_1_circle_near_ball.html" alt="tactics.circle_near_ball.CircleNearBall" shape="rect" coords="391,336,772,360"/>
+<area href="classtactics_1_1circle__near__ball_1_1_circle_near_ball.html" title="Robots position themselves along a portion of the circle centered at the ball. " alt="tactics.circle_near_ball.CircleNearBall" shape="rect" coords="391,336,772,360"/>
 <area href="classtactics_1_1coordinated__pass_1_1_coordinated_pass.html" alt="tactics.coordinated_pass.CoordinatedPass" shape="rect" coords="391,392,772,416"/>
-<area href="classtactics_1_1defense_1_1_defense.html" alt="tactics.defense.Defense" shape="rect" coords="391,448,772,472"/>
+<area href="classtactics_1_1defense_1_1_defense.html" title="The Defense tactic handles goalie and defender placement to defend the goal It does lots of window an..." alt="tactics.defense.Defense" shape="rect" coords="391,448,772,472"/>
 <area href="classtactics_1_1line__up_1_1_line_up.html" alt="tactics.line_up.LineUp" shape="rect" coords="391,504,772,528"/>
 <area href="classplays_1_1tuning_1_1test__jittery__motion_1_1_jitterer.html" alt="plays.tuning.test_jittery_motion.Jitterer" shape="rect" coords="1173,168,1554,192"/>
 <area href="classplays_1_1tuning_1_1tune__pivot_1_1_pivoter.html" alt="plays.tuning.tune_pivot.Pivoter" shape="rect" coords="1173,224,1554,248"/>
-<area href="classsingle__robot__composite__behavior_1_1_single_robot_composite_behavior.html" alt="single_robot_composite_behavior.SingleRobotCompositeBehavior" shape="rect" coords="1173,280,1554,304"/>
-<area href="classskills_1_1__kick_1_1___kick.html" alt="skills._kick._Kick" shape="rect" coords="1173,336,1554,360"/>
+<area href="classsingle__robot__composite__behavior_1_1_single_robot_composite_behavior.html" title="Behavior that applies to a single ROBOT and may have up to one subbehavior at any time Most of the im..." alt="single_robot_composite_behavior.SingleRobotCompositeBehavior" shape="rect" coords="1173,280,1554,304"/>
+<area href="classskills_1_1__kick_1_1___kick.html" title="this is the abstract superclass for PivotKick and LineKick " alt="skills._kick._Kick" shape="rect" coords="1173,336,1554,360"/>
 <area href="classskills_1_1aim_1_1_aim.html" alt="skills.aim.Aim" shape="rect" coords="1173,392,1554,416"/>
-<area href="classskills_1_1bump_1_1_bump.html" alt="skills.bump.Bump" shape="rect" coords="1173,448,1554,472"/>
+<area href="classskills_1_1bump_1_1_bump.html" title="pushes the ball by bumping into it " alt="skills.bump.Bump" shape="rect" coords="1173,448,1554,472"/>
 <area href="classskills_1_1capture_1_1_capture.html" alt="skills.capture.Capture" shape="rect" coords="1173,504,1554,528"/>
 <area href="classskills_1_1intercept_1_1_intercept.html" alt="skills.intercept.Intercept" shape="rect" coords="1173,560,1554,584"/>
 <area href="classskills_1_1mark_1_1_mark.html" alt="skills.mark.Mark" shape="rect" coords="1173,616,1554,640"/>
-<area href="classskills_1_1move_1_1_move.html" alt="skills.move.Move" shape="rect" coords="1173,672,1554,696"/>
-<area href="classskills_1_1pass__receive_1_1_pass_receive.html" alt="skills.pass_receive.PassReceive" shape="rect" coords="1173,728,1554,752"/>
-<area href="classtactics_1_1positions_1_1defender_1_1_defender.html" alt="tactics.positions.defender.Defender" shape="rect" coords="1173,784,1554,808"/>
+<area href="classskills_1_1move_1_1_move.html" title="Behavior that moves a robot to a specified location wraps up OurRobot.move() into a Skill so we can u..." alt="skills.move.Move" shape="rect" coords="1173,672,1554,696"/>
+<area href="classskills_1_1pass__receive_1_1_pass_receive.html" title="PassReceive accepts a receive_point as a parameter and gets setup there to catch the ball It transiti..." alt="skills.pass_receive.PassReceive" shape="rect" coords="1173,728,1554,752"/>
+<area href="classtactics_1_1positions_1_1defender_1_1_defender.html" title="The Defender behavior positions a robot on a certain area of the field and defends it..." alt="tactics.positions.defender.Defender" shape="rect" coords="1173,784,1554,808"/>
 </map>
  </div></div>
 <hr/>The documentation for this class was generated from the following file:<ul>
@@ -246,7 +261,7 @@ Additional Inherited Members</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>behavior</b></li><li class="navelem"><a class="el" href="classbehavior_1_1_behavior.html">Behavior</a></li>
-    <li class="footer">Generated on Fri Oct 24 2014 15:29:59 for GT RoboCup SSL by
+    <li class="footer">Generated on Fri Oct 24 2014 19:25:24 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>
