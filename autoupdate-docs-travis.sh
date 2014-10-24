@@ -22,11 +22,11 @@ if [ "$(git rev-parse master)" = "$TRAVIS_COMMIT" ]; then
 
     git config --global user.name "$GIT_USERNAME"
     git config --global user.email $GIT_EMAIL
-    git clone -b gh-pages git://github.com/robojackets/robocup-software api_docs
+    mkdir -p api_docs
+    git clone -b gh-pages git://github.com/robojackets/robocup-software api_docs/html
     doxygen
     cp doxygen.css api_docs/
-    cd api_docs
-    mv html/* ./
+    cd api_docs/html
     git add --all
     git commit -m 'auto-updated api docs'
     git push https://$GH_TOKEN@github.com/robojackets/robocup-software gh-pages
