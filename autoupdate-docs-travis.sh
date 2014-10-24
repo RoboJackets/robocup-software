@@ -25,7 +25,7 @@ if [ "$(git rev-parse master)" = "$TRAVIS_COMMIT" ]; then
     mkdir -p api_docs
     git clone -b gh-pages git://github.com/robojackets/robocup-software api_docs/html
     doxygen
-    cp doxygen.css api_docs/
+    cp doxygen.css api_docs/html
     cd api_docs/html
     git add --all
     git commit -m 'auto-updated api docs'
