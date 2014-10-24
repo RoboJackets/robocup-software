@@ -17,6 +17,8 @@ if [ "$(git rev-parse master)" = "$TRAVIS_COMMIT" ]; then
     sudo make install
     doxygen --version
 
+    sudo apt-get install graphviz
+
     git config --global user.name "$GIT_USERNAME"
     git config --global user.email $GIT_EMAIL
     git clone -b gh-pages git://github.com/robojackets/robocup-software api_docs
