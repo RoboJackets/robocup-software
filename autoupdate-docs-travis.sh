@@ -7,6 +7,7 @@ set -e
 
 if [ "$(git rev-parse master)" = "$TRAVIS_COMMIT" ]; then
     sudo apt-get install doxygen
+    doxygen --version
     git config --global user.name "$GIT_USERNAME"
     git config --global user.email $GIT_EMAIL
     git clone -b gh-pages git://github.com/robojackets/robocup-software api_docs
