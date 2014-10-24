@@ -1,0 +1,14 @@
+var class_robot_config =
+[
+    [ "RobotConfig", "class_robot_config.html#a8f8d9a15b5158357b557a203aaefb7aa", null ],
+    [ "~RobotConfig", "class_robot_config.html#aa368fb9747c0a4be62e50194415bf4c9", null ],
+    [ "accelerationMultiplier", "class_robot_config.html#ac6dbc7789eb0a33f3ae593b5da3456f0", null ],
+    [ "angleVelMultiplier", "class_robot_config.html#aa5405fff4965ff744c3a7d905ae6f303", null ],
+    [ "chipper", "class_robot_config.html#a8d3a76cbd7e56c4a5a33c33adff3a6ed", null ],
+    [ "dribbler", "class_robot_config.html#abfce265e9d680916c5ee73097d1ac8b3", null ],
+    [ "kicker", "class_robot_config.html#a6417cc426cb159a57165092a836c47a2", null ],
+    [ "pivotVelMultiplier", "class_robot_config.html#a258c42b64eb53160ec1eda9c6081dbf9", null ],
+    [ "rotation", "class_robot_config.html#a1efd430e6346fed75d320bfbf0f6a081", null ],
+    [ "translation", "class_robot_config.html#a7d3341f5e06c2698ad74d847fd99e463", null ],
+    [ "velMultiplier", "class_robot_config.html#ae880291b9adb38c7a76f1a5fdbc8482a", null ]
+];
