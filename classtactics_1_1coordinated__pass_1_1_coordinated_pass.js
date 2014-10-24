@@ -1,5 +1,6 @@
 var classtactics_1_1coordinated__pass_1_1_coordinated_pass =
 [
+    [ "State", "classtactics_1_1coordinated__pass_1_1_coordinated_pass_1_1_state.html", null ],
     [ "__init__", "classtactics_1_1coordinated__pass_1_1_coordinated_pass.html#a0e0530b0b00ddabc04a76ab94d9540c4", null ],
     [ "__str__", "classtactics_1_1coordinated__pass_1_1_coordinated_pass.html#a7d16884da0651bc5d33c12d9c68efc1b", null ],
     [ "execute_preparing", "classtactics_1_1coordinated__pass_1_1_coordinated_pass.html#a43c1caa008525f3b913b0b99b4738c8e", null ],
@@ -11,6 +12,5 @@ var classtactics_1_1coordinated__pass_1_1_coordinated_pass =
     [ "on_exit_running", "classtactics_1_1coordinated__pass_1_1_coordinated_pass.html#a5a0f510228890b86ca34f0672c20153f", null ],
     [ "receive_point", "classtactics_1_1coordinated__pass_1_1_coordinated_pass.html#a3808ed1a6aefbe81184225fe67fe7da7", null ],
     [ "receive_point", "classtactics_1_1coordinated__pass_1_1_coordinated_pass.html#a3808ed1a6aefbe81184225fe67fe7da7", null ],
-    [ "KickPower", "classtactics_1_1coordinated__pass_1_1_coordinated_pass.html#ae6311258092b24b6bd49603126f9138f", null ],
-    [ "receive_point", "classtactics_1_1coordinated__pass_1_1_coordinated_pass.html#a48c3d02d204829d644573086dab7c97d", null ]
+    [ "receive_point", "classtactics_1_1coordinated__pass_1_1_coordinated_pass.html#abfddba86d6449500ba13a0d75f644cc3", null ]
 ];

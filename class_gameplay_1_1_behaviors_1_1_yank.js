@@ -2,7 +2,6 @@ var class_gameplay_1_1_behaviors_1_1_yank =
 [
     [ "Yank", "class_gameplay_1_1_behaviors_1_1_yank.html#a2c667446133a2dae234df08cfb95dfcd", null ],
     [ "capture", "class_gameplay_1_1_behaviors_1_1_yank.html#a6ed5d4c769f5073cd9faf1e5d1b1ff71", null ],
-    [ "createConfiguration", "class_gameplay_1_1_behaviors_1_1_yank.html#a9c00707bf2daeb4ca163dd919ba95403", null ],
     [ "done", "class_gameplay_1_1_behaviors_1_1_yank.html#aa2a8e5f35dd3ba6ac117917abf201472", null ],
     [ "restart", "class_gameplay_1_1_behaviors_1_1_yank.html#a126bd0ff840c8377122f8842a7012d3a", null ],
     [ "run", "class_gameplay_1_1_behaviors_1_1_yank.html#a05dc7c44fdc297b269aa30226e76fa22", null ],

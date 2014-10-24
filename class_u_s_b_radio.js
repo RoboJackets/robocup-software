@@ -11,7 +11,6 @@ var class_u_s_b_radio =
     [ "open", "class_u_s_b_radio.html#a9cc536afac2872f1e7cf7663ba3e3dbc", null ],
     [ "read", "class_u_s_b_radio.html#aab5042f7b2da255dcb1a5cf56366afae", null ],
     [ "receive", "class_u_s_b_radio.html#a851c028e925a5547d7896e490a6ed78c", null ],
-    [ "rxCompleted", "class_u_s_b_radio.html#a76a22896219e576884087afdb5d680e2", null ],
     [ "send", "class_u_s_b_radio.html#a3c7736067d3609106f2735484e7128d1", null ],
     [ "switchTeam", "class_u_s_b_radio.html#ab4db01dc20323b5e79f851420ae2a4cb", null ],
     [ "write", "class_u_s_b_radio.html#a07036ca8dc585eccd08f03eb2db8c1ed", null ],
@@ -21,6 +20,5 @@ var class_u_s_b_radio =
     [ "_rxBuffers", "class_u_s_b_radio.html#a843493d805d6db77518084485ad89daf", null ],
     [ "_rxTransfers", "class_u_s_b_radio.html#a13175984818f4acf43b96321ca23b474", null ],
     [ "_sequence", "class_u_s_b_radio.html#aa011f3463d5c1647f2f90c5716ec6af5", null ],
-    [ "_usb_context", "class_u_s_b_radio.html#a60593a5a7f029d52e1f7d5479a829d3c", null ],
-    [ "NumRXTransfers", "class_u_s_b_radio.html#a8c4110d92dd7ba9260ec88fef4a1c6cc", null ]
+    [ "_usb_context", "class_u_s_b_radio.html#a60593a5a7f029d52e1f7d5479a829d3c", null ]
 ];

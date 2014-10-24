@@ -1,5 +1,7 @@
 var classplay__registry_1_1_play_registry =
 [
+    [ "Category", "classplay__registry_1_1_play_registry_1_1_category.html", "classplay__registry_1_1_play_registry_1_1_category" ],
+    [ "Node", "classplay__registry_1_1_play_registry_1_1_node.html", "classplay__registry_1_1_play_registry_1_1_node" ],
     [ "__init__", "classplay__registry_1_1_play_registry.html#a6af773a817cb8ebd3d16080fd82d6c75", null ],
     [ "__contains__", "classplay__registry_1_1_play_registry.html#a8a79d147c84d3e47d77ccfb75f40e724", null ],
     [ "__iter__", "classplay__registry_1_1_play_registry.html#ac0220d9c900261fb0b4caf73a589ec5b", null ],

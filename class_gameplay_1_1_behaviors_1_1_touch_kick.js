@@ -1,7 +1,6 @@
 var class_gameplay_1_1_behaviors_1_1_touch_kick =
 [
     [ "TouchKick", "class_gameplay_1_1_behaviors_1_1_touch_kick.html#a1d38abd8e77aaa37457638d19b069b5f", null ],
-    [ "createConfiguration", "class_gameplay_1_1_behaviors_1_1_touch_kick.html#a70bdb2093e0b15943013c7d5e919db48", null ],
     [ "done", "class_gameplay_1_1_behaviors_1_1_touch_kick.html#a72aa325bb97be21f03ff74fd731c7a52", null ],
     [ "restart", "class_gameplay_1_1_behaviors_1_1_touch_kick.html#a05177994c3014ab926e0e20c3e5cf2a8", null ],
     [ "run", "class_gameplay_1_1_behaviors_1_1_touch_kick.html#a60725fb3cc300cebf57fd7da9ff4b5ba", null ],

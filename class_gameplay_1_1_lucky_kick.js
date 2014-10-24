@@ -2,7 +2,6 @@ var class_gameplay_1_1_lucky_kick =
 [
     [ "LuckyKick", "class_gameplay_1_1_lucky_kick.html#ab82dd78820ab2f95798bcc17235e836b", null ],
     [ "~LuckyKick", "class_gameplay_1_1_lucky_kick.html#a71bbed5bad04acc67a64d3ed5fa0b6e4", null ],
-    [ "createConfiguration", "class_gameplay_1_1_lucky_kick.html#a4b3983f799daee12ebbe78a4ff967717", null ],
     [ "get_goalline", "class_gameplay_1_1_lucky_kick.html#ab30ce5ceb96946b647760b9c4e3bc03c", null ],
     [ "get_kickray", "class_gameplay_1_1_lucky_kick.html#a37773498a8f2f0ca594c751cbe3d8451", null ],
     [ "get_lucky", "class_gameplay_1_1_lucky_kick.html#a94be93c7164eb83183375635e39583e9", null ],
@@ -20,16 +19,7 @@ var class_gameplay_1_1_lucky_kick =
     [ "use_chip", "class_gameplay_1_1_lucky_kick.html#a951291eb43228abeb44d5e61b1fb28c4", null ],
     [ "use_kick", "class_gameplay_1_1_lucky_kick.html#ab6bdeffb7f5778ce1d727c5dc61f6c44", null ],
     [ "use_pivot", "class_gameplay_1_1_lucky_kick.html#a42378d12bf7cce5e67af30034165512c", null ],
-    [ "APPROACH_ANGLE", "class_gameplay_1_1_lucky_kick.html#a9d11e656ee831698bf7cbefc8adb770d", null ],
-    [ "APPROACH_DIST", "class_gameplay_1_1_lucky_kick.html#a71affeba9d423e7215923701cbccc985", null ],
-    [ "DEBUG", "class_gameplay_1_1_lucky_kick.html#ae6b0808b776a8ce9ec19e3b5ede3dce3", null ],
     [ "local", "class_gameplay_1_1_lucky_kick.html#a9b59bceb9d76470badc390956ab2caea", null ],
     [ "pivot_kicker", "class_gameplay_1_1_lucky_kick.html#a8134049872b387a6842db292fab5cbbd", null ],
-    [ "USE_APPROACH", "class_gameplay_1_1_lucky_kick.html#a1da90f0954fd4212e35a4c519e702ccf", null ],
-    [ "USE_BALLSENSE", "class_gameplay_1_1_lucky_kick.html#aea14fb1a1a4162fe299fd9776c23b5bb", null ],
-    [ "USE_CHANCE", "class_gameplay_1_1_lucky_kick.html#aaa6584428bf474a80d9f992c2ddd5424", null ],
-    [ "USE_CHIP", "class_gameplay_1_1_lucky_kick.html#a2049c38702b6c54a2799cef018342c6b", null ],
-    [ "USE_KICK", "class_gameplay_1_1_lucky_kick.html#a7dacdfaba96962cfc45e7ae18040a5a8", null ],
-    [ "USE_PIVOT", "class_gameplay_1_1_lucky_kick.html#a213baca7d778c135893c71ff98d7025e", null ],
     [ "window_eval", "class_gameplay_1_1_lucky_kick.html#a3adb25f2ca626bba8d4b4a9c18ba4dcd", null ]
 ];

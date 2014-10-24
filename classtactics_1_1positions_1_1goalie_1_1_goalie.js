@@ -1,5 +1,6 @@
 var classtactics_1_1positions_1_1goalie_1_1_goalie =
 [
+    [ "State", "classtactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html", null ],
     [ "__init__", "classtactics_1_1positions_1_1goalie_1_1_goalie.html#aefd21f80ad43e9df6a4cc26d93c7c3b6", null ],
     [ "execute_block", "classtactics_1_1positions_1_1goalie_1_1_goalie.html#ab34169da886f9b1710019a84cb5bbfdd", null ],
     [ "execute_chill", "classtactics_1_1positions_1_1goalie_1_1_goalie.html#a40dfbcc4838fecf2bd0220c68ff4262d", null ],
@@ -14,8 +15,5 @@ var classtactics_1_1positions_1_1goalie_1_1_goalie =
     [ "robot_is_facing_our_goal", "classtactics_1_1positions_1_1goalie_1_1_goalie.html#aaff10e118e9416b9b2ac659198d27c91", null ],
     [ "role_requirements", "classtactics_1_1positions_1_1goalie_1_1_goalie.html#a970eaa96aefc9fbb2b1af31fb9cfffe6", null ],
     [ "shell_id", "classtactics_1_1positions_1_1goalie_1_1_goalie.html#a934a354c2c48f7ace42d9dc14f807fe1", null ],
-    [ "shell_id", "classtactics_1_1positions_1_1goalie_1_1_goalie.html#a934a354c2c48f7ace42d9dc14f807fe1", null ],
-    [ "MaxX", "classtactics_1_1positions_1_1goalie_1_1_goalie.html#a2617b6d9b76c5df1145ebe9e541e3663", null ],
-    [ "OpponentFacingThreshold", "classtactics_1_1positions_1_1goalie_1_1_goalie.html#a260ae26cd5ff3f0957357a422b3c624f", null ],
-    [ "RobotSegment", "classtactics_1_1positions_1_1goalie_1_1_goalie.html#a874d9849acd695116100efdf1e2d9fc8", null ]
+    [ "shell_id", "classtactics_1_1positions_1_1goalie_1_1_goalie.html#a934a354c2c48f7ace42d9dc14f807fe1", null ]
 ];

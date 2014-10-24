@@ -8,7 +8,6 @@ var class_gameplay_1_1_passing_context =
     [ "addReceiver", "class_gameplay_1_1_passing_context.html#a41d9d816300a472a711f2fe15aec3f02", null ],
     [ "chooseReceivePointForReceiverAlongSegment", "class_gameplay_1_1_passing_context.html#ac74c4bb05f8dd91249e0c75fa8906e43", null ],
     [ "chooseReceiver", "class_gameplay_1_1_passing_context.html#ae33cc810832e70b5246bcc4b6a92bd47", null ],
-    [ "createConfiguration", "class_gameplay_1_1_passing_context.html#adda8b5921e3d1f72c9bec5ffb5c6d956", null ],
     [ "currentBestReceiver", "class_gameplay_1_1_passing_context.html#a8ca222bd467a4a4dea85cacc0c6ebee1", null ],
     [ "currentChosenReceiver", "class_gameplay_1_1_passing_context.html#a846194c7b217d325744e4953eb3c2a35", null ],
     [ "done", "class_gameplay_1_1_passing_context.html#a9dbfeed67ca9c8ecc75956f02dfda750", null ],

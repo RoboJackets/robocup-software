@@ -32,7 +32,6 @@ var class_our_robot =
     [ "clearLocalObstacles", "class_our_robot.html#abe87bdafe987c05819d221d4ac84252c", null ],
     [ "consecutivePathChangeCount", "class_our_robot.html#afb8d32e3580b30997915444bb907e262", null ],
     [ "createBallObstacle", "class_our_robot.html#a7baa02e9ccb8c3882d50de92898974c5", null ],
-    [ "createConfiguration", "class_our_robot.html#a7dd4ae97d57385b88c40f4da7a231f6a", null ],
     [ "createRobotObstacles", "class_our_robot.html#ae659b832401f12a187df08165301e847", null ],
     [ "disableAvoidBall", "class_our_robot.html#ab2025ccc19a48d16b94cdf5448c60f9a", null ],
     [ "distanceToChipLanding", "class_our_robot.html#a019e62061c483d79b3ecd88aa5f08e27", null ],
@@ -95,7 +94,6 @@ var class_our_robot =
     [ "_self_avoid_mask", "class_our_robot.html#a19192634cf02c79cbaf29b35d999a52d", null ],
     [ "_state", "class_our_robot.html#a1a0db98c8a9a081f074390cdd609daff", null ],
     [ "config", "class_our_robot.html#a0d772617dda85ce48b6ee3fe4b7746ef", null ],
-    [ "PathChangeHistoryBufferSize", "class_our_robot.html#a4012973d95436aee7bbb8dc47474a1ca", null ],
     [ "radioTx", "class_our_robot.html#a955ab4a906727f54a123f4e788ce68ba", null ],
     [ "robotText", "class_our_robot.html#abdfb739ad95731cda9ecad9dc649a371", null ],
     [ "status", "class_our_robot.html#ab7b626ee8e0f231795e40d4c2d3944de", null ]

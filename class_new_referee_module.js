@@ -1,6 +1,12 @@
 var class_new_referee_module =
 [
-    [ "KickDetectState", "class_new_referee_module.html#ae4e91451e394bfa95b01ed05e9978278", null ],
+    [ "KickDetectState", "class_new_referee_module.html#ae4e91451e394bfa95b01ed05e9978278", [
+      [ "WaitForReady", "class_new_referee_module.html#ae4e91451e394bfa95b01ed05e9978278abb480cc34620debb99c6e6fa81c929a0", null ],
+      [ "CapturePosition", "class_new_referee_module.html#ae4e91451e394bfa95b01ed05e9978278a3bc527710f3b87ca4da1a5c6adfd4776", null ],
+      [ "WaitForKick", "class_new_referee_module.html#ae4e91451e394bfa95b01ed05e9978278a8ca37eee1d7aa2599f02a45f77c97838", null ],
+      [ "VerifyKick", "class_new_referee_module.html#ae4e91451e394bfa95b01ed05e9978278a7ee5f470b36327c9ae55ff385f824b8f", null ],
+      [ "Kicked", "class_new_referee_module.html#ae4e91451e394bfa95b01ed05e9978278ac3bcf483da12c113f3410c2a68d2e1ed", null ]
+    ] ],
     [ "NewRefereeModule", "class_new_referee_module.html#a801cd6435d850cc547a6ccfea07c4d85", null ],
     [ "~NewRefereeModule", "class_new_referee_module.html#a3375c7043798c967a248afd0a08063e3", null ],
     [ "getPackets", "class_new_referee_module.html#a147c72a78e4843f8279cd95ba6ab9294", null ],

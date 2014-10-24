@@ -2,7 +2,6 @@ var class_gameplay_1_1_behaviors_1_1_yank_chip =
 [
     [ "YankChip", "class_gameplay_1_1_behaviors_1_1_yank_chip.html#aad3956857a10d45cf1ddcf8193ea7ca8", null ],
     [ "capture", "class_gameplay_1_1_behaviors_1_1_yank_chip.html#ae0264531eb3ddca325affbf7e9687934", null ],
-    [ "createConfiguration", "class_gameplay_1_1_behaviors_1_1_yank_chip.html#a83d87ba3707b7422eb862788c1544071", null ],
     [ "done", "class_gameplay_1_1_behaviors_1_1_yank_chip.html#afcd4731b30261af472630549c7eb5e45", null ],
     [ "restart", "class_gameplay_1_1_behaviors_1_1_yank_chip.html#a71c6a0044cb8b7b20e67c1f70363f48a", null ],
     [ "run", "class_gameplay_1_1_behaviors_1_1_yank_chip.html#a701a7d392b2ee257d0cfa882b9a1e3b5", null ],

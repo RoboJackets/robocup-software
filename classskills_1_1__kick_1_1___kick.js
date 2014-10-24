@@ -21,12 +21,12 @@ var classskills_1_1__kick_1_1___kick =
     [ "use_windowing", "classskills_1_1__kick_1_1___kick.html#a802dfb257ccefade07ddce2fa669ff10", null ],
     [ "win_eval_params", "classskills_1_1__kick_1_1___kick.html#a30dc17335d208c6046c667210a0f52eb", null ],
     [ "win_eval_params", "classskills_1_1__kick_1_1___kick.html#a30dc17335d208c6046c667210a0f52eb", null ],
-    [ "chip_power", "classskills_1_1__kick_1_1___kick.html#a9b2501ea72c444a8e51abb23cf6ac57c", null ],
-    [ "enable_kick", "classskills_1_1__kick_1_1___kick.html#a0ac46846a1030b27d40cc38e88f905a5", null ],
-    [ "kick_power", "classskills_1_1__kick_1_1___kick.html#a4963464e7cb5abf200710126fe4862c0", null ],
-    [ "shot_obstacle_ignoring_robots", "classskills_1_1__kick_1_1___kick.html#a914257f5dd6f84f0e4fbad64000385f1", null ],
-    [ "target", "classskills_1_1__kick_1_1___kick.html#af14fae8640944e8ec4eb0e5171c56ca5", null ],
-    [ "use_chipper", "classskills_1_1__kick_1_1___kick.html#a46d3d46759656be8dcbc6d9f6086b291", null ],
-    [ "use_windowing", "classskills_1_1__kick_1_1___kick.html#adfec4706033e5e7e2f620582a7b30924", null ],
-    [ "win_eval_params", "classskills_1_1__kick_1_1___kick.html#ab5ed975d3293fdcd90bdb171cb673121", null ]
+    [ "chip_power", "classskills_1_1__kick_1_1___kick.html#a9a362900e3466c62df5e0aa2af7a21fd", null ],
+    [ "enable_kick", "classskills_1_1__kick_1_1___kick.html#aa6baf98e755d6962c627a4325da33e63", null ],
+    [ "kick_power", "classskills_1_1__kick_1_1___kick.html#a47683f971b125d43a2c9a2e6d78e7f17", null ],
+    [ "shot_obstacle_ignoring_robots", "classskills_1_1__kick_1_1___kick.html#a1901c6b50d0cd126c4cad137871746e4", null ],
+    [ "target", "classskills_1_1__kick_1_1___kick.html#adceab6c3d3b8572f4d475a8c90c18ac3", null ],
+    [ "use_chipper", "classskills_1_1__kick_1_1___kick.html#a976fc56aa99bcb203c7c229b83468be8", null ],
+    [ "use_windowing", "classskills_1_1__kick_1_1___kick.html#a0b9d7496d224058eb98201a4abde9218", null ],
+    [ "win_eval_params", "classskills_1_1__kick_1_1___kick.html#a37f280ec9feee630b7c1ab278198c67a", null ]
 ];

@@ -1,5 +1,6 @@
 var classskills_1_1aim_1_1_aim =
 [
+    [ "State", "classskills_1_1aim_1_1_aim_1_1_state.html", null ],
     [ "__init__", "classskills_1_1aim_1_1_aim.html#adde6e5fc95a27dbbda417adfdc65d6f5", null ],
     [ "__str__", "classskills_1_1aim_1_1_aim.html#aba9f028683c87019ff7944490ae55e65", null ],
     [ "current_shot_point", "classskills_1_1aim_1_1_aim.html#a318d281b03563ec2ddd84a852a520e63", null ],
@@ -23,11 +24,11 @@ var classskills_1_1aim_1_1_aim =
     [ "role_requirements", "classskills_1_1aim_1_1_aim.html#a695282866cb2f37e7d127b3a587327a8", null ],
     [ "target_point", "classskills_1_1aim_1_1_aim.html#ab08ed470928cb051130df02239a7ceab", null ],
     [ "target_point", "classskills_1_1aim_1_1_aim.html#ab08ed470928cb051130df02239a7ceab", null ],
-    [ "desperate_timeout", "classskills_1_1aim_1_1_aim.html#a90a46cf7fa9dc11cd63e15d53a5df7f0", null ],
-    [ "dribbler_speed", "classskills_1_1aim_1_1_aim.html#a522734b2bbfb60120b60502e39349405", null ],
-    [ "error_threshold", "classskills_1_1aim_1_1_aim.html#ad227178b29288da001dbcc67d6aaa3ff", null ],
-    [ "last_ball_time", "classskills_1_1aim_1_1_aim.html#a1b6bd1f410d37729a7a22b48f54bc008", null ],
-    [ "max_steady_ang_vel", "classskills_1_1aim_1_1_aim.html#a214a69060b76ede387432ba254a36535", null ],
-    [ "min_steady_duration", "classskills_1_1aim_1_1_aim.html#a682f8330d03cf3c76a2ad632cbfff9d8", null ],
-    [ "target_point", "classskills_1_1aim_1_1_aim.html#a2290d21ac71532abfa53627c869771a6", null ]
+    [ "desperate_timeout", "classskills_1_1aim_1_1_aim.html#a1077ec637675224df844ce86aa174e79", null ],
+    [ "dribbler_speed", "classskills_1_1aim_1_1_aim.html#a73bd646e17f4b97141d7b7e8195473e6", null ],
+    [ "error_threshold", "classskills_1_1aim_1_1_aim.html#a1d08c64cfaa31d4ac16abf55d8571690", null ],
+    [ "last_ball_time", "classskills_1_1aim_1_1_aim.html#a72285a745f4c51e34ebc1f1cc6476ef5", null ],
+    [ "max_steady_ang_vel", "classskills_1_1aim_1_1_aim.html#aff791de65f073212be1fea1e901504f6", null ],
+    [ "min_steady_duration", "classskills_1_1aim_1_1_aim.html#ac4d24c9d8931d067a15e1c66b26c8458", null ],
+    [ "target_point", "classskills_1_1aim_1_1_aim.html#a8163ef9aeba19f920e72402f122d9f9c", null ]
 ];

@@ -1,5 +1,6 @@
 var classplays_1_1tuning_1_1tune__facing_1_1_facer =
 [
+    [ "State", "classplays_1_1tuning_1_1tune__facing_1_1_facer_1_1_state.html", null ],
     [ "__init__", "classplays_1_1tuning_1_1tune__facing_1_1_facer.html#a030121b88010ab6b435e6425ebb0b9e4", null ],
     [ "angle", "classplays_1_1tuning_1_1tune__facing_1_1_facer.html#a00c20ac0e8bc64a7c3b042fedb74b2f6", null ],
     [ "angle", "classplays_1_1tuning_1_1tune__facing_1_1_facer.html#a00c20ac0e8bc64a7c3b042fedb74b2f6", null ],
@@ -10,7 +11,7 @@ var classplays_1_1tuning_1_1tune__facing_1_1_facer =
     [ "on_exit_rotating", "classplays_1_1tuning_1_1tune__facing_1_1_facer.html#a20457b9ab8fd89971c158536740ee2e5", null ],
     [ "point", "classplays_1_1tuning_1_1tune__facing_1_1_facer.html#aa84202a27e344dfc48cc5f0f2cf5456d", null ],
     [ "point", "classplays_1_1tuning_1_1tune__facing_1_1_facer.html#aa84202a27e344dfc48cc5f0f2cf5456d", null ],
-    [ "angle", "classplays_1_1tuning_1_1tune__facing_1_1_facer.html#a2876e392135098213c78d8687889b2bd", null ],
-    [ "pause_start_time", "classplays_1_1tuning_1_1tune__facing_1_1_facer.html#a550c71fef9661f00007cdbf2f9da45b8", null ],
-    [ "point", "classplays_1_1tuning_1_1tune__facing_1_1_facer.html#a1e6c348066885461d89bc8e2dd49d343", null ]
+    [ "angle", "classplays_1_1tuning_1_1tune__facing_1_1_facer.html#ad1511837ee06eab102a8cd24df664e70", null ],
+    [ "pause_start_time", "classplays_1_1tuning_1_1tune__facing_1_1_facer.html#ae736bee6b482becf91eccfc46a22a9a0", null ],
+    [ "point", "classplays_1_1tuning_1_1tune__facing_1_1_facer.html#a6f3868936db671ffa72851e65d6637dd", null ]
 ];

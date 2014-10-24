@@ -2,7 +2,6 @@ var class_gameplay_1_1_behaviors_1_1_kick =
 [
     [ "Kick", "class_gameplay_1_1_behaviors_1_1_kick.html#a3a54d676271e15bc084531862604d03f", null ],
     [ "calculateChipPower", "class_gameplay_1_1_behaviors_1_1_kick.html#ae549e79b2f866a8eb956d6cf4b986e59", null ],
-    [ "createConfiguration", "class_gameplay_1_1_behaviors_1_1_kick.html#ac7d9a2a33787bd867dc966a10f25dcd6", null ],
     [ "done", "class_gameplay_1_1_behaviors_1_1_kick.html#ad3be39888747feef7cdce34f14bb5de2", null ],
     [ "findShot", "class_gameplay_1_1_behaviors_1_1_kick.html#a537e89cb31777c0f4cb019fd764ddfa1", null ],
     [ "restart", "class_gameplay_1_1_behaviors_1_1_kick.html#a09d76715a51557c336ba59220e6a5107", null ],

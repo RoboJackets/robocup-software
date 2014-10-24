@@ -1,7 +1,6 @@
 var class_gameplay_1_1_behaviors_1_1_line_kick =
 [
     [ "LineKick", "class_gameplay_1_1_behaviors_1_1_line_kick.html#ab935b41c17f9162cbf1f69336ee10bdb", null ],
-    [ "createConfiguration", "class_gameplay_1_1_behaviors_1_1_line_kick.html#af10245704964d69cf0be35ac20465a0f", null ],
     [ "done", "class_gameplay_1_1_behaviors_1_1_line_kick.html#afc53b612079492c24ea3ddd1df48de11", null ],
     [ "restart", "class_gameplay_1_1_behaviors_1_1_line_kick.html#afa045b386c89fdbe01428c6cbd512c4f", null ],
     [ "run", "class_gameplay_1_1_behaviors_1_1_line_kick.html#a37c64275bc96ec00cb6a8ad41706bf66", null ],

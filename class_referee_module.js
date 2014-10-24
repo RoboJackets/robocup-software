@@ -1,6 +1,12 @@
 var class_referee_module =
 [
-    [ "KickDetectState", "class_referee_module.html#a2bb4eefd27ee77e5fc62896d64194f4c", null ],
+    [ "KickDetectState", "class_referee_module.html#a2bb4eefd27ee77e5fc62896d64194f4c", [
+      [ "WaitForReady", "class_referee_module.html#a2bb4eefd27ee77e5fc62896d64194f4ca729ba1e526a5a8870e593e2d08342547", null ],
+      [ "CapturePosition", "class_referee_module.html#a2bb4eefd27ee77e5fc62896d64194f4ca91ec1cbb8c33b709e53cff90e53bb7f0", null ],
+      [ "WaitForKick", "class_referee_module.html#a2bb4eefd27ee77e5fc62896d64194f4caf3c5f868aade843dee6b7d7191e220fc", null ],
+      [ "VerifyKick", "class_referee_module.html#a2bb4eefd27ee77e5fc62896d64194f4cac6a2a69299521560d16776a6b7443c5c", null ],
+      [ "Kicked", "class_referee_module.html#a2bb4eefd27ee77e5fc62896d64194f4cae1dd2048029d922526cc5608bbe6b699", null ]
+    ] ],
     [ "RefereeModule", "class_referee_module.html#a076efd3e8fd63968cb4a01621bc4332b", null ],
     [ "~RefereeModule", "class_referee_module.html#a965f6f34da381a35975b5a877c8b6835", null ],
     [ "blueTeam", "class_referee_module.html#ae194074fac734e95021abce6a081f5b6", null ],

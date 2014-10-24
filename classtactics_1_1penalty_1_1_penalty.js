@@ -1,5 +1,6 @@
 var classtactics_1_1penalty_1_1_penalty =
 [
+    [ "State", "classtactics_1_1penalty_1_1_penalty_1_1_state.html", null ],
     [ "__init__", "classtactics_1_1penalty_1_1_penalty.html#a36a14eddd09a6f012bef5772835ce5dc", null ],
     [ "execute_setup", "classtactics_1_1penalty_1_1_penalty.html#ad80ce38deb947402501281a4292ad20e", null ],
     [ "execute_waiting", "classtactics_1_1penalty_1_1_penalty.html#a618f6249aae0967b7505f64ebb092c3c", null ],

@@ -1,5 +1,6 @@
 var classskills_1_1pivot__kick_1_1_pivot_kick =
 [
+    [ "State", "classskills_1_1pivot__kick_1_1_pivot_kick_1_1_state.html", null ],
     [ "__init__", "classskills_1_1pivot__kick_1_1_pivot_kick.html#a90e4777294edae761d3174bbe4ddc667", null ],
     [ "aim_params", "classskills_1_1pivot__kick_1_1_pivot_kick.html#a9902b78306a85404db2f4fabd27be499", null ],
     [ "aim_params", "classskills_1_1pivot__kick_1_1_pivot_kick.html#a9902b78306a85404db2f4fabd27be499", null ],
@@ -18,6 +19,6 @@ var classskills_1_1pivot__kick_1_1_pivot_kick =
     [ "remove_aim_behavior", "classskills_1_1pivot__kick_1_1_pivot_kick.html#a5b8472941853ea80f852ef5bc09b052b", null ],
     [ "role_requirements", "classskills_1_1pivot__kick_1_1_pivot_kick.html#a6ddbff26c2d659bcc39c583adfe0f661", null ],
     [ "set_aim_params", "classskills_1_1pivot__kick_1_1_pivot_kick.html#a97b90a5b7ea3c358a78e0e22046afaba", null ],
-    [ "aim_params", "classskills_1_1pivot__kick_1_1_pivot_kick.html#ae57f64d116e27ee5149b59bfd2d7d015", null ],
-    [ "dribbler_power", "classskills_1_1pivot__kick_1_1_pivot_kick.html#a64920a6d675657bcfb5a324bf9ee615a", null ]
+    [ "aim_params", "classskills_1_1pivot__kick_1_1_pivot_kick.html#a684df33650e459c69bf49def83b53279", null ],
+    [ "dribbler_power", "classskills_1_1pivot__kick_1_1_pivot_kick.html#acda43cec62fd373a3b185fcf782138e7", null ]
 ];

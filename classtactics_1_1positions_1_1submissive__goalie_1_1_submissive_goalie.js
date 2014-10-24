@@ -1,5 +1,6 @@
 var classtactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie =
 [
+    [ "State", "classtactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie_1_1_state.html", null ],
     [ "__init__", "classtactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a73783f53ad55606adb19a371a556022e", null ],
     [ "block_line", "classtactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a13a0a7f0083d691a2dc745ea611abead", null ],
     [ "block_line", "classtactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a13a0a7f0083d691a2dc745ea611abead", null ],
@@ -15,8 +16,5 @@ var classtactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie =
     [ "role_requirements", "classtactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#af3f55b35318a776e75ce23c30a3773de", null ],
     [ "shell_id", "classtactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a7237e91156e15b29c966a687cbe18967", null ],
     [ "shell_id", "classtactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a7237e91156e15b29c966a687cbe18967", null ],
-    [ "block_line", "classtactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#aa6fdcbe80784344f1929f40c8e1b484b", null ],
-    [ "MaxX", "classtactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a9b6833bfe43c19bed54095574324726f", null ],
-    [ "RobotSegment", "classtactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#ad8d474757eeee6d4cbc92b56a66493ed", null ],
-    [ "SegmentY", "classtactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#a3485bc4bbe7024dfe319e0150291998d", null ]
+    [ "block_line", "classtactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html#aef1a383c004093b35a52e70f71019c73", null ]
 ];

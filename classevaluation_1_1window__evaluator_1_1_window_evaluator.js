@@ -19,10 +19,10 @@ var classevaluation_1_1window__evaluator_1_1_window_evaluator =
     [ "min_chip_range", "classevaluation_1_1window__evaluator_1_1_window_evaluator.html#ab347ada92c15e159bfb7c14a03c55996", null ],
     [ "obstacle_range", "classevaluation_1_1window__evaluator_1_1_window_evaluator.html#a747815b671821b2dbe147f1fb2a0cd5c", null ],
     [ "obstacle_robot", "classevaluation_1_1window__evaluator_1_1_window_evaluator.html#a201d7786f15dbb1789af1a828d4ccdb2", null ],
-    [ "chip_enabled", "classevaluation_1_1window__evaluator_1_1_window_evaluator.html#a3a356c9e57458d9172d9bdd08ff5c2aa", null ],
-    [ "debug", "classevaluation_1_1window__evaluator_1_1_window_evaluator.html#ac7c99dac2c2cf2b29743b13b16789102", null ],
-    [ "excluded_robots", "classevaluation_1_1window__evaluator_1_1_window_evaluator.html#abe22d88ce99b627a4b160ecad202ddf9", null ],
-    [ "hypothetical_robot_locations", "classevaluation_1_1window__evaluator_1_1_window_evaluator.html#ae723daf1bc38b80efb947b1771e85a9a", null ],
-    [ "max_chip_range", "classevaluation_1_1window__evaluator_1_1_window_evaluator.html#ad754daa104b2384dd927f8f4ce343b15", null ],
-    [ "min_chip_range", "classevaluation_1_1window__evaluator_1_1_window_evaluator.html#ad7fcfc07177419dee2467a8c5b55640d", null ]
+    [ "chip_enabled", "classevaluation_1_1window__evaluator_1_1_window_evaluator.html#a88e1ecbc1c423fd88abb6cef5fdeba5b", null ],
+    [ "debug", "classevaluation_1_1window__evaluator_1_1_window_evaluator.html#a3d524427845cda5ed89c8f5c4ae02630", null ],
+    [ "excluded_robots", "classevaluation_1_1window__evaluator_1_1_window_evaluator.html#a1f6082d855df5278f9fe859e0f73f30c", null ],
+    [ "hypothetical_robot_locations", "classevaluation_1_1window__evaluator_1_1_window_evaluator.html#a033278ab9c1871bd6dfe27759f07b250", null ],
+    [ "max_chip_range", "classevaluation_1_1window__evaluator_1_1_window_evaluator.html#a01fa627e9a3cdfe963651b8091f1e1b1", null ],
+    [ "min_chip_range", "classevaluation_1_1window__evaluator_1_1_window_evaluator.html#aca670233562f7efd60d6adc910e70b7c", null ]
 ];

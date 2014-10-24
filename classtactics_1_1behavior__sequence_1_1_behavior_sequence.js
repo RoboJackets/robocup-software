@@ -10,7 +10,7 @@ var classtactics_1_1behavior__sequence_1_1_behavior_sequence =
     [ "on_enter_cancelled", "classtactics_1_1behavior__sequence_1_1_behavior_sequence.html#a9e749e66d0c8eccc07f4d07b3dfc5038", null ],
     [ "on_enter_failed", "classtactics_1_1behavior__sequence_1_1_behavior_sequence.html#af53715365d42d9aae27a3598198ded62", null ],
     [ "on_enter_start", "classtactics_1_1behavior__sequence_1_1_behavior_sequence.html#ac4b69ba61e96f41f7905126197b184ef", null ],
-    [ "behaviors", "classtactics_1_1behavior__sequence_1_1_behavior_sequence.html#aab3e96d76a769056bd03d4ea4a628fe6", null ],
-    [ "current_behavior_index", "classtactics_1_1behavior__sequence_1_1_behavior_sequence.html#a1f098a81357ad5d7058a48f1b303b1b6", null ],
-    [ "state", "classtactics_1_1behavior__sequence_1_1_behavior_sequence.html#a6d4926f95811d641b4a67b793a27e160", null ]
+    [ "behaviors", "classtactics_1_1behavior__sequence_1_1_behavior_sequence.html#a7ce8349a316a1ec02f90966b00c6aaee", null ],
+    [ "current_behavior_index", "classtactics_1_1behavior__sequence_1_1_behavior_sequence.html#a1eff6da6c3fd3dd47fdc3d7836a5cfdd", null ],
+    [ "state", "classtactics_1_1behavior__sequence_1_1_behavior_sequence.html#aee96bb2d369419e0788535f8666b7111", null ]
 ];

@@ -2,7 +2,6 @@ var class_gameplay_1_1_plays_1_1_cal_speed =
 [
     [ "CalSpeed", "class_gameplay_1_1_plays_1_1_cal_speed.html#abaca6eeca9fc5b7cfabb4ce8b4c44424", null ],
     [ "run", "class_gameplay_1_1_plays_1_1_cal_speed.html#a7c9304960f2910e4baaec257d40a67d4", null ],
-    [ "score", "class_gameplay_1_1_plays_1_1_cal_speed.html#ae0ce12ba2b29d7cee9ababd18c4a7792", null ],
     [ "_average", "class_gameplay_1_1_plays_1_1_cal_speed.html#a1dc52cffcb1c0457c67554e1e8464ef9", null ],
     [ "_count", "class_gameplay_1_1_plays_1_1_cal_speed.html#a77be6536af7a6e68bdd24b152f43c5d9", null ],
     [ "_lastAngle", "class_gameplay_1_1_plays_1_1_cal_speed.html#ae209e72078763f60909b9155f07223d8", null ],

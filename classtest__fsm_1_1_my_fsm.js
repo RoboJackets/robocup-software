@@ -1,5 +1,7 @@
 var classtest__fsm_1_1_my_fsm =
 [
+    [ "State", "classtest__fsm_1_1_my_fsm_1_1_state.html", null ],
+    [ "SubState", "classtest__fsm_1_1_my_fsm_1_1_sub_state.html", null ],
     [ "__init__", "classtest__fsm_1_1_my_fsm.html#afb676cce37c023645c6420e06f18363c", null ],
     [ "execute_done", "classtest__fsm_1_1_my_fsm.html#a2cfe5e6c2f34a90901fa14038fe3485e", null ],
     [ "execute_running", "classtest__fsm_1_1_my_fsm.html#ab589dc1b2d84e2e582b390475fd59912", null ],

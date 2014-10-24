@@ -1,5 +1,9 @@
 var class_robot_config =
 [
+    [ "Chipper", "struct_robot_config_1_1_chipper.html", "struct_robot_config_1_1_chipper" ],
+    [ "Dribbler", "struct_robot_config_1_1_dribbler.html", "struct_robot_config_1_1_dribbler" ],
+    [ "Kicker", "struct_robot_config_1_1_kicker.html", "struct_robot_config_1_1_kicker" ],
+    [ "PID", "struct_robot_config_1_1_p_i_d.html", "struct_robot_config_1_1_p_i_d" ],
     [ "RobotConfig", "class_robot_config.html#a8f8d9a15b5158357b557a203aaefb7aa", null ],
     [ "~RobotConfig", "class_robot_config.html#aa368fb9747c0a4be62e50194415bf4c9", null ],
     [ "accelerationMultiplier", "class_robot_config.html#ac6dbc7789eb0a33f3ae593b5da3456f0", null ],

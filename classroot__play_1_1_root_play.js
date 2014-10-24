@@ -14,6 +14,5 @@ var classroot__play_1_1_root_play =
     [ "setup_goalie_if_needed", "classroot__play_1_1_root_play.html#a4e2c890b7615597f331a99b77a015848", null ],
     [ "goalie_id", "classroot__play_1_1_root_play.html#aa3b957a4f6bd78632ea786398b1076a4", null ],
     [ "play", "classroot__play_1_1_root_play.html#a2c19c4b5168c4006c16c8d1c879e1094", null ],
-    [ "play_changed", "classroot__play_1_1_root_play.html#a45b0fd4503139f08a84bc0cb0340261d", null ],
     [ "temporarily_blacklisted_play_class", "classroot__play_1_1_root_play.html#a90cf8c0150357055dc079776edbc1d40", null ]
 ];

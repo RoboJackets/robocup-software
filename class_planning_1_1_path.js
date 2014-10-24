@@ -4,7 +4,6 @@ var class_planning_1_1_path =
     [ "Path", "class_planning_1_1_path.html#ad1d1020adb93cb1cedd8ffd68f806e7f", null ],
     [ "Path", "class_planning_1_1_path.html#add96cf40541c803e78566691577c48df", null ],
     [ "clear", "class_planning_1_1_path.html#a9e86d31c573e41ece37433b4c974db15", null ],
-    [ "createConfiguration", "class_planning_1_1_path.html#aa413f4e91ac6d47dde68d0265d577e14", null ],
     [ "destination", "class_planning_1_1_path.html#a66e9e57c6fb545e7d2db7cf09d30431e", null ],
     [ "distanceTo", "class_planning_1_1_path.html#a391eb9889e5ee2f023953ca79076df87", null ],
     [ "empty", "class_planning_1_1_path.html#a10f7ac5b02e81452b0cf66f4ede10c52", null ],

@@ -1,5 +1,6 @@
 var classskills_1_1pass__receive_1_1_pass_receive =
 [
+    [ "State", "classskills_1_1pass__receive_1_1_pass_receive_1_1_state.html", null ],
     [ "__init__", "classskills_1_1pass__receive_1_1_pass_receive.html#adf50e957c795a553b7b91b45bdc7128d", null ],
     [ "__str__", "classskills_1_1pass__receive_1_1_pass_receive.html#a3db377ab01285869a09499f3529c7360", null ],
     [ "ball_kicked", "classskills_1_1pass__receive_1_1_pass_receive.html#a4f8d22b76aea988748ff583b9d9de567", null ],
@@ -14,14 +15,7 @@ var classskills_1_1pass__receive_1_1_pass_receive =
     [ "receive_point", "classskills_1_1pass__receive_1_1_pass_receive.html#a305f2dba0247929b0303151d6c18cdfe", null ],
     [ "receive_point", "classskills_1_1pass__receive_1_1_pass_receive.html#a305f2dba0247929b0303151d6c18cdfe", null ],
     [ "role_requirements", "classskills_1_1pass__receive_1_1_pass_receive.html#a14e5336d739cfb7fa119320c26292582", null ],
-    [ "ball_kicked", "classskills_1_1pass__receive_1_1_pass_receive.html#ab9133b8ce62146d937e00df92248089e", null ],
-    [ "DribbleSpeed", "classskills_1_1pass__receive_1_1_pass_receive.html#acee09b8605b3c285c4d7e1933038a844", null ],
-    [ "FaceAngleErrorThreshold", "classskills_1_1pass__receive_1_1_pass_receive.html#a9c85a619ce00391cf1caf84b3496a990", null ],
-    [ "PositionXErrorThreshold", "classskills_1_1pass__receive_1_1_pass_receive.html#a88adefcb2a7993e578d8d346b8945e75", null ],
-    [ "PositionYErrorThreshold", "classskills_1_1pass__receive_1_1_pass_receive.html#a665529a15559d1ad99a3335dd116c775", null ],
-    [ "receive_point", "classskills_1_1pass__receive_1_1_pass_receive.html#a0baa9b89d4169fbbff5df5692dbdf26c", null ],
-    [ "ReceiveTimeout", "classskills_1_1pass__receive_1_1_pass_receive.html#ad78e4f63f2c6e76fb8f3011b39adbdfd", null ],
-    [ "robot", "classskills_1_1pass__receive_1_1_pass_receive.html#a3b42653a367a6f42f27fdf892e2c01ed", null ],
-    [ "SteadyMaxAngleVel", "classskills_1_1pass__receive_1_1_pass_receive.html#aeae9f2c42fdf26056c94aba15890a042", null ],
-    [ "SteadyMaxVel", "classskills_1_1pass__receive_1_1_pass_receive.html#a58ad0197a62762fa0c640cae044c0ec6", null ]
+    [ "ball_kicked", "classskills_1_1pass__receive_1_1_pass_receive.html#a6bae661074edac61efcf3651cfe99fc4", null ],
+    [ "receive_point", "classskills_1_1pass__receive_1_1_pass_receive.html#a4ee1384a0dc7b26bd38942aed0ad8773", null ],
+    [ "robot", "classskills_1_1pass__receive_1_1_pass_receive.html#aa14c9ebd7d631e077c5c195905d09c58", null ]
 ];

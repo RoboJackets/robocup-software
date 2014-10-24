@@ -6,8 +6,6 @@ var class_gameplay_1_1_behaviors_1_1_capture =
     [ "approach", "class_gameplay_1_1_behaviors_1_1_capture.html#a8338580dfa3ebe7a7338590b939ae3d4", null ],
     [ "capture", "class_gameplay_1_1_behaviors_1_1_capture.html#af73e6915243154b98fa02ee96b01d47d", null ],
     [ "capture", "class_gameplay_1_1_behaviors_1_1_capture.html#af73e6915243154b98fa02ee96b01d47d", null ],
-    [ "createConfiguration", "class_gameplay_1_1_behaviors_1_1_capture.html#acc92ea605f27e843640a501cfe4dab26", null ],
-    [ "createConfiguration", "class_gameplay_1_1_behaviors_1_1_capture.html#a4f6012021545494cc6dff3f463993f46", null ],
     [ "done", "class_gameplay_1_1_behaviors_1_1_capture.html#add0dd01614cc6f1b5c1e66badcc346a3", null ],
     [ "done", "class_gameplay_1_1_behaviors_1_1_capture.html#add0dd01614cc6f1b5c1e66badcc346a3", null ],
     [ "pivoting", "class_gameplay_1_1_behaviors_1_1_capture.html#aadcff91c90f9161d2e7ea9e54bd488a2", null ],

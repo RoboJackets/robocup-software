@@ -1,7 +1,6 @@
 var class_gameplay_1_1_pass_receiver =
 [
     [ "PassReceiver", "class_gameplay_1_1_pass_receiver.html#ac6ea8d54158a82ef18266cf0a72bdb3a", null ],
-    [ "createConfiguration", "class_gameplay_1_1_pass_receiver.html#ace5b08cca479bfbb6d93610632963684", null ],
     [ "isActing", "class_gameplay_1_1_pass_receiver.html#a709491a4c1e4d2d406330cd9185d42fd", null ],
     [ "isDone", "class_gameplay_1_1_pass_receiver.html#a14a2cd5df9a7934fd5aa91f890594bb6", null ],
     [ "isSettingUp", "class_gameplay_1_1_pass_receiver.html#a092cee1c43d05fe0e2a94c9c964bed6d", null ],

@@ -1,5 +1,6 @@
 var class_processor =
 [
+    [ "Status", "struct_processor_1_1_status.html", "struct_processor_1_1_status" ],
     [ "Processor", "class_processor.html#ade4b410819be6fe3b6fe64086b2c8b8d", null ],
     [ "~Processor", "class_processor.html#acf37952c5b420d4e903a512571678692", null ],
     [ "autonomous", "class_processor.html#ae82d01435599d7ade385225832ef2bf2", null ],
@@ -7,7 +8,6 @@ var class_processor =
     [ "blueTeam", "class_processor.html#afaad3140ad4f40c8f5b8d1af647b9194", null ],
     [ "changeVisionChannel", "class_processor.html#afbefacf8023e7c804d0451ff1d5fde39", null ],
     [ "closeLog", "class_processor.html#a6a9546f03d466b7f18fa34cf72233e56", null ],
-    [ "createConfiguration", "class_processor.html#ac3b12a2fde01bd8021163052abb964a4", null ],
     [ "dampedRotation", "class_processor.html#a1b599d9aba834e8671ce1f65d5471e25", null ],
     [ "dampedTranslation", "class_processor.html#a72c28573c98b04824354ac13897dab84", null ],
     [ "defendPlusX", "class_processor.html#abe3e25aed4cd5a0363621b4cf4664653", null ],

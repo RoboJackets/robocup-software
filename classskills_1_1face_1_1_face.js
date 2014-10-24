@@ -8,6 +8,6 @@ var classskills_1_1face_1_1_face =
     [ "is_at_target_angle", "classskills_1_1face_1_1_face.html#a96920cab8ea239d71e5781c3afe5f4a7", null ],
     [ "pos", "classskills_1_1face_1_1_face.html#ae9b1145a871fa69e4022df3a0495be37", null ],
     [ "pos", "classskills_1_1face_1_1_face.html#ae9b1145a871fa69e4022df3a0495be37", null ],
-    [ "angle", "classskills_1_1face_1_1_face.html#a1a54ddb10c425ad15fbea316376f1a83", null ],
-    [ "pos", "classskills_1_1face_1_1_face.html#a1bb709bbb475d28c67d8716582731c35", null ]
+    [ "angle", "classskills_1_1face_1_1_face.html#a7ac5566e86c799859f2151cf4131cc5a", null ],
+    [ "pos", "classskills_1_1face_1_1_face.html#a344342125f98bb3d39a2fae601890881", null ]
 ];

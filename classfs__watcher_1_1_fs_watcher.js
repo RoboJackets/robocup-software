@@ -1,5 +1,6 @@
 var classfs__watcher_1_1_fs_watcher =
 [
+    [ "FsEventHandler", "classfs__watcher_1_1_fs_watcher_1_1_fs_event_handler.html", "classfs__watcher_1_1_fs_watcher_1_1_fs_event_handler" ],
     [ "__init__", "classfs__watcher_1_1_fs_watcher.html#a218ecd243b6b2412ff6dd67a31c2290a", null ],
     [ "root_path", "classfs__watcher_1_1_fs_watcher.html#aa7dc9b30d1d038bd7211f244b321a21b", null ],
     [ "root_path", "classfs__watcher_1_1_fs_watcher.html#aa7dc9b30d1d038bd7211f244b321a21b", null ],
