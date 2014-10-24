@@ -13,6 +13,7 @@ if [ "$(git rev-parse master)" = "$TRAVIS_COMMIT" ]; then
     doxygen
     cp doxygen.css api_docs/
     cd api_docs
+    mv html/* ./
     git add --all
     git commit -m 'auto-updated api docs'
     git push https://$GH_TOKEN@github.com/robojackets/robocup-software gh-pages
