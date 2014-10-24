@@ -16,6 +16,7 @@ if [ "$(git rev-parse master)" = "$TRAVIS_COMMIT" ]; then
     make
     sudo make install
     doxygen --version
+    cd ..
 
     sudo apt-get install graphviz
 
