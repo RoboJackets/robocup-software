@@ -22,7 +22,7 @@ before_install:
 
   - sudo ./util/ubuntu-setup
 
-script: scons && scons test
+script: make && make tests
 
 notifications:
   email: true
