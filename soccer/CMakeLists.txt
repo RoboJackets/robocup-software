@@ -33,10 +33,18 @@ set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost COMPONENTS system REQUIRED)
 
-# This package is named 'python3' on Arch and 'python-py34 on Ubuntu'
-find_package(Boost COMPONENTS python3)
-if (NOT Boost_FOUND)
-    find_package(Boost COMPONENTS python-py34 REQUIRED)
+# find boost python
+# This package is named 'python3' on Arch and 'python-py34 on Ubuntu 14'
+set(FOUND_A_BOOST_PYTHON FALSE)
+foreach(possible_name python3 python-py32 python-py33 python-py34)
+    find_package(Boost COMPONENTS ${possible_name})
+    if (Boost_FOUND)
+        set(FOUND_A_BOOST_PYTHON TRUE)
+        break()
+    endif()
+endforeach()
+if (NOT FOUND_A_BOOST_PYTHON)
+    message(FATAL_ERROR "Unable to find a suitable version of boost python")
 endif()
 
 # libusb
