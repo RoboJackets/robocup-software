@@ -7,16 +7,24 @@ import main
 from enum import Enum
 import math
 
+
+## The Defender behavior positions a robot on a certain area of the field and defends it
 class Defender(single_robot_behavior.SingleRobotBehavior):
 
 	class State(Enum):
-		marking = 1 		# gets between a particular opponent and the goal.  stays closer to the goal
-		area_marking = 2 	# chilling out in a zone waiting to mark an opponent.  doesn't do this much
+		## gets between a particular opponent and the goal.  stays closer to the goal
+		marking = 1
 
+		## chilling out in a zone waiting to mark an opponent.  doesn't do this much
+		area_marking = 2
+
+
+	## The area of the field this robot should block
 	class Side(Enum):
 		left = 1
 		center = 2
 		right = 3
+
 
 	def __init__(self, side=Side.center):
 		super().__init__(continuous=True)
