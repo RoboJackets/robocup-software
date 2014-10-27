@@ -45,8 +45,8 @@ wget http://www.cmake.org/files/v3.0/cmake-3.0.2.tar.gz
 tar -xvzf cmake-3.0.2.tar.gz
 cd cmake-3.0.2
 ./bootstrap
-make
-sudo make install
+make >> make.log 2>&1
+sudo make install >> install.log 2>&1
 cd ..
 
 # install python3 dependencies
