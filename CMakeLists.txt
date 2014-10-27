@@ -39,5 +39,6 @@ include_directories("${PROJECT_BINARY_DIR}/common") # for generated protobuf hea
 add_subdirectory(test)
 add_subdirectory(common)
 add_subdirectory(soccer)
+add_subdirectory(simulator)
 add_subdirectory(logging)
 add_subdirectory(firmware)
