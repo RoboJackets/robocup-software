@@ -3,10 +3,10 @@ import fsm
 import logging
 
 
-# a Behavior is an abstract superclass for Skill, Play, etc
+## Behavior is an abstract superclass for Skill, Play, etc
 class Behavior(fsm.StateMachine):
 
-    # These are the core states of the Behavior class
+    ## These are the core states of the Behavior class
     # Subclasses may extend this by adding substates of the following
     class State(Enum):
         start = 1
@@ -35,6 +35,9 @@ class Behavior(fsm.StateMachine):
         #TODO: raise exception if @state doesn't have a Behavior.State ancestor
 
 
+    ## Whether or not the Behavior is running
+    # Because we use hierarchial state machines, a behavior never be in the "running", but may be in a substate of it
+    # This is a convenience method to check whether or not the play is running
     def is_done_running(self):
         for state in [Behavior.State.completed, Behavior.State.failed, Behavior.State.cancelled]:
             if self.is_in_state(state): return True
@@ -42,6 +45,7 @@ class Behavior(fsm.StateMachine):
         return False
 
 
+    ## Transitions the Behavior into a terminal state (either completed or cancelled)
     def terminate(self):
         if self.is_done_running():
             logging.warn("Attempt to terminate behavior that's already done running")
@@ -52,13 +56,14 @@ class Behavior(fsm.StateMachine):
                 self.transition(Behavior.State.cancelled)
 
 
-    # returns a state in Behavior.State that represents what the behaviors is doing
-    # use this instead of the @state property if you don't want to avoid dealing with custom subclass substates
+    ## returns a state in Behavior.State that represents what the behaviors is doing
+    # use this instead of the @state property if you want to avoid dealing with custom subclass substates
     @property
     def behavior_state(self):
         return self.corresponding_ancestor_state(list(Behavior.State))
 
 
+    ## The Behavior's termination behavior
     # noncontinuous: a behavior that accomplishes a specific task, then completes (example: shooting at the goal)
     # continuous: a behavior that continually runs until told to stop (example: zone defense)
     @property
@@ -71,14 +76,14 @@ class Behavior(fsm.StateMachine):
         return self.__class__.__name__ + "::" + state_desc
 
 
-    # Returns a tree of RoleRequirements keyed by subbehavior reference name
+    ## Returns a tree of RoleRequirements keyed by subbehavior reference name
     # This is used by the dynamic role assignment system to
     # intelligently select which robot will run which behavior
     def role_requirements(self):
         raise NotImplementedError()
 
 
-    # assignments is a tree of (RoleRequirements, OurRobot) tuples
+    ## assignments is a tree of (RoleRequirements, OurRobot) tuples
     # Same tree structure as the role_requirements() return value, but tuples instead of RoleRequirements as leaf nodes
     def assign_roles(self, assignments):
         raise NotImplementedError()

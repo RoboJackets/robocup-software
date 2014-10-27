@@ -7,7 +7,7 @@ import re
 import sys
 
 
-# a composite behavior is one that has 1+ subbehaviors
+## A composite behavior is one that has 0+ named subbehaviors
 # this class has methods for making it easy to work with and manage subbehaviors
 class CompositeBehavior(behavior.Behavior):
 
@@ -55,10 +55,12 @@ class CompositeBehavior(behavior.Behavior):
             self.remove_subbehavior(name)
 
 
+    ## Returns a list of all subbehaviors
     def all_subbehaviors(self):
         return [self._subbehavior_info[name]['behavior'] for name in self._subbehavior_info]
 
 
+    ## Override StateMachine.spin() so we can call spin() on subbehaviors
     def spin(self):
         super().spin()
         # spin each subbehavior
@@ -82,6 +84,7 @@ class CompositeBehavior(behavior.Behavior):
                     self.handle_subbehavior_exception(name, exc)
 
 
+    ## Override point for exception handling
     # this is called whenever a subbehavior throws an exception during spin()
     # subclasses of CompositeBehavior can override this to perform custom actions, such as removing the offending subbehavior
     # the default implementation logs the exception and re-raises it
@@ -91,7 +94,7 @@ class CompositeBehavior(behavior.Behavior):
         raise
 
 
-    # returns a tree of role_requirements
+    ## returns a tree of role_requirements
     def role_requirements(self):
         reqs = {}
         for name, info in self._subbehavior_info.items():

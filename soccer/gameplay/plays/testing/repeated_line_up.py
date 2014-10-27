@@ -7,7 +7,7 @@ import enum
 import time
 
 
-# A continuous version of RepeatedLineUp that makes the bots run laps left to right repeatedly
+## Robots repeatedly line up on opposite sides of the field
 class RepeatedLineUp(play.Play):
 
     Pause = 2.0
