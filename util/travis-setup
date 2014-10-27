@@ -41,4 +41,5 @@ libboost-python-dev \
 libusb-1.0.0-dev
 
 # install python3 dependencies
+sudo easy_install3 pip
 sudo pip3 install -r ./util/requirements3.txt
