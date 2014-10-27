@@ -36,7 +36,7 @@ find_package(Boost COMPONENTS system REQUIRED)
 # This package is named 'python3' on Arch and 'python-py34 on Ubuntu'
 find_package(Boost COMPONENTS python3)
 if (NOT Boost_FOUND)
-    find_package(Boost COMPONENTS python-py34 REQUIRED)
+    find_package(Boost COMPONENTS python-py3 REQUIRED)
 endif()
 
 # libusb
