@@ -17,6 +17,5 @@ var searchData=
   ['excutetest',['excuteTest',['../class_gameplay_1_1_testing_1_1_test_path_tracking.html#a3ee7719845c0e8501011c421a4bf7e73',1,'Gameplay::Testing::TestPathTracking::excuteTest()'],['../class_gameplay_1_1_testing_1_1_test_fixture.html#af57f7785af451a6c9e80c43a07c8bd57',1,'Gameplay::Testing::TestFixture::excuteTest()']]],
   ['execute_5fmarking',['execute_marking',['../classtactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#ab58f5dfad7892a9e909b7e1f306dec34',1,'tactics::positions::submissive_defender::SubmissiveDefender']]],
   ['extend',['extend',['../class_planning_1_1_tree.html#add95fff816e880994b1fade7f5833d7c',1,'Planning::Tree::extend()'],['../class_planning_1_1_fixed_step_tree.html#ae816310e36364eef726c80627efcbae1',1,'Planning::FixedStepTree::extend()']]],
-  ['eye',['eye',['../namespace_lin_alg.html#a7f6565c5ae28a246c3e088df197aebfe',1,'LinAlg']]],
-  ['evaluation',['Evaluation',['../md_soccer_gameplay_evaluation_readme.html',1,'']]]
+  ['eye',['eye',['../namespace_lin_alg.html#a7f6565c5ae28a246c3e088df197aebfe',1,'LinAlg']]]
 ];

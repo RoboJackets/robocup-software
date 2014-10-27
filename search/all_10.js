@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['python_20high_2dlevel_20soccer_20interface',['Python high-level soccer interface',['../md_soccer_gameplay_readme.html',1,'']]],
   ['packet',['packet',['../class_referee_module.html#a3746ccfc3d2a65b1c2917d5fb0025051',1,'RefereeModule']]],
   ['passing',['passing',['../classplays_1_1testing_1_1triangle__pass_1_1_triangle_pass_1_1_state.html#a5bfe3aa96cfcc8bf8c7c8ba110f0fd16',1,'plays::testing::triangle_pass::TrianglePass::State']]],
   ['passingcontext',['PassingContext',['../class_gameplay_1_1_passing_context.html',1,'Gameplay']]],

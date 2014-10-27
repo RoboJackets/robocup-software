@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['readme',['readme',['../md_soccer_gameplay_cpp-old_readme.html',1,'']]],
-  ['robocup_20python_20tests',['RoboCup Python tests',['../md_soccer_gameplay_tests_readme.html',1,'']]],
   ['radio',['Radio',['../class_radio.html',1,'']]],
   ['radiorxupdated',['radioRxUpdated',['../class_our_robot.html#a78613ea6958affaf11afaf152aceaf60',1,'OurRobot']]],
   ['radiotx',['radioTx',['../class_our_robot.html#a955ab4a906727f54a123f4e788ce68ba',1,'OurRobot']]],

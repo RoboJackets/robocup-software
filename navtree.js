@@ -5,10 +5,6 @@ var NAVTREE =
     [ "Motion Control", "md_soccer_doc__motion_control.html", null ],
     [ "Soccer", "md_soccer_doc__soccer.html", null ],
     [ "Vision", "md_soccer_doc__vision.html", null ],
-    [ "readme", "md_soccer_gameplay_cpp-old_readme.html", null ],
-    [ "Evaluation", "md_soccer_gameplay_evaluation_readme.html", null ],
-    [ "Python high-level soccer interface", "md_soccer_gameplay_readme.html", null ],
-    [ "RoboCup Python tests", "md_soccer_gameplay_tests_readme.html", null ],
     [ "Modules", "modules.html", "modules" ],
     [ "Namespaces", null, [
       [ "Namespace List", "namespaces.html", "namespaces" ],
