@@ -19,3 +19,4 @@ script: make && make tests
 
 notifications:
   email: true
+
