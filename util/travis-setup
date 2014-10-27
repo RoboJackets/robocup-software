@@ -40,6 +40,15 @@ python3-setuptools \
 libboost-python-dev \
 libusb-1.0.0-dev
 
+# install CMake from source b/c we need >= 3.0.0
+wget http://www.cmake.org/files/v3.0/cmake-3.0.2.tar.gz
+tar -xvzf cmake-3.0.2.tar.gz
+cd cmake-3.0.2
+./bootstrap
+make
+sudo make install
+cd ..
+
 # install python3 dependencies
 sudo easy_install3 pip
 sudo pip3 install -r ./util/requirements3.txt
