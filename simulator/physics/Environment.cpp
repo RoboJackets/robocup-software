@@ -486,7 +486,7 @@ bool Environment::loadConfigFile(const QString& filename) {
 
 	if (!configFile.exists())
 	{
-		fprintf(stderr, "Configuration file %s does not exist\n", (const char *)filename.toLocal8Bit());
+		fprintf(stderr, "Configuration file %s does not exist\n", (const char *)filename.toLatin1());
 		return false;
 	}
 
