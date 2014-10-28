@@ -470,7 +470,7 @@ void FieldView::drawField(QPainter& p, const LogFrame *frame)
 	
 	p.translate(Field_Border, Field_Border);
 	
-	p.setPen(Qt::white);
+	p.setPen(QPen(Qt::white, Field_LineWidth*2.0));	//	double-width pen for visibility (although its less accurate)
 	p.setBrush(Qt::NoBrush);
 	p.drawRect(QRectF(0, 0, Field_Length, Field_Width));
 	
@@ -510,7 +510,8 @@ void FieldView::drawField(QPainter& p, const LogFrame *frame)
 	
 	bool flip = frame->blue_team() ^ frame->defend_plus_x();
 	
-	p.setPen(flip ? Qt::yellow : Qt::blue);
+	QColor goalColor = flip ? Qt::yellow : Qt::blue;
+	p.setPen(QPen(goalColor, Field_LineWidth * 2.0));	//	double-width for visibility, not real-life accuracy
 	p.drawLine(QLineF(x[0], y[0], x[1], y[0]));
 	p.drawLine(QLineF(x[0], y[1], x[1], y[1]));
 	p.drawLine(QLineF(x[1], y[1], x[1], y[0]));
@@ -518,7 +519,8 @@ void FieldView::drawField(QPainter& p, const LogFrame *frame)
 	x[0] -= Field_Length;
 	x[1] -= Field_Length + 2 * Field_GoalDepth;
 	
-	p.setPen(flip ? Qt::blue : Qt::yellow);
+	goalColor = flip ? Qt::blue : Qt::yellow;
+	p.setPen(QPen(goalColor, Field_LineWidth * 2.0));
 	p.drawLine(QLineF(x[0], y[0], x[1], y[0]));
 	p.drawLine(QLineF(x[0], y[1], x[1], y[1]));
 	p.drawLine(QLineF(x[1], y[1], x[1], y[0]));
