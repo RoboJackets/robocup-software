@@ -103,49 +103,25 @@ $(document).ready(function(){initNavTree('md_soccer_doc__gameplay.html','');});
 <div class="title"><a class="el" href="namespace_gameplay.html" title="Higher-level logic for soccer. ">Gameplay</a> </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p>NOTE: This document is old - this is how we used to setup plays before we switched to python. We will soon replace this with the relevant instructions for the new python gameplay system.</p>
-<p>The <a class="el" href="namespace_gameplay.html" title="Higher-level logic for soccer. ">Gameplay</a> namespace contains most of the higher-level logic of the <code>soccer</code> program.</p>
-<p><a class="el" href="class_gameplay_1_1_gameplay_module.html" title="Coordinator of high-level logic. ">Gameplay::GameplayModule</a></p>
+<div class="textblock"><p>This document covers the basics of our high-level soccer code including Plays, Behaviors, and game state evaluation. This code resides in <a href="https://github.com/RoboJackets/robocup-software/tree/master/soccer/gameplay">soccer/gameplay</a>.</p>
 <h2>Play Structure</h2>
-<p>The high-level strategy code is organized to be as modular as possible. To do this, it's been split up into three main parts: <b>Behaviors</b>, <b>Tactics</b>, and <b>Plays</b>. The GameplayModule has one Goalie (optionally) and one Play.</p>
+<p>The high-level strategy code is organized to be as modular as possible. To do this, it's been split up into three main parts: <b>Behaviors</b>, <b>Tactics</b>, and <b>Plays</b>. There is one Goalie (optionally) and one Play.</p>
 <div align="center">
 </div>
-<h3>Behavior</h3>
-<p>Behaviors are simple actions. A few examples are:</p>
-<ul>
-<li><b>Gameplay::Behaviors::Move</b> - navigates the robot to a specified (x,y) coordinate on the field</li>
-<li><b>Gameplay::Behaviors::LineKick</b> - given a target line segment to hit, it lines the robot up behind the ball, approaches it, then kicks it towards the target</li>
-<li><b>Gameplay::Behaviors::Capture</b> - drives the robot towards the ball, turns the dribbler on, and attempts to bring the ball under its posession</li>
-</ul>
+<h3>Skill</h3>
+<p>Skills are simple Behaviors that apply to a single robot and are instances of the SingleRobotBehavior class.</p>
 <h3>Tactic</h3>
-<p>Currently our distinction between Behaviors and Tactics isn't overly clear... The code probably needs some cleanup here.</p>
+<p>Tactics are Behaviors that apply to one or more robots and are higher-level than a Skill. Note: there is no Tactic class, the distinction between it and other behaviors is mostly for organizational purposes.</p>
 <h3>Play</h3>
-<p>Plays are the highest-level actions and there is only one active at any given time. Plays are responsible for coordinating actions amongst all available robots. Plays are generally made up of Behaviors and Tactics. A few example plays are:</p>
-<ul>
-<li>Gameplay::Plays::OurFreekick</li>
-<li>Gameplay::Plays::TheirFreekick</li>
-<li>Gameplay::Plays::OurCornerKick</li>
-<li>Gameplay::Plays::OurGoalKick</li>
-<li>Gameplay::Plays::Stopped</li>
-<li>Gameplay::Plays::MightyMight - our main offensive play</li>
-</ul>
+<p>Plays are the highest-level actions and there is only one active at any given time. Plays are responsible for coordinating actions amongst all available robot and are generally made up of Behaviors and Tactics.</p>
 <h2>Creating a Play</h2>
-<p>In order to add a custom play to the system, you must make a new play class, and then register the play and add it to the appropriate build lists. The steps are as follows:</p>
-<h3>Create a subclass of Play</h3>
-<p>Copy the Gameplay::Plays::ExamplePlay class (both hpp and cpp files) with your new play class name. Change all occurrences of ExamplePlay.</p>
-<p>Play classes go in <code>soccer/gameplay/plays</code>, and demo-only plays should go in <code>soccer/gameplay/plays/demo_plays</code>.</p>
-<h3>Register the Play</h3>
-<p>You may assign the play to a category in the play list. Use REGISTER_PLAY_CATEGORY instead of REGISTER_PLAY. This should be called in the .cpp file.</p>
-<p>Note: Only one play class can be present in a source file. This is a limitation of REGISTER_PLAY, and if it really bothers you, it is possible to work around it (see the macro definition).</p>
-<h3>Add the source files to scons</h3>
-<p>Add an entry for the new .ccp file to <code>soccer/SConscript</code> in the <code>srcs</code> array.</p>
-<p>The play should now be available in the play selection tab of the soccer user interface, and can be enabled or disabled like the other plays. </p>
+<p>Making a new play is as simple as adding a new python file somewhere inside the <code>soccer/gameplay/plays</code> directory and writing a subclass of <code>Play</code> inside of it. There is no need to register the play, soccer will see the file in that folder and display it in the Play Config Tab. </p>
 </div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Oct 28 2014 03:29:09 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Oct 28 2014 03:42:36 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>
