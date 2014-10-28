@@ -80,4 +80,6 @@ python-numpy
 python-matplotlib
 python-usb
 freeglut3-dev
-svn
+subversion
+cmake3
+
