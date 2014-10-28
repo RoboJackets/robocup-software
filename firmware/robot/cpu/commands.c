@@ -17,7 +17,6 @@
 #include "control.h"
 #include "power.h"
 #include "main.h"
-#include "version.h"
 #include "ball_sense.h"
 #include "adc.h"
 #include "fpga.h"
@@ -237,8 +236,6 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	{
 		printf("Voltage ADC failed\n");
 	}
-	
-	printf("GIT version: %s\n", git_version);
 	
 	printf("Encoder monitor:\n");
 	for (int i = 0; i < 5; ++i)

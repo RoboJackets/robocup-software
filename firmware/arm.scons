@@ -1,3 +1,6 @@
+import os.path
+
+Import('*')
 
 # Add the install path so that gcc and newlib can find the tools that we are building
 host_env = env_base.Clone()
@@ -7,13 +10,30 @@ host_env.AppendENVPath('PATH', Dir('install/bin').abspath)
 # to build it).
 host_env['ENV']['MAKEFLAGS'] = '-j%d' % GetOption('num_jobs')
 
+mirror_gnu = 'http://www.gtlib.gatech.edu/pub/gnu/gnu'
+mirror_newlib = 'ftp://sources.redhat.com/pub/newlib'
 
 # Package versions and size of complete file
 # Use gcc-core to avoid downloading huge things when we're not using C++
-downloads_dir = Dir('#/downloads')
+binutils_package = 'binutils-2.21.1'
+binutils_size = 18742991
+gcc_version = '4.5.2'
+gcc_package = 'gcc-' + gcc_version
+gcc_size = 28241468
+newlib_package = 'newlib-1.19.0'
+newlib_size = 14323667
+
+downloads_dir = Dir('downloads')
 
 binutils_file = '%s.tar.bz2' % binutils_package
 binutils_url = '%s/binutils/%s' % (mirror_gnu, binutils_file)
+
+gcc_file = 'gcc-core-%s.tar.bz2' % gcc_version
+gcc_dir = 'gcc-' + gcc_version
+gcc_url = '%s/gcc/%s/%s' % (mirror_gnu, gcc_dir, gcc_file)
+
+newlib_file = '%s.tar.gz' % newlib_package
+newlib_url = '%s/%s' % (mirror_newlib, newlib_file)
 
 target = 'arm-elf'
 
