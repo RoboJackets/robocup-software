@@ -1,14 +1,9 @@
 var searchData=
 [
-  ['calspeed',['CalSpeed',['../class_gameplay_1_1_plays_1_1_cal_speed.html',1,'Gameplay::Plays']]],
-  ['capture',['Capture',['../class_gameplay_1_1_behaviors_1_1_capture.html',1,'Gameplay::Behaviors']]],
   ['capture',['Capture',['../classskills_1_1capture_1_1_capture.html',1,'skills::capture']]],
   ['category',['Category',['../classplay__registry_1_1_play_registry_1_1_category.html',1,'play_registry::PlayRegistry']]],
-  ['catpassdemo',['CatPassDemo',['../class_gameplay_1_1_plays_1_1_cat_pass_demo.html',1,'Gameplay::Plays']]],
   ['centermatrix',['centerMatrix',['../group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02',1,'Gameplay::GameplayModule']]],
-  ['changeme',['ChangeMe',['../class_gameplay_1_1_behaviors_1_1_change_me.html',1,'Gameplay::Behaviors']]],
   ['chip',['chip',['../class_our_robot.html#acfb0a511c25d2af38a9e4ef81640621d',1,'OurRobot']]],
-  ['chipcalibration',['ChipCalibration',['../class_gameplay_1_1_chip_calibration.html',1,'Gameplay']]],
   ['chipper',['Chipper',['../classconstants_1_1_robot_1_1_chipper.html',1,'constants::Robot']]],
   ['chipper',['Chipper',['../struct_robot_config_1_1_chipper.html',1,'RobotConfig']]],
   ['chipper_5favailable',['chipper_available',['../class_our_robot.html#a58360a0994fb157062277d397cb1f213',1,'OurRobot']]],

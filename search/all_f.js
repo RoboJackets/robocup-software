@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['openfield221',['OpenField221',['../class_gameplay_1_1_plays_1_1_open_field221.html',1,'Gameplay::Plays']]],
   ['operator_21_3d',['operator!=',['../class_geometry2d_1_1_point.html#a4eba8c40e062c4932fbdec61fd75d978',1,'Geometry2d::Point']]],
   ['operator_2a',['operator*',['../class_geometry2d_1_1_point.html#a07d1485f7ee656c42b0ec1193894eba5',1,'Geometry2d::Point']]],
   ['operator_2a_3d',['operator*=',['../class_geometry2d_1_1_point.html#a0c53cdd9a83d4784f348d10ba59f09f1',1,'Geometry2d::Point']]],
@@ -14,18 +13,9 @@ var searchData=
   ['oppmatrix',['oppMatrix',['../group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93',1,'Gameplay::GameplayModule']]],
   ['opponentrobot',['OpponentRobot',['../class_opponent_robot.html',1,'']]],
   ['optimize',['optimize',['../class_planning_1_1_r_r_t_planner.html#a70bf95f42e8106cd66ffaf5de9543887',1,'Planning::RRTPlanner']]],
-  ['ourcornerkick',['OurCornerKick',['../class_gameplay_1_1_plays_1_1_our_corner_kick.html',1,'Gameplay::Plays']]],
   ['ourcornerkick',['OurCornerKick',['../classplays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html',1,'plays::restarts::our_corner_kick']]],
-  ['ourcornerkick_5fchiptogoalarea',['OurCornerKick_ChipToGoalArea',['../class_gameplay_1_1_plays_1_1_our_corner_kick___chip_to_goal_area.html',1,'Gameplay::Plays']]],
-  ['ourcornerkick_5fpass',['OurCornerKick_Pass',['../class_gameplay_1_1_plays_1_1_our_corner_kick___pass.html',1,'Gameplay::Plays']]],
-  ['ourfreekick',['OurFreekick',['../class_gameplay_1_1_plays_1_1_our_freekick.html',1,'Gameplay::Plays']]],
   ['ourfreekick',['OurFreeKick',['../classplays_1_1restarts_1_1our__free__kick_1_1_our_free_kick.html',1,'plays::restarts::our_free_kick']]],
   ['ourgoalkick',['OurGoalKick',['../classplays_1_1restarts_1_1our__goal__kick_1_1_our_goal_kick.html',1,'plays::restarts::our_goal_kick']]],
-  ['ourgoalkick',['OurGoalKick',['../class_gameplay_1_1_plays_1_1_our_goal_kick.html',1,'Gameplay::Plays']]],
-  ['ourgoalkick2',['OurGoalKick2',['../class_gameplay_1_1_plays_1_1_our_goal_kick2.html',1,'Gameplay::Plays']]],
-  ['ourgoalkick_5fpass',['OurGoalKick_Pass',['../class_gameplay_1_1_plays_1_1_our_goal_kick___pass.html',1,'Gameplay::Plays']]],
-  ['ourkickoff',['OurKickoff',['../class_gameplay_1_1_plays_1_1_our_kickoff.html',1,'Gameplay::Plays']]],
   ['ourkickoff',['OurKickoff',['../classplays_1_1restarts_1_1our__kickoff_1_1_our_kickoff.html',1,'plays::restarts::our_kickoff']]],
-  ['ourrobot',['OurRobot',['../class_our_robot.html',1,'OurRobot'],['../class_our_robot.html#a6b6f72c2cfb6c0c5ff1eff82904fc04a',1,'OurRobot::OurRobot()']]],
-  ['override_5faim',['override_aim',['../class_gameplay_1_1_behaviors_1_1_kick.html#a2a162e6451456632de491d7bc1156046',1,'Gameplay::Behaviors::Kick']]]
+  ['ourrobot',['OurRobot',['../class_our_robot.html',1,'OurRobot'],['../class_our_robot.html#a6b6f72c2cfb6c0c5ff1eff82904fc04a',1,'OurRobot::OurRobot()']]]
 ];

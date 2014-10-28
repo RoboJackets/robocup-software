@@ -1,7 +1,6 @@
 var searchData=
 [
   ['accelerationmultiplier',['accelerationMultiplier',['../class_robot_config.html#ac6dbc7789eb0a33f3ae593b5da3456f0',1,'RobotConfig']]],
-  ['actionbehavior',['ActionBehavior',['../class_gameplay_1_1_action_behavior.html',1,'Gameplay']]],
   ['add',['add',['../class_geometry2d_1_1_composite_shape.html#a9d61a9cd810f5329270c948f6b3669d7',1,'Geometry2d::CompositeShape']]],
   ['add_5fshot_5fobstacle',['add_shot_obstacle',['../classskills_1_1__kick_1_1___kick.html#a6962940e62cd25a35ea66e7ba487a46e',1,'skills::_kick::_Kick']]],
   ['add_5fstate',['add_state',['../classfsm_1_1_state_machine.html#adb77bc1efbfb9c4ca3ccf5f1aa6d23c5',1,'fsm::StateMachine']]],
@@ -9,14 +8,12 @@ var searchData=
   ['addpath',['addPath',['../class_planning_1_1_tree.html#a4a6f3826c39b7cf01b718e0178394a21',1,'Planning::Tree']]],
   ['aim',['Aim',['../classskills_1_1aim_1_1_aim.html',1,'skills::aim']]],
   ['aim_5ftarget_5fpoint',['aim_target_point',['../classskills_1_1__kick_1_1___kick.html#ada2837127b78f6fff4a0f578cd1408a3',1,'skills::_kick::_Kick']]],
-  ['aimcapture',['AimCapture',['../class_gameplay_1_1_behaviors_1_1_aim_capture.html',1,'Gameplay::Behaviors']]],
   ['aligned',['aligned',['../classskills_1_1pass__receive_1_1_pass_receive_1_1_state.html#ab29e20d7ab64edd7ddac0fb20eed7fbb',1,'skills::pass_receive::PassReceive::State']]],
   ['aligning',['aligning',['../classskills_1_1pass__receive_1_1_pass_receive_1_1_state.html#a7c396d7ced2ede373ce64a0f7a313a2d',1,'skills::pass_receive::PassReceive::State']]],
   ['all_5fsubbehaviors',['all_subbehaviors',['../classcomposite__behavior_1_1_composite_behavior.html#ac7e062ed903eacadd6db8e9745d5105f',1,'composite_behavior::CompositeBehavior']]],
   ['alldebugoff',['allDebugOff',['../class_main_window.html#ad3ef00bb8cd8a66a55eecc6244a6ce76',1,'MainWindow']]],
   ['alldebugon',['allDebugOn',['../class_main_window.html#a8c658c8786efca65f5795e2dedfaf985',1,'MainWindow']]],
   ['angle',['angle',['../classskills_1_1face_1_1_face.html#aa0b6bc6c0b729c09fd1d02afe91eb25b',1,'skills.face.Face.angle()'],['../class_geometry2d_1_1_point.html#a67ea60681c7172fa1ef5ad7b2e04174d',1,'Geometry2d::Point::angle()']]],
-  ['anglecontroltest',['AngleControlTest',['../class_gameplay_1_1_plays_1_1_angle_control_test.html',1,'Gameplay::Plays']]],
   ['angleto',['angleTo',['../class_geometry2d_1_1_point.html#ace62e1a76e038d501c48e0435b737bbb',1,'Geometry2d::Point']]],
   ['anglevel',['angleVel',['../class_robot_pose.html#a685c05ad27d5bcc6ac58130df4219e7e',1,'RobotPose']]],
   ['approachopponent',['approachOpponent',['../class_our_robot.html#afcf2cd89c218915086882fef528e2fd2',1,'OurRobot::approachOpponent(unsigned shell_id) const '],['../class_our_robot.html#a334c3de52cadfaf6af2ea8537ab1d9b2',1,'OurRobot::approachOpponent(unsigned shell_id, bool enable_approach)']]],

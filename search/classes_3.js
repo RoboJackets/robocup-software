@@ -1,12 +1,7 @@
 var searchData=
 [
-  ['calspeed',['CalSpeed',['../class_gameplay_1_1_plays_1_1_cal_speed.html',1,'Gameplay::Plays']]],
-  ['capture',['Capture',['../class_gameplay_1_1_behaviors_1_1_capture.html',1,'Gameplay::Behaviors']]],
   ['capture',['Capture',['../classskills_1_1capture_1_1_capture.html',1,'skills::capture']]],
   ['category',['Category',['../classplay__registry_1_1_play_registry_1_1_category.html',1,'play_registry::PlayRegistry']]],
-  ['catpassdemo',['CatPassDemo',['../class_gameplay_1_1_plays_1_1_cat_pass_demo.html',1,'Gameplay::Plays']]],
-  ['changeme',['ChangeMe',['../class_gameplay_1_1_behaviors_1_1_change_me.html',1,'Gameplay::Behaviors']]],
-  ['chipcalibration',['ChipCalibration',['../class_gameplay_1_1_chip_calibration.html',1,'Gameplay']]],
   ['chipper',['Chipper',['../classconstants_1_1_robot_1_1_chipper.html',1,'constants::Robot']]],
   ['chipper',['Chipper',['../struct_robot_config_1_1_chipper.html',1,'RobotConfig']]],
   ['circle',['Circle',['../class_geometry2d_1_1_circle.html',1,'Geometry2d']]],

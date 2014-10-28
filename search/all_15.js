@@ -4,7 +4,6 @@ var searchData=
   ['unsubscribe',['unsubscribe',['../classfs__watcher_1_1_fs_watcher.html#a2df6c694ae8fbafe0956e73468e953f6',1,'fs_watcher::FsWatcher']]],
   ['update',['update',['../class_robot_filter.html#a47b3ca9d7c598cc9078ea60a7dc1b050',1,'RobotFilter']]],
   ['usbradio',['USBRadio',['../class_u_s_b_radio.html',1,'']]],
-  ['use_5fchipper',['use_chipper',['../class_gameplay_1_1_behaviors_1_1_line_kick.html#ad2bdc14e4d7e77bc350911ad92da11f4',1,'Gameplay::Behaviors::LineKick::use_chipper()'],['../class_gameplay_1_1_behaviors_1_1_touch_kick.html#a92fc3e5b57bd22874a63f224d0b2ac99',1,'Gameplay::Behaviors::TouchKick::use_chipper()'],['../classskills_1_1__kick_1_1___kick.html#ae2d7b7455a9d57f43cc66cca2aa65df2',1,'skills._kick._Kick.use_chipper()']]],
-  ['use_5fline_5fkick',['use_line_kick',['../class_gameplay_1_1_behaviors_1_1_kick.html#a35f766b9d5564b34243d8c1b58e10b52',1,'Gameplay::Behaviors::Kick']]],
+  ['use_5fchipper',['use_chipper',['../classskills_1_1__kick_1_1___kick.html#ae2d7b7455a9d57f43cc66cca2aa65df2',1,'skills::_kick::_Kick']]],
   ['use_5fwindowing',['use_windowing',['../classskills_1_1__kick_1_1___kick.html#a802dfb257ccefade07ddce2fa669ff10',1,'skills::_kick::_Kick']]]
 ];

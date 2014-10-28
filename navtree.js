@@ -20,7 +20,7 @@ var NAVTREE =
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", "functions_dup" ],
-        [ "Functions", "functions_func.html", "functions_func" ],
+        [ "Functions", "functions_func.html", null ],
         [ "Variables", "functions_vars.html", null ]
       ] ]
     ] ],
@@ -33,17 +33,13 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_ball_observation.html#a16b49aa49c32b80165a37c98cc80e419",
-"class_gameplay_1_1_behaviors_1_1_defender.html#acb0fcd0187e99f402f91fcde0ddccf0f",
-"class_gameplay_1_1_not_in_goalie_box_point_evaluator.html",
-"class_gameplay_1_1_plays_1_1_my_test_play.html#a2f1d714188c96eec7ceaeeeeeff06296",
-"class_gameplay_1_1_stable_yank.html",
-"class_joystick.html#a23429c0470e1a32b8de61e1ad7c251c1",
-"class_planning_1_1_tree.html#a1d2f09b93d7b662459ba7f89b9ebe32c",
-"class_team_info.html#ab707013c2076fe92969311cf8273aa14",
-"classplays_1_1restarts_1_1our__kickoff_1_1_our_kickoff.html#ada3fb5a18491dfd15e0941f82c91c284",
-"classskills_1_1aim_1_1_aim.html#a8163ef9aeba19f920e72402f122d9f9c",
-"classtest__fsm_1_1_my_fsm.html#a5baaa3880b87ab04b18b3df877878498"
+"class_field_view.html#a69c96ac8aac9db9bf17c9fe43d5e1aef",
+"class_geometry2d_1_1_segment.html#ab2812ecdc4b8d9a5d01e5dba91b7224e",
+"class_planning_1_1_path.html#a1a4cd2971040a6b5d94c5344f06c37ba",
+"class_strip_chart.html",
+"classplays_1_1restarts_1_1defend__penalty_1_1_defend_penalty.html#a18c509e4655e2495743935498be0c5d5",
+"classskills_1_1__kick_1_1___kick.html#a4722450b6050554dc20f667f2b76af5a",
+"classtactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
