@@ -14,5 +14,6 @@ var searchData=
   ['drawing_20functions',['Drawing Functions',['../group__drawing__functions.html',1,'']]],
   ['drawworldspace',['drawWorldSpace',['../class_field_view.html#a460a442ebb106e12d137c3eca53c9244',1,'FieldView']]],
   ['dribbler',['Dribbler',['../classconstants_1_1_robot_1_1_dribbler.html',1,'constants::Robot']]],
-  ['dribbler',['Dribbler',['../struct_robot_config_1_1_dribbler.html',1,'RobotConfig']]]
+  ['dribbler',['Dribbler',['../struct_robot_config_1_1_dribbler.html',1,'RobotConfig']]],
+  ['documentation',['Documentation',['../md_soccer_doc__documentation.html',1,'']]]
 ];
