@@ -80,3 +80,6 @@ python-numpy
 python-matplotlib
 python-usb
 freeglut3-dev
+
+# cmake 3 from andy kimpe's repo
+cmake3
