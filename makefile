@@ -3,8 +3,9 @@ all: all
 	mkdir -p build
 	cd build; cmake .. -Wno-dev && make
 
-tests: all-make
-	run/run_tests && cd soccer/gameplay; ./run_tests.sh
+# Run both C++ and python unit tests
+tests: all
+	run/run_tests && cd soccer/gameplay && ./run_tests.sh
 
 clean:
 	rm -rf build
@@ -14,6 +15,10 @@ robot:
 	cd firmware; scons robot
 robot-prog:
 	cd firmware; scons robot; sudo scons robot-prog
+robot-ota:
+	cd firmware; scons robot; scons robot-ota
+robot-prog-samba:
+	cd firmware; scons robot; sudo scons robot-prog-samba
 
 # Robot FPGA
 fpga2011:
