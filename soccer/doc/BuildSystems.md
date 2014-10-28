@@ -11,9 +11,9 @@ We use [CMake](http://www.cmake.org/) as our main build system.  This is configu
 To build the project using CMake, you could do:
 
 1. `mkdir build`
-1. `cd build`
-1. `cmake ..`
-1. `make`
+2. `cd build`
+3. `cmake ..`
+4. `make`
 
 Assuming everything ran successfully, this would place `soccer`, `simulator`, and our other targets in the output folder `run`.
 
