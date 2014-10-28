@@ -23,7 +23,7 @@ gcc_size = 28241468
 newlib_package = 'newlib-1.19.0'
 newlib_size = 14323667
 
-downloads_dir = Dir('#/downloads')
+downloads_dir = Dir('downloads')
 
 binutils_file = '%s.tar.bz2' % binutils_package
 binutils_url = '%s/binutils/%s' % (mirror_gnu, binutils_file)

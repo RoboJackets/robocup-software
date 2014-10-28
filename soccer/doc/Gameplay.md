@@ -1,16 +1,13 @@
 
 # Gameplay
 
-The Gameplay namespace contains most of the higher-level logic of the `soccer` program.
-
-
-Gameplay::GameplayModule
+This document covers the basics of our high-level soccer code including Plays, Behaviors, and game state evaluation.  This code resides in [soccer/gameplay](https://github.com/RoboJackets/robocup-software/tree/master/soccer/gameplay).
 
 
 
 ## Play Structure
 
-The high-level strategy code is organized to be as modular as possible.  To do this, it's been split up into three main parts: **Behaviors**, **Tactics**, and **Plays**.  The GameplayModule has one Goalie (optionally) and one Play.
+The high-level strategy code is organized to be as modular as possible.  To do this, it's been split up into three main parts: **Behaviors**, **Tactics**, and **Plays**.  There is one Goalie (optionally) and one Play.
 
 \dot
 digraph play_structure {
@@ -46,53 +43,21 @@ digraph play_structure {
 \enddot
 
 
-### Behavior
+### Skill
 
-Behaviors are simple actions.  A few examples are:
-
-* **Gameplay::Behaviors::Move** - navigates the robot to a specified (x,y) coordinate on the field
-* **Gameplay::Behaviors::LineKick** - given a target line segment to hit, it lines the robot up behind the ball, approaches it, then kicks it towards the target
-* **Gameplay::Behaviors::Capture** - drives the robot towards the ball, turns the dribbler on, and attempts to bring the ball under its posession
+Skills are simple Behaviors that apply to a single robot and are instances of the SingleRobotBehavior class.
 
 
 ### Tactic
 
-Currently our distinction between Behaviors and Tactics isn't overly clear...  The code probably needs some cleanup here.
+Tactics are Behaviors that apply to one or more robots and are higher-level than a Skill.  Note: there is no Tactic class, the distinction between it and other behaviors is mostly for organizational purposes.
 
 
 ### Play
 
-Plays are the highest-level actions and there is only one active at any given time.  Plays are responsible for coordinating actions amongst all available robots.  Plays are generally made up of Behaviors and Tactics.  A few example plays are:
-
-* Gameplay::Plays::OurFreekick
-* Gameplay::Plays::TheirFreekick
-* Gameplay::Plays::OurCornerKick
-* Gameplay::Plays::OurGoalKick
-* Gameplay::Plays::Stopped
-* Gameplay::Plays::MightyMight - our main offensive play
+Plays are the highest-level actions and there is only one active at any given time.  Plays are responsible for coordinating actions amongst all available robot and are generally made up of Behaviors and Tactics.
 
 
 ## Creating a Play
 
-In order to add a custom play to the system, you must make a new play class, and then register the play and add it to the appropriate build lists. The steps are as follows:
-
-
-### Create a subclass of Play
-
-Copy the Gameplay::Plays::ExamplePlay class (both hpp and cpp files) with your new play class name. Change all occurrences of ExamplePlay.
-
-Play classes go in `soccer/gameplay/plays`, and demo-only plays should go in `soccer/gameplay/plays/demo_plays`.
-
-
-### Register the Play
-
-You may assign the play to a category in the play list. Use REGISTER_PLAY_CATEGORY instead of REGISTER_PLAY.  This should be called in the .cpp file.
-
-Note: Only one play class can be present in a source file. This is a limitation of REGISTER_PLAY, and if it really bothers you, it is possible to work around it (see the macro definition).
-
-
-### Add the source files to scons
-
-Add an entry for the new .ccp file to `soccer/SConscript` in the `srcs` array.
-
-The play should now be available in the play selection tab of the soccer user interface, and can be enabled or disabled like the other plays.
+Making a new play is as simple as adding a new python file somewhere inside the `soccer/gameplay/plays` directory and writing a subclass of `Play` inside of it.  There is no need to register the play, soccer will see the file in that folder and display it in the Play Config Tab.

@@ -1,0 +1,36 @@
+
+# python 3
+python
+python-pip
+
+# Build system
+cmake
+ninja
+clang
+
+# required to compile gcc toolchain for ARM
+mpfr
+gmp
+libmpc
+
+qt5-base
+qt5-tools
+qwtplot3d
+
+python-pyqt5
+
+# Documentation
+doxygen
+
+bullet
+freeglut
+
+eigen
+
+boost
+boost-libs
+
+protobuf
+libpcap
+
+graphviz

@@ -23,5 +23,6 @@ libNxCooking.so.1
 libPhysXCore.so.1
 libPhysXLoader.so.1
 robocup.so
+run_tests
 
 /qt_vehicle_demo
