@@ -6,7 +6,7 @@ all: all
 run: all
 	cd run; ./soccer
 run-sim: all
-	cd run; ./simulator &; ./soccer-sim
+	cd run; ./simulator &; ./soccer -sim
 
 # Run both C++ and python unit tests
 tests: all
