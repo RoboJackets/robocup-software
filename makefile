@@ -3,6 +3,11 @@ all: all
 	mkdir -p build
 	cd build; cmake .. -Wno-dev && make
 
+run: all
+	cd run; ./soccer
+run-sim: all
+	cd run; ./simulator &; ./soccer-sim
+
 # Run both C++ and python unit tests
 tests: all
 	run/run_tests && cd soccer/gameplay && ./run_tests.sh
