@@ -31,5 +31,6 @@ boost
 boost-libs
 
 protobuf
+libpcap
 
 graphviz
