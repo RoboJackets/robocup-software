@@ -67,10 +67,12 @@ $ util/ubuntu-setup
 3) Build the project
 
 ```
-$ scons
+$ make
 ```
 
-[Scons](http://www.scons.org/) is a python-based build system that we use to compile the executables that make up our project.  After running scons, several programs will be placed in the **run** folder.  See the [soccer docs](http://robojackets.github.io/robocup-software/md_soccer_doc__soccer.html) for instructions on running the soccer program.
+We use CMake as our build system and have a simple `makefile` setup that invokes CMake.
+
+After running `make`, several programs will be placed in the **run** folder.  See the [soccer docs](http://robojackets.github.io/robocup-software/md_soccer_doc__soccer.html) for instructions on running the soccer program.
 
 
 ## Documentation
@@ -79,12 +81,7 @@ We use [Doxygen](www.doxygen.org) for documentation.  This allows us to convert 
 
 http://robojackets.github.io/robocup-software/
 
-Note: The doxygen documentation site above is currently updated manually (pushing new code to master doesn't update our documentation site).  Checkout the `gh-pages` branch and take a look at the README to see how this is handled.
-
+Note: The doxygen documentation site above is updated automacally using travis-ci.  See our .travis.yml file for more info.
 
 ## Testing
-
-We use [gtest](https://code.google.com/p/googletest/) for unit-testing our software, which can be run by running `scons test`.  To add a test to be run with the rest of the bunch, add it to the test sources variable in [test/SConscript](test/SConscript).
-
-
-
+We use [gtest](https://code.google.com/p/googletest/) for unit-testing our software, which can be run by running `make tests`.  To add a test to be run with the rest of the bunch, add a new file in soccer/tests.

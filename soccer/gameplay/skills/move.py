@@ -2,6 +2,7 @@ import single_robot_behavior
 import behavior
 
 
+## Behavior that moves a robot to a specified location
 # wraps up OurRobot.move() into a Skill so we can use it in the play system more easily
 class Move(single_robot_behavior.SingleRobotBehavior):
 
@@ -25,12 +26,7 @@ class Move(single_robot_behavior.SingleRobotBehavior):
             'away from target')
 
 
-    def execute_running(self):
-        if self.pos != None:
-            self.robot.move_to(self.pos)
-
-
-    # the position to move to
+    ## the position to move to (a robocup.Point object)
     @property
     def pos(self):
         return self._pos
@@ -39,13 +35,19 @@ class Move(single_robot_behavior.SingleRobotBehavior):
         self._pos = value
 
 
-    # how close (in meters) the robot has to be to the target position for it be complete
+    ## how close (in meters) the robot has to be to the target position for it be complete
     @property
     def threshold(self):
         return self._threshold
     @threshold.setter
     def threshold(self, value):
         self._threshold = value
+
+
+
+    def execute_running(self):
+        if self.pos != None:
+            self.robot.move_to(self.pos)
 
 
     def role_requirements(self):

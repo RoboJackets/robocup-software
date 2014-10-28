@@ -42,10 +42,10 @@ void translateException(NullArgumentException const& e)
  * from python was None.  Check for this case so that we don't segfault.
  */
 
-//	this is here so boost can work with std::shared_ptr
-template<class T> T * get_pointer( std::shared_ptr<T> const& p) {
-	return p.get();
-}
+// //	this is here so boost can work with std::shared_ptr
+// template<class T> T * get_pointer( std::shared_ptr<T> const& p) {
+// 	return p.get();
+// }
 
 QColor Color_from_tuple(const boost::python::tuple &rgb) {
 	float r = extract<float>(rgb[0]);
