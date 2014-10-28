@@ -10,7 +10,6 @@ fi
 # TODO remove this once ubuntu ships cmake3
 apt-add-repository -y ppa:andykimpe/cmake3
 
-rm -rf /tmp/cmake /opt/cmake /usr/bin/cmake
 #TODO dont run this if running cmake3. This dosent hurt for now
 apt-get -y purge cmake
 # apt get install cmake3 is taken care of by requiremnets.
