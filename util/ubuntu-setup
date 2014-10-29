@@ -6,14 +6,11 @@ if [ $UID -ne 0 ]; then
 	exec sudo $0
 fi
 
-# add repo for backport of cmake3
+# add repo for backport of cmake3 from debian testing
 # TODO remove this once ubuntu ships cmake3
-apt-add-repository -y ppa:andykimpe/cmake3
+apt-add-repository -y ppa:packetlost/cmake
 
-#TODO dont run this if running cmake3. This dosent hurt for now
-#apt-get -y purge cmake
-# apt get install cmake3 is taken care of by requiremnets.
-# When removing this, change cmake3 to cmake in dependencies
+# apt get install cmake is taken care of by requirements
 
 apt-get update
 
