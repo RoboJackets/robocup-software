@@ -67,6 +67,7 @@ target_link_libraries(robocup pthread bfd)
 
 # 'soccer' program
 add_executable(soccer main.cpp)
+qt5_use_modules(soccer Widgets Xml Core OpenGL Network)
 target_link_libraries(soccer robocup)
 
 # Unit tests
@@ -83,5 +84,5 @@ set(LOG_VIEWER_SRC
    	"StripChart.cpp"
 )
 add_executable(log_viewer ${LOG_VIEWER_SRC} ${LOG_VIEWER_UI} ${LOG_VIEWER_RSRC})
-qt5_use_modules(log_viewer Widgets OpenGL)
+qt5_use_modules(log_viewer Core Widgets OpenGL)
 target_link_libraries(log_viewer common)
