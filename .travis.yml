@@ -18,5 +18,5 @@ before_install:
 script: make && make tests
 
 notifications:
-  email: true
+  email: false
 
