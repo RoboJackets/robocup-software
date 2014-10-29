@@ -6,6 +6,7 @@
 
 # Build system
 ninja
+cmake
 
 # QT
 qt5-default
@@ -81,5 +82,3 @@ python-numpy
 python-matplotlib
 python-usb
 freeglut3-dev
-cmake3
-
