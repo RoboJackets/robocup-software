@@ -11,7 +11,7 @@ fi
 apt-add-repository -y ppa:andykimpe/cmake3
 
 #TODO dont run this if running cmake3. This dosent hurt for now
-apt-get -y purge cmake
+#apt-get -y purge cmake
 # apt get install cmake3 is taken care of by requiremnets.
 # When removing this, change cmake3 to cmake in dependencies
 
