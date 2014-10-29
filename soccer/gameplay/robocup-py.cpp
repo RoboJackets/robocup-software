@@ -43,7 +43,7 @@ void translateException(NullArgumentException const& e)
  */
 
 
-#if !__clang__
+#ifndef __clang__
 //	this is here so boost can work with std::shared_ptr
 template<class T> T * get_pointer( std::shared_ptr<T> const& p) {
 	return p.get();
