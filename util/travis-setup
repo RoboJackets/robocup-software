@@ -32,7 +32,7 @@ sudo add-apt-repository --yes ppa:fkrull/deadsnakes
 sudo apt-get update -qq
 
 # install ubuntu packages
-sudo apt-get install \
+sudo apt-get install --yes \
 cmake \
 qt5-default \
 qttools5-dev-tools \
@@ -45,7 +45,7 @@ libprotobuf-dev \
 graphviz \
 python3.4 \
 python3.4-dev \
-python-setuptools \
+python3-setuptools \
 libboost-python-dev \
 libusb-1.0.0-dev \
 gcc-4.7 g++-4.7 \
@@ -66,5 +66,5 @@ export CC=gcc-4.7
 export CXX=g++-4.7
 
 # install python3 dependencies
-sudo easy_install3.4 pip
-sudo pip3.4 install -r ./util/requirements3.txt
+sudo easy_install pip
+sudo pip3 install -r ./util/requirements3.txt
