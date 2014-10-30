@@ -16,6 +16,7 @@ using namespace boost::python;
 #include <protobuf/LogFrame.pb.h>
 
 #include <boost/python/exception_translator.hpp>
+#include <boost/version.hpp>
 #include <exception>
 
 /**
@@ -44,7 +45,8 @@ void translateException(NullArgumentException const& e)
 
 
 //	this is here so boost can work with std::shared_ptr
-#ifndef GET_POINTER_DWA20021219_HPP
+//	later versions of boost include this, so we only define it for older versions
+#if BOOST_VERSION < 105300
 template<class T> T * get_pointer( std::shared_ptr<T> const& p) {
 	return p.get();
 }
