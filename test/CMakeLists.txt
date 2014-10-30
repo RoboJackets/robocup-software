@@ -2,7 +2,7 @@
 include(ExternalProject)
 
 ExternalProject_Add(googletest
-    SVN_REPOSITORY http://googletest.googlecode.com/svn/trunk
+    GIT_REPOSITORY https://git.chromium.org/git/external/googletest.git
     CMAKE_ARGS -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG:PATH=DebugLibs
                -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE:PATH=ReleaseLibs
     PREFIX "${CMAKE_CURRENT_BINARY_DIR}"
