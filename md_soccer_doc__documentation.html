@@ -109,35 +109,20 @@ $(document).ready(function(){initNavTree('md_soccer_doc__documentation.html','')
 <h2>Doxygen Comment Formats</h2>
 <p>Doxygen has support for many different languages, but the comment syntax differs a bit. Below are a couple examples, but you should check out the <a href="http://www.stack.nl/~dimitri/doxygen/manual/docblocks.html">official Doxygen docs</a> for more info.</p>
 <h3>C++</h3>
-<p>``` /**</p><ul>
-<li>a normal member taking two arguments and returning an integer value.</li>
-<li><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">a</td><td>an integer argument.</td></tr>
-  </table>
-  </dd>
-</dl>
-</li>
-<li><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">s</td><td>a constant character pointer.</td></tr>
-  </table>
-  </dd>
-</dl>
-</li>
-<li><dl class="section see"><dt>See also</dt><dd>Test()</dd></dl>
-</li>
-<li><dl class="section see"><dt>See also</dt><dd>~Test()</dd></dl>
-</li>
-<li><dl class="section see"><dt>See also</dt><dd>testMeToo()</dd></dl>
-</li>
-<li><dl class="section see"><dt>See also</dt><dd>publicVar()</dd></dl>
-</li>
-<li><dl class="section return"><dt>Returns</dt><dd>The test results */ int testMe(int a,const char *s); ```</dd></dl>
-<h3>Python</h3>
-</li>
-</ul>
-<p>``` </p><h2>Documentation for a class.</h2>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;/**</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160; * a normal member taking two arguments and returning an integer value.</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160; * @param a an integer argument.</div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160; * @param s a constant character pointer.</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160; * @see Test()</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160; * @see ~Test()</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; * @see testMeToo()</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160; * @see publicVar()</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160; * @return The test results</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; */</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; int testMe(int a,const char *s);</div>
+</div><!-- fragment --><h3>Python</h3>
+<p>~~~~~</p>
+<h2>Documentation for a class.</h2>
 <p># </p><h1>More details.</h1>
 <p>class PyClass: </p><pre class="fragment">## The constructor.
 def __init__(self):
@@ -156,7 +141,7 @@ classVar = 0;
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Oct 30 2014 06:26:19 for GT RoboCup SSL by
+    <li class="footer">Generated on Fri Oct 31 2014 15:50:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>
