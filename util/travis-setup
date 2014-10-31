@@ -64,4 +64,4 @@ export CXX=g++-4.7
 
 # install python3 dependencies
 sudo easy_install pip
-sudo pip3 install -r ./util/requirements3.txt
+sudo pip install -r ./util/requirements3.txt
