@@ -2,7 +2,7 @@
 
 #include "../Play.hpp"
 
-#include <gameplay/behaviors/positions/Fullback.hpp>
+#include <gameplay/behaviors/positions/Defender.hpp>
 #include <gameplay/behaviors/Kick.hpp>
 #include <gameplay/behaviors/Mark.hpp>
 #include <gameplay/behaviors/Move.hpp>
@@ -36,7 +36,7 @@ namespace Gameplay
 				void waitFor(int secs);
 
 			protected:
-				Behaviors::Fullback _leftFullback, _rightFullback;
+				Behaviors::Defender _leftDefender, _rightDefender;
 				Behaviors::Move _move1;
 				Behaviors::Move _move2;
 				Behaviors::Move _move3;

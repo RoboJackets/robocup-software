@@ -2,7 +2,7 @@
 
 #include "../Play.hpp"
 
-#include <gameplay/behaviors/positions/Fullback.hpp>
+#include <gameplay/behaviors/positions/Defender.hpp>
 #include <gameplay/behaviors/Mark.hpp>
 
 namespace Gameplay
@@ -23,7 +23,7 @@ namespace Gameplay
 				bool _assignedMark2;
 				bool _assignedMark3;
 
-				Behaviors::Fullback _fullback1, _fullback2;
+				Behaviors::Defender _defender1, _defender2;
 				Behaviors::Mark _marking1, _marking2, _marking3;
 		};
 	}

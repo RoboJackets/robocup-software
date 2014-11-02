@@ -51,6 +51,19 @@ namespace Geometry2d
         Rect bbox() const;
         
         std::vector<Point> vertices;
+
+        void addVertex(const Point &pt) {
+            vertices.push_back(pt);
+        }
+
+        std::string toString() {
+            std::stringstream str;
+            str << "Polygon<";
+            for(int i = 0; i < vertices.size(); i++)
+                str << vertices[i] << ", ";
+            str << ">";
+            return str.str();
+        }
     
     protected:
         /// Used by constructors

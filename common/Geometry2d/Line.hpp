@@ -78,5 +78,11 @@ namespace Geometry2d
 			
 			/** the line consists of two points */
 			Point pt[2];
+
+			std::string toString() {
+				std::stringstream str;
+				str << "Line<" << pt[0] << ", " << pt[1] << ">";
+				return str.str();
+			}
 	};
 }

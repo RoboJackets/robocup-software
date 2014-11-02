@@ -38,12 +38,12 @@ Gameplay::Plays::OurGoalKick_Pass::OurGoalKick_Pass(GameplayModule *gameplay):
 	_passer(gameplay),
 	_receiver1(gameplay),
 	_receiver2(gameplay),
-	_fullback1(gameplay, Behaviors::Fullback::Left),
-	_fullback2(gameplay, Behaviors::Fullback::Right),
+	_defender1(gameplay, Behaviors::Defender::Left),
+	_defender2(gameplay, Behaviors::Defender::Right),
 	_passCtxt(_gameplay, &_passer)
 {
-	_fullback2.otherFullbacks.insert(&_fullback1);
-	_fullback1.otherFullbacks.insert(&_fullback2);
+	_defender2.otherDefenders.insert(&_defender1);
+	_defender1.otherDefenders.insert(&_defender2);
 
 	_passCtxt.addReceiver(&_receiver1);
 	_passCtxt.addReceiver(&_receiver2);
@@ -93,12 +93,12 @@ bool Gameplay::Plays::OurGoalKick_Pass::run()
 		_passCtxt.run();
 	}
 
-	assignNearest(_fullback1.robot, available, Geometry2d::Point(-Field_GoalHeight/2.0, 0.0));
-	assignNearest(_fullback2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
+	assignNearest(_defender1.robot, available, Geometry2d::Point(-Field_GoalHeight/2.0, 0.0));
+	assignNearest(_defender2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
 
 
-	_fullback1.run();
-	_fullback2.run();
+	_defender1.run();
+	_defender2.run();
 	
 
 	return !_passCtxt.done();

@@ -44,12 +44,12 @@ Gameplay::Plays::OurGoalKick2::OurGoalKick2(GameplayModule *gameplay):
 	_kicker(gameplay),
 	_center1(gameplay),
 	_center2(gameplay),
-	_fullback1(gameplay, Behaviors::Fullback::Left),
-	_fullback2(gameplay, Behaviors::Fullback::Right),
+	_defender1(gameplay, Behaviors::Defender::Left),
+	_defender2(gameplay, Behaviors::Defender::Right),
 	_pdt(gameplay, &_kicker)
 {
-	_fullback2.otherFullbacks.insert(&_fullback1);
-	_fullback1.otherFullbacks.insert(&_fullback2);
+	_defender2.otherDefenders.insert(&_defender1);
+	_defender1.otherDefenders.insert(&_defender2);
 	hasChipper = false;
 }
 
@@ -82,8 +82,8 @@ bool Gameplay::Plays::OurGoalKick2::run()
 	assignNearest(_center1.robot, available, Point(-Field_Width/2.0,Field_Length));
 	assignNearest(_center2.robot, available, Point( Field_Width/2.0,Field_Length));
 
-	assignNearest(_fullback1.robot, available, Geometry2d::Point(-Field_GoalHeight/2.0, 0.0));
-	assignNearest(_fullback2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
+	assignNearest(_defender1.robot, available, Geometry2d::Point(-Field_GoalHeight/2.0, 0.0));
+	assignNearest(_defender2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
 
 	// choose a target for the kick
 	// if straight shot on goal is available, take it
@@ -140,8 +140,8 @@ bool Gameplay::Plays::OurGoalKick2::run()
 	_pdt.run();
 	_center1.run();
 	_center2.run();
-	_fullback1.run();
-	_fullback2.run();
+	_defender1.run();
+	_defender2.run();
 	
 	return _pdt.keepRunning();
 }

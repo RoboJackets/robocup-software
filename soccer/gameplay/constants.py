@@ -37,8 +37,8 @@ class Ball:
     
 
 class Field:
-    Length = 6.05
-    Width = 4.05
+    Length = 6.5
+    Width = 4.455
 
     # diameter of the center circle 
     CenterRadius = 0.5
@@ -53,7 +53,7 @@ class Field:
     PenaltyDist = 0.750
     PenaltyDiam = 0.010
 
-    # flat area for defence markings 
+    # flat area for defense markings 
     GoalFlat = 0.35
 
     # Radius of the goal arcs 
@@ -78,3 +78,6 @@ class Field:
                                         robocup.Point(-GoalWidth / 2.0, Length))
     OurGoalSegment = robocup.Segment(robocup.Point(GoalWidth / 2.0, 0),
                                         robocup.Point(-GoalWidth / 2.0, 0))
+
+    TheirHalf = robocup.Rect(robocup.Point(-Width/2, Length), robocup.Point(Width/2, Length/2))
+    OurHalf = robocup.Rect(robocup.Point(-Width/2, 0), robocup.Point(Width/2, Length/2))

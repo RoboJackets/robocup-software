@@ -4,6 +4,7 @@ import robocup
 import main
 import constants
 
+
 class Mark(single_robot_behavior.SingleRobotBehavior):
 
 	def __init__(self):

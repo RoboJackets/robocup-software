@@ -368,10 +368,10 @@
   <Done_Thresh value="0.2"/>
   <Kick_Power_Constant value="15"/>
  </PassReceive>
- <Fullback>
+ <Defender>
   <Defend_Goal_Radius value="0.9"/>
   <Opponent_Avoid_Threshold value="2"/>
- </Fullback>
+ </Defender>
  <StableLineKick>
   <Kick_Power value="25"/>
   <Backoff_Distance value="0.2"/>

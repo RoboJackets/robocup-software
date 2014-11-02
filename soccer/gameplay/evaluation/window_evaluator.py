@@ -76,6 +76,7 @@ class WindowEvaluator:
         self.min_chip_range = 4.0
 
         self.excluded_robots = []
+        self.hypothetical_robot_locations = []
 
 
     # Defaults to False
@@ -123,6 +124,17 @@ class WindowEvaluator:
         self._excluded_robots = value if value != None else []
 
 
+    # a list of robocup.Point objects
+    # the window evaluator adds robot obstacles at these locations
+    @property
+    def hypothetical_robot_locations(self):
+        return self._hypothetical_robot_locations
+    @hypothetical_robot_locations.setter
+    def hypothetical_robot_locations(self, value):
+        self._hypothetical_robot_locations = value if value != None else []
+    
+
+
     # calculate open windows to another robot
     def eval_pt_to_pt(self, origin, target):
         # dir vec is parallel to the target segment
@@ -136,6 +148,9 @@ class WindowEvaluator:
     # calculate open windows into the opponent's goal
     def eval_pt_to_opp_goal(self, origin):
         return self.eval_pt_to_seg(origin, constants.Field.TheirGoalSegment)
+
+    def eval_pt_to_our_goal(self, origin):
+        return self.eval_pt_to_seg(origin, constants.Field.OurGoalSegment)
 
 
     # t0 and t1 are distances from segment.get_pt(0) along the segment
@@ -193,7 +208,7 @@ class WindowEvaluator:
             d = edge.delta().magsq()
 
             intersect = edge.line_intersection(target)
-            if intersect != None:
+            if intersect != None and (intersect - origin).dot(edge.delta()) > d:
                 t = (intersect - target.get_pt(0)).dot(target.delta())
                 if t < 0:
                     extent[i] = 0
@@ -214,18 +229,23 @@ class WindowEvaluator:
         if end == 0:
             return [], None
 
+        if self.debug:
+            main.system_state().draw_line(target, constants.Colors.Blue, "Debug")
+
         windows = [Window(0, end)]
 
         # apply the obstacles
-        for bot in list(main.our_robots()) + list(main.their_robots()):
-            if bot not in self.excluded_robots and bot.visible:
-                d = (bot.pos - origin).mag()
-                # whether or not we can chip over this bot
-                chip_overable = (self.chip_enabled
-                                and (d < self.max_chip_range - constants.Robot.Radius)
-                                and (d > self.min_chip_range + constants.Robot.Radius))
-                if not chip_overable:
-                    self.obstacle_robot(windows, origin, target, bot.pos)
+        bots = filter(lambda bot: bot not in self.excluded_robots and bot.visible, (list(main.our_robots()) + list(main.their_robots())))
+        bot_locations = list(map(lambda bot: bot.pos, bots))
+        bot_locations.extend(self.hypothetical_robot_locations)
+        for pos in bot_locations:
+            d = (pos - origin).mag()
+            # whether or not we can chip over this bot
+            chip_overable = (self.chip_enabled
+                            and (d < self.max_chip_range - constants.Robot.Radius)
+                            and (d > self.min_chip_range + constants.Robot.Radius))
+            if not chip_overable:
+                self.obstacle_robot(windows, origin, target, pos)
 
         # set the segment and angles for each window
         p0 = target.get_pt(0)
@@ -237,6 +257,10 @@ class WindowEvaluator:
             w.a1 = (w.segment.get_pt(1) - origin).angle() * constants.RadiansToDegrees
 
         best = max(windows, key=lambda w: w.segment.delta().magsq()) if len(windows) > 0 else None
+
+        if self.debug and best is not None:
+            main.system_state().draw_line(best.segment, constants.Colors.Green, "Debug")
+            main.system_state().draw_line(robocup.Line(origin, best.segment.center()), constants.Colors.Green, "Debug")
 
         # # draw the windows if we're in debug mode
         # if self.debug:

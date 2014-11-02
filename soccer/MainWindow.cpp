@@ -20,6 +20,8 @@
 #include <ctime>
 
 #include <google/protobuf/descriptor.h>
+#include <Network.hpp>
+#include <Joystick.hpp>
 
 using namespace std;
 using namespace boost;
@@ -190,10 +192,24 @@ void MainWindow::updateViews()
 		_ui.manualID->setCurrentIndex(0);
 		_processor->manualID(-1);
 		_ui.manualID->setEnabled(false);
+		_ui.tabWidget->setTabEnabled(2, false);
 	} else if (!_ui.manualID->isEnabled() && _processor->joystickValid())
 	{
 		// Joystick reconnected
 		_ui.manualID->setEnabled(true);
+		_ui.joystickTab->setVisible(true);
+		_ui.tabWidget->setTabEnabled(2, true);
+	}
+	if(manual >= 0) {
+		JoystickControlValues vals = _processor->joystickControlValues();
+		_ui.joystickBodyXLabel->setText(tr("%1").arg(vals.bodyX));
+		_ui.joystickBodyYLabel->setText(tr("%1").arg(vals.bodyY));
+		_ui.joystickBodyWLabel->setText(tr("%1").arg(vals.bodyW));
+		_ui.joystickKickPowerLabel->setText(tr("%1").arg(vals.kickPower));
+		_ui.joystickDibblerPowerLabel->setText(tr("%1").arg(vals.dribblerPower));
+		_ui.joystickKickCheckBox->setChecked(vals.kick);
+		_ui.joystickChipCheckBox->setChecked(vals.chip);
+		_ui.joystickDribblerCheckBox->setChecked(vals.dribble);
 	}
 	
 	// Time since last update
@@ -314,7 +330,7 @@ void MainWindow::updateViews()
 		_ui.behaviorTree->setPlainText(QString::fromStdString(currentFrame->behavior_tree()));
 	}
 
-	if(std::time(0) - (_processor->refereeModule()->sent_time/1000000) > 1)
+	if(std::time(0) - (_processor->refereeModule()->received_time/1000000) > 1)
 	{
 		_ui.fastHalt->setEnabled(true);
 		_ui.fastStop->setEnabled(true);
@@ -922,4 +938,18 @@ void MainWindow::on_fastKickoffBlue_clicked()
 void MainWindow::on_fastKickoffYellow_clicked()
 {
 	_processor->refereeModule()->command = NewRefereeModuleEnums::PREPARE_KICKOFF_YELLOW;
+}
+
+void MainWindow::on_actionVisionFirst_Half_triggered()
+{
+	_processor->changeVisionChannel(SharedVisionPortFirstHalf);
+	_ui.actionVisionFirst_Half->setChecked(true);
+	_ui.actionVisionSecond_Half->setChecked(false);
+}
+
+void MainWindow::on_actionVisionSecond_Half_triggered()
+{
+	_processor->changeVisionChannel(SharedVisionPortSecondHalf);
+	_ui.actionVisionFirst_Half->setChecked(false);
+	_ui.actionVisionSecond_Half->setChecked(true);
 }

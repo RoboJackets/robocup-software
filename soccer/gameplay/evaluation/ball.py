@@ -6,12 +6,17 @@ import math
 
 def is_moving_towards_our_goal():
     # see if the ball is moving much
-    if main.ball().vel.mag() > 0.04:
+    if main.ball().vel.mag() > 0.3:
         # see if it's moving somewhat towards our goal
         if main.ball().vel.dot(robocup.Point(0, -1)) > 0:
             ball_path = robocup.Segment(main.ball().pos, (main.ball().pos + main.ball().vel.normalized()))
-            pt = ball_path.line_intersection(constants.Field.OurGoalSegment)
-            return pt != None and abs(pt.x) < constants.Field.GoalWidth / 2.0
+
+            fudge_factor = 0.05
+            WiderGoalSegment = robocup.Segment(robocup.Point(constants.Field.GoalWidth / 2.0 + fudge_factor, 0),
+                                        robocup.Point(-constants.Field.GoalWidth / 2.0 - fudge_factor, 0))
+
+            pt = ball_path.line_intersection(WiderGoalSegment)
+            return pt != None and abs(pt.x) < WiderGoalSegment.delta().mag() / 2.0
 
     return False
 
@@ -28,7 +33,7 @@ GravitationalCoefficient = 9.81 # in m/s^2
 
 # The ball's motion follows the equation X(t) = X_i + V_i*t - 0.5*(c*g)*t^2
 def predict(X_i, V_i, t):
-    return X_i + (V_i * t) - (0.5 * FrictionCoefficient * GravitationalCoefficient * t**2)
+    return X_i + (V_i * t) - (V_i.normalized() * 0.5 * FrictionCoefficient * GravitationalCoefficient * t**2)
 
 
 def rev_predict(V_i, dist):
@@ -49,14 +54,7 @@ def rev_predict(V_i, dist):
 
 # returns a Robot or None indicating which opponent has the ball
 def opponent_with_ball():
-    def angle_btw_three_pts(a, b, vertex):
-        VA = math.sqrt( (vertex.x - a.x)**2 + (vertex.y - a.y)**2 )
-        VB = math.sqrt( (vertex.x - b.x)**2 + (vertex.y - b.y)**2 )
-        AB = math.sqrt( (a.x - b.x)**2 + (a.y - b.y)**2 )
-        return math.acos((VA*VA + VB*VB - AB*AB)/(2*VA*VB))
-
-    closest_bot = None
-    closest_dist = float("inf")
+    closest_bot, closest_dist = None, float("inf")
     for bot in main.their_robots():
         if bot.visible:
             dist = (bot.pos - main.ball().pos).mag()
@@ -65,14 +63,27 @@ def opponent_with_ball():
 
     if closest_bot == None:
         return None
+    else:
+        if robot_has_ball(closest_bot):
+            return closest_bot
+        else:
+            return None
 
-    angle = closest_bot.angle * constants.DegreesToRadians
-    theta = angle_btw_three_pts(closest_bot.pos + robocup.Point(math.cos(angle), math.sin(angle)),
+
+
+# based on face angle and distance, determines if the robot has the ball
+def robot_has_ball(robot):
+    def angle_btw_three_pts(a, b, vertex):
+        VA = math.sqrt( (vertex.x - a.x)**2 + (vertex.y - a.y)**2 )
+        VB = math.sqrt( (vertex.x - b.x)**2 + (vertex.y - b.y)**2 )
+        AB = math.sqrt( (a.x - b.x)**2 + (a.y - b.y)**2 )
+        return math.acos((VA*VA + VB*VB - AB*AB)/(2*VA*VB))
+
+
+    angle = robot.angle
+    theta = angle_btw_three_pts(robot.pos + robocup.Point(math.cos(angle), math.sin(angle)),
                                 main.ball().pos,
-                                closest_bot.pos)
+                                robot.pos)
     max_radius = constants.Robot.Radius * (2.0 + 2.0*math.cos(theta))
 
-    if closest_bot.pos.near_point(main.ball().pos, max_radius):
-        return closest_bot
-    else:
-        return None
+    return robot.pos.near_point(main.ball().pos, max_radius)

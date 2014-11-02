@@ -7,7 +7,7 @@
 #include <gameplay/tactics/PassReceiver.hpp>
 #include <gameplay/tactics/StablePass.hpp>
 
-#include <gameplay/behaviors/positions/Fullback.hpp>
+#include <gameplay/behaviors/positions/Defender.hpp>
 
 #include <gameplay/FieldEvaluator.hpp>
 
@@ -28,7 +28,7 @@ namespace Gameplay
 				
 			protected:
 				FieldEvaluator _fieldEval;
-				//	FIXME: fullback? center?
+				//	FIXME: defender? center?
 
 				// std::map<OurRobot *, Behavior *> _behaviorsByFlexibleBot;
 
@@ -36,7 +36,7 @@ namespace Gameplay
 				
 				
 
-				Behaviors::Fullback _leftFullback, _rightFullback;
+				Behaviors::Defender _leftDefender, _rightDefender;
 
 
 

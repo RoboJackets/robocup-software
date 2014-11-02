@@ -1,4 +1,4 @@
-#include "Fullback.hpp"
+#include "Defender.hpp"
 
 #include <gameplay/behaviors/positions/Goalie.hpp>
 #include <Constants.hpp>
@@ -15,20 +15,20 @@ namespace Gameplay
 {
 	namespace Behaviors
 	{
-		REGISTER_CONFIGURABLE(Fullback)
+		REGISTER_CONFIGURABLE(Defender)
 	}
 }
 
-ConfigDouble *Gameplay::Behaviors::Fullback::_defend_goal_radius;
-ConfigDouble *Gameplay::Behaviors::Fullback::_opponent_avoid_threshold;
+ConfigDouble *Gameplay::Behaviors::Defender::_defend_goal_radius;
+ConfigDouble *Gameplay::Behaviors::Defender::_opponent_avoid_threshold;
 
-void Gameplay::Behaviors::Fullback::createConfiguration(Configuration *cfg)
+void Gameplay::Behaviors::Defender::createConfiguration(Configuration *cfg)
 {
-	_defend_goal_radius = new ConfigDouble(cfg, "Fullback/Defend Goal Radius", 0.9);
-	_opponent_avoid_threshold = new ConfigDouble(cfg, "Fullback/Opponent Avoid Threshold", 2.0);
+	_defend_goal_radius = new ConfigDouble(cfg, "Defender/Defend Goal Radius", 0.9);
+	_opponent_avoid_threshold = new ConfigDouble(cfg, "Defender/Opponent Avoid Threshold", 2.0);
 }
 
-Gameplay::Behaviors::Fullback::Fullback(GameplayModule *gameplay, Side side, int role):
+Gameplay::Behaviors::Defender::Defender(GameplayModule *gameplay, Side side, int role):
 	Behavior(gameplay),
 	robot(0),
 	_blockRobot(0),
@@ -40,7 +40,7 @@ Gameplay::Behaviors::Fullback::Fullback(GameplayModule *gameplay, Side side, int
 	_winEval.debug = false;
 }
 
-OpponentRobot* Gameplay::Behaviors::Fullback::findRobotToBlock(const Geometry2d::Rect& area)
+OpponentRobot* Gameplay::Behaviors::Defender::findRobotToBlock(const Geometry2d::Rect& area)
 {
 	OpponentRobot* target = 0;
 	// Find by ball distance
@@ -58,7 +58,7 @@ OpponentRobot* Gameplay::Behaviors::Fullback::findRobotToBlock(const Geometry2d:
 	return target;
 }
 
-bool Gameplay::Behaviors::Fullback::run()
+bool Gameplay::Behaviors::Defender::run()
 {
 	if (!robot || !robot->visible)
 	{
@@ -148,8 +148,8 @@ bool Gameplay::Behaviors::Fullback::run()
 		Geometry2d::Segment goalLine(Geometry2d::Point(-Field_GoalWidth / 2.0f, 0),
 									 Geometry2d::Point(Field_GoalWidth / 2.0f, 0));
 
-		//exclude robots that aren't the fullback
-		BOOST_FOREACH(Fullback *f, otherFullbacks)
+		//exclude robots that aren't the defender
+		BOOST_FOREACH(Defender *f, otherDefenders)
 		{
 			if (f->robot)
 			{

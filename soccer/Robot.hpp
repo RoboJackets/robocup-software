@@ -31,7 +31,6 @@ namespace Packet
 namespace Gameplay
 {
 	class GameplayModule;
-	class Behavior;
 }
 
 namespace Planning
@@ -55,13 +54,15 @@ public:
 		time(0),
 		visionFrame(0)
 	{
+		// normalize angle so it's always positive
+		while (angle < 0) angle += 2.0 * M_PI;
 	}
 	
 	bool visible;
 	Geometry2d::Point pos;
 	Geometry2d::Point vel;
-	float angle;	///	angle in degrees.  0 degrees means the robot is aimed along the x-axis
-	float angleVel;
+	float angle;	///	angle in radians.  0 radians means the robot is aimed along the x-axis
+	float angleVel;	///	angular velocity in radians/sec
 	
 	// Time at which this estimate is valid
 	uint64_t time;
@@ -100,7 +101,11 @@ public:
 	}
 
 	bool operator==(const Robot &other) {
-		return shell() == other.shell();
+		return shell() == other.shell() && self() == other.self();
+	}
+
+	bool equals(const Robot &other) {
+		return *this == other;
 	}
 
 private:
@@ -388,6 +393,12 @@ public:
 		radioTx.set_sing(true);
 	}
 
+
+	static void createConfiguration(Configuration *cfg);
+	
+	double distanceToChipLanding(int chipPower);
+	uint8_t chipPowerForDistance(double distance);
+
 protected:
 	MotionControl *_motionControl;
 	
@@ -426,6 +437,30 @@ protected:
 		for (size_t i=0; i<RobotMask::size(); ++i)
 			if (mask[i] > 0 && robots[i] && robots[i]->visible)
 				result.add(std::shared_ptr<Geometry2d::Shape>(new Geometry2d::Circle(robots[i]->pos, mask[i])));
+		return result;
+	}
+
+
+	/**
+	 * Only adds obstacles within the checkRadius of the passed in position
+	 * Creates a set of obstacles from a given robot team mask,
+	 * where mask values < 0 create no obstacle, and larger values
+	 * create an obstacle of a given radius
+	 *
+	 * NOTE: mask must not be set for this robot
+	 *
+	 * @param robots is the set of robots to use to create a mask - either self or opp from _state
+	 */
+	template<class ROBOT>
+	Geometry2d::CompositeShape createRobotObstacles(const std::vector<ROBOT*>& robots, const RobotMask& mask,
+				 Geometry2d::Point currentPosition, float checkRadius) const {
+		Geometry2d::CompositeShape result;
+		for (size_t i=0; i<RobotMask::size(); ++i)
+			if (mask[i] > 0 && robots[i] && robots[i]->visible) {
+				if (currentPosition.distTo(robots[i]->pos)<=checkRadius) {
+					result.add(std::shared_ptr<Geometry2d::Shape>(new Geometry2d::Circle(robots[i]->pos, mask[i])));
+				}
+			}
 		return result;
 	}
 
@@ -484,6 +519,12 @@ private:
 	std::stringstream *_cmdText;
 
 	void _clearCmdText();
+
+
+	///	default values for avoid radii
+	static ConfigDouble *_selfAvoidRadius;
+	static ConfigDouble *_oppAvoidRadius;
+	static ConfigDouble *_oppGoalieAvoidRadius;
 };
 
 /**

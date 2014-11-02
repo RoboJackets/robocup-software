@@ -1,11 +1,14 @@
 import munkres
 import evaluation.double_touch
+import robocup
 
+
+# TODO arbitrary cost lambda property
 
 class RoleRequirements:
 
     def __init__(self):
-        self.pos = None
+        self.destination_shape = None
         self.has_ball = False
         self.chipper_preference_weight = 0
         self.required_shell_id = None
@@ -16,11 +19,13 @@ class RoleRequirements:
 
 
     @property
-    def pos(self):
-        return self._pos
-    @pos.setter
-    def pos(self, value):
-        self._pos = value
+    def destination_shape(self):
+        return self._destination_shape
+    @destination_shape.setter
+    def destination_shape(self, value):
+        if value != None and not ( isinstance(value, robocup.Point) or isinstance(value, robocup.Segment) ):
+            raise TypeError("Unexpected type for destination_shape: " + str(value))
+        self._destination_shape = value
 
 
     @property
@@ -28,11 +33,13 @@ class RoleRequirements:
         return self._has_ball
     @has_ball.setter
     def has_ball(self, value):
+        if value != None and not isinstance(value, bool):
+            raise TypeError("Unexpected type for has_ball: " + str(value))
         self._has_ball = value
 
 
     # rather than having a 'has_chipper' property, we have a property for the weight
-    # * a value of float("inf") means that a chipper is required
+    # * a value of MaxWeight means that a chipper is required
     # * a value of 0 means we don't care if it has a chipper or not
     # * a value in-between means we want one, but it's not essential
     # This weight is added to the assignment cost for a robot
@@ -60,6 +67,8 @@ class RoleRequirements:
         return self._required_shell_id
     @required_shell_id.setter
     def required_shell_id(self, value):
+        if value != None and not isinstance(value, int):
+            raise TypeError("Unexpected type for required_shell_id: " + str(value))
         self._required_shell_id = value
 
 
@@ -68,6 +77,8 @@ class RoleRequirements:
         return self._previous_shell_id
     @previous_shell_id.setter
     def previous_shell_id(self, value):
+        if value != None and not isinstance(value, int):
+            raise TypeError("Unexpected type for previous_shell_id: " + str(value))
         self._previous_shell_id = value
 
 
@@ -105,6 +116,9 @@ def iterate_role_requirements_tree_leaves(reqs_tree):
 class ImpossibleAssignmentError(RuntimeError): pass
 
 
+# the munkres library doesn't like infinity, so we use this instead
+MaxWeight = 10000000
+
 
 # multiply this by the distance between two points to get the cost
 PositionCostMultiplier = 1.0
@@ -114,7 +128,7 @@ RobotChangeCost = 1.0
 
 # a default weight for preferring a chipper
 # this is tunable
-PreferChipper = 5
+PreferChipper = 2.5
 
 
 # uses the munkres/hungarian algorithm to find the optimal role assignments
@@ -126,7 +140,7 @@ PreferChipper = 5
 # returns a tree with the same structure as @role_reqs, but the leaf nodes have (RoleRequirements, OurRobot) tuples instead of just RoleRequirements objects
 def assign_roles(robots, role_reqs):
 
-    # check for empty requrest set
+    # check for empty request set
     if len(role_reqs) == 0:
         return {}
 
@@ -155,13 +169,14 @@ def assign_roles(robots, role_reqs):
     optional_roles = sorted([r for r in role_reqs_list if not r.required], reverse=True, key=lambda r: r.priority)
 
     # make sure there's enough robots
+    unassigned_role_requirements = []   # roles that won't be assigned because there aren't enough bots
     if len(required_roles) > len(robots):
         raise ImpossibleAssignmentError("More required roles than available robots")
     elif len(role_reqs_list) > len(robots):
         # remove the lowest priority optional roles so we have as many bots as roles we're trying to fill
         overflow = len(role_reqs_list) - len(robots)
         role_reqs_list = required_roles + optional_roles[0:-overflow]
-
+        unassigned_role_requirements = optional_roles[len(optional_roles) - overflow:]
 
     if len(robots) == 0:
         return {}
@@ -175,14 +190,14 @@ def assign_roles(robots, role_reqs):
             cost = 0
 
             if req.required_shell_id != None and req.required_shell_id != robot.shell_id():
-                cost = float("inf")
+                cost = MaxWeight
             elif req.has_ball == True and robot.has_ball() == False:
-                cost = float("inf")
-            elif req.require_kicking and (robot.shell_id() == evaluation.double_touch.forbiden_ball_toucher() or not robot.kicker_works() or not robot.ball_sense_works()):
-                cost = float("inf")
+                cost = MaxWeight
+            elif req.require_kicking and (robot.shell_id() == evaluation.double_touch.tracker().forbidden_ball_toucher() or not robot.kicker_works() or not robot.ball_sense_works()):
+                cost = MaxWeight
             else:
-                if req.pos != None:
-                    cost += PositionCostMultiplier * (req.pos - robot.pos).mag()
+                if req.destination_shape != None:
+                    cost += PositionCostMultiplier * req.destination_shape.dist_to(robot.pos)
                 if req.previous_shell_id != None and req.previous_shell_id != robot.shell_id:
                     cost += RobotChangeCost
                 if not robot.has_chipper():
@@ -192,14 +207,23 @@ def assign_roles(robots, role_reqs):
         cost_matrix.append(cost_row)
 
 
-    # FIXME: priority?????
-
     # solve
     solver = munkres.Munkres()
     indexes = solver.compute(cost_matrix)
 
 
     results = {}
+
+    def insert_into_results(results, tree_mapping, role_reqs, robot):
+        # get the keypath of this entry so we can insert back into the tree
+        tree_path = tree_mapping[role_reqs]
+        parent = results
+        for key in tree_path[:-1]:
+            if key not in parent:
+                parent[key] = {}
+            parent = parent[key]
+        parent[tree_path[-1]] = (role_reqs, robot)
+
 
     # build assignments mapping
     assignments = {}
@@ -210,18 +234,16 @@ def assign_roles(robots, role_reqs):
         bot = robots[row]
         reqs = role_reqs_list[col]
 
-        # get the keypath of this entry so we can insert back into the tree
-        tree_path = tree_mapping[reqs]
-
-        parent = results
-        for key in tree_path[:-1]:
-            if key not in parent:
-                parent[key] = {}
-            parent = parent[key]
-        parent[tree_path[-1]] = (reqs, bot)
+        # add entry to results tree
+        insert_into_results(results, tree_mapping, reqs, bot)
 
 
-    if total == float("inf"):
+    # insert None for each role that we didn't assign
+    for reqs in unassigned_role_requirements:
+        insert_into_results(results, tree_mapping, reqs, None)
+
+
+    if total > MaxWeight:
         raise ImpossibleAssignmentError("No assignments possible that satisfy all constraints")
 
     return results

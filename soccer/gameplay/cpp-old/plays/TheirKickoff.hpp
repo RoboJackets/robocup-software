@@ -2,7 +2,7 @@
 
 #include "../Play.hpp"
 
-#include <gameplay/behaviors/positions/Fullback.hpp>
+#include <gameplay/behaviors/positions/Defender.hpp>
 #include <gameplay/behaviors/Idle.hpp>
 
 namespace Gameplay
@@ -19,7 +19,7 @@ namespace Gameplay
 				virtual bool run();
 			
 			protected:
-				Behaviors::Fullback _fullback1, _fullback2;
+				Behaviors::Defender _defender1, _defender2;
 				Behaviors::Idle _idle;
 		};
 	}

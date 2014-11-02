@@ -4,6 +4,7 @@ import plays.stopped
 import logging
 from PyQt4 import QtCore
 import main
+import evaluation.double_touch
 import tactics.positions.goalie
 import role_assignment
 import traceback
@@ -23,11 +24,17 @@ class RootPlay(Play, QtCore.QObject):
         # if a play fails for some reason, we can temporarily blacklist it, which removes it from play
         # selection for the next iteration, then enables it again
         self.temporarily_blacklisted_play_class = None
+        self._currently_restarting = False
 
 
     play_changed = QtCore.pyqtSignal("QString")
 
     def execute_running(self):
+        # update double touch tracker
+        evaluation.double_touch.tracker().spin()
+
+        # cache and calculate the score() function for each play class
+        main.play_registry().recalculate_scores()
 
         # Play Selection
         ################################################################################
@@ -36,24 +43,31 @@ class RootPlay(Play, QtCore.QObject):
             if not isinstance(self.play, plays.stopped.Stopped):
                 logging.info("Running 'Stopped' play due to game state change")
                 self.play = plays.stopped.Stopped()
+                self._currently_restarting = True
         elif main.game_state().is_halted():
             self.play = None
         else:
-            enabled_plays = main.play_registry().get_enabled_plays()
+            # (play_class, score value) tuples
+            enabled_plays_and_scores = [p for p in main.play_registry().get_enabled_plays_and_scores()]
+
+            # only let restart play run once
+            enabled_plays_and_scores = [p for p in enabled_plays_and_scores if not p[0].is_restart() or ( p[0].is_restart() and self._currently_restarting)]
 
             # handle temporary blacklisting
             # we remove the blacklisted play class from selection for this iteration, then unblacklist it
-            enabled_plays = [p for p in enabled_plays if p != self.temporarily_blacklisted_play_class]
+            enabled_plays_and_scores = [p for p in enabled_plays_and_scores if p[0] != self.temporarily_blacklisted_play_class]
             self.temporarily_blacklisted_play_class = None
 
             # see if we need to kill current play or if it's done running
             if self.play != None:
-                if self.play.__class__ not in enabled_plays:
+                if self.play.__class__ not in map(lambda tup: tup[0], enabled_plays_and_scores):
                     logging.info("Current play '" + self.play.__class__.__name__ + "' no longer enabled, aborting")
                     self.play.terminate()
                     self.play = None
                 elif self.play.is_done_running():
                     logging.info("Current play '" + self.play.__class__.__name__ + "' finished running")
+                    if self.play.is_restart:
+                        self._currently_restarting = False
                     self.play = None
                 elif self.play.__class__.score() == float("inf"):
                     logging.info("Current play '" + self.play.__class__.__name__ + "' no longer applicable, ending")
@@ -61,21 +75,18 @@ class RootPlay(Play, QtCore.QObject):
                     self.play = None
 
             if self.play == None:
+                # reset the double-touch tracker
+                evaluation.double_touch.tracker().restart()
+
                 try:
-                    if len(enabled_plays) > 0:
+                    if len(enabled_plays_and_scores) > 0:
                         # select the play with the smallest value for score()
-
-                        # calculate scores for all of the plays
-                        scores = {}
-                        for p_class in enabled_plays:
-                            scores[p_class] = p_class.score()
-
-                        # this gets the key for the min value in the dictionary (play class with lowest score)
-                        play_class = min(scores, key=scores.get)
+                        play_class_and_score = min(enabled_plays_and_scores, key=lambda tup: tup[1])
 
                         # run the play with the lowest score, as long as it isn't inf
-                        if scores[play_class] != float("inf"):
-                            self.play = play_class()
+                        if play_class_and_score[1] != float("inf"):
+                            play_class = play_class_and_score[0]
+                            self.play = play_class() # instantiate it
                     else:
                         # there's no available plays to run
                         pass
@@ -134,7 +145,15 @@ class RootPlay(Play, QtCore.QObject):
 
         if value != None:
             self._play = value
+
+            # see if this play handles the goalie by itself
+            if value.__class__.handles_goalie():
+                self.drop_goalie_behavior()
+
             self.add_subbehavior(value, name='play', required=True)
+
+        # make sure somebody handles the goalie
+        self.setup_goalie_if_needed()
 
         # change notification so ui can update if necessary
         self.play_changed.emit(self.play.__class__.__name__ if self._play != None else "(No Play)")
@@ -159,12 +178,14 @@ class RootPlay(Play, QtCore.QObject):
         else:
             if self.has_subbehavior_with_name('goalie'):
                 goalie = self.subbehavior_with_name('goalie')
-            else:
+            elif self.play == None or not self.play.__class__.handles_goalie():
                 goalie = tactics.positions.goalie.Goalie()
-                # FIXME: add goalie with high priority?
                 self.add_subbehavior(goalie, 'goalie', required=True)
+            else:
+                goalie = None
 
-            goalie.shell_id = self.goalie_id
+            if goalie != None:
+                goalie.shell_id = self.goalie_id
 
 
     @property

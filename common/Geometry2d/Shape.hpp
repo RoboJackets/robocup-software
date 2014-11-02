@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Point.hpp"
+#include <stdexcept>
 
 
 namespace Geometry2d {
@@ -41,6 +42,17 @@ namespace Geometry2d {
         virtual bool hit(const Segment &seg) const {
             throw std::runtime_error("Unimplemented method");
             return false;
+        }
+
+        virtual std::string toString() {
+            std::stringstream str;
+            str << "Shape";
+            return str.str();
+        }
+
+        friend std::ostream& operator<< (std::ostream &stream, Shape &shape) {
+            stream << shape.toString();
+            return stream;
         }
 
     };

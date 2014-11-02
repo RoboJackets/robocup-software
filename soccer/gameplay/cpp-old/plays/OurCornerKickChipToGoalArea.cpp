@@ -21,12 +21,12 @@ OurCornerKick_ChipToGoalArea::OurCornerKick_ChipToGoalArea(GameplayModule* gamep
 	_kicker(gameplay),
 	_center1(gameplay),
 	_center2(gameplay),
-	_fullback1(gameplay, Behaviors::Fullback::Left),
-	_fullback2(gameplay, Behaviors::Fullback::Right),
+	_defender1(gameplay, Behaviors::Defender::Left),
+	_defender2(gameplay, Behaviors::Defender::Right),
 	_pdt(gameplay, &_kicker)
 {
-	_fullback2.otherFullbacks.insert(&_fullback1);
-	_fullback1.otherFullbacks.insert(&_fullback1);
+	_defender2.otherDefenders.insert(&_defender1);
+	_defender1.otherDefenders.insert(&_defender1);
 
 	_center1.target = Point(0.0, Field_Length / 2.0);
 
@@ -62,11 +62,11 @@ bool OurCornerKick_ChipToGoalArea::run()
 
 	assignNearest(_center1.robot, available, Point(-Field_Width/4.0, Field_Length));
 	assignNearest(_center2.robot, available, Point( Field_Width/4.0, Field_Length));
-	assignNearest(_fullback1.robot, available, Geometry2d::Point(-Field_GoalHeight/2.0, 0.0));
-	assignNearest(_fullback2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
+	assignNearest(_defender1.robot, available, Geometry2d::Point(-Field_GoalHeight/2.0, 0.0));
+	assignNearest(_defender2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
 
-	_fullback1.run();
-	_fullback2.run();
+	_defender1.run();
+	_defender2.run();
 
 	if(ball().pos.x < 0)
 	{
