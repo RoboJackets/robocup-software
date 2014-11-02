@@ -16,6 +16,7 @@ using namespace boost::python;
 #include <protobuf/LogFrame.pb.h>
 
 #include <boost/python/exception_translator.hpp>
+#include <boost/version.hpp>
 #include <exception>
 
 /**
@@ -42,10 +43,14 @@ void translateException(NullArgumentException const& e)
  * from python was None.  Check for this case so that we don't segfault.
  */
 
+
 //	this is here so boost can work with std::shared_ptr
+//	later versions of boost include this, so we only define it for older versions
+#if BOOST_VERSION < 105300
 template<class T> T * get_pointer( std::shared_ptr<T> const& p) {
 	return p.get();
 }
+#endif
 
 QColor Color_from_tuple(const boost::python::tuple &rgb) {
 	float r = extract<float>(rgb[0]);

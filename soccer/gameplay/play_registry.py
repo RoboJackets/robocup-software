@@ -1,7 +1,8 @@
-from PyQt4 import QtCore, QtGui
+from PyQt5 import QtCore, QtGui
 import logging
 
 
+## Holds references to all Play subclasses and their enabled state
 # The play registry keeps a tree of all plays in the 'plays' folder (and its subfolders)
 # Our old system required programmatically registering plays into categories, but
 # the new system just uses the filesystem hierarchy for this.
@@ -9,6 +10,8 @@ import logging
 # The registry has methods for loading and unloading plays (for when files change on disk)
 #
 # It also tracks which plays are enabled
+#
+# This is a subclass of QAbstractItemModel so that we can easily attach a UI
 class PlayRegistry(QtCore.QAbstractItemModel):
 
     def __init__(self):
@@ -73,7 +76,7 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             self.dataChanged.emit(index, index) # , [QtCore.Qt.DisplayRole]
 
 
-    # returns a list of all plays in the tree that are currently enabled
+    ## Get a list of all plays in the tree that are currently enabled
     def get_enabled_plays_and_scores(self):
         return [(node.play_class, node.last_score) for node in self if node.enabled]
 
@@ -127,6 +130,7 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         return None
 
 
+    ## Categories correspond to filesystem directories
     class Category():
         def __init__(self, parent, name):
             super().__init__()

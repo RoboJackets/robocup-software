@@ -32,10 +32,10 @@ bool Logger::open(QString filename)
 		close();
 	}
 	
-	_fd = creat(filename.toAscii(), 0666);
+	_fd = creat(filename.toLatin1(), 0666);
 	if (_fd < 0)
 	{
-		printf("Can't create %s: %m\n", (const char *)filename.toAscii());
+		printf("Can't create %s: %m\n", (const char *)filename.toLatin1());
 		return false;
 	}
 	

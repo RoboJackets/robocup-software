@@ -6,7 +6,6 @@
 			"path": ".",
 			"folder_exclude_patterns": [
 				"build",
-				"site_scons",
 				"sslrefbox",
 				"downloads",
 				"watchdog",
@@ -24,7 +23,7 @@
 	[
 		{
 			"name": "Soccer - Real",
-			"cmd": ["scons", "-j4"],
+			"cmd": ["make"],
 			"working_dir": "${project_path}",
 			"file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
 			"variants": [
@@ -37,7 +36,7 @@
 		},
 		{
 			"name": "Soccer - Sim",
-			"cmd": ["scons", "-j4"],
+			"cmd": ["make"],
 			"working_dir": "${project_path}",
 			"file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
 			"variants": [

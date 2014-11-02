@@ -96,11 +96,11 @@ TEST(Path, evaluate) {
 	path.points.push_back(p1);
 	path.points.push_back(p2);
 
-	Configuration config;
-	path.createConfiguration(&config);
-
 	Point posOut, velOut;
 	bool pathValid;
+
+	path.maxSpeed = 2;
+	path.maxAcceleration = 2;
 
 	//	path should be invalid and at start state when t < 0
 	pathValid = path.evaluate(-1, posOut, velOut);
