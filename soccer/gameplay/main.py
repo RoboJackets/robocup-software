@@ -9,7 +9,7 @@ import imp
 import sys
 
 
-# soccer is run from the `run` folder, so we provide a relative path to where the python files live
+## soccer is run from the `run` folder, so we provide a relative path to where the python files live
 GAMEPLAY_DIR = '../soccer/gameplay'
 
 
@@ -125,6 +125,7 @@ def init():
     _has_initialized = True
 
 
+## Called ~60times/sec by the C++ GameplayModule
 def run():
     global _has_initialized
     if not _has_initialized:

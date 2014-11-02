@@ -4,6 +4,8 @@ import tactics.defense
 import robocup
 import main
 
+
+## Runs our Defense tactic
 class TestDefense(play.Play):
 
 	def __init__(self):

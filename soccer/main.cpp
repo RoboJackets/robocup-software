@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <malloc.h>
 #include <assert.h>
+#include <signal.h>
 
 #include <QApplication>
 #include <QFile>
@@ -296,7 +297,7 @@ int main (int argc, char* argv[])
 		QString logFile = QString("logs/") + QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss.log");
 		if (!processor->openLog(logFile))
 		{
-			printf("Failed to open %s: %m\n", (const char *)logFile.toAscii());
+			printf("Failed to open %s: %m\n", (const char *)logFile.toLatin1());
 		}
 	}
 

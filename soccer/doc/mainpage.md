@@ -1,8 +1,6 @@
 
 Welcome to the GT RoboJackets RoboCup Documentation Page!
 
-This documentation site is in the processing of getting fleshed out and organized, however this is a lot of useful information here already!
-
 
 # Contributing
 
@@ -15,6 +13,6 @@ If you're new to our codebase, we'd recommend you start by checking out the foll
 
 * Processor
 * Gameplay::GameplayModule
-* Gameplay::Play and Gameplay::Behavior
+* The python Play class
 * SystemState
 * OurRobot

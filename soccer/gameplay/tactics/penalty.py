@@ -7,6 +7,8 @@ import robocup
 import skills
 
 
+## This class is currently not used for anything
+# This was ported from our old C++ gameplay system and served a purpose then, but is unused now
 class Penalty(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     class State(enum.Enum):
@@ -66,7 +68,7 @@ class Penalty(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.remove_subbehavior('kick')
 
 
-    # prefer to get assigned robot closest to ball
+    ## prefer to get assigned robot closest to ball
     def role_requirements(self):
         reqs = super().role_requirements()
         if isinstance(reqs, role_assignment.RoleRequirements):
