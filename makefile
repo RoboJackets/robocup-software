@@ -10,8 +10,11 @@ run-sim: all
 	cd run; ./soccer -sim
 
 # Run both C++ and python unit tests
-tests: all
-	run/run_tests && cd soccer/gameplay && ./run_tests.sh
+tests: test-cpp test-python
+test-cpp: all
+	run/run_tests
+test-python: all
+	cd soccer/gameplay && ./run_tests.sh
 
 clean:
 	rm -rf build
