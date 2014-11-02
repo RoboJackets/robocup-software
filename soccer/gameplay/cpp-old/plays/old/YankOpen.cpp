@@ -39,15 +39,15 @@ void Gameplay::Plays::YankOpen::createConfiguration(Configuration *cfg)
 
 Gameplay::Plays::YankOpen::YankOpen(GameplayModule *gameplay):
 Play(gameplay),
-_leftFullback(gameplay, Behaviors::Fullback::Left),
-_rightFullback(gameplay, Behaviors::Fullback::Right),
+_leftDefender(gameplay, Behaviors::Defender::Left),
+_rightDefender(gameplay, Behaviors::Defender::Right),
 _support(gameplay),
 _strikerBump(gameplay),
 _strikerFling(gameplay),
 _strikerYank(gameplay)
 {
-	_leftFullback.otherFullbacks.insert(&_rightFullback);
-	_rightFullback.otherFullbacks.insert(&_leftFullback);
+	_leftDefender.otherDefenders.insert(&_rightDefender);
+	_rightDefender.otherDefenders.insert(&_leftDefender);
 
 	// use constant value of mark threshold for now
 	_support.markLineThresh(1.0);
@@ -113,8 +113,8 @@ bool Gameplay::Plays::YankOpen::run()
 	bool striker_engaged = _strikerYank.robot && closestDistToStriker < *_support_backoff_thresh;
 
 	// defense after striker  - get closest to goal to choose sides properly
-	assignNearest(_leftFullback.robot, available, Geometry2d::Point(-Field_GoalWidth/2, 0.0));
-	assignNearest(_rightFullback.robot, available, Geometry2d::Point(Field_GoalWidth/2, 0.0));
+	assignNearest(_leftDefender.robot, available, Geometry2d::Point(-Field_GoalWidth/2, 0.0));
+	assignNearest(_rightDefender.robot, available, Geometry2d::Point(Field_GoalWidth/2, 0.0));
 
 	// support last - marginally useful in this scenario
 	assignNearest(_support.robot, available, ballProj);
@@ -180,8 +180,8 @@ bool Gameplay::Plays::YankOpen::run()
 	if (!*_useYank && _strikerBump.robot) _strikerBump.run();
 
 	if (_support.robot) _support.run();
-	if (_leftFullback.robot) _leftFullback.run();
-	if (_rightFullback.robot) _rightFullback.run();
+	if (_leftDefender.robot) _leftDefender.run();
+	if (_rightDefender.robot) _rightDefender.run();
 
 	return true;
 }

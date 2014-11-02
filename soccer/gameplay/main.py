@@ -1,4 +1,3 @@
-import root_play as root_play_module
 import play_registry as play_registry_module
 import play
 import fs_watcher
@@ -27,6 +26,7 @@ def init():
 
     # init root play
     global _root_play
+    import root_play as root_play_module
     _root_play = root_play_module.RootPlay()
 
     # init play registry
@@ -131,10 +131,6 @@ def run():
         raise AssertionError("Error: must call init() before run()")
 
     try:
-        # run double-touch tracker
-        import evaluation.double_touch
-        evaluation.double_touch.update()
-
         if root_play() != None:
             root_play().spin()
     except:

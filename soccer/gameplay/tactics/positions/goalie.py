@@ -8,22 +8,28 @@ import skills
 import main
 import enum
 import math
-
+import evaluation
 
 class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     MaxX = constants.Field.GoalWidth / 2.0
     RobotSegment = robocup.Segment(robocup.Point(-MaxX, constants.Robot.Radius),
                                     robocup.Point(MaxX, constants.Robot.Radius))
+    OpponentFacingThreshold = math.pi / 8.0
 
     class State(enum.Enum):
-        defend = 1          # TODO: clarify difference between block and defend
+        """Normal gameplay, stay towards the side of the goal that the ball is on."""
+        defend = 1
+        """Opponent has a ball and is prepping a shot we should block."""
         block = 2
+        """The ball is moving towards our goal and we should catch it."""
         intercept = 3
-        clear = 4           # kick/chip the ball out if it's in our goal zone
-        setup_penalty = 5   # get in place for a penalty shot
-        chill = 6           # if we can't see the ball, we just sit in the center in front of our goal
-
+        """Get the ball out of our defense area."""
+        clear = 4
+        """Prepare to block the opponent's penalty shot"""
+        setup_penalty = 5
+        """Keep calm and wait for the ball to be valid."""
+        chill = 6
 
     def __init__(self):
         super().__init__(continuous=True)
@@ -53,20 +59,23 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         for state in non_chill_states:
             self.add_transition(state,
                 Goalie.State.setup_penalty,
-                lambda: main.game_state().is_their_penalty() and not main.game_state().playing(),
-                "opponent penalty shot about to happen")
+                lambda: main.game_state().is_their_penalty() and
+                        main.game_state().is_setup(),
+                "setting up for opponent penalty")
 
         for state in [s2 for s2 in non_chill_states if s2 != Goalie.State.intercept]:
             self.add_transition(state,
                 Goalie.State.intercept,
-                lambda: evaluation.ball.is_moving_towards_our_goal(),
+                lambda: evaluation.ball.is_moving_towards_our_goal() and
+                        not self.robot_is_facing_our_goal(evaluation.ball.opponent_with_ball()),
                 "ball coming towards our goal")
 
         for state in [s2 for s2 in non_chill_states if s2 != Goalie.State.clear]:
             self.add_transition(state,
                 Goalie.State.clear,
                 lambda: evaluation.ball.is_in_our_goalie_zone() and
-                        not evaluation.ball.is_moving_towards_our_goal(),
+                        not evaluation.ball.is_moving_towards_our_goal() and
+                        evaluation.ball.opponent_with_ball() is None,
                 "ball in our goalie box, but not headed toward goal")
 
         for state in [s2 for s2 in non_chill_states if s2 != Goalie.State.defend]:
@@ -74,9 +83,29 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                 Goalie.State.defend,
                 lambda: not evaluation.ball.is_in_our_goalie_zone() and
                         not evaluation.ball.is_moving_towards_our_goal() and
-                        evaluation.ball.opponent_with_ball() == None,
+                        not self.robot_is_facing_our_goal(evaluation.ball.opponent_with_ball()),
                 'not much going on')
 
+        for state in [s2 for s2 in non_chill_states if s2 != Goalie.State.block]:
+            self.add_transition(state,
+                Goalie.State.block,
+                lambda: not evaluation.ball.is_in_our_goalie_zone() and
+                        not evaluation.ball.is_moving_towards_our_goal() and
+                        self.robot_is_facing_our_goal(evaluation.ball.opponent_with_ball()),
+                "opponents have possession")
+
+
+    def robot_is_facing_our_goal(self, robot):
+        if robot is None:
+            return False
+        goal_robot = robot.pos - robocup.Point(0,0)
+        angle = goal_robot.normalized().angle() - math.pi
+        robot_angle = robot.angle * math.pi / 180.
+        self.robot.add_text(str(angle - robot_angle), (255,255,255), "OurRobot")
+        if abs(angle - robot_angle) < self.OpponentFacingThreshold:
+            return True
+        else:
+            return False
 
 
     # note that execute_running() gets called BEFORE any of the execute_SUBSTATE methods gets called
@@ -93,7 +122,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def execute_setup_penalty(self):
         pt = Point(0, Field_PenaltyDist)
         penalty_kicker = min(main.opponent_robots(), key=lambda r: (r.pos - pt).mag())
-        angle_rad = penalty_kicker.angle * constants.DegreesToRadians
+        angle_rad = penalty_kicker.angle
         shot_line = Line(penalty_kicker.pos, penalty_kicker.pos + robocup.Point.direction(angle_rad))
 
         dest = shot_line.intersection(Goalie.RobotSegment)
@@ -104,26 +133,6 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
             dest.y = min(Goalie.MaxX - constants.Robot.Radius, dest.x)
         self.robot.move_to(dest)
 
-
-    # The below is the old C++ code ported to python - instead of using this I've (justin) replaced it with the pivot kick behavior
-    # remove this old stuff once we verify that the new behavior works well
-    # def execute_clear(self):
-    #     ball_to_goal = robocup.Segment(main.ball().pos, Point(0, 0))
-    #     closest = ball_to_goal.nearest_point(robot.pos)
-
-    #     if (robot.pos - closest).mag() > 0.10:
-    #         robot.move_to(closest)
-    #     else:
-    #         robot.set_world_vel(main.ball().pos - robot.pos).normalized() * 1.0
-
-    #     robot.dribble(40)
-    #     robot.face(main.ball().pos())
-    #     robot.unkick()
-
-    #     if robot.has_chipper():
-    #         robot.chip(255)
-    #     else:
-    #         robot.kick(255)
 
     def on_enter_clear(self):
         # FIXME: what we really want is a less-precise LineKick
@@ -142,6 +151,9 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         kick.chip_power = constants.Robot.Chipper.MaxPower
         kick.use_chipper = True
 
+        kick.target = robocup.Segment(robocup.Point(-constants.Field.Width/2, constants.Field.Length),
+            robocup.Point(constants.Field.Width/2, constants.Field.Length))
+
         # FIXME: if the goalie has a fault, resort to bump
 
         self.add_subbehavior(kick, 'kick-clear', required=True)
@@ -151,28 +163,36 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.remove_subbehavior('kick-clear')
 
 
+    def on_enter_intercept(self):
+        i = skills.intercept.Intercept()
+        self.add_subbehavior(i, 'intercept', required=True)
+
     def execute_intercept(self):
         ball_path = robocup.Segment(main.ball().pos,
                             main.ball().pos + main.ball().vel.normalized()*10.0)
         dest = ball_path.nearest_point(self.robot.pos)
         self.robot.move_to(dest)
 
+    def on_exit_intercept(self):
+        self.remove_subbehavior('intercept')
 
     def execute_block(self):
-        opposing_kicker = evaluation.opponent_with_ball()
-        shot_line = Line(opposing_kicker.pos, main.ball().pos)
-        block_circle = Circle(Point(0, 0), constants.Field.GoalWidth / 2.0)
-
-        dest = block_circle.intersection(shot_line)
-        if dest != None:
-            self.robot.move_to(dest)
-        else:
-            block_line = Line(Point(-Goalie.MaxX, constants.Robot.Radius),
-                                Point(Goalie.MaxX, constants.Robot.Radius))
-            dest = block_line.intersection(shot_line)
-            dest.x = min(Goalie.MaxX, dest.x)
-            dest.x = max(-Goalie.MaxX, dest.x)
-            self.robot.move_to(dest)
+        opposing_kicker = evaluation.ball.opponent_with_ball()
+        if opposing_kicker is not None:
+            winEval = evaluation.window_evaluator.WindowEvaluator()
+            winEval.excluded_robots = [self.robot]
+            best = winEval.eval_pt_to_our_goal(main.ball().pos)[1]
+            if best is not None:
+                shot_line = robocup.Line(opposing_kicker.pos, main.ball().pos)
+                block_line = robocup.Line(robocup.Point(best.segment.get_pt(0).x - constants.Robot.Radius, constants.Robot.Radius),
+                                    robocup.Point(best.segment.get_pt(1).x + constants.Robot.Radius, constants.Robot.Radius))
+                main.system_state().draw_line(block_line, (255,0,0), "Debug")
+                dest = block_line.line_intersection(shot_line)
+                dest.x = min(Goalie.MaxX, dest.x)
+                dest.x = max(-Goalie.MaxX, dest.x)
+                self.robot.move_to(dest)
+                return
+        self.robot.move_to(robocup.Point(0,constants.Robot.Radius))
 
 
     def execute_defend(self):

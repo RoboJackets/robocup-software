@@ -145,7 +145,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
             self._pass_line = robocup.Line(ball.pos, self.receive_point)
 
         target_angle_rad = (ball.pos - self.robot.pos).angle()
-        angle_rad = self.robot.angle * constants.DegreesToRadians
+        angle_rad = self.robot.angle
         self._angle_error = target_angle_rad - angle_rad
 
 
@@ -195,7 +195,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
 
         # don't use the move_to() command here, we need more precision, less obstacle avoidance
         pos_error = self._target_pos - self.robot.pos
-        vel = pos_error * 3.0
+        vel = pos_error * 3.5
         self.robot.set_world_vel(vel)
 
 
@@ -203,7 +203,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
         # prefer a robot that's already near the receive position
         reqs = super().role_requirements()
         if self.receive_point != None:
-            reqs.pos = self.receive_point
+            reqs.destination_shape = self.receive_point
         return reqs
 
 

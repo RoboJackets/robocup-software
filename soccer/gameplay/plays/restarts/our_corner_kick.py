@@ -26,7 +26,7 @@ class OurCornerKick(play.Play):
 
         self.kicker = skills.line_kick.LineKick()
         # FIXME: settings
-        self.kicker.use_chipper = True
+        # self.kicker.use_chipper = True
         self.kicker.chip_power = OurCornerKick.ChipperPower # TODO: base this on the target dist from the bot
         self.kicker.min_chip_range = OurCornerKick.MinChipRange
         self.kicker.max_chip_range = OurCornerKick.MaxChipRange
@@ -38,27 +38,30 @@ class OurCornerKick(play.Play):
         self.center2 = skills.move.Move()
         self.add_subbehavior(self.center2, 'center2', required=False, priority=3)
 
-
-        fullback1 = tactics.positions.fullback.Fullback(side=tactics.positions.fullback.Fullback.Side.left)
-        self.add_subbehavior(fullback1, 'fullback1', required=False, priority=2)
-
-        fullback2 = tactics.positions.fullback.Fullback(side=tactics.positions.fullback.Fullback.Side.left)
-        self.add_subbehavior(fullback2, 'fullback2', required=False, priority=1)
+        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
 
         self.add_transition(behavior.Behavior.State.running,
             behavior.Behavior.State.completed,
             self.kicker.is_done_running,
             'kicker is done')
 
-    # note: the old C++ version of this play required a chipper
     @classmethod
     def score(cls):
         gs = main.game_state()
 
-        if gs.is_setup_state() and gs.is_our_direct() and  main.ball().pos.y > ( constants.Field.Length - 1.0 ):
+        if gs.is_ready_state() and gs.is_our_direct() and  main.ball().pos.y > ( constants.Field.Length - 1.0 ):
             return 0
         else:
             return float("inf")
+
+    @classmethod
+    def is_restart(cls):
+        return True
+
+    @classmethod
+    def handles_goalie(cls):
+        return True
+
 
     def execute_running(self):
         # setup the kicker target

@@ -5,10 +5,13 @@
 
 #include <QThread>
 #include <QMutex>
+#include <QTime>
 
 #include <vector>
 
 #include <stdint.h>
+#include "GameState.hpp"
+#include "SystemState.hpp"
 
 class QUdpSocket;
 
@@ -110,12 +113,16 @@ public:
 class NewRefereeModule: public QThread
 {
 public:
-	NewRefereeModule();
+	NewRefereeModule(SystemState &state);
 	~NewRefereeModule();
 
 	void stop();
 
 	void getPackets(std::vector<NewRefereePacket *> &packets);
+
+	bool kicked() {
+		return _kickDetectState == Kicked;
+	}
 
 	NewRefereeModuleEnums::Stage stage;
 	NewRefereeModuleEnums::Command command;
@@ -123,6 +130,7 @@ public:
 	// The UNIX timestamp when the packet was sent, in microseconds.
 	// Divide by 1,000,000 to get a time_t.
 	uint64_t sent_time;
+	uint64_t received_time;
 
 	// The number of microseconds left in the stage.
 	// The following stages have this value; the rest do not:
@@ -149,11 +157,36 @@ public:
 	TeamInfo yellow_info;
 	TeamInfo blue_info;
 
+	void updateGameState(bool blueTeam);
+
+	void spinKickWatcher();
+
 protected:
 	virtual void run();
 
 	volatile bool _running;
 
+	void ready();
+
+	typedef enum
+	{
+		WaitForReady,
+		CapturePosition,
+		WaitForKick,
+		VerifyKick,
+		Kicked
+	} KickDetectState;
+	KickDetectState _kickDetectState;
+	
+	Geometry2d::Point _readyBallPos;
+	
+	// Time the ball was first beyond KickThreshold from its original position
+	QTime _kickTime;
+
 	QMutex _mutex;
 	std::vector<NewRefereePacket *> _packets;
+	SystemState &_state;
+
+	NewRefereeModuleEnums::Command prev_command;
+	NewRefereeModuleEnums::Stage prev_stage;
 };

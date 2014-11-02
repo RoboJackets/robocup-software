@@ -2,6 +2,7 @@ import play
 import behavior
 import robocup
 import tactics.line_up
+import tactics.defense
 import main
 
 
@@ -20,8 +21,18 @@ class DefendPenalty(play.Play):
         lineup = tactics.line_up.LineUp(line)
         self.add_subbehavior(lineup, 'lineup')
 
+        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False,)
+
 
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 0.0 if gs.is_their_penalty() and gs.is_setup_state() else float("inf")
+        return 0 if gs.is_their_penalty() and gs.is_setup_state() else float("inf")
+
+    @classmethod
+    def is_restart(cls):
+        return True
+
+    @classmethod
+    def handles_goalie(cls):
+        return True

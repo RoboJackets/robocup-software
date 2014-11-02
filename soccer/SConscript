@@ -57,7 +57,7 @@ e.Append(LIBS=['bfd', 'GLU'])
 e.Append(LIBS=['alglib'])
 
 # python stuff
-e.Append(LIBS=['boost_python-py33'])
+e.Append(LIBS=['boost_python-py34'])
 e.ParseConfig('pkg-config --cflags --libs python3')
 
 e.ParseConfig('pkg-config --cflags --libs libusb-1.0')

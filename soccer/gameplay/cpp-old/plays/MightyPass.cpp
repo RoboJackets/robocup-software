@@ -28,12 +28,12 @@ void Gameplay::Plays::MightyPass::createConfiguration(Configuration *cfg)
 
 Gameplay::Plays::MightyPass::MightyPass(GameplayModule *gameplay):
 	Play(gameplay),
-	_leftFullback(gameplay, Behaviors::Fullback::Left),
-	_rightFullback(gameplay, Behaviors::Fullback::Right),
+	_leftDefender(gameplay, Behaviors::Defender::Left),
+	_rightDefender(gameplay, Behaviors::Defender::Right),
 	_fieldEval(gameplay->state())
 {
-	_leftFullback.otherFullbacks.insert(&_rightFullback);
-	_rightFullback.otherFullbacks.insert(&_leftFullback);
+	_leftDefender.otherDefenders.insert(&_rightDefender);
+	_rightDefender.otherDefenders.insert(&_leftDefender);
 
 	_fieldEval.visualize = true; 
 }
@@ -59,15 +59,15 @@ bool Gameplay::Plays::MightyPass::run()
 	// set<OurRobot *> available = _gameplay->playRobots();
 
 	// // defense first - closest to goal
-	// assignNearest(_leftFullback.robot, available, Geometry2d::Point());
-	// assignNearest(_rightFullback.robot, available, Geometry2d::Point());
+	// assignNearest(_leftDefender.robot, available, Geometry2d::Point());
+	// assignNearest(_rightDefender.robot, available, Geometry2d::Point());
 
 	// // choose offense, we want both robots to attack
 	// assignNearest(_kicker1.robot, available, ball().pos);
 	// assignNearest(_kicker2.robot, available, ball().pos);
 
 	// // additional defense - if it exists
-	// assignNearest(_centerFullback.robot, available, Geometry2d::Point());
+	// assignNearest(_centerDefender.robot, available, Geometry2d::Point());
 
 	// // manually reset any kickers so they keep kicking
 	// // if (_kicker1.done())
@@ -86,10 +86,10 @@ bool Gameplay::Plays::MightyPass::run()
 	// if (_kicker1.robot) _kicker1.run();
 	// if (_kicker2.robot) _kicker2.run();
 
-	// // run standard fullback behavior
-	// if (_leftFullback.robot) _leftFullback.run();
-	// if (_rightFullback.robot) _rightFullback.run();
-	// if (_centerFullback.robot) _centerFullback.run();
+	// // run standard defender behavior
+	// if (_leftDefender.robot) _leftDefender.run();
+	// if (_rightDefender.robot) _rightDefender.run();
+	// if (_centerDefender.robot) _centerDefender.run();
 	
 	// return true;
 }

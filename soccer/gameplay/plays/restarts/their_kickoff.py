@@ -1,8 +1,9 @@
 import play
 import behavior
 import robocup
-import tactics.positions.fullback
+import tactics.positions.defender
 import tactics.circle_near_ball
+import main
 
 
 class TheirKickoff(play.Play):
@@ -16,11 +17,7 @@ class TheirKickoff(play.Play):
             'immediately')
 
 
-        fullback1 = tactics.positions.fullback.Fullback(tactics.positions.fullback.Fullback.Side.left)
-        self.add_subbehavior(fullback1, 'fullback1', priority=102)
-
-        fullback2 = tactics.positions.fullback.Fullback(tactics.positions.fullback.Fullback.Side.right)
-        self.add_subbehavior(fullback2, 'fullback2', priority=101)
+        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
 
         circle_up = tactics.circle_near_ball.CircleNearBall()
         self.add_subbehavior(circle_up, 'circle_up')
@@ -30,3 +27,11 @@ class TheirKickoff(play.Play):
     def score(cls):
         gs = main.game_state()
         return 0 if gs.is_setup_state() and gs.is_their_kickoff() else float("inf")
+
+    @classmethod
+    def is_restart(cls):
+        return True
+
+    @classmethod
+    def handles_goalie(cls):
+        return True

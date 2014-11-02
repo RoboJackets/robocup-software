@@ -11,32 +11,25 @@
 #include <QString>
 #include "Geometry2d/Point.hpp"
 #include "Constants.hpp"
+//#include <iostream>
+#include <math.h>
+using namespace std;
 
-// Adjusts an angle in degrees to fit in [-180, 180].
-static inline float fixAngleDegrees(float a)
-{
-	if (a < -180)
-	{
-		return a + 360;
-	} else if (a > 180)
-	{
-		return a - 360;
-	} else {
-		return a;
-	}
-}
 
+/**
+ * @brief Restricts the given angle to be between pi and -pi
+ * 
+ * @param a An angle in radians
+ * @return An equivalent angle in radians restricted to [-pi, pi]
+ */
 static inline float fixAngleRadians(float a)
 {
-	if (a < -M_PI)
-	{
-		return a + 2 * M_PI;
-	} else if (a > M_PI)
-	{
-		return a - 2 * M_PI;
-	} else {
-		return a;
-	}
+	a= remainder(a, 2*M_PI);
+	//cout<<"angle "<<a<<endl;
+	while (a < -M_PI) a += 2.0*M_PI;
+
+	while (a > M_PI) a -= 2.0*M_PI;
+	return a;
 }
 
 /** Checks whether or not the given ball is in the defense area. */

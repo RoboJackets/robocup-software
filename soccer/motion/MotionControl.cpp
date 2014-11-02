@@ -17,44 +17,16 @@ using namespace Geometry2d;
 
 REGISTER_CONFIGURABLE(MotionControl);
 
-ConfigDouble *MotionControl::_pid_pos_p;
-ConfigDouble *MotionControl::_pid_pos_i;
-ConfigInt    * MotionControl::_pid_pos_i_windup;
-ConfigDouble *MotionControl::_pid_pos_d;
-ConfigDouble *MotionControl::_vel_mult;
-
-ConfigDouble *MotionControl::_pid_angle_p;
-ConfigDouble *MotionControl::_pid_angle_i;
-ConfigDouble *MotionControl::_pid_angle_d;
-ConfigDouble *MotionControl::_angle_vel_mult;
-// ConfigDouble *MotionControl::_max_angle_w;
-
 ConfigDouble *MotionControl::_max_acceleration;
 ConfigDouble *MotionControl::_max_velocity;
 
-ConfigDouble *MotionControl::_path_jitter_compensation_factor;
-
-ConfigDouble *MotionControl::_pivot_vel_multiplier;
+ConfigDouble *MotionControl::_path_change_boost;
 
 void MotionControl::createConfiguration(Configuration *cfg) {
-	_pid_pos_p = new ConfigDouble(cfg, "MotionControl/pos/PID_p", 6.5);
-	_pid_pos_i = new ConfigDouble(cfg, "MotionControl/pos/PID_i", 0.0001);
-	_pid_pos_i_windup = new ConfigInt(cfg, "MotionControl/pos/PID_i_windup", 0);
-	_pid_pos_d = new ConfigDouble(cfg, "MotionControl/pos/PID_d", 2);
-	_vel_mult = new ConfigDouble(cfg, "MotionControl/pos/Velocity Multiplier", 1);
-
-	_pid_angle_p	= new ConfigDouble(cfg, "MotionControl/angle/PID_p", 1);
-	_pid_angle_i	= new ConfigDouble(cfg, "MotionControl/angle/PID_i", 0.00001);
-	_pid_angle_d	= new ConfigDouble(cfg, "MotionControl/angle/PID_d", 0.001);
-	_angle_vel_mult	= new ConfigDouble(cfg, "MotionControl/angle/Velocity Multiplier", 0.5);
-	// _max_angle_w	= new ConfigDouble(cfg, "MotionControl/angle/Max w", 10);
-
 	_max_acceleration	= new ConfigDouble(cfg, "MotionControl/Max Acceleration", 1.5);
 	_max_velocity		= new ConfigDouble(cfg, "MotionControl/Max Velocity", 2.0);
 
-	_path_jitter_compensation_factor = new ConfigDouble(cfg, "MotionControl/PathJitterCompensationFactor", 2.5);
-
-	_pivot_vel_multiplier = new ConfigDouble(cfg, "MotionControl/PivotVelMultiplier", 05);
+	_path_change_boost = new ConfigDouble(cfg, "MotionControl/PathChangeBoost", 0.5);
 }
 
 
@@ -74,17 +46,17 @@ void MotionControl::run() {
 	const MotionConstraints &constraints = _robot->motionConstraints();
 
 	//	update PID parameters
-	_positionXController.kp = *_pid_pos_p;
-	_positionXController.ki = *_pid_pos_i;
-	_positionXController.setWindup(*_pid_pos_i_windup);
-	_positionXController.kd = *_pid_pos_d;
-	_positionYController.kp = *_pid_pos_p;
-	_positionYController.ki = *_pid_pos_i;
-	_positionYController.setWindup(*_pid_pos_i_windup);
-	_positionYController.kd = *_pid_pos_d;
-	_angleController.kp = *_pid_angle_p;
-	_angleController.ki = *_pid_angle_i;
-	_angleController.kd = *_pid_angle_d;
+	_positionXController.kp = *_robot->config->translation.p;
+	_positionXController.ki = *_robot->config->translation.i;
+	_positionXController.setWindup(*_robot->config->translation.i_windup);
+	_positionXController.kd = *_robot->config->translation.d;
+	_positionYController.kp = *_robot->config->translation.p;
+	_positionYController.ki = *_robot->config->translation.i;
+	_positionYController.setWindup(*_robot->config->translation.i_windup);
+	_positionYController.kd = *_robot->config->translation.d;
+	_angleController.kp = *_robot->config->rotation.p;
+	_angleController.ki = *_robot->config->rotation.i;
+	_angleController.kd = *_robot->config->rotation.d;
 
 
 
@@ -97,16 +69,10 @@ void MotionControl::run() {
 	} else if (constraints.faceTarget || constraints.pivotTarget) {
 		const Geometry2d::Point &targetPt = constraints.pivotTarget ? *constraints.pivotTarget : *constraints.faceTarget;
 
-		float targetAngleFinal = (targetPt - _robot->pos).angle() * RadiansToDegrees;
-		float angleError = targetAngleFinal - _robot->angle;
+		//	fixing the angle ensures that we don't go the long way around to get to our final angle
+		float targetAngleFinal = (targetPt - _robot->pos).angle();
+		float angleError = fixAngleRadians(targetAngleFinal - _robot->angle);
 
-		//	don't go the long way around to get to our final angle
-		while (angleError > 180) {
-			angleError -= 360;
-		} 
-		while (angleError < -180) {
-			angleError += 360;
-		}
 
 
 		// float targetW;
@@ -156,12 +122,12 @@ void MotionControl::run() {
 	// handle body velocity for pivot command
 	if (constraints.pivotTarget) {
 		float r = Robot_Radius;
-		const float FudgeFactor = *_pivot_vel_multiplier;
+		const float FudgeFactor = *_robot->config->pivotVelMultiplier;
 		float speed = r * targetW * RadiansToDegrees * FudgeFactor;
 		Point vel(speed, 0);
 
 		//	the robot body coordinate system is wierd...
-		vel.rotate(-90);
+		vel.rotate(-M_PI_2);
 
 		_targetBodyVel(vel);
 
@@ -200,8 +166,15 @@ void MotionControl::run() {
 
 		//	the 0.9 is a fudge factor
 		//	we do this to compensate for lost command cycles
-		double factor = *_path_jitter_compensation_factor;
-		timeIntoPath += _robot->consecutivePathChangeCount() * 1.0f/60.0f * factor;
+		// double factor = *_path_jitter_compensation_factor;
+		// timeIntoPath += _robot->consecutivePathChangeCount() * 1.0f/60.0f * factor;
+		// cout << "------" << endl;
+		// cout << "path.startSpeed: " << _robot->path()->startSpeed << endl;
+		// cout << "botVel: (" << _robot->vel.x << ", " << _robot->vel.x << ")" << endl;
+		// cout << "timeIntoPath: " << timeIntoPath << endl;
+
+
+
 
 
 		//	evaluate path - where should we be right now?
@@ -217,14 +190,36 @@ void MotionControl::run() {
 		//	tracking error
 		Point posError = targetPos - _robot->pos;
 
+		//	acceleration factor
+		Point nextTargetVel, _;
+		_robot->path()->evaluate(timeIntoPath + 1.0/60.0, _, nextTargetVel);
+		Point acceleration = (nextTargetVel - targetVel) / 60.0f;
+		Point accelFactor = acceleration * 60.0f * (*_robot->config->accelerationMultiplier);
+
+
+		// cout << "accelFactor: (" << accelFactor.x << ", " << accelFactor.y << ")" << endl;
+
+		targetVel += accelFactor;
+
+		//	path change boost
+		if (_robot->consecutivePathChangeCount() > 0) {
+			float boost = *_path_change_boost;
+			targetVel += acceleration * boost;
+		}
+
 		//	PID on position
+		//cout<<targetVel.x <<endl;
+	
+		//cout<<posError.x;
 		targetVel.x += _positionXController.run(posError.x);
 		targetVel.y += _positionYController.run(posError.y);
-
+		//cout<<targetVel.x ;
 		//	draw target pt
 		_robot->state()->drawCircle(targetPos, .04, Qt::red, "MotionControl");
 		_robot->state()->drawLine(targetPos, targetPos + targetVel, Qt::blue, "velocity");
 		_robot->state()->drawText(QString("%1").arg(timeIntoPath), targetPos, Qt::black, "time");
+
+		// cout << "targetVel: (" << targetVel.x << ", " << targetVel.y << ")" << endl;
 
 		//	convert from world to body coordinates
 		targetVel = targetVel.rotated(-_robot->angle);
@@ -240,9 +235,10 @@ void MotionControl::stopped() {
 
 void MotionControl::_targetAngleVel(float angleVel) {
 	//	velocity multiplier
-	angleVel *= *_angle_vel_mult;
+	angleVel *= *_robot->config->angleVelMultiplier;
 
-	_robot->radioTx.set_body_w(angleVel);
+	//	the robot firmware still speaks degrees, so that's how we send it over
+	_robot->radioTx.set_body_w(angleVel * RadiansToDegrees);
 }
 
 void MotionControl::_targetBodyVel(Point targetVel) {
@@ -270,7 +266,7 @@ void MotionControl::_targetBodyVel(Point targetVel) {
 	_lastCmdTime = timestamp();
 
 	//	velocity multiplier
-	targetVel *= *_vel_mult;
+	targetVel *= *_robot->config->velMultiplier;
 
 	//	set radioTx values
 	_robot->radioTx.set_body_x(targetVel.x);

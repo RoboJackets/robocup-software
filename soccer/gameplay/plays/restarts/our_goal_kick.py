@@ -4,6 +4,7 @@ import robocup
 import skills
 import tactics
 import constants
+import main
 
 
 # sends a goal kick towards the goal if it's open
@@ -29,7 +30,7 @@ class OurGoalKick(play.Play):
 
 
         kicker = skills.line_kick.LineKick()
-        kicker.use_chipper = True
+        # kicker.use_chipper = True
         kicker.kick_power = OurGoalKick.KickerPower
         kicker.chip_power = OurGoalKick.ChipperPower
         self.add_subbehavior(kicker, 'kicker', required=True, priority=6)
@@ -42,18 +43,22 @@ class OurGoalKick(play.Play):
         self.add_subbehavior(center2, 'center2', required=False, priority=4)
 
 
-        fullback1 = tactics.positions.fullback.Fullback(side=tactics.positions.fullback.Fullback.Side.left)
-        self.add_subbehavior(fullback1, 'fullback1', required=False, priority=3)
-        
-        fullback1 = tactics.positions.fullback.Fullback(side=tactics.positions.fullback.Fullback.Side.right)
-        self.add_subbehavior(fullback1, 'fullback2', required=False, priority=2)
+        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
 
 
 
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 0 if (gs.is_setup_state() and gs.is_our_direct() and main.ball().pos.y < 1.0) else float("inf")
+        return 0 if (gs.is_ready_state() and gs.is_our_direct() and main.ball().pos.y < 1.0) else float("inf")
+
+    @classmethod
+    def is_restart(cls):
+        return True
+
+    @classmethod
+    def handles_goalie(cls):
+        return True
 
 
     def execute_running(self):

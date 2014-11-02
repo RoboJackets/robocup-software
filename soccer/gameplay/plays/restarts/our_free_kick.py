@@ -2,7 +2,7 @@ import play
 import behavior
 import skills.move
 import skills.pivot_kick
-import tactics.positions.fullback
+import tactics.defense
 import constants
 import robocup
 import main
@@ -21,7 +21,10 @@ class OurFreeKick(play.Play):
 
         # FIXME: this could also be a PivotKick
         kicker = skills.line_kick.LineKick()
-        kicker.use_chipper = True
+        # kicker.use_chipper = True
+        kicker.min_chip_range = 0.3
+        kicker.max_chip_range = 3.0
+        kicker.target = constants.Field.TheirGoalSegment
         self.add_subbehavior(kicker, 'kicker', required=False, priority=5)
 
 
@@ -31,11 +34,7 @@ class OurFreeKick(play.Play):
         center2 = skills.move.Move(robocup.Point(0, 1.5))
         self.add_subbehavior(center1, 'center2', required=False, priority=3)
 
-        fullback1 = tactics.positions.fullback.Fullback(side=tactics.positions.fullback.Fullback.Side.left)
-        self.add_subbehavior(fullback1, 'fullback1', required=False, priority=2)
-
-        fullback2 = tactics.positions.fullback.Fullback(side=tactics.positions.fullback.Fullback.Side.left)
-        self.add_subbehavior(fullback2, 'fullback2', required=False, priority=1)
+        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
 
         self.add_transition(behavior.Behavior.State.running,
             behavior.Behavior.State.completed,
@@ -47,18 +46,14 @@ class OurFreeKick(play.Play):
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 10 if gs.is_setup_state() and gs.is_our_free_kick() else float("inf")
+        return 0 if gs.is_ready_state() and gs.is_our_free_kick() else float("inf")
 
+    @classmethod
+    def is_restart(cls):
+        return True
 
-
-    def run(self):
-        # TODO: set kicker's minchiprange(0.3) and maxchiprange(2)
-        # TODO: set kicker's goal
-        #        prev implementation set it to goal line, right downfield, or left downfield
-
-        kicker = self.subbehavior_with_name('kicker')
-        if kicker.robot != None and kicker.robot.pos.near_point(main.ball().pos, 0.3):
-            pass
-            # FIXME: add shot channel obstacle for the other robots
+    @classmethod
+    def handles_goalie(cls):
+        return True
 
     

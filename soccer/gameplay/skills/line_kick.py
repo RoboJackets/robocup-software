@@ -4,6 +4,7 @@ import constants
 import robocup
 import enum
 import main
+import role_assignment
 
 
 # lines up with the ball and the target, then drives up and kicks
@@ -15,14 +16,13 @@ class LineKick(skills._kick._Kick):
     DriveAroundDist = 0.15
     ChargeThresh = 0.1
     EscapeChargeThresh = 0.1
-    SetupBallAvoid = 0.08
+    SetupBallAvoid = 0.15
     AccelBias = 0.2
     FacingThresh = 10   # angle in degrees
     MaxChargeSpeed = 1.5
     BallProjectTime = 0.4
     DoneStateThresh = 0.11
-    WrongSideOfBallThresh = 0.1
-
+    ClosenessThreshold = constants.Robot.Radius + 0.04
 
     class State(enum.Enum):
         setup = 1
@@ -31,6 +31,8 @@ class LineKick(skills._kick._Kick):
 
     def __init__(self):
         super().__init__()
+
+        self._got_close = False
 
         for state in LineKick.State:
             self.add_state(state, behavior.Behavior.State.running)
@@ -42,22 +44,22 @@ class LineKick(skills._kick._Kick):
 
         self.add_transition(LineKick.State.setup,
             LineKick.State.charge,
-            lambda: ( not self.robot_is_between_ball_and_target() ) and self._target_line.dist_to(self.robot.pos) < self.ChargeThresh,
+            lambda: ( not self.robot_is_between_ball_and_target() ) and self._target_line.dist_to(self.robot.pos) < self.ChargeThresh and not self.robot.just_kicked(),
             "robot on line")
 
         self.add_transition(LineKick.State.charge,
             behavior.Behavior.State.completed,
-            lambda: self.robot is not None and self.robot.just_kicked(),
+            lambda: self.robot is not None and self._got_close and self.robot.just_kicked(),
             "robot kicked")
 
         self.add_transition(LineKick.State.charge,
             LineKick.State.setup,
-            self.robot_is_between_ball_and_target,
+            lambda: self.robot_is_between_ball_and_target() or self._target_line.dist_to(self.robot.pos) > self.ChargeThresh,
             "robot between ball and target")
 
     def robot_is_between_ball_and_target(self):
         return self.robot is not None and \
-            robocup.Segment(main.ball().pos, self.aim_target_point).dist_to(self.robot.pos) < self.WrongSideOfBallThresh
+            self.robot.pos.dist_to(self.aim_target_point) < main.ball().pos.dist_to(self.aim_target_point)
 
     def recalculate(self):
         self._target_line = robocup.Line(main.ball().pos, self.aim_target_point)
@@ -69,15 +71,16 @@ class LineKick(skills._kick._Kick):
 
     def execute_running(self):
         self.recalculate()
+        super().execute_running()
 
 
     def execute_setup(self):
         move_goal = main.ball().pos - self._target_line.delta().normalized() * (LineKick.DriveAroundDist + constants.Robot.Radius)
 
-        left_field_edge = robocup.Segment(robocup.Point(-constants.Field.Width / 2.0, 0),
-            robocup.Point(-constants.Field.Width / 2.0, constants.Field.Length))
-        right_field_edge = robocup.Segment(robocup.Point(constants.Field.Width / 2.0, 0),
-            robocup.Point(constants.Field.Width / 2.0, constants.Field.Length))
+        left_field_edge = robocup.Segment(robocup.Point(-constants.Field.Width / 2.0 - constants.Robot.Radius, 0),
+            robocup.Point(-constants.Field.Width / 2.0 - constants.Robot.Radius, constants.Field.Length))
+        right_field_edge = robocup.Segment(robocup.Point(constants.Field.Width / 2.0 + constants.Robot.Radius, 0),
+            robocup.Point(constants.Field.Width / 2.0 + constants.Robot.Radius, constants.Field.Length))
 
         # handle the case when the ball is near the field's edge
         field_edge_thresh = 0.3
@@ -107,8 +110,23 @@ class LineKick(skills._kick._Kick):
         self.robot.set_world_vel(robot2ball.normalized() * speed)
         
         self.robot.face(self.aim_target_point)
+        
+        if main.ball().pos.dist_to(self.robot.pos) < LineKick.ClosenessThreshold:
+            self._got_close = True
 
+        if self._got_close:
+            if self.use_chipper:
+                self.robot.chip(self.chip_power)
+            else:
+                self.robot.kick(self.kick_power)
+
+
+    def role_requirements(self):
+        reqs = super().role_requirements()
+        # try to be near the ball
+        if main.ball().valid:
+            reqs.destination_shape = main.ball().pos
+        reqs.require_kicking = True
         if self.use_chipper:
-            self.robot.chip(self.chip_power)
-        else:
-            self.kick(self.kick_power)
+            reqs.chipper_preference_weight = role_assignment.PreferChipper
+        return reqs

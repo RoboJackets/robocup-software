@@ -12,7 +12,8 @@
 				"watchdog",
 				"firmware/external",
 				"api_docs",
-				"__pycache__"
+				"__pycache__",
+				"soccer/gameplay/cpp-old"
 			],
 			"file_exclude_patterns": [
 				".*"

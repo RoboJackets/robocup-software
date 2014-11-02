@@ -1,7 +1,6 @@
 
 #include <gameplay/GameplayModule.hpp>
 #include "Processor.hpp"
-#include "VisionReceiver.hpp"
 #include "radio/SimRadio.hpp"
 #include "radio/USBRadio.hpp"
 #include "modeling/BallTracker.hpp"
@@ -75,9 +74,10 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive)
 	QMetaObject::connectSlotsByName(this);
 
 	_ballTracker = std::make_shared<BallTracker>();
-	_refereeModule = std::make_shared<NewRefereeModule>();
+	_refereeModule = std::make_shared<NewRefereeModule>(_state);
 	_refereeModule->start();
 	_gameplayModule = std::make_shared<Gameplay::GameplayModule>(&_state);
+	vision.simulation = _simulation;
 }
 
 Processor::~Processor()
@@ -158,13 +158,17 @@ bool Processor::joystickValid()
 	return _joystick->valid();
 }
 
+JoystickControlValues Processor::joystickControlValues() {
+	return _joystick->getJoystickControlValues();
+}
+
 void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFrames)
 {
 	vector<BallObservation> ballObservations;
 	
 	BOOST_FOREACH(const SSL_DetectionFrame* frame, detectionFrames)
 	{
-		uint64_t time = frame->t_capture() * 1000000;
+		uint64_t time = frame->t_capture() * SecsToTimestamp;
 		
 		// Add ball observations
 		ballObservations.reserve(ballObservations.size() + frame->balls().size());
@@ -177,8 +181,8 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 		const RepeatedPtrField<SSL_DetectionRobot> &selfRobots = _blueTeam ? frame->robots_blue() : frame->robots_yellow();
 		BOOST_FOREACH(const SSL_DetectionRobot &robot, selfRobots)
 		{
-			float angle = fixAngleDegrees(robot.orientation() * RadiansToDegrees + _teamAngle);
-			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angle, time, frame->frame_number());
+			float angleRad = fixAngleRadians(robot.orientation() + _teamAngle);
+			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angleRad, time, frame->frame_number());
 			obs.source = frame->camera_id();
 			unsigned int id = robot.robot_id();
 			if (id < _state.self.size())
@@ -190,8 +194,8 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 		const RepeatedPtrField<SSL_DetectionRobot> &oppRobots = _blueTeam ? frame->robots_yellow() : frame->robots_blue();
 		BOOST_FOREACH(const SSL_DetectionRobot &robot, oppRobots)
 		{
-			float angle = fixAngleDegrees(robot.orientation() * RadiansToDegrees + _teamAngle);
-			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angle, time, frame->frame_number());
+			float angleRad = fixAngleRadians(robot.orientation() + _teamAngle);
+			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angleRad, time, frame->frame_number());
 			obs.source = frame->camera_id();
 			unsigned int id = robot.robot_id();
 			if (id < _state.opp.size())
@@ -218,7 +222,6 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
  */
 void Processor::run()
 {
-	VisionReceiver vision(_simulation);
 	vision.start();
 
     // Create radio socket
@@ -373,119 +376,9 @@ void Processor::run()
 		
 		runModels(detectionFrames);
 
-		_state.gameState.ourScore = blueTeam() ? _refereeModule->blue_info.score : _refereeModule->yellow_info.score;
-		_state.gameState.theirScore = blueTeam() ? _refereeModule->yellow_info.score : _refereeModule->blue_info.score;
-		using namespace NewRefereeModuleEnums;
-		switch(_refereeModule->stage)
-		{
-		case Stage::NORMAL_FIRST_HALF_PRE:
-			_state.gameState.period = GameState::FirstHalf;
-			break;
-		case Stage::NORMAL_FIRST_HALF:
-			_state.gameState.period = GameState::FirstHalf;
-			break;
-		case Stage::NORMAL_HALF_TIME:
-			_state.gameState.period = GameState::Halftime;
-			break;
-		case Stage::NORMAL_SECOND_HALF_PRE:
-			_state.gameState.period = GameState::SecondHalf;
-			break;
-		case Stage::NORMAL_SECOND_HALF:
-			_state.gameState.period = GameState::SecondHalf;
-			break;
-		case Stage::EXTRA_TIME_BREAK:
-			_state.gameState.period = GameState::FirstHalf;
-			break;
-		case Stage::EXTRA_FIRST_HALF_PRE:
-			_state.gameState.period = GameState::Overtime1;
-			break;
-		case Stage::EXTRA_FIRST_HALF:
-			_state.gameState.period = GameState::Overtime1;
-			break;
-		case Stage::EXTRA_HALF_TIME:
-			_state.gameState.period = GameState::Halftime;
-			break;
-		case Stage::EXTRA_SECOND_HALF_PRE:
-			_state.gameState.period = GameState::Overtime2;
-			break;
-		case Stage::EXTRA_SECOND_HALF:
-			_state.gameState.period = GameState::Overtime2;
-			break;
-		case Stage::PENALTY_SHOOTOUT_BREAK:
-			_state.gameState.period = GameState::PenaltyShootout;
-			break;
-		case Stage::PENALTY_SHOOTOUT:
-			_state.gameState.period = GameState::PenaltyShootout;
-			break;
-		case Stage::POST_GAME:
-			_state.gameState.period = GameState::Overtime2;
-			break;
-		}
-		switch(_refereeModule->command)
-		{
-		case Command::HALT:
-			_state.gameState.state = GameState::Halt;
-			break;
-		case Command::STOP:
-			_state.gameState.state = GameState::Stop;
-			break;
-		case Command::NORMAL_START:
-			_state.gameState.state = GameState::Ready;
-			break;
-		case Command::FORCE_START:
-			_state.gameState.state = GameState::Playing;
-			break;
-		case Command::PREPARE_KICKOFF_YELLOW:
-			_state.gameState.state = GameState::Setup;
-			_state.gameState.restart = GameState::Kickoff;
-			_state.gameState.ourRestart = !blueTeam();
-			break;
-		case Command::PREPARE_KICKOFF_BLUE:
-			_state.gameState.state = GameState::Setup;
-			_state.gameState.restart = GameState::Kickoff;
-			_state.gameState.ourRestart = blueTeam();
-			break;
-		case Command::PREPARE_PENALTY_YELLOW:
-			_state.gameState.state = GameState::Setup;
-			_state.gameState.restart = GameState::Penalty;
-			_state.gameState.ourRestart = !blueTeam();
-			break;
-		case Command::PREPARE_PENALTY_BLUE:
-			_state.gameState.state = GameState::Setup;
-			_state.gameState.restart = GameState::Penalty;
-			_state.gameState.ourRestart = blueTeam();
-			break;
-		case Command::DIRECT_FREE_YELLOW:
-			_state.gameState.state = GameState::Setup;
-			_state.gameState.restart = GameState::Direct;
-			_state.gameState.ourRestart = !blueTeam();
-			break;
-		case Command::DIRECT_FREE_BLUE:
-			_state.gameState.state = GameState::Setup;
-			_state.gameState.restart = GameState::Direct;
-			_state.gameState.ourRestart = blueTeam();
-			break;
-		case Command::INDIRECT_FREE_YELLOW:
-			_state.gameState.state = GameState::Setup;
-			_state.gameState.restart = GameState::Indirect;
-			_state.gameState.ourRestart = !blueTeam();
-			break;
-		case Command::INDIRECT_FREE_BLUE:
-			_state.gameState.state = GameState::Setup;
-			_state.gameState.restart = GameState::Indirect;
-			_state.gameState.ourRestart = blueTeam();
-			break;
-		case Command::TIMEOUT_YELLOW:
-			_state.gameState.state = GameState::Halt;
-			break;
-		case Command::TIMEOUT_BLUE:
-			_state.gameState.state = GameState::Halt;
-			break;
-		case Command::GOAL_YELLOW:
-			break;
-		case Command::GOAL_BLUE:
-			break;
-		}
+		// Update gamestate w/ referee data
+		_refereeModule->updateGameState(blueTeam());
+		_refereeModule->spinKickWatcher();
 		
 		if (_gameplayModule)
 		{
@@ -688,11 +581,24 @@ void Processor::defendPlusX(bool value)
 
 	if (_defendPlusX)
 	{
-		_teamAngle = -90;
+		_teamAngle = -M_PI_2;
 	} else {
-		_teamAngle = 90;
+		_teamAngle = M_PI_2;
 	}
 
 	_worldToTeam = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Length / 2.0f));
 	_worldToTeam *= Geometry2d::TransformMatrix::rotate(_teamAngle);
+}
+
+void Processor::changeVisionChannel(int port)
+{
+	_loopMutex.lock();
+
+	vision.stop();
+
+	vision.simulation = _simulation;
+	vision.port = port;
+	vision.start();
+
+	_loopMutex.unlock();
 }

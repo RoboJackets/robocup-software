@@ -7,6 +7,14 @@
 #include <stdexcept>
 #include <stdint.h>
 #include <vector>
+
+
+
+struct JoystickControlValues {
+	double bodyX, bodyY, bodyW, kickPower, dribblerPower;
+	bool kick, chip, dribble;
+};
+
 /**
  * this is the class for the joystick control of the robots
  */
@@ -24,6 +32,7 @@ class Joystick: boost::noncopyable
 		void reset();
 		void update();
 		void drive(Packet::RadioTx::Robot *tx);
+		JoystickControlValues getJoystickControlValues();
 
 		void dampedRotation(bool value);
 		void dampedTranslation(bool value);

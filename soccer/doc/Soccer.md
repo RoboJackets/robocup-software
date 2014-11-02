@@ -17,6 +17,9 @@ $ ./soccer -sim
 ~~~~~~~~~~~~~~~
 
 
+In the simulator, you can move the robots and ball around by clicking and dragging.  The ball can also be given a velocity by right-clicking and dragging on it.
+
+
 ## Running with real robots
 
 Start soccer:

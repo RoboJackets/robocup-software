@@ -13,14 +13,13 @@
 #include <stdexcept>
 #include <boost/foreach.hpp>
 #include <QString>
+#include <cmath>
 
 using namespace std;
 using namespace Geometry2d;
 
 /** thresholds for avoidance of opponents - either a normal (large) or an approach (small)*/
 const float Opp_Avoid_Small = Robot_Radius - 0.03;
-/** thresholds for avoidance of opponents - either a normal (large) or an approach (small)*/
-const float Opp_Avoid_Large = Robot_Radius - 0.01;
 /** threshold for avoiding the ball*/
 const float Ball_Avoid_Small = 2.0 * Ball_Radius;
 /**
@@ -55,6 +54,18 @@ Robot::~Robot()
 
 
 #pragma mark OurRobot
+
+REGISTER_CONFIGURABLE(OurRobot)
+
+ConfigDouble *OurRobot::_selfAvoidRadius;
+ConfigDouble *OurRobot::_oppAvoidRadius;
+ConfigDouble *OurRobot::_oppGoalieAvoidRadius;
+
+void OurRobot::createConfiguration(Configuration *cfg) {
+	_selfAvoidRadius = new ConfigDouble(cfg, "PathPlanner/selfAvoidRadius", Robot_Radius);
+	_oppAvoidRadius = new ConfigDouble(cfg, "PathPlanner/oppAvoidRadius", Robot_Radius - 0.01);
+	_oppGoalieAvoidRadius = new ConfigDouble(cfg, "PathPlanner/oppGoalieAvoidRadius", Robot_Radius + 0.05);
+}
 
 OurRobot::OurRobot(int shell, SystemState *state):
 	Robot(shell, true),
@@ -303,7 +314,8 @@ float OurRobot::kickTimer() const {
 
 void OurRobot::dribble(uint8_t speed)
 {
-	radioTx.set_dribbler(speed);
+	uint8_t scaled = *config->dribbler.multiplier * speed;
+	radioTx.set_dribbler(scaled);
 
 	*_cmdText << "dribble(" << (float)speed << ")\n";
 }
@@ -347,6 +359,19 @@ void OurRobot::_kick(uint8_t strength) {
 
 void OurRobot::_chip(uint8_t strength) {
 	uint8_t max = *config->kicker.maxChip;
+	// TODO make sure we're not about to chip over the middle line.
+	Segment robot_face_line = Segment(pos, pos + 10*Point::direction(angle * M_PI / 180.));
+	Segment mid_field_line = Segment(Point(-Field_Width/2,Field_Length/2), Point(Field_Width/2,Field_Length/2));
+	Point intersection;
+	if(robot_face_line.intersects(mid_field_line, &intersection))
+	{
+		float dist = intersection.distTo(pos);
+		int power = min(strength, chipPowerForDistance(dist));
+		if(power == 0)
+			_kick(strength);
+		else
+			strength = power;
+	}
 	radioTx.set_kick(strength > max ? max : strength);
 	radioTx.set_use_chipper(true);
 }
@@ -375,19 +400,18 @@ void OurRobot::kickImmediately(bool im)
 
 void OurRobot::resetAvoidRobotRadii() {
 	for (size_t i = 0; i < Num_Shells; ++i) {
-		// TODO move thresholds elsewhere
-		_self_avoid_mask[i] = (i != (size_t) shell()) ? Robot_Radius : -1.0;
-		_opp_avoid_mask[i] = Opp_Avoid_Large;
+		_self_avoid_mask[i] = (i != (size_t) shell()) ? *_selfAvoidRadius : -1.0;
+		_opp_avoid_mask[i] = (i == state()->gameState.TheirInfo.goalie) ? *_oppGoalieAvoidRadius : *_oppAvoidRadius;
 	}
 }
 
 void OurRobot::approachAllOpponents(bool enable) {
 	BOOST_FOREACH(float &ar, _opp_avoid_mask)
-		ar = (enable) ?  Opp_Avoid_Small : Opp_Avoid_Large;
+		ar = (enable) ?  Opp_Avoid_Small : *_oppAvoidRadius;
 }
 void OurRobot::avoidAllOpponents(bool enable) {
 	BOOST_FOREACH(float &ar, _opp_avoid_mask)
-		ar = (enable) ?  -1.0 : Opp_Avoid_Large;
+		ar = (enable) ?  -1.0 : *_oppAvoidRadius;
 }
 
 bool OurRobot::avoidOpponent(unsigned shell_id) const {
@@ -404,7 +428,7 @@ float OurRobot::avoidOpponentRadius(unsigned shell_id) const {
 
 void OurRobot::avoidOpponent(unsigned shell_id, bool enable_avoid) {
 	if (enable_avoid)
-		_opp_avoid_mask[shell_id] = Opp_Avoid_Large;
+		_opp_avoid_mask[shell_id] = *_oppAvoidRadius;
 	else
 		_opp_avoid_mask[shell_id] = -1.0;
 }
@@ -413,7 +437,7 @@ void OurRobot::approachOpponent(unsigned shell_id, bool enable_approach) {
 	if (enable_approach)
 		_opp_avoid_mask[shell_id] = Opp_Avoid_Small;
 	else
-		_opp_avoid_mask[shell_id] = Opp_Avoid_Large;
+		_opp_avoid_mask[shell_id] = *_oppAvoidRadius;
 }
 
 void OurRobot::avoidOpponentRadius(unsigned shell_id, float radius) {
@@ -545,9 +569,12 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 	// create and visualize obstacles
 	Geometry2d::CompositeShape full_obstacles(_local_obstacles);
+	//Add's our robots as obstacles only if they're within a certain distance from our robot.
+	//This distance increases with velocity.
 	Geometry2d::CompositeShape
-		self_obs = createRobotObstacles(_state->self, _self_avoid_mask),
+		self_obs = createRobotObstacles(_state->self, _self_avoid_mask, this->pos, 0.6 + this->vel.mag()),
 		opp_obs = createRobotObstacles(_state->opp, _opp_avoid_mask);
+
 	_state->drawCompositeShape(self_obs, Qt::gray, QString("self_obstacles_%1").arg(shell()));
 	_state->drawCompositeShape(opp_obs, Qt::gray, QString("opp_obstacles_%1").arg(shell()));
 	if (_state->ball.valid)
@@ -573,18 +600,19 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	Geometry2d::Point dest = *_motionConstraints.targetPos;
 
 	// //	if this number of microseconds passes since our last path plan, we automatically replan
-	// const uint64_t kPathExpirationInterval = 1.5 * SecsToTimestamp;
-	// if ((timestamp() - _pathStartTime) > kPathExpirationInterval) {
-	// 	_pathInvalidated = true;
-	// }
+	const uint64_t kPathExpirationInterval = 10 * SecsToTimestamp;
+	if ((timestamp() - _pathStartTime) > kPathExpirationInterval) {
+		_pathInvalidated = true;
+	}
 
 	if (!_path) {
+		addText("hwat");
 		_pathInvalidated = true;
 	}
 
 
 	Planning::Path newlyPlannedPath;
-	_planner->run(pos, angle, vel, *_motionConstraints.targetPos, &full_obstacles, newlyPlannedPath);
+	_planner->run(pos, angle, vel, _motionConstraints, &full_obstacles, newlyPlannedPath);
 
 	//	invalidate path if it hits obstacles
 	//	TODO: it would be better to compare WHICH obstacles the old and new paths hit rather than just looking at IF they hit obstacles
@@ -594,14 +622,21 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 	//  invalidate path if current position is more than 15cm from the planned point
 	if (_path) {
-		float maxDist = 0.30;
+		_state->drawPath(*_path, Qt::magenta);
+
+		float maxDist = .6;
 		Point targetPathPos;
 		Point targetVel;
-		float timeIntoPath = ((float)(timestamp() - _pathStartTime)) * TimestampToSecs;
+		float timeIntoPath = ((float)(timestamp() - _pathStartTime)) * TimestampToSecs + 1.0/60.0;
 		_path->evaluate(timeIntoPath, targetPathPos, targetVel);
 		float pathError = (targetPathPos - pos).mag();
+		//state()->drawCircle(targetPathPos, maxDist, Qt::green, "MotionControl");
+		addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
+		addText(QString("%1").arg(pathError));
 		if (pathError > maxDist) {
 			_pathInvalidated = true;
+			addText("pathError");
+			//addText(pathError); 
 		}
 	}
 	
@@ -609,11 +644,11 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	//	if the destination of the current path is greater than X m away from the target destination,
 	//	we invalidate the path.  this situation could arise if during a previous planning, the target point
 	//	was blocked by an obstacle
-	if (_path && (_path->points.back() - dest).mag() > 0.005) {
+	if (_path && (_path->points.back() - dest).mag() > 0.025) {
 		_pathInvalidated = true;
 	}
 
-
+	/*
 	//	try a straight path EVERY time
 	if (_path && _path->points.size() > 2) {
 		//	try a straight line path first
@@ -625,7 +660,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 			_pathInvalidated = false;
 		}
 	}
-
+	*/
 	
 
 
@@ -636,19 +671,20 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		// 	cout << "\t(" << itr.x << ", " << itr.y << ")" << endl;
 		// }
 	} else {
+		addText("Replanning");
 		// use the newly generated path
 		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: using new RRT path" << std::endl;
 		
 		//	try a straight line path first
-		Geometry2d::Segment straight_seg(pos, *_motionConstraints.targetPos);
-		if (!full_obstacles.hit(straight_seg)) {
-			addText(QString("planner: straight_line"));
-			Planning::Path straightLine(pos, *_motionConstraints.targetPos);
-			setPath(straightLine);
-		} else {
+	//	Geometry2d::Segment straight_seg(pos, *_motionConstraints.targetPos);
+	//	if (!full_obstacles.hit(straight_seg)) {
+	//		addText(QString("planner: straight_line"));
+	//		Planning::Path straightLine(pos, *_motionConstraints.targetPos);
+	//		setPath(straightLine);
+	//	} else {
 			//	rrt-planned path
 			setPath(newlyPlannedPath);
-		}
+	//	}
 	}
 
 
@@ -656,8 +692,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	_path->endSpeed = _motionConstraints.endSpeed;
 	_path->maxAcceleration = _motionConstraints.maxAcceleration;
 
-	_state->drawPath(*_path, Qt::magenta);
-
+	
 	_pathChangeHistory.push_back(_didSetPathThisIteration);
 
 	return;
@@ -760,4 +795,17 @@ void OurRobot::radioRxUpdated() {
 		_lastKickTime = timestamp();
 	}
 	_lastKickerStatus = _radioRx.kicker_status();
+}
+
+double OurRobot::distanceToChipLanding(int chipPower) {
+	return max(0., min(190., *(config->chipper.calibrationSlope) * chipPower + *(config->chipper.calibrationOffset)));
+}
+
+uint8_t OurRobot::chipPowerForDistance(double distance) {
+	double b = *(config->chipper.calibrationOffset) / 2.;
+	if(distance < b)
+		return 0;
+	if(distance > distanceToChipLanding(255))
+		return 255;
+	return 0.5 * distance + b;
 }

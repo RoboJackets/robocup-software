@@ -7,7 +7,7 @@ namespace Gameplay
 {
 	namespace Behaviors
 	{
-		class Fullback: public Behavior
+		class Defender: public Behavior
 		{
 			public:
 				static void createConfiguration(Configuration *cfg);
@@ -32,7 +32,7 @@ namespace Gameplay
 					Right
 				} Side;
 
-				Fullback(GameplayModule *gameplay, Side side = Center, int role = Marking);
+				Defender(GameplayModule *gameplay, Side side = Center, int role = Marking);
 
 				virtual bool run();
 
@@ -49,7 +49,7 @@ namespace Gameplay
 				void role(int r) { _roles = r; }
 				int role() const { return _roles; }
 
-				std::set<Fullback *> otherFullbacks;
+				std::set<Defender *> otherDefenders;
 				
 				OurRobot *robot;
 				OpponentRobot *_blockRobot;

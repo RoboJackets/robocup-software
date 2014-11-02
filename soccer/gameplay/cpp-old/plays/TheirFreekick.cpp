@@ -24,14 +24,14 @@ void Gameplay::Plays::TheirFreekick::createConfiguration(Configuration *cfg)
 
 Gameplay::Plays::TheirFreekick::TheirFreekick(GameplayModule *gameplay):
 	Play(gameplay),
-	_fullback1(gameplay, Behaviors::Fullback::Left),
-	_fullback2(gameplay, Behaviors::Fullback::Right),
+	_defender1(gameplay, Behaviors::Defender::Left),
+	_defender2(gameplay, Behaviors::Defender::Right),
 	_marking1(gameplay),
 	_marking2(gameplay),
 	_marking3(gameplay)
 {
-	_fullback1.otherFullbacks.insert(&_fullback2);
-	_fullback2.otherFullbacks.insert(&_fullback1);
+	_defender1.otherDefenders.insert(&_defender2);
+	_defender2.otherDefenders.insert(&_defender1);
 
 	// assign general parameters
 	float r = 0.7;
@@ -50,8 +50,8 @@ bool Gameplay::Plays::TheirFreekick::run()
 {
 	set<OurRobot *> available = _gameplay->playRobots();
 	
-	assignNearest(_fullback1.robot, available, Geometry2d::Point(-Field_GoalWidth/2, 0.0));
-	assignNearest(_fullback2.robot, available, Geometry2d::Point( Field_GoalWidth/2, 0.0));
+	assignNearest(_defender1.robot, available, Geometry2d::Point(-Field_GoalWidth/2, 0.0));
+	assignNearest(_defender2.robot, available, Geometry2d::Point( Field_GoalWidth/2, 0.0));
 
 	//FIXME - How to choose?
 	assignNearest(_marking1.robot, available, Geometry2d::Point());
@@ -190,9 +190,9 @@ bool Gameplay::Plays::TheirFreekick::run()
 		}
 	}
 
-	// execute default fullback "wall" behavior
-	_fullback1.run();
-	_fullback2.run();
+	// execute default defender "wall" behavior
+	_defender1.run();
+	_defender2.run();
 	
 	return true;
 }

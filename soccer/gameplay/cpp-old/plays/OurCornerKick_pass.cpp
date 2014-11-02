@@ -33,8 +33,8 @@ void Gameplay::Plays::OurCornerKick_Pass::createConfiguration(Configuration *cfg
 Gameplay::Plays::OurCornerKick_Pass::OurCornerKick_Pass(GameplayModule *gameplay):
 	Play(gameplay),
 	_passer(gameplay),
-	_fullback1(gameplay, Behaviors::Fullback::Left),
-	_fullback2(gameplay, Behaviors::Fullback::Right),
+	_defender1(gameplay, Behaviors::Defender::Left),
+	_defender2(gameplay, Behaviors::Defender::Right),
 	_receiver2(gameplay),
 	_pdt(gameplay, &_passer),
 	_receiver1(gameplay),
@@ -116,11 +116,11 @@ bool Gameplay::Plays::OurCornerKick_Pass::run()
 
 
 
-	assignNearest(_fullback1.robot, available, Geometry2d::Point(-Field_GoalHeight/2.0, 0.0));
-	assignNearest(_fullback2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
+	assignNearest(_defender1.robot, available, Geometry2d::Point(-Field_GoalHeight/2.0, 0.0));
+	assignNearest(_defender2.robot, available, Geometry2d::Point( Field_GoalHeight/2.0, 0.0));
 
-	_fullback2.run();
-	_fullback1.run();
+	_defender2.run();
+	_defender1.run();
 	
 
 	return !_passCtxt.done();

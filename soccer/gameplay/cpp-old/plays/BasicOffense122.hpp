@@ -2,7 +2,7 @@
 
 #include "../Play.hpp"
 
-#include <gameplay/behaviors/positions/Fullback.hpp>
+#include <gameplay/behaviors/positions/Defender.hpp>
 #include <gameplay/behaviors/Kick.hpp>
 #include <gameplay/behaviors/Mark.hpp>
 
@@ -25,7 +25,7 @@ namespace Gameplay
 				virtual bool run();
 				
 			protected:
-				Behaviors::Fullback _leftFullback, _rightFullback;
+				Behaviors::Defender _leftDefender, _rightDefender;
 				Behaviors::Kick _striker;
 				Behaviors::Mark _support1, _support2;
 

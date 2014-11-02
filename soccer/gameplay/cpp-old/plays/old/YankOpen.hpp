@@ -2,7 +2,7 @@
 
 #include "../Play.hpp"
 
-#include <gameplay/behaviors/positions/Fullback.hpp>
+#include <gameplay/behaviors/positions/Defender.hpp>
 #include <gameplay/behaviors/Yank.hpp>
 #include <gameplay/behaviors/Fling.hpp>
 #include <gameplay/behaviors/Mark.hpp>
@@ -27,7 +27,7 @@ namespace Gameplay
 				virtual bool run();
 				
 			protected:
-				Behaviors::Fullback _leftFullback, _rightFullback;
+				Behaviors::Defender _leftDefender, _rightDefender;
 				Behaviors::Mark _support;
 
 				// behaviors for the striker - switch between these

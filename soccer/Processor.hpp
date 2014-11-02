@@ -13,10 +13,12 @@
 #include <SystemState.hpp>
 #include <modeling/RobotFilter.hpp>
 #include <NewRefereeModule.hpp>
+#include "VisionReceiver.hpp"
 
 class Configuration;
 class RobotStatus;
 class Joystick;
+struct JoystickControlValues;
 class Radio;
 class BallTracker;
 
@@ -63,7 +65,6 @@ public:
 };
 
 
-
 /**
  * @brief Brings all the pieces together
  * 
@@ -107,6 +108,8 @@ class Processor: public QThread
 		
 		bool autonomous();
 		bool joystickValid();
+
+		JoystickControlValues joystickControlValues();
 		
 		void externalReferee(bool value)
 		{
@@ -213,6 +216,8 @@ class Processor: public QThread
         {
 			return _radio;
 		}
+
+		void changeVisionChannel(int port);
 		
 		////////
 		
@@ -291,4 +296,6 @@ class Processor: public QThread
 		std::shared_ptr<BallTracker> _ballTracker;
 
 		Joystick *_joystick;
+
+		VisionReceiver vision;
 };

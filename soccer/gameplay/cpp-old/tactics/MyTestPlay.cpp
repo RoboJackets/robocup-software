@@ -39,8 +39,8 @@ void Gameplay::Plays::MyTestPlay::createConfiguration(Configuration *cfg)
 
 Gameplay::Plays::MyTestPlay::MyTestPlay(GameplayModule *gameplay):
 Play(gameplay),
-_leftFullback(gameplay, Behaviors::Fullback::Left),
-_rightFullback(gameplay, Behaviors::Fullback::Right),
+_leftDefender(gameplay, Behaviors::Defender::Left),
+_rightDefender(gameplay, Behaviors::Defender::Right),
 _striker(gameplay),
 _support1(gameplay),
 _support2(gameplay),
@@ -51,8 +51,8 @@ _move4(gameplay),
 _move5(gameplay)
 {
 
-	_leftFullback.otherFullbacks.insert(&_rightFullback);
-	_rightFullback.otherFullbacks.insert(&_leftFullback);
+	_leftDefender.otherDefenders.insert(&_rightDefender);
+	_rightDefender.otherDefenders.insert(&_leftDefender);
 	_letter = 0;
 	_startTime = 0;
 	// use constant value of mark threshold for now

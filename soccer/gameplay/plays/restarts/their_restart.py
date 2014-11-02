@@ -1,10 +1,11 @@
 import play
 import behavior
-import tactics.positions.fullback
+import tactics.positions.defender
 import skills.mark
+import main
 
 
-class TheirFreeKick(play.Play):
+class TheirRestart(play.Play):
 
     def __init__(self):
         super().__init__(continuous=True)
@@ -15,11 +16,7 @@ class TheirFreeKick(play.Play):
             'immediately')
 
 
-        fullback1 = tactics.positions.fullback.Fullback(tactics.positions.fullback.Fullback.Side.left)
-        self.add_subbehavior(fullback1, 'fullback1', required=False, priority=5)
-
-        fullback2 = tactics.positions.fullback.Fullback(tactics.positions.fullback.Fullback.Side.right)
-        self.add_subbehavior(fullback2, 'fullback2', required=False, priority=4)
+        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False,)
 
         self.marks = []
         for i in range(3):
@@ -32,7 +29,15 @@ class TheirFreeKick(play.Play):
     @classmethod
     def score(cls):
         gs = main.game_state()
-        return 0 if gs.is_setup_state() and gs.is_their_freekick() else float("inf")
+        return 0 if gs.is_ready_state() and ( gs.is_their_free_kick() or gs.is_their_indirect() or gs.is_their_direct()) else float("inf")
+
+    @classmethod
+    def is_restart(cls):
+        return True
+
+    @classmethod
+    def handles_goalie(cls):
+        return True
 
 
     def execute_running(self):
@@ -61,7 +66,7 @@ class TheirFreeKick(play.Play):
             # if it is, we record the closest distance from one of our robots to it
             if ball_dist < 3.0:
                 # which of our robots is closest to this opponent
-                closest_self_dist = min([bot.pos.distTo(opp.pos) for bot in main.our_robots()])
+                closest_self_dist = min([bot.pos.dist_to(opp.pos) for bot in main.our_robots()])
                 open_opps_and_dists.append( (opp, closest_self_dist) )
 
 
@@ -72,7 +77,7 @@ class TheirFreeKick(play.Play):
             if mark_i.robot != None:
                 if i < len(open_opps_and_dists):
                     # mark the opponent
-                    mark_i.mark_robot = open_opps_and_dists[i](0)
+                    mark_i.mark_robot = open_opps_and_dists[i][0]
                 else:
                     pass
                     # NOTE: the old code ran these motion commands INSTEAD of running the mark command
@@ -91,4 +96,4 @@ class TheirFreeKick(play.Play):
             for j, mark_j in enumerate(self.marks):
                 if i == j: continue
                 if mark_i.robot != None and mark_j.robot != None:
-                    mark_i.robot.set_avoid_teammate_radius(mark_j.shell_id(), 0.5)
+                    mark_i.robot.set_avoid_teammate_radius(mark_j.robot.shell_id(), 0.5)
