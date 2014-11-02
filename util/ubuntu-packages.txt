@@ -24,9 +24,6 @@ doxygen
 # linear algebra library
 libeigen3-dev
 
-# used for cubic spline paths
-libalglib-dev
-
 # Bullet physics library - used in the robocup simulator
 libbullet-dev
 
