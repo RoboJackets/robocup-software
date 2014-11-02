@@ -630,7 +630,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		float timeIntoPath = ((float)(timestamp() - _pathStartTime)) * TimestampToSecs + 1.0/60.0;
 		_path->evaluate(timeIntoPath, targetPathPos, targetVel);
 		float pathError = (targetPathPos - pos).mag();
-		state()->drawCircle(targetPathPos, maxDist, Qt::green, "MotionControl");
+		//state()->drawCircle(targetPathPos, maxDist, Qt::green, "MotionControl");
 		addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
 		addText(QString("%1").arg(pathError));
 		if (pathError > maxDist) {

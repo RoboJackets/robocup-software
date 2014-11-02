@@ -254,48 +254,13 @@ Geometry2d::Point pow(Geometry2d::Point &p1, float i)
 	return Geometry2d::Point(pow(p1.x, i), pow(p1.y, i));
 }
 
-void RRTPlanner::quarticBezier (Planning::Path &path, const Geometry2d::CompositeShape *obstacles)
-{
-	vector<Geometry2d::Point> pts;
-	//vector<Geometry2d::Point> reversed;
-	//reversed = path.points;
-	//reverse(reversed.begin(), reversed.end());
-	Geometry2d::Point p0, p1, p2, p3, p4;
-	p1 = path.points.back();	
-
-	int interpolations = 10;
-
-	for (int i=path.points.size()-1; i>0; i--) // access by reference to avoid copying
-    {
-    	p4 = path.points[i];
-    	p0 = path.points[i-1];
-    	p3 = 2.0*p4 - p1;
-    	p2 = p3*2 - p4;
-    	p1 = .5*p0 + .5*p2;
-
-    	for (int j=0; j<interpolations; j++)
-    	{
-    		float t = 1.0-((float)j / (float)(interpolations));
-    		Geometry2d::Point temp = pow(1.0-t, 4) * p0 + 4.0* pow(1.0-t, 3)*t*p1 + 6*pow(1.0-t, 2)*pow(t, 2)*p2 
-    						+ 4*(1.0-t)*pow(t, 3)*p3 + pow(t, 4)*p4;
-    		pts.push_back(temp);
-    	}
-    	
-    }
-    pts.push_back(path.points.front());
-   	reverse(pts.begin(), pts.end());
-    path.points = pts;
-}
-
 using namespace Eigen;
-//typedef Matrix<double, Dynamic, Dynamic>;
+//TODO: Use targeted end velocity
 void RRTPlanner::cubicBezier (Planning::Path &path, const Geometry2d::CompositeShape *obstacles)
 {
 	int length = path.size();
 	int curvesNum = length-1;
-	//double Vo();
 	if (curvesNum <= 0) {
-		cout<<"what?";
 		//TODO 
 		return;
 	}

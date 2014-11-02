@@ -76,12 +76,21 @@ namespace Planning
 		 *  to the start of tree1 */
 		void makePath();
 		
-		void quarticBezier(Planning::Path &path, const Geometry2d::CompositeShape *obstacles);
-
-		void cubicBezier(Planning::Path &path, const Geometry2d::CompositeShape *obstacles);
-		/** optimize the path */
+		/** optimize the path 
+		 *  Calles the cubicBezier optimization function.
+		 */
 		void optimize(Planning::Path &path, const Geometry2d::CompositeShape *obstacles);
 
+		/**
+		 * Uses a cubicBezier to interpolate between the points on the path and add
+		 * velocity planning
+		 */
+		void cubicBezier(Planning::Path &path, const Geometry2d::CompositeShape *obstacles);
+
+		/**
+		 * Helper function for cubicBezier() which uses Eigen matrices to solve for the 
+		 * cubic bezier equations.
+		 */
 		Eigen::VectorXd cubicBezierCalc (double vi, double vf, std::vector<double> &points, 
 									std::vector<double> &ks, std::vector<double> &ks2);
 	};
