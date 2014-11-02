@@ -34,16 +34,27 @@ namespace Planning
 				points.clear();
 			}
 			
-			// Returns the length of the path starting at point (start).
+			/**
+			 * Calulates the length of the path 
+			 *
+			 * \param[in] 	start Index of point in path to use at start point.
+			 * \returns 	the length of the path starting at point (start). 
+			 */
 			float length(unsigned int start = 0) const;
-
-			//TODO: write javadoc
+			
+			/**
+			 * Calulates the length of the path
+			 *
+			 * \param[in] 	start Index of point in path to use at start point.
+			 * \param[in] 	end Index of point in path to use at end point.
+			 * \returns 	the length of the path starting at point (start) and ending at point [end]. 
+			 */
 			float length(unsigned int start, unsigned int end) const;
 			
-			/** returns the length of the path from the closet point found to @a pt */
+			/** Returns the length of the path from the closet point found to @a pt */
 			float length(const Geometry2d::Point &pt) const;
 			
-			// number of waypoints
+			/** Returns number of waypoints */
 			size_t size() const { return points.size(); }
 
 			/** returns true if the path has non-zero size */
@@ -78,26 +89,42 @@ namespace Planning
 
 			/**
 			 * A path describes the position and velocity a robot should be at for a
-			 * particular time interval.  This methd evalates the path at a given time and
+			 * particular time interval.  This method evalates the path at a given time and
 			 * returns the target position and velocity of the robot.
 			 *
-			 * @param t Time (in seconds) since the robot started the path
-			 * @param targetPosOut The position the robot would ideally be at at the given time
-			 * @param targetVelOut The target velocity of the robot at the given time
-			 * @return true if the path is valid at time @t, false if you've gone past the end
+			 * @param[in] 	t Time (in seconds) since the robot started the path
+			 * @param[out] 	targetPosOut The position the robot would ideally be at at the given time
+			 * @param[out] 	targetVelOut The target velocity of the robot at the given time
+			 * @return 		true if the path is valid at time @t, false if you've gone past the end
 			 */
 			bool evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const;
 
-			//TODO javadoc everything
+			/**
+			 * Evaluates the point and velocity of the robot at a given distance in the path.
+			 *
+			 * @param[in] 	distance A given distance the robot has traveled down the path from the start or t=0
+			 * @param[out] 	position The position the robot given distance in the path
+			 * @param[out] 	direction The target velocity of the robot at the given distance in the path
+			 * @return 		true if the path is valid at the given distance, false if you've gone past the end
+			 */
 			bool getPoint(float distance ,Geometry2d::Point &position, Geometry2d::Point &direction) const;
-			float getTime(int) const;
+
+			/**
+			 * Estimates how long it would take for the robot to get to a certain point in the path using 
+			 * Trapezoidal motion.
+			 *
+			 * @param[in] 	index Index of the point on the path 
+			 * @return 		the estimated time it would take for the robot to a point on the path starting from the start of the path
+			 */
+			float getTime(int index) const;
 			static void createConfiguration(Configuration *cfg);
 
-			Geometry2d::Point vi;
-			Geometry2d::Point vf;
+			Geometry2d::Point vi;	//Stored velocity of the robot at the start of the path
+			Geometry2d::Point vf;	//Stored target end velocity of the robot at the end of the path
 
-			float startSpeed = 0;
-			float endSpeed = 0;
+
+			float startSpeed = 0; 	//Stored speed of the robot at the start of the path
+			float endSpeed = 0;		//Stored target endSpeed of the robot at teh end of hte path.
 
 			///	note: you MUST set these before calling evaluate or else it'll throw an exception
 			float maxSpeed = -1;
