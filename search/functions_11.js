@@ -9,6 +9,7 @@ var searchData=
   ['shieldfromteammates',['shieldFromTeammates',['../class_our_robot.html#a9651d74f3d8839801adf5ab7ce509bf7',1,'OurRobot']]],
   ['shot_5fobstacle_5fignoring_5frobots',['shot_obstacle_ignoring_robots',['../classskills_1_1__kick_1_1___kick.html#a1c2bf30969d84bbbd33cf2d557fac2e3',1,'skills::_kick::_Kick']]],
   ['sing',['sing',['../class_our_robot.html#a1446bc7daeb6a68d549a98e328bdd5b9',1,'OurRobot']]],
+  ['size',['size',['../class_planning_1_1_path.html#ac1fef7a784253f927a07a13b6217ef27',1,'Planning::Path']]],
   ['spin',['spin',['../classcomposite__behavior_1_1_composite_behavior.html#ae45aa3dbe52ac871588d98255df5b3b1',1,'composite_behavior.CompositeBehavior.spin()'],['../classfsm_1_1_state_machine.html#abb4f0d680dd3d3f5cdf7f69bd89df640',1,'fsm.StateMachine.spin()']]],
   ['spinkickwatcher',['spinKickWatcher',['../class_new_referee_module.html#a81f595e25744665fa3722a8588c42c45',1,'NewRefereeModule']]],
   ['start',['start',['../class_planning_1_1_tree.html#a8d4c66a9c88035ca7131cc67c0458027',1,'Planning::Tree']]],

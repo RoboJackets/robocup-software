@@ -9,8 +9,10 @@ var class_planning_1_1_path =
     [ "empty", "class_planning_1_1_path.html#a10f7ac5b02e81452b0cf66f4ede10c52", null ],
     [ "evaluate", "class_planning_1_1_path.html#ab4f9fdc9b412e8bd883485db008a4be8", null ],
     [ "getPoint", "class_planning_1_1_path.html#acdbd7a933f60c0a77b3d61a745f7a230", null ],
+    [ "getTime", "class_planning_1_1_path.html#abf30ca990fb918fab0bcd8fdca78ceb6", null ],
     [ "hit", "class_planning_1_1_path.html#a97b364080f7ce4bbfc60fc22edd9f33d", null ],
     [ "length", "class_planning_1_1_path.html#a3dae3d7d24dd7748acc73be8f08108b8", null ],
+    [ "length", "class_planning_1_1_path.html#a943f299e646cb3b4dc0e55e57dfc60a0", null ],
     [ "length", "class_planning_1_1_path.html#a1a4cd2971040a6b5d94c5344f06c37ba", null ],
     [ "nearestIndex", "class_planning_1_1_path.html#a4799a96300b804e21a92574ea2a2d5c1", null ],
     [ "nearestSegment", "class_planning_1_1_path.html#a9ef658a543b7f147077391279604bb88", null ],
@@ -22,5 +24,9 @@ var class_planning_1_1_path =
     [ "maxAcceleration", "class_planning_1_1_path.html#a2f60f29802d342a2de90e6542b452223", null ],
     [ "maxSpeed", "class_planning_1_1_path.html#aa0a992637a6a205de26180d03b1a9ecf", null ],
     [ "points", "class_planning_1_1_path.html#aebaceb7eb8f150dec69df2c2b1d83ebe", null ],
-    [ "startSpeed", "class_planning_1_1_path.html#a1e4ef93ea20d7bbc73776931596406c9", null ]
+    [ "startSpeed", "class_planning_1_1_path.html#a1e4ef93ea20d7bbc73776931596406c9", null ],
+    [ "times", "class_planning_1_1_path.html#a302f37c5bf6107a366d9c2418d3c38e8", null ],
+    [ "vels", "class_planning_1_1_path.html#abaa8f84a2b5bab622c34e3d6f090c3a8", null ],
+    [ "vf", "class_planning_1_1_path.html#a6ac543cfdad59591d01fa21241568656", null ],
+    [ "vi", "class_planning_1_1_path.html#afc870eb988b76d960f3e4da9e2491fde", null ]
 ];

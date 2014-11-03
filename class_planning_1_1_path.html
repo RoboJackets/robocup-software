@@ -109,6 +109,7 @@ $(document).ready(function(){initNavTree('class_planning_1_1_path.html','');});
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="class_planning_1_1_path-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -139,15 +140,19 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>empty</b> () const </
 <tr class="memitem:a9e86d31c573e41ece37433b4c974db15"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9e86d31c573e41ece37433b4c974db15"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
 <tr class="separator:a9e86d31c573e41ece37433b4c974db15"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3dae3d7d24dd7748acc73be8f08108b8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3dae3d7d24dd7748acc73be8f08108b8"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>length</b> (unsigned int start=0) const </td></tr>
+<tr class="memitem:a3dae3d7d24dd7748acc73be8f08108b8"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a3dae3d7d24dd7748acc73be8f08108b8">length</a> (unsigned int start=0) const </td></tr>
+<tr class="memdesc:a3dae3d7d24dd7748acc73be8f08108b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calulates the length of the path.  <a href="#a3dae3d7d24dd7748acc73be8f08108b8">More...</a><br /></td></tr>
 <tr class="separator:a3dae3d7d24dd7748acc73be8f08108b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a943f299e646cb3b4dc0e55e57dfc60a0"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a943f299e646cb3b4dc0e55e57dfc60a0">length</a> (unsigned int start, unsigned int end) const </td></tr>
+<tr class="memdesc:a943f299e646cb3b4dc0e55e57dfc60a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calulates the length of the path.  <a href="#a943f299e646cb3b4dc0e55e57dfc60a0">More...</a><br /></td></tr>
+<tr class="separator:a943f299e646cb3b4dc0e55e57dfc60a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1a4cd2971040a6b5d94c5344f06c37ba"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1a4cd2971040a6b5d94c5344f06c37ba"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a1a4cd2971040a6b5d94c5344f06c37ba">length</a> (const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;pt) const </td></tr>
-<tr class="memdesc:a1a4cd2971040a6b5d94c5344f06c37ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the length of the path from the closet point found to <em>pt</em> <br /></td></tr>
+<tr class="memdesc:a1a4cd2971040a6b5d94c5344f06c37ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the length of the path from the closet point found to <em>pt</em>. <br /></td></tr>
 <tr class="separator:a1a4cd2971040a6b5d94c5344f06c37ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1fef7a784253f927a07a13b6217ef27"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac1fef7a784253f927a07a13b6217ef27"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> () const </td></tr>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#ac1fef7a784253f927a07a13b6217ef27">size</a> () const </td></tr>
+<tr class="memdesc:ac1fef7a784253f927a07a13b6217ef27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns number of waypoints. <br /></td></tr>
 <tr class="separator:ac1fef7a784253f927a07a13b6217ef27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe47aec858e47f95295dcc59f17197db"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abe47aec858e47f95295dcc59f17197db"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#abe47aec858e47f95295dcc59f17197db">valid</a> () const </td></tr>
@@ -178,15 +183,36 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>hit</b> (const <a cla
 <tr class="memitem:ab4f9fdc9b412e8bd883485db008a4be8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#ab4f9fdc9b412e8bd883485db008a4be8">evaluate</a> (float t, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;targetPosOut, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;targetVelOut) const </td></tr>
 <tr class="memdesc:ab4f9fdc9b412e8bd883485db008a4be8"><td class="mdescLeft">&#160;</td><td class="mdescRight">A path describes the position and velocity a robot should be at for a particular time interval.  <a href="#ab4f9fdc9b412e8bd883485db008a4be8">More...</a><br /></td></tr>
 <tr class="separator:ab4f9fdc9b412e8bd883485db008a4be8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acdbd7a933f60c0a77b3d61a745f7a230"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acdbd7a933f60c0a77b3d61a745f7a230"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>getPoint</b> (float distance, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;position, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;direction) const </td></tr>
+<tr class="memitem:acdbd7a933f60c0a77b3d61a745f7a230"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#acdbd7a933f60c0a77b3d61a745f7a230">getPoint</a> (float distance, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;position, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;direction) const </td></tr>
+<tr class="memdesc:acdbd7a933f60c0a77b3d61a745f7a230"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates the point and velocity of the robot at a given distance in the path.  <a href="#acdbd7a933f60c0a77b3d61a745f7a230">More...</a><br /></td></tr>
 <tr class="separator:acdbd7a933f60c0a77b3d61a745f7a230"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf30ca990fb918fab0bcd8fdca78ceb6"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#abf30ca990fb918fab0bcd8fdca78ceb6">getTime</a> (int index) const </td></tr>
+<tr class="memdesc:abf30ca990fb918fab0bcd8fdca78ceb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estimates how long it would take for the robot to get to a certain point in the path using Trapezoidal motion.  <a href="#abf30ca990fb918fab0bcd8fdca78ceb6">More...</a><br /></td></tr>
+<tr class="separator:abf30ca990fb918fab0bcd8fdca78ceb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:aa413f4e91ac6d47dde68d0265d577e14"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa413f4e91ac6d47dde68d0265d577e14"></a>
+static void&#160;</td><td class="memItemRight" valign="bottom"><b>createConfiguration</b> (<a class="el" href="class_configuration.html">Configuration</a> *cfg)</td></tr>
+<tr class="separator:aa413f4e91ac6d47dde68d0265d577e14"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:aebaceb7eb8f150dec69df2c2b1d83ebe"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aebaceb7eb8f150dec69df2c2b1d83ebe"></a>
 std::vector&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>points</b></td></tr>
 <tr class="separator:aebaceb7eb8f150dec69df2c2b1d83ebe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abaa8f84a2b5bab622c34e3d6f090c3a8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abaa8f84a2b5bab622c34e3d6f090c3a8"></a>
+std::vector&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>vels</b></td></tr>
+<tr class="separator:abaa8f84a2b5bab622c34e3d6f090c3a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a302f37c5bf6107a366d9c2418d3c38e8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a302f37c5bf6107a366d9c2418d3c38e8"></a>
+std::vector&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>times</b></td></tr>
+<tr class="separator:a302f37c5bf6107a366d9c2418d3c38e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc870eb988b76d960f3e4da9e2491fde"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afc870eb988b76d960f3e4da9e2491fde"></a>
+<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&#160;</td><td class="memItemRight" valign="bottom"><b>vi</b></td></tr>
+<tr class="separator:afc870eb988b76d960f3e4da9e2491fde"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ac543cfdad59591d01fa21241568656"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6ac543cfdad59591d01fa21241568656"></a>
+<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&#160;</td><td class="memItemRight" valign="bottom"><b>vf</b></td></tr>
+<tr class="separator:a6ac543cfdad59591d01fa21241568656"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e4ef93ea20d7bbc73776931596406c9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1e4ef93ea20d7bbc73776931596406c9"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><b>startSpeed</b> = 0</td></tr>
 <tr class="separator:a1e4ef93ea20d7bbc73776931596406c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -235,16 +261,145 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>maxAcceleration</b> 
 </div><div class="memdoc">
 
 <p>A path describes the position and velocity a robot should be at for a particular time interval. </p>
-<p>This methd evalates the path at a given time and returns the target position and velocity of the robot.</p>
+<p>This method evalates the path at a given time and returns the target position and velocity of the robot.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">t</td><td>Time (in seconds) since the robot started the path </td></tr>
-    <tr><td class="paramname">targetPosOut</td><td>The position the robot would ideally be at at the given time </td></tr>
-    <tr><td class="paramname">targetVelOut</td><td>The target velocity of the robot at the given time </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">t</td><td>Time (in seconds) since the robot started the path </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">targetPosOut</td><td>The position the robot would ideally be at at the given time </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">targetVelOut</td><td>The target velocity of the robot at the given time </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if the path is valid at time , false if you've gone past the end </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="acdbd7a933f60c0a77b3d61a745f7a230"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool Planning::Path::getPoint </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>distance</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;&#160;</td>
+          <td class="paramname"><em>position</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;&#160;</td>
+          <td class="paramname"><em>direction</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Evaluates the point and velocity of the robot at a given distance in the path. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">distance</td><td>A given distance the robot has traveled down the path from the start or t=0 </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">position</td><td>The position the robot given distance in the path </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">direction</td><td>The target velocity of the robot at the given distance in the path </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the path is valid at the given distance, false if you've gone past the end </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="abf30ca990fb918fab0bcd8fdca78ceb6"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float Planning::Path::getTime </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>index</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Estimates how long it would take for the robot to get to a certain point in the path using Trapezoidal motion. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>Index of the point on the path </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the estimated time it would take for the robot to a point on the path starting from the start of the path </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a3dae3d7d24dd7748acc73be8f08108b8"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float Planning::Path::length </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>start</em> = <code>0</code></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Calulates the length of the path. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">start</td><td>Index of point in path to use at start point. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the length of the path starting at point (start). </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a943f299e646cb3b4dc0e55e57dfc60a0"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float Planning::Path::length </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>start</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>end</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Calulates the length of the path. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">start</td><td>Index of point in path to use at start point. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">end</td><td>Index of point in path to use at end point. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>the length of the path starting at point (start) and ending at point [end]. </dd></dl>
 
 </div>
 </div>
@@ -258,7 +413,7 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>maxAcceleration</b> 
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespace_planning.html">Planning</a></li><li class="navelem"><a class="el" href="class_planning_1_1_path.html">Path</a></li>
-    <li class="footer">Generated on Sun Nov 2 2014 18:47:04 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Nov 3 2014 07:18:00 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

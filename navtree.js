@@ -22,7 +22,7 @@ var NAVTREE =
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", "functions_dup" ],
-        [ "Functions", "functions_func.html", null ],
+        [ "Functions", "functions_func.html", "functions_func" ],
         [ "Variables", "functions_vars.html", null ]
       ] ]
     ] ],
@@ -37,11 +37,11 @@ var NAVTREEINDEX =
 ".html",
 "class_field_view.html#a69c96ac8aac9db9bf17c9fe43d5e1aef",
 "class_geometry2d_1_1_segment.html#ab2812ecdc4b8d9a5d01e5dba91b7224e",
-"class_planning_1_1_path.html#a1a4cd2971040a6b5d94c5344f06c37ba",
-"class_strip_chart.html",
-"classplays_1_1restarts_1_1defend__penalty_1_1_defend_penalty.html#a18c509e4655e2495743935498be0c5d5",
-"classskills_1_1__kick_1_1___kick.html#a4722450b6050554dc20f667f2b76af5a",
-"classtactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html"
+"class_planning_1_1_path.html#a10f7ac5b02e81452b0cf66f4ede10c52",
+"class_sim_field_view.html#a987951cd0f45a2c40959d766441a19e3",
+"classplay__registry_1_1_play_registry_1_1_node.html#aaa795a22f75e3bdcdc3d09577dabb84b",
+"classskills_1_1__kick_1_1___kick.html",
+"classtactics_1_1positions_1_1goalie_1_1_goalie.html#a73e564dcc86068ffbb8e5675d20434b4"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

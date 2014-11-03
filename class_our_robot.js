@@ -33,6 +33,7 @@ var class_our_robot =
     [ "consecutivePathChangeCount", "class_our_robot.html#afb8d32e3580b30997915444bb907e262", null ],
     [ "createBallObstacle", "class_our_robot.html#a7baa02e9ccb8c3882d50de92898974c5", null ],
     [ "createRobotObstacles", "class_our_robot.html#ae659b832401f12a187df08165301e847", null ],
+    [ "createRobotObstacles", "class_our_robot.html#aae2d18b5b0d6b35600bae7daeb88d7f0", null ],
     [ "disableAvoidBall", "class_our_robot.html#ab2025ccc19a48d16b94cdf5448c60f9a", null ],
     [ "distanceToChipLanding", "class_our_robot.html#a019e62061c483d79b3ecd88aa5f08e27", null ],
     [ "dribble", "class_our_robot.html#afd4e2e7b34afbe32cb27c231adcb477f", null ],
