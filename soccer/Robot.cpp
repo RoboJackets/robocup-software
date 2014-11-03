@@ -569,9 +569,12 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 	// create and visualize obstacles
 	Geometry2d::CompositeShape full_obstacles(_local_obstacles);
+	//Add's our robots as obstacles only if they're within a certain distance from our robot.
+	//This distance increases with velocity.
 	Geometry2d::CompositeShape
-		self_obs = createRobotObstacles(_state->self, _self_avoid_mask),
+		self_obs = createRobotObstacles(_state->self, _self_avoid_mask, this->pos, 0.6 + this->vel.mag()),
 		opp_obs = createRobotObstacles(_state->opp, _opp_avoid_mask);
+
 	_state->drawCompositeShape(self_obs, Qt::gray, QString("self_obstacles_%1").arg(shell()));
 	_state->drawCompositeShape(opp_obs, Qt::gray, QString("opp_obstacles_%1").arg(shell()));
 	if (_state->ball.valid)
@@ -597,10 +600,10 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	Geometry2d::Point dest = *_motionConstraints.targetPos;
 
 	// //	if this number of microseconds passes since our last path plan, we automatically replan
-	// const uint64_t kPathExpirationInterval = 1.5 * SecsToTimestamp;
-	// if ((timestamp() - _pathStartTime) > kPathExpirationInterval) {
-	// 	_pathInvalidated = true;
-	// }
+	const uint64_t kPathExpirationInterval = 10 * SecsToTimestamp;
+	if ((timestamp() - _pathStartTime) > kPathExpirationInterval) {
+		_pathInvalidated = true;
+	}
 
 	if (!_path) {
 		_pathInvalidated = true;
@@ -608,7 +611,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 
 	Planning::Path newlyPlannedPath;
-	_planner->run(pos, angle, vel, *_motionConstraints.targetPos, &full_obstacles, newlyPlannedPath);
+	_planner->run(pos, angle, vel, _motionConstraints, &full_obstacles, newlyPlannedPath);
 
 	//	invalidate path if it hits obstacles
 	//	TODO: it would be better to compare WHICH obstacles the old and new paths hit rather than just looking at IF they hit obstacles
@@ -618,14 +621,21 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 	//  invalidate path if current position is more than 15cm from the planned point
 	if (_path) {
-		float maxDist = 0.30;
+		_state->drawPath(*_path, Qt::magenta);
+
+		float maxDist = .6;
 		Point targetPathPos;
 		Point targetVel;
-		float timeIntoPath = ((float)(timestamp() - _pathStartTime)) * TimestampToSecs;
+		float timeIntoPath = ((float)(timestamp() - _pathStartTime)) * TimestampToSecs + 1.0/60.0;
 		_path->evaluate(timeIntoPath, targetPathPos, targetVel);
 		float pathError = (targetPathPos - pos).mag();
+		//state()->drawCircle(targetPathPos, maxDist, Qt::green, "MotionControl");
+		addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
+		addText(QString("%1").arg(pathError));
 		if (pathError > maxDist) {
 			_pathInvalidated = true;
+			addText("pathError");
+			//addText(pathError); 
 		}
 	}
 	
@@ -637,7 +647,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		_pathInvalidated = true;
 	}
 
-
+	/*
 	//	try a straight path EVERY time
 	if (_path && _path->points.size() > 2) {
 		//	try a straight line path first
@@ -649,7 +659,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 			_pathInvalidated = false;
 		}
 	}
-
+	*/
 	
 
 
@@ -660,19 +670,20 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		// 	cout << "\t(" << itr.x << ", " << itr.y << ")" << endl;
 		// }
 	} else {
+		addText("Replanning");
 		// use the newly generated path
 		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: using new RRT path" << std::endl;
 		
 		//	try a straight line path first
-		Geometry2d::Segment straight_seg(pos, *_motionConstraints.targetPos);
-		if (!full_obstacles.hit(straight_seg)) {
-			addText(QString("planner: straight_line"));
-			Planning::Path straightLine(pos, *_motionConstraints.targetPos);
-			setPath(straightLine);
-		} else {
+	//	Geometry2d::Segment straight_seg(pos, *_motionConstraints.targetPos);
+	//	if (!full_obstacles.hit(straight_seg)) {
+	//		addText(QString("planner: straight_line"));
+	//		Planning::Path straightLine(pos, *_motionConstraints.targetPos);
+	//		setPath(straightLine);
+	//	} else {
 			//	rrt-planned path
 			setPath(newlyPlannedPath);
-		}
+	//	}
 	}
 
 
@@ -680,8 +691,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	_path->endSpeed = _motionConstraints.endSpeed;
 	_path->maxAcceleration = _motionConstraints.maxAcceleration;
 
-	_state->drawPath(*_path, Qt::magenta);
-
+	
 	_pathChangeHistory.push_back(_didSetPathThisIteration);
 
 	return;
