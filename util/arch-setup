@@ -15,4 +15,7 @@ cp -f $BASE/util/robocup.rules /etc/udev/rules.d/
 echo "-- Installing required packages"
 pacman -S --needed --noconfirm $(sed 's/#.*//;/^$/d' $BASE/util/arch-packages.txt)
 
+echo "-- Installing required AUR packages"
+yaourt -S --needed --noconfirm $(sed 's/#.*//;/^$/d' $BASE/util/arch-packages-aur.txt)
+
 pip install -r $BASE/util/requirements3.txt
