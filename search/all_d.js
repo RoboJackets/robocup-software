@@ -10,7 +10,6 @@ var searchData=
   ['maxiterations',['maxIterations',['../class_planning_1_1_r_r_t_planner.html#a140a61e029018d1f1b84805fb5632d5c',1,'Planning::RRTPlanner::maxIterations() const '],['../class_planning_1_1_r_r_t_planner.html#ab45eeb7da9dbe6cb822e01748cad5867',1,'Planning::RRTPlanner::maxIterations(int value)']]],
   ['maxkick',['maxKick',['../struct_robot_config_1_1_kicker.html#a1ac76a35747c67becd45b4fdc8fb117b',1,'RobotConfig::Kicker']]],
   ['maxspeed',['maxSpeed',['../struct_motion_constraints.html#a50ac8502cbbb4f8a56f848b2ecbc1220',1,'MotionConstraints::maxSpeed()'],['../class_planning_1_1_path.html#aa0a992637a6a205de26180d03b1a9ecf',1,'Planning::Path::maxSpeed()']]],
-  ['motion_20control',['Motion Control',['../md_soccer_doc__motion_control.html',1,'']]],
   ['motionconstraints',['MotionConstraints',['../struct_motion_constraints.html',1,'']]],
   ['motioncontrol',['MotionControl',['../class_motion_control.html',1,'']]],
   ['move',['move',['../class_our_robot.html#a2687c62674d3e5ae878cae962950caef',1,'OurRobot']]],

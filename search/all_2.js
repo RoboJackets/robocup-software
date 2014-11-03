@@ -16,6 +16,5 @@ var searchData=
   ['binomialcoefficient',['binomialCoefficient',['../namespace_planning.html#a4c8e9c9a6a3fb8d42109d5243212035d',1,'Planning']]],
   ['block_5fline',['block_line',['../classtactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#af1859c9c15efbf1b090fc9f41b5384ca',1,'tactics::positions::submissive_defender::SubmissiveDefender']]],
   ['blueteam',['blueTeam',['../class_processor.html#a1a61818c88b94200bba7f56a5cc7de76',1,'Processor']]],
-  ['bump',['Bump',['../classskills_1_1bump_1_1_bump.html',1,'skills::bump']]],
-  ['build_20systems',['Build Systems',['../md_soccer_doc__build_systems.html',1,'']]]
+  ['bump',['Bump',['../classskills_1_1bump_1_1_bump.html',1,'skills::bump']]]
 ];

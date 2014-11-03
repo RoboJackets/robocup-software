@@ -14,8 +14,7 @@ var indexSectionsWithContent =
   4: "abcdefghijklmnoprstuvw~",
   5: "_adefmprstvwxy",
   6: "v",
-  7: "cd",
-  8: "bdgmstv"
+  7: "cd"
 };
 
 var indexSectionNames =
@@ -27,8 +26,7 @@ var indexSectionNames =
   4: "functions",
   5: "variables",
   6: "typedefs",
-  7: "groups",
-  8: "pages"
+  7: "groups"
 };
 
 function convertToId(search)
