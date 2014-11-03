@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.8"/>
-<title>GT RoboCup SSL: Class Members</title>
+<title>GT RoboCup SSL: Testing &amp; Continuous Integration</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -46,10 +46,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li class="current"><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
-      <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
+      <li><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -69,51 +69,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       </li>
     </ul>
   </div>
-  <div id="navrow2" class="tabs2">
-    <ul class="tablist">
-      <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
-      <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
-      <li><a href="hierarchy.html"><span>Class&#160;Hierarchy</span></a></li>
-      <li class="current"><a href="functions.html"><span>Class&#160;Members</span></a></li>
-    </ul>
-  </div>
-  <div id="navrow3" class="tabs2">
-    <ul class="tablist">
-      <li class="current"><a href="functions.html"><span>All</span></a></li>
-      <li><a href="functions_func.html"><span>Functions</span></a></li>
-      <li><a href="functions_vars.html"><span>Variables</span></a></li>
-    </ul>
-  </div>
-  <div id="navrow4" class="tabs3">
-    <ul class="tablist">
-      <li><a href="functions.html#index__"><span>_</span></a></li>
-      <li><a href="functions_a.html#index_a"><span>a</span></a></li>
-      <li><a href="functions_b.html#index_b"><span>b</span></a></li>
-      <li><a href="functions_c.html#index_c"><span>c</span></a></li>
-      <li><a href="functions_d.html#index_d"><span>d</span></a></li>
-      <li><a href="functions_e.html#index_e"><span>e</span></a></li>
-      <li><a href="functions_f.html#index_f"><span>f</span></a></li>
-      <li><a href="functions_g.html#index_g"><span>g</span></a></li>
-      <li><a href="functions_h.html#index_h"><span>h</span></a></li>
-      <li><a href="functions_i.html#index_i"><span>i</span></a></li>
-      <li class="current"><a href="functions_j.html#index_j"><span>j</span></a></li>
-      <li><a href="functions_k.html#index_k"><span>k</span></a></li>
-      <li><a href="functions_l.html#index_l"><span>l</span></a></li>
-      <li><a href="functions_m.html#index_m"><span>m</span></a></li>
-      <li><a href="functions_n.html#index_n"><span>n</span></a></li>
-      <li><a href="functions_o.html#index_o"><span>o</span></a></li>
-      <li><a href="functions_p.html#index_p"><span>p</span></a></li>
-      <li><a href="functions_r.html#index_r"><span>r</span></a></li>
-      <li><a href="functions_s.html#index_s"><span>s</span></a></li>
-      <li><a href="functions_t.html#index_t"><span>t</span></a></li>
-      <li><a href="functions_u.html#index_u"><span>u</span></a></li>
-      <li><a href="functions_v.html#index_v"><span>v</span></a></li>
-      <li><a href="functions_w.html#index_w"><span>w</span></a></li>
-      <li><a href="functions_x.html#index_x"><span>x</span></a></li>
-      <li><a href="functions_y.html#index_y"><span>y</span></a></li>
-      <li><a href="functions_~.html#index_~"><span>~</span></a></li>
-    </ul>
-  </div>
 </div><!-- top -->
 <div id="side-nav" class="ui-resizable side-nav-resizable">
   <div id="nav-tree">
@@ -126,7 +81,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <script type="text/javascript">
-$(document).ready(function(){initNavTree('functions_j.html','');});
+$(document).ready(function(){initNavTree('md_soccer_doc__unit_tests_and_c_i.html','');});
 </script>
 <div id="doc-content">
 <!-- window showing the filter options -->
@@ -143,20 +98,26 @@ $(document).ready(function(){initNavTree('functions_j.html','');});
 </iframe>
 </div>
 
+<div class="header">
+  <div class="headertitle">
+<div class="title">Testing &amp; Continuous Integration </div>  </div>
+</div><!--header-->
 <div class="contents">
-<div class="textblock">Here is a list of all documented class members with links to the class documentation for each member:</div>
-
-<h3><a class="anchor" id="index_j"></a>- j -</h3><ul>
-<li>joystickValid()
-: <a class="el" href="class_processor.html#ac921aeed15e3e38c88de9c8253b99c70">Processor</a>
-</li>
-</ul>
-</div><!-- contents -->
+<div class="textblock"><p>When working on a large software project, it's very helpful to have a test suite in place that can be quickly run to verify that key components haven't been broken by new changes. The test suite won't cover everything, but the more it covers, the better.</p>
+<p>Each time you make tests to the codebase, you should run the test suite with <code>make tests</code> to ensure that you haven't broken anything that was previously working. Additionally, you should add unit tests for your new code when appropriate.</p>
+<h2>C++ Unit Tests</h2>
+<p>We use the <a href="https://code.google.com/p/googletest/">googletest</a> unit testing platform for our C++ code. See the <code>soccer/tests</code> directory for our current tests. You can run these by running the <code>run_tests</code> executable in the <code>run</code> folder after compiling the project.</p>
+<h2>Python Unit Tests</h2>
+<p>We use the standard <code>unittest</code> module for testing our python code. Our unit tests are located at <code>soccer/gameplay/tests</code> and can be run by running <code>./run_tests.sh</code> form the <code>soccer/gameplay</code> directory.</p>
+<h2>Continuous Integration</h2>
+<p>We use a free continuous integration service called <a href="http://travis-ci.org">travis-ci</a>, which recompiles and retests our project everytime we push a new commit to our <a href="http://github.com/robojackets/robocup-software">GitHub repo</a>. Travis-ci works by cloning our git repository into a fresh Ubuntu Virtual Machine each time it receives a notification from GitHub that there are new commits. It then looks at our travis config file <a href="https://github.com/RoboJackets/robocup-software/blob/master/.travis.yml">.travis.yml</a>, which tells it what commands to run to build and test our code.</p>
+<p>There is a build status icon on our GitHub project's main page README that is green when the master branch build succeeds and red when it fails. This lets us quickly ensure that our project build hasn't been broken. Our goal is to make sure the master branch always builds. We push new code to a separate branch, then merge it only once we verify that it passes travis's tests. </p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Nov 3 2014 16:00:26 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Nov 3 2014 16:00:25 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>
