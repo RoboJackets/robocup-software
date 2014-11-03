@@ -283,9 +283,6 @@ void RRTPlanner::cubicBezier (Planning::Path &path, const Geometry2d::CompositeS
 	}
 	for (int i=0; i<curvesNum; i++) {
 		ks[i] = 1.0/(path.getTime(i+1)-path.getTime(i));
-
-		//cout<<ks[i]<< " ";
-		//ks[i]=1;
 		ks2[i] = ks[i]*ks[i];
 	}
 	
@@ -298,8 +295,7 @@ void RRTPlanner::cubicBezier (Planning::Path &path, const Geometry2d::CompositeS
 	vector<float> times;
 	const int interpolations = 10;
 	double time=0;
-	//cout<<curvesNum<<endl;
-	//cout<<ks[0]<<endl;
+
 	for (int i=0; i<curvesNum; i++) // access by reference to avoid copying
     {
     	p0 = path.points[i];
@@ -307,8 +303,6 @@ void RRTPlanner::cubicBezier (Planning::Path &path, const Geometry2d::CompositeS
     	p1 = Geometry2d::Point(solutionX(i*2),solutionY(i*2));
     	p2 = Geometry2d::Point(solutionX(i*2 + 1),solutionY(i*2 + 1));
     	
-    	//cout<<p0 << " "<<p1<<" "<<p2<<" "<<p3<<endl;
-
     	for (int j=0; j<interpolations; j++)
     	{
     		double k = ks[i];
@@ -320,7 +314,6 @@ void RRTPlanner::cubicBezier (Planning::Path &path, const Geometry2d::CompositeS
     		//3 k (-(A (-1 + k t)^2) + k t (2 C - 3 C k t + D k t) + B (1 - 4 k t + 3 k^2 t^2))
     		temp = 3*k*(-(p0*pow(-1 + k*t ,2)) + k*t*(2*p2 - 3*p2*k*t + p3*k*t) + p1*(1 - 4*k*t + 3*pow(k,2)*pow(t,2)));
     		vels.push_back(temp);
-    		//cout<<temp<<endl;	
     		times.push_back(time +  t);    		
     	}
     	time+= 1.0/ks[i];
@@ -333,8 +326,6 @@ void RRTPlanner::cubicBezier (Planning::Path &path, const Geometry2d::CompositeS
     path.points = pts;
     path.vels = vels;
     path.times = times;
-	//cout<<path.times.size();
-    //cout<<path.times.size()<<endl;
 	//Matrix<double, Dynamic, Dynamic> RowVector2i(10, 10);
 	//m(0,0)
 	//Eigen::VectorXd v(10);
@@ -344,7 +335,6 @@ void RRTPlanner::cubicBezier (Planning::Path &path, const Geometry2d::CompositeS
 VectorXd RRTPlanner::cubicBezierCalc (double vi, double vf, vector<double> &points, 
 									vector<double> &ks, vector<double> &ks2)
 {
-	//cout<< vi<<endl;
 	int curvesNum = points.size() - 1;
 
 
@@ -357,8 +347,6 @@ VectorXd RRTPlanner::cubicBezierCalc (double vi, double vf, vector<double> &poin
 		return vector;
 	}
 	else {
-		//cout<<curvesNum<<endl;
-		
 		int matrixSize = curvesNum*2;
 		MatrixXd equations = MatrixXd::Zero(matrixSize, matrixSize);
 		VectorXd answer(matrixSize);
@@ -374,10 +362,8 @@ VectorXd RRTPlanner::cubicBezierCalc (double vi, double vf, vector<double> &poin
 			equations(i, n*2 + 2) = ks[n+1];
 			answer(i) = (ks[n] + ks[n+1]) * points[n + 1];
 			i++;
-			//cout<<ks[n]<<endl;
 		}
 
-		
 		
 		for (int n=0; n<curvesNum-1; n++) 
 		{
@@ -392,13 +378,6 @@ VectorXd RRTPlanner::cubicBezierCalc (double vi, double vf, vector<double> &poin
 		
 		ColPivHouseholderQR<MatrixXd> solver(equations);
 		VectorXd solution = solver.solve(answer);
-		//cout<< i <<" "<<matrixSize<<endl;
-		//cout<<solution;
 		return solution;
-		//return VectorXd(1);
-
-
-
-
 	}
 }

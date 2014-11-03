@@ -606,7 +606,6 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	}
 
 	if (!_path) {
-		addText("hwat");
 		_pathInvalidated = true;
 	}
 
