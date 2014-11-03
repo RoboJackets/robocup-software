@@ -314,11 +314,11 @@ bool Planning::Path::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry
 		return false;
 	}
 	int i=0;
-	if (times[0]>t)
+	if (t<times[0])
 	{
 		targetPosOut = points[0];
 		targetVelOut = vels[0];
-		return true;
+		return false;
 	}
 	while (times[i]<=t)
 	{
