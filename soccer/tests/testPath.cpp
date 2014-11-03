@@ -95,23 +95,26 @@ TEST(Path, evaluate) {
 	path.points.push_back(p0);
 	path.points.push_back(p1);
 	path.points.push_back(p2);
-
+	path.times.push_back(0);
+	path.times.push_back(3);
+	path.times.push_back(6);
 	Point posOut, velOut;
 	bool pathValid;
 
 	path.maxSpeed = 2;
 	path.maxAcceleration = 2;
 
+
 	//	path should be invalid and at start state when t < 0
 	pathValid = path.evaluate(-1, posOut, velOut);
-	EXPECT_FLOAT_EQ((posOut - p0).mag(), 0);
-	EXPECT_FLOAT_EQ((velOut).mag(), 0);
+	EXPECT_FLOAT_EQ(0, (posOut - p0).mag());
+	EXPECT_FLOAT_EQ(0, (velOut).mag());
 	EXPECT_FALSE(pathValid);
 
 	//	path should be invalid and at end state when t > duration
 	pathValid = path.evaluate(1000, posOut, velOut);
-	EXPECT_FLOAT_EQ((posOut - p2).mag(), 0);
-	EXPECT_FLOAT_EQ(velOut.mag(), 0);
+	EXPECT_FLOAT_EQ(0, (posOut - p2).mag());
+	EXPECT_FLOAT_EQ(0, velOut.mag());
 	EXPECT_FALSE(pathValid);
 }
 
