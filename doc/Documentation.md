@@ -59,7 +59,7 @@ class PyClass:
 
 ## Additional Documentation
 
-In addition to turning inline code comments into documentation, Doxygen can also include docs in other formats.  This page that you are viewing right now and several others are written in [Markdown](http://daringfireball.net/projects/markdown/syntax).  See the files in `soccer/doc/` for examples.
+In addition to turning inline code comments into documentation, Doxygen can also include docs in other formats.  This page that you are viewing right now and several others are written in [Markdown](http://daringfireball.net/projects/markdown/syntax).  See the files in `doc` for examples.
 
 
 ## Compiling the documentation
