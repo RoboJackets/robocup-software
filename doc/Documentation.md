@@ -15,7 +15,7 @@ Doxygen has support for many different languages, but the comment syntax differs
 
 ### C++
 
-~~~~~
+\code
 /**
  * a normal member taking two arguments and returning an integer value.
  * @param a an integer argument.
@@ -27,14 +27,12 @@ Doxygen has support for many different languages, but the comment syntax differs
  * @return The test results
  */
  int testMe(int a,const char *s);
-~~~~~
-
+\endcode
 
 
 ### Python
 
-~~~~~
-
+\code{.py}
 ## Documentation for a class.
 #
 #  More details.
@@ -54,8 +52,7 @@ class PyClass:
 
     ## @var _memVar
     #  a member variable
-~~~~~
-
+\endcode
 
 ## Additional Documentation
 
