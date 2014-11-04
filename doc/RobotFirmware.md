@@ -83,7 +83,7 @@ monitor_ball
 ~~~
 
 
-# Sounds
+## Sounds
 
 The firmware plays certain sounds at startup or during operation to indicate status:
 
