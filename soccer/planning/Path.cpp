@@ -332,7 +332,6 @@ bool Planning::Path::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry
 		{
 			targetPosOut = points[i-1];
 			targetVelOut = Geometry2d::Point(0,0);
-			//targetVelOut = vels[i-1];
 			return false;
 		}
 	}
@@ -348,7 +347,6 @@ bool Planning::Path::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry
 	targetPosOut = points[i-1]*(1-constant) + points[i]*(constant);
 	targetVelOut = vels[i-1]*(1-constant) + vels[i]*(constant);
 
-
 	return true;
 }
 
@@ -359,7 +357,4 @@ float Planning::Path::getTime(int index) const
     }
 
 	return Trapezoidal::getTime(length(0,index), length(), maxSpeed, maxAcceleration, startSpeed, endSpeed);
-
-
-	
 }

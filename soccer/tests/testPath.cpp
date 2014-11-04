@@ -98,6 +98,9 @@ TEST(Path, evaluate) {
 	path.times.push_back(0);
 	path.times.push_back(3);
 	path.times.push_back(6);
+	path.vels.push_back(Point(0,0));
+	path.vels.push_back(p1);
+	path.vels.push_back(Point(0,0));
 	Point posOut, velOut;
 	bool pathValid;
 

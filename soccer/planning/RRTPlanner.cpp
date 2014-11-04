@@ -326,10 +326,6 @@ void RRTPlanner::cubicBezier (Planning::Path &path, const Geometry2d::CompositeS
     path.points = pts;
     path.vels = vels;
     path.times = times;
-	//Matrix<double, Dynamic, Dynamic> RowVector2i(10, 10);
-	//m(0,0)
-	//Eigen::VectorXd v(10);
-	//Eigen::MatrixX3d equations(10); 
 }
 
 VectorXd RRTPlanner::cubicBezierCalc (double vi, double vf, vector<double> &points, 
