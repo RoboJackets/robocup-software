@@ -20,7 +20,5 @@ before_install:
 script: make && make test-cpp
 
 notifications:
-  email:
-    - justbuchanan@gmail.com
-    - ashaw596@gmail.com
+  email: false
 
