@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['soccer',['Soccer',['../md_doc__soccer.html',1,'']]],
   ['saturate',['saturate',['../class_geometry2d_1_1_point.html#a7c7c74276015f8a8efc19a3b2937ae7f',1,'Geometry2d::Point']]],
   ['score',['score',['../classplay_1_1_play.html#a517df22776d34e3d930bcae4da1fb469',1,'play::Play']]],
   ['segment',['Segment',['../class_geometry2d_1_1_segment.html',1,'Geometry2d']]],
@@ -30,7 +31,7 @@ var searchData=
   ['state',['State',['../classplays_1_1testing_1_1_two_side_attack_1_1_two_side_attack_1_1_state.html',1,'plays::testing::TwoSideAttack::TwoSideAttack']]],
   ['state',['State',['../classskills_1_1bump_1_1_bump_1_1_state.html',1,'skills::bump::Bump']]],
   ['state',['State',['../classplays_1_1testing_1_1test__capture_1_1_test_capture_1_1_state.html',1,'plays::testing::test_capture::TestCapture']]],
-  ['state',['State',['../classtactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie_1_1_state.html',1,'tactics::positions::submissive_goalie::SubmissiveGoalie']]],
+  ['state',['State',['../classskills_1_1aim_1_1_aim_1_1_state.html',1,'skills::aim::Aim']]],
   ['state',['State',['../classplays_1_1testing_1_1repeated__line__up_1_1_repeated_line_up_1_1_state.html',1,'plays::testing::repeated_line_up::RepeatedLineUp']]],
   ['state',['State',['../classtimed__behavior_1_1_timed_behavior_1_1_state.html',1,'timed_behavior::TimedBehavior']]],
   ['state',['State',['../classplays_1_1tuning_1_1tune__facing_1_1_facer_1_1_state.html',1,'plays::tuning::tune_facing::Facer']]],
@@ -41,7 +42,7 @@ var searchData=
   ['state',['State',['../classtactics_1_1penalty_1_1_penalty_1_1_state.html',1,'tactics::penalty::Penalty']]],
   ['state',['State',['../classskills_1_1capture_1_1_capture_1_1_state.html',1,'skills::capture::Capture']]],
   ['state',['State',['../classevaluation_1_1double__touch_1_1_double_touch_tracker_1_1_state.html',1,'evaluation::double_touch::DoubleTouchTracker']]],
-  ['state',['State',['../classskills_1_1aim_1_1_aim_1_1_state.html',1,'skills::aim::Aim']]],
+  ['state',['State',['../classtactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie_1_1_state.html',1,'tactics::positions::submissive_goalie::SubmissiveGoalie']]],
   ['state',['State',['../classtactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html',1,'tactics::positions::goalie::Goalie']]],
   ['state',['State',['../classplays_1_1restarts_1_1our__kickoff_1_1_our_kickoff_1_1_state.html',1,'plays::restarts::our_kickoff::OurKickoff']]],
   ['statemachine',['StateMachine',['../classfsm_1_1_state_machine.html',1,'fsm']]],

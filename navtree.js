@@ -1,6 +1,13 @@
 var NAVTREE =
 [
   [ "GT RoboCup SSL", "index.html", [
+    [ "Build Systems", "md_doc__build_systems.html", null ],
+    [ "Documentation", "md_doc__documentation.html", null ],
+    [ "Gameplay", "md_doc__gameplay.html", null ],
+    [ "Motion Control", "md_doc__motion_control.html", null ],
+    [ "Soccer", "md_doc__soccer.html", null ],
+    [ "Testing & Continuous Integration", "md_doc__unit_tests_and_c_i.html", null ],
+    [ "Vision", "md_doc__vision.html", null ],
     [ "Modules", "modules.html", "modules" ],
     [ "Namespaces", null, [
       [ "Namespace List", "namespaces.html", "namespaces" ],
