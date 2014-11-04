@@ -124,6 +124,7 @@ $(document).ready(function(){initNavTree('md_doc__robot_firmware.html','');});
 <li>LEDs</li>
 <li>Sounds / songs</li>
 <li>ball sensor</li>
+<li><a class="el" href="class_robot.html">Robot</a> ID selector</li>
 </ul>
 <h2>Console</h2>
 <p>A great way to debug a robot or just to query it for information is to use the console. This is a command-prompt that you can use when the robot is connected via USB. We have <a href="http://en.wikipedia.org/wiki/Udev">udev</a> rules setup so that when the robot is connected via USB, it will show up in the filesystem as <code>/dev/robot</code>. You can use the <a href="http://en.wikipedia.org/wiki/GNU_Screen">screen</a> program in the terminal to connect to it by typing:</p>
@@ -162,12 +163,22 @@ $(document).ready(function(){initNavTree('md_doc__robot_firmware.html','');});
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;monitor_charge</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;imu_test</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;monitor_ball</div>
-</div><!-- fragment --> </div></div><!-- contents -->
+</div><!-- fragment --><h2>Sounds</h2>
+<p>The firmware plays certain sounds at startup or during operation to indicate status:</p>
+<ul>
+<li><a href="0-startup.m4a">0-startup</a></li>
+<li><a href="1-failure.m4a">1-failure</a></li>
+<li><a href="2-overvoltage.m4a">2-overvoltage</a></li>
+<li><a href="3-undervoltage.m4a">3-undervoltage</a></li>
+<li><a href="4-fuse-blown.m4a">4-fuse-blown</a></li>
+<li><a href="5-victory.m4a">5-victory</a> </li>
+</ul>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Nov 4 2014 18:38:10 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Nov 4 2014 19:36:01 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>
