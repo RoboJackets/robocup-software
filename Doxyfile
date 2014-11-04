@@ -1122,7 +1122,12 @@ HTML_EXTRA_STYLESHEET  =
 # files will be copied as-is; there are no commands or markers available.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_FILES       =
+HTML_EXTRA_FILES       = doc/firmware-sounds/0-startup.m4a \
+                         doc/firmware-sounds/1-failure.m4a \
+                         doc/firmware-sounds/2-overvoltage.m4a \
+                         doc/firmware-sounds/3-undervoltage.m4a \
+                         doc/firmware-sounds/4-fuse-blown.m4a \
+                         doc/firmware-sounds/5-victory.m4a
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the stylesheet and background images according to
