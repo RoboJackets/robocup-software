@@ -121,27 +121,38 @@ $(document).ready(function(){initNavTree('md_doc__documentation.html','');});
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160; */</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; int testMe(int a,const char *s);</div>
 </div><!-- fragment --><h3>Python</h3>
-<p>~~~~~</p>
-<h2>Documentation for a class.</h2>
-<p># </p><h1>More details.</h1>
-<p>class PyClass: </p><pre class="fragment">## The constructor.
-def __init__(self):
-    self._memVar = 0;
-
-## Documentation for a method.
-#  @param self The object pointer.
-def PyMethod(self):
-    pass
-
-## A class variable.
-classVar = 0;
-
-##</pre> </div></div><!-- contents -->
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">## Documentation for a class.</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">#</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment">#  More details.</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="keyword">class </span>PyClass:</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;   </div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    <span class="comment">## The constructor.</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    <span class="keyword">def </span>__init__(self):</div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;        self._memVar = 0;</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;   </div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="comment">## Documentation for a method.</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="comment">#  @param self The object pointer.</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <span class="keyword">def </span>PyMethod(self):</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        <span class="keywordflow">pass</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;     </div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="comment">## A class variable.</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    classVar = 0;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <span class="comment">## @var _memVar</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="comment">#  a member variable</span></div>
+</div><!-- fragment --><h2>Additional Documentation</h2>
+<p>In addition to turning inline code comments into documentation, Doxygen can also include docs in other formats. This page that you are viewing right now and several others are written in <a href="http://daringfireball.net/projects/markdown/syntax">Markdown</a>. See the files in <code>doc</code> for examples.</p>
+<h2>Compiling the documentation</h2>
+<p>To build the documentation website, run <code>doxygen</code> from the root of the robocup-software project. This will place a bunch of files in <code>api_docs/html</code>. Open the <code>index.html</code> file in a browser to view the site.</p>
+<p>Our documentation website automagically updates everytime someone pushes the master branch of the repository. This is setup through <a href="https://travis-ci.org">travis-ci</a> - see the <code>autoupdate-docs-travis.sh</code> script to see how this is done.</p>
+<h2>Further configuration</h2>
+<p>Doxgen looks at the <code>Doxyfile</code> in the root of our project to configure things such as which files to include and how to display the output. </p>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Nov 4 2014 19:44:11 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Nov 4 2014 20:11:08 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>
