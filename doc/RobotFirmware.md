@@ -33,6 +33,7 @@ The firmware's job is to accept instructions over the radio and carry them out b
 * LEDs
 * Sounds / songs
 * ball sensor
+* Robot ID selector
 
 
 ## Console
@@ -81,3 +82,14 @@ imu_test
 monitor_ball
 ~~~
 
+
+# Sounds
+
+The firmware plays certain sounds at startup or during operation to indicate status:
+
+* [0-startup](0-startup.m4a)
+* [1-failure](1-failure.m4a)
+* [2-overvoltage](2-overvoltage.m4a)
+* [3-undervoltage](3-undervoltage.m4a)
+* [4-fuse-blown](4-fuse-blown.m4a)
+* [5-victory](5-victory.m4a)
