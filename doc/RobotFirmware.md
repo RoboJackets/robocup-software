@@ -92,4 +92,4 @@ The firmware plays certain sounds at startup or during operation to indicate sta
 * [2-overvoltage](2-overvoltage.m4a)
 * [3-undervoltage](3-undervoltage.m4a)
 * [4-fuse-blown](4-fuse-blown.m4a)
-* [5-victory](5-victory.m4a)
+* [5-fight-song](5-victory.m4a)
