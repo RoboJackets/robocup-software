@@ -4,6 +4,7 @@
 #include "timer.h"
 
 #include "songs/NationalAnthem.h"
+#include "songs/music_notes.h"
 
 volatile int music_playing;
 
@@ -289,6 +290,8 @@ const note_t song_still_alive[] =
 	{PERIOD(740), 800},
 	{0, 1400},
 
+	// clears garble
+	{PERIOD(CLEAR), 1},
 	{PERIOD(440), 200},
 	{PERIOD(784), 200},
 	{PERIOD(740), 200},
@@ -314,6 +317,7 @@ const note_t song_still_alive[] =
 	{PERIOD(740), 1400},
 	{0, 800},
 
+	{PERIOD(CLEAR), 1},
 	{PERIOD(784), 200},
 	{PERIOD(740), 200},
 	{PERIOD(659), 200},
@@ -322,6 +326,7 @@ const note_t song_still_alive[] =
 	{PERIOD(740), 800},
 	{0, 1400},
 
+	{PERIOD(CLEAR), 1},
 	{PERIOD(440), 200},
 	{PERIOD(784), 200},
 	{PERIOD(740), 200},
@@ -334,6 +339,7 @@ const note_t song_still_alive[] =
 	{PERIOD(440), 1000},
 
 	{0, 800},
+	{PERIOD(CLEAR), 1},
 	{PERIOD(659), 400},
 	{PERIOD(740), 200},
 	{PERIOD(784), 600},
@@ -350,6 +356,7 @@ const note_t song_still_alive[] =
 	{PERIOD(523), 200},
 	{0, 400},
 
+	{PERIOD(CLEAR), 1},
 	{PERIOD(440), 200},
 	{PERIOD(466), 200},
 	{PERIOD(523), 400},
