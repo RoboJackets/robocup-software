@@ -1,8 +1,20 @@
+# this file came from https://github.com/uwearzt/mbed-cmake
+# and was modified by Justin Buchanan
+#
+# The end result of this file is the 'robot2015' target
+# building this target ouputs an MBED-runnable file at run/robot2015.bin, which can be copied onto the MBED
+
+# set the arm toolchain
+set(CMAKE_TOOLCHAIN_FILE arm_toolchain.cmake)
+include(arm_toolchain.cmake)
+
+
+# suppress -rdynamic flag
+set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
+set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS "")
 
 include(ExternalProject)
 
-# download the latest version of the mbed sdk/library from the official source
-# it mostly just contains header files and mbed hardware support
 ExternalProject_Add(mbed_library
     HG_REPOSITORY https://developer.mbed.org/users/mbed_official/code/mbed/
     HG_TAG default
@@ -11,54 +23,54 @@ ExternalProject_Add(mbed_library
     INSTALL_COMMAND ""
 )
 
-set(CMAKE_TOOLCHAIN_FILE mbed_gcc_toolchain.cmake)
+# don't get the external project unless it's required
+set_target_properties(mbed_library PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
-# the source files that will go into the robot2015.bin firmware
+
+# set the target processor and include settings for cmake
+set(MBED_TARGET LPC1768)
+#set(MBED_TARGET LPC11U24)
+#set(MBED_TARGET RBLAB_NRF51822)
+
+# ------------------------------------------------------------------------------
+# will add the include dirs and link the lib
+#set(USE_RTOS true)
+#set(USE_NET true)
+#set(USE_USB true)
+#set(USE_DSP true)
+
+
+include(arm_mbed.cmake)
+
+
+# firmware source files
 file(GLOB robot2015_SRC
     "*.cpp"
-    )
+)
 
-# include the mbed headers that we downloaded above with the ExternalProject command
-set(MBED_LIB_PATH ${CMAKE_CURRENT_BINARY_DIR}/mbed_library-prefix/src/mbed_library)
-include_directories(${MBED_LIB_PATH})
-include_directories(${MBED_LIB_PATH}/TARGET_LPC1768)
-include_directories(${MBED_LIB_PATH}/TARGET_LPC1768/TOOLCHAIN_GCC_ARM)
-include_directories(${MBED_LIB_PATH}/TARGET_LPC1768/TARGET_NXP)
-include_directories(${MBED_LIB_PATH}/TARGET_LPC1768/TARGET_NXP/TARGET_LPC176X)
-include_directories(${MBED_LIB_PATH}/TARGET_LPC1768/TARGET_NXP/TARGET_LPC176X/TARGET_MBED_LPC1768)
+add_executable(robot2015_elf ${robot2015_SRC} ${MBED_OBJECTS})
+target_link_libraries(robot2015_elf ${MBED_LIBS})
 
-# include cross-compiler header files
-# find_path(CSPATH arm-none-eabi-g++ PATHS ENV)
-set(CSPATH  /usr/lib/arm-none-eabi/include)
-message(STATUS "${CSPATH} is where the xcompile toolchain is installed")
-include_directories(${CSPATH})
-include_directories(${CSPATH}/c++/4.8)
+# the final product is the .bin file, not the elf one.  We hide this away in the build dir
+set_target_properties(robot2015_elf PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
-# define some symbols when compiling
-set(CC_SYMBOLS "-DTARGET_LPC1768 -DTARGET_M3 -DTARGET_NXP -DTARGET_LPC176X -DTARGET_MBED_LPC1768 -DTOOLCHAIN_GCC_ARM -DTOOLCHAIN_GCC -D__CORTEX_M3 -DARM_MATH_CM3 -DMBED_BUILD_TIMESTAMP=1415078109.67 -D__MBED__=1")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CC_SYMBOLS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CC_SYMBOLS}")
+# only build robot firmware if specifically instructed
+set_target_properties(robot2015_elf PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
-# path to mbed object files
-link_directories(${MBED_LIB_PATH}/TARGET_LPC1768/TOOLCHAIN_GCC_ARM)
 
-# use mbed-provided linker script
-set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -T ${MBED_LIB_PATH}/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/LPC1768.ld")
+# tell CMake that the obj files all come from the ExternalProject
+# otherwise it'll complain that the files can't be found
+foreach(mbed_obj ${MBED_OBJECTS})
+    add_custom_command(
+        OUTPUT ${mbed_obj}
+        DEPENDS mbed_library
+        COMMAND "")
+endforeach()
 
-set(MBED_OBJ
-    ${MBED_LIB_PATH}/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/retarget.o
-    ${MBED_LIB_PATH}/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/system_LPC17xx.o
-    ${MBED_LIB_PATH}/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/board.o
-    ${MBED_LIB_PATH}/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/cmsis_nvic.o
-    ${MBED_LIB_PATH}/TARGET_LPC1768/TOOLCHAIN_GCC_ARM/startup_LPC17xx.o)
 
-# firmware output: robot2015.bin
-add_executable(robot2015 ${robot2015_SRC} ${MBED_OBJ})
-add_dependencies(robot2015 mbed_library)
-target_link_libraries(robot2015 mbed)
-target_link_libraries(robot2015 stdc++ supc++ m c gcc nosys)
-
-# create a robot2015.bin from a robot2015.elf
-add_custom_command(TARGET robot2015
-    COMMAND arm-none-eabi-objcopy -O binary robot2015 robot2015_mbed.bin
-    COMMENT "objcopying to make mbed-compatible firmware")
+# custom target for creating a .bin file from an elf binary
+add_custom_target(robot2015
+    arm-none-eabi-objcopy -O binary robot2015_elf robot2015.bin
+    COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/robot2015.bin ${PROJECT_SOURCE_DIR}/run/
+    DEPENDS robot2015_elf
+)
