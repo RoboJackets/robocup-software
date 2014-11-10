@@ -10,7 +10,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/run)
 
 # Qt5
-set(CMAKE_AUTOMOC ON)
 find_package(Qt5Widgets)
 
 # Google Protobuf
