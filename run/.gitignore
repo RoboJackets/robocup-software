@@ -25,5 +25,6 @@ libPhysXLoader.so.1
 robocup.so
 run_tests
 robot2015.bin
+test-cpp
 
 /qt_vehicle_demo

@@ -12,7 +12,7 @@ run-sim: all
 # Run both C++ and python unit tests
 tests: test-cpp test-python
 test-cpp: all
-	run/run_tests
+	cd build && make test-cpp && cd .. && run/test-cpp
 test-python: all
 	cd soccer/gameplay && ./run_tests.sh
 
