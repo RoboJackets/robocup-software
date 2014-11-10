@@ -29,6 +29,11 @@ robot-ota:
 robot-prog-samba:
 	cd firmware; scons robot; sudo scons robot-prog-samba
 
+# robot 2015 firmware
+robot2015: all
+	cd build && make robot2015
+
+
 # Robot FPGA
 fpga2011:
 	cd firmware; scons fpga2011

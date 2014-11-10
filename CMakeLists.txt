@@ -6,17 +6,10 @@ project("GT RoboJackets RoboCup")
 # include cmake files in the 'cmake folder'
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
 
-# Compiler flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
-# add debug symbols for use with gdb
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
-
 # put executables in the 'run' folder
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/run)
 
 # Qt5
-set(CMAKE_AUTOMOC ON)
 find_package(Qt5Widgets)
 
 # Google Protobuf
@@ -44,3 +37,4 @@ add_subdirectory(common)
 add_subdirectory(soccer)
 add_subdirectory(simulator)
 add_subdirectory(logging)
+add_subdirectory(firmware)
