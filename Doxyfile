@@ -1127,7 +1127,8 @@ HTML_EXTRA_FILES       = doc/firmware-sounds/0-startup.m4a \
                          doc/firmware-sounds/2-overvoltage.m4a \
                          doc/firmware-sounds/3-undervoltage.m4a \
                          doc/firmware-sounds/4-fuse-blown.m4a \
-                         doc/firmware-sounds/5-victory.m4a
+                         doc/firmware-sounds/5-victory.m4a \
+                         doc/firmware-sounds/6-still-alive.ogg
 
 # The HTML_COLORSTYLE_HUE tag controls the color of the HTML output. Doxygen
 # will adjust the colors in the stylesheet and background images according to
