@@ -1,7 +1,7 @@
-
+MAKE_FLAGS=--no-print-directory
 all:
 	mkdir -p build
-	cd build; cmake .. -Wno-dev && make
+	cd build; cmake .. -Wno-dev && make $(MAKE_FLAGS)
 
 run: all
 	cd run; ./soccer
@@ -11,12 +11,13 @@ run-sim: all
 
 # Run both C++ and python unit tests
 tests: test-cpp test-python
-test-cpp: all
-	cd build && make test-cpp && cd .. && run/test-cpp
+test-cpp:
+	cd build && cmake --target test-cpp .. && make $(MAKE_FLAGS) test-cpp && cd .. && run/test-cpp
 test-python: all
 	cd soccer/gameplay && ./run_tests.sh
 
 clean:
+	cd build && make $(MAKE_FLAGS) clean
 	rm -rf build
 
 # Robot firmware (both 2008/2011)
@@ -30,8 +31,8 @@ robot-prog-samba:
 	cd firmware; scons robot; sudo scons robot-prog-samba
 
 # robot 2015 firmware
-robot2015: all
-	cd build && make robot2015
+robot2015:
+	mkdir -p build && cd build && cmake --target robot2015 .. && make $(MAKE_FLAGS) robot2015
 
 
 # Robot FPGA
