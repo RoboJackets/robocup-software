@@ -73,4 +73,6 @@ add_custom_target(robot2015
     arm-none-eabi-objcopy -O binary robot2015_elf robot2015.bin
     COMMAND cp ${CMAKE_CURRENT_BINARY_DIR}/robot2015.bin ${PROJECT_SOURCE_DIR}/run/
     DEPENDS robot2015_elf
+    COMMENT "objcopying to make MBED-compatible executable"
 )
+set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/robot2015.bin)
