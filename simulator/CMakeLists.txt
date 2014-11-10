@@ -1,4 +1,10 @@
 
+# Compiler flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++11")
+
+# Qt
+set(CMAKE_AUTOMOC ON)
+
 file(GLOB simulator_SRC
     "*.cpp"
     "physics/*.cpp"
