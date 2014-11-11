@@ -5,7 +5,7 @@
 #include "WindowEvaluator.hpp"
 #include "ReceivePointEvaluator.hpp"
 #include <Geometry2d/Segment.hpp>
-#include <boost/foreach.hpp>
+
 #include <Utils.hpp>
 
 
@@ -148,7 +148,7 @@ namespace Gameplay {
 
 
 		void removeAllPointEvaluators() {
-			BOOST_FOREACH(PointEvaluator *ptEval, _pointEvaluators) {
+			for (PointEvaluator *ptEval :  _pointEvaluators) {
 				delete ptEval;
 			}
 			_pointEvaluators.clear();

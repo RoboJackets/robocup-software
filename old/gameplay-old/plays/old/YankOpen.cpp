@@ -1,6 +1,5 @@
 #include <limits>
 #include <iostream>
-#include <boost/foreach.hpp>
 #include "YankOpen.hpp"
 
 using namespace std;
@@ -100,7 +99,7 @@ bool Gameplay::Plays::YankOpen::run()
 	OpponentRobot* closestRobotToStriker = 0;
 	float closestDistToStriker = numeric_limits<float>::infinity();
 	if (_strikerYank.robot) {
-		BOOST_FOREACH(OpponentRobot* opp, state()->opp) {
+		for (OpponentRobot* opp :  state()->opp) {
 			if (opp) {
 				float d = opp->pos.distTo(_strikerYank.robot->pos);
 				if (d < closestDistToStriker) {
@@ -126,7 +125,7 @@ bool Gameplay::Plays::YankOpen::run()
 	float cur_dist = (_support.markRobot()) ? _support.markRobot()->pos.distTo(ballProj) : numeric_limits<float>::infinity();
 
 	size_t nrOppClose = 0;
-	BOOST_FOREACH(OpponentRobot* opp, state()->opp)
+	for (OpponentRobot* opp :  state()->opp)
 	{
 		const float oppPos = opp->pos.y;
 		if (opp && opp->visible && oppPos > 0.1 && !(striker_engaged && opp == closestRobotToStriker)) {

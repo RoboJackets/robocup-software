@@ -1,6 +1,6 @@
 #include "Behavior.hpp"
 
-#include <boost/foreach.hpp>
+
 
 using namespace std;
 

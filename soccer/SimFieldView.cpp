@@ -5,7 +5,6 @@
 
 #include <QPainter>
 #include <QMouseEvent>
-#include <boost/foreach.hpp>
 
 using namespace boost;
 using namespace Packet;
@@ -28,7 +27,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me)
 	if (me->button() == Qt::LeftButton && frame)
 	{
 		_dragRobot = -1;
-		BOOST_FOREACH(const LogFrame::Robot &r, frame->self())
+		for (const LogFrame::Robot &r :  frame->self())
 		{
 			if (pos.nearPoint(r.pos(), Robot_Radius))
 			{
@@ -37,7 +36,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me)
 				break;
 			}
 		}
-		BOOST_FOREACH(const LogFrame::Robot &r, frame->opp())
+		for (const LogFrame::Robot &r :  frame->opp())
 		{
 			if (pos.nearPoint(r.pos(), Robot_Radius))
 			{

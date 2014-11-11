@@ -6,7 +6,7 @@
 #include <Geometry2d/util.h>
 
 #include <vector>
-#include <boost/foreach.hpp>
+
 #include <boost/make_shared.hpp>
 
 using namespace std;
@@ -44,7 +44,7 @@ OpponentRobot* Gameplay::Behaviors::Defender::findRobotToBlock(const Geometry2d:
 {
 	OpponentRobot* target = 0;
 	// Find by ball distance
-	BOOST_FOREACH(OpponentRobot* r, state()->opp)
+	for (OpponentRobot* r :  state()->opp)
 	{
 		if(r && r->visible && area.contains(r->pos))
 		{
@@ -149,7 +149,7 @@ bool Gameplay::Behaviors::Defender::run()
 									 Geometry2d::Point(Field_GoalWidth / 2.0f, 0));
 
 		//exclude robots that aren't the defender
-		BOOST_FOREACH(Defender *f, otherDefenders)
+		for (Defender *f :  otherDefenders)
 		{
 			if (f->robot)
 			{
@@ -173,7 +173,7 @@ bool Gameplay::Behaviors::Defender::run()
 		// Center defends entire area
 
 		//exclude robots that are on the other team
-		BOOST_FOREACH(OpponentRobot* opp, state()->opp)
+		for (OpponentRobot* opp :  state()->opp)
 		{
 			if (opp)
 				_winEval.exclude.push_back(opp->pos);
@@ -196,7 +196,7 @@ bool Gameplay::Behaviors::Defender::run()
 		Goalie* goalie = _gameplay->goalie();
 		if (goalie && goalie->robot && _side != Center)
 		{
-			BOOST_FOREACH(Window* window, _winEval.windows)
+			for (Window* window :  _winEval.windows)
 			{
 				if (!best)
 					best = window;
@@ -216,7 +216,7 @@ bool Gameplay::Behaviors::Defender::run()
 		{
 			//if no side parameter...stay in the middle
 			float bestDist = 0;
-			BOOST_FOREACH(Window* window, _winEval.windows)
+			for (Window* window :  _winEval.windows)
 			{
 				Geometry2d::Segment seg(window->segment.center(), ball().pos);
 				float newDist = seg.distTo(robot->pos);
@@ -232,7 +232,7 @@ bool Gameplay::Behaviors::Defender::run()
 	else if(_state == AreaMarking)
 	{
 		float angle;
-		BOOST_FOREACH(Window* window, _winEval.windows)
+		for (Window* window :  _winEval.windows)
 		{
 			if(!best){
 				best = window;

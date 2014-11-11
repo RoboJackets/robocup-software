@@ -1,5 +1,5 @@
 #include <limits>
-#include <boost/foreach.hpp>
+
 #include "BasicOffense122.hpp"
 
 using namespace std;
@@ -116,7 +116,7 @@ bool Gameplay::Plays::BasicOffense122::run()
 	OpponentRobot* closestRobotToStriker = 0;
 	float closestDistToStriker = numeric_limits<float>::infinity();
 	if (_striker.robot) {
-		BOOST_FOREACH(OpponentRobot* opp, state()->opp) {
+		for (OpponentRobot* opp :  state()->opp) {
 			if (opp) {
 				float d = opp->pos.distTo(_striker.robot->pos);
 				if (d < closestDistToStriker) {
@@ -134,7 +134,7 @@ bool Gameplay::Plays::BasicOffense122::run()
 	OpponentRobot* bestOpp1 = NULL, *bestOpp2 = NULL;
 	float bestDist1 = numeric_limits<float>::infinity(), bestDist2 = bestDist1;
 	size_t nrOppClose = 0;
-	BOOST_FOREACH(OpponentRobot* opp, state()->opp)
+	for (OpponentRobot* opp :  state()->opp)
 	{
 		// use distance from goal rather than just y coordinate to handle corners better
 		const float oppDistSq = opp->pos.magsq();

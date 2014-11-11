@@ -4,7 +4,6 @@
 #include <QObject>
 #include <QString>
 #include <vector>
-#include <boost/foreach.hpp>
 
 #include <Configuration.hpp>
 #include <Constants.hpp>
@@ -45,7 +44,7 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 	// Add vision packets
 	uint64_t curTime = timestamp();
 	if (verbose) cout << "Adding vision packets" << endl;
-	BOOST_FOREACH(const SSL_DetectionFrame* vision, rawVision)
+	for (const SSL_DetectionFrame* vision :  rawVision)
 	{
 		//FIXME - Use vision computer time, but only as a relative time.
 		//  Be aware that network/scheduling latency can change dramatically.
@@ -63,18 +62,18 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 		}
 
 		// add ball observation
-		BOOST_FOREACH(const SSL_DetectionBall &ball, vision->balls())
+		for (const SSL_DetectionBall &ball :  vision->balls())
 		{
 			Geometry2d::Point pos(ball.x() / 1000.0f, ball.y() / 1000.0f);
 			_ballModel->observation(timestamp, pos, BallModel::VISION);
 		}
 
 		// add robot observations
-		BOOST_FOREACH(const SSL_DetectionRobot &robot, *self)
+		for (const SSL_DetectionRobot &robot :  *self)
 		{
 			addRobotObseration(robot, timestamp, _selfPlayers);
 		}
-		BOOST_FOREACH(const SSL_DetectionRobot &robot, *opp)
+		for (const SSL_DetectionRobot &robot :  *opp)
 		{
 			addRobotObseration(robot, timestamp, _oppPlayers);
 		}
@@ -82,7 +81,7 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 
 	// get robot data from return packets
 	if (verbose) cout << "Adding robot rx data" << endl;
-	BOOST_FOREACH(OurRobot *robot, _state->self) {
+	for (OurRobot *robot :  _state->self) {
 		addRobotRxData(robot);
 	}
 
@@ -93,7 +92,7 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 
 	// Ball sensor
 	//FIXME - Detect broken ball sensors and spurious triggers (from spinning or collision)
-	BOOST_FOREACH(OurRobot *robot, _state->self)
+	for (OurRobot *robot :  _state->self)
 	{
 		robot->hasBall = robot->radioRx.ball_sense();
 	}
@@ -101,16 +100,16 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 	// Copy robot data out of models into state
 	if (verbose) cout << "copying out data for robots" << endl;
 	// by default, sets robots to not visible
-	BOOST_FOREACH(Robot *robot, _state->self)
+	for (Robot *robot :  _state->self)
 	{
 		robot->visible = false;
 	}
-	BOOST_FOREACH(Robot *robot, _state->opp)
+	for (Robot *robot :  _state->opp)
 	{
 		robot->visible = false;
 	}
 	
-	BOOST_FOREACH(const RobotModel::shared& robot, _selfPlayers)
+	for (const RobotModel::shared& robot :  _selfPlayers)
 	{
 		if (robot) {
 			int i = robot->shell();
@@ -121,7 +120,7 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 			_state->self[i]->angleVel = robot->angleVel();
 		}
 	}
-	BOOST_FOREACH(const RobotModel::shared& robot, _oppPlayers)
+	for (const RobotModel::shared& robot :  _oppPlayers)
 	{
 		if (robot) {
 			int i = robot->shell();
@@ -135,7 +134,7 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 
 	// Store the robot models for use by the ball model
 	_robotMap.clear();
-	BOOST_FOREACH(const RobotModel::shared& model, _selfPlayers)
+	for (const RobotModel::shared& model :  _selfPlayers)
 	{
 		if (model)
 		{
@@ -143,7 +142,7 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 		}
 	}
 	
-	BOOST_FOREACH(const RobotModel::shared& model, _oppPlayers)
+	for (const RobotModel::shared& model :  _oppPlayers)
 	{
 		if (model)
 		{
@@ -153,7 +152,7 @@ void WorldModel::run(bool blueTeam, const std::vector<const SSL_DetectionFrame *
 
 	// add observations to the ball based on ball sensors and filtered robot positions
 	if (verbose) cout << "adding ball observations for ball sensors" << endl;
-	BOOST_FOREACH(RobotModel::shared robot, _selfPlayers)
+	for (RobotModel::shared robot :  _selfPlayers)
 	{
 		if (robot) {
 			//if a robot has the ball, we need to make an observation
@@ -194,7 +193,7 @@ void WorldModel::addRobotObseration(const SSL_DetectionRobot &obs, uint64_t time
 	int obs_shell = obs.robot_id();
 
 	// try to add to an existing model, and return if we update something
-	BOOST_FOREACH(RobotModel::shared& model, players) {
+	for (RobotModel::shared& model :  players) {
 		if (model && model->shell() == obs_shell) {
 			Geometry2d::Point pos(obs.x() / 1000.0f, obs.y() / 1000.0f);
 			model->observation(timestamp, pos, obs.orientation() * RadiansToDegrees);
@@ -203,7 +202,7 @@ void WorldModel::addRobotObseration(const SSL_DetectionRobot &obs, uint64_t time
 	}
 
 	// find an open slot - assumed that invalid models will have been removed already
-	BOOST_FOREACH(RobotModel::shared& model, players) {
+	for (RobotModel::shared& model :  players) {
 		if (!model) {
 			model = RobotModel::shared(new RobotModel(&_robotConfig, obs_shell));
 			Geometry2d::Point pos(obs.x() / 1000.0f, obs.y() / 1000.0f);
@@ -214,7 +213,7 @@ void WorldModel::addRobotObseration(const SSL_DetectionRobot &obs, uint64_t time
 }
 
 void WorldModel::updateRobots(vector<RobotModel::shared>& players, uint64_t cur_time) {
-	BOOST_FOREACH(RobotModel::shared& model, players) {
+	for (RobotModel::shared& model :  players) {
 		if (model && model->valid(cur_time)) {
 			model->update(cur_time);
 		} else {
@@ -225,7 +224,7 @@ void WorldModel::updateRobots(vector<RobotModel::shared>& players, uint64_t cur_
 
 void WorldModel::addRobotRxData(OurRobot *robot) {
 	int shell = robot->shell();
-	BOOST_FOREACH(RobotModel::shared& model, _selfPlayers) {
+	for (RobotModel::shared& model :  _selfPlayers) {
 		if (model && model->shell() == shell) {
 			model->hasBall(robot->radioRx.ball_sense());
 			return;

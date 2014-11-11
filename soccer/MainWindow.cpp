@@ -14,8 +14,6 @@
 #include <QMessageBox>
 
 #include <iostream>
-#include <boost/foreach.hpp>
-
 #include <ctime>
 
 #include <google/protobuf/descriptor.h>
@@ -294,7 +292,7 @@ void MainWindow::updateViews()
 		if (_quaternion_demo && manual >= 0 && currentFrame->radio_rx().size() && currentFrame->radio_rx(0).has_quaternion())
 		{
 			const RadioRx *manualRx = 0;
-			BOOST_FOREACH(const RadioRx &rx, currentFrame->radio_rx())
+			for (const RadioRx &rx :  currentFrame->radio_rx())
 			{
 				if ((int)rx.robot_id() == manual)
 				{
@@ -640,7 +638,7 @@ void MainWindow::on_actionResetField_triggered() {
 void MainWindow::on_actionStopRobots_triggered() {
 	SimCommand cmd;
 	// TODO: check that this handles threads properly
-	BOOST_FOREACH(OurRobot* robot, state()->self)
+	for (OurRobot* robot :  state()->self)
 	{
 		SimCommand::Robot *r = cmd.add_robots();
 		r->set_shell(robot->shell());
@@ -649,7 +647,7 @@ void MainWindow::on_actionStopRobots_triggered() {
 		r->mutable_vel()->set_y(0);
 		r->set_w(0);
 	}
-	BOOST_FOREACH(OpponentRobot* robot, state()->opp)
+	for (OpponentRobot* robot :  state()->opp)
 	{
 		SimCommand::Robot *r = cmd.add_robots();
 		r->set_shell(robot->shell());

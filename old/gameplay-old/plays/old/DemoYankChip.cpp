@@ -1,6 +1,5 @@
 #include "DemoYankChip.hpp"
 
-#include <boost/foreach.hpp>
 
 using namespace std;
 
