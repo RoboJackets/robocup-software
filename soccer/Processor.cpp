@@ -217,6 +217,7 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 		robot->filter()->predict(_state.logFrame->command_time(), robot);
 	}
 }
+
 /**
  * program loop
  */
