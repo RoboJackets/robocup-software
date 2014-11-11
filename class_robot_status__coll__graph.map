@@ -1,0 +1,5 @@
+<map id="RobotStatus" name="RobotStatus">
+<area shape="rect" id="node2" href="$class_config_bool.html" title="ConfigBool" alt="" coords="12,261,97,291"/>
+<area shape="rect" id="node4" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="12,181,97,211"/>
+<area shape="rect" id="node6" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="5,85,104,115"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="tactics.penalty.Penalty" name="tactics.penalty.Penalty">
+<area shape="rect" id="node2" href="$classsingle__robot__composite__behavior_1_1_single_robot_composite_behavior.html" title="Behavior that applies to a single ROBOT and may have up to one subbehavior at any time Most of the im..." alt="" coords="100,256,316,320"/>
+<area shape="rect" id="node4" href="$classsingle__robot__behavior_1_1_single_robot_behavior.html" title="single_robot_behavior.Single\lRobotBehavior" alt="" coords="5,161,192,207"/>
+<area shape="rect" id="node6" href="$classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="145,83,271,112"/>
+<area shape="rect" id="node10" href="$classcomposite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="216,161,421,207"/>
+<area shape="rect" id="node8" href="$classfsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="144,5,272,35"/>
+</map>

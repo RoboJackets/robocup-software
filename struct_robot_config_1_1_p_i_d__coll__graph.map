@@ -1,0 +1,6 @@
+<map id="RobotConfig::PID" name="RobotConfig::PID">
+<area shape="rect" id="node2" href="$class_config_double.html" title="ConfigDouble" alt="" coords="5,261,107,291"/>
+<area shape="rect" id="node4" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="49,181,135,211"/>
+<area shape="rect" id="node10" href="$class_config_int.html" title="ConfigInt" alt="" coords="131,261,205,291"/>
+<area shape="rect" id="node6" href="$class_configuration.html" title="static variable for the program, extremely general " alt="" coords="43,85,141,115"/>
+</map>

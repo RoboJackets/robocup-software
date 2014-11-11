@@ -1,0 +1,7 @@
+<map id="skills._kick._Kick" name="skills._kick._Kick">
+<area shape="rect" id="node9" href="$classskills_1_1line__kick_1_1_line_kick.html" title="lines up with the ball and the target, then drives up and kicks this differs from PivotKick which get..." alt="" coords="5,333,165,363"/>
+<area shape="rect" id="node11" href="$classskills_1_1pivot__kick_1_1_pivot_kick.html" title="skills.pivot_kick.PivotKick" alt="" coords="189,333,363,363"/>
+<area shape="rect" id="node2" href="$classsingle__robot__behavior_1_1_single_robot_behavior.html" title="single_robot_behavior.Single\lRobotBehavior" alt="" coords="87,161,273,207"/>
+<area shape="rect" id="node4" href="$classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="117,83,243,112"/>
+<area shape="rect" id="node6" href="$classfsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="116,5,244,35"/>
+</map>

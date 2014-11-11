@@ -1,0 +1,6 @@
+<map id="plays.testing.test_line_kick.TestLineKick" name="plays.testing.test_line_kick.TestLineKick">
+<area shape="rect" id="node2" href="$classplay_1_1_play.html" title="A play coordinates the entire team of robots Only play runs at a time By default, the RootPlay (which..." alt="" coords="71,256,145,285"/>
+<area shape="rect" id="node4" href="$classcomposite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="5,161,211,207"/>
+<area shape="rect" id="node6" href="$classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="45,83,171,112"/>
+<area shape="rect" id="node8" href="$classfsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="44,5,172,35"/>
+</map>

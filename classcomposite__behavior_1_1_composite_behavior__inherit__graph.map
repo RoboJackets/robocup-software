@@ -1,0 +1,48 @@
+<map id="composite_behavior.CompositeBehavior" name="composite_behavior.CompositeBehavior">
+<area shape="rect" id="node7" href="$classplay_1_1_play.html" title="A play coordinates the entire team of robots Only play runs at a time By default, the RootPlay (which..." alt="" coords="681,1056,756,1085"/>
+<area shape="rect" id="node69" href="$classsingle__robot__composite__behavior_1_1_single_robot_composite_behavior.html" title="Behavior that applies to a single ROBOT and may have up to one subbehavior at any time Most of the im..." alt="" coords="611,2204,827,2268"/>
+<area shape="rect" id="node85" href="$classtactics_1_1behavior__sequence_1_1_behavior_sequence.html" title="tactics.behavior_sequence.\lBehaviorSequence" alt="" coords="628,2291,809,2338"/>
+<area shape="rect" id="node87" href="$classtactics_1_1circle__near__ball_1_1_circle_near_ball.html" title="Robots position themselves along a portion of the circle centered at the ball. " alt="" coords="651,2361,787,2407"/>
+<area shape="rect" id="node89" href="$classtactics_1_1coordinated__pass_1_1_coordinated_pass.html" title="tactics.coordinated\l_pass.CoordinatedPass" alt="" coords="639,2430,799,2477"/>
+<area shape="rect" id="node91" href="$classtactics_1_1defense_1_1_defense.html" title="The Defense tactic handles goalie and defender placement to defend the goal It does lots of window an..." alt="" coords="637,2500,800,2529"/>
+<area shape="rect" id="node93" href="$classtactics_1_1line__up_1_1_line_up.html" title="tactics.line_up.LineUp" alt="" coords="644,2553,793,2583"/>
+<area shape="rect" id="node2" href="$classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="183,2369,308,2399"/>
+<area shape="rect" id="node4" href="$classfsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="5,2369,133,2399"/>
+<area shape="rect" id="node9" href="$classplays_1_1offense_1_1basic__122_1_1_basic122.html" title="plays.offense.basic\l_122.Basic122" alt="" coords="939,5,1072,51"/>
+<area shape="rect" id="node11" href="$classplays_1_1restarts_1_1defend__penalty_1_1_defend_penalty.html" title="plays.restarts.defend\l_penalty.DefendPenalty" alt="" coords="925,74,1085,121"/>
+<area shape="rect" id="node13" href="$classplays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html" title="plays.restarts.kick\l_penalty.KickPenalty" alt="" coords="933,143,1077,190"/>
+<area shape="rect" id="node15" href="$classplays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html" title="plays.restarts.our\l_corner_kick.OurCornerKick" alt="" coords="912,213,1099,259"/>
+<area shape="rect" id="node17" href="$classplays_1_1restarts_1_1our__free__kick_1_1_our_free_kick.html" title="plays.restarts.our\l_free_kick.OurFreeKick" alt="" coords="927,282,1084,329"/>
+<area shape="rect" id="node19" href="$classplays_1_1restarts_1_1our__goal__kick_1_1_our_goal_kick.html" title="plays.restarts.our\l_goal_kick.OurGoalKick" alt="" coords="924,351,1087,398"/>
+<area shape="rect" id="node21" href="$classplays_1_1restarts_1_1our__kickoff_1_1_our_kickoff.html" title="plays.restarts.our\l_kickoff.OurKickoff" alt="" coords="939,421,1072,467"/>
+<area shape="rect" id="node23" href="$classplays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html" title="plays.restarts.their\l_kickoff.TheirKickoff" alt="" coords="935,490,1076,537"/>
+<area shape="rect" id="node25" href="$classplays_1_1restarts_1_1their__restart_1_1_their_restart.html" title="plays.restarts.their\l_restart.TheirRestart" alt="" coords="935,559,1076,606"/>
+<area shape="rect" id="node27" href="$classplays_1_1stopped_1_1_stopped.html" title="plays.stopped.Stopped" alt="" coords="928,629,1083,659"/>
+<area shape="rect" id="node29" href="$classplays_1_1testing_1_1debug__window__evaluator_1_1_debug_window_evaluator.html" title="plays.testing.debug\l_window_evaluator.DebugWindow\lEvaluator" alt="" coords="895,683,1116,747"/>
+<area shape="rect" id="node31" href="$classplays_1_1testing_1_1defense_1_1_test_defense.html" title="Runs our Defense tactic. " alt="" coords="917,770,1093,817"/>
+<area shape="rect" id="node33" href="$classplays_1_1testing_1_1line__up_1_1_line_up.html" title="plays.testing.line\l_up.LineUp" alt="" coords="945,839,1065,886"/>
+<area shape="rect" id="node35" href="$classplays_1_1testing_1_1repeated__line__up_1_1_repeated_line_up.html" title="Robots repeatedly line up on opposite sides of the field. " alt="" coords="920,909,1091,955"/>
+<area shape="rect" id="node37" href="$classplays_1_1testing_1_1stress__test_1_1_stress_test.html" title="plays.testing.stress\l_test.StressTest" alt="" coords="937,978,1073,1025"/>
+<area shape="rect" id="node39" href="$classplays_1_1testing_1_1test__bump_1_1_test_bump.html" title="plays.testing.test\l_bump.TestBump" alt="" coords="943,1047,1068,1094"/>
+<area shape="rect" id="node41" href="$classplays_1_1testing_1_1test__capture_1_1_test_capture.html" title="plays.testing.test\l_capture.TestCapture" alt="" coords="932,1117,1079,1163"/>
+<area shape="rect" id="node43" href="$classplays_1_1testing_1_1test__coordinated__pass_1_1_test_coordinated_pass.html" title="Continually runs a coordinated pass to opposite sides of the field. " alt="" coords="875,1186,1136,1233"/>
+<area shape="rect" id="node45" href="$classplays_1_1testing_1_1test__fullback_1_1_test_defender.html" title="plays.testing.test\l_fullback.TestDefender" alt="" coords="927,1255,1084,1302"/>
+<area shape="rect" id="node47" href="$classplays_1_1testing_1_1test__idle_1_1_test_idle.html" title="plays.testing.test\l_idle.TestIdle" alt="" coords="944,1325,1067,1371"/>
+<area shape="rect" id="node49" href="$classplays_1_1testing_1_1test__intercept_1_1_test_intercept.html" title="plays.testing.test\l_intercept.TestIntercept" alt="" coords="925,1394,1085,1441"/>
+<area shape="rect" id="node51" href="$classplays_1_1testing_1_1test__line__kick_1_1_test_line_kick.html" title="plays.testing.test\l_line_kick.TestLineKick" alt="" coords="925,1463,1085,1510"/>
+<area shape="rect" id="node53" href="$classplays_1_1testing_1_1test__mark_1_1_test_mark.html" title="plays.testing.test\l_mark.TestMark" alt="" coords="944,1533,1067,1579"/>
+<area shape="rect" id="node55" href="$classplays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html" title="plays.testing.test\l_pivot_kick.TestPivotKick" alt="" coords="919,1602,1092,1649"/>
+<area shape="rect" id="node57" href="$classplays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html" title="A demo play written during a teaching session to demonstrate play&#45;writing Three robots form a triangl..." alt="" coords="935,1671,1076,1718"/>
+<area shape="rect" id="node59" href="$classplays_1_1testing_1_1_two_side_attack_1_1_two_side_attack.html" title="plays.testing.TwoSideAttack.\lTwoSideAttack" alt="" coords="909,1741,1101,1787"/>
+<area shape="rect" id="node61" href="$classplays_1_1tuning_1_1test__jittery__motion_1_1_test_jittery_motion.html" title="plays.tuning.test_jittery\l_motion.TestJitteryMotion" alt="" coords="919,1810,1092,1857"/>
+<area shape="rect" id="node63" href="$classplays_1_1tuning_1_1tune__facing_1_1_tune_facing.html" title="This play rotates the bot 90 degrees, pauses, and repeats It&#39;s useful for tuning the angle PID contro..." alt="" coords="923,1879,1088,1926"/>
+<area shape="rect" id="node65" href="$classplays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html" title="plays.tuning.tune_pivot.\lTunePivoting" alt="" coords="925,1949,1085,1995"/>
+<area shape="rect" id="node67" href="$classroot__play_1_1_root_play.html" title="The RootPlay is basically the python&#45;side of the c++ GameplayModule it coordinates the selection of t..." alt="" coords="939,2019,1072,2048"/>
+<area shape="rect" id="node71" href="$classplays_1_1tuning_1_1tune__facing_1_1_facer.html" title="plays.tuning.tune_facing.\lFacer" alt="" coords="923,2071,1088,2118"/>
+<area shape="rect" id="node73" href="$classskills_1_1face_1_1_face.html" title="A simple behavior to make a robot move to a given point and face a given direction note: probably not..." alt="" coords="948,2141,1063,2171"/>
+<area shape="rect" id="node75" href="$classskills_1_1pivot__kick_1_1_pivot_kick.html" title="skills.pivot_kick.PivotKick" alt="" coords="919,2195,1092,2224"/>
+<area shape="rect" id="node77" href="$classtactics_1_1penalty_1_1_penalty.html" title="This class is currently not used for anything This was ported from our old C++ gameplay system and se..." alt="" coords="928,2248,1083,2277"/>
+<area shape="rect" id="node79" href="$classtactics_1_1positions_1_1goalie_1_1_goalie.html" title="tactics.positions.goalie.\lGoalie" alt="" coords="927,2301,1084,2347"/>
+<area shape="rect" id="node81" href="$classtactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html" title="Defender behavior meant to be coordinated in a defense tactic The regular defender does a lot of calc..." alt="" coords="904,2370,1107,2417"/>
+<area shape="rect" id="node83" href="$classtactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie.html" title="tactics.positions.submissive\l_goalie.SubmissiveGoalie" alt="" coords="912,2439,1099,2486"/>
+</map>
