@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
-#include <boost/foreach.hpp>
 #include <algorithm>
 #include <Eigen/Dense>
 #include "RRTPlanner.hpp"

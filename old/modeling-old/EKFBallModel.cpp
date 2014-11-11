@@ -1,6 +1,5 @@
 
 #include <iostream>
-#include <boost/foreach.hpp>
 
 #include "EKFBallModel.hpp"
 
@@ -47,7 +46,7 @@ void Modeling::EKFBallModel::update(float dtime) {
 	if(_observations.size() >= 1){ // currently hacked to just handle a single update
 		// pick the closest observation to the current estimate
 		float bestDist = 99999;
-		BOOST_FOREACH(const observation_type& observation, _observations)
+		for (const observation_type& observation :  _observations)
 		{
 			if(observation.pos.distTo(pos) < bestDist)
 			{

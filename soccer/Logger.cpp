@@ -1,7 +1,6 @@
 #include "Logger.hpp"
 
 #include <QString>
-#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 #include <fcntl.h>
 #include <stdio.h>

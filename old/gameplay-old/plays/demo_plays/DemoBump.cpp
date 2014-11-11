@@ -1,6 +1,5 @@
 #include "DemoBump.hpp"
 
-#include <boost/foreach.hpp>
 
 using namespace std;
 

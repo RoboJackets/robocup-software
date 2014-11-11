@@ -13,7 +13,6 @@
 #include <QLayout>
 #include <QPainter>
 #include <QResizeEvent>
-#include <boost/foreach.hpp>
 #include <algorithm>
 #include <sys/socket.h>
 
@@ -218,7 +217,7 @@ void FieldView::drawWorldSpace(QPainter& p)
 	{
 		tempPen.setColor(QColor(0xcc, 0xcc, 0xcc));
 		p.setPen(tempPen);
-		BOOST_FOREACH(const SSL_WrapperPacket& wrapper, frame->raw_vision())
+		for (const SSL_WrapperPacket& wrapper :  frame->raw_vision())
 		{
 			if (!wrapper.has_detection())
 			{
@@ -230,14 +229,14 @@ void FieldView::drawWorldSpace(QPainter& p)
 			
 			if (showRawRobots)
 			{
-				BOOST_FOREACH(const SSL_DetectionRobot& r, detect.robots_blue())
+				for (const SSL_DetectionRobot& r :  detect.robots_blue())
 				{
 					QPointF pos(r.x() / 1000, r.y() / 1000);
 					drawRobot(p, true, r.robot_id(), pos, r.orientation());
 // 					p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000), Robot_Radius, Robot_Radius);
 				}
 				
-				BOOST_FOREACH(const SSL_DetectionRobot& r, detect.robots_yellow())
+				for (const SSL_DetectionRobot& r :  detect.robots_yellow())
 				{
 					QPointF pos(r.x() / 1000, r.y() / 1000);
 					drawRobot(p, false, r.robot_id(), pos, r.orientation());
@@ -247,7 +246,7 @@ void FieldView::drawWorldSpace(QPainter& p)
 			
 			if (showRawBalls)
 			{
-				BOOST_FOREACH(const SSL_DetectionBall& b, detect.balls())
+				for (const SSL_DetectionBall& b :  detect.balls())
 				{
 					p.drawEllipse(QPointF(b.x() / 1000, b.y() / 1000), Ball_Radius, Ball_Radius);
 				}
@@ -303,7 +302,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 	}
 	
 	// Debug lines
-	BOOST_FOREACH(const DebugPath& path, frame->debug_paths())
+	for (const DebugPath& path :  frame->debug_paths())
 	{
 		if (path.layer() < 0 || layerVisible(path.layer()))
 		{
@@ -319,7 +318,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 	}
 
 	// Debug circles
-	BOOST_FOREACH(const DebugCircle& c, frame->debug_circles())
+	for (const DebugCircle& c :  frame->debug_circles())
 	{
 		if (c.layer() < 0 || layerVisible(c.layer()))
 		{
@@ -330,7 +329,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 	}
 
 	// Debug text
-	BOOST_FOREACH(const DebugText& text, frame->debug_texts())
+	for (const DebugText& text :  frame->debug_texts())
 	{
 		if (text.layer() < 0 || layerVisible(text.layer()))
 		{
@@ -342,7 +341,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 
 	// Debug polygons
 	p.setPen(Qt::NoPen);
-	BOOST_FOREACH(const DebugPath& path, frame->debug_polygons())
+	for (const DebugPath& path :  frame->debug_polygons())
 	{
 		if (path.layer() < 0 || layerVisible(path.layer()))
 		{
@@ -370,14 +369,14 @@ void FieldView::drawTeamSpace(QPainter& p)
 	QPointF rtY = qpointf(Geometry2d::Point(-1, 0).rotated(-_rotate * 90));
 	
 	// Opponent robots
-	BOOST_FOREACH(const LogFrame::Robot &r, frame->opp())
+	for (const LogFrame::Robot &r :  frame->opp())
 	{
 		drawRobot(p, !frame->blue_team(), r.shell(), qpointf(r.pos()), r.angle(), r.ball_sense_status() == HasBall);
 	}
 	
 	// Our robots
 	int manualID = frame->manual_id();
-	BOOST_FOREACH(const LogFrame::Robot &r, frame->self())
+	for (const LogFrame::Robot &r :  frame->self())
 	{
 		QPointF center = qpointf(r.pos());
 		
@@ -414,7 +413,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 		
 		// Robot text
 		QPointF textPos = center - rtX * 0.2 - rtY * (Robot_Radius + 0.1);
-		BOOST_FOREACH(const DebugText& text, r.text())
+		for (const DebugText& text :  r.text())
 		{
 			if (text.layer() < 0 || layerVisible(text.layer()))
 			{

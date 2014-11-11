@@ -82,7 +82,7 @@ class Defender(single_robot_behavior.SingleRobotBehavior):
 
 		# TODO defenders should register themselves with some static list on init
 		# TODO make this happen in python-land
-		# BOOST_FOREACH(Defender *f, otherDefenders)
+		# for (Defender *f :  otherDefenders)
 		# {
 		# 	if (f->robot)
 		# 	{

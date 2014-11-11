@@ -4,7 +4,7 @@
 #include <Constants.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
-#include <boost/foreach.hpp>
+
 
 using namespace std;
 
@@ -68,13 +68,13 @@ void Gameplay::WindowEvaluator::run(Geometry2d::Point origin, const Geometry2d::
 	Window *all = new Window(0, _end);
 	windows.push_back(all);
 	
-	BOOST_FOREACH(const Robot *robot, _state->opp)
+	for (const Robot *robot :  _state->opp)
 	{
 		if (robot->visible)
 		{
 			// remove excluded robots
 			bool skip = false;
-			BOOST_FOREACH(const Geometry2d::Point &pt, exclude)
+			for (const Geometry2d::Point &pt :  exclude)
 			{
 				if (pt.nearPoint(robot->pos, Robot_Radius))
 				{
@@ -100,12 +100,12 @@ void Gameplay::WindowEvaluator::run(Geometry2d::Point origin, const Geometry2d::
 		}
 	}
 	
-	BOOST_FOREACH(const Robot *robot, _state->self)
+	for (const Robot *robot :  _state->self)
 	{
 		if (robot->visible)
 		{
 			bool skip = false;
-			BOOST_FOREACH(const Geometry2d::Point &pt, exclude)
+			for (const Geometry2d::Point &pt :  exclude)
 			{
 				if (pt.nearPoint(robot->pos, Robot_Radius))
 				{
@@ -139,7 +139,7 @@ void Gameplay::WindowEvaluator::run(Geometry2d::Point origin, const Geometry2d::
 
 	const Geometry2d::Point &p0 = _target.pt[0];
 	Geometry2d::Point delta = _target.delta() / _end;
-	BOOST_FOREACH(Window *w, windows)
+	for (Window *w :  windows)
 	{
 		w->segment.pt[0] = p0 + delta * w->t0;
 		w->segment.pt[1] = p0 + delta * w->t1;
@@ -150,7 +150,7 @@ void Gameplay::WindowEvaluator::run(Geometry2d::Point origin, const Geometry2d::
 
 	// Find the best (largest) window
 	_best = 0;
-	BOOST_FOREACH(Window *w, windows)
+	for (Window *w :  windows)
 	{
 		if (!_best || w->segment.delta().magsq() > _best->segment.delta().magsq())
 		{
@@ -161,7 +161,7 @@ void Gameplay::WindowEvaluator::run(Geometry2d::Point origin, const Geometry2d::
 	if (debug)
 	{
 		// Debug polygons for windows
-		BOOST_FOREACH(Window *w, windows)
+		for (Window *w :  windows)
 		{
 			Geometry2d::Point pts[] = {
 				_origin,

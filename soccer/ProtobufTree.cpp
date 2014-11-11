@@ -8,7 +8,6 @@
 #include <QTimer>
 
 #include <stdio.h>
-#include <boost/foreach.hpp>
 #include <google/protobuf/descriptor.h>
 
 using namespace std;
@@ -92,7 +91,7 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem *parent, const google::protobuf::
 			if (!hasData && item->childCount())
 			{
 				// Remove and delete children
-				BOOST_FOREACH(QTreeWidgetItem *child, item->takeChildren())
+				for (QTreeWidgetItem *child :  item->takeChildren())
 				{
 					delete child;
 				}
@@ -108,7 +107,7 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem *parent, const google::protobuf::
 		}
 	}
 	
-	BOOST_FOREACH(const FieldDescriptor *field, fields)
+	for (const FieldDescriptor *field :  fields)
 	{
 		// Get the item for this field if the field has been seen before
 		QTreeWidgetItem *item;

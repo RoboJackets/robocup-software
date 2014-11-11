@@ -4,7 +4,6 @@
 
 #include <iostream>
 
-#include <boost/foreach.hpp>
 
 using namespace std;
 
@@ -170,7 +169,7 @@ void Modeling::BallModel::rbpfUpdateMultipleObs(std::vector<observation_type> &o
 	if(obs.size() >= 1){ // currently hacked to just handle a single update
 		// pick the closest observation to the current estimate
 		float bestDist = 99999;
-		BOOST_FOREACH(const observation_type& observation, _observations)
+		for (const observation_type& observation :  _observations)
 		{
 			if(observation.pos.distTo(pos) < bestDist)
 			{
@@ -236,7 +235,7 @@ void Modeling::BallModel::run(uint64_t time)
 
 	// loop through the observations and determine if we got vision observations
 	bool gotCameraObservation = false;
-	BOOST_FOREACH(const observation_type& obs, _observations) {
+	for (const observation_type& obs :  _observations) {
 		if(obs.obs_type == BallModel::VISION){
 			gotCameraObservation = true;
 			break;
@@ -246,7 +245,7 @@ void Modeling::BallModel::run(uint64_t time)
 	// If there are camera observations, remove robot sensor observations.
 	vector<observation_type> goodObs;
 	if(gotCameraObservation){
-		BOOST_FOREACH(const observation_type& obs, _observations) {
+		for (const observation_type& obs :  _observations) {
 			if (obs.obs_type == BallModel::VISION) {
 				goodObs.push_back(obs);
 			}

@@ -11,7 +11,6 @@
 #include <iostream>
 #include <execinfo.h>
 #include <stdexcept>
-#include <boost/foreach.hpp>
 #include <QString>
 #include <cmath>
 
@@ -183,7 +182,7 @@ bool OurRobot::avoidOpponents() const {
 }
 
 void OurRobot::avoidOpponents(bool enable) {
-	BOOST_FOREACH(float &a, _opp_avoid_mask)
+	for (float &a :  _opp_avoid_mask)
 		if (enable)
 			a = Robot_Radius - 0.03;
 		else
@@ -406,11 +405,11 @@ void OurRobot::resetAvoidRobotRadii() {
 }
 
 void OurRobot::approachAllOpponents(bool enable) {
-	BOOST_FOREACH(float &ar, _opp_avoid_mask)
+	for (float &ar :  _opp_avoid_mask)
 		ar = (enable) ?  Opp_Avoid_Small : *_oppAvoidRadius;
 }
 void OurRobot::avoidAllOpponents(bool enable) {
-	BOOST_FOREACH(float &ar, _opp_avoid_mask)
+	for (float &ar :  _opp_avoid_mask)
 		ar = (enable) ?  -1.0 : *_oppAvoidRadius;
 }
 
@@ -445,7 +444,7 @@ void OurRobot::avoidOpponentRadius(unsigned shell_id, float radius) {
 }
 
 void OurRobot::avoidAllOpponentRadius(float radius) {
-	BOOST_FOREACH(float &ar, _opp_avoid_mask)
+	for (float &ar :  _opp_avoid_mask)
 		ar = radius;
 }
 

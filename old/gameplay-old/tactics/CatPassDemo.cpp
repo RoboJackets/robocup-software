@@ -3,7 +3,6 @@
 #include <gameplay/tactics/passing/DumbReceive.hpp>
 #include <iostream>
 
-#include <boost/foreach.hpp>
 
 REGISTER_PLAY_CATEGORY(Gameplay::Plays::CatPassDemo, "Test")
 
@@ -56,7 +55,7 @@ bool Gameplay::Plays::CatPassDemo::initPositions()
 		return true;
 
 	std::vector<OurRobot*> robots;
-	BOOST_FOREACH(OurRobot* r, gameplay()->playRobots()) {
+	for (OurRobot* r :  gameplay()->playRobots()) {
 		robots.push_back(r);
 	}
 

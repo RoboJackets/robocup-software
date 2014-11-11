@@ -1,7 +1,7 @@
 #include "PreventDoubleTouch.hpp"
 
 #include <stdio.h>
-#include <boost/foreach.hpp>
+
 
 using namespace std;
 
@@ -59,7 +59,7 @@ void Gameplay::PreventDoubleTouch::run()
 	
 	Robot *best = 0;
 	float bestDist = 0;
-	BOOST_FOREACH(Robot *r, state()->self)
+	for (Robot *r :  state()->self)
 	{
 		if (r->visible)
 		{

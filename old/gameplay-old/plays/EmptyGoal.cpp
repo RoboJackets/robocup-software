@@ -1,5 +1,5 @@
 #include <limits>
-#include <boost/foreach.hpp>
+
 #include "EmptyGoal.hpp"
 
 using namespace std;

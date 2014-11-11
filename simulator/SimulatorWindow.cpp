@@ -3,7 +3,6 @@
 #include "physics/Environment.hpp"
 #include "RobotTableModel.hpp"
 
-#include <boost/foreach.hpp>
 
 ////////////////////////////////////
 // SimulatorWindow class

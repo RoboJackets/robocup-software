@@ -11,7 +11,6 @@
 
 #include <Geometry2d/TransformMatrix.hpp>
 
-#include <boost/foreach.hpp>
 
 using namespace Geometry2d;
 

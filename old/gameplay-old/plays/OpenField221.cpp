@@ -1,5 +1,5 @@
 #include <limits>
-#include <boost/foreach.hpp>
+
 #include "OpenField221.hpp"
 
 using namespace std;
@@ -94,7 +94,7 @@ bool Gameplay::Plays::OpenField221::run()
 	float cur_dist1 = (_support1.markRobot()) ?	_support1.markRobot()->pos.distTo(ballProj) : numeric_limits<float>::infinity();
 	float cur_dist2 = (_support2.markRobot()) ?	_support2.markRobot()->pos.distTo(ballProj) : numeric_limits<float>::infinity();
 	size_t nrOppClose = 0;
-	BOOST_FOREACH(OpponentRobot* opp, state()->opp)
+	for (OpponentRobot* opp :  state()->opp)
 	{
 		// use distance from goal rather than just y coordinate to handle corners better
 		const float oppDistSq = opp->pos.magsq();

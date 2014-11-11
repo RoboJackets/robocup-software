@@ -1,6 +1,6 @@
 #include "OurCornerKick.hpp"
 #include <RobotConfig.hpp>
-#include <boost/foreach.hpp>
+
 #include <iostream>
 
 using namespace std;
@@ -49,7 +49,7 @@ float Gameplay::Plays::OurCornerKick::score ( Gameplay::GameplayModule* gameplay
 	const GameState &gs = gameplay->state()->gameState;
 	Point ballPos = gameplay->state()->ball.pos;
 	bool chipper_available = false;
-	BOOST_FOREACH(OurRobot * r, gameplay->playRobots())
+	for (OurRobot * r :  gameplay->playRobots())
 	{
 		if (r && r->chipper_available())
 		{
