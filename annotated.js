@@ -289,7 +289,6 @@ var annotated =
     [ "ProtobufTree", "class_protobuf_tree.html", "class_protobuf_tree" ],
     [ "QuaternionDemo", "class_quaternion_demo.html", "class_quaternion_demo" ],
     [ "Radio", "class_radio.html", "class_radio" ],
-    [ "RefereeModule", "class_referee_module.html", "class_referee_module" ],
     [ "RefereeTab", "class_referee_tab.html", "class_referee_tab" ],
     [ "Robot", "class_robot.html", "class_robot" ],
     [ "RobotConfig", "class_robot_config.html", "class_robot_config" ],

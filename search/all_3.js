@@ -13,7 +13,6 @@ var searchData=
   ['clear',['clear',['../class_planning_1_1_tree.html#aebea8cd6661be6de63ce2ebbf835a687',1,'Planning::Tree::clear()'],['../class_geometry2d_1_1_composite_shape.html#ae8a9e41ef5fe8929ca8a058236032c4a',1,'Geometry2d::CompositeShape::clear()']]],
   ['clearwindup',['clearWindup',['../class_pid.html#a63308bb7bc14653d961b1f79f1824aaf',1,'Pid']]],
   ['colors',['Colors',['../classconstants_1_1_colors.html',1,'constants']]],
-  ['command',['command',['../class_referee_module.html#ad26fac8a1e238d40771517d8822bd04e',1,'RefereeModule']]],
   ['compositebehavior',['CompositeBehavior',['../classcomposite__behavior_1_1_composite_behavior.html',1,'composite_behavior']]],
   ['compositeshape',['CompositeShape',['../class_geometry2d_1_1_composite_shape.html',1,'Geometry2d']]],
   ['configbool',['ConfigBool',['../class_config_bool.html',1,'']]],

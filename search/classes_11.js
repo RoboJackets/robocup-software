@@ -2,7 +2,6 @@ var searchData=
 [
   ['radio',['Radio',['../class_radio.html',1,'']]],
   ['rect',['Rect',['../class_geometry2d_1_1_rect.html',1,'Geometry2d']]],
-  ['refereemodule',['RefereeModule',['../class_referee_module.html',1,'']]],
   ['refereetab',['RefereeTab',['../class_referee_tab.html',1,'']]],
   ['repeatedlineup',['RepeatedLineUp',['../classplays_1_1testing_1_1repeated__line__up_1_1_repeated_line_up.html',1,'plays::testing::repeated_line_up']]],
   ['robot',['Robot',['../class_robot.html',1,'']]],

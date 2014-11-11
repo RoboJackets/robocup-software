@@ -129,31 +129,32 @@ $(document).ready(function(){initNavTree('_vision_receiver_8hpp_source.html','')
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    </div>
 <div class="line"><a name="l00022"></a><span class="lineno"><a class="line" href="class_vision_packet.html#a49df3d58429f4ea72f51852cda27b802">   22</a></span>&#160;    SSL_WrapperPacket <a class="code" href="class_vision_packet.html#a49df3d58429f4ea72f51852cda27b802">wrapper</a>;</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;};</div>
-<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="class_vision_receiver.html">   27</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_vision_receiver.html">VisionReceiver</a>: <span class="keyword">public</span> QThread</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;{</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <a class="code" href="class_vision_receiver.html">VisionReceiver</a>(<span class="keywordtype">bool</span> sim = <span class="keyword">false</span>, <span class="keywordtype">int</span> port = SharedVisionPortFirstHalf);</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keywordtype">void</span> stop();</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_vision_receiver.html#a8e156cf20a84dd29c46ae82d6076b9e4">getPackets</a>(std::vector&lt;VisionPacket *&gt; &amp;packets);</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="class_vision_receiver.html">   36</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_vision_receiver.html">VisionReceiver</a>: <span class="keyword">public</span> QThread</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;{</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <a class="code" href="class_vision_receiver.html">VisionReceiver</a>(<span class="keywordtype">bool</span> sim = <span class="keyword">false</span>, <span class="keywordtype">int</span> port = SharedVisionPortFirstHalf);</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordtype">bool</span> simulation;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keywordtype">int</span> port;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> run();</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    </div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keyword">volatile</span> <span class="keywordtype">bool</span> _running;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    </div>
-<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="class_vision_receiver.html#a413fbf954ac882d2cf7a2381b7a3df22">   50</a></span>&#160;    QMutex <a class="code" href="class_vision_receiver.html#a413fbf954ac882d2cf7a2381b7a3df22">_mutex</a>;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    std::vector&lt;VisionPacket *&gt; _packets;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;};</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keywordtype">void</span> stop();</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    </div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_vision_receiver.html#a8e156cf20a84dd29c46ae82d6076b9e4">getPackets</a>(std::vector&lt;VisionPacket *&gt; &amp;packets);</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordtype">bool</span> simulation;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keywordtype">int</span> port;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> run();</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keyword">volatile</span> <span class="keywordtype">bool</span> _running;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    </div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="class_vision_receiver.html#a413fbf954ac882d2cf7a2381b7a3df22">   59</a></span>&#160;    QMutex <a class="code" href="class_vision_receiver.html#a413fbf954ac882d2cf7a2381b7a3df22">_mutex</a>;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    std::vector&lt;VisionPacket *&gt; _packets;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;};</div>
 <div class="ttc" id="class_vision_packet_html_a49df3d58429f4ea72f51852cda27b802"><div class="ttname"><a href="class_vision_packet.html#a49df3d58429f4ea72f51852cda27b802">VisionPacket::wrapper</a></div><div class="ttdeci">SSL_WrapperPacket wrapper</div><div class="ttdoc">protobuf message from the vision system </div><div class="ttdef"><b>Definition:</b> VisionReceiver.hpp:22</div></div>
 <div class="ttc" id="class_vision_packet_html_ab5fa431f2d132aa7475f345a4bd1cc1c"><div class="ttname"><a href="class_vision_packet.html#ab5fa431f2d132aa7475f345a4bd1cc1c">VisionPacket::receivedTime</a></div><div class="ttdeci">uint64_t receivedTime</div><div class="ttdoc">Local time when the packet was received. </div><div class="ttdef"><b>Definition:</b> VisionReceiver.hpp:19</div></div>
-<div class="ttc" id="class_vision_receiver_html"><div class="ttname"><a href="class_vision_receiver.html">VisionReceiver</a></div><div class="ttdoc">gets vision packets, vision-thread </div><div class="ttdef"><b>Definition:</b> VisionReceiver.hpp:27</div></div>
+<div class="ttc" id="class_vision_receiver_html"><div class="ttname"><a href="class_vision_receiver.html">VisionReceiver</a></div><div class="ttdoc">Receives vision packets over UDP and places them in a buffer until they are read. ...</div><div class="ttdef"><b>Definition:</b> VisionReceiver.hpp:36</div></div>
 <div class="ttc" id="class_vision_packet_html"><div class="ttname"><a href="class_vision_packet.html">VisionPacket</a></div><div class="ttdef"><b>Definition:</b> VisionReceiver.hpp:15</div></div>
-<div class="ttc" id="class_vision_receiver_html_a413fbf954ac882d2cf7a2381b7a3df22"><div class="ttname"><a href="class_vision_receiver.html#a413fbf954ac882d2cf7a2381b7a3df22">VisionReceiver::_mutex</a></div><div class="ttdeci">QMutex _mutex</div><div class="ttdoc">This mutex protects the vector of packets. </div><div class="ttdef"><b>Definition:</b> VisionReceiver.hpp:50</div></div>
+<div class="ttc" id="class_vision_receiver_html_a413fbf954ac882d2cf7a2381b7a3df22"><div class="ttname"><a href="class_vision_receiver.html#a413fbf954ac882d2cf7a2381b7a3df22">VisionReceiver::_mutex</a></div><div class="ttdeci">QMutex _mutex</div><div class="ttdoc">This mutex protects the vector of packets. </div><div class="ttdef"><b>Definition:</b> VisionReceiver.hpp:59</div></div>
 <div class="ttc" id="class_vision_receiver_html_a8e156cf20a84dd29c46ae82d6076b9e4"><div class="ttname"><a href="class_vision_receiver.html#a8e156cf20a84dd29c46ae82d6076b9e4">VisionReceiver::getPackets</a></div><div class="ttdeci">void getPackets(std::vector&lt; VisionPacket * &gt; &amp;packets)</div><div class="ttdoc">Copies the vector of packets and then clears it. </div><div class="ttdef"><b>Definition:</b> VisionReceiver.cpp:25</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
@@ -161,7 +162,7 @@ $(document).ready(function(){initNavTree('_vision_receiver_8hpp_source.html','')
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><b>VisionReceiver.hpp</b></li>
-    <li class="footer">Generated on Tue Nov 11 2014 18:59:16 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Nov 11 2014 19:22:12 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

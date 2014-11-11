@@ -116,7 +116,6 @@ var hierarchy =
       [ "SimRadio", "class_sim_radio.html", null ],
       [ "USBRadio", "class_u_s_b_radio.html", null ]
     ] ],
-    [ "RefereeModule", "class_referee_module.html", null ],
     [ "constants.Robot", "classconstants_1_1_robot.html", null ],
     [ "RobotConfig", "class_robot_config.html", null ],
     [ "RobotFilter", "class_robot_filter.html", null ],

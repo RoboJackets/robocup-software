@@ -114,6 +114,9 @@ $(document).ready(function(){initNavTree('class_logger.html','');});
 <div class="title">Logger Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>This logger implements a circular buffer for recent history and writes all frames to disk.  
+ <a href="class_logger.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -154,7 +157,15 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>recording</b> () cons
 QString&#160;</td><td class="memItemRight" valign="bottom"><b>filename</b> () const </td></tr>
 <tr class="separator:a9930be1c39163aa25374e5a30794cc32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following files:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>This logger implements a circular buffer for recent history and writes all frames to disk. </p>
+<p>_history is a circular buffer.</p>
+<p>Consider a sequence number for each frame, where the first frame passed to addFrame() has a sequence number of zero and the sequence number is one greater for each subsequent frame.</p>
+<p>_nextFrameNumber is the sequence number of the next frame to be stored by addFrame().</p>
+<p>lastFrame() returns the sequence number of the latest available frame. It returns -1 if no frames have been stored.</p>
+<p>You can get a copy of a frame by passing its sequence number to getFrame(). If the frame is too old to be in the circular buffer (or the sequence number is beyond the most recent available) then getFrame() will return false.</p>
+<p>Frames are allocated as they are first needed. The size of the circular buffer limits total memory usage. </p>
+</div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>soccer/<a class="el" href="_logger_8hpp_source.html">Logger.hpp</a></li>
 <li>soccer/Logger.cpp</li>
 </ul>
@@ -164,7 +175,7 @@ QString&#160;</td><td class="memItemRight" valign="bottom"><b>filename</b> () co
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_logger.html">Logger</a></li>
-    <li class="footer">Generated on Tue Nov 11 2014 18:59:17 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Nov 11 2014 19:22:12 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>
