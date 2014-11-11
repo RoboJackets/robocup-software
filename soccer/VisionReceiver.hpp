@@ -21,8 +21,17 @@ public:
 	/// protobuf message from the vision system
 	SSL_WrapperPacket wrapper;
 };
+
 /**
- * gets vision packets, vision-thread
+ * Receives vision packets over UDP and places them in a buffer until they are read.
+ * 
+ * When start() is called, a new thread is spawned that listens on a UDP port for packets.
+ * If sim = true, it tries both simulator ports until one works.  Otherwise, it connects to the port
+ * specified in the constructor.
+ * 
+ * Whenever a new packet comes in (encoded as Google Protobuf), it is parsed into an
+ * SSL_WrapperPacket and placed onto the circular buffer @_packets.  They remain there
+ * until they are retrieved with getPackets().
  */
 class VisionReceiver: public QThread
 {
