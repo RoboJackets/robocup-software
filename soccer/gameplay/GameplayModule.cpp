@@ -144,7 +144,9 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 }
 
 Gameplay::GameplayModule::~GameplayModule() {
-	Py_Finalize();
+	// Apparently this is broken in Boost 1.57 as per:
+	// http://www.boost.org/doc/libs/1_57_0/libs/python/doc/tutorial/doc/html/python/embedding.html
+	// Py_Finalize();
 }
 
 void Gameplay::GameplayModule::setupUI() {
