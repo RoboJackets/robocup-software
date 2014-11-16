@@ -1,7 +1,7 @@
 var searchData=
 [
   ['kick',['kick',['../class_our_robot.html#a1c8589e1c0b057797582cc5ae68040f5',1,'OurRobot']]],
-  ['kick_5fpower',['kick_power',['../classskills_1_1__kick_1_1___kick.html#a6545b9e20baaf409564b7fe9a49f27e6',1,'skills::_kick::_Kick']]],
+  ['kick_5fpower',['kick_power',['../classskills_1_1__kick_1_1___kick.html#ab87c2e916983c8d3eeb0614612028882',1,'skills::_kick::_Kick']]],
   ['kicker',['Kicker',['../classconstants_1_1_robot_1_1_kicker.html',1,'constants::Robot']]],
   ['kicker',['Kicker',['../struct_robot_config_1_1_kicker.html',1,'RobotConfig']]],
   ['kickerbar',['kickerBar',['../class_our_robot.html#a8ebe1185b9bb1cc9c473d507ec9e8f43',1,'OurRobot']]],

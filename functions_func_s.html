@@ -10,15 +10,17 @@
 <script type="text/javascript" src="dynsections.js"></script>
 <link href="navtree.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
 <script type="text/javascript" src="navtree.js"></script>
 <script type="text/javascript">
   $(document).ready(initResizable);
   $(window).load(resizeHeight);
 </script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
-  $(document).ready(function() { searchBox.OnSelectItem(0); });
+  $(document).ready(function() { init_search(); });
 </script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
@@ -131,7 +133,7 @@ $(document).ready(function(){initNavTree('functions_func_s.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Modules</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+</div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -148,7 +150,7 @@ $(document).ready(function(){initNavTree('functions_func_s.html','');});
 : <a class="el" href="class_geometry2d_1_1_point.html#a7c7c74276015f8a8efc19a3b2937ae7f">Geometry2d::Point</a>
 </li>
 <li>score()
-: <a class="el" href="classplay_1_1_play.html#a517df22776d34e3d930bcae4da1fb469">play.Play</a>
+: <a class="el" href="classplay_1_1_play.html#a0a2c43f5b2705d448455c43b0b10e38f">play.Play</a>
 </li>
 <li>self()
 : <a class="el" href="class_robot.html#a54366c96e4367b00216f42ae0405c552">Robot</a>
@@ -166,7 +168,7 @@ $(document).ready(function(){initNavTree('functions_func_s.html','');});
 : <a class="el" href="class_our_robot.html#a9651d74f3d8839801adf5ab7ce509bf7">OurRobot</a>
 </li>
 <li>shot_obstacle_ignoring_robots()
-: <a class="el" href="classskills_1_1__kick_1_1___kick.html#a1c2bf30969d84bbbd33cf2d557fac2e3">skills._kick._Kick</a>
+: <a class="el" href="classskills_1_1__kick_1_1___kick.html#add5e8108513ba511e66427317bd547c5">skills._kick._Kick</a>
 </li>
 <li>sing()
 : <a class="el" href="class_our_robot.html#a1446bc7daeb6a68d549a98e328bdd5b9">OurRobot</a>
@@ -175,8 +177,8 @@ $(document).ready(function(){initNavTree('functions_func_s.html','');});
 : <a class="el" href="class_planning_1_1_path.html#ac1fef7a784253f927a07a13b6217ef27">Planning::Path</a>
 </li>
 <li>spin()
-: <a class="el" href="classcomposite__behavior_1_1_composite_behavior.html#ae45aa3dbe52ac871588d98255df5b3b1">composite_behavior.CompositeBehavior</a>
-, <a class="el" href="classfsm_1_1_state_machine.html#abb4f0d680dd3d3f5cdf7f69bd89df640">fsm.StateMachine</a>
+: <a class="el" href="classcomposite__behavior_1_1_composite_behavior.html#a655a14278d0e325db7f9fff0b0b0a057">composite_behavior.CompositeBehavior</a>
+, <a class="el" href="classfsm_1_1_state_machine.html#a23c3e817663c1200e4f831a051ac9aa3">fsm.StateMachine</a>
 </li>
 <li>spinKickWatcher()
 : <a class="el" href="class_new_referee_module.html#a81f595e25744665fa3722a8588c42c45">NewRefereeModule</a>
@@ -191,7 +193,7 @@ $(document).ready(function(){initNavTree('functions_func_s.html','');});
 : <a class="el" href="class_motion_control.html#a0d8a00158b08f848c7bd03f65f2bb2b8">MotionControl</a>
 </li>
 <li>subscribe()
-: <a class="el" href="classfs__watcher_1_1_fs_watcher.html#ad9ebf1eeb4a3cd83843abd8d087ba6f9">fs_watcher.FsWatcher</a>
+: <a class="el" href="classfs__watcher_1_1_fs_watcher.html#a11aa705db9a6fb54eeba7895bec7f03b">fs_watcher.FsWatcher</a>
 </li>
 </ul>
 </div><!-- contents -->
@@ -199,7 +201,7 @@ $(document).ready(function(){initNavTree('functions_func_s.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Nov 12 2014 02:06:43 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Nov 16 2014 20:16:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

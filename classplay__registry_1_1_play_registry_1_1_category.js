@@ -1,14 +1,14 @@
 var classplay__registry_1_1_play_registry_1_1_category =
 [
-    [ "__init__", "classplay__registry_1_1_play_registry_1_1_category.html#a35427e200a6a905dfe35494b3496118f", null ],
-    [ "__delitem__", "classplay__registry_1_1_play_registry_1_1_category.html#a6bfda04588697b3cfcf91db1a5ced45e", null ],
-    [ "__getitem__", "classplay__registry_1_1_play_registry_1_1_category.html#aee3069dd51f3c107075f0d908c333432", null ],
-    [ "append_child", "classplay__registry_1_1_play_registry_1_1_category.html#a93b936632fb4ee6a31786af6e91b60a0", null ],
-    [ "children", "classplay__registry_1_1_play_registry_1_1_category.html#a9a3c0ee35e781b583893a360be184a3c", null ],
-    [ "has_child_with_name", "classplay__registry_1_1_play_registry_1_1_category.html#abb5a6c7028d65ab82da372b8d3771345", null ],
-    [ "name", "classplay__registry_1_1_play_registry_1_1_category.html#a90e2daa70f766ca8d73399714fe4ee71", null ],
-    [ "parent", "classplay__registry_1_1_play_registry_1_1_category.html#ae9286eac23b8291addb851a1a11cb2b2", null ],
-    [ "parent", "classplay__registry_1_1_play_registry_1_1_category.html#ae9286eac23b8291addb851a1a11cb2b2", null ],
-    [ "recalculate_scores", "classplay__registry_1_1_play_registry_1_1_category.html#a07411140002a3762fa92a016159eaa07", null ],
-    [ "row", "classplay__registry_1_1_play_registry_1_1_category.html#a0d53c5abda89357e39c94c52890446ce", null ]
+    [ "__init__", "classplay__registry_1_1_play_registry_1_1_category.html#acb39c853685aa7fb45892460379e7a35", null ],
+    [ "__delitem__", "classplay__registry_1_1_play_registry_1_1_category.html#aa3658ad2f5d73eb0a008f030851dc54f", null ],
+    [ "__getitem__", "classplay__registry_1_1_play_registry_1_1_category.html#a1caaafad551d1449ee8d1e9ed2c47bae", null ],
+    [ "append_child", "classplay__registry_1_1_play_registry_1_1_category.html#aeb949d1770208d99c790de710d54316d", null ],
+    [ "children", "classplay__registry_1_1_play_registry_1_1_category.html#afbb4d91814ad6fdde1cd24f3872870a6", null ],
+    [ "has_child_with_name", "classplay__registry_1_1_play_registry_1_1_category.html#af4f739f169f6fde0a9694a18ce2b570c", null ],
+    [ "name", "classplay__registry_1_1_play_registry_1_1_category.html#adfa31fc07ab52f723a1be637f494a52a", null ],
+    [ "parent", "classplay__registry_1_1_play_registry_1_1_category.html#a5a6fc51c15a1edaa7998df4c333ec282", null ],
+    [ "parent", "classplay__registry_1_1_play_registry_1_1_category.html#a9c47f8da47fe061481cf02ef4ebc5e46", null ],
+    [ "recalculate_scores", "classplay__registry_1_1_play_registry_1_1_category.html#afcbbb3f432beb0768cc1a1854fa44778", null ],
+    [ "row", "classplay__registry_1_1_play_registry_1_1_category.html#a9a624b4765f443a901c9185fb4d94a17", null ]
 ];

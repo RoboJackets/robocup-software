@@ -10,15 +10,17 @@
 <script type="text/javascript" src="dynsections.js"></script>
 <link href="navtree.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
 <script type="text/javascript" src="navtree.js"></script>
 <script type="text/javascript">
   $(document).ready(initResizable);
   $(window).load(resizeHeight);
 </script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
-  $(document).ready(function() { searchBox.OnSelectItem(0); });
+  $(document).ready(function() { init_search(); });
 </script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
@@ -97,7 +99,7 @@ $(document).ready(function(){initNavTree('classtest__win__eval_1_1_test_window_e
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Modules</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+</div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -117,9 +119,9 @@ $(document).ready(function(){initNavTree('classtest__win__eval_1_1_test_window_e
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a86ddcc3c1d3b8f52b8a8ea9396cee5dc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a86ddcc3c1d3b8f52b8a8ea9396cee5dc"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>test_eval_pt_to_seg</b></td></tr>
-<tr class="separator:a86ddcc3c1d3b8f52b8a8ea9396cee5dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf5d2bbf6adca2033e54bdcdc0b09948"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abf5d2bbf6adca2033e54bdcdc0b09948"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>test_eval_pt_to_seg</b> (self)</td></tr>
+<tr class="separator:abf5d2bbf6adca2033e54bdcdc0b09948"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for test_win_eval.TestWindowEvaluator:</div>
@@ -144,7 +146,7 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>test_eval_pt_to_seg</b
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>test_win_eval</b></li><li class="navelem"><a class="el" href="classtest__win__eval_1_1_test_window_evaluator.html">TestWindowEvaluator</a></li>
-    <li class="footer">Generated on Wed Nov 12 2014 02:06:43 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Nov 16 2014 20:16:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

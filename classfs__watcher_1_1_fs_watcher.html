@@ -10,15 +10,17 @@
 <script type="text/javascript" src="dynsections.js"></script>
 <link href="navtree.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
 <script type="text/javascript" src="navtree.js"></script>
 <script type="text/javascript">
   $(document).ready(initResizable);
   $(window).load(resizeHeight);
 </script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
-  $(document).ready(function() { searchBox.OnSelectItem(0); });
+  $(document).ready(function() { init_search(); });
 </script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
@@ -97,7 +99,7 @@ $(document).ready(function(){initNavTree('classfs__watcher_1_1_fs_watcher.html',
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Modules</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+</div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -127,24 +129,24 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a218ecd243b6b2412ff6dd67a31c2290a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a218ecd243b6b2412ff6dd67a31c2290a"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b></td></tr>
-<tr class="separator:a218ecd243b6b2412ff6dd67a31c2290a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad9ebf1eeb4a3cd83843abd8d087ba6f9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad9ebf1eeb4a3cd83843abd8d087ba6f9"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfs__watcher_1_1_fs_watcher.html#ad9ebf1eeb4a3cd83843abd8d087ba6f9">subscribe</a></td></tr>
-<tr class="memdesc:ad9ebf1eeb4a3cd83843abd8d087ba6f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">the callback is passed event_type, module_path where event_type is a string with the following possible values: 'modified', 'created', 'deleted' <br /></td></tr>
-<tr class="separator:ad9ebf1eeb4a3cd83843abd8d087ba6f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2df6c694ae8fbafe0956e73468e953f6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2df6c694ae8fbafe0956e73468e953f6"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfs__watcher_1_1_fs_watcher.html#a2df6c694ae8fbafe0956e73468e953f6">unsubscribe</a></td></tr>
-<tr class="memdesc:a2df6c694ae8fbafe0956e73468e953f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">removes a given subscriber <br /></td></tr>
-<tr class="separator:a2df6c694ae8fbafe0956e73468e953f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7dc9b30d1d038bd7211f244b321a21b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa7dc9b30d1d038bd7211f244b321a21b"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfs__watcher_1_1_fs_watcher.html#aa7dc9b30d1d038bd7211f244b321a21b">root_path</a></td></tr>
-<tr class="memdesc:aa7dc9b30d1d038bd7211f244b321a21b"><td class="mdescLeft">&#160;</td><td class="mdescRight">The directory to watch recursively. <br /></td></tr>
-<tr class="separator:aa7dc9b30d1d038bd7211f244b321a21b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa7dc9b30d1d038bd7211f244b321a21b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa7dc9b30d1d038bd7211f244b321a21b"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>root_path</b></td></tr>
-<tr class="separator:aa7dc9b30d1d038bd7211f244b321a21b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace1d8a61e49bb0bd7952652ff10047d4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ace1d8a61e49bb0bd7952652ff10047d4"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self, path)</td></tr>
+<tr class="separator:ace1d8a61e49bb0bd7952652ff10047d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11aa705db9a6fb54eeba7895bec7f03b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a11aa705db9a6fb54eeba7895bec7f03b"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfs__watcher_1_1_fs_watcher.html#a11aa705db9a6fb54eeba7895bec7f03b">subscribe</a> (self, callback)</td></tr>
+<tr class="memdesc:a11aa705db9a6fb54eeba7895bec7f03b"><td class="mdescLeft">&#160;</td><td class="mdescRight">the callback is passed event_type, module_path where event_type is a string with the following possible values: 'modified', 'created', 'deleted' <br /></td></tr>
+<tr class="separator:a11aa705db9a6fb54eeba7895bec7f03b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a556ef42e4aad018fba5f2b9b222454"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1a556ef42e4aad018fba5f2b9b222454"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfs__watcher_1_1_fs_watcher.html#a1a556ef42e4aad018fba5f2b9b222454">unsubscribe</a> (self, callback)</td></tr>
+<tr class="memdesc:a1a556ef42e4aad018fba5f2b9b222454"><td class="mdescLeft">&#160;</td><td class="mdescRight">removes a given subscriber <br /></td></tr>
+<tr class="separator:a1a556ef42e4aad018fba5f2b9b222454"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3ee86dbfc174b0115e768f6774e85e4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab3ee86dbfc174b0115e768f6774e85e4"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfs__watcher_1_1_fs_watcher.html#ab3ee86dbfc174b0115e768f6774e85e4">root_path</a> (self)</td></tr>
+<tr class="memdesc:ab3ee86dbfc174b0115e768f6774e85e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The directory to watch recursively. <br /></td></tr>
+<tr class="separator:ab3ee86dbfc174b0115e768f6774e85e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2463ed49a1ababcbfa40658e8c60697a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2463ed49a1ababcbfa40658e8c60697a"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>root_path</b> (self, value)</td></tr>
+<tr class="separator:a2463ed49a1ababcbfa40658e8c60697a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -177,7 +179,7 @@ Public Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>fs_watcher</b></li><li class="navelem"><a class="el" href="classfs__watcher_1_1_fs_watcher.html">FsWatcher</a></li>
-    <li class="footer">Generated on Wed Nov 12 2014 02:06:42 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Nov 16 2014 20:16:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

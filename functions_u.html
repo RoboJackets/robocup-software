@@ -10,15 +10,17 @@
 <script type="text/javascript" src="dynsections.js"></script>
 <link href="navtree.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
 <script type="text/javascript" src="navtree.js"></script>
 <script type="text/javascript">
   $(document).ready(initResizable);
   $(window).load(resizeHeight);
 </script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
-  $(document).ready(function() { searchBox.OnSelectItem(0); });
+  $(document).ready(function() { init_search(); });
 </script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
@@ -134,7 +136,7 @@ $(document).ready(function(){initNavTree('functions_u.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Modules</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+</div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -151,16 +153,16 @@ $(document).ready(function(){initNavTree('functions_u.html','');});
 : <a class="el" href="class_our_robot.html#ae69f9949b6337a7a97389ff0c6b25063">OurRobot</a>
 </li>
 <li>unsubscribe()
-: <a class="el" href="classfs__watcher_1_1_fs_watcher.html#a2df6c694ae8fbafe0956e73468e953f6">fs_watcher.FsWatcher</a>
+: <a class="el" href="classfs__watcher_1_1_fs_watcher.html#a1a556ef42e4aad018fba5f2b9b222454">fs_watcher.FsWatcher</a>
 </li>
 <li>update()
 : <a class="el" href="class_robot_filter.html#a47b3ca9d7c598cc9078ea60a7dc1b050">RobotFilter</a>
 </li>
 <li>use_chipper()
-: <a class="el" href="classskills_1_1__kick_1_1___kick.html#ae2d7b7455a9d57f43cc66cca2aa65df2">skills._kick._Kick</a>
+: <a class="el" href="classskills_1_1__kick_1_1___kick.html#a1c8ecb6b6a8d4ba599193e04eea719bc">skills._kick._Kick</a>
 </li>
 <li>use_windowing()
-: <a class="el" href="classskills_1_1__kick_1_1___kick.html#a802dfb257ccefade07ddce2fa669ff10">skills._kick._Kick</a>
+: <a class="el" href="classskills_1_1__kick_1_1___kick.html#a0c671535a409787228ab22483ea64084">skills._kick._Kick</a>
 </li>
 </ul>
 </div><!-- contents -->
@@ -168,7 +170,7 @@ $(document).ready(function(){initNavTree('functions_u.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Nov 12 2014 02:06:43 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Nov 16 2014 20:16:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

@@ -10,15 +10,17 @@
 <script type="text/javascript" src="dynsections.js"></script>
 <link href="navtree.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
 <script type="text/javascript" src="navtree.js"></script>
 <script type="text/javascript">
   $(document).ready(initResizable);
   $(window).load(resizeHeight);
 </script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
-  $(document).ready(function() { searchBox.OnSelectItem(0); });
+  $(document).ready(function() { init_search(); });
 </script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
@@ -97,7 +99,7 @@ $(document).ready(function(){initNavTree('classrole__assignment_1_1_role_require
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Modules</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+</div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -118,60 +120,60 @@ $(document).ready(function(){initNavTree('classrole__assignment_1_1_role_require
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9adefee8961c3d5a32df7a7af77cb469"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9adefee8961c3d5a32df7a7af77cb469"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b></td></tr>
-<tr class="separator:a9adefee8961c3d5a32df7a7af77cb469"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac33424825fdf75f2b2c9631a3158100a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac33424825fdf75f2b2c9631a3158100a"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__str__</b></td></tr>
-<tr class="separator:ac33424825fdf75f2b2c9631a3158100a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3575170d7bdb39f7f6c476ed9cfc2487"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3575170d7bdb39f7f6c476ed9cfc2487"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>destination_shape</b></td></tr>
-<tr class="separator:a3575170d7bdb39f7f6c476ed9cfc2487"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3575170d7bdb39f7f6c476ed9cfc2487"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3575170d7bdb39f7f6c476ed9cfc2487"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>destination_shape</b></td></tr>
-<tr class="separator:a3575170d7bdb39f7f6c476ed9cfc2487"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae019a8616ab20888ad39295ec1681b92"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae019a8616ab20888ad39295ec1681b92"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>has_ball</b></td></tr>
-<tr class="separator:ae019a8616ab20888ad39295ec1681b92"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae019a8616ab20888ad39295ec1681b92"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae019a8616ab20888ad39295ec1681b92"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>has_ball</b></td></tr>
-<tr class="separator:ae019a8616ab20888ad39295ec1681b92"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a913e0b654473f4e43ff69361fd672d63"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a913e0b654473f4e43ff69361fd672d63"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>chipper_preference_weight</b></td></tr>
-<tr class="separator:a913e0b654473f4e43ff69361fd672d63"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a913e0b654473f4e43ff69361fd672d63"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a913e0b654473f4e43ff69361fd672d63"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>chipper_preference_weight</b></td></tr>
-<tr class="separator:a913e0b654473f4e43ff69361fd672d63"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af13b1dcfdc113319e36436a3cb62c3e0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af13b1dcfdc113319e36436a3cb62c3e0"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>require_kicking</b></td></tr>
-<tr class="separator:af13b1dcfdc113319e36436a3cb62c3e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af13b1dcfdc113319e36436a3cb62c3e0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af13b1dcfdc113319e36436a3cb62c3e0"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>require_kicking</b></td></tr>
-<tr class="separator:af13b1dcfdc113319e36436a3cb62c3e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea655a2d0399a8cc17e06d71c42e3ffc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aea655a2d0399a8cc17e06d71c42e3ffc"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>required_shell_id</b></td></tr>
-<tr class="separator:aea655a2d0399a8cc17e06d71c42e3ffc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea655a2d0399a8cc17e06d71c42e3ffc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aea655a2d0399a8cc17e06d71c42e3ffc"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>required_shell_id</b></td></tr>
-<tr class="separator:aea655a2d0399a8cc17e06d71c42e3ffc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b5113f66c93888a9da7cda28a6f45dc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6b5113f66c93888a9da7cda28a6f45dc"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>previous_shell_id</b></td></tr>
-<tr class="separator:a6b5113f66c93888a9da7cda28a6f45dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6b5113f66c93888a9da7cda28a6f45dc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6b5113f66c93888a9da7cda28a6f45dc"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>previous_shell_id</b></td></tr>
-<tr class="separator:a6b5113f66c93888a9da7cda28a6f45dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a422adb88eb7de144e64e5ae394a893c3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a422adb88eb7de144e64e5ae394a893c3"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>required</b></td></tr>
-<tr class="separator:a422adb88eb7de144e64e5ae394a893c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a422adb88eb7de144e64e5ae394a893c3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a422adb88eb7de144e64e5ae394a893c3"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>required</b></td></tr>
-<tr class="separator:a422adb88eb7de144e64e5ae394a893c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae7f3b1f6ea45cd7c41069712a264aa8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aae7f3b1f6ea45cd7c41069712a264aa8"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>priority</b></td></tr>
-<tr class="separator:aae7f3b1f6ea45cd7c41069712a264aa8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae7f3b1f6ea45cd7c41069712a264aa8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aae7f3b1f6ea45cd7c41069712a264aa8"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>priority</b></td></tr>
-<tr class="separator:aae7f3b1f6ea45cd7c41069712a264aa8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35dc8384f59950bde1a331abc422a795"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a35dc8384f59950bde1a331abc422a795"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self)</td></tr>
+<tr class="separator:a35dc8384f59950bde1a331abc422a795"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e3eac585c58a33e07d3db11a419be0d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2e3eac585c58a33e07d3db11a419be0d"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__str__</b> (self)</td></tr>
+<tr class="separator:a2e3eac585c58a33e07d3db11a419be0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83c40626fa5d723a53d77c2ffcf68db5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a83c40626fa5d723a53d77c2ffcf68db5"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>destination_shape</b> (self)</td></tr>
+<tr class="separator:a83c40626fa5d723a53d77c2ffcf68db5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ffbfe879276a826db86154d200a7bf5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1ffbfe879276a826db86154d200a7bf5"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>destination_shape</b> (self, value)</td></tr>
+<tr class="separator:a1ffbfe879276a826db86154d200a7bf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac6133be7cf107eaeac143f4e0ea643ad"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac6133be7cf107eaeac143f4e0ea643ad"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>has_ball</b> (self)</td></tr>
+<tr class="separator:ac6133be7cf107eaeac143f4e0ea643ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d1de5044c31631d33e15bc50fc1063d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8d1de5044c31631d33e15bc50fc1063d"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>has_ball</b> (self, value)</td></tr>
+<tr class="separator:a8d1de5044c31631d33e15bc50fc1063d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0cdb7723ced8341229b804d0ebccf3d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa0cdb7723ced8341229b804d0ebccf3d"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>chipper_preference_weight</b> (self)</td></tr>
+<tr class="separator:aa0cdb7723ced8341229b804d0ebccf3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d750cd3deba91f186cf78590ccd7c99"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5d750cd3deba91f186cf78590ccd7c99"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>chipper_preference_weight</b> (self, value)</td></tr>
+<tr class="separator:a5d750cd3deba91f186cf78590ccd7c99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f2466e00905a080b6af8c9a47441224"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9f2466e00905a080b6af8c9a47441224"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>require_kicking</b> (self)</td></tr>
+<tr class="separator:a9f2466e00905a080b6af8c9a47441224"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a077e86df88da1004d18016b67cf1271d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a077e86df88da1004d18016b67cf1271d"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>require_kicking</b> (self, value)</td></tr>
+<tr class="separator:a077e86df88da1004d18016b67cf1271d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af254bfce0b147a07b765a97c965bd8bb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af254bfce0b147a07b765a97c965bd8bb"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>required_shell_id</b> (self)</td></tr>
+<tr class="separator:af254bfce0b147a07b765a97c965bd8bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8ef0f4d2336fb440377c3c31e3975f2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae8ef0f4d2336fb440377c3c31e3975f2"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>required_shell_id</b> (self, value)</td></tr>
+<tr class="separator:ae8ef0f4d2336fb440377c3c31e3975f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1af0f99fa3e4635f86ba95c92fddc494"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1af0f99fa3e4635f86ba95c92fddc494"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>previous_shell_id</b> (self)</td></tr>
+<tr class="separator:a1af0f99fa3e4635f86ba95c92fddc494"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6877d8ed7837afcac2fe5d3a539ba070"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6877d8ed7837afcac2fe5d3a539ba070"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>previous_shell_id</b> (self, value)</td></tr>
+<tr class="separator:a6877d8ed7837afcac2fe5d3a539ba070"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f279d268c2e6ddec1bf26bad7f99e82"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1f279d268c2e6ddec1bf26bad7f99e82"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>required</b> (self)</td></tr>
+<tr class="separator:a1f279d268c2e6ddec1bf26bad7f99e82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aacadda2fe7ed64898c1413a7e7473c30"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aacadda2fe7ed64898c1413a7e7473c30"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>required</b> (self, value)</td></tr>
+<tr class="separator:aacadda2fe7ed64898c1413a7e7473c30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e4da1504abfd3a4df066b9bb969cb17"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5e4da1504abfd3a4df066b9bb969cb17"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>priority</b> (self)</td></tr>
+<tr class="separator:a5e4da1504abfd3a4df066b9bb969cb17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa719ef16885f193a631f7f5edf2a45f0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa719ef16885f193a631f7f5edf2a45f0"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>priority</b> (self, value)</td></tr>
+<tr class="separator:aa719ef16885f193a631f7f5edf2a45f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -209,7 +211,7 @@ Public Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>role_assignment</b></li><li class="navelem"><a class="el" href="classrole__assignment_1_1_role_requirements.html">RoleRequirements</a></li>
-    <li class="footer">Generated on Wed Nov 12 2014 02:06:42 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Nov 16 2014 20:16:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

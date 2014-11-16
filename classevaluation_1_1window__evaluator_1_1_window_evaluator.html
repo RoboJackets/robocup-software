@@ -10,15 +10,17 @@
 <script type="text/javascript" src="dynsections.js"></script>
 <link href="navtree.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
 <script type="text/javascript" src="navtree.js"></script>
 <script type="text/javascript">
   $(document).ready(initResizable);
   $(window).load(resizeHeight);
 </script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
-  $(document).ready(function() { searchBox.OnSelectItem(0); });
+  $(document).ready(function() { init_search(); });
 </script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
@@ -97,7 +99,7 @@ $(document).ready(function(){initNavTree('classevaluation_1_1window__evaluator_1
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Modules</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+</div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -118,63 +120,63 @@ $(document).ready(function(){initNavTree('classevaluation_1_1window__evaluator_1
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab39cf6e4c6bad5d473966bb8cd26c27c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab39cf6e4c6bad5d473966bb8cd26c27c"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b></td></tr>
-<tr class="separator:ab39cf6e4c6bad5d473966bb8cd26c27c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41ef2ba207f23f45b4982a2dde6ef8ec"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a41ef2ba207f23f45b4982a2dde6ef8ec"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>debug</b></td></tr>
-<tr class="separator:a41ef2ba207f23f45b4982a2dde6ef8ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41ef2ba207f23f45b4982a2dde6ef8ec"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a41ef2ba207f23f45b4982a2dde6ef8ec"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>debug</b></td></tr>
-<tr class="separator:a41ef2ba207f23f45b4982a2dde6ef8ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad80d28b55d6048088a4764fbd14382e5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad80d28b55d6048088a4764fbd14382e5"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>chip_enabled</b></td></tr>
-<tr class="separator:ad80d28b55d6048088a4764fbd14382e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad80d28b55d6048088a4764fbd14382e5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad80d28b55d6048088a4764fbd14382e5"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>chip_enabled</b></td></tr>
-<tr class="separator:ad80d28b55d6048088a4764fbd14382e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab347ada92c15e159bfb7c14a03c55996"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab347ada92c15e159bfb7c14a03c55996"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>min_chip_range</b></td></tr>
-<tr class="separator:ab347ada92c15e159bfb7c14a03c55996"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab347ada92c15e159bfb7c14a03c55996"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab347ada92c15e159bfb7c14a03c55996"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>min_chip_range</b></td></tr>
-<tr class="separator:ab347ada92c15e159bfb7c14a03c55996"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a593acd31fc809e7d5a7f38d5ea13339b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a593acd31fc809e7d5a7f38d5ea13339b"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>max_chip_range</b></td></tr>
-<tr class="separator:a593acd31fc809e7d5a7f38d5ea13339b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a593acd31fc809e7d5a7f38d5ea13339b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a593acd31fc809e7d5a7f38d5ea13339b"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>max_chip_range</b></td></tr>
-<tr class="separator:a593acd31fc809e7d5a7f38d5ea13339b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6216385aaa0f67e55c6db1b462096358"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6216385aaa0f67e55c6db1b462096358"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>excluded_robots</b></td></tr>
-<tr class="separator:a6216385aaa0f67e55c6db1b462096358"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6216385aaa0f67e55c6db1b462096358"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6216385aaa0f67e55c6db1b462096358"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>excluded_robots</b></td></tr>
-<tr class="separator:a6216385aaa0f67e55c6db1b462096358"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d6e7f34f38503450e992afbcfb333e3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8d6e7f34f38503450e992afbcfb333e3"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>hypothetical_robot_locations</b></td></tr>
-<tr class="separator:a8d6e7f34f38503450e992afbcfb333e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8d6e7f34f38503450e992afbcfb333e3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8d6e7f34f38503450e992afbcfb333e3"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>hypothetical_robot_locations</b></td></tr>
-<tr class="separator:a8d6e7f34f38503450e992afbcfb333e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a19baf4d9d76211c746b3151cb0d476"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2a19baf4d9d76211c746b3151cb0d476"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>eval_pt_to_pt</b></td></tr>
-<tr class="separator:a2a19baf4d9d76211c746b3151cb0d476"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0bab16f831aa0a80a39950f7c4076b74"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0bab16f831aa0a80a39950f7c4076b74"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>eval_pt_to_opp_goal</b></td></tr>
-<tr class="separator:a0bab16f831aa0a80a39950f7c4076b74"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e27c009596390359674d167f8d3c085"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2e27c009596390359674d167f8d3c085"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>eval_pt_to_our_goal</b></td></tr>
-<tr class="separator:a2e27c009596390359674d167f8d3c085"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a747815b671821b2dbe147f1fb2a0cd5c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a747815b671821b2dbe147f1fb2a0cd5c"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>obstacle_range</b></td></tr>
-<tr class="separator:a747815b671821b2dbe147f1fb2a0cd5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a201d7786f15dbb1789af1a828d4ccdb2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a201d7786f15dbb1789af1a828d4ccdb2"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>obstacle_robot</b></td></tr>
-<tr class="separator:a201d7786f15dbb1789af1a828d4ccdb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade66f78340cf82cec8937afefc6fef30"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ade66f78340cf82cec8937afefc6fef30"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>eval_pt_to_seg</b></td></tr>
-<tr class="separator:ade66f78340cf82cec8937afefc6fef30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac9cf97525e00fbfbafa7ebb655a05b71"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac9cf97525e00fbfbafa7ebb655a05b71"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self)</td></tr>
+<tr class="separator:ac9cf97525e00fbfbafa7ebb655a05b71"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4852ecb4971574eff185104037916b8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae4852ecb4971574eff185104037916b8"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>debug</b> (self)</td></tr>
+<tr class="separator:ae4852ecb4971574eff185104037916b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e91e695b9866a62c8d76da247ec8886"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8e91e695b9866a62c8d76da247ec8886"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>debug</b> (self, value)</td></tr>
+<tr class="separator:a8e91e695b9866a62c8d76da247ec8886"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7c72aa052bbace78e0d108cc644dbe8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af7c72aa052bbace78e0d108cc644dbe8"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>chip_enabled</b> (self)</td></tr>
+<tr class="separator:af7c72aa052bbace78e0d108cc644dbe8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a534d432e933a128638ca9bb1ca8e733f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a534d432e933a128638ca9bb1ca8e733f"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>chip_enabled</b> (self, value)</td></tr>
+<tr class="separator:a534d432e933a128638ca9bb1ca8e733f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8a1aad154ecf87685f5af5cdec0c2b8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae8a1aad154ecf87685f5af5cdec0c2b8"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>min_chip_range</b> (self)</td></tr>
+<tr class="separator:ae8a1aad154ecf87685f5af5cdec0c2b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad3965d14208e1542e5e8716ad84e1840"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad3965d14208e1542e5e8716ad84e1840"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>min_chip_range</b> (self, value)</td></tr>
+<tr class="separator:ad3965d14208e1542e5e8716ad84e1840"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa16b1f7be0af00467d26e8bdeff3696a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa16b1f7be0af00467d26e8bdeff3696a"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>max_chip_range</b> (self)</td></tr>
+<tr class="separator:aa16b1f7be0af00467d26e8bdeff3696a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2d1f7883c8686d3235f2b180687000d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae2d1f7883c8686d3235f2b180687000d"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>max_chip_range</b> (self, value)</td></tr>
+<tr class="separator:ae2d1f7883c8686d3235f2b180687000d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac34a56f6117876c387ae4ada4f502ce3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac34a56f6117876c387ae4ada4f502ce3"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>excluded_robots</b> (self)</td></tr>
+<tr class="separator:ac34a56f6117876c387ae4ada4f502ce3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a565770a634b17ba6534d7fa50bc84103"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a565770a634b17ba6534d7fa50bc84103"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>excluded_robots</b> (self, value)</td></tr>
+<tr class="separator:a565770a634b17ba6534d7fa50bc84103"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a951453e592834bc03be6255bfce60d7d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a951453e592834bc03be6255bfce60d7d"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>hypothetical_robot_locations</b> (self)</td></tr>
+<tr class="separator:a951453e592834bc03be6255bfce60d7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff58ad701d2e78535f666cc069b22327"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aff58ad701d2e78535f666cc069b22327"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>hypothetical_robot_locations</b> (self, value)</td></tr>
+<tr class="separator:aff58ad701d2e78535f666cc069b22327"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36c469c165462e427fad247215f5b007"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a36c469c165462e427fad247215f5b007"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>eval_pt_to_pt</b> (self, origin, target)</td></tr>
+<tr class="separator:a36c469c165462e427fad247215f5b007"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5707a0058e094c9134b5d82318cbf41"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab5707a0058e094c9134b5d82318cbf41"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>eval_pt_to_opp_goal</b> (self, origin)</td></tr>
+<tr class="separator:ab5707a0058e094c9134b5d82318cbf41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a351e7e0ffdb0bcf4239b000660d81815"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a351e7e0ffdb0bcf4239b000660d81815"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>eval_pt_to_our_goal</b> (self, origin)</td></tr>
+<tr class="separator:a351e7e0ffdb0bcf4239b000660d81815"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae52d93027eb5ab11b2fcd3eaf3f74ec1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae52d93027eb5ab11b2fcd3eaf3f74ec1"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>obstacle_range</b> (self, windows, t0, t1)</td></tr>
+<tr class="separator:ae52d93027eb5ab11b2fcd3eaf3f74ec1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a60e7d13a22d362b5d98998def8fdb1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a60e7d13a22d362b5d98998def8fdb1"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>obstacle_robot</b> (self, windows, origin, target, bot_pos)</td></tr>
+<tr class="separator:a7a60e7d13a22d362b5d98998def8fdb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f3a3fbe15c53ad68ec991afc45bc194"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1f3a3fbe15c53ad68ec991afc45bc194"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>eval_pt_to_seg</b> (self, origin, target)</td></tr>
+<tr class="separator:a1f3a3fbe15c53ad68ec991afc45bc194"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -206,7 +208,7 @@ Public Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>evaluation</b></li><li class="navelem"><b>window_evaluator</b></li><li class="navelem"><a class="el" href="classevaluation_1_1window__evaluator_1_1_window_evaluator.html">WindowEvaluator</a></li>
-    <li class="footer">Generated on Wed Nov 12 2014 02:06:42 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Nov 16 2014 20:16:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

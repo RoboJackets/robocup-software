@@ -10,15 +10,17 @@
 <script type="text/javascript" src="dynsections.js"></script>
 <link href="navtree.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
 <script type="text/javascript" src="navtree.js"></script>
 <script type="text/javascript">
   $(document).ready(initResizable);
   $(window).load(resizeHeight);
 </script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
-  $(document).ready(function() { searchBox.OnSelectItem(0); });
+  $(document).ready(function() { init_search(); });
 </script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
@@ -97,7 +99,7 @@ $(document).ready(function(){initNavTree('classtest__play__registry_1_1_test_pla
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Modules</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+</div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -117,17 +119,17 @@ $(document).ready(function(){initNavTree('classtest__play__registry_1_1_test_pla
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a798446cd2a28d595f8e1207396d95e26"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a798446cd2a28d595f8e1207396d95e26"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>test_insert</b></td></tr>
-<tr class="separator:a798446cd2a28d595f8e1207396d95e26"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2f00cea3065064990a5c7678e29dec3a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2f00cea3065064990a5c7678e29dec3a"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>test_delete</b></td></tr>
-<tr class="separator:a2f00cea3065064990a5c7678e29dec3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41c5c7035fd9c54fa3394f311ee4c9d2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a41c5c7035fd9c54fa3394f311ee4c9d2"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>test_nested_insert</b></td></tr>
-<tr class="separator:a41c5c7035fd9c54fa3394f311ee4c9d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf952de1d23c964f24823a633150578c"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtest__play__registry_1_1_test_play_registry.html#aaf952de1d23c964f24823a633150578c">test_delete_last_item_in_category</a></td></tr>
-<tr class="separator:aaf952de1d23c964f24823a633150578c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf5b9b9b1b35fe5c40a3c1255fb12bc7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaf5b9b9b1b35fe5c40a3c1255fb12bc7"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>test_insert</b> (self)</td></tr>
+<tr class="separator:aaf5b9b9b1b35fe5c40a3c1255fb12bc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a353f3a3c85ddfb569cfa051a1e0abd10"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a353f3a3c85ddfb569cfa051a1e0abd10"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>test_delete</b> (self)</td></tr>
+<tr class="separator:a353f3a3c85ddfb569cfa051a1e0abd10"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90c0d18ea43663b4ed9cb5ad2103a6bf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a90c0d18ea43663b4ed9cb5ad2103a6bf"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>test_nested_insert</b> (self)</td></tr>
+<tr class="separator:a90c0d18ea43663b4ed9cb5ad2103a6bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a422fd2d293fba74ee1901804546872a0"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtest__play__registry_1_1_test_play_registry.html#a422fd2d293fba74ee1901804546872a0">test_delete_last_item_in_category</a> (self)</td></tr>
+<tr class="separator:a422fd2d293fba74ee1901804546872a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for test_play_registry.TestPlayRegistry:</div>
@@ -144,7 +146,7 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>test_nested_insert</b>
 <div class="center"><img src="classtest__play__registry_1_1_test_play_registry__coll__graph.png" border="0" usemap="#test__play__registry_8_test_play_registry_coll__map" alt="Collaboration graph"/></div>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="aaf952de1d23c964f24823a633150578c"></a>
+<a class="anchor" id="a422fd2d293fba74ee1901804546872a0"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -169,7 +171,7 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>test_nested_insert</b>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>test_play_registry</b></li><li class="navelem"><a class="el" href="classtest__play__registry_1_1_test_play_registry.html">TestPlayRegistry</a></li>
-    <li class="footer">Generated on Wed Nov 12 2014 02:06:43 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Nov 16 2014 20:16:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

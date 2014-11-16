@@ -10,15 +10,17 @@
 <script type="text/javascript" src="dynsections.js"></script>
 <link href="navtree.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
 <script type="text/javascript" src="navtree.js"></script>
 <script type="text/javascript">
   $(document).ready(initResizable);
   $(window).load(resizeHeight);
 </script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
-  $(document).ready(function() { searchBox.OnSelectItem(0); });
+  $(document).ready(function() { init_search(); });
 </script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
@@ -131,7 +133,7 @@ $(document).ready(function(){initNavTree('functions_func_e.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Modules</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+</div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -145,16 +147,16 @@ $(document).ready(function(){initNavTree('functions_func_e.html','');});
 
 <h3><a class="anchor" id="index_e"></a>- e -</h3><ul>
 <li>enable_kick()
-: <a class="el" href="classskills_1_1__kick_1_1___kick.html#af83f77a20cc318aad72398dfe15b371b">skills._kick._Kick</a>
+: <a class="el" href="classskills_1_1__kick_1_1___kick.html#a58914c3eff3ff82497c1c095e44dc480">skills._kick._Kick</a>
 </li>
 <li>errors_below_thresholds()
-: <a class="el" href="classskills_1_1pass__receive_1_1_pass_receive.html#a9f388fa05810fa57e7ef30401115e911">skills.pass_receive.PassReceive</a>
+: <a class="el" href="classskills_1_1pass__receive_1_1_pass_receive.html#a5b9ddbdff486e63e908529dd750c1dc7">skills.pass_receive.PassReceive</a>
 </li>
 <li>evaluate()
 : <a class="el" href="class_planning_1_1_path.html#ab4f9fdc9b412e8bd883485db008a4be8">Planning::Path</a>
 </li>
 <li>execute_marking()
-: <a class="el" href="classtactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#ab58f5dfad7892a9e909b7e1f306dec34">tactics.positions.submissive_defender.SubmissiveDefender</a>
+: <a class="el" href="classtactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a3478f9b0a899476aca11cee3fee0e273">tactics.positions.submissive_defender.SubmissiveDefender</a>
 </li>
 <li>extend()
 : <a class="el" href="class_planning_1_1_fixed_step_tree.html#ae816310e36364eef726c80627efcbae1">Planning::FixedStepTree</a>
@@ -166,7 +168,7 @@ $(document).ready(function(){initNavTree('functions_func_e.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Nov 12 2014 02:06:43 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Nov 16 2014 20:16:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

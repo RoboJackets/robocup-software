@@ -10,15 +10,17 @@
 <script type="text/javascript" src="dynsections.js"></script>
 <link href="navtree.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
 <script type="text/javascript" src="navtree.js"></script>
 <script type="text/javascript">
   $(document).ready(initResizable);
   $(window).load(resizeHeight);
 </script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
-  $(document).ready(function() { searchBox.OnSelectItem(0); });
+  $(document).ready(function() { init_search(); });
 </script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
@@ -97,7 +99,7 @@ $(document).ready(function(){initNavTree('classskills_1_1capture_1_1_capture.htm
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Modules</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+</div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -124,135 +126,135 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae39b25913db98b88730419da9f8b7674"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae39b25913db98b88730419da9f8b7674"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b></td></tr>
-<tr class="separator:ae39b25913db98b88730419da9f8b7674"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb7086d6dcc881164d33788d7a536aed"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeb7086d6dcc881164d33788d7a536aed"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>bot_in_approach_pos</b></td></tr>
-<tr class="separator:aeb7086d6dcc881164d33788d7a536aed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af712f475364048046ecbbd27f461fca6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af712f475364048046ecbbd27f461fca6"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>approach_vector</b></td></tr>
-<tr class="separator:af712f475364048046ecbbd27f461fca6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab49ffcce4dbec7cbda6946afdc85ae44"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab49ffcce4dbec7cbda6946afdc85ae44"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>find_intercept_point</b></td></tr>
-<tr class="separator:ab49ffcce4dbec7cbda6946afdc85ae44"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5751f88c429e53061a3b7fd2c2c18fad"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5751f88c429e53061a3b7fd2c2c18fad"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>execute_running</b></td></tr>
-<tr class="separator:a5751f88c429e53061a3b7fd2c2c18fad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc1379c5f6dfc32cb10dc57e4387e32a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afc1379c5f6dfc32cb10dc57e4387e32a"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>execute_course_approach</b></td></tr>
-<tr class="separator:afc1379c5f6dfc32cb10dc57e4387e32a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c82b67d29530496321926ffb4070478"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5c82b67d29530496321926ffb4070478"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>execute_fine_approach</b></td></tr>
-<tr class="separator:a5c82b67d29530496321926ffb4070478"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41277f7d2a460bd4adfec41e1db02d7a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a41277f7d2a460bd4adfec41e1db02d7a"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>role_requirements</b></td></tr>
-<tr class="separator:a41277f7d2a460bd4adfec41e1db02d7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57eefb135aad5968a08dee20ca2e13fa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a57eefb135aad5968a08dee20ca2e13fa"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self)</td></tr>
+<tr class="separator:a57eefb135aad5968a08dee20ca2e13fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8efd9159c778b8adde6524be74564020"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8efd9159c778b8adde6524be74564020"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>bot_in_approach_pos</b> (self)</td></tr>
+<tr class="separator:a8efd9159c778b8adde6524be74564020"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aceaa1f526ef57e647bad4fbfbca69fdc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aceaa1f526ef57e647bad4fbfbca69fdc"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>approach_vector</b> (self)</td></tr>
+<tr class="separator:aceaa1f526ef57e647bad4fbfbca69fdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f95beaba61d2ee0074dc24b4f44e779"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0f95beaba61d2ee0074dc24b4f44e779"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>find_intercept_point</b> (self)</td></tr>
+<tr class="separator:a0f95beaba61d2ee0074dc24b4f44e779"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d535c8316a982322d1e1b78c55b7d8b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7d535c8316a982322d1e1b78c55b7d8b"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>execute_running</b> (self)</td></tr>
+<tr class="separator:a7d535c8316a982322d1e1b78c55b7d8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8563d4591b2b7a76de42130f3108e23"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af8563d4591b2b7a76de42130f3108e23"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>execute_course_approach</b> (self)</td></tr>
+<tr class="separator:af8563d4591b2b7a76de42130f3108e23"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4450cd911a76d7171f6bd6ce0ccf0a92"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4450cd911a76d7171f6bd6ce0ccf0a92"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>execute_fine_approach</b> (self)</td></tr>
+<tr class="separator:a4450cd911a76d7171f6bd6ce0ccf0a92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a634fe28950b19ef590d741e114aa666d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a634fe28950b19ef590d741e114aa666d"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>role_requirements</b> (self)</td></tr>
+<tr class="separator:a634fe28950b19ef590d741e114aa666d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classsingle__robot__behavior_1_1_single_robot_behavior.html">single_robot_behavior.SingleRobotBehavior</a></td></tr>
-<tr class="memitem:ae4d5661ebfbc38073cd077f75d173ff2 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae4d5661ebfbc38073cd077f75d173ff2"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b></td></tr>
-<tr class="separator:ae4d5661ebfbc38073cd077f75d173ff2 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41058087165acd8d8c71bca75d96c44d inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a41058087165acd8d8c71bca75d96c44d"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>execute_running</b></td></tr>
-<tr class="separator:a41058087165acd8d8c71bca75d96c44d inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a6e6f534a46af008d6ace082bfff97a inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0a6e6f534a46af008d6ace082bfff97a"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>robot</b></td></tr>
-<tr class="separator:a0a6e6f534a46af008d6ace082bfff97a inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a6e6f534a46af008d6ace082bfff97a inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0a6e6f534a46af008d6ace082bfff97a"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>robot</b></td></tr>
-<tr class="separator:a0a6e6f534a46af008d6ace082bfff97a inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a512bbd3fbb91811ebb3528aef90c5ca8 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a512bbd3fbb91811ebb3528aef90c5ca8"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>role_requirements</b></td></tr>
-<tr class="separator:a512bbd3fbb91811ebb3528aef90c5ca8 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc84eb23bfb350c6c44d3bfb9e6a4352 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adc84eb23bfb350c6c44d3bfb9e6a4352"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>assign_roles</b></td></tr>
-<tr class="separator:adc84eb23bfb350c6c44d3bfb9e6a4352 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa95abebcec9a94570ffc495ec6328099 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa95abebcec9a94570ffc495ec6328099"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__str__</b></td></tr>
-<tr class="separator:aa95abebcec9a94570ffc495ec6328099 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9570d37f49fdb2ea925dfa8585f446c inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af9570d37f49fdb2ea925dfa8585f446c"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self, continuous)</td></tr>
+<tr class="separator:af9570d37f49fdb2ea925dfa8585f446c inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09322c5f451ee377447d9ab1531a6dc0 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a09322c5f451ee377447d9ab1531a6dc0"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>execute_running</b> (self)</td></tr>
+<tr class="separator:a09322c5f451ee377447d9ab1531a6dc0 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68117363d0d60fcadc3c353ef5cd2bee inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a68117363d0d60fcadc3c353ef5cd2bee"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>robot</b> (self)</td></tr>
+<tr class="separator:a68117363d0d60fcadc3c353ef5cd2bee inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ba0eec7c6bdde58b7a2b2493a3eb700 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2ba0eec7c6bdde58b7a2b2493a3eb700"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>robot</b> (self, value)</td></tr>
+<tr class="separator:a2ba0eec7c6bdde58b7a2b2493a3eb700 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9391227ee948dcd690fc24fd3bccce48 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9391227ee948dcd690fc24fd3bccce48"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>role_requirements</b> (self)</td></tr>
+<tr class="separator:a9391227ee948dcd690fc24fd3bccce48 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac192acb008093ac2a4cbe8eb0d5deef0 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac192acb008093ac2a4cbe8eb0d5deef0"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>assign_roles</b> (self, assignments)</td></tr>
+<tr class="separator:ac192acb008093ac2a4cbe8eb0d5deef0 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03c30b6f5d24cd275529b5561c6dd009 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a03c30b6f5d24cd275529b5561c6dd009"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__str__</b> (self)</td></tr>
+<tr class="separator:a03c30b6f5d24cd275529b5561c6dd009 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classbehavior_1_1_behavior"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classbehavior_1_1_behavior')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classbehavior_1_1_behavior.html">behavior.Behavior</a></td></tr>
-<tr class="memitem:ab3f5cdbdc13ae31e1659d362c62e1718 inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab3f5cdbdc13ae31e1659d362c62e1718"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b></td></tr>
-<tr class="separator:ab3f5cdbdc13ae31e1659d362c62e1718 inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f723c29e8b74438cff0b991b7e5bc4d inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7f723c29e8b74438cff0b991b7e5bc4d"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self, continuous)</td></tr>
+<tr class="separator:a7f723c29e8b74438cff0b991b7e5bc4d inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a241439a73b02d47245ec722608ad7c8d inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a241439a73b02d47245ec722608ad7c8d"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>add_state</b></td></tr>
 <tr class="separator:a241439a73b02d47245ec722608ad7c8d inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae03dad787210b1b6a592f24f2742cd90 inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae03dad787210b1b6a592f24f2742cd90"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#ae03dad787210b1b6a592f24f2742cd90">is_done_running</a></td></tr>
-<tr class="memdesc:ae03dad787210b1b6a592f24f2742cd90 inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether or not the <a class="el" href="classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. ">Behavior</a> is running Because we use hierarchial state machines, a behavior never be in the "running", but may be in a substate of it This is a convenience method to check whether or not the play is running. <br /></td></tr>
-<tr class="separator:ae03dad787210b1b6a592f24f2742cd90 inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a484771fee6b59e5475905eeaa8d95c7e inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a484771fee6b59e5475905eeaa8d95c7e"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#a484771fee6b59e5475905eeaa8d95c7e">terminate</a></td></tr>
-<tr class="memdesc:a484771fee6b59e5475905eeaa8d95c7e inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transitions the <a class="el" href="classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. ">Behavior</a> into a terminal state (either completed or cancelled) <br /></td></tr>
-<tr class="separator:a484771fee6b59e5475905eeaa8d95c7e inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae960426568ca52d8128c88f3e7bb6d54 inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae960426568ca52d8128c88f3e7bb6d54"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#ae960426568ca52d8128c88f3e7bb6d54">behavior_state</a></td></tr>
-<tr class="memdesc:ae960426568ca52d8128c88f3e7bb6d54 inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns a state in <a class="el" href="classbehavior_1_1_behavior_1_1_state.html" title="These are the core states of the Behavior class Subclasses may extend this by adding substates of the...">Behavior.State</a> that represents what the behaviors is doing use this instead of the  property if you want to avoid dealing with custom subclass substates <br /></td></tr>
-<tr class="separator:ae960426568ca52d8128c88f3e7bb6d54 inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a773f990afb15c9a7b079b3a3dc7d72ae inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a773f990afb15c9a7b079b3a3dc7d72ae"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#a773f990afb15c9a7b079b3a3dc7d72ae">is_continuous</a></td></tr>
-<tr class="memdesc:a773f990afb15c9a7b079b3a3dc7d72ae inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. ">Behavior</a>'s termination behavior noncontinuous: a behavior that accomplishes a specific task, then completes (example: shooting at the goal) continuous: a behavior that continually runs until told to stop (example: zone defense) <br /></td></tr>
-<tr class="separator:a773f990afb15c9a7b079b3a3dc7d72ae inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53d5f7c2d3e3010ae915be524cb6859c inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a53d5f7c2d3e3010ae915be524cb6859c"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__str__</b></td></tr>
-<tr class="separator:a53d5f7c2d3e3010ae915be524cb6859c inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a345077b34bccd014b1d134e4b494b547 inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a345077b34bccd014b1d134e4b494b547"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#a345077b34bccd014b1d134e4b494b547">role_requirements</a></td></tr>
-<tr class="memdesc:a345077b34bccd014b1d134e4b494b547 inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a tree of RoleRequirements keyed by subbehavior reference name This is used by the dynamic role assignment system to intelligently select which robot will run which behavior. <br /></td></tr>
-<tr class="separator:a345077b34bccd014b1d134e4b494b547 inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a702d925510cc813f2a6334e3cec94dae inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a702d925510cc813f2a6334e3cec94dae"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#a702d925510cc813f2a6334e3cec94dae">assign_roles</a></td></tr>
-<tr class="memdesc:a702d925510cc813f2a6334e3cec94dae inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">assignments is a tree of (RoleRequirements, <a class="el" href="class_our_robot.html" title="A robot on our team. ">OurRobot</a>) tuples Same tree structure as the <a class="el" href="classbehavior_1_1_behavior.html#a345077b34bccd014b1d134e4b494b547" title="Returns a tree of RoleRequirements keyed by subbehavior reference name This is used by the dynamic ro...">role_requirements()</a> return value, but tuples instead of RoleRequirements as leaf nodes <br /></td></tr>
-<tr class="separator:a702d925510cc813f2a6334e3cec94dae inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8efa2b6dc9ec6e796755654353bac68 inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae8efa2b6dc9ec6e796755654353bac68"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#ae8efa2b6dc9ec6e796755654353bac68">is_done_running</a> (self)</td></tr>
+<tr class="memdesc:ae8efa2b6dc9ec6e796755654353bac68 inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether or not the <a class="el" href="classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. ">Behavior</a> is running Because we use hierarchial state machines, a behavior never be in the "running", but may be in a substate of it This is a convenience method to check whether or not the play is running. <br /></td></tr>
+<tr class="separator:ae8efa2b6dc9ec6e796755654353bac68 inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c45f71aa5f18bfca2d4ebd859471f2e inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0c45f71aa5f18bfca2d4ebd859471f2e"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#a0c45f71aa5f18bfca2d4ebd859471f2e">terminate</a> (self)</td></tr>
+<tr class="memdesc:a0c45f71aa5f18bfca2d4ebd859471f2e inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transitions the <a class="el" href="classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. ">Behavior</a> into a terminal state (either completed or cancelled) <br /></td></tr>
+<tr class="separator:a0c45f71aa5f18bfca2d4ebd859471f2e inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd2eea95a9d665adbccadb6713868237 inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afd2eea95a9d665adbccadb6713868237"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#afd2eea95a9d665adbccadb6713868237">behavior_state</a> (self)</td></tr>
+<tr class="memdesc:afd2eea95a9d665adbccadb6713868237 inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns a state in <a class="el" href="classbehavior_1_1_behavior_1_1_state.html" title="These are the core states of the Behavior class Subclasses may extend this by adding substates of the...">Behavior.State</a> that represents what the behaviors is doing use this instead of the  property if you want to avoid dealing with custom subclass substates <br /></td></tr>
+<tr class="separator:afd2eea95a9d665adbccadb6713868237 inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f86dac7d36fd4acae61dfdd26cbe60d inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6f86dac7d36fd4acae61dfdd26cbe60d"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#a6f86dac7d36fd4acae61dfdd26cbe60d">is_continuous</a> (self)</td></tr>
+<tr class="memdesc:a6f86dac7d36fd4acae61dfdd26cbe60d inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. ">Behavior</a>'s termination behavior noncontinuous: a behavior that accomplishes a specific task, then completes (example: shooting at the goal) continuous: a behavior that continually runs until told to stop (example: zone defense) <br /></td></tr>
+<tr class="separator:a6f86dac7d36fd4acae61dfdd26cbe60d inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1827aaa9db73a9235d4d14bbd4f1c9d7 inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1827aaa9db73a9235d4d14bbd4f1c9d7"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__str__</b> (self)</td></tr>
+<tr class="separator:a1827aaa9db73a9235d4d14bbd4f1c9d7 inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01bf2a5d8f59ad226b1df15b4cc2d6e9 inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a01bf2a5d8f59ad226b1df15b4cc2d6e9"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#a01bf2a5d8f59ad226b1df15b4cc2d6e9">role_requirements</a> (self)</td></tr>
+<tr class="memdesc:a01bf2a5d8f59ad226b1df15b4cc2d6e9 inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a tree of RoleRequirements keyed by subbehavior reference name This is used by the dynamic role assignment system to intelligently select which robot will run which behavior. <br /></td></tr>
+<tr class="separator:a01bf2a5d8f59ad226b1df15b4cc2d6e9 inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d9a8e39c6fe3007b8649b8cf83b08f4 inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0d9a8e39c6fe3007b8649b8cf83b08f4"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#a0d9a8e39c6fe3007b8649b8cf83b08f4">assign_roles</a> (self, assignments)</td></tr>
+<tr class="memdesc:a0d9a8e39c6fe3007b8649b8cf83b08f4 inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">assignments is a tree of (RoleRequirements, <a class="el" href="class_our_robot.html" title="A robot on our team. ">OurRobot</a>) tuples Same tree structure as the <a class="el" href="classbehavior_1_1_behavior.html#a01bf2a5d8f59ad226b1df15b4cc2d6e9" title="Returns a tree of RoleRequirements keyed by subbehavior reference name This is used by the dynamic ro...">role_requirements()</a> return value, but tuples instead of RoleRequirements as leaf nodes <br /></td></tr>
+<tr class="separator:a0d9a8e39c6fe3007b8649b8cf83b08f4 inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classfsm_1_1_state_machine"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classfsm_1_1_state_machine')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classfsm_1_1_state_machine.html">fsm.StateMachine</a></td></tr>
-<tr class="memitem:afdea72a04c29ae99249dc4418e292837 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afdea72a04c29ae99249dc4418e292837"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b></td></tr>
-<tr class="separator:afdea72a04c29ae99249dc4418e292837 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af3e2e0512b96a8a6218d85ab416713bb inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af3e2e0512b96a8a6218d85ab416713bb"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>start_state</b></td></tr>
-<tr class="separator:af3e2e0512b96a8a6218d85ab416713bb inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae31e10d29d64d1f68c6289114f30288c inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae31e10d29d64d1f68c6289114f30288c"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfsm_1_1_state_machine.html#ae31e10d29d64d1f68c6289114f30288c">restart</a></td></tr>
-<tr class="memdesc:ae31e10d29d64d1f68c6289114f30288c inherit pub_methods_classfsm_1_1_state_machine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the FSM back into the start state. <br /></td></tr>
-<tr class="separator:ae31e10d29d64d1f68c6289114f30288c inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79dbd4112d024a67c97eef8cab50b086 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a79dbd4112d024a67c97eef8cab50b086"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self, start_state)</td></tr>
+<tr class="separator:a79dbd4112d024a67c97eef8cab50b086 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac01f772989e580e9fd028529ba787588 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac01f772989e580e9fd028529ba787588"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>start_state</b> (self)</td></tr>
+<tr class="separator:ac01f772989e580e9fd028529ba787588 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a4f68b6016e1c759635eeea747912f3 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8a4f68b6016e1c759635eeea747912f3"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfsm_1_1_state_machine.html#a8a4f68b6016e1c759635eeea747912f3">restart</a> (self)</td></tr>
+<tr class="memdesc:a8a4f68b6016e1c759635eeea747912f3 inherit pub_methods_classfsm_1_1_state_machine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the FSM back into the start state. <br /></td></tr>
+<tr class="separator:a8a4f68b6016e1c759635eeea747912f3 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb77bc1efbfb9c4ca3ccf5f1aa6d23c5 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adb77bc1efbfb9c4ca3ccf5f1aa6d23c5"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfsm_1_1_state_machine.html#adb77bc1efbfb9c4ca3ccf5f1aa6d23c5">add_state</a></td></tr>
 <tr class="memdesc:adb77bc1efbfb9c4ca3ccf5f1aa6d23c5 inherit pub_methods_classfsm_1_1_state_machine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a new state (which can optionally be a substate of an existing state) <br /></td></tr>
 <tr class="separator:adb77bc1efbfb9c4ca3ccf5f1aa6d23c5 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb4f0d680dd3d3f5cdf7f69bd89df640 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb4f0d680dd3d3f5cdf7f69bd89df640"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfsm_1_1_state_machine.html#abb4f0d680dd3d3f5cdf7f69bd89df640">spin</a></td></tr>
-<tr class="memdesc:abb4f0d680dd3d3f5cdf7f69bd89df640 inherit pub_methods_classfsm_1_1_state_machine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the FSM checks transition conditions for all edges leading away from the current state if one evaluates to true, we transition to it if more than one evaluates to true, we throw a RuntimeError. <br /></td></tr>
-<tr class="separator:abb4f0d680dd3d3f5cdf7f69bd89df640 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9e2d8719f2a2c72cd84a37b43d83302 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af9e2d8719f2a2c72cd84a37b43d83302"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>add_transition</b></td></tr>
-<tr class="separator:af9e2d8719f2a2c72cd84a37b43d83302 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae38abdc4967b244656dac154d2732e88 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae38abdc4967b244656dac154d2732e88"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>transition</b></td></tr>
-<tr class="separator:ae38abdc4967b244656dac154d2732e88 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a59ab466e7f4ed151ccbd796158e167 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a59ab466e7f4ed151ccbd796158e167"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>is_in_state</b></td></tr>
-<tr class="separator:a7a59ab466e7f4ed151ccbd796158e167 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33c2321512a24f8675059cd9287227cf inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a33c2321512a24f8675059cd9287227cf"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>state_is_substate</b></td></tr>
-<tr class="separator:a33c2321512a24f8675059cd9287227cf inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8734181244cd1068e8f8f350a40a9c3 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab8734181244cd1068e8f8f350a40a9c3"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>corresponding_ancestor_state</b></td></tr>
-<tr class="separator:ab8734181244cd1068e8f8f350a40a9c3 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae30ebb0ee47a49c2581c949083eba41b inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae30ebb0ee47a49c2581c949083eba41b"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>ancestors_of_state</b></td></tr>
-<tr class="separator:ae30ebb0ee47a49c2581c949083eba41b inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afcfeddf7a3a81317f35f816de7084bd5 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afcfeddf7a3a81317f35f816de7084bd5"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>as_graphviz</b></td></tr>
-<tr class="separator:afcfeddf7a3a81317f35f816de7084bd5 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae672988758b5c534d48c8d2db1730ee1 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae672988758b5c534d48c8d2db1730ee1"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>to_graphviz</b></td></tr>
-<tr class="separator:ae672988758b5c534d48c8d2db1730ee1 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3397a4cf9e7d0d62508cb555f4726005 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3397a4cf9e7d0d62508cb555f4726005"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>write_diagram_png</b></td></tr>
-<tr class="separator:a3397a4cf9e7d0d62508cb555f4726005 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2db6bb7e5671f837a20203d1100067c4 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2db6bb7e5671f837a20203d1100067c4"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>state</b></td></tr>
-<tr class="separator:a2db6bb7e5671f837a20203d1100067c4 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23c3e817663c1200e4f831a051ac9aa3 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a23c3e817663c1200e4f831a051ac9aa3"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfsm_1_1_state_machine.html#a23c3e817663c1200e4f831a051ac9aa3">spin</a> (self)</td></tr>
+<tr class="memdesc:a23c3e817663c1200e4f831a051ac9aa3 inherit pub_methods_classfsm_1_1_state_machine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the FSM checks transition conditions for all edges leading away from the current state if one evaluates to true, we transition to it if more than one evaluates to true, we throw a RuntimeError. <br /></td></tr>
+<tr class="separator:a23c3e817663c1200e4f831a051ac9aa3 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef1a472a386e74789966f329f8fcc585 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aef1a472a386e74789966f329f8fcc585"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>add_transition</b> (self, from_state, to_state, condition, event_name)</td></tr>
+<tr class="separator:aef1a472a386e74789966f329f8fcc585 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ada22b8d508be982f681cde63fca674 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3ada22b8d508be982f681cde63fca674"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>transition</b> (self, new_state)</td></tr>
+<tr class="separator:a3ada22b8d508be982f681cde63fca674 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a063f09b89a9c98290a955f93279496f6 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a063f09b89a9c98290a955f93279496f6"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>is_in_state</b> (self, state)</td></tr>
+<tr class="separator:a063f09b89a9c98290a955f93279496f6 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6875ee48c4051c3a36e4f9e9966e5467 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6875ee48c4051c3a36e4f9e9966e5467"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>state_is_substate</b> (self, state, possible_parent)</td></tr>
+<tr class="separator:a6875ee48c4051c3a36e4f9e9966e5467 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01188fd6c9487ae6a13a4664919af640 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a01188fd6c9487ae6a13a4664919af640"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>corresponding_ancestor_state</b> (self, ancestors)</td></tr>
+<tr class="separator:a01188fd6c9487ae6a13a4664919af640 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab772209815d0ca026b9906b63a1e3083 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab772209815d0ca026b9906b63a1e3083"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>ancestors_of_state</b> (self, state)</td></tr>
+<tr class="separator:ab772209815d0ca026b9906b63a1e3083 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad528950e6cecb778139d44875c0f6267 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad528950e6cecb778139d44875c0f6267"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>as_graphviz</b> (self)</td></tr>
+<tr class="separator:ad528950e6cecb778139d44875c0f6267 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc4979ae34a7551fe2d166b853f39565 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abc4979ae34a7551fe2d166b853f39565"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>to_graphviz</b> (self)</td></tr>
+<tr class="separator:abc4979ae34a7551fe2d166b853f39565 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f4fc75fe811bb570feaf0dfb888131d inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8f4fc75fe811bb570feaf0dfb888131d"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>write_diagram_png</b> (self, filename)</td></tr>
+<tr class="separator:a8f4fc75fe811bb570feaf0dfb888131d inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2ac73f2d3ea3706428f1bda246098f8 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad2ac73f2d3ea3706428f1bda246098f8"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>state</b> (self)</td></tr>
+<tr class="separator:ad2ac73f2d3ea3706428f1bda246098f8 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -310,7 +312,7 @@ Additional Inherited Members</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>skills</b></li><li class="navelem"><b>capture</b></li><li class="navelem"><a class="el" href="classskills_1_1capture_1_1_capture.html">Capture</a></li>
-    <li class="footer">Generated on Wed Nov 12 2014 02:06:43 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Nov 16 2014 20:16:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

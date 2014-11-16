@@ -1,6 +1,6 @@
 var classplays_1_1stopped_1_1_stopped =
 [
-    [ "__init__", "classplays_1_1stopped_1_1_stopped.html#ae181e13e5bec2e06743f0c192d62ea94", null ],
-    [ "handles_goalie", "classplays_1_1stopped_1_1_stopped.html#ac4568ba9c07250db57c4e8cc08d448ce", null ],
-    [ "score", "classplays_1_1stopped_1_1_stopped.html#a5e1a58095891926a6297c6fdcc121638", null ]
+    [ "__init__", "classplays_1_1stopped_1_1_stopped.html#adaf13a4431dce0cbefe4edfa43200efa", null ],
+    [ "handles_goalie", "classplays_1_1stopped_1_1_stopped.html#a9b1819aff59fdb38c4d6772381d6383f", null ],
+    [ "score", "classplays_1_1stopped_1_1_stopped.html#a5c7e5d5d9a4ad411a9e7e37796634869", null ]
 ];

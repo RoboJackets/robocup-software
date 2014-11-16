@@ -10,15 +10,17 @@
 <script type="text/javascript" src="dynsections.js"></script>
 <link href="navtree.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
 <script type="text/javascript" src="navtree.js"></script>
 <script type="text/javascript">
   $(document).ready(initResizable);
   $(window).load(resizeHeight);
 </script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
-  $(document).ready(function() { searchBox.OnSelectItem(0); });
+  $(document).ready(function() { init_search(); });
 </script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
@@ -97,7 +99,7 @@ $(document).ready(function(){initNavTree('classskills_1_1__kick_1_1___kick.html'
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Modules</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+</div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -121,183 +123,183 @@ $(document).ready(function(){initNavTree('classskills_1_1__kick_1_1___kick.html'
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a7222841ab05f6c1def49b521bf5ac6b0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7222841ab05f6c1def49b521bf5ac6b0"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b></td></tr>
-<tr class="separator:a7222841ab05f6c1def49b521bf5ac6b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a802dfb257ccefade07ddce2fa669ff10"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a802dfb257ccefade07ddce2fa669ff10"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classskills_1_1__kick_1_1___kick.html#a802dfb257ccefade07ddce2fa669ff10">use_windowing</a></td></tr>
-<tr class="memdesc:a802dfb257ccefade07ddce2fa669ff10"><td class="mdescLeft">&#160;</td><td class="mdescRight">if True, uses the window evaluator to choose the best place to aim at target_segment Default: True <br /></td></tr>
-<tr class="separator:a802dfb257ccefade07ddce2fa669ff10"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a802dfb257ccefade07ddce2fa669ff10"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a802dfb257ccefade07ddce2fa669ff10"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>use_windowing</b></td></tr>
-<tr class="separator:a802dfb257ccefade07ddce2fa669ff10"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a30dc17335d208c6046c667210a0f52eb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a30dc17335d208c6046c667210a0f52eb"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classskills_1_1__kick_1_1___kick.html#a30dc17335d208c6046c667210a0f52eb">win_eval_params</a></td></tr>
-<tr class="memdesc:a30dc17335d208c6046c667210a0f52eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">these params are passed to the window evaluator using setattr() Default: {} <br /></td></tr>
-<tr class="separator:a30dc17335d208c6046c667210a0f52eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a30dc17335d208c6046c667210a0f52eb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a30dc17335d208c6046c667210a0f52eb"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>win_eval_params</b></td></tr>
-<tr class="separator:a30dc17335d208c6046c667210a0f52eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4722450b6050554dc20f667f2b76af5a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4722450b6050554dc20f667f2b76af5a"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classskills_1_1__kick_1_1___kick.html#a4722450b6050554dc20f667f2b76af5a">target</a></td></tr>
-<tr class="memdesc:a4722450b6050554dc20f667f2b76af5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">The thing we're trying to kick at can be a Segment or a Point setting this property automatically recalculates the target_aim_point Default: the opponent's goal segment. <br /></td></tr>
-<tr class="separator:a4722450b6050554dc20f667f2b76af5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4722450b6050554dc20f667f2b76af5a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4722450b6050554dc20f667f2b76af5a"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>target</b></td></tr>
-<tr class="separator:a4722450b6050554dc20f667f2b76af5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c2bf30969d84bbbd33cf2d557fac2e3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1c2bf30969d84bbbd33cf2d557fac2e3"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classskills_1_1__kick_1_1___kick.html#a1c2bf30969d84bbbd33cf2d557fac2e3">shot_obstacle_ignoring_robots</a></td></tr>
-<tr class="memdesc:a1c2bf30969d84bbbd33cf2d557fac2e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">A list of robots that the shot obstacle doesn't apply to Note: the shot obstacle already doesn't apply to the kicker, you don't have to specify that here Default: []. <br /></td></tr>
-<tr class="separator:a1c2bf30969d84bbbd33cf2d557fac2e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c2bf30969d84bbbd33cf2d557fac2e3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1c2bf30969d84bbbd33cf2d557fac2e3"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>shot_obstacle_ignoring_robots</b></td></tr>
-<tr class="separator:a1c2bf30969d84bbbd33cf2d557fac2e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada2837127b78f6fff4a0f578cd1408a3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ada2837127b78f6fff4a0f578cd1408a3"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classskills_1_1__kick_1_1___kick.html#ada2837127b78f6fff4a0f578cd1408a3">aim_target_point</a></td></tr>
-<tr class="memdesc:ada2837127b78f6fff4a0f578cd1408a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">We calculate the point we're ACTUALLY going to aim at based on the target Segment/Point and other parameters This is that point. <br /></td></tr>
-<tr class="separator:ada2837127b78f6fff4a0f578cd1408a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab7b68228e38a22499620590f466caa7c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab7b68228e38a22499620590f466caa7c"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classskills_1_1__kick_1_1___kick.html#ab7b68228e38a22499620590f466caa7c">recalculate_aim_target_point</a></td></tr>
-<tr class="memdesc:ab7b68228e38a22499620590f466caa7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">we're aiming at a particular point on our target segment, what is this point? <br /></td></tr>
-<tr class="separator:ab7b68228e38a22499620590f466caa7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6545b9e20baaf409564b7fe9a49f27e6"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classskills_1_1__kick_1_1___kick.html#a6545b9e20baaf409564b7fe9a49f27e6">kick_power</a></td></tr>
-<tr class="memdesc:a6545b9e20baaf409564b7fe9a49f27e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows for different kicker/chipper settings, such as for passing with lower power.  <a href="#a6545b9e20baaf409564b7fe9a49f27e6">More...</a><br /></td></tr>
-<tr class="separator:a6545b9e20baaf409564b7fe9a49f27e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6545b9e20baaf409564b7fe9a49f27e6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6545b9e20baaf409564b7fe9a49f27e6"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>kick_power</b></td></tr>
-<tr class="separator:a6545b9e20baaf409564b7fe9a49f27e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0fe2df164a1485de36c0228deeb5b3b0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0fe2df164a1485de36c0228deeb5b3b0"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>chip_power</b></td></tr>
-<tr class="separator:a0fe2df164a1485de36c0228deeb5b3b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0fe2df164a1485de36c0228deeb5b3b0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0fe2df164a1485de36c0228deeb5b3b0"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>chip_power</b></td></tr>
-<tr class="separator:a0fe2df164a1485de36c0228deeb5b3b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae2d7b7455a9d57f43cc66cca2aa65df2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae2d7b7455a9d57f43cc66cca2aa65df2"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classskills_1_1__kick_1_1___kick.html#ae2d7b7455a9d57f43cc66cca2aa65df2">use_chipper</a></td></tr>
-<tr class="memdesc:ae2d7b7455a9d57f43cc66cca2aa65df2"><td class="mdescLeft">&#160;</td><td class="mdescRight">If false, uses straight kicker, if true, uses chipper (if available) Default: False. <br /></td></tr>
-<tr class="separator:ae2d7b7455a9d57f43cc66cca2aa65df2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae2d7b7455a9d57f43cc66cca2aa65df2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae2d7b7455a9d57f43cc66cca2aa65df2"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>use_chipper</b></td></tr>
-<tr class="separator:ae2d7b7455a9d57f43cc66cca2aa65df2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af83f77a20cc318aad72398dfe15b371b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af83f77a20cc318aad72398dfe15b371b"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classskills_1_1__kick_1_1___kick.html#af83f77a20cc318aad72398dfe15b371b">enable_kick</a></td></tr>
-<tr class="memdesc:af83f77a20cc318aad72398dfe15b371b"><td class="mdescLeft">&#160;</td><td class="mdescRight">If set to False, will get all ready to go, but won't kick/chip just yet Can be used to synchronize between behaviors Default: True. <br /></td></tr>
-<tr class="separator:af83f77a20cc318aad72398dfe15b371b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af83f77a20cc318aad72398dfe15b371b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af83f77a20cc318aad72398dfe15b371b"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>enable_kick</b></td></tr>
-<tr class="separator:af83f77a20cc318aad72398dfe15b371b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78879528a99108b65a4e9fbca6f2b38d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a78879528a99108b65a4e9fbca6f2b38d"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self)</td></tr>
+<tr class="separator:a78879528a99108b65a4e9fbca6f2b38d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c671535a409787228ab22483ea64084"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0c671535a409787228ab22483ea64084"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classskills_1_1__kick_1_1___kick.html#a0c671535a409787228ab22483ea64084">use_windowing</a> (self)</td></tr>
+<tr class="memdesc:a0c671535a409787228ab22483ea64084"><td class="mdescLeft">&#160;</td><td class="mdescRight">if True, uses the window evaluator to choose the best place to aim at target_segment Default: True <br /></td></tr>
+<tr class="separator:a0c671535a409787228ab22483ea64084"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d94fad08fa49b3f7f7da35b8b1e109d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d94fad08fa49b3f7f7da35b8b1e109d"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>use_windowing</b> (self, value)</td></tr>
+<tr class="separator:a1d94fad08fa49b3f7f7da35b8b1e109d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afeeb2899d2d817d22f5e0e3cc268c617"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afeeb2899d2d817d22f5e0e3cc268c617"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classskills_1_1__kick_1_1___kick.html#afeeb2899d2d817d22f5e0e3cc268c617">win_eval_params</a> (self)</td></tr>
+<tr class="memdesc:afeeb2899d2d817d22f5e0e3cc268c617"><td class="mdescLeft">&#160;</td><td class="mdescRight">these params are passed to the window evaluator using setattr() Default: {} <br /></td></tr>
+<tr class="separator:afeeb2899d2d817d22f5e0e3cc268c617"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac1ca69a4e1954d7eba6ba9ca1f850fb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aac1ca69a4e1954d7eba6ba9ca1f850fb"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>win_eval_params</b> (self, value)</td></tr>
+<tr class="separator:aac1ca69a4e1954d7eba6ba9ca1f850fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa1d8c644e1805cde77d0f4c0f82dcc64"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa1d8c644e1805cde77d0f4c0f82dcc64"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classskills_1_1__kick_1_1___kick.html#aa1d8c644e1805cde77d0f4c0f82dcc64">target</a> (self)</td></tr>
+<tr class="memdesc:aa1d8c644e1805cde77d0f4c0f82dcc64"><td class="mdescLeft">&#160;</td><td class="mdescRight">The thing we're trying to kick at can be a Segment or a Point setting this property automatically recalculates the target_aim_point Default: the opponent's goal segment. <br /></td></tr>
+<tr class="separator:aa1d8c644e1805cde77d0f4c0f82dcc64"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a150bcc23a3334f9c5aa9711c55fbb1db"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a150bcc23a3334f9c5aa9711c55fbb1db"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>target</b> (self, value)</td></tr>
+<tr class="separator:a150bcc23a3334f9c5aa9711c55fbb1db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add5e8108513ba511e66427317bd547c5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="add5e8108513ba511e66427317bd547c5"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classskills_1_1__kick_1_1___kick.html#add5e8108513ba511e66427317bd547c5">shot_obstacle_ignoring_robots</a> (self)</td></tr>
+<tr class="memdesc:add5e8108513ba511e66427317bd547c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">A list of robots that the shot obstacle doesn't apply to Note: the shot obstacle already doesn't apply to the kicker, you don't have to specify that here Default: []. <br /></td></tr>
+<tr class="separator:add5e8108513ba511e66427317bd547c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31b27816f193e924fd9f8aa569d5fe91"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a31b27816f193e924fd9f8aa569d5fe91"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>shot_obstacle_ignoring_robots</b> (self, value)</td></tr>
+<tr class="separator:a31b27816f193e924fd9f8aa569d5fe91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8751de598437945345654b5df002d44a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8751de598437945345654b5df002d44a"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classskills_1_1__kick_1_1___kick.html#a8751de598437945345654b5df002d44a">aim_target_point</a> (self)</td></tr>
+<tr class="memdesc:a8751de598437945345654b5df002d44a"><td class="mdescLeft">&#160;</td><td class="mdescRight">We calculate the point we're ACTUALLY going to aim at based on the target Segment/Point and other parameters This is that point. <br /></td></tr>
+<tr class="separator:a8751de598437945345654b5df002d44a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf6399e84a7bb2008aba12e653a4ce7c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abf6399e84a7bb2008aba12e653a4ce7c"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classskills_1_1__kick_1_1___kick.html#abf6399e84a7bb2008aba12e653a4ce7c">recalculate_aim_target_point</a> (self)</td></tr>
+<tr class="memdesc:abf6399e84a7bb2008aba12e653a4ce7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">we're aiming at a particular point on our target segment, what is this point? <br /></td></tr>
+<tr class="separator:abf6399e84a7bb2008aba12e653a4ce7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab87c2e916983c8d3eeb0614612028882"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classskills_1_1__kick_1_1___kick.html#ab87c2e916983c8d3eeb0614612028882">kick_power</a> (self)</td></tr>
+<tr class="memdesc:ab87c2e916983c8d3eeb0614612028882"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allows for different kicker/chipper settings, such as for passing with lower power.  <a href="#ab87c2e916983c8d3eeb0614612028882">More...</a><br /></td></tr>
+<tr class="separator:ab87c2e916983c8d3eeb0614612028882"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:addf5e77d04fc5c9a2774858358588b22"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="addf5e77d04fc5c9a2774858358588b22"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>kick_power</b> (self, value)</td></tr>
+<tr class="separator:addf5e77d04fc5c9a2774858358588b22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7b06b0381fc2328a12ab0e1110bb6e3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa7b06b0381fc2328a12ab0e1110bb6e3"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>chip_power</b> (self)</td></tr>
+<tr class="separator:aa7b06b0381fc2328a12ab0e1110bb6e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a53c236d9bc5c7e47640d9e9e08dde1e5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a53c236d9bc5c7e47640d9e9e08dde1e5"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>chip_power</b> (self, value)</td></tr>
+<tr class="separator:a53c236d9bc5c7e47640d9e9e08dde1e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c8ecb6b6a8d4ba599193e04eea719bc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1c8ecb6b6a8d4ba599193e04eea719bc"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classskills_1_1__kick_1_1___kick.html#a1c8ecb6b6a8d4ba599193e04eea719bc">use_chipper</a> (self)</td></tr>
+<tr class="memdesc:a1c8ecb6b6a8d4ba599193e04eea719bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">If false, uses straight kicker, if true, uses chipper (if available) Default: False. <br /></td></tr>
+<tr class="separator:a1c8ecb6b6a8d4ba599193e04eea719bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae13afa4fad73c683bdd5327c2cf0bf01"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae13afa4fad73c683bdd5327c2cf0bf01"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>use_chipper</b> (self, value)</td></tr>
+<tr class="separator:ae13afa4fad73c683bdd5327c2cf0bf01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a58914c3eff3ff82497c1c095e44dc480"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a58914c3eff3ff82497c1c095e44dc480"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classskills_1_1__kick_1_1___kick.html#a58914c3eff3ff82497c1c095e44dc480">enable_kick</a> (self)</td></tr>
+<tr class="memdesc:a58914c3eff3ff82497c1c095e44dc480"><td class="mdescLeft">&#160;</td><td class="mdescRight">If set to False, will get all ready to go, but won't kick/chip just yet Can be used to synchronize between behaviors Default: True. <br /></td></tr>
+<tr class="separator:a58914c3eff3ff82497c1c095e44dc480"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb30582e4b67e49340393da1900a2f26"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb30582e4b67e49340393da1900a2f26"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>enable_kick</b> (self, value)</td></tr>
+<tr class="separator:acb30582e4b67e49340393da1900a2f26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6962940e62cd25a35ea66e7ba487a46e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6962940e62cd25a35ea66e7ba487a46e"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classskills_1_1__kick_1_1___kick.html#a6962940e62cd25a35ea66e7ba487a46e">add_shot_obstacle</a></td></tr>
 <tr class="memdesc:a6962940e62cd25a35ea66e7ba487a46e"><td class="mdescLeft">&#160;</td><td class="mdescRight">creates a polygon obstacle from the ball to the target this obstacle applies to all robots except the kicker and anything specified in the excluded_robots parameter NOTE: this method is not called by _kick, it's up to subclasses/superbehaviors to call it <br /></td></tr>
 <tr class="separator:a6962940e62cd25a35ea66e7ba487a46e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a289a825a6855ba4815a7db82066b1bfd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a289a825a6855ba4815a7db82066b1bfd"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>execute_running</b></td></tr>
-<tr class="separator:a289a825a6855ba4815a7db82066b1bfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47d58b1bc733ec79933af608a7052d64"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a47d58b1bc733ec79933af608a7052d64"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>execute_running</b> (self)</td></tr>
+<tr class="separator:a47d58b1bc733ec79933af608a7052d64"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classsingle__robot__behavior_1_1_single_robot_behavior.html">single_robot_behavior.SingleRobotBehavior</a></td></tr>
-<tr class="memitem:ae4d5661ebfbc38073cd077f75d173ff2 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae4d5661ebfbc38073cd077f75d173ff2"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b></td></tr>
-<tr class="separator:ae4d5661ebfbc38073cd077f75d173ff2 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41058087165acd8d8c71bca75d96c44d inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a41058087165acd8d8c71bca75d96c44d"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>execute_running</b></td></tr>
-<tr class="separator:a41058087165acd8d8c71bca75d96c44d inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a6e6f534a46af008d6ace082bfff97a inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0a6e6f534a46af008d6ace082bfff97a"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>robot</b></td></tr>
-<tr class="separator:a0a6e6f534a46af008d6ace082bfff97a inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a6e6f534a46af008d6ace082bfff97a inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0a6e6f534a46af008d6ace082bfff97a"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>robot</b></td></tr>
-<tr class="separator:a0a6e6f534a46af008d6ace082bfff97a inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a512bbd3fbb91811ebb3528aef90c5ca8 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a512bbd3fbb91811ebb3528aef90c5ca8"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>role_requirements</b></td></tr>
-<tr class="separator:a512bbd3fbb91811ebb3528aef90c5ca8 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc84eb23bfb350c6c44d3bfb9e6a4352 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adc84eb23bfb350c6c44d3bfb9e6a4352"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>assign_roles</b></td></tr>
-<tr class="separator:adc84eb23bfb350c6c44d3bfb9e6a4352 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa95abebcec9a94570ffc495ec6328099 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa95abebcec9a94570ffc495ec6328099"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__str__</b></td></tr>
-<tr class="separator:aa95abebcec9a94570ffc495ec6328099 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9570d37f49fdb2ea925dfa8585f446c inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af9570d37f49fdb2ea925dfa8585f446c"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self, continuous)</td></tr>
+<tr class="separator:af9570d37f49fdb2ea925dfa8585f446c inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09322c5f451ee377447d9ab1531a6dc0 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a09322c5f451ee377447d9ab1531a6dc0"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>execute_running</b> (self)</td></tr>
+<tr class="separator:a09322c5f451ee377447d9ab1531a6dc0 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68117363d0d60fcadc3c353ef5cd2bee inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a68117363d0d60fcadc3c353ef5cd2bee"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>robot</b> (self)</td></tr>
+<tr class="separator:a68117363d0d60fcadc3c353ef5cd2bee inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ba0eec7c6bdde58b7a2b2493a3eb700 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2ba0eec7c6bdde58b7a2b2493a3eb700"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>robot</b> (self, value)</td></tr>
+<tr class="separator:a2ba0eec7c6bdde58b7a2b2493a3eb700 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9391227ee948dcd690fc24fd3bccce48 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9391227ee948dcd690fc24fd3bccce48"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>role_requirements</b> (self)</td></tr>
+<tr class="separator:a9391227ee948dcd690fc24fd3bccce48 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac192acb008093ac2a4cbe8eb0d5deef0 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac192acb008093ac2a4cbe8eb0d5deef0"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>assign_roles</b> (self, assignments)</td></tr>
+<tr class="separator:ac192acb008093ac2a4cbe8eb0d5deef0 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03c30b6f5d24cd275529b5561c6dd009 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a03c30b6f5d24cd275529b5561c6dd009"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__str__</b> (self)</td></tr>
+<tr class="separator:a03c30b6f5d24cd275529b5561c6dd009 inherit pub_methods_classsingle__robot__behavior_1_1_single_robot_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classbehavior_1_1_behavior"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classbehavior_1_1_behavior')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classbehavior_1_1_behavior.html">behavior.Behavior</a></td></tr>
-<tr class="memitem:ab3f5cdbdc13ae31e1659d362c62e1718 inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab3f5cdbdc13ae31e1659d362c62e1718"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b></td></tr>
-<tr class="separator:ab3f5cdbdc13ae31e1659d362c62e1718 inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f723c29e8b74438cff0b991b7e5bc4d inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7f723c29e8b74438cff0b991b7e5bc4d"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self, continuous)</td></tr>
+<tr class="separator:a7f723c29e8b74438cff0b991b7e5bc4d inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a241439a73b02d47245ec722608ad7c8d inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a241439a73b02d47245ec722608ad7c8d"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>add_state</b></td></tr>
 <tr class="separator:a241439a73b02d47245ec722608ad7c8d inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae03dad787210b1b6a592f24f2742cd90 inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae03dad787210b1b6a592f24f2742cd90"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#ae03dad787210b1b6a592f24f2742cd90">is_done_running</a></td></tr>
-<tr class="memdesc:ae03dad787210b1b6a592f24f2742cd90 inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether or not the <a class="el" href="classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. ">Behavior</a> is running Because we use hierarchial state machines, a behavior never be in the "running", but may be in a substate of it This is a convenience method to check whether or not the play is running. <br /></td></tr>
-<tr class="separator:ae03dad787210b1b6a592f24f2742cd90 inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a484771fee6b59e5475905eeaa8d95c7e inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a484771fee6b59e5475905eeaa8d95c7e"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#a484771fee6b59e5475905eeaa8d95c7e">terminate</a></td></tr>
-<tr class="memdesc:a484771fee6b59e5475905eeaa8d95c7e inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transitions the <a class="el" href="classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. ">Behavior</a> into a terminal state (either completed or cancelled) <br /></td></tr>
-<tr class="separator:a484771fee6b59e5475905eeaa8d95c7e inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae960426568ca52d8128c88f3e7bb6d54 inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae960426568ca52d8128c88f3e7bb6d54"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#ae960426568ca52d8128c88f3e7bb6d54">behavior_state</a></td></tr>
-<tr class="memdesc:ae960426568ca52d8128c88f3e7bb6d54 inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns a state in <a class="el" href="classbehavior_1_1_behavior_1_1_state.html" title="These are the core states of the Behavior class Subclasses may extend this by adding substates of the...">Behavior.State</a> that represents what the behaviors is doing use this instead of the  property if you want to avoid dealing with custom subclass substates <br /></td></tr>
-<tr class="separator:ae960426568ca52d8128c88f3e7bb6d54 inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a773f990afb15c9a7b079b3a3dc7d72ae inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a773f990afb15c9a7b079b3a3dc7d72ae"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#a773f990afb15c9a7b079b3a3dc7d72ae">is_continuous</a></td></tr>
-<tr class="memdesc:a773f990afb15c9a7b079b3a3dc7d72ae inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. ">Behavior</a>'s termination behavior noncontinuous: a behavior that accomplishes a specific task, then completes (example: shooting at the goal) continuous: a behavior that continually runs until told to stop (example: zone defense) <br /></td></tr>
-<tr class="separator:a773f990afb15c9a7b079b3a3dc7d72ae inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53d5f7c2d3e3010ae915be524cb6859c inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a53d5f7c2d3e3010ae915be524cb6859c"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__str__</b></td></tr>
-<tr class="separator:a53d5f7c2d3e3010ae915be524cb6859c inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a345077b34bccd014b1d134e4b494b547 inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a345077b34bccd014b1d134e4b494b547"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#a345077b34bccd014b1d134e4b494b547">role_requirements</a></td></tr>
-<tr class="memdesc:a345077b34bccd014b1d134e4b494b547 inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a tree of RoleRequirements keyed by subbehavior reference name This is used by the dynamic role assignment system to intelligently select which robot will run which behavior. <br /></td></tr>
-<tr class="separator:a345077b34bccd014b1d134e4b494b547 inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a702d925510cc813f2a6334e3cec94dae inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a702d925510cc813f2a6334e3cec94dae"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#a702d925510cc813f2a6334e3cec94dae">assign_roles</a></td></tr>
-<tr class="memdesc:a702d925510cc813f2a6334e3cec94dae inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">assignments is a tree of (RoleRequirements, <a class="el" href="class_our_robot.html" title="A robot on our team. ">OurRobot</a>) tuples Same tree structure as the <a class="el" href="classbehavior_1_1_behavior.html#a345077b34bccd014b1d134e4b494b547" title="Returns a tree of RoleRequirements keyed by subbehavior reference name This is used by the dynamic ro...">role_requirements()</a> return value, but tuples instead of RoleRequirements as leaf nodes <br /></td></tr>
-<tr class="separator:a702d925510cc813f2a6334e3cec94dae inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8efa2b6dc9ec6e796755654353bac68 inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae8efa2b6dc9ec6e796755654353bac68"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#ae8efa2b6dc9ec6e796755654353bac68">is_done_running</a> (self)</td></tr>
+<tr class="memdesc:ae8efa2b6dc9ec6e796755654353bac68 inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">Whether or not the <a class="el" href="classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. ">Behavior</a> is running Because we use hierarchial state machines, a behavior never be in the "running", but may be in a substate of it This is a convenience method to check whether or not the play is running. <br /></td></tr>
+<tr class="separator:ae8efa2b6dc9ec6e796755654353bac68 inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c45f71aa5f18bfca2d4ebd859471f2e inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0c45f71aa5f18bfca2d4ebd859471f2e"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#a0c45f71aa5f18bfca2d4ebd859471f2e">terminate</a> (self)</td></tr>
+<tr class="memdesc:a0c45f71aa5f18bfca2d4ebd859471f2e inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transitions the <a class="el" href="classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. ">Behavior</a> into a terminal state (either completed or cancelled) <br /></td></tr>
+<tr class="separator:a0c45f71aa5f18bfca2d4ebd859471f2e inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afd2eea95a9d665adbccadb6713868237 inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afd2eea95a9d665adbccadb6713868237"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#afd2eea95a9d665adbccadb6713868237">behavior_state</a> (self)</td></tr>
+<tr class="memdesc:afd2eea95a9d665adbccadb6713868237 inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns a state in <a class="el" href="classbehavior_1_1_behavior_1_1_state.html" title="These are the core states of the Behavior class Subclasses may extend this by adding substates of the...">Behavior.State</a> that represents what the behaviors is doing use this instead of the  property if you want to avoid dealing with custom subclass substates <br /></td></tr>
+<tr class="separator:afd2eea95a9d665adbccadb6713868237 inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f86dac7d36fd4acae61dfdd26cbe60d inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6f86dac7d36fd4acae61dfdd26cbe60d"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#a6f86dac7d36fd4acae61dfdd26cbe60d">is_continuous</a> (self)</td></tr>
+<tr class="memdesc:a6f86dac7d36fd4acae61dfdd26cbe60d inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">The <a class="el" href="classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. ">Behavior</a>'s termination behavior noncontinuous: a behavior that accomplishes a specific task, then completes (example: shooting at the goal) continuous: a behavior that continually runs until told to stop (example: zone defense) <br /></td></tr>
+<tr class="separator:a6f86dac7d36fd4acae61dfdd26cbe60d inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1827aaa9db73a9235d4d14bbd4f1c9d7 inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1827aaa9db73a9235d4d14bbd4f1c9d7"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__str__</b> (self)</td></tr>
+<tr class="separator:a1827aaa9db73a9235d4d14bbd4f1c9d7 inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01bf2a5d8f59ad226b1df15b4cc2d6e9 inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a01bf2a5d8f59ad226b1df15b4cc2d6e9"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#a01bf2a5d8f59ad226b1df15b4cc2d6e9">role_requirements</a> (self)</td></tr>
+<tr class="memdesc:a01bf2a5d8f59ad226b1df15b4cc2d6e9 inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a tree of RoleRequirements keyed by subbehavior reference name This is used by the dynamic role assignment system to intelligently select which robot will run which behavior. <br /></td></tr>
+<tr class="separator:a01bf2a5d8f59ad226b1df15b4cc2d6e9 inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d9a8e39c6fe3007b8649b8cf83b08f4 inherit pub_methods_classbehavior_1_1_behavior"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0d9a8e39c6fe3007b8649b8cf83b08f4"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classbehavior_1_1_behavior.html#a0d9a8e39c6fe3007b8649b8cf83b08f4">assign_roles</a> (self, assignments)</td></tr>
+<tr class="memdesc:a0d9a8e39c6fe3007b8649b8cf83b08f4 inherit pub_methods_classbehavior_1_1_behavior"><td class="mdescLeft">&#160;</td><td class="mdescRight">assignments is a tree of (RoleRequirements, <a class="el" href="class_our_robot.html" title="A robot on our team. ">OurRobot</a>) tuples Same tree structure as the <a class="el" href="classbehavior_1_1_behavior.html#a01bf2a5d8f59ad226b1df15b4cc2d6e9" title="Returns a tree of RoleRequirements keyed by subbehavior reference name This is used by the dynamic ro...">role_requirements()</a> return value, but tuples instead of RoleRequirements as leaf nodes <br /></td></tr>
+<tr class="separator:a0d9a8e39c6fe3007b8649b8cf83b08f4 inherit pub_methods_classbehavior_1_1_behavior"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classfsm_1_1_state_machine"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classfsm_1_1_state_machine')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classfsm_1_1_state_machine.html">fsm.StateMachine</a></td></tr>
-<tr class="memitem:afdea72a04c29ae99249dc4418e292837 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afdea72a04c29ae99249dc4418e292837"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b></td></tr>
-<tr class="separator:afdea72a04c29ae99249dc4418e292837 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af3e2e0512b96a8a6218d85ab416713bb inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af3e2e0512b96a8a6218d85ab416713bb"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>start_state</b></td></tr>
-<tr class="separator:af3e2e0512b96a8a6218d85ab416713bb inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae31e10d29d64d1f68c6289114f30288c inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae31e10d29d64d1f68c6289114f30288c"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfsm_1_1_state_machine.html#ae31e10d29d64d1f68c6289114f30288c">restart</a></td></tr>
-<tr class="memdesc:ae31e10d29d64d1f68c6289114f30288c inherit pub_methods_classfsm_1_1_state_machine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the FSM back into the start state. <br /></td></tr>
-<tr class="separator:ae31e10d29d64d1f68c6289114f30288c inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79dbd4112d024a67c97eef8cab50b086 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a79dbd4112d024a67c97eef8cab50b086"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self, start_state)</td></tr>
+<tr class="separator:a79dbd4112d024a67c97eef8cab50b086 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac01f772989e580e9fd028529ba787588 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac01f772989e580e9fd028529ba787588"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>start_state</b> (self)</td></tr>
+<tr class="separator:ac01f772989e580e9fd028529ba787588 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a4f68b6016e1c759635eeea747912f3 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8a4f68b6016e1c759635eeea747912f3"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfsm_1_1_state_machine.html#a8a4f68b6016e1c759635eeea747912f3">restart</a> (self)</td></tr>
+<tr class="memdesc:a8a4f68b6016e1c759635eeea747912f3 inherit pub_methods_classfsm_1_1_state_machine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the FSM back into the start state. <br /></td></tr>
+<tr class="separator:a8a4f68b6016e1c759635eeea747912f3 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb77bc1efbfb9c4ca3ccf5f1aa6d23c5 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adb77bc1efbfb9c4ca3ccf5f1aa6d23c5"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfsm_1_1_state_machine.html#adb77bc1efbfb9c4ca3ccf5f1aa6d23c5">add_state</a></td></tr>
 <tr class="memdesc:adb77bc1efbfb9c4ca3ccf5f1aa6d23c5 inherit pub_methods_classfsm_1_1_state_machine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a new state (which can optionally be a substate of an existing state) <br /></td></tr>
 <tr class="separator:adb77bc1efbfb9c4ca3ccf5f1aa6d23c5 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb4f0d680dd3d3f5cdf7f69bd89df640 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb4f0d680dd3d3f5cdf7f69bd89df640"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfsm_1_1_state_machine.html#abb4f0d680dd3d3f5cdf7f69bd89df640">spin</a></td></tr>
-<tr class="memdesc:abb4f0d680dd3d3f5cdf7f69bd89df640 inherit pub_methods_classfsm_1_1_state_machine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the FSM checks transition conditions for all edges leading away from the current state if one evaluates to true, we transition to it if more than one evaluates to true, we throw a RuntimeError. <br /></td></tr>
-<tr class="separator:abb4f0d680dd3d3f5cdf7f69bd89df640 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9e2d8719f2a2c72cd84a37b43d83302 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af9e2d8719f2a2c72cd84a37b43d83302"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>add_transition</b></td></tr>
-<tr class="separator:af9e2d8719f2a2c72cd84a37b43d83302 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae38abdc4967b244656dac154d2732e88 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae38abdc4967b244656dac154d2732e88"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>transition</b></td></tr>
-<tr class="separator:ae38abdc4967b244656dac154d2732e88 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a59ab466e7f4ed151ccbd796158e167 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a59ab466e7f4ed151ccbd796158e167"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>is_in_state</b></td></tr>
-<tr class="separator:a7a59ab466e7f4ed151ccbd796158e167 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33c2321512a24f8675059cd9287227cf inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a33c2321512a24f8675059cd9287227cf"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>state_is_substate</b></td></tr>
-<tr class="separator:a33c2321512a24f8675059cd9287227cf inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8734181244cd1068e8f8f350a40a9c3 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab8734181244cd1068e8f8f350a40a9c3"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>corresponding_ancestor_state</b></td></tr>
-<tr class="separator:ab8734181244cd1068e8f8f350a40a9c3 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae30ebb0ee47a49c2581c949083eba41b inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae30ebb0ee47a49c2581c949083eba41b"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>ancestors_of_state</b></td></tr>
-<tr class="separator:ae30ebb0ee47a49c2581c949083eba41b inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afcfeddf7a3a81317f35f816de7084bd5 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afcfeddf7a3a81317f35f816de7084bd5"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>as_graphviz</b></td></tr>
-<tr class="separator:afcfeddf7a3a81317f35f816de7084bd5 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae672988758b5c534d48c8d2db1730ee1 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae672988758b5c534d48c8d2db1730ee1"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>to_graphviz</b></td></tr>
-<tr class="separator:ae672988758b5c534d48c8d2db1730ee1 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3397a4cf9e7d0d62508cb555f4726005 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3397a4cf9e7d0d62508cb555f4726005"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>write_diagram_png</b></td></tr>
-<tr class="separator:a3397a4cf9e7d0d62508cb555f4726005 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2db6bb7e5671f837a20203d1100067c4 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2db6bb7e5671f837a20203d1100067c4"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>state</b></td></tr>
-<tr class="separator:a2db6bb7e5671f837a20203d1100067c4 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23c3e817663c1200e4f831a051ac9aa3 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a23c3e817663c1200e4f831a051ac9aa3"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfsm_1_1_state_machine.html#a23c3e817663c1200e4f831a051ac9aa3">spin</a> (self)</td></tr>
+<tr class="memdesc:a23c3e817663c1200e4f831a051ac9aa3 inherit pub_methods_classfsm_1_1_state_machine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the FSM checks transition conditions for all edges leading away from the current state if one evaluates to true, we transition to it if more than one evaluates to true, we throw a RuntimeError. <br /></td></tr>
+<tr class="separator:a23c3e817663c1200e4f831a051ac9aa3 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef1a472a386e74789966f329f8fcc585 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aef1a472a386e74789966f329f8fcc585"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>add_transition</b> (self, from_state, to_state, condition, event_name)</td></tr>
+<tr class="separator:aef1a472a386e74789966f329f8fcc585 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ada22b8d508be982f681cde63fca674 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3ada22b8d508be982f681cde63fca674"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>transition</b> (self, new_state)</td></tr>
+<tr class="separator:a3ada22b8d508be982f681cde63fca674 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a063f09b89a9c98290a955f93279496f6 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a063f09b89a9c98290a955f93279496f6"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>is_in_state</b> (self, state)</td></tr>
+<tr class="separator:a063f09b89a9c98290a955f93279496f6 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6875ee48c4051c3a36e4f9e9966e5467 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6875ee48c4051c3a36e4f9e9966e5467"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>state_is_substate</b> (self, state, possible_parent)</td></tr>
+<tr class="separator:a6875ee48c4051c3a36e4f9e9966e5467 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01188fd6c9487ae6a13a4664919af640 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a01188fd6c9487ae6a13a4664919af640"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>corresponding_ancestor_state</b> (self, ancestors)</td></tr>
+<tr class="separator:a01188fd6c9487ae6a13a4664919af640 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab772209815d0ca026b9906b63a1e3083 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab772209815d0ca026b9906b63a1e3083"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>ancestors_of_state</b> (self, state)</td></tr>
+<tr class="separator:ab772209815d0ca026b9906b63a1e3083 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad528950e6cecb778139d44875c0f6267 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad528950e6cecb778139d44875c0f6267"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>as_graphviz</b> (self)</td></tr>
+<tr class="separator:ad528950e6cecb778139d44875c0f6267 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc4979ae34a7551fe2d166b853f39565 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abc4979ae34a7551fe2d166b853f39565"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>to_graphviz</b> (self)</td></tr>
+<tr class="separator:abc4979ae34a7551fe2d166b853f39565 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f4fc75fe811bb570feaf0dfb888131d inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8f4fc75fe811bb570feaf0dfb888131d"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>write_diagram_png</b> (self, filename)</td></tr>
+<tr class="separator:a8f4fc75fe811bb570feaf0dfb888131d inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2ac73f2d3ea3706428f1bda246098f8 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad2ac73f2d3ea3706428f1bda246098f8"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>state</b> (self)</td></tr>
+<tr class="separator:ad2ac73f2d3ea3706428f1bda246098f8 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -355,7 +357,7 @@ Public Attributes</h2></td></tr>
 <area shape="rect" id="node2" href="classsingle__robot__behavior_1_1_single_robot_behavior.html" title="single_robot_behavior.Single\lRobotBehavior" alt="" coords="5,161,192,207"/><area shape="rect" id="node4" href="classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="36,83,161,112"/><area shape="rect" id="node6" href="classfsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="35,5,163,35"/></map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a6545b9e20baaf409564b7fe9a49f27e6"></a>
+<a class="anchor" id="ab87c2e916983c8d3eeb0614612028882"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -383,7 +385,7 @@ Public Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>skills</b></li><li class="navelem"><b>_kick</b></li><li class="navelem"><a class="el" href="classskills_1_1__kick_1_1___kick.html">_Kick</a></li>
-    <li class="footer">Generated on Wed Nov 12 2014 02:06:42 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Nov 16 2014 20:16:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

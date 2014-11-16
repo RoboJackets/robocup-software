@@ -10,15 +10,17 @@
 <script type="text/javascript" src="dynsections.js"></script>
 <link href="navtree.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
 <script type="text/javascript" src="navtree.js"></script>
 <script type="text/javascript">
   $(document).ready(initResizable);
   $(window).load(resizeHeight);
 </script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
-  $(document).ready(function() { searchBox.OnSelectItem(0); });
+  $(document).ready(function() { init_search(); });
 </script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
@@ -97,7 +99,7 @@ $(document).ready(function(){initNavTree('hierarchy.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Modules</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+</div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -232,7 +234,7 @@ This inheritance list is sorted roughly, but not completely, alphabetically:</di
 <tr id="row_59_"><td class="entry"><span style="width:0px;display:inline-block;">&#160;</span><span id="arr_59_" class="arrow" onclick="toggleFolder('59_')">&#9658;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classfsm_1_1_state_machine.html" target="_self">fsm.StateMachine</a></td><td class="desc">Generic hierarchial state machine class states can have substates </td></tr>
 <tr id="row_59_0_" class="even" style="display:none;"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span id="arr_59_0_" class="arrow" onclick="toggleFolder('59_0_')">&#9658;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classbehavior_1_1_behavior.html" target="_self">behavior.Behavior</a></td><td class="desc"><a class="el" href="classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. ">Behavior</a> is an abstract superclass for Skill, Play, etc </td></tr>
 <tr id="row_59_0_0_" class="even" style="display:none;"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span id="arr_59_0_0_" class="arrow" onclick="toggleFolder('59_0_0_')">&#9658;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classcomposite__behavior_1_1_composite_behavior.html" target="_self">composite_behavior.CompositeBehavior</a></td><td class="desc">A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy to work with and manage subbehaviors </td></tr>
-<tr id="row_59_0_0_0_" class="even" style="display:none;"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><span id="arr_59_0_0_0_" class="arrow" onclick="toggleFolder('59_0_0_0_')">&#9658;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classplay_1_1_play.html" target="_self">play.Play</a></td><td class="desc">A play coordinates the entire team of robots Only play runs at a time By default, the RootPlay (which every <a class="el" href="classplay_1_1_play.html" title="A play coordinates the entire team of robots Only play runs at a time By default, the RootPlay (which...">Play</a> is a subbehavior of) handles the Goalie, however, by overriding the <a class="el" href="classplay_1_1_play.html#a8069b69cc02d1f8251ed36b2910bb435" title="Override to opt-in to handling the Goalie By default, the root play allocates and runs the goalie beh...">handles_goalie()</a> class method, a <a class="el" href="classplay_1_1_play.html" title="A play coordinates the entire team of robots Only play runs at a time By default, the RootPlay (which...">Play</a> can choose to handle the goalie on its own, which allows for greater coordination </td></tr>
+<tr id="row_59_0_0_0_" class="even" style="display:none;"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><span id="arr_59_0_0_0_" class="arrow" onclick="toggleFolder('59_0_0_0_')">&#9658;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classplay_1_1_play.html" target="_self">play.Play</a></td><td class="desc">A play coordinates the entire team of robots Only play runs at a time By default, the RootPlay (which every <a class="el" href="classplay_1_1_play.html" title="A play coordinates the entire team of robots Only play runs at a time By default, the RootPlay (which...">Play</a> is a subbehavior of) handles the Goalie, however, by overriding the <a class="el" href="classplay_1_1_play.html#ae4eb2f9751d1e1038b81760ff67728d4" title="Override to opt-in to handling the Goalie By default, the root play allocates and runs the goalie beh...">handles_goalie()</a> class method, a <a class="el" href="classplay_1_1_play.html" title="A play coordinates the entire team of robots Only play runs at a time By default, the RootPlay (which...">Play</a> can choose to handle the goalie on its own, which allows for greater coordination </td></tr>
 <tr id="row_59_0_0_0_0_" class="even" style="display:none;"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classplays_1_1offense_1_1basic__122_1_1_basic122.html" target="_self">plays.offense.basic_122.Basic122</a></td><td class="desc"></td></tr>
 <tr id="row_59_0_0_0_1_" class="even" style="display:none;"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classplays_1_1restarts_1_1defend__penalty_1_1_defend_penalty.html" target="_self">plays.restarts.defend_penalty.DefendPenalty</a></td><td class="desc"></td></tr>
 <tr id="row_59_0_0_0_2_" class="even" style="display:none;"><td class="entry"><span style="width:80px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classplays_1_1restarts_1_1kick__penalty_1_1_kick_penalty.html" target="_self">plays.restarts.kick_penalty.KickPenalty</a></td><td class="desc"></td></tr>
@@ -325,7 +327,7 @@ This inheritance list is sorted roughly, but not completely, alphabetically:</di
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Nov 12 2014 02:06:43 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Nov 16 2014 20:16:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

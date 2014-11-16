@@ -10,15 +10,17 @@
 <script type="text/javascript" src="dynsections.js"></script>
 <link href="navtree.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
 <script type="text/javascript" src="navtree.js"></script>
 <script type="text/javascript">
   $(document).ready(initResizable);
   $(window).load(resizeHeight);
 </script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
-  $(document).ready(function() { searchBox.OnSelectItem(0); });
+  $(document).ready(function() { init_search(); });
 </script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
@@ -97,7 +99,7 @@ $(document).ready(function(){initNavTree('classplay__registry_1_1_play_registry_
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Modules</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+</div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -120,39 +122,39 @@ $(document).ready(function(){initNavTree('classplay__registry_1_1_play_registry_
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a35427e200a6a905dfe35494b3496118f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a35427e200a6a905dfe35494b3496118f"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b></td></tr>
-<tr class="separator:a35427e200a6a905dfe35494b3496118f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a90e2daa70f766ca8d73399714fe4ee71"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a90e2daa70f766ca8d73399714fe4ee71"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>name</b></td></tr>
-<tr class="separator:a90e2daa70f766ca8d73399714fe4ee71"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07411140002a3762fa92a016159eaa07"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a07411140002a3762fa92a016159eaa07"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>recalculate_scores</b></td></tr>
-<tr class="separator:a07411140002a3762fa92a016159eaa07"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6bfda04588697b3cfcf91db1a5ced45e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6bfda04588697b3cfcf91db1a5ced45e"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__delitem__</b></td></tr>
-<tr class="separator:a6bfda04588697b3cfcf91db1a5ced45e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93b936632fb4ee6a31786af6e91b60a0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a93b936632fb4ee6a31786af6e91b60a0"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>append_child</b></td></tr>
-<tr class="separator:a93b936632fb4ee6a31786af6e91b60a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee3069dd51f3c107075f0d908c333432"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aee3069dd51f3c107075f0d908c333432"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__getitem__</b></td></tr>
-<tr class="separator:aee3069dd51f3c107075f0d908c333432"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb5a6c7028d65ab82da372b8d3771345"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb5a6c7028d65ab82da372b8d3771345"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>has_child_with_name</b></td></tr>
-<tr class="separator:abb5a6c7028d65ab82da372b8d3771345"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9286eac23b8291addb851a1a11cb2b2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae9286eac23b8291addb851a1a11cb2b2"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>parent</b></td></tr>
-<tr class="separator:ae9286eac23b8291addb851a1a11cb2b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9286eac23b8291addb851a1a11cb2b2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae9286eac23b8291addb851a1a11cb2b2"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>parent</b></td></tr>
-<tr class="separator:ae9286eac23b8291addb851a1a11cb2b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a3c0ee35e781b583893a360be184a3c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9a3c0ee35e781b583893a360be184a3c"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>children</b></td></tr>
-<tr class="separator:a9a3c0ee35e781b583893a360be184a3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d53c5abda89357e39c94c52890446ce"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0d53c5abda89357e39c94c52890446ce"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>row</b></td></tr>
-<tr class="separator:a0d53c5abda89357e39c94c52890446ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb39c853685aa7fb45892460379e7a35"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb39c853685aa7fb45892460379e7a35"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self, parent, name)</td></tr>
+<tr class="separator:acb39c853685aa7fb45892460379e7a35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adfa31fc07ab52f723a1be637f494a52a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adfa31fc07ab52f723a1be637f494a52a"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>name</b> (self)</td></tr>
+<tr class="separator:adfa31fc07ab52f723a1be637f494a52a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afcbbb3f432beb0768cc1a1854fa44778"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afcbbb3f432beb0768cc1a1854fa44778"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>recalculate_scores</b> (self, modal)</td></tr>
+<tr class="separator:afcbbb3f432beb0768cc1a1854fa44778"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa3658ad2f5d73eb0a008f030851dc54f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa3658ad2f5d73eb0a008f030851dc54f"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__delitem__</b> (self, name)</td></tr>
+<tr class="separator:aa3658ad2f5d73eb0a008f030851dc54f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb949d1770208d99c790de710d54316d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeb949d1770208d99c790de710d54316d"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>append_child</b> (self, child)</td></tr>
+<tr class="separator:aeb949d1770208d99c790de710d54316d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1caaafad551d1449ee8d1e9ed2c47bae"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1caaafad551d1449ee8d1e9ed2c47bae"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__getitem__</b> (self, name)</td></tr>
+<tr class="separator:a1caaafad551d1449ee8d1e9ed2c47bae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4f739f169f6fde0a9694a18ce2b570c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af4f739f169f6fde0a9694a18ce2b570c"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>has_child_with_name</b> (self, name)</td></tr>
+<tr class="separator:af4f739f169f6fde0a9694a18ce2b570c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a6fc51c15a1edaa7998df4c333ec282"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5a6fc51c15a1edaa7998df4c333ec282"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>parent</b> (self)</td></tr>
+<tr class="separator:a5a6fc51c15a1edaa7998df4c333ec282"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c47f8da47fe061481cf02ef4ebc5e46"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9c47f8da47fe061481cf02ef4ebc5e46"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>parent</b> (self, value)</td></tr>
+<tr class="separator:a9c47f8da47fe061481cf02ef4ebc5e46"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afbb4d91814ad6fdde1cd24f3872870a6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afbb4d91814ad6fdde1cd24f3872870a6"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>children</b> (self)</td></tr>
+<tr class="separator:afbb4d91814ad6fdde1cd24f3872870a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a624b4765f443a901c9185fb4d94a17"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9a624b4765f443a901c9185fb4d94a17"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>row</b> (self)</td></tr>
+<tr class="separator:a9a624b4765f443a901c9185fb4d94a17"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Categories correspond to filesystem directories. </p>
@@ -165,7 +167,7 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>row</b></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>play_registry</b></li><li class="navelem"><a class="el" href="classplay__registry_1_1_play_registry.html">PlayRegistry</a></li><li class="navelem"><a class="el" href="classplay__registry_1_1_play_registry_1_1_category.html">Category</a></li>
-    <li class="footer">Generated on Wed Nov 12 2014 02:06:42 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Nov 16 2014 20:16:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

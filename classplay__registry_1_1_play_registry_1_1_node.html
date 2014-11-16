@@ -10,15 +10,17 @@
 <script type="text/javascript" src="dynsections.js"></script>
 <link href="navtree.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
 <script type="text/javascript" src="navtree.js"></script>
 <script type="text/javascript">
   $(document).ready(initResizable);
   $(window).load(resizeHeight);
 </script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
-  $(document).ready(function() { searchBox.OnSelectItem(0); });
+  $(document).ready(function() { init_search(); });
 </script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
@@ -97,7 +99,7 @@ $(document).ready(function(){initNavTree('classplay__registry_1_1_play_registry_
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Modules</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+</div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -117,42 +119,42 @@ $(document).ready(function(){initNavTree('classplay__registry_1_1_play_registry_
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a91ef567b8a4cf33db05d3aa76c42356c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a91ef567b8a4cf33db05d3aa76c42356c"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b></td></tr>
-<tr class="separator:a91ef567b8a4cf33db05d3aa76c42356c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc705410f73e0a79ce9d060c77a077c7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afc705410f73e0a79ce9d060c77a077c7"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>parent</b></td></tr>
-<tr class="separator:afc705410f73e0a79ce9d060c77a077c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc705410f73e0a79ce9d060c77a077c7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afc705410f73e0a79ce9d060c77a077c7"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>parent</b></td></tr>
-<tr class="separator:afc705410f73e0a79ce9d060c77a077c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a017faca01d0233d698e844f1b79b1152"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a017faca01d0233d698e844f1b79b1152"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>name</b></td></tr>
-<tr class="separator:a017faca01d0233d698e844f1b79b1152"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a45fed8cbcb942958384b9ba31f78ad39"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a45fed8cbcb942958384b9ba31f78ad39"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>module_name</b></td></tr>
-<tr class="separator:a45fed8cbcb942958384b9ba31f78ad39"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad09ad42984bb49122e91a0168b299d8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aad09ad42984bb49122e91a0168b299d8"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>play_class</b></td></tr>
-<tr class="separator:aad09ad42984bb49122e91a0168b299d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad09ad42984bb49122e91a0168b299d8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aad09ad42984bb49122e91a0168b299d8"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>play_class</b></td></tr>
-<tr class="separator:aad09ad42984bb49122e91a0168b299d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f448e36bc5ebcd2dcbe5f83e59e7928"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4f448e36bc5ebcd2dcbe5f83e59e7928"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>enabled</b></td></tr>
-<tr class="separator:a4f448e36bc5ebcd2dcbe5f83e59e7928"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f448e36bc5ebcd2dcbe5f83e59e7928"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4f448e36bc5ebcd2dcbe5f83e59e7928"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>enabled</b></td></tr>
-<tr class="separator:a4f448e36bc5ebcd2dcbe5f83e59e7928"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa795a22f75e3bdcdc3d09577dabb84b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaa795a22f75e3bdcdc3d09577dabb84b"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>recalculate_scores</b></td></tr>
-<tr class="separator:aaa795a22f75e3bdcdc3d09577dabb84b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a781536cfc9ae649e39e673239cdd3c37"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a781536cfc9ae649e39e673239cdd3c37"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>last_score</b></td></tr>
-<tr class="separator:a781536cfc9ae649e39e673239cdd3c37"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a5f8133774a803c0da135cd3e760d82"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2a5f8133774a803c0da135cd3e760d82"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__str__</b></td></tr>
-<tr class="separator:a2a5f8133774a803c0da135cd3e760d82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23fba32b741cb5e5444e1a475470ff4f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a23fba32b741cb5e5444e1a475470ff4f"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self, module_name, play_class)</td></tr>
+<tr class="separator:a23fba32b741cb5e5444e1a475470ff4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74fc64e3acee2f2dad66bd14126ae49b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a74fc64e3acee2f2dad66bd14126ae49b"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>parent</b> (self)</td></tr>
+<tr class="separator:a74fc64e3acee2f2dad66bd14126ae49b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a891cd8eb53409f421f90bc601518713f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a891cd8eb53409f421f90bc601518713f"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>parent</b> (self, value)</td></tr>
+<tr class="separator:a891cd8eb53409f421f90bc601518713f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abaf407337a75469e39c33730619b1251"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abaf407337a75469e39c33730619b1251"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>name</b> (self)</td></tr>
+<tr class="separator:abaf407337a75469e39c33730619b1251"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acababd518199b746b2e840be368ee566"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acababd518199b746b2e840be368ee566"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>module_name</b> (self)</td></tr>
+<tr class="separator:acababd518199b746b2e840be368ee566"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6dc8101bafda82c19ce340d99710c2e1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6dc8101bafda82c19ce340d99710c2e1"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>play_class</b> (self)</td></tr>
+<tr class="separator:a6dc8101bafda82c19ce340d99710c2e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78433fbe5ecc5cefcfc56264675daa38"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a78433fbe5ecc5cefcfc56264675daa38"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>play_class</b> (self, value)</td></tr>
+<tr class="separator:a78433fbe5ecc5cefcfc56264675daa38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69a78514f2cb88a0e2f2d9ec2cb454de"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a69a78514f2cb88a0e2f2d9ec2cb454de"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>enabled</b> (self)</td></tr>
+<tr class="separator:a69a78514f2cb88a0e2f2d9ec2cb454de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a538a7427e6a8fa91174ecef0bb6ace8b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a538a7427e6a8fa91174ecef0bb6ace8b"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>enabled</b> (self, value)</td></tr>
+<tr class="separator:a538a7427e6a8fa91174ecef0bb6ace8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a78b0e6a6077fad7c7df825f85ab321a5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a78b0e6a6077fad7c7df825f85ab321a5"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>recalculate_scores</b> (self, modal)</td></tr>
+<tr class="separator:a78b0e6a6077fad7c7df825f85ab321a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf837ca53fb0a53460b710c035c7c91b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adf837ca53fb0a53460b710c035c7c91b"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>last_score</b> (self)</td></tr>
+<tr class="separator:adf837ca53fb0a53460b710c035c7c91b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a892abbc7cbc6be05d03ec1d730710461"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a892abbc7cbc6be05d03ec1d730710461"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__str__</b> (self)</td></tr>
+<tr class="separator:a892abbc7cbc6be05d03ec1d730710461"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>soccer/gameplay/play_registry.py</li>
@@ -163,7 +165,7 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>__str__</b></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>play_registry</b></li><li class="navelem"><a class="el" href="classplay__registry_1_1_play_registry.html">PlayRegistry</a></li><li class="navelem"><a class="el" href="classplay__registry_1_1_play_registry_1_1_node.html">Node</a></li>
-    <li class="footer">Generated on Wed Nov 12 2014 02:06:42 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Nov 16 2014 20:16:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

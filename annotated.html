@@ -10,15 +10,17 @@
 <script type="text/javascript" src="dynsections.js"></script>
 <link href="navtree.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
 <script type="text/javascript" src="navtree.js"></script>
 <script type="text/javascript">
   $(document).ready(initResizable);
   $(window).load(resizeHeight);
 </script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
-  $(document).ready(function() { searchBox.OnSelectItem(0); });
+  $(document).ready(function() { init_search(); });
 </script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
@@ -97,7 +99,7 @@ $(document).ready(function(){initNavTree('annotated.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Modules</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+</div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -162,7 +164,7 @@ $(document).ready(function(){initNavTree('annotated.html','');});
 <tr id="row_9_3_" class="even" style="display:none;"><td class="entry"><span style="width:16px;display:inline-block;">&#160;</span><span id="arr_9_3_" class="arrow" onclick="toggleFolder('9_3_')">&#9658;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="class_planning_1_1_tree.html" target="_self">Tree</a></td><td class="desc">Base tree class for rrt trees <a class="el" href="class_planning_1_1_tree.html" title="base tree class for rrt trees Tree can be grown in different ways ">Tree</a> can be grown in different ways </td></tr>
 <tr id="row_9_3_0_" class="even" style="display:none;"><td class="entry"><span style="width:48px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="class_planning_1_1_tree_1_1_point.html" target="_self">Point</a></td><td class="desc">Base class for a tree point </td></tr>
 <tr id="row_10_" class="even"><td class="entry"><span style="width:0px;display:inline-block;">&#160;</span><span id="arr_10_" class="arrow" onclick="toggleFolder('10_')">&#9658;</span><span class="icona"><span class="icon">N</span></span><b>play</b></td><td class="desc"></td></tr>
-<tr id="row_10_0_" style="display:none;"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classplay_1_1_play.html" target="_self">Play</a></td><td class="desc">A play coordinates the entire team of robots Only play runs at a time By default, the RootPlay (which every <a class="el" href="classplay_1_1_play.html" title="A play coordinates the entire team of robots Only play runs at a time By default, the RootPlay (which...">Play</a> is a subbehavior of) handles the Goalie, however, by overriding the <a class="el" href="classplay_1_1_play.html#a8069b69cc02d1f8251ed36b2910bb435" title="Override to opt-in to handling the Goalie By default, the root play allocates and runs the goalie beh...">handles_goalie()</a> class method, a <a class="el" href="classplay_1_1_play.html" title="A play coordinates the entire team of robots Only play runs at a time By default, the RootPlay (which...">Play</a> can choose to handle the goalie on its own, which allows for greater coordination </td></tr>
+<tr id="row_10_0_" style="display:none;"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classplay_1_1_play.html" target="_self">Play</a></td><td class="desc">A play coordinates the entire team of robots Only play runs at a time By default, the RootPlay (which every <a class="el" href="classplay_1_1_play.html" title="A play coordinates the entire team of robots Only play runs at a time By default, the RootPlay (which...">Play</a> is a subbehavior of) handles the Goalie, however, by overriding the <a class="el" href="classplay_1_1_play.html#ae4eb2f9751d1e1038b81760ff67728d4" title="Override to opt-in to handling the Goalie By default, the root play allocates and runs the goalie beh...">handles_goalie()</a> class method, a <a class="el" href="classplay_1_1_play.html" title="A play coordinates the entire team of robots Only play runs at a time By default, the RootPlay (which...">Play</a> can choose to handle the goalie on its own, which allows for greater coordination </td></tr>
 <tr id="row_11_"><td class="entry"><span style="width:0px;display:inline-block;">&#160;</span><span id="arr_11_" class="arrow" onclick="toggleFolder('11_')">&#9658;</span><span class="icona"><span class="icon">N</span></span><b>play_config_tab</b></td><td class="desc"></td></tr>
 <tr id="row_11_0_" class="even" style="display:none;"><td class="entry"><span style="width:32px;display:inline-block;">&#160;</span><span class="icona"><span class="icon">C</span></span><a class="el" href="classplay__config__tab_1_1_play_config_tab.html" target="_self">PlayConfigTab</a></td><td class="desc"></td></tr>
 <tr id="row_12_" class="even"><td class="entry"><span style="width:0px;display:inline-block;">&#160;</span><span id="arr_12_" class="arrow" onclick="toggleFolder('12_')">&#9658;</span><span class="icona"><span class="icon">N</span></span><b>play_registry</b></td><td class="desc"></td></tr>
@@ -386,7 +388,7 @@ $(document).ready(function(){initNavTree('annotated.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Nov 12 2014 02:06:43 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Nov 16 2014 20:16:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

@@ -10,15 +10,17 @@
 <script type="text/javascript" src="dynsections.js"></script>
 <link href="navtree.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
 <script type="text/javascript" src="navtree.js"></script>
 <script type="text/javascript">
   $(document).ready(initResizable);
   $(window).load(resizeHeight);
 </script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
-  $(document).ready(function() { searchBox.OnSelectItem(0); });
+  $(document).ready(function() { init_search(); });
 </script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
@@ -134,7 +136,7 @@ $(document).ready(function(){initNavTree('functions_b.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Modules</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+</div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -148,19 +150,19 @@ $(document).ready(function(){initNavTree('functions_b.html','');});
 
 <h3><a class="anchor" id="index_b"></a>- b -</h3><ul>
 <li>ball_kicked()
-: <a class="el" href="classskills_1_1pass__receive_1_1_pass_receive.html#a4f8d22b76aea988748ff583b9d9de567">skills.pass_receive.PassReceive</a>
+: <a class="el" href="classskills_1_1pass__receive_1_1_pass_receive.html#a2cc653d5542574ff5066a91246e1e998">skills.pass_receive.PassReceive</a>
 </li>
 <li>ballMatrix()
 : <a class="el" href="group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a">Gameplay::GameplayModule</a>
 </li>
 <li>behavior_state()
-: <a class="el" href="classbehavior_1_1_behavior.html#ae960426568ca52d8128c88f3e7bb6d54">behavior.Behavior</a>
+: <a class="el" href="classbehavior_1_1_behavior.html#afd2eea95a9d665adbccadb6713868237">behavior.Behavior</a>
 </li>
 <li>behindBall()
 : <a class="el" href="class_our_robot.html#a43a7c66bc61352d1d9fa3a6851e83d5d">OurRobot</a>
 </li>
 <li>block_line()
-: <a class="el" href="classtactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#af1859c9c15efbf1b090fc9f41b5384ca">tactics.positions.submissive_defender.SubmissiveDefender</a>
+: <a class="el" href="classtactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a99856c78aac839805aef21e4ee523702">tactics.positions.submissive_defender.SubmissiveDefender</a>
 </li>
 <li>blueTeam()
 : <a class="el" href="class_processor.html#a1a61818c88b94200bba7f56a5cc7de76">Processor</a>
@@ -171,7 +173,7 @@ $(document).ready(function(){initNavTree('functions_b.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Nov 12 2014 02:06:43 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Nov 16 2014 20:16:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

@@ -1,10 +1,10 @@
 var classplays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick =
 [
-    [ "__init__", "classplays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html#a78ffa4e66ac4e82e445b0af2afc79a22", null ],
-    [ "execute_running", "classplays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html#a3e188e281f8d8249a28dbe7b35762673", null ],
-    [ "handles_goalie", "classplays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html#af4725ad3d313ad1a990839fbd7ea4709", null ],
-    [ "is_restart", "classplays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html#a81127f808be8f6b8e2cb0b607334a502", null ],
-    [ "score", "classplays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html#a2d6c4ba88cc7dc3dac6b95a6359b856f", null ],
+    [ "__init__", "classplays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html#aedfd305d92943542f41dc4d19b42f7b7", null ],
+    [ "execute_running", "classplays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html#a1576633a87bfe06639f01a80e8743e8f", null ],
+    [ "handles_goalie", "classplays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html#a25aae77c779c022dd1f8d053f24fae28", null ],
+    [ "is_restart", "classplays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html#af7c2a8039e9991cfae8e78ac5613653e", null ],
+    [ "score", "classplays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html#a561f9117337442e01d6c2edd9d7110c9", null ],
     [ "center1", "classplays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html#a5391134db925ffeb7164769c8204d1d8", null ],
     [ "center2", "classplays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html#a90a11c753050f89a211c332c4ffaf494", null ],
     [ "kicker", "classplays_1_1restarts_1_1our__corner__kick_1_1_our_corner_kick.html#a2ee12aaaadd6f5bca85ec22cf93c1ab6", null ]

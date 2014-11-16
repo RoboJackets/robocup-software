@@ -10,15 +10,17 @@
 <script type="text/javascript" src="dynsections.js"></script>
 <link href="navtree.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="resize.js"></script>
+<script type="text/javascript" src="navtreedata.js"></script>
 <script type="text/javascript" src="navtree.js"></script>
 <script type="text/javascript">
   $(document).ready(initResizable);
   $(window).load(resizeHeight);
 </script>
 <link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <script type="text/javascript">
-  $(document).ready(function() { searchBox.OnSelectItem(0); });
+  $(document).ready(function() { init_search(); });
 </script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
 </head>
@@ -97,7 +99,7 @@ $(document).ready(function(){initNavTree('classevaluation_1_1double__touch_1_1_d
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Modules</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(8)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+</div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -127,77 +129,77 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0846692a066b34a593907282923c1479"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0846692a066b34a593907282923c1479"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b></td></tr>
-<tr class="separator:a0846692a066b34a593907282923c1479"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3a2441fa0a7018bf3a159d37b1d5955a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3a2441fa0a7018bf3a159d37b1d5955a"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>kicker_has_possession</b></td></tr>
-<tr class="separator:a3a2441fa0a7018bf3a159d37b1d5955a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a84d3493bfae47a2ca95e37046a909022"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a84d3493bfae47a2ca95e37046a909022"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevaluation_1_1double__touch_1_1_double_touch_tracker.html#a84d3493bfae47a2ca95e37046a909022">forbidden_ball_toucher</a></td></tr>
-<tr class="memdesc:a84d3493bfae47a2ca95e37046a909022"><td class="mdescLeft">&#160;</td><td class="mdescRight">The shell id of the robot that isn't allowed to touch the ball returns None if everyone is allowed to touch. <br /></td></tr>
-<tr class="separator:a84d3493bfae47a2ca95e37046a909022"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a078193a7145058f59096bdd44f40d43f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a078193a7145058f59096bdd44f40d43f"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>other_robot_touching_ball</b></td></tr>
-<tr class="separator:a078193a7145058f59096bdd44f40d43f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04f0cac4455b0e0f10bb472e09732b13"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a04f0cac4455b0e0f10bb472e09732b13"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>on_enter_start</b></td></tr>
-<tr class="separator:a04f0cac4455b0e0f10bb472e09732b13"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac54d0d4d961554d780c543f0712364a6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac54d0d4d961554d780c543f0712364a6"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>on_exit_restart_play_began</b></td></tr>
-<tr class="separator:ac54d0d4d961554d780c543f0712364a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d1a8bd76bc15eac6841133d741753b2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d1a8bd76bc15eac6841133d741753b2"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>on_enter_kicker_forbidden</b></td></tr>
-<tr class="separator:a1d1a8bd76bc15eac6841133d741753b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af49b8fd1d992cbfd007057983fa280ac"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af49b8fd1d992cbfd007057983fa280ac"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self)</td></tr>
+<tr class="separator:af49b8fd1d992cbfd007057983fa280ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2619fdac287aca3ca7b065a0a3fe10c0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2619fdac287aca3ca7b065a0a3fe10c0"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>kicker_has_possession</b> (self)</td></tr>
+<tr class="separator:a2619fdac287aca3ca7b065a0a3fe10c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af099865a4abce1cb5a5355d366ed0f79"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af099865a4abce1cb5a5355d366ed0f79"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classevaluation_1_1double__touch_1_1_double_touch_tracker.html#af099865a4abce1cb5a5355d366ed0f79">forbidden_ball_toucher</a> (self)</td></tr>
+<tr class="memdesc:af099865a4abce1cb5a5355d366ed0f79"><td class="mdescLeft">&#160;</td><td class="mdescRight">The shell id of the robot that isn't allowed to touch the ball returns None if everyone is allowed to touch. <br /></td></tr>
+<tr class="separator:af099865a4abce1cb5a5355d366ed0f79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21ff408b054f77ac2323e4f2f574b129"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a21ff408b054f77ac2323e4f2f574b129"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>other_robot_touching_ball</b> (self)</td></tr>
+<tr class="separator:a21ff408b054f77ac2323e4f2f574b129"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03b0b04ad795668bba9a02318e18cd88"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a03b0b04ad795668bba9a02318e18cd88"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>on_enter_start</b> (self)</td></tr>
+<tr class="separator:a03b0b04ad795668bba9a02318e18cd88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1562a78d3af6f51a486b464d44bf293"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad1562a78d3af6f51a486b464d44bf293"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>on_exit_restart_play_began</b> (self)</td></tr>
+<tr class="separator:ad1562a78d3af6f51a486b464d44bf293"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afacdba77f5bc56a553faa8a679f24730"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afacdba77f5bc56a553faa8a679f24730"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>on_enter_kicker_forbidden</b> (self)</td></tr>
+<tr class="separator:afacdba77f5bc56a553faa8a679f24730"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classfsm_1_1_state_machine"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classfsm_1_1_state_machine')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classfsm_1_1_state_machine.html">fsm.StateMachine</a></td></tr>
-<tr class="memitem:afdea72a04c29ae99249dc4418e292837 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afdea72a04c29ae99249dc4418e292837"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b></td></tr>
-<tr class="separator:afdea72a04c29ae99249dc4418e292837 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af3e2e0512b96a8a6218d85ab416713bb inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af3e2e0512b96a8a6218d85ab416713bb"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>start_state</b></td></tr>
-<tr class="separator:af3e2e0512b96a8a6218d85ab416713bb inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae31e10d29d64d1f68c6289114f30288c inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae31e10d29d64d1f68c6289114f30288c"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfsm_1_1_state_machine.html#ae31e10d29d64d1f68c6289114f30288c">restart</a></td></tr>
-<tr class="memdesc:ae31e10d29d64d1f68c6289114f30288c inherit pub_methods_classfsm_1_1_state_machine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the FSM back into the start state. <br /></td></tr>
-<tr class="separator:ae31e10d29d64d1f68c6289114f30288c inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79dbd4112d024a67c97eef8cab50b086 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a79dbd4112d024a67c97eef8cab50b086"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self, start_state)</td></tr>
+<tr class="separator:a79dbd4112d024a67c97eef8cab50b086 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac01f772989e580e9fd028529ba787588 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac01f772989e580e9fd028529ba787588"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>start_state</b> (self)</td></tr>
+<tr class="separator:ac01f772989e580e9fd028529ba787588 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a4f68b6016e1c759635eeea747912f3 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8a4f68b6016e1c759635eeea747912f3"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfsm_1_1_state_machine.html#a8a4f68b6016e1c759635eeea747912f3">restart</a> (self)</td></tr>
+<tr class="memdesc:a8a4f68b6016e1c759635eeea747912f3 inherit pub_methods_classfsm_1_1_state_machine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resets the FSM back into the start state. <br /></td></tr>
+<tr class="separator:a8a4f68b6016e1c759635eeea747912f3 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb77bc1efbfb9c4ca3ccf5f1aa6d23c5 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adb77bc1efbfb9c4ca3ccf5f1aa6d23c5"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfsm_1_1_state_machine.html#adb77bc1efbfb9c4ca3ccf5f1aa6d23c5">add_state</a></td></tr>
 <tr class="memdesc:adb77bc1efbfb9c4ca3ccf5f1aa6d23c5 inherit pub_methods_classfsm_1_1_state_machine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a new state (which can optionally be a substate of an existing state) <br /></td></tr>
 <tr class="separator:adb77bc1efbfb9c4ca3ccf5f1aa6d23c5 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb4f0d680dd3d3f5cdf7f69bd89df640 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abb4f0d680dd3d3f5cdf7f69bd89df640"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfsm_1_1_state_machine.html#abb4f0d680dd3d3f5cdf7f69bd89df640">spin</a></td></tr>
-<tr class="memdesc:abb4f0d680dd3d3f5cdf7f69bd89df640 inherit pub_methods_classfsm_1_1_state_machine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the FSM checks transition conditions for all edges leading away from the current state if one evaluates to true, we transition to it if more than one evaluates to true, we throw a RuntimeError. <br /></td></tr>
-<tr class="separator:abb4f0d680dd3d3f5cdf7f69bd89df640 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9e2d8719f2a2c72cd84a37b43d83302 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af9e2d8719f2a2c72cd84a37b43d83302"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>add_transition</b></td></tr>
-<tr class="separator:af9e2d8719f2a2c72cd84a37b43d83302 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae38abdc4967b244656dac154d2732e88 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae38abdc4967b244656dac154d2732e88"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>transition</b></td></tr>
-<tr class="separator:ae38abdc4967b244656dac154d2732e88 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7a59ab466e7f4ed151ccbd796158e167 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a59ab466e7f4ed151ccbd796158e167"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>is_in_state</b></td></tr>
-<tr class="separator:a7a59ab466e7f4ed151ccbd796158e167 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33c2321512a24f8675059cd9287227cf inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a33c2321512a24f8675059cd9287227cf"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>state_is_substate</b></td></tr>
-<tr class="separator:a33c2321512a24f8675059cd9287227cf inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab8734181244cd1068e8f8f350a40a9c3 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab8734181244cd1068e8f8f350a40a9c3"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>corresponding_ancestor_state</b></td></tr>
-<tr class="separator:ab8734181244cd1068e8f8f350a40a9c3 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae30ebb0ee47a49c2581c949083eba41b inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae30ebb0ee47a49c2581c949083eba41b"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>ancestors_of_state</b></td></tr>
-<tr class="separator:ae30ebb0ee47a49c2581c949083eba41b inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afcfeddf7a3a81317f35f816de7084bd5 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afcfeddf7a3a81317f35f816de7084bd5"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>as_graphviz</b></td></tr>
-<tr class="separator:afcfeddf7a3a81317f35f816de7084bd5 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae672988758b5c534d48c8d2db1730ee1 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae672988758b5c534d48c8d2db1730ee1"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>to_graphviz</b></td></tr>
-<tr class="separator:ae672988758b5c534d48c8d2db1730ee1 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3397a4cf9e7d0d62508cb555f4726005 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3397a4cf9e7d0d62508cb555f4726005"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>write_diagram_png</b></td></tr>
-<tr class="separator:a3397a4cf9e7d0d62508cb555f4726005 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2db6bb7e5671f837a20203d1100067c4 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2db6bb7e5671f837a20203d1100067c4"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>state</b></td></tr>
-<tr class="separator:a2db6bb7e5671f837a20203d1100067c4 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23c3e817663c1200e4f831a051ac9aa3 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a23c3e817663c1200e4f831a051ac9aa3"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classfsm_1_1_state_machine.html#a23c3e817663c1200e4f831a051ac9aa3">spin</a> (self)</td></tr>
+<tr class="memdesc:a23c3e817663c1200e4f831a051ac9aa3 inherit pub_methods_classfsm_1_1_state_machine"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs the FSM checks transition conditions for all edges leading away from the current state if one evaluates to true, we transition to it if more than one evaluates to true, we throw a RuntimeError. <br /></td></tr>
+<tr class="separator:a23c3e817663c1200e4f831a051ac9aa3 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef1a472a386e74789966f329f8fcc585 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aef1a472a386e74789966f329f8fcc585"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>add_transition</b> (self, from_state, to_state, condition, event_name)</td></tr>
+<tr class="separator:aef1a472a386e74789966f329f8fcc585 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ada22b8d508be982f681cde63fca674 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3ada22b8d508be982f681cde63fca674"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>transition</b> (self, new_state)</td></tr>
+<tr class="separator:a3ada22b8d508be982f681cde63fca674 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a063f09b89a9c98290a955f93279496f6 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a063f09b89a9c98290a955f93279496f6"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>is_in_state</b> (self, state)</td></tr>
+<tr class="separator:a063f09b89a9c98290a955f93279496f6 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6875ee48c4051c3a36e4f9e9966e5467 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6875ee48c4051c3a36e4f9e9966e5467"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>state_is_substate</b> (self, state, possible_parent)</td></tr>
+<tr class="separator:a6875ee48c4051c3a36e4f9e9966e5467 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01188fd6c9487ae6a13a4664919af640 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a01188fd6c9487ae6a13a4664919af640"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>corresponding_ancestor_state</b> (self, ancestors)</td></tr>
+<tr class="separator:a01188fd6c9487ae6a13a4664919af640 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab772209815d0ca026b9906b63a1e3083 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab772209815d0ca026b9906b63a1e3083"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>ancestors_of_state</b> (self, state)</td></tr>
+<tr class="separator:ab772209815d0ca026b9906b63a1e3083 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad528950e6cecb778139d44875c0f6267 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad528950e6cecb778139d44875c0f6267"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>as_graphviz</b> (self)</td></tr>
+<tr class="separator:ad528950e6cecb778139d44875c0f6267 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc4979ae34a7551fe2d166b853f39565 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abc4979ae34a7551fe2d166b853f39565"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>to_graphviz</b> (self)</td></tr>
+<tr class="separator:abc4979ae34a7551fe2d166b853f39565 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f4fc75fe811bb570feaf0dfb888131d inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8f4fc75fe811bb570feaf0dfb888131d"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>write_diagram_png</b> (self, filename)</td></tr>
+<tr class="separator:a8f4fc75fe811bb570feaf0dfb888131d inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2ac73f2d3ea3706428f1bda246098f8 inherit pub_methods_classfsm_1_1_state_machine"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad2ac73f2d3ea3706428f1bda246098f8"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>state</b> (self)</td></tr>
+<tr class="separator:ad2ac73f2d3ea3706428f1bda246098f8 inherit pub_methods_classfsm_1_1_state_machine"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -242,7 +244,7 @@ Public Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>evaluation</b></li><li class="navelem"><b>double_touch</b></li><li class="navelem"><a class="el" href="classevaluation_1_1double__touch_1_1_double_touch_tracker.html">DoubleTouchTracker</a></li>
-    <li class="footer">Generated on Wed Nov 12 2014 02:06:42 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Nov 16 2014 20:16:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

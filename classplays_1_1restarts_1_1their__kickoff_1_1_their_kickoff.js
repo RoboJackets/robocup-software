@@ -1,7 +1,7 @@
 var classplays_1_1restarts_1_1their__kickoff_1_1_their_kickoff =
 [
-    [ "__init__", "classplays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#a852c83856933f8d343add7742b7b7a2e", null ],
-    [ "handles_goalie", "classplays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#a0c5b33030f085fcd3f08daef6104b7ed", null ],
-    [ "is_restart", "classplays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#a9408880e764e2df68f3de124b8f14dbc", null ],
-    [ "score", "classplays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#a968a88b53467fbd04d67af4511724163", null ]
+    [ "__init__", "classplays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#af790da838413ee829d6fe06657b2e1f2", null ],
+    [ "handles_goalie", "classplays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#a72faea8188fb39dee2835e4b38bbfa95", null ],
+    [ "is_restart", "classplays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#a413ca3b2fd0d75ea1ef2e84db4fe8632", null ],
+    [ "score", "classplays_1_1restarts_1_1their__kickoff_1_1_their_kickoff.html#a38fa1ce7f90d9a5023b1b5b344ce984c", null ]
 ];
