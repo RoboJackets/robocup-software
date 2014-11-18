@@ -1,5 +1,5 @@
 <map id="plays.testing.test_coordinated_pass.TestCoordinatedPass" name="plays.testing.test_coordinated_pass.TestCoordinatedPass">
-<area shape="rect" id="node2" href="$classplay_1_1_play.html" title="A play coordinates the entire team of robots Only play runs at a time By default, the RootPlay (which..." alt="" coords="99,256,173,285"/>
+<area shape="rect" id="node2" href="$classplay_1_1_play.html" title="A play coordinates the entire team of robots. " alt="" coords="99,256,173,285"/>
 <area shape="rect" id="node4" href="$classcomposite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="33,161,239,207"/>
 <area shape="rect" id="node6" href="$classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="73,83,199,112"/>
 <area shape="rect" id="node8" href="$classfsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="72,5,200,35"/>

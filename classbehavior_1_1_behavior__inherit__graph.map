@@ -3,7 +3,7 @@
 <area shape="rect" id="node73" href="$classsingle__robot__behavior_1_1_single_robot_behavior.html" title="single_robot_behavior.Single\lRobotBehavior" alt="" coords="367,1575,553,1622"/>
 <area shape="rect" id="node98" href="$classtimed__behavior_1_1_timed_behavior.html" title="TimedBehavior wraps a subbehavior and allows us to easily place a time limit on it. " alt="" coords="360,1645,560,1675"/>
 <area shape="rect" id="node2" href="$classfsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="5,1584,133,1613"/>
-<area shape="rect" id="node7" href="$classplay_1_1_play.html" title="A play coordinates the entire team of robots Only play runs at a time By default, the RootPlay (which..." alt="" coords="681,883,756,912"/>
+<area shape="rect" id="node7" href="$classplay_1_1_play.html" title="A play coordinates the entire team of robots. " alt="" coords="681,883,756,912"/>
 <area shape="rect" id="node61" href="$classsingle__robot__composite__behavior_1_1_single_robot_composite_behavior.html" title="Behavior that applies to a single ROBOT and may have up to one subbehavior at any time Most of the im..." alt="" coords="611,1251,827,1315"/>
 <area shape="rect" id="node63" href="$classtactics_1_1behavior__sequence_1_1_behavior_sequence.html" title="tactics.behavior_sequence.\lBehaviorSequence" alt="" coords="628,935,809,982"/>
 <area shape="rect" id="node65" href="$classtactics_1_1circle__near__ball_1_1_circle_near_ball.html" title="Robots position themselves along a portion of the circle centered at the ball. " alt="" coords="651,1005,787,1051"/>

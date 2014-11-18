@@ -170,13 +170,7 @@ boost::python::object&#160;</td><td class="memItemRight" valign="bottom"><a clas
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Coordinator of high-level logic. </p>
-<p>Its main responsibilities include:</p><ul>
-<li>managing the Goalie</li>
-<li>maintaining a list of global field obstacles</li>
-<li>choosing which Play to run</li>
-<li>running the current play</li>
-<li>executing path planning for each <a class="el" href="class_our_robot.html" title="A robot on our team. ">OurRobot</a> </li>
-</ul>
+<p>The gameplay module has an embedded python interpreter and serves as the bridge between our python and c++ code. The python side of things is responsible for high-level gameplay. At each iteration of the main run loop, the <a class="el" href="class_gameplay_1_1_gameplay_module.html" title="Coordinator of high-level logic. ">GameplayModule</a> calls into python, which does all of the high-level planning, resulting in updated motion targets, etc for the robots. The <a class="el" href="class_gameplay_1_1_gameplay_module.html" title="Coordinator of high-level logic. ">GameplayModule</a> then executes path planning for each <a class="el" href="class_our_robot.html" title="A robot on our team. ">OurRobot</a>. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a class="anchor" id="aaba424dfbce39f5f9251f4c6545e18e0"></a>
 <div class="memitem">
@@ -222,7 +216,7 @@ boost::python::object&#160;</td><td class="memItemRight" valign="bottom"><a clas
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespace_gameplay.html">Gameplay</a></li><li class="navelem"><a class="el" href="class_gameplay_1_1_gameplay_module.html">GameplayModule</a></li>
-    <li class="footer">Generated on Sun Nov 16 2014 20:16:29 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Nov 18 2014 21:32:14 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

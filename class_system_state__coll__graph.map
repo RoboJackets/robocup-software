@@ -4,10 +4,10 @@
 <area shape="rect" id="node6" href="$class_robot.html" title="Robot" alt="" coords="657,204,713,233"/>
 <area shape="rect" id="node8" href="$class_robot_pose.html" title="Contains robot motion state data. " alt="" coords="351,211,436,240"/>
 <area shape="rect" id="node10" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="39,355,169,384"/>
-<area shape="rect" id="node17" href="$class_planning_1_1_r_r_t_planner.html" title="RRT: http://en.wikipedia.org/wiki/Rapidly&#45;exploring_random_tree this plans the motion path for the ro..." alt="" coords="1600,435,1752,464"/>
+<area shape="rect" id="node17" href="$class_planning_1_1_r_r_t_planner.html" title="Given a start point and an end point and some conditions, plans a path for a robot to get there..." alt="" coords="1600,435,1752,464"/>
 <area shape="rect" id="node40" href="$class_planning_1_1_tree_1_1_point.html" title="base class for a tree point " alt="" coords="321,265,465,295"/>
-<area shape="rect" id="node46" href="$class_planning_1_1_path.html" title="Represents a path as a series of 2d points. " alt="" coords="632,496,739,525"/>
-<area shape="rect" id="node82" href="$class_ball.html" title="Ball" alt="" coords="509,55,552,84"/>
+<area shape="rect" id="node46" href="$class_planning_1_1_path.html" title="Represents a motion path as a series of {pos, vel} pairs. " alt="" coords="632,496,739,525"/>
+<area shape="rect" id="node82" href="$class_ball.html" title="Our beliefs about the ball&#39;s position and velocity. " alt="" coords="509,55,552,84"/>
 <area shape="rect" id="node20" href="$struct_motion_constraints.html" title="This class contains the motion constraints that the high&#45;level logic sets for a robot. " alt="" coords="1267,637,1395,667"/>
 <area shape="rect" id="node22" href="$class_config_double.html" title="ConfigDouble" alt="" coords="956,864,1057,893"/>
 <area shape="rect" id="node58" href="$class_robot_config.html" title="Configuration per robot model. " alt="" coords="1629,812,1723,841"/>
@@ -25,7 +25,7 @@
 <area shape="rect" id="node34" href="$class_planning_1_1_fixed_step_tree.html" title="tree that grows based on fixed distance step " alt="" coords="1248,332,1413,361"/>
 <area shape="rect" id="node55" href="$class_motion_control.html" title="Handles computer&#45;side motion control. " alt="" coords="1625,865,1727,895"/>
 <area shape="rect" id="node77" href="$class_robot_status.html" title="Provides per&#45;robot overrides for a robot Should be updated for hardware revision. ..." alt="" coords="1471,537,1564,567"/>
-<area shape="rect" id="node85" href="$class_game_state.html" title="this is the set of rules that are in effect " alt="" coords="1287,109,1375,139"/>
+<area shape="rect" id="node85" href="$class_game_state.html" title="Holds the state of the game according to the referee. " alt="" coords="1287,109,1375,139"/>
 <area shape="rect" id="node87" href="$class_team_info.html" title="TeamInfo" alt="" coords="968,109,1045,139"/>
 <area shape="rect" id="node89" title="STL class. " alt="" coords="645,95,725,124"/>
 <area shape="rect" id="node91" title="STL class. " alt="" coords="331,130,456,177"/>

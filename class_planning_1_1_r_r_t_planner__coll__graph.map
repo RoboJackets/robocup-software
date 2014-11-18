@@ -1,7 +1,7 @@
 <map id="Planning::RRTPlanner" name="Planning::RRTPlanner">
 <area shape="rect" id="node2" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="39,180,169,209"/>
 <area shape="rect" id="node24" href="$class_planning_1_1_tree_1_1_point.html" title="base class for a tree point " alt="" coords="321,269,465,299"/>
-<area shape="rect" id="node30" href="$class_planning_1_1_path.html" title="Represents a path as a series of 2d points. " alt="" coords="632,107,739,136"/>
+<area shape="rect" id="node30" href="$class_planning_1_1_path.html" title="Represents a motion path as a series of {pos, vel} pairs. " alt="" coords="632,107,739,136"/>
 <area shape="rect" id="node4" href="$struct_motion_constraints.html" title="This class contains the motion constraints that the high&#45;level logic sets for a robot. " alt="" coords="1192,416,1320,445"/>
 <area shape="rect" id="node6" href="$class_config_double.html" title="ConfigDouble" alt="" coords="907,432,1008,461"/>
 <area shape="rect" id="node8" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="643,432,728,461"/>

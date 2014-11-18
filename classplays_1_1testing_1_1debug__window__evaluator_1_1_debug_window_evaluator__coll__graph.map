@@ -1,5 +1,5 @@
 <map id="plays.testing.debug_window_evaluator.DebugWindowEvaluator" name="plays.testing.debug_window_evaluator.DebugWindowEvaluator">
-<area shape="rect" id="node2" href="$classplay_1_1_play.html" title="A play coordinates the entire team of robots Only play runs at a time By default, the RootPlay (which..." alt="" coords="79,256,153,285"/>
+<area shape="rect" id="node2" href="$classplay_1_1_play.html" title="A play coordinates the entire team of robots. " alt="" coords="79,256,153,285"/>
 <area shape="rect" id="node4" href="$classcomposite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="13,161,219,207"/>
 <area shape="rect" id="node6" href="$classbehavior_1_1_behavior.html" title="Behavior is an abstract superclass for Skill, Play, etc. " alt="" coords="53,83,179,112"/>
 <area shape="rect" id="node8" href="$classfsm_1_1_state_machine.html" title="generic hierarchial state machine class states can have substates. " alt="" coords="52,5,180,35"/>

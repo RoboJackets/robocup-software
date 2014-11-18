@@ -119,7 +119,7 @@ $(document).ready(function(){initNavTree('class_planning_1_1_path.html','');});
 </div><!--header-->
 <div class="contents">
 
-<p>Represents a path as a series of 2d points.  
+<p>Represents a motion path as a series of {pos, vel} pairs.  
  <a href="class_planning_1_1_path.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -230,7 +230,8 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>maxAcceleration</b> 
 <tr class="separator:a2f60f29802d342a2de90e6542b452223"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Represents a path as a series of 2d points. </p>
+<div class="textblock"><p>Represents a motion path as a series of {pos, vel} pairs. </p>
+<p>The path represents a function of position given time that the robot should follow. A line-segment-based path comes from the planner, then we use cubic bezier curves to interpolate and smooth it out. This is done via the evaulate() method. </p>
 </div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Collaboration diagram for Planning::Path:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -424,7 +425,7 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>maxAcceleration</b> 
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespace_planning.html">Planning</a></li><li class="navelem"><a class="el" href="class_planning_1_1_path.html">Path</a></li>
-    <li class="footer">Generated on Sun Nov 16 2014 20:16:29 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Nov 18 2014 21:32:14 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.8 </li>
   </ul>

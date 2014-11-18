@@ -5,7 +5,7 @@
 <area shape="rect" id="node5" href="$classcomposite__behavior_1_1_composite_behavior.html" title="A composite behavior is one that has 0+ named subbehaviors this class has methods for making it easy ..." alt="" coords="397,1035,603,1082"/>
 <area shape="rect" id="node69" href="$classsingle__robot__behavior_1_1_single_robot_behavior.html" title="single_robot_behavior.Single\lRobotBehavior" alt="" coords="407,1506,593,1553"/>
 <area shape="rect" id="node94" href="$classtimed__behavior_1_1_timed_behavior.html" title="TimedBehavior wraps a subbehavior and allows us to easily place a time limit on it. " alt="" coords="400,1576,600,1605"/>
-<area shape="rect" id="node7" href="$classplay_1_1_play.html" title="A play coordinates the entire team of robots Only play runs at a time By default, the RootPlay (which..." alt="" coords="721,813,796,843"/>
+<area shape="rect" id="node7" href="$classplay_1_1_play.html" title="A play coordinates the entire team of robots. " alt="" coords="721,813,796,843"/>
 <area shape="rect" id="node57" href="$classsingle__robot__composite__behavior_1_1_single_robot_composite_behavior.html" title="Behavior that applies to a single ROBOT and may have up to one subbehavior at any time Most of the im..." alt="" coords="651,1181,867,1245"/>
 <area shape="rect" id="node59" href="$classtactics_1_1behavior__sequence_1_1_behavior_sequence.html" title="tactics.behavior_sequence.\lBehaviorSequence" alt="" coords="668,866,849,913"/>
 <area shape="rect" id="node61" href="$classtactics_1_1circle__near__ball_1_1_circle_near_ball.html" title="Robots position themselves along a portion of the circle centered at the ball. " alt="" coords="691,935,827,982"/>
