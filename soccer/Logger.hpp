@@ -1,4 +1,7 @@
 /**
+ * @brief The Logger stores and saves the state of the game at each point in time.
+ * 
+ * @details
  * This logger implements a circular buffer for recent history and writes all
  * frames to disk.
  *

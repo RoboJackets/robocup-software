@@ -9,7 +9,11 @@
 namespace Planning
 {
 	/**
-	 *	Represents a path as a series of 2d points
+	 * @brief Represents a motion path as a series of {pos, vel} pairs.
+	 *
+	 * @details The path represents a function of position given time that the robot should follow.  A
+	 * line-segment-based path comes from the planner, then we use cubic bezier curves to interpolate
+	 * and smooth it out.  This is done via the evaulate() method.
 	 */
 	class Path
 	{

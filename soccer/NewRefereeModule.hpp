@@ -100,6 +100,12 @@ enum Command {
 std::string stringFromCommand(Command c);
 }
 
+
+/**
+ * @brief A packet we received over the network from ssl-refbox
+ *
+ * @details Contains the protobuf packet from the refbox and a timestamp of when we received it.
+ */
 class NewRefereePacket
 {
 public:
@@ -110,6 +116,15 @@ public:
 	SSL_Referee wrapper;
 };
 
+/**
+ * @brief The ref module listens to a port for referee packets over the network.
+ * 
+ * @details Referee packets are sent out from the [ssl-refbox](https://github.com/Hawk777/ssl-refbox) program.
+ * You can see the [protobuf packet](https://github.com/Hawk777/ssl-refbox/blob/master/referee.proto) for full details,
+ * but the packets contains info about which stage of the game it is, team scores, yellow/red cards, etc.
+ *
+ * Each time a new packet arrives, the ref module updates the GameState object with the new information.
+ */
 class NewRefereeModule: public QThread
 {
 public:
