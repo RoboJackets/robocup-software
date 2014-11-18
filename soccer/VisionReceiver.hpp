@@ -1,14 +1,12 @@
 #pragma once
 
 #include <protobuf/messages_robocup_ssl_wrapper.pb.h>
+#include <Network.hpp>
 
 #include <QThread>
 #include <QMutex>
-
 #include <vector>
-
 #include <stdint.h>
-#include <Network.hpp>
 
 class QUdpSocket;
 
@@ -22,9 +20,11 @@ public:
 	SSL_WrapperPacket wrapper;
 };
 
+
 /**
- * Receives vision packets over UDP and places them in a buffer until they are read.
+ * @brief Receives vision packets over UDP and places them in a buffer until they are read.
  * 
+ * @details
  * When start() is called, a new thread is spawned that listens on a UDP port for packets.
  * If sim = true, it tries both simulator ports until one works.  Otherwise, it connects to the port
  * specified in the constructor.

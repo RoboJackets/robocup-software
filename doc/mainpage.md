@@ -13,6 +13,18 @@ If you're new to our codebase, we'd recommend you start by checking out the foll
 
 * Processor
 * Gameplay::GameplayModule
-* The python Play class
+* The python play.Play class
 * SystemState
 * OurRobot
+
+
+A few other classes that are helpful for more understanding are:
+
+* Logger
+* RobotFilter
+* VisionReceiver
+* NewRefereeModule
+* GameState
+* Planning::RRTPlanner
+* Planning::Path
+* MotionControl
