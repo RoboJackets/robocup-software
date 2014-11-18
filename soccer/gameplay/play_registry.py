@@ -139,14 +139,14 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             return self._name
 
 
-        def recalculate_scores(self, modal):
+        def recalculate_scores(self, model):
             for child in self._children:
-                if child.recalculate_scores(modal):
+                if child.recalculate_scores(model):
                     row = child.parent.children.index(child)
                     col = 1
                     parent = child.parent
-                    index = modal.createIndex(row, col, child)
-                    modal.dataChanged.emit(index, index) # , [QtCore.Qt.DisplayRole]
+                    index = model.createIndex(row, col, child)
+                    model.dataChanged.emit(index, index) # , [QtCore.Qt.DisplayRole]
                 return False
 
 
@@ -239,7 +239,7 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             self._enabled = value
 
 
-        def recalculate_scores(self, modal):
+        def recalculate_scores(self, model):
             last_score = self._last_score
             self._last_score = self.play_class.score()
             if last_score != self._last_score:
