@@ -66,14 +66,8 @@ class PlayRegistry(QtCore.QAbstractItemModel):
 
     # cache and calculate the score() function for each play class
     def recalculate_scores(self):
-        self.root.recalculate_scores()
-
-        for node in self:
-            row = node.parent.children.index(node)
-            col = 1
-            parent = node.parent
-            index = self.createIndex(row, col, node)
-            self.dataChanged.emit(index, index) # , [QtCore.Qt.DisplayRole]
+        self.root.recalculate_scores(self)
+            
 
 
     ## Get a list of all plays in the tree that are currently enabled
@@ -145,9 +139,18 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             return self._name
 
 
-        def recalculate_scores(self):
+        # Instructs all child nodes to recalculate their scores.
+        # if a child node returns True indicating that the score value changed, we
+        # emit the "dataChanged" signal with the corresponding node index
+        def recalculate_scores(self, model):
             for child in self._children:
-                child.recalculate_scores()
+                if child.recalculate_scores(model):
+                    row = child.parent.children.index(child)
+                    col = 1
+                    parent = child.parent
+                    index = model.createIndex(row, col, child)
+                    model.dataChanged.emit(index, index) # , [QtCore.Qt.DisplayRole]
+            return False
 
 
         def __delitem__(self, name):
@@ -239,8 +242,13 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             self._enabled = value
 
 
-        def recalculate_scores(self):
+        # recalculates and caches the score value for the play
+        # returns True if the value changed and False otherwise
+        def recalculate_scores(self, model):
+            prev = self._last_score
             self._last_score = self.play_class.score()
+            return prev != self._last_score
+
 
 
         @property
