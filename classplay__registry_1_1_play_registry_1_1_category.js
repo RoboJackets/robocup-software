@@ -9,6 +9,6 @@ var classplay__registry_1_1_play_registry_1_1_category =
     [ "name", "classplay__registry_1_1_play_registry_1_1_category.html#adfa31fc07ab52f723a1be637f494a52a", null ],
     [ "parent", "classplay__registry_1_1_play_registry_1_1_category.html#a5a6fc51c15a1edaa7998df4c333ec282", null ],
     [ "parent", "classplay__registry_1_1_play_registry_1_1_category.html#a9c47f8da47fe061481cf02ef4ebc5e46", null ],
-    [ "recalculate_scores", "classplay__registry_1_1_play_registry_1_1_category.html#acbcc4faf1f97f76c4628dac49ef9250c", null ],
+    [ "recalculate_scores", "classplay__registry_1_1_play_registry_1_1_category.html#a70b2f1e237bb5e2d10bf7970c67b65b6", null ],
     [ "row", "classplay__registry_1_1_play_registry_1_1_category.html#a9a624b4765f443a901c9185fb4d94a17", null ]
 ];

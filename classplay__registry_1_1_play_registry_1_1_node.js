@@ -11,5 +11,5 @@ var classplay__registry_1_1_play_registry_1_1_node =
     [ "parent", "classplay__registry_1_1_play_registry_1_1_node.html#a891cd8eb53409f421f90bc601518713f", null ],
     [ "play_class", "classplay__registry_1_1_play_registry_1_1_node.html#a6dc8101bafda82c19ce340d99710c2e1", null ],
     [ "play_class", "classplay__registry_1_1_play_registry_1_1_node.html#a78433fbe5ecc5cefcfc56264675daa38", null ],
-    [ "recalculate_scores", "classplay__registry_1_1_play_registry_1_1_node.html#a4232398f5787fda4f453125c2897e6fd", null ]
+    [ "recalculate_scores", "classplay__registry_1_1_play_registry_1_1_node.html#a1541be4bce02230f081fb5ce06eb38a5", null ]
 ];
