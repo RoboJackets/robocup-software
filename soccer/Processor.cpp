@@ -379,6 +379,22 @@ void Processor::run()
 		// Update gamestate w/ referee data
 		_refereeModule->updateGameState(blueTeam());
 		_refereeModule->spinKickWatcher();
+
+
+		string yellowname,bluename;
+
+		if(blueTeam()){
+			bluename = _state.gameState.OurInfo.name;
+			yellowname = _state.gameState.TheirInfo.name;
+		}
+		else{
+			yellowname = _state.gameState.OurInfo.name;
+			bluename = _state.gameState.TheirInfo.name;
+		}
+
+
+		_state.logFrame->set_team_name_blue(bluename);
+		_state.logFrame->set_team_name_yellow(yellowname);
 		
 		if (_gameplayModule)
 		{

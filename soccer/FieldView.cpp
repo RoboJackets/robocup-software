@@ -1,4 +1,4 @@
-
+ 	
 #include <FieldView.hpp>
 
 #include <stdio.h>
@@ -172,7 +172,9 @@ void FieldView::drawWorldSpace(QPainter& p)
 	// Draw the field
 	drawField(p, frame);
 	
-
+	//Draw Team Names
+	drawText(p,QPointF(-1.75,0), QString(frame->team_name_blue().c_str()) , true); //Blue
+	drawText(p,QPointF(-4.75,0), QString(frame->team_name_yellow().c_str()), true); //Yellow
 
 	///	draw a comet trail behind each robot so we can see its path easier
 	int pastLocationCount = 50;
@@ -542,7 +544,7 @@ void FieldView::drawField(QPainter& p, const LogFrame *frame)
 	p.drawLine(QLineF(x[0], y[0], x[1], y[0]));
 	p.drawLine(QLineF(x[0], y[1], x[1], y[1]));
 	p.drawLine(QLineF(x[1], y[1], x[1], y[0]));
-	
+		
 
 	p.restore();
 }
