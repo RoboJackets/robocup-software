@@ -2,7 +2,9 @@
 #include "TeamInfo.hpp"
 
 /**
- * this is the set of rules that are in effect
+ * @brief Holds the state of the game according to the referee
+ * 
+ * @details Contains information on what period of the game it is, what type of play to run, team scores, time remaining, etc.
  */
 class GameState
 {

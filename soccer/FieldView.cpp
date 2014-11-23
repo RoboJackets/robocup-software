@@ -13,7 +13,6 @@
 #include <QLayout>
 #include <QPainter>
 #include <QResizeEvent>
-#include <boost/foreach.hpp>
 #include <algorithm>
 #include <sys/socket.h>
 
@@ -23,11 +22,23 @@ using namespace std;
 using namespace boost;
 using namespace Packet;
 
-QColor ballColor(0xff, 0x90, 0);
+static QPen redPen(Qt::red, 0);
+static QPen bluePen(Qt::blue, 0);
+static QPen yellowPen(Qt::yellow, 0);
+static QPen blackPen(Qt::black, 0);
+static QPen whitePen(Qt::white, 0);
+static QPen greenPen(Qt::green, 0);
+static QPen grayPen(Qt::gray, 0);
+
+static QPen tempPen(Qt::white, 0);
+
+static QColor ballColor(0xff, 0x90, 0);
+static QPen ballPen(ballColor, 0);
 
 FieldView::FieldView(QWidget* parent) :
 	QWidget(parent)
 {
+
 	showRawRobots = false;
 	showRawBalls = false;
 	showCoords = false;
@@ -66,7 +77,8 @@ void FieldView::paintEvent(QPaintEvent* e)
 {
 	QPainter p(this);
 	
-	if (!live) {
+	if (!live)
+	{
 		// Non-live border
 		p.setPen(QPen(Qt::red, 4));
 		p.drawRect(rect());
@@ -77,7 +89,7 @@ void FieldView::paintEvent(QPaintEvent* e)
 	p.scale(width(), -height());
 	p.rotate(_rotate * 90);
 	p.scale(1.0 / Floor_Length, 1.0 / Floor_Width);
-
+	
 	// Set text rotation for world space
 	_textRotation = -_rotate * 90;
 	
@@ -161,9 +173,10 @@ void FieldView::drawWorldSpace(QPainter& p)
 	drawField(p, frame);
 	
 
+
 	///	draw a comet trail behind each robot so we can see its path easier
 	int pastLocationCount = 50;
-	const float prev_loc_scale = 0.8;
+	const float prev_loc_scale = 0.4;
 	for (int i = 1; i < pastLocationCount + 1 && i < _history->size(); i++) {
 		const LogFrame *oldFrame = _history->at(i).get();
 		if (oldFrame) {
@@ -179,7 +192,7 @@ void FieldView::drawWorldSpace(QPainter& p)
 
 				QColor blue = Qt::blue;
 				blue.setAlphaF(alpha);
-				p.setPen(QPen(blue, 0.02));
+				p.setPen(bluePen);
 				p.setBrush(QBrush(blue));
 				for (const SSL_DetectionRobot &r : detect.robots_blue()) {
 					QPointF pos(r.x() / 1000, r.y() / 1000);
@@ -189,7 +202,7 @@ void FieldView::drawWorldSpace(QPainter& p)
 				QColor yellow = Qt::yellow;
 				yellow.setAlphaF(alpha);
 				p.setBrush(QBrush(yellow));
-				p.setPen(QPen(yellow, 0.02));
+				p.setPen(yellowPen);
 				for (const SSL_DetectionRobot &r : detect.robots_yellow()) {
 					QPointF pos(r.x() / 1000, r.y() / 1000);
 					p.drawEllipse(pos, Robot_Radius * prev_loc_scale, Robot_Radius * prev_loc_scale);
@@ -202,8 +215,9 @@ void FieldView::drawWorldSpace(QPainter& p)
 	// Raw vision
 	if (showRawBalls || showRawRobots)
 	{
-		p.setPen(QColor(0xcc, 0xcc, 0xcc));
-		BOOST_FOREACH(const SSL_WrapperPacket& wrapper, frame->raw_vision())
+		tempPen.setColor(QColor(0xcc, 0xcc, 0xcc));
+		p.setPen(tempPen);
+		for (const SSL_WrapperPacket& wrapper :  frame->raw_vision())
 		{
 			if (!wrapper.has_detection())
 			{
@@ -215,24 +229,25 @@ void FieldView::drawWorldSpace(QPainter& p)
 			
 			if (showRawRobots)
 			{
-				BOOST_FOREACH(const SSL_DetectionRobot& r, detect.robots_blue())
+				for (const SSL_DetectionRobot& r :  detect.robots_blue())
 				{
 					QPointF pos(r.x() / 1000, r.y() / 1000);
 					drawRobot(p, true, r.robot_id(), pos, r.orientation());
+// 					p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000), Robot_Radius, Robot_Radius);
 				}
 				
-				BOOST_FOREACH(const SSL_DetectionRobot& r, detect.robots_yellow())
+				for (const SSL_DetectionRobot& r :  detect.robots_yellow())
 				{
 					QPointF pos(r.x() / 1000, r.y() / 1000);
 					drawRobot(p, false, r.robot_id(), pos, r.orientation());
+// 					p.drawEllipse(QPointF(r.x() / 1000, r.y() / 1000), Robot_Radius, Robot_Radius);
 				}
 			}
 			
 			if (showRawBalls)
 			{
-				BOOST_FOREACH(const SSL_DetectionBall& b, detect.balls())
+				for (const SSL_DetectionBall& b :  detect.balls())
 				{
-					p.setPen(QPen(ballColor, 0.02));
 					p.drawEllipse(QPointF(b.x() / 1000, b.y() / 1000), Ball_Radius, Ball_Radius);
 				}
 			}
@@ -277,7 +292,9 @@ void FieldView::drawTeamSpace(QPainter& p)
 			
 			QColor c = ballColor;
 			c.setAlpha(255 - i);
-			p.setPen(QPen(c, 0.02));
+
+			tempPen.setColor(c);
+			p.setPen(tempPen);
 			
 			p.drawEllipse(QRectF(-Ball_Radius + pos.x(), -Ball_Radius + pos.y(),
 					Ball_Diameter, Ball_Diameter));
@@ -285,11 +302,12 @@ void FieldView::drawTeamSpace(QPainter& p)
 	}
 	
 	// Debug lines
-	BOOST_FOREACH(const DebugPath& path, frame->debug_paths())
+	for (const DebugPath& path :  frame->debug_paths())
 	{
 		if (path.layer() < 0 || layerVisible(path.layer()))
 		{
-			p.setPen(QPen(qcolor(path.color()), 0.02));
+			tempPen.setColor(qcolor(path.color()));
+			p.setPen(tempPen);
 			std::vector<QPointF> pts;
 			for (int i = 0; i < path.points_size(); ++i)
 			{
@@ -300,28 +318,30 @@ void FieldView::drawTeamSpace(QPainter& p)
 	}
 
 	// Debug circles
-	BOOST_FOREACH(const DebugCircle& c, frame->debug_circles())
+	for (const DebugCircle& c :  frame->debug_circles())
 	{
 		if (c.layer() < 0 || layerVisible(c.layer()))
 		{
-			p.setPen(QPen(qcolor(c.color()), 0.02));
+			tempPen.setColor(c.color());
+			p.setPen(tempPen);
 			p.drawEllipse(qpointf(c.center()), c.radius(), c.radius());
 		}
 	}
 
 	// Debug text
-	BOOST_FOREACH(const DebugText& text, frame->debug_texts())
+	for (const DebugText& text :  frame->debug_texts())
 	{
 		if (text.layer() < 0 || layerVisible(text.layer()))
 		{
-			p.setPen(QPen(qcolor(text.color()), 0.02));
+			tempPen.setColor(text.color());
+			p.setPen(tempPen);
 			drawText(p, qpointf(text.pos()), QString::fromStdString(text.text()), text.center());
 		}
 	}
 
 	// Debug polygons
 	p.setPen(Qt::NoPen);
-	BOOST_FOREACH(const DebugPath& path, frame->debug_polygons())
+	for (const DebugPath& path :  frame->debug_polygons())
 	{
 		if (path.layer() < 0 || layerVisible(path.layer()))
 		{
@@ -349,14 +369,14 @@ void FieldView::drawTeamSpace(QPainter& p)
 	QPointF rtY = qpointf(Geometry2d::Point(-1, 0).rotated(-_rotate * 90));
 	
 	// Opponent robots
-	BOOST_FOREACH(const LogFrame::Robot &r, frame->opp())
+	for (const LogFrame::Robot &r :  frame->opp())
 	{
 		drawRobot(p, !frame->blue_team(), r.shell(), qpointf(r.pos()), r.angle(), r.ball_sense_status() == HasBall);
 	}
 	
 	// Our robots
 	int manualID = frame->manual_id();
-	BOOST_FOREACH(const LogFrame::Robot &r, frame->self())
+	for (const LogFrame::Robot &r :  frame->self())
 	{
 		QPointF center = qpointf(r.pos());
 		
@@ -386,18 +406,19 @@ void FieldView::drawTeamSpace(QPainter& p)
 		// Highlight the manually controlled robot
 		if (manualID == r.shell())
 		{
-			p.setPen(Qt::green);
+			p.setPen(greenPen);
 			const float r = Robot_Radius + .05;
 			p.drawEllipse(center, r, r);
 		}
 		
 		// Robot text
 		QPointF textPos = center - rtX * 0.2 - rtY * (Robot_Radius + 0.1);
-		BOOST_FOREACH(const DebugText& text, r.text())
+		for (const DebugText& text :  r.text())
 		{
 			if (text.layer() < 0 || layerVisible(text.layer()))
 			{
-				p.setPen(qcolor(text.color()));
+				tempPen.setColor(text.color());
+				p.setPen(tempPen);
 				drawText(p, textPos, QString::fromStdString(text.text()), false);
 				textPos -= rtY * 0.1;
 			}
@@ -410,7 +431,7 @@ void FieldView::drawTeamSpace(QPainter& p)
 		QPointF pos = qpointf(frame->ball().pos());
 		QPointF vel = qpointf(frame->ball().vel());
 		
-		p.setPen(QPen(ballColor, 0.02));
+		p.setPen(ballPen);
 		p.setBrush(ballColor);
 		p.drawEllipse(QRectF(-Ball_Radius + pos.x(), -Ball_Radius + pos.y(),
 				Ball_Diameter, Ball_Diameter));
@@ -427,7 +448,7 @@ void FieldView::drawText(QPainter &p, QPointF pos, QString text, bool center)
 	p.save();
 	p.translate(pos);
 	p.rotate(_textRotation);
-	p.scale(0.010, -0.010);
+	p.scale(0.008, -0.008);
 	
 	if (center)
 	{
@@ -443,7 +464,7 @@ void FieldView::drawText(QPainter &p, QPointF pos, QString text, bool center)
 
 void FieldView::drawCoords(QPainter& p)
 {
-	p.setPen(Qt::gray);
+	p.setPen(grayPen);
 	
 	// X
 	p.drawLine(QPointF(0, 0), QPointF(0.25, 0));
@@ -528,21 +549,23 @@ void FieldView::drawField(QPainter& p, const LogFrame *frame)
 
 void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos, float theta, bool hasBall, bool faulty)
 {
-	painter.setPen(QPen(Qt::white, 0.02));
+	painter.setPen(Qt::NoPen);
 	painter.setBrush(Qt::NoBrush);
 	
 	painter.save();
 
 	painter.translate(pos.x(), pos.y());
 	
-	if (faulty) {
-		painter.setPen(QPen(Qt::red, 0.02));
-	} else if (blueRobot) {
-		painter.setPen(QPen(Qt::blue, 0.005));
-		painter.setBrush(QBrush(Qt::blue));
+	if (faulty)
+	{
+		painter.setPen(redPen);
+	} else if (blueRobot)
+	{
+		painter.setPen(bluePen);
+		painter.setBrush(Qt::blue);
 	} else {
-		painter.setPen(QPen(Qt::yellow, 0.005));
-		painter.setBrush(QBrush(Qt::yellow));
+		painter.setPen(yellowPen);
+		painter.setBrush(Qt::yellow);
 	}
 	
 	painter.rotate(theta * RadiansToDegrees + 90);
@@ -551,7 +574,7 @@ void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos
 	
 	int start = span*16 + 90*16;
 	int end = 360*16 - (span*2)*16;
-	const float r = Robot_Radius * 1.5;
+	const float r = Robot_Radius;
 	painter.drawChord(QRectF(-r, -r, r * 2, r * 2), start, end);
 
     if(showDotPatterns)
@@ -571,7 +594,7 @@ void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos
 	
 	if (hasBall)
 	{
-		painter.setPen(Qt::red);
+		painter.setPen(redPen);
 		const float r = Robot_Radius * 0.75f;
 		painter.drawChord(QRectF(-r, -r, r * 2, r * 2), start, end);
 	}
@@ -581,8 +604,11 @@ void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos
 	//	draw shell number
 	painter.save();
 	painter.translate(pos.x(), pos.y());
-	QColor penColor = blueRobot ? Qt::white : Qt::black;
-	painter.setPen(QPen(penColor, 0.1));
+	if (blueRobot) {
+		painter.setPen(whitePen);
+	} else {
+		painter.setPen(blackPen);
+	}
 	drawText(painter, QPointF(), QString::number(ID));
 	painter.restore();
 }

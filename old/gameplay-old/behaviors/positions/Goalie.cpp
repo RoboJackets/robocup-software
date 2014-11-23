@@ -5,7 +5,7 @@
 #include <gameplay/evaluation/WindowEvaluator.hpp>
 #include <Geometry2d/util.h>
 
-#include <boost/foreach.hpp>
+
 
 #include <Constants.hpp>
 
@@ -45,7 +45,7 @@ void Gameplay::Behaviors::Goalie::assign(set<OurRobot *> &available, int ID) {
 	}
 	else if(ID >= 0 && ( robot == NULL || (robot && robot->shell() != ID) ) )
 	{
-		BOOST_FOREACH(OurRobot *r, available)
+		for (OurRobot *r :  available)
 		{
 			if(r->shell() == ID)
 			{
@@ -80,7 +80,7 @@ Robot* Gameplay::Behaviors::Goalie::opponentWithBall()
 {
 	Robot* closest = 0;
 	float bestDist = 0;
-	BOOST_FOREACH(Robot *r, state()->opp){
+	for (Robot *r :  state()->opp){
 		float dist = r->pos.distTo(ball().pos);
 		if (!closest || dist < bestDist)
 		{
@@ -237,7 +237,7 @@ bool Gameplay::Behaviors::Goalie::run()
 		// Touch the goal line, as required by the rules, and move to block the shot.
 		Robot *penaltyKicker = 0;
 		float smallestDist = 0;
-		BOOST_FOREACH(Robot *r, state()->opp)
+		for (Robot *r :  state()->opp)
 		{
 			float dist = r->pos.distTo(Point(0,Field_PenaltyDist));
 			if(!penaltyKicker || dist < smallestDist)
@@ -298,7 +298,7 @@ bool Gameplay::Behaviors::Goalie::run()
 
 		Robot* closest = 0;
 		float bestDist = 0;
-		BOOST_FOREACH(Robot *r, state()->opp){
+		for (Robot *r :  state()->opp){
 			float dist = r->pos.distTo(ball().pos);
 			if (!closest || dist < bestDist)
 			{

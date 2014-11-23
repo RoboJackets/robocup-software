@@ -1,6 +1,5 @@
 #include "DemoYank.hpp"
 
-#include <boost/foreach.hpp>
 
 using namespace std;
 

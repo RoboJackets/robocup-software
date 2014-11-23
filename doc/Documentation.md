@@ -15,7 +15,7 @@ Doxygen has support for many different languages, but the comment syntax differs
 
 ### C++
 
-```
+\code
 /**
  * a normal member taking two arguments and returning an integer value.
  * @param a an integer argument.
@@ -27,12 +27,12 @@ Doxygen has support for many different languages, but the comment syntax differs
  * @return The test results
  */
  int testMe(int a,const char *s);
-```
+\endcode
 
 
 ### Python
 
-```
+\code{.py}
 ## Documentation for a class.
 #
 #  More details.
@@ -52,12 +52,11 @@ class PyClass:
 
     ## @var _memVar
     #  a member variable
-```
-
+\endcode
 
 ## Additional Documentation
 
-In addition to turning inline code comments into documentation, Doxygen can also include docs in other formats.  This page that you are viewing right now and several others are written in [Markdown](http://daringfireball.net/projects/markdown/syntax).  See the files in `soccer/doc/` for examples.
+In addition to turning inline code comments into documentation, Doxygen can also include docs in other formats.  This page that you are viewing right now and several others are written in [Markdown](http://daringfireball.net/projects/markdown/syntax).  See the files in `doc` for examples.
 
 
 ## Compiling the documentation
@@ -70,3 +69,4 @@ Our documentation website automagically updates everytime someone pushes the mas
 ## Further configuration
 
 Doxgen looks at the `Doxyfile` in the root of our project to configure things such as which files to include and how to display the output.
+

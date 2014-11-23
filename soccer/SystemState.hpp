@@ -23,6 +23,10 @@ namespace Packet
 	class LogFrame;
 }
 
+
+/**
+ * @brief Our beliefs about the ball's position and velocity
+ */
 class Ball
 {
 public:

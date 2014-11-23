@@ -16,7 +16,6 @@
 #include <QString>
 #include <QMessageBox>
 
-#include <boost/foreach.hpp>
 
 #include "MainWindow.hpp"
 #include "Configuration.hpp"
@@ -267,7 +266,7 @@ int main (int argc, char* argv[])
 	}
 	
 	Configuration config;
-	BOOST_FOREACH(Configurable *obj, Configurable::configurables())
+	for (Configurable *obj :  Configurable::configurables())
 	{
 		obj->createConfiguration(&config);
 	}

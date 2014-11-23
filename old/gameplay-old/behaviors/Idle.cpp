@@ -1,6 +1,6 @@
 #include "Idle.hpp"
 
-#include <boost/foreach.hpp>
+
 
 using namespace std;
 
@@ -11,7 +11,7 @@ Gameplay::Behaviors::Idle::Idle(GameplayModule *gameplay) :
 
 Gameplay::Behaviors::Idle::~Idle()
 {
-    BOOST_FOREACH(OurRobot* r, robots)
+    for (OurRobot* r :  robots)
     {
         if(r)
             r->resetAvoidBall();
@@ -44,7 +44,7 @@ bool Gameplay::Behaviors::Idle::run()
 	
 	state()->drawLine(ball().pos, Geometry2d::Point());
 	
-	BOOST_FOREACH(OurRobot *r, robots)
+	for (OurRobot *r :  robots)
 	{
 		if (r->visible)
 		{
@@ -86,7 +86,7 @@ bool Gameplay::Behaviors::Idle::run(const Geometry2d::Segment& line)
 
 	Geometry2d::Point incr = line.delta().normalized() * length / (float) robots.size();
 
-	BOOST_FOREACH(OurRobot* r, robots)
+	for (OurRobot* r :  robots)
 	{
 		r->move(loc);
 		loc += incr;

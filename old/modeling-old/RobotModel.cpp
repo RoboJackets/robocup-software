@@ -1,6 +1,5 @@
 #include <iostream>
 #include <limits>
-#include <boost/foreach.hpp>
 #include "RobotModel.hpp"
 #include <Utils.hpp>
 
@@ -143,7 +142,7 @@ void Modeling::RobotModel::update(uint64_t cur_time)
 	// debug by printing observations
 	if (verbose) {
 		cout << "Updating RobotModel with observations: ";
-		BOOST_FOREACH(const Observation_t obs, _observations) {
+		for (const Observation_t obs :  _observations) {
 			cout << "(" << obs.pos.x << ", " << obs.pos.y << ") ";
 		}
 		cout << endl;
@@ -173,7 +172,7 @@ void Modeling::RobotModel::update(uint64_t cur_time)
 	Geometry2d::Point observedPos = _observations.front().pos;
 	float observedAngle = _observations.front().angle;
 	float bestError = std::numeric_limits<float>::infinity();
-	BOOST_FOREACH(const Observation_t& obs, _observations) {
+	for (const Observation_t& obs :  _observations) {
 		float error = (obs.pos - predictPos).magsq()
 				+ fabs(fixAngleDegrees(obs.angle - predictAngle));
 		if (error < bestError) {

@@ -3,16 +3,15 @@ enable_testing()
 
 
 file(GLOB TEST_SRC "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
-add_executable(run_tests ${TEST_SRC})
-qt5_use_modules(run_tests Core Widgets Xml)
-add_dependencies(run_tests googletest)
+add_executable(test-cpp ${TEST_SRC})
+set_target_properties(test-cpp PROPERTIES EXCLUDE_FROM_ALL TRUE)
+qt5_use_modules(test-cpp Core Widgets Xml)
+add_dependencies(test-cpp googletest)
 include_directories(${GTEST_INCLUDE_DIRS})
-# include_directories(${GTEST_LIBS_DIR})
-# include_directories("${PROJECT_BINARY_DIR}/test/src/googletest-build")
-target_link_libraries(run_tests
+target_link_libraries(test-cpp
     ${GTEST_LIBS_DIR}/libgtest.a
     ${GTEST_LIBS_DIR}/libgtest_main.a
 )
-target_link_libraries(run_tests robocup)
+target_link_libraries(test-cpp robocup)
 
-add_test(test1 run_tests)
+add_test(test1 test-cpp)

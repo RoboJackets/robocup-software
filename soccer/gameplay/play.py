@@ -1,8 +1,8 @@
 import composite_behavior
 
 
-## A play coordinates the entire team of robots
-# Only play runs at a time
+## @brief A play coordinates the entire team of robots
+# @details Only play runs at a time.
 # By default, the RootPlay (which every Play is a subbehavior of) handles the Goalie,
 # however, by overriding the handles_goalie() class method, a Play can choose to handle
 # the goalie on its own, which allows for greater coordination.

@@ -1,6 +1,5 @@
 #include "DemoPivotAttack.hpp"
 
-#include <boost/foreach.hpp>
 
 using namespace std;
 using namespace Geometry2d;

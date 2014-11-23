@@ -22,21 +22,11 @@ struct JoystickControlValues;
 class Radio;
 class BallTracker;
 
-namespace StateIdentification
-{
-	class StateIDModule;
-}
 
 namespace Gameplay
 {
 	class GameplayModule;
 }
-
-namespace Motion
-{
-	class RobotController;
-}
-
 
 
 class DebugQMutex: public QMutex {

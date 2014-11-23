@@ -1,4 +1,3 @@
-#include <boost/foreach.hpp>
 #include <SystemState.hpp>
 #include <protobuf/LogFrame.pb.h>
 #include <LogUtils.hpp>
@@ -106,7 +105,7 @@ void SystemState::drawShape(const std::shared_ptr<Geometry2d::Shape>& obs, const
 
 void SystemState::drawCompositeShape(const Geometry2d::CompositeShape& group, const QColor &color, const QString &layer)
 {
-	BOOST_FOREACH(const std::shared_ptr<Geometry2d::Shape>& obs, group)
+	for (const std::shared_ptr<Geometry2d::Shape>& obs :  group)
 		drawShape(obs, color, layer);
 }
 

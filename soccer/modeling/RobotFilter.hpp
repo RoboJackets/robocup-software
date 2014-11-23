@@ -2,6 +2,13 @@
 
 #include <Robot.hpp>
 
+/**
+ * @brief An observation of a robot's position and angle at a certain time
+ *
+ * @details We get this data out of the packets that come from the visoin sytem.
+ * This is fed through RobotFilter, which then sets the position,
+ * angle, velocity, and angular velocity of the Robot.
+ */
 class RobotObservation
 {
 public:
@@ -22,8 +29,9 @@ public:
 		return time < other.time;
 	}
 };
+
 /**
- * adjusts robot vision for accuracy
+ * adjusts robot vision for accuracy and calculates velocities from positions
  */
 class RobotFilter
 {

@@ -1,6 +1,5 @@
 #include "DemoAttack.hpp"
 
-#include <boost/foreach.hpp>
 
 using namespace std;
 

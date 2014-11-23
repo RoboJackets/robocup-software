@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <limits>
-#include <boost/foreach.hpp>
+
 
 using namespace std;
 using namespace Geometry2d;
@@ -69,7 +69,7 @@ bool Gameplay::Plays::TheirFreekick::run()
 	OpponentRobot* closestRobot = NULL;
 	float closestRobotDist = numeric_limits<float>::infinity();
 	float closestOpenDist = numeric_limits<float>::infinity();
-	BOOST_FOREACH(OpponentRobot * r, state()->opp) {
+	for (OpponentRobot * r :  state()->opp) {
 		if (r && r->visible) {
 			// want maximum distance that is less than 3 meters from any of our robots
 			Point oppPos = r->pos;
@@ -77,7 +77,7 @@ bool Gameplay::Plays::TheirFreekick::run()
 			float max_relevant_robot_range = 3.0; // meters
 			float closestSelfDist = 100.0;
 			if (ballDist < max_relevant_robot_range) {
-				BOOST_FOREACH(OurRobot * s, state()->self) {
+				for (OurRobot * s :  state()->self) {
 					float selfDist = s->pos.distTo(oppPos);
 					if (selfDist < closestSelfDist) {
 						closestSelfDist = selfDist;

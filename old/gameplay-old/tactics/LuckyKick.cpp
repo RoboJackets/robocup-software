@@ -1,6 +1,5 @@
 #include "LuckyKick.hpp"
 #include <gameplay/behaviors/PivotKick.hpp>
-#include <boost/foreach.hpp>
 #include <Geometry2d/util.h>
 
 //namespace Gameplay { namespace Behaviors { REGISTER_CONFIGURABLE(LuckyKick) } }
@@ -136,7 +135,7 @@ namespace Gameplay {
 
 		Geometry2d::Segment kick_ray;
 		bool ok = get_kickray(robot, kick_ray);
-		BOOST_FOREACH(Robot* other, get_others(robot)) {
+		for (Robot* other :  get_others(robot)) {
 			if(!other->visible)
 				continue;
 			Geometry2d::Circle obstacle(other->pos, Robot_Radius + Ball_Radius);
@@ -164,7 +163,7 @@ namespace Gameplay {
 		window_eval.run(robot->pos, get_goalline());
 
 		bool open = false;
-		BOOST_FOREACH(Window* window, window_eval.windows) {
+		for (Window* window :  window_eval.windows) {
 			if(window->segment.length() > Ball_Radius) {
 				open = true;
 			}

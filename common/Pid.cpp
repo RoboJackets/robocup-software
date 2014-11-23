@@ -3,6 +3,7 @@
 #include <cstring>
 #include <stdio.h>
 #include <iostream>
+#include <math.h>
 
 using namespace std;
 
@@ -49,6 +50,10 @@ void Pid::setWindup(unsigned int w)
 
 float Pid::run(const float err)
 {
+	if (isnan(err))
+	{
+		return 0;
+	}
 	float dErr = err - _lastErr;
 	_lastErr = err;
 

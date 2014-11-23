@@ -1,6 +1,5 @@
 
 #include <iostream>
-#include <boost/foreach.hpp>
 
 #include "BallModel.hpp"
 #include <Configuration.hpp>
@@ -66,7 +65,7 @@ void Modeling::BallModel::run(uint64_t time)
 
 	// loop through the observations and determine if we got vision observations
 	bool gotCameraObservation = false;
-	BOOST_FOREACH(const observation_type& obs, _observations) {
+	for (const observation_type& obs :  _observations) {
 		if(obs.obs_type == BallModel::VISION){
 			gotCameraObservation = true;
 			break;
@@ -76,7 +75,7 @@ void Modeling::BallModel::run(uint64_t time)
 	// If there are camera observations, remove robot sensor observations.
 	vector<observation_type> goodObs;
 	if(gotCameraObservation){
-		BOOST_FOREACH(const observation_type& obs, _observations) {
+		for (const observation_type& obs :  _observations) {
 			if (obs.obs_type == BallModel::VISION) {
 				goodObs.push_back(obs);
 			}
