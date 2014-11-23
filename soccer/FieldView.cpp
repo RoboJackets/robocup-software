@@ -172,10 +172,6 @@ void FieldView::drawWorldSpace(QPainter& p)
 	// Draw the field
 	drawField(p, frame);
 	
-	//Draw Team Names
-	drawText(p,QPointF(-1.75,0), QString(frame->team_name_blue().c_str()) , true); //Blue
-	drawText(p,QPointF(-4.75,0), QString(frame->team_name_yellow().c_str()), true); //Yellow
-
 	///	draw a comet trail behind each robot so we can see its path easier
 	int pastLocationCount = 50;
 	const float prev_loc_scale = 0.4;
@@ -262,6 +258,13 @@ void FieldView::drawTeamSpace(QPainter& p)
 	// Get the latest LogFrame
 	const LogFrame *frame = _history->at(0).get();
 	
+	//Draw Team Names
+	p.setPen(bluePen);
+	drawText(p,QPointF(0,4.75), QString(frame->team_name_blue().c_str()) , true); //Blue
+	p.setPen(yellowPen);
+	drawText(p,QPointF(0,1.75), QString(frame->team_name_yellow().c_str()), true); //Yellow
+
+
 	// Block off half the field
 	if (!frame->use_our_half())
 	{
