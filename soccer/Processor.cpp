@@ -18,7 +18,6 @@
 #include <motion/MotionControl.hpp>
 #include <RobotConfig.hpp>
 
-#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
 #include <protobuf/messages_robocup_ssl_detection.pb.h>
@@ -166,20 +165,20 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 {
 	vector<BallObservation> ballObservations;
 	
-	BOOST_FOREACH(const SSL_DetectionFrame* frame, detectionFrames)
+	for (const SSL_DetectionFrame* frame : detectionFrames)
 	{
 		uint64_t time = frame->t_capture() * SecsToTimestamp;
 		
 		// Add ball observations
 		ballObservations.reserve(ballObservations.size() + frame->balls().size());
-		BOOST_FOREACH(const SSL_DetectionBall &ball, frame->balls())
+		for (const SSL_DetectionBall &ball : frame->balls())
 		{
 			ballObservations.push_back(BallObservation(_worldToTeam * Point(ball.x() / 1000, ball.y() / 1000), time));
 		}
 		
 		// Add robot observations
 		const RepeatedPtrField<SSL_DetectionRobot> &selfRobots = _blueTeam ? frame->robots_blue() : frame->robots_yellow();
-		BOOST_FOREACH(const SSL_DetectionRobot &robot, selfRobots)
+		for (const SSL_DetectionRobot &robot : selfRobots)
 		{
 			float angleRad = fixAngleRadians(robot.orientation() + _teamAngle);
 			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angleRad, time, frame->frame_number());
@@ -192,7 +191,7 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 		}
 		
 		const RepeatedPtrField<SSL_DetectionRobot> &oppRobots = _blueTeam ? frame->robots_yellow() : frame->robots_blue();
-		BOOST_FOREACH(const SSL_DetectionRobot &robot, oppRobots)
+		for (const SSL_DetectionRobot &robot : oppRobots)
 		{
 			float angleRad = fixAngleRadians(robot.orientation() + _teamAngle);
 			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angleRad, time, frame->frame_number());
@@ -207,16 +206,17 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 	
 	_ballTracker->run(ballObservations, &_state);
 	
-	BOOST_FOREACH(Robot *robot, _state.self)
+	for (Robot *robot : _state.self)
 	{
 		robot->filter()->predict(_state.logFrame->command_time(), robot);
 	}
 	
-	BOOST_FOREACH(Robot *robot, _state.opp)
+	for (Robot *robot : _state.opp)
 	{
 		robot->filter()->predict(_state.logFrame->command_time(), robot);
 	}
 }
+
 /**
  * program loop
  */
@@ -267,7 +267,7 @@ void Processor::run()
 			logConfig->set_simulation(_simulation);
 		}
 		
-		BOOST_FOREACH(OurRobot *robot, _state.self)
+		for (OurRobot *robot : _state.self)
 		{
 			// overall robot config
 			switch (robot->hardwareVersion())
@@ -294,7 +294,7 @@ void Processor::run()
 		vector<const SSL_DetectionFrame *> detectionFrames;
 		vector<VisionPacket *> visionPackets;
 		vision.getPackets(visionPackets);
-		BOOST_FOREACH(VisionPacket *packet, visionPackets)
+		for (VisionPacket *packet : visionPackets)
 		{
 			SSL_WrapperPacket *log = _state.logFrame->add_raw_vision();
 			log->CopyFrom(packet->wrapper);
@@ -352,7 +352,7 @@ void Processor::run()
 		
 		// Read radio reverse packets
 		_radio->receive();
-		BOOST_FOREACH(const Packet::RadioRx &rx, _radio->reversePackets())
+		for (const Packet::RadioRx &rx : _radio->reversePackets())
 		{
 			_state.logFrame->add_radio_rx()->CopyFrom(rx);
 			
@@ -386,7 +386,7 @@ void Processor::run()
 		}
 
 		// Run velocity controllers
-		BOOST_FOREACH(OurRobot *robot, _state.self)
+		for (OurRobot *robot : _state.self)
 		{
 			if (robot->visible)
 			{
@@ -404,13 +404,13 @@ void Processor::run()
 		
 		// Debug layers
 		const QStringList &layers = _state.debugLayers();
-		BOOST_FOREACH(const QString &str, layers)
+		for (const QString &str : layers)
 		{
 			_state.logFrame->add_debug_layers(str.toStdString());
 		}
 		
 		// Our robots
-		BOOST_FOREACH(OurRobot *r, _state.self)
+		for (OurRobot *r : _state.self)
 		{
 			if (r->visible)
 			{
@@ -456,7 +456,7 @@ void Processor::run()
 					log->clear_quaternion();
 				}
 				
-				BOOST_FOREACH(const Packet::DebugText &t, r->robotText)
+				for (const Packet::DebugText &t : r->robotText)
 				{
 					log->add_text()->CopyFrom(t);
 				}
@@ -464,7 +464,7 @@ void Processor::run()
 		}
 		
 		// Opponent robots
-		BOOST_FOREACH(OpponentRobot *r, _state.opp)
+		for (OpponentRobot *r : _state.opp)
 		{
 			if (r->visible)
 			{
@@ -528,7 +528,7 @@ void Processor::sendRadioData()
 	if (_state.gameState.halt())
 	{
 		// Force all motor speeds to zero
-		BOOST_FOREACH(OurRobot *r, _state.self)
+		for (OurRobot *r : _state.self)
 		{
 			Packet::RadioTx::Robot &txRobot = r->radioTx;
 			txRobot.set_body_x(0);
@@ -540,7 +540,7 @@ void Processor::sendRadioData()
 	}
 	
 	// Add RadioTx commands for visible robots and apply joystick input
-	BOOST_FOREACH(OurRobot *r, _state.self)
+	for (OurRobot *r : _state.self)
 	{
 		if (r->visible)
 		{

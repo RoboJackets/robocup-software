@@ -5,6 +5,7 @@
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/CompositeShape.hpp>
 #include <planning/Path.hpp>
+#include <MotionConstraints.hpp>
 
 #include "Tree.hpp"
 
@@ -12,9 +13,12 @@ namespace Planning
 {
 	/** generate a random point on the floor */
 	Geometry2d::Point randomPoint();
+
 	/**
-	 * RRT: http://en.wikipedia.org/wiki/Rapidly-exploring_random_tree
-	 * this plans the motion path for the robot
+	 * @brief Given a start point and an end point and some conditions, plans a path for a robot to get there.
+	 * 
+	 * @details There are many ways to plan paths.  This planner uses bidirectional [RRTs](http://en.wikipedia.org/wiki/Rapidly-exploring_random_tree).
+	 * You can check out our interactive RRT applet on GitHub here: https://github.com/RoboJackets/rrt.
 	 */
 	class RRTPlanner
 	{
@@ -41,7 +45,7 @@ namespace Planning
 					const Geometry2d::Point& start,
 					const float angle, 
 					const Geometry2d::Point& vel, 
-					const Geometry2d::Point& goal, 
+					const MotionConstraints &motionConstraints,
 					const Geometry2d::CompositeShape* obstacles, 
 					Planning::Path &path);
 			
@@ -49,6 +53,8 @@ namespace Planning
 			float fixedPathLength() const { return _bestPath.length(); }
 			
 	protected:
+		MotionConstraints _motionConstraints;
+
 		FixedStepTree _fixedStepTree0;
 		FixedStepTree _fixedStepTree1;
 		
@@ -59,6 +65,7 @@ namespace Planning
 		///this is a fixed step path
 		Planning::Path _bestPath;
 		
+		Geometry2d::Point vi;
 		///maximum number of rrt iterations to run
 		///this does not include connect attempts
 		unsigned int _maxIterations;
@@ -72,7 +79,22 @@ namespace Planning
 		 *  to the start of tree1 */
 		void makePath();
 		
-		/** optimize the path */
+		/** optimize the path 
+		 *  Calles the cubicBezier optimization function.
+		 */
 		void optimize(Planning::Path &path, const Geometry2d::CompositeShape *obstacles);
+
+		/**
+		 * Uses a cubicBezier to interpolate between the points on the path and add
+		 * velocity planning
+		 */
+		void cubicBezier(Planning::Path &path, const Geometry2d::CompositeShape *obstacles);
+
+		/**
+		 * Helper function for cubicBezier() which uses Eigen matrices to solve for the 
+		 * cubic bezier equations.
+		 */
+		Eigen::VectorXd cubicBezierCalc (double vi, double vf, std::vector<double> &points, 
+									std::vector<double> &ks, std::vector<double> &ks2);
 	};
 }

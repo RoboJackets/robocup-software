@@ -6,7 +6,6 @@
  */
 
 #include "TestReceivingPointPicking.hpp"
-#include <boost/foreach.hpp>
 #include <iterator>
 
 #include <QtGui>

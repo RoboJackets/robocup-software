@@ -1,6 +1,6 @@
 #include "GoalDefender.hpp"
 
-#include <boost/foreach.hpp>
+
 
 Gameplay::Behaviors::GoalDefender::GoalDefender(GameplayModule *gameplay):
     Behavior(gameplay)
@@ -23,7 +23,7 @@ bool Gameplay::Behaviors::GoalDefender::run()
 
 	// Update the target window
 	_winEval->exclude.clear();
-	BOOST_FOREACH(Robot *r, _robots)
+	for (Robot *r :  _robots)
 	{
 		_winEval->exclude.push_back(r->pos());
 	}
@@ -34,7 +34,7 @@ bool Gameplay::Behaviors::GoalDefender::run()
 	float bestDist = 0;
 
 	// finds the closest segment to the ball
-	BOOST_FOREACH(Window* window, _winEval->windows)
+	for (Window* window :  _winEval->windows)
 	{
 		Geometry2d::Segment seg(window->segment.center(), ball().pos);
 		float newDist = seg.distTo(Behavior::robot()->pos());
@@ -79,7 +79,7 @@ bool Gameplay::Behaviors::GoalDefender::run()
 	//exclude robots that arn't the defender
 	//_winEval->run(ball().pos, goalLine);
 
-	BOOST_FOREACH(Defender *f, otherDefenders)
+	for (Defender *f :  otherDefenders)
 	{
 		if (f->robot())
 		{
@@ -98,7 +98,7 @@ bool Gameplay::Behaviors::GoalDefender::run()
 	//pick biggest window on appropriate side
 	if (goalie && goalie->robot())
 	{
-		BOOST_FOREACH(Window* window, _winEval->windows)
+		for (Window* window :  _winEval->windows)
 		{
 			if (_side == Left)
 			{
@@ -120,7 +120,7 @@ bool Gameplay::Behaviors::GoalDefender::run()
 	{
 		//if no side parameter...stay in the middle
 		float bestDist = 0;
-		BOOST_FOREACH(Window* window, _winEval->windows)
+		for (Window* window :  _winEval->windows)
 		{
 			Geometry2d::Segment seg(window->segment.center(), ball().pos);
 			float newDist = seg.distTo(Behavior::robot()->pos());

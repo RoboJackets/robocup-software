@@ -6,7 +6,7 @@
  */
 
 #include "OurCornerKickChipToGoalArea.hpp"
-#include <boost/foreach.hpp>
+
 
 namespace Gameplay {
 namespace Plays {
@@ -40,7 +40,7 @@ float OurCornerKick_ChipToGoalArea::score(GameplayModule* gameplay)
 	const GameState &gs = gameplay->state()->gameState;
 	Point ballPos = gameplay->state()->ball.pos;
 	bool chipper_available = false;
-	BOOST_FOREACH(OurRobot * r, gameplay->playRobots())
+	for (OurRobot * r :  gameplay->playRobots())
 	{
 		if (r && r->hardwareVersion() == Packet::RJ2011)
 		{

@@ -35,6 +35,21 @@ float Planning::Path::length(unsigned int start) const
     return length;
 }
 
+float Planning::Path::length(unsigned int start, unsigned int end) const
+{
+    if (points.empty() || start >= (points.size() - 1))
+    {
+        return 0;
+    }
+    
+    float length  = 0;
+    for (unsigned int i = start; i < end; ++i)
+    {
+        length += (points[i + 1] - points[i]).mag();
+    }
+    return length;
+}
+
 boost::optional<Geometry2d::Point> Planning::Path::start() const
 {
 		if (points.empty())
@@ -232,6 +247,10 @@ float Planning::Path::length(const Geometry2d::Point &pt) const
 
 bool Planning::Path::getPoint(float distance ,Geometry2d::Point &position, Geometry2d::Point &direction) const
 {
+	if (distance<=0) {
+		position = points.front();
+		return false; 
+	}
 	if (points.empty())
 	{
 		return false;
@@ -252,6 +271,7 @@ bool Planning::Path::getPoint(float distance ,Geometry2d::Point &position, Geome
 			return true;
 		}
 	}
+	position = points.back();
 	return false;
 
 }
@@ -263,6 +283,7 @@ bool Planning::Path::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry
         throw std::runtime_error("You must set maxSpeed and maxAcceleration before calling Path.evaluate()");
     }
 
+    /*
 	float linearPos;
 	float linearSpeed;
 	bool pathIsValid = TrapezoidalMotion(
@@ -281,6 +302,59 @@ bool Planning::Path::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry
 	}
 
 	targetVelOut = direction * linearSpeed;
+	*/
+	if (times.size()==0) {
+		targetPosOut = Geometry2d::Point(0,0);
+		targetVelOut = Geometry2d::Point(0,0);
+		return false;
+	}
+	if (times.size()==1) {
+		targetPosOut = points[0];
+		targetVelOut = Geometry2d::Point(0,0);
+		return false;
+	}
+	int i=0;
+	if (t<times[0])
+	{
+		targetPosOut = points[0];
+		targetVelOut = vels[0];
+		return false;
+	}
+	while (times[i]<=t)
+	{
+		if (times[i]==t) {
+			targetPosOut = points[i];
+			targetVelOut = vels[i];
+			return true;
+		}
+		i++;
+		if (i==size())
+		{
+			targetPosOut = points[i-1];
+			targetVelOut = Geometry2d::Point(0,0);
+			return false;
+		}
+	}
+	float deltaT = (times[i] - times[i-1]);
+	if (deltaT==0)
+	{
+		targetPosOut = points[i];
+		targetVelOut = vels[i];
+		return true;
+	}
+	float constant = (t-times[i-1])/deltaT;
 
-	return pathIsValid;
+	targetPosOut = points[i-1]*(1-constant) + points[i]*(constant);
+	targetVelOut = vels[i-1]*(1-constant) + vels[i]*(constant);
+
+	return true;
+}
+
+float Planning::Path::getTime(int index) const
+{
+	if (maxSpeed == -1 || maxAcceleration == -1) {
+        throw std::runtime_error("You must set maxSpeed and maxAcceleration before calling Path.evaluate()");
+    }
+
+	return Trapezoidal::getTime(length(0,index), length(), maxSpeed, maxAcceleration, startSpeed, endSpeed);
 }

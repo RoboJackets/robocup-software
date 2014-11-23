@@ -1,6 +1,5 @@
 #include "KickerEnduranceTest.hpp"
 
-#include <boost/foreach.hpp>
 
 using namespace std;
 
@@ -37,7 +36,7 @@ bool Gameplay::Plays::KickerEnduranceTest::run()
 	if (_timer.elapsed() > *_kick_interval) {
 
 		// fire all robots
-		BOOST_FOREACH(OurRobot* r, available) {
+		for (OurRobot* r :  available) {
 			if (*_use_chipper)
 				r->chip(*_kick_power);
 			else
@@ -55,7 +54,7 @@ bool Gameplay::Plays::KickerEnduranceTest::run()
 	}
 
 	// draw on screen
-	BOOST_FOREACH(OurRobot* r, available) {
+	for (OurRobot* r :  available) {
 		size_t kicks = 0;
 		if (_kicker_counts.find(r->shell()) == _kicker_counts.end()) {
 			_kicker_counts[r->shell()] = 0;

@@ -7,7 +7,6 @@
 
 #include <stdio.h>
 #include <iostream>
-#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
 //	for python stuff
@@ -145,7 +144,9 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 }
 
 Gameplay::GameplayModule::~GameplayModule() {
-	Py_Finalize();
+	// Apparently this is broken in Boost 1.57 as per:
+	// http://www.boost.org/doc/libs/1_57_0/libs/python/doc/tutorial/doc/html/python/embedding.html
+	// Py_Finalize();
 }
 
 void Gameplay::GameplayModule::setupUI() {
@@ -201,7 +202,7 @@ Geometry2d::CompositeShape Gameplay::GameplayModule::globalObstacles() const {
 	}
 
 	/// Add non floor obstacles
-	BOOST_FOREACH(const std::shared_ptr<Shape>& ptr, _nonFloor)
+	for (const std::shared_ptr<Shape>& ptr :  _nonFloor)
 	{
 		obstacles.add(ptr);
 	}
@@ -222,7 +223,7 @@ void Gameplay::GameplayModule::run()
 
 
 	///	prepare each bot for the next iteration by resetting temporary things
-	BOOST_FOREACH(OurRobot* robot, _state->self)
+	for (OurRobot* robot :  _state->self)
 	{
 		if (robot) {
 			robot->resetAvoidBall();
@@ -233,7 +234,7 @@ void Gameplay::GameplayModule::run()
 
 	/// Build a list of visible robots
 	_playRobots.clear();
-	BOOST_FOREACH(OurRobot *r, _state->self)
+	for (OurRobot *r :  _state->self)
 	{
 		if (r->visible && r->rxIsFresh())
 		{
@@ -312,7 +313,7 @@ void Gameplay::GameplayModule::run()
 	obstacles_with_goal.add(_goalArea);
 
 	/// execute motion planning for each robot
-	BOOST_FOREACH(OurRobot* r, _state->self) {
+	for (OurRobot* r :  _state->self) {
 		if (r && r->visible) {
 			/// set obstacles for the robots
 			if (r->shell() == _goalieID)
@@ -332,7 +333,7 @@ void Gameplay::GameplayModule::run()
 
 	if(_state->gameState.ourScore > _our_score_last_frame)
 	{
-		BOOST_FOREACH(OurRobot* r, _state->self)
+		for (OurRobot* r :  _state->self)
 		{
 			r->sing();
 		}

@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdexcept>
 #include <boost/format.hpp>
-#include <boost/foreach.hpp>
 
 #include <QMutexLocker>
 

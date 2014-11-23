@@ -1,2 +1,0 @@
-
-env.Append(CPPFLAGS=['-fPIC'])

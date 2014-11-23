@@ -18,6 +18,9 @@ libgmp3-dev
 libmpfr-dev
 libmpc-dev
 
+# arm toolchain for compiling for mbed
+gcc-arm-none-eabi
+
 # program to generate api documentation from comments in code files
 doxygen
 
@@ -54,6 +57,7 @@ python3-pip
 python3-dev
 python3-setuptools
 python3-pyqt5
+python-serial
 
 # for the high-level python interface for soccer
 libboost-python-dev
@@ -82,3 +86,4 @@ python-numpy
 python-matplotlib
 python-usb
 freeglut3-dev
+mercurial

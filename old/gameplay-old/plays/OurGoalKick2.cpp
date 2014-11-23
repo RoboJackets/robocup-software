@@ -1,6 +1,6 @@
 #include "OurGoalKick2.hpp"
 #include <RobotConfig.hpp>
-#include <boost/foreach.hpp>
+
 #include <iostream>
 
 using namespace std;

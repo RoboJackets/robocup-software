@@ -1,0 +1,6 @@
+# This is a list of packages that we need for Arch Linux that
+# we'll install from the AUR using yaourt
+
+# gcc xcompile toolchain for mbed
+gcc-arm-none-eabi-bin
+

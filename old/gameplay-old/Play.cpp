@@ -2,7 +2,7 @@
 #include "Play.hpp"
 #include <Robot.hpp>
 
-#include <boost/foreach.hpp>
+
 #include <RobotConfig.hpp>
 
 using namespace std;
@@ -59,7 +59,7 @@ bool assignNearest(OurRobot *&role, std::set<OurRobot*>& robots, Geometry2d::Poi
 	
 	OurRobot *bestRobot = 0;
 	float bestDistSq = -1;
-	BOOST_FOREACH(OurRobot *robot, robots)
+	for (OurRobot *robot :  robots)
 	{
 		float dsq = (robot->pos - pt).magsq();
 		if (bestDistSq < 0 || dsq < bestDistSq)
@@ -124,7 +124,7 @@ bool assignNearest(OurRobot *&role, std::set<OurRobot *> &robots, Geometry2d::Po
 
 		OurRobot *bestRobot = 0;
 		float bestDistSq = -1;
-		BOOST_FOREACH(OurRobot *robot, robots)
+		for (OurRobot *robot :  robots)
 		{
 			// manage requirements
 			if (meetsRequirements(robot, hasKicker, hasChipper, hasDribbler, hasBallSense))

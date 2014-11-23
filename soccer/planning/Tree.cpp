@@ -4,7 +4,6 @@
 
 #include <stdio.h>
 #include <iostream>
-#include <boost/foreach.hpp>
 
 using namespace Planning;
 using namespace std;
@@ -25,7 +24,7 @@ Tree::Point::Point(const Geometry2d::Point& p, Tree::Point* parent) :
 
 void Tree::Point::addEdges(std::list<Geometry2d::Segment>& edges)
 {
-	BOOST_FOREACH(Tree::Point* next, children)
+	for (Tree::Point* next :  children)
 	{
 		edges.push_back(Geometry2d::Segment(pos, next->pos));
 		next->addEdges(edges);
@@ -50,7 +49,7 @@ void Tree::clear()
 	 _obstacles = 0;
 
     // Delete all points
-    BOOST_FOREACH(Point *pt, points)
+    for (Point *pt :  points)
     {
         delete pt;
     }
@@ -88,7 +87,7 @@ void Tree::addPath(Planning::Path &path, Point* dest, const bool rev)
 	}
 	
 	path.points.reserve(path.points.size() + n);
-	BOOST_FOREACH(Point *pt, points)
+	for (Point *pt :  points)
 	{
 		path.points.push_back(pt->pos);
 	}
@@ -99,7 +98,7 @@ Tree::Point* Tree::nearest(Geometry2d::Point pt)
 	float bestDistance = -1;
     Point *best = 0;
     
-    BOOST_FOREACH(Point* other, points)
+    for (Point* other :  points)
     {
         float d = (other->pos - pt).magsq();
         if (bestDistance < 0 || d < bestDistance)
