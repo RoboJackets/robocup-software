@@ -17,8 +17,8 @@ const float Ball_Diameter = 0.043f;
 const float Ball_Radius = Ball_Diameter/2.0f;
 const float Ball_Mass = 0.048f;
 
-const float Field_Length = 6.5f;
-const float Field_Width = 4.455f;
+const float Field_Length = 6.55f;
+const float Field_Width = 4.55f;
 const float Field_Border = 0.25f;
 
 const float Field_LineWidth = 0.01f;
