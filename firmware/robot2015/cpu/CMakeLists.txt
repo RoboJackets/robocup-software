@@ -21,6 +21,7 @@ ExternalProject_Add(mbed_library
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
+    UPDATE_COMMAND ""
 )
 
 # don't get the external project unless it's required
