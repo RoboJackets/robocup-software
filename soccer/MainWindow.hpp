@@ -102,8 +102,8 @@ class MainWindow : public QMainWindow
 		void on_action906MHz_triggered();
 
 		/// Vision port
-		void on_actionVisionFirst_Half_triggered();
-		void on_actionVisionSecond_Half_triggered();
+		void on_actionVisionPrimary_Half_triggered();
+		void on_actionVisionSecondary_Half_triggered();
 		
 		/// Simulator commands
 		void on_actionCenterBall_triggered();
