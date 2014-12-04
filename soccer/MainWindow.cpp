@@ -942,14 +942,14 @@ void MainWindow::on_fastKickoffYellow_clicked()
 
 void MainWindow::on_actionVisionFirst_Half_triggered()
 {
-	_processor->changeVisionChannel(SharedVisionPortFirstHalf);
+	_processor->changeVisionChannel(SharedVisionPortSinglePrimary);
 	_ui.actionVisionFirst_Half->setChecked(true);
 	_ui.actionVisionSecond_Half->setChecked(false);
 }
 
 void MainWindow::on_actionVisionSecond_Half_triggered()
 {
-	_processor->changeVisionChannel(SharedVisionPortSecondHalf);
+	_processor->changeVisionChannel(SharedVisionPortSingleSecondary);
 	_ui.actionVisionFirst_Half->setChecked(false);
 	_ui.actionVisionSecond_Half->setChecked(true);
 }
