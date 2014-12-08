@@ -103,7 +103,7 @@ void BallTracker::run(const vector< BallObservation >& obs, SystemState *state)
 	
 	// Rectangle that defines the boundaries of the field.
 	// Note that we are working in team space.
-	static const Rect field(Point(-Field_Width / 2, 0), Point(Field_Width / 2, Field_Length));
+	static const Rect field(Point(-Field_Dimensions.Field_Width / 2, 0), Point(Field_Dimensions.Field_Width / 2, Field_Dimensions.Field_Length));
 	
 	// Update the real ball
 	if (_ballFilter)
