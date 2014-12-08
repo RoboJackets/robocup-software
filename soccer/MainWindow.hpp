@@ -104,6 +104,7 @@ class MainWindow : public QMainWindow
 		/// Vision port
 		void on_actionVisionPrimary_Half_triggered();
 		void on_actionVisionSecondary_Half_triggered();
+		void on_actionVisionFull_Field_triggered();
 		
 		/// Simulator commands
 		void on_actionCenterBall_triggered();

@@ -3,6 +3,8 @@
 
 #include <string> // for size_t
 
+#include "Field_Dimensions_t.hpp"
+
 /// all distances in meters
 /// all times in seconds
 /// all weights in kilograms
@@ -16,6 +18,15 @@ const size_t Robots_Per_Team = 6;
 const float Ball_Diameter = 0.043f;
 const float Ball_Radius = Ball_Diameter/2.0f;
 const float Ball_Mass = 0.048f;
+
+/** Single-size field constants */
+extern const Field_Dimensions_t Single_Field_Dimensions;
+
+/** Single-size field constants */
+extern const Field_Dimensions_t Double_Field_Dimensions;
+
+/** Current field constants */
+extern Field_Dimensions_t Field_Dimensions;
 
 const float Field_Length = 6.05f;
 const float Field_Width = 4.05f;
