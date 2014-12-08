@@ -238,8 +238,8 @@ void Environment::sendVision()
 		}
 	}
 
-	Geometry2d::Point cam0(-Field_Dimensions.Field_Length / 4, 0);
-	Geometry2d::Point cam1(Field_Dimensions.Field_Length / 4, 0);
+	Geometry2d::Point cam0(-Field_Dimensions.Length / 4, 0);
+	Geometry2d::Point cam1(Field_Dimensions.Length / 4, 0);
 
 	for (const Ball* b :  _balls)
 	{

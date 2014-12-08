@@ -961,9 +961,7 @@ void MainWindow::on_actionVisionSecondary_Half_triggered()
 void MainWindow::on_actionVisionFull_Field_triggered()
 {
 	_processor->changeVisionChannel(SharedVisionPortDoubleOld);
-	std::cout << "Field_Dimensions @ " << &Field_Dimensions << std::endl;
 	Field_Dimensions = Double_Field_Dimensions;
-	std::cout << &(Field_Dimensions.Field_Length) << "\t" << Field_Dimensions.Field_Length << std::endl;
 	_ui.actionVisionPrimary_Half->setChecked(false);
 	_ui.actionVisionSecondary_Half->setChecked(false);
 	_ui.actionVisionFull_Field->setChecked(true);
