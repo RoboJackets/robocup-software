@@ -17,8 +17,8 @@ using namespace Planning;
 
 Geometry2d::Point Planning::randomPoint()
 {
-	float x = Field_Dimensions.Floor_Width * (drand48() - 0.5f);
-	float y = Field_Dimensions.Floor_Length * drand48() - Field_Dimensions.Field_Border;
+	float x = Field_Dimensions.FloorWidth * (drand48() - 0.5f);
+	float y = Field_Dimensions.FloorLength * drand48() - Field_Dimensions.Border;
 
 	return Geometry2d::Point(x, y);
 }

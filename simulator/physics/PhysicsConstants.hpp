@@ -16,37 +16,37 @@ const float Sim_Ball_Diameter = Ball_Diameter*scaling;
 const float Sim_Ball_Radius = Ball_Radius*scaling;
 const float Sim_Ball_Mass = Ball_Mass; //mass is not scaled
 
-const float Sim_Field_Length = Field_Dimensions.Field_Length*scaling;
-const float Sim_Field_Width = Field_Dimensions.Field_Width*scaling;
-const float Sim_Field_Border = Field_Dimensions.Field_Border*scaling;
+const float Sim_Field_Length = Field_Dimensions.Length*scaling;
+const float Sim_Field_Width = Field_Dimensions.Width*scaling;
+const float Sim_Field_Border = Field_Dimensions.Border*scaling;
 
-const float Sim_Field_LineWidth = Field_Dimensions.Field_LineWidth*scaling;
+const float Sim_Field_LineWidth = Field_Dimensions.LineWidth*scaling;
 
-const float Sim_Field_GoalWidth = Field_Dimensions.Field_GoalWidth*scaling;
-const float Sim_Field_GoalDepth = Field_Dimensions.Field_GoalDepth*scaling;
-const float Sim_Field_GoalHeight = Field_Dimensions.Field_GoalHeight*scaling;
+const float Sim_Field_GoalWidth = Field_Dimensions.GoalWidth*scaling;
+const float Sim_Field_GoalDepth = Field_Dimensions.GoalDepth*scaling;
+const float Sim_Field_GoalHeight = Field_Dimensions.GoalHeight*scaling;
 
 /** Dimensions of the goal walls **/
 const float Sim_GoalWall_Width = 0.02*scaling;
 const float Sim_GoalWall_Height = 0.16*scaling;
 
 /** Distance of the penalty marker from the goal line */
-const float Sim_Field_PenaltyDist = Field_Dimensions.Field_PenaltyDist*scaling;
-const float Sim_Field_PenaltyDiam = Field_Dimensions.Field_PenaltyDiam*scaling;
+const float Sim_Field_PenaltyDist = Field_Dimensions.PenaltyDist*scaling;
+const float Sim_Field_PenaltyDiam = Field_Dimensions.PenaltyDiam*scaling;
 
 /** Radius of the goal arcs */
-const float Sim_Field_ArcRadius = Field_Dimensions.Field_ArcRadius*scaling;
+const float Sim_Field_ArcRadius = Field_Dimensions.ArcRadius*scaling;
 
 /** diameter of the center circle */
-const float Sim_Field_CenterRadius = Field_Dimensions.Field_CenterRadius*scaling;
-const float Sim_Field_CenterDiameter = Field_Dimensions.Field_CenterDiameter*scaling;
+const float Sim_Field_CenterRadius = Field_Dimensions.CenterRadius*scaling;
+const float Sim_Field_CenterDiameter = Field_Dimensions.CenterDiameter*scaling;
 
 /** flat area for defence markings */
-const float Sim_Field_GoalFlat = Field_Dimensions.Field_GoalFlat*scaling;
+const float Sim_Field_GoalFlat = Field_Dimensions.GoalFlat*scaling;
 
 const float Sim_RefArea_Offset = 0.425*scaling;
-const float Sim_Floor_Length = Field_Dimensions.Floor_Length*scaling + Sim_RefArea_Offset;
-const float Sim_Floor_Width = Field_Dimensions.Floor_Width*scaling + Sim_RefArea_Offset;
+const float Sim_Floor_Length = Field_Dimensions.FloorLength*scaling + Sim_RefArea_Offset;
+const float Sim_Floor_Width = Field_Dimensions.FloorWidth*scaling + Sim_RefArea_Offset;
 
 const float Sim_Robot_Diameter = Robot_Diameter*scaling;
 const float Sim_Robot_Radius = Robot_Radius*scaling;
