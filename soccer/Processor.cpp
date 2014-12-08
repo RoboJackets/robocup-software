@@ -586,7 +586,7 @@ void Processor::defendPlusX(bool value)
 		_teamAngle = M_PI_2;
 	}
 
-	_worldToTeam = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Length / 2.0f));
+	_worldToTeam = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Dimensions.Field_Length / 2.0f));
 	_worldToTeam *= Geometry2d::TransformMatrix::rotate(_teamAngle);
 }
 
