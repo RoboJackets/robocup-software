@@ -1236,6 +1236,7 @@
      </property>
      <addaction name="actionVisionPrimary_Half"/>
      <addaction name="actionVisionSecondary_Half"/>
+     <addaction name="actionVisionFull_Field"/>
     </widget>
     <addaction name="actionDefendMinusX"/>
     <addaction name="actionDefendPlusX"/>
@@ -1549,6 +1550,14 @@
    </property>
    <property name="text">
     <string>Secondary Half</string>
+   </property>
+  </action>
+  <action name="actionVisionFull_Field">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Full Field</string>
    </property>
   </action>
  </widget>
