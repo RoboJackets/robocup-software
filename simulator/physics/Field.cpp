@@ -90,24 +90,24 @@ void Field::initPhysics()
 	const float halfWidth = 0.1*scaling;
 	const float halfHeight = 0.05*scaling;
 
-	btCollisionShape* longWallShape = new btBoxShape(btVector3(halfWidth,halfHeight,Sim_Floor_Length/2.f+2*halfWidth));
-	btCollisionShape* wideWallShape = new btBoxShape(btVector3(Sim_Floor_Width/2.f,halfHeight,halfWidth));
+	btCollisionShape* longWallShape = new btBoxShape(btVector3(halfWidth,halfHeight,Sim_Field_Dimensions.FloorLength/2.f+2*halfWidth));
+	btCollisionShape* wideWallShape = new btBoxShape(btVector3(Sim_Field_Dimensions.FloorWidth/2.f,halfHeight,halfWidth));
 	longWallShape->setMargin(0.004*scaling);
 	wideWallShape->setMargin(0.004*scaling);
 
 	_simEngine->addCollisionShape(longWallShape);
 	_simEngine->addCollisionShape(wideWallShape);
 
-	tr.setOrigin(btVector3(Sim_Floor_Width/2.f+halfWidth,halfHeight,0));
+	tr.setOrigin(btVector3(Sim_Field_Dimensions.FloorWidth/2.f+halfWidth,halfHeight,0));
 	_simEngine->localCreateRigidBody(0,tr,longWallShape);
 
-	tr.setOrigin(btVector3(-Sim_Floor_Width/2.f-halfWidth,halfHeight,0));
+	tr.setOrigin(btVector3(-Sim_Field_Dimensions.FloorWidth/2.f-halfWidth,halfHeight,0));
 	_simEngine->localCreateRigidBody(0,tr,longWallShape);
 
-	tr.setOrigin(btVector3(0,halfHeight,Sim_Floor_Length/2.f+halfWidth));
+	tr.setOrigin(btVector3(0,halfHeight,Sim_Field_Dimensions.FloorLength/2.f+halfWidth));
 	_simEngine->localCreateRigidBody(0,tr,wideWallShape);
 
-	tr.setOrigin(btVector3(0,halfHeight,-Sim_Floor_Length/2.f-halfWidth));
+	tr.setOrigin(btVector3(0,halfHeight,-Sim_Field_Dimensions.FloorLength/2.f-halfWidth));
 	_simEngine->localCreateRigidBody(0,tr,wideWallShape);
 
 	//color
@@ -116,16 +116,16 @@ void Field::initPhysics()
 	wideWallShape->setUserPointer(color);
 
 	//create goal walls for blue
-	btBoxShape* goalBackShape = new btBoxShape(btVector3(Sim_Field_GoalWidth/2.f+Sim_GoalWall_Width,Sim_GoalWall_Height/2.f,Sim_GoalWall_Width/2.f));
-	btBoxShape* goalSideShape = new btBoxShape(btVector3(Sim_GoalWall_Width/2.f,Sim_GoalWall_Height/2.f,Sim_Field_GoalDepth/2.f));
+	btBoxShape* goalBackShape = new btBoxShape(btVector3(Sim_Field_Dimensions.GoalWidth/2.f+Sim_GoalWall_Width,Sim_GoalWall_Height/2.f,Sim_GoalWall_Width/2.f));
+	btBoxShape* goalSideShape = new btBoxShape(btVector3(Sim_GoalWall_Width/2.f,Sim_GoalWall_Height/2.f,Sim_Field_Dimensions.GoalDepth/2.f));
 	goalBackShape->setMargin(0.004*scaling);
 	goalSideShape->setMargin(0.004*scaling);
 
 	_simEngine->addCollisionShape(goalBackShape);
 	_simEngine->addCollisionShape(goalSideShape);
 
-	btVector3 backPos = btVector3(0,Sim_GoalWall_Height/2.f,Sim_Field_Length/2.f+Sim_GoalWall_Width/2.f+Sim_Field_GoalDepth);
-	btVector3 sidePos = btVector3(Sim_Field_GoalWidth/2.f+Sim_GoalWall_Width/2.f,Sim_GoalWall_Height/2.f,Sim_Field_Length/2.f+Sim_Field_GoalDepth/2.f);
+	btVector3 backPos = btVector3(0,Sim_GoalWall_Height/2.f,Sim_Field_Dimensions.Length/2.f+Sim_GoalWall_Width/2.f+Sim_Field_Dimensions.GoalDepth);
+	btVector3 sidePos = btVector3(Sim_Field_Dimensions.GoalWidth/2.f+Sim_GoalWall_Width/2.f,Sim_GoalWall_Height/2.f,Sim_Field_Dimensions.Length/2.f+Sim_Field_Dimensions.GoalDepth/2.f);
 
 	tr.setOrigin(backPos);
 	_simEngine->localCreateRigidBody(0,tr,goalBackShape);
@@ -182,45 +182,45 @@ void Field::renderField() {
 	float fieldHeight = 0.001*scaling; //Strictly for rendering purposes
 	glColor4f(0.,1.0,0.,1.0);
 	glBegin(GL_POLYGON);
-		glVertex3f(_x+Sim_Floor_Width/2.f, fieldHeight, _y+Sim_Floor_Length/2.f);
-		glVertex3f(_x-Sim_Floor_Width/2.f, fieldHeight, _y+Sim_Floor_Length/2.f);
-		glVertex3f(_x-Sim_Floor_Width/2.f, fieldHeight, _y-Sim_Floor_Length/2.f);
-		glVertex3f(_x+Sim_Floor_Width/2.f, fieldHeight, _y-Sim_Floor_Length/2.f);
+		glVertex3f(_x+Sim_Field_Dimensions.FloorWidth/2.f, fieldHeight, _y+Sim_Field_Dimensions.FloorLength/2.f);
+		glVertex3f(_x-Sim_Field_Dimensions.FloorWidth/2.f, fieldHeight, _y+Sim_Field_Dimensions.FloorLength/2.f);
+		glVertex3f(_x-Sim_Field_Dimensions.FloorWidth/2.f, fieldHeight, _y-Sim_Field_Dimensions.FloorLength/2.f);
+		glVertex3f(_x+Sim_Field_Dimensions.FloorWidth/2.f, fieldHeight, _y-Sim_Field_Dimensions.FloorLength/2.f);
 	glEnd();
 
 	float lineHeight = 0.002*scaling;
 	//Center circle
 	glColor4f (1.0, 1.0, 1.0, 1.0);
-	renderArc(_x,_y,0,PI*2,lineHeight,Sim_Field_CenterRadius,Sim_Field_LineWidth,360);
+	renderArc(_x,_y,0,PI*2,lineHeight,Sim_Field_Dimensions.CenterRadius,Sim_Field_Dimensions.LineWidth,360);
 
 	//Field Boundary Lines
-	renderVerticalLine(_x+Sim_Field_Width/2.f, _y+Sim_Field_Length/2.f, _x+Sim_Field_Width/2.f, _y-Sim_Field_Length/2.f, lineHeight, Sim_Field_LineWidth);
-	renderVerticalLine(_x-Sim_Field_Width/2.f, _y+Sim_Field_Length/2.f, _x-Sim_Field_Width/2.f, _y-Sim_Field_Length/2.f, lineHeight, Sim_Field_LineWidth);
-	renderHorizontalLine(_x+Sim_Field_Width/2.f, _y+Sim_Field_Length/2.f, _x-Sim_Field_Width/2.f, _y+Sim_Field_Length/2.f, lineHeight, Sim_Field_LineWidth);
-	renderHorizontalLine(_x+Sim_Field_Width/2.f, _y-Sim_Field_Length/2.f, _x-Sim_Field_Width/2.f, _y-Sim_Field_Length/2.f, lineHeight, Sim_Field_LineWidth);
+	renderVerticalLine(_x+Sim_Field_Dimensions.Width/2.f, _y+Sim_Field_Dimensions.Length/2.f, _x+Sim_Field_Dimensions.Width/2.f, _y-Sim_Field_Dimensions.Length/2.f, lineHeight, Sim_Field_Dimensions.LineWidth);
+	renderVerticalLine(_x-Sim_Field_Dimensions.Width/2.f, _y+Sim_Field_Dimensions.Length/2.f, _x-Sim_Field_Dimensions.Width/2.f, _y-Sim_Field_Dimensions.Length/2.f, lineHeight, Sim_Field_Dimensions.LineWidth);
+	renderHorizontalLine(_x+Sim_Field_Dimensions.Width/2.f, _y+Sim_Field_Dimensions.Length/2.f, _x-Sim_Field_Dimensions.Width/2.f, _y+Sim_Field_Dimensions.Length/2.f, lineHeight, Sim_Field_Dimensions.LineWidth);
+	renderHorizontalLine(_x+Sim_Field_Dimensions.Width/2.f, _y-Sim_Field_Dimensions.Length/2.f, _x-Sim_Field_Dimensions.Width/2.f, _y-Sim_Field_Dimensions.Length/2.f, lineHeight, Sim_Field_Dimensions.LineWidth);
 
 	//Center Line
-	renderHorizontalLine(_x+Sim_Field_Width/2.f,_y,_x-Sim_Field_Width/2.f,_y,lineHeight,Sim_Field_LineWidth);
+	renderHorizontalLine(_x+Sim_Field_Dimensions.Width/2.f,_y,_x-Sim_Field_Dimensions.Width/2.f,_y,lineHeight,Sim_Field_Dimensions.LineWidth);
 
 	//Goal Arc //0 radians is in the Z direction (forward)
-	renderArc(_x-(Sim_Field_GoalFlat/2.f),_y-Sim_Field_Length/2.f,PI*3/2.f,PI*2.f,lineHeight,Sim_Field_ArcRadius,Sim_Field_LineWidth*2,90);
-	renderArc(_x+(Sim_Field_GoalFlat/2.f),_y-Sim_Field_Length/2.f,0,PI/2.f,lineHeight,Sim_Field_ArcRadius,Sim_Field_LineWidth*2,90);
-	renderHorizontalLine(_x-Sim_Field_GoalFlat/2.f,_y-Sim_Field_Length/2.f+Sim_Field_ArcRadius,_x+Sim_Field_GoalFlat/2.f,_y-Sim_Field_Length/2.f+Sim_Field_ArcRadius,lineHeight, Sim_Field_LineWidth);
+	renderArc(_x-(Sim_Field_Dimensions.GoalFlat/2.f),_y-Sim_Field_Dimensions.Length/2.f,PI*3/2.f,PI*2.f,lineHeight,Sim_Field_Dimensions.ArcRadius,Sim_Field_Dimensions.LineWidth*2,90);
+	renderArc(_x+(Sim_Field_Dimensions.GoalFlat/2.f),_y-Sim_Field_Dimensions.Length/2.f,0,PI/2.f,lineHeight,Sim_Field_Dimensions.ArcRadius,Sim_Field_Dimensions.LineWidth*2,90);
+	renderHorizontalLine(_x-Sim_Field_Dimensions.GoalFlat/2.f,_y-Sim_Field_Dimensions.Length/2.f+Sim_Field_Dimensions.ArcRadius,_x+Sim_Field_Dimensions.GoalFlat/2.f,_y-Sim_Field_Dimensions.Length/2.f+Sim_Field_Dimensions.ArcRadius,lineHeight, Sim_Field_Dimensions.LineWidth);
 
-	renderArc(_x-(Sim_Field_GoalFlat/2.f),_y+Sim_Field_Length/2.f,PI,PI*3/2.f,lineHeight,Sim_Field_ArcRadius,Sim_Field_LineWidth*2,90);
-	renderArc(_x+(Sim_Field_GoalFlat/2.f),_y+Sim_Field_Length/2.f,PI/2.f,PI,lineHeight,Sim_Field_ArcRadius,Sim_Field_LineWidth*2,90);
-	renderHorizontalLine(_x-Sim_Field_GoalFlat/2.f,_y+Sim_Field_Length/2.f-Sim_Field_ArcRadius,_x+Sim_Field_GoalFlat/2.f,_y+Sim_Field_Length/2.f-Sim_Field_ArcRadius,lineHeight, Sim_Field_LineWidth);
+	renderArc(_x-(Sim_Field_Dimensions.GoalFlat/2.f),_y+Sim_Field_Dimensions.Length/2.f,PI,PI*3/2.f,lineHeight,Sim_Field_Dimensions.ArcRadius,Sim_Field_Dimensions.LineWidth*2,90);
+	renderArc(_x+(Sim_Field_Dimensions.GoalFlat/2.f),_y+Sim_Field_Dimensions.Length/2.f,PI/2.f,PI,lineHeight,Sim_Field_Dimensions.ArcRadius,Sim_Field_Dimensions.LineWidth*2,90);
+	renderHorizontalLine(_x-Sim_Field_Dimensions.GoalFlat/2.f,_y+Sim_Field_Dimensions.Length/2.f-Sim_Field_Dimensions.ArcRadius,_x+Sim_Field_Dimensions.GoalFlat/2.f,_y+Sim_Field_Dimensions.Length/2.f-Sim_Field_Dimensions.ArcRadius,lineHeight, Sim_Field_Dimensions.LineWidth);
 
 	//Goal Area
 	glColor4f(1.0,1.0,0,1.0); //Yellow
-	renderVerticalLine(_x-Sim_Field_GoalWidth/2.f,_y-Sim_Field_Length/2.f,_x-Sim_Field_GoalWidth/2.f,_y-(Sim_Field_Length/2.f+Sim_Field_GoalDepth),lineHeight,Sim_Field_LineWidth);
-	renderVerticalLine(_x+Sim_Field_GoalWidth/2.f,_y-Sim_Field_Length/2.f,_x+Sim_Field_GoalWidth/2.f,_y-(Sim_Field_Length/2.f+Sim_Field_GoalDepth),lineHeight,Sim_Field_LineWidth);
-	renderHorizontalLine(_x-Sim_Field_GoalWidth/2.f,_y-(Sim_Field_Length/2.f+Sim_Field_GoalDepth),_x+Sim_Field_GoalWidth/2.f,_y-(Sim_Field_Length/2.f+Sim_Field_GoalDepth),lineHeight,Sim_Field_LineWidth);
+	renderVerticalLine(_x-Sim_Field_Dimensions.GoalWidth/2.f,_y-Sim_Field_Dimensions.Length/2.f,_x-Sim_Field_Dimensions.GoalWidth/2.f,_y-(Sim_Field_Dimensions.Length/2.f+Sim_Field_Dimensions.GoalDepth),lineHeight,Sim_Field_Dimensions.LineWidth);
+	renderVerticalLine(_x+Sim_Field_Dimensions.GoalWidth/2.f,_y-Sim_Field_Dimensions.Length/2.f,_x+Sim_Field_Dimensions.GoalWidth/2.f,_y-(Sim_Field_Dimensions.Length/2.f+Sim_Field_Dimensions.GoalDepth),lineHeight,Sim_Field_Dimensions.LineWidth);
+	renderHorizontalLine(_x-Sim_Field_Dimensions.GoalWidth/2.f,_y-(Sim_Field_Dimensions.Length/2.f+Sim_Field_Dimensions.GoalDepth),_x+Sim_Field_Dimensions.GoalWidth/2.f,_y-(Sim_Field_Dimensions.Length/2.f+Sim_Field_Dimensions.GoalDepth),lineHeight,Sim_Field_Dimensions.LineWidth);
 
 	glColor4f(0,0,1.0,1.0); //Blue
-	renderVerticalLine(_x-Sim_Field_GoalWidth/2.f,_y+Sim_Field_Length/2.f,_x-Sim_Field_GoalWidth/2.f,_y+(Sim_Field_Length/2.f+Sim_Field_GoalDepth),lineHeight,Sim_Field_LineWidth);
-	renderVerticalLine(_x+Sim_Field_GoalWidth/2.f,_y+Sim_Field_Length/2.f,_x+Sim_Field_GoalWidth/2.f,_y+(Sim_Field_Length/2.f+Sim_Field_GoalDepth),lineHeight,Sim_Field_LineWidth);
-	renderHorizontalLine(_x-Sim_Field_GoalWidth/2.f,_y+(Sim_Field_Length/2.f+Sim_Field_GoalDepth),_x+Sim_Field_GoalWidth/2.f,_y+(Sim_Field_Length/2.f+Sim_Field_GoalDepth),lineHeight,Sim_Field_LineWidth);
+	renderVerticalLine(_x-Sim_Field_Dimensions.GoalWidth/2.f,_y+Sim_Field_Dimensions.Length/2.f,_x-Sim_Field_Dimensions.GoalWidth/2.f,_y+(Sim_Field_Dimensions.Length/2.f+Sim_Field_Dimensions.GoalDepth),lineHeight,Sim_Field_Dimensions.LineWidth);
+	renderVerticalLine(_x+Sim_Field_Dimensions.GoalWidth/2.f,_y+Sim_Field_Dimensions.Length/2.f,_x+Sim_Field_Dimensions.GoalWidth/2.f,_y+(Sim_Field_Dimensions.Length/2.f+Sim_Field_Dimensions.GoalDepth),lineHeight,Sim_Field_Dimensions.LineWidth);
+	renderHorizontalLine(_x-Sim_Field_Dimensions.GoalWidth/2.f,_y+(Sim_Field_Dimensions.Length/2.f+Sim_Field_Dimensions.GoalDepth),_x+Sim_Field_Dimensions.GoalWidth/2.f,_y+(Sim_Field_Dimensions.Length/2.f+Sim_Field_Dimensions.GoalDepth),lineHeight,Sim_Field_Dimensions.LineWidth);
 
 	if(debug_mode & btIDebugDraw::DBG_DrawWireframe){
 		glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
