@@ -70,8 +70,6 @@ void SpaceNavJoystick::update() {
                 _controlValues.dribblerPower += 0.1 * -sign<int>(sev.motion.y);
                 if (_controlValues.dribblerPower < 0) _controlValues.dribblerPower = 0;
                 if (_controlValues.dribblerPower > 1) _controlValues.dribblerPower = 1;
-
-                cout << "changed dribbler to " << _controlValues.dribblerPower << endl;
             }
 
             _controlValues.dribble = _controlValues.dribblerPower > 0.01;
