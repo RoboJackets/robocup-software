@@ -1,7 +1,6 @@
-#include "Constants.hpp"
+#include "Field_Dimensions.hpp"
 
-/** Single-size field constants */
-const Field_Dimensions_t Single_Field_Dimensions(
+const Field_Dimensions Field_Dimensions::Single_Field_Dimensions(
     6.050f,
     4.050f,
     0.250f,
@@ -19,8 +18,7 @@ const Field_Dimensions_t Single_Field_Dimensions(
     4.550f
 );
 
-/** Single-size field constants */
-const Field_Dimensions_t Double_Field_Dimensions(
+const Field_Dimensions Field_Dimensions::Double_Field_Dimensions(
     8.090f,
     6.050f,
     0.250f,
@@ -38,5 +36,4 @@ const Field_Dimensions_t Double_Field_Dimensions(
     6.550f
 );
 
-// Defualt value of Field_Dimensions, defined in Constants.hpp
-Field_Dimensions_t Field_Dimensions = Single_Field_Dimensions;
+Field_Dimensions Field_Dimensions::Current_Dimensions = Field_Dimensions::Single_Field_Dimensions;

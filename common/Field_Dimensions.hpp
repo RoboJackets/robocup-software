@@ -1,6 +1,8 @@
 #pragma once
 
-struct Field_Dimensions_t {
+#include <iostream>
+
+struct Field_Dimensions {
   const float &Length;
   const float &Width;
   const float &Border;
@@ -28,11 +30,17 @@ struct Field_Dimensions_t {
   const float &FloorLength;
   const float &FloorWidth;
 
-  Field_Dimensions_t() : Field_Dimensions_t(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+  static const Field_Dimensions Single_Field_Dimensions;
+
+  static const Field_Dimensions Double_Field_Dimensions;
+
+  static Field_Dimensions Current_Dimensions;
+
+  Field_Dimensions() : Field_Dimensions(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
   {
   }
 
-  Field_Dimensions_t(float fl, float fw, float fb, float flw, float gw, float gd, float gh, float pd, float pdiam, float ar, float cr, float cd, float gf, float ffl, float ffw)
+  Field_Dimensions(float fl, float fw, float fb, float flw, float gw, float gd, float gh, float pd, float pdiam, float ar, float cr, float cd, float gf, float ffl, float ffw)
       : Length(_Length),
         Width(_Width),
         Border(_Border),
@@ -66,8 +74,8 @@ struct Field_Dimensions_t {
   {
   }
 
-  Field_Dimensions_t(const Field_Dimensions_t& other)
-      : Field_Dimensions_t( other._Length,
+  Field_Dimensions(const Field_Dimensions & other)
+      : Field_Dimensions( other._Length,
                             other._Width,
                             other._Border,
                             other._LineWidth,
@@ -85,7 +93,7 @@ struct Field_Dimensions_t {
   {
   }
 
-  Field_Dimensions_t& operator=(const Field_Dimensions_t& other) {
+  Field_Dimensions & operator=(const Field_Dimensions & other) {
     _Length = other._Length;
     _Width = other._Width;
     _Border = other._Border;
@@ -102,6 +110,26 @@ struct Field_Dimensions_t {
     _FloorLength = other._FloorLength;
     _FloorWidth = other._FloorWidth;
     return *this;
+  }
+
+  Field_Dimensions operator*(float scalar) const {
+    return Field_Dimensions(
+        _Length*scalar,
+        _Width*scalar,
+        _Border*scalar,
+        _LineWidth*scalar,
+        _GoalWidth*scalar,
+        _GoalDepth*scalar,
+        _GoalHeight*scalar,
+        _PenaltyDist*scalar,
+        _PenaltyDiam*scalar,
+        _ArcRadius*scalar,
+        _CenterRadius*scalar,
+        _CenterDiameter*scalar,
+        _GoalFlat*scalar,
+        _FloorLength*scalar,
+        _FloorWidth*scalar
+    );
   }
 
 private:
