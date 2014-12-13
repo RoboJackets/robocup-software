@@ -59,6 +59,10 @@ python3-setuptools
 python3-pyqt5
 python-serial
 
+# required to use SpaceNavigator 3d mouse to drive robots
+libspnav-dev
+spacenavd
+
 # for the high-level python interface for soccer
 libboost-python-dev
 

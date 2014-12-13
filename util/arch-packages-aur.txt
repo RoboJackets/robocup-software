@@ -4,3 +4,5 @@
 # gcc xcompile toolchain for mbed
 gcc-arm-none-eabi-bin
 
+# to drive robots with the SpaceNavigator 3d mouse
+spacenavd
