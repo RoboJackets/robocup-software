@@ -1,6 +1,6 @@
 #include "PhysicsConstants.hpp"
 
-const Field_Dimensions Sim_Field_Dimensions(
+Field_Dimensions Sim_Field_Dimensions(
     60.50f,
     40.50f,
     02.50f,
