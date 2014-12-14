@@ -41,12 +41,12 @@ void SimulatorWindow::on_ballVisibility_valueChanged(int value)
 
 void SimulatorWindow::on_pushButton_singleFieldSize_clicked()
 {
-	Sim_Field_Dimensions = Field_Dimensions::Single_Field_Dimensions * scaling;
+	Field_Dimensions::Current_Dimensions = Field_Dimensions::Single_Field_Dimensions * scaling;
 	_environment->reshapeFieldBodies();
 }
 
 void SimulatorWindow::on_pushButton_doubleFieldSize_clicked()
 {
-	Sim_Field_Dimensions = Field_Dimensions::Double_Field_Dimensions * scaling;
+	Field_Dimensions::Current_Dimensions = Field_Dimensions::Double_Field_Dimensions * scaling;
 	_environment->reshapeFieldBodies();
 }
