@@ -569,3 +569,6 @@ void Environment::procTeam(QDomElement e, bool blue) {
 	}
 }
 
+void Environment::reshapeFieldBodies() {
+	_field->reshapeBodies();
+}
