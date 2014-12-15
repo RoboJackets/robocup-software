@@ -586,8 +586,7 @@ void Processor::defendPlusX(bool value)
 		_teamAngle = M_PI_2;
 	}
 
-	_worldToTeam = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Dimensions::Current_Dimensions.Length / 2.0f));
-	_worldToTeam *= Geometry2d::TransformMatrix::rotate(_teamAngle);
+	recalculateWorldToTeamTransform();
 }
 
 void Processor::changeVisionChannel(int port)
@@ -601,4 +600,9 @@ void Processor::changeVisionChannel(int port)
 	vision.start();
 
 	_loopMutex.unlock();
+}
+
+void Processor::recalculateWorldToTeamTransform() {
+	_worldToTeam = Geometry2d::TransformMatrix::translate(0, Field_Dimensions::Current_Dimensions.Length / 2.0f);
+	_worldToTeam *= Geometry2d::TransformMatrix::rotate(_teamAngle);
 }

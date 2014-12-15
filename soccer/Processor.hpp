@@ -208,6 +208,8 @@ class Processor: public QThread
 		}
 
 		void changeVisionChannel(int port);
+
+		void recalculateWorldToTeamTransform();
 		
 		////////
 		
