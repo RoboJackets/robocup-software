@@ -132,6 +132,22 @@ struct Field_Dimensions {
     );
   }
 
+  float Get_Length() { return _Length; }
+  float Get_Width() { return _Width; }
+  float Get_Border() { return _Border; }
+  float Get_LineWidth() { return _LineWidth; }
+  float Get_GoalWidth() { return _GoalWidth; }
+  float Get_GoalDepth() { return _GoalDepth; }
+  float Get_GoalHeight() { return _GoalHeight; }
+  float Get_PenaltyDist() { return _PenaltyDist; }
+  float Get_PenaltyDiam() { return _PenaltyDiam; }
+  float Get_ArcRadius() { return _ArcRadius; }
+  float Get_CenterRadius() { return _CenterRadius; }
+  float Get_CenterDiameter() { return _CenterDiameter; }
+  float Get_GoalFlat() { return _GoalFlat; }
+  float Get_FloorLength() { return _FloorLength; }
+  float Get_FloorWidth() { return _FloorWidth; }
+
 private:
   float _Length;
   float _Width;

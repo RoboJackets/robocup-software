@@ -351,3 +351,14 @@ boost::python::object Gameplay::GameplayModule::getRootPlay() {
 boost::python::object Gameplay::GameplayModule::getMainModule() {
 	return _mainPyNamespace["main"];
 }
+
+void Gameplay::GameplayModule::sendFieldDimensionsToPython() {
+	PyGILState_STATE state = PyGILState_Ensure(); {
+		try {
+			getMainModule().attr("set_field_constants")(Field_Dimensions::Current_Dimensions);
+		} catch (error_already_set) {
+			PyErr_Print();
+			throw new runtime_error("Error trying to pass field dimensions to python");
+		}
+	} PyGILState_Release(state);
+}

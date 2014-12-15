@@ -943,8 +943,7 @@ void MainWindow::on_fastKickoffYellow_clicked()
 void MainWindow::on_actionVisionPrimary_Half_triggered()
 {
 	_processor->changeVisionChannel(SharedVisionPortSinglePrimary);
-	Field_Dimensions::Current_Dimensions = Field_Dimensions::Single_Field_Dimensions;
-	_processor->recalculateWorldToTeamTransform();
+	_processor->setFieldDimensions(Field_Dimensions::Single_Field_Dimensions);
 	_ui.actionVisionPrimary_Half->setChecked(true);
 	_ui.actionVisionSecondary_Half->setChecked(false);
 	_ui.actionVisionFull_Field->setChecked(false);
@@ -953,8 +952,7 @@ void MainWindow::on_actionVisionPrimary_Half_triggered()
 void MainWindow::on_actionVisionSecondary_Half_triggered()
 {
 	_processor->changeVisionChannel(SharedVisionPortSingleSecondary);
-	Field_Dimensions::Current_Dimensions = Field_Dimensions::Single_Field_Dimensions;
-	_processor->recalculateWorldToTeamTransform();
+	_processor->setFieldDimensions(Field_Dimensions::Single_Field_Dimensions);
 	_ui.actionVisionPrimary_Half->setChecked(false);
 	_ui.actionVisionSecondary_Half->setChecked(true);
 	_ui.actionVisionFull_Field->setChecked(false);
@@ -963,8 +961,7 @@ void MainWindow::on_actionVisionSecondary_Half_triggered()
 void MainWindow::on_actionVisionFull_Field_triggered()
 {
 	_processor->changeVisionChannel(SharedVisionPortDoubleOld);
-	Field_Dimensions::Current_Dimensions = Field_Dimensions::Double_Field_Dimensions;
-	_processor->recalculateWorldToTeamTransform();
+	_processor->setFieldDimensions(Field_Dimensions::Double_Field_Dimensions);
 	_ui.actionVisionPrimary_Half->setChecked(false);
 	_ui.actionVisionSecondary_Half->setChecked(false);
 	_ui.actionVisionFull_Field->setChecked(true);
