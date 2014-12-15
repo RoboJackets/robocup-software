@@ -606,3 +606,9 @@ void Processor::recalculateWorldToTeamTransform() {
 	_worldToTeam = Geometry2d::TransformMatrix::translate(0, Field_Dimensions::Current_Dimensions.Length / 2.0f);
 	_worldToTeam *= Geometry2d::TransformMatrix::rotate(_teamAngle);
 }
+
+void Processor::setFieldDimensions(const Field_Dimensions &dims) {
+	Field_Dimensions::Current_Dimensions = dims;
+	recalculateWorldToTeamTransform();
+	_gameplayModule->sendFieldDimensionsToPython();
+}
