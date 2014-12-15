@@ -98,9 +98,8 @@ class Processor: public QThread
 		
 		bool autonomous();
 		bool joystickValid();
+		JoystickControlValues getJoystickControlValues();
 
-		JoystickControlValues joystickControlValues();
-		
 		void externalReferee(bool value)
 		{
 			_externalReferee = value;
@@ -220,6 +219,9 @@ class Processor: public QThread
 		
 	protected:
 		void run();
+
+		void applyJoystickControls(const JoystickControlValues &controlVals, Packet::RadioTx::Robot *txRobot, OurRobot *robot);
+
 		
 	private:
 		// Configuration for different models of robots
@@ -289,7 +291,12 @@ class Processor: public QThread
 		std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
 		std::shared_ptr<BallTracker> _ballTracker;
 
-		Joystick *_joystick;
+		//	mixes values from all joysticks to control the single manual robot
+		std::vector<Joystick *> _joysticks;
+
+		//	joystick damping
+		bool _dampedRotation;
+		bool _dampedTranslation;
 
 		VisionReceiver vision;
 };
