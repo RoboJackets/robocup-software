@@ -360,7 +360,7 @@ void OurRobot::_chip(uint8_t strength) {
 	uint8_t max = *config->kicker.maxChip;
 	// TODO make sure we're not about to chip over the middle line.
 	Segment robot_face_line = Segment(pos, pos + 10*Point::direction(angle * M_PI / 180.));
-	Segment mid_field_line = Segment(Point(-Field_Dimensions::Current_Dimensions.Width /2,Field_Dimensions::Current_Dimensions.Length /2), Point(Field_Dimensions::Current_Dimensions.Width /2,Field_Dimensions::Current_Dimensions.Length /2));
+	Segment mid_field_line = Segment(Point(-Field_Dimensions::Current_Dimensions.Width() /2,Field_Dimensions::Current_Dimensions.Length() /2), Point(Field_Dimensions::Current_Dimensions.Width() /2,Field_Dimensions::Current_Dimensions.Length() /2));
 	Point intersection;
 	if(robot_face_line.intersects(mid_field_line, &intersection))
 	{
@@ -504,7 +504,7 @@ std::shared_ptr<Geometry2d::Shape> OurRobot::createBallObstacle() const {
 	// if game is stopped, large obstacle regardless of flags
 	if (_state->gameState.state != GameState::Playing && !(_state->gameState.ourRestart || _state->gameState.theirPenalty()))
 	{
-		return std::shared_ptr<Geometry2d::Shape>(new Circle(_state->ball.pos, Field_Dimensions::Current_Dimensions.CenterRadius));
+		return std::shared_ptr<Geometry2d::Shape>(new Circle(_state->ball.pos, Field_Dimensions::Current_Dimensions.CenterRadius()));
 	}
 
 	// create an obstacle if necessary

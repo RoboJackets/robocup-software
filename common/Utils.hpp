@@ -34,17 +34,17 @@ static inline float fixAngleRadians(float a)
 
 /** Checks whether or not the given ball is in the defense area. */
 static inline bool ballIsInGoalieBox(Geometry2d::Point point) {
-	if (abs(point.x) < Field_Dimensions::Current_Dimensions.GoalFlat / 2.0f) // Ball is in center (rectangular) portion of defensive bubble
+	if (abs(point.x) < Field_Dimensions::Current_Dimensions.GoalFlat() / 2.0f) // Ball is in center (rectangular) portion of defensive bubble
 	{
-		if (point.y > 0 && point.y < Field_Dimensions::Current_Dimensions.ArcRadius) {
+		if (point.y > 0 && point.y < Field_Dimensions::Current_Dimensions.ArcRadius()) {
 			return true;
 		} else {
 			return false;
 		}
-	} else if (abs(point.x) < (Field_Dimensions::Current_Dimensions.ArcRadius + Field_Dimensions::Current_Dimensions.GoalFlat / 2.0f)) // Ball is in one of the side (arc) portions of defensive bubble
+	} else if (abs(point.x) < (Field_Dimensions::Current_Dimensions.ArcRadius() + Field_Dimensions::Current_Dimensions.GoalFlat() / 2.0f)) // Ball is in one of the side (arc) portions of defensive bubble
 	{
-		double adjusted_x = abs(point.x) - (Field_Dimensions::Current_Dimensions.GoalFlat / 2.0f);
-		double max_y = sqrt( (Field_Dimensions::Current_Dimensions.ArcRadius * Field_Dimensions::Current_Dimensions.ArcRadius) - (adjusted_x * adjusted_x));
+		double adjusted_x = abs(point.x) - (Field_Dimensions::Current_Dimensions.GoalFlat() / 2.0f);
+		double max_y = sqrt( (Field_Dimensions::Current_Dimensions.ArcRadius() * Field_Dimensions::Current_Dimensions.ArcRadius()) - (adjusted_x * adjusted_x));
 		if (point.y > 0 && point.y <= max_y) {
 			return true;
 		} else {
@@ -58,7 +58,7 @@ static inline bool ballIsInGoalieBox(Geometry2d::Point point) {
 
 static Geometry2d::Point fromOursToTheirs(Geometry2d::Point &pt) {
 	Geometry2d::Point c;
-	c.y = Field_Dimensions::Current_Dimensions.Length - pt.y;
+	c.y = Field_Dimensions::Current_Dimensions.Length() - pt.y;
 	c.x = -pt.x;
 
 	return c;
