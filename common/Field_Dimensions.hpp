@@ -3,32 +3,33 @@
 #include <iostream>
 
 struct Field_Dimensions {
-  const float &Length;
-  const float &Width;
-  const float &Border;
 
-  const float &LineWidth;
+  inline float Length() { return _Length; }
+  inline float Width() { return _Width; }
+  inline float Border() { return _Border; }
 
-  const float &GoalWidth;
-  const float &GoalDepth;
-  const float &GoalHeight;
+  inline float LineWidth() { return _LineWidth; }
+
+  inline float GoalWidth() { return _GoalWidth; }
+  inline float GoalDepth() { return _GoalDepth; }
+  inline float GoalHeight() { return _GoalHeight; }
 
 /** Distance of the penalty marker from the goal line */
-  const float &PenaltyDist;
-  const float &PenaltyDiam;
+  inline float PenaltyDist() { return _PenaltyDist; }
+  inline float PenaltyDiam() { return _PenaltyDiam; }
 
 /** Radius of the goal arcs */
-  const float &ArcRadius;
+  inline float ArcRadius() { return _ArcRadius; }
 
 /** diameter of the center circle */
-  const float &CenterRadius;
-  const float &CenterDiameter;
+  inline float CenterRadius() { return _CenterRadius; }
+  inline float CenterDiameter() { return _CenterDiameter; }
 
 /** flat area for defence markings */
-  const float &GoalFlat;
+  inline float GoalFlat() { return _GoalFlat; }
 
-  const float &FloorLength;
-  const float &FloorWidth;
+  inline float FloorLength() { return _FloorLength; }
+  inline float FloorWidth() { return _FloorWidth; }
 
   static const Field_Dimensions Single_Field_Dimensions;
 
@@ -41,22 +42,7 @@ struct Field_Dimensions {
   }
 
   Field_Dimensions(float fl, float fw, float fb, float flw, float gw, float gd, float gh, float pd, float pdiam, float ar, float cr, float cd, float gf, float ffl, float ffw)
-      : Length(_Length),
-        Width(_Width),
-        Border(_Border),
-        LineWidth(_LineWidth),
-        GoalWidth(_GoalWidth),
-        GoalDepth(_GoalDepth),
-        GoalHeight(_GoalHeight),
-        PenaltyDist(_PenaltyDist),
-        PenaltyDiam(_PenaltyDiam),
-        ArcRadius(_ArcRadius),
-        CenterRadius(_CenterRadius),
-        CenterDiameter(_CenterDiameter),
-        GoalFlat(_GoalFlat),
-        FloorLength(_FloorLength),
-        FloorWidth(_FloorWidth),
-        _Length(fl),
+      : _Length(fl),
         _Width(fw),
         _Border(fb),
         _LineWidth(flw),
@@ -76,20 +62,20 @@ struct Field_Dimensions {
 
   Field_Dimensions(const Field_Dimensions & other)
       : Field_Dimensions( other._Length,
-                            other._Width,
-                            other._Border,
-                            other._LineWidth,
-                            other._GoalWidth,
-                            other._GoalDepth,
-                            other._GoalHeight,
-                            other._PenaltyDist,
-                            other._PenaltyDiam,
-                            other._ArcRadius,
-                            other._CenterRadius,
-                            other._CenterDiameter,
-                            other._GoalFlat,
-                            other._FloorLength,
-                            other._FloorWidth)
+                          other._Width,
+                          other._Border,
+                          other._LineWidth,
+                          other._GoalWidth,
+                          other._GoalDepth,
+                          other._GoalHeight,
+                          other._PenaltyDist,
+                          other._PenaltyDiam,
+                          other._ArcRadius,
+                          other._CenterRadius,
+                          other._CenterDiameter,
+                          other._GoalFlat,
+                          other._FloorLength,
+                          other._FloorWidth)
   {
   }
 
@@ -131,22 +117,6 @@ struct Field_Dimensions {
         _FloorWidth*scalar
     );
   }
-
-  float Get_Length() { return _Length; }
-  float Get_Width() { return _Width; }
-  float Get_Border() { return _Border; }
-  float Get_LineWidth() { return _LineWidth; }
-  float Get_GoalWidth() { return _GoalWidth; }
-  float Get_GoalDepth() { return _GoalDepth; }
-  float Get_GoalHeight() { return _GoalHeight; }
-  float Get_PenaltyDist() { return _PenaltyDist; }
-  float Get_PenaltyDiam() { return _PenaltyDiam; }
-  float Get_ArcRadius() { return _ArcRadius; }
-  float Get_CenterRadius() { return _CenterRadius; }
-  float Get_CenterDiameter() { return _CenterDiameter; }
-  float Get_GoalFlat() { return _GoalFlat; }
-  float Get_FloorLength() { return _FloorLength; }
-  float Get_FloorWidth() { return _FloorWidth; }
 
 private:
   float _Length;

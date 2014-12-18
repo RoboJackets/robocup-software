@@ -679,7 +679,7 @@ void Processor::changeVisionChannel(int port)
 }
 
 void Processor::recalculateWorldToTeamTransform() {
-	_worldToTeam = Geometry2d::TransformMatrix::translate(0, Field_Dimensions::Current_Dimensions.Length / 2.0f);
+	_worldToTeam = Geometry2d::TransformMatrix::translate(0, Field_Dimensions::Current_Dimensions.Length() / 2.0f);
 	_worldToTeam *= Geometry2d::TransformMatrix::rotate(_teamAngle);
 }
 

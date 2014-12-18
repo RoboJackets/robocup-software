@@ -89,24 +89,24 @@ void Field::initPhysics() {
 	const float halfWidth = 0.1 * scaling;
 	const float halfHeight = 0.05 * scaling;
 
-	btCollisionShape *longWallShape = new btBoxShape(btVector3(halfWidth, halfHeight, Field_Dimensions::Current_Dimensions.FloorLength / 2.f + 2 * halfWidth));
-	btCollisionShape *wideWallShape = new btBoxShape(btVector3(Field_Dimensions::Current_Dimensions.FloorWidth / 2.f, halfHeight, halfWidth));
+	btCollisionShape *longWallShape = new btBoxShape(btVector3(halfWidth, halfHeight, Field_Dimensions::Current_Dimensions.FloorLength() / 2.f + 2 * halfWidth));
+	btCollisionShape *wideWallShape = new btBoxShape(btVector3(Field_Dimensions::Current_Dimensions.FloorWidth() / 2.f, halfHeight, halfWidth));
 	longWallShape->setMargin(0.004 * scaling);
 	wideWallShape->setMargin(0.004 * scaling);
 
 	_simEngine->addCollisionShape(longWallShape);
 	_simEngine->addCollisionShape(wideWallShape);
 
-	tr.setOrigin(btVector3(Field_Dimensions::Current_Dimensions.FloorWidth / 2.f + halfWidth, halfHeight, 0));
+	tr.setOrigin(btVector3(Field_Dimensions::Current_Dimensions.FloorWidth() / 2.f + halfWidth, halfHeight, 0));
 	_wallBodies[0] = _simEngine->localCreateRigidBody(0, tr, longWallShape);
 
-	tr.setOrigin(btVector3(-Field_Dimensions::Current_Dimensions.FloorWidth / 2.f - halfWidth, halfHeight, 0));
+	tr.setOrigin(btVector3(-Field_Dimensions::Current_Dimensions.FloorWidth() / 2.f - halfWidth, halfHeight, 0));
 	_wallBodies[1] = _simEngine->localCreateRigidBody(0, tr, longWallShape);
 
-	tr.setOrigin(btVector3(0, halfHeight, Field_Dimensions::Current_Dimensions.FloorLength / 2.f + halfWidth));
+	tr.setOrigin(btVector3(0, halfHeight, Field_Dimensions::Current_Dimensions.FloorLength() / 2.f + halfWidth));
 	_wallBodies[2] = _simEngine->localCreateRigidBody(0, tr, wideWallShape);
 
-	tr.setOrigin(btVector3(0, halfHeight, -Field_Dimensions::Current_Dimensions.FloorLength / 2.f - halfWidth));
+	tr.setOrigin(btVector3(0, halfHeight, -Field_Dimensions::Current_Dimensions.FloorLength() / 2.f - halfWidth));
 	_wallBodies[3] = _simEngine->localCreateRigidBody(0, tr, wideWallShape);
 
 	//color
@@ -115,16 +115,16 @@ void Field::initPhysics() {
 	wideWallShape->setUserPointer(color);
 
 	//create goal walls for blue
-	btBoxShape *goalBackShape = new btBoxShape(btVector3(Field_Dimensions::Current_Dimensions.GoalWidth / 2.f + Sim_GoalWall_Width, Sim_GoalWall_Height / 2.f, Sim_GoalWall_Width / 2.f));
-	btBoxShape *goalSideShape = new btBoxShape(btVector3(Sim_GoalWall_Width / 2.f, Sim_GoalWall_Height / 2.f, Field_Dimensions::Current_Dimensions.GoalDepth / 2.f));
+	btBoxShape *goalBackShape = new btBoxShape(btVector3(Field_Dimensions::Current_Dimensions.GoalWidth() / 2.f + Sim_GoalWall_Width, Sim_GoalWall_Height / 2.f, Sim_GoalWall_Width / 2.f));
+	btBoxShape *goalSideShape = new btBoxShape(btVector3(Sim_GoalWall_Width / 2.f, Sim_GoalWall_Height / 2.f, Field_Dimensions::Current_Dimensions.GoalDepth() / 2.f));
 	goalBackShape->setMargin(0.004 * scaling);
 	goalSideShape->setMargin(0.004 * scaling);
 
 	_simEngine->addCollisionShape(goalBackShape);
 	_simEngine->addCollisionShape(goalSideShape);
 
-	btVector3 backPos = btVector3(0, Sim_GoalWall_Height / 2.f, Field_Dimensions::Current_Dimensions.Length / 2.f + Sim_GoalWall_Width / 2.f + Field_Dimensions::Current_Dimensions.GoalDepth);
-	btVector3 sidePos = btVector3(Field_Dimensions::Current_Dimensions.GoalWidth / 2.f + Sim_GoalWall_Width / 2.f, Sim_GoalWall_Height / 2.f, Field_Dimensions::Current_Dimensions.Length / 2.f + Field_Dimensions::Current_Dimensions.GoalDepth / 2.f);
+	btVector3 backPos = btVector3(0, Sim_GoalWall_Height / 2.f, Field_Dimensions::Current_Dimensions.Length() / 2.f + Sim_GoalWall_Width / 2.f + Field_Dimensions::Current_Dimensions.GoalDepth());
+	btVector3 sidePos = btVector3(Field_Dimensions::Current_Dimensions.GoalWidth() / 2.f + Sim_GoalWall_Width / 2.f, Sim_GoalWall_Height / 2.f, Field_Dimensions::Current_Dimensions.Length() / 2.f + Field_Dimensions::Current_Dimensions.GoalDepth() / 2.f);
 
 	tr.setOrigin(backPos);
 	_blueGoalBodies[0] = _simEngine->localCreateRigidBody(0, tr, goalBackShape);
@@ -181,45 +181,45 @@ void Field::renderField() {
 	float fieldHeight = 0.001*scaling; //Strictly for rendering purposes
 	glColor4f(0.,1.0,0.,1.0);
 	glBegin(GL_POLYGON);
-		glVertex3f(_x+Field_Dimensions::Current_Dimensions.FloorWidth/2.f, fieldHeight, _y+Field_Dimensions::Current_Dimensions.FloorLength/2.f);
-		glVertex3f(_x-Field_Dimensions::Current_Dimensions.FloorWidth/2.f, fieldHeight, _y+Field_Dimensions::Current_Dimensions.FloorLength/2.f);
-		glVertex3f(_x-Field_Dimensions::Current_Dimensions.FloorWidth/2.f, fieldHeight, _y-Field_Dimensions::Current_Dimensions.FloorLength/2.f);
-		glVertex3f(_x+Field_Dimensions::Current_Dimensions.FloorWidth/2.f, fieldHeight, _y-Field_Dimensions::Current_Dimensions.FloorLength/2.f);
+		glVertex3f(_x+Field_Dimensions::Current_Dimensions.FloorWidth()/2.f, fieldHeight, _y+Field_Dimensions::Current_Dimensions.FloorLength()/2.f);
+		glVertex3f(_x-Field_Dimensions::Current_Dimensions.FloorWidth()/2.f, fieldHeight, _y+Field_Dimensions::Current_Dimensions.FloorLength()/2.f);
+		glVertex3f(_x-Field_Dimensions::Current_Dimensions.FloorWidth()/2.f, fieldHeight, _y-Field_Dimensions::Current_Dimensions.FloorLength()/2.f);
+		glVertex3f(_x+Field_Dimensions::Current_Dimensions.FloorWidth()/2.f, fieldHeight, _y-Field_Dimensions::Current_Dimensions.FloorLength()/2.f);
 	glEnd();
 
 	float lineHeight = 0.002*scaling;
 	//Center circle
 	glColor4f (1.0, 1.0, 1.0, 1.0);
-	renderArc(_x,_y,0,PI*2,lineHeight,Field_Dimensions::Current_Dimensions.CenterRadius,Field_Dimensions::Current_Dimensions.LineWidth,360);
+	renderArc(_x,_y,0,PI*2,lineHeight,Field_Dimensions::Current_Dimensions.CenterRadius(),Field_Dimensions::Current_Dimensions.LineWidth(),360);
 
 	//Field Boundary Lines
-	renderVerticalLine(_x+Field_Dimensions::Current_Dimensions.Width/2.f, _y+Field_Dimensions::Current_Dimensions.Length/2.f, _x+Field_Dimensions::Current_Dimensions.Width/2.f, _y-Field_Dimensions::Current_Dimensions.Length/2.f, lineHeight, Field_Dimensions::Current_Dimensions.LineWidth);
-	renderVerticalLine(_x-Field_Dimensions::Current_Dimensions.Width/2.f, _y+Field_Dimensions::Current_Dimensions.Length/2.f, _x-Field_Dimensions::Current_Dimensions.Width/2.f, _y-Field_Dimensions::Current_Dimensions.Length/2.f, lineHeight, Field_Dimensions::Current_Dimensions.LineWidth);
-	renderHorizontalLine(_x+Field_Dimensions::Current_Dimensions.Width/2.f, _y+Field_Dimensions::Current_Dimensions.Length/2.f, _x-Field_Dimensions::Current_Dimensions.Width/2.f, _y+Field_Dimensions::Current_Dimensions.Length/2.f, lineHeight, Field_Dimensions::Current_Dimensions.LineWidth);
-	renderHorizontalLine(_x+Field_Dimensions::Current_Dimensions.Width/2.f, _y-Field_Dimensions::Current_Dimensions.Length/2.f, _x-Field_Dimensions::Current_Dimensions.Width/2.f, _y-Field_Dimensions::Current_Dimensions.Length/2.f, lineHeight, Field_Dimensions::Current_Dimensions.LineWidth);
+	renderVerticalLine(_x+Field_Dimensions::Current_Dimensions.Width()/2.f, _y+Field_Dimensions::Current_Dimensions.Length()/2.f, _x+Field_Dimensions::Current_Dimensions.Width()/2.f, _y-Field_Dimensions::Current_Dimensions.Length()/2.f, lineHeight, Field_Dimensions::Current_Dimensions.LineWidth());
+	renderVerticalLine(_x-Field_Dimensions::Current_Dimensions.Width()/2.f, _y+Field_Dimensions::Current_Dimensions.Length()/2.f, _x-Field_Dimensions::Current_Dimensions.Width()/2.f, _y-Field_Dimensions::Current_Dimensions.Length()/2.f, lineHeight, Field_Dimensions::Current_Dimensions.LineWidth());
+	renderHorizontalLine(_x+Field_Dimensions::Current_Dimensions.Width()/2.f, _y+Field_Dimensions::Current_Dimensions.Length()/2.f, _x-Field_Dimensions::Current_Dimensions.Width()/2.f, _y+Field_Dimensions::Current_Dimensions.Length()/2.f, lineHeight, Field_Dimensions::Current_Dimensions.LineWidth());
+	renderHorizontalLine(_x+Field_Dimensions::Current_Dimensions.Width()/2.f, _y-Field_Dimensions::Current_Dimensions.Length()/2.f, _x-Field_Dimensions::Current_Dimensions.Width()/2.f, _y-Field_Dimensions::Current_Dimensions.Length()/2.f, lineHeight, Field_Dimensions::Current_Dimensions.LineWidth());
 
 	//Center Line
-	renderHorizontalLine(_x+Field_Dimensions::Current_Dimensions.Width/2.f,_y,_x-Field_Dimensions::Current_Dimensions.Width/2.f,_y,lineHeight,Field_Dimensions::Current_Dimensions.LineWidth);
+	renderHorizontalLine(_x+Field_Dimensions::Current_Dimensions.Width()/2.f,_y,_x-Field_Dimensions::Current_Dimensions.Width()/2.f,_y,lineHeight,Field_Dimensions::Current_Dimensions.LineWidth());
 
 	//Goal Arc //0 radians is in the Z direction (forward)
-	renderArc(_x-(Field_Dimensions::Current_Dimensions.GoalFlat/2.f),_y-Field_Dimensions::Current_Dimensions.Length/2.f,PI*3/2.f,PI*2.f,lineHeight,Field_Dimensions::Current_Dimensions.ArcRadius,Field_Dimensions::Current_Dimensions.LineWidth*2,90);
-	renderArc(_x+(Field_Dimensions::Current_Dimensions.GoalFlat/2.f),_y-Field_Dimensions::Current_Dimensions.Length/2.f,0,PI/2.f,lineHeight,Field_Dimensions::Current_Dimensions.ArcRadius,Field_Dimensions::Current_Dimensions.LineWidth*2,90);
-	renderHorizontalLine(_x-Field_Dimensions::Current_Dimensions.GoalFlat/2.f,_y-Field_Dimensions::Current_Dimensions.Length/2.f+Field_Dimensions::Current_Dimensions.ArcRadius,_x+Field_Dimensions::Current_Dimensions.GoalFlat/2.f,_y-Field_Dimensions::Current_Dimensions.Length/2.f+Field_Dimensions::Current_Dimensions.ArcRadius,lineHeight, Field_Dimensions::Current_Dimensions.LineWidth);
+	renderArc(_x-(Field_Dimensions::Current_Dimensions.GoalFlat()/2.f),_y-Field_Dimensions::Current_Dimensions.Length()/2.f,PI*3/2.f,PI*2.f,lineHeight,Field_Dimensions::Current_Dimensions.ArcRadius(),Field_Dimensions::Current_Dimensions.LineWidth()*2,90);
+	renderArc(_x+(Field_Dimensions::Current_Dimensions.GoalFlat()/2.f),_y-Field_Dimensions::Current_Dimensions.Length()/2.f,0,PI/2.f,lineHeight,Field_Dimensions::Current_Dimensions.ArcRadius(),Field_Dimensions::Current_Dimensions.LineWidth()*2,90);
+	renderHorizontalLine(_x-Field_Dimensions::Current_Dimensions.GoalFlat()/2.f,_y-Field_Dimensions::Current_Dimensions.Length()/2.f+Field_Dimensions::Current_Dimensions.ArcRadius(),_x+Field_Dimensions::Current_Dimensions.GoalFlat()/2.f,_y-Field_Dimensions::Current_Dimensions.Length()/2.f+Field_Dimensions::Current_Dimensions.ArcRadius(),lineHeight, Field_Dimensions::Current_Dimensions.LineWidth());
 
-	renderArc(_x-(Field_Dimensions::Current_Dimensions.GoalFlat/2.f),_y+Field_Dimensions::Current_Dimensions.Length/2.f,PI,PI*3/2.f,lineHeight,Field_Dimensions::Current_Dimensions.ArcRadius,Field_Dimensions::Current_Dimensions.LineWidth*2,90);
-	renderArc(_x+(Field_Dimensions::Current_Dimensions.GoalFlat/2.f),_y+Field_Dimensions::Current_Dimensions.Length/2.f,PI/2.f,PI,lineHeight,Field_Dimensions::Current_Dimensions.ArcRadius,Field_Dimensions::Current_Dimensions.LineWidth*2,90);
-	renderHorizontalLine(_x-Field_Dimensions::Current_Dimensions.GoalFlat/2.f,_y+Field_Dimensions::Current_Dimensions.Length/2.f-Field_Dimensions::Current_Dimensions.ArcRadius,_x+Field_Dimensions::Current_Dimensions.GoalFlat/2.f,_y+Field_Dimensions::Current_Dimensions.Length/2.f-Field_Dimensions::Current_Dimensions.ArcRadius,lineHeight, Field_Dimensions::Current_Dimensions.LineWidth);
+	renderArc(_x-(Field_Dimensions::Current_Dimensions.GoalFlat()/2.f),_y+Field_Dimensions::Current_Dimensions.Length()/2.f,PI,PI*3/2.f,lineHeight,Field_Dimensions::Current_Dimensions.ArcRadius(),Field_Dimensions::Current_Dimensions.LineWidth()*2,90);
+	renderArc(_x+(Field_Dimensions::Current_Dimensions.GoalFlat()/2.f),_y+Field_Dimensions::Current_Dimensions.Length()/2.f,PI/2.f,PI,lineHeight,Field_Dimensions::Current_Dimensions.ArcRadius(),Field_Dimensions::Current_Dimensions.LineWidth()*2,90);
+	renderHorizontalLine(_x-Field_Dimensions::Current_Dimensions.GoalFlat()/2.f,_y+Field_Dimensions::Current_Dimensions.Length()/2.f-Field_Dimensions::Current_Dimensions.ArcRadius(),_x+Field_Dimensions::Current_Dimensions.GoalFlat()/2.f,_y+Field_Dimensions::Current_Dimensions.Length()/2.f-Field_Dimensions::Current_Dimensions.ArcRadius(),lineHeight, Field_Dimensions::Current_Dimensions.LineWidth());
 
 	//Goal Area
 	glColor4f(1.0,1.0,0,1.0); //Yellow
-	renderVerticalLine(_x-Field_Dimensions::Current_Dimensions.GoalWidth/2.f,_y-Field_Dimensions::Current_Dimensions.Length/2.f,_x-Field_Dimensions::Current_Dimensions.GoalWidth/2.f,_y-(Field_Dimensions::Current_Dimensions.Length/2.f+Field_Dimensions::Current_Dimensions.GoalDepth),lineHeight,Field_Dimensions::Current_Dimensions.LineWidth);
-	renderVerticalLine(_x+Field_Dimensions::Current_Dimensions.GoalWidth/2.f,_y-Field_Dimensions::Current_Dimensions.Length/2.f,_x+Field_Dimensions::Current_Dimensions.GoalWidth/2.f,_y-(Field_Dimensions::Current_Dimensions.Length/2.f+Field_Dimensions::Current_Dimensions.GoalDepth),lineHeight,Field_Dimensions::Current_Dimensions.LineWidth);
-	renderHorizontalLine(_x-Field_Dimensions::Current_Dimensions.GoalWidth/2.f,_y-(Field_Dimensions::Current_Dimensions.Length/2.f+Field_Dimensions::Current_Dimensions.GoalDepth),_x+Field_Dimensions::Current_Dimensions.GoalWidth/2.f,_y-(Field_Dimensions::Current_Dimensions.Length/2.f+Field_Dimensions::Current_Dimensions.GoalDepth),lineHeight,Field_Dimensions::Current_Dimensions.LineWidth);
+	renderVerticalLine(_x-Field_Dimensions::Current_Dimensions.GoalWidth()/2.f,_y-Field_Dimensions::Current_Dimensions.Length()/2.f,_x-Field_Dimensions::Current_Dimensions.GoalWidth()/2.f,_y-(Field_Dimensions::Current_Dimensions.Length()/2.f+Field_Dimensions::Current_Dimensions.GoalDepth()),lineHeight,Field_Dimensions::Current_Dimensions.LineWidth());
+	renderVerticalLine(_x+Field_Dimensions::Current_Dimensions.GoalWidth()/2.f,_y-Field_Dimensions::Current_Dimensions.Length()/2.f,_x+Field_Dimensions::Current_Dimensions.GoalWidth()/2.f,_y-(Field_Dimensions::Current_Dimensions.Length()/2.f+Field_Dimensions::Current_Dimensions.GoalDepth()),lineHeight,Field_Dimensions::Current_Dimensions.LineWidth());
+	renderHorizontalLine(_x-Field_Dimensions::Current_Dimensions.GoalWidth()/2.f,_y-(Field_Dimensions::Current_Dimensions.Length()/2.f+Field_Dimensions::Current_Dimensions.GoalDepth()),_x+Field_Dimensions::Current_Dimensions.GoalWidth()/2.f,_y-(Field_Dimensions::Current_Dimensions.Length()/2.f+Field_Dimensions::Current_Dimensions.GoalDepth()),lineHeight,Field_Dimensions::Current_Dimensions.LineWidth());
 
 	glColor4f(0,0,1.0,1.0); //Blue
-	renderVerticalLine(_x-Field_Dimensions::Current_Dimensions.GoalWidth/2.f,_y+Field_Dimensions::Current_Dimensions.Length/2.f,_x-Field_Dimensions::Current_Dimensions.GoalWidth/2.f,_y+(Field_Dimensions::Current_Dimensions.Length/2.f+Field_Dimensions::Current_Dimensions.GoalDepth),lineHeight,Field_Dimensions::Current_Dimensions.LineWidth);
-	renderVerticalLine(_x+Field_Dimensions::Current_Dimensions.GoalWidth/2.f,_y+Field_Dimensions::Current_Dimensions.Length/2.f,_x+Field_Dimensions::Current_Dimensions.GoalWidth/2.f,_y+(Field_Dimensions::Current_Dimensions.Length/2.f+Field_Dimensions::Current_Dimensions.GoalDepth),lineHeight,Field_Dimensions::Current_Dimensions.LineWidth);
-	renderHorizontalLine(_x-Field_Dimensions::Current_Dimensions.GoalWidth/2.f,_y+(Field_Dimensions::Current_Dimensions.Length/2.f+Field_Dimensions::Current_Dimensions.GoalDepth),_x+Field_Dimensions::Current_Dimensions.GoalWidth/2.f,_y+(Field_Dimensions::Current_Dimensions.Length/2.f+Field_Dimensions::Current_Dimensions.GoalDepth),lineHeight,Field_Dimensions::Current_Dimensions.LineWidth);
+	renderVerticalLine(_x-Field_Dimensions::Current_Dimensions.GoalWidth()/2.f,_y+Field_Dimensions::Current_Dimensions.Length()/2.f,_x-Field_Dimensions::Current_Dimensions.GoalWidth()/2.f,_y+(Field_Dimensions::Current_Dimensions.Length()/2.f+Field_Dimensions::Current_Dimensions.GoalDepth()),lineHeight,Field_Dimensions::Current_Dimensions.LineWidth());
+	renderVerticalLine(_x+Field_Dimensions::Current_Dimensions.GoalWidth()/2.f,_y+Field_Dimensions::Current_Dimensions.Length()/2.f,_x+Field_Dimensions::Current_Dimensions.GoalWidth()/2.f,_y+(Field_Dimensions::Current_Dimensions.Length()/2.f+Field_Dimensions::Current_Dimensions.GoalDepth()),lineHeight,Field_Dimensions::Current_Dimensions.LineWidth());
+	renderHorizontalLine(_x-Field_Dimensions::Current_Dimensions.GoalWidth()/2.f,_y+(Field_Dimensions::Current_Dimensions.Length()/2.f+Field_Dimensions::Current_Dimensions.GoalDepth()),_x+Field_Dimensions::Current_Dimensions.GoalWidth()/2.f,_y+(Field_Dimensions::Current_Dimensions.Length()/2.f+Field_Dimensions::Current_Dimensions.GoalDepth()),lineHeight,Field_Dimensions::Current_Dimensions.LineWidth());
 
 	if(debug_mode & btIDebugDraw::DBG_DrawWireframe){
 		glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
@@ -264,24 +264,24 @@ void Field::reshapeBodies() {
 	const float halfWidth = 0.1 * scaling;
 	const float halfHeight = 0.05 * scaling;
 
-	btCollisionShape *longWallShape = new btBoxShape(btVector3(halfWidth, halfHeight, Field_Dimensions::Current_Dimensions.FloorLength / 2.f + 2 * halfWidth));
-	btCollisionShape *wideWallShape = new btBoxShape(btVector3(Field_Dimensions::Current_Dimensions.FloorWidth / 2.f, halfHeight, halfWidth));
+	btCollisionShape *longWallShape = new btBoxShape(btVector3(halfWidth, halfHeight, Field_Dimensions::Current_Dimensions.FloorLength() / 2.f + 2 * halfWidth));
+	btCollisionShape *wideWallShape = new btBoxShape(btVector3(Field_Dimensions::Current_Dimensions.FloorWidth() / 2.f, halfHeight, halfWidth));
 	longWallShape->setMargin(0.004 * scaling);
 	wideWallShape->setMargin(0.004 * scaling);
 
-	tr.setOrigin(btVector3(Field_Dimensions::Current_Dimensions.FloorWidth / 2.f + halfWidth, halfHeight, 0));
+	tr.setOrigin(btVector3(Field_Dimensions::Current_Dimensions.FloorWidth() / 2.f + halfWidth, halfHeight, 0));
 	_wallBodies[0]->setCollisionShape(longWallShape);
 	_wallBodies[0]->setMotionState(new btDefaultMotionState(tr));
 
-	tr.setOrigin(btVector3(-Field_Dimensions::Current_Dimensions.FloorWidth / 2.f - halfWidth, halfHeight, 0));
+	tr.setOrigin(btVector3(-Field_Dimensions::Current_Dimensions.FloorWidth() / 2.f - halfWidth, halfHeight, 0));
 	_wallBodies[1]->setCollisionShape(longWallShape);
 	_wallBodies[1]->setMotionState(new btDefaultMotionState(tr));
 
-	tr.setOrigin(btVector3(0, halfHeight, Field_Dimensions::Current_Dimensions.FloorLength / 2.f + halfWidth));
+	tr.setOrigin(btVector3(0, halfHeight, Field_Dimensions::Current_Dimensions.FloorLength() / 2.f + halfWidth));
 	_wallBodies[2]->setCollisionShape(wideWallShape);
 	_wallBodies[2]->setMotionState(new btDefaultMotionState(tr));
 
-	tr.setOrigin(btVector3(0, halfHeight, -Field_Dimensions::Current_Dimensions.FloorLength / 2.f - halfWidth));
+	tr.setOrigin(btVector3(0, halfHeight, -Field_Dimensions::Current_Dimensions.FloorLength() / 2.f - halfWidth));
 	_wallBodies[3]->setCollisionShape(wideWallShape);
 	_wallBodies[3]->setMotionState(new btDefaultMotionState(tr));
 
@@ -291,13 +291,13 @@ void Field::reshapeBodies() {
 	wideWallShape->setUserPointer(color);
 
 	//create goal walls for blue
-	btBoxShape *goalBackShape = new btBoxShape(btVector3(Field_Dimensions::Current_Dimensions.GoalWidth / 2.f + Sim_GoalWall_Width, Sim_GoalWall_Height / 2.f, Sim_GoalWall_Width / 2.f));
-	btBoxShape *goalSideShape = new btBoxShape(btVector3(Sim_GoalWall_Width / 2.f, Sim_GoalWall_Height / 2.f, Field_Dimensions::Current_Dimensions.GoalDepth / 2.f));
+	btBoxShape *goalBackShape = new btBoxShape(btVector3(Field_Dimensions::Current_Dimensions.GoalWidth() / 2.f + Sim_GoalWall_Width, Sim_GoalWall_Height / 2.f, Sim_GoalWall_Width / 2.f));
+	btBoxShape *goalSideShape = new btBoxShape(btVector3(Sim_GoalWall_Width / 2.f, Sim_GoalWall_Height / 2.f, Field_Dimensions::Current_Dimensions.GoalDepth() / 2.f));
 	goalBackShape->setMargin(0.004 * scaling);
 	goalSideShape->setMargin(0.004 * scaling);
 
-	btVector3 backPos = btVector3(0, Sim_GoalWall_Height / 2.f, Field_Dimensions::Current_Dimensions.Length / 2.f + Sim_GoalWall_Width / 2.f + Field_Dimensions::Current_Dimensions.GoalDepth);
-	btVector3 sidePos = btVector3(Field_Dimensions::Current_Dimensions.GoalWidth / 2.f + Sim_GoalWall_Width / 2.f, Sim_GoalWall_Height / 2.f, Field_Dimensions::Current_Dimensions.Length / 2.f + Field_Dimensions::Current_Dimensions.GoalDepth / 2.f);
+	btVector3 backPos = btVector3(0, Sim_GoalWall_Height / 2.f, Field_Dimensions::Current_Dimensions.Length() / 2.f + Sim_GoalWall_Width / 2.f + Field_Dimensions::Current_Dimensions.GoalDepth());
+	btVector3 sidePos = btVector3(Field_Dimensions::Current_Dimensions.GoalWidth() / 2.f + Sim_GoalWall_Width / 2.f, Sim_GoalWall_Height / 2.f, Field_Dimensions::Current_Dimensions.Length() / 2.f + Field_Dimensions::Current_Dimensions.GoalDepth() / 2.f);
 
 	tr.setOrigin(backPos);
 	_blueGoalBodies[0]->setCollisionShape(goalBackShape);
