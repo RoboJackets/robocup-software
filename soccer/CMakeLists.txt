@@ -13,6 +13,7 @@ file(GLOB SOCCER_SRC
     "motion/*.cpp"
     "planning/*.cpp"
     "radio/*.cpp"
+    "joystick/*.cpp"
     )
 
 # Exclude the two files that include a main() function - we'll add those in later for their respective executables
@@ -69,6 +70,7 @@ target_link_libraries(robocup ${LIBUSB_1_LIBRARIES})
 target_link_libraries(robocup ${Boost_LIBRARIES})
 target_link_libraries(robocup GL GLU glut)
 target_link_libraries(robocup pthread bfd)
+target_link_libraries(robocup spnav)
 
 
 # 'soccer' program

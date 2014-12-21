@@ -36,3 +36,6 @@ libpcap
 graphviz
 
 mercurial
+
+# to drive robots with the SpaceNavigator 3d mouse
+libspnav
