@@ -7,7 +7,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.10)
 # ------------------------------------------------------------------------------
 # git checkout and build location of mbed libraries
 set(MBED_PATH ${CMAKE_CURRENT_BINARY_DIR}/mbed_library-prefix/src/mbed_library)
-
+set(GCC_GCC_PATH "/usr/lib/gcc/arm-none-eabi/4.8.2")
 
 # ------------------------------------------------------------------------------
 # setup processor settings add aditional boards here
