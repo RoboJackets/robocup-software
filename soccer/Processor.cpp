@@ -11,7 +11,8 @@
 #include <multicast.hpp>
 #include <Constants.hpp>
 #include <Utils.hpp>
-#include <Joystick.hpp>
+#include <joystick/GamepadJoystick.hpp>
+#include <joystick/SpaceNavJoystick.hpp>
 #include <LogUtils.hpp>
 #include <Robot.hpp>
 
@@ -40,6 +41,16 @@ RobotConfig *Processor::robotConfig2008;
 RobotConfig *Processor::robotConfig2011;
 std::vector<RobotStatus*> Processor::robotStatuses; ///< FIXME: verify that this is correct
 
+
+//	Joystick speed limits (for damped and non-damped mode)
+// Translation in m/s, Rotation in rad/s
+static const float JoystickRotationMaxSpeed = 4 * M_PI;
+static const float JoystickRotationMaxDampedSpeed = 1 * M_PI;
+static const float JoystickTranslationMaxSpeed = 3.0;
+static const float JoystickTranslationMaxDampedSpeed = 1.0;
+
+
+
 void Processor::createConfiguration(Configuration *cfg)
 {
 	robotConfig2008 = new RobotConfig(cfg, "Rev2008");
@@ -65,7 +76,12 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive)
 
 	_simulation = sim;
 	_radio = 0;
-	_joystick = new Joystick();
+
+	//	joysticks
+	_joysticks.push_back(new GamepadJoystick());
+	_joysticks.push_back(new SpaceNavJoystick());
+	_dampedTranslation = true;
+	_dampedRotation = true;
 	
 	// Initialize team-space transformation
 	defendPlusX(_defendPlusX);
@@ -83,8 +99,10 @@ Processor::~Processor()
 {
 	stop();
 	
-	delete _joystick;
-	
+	for (Joystick *joy : _joysticks) {
+		delete joy;
+	}
+
 	//DEBUG - This is unnecessary, but lets us determine which one breaks.
 	//_refereeModule.reset();
 	_gameplayModule.reset();
@@ -103,7 +121,10 @@ void Processor::manualID(int value)
 {
 	QMutexLocker locker(&_loopMutex);
 	_manualID = value;
-	_joystick->reset();
+
+	for (Joystick *joy : _joysticks) {
+		joy->reset();
+	}
 }
 
 void Processor::goalieID(int value)
@@ -121,13 +142,13 @@ int Processor::goalieID()
 void Processor::dampedRotation(bool value)
 {
 	QMutexLocker locker(&_loopMutex);
-	_joystick->dampedRotation(value);
+	_dampedRotation = value;
 }
 
 void Processor::dampedTranslation(bool value)
 {
 	QMutexLocker locker(&_loopMutex);
-	_joystick->dampedTranslation(value);
+	_dampedTranslation = value;
 }
 
 /**
@@ -148,17 +169,13 @@ void Processor::blueTeam(bool value)
     }
 }
 
-/**
- * I believe this checks whether or not there is a joystick
- */
 bool Processor::joystickValid()
 {
 	QMutexLocker lock(&_loopMutex);
-	return _joystick->valid();
-}
-
-JoystickControlValues Processor::joystickControlValues() {
-	return _joystick->getJoystickControlValues();
+	for (Joystick *joy : _joysticks) {
+		if (joy->valid()) return true;
+	}
+	return false;
 }
 
 void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFrames)
@@ -372,7 +389,9 @@ void Processor::run()
 		
 		_loopMutex.lock();
 		
-		_joystick->update();
+		for (Joystick *joystick : _joysticks) {
+			joystick->update();
+		}
 		
 		runModels(detectionFrames);
 
@@ -542,7 +561,7 @@ void Processor::sendRadioData()
 	// Add RadioTx commands for visible robots and apply joystick input
 	for (OurRobot *r : _state.self)
 	{
-		if (r->visible)
+		if (r->visible || _manualID == r->shell())
 		{
 			Packet::RadioTx::Robot *txRobot = tx->add_robots();
 			
@@ -551,28 +570,85 @@ void Processor::sendRadioData()
 			// number of motors.
 			txRobot->CopyFrom(r->radioTx);
 			
-			if (_manualID >= 0 && (int)r->shell() == _manualID)
+			if (r->shell() == _manualID)
 			{
-				// Drive this robot manually
-				_joystick->drive(txRobot);
+				JoystickControlValues controlVals = getJoystickControlValues();
+				applyJoystickControls(controlVals, txRobot, r);
 			}
 		}
 	}
-	
-	// Manual driving for invisible robots
-	if (_manualID >= 0 && !_state.self[_manualID]->visible && tx->robots_size() < (int)Robots_Per_Team)
-	{
-		// The manual robot wasn't found by vision/modeling but we have room for it in the packet.
-		// This allows us to drive an off-field robot for testing or to drive a robot back onto the field.
-		Packet::RadioTx::Robot *txRobot = &_state.self[_manualID]->radioTx;
-		_joystick->drive(txRobot);
-		tx->add_robots()->CopyFrom(*txRobot);
-	}
 
-	if (_radio)
-    {
+	if (_radio) {
 		_radio->send(*_state.logFrame->mutable_radio_tx());
 	}
+}
+
+void Processor::applyJoystickControls(const JoystickControlValues &controlVals, Packet::RadioTx::Robot *tx, OurRobot *robot) {
+	Geometry2d::Point translation(controlVals.translation);
+
+	//	use world coordinates if we can see the robot
+	//	otherwise default to body coordinates
+	if (robot && robot->visible) {
+		translation.rotate(-robot->angle);
+	}
+
+	//	translation
+	tx->set_body_x(translation.x);
+	tx->set_body_y(translation.y);
+
+	//	rotation
+	tx->set_body_w(controlVals.rotation);
+
+	//	kick/chip
+	tx->set_kick_immediate(controlVals.kick || controlVals.chip);
+	tx->set_kick(controlVals.kickPower);
+	tx->set_use_chipper(controlVals.chip);
+
+	//	dribbler
+	tx->set_dribbler(controlVals.dribble ? controlVals.dribblerPower : 0);
+}
+
+JoystickControlValues Processor::getJoystickControlValues() {
+	//	if there's more than one joystick, we add their values
+	JoystickControlValues vals;
+	for (Joystick *joy : _joysticks) {
+		if (joy->valid()) {
+			JoystickControlValues newVals = joy->getJoystickControlValues();
+
+			if (newVals.dribble) vals.dribble = true;
+			if (newVals.kick) vals.kick = true;
+			if (newVals.chip) vals.chip = true;
+
+			vals.rotation += newVals.rotation;
+			vals.translation += newVals.translation;
+
+			vals.dribblerPower = max<double>(vals.dribblerPower, newVals.dribblerPower);
+			vals.kickPower = max<double>(vals.kickPower, newVals.kickPower);
+		}
+	}
+
+	//	keep it in range
+	vals.translation.clamp(sqrt(2.0));
+	if (vals.rotation > 1) vals.rotation = 1;
+	if (vals.rotation < -1) vals.rotation = -1;
+
+	//	scale up speeds, respecting the damping modes
+	if (_dampedTranslation) {
+		vals.translation *= JoystickTranslationMaxDampedSpeed;
+	} else {
+		vals.translation *= JoystickRotationMaxSpeed;
+	}
+	if (_dampedRotation) {
+		vals.rotation *= JoystickRotationMaxDampedSpeed;
+	} else {
+		vals.rotation *= JoystickRotationMaxSpeed;
+	}
+
+	//	scale up kicker and dribbler speeds
+	vals.dribblerPower *= 128;
+	vals.kickPower *= 255;
+
+	return vals;
 }
 
 void Processor::defendPlusX(bool value)
