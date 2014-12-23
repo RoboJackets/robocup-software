@@ -4,32 +4,32 @@
 
 struct Field_Dimensions {
 
-  inline float Length() { return _Length; }
-  inline float Width() { return _Width; }
-  inline float Border() { return _Border; }
+  inline float Length() const { return _Length; }
+  inline float Width() const { return _Width; }
+  inline float Border() const { return _Border; }
 
-  inline float LineWidth() { return _LineWidth; }
+  inline float LineWidth() const { return _LineWidth; }
 
-  inline float GoalWidth() { return _GoalWidth; }
-  inline float GoalDepth() { return _GoalDepth; }
-  inline float GoalHeight() { return _GoalHeight; }
+  inline float GoalWidth() const { return _GoalWidth; }
+  inline float GoalDepth() const { return _GoalDepth; }
+  inline float GoalHeight() const { return _GoalHeight; }
 
 /** Distance of the penalty marker from the goal line */
-  inline float PenaltyDist() { return _PenaltyDist; }
-  inline float PenaltyDiam() { return _PenaltyDiam; }
+  inline float PenaltyDist() const { return _PenaltyDist; }
+  inline float PenaltyDiam() const { return _PenaltyDiam; }
 
 /** Radius of the goal arcs */
-  inline float ArcRadius() { return _ArcRadius; }
+  inline float ArcRadius() const { return _ArcRadius; }
 
 /** diameter of the center circle */
-  inline float CenterRadius() { return _CenterRadius; }
-  inline float CenterDiameter() { return _CenterDiameter; }
+  inline float CenterRadius() const { return _CenterRadius; }
+  inline float CenterDiameter() const { return _CenterDiameter; }
 
 /** flat area for defence markings */
-  inline float GoalFlat() { return _GoalFlat; }
+  inline float GoalFlat() const { return _GoalFlat; }
 
-  inline float FloorLength() { return _FloorLength; }
-  inline float FloorWidth() { return _FloorWidth; }
+  inline float FloorLength() const { return _FloorLength; }
+  inline float FloorWidth() const { return _FloorWidth; }
 
   static const Field_Dimensions Single_Field_Dimensions;
 
