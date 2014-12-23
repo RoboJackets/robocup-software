@@ -16,8 +16,6 @@ const float Sim_Ball_Diameter = Ball_Diameter*scaling;
 const float Sim_Ball_Radius = Ball_Radius*scaling;
 const float Sim_Ball_Mass = Ball_Mass; //mass is not scaled
 
-//extern Field_Dimensions Sim_Field_Dimensions;
-
 /** Dimensions of the goal walls **/
 const float Sim_GoalWall_Width = 0.02*scaling;
 const float Sim_GoalWall_Height = 0.16*scaling;
