@@ -20,7 +20,7 @@ clean:
 	cd build && make $(MAKE_FLAGS) clean
 	rm -rf build
 
-# Robot firmware (both 2008/2011)
+# robot firmware (both 2008/2011)
 robot:
 	cd firmware; scons robot
 robot-prog:
@@ -37,7 +37,11 @@ robot2015:
 robot2015-prog:
 	mkdir -p build && cd build && cmake --target robot2015-prog .. && make $(MAKE_FLAGS) robot2015-prog
 
-# Robot FPGA
+# robot 2015 fpga
+fpga2015:
+	mkdir -p build && cd build && cmake --target fpga2015 .. && make $(MAKE_FLAGS) fpga2015
+
+# robot 2011 fpga
 fpga2011:
 	cd firmware; scons fpga2011
 # program the fpga over the usb spi interface
