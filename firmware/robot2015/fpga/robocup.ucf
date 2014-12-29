@@ -1,0 +1,6 @@
+# This is the "User Constraints File" for configuring the fpga
+# It specifies pin names and properties
+
+NET "SYSCLK" LOC="P50"; # FIXME: is this right?  I put it here just so this file isn't empty
+
+NET "JUSTIN" LOC="P130"; # FIXME: remove
