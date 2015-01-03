@@ -35,5 +35,10 @@ add_custom_target(fpga2015
         -config bitgen ${CMAKE_CURRENT_SOURCE_DIR}/robocup.v
     COMMENT "Using xflow to generate fpga bitstream from Verilog files"
     DEPENDS copy_ucf)
-set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE_DIR}/run/fpga2015.bit)
 
+# target to copy the output fpga bitstream to the mbed
+add_custom_target(fpga2015-prog
+    COMMAND ${PROJECT_SOURCE_DIR}/util/mbed-copy.sh ${CMAKE_CURRENT_BINARY_DIR}/robocup.bit
+    DEPENDS fpga2015
+    COMMENT "Copies the fpga bitstream file to the mbed"
+)
