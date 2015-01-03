@@ -40,6 +40,8 @@ robot2015-prog:
 # robot 2015 fpga
 fpga2015:
 	mkdir -p build && cd build && cmake --target fpga2015 .. && make $(MAKE_FLAGS) fpga2015
+fpga2015-prog:
+	mkdir -p build && cd build && cmake --target fpga2015-prog .. && make $(MAKE_FLAGS) fpga2015-prog
 
 # robot 2011 fpga
 fpga2011:
