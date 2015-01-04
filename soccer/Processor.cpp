@@ -600,8 +600,9 @@ void Processor::applyJoystickControls(const JoystickControlValues &controlVals, 
 	tx->set_body_w(controlVals.rotation);
 
 	//	kick/chip
-	tx->set_kick_immediate(controlVals.kick || controlVals.chip);
-	tx->set_kick(controlVals.kickPower);
+	bool kick = controlVals.kick || controlVals.chip;
+	tx->set_kick_immediate(kick);
+	tx->set_kick(kick ? controlVals.kickPower : 0);
 	tx->set_use_chipper(controlVals.chip);
 
 	//	dribbler
