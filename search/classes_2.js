@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['ball',['Ball',['../class_ball.html',1,'']]],
   ['ball',['Ball',['../classconstants_1_1_ball.html',1,'constants']]],
+  ['ball',['Ball',['../class_ball.html',1,'']]],
   ['ballfilter',['BallFilter',['../class_ball_filter.html',1,'']]],
   ['ballobservation',['BallObservation',['../class_ball_observation.html',1,'']]],
   ['balltracker',['BallTracker',['../class_ball_tracker.html',1,'']]],

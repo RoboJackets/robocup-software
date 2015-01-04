@@ -12,6 +12,7 @@ var searchData=
   ['angle',['angle',['../classskills_1_1face_1_1_face.html#a0b3d0603245fab32a1daa7b2fc8747ae',1,'skills.face.Face.angle()'],['../class_geometry2d_1_1_point.html#a67ea60681c7172fa1ef5ad7b2e04174d',1,'Geometry2d::Point::angle()']]],
   ['angleto',['angleTo',['../class_geometry2d_1_1_point.html#ace62e1a76e038d501c48e0435b737bbb',1,'Geometry2d::Point']]],
   ['approachopponent',['approachOpponent',['../class_our_robot.html#afcf2cd89c218915086882fef528e2fd2',1,'OurRobot::approachOpponent(unsigned shell_id) const '],['../class_our_robot.html#a334c3de52cadfaf6af2ea8537ab1d9b2',1,'OurRobot::approachOpponent(unsigned shell_id, bool enable_approach)']]],
+  ['arcradius',['ArcRadius',['../struct_field___dimensions.html#a01d05184f9c582f489d4058f42e9644f',1,'Field_Dimensions']]],
   ['assign_5froles',['assign_roles',['../classbehavior_1_1_behavior.html#a0d9a8e39c6fe3007b8649b8cf83b08f4',1,'behavior::Behavior']]],
   ['avoidallopponentradius',['avoidAllOpponentRadius',['../class_our_robot.html#a99ff3312c7249d7893c0c719143b84b7',1,'OurRobot']]],
   ['avoidallteammates',['avoidAllTeammates',['../class_our_robot.html#a027f238b9edf1f342398730652b4ecd3',1,'OurRobot']]],

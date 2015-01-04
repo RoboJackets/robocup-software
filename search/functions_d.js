@@ -1,9 +1,16 @@
 var searchData=
 [
-  ['name',['name',['../class_auto_name.html#a60e0e24b7dc109403cb343b83e8a6558',1,'AutoName']]],
-  ['nearest',['nearest',['../class_planning_1_1_tree.html#a1d2f09b93d7b662459ba7f89b9ebe32c',1,'Planning::Tree']]],
-  ['nearestpoint',['nearestPoint',['../class_geometry2d_1_1_line.html#a8719bc0e5b5008309c8cea92c09e22ba',1,'Geometry2d::Line::nearestPoint()'],['../class_geometry2d_1_1_segment.html#aff3b54739f001cba6fc3d6f2dbe11085',1,'Geometry2d::Segment::nearestPoint()']]],
-  ['nearestsegment',['nearestSegment',['../class_planning_1_1_path.html#a9ef658a543b7f147077391279604bb88',1,'Planning::Path']]],
-  ['nearpoint',['nearPoint',['../class_geometry2d_1_1_point.html#a5b491a02fd98e0124ab5c33572345ebb',1,'Geometry2d::Point']]],
-  ['normalized',['normalized',['../class_geometry2d_1_1_point.html#a551abe4264e33b2de66890982ef508e6',1,'Geometry2d::Point']]]
+  ['operator_21_3d',['operator!=',['../class_geometry2d_1_1_point.html#a4eba8c40e062c4932fbdec61fd75d978',1,'Geometry2d::Point']]],
+  ['operator_2a',['operator*',['../class_geometry2d_1_1_point.html#a07d1485f7ee656c42b0ec1193894eba5',1,'Geometry2d::Point']]],
+  ['operator_2a_3d',['operator*=',['../class_geometry2d_1_1_point.html#a0c53cdd9a83d4784f348d10ba59f09f1',1,'Geometry2d::Point']]],
+  ['operator_2b',['operator+',['../class_geometry2d_1_1_point.html#ac2ff247a5530cbf9acd327f85d346e95',1,'Geometry2d::Point']]],
+  ['operator_2b_3d',['operator+=',['../class_geometry2d_1_1_point.html#a0fc8aa68e604d56ec5bb1a40b7961dad',1,'Geometry2d::Point']]],
+  ['operator_2d',['operator-',['../class_geometry2d_1_1_point.html#a2be1b69b1e6b2690d3c7269e0a1a62da',1,'Geometry2d::Point::operator-(Point other) const '],['../class_geometry2d_1_1_point.html#a75d62178f5def7f127a53b564c91d0f1',1,'Geometry2d::Point::operator-() const ']]],
+  ['operator_2d_3d',['operator-=',['../class_geometry2d_1_1_point.html#a96036039e521aa1d06350af87a0e50cf',1,'Geometry2d::Point']]],
+  ['operator_2f',['operator/',['../class_geometry2d_1_1_point.html#aa44b6c0b0cd399b1f57db2bbc1fb24f9',1,'Geometry2d::Point::operator/(Point other) const '],['../class_geometry2d_1_1_point.html#a1d311a8cff730f09aa8a51a0dedf34c7',1,'Geometry2d::Point::operator/(float s) const ']]],
+  ['operator_2f_3d',['operator/=',['../class_geometry2d_1_1_point.html#a384a0bb60f1498244ca2846785ae1f79',1,'Geometry2d::Point']]],
+  ['operator_3d_3d',['operator==',['../class_geometry2d_1_1_point.html#a446c6e7344a32e17db98fcab3f14b2cc',1,'Geometry2d::Point']]],
+  ['oppmatrix',['oppMatrix',['../group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93',1,'Gameplay::GameplayModule']]],
+  ['optimize',['optimize',['../class_planning_1_1_r_r_t_planner.html#a70bf95f42e8106cd66ffaf5de9543887',1,'Planning::RRTPlanner']]],
+  ['ourrobot',['OurRobot',['../class_our_robot.html#a6b6f72c2cfb6c0c5ff1eff82904fc04a',1,'OurRobot']]]
 ];

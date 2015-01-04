@@ -1,15 +1,19 @@
 var searchData=
 [
-  ['path',['Path',['../class_planning_1_1_path.html#a7b732efd0f08055f44db555e4dcd23e0',1,'Planning::Path::Path()'],['../class_planning_1_1_path.html#ad1d1020adb93cb1cedd8ffd68f806e7f',1,'Planning::Path::Path(const Geometry2d::Point &amp;p0)'],['../class_planning_1_1_path.html#add96cf40541c803e78566691577c48df',1,'Planning::Path::Path(const Geometry2d::Point &amp;p0, const Geometry2d::Point &amp;p1)']]],
-  ['perpccw',['perpCCW',['../class_geometry2d_1_1_point.html#af7a65853916e74cbe125a0abc2b6d049',1,'Geometry2d::Point']]],
-  ['perpcw',['perpCW',['../class_geometry2d_1_1_point.html#abd3f1f20685256a38bc7c2a6b264ac79',1,'Geometry2d::Point']]],
-  ['pivot',['pivot',['../class_our_robot.html#a09f7e6a379537ecc7290a6d11072c903',1,'OurRobot']]],
-  ['playrobots',['playRobots',['../class_gameplay_1_1_gameplay_module.html#a5f607fcb4fdd5fe68830769cbeb0350b',1,'Gameplay::GameplayModule']]],
-  ['point',['Point',['../class_geometry2d_1_1_point.html#a8e0ac151ee451f036d322d24677bc691',1,'Geometry2d::Point::Point()'],['../class_geometry2d_1_1_point.html#a36b9e202aef2c2c2cfb39386ac1dbfd3',1,'Geometry2d::Point::Point(float x, float y)']]],
-  ['pointinrobotspace',['pointInRobotSpace',['../class_our_robot.html#a1d04e4b5569a9ff3ee1dca09bd73c38d',1,'OurRobot']]],
-  ['pointside',['pointSide',['../class_geometry2d_1_1_line.html#a4780f317efc1077423a99223ad0e770a',1,'Geometry2d::Line']]],
-  ['polygon',['Polygon',['../class_geometry2d_1_1_polygon.html#a9f1e47d29166782739f056d05912930d',1,'Geometry2d::Polygon::Polygon(const Segment &amp;seg, float r)'],['../class_geometry2d_1_1_polygon.html#adb85e6da4e9230a47f7ddb7c0b9c5c6d',1,'Geometry2d::Polygon::Polygon(const Segment &amp;seg, float r, float length)']]],
-  ['pos',['pos',['../classskills_1_1face_1_1_face.html#a9d3fb8674d7cc234115c97f489f6d080',1,'skills.face.Face.pos()'],['../classskills_1_1move_1_1_move.html#ad0aeb12ae90053c5038c92d250356d52',1,'skills.move.Move.pos()']]],
-  ['pose',['Pose',['../class_geometry2d_1_1_pose.html#a168f0c6e87cd34caab7cb3d4098fa052',1,'Geometry2d::Pose']]],
-  ['predict',['predict',['../class_robot_filter.html#ac789224b3a9c199be6289aa5f3512437',1,'RobotFilter']]]
+  ['radiorxupdated',['radioRxUpdated',['../class_our_robot.html#a78613ea6958affaf11afaf152aceaf60',1,'OurRobot']]],
+  ['randompoint',['randomPoint',['../namespace_planning.html#a3470cc1ec675b113668f12bdc10f2466',1,'Planning']]],
+  ['recalculate_5faim_5ftarget_5fpoint',['recalculate_aim_target_point',['../classskills_1_1__kick_1_1___kick.html#abf6399e84a7bb2008aba12e653a4ce7c',1,'skills::_kick::_Kick']]],
+  ['receive_5fpoint',['receive_point',['../classskills_1_1pass__receive_1_1_pass_receive.html#a89e7cb8a12685c0efd84fbcad5c92723',1,'skills::pass_receive::PassReceive']]],
+  ['replanifneeded',['replanIfNeeded',['../class_our_robot.html#a95efbaa6f6668a9559edc7c29e992447',1,'OurRobot']]],
+  ['reset',['reset',['../class_gamepad_joystick.html#a378ab547151a541b6c85b7722c9cd54e',1,'GamepadJoystick::reset()'],['../class_joystick.html#a501ff19bf226c6edb17a80e8fd7218f8',1,'Joystick::reset()'],['../class_space_nav_joystick.html#a793b5d7cb3f40488ca11668dfdc830ab',1,'SpaceNavJoystick::reset()']]],
+  ['resetfornextiteration',['resetForNextIteration',['../class_our_robot.html#aa9ab95dc3c42279734fe860609d6e9d0',1,'OurRobot']]],
+  ['resetmotionconstraints',['resetMotionConstraints',['../class_our_robot.html#aea7c7abd872f189b616eeee893256064',1,'OurRobot']]],
+  ['restart',['restart',['../classfsm_1_1_state_machine.html#a8a4f68b6016e1c759635eeea747912f3',1,'fsm::StateMachine']]],
+  ['robot',['Robot',['../class_robot.html#a241c0ca6e392b4c2fef481392d35531d',1,'Robot']]],
+  ['role_5frequirements',['role_requirements',['../classbehavior_1_1_behavior.html#a01bf2a5d8f59ad226b1df15b4cc2d6e9',1,'behavior.Behavior.role_requirements()'],['../classcomposite__behavior_1_1_composite_behavior.html#a1c16307c571cf7e688c8dfa064fa411a',1,'composite_behavior.CompositeBehavior.role_requirements()'],['../classskills_1_1pass__receive_1_1_pass_receive.html#af78a8a2049f92bcdf61e3b2f6b455890',1,'skills.pass_receive.PassReceive.role_requirements()'],['../classtactics_1_1penalty_1_1_penalty.html#ac6a714790c572525aa913b69b0283976',1,'tactics.penalty.Penalty.role_requirements()']]],
+  ['root_5fpath',['root_path',['../classfs__watcher_1_1_fs_watcher.html#ab3ee86dbfc174b0115e768f6774e85e4',1,'fs_watcher::FsWatcher']]],
+  ['rotate',['rotate',['../class_geometry2d_1_1_point.html#a0d94c0285505aa1aab17c36505928bbb',1,'Geometry2d::Point::rotate(const Point &amp;origin, float angle)'],['../class_geometry2d_1_1_point.html#a6ccfeea670b14c267037f6185cb9d137',1,'Geometry2d::Point::rotate(float angle)'],['../class_geometry2d_1_1_point.html#ab9ba426c22a63b02d9488fc61368e5cf',1,'Geometry2d::Point::rotate(const Point &amp;pt, const Point &amp;origin, float angle)']]],
+  ['rotated',['rotated',['../class_geometry2d_1_1_point.html#aeab18a2ec5e60bcd00498bb29bcf3048',1,'Geometry2d::Point']]],
+  ['run',['run',['../class_gameplay_1_1_gameplay_module.html#aaba424dfbce39f5f9251f4c6545e18e0',1,'Gameplay::GameplayModule::run()'],['../class_motion_control.html#abdf289b41bccf17e5436f5131701efd6',1,'MotionControl::run()'],['../class_planning_1_1_r_r_t_planner.html#a1755133e327e1fed756bca8e42d8a481',1,'Planning::RRTPlanner::run()'],['../class_processor.html#a073f5e9ea6a3557c217d67ab392e5852',1,'Processor::run()'],['../class_pid.html#ae86adf5545b2af4188acdf3a29f71ea9',1,'Pid::run()']]],
+  ['rxisfresh',['rxIsFresh',['../class_our_robot.html#ae47a79814e56d53244f5b0d7d188022a',1,'OurRobot']]]
 ];

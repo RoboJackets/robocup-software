@@ -1,14 +1,14 @@
 var hierarchy =
 [
     [ "AutoName", "class_auto_name.html", null ],
-    [ "Ball", "class_ball.html", null ],
     [ "constants.Ball", "classconstants_1_1_ball.html", null ],
+    [ "Ball", "class_ball.html", null ],
     [ "BallFilter", "class_ball_filter.html", null ],
     [ "BallObservation", "class_ball_observation.html", null ],
     [ "BallTracker", "class_ball_tracker.html", null ],
     [ "play_registry.PlayRegistry.Category", "classplay__registry_1_1_play_registry_1_1_category.html", null ],
-    [ "RobotConfig::Chipper", "struct_robot_config_1_1_chipper.html", null ],
     [ "constants.Robot.Chipper", "classconstants_1_1_robot_1_1_chipper.html", null ],
+    [ "RobotConfig::Chipper", "struct_robot_config_1_1_chipper.html", null ],
     [ "constants.Colors", "classconstants_1_1_colors.html", null ],
     [ "ConfigItem", "class_config_item.html", [
       [ "ConfigBool", "class_config_bool.html", null ],
@@ -41,6 +41,7 @@ var hierarchy =
       [ "test_fsm.MyFsm.SubState", "classtest__fsm_1_1_my_fsm_1_1_sub_state.html", null ]
     ] ],
     [ "constants.Field", "classconstants_1_1_field.html", null ],
+    [ "Field_Dimensions", "struct_field___dimensions.html", null ],
     [ "FileSystemEventHandler", null, [
       [ "fs_watcher.FsWatcher.FsEventHandler", "classfs__watcher_1_1_fs_watcher_1_1_fs_event_handler.html", null ]
     ] ],
@@ -66,7 +67,10 @@ var hierarchy =
     [ "NewRefereePacket", "class_new_referee_packet.html", null ],
     [ "play_registry.PlayRegistry.Node", "classplay__registry_1_1_play_registry_1_1_node.html", null ],
     [ "noncopyable", null, [
-      [ "Joystick", "class_joystick.html", null ]
+      [ "Joystick", "class_joystick.html", [
+        [ "GamepadJoystick", "class_gamepad_joystick.html", null ],
+        [ "SpaceNavJoystick", "class_space_nav_joystick.html", null ]
+      ] ]
     ] ],
     [ "Observer", null, [
       [ "fs_watcher.FsWatcher", "classfs__watcher_1_1_fs_watcher.html", null ]

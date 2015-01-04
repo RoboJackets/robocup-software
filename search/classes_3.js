@@ -2,8 +2,8 @@ var searchData=
 [
   ['capture',['Capture',['../classskills_1_1capture_1_1_capture.html',1,'skills::capture']]],
   ['category',['Category',['../classplay__registry_1_1_play_registry_1_1_category.html',1,'play_registry::PlayRegistry']]],
-  ['chipper',['Chipper',['../classconstants_1_1_robot_1_1_chipper.html',1,'constants::Robot']]],
   ['chipper',['Chipper',['../struct_robot_config_1_1_chipper.html',1,'RobotConfig']]],
+  ['chipper',['Chipper',['../classconstants_1_1_robot_1_1_chipper.html',1,'constants::Robot']]],
   ['circle',['Circle',['../class_geometry2d_1_1_circle.html',1,'Geometry2d']]],
   ['circlenearball',['CircleNearBall',['../classtactics_1_1circle__near__ball_1_1_circle_near_ball.html',1,'tactics::circle_near_ball']]],
   ['colors',['Colors',['../classconstants_1_1_colors.html',1,'constants']]],

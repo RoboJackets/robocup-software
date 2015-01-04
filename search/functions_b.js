@@ -1,6 +1,9 @@
 var searchData=
 [
-  ['last',['last',['../class_planning_1_1_tree.html#ae5673a955cf95b8d5980b075fdd0d263',1,'Planning::Tree']]],
-  ['length',['length',['../class_planning_1_1_path.html#a3dae3d7d24dd7748acc73be8f08108b8',1,'Planning::Path::length(unsigned int start=0) const '],['../class_planning_1_1_path.html#a943f299e646cb3b4dc0e55e57dfc60a0',1,'Planning::Path::length(unsigned int start, unsigned int end) const '],['../class_planning_1_1_path.html#a1a4cd2971040a6b5d94c5344f06c37ba',1,'Planning::Path::length(const Geometry2d::Point &amp;pt) const ']]],
-  ['localobstacles',['localObstacles',['../class_our_robot.html#ad3ccf59f3c226b40774933432ce22a70',1,'OurRobot']]]
+  ['mag',['mag',['../class_geometry2d_1_1_point.html#a6ed5c08d2d6593452ca07f3b93f10a71',1,'Geometry2d::Point']]],
+  ['magsq',['magsq',['../class_geometry2d_1_1_point.html#aaafa7c842d0f79280fbf1b03bcae411f',1,'Geometry2d::Point']]],
+  ['makepath',['makePath',['../class_planning_1_1_r_r_t_planner.html#afde2aacc72b22f1af083768b1baada01',1,'Planning::RRTPlanner']]],
+  ['maxiterations',['maxIterations',['../class_planning_1_1_r_r_t_planner.html#a140a61e029018d1f1b84805fb5632d5c',1,'Planning::RRTPlanner::maxIterations() const '],['../class_planning_1_1_r_r_t_planner.html#ab45eeb7da9dbe6cb822e01748cad5867',1,'Planning::RRTPlanner::maxIterations(int value)']]],
+  ['move',['move',['../class_our_robot.html#a2687c62674d3e5ae878cae962950caef',1,'OurRobot']]],
+  ['move_5ftarget',['move_target',['../classtactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#a544116eae1d65d492c06b4971e6b8eeb',1,'tactics::positions::submissive_defender::SubmissiveDefender']]]
 ];

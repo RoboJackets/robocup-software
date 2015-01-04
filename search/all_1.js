@@ -17,6 +17,7 @@ var searchData=
   ['angleto',['angleTo',['../class_geometry2d_1_1_point.html#ace62e1a76e038d501c48e0435b737bbb',1,'Geometry2d::Point']]],
   ['anglevel',['angleVel',['../class_robot_pose.html#a685c05ad27d5bcc6ac58130df4219e7e',1,'RobotPose']]],
   ['approachopponent',['approachOpponent',['../class_our_robot.html#afcf2cd89c218915086882fef528e2fd2',1,'OurRobot::approachOpponent(unsigned shell_id) const '],['../class_our_robot.html#a334c3de52cadfaf6af2ea8537ab1d9b2',1,'OurRobot::approachOpponent(unsigned shell_id, bool enable_approach)']]],
+  ['arcradius',['ArcRadius',['../struct_field___dimensions.html#a01d05184f9c582f489d4058f42e9644f',1,'Field_Dimensions']]],
   ['area_5fmarking',['area_marking',['../classtactics_1_1positions_1_1defender_1_1_defender_1_1_state.html#ac3961e8318cbf7ba0703327c76bf0263',1,'tactics::positions::defender::Defender::State']]],
   ['assign_5froles',['assign_roles',['../classbehavior_1_1_behavior.html#a0d9a8e39c6fe3007b8649b8cf83b08f4',1,'behavior::Behavior']]],
   ['autoname',['AutoName',['../class_auto_name.html',1,'']]],

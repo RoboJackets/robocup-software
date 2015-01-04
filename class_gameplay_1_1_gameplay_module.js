@@ -11,6 +11,7 @@ var class_gameplay_1_1_gameplay_module =
     [ "oppMatrix", "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93", null ],
     [ "playRobots", "class_gameplay_1_1_gameplay_module.html#a5f607fcb4fdd5fe68830769cbeb0350b", null ],
     [ "run", "class_gameplay_1_1_gameplay_module.html#aaba424dfbce39f5f9251f4c6545e18e0", null ],
+    [ "sendFieldDimensionsToPython", "class_gameplay_1_1_gameplay_module.html#a33399a813ba047378703a512451330c9", null ],
     [ "setupUI", "class_gameplay_1_1_gameplay_module.html#a0cd9f6f095d43b1896e073e0f1d9bf20", null ],
     [ "state", "class_gameplay_1_1_gameplay_module.html#ab3143bba8c5e2243bb0e5fe72ee89eba", null ]
 ];

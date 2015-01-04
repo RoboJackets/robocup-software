@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['kick',['kick',['../class_our_robot.html#a1c8589e1c0b057797582cc5ae68040f5',1,'OurRobot']]],
-  ['kick_5fpower',['kick_power',['../classskills_1_1__kick_1_1___kick.html#ab87c2e916983c8d3eeb0614612028882',1,'skills::_kick::_Kick']]],
-  ['kickerbar',['kickerBar',['../class_our_robot.html#a8ebe1185b9bb1cc9c473d507ec9e8f43',1,'OurRobot']]],
-  ['kickimmediately',['kickImmediately',['../class_our_robot.html#a1b366ab867c9976e5915872d059e991f',1,'OurRobot']]],
-  ['kicktimer',['kickTimer',['../class_our_robot.html#a808d23e992c9f6e6a40a8b9c35965e6e',1,'OurRobot']]]
+  ['last',['last',['../class_planning_1_1_tree.html#ae5673a955cf95b8d5980b075fdd0d263',1,'Planning::Tree']]],
+  ['length',['length',['../class_planning_1_1_path.html#a3dae3d7d24dd7748acc73be8f08108b8',1,'Planning::Path::length(unsigned int start=0) const '],['../class_planning_1_1_path.html#a943f299e646cb3b4dc0e55e57dfc60a0',1,'Planning::Path::length(unsigned int start, unsigned int end) const '],['../class_planning_1_1_path.html#a1a4cd2971040a6b5d94c5344f06c37ba',1,'Planning::Path::length(const Geometry2d::Point &amp;pt) const ']]],
+  ['localobstacles',['localObstacles',['../class_our_robot.html#ad3ccf59f3c226b40774933432ce22a70',1,'OurRobot']]]
 ];

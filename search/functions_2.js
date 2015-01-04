@@ -1,6 +1,7 @@
 var searchData=
 [
   ['centermatrix',['centerMatrix',['../group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02',1,'Gameplay::GameplayModule']]],
+  ['centerradius',['CenterRadius',['../struct_field___dimensions.html#aecc66ef950ceee7a15a435f1e1e4a238',1,'Field_Dimensions']]],
   ['chip',['chip',['../class_our_robot.html#acfb0a511c25d2af38a9e4ef81640621d',1,'OurRobot']]],
   ['chipper_5favailable',['chipper_available',['../class_our_robot.html#a58360a0994fb157062277d397cb1f213',1,'OurRobot']]],
   ['clamp',['clamp',['../class_geometry2d_1_1_point.html#a2fcdfc771eda6de52ffb3cee4096f15f',1,'Geometry2d::Point']]],
