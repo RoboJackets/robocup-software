@@ -204,7 +204,7 @@ class Defender(single_robot_behavior.SingleRobotBehavior):
 		shootline = robocup.Segment(robocup.Point(0,0), robocup.Point(0,0))
 		if best is not None:
 			angle = (best.a0 + best.a1)/2.0
-			shootline = robocup.Segment(self._win_eval.origin(), robocup.Point.direction(angle * (math.pi / 180.0)))
+			shootline = robocup.Segment(self._win_eval.origin(), robocup.Point.direction(angle * (math.pi / 180.0))) # FIXME :no origin. 
 			main.system_state().draw_line(shootline, (255,0,0), "Defender")
 
 		need_task = False
