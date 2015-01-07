@@ -72,7 +72,7 @@ class OurGoalKick(play.Play):
         win_eval.enable_chip = kicker.robot != None and kicker.robot.has_chipper()
         win_eval.min_chip_range = OurGoalKick.MinChipRange
         win_eval.max_chip_range = OurGoalKick.MaxChipRange
-	windows, best = win_eval.eval_pt_to_seg(main.ball().pos, constants.Field.TheirGoalSegment)
+        windows, best = win_eval.eval_pt_to_seg(main.ball().pos, constants.Field.TheirGoalSegment)
 
         # note: the min length value is tunable
         if best != None and best.segment.length() > 0.3:
