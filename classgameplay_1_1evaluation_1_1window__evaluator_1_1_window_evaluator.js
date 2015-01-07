@@ -1,0 +1,28 @@
+var classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator =
+[
+    [ "__init__", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#ac47f7ee79e5c5cc9876d9c52a6b01c82", null ],
+    [ "chip_enabled", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#a95b69aaef8310b610dbec50c124bf222", null ],
+    [ "chip_enabled", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#aa669a19974383f4c53da285eeaa9fde8", null ],
+    [ "debug", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#a02fa1ce99be801b189011ca0fcf744ad", null ],
+    [ "debug", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#a582cd9f2d7613142499a907f4e7b5c0f", null ],
+    [ "eval_pt_to_opp_goal", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#a3401af6353767f623d2238cd6d83834f", null ],
+    [ "eval_pt_to_our_goal", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#a6ad9a6e627a2f455c7ca44ebba065ead", null ],
+    [ "eval_pt_to_pt", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#a24d5985dcc75c5c6df9c447db7aea612", null ],
+    [ "eval_pt_to_seg", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#a538f4569d599b3f9e53773d526b4c959", null ],
+    [ "excluded_robots", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#af63e020d0e6362390032b8b9ed003194", null ],
+    [ "excluded_robots", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#aee19ba28584c2da5174922033de8acd1", null ],
+    [ "hypothetical_robot_locations", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#a1ea3ef175c985309859c7737e8df1125", null ],
+    [ "hypothetical_robot_locations", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#a398e33d946e55e52eb2cdfacc83e9b80", null ],
+    [ "max_chip_range", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#a156a7f3570777dfeca69ba46b0c926cf", null ],
+    [ "max_chip_range", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#ad00106af35d3243dec6a232d9b711666", null ],
+    [ "min_chip_range", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#af29d4cc4f3a50954f7e903c20b1df31d", null ],
+    [ "min_chip_range", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#a06b6a1e608fd232e7d3be1d9c54094d3", null ],
+    [ "obstacle_range", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#ae3f7d29c179d572e510666caeb12bc3b", null ],
+    [ "obstacle_robot", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#aa858b5c12a4a63bb819bd64e779b38c3", null ],
+    [ "chip_enabled", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#a64645c64b9266c80554bcfff2324db4f", null ],
+    [ "debug", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#acb646769aa5a98872e74097370dac5cc", null ],
+    [ "excluded_robots", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#ab0e8cbec4c535f3dd3c16e33def56f04", null ],
+    [ "hypothetical_robot_locations", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#a2887a5c86e9ed23438e9a0e92db63dc0", null ],
+    [ "max_chip_range", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#ae448d4c3074eacb4edbe12517ceb424c", null ],
+    [ "min_chip_range", "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window_evaluator.html#af5806ccc4d328cb2f87a94cf807d29c6", null ]
+];

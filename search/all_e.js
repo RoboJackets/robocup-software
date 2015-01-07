@@ -7,7 +7,7 @@ var searchData=
   ['nearpoint',['nearPoint',['../class_geometry2d_1_1_point.html#a5b491a02fd98e0124ab5c33572345ebb',1,'Geometry2d::Point']]],
   ['newrefereemodule',['NewRefereeModule',['../class_new_referee_module.html',1,'']]],
   ['newrefereepacket',['NewRefereePacket',['../class_new_referee_packet.html',1,'']]],
-  ['node',['Node',['../classplay__registry_1_1_play_registry_1_1_node.html',1,'play_registry::PlayRegistry']]],
+  ['node',['Node',['../classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html',1,'gameplay::play_registry::PlayRegistry']]],
   ['normalized',['normalized',['../class_geometry2d_1_1_point.html#a551abe4264e33b2de66890982ef508e6',1,'Geometry2d::Point']]],
   ['numericfield',['NumericField',['../struct_chart_1_1_numeric_field.html',1,'Chart']]]
 ];
