@@ -1,8 +1,5 @@
 # This is a list of packages that we need for Arch Linux that
 # we'll install from the AUR using yaourt
 
-# gcc xcompile toolchain for mbed
-gcc-arm-none-eabi-bin
-
 # to drive robots with the SpaceNavigator 3d mouse
-spacenavd
+#spacenavd #TODO fix spacenavd. Once fixed, uncomment yaourt in arch-setup
