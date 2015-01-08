@@ -3,7 +3,6 @@ var searchData=
   ['radio',['Radio',['../class_radio.html',1,'']]],
   ['radiorxupdated',['radioRxUpdated',['../class_our_robot.html#a78613ea6958affaf11afaf152aceaf60',1,'OurRobot']]],
   ['radiotx',['radioTx',['../class_our_robot.html#a955ab4a906727f54a123f4e788ce68ba',1,'OurRobot']]],
-  ['randompoint',['randomPoint',['../namespace_planning.html#a3470cc1ec675b113668f12bdc10f2466',1,'Planning']]],
   ['recalculate_5faim_5ftarget_5fpoint',['recalculate_aim_target_point',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#a39508641624c2c4a9d206be19303de65',1,'gameplay::skills::_kick::_Kick']]],
   ['receive_5fpoint',['receive_point',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a7343a52e5f0cd0c7a87c1c04ad1cf876',1,'gameplay::skills::pass_receive::PassReceive']]],
   ['receivedtime',['receivedTime',['../class_new_referee_packet.html#a140afbc76fe594f06bde1caca290acf8',1,'NewRefereePacket::receivedTime()'],['../class_vision_packet.html#ab5fa431f2d132aa7475f345a4bd1cc1c',1,'VisionPacket::receivedTime()']]],

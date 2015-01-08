@@ -11,7 +11,6 @@ var searchData=
   ['consecutivepathchangecount',['consecutivePathChangeCount',['../class_our_robot.html#afb8d32e3580b30997915444bb907e262',1,'OurRobot']]],
   ['containsvertex',['containsVertex',['../class_geometry2d_1_1_polygon.html#aaeb37754674c18668a41637cd7070bfe',1,'Geometry2d::Polygon']]],
   ['createballobstacle',['createBallObstacle',['../class_our_robot.html#a7baa02e9ccb8c3882d50de92898974c5',1,'OurRobot']]],
-  ['createbezierpath',['createBezierPath',['../namespace_planning.html#a71135b3c2091bc4219c9c879e2da0a30',1,'Planning']]],
   ['createconfiguration',['createConfiguration',['../struct_motion_constraints.html#ad5044f21eb16f8cc7ce757ded8916f69',1,'MotionConstraints']]],
   ['createrobotobstacles',['createRobotObstacles',['../class_our_robot.html#ae659b832401f12a187df08165301e847',1,'OurRobot::createRobotObstacles(const std::vector&lt; ROBOT * &gt; &amp;robots, const RobotMask &amp;mask) const '],['../class_our_robot.html#aae2d18b5b0d6b35600bae7daeb88d7f0',1,'OurRobot::createRobotObstacles(const std::vector&lt; ROBOT * &gt; &amp;robots, const RobotMask &amp;mask, Geometry2d::Point currentPosition, float checkRadius) const ']]],
   ['cubicbezier',['cubicBezier',['../class_planning_1_1_r_r_t_planner.html#ac100cbe99e3061095e9de3f456d5bc33',1,'Planning::RRTPlanner']]],

@@ -238,7 +238,12 @@ var annotated =
       [ "Shape", "class_geometry2d_1_1_shape.html", "class_geometry2d_1_1_shape" ],
       [ "TransformMatrix", "class_geometry2d_1_1_transform_matrix.html", "class_geometry2d_1_1_transform_matrix" ]
     ] ],
-    [ "Planning", "namespace_planning.html", "namespace_planning" ],
+    [ "Planning", null, [
+      [ "FixedStepTree", "class_planning_1_1_fixed_step_tree.html", "class_planning_1_1_fixed_step_tree" ],
+      [ "Path", "class_planning_1_1_path.html", "class_planning_1_1_path" ],
+      [ "RRTPlanner", "class_planning_1_1_r_r_t_planner.html", "class_planning_1_1_r_r_t_planner" ],
+      [ "Tree", "class_planning_1_1_tree.html", "class_planning_1_1_tree" ]
+    ] ],
     [ "play_config_tab", null, [
       [ "PlayConfigTab", "classplay__config__tab_1_1_play_config_tab.html", "classplay__config__tab_1_1_play_config_tab" ]
     ] ],
