@@ -207,6 +207,10 @@ class Processor: public QThread
 		}
 
 		void changeVisionChannel(int port);
+
+		void recalculateWorldToTeamTransform();
+
+		void setFieldDimensions(const Field_Dimensions &dims);
 		
 		////////
 		

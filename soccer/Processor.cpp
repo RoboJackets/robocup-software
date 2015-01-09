@@ -600,8 +600,9 @@ void Processor::applyJoystickControls(const JoystickControlValues &controlVals, 
 	tx->set_body_w(controlVals.rotation);
 
 	//	kick/chip
-	tx->set_kick_immediate(controlVals.kick || controlVals.chip);
-	tx->set_kick(controlVals.kickPower);
+	bool kick = controlVals.kick || controlVals.chip;
+	tx->set_kick_immediate(kick);
+	tx->set_kick(kick ? controlVals.kickPower : 0);
 	tx->set_use_chipper(controlVals.chip);
 
 	//	dribbler
@@ -662,8 +663,7 @@ void Processor::defendPlusX(bool value)
 		_teamAngle = M_PI_2;
 	}
 
-	_worldToTeam = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Length / 2.0f));
-	_worldToTeam *= Geometry2d::TransformMatrix::rotate(_teamAngle);
+	recalculateWorldToTeamTransform();
 }
 
 void Processor::changeVisionChannel(int port)
@@ -677,4 +677,15 @@ void Processor::changeVisionChannel(int port)
 	vision.start();
 
 	_loopMutex.unlock();
+}
+
+void Processor::recalculateWorldToTeamTransform() {
+	_worldToTeam = Geometry2d::TransformMatrix::translate(0, Field_Dimensions::Current_Dimensions.Length() / 2.0f);
+	_worldToTeam *= Geometry2d::TransformMatrix::rotate(_teamAngle);
+}
+
+void Processor::setFieldDimensions(const Field_Dimensions &dims) {
+	Field_Dimensions::Current_Dimensions = dims;
+	recalculateWorldToTeamTransform();
+	_gameplayModule->sendFieldDimensionsToPython();
 }

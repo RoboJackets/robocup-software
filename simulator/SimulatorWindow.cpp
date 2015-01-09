@@ -2,13 +2,15 @@
 //#include "rendering/SimRenderView.hpp"
 #include "physics/Environment.hpp"
 #include "RobotTableModel.hpp"
+#include "physics/PhysicsConstants.hpp"
 
 
 ////////////////////////////////////
 // SimulatorWindow class
 ////////////////////////////////////
 SimulatorWindow::SimulatorWindow(Environment * env, QWidget* parent):
-			QMainWindow(parent)
+			QMainWindow(parent),
+			_environment(env)
 {
 	_ui.setupUi(this);
 
@@ -35,4 +37,16 @@ void SimulatorWindow::on_dropFrame_clicked()
 void SimulatorWindow::on_ballVisibility_valueChanged(int value)
 {
 	emit setBallVisibility(value);
+}
+
+void SimulatorWindow::on_pushButton_singleFieldSize_clicked()
+{
+	Field_Dimensions::Current_Dimensions = Field_Dimensions::Single_Field_Dimensions * scaling;
+	_environment->reshapeFieldBodies();
+}
+
+void SimulatorWindow::on_pushButton_doubleFieldSize_clicked()
+{
+	Field_Dimensions::Current_Dimensions = Field_Dimensions::Double_Field_Dimensions * scaling;
+	_environment->reshapeFieldBodies();
 }
