@@ -19,6 +19,8 @@ private slots:
 	// slots from GUI components
 	void on_dropFrame_clicked();
 	void on_ballVisibility_valueChanged(int value);
+	void on_pushButton_singleFieldSize_clicked();
+	void on_pushButton_doubleFieldSize_clicked();
 	
 public slots:
 	// slots to receive information from simulator engine
@@ -41,6 +43,8 @@ private:
 	Ui_SimpleSimulatorWindow _ui;
 
 	RobotTableModel *_model;
+
+	Environment *_environment;
 
 	// Renderer disabled for now
 //	SimRenderView *_render;

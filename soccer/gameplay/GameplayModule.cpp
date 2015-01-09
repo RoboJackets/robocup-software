@@ -25,17 +25,17 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 {
 	_state = state;
 
-	_centerMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Length / 2));
-	_oppMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Length)) *
+	_centerMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Dimensions::Current_Dimensions.Length() / 2));
+	_oppMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Dimensions::Current_Dimensions.Length())) *
 				Geometry2d::TransformMatrix::rotate(M_PI);
 
 	//// Make an obstacle to cover the opponent's half of the field except for one robot diameter across the center line.
 	Polygon *sidePolygon = new Polygon;
 	_sideObstacle = std::shared_ptr<Shape>(sidePolygon);
-	float x = Field_Width / 2 + Field_Border;
-	const float y1 = Field_Length / 2;
-	const float y2 = Field_Length + Field_Border;
-	const float r = Field_CenterRadius;
+	float x = Field_Dimensions::Current_Dimensions.Width() / 2 + Field_Dimensions::Current_Dimensions.Border();
+	const float y1 = Field_Dimensions::Current_Dimensions.Length() / 2;
+	const float y2 = Field_Dimensions::Current_Dimensions.Length() + Field_Dimensions::Current_Dimensions.Border();
+	const float r = Field_Dimensions::Current_Dimensions.CenterRadius();
 	sidePolygon->vertices.push_back(Geometry2d::Point(-x, y1));
 	sidePolygon->vertices.push_back(Geometry2d::Point(-r, y1));
 	sidePolygon->vertices.push_back(Geometry2d::Point(0, y1 + r));
@@ -44,9 +44,9 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	sidePolygon->vertices.push_back(Geometry2d::Point(x, y2));
 	sidePolygon->vertices.push_back(Geometry2d::Point(-x, y2));
 
-	float y = -Field_Border;
-	float deadspace = Field_Border;
-	x = Floor_Width/2.0f;
+	float y = -Field_Dimensions::Current_Dimensions.Border();
+	float deadspace = Field_Dimensions::Current_Dimensions.Border();
+	x = Field_Dimensions::Current_Dimensions.FloorWidth() /2.0f;
 	Polygon* floorObstacle = new Polygon;
 	floorObstacle->vertices.push_back(Geometry2d::Point(-x, y));
 	floorObstacle->vertices.push_back(Geometry2d::Point(-x, y-1));
@@ -54,7 +54,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	floorObstacle->vertices.push_back(Geometry2d::Point(x, y));
 	_nonFloor[0] = std::shared_ptr<Shape>(floorObstacle);
 
-	y = Field_Length + Field_Border;
+	y = Field_Dimensions::Current_Dimensions.Length() + Field_Dimensions::Current_Dimensions.Border();
 	floorObstacle = new Polygon;
 	floorObstacle->vertices.push_back(Geometry2d::Point(-x, y));
 	floorObstacle->vertices.push_back(Geometry2d::Point(-x, y+1));
@@ -62,7 +62,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	floorObstacle->vertices.push_back(Geometry2d::Point(x, y));
 	_nonFloor[1] = std::shared_ptr<Shape>(floorObstacle);
 
-	y = Floor_Length;
+	y = Field_Dimensions::Current_Dimensions.FloorLength();
 	floorObstacle = new Polygon;
 	floorObstacle->vertices.push_back(Geometry2d::Point(-x, -deadspace));
 	floorObstacle->vertices.push_back(Geometry2d::Point(-x-1, -deadspace));
@@ -78,8 +78,8 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_nonFloor[3] = std::shared_ptr<Shape>(floorObstacle);
 
 	Polygon* goalArea = new Polygon;
-	const float halfFlat = Field_GoalFlat/2.0;
-	const float radius = Field_ArcRadius;
+	const float halfFlat = Field_Dimensions::Current_Dimensions.GoalFlat() /2.0;
+	const float radius = Field_Dimensions::Current_Dimensions.ArcRadius();
 	goalArea->vertices.push_back(Geometry2d::Point(-halfFlat, 0));
 	goalArea->vertices.push_back(Geometry2d::Point(-halfFlat, radius));
 	goalArea->vertices.push_back(Geometry2d::Point( halfFlat, radius));
@@ -89,10 +89,10 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_goalArea.add(std::shared_ptr<Shape>(new Circle(Geometry2d::Point(halfFlat, 0), radius)));
 
 	_ourHalf = std::make_shared<Polygon>();
-	_ourHalf->vertices.push_back(Geometry2d::Point(-x, -Field_Border));
+	_ourHalf->vertices.push_back(Geometry2d::Point(-x, -Field_Dimensions::Current_Dimensions.Border()));
 	_ourHalf->vertices.push_back(Geometry2d::Point(-x, y1));
 	_ourHalf->vertices.push_back(Geometry2d::Point(x, y1));
-	_ourHalf->vertices.push_back(Geometry2d::Point(x, -Field_Border));
+	_ourHalf->vertices.push_back(Geometry2d::Point(x, -Field_Dimensions::Current_Dimensions.Border()));
 
 	_opponentHalf = std::make_shared<Polygon>();
 	_opponentHalf->vertices.push_back(Geometry2d::Point(-x, y1));
@@ -326,7 +326,7 @@ void Gameplay::GameplayModule::run()
 	/// visualize
 	if (_state->gameState.stayAwayFromBall() && _state->ball.valid)
 	{
-		_state->drawCircle(_state->ball.pos, Field_CenterRadius, Qt::black, "Rules");
+		_state->drawCircle(_state->ball.pos, Field_Dimensions::Current_Dimensions.CenterRadius(), Qt::black, "Rules");
 	}
 
 	if (verbose) cout << "Finishing GameplayModule::run()" << endl;
@@ -350,4 +350,15 @@ boost::python::object Gameplay::GameplayModule::getRootPlay() {
 
 boost::python::object Gameplay::GameplayModule::getMainModule() {
 	return _mainPyNamespace["main"];
+}
+
+void Gameplay::GameplayModule::sendFieldDimensionsToPython() {
+	PyGILState_STATE state = PyGILState_Ensure(); {
+		try {
+			getMainModule().attr("set_field_constants")(Field_Dimensions::Current_Dimensions);
+		} catch (error_already_set) {
+			PyErr_Print();
+			throw new runtime_error("Error trying to pass field dimensions to python");
+		}
+	} PyGILState_Release(state);
 }

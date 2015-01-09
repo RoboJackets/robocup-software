@@ -147,19 +147,21 @@ void SimFieldView::drawTeamSpace(QPainter& p)
 	std::shared_ptr<LogFrame> frame = currentFrame();
 	if (_dragMode == DRAG_SHOOT && frame)
 	{
-		p.setPen(Qt::white);
+		p.setPen(QPen(Qt::white, 0.1f));
 		Geometry2d::Point ball = frame->ball().pos();
 		p.drawLine(ball.toQPointF(), _dragTo.toQPointF());
 		
 		if (ball != _dragTo)
 		{
-			p.setPen(Qt::gray);
+			p.setPen(QPen(Qt::gray, 0.1f));
 			
 			_shot = (ball - _dragTo) * ShootScale;
 			float speed = _shot.mag();
 			Geometry2d::Point shotExtension = ball + _shot / speed * 8;
 			
 			p.drawLine(ball.toQPointF(), shotExtension.toQPointF());
+
+			p.setPen(Qt::black);
 			drawText(p, _dragTo.toQPointF(), QString("%1 m/s").arg(speed, 0, 'f', 1));
 		}
 	}

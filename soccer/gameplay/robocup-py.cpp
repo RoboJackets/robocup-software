@@ -14,6 +14,7 @@ using namespace boost::python;
 #include <Robot.hpp>
 #include <SystemState.hpp>
 #include <protobuf/LogFrame.pb.h>
+#include <Constants.hpp>
 
 #include <boost/python/exception_translator.hpp>
 #include <boost/version.hpp>
@@ -438,5 +439,23 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("draw_shape", &SystemState::drawShape)
 		.def("draw_line", &State_draw_line)
 		.def("draw_polygon", &State_draw_polygon)
+	;
+
+	class_<Field_Dimensions>("Field_Dimensions")
+		.def("Length", &Field_Dimensions::Length)
+		.def("Width", &Field_Dimensions::Width)
+		.def("Border", &Field_Dimensions::Border)
+		.def("LineWidth", &Field_Dimensions::LineWidth)
+		.def("GoalWidth", &Field_Dimensions::GoalWidth)
+		.def("GoalDepth", &Field_Dimensions::GoalDepth)
+		.def("GoalHeight", &Field_Dimensions::GoalHeight)
+		.def("PenaltyDist", &Field_Dimensions::PenaltyDist)
+		.def("PenaltyDiam", &Field_Dimensions::PenaltyDiam)
+		.def("ArcRadius", &Field_Dimensions::ArcRadius)
+		.def("CenterRadius", &Field_Dimensions::CenterRadius)
+		.def("CenterDiameter", &Field_Dimensions::CenterDiameter)
+		.def("GoalFlat", &Field_Dimensions::GoalFlat)
+		.def("FloorLength", &Field_Dimensions::FloorLength)
+		.def("FloorWidth", &Field_Dimensions::FloorWidth)
 	;
 }

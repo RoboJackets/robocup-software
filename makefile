@@ -15,6 +15,8 @@ test-cpp:
 	cd build && cmake --target test-cpp .. && make $(MAKE_FLAGS) test-cpp && cd .. && run/test-cpp
 test-python: all
 	cd soccer/gameplay && ./run_tests.sh
+pylint:
+	cd soccer && pylint -E gameplay
 
 clean:
 	cd build && make $(MAKE_FLAGS) clean

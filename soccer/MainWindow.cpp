@@ -940,16 +940,29 @@ void MainWindow::on_fastKickoffYellow_clicked()
 	_processor->refereeModule()->command = NewRefereeModuleEnums::PREPARE_KICKOFF_YELLOW;
 }
 
-void MainWindow::on_actionVisionFirst_Half_triggered()
+void MainWindow::on_actionVisionPrimary_Half_triggered()
 {
-	_processor->changeVisionChannel(SharedVisionPortFirstHalf);
-	_ui.actionVisionFirst_Half->setChecked(true);
-	_ui.actionVisionSecond_Half->setChecked(false);
+	_processor->changeVisionChannel(SharedVisionPortSinglePrimary);
+	_processor->setFieldDimensions(Field_Dimensions::Single_Field_Dimensions);
+	_ui.actionVisionPrimary_Half->setChecked(true);
+	_ui.actionVisionSecondary_Half->setChecked(false);
+	_ui.actionVisionFull_Field->setChecked(false);
 }
 
-void MainWindow::on_actionVisionSecond_Half_triggered()
+void MainWindow::on_actionVisionSecondary_Half_triggered()
 {
-	_processor->changeVisionChannel(SharedVisionPortSecondHalf);
-	_ui.actionVisionFirst_Half->setChecked(false);
-	_ui.actionVisionSecond_Half->setChecked(true);
+	_processor->changeVisionChannel(SharedVisionPortSingleSecondary);
+	_processor->setFieldDimensions(Field_Dimensions::Single_Field_Dimensions);
+	_ui.actionVisionPrimary_Half->setChecked(false);
+	_ui.actionVisionSecondary_Half->setChecked(true);
+	_ui.actionVisionFull_Field->setChecked(false);
+}
+
+void MainWindow::on_actionVisionFull_Field_triggered()
+{
+	_processor->changeVisionChannel(SharedVisionPortDoubleOld);
+	_processor->setFieldDimensions(Field_Dimensions::Double_Field_Dimensions);
+	_ui.actionVisionPrimary_Half->setChecked(false);
+	_ui.actionVisionSecondary_Half->setChecked(false);
+	_ui.actionVisionFull_Field->setChecked(true);
 }
