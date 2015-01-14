@@ -434,7 +434,6 @@ BOOST_PYTHON_MODULE(robocup)
 
 		//	debug drawing methods
 		.def("draw_circle", &State_draw_circle)
-		.def("draw_path", &SystemState::drawPath)
 		.def("draw_text", &State_draw_text)
 		.def("draw_shape", &SystemState::drawShape)
 		.def("draw_line", &State_draw_line)
