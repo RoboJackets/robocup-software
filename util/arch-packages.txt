@@ -12,7 +12,6 @@ clang
 mpfr
 gmp
 libmpc
-arm-none-eabi-gcc
 
 qt5-base
 qt5-tools
