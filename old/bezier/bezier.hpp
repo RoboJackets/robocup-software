@@ -4,7 +4,7 @@
  * Utilities for handling bezier curves
  */
 
-#include <planning/Path.hpp>
+#include <planning/BezierPath.hpp>
 
 namespace Planning {
 
@@ -20,7 +20,7 @@ evaluateBezierVelocity(float t,
 		const std::vector<float>& coeffs);
 
 /** generate an interpolated bezier curve */
-Path createBezierPath(const std::vector<Geometry2d::Point>& controls);
+BezierPath createBezierPath(const std::vector<Geometry2d::Point>& controls);
 
 /** determines the length of a Bezier curve */
 float bezierLength(const std::vector<Geometry2d::Point>& controls,

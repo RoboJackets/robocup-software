@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Geometry2d/Point.hpp>
-#include <planning/Path.hpp>
+#include <planning/BezierPath.hpp>
 #include <boost/optional.hpp>
 
 

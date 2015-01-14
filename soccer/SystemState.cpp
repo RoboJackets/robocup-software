@@ -11,7 +11,7 @@ SystemState::SystemState()
 {
 	timestamp = 0;
 	_numDebugLayers = 0;
-	
+
 	//FIXME - boost::array?
 	self.resize(Num_Shells);
 	opp.resize(Num_Shells);
@@ -37,7 +37,7 @@ int SystemState::findDebugLayer(QString layer)
 	{
 		layer = "Debug";
 	}
-	
+
 	QMap<QString, int>::const_iterator i = _debugLayerMap.find(layer);
 	if (i == _debugLayerMap.end())
 	{
@@ -51,8 +51,8 @@ int SystemState::findDebugLayer(QString layer)
 		return i.value();
 	}
 }
-
-void SystemState::drawPath(const Planning::Path &path, const QColor& qc, const QString& layer)
+/*
+void SystemState::drawPath(const Planning::BezierPath &path, const QColor& qc, const QString& layer)
 {
 	DebugPath *dbg = logFrame->add_debug_paths();
 	dbg->set_layer(findDebugLayer(layer));
@@ -62,6 +62,7 @@ void SystemState::drawPath(const Planning::Path &path, const QColor& qc, const Q
 	}
 	dbg->set_color(color(qc));
 }
+*/
 
 void SystemState::drawPolygon(const Geometry2d::Point* pts, int n, const QColor& qc, const QString &layer)
 {

@@ -1,5 +1,5 @@
 
-#include "Path.hpp"
+#include "BezierPath.hpp"
 #include "Utils.hpp"
 #include "motion/TrapezoidalMotion.hpp"
 
@@ -9,24 +9,24 @@ using namespace std;
 using namespace Planning;
 
 
-#pragma mark Path
+#pragma mark BezierPath
 
-Planning::Path::Path(const Geometry2d::Point& p0) {
+Planning::BezierPath::BezierPath(const Geometry2d::Point& p0) {
 	points.push_back(p0);
 }
 
-Planning::Path::Path(const Geometry2d::Point& p0, const Geometry2d::Point& p1) {
+Planning::BezierPath::BezierPath(const Geometry2d::Point& p0, const Geometry2d::Point& p1) {
 	points.push_back(p0);
 	points.push_back(p1);
 }
 
-float Planning::Path::length(unsigned int start) const
+float Planning::BezierPath::length(unsigned int start) const
 {
     if (points.empty() || start >= (points.size() - 1))
     {
         return 0;
     }
-    
+
     float length  = 0;
     for (unsigned int i = start; i < (points.size() - 1); ++i)
     {
@@ -35,13 +35,13 @@ float Planning::Path::length(unsigned int start) const
     return length;
 }
 
-float Planning::Path::length(unsigned int start, unsigned int end) const
+float Planning::BezierPath::length(unsigned int start, unsigned int end) const
 {
     if (points.empty() || start >= (points.size() - 1))
     {
         return 0;
     }
-    
+
     float length  = 0;
     for (unsigned int i = start; i < end; ++i)
     {
@@ -50,7 +50,7 @@ float Planning::Path::length(unsigned int start, unsigned int end) const
     return length;
 }
 
-boost::optional<Geometry2d::Point> Planning::Path::start() const
+boost::optional<Geometry2d::Point> Planning::BezierPath::start() const
 {
 		if (points.empty())
 			return boost::none;
@@ -58,7 +58,7 @@ boost::optional<Geometry2d::Point> Planning::Path::start() const
 			return points.front();
 }
 
-boost::optional<Geometry2d::Point> Planning::Path::destination() const
+boost::optional<Geometry2d::Point> Planning::BezierPath::destination() const
 {
 		if (points.empty())
 			return boost::none;
@@ -67,16 +67,16 @@ boost::optional<Geometry2d::Point> Planning::Path::destination() const
 }
 
 // Returns the index of the point in this path nearest to pt.
-int Planning::Path::nearestIndex(const Geometry2d::Point &pt) const
+int Planning::BezierPath::nearestIndex(const Geometry2d::Point &pt) const
 {
 	if (points.size() == 0)
 	{
 		return -1;
 	}
-	
+
 	int index = 0;
 	float dist = pt.distTo(points[0]);
-	
+
 	for (unsigned int i=1 ; i<points.size(); ++i)
 	{
 		float d = pt.distTo(points[i]);
@@ -86,22 +86,22 @@ int Planning::Path::nearestIndex(const Geometry2d::Point &pt) const
 			index = i;
 		}
 	}
-	
+
 	return index;
 }
 
-bool Planning::Path::hit(const Geometry2d::CompositeShape &obstacles, unsigned int start) const
+bool Planning::BezierPath::hit(const Geometry2d::CompositeShape &obstacles, unsigned int start) const
 {
     if (start >= points.size())
     {
         // Empty path or starting beyond end of path
         return false;
     }
-    
+
     // The set of obstacles the starting point was inside of
     std::set<std::shared_ptr<Geometry2d::Shape> > hit;
     obstacles.hit(points[start], hit);
-    
+
     for (unsigned int i = start; i < (points.size() - 1); ++i)
     {
         std::set<std::shared_ptr<Geometry2d::Shape> > newHit;
@@ -115,35 +115,35 @@ bool Planning::Path::hit(const Geometry2d::CompositeShape &obstacles, unsigned i
             return true;
         }
     }
-    
+
     // Didn't hit anything or never left any obstacle
     return obstacles.hit(points.back());
 }
 
-float Planning::Path::distanceTo(const Geometry2d::Point &pt) const
+float Planning::BezierPath::distanceTo(const Geometry2d::Point &pt) const
 {
     int i = nearestIndex(pt);
     if (i < 0)
     {
         return 0;
     }
-    
+
     float dist = -1;
     for (unsigned int i = 0; i < (points.size() - 1); ++i)
 	{
 		Geometry2d::Segment s(points[i], points[i+1]);
 		const float d = s.distTo(pt);
-		
+
 		if (dist < 0 || d < dist)
 		{
 			dist = d;
 		}
 	}
-    
+
     return dist;
 }
 
-Geometry2d::Segment Planning::Path::nearestSegment(const Geometry2d::Point &pt) const
+Geometry2d::Segment Planning::BezierPath::nearestSegment(const Geometry2d::Point &pt) const
 {
 	Geometry2d::Segment best;
 	float dist = -1;
@@ -151,23 +151,23 @@ Geometry2d::Segment Planning::Path::nearestSegment(const Geometry2d::Point &pt) 
 	{
 		return best;
 	}
-	
+
 	for (unsigned int i = 0; i < (points.size() - 1); ++i)
     {
 		Geometry2d::Segment s(points[i], points[i+1]);
 		const float d = s.distTo(pt);
-		
+
 		if (dist < 0 || d < dist)
 		{
 			best = s;
 			dist = d;
 		}
 	}
-	
+
 	return best;
 }
 
-void Planning::Path::startFrom(const Geometry2d::Point& pt, Planning::Path& result) const {
+void Planning::BezierPath::startFrom(const Geometry2d::Point& pt, Planning::BezierPath& result) const {
 
 	// path will start at the current robot pose
 	result.clear();
@@ -209,7 +209,7 @@ void Planning::Path::startFrom(const Geometry2d::Point& pt, Planning::Path& resu
 
 }
 
-float Planning::Path::length(const Geometry2d::Point &pt) const
+float Planning::BezierPath::length(const Geometry2d::Point &pt) const
 {
 	float dist = -1;
 	float length = 0;
@@ -217,39 +217,39 @@ float Planning::Path::length(const Geometry2d::Point &pt) const
 	{
 		return 0;
 	}
-	
+
 	for (unsigned int i = 0; i < (points.size() - 1); ++i)
     {
 		Geometry2d::Segment s(points[i], points[i+1]);
-				
+
 		//add the segment length
 		length += s.length();
-		
+
 		const float d = s.distTo(pt);
-		
+
 		//if point closer to this segment
 		if (dist < 0 || d < dist)
 		{
 			//closest point on segment
 			Geometry2d::Point p = s.nearestPoint(pt);
-			
+
 			//new best distance
 			dist = d;
-			
+
 			//reset running length count
 			length = 0;
 			length += p.distTo(s.pt[1]);
 		}
 	}
-	
+
 	return length;
 }
 
-bool Planning::Path::getPoint(float distance ,Geometry2d::Point &position, Geometry2d::Point &direction) const
+bool Planning::BezierPath::getPoint(float distance ,Geometry2d::Point &position, Geometry2d::Point &direction) const
 {
 	if (distance<=0) {
 		position = points.front();
-		return false; 
+		return false;
 	}
 	if (points.empty())
 	{
@@ -259,11 +259,11 @@ bool Planning::Path::getPoint(float distance ,Geometry2d::Point &position, Geome
     {
     	Geometry2d::Point vector(points[i + 1] - points[i]);
 		//Geometry2d::Segment s(points[i], points[i+1]);
-		
+
 		float vectorLength = vector.mag();
 		distance -= vectorLength;
-		
-		if(distance<=0) 
+
+		if(distance<=0)
 		{
 			distance += vectorLength;
 			position = points[i] + (vector * (distance / vectorLength));
@@ -275,9 +275,11 @@ bool Planning::Path::getPoint(float distance ,Geometry2d::Point &position, Geome
 	return false;
 
 }
+void Planning::BezierPath::draw(const SystemState *state, const QColor &color = Qt::black, const QString &layer = "Motion") const {
+	return;
+}
 
-
-bool Planning::Path::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const
+bool Planning::BezierPath::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const
 {
     if (maxSpeed == -1 || maxAcceleration == -1) {
         throw std::runtime_error("You must set maxSpeed and maxAcceleration before calling Path.evaluate()");
@@ -350,7 +352,7 @@ bool Planning::Path::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry
 	return true;
 }
 
-float Planning::Path::getTime(int index) const
+float Planning::BezierPath::getTime(int index) const
 {
 	if (maxSpeed == -1 || maxAcceleration == -1) {
         throw std::runtime_error("You must set maxSpeed and maxAcceleration before calling Path.evaluate()");
