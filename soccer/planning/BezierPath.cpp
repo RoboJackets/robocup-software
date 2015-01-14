@@ -1,8 +1,8 @@
-
+#include <protobuf/LogFrame.pb.h>
 #include "BezierPath.hpp"
 #include "Utils.hpp"
 #include "motion/TrapezoidalMotion.hpp"
-
+#include "LogUtils.hpp"
 #include <stdexcept>
 
 using namespace std;
@@ -275,7 +275,14 @@ bool Planning::BezierPath::getPoint(float distance ,Geometry2d::Point &position,
 	return false;
 
 }
-void Planning::BezierPath::draw(const SystemState *state, const QColor &color = Qt::black, const QString &layer = "Motion") const {
+void Planning::BezierPath::draw(SystemState * const state, const QColor &col = Qt::black, const QString &layer = "Motion") const {
+	Packet::DebugPath *dbg = state->logFrame->add_debug_paths();
+	dbg->set_layer(state->findDebugLayer(layer));
+	for (Geometry2d::Point pt : points)
+	{
+		*dbg->add_points() = pt;
+	}
+	dbg->set_color(color(col));
 	return;
 }
 
