@@ -272,7 +272,7 @@ void OurRobot::worldVelocity(const Geometry2d::Point& v)
 {
 	_motionConstraints.targetPos = boost::none;
 	_motionConstraints.targetWorldVel = v;
-
+	setPath(NULL);
 	*_cmdText << "worldVel(" << v.x << ", " << v.y << ")\n";
 }
 
@@ -280,6 +280,8 @@ void OurRobot::pivot(const Geometry2d::Point &pivotTarget) {
 	_motionConstraints.pivotTarget = pivotTarget;
 
 	//	reset other conflicting motion commands
+	
+	setPath(NULL);
 	_motionConstraints.targetPos = boost::none;
 	_motionConstraints.targetWorldVel = boost::none;
 	_motionConstraints.faceTarget = boost::none;
