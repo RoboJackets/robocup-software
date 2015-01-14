@@ -91,7 +91,7 @@ namespace Planning
 			std::vector<Geometry2d::Point> vels;
 			std::vector<float> times;
 
-			virtual void draw(const SystemState *state, const QColor &color, const QString &layer) const;
+			virtual void draw(SystemState  * const state, const QColor &color, const QString &layer) const;
 
 			/**
 			 * A path describes the position and velocity a robot should be at for a
