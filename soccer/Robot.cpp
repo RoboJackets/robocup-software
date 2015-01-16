@@ -599,7 +599,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	Geometry2d::Point dest = *_motionConstraints.targetPos;
 
 	// //	if this number of microseconds passes since our last path plan, we automatically replan
-	const uint64_t kPathExpirationInterval = 10 * SecsToTimestamp;
+	const Time kPathExpirationInterval = 10 * SecsToTimestamp;
 	if ((timestamp() - _pathStartTime) > kPathExpirationInterval) {
 		_pathInvalidated = true;
 	}
@@ -779,12 +779,12 @@ boost::optional<Eigen::Quaternionf> OurRobot::quaternion() const
 	}
 }
 
-bool OurRobot::rxIsFresh(uint64_t age) const
+bool OurRobot::rxIsFresh(Time age) const
 {
 	return (timestamp() - _radioRx.timestamp()) < age;
 }
 
-uint64_t OurRobot::lastKickTime() const {
+Time OurRobot::lastKickTime() const {
 	return _lastKickTime;
 }
 

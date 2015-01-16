@@ -15,8 +15,8 @@
 using namespace Packet;
 using namespace std;
 
-static const uint64_t Dribble_Step_Time = 125 * 1000;
-static const uint64_t Kicker_Step_Time = 125 * 1000;
+static const Time Dribble_Step_Time = 125 * 1000;
+static const Time Kicker_Step_Time = 125 * 1000;
 
 
 static const char *devices[] =
@@ -170,7 +170,7 @@ void GamepadJoystick::update()
     }
 
 
-    uint64_t now = timestamp();
+    Time now = timestamp();
     if (_button[1])
     {
         if (_dribbler > 0 && (now - _lastDribblerTime) >= Dribble_Step_Time)
