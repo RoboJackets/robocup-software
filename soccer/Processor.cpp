@@ -184,7 +184,7 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 	
 	for (const SSL_DetectionFrame* frame : detectionFrames)
 	{
-		uint64_t time = frame->t_capture() * SecsToTimestamp;
+		Time time = frame->t_capture() * SecsToTimestamp;
 		
 		// Add ball observations
 		ballObservations.reserve(ballObservations.size() + frame->balls().size());
@@ -250,7 +250,7 @@ void Processor::run()
 	//main loop
 	while (_running)
 	{
-		uint64_t startTime = timestamp();
+		Time startTime = timestamp();
 		int delta_us = startTime - curStatus.lastLoopTime;
 		_framerate = 1000000.0 / delta_us;
 		curStatus.lastLoopTime = startTime;
@@ -522,7 +522,7 @@ void Processor::run()
 		////////////////
 		// Timing
 		
-		uint64_t endTime = timestamp();
+		Time endTime = timestamp();
 		int lastFrameTime = endTime - startTime;
 		if (lastFrameTime < _framePeriod)
 		{

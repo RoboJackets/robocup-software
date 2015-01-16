@@ -193,7 +193,7 @@ class MainWindow : public QMainWindow
 		// To keep rounding consistent, only access this with frameNumber().
 		double _doubleFrameNumber;
 		
-		uint64_t _lastUpdateTime;
+		Time _lastUpdateTime;
 		
 		QLabel *_currentPlay;
 		QLabel *_logFile;
