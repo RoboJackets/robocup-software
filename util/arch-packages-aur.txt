@@ -2,4 +2,5 @@
 # we'll install from the AUR using yaourt
 
 # to drive robots with the SpaceNavigator 3d mouse
+gcc-arm-none-eabi-bin
 #spacenavd #TODO fix spacenavd. Once fixed, uncomment yaourt in arch-setup
