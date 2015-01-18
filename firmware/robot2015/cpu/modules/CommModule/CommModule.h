@@ -19,7 +19,9 @@
 
 class CommLink;
 
-/// The base class for 
+/**
+ *  The CommModule class acts as the interface to provide an abstraction layer between the user and hardware for communications.
+ */
 class CommModule
 {
 public:
@@ -109,6 +111,7 @@ private:
     FunctionPointerRJ   _tx_handles[COMM_MODULE_NBR_PORTS];
     
     bool    _txH_called;
+    bool    _rxH_called;
 };
 
 #endif  // COMMUNICATION_MODULE_H
