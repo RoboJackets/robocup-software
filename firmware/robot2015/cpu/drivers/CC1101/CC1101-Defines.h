@@ -125,7 +125,7 @@
 #define CCXXX1_CRYSTAL_FREQUENCY    27000000    // 27 MHz
 
 
-// RF_SETTINGS is a data structure which contains all relevant CCxxx0 registers
+/// RF_SETTINGS is a data structure which contains all relevant CCxxx0 registers
 typedef struct rf_settings_t {
     uint8_t FSCTRL1;   // Frequency synthesizer control.
     uint8_t IOCFG0;    // GDO0 output pin configuration
