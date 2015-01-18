@@ -19,7 +19,7 @@ CommLink::CommLink(PinName mosi, PinName miso, PinName sck, PinName cs, PinName 
 }
 
 
-// =================== CLASS SETUP ===================
+// Setup the class
 void CommLink::setup()
 {
     // [X] - 1 - Initialize the hardware for communication.
@@ -40,7 +40,7 @@ void CommLink::setup()
 }
 
 
-// =================== PIN SETUP ===================
+// Set the class's members for storging pin information
 void CommLink::setup_pins(PinName mosi, PinName miso, PinName sck, PinName cs, PinName int_pin)
 {
     _mosi_pin = mosi;
@@ -50,6 +50,8 @@ void CommLink::setup_pins(PinName mosi, PinName miso, PinName sck, PinName cs, P
     _int_pin = int_pin;
 }
 
+
+// Setup the SPI data bus from the class's members
 void CommLink::setup_spi(void)
 {
     if (_mosi_pin != NC & _miso_pin != NC & _sck_pin != NC) {
@@ -59,6 +61,7 @@ void CommLink::setup_spi(void)
     }
 }
 
+// Setup the "Chip Select" pin if the class needs one
 void CommLink::setup_cs(void)
 {
     if (_cs_pin != NC) {
@@ -66,6 +69,8 @@ void CommLink::setup_cs(void)
     }
 }
 
+
+// Setup the "Interrupt" pin if the class needs one
 void CommLink::setup_interrupt(void)
 {
     if (_int_pin != NC) {
@@ -75,7 +80,6 @@ void CommLink::setup_interrupt(void)
 }
 
 
-// =================== TX/RX THREADS ===================
 // Task operations for sending data over the hardware link when a new item is placed in the queue
 void CommLink::txThread(void const *arg)
 {
@@ -120,23 +124,19 @@ void CommLink::rxThread(void const *arg)
         // =================
         osSignalWait(COMM_LINK_SIGNAL_RX_TRIGGER, osWaitForever);
 
-
         // [X] - 2 - Get the received data from the external chip
         // =================
         uint8_t rec_bytes = COMM_LINK_BUFFER_SIZE;
         RTP_t p;
 
         if (inst->getData(p.data, &rec_bytes) ) {
-            ;
             //p.port = p.data[0] & 0xF0;
             p.port = 8;
             p.subclass = p.data[0] & 0x0F;
 
-
             // [X] - 3 - Write the data to the CommModule object's rxQueue
             // =================
             inst->_comm_module->receive(p);
-
 
             // [~] - 4 - Blink the RX LED for the hardware link
             // =================
@@ -154,6 +154,7 @@ void CommLink::ready(void)
 }
 
 
+// Send data by calling the derived class's method for sending information
 void CommLink::sendPacket(RTP_t *p)
 {
     sendData(p->raw, p->data_size+1);
@@ -167,12 +168,14 @@ void CommLink::ISR(void)
 }
 
 
+// Toggle the state of the chip select pin
 void CommLink::toggle_cs(void)
 {
     *_cs = !*_cs;
 }
 
 
+// Inform the class of a CommModule object
 void CommLink::setModule(CommModule& com)
 {
     _comm_module = &com;

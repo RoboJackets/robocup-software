@@ -54,31 +54,36 @@ public:
     void receivePacket(RTP_t*);
 
 protected:
-    virtual int32_t sendData(uint8_t*, uint8_t) = 0;    // write data out to the radio device using SPI
-    virtual int32_t getData(uint8_t*, uint8_t*) = 0;   // read data in from the radio device using SPI
+    /// Send data to a hardware device defined in derived classes
+    virtual int32_t sendData(uint8_t*, uint8_t) = 0;
 
+    /// Get data from a hardware device defined in derived classes
+    virtual int32_t getData(uint8_t*, uint8_t*) = 0;
+
+    /// Interrupt Service Routine implemented in the base class for proper threading
     void ISR(void);
+
+    /// Toggle the "Chip Select" pin
     void toggle_cs(void);
     
     /// Used for giving derived classes a standaradized way to inform the base class that it is ready for communication and to begin the threads
     void ready(void);   // Always call CommLink::ready() after derived class is ready for communication
 
-    /// Initialize the SPI bus according to 
+    /// Initialize the SPI bus from the class's members
     void setup_spi(void);
 
     // The data queues for temporarily holding received packets and packets that need to be transmitted
     osMailQId   _txQueue;
     osMailQId   _rxQueue;
 
-    // ============== PIN NAMES ==============
-    // SPI bus pins
+    // Pin names
     PinName     _miso_pin;
     PinName     _mosi_pin;
     PinName     _sck_pin;
     PinName     _cs_pin;    // CS pin
     PinName     _int_pin;   // Interrupt pin
 
-    // ============== PIN OBJECTS ==============
+    // Pin objects
     SPI         *_spi;      // SPI pointer
     DigitalOut  *_cs;       // Chip Select pointer
     InterruptIn *_int_in;    // Interrupt pin
