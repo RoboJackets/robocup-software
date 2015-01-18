@@ -1,49 +1,51 @@
 #include "mbed.h"
-#include "console.h"
+#include "console.hpp"
+#include "commands.hpp"
 
+Ticker lifeLight;
 DigitalOut ledOne(LED1);
 DigitalOut ledTwo(LED2);
-Serial pc(USBTX, USBRX);
 
-
-char txBuf[84];
-char rxBuf[84];
-
-void rx()
+/**
+ * timer interrupt based light flicker
+ */
+void imAlive()
 {
-	ledOne = 1;
-	NVIC_DisableIRQ(UART1_IRQn);
-	//pc.getc();
-	pc.printf("Echo: %c\n", pc.getc());
-	NVIC_EnableIRQ(UART1_IRQn);
-	ledOne = 0;	
+	ledOne = !ledOne;
 }
 
-void tx()
-{
-	ledTwo = 1;
-	ledTwo = 0;
-}
-
+/**
+ * system entry point
+ */
 int main() 
 {
-	//pc.attach(&cmdHandler);
-	//pc.attach(&tx, Serial::TxIrq);
-	pc.attach(&rx, Serial::RxIrq);
-	//myled = 1;
+	lifeLight.attach(&imAlive, 0.25);
+	initConsole();
 
-    	for (;;) 
+    	for (;;)
 	{
-		//wait(0.5);
-		//myled = !myled;
+		/*
+		 * check console communications, currently does nothing
+		 * then execute any active iterative command
+ 		 */
+		conComCheck();
+		//execute any active iterative command
+		executeIterativeCommand();
 
 		/*
-		while (pc.readable())
+		 * check if a system stop is requested
+		 */
+		if (isSysStopReq() == true)
 		{
-			myled = !myled;
-
-			pc.printf("echo: %s\n", pc.getc());
+			break;
 		}
-		*/
+
+		//main loop heartbeat
+		wait(0.1);
+		ledTwo = !ledTwo;
     	}
+
+	//clear light for main loop (shows its complete)
+	ledTwo = false;
 }
+
