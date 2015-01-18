@@ -1,8 +1,21 @@
 <!-- Wheels
-	/3   0\
+	/0   1\
 		x > >
-	\2   1/
+	\3   2/
 
-	> > > is positive X with robot center being 0,0
+	> > > is location of mouth, as well as positive X with robot center being 0,0
 	Axles are specified on robot coord system
+
+	Angle measures of wheel axle relative to the x axis (degrees):
+		2008 robots:
+			Wheel 0: 44
+			Wheel 1: 40
+			Wheel 2: 47
+			Wheel 3: 37
+		2011 robots:
+			Wheel 0: 55
+			Wheel 1: 45
+			Wheel 2: 55
+			Wheel 3: 45
+
 -->

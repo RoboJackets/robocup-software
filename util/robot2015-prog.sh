@@ -39,7 +39,10 @@ for i in $MBED_DEVICES_PATH; do
     sudo mkdir -p /mnt/script/MBED
     sudo mount $i /mnt/script/MBED
     sudo cp $1 /mnt/script/MBED/
-    sudo umount /mnt/script/MBED/
+    sudo umount -l /mnt/script/MBED/
+    if [ $? -eq 0 ]; then
+        echo Unmount successful! Do not remove mbed until write light stops blinking!
+    fi
     sudo rmdir /mnt/script/MBED
 done
 
