@@ -468,17 +468,6 @@ void MainWindow::updateStatus()
 		return;
 	}
 	
-	//	FIXME: this was disabled in the transition to python for high-level stuff
-	//			once that's figured out, we should re-enable this status text
-	// if (!sim && !_processor->gameplayModule()->goalie())
-	// {
-	// 	// No goalie.  Not checked in simulation because this is common during development.
-	// 	status("NO GOALIE", Status_Warning);
-	// 	return;
-	// }
-	
-	//FIXME - Can we validate or flag the playbook?
-	
 	if (!sim && !_processor->logger().recording())
 	{
 		// We should record logs during competition
