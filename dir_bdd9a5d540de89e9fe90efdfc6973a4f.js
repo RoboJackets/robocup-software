@@ -8,6 +8,7 @@ var dir_bdd9a5d540de89e9fe90efdfc6973a4f =
     [ "multicast.hpp", "multicast_8hpp_source.html", null ],
     [ "Network.hpp", "_network_8hpp_source.html", null ],
     [ "Pid.hpp", "_pid_8hpp_source.html", null ],
+    [ "time.hpp", "time_8hpp_source.html", null ],
     [ "Utils.hpp", "_utils_8hpp_source.html", null ],
     [ "VisionDotPattern.hpp", "_vision_dot_pattern_8hpp_source.html", null ]
 ];

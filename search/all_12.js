@@ -5,7 +5,7 @@ var searchData=
   ['radiotx',['radioTx',['../class_our_robot.html#a955ab4a906727f54a123f4e788ce68ba',1,'OurRobot']]],
   ['recalculate_5faim_5ftarget_5fpoint',['recalculate_aim_target_point',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html#a39508641624c2c4a9d206be19303de65',1,'gameplay::skills::_kick::_Kick']]],
   ['receive_5fpoint',['receive_point',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a7343a52e5f0cd0c7a87c1c04ad1cf876',1,'gameplay::skills::pass_receive::PassReceive']]],
-  ['receivedtime',['receivedTime',['../class_new_referee_packet.html#a140afbc76fe594f06bde1caca290acf8',1,'NewRefereePacket::receivedTime()'],['../class_vision_packet.html#ab5fa431f2d132aa7475f345a4bd1cc1c',1,'VisionPacket::receivedTime()']]],
+  ['receivedtime',['receivedTime',['../class_new_referee_packet.html#a8bce4e0b812bf5c92f6b1e89ed670985',1,'NewRefereePacket::receivedTime()'],['../class_vision_packet.html#a87ca75703079dd88549870b955e0d12c',1,'VisionPacket::receivedTime()']]],
   ['receivetimeout',['ReceiveTimeout',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a7cba3b5eae5fbd57ef7e06497fd6a6f1',1,'gameplay::skills::pass_receive::PassReceive']]],
   ['receiving',['receiving',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive_1_1_state.html#aa1b8b40765471a49cd54f5d7da8793e5',1,'gameplay::skills::pass_receive::PassReceive::State']]],
   ['rect',['Rect',['../class_geometry2d_1_1_rect.html',1,'Geometry2d']]],
@@ -31,5 +31,5 @@ var searchData=
   ['rotated',['rotated',['../class_geometry2d_1_1_point.html#aeab18a2ec5e60bcd00498bb29bcf3048',1,'Geometry2d::Point']]],
   ['rrtplanner',['RRTPlanner',['../class_planning_1_1_r_r_t_planner.html',1,'Planning']]],
   ['run',['run',['../class_gameplay_1_1_gameplay_module.html#aaba424dfbce39f5f9251f4c6545e18e0',1,'Gameplay::GameplayModule::run()'],['../class_motion_control.html#abdf289b41bccf17e5436f5131701efd6',1,'MotionControl::run()'],['../class_planning_1_1_r_r_t_planner.html#a1755133e327e1fed756bca8e42d8a481',1,'Planning::RRTPlanner::run()'],['../class_processor.html#a073f5e9ea6a3557c217d67ab392e5852',1,'Processor::run()'],['../class_pid.html#ae86adf5545b2af4188acdf3a29f71ea9',1,'Pid::run()']]],
-  ['rxisfresh',['rxIsFresh',['../class_our_robot.html#ae47a79814e56d53244f5b0d7d188022a',1,'OurRobot']]]
+  ['rxisfresh',['rxIsFresh',['../class_our_robot.html#ab124ca47258735f3ce4ad96a8b4f1279',1,'OurRobot']]]
 ];

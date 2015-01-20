@@ -14,5 +14,5 @@ var searchData=
   ['rotate',['rotate',['../class_geometry2d_1_1_point.html#a0d94c0285505aa1aab17c36505928bbb',1,'Geometry2d::Point::rotate(const Point &amp;origin, float angle)'],['../class_geometry2d_1_1_point.html#a6ccfeea670b14c267037f6185cb9d137',1,'Geometry2d::Point::rotate(float angle)'],['../class_geometry2d_1_1_point.html#ab9ba426c22a63b02d9488fc61368e5cf',1,'Geometry2d::Point::rotate(const Point &amp;pt, const Point &amp;origin, float angle)']]],
   ['rotated',['rotated',['../class_geometry2d_1_1_point.html#aeab18a2ec5e60bcd00498bb29bcf3048',1,'Geometry2d::Point']]],
   ['run',['run',['../class_gameplay_1_1_gameplay_module.html#aaba424dfbce39f5f9251f4c6545e18e0',1,'Gameplay::GameplayModule::run()'],['../class_motion_control.html#abdf289b41bccf17e5436f5131701efd6',1,'MotionControl::run()'],['../class_planning_1_1_r_r_t_planner.html#a1755133e327e1fed756bca8e42d8a481',1,'Planning::RRTPlanner::run()'],['../class_processor.html#a073f5e9ea6a3557c217d67ab392e5852',1,'Processor::run()'],['../class_pid.html#ae86adf5545b2af4188acdf3a29f71ea9',1,'Pid::run()']]],
-  ['rxisfresh',['rxIsFresh',['../class_our_robot.html#ae47a79814e56d53244f5b0d7d188022a',1,'OurRobot']]]
+  ['rxisfresh',['rxIsFresh',['../class_our_robot.html#ab124ca47258735f3ce4ad96a8b4f1279',1,'OurRobot']]]
 ];

@@ -193,9 +193,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:a2687c62674d3e5ae878cae962950caef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a2687c62674d3e5ae878cae962950caef">move</a> (const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;goal, float endSpeed=0)</td></tr>
 <tr class="memdesc:a2687c62674d3e5ae878cae962950caef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move to a given point using the default RRT planner.  <a href="#a2687c62674d3e5ae878cae962950caef">More...</a><br /></td></tr>
 <tr class="separator:a2687c62674d3e5ae878cae962950caef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acc1581091559c855fb79ffa1bb54876b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acc1581091559c855fb79ffa1bb54876b"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>pathStartTime</b> () const </td></tr>
-<tr class="separator:acc1581091559c855fb79ffa1bb54876b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a73b5400ff477cb2220b8a980ddb8da8f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a73b5400ff477cb2220b8a980ddb8da8f"></a>
+Time&#160;</td><td class="memItemRight" valign="bottom"><b>pathStartTime</b> () const </td></tr>
+<tr class="separator:a73b5400ff477cb2220b8a980ddb8da8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb8d32e3580b30997915444bb907e262"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#afb8d32e3580b30997915444bb907e262">consecutivePathChangeCount</a> () const </td></tr>
 <tr class="memdesc:afb8d32e3580b30997915444bb907e262"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of consecutive times since now that we've set our path to something new.  <a href="#afb8d32e3580b30997915444bb907e262">More...</a><br /></td></tr>
 <tr class="separator:afb8d32e3580b30997915444bb907e262"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -229,9 +229,9 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#ae69f9949b6337a7a97389ff0c6b25063">unkick</a> ()</td></tr>
 <tr class="memdesc:ae69f9949b6337a7a97389ff0c6b25063"><td class="mdescLeft">&#160;</td><td class="mdescRight">Undoes any calls to <a class="el" href="class_our_robot.html#a1c8589e1c0b057797582cc5ae68040f5" title="KICKING/CHIPPING. ">kick()</a> or <a class="el" href="class_our_robot.html#acfb0a511c25d2af38a9e4ef81640621d" title="enable chip when ready at a given strength ">chip()</a>. <br /></td></tr>
 <tr class="separator:ae69f9949b6337a7a97389ff0c6b25063"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79845308c3f322317ceefa3f83bf0324"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a79845308c3f322317ceefa3f83bf0324"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><b>lastKickTime</b> () const </td></tr>
-<tr class="separator:a79845308c3f322317ceefa3f83bf0324"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a24e0845fafeab64fec2c9c38d683ceaa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a24e0845fafeab64fec2c9c38d683ceaa"></a>
+Time&#160;</td><td class="memItemRight" valign="bottom"><b>lastKickTime</b> () const </td></tr>
+<tr class="separator:a24e0845fafeab64fec2c9c38d683ceaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acb041522cb8d92a305ecc8e3698c02e4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb041522cb8d92a305ecc8e3698c02e4"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>justKicked</b> ()</td></tr>
 <tr class="separator:acb041522cb8d92a305ecc8e3698c02e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -363,8 +363,8 @@ Packet::RadioRx &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>radi
 <tr class="memitem:a790dab042f6260cda5e1cf215777d8dd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a790dab042f6260cda5e1cf215777d8dd"></a>
 <a class="el" href="class_system_state.html">SystemState</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>state</b> () const </td></tr>
 <tr class="separator:a790dab042f6260cda5e1cf215777d8dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae47a79814e56d53244f5b0d7d188022a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#ae47a79814e56d53244f5b0d7d188022a">rxIsFresh</a> (uint64_t age=500000) const </td></tr>
-<tr class="separator:ae47a79814e56d53244f5b0d7d188022a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab124ca47258735f3ce4ad96a8b4f1279"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#ab124ca47258735f3ce4ad96a8b4f1279">rxIsFresh</a> (Time age=500000) const </td></tr>
+<tr class="separator:ab124ca47258735f3ce4ad96a8b4f1279"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1446bc7daeb6a68d549a98e328bdd5b9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1446bc7daeb6a68d549a98e328bdd5b9"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a1446bc7daeb6a68d549a98e328bdd5b9">sing</a> ()</td></tr>
 <tr class="memdesc:a1446bc7daeb6a68d549a98e328bdd5b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Starts the robot playing the fight song. <br /></td></tr>
@@ -439,10 +439,10 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>angle</b></td></tr>
 float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_robot_pose.html#a685c05ad27d5bcc6ac58130df4219e7e">angleVel</a></td></tr>
 <tr class="memdesc:a685c05ad27d5bcc6ac58130df4219e7e inherit pub_attribs_class_robot_pose"><td class="mdescLeft">&#160;</td><td class="mdescRight">angle in radians. 0 radians means the robot is aimed along the x-axis <br /></td></tr>
 <tr class="separator:a685c05ad27d5bcc6ac58130df4219e7e inherit pub_attribs_class_robot_pose"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a917efb3558758c412aeb2d8f8cd5331c inherit pub_attribs_class_robot_pose"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a917efb3558758c412aeb2d8f8cd5331c"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_robot_pose.html#a917efb3558758c412aeb2d8f8cd5331c">time</a></td></tr>
-<tr class="memdesc:a917efb3558758c412aeb2d8f8cd5331c inherit pub_attribs_class_robot_pose"><td class="mdescLeft">&#160;</td><td class="mdescRight">angular velocity in radians/sec <br /></td></tr>
-<tr class="separator:a917efb3558758c412aeb2d8f8cd5331c inherit pub_attribs_class_robot_pose"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7cb2b17a2866dca8a5b238ff9af2accc inherit pub_attribs_class_robot_pose"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7cb2b17a2866dca8a5b238ff9af2accc"></a>
+Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_robot_pose.html#a7cb2b17a2866dca8a5b238ff9af2accc">time</a></td></tr>
+<tr class="memdesc:a7cb2b17a2866dca8a5b238ff9af2accc inherit pub_attribs_class_robot_pose"><td class="mdescLeft">&#160;</td><td class="mdescRight">angular velocity in radians/sec <br /></td></tr>
+<tr class="separator:a7cb2b17a2866dca8a5b238ff9af2accc inherit pub_attribs_class_robot_pose"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4375eb7b0a6cca0784c487bddba1db21 inherit pub_attribs_class_robot_pose"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4375eb7b0a6cca0784c487bddba1db21"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>visionFrame</b></td></tr>
 <tr class="separator:a4375eb7b0a6cca0784c487bddba1db21 inherit pub_attribs_class_robot_pose"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -502,10 +502,10 @@ float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cla
 <tr class="memitem:aa5e045b1e6faaa5843e5afb5841eae87"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa5e045b1e6faaa5843e5afb5841eae87"></a>
 boost::optional&lt; <a class="el" href="class_planning_1_1_path.html">Planning::Path</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_path</b></td></tr>
 <tr class="separator:aa5e045b1e6faaa5843e5afb5841eae87"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5e7bb58a015803d21c21d4d01b9a9ee6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5e7bb58a015803d21c21d4d01b9a9ee6"></a>
-uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a5e7bb58a015803d21c21d4d01b9a9ee6">_pathStartTime</a></td></tr>
-<tr class="memdesc:a5e7bb58a015803d21c21d4d01b9a9ee6"><td class="mdescLeft">&#160;</td><td class="mdescRight">latest path <br /></td></tr>
-<tr class="separator:a5e7bb58a015803d21c21d4d01b9a9ee6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69916a94c5416050044d1e91d58b5cac"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a69916a94c5416050044d1e91d58b5cac"></a>
+Time&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a69916a94c5416050044d1e91d58b5cac">_pathStartTime</a></td></tr>
+<tr class="memdesc:a69916a94c5416050044d1e91d58b5cac"><td class="mdescLeft">&#160;</td><td class="mdescRight">latest path <br /></td></tr>
+<tr class="separator:a69916a94c5416050044d1e91d58b5cac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adac5bd2605e976a6fe96ca786947908b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adac5bd2605e976a6fe96ca786947908b"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#adac5bd2605e976a6fe96ca786947908b">_pathInvalidated</a></td></tr>
 <tr class="memdesc:adac5bd2605e976a6fe96ca786947908b"><td class="mdescLeft">&#160;</td><td class="mdescRight">whenever the constraints for the robot path are changed, this is set to true to trigger a replan <br /></td></tr>
@@ -843,14 +843,14 @@ template&lt;class ROBOT &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="ae47a79814e56d53244f5b0d7d188022a"></a>
+<a class="anchor" id="ab124ca47258735f3ce4ad96a8b4f1279"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">bool OurRobot::rxIsFresh </td>
           <td>(</td>
-          <td class="paramtype">uint64_t&#160;</td>
+          <td class="paramtype">Time&#160;</td>
           <td class="paramname"><em>age</em> = <code>500000</code></td><td>)</td>
           <td> const</td>
         </tr>
@@ -923,7 +923,7 @@ template&lt;class ROBOT &gt; </div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_our_robot.html">OurRobot</a></li>
-    <li class="footer">Generated on Tue Jan 20 2015 02:32:44 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Jan 20 2015 07:03:26 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

@@ -40,7 +40,7 @@ var NAVTREEINDEX =
 "class_field_view.html#a460a442ebb106e12d137c3eca53c9244",
 "class_geometry2d_1_1_segment.html#a3a1007a2699b7f5f5032dbfcc15c7962",
 "class_pid.html#a7feaf4b3444c9d3d40415f8479e65e4b",
-"class_space_nav_joystick.html#a917cd395a6608895cf2ee9abf806cb82",
+"class_space_nav_joystick.html#a793b5d7cb3f40488ca11668dfdc830ab",
 "classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122.html",
 "classgameplay_1_1skills_1_1__kick_1_1___kick.html#a39508641624c2c4a9d206be19303de65",
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#ac8040052175d72f3de92db1630ff9843",

@@ -128,10 +128,10 @@ $(document).ready(function(){initNavTree('_timeout_8hpp_source.html','');});
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keywordtype">void</span> setIntervalInSeconds(<span class="keywordtype">float</span> seconds) {</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        _interval = (uint64_t)(seconds * 1000.0f);</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        _interval = (Time)(seconds * 1000.0f);</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    }</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordtype">void</span> setIntervalInMilliseconds(uint64_t ms) {</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordtype">void</span> setIntervalInMilliseconds(Time ms) {</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        _interval = ms;</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    }</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
@@ -141,8 +141,8 @@ $(document).ready(function(){initNavTree('_timeout_8hpp_source.html','');});
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    }</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    uint64_t _interval;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    uint64_t _startTime;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    Time _interval;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    Time _startTime;</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;};</div>
 <div class="ttc" id="class_timeout_html"><div class="ttname"><a href="class_timeout.html">Timeout</a></div><div class="ttdoc">This is a simple timeout timer. </div><div class="ttdef"><b>Definition:</b> Timeout.hpp:12</div></div>
 </div><!-- fragment --></div><!-- contents -->
@@ -151,7 +151,7 @@ $(document).ready(function(){initNavTree('_timeout_8hpp_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><b>Timeout.hpp</b></li>
-    <li class="footer">Generated on Tue Jan 20 2015 02:32:43 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Jan 20 2015 07:03:25 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

@@ -157,7 +157,7 @@ $(document).ready(function(){initNavTree('_robot_8hpp_source.html','');});
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        visible(<span class="keyword">false</span>),</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        angle(0),</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <a class="code" href="class_robot_pose.html#a685c05ad27d5bcc6ac58130df4219e7e">angleVel</a>(0),</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <a class="code" href="class_robot_pose.html#a917efb3558758c412aeb2d8f8cd5331c">time</a>(0),</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <a class="code" href="class_robot_pose.html#a7cb2b17a2866dca8a5b238ff9af2accc">time</a>(0),</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        visionFrame(0)</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    {</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="comment">// normalize angle so it&#39;s always positive</span></div>
@@ -171,7 +171,7 @@ $(document).ready(function(){initNavTree('_robot_8hpp_source.html','');});
 <div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="class_robot_pose.html#a685c05ad27d5bcc6ac58130df4219e7e">   65</a></span>&#160;    <span class="keywordtype">float</span> <a class="code" href="class_robot_pose.html#a685c05ad27d5bcc6ac58130df4219e7e">angleVel</a>; </div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    </div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="comment">// Time at which this estimate is valid</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="class_robot_pose.html#a917efb3558758c412aeb2d8f8cd5331c">   68</a></span>&#160;    uint64_t <a class="code" href="class_robot_pose.html#a917efb3558758c412aeb2d8f8cd5331c">time</a>;</div>
+<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="class_robot_pose.html#a7cb2b17a2866dca8a5b238ff9af2accc">   68</a></span>&#160;    Time <a class="code" href="class_robot_pose.html#a7cb2b17a2866dca8a5b238ff9af2accc">time</a>;</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keywordtype">int</span> visionFrame;</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;};</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
@@ -261,8 +261,8 @@ $(document).ready(function(){initNavTree('_robot_8hpp_source.html','');});
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;</div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_our_robot.html#a2687c62674d3e5ae878cae962950caef">move</a>(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;goal, <span class="keywordtype">float</span> endSpeed = 0);</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    uint64_t pathStartTime()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_our_robot.html#a5e7bb58a015803d21c21d4d01b9a9ee6">_pathStartTime</a>;</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    Time pathStartTime()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="class_our_robot.html#a69916a94c5416050044d1e91d58b5cac">_pathStartTime</a>;</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    }</div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;</div>
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    <span class="keywordtype">int</span> <a class="code" href="class_our_robot.html#afb8d32e3580b30997915444bb907e262">consecutivePathChangeCount</a>() <span class="keyword">const</span>;</div>
@@ -289,7 +289,7 @@ $(document).ready(function(){initNavTree('_robot_8hpp_source.html','');});
 <div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;</div>
 <div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_our_robot.html#ae69f9949b6337a7a97389ff0c6b25063">unkick</a>();</div>
 <div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    uint64_t lastKickTime() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    Time lastKickTime() <span class="keyword">const</span>;</div>
 <div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;</div>
 <div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    <span class="comment">//  checks if the bot has kicked/chipped very recently.</span></div>
 <div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    <span class="keywordtype">bool</span> justKicked() {</div>
@@ -386,7 +386,7 @@ $(document).ready(function(){initNavTree('_robot_8hpp_source.html','');});
 <div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;        <span class="keywordflow">return</span> _state;</div>
 <div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;    }</div>
 <div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_our_robot.html#ae47a79814e56d53244f5b0d7d188022a">rxIsFresh</a>(uint64_t age = 500000) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_our_robot.html#ab124ca47258735f3ce4ad96a8b4f1279">rxIsFresh</a>(Time age = 500000) <span class="keyword">const</span>;</div>
 <div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;</div>
 <div class="line"><a name="l00390"></a><span class="lineno"><a class="line" href="class_our_robot.html#a1446bc7daeb6a68d549a98e328bdd5b9">  390</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_our_robot.html#a1446bc7daeb6a68d549a98e328bdd5b9">sing</a>()</div>
 <div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;    {</div>
@@ -417,7 +417,7 @@ $(document).ready(function(){initNavTree('_robot_8hpp_source.html','');});
 <div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_our_robot.html#a1ca63b9c2dff5f9d023d8590c771142a">setPath</a>(<a class="code" href="class_planning_1_1_path.html">Planning::Path</a> path);</div>
 <div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;</div>
 <div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;    boost::optional&lt;Planning::Path&gt; _path;  </div>
-<div class="line"><a name="l00419"></a><span class="lineno"><a class="line" href="class_our_robot.html#a5e7bb58a015803d21c21d4d01b9a9ee6">  419</a></span>&#160;    uint64_t <a class="code" href="class_our_robot.html#a5e7bb58a015803d21c21d4d01b9a9ee6">_pathStartTime</a>;</div>
+<div class="line"><a name="l00419"></a><span class="lineno"><a class="line" href="class_our_robot.html#a69916a94c5416050044d1e91d58b5cac">  419</a></span>&#160;    Time <a class="code" href="class_our_robot.html#a69916a94c5416050044d1e91d58b5cac">_pathStartTime</a>;</div>
 <div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;</div>
 <div class="line"><a name="l00422"></a><span class="lineno"><a class="line" href="class_our_robot.html#adac5bd2605e976a6fe96ca786947908b">  422</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="class_our_robot.html#adac5bd2605e976a6fe96ca786947908b">_pathInvalidated</a>;</div>
 <div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;</div>
@@ -469,8 +469,8 @@ $(document).ready(function(){initNavTree('_robot_8hpp_source.html','');});
 <div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;    <span class="keywordtype">void</span> _unkick();</div>
 <div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;</div>
 <div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;    uint32_t _lastKickerStatus;</div>
-<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;    uint64_t _lastKickTime;</div>
-<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;    uint64_t _lastChargedTime;</div>
+<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;    Time _lastKickTime;</div>
+<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;    Time _lastChargedTime;</div>
 <div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;</div>
 <div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;    Packet::RadioRx _radioRx;</div>
 <div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;</div>
@@ -510,9 +510,10 @@ $(document).ready(function(){initNavTree('_robot_8hpp_source.html','');});
 <div class="ttc" id="class_our_robot_html_a99ff3312c7249d7893c0c719143b84b7"><div class="ttname"><a href="class_our_robot.html#a99ff3312c7249d7893c0c719143b84b7">OurRobot::avoidAllOpponentRadius</a></div><div class="ttdeci">void avoidAllOpponentRadius(float radius)</div><div class="ttdoc">returns the avoidance radius </div><div class="ttdef"><b>Definition:</b> Robot.cpp:446</div></div>
 <div class="ttc" id="class_geometry2d_1_1_segment_html"><div class="ttname"><a href="class_geometry2d_1_1_segment.html">Geometry2d::Segment</a></div><div class="ttdef"><b>Definition:</b> Segment.hpp:13</div></div>
 <div class="ttc" id="class_our_robot_html_a19192634cf02c79cbaf29b35d999a52d"><div class="ttname"><a href="class_our_robot.html#a19192634cf02c79cbaf29b35d999a52d">OurRobot::_self_avoid_mask</a></div><div class="ttdeci">RobotMask _self_avoid_mask</div><div class="ttdoc">set of obstacles added by plays </div><div class="ttdef"><b>Definition:</b> Robot.hpp:409</div></div>
-<div class="ttc" id="class_robot_pose_html_a917efb3558758c412aeb2d8f8cd5331c"><div class="ttname"><a href="class_robot_pose.html#a917efb3558758c412aeb2d8f8cd5331c">RobotPose::time</a></div><div class="ttdeci">uint64_t time</div><div class="ttdoc">angular velocity in radians/sec </div><div class="ttdef"><b>Definition:</b> Robot.hpp:68</div></div>
+<div class="ttc" id="class_robot_pose_html_a7cb2b17a2866dca8a5b238ff9af2accc"><div class="ttname"><a href="class_robot_pose.html#a7cb2b17a2866dca8a5b238ff9af2accc">RobotPose::time</a></div><div class="ttdeci">Time time</div><div class="ttdoc">angular velocity in radians/sec </div><div class="ttdef"><b>Definition:</b> Robot.hpp:68</div></div>
 <div class="ttc" id="class_our_robot_html_a0ec11b895af861e0dce869bfe0b3c7ed"><div class="ttname"><a href="class_our_robot.html#a0ec11b895af861e0dce869bfe0b3c7ed">OurRobot::faceNone</a></div><div class="ttdeci">void faceNone()</div><div class="ttdoc">Remove the facing command. </div><div class="ttdef"><b>Definition:</b> Robot.cpp:332</div></div>
 <div class="ttc" id="class_our_robot_html"><div class="ttname"><a href="class_our_robot.html">OurRobot</a></div><div class="ttdoc">A robot on our team. </div><div class="ttdef"><b>Definition:</b> Robot.hpp:128</div></div>
+<div class="ttc" id="class_our_robot_html_ab124ca47258735f3ce4ad96a8b4f1279"><div class="ttname"><a href="class_our_robot.html#ab124ca47258735f3ce4ad96a8b4f1279">OurRobot::rxIsFresh</a></div><div class="ttdeci">bool rxIsFresh(Time age=500000) const </div><div class="ttdef"><b>Definition:</b> Robot.cpp:782</div></div>
 <div class="ttc" id="class_robot_html"><div class="ttname"><a href="class_robot.html">Robot</a></div><div class="ttdef"><b>Definition:</b> Robot.hpp:72</div></div>
 <div class="ttc" id="class_robot_status_html"><div class="ttname"><a href="class_robot_status.html">RobotStatus</a></div><div class="ttdoc">Provides per-robot overrides for a robot Should be updated for hardware revision. ...</div><div class="ttdef"><b>Definition:</b> RobotConfig.hpp:70</div></div>
 <div class="ttc" id="class_our_robot_html_a6b6f72c2cfb6c0c5ff1eff82904fc04a"><div class="ttname"><a href="class_our_robot.html#a6b6f72c2cfb6c0c5ff1eff82904fc04a">OurRobot::OurRobot</a></div><div class="ttdeci">OurRobot(int shell, SystemState *state)</div><div class="ttdoc">Construct a new OurRobot. </div><div class="ttdef"><b>Definition:</b> Robot.cpp:69</div></div>
@@ -540,7 +541,6 @@ $(document).ready(function(){initNavTree('_robot_8hpp_source.html','');});
 <div class="ttc" id="class_our_robot_html_aea7c7abd872f189b616eeee893256064"><div class="ttname"><a href="class_our_robot.html#aea7c7abd872f189b616eeee893256064">OurRobot::resetMotionConstraints</a></div><div class="ttdeci">void resetMotionConstraints()</div><div class="ttdoc">clears all fields in the robot&#39;s MotionConstraints object, causing the robot to stop ...</div><div class="ttdef"><b>Definition:</b> Robot.cpp:223</div></div>
 <div class="ttc" id="class_geometry2d_1_1_circle_html"><div class="ttname"><a href="class_geometry2d_1_1_circle.html">Geometry2d::Circle</a></div><div class="ttdef"><b>Definition:</b> Circle.hpp:9</div></div>
 <div class="ttc" id="class_our_robot_html_aae2d18b5b0d6b35600bae7daeb88d7f0"><div class="ttname"><a href="class_our_robot.html#aae2d18b5b0d6b35600bae7daeb88d7f0">OurRobot::createRobotObstacles</a></div><div class="ttdeci">Geometry2d::CompositeShape createRobotObstacles(const std::vector&lt; ROBOT * &gt; &amp;robots, const RobotMask &amp;mask, Geometry2d::Point currentPosition, float checkRadius) const </div><div class="ttdoc">Only adds obstacles within the checkRadius of the passed in position Creates a set of obstacles from ...</div><div class="ttdef"><b>Definition:</b> Robot.hpp:455</div></div>
-<div class="ttc" id="class_our_robot_html_a5e7bb58a015803d21c21d4d01b9a9ee6"><div class="ttname"><a href="class_our_robot.html#a5e7bb58a015803d21c21d4d01b9a9ee6">OurRobot::_pathStartTime</a></div><div class="ttdeci">uint64_t _pathStartTime</div><div class="ttdoc">latest path </div><div class="ttdef"><b>Definition:</b> Robot.hpp:419</div></div>
 <div class="ttc" id="class_robot_html_af07efd37034645af0a39eb598ff29b65"><div class="ttname"><a href="class_robot.html#af07efd37034645af0a39eb598ff29b65">Robot::filter</a></div><div class="ttdeci">RobotFilter * filter() const </div><div class="ttdoc">Get the robot&#39;s position filter. </div><div class="ttdef"><b>Definition:</b> Robot.hpp:98</div></div>
 <div class="ttc" id="class_our_robot_html_a2c4a9fc7b69b2118594fe9ae13ef0ea5"><div class="ttname"><a href="class_our_robot.html#a2c4a9fc7b69b2118594fe9ae13ef0ea5">OurRobot::face</a></div><div class="ttdeci">void face(const Geometry2d::Point &amp;pt)</div><div class="ttdoc">Face a point while remaining in place. </div><div class="ttdef"><b>Definition:</b> Robot.cpp:322</div></div>
 <div class="ttc" id="class_our_robot_html_a8bd167a6569b54a911720c7136920580"><div class="ttname"><a href="class_our_robot.html#a8bd167a6569b54a911720c7136920580">OurRobot::avoidOpponent</a></div><div class="ttdeci">bool avoidOpponent(unsigned shell_id) const </div><div class="ttdoc">checks if opponents are avoided at all </div><div class="ttdef"><b>Definition:</b> Robot.cpp:416</div></div>
@@ -551,12 +551,12 @@ $(document).ready(function(){initNavTree('_robot_8hpp_source.html','');});
 <div class="ttc" id="class_configuration_html"><div class="ttname"><a href="class_configuration.html">Configuration</a></div><div class="ttdoc">static variable for the program, extremely general </div><div class="ttdef"><b>Definition:</b> Configuration.hpp:15</div></div>
 <div class="ttc" id="class_our_robot_html_afcf2cd89c218915086882fef528e2fd2"><div class="ttname"><a href="class_our_robot.html#afcf2cd89c218915086882fef528e2fd2">OurRobot::approachOpponent</a></div><div class="ttdeci">bool approachOpponent(unsigned shell_id) const </div><div class="ttdef"><b>Definition:</b> Robot.cpp:420</div></div>
 <div class="ttc" id="class_our_robot_html_a1446bc7daeb6a68d549a98e328bdd5b9"><div class="ttname"><a href="class_our_robot.html#a1446bc7daeb6a68d549a98e328bdd5b9">OurRobot::sing</a></div><div class="ttdeci">void sing()</div><div class="ttdoc">Starts the robot playing the fight song. </div><div class="ttdef"><b>Definition:</b> Robot.hpp:390</div></div>
-<div class="ttc" id="class_system_state_html"><div class="ttname"><a href="class_system_state.html">SystemState</a></div><div class="ttdoc">Holds the positions of everything on the field. </div><div class="ttdef"><b>Definition:</b> SystemState.hpp:54</div></div>
+<div class="ttc" id="class_system_state_html"><div class="ttname"><a href="class_system_state.html">SystemState</a></div><div class="ttdoc">Holds the positions of everything on the field. </div><div class="ttdef"><b>Definition:</b> SystemState.hpp:55</div></div>
 <div class="ttc" id="class_geometry2d_1_1_point_html"><div class="ttname"><a href="class_geometry2d_1_1_point.html">Geometry2d::Point</a></div><div class="ttdoc">Simple class to represent a point in 2d space. </div><div class="ttdef"><b>Definition:</b> Point.hpp:16</div></div>
 <div class="ttc" id="class_our_robot_html_a8ebe1185b9bb1cc9c473d507ec9e8f43"><div class="ttname"><a href="class_our_robot.html#a8ebe1185b9bb1cc9c473d507ec9e8f43">OurRobot::kickerBar</a></div><div class="ttdeci">const Geometry2d::Segment kickerBar() const </div><div class="ttdoc">returns the time since the kicker was last charged, 0.0 if ready </div><div class="ttdef"><b>Definition:</b> Robot.cpp:296</div></div>
 <div class="ttc" id="namespace_gameplay_html"><div class="ttname"><a href="namespace_gameplay.html">Gameplay</a></div><div class="ttdoc">Higher-level logic for soccer. </div><div class="ttdef"><b>Definition:</b> GameplayModule.hpp:28</div></div>
-<div class="ttc" id="class_our_robot_html_ae47a79814e56d53244f5b0d7d188022a"><div class="ttname"><a href="class_our_robot.html#ae47a79814e56d53244f5b0d7d188022a">OurRobot::rxIsFresh</a></div><div class="ttdeci">bool rxIsFresh(uint64_t age=500000) const </div><div class="ttdef"><b>Definition:</b> Robot.cpp:782</div></div>
 <div class="ttc" id="class_our_robot_html_a1ca63b9c2dff5f9d023d8590c771142a"><div class="ttname"><a href="class_our_robot.html#a1ca63b9c2dff5f9d023d8590c771142a">OurRobot::setPath</a></div><div class="ttdeci">void setPath(Planning::Path path)</div><div class="ttdoc">single-robot RRT planner </div><div class="ttdef"><b>Definition:</b> Robot.cpp:521</div></div>
+<div class="ttc" id="class_our_robot_html_a69916a94c5416050044d1e91d58b5cac"><div class="ttname"><a href="class_our_robot.html#a69916a94c5416050044d1e91d58b5cac">OurRobot::_pathStartTime</a></div><div class="ttdeci">Time _pathStartTime</div><div class="ttdoc">latest path </div><div class="ttdef"><b>Definition:</b> Robot.hpp:419</div></div>
 <div class="ttc" id="struct_motion_constraints_html"><div class="ttname"><a href="struct_motion_constraints.html">MotionConstraints</a></div><div class="ttdoc">This class contains the motion constraints that the high-level logic sets for a robot. </div><div class="ttdef"><b>Definition:</b> MotionConstraints.hpp:13</div></div>
 <div class="ttc" id="class_robot_html_a54366c96e4367b00216f42ae0405c552"><div class="ttname"><a href="class_robot.html#a54366c96e4367b00216f42ae0405c552">Robot::self</a></div><div class="ttdeci">bool self() const </div><div class="ttdoc">Check whether or not this robot is on our team. </div><div class="ttdef"><b>Definition:</b> Robot.hpp:90</div></div>
 <div class="ttc" id="class_our_robot_html_a1b366ab867c9976e5915872d059e991f"><div class="ttname"><a href="class_our_robot.html#a1b366ab867c9976e5915872d059e991f">OurRobot::kickImmediately</a></div><div class="ttdeci">void kickImmediately(bool im)</div><div class="ttdoc">ignore ball sense and kick immediately </div><div class="ttdef"><b>Definition:</b> Robot.cpp:392</div></div>
@@ -570,7 +570,7 @@ $(document).ready(function(){initNavTree('_robot_8hpp_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><b>Robot.hpp</b></li>
-    <li class="footer">Generated on Tue Jan 20 2015 02:32:43 for GT RoboCup SSL by
+    <li class="footer">Generated on Tue Jan 20 2015 07:03:25 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>
