@@ -51,7 +51,7 @@ void Ball::initPhysics() {
 	_ball->setActivationState(DISABLE_DEACTIVATION);
 
 	_ball->setFriction(10.f); // doesn't work?
-	_ball->setDamping(0.5f,0.5f); // use damping for friction
+	_ball->setDamping(0.25f,0.25f); // use damping for friction
 
 	//_ball->setCollisionFlags(_ball->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 
