@@ -1,8 +1,8 @@
-#if not defined(COMMANDS_HEADER_FILE)
-#define COMMANDS_HEADER_FILE
+#pragma once
 
 #include <string>
 #include <array>
+#include <vector>
 
 /**
  * max number of command aliases
@@ -10,7 +10,8 @@
 const uint8_t MAX_ALIASES = 4;
 
 /**
- *
+ * max command args safety check. Args are now vector based upon creation, so 
+ * this can be changed in size safely.
  */
 const uint8_t MAX_COMMAND_ARGS = 16;
 
@@ -33,7 +34,7 @@ typedef struct
 	/**
 	 * command handler function pointer
  	 */
-	void (*handler)(uint8_t argc, std::array<std::string, MAX_COMMAND_ARGS> argv);
+	void (*handler)(std::vector<std::string> args);
 
 	/**
 	 * command description. Used by help
@@ -55,16 +56,15 @@ void cancelIterativeCommand(void);
 void executeIterativeCommand(void);
 
 /*
- * some command function that have circular definitions. Alphabetical order
- * please.
+ * Command definitions. Some command functions have circular definitions. 
+ * 
+ * Alphabetical order please.
  */
-void cmd_alias(uint8_t argc, std::array<std::string, MAX_COMMAND_ARGS>);
-void cmd_clear(uint8_t argc, std::array<std::string, MAX_COMMAND_ARGS>);
-void cmd_echo(uint8_t argc, std::array<std::string, MAX_COMMAND_ARGS>);
-void cmd_exitSys(uint8_t argc, std::array<std::string, MAX_COMMAND_ARGS>);
-void cmd_help(uint8_t argc, std::array<std::string, MAX_COMMAND_ARGS>);
-void cmd_ping(uint8_t argc, std::array<std::string, MAX_COMMAND_ARGS>);
-void cmd_resetMbed(uint8_t argc, std::array<std::string, MAX_COMMAND_ARGS>);
-
-#endif
+void cmd_alias(std::vector<std::string> args);
+void cmd_clear(std::vector<std::string> args);
+void cmd_echo(std::vector<std::string> args);
+void cmd_exitSys(std::vector<std::string> args);
+void cmd_help(std::vector<std::string> args);
+void cmd_ping(std::vector<std::string> args);
+void cmd_resetMbed(std::vector<std::string> args);
 

@@ -53,7 +53,7 @@ const char ARROW_UP_KEY = 65;
 const char ARROW_DOWN_KEY = 66;
 
 /**
- * console header string. Default " >\0"
+ * console header string.
  */
 const string CONSOLE_HEADER = "> ";
 
@@ -66,16 +66,6 @@ const string RX_BUFFER_FULL_MSG = "RX BUFFER FULL";
  * break message
  */
 const string COMMAND_BREAK_MSG = "*BREAK*";
-
-/**
- * enable scrolling vi sequence
- */
-const string ENABLE_SCROLL_SEQ = "\033[r";
-
-/**
- * clear screen vi sequence
- */
-const string CLEAR_SCREEN_SEQ = "\033[2J";
 
 /**
  * Serial (over USB) baud rate. Default 9600. Screen default 9600

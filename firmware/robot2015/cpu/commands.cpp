@@ -8,11 +8,6 @@
 using namespace std;
 
 /**
- * the current number of commands
- */
-const uint8_t NUM_COMMANDS = 7;
-
-/**
  * error message when a typed command isn't found
  */
 const string COMMAND_NOT_FOUND_MSG = "Command not found.";
@@ -28,29 +23,29 @@ const string TOO_MANY_ARGS_MSG = "*** too many arguments ***";
 volatile bool executingIterativeCommand = false;
 
 /**
- * current iterative command arg count
- */
-uint8_t iterativeCommandArgc;
-
-/**
  * current iterative command args
  */
-array<string, MAX_COMMAND_ARGS> iterativeCommandArgv;
+vector<string> iterativeCommandArgs;
 
 /**
  * the current iterative command handler
  */
-void (*iterativeCommandHandler)(uint8_t argc, array<string, MAX_COMMAND_ARGS> argv);
+void (*iterativeCommandHandler)(vector<string> args);
 
 /**
- * commands list
+ * commands list. Add command handlers to commands.hpp.
  *
- * note: when adding or removing entries, change the length constant at the top
- * of the file, and add the command handler to the header file. Alphabetical 
- * order please.
+ * Alphabetical order please (here addition and in handler function declaration)
  */
-const command_t commands[] = 
+const vector<command_t> commands =  
 {
+	// COMMAND TEMPALATE
+	// {
+	// 	{"<alias>", "<alias2>", "<alias...>"},
+	// 	is the command iterative,
+	// 	command handler function,
+	// 	"description",
+	// 	"usage"},
 	{
 		{"alias"},
 		false,
@@ -80,7 +75,7 @@ const command_t commands[] =
 		false, 
 		cmd_help, 
 		"prints this message", 
-		"help | h | ? <--list> <command names>"},
+		"help | h | ? (<--list> | <command names>)"},
 	{
 		{"ping"},
 		true,
@@ -99,12 +94,12 @@ const command_t commands[] =
  * lists aliases for commands, if args are present, it will only list aliases
  * for those commands
  */
-void cmd_alias(uint8_t argc, array<string, MAX_COMMAND_ARGS> argv)
+void cmd_alias(vector<string> args)
 {
 	//if no args given, list all aliases
-	if (argc == 0)
+	if (args.size() == 0)
 	{
-		for (uint8_t i = 0; i < NUM_COMMANDS; i++)
+		for (uint8_t i = 0; i < commands.size(); i++)
 		{
 			printf("%s:\r\n", commands[i].aliases[0].c_str());
 
@@ -131,14 +126,14 @@ void cmd_alias(uint8_t argc, array<string, MAX_COMMAND_ARGS> argv)
 	else
 	{
 		bool aliasFound = false;
-		for (uint8_t argInd = 0; argInd < argc; argInd++)
+		for (uint8_t argInd = 0; argInd < args.size(); argInd++)
 		{
-			for (uint8_t cmdInd = 0; cmdInd < NUM_COMMANDS; cmdInd++)
+			for (uint8_t cmdInd = 0; cmdInd < commands.size(); cmdInd++)
 			{
 				//check match against args
 				if (find(commands[cmdInd].aliases.begin(),
 					 commands[cmdInd].aliases.end(),
-					 argv[argInd]) != commands[cmdInd].aliases.end())
+					 args[argInd]) != commands[cmdInd].aliases.end())
 				{
 					aliasFound = true;
 
@@ -172,7 +167,7 @@ void cmd_alias(uint8_t argc, array<string, MAX_COMMAND_ARGS> argv)
 			else
 			{
 				printf("error listing aliases: command \"%s\" not found\r\n",
-				       argv[argInd].c_str());
+				       args[argInd].c_str());
 			}
 		}		
 	}
@@ -183,20 +178,20 @@ void cmd_alias(uint8_t argc, array<string, MAX_COMMAND_ARGS> argv)
 /**
  * clears the console
  */ 
-void cmd_clear(uint8_t argc, array<string, MAX_COMMAND_ARGS> argv)
+void cmd_clear(vector<string> args)
 {
-	printf("\033[2J");
+	printf(CLEAR_SCREEN_SEQ.c_str());
 	flush();
 }
 
 /**
  * echos text
  */
-void cmd_echo(uint8_t argc, array<string, MAX_COMMAND_ARGS> argv)
+void cmd_echo(vector<string> args)
 {
-	for (uint8_t argInd = 0; argInd < argc; argInd++)
+	for (uint8_t argInd = 0; argInd < args.size(); argInd++)
 	{
-		printf("%s ", argv[argInd].c_str());
+		printf("%s ", args[argInd].c_str());
 	}	
 	
 	printf("\r\n");
@@ -204,9 +199,10 @@ void cmd_echo(uint8_t argc, array<string, MAX_COMMAND_ARGS> argv)
 }
 
 /**
- * requests a system stop. (breaks main loop)
+ * requests a system stop. (breaks main loop, or whatever implementation this
+ * links to)
  */
-void cmd_exitSys(uint8_t argc, array<string, MAX_COMMAND_ARGS> argv)
+void cmd_exitSys(vector<string> args)
 {
 	reqSysStop();
 }
@@ -214,34 +210,43 @@ void cmd_exitSys(uint8_t argc, array<string, MAX_COMMAND_ARGS> argv)
 /**
  * prints command help
  */
-void cmd_help(uint8_t argc, array<string, MAX_COMMAND_ARGS> argv)
+void cmd_help(vector<string> args)
 {
-	printf("\nCtrl + C stops iterative commands\r\n");
-	printf("usage: help <command>\r\n\r\n");
+	printf("\nCtrl + C stops iterative commands\r\n\r\n");
 	flush();
 
 	//prints all commands, with details
-	if (argc == 0)
+	if (args.size() == 0)
 	{
-		for (uint8_t i = 0; i < NUM_COMMANDS; i++)
+		for (uint8_t i = 0; i < commands.size(); i++)
 		{
-			printf("%s:\r\n", commands[i].aliases[0].c_str());
-			printf("\tDescription: %s\r\n", commands[i].description.c_str());
-			printf("\tUsage: %s\r\n", commands[i].usage.c_str());
-			printf("\tIterative: %s\r\n\r\n", commands[i].isIterative ? "true" : "false");
+			printf("%s:\r\n", 
+			       commands[i].aliases[0].c_str());
+			flush();
+			printf("\tDescription: %s\r\n", 
+			       commands[i].description.c_str());
+			flush();
+			printf("\tUsage: %s\r\n",
+			       commands[i].usage.c_str());
+			flush();
+			printf("\tIterative: %s\r\n\r\n", 
+			       commands[i].isIterative ? "true" : "false");
 			flush();
 		}
+
+		printf("Screen Overflow? Try \"help <command>\"\r\n\r\n");
+		flush();
 	}
 	//prints all commands
-	else if (argc == 1 && strcmp(argv[0].c_str(), "--list") == 0)
+	else if (args.size() == 1 && strcmp(args[0].c_str(), "--list") == 0)
 	{
-		for (uint8_t i = 0; i < NUM_COMMANDS; i++)
+		for (uint8_t i = 0; i < commands.size(); i++)
 		{
 			if (i % 4 == 3)
 			{
 				printf("%s\r\n", commands[i].aliases[0].c_str());	
 			}
-			else if (i == NUM_COMMANDS - 1)
+			else if (i == commands.size() - 1)
 			{
 				printf("%s", commands[i].aliases[0].c_str());
 			}
@@ -258,24 +263,29 @@ void cmd_help(uint8_t argc, array<string, MAX_COMMAND_ARGS> argv)
 	else
 	{
 		//iterate through args
-		for (uint8_t argInd = 0; argInd < argc; argInd++)
+		for (uint8_t argInd = 0; argInd < args.size(); argInd++)
 		{
 			//iterate through commands
 			bool commandFound = false;
-			for (uint8_t i = 0; i < NUM_COMMANDS; i++)
+			for (uint8_t i = 0; i < commands.size(); i++)
 			{
 				//check match against args
 				if (find(commands[i].aliases.begin(),
 					 commands[i].aliases.end(),
-					 argv[argInd]) != commands[i].aliases.end())
+					 args[argInd]) != commands[i].aliases.end())
 				{
 					commandFound = true;
 
 					//print info
-					printf("%s:\r\n", commands[i].aliases[0].c_str());
+					printf("%s:\r\n", 
+					       commands[i].aliases[0].c_str());
+					flush();
 					printf("\tDescription: %s\r\n", 
 					       commands[i].description.c_str());
-					printf("\tUsage: %s\r\n", commands[i].usage.c_str());
+					flush();
+					printf("\tUsage: %s\r\n",
+					       commands[i].usage.c_str());
+					flush();
 					printf("\tIterative: %s\r\n\r\n", 
 					       commands[i].isIterative ? "true" : "false");
 					flush();	
@@ -285,7 +295,7 @@ void cmd_help(uint8_t argc, array<string, MAX_COMMAND_ARGS> argv)
 			//if the command wasn't found, notify
 			if (!commandFound)
 			{
-				printf("Command \"%s\" not found.\r\n", argv[argInd].c_str());
+				printf("Command \"%s\" not found.\r\n", args[argInd].c_str());
 				flush();
 			}
 		}
@@ -295,7 +305,7 @@ void cmd_help(uint8_t argc, array<string, MAX_COMMAND_ARGS> argv)
 /**
  * console responsiveness test
  */
-void cmd_ping(uint8_t argc, array<string, MAX_COMMAND_ARGS> argv)
+void cmd_ping(vector<string> args)
 {
 	printf("pong.\r\n");
 	flush();
@@ -304,7 +314,7 @@ void cmd_ping(uint8_t argc, array<string, MAX_COMMAND_ARGS> argv)
 /**
  * Resets the mbed (should be the equivalent of pressing the reset button)
  */
-void cmd_resetMbed(uint8_t argc, array<string, MAX_COMMAND_ARGS> argv)
+void cmd_resetMbed(vector<string> args)
 {
 	mbed_reset();
 }
@@ -318,13 +328,13 @@ void executeCommand(char* rawCommand)
 {
 	uint8_t argc = 0;
 	string cmdName = "\0";
-	array<string, MAX_COMMAND_ARGS> argv;
+	vector<string> args;
 	
 	char* pch = strtok(rawCommand, " ");
 	while (pch != NULL)
 	{		
 		//check args length
-		if (argc >= MAX_COMMAND_ARGS)
+		if (argc > MAX_COMMAND_ARGS)
 		{
 			printf("%s\r\n", TOO_MANY_ARGS_MSG.c_str());
 			break;
@@ -338,7 +348,7 @@ void executeCommand(char* rawCommand)
 		//set args
 		else
 		{
-			argv[argc - 1] = string(pch);
+			args.push_back(pch);
 		}
 		argc++;
 
@@ -348,7 +358,7 @@ void executeCommand(char* rawCommand)
 	if (cmdName.size() > 0)
 	{		
 		bool commandFound = false;
-		for (uint8_t cmdInd = 0; cmdInd < NUM_COMMANDS; cmdInd++)
+		for (uint8_t cmdInd = 0; cmdInd < commands.size(); cmdInd++)
 		{
 			//check for name match
 			if (find(commands[cmdInd].aliases.begin(),
@@ -368,10 +378,7 @@ void executeCommand(char* rawCommand)
  					//Sets the current arg count, args, and
 					//command function in fields to be used
 					//in the iterative call.
-					iterativeCommandArgc = argc;
-					memcpy(&iterativeCommandArgv, 
-					       &argv, 
-					       MAX_COMMAND_ARGS);
+					iterativeCommandArgs = args;
 					iterativeCommandHandler = 
 						commands[cmdInd].handler;
 
@@ -381,7 +388,7 @@ void executeCommand(char* rawCommand)
 				//once immeidately.
 				else
 				{
-					commands[cmdInd].handler(argc - 1, argv);
+					commands[cmdInd].handler(args);
 				}
 
 				break;
@@ -413,7 +420,7 @@ void executeIterativeCommand(void)
 {
 	if (executingIterativeCommand)
 	{
-		iterativeCommandHandler(iterativeCommandArgc, iterativeCommandArgv);
+		iterativeCommandHandler(iterativeCommandArgs);
 	}	
 }
 

@@ -1,5 +1,6 @@
-#if not defined(CONSOLE_HEADER_FILE)
-#define CONSOLE_HEADER_FILE
+#pragma once
+
+#include <string>
 
 /*
  * uncomment the following line to enable serial transmit and receive debugging
@@ -10,6 +11,16 @@
  */
 //#define DEBUG
 #define DISABLE_CMD_FEEDBACK
+
+/**
+ * enable scrolling vi sequence
+ */
+const string ENABLE_SCROLL_SEQ = "\033[r";
+
+/**
+ * clear screen vi sequence
+ */
+const string CLEAR_SCREEN_SEQ = "\033[2J";
 
 /**
  * Console initialization routine. Attaches interrupt handlers and clears the 
@@ -37,6 +48,4 @@ void reqSysStop(void);
  * returns if the main loop is requested to break
  */
 bool isSysStopReq(void);
-
-#endif
 
