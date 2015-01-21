@@ -143,4 +143,8 @@ message LogFrame
 	//	the description of the behavior tree
 	//	should show the hierarchy of behaviors and each behavior's state
 	optional string behavior_tree = 21;
+
+	// timestamp in microseconds since epoch
+  required uint64 timestamp = 22;
+
 }
