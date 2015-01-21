@@ -8,7 +8,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.10)
 # git checkout and build location of mbed libraries
 set(MBED_PATH ${CMAKE_CURRENT_BINARY_DIR}/mbed_library-prefix/src/mbed_library)
 
-
 # ------------------------------------------------------------------------------
 # setup processor settings add aditional boards here
 #  LPC1768, LPC11U24, NRF51822, K64F
