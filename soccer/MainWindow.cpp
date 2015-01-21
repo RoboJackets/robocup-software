@@ -7,6 +7,7 @@
 #include "radio/Radio.hpp"
 #include <Utils.hpp>
 #include <Robot.hpp>
+#include <joystick/Joystick.hpp>
 
 #include <QInputDialog>
 #include <QFileDialog>
@@ -18,7 +19,6 @@
 
 #include <google/protobuf/descriptor.h>
 #include <Network.hpp>
-#include <Joystick.hpp>
 
 using namespace std;
 using namespace boost;
@@ -201,10 +201,10 @@ void MainWindow::updateViews()
 		_ui.tabWidget->setTabEnabled(2, true);
 	}
 	if(manual >= 0) {
-		JoystickControlValues vals = _processor->joystickControlValues();
-		_ui.joystickBodyXLabel->setText(tr("%1").arg(vals.bodyX));
-		_ui.joystickBodyYLabel->setText(tr("%1").arg(vals.bodyY));
-		_ui.joystickBodyWLabel->setText(tr("%1").arg(vals.bodyW));
+		JoystickControlValues vals = _processor->getJoystickControlValues();
+		_ui.joystickBodyXLabel->setText(tr("%1").arg(vals.translation.x));
+		_ui.joystickBodyYLabel->setText(tr("%1").arg(vals.translation.y));
+		_ui.joystickBodyWLabel->setText(tr("%1").arg(vals.rotation));
 		_ui.joystickKickPowerLabel->setText(tr("%1").arg(vals.kickPower));
 		_ui.joystickDibblerPowerLabel->setText(tr("%1").arg(vals.dribblerPower));
 		_ui.joystickKickCheckBox->setChecked(vals.kick);
@@ -213,7 +213,7 @@ void MainWindow::updateViews()
 	}
 	
 	// Time since last update
-	uint64_t time = timestamp();
+	Time time = timestamp();
 	int delta_us = time - _lastUpdateTime;
 	_lastUpdateTime = time;
 	double framerate = 1000000.0 / delta_us;
@@ -395,7 +395,7 @@ void MainWindow::updateStatus()
 	
 	// Get processing thread status
 	Processor::Status ps = _processor->status();
-	uint64_t curTime = timestamp();
+	Time curTime = timestamp();
 	
 	// Determine if we are receiving packets from an external referee
 	bool haveExternalReferee = (curTime - ps.lastRefereeTime) < 500 * 1000;
@@ -467,17 +467,6 @@ void MainWindow::updateStatus()
 		status("INTERNAL REF", Status_Warning);
 		return;
 	}
-	
-	//	FIXME: this was disabled in the transition to python for high-level stuff
-	//			once that's figured out, we should re-enable this status text
-	// if (!sim && !_processor->gameplayModule()->goalie())
-	// {
-	// 	// No goalie.  Not checked in simulation because this is common during development.
-	// 	status("NO GOALIE", Status_Warning);
-	// 	return;
-	// }
-	
-	//FIXME - Can we validate or flag the playbook?
 	
 	if (!sim && !_processor->logger().recording())
 	{
@@ -940,16 +929,29 @@ void MainWindow::on_fastKickoffYellow_clicked()
 	_processor->refereeModule()->command = NewRefereeModuleEnums::PREPARE_KICKOFF_YELLOW;
 }
 
-void MainWindow::on_actionVisionFirst_Half_triggered()
+void MainWindow::on_actionVisionPrimary_Half_triggered()
 {
-	_processor->changeVisionChannel(SharedVisionPortFirstHalf);
-	_ui.actionVisionFirst_Half->setChecked(true);
-	_ui.actionVisionSecond_Half->setChecked(false);
+	_processor->changeVisionChannel(SharedVisionPortSinglePrimary);
+	_processor->setFieldDimensions(Field_Dimensions::Single_Field_Dimensions);
+	_ui.actionVisionPrimary_Half->setChecked(true);
+	_ui.actionVisionSecondary_Half->setChecked(false);
+	_ui.actionVisionFull_Field->setChecked(false);
 }
 
-void MainWindow::on_actionVisionSecond_Half_triggered()
+void MainWindow::on_actionVisionSecondary_Half_triggered()
 {
-	_processor->changeVisionChannel(SharedVisionPortSecondHalf);
-	_ui.actionVisionFirst_Half->setChecked(false);
-	_ui.actionVisionSecond_Half->setChecked(true);
+	_processor->changeVisionChannel(SharedVisionPortSingleSecondary);
+	_processor->setFieldDimensions(Field_Dimensions::Single_Field_Dimensions);
+	_ui.actionVisionPrimary_Half->setChecked(false);
+	_ui.actionVisionSecondary_Half->setChecked(true);
+	_ui.actionVisionFull_Field->setChecked(false);
+}
+
+void MainWindow::on_actionVisionFull_Field_triggered()
+{
+	_processor->changeVisionChannel(SharedVisionPortDoubleOld);
+	_processor->setFieldDimensions(Field_Dimensions::Double_Field_Dimensions);
+	_ui.actionVisionPrimary_Half->setChecked(false);
+	_ui.actionVisionSecondary_Half->setChecked(false);
+	_ui.actionVisionFull_Field->setChecked(true);
 }

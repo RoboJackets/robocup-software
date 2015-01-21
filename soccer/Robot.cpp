@@ -360,7 +360,7 @@ void OurRobot::_chip(uint8_t strength) {
 	uint8_t max = *config->kicker.maxChip;
 	// TODO make sure we're not about to chip over the middle line.
 	Segment robot_face_line = Segment(pos, pos + 10*Point::direction(angle * M_PI / 180.));
-	Segment mid_field_line = Segment(Point(-Field_Width/2,Field_Length/2), Point(Field_Width/2,Field_Length/2));
+	Segment mid_field_line = Segment(Point(-Field_Dimensions::Current_Dimensions.Width() /2,Field_Dimensions::Current_Dimensions.Length() /2), Point(Field_Dimensions::Current_Dimensions.Width() /2,Field_Dimensions::Current_Dimensions.Length() /2));
 	Point intersection;
 	if(robot_face_line.intersects(mid_field_line, &intersection))
 	{
@@ -504,7 +504,7 @@ std::shared_ptr<Geometry2d::Shape> OurRobot::createBallObstacle() const {
 	// if game is stopped, large obstacle regardless of flags
 	if (_state->gameState.state != GameState::Playing && !(_state->gameState.ourRestart || _state->gameState.theirPenalty()))
 	{
-		return std::shared_ptr<Geometry2d::Shape>(new Circle(_state->ball.pos, Field_CenterRadius));
+		return std::shared_ptr<Geometry2d::Shape>(new Circle(_state->ball.pos, Field_Dimensions::Current_Dimensions.CenterRadius()));
 	}
 
 	// create an obstacle if necessary
@@ -599,7 +599,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	Geometry2d::Point dest = *_motionConstraints.targetPos;
 
 	// //	if this number of microseconds passes since our last path plan, we automatically replan
-	const uint64_t kPathExpirationInterval = 10 * SecsToTimestamp;
+	const Time kPathExpirationInterval = 10 * SecsToTimestamp;
 	if ((timestamp() - _pathStartTime) > kPathExpirationInterval) {
 		_pathInvalidated = true;
 	}
@@ -779,12 +779,12 @@ boost::optional<Eigen::Quaternionf> OurRobot::quaternion() const
 	}
 }
 
-bool OurRobot::rxIsFresh(uint64_t age) const
+bool OurRobot::rxIsFresh(Time age) const
 {
 	return (timestamp() - _radioRx.timestamp()) < age;
 }
 
-uint64_t OurRobot::lastKickTime() const {
+Time OurRobot::lastKickTime() const {
 	return _lastKickTime;
 }
 

@@ -15,6 +15,8 @@ test-cpp:
 	cd build && cmake --target test-cpp .. && make $(MAKE_FLAGS) test-cpp && cd .. && run/test-cpp
 test-python: all
 	cd soccer/gameplay && ./run_tests.sh
+pylint:
+	cd soccer && pylint -E gameplay
 
 clean:
 	cd build && make $(MAKE_FLAGS) clean
@@ -34,6 +36,8 @@ robot-prog-samba:
 robot2015:
 	mkdir -p build && cd build && cmake --target robot2015 .. && make $(MAKE_FLAGS) robot2015
 
+robot2015-prog:
+	mkdir -p build && cd build && cmake --target robot2015-prog .. && make $(MAKE_FLAGS) robot2015-prog
 
 # Robot FPGA
 fpga2011:
