@@ -144,7 +144,9 @@ message LogFrame
 	//	should show the hierarchy of behaviors and each behavior's state
 	optional string behavior_tree = 21;
 
+	optional string team_name_yellow = 22;
+	optional string team_name_blue = 23;
+	
 	// timestamp in microseconds since epoch
-  required uint64 timestamp = 22;
-
+    required uint64 timestamp = 24;
 }
