@@ -1,5 +1,6 @@
 var NAVTREEINDEX4 =
 {
+"class_space_nav_joystick.html#a67cd13cbfad71c9970581e90087255b1":[10,0,56,4],
 "class_space_nav_joystick.html#a793b5d7cb3f40488ca11668dfdc830ab":[10,0,56,5],
 "class_space_nav_joystick.html#a917cd395a6608895cf2ee9abf806cb82":[10,0,56,2],
 "class_space_nav_joystick.html#a996c864592a44377353be62dd5e6a77f":[10,0,56,3],
@@ -248,6 +249,5 @@ var NAVTREEINDEX4 =
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#aae42210642f5819b300f45fd4bebb2f9":[10,0,2,7,0,1,3],
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#ab9da86459042cd80e2ab81a6bc5f1513":[10,0,2,7,0,1,1],
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#ac6f17552b0995e8adf8cdb8f1219e5b2":[10,0,2,7,0,1,0],
-"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#aebea3e8c82320b1384a4d10a384eb950":[10,0,2,7,0,1,8],
-"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#afd65e43f930177179e6f6d5eac89c448":[10,0,2,7,0,1,9]
+"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#aebea3e8c82320b1384a4d10a384eb950":[10,0,2,7,0,1,8]
 };

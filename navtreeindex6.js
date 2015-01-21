@@ -1,5 +1,6 @@
 var NAVTREEINDEX6 =
 {
+"classgameplay_1_1skills_1_1__kick_1_1___kick.html#a2a05cafc64bb5dc31cc2368b33c38488":[10,0,2,13,0,0,0],
 "classgameplay_1_1skills_1_1__kick_1_1___kick.html#a39508641624c2c4a9d206be19303de65":[10,0,2,13,0,0,10],
 "classgameplay_1_1skills_1_1__kick_1_1___kick.html#a3a07242aa710f5db474634044a0c7306":[10,0,2,13,0,0,7],
 "classgameplay_1_1skills_1_1__kick_1_1___kick.html#a3ad63e4e82168b932996a018391adbeb":[10,0,2,13,0,0,18],
@@ -248,6 +249,5 @@ var NAVTREEINDEX6 =
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#a79ae4273e4d17047eeb14da7309036c2":[10,0,2,14,6,1,0,4],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#a85576b62ff4a9e365bef4063194bc290":[10,0,2,14,6,1,0,6],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#aadac280d9d05f3d8b3f36230b5b7bb8e":[10,0,2,14,6,1,0,7],
-"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#abba45fdbf41f81df0ffbe59b2e83629a":[10,0,2,14,6,1,0,14],
-"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#ac39756f614f1e53eb116ebda58c96ada":[10,0,2,14,6,1,0,5]
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#abba45fdbf41f81df0ffbe59b2e83629a":[10,0,2,14,6,1,0,14]
 };

@@ -1,5 +1,6 @@
 var NAVTREEINDEX5 =
 {
+"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#afd65e43f930177179e6f6d5eac89c448":[10,0,2,7,0,1,9],
 "classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122.html":[10,0,2,8,0,0,0],
 "classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122.html#a083ad6cc6ad7270d390c0e0cc8492629":[10,0,2,8,0,0,0,2],
 "classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122.html#a1378f0524bca86a9f57bdc8229c01087":[10,0,2,8,0,0,0,1],
@@ -248,6 +249,5 @@ var NAVTREEINDEX5 =
 "classgameplay_1_1skills_1_1__kick_1_1___kick.html":[10,0,2,13,0,0],
 "classgameplay_1_1skills_1_1__kick_1_1___kick.html#a01825a7bb353613353fed1181518b342":[10,0,2,13,0,0,13],
 "classgameplay_1_1skills_1_1__kick_1_1___kick.html#a1aa06fd98faac92c1db89a5f9d53ec32":[10,0,2,13,0,0,8],
-"classgameplay_1_1skills_1_1__kick_1_1___kick.html#a287c43c07074a9f7c0ff8e003b23c33e":[10,0,2,13,0,0,26],
-"classgameplay_1_1skills_1_1__kick_1_1___kick.html#a2a05cafc64bb5dc31cc2368b33c38488":[10,0,2,13,0,0,0]
+"classgameplay_1_1skills_1_1__kick_1_1___kick.html#a287c43c07074a9f7c0ff8e003b23c33e":[10,0,2,13,0,0,26]
 };

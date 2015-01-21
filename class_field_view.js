@@ -25,5 +25,6 @@ var class_field_view =
     [ "showCoords", "class_field_view.html#af5f6678044e8e6b38094f86b5f9835b1", null ],
     [ "showDotPatterns", "class_field_view.html#abf3aaf3bbc45d41d081372e8664d38be", null ],
     [ "showRawBalls", "class_field_view.html#a979a0acca8230b40c1e1126aa2d26a9a", null ],
-    [ "showRawRobots", "class_field_view.html#a69c96ac8aac9db9bf17c9fe43d5e1aef", null ]
+    [ "showRawRobots", "class_field_view.html#a69c96ac8aac9db9bf17c9fe43d5e1aef", null ],
+    [ "showTeamNames", "class_field_view.html#a6450014de9bfcc6b7f80217bc752cccb", null ]
 ];
