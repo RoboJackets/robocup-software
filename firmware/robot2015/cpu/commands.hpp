@@ -34,7 +34,7 @@ typedef struct
 	/**
 	 * command handler function pointer
  	 */
-	void (*handler)(std::vector<std::string> args);
+	void (*handler)(const std::vector<std::string> &args);
 
 	/**
 	 * command description. Used by help
@@ -60,11 +60,11 @@ void executeIterativeCommand(void);
  * 
  * Alphabetical order please.
  */
-void cmd_alias(std::vector<std::string> args);
-void cmd_clear(std::vector<std::string> args);
-void cmd_echo(std::vector<std::string> args);
-void cmd_exitSys(std::vector<std::string> args);
-void cmd_help(std::vector<std::string> args);
-void cmd_ping(std::vector<std::string> args);
-void cmd_resetMbed(std::vector<std::string> args);
+void cmd_alias(const std::vector<std::string> &args);
+void cmd_clear(const std::vector<std::string> &args);
+void cmd_echo(const std::vector<std::string> &args);
+void cmd_exitSys(const std::vector<std::string> &args);
+void cmd_help(const std::vector<std::string> &args);
+void cmd_ping(const std::vector<std::string> &args);
+void cmd_resetMbed(const std::vector<std::string> &args);
 

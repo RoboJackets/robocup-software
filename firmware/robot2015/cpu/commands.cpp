@@ -30,7 +30,7 @@ vector<string> iterativeCommandArgs;
 /**
  * the current iterative command handler
  */
-void (*iterativeCommandHandler)(vector<string> args);
+void (*iterativeCommandHandler)(const vector<string> &args);
 
 /**
  * commands list. Add command handlers to commands.hpp.
@@ -94,7 +94,7 @@ const vector<command_t> commands =
  * lists aliases for commands, if args are present, it will only list aliases
  * for those commands
  */
-void cmd_alias(vector<string> args)
+void cmd_alias(const vector<string> &args)
 {
 	//if no args given, list all aliases
 	if (args.size() == 0)
@@ -178,7 +178,7 @@ void cmd_alias(vector<string> args)
 /**
  * clears the console
  */ 
-void cmd_clear(vector<string> args)
+void cmd_clear(const vector<string> &args)
 {
 	printf(CLEAR_SCREEN_SEQ.c_str());
 	flush();
@@ -187,7 +187,7 @@ void cmd_clear(vector<string> args)
 /**
  * echos text
  */
-void cmd_echo(vector<string> args)
+void cmd_echo(const vector<string> &args)
 {
 	for (uint8_t argInd = 0; argInd < args.size(); argInd++)
 	{
@@ -202,7 +202,7 @@ void cmd_echo(vector<string> args)
  * requests a system stop. (breaks main loop, or whatever implementation this
  * links to)
  */
-void cmd_exitSys(vector<string> args)
+void cmd_exitSys(const vector<string> &args)
 {
 	reqSysStop();
 }
@@ -210,7 +210,7 @@ void cmd_exitSys(vector<string> args)
 /**
  * prints command help
  */
-void cmd_help(vector<string> args)
+void cmd_help(const vector<string> &args)
 {
 	printf("\nCtrl + C stops iterative commands\r\n\r\n");
 	flush();
@@ -305,7 +305,7 @@ void cmd_help(vector<string> args)
 /**
  * console responsiveness test
  */
-void cmd_ping(vector<string> args)
+void cmd_ping(const vector<string> &args)
 {
 	printf("pong.\r\n");
 	flush();
@@ -314,7 +314,7 @@ void cmd_ping(vector<string> args)
 /**
  * Resets the mbed (should be the equivalent of pressing the reset button)
  */
-void cmd_resetMbed(vector<string> args)
+void cmd_resetMbed(const vector<string> &args)
 {
 	mbed_reset();
 }
@@ -329,6 +329,7 @@ void executeCommand(char* rawCommand)
 	uint8_t argc = 0;
 	string cmdName = "\0";
 	vector<string> args;
+	args.reserve(MAX_COMMAND_ARGS);
 	
 	char* pch = strtok(rawCommand, " ");
 	while (pch != NULL)
