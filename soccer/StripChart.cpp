@@ -75,6 +75,10 @@ void StripChart::paintEvent(QPaintEvent* e)
 	bool haveLast = false;
 	float newMin = _minValue;
 	float newMax = _maxValue;
+
+  p.drawText(0, height()-5, std::to_string(newMin).c_str());
+  p.drawText(0, QFontMetrics(p.font()).height(), std::to_string(newMax).c_str());
+
 	for (unsigned int i = 0; i < _history->size(); ++i)
 	{
 		float v = 0;
