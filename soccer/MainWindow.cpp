@@ -535,6 +535,13 @@ void MainWindow::on_actionDotPatterns_toggled(bool state)
     _ui.fieldView->update();
 }
 
+void MainWindow::on_actionTeam_Names_toggled(bool state)
+{
+	_ui.fieldView->showTeamNames = state;
+	_ui.fieldView->update();
+}
+
+
 void MainWindow::on_actionDefendMinusX_triggered()
 {
 	_processor->defendPlusX(false);
