@@ -7,6 +7,7 @@ var searchData=
   ['defender',['Defender',['../classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender.html',1,'gameplay::tactics::positions::defender']]],
   ['defendpenalty',['DefendPenalty',['../classgameplay_1_1plays_1_1restarts_1_1defend__penalty_1_1_defend_penalty.html',1,'gameplay::plays::restarts::defend_penalty']]],
   ['defense',['Defense',['../classgameplay_1_1tactics_1_1defense_1_1_defense.html',1,'gameplay::tactics::defense']]],
+  ['description',['description',['../structcommand__t.html#a94ed95e8cfafc8f0003c9068648adeb9',1,'command_t']]],
   ['direction',['direction',['../class_geometry2d_1_1_point.html#a7ddcff0925ffe9f7405e8db84710d3a3',1,'Geometry2d::Point']]],
   ['distto',['distTo',['../class_geometry2d_1_1_line.html#abce9805c81f2753a672f01fa0c2df429',1,'Geometry2d::Line::distTo()'],['../class_geometry2d_1_1_point.html#a2c3908ca392de0f0416dc8a5b739374e',1,'Geometry2d::Point::distTo()']]],
   ['dot',['dot',['../class_geometry2d_1_1_point.html#a1efb0c6ab5dea03efef9f8e599a2cbf2',1,'Geometry2d::Point']]],

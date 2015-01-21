@@ -44,7 +44,7 @@ var NAVTREEINDEX =
 "classgameplay_1_1plays_1_1offense_1_1basic__122_1_1_basic122.html",
 "classgameplay_1_1skills_1_1__kick_1_1___kick.html#a39508641624c2c4a9d206be19303de65",
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#ac8040052175d72f3de92db1630ff9843",
-"struct_robot_config_1_1_p_i_d.html#ae102a6d6644ed471d0fef7fefdae772c"
+"struct_robot_config_1_1_kicker.html#aa3df412fdc69b4d48b16832f472cdcdd"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

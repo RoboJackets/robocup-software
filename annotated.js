@@ -268,6 +268,7 @@ var annotated =
     [ "BallFilter", "class_ball_filter.html", "class_ball_filter" ],
     [ "BallObservation", "class_ball_observation.html", "class_ball_observation" ],
     [ "BallTracker", "class_ball_tracker.html", "class_ball_tracker" ],
+    [ "command_t", "structcommand__t.html", "structcommand__t" ],
     [ "ConfigBool", "class_config_bool.html", "class_config_bool" ],
     [ "ConfigDouble", "class_config_double.html", "class_config_double" ],
     [ "ConfigInt", "class_config_int.html", "class_config_int" ],

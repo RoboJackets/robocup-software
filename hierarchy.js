@@ -10,6 +10,7 @@ var hierarchy =
     [ "gameplay.constants.Robot.Chipper", "classgameplay_1_1constants_1_1_robot_1_1_chipper.html", null ],
     [ "RobotConfig::Chipper", "struct_robot_config_1_1_chipper.html", null ],
     [ "gameplay.constants.Colors", "classgameplay_1_1constants_1_1_colors.html", null ],
+    [ "command_t", "structcommand__t.html", null ],
     [ "ConfigItem", "class_config_item.html", [
       [ "ConfigBool", "class_config_bool.html", null ],
       [ "ConfigDouble", "class_config_double.html", null ],

@@ -7,6 +7,7 @@ var searchData=
   ['circle',['Circle',['../class_geometry2d_1_1_circle.html',1,'Geometry2d']]],
   ['circlenearball',['CircleNearBall',['../classgameplay_1_1tactics_1_1circle__near__ball_1_1_circle_near_ball.html',1,'gameplay::tactics::circle_near_ball']]],
   ['colors',['Colors',['../classgameplay_1_1constants_1_1_colors.html',1,'gameplay::constants']]],
+  ['command_5ft',['command_t',['../structcommand__t.html',1,'']]],
   ['compositebehavior',['CompositeBehavior',['../classgameplay_1_1composite__behavior_1_1_composite_behavior.html',1,'gameplay::composite_behavior']]],
   ['compositeshape',['CompositeShape',['../class_geometry2d_1_1_composite_shape.html',1,'Geometry2d']]],
   ['configbool',['ConfigBool',['../class_config_bool.html',1,'']]],
