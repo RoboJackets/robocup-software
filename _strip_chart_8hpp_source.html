@@ -199,16 +199,20 @@ $(document).ready(function(){initNavTree('_strip_chart_8hpp_source.html','');});
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="comment">// i is an index in _history, so 0 is the most recent frame</span></div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        <span class="comment">// and increasing indices are older frames.</span></div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        QPointF dataPoint(<span class="keywordtype">int</span> i, <span class="keywordtype">float</span> value);</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        </div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <span class="comment">// Chart function (see above)</span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        <a class="code" href="struct_chart_1_1_function.html">Chart::Function</a> *_function;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        </div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        <span class="keywordtype">float</span> _minValue;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        <span class="keywordtype">float</span> _maxValue;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        QColor _color;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        </div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="keyword">const</span> std::vector&lt;std::shared_ptr&lt;Packet::LogFrame&gt; &gt; *_history;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;};</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keywordtype">int</span> indexAtPoint(<span class="keyword">const</span> QPoint &amp;point);</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        </div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <span class="comment">// Chart function (see above)</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        <a class="code" href="struct_chart_1_1_function.html">Chart::Function</a> *_function;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        </div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <span class="keywordtype">float</span> _minValue;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <span class="keywordtype">float</span> _maxValue;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        QColor _color;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        <span class="keyword">const</span> std::vector&lt;std::shared_ptr&lt;Packet::LogFrame&gt; &gt; *_history;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    QPointF _mouse_overlay;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;};</div>
 <div class="ttc" id="struct_chart_1_1_numeric_field_html"><div class="ttname"><a href="struct_chart_1_1_numeric_field.html">Chart::NumericField</a></div><div class="ttdef"><b>Definition:</b> StripChart.hpp:37</div></div>
 <div class="ttc" id="namespace_packet_html"><div class="ttname"><a href="namespace_packet.html">Packet</a></div><div class="ttdef"><b>Definition:</b> ProtobufTree.hpp:11</div></div>
 <div class="ttc" id="namespace_chart_html"><div class="ttname"><a href="namespace_chart.html">Chart</a></div><div class="ttdef"><b>Definition:</b> StripChart.hpp:19</div></div>
@@ -221,7 +225,7 @@ $(document).ready(function(){initNavTree('_strip_chart_8hpp_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_2b77d30d8f9797ab2db09c7c3c70f9b7.html">soccer</a></li><li class="navelem"><b>StripChart.hpp</b></li>
-    <li class="footer">Generated on Wed Jan 21 2015 02:15:53 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Jan 21 2015 03:59:25 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

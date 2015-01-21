@@ -1,5 +1,7 @@
 var NAVTREEINDEX7 =
 {
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#aadac280d9d05f3d8b3f36230b5b7bb8e":[10,0,2,14,6,1,0,7],
+"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#abba45fdbf41f81df0ffbe59b2e83629a":[10,0,2,14,6,1,0,14],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#ac39756f614f1e53eb116ebda58c96ada":[10,0,2,14,6,1,0,5],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#ac8040052175d72f3de92db1630ff9843":[10,0,2,14,6,1,0,3],
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#acb7c7f9f71fc15e0f07452bc784d772f":[10,0,2,14,6,1,0,13],
@@ -103,8 +105,8 @@ var NAVTREEINDEX7 =
 "functions_d.html":[10,3,0,4],
 "functions_e.html":[10,3,0,5],
 "functions_f.html":[10,3,0,6],
-"functions_func.html":[10,3,1],
 "functions_func.html":[10,3,1,0],
+"functions_func.html":[10,3,1],
 "functions_func_b.html":[10,3,1,1],
 "functions_func_c.html":[10,3,1,2],
 "functions_func_d.html":[10,3,1,3],
@@ -156,12 +158,12 @@ var NAVTREEINDEX7 =
 "group__drawing__functions.html#gaddf2788cb1bb1ae0385e6e2b7c24b362":[10,0,58,7],
 "group__drawing__functions.html#gaebc8a29b9d79e403ce1e06749ba4fb8c":[10,0,58,6],
 "group__matrices.html":[8,0],
-"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[8,0,0],
 "group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[10,0,1,0,2],
-"group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[8,0,1],
+"group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a":[8,0,0],
 "group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[10,0,1,0,3],
-"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[10,0,1,0,8],
+"group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02":[8,0,1],
 "group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[8,0,2],
+"group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93":[10,0,1,0,8],
 "hierarchy.html":[10,2],
 "index.html":[],
 "md_doc__build_systems.html":[0],
@@ -174,8 +176,8 @@ var NAVTREEINDEX7 =
 "md_doc__vision.html":[7],
 "modules.html":[8],
 "multicast_8hpp_source.html":[11,0,0,5],
-"namespace_gameplay.html":[9,0,0],
 "namespace_gameplay.html":[10,0,1],
+"namespace_gameplay.html":[9,0,0],
 "namespace_lin_alg.html":[9,0,1],
 "namespacemembers.html":[9,1,0],
 "namespacemembers_func.html":[9,1,1],
@@ -247,7 +249,5 @@ var NAVTREEINDEX7 =
 "struct_robot_config_1_1_chipper.html#adfea0d80e221e0889c97e31089886306":[10,0,49,0,2],
 "struct_robot_config_1_1_dribbler.html":[10,0,49,1],
 "struct_robot_config_1_1_dribbler.html#a65e1488817d5ba4f41685865bf30e0b3":[10,0,49,1,0],
-"struct_robot_config_1_1_dribbler.html#acf2811d339289996653275ee5c59ea19":[10,0,49,1,1],
-"struct_robot_config_1_1_kicker.html":[10,0,49,2],
-"struct_robot_config_1_1_kicker.html#a1ac76a35747c67becd45b4fdc8fb117b":[10,0,49,2,2]
+"struct_robot_config_1_1_dribbler.html#acf2811d339289996653275ee5c59ea19":[10,0,49,1,1]
 };
