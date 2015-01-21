@@ -11,12 +11,7 @@ var NAVTREE =
     [ "Vision", "md_doc__vision.html", null ],
     [ "Modules", "modules.html", "modules" ],
     [ "Namespaces", null, [
-      [ "Namespace List", "namespaces.html", "namespaces" ],
-      [ "Namespace Members", "namespacemembers.html", [
-        [ "All", "namespacemembers.html", null ],
-        [ "Functions", "namespacemembers_func.html", null ],
-        [ "Typedefs", "namespacemembers_type.html", null ]
-      ] ]
+      [ "Namespace List", "namespaces.html", "namespaces" ]
     ] ],
     [ "Classes", null, [
       [ "Class List", "annotated.html", "annotated" ],
@@ -44,7 +39,7 @@ var NAVTREEINDEX =
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#ac6f17552b0995e8adf8cdb8f1219e5b2",
 "classgameplay_1_1skills_1_1__kick_1_1___kick.html#a1aa06fd98faac92c1db89a5f9d53ec32",
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#aadac280d9d05f3d8b3f36230b5b7bb8e",
-"struct_robot_config_1_1_kicker.html"
+"struct_robot_config_1_1_p_i_d.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

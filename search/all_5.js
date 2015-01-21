@@ -6,6 +6,5 @@ var searchData=
   ['evaluate',['evaluate',['../class_planning_1_1_path.html#ab4f9fdc9b412e8bd883485db008a4be8',1,'Planning::Path']]],
   ['exceptioniterator',['ExceptionIterator',['../class_exception_iterator.html',1,'']]],
   ['execute_5fmarking',['execute_marking',['../classgameplay_1_1tactics_1_1positions_1_1submissive__defender_1_1_submissive_defender.html#aa007bbe9c485822a314666cc060d3c94',1,'gameplay::tactics::positions::submissive_defender::SubmissiveDefender']]],
-  ['extend',['extend',['../class_planning_1_1_tree.html#add95fff816e880994b1fade7f5833d7c',1,'Planning::Tree::extend()'],['../class_planning_1_1_fixed_step_tree.html#ae816310e36364eef726c80627efcbae1',1,'Planning::FixedStepTree::extend()']]],
-  ['eye',['eye',['../namespace_lin_alg.html#a7f6565c5ae28a246c3e088df197aebfe',1,'LinAlg']]]
+  ['extend',['extend',['../class_planning_1_1_tree.html#add95fff816e880994b1fade7f5833d7c',1,'Planning::Tree::extend()'],['../class_planning_1_1_fixed_step_tree.html#ae816310e36364eef726c80627efcbae1',1,'Planning::FixedStepTree::extend()']]]
 ];
