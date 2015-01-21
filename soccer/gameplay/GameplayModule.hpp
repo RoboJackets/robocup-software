@@ -100,6 +100,8 @@ namespace Gameplay
 				return _playRobots;
 			}
 
+			void sendFieldDimensionsToPython();
+
 
 		protected:
 

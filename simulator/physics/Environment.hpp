@@ -96,6 +96,8 @@ public:
 	/** gets a robot with id from the environment */
 	Robot *robot(bool blue, int board_id) const;
 
+	void reshapeFieldBodies();
+
 signals:
 	// connect to visualization for rendering
 	void setRobotPose(bool blue, int id, const QVector3D& pos, qreal angle, const QVector3D& axis);

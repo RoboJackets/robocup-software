@@ -1,6 +1,6 @@
 # Robot Firmware
 
-This folder contains the firmware that runs on the robots themselves.  The cpu/ folder contains the c code that runs on the ARM7 microcontroller (Atmel AT91SAM7S256) and the fpga/ folder contains the verilog code for the on-board Xilinx XC3S100E  field-programmable gate array (FPGA).
+This folder contains the firmware that runs on the robots themselves.  The [`./cpu`](./cpu) folder contains the C code that runs on the [ARM7TDMI](http://en.wikipedia.org/wiki/ARM7) microcontroller ([Atmel AT91SAM7S256](http://www.atmel.com/devices/sam7s256.aspx)) and the [`./fpga`](./fpga) folder contains the [Verilog](http://en.wikipedia.org/wiki/Verilog) code for the Xilinx [Spartan-3E Series](http://www.xilinx.com/support/index.html/content/xilinx/en/supportNav/silicon_devices/fpga/spartan-3e.html) field-programmable gate array ([FPGA](http://en.wikipedia.org/wiki/Field-programmable_gate_array)).
 
 
 ## Building and Installing

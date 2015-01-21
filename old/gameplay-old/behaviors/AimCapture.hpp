@@ -53,7 +53,7 @@ namespace Gameplay
 					State_Done
 				} _state;
 				
-				// uint64_t _lastBallTime;
+				// Time _lastBallTime;
 
 
 				bool _hadBall;

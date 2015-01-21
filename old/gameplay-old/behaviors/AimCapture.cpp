@@ -273,7 +273,7 @@ bool Gameplay::Behaviors::AimCapture::run()
 
 	//	see if we've had the ball for long enough to consider it captured
 	// if ( _hadBall ) {
-	// 	uint64_t ballHoldDuration = timestamp() - _ballHoldStartTime;
+	// 	Time ballHoldDuration = timestamp() - _ballHoldStartTime;
 	// 	if ( ballHoldDuration > 20 ) { //*_capture_Time_Threshold ) {
 	// 		_state = State_Done;
 	// 		return false;
