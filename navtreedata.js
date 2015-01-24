@@ -6,6 +6,7 @@ var NAVTREE =
     [ "Gameplay", "md_doc__gameplay.html", null ],
     [ "Motion Control", "md_doc__motion_control.html", null ],
     [ "Robot Firmware 2008, 2011", "md_doc__robot_firmware.html", null ],
+    [ "Robot Firmware 2015", "md_doc__robot_firmware2015.html", null ],
     [ "Soccer", "md_doc__soccer.html", null ],
     [ "Testing & Continuous Integration", "md_doc__unit_tests_and_c_i.html", null ],
     [ "Vision", "md_doc__vision.html", null ],
@@ -39,7 +40,7 @@ var NAVTREEINDEX =
 "classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#aebea3e8c82320b1384a4d10a384eb950",
 "classgameplay_1_1skills_1_1__kick_1_1___kick.html#a287c43c07074a9f7c0ff8e003b23c33e",
 "classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#abba45fdbf41f81df0ffbe59b2e83629a",
-"struct_robot_config_1_1_p_i_d.html#a2c5edd003385d53bb70bb14da228e627"
+"struct_robot_config_1_1_p_i_d.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

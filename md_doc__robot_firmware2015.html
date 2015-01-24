@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.9.1"/>
-<title>GT RoboCup SSL: gameplay.constants.Ball Class Reference</title>
+<title>GT RoboCup SSL: Robot Firmware 2015</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -48,10 +48,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
+      <li class="current"><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="modules.html"><span>Modules</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
-      <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
+      <li><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
@@ -71,14 +71,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       </li>
     </ul>
   </div>
-  <div id="navrow2" class="tabs2">
-    <ul class="tablist">
-      <li><a href="annotated.html"><span>Class&#160;List</span></a></li>
-      <li><a href="classes.html"><span>Class&#160;Index</span></a></li>
-      <li><a href="inherits.html"><span>Class&#160;Hierarchy</span></a></li>
-      <li><a href="functions.html"><span>Class&#160;Members</span></a></li>
-    </ul>
-  </div>
 </div><!-- top -->
 <div id="side-nav" class="ui-resizable side-nav-resizable">
   <div id="nav-tree">
@@ -91,7 +83,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   </div>
 </div>
 <script type="text/javascript">
-$(document).ready(function(){initNavTree('classgameplay_1_1constants_1_1_ball.html','');});
+$(document).ready(function(){initNavTree('md_doc__robot_firmware2015.html','');});
 </script>
 <div id="doc-content">
 <!-- window showing the filter options -->
@@ -109,32 +101,51 @@ $(document).ready(function(){initNavTree('classgameplay_1_1constants_1_1_ball.ht
 </div>
 
 <div class="header">
-  <div class="summary">
-<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
-<a href="classgameplay_1_1constants_1_1_ball-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">gameplay.constants.Ball Class Reference</div>  </div>
+<div class="title">Robot Firmware 2015 </div>  </div>
 </div><!--header-->
 <div class="contents">
-<table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
-Static Public Attributes</h2></td></tr>
-<tr class="memitem:ab5655e4af4337e6a86c19cdc8041373e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab5655e4af4337e6a86c19cdc8041373e"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>Radius</b> = 0.0215</td></tr>
-<tr class="separator:ab5655e4af4337e6a86c19cdc8041373e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65ea46cfbec6a3d588f44ae2aa2ef2d8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a65ea46cfbec6a3d588f44ae2aa2ef2d8"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>Mass</b> = 0.04593</td></tr>
-<tr class="separator:a65ea46cfbec6a3d588f44ae2aa2ef2d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>soccer/gameplay/constants.py</li>
+<div class="textblock"><p>Robot firmware is anything that runs on the robot itself, rather than on the field computer. It is composed of two main parts: VeriLog HDL code for the FPGA and C code that runs on the microprocessor. The microprocessor handles most of the logic that drives the robots and the FPGA is the bridge that the microprocessor uses to communicate with the hardware.</p>
+<p>The 2015 robot firmware runs different firmware than the 2008 and 2011 version. A DIP switch on the control board is used to set various settings in the firmware. These settings are still being decided.</p>
+<h2>Startup</h2>
+<p>TBD</p>
+<h2>Hardware</h2>
+<p>The firmware's job is to accept instructions over the radio and carry them out by controlling the hardware. Here's a list of the hardware onboard:</p>
+<ul>
+<li>TBD</li>
 </ul>
-</div><!-- contents -->
+<h2>Console</h2>
+<p>A great way to debug a robot or just to query it for information is to use the console. This is a command-prompt that you can use when the robot is connected via USB. We have <a href="http://en.wikipedia.org/wiki/Udev">udev</a> rules setup so that when the robot is connected via USB, it will show up in the filesystem as <code>/dev/robot</code>. You can use the <a href="http://en.wikipedia.org/wiki/GNU_Screen">screen</a> program in the terminal to connect to it by typing:</p>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;sudo screen /dev/mbed</div>
+</div><!-- fragment --><p>From there you can type any of the many available commands to make the robot do things or get info. Type <code>help</code> to see a list of available commands. Currently, there are no commands! You should submit a pull request adding some!</p>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;help</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;echo</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;alias</div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;ping</div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;reset</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;reboot</div>
+</div><!-- fragment --><h2>Compiler Toolchain</h2>
+<p>The MBED requires a version of the arm compiler that is newer than the one provided by Ubuntu 14.04. We have not added this to the ubuntu-setup script, as we dont want to add more ppa's than we do. If you need to compiler firmware, you can run</p>
+<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;sudo apt-get remove binutils-arm-none-eabi gcc-arm-none-eabi</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;sudo add-apt-repository ppa:terry.guo/gcc-arm-embedded</div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;sudo apt-get update</div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;sudo apt-get install gcc-arm-none-eabi</div>
+</div><!-- fragment --><h2>Sounds</h2>
+<p>The firmware plays certain sounds at startup or during operation to indicate status:</p>
+<ul>
+<li><a href="0-startup.m4a">0-startup</a></li>
+<li><a href="1-failure.m4a">1-failure</a></li>
+<li><a href="2-overvoltage.m4a">2-overvoltage</a></li>
+<li><a href="3-undervoltage.m4a">3-undervoltage</a></li>
+<li><a href="4-fuse-blown.m4a">4-fuse-blown</a></li>
+<li><a href="5-victory.m4a">5-fight-song</a></li>
+<li><a href="6-still-alive.ogg">6-still-alive</a> </li>
+</ul>
+</div></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>gameplay</b></li><li class="navelem"><b>constants</b></li><li class="navelem"><a class="el" href="classgameplay_1_1constants_1_1_ball.html">Ball</a></li>
     <li class="footer">Generated on Sat Jan 24 2015 16:13:02 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
