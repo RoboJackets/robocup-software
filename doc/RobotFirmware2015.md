@@ -3,7 +3,7 @@
 
 %Robot firmware is anything that runs on the robot itself, rather than on the field computer.  It is composed of two main parts: VeriLog HDL code for the FPGA and C code that runs on the microprocessor.  The microprocessor handles most of the logic that drives the robots and the FPGA is the bridge that the microprocessor uses to communicate with the hardware.
 
-The 2015 robot firmware runs different firmware than the 2008 and 2011 version. A DIP switch on the control board is used to set various settings in the firmware.
+The 2015 robot firmware runs different firmware than the 2008 and 2011 version. A DIP switch on the control board is used to set various settings in the firmware. These settings are still being decided.
 
 
 ## Startup
@@ -38,7 +38,7 @@ reboot
 ~~~
 
 
-## Debugging
+## Compiler Toolchain
 
 The MBED requires a version of the arm compiler that is newer than the one provided by Ubuntu 14.04. We have not added this to the ubuntu-setup script, as we dont want to add more ppa's than we do. If you need to compiler firmware, you can run
 
