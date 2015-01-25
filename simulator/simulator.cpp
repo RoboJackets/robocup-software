@@ -28,6 +28,8 @@ int main(int argc, char* argv[])
 {
 	QApplication app(argc, argv);
 
+	Field_Dimensions::Current_Dimensions = Field_Dimensions::Single_Field_Dimensions * scaling;
+
 	QString configFile = "simulator.cfg";
 	bool sendShared = false;
 

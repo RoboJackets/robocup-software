@@ -11,6 +11,7 @@
 #include <QString>
 #include "Geometry2d/Point.hpp"
 #include "Constants.hpp"
+#include "time.hpp"
 //#include <iostream>
 #include <math.h>
 using namespace std;
@@ -34,17 +35,17 @@ static inline float fixAngleRadians(float a)
 
 /** Checks whether or not the given ball is in the defense area. */
 static inline bool ballIsInGoalieBox(Geometry2d::Point point) {
-	if (abs(point.x) < Field_GoalFlat / 2.0f) // Ball is in center (rectangular) portion of defensive bubble
+	if (abs(point.x) < Field_Dimensions::Current_Dimensions.GoalFlat() / 2.0f) // Ball is in center (rectangular) portion of defensive bubble
 	{
-		if (point.y > 0 && point.y < Field_ArcRadius) {
+		if (point.y > 0 && point.y < Field_Dimensions::Current_Dimensions.ArcRadius()) {
 			return true;
 		} else {
 			return false;
 		}
-	} else if (abs(point.x) < (Field_ArcRadius + Field_GoalFlat / 2.0f)) // Ball is in one of the side (arc) portions of defensive bubble
+	} else if (abs(point.x) < (Field_Dimensions::Current_Dimensions.ArcRadius() + Field_Dimensions::Current_Dimensions.GoalFlat() / 2.0f)) // Ball is in one of the side (arc) portions of defensive bubble
 	{
-		double adjusted_x = abs(point.x) - (Field_GoalFlat / 2.0f);
-		double max_y = sqrt( (Field_ArcRadius * Field_ArcRadius) - (adjusted_x * adjusted_x));
+		double adjusted_x = abs(point.x) - (Field_Dimensions::Current_Dimensions.GoalFlat() / 2.0f);
+		double max_y = sqrt( (Field_Dimensions::Current_Dimensions.ArcRadius() * Field_Dimensions::Current_Dimensions.ArcRadius()) - (adjusted_x * adjusted_x));
 		if (point.y > 0 && point.y <= max_y) {
 			return true;
 		} else {
@@ -58,7 +59,7 @@ static inline bool ballIsInGoalieBox(Geometry2d::Point point) {
 
 static Geometry2d::Point fromOursToTheirs(Geometry2d::Point &pt) {
 	Geometry2d::Point c;
-	c.y = Field_Length - pt.y;
+	c.y = Field_Dimensions::Current_Dimensions.Length() - pt.y;
 	c.x = -pt.x;
 
 	return c;
@@ -84,15 +85,6 @@ float clamp(T value, T min, T max)
 		return min;
 	}
 	return value;
-}
-
-/** returns the local system timestamp */
-static inline uint64_t timestamp()
-{
-	struct timeval time;
-	gettimeofday(&time, 0);
-
-	return (uint64_t)time.tv_sec * 1000000 + (uint64_t)time.tv_usec;
 }
 
 // Removes all entries in a std::map which associate to the given value.
@@ -203,14 +195,14 @@ public:
 	}
 
 	ExceptionIterator &operator++()
-				{
+	{
 		return *this;
-				}
+	}
 
 	ExceptionIterator &operator++(int)
-				{
+	{
 		return *this;
-				}
+	}
 };
 
 // Sets str to the name of a class.

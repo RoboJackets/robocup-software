@@ -77,7 +77,7 @@ void VisionReceiver::run()
 		qint64 size = socket.readDatagram(buf, sizeof(buf), &host, &portNumber);
 		if (size < 1)
 		{
-			fprintf(stderr, "VisionReceiver: %s\n", (const char *)socket.errorString().toAscii());
+			fprintf(stderr, "VisionReceiver: %s\n", (const char *)socket.errorString().toLatin1());
 			// See Processor for why we can't use QThread::msleep()
 			::usleep(100 * 1000);
 			continue;
@@ -90,7 +90,7 @@ void VisionReceiver::run()
 		packet->receivedTime = timestamp();
 		if (!packet->wrapper.ParseFromArray(buf, size))
 		{
-			fprintf(stderr, "VisionReceiver: got bad packet of %d bytes from %s:%d\n", (int)size, (const char *)host.toString().toAscii(), portNumber);
+			fprintf(stderr, "VisionReceiver: got bad packet of %d bytes from %s:%d\n", (int)size, (const char *)host.toString().toLatin1(), portNumber);
 			continue;
 		}
 		

@@ -14,8 +14,10 @@ using namespace boost::python;
 #include <Robot.hpp>
 #include <SystemState.hpp>
 #include <protobuf/LogFrame.pb.h>
+#include <Constants.hpp>
 
 #include <boost/python/exception_translator.hpp>
+#include <boost/version.hpp>
 #include <exception>
 
 /**
@@ -42,10 +44,14 @@ void translateException(NullArgumentException const& e)
  * from python was None.  Check for this case so that we don't segfault.
  */
 
+
 //	this is here so boost can work with std::shared_ptr
+//	later versions of boost include this, so we only define it for older versions
+#if BOOST_VERSION < 105300
 template<class T> T * get_pointer( std::shared_ptr<T> const& p) {
 	return p.get();
 }
+#endif
 
 QColor Color_from_tuple(const boost::python::tuple &rgb) {
 	float r = extract<float>(rgb[0]);
@@ -433,5 +439,23 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("draw_shape", &SystemState::drawShape)
 		.def("draw_line", &State_draw_line)
 		.def("draw_polygon", &State_draw_polygon)
+	;
+
+	class_<Field_Dimensions>("Field_Dimensions")
+		.def("Length", &Field_Dimensions::Length)
+		.def("Width", &Field_Dimensions::Width)
+		.def("Border", &Field_Dimensions::Border)
+		.def("LineWidth", &Field_Dimensions::LineWidth)
+		.def("GoalWidth", &Field_Dimensions::GoalWidth)
+		.def("GoalDepth", &Field_Dimensions::GoalDepth)
+		.def("GoalHeight", &Field_Dimensions::GoalHeight)
+		.def("PenaltyDist", &Field_Dimensions::PenaltyDist)
+		.def("PenaltyDiam", &Field_Dimensions::PenaltyDiam)
+		.def("ArcRadius", &Field_Dimensions::ArcRadius)
+		.def("CenterRadius", &Field_Dimensions::CenterRadius)
+		.def("CenterDiameter", &Field_Dimensions::CenterDiameter)
+		.def("GoalFlat", &Field_Dimensions::GoalFlat)
+		.def("FloorLength", &Field_Dimensions::FloorLength)
+		.def("FloorWidth", &Field_Dimensions::FloorWidth)
 	;
 }

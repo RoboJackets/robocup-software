@@ -11,7 +11,6 @@
 #include <iostream>
 #include <execinfo.h>
 #include <stdexcept>
-#include <boost/foreach.hpp>
 #include <QString>
 #include <cmath>
 
@@ -183,7 +182,7 @@ bool OurRobot::avoidOpponents() const {
 }
 
 void OurRobot::avoidOpponents(bool enable) {
-	BOOST_FOREACH(float &a, _opp_avoid_mask)
+	for (float &a :  _opp_avoid_mask)
 		if (enable)
 			a = Robot_Radius - 0.03;
 		else
@@ -361,7 +360,7 @@ void OurRobot::_chip(uint8_t strength) {
 	uint8_t max = *config->kicker.maxChip;
 	// TODO make sure we're not about to chip over the middle line.
 	Segment robot_face_line = Segment(pos, pos + 10*Point::direction(angle * M_PI / 180.));
-	Segment mid_field_line = Segment(Point(-Field_Width/2,Field_Length/2), Point(Field_Width/2,Field_Length/2));
+	Segment mid_field_line = Segment(Point(-Field_Dimensions::Current_Dimensions.Width() /2,Field_Dimensions::Current_Dimensions.Length() /2), Point(Field_Dimensions::Current_Dimensions.Width() /2,Field_Dimensions::Current_Dimensions.Length() /2));
 	Point intersection;
 	if(robot_face_line.intersects(mid_field_line, &intersection))
 	{
@@ -406,11 +405,11 @@ void OurRobot::resetAvoidRobotRadii() {
 }
 
 void OurRobot::approachAllOpponents(bool enable) {
-	BOOST_FOREACH(float &ar, _opp_avoid_mask)
+	for (float &ar :  _opp_avoid_mask)
 		ar = (enable) ?  Opp_Avoid_Small : *_oppAvoidRadius;
 }
 void OurRobot::avoidAllOpponents(bool enable) {
-	BOOST_FOREACH(float &ar, _opp_avoid_mask)
+	for (float &ar :  _opp_avoid_mask)
 		ar = (enable) ?  -1.0 : *_oppAvoidRadius;
 }
 
@@ -445,7 +444,7 @@ void OurRobot::avoidOpponentRadius(unsigned shell_id, float radius) {
 }
 
 void OurRobot::avoidAllOpponentRadius(float radius) {
-	BOOST_FOREACH(float &ar, _opp_avoid_mask)
+	for (float &ar :  _opp_avoid_mask)
 		ar = radius;
 }
 
@@ -505,7 +504,7 @@ std::shared_ptr<Geometry2d::Shape> OurRobot::createBallObstacle() const {
 	// if game is stopped, large obstacle regardless of flags
 	if (_state->gameState.state != GameState::Playing && !(_state->gameState.ourRestart || _state->gameState.theirPenalty()))
 	{
-		return std::shared_ptr<Geometry2d::Shape>(new Circle(_state->ball.pos, Field_CenterRadius));
+		return std::shared_ptr<Geometry2d::Shape>(new Circle(_state->ball.pos, Field_Dimensions::Current_Dimensions.CenterRadius()));
 	}
 
 	// create an obstacle if necessary
@@ -569,9 +568,12 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 	// create and visualize obstacles
 	Geometry2d::CompositeShape full_obstacles(_local_obstacles);
+	//Add's our robots as obstacles only if they're within a certain distance from our robot.
+	//This distance increases with velocity.
 	Geometry2d::CompositeShape
-		self_obs = createRobotObstacles(_state->self, _self_avoid_mask),
+		self_obs = createRobotObstacles(_state->self, _self_avoid_mask, this->pos, 0.6 + this->vel.mag()),
 		opp_obs = createRobotObstacles(_state->opp, _opp_avoid_mask);
+
 	_state->drawCompositeShape(self_obs, Qt::gray, QString("self_obstacles_%1").arg(shell()));
 	_state->drawCompositeShape(opp_obs, Qt::gray, QString("opp_obstacles_%1").arg(shell()));
 	if (_state->ball.valid)
@@ -580,7 +582,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		_state->drawShape(ball_obs, Qt::gray, QString("ball_obstacles_%1").arg(shell()));
 		full_obstacles.add(ball_obs);
 	}
-	//full_obstacles.add(self_obs);
+	full_obstacles.add(self_obs);
 	full_obstacles.add(opp_obs);
 	full_obstacles.add(global_obstacles);
 
@@ -597,13 +599,12 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	Geometry2d::Point dest = *_motionConstraints.targetPos;
 
 	// //	if this number of microseconds passes since our last path plan, we automatically replan
-	const uint64_t kPathExpirationInterval = 10 * SecsToTimestamp;
+	const Time kPathExpirationInterval = 10 * SecsToTimestamp;
 	if ((timestamp() - _pathStartTime) > kPathExpirationInterval) {
 		_pathInvalidated = true;
 	}
 
 	if (!_path) {
-		addText("hwat");
 		_pathInvalidated = true;
 	}
 
@@ -627,8 +628,8 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		float timeIntoPath = ((float)(timestamp() - _pathStartTime)) * TimestampToSecs + 1.0/60.0;
 		_path->evaluate(timeIntoPath, targetPathPos, targetVel);
 		float pathError = (targetPathPos - pos).mag();
-		state()->drawCircle(targetPathPos, maxDist, Qt::green, "MotionControl");
-		addText(QString("time: %1").arg(timeIntoPath));
+		//state()->drawCircle(targetPathPos, maxDist, Qt::green, "MotionControl");
+		addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
 		addText(QString("%1").arg(pathError));
 		if (pathError > maxDist) {
 			_pathInvalidated = true;
@@ -778,12 +779,12 @@ boost::optional<Eigen::Quaternionf> OurRobot::quaternion() const
 	}
 }
 
-bool OurRobot::rxIsFresh(uint64_t age) const
+bool OurRobot::rxIsFresh(Time age) const
 {
 	return (timestamp() - _radioRx.timestamp()) < age;
 }
 
-uint64_t OurRobot::lastKickTime() const {
+Time OurRobot::lastKickTime() const {
 	return _lastKickTime;
 }
 

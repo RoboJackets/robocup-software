@@ -296,8 +296,6 @@ bool Planning::Path::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry
         linearPos,      //  these are set by reference since C++ can't return multiple values
         linearSpeed);   //
 
-	//cout<<pathIsValid;
-	//cout<<" length:" << length() << "\n";
 	Geometry2d::Point direction;
 	if(!getPoint(linearPos, targetPosOut, direction)) {
 		return false;
@@ -305,7 +303,6 @@ bool Planning::Path::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry
 
 	targetVelOut = direction * linearSpeed;
 	*/
-	//cout<<times.size()<<endl;
 	if (times.size()==0) {
 		targetPosOut = Geometry2d::Point(0,0);
 		targetVelOut = Geometry2d::Point(0,0);
@@ -314,15 +311,14 @@ bool Planning::Path::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry
 	if (times.size()==1) {
 		targetPosOut = points[0];
 		targetVelOut = Geometry2d::Point(0,0);
-		cout<< "wow"<<endl;
 		return false;
 	}
 	int i=0;
-	if (times[0]>t)
+	if (t<times[0])
 	{
 		targetPosOut = points[0];
 		targetVelOut = vels[0];
-		return true;
+		return false;
 	}
 	while (times[i]<=t)
 	{
@@ -336,7 +332,6 @@ bool Planning::Path::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry
 		{
 			targetPosOut = points[i-1];
 			targetVelOut = Geometry2d::Point(0,0);
-			//targetVelOut = vels[i-1];
 			return false;
 		}
 	}
@@ -348,27 +343,18 @@ bool Planning::Path::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry
 		return true;
 	}
 	float constant = (t-times[i-1])/deltaT;
-	//cout<<"ok "<<i<<" "<<vels[i].x<<" "<<vels[i].y<<" "<<constant<<endl;
 
 	targetPosOut = points[i-1]*(1-constant) + points[i]*(constant);
 	targetVelOut = vels[i-1]*(1-constant) + vels[i]*(constant);
 
-
 	return true;
 }
 
-float Planning::Path::getTime(int i) const
+float Planning::Path::getTime(int index) const
 {
 	if (maxSpeed == -1 || maxAcceleration == -1) {
         throw std::runtime_error("You must set maxSpeed and maxAcceleration before calling Path.evaluate()");
     }
 
-	float linearPos;
-	float linearSpeed;
-	//cout<<maxSpeed << " " << maxAcceleration << " "<<startSpeed<<" "<<endSpeed<<endl;
-	//cout << length()<< " "<<length(0,i)<<endl;
-	return Trapezoidal::getTime(length(), maxSpeed, maxAcceleration, length(0,i), startSpeed, endSpeed);
-
-
-	
+	return Trapezoidal::getTime(length(0,index), length(), maxSpeed, maxAcceleration, startSpeed, endSpeed);
 }

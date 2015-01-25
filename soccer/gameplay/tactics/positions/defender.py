@@ -7,16 +7,24 @@ import main
 from enum import Enum
 import math
 
+
+## The Defender behavior positions a robot on a certain area of the field and defends it
 class Defender(single_robot_behavior.SingleRobotBehavior):
 
 	class State(Enum):
-		marking = 1 		# gets between a particular opponent and the goal.  stays closer to the goal
-		area_marking = 2 	# chilling out in a zone waiting to mark an opponent.  doesn't do this much
+		## gets between a particular opponent and the goal.  stays closer to the goal
+		marking = 1
 
+		## chilling out in a zone waiting to mark an opponent.  doesn't do this much
+		area_marking = 2
+
+
+	## The area of the field this robot should block
 	class Side(Enum):
 		left = 1
 		center = 2
 		right = 3
+
 
 	def __init__(self, side=Side.center):
 		super().__init__(continuous=True)
@@ -74,7 +82,7 @@ class Defender(single_robot_behavior.SingleRobotBehavior):
 
 		# TODO defenders should register themselves with some static list on init
 		# TODO make this happen in python-land
-		# BOOST_FOREACH(Defender *f, otherDefenders)
+		# for (Defender *f :  otherDefenders)
 		# {
 		# 	if (f->robot)
 		# 	{
@@ -196,7 +204,7 @@ class Defender(single_robot_behavior.SingleRobotBehavior):
 		shootline = robocup.Segment(robocup.Point(0,0), robocup.Point(0,0))
 		if best is not None:
 			angle = (best.a0 + best.a1)/2.0
-			shootline = robocup.Segment(self._win_eval.origin(), robocup.Point.direction(angle * (math.pi / 180.0)))
+			shootline = robocup.Segment(self._win_eval.origin(), robocup.Point.direction(angle * (math.pi / 180.0))) # FIXME :no origin. 
 			main.system_state().draw_line(shootline, (255,0,0), "Defender")
 
 		need_task = False

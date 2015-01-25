@@ -22,21 +22,11 @@ struct JoystickControlValues;
 class Radio;
 class BallTracker;
 
-namespace StateIdentification
-{
-	class StateIDModule;
-}
 
 namespace Gameplay
 {
 	class GameplayModule;
 }
-
-namespace Motion
-{
-	class RobotController;
-}
-
 
 
 class DebugQMutex: public QMutex {
@@ -93,10 +83,10 @@ class Processor: public QThread
 				lastRadioRxTime = 0;
 			}
 			
-			uint64_t lastLoopTime;
-			uint64_t lastVisionTime;
-			uint64_t lastRefereeTime;
-			uint64_t lastRadioRxTime;
+			Time lastLoopTime;
+			Time lastVisionTime;
+			Time lastRefereeTime;
+			Time lastRadioRxTime;
 		};
 		
 		static void createConfiguration(Configuration *cfg);
@@ -108,9 +98,8 @@ class Processor: public QThread
 		
 		bool autonomous();
 		bool joystickValid();
+		JoystickControlValues getJoystickControlValues();
 
-		JoystickControlValues joystickControlValues();
-		
 		void externalReferee(bool value)
 		{
 			_externalReferee = value;
@@ -218,14 +207,21 @@ class Processor: public QThread
 		}
 
 		void changeVisionChannel(int port);
+
+		void recalculateWorldToTeamTransform();
+
+		void setFieldDimensions(const Field_Dimensions &dims);
 		
 		////////
 		
 		// Time of the first LogFrame
-		uint64_t firstLogTime;
+		Time firstLogTime;
 		
 	protected:
 		void run();
+
+		void applyJoystickControls(const JoystickControlValues &controlVals, Packet::RadioTx::Robot *txRobot, OurRobot *robot);
+
 		
 	private:
 		// Configuration for different models of robots
@@ -295,7 +291,12 @@ class Processor: public QThread
 		std::shared_ptr<Gameplay::GameplayModule> _gameplayModule;
 		std::shared_ptr<BallTracker> _ballTracker;
 
-		Joystick *_joystick;
+		//	mixes values from all joysticks to control the single manual robot
+		std::vector<Joystick *> _joysticks;
+
+		//	joystick damping
+		bool _dampedRotation;
+		bool _dampedTranslation;
 
 		VisionReceiver vision;
 };

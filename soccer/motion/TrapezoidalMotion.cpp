@@ -2,10 +2,10 @@
 #include <math.h>
 #include <iostream>
 float Trapezoidal::getTime(
+	float distance,
 	float pathLength,
 	float maxSpeed,
 	float maxAcc,
-	float pos,
 	float startSpeed,
 	float finalSpeed)
 {
@@ -49,11 +49,11 @@ float Trapezoidal::getTime(
 		plateauTime = plateauDist / maxSpeed;
 	}
 
-	if (pos<0)
+	if (distance<0)
 	{
 		return 0;
 	}
-	if (pos<rampUpDist) 
+	if (distance<rampUpDist) 
 	{
 		//time calculations
 		/*
@@ -63,12 +63,12 @@ float Trapezoidal::getTime(
 		*/
 		float b = startSpeed;
 		float a = maxAcc/2.0;
-		float c = -pos;
+		float c = -distance;
 		float root = sqrt(b*b - 4*a*c);
 		float temp1 = (-b + root)/(2*a);
 		float temp2 = (-b - root)/(2*a);
 		if (isnan(root)) {
-			std::cout<<"meh";
+			//TODO Handle this
 		}
 		if (temp1 > 0 && temp1<rampUpTime) 
 		{
@@ -79,12 +79,12 @@ float Trapezoidal::getTime(
 			return temp2;
 		}
 	} 
-	else if (pos<=rampUpDist + plateauDist) 
+	else if (distance<=rampUpDist + plateauDist) 
 	{
-		float position = pos-rampUpDist;
+		float position = distance-rampUpDist;
 		return rampUpTime + position/maxSpeed;
 	}
-	else if (pos<=rampUpDist + plateauDist + rampDownDist)
+	else if (distance<=rampUpDist + plateauDist + rampDownDist)
 	{
 		//time calculations
 		/*
@@ -92,7 +92,7 @@ float Trapezoidal::getTime(
 			t = -b +- sqrt(b^2 - 4*a*c)/(2*a)
 
 		*/
-		float position = pos - rampUpDist - plateauDist;
+		float position = distance - rampUpDist - plateauDist;
 		float b = maxSpeed;
 		float a = -maxAcc/2.0;
 		float c = -position;
@@ -100,7 +100,8 @@ float Trapezoidal::getTime(
 		float temp1 = (-b + root)/(2*a);
 		float temp2 = (-b - root)/(2*a);
 		if (isnan(root)) {
-			std::cout<<"meh"<<std::endl;
+			//std::cout<<"meh"<<std::endl;
+			//TODO Handle this case
 		}
 		if (temp1 > 0 && temp1<rampDownTime) 
 		{

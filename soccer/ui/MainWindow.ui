@@ -226,7 +226,7 @@
               <string>Stop</string>
              </property>
              <property name="icon">
-              <iconset resource="log_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/media-playback-pause.png</normaloff>:/icons/media-playback-pause.png</iconset>
              </property>
              <property name="iconSize">
@@ -246,7 +246,7 @@
               <string>First Available Frame</string>
              </property>
              <property name="icon">
-              <iconset resource="log_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/media-skip-backward.png</normaloff>:/icons/media-skip-backward.png</iconset>
              </property>
              <property name="iconSize">
@@ -266,7 +266,7 @@
               <string>Previous Frame</string>
              </property>
              <property name="icon">
-              <iconset resource="log_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/media-seek-backward.png</normaloff>:/icons/media-seek-backward.png</iconset>
              </property>
              <property name="iconSize">
@@ -286,7 +286,7 @@
               <string>Next Frame</string>
              </property>
              <property name="icon">
-              <iconset resource="log_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/media-seek-forward.png</normaloff>:/icons/media-seek-forward.png</iconset>
              </property>
              <property name="iconSize">
@@ -306,7 +306,7 @@
               <string>Live</string>
              </property>
              <property name="icon">
-              <iconset resource="log_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/media-skip-forward.png</normaloff>:/icons/media-skip-forward.png</iconset>
              </property>
              <property name="iconSize">
@@ -1202,7 +1202,7 @@
      <x>0</x>
      <y>0</y>
      <width>1080</width>
-     <height>20</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
@@ -1218,6 +1218,7 @@
     <addaction name="actionRawRobots"/>
     <addaction name="actionCoords"/>
     <addaction name="actionDotPatterns"/>
+    <addaction name="actionTeam_Names"/>
    </widget>
    <widget class="QMenu" name="menu_Field">
     <property name="title">
@@ -1234,8 +1235,9 @@
      <property name="title">
       <string>Vision Channel</string>
      </property>
-     <addaction name="actionVisionFirst_Half"/>
-     <addaction name="actionVisionSecond_Half"/>
+     <addaction name="actionVisionPrimary_Half"/>
+     <addaction name="actionVisionSecondary_Half"/>
+     <addaction name="actionVisionFull_Field"/>
     </widget>
     <addaction name="actionDefendMinusX"/>
     <addaction name="actionDefendPlusX"/>
@@ -1532,7 +1534,7 @@
     <string>Toggles display of robot shell dot patterns.</string>
    </property>
   </action>
-  <action name="actionVisionFirst_Half">
+  <action name="actionVisionPrimary_Half">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -1540,15 +1542,31 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>First Half</string>
+    <string>Primary Half</string>
    </property>
   </action>
-  <action name="actionVisionSecond_Half">
+  <action name="actionVisionSecondary_Half">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Second Half</string>
+    <string>Secondary Half</string>
+   </property>
+  </action>
+  <action name="actionVisionFull_Field">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Full Field</string>
+   </property>
+  </action>
+  <action name="actionTeam_Names">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Team Names</string>
    </property>
   </action>
  </widget>

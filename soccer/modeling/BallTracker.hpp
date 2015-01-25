@@ -2,6 +2,8 @@
 
 #include <memory>
 #include <Geometry2d/Point.hpp>
+#include <Utils.hpp>
+
 
 class BallFilter;
 class SystemState;
@@ -9,13 +11,13 @@ class SystemState;
 class BallObservation
 {
 public:
-	BallObservation(Geometry2d::Point pos = Geometry2d::Point(), uint64_t time = 0):
+	BallObservation(Geometry2d::Point pos = Geometry2d::Point(), Time time = 0):
 		pos(pos), time(time)
 	{
 	}
 
 	Geometry2d::Point pos;
-	uint64_t time;
+	Time time;
 };
 
 class BallTracker
@@ -27,7 +29,7 @@ public:
 
 private:
 	/// Time of the last observation given to the filter
-	uint64_t _lastTrackTime;
+	Time _lastTrackTime;
 	
 	/// Possible balls that were not used on the last frame
 	struct PossibleTrack

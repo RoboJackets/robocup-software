@@ -4,6 +4,7 @@ import skills.intercept
 import robocup
 import main
 
+
 class TestIntercept(play.Play):
 
     def __init__(self):

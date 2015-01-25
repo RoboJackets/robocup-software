@@ -122,7 +122,7 @@ void NewRefereeModule::run()
 		qint64 size = socket.readDatagram(buf, sizeof(buf), &host, &port);
 		if(size < 1)
 		{
-			fprintf(stderr, "NewRefereeModule: %s/n", (const char *)socket.errorString().toAscii());
+			fprintf(stderr, "NewRefereeModule: %s/n", (const char *)socket.errorString().toLatin1());
 			::usleep(100000);
 			continue;
 		}
@@ -132,7 +132,7 @@ void NewRefereeModule::run()
 		this->received_time = packet->receivedTime;
 		if(!packet->wrapper.ParseFromArray(buf, size))
 		{
-			fprintf(stderr, "NewRefereeModule: got bad packet of %d bytes from %s:%d\n", (int)size, (const char *)host.toString().toAscii(), port);
+			fprintf(stderr, "NewRefereeModule: got bad packet of %d bytes from %s:%d\n", (int)size, (const char *)host.toString().toLatin1(), port);
 			fprintf(stderr, "Packet: %s\n", buf);
 			fprintf(stderr, "Address: %s\n", RefereeAddress);
 			continue;

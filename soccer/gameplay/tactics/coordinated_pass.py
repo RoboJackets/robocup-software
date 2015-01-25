@@ -23,7 +23,7 @@ import logging
 # If the receiver gets the ball, CoordinatedPass transitions to the completed state, otherwise it goes to the failed state
 class CoordinatedPass(composite_behavior.CompositeBehavior):
 
-    KickPower = 30 # was25
+    KickPower = 100 # was25
 
 
     class State(enum.Enum):

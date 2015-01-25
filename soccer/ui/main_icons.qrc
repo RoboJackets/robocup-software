@@ -8,5 +8,10 @@
     <file>ready.svg</file>
     <file>stop.svg</file>
     <file>SoccerBall.png</file>
+    <file>media-playback-pause.png</file>
+    <file>media-seek-backward.png</file>
+    <file>media-seek-forward.png</file>
+    <file>media-skip-backward.png</file>
+    <file>media-skip-forward.png</file>
   </qresource>
 </RCC>

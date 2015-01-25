@@ -86,14 +86,14 @@ void GlutCamera::setCameraMode(int mode){
 		_cameraDistance = 30;
 	}
 	if(_mode & BehindYellowGoal){
-		_cameraDistance = Sim_Field_Length/4.f;
-		_cameraTargetPosition = btVector3(0,0,-Sim_Field_Length/2.f);
+		_cameraDistance = Field_Dimensions::Current_Dimensions.Length()/4.f;
+		_cameraTargetPosition = btVector3(0,0,-Field_Dimensions::Current_Dimensions.Length()/2.f);
 		_ele = 50;
 		_azi = 0;
 	}
 	if(_mode & BehindBlueGoal){
-		_cameraDistance = Sim_Field_Length/4.f;
-		_cameraTargetPosition = btVector3(0,0,Sim_Field_Length/2.f);
+		_cameraDistance = Field_Dimensions::Current_Dimensions.Length()/4.f;
+		_cameraTargetPosition = btVector3(0,0,Field_Dimensions::Current_Dimensions.Length()/2.f);
 		_ele = 50;
 		_azi = 180;
 	}
