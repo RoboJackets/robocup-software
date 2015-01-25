@@ -2,7 +2,7 @@
 
 #include <math.h>
 #include <boost/optional.hpp>
-#include <QPointF>
+#include <QtCore/QPointF>
 #include <protobuf/Point.pb.h>
 #include <sstream>
 

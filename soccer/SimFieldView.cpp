@@ -5,7 +5,6 @@
 
 #include <QPainter>
 #include <QMouseEvent>
-#include <boost/foreach.hpp>
 
 using namespace boost;
 using namespace Packet;
@@ -22,13 +21,13 @@ SimFieldView::SimFieldView(QWidget* parent): FieldView(parent)
 
 void SimFieldView::mousePressEvent(QMouseEvent* me)
 {
-	Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->posF();
+	Geometry2d::Point pos = _worldToTeam * _screenToWorld * me->pos();
 	
 	std::shared_ptr<LogFrame> frame = currentFrame();
 	if (me->button() == Qt::LeftButton && frame)
 	{
 		_dragRobot = -1;
-		BOOST_FOREACH(const LogFrame::Robot &r, frame->self())
+		for (const LogFrame::Robot &r :  frame->self())
 		{
 			if (pos.nearPoint(r.pos(), Robot_Radius))
 			{
@@ -37,7 +36,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me)
 				break;
 			}
 		}
-		BOOST_FOREACH(const LogFrame::Robot &r, frame->opp())
+		for (const LogFrame::Robot &r :  frame->opp())
 		{
 			if (pos.nearPoint(r.pos(), Robot_Radius))
 			{
@@ -49,7 +48,7 @@ void SimFieldView::mousePressEvent(QMouseEvent* me)
 		
 		if (_dragRobot < 0)
 		{
-			placeBall(me->posF());
+			placeBall(me->pos());
 		}
 		
 		_dragMode = DRAG_PLACE;
@@ -85,7 +84,7 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me)
 	switch (_dragMode)
 	{
 		case DRAG_SHOOT:
-			_dragTo = _worldToTeam * _screenToWorld * me->posF();
+			_dragTo = _worldToTeam * _screenToWorld * me->pos();
 			break;
 		
 		case DRAG_PLACE:
@@ -95,12 +94,12 @@ void SimFieldView::mouseMoveEvent(QMouseEvent* me)
 				SimCommand::Robot *r = cmd.add_robots();
 				r->set_shell(_dragRobot);
 				r->set_blue_team(_dragRobotBlue);
-				r->mutable_pos()->CopyFrom(_screenToWorld * me->posF());
+				r->mutable_pos()->CopyFrom(_screenToWorld * me->pos());
 				r->mutable_vel()->set_x(0);
 				r->mutable_vel()->set_y(0);
 				sendSimCommand(cmd);
 			} else {
-				placeBall(me->posF());
+				placeBall(me->pos());
 			}
 			break;
 		
@@ -148,19 +147,21 @@ void SimFieldView::drawTeamSpace(QPainter& p)
 	std::shared_ptr<LogFrame> frame = currentFrame();
 	if (_dragMode == DRAG_SHOOT && frame)
 	{
-		p.setPen(Qt::white);
+		p.setPen(QPen(Qt::white, 0.1f));
 		Geometry2d::Point ball = frame->ball().pos();
 		p.drawLine(ball.toQPointF(), _dragTo.toQPointF());
 		
 		if (ball != _dragTo)
 		{
-			p.setPen(Qt::gray);
+			p.setPen(QPen(Qt::gray, 0.1f));
 			
 			_shot = (ball - _dragTo) * ShootScale;
 			float speed = _shot.mag();
 			Geometry2d::Point shotExtension = ball + _shot / speed * 8;
 			
 			p.drawLine(ball.toQPointF(), shotExtension.toQPointF());
+
+			p.setPen(Qt::black);
 			drawText(p, _dragTo.toQPointF(), QString("%1 m/s").arg(speed, 0, 'f', 1));
 		}
 	}

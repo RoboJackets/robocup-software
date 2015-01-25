@@ -80,6 +80,7 @@ class MainWindow : public QMainWindow
 		void on_actionRawRobots_toggled(bool state);
 		void on_actionCoords_toggled(bool state);
         void on_actionDotPatterns_toggled(bool state);
+        void on_actionTeam_Names_toggled(bool state);
 		void on_actionTeamYellow_triggered();
 		void on_actionTeamBlue_triggered();
 		void on_manualID_currentIndexChanged(int value);
@@ -102,8 +103,9 @@ class MainWindow : public QMainWindow
 		void on_action906MHz_triggered();
 
 		/// Vision port
-		void on_actionVisionFirst_Half_triggered();
-		void on_actionVisionSecond_Half_triggered();
+		void on_actionVisionPrimary_Half_triggered();
+		void on_actionVisionSecondary_Half_triggered();
+		void on_actionVisionFull_Field_triggered();
 		
 		/// Simulator commands
 		void on_actionCenterBall_triggered();
@@ -192,7 +194,7 @@ class MainWindow : public QMainWindow
 		// To keep rounding consistent, only access this with frameNumber().
 		double _doubleFrameNumber;
 		
-		uint64_t _lastUpdateTime;
+		Time _lastUpdateTime;
 		
 		QLabel *_currentPlay;
 		QLabel *_logFile;

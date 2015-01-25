@@ -8,6 +8,8 @@
 #include <protobuf/LogFrame.pb.h>
 #include <Geometry2d/Point.hpp>
 
+#include <Constants.hpp>
+
 #include <google/protobuf/descriptor.h>
 
 using namespace std;
@@ -31,6 +33,8 @@ StripChart::StripChart(QWidget* parent)
 	
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	setMinimumSize(100, 100);
+
+  setMouseTracking(true);
 }
 
 StripChart::~StripChart()
@@ -50,10 +54,14 @@ void StripChart::function(Chart::Function* function)
 
 QPointF StripChart::dataPoint(int i, float value)
 {
-	float x = i * width() / _history->size();
+	float x = width() - (i * width() / _history->size());
 	int h = height();
 	float y = h - (value - _minValue) * h / (_maxValue - _minValue);
 	return QPointF(x, y);
+}
+
+int StripChart::indexAtPoint(const QPoint &point) {
+  return (width() - point.x()) * _history->size() / width();
 }
 
 void StripChart::paintEvent(QPaintEvent* e)
@@ -75,6 +83,12 @@ void StripChart::paintEvent(QPaintEvent* e)
 	bool haveLast = false;
 	float newMin = _minValue;
 	float newMax = _maxValue;
+
+  auto mappedCursorPos = mapFromGlobal(QCursor::pos());
+  auto highlightedIndex = rect().contains(mappedCursorPos) ? indexAtPoint(mappedCursorPos) : -1;
+
+  auto fontHeight = QFontMetrics(p.font()).height();
+
 	for (unsigned int i = 0; i < _history->size(); ++i)
 	{
 		float v = 0;
@@ -87,6 +101,33 @@ void StripChart::paintEvent(QPaintEvent* e)
 			}
 			
 			QPointF pt = dataPoint(i, v);
+
+      if (i == highlightedIndex)
+      {
+        p.drawEllipse(pt, 5, 5);
+
+        p.drawText(mappedCursorPos+QPointF(15,0), ("V: " + std::to_string(v)).c_str());
+
+        if(i > 0 && i < _history->size()-1) {
+
+          float v1, v2;
+
+          _function->value(*_history->at(i - 1).get(), v1);
+          _function->value(*_history->at(i + 1).get(), v2);
+
+          double t1 = 0.0;
+          t1 += _history->at(i-1)->timestamp();
+          t1 *= TimestampToSecs;
+          double t2 = 0.0;
+          t2 += _history->at(i+1)->timestamp();
+          t2 *= TimestampToSecs;
+
+          auto derivative = (v2 - v1) / (t2 - t1);
+
+          p.drawText(mappedCursorPos + QPointF(15, fontHeight), ("dV: " + std::to_string(derivative)).c_str());
+        }
+      }
+
 			if (haveLast)
 			{
 				p.drawLine(last, pt);
@@ -97,6 +138,9 @@ void StripChart::paintEvent(QPaintEvent* e)
 			haveLast = false;
 		}
 	}
+
+  p.drawText(0, height()-5, std::to_string(newMin).c_str());
+  p.drawText(0, fontHeight, std::to_string(newMax).c_str());
 	
 	_minValue = newMin;
 	_maxValue = newMax;

@@ -87,6 +87,8 @@ class StripChart: public QWidget
 		// i is an index in _history, so 0 is the most recent frame
 		// and increasing indices are older frames.
 		QPointF dataPoint(int i, float value);
+
+    int indexAtPoint(const QPoint &point);
 		
 		// Chart function (see above)
 		Chart::Function *_function;
@@ -96,4 +98,6 @@ class StripChart: public QWidget
 		QColor _color;
 		
 		const std::vector<std::shared_ptr<Packet::LogFrame> > *_history;
+
+    QPointF _mouse_overlay;
 };

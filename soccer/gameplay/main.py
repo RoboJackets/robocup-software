@@ -7,9 +7,9 @@ import importlib
 import traceback
 import imp
 import sys
+import constants
 
-
-# soccer is run from the `run` folder, so we provide a relative path to where the python files live
+## soccer is run from the `run` folder, so we provide a relative path to where the python files live
 GAMEPLAY_DIR = '../soccer/gameplay'
 
 
@@ -125,6 +125,7 @@ def init():
     _has_initialized = True
 
 
+## Called ~60times/sec by the C++ GameplayModule
 def run():
     global _has_initialized
     if not _has_initialized:
@@ -197,3 +198,6 @@ def system_state():
 def set_system_state(value):
     global _system_state
     _system_state = value
+
+def set_field_constants(value):
+    constants.setFieldConstantsFromField_Dimensions(value)

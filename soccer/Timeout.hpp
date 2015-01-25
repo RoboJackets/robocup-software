@@ -22,10 +22,10 @@ public:
 
 
 	void setIntervalInSeconds(float seconds) {
-		_interval = (uint64_t)(seconds * 1000.0f);
+		_interval = (Time)(seconds * 1000.0f);
 	}
 
-	void setIntervalInMilliseconds(uint64_t ms) {
+	void setIntervalInMilliseconds(Time ms) {
 		_interval = ms;
 	}
 
@@ -35,6 +35,6 @@ public:
 	}
 
 private:
-	uint64_t _interval;
-	uint64_t _startTime;
+	Time _interval;
+	Time _startTime;
 };
