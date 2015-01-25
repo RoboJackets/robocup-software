@@ -4,6 +4,10 @@
 # The end result of this file is the 'robot2015' target
 # building this target ouputs an MBED-runnable file at run/robot2015.bin, which can be copied onto the MBED
 
+include_directories(drivers drivers/CC1101)
+include_directories(modules modules/CommLink modules/CommModule)
+include_directories(utils utils/FirmwareCheck utils/Logger utils/RTOS_Management utils/Watchdog)
+
 # set the arm toolchain
 set(CMAKE_TOOLCHAIN_FILE arm_toolchain.cmake)
 include(arm_toolchain.cmake)
@@ -24,9 +28,28 @@ ExternalProject_Add(mbed_library
     UPDATE_COMMAND ""
 )
 
+ExternalProject_Add(mbed_lib_build_tools
+    GIT_REPOSITORY https://github.com/mbedmicro/mbed.git
+    GIT_TAG default
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    UPDATE_COMMAND ""
+)   
+
+ExternalProject_Add(mbed_rtos_library
+    HG_REPOSITORY https://developer.mbed.org/users/mbed_official/code/mbed-rtos/
+    HG_TAG default
+    CONFIGURE_COMMAND ""
+    BUILD_COMMAND ""
+    INSTALL_COMMAND ""
+    UPDATE_COMMAND ""
+)
+
 # don't get the external project unless it's required
 set_target_properties(mbed_library PROPERTIES EXCLUDE_FROM_ALL TRUE)
-
+set_target_properties(mbed_lib_build_tools PROPERTIES EXCLUDE_FORM_ALL TRUE)
+set_target_properties(mbed_rtos_library PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 # set the target processor and include settings for cmake
 set(MBED_TARGET LPC1768)
@@ -45,7 +68,7 @@ include(arm_mbed.cmake)
 
 
 # firmware source files
-file(GLOB robot2015_SRC
+file(GLOB_RECURSE robot2015_SRC
     "*.cpp"
 )
 
@@ -62,9 +85,13 @@ set_target_properties(robot2015_elf PROPERTIES EXCLUDE_FROM_ALL TRUE)
 # tell CMake that the obj files all come from the ExternalProject
 # otherwise it'll complain that the files can't be found
 foreach(mbed_obj ${MBED_OBJECTS})
+    message("******************************")
+    message(${mbed_obj})
     add_custom_command(
         OUTPUT ${mbed_obj}
         DEPENDS mbed_library
+	#DEPENDS mbed_build_tools
+	DEPENDS mbed_rtos_library
         COMMAND "")
 endforeach()
 

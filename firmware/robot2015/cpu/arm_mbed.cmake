@@ -7,6 +7,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.10)
 # ------------------------------------------------------------------------------
 # git checkout and build location of mbed libraries
 set(MBED_PATH ${CMAKE_CURRENT_BINARY_DIR}/mbed_library-prefix/src/mbed_library)
+set(MBED_RTOS_PATH ${CMAKE_CURRENT_BINARY_DIR}/mbed_rtos_library-prefix/src/mbed_rtos_library)
 
 
 # ------------------------------------------------------------------------------
@@ -24,6 +25,7 @@ if(MBED_TARGET MATCHES "LPC1768")
   set(MBED_FAMILY "LPC176X")
   set(MBED_CPU "MBED_LPC1768")
   set(MBED_CORE "cortex-m3")
+  set(MBED_CORE_GENERIC "CORTEX_M")
   set(MBED_INSTRUCTIONSET "M3")
 
   set(MBED_STARTUP "startup_LPC17xx.o")
@@ -34,6 +36,7 @@ elseif(MBED_TARGET MATCHES "LPC11U24")
   set(MBED_VENDOR "NXP")
   set(MBED_FAMILY "LPC11UXX")
   set(MBED_CPU "LPC11U24_401")
+  set(MBED_CORE_GENERIC "CORTEX_M")
   set(MBED_CORE "cortex-m0")
   set(MBED_INSTRUCTIONSET "M0")
 
@@ -45,6 +48,7 @@ elseif(MBED_TARGET MATCHES "RBLAB_NRF51822")
   set(MBED_VENDOR "NORDIC")
   set(MBED_FAMILY "MCU_NRF51822")
   set(MBED_CPU "RBLAB_NRF51822")
+  set(MBED_CORE_GENERIC "CORTEX_M")
   set(MBED_CORE "cortex-m0")
   set(MBED_INSTRUCTIONSET "M0")
 
@@ -125,12 +129,20 @@ endif()
 
 # add rtos
 if(${USE_RTOS} STREQUAL "true")
-  include_directories("${MBED_PATH}/rtos/")
-  include_directories("${MBED_PATH}/rtos/TARGET_${MBED_TARGET}/")
-  include_directories("${MBED_PATH}/rtos/TARGET_${MBED_TARGET}/${TOOLCHAIN}")
+  #include_directories("${MBED_PATH}/rtos/")
+  #include_directories("${MBED_PATH}/rtos/TARGET_${MBED_TARGET}/")
+  #include_directories("${MBED_PATH}/rtos/TARGET_${MBED_TARGET}/${TOOLCHAIN}")
+  #link_directories("${MBED_PATH}/rtos/TARGET_${MBED_TARGET}/${TOOLCHAIN}")
+  #set(MBED_LIBS ${MBED_LIBS} rtos rtx)
 
-  link_directories("${MBED_PATH}/rtos/TARGET_${MBED_TARGET}/${TOOLCHAIN}")
-  set(MBED_LIBS ${MBED_LIBS} rtos rtx)
+  #set(MBED_OBJECTS ${MBED_OBJECTS} ${MBED_RTOS_PATH}/rtos/rtos.h)
+
+  include_directories("${MBED_RTOS_PATH}/rtos/")
+  include_directories("${MBED_RTOS_PATH}/rtx/")
+  include_directories("${MBED_RTOS_PATH}/rtx/TARGET_${MBED_CORE_GENERIC}/")
+  include_directories("${MBED_RTOS_PATH}/rtx/TARGET_${MBED_CORE_GENERIC}/${TOOLCHAIN}")
+  link_directories("${MBED_RTOS_PATH}/rtx/TARGET_${MBED_CORE_GENERIC}/${TOOLCHAIN}")
+  set(MBED_LIBS ${MBED_LIBS} rtos)
 endif()
 
 # add usb

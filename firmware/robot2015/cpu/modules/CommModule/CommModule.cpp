@@ -1,5 +1,4 @@
-#include "CommModule.h"
-
+#include "CommModule.hpp"
 
 // Set the class's constants for streamlined use in other areas of the code
 const int CommModule::TX_QUEUE_SIZE = COMM_MODULE_TX_QUEUE_SIZE;
