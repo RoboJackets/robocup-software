@@ -395,7 +395,11 @@ void Processor::run()
 		}
 		
 		runModels(detectionFrames);
-
+		for (VisionPacket *packet : visionPackets)
+		{
+			delete packet;
+		}
+		
 		// Update gamestate w/ referee data
 		_refereeModule->updateGameState(blueTeam());
 		_refereeModule->spinKickWatcher();
