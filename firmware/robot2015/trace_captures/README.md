@@ -9,13 +9,13 @@ The program's [configuration file](./program_settings.logicsettings) is included
 ## Testing Environment Overview
 
 The following image was taken during the 2nd round of trace capturing to document and show how the control board was interfaced to the logic analyzer's probes.
-![Testing setup](./test_setup.png)
+![Testing setup](./test_setup.jpg)
 
 The following table provides information about each trace capture and identifies each file's controlled variables.
 
 | File Name | Communication Description | Control Board Version  | Kicker Board Connected | Drive Motors Connected | Dribbler Motor Connected | Ball Sensor Connected | Sampling Frequency | Duration |
 | :---------------------|:--------------------------------------------------|:-------------------:|:-----------:|:----------:|:-----------:|:-----------:|:-----------:|:-----------:|
-| [`trace_capture_01.logicdata`](./trace_capture_01.logicdata)<br>[`trace_capture_01.csv`](./trace_capture_01.csv) | No base station<br> Only robot's startup routine | 2011 Ver. C | No | No | No | No | 40MHz | 3 sec. |
+| [`trace_capture_01.logicdata`](./trace_capture_01.logicdata)<br>[`trace_capture_01.csv`](./trace_capture_01.csv) | <ul><li>No base station</li><li>Only robot's startup routine</li></ul> | 2011 Ver. C | No | No | No | No | 40MHz | 3 sec. |
 | [`trace_capture_02.logicdata`](./trace_capture_02.logicdata)<br>[`trace_capture_02.csv`](./trace_capture_02.csv) | Empty packets from base station<br> Soccer open<br> No vision | 2011 Ver. C | No | No | No | No | 50MHz | 10 sec. |
 | [`trace_capture_03.logicdata`](./trace_capture_03.logicdata)<br>[`trace_capture_03.csv`](./trace_capture_03.csv) | Field computer with game controller<br>Soccer open & no running play; No ssl-vision | 2011 Ver. C | No | No | No | No | 50MHz | 10 sec. |
 | [`trace_capture_04.logicdata`](./trace_capture_04.logicdata)<br>[`trace_capture_04.csv`](./trace_capture_04.csv) | Field computer with Soccer<br> 2 robot shells on field*Running* a Soccer play<br> *Running* a play within Soccer | 2011 Ver. C | No | No | No | No | 50MHz | 10 sec. |
