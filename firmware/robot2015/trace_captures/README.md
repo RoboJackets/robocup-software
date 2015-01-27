@@ -9,7 +9,7 @@ The program's [configuration file](./program_settings.logicsettings) is included
 ## Testing Environment Overview
 
 The following image was taken during the 2nd round of trace capturing to document and show how the control board was interfaced to the logic analyzer's probes.
-![Testing setup](./test_setup.jpg =375x)
+![Testing setup](./test_setup.jpg)
 
 The following table provides information about each trace capture and identifies each file's controlled variables.
 
