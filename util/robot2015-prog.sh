@@ -42,7 +42,16 @@ for i in $MBED_DEVICES_PATH; do
     sudo umount -l /mnt/script/MBED/
     if [ $? -eq 0 ]; then
         echo Unmount successful! Do not remove mbed until write light stops blinking!
+    else
+        echo UNMOUNT FAILED! PLEASE UNMOUNT /mnt/script/MBED MANUALLY!!!!
     fi
     sudo rmdir /mnt/script/MBED
+    echo Attempting mbed reboot...
+
+    # This part sends 'reboot\r' over the serial connection. -e enables escape codes, and -n omits the endline at the end of echo, which prints by default.
+    # \r is the character that represents the end of the command.
+
+    #TODO get this working with multiple mbeds!
+    sudo sh -c 'echo -ne "reboot\r" > /dev/mbed'
 done
 
