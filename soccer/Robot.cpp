@@ -238,7 +238,7 @@ void OurRobot::move(const Geometry2d::Point &goal, float endSpeed)
 	// sets flags for future movement
 	if (verbose) cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", " << goal.y << ")" << std::endl;
 
-	
+
 
 	// //	only invalidate path if move() is being called with a new goal or one wasn't set previously
 	if (!_motionConstraints.targetPos || !_motionConstraints.targetPos->nearPoint(goal, 0.02)) {
@@ -280,7 +280,7 @@ void OurRobot::pivot(const Geometry2d::Point &pivotTarget) {
 	_motionConstraints.pivotTarget = pivotTarget;
 
 	//	reset other conflicting motion commands
-	
+
 	setPath(NULL);
 	_motionConstraints.targetPos = boost::none;
 	_motionConstraints.targetWorldVel = boost::none;
@@ -579,7 +579,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	if (!_motionConstraints.targetPos) {
 		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: stopped" << std::endl;
 		addText(QString("replan: no goal"));
-		setPath(new Planning::BezierPath(pos));
+		setPath(new Planning::InterpolatedPath(pos));
 		_path->draw(_state);
 		return;
 	}

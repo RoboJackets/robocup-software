@@ -28,14 +28,14 @@ RRTPlanner::RRTPlanner()
 	_maxIterations = 100;
 }
 
-Planning::BezierPath* RRTPlanner::run(
+Planning::InterpolatedPath* RRTPlanner::run(
 		const Geometry2d::Point &start,
 		const float angle,
 		const Geometry2d::Point &vel,
 		const MotionConstraints &motionConstraints,
 		const Geometry2d::CompositeShape *obstacles)
 {
-	Planning::BezierPath *path = new Planning::BezierPath();
+	Planning::InterpolatedPath *path = new Planning::InterpolatedPath();
 	Geometry2d::Point goal = *motionConstraints.targetPos;
 	_motionConstraints = motionConstraints;
 	vi = vel;
@@ -157,7 +157,7 @@ void RRTPlanner::makePath()
 		return;
 	}
 
-	Planning::BezierPath newPath;
+	Planning::InterpolatedPath newPath;
 
 	//add the start tree first...normal order
 	//aka from root to p0
@@ -199,7 +199,7 @@ void RRTPlanner::makePath()
 	}*/
 }
 
-void RRTPlanner::optimize(Planning::BezierPath &path, const Geometry2d::CompositeShape *obstacles)
+void RRTPlanner::optimize(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles)
 {
 	unsigned int start = 0;
 
@@ -253,7 +253,7 @@ Geometry2d::Point pow(Geometry2d::Point &p1, float i)
 
 using namespace Eigen;
 //TODO: Use targeted end velocity
-void RRTPlanner::cubicBezier (Planning::BezierPath &path, const Geometry2d::CompositeShape *obstacles)
+void RRTPlanner::cubicBezier (Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles)
 {
 	int length = path.size();
 	int curvesNum = length-1;

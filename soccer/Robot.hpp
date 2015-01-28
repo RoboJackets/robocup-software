@@ -11,7 +11,7 @@
 #include <Constants.hpp>
 #include "MotionConstraints.hpp"
 #include <Utils.hpp>
-#include <planning/BezierPath.hpp>
+#include <planning/InterpolatedPath.hpp>
 #include <planning/RRTPlanner.hpp>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
