@@ -3,7 +3,7 @@
 #include <list>
 
 #include <Geometry2d/Segment.hpp>
-#include <planning/BezierPath.hpp>
+#include <planning/InterpolatedPath.hpp>
 
 namespace Planning
 {
@@ -60,7 +60,7 @@ namespace Planning
 
 			/** make a path from the dest point's root to the dest point
 			 *  If rev is true, the path will be from the dest point to its root */
-			void addPath(Planning::BezierPath &path, Point* dest, const bool rev = false);
+			void addPath(Planning::InterpolatedPath &path, Point* dest, const bool rev = false);
 
 			/** returns the first point or 0 if none */
 			Point* start() const;

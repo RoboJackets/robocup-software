@@ -67,7 +67,7 @@ void Tree::init(const Geometry2d::Point& start, const Geometry2d::CompositeShape
 	points.push_back(p);
 }
 
-void Tree::addPath(Planning::BezierPath &path, Point* dest, const bool rev)
+void Tree::addPath(Planning::InterpolatedPath &path, Point* dest, const bool rev)
 {
 	list<Point *> points;
 

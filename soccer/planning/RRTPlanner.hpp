@@ -4,7 +4,7 @@
 #include <list>
 #include <Geometry2d/Point.hpp>
 #include <Geometry2d/CompositeShape.hpp>
-#include <planning/BezierPath.hpp>
+#include <planning/InterpolatedPath.hpp>
 #include <MotionConstraints.hpp>
 
 #include "Tree.hpp"
@@ -41,7 +41,7 @@ namespace Planning
 
 			///run the path ROTplanner
 			///this will always populate path to be the path we need to travel
-			Planning::BezierPath* run(
+			Planning::InterpolatedPath* run(
 					const Geometry2d::Point& start,
 					const float angle,
 					const Geometry2d::Point& vel,
@@ -62,7 +62,7 @@ namespace Planning
 
 		///best planned path
 		///this is a fixed step path
-		Planning::BezierPath _bestPath;
+		Planning::InterpolatedPath _bestPath;
 
 		Geometry2d::Point vi;
 		///maximum number of rrt iterations to run
@@ -81,13 +81,13 @@ namespace Planning
 		/** optimize the path
 		 *  Calles the cubicBezier optimization function.
 		 */
-		void optimize(Planning::BezierPath &path, const Geometry2d::CompositeShape *obstacles);
+		void optimize(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles);
 
 		/**
 		 * Uses a cubicBezier to interpolate between the points on the path and add
 		 * velocity planning
 		 */
-		void cubicBezier(Planning::BezierPath &path, const Geometry2d::CompositeShape *obstacles);
+		void cubicBezier(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles);
 
 		/**
 		 * Helper function for cubicBezier() which uses Eigen matrices to solve for the
