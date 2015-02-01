@@ -80,6 +80,7 @@ class MainWindow : public QMainWindow
 		void on_actionRawRobots_toggled(bool state);
 		void on_actionCoords_toggled(bool state);
         void on_actionDotPatterns_toggled(bool state);
+        void on_actionTeam_Names_toggled(bool state);
 		void on_actionTeamYellow_triggered();
 		void on_actionTeamBlue_triggered();
 		void on_manualID_currentIndexChanged(int value);
@@ -193,7 +194,7 @@ class MainWindow : public QMainWindow
 		// To keep rounding consistent, only access this with frameNumber().
 		double _doubleFrameNumber;
 		
-		uint64_t _lastUpdateTime;
+		Time _lastUpdateTime;
 		
 		QLabel *_currentPlay;
 		QLabel *_logFile;

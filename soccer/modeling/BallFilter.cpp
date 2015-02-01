@@ -29,7 +29,7 @@ void BallFilter::update(const BallObservation* obs)
 	_estimate.time = obs->time;
 }
 
-void BallFilter::predict(uint64_t time, Ball *out, float *velocityUncertainty)
+void BallFilter::predict(Time time, Ball *out, float *velocityUncertainty)
 {
 	if (velocityUncertainty)
 	{
