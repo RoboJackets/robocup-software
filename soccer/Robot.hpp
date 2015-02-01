@@ -65,7 +65,7 @@ public:
 	float angleVel;	///	angular velocity in radians/sec
 	
 	// Time at which this estimate is valid
-	uint64_t time;
+	Time time;
 	int visionFrame;
 };
 
@@ -188,7 +188,7 @@ public:
 	 */
 	void move(const Geometry2d::Point &goal, float endSpeed = 0);
 
-	uint64_t pathStartTime() const {
+	Time pathStartTime() const {
 		return _pathStartTime;
 	}
 
@@ -253,7 +253,7 @@ public:
 	 */
 	void unkick();
 
-	uint64_t lastKickTime() const;
+	Time lastKickTime() const;
 
 	//	checks if the bot has kicked/chipped very recently.
 	bool justKicked() {
@@ -382,7 +382,7 @@ public:
 	/**
 	 * @param age Time (in microseconds) that defines non-fresh
 	 */
-	bool rxIsFresh(uint64_t age = 500000) const;
+	bool rxIsFresh(Time age = 500000) const;
 
 	/**
 	 * @brief Starts the robot playing the fight song
@@ -416,7 +416,7 @@ protected:
 	void setPath(Planning::Path path);
 
 	boost::optional<Planning::Path> _path;	/// latest path
-	uint64_t _pathStartTime;
+	Time _pathStartTime;
 
 	///	whenever the constraints for the robot path are changed, this is set to true to trigger a replan
 	bool _pathInvalidated;
@@ -506,8 +506,8 @@ private:
 	void _unkick();
 
 	uint32_t _lastKickerStatus;
-	uint64_t _lastKickTime;
-	uint64_t _lastChargedTime;
+	Time _lastKickTime;
+	Time _lastChargedTime;
 
 	Packet::RadioRx _radioRx;
 
