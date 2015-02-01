@@ -1,4 +1,4 @@
-#include "CC1101.h"
+#include "CC1101.hpp"
 
 
 // Default constructor
