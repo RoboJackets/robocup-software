@@ -1,6 +1,8 @@
 #ifndef ROBOT_H // Only include once
 #define ROBOT_H
 
+#define ARM_MATH_CM3
+
 // ** ============================= ** DEBUGGING OPTIONS ** ============================= **
 
 // Set the debugging level for compiling. Valid levels include `0`, `1`, `2`, `3`, & `4`.
