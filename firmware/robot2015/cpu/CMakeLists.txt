@@ -57,7 +57,7 @@ set_target_properties(robot2015_elf PROPERTIES EXCLUDE_FROM_ALL TRUE)
 #this is added as a dependency for standard builds, forcing the python script to
 #run at the correct time
 add_custom_target(pre-build
-    COMMAND ${PY_TOOLS_DIR}/workspace_tools/build.py --mcu=${PY_MCU_OPT} --tool=${PY_TOOLCHAIN_OPT} ${PY_LIBS}
+    COMMAND python2 ${PY_TOOLS_DIR}/workspace_tools/build.py --mcu=${PY_MCU_OPT} --tool=${PY_TOOLCHAIN_OPT} ${PY_LIBS}
     DEPENDS mbed_lib_build_tools)
 
 # tell CMake that the obj files all come from the ExternalProject
