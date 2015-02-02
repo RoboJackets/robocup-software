@@ -11,7 +11,7 @@ DigitalOut ledTwo(LED2);
  */
 void imAlive()
 {
-	ledOne = !ledOne;
+    ledOne = !ledOne;
 }
 
 /**
@@ -19,33 +19,33 @@ void imAlive()
  */
 int main() 
 {
-	lifeLight.attach(&imAlive, 0.25);
-	initConsole();
+    lifeLight.attach(&imAlive, 0.25);
+    initConsole();
 
-    	for (;;)
-	{
-		/*
-		 * check console communications, currently does nothing
-		 * then execute any active iterative command
- 		 */
-		conComCheck();
-		//execute any active iterative command
-		executeIterativeCommand();
+    while (true)
+    {
+        /*
+         * check console communications, currently does nothing
+         * then execute any active iterative command
+         */
+        conComCheck();
+        //execute any active iterative command
+        executeIterativeCommand();
 
-		/*
-		 * check if a system stop is requested
-		 */
-		if (isSysStopReq() == true)
-		{
-			break;
-		}
+        /*
+         * check if a system stop is requested
+         */
+        if (isSysStopReq() == true)
+        {
+            break;
+        }
 
-		//main loop heartbeat
-		wait(0.1);
-		ledTwo = !ledTwo;
-    	}
+        //main loop heartbeat
+        wait(0.1);
+        ledTwo = !ledTwo;
+    }
 
-	//clear light for main loop (shows its complete)
-	ledTwo = false;
+    //clear light for main loop (shows its complete)
+    ledTwo = false;
 }
 
