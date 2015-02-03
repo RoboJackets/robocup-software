@@ -1,10 +1,17 @@
 #include "mbed.h"
 #include "console.hpp"
 #include "commands.hpp"
+#include "KickerBoard.hpp"
+
+using namespace std;
+
 
 Ticker lifeLight;
 DigitalOut ledOne(LED1);
 DigitalOut ledTwo(LED2);
+
+LocalFileSystem fs("local");
+
 
 /**
  * timer interrupt based light flicker
@@ -21,6 +28,12 @@ int main()
 {
     lifeLight.attach(&imAlive, 0.25);
     initConsole();
+
+
+    //  initialize kicker board and flash it with new firmware if necessary
+    KickerBoard kickerBoard(p11, p12, p13, p27, string("/local/kickerFW"));
+    bool kickerSuccess = kickerBoard.flash(true, true) == 0;
+    
 
     while (true)
     {
@@ -48,4 +61,3 @@ int main()
     //clear light for main loop (shows its complete)
     ledTwo = false;
 }
-

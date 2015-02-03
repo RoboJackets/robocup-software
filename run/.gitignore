@@ -25,6 +25,7 @@ libPhysXLoader.so.1
 robocup.so
 run_tests
 robot2015.bin
+kickerFW
 test-cpp
 
 /qt_vehicle_demo

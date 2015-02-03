@@ -81,7 +81,7 @@ set_directory_properties(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES ${PROJECT_SOURCE
 
 add_custom_target(robot2015-prog
     arm-none-eabi-objcopy -O binary robot2015_elf robot2015.bin
-    COMMAND ${PROJECT_SOURCE_DIR}/util/robot2015-prog.sh ${PROJECT_SOURCE_DIR}/run/robot2015.bin
+    COMMAND ${PROJECT_SOURCE_DIR}/util/mbed-copy.sh ${PROJECT_SOURCE_DIR}/run/robot2015.bin
     DEPENDS robot2015
     COMMENT "Copies the files created by robot2015 into a single mbed"
 )
