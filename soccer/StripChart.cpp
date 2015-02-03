@@ -7,7 +7,6 @@
 #include <algorithm>
 #include <protobuf/LogFrame.pb.h>
 #include <Geometry2d/Point.hpp>
-
 #include <Constants.hpp>
 
 #include <google/protobuf/descriptor.h>
@@ -80,6 +79,12 @@ void StripChart::paintEvent(QPaintEvent* e)
 	auto highlightedIndex = rect().contains(mappedCursorPos) ? indexAtPoint(mappedCursorPos) : -1;
 
 	auto fontHeight = QFontMetrics(p.font()).height();
+	
+	// X-axis
+	p.setPen(Qt::gray);
+	QPointF x = dataPoint(0, 0);
+	p.drawLine(x, QPointF(0, x.y()));
+
 	for (unsigned int x = 0; x < _functions.size(); x++) {
 		auto function = _functions[x];
 
@@ -140,10 +145,7 @@ void StripChart::paintEvent(QPaintEvent* e)
 		}
 	}
 
-	// X-axis
-	p.setPen(Qt::red);
-	QPointF x = dataPoint(0, 0);
-	p.drawLine(x, QPointF(width(), x.y()));
+	
 	
 
 	p.drawText(0, height()-5, std::to_string(newMin).c_str());
