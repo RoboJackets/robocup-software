@@ -6,7 +6,6 @@
 #include <QDockWidget>
 #include <QMainWindow>
 #include <QTimer>
-#include <iostream>
 #include <stdio.h>
 #include <google/protobuf/descriptor.h>
 
