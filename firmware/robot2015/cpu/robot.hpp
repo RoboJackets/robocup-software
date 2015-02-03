@@ -124,6 +124,10 @@
 
 // Include the basic classes - Note: the header files included within "mbed.h" are listed here.
 #include "mbed.h"
+
+#include "pnvicdef.hpp"
+#include "reset.hpp"
+
 /*
 #include <stdio.h>
 #include <stdlib.h>
