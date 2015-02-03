@@ -82,8 +82,14 @@ namespace Planning
 			//Returns the destination of this path (the last point in the points array)
 			virtual boost::optional<Geometry2d::Point> destination() const;
 
-			// Returns true if the path never touches an obstacle or additionally, when exitObstacles is true, if the path
-			// starts out in an obstacle but leaves and never re-enters any obstacle.
+			/**
+			 * Returns true if the path never touches an obstacle or additionally, when exitObstacles is true, if the path
+			 * starts out in an obstacle but leaves and never re-enters any obstacle.
+			 *
+			 * @param[in]	shape The obstacles on the field
+			 * @param[in] 	start The point on the path to start checking from
+			 * @return 		true if the path is valid, false if it hits an obstacle
+			 */
 			virtual bool hit(const Geometry2d::CompositeShape &shape, unsigned int start = 0) const;
 
 			// Set of points in the path - used as waypoints
