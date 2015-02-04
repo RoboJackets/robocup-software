@@ -121,7 +121,6 @@ void usage(const char* prog)
 	fprintf(stderr, "\t-b:         run as the blue team\n");
 	fprintf(stderr, "\t-c <file>:  specify the configuration file\n");
 	fprintf(stderr, "\t-s <seed>:  set random seed (hexadecimal)\n");
-	fprintf(stderr, "\t-p <file>:  load playbook\n");
 	fprintf(stderr, "\t-pp <play>: enable named play\n");
 	fprintf(stderr, "\t-ng:        no goalie\n");
 	fprintf(stderr, "\t-sim:       use simulator\n");
@@ -156,7 +155,6 @@ int main (int argc, char* argv[])
 
 	bool blueTeam = false;
 	QString cfgFile;
-	QString playbook;
 	vector<const char *> playDirs;
 	vector<QString> extraPlays;
 	bool goalie = true;
@@ -235,17 +233,6 @@ int main (int argc, char* argv[])
 			i++;
 			extraPlays.push_back(argv[i]);
 		}
-		else if(strcmp(var, "-p") == 0)
-		{
-			if (i+1 >= argc)
-			{
-				printf("no playbook file specified after -p");
-				usage(argv[0]);
-			}
-			
-			i++;
-			playbook = argv[i];
-        }
 		else
 		{
 			printf("Not a valid flag: %s\n", argv[i]);

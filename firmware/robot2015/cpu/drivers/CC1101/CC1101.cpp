@@ -1,5 +1,4 @@
-#include "CC1101.h"
-
+#include "CC1101.hpp"
 
 // Default constructor
 CC1101::CC1101() :
@@ -13,16 +12,17 @@ CC1101::CC1101(PinName mosi, PinName miso, PinName sck, PinName cs, PinName int_
 {
     // [X] - 1 - Setup the chip and only signal the base class if device is tested and confirmed to be electrically connected
     if(powerUp()) {
-
-        LOG("CC1101 Failure");
-
+        
+        // [X] - 2a - Don't completely initialize if device fails to successfully start
+        // =================
+        log(SEVERE, "CC1101", "CC1101 Failure");
     } else {
 
         // [X] - 2 - Call the base class method for beginning full class operation with threads
         // =================
         CommLink::ready();
-        LOG("CC1101 Ready!");
 
+        log(OK, "CC1101", "CC1101 Ready!");
     }
 }
 
@@ -84,8 +84,9 @@ int32_t CC1101::selfTest(void)
 
     if (_chip_version != CCXXX1_EXPECTED_VERSION_NUMBER) {
 
-        // send message over serial port
-        WARNING(
+        // [X] - 2 - Send message over serial port if version register is not what was expected
+        // =================
+        log(FATAL, "CC1101",
             "FATAL ERROR\r\n"
             "  Wrong version number returned from chip's 'VERSION' register (Addr: 0x%02X)\r\n"
             "\r\n"
@@ -125,6 +126,11 @@ void CC1101::set_init_vars(void)
 
     // enable appending 2 status bytes to the end of every packet that includes the CRC and
     _pck_control.status_field_en = true;
+
+    // Set the initial offset frequency estimate
+    log(INF1, "CC1101", "Configuring frequency offset estimate...");
+    write_reg(CCXXX1_FSCTRL0, status(CCXXX1_FREQEST));
+    log(INF1, "CC1101", "Frequency offset estimate configured");
 
     // normal packet mode uses RX and TX buffers
     _pck_control.format_type = FORMAT_DEFAULT;
@@ -217,9 +223,7 @@ void CC1101::put_rf_settings()
 
 void CC1101::power_on_reset(void)
 {
-#if DEBUG_MODE > 0
-    LOG("Beginning Power-on-Reset routine...");
-#endif
+    log(INF1, "CC1101", "Beginning Power-on-Reset routine...");
 
     delete _spi;
 
@@ -266,9 +270,7 @@ void CC1101::power_on_reset(void)
     delete SO2;
     setup_spi();
 
-#if DEBUG_MODE > 0
-    LOG("CC1101 Power-on-Reset complete");
-#endif
+    log(INF1, "CC1101", "CC1101 Power-on-Reset complete");
 }
 
 // 2nd ighest level of initilization routines behind CC1101::setup();
@@ -317,11 +319,7 @@ int32_t CC1101::sendData(uint8_t *buf, uint8_t size)
     // =================
     // buf[0] = size;
 
-
-#if CCXXX1_DEBUG_MODE > 0
-    LOG("PACKET TRANSMITTED\r\n  Bytes: %u  Byte[0]: %u", size, buf[0]);
-#endif
-
+    log(INF2, "CC1101", "PACKET TRANSMITTED\r\n  Bytes: %u", size);
 
     // [X] - 3 - Send the data to the CC1101. Increment the size value by 1 before doing so to account for the buffer's inserted value
     // =================
@@ -354,7 +352,7 @@ int32_t CC1101::sendData(uint8_t *buf, uint8_t size)
 
 #if CCXXX1_DEBUG_MODE > 1
     t1.stop();
-    LOG("Time:  %02.4f ms", (t1.read() - ti)*1000);
+    log(INF1, "CC1101", "Time:  %02.4f ms", (t1.read() - ti)*1000);
 #endif
 
     // [] - 6 - Return any error codes if necessary.
@@ -401,7 +399,7 @@ int32_t CC1101::getData(uint8_t *buf, uint8_t *length)
             _lqi = status_bytes[1] & CCXXX1_RXFIFO_MASK; // MSB of LQI is the CRC_OK bit - The interrupt is only triggered if CRC is OK, so no need to check again.
 
 #if CCXXX1_DEBUG_MODE > 0
-            LOG(
+            log(INF1, "CC1101", 
                 "PACKET RECEIVED\r\n"
                 "  Bytes: %u\r\n"
                 "  RSSI: %ddBm\r\n"
@@ -435,7 +433,7 @@ uint8_t CC1101::read_reg(uint8_t addr)
     toggle_cs();
 
 #if CCXXX1_DEBUG_MODE > 1
-    LOG("== Single Register Read ==\r\n    Address: 0x%02X\r\n    Value:   0x%02X", addr, x);
+    log(INF2, "CC1101", "== Single Register Read ==\r\n    Address: 0x%02X\r\n    Value:   0x%02X", addr, x);
 #endif
     return x;
 }   // read_reg
@@ -450,7 +448,7 @@ void CC1101::read_reg(uint8_t addr, uint8_t *buffer, uint8_t count)
     toggle_cs();
 
 #if CCXXX1_DEBUG_MODE > 1
-    LOG("== Burst Register Read ==\r\n    Address: 0x%02X\r\n    Bytes:   %u", addr, count);
+    log(INF1, "CC1101", "== Burst Register Read ==\r\n    Address: 0x%02X\r\n    Bytes:   %u", addr, count);
 #endif
 }   // read_reg
 
@@ -466,7 +464,7 @@ void CC1101::write_reg(uint8_t addr, uint8_t value)
     toggle_cs();
 
 #if CCXXX1_DEBUG_MODE > 1
-    LOG("== Single Register Write ==\r\n    Address: 0x%02X\r\n    Value:   0x%02X", addr, value);
+    log(INF2, "CC1101", "== Single Register Write ==\r\n    Address: 0x%02X\r\n    Value:   0x%02X", addr, value);
 #endif
 }   // write_reg
 void CC1101::write_reg(uint8_t addr, uint8_t *buffer, uint8_t count)
@@ -480,7 +478,7 @@ void CC1101::write_reg(uint8_t addr, uint8_t *buffer, uint8_t count)
     toggle_cs();
 
 #if CCXXX1_DEBUG_MODE > 1
-    LOG("== Burst Register Write ==\r\n    Address: 0x%02X\r\n    Bytes:   %u", addr, count);
+    log(INF2, "CC1101", "== Burst Register Write ==\r\n    Address: 0x%02X\r\n    Bytes:   %u", addr, count);
 #endif
 }   // write_reg
 
@@ -500,7 +498,7 @@ uint8_t CC1101::strobe(uint8_t addr)
 void CC1101::calibrate(void)
 {
 #if DEBUG_MODE > 0
-    LOG("Calibrating frequency synthesizer");
+    log(INF1, "CC1101", "Calibrating frequency synthesizer");
 #endif
 
     idle();
@@ -515,7 +513,7 @@ void CC1101::calibrate(void)
     rx_mode();
 
 #if DEBUG_MODE > 0
-    LOG("Frequency synthesizer calibrated");
+    log(INF1, "CC1101", "Frequency synthesizer calibrated");
 #endif
 }
 
@@ -540,14 +538,14 @@ void CC1101::channel(uint16_t chan)
 {
     if ( chan != _channel ) {
 #if DEBUG_MODE > 0
-        LOG("Updating channel from %02u to %02u", _channel, chan);
+        log(INF1, "CC1101", "Updating channel from %02u to %02u", _channel, chan);
 #endif
 
         _channel = chan;
         write_reg(CCXXX1_CHANNR, _channel);
 
 #if DEBUG_MODE > 0
-        LOG("Channel updated: %02u", _channel);
+        log(INF1, "CC1101", "Channel updated: %02u", _channel);
 #endif
     }
 }
@@ -573,7 +571,7 @@ void CC1101::rssi(uint8_t rssi_val)
 void CC1101::flush_rx(void)
 {
 #if DEBUG_MODE > 0
-    LOG("Clearing RX buffer...");
+    log(INF1, "CC1101", "Clearing RX buffer...");
 #endif
 
     // Make sure that the radio is in IDLE state before flushing the FIFO
@@ -586,7 +584,7 @@ void CC1101::flush_rx(void)
     rx_mode();
 
 #if DEBUG_MODE > 0
-    LOG("RX buffer cleared");
+    log(INF1, "CC1101", "RX buffer cleared");
 #endif
 }
 
@@ -594,7 +592,7 @@ void CC1101::flush_rx(void)
 void CC1101::flush_tx(void)
 {
 #if DEBUG_MODE > 0
-    LOG("Clearing TX buffer...");
+    log(INF1, "CC1101", "Clearing TX buffer...");
 #endif
 
     // Make sure that the radio is in IDLE state before flushing the FIFO
@@ -607,7 +605,7 @@ void CC1101::flush_tx(void)
     rx_mode();
 
 #if DEBUG_MODE > 0
-    LOG("TX buffer cleared");
+    log(INF1, "CC1101", "TX buffer cleared");
 #endif
 }
 
@@ -615,13 +613,13 @@ void CC1101::flush_tx(void)
 void CC1101::rx_mode(void)
 {
 #if DEBUG_MODE > 0
-    LOG("Sending RX_MODE strobe to CC1101");
+    log(INF1, "CC1101", "Sending RX_MODE strobe to CC1101");
 #endif
 
     strobe(CCXXX1_SRX);
 
 #if DEBUG_MODE > 0
-    LOG("RX_MODE strobe sent to CC1101");
+    log(INF1, "CC1101", "RX_MODE strobe sent to CC1101");
 #endif
 }
 
@@ -629,26 +627,26 @@ void CC1101::rx_mode(void)
 void CC1101::tx_mode(void)
 {
 #if DEBUG_MODE > 0
-    LOG("Sending TX_MODE strobe to CC1101");
+    log(INF1, "CC1101", "Sending TX_MODE strobe to CC1101");
 #endif
 
     strobe(CCXXX1_STX);
 
 #if DEBUG_MODE > 0
-    LOG("TX_MODE strobe sent to CC1101");
+    log(INF1, "CC1101", "TX_MODE strobe sent to CC1101");
 #endif
 }
 
 void CC1101::idle(void)
 {
 #if DEBUG_MODE > 0
-    LOG("Sending IDLE strobe to CC1101");
+    log(INF1, "CC1101", "Sending IDLE strobe to CC1101");
 #endif
 
     strobe(CCXXX1_SIDLE);
 
 #if DEBUG_MODE > 0
-    LOG("IDLE strobe sent to CC1101");
+    log(INF1, "CC1101", "IDLE strobe sent to CC1101");
 #endif
 }
 
@@ -793,8 +791,69 @@ void CC1101::set_rf_settings(void)
     rfSettings.AGCCTRL1 = 0x00;
     rfSettings.AGCCTRL0 = 0xB0;
 
-    // rfSettings.FIFOTHR = 0x0F;   // RXFIFO and TXFIFO thresholds.
-
     // 33 byte TX FIFO & 32 byte RX FIFO
-    rfSettings.FIFOTHR = 0x07;   // RXFIFO and TXFIFO thresholds.
+    rfSettings.FIFOTHR = 0x07;
+    // rfSettings.FIFOTHR = 0x0F;
+}
+
+
+// Write the setup register values to the CC1101 for configuration
+void CC1101::put_rf_settings()
+{
+#if DEBUG_MODE > 0
+    log(INF1, "CC1101", "Writing configuration registers...");
+#endif
+    write_reg(CCXXX1_IOCFG2,   rfSettings.IOCFG2);
+    write_reg(CCXXX1_IOCFG1,   rfSettings.IOCFG1);
+    write_reg(CCXXX1_IOCFG0,   rfSettings.IOCFG0);
+    write_reg(CCXXX1_FIFOTHR,  rfSettings.FIFOTHR);
+    // SYNC1
+    // SYNC0
+    write_reg(CCXXX1_PCKLEN,   rfSettings.PCKLEN);
+    write_reg(CCXXX1_PCKCTRL1, rfSettings.PCKCTRL1);
+    write_reg(CCXXX1_PCKCTRL0, rfSettings.PCKCTRL0);
+    write_reg(CCXXX1_ADDR,     rfSettings.ADDR);
+
+    write_reg(CCXXX1_CHANNR,   rfSettings.CHANNR);
+    write_reg(CCXXX1_FSCTRL1,  rfSettings.FSCTRL1);
+//    write_reg(CCXXX1_FSCTRL0,  rfSettings.FSCTRL0);
+    write_reg(CCXXX1_FREQ2,    rfSettings.FREQ2);
+
+    write_reg(CCXXX1_FREQ1,    rfSettings.FREQ1);
+    write_reg(CCXXX1_FREQ0,    rfSettings.FREQ0);
+    write_reg(CCXXX1_MDMCFG4,  rfSettings.MDMCFG4);
+    write_reg(CCXXX1_MDMCFG3,  rfSettings.MDMCFG3);
+
+    write_reg(CCXXX1_MDMCFG2,  rfSettings.MDMCFG2);
+    write_reg(CCXXX1_MDMCFG1,  rfSettings.MDMCFG1);
+    write_reg(CCXXX1_MDMCFG0,  rfSettings.MDMCFG0);
+    write_reg(CCXXX1_DEVIATN,  rfSettings.DEVIATN);
+    write_reg(CCXXX1_MCSM2 ,   rfSettings.MCSM2);
+    write_reg(CCXXX1_MCSM1 ,   rfSettings.MCSM1);
+    write_reg(CCXXX1_MCSM0 ,   rfSettings.MCSM0 );
+    write_reg(CCXXX1_FOCCFG,   rfSettings.FOCCFG);
+    write_reg(CCXXX1_BSCFG,    rfSettings.BSCFG);
+    write_reg(CCXXX1_AGCCTRL2, rfSettings.AGCCTRL2);
+    write_reg(CCXXX1_AGCCTRL1, rfSettings.AGCCTRL1);
+    write_reg(CCXXX1_AGCCTRL0, rfSettings.AGCCTRL0);
+    // WOREVT1
+    // WOREVT0
+    // WORCTRL
+    write_reg(CCXXX1_FREND1,   rfSettings.FREND1);
+    write_reg(CCXXX1_FREND0,   rfSettings.FREND0);
+    //write_reg(CCXXX1_FSCAL3,   rfSettings.FSCAL3);
+    //write_reg(CCXXX1_FSCAL2,   rfSettings.FSCAL2);
+    //write_reg(CCXXX1_FSCAL1,   rfSettings.FSCAL1);
+    //write_reg(CCXXX1_FSCAL0,   rfSettings.FSCAL0);
+    // PCCTRL1
+    // PCCTRL0
+    // FSTEST
+    // PTEST
+    // AGCTEST
+    //write_reg(CCXXX1_TEST2,    rfSettings.TEST2);
+    //write_reg(CCXXX1_TEST1,    rfSettings.TEST1);
+    //write_reg(CCXXX1_TEST0,    rfSettings.TEST0);
+#if DEBUG_MODE > 0
+    log(INF1, "CC1101", "Configurations registers ready");
+#endif
 }

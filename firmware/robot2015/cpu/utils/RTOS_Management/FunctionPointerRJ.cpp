@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "FunctionPointerRJ.h"
+#include "FunctionPointerRJ.hpp"
 
 FunctionPointerRJ::FunctionPointerRJ(void (*function)(void)) :
     _function(),

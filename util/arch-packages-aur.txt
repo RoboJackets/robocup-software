@@ -1,6 +1,8 @@
 # This is a list of packages that we need for Arch Linux that
 # we'll install from the AUR using yaourt
 
-# to drive robots with the SpaceNavigator 3d mouse
+# compiler to build firmware for MBED
 gcc-arm-none-eabi-bin
-#spacenavd #TODO fix spacenavd. Once fixed, uncomment yaourt in arch-setup
+
+# optional - needed if you want to use the SpaceNavigator 3d mouse to drive robots
+#spacenavd 

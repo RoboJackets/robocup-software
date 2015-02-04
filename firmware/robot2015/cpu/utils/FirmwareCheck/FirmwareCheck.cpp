@@ -1,4 +1,4 @@
-#include "FirmwareCheck.h"
+#include "FirmwareCheck.hpp"
 
 void firmware_version(std::string& version)
 {

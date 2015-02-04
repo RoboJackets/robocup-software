@@ -184,7 +184,7 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 	
 	for (const SSL_DetectionFrame* frame : detectionFrames)
 	{
-		uint64_t time = frame->t_capture() * SecsToTimestamp;
+		Time time = frame->t_capture() * SecsToTimestamp;
 		
 		// Add ball observations
 		ballObservations.reserve(ballObservations.size() + frame->balls().size());
@@ -250,7 +250,7 @@ void Processor::run()
 	//main loop
 	while (_running)
 	{
-		uint64_t startTime = timestamp();
+		Time startTime = timestamp();
 		int delta_us = startTime - curStatus.lastLoopTime;
 		_framerate = 1000000.0 / delta_us;
 		curStatus.lastLoopTime = startTime;
@@ -266,6 +266,7 @@ void Processor::run()
 		
 		// Make a new log frame
 		_state.logFrame = std::make_shared<Packet::LogFrame>();
+    _state.logFrame->set_timestamp(timestamp());
 		_state.logFrame->set_command_time(startTime + Command_Latency);
 		_state.logFrame->set_use_our_half(_useOurHalf);
 		_state.logFrame->set_use_opponent_half(_useOpponentHalf);
@@ -394,10 +395,30 @@ void Processor::run()
 		}
 		
 		runModels(detectionFrames);
-
+		for (VisionPacket *packet : visionPackets)
+		{
+			delete packet;
+		}
+		
 		// Update gamestate w/ referee data
 		_refereeModule->updateGameState(blueTeam());
 		_refereeModule->spinKickWatcher();
+
+
+		string yellowname,bluename;
+
+		if(blueTeam()){
+			bluename = _state.gameState.OurInfo.name;
+			yellowname = _state.gameState.TheirInfo.name;
+		}
+		else{
+			yellowname = _state.gameState.OurInfo.name;
+			bluename = _state.gameState.TheirInfo.name;
+		}
+
+
+		_state.logFrame->set_team_name_blue(bluename);
+		_state.logFrame->set_team_name_yellow(yellowname);
 		
 		if (_gameplayModule)
 		{
@@ -522,7 +543,7 @@ void Processor::run()
 		////////////////
 		// Timing
 		
-		uint64_t endTime = timestamp();
+		Time endTime = timestamp();
 		int lastFrameTime = endTime - startTime;
 		if (lastFrameTime < _framePeriod)
 		{

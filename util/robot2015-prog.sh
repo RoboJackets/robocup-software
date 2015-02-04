@@ -2,9 +2,6 @@
 
 # This script takes the argument as a filename and copies it to all mbeds attached!
 
-# this causes the script to fail if any command below fails
-set -e
-
 # checks for file existence
 if [ ! -e "$1" ]; then
     echo "File $1 not found..."
@@ -30,6 +27,9 @@ fi
 
 echo -e Devices path is $MBED_DEVICES_PATH
 
+# this causes the script to fail if any command below fails
+set -e
+
 # use newlines as delimiters in the forloop, rather than all whitespace
 IFS=$'\n'
 
@@ -42,7 +42,21 @@ for i in $MBED_DEVICES_PATH; do
     sudo umount -l /mnt/script/MBED/
     if [ $? -eq 0 ]; then
         echo Unmount successful! Do not remove mbed until write light stops blinking!
+    else
+        echo UNMOUNT FAILED! PLEASE UNMOUNT /mnt/script/MBED MANUALLY!!!!
     fi
     sudo rmdir /mnt/script/MBED
+
+    # This part sends 'reboot\r' over the serial connection. -e enables escape codes, and -n omits the endline at the end of echo, which prints by default.
+    # \r is the character that represents the end of the command.
 done
+
+# restart mbed code
+MBED_SERIAL_PATH="$(ls /dev/ | grep ttyACM | sed 's\.*\/dev/&\g')"
+
+#for i in $MBED_SERIAL_PATH; do
+    #echo Attempting reboot on $i ...
+    #sudo sh -c "echo -ne 'reboot\r' > $i"
+#done
+
 

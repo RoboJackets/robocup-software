@@ -226,7 +226,7 @@
               <string>Stop</string>
              </property>
              <property name="icon">
-              <iconset resource="log_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/media-playback-pause.png</normaloff>:/icons/media-playback-pause.png</iconset>
              </property>
              <property name="iconSize">
@@ -246,7 +246,7 @@
               <string>First Available Frame</string>
              </property>
              <property name="icon">
-              <iconset resource="log_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/media-skip-backward.png</normaloff>:/icons/media-skip-backward.png</iconset>
              </property>
              <property name="iconSize">
@@ -266,7 +266,7 @@
               <string>Previous Frame</string>
              </property>
              <property name="icon">
-              <iconset resource="log_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/media-seek-backward.png</normaloff>:/icons/media-seek-backward.png</iconset>
              </property>
              <property name="iconSize">
@@ -286,7 +286,7 @@
               <string>Next Frame</string>
              </property>
              <property name="icon">
-              <iconset resource="log_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/media-seek-forward.png</normaloff>:/icons/media-seek-forward.png</iconset>
              </property>
              <property name="iconSize">
@@ -306,7 +306,7 @@
               <string>Live</string>
              </property>
              <property name="icon">
-              <iconset resource="log_icons.qrc">
+              <iconset resource="main_icons.qrc">
                <normaloff>:/icons/media-skip-forward.png</normaloff>:/icons/media-skip-forward.png</iconset>
              </property>
              <property name="iconSize">
@@ -1218,6 +1218,7 @@
     <addaction name="actionRawRobots"/>
     <addaction name="actionCoords"/>
     <addaction name="actionDotPatterns"/>
+    <addaction name="actionTeam_Names"/>
    </widget>
    <widget class="QMenu" name="menu_Field">
     <property name="title">
@@ -1558,6 +1559,14 @@
    </property>
    <property name="text">
     <string>Full Field</string>
+   </property>
+  </action>
+  <action name="actionTeam_Names">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Team Names</string>
    </property>
   </action>
  </widget>

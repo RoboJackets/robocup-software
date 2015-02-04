@@ -1,4 +1,4 @@
-#include "CommLink.h"
+#include "CommLink.hpp"
 
 
 // Set the class's constants for streamlined use in other areas of the code
@@ -57,7 +57,7 @@ void CommLink::setup_pins(PinName mosi, PinName miso, PinName sck, PinName cs, P
 
 void CommLink::setup_spi(void)
 {
-    if (_mosi_pin != NC & _miso_pin != NC & _sck_pin != NC) {
+    if ((_mosi_pin != NC) & (_miso_pin != NC) & (_sck_pin != NC)) {
         _spi = new SPI(_mosi_pin, _miso_pin, _sck_pin);    // DON'T FORGET TO DELETE IN DERIVED CLASS
         _spi->format(8,0);
         _spi->frequency(5000000);
@@ -84,7 +84,7 @@ void CommLink::setup_interrupt(void)
 // Task operations for sending data over the hardware link when a new item is placed in the queue
 void CommLink::txThread(void const *arg)
 {
-    CommLink *inst = (CommLink*)arg;
+    //CommLink *inst = (CommLink*)arg;
 
     // Only continue past this point once the hardware link is initialized
     osSignalWait(COMM_LINK_SIGNAL_START_THREAD, osWaitForever);
