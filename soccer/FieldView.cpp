@@ -1,4 +1,4 @@
-
+ 	
 #include <FieldView.hpp>
 
 #include <stdio.h>
@@ -43,6 +43,7 @@ FieldView::FieldView(QWidget* parent) :
 	showRawBalls = false;
 	showCoords = false;
     showDotPatterns = false;
+    showTeamNames = false;
 	_rotate = 1;
 	_history = 0;
 
@@ -172,8 +173,6 @@ void FieldView::drawWorldSpace(QPainter& p)
 	// Draw the field
 	drawField(p, frame);
 	
-
-
 	///	draw a comet trail behind each robot so we can see its path easier
 	int pastLocationCount = 50;
 	const float prev_loc_scale = 0.4;
@@ -260,6 +259,20 @@ void FieldView::drawTeamSpace(QPainter& p)
 	// Get the latest LogFrame
 	const LogFrame *frame = _history->at(0).get();
 	
+	if(showTeamNames)
+    {
+    	//Draw Team Names
+    	QFont savedFont = p.font();
+		QFont fontstyle = p.font();
+		fontstyle.setPointSize(20);
+		p.setFont(fontstyle);
+		p.setPen(bluePen);
+		drawText(p,QPointF(0,4.75), QString(frame->team_name_blue().c_str()), true); //Blue
+		p.setPen(yellowPen);
+		drawText(p,QPointF(0,1.75), QString(frame->team_name_yellow().c_str()), true); //Yellow
+    	p.setFont(savedFont);
+    }
+
 	// Block off half the field
 	if (!frame->use_our_half())
 	{
@@ -542,7 +555,7 @@ void FieldView::drawField(QPainter& p, const LogFrame *frame)
 	p.drawLine(QLineF(x[0], y[0], x[1], y[0]));
 	p.drawLine(QLineF(x[0], y[1], x[1], y[1]));
 	p.drawLine(QLineF(x[1], y[1], x[1], y[0]));
-	
+		
 
 	p.restore();
 }
@@ -591,7 +604,7 @@ void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos
             painter.drawEllipse(center, Dots_Radius, Dots_Radius);
         }
     }
-	
+
 	if (hasBall)
 	{
 		painter.setPen(redPen);

@@ -213,7 +213,7 @@ void MainWindow::updateViews()
 	}
 	
 	// Time since last update
-	uint64_t time = timestamp();
+	Time time = timestamp();
 	int delta_us = time - _lastUpdateTime;
 	_lastUpdateTime = time;
 	double framerate = 1000000.0 / delta_us;
@@ -395,7 +395,7 @@ void MainWindow::updateStatus()
 	
 	// Get processing thread status
 	Processor::Status ps = _processor->status();
-	uint64_t curTime = timestamp();
+	Time curTime = timestamp();
 	
 	// Determine if we are receiving packets from an external referee
 	bool haveExternalReferee = (curTime - ps.lastRefereeTime) < 500 * 1000;
@@ -468,17 +468,6 @@ void MainWindow::updateStatus()
 		return;
 	}
 	
-	//	FIXME: this was disabled in the transition to python for high-level stuff
-	//			once that's figured out, we should re-enable this status text
-	// if (!sim && !_processor->gameplayModule()->goalie())
-	// {
-	// 	// No goalie.  Not checked in simulation because this is common during development.
-	// 	status("NO GOALIE", Status_Warning);
-	// 	return;
-	// }
-	
-	//FIXME - Can we validate or flag the playbook?
-	
 	if (!sim && !_processor->logger().recording())
 	{
 		// We should record logs during competition
@@ -545,6 +534,13 @@ void MainWindow::on_actionDotPatterns_toggled(bool state)
     _ui.fieldView->showDotPatterns = state;
     _ui.fieldView->update();
 }
+
+void MainWindow::on_actionTeam_Names_toggled(bool state)
+{
+	_ui.fieldView->showTeamNames = state;
+	_ui.fieldView->update();
+}
+
 
 void MainWindow::on_actionDefendMinusX_triggered()
 {

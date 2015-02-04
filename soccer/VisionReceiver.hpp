@@ -2,6 +2,7 @@
 
 #include <protobuf/messages_robocup_ssl_wrapper.pb.h>
 #include <Network.hpp>
+#include <Utils.hpp>
 
 #include <QThread>
 #include <QMutex>
@@ -14,7 +15,7 @@ class VisionPacket
 {
 public:
 	/// Local time when the packet was received
-	uint64_t receivedTime;
+	Time receivedTime;
 	
 	/// protobuf message from the vision system
 	SSL_WrapperPacket wrapper;

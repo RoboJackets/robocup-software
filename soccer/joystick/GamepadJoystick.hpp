@@ -33,8 +33,8 @@ class GamepadJoystick : public Joystick {
         float _kicker;
 
         // Last time the dribbler speed changed
-        uint64_t _lastDribblerTime;
-        uint64_t _lastKickerTime;
+        Time _lastDribblerTime;
+        Time _lastKickerTime;
         
         static const int Axis_Left_X = 0;
         static const int Axis_Left_Y = 1;

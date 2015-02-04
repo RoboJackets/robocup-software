@@ -2,16 +2,15 @@
 
 #include <protobuf/referee.pb.h>
 #include "TeamInfo.hpp"
+#include "GameState.hpp"
+#include "SystemState.hpp"
+#include <Utils.hpp>
 
 #include <QThread>
 #include <QMutex>
 #include <QTime>
-
 #include <vector>
-
 #include <stdint.h>
-#include "GameState.hpp"
-#include "SystemState.hpp"
 
 class QUdpSocket;
 
@@ -110,7 +109,7 @@ class NewRefereePacket
 {
 public:
 	/// Local time when the packet was received
-	uint64_t receivedTime;
+	Time receivedTime;
 
 	/// protobuf message from the vision system
 	SSL_Referee wrapper;
@@ -144,8 +143,8 @@ public:
 
 	// The UNIX timestamp when the packet was sent, in microseconds.
 	// Divide by 1,000,000 to get a time_t.
-	uint64_t sent_time;
-	uint64_t received_time;
+	Time sent_time;
+	Time received_time;
 
 	// The number of microseconds left in the stage.
 	// The following stages have this value; the rest do not:
@@ -167,7 +166,7 @@ public:
 
 	// The UNIX timestamp when the command was issued, in microseconds.
 	// This value changes only when a new command is issued, not on each packet.
-	uint64_t command_timestamp;
+	Time command_timestamp;
 
 	TeamInfo yellow_info;
 	TeamInfo blue_info;

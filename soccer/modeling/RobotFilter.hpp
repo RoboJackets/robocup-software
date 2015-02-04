@@ -12,14 +12,14 @@
 class RobotObservation
 {
 public:
-	RobotObservation(Geometry2d::Point pos = Geometry2d::Point(), float angle = 0, uint64_t time = 0, int frame = 0):
+	RobotObservation(Geometry2d::Point pos = Geometry2d::Point(), float angle = 0, Time time = 0, int frame = 0):
 		pos(pos), angle(angle), time(time), source(-1), frameNumber(frame)
 	{
 	}
 
 	Geometry2d::Point pos;
 	float angle;	///	in radians
-	uint64_t time;
+	Time time;
 	int source;
 	int frameNumber;
 	
@@ -43,7 +43,7 @@ public:
 	
 	/// Generates a prediction of the ball's state at a given time in the future.
 	/// This may clear robot->visible if the prediction is too long in the future to be reliable.
-	void predict(uint64_t time, Robot *robot);
+	void predict(Time time, Robot *robot);
 
 private:
 	static const int Num_Cameras = 2;
