@@ -11,7 +11,7 @@ var class_strip_chart =
     [ "minValue", "class_strip_chart.html#acf085c3fb05c6e6c1a42946bd73e195c", null ],
     [ "paintEvent", "class_strip_chart.html#a4997052c7d09eeaa0e592630f477e431", null ],
     [ "_color", "class_strip_chart.html#a2a4adeabe2c50395a9a0ad56e55a6067", null ],
-    [ "_function", "class_strip_chart.html#a98534842f1bb27a7a847e623ea6474e0", null ],
+    [ "_functions", "class_strip_chart.html#a1f3c28741ea61ec3a3303adce6f0ecf9", null ],
     [ "_history", "class_strip_chart.html#aa6eb7cd7924051d29cf9e3f4b06a959f", null ],
     [ "_maxValue", "class_strip_chart.html#a03e0e8c071aefa418b9396c077f6df65", null ],
     [ "_minValue", "class_strip_chart.html#ac953b6b58e6bf416be57a6046c201631", null ],
