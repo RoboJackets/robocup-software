@@ -216,7 +216,7 @@ void OurRobot::resetForNextIteration() {
 	}
 
 	_local_obstacles.clear();
-	resetMotionConstraints();
+	//resetMotionConstraints();
 	_unkick();
 }
 
