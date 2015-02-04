@@ -1,13 +1,11 @@
 #ifndef CC1101_RADIO_H
 #define CC1101_RADIO_H
 
-
 #include "mbed.h"
 #include "CommLink.h"
 #include "cmsis_os.h"
 #include "RTP.h"
 #include "CC1101-Defines.h"
-
 
 #define CCXXX1_DEBUG_MODE 0
 
@@ -36,10 +34,9 @@ public:
     /// Perform a soft reset for the transceiver
     virtual void reset(void);
     
-    /// Test if we can communicate with the hardware
+    /// Test the 
     virtual int32_t selfTest(void);
     
-    /// Test if the hardware can communicate with another device
     virtual bool isConnected(void);
     
     /// Set the channel number
@@ -57,20 +54,14 @@ public:
     /// Get the transceiver's operating datarate
     uint16_t datarate(void);
     
-    /// Read the STATUS byte from the CC1101
+    // The NOP command used to get the CC1101's status byte
     uint8_t status(void);
-
-    /// Read any READ ONLY register
     uint8_t status(uint8_t);
-
-    /// Get the "Link Quality Indicator" of the last received packet
     uint8_t lqi(void);
-
-    /// Read the CC1101's VERSION register
     uint8_t version(void);
-
-    /// Get the "Received Signal Strength Indicator" value of the last received packet
     int16_t rssi(void);
+    
+    int32_t powerUp(void);
     
 protected:
     // These must have implementations in the CC1101 class since it is a derived class of the base class CommLink
@@ -97,11 +88,12 @@ protected:
     
     void freq(uint32_t);
     void datarate(uint32_t);    // set data rate
-
-    int32_t powerUp(void);
+    void put_rf_settings(void);
     void init(void);
     
 private:
+
+
     void calibrate(void);
     void rssi(uint8_t);
     uint8_t mode(void);
@@ -111,7 +103,6 @@ private:
     void interface_freq(uint32_t);
     void assign_channel_spacing(uint32_t);
     void set_rf_settings(void);
-    void put_rf_settings(void);
     void set_init_vars(void);
     void power_on_reset(void);
     
@@ -130,4 +121,3 @@ private:
 };
 
 #endif  // CC1101_RADIO_H
-
