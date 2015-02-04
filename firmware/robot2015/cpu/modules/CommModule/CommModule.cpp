@@ -5,7 +5,6 @@ const int CommModule::TX_QUEUE_SIZE = COMM_MODULE_TX_QUEUE_SIZE;
 const int CommModule::RX_QUEUE_SIZE = COMM_MODULE_RX_QUEUE_SIZE;
 const int CommModule::NBR_PORTS = COMM_MODULE_NBR_PORTS;
 
-
 // Default constructor
 CommModule::CommModule() :
     // [X] - 1.1 - Define the data queues.
@@ -28,19 +27,17 @@ CommModule::CommModule() :
     _txID = osThreadCreate(&_txDef, (void*)this);
     _rxID = osThreadCreate(&_rxDef, (void*)this);
 
-    _txH_called = false;
+    // Initialize boolean arrays
+    memset(_txH_called, 0, COMM_MODULE_NBR_PORTS);
+    memset(_rxH_called, 0, COMM_MODULE_NBR_PORTS);
 }
 
-
-// Deconstructor that deletes the vector of opened ports
 CommModule::~CommModule()
 {
     if (_open_ports)
         delete _open_ports;
 }
 
-
-// Task operations for transmitting packets
 void CommModule::txThread(void const *arg)
 {
     CommModule *inst = (CommModule*)arg;
@@ -63,7 +60,7 @@ void CommModule::txThread(void const *arg)
             // Send the packet on the active communication link
             inst->_tx_handles[p->port].call(p);
 
-            log(INF1, "CommModule", "Transmission:    Port: %u    Subclass: %u", p->port, p->subclass);
+            log(INF1, "Transmission:  Port: %u  Subclass: %u  Bytes: %u  Flags: SFS[%c], ACK[%c]\r\n", p->port, p->subclass, p->payload_size, (p->sfs ? 'X':' '), (p->ack ? 'X':' '));
 
             // Release the allocated memory once data is sent
             osMailFree(inst->_txQueue, p);
@@ -71,8 +68,6 @@ void CommModule::txThread(void const *arg)
     }
 }
 
-
-// Task operations for receiving packets
 void CommModule::rxThread(void const *arg)
 {
     CommModule *inst = (CommModule*)arg;
@@ -84,60 +79,59 @@ void CommModule::rxThread(void const *arg)
 
     RTP_t *p;
     osEvent  evt;
+    
     while(1) {
 
         // Wait until new data is placed in the class's rxQueue from a CommLink class
         evt = osMailGet(inst->_rxQueue, osWaitForever);
 
         if (evt.status == osEventMail) {
-
-            // Get a pointer to where the data is stored
+            
+            // get a pointer to where the data is stored
             p = (RTP_t*)evt.value.p;
 
-            // If there is an open socket for the port, call it
+            // If there is an open socket for the port, call it.
             if (std::binary_search(inst->_open_ports->begin(), inst->_open_ports->end(), p->port)) {
-                inst->_rx_handles[p->port].call();
+                inst->_rx_handles[p->port].call(p);
             }
 
             log(INF1, "CommModule", "Reception: \r\n  Port: %u\r\n  Subclass: %u", p->port, p->subclass);
 
-            // Release the allocated memory once RX callback function is called
-            osMailFree(inst->_rxQueue, p);
+            osMailFree(inst->_rxQueue, p);  // free memory allocated for mail
         }
     }
 }
 
-
-// Set a function to call for sending a packet
 void CommModule::TxHandler(void(*ptr)(RTP_t*), uint8_t portNbr)
 {
-    _txH_called = true;
+    _txH_called[portNbr] = true;
     ready();
     _tx_handles[portNbr].attach(ptr);
 }
 
-
-// Set a function to call when a packet is received
 void CommModule::RxHandler(void(*ptr)(RTP_t*), uint8_t portNbr)
 {
+    _rxH_called[portNbr] = true;
+    ready();
+    _rx_handles[portNbr].attach(ptr);
+}
+
+void CommModule::RxHandler(void(*ptr)(void), uint8_t portNbr)
+{
+    _rxH_called[portNbr] = true;
     ready();
     _rx_handles[portNbr].attach(ptr);
 }
 
 
-// Start using an initialized port number
 void CommModule::openSocket(uint8_t portNbr)
 {
     ready();
-
-    // Don't open a socket connection until a TX callback has been set
-    if (_txH_called) {
-
-        // Check if the port has already been opened
+    if (_txH_called[portNbr] & _rxH_called[portNbr]) {
         if (std::binary_search(_open_ports->begin(), _open_ports->end(), portNbr)) {
             log(WARN, "CommModule", "Port number %u already opened", portNbr);
         } else {
-            // Add the port number to the list of active ports & keep sorted
+            // [X] - 1 - Add the port number to the list of active ports & keep sorted
             _open_ports->push_back(portNbr);
             std::sort(_open_ports->begin(), _open_ports->end());
             log(INF1, "CommModule", "Port %u opened", portNbr);
@@ -149,7 +143,6 @@ void CommModule::openSocket(uint8_t portNbr)
 }
 
 
-// Perform checks on if the working threads are ready to start
 void CommModule::ready(void)
 {
     static bool isReady = false;
@@ -167,11 +160,9 @@ void CommModule::ready(void)
 }
 
 
-// Send a packet by placing it into the transmit data queue
 void CommModule::send(RTP_t& packet)
 {
     // [X] - 1 - Check to make sure a socket for the port exists
-    // =================
     if (std::binary_search(_open_ports->begin(), _open_ports->end(), packet.port)) {
 
         // [X] - 1.1 - Allocate a block of memory for the data.
@@ -180,11 +171,10 @@ void CommModule::send(RTP_t& packet)
 
         // [X] - 1.2 - Copy the contents into the allocated memory block
         // =================
-        p->port = packet.port;
-        p->subclass = packet.subclass;
-        p->data_size = packet.data_size;
-        for (int i=0; i<p->data_size; i++)
-            p->data[i] = packet.data[i];
+        p->total_size = packet.payload_size + packet.sfs + 3;
+
+        for (int i=0; i < p->total_size + 1; i++) // no need to include rssi & lqi values (the last 2 bytes)
+            p->raw[i] = packet.raw[i];
 
         // [X] - 1.3 - Place the passed packet into the txQueue.
         // =================
@@ -195,11 +185,9 @@ void CommModule::send(RTP_t& packet)
 }
 
 
-// Used for allowing outside calls to place a packet into the received data queue
 void CommModule::receive(RTP_t& packet)
 {
     // [X] - 1 - Check to make sure a socket for the port exists
-    // =================
     if (std::binary_search(_open_ports->begin(), _open_ports->end(), packet.port)) {
 
         // [X] - 1.1 - Allocate a block of memory for the data.
@@ -208,11 +196,8 @@ void CommModule::receive(RTP_t& packet)
 
         // [X] - 1.2 - Copy the contents into the allocated memory block
         // =================
-        p->port = packet.port;
-        p->subclass = packet.subclass;
-        p->data_size = packet.data_size;
-        for (int i=0; i<packet.data_size; i++)
-            p->data[i] = packet.data[i];
+        for (int i=0; i<packet.total_size + 1; i++)
+            p->raw[i] = packet.raw[i];
 
         // [X] - 1.3 - Place the passed packet into the txQueue.
         // =================
