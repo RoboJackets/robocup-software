@@ -5,6 +5,7 @@ python-pip
 
 # Build system
 cmake
+ccache
 ninja
 clang
 
