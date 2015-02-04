@@ -27,7 +27,7 @@ int main(void)
 	isLogging = true;
 	rjLogLevel = INF2;
 	
-	initRadioThread();
+	//initRadioThread();
 	initConsoleRoutine();
 }
 
