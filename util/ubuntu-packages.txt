@@ -7,6 +7,7 @@
 # Build system
 ninja
 cmake
+ccache
 
 # QT
 qt5-default
