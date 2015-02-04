@@ -14,6 +14,7 @@
 #include <protobuf/RadioRx.pb.h>
 #include <GameState.hpp>
 #include <Constants.hpp>
+#include <Utils.hpp>
 
 class RobotConfig;
 class OurRobot;
@@ -42,7 +43,7 @@ public:
 	bool valid;
 
 	/// Time at which this estimate is valid
-	uint64_t time;
+	Time time;
 };
 
 /**
@@ -87,7 +88,7 @@ public:
 	/** @ingroup drawing_functions */
 	void drawCompositeShape(const Geometry2d::CompositeShape& group, const QColor &color = Qt::black, const QString &layer = QString());
 
-	uint64_t timestamp;
+	Time timestamp;
 	GameState gameState;
 
 	/// All possible robots.

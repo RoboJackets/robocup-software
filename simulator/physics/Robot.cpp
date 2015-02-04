@@ -16,7 +16,7 @@ using namespace Geometry2d;
 
 //FIXME: parameters have no sensible interpretation
 // static physics parameters
-static const float maxEngineForce = 2000.f; //this should be engine/velocity dependent
+static const float maxEngineForce = 4000.f; //this should be engine/velocity dependent
 static const float maxBreakingForce = 100.f;
 static const float wheelFriction = 1000; //BT_LARGE_FLOAT;
 static const float suspensionStiffness = 1000.f;
@@ -329,8 +329,8 @@ void Robot::applyEngineForces(float deltaTime) {
 //		printf("WS ang vel = %5.3f\n",robotRot);
 
 		//velocity delta projected onto forwardRight and forwardLeft
-		float velFR = (_targetVel-robotVel).dot(forwardRightCS);
-		float velFL = (_targetVel-robotVel).dot(forwardLeftCS);
+		float velFR = (_targetVel-robotVel).dot(forwardRightCS) * 2;
+		float velFL = (_targetVel-robotVel).dot(forwardLeftCS) * 2;
 
 //		printf("error: %f\n",(_targetVel-robotVel).length());
 
