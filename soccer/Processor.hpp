@@ -83,10 +83,10 @@ class Processor: public QThread
 				lastRadioRxTime = 0;
 			}
 			
-			uint64_t lastLoopTime;
-			uint64_t lastVisionTime;
-			uint64_t lastRefereeTime;
-			uint64_t lastRadioRxTime;
+			Time lastLoopTime;
+			Time lastVisionTime;
+			Time lastRefereeTime;
+			Time lastRadioRxTime;
 		};
 		
 		static void createConfiguration(Configuration *cfg);
@@ -215,7 +215,7 @@ class Processor: public QThread
 		////////
 		
 		// Time of the first LogFrame
-		uint64_t firstLogTime;
+		Time firstLogTime;
 		
 	protected:
 		void run();

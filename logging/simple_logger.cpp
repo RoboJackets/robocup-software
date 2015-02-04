@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 	bool first = true;
 	while (true)
 	{
-		uint64_t startTime = timestamp();
+		Time startTime = timestamp();
 		
 		logFrame.Clear();
 		logFrame.set_command_time(startTime);
@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
 			break;
 		}
 		
-		uint64_t endTime = timestamp();
+		Time endTime = timestamp();
 		int lastFrameTime = endTime - startTime;
 		if (lastFrameTime < framePeriod)
 		{
