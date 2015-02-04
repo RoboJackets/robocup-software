@@ -430,7 +430,7 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e)
 				    chartAction = chartMenu->addAction("New Chart");
 					chartMenu->addSeparator();
 				    for (int i = 0; i < dockWidgets.size(); ++i)  {
-			        	chartMenuActions.append(chartMenu->addAction(dockWidgets[0]->windowTitle()));
+			        	chartMenuActions.append(chartMenu->addAction(QString("Add to '%1'").arg(dockWidgets[0]->windowTitle())));
 				    }
 				} else {
 					chartAction = menu.addAction("New Chart");
