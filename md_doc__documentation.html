@@ -107,7 +107,7 @@ $(document).ready(function(){initNavTree('md_doc__documentation.html','');});
 <div class="contents">
 <div class="textblock"><p>It's important to keep software projects well-documented so that newcomers can quickly get up-to-speed and have a reference when questions arise. One common problem with software documentation is that it is easy for the documentation to get out-of-sync with the code, since the code is constantly updated and documenting it is often an afterthought.</p>
 <p>One way to help with this is to put the documentation inline with the code, which is what we do for this project. We use a program called <a href="http://www.stack.nl/~dimitri/doxygen/">Doxygen</a> that parses specially-formatted comments in our code and turns them into a searchable <a href="http://robojackets.github.io/robocup-software/">website</a> that can be easily viewed. Note that this is very similar to a program called <a href="http://en.wikipedia.org/wiki/Javadoc">javadoc</a> that many GT students are probably familiar with using in class.</p>
-<p>Another way to improve documentation practices is by requirig code to be well-documented before merging GitHub <a href="https://help.github.com/articles/using-pull-requests">pull-requests</a>, which is something we're getting better at doing.</p>
+<p>Another way to improve documentation practices is by requiring code to be well-documented before merging GitHub <a href="https://help.github.com/articles/using-pull-requests">pull-requests</a>, which is something we're getting better at doing.</p>
 <h2>Doxygen Comment Formats</h2>
 <p>Doxygen has support for many different languages, but the comment syntax differs a bit. Below are a couple examples, but you should check out the <a href="http://www.stack.nl/~dimitri/doxygen/manual/docblocks.html">official Doxygen docs</a> for more info.</p>
 <h3>C++</h3>
@@ -127,16 +127,16 @@ $(document).ready(function(){initNavTree('md_doc__documentation.html','');});
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">#</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment">#  More details.</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="keyword">class </span>PyClass:</div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;   </div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div>
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    <span class="comment">## The constructor.</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    <span class="keyword">def </span>__init__(self):</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;        self._memVar = 0;</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;   </div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="comment">## Documentation for a method.</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="comment">#  @param self The object pointer.</span></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <span class="keyword">def </span>PyMethod(self):</div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        <span class="keywordflow">pass</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;     </div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="comment">## A class variable.</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    classVar = 0;</div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
@@ -154,7 +154,7 @@ $(document).ready(function(){initNavTree('md_doc__documentation.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Feb 4 2015 05:40:30 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Feb 4 2015 06:39:29 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>
