@@ -40,7 +40,7 @@ reboot
 
 ## Compiler Toolchain
 
-The MBED requires a version of the arm compiler that is newer than the one provided by Ubuntu 14.04. We have not added this to the ubuntu-setup script, as we dont want to add more ppa's than we need do. If you need to compiler firmware, you can run
+The MBED requires a version of the arm compiler that is newer than the one provided by Ubuntu 14.04. We have not added this to the ubuntu-setup script, as we dont want to add more ppa's than we need to. If you need to compiler firmware, you can run
 
 ~~~~~{.c}
 sudo apt-get remove binutils-arm-none-eabi gcc-arm-none-eabi
