@@ -408,6 +408,8 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e)
 	showTags->setCheckable(true);
 	showTags->setChecked(!isColumnHidden(Column_Tag));
 	
+	menu.addSeparator();
+
 	QAction *chartAction = 0;
 	QList<QAction*> chartMenuActions;
 
@@ -421,13 +423,17 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e)
 			int t = field->type();
 			if (t == FieldDescriptor::TYPE_FLOAT || t == FieldDescriptor::TYPE_DOUBLE || (t == FieldDescriptor::TYPE_MESSAGE && field->message_type()->name() == "Point"))
 			{
-				chartAction = menu.addAction("Chart");
+				
 				dockWidgets = mainWindow->findChildren<QDockWidget *>();
 				if (!dockWidgets.isEmpty()) {
-				    QMenu *chartMenu =	menu.addMenu("Chart Menu");
+				    QMenu *chartMenu =	menu.addMenu("Chart");
+				    chartAction = chartMenu->addAction("New Chart");
+					chartMenu->addSeparator();
 				    for (int i = 0; i < dockWidgets.size(); ++i)  {
 			        	chartMenuActions.append(chartMenu->addAction(dockWidgets[0]->windowTitle()));
 				    }
+				} else {
+					chartAction = menu.addAction("New Chart");
 				}
 
 			}
