@@ -22,11 +22,11 @@ The firmware's job is to accept instructions over the radio and carry them out b
 
 A great way to debug a robot or just to query it for information is to use the console.  This is a command-prompt that you can use when the robot is connected via USB.  We have [udev](http://en.wikipedia.org/wiki/Udev) rules setup so that when the robot is connected via USB, it will show up in the filesystem as `/dev/robot`.  You can use the [screen](http://en.wikipedia.org/wiki/GNU_Screen) program in the terminal to connect to it by typing:
 
-~~~~
+~~~~{.c}
 sudo screen /dev/mbed
 ~~~~
 
-From there you can type any of the many available commands to make the robot do things or get info.  Type `help` to see a list of available commands.  Currently, there are no commands! You should submit a pull request adding some!
+From there you can type any of the many available commands to make the robot do things or get info.  Type `help` to see a list of available commands.
 
 ~~~
 help
@@ -40,14 +40,14 @@ reboot
 
 ## Compiler Toolchain
 
-The MBED requires a version of the arm compiler that is newer than the one provided by Ubuntu 14.04. We have not added this to the ubuntu-setup script, as we dont want to add more ppa's than we do. If you need to compiler firmware, you can run
+The MBED requires a version of the arm compiler that is newer than the one provided by Ubuntu 14.04. We have not added this to the ubuntu-setup script, as we dont want to add more ppa's than we need do. If you need to compiler firmware, you can run
 
-~~~
+~~~~~{.c}
 sudo apt-get remove binutils-arm-none-eabi gcc-arm-none-eabi
 sudo add-apt-repository ppa:terry.guo/gcc-arm-embedded
 sudo apt-get update
 sudo apt-get install gcc-arm-none-eabi
-~~~
+~~~~~
 
 
 ## Sounds
