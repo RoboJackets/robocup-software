@@ -1,5 +1,6 @@
-#ifndef ROBOT_H // Only include once
-#define ROBOT_H
+#pragma once
+
+#define COMPETITION_DEPLOY 0
 
 #define ARM_MATH_CM3
 
@@ -124,6 +125,7 @@
 
 // Include the basic classes - Note: the header files included within "mbed.h" are listed here.
 #include "mbed.h"
+#include "rtos.h"
 
 #include "pnvicdef.hpp"
 #include "reset.hpp"
@@ -170,7 +172,7 @@
 */
 
 // Include header file for the CMSIS Real Time Operating System
-#include "cmsis_os.h"
+//#include "cmsis_os.h"
 
 #if RJ_CHECK_FIRMWARE
 #include "FirmwareCheck.hpp"
@@ -195,6 +197,4 @@
 #include "nRF24L01.h"
 #endif
 
-#include "Logger.hpp"
-
-#endif // ROBOT_H
+#include "logger.hpp"

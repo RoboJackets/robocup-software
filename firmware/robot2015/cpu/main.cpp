@@ -1,6 +1,8 @@
 #include "robot.hpp"
 #include "console.hpp"
 #include "commands.hpp"
+#include "logger.hpp"
+#include "radio.hpp"
 
 Ticker lifeLight;
 DigitalOut ledOne(LED1);
@@ -11,7 +13,7 @@ DigitalOut ledTwo(LED2);
  */
 void imAlive(void);
 void setISRPriorities(void);
-void initRadioRoutine(void);
+void initRadioThread(void);
 void initConsoleRoutine(void);
 
 /**
@@ -19,10 +21,13 @@ void initConsoleRoutine(void);
  */
 int main(void) 
 {
+	setISRPriorities();
 	lifeLight.attach(&imAlive, 0.25);
 
-	setISRPriorities();
-	initRadioRoutine();
+	isLogging = true;
+	rjLogLevel = INF2;
+	
+	initRadioThread();
 	initConsoleRoutine();
 }
 
@@ -60,7 +65,7 @@ void setISRPriorities(void)
 	//
 	//Consult LPC17xx.h under IRQn_Type for PNVIC ranges, this is LPC1768 
 	//specific
-	for (uint32_t IRQn = WDT_IRQn; IRQn <= CANActivity_IRQn; IRQn++)
+	for (uint32_t IRQn = TIMER0_IRQn; IRQn <= CANActivity_IRQn; IRQn++)
 	{
 		//set default priority
 		NVIC_SetPriority((IRQn_Type) IRQn, defaultPriority);
@@ -90,14 +95,19 @@ void setISRPriorities(void)
 	NVIC_SetPriority(UART3_IRQn, NVIC_EncodePriority(priorityGrouping, 3, 1));
 
 	//TODO lower others after discussion
+
+	//NVIC_EnableIRQ(TIMER0_IRQn);
+	//NVIC_EnableIRQ(TIMER1_IRQn);
+	//NVIC_EnableIRQ(TIMER2_IRQn);
+	//NVIC_EnableIRQ(TIMER3_IRQn);
 }
 
 /**
  * initializes the radio communications thread
  */
-void initRadioRoutine(void)
+void initRadioThread(void)
 {
-
+	initRadio();
 }
 
 /**
@@ -105,29 +115,36 @@ void initRadioRoutine(void)
  */
 void initConsoleRoutine(void)
 {
-	initConsole();
-
-	for (;;)
+	if (!COMPETITION_DEPLOY)
 	{
-		//check console communications, currently does nothing
-		//then execute any active iterative command
-		conComCheck();
-		//execute any active iterative command
-		executeIterativeCommand();
+		initConsole();
 
-		//check if a system stop is requested
-		if (isSysStopReq() == true)
+		for (;;)
 		{
-			break;
-		}
+			//check console communications, currently does nothing
+			//then execute any active iterative command
+			conComCheck();
+			//execute any active iterative command
+			executeIterativeCommand();
 
-		//main loop heartbeat
-		wait(0.1);
-		ledTwo = !ledTwo;
-    	}
+			//check if a system stop is requested
+			if (isSysStopReq() == true)
+			{
+				break;
+			}
 
-	//clear light for main loop (shows its complete)
-	ledTwo = false;
+			//main loop heartbeat
+			wait(0.1);
+			ledTwo = !ledTwo;
+	    	}
+
+		//clear light for main loop (shows its complete)
+		ledTwo = false;
+	}
+	else
+	{
+		for (;;);
+	}
 }
 
 /**

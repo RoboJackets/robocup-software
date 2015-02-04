@@ -10,6 +10,7 @@ set(PY_LIBS)
 # ------------------------------------------------------------------------------
 # git checkout and build location of mbed libraries
 set(PY_TOOLS_DIR ${CMAKE_CURRENT_BINARY_DIR}/mbed_lib_build_tools-prefix/src/mbed_lib_build_tools)
+set(MCP23017_DIR ${CMAKE_CURRENT_BINARY_DIR}/mcp23017-prefix/src/mcp23017)
 
 #library roots
 set(MBED_PATH          ${PY_TOOLS_DIR}/build/mbed)
@@ -191,6 +192,10 @@ if(${USE_DSP} STREQUAL "true")
   set(MBED_LIBS ${MBED_LIBS} ${PY_DSP_LIB_DIR}/libcmsis_dsp.a ${PY_DSP_LIB_DIR}/libdsp.a)
   #add build arg to py script command
   set(PY_LIBS ${PY_LIBS} --dsp)
+endif()
+
+if(${BUILD_MCP23017} STREQUAL "true")
+  include_directories("${MCP23017_DIR}")
 endif()
 
 # print all include directories

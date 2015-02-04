@@ -5,7 +5,7 @@
 #include "RTP.hpp"
 #include "ThreadHelper.hpp"
 #include "MailHelper.hpp"
-#include "Logger.hpp"
+#include "logger.hpp"
 #include "FunctionPointerRJ.hpp"
 
 #include <algorithm>    // std::binary_search, std::sort

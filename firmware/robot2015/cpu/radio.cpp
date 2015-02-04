@@ -1,3 +1,29 @@
+#include "robot.hpp"
+#include "radio.hpp"
+
+/*
+ * forward delarations
+ */
+void radioThreadHandler(void const* args);
+
+/**
+ * call to initialize radio
+ */
+int initRadio(void)
+{
+	Thread radioThread(radioThreadHandler);
+
+	return 0;
+}
+
+void radioThreadHandler(void const* args)
+{
+	for (;;)
+	{
+		Thread::wait(500);
+	}
+}
+
 /*
 #include "robot.hpp"
 

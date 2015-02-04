@@ -1,5 +1,4 @@
-#ifndef CC1101_DEFINES_H
-#define CC1101_DEFINES_H
+#pragma once
 
 /**
 * @file CC1101-Defines.h
@@ -264,4 +263,3 @@ typedef struct modem_t {
     pream_bytes_t   preamble_bytes;
 } modem_t;
 
-#endif  // CC1101_DEFINES_H

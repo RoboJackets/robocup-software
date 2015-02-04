@@ -1,5 +1,4 @@
-#ifndef CC1101_RADIO_H
-#define CC1101_RADIO_H
+#pragma once
 
 
 #include "mbed.h"
@@ -128,6 +127,4 @@ private:
     uint8_t     _chip_version;
     uint32_t    _base_freq;
 };
-
-#endif  // CC1101_RADIO_H
 
