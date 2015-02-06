@@ -32,6 +32,12 @@ find_package(libusb-1.0 REQUIRED)
 include_directories("${PROJECT_SOURCE_DIR}/common") # for headers in common/
 include_directories("${PROJECT_BINARY_DIR}/common") # for generated protobuf headers
 
+# setup ccache to speed up recompiles.  It's especially useful when switching back and forth
+# between branches where you'd normally have to recompile things many times.
+# see http://stackoverflow.com/questions/1815688/how-to-use-ccache-with-cmake
+set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ccache)
+set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
+
 # run all the other CMakeLists files
 add_subdirectory(test)
 add_subdirectory(common)
