@@ -458,7 +458,7 @@ void Processor::run()
 				
 				Packet::LogFrame::Robot *log = _state.logFrame->add_self();
 				*log->mutable_pos() = r->pos;
-				*log->mutable_vel() = r->vel;
+				*log->mutable_world_vel() = r->vel;
 				*log->mutable_body_vel() = r->vel.rotated(2*M_PI - r->angle);
 				//*log->mutable_cmd_body_vel() = r->
 				// *log->mutable_cmd_vel() = r->cmd_vel;
@@ -514,7 +514,8 @@ void Processor::run()
 				*log->mutable_pos() = r->pos;
 				log->set_shell(r->shell());
 				log->set_angle(r->angle);
-				*log->mutable_vel() = r->vel;
+				*log->mutable_world_vel() = r->vel;
+				*log->mutable_body_vel() = r->vel.rotated(2*M_PI - r->angle);
 			}
 		}
 		
