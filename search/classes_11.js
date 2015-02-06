@@ -4,6 +4,7 @@ var searchData=
   ['rect',['Rect',['../class_geometry2d_1_1_rect.html',1,'Geometry2d']]],
   ['refereetab',['RefereeTab',['../class_referee_tab.html',1,'']]],
   ['repeatedlineup',['RepeatedLineUp',['../classgameplay_1_1plays_1_1testing_1_1repeated__line__up_1_1_repeated_line_up.html',1,'gameplay::plays::testing::repeated_line_up']]],
+  ['rf_5fsettings_5ft',['rf_settings_t',['../structrf__settings__t.html',1,'']]],
   ['robot',['Robot',['../classgameplay_1_1constants_1_1_robot.html',1,'gameplay::constants']]],
   ['robot',['Robot',['../class_robot.html',1,'']]],
   ['robotconfig',['RobotConfig',['../class_robot_config.html',1,'']]],

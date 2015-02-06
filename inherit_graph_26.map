@@ -1,3 +1,20 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node3" href="$classgameplay_1_1fs__watcher_1_1_fs_watcher_1_1_fs_event_handler.html" title="gameplay.fs_watcher.FsWatcher.\lFsEventHandler" alt="" coords="221,5,440,51"/>
+<area shape="rect" id="node3" href="$classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker_1_1_state.html" title="gameplay.evaluation.double\l_touch.DoubleTouchTracker.State" alt="" coords="123,5,344,51"/>
+<area shape="rect" id="node5" href="$classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff_1_1_state.html" title="gameplay.plays.restarts.our\l_kickoff.OurKickoff.State" alt="" coords="143,74,324,121"/>
+<area shape="rect" id="node7" href="$classgameplay_1_1plays_1_1testing_1_1repeated__line__up_1_1_repeated_line_up_1_1_state.html" title="gameplay.plays.testing.repeated\l_line_up.RepeatedLineUp.State" alt="" coords="128,143,339,190"/>
+<area shape="rect" id="node9" href="$classgameplay_1_1plays_1_1testing_1_1test__capture_1_1_test_capture_1_1_state.html" title="gameplay.plays.testing.test\l_capture.TestCapture.State" alt="" coords="143,213,324,259"/>
+<area shape="rect" id="node11" href="$classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick_1_1_state.html" title="gameplay.plays.testing.test\l_pivot_kick.TestPivotKick.State" alt="" coords="129,282,337,329"/>
+<area shape="rect" id="node13" href="$classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass_1_1_state.html" title="gameplay.plays.testing.triangle\l_pass.TrianglePass.State" alt="" coords="132,351,335,398"/>
+<area shape="rect" id="node15" href="$classgameplay_1_1plays_1_1testing_1_1_two_side_attack_1_1_two_side_attack_1_1_state.html" title="gameplay.plays.testing.Two\lSideAttack.TwoSideAttack.State" alt="" coords="127,421,340,467"/>
+<area shape="rect" id="node17" href="$classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_facer_1_1_state.html" title="gameplay.plays.tuning.tune\l_facing.Facer.State" alt="" coords="143,490,324,537"/>
+<area shape="rect" id="node19" href="$classgameplay_1_1skills_1_1aim_1_1_aim_1_1_state.html" title="gameplay.skills.aim.Aim.\lState" alt="" coords="149,559,317,606"/>
+<area shape="rect" id="node21" href="$classgameplay_1_1skills_1_1bump_1_1_bump_1_1_state.html" title="gameplay.skills.bump.Bump.\lState" alt="" coords="139,629,328,675"/>
+<area shape="rect" id="node23" href="$classgameplay_1_1skills_1_1line__kick_1_1_line_kick_1_1_state.html" title="gameplay.skills.line\l_kick.LineKick.State" alt="" coords="163,698,304,745"/>
+<area shape="rect" id="node25" href="$classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive_1_1_state.html" title="gameplay.skills.pass\l_receive.PassReceive.State" alt="" coords="140,767,327,814"/>
+<area shape="rect" id="node27" href="$classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass_1_1_state.html" title="gameplay.tactics.coordinated\l_pass.CoordinatedPass.State" alt="" coords="136,837,331,883"/>
+<area shape="rect" id="node29" href="$classgameplay_1_1tactics_1_1penalty_1_1_penalty_1_1_state.html" title="gameplay.tactics.penalty.\lPenalty.State" alt="" coords="148,906,319,953"/>
+<area shape="rect" id="node31" href="$classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html" title="gameplay.tactics.positions.goalie.\lGoalie.State" alt="" coords="124,975,343,1022"/>
+<area shape="rect" id="node33" href="$classgameplay_1_1tactics_1_1positions_1_1submissive__goalie_1_1_submissive_goalie_1_1_state.html" title="gameplay.tactics.positions.submissive\l_goalie.SubmissiveGoalie.State" alt="" coords="111,1045,356,1091"/>
+<area shape="rect" id="node35" href="$classtest__fsm_1_1_my_fsm_1_1_state.html" title="test_fsm.MyFsm.State" alt="" coords="156,1115,311,1144"/>
+<area shape="rect" id="node37" href="$classtest__fsm_1_1_my_fsm_1_1_sub_state.html" title="test_fsm.MyFsm.SubState" alt="" coords="144,1168,323,1197"/>
 </map>

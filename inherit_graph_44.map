@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$struct_motion_constraints.html" title="This class contains the motion constraints that the high&#45;level logic sets for a robot. " alt="" coords="5,5,133,35"/>
+<area shape="rect" id="node3" href="$class_joystick.html" title="Used for manually controlling robots. " alt="" coords="151,32,220,61"/>
+<area shape="rect" id="node5" href="$class_gamepad_joystick.html" title="Logitecch Gamepad/Joystick used to control robots. " alt="" coords="273,5,399,35"/>
+<area shape="rect" id="node7" href="$class_space_nav_joystick.html" title="Joystick class for using a SpaceNavigator 3d mouse for controlling the robots. " alt="" coords="271,59,401,88"/>
 </map>

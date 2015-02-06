@@ -1,0 +1,8 @@
+<map id="soccer/gameplay/plays" name="soccer/gameplay/plays">
+<area shape="rect" id="node4" href="dir_82439d186ff89ecfbcba21e8d18b78fe.html" title="offense" alt="" coords="325,65,397,113"/>
+<area shape="rect" id="node5" href="dir_9ac281a87d29ea22521a255a3dae1d96.html" title="restarts" alt="" coords="229,65,301,113"/>
+<area shape="rect" id="node6" href="dir_8905435cd3c2ac82601c49ef23ca649c.html" title="testing" alt="" coords="133,65,205,113"/>
+<area shape="rect" id="node7" href="dir_8f5d42a428431336bc982a247b2b9c3a.html" title="tuning" alt="" coords="37,65,109,113"/>
+<area shape="rect" id="graph3" href="dir_f4c3b910b0d34cc83e1f8f4d3a930714.html" alt="" coords="27,55,504,124"/>
+<area shape="rect" id="graph2" href="dir_79e278ceef58e588fa85e49d1f74b815.html" title="gameplay" alt="" coords="16,16,515,135"/>
+</map>

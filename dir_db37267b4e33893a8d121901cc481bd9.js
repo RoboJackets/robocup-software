@@ -1,6 +1,7 @@
 var dir_db37267b4e33893a8d121901cc481bd9 =
 [
     [ "gameplay", "dir_79e278ceef58e588fa85e49d1f74b815.html", "dir_79e278ceef58e588fa85e49d1f74b815" ],
+    [ "joystick", "dir_956ad80ab53543a60928165df82e2118.html", "dir_956ad80ab53543a60928165df82e2118" ],
     [ "modeling", "dir_73a45929ff8180e4f74b374130d7a92f.html", "dir_73a45929ff8180e4f74b374130d7a92f" ],
     [ "motion", "dir_6119c78eeb9f70e90565579c7e982ffb.html", "dir_6119c78eeb9f70e90565579c7e982ffb" ],
     [ "planning", "dir_7e35db79f3a40483f5ecbace80ccf53b.html", "dir_7e35db79f3a40483f5ecbace80ccf53b" ],
@@ -8,7 +9,6 @@ var dir_db37267b4e33893a8d121901cc481bd9 =
     [ "Configuration.hpp", "_configuration_8hpp_source.html", null ],
     [ "FieldView.hpp", "_field_view_8hpp_source.html", null ],
     [ "GameState.hpp", "_game_state_8hpp_source.html", null ],
-    [ "Joystick.hpp", "_joystick_8hpp_source.html", null ],
     [ "Logger.hpp", "_logger_8hpp_source.html", null ],
     [ "LogUtils.hpp", "_log_utils_8hpp_source.html", null ],
     [ "LogViewer.hpp", "_log_viewer_8hpp_source.html", null ],
@@ -18,7 +18,6 @@ var dir_db37267b4e33893a8d121901cc481bd9 =
     [ "Processor.hpp", "_processor_8hpp_source.html", null ],
     [ "ProtobufTree.hpp", "_protobuf_tree_8hpp_source.html", null ],
     [ "QuaternionDemo.hpp", "_quaternion_demo_8hpp_source.html", null ],
-    [ "RefereeModule.hpp", "_referee_module_8hpp_source.html", null ],
     [ "RefereeTab.hpp", "_referee_tab_8hpp_source.html", null ],
     [ "Robot.hpp", "_robot_8hpp_source.html", null ],
     [ "RobotConfig.hpp", "_robot_config_8hpp_source.html", null ],

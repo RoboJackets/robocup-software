@@ -1,6 +1,7 @@
 var NAVTREE =
 [
   [ "GT RoboCup SSL", "index.html", [
+    [ "Logic Analyzer Trace Captures", "md_firmware_robot2015_trace_captures__r_e_a_d_m_e.html", null ],
     [ "Build Systems", "md_doc__build_systems.html", null ],
     [ "Documentation", "md_doc__documentation.html", null ],
     [ "Gameplay", "md_doc__gameplay.html", null ],
@@ -33,14 +34,14 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_field_view.html#a4d9f90644c5a81388d38221df3bd5811",
-"class_geometry2d_1_1_segment.html#a3a1007a2699b7f5f5032dbfcc15c7962",
-"class_pid.html#a7feaf4b3444c9d3d40415f8479e65e4b",
-"class_space_nav_joystick.html#a793b5d7cb3f40488ca11668dfdc830ab",
-"classgameplay_1_1play__registry_1_1_play_registry_1_1_node.html#aebea3e8c82320b1384a4d10a384eb950",
-"classgameplay_1_1skills_1_1__kick_1_1___kick.html#a287c43c07074a9f7c0ff8e003b23c33e",
-"classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie.html#abba45fdbf41f81df0ffbe59b2e83629a",
-"struct_robot_config_1_1_p_i_d.html"
+"class_config_bool.html#a31c83a6f6542f246c2db254afe26744d",
+"class_geometry2d_1_1_line.html#a8719bc0e5b5008309c8cea92c09e22ba",
+"class_our_robot.html#a02faabdbe05e3d34856ff7043dc40d58",
+"class_radio.html#ac2b7aa0f4630a8fa349f2e77c6d69a49",
+"classgameplay_1_1evaluation_1_1window__evaluator_1_1_window.html#ad340a48e0a4995a6826b89f03d6f3731",
+"classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html#a2b2700739fcfb30169a9af22638f0963",
+"classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive_1_1_state.html",
+"functions_p.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
