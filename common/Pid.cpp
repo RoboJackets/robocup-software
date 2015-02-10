@@ -40,7 +40,7 @@ void Pid::setWindup(unsigned int w)
 		if (w != _windup) {
 			_windup = w;
 			_oldErr = new float[_windup];
-			memset(_oldErr, 0, sizeof(float)*_windup);
+			_errSum=0;
 		}
 	} else {
 		if (_oldErr) delete[] _oldErr;
@@ -63,7 +63,7 @@ float Pid::run(const float err)
 	{
 		_errSum -= _oldErr[_windupLoc];
 		_oldErr[_windupLoc] = err;
-	
+		//cout << "errSum"<<_errSum <<endl;
 		_windupLoc = (_windupLoc + 1) % _windup;
 	}
 

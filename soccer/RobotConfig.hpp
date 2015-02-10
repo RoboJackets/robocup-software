@@ -45,6 +45,7 @@ public:
 	
 	PID translation;
 	PID rotation;
+	PID velocity;
 
 	Kicker kicker;
 	Dribbler dribbler;

@@ -31,6 +31,7 @@ RobotConfig::Chipper::Chipper(Configuration *config, QString prefix):
 
 RobotConfig::RobotConfig(Configuration* config, QString prefix):
 	translation(config, QString("%1/translation").arg(prefix)),
+	velocity(config, QString("%1/velocity").arg(prefix)),
 	rotation(config, QString("%1/rotation").arg(prefix)),
 	kicker(config, QString("%1/kicker").arg(prefix)),
 	dribbler(config, QString("%1/dribbler").arg(prefix)),
