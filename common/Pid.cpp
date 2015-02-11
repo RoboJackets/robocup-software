@@ -44,7 +44,7 @@ void Pid::setWindup(unsigned int w)
 		{
 			if (w != _windup) {
 				_windup = w;
-				_oldErr = new float[_windup]();
+				_oldErr = new float[_windup]{};
 				_errSum=0;
 			}
 		}
