@@ -5,8 +5,9 @@
 
 
 # Build system
-ninja
+ninja-build
 cmake
+ccache
 
 # QT
 qt5-default
