@@ -238,25 +238,6 @@ void OurRobot::move(const Geometry2d::Point &goal, float endSpeed)
 	// sets flags for future movement
 	if (verbose) cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", " << goal.y << ")" << std::endl;
 
-
-
-	// //	only invalidate path if move() is being called with a new goal or one wasn't set previously
-	/*
-	if (!_motionConstraints.targetPos || !_motionConstraints.targetPos->nearPoint(goal, 0.02)) {
-		addText("Invalidated old path");
-
-	 	if (_motionConstraints.targetPos) {
-	 		addText(QString("Old goal: (%1, %2)").arg(goal.x, goal.y));
-	 		addText(QString("New goal: (%1, %2)").arg(_motionConstraints.targetPos->x, _motionConstraints.targetPos->y));
-	 	} else {
-	 		addText("Old goal was null");
-	 	}
-
-	 	_motionConstraints.targetPos = goal;
-	 	_pathInvalidated = true;
-	}
-	*/
-
 	_motionConstraints.targetPos = goal;
 	_motionConstraints.endSpeed = endSpeed;
 
