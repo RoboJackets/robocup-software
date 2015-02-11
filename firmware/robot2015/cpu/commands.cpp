@@ -90,8 +90,8 @@ const vector<command_t> commands =
 		{"ls"},
 		false,
 		cmd_ls,
-		"list contents of current directory",
-		"ls"},
+		"list contents of current directory\r\n\tBugs: sometimes displays train animations",
+		"ls [folder/device]"},
 	{
 		{"reset", "reboot"},
 		false,
@@ -337,18 +337,22 @@ void cmd_ls(const vector<string> &args)
     DIR *d;
     struct dirent *p;
 
-    d = opendir("/local");
+    if (args.size() == 0) {
+        d = opendir("/local");
+    } else {
+        d = opendir(args[0].c_str());
+    }
     if (d != NULL) {
         while ((p = readdir(d)) != NULL) {
             printf(" - %s\r\n", p->d_name);
+            flush();
 
         }
-
+        closedir(d);
     } else {
         printf("Could not open directory!\r\n");
-
+        flush();
     }
-    closedir(d);
 }
 
 /**
