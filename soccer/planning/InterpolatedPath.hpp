@@ -90,7 +90,7 @@ namespace Planning
 			 * @param[in] 	start The point on the path to start checking from
 			 * @return 		true if the path is valid, false if it hits an obstacle
 			 */
-			virtual bool hit(const Geometry2d::CompositeShape &shape, unsigned int start = 0) const;
+			virtual bool hit(const Geometry2d::CompositeShape &shape, Geometry2d::Point *startPosition = NULL) const;
 
 			// Set of points in the path - used as waypoints
 			std::vector<Geometry2d::Point> points;
