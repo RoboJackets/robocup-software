@@ -590,7 +590,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		//state()->drawCircle(targetPathPos, maxDist, Qt::green, "MotionControl");
 		addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
 		addText(QString("%1").arg(pathError));
-		if (_motionConstraints.maxReplanDistance!=0 && pathError > _motionConstraints.maxReplanDistance) {
+		if (*_motionConstraints._replan_threshold!=0 && pathError > *_motionConstraints._replan_threshold) {
 			_pathInvalidated = true;
 			addText("pathError");
 			//addText(pathError);
