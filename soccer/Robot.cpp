@@ -216,7 +216,7 @@ void OurRobot::resetForNextIteration() {
 	}
 
 	_local_obstacles.clear();
-	//resetMotionConstraints();
+	resetMotionConstraints();
 	_unkick();
 }
 
@@ -241,6 +241,7 @@ void OurRobot::move(const Geometry2d::Point &goal, float endSpeed)
 
 
 	// //	only invalidate path if move() is being called with a new goal or one wasn't set previously
+	/*
 	if (!_motionConstraints.targetPos || !_motionConstraints.targetPos->nearPoint(goal, 0.02)) {
 		addText("Invalidated old path");
 
@@ -254,6 +255,7 @@ void OurRobot::move(const Geometry2d::Point &goal, float endSpeed)
 	 	_motionConstraints.targetPos = goal;
 	 	_pathInvalidated = true;
 	}
+	*/
 
 	_motionConstraints.targetPos = goal;
 	_motionConstraints.endSpeed = endSpeed;
@@ -595,22 +597,10 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 	if (!_path) {
 		_pathInvalidated = true;
-	}
-
-
-	Planning::Path *newlyPlannedPath = _planner->run(pos, angle, vel, _motionConstraints, &full_obstacles);
-
-	//	invalidate path if it hits obstacles
-	//	TODO: it would be better to compare WHICH obstacles the old and new paths hit rather than just looking at IF they hit obstacles
-	if (_path && _path->hit(full_obstacles) && !newlyPlannedPath->hit(full_obstacles)) {
-		_pathInvalidated = true;
-	}
-
-	//  invalidate path if current position is more than 15cm from the planned point
-	if (_path) {
+	} else {
 		_path->draw(_state, Qt::magenta);
 
-		float maxDist = .6;
+		//float maxDist = .6;
 		Point targetPathPos;
 		Point targetVel;
 		float timeIntoPath = ((float)(timestamp() - _pathStartTime)) * TimestampToSecs + 1.0/60.0;
@@ -619,21 +609,39 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		//state()->drawCircle(targetPathPos, maxDist, Qt::green, "MotionControl");
 		addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
 		addText(QString("%1").arg(pathError));
-		if (pathError > maxDist) {
+		if (_motionConstraints.maxReplanDistance!=0 && pathError > _motionConstraints.maxReplanDistance) {
 			_pathInvalidated = true;
 			addText("pathError");
 			//addText(pathError);
 		}
-	}
 
 
-	//	if the destination of the current path is greater than X m away from the target destination,
-	//	we invalidate the path.  this situation could arise if during a previous planning, the target point
-	//	was blocked by an obstacle
-	//  TODO: This is Stupid. This should be fixed in the RRT planner or the Bezier Algorithm.
-	if (_path && _path->destination() && (*_path->destination() - dest).mag() > 0.025) {
+
+		if (_path->hit(full_obstacles, &targetPathPos)) {
 		_pathInvalidated = true;
+		}
+
+		//  invalidate path if current position is more than 15cm from the planned point
+		
+
+
+		//	if the destination of the current path is greater than X m away from the target destination,
+		//	we invalidate the path.  this situation could arise if during a previous planning, the target point
+		//	was blocked by an obstacle
+		//  TODO: This is Stupid. This should be fixed in the RRT planner or the Bezier Algorithm.
+		if (_path->destination() && (*_path->destination() - dest).mag() > 0.025) {
+			_pathInvalidated = true;
+		}
+
+
 	}
+
+
+
+
+	//	invalidate path if it hits obstacles
+	//	TODO: it would be better to compare WHICH obstacles the old and new paths hit rather than just looking at IF they hit obstacles
+	
 
 	/*
 	//	try a straight path EVERY time
@@ -658,6 +666,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		// 	cout << "\t(" << itr.x << ", " << itr.y << ")" << endl;
 		// }
 	} else {
+		Planning::Path *newlyPlannedPath = _planner->run(pos, angle, vel, _motionConstraints, &full_obstacles);
 		addText("Replanning");
 		// use the newly generated path
 		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: using new RRT path" << std::endl;

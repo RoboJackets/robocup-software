@@ -90,8 +90,15 @@ int Planning::InterpolatedPath::nearestIndex(const Geometry2d::Point &pt) const
 	return index;
 }
 
-bool Planning::InterpolatedPath::hit(const Geometry2d::CompositeShape &obstacles, unsigned int start) const
+bool Planning::InterpolatedPath::hit(const Geometry2d::CompositeShape &obstacles, Geometry2d::Point *startPosition) const
 {
+	int start;
+	if(startPosition) {
+		start = nearestIndex(*startPosition);
+	} else {
+		start = 0;
+	}
+
     if (start >= points.size())
     {
         // Empty path or starting beyond end of path

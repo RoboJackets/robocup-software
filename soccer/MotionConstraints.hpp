@@ -66,6 +66,7 @@ struct MotionConstraints {
 
     /// The speed we should be going when we reach the end of the path
     float endSpeed = 0;
+    float maxReplanDistance;
 
 
 
@@ -76,4 +77,5 @@ struct MotionConstraints {
     static ConfigDouble *_max_acceleration;
     static ConfigDouble *_max_speed;
     static ConfigDouble *_max_angle_speed;
+    static ConfigDouble *_max_replan_distance;
 };
