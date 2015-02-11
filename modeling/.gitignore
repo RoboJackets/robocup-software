@@ -1,2 +1,5 @@
 *.mexw64
 slprj
+test
+*.autosave
+*.asv
