@@ -12,8 +12,8 @@ ke = 1/(285*2*pi/60); %% Motor Back-emf Constant (V/rad/sec)
 c0 = .001; %%Static Frictional Torque of BLDC Motor
 kt = 33.5e-3;%% Torque Constant Nm/A
 Vcc = 24; %%Maximum Voltage of system
-pwmResolution = 16; %%pwmResolution in bits
-
+encoderResolution = 12; %%Measured in bits
+encoderSampleTime = .001; %%Measured in seconds
 %% X' = AX + BU
 %% Y = CX
 
