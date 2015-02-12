@@ -506,9 +506,11 @@ std::shared_ptr<Geometry2d::Shape> OurRobot::createBallObstacle() const {
 void OurRobot::setPath(Planning::Path *path) {
 	_didSetPathThisIteration = true;
 
-	delete _path;
-	_path = path;
+	if (_path) {
+		delete _path;
+	}
 
+	_path = path;
 	_pathInvalidated = false;
 	_pathStartTime = timestamp();
 }
