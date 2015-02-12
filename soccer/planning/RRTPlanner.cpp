@@ -46,7 +46,6 @@ Planning::InterpolatedPath* RRTPlanner::run(
 	if (start == goal)
 	{
 		path->points.push_back(start);
-		_bestPath = *path;
 		return path;
 	}
 
@@ -132,32 +131,30 @@ Planning::InterpolatedPath* RRTPlanner::run(
 	}
 
 	//see if we found a better global path
-	makePath();
+	*path = makePath();
 
-	if (_bestPath.points.empty())
+	if (path->points.empty())
 	{
 		// FIXME: without these two lines, an empty path is returned which causes errors down the line.
 		path->points.push_back(start);
-		_bestPath = *path;
-		return path;
 	}
-
-	*path = _bestPath;
 	return path;
 }
 
-void RRTPlanner::makePath()
+Planning::InterpolatedPath RRTPlanner::makePath()
 {
+	Planning::InterpolatedPath newPath;
+
 	Tree::Point* p0 = _fixedStepTree0.last();
 	Tree::Point* p1 = _fixedStepTree1.last();
 
 	//sanity check
 	if (!p0 || !p1 || p0->pos != p1->pos)
 	{
-		return;
+		return newPath;
 	}
 
-	Planning::InterpolatedPath newPath;
+	
 
 	//add the start tree first...normal order
 	//aka from root to p0
@@ -170,7 +167,7 @@ void RRTPlanner::makePath()
 	optimize(newPath, _obstacles);
 
 	/// check the path against the old one
-	bool hit = (_obstacles) ? _bestPath.hit(*_obstacles) : false;
+	//bool hit = (_obstacles) ? _bestPath.hit(*_obstacles) : false;
 
 	//TODO evaluate the old path based on the closest segment
 	//and the distance to the endpoint of that segment
@@ -188,7 +185,7 @@ void RRTPlanner::makePath()
 	//		(_bestPath.points.back() != _fixedStepTree1.start()->pos) ||
 	//		(newPath.length() < _bestPath.length()))
 	//{
-		_bestPath = newPath;
+	return newPath;
 	//	return;
 	//}
 	/*
