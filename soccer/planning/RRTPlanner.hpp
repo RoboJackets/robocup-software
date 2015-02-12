@@ -48,9 +48,6 @@ namespace Planning
 					const MotionConstraints &motionConstraints,
 					const Geometry2d::CompositeShape* obstacles);
 
-			/** returns the length of the best position planned path */
-			float fixedPathLength() const { return _bestPath.length(); }
-
 	protected:
 		MotionConstraints _motionConstraints;
 
@@ -59,10 +56,6 @@ namespace Planning
 
 		/** best goal point */
 		Geometry2d::Point _bestGoal;
-
-		///best planned path
-		///this is a fixed step path
-		Planning::InterpolatedPath _bestPath;
 
 		Geometry2d::Point vi;
 		///maximum number of rrt iterations to run
@@ -76,7 +69,7 @@ namespace Planning
 		 *  If the points don't match up...fail!
 		 *  The final path will be from the start of tree0
 		 *  to the start of tree1 */
-		void makePath();
+		Planning::InterpolatedPath makePath();
 
 		/** optimize the path
 		 *  Calles the cubicBezier optimization function.
