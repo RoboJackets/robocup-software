@@ -56,7 +56,8 @@ MBED_SERIAL_PATH="$(ls /dev/ | grep ttyACM | sed 's\.*\/dev/&\g')"
 
 for i in $MBED_SERIAL_PATH; do
     echo Attempting reboot on $i ...
-    sudo sh -c "echo -ne 'reboot\r' > $i"
+    # clear buffer, send reboot, enter
+    sudo bash -c "echo -ne '\rreboot\r' > $i"
 done
 
 
