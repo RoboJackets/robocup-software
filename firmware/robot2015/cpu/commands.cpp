@@ -345,14 +345,13 @@ void cmd_ls(const vector<string> &args)
     if (d != NULL) {
         while ((p = readdir(d)) != NULL) {
             printf(" - %s\r\n", p->d_name);
-            flush();
 
         }
         closedir(d);
     } else {
         printf("Could not open directory!\r\n");
-        flush();
     }
+    flush();
 }
 
 /**
