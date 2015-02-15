@@ -510,6 +510,8 @@ void OurRobot::setPath(Planning::Path *path) {
 		delete _path;
 	}
 
+
+
 	_path = path;
 	_pathInvalidated = false;
 	_pathStartTime = timestamp();
@@ -529,14 +531,10 @@ int OurRobot::consecutivePathChangeCount() const {
 }
 
 void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles) {
-	if (!_motionConstraints.targetPos) {
-		return;
-	}
-
 	if (_state->gameState.state == GameState::Halt || !_motionConstraints.targetPos) {
 		//	clear our history of path change times
 		_pathChangeHistory.clear();
-
+		setPath(null);
 		return;
 	}
 
