@@ -534,7 +534,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	if (_state->gameState.state == GameState::Halt || !_motionConstraints.targetPos) {
 		//	clear our history of path change times
 		_pathChangeHistory.clear();
-		setPath(null);
+		setPath(nullptr);
 		return;
 	}
 
