@@ -5,7 +5,7 @@
 
 
 # Build system
-ninja
+ninja-build
 cmake
 ccache
 
