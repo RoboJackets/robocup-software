@@ -1,5 +1,10 @@
 var NAVTREEINDEX5 =
 {
+"classgameplay_1_1evaluation_1_1window__evaluator_1_1_window.html#a41aac31cc1749c060e83c4b60894d578":[12,0,2,3,1,0,7],
+"classgameplay_1_1evaluation_1_1window__evaluator_1_1_window.html#a43285bc9e554e271686d6601608c8860":[12,0,2,3,1,0,10],
+"classgameplay_1_1evaluation_1_1window__evaluator_1_1_window.html#a45e684f5c52965868b4a50aebda3e1d8":[12,0,2,3,1,0,6],
+"classgameplay_1_1evaluation_1_1window__evaluator_1_1_window.html#a78b3fe58605b7870cb3a461c59b1c064":[12,0,2,3,1,0,0],
+"classgameplay_1_1evaluation_1_1window__evaluator_1_1_window.html#a98aa62031b80c5caa1753084333a6157":[12,0,2,3,1,0,5],
 "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window.html#ad340a48e0a4995a6826b89f03d6f3731":[12,0,2,3,1,0,11],
 "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window.html#af6e24cc271dc31349af2fcf98f5b75d9":[12,0,2,3,1,0,3],
 "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window.html#afb7f1dc8b53f360289b024aa59a9ab94":[12,0,2,3,1,0,4],
@@ -244,10 +249,5 @@ var NAVTREEINDEX5 =
 "classgameplay_1_1plays_1_1testing_1_1test__mark_1_1_test_mark.html#a0d80fc747a630e481dbac06cd6fa6121":[12,0,2,8,3,12,0,0],
 "classgameplay_1_1plays_1_1testing_1_1test__mark_1_1_test_mark.html#adcad4c436a7ec369781d64efe706a63c":[12,0,2,8,3,12,0,1],
 "classgameplay_1_1plays_1_1testing_1_1test__mark_1_1_test_mark.html#adef426b681c4fcf2899f9fe7644adc35":[12,0,2,8,3,12,0,2],
-"classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html":[12,0,2,8,3,13,0],
-"classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html#a2a660efc21b9605aaec1947fed77c2b4":[12,0,2,8,3,13,0,2],
-"classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html#a42a7097118277d229fb2d9eecae44a6e":[12,0,2,8,3,13,0,1],
-"classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick_1_1_state.html":[12,0,2,8,3,13,0,0],
-"classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html":[12,0,2,8,3,14,0],
-"classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html#a060c0c676e5781288e30233d4c0d538d":[12,0,2,8,3,14,0,7]
+"classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html":[12,0,2,8,3,13,0]
 };

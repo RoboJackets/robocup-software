@@ -20,8 +20,8 @@ var searchData=
   ['resetmotionconstraints',['resetMotionConstraints',['../class_our_robot.html#aea7c7abd872f189b616eeee893256064',1,'OurRobot']]],
   ['restart',['restart',['../classgameplay_1_1fsm_1_1_state_machine.html#a7ca51b77463ff495045946ad0dff142d',1,'gameplay::fsm::StateMachine']]],
   ['rf_5fsettings_5ft',['rf_settings_t',['../structrf__settings__t.html',1,'']]],
-  ['robot',['Robot',['../classgameplay_1_1constants_1_1_robot.html',1,'gameplay::constants']]],
   ['robot',['Robot',['../class_robot.html',1,'Robot'],['../class_robot.html#a241c0ca6e392b4c2fef481392d35531d',1,'Robot::Robot()']]],
+  ['robot',['Robot',['../classgameplay_1_1constants_1_1_robot.html',1,'gameplay::constants']]],
   ['robotconfig',['RobotConfig',['../class_robot_config.html',1,'']]],
   ['robotfilter',['RobotFilter',['../class_robot_filter.html',1,'']]],
   ['robotobservation',['RobotObservation',['../class_robot_observation.html',1,'']]],
@@ -35,7 +35,7 @@ var searchData=
   ['rotated',['rotated',['../class_geometry2d_1_1_point.html#aeab18a2ec5e60bcd00498bb29bcf3048',1,'Geometry2d::Point']]],
   ['rrtplanner',['RRTPlanner',['../class_planning_1_1_r_r_t_planner.html',1,'Planning']]],
   ['rssi',['rssi',['../class_c_c1101.html#ae0b02dad1c4e1f6636516f587b22bcb8',1,'CC1101']]],
-  ['run',['run',['../class_gameplay_1_1_gameplay_module.html#aaba424dfbce39f5f9251f4c6545e18e0',1,'Gameplay::GameplayModule::run()'],['../class_motion_control.html#abdf289b41bccf17e5436f5131701efd6',1,'MotionControl::run()'],['../class_planning_1_1_r_r_t_planner.html#a1755133e327e1fed756bca8e42d8a481',1,'Planning::RRTPlanner::run()'],['../class_processor.html#a073f5e9ea6a3557c217d67ab392e5852',1,'Processor::run()'],['../class_pid.html#ae86adf5545b2af4188acdf3a29f71ea9',1,'Pid::run()']]],
+  ['run',['run',['../class_gameplay_1_1_gameplay_module.html#aaba424dfbce39f5f9251f4c6545e18e0',1,'Gameplay::GameplayModule::run()'],['../class_motion_control.html#abdf289b41bccf17e5436f5131701efd6',1,'MotionControl::run()'],['../class_planning_1_1_r_r_t_planner.html#a4d403e52859796483e59297893c3006d',1,'Planning::RRTPlanner::run()'],['../class_processor.html#a073f5e9ea6a3557c217d67ab392e5852',1,'Processor::run()'],['../class_pid.html#ae86adf5545b2af4188acdf3a29f71ea9',1,'Pid::run()']]],
   ['rxhandler',['RxHandler',['../class_comm_module.html#a1925e80415802cb75af849f4532493d9',1,'CommModule::RxHandler(T *tptr, void(T::*mptr)(RTP_t *), uint8_t portNbr)'],['../class_comm_module.html#ab52daa5d4890ecafbff07362b19dfde4',1,'CommModule::RxHandler(void(*)(RTP_t *), uint8_t)']]],
   ['rxisfresh',['rxIsFresh',['../class_our_robot.html#ab124ca47258735f3ce4ad96a8b4f1279',1,'OurRobot']]]
 ];

@@ -101,6 +101,7 @@ var NAVTREEINDEX0 =
 "_game_state_8hpp_source.html":[13,0,2,8],
 "_gamepad_joystick_8hpp_source.html":[13,0,2,1,0],
 "_gameplay_module_8hpp_source.html":[13,0,2,0,0],
+"_interpolated_path_8hpp_source.html":[13,0,2,4,0],
 "_joystick_8hpp_source.html":[13,0,2,1,1],
 "_line_8hpp_source.html":[13,0,0,0,2],
 "_log_utils_8hpp_source.html":[13,0,2,10],
@@ -112,7 +113,7 @@ var NAVTREEINDEX0 =
 "_motion_control_8hpp_source.html":[13,0,2,3,0],
 "_network_8hpp_source.html":[13,0,0,5],
 "_new_referee_module_8hpp_source.html":[13,0,2,14],
-"_path_8hpp_source.html":[13,0,2,4,0],
+"_path_8hpp_source.html":[13,0,2,4,1],
 "_pid_8hpp_source.html":[13,0,0,6],
 "_point_8hpp_source.html":[13,0,0,0,3],
 "_polygon_8hpp_source.html":[13,0,0,0,4],
@@ -121,7 +122,7 @@ var NAVTREEINDEX0 =
 "_processor_8hpp_source.html":[13,0,2,15],
 "_protobuf_tree_8hpp_source.html":[13,0,2,16],
 "_quaternion_demo_8hpp_source.html":[13,0,2,17],
-"_r_r_t_planner_8hpp_source.html":[13,0,2,4,1],
+"_r_r_t_planner_8hpp_source.html":[13,0,2,4,2],
 "_r_t_p_8hpp_source.html":[13,0,1,0,0,2,6],
 "_radio_8hpp_source.html":[13,0,2,5,1],
 "_rect_8hpp_source.html":[13,0,0,0,6],
@@ -141,7 +142,7 @@ var NAVTREEINDEX0 =
 "_timeout_8hpp_source.html":[13,0,2,25],
 "_transform_matrix_8hpp_source.html":[13,0,0,0,9],
 "_trapezoidal_motion_8hpp_source.html":[13,0,2,3,1],
-"_tree_8hpp_source.html":[13,0,2,4,2],
+"_tree_8hpp_source.html":[13,0,2,4,3],
 "_u_s_b_radio_8hpp_source.html":[13,0,2,5,4],
 "_utils_8hpp_source.html":[13,0,0,8],
 "_vision_dot_pattern_8hpp_source.html":[13,0,0,9],
@@ -248,6 +249,5 @@ var NAVTREEINDEX0 =
 "class_comm_module.html#af8280c7bf530aff59f66d0728122c7be":[12,0,20,9],
 "class_config_bool.html":[12,0,21],
 "class_config_bool.html#a0a776f02cd198aa511c1301d4cbedd89":[12,0,21,3],
-"class_config_bool.html#a2be4a94f7bc7e380aa3261d025f7796a":[12,0,21,5],
-"class_config_bool.html#a30221ddc558692a7b52598b963a74bc2":[12,0,21,7]
+"class_config_bool.html#a2be4a94f7bc7e380aa3261d025f7796a":[12,0,21,5]
 };

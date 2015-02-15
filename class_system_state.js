@@ -7,7 +7,6 @@ var class_system_state =
     [ "drawCompositeShape", "group__drawing__functions.html#gadbe321c172936eab1faf367e1dabc267", null ],
     [ "drawLine", "group__drawing__functions.html#ga8492f4adee4f70e718c2eb101a731f8f", null ],
     [ "drawLine", "group__drawing__functions.html#gaebc8a29b9d79e403ce1e06749ba4fb8c", null ],
-    [ "drawPath", "group__drawing__functions.html#gaddf2788cb1bb1ae0385e6e2b7c24b362", null ],
     [ "drawPolygon", "group__drawing__functions.html#gadd86d115d8d3ffcd618f71ce6502036d", null ],
     [ "drawPolygon", "group__drawing__functions.html#ga3fe8ee373e21333e3ee56649516f30bc", null ],
     [ "drawShape", "group__drawing__functions.html#ga3225d93e0271fb56247afc6458e52add", null ],

@@ -115,82 +115,83 @@ $(document).ready(function(){initNavTree('_tree_8hpp_source.html','');});
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;list&gt;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;</div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;Geometry2d/Segment.hpp&gt;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;planning/Path.hpp&gt;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;planning/InterpolatedPath.hpp&gt;</span></div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespace_planning.html">Planning</a></div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;{</div>
 <div class="line"><a name="l00012"></a><span class="lineno"><a class="line" href="class_planning_1_1_tree.html">   12</a></span>&#160;    <span class="keyword">class </span><a class="code" href="class_planning_1_1_tree.html">Tree</a></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    {</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;            </div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;</div>
 <div class="line"><a name="l00017"></a><span class="lineno"><a class="line" href="class_planning_1_1_tree_1_1_point.html">   17</a></span>&#160;            <span class="keyword">class </span><a class="code" href="class_planning_1_1_tree_1_1_point.html">Point</a></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;            {</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;                <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;                    <a class="code" href="class_planning_1_1_tree_1_1_point.html">Point</a>(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&amp; pos, <a class="code" href="class_planning_1_1_tree_1_1_point.html">Point</a>* parent);</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;                    </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;                    <span class="comment">//field position of the point</span></div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;                    <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> pos;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;                    </div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;                    <span class="comment">// Which obstacles contain this point</span></div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;                    std::set&lt;std::shared_ptr&lt;Geometry2d::Shape&gt;&gt; hit;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;                    </div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;                    <span class="comment">//velocity information (used by dynamic tree)</span></div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;                    <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> vel;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;                    </div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;                    <span class="keywordtype">bool</span> leaf;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;                    </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;                    <span class="keyword">inline</span> <a class="code" href="class_planning_1_1_tree_1_1_point.html">Point</a>* parent()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _parent; }</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;                    </div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;                    <span class="keywordtype">void</span> addEdges(std::list&lt;Geometry2d::Segment&gt;&amp; edges);</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;                    </div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;                    std::list&lt;Point *&gt; children;</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                    <a class="code" href="class_planning_1_1_tree_1_1_point.html">Point</a>* _parent;</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            };</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            </div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            <a class="code" href="class_planning_1_1_tree.html">Tree</a>();</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            <span class="keyword">virtual</span> ~<a class="code" href="class_planning_1_1_tree.html">Tree</a>();</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            </div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            <span class="keywordtype">void</span> <a class="code" href="class_planning_1_1_tree.html#aebea8cd6661be6de63ce2ebbf835a687">clear</a>();</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;            <span class="keywordtype">void</span> init(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;<a class="code" href="class_planning_1_1_tree.html#a8d4c66a9c88035ca7131cc67c0458027">start</a>, <span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> *obstacles);</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            </div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;            <a class="code" href="class_planning_1_1_tree_1_1_point.html">Point</a>* <a class="code" href="class_planning_1_1_tree.html#a1d2f09b93d7b662459ba7f89b9ebe32c">nearest</a>(<a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> pt);</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            <span class="keyword">virtual</span> <a class="code" href="class_planning_1_1_tree_1_1_point.html">Point</a>* <a class="code" href="class_planning_1_1_tree.html#add95fff816e880994b1fade7f5833d7c">extend</a>(<a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> pt, <a class="code" href="class_planning_1_1_tree_1_1_point.html">Point</a>* base = 0) = 0;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            </div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            <span class="keyword">virtual</span> <span class="keywordtype">bool</span> <a class="code" href="class_planning_1_1_tree.html#a4d8ff370791a7cde468fcc5521f4bdce">connect</a>(<span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> pt) = 0;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            </div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            <span class="keywordtype">void</span> <a class="code" href="class_planning_1_1_tree.html#a4a6f3826c39b7cf01b718e0178394a21">addPath</a>(<a class="code" href="class_planning_1_1_path.html">Planning::Path</a> &amp;path, <a class="code" href="class_planning_1_1_tree_1_1_point.html">Point</a>* dest, <span class="keyword">const</span> <span class="keywordtype">bool</span> rev = <span class="keyword">false</span>);</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            </div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            <span class="keywordtype">void</span> <a class="code" href="class_planning_1_1_tree.html#aa487c971664eb52a4070856b19d2b12a">addPath</a>(<a class="code" href="class_planning_1_1_interpolated_path.html">Planning::InterpolatedPath</a> &amp;path, <a class="code" href="class_planning_1_1_tree_1_1_point.html">Point</a>* dest, <span class="keyword">const</span> <span class="keywordtype">bool</span> rev = <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;            <a class="code" href="class_planning_1_1_tree_1_1_point.html">Point</a>* <a class="code" href="class_planning_1_1_tree.html#a8d4c66a9c88035ca7131cc67c0458027">start</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;            </div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            <a class="code" href="class_planning_1_1_tree_1_1_point.html">Point</a>* <a class="code" href="class_planning_1_1_tree.html#ae5673a955cf95b8d5980b075fdd0d263">last</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            </div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
 <div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="class_planning_1_1_tree.html#a673cc24682fd5e8342b740599c393d85">   72</a></span>&#160;            <span class="keywordtype">float</span> <a class="code" href="class_planning_1_1_tree.html#a673cc24682fd5e8342b740599c393d85">step</a>;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            </div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;            std::list&lt;Point*&gt; points;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;            </div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="keyword">protected</span>:</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;            <span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a>* _obstacles;</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    };</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    </div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
 <div class="line"><a name="l00081"></a><span class="lineno"><a class="line" href="class_planning_1_1_fixed_step_tree.html">   81</a></span>&#160;    <span class="keyword">class </span><a class="code" href="class_planning_1_1_fixed_step_tree.html">FixedStepTree</a> : <span class="keyword">public</span> <a class="code" href="class_planning_1_1_tree.html">Tree</a></div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    {</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            <a class="code" href="class_planning_1_1_fixed_step_tree.html">FixedStepTree</a>() {}</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;            </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            <a class="code" href="class_planning_1_1_tree_1_1_point.html">Tree::Point</a>* <a class="code" href="class_planning_1_1_fixed_step_tree.html#ae816310e36364eef726c80627efcbae1">extend</a>(<a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> pt, <a class="code" href="class_planning_1_1_tree_1_1_point.html">Tree::Point</a>* base = 0);</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;            <span class="keywordtype">bool</span> <a class="code" href="class_planning_1_1_fixed_step_tree.html#a9768d2c7f904d0baa96d18881f38f48f">connect</a>(<a class="code" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> pt);</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    };</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;}</div>
 <div class="ttc" id="class_planning_1_1_fixed_step_tree_html_a9768d2c7f904d0baa96d18881f38f48f"><div class="ttname"><a href="class_planning_1_1_fixed_step_tree.html#a9768d2c7f904d0baa96d18881f38f48f">Planning::FixedStepTree::connect</a></div><div class="ttdeci">bool connect(Geometry2d::Point pt)</div><div class="ttdoc">attempt to connect the tree to the point </div><div class="ttdef"><b>Definition:</b> Tree.cpp:189</div></div>
+<div class="ttc" id="class_planning_1_1_interpolated_path_html"><div class="ttname"><a href="class_planning_1_1_interpolated_path.html">Planning::InterpolatedPath</a></div><div class="ttdoc">Represents a motion path as a series of {pos, vel} pairs. </div><div class="ttdef"><b>Definition:</b> InterpolatedPath.hpp:18</div></div>
 <div class="ttc" id="class_planning_1_1_fixed_step_tree_html"><div class="ttname"><a href="class_planning_1_1_fixed_step_tree.html">Planning::FixedStepTree</a></div><div class="ttdoc">tree that grows based on fixed distance step </div><div class="ttdef"><b>Definition:</b> Tree.hpp:81</div></div>
 <div class="ttc" id="class_planning_1_1_tree_html_a4d8ff370791a7cde468fcc5521f4bdce"><div class="ttname"><a href="class_planning_1_1_tree.html#a4d8ff370791a7cde468fcc5521f4bdce">Planning::Tree::connect</a></div><div class="ttdeci">virtual bool connect(const Geometry2d::Point pt)=0</div><div class="ttdoc">attempt to connect the tree to the point </div></div>
 <div class="ttc" id="class_planning_1_1_tree_html_a673cc24682fd5e8342b740599c393d85"><div class="ttname"><a href="class_planning_1_1_tree.html#a673cc24682fd5e8342b740599c393d85">Planning::Tree::step</a></div><div class="ttdeci">float step</div><div class="ttdoc">tree step size...interpreted differently for different trees </div><div class="ttdef"><b>Definition:</b> Tree.hpp:72</div></div>
 <div class="ttc" id="class_planning_1_1_tree_html_a8d4c66a9c88035ca7131cc67c0458027"><div class="ttname"><a href="class_planning_1_1_tree.html#a8d4c66a9c88035ca7131cc67c0458027">Planning::Tree::start</a></div><div class="ttdeci">Point * start() const </div><div class="ttdoc">returns the first point or 0 if none </div><div class="ttdef"><b>Definition:</b> Tree.cpp:114</div></div>
 <div class="ttc" id="class_planning_1_1_tree_html_a1d2f09b93d7b662459ba7f89b9ebe32c"><div class="ttname"><a href="class_planning_1_1_tree.html#a1d2f09b93d7b662459ba7f89b9ebe32c">Planning::Tree::nearest</a></div><div class="ttdeci">Point * nearest(Geometry2d::Point pt)</div><div class="ttdoc">find the point of the tree closest to pt </div><div class="ttdef"><b>Definition:</b> Tree.cpp:96</div></div>
-<div class="ttc" id="namespace_planning_html"><div class="ttname"><a href="namespace_planning.html">Planning</a></div><div class="ttdef"><b>Definition:</b> Path.hpp:9</div></div>
+<div class="ttc" id="namespace_planning_html"><div class="ttname"><a href="namespace_planning.html">Planning</a></div><div class="ttdef"><b>Definition:</b> InterpolatedPath.hpp:9</div></div>
 <div class="ttc" id="class_planning_1_1_tree_html_ae5673a955cf95b8d5980b075fdd0d263"><div class="ttname"><a href="class_planning_1_1_tree.html#ae5673a955cf95b8d5980b075fdd0d263">Planning::Tree::last</a></div><div class="ttdeci">Point * last() const </div><div class="ttdoc">last point added </div><div class="ttdef"><b>Definition:</b> Tree.cpp:124</div></div>
 <div class="ttc" id="class_planning_1_1_tree_html_aebea8cd6661be6de63ce2ebbf835a687"><div class="ttname"><a href="class_planning_1_1_tree.html#aebea8cd6661be6de63ce2ebbf835a687">Planning::Tree::clear</a></div><div class="ttdeci">void clear()</div><div class="ttdoc">cleanup the tree </div><div class="ttdef"><b>Definition:</b> Tree.cpp:47</div></div>
 <div class="ttc" id="class_geometry2d_1_1_composite_shape_html"><div class="ttname"><a href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a></div><div class="ttdoc">A Geometry2d::CompositeShape is a Shape that is made up of other shapes. </div><div class="ttdef"><b>Definition:</b> CompositeShape.hpp:17</div></div>
@@ -198,8 +199,7 @@ $(document).ready(function(){initNavTree('_tree_8hpp_source.html','');});
 <div class="ttc" id="class_planning_1_1_tree_html"><div class="ttname"><a href="class_planning_1_1_tree.html">Planning::Tree</a></div><div class="ttdoc">base tree class for rrt trees Tree can be grown in different ways </div><div class="ttdef"><b>Definition:</b> Tree.hpp:12</div></div>
 <div class="ttc" id="class_planning_1_1_tree_1_1_point_html"><div class="ttname"><a href="class_planning_1_1_tree_1_1_point.html">Planning::Tree::Point</a></div><div class="ttdoc">base class for a tree point </div><div class="ttdef"><b>Definition:</b> Tree.hpp:17</div></div>
 <div class="ttc" id="class_planning_1_1_fixed_step_tree_html_ae816310e36364eef726c80627efcbae1"><div class="ttname"><a href="class_planning_1_1_fixed_step_tree.html#ae816310e36364eef726c80627efcbae1">Planning::FixedStepTree::extend</a></div><div class="ttdeci">Tree::Point * extend(Geometry2d::Point pt, Tree::Point *base=0)</div><div class="ttdoc">grow the tree in the direction of pt returns the new tree point. </div><div class="ttdef"><b>Definition:</b> Tree.cpp:135</div></div>
-<div class="ttc" id="class_planning_1_1_path_html"><div class="ttname"><a href="class_planning_1_1_path.html">Planning::Path</a></div><div class="ttdoc">Represents a motion path as a series of {pos, vel} pairs. </div><div class="ttdef"><b>Definition:</b> Path.hpp:18</div></div>
-<div class="ttc" id="class_planning_1_1_tree_html_a4a6f3826c39b7cf01b718e0178394a21"><div class="ttname"><a href="class_planning_1_1_tree.html#a4a6f3826c39b7cf01b718e0178394a21">Planning::Tree::addPath</a></div><div class="ttdeci">void addPath(Planning::Path &amp;path, Point *dest, const bool rev=false)</div><div class="ttdoc">make a path from the dest point&#39;s root to the dest point If rev is true, the path will be from the de...</div><div class="ttdef"><b>Definition:</b> Tree.cpp:70</div></div>
+<div class="ttc" id="class_planning_1_1_tree_html_aa487c971664eb52a4070856b19d2b12a"><div class="ttname"><a href="class_planning_1_1_tree.html#aa487c971664eb52a4070856b19d2b12a">Planning::Tree::addPath</a></div><div class="ttdeci">void addPath(Planning::InterpolatedPath &amp;path, Point *dest, const bool rev=false)</div><div class="ttdoc">make a path from the dest point&#39;s root to the dest point If rev is true, the path will be from the de...</div><div class="ttdef"><b>Definition:</b> Tree.cpp:70</div></div>
 <div class="ttc" id="class_geometry2d_1_1_point_html"><div class="ttname"><a href="class_geometry2d_1_1_point.html">Geometry2d::Point</a></div><div class="ttdoc">Simple class to represent a point in 2d space. </div><div class="ttdef"><b>Definition:</b> Point.hpp:16</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
@@ -207,7 +207,7 @@ $(document).ready(function(){initNavTree('_tree_8hpp_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_db37267b4e33893a8d121901cc481bd9.html">soccer</a></li><li class="navelem"><a class="el" href="dir_7e35db79f3a40483f5ecbace80ccf53b.html">planning</a></li><li class="navelem"><b>Tree.hpp</b></li>
-    <li class="footer">Generated on Fri Feb 6 2015 01:36:12 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Feb 15 2015 19:13:38 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

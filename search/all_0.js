@@ -2,7 +2,6 @@ var searchData=
 [
   ['_5favoidballradius',['_avoidBallRadius',['../class_our_robot.html#a3c4be933a623940fe86c44c3a3a3f5d4',1,'OurRobot']]],
   ['_5fbestgoal',['_bestGoal',['../class_planning_1_1_r_r_t_planner.html#a3f92c0ebfbc1f94d4b6926355c195d63',1,'Planning::RRTPlanner']]],
-  ['_5fbestpath',['_bestPath',['../class_planning_1_1_r_r_t_planner.html#ad32d32b8ab923ed7be9790fe63ecde6d',1,'Planning::RRTPlanner']]],
   ['_5fkick',['_Kick',['../classgameplay_1_1skills_1_1__kick_1_1___kick.html',1,'gameplay::skills::_kick']]],
   ['_5fmaxiterations',['_maxIterations',['../class_planning_1_1_r_r_t_planner.html#a3e333063b05159149291fd2defff89ac',1,'Planning::RRTPlanner']]],
   ['_5fmotionconstraints',['_motionConstraints',['../class_our_robot.html#a19e24abfe6033684e391ea99795702ce',1,'OurRobot']]],

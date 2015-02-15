@@ -88,10 +88,12 @@ var hierarchy =
     [ "Observer", null, [
       [ "gameplay.fs_watcher.FsWatcher", "classgameplay_1_1fs__watcher_1_1_fs_watcher.html", null ]
     ] ],
-    [ "Planning::Path", "class_planning_1_1_path.html", null ],
+    [ "Planning::Path", "class_planning_1_1_path.html", [
+      [ "Planning::InterpolatedPath", "class_planning_1_1_interpolated_path.html", null ]
+    ] ],
     [ "pck_ctrl_t", "structpck__ctrl__t.html", null ],
-    [ "Pid", "class_pid.html", null ],
     [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
+    [ "Pid", "class_pid.html", null ],
     [ "Planning::Tree::Point", "class_planning_1_1_tree_1_1_point.html", null ],
     [ "Geometry2d::Point", "class_geometry2d_1_1_point.html", null ],
     [ "Geometry2d::Pose", "class_geometry2d_1_1_pose.html", null ],

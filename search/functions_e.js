@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['path',['Path',['../class_planning_1_1_path.html#a7b732efd0f08055f44db555e4dcd23e0',1,'Planning::Path::Path()'],['../class_planning_1_1_path.html#ad1d1020adb93cb1cedd8ffd68f806e7f',1,'Planning::Path::Path(const Geometry2d::Point &amp;p0)'],['../class_planning_1_1_path.html#add96cf40541c803e78566691577c48df',1,'Planning::Path::Path(const Geometry2d::Point &amp;p0, const Geometry2d::Point &amp;p1)']]],
   ['penaltydist',['PenaltyDist',['../struct_field___dimensions.html#acef9413dbbebc30418e9c4e75a6f6b5f',1,'Field_Dimensions']]],
   ['perpccw',['perpCCW',['../class_geometry2d_1_1_point.html#af7a65853916e74cbe125a0abc2b6d049',1,'Geometry2d::Point']]],
   ['perpcw',['perpCW',['../class_geometry2d_1_1_point.html#abd3f1f20685256a38bc7c2a6b264ac79',1,'Geometry2d::Point']]],

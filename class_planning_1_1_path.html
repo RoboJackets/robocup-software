@@ -111,144 +111,105 @@ $(document).ready(function(){initNavTree('class_planning_1_1_path.html','');});
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="class_planning_1_1_path-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Planning::Path Class Reference</div>  </div>
+<div class="title">Planning::Path Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Represents a motion path as a series of {pos, vel} pairs.  
+<p>Abstract class representing a motion path.  
  <a href="class_planning_1_1_path.html#details">More...</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a7b732efd0f08055f44db555e4dcd23e0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7b732efd0f08055f44db555e4dcd23e0"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a7b732efd0f08055f44db555e4dcd23e0">Path</a> ()</td></tr>
-<tr class="memdesc:a7b732efd0f08055f44db555e4dcd23e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">default path is empty <br /></td></tr>
-<tr class="separator:a7b732efd0f08055f44db555e4dcd23e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad1d1020adb93cb1cedd8ffd68f806e7f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad1d1020adb93cb1cedd8ffd68f806e7f"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#ad1d1020adb93cb1cedd8ffd68f806e7f">Path</a> (const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;p0)</td></tr>
-<tr class="memdesc:ad1d1020adb93cb1cedd8ffd68f806e7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor with a single point <br /></td></tr>
-<tr class="separator:ad1d1020adb93cb1cedd8ffd68f806e7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:add96cf40541c803e78566691577c48df"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="add96cf40541c803e78566691577c48df"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#add96cf40541c803e78566691577c48df">Path</a> (const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;p0, const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;p1)</td></tr>
-<tr class="memdesc:add96cf40541c803e78566691577c48df"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor from two points <br /></td></tr>
-<tr class="separator:add96cf40541c803e78566691577c48df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a10f7ac5b02e81452b0cf66f4ede10c52"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a10f7ac5b02e81452b0cf66f4ede10c52"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>empty</b> () const </td></tr>
-<tr class="separator:a10f7ac5b02e81452b0cf66f4ede10c52"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e86d31c573e41ece37433b4c974db15"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9e86d31c573e41ece37433b4c974db15"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
-<tr class="separator:a9e86d31c573e41ece37433b4c974db15"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3dae3d7d24dd7748acc73be8f08108b8"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a3dae3d7d24dd7748acc73be8f08108b8">length</a> (unsigned int start=0) const </td></tr>
-<tr class="memdesc:a3dae3d7d24dd7748acc73be8f08108b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calulates the length of the path.  <a href="#a3dae3d7d24dd7748acc73be8f08108b8">More...</a><br /></td></tr>
-<tr class="separator:a3dae3d7d24dd7748acc73be8f08108b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a943f299e646cb3b4dc0e55e57dfc60a0"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a943f299e646cb3b4dc0e55e57dfc60a0">length</a> (unsigned int start, unsigned int end) const </td></tr>
-<tr class="memdesc:a943f299e646cb3b4dc0e55e57dfc60a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calulates the length of the path.  <a href="#a943f299e646cb3b4dc0e55e57dfc60a0">More...</a><br /></td></tr>
-<tr class="separator:a943f299e646cb3b4dc0e55e57dfc60a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a4cd2971040a6b5d94c5344f06c37ba"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1a4cd2971040a6b5d94c5344f06c37ba"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a1a4cd2971040a6b5d94c5344f06c37ba">length</a> (const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;pt) const </td></tr>
-<tr class="memdesc:a1a4cd2971040a6b5d94c5344f06c37ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the length of the path from the closet point found to <em>pt</em>. <br /></td></tr>
-<tr class="separator:a1a4cd2971040a6b5d94c5344f06c37ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac1fef7a784253f927a07a13b6217ef27"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac1fef7a784253f927a07a13b6217ef27"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#ac1fef7a784253f927a07a13b6217ef27">size</a> () const </td></tr>
-<tr class="memdesc:ac1fef7a784253f927a07a13b6217ef27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns number of waypoints. <br /></td></tr>
-<tr class="separator:ac1fef7a784253f927a07a13b6217ef27"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe47aec858e47f95295dcc59f17197db"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abe47aec858e47f95295dcc59f17197db"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#abe47aec858e47f95295dcc59f17197db">valid</a> () const </td></tr>
-<tr class="memdesc:abe47aec858e47f95295dcc59f17197db"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns true if the path has non-zero size <br /></td></tr>
-<tr class="separator:abe47aec858e47f95295dcc59f17197db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4799a96300b804e21a92574ea2a2d5c1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4799a96300b804e21a92574ea2a2d5c1"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>nearestIndex</b> (const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;pt) const </td></tr>
-<tr class="separator:a4799a96300b804e21a92574ea2a2d5c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ef658a543b7f147077391279604bb88"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9ef658a543b7f147077391279604bb88"></a>
-<a class="el" href="class_geometry2d_1_1_segment.html">Geometry2d::Segment</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a9ef658a543b7f147077391279604bb88">nearestSegment</a> (const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;pt) const </td></tr>
-<tr class="memdesc:a9ef658a543b7f147077391279604bb88"><td class="mdescLeft">&#160;</td><td class="mdescRight">returns the nearest segement of <em>pt</em> to the path <br /></td></tr>
-<tr class="separator:a9ef658a543b7f147077391279604bb88"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a391eb9889e5ee2f023953ca79076df87"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a391eb9889e5ee2f023953ca79076df87"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>distanceTo</b> (const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;pt) const </td></tr>
-<tr class="separator:a391eb9889e5ee2f023953ca79076df87"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ff482ac5e257095ea363acd07d0655e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5ff482ac5e257095ea363acd07d0655e"></a>
-boost::optional&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>start</b> () const </td></tr>
-<tr class="separator:a5ff482ac5e257095ea363acd07d0655e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a5a0d43aec0e3c55acbb3dd26ddfdaa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0a5a0d43aec0e3c55acbb3dd26ddfdaa"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>startFrom</b> (const <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;pt, <a class="el" href="class_planning_1_1_path.html">Planning::Path</a> &amp;result) const </td></tr>
-<tr class="separator:a0a5a0d43aec0e3c55acbb3dd26ddfdaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a66e9e57c6fb545e7d2db7cf09d30431e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a66e9e57c6fb545e7d2db7cf09d30431e"></a>
-boost::optional&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>destination</b> () const </td></tr>
-<tr class="separator:a66e9e57c6fb545e7d2db7cf09d30431e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97b364080f7ce4bbfc60fc22edd9f33d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a97b364080f7ce4bbfc60fc22edd9f33d"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>hit</b> (const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> &amp;shape, unsigned int start=0) const </td></tr>
-<tr class="separator:a97b364080f7ce4bbfc60fc22edd9f33d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4f9fdc9b412e8bd883485db008a4be8"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#ab4f9fdc9b412e8bd883485db008a4be8">evaluate</a> (float t, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;targetPosOut, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;targetVelOut) const </td></tr>
-<tr class="memdesc:ab4f9fdc9b412e8bd883485db008a4be8"><td class="mdescLeft">&#160;</td><td class="mdescRight">A path describes the position and velocity a robot should be at for a particular time interval.  <a href="#ab4f9fdc9b412e8bd883485db008a4be8">More...</a><br /></td></tr>
-<tr class="separator:ab4f9fdc9b412e8bd883485db008a4be8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acdbd7a933f60c0a77b3d61a745f7a230"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#acdbd7a933f60c0a77b3d61a745f7a230">getPoint</a> (float distance, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;position, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;direction) const </td></tr>
-<tr class="memdesc:acdbd7a933f60c0a77b3d61a745f7a230"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evaluates the point and velocity of the robot at a given distance in the path.  <a href="#acdbd7a933f60c0a77b3d61a745f7a230">More...</a><br /></td></tr>
-<tr class="separator:acdbd7a933f60c0a77b3d61a745f7a230"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf30ca990fb918fab0bcd8fdca78ceb6"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#abf30ca990fb918fab0bcd8fdca78ceb6">getTime</a> (int index) const </td></tr>
-<tr class="memdesc:abf30ca990fb918fab0bcd8fdca78ceb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Estimates how long it would take for the robot to get to a certain point in the path using Trapezoidal motion.  <a href="#abf30ca990fb918fab0bcd8fdca78ceb6">More...</a><br /></td></tr>
-<tr class="separator:abf30ca990fb918fab0bcd8fdca78ceb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
-Static Public Member Functions</h2></td></tr>
-<tr class="memitem:aa413f4e91ac6d47dde68d0265d577e14"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa413f4e91ac6d47dde68d0265d577e14"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>createConfiguration</b> (<a class="el" href="class_configuration.html">Configuration</a> *cfg)</td></tr>
-<tr class="separator:aa413f4e91ac6d47dde68d0265d577e14"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:aebaceb7eb8f150dec69df2c2b1d83ebe"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aebaceb7eb8f150dec69df2c2b1d83ebe"></a>
-std::vector&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>points</b></td></tr>
-<tr class="separator:aebaceb7eb8f150dec69df2c2b1d83ebe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abaa8f84a2b5bab622c34e3d6f090c3a8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abaa8f84a2b5bab622c34e3d6f090c3a8"></a>
-std::vector&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>vels</b></td></tr>
-<tr class="separator:abaa8f84a2b5bab622c34e3d6f090c3a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a302f37c5bf6107a366d9c2418d3c38e8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a302f37c5bf6107a366d9c2418d3c38e8"></a>
-std::vector&lt; float &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>times</b></td></tr>
-<tr class="separator:a302f37c5bf6107a366d9c2418d3c38e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc870eb988b76d960f3e4da9e2491fde"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afc870eb988b76d960f3e4da9e2491fde"></a>
-<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&#160;</td><td class="memItemRight" valign="bottom"><b>vi</b></td></tr>
-<tr class="separator:afc870eb988b76d960f3e4da9e2491fde"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ac543cfdad59591d01fa21241568656"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6ac543cfdad59591d01fa21241568656"></a>
-<a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a>&#160;</td><td class="memItemRight" valign="bottom"><b>vf</b></td></tr>
-<tr class="separator:a6ac543cfdad59591d01fa21241568656"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e4ef93ea20d7bbc73776931596406c9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1e4ef93ea20d7bbc73776931596406c9"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>startSpeed</b> = 0</td></tr>
-<tr class="separator:a1e4ef93ea20d7bbc73776931596406c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a339425c6ccaf0240cb33e0007dbf0e32"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a339425c6ccaf0240cb33e0007dbf0e32"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>endSpeed</b> = 0</td></tr>
-<tr class="separator:a339425c6ccaf0240cb33e0007dbf0e32"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa0a992637a6a205de26180d03b1a9ecf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa0a992637a6a205de26180d03b1a9ecf"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#aa0a992637a6a205de26180d03b1a9ecf">maxSpeed</a> = -1</td></tr>
-<tr class="memdesc:aa0a992637a6a205de26180d03b1a9ecf"><td class="mdescLeft">&#160;</td><td class="mdescRight">note: you MUST set these before calling evaluate or else it'll throw an exception <br /></td></tr>
-<tr class="separator:aa0a992637a6a205de26180d03b1a9ecf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2f60f29802d342a2de90e6542b452223"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2f60f29802d342a2de90e6542b452223"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>maxAcceleration</b> = -1</td></tr>
-<tr class="separator:a2f60f29802d342a2de90e6542b452223"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e701e94af9dc86c81986a07cac5dec5"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a9e701e94af9dc86c81986a07cac5dec5">evaluate</a> (float t, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;targetPosOut, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;targetVelOut) const =0</td></tr>
+<tr class="memdesc:a9e701e94af9dc86c81986a07cac5dec5"><td class="mdescLeft">&#160;</td><td class="mdescRight">A path describes the position and velocity a robot should be at for a particular time interval.  <a href="#a9e701e94af9dc86c81986a07cac5dec5">More...</a><br /></td></tr>
+<tr class="separator:a9e701e94af9dc86c81986a07cac5dec5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab14c44616242d7b1592cfcf3e7c69488"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#ab14c44616242d7b1592cfcf3e7c69488">hit</a> (const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> &amp;shape, <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> *startPosition=NULL) const =0</td></tr>
+<tr class="memdesc:ab14c44616242d7b1592cfcf3e7c69488"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns true if the path never touches an obstacle or additionally, when exitObstacles is true, if the path starts out in an obstacle but leaves and never re-enters any obstacle.  <a href="#ab14c44616242d7b1592cfcf3e7c69488">More...</a><br /></td></tr>
+<tr class="separator:ab14c44616242d7b1592cfcf3e7c69488"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a6d71132a1bc261968aa7fcbb141b1a"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a8a6d71132a1bc261968aa7fcbb141b1a">draw</a> (<a class="el" href="class_system_state.html">SystemState</a> *const state, const QColor &amp;color=Qt::black, const QString &amp;layer=&quot;Motion&quot;) const =0</td></tr>
+<tr class="memdesc:a8a6d71132a1bc261968aa7fcbb141b1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Draws the path.  <a href="#a8a6d71132a1bc261968aa7fcbb141b1a">More...</a><br /></td></tr>
+<tr class="separator:a8a6d71132a1bc261968aa7fcbb141b1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b9f7fee1744c7261788f7702b71eef7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0b9f7fee1744c7261788f7702b71eef7"></a>
+virtual boost::optional&lt; <a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_planning_1_1_path.html#a0b9f7fee1744c7261788f7702b71eef7">destination</a> () const =0</td></tr>
+<tr class="memdesc:a0b9f7fee1744c7261788f7702b71eef7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the destination point of the path if it has one. <br /></td></tr>
+<tr class="separator:a0b9f7fee1744c7261788f7702b71eef7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Represents a motion path as a series of {pos, vel} pairs. </p>
-<p>The path represents a function of position given time that the robot should follow. A line-segment-based path comes from the planner, then we use cubic bezier curves to interpolate and smooth it out. This is done via the evaulate() method. </p>
+<div class="textblock"><p>Abstract class representing a motion path. </p>
 </div><div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
-  <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Collaboration diagram for Planning::Path:</div>
+  <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for Planning::Path:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
 </div>
 <div id="dynsection-0-content" class="dyncontent" style="display:none;">
-<div class="center"><img src="class_planning_1_1_path__coll__graph.png" border="0" usemap="#_planning_1_1_path_coll__map" alt="Collaboration graph"/></div>
-<map name="_planning_1_1_path_coll__map" id="_planning_1_1_path_coll__map">
-<area shape="rect" id="node2" href="class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="5,5,136,35"/>
+<div class="center"><img src="class_planning_1_1_path__inherit__graph.png" border="0" usemap="#_planning_1_1_path_inherit__map" alt="Inheritance graph"/></div>
+<map name="_planning_1_1_path_inherit__map" id="_planning_1_1_path_inherit__map">
+<area shape="rect" id="node3" href="class_planning_1_1_interpolated_path.html" title="Represents a motion path as a series of {pos, vel} pairs. " alt="" coords="5,83,179,112"/>
 </map>
 <center><span class="legend">[<a target="top" href="graph_legend.html">legend</a>]</span></center></div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="ab4f9fdc9b412e8bd883485db008a4be8"></a>
+<a class="anchor" id="a8a6d71132a1bc261968aa7fcbb141b1a"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool Planning::Path::evaluate </td>
+          <td class="memname">virtual void Planning::Path::draw </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_system_state.html">SystemState</a> *const&#160;</td>
+          <td class="paramname"><em>state</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const QColor &amp;&#160;</td>
+          <td class="paramname"><em>color</em> = <code>Qt::black</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const QString &amp;&#160;</td>
+          <td class="paramname"><em>layer</em> = <code>&quot;Motion&quot;</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Draws the path. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">state</td><td>The <a class="el" href="class_system_state.html" title="Holds the positions of everything on the field. ">SystemState</a> to draw the path on </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">color</td><td>The color the path should be drawn </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">layer</td><td>The layer to draw the path on </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="class_planning_1_1_interpolated_path.html#ad4c7e92ab2bdadfb2bbca3b4c4606f6f">Planning::InterpolatedPath</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="a9e701e94af9dc86c81986a07cac5dec5"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual bool Planning::Path::evaluate </td>
           <td>(</td>
           <td class="paramtype">float&#160;</td>
           <td class="paramname"><em>t</em>, </td>
@@ -271,6 +232,11 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>maxAcceleration</b> 
           <td></td><td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 <p>A path describes the position and velocity a robot should be at for a particular time interval. </p>
@@ -285,29 +251,28 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>maxAcceleration</b> 
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true if the path is valid at time , false if you've gone past the end </dd></dl>
 
+<p>Implemented in <a class="el" href="class_planning_1_1_interpolated_path.html#a2fc9137d67ddf689cbf38b1aa823871f">Planning::InterpolatedPath</a>.</p>
+
 </div>
 </div>
-<a class="anchor" id="acdbd7a933f60c0a77b3d61a745f7a230"></a>
+<a class="anchor" id="ab14c44616242d7b1592cfcf3e7c69488"></a>
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool Planning::Path::getPoint </td>
+          <td class="memname">virtual bool Planning::Path::hit </td>
           <td>(</td>
-          <td class="paramtype">float&#160;</td>
-          <td class="paramname"><em>distance</em>, </td>
+          <td class="paramtype">const <a class="el" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> &amp;&#160;</td>
+          <td class="paramname"><em>shape</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;&#160;</td>
-          <td class="paramname"><em>position</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> &amp;&#160;</td>
-          <td class="paramname"><em>direction</em>&#160;</td>
+          <td class="paramtype"><a class="el" href="class_geometry2d_1_1_point.html">Geometry2d::Point</a> *&#160;</td>
+          <td class="paramname"><em>startPosition</em> = <code>NULL</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -315,110 +280,29 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>maxAcceleration</b> 
           <td></td><td> const</td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
-<p>Evaluates the point and velocity of the robot at a given distance in the path. </p>
+<p>Returns true if the path never touches an obstacle or additionally, when exitObstacles is true, if the path starts out in an obstacle but leaves and never re-enters any obstacle. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">distance</td><td>A given distance the robot has traveled down the path from the start or t=0 </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">position</td><td>The position the robot given distance in the path </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">direction</td><td>The target velocity of the robot at the given distance in the path </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">shape</td><td>The obstacles on the field </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">start</td><td>The point on the path to start checking from </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>true if the path is valid at the given distance, false if you've gone past the end </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>true if the path is valid, false if it hits an obstacle </dd></dl>
+
+<p>Implemented in <a class="el" href="class_planning_1_1_interpolated_path.html#a74edb5a84b760ae0663761ec4aaca534">Planning::InterpolatedPath</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="abf30ca990fb918fab0bcd8fdca78ceb6"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">float Planning::Path::getTime </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>index</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Estimates how long it would take for the robot to get to a certain point in the path using Trapezoidal motion. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">index</td><td>Index of the point on the path </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>the estimated time it would take for the robot to a point on the path starting from the start of the path </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a3dae3d7d24dd7748acc73be8f08108b8"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">float Planning::Path::length </td>
-          <td>(</td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>start</em> = <code>0</code></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Calulates the length of the path. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">start</td><td>Index of point in path to use at start point. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>the length of the path starting at point (start). </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a943f299e646cb3b4dc0e55e57dfc60a0"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">float Planning::Path::length </td>
-          <td>(</td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>start</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">unsigned int&#160;</td>
-          <td class="paramname"><em>end</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Calulates the length of the path. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">start</td><td>Index of point in path to use at start point. </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">end</td><td>Index of point in path to use at end point. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>the length of the path starting at point (start) and ending at point [end]. </dd></dl>
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following files:<ul>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>soccer/planning/<a class="el" href="_path_8hpp_source.html">Path.hpp</a></li>
-<li>soccer/planning/Path.cpp</li>
 </ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
@@ -426,7 +310,7 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>maxAcceleration</b> 
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><b>Planning</b></li><li class="navelem"><a class="el" href="class_planning_1_1_path.html">Path</a></li>
-    <li class="footer">Generated on Fri Feb 6 2015 01:36:13 for GT RoboCup SSL by
+    <li class="footer">Generated on Sun Feb 15 2015 19:13:40 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

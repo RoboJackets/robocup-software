@@ -3,7 +3,7 @@ var class_planning_1_1_tree =
     [ "Point", "class_planning_1_1_tree_1_1_point.html", "class_planning_1_1_tree_1_1_point" ],
     [ "Tree", "class_planning_1_1_tree.html#ad376a7c639d857312f5de2ef47482f68", null ],
     [ "~Tree", "class_planning_1_1_tree.html#abdc38545cf3f588725b5d8b8075b3866", null ],
-    [ "addPath", "class_planning_1_1_tree.html#a4a6f3826c39b7cf01b718e0178394a21", null ],
+    [ "addPath", "class_planning_1_1_tree.html#aa487c971664eb52a4070856b19d2b12a", null ],
     [ "clear", "class_planning_1_1_tree.html#aebea8cd6661be6de63ce2ebbf835a687", null ],
     [ "connect", "class_planning_1_1_tree.html#a4d8ff370791a7cde468fcc5521f4bdce", null ],
     [ "extend", "class_planning_1_1_tree.html#add95fff816e880994b1fade7f5833d7c", null ],
