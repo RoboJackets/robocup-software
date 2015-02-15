@@ -66,7 +66,6 @@ struct MotionConstraints {
 
     /// The speed we should be going when we reach the end of the path
     float endSpeed = 0;
-    float maxReplanDistance;
 
 
 
