@@ -142,8 +142,8 @@ $(document).ready(function(){initNavTree('commands_8hpp_source.html','');});
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="keywordtype">void</span> executeIterativeCommand(<span class="keywordtype">void</span>);</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">/*</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment"> * Command definitions. Some command functions have circular definitions. </span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment"> * </span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment"> * Command definitions. Some command functions have circular definitions.</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment"> *</span></div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment"> * Alphabetical order please.</span></div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="comment"> */</span></div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="keywordtype">void</span> cmd_alias(<span class="keyword">const</span> std::vector&lt;std::string&gt; &amp;args);</div>
@@ -152,8 +152,9 @@ $(document).ready(function(){initNavTree('commands_8hpp_source.html','');});
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="keywordtype">void</span> cmd_exitSys(<span class="keyword">const</span> std::vector&lt;std::string&gt; &amp;args);</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="keywordtype">void</span> cmd_help(<span class="keyword">const</span> std::vector&lt;std::string&gt; &amp;args);</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="keywordtype">void</span> cmd_ping(<span class="keyword">const</span> std::vector&lt;std::string&gt; &amp;args);</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="keywordtype">void</span> cmd_resetMbed(<span class="keyword">const</span> std::vector&lt;std::string&gt; &amp;args);</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="keywordtype">void</span> cmd_ls(<span class="keyword">const</span> std::vector&lt;std::string&gt; &amp;args);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keywordtype">void</span> cmd_resetMbed(<span class="keyword">const</span> std::vector&lt;std::string&gt; &amp;args);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
 <div class="ttc" id="structcommand__t_html"><div class="ttname"><a href="structcommand__t.html">command_t</a></div><div class="ttdoc">command structure </div><div class="ttdef"><b>Definition:</b> commands.hpp:21</div></div>
 <div class="ttc" id="structcommand__t_html_aecafd32aee69a7a18c5a0ca6068b3a72"><div class="ttname"><a href="structcommand__t.html#aecafd32aee69a7a18c5a0ca6068b3a72">command_t::isIterative</a></div><div class="ttdeci">const bool isIterative</div><div class="ttdoc">iterative flag. </div><div class="ttdef"><b>Definition:</b> commands.hpp:32</div></div>
 <div class="ttc" id="structcommand__t_html_ac3e0119f9dad4e6bf296d097cb616f54"><div class="ttname"><a href="structcommand__t.html#ac3e0119f9dad4e6bf296d097cb616f54">command_t::usage</a></div><div class="ttdeci">const std::string usage</div><div class="ttdoc">usage description. </div><div class="ttdef"><b>Definition:</b> commands.hpp:47</div></div>
@@ -165,7 +166,7 @@ $(document).ready(function(){initNavTree('commands_8hpp_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_c0c004eb35b511375354a83a9fdcdede.html">firmware</a></li><li class="navelem"><a class="el" href="dir_354b1a99ef6c04cbc0da7bd8e88ac732.html">robot2015</a></li><li class="navelem"><a class="el" href="dir_128d5102bb692abd81ad85548ed1360f.html">cpu</a></li><li class="navelem"><b>commands.hpp</b></li>
-    <li class="footer">Generated on Sun Feb 15 2015 19:13:38 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Feb 16 2015 19:51:51 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>
