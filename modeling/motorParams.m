@@ -3,7 +3,8 @@
 %Motor Spec Sheet: http://www.maxonmotorusa.com/medias/sys_master/root/8813854326814/14-232-EN-Jun.pdf
 
 
-p = 16; %%number of motor poles (NOT pole pairs)
+poles = 16; %%number of motor poles (NOT pole pairs)
+p = poles;
 r = 1.03/2; %% phase resistance of stator winding
 l = (0.572/2)/1000; %% phase inductance of stator winding
 j = .000001; %% combined rotor and wheel moment of inirtia (Kg*m2)
@@ -14,6 +15,9 @@ kt = 33.5e-3;%% Torque Constant Nm/A
 Vcc = 24; %%Maximum Voltage of system
 encoderResolution = 12; %%Measured in bits
 encoderSampleTime = .001; %%Measured in seconds
+pwmResolution = 8; %% number of bits of resolution for duty cycle
+pwmClockPeriod = .00001; %%in seconds. How often the PWM counter updates
+%%pwmFreq = 1/(2^pwmResolution*pwmClockPeriod);
 %% X' = AX + BU
 %% Y = CX
 
