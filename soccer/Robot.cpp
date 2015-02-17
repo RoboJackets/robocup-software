@@ -562,7 +562,11 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	if (!_motionConstraints.targetPos) {
 		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: stopped" << std::endl;
 		addText(QString("replan: no goal"));
-		setPath(new Planning::InterpolatedPath(pos));
+
+		Planning::InterpolatedPath *newPath = new Planning::InterpolatedPath(pos);
+		newPath->maxSpeed = _motionConstraints.maxSpeed;
+		newPath->maxAcceleration = _motionConstraints.maxAcceleration;
+		setPath(newPath);
 		_path->draw(_state);
 		return;
 	}
@@ -618,50 +622,15 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	}
 
 
-
-
-	//	invalidate path if it hits obstacles
-	//	TODO: it would be better to compare WHICH obstacles the old and new paths hit rather than just looking at IF they hit obstacles
-	
-
-	/*
-	//	try a straight path EVERY time
-	if (_path && _path->points.size() > 2) {
-		//	try a straight line path first
-		Geometry2d::Segment straight_seg(pos, *_motionConstraints.targetPos);
-		if (!full_obstacles.hit(straight_seg)) {
-			addText(QString("planner: pre-emptive straight_line"));
-			Planning::Path straightLine(pos, *_motionConstraints.targetPos);
-			setPath(straightLine);
-			_pathInvalidated = false;
-		}
-	}
-	*/
-
-
-
 	// check if goal is close to previous goal to reuse path
 	if (!_pathInvalidated) {
 		addText("Reusing path");
-		// for (auto itr : _path->points) {
-		// 	cout << "\t(" << itr.x << ", " << itr.y << ")" << endl;
-		// }
 	} else {
 		Planning::Path *newlyPlannedPath = _planner->run(pos, angle, vel, _motionConstraints, &full_obstacles);
 		addText("Replanning");
 		// use the newly generated path
 		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: using new RRT path" << std::endl;
-
-		//	try a straight line path first
-	//	Geometry2d::Segment straight_seg(pos, *_motionConstraints.targetPos);
-	//	if (!full_obstacles.hit(straight_seg)) {
-	//		addText(QString("planner: straight_line"));
-	//		Planning::Path straightLine(pos, *_motionConstraints.targetPos);
-	//		setPath(straightLine);
-	//	} else {
-			//	rrt-planned path
-			setPath(newlyPlannedPath);
-	//	}
+		setPath(newlyPlannedPath);
 	}
 	_pathChangeHistory.push_back(_didSetPathThisIteration);
 

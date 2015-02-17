@@ -144,6 +144,9 @@ Planning::InterpolatedPath* RRTPlanner::run(
 Planning::InterpolatedPath RRTPlanner::makePath()
 {
 	Planning::InterpolatedPath newPath;
+	newPath.maxSpeed = _motionConstraints.maxSpeed;
+	newPath.maxAcceleration = _motionConstraints.maxAcceleration;
+	
 
 	Tree::Point* p0 = _fixedStepTree0.last();
 	Tree::Point* p1 = _fixedStepTree1.last();
@@ -155,19 +158,14 @@ Planning::InterpolatedPath RRTPlanner::makePath()
 	}
 
 	
+	//	extract path from RRTs
+	_fixedStepTree0.addPath(newPath, p0);//add the start tree first...normal order (aka from root to p0)
+	_fixedStepTree1.addPath(newPath, p1, true);//add the goal tree in reverse (aka p1 to root)
 
-	//add the start tree first...normal order
-	//aka from root to p0
-	_fixedStepTree0.addPath(newPath, p0);
-
-	//add the goal tree in reverse
-	//aka p1 to root
-	_fixedStepTree1.addPath(newPath, p1, true);
 	newPath.vi = vi;
-	optimize(newPath, _obstacles);
+	newPath.endSpeed = _motionConstraints.endSpeed;
 
-	/// check the path against the old one
-	//bool hit = (_obstacles) ? _bestPath.hit(*_obstacles) : false;
+	optimize(newPath, _obstacles);
 
 	//TODO evaluate the old path based on the closest segment
 	//and the distance to the endpoint of that segment
@@ -179,21 +177,8 @@ Planning::InterpolatedPath RRTPlanner::makePath()
 	/// 3. start changed -- maybe (Roman)
 	/// 3. new path is better
 	/// 4. old path not valid (hits obstacles)
-	//if (_bestPath.points.empty() ||
-	//		(hit) ||
-	//		//(_bestPath.points.front() != _fixedStepTree0.start()->pos) ||
-	//		(_bestPath.points.back() != _fixedStepTree1.start()->pos) ||
-	//		(newPath.length() < _bestPath.length()))
-	//{
+
 	return newPath;
-	//	return;
-	//}
-	/*
-	else
-	{
-		_bestPath.vi = vi;
-		cubicBezier(_bestPath, _obstacles);
-	}*/
 }
 
 void RRTPlanner::optimize(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles)
@@ -236,10 +221,6 @@ void RRTPlanner::optimize(Planning::InterpolatedPath &path, const Geometry2d::Co
 	// Done with the path
 	pts.push_back(path.points.back());
 	path.points = pts;
-	//quarticBezier(path, obstacles);
-	path.maxSpeed = _motionConstraints.maxSpeed;
-	path.endSpeed = _motionConstraints.endSpeed;
-	path.maxAcceleration = _motionConstraints.maxAcceleration;
 	cubicBezier(path, obstacles);
 }
 
