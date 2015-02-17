@@ -12,9 +12,7 @@
 #include "Geometry2d/Point.hpp"
 #include "Constants.hpp"
 #include "time.hpp"
-//#include <iostream>
 #include <math.h>
-using namespace std;
 
 
 /**

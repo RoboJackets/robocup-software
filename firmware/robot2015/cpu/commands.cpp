@@ -1,7 +1,8 @@
-#include "mbed.h"
+#include "robot.hpp"
 #include "commands.hpp"
 #include "console.hpp"
 #include "reset.hpp"
+#include "LocalFileSystem.h"
 
 #include "IOExpander.h"
 #include "IOExpanderDigitalOut.h"
@@ -34,6 +35,9 @@ vector<string> iterativeCommandArgs;
  * the current iterative command handler
  */
 void (*iterativeCommandHandler)(const vector<string> &args);
+
+// Create an object to help find files
+LocalFileSystem local("local");
 
 /**
  * commands list. Add command handlers to commands.hpp.
@@ -69,15 +73,15 @@ const vector<command_t> commands =
 		"echo <text>"},
 	{
 		{"exit", "quit"},
-		false, 
-		cmd_exitSys, 
-		"breaks the main loop", 
+		false,
+		cmd_exitSys,
+		"breaks the main loop",
 		"exit | quit"},
 	{
 		{"help", "h", "?"},
-		false, 
-		cmd_help, 
-		"prints this message", 
+		false,
+		cmd_help,
+		"prints this message",
 		"help | h | ? (<--list> | <command names>)"},
 	{
 		{"ping"},
@@ -86,24 +90,30 @@ const vector<command_t> commands =
 		"check console responsiveness. Ping pong.",
 		"ping"},
 	{
-		{"reset", "reboot"}, 
+		{"ls"},
 		false,
-		cmd_resetMbed, 
-		"resets the mbed (like pushing the reset button)", 
-		"reset | reboot"},
-    {
-        {"testioexp"},
-        false,
-        cmd_testioexp,
-        "Cycles through all leds on io expander on pins 9 and 10",
-        "testioexp"},
-    {
-        {"toggleioexp"},
-        false,
-        cmd_toggleioexp,
-        "Toggles a single output pin on the IO Expander.",
-        "toggleioexp <side(A | B)> <pin number(0-7)>"}
+		cmd_ls,
+		"list contents of current directory\r\n\tBugs: sometimes displays train animations",
+		"ls [folder/device]"},
+	{
+		{"reset", "reboot"},
+		false,
+		cmd_resetMbed,
+		"resets the mbed (like pushing the reset button)",
+		"reset | reboot"}
 
+	{
+		{"testioexp"},
+		false,
+		cmd_testioexp,
+		"Cycles through all leds on io expander on pins 9 and 10",
+		"testioexp"},
+	{
+		{"toggleioexp"},
+		false,
+		cmd_toggleioexp,
+		"Toggles a single output pin on the IO Expander.",
+		"toggleioexp <side(A | B)> <pin number(0-7)>"}
 };
 
 /**
@@ -136,7 +146,7 @@ void cmd_alias(const vector<string> &args)
 				a++;
 			}
 
-			printf("\r\n");	
+			printf("\r\n");
 		}
 	}
 	else
@@ -153,7 +163,7 @@ void cmd_alias(const vector<string> &args)
 				{
 					aliasFound = true;
 
-					printf("%s:\r\n", 
+					printf("%s:\r\n",
 						commands[cmdInd].aliases[0].c_str());
 
 					//print aliases
@@ -161,7 +171,7 @@ void cmd_alias(const vector<string> &args)
 					while (a < commands[cmdInd].aliases.size()
 					       && commands[cmdInd].aliases[a] != "\0")
 					{
-						printf("\t%s", 
+						printf("\t%s",
 						       commands[cmdInd].aliases[a].c_str());
 
 						//print commas
@@ -172,10 +182,10 @@ void cmd_alias(const vector<string> &args)
 						}
 
 						a++;
-					}	
-				}		
+					}
+				}
 			}
-			
+
 			if (aliasFound)
 			{
 				printf("\r\n");
@@ -185,7 +195,7 @@ void cmd_alias(const vector<string> &args)
 				printf("error listing aliases: command \"%s\" not found\r\n",
 				       args[argInd].c_str());
 			}
-		}		
+		}
 	}
 
 	flush();
@@ -193,7 +203,7 @@ void cmd_alias(const vector<string> &args)
 
 /**
  * clears the console
- */ 
+ */
 void cmd_clear(const vector<string> &args)
 {
 	printf(CLEAR_SCREEN_SEQ.c_str());
@@ -208,8 +218,8 @@ void cmd_echo(const vector<string> &args)
 	for (uint8_t argInd = 0; argInd < args.size(); argInd++)
 	{
 		printf("%s ", args[argInd].c_str());
-	}	
-	
+	}
+
 	printf("\r\n");
 	flush();
 }
@@ -236,16 +246,16 @@ void cmd_help(const vector<string> &args)
 	{
 		for (uint8_t i = 0; i < commands.size(); i++)
 		{
-			printf("%s:\r\n", 
+			printf("%s:\r\n",
 			       commands[i].aliases[0].c_str());
 			flush();
-			printf("\tDescription: %s\r\n", 
+			printf("\tDescription: %s\r\n",
 			       commands[i].description.c_str());
 			flush();
 			printf("\tUsage: %s\r\n",
 			       commands[i].usage.c_str());
 			flush();
-			printf("\tIterative: %s\r\n\r\n", 
+			printf("\tIterative: %s\r\n\r\n",
 			       commands[i].isIterative ? "true" : "false");
 			flush();
 		}
@@ -260,7 +270,7 @@ void cmd_help(const vector<string> &args)
 		{
 			if (i % 4 == 3)
 			{
-				printf("%s\r\n", commands[i].aliases[0].c_str());	
+				printf("%s\r\n", commands[i].aliases[0].c_str());
 			}
 			else if (i == commands.size() - 1)
 			{
@@ -270,7 +280,7 @@ void cmd_help(const vector<string> &args)
 			{
 				printf("%s,\t", commands[i].aliases[0].c_str());
 			}
-		}	
+		}
 
 		printf("\r\n");
 		flush();
@@ -293,18 +303,18 @@ void cmd_help(const vector<string> &args)
 					commandFound = true;
 
 					//print info
-					printf("%s:\r\n", 
+					printf("%s:\r\n",
 					       commands[i].aliases[0].c_str());
 					flush();
-					printf("\tDescription: %s\r\n", 
+					printf("\tDescription: %s\r\n",
 					       commands[i].description.c_str());
 					flush();
 					printf("\tUsage: %s\r\n",
 					       commands[i].usage.c_str());
 					flush();
-					printf("\tIterative: %s\r\n\r\n", 
+					printf("\tIterative: %s\r\n\r\n",
 					       commands[i].isIterative ? "true" : "false");
-					flush();	
+					flush();
 				}
 			}
 
@@ -315,7 +325,7 @@ void cmd_help(const vector<string> &args)
 				flush();
 			}
 		}
-	}	
+	}
 }
 
 /**
@@ -417,6 +427,31 @@ void cmd_toggleioexp(const vector<string> &args)
 
 
 /**
+ * Lists files
+ */
+void cmd_ls(const vector<string> &args)
+{
+    DIR *d;
+    struct dirent *p;
+
+    if (args.size() == 0) {
+        d = opendir("/local");
+    } else {
+        d = opendir(args[0].c_str());
+    }
+    if (d != NULL) {
+        while ((p = readdir(d)) != NULL) {
+            printf(" - %s\r\n", p->d_name);
+
+        }
+        closedir(d);
+    } else {
+        printf("Could not open directory!\r\n");
+    }
+    flush();
+}
+
+/**
  * command executor
  *
  * much of this taken from console.c under old robot firmware
@@ -427,10 +462,10 @@ void executeCommand(char* rawCommand)
 	string cmdName = "\0";
 	vector<string> args;
 	args.reserve(MAX_COMMAND_ARGS);
-	
+
 	char* pch = strtok(rawCommand, " ");
 	while (pch != NULL)
-	{		
+	{
 		//check args length
 		if (argc > MAX_COMMAND_ARGS)
 		{
@@ -454,7 +489,7 @@ void executeCommand(char* rawCommand)
 	}
 
 	if (cmdName.size() > 0)
-	{		
+	{
 		bool commandFound = false;
 		for (uint8_t cmdInd = 0; cmdInd < commands.size(); cmdInd++)
 		{
@@ -477,7 +512,7 @@ void executeCommand(char* rawCommand)
 					//command function in fields to be used
 					//in the iterative call.
 					iterativeCommandArgs = args;
-					iterativeCommandHandler = 
+					iterativeCommandHandler =
 						commands[cmdInd].handler;
 
 					executingIterativeCommand = true;
@@ -490,8 +525,8 @@ void executeCommand(char* rawCommand)
 				}
 
 				break;
-			}		
-		}	
+			}
+		}
 
 		//if the command wasnt found, print an error
 		if (!commandFound)
@@ -499,7 +534,7 @@ void executeCommand(char* rawCommand)
 			printf("%s\r\n", COMMAND_NOT_FOUND_MSG.c_str());
 			flush();
 		}
-	}	
+	}
 }
 
 /**
@@ -511,7 +546,7 @@ bool isExecutingIterativeCommand(void)
 }
 
 /**
- * executes iterative commands, and is nonblocking regardless  
+ * executes iterative commands, and is nonblocking regardless
  * of if an iterative command is not running or not.
  */
 void executeIterativeCommand(void)
@@ -519,7 +554,7 @@ void executeIterativeCommand(void)
 	if (executingIterativeCommand)
 	{
 		iterativeCommandHandler(iterativeCommandArgs);
-	}	
+	}
 }
 
 /**
@@ -530,4 +565,3 @@ void cancelIterativeCommand(void)
 {
 	executingIterativeCommand = false;
 }
-

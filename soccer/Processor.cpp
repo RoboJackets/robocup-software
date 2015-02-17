@@ -26,7 +26,7 @@
 #include <protobuf/messages_robocup_ssl_geometry.pb.h>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
-#include <git_version.h>
+#include <git_version.hpp>
 
 REGISTER_CONFIGURABLE(Processor)
 
@@ -449,7 +449,7 @@ void Processor::run()
 			_state.logFrame->add_debug_layers(str.toStdString());
 		}
 		
-		// Our robots
+		// Add our robots data to the LogFram
 		for (OurRobot *r : _state.self)
 		{
 			if (r->visible)
@@ -458,7 +458,9 @@ void Processor::run()
 				
 				Packet::LogFrame::Robot *log = _state.logFrame->add_self();
 				*log->mutable_pos() = r->pos;
-				*log->mutable_vel() = r->vel;
+				*log->mutable_world_vel() = r->vel;
+				*log->mutable_body_vel() = r->vel.rotated(2*M_PI - r->angle);
+				//*log->mutable_cmd_body_vel() = r->
 				// *log->mutable_cmd_vel() = r->cmd_vel;
 				// log->set_cmd_w(r->cmd_w);
 				log->set_shell(r->shell());
@@ -512,7 +514,8 @@ void Processor::run()
 				*log->mutable_pos() = r->pos;
 				log->set_shell(r->shell());
 				log->set_angle(r->angle);
-				*log->mutable_vel() = r->vel;
+				*log->mutable_world_vel() = r->vel;
+				*log->mutable_body_vel() = r->vel.rotated(2*M_PI - r->angle);
 			}
 		}
 		
