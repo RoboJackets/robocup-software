@@ -18,6 +18,9 @@ encoderSampleTime = .001; %%Measured in seconds
 pwmResolution = 8; %% number of bits of resolution for duty cycle
 pwmClockPeriod = .00001; %%in seconds. How often the PWM counter updates
 %%pwmFreq = 1/(2^pwmResolution*pwmClockPeriod);
+pwmApprox = 1; %%Tells sim to use approx version of PWM, speeds up sim
+
+
 %% X' = AX + BU
 %% Y = CX
 
