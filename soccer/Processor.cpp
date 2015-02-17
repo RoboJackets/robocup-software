@@ -26,7 +26,7 @@
 #include <protobuf/messages_robocup_ssl_geometry.pb.h>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
-#include <git_version.h>
+#include <git_version.hpp>
 
 REGISTER_CONFIGURABLE(Processor)
 
