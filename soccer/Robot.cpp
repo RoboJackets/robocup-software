@@ -71,6 +71,8 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	_state(state),
 	_pathChangeHistory(PathChangeHistoryBufferSize)
 {
+	_path = nullptr;
+	
 	_cmdText = new std::stringstream();
 
 	resetAvoidBall();
@@ -509,8 +511,6 @@ void OurRobot::setPath(Planning::Path *path) {
 	if (_path) {
 		delete _path;
 	}
-
-
 
 	_path = path;
 	_pathInvalidated = false;
