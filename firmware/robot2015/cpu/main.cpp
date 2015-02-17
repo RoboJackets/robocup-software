@@ -1,6 +1,7 @@
 #include "mbed.h"
 #include "console.hpp"
 #include "commands.hpp"
+#include "IOExpander.h";
 
 Ticker lifeLight;
 DigitalOut ledOne(LED1);

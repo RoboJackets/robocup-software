@@ -67,4 +67,6 @@ void cmd_exitSys(const std::vector<std::string> &args);
 void cmd_help(const std::vector<std::string> &args);
 void cmd_ping(const std::vector<std::string> &args);
 void cmd_resetMbed(const std::vector<std::string> &args);
+void cmd_testioexp(const std::vector<std::string> &args);
+void cmd_toggleioexp(const std::vector<std::string> &args);
 
