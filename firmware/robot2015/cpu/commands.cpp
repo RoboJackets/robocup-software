@@ -4,6 +4,8 @@
 #include "reset.hpp"
 #include "LocalFileSystem.h"
 
+#include "git_version.hpp"
+
 #include <algorithm>
 
 using namespace std;
@@ -92,6 +94,12 @@ const vector<command_t> commands =
 		cmd_ls,
 		"list contents of current directory\r\n\tBugs: sometimes displays train animations",
 		"ls [folder/device]"},
+	{
+		{"info"},
+		false,
+		cmd_info,
+		"Stufff",
+		""},
 	{
 		{"reset", "reboot"},
 		false,
@@ -351,6 +359,17 @@ void cmd_ls(const vector<string> &args)
     } else {
         printf("Could not open directory!\r\n");
     }
+    flush();
+}
+
+
+/**
+ * prints info
+ */
+void cmd_info(const vector<string> &args)
+{
+
+    printf("%s\r\n", git_version_hash);
     flush();
 }
 
