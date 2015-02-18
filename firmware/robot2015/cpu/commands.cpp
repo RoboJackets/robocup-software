@@ -3,10 +3,11 @@
 #include "console.hpp"
 #include "reset.hpp"
 #include "LocalFileSystem.h"
-
 #include "git_version.hpp"
 
 #include <algorithm>
+
+
 
 using namespace std;
 
@@ -95,11 +96,11 @@ const vector<command_t> commands =
 		"list contents of current directory\r\n\tBugs: sometimes displays train animations",
 		"ls [folder/device]"},
 	{
-		{"info"},
+		{"info", "version"},
 		false,
 		cmd_info,
-		"Stufff",
-		""},
+		"Display information about the current version of the firmware",
+		"info | version"},
 	{
 		{"reset", "reboot"},
 		false,
@@ -368,8 +369,22 @@ void cmd_ls(const vector<string> &args)
  */
 void cmd_info(const vector<string> &args)
 {
+    printf("Git Hash:\t%s\r\n", git_version_hash);
 
-    printf("%s\r\n", git_version_hash);
+    printf("Commit Date:\t%s\r\n", git_head_date);
+
+    // Prints out a serial number, taken from the mbed forms
+    // https://developer.mbed.org/forum/helloworld/topic/2048/
+    unsigned int Interface[5] = {58,0,0,0,0};
+    typedef void (*CallMe)(unsigned int[],unsigned int[]);
+    CallMe CallMe_entry=(CallMe)0x1FFF1FF1;
+    CallMe_entry(Interface, Interface);
+    if (!Interface[0])
+        printf("Serial Number:\t%0.8X%0.8X%0.8X%0.8X\r\n",
+                Interface[1], Interface[2], Interface[3], Interface[4]);
+    else
+        printf("Unable to retrieve Serial Number from LPC Flash\r\n");
+
     flush();
 }
 
