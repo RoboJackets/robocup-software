@@ -14,10 +14,10 @@ if [ ! -e "/dev/disk/by-id" ]; then
     exit 2
 fi
 
-MBED_DEVICES="$(ls /dev/disk/by-id/ | grep mbed)"
+MBED_DEVICES="$(ls /dev/disk/by-id/ | grep -i mbed)"
 
 # This prepends the directory structure to all found mbed devices
-MBED_DEVICES_PATH="$(ls /dev/disk/by-id/ | grep mbed | sed 's\.*\/dev/disk/by-id/&\g')"
+MBED_DEVICES_PATH="$(ls /dev/disk/by-id/ | grep -i mbed | sed 's\.*\/dev/disk/by-id/&\g')"
 
 # errors out if no mbed devices were found
 if [ -z $MBED_DEVICES ]; then
