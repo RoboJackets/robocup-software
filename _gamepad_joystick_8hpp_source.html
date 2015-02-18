@@ -114,56 +114,33 @@ $(document).ready(function(){initNavTree('_gamepad_joystick_8hpp_source.html',''
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;</div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &quot;Joystick.hpp&quot;</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;</div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div>
-<div class="line"><a name="l00009"></a><span class="lineno"><a class="line" href="class_gamepad_joystick.html">    9</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_gamepad_joystick.html">GamepadJoystick</a> : <span class="keyword">public</span> <a class="code" href="class_joystick.html">Joystick</a> {</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;        <a class="code" href="class_gamepad_joystick.html">GamepadJoystick</a>();</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        ~<a class="code" href="class_gamepad_joystick.html">GamepadJoystick</a>();</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="class_gamepad_joystick.html#a378ab547151a541b6c85b7722c9cd54e">reset</a>();</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="class_gamepad_joystick.html#a955b893d3d34cd2e5500eaeb7d0e8cda">update</a>();</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <a class="code" href="struct_joystick_control_values.html">JoystickControlValues</a> <a class="code" href="class_gamepad_joystick.html#a43520e3a61aa1c7e88b929f53a354a59">getJoystickControlValues</a>();</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="class_gamepad_joystick.html#a5c3c2d4bcc90206fb073210d348d58a2">valid</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;        <span class="keywordtype">bool</span> open();</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        <span class="keywordtype">void</span> close();</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        </div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <span class="comment">// File handle of joystick device</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;        <span class="keywordtype">int</span> _fd;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        std::vector&lt;int&gt; _axis;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        std::vector&lt;int&gt; _button;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <span class="keywordtype">float</span> _dribbler;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        <span class="keywordtype">bool</span> _dribblerOn;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="keywordtype">float</span> _kicker;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="comment">// Last time the dribbler speed changed</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        Time _lastDribblerTime;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        Time _lastKickerTime;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">int</span> Axis_Left_X = 0;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">int</span> Axis_Left_Y = 1;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">int</span> Axis_Right_X = 2;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">int</span> Axis_Right_Y = 3;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">int</span> Axis_DPad_X = 4;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">int</span> Axis_DPad_Y = 5;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        </div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="comment">// D-pad</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="keywordtype">bool</span> dUp()<span class="keyword">    const </span>{ <span class="keywordflow">return</span> (_axis[5] &lt; 0) ? <span class="keyword">true</span> : <span class="keyword">false</span>; }</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <span class="keywordtype">bool</span> dDown()<span class="keyword">  const </span>{ <span class="keywordflow">return</span> (_axis[5] &gt; 0) ? <span class="keyword">true</span> : <span class="keyword">false</span>; }</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="keywordtype">bool</span> dRight()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> (_axis[4] &gt; 0) ? <span class="keyword">true</span> : <span class="keyword">false</span>; }</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="keywordtype">bool</span> dLeft()<span class="keyword">  const </span>{ <span class="keywordflow">return</span> (_axis[4] &lt; 0) ? <span class="keyword">true</span> : <span class="keyword">false</span>; }</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;};</div>
-<div class="ttc" id="class_gamepad_joystick_html"><div class="ttname"><a href="class_gamepad_joystick.html">GamepadJoystick</a></div><div class="ttdoc">Logitecch Gamepad/Joystick used to control robots. </div><div class="ttdef"><b>Definition:</b> GamepadJoystick.hpp:9</div></div>
-<div class="ttc" id="class_gamepad_joystick_html_a955b893d3d34cd2e5500eaeb7d0e8cda"><div class="ttname"><a href="class_gamepad_joystick.html#a955b893d3d34cd2e5500eaeb7d0e8cda">GamepadJoystick::update</a></div><div class="ttdeci">void update()</div><div class="ttdoc">Instructs the joystick to updates its values. </div><div class="ttdef"><b>Definition:</b> GamepadJoystick.cpp:101</div></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;SDL/SDL.h&gt;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;</div>
+<div class="line"><a name="l00010"></a><span class="lineno"><a class="line" href="class_gamepad_joystick.html">   10</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_gamepad_joystick.html">GamepadJoystick</a> : <span class="keyword">public</span> <a class="code" href="class_joystick.html">Joystick</a> {</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;        <a class="code" href="class_gamepad_joystick.html">GamepadJoystick</a>();</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;        ~<a class="code" href="class_gamepad_joystick.html">GamepadJoystick</a>();</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="class_gamepad_joystick.html#af755f2ecd6bbfd7fd4187473995c2b25">reset</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;        <span class="keywordtype">void</span> <a class="code" href="class_gamepad_joystick.html#ac4de36ae979a045c4445e866adcbd335">update</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <a class="code" href="struct_joystick_control_values.html">JoystickControlValues</a> <a class="code" href="class_gamepad_joystick.html#a5295fd0b867b599ac4310e7bf85dcc79">getJoystickControlValues</a>() <span class="keyword">override</span>;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="class_gamepad_joystick.html#ae8234bf105ab2e860dd742d08519cb19">valid</a>() <span class="keyword">const override</span>;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        SDL_Joystick *_joystick;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        <a class="code" href="struct_joystick_control_values.html">JoystickControlValues</a> _controls;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        Time _lastDribblerTime;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;        Time _lastKickerTime;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;};</div>
+<div class="ttc" id="class_gamepad_joystick_html_af755f2ecd6bbfd7fd4187473995c2b25"><div class="ttname"><a href="class_gamepad_joystick.html#af755f2ecd6bbfd7fd4187473995c2b25">GamepadJoystick::reset</a></div><div class="ttdeci">void reset() override</div><div class="ttdoc">Resets any stored values. </div><div class="ttdef"><b>Definition:</b> GamepadJoystick.cpp:158</div></div>
+<div class="ttc" id="class_gamepad_joystick_html_a5295fd0b867b599ac4310e7bf85dcc79"><div class="ttname"><a href="class_gamepad_joystick.html#a5295fd0b867b599ac4310e7bf85dcc79">GamepadJoystick::getJoystickControlValues</a></div><div class="ttdeci">JoystickControlValues getJoystickControlValues() override</div><div class="ttdoc">Returns the control values from this joystick. </div><div class="ttdef"><b>Definition:</b> GamepadJoystick.cpp:151</div></div>
+<div class="ttc" id="class_gamepad_joystick_html"><div class="ttname"><a href="class_gamepad_joystick.html">GamepadJoystick</a></div><div class="ttdoc">Logitecch Gamepad/Joystick used to control robots. </div><div class="ttdef"><b>Definition:</b> GamepadJoystick.hpp:10</div></div>
+<div class="ttc" id="class_gamepad_joystick_html_ae8234bf105ab2e860dd742d08519cb19"><div class="ttname"><a href="class_gamepad_joystick.html#ae8234bf105ab2e860dd742d08519cb19">GamepadJoystick::valid</a></div><div class="ttdeci">bool valid() const override</div><div class="ttdoc">Whether or not this Joystick is connected to a real device. </div><div class="ttdef"><b>Definition:</b> GamepadJoystick.cpp:53</div></div>
+<div class="ttc" id="class_gamepad_joystick_html_ac4de36ae979a045c4445e866adcbd335"><div class="ttname"><a href="class_gamepad_joystick.html#ac4de36ae979a045c4445e866adcbd335">GamepadJoystick::update</a></div><div class="ttdeci">void update() override</div><div class="ttdoc">Instructs the joystick to updates its values. </div><div class="ttdef"><b>Definition:</b> GamepadJoystick.cpp:58</div></div>
 <div class="ttc" id="struct_joystick_control_values_html"><div class="ttname"><a href="struct_joystick_control_values.html">JoystickControlValues</a></div><div class="ttdef"><b>Definition:</b> Joystick.hpp:14</div></div>
-<div class="ttc" id="class_gamepad_joystick_html_a5c3c2d4bcc90206fb073210d348d58a2"><div class="ttname"><a href="class_gamepad_joystick.html#a5c3c2d4bcc90206fb073210d348d58a2">GamepadJoystick::valid</a></div><div class="ttdeci">bool valid() const </div><div class="ttdoc">Whether or not this Joystick is connected to a real device. </div><div class="ttdef"><b>Definition:</b> GamepadJoystick.cpp:50</div></div>
-<div class="ttc" id="class_gamepad_joystick_html_a43520e3a61aa1c7e88b929f53a354a59"><div class="ttname"><a href="class_gamepad_joystick.html#a43520e3a61aa1c7e88b929f53a354a59">GamepadJoystick::getJoystickControlValues</a></div><div class="ttdeci">JoystickControlValues getJoystickControlValues()</div><div class="ttdoc">Returns the control values from this joystick. </div><div class="ttdef"><b>Definition:</b> GamepadJoystick.cpp:218</div></div>
-<div class="ttc" id="class_gamepad_joystick_html_a378ab547151a541b6c85b7722c9cd54e"><div class="ttname"><a href="class_gamepad_joystick.html#a378ab547151a541b6c85b7722c9cd54e">GamepadJoystick::reset</a></div><div class="ttdeci">void reset()</div><div class="ttdoc">Resets any stored values. </div><div class="ttdef"><b>Definition:</b> GamepadJoystick.cpp:268</div></div>
 <div class="ttc" id="class_joystick_html"><div class="ttname"><a href="class_joystick.html">Joystick</a></div><div class="ttdoc">Used for manually controlling robots. </div><div class="ttdef"><b>Definition:</b> Joystick.hpp:36</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
@@ -171,7 +148,7 @@ $(document).ready(function(){initNavTree('_gamepad_joystick_8hpp_source.html',''
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_db37267b4e33893a8d121901cc481bd9.html">soccer</a></li><li class="navelem"><a class="el" href="dir_956ad80ab53543a60928165df82e2118.html">joystick</a></li><li class="navelem"><b>GamepadJoystick.hpp</b></li>
-    <li class="footer">Generated on Tue Feb 17 2015 19:23:57 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Feb 18 2015 02:58:13 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

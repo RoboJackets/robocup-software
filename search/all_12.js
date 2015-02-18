@@ -15,7 +15,7 @@ var searchData=
   ['refereetab',['RefereeTab',['../class_referee_tab.html',1,'']]],
   ['repeatedlineup',['RepeatedLineUp',['../classgameplay_1_1plays_1_1testing_1_1repeated__line__up_1_1_repeated_line_up.html',1,'gameplay::plays::testing::repeated_line_up']]],
   ['replanifneeded',['replanIfNeeded',['../class_our_robot.html#a95efbaa6f6668a9559edc7c29e992447',1,'OurRobot']]],
-  ['reset',['reset',['../class_gamepad_joystick.html#a378ab547151a541b6c85b7722c9cd54e',1,'GamepadJoystick::reset()'],['../class_joystick.html#a501ff19bf226c6edb17a80e8fd7218f8',1,'Joystick::reset()'],['../class_space_nav_joystick.html#a793b5d7cb3f40488ca11668dfdc830ab',1,'SpaceNavJoystick::reset()'],['../class_c_c1101.html#abd6ae0b5286271c54e1ec785fb498c51',1,'CC1101::reset()'],['../class_comm_link.html#a50a7e9304ef5ddbf702613104b1fcbc1',1,'CommLink::reset()']]],
+  ['reset',['reset',['../class_gamepad_joystick.html#af755f2ecd6bbfd7fd4187473995c2b25',1,'GamepadJoystick::reset()'],['../class_joystick.html#a501ff19bf226c6edb17a80e8fd7218f8',1,'Joystick::reset()'],['../class_space_nav_joystick.html#a793b5d7cb3f40488ca11668dfdc830ab',1,'SpaceNavJoystick::reset()'],['../class_c_c1101.html#abd6ae0b5286271c54e1ec785fb498c51',1,'CC1101::reset()'],['../class_comm_link.html#a50a7e9304ef5ddbf702613104b1fcbc1',1,'CommLink::reset()']]],
   ['resetfornextiteration',['resetForNextIteration',['../class_our_robot.html#aa9ab95dc3c42279734fe860609d6e9d0',1,'OurRobot']]],
   ['resetmotionconstraints',['resetMotionConstraints',['../class_our_robot.html#aea7c7abd872f189b616eeee893256064',1,'OurRobot']]],
   ['restart',['restart',['../classgameplay_1_1fsm_1_1_state_machine.html#a7ca51b77463ff495045946ad0dff142d',1,'gameplay::fsm::StateMachine']]],
