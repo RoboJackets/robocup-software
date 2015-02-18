@@ -3,4 +3,5 @@
 //  which is generated automatically by CMake
 extern const char *git_version_hash;
 extern const char *git_head_date;
+extern const char *git_head_author;
 extern const bool git_version_dirty;
