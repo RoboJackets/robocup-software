@@ -1,7 +1,6 @@
 var NAVTREE =
 [
   [ "GT RoboCup SSL", "index.html", [
-    [ "Logic Analyzer Trace Captures", "md_firmware_robot2015_trace_captures__r_e_a_d_m_e.html", null ],
     [ "Build Systems", "md_doc__build_systems.html", null ],
     [ "Documentation", "md_doc__documentation.html", null ],
     [ "Gameplay", "md_doc__gameplay.html", null ],

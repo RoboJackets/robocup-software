@@ -9,6 +9,5 @@ var searchData=
   ['localobstacles',['localObstacles',['../class_our_robot.html#ad3ccf59f3c226b40774933432ce22a70',1,'OurRobot']]],
   ['logger',['Logger',['../class_logger.html',1,'']]],
   ['logviewer',['LogViewer',['../class_log_viewer.html',1,'']]],
-  ['lqi',['lqi',['../class_c_c1101.html#aab5bee912982884b386fa0f279d39935',1,'CC1101']]],
-  ['logic_20analyzer_20trace_20captures',['Logic Analyzer Trace Captures',['../md_firmware_robot2015_trace_captures__r_e_a_d_m_e.html',1,'']]]
+  ['lqi',['lqi',['../class_c_c1101.html#aab5bee912982884b386fa0f279d39935',1,'CC1101']]]
 ];
