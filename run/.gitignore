@@ -23,6 +23,7 @@ libNxCooking.so.1
 libPhysXCore.so.1
 libPhysXLoader.so.1
 robocup.so
+robocup.dylib
 run_tests
 robot2015.bin
 test-cpp

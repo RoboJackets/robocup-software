@@ -20,6 +20,11 @@ file(GLOB SOCCER_SRC
 list(REMOVE_ITEM SOCCER_SRC "${CMAKE_CURRENT_SOURCE_DIR}/LogViewer.cpp")
 list(REMOVE_ITEM SOCCER_SRC "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
 
+# help CMake find gl.h, glu.h, etc on OS X
+if(APPLE)
+    link_directories(/opt/X11/lib/)
+    include_directories(/opt/X11/include/)
+endif()
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
@@ -41,9 +46,9 @@ set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost COMPONENTS system REQUIRED)
 
 # find boost python
-# This package is named 'python3' on Arch and 'python-py34 on Ubuntu 14'
+# This package is named 'python3' on Arch, 'python-py34' on Ubuntu 14, and 'python' on OS X
 set(FOUND_A_BOOST_PYTHON FALSE)
-foreach(possible_name python3 python-py32 python-py33 python-py34)
+foreach(possible_name python3 python-py32 python-py33 python-py34 python)
     find_package(Boost COMPONENTS ${possible_name})
     if (Boost_FOUND)
         set(FOUND_A_BOOST_PYTHON TRUE)
@@ -66,14 +71,19 @@ add_library(robocup SHARED ${SOCCER_SRC} ${SOCCER_UIS} ${SOCCER_RSRC})
 set_target_properties(robocup PROPERTIES PREFIX "")
 
 target_link_libraries(robocup common)
-target_link_libraries(robocup ${PYTHON_LIBRARIES})
 qt5_use_modules(robocup Widgets Xml Core OpenGL Network)
 target_link_libraries(robocup ${LIBUSB_1_LIBRARIES})
 target_link_libraries(robocup ${Boost_LIBRARIES})
 target_link_libraries(robocup GL GLU glut)
-target_link_libraries(robocup pthread bfd)
+target_link_libraries(robocup pthread)
 target_link_libraries(robocup spnav)
 target_link_libraries(robocup ${SDL_LIBRARY})
+
+# python
+# note: these are set in the root CMakeLists.txt file
+include_directories(${PYTHON_INCLUDE_DIRS})
+link_directories(${PYTHON_LINK_DIRS})
+target_link_libraries(robocup ${PYTHON_LIBRARIES})
 
 # 'soccer' program
 add_executable(soccer main.cpp)

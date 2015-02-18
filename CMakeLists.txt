@@ -11,15 +11,56 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/run)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/run)
 
 # Qt5
-find_package(Qt5Widgets)
+if(APPLE)
+    # look for the homebrew-installed version of Qt5
+    find_package(Qt5Widgets
+        REQUIRED
+        PATHS /usr/local/Cellar/qt5/*)
+else()
+    find_package(Qt5Widgets REQUIRED)
+endif()
+message(STATUS "Found Qt5: ${Qt5Widgets_DIR}")
 
 # Google Protobuf
 find_package(Protobuf REQUIRED)
 include_directories(${PROTOBUF_INCLUDE_DIR})
 
 # Python
-find_package(PythonInterp 3.2 REQUIRED)
-find_package(PythonLibs 3.2 REQUIRED)
+if(APPLE)
+    # Finding homebrew-installed python3 on OS X doesn't work with the standard
+    # FindPythonLibs.cmake file, so we do a custom search for it here.
+
+    # This block will either fail or set these three variables:
+    # * PYTHON_INCLUDE_DIRS
+    # * PYTHON_LINK_DIRS
+    # * PYTHON_LIBRARIES
+
+    # try to find python3-config
+    find_program(PYTHON3_CONFIG
+        NAMES python3-config)
+    if(NOT PYTHON3_CONFIG)
+        message(FATAL_ERROR "Could not find python3-config")
+    endif()
+
+    # use python3-config to find where python stuff is stored
+    execute_process(COMMAND "${PYTHON3_CONFIG}" --prefix
+                    OUTPUT_VARIABLE PYTHON3_PREFIX
+                    OUTPUT_STRIP_TRAILING_WHITESPACE
+                    ERROR_QUIET)
+    set(PYTHON_INCLUDE_DIRS "${PYTHON3_PREFIX}/Headers")
+    set(PYTHON_LINK_DIRS "${PYTHON3_PREFIX}/lib")
+
+    # search for the python library
+    find_library(PYTHON_LIBRARIES
+        NAMES python3.4 python3.3 python3.2 python3
+        PATHS ${PYTHON_LINK_DIRS})
+    if(NOT PYTHON_LIBRARIES)
+        message(FATAL_ERROR "Unable to find python 3 library")
+    endif()
+else()
+    find_package(PythonInterp 3.2 REQUIRED)
+    find_package(PythonLibs 3.2 REQUIRED)
+endif()
 
 # Eigen - used for linear algebra
 find_package(Eigen3 REQUIRED)
