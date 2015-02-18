@@ -373,6 +373,11 @@ void cmd_info(const vector<string> &args)
 
     printf("Commit Date:\t%s\r\n", git_head_date);
 
+    printf("Commit Author:\t%s\r\n", git_head_author);
+
+
+    printf("\r\n");
+
     // Prints out a serial number, taken from the mbed forms
     // https://developer.mbed.org/forum/helloworld/topic/2048/
     unsigned int Interface[5] = {58,0,0,0,0};
