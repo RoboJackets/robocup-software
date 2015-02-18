@@ -42,3 +42,5 @@ glu
 
 # to drive robots with the SpaceNavigator 3d mouse
 libspnav
+
+libsdl1.2-dev

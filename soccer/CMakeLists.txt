@@ -57,6 +57,8 @@ endif()
 # libusb
 include_directories(${LIBUSB_1_INCLUDE_DIRS})
 
+# SDL
+include_directories(${SDL_INCLUDE_DIRS})
 
 # Build stand-alone soccer dylib
 # This is linked into soccer and our unit tests, as well as being a python module
@@ -71,7 +73,7 @@ target_link_libraries(robocup ${Boost_LIBRARIES})
 target_link_libraries(robocup GL GLU glut)
 target_link_libraries(robocup pthread bfd)
 target_link_libraries(robocup spnav)
-
+target_link_libraries(robocup ${SDL_LIBRARY})
 
 # 'soccer' program
 add_executable(soccer main.cpp)

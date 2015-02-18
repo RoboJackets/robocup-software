@@ -28,6 +28,9 @@ include_directories(${EIGEN_INCLUDE_DIR})
 # libusb
 find_package(libusb-1.0 REQUIRED)
 
+# SDL
+find_package(SDL REQUIRED)
+
 # Several things depend on the headers in the 'common' directory
 include_directories("${PROJECT_SOURCE_DIR}/common") # for headers in common/
 include_directories("${PROJECT_BINARY_DIR}/common") # for generated protobuf headers
