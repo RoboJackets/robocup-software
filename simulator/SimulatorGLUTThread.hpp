@@ -46,7 +46,7 @@ public:
 	typedef std::shared_ptr<SimulatorGLUTThread> shared_ptr;
 
 	/** need to pass arguments through to glut */
-	SimulatorGLUTThread(int argc, char* argv[], const QString& configFile, bool sendShared);
+	SimulatorGLUTThread(int argc, char* argv[], const QString& configFile, bool sendShared, bool showWindow = true);
 
 	~SimulatorGLUTThread();
 
@@ -60,6 +60,8 @@ private:
 public:
 
 	btDynamicsWorld* getDynamicsWorld();
+
+	void stepSimulation();
 
 	void setDrawClusters(bool drawClusters) {}
 
@@ -102,5 +104,7 @@ public:
 
 	void addVehicle(btDynamicsWorld* m_dynamicsWorld,
 			btAlignedObjectArray<btCollisionShape*>& m_collisionShapes);
+
+	bool _showWindow;
 
 }; // \class SimulatorGLUTThread

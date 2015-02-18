@@ -6,7 +6,7 @@ all:
 run: all
 	cd run; ./soccer
 run-sim: all
-	cd run; ./simulator &
+	cd run; ./simulator --headless &
 	cd run; ./soccer -sim
 
 # Run both C++ and python unit tests
