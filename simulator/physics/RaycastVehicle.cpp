@@ -25,13 +25,6 @@
 #define ROLLING_INFLUENCE_FIX
 
 
-btRigidBody& btActionInterface::getFixedBody()
-{
-	static btRigidBody s_fixed(0, 0,0);
-	s_fixed.setMassProps(btScalar(0.),btVector3(btScalar(0.),btScalar(0.),btScalar(0.)));
-	return s_fixed;
-}
-
 RaycastVehicle::RaycastVehicle(const btVehicleTuning& tuning,btRigidBody* chassis,	btVehicleRaycaster* raycaster )
 :m_vehicleRaycaster(raycaster),
 m_pitchControl(btScalar(0.))
@@ -498,8 +491,8 @@ struct btWheelContactPoint
 
 };
 
-btScalar calcRollingFriction(btWheelContactPoint& contactPoint);
-btScalar calcRollingFriction(btWheelContactPoint& contactPoint)
+
+btScalar calculateRollingFriction(btWheelContactPoint& contactPoint)
 {
 
 	btScalar j1=0.f;
@@ -527,7 +520,6 @@ btScalar calcRollingFriction(btWheelContactPoint& contactPoint)
 
 
 //Allow omniwheels to slide sideways
-btScalar sideFrictionStiffness2 = btScalar(0.00);
 void	RaycastVehicle::updateFriction(btScalar	timeStep)
 {
 
@@ -589,7 +581,8 @@ void	RaycastVehicle::updateFriction(btScalar	timeStep)
 							  *groundObject, wheelInfo.m_raycastInfo.m_contactPointWS,
 							  btScalar(0.), m_axle[i],m_sideImpulse[i],timeStep);
 
-					m_sideImpulse[i] *= sideFrictionStiffness2;
+					static const btScalar kSideFrictionStiffness = btScalar(0.00);
+					m_sideImpulse[i] *= kSideFrictionStiffness;
 						
 				}
 				
@@ -623,7 +616,7 @@ void	RaycastVehicle::updateFriction(btScalar	timeStep)
 					btScalar defaultRollingFrictionImpulse = 100.f;
 					btScalar maxImpulse = wheelInfo.m_brake ? wheelInfo.m_brake : defaultRollingFrictionImpulse;
 					btWheelContactPoint contactPt(m_chassisBody,groundObject,wheelInfo.m_raycastInfo.m_contactPointWS,m_forwardWS[wheel],maxImpulse);
-					rollingFriction = calcRollingFriction(contactPt);
+					rollingFriction = calculateRollingFriction(contactPt);
 				}
 			}
 
