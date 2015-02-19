@@ -1,0 +1,23 @@
+# This file contains a (probably incomplete) list of packages that must
+# be installed through homebrew on OS X in order to build this project.
+# In addition to these, you'll also need to install libspnav - see below.
+
+qt5
+pyqt5
+python3
+sdl
+boost
+boost-build
+boost-python --with-python3
+ccache
+cmake
+homebrew/x11/freeglut
+libusb
+
+
+# Installing libspnav on OS X:
+################################################################################
+# 1: Download libspnav source from http://sourceforge.net/projects/spacenav
+# 2: Extract zip/tar.gz
+# 3: Run ./configure --disable-x11 from the extracted directory
+# 4: make; sudo make install
