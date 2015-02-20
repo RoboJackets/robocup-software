@@ -14,6 +14,9 @@ cmake
 homebrew/x11/freeglut
 libusb
 
+# also, install xquartz, with `brew cask install xquartz` or else you'll
+# get the simulator erro: "freeglut (./simulator): failed to open display"
+
 
 # Installing libspnav on OS X:
 ################################################################################
