@@ -95,6 +95,15 @@ if(APPLE)
     set(MACOSX_BUNDLE_ICON_FILE SoccerBall)
 
     add_executable(soccer MACOSX_BUNDLE main.cpp ${OSX_ICON_FILES})
+
+    # add a script called "soccer" in the run/ dir that launches the soccer app and passes on all args,
+    # so it can be used the same way the soccer executable is used on Linux
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/soccer
+        "#!/bin/sh\n"
+        "open soccer.app --args $@")
+    file(INSTALL ${CMAKE_CURRENT_BINARY_DIR}/soccer
+        DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        FILE_PERMISSIONS OWNER_READ GROUP_READ OWNER_WRITE GROUP_WRITE OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE)
 else()
     add_executable(soccer main.cpp)
 endif()
