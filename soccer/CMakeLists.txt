@@ -86,9 +86,21 @@ link_directories(${PYTHON_LINK_DIRS})
 target_link_libraries(robocup ${PYTHON_LIBRARIES})
 
 # 'soccer' program
-add_executable(soccer main.cpp)
+if(APPLE)
+    include(BundleUtilities)
+
+    # app icon
+    set(OSX_ICON_FILES ${CMAKE_CURRENT_SOURCE_DIR}/ui/SoccerBall.icns)
+    set_source_files_properties(${OSX_ICON_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+    set(MACOSX_BUNDLE_ICON_FILE SoccerBall)
+
+    add_executable(soccer MACOSX_BUNDLE main.cpp ${OSX_ICON_FILES})
+else()
+    add_executable(soccer main.cpp)
+endif()
 qt5_use_modules(soccer Widgets Xml Core OpenGL Network)
 target_link_libraries(soccer robocup)
+
 
 # Unit tests
 add_subdirectory(tests)
