@@ -3,6 +3,7 @@ soccsim
 simulator
 vehicle_demo
 soccer
+soccer.app
 soccer_tests
 simple_logger
 log_viewer
