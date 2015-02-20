@@ -6,6 +6,7 @@ var class_main_window =
     [ "configuration", "class_main_window.html#a9670a762862f1ce381fc43b740809f1e", null ],
     [ "frameNumber", "class_main_window.html#a81d847a2c53c4a8dc780d6daed0983db", null ],
     [ "frameNumber", "class_main_window.html#af9dba43a40d8b47a7e1e20d80e8a5ccc", null ],
+    [ "historyLocationChanged", "class_main_window.html#a61e359aed68c836d5393b607fdf17104", null ],
     [ "live", "class_main_window.html#acf17751d50897b9cb27607a8ae583fb1", null ],
     [ "logFileChanged", "class_main_window.html#a6197fa99fcda6b9461a3beadd9f7a3c5", null ],
     [ "processor", "class_main_window.html#a088d6e32820b7c79cb4eb17c49947ef3", null ],

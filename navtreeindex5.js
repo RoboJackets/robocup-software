@@ -1,5 +1,6 @@
 var NAVTREEINDEX5 =
 {
+"classgameplay_1_1evaluation_1_1window__evaluator_1_1_window.html#a2c2cb848b68fdb0d670578fa9524ab73":[11,0,2,3,1,0,9],
 "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window.html#a41aac31cc1749c060e83c4b60894d578":[11,0,2,3,1,0,7],
 "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window.html#a43285bc9e554e271686d6601608c8860":[11,0,2,3,1,0,10],
 "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window.html#a45e684f5c52965868b4a50aebda3e1d8":[11,0,2,3,1,0,6],
@@ -248,6 +249,5 @@ var NAVTREEINDEX5 =
 "classgameplay_1_1plays_1_1testing_1_1test__mark_1_1_test_mark.html":[11,0,2,8,3,12,0],
 "classgameplay_1_1plays_1_1testing_1_1test__mark_1_1_test_mark.html#a0d80fc747a630e481dbac06cd6fa6121":[11,0,2,8,3,12,0,0],
 "classgameplay_1_1plays_1_1testing_1_1test__mark_1_1_test_mark.html#adcad4c436a7ec369781d64efe706a63c":[11,0,2,8,3,12,0,1],
-"classgameplay_1_1plays_1_1testing_1_1test__mark_1_1_test_mark.html#adef426b681c4fcf2899f9fe7644adc35":[11,0,2,8,3,12,0,2],
-"classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html":[11,0,2,8,3,13,0]
+"classgameplay_1_1plays_1_1testing_1_1test__mark_1_1_test_mark.html#adef426b681c4fcf2899f9fe7644adc35":[11,0,2,8,3,12,0,2]
 };
