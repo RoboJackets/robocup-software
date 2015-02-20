@@ -1,9 +1,10 @@
 <RCC>
   <qresource prefix="icons">
-    <file>media-playback-pause.png</file>
-    <file>media-seek-backward.png</file>
-    <file>media-seek-forward.png</file>
-    <file>media-skip-backward.png</file>
-    <file>media-skip-forward.png</file>
+    <file>fast-backward.svg</file>
+    <file>slow-backward.svg</file>
+    <file>pause.svg</file>
+    <file>slow-forward.svg</file>
+    <file>fast-forward.svg</file>
+    <file>live.svg</file>
   </qresource>
 </RCC>
