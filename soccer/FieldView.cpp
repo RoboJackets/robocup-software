@@ -77,6 +77,9 @@ void FieldView::rotate(int value)
 void FieldView::paintEvent(QPaintEvent* e)
 {
 	QPainter p(this);
+
+	//	antialiasing drastically improves rendering quality
+	p.setRenderHint(QPainter::Antialiasing);
 	
 	if (!live)
 	{
