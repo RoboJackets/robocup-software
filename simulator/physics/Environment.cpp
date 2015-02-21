@@ -79,7 +79,6 @@ void Environment::preStep(float deltaTime){
 
 void Environment::step()
 {
-
 	// Check for SimCommands
 	while (_visionSocket.hasPendingDatagrams())
 	{
