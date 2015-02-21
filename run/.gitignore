@@ -1,6 +1,7 @@
 libprotobuf.so*
 soccsim
 simulator
+simulator.app
 vehicle_demo
 soccer
 soccer.app

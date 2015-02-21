@@ -1,0 +1,23 @@
+#!/bin/bash
+
+BASE="$(dirname $0)/.."
+
+echo "-- Installing required homebrew packages"
+brew install $(sed 's/#.*//;/^$/d' $BASE/util/osx-packages.txt)
+
+#  needed for the simulator
+echo "-- Installing xquartz through homebrew cask"
+brew cask install xquartz
+
+sudo pip3 install -r $BASE/util/requirements3.txt
+
+# prevent OS X's AppNap "feature" from sleeping the simulator
+echo "-- Disabling AppNap for simulator"
+defaults write org.robojackets.robocup.simulator NSAppSleepDisabled -bool YES
+
+# Note: you also need to install libspnav, which isn't available through homebrew
+################################################################################
+# 1: Download libspnav source from http://sourceforge.net/projects/spacenav
+# 2: Extract zip/tar.gz
+# 3: Run ./configure --disable-x11 from the extracted directory
+# 4: make; sudo make install

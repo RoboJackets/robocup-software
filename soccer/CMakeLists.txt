@@ -94,6 +94,8 @@ if(APPLE)
     set_source_files_properties(${OSX_ICON_FILES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
     set(MACOSX_BUNDLE_ICON_FILE SoccerBall)
 
+    set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.robojackets.robocup.soccer")
+
     add_executable(soccer MACOSX_BUNDLE main.cpp ${OSX_ICON_FILES})
 
     # add a script called "soccer" in the run/ dir that launches the soccer app and passes on all args,
