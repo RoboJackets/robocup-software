@@ -6,5 +6,5 @@ var class_joystick =
     [ "mutex", "class_joystick.html#a159904c815f766ba68a7281d5738e6a2", null ],
     [ "reset", "class_joystick.html#a501ff19bf226c6edb17a80e8fd7218f8", null ],
     [ "update", "class_joystick.html#a4a959114e8af00ec67d07b8276f420ca", null ],
-    [ "valid", "class_joystick.html#a7e9f7707fd861b7d9e89658d9fadd99e", null ]
+    [ "valid", "class_joystick.html#ae7964e1471ff27f95df34e2bcf191523", null ]
 ];
