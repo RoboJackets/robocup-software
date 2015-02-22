@@ -34,8 +34,8 @@ Geometry2d::Point evaluateBezierVelocity(float t,
 	return pt;
 }
 
-Path createBezierPath(const std::vector<Geometry2d::Point>& controls) {
-	Planning::Path interp;
+BezierPath createBezierPath(const std::vector<Geometry2d::Point>& controls) {
+	Planning::BezierPath interp;
 	size_t degree = controls.size();
 
 	// generate coefficients

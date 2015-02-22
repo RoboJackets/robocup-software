@@ -67,6 +67,9 @@ spacenavd
 # for the high-level python interface for soccer
 libboost-python-dev
 
+# for joystick
+libsdl1.2-dev
+
 # everything else...
 build-essential
 libusb-1.0-0-dev

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <gtest/gtest.h>
-#include <planning/Path.hpp>
+#include <planning/InterpolatedPath.hpp>
 
 using namespace std;
 using namespace Geometry2d;
@@ -10,7 +10,7 @@ using namespace Planning;
 TEST( testPath, nearestSegment) {
 	Geometry2d::Point p0, p1(1.0, 0.0), p2(2.0, 0.0), p3(3.0, 0.0);
 
-	Planning::Path path;
+	Planning::InterpolatedPath path;
 	path.points.push_back(p0);
 	path.points.push_back(p1);
 	path.points.push_back(p2);
@@ -28,14 +28,14 @@ TEST( testPath, startFrom1 ) {
 
 	Geometry2d::Point p0, p1(1.0, 0.0), p2(2.0, 0.0), p3(3.0, 0.0);
 
-	Planning::Path path;
+	Planning::InterpolatedPath path;
 	path.points.push_back(p0);
 	path.points.push_back(p1);
 	path.points.push_back(p2);
 	path.points.push_back(p3);
 
 	// simple case - on same axis as path
-	Planning::Path act;
+	Planning::InterpolatedPath act;
 	path.startFrom(Point(-1.0, 0.0), act);
 
 	// verify
@@ -50,14 +50,14 @@ TEST( testPath, startFrom2 ) {
 
 	Geometry2d::Point p0, p1(1.0, 0.0), p2(2.0, 0.0), p3(3.0, 0.0);
 
-	Planning::Path path;
+	Planning::InterpolatedPath path;
 	path.points.push_back(p0);
 	path.points.push_back(p1);
 	path.points.push_back(p2);
 	path.points.push_back(p3);
 
 	Point pt(0.5,-1.0);
-	Planning::Path act;
+	Planning::InterpolatedPath act;
 	path.startFrom(pt, act);
 
 	// verify
@@ -72,14 +72,14 @@ TEST( testPath, startFrom3 ) {
 
 	Geometry2d::Point p0, p1(1.0, 0.0), p2(2.0, 0.0), p3(3.0, 0.0);
 
-	Planning::Path path;
+	Planning::InterpolatedPath path;
 	path.points.push_back(p0);
 	path.points.push_back(p1);
 	path.points.push_back(p2);
 	path.points.push_back(p3);
 
 	Point pt(0.5,-0.01);
-	Planning::Path act;
+	Planning::InterpolatedPath act;
 	path.startFrom(pt, act);
 
 	// verify
@@ -88,10 +88,10 @@ TEST( testPath, startFrom3 ) {
 //	EXPECT_TRUE(p1 == act.points[1]); // fails
 }
 
-TEST(Path, evaluate) {
+TEST(InterpolatedPath, evaluate) {
 	Point p0(1,1), p1(1, 2), p2(2, 2);
 
-	Path path;
+	InterpolatedPath path;
 	path.points.push_back(p0);
 	path.points.push_back(p1);
 	path.points.push_back(p2);

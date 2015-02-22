@@ -42,3 +42,6 @@ glu
 
 # to drive robots with the SpaceNavigator 3d mouse
 libspnav
+
+# joystick library
+sdl
