@@ -50,9 +50,7 @@ if(${BUILD_MCP23017} STREQUAL "true")
 endif() 
 
 # don't get the external project unless it's required
-set_target_properties(mbed_lib_build_tools PROPERTIES EXCLUDE_FORM_ALL TRUE)
-
-
+set_target_properties(mbed_lib_build_tools PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 # firmware source files
 file(GLOB_RECURSE robot2015_SRC
@@ -74,6 +72,7 @@ set_target_properties(robot2015_elf PROPERTIES EXCLUDE_FROM_ALL TRUE)
 add_custom_target(pre-build
     COMMAND python2 ${PY_TOOLS_DIR}/workspace_tools/build.py --mcu=${PY_MCU_OPT} --tool=${PY_TOOLCHAIN_OPT} ${PY_LIBS}
     DEPENDS ${PREBUILD_DEPS})
+set_target_properties(pre-build PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 # tell CMake that the obj files all come from the ExternalProject
 # otherwise it'll complain that the files can't be found
