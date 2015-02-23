@@ -103,11 +103,10 @@ void SimulatorGLUTThread::run() {
 
 void SimulatorGLUTThread::stop() {
 	QMutexLocker locker(&_mutex);
+	//	in headless mode, we check this variable to stop nicely
+	_stopped = true;
 	if (_showWindow) {
 		glutLeaveMainLoop();
-	} else {
-		//	in headless mode, we check this variable to stop nicely
-		_stopped = true;
 	}
 }
 
