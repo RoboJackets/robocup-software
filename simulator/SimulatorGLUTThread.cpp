@@ -6,6 +6,7 @@
 #include <SimulatorGLUTThread.hpp>
 #include "physics/RobotBallController.hpp"
 #include <GLDebugFont.h>
+#include <GL/freeglut.h>
 
 using namespace std;
 
@@ -45,7 +46,7 @@ static void glutDisplayCallback(void) {
 
 SimulatorGLUTThread::SimulatorGLUTThread(int argc, char* argv[], const QString& configFile, bool sendShared, bool showWindow)
 : _argv(argv), _argc(argc), _env(0), _vehicle(0), _blue(false),
-  _camera(0), _cameraHeight(4.f), _minCameraDistance(3.f), _maxCameraDistance(10.f), _showWindow(showWindow)
+  _camera(0), _cameraHeight(4.f), _minCameraDistance(3.f), _maxCameraDistance(10.f), _showWindow(showWindow), _stopped(false)
 {
 	initialize(configFile, sendShared);
 }
@@ -93,9 +94,20 @@ void SimulatorGLUTThread::run() {
 		glutMainLoop();
 	} else {
 		while (true) {
+			if (_stopped) return;
 			stepSimulation();
 			usleep(16667);	//	wait 1/60 seconds
 		}
+	}
+}
+
+void SimulatorGLUTThread::stop() {
+	QMutexLocker locker(&_mutex);
+	if (_showWindow) {
+		glutLeaveMainLoop();
+	} else {
+		//	in headless mode, we check this variable to stop nicely
+		_stopped = true;
 	}
 }
 

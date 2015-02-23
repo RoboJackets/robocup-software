@@ -53,9 +53,16 @@ public:
 	/** access environment */
 	Environment* env() { return _env; }
 
+	void stop();
+
+
 private:
 	// Re-implement the run function to start the process
 	void run();
+	
+	QMutex _mutex;
+	bool _stopped;
+
 
 public:
 

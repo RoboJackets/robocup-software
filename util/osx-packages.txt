@@ -13,3 +13,4 @@ ccache
 cmake
 homebrew/x11/freeglut
 libusb
+freeglut
