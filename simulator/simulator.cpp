@@ -91,8 +91,8 @@ int main(int argc, char* argv[])
 	int ret = app.exec();
 
 	// shut down sim_thread
+	sim_thread.stop();
 	sim_thread.wait();
-//	sim_thread.exit(0);
 
 	return 0;//ret;
 }
