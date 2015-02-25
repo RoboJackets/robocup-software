@@ -19,6 +19,9 @@ sudo add-apt-repository --yes ppa:boost-latest/ppa
 # add repo for gcc-4.7
 sudo add-apt-repository --yes ppa:ubuntu-toolchain-r/test
 
+# add repo for the firmware comipler
+sudo add-apt-repository --yes ppa:terry.guo/gcc-arm-embedded
+
 # we use boost python 3.3, but ubuntu12.04 (which travis uses as of now) has an older version
 # we get around this by using 'apt-pinning' to get this package from a newer ubuntu repo
 # see this link for more info: http://askubuntu.com/questions/103320/install-packages-from-newer-release-without-building-apt-pinning
@@ -69,3 +72,4 @@ export CXX=g++-4.7
 # install python3 dependencies
 sudo easy_install pip
 sudo pip install -r ./util/requirements3.txt
+sudo pip install -r ./util/requirements2.txt
