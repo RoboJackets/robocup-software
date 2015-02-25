@@ -51,6 +51,10 @@ for i in $MBED_DEVICES_PATH; do
     # \r is the character that represents the end of the command.
 done
 
+# here's hoping the copy takes less than 5 seconds
+# TODO find a better solution...
+sleep 5
+
 # restart mbed code
 MBED_SERIAL_PATH="$(ls /dev/ | grep ttyACM | sed 's\.*\/dev/&\g')"
 
