@@ -60,8 +60,8 @@ void SpaceNavJoystick::update() {
 
             //  we don't want to increment it at each iteration, otherwise it would change dribbler
             //  speed unusably quickly.  Instead we have a delay between each increment
-            uint64_t now = timestamp();
-            const uint64_t DribbleStepTime = 300000;
+            Time now = timestamp();
+            const Time DribbleStepTime = 300000;
 
             if ((abs<int>(sev.motion.y) > DribblerAxisDeadzone)
                 && ((now - _lastDribbleTime) > DribbleStepTime)) {

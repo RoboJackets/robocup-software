@@ -18,7 +18,7 @@ public:
 	void update(const BallObservation *obs);
 	
 	// Generates a prediction of the ball's state at a given time in the future
-	void predict(uint64_t time, Ball *out, float *velocityUncertainty);
+	void predict(Time time, Ball *out, float *velocityUncertainty);
 	
 private:
 	Ball _estimate;

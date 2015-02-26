@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Entity.hpp"
 #include "SimEngine.hpp"
 

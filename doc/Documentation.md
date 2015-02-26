@@ -5,7 +5,7 @@ It's important to keep software projects well-documented so that newcomers can q
 
 One way to help with this is to put the documentation inline with the code, which is what we do for this project.  We use a program called [Doxygen](http://www.stack.nl/~dimitri/doxygen/) that parses specially-formatted comments in our code and turns them into a searchable [website](http://robojackets.github.io/robocup-software/) that can be easily viewed.  Note that this is very similar to a program called [javadoc](http://en.wikipedia.org/wiki/Javadoc) that many GT students are probably familiar with using in class.
 
-Another way to improve documentation practices is by requirig code to be well-documented before merging GitHub [pull-requests](https://help.github.com/articles/using-pull-requests), which is something we're getting better at doing.
+Another way to improve documentation practices is by requiring code to be well-documented before merging GitHub [pull-requests](https://help.github.com/articles/using-pull-requests), which is something we're getting better at doing.
 
 
 ## Doxygen Comment Formats
@@ -37,16 +37,16 @@ Doxygen has support for many different languages, but the comment syntax differs
 #
 #  More details.
 class PyClass:
-   
+
     ## The constructor.
     def __init__(self):
         self._memVar = 0;
-   
+
     ## Documentation for a method.
     #  @param self The object pointer.
     def PyMethod(self):
         pass
-     
+
     ## A class variable.
     classVar = 0;
 

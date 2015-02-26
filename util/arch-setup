@@ -1,21 +1,16 @@
 #!/bin/bash -e
 
-# Become root
-if [ $UID -ne 0 ]; then
-    echo "-- Becoming root"
-    exec sudo $0
-fi
-
-
 BASE=$(readlink -f $(dirname $0)/..)
 
 echo "-- Installing udev rules"
-cp -f $BASE/util/robocup.rules /etc/udev/rules.d/
+sudo cp -f $BASE/util/robocup.rules /etc/udev/rules.d/
 
 echo "-- Installing required packages"
-pacman -S --needed --noconfirm $(sed 's/#.*//;/^$/d' $BASE/util/arch-packages.txt)
+sudo pacman -S --needed --noconfirm $(sed 's/#.*//;/^$/d' $BASE/util/arch-packages.txt)
 
 echo "-- Installing required AUR packages"
 yaourt -S --needed --noconfirm $(sed 's/#.*//;/^$/d' $BASE/util/arch-packages-aur.txt)
 
-pip install -r $BASE/util/requirements3.txt
+sudo pip install -r $BASE/util/requirements3.txt
+
+sudo pip2 install -r $BASE/util/requirements2.txt

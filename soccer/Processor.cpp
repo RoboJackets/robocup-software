@@ -26,7 +26,7 @@
 #include <protobuf/messages_robocup_ssl_geometry.pb.h>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
-#include <git_version.h>
+#include <git_version.hpp>
 
 REGISTER_CONFIGURABLE(Processor)
 
@@ -184,7 +184,7 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 	
 	for (const SSL_DetectionFrame* frame : detectionFrames)
 	{
-		uint64_t time = frame->t_capture() * SecsToTimestamp;
+		Time time = frame->t_capture() * SecsToTimestamp;
 		
 		// Add ball observations
 		ballObservations.reserve(ballObservations.size() + frame->balls().size());
@@ -250,7 +250,7 @@ void Processor::run()
 	//main loop
 	while (_running)
 	{
-		uint64_t startTime = timestamp();
+		Time startTime = timestamp();
 		int delta_us = startTime - curStatus.lastLoopTime;
 		_framerate = 1000000.0 / delta_us;
 		curStatus.lastLoopTime = startTime;
@@ -266,6 +266,7 @@ void Processor::run()
 		
 		// Make a new log frame
 		_state.logFrame = std::make_shared<Packet::LogFrame>();
+    _state.logFrame->set_timestamp(timestamp());
 		_state.logFrame->set_command_time(startTime + Command_Latency);
 		_state.logFrame->set_use_our_half(_useOurHalf);
 		_state.logFrame->set_use_opponent_half(_useOpponentHalf);
@@ -394,10 +395,30 @@ void Processor::run()
 		}
 		
 		runModels(detectionFrames);
-
+		for (VisionPacket *packet : visionPackets)
+		{
+			delete packet;
+		}
+		
 		// Update gamestate w/ referee data
 		_refereeModule->updateGameState(blueTeam());
 		_refereeModule->spinKickWatcher();
+
+
+		string yellowname,bluename;
+
+		if(blueTeam()){
+			bluename = _state.gameState.OurInfo.name;
+			yellowname = _state.gameState.TheirInfo.name;
+		}
+		else{
+			yellowname = _state.gameState.OurInfo.name;
+			bluename = _state.gameState.TheirInfo.name;
+		}
+
+
+		_state.logFrame->set_team_name_blue(bluename);
+		_state.logFrame->set_team_name_yellow(yellowname);
 		
 		if (_gameplayModule)
 		{
@@ -428,7 +449,7 @@ void Processor::run()
 			_state.logFrame->add_debug_layers(str.toStdString());
 		}
 		
-		// Our robots
+		// Add our robots data to the LogFram
 		for (OurRobot *r : _state.self)
 		{
 			if (r->visible)
@@ -437,7 +458,9 @@ void Processor::run()
 				
 				Packet::LogFrame::Robot *log = _state.logFrame->add_self();
 				*log->mutable_pos() = r->pos;
-				*log->mutable_vel() = r->vel;
+				*log->mutable_world_vel() = r->vel;
+				*log->mutable_body_vel() = r->vel.rotated(2*M_PI - r->angle);
+				//*log->mutable_cmd_body_vel() = r->
 				// *log->mutable_cmd_vel() = r->cmd_vel;
 				// log->set_cmd_w(r->cmd_w);
 				log->set_shell(r->shell());
@@ -491,7 +514,8 @@ void Processor::run()
 				*log->mutable_pos() = r->pos;
 				log->set_shell(r->shell());
 				log->set_angle(r->angle);
-				*log->mutable_vel() = r->vel;
+				*log->mutable_world_vel() = r->vel;
+				*log->mutable_body_vel() = r->vel.rotated(2*M_PI - r->angle);
 			}
 		}
 		
@@ -522,7 +546,7 @@ void Processor::run()
 		////////////////
 		// Timing
 		
-		uint64_t endTime = timestamp();
+		Time endTime = timestamp();
 		int lastFrameTime = endTime - startTime;
 		if (lastFrameTime < _framePeriod)
 		{
@@ -590,6 +614,9 @@ void Processor::applyJoystickControls(const JoystickControlValues &controlVals, 
 	//	otherwise default to body coordinates
 	if (robot && robot->visible) {
 		translation.rotate(-robot->angle);
+	} else {
+		//	adjust for robot coordinate system (x axis points forward through the mouth of the bot)
+		translation.rotate(-M_PI / 2.0f);
 	}
 
 	//	translation
@@ -600,8 +627,9 @@ void Processor::applyJoystickControls(const JoystickControlValues &controlVals, 
 	tx->set_body_w(controlVals.rotation);
 
 	//	kick/chip
-	tx->set_kick_immediate(controlVals.kick || controlVals.chip);
-	tx->set_kick(controlVals.kickPower);
+	bool kick = controlVals.kick || controlVals.chip;
+	tx->set_kick_immediate(kick);
+	tx->set_kick(kick ? controlVals.kickPower : 0);
 	tx->set_use_chipper(controlVals.chip);
 
 	//	dribbler

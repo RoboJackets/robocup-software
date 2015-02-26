@@ -28,3 +28,5 @@ apt-get install $(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)
 
 # install python3 requirements
 pip3 install -r $BASE/util/requirements3.txt
+# install python2 requirements
+pip2 install -r $BASE/util/requirements2.txt
