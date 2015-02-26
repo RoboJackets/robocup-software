@@ -6,7 +6,7 @@ all:
 run: all
 	cd run; ./soccer
 run-sim: all
-	cd run; ./simulator &
+	cd run; ./simulator --headless &
 	cd run; ./soccer -sim
 
 # Run both C++ and python unit tests
@@ -15,6 +15,8 @@ test-cpp:
 	cd build && cmake --target test-cpp .. && make $(MAKE_FLAGS) test-cpp && cd .. && run/test-cpp
 test-python: all
 	cd soccer/gameplay && ./run_tests.sh
+pylint:
+	cd soccer && pylint -E gameplay
 
 clean:
 	cd build && make $(MAKE_FLAGS) clean

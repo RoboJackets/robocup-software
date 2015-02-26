@@ -1,22 +1,12 @@
 #include "GamepadJoystick.hpp"
 
-#include <iostream>
-#include <QMutexLocker>
-#include <linux/joystick.h>
-#include <Geometry2d/Point.hpp>
-#include <Utils.hpp>
-
-#include <stdio.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <poll.h>
-#include <errno.h>
-
 using namespace Packet;
 using namespace std;
 
-static const uint64_t Dribble_Step_Time = 125 * 1000;
-static const uint64_t Kicker_Step_Time = 125 * 1000;
+static constexpr Time Dribble_Step_Time = 125 * 1000;
+static constexpr Time Kicker_Step_Time = 125 * 1000;
+
+static constexpr float AXIS_MAX = 32768.0f;
 
 
 static const char *devices[] =
@@ -28,161 +18,69 @@ static const char *devices[] =
     0
 };
 
-GamepadJoystick::GamepadJoystick() {
-    _dribbler = 0;
-    _dribblerOn = false;
-    _kicker = 0;
-    _lastDribblerTime = 0;
-    _lastKickerTime = 0;
-    _fd = -1;
-    
-    if (!open())
+GamepadJoystick::GamepadJoystick()
+    : _joystick(nullptr),
+      _lastDribblerTime(0),
+      _lastKickerTime(0)
+{
+    if(SDL_Init(SDL_INIT_JOYSTICK) < 0)
     {
-        printf("No joystick\n");
+        cerr << "SDL could not initialize! SDL Error: " << SDL_GetError() << endl;
+        return;
+    }
+    if(SDL_NumJoysticks() < 1)
+    {
+        cout << "Warning: No joysticks connected!" << endl;
+    } else {
+        _joystick = SDL_JoystickOpen(0);
+        if(_joystick == nullptr)
+        {
+            cerr << "SDL could not open joystick! SDL Error: " << SDL_GetError() << endl;
+        } else {
+            cout << "Joystick connected to " << SDL_JoystickName(0) << endl;
+        }
     }
 }
 
 GamepadJoystick::~GamepadJoystick()
 {
-    close();
+    QMutexLocker(&mutex());
+    SDL_JoystickClose(_joystick);
+    _joystick = nullptr;
+    SDL_Quit();
 }
 
 bool GamepadJoystick::valid() const
 {
-    return _fd >= 0;
-}
-
-bool GamepadJoystick::open()
-{
-    QMutexLocker locker(&mutex());
-    
-    if (_fd >= 0)
-    {
-        // Already open
-        return true;
-    }
-    
-    reset();
-    
-    for (int i = 0; devices[i]; ++i)
-    {
-        _fd = ::open(devices[i], O_RDONLY);
-        if (_fd >= 0)
-        {
-            printf("GamepadJoystick: %s\n", devices[i]);
-            
-            unsigned int numAxes = 0, numButtons = 0;
-            ioctl(_fd, JSIOCGAXES, &numAxes);
-            ioctl(_fd, JSIOCGBUTTONS, &numButtons);
-
-            _axis.resize(numAxes);
-            _button.resize(numButtons);
-            
-            return true;
-        }
-    }
-    
-    return false;
-}
-
-void GamepadJoystick::close()
-{
-    QMutexLocker locker(&mutex());
-    if (_fd >= 0)
-    {
-        ::close(_fd);
-        _fd = -1;
-        
-        _axis.clear();
-        _button.clear();
-    }
+    return _joystick != nullptr;
 }
 
 void GamepadJoystick::update()
 {
-    QMutexLocker locker(&mutex());
-    
-    if (_fd < 0 && !open())
-    {
-        // No joystick available
-        return;
-    }
-    
-    while (true)
-    {
-        struct pollfd pfd;
-        
-        pfd.fd = _fd;
-        pfd.events = POLLIN | POLLHUP;
-        int ret = poll(&pfd, 1, 0);
-        if (ret == 0)
-        {
-            // No data
-            break;
-        } else if (ret < 0)
-        {
-            // Poll error (not fd error)
-            //
-            // EINTR can happen while profiling because the poll() is interrupted
-            // by the timer signal used for statistical sampling.
-            // In this case, ignore the error and try again next time.
-            if (errno != EINTR)
-            {
-                printf("GamepadJoystick poll error: %m\n");
-                close();
-            }
-            return;
-        }
-        
-        if (pfd.revents & POLLHUP)
-        {
-            // GamepadJoystick disconnected
-            printf("Lost joystick\n");
-            close();
-            return;
-        }
-        
-        struct js_event event;
-        if (read(_fd, &event, sizeof(event)) != sizeof(event))
-        {
-            break;
-        }
+    QMutexLocker(&mutex());
+    SDL_JoystickUpdate();
 
-        if (event.type == JS_EVENT_BUTTON)
-        {
-            _button[event.number] = event.value;
-        }
-        else if (event.type == JS_EVENT_AXIS)
-        {
-            // Store analog data
-            _axis[event.number] = event.value;
-        }
+    if(SDL_JoystickGetButton(_joystick, 6))
+    {
+        _controls.dribble = false;
+    } else if(SDL_JoystickGetButton(_joystick, 4))
+    {
+        _controls.dribble = true;
     }
 
-
-
-    if (_button[6])
+    Time now = timestamp();
+    if(SDL_JoystickGetButton(_joystick, 1))
     {
-        _dribblerOn = false;
-    } else if (_button[4])
-    {
-        _dribblerOn = true;
-    }
-
-
-    uint64_t now = timestamp();
-    if (_button[1])
-    {
-        if (_dribbler > 0 && (now - _lastDribblerTime) >= Dribble_Step_Time)
+        if(_controls.dribblerPower > 0 && (now - _lastDribblerTime) >= Dribble_Step_Time)
         {
-            _dribbler -= 0.1;
+            _controls.dribblerPower -= 0.1;
             _lastDribblerTime = now;
         }
-    } else if (_button[3])
+    } else if(SDL_JoystickGetButton(_joystick, 3))
     {
-        if (_dribbler < 1 && (now - _lastDribblerTime) >= Dribble_Step_Time)
+        if(_controls.dribblerPower < 1 && (now - _lastDribblerTime) >= Dribble_Step_Time)
         {
-            _dribbler += 0.1;
+            _controls.dribblerPower += 0.1;
             _lastDribblerTime = now;
         }
     } else {
@@ -190,83 +88,75 @@ void GamepadJoystick::update()
         _lastDribblerTime = now - Dribble_Step_Time;
     }
 
-    if (_button[0])
+    if(SDL_JoystickGetButton(_joystick, 0))
     {
-        if (_kicker > 0 && (now - _lastKickerTime) >= Kicker_Step_Time)
+        if(_controls.kickPower > 0 && (now - _lastKickerTime) >= Kicker_Step_Time)
         {
-            _kicker -= 0.1;
+            _controls.kickPower -= 0.1;
             _lastKickerTime = now;
         }
-    } else if (_button[2])
+    } else if (SDL_JoystickGetButton(_joystick, 2))
     {
-        if (_kicker < 1 && (now - _lastKickerTime) >= Kicker_Step_Time)
+        if(_controls.kickPower < 1 && (now - _lastKickerTime) >= Kicker_Step_Time)
         {
-            _kicker += 0.1;
+            _controls.kickPower += 0.1;
             _lastKickerTime = now;
         }
     } else {
         _lastKickerTime = now - Kicker_Step_Time;
     }
-}
 
-//  note: we used to have buttons for singing/anthem
-//     if(_button[9])
-//         tx->set_sing(true);
-//     if(_button[8])
-//         tx->set_anthem(true);
+    _controls.kick = SDL_JoystickGetButton(_joystick, 7) | SDL_JoystickGetButton(_joystick, 5);
 
-JoystickControlValues GamepadJoystick::getJoystickControlValues()
-{
-    QMutexLocker locker(&mutex());
-    JoystickControlValues vals;
+    _controls.chip = SDL_JoystickGetButton(_joystick, 5);
 
-    // applying dampening - scales each to [-1,1] range
-    float leftX =   _axis[Axis_Left_X]  / 32768.0f;
-    float rightX =  _axis[Axis_Right_X] / 32768.0f;
-    float rightY = -_axis[Axis_Right_Y] / 32768.0f;
-    
-    //input is vx, vy in robot space
+    //for(int i = 0; i < SDL_JoystickNumButtons(_joystick); i++)
+    //    cout << static_cast<int>(SDL_JoystickGetButton(_joystick, i));
+    //cout << endl;
+
+    auto leftX = SDL_JoystickGetAxis(_joystick, 0) / AXIS_MAX;
+    auto rightX = SDL_JoystickGetAxis(_joystick, 2) / AXIS_MAX;
+    auto rightY = -SDL_JoystickGetAxis(_joystick, 3) / AXIS_MAX;
+
     Geometry2d::Point input(rightX, rightY);
 
-    //if using DPad, this is the input value
-    float mVal = fabs(rightY);
+    auto mVal = fabs(rightY);
 
-    if (dUp())
+    if(SDL_JoystickGetAxis(_joystick, 5) < 0)
     {
         input.y = mVal;
         input.x = 0;
     }
-    else if (dDown())
+    else if(SDL_JoystickGetAxis(_joystick, 5) > 0)
     {
         input.y = -mVal;
         input.x = 0;
     }
-    else if (dRight())
+    else if(SDL_JoystickGetAxis(_joystick, 4) > 0)
     {
         input.y = 0;
         input.x = mVal;
     }
-    else if (dLeft())
+    else if(SDL_JoystickGetAxis(_joystick, 4) < 0)
     {
         input.y = 0;
         input.x = -mVal;
     }
 
-    vals.translation = Geometry2d::Point(input.x, input.y);
+    _controls.translation = Geometry2d::Point(input.x, input.y);
 
-    vals.rotation = -leftX;
+    _controls.rotation = -leftX;
+}
 
-    vals.kickPower = _kicker;
-    vals.dribblerPower = _dribbler;
-    vals.kick = _button[7] | _button[5];
-    vals.dribble = _dribblerOn;
-    vals.chip = _button[5];
-
-    return vals;
+JoystickControlValues GamepadJoystick::getJoystickControlValues()
+{
+    QMutexLocker(&mutex());
+//    cout << _controls.translation.x << endl;
+    return _controls;
 }
 
 void GamepadJoystick::reset()
 {
-    QMutexLocker locker(&mutex());
-    _dribblerOn = false;
+    QMutexLocker(&mutex());
+    _controls.dribble = false;
 }

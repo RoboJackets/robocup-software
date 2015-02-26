@@ -11,9 +11,8 @@
 #include <QString>
 #include "Geometry2d/Point.hpp"
 #include "Constants.hpp"
-//#include <iostream>
+#include "time.hpp"
 #include <math.h>
-using namespace std;
 
 
 /**
@@ -84,15 +83,6 @@ float clamp(T value, T min, T max)
 		return min;
 	}
 	return value;
-}
-
-/** returns the local system timestamp */
-static inline uint64_t timestamp()
-{
-	struct timeval time;
-	gettimeofday(&time, 0);
-
-	return (uint64_t)time.tv_sec * 1000000 + (uint64_t)time.tv_usec;
 }
 
 // Removes all entries in a std::map which associate to the given value.
@@ -203,14 +193,14 @@ public:
 	}
 
 	ExceptionIterator &operator++()
-				{
+	{
 		return *this;
-				}
+	}
 
 	ExceptionIterator &operator++(int)
-				{
+	{
 		return *this;
-				}
+	}
 };
 
 // Sets str to the name of a class.

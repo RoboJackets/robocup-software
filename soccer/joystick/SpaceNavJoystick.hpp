@@ -44,5 +44,5 @@ protected:
     //  store normalized values
     JoystickControlValues _controlValues;
     
-    uint64_t _lastDribbleTime;
+    Time _lastDribbleTime;
 };

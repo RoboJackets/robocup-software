@@ -4,6 +4,7 @@ import robocup
 import skills
 import tactics
 import constants
+import evaluation
 import main
 
 
@@ -71,7 +72,7 @@ class OurGoalKick(play.Play):
         win_eval.enable_chip = kicker.robot != None and kicker.robot.has_chipper()
         win_eval.min_chip_range = OurGoalKick.MinChipRange
         win_eval.max_chip_range = OurGoalKick.MaxChipRange
-        windows, best = win_eval.run(main.ball().pos, constants.Field.TheirGoalSegment)
+        windows, best = win_eval.eval_pt_to_seg(main.ball().pos, constants.Field.TheirGoalSegment)
 
         # note: the min length value is tunable
         if best != None and best.segment.length() > 0.3:
@@ -86,7 +87,7 @@ class OurGoalKick(play.Play):
         else:
             # no open shot, shoot it in-between the two centers
             center_x = constants.Field.Width * 0.15
-            center_y = constants.Fiel.Length * 0.6
+            center_y = constants.Field.Length * 0.6
 
             center1.target = robocup.Point(-center_x, center_y)
             center2.target = robocup.Point(center_x, center_y)
