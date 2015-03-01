@@ -42,6 +42,8 @@ class FsWatcher(Observer):
         if not isinstance(path, str):
             path = path.decode('utf-8')
 
+        path = os.path.abspath(path)
+
         name, file_ext = os.path.splitext(path)
         if file_ext == '.py':
             # remove the prefix @root from @subpath

@@ -14,10 +14,10 @@ if [ ! -e "/dev/disk/by-id" ]; then
     exit 2
 fi
 
-MBED_DEVICES="$(ls /dev/disk/by-id/ | grep mbed)"
+MBED_DEVICES="$(ls /dev/disk/by-id/ | grep -i mbed)"
 
 # This prepends the directory structure to all found mbed devices
-MBED_DEVICES_PATH="$(ls /dev/disk/by-id/ | grep mbed | sed 's\.*\/dev/disk/by-id/&\g')"
+MBED_DEVICES_PATH="$(ls /dev/disk/by-id/ | grep -i mbed | sed 's\.*\/dev/disk/by-id/&\g')"
 
 # errors out if no mbed devices were found
 if [ -z $MBED_DEVICES ]; then
@@ -50,6 +50,10 @@ for i in $MBED_DEVICES_PATH; do
     # This part sends 'reboot\r' over the serial connection. -e enables escape codes, and -n omits the endline at the end of echo, which prints by default.
     # \r is the character that represents the end of the command.
 done
+
+# here's hoping the copy takes less than 5 seconds
+# TODO find a better solution...
+sleep 5
 
 # restart mbed code
 MBED_SERIAL_PATH="$(ls /dev/ | grep ttyACM | sed 's\.*\/dev/&\g')"
