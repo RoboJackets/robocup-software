@@ -6,17 +6,21 @@ if [ $UID -ne 0 ]; then
 	exec sudo $0 $@
 fi
 
-HELP_STR="Usage: ./ubuntu-setup [-y | --yes] [-n | --noclobber] [-c | --clobber] [-h | --help]
+HELP_STR="Usage: ./ubuntu-setup [-y | --yes] [-n | --noclobber] [-c | --clobber] [-f | --firmware] [-h | --help]
 
 \tyes:\t\tassume no user input
 \tnoclobber:\tdont install 3rd party repositories
 \tclobber:\tInstall 3rd party repositories
+\tfirmware:\tInstall firmware repository
 \thelp:\t\tprint this message!
 
 This script will need root privileges"
 
 # defaults!
 YES=false
+
+# if we change this to true, please put it in the below if statment, as debian already has a good version...
+FIRMWARE=false
 if [ -z "$(uname -a | grep -i "Debian")" ]; then # dont add repositories on debian, compatability issues?
     ADD_REPOS=true
 else
@@ -32,12 +36,16 @@ do
             YES=true
             ;;
         -n|--noclobber)
-            # This option omits the addition of the fake repos
+            # This option omits the addition of the 3rd party repos
             ADD_REPOS=false
             ;;
         -c|--clobber)
             # This option forces addition of the custom repos
             ADD_REPOS=true
+            ;;
+        -f|--firmware)
+            # This option forces the addition of the firmware repositories
+            FIRMWARE=true
             ;;
         -h|--help)
             echo -e "$HELP_STR"
@@ -56,6 +64,12 @@ done
 # TODO remove this once ubuntu ships cmake3
 if $ADD_REPOS; then
     apt-add-repository -y ppa:packetlost/cmake
+fi
+
+if $FIRMWARE; then
+    add-apt-repository -y ppa:terry.guo/gcc-arm-embedded
+    apt-get update
+    sudo apt-get install gcc-arm-none-eabi
 fi
 
 # apt get install cmake is taken care of by requirements
