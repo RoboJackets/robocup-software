@@ -21,7 +21,7 @@ YES=false
 
 # if we change this to true, please put it in the below if statment, as debian already has a good version...
 FIRMWARE=false
-if [ -z "$(uname -a | grep -i "Debian")" ]; then # dont add repositories on debian, compatability issues?
+if [ -z "$(cat /etc/lsb-release | grep -i "Debian")" ]; then # dont add repositories on debian, compatability issues?
     ADD_REPOS=true
 else
     ADD_REPOS=false
