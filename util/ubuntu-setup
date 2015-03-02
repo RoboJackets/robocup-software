@@ -14,11 +14,12 @@ This script will need root privileges"
 YES=false
 
 # if we change this to true, please put it in the below if statment, as debian already has a good version...
-FIRMWARE=false
-if [ -z "$(cat /etc/os-release | grep -i "Debian")" ]; then # dont add repositories on debian, compatability issues?
+if [ -z "$(cat /etc/os-release | grep 'Debian')" ]; then # dont add repositories on debian, compatability issues?
     ADD_REPOS=true
+    FIRMWARE=true
 else
     ADD_REPOS=false
+    FIRMWARE=false
 fi
 
 
