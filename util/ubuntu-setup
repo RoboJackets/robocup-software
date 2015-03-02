@@ -1,11 +1,5 @@
 #!/bin/bash -e
 
-# Become root
-if [ $UID -ne 0 ]; then
-	echo "-- Becoming root"
-	exec sudo $0 $@
-fi
-
 HELP_STR="Usage: ./ubuntu-setup [-y | --yes] [-n | --noclobber] [-c | --clobber] [-f | --firmware] [-h | --help]
 
 \tyes:\t\tassume no user input
@@ -21,7 +15,7 @@ YES=false
 
 # if we change this to true, please put it in the below if statment, as debian already has a good version...
 FIRMWARE=false
-if [ -z "$(cat /etc/lsb-release | grep -i "Debian")" ]; then # dont add repositories on debian, compatability issues?
+if [ -z "$(cat /etc/os-release | grep -i "Debian")" ]; then # dont add repositories on debian, compatability issues?
     ADD_REPOS=true
 else
     ADD_REPOS=false
@@ -59,6 +53,12 @@ do
             ;;
     esac
 done
+
+# Become root
+if [ $UID -ne 0 ]; then
+	echo "-- Becoming root"
+	exec sudo $0 $@
+fi
 
 # add repo for backport of cmake3 from debian testing
 # TODO remove this once ubuntu ships cmake3
