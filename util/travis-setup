@@ -54,7 +54,8 @@ freeglut3-dev \
 libbfd-dev \
 libspnav-dev \
 libsdl1.2-dev \
-gcc-arm-none-eabi
+gcc-arm-none-eabi \
+libqt5svg5-dev
 
 # install CMake from source b/c we need >= 3.0.0
 wget http://www.cmake.org/files/v3.0/cmake-3.0.2.tar.gz
