@@ -68,8 +68,6 @@ fi
 
 if $FIRMWARE; then
     add-apt-repository -y ppa:terry.guo/gcc-arm-embedded
-    apt-get update
-    sudo apt-get install gcc-arm-none-eabi
 fi
 
 # apt get install cmake is taken care of by requirements
@@ -90,6 +88,12 @@ echo "-- Installing required packages"
 ARGS=""
 if $YES; then
     ARGS="-y"
+fi
+
+if $FIRMWARE; then
+    # This is kind of hacky and could produce unwanted side effects
+    # If the firmware switch does more things, it may be better to make a firmware-deps file!
+    ARGS="$ARGS gcc-arm-none-eabi"
 fi
 
 # install all of the packages listed in required_packages.txt
