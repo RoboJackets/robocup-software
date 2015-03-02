@@ -43,7 +43,7 @@ if(APPLE)
         DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         FILE_PERMISSIONS OWNER_READ GROUP_READ OWNER_WRITE GROUP_WRITE OWNER_EXECUTE GROUP_EXECUTE WORLD_EXECUTE)
 else()
-    add_executable(simulator ${simulator_SRC} ${simulator_UIS})
+    add_executable(simulator ${simulator_SRC} ${simulator_RSRC} ${simulator_UIS})
 endif()
 
 
