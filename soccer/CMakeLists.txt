@@ -109,7 +109,7 @@ if(APPLE)
 else()
     add_executable(soccer main.cpp)
 endif()
-qt5_use_modules(soccer Widgets Xml Core OpenGL Network)
+qt5_use_modules(soccer Widgets Xml Core OpenGL Network Svg)
 target_link_libraries(soccer robocup)
 
 
@@ -127,5 +127,5 @@ set(LOG_VIEWER_SRC
    	"StripChart.cpp"
 )
 add_executable(log_viewer ${LOG_VIEWER_SRC} ${LOG_VIEWER_UI} ${LOG_VIEWER_RSRC})
-qt5_use_modules(log_viewer Core Widgets OpenGL)
+qt5_use_modules(log_viewer Core Widgets OpenGL Svg)
 target_link_libraries(log_viewer common)
