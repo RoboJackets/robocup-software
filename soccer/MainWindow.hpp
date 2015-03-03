@@ -210,6 +210,8 @@ class MainWindow : public QMainWindow
 		QLabel *_procFPS;
 		QLabel *_logMemory;
 
+		//	maps robot shell IDs to items in the list
+		std::map<int, QListWidgetItem*> _robotStatusItemMap;
 
 		///	the play, pause, ffwd, etc buttons
 		std::vector<QPushButton *> _logPlaybackButtons;

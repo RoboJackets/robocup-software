@@ -392,6 +392,52 @@ void MainWindow::updateViews()
 	_ui.refYellowTimeoutsLeft->setText(tr("%1").arg(_processor->refereeModule()->yellow_info.timeouts_left));
 	_ui.refYellowGoalie->setText(tr("%1").arg(_processor->refereeModule()->yellow_info.goalie));
 
+
+	//	update robot status widget
+	for (const OurRobot *robot : _processor->state()->self) {
+		//	a robot shows up in the status list if it's visible or reachable via radio
+		bool valid = robot->rxIsFresh() || robot->visible;
+
+		//	see if it's already in the robot status list widget
+		bool displaying = _robotStatusItemMap.find(robot->shell()) != _robotStatusItemMap.end();
+
+		if (valid && !displaying) {
+			//	add a widget to the list for this robot
+
+			QListWidgetItem *item = new QListWidgetItem();
+			_robotStatusItemMap[robot->shell()] = item;
+			_ui.robotStatusList->addItem(item);
+
+			QPushButton *itemWidget = new QPushButton(QString("robot%1").arg(robot->shell()));
+			item->setSizeHint(itemWidget->minimumSizeHint());
+			_ui.robotStatusList->setItemWidget(item, itemWidget);
+		} else if (!valid && displaying) {
+			//	remove the widget for this robot from the list
+
+			QListWidgetItem *item = _robotStatusItemMap[robot->shell()];
+
+			//	delete widget from list
+			for (int row = 0; row < _ui.robotStatusList->count(); row++) {
+				if (_ui.robotStatusList->item(row) == item) {
+					_ui.robotStatusList->takeItem(row);
+					break;
+				}
+			}
+
+			_robotStatusItemMap.erase(robot->shell());
+			delete item;
+		}
+
+		//	update displayed attributes for valid robots
+		if (valid) {
+			QListWidgetItem *item = _robotStatusItemMap[robot->shell()];
+			QWidget *statusWidget = _ui.robotStatusList->itemWidget(item);
+
+			//	TODO: update attributes
+		}
+	}
+
+
 	// We restart this timer repeatedly instead of using a single shot timer in order
 	// to guarantee a minimum time between redraws.  This will limit the CPU usage on a fast computer.
 	updateTimer.start(20);
