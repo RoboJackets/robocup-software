@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>856</width>
-    <height>485</height>
+    <width>426</width>
+    <height>137</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,7 +18,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
-    <widget class="QLabel" name="Id">
+    <widget class="QLabel" name="shellID">
      <property name="maximumSize">
       <size>
        <width>16777213</width>
@@ -48,13 +48,13 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QSvgWidget" name="image" native="true"/>
+        <widget class="QSvgWidget" name="visionIndicator" native="true"/>
        </item>
        <item>
-        <widget class="QSvgWidget" name="wifi" native="true"/>
+        <widget class="QSvgWidget" name="radioIndicator" native="true"/>
        </item>
        <item>
-        <widget class="BatteryWidget" name="battery" native="true"/>
+        <widget class="BatteryWidget" name="batteryIndicator" native="true"/>
        </item>
       </layout>
      </item>

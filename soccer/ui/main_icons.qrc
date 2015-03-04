@@ -14,5 +14,10 @@
     <file>slow-forward.svg</file>
     <file>fast-forward.svg</file>
     <file>live.svg</file>
+
+    <file>vision-available.svg</file>
+    <file>vision-unavailable.svg</file>
+    <file>radio-connected.svg</file>
+    <file>radio-disconnected.svg</file>
   </qresource>
 </RCC>
