@@ -368,6 +368,9 @@ public:
 	Packet::RadioRx &radioRx() {
 		return _radioRx;
 	}
+	const Packet::RadioRx &radioRx() const {
+		return _radioRx;
+	}
 
 	MotionControl *motionControl() const
 	{

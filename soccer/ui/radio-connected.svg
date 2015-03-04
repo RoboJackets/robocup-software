@@ -1,77 +1,62 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Generator: Adobe Illustrator 18.1.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 28.477 28.477" style="enable-background:new 0 0 28.477 28.477;" xml:space="preserve">
-<g>
-	<path d="M14.286,9.502c-1.557,0-2.824,1.263-2.824,2.823c0,0.799,0.338,1.519,0.872,2.032v14.12h4.001v-14.22
-		c0.479-0.505,0.775-1.183,0.775-1.932C17.11,10.766,15.847,9.502,14.286,9.502z"/>
-	<path d="M14.238,0c-7.124,0-12.9,5.775-12.9,12.899c0,4.538,2.348,8.52,5.891,10.819c0,0,0.326,0.153,0.326-0.401
-		c0-0.556,0-1.582,0-1.774c0-0.194-0.326-0.397-0.326-0.397c-2.345-1.996-3.86-4.928-3.86-8.246c0-6.004,4.867-10.872,10.87-10.872
-		S25.111,6.896,25.111,12.9c0,3.229-1.438,6.1-3.673,8.092c0,0-0.324,0.287-0.324,0.516s0,1.393,0,1.788s0.324,0.31,0.324,0.31
-		c3.438-2.316,5.702-6.248,5.702-10.706C27.14,5.775,21.362,0,14.238,0z"/>
-	<path d="M14.286,4.29c-4.49,0-8.132,3.641-8.132,8.132c0,3.078,1.711,5.752,4.231,7.134c0,0,0.417,0.204,0.417-0.295
-		s0-1.539,0-1.787c0-0.25-0.417-0.465-0.417-0.465c-1.305-1.11-2.149-2.742-2.149-4.587c0-3.342,2.708-6.05,6.05-6.05
-		c3.343,0,6.051,2.708,6.051,6.05c0,1.839-0.84,3.466-2.135,4.575c0,0-0.332,0.228-0.332,0.435c0,0.208,0,1.415,0,1.79
-		c0,0.373,0.332,0.327,0.332,0.327c2.514-1.384,4.217-4.055,4.217-7.126C22.419,7.931,18.778,4.29,14.286,4.29z"/>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-	<g>
-	</g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-<g>
-</g>
-</svg>
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Capa_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 286.375 286.375"
+   style="enable-background:new 0 0 286.375 286.375;"
+   xml:space="preserve"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="radio-connected.svg"><metadata
+     id="metadata3468"><rdf:RDF><cc:Work
+         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /></cc:Work></rdf:RDF></metadata><defs
+     id="defs3466" /><sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1603"
+     inkscape:window-height="983"
+     id="namedview3464"
+     showgrid="false"
+     inkscape:zoom="0.72806635"
+     inkscape:cx="126.64242"
+     inkscape:cy="64.261913"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="Capa_1" /><g
+     id="Radio__x2F__Podcast"><path
+       style="fill-rule:evenodd;clip-rule:evenodd;"
+       d="M156.406,118.288c13.217-5.263,22.579-18.147,22.579-33.244   c0-19.774-16.037-35.797-35.797-35.797S107.39,65.271,107.39,85.044c0,15.101,9.367,27.988,22.589,33.248L79.181,260.078   c-2.508,7.018-7.815,21.753,13.528,21.753l-0.036,0.043H193.71l-0.026-0.043c21.334,0,16.028-14.735,13.519-21.753L156.406,118.288   z M261.32,4.501l-22.156,15.158c12.831,18.698,20.363,41.312,20.363,65.7c0,24.391-7.533,47.01-20.363,65.707l22.146,15.163   c15.783-23.016,25.065-50.846,25.065-80.87C286.375,55.338,277.103,27.512,261.32,4.501z M25.056,4.501   C9.273,27.512,0,55.338,0,85.359c0,30.019,9.273,57.846,25.056,80.857l22.155-15.158c-12.83-18.698-20.363-41.311-20.363-65.699   s7.533-47.001,20.363-65.7L25.056,4.501z M80.543,85.044c0-13.131,4.055-25.309,10.959-35.377L69.356,34.508   C59.49,48.889,53.695,66.285,53.695,85.044c0,18.763,5.795,36.155,15.661,50.536l22.146-15.159   C84.598,110.353,80.543,98.175,80.543,85.044z M194.872,49.667c6.905,10.068,10.959,22.246,10.959,35.377   s-4.055,25.304-10.959,35.373l22.146,15.163c9.867-14.384,15.661-31.777,15.661-50.536c0-18.76-5.794-36.155-15.661-50.536   L194.872,49.667z"
+       id="path3432" /></g><g
+     id="g3434" /><g
+     id="g3436" /><g
+     id="g3438" /><g
+     id="g3440" /><g
+     id="g3442" /><g
+     id="g3444" /><g
+     id="g3446" /><g
+     id="g3448" /><g
+     id="g3450" /><g
+     id="g3452" /><g
+     id="g3454" /><g
+     id="g3456" /><g
+     id="g3458" /><g
+     id="g3460" /><g
+     id="g3462" /></svg>
