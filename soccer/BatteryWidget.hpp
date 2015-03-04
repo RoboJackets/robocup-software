@@ -17,7 +17,7 @@ public:
 	void setBatteryLevel(float batteryLevel);
 
 
-	void paintEvent(QEvent *event);
+	void paintEvent(QPaintEvent *event);
 
 
 private:

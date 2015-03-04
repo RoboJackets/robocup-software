@@ -8,6 +8,7 @@
 #include <Utils.hpp>
 #include <Robot.hpp>
 #include <joystick/Joystick.hpp>
+#include "RobotStatusWidget.hpp"
 
 #include <QInputDialog>
 #include <QFileDialog>
@@ -408,9 +409,56 @@ void MainWindow::updateViews()
 			_robotStatusItemMap[robot->shell()] = item;
 			_ui.robotStatusList->addItem(item);
 
-			QPushButton *itemWidget = new QPushButton(QString("robot%1").arg(robot->shell()));
-			item->setSizeHint(itemWidget->minimumSizeHint());
-			_ui.robotStatusList->setItemWidget(item, itemWidget);
+			RobotStatusWidget *statusWidget = new RobotStatusWidget();
+			item->setSizeHint(statusWidget->minimumSizeHint());
+			_ui.robotStatusList->setItemWidget(item, statusWidget);
+
+			//	set shell ID
+			statusWidget->setShellID(robot->shell());
+
+			//	set team
+			statusWidget->setBlueTeam(processor()->blueTeam());
+
+			//	TODO: set board ID
+
+
+// #define DEMO_ROBOT_STATUS
+
+#ifdef DEMO_ROBOT_STATUS
+			//	set board ID
+			QString hex("");
+			for (int i = 0; i < 4; i++) hex += QString::number(rand() % 16, 16).toUpper();
+			statusWidget->setBoardID(hex);
+
+			//	fake vision
+			bool vision = rand() % 5 != 0;
+			statusWidget->setHasVision(vision);
+
+			//	fake battery
+			float battery = robot->shell() / 6.0f;
+			statusWidget->setBatteryLevel(battery);
+
+			//	fake radio
+			bool radio = rand() % 5 != 0;
+			statusWidget->setHasRadio(radio);
+
+			//	fake ball
+			bool ball = rand() % 4 == 0;
+			statusWidget->setHasBall(ball);
+
+			//	fake ball sense status
+			bool ballFault = rand() % 4 == 0;
+			statusWidget->setBallSenseFault(ballFault);
+
+			bool hasWheelFault = false;
+			if (rand() % 4 == 0) {
+				statusWidget->setWheelFault(rand() % 4);
+				hasWheelFault = true;
+			}
+
+			bool showstopper = !vision || !radio || hasWheelFault || battery < 0.25;
+			statusWidget->setShowstopper(showstopper);
+#endif
 		} else if (!valid && displaying) {
 			//	remove the widget for this robot from the list
 
@@ -431,9 +479,76 @@ void MainWindow::updateViews()
 		//	update displayed attributes for valid robots
 		if (valid) {
 			QListWidgetItem *item = _robotStatusItemMap[robot->shell()];
-			QWidget *statusWidget = _ui.robotStatusList->itemWidget(item);
+			RobotStatusWidget *statusWidget = (RobotStatusWidget *)_ui.robotStatusList->itemWidget(item);
 
 			//	TODO: update attributes
+
+			const RadioRx &rx = robot->radioRx();
+
+
+#ifndef DEMO_ROBOT_STATUS
+			//	radio status
+			bool hasRadio = robot->rxIsFresh();
+			statusWidget->setHasRadio(hasRadio);
+
+			//	vision status
+			bool hasVision = robot->visible;
+			statusWidget->setHasVision(hasVision);
+
+			//	TODO: kicker fault
+			//	TODO: dribbler fault
+
+			//	wheel faults
+			bool hasWheelFault = false;
+			if (rx.motor_status().size() == 5)
+			{
+				//	examine status of each motor
+				for (int i = 0; i < 4; ++i)
+				{
+					bool wheelIFault = true;
+					switch (rx.motor_status(i))
+					{
+						case Packet::Hall_Failure:
+							break;
+						case Packet::Stalled:
+							break;
+						case Packet::Encoder_Failure:
+							break;
+
+						default:
+							wheelIFault = false;
+							break;
+					}
+					statusWidget->setWheelFault(i, wheelIFault);
+					hasWheelFault = hasWheelFault || wheelIFault;
+				}
+			}
+
+			// ball sensor
+			bool hasBallSense = robot->ballSenseWorks();
+			statusWidget->setBallSenseFault(!hasBallSense);
+
+			//	has ball
+			statusWidget->setHasBall(robot->hasBall());
+
+			//	battery
+			//	FIXME: handle battery for real
+			float batteryLevel = 1;
+			if (rx.has_battery()) {
+				if (rx.battery() < 14.3f) {
+					batteryLevel = 0.24;
+				}
+			}
+			statusWidget->setBatteryLevel(batteryLevel);
+
+
+			bool showstopper = !hasVision || !hasRadio || hasWheelFault || !hasBallSense || batteryLevel < 0.25;
+			statusWidget->setShowstopper(showstopper);
+
+#endif
+
+			//	TODO: self needs to allow robots of duplicate shell IDs
+			//	TODO: make @visible a getter
 		}
 	}
 

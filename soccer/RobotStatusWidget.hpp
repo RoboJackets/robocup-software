@@ -1,9 +1,8 @@
 #pragma once
 
-#include "ui_StatusWidget.h"
+#include "ui_RobotStatusWidget.h"
 #include <QtWidgets>
 #include <string>
-#include <QtSvg>
 
 
 /**
@@ -18,6 +17,27 @@ public:
 	int shellID() const;
 	void setShellID(int shellID);
 
+	void setBlueTeam(bool blueTeam);
+	bool blueTeam() const;
+
+	/**
+	 * @brief ID of control board (4 hex digits)
+	 */
+	const QString &boardID() const;
+	void setBoardID(const QString &boardID);
+
+
+	void setWheelFault(int wheelIndex, bool faulty = true);
+    void setBallSenseFault(bool faulty = true);
+    void setHasBall(bool hasBall = true);
+
+
+	/**
+	 * @brief ID of mechanical base (4 hex digits)
+	 */
+	const QString &baseID() const;
+	void setBaseID(const QString &baseID);
+
 	bool hasRadio() const;
 	void setHasRadio(bool hasRadio);
 
@@ -27,12 +47,21 @@ public:
 	float batteryLevel() const;
 	void setBatteryLevel(float batteryLevel);
 
+	/**
+	 * @brief Set to true to present this robot as being in critical
+	 * status and in need of removing from the field.
+	 */
+	 void setShowstopper(bool showstopper = true);
+
 
 private:
 	Ui_RobotStatusWidget _ui;
 
 	int _shellID;
+	bool _blueTeam;
 	bool _hasRadio;
 	bool _hasVision;
 	float _batteryLevel;
+	bool _showstopper;
+	QString _boardID;
 };
