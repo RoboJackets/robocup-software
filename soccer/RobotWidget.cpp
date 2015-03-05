@@ -2,6 +2,7 @@
 #include <VisionDotPattern.hpp>
 #include <Constants.hpp>
 #include <Geometry2d/util.h>
+#include <stdexcept>
 
 
 RobotWidget::RobotWidget(QWidget *parent, Qt::WindowFlags f) {
