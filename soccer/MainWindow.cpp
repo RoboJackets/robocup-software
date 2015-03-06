@@ -9,6 +9,7 @@
 #include <Robot.hpp>
 #include <joystick/Joystick.hpp>
 #include "RobotStatusWidget.hpp"
+#include "BatteryProfile.hpp"
 
 #include <QInputDialog>
 #include <QFileDialog>
@@ -535,8 +536,11 @@ void MainWindow::updateViews()
 			//	FIXME: handle battery for real
 			float batteryLevel = 1;
 			if (rx.has_battery()) {
-				if (rx.battery() < 14.3f) {
-					batteryLevel = 0.24;
+				if (rx.hardware_version() == RJ2008 || rx.hardware_version() == RJ2011) {
+					batteryLevel = RJ2008BatteryProfile.getChargeLevel(rx.battery());
+				} else {
+					//	FIXME: add battery profile for 2015 robot
+					throw logic_error("No battery profile for the given robot model");
 				}
 			}
 			statusWidget->setBatteryLevel(batteryLevel);
