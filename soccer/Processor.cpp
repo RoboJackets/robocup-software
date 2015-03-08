@@ -460,6 +460,7 @@ void Processor::run()
 				*log->mutable_pos() = r->pos;
 				*log->mutable_world_vel() = r->vel;
 				*log->mutable_body_vel() = r->vel.rotated(2*M_PI - r->angle);
+				log->set_angle_vel(r->angleVel);
 				//*log->mutable_cmd_body_vel() = r->
 				// *log->mutable_cmd_vel() = r->cmd_vel;
 				// log->set_cmd_w(r->cmd_w);

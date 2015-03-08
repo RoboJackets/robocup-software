@@ -89,6 +89,7 @@ message LogFrame
 		required Point pos = 1;
 		required Point world_vel = 7;
 		optional Point body_vel= 16;
+		optional float angle_vel = 17;
 		required int32 shell = 2;
 		required float angle = 3;
 		optional BallSenseStatus ball_sense_status = 4;
