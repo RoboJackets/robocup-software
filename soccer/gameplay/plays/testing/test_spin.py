@@ -5,7 +5,7 @@ import robocup
 import constants
 
 
-class TestPivot(play.Play):
+class TestSpin(play.Play):
 
     def __init__(self):
         super().__init__(continuous=False)

@@ -50,7 +50,7 @@ class Spin(composite_behavior.CompositeBehavior):
 
         # add subbehaviors for all robots, instructing them to line up
         self.remove_all_subbehaviors()
-        for i in range(6):
+        for i in range(1):
             pt = self._line.get_pt(0) + ( self.diff * float(i)  )
 
             self.add_subbehavior(skills.spin.Spin(1,5,pt),
