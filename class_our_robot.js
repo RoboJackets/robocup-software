@@ -5,6 +5,7 @@ var class_our_robot =
     [ "~OurRobot", "class_our_robot.html#a8ff6c7f8f05d24ba8f24efcb0ad247a3", null ],
     [ "addStatusText", "class_our_robot.html#a47574cba97a8970a1437e47e8657d032", null ],
     [ "addText", "class_our_robot.html#a639eecf0232af72c5845feca21ee9d70", null ],
+    [ "angleVelocity", "class_our_robot.html#a39e2201dd5932aa609b6f5aa7924af26", null ],
     [ "approachAllOpponents", "class_our_robot.html#af154e4d8545df3fda5b8bab6215c04f0", null ],
     [ "approachOpponent", "class_our_robot.html#afcf2cd89c218915086882fef528e2fd2", null ],
     [ "approachOpponent", "class_our_robot.html#a334c3de52cadfaf6af2ea8537ab1d9b2", null ],

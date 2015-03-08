@@ -249,5 +249,5 @@ var NAVTREEINDEX2 =
 "class_opponent_robot.html":[11,0,47],
 "class_opponent_robot.html#ada2f05a57d22fec57721615638fb07d1":[11,0,47,0],
 "class_our_robot.html":[11,0,48],
-"class_our_robot.html#a019e62061c483d79b3ecd88aa5f08e27":[11,0,48,35]
+"class_our_robot.html#a019e62061c483d79b3ecd88aa5f08e27":[11,0,48,36]
 };
