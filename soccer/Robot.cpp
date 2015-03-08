@@ -263,13 +263,13 @@ void OurRobot::worldVelocity(const Geometry2d::Point& v)
 
 
 
-void OurRobot::angleVelocity(const float targetAngleVel) {
+void OurRobot::angleVelocity(float targetAngleVel) {
 	_motionConstraints.targetAngleVel = fixAngleRadians(targetAngleVel);
 
 	//	reset other conflicting motion commands
 	_motionConstraints.faceTarget = boost::none;
 	_motionConstraints.pivotTarget = boost::none;
-	
+
 	*_cmdText << "angleVelocity(" << _motionConstraints.pivotTarget << ")\n";
 }
 
