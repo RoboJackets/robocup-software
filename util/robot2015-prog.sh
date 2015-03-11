@@ -53,7 +53,7 @@ done
 
 # here's hoping the copy takes less than 5 seconds
 # TODO find a better solution...
-sleep 5
+sleep 1
 
 # restart mbed code
 MBED_SERIAL_PATH="$(ls /dev/ | grep ttyACM | sed 's\.*\/dev/&\g')"
@@ -61,7 +61,10 @@ MBED_SERIAL_PATH="$(ls /dev/ | grep ttyACM | sed 's\.*\/dev/&\g')"
 for i in $MBED_SERIAL_PATH; do
     echo Attempting reboot on $i ...
     # clear buffer, send reboot, enter
-    sudo bash -c "echo -ne '\rreboot\r' > $i"
+
+    # send break signal to all mbeds
+    sudo python3 -c "import serial; serial.Serial(\"$i\").sendBreak()"
+    # sudo bash -c "echo -ne '\rreboot\r' > $i"
 done
 
 
