@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# abort script if something fails
+set -e
+
 BASE="$(dirname $0)/.."
 
 echo "-- Installing required homebrew packages"
