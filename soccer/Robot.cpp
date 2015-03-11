@@ -270,7 +270,7 @@ void OurRobot::angleVelocity(float targetAngleVel) {
 	_motionConstraints.faceTarget = boost::none;
 	_motionConstraints.pivotTarget = boost::none;
 
-	*_cmdText << "angleVelocity(" << _motionConstraints.pivotTarget << ")\n";
+	*_cmdText << "angleVelocity(" << targetAngleVel << ")\n";
 }
 
 
