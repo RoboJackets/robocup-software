@@ -1,11 +1,12 @@
 #!/bin/bash -e
 
-HELP_STR="Usage: ./ubuntu-setup [-y | --yes] [-n | --noclobber] [-c | --clobber] [-f | --firmware] [-h | --help]
+HELP_STR="Usage: ./ubuntu-setup [-y | --yes] [-n | --noclobber] [-c | --clobber] [-f | --firmware] [-nf | --nofirmware] [-h | --help]
 
 \tyes:\t\tassume no user input
 \tnoclobber:\tdont install 3rd party repositories
 \tclobber:\tInstall 3rd party repositories
 \tfirmware:\tInstall firmware repository
+\tnofirmware:\tPrevents installation of firmware deps firmware repository
 \thelp:\t\tprint this message!
 
 This script will need root privileges"
@@ -41,6 +42,10 @@ do
         -f|--firmware)
             # This option forces the addition of the firmware repositories
             FIRMWARE=true
+            ;;
+        -nf|--nofirmware)
+            # This option turns off the addition of the firmware repositories
+            FIRMWARE=false
             ;;
         -h|--help)
             echo -e "$HELP_STR"
