@@ -41,7 +41,6 @@ end
  end
 /* instantiate PWM high and low */
 
-PWM_LOW pwm_low_driver (clock, duty_cycle, low_mod);
 
 Phase_Driver phasedriver(clock, duty_cycle, high_z, pmwH, pwmL);
 
