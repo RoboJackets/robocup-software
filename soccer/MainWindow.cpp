@@ -397,13 +397,13 @@ void MainWindow::updateViews()
 
 	//	update robot status widget
 	for (const OurRobot *robot : _processor->state()->self) {
-		//	a robot shows up in the status list if it's visible or reachable via radio
-		bool valid = robot->rxIsFresh() || robot->visible;
+		//	a robot shows up in the status list if it's reachable via radio
+		bool shouldDisplay = robot->rxIsFresh();
 
 		//	see if it's already in the robot status list widget
 		bool displaying = _robotStatusItemMap.find(robot->shell()) != _robotStatusItemMap.end();
 
-		if (valid && !displaying) {
+		if (shouldDisplay && !displaying) {
 			//	add a widget to the list for this robot
 
 			QListWidgetItem *item = new QListWidgetItem();
@@ -460,7 +460,7 @@ void MainWindow::updateViews()
 			bool showstopper = !vision || !radio || hasWheelFault || battery < 0.25;
 			statusWidget->setShowstopper(showstopper);
 #endif
-		} else if (!valid && displaying) {
+		} else if (!shouldDisplay && displaying) {
 			//	remove the widget for this robot from the list
 
 			QListWidgetItem *item = _robotStatusItemMap[robot->shell()];
@@ -478,7 +478,7 @@ void MainWindow::updateViews()
 		}
 
 		//	update displayed attributes for valid robots
-		if (valid) {
+		if (shouldDisplay) {
 			QListWidgetItem *item = _robotStatusItemMap[robot->shell()];
 			RobotStatusWidget *statusWidget = (RobotStatusWidget *)_ui.robotStatusList->itemWidget(item);
 
