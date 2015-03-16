@@ -484,7 +484,9 @@ void MainWindow::updateViews()
 
 			//	TODO: update attributes
 
-			const RadioRx &rx = robot->radioRx();
+			//	we make a copy of the robot's radioRx packet b/c the original might change
+			//	during the course of this method b/c radio comm happens on a different thread
+			RadioRx rx(robot->radioRx());
 
 
 #ifndef DEMO_ROBOT_STATUS
