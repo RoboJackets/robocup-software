@@ -5,13 +5,15 @@
 
 
 # Build system
-ninja
+ninja-build
 cmake
+ccache
 
 # QT
 qt5-default
 qttools5-dev-tools
 libqt5opengl5-dev
+libqt5svg5-dev
 
 # required for compiling gcc
 libgmp3-dev
@@ -65,6 +67,9 @@ spacenavd
 
 # for the high-level python interface for soccer
 libboost-python-dev
+
+# for joystick
+libsdl1.2-dev
 
 # everything else...
 build-essential

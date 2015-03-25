@@ -12,3 +12,5 @@ echo "-- Installing required AUR packages"
 yaourt -S --needed --noconfirm $(sed 's/#.*//;/^$/d' $BASE/util/arch-packages-aur.txt)
 
 sudo pip install -r $BASE/util/requirements3.txt
+
+sudo pip2 install -r $BASE/util/requirements2.txt

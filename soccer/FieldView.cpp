@@ -43,6 +43,7 @@ FieldView::FieldView(QWidget* parent) :
 	showRawBalls = false;
 	showCoords = false;
     showDotPatterns = false;
+    showTeamNames = false;
 	_rotate = 1;
 	_history = 0;
 
@@ -76,6 +77,9 @@ void FieldView::rotate(int value)
 void FieldView::paintEvent(QPaintEvent* e)
 {
 	QPainter p(this);
+
+	//	antialiasing drastically improves rendering quality
+	p.setRenderHint(QPainter::Antialiasing);
 	
 	if (!live)
 	{
@@ -171,13 +175,16 @@ void FieldView::drawWorldSpace(QPainter& p)
 	
 	// Draw the field
 	drawField(p, frame);
-	
 
+	//	maps robots to their comet trails, so we can draw a path of where each robot has been over the past X frames
+	//	the pair used as a key is of the form (team, robot_id).  Blue team = 1, yellow = 2.
+	//	we only draw trails for robots that exist in the current frame
+	map<pair<int, int>, QPainterPath> cometTrails;
 
-	///	draw a comet trail behind each robot so we can see its path easier
-	int pastLocationCount = 50;
+	///	populate @cometTrails with the past locations of each robot
+	int pastLocationCount = 50;	//	number of past locations to show
 	const float prev_loc_scale = 0.4;
-	for (int i = 1; i < pastLocationCount + 1 && i < _history->size(); i++) {
+	for (int i = 0; i < pastLocationCount + 1 && i < _history->size(); i++) {
 		const LogFrame *oldFrame = _history->at(i).get();
 		if (oldFrame) {
 			for (const SSL_WrapperPacket &wrapper : oldFrame->raw_vision()) {
@@ -188,27 +195,36 @@ void FieldView::drawWorldSpace(QPainter& p)
 
 				const SSL_DetectionFrame &detect = wrapper.detection();
 
-				float alpha = 0.6f * (1.0f - (float)i / pastLocationCount);
-
-				QColor blue = Qt::blue;
-				blue.setAlphaF(alpha);
-				p.setPen(bluePen);
-				p.setBrush(QBrush(blue));
 				for (const SSL_DetectionRobot &r : detect.robots_blue()) {
-					QPointF pos(r.x() / 1000, r.y() / 1000);
-					p.drawEllipse(pos, Robot_Radius * prev_loc_scale, Robot_Radius * prev_loc_scale);
+					pair<int, int> key(1, r.robot_id());
+					if (cometTrails.find(key) != cometTrails.end() || i == 0) {
+						QPointF pt(r.x() / 1000, r.y() / 1000);
+						if (i == 0) cometTrails[key].moveTo(pt);
+						else cometTrails[key].lineTo(pt);
+					}
 				}
 
-				QColor yellow = Qt::yellow;
-				yellow.setAlphaF(alpha);
-				p.setBrush(QBrush(yellow));
-				p.setPen(yellowPen);
 				for (const SSL_DetectionRobot &r : detect.robots_yellow()) {
-					QPointF pos(r.x() / 1000, r.y() / 1000);
-					p.drawEllipse(pos, Robot_Radius * prev_loc_scale, Robot_Radius * prev_loc_scale);
+					pair<int, int> key(2, r.robot_id());
+					if (cometTrails.find(key) != cometTrails.end() || i == 0) {
+						QPointF pt(r.x() / 1000, r.y() / 1000);
+						if (i == 0) cometTrails[key].moveTo(pt);
+						else cometTrails[key].lineTo(pt);
+					}
 				}
 			}
 		}
+	}
+
+
+	//	draw robot comet trails
+	const float cometTrailPenSize = 0.05;
+	for (auto &kv : cometTrails) {
+		QColor color = kv.first.first == 1 ? Qt::blue : Qt::yellow;
+		QPen pen(color, cometTrailPenSize);
+		pen.setCapStyle(Qt::RoundCap);
+		p.setPen(pen);
+		p.drawPath(kv.second);
 	}
 
 
@@ -260,6 +276,20 @@ void FieldView::drawTeamSpace(QPainter& p)
 	// Get the latest LogFrame
 	const LogFrame *frame = _history->at(0).get();
 	
+	if(showTeamNames)
+    {
+    	//Draw Team Names
+    	QFont savedFont = p.font();
+		QFont fontstyle = p.font();
+		fontstyle.setPointSize(20);
+		p.setFont(fontstyle);
+		p.setPen(bluePen);
+		drawText(p,QPointF(0,4.75), QString(frame->team_name_blue().c_str()), true); //Blue
+		p.setPen(yellowPen);
+		drawText(p,QPointF(0,1.75), QString(frame->team_name_yellow().c_str()), true); //Yellow
+    	p.setFont(savedFont);
+    }
+
 	// Block off half the field
 	if (!frame->use_our_half())
 	{
@@ -283,23 +313,21 @@ void FieldView::drawTeamSpace(QPainter& p)
 	
 	// History
 	p.setBrush(Qt::NoBrush);
-	for (unsigned int i = 1; i < 200 && i < _history->size(); ++i)
+	QPainterPath ballTrail;
+	for (unsigned int i = 0; i < 200 && i < _history->size(); ++i)
 	{
 		const LogFrame *oldFrame = _history->at(i).get();
-		if (oldFrame && oldFrame->has_ball())
-		{
+		if (oldFrame && oldFrame->has_ball()) {
 			QPointF pos = qpointf(oldFrame->ball().pos());
 			
-			QColor c = ballColor;
-			c.setAlpha(255 - i);
-
-			tempPen.setColor(c);
-			p.setPen(tempPen);
-			
-			p.drawEllipse(QRectF(-Ball_Radius + pos.x(), -Ball_Radius + pos.y(),
-					Ball_Diameter, Ball_Diameter));
+			if (i == 0) ballTrail.moveTo(pos);
+			else ballTrail.lineTo(pos);
 		}
 	}
+	QPen ballTrailPen(ballColor, 0.03);
+	ballTrailPen.setCapStyle(Qt::RoundCap);
+	p.setPen(ballTrailPen);
+	p.drawPath(ballTrail);
 	
 	// Debug lines
 	for (const DebugPath& path :  frame->debug_paths())
@@ -542,7 +570,7 @@ void FieldView::drawField(QPainter& p, const LogFrame *frame)
 	p.drawLine(QLineF(x[0], y[0], x[1], y[0]));
 	p.drawLine(QLineF(x[0], y[1], x[1], y[1]));
 	p.drawLine(QLineF(x[1], y[1], x[1], y[0]));
-	
+		
 
 	p.restore();
 }
@@ -591,7 +619,7 @@ void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos
             painter.drawEllipse(center, Dots_Radius, Dots_Radius);
         }
     }
-	
+
 	if (hasBall)
 	{
 		painter.setPen(redPen);

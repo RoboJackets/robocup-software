@@ -1,0 +1,3 @@
+# python requirements
+
+colorama # A dependency for the mbed build library
