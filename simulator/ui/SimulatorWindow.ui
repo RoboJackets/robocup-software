@@ -19,6 +19,10 @@
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="main_icons.qrc">
+    <normaloff>:/icons/SimIcon.png</normaloff>:/icons/SimIcon.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_3">
     <item>
@@ -150,7 +154,7 @@
      <x>0</x>
      <y>0</y>
      <width>1114</width>
-     <height>25</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
@@ -164,6 +168,8 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="main_icons.qrc"/>
+ </resources>
  <connections/>
 </ui>

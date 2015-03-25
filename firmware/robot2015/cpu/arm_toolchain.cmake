@@ -18,7 +18,11 @@ set(TOOLCHAIN TOOLCHAIN_GCC_ARM)
 
 #-------------------------------------------------------------------------------
 # define presets
-set(USE_RTOS false)
+#mbed official
+set(USE_RTOS true)
 set(USE_NET false)
 set(USE_USB false)
 set(USE_DSP false)
+
+#other
+set(BUILD_MCP23017 false)

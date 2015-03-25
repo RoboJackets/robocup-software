@@ -6,6 +6,7 @@
 #include <SimulatorGLUTThread.hpp>
 #include "physics/RobotBallController.hpp"
 #include <GLDebugFont.h>
+#include <GL/freeglut.h>
 
 using namespace std;
 
@@ -43,9 +44,9 @@ static void glutDisplayCallback(void) {
 
 // SimulatorGLUTThread implementation
 
-SimulatorGLUTThread::SimulatorGLUTThread(int argc, char* argv[], const QString& configFile, bool sendShared)
-: _argv(argv), _argc(argc), _env(0), _vehicle(0),_blue(false),
-  _camera(0), _cameraHeight(4.f),	_minCameraDistance(3.f), _maxCameraDistance(10.f)
+SimulatorGLUTThread::SimulatorGLUTThread(int argc, char* argv[], const QString& configFile, bool sendShared, bool showWindow)
+: _argv(argv), _argc(argc), _env(0), _vehicle(0), _blue(false),
+  _camera(0), _cameraHeight(4.f), _minCameraDistance(3.f), _maxCameraDistance(10.f), _showWindow(showWindow), _stopped(false)
 {
 	initialize(configFile, sendShared);
 }
@@ -65,31 +66,48 @@ SimulatorGLUTThread::~SimulatorGLUTThread() {
 }
 
 void SimulatorGLUTThread::run() {
-	// set up glut
-	gSimpleApplication = this;
-	int width = 800, height = 640;
-	const char* title = "Robocup Simulator";
-	glutInit(&_argc, _argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL);
-	glutInitWindowPosition(0, 0);
-	glutInitWindowSize(width, height);
-	glutCreateWindow(title);
+	if (_showWindow) {
+		// set up glut
+		gSimpleApplication = this;
+		int width = 800, height = 640;
+		const char* title = "Robocup Simulator";
+		glutInit(&_argc, _argv);
+		glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL);
+		glutInitWindowPosition(0, 0);
+		glutInitWindowSize(width, height);
+		glutCreateWindow(title);
 
-	_camera->myinit();
+		_camera->myinit();
 
-	glutKeyboardFunc(glutKeyboardCallback);
-	glutKeyboardUpFunc(glutKeyboardUpCallback);
-	glutSpecialFunc(glutSpecialKeyboardCallback);
-	glutSpecialUpFunc(glutSpecialKeyboardUpCallback);
+		glutKeyboardFunc(glutKeyboardCallback);
+		glutKeyboardUpFunc(glutKeyboardUpCallback);
+		glutSpecialFunc(glutSpecialKeyboardCallback);
+		glutSpecialUpFunc(glutSpecialKeyboardUpCallback);
 
-	glutReshapeFunc(glutReshapeCallback);
-	glutIdleFunc(glutMoveAndDisplayCallback);
-	glutDisplayFunc(glutDisplayCallback);
+		glutReshapeFunc(glutReshapeCallback);
+		glutIdleFunc(glutMoveAndDisplayCallback);
+		glutDisplayFunc(glutDisplayCallback);
 
-	glutMoveAndDisplayCallback();
+		glutMoveAndDisplayCallback();
 
-	// Actually start loop
-	glutMainLoop();
+		// Actually start loop
+		glutMainLoop();
+	} else {
+		while (true) {
+			if (_stopped) return;
+			stepSimulation();
+			usleep(16667);	//	wait 1/60 seconds
+		}
+	}
+}
+
+void SimulatorGLUTThread::stop() {
+	QMutexLocker locker(&_mutex);
+	//	in headless mode, we check this variable to stop nicely
+	_stopped = true;
+	if (_showWindow) {
+		glutLeaveMainLoop();
+	}
 }
 
 static bool DisplayMotion = false;
@@ -210,12 +228,22 @@ void SimulatorGLUTThread::initialize(const QString& configFile, bool sendShared)
 	_vehicle = _env->yellow().begin().value();
 
 	// Set up the camera
-	_camera = new GlutCamera(_simEngine);
-	_camera->setCameraPosition(scaling*btVector3(1, 1, 1));//
+	if (_showWindow) {
+		_camera = new GlutCamera(_simEngine);
+		_camera->setCameraPosition(scaling*btVector3(1, 1, 1));
 
+		// Connect the debug drawer
+		_simEngine->dynamicsWorld()->setDebugDrawer(_camera->debugDrawer());
+	}
+}
 
-	// Connect the debug drawer
-	_simEngine->dynamicsWorld()->setDebugDrawer(_camera->debugDrawer());
+void SimulatorGLUTThread::stepSimulation() {
+	//get delta time
+	float delta = _simEngine->getClock()->getTimeMicroseconds() * 0.000001f;
+
+	// simulation steps
+	_env->preStep(delta);
+	_simEngine->stepSimulation();
 }
 
 void SimulatorGLUTThread::render() {
@@ -233,12 +261,7 @@ void SimulatorGLUTThread::clientMoveAndDisplay() {
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//get delta time
-	float delta = _simEngine->getClock()->getTimeMicroseconds() * 0.000001f;
-
-	// simulation steps
-	_env->preStep(delta);
-	_simEngine->stepSimulation();
+	stepSimulation();
 
 	render();
 
@@ -444,5 +467,4 @@ void SimulatorGLUTThread::showVehicleInfo(int& xOffset,int& yStart, int yIncr)
 	sprintf(robotText,"-------------------------------------------------");
 	displayProfileString(xOffset,yStart,robotText);
 	yStart += yIncr;
-
 }

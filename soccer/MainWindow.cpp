@@ -25,6 +25,9 @@ using namespace google::protobuf;
 using namespace Packet;
 using namespace Eigen;
 
+
+const float kFastPlaybackRate = 3;
+
 // Style sheets used for live/non-live controls
 QString LiveStyle("border:2px solid transparent");
 QString NonLiveStyle("border:2px solid red");
@@ -39,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent):
 	QMainWindow(parent)
 {
 
-  qRegisterMetaType<QVector<int> >("QVector<int>");
+ 	qRegisterMetaType<QVector<int> >("QVector<int>");
 
 	_quaternion_demo = 0;
 	
@@ -125,6 +128,14 @@ MainWindow::MainWindow(QWidget *parent):
 	updateTimer.setSingleShot(true);
 	connect(&updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
 	updateTimer.start(30);
+
+	//	put all log playback buttons into a vector for easy access later
+	_logPlaybackButtons.push_back(_ui.logPlaybackFastBackward);
+	_logPlaybackButtons.push_back(_ui.logPlaybackBackward);
+	_logPlaybackButtons.push_back(_ui.logPlaybackPause);
+	_logPlaybackButtons.push_back(_ui.logPlaybackForward);
+	_logPlaybackButtons.push_back(_ui.logPlaybackFastForward);
+	_logPlaybackButtons.push_back(_ui.logPlaybackLive);
 }
 
 void MainWindow::configuration(Configuration* config)
@@ -150,6 +161,9 @@ void MainWindow::processor(Processor* value)
 	} else {
 		_ui.actionTeamYellow->trigger();
 	}
+
+	_ui.logHistoryLocation->setMaximum(_processor->logger().maxFrames());
+	_ui.logHistoryLocation->setTickInterval(60*60);	//	interval is ~ 1 minute
 }
 
 void MainWindow::logFileChanged()
@@ -229,17 +243,17 @@ void MainWindow::updateViews()
 		));
 	}
 	
-	// Advance log playback time
+	// Advance log history
 	int liveFrameNumber = _processor->logger().lastFrameNumber();
 	if (_live)
 	{
 		_doubleFrameNumber = liveFrameNumber;
 	} else {
-		double rate = _ui.playbackRate->value();
-		_doubleFrameNumber += rate / framerate;
+		_doubleFrameNumber += _playbackRate;
 		
 		int minFrame = _processor->logger().firstFrameNumber();
 		int maxFrame = _processor->logger().lastFrameNumber();
+
 		if (_doubleFrameNumber < minFrame)
 		{
 			_doubleFrameNumber = minFrame;
@@ -248,16 +262,26 @@ void MainWindow::updateViews()
 			_doubleFrameNumber = maxFrame;
 		}
 	}
-	
+
+	//	update history slider in ui
+	emit historyLocationChanged(_doubleFrameNumber - _processor->logger().firstFrameNumber());
+
 	// Read recent history from the log
 	_processor->logger().getFrames(frameNumber(), _history);
 	
 	// Update field view
 	_ui.fieldView->update();
-	
-	// Update log controls
-	_ui.logLive->setEnabled(!_live);
-	_ui.logStop->setEnabled(_live);
+
+
+	//	enable playback buttons based on playback rate
+	for (QPushButton *playbackBtn : _logPlaybackButtons) playbackBtn->setEnabled(true);
+	if (_live) _ui.logPlaybackLive->setEnabled(false);
+	else if (_playbackRate < -1.1) _ui.logPlaybackFastBackward->setEnabled(false);
+	else if (_playbackRate < -0.1) _ui.logPlaybackBackward->setEnabled(false);
+	else if (abs<float>(_playbackRate) < 0.01) _ui.logPlaybackPause->setEnabled(false);
+	else if (_playbackRate > 1.1) _ui.logPlaybackFastForward->setEnabled(false);
+	else if (_playbackRate > 0.1) _ui.logPlaybackForward->setEnabled(false);
+
 	
 	// Update status indicator
 	updateStatus();
@@ -531,6 +555,13 @@ void MainWindow::on_actionDotPatterns_toggled(bool state)
     _ui.fieldView->update();
 }
 
+void MainWindow::on_actionTeam_Names_toggled(bool state)
+{
+	_ui.fieldView->showTeamNames = state;
+	_ui.fieldView->update();
+}
+
+
 void MainWindow::on_actionDefendMinusX_triggered()
 {
 	_processor->defendPlusX(false);
@@ -711,48 +742,52 @@ void MainWindow::on_actionSeed_triggered()
 
 
 // Log controls
-void MainWindow::on_playbackRate_sliderPressed()
+void MainWindow::on_logHistoryLocation_sliderMoved(int value)
 {
-	// Stop playback
+	//	update current frame
+	int minFrame = _processor->logger().firstFrameNumber();
+	int maxFrame = _processor->logger().lastFrameNumber();
+	_doubleFrameNumber = value + minFrame;
+	_doubleFrameNumber = min<double>(maxFrame, _doubleFrameNumber);
+
+	emit historyLocationChanged(_doubleFrameNumber - minFrame);
+
+	//	pause playback
 	live(false);
+	_playbackRate = 0;
 }
 
-void MainWindow::on_playbackRate_sliderMoved(int value)
-{
-	live(false);
-}
-
-void MainWindow::on_playbackRate_sliderReleased()
-{
-	// Center the slider and stop playback
-	_ui.playbackRate->setValue(0);
-}
-
-void MainWindow::on_logNext_clicked()
-{
-	on_logStop_clicked();
-	frameNumber(frameNumber() + 1);
-}
-
-void MainWindow::on_logPrev_clicked()
-{
-	on_logStop_clicked();
-	frameNumber(frameNumber() - 1);
-}
-
-void MainWindow::on_logStop_clicked()
+void MainWindow::on_logPlaybackFastBackward_clicked()
 {
 	live(false);
-	_ui.playbackRate->setValue(0);
+	_playbackRate = -kFastPlaybackRate;
 }
 
-void MainWindow::on_logFirst_clicked()
+void MainWindow::on_logPlaybackBackward_clicked()
 {
-	on_logStop_clicked();
-	frameNumber(_processor->logger().firstFrameNumber());
+	live(false);
+	_playbackRate = -1;
 }
 
-void MainWindow::on_logLive_clicked()
+void MainWindow::on_logPlaybackPause_clicked()
+{
+	live(false);
+	_playbackRate = 0;
+}
+
+void MainWindow::on_logPlaybackForward_clicked()
+{
+	live(false);
+	_playbackRate = 1;
+}
+
+void MainWindow::on_logPlaybackFastForward_clicked()
+{
+	live(false);
+	_playbackRate = kFastPlaybackRate;
+}
+
+void MainWindow::on_logPlaybackLive_clicked()
 {
 	live(true);
 }
