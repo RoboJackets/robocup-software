@@ -50,6 +50,9 @@ namespace Gameplay
 			
 			void setupUI();
 
+			void loadPlaybook(std::string);
+			void savePlaybook(std::string);
+
 			void goalieID(int value);
 			int goalieID()
 			{

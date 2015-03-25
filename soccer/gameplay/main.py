@@ -1,4 +1,5 @@
 import play_registry as play_registry_module
+import playbook
 import play
 import fs_watcher
 import class_import
@@ -39,7 +40,7 @@ def init():
         # keep in mind that @entry is a tuple
         mod_path = entry[0][1:]
         _play_registry.insert(mod_path, entry[1])
-
+    
 
     # this callback lets us do cool stuff when our python files change on disk
     def fswatch_callback(event_type, module_path):
@@ -124,6 +125,13 @@ def init():
 
     _has_initialized = True
 
+def load_playbook(file_name):
+    global _play_registry
+    _play_registry.load_playbook(playbook.load_from_file(GAMEPLAY_DIR + '/' + file_name))
+
+def save_playbook(file_name):
+    global _play_registry
+    playbook.save_to_file(GAMEPLAY_DIR + '/' + file_name, _play_registry.get_enabled_plays_path());
 
 ## Called ~60times/sec by the C++ GameplayModule
 def run():
