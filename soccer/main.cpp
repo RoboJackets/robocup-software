@@ -116,11 +116,10 @@ void signal_handler(int signum) {
 void usage(const char* prog)
 {
 	fprintf(stderr, "usage: %s [options...]\n", prog);
-	fprintf(stderr, "\t-y:         run as the yellow team\n");
-	fprintf(stderr, "\t-b:         run as the blue team\n");
-	fprintf(stderr, "\t-c <file>:  specify the configuration file\n");
-	fprintf(stderr, "\t-s <seed>:  set random seed (hexadecimal)\n");
-	fprintf(stderr, "\t-pp <play>: enable named play\n");
+	fprintf(stderr, "\t-y:          run as the yellow team\n");
+	fprintf(stderr, "\t-b:          run as the blue team\n");
+	fprintf(stderr, "\t-c <file>:   specify the configuration file\n");
+	fprintf(stderr, "\t-s <seed>:   set random seed (hexadecimal)\n");
 	fprintf(stderr, "\t-pbk <file>: playbook file, relative to the 'soccer/gameplay' folder\n");
 	fprintf(stderr, "\t-ng:        no goalie\n");
 	fprintf(stderr, "\t-sim:       use simulator\n");
@@ -156,7 +155,6 @@ int main (int argc, char* argv[])
 	bool blueTeam = false;
 	QString cfgFile;
 	vector<const char *> playDirs;
-	vector<QString> extraPlays;
 	bool sim = false;
 	bool log = true;
     QString radioFreq;
@@ -218,17 +216,6 @@ int main (int argc, char* argv[])
 			
 			i++;
 			seed = strtol(argv[i], 0, 16);
-		}
-		else if(strcmp(var, "-pp") == 0)
-		{
-			if (i+1 >= argc)
-			{
-				printf("no play specified after -pp\n");
-				usage(argv[0]);
-			}
-			
-			i++;
-			extraPlays.push_back(argv[i]);
 		}
 		else if(strcmp(var, "-pbk") == 0)
 		{
