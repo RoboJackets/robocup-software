@@ -235,7 +235,7 @@ int main (int argc, char* argv[])
 	}
 
 
-	printf("Running on %s\n", sim ? "simulation" : "real hardwar\ne");
+	printf("Running on %s\n", sim ? "simulation" : "real hardware\n");
 	
 	printf("seed %016lx\n", seed);
 	srand48(seed);

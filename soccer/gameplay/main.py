@@ -131,7 +131,7 @@ def load_playbook(file_name):
 
 def save_playbook(file_name):
     global _play_registry
-    playbook.save_to_file(GAMEPLAY_DIR + '/' + file_name, _play_registry.get_enabled_plays_path());
+    playbook.save_to_file(GAMEPLAY_DIR + '/' + file_name, _play_registry.get_enabled_plays_paths());
 
 ## Called ~60times/sec by the C++ GameplayModule
 def run():

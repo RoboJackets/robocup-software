@@ -84,7 +84,10 @@ class PlayRegistry(QtCore.QAbstractItemModel):
     def get_enabled_plays_and_scores(self):
         return [(node.play_class, node.last_score) for node in self if node.enabled]
 
-    def get_enabled_plays_path(self):
+    ## Returns a list of module paths for the currently-enabled plays
+    # The module path is a list or tuple giving the path the the play's python module
+    # For example: ['testing', 'test_pivot_kick']
+    def get_enabled_plays_paths(self):
         enabled_plays = []
 
         for node in self:

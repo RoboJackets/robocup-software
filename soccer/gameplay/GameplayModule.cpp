@@ -173,7 +173,7 @@ void Gameplay::GameplayModule::setupUI() {
 	} PyGILState_Release(state);
 }
 
-void Gameplay::GameplayModule::loadPlaybook(string playbookFile) {
+void Gameplay::GameplayModule::loadPlaybook(const string &playbookFile) {
 	PyGILState_STATE state = PyGILState_Ensure(); {
 		try {
 			getMainModule().attr("load_playbook")(playbookFile);
@@ -184,13 +184,13 @@ void Gameplay::GameplayModule::loadPlaybook(string playbookFile) {
 	} PyGILState_Release(state);
 }
 
-void Gameplay::GameplayModule::savePlaybook(string playbookFile) {
+void Gameplay::GameplayModule::savePlaybook(const string &playbookFile) {
 	PyGILState_STATE state = PyGILState_Ensure(); {
 		try {
 			getMainModule().attr("save_playbook")(playbookFile);
 		} catch (error_already_set) {
 			PyErr_Print();
-			throw new runtime_error("Error trying to load playbook.");
+			throw new runtime_error("Error trying to save playbook.");
 		}
 	} PyGILState_Release(state);
 }
