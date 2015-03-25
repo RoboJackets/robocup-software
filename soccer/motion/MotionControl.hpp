@@ -44,6 +44,7 @@ private:
 
 	OurRobot *_robot;
 
+	//Geometry2d::Point _lastTargetVel;
 	//	these are tracked so we can limit robot acceleration
 	Geometry2d::Point _lastVelCmd;	//	the last velocity (in m/s, not the radioTx value) command that we sent to the robot
 	long _lastCmdTime;	//	the time in microseconds when the last velocity command was sent
@@ -51,6 +52,9 @@ private:
 	Pid _positionXController;
 	Pid _positionYController;
 	Pid _angleController;
+
+	Pid _velocityXController;
+	Pid _velocityYController;
 	
 	static ConfigDouble *_max_acceleration;
 	static ConfigDouble *_max_velocity;
