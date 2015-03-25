@@ -53,6 +53,8 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             node = self.node_for_module_path(play)
             if node is not None:
                 node.enabled = True
+            else:
+                logging.warn("Attempt to load non-existent play " + '/'.join(play) + " from playbook.")
 
         # note: this is a shitty way to do this - we should really only reload part of the model
         self.modelReset.emit()
