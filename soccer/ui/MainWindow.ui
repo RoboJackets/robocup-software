@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1405</width>
+    <width>1080</width>
     <height>711</height>
    </rect>
   </property>
@@ -662,32 +662,12 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QListWidget" name="robotStatusList">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>415</width>
-         <height>16777215</height>
-        </size>
-       </property>
-      </widget>
       <widget class="SimFieldView" name="fieldView" native="true">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>476</width>
-         <height>0</height>
-        </size>
        </property>
       </widget>
       <widget class="QTabWidget" name="tabWidget">
@@ -1247,8 +1227,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1405</width>
-     <height>22</height>
+     <width>1080</width>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
