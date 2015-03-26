@@ -249,11 +249,6 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             self._parent = value
 
         @property
-        def full_play_path(self):
-            path = []
-
-
-        @property
         def name(self):
             return self.play_class.__name__
 

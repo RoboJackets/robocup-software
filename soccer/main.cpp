@@ -120,11 +120,11 @@ void usage(const char* prog)
 	fprintf(stderr, "\t-b:          run as the blue team\n");
 	fprintf(stderr, "\t-c <file>:   specify the configuration file\n");
 	fprintf(stderr, "\t-s <seed>:   set random seed (hexadecimal)\n");
-	fprintf(stderr, "\t-pbk <file>: playbook file, relative to the 'soccer/gameplay' folder\n");
-	fprintf(stderr, "\t-ng:        no goalie\n");
-	fprintf(stderr, "\t-sim:       use simulator\n");
-	fprintf(stderr, "\t-freq:      specify radio frequency (906 or 904)\n");
-	fprintf(stderr, "\t-nolog:     don't write log files\n");
+	fprintf(stderr, "\t-pbk <file>: playbook file name as contained in 'soccer/gameplay/playbooks/'\n");
+	fprintf(stderr, "\t-ng:         no goalie\n");
+	fprintf(stderr, "\t-sim:        use simulator\n");
+	fprintf(stderr, "\t-freq:       specify radio frequency (906 or 904)\n");
+	fprintf(stderr, "\t-nolog:      don't write log files\n");
 	exit(1);
 }
 
