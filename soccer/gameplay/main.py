@@ -12,6 +12,7 @@ import constants
 
 ## soccer is run from the `run` folder, so we provide a relative path to where the python files live
 GAMEPLAY_DIR = '../soccer/gameplay'
+PLAYBOOKS_DIR = GAMEPLAY_DIR + '/playbooks'
 
 
 # main init method for the python side of things
@@ -125,13 +126,15 @@ def init():
 
     _has_initialized = True
 
+#loads the specified file_name from the playbooks folder
 def load_playbook(file_name):
     global _play_registry
-    _play_registry.load_playbook(playbook.load_from_file(GAMEPLAY_DIR + '/' + file_name))
+    _play_registry.load_playbook(playbook.load_from_file(PLAYBOOKS_DIR + '/' + file_name))
 
+#saves the playbook into the specified file_name in the playbooks folder
 def save_playbook(file_name):
     global _play_registry
-    playbook.save_to_file(GAMEPLAY_DIR + '/' + file_name, _play_registry.get_enabled_plays_paths());
+    playbook.save_to_file(PLAYBOOKS_DIR + '/' + file_name, _play_registry.get_enabled_plays_paths());
 
 ## Called ~60times/sec by the C++ GameplayModule
 def run():
