@@ -77,16 +77,26 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	floorObstacle->vertices.push_back(Geometry2d::Point(x, y));
 	_nonFloor[3] = std::shared_ptr<Shape>(floorObstacle);
 
-	Polygon* goalArea = new Polygon;
+  auto ourGoalArea = std::make_shared<Polygon>();
 	const float halfFlat = Field_Dimensions::Current_Dimensions.GoalFlat() /2.0;
 	const float radius = Field_Dimensions::Current_Dimensions.ArcRadius();
-	goalArea->vertices.push_back(Geometry2d::Point(-halfFlat, 0));
-	goalArea->vertices.push_back(Geometry2d::Point(-halfFlat, radius));
-	goalArea->vertices.push_back(Geometry2d::Point( halfFlat, radius));
-	goalArea->vertices.push_back(Geometry2d::Point( halfFlat, 0));
-	_goalArea.add(std::shared_ptr<Shape>(goalArea));
-	_goalArea.add(std::shared_ptr<Shape>(new Circle(Geometry2d::Point(-halfFlat, 0), radius)));
-	_goalArea.add(std::shared_ptr<Shape>(new Circle(Geometry2d::Point(halfFlat, 0), radius)));
+	ourGoalArea->vertices.push_back(Geometry2d::Point(-halfFlat, 0));
+	ourGoalArea->vertices.push_back(Geometry2d::Point(-halfFlat, radius));
+	ourGoalArea->vertices.push_back(Geometry2d::Point( halfFlat, radius));
+	ourGoalArea->vertices.push_back(Geometry2d::Point( halfFlat, 0));
+	_ourGoalArea.add(ourGoalArea);
+	_ourGoalArea.add(std::dynamic_pointer_cast<Shape>(std::make_shared<Circle>(Geometry2d::Point(-halfFlat, 0), radius)));
+	_ourGoalArea.add(std::dynamic_pointer_cast<Shape>(std::make_shared<Circle>(Geometry2d::Point( halfFlat, 0), radius)));
+
+	auto theirGoalArea = std::make_shared<Polygon>();
+	const auto field_length = Field_Dimensions::Current_Dimensions.Length();
+	theirGoalArea->vertices.push_back(Geometry2d::Point(-halfFlat, field_length));
+	theirGoalArea->vertices.push_back(Geometry2d::Point(-halfFlat, field_length - radius));
+	theirGoalArea->vertices.push_back(Geometry2d::Point( halfFlat, field_length - radius));
+	theirGoalArea->vertices.push_back(Geometry2d::Point( halfFlat, field_length));
+	_theirGoalArea.add(theirGoalArea);
+	_theirGoalArea.add(std::dynamic_pointer_cast<Shape>(std::make_shared<Circle>(Geometry2d::Point(-halfFlat, field_length), radius)));
+	_theirGoalArea.add(std::dynamic_pointer_cast<Shape>(std::make_shared<Circle>(Geometry2d::Point( halfFlat, field_length), radius)));
 
 	_ourHalf = std::make_shared<Polygon>();
 	_ourHalf->vertices.push_back(Geometry2d::Point(-x, -Field_Dimensions::Current_Dimensions.Border()));
@@ -309,8 +319,9 @@ void Gameplay::GameplayModule::run()
 	/// determine global obstacles - field requirements
 	/// Two versions - one set with goal area, another without for goalie
 	Geometry2d::CompositeShape global_obstacles = globalObstacles();
-	Geometry2d::CompositeShape obstacles_with_goal = global_obstacles;
-	obstacles_with_goal.add(_goalArea);
+	Geometry2d::CompositeShape obstacles_with_goals = global_obstacles;
+	obstacles_with_goals.add(_ourGoalArea);
+	obstacles_with_goals.add(_theirGoalArea);
 
 	/// execute motion planning for each robot
 	for (OurRobot* r :  _state->self) {
@@ -319,7 +330,7 @@ void Gameplay::GameplayModule::run()
 			if (r->shell() == _goalieID)
 				r->replanIfNeeded(global_obstacles); /// just for goalie
 			else
-				r->replanIfNeeded(obstacles_with_goal); /// all other robots
+				r->replanIfNeeded(obstacles_with_goals); /// all other robots
 		}
 	}
 
