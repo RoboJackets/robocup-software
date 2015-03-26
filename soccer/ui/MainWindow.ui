@@ -1100,7 +1100,7 @@ p, li { white-space: pre-wrap; }
          </widget>
         </item>
         <item>
-         <widget class="QListView" name="robotStatusList">
+         <widget class="QListWidget" name="robotStatusList">
           <property name="selectionMode">
            <enum>QAbstractItemView::NoSelection</enum>
           </property>
@@ -1121,7 +1121,6 @@ p, li { white-space: pre-wrap; }
          <height>0</height>
         </size>
        </property>
-       <zorder>refereePane</zorder>
       </widget>
       <widget class="QTabWidget" name="tabWidget">
        <property name="sizePolicy">
