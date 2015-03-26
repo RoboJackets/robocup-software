@@ -133,8 +133,9 @@ namespace Gameplay
 			///	outside of the floor boundaries
 			std::shared_ptr<Geometry2d::Shape> _nonFloor[4];
 			
-			///	goal area
-			Geometry2d::CompositeShape _goalArea;
+			///	goal areas
+			Geometry2d::CompositeShape _ourGoalArea;
+			Geometry2d::CompositeShape _theirGoalArea;
 
 			/// utility functions
 
