@@ -23,4 +23,5 @@ void freeNeopixelBuffer(void);
 void setBytes(uint8_t* newBytes);
 uint8_t* getBytes(void);
 void setLed(uint8_t red, uint8_t green, uint8_t blue, uint8_t pos);
+void setLeds(uint8_t red, uint8_t green, uint8_t blue);
 void writeNeopixels(void);
