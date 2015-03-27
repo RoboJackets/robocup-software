@@ -1,5 +1,5 @@
 Model {
-  Name			  "robocup"
+  Name			  "robocup_model"
   Version		  8.4
   MdlSubVersion		  0
   SavedCharacterEncoding  "ISO-8859-1"
@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.8"
+    ComputedModelVersion    "1.37"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -29,7 +29,7 @@ Model {
       $ObjectID		      2
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [354.0, 214.0, 800.0, 522.0]
+      Location		      [0.0, 23.0, 1440.0, 842.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		3
@@ -53,9 +53,9 @@ Model {
 	IsActive		[1]
 	ViewObjType		"SimulinkTopLevel"
 	LoadSaveID		"0"
-	Extents			[766.0, 352.0]
-	ZoomFactor		[1.0]
-	Offset			[0.0, 0.0]
+	Extents			[1406.0, 672.0]
+	ZoomFactor		[1.25]
+	Offset			[-2.5047619047596754, -21.042857142856406]
       }
     }
   }
@@ -65,9 +65,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "justbuchanan"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed Mar 11 04:00:05 2015"
-  RTWModifiedTimeStamp	  347946902
-  ModelVersionFormat	  "1.%<AutoIncrement:8>"
+  LastModifiedDate	  "Wed Apr 08 20:45:36 2015"
+  RTWModifiedTimeStamp	  350426656
+  ModelVersionFormat	  "1.%<AutoIncrement:37>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -718,7 +718,7 @@ Model {
       }
       Name		      "Configuration"
       CurrentDlgPage	      "Solver"
-      ConfigPrmDlgPosition     [ 180, 130, 1260, 770 ] 
+      ConfigPrmDlgPosition     [ 180, 86, 1260, 770 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -789,10 +789,27 @@ Model {
   }
   BlockParameterDefaults {
     Block {
+      BlockType		      Constant
+      Value		      "1"
+      VectorParams1D	      on
+      SamplingMode	      "Sample based"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Inherit from 'Constant value'"
+      LockScale		      off
+      SampleTime	      "inf"
+      FramePeriod	      "inf"
+      PreserveConstantTs      off
+    }
+    Block {
       BlockType		      Demux
       Outputs		      "4"
       DisplayOption	      "none"
       BusSelectionMode	      off
+    }
+    Block {
+      BlockType		      Derivative
+      CoefficientInTFapproximation "inf"
     }
     Block {
       BlockType		      Inport
@@ -811,6 +828,11 @@ Model {
       LatchByDelayingOutsideSignal off
       LatchInputForFeedbackSignals off
       Interpolate	      on
+    }
+    Block {
+      BlockType		      MATLABSystem
+      System		      "<Enter System Class Name>"
+      SimulateUsing	      "Code generation"
     }
     Block {
       BlockType		      Outport
@@ -835,6 +857,24 @@ Model {
       SFunctionModules	      "''"
       PortCounts	      "[]"
       SFunctionDeploymentMode off
+    }
+    Block {
+      BlockType		      Scope
+      ModelBased	      off
+      TickLabels	      "OneTimeTick"
+      ZoomMode		      "on"
+      Grid		      "on"
+      TimeRange		      "auto"
+      YMin		      "-5"
+      YMax		      "5"
+      SaveToWorkspace	      off
+      SaveName		      "ScopeData"
+      DataFormat	      "Array"
+      LimitDataPoints	      on
+      MaxDataPoints	      "5000"
+      Decimation	      "1"
+      SampleInput	      off
+      SampleTime	      "-1"
     }
     Block {
       BlockType		      SubSystem
@@ -868,12 +908,28 @@ Model {
       ContentPreviewEnabled   off
     }
     Block {
+      BlockType		      Sum
+      IconShape		      "rectangular"
+      Inputs		      "++"
+      CollapseMode	      "All dimensions"
+      CollapseDim	      "1"
+      InputSameDT	      on
+      AccumDataTypeStr	      "Inherit: Inherit via internal rule"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Same as first input"
+      LockScale		      off
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	on
+      SampleTime	      "-1"
+    }
+    Block {
       BlockType		      Terminator
     }
   }
   System {
-    Name		    "robocup"
-    Location		    [354, 214, 1154, 736]
+    Name		    "robocup_model"
+    Location		    [0, 23, 1440, 865]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -885,26 +941,216 @@ Model {
     TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
     TiledPageScale	    1
     ShowPageBoundaries	    off
-    ZoomFactor		    "100"
+    ZoomFactor		    "125"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "19"
+    SIDHighWatermark	    "59"
+    Block {
+      BlockType		      Sum
+      Name		      "Add"
+      SID		      "45"
+      Ports		      [2, 1]
+      Position		      [310, 67, 340, 98]
+      ZOrder		      40
+      InputSameDT	      off
+      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      SaturateOnIntegerOverflow	off
+      Port {
+	PortNumber		1
+	Name			"Command Body Velocity"
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
+    }
+    Block {
+      BlockType		      Constant
+      Name		      "Constant"
+      SID		      "28"
+      Position		      [620, 110, 650, 140]
+      ZOrder		      26
+      Value		      "1/60.0"
+    }
     Block {
       BlockType		      Demux
       Name		      "Demux"
-      SID		      "16"
+      SID		      "31"
       Ports		      [1, 3]
-      Position		      [375, 141, 380, 179]
-      ZOrder		      18
+      Position		      [890, 66, 895, 104]
+      ZOrder		      29
+      ShowName		      off
       Outputs		      "3"
       DisplayOption	      "bar"
     }
     Block {
-      BlockType		      SubSystem
-      Name		      "MATLAB Function"
-      SID		      "9"
+      BlockType		      Derivative
+      Name		      "Derivative"
+      SID		      "48"
+      Position		      [185, 60, 215, 90]
+      ZOrder		      43
+    }
+    Block {
+      BlockType		      MATLABSystem
+      Name		      "MATLAB System"
+      SID		      "27"
+      Ports		      [2, 2]
+      Position		      [670, 63, 865, 147]
+      ZOrder		      25
+      System		      "Robot"
+      SimulateUsing	      "Interpreted execution"
+      MaskType		      "Robot"
+      MaskDisplay	      "disp(['RoboCup Robot' char(10) 'Dynamics']);\nport_label('input',1,'Motor Voltages');\nport_l"
+      "abel('input',2,'dt');\nport_label('output',1,'Robot pose');\nport_label('output',2,'Robot velocity');\n"
+      M_bot		      "1"
+      I_bot		      "1"
+      g			      "2.0/7.0"
+      r			      "1"
+      L			      "0.1"
+      R			      "1"
+      K_e		      "1"
+      K_t		      "1"
+      K_f		      "1"
+      I_asm		      "1"
+      V			      "1"
+      wheel_angles	      "(pi/4 + (pi/2)*(0:3))'"
+      Port {
+	PortNumber		1
+	Name			"Bot position, as reported by ssl-vision"
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
+    }
+    Block {
+      BlockType		      MATLABSystem
+      Name		      "On-board\nmotion controller"
+      SID		      "44"
       Ports		      [1, 1]
-      Position		      [125, 112, 195, 158]
-      ZOrder		      11
+      Position		      [515, 56, 585, 114]
+      ZOrder		      39
+      System		      "RobotLqt"
+      MaskType		      "RobotLqt"
+      MaskDisplay	      "disp('RobotLqt');\n"
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "PID Controller"
+      SID		      "34"
+      Ports		      [1, 1]
+      Position		      [230, 132, 270, 168]
+      ZOrder		      32
+      LibraryVersion	      "1.354"
+      SourceBlock	      "simulink/Continuous/PID Controller"
+      SourceType	      "PID 1dof"
+      ContentPreviewEnabled   off
+      Controller	      "PID"
+      TimeDomain	      "Continuous-time"
+      SampleTime	      "-1"
+      IntegratorMethod	      "Forward Euler"
+      FilterMethod	      "Forward Euler"
+      Form		      "Parallel"
+      P			      "1"
+      I			      "1"
+      D			      "0"
+      N			      "100"
+      InitialConditionSource  "internal"
+      InitialConditionForIntegrator "0"
+      InitialConditionForFilter	"0"
+      ExternalReset	      "none"
+      IgnoreLimit	      off
+      ZeroCross		      on
+      LimitOutput	      off
+      UpperSaturationLimit    "inf"
+      LowerSaturationLimit    "-inf"
+      LinearizeAsGain	      on
+      AntiWindupMode	      "none"
+      Kb		      "1"
+      TrackingMode	      off
+      Kt		      "1"
+      RndMeth		      "Floor"
+      SaturateOnIntegerOverflow	off
+      LockScale		      off
+      PParamMin		      "[]"
+      PParamMax		      "[]"
+      PParamDataTypeStr	      "Inherit: Inherit via internal rule"
+      IParamMin		      "[]"
+      IParamMax		      "[]"
+      IParamDataTypeStr	      "Inherit: Inherit via internal rule"
+      DParamMin		      "[]"
+      DParamMax		      "[]"
+      DParamDataTypeStr	      "Inherit: Inherit via internal rule"
+      NParamMin		      "[]"
+      NParamMax		      "[]"
+      NParamDataTypeStr	      "Inherit: Inherit via internal rule"
+      KbParamMin	      "[]"
+      KbParamMax	      "[]"
+      KbParamDataTypeStr      "Inherit: Inherit via internal rule"
+      KtParamMin	      "[]"
+      KtParamMax	      "[]"
+      KtParamDataTypeStr      "Inherit: Inherit via internal rule"
+      POutMin		      "[]"
+      POutMax		      "[]"
+      POutDataTypeStr	      "Inherit: Inherit via internal rule"
+      IOutMin		      "[]"
+      IOutMax		      "[]"
+      IOutDataTypeStr	      "Inherit: Inherit via internal rule"
+      DOutMin		      "[]"
+      DOutMax		      "[]"
+      DOutDataTypeStr	      "Inherit: Inherit via internal rule"
+      NOutMin		      "[]"
+      NOutMax		      "[]"
+      NOutDataTypeStr	      "Inherit: Inherit via internal rule"
+      KbOutMin		      "[]"
+      KbOutMax		      "[]"
+      KbOutDataTypeStr	      "Inherit: Inherit via internal rule"
+      KtOutMin		      "[]"
+      KtOutMax		      "[]"
+      KtOutDataTypeStr	      "Inherit: Inherit via internal rule"
+      IntegratorOutMin	      "[]"
+      IntegratorOutMax	      "[]"
+      IntegratorOutDataTypeStr "Inherit: Inherit via internal rule"
+      FilterOutMin	      "[]"
+      FilterOutMax	      "[]"
+      FilterOutDataTypeStr    "Inherit: Inherit via internal rule"
+      SumOutMin		      "[]"
+      SumOutMax		      "[]"
+      SumOutDataTypeStr	      "Inherit: Inherit via internal rule"
+      SumI1OutMin	      "[]"
+      SumI1OutMax	      "[]"
+      SumI1OutDataTypeStr     "Inherit: Inherit via internal rule"
+      SumI2OutMin	      "[]"
+      SumI2OutMax	      "[]"
+      SumI2OutDataTypeStr     "Inherit: Inherit via internal rule"
+      SumI3OutMin	      "[]"
+      SumI3OutMax	      "[]"
+      SumI3OutDataTypeStr     "Inherit: Inherit via internal rule"
+      SumDOutMin	      "[]"
+      SumDOutMax	      "[]"
+      SumDOutDataTypeStr      "Inherit: Inherit via internal rule"
+      SumAccumDataTypeStr     "Inherit: Inherit via internal rule"
+      SumI1AccumDataTypeStr   "Inherit: Inherit via internal rule"
+      SumI2AccumDataTypeStr   "Inherit: Inherit via internal rule"
+      SumI3AccumDataTypeStr   "Inherit: Inherit via internal rule"
+      SumDAccumDataTypeStr    "Inherit: Inherit via internal rule"
+      SaturationOutMin	      "[]"
+      SaturationOutMax	      "[]"
+      SaturationOutDataTypeStr "Inherit: Same as input"
+      IntegratorContinuousStateAttributes "''"
+      IntegratorStateMustResolveToSignalObject off
+      IntegratorRTWStateStorageClass "Auto"
+      FilterContinuousStateAttributes "''"
+      FilterStateMustResolveToSignalObject off
+      FilterRTWStateStorageClass "Auto"
+      DifferentiatorICPrevScaledInput "0"
+      DifferentiatorOutMin    "[]"
+      DifferentiatorOutMax    "[]"
+      DifferentiatorOutDataTypeStr "Inherit: Inherit via internal rule"
+      UseFilter		      on
+    }
+    Block {
+      BlockType		      SubSystem
+      Name		      "Path"
+      SID		      "43"
+      Ports		      [1, 1]
+      Position		      [20, 52, 90, 98]
+      ZOrder		      38
       LibraryVersion	      "1.32"
       ErrorFcn		      "Stateflow.Translate.translate"
       PermitHierarchicalResolution "ExplicitOnly"
@@ -912,7 +1158,7 @@ Model {
       RequestExecContextInheritance off
       SFBlockType	      "MATLAB Function"
       System {
-	Name			"MATLAB Function"
+	Name			"Path"
 	Location		[223, 338, 826, 833]
 	Open			off
 	ModelBrowserVisibility	off
@@ -926,19 +1172,19 @@ Model {
 	TiledPageScale		1
 	ShowPageBoundaries	off
 	ZoomFactor		"100"
-	SIDHighWatermark	"18"
+	SIDHighWatermark	"20"
 	Block {
 	  BlockType		  Inport
 	  Name			  "t"
-	  SID			  "9::1"
+	  SID			  "43::20"
 	  Position		  [20, 101, 40, 119]
-	  ZOrder		  -1
+	  ZOrder		  11
 	  IconDisplay		  "Port number"
 	}
 	Block {
 	  BlockType		  Demux
 	  Name			  " Demux "
-	  SID			  "9::17"
+	  SID			  "43::17"
 	  Ports			  [1, 1]
 	  Position		  [270, 230, 320, 270]
 	  ZOrder		  8
@@ -947,17 +1193,17 @@ Model {
 	Block {
 	  BlockType		  S-Function
 	  Name			  " SFunction "
-	  SID			  "9::16"
-	  Tag			  "Stateflow S-Function robocup 2"
+	  SID			  "43::16"
+	  Tag			  "Stateflow S-Function robocup_model 2"
 	  Ports			  [1, 2]
 	  Position		  [180, 100, 230, 160]
 	  ZOrder		  7
 	  FunctionName		  "sf_sfun"
 	  PortCounts		  "[1 2]"
-	  EnableBusSupport	  on
+	  EnableBusSupport	  off
 	  Port {
 	    PortNumber		    2
-	    Name		    "y"
+	    Name		    "pos"
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
@@ -965,43 +1211,43 @@ Model {
 	Block {
 	  BlockType		  Terminator
 	  Name			  " Terminator "
-	  SID			  "9::18"
+	  SID			  "43::18"
 	  Position		  [460, 241, 480, 259]
 	  ZOrder		  9
 	}
 	Block {
 	  BlockType		  Outport
-	  Name			  "y"
-	  SID			  "9::5"
+	  Name			  "pos"
+	  SID			  "43::5"
 	  Position		  [460, 101, 480, 119]
 	  ZOrder		  -5
 	  IconDisplay		  "Port number"
 	}
 	Line {
-	  ZOrder		  5
+	  ZOrder		  13
 	  SrcBlock		  "t"
 	  SrcPort		  1
 	  DstBlock		  " SFunction "
 	  DstPort		  1
 	}
 	Line {
-	  Name			  "y"
-	  ZOrder		  6
+	  Name			  "pos"
+	  ZOrder		  14
 	  Labels		  [0, 0]
 	  SrcBlock		  " SFunction "
 	  SrcPort		  2
-	  DstBlock		  "y"
+	  DstBlock		  "pos"
 	  DstPort		  1
 	}
 	Line {
-	  ZOrder		  7
+	  ZOrder		  15
 	  SrcBlock		  " Demux "
 	  SrcPort		  1
 	  DstBlock		  " Terminator "
 	  DstPort		  1
 	}
 	Line {
-	  ZOrder		  8
+	  ZOrder		  16
 	  SrcBlock		  " SFunction "
 	  SrcPort		  1
 	  DstBlock		  " Demux "
@@ -1010,69 +1256,223 @@ Model {
       }
     }
     Block {
-      BlockType		      Reference
-      Name		      "Ramp"
-      SID		      "12"
-      Ports		      [0, 1]
-      Position		      [25, 125, 55, 155]
-      ZOrder		      14
-      LibraryVersion	      "1.354"
-      SourceBlock	      "simulink/Sources/Ramp"
-      SourceType	      "Ramp"
-      ContentPreviewEnabled   off
-      slope		      "1"
-      start		      "0"
-      X0		      "0"
-      VectorParams1D	      on
+      BlockType		      Sum
+      Name		      "Subtract"
+      SID		      "47"
+      Ports		      [2, 1]
+      Position		      [130, 132, 160, 163]
+      ZOrder		      42
+      Inputs		      "+-"
+      InputSameDT	      off
+      OutDataTypeStr	      "Inherit: Inherit via internal rule"
+      SaturateOnIntegerOverflow	off
+      Port {
+	PortNumber		1
+	Name			"Position Error"
+	RTWStorageClass		"Auto"
+	DataLoggingNameMode	"SignalName"
+      }
+    }
+    Block {
+      BlockType		      Scope
+      Name		      "Theta scope"
+      SID		      "33"
+      Ports		      [1]
+      Position		      [965, 119, 995, 151]
+      ZOrder		      31
+      Floating		      off
+      Location		      [573, 236, 1119, 718]
+      Open		      off
+      NumInputPorts	      "1"
+      List {
+	ListType		AxesTitles
+	axes1			"%<SignalLabel>"
+      }
+      List {
+	ListType		ScopeGraphics
+	FigureColor		"[0.5 0.5 0.5]"
+	AxesColor		"[0 0 0]"
+	AxesTickColor		"[1 1 1]"
+	LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	LineStyles		"-|-|-|-|-|-"
+	LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
+	MarkerStyles		"none|none|none|none|none|none"
+      }
+      ShowLegends	      off
+      ScrollMode	      off
     }
     Block {
       BlockType		      Reference
       Name		      "XY Graph"
-      SID		      "14"
+      SID		      "29"
       Ports		      [2]
-      Position		      [425, 145, 455, 180]
-      ZOrder		      16
+      Position		      [965, 60, 995, 95]
+      ZOrder		      27
       LibraryVersion	      "1.354"
       SourceBlock	      "simulink/Sinks/XY Graph"
       SourceType	      "XY scope."
       ContentPreviewEnabled   off
       xmin		      "-1"
-      xmax		      "10"
+      xmax		      "1"
       ymin		      "-1"
-      ymax		      "10"
+      ymax		      "1"
       st		      "-1"
     }
     Line {
-      ZOrder		      1
-      SrcBlock		      "Ramp"
+      ZOrder		      19
+      SrcBlock		      "On-board\nmotion controller"
       SrcPort		      1
-      Points		      [50, 0]
-      DstBlock		      "MATLAB Function"
+      DstBlock		      "MATLAB System"
       DstPort		      1
     }
     Line {
-      ZOrder		      4
-      SrcBlock		      "MATLAB Function"
+      ZOrder		      13
+      SrcBlock		      "Constant"
       SrcPort		      1
-      Points		      [85, 0; 0, 25]
-      DstBlock		      "Demux"
-      DstPort		      1
+      DstBlock		      "MATLAB System"
+      DstPort		      2
     }
     Line {
-      ZOrder		      5
+      ZOrder		      15
       SrcBlock		      "Demux"
       SrcPort		      1
-      Points		      [25, 0]
+      Points		      [30, 0; 0, -5]
       DstBlock		      "XY Graph"
       DstPort		      1
     }
     Line {
-      ZOrder		      6
+      ZOrder		      16
       SrcBlock		      "Demux"
       SrcPort		      2
-      Points		      [18, 0; 0, 10]
       DstBlock		      "XY Graph"
       DstPort		      2
+    }
+    Line {
+      ZOrder		      18
+      SrcBlock		      "Demux"
+      SrcPort		      3
+      Points		      [25, 0; 0, 40]
+      DstBlock		      "Theta scope"
+      DstPort		      1
+    }
+    Line {
+      Name		      "Bot position, as reported by ssl-vision"
+      ZOrder		      14
+      SrcBlock		      "MATLAB System"
+      SrcPort		      1
+      Points		      [5, 0]
+      Branch {
+	ZOrder			39
+	Labels			[2, 1]
+	Points			[0, 167; -774, 0; 0, -97]
+	DstBlock		"Subtract"
+	DstPort			2
+      }
+      Branch {
+	ZOrder			38
+	DstBlock		"Demux"
+	DstPort			1
+      }
+    }
+    Line {
+      Name		      "Command Body Velocity"
+      ZOrder		      28
+      Labels		      [1, 1]
+      SrcBlock		      "Add"
+      SrcPort		      1
+      DstBlock		      "On-board\nmotion controller"
+      DstPort		      1
+    }
+    Line {
+      ZOrder		      29
+      SrcBlock		      "PID Controller"
+      SrcPort		      1
+      Points		      [12, 0; 0, -60]
+      DstBlock		      "Add"
+      DstPort		      2
+    }
+    Line {
+      ZOrder		      32
+      SrcBlock		      "Derivative"
+      SrcPort		      1
+      DstBlock		      "Add"
+      DstPort		      1
+    }
+    Line {
+      ZOrder		      33
+      SrcBlock		      "Path"
+      SrcPort		      1
+      Points		      [7, 0]
+      Branch {
+	ZOrder			41
+	DstBlock		"Derivative"
+	DstPort			1
+      }
+      Branch {
+	ZOrder			36
+	Points			[0, 65]
+	DstBlock		"Subtract"
+	DstPort			1
+      }
+    }
+    Line {
+      Name		      "Position Error"
+      ZOrder		      40
+      Labels		      [0, 0]
+      SrcBlock		      "Subtract"
+      SrcPort		      1
+      DstBlock		      "PID Controller"
+      DstPort		      1
+    }
+    Annotation {
+      SID		      "59"
+      Name		      "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+      "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }"
+      "\n</style></head><body style=\" font-family:'Helvetica'; font-size:10px; font-weight:400; font-style:normal;\">\n"
+      "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-ind"
+      "ent:0; text-indent:0px;\">Robot Firmware</p></body></html>"
+      Position		      [490, 31, 613, 153]
+      InternalMargins	      [0, 0, 0, 0]
+      FixedHeight	      on
+      FixedWidth	      on
+      HorizontalAlignment     "left"
+      VerticalAlignment	      "top"
+      BackgroundColor	      "lightBlue"
+      Interpreter	      "rich"
+    }
+    Annotation {
+      SID		      "58"
+      Name		      "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+      "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }"
+      "\n</style></head><body style=\" font-family:'Helvetica'; font-size:10px; font-weight:400; font-style:normal;\">\n"
+      "<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-ind"
+      "ent:0; text-indent:0px;\">Radio Packet</p></body></html>"
+      Position		      [370, 54, 476, 111]
+      InternalMargins	      [0, 0, 0, 0]
+      FixedHeight	      on
+      FixedWidth	      on
+      HorizontalAlignment     "left"
+      VerticalAlignment	      "top"
+      BackgroundColor	      "lightBlue"
+      Interpreter	      "rich"
+    }
+    Annotation {
+      SID		      "57"
+      Name		      "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+      "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }"
+      "\n</style></head><body style=\" font-family:'Helvetica'; font-size:10px; font-weight:400; font-style:normal;\">\n"
+      "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-b"
+      "lock-indent:0; text-indent:0px;\"><br /></p>\n<p align=\"center\" style=\" margin-top:0px; margin-bottom:0px; ma"
+      "rgin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><span style=\" font-size:10px;\">Soccer "
+      "Program on Field Laptop</span></p></body></html>"
+      Position		      [7, 16, 366, 283]
+      InternalMargins	      [0, 0, 0, 0]
+      FixedHeight	      on
+      FixedWidth	      on
+      HorizontalAlignment     "left"
+      VerticalAlignment	      "top"
+      BackgroundColor	      "lightBlue"
+      Interpreter	      "rich"
     }
   }
 }
@@ -1084,7 +1484,7 @@ Model {
 Stateflow {
   machine {
     id			    1
-    name		    "robocup"
+    name		    "robocup_model"
     created		    "11-Mar-2015 01:21:21"
     isLibrary		    0
     firstTarget		    9
@@ -1092,7 +1492,7 @@ Stateflow {
   }
   chart {
     id			    2
-    name		    "MATLAB Function"
+    name		    "Path"
     windowPosition	    [422 539.941 189 413]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 3600 1200 1.180555555555556]
@@ -1104,14 +1504,14 @@ Stateflow {
     machine		    1
     subviewS {
     }
-    ssIdHighWaterMark	    5
+    ssIdHighWaterMark	    6
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
     firstData		    4
     chartFileNumber	    2
     disableImplicitCasting  1
     eml {
-      name		      "fcn"
+      name		      "path"
     }
   }
   state {
@@ -1128,34 +1528,15 @@ Stateflow {
     decomposition	    CLUSTER_STATE
     eml {
       isEML		      1
-      script		      "function y = fcn(t)\ny = DiagonalPath(t)'\n"
+      script		      "function pos = path(t)\n%#codegen\n\npos = [0 0 0]';\n"
       editorLayout	      "100 M4x1[10 5 700 500]"
     }
   }
   data {
     id			    4
-    ssIdNumber		    4
-    name		    "t"
-    linkNode		    [2 0 5]
-    scope		    INPUT_DATA
-    machine		    1
-    props {
-      array {
-	size			"-1"
-      }
-      type {
-	method			SF_INHERITED_TYPE
-	primitive		SF_DOUBLE_TYPE
-      }
-      complexity	      SF_COMPLEX_INHERITED
-    }
-    dataType		    "Inherit: Same as Simulink"
-  }
-  data {
-    id			    5
     ssIdNumber		    5
-    name		    "y"
-    linkNode		    [2 4 0]
+    name		    "pos"
+    linkNode		    [2 0 5]
     scope		    OUTPUT_DATA
     machine		    1
     props {
@@ -1168,6 +1549,28 @@ Stateflow {
       }
       complexity	      SF_COMPLEX_INHERITED
       frame		      SF_FRAME_NO
+    }
+    dataType		    "Inherit: Same as Simulink"
+  }
+  data {
+    id			    5
+    ssIdNumber		    6
+    name		    "t"
+    linkNode		    [2 4 0]
+    scope		    INPUT_DATA
+    machine		    1
+    props {
+      array {
+	size			"-1"
+      }
+      type {
+	method			SF_INHERITED_TYPE
+	primitive		SF_DOUBLE_TYPE
+	isSigned		1
+	wordLength		"16"
+      }
+      complexity	      SF_COMPLEX_INHERITED
+      frame		      SF_FRAME_INHERITED
     }
     dataType		    "Inherit: Same as Simulink"
   }
@@ -1206,7 +1609,7 @@ Stateflow {
   }
   instance {
     id			    8
-    name		    "MATLAB Function"
+    name		    "Path"
     machine		    1
     chart		    2
   }
