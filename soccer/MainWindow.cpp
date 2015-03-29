@@ -423,7 +423,7 @@ void MainWindow::updateViews()
 			//	TODO: set board ID
 
 
-// #define DEMO_ROBOT_STATUS
+#define DEMO_ROBOT_STATUS
 
 #ifdef DEMO_ROBOT_STATUS
 			//	set board ID
@@ -446,11 +446,13 @@ void MainWindow::updateViews()
 			//	fake ball
 			bool ball = rand() % 4 == 0;
 			statusWidget->setHasBall(ball);
+		
 
 			//	fake ball sense status
+			/**
 			bool ballFault = rand() % 4 == 0;
 			statusWidget->setBallSenseFault(ballFault);
-
+			**/
 			bool hasWheelFault = false;
 			if (rand() % 4 == 0) {
 				statusWidget->setWheelFault(rand() % 4);
@@ -526,6 +528,7 @@ void MainWindow::updateViews()
 			}
 
 			// ball sensor
+			/**
 			bool hasBallSense = robot->ballSenseWorks();
 			statusWidget->setBallSenseFault(!hasBallSense);
 
@@ -534,6 +537,7 @@ void MainWindow::updateViews()
 
 			//	battery
 			//	FIXME: handle battery for real
+			**/
 			float batteryLevel = 1;
 			if (rx.has_battery()) {
 				if (rx.hardware_version() == RJ2008 || rx.hardware_version() == RJ2011) {
