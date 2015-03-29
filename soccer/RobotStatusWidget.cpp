@@ -1,4 +1,5 @@
 #include "RobotStatusWidget.hpp"
+#include <QString>
 
 
 RobotStatusWidget::RobotStatusWidget(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f) {
@@ -21,7 +22,13 @@ RobotStatusWidget::RobotStatusWidget(QWidget *parent, Qt::WindowFlags f) : QWidg
     _batteryLevel = 1;
     setBatteryLevel(0.5);
 
+    _Dribbler_fault=true;
+    _Kicker_fault=true;
+    _Ball_fault=true;
+    set_Errors(false,true,true);
+
     _showstopper = false;
+
 }
 
 int RobotStatusWidget::shellID() const {
@@ -41,7 +48,32 @@ void RobotStatusWidget::setShellID(int shellID) {
         }
     }
 }
+bool RobotStatusWidget::Dribbler_fault() const{
+    return _Dribbler_fault;
+}
+bool RobotStatusWidget::Kicker_fault() const{
+    return _Kicker_fault;
+}
+bool RobotStatusWidget::Ball_fault() const{
+    return _Ball_fault;
+}
+//{} ||
+void RobotStatusWidget::set_Errors(bool Dribbler_fault,bool Kicker_fault,bool Ball_fault ){
+    if(_Dribbler_fault != Dribbler_fault || Kicker_fault != _Kicker_fault || Ball_fault != Ball_fault){
+        QString error="";
 
+        if (Kicker_fault==true){
+            error=error +"Error Kicker ";
+        }
+        if (Dribbler_fault==true ){
+           error=error+"Error Dribbler ";
+        }  
+        if (Ball_fault==true ){
+           error=error+"Error Ball ";
+        }  
+        _ui.errors->setText(QString("%1").arg(error));     
+    }
+}
 void RobotStatusWidget::setBlueTeam(bool blueTeam) {
     _ui.robotWidget->setBlueTeam(blueTeam);
     _blueTeam = blueTeam;

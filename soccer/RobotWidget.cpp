@@ -13,7 +13,7 @@ RobotWidget::RobotWidget(QWidget *parent, Qt::WindowFlags f) {
     _shellID = 0;
 
     _hasBall = false;
-    _ballSenseFault = false;
+ //   _ballSenseFault = false;
     for (int i = 0; i < 4; i++) _wheelFaults[i] = false;
 }
 void RobotWidget::setShellID(int shellID) {
@@ -25,6 +25,14 @@ void RobotWidget::setBlueTeam(bool blueTeam) {
         _blueTeam = blueTeam;
         update();
     }
+}
+void RobotWidget::set_Errors(bool Dribbler_fault,bool Kicker_fault,bool Ball_fault ){
+    if(_Dribbler_fault != Dribbler_fault || Kicker_fault != _Kicker_fault || Ball_fault != _Ball_fault){
+        Dribbler_fault = Dribbler_fault;
+        Kicker_fault   = Kicker_fault;
+        Ball_fault= Ball_fault;
+        update();
+    }  
 }
 
 bool RobotWidget::blueTeam() const {
@@ -40,11 +48,11 @@ void RobotWidget::setWheelFault(int wheelIndex, bool faulty) {
     _wheelFaults[wheelIndex] = faulty;
     update();
 }
-
+/**
 void RobotWidget::setBallSenseFault(bool faulty) {
     _ballSenseFault = faulty;
 }
-
+**/
 void RobotWidget::setHasBall(bool hasBall) {
     if (hasBall != _hasBall) {
         _hasBall = hasBall;

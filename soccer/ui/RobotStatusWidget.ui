@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>267</width>
-    <height>74</height>
+    <width>786</width>
+    <height>474</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -205,6 +205,13 @@
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="Errors">
+       <property name="text">
+        <string>TextLabel</string>
        </property>
       </widget>
      </item>

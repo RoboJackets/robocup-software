@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QtWidgets>
-
+#include <string>
 
 /**
  * @brief Presents an image of a robot with errors drawn in red
@@ -17,7 +17,7 @@ public:
     void setWheelFault(int wheelIndex, bool faulty = true);
     void setBallSenseFault(bool faulty = true);
     void setHasBall(bool hasBall = true);
-
+    void set_Errors(bool Dribbler_fault,bool Kicker_fault,bool Ball_fault);
     void paintEvent(QPaintEvent *event);
 
 
@@ -27,4 +27,8 @@ private:
     bool _hasBall;
     int _shellID;
     bool _blueTeam;
+    bool _Dribbler_fault;
+    bool _Kicker_fault;
+    bool _Ball_fault;
+
 };
