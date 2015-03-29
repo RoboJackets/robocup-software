@@ -7,34 +7,34 @@ input	[2:0]	h; 	//Hall Effect sensor input
 output 	[2:0]	u; 	//duty cycle output
 output	[2:0]	z;	//if phase should be high impedance
 
-wire	[2:0]	u;
-wire	[2:0]	z;
+reg	[2:0]	u;
+reg	[2:0]	z;
 
 always @ (h) begin
 	if (h == 3'b000) begin 	//(h1, h2, h3) Failure state
-		u <= 3'b000;		//(u1, u2, u3)
-		z <= 3'b111;		//(z1, z2, z3)
+		u = 3'b000;		//(u1, u2, u3)
+		z = 3'b111;		//(z1, z2, z3)
 	end else if (h == 3'b101) begin
-		u <= 3'b100;
-		z <= 3'b001;
+		u = 3'b100;
+		z = 3'b001;
 	end else if (h == 3'b100) begin
-		u <= 3'b100;
-		z <= 3'b010;
+		u = 3'b100;
+		z = 3'b010;
 	end else if (h == 3'b110) begin
-		u <= 3'b010;
-		z <= 3'b100;
+		u = 3'b010;
+		z = 3'b100;
 	end else if (h == 3'b101) begin
-		u <= 3'b010;
-		z <= 3'b001;
+		u = 3'b010;
+		z = 3'b001;
 	end else if (h == 3'b011) begin
-		u <= 3'b001;
-		z <= 3'b010;
+		u = 3'b001;
+		z = 3'b010;
 	end else if (h == 3'b001) begin
-		u <= 3'b001;
-		z <= 3'b100;
+		u = 3'b001;
+		z = 3'b100;
 	end else if (h == 3'b000) begin //failure state
-		u <= 3'b000;
-		z <= 3'b111;	
+		u = 3'b000;
+		z = 3'b111;	
 	end
 end
 

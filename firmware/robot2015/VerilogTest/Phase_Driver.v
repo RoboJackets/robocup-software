@@ -13,7 +13,7 @@ wire h, l;
 PWM pwm_high_driver (clock, duty_cycle, h);
 PWM_LOW pwm_low_driver (clock, duty_cycle, l);
 
-always @ (clock)
+always @ (h or l or high_z)
 begin
 	pwm_high = (high_z == 1) ? 0 : h;
 	pwm_low = (high_z == 1) ? 0 : l;
