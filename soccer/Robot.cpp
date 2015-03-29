@@ -102,8 +102,6 @@ OurRobot::~OurRobot()
 
 void OurRobot::addStatusText()
 {
-	static const char *motorNames[] = {"BL", "FL", "FR", "BR", "DR"};
-
 	const QColor statusColor(255, 32, 32);
 
 	if (!rxIsFresh())
@@ -112,56 +110,6 @@ void OurRobot::addStatusText()
 
 		// No more status is available
 		return;
-	}
-
-	// Motor status
-	if (_radioRx.motor_status().size() == 5)
-	{
-		for (int i = 0; i < 5; ++i)
-		{
-			QString error;
-			switch (_radioRx.motor_status(i))
-			{
-				case Packet::Hall_Failure:
-					error = "Hall fault";
-					break;
-
-				case Packet::Stalled:
-					error = "Stall";
-					break;
-
-				case Packet::Encoder_Failure:
-					error = "Encoder fault";
-					break;
-
-				default:
-					break;
-			}
-
-			if (!error.isNull())
-			{
-				addText(QString("%1: %2").arg(error, QString(motorNames[i])), statusColor, "Status");
-			}
-		}
-	}
-
-	if (!ballSenseWorks())
-	{
-		addText("Ball sense fault", statusColor, "Status");
-	}
-
-	if (!kickerWorks() && false)
-	{
-		addText("Kicker fault", statusColor, "Status");
-	}
-
-	if (_radioRx.has_battery())
-	{
-		float battery = _radioRx.battery();
-		if (battery <= 14.3f)
-		{
-			addText(QString("Low battery: %1V").arg(battery, 0, 'f', 1), statusColor, "Status");
-		}
 	}
 }
 
