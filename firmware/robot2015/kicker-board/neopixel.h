@@ -3,17 +3,17 @@
 /**
  * I/O port 
  */
-static const uint8_t PORT      = 0x18;
+static const uint8_t NEOPIXEL_PORT = 0x18;
 
 /**
  * pin on the I/O port connected to DI on the neo pixel chain
  */
-static const uint8_t PIN       = 3;
+static const uint8_t NEOPIXEL_PIN  = 3;
 
 /**
  * the number of leds on the chain
  */
-static const uint8_t LED_COUNT = 1;
+static const uint8_t LED_COUNT     = 1;
 
 /*
  * functions

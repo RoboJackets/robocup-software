@@ -170,7 +170,7 @@ void writeNeopixels(void)
 			"RJMP .+0"		"\n\t"
 			"SBRC %[BYTE], 1"	"\n\t"
 			"CBI  %[PORT], %[PIN]"	"\n\t"
-			"LD   %[BYTE], %a[PTR]+" "\n\t" //load byte from bytes pointer
+			"LD   %[BYTE], %a[PTR]+""\n\t" //load byte from bytes pointer
 
 			//bit 0 (+ counter compare to end point and branch)
 			"SBI  %[PORT], %[PIN]"	"\n\t"
@@ -186,8 +186,8 @@ void writeNeopixels(void)
 			//no outputs
 			:
 			//inputs
-			: [PORT] "I" (PORT),
-				[PIN]   "I" (PIN),
+			: [PORT] "I" (NEOPIXEL_PORT),
+				[PIN]   "I" (NEOPIXEL_PIN),
 				[COUNT] "I" (LED_COUNT * 3),
 				[BYTE]  "r" (rgbBuffer[0]),
 				[PTR]	"e" (rgbBuffer + 1)
