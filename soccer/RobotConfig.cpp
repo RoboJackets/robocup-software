@@ -38,7 +38,8 @@ RobotConfig::RobotConfig(Configuration* config, QString prefix):
 	pivotVelMultiplier(new ConfigDouble(config, QString("%1/pivot/velMultiplier").arg(prefix))),
 	velMultiplier(new ConfigDouble(config, QString("%1/translation/velMultiplier").arg(prefix))),
 	angleVelMultiplier(new ConfigDouble(config, QString("%1/rotation/velMultiplier").arg(prefix))),
-	accelerationMultiplier(new ConfigDouble(config, QString("%1/translation/accelMultiplier").arg(prefix)))
+	accelerationMultiplier(new ConfigDouble(config, QString("%1/translation/accelMultiplier").arg(prefix))),
+	commandLatency(new ConfigDouble(config, QString("%1/latency/commandLatency").arg(prefix)))
 {
 }
 

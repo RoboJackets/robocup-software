@@ -39,18 +39,22 @@ public:
 	RobotFilter();
 	
 	/// Gives a new observation to the filter
-	void update(const RobotObservation *obs);
+	void update(const RobotObservation &obs);
 	
 	/// Generates a prediction of the ball's state at a given time in the future.
 	/// This may clear robot->visible if the prediction is too long in the future to be reliable.
 	void predict(Time time, Robot *robot);
+
+	void setVelocityAlpha(float alpha);
+
+	RobotObservation getLastObservation();
 
 private:
 	static const int Num_Cameras = 2;
 	
 	/// Estimate for each camera
 	RobotPose _estimate[Num_Cameras];
-	
+	RobotObservation lastObservation;
 	/// Which camera we are using to track this robot, or -1 if it has not been seen recently
 	int _camera;
 };

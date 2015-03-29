@@ -22,6 +22,8 @@ class Spin(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.period = period
         self.starttime = time.clock()
         self.turnSpeed = turnSpeed
+        self.last_angle = 0
+        self.last_frame_time = 0
 
         self.turnClockwise = 0
         self.add_transition(behavior.Behavior.State.start,
@@ -60,9 +62,15 @@ class Spin(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         return time.clock()-self.starttime
 
     def calculate_turn_speed(self):
+        angle = self.robot.angle
+        frame_time = self.robot.filter_time/1000000;
         time = (self.elapsed_time()%self.period)
         time_sec = time
         time = time/self.period*2
+        calculatedVel = (angle - self.last_angle)/(frame_time-self.last_frame_time)
+
+        vel = calculatedVel
+        #print (calculatedVel)
         if time<1:
             if self.turnClockwise==0:
                 self.command_angles = list()
@@ -76,7 +84,7 @@ class Spin(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
             self.times.append(time_sec)
             self.command_angles.append(command)
-            self.real_angles.append(self.robot.angle_vel)
+            self.real_angles.append(vel)
             if command >=0 and self.zeroTime==-1:
                 print ("fake")
                 right = command
@@ -89,25 +97,28 @@ class Spin(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                 self.zeroTime = self.times[self.iteration]*left + self.times[self.iteration-1]*right
                 print (self.zeroTime)
 
-            if  time>0.3 and self.robot.angle_vel >= 0 and self.realZeroTime == -1:
+            if  time>0.3 and vel >= 0 and self.realZeroTime == -1:
                 print ("real")
                 right = self.real_angles[self.iteration]
                 left = -self.real_angles[self.iteration-1]
-                print (left)
-                print (right)
+                #print (left)
+                #print (right)
                 total = right + left
                 right = right/total
                 left = left/total
                 self.realZeroTime = self.times[self.iteration]*left + self.times[self.iteration-1]*right
                 print (self.realZeroTime)
 
-
+            self.last_angle = angle
+            self.last_frame_time = frame_time;
             
             self.iteration += 1
             return command
         else:
             if self.turnClockwise:
                 self.turnClockwise = 0
+            self.last_angle = angle
+            self.last_frame_time = frame_time;
             return self.turnSpeed - (time-1)*self.turnSpeed*2
 
     def calculate_face_target(self):
@@ -115,6 +126,7 @@ class Spin(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def execute_running(self):
         if self.robot:
+            #self.robot.disable_velocity_smoothing()
             self.robot.set_angle_vel(self.calculate_turn_speed())
 
 #            if self.turnClockwise:

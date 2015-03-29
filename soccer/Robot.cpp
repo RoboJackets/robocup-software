@@ -376,6 +376,7 @@ void OurRobot::_chip(uint8_t strength) {
 	radioTx.set_use_chipper(true);
 }
 
+
 void OurRobot::_unkick() {
 	_kick(0);
 	_chip(0);
@@ -469,6 +470,10 @@ bool OurRobot::avoidTeammate(unsigned shell_id) const {
 
 float OurRobot::avoidTeammateRadius(unsigned shell_id) const {
 	return _self_avoid_mask[shell_id];
+}
+
+void OurRobot::disableVelocitySmoothing() {
+	filter()->setVelocityAlpha(1);
 }
 
 void OurRobot::shieldFromTeammates(float radius) {

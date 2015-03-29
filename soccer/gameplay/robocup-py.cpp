@@ -99,6 +99,10 @@ float Robot_angle_vel(Robot *self) {
 	return self->angleVel;
 }
 
+Time Robot_filter_time(Robot *self) {
+	return self->time;
+}
+
 void OurRobot_move_to(OurRobot *self, Geometry2d::Point *to) {
 	if(to == nullptr)
 		throw NullArgumentException("to");
@@ -196,6 +200,7 @@ boost::python::object Line_line_intersection(Geometry2d::Line *self, Geometry2d:
 		boost::python::object obj(pt);
 		return obj;
 	} else {
+
 		//	return None
 		return boost::python::object();
 	}
@@ -241,6 +246,7 @@ void State_draw_polygon(SystemState *self, boost::python::list points, boost::py
 
 	self->drawPolygon(ptVec, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
+
 
 boost::python::list Circle_intersects_line(Geometry2d::Circle *self, const Geometry2d::Line *line) {
 	if(line == nullptr)
@@ -376,6 +382,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.add_property("vel", &Robot_vel, "velocity vector of the robot in m/s")
 		.add_property("angle", &Robot_angle, "angle of the robot in degrees")
 		.add_property("angle_vel", &Robot_angle_vel, "angular velocity in degrees per second")
+		.add_property("filter_time", &Robot_filter_time, "Time when last vel, pos, ... data was set by filter")
         .add_property("visible", &Robot::visible)
 		.def("__repr__", &Robot_repr)
 		.def("__eq__", &Robot::equals)
@@ -408,6 +415,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("ball_sense_works", &OurRobot::ballSenseWorks)
 		.def("kicker_works", &OurRobot::kickerWorks)
 		.def("add_local_obstacle", &OurRobot_add_local_obstacle)
+		.def("disable_velocity_smoothing", &OurRobot::disableVelocitySmoothing)
 	;
 
 	class_<OpponentRobot, OpponentRobot *, std::shared_ptr<OpponentRobot>, bases<Robot> >("OpponentRobot", init<int>());

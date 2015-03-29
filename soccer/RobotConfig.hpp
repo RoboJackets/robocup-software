@@ -60,6 +60,9 @@ public:
 	//	when pivoting, we multiply the calculated x-velocity
 	//	of the robot by this value before sending it to the robot
 	ConfigDouble *pivotVelMultiplier;
+
+	//Vission/Command Latency
+	ConfigDouble *commandLatency;
 };
 
 

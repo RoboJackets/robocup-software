@@ -65,7 +65,7 @@ public:
 	float angleVel;	///	angular velocity in radians/sec
 
 	// Time at which this estimate is valid
-	Time time;
+	Time time;	//Set in RobotFilter
 	int visionFrame;
 };
 
@@ -291,6 +291,8 @@ public:
 	void avoidBallRadius(float radius);
 	float avoidBallRadius() const;
 	void resetAvoidBall();	//	sets avoid ball radius to Ball_Avoid_Small
+
+	void disableVelocitySmoothing(); //Disables velocity smoothing by setting velocityAlpha in the filter to 1
 
 	/**
 	 * Adds an obstacle to the local set of obstacles for avoidance

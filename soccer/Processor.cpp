@@ -28,14 +28,14 @@
 #include <protobuf/RadioRx.pb.h>
 #include <git_version.hpp>
 
+#include "MotionConstraints.hpp"
+
 REGISTER_CONFIGURABLE(Processor)
 
 using namespace std;
 using namespace boost;
 using namespace Geometry2d;
 using namespace google::protobuf;
-
-static const uint64_t Command_Latency = 0;
 
 RobotConfig *Processor::robotConfig2008;
 RobotConfig *Processor::robotConfig2011;
@@ -203,7 +203,7 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 			unsigned int id = robot.robot_id();
 			if (id < _state.self.size())
 			{
-				_state.self[id]->filter()->update(&obs);
+				_state.self[id]->filter()->update(obs);
 			}
 		}
 		
@@ -216,7 +216,7 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 			unsigned int id = robot.robot_id();
 			if (id < _state.opp.size())
 			{
-				_state.opp[id]->filter()->update(&obs);
+				_state.opp[id]->filter()->update(obs);
 			}
 		}
 	}
@@ -266,8 +266,9 @@ void Processor::run()
 		
 		// Make a new log frame
 		_state.logFrame = std::make_shared<Packet::LogFrame>();
-    _state.logFrame->set_timestamp(timestamp());
-		_state.logFrame->set_command_time(startTime + Command_Latency);
+    	_state.logFrame->set_timestamp(timestamp());
+    	uint64_t latency = *(MotionConstraints::_commandLatency)*1000000;
+		_state.logFrame->set_command_time(startTime + latency);
 		_state.logFrame->set_use_our_half(_useOurHalf);
 		_state.logFrame->set_use_opponent_half(_useOpponentHalf);
 		_state.logFrame->set_manual_id(_manualID);
@@ -277,7 +278,6 @@ void Processor::run()
 		if (first)
 		{
 			first = false;
-			
 			Packet::LogConfig *logConfig = _state.logFrame->mutable_log_config();
 			logConfig->set_generator("soccer");
 			logConfig->set_git_version_hash(git_version_hash);
@@ -324,7 +324,8 @@ void Processor::run()
 				
 				//FIXME - Account for network latency
 				double rt = packet->receivedTime / 1000000.0;
-				det->set_t_capture(rt - det->t_sent() + det->t_capture());
+				det->set_t_capture(rt - det->t_sent() + det->t_capture()); //Convert their caputre time to our system clock
+																			//Currently assuming no time difference between packet send and recieve
 				det->set_t_sent(rt);
 				
 				// Remove balls on the excluded half of the field
