@@ -201,6 +201,11 @@ public:
 	int consecutivePathChangeCount() const;
 
 	/**
+	 * Sets the angleVelocity in the robot's MotionConstraints
+	 */
+	void angleVelocity(const float angleVelocity);
+
+	/**
 	 * Sets the worldVelocity in the robot's MotionConstraints
 	 */
 	void worldVelocity(const Geometry2d::Point &targetWorldVel);
