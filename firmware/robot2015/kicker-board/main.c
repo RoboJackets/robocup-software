@@ -1,18 +1,52 @@
-#include <avr/io.h>
-#include <util/delay.h>
+#include <stdlib.h>
+#include "kicker.h"
+#include "neopixel.h"
 
+/*
+ * initialization
+ */
+void init()
+{
+	//force prescalar to keep frequency at 9.6 MHz
+	CLKPR = (1<<CLKPCE);
+	CLKPR = 0;
 
-//  simple test program to blink an led on pin2 on the ATtiny13
+	//set data pins I/O
+	DDRB = 1<<3; //set B3, DO
+
+	//create led buffer
+	initNeopixelBuffer();
+}
+
+/*
+ * main
+ */
 int main(void)
 {
-    DDRB = 1<<3; // port B3, ATtiny13a pin 2
-    PORTB = 0x0;
+	init();
+	
+	const uint8_t UPPER_LIMIT = 0xFF;
+	const uint8_t LOWER_LIMIT = 0x00;
+	uint8_t red   = UPPER_LIMIT;
+	uint8_t green = LOWER_LIMIT; 
+	uint8_t blue  = LOWER_LIMIT;
+	for (;;)
+	{
+		if 	(red   == UPPER_LIMIT && green != UPPER_LIMIT && blue == LOWER_LIMIT)
+			green++;
+		else if (red   != LOWER_LIMIT && green == UPPER_LIMIT && blue == LOWER_LIMIT)
+			red--;	
+		else if (green == UPPER_LIMIT && blue  != UPPER_LIMIT)
+			blue++;
+		else if (green != LOWER_LIMIT && blue  == UPPER_LIMIT)
+			green--;
+		else if (red   != UPPER_LIMIT && blue  == UPPER_LIMIT)
+			red++;
+		else if (red   == UPPER_LIMIT && blue  != LOWER_LIMIT)
+			blue--;
 
-    while (1)
-    {
-        PORTB = 1<<3; // port B3, ATtiny13a pin 2
-        _delay_ms(100);
-        PORTB = 0X0;
-        _delay_ms(100);
-    }
+		setLed(red, green, blue, 1);
+		writeNeopixels();
+		_delay_ms(1);	
+	}
 }
