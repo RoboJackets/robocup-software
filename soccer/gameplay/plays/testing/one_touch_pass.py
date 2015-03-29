@@ -13,7 +13,7 @@ import main
 class OneTouchPass(play.Play):
 
     ReceiveXCoord = 1
-    ReceiveYCoord = constants.Field.Length / 2.0 * 1.0/3.0
+    ReceiveYCoord = constants.Field.Length * 5.0 / 6.0
 
     def __init__(self):
         super().__init__(continuous=False)
@@ -23,9 +23,10 @@ class OneTouchPass(play.Play):
             lambda: True,
             'immediately')
 
+
         pass_bhvr = tactics.coordinated_pass.CoordinatedPass()
         self.add_subbehavior(pass_bhvr, 'pass')
-        
+
 
 
 
@@ -36,20 +37,23 @@ class OneTouchPass(play.Play):
 
     def execute_running(self):
         pass_bhvr = self.subbehavior_with_name('pass')
-        
+
 
         if pass_bhvr.receive_point == None:
             self.reset_receive_point()
 
-        if pass_bhvr.is_done_running():
+        if self.has_subbehavior_with_name('kick'):
+            kick = self.subbehavior_with_name('kick')
+            # TODO, if this isnt needed, merge with lower if
+
+        elif pass_bhvr.is_done_running():
             kick = skills.pivot_kick.PivotKick()
             kick.target = constants.Field.TheirGoalSegment
             kick.aim_params['desperate_timeout'] = 3
-            self.add_subbehavior(kick, 'kick', required=False)
-        
-        if self.has_subbehavior_with_name('kick'):
-            kick = self.subbehavior_with_name('kick')
-            if kick.is_done_running():
-                kick.restart()
+            self.add_subbehavior(kick, 'kick', required=True)
+
+    def on_exit_running(self):
+        self.remove_all_subbehaviors()
+        # TODO This restarts play if another robot is asigned the ball. Make it exit either way.
 
 
