@@ -27,10 +27,7 @@ void Pid::setWindup(unsigned int w)
 {
 	if (w != _windup) 
 	{
-
 		_windup = w;
-
-		
 
 		if (w > 0)
 		{	
