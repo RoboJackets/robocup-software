@@ -1,6 +1,7 @@
 #include "robot.hpp"
 #include "console.hpp"
 #include "commands.hpp"
+#include "IOExpander.h";
 #include "logger.hpp"
 #include "radio.hpp"
 

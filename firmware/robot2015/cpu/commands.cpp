@@ -5,6 +5,9 @@
 #include "LocalFileSystem.h"
 #include "git_version.hpp"
 
+#include "IOExpander.h"
+#include "IOExpanderDigitalOut.h"
+
 #include <algorithm>
 
 
@@ -107,6 +110,19 @@ const vector<command_t> commands =
 		cmd_resetMbed,
 		"resets the mbed (like pushing the reset button)",
 		"reset | reboot"}
+
+	{
+		{"testioexp"},
+		false,
+		cmd_testioexp,
+		"Cycles through all leds on io expander on pins 9 and 10",
+		"testioexp"},
+	{
+		{"toggleioexp"},
+		false,
+		cmd_toggleioexp,
+		"Toggles a single output pin on the IO Expander.",
+		"toggleioexp <side(A | B)> <pin number(0-7)>"}
 };
 
 /**
@@ -338,6 +354,87 @@ void cmd_resetMbed(const vector<string> &args)
 	mbed_reset();
 }
 
+/*
+ * Tests IO expander status lights.
+ * Blinks all lights then should light each up one at a time then
+ * turn them off one at a time.
+ */
+void cmd_testioexp(const vector<string> &args)
+{
+    // Ox40 is the base address when all hardware address pins = 0, use 0x42 for 001 on the hardware pins
+    expander->config(0, 0, 0);
+
+    // Blink all LEDs on
+    expander->digitalWordWrite(0xFFFF);
+    wait_ms(150);
+    expander->digitalWordWrite(0x0000);
+    wait_ms(150);
+
+    // Typical usage example, flash two lights
+    IOExpanderDigitalOut led(expander, IOExpanderPinA0);
+    IOExpanderDigitalOut led2(expander, IOExpanderPinB0);
+    led = 1;
+    led2 = led; // Able to set IOExpDigOut equal to each other
+    wait_ms(150);
+    led = 0;
+    led2 = led;
+    wait_ms(50);
+
+    // Light up all LEDs one at a time
+    IOExpanderDigitalOut *leds[NUM_EXPANDER_PINS];
+    for (int i = 0; i < NUM_EXPANDER_PINS; i++)
+    {
+        // Avoid the static cast by referring to actual IOExpanderPins in other applications
+        leds[i] = new IOExpanderDigitalOut(expander, static_cast<IOExpanderPin>(i));
+        *leds[i] = 1;
+        wait_ms(25);
+    }
+
+    // Turn all LEDs off one at a time and free up memory
+    for (int i = 0; i < NUM_EXPANDER_PINS; i++)
+    {
+        *leds[i] = 0;
+        wait_ms(25);
+        delete leds[i];
+    }
+}
+
+void cmd_toggleioexp(const vector<string> &args)
+{
+    int pinNum;
+    if (args.size() == 1)
+    {
+        if (args[0].length() == 2)
+        {
+            char side = args[0].at(0);
+            if (side == 'A' || side == 'a') pinNum = 0;
+            else if (side == 'B' || side == 'b') pinNum = 8;
+            else {
+                printf("Error, side argument incorrect.\r\n");
+                return;
+            }
+
+            char num = args[0].at(1);
+            num -= '0';
+            if (num > 7) // If < 0 then will overflow to a very big number.
+            {
+                printf("Error, pin number incorrect.\r\n");
+                return;
+            }
+
+            pinNum += num;
+            expander->config(0, 0, 0);
+            expander->write_bit(!expander->read_bit(pinNum), pinNum);
+
+        } else {
+            printf("Error, argument length != 2\r\n");
+        }
+    } else {
+        printf("Error, wrong number of arguments.\r\n");
+    }
+}
+
+
 /**
  * Lists files
  */
@@ -507,4 +604,3 @@ void cancelIterativeCommand(void)
 {
 	executingIterativeCommand = false;
 }
-
