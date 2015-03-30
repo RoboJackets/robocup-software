@@ -8,11 +8,10 @@
 using namespace std;
 
 
-Pid::Pid(float p, float i, float d, unsigned int windup)
+Pid::Pid(float p, float i, float d, unsigned int windup) : _oldErr()
 {
 	_windupLoc = 0;
 	_errSum = 0;
-	_oldErr = 0;
 	
 	_lastErr = 0;
 
@@ -24,15 +23,6 @@ Pid::Pid(float p, float i, float d, unsigned int windup)
 	setWindup(windup);
 }
 
-Pid::~Pid()
-{
-	if (_oldErr)
-	{
-		delete[] _oldErr;
-		_oldErr = nullptr;
-	}
-}
-
 void Pid::setWindup(unsigned int w)
 {
 	if (w != _windup) 
@@ -40,13 +30,15 @@ void Pid::setWindup(unsigned int w)
 
 		_windup = w;
 
-		if (_oldErr) 
-			delete[] _oldErr;
+		
 
 		if (w > 0)
 		{	
-			_oldErr = new float[_windup]{};
+			_oldErr.resize(w);
 			_errSum=0;
+			std::fill(_oldErr.begin(), _oldErr.end(), 0);
+		} else {
+			_oldErr.clear();
 		}
 	}
 }
@@ -62,7 +54,7 @@ float Pid::run(const float err)
 
 	_errSum += err;
 	
-	if (_oldErr)
+	if (_windup>0)
 	{
 		_errSum -= _oldErr[_windupLoc];
 		_oldErr[_windupLoc] = err;
@@ -75,8 +67,6 @@ float Pid::run(const float err)
 
 void Pid::clearWindup()
 {
-	if (_oldErr)
-	{
-		memset(_oldErr, 0, sizeof(float)*_windup);
-	}
+	_errSum=0;
+	std::fill(_oldErr.begin(), _oldErr.end(), 0);
 }
