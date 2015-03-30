@@ -111,47 +111,48 @@ $(document).ready(function(){initNavTree('_pid_8hpp_source.html','');});
 </div><!--header-->
 <div class="contents">
 <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;</div>
-<div class="line"><a name="l00003"></a><span class="lineno"><a class="line" href="class_pid.html">    3</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_pid.html">Pid</a></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;{</div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;    <a class="code" href="class_pid.html">Pid</a>(<span class="keywordtype">float</span> p = 0, <span class="keywordtype">float</span> i = 0, <span class="keywordtype">float</span> d = 0, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> windup = 0);</div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    ~<a class="code" href="class_pid.html">Pid</a>();</div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;</div>
+<div class="line"><a name="l00004"></a><span class="lineno"><a class="line" href="class_pid.html">    4</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_pid.html">Pid</a></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;{</div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;    <a class="code" href="class_pid.html">Pid</a>(<span class="keywordtype">float</span> p = 0, <span class="keywordtype">float</span> i = 0, <span class="keywordtype">float</span> d = 0, <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> windup = 0);</div>
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;</div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> windup()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _windup; }</div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;    <span class="keywordtype">float</span> <a class="code" href="class_pid.html#ae86adf5545b2af4188acdf3a29f71ea9">run</a>(<span class="keyword">const</span> <span class="keywordtype">float</span> err);</div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;    <span class="keywordtype">void</span> setWindup(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> w);</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_pid.html#a63308bb7bc14653d961b1f79f1824aaf">clearWindup</a>();</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;    <span class="keywordtype">float</span> kp, ki, kd;</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    <a class="code" href="class_pid.html">Pid</a>(<a class="code" href="class_pid.html">Pid</a>&amp;);</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <a class="code" href="class_pid.html">Pid</a>&amp; operator &amp;= (<a class="code" href="class_pid.html">Pid</a>&amp;);</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> _windup;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> _windupLoc;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keywordtype">float</span> _errSum;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keywordtype">float</span> _lastErr;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keywordtype">float</span>* _oldErr;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;};</div>
-<div class="ttc" id="class_pid_html_a63308bb7bc14653d961b1f79f1824aaf"><div class="ttname"><a href="class_pid.html#a63308bb7bc14653d961b1f79f1824aaf">Pid::clearWindup</a></div><div class="ttdeci">void clearWindup()</div><div class="ttdoc">clear any windup </div><div class="ttdef"><b>Definition:</b> Pid.cpp:73</div></div>
-<div class="ttc" id="class_pid_html_ae86adf5545b2af4188acdf3a29f71ea9"><div class="ttname"><a href="class_pid.html#ae86adf5545b2af4188acdf3a29f71ea9">Pid::run</a></div><div class="ttdeci">float run(const float err)</div><div class="ttdoc">Runs the pid loop and returns the error. </div><div class="ttdef"><b>Definition:</b> Pid.cpp:51</div></div>
-<div class="ttc" id="class_pid_html"><div class="ttname"><a href="class_pid.html">Pid</a></div><div class="ttdef"><b>Definition:</b> Pid.hpp:3</div></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> windup()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _windup; }</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;</div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;    <span class="keywordtype">float</span> <a class="code" href="class_pid.html#ae86adf5545b2af4188acdf3a29f71ea9">run</a>(<span class="keyword">const</span> <span class="keywordtype">float</span> err);</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="keywordtype">void</span> setWindup(<span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> w);</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="class_pid.html#a63308bb7bc14653d961b1f79f1824aaf">clearWindup</a>();</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;    <span class="keywordtype">float</span> kp, ki, kd;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <a class="code" href="class_pid.html">Pid</a>(<a class="code" href="class_pid.html">Pid</a>&amp;);</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <a class="code" href="class_pid.html">Pid</a>&amp; operator &amp;= (<a class="code" href="class_pid.html">Pid</a>&amp;);</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> _windup;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> _windupLoc;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keywordtype">float</span> _errSum;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordtype">float</span> _lastErr;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    std::vector&lt;float&gt; _oldErr;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;};</div>
+<div class="ttc" id="class_pid_html_a63308bb7bc14653d961b1f79f1824aaf"><div class="ttname"><a href="class_pid.html#a63308bb7bc14653d961b1f79f1824aaf">Pid::clearWindup</a></div><div class="ttdeci">void clearWindup()</div><div class="ttdoc">clear any windup </div><div class="ttdef"><b>Definition:</b> Pid.cpp:65</div></div>
+<div class="ttc" id="class_pid_html_ae86adf5545b2af4188acdf3a29f71ea9"><div class="ttname"><a href="class_pid.html#ae86adf5545b2af4188acdf3a29f71ea9">Pid::run</a></div><div class="ttdeci">float run(const float err)</div><div class="ttdoc">Runs the pid loop and returns the error. </div><div class="ttdef"><b>Definition:</b> Pid.cpp:43</div></div>
+<div class="ttc" id="class_pid_html"><div class="ttname"><a href="class_pid.html">Pid</a></div><div class="ttdef"><b>Definition:</b> Pid.hpp:4</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_c5f6e4ff4314f36b41387a9347f2c16e.html">common</a></li><li class="navelem"><b>Pid.hpp</b></li>
-    <li class="footer">Generated on Thu Mar 12 2015 03:01:50 for GT RoboCup SSL by
+    <li class="footer">Generated on Mon Mar 30 2015 23:50:10 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

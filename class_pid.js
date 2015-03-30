@@ -1,7 +1,6 @@
 var class_pid =
 [
     [ "Pid", "class_pid.html#a7feaf4b3444c9d3d40415f8479e65e4b", null ],
-    [ "~Pid", "class_pid.html#a7cc4e01fa357cc31834f982c7ba81dad", null ],
     [ "clearWindup", "class_pid.html#a63308bb7bc14653d961b1f79f1824aaf", null ],
     [ "run", "class_pid.html#ae86adf5545b2af4188acdf3a29f71ea9", null ],
     [ "setWindup", "class_pid.html#a1106664b17ce8a73c361de7b74e005eb", null ],
