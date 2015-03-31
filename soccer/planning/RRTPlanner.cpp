@@ -140,7 +140,15 @@ Planning::InterpolatedPath* RRTPlanner::run(
 	}
 	return path;
 }
+Planning::InterpolatedPath update(
+					Planning::InterpolatedPath &origionalPath, 
+					const float angle,
+					const Geometry2d::Point& vel,
+					const MotionConstraints &motionConstraints,
+					const Geometry2d::CompositeShape* obstacles) 
+{
 
+}
 Planning::InterpolatedPath RRTPlanner::makePath()
 {
 	Planning::InterpolatedPath newPath;
