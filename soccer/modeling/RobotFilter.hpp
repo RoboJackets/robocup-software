@@ -43,7 +43,7 @@ public:
 	
 	/// Generates a prediction of the ball's state at a given time in the future.
 	/// This may clear robot->visible if the prediction is too long in the future to be reliable.
-	void predict(Time time, Robot *robot);
+	void predict(Time time, RobotPose *robot);
 
 private:
 	static const int Num_Cameras = 2;

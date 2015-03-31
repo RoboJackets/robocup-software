@@ -640,7 +640,11 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	if (!_pathInvalidated) {
 		addText("Reusing path");
 	} else {
-		Planning::Path *newlyPlannedPath = _planner->run(pos, angle, vel, _motionConstraints, &full_obstacles);
+		double leadTime = 0.1*1000000;
+		RobotPose predictedPose;
+		filter()->predict(timestamp()+leadTime, &predictedPose);
+		
+		Planning::Path *newlyPlannedPath = _planner->run(predictedPose.pos, predictedPose.angle, predictedPose.vel, _motionConstraints, &full_obstacles);
 		addText("Replanning");
 		// use the newly generated path
 		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: using new RRT path" << std::endl;
