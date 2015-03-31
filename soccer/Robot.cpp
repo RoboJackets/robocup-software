@@ -640,8 +640,9 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	if (!_pathInvalidated) {
 		addText("Reusing path");
 	} else {
-		double leadTime = 0.1*1000000;
+		double leadTime = *(_motionConstraints._replan_lead_time)*1000000;
 		RobotPose predictedPose;
+
 		filter()->predict(timestamp()+leadTime, &predictedPose);
 		
 		Planning::Path *newlyPlannedPath = _planner->run(predictedPose.pos, predictedPose.angle, predictedPose.vel, _motionConstraints, &full_obstacles);
