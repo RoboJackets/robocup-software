@@ -143,7 +143,7 @@ namespace Planning
 			 *
 			 * @return 		The time from start to path completion
 			 */
-			float getTime() const;
+			virtual float getTime() const;
 
 			static void createConfiguration(Configuration *cfg);
 
