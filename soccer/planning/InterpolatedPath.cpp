@@ -90,13 +90,15 @@ int Planning::InterpolatedPath::nearestIndex(const Geometry2d::Point &pt) const
 	return index;
 }
 
-bool Planning::InterpolatedPath::hit(const Geometry2d::CompositeShape &obstacles, Geometry2d::Point *startPosition) const
+bool Planning::InterpolatedPath::hit(const Geometry2d::CompositeShape &obstacles, float startTime) const
 {
-	int start;
-	if(startPosition) {
-		start = nearestIndex(*startPosition);
-	} else {
-		start = 0;
+	int start=0;
+	for(float t: times) {
+		start++;
+		if(t>startTime) {
+			start--;
+			break;
+		}
 	}
 
     if (start >= points.size())
@@ -374,6 +376,7 @@ float Planning::InterpolatedPath::getTime(int index) const
 
 	return Trapezoidal::getTime(length(0,index), length(), maxSpeed, maxAcceleration, startSpeed, endSpeed);
 }
+
 
 float Planning::InterpolatedPath::getTime() const
 {

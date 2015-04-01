@@ -616,8 +616,8 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 
 
-		if (_path->hit(full_obstacles, &targetPathPos)) {
-		_pathInvalidated = true;
+		if (_path->hit(full_obstacles, timeIntoPath)) {
+			_pathInvalidated = true;
 		}
 
 		//  invalidate path if current position is more than 15cm from the planned point
