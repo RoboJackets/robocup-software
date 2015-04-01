@@ -44,6 +44,13 @@ namespace Planning
 			 */
 			virtual void draw(SystemState * const state, const QColor &color = Qt::black, const QString &layer = "Motion") const =0;
 			
+			/** 
+			 * Estimates how long it would take for the robot to traverse the entire path
+			 *
+			 * @return 	The time from start to path completion or -1 if there is no destination
+			 */
+			virtual float getTime() const=0;
+
 			/**
 			 * Returns the destination point of the path if it has one
 			 */
