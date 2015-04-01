@@ -137,6 +137,14 @@ namespace Planning
 			 * @return 		the estimated time it would take for the robot to a point on the path starting from the start of the path
 			 */
 			float getTime(int index) const;
+
+			/**
+			 * Estimates how long it would take for the robot to traverse the entire path
+			 *
+			 * @return 		The time from start to path completion
+			 */
+			float getTime() const;
+
 			static void createConfiguration(Configuration *cfg);
 
 			Geometry2d::Point vi;	//Stored velocity of the robot at the start of the path

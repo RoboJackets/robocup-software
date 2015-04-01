@@ -374,3 +374,8 @@ float Planning::InterpolatedPath::getTime(int index) const
 
 	return Trapezoidal::getTime(length(0,index), length(), maxSpeed, maxAcceleration, startSpeed, endSpeed);
 }
+
+float Planning::InterpolatedPath::getTime() const
+{
+	return getTime(size()-1);
+}
