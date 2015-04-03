@@ -11,8 +11,8 @@ reg [`COUNTER_WIDTH - 1:0] counter = 0;
 
 always @ (posedge clock)
 begin
-	counter = counter + 1;
+	pwm = (counter < duty_cycle*`DUTY_CYCLE_STEP_RES) ? 1 : 0;
+	counter = counter + 1; 
 	if (counter >= `MAX_COUNTER) counter = 0;
-	pwm = (counter < duty_cycle*`DUTY_CYCLE_STEP_RES) ? 1 : 0; 
 end
 endmodule

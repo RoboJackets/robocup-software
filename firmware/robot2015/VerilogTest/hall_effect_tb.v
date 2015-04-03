@@ -9,10 +9,15 @@ initial
     $dumpfile("test.vcd");
     $dumpvars(0,hall_effect_tb);
  end
-
+reg clock;
 reg [2:0] h;
 wire [2:0] u;
 wire [2:0] z;
+
+
+ always begin
+ 	 #1 clock = !clock;
+ end
 
 always begin
 	#0 h = 3'b000;
@@ -25,7 +30,7 @@ always begin
 	#7 h = 3'b111;
 end
 
-Hall_Effect_Sensor hallEffectSensor(h,u,z);
+Hall_Effect_Sensor hallEffectSensor(clock, h,u,z);
 
 
 endmodule

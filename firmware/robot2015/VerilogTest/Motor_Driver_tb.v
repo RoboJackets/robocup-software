@@ -14,14 +14,14 @@ reg [2:0] h;
 reg [`DUTY_CYCLE_WIDTH - 1 : 0] duty_cycle;
 
 
-wire phase1h, phase1l, phase2h, phase2l, phase3h, phase3l;
+wire [2:0] phaseH, phaseL;
 
 
-Motor_Driver motorDriver (clock, duty_cycle, h, phase1h, phase1l, phase2h, phase2l, phase3h, phase3l);
+Motor_Driver motorDriver (clock, duty_cycle, h, phaseH, phaseL);
 
 initial begin
 	
-	duty_cycle = 8'h9f; //dutycycle
+	duty_cycle = 8'h80; //dutycycle
 	clock = 0;
 
 end
