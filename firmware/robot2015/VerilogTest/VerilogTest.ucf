@@ -1,0 +1,21 @@
+
+
+##Xilinx Spartan XC3S100E
+##Example## NET "SYSCLK" LOC="P50"; 
+##NET "u<1>" LOC="PXXX"
+
+NET "phaseH<2>" LOC="P2";
+NET "phaseH<1>" LOC="P3";
+NET "phaseH<0>" LOC="P4";
+
+NET "phaseL<2>" LOC="140";
+NET "phaseL<1>" LOC="142";
+NET "phaseL<0>" LOC="143";
+
+NET "clock" LOC="";
+
+NET "h<2>" LOC="98";
+NET "h<1>" LOC="97";
+NET "h<0>" LOC="96";
+
+
