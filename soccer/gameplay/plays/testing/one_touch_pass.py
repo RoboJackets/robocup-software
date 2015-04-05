@@ -17,7 +17,8 @@ class OneTouchPass(play.Play):
     ReceiveYCoord = constants.Field.Length * 5.0 / 6.0
 
     class State(Enum):
-        shooting = 1   # Shooting into the goal
+        passing = 1
+        shooting = 2   # Shooting into the goal
 
     def __init__(self):
         super().__init__(continuous=False)
@@ -26,11 +27,11 @@ class OneTouchPass(play.Play):
             self.add_state(state, behavior.Behavior.State.running)
 
         self.add_transition(behavior.Behavior.State.start,
-                behavior.Behavior.State.running,
+                OneTouchPass.State.passing,
                 lambda: True,
                 'immediately')
 
-        self.add_transition(behavior.Behavior.State.running,
+        self.add_transition(OneTouchPass.State.passing,
                 OneTouchPass.State.shooting,
                 lambda: self.subbehavior_with_name('pass').state == behavior.Behavior.State.completed,
                 'preparing to shoot')
@@ -44,7 +45,7 @@ class OneTouchPass(play.Play):
         pass_bhvr = self.subbehavior_with_name('pass')
         pass_bhvr.receive_point = robocup.Point(OneTouchPass.ReceiveXCoord, OneTouchPass.ReceiveYCoord)
 
-    def on_enter_running(self):
+    def on_enter_passing(self):
         pass_bhvr = tactics.coordinated_pass.CoordinatedPass()
         self.add_subbehavior(pass_bhvr, 'pass')
         if pass_bhvr.receive_point == None:
@@ -54,11 +55,10 @@ class OneTouchPass(play.Play):
     def on_enter_shooting(self):
         kick = skills.pivot_kick.PivotKick()
         self.add_subbehavior(kick, 'kick', required=True)
-        kick = self.subbehavior_with_name('kick')
         kick.target = constants.Field.TheirGoalSegment
         kick.aim_params['desperate_timeout'] = 3
 
-    def on_exit_running(self):
+    def on_exit_passing(self):
         self.remove_subbehavior('pass')
 
     def on_exit_shooting(self):
