@@ -1,15 +1,17 @@
 #include <protobuf/LogFrame.pb.h>
 #include "InterpolatedPath.hpp"
 #include "Utils.hpp"
-#include "motion/TrapezoidalMotion.hpp"
 #include "LogUtils.hpp"
 #include <stdexcept>
 
 using namespace std;
 using namespace Planning;
+using namespace Geometry2d;
 
 
 #pragma mark InterpolatedPath
+
+
 
 Planning::InterpolatedPath::InterpolatedPath(const Geometry2d::Point& p0) {
 	points.push_back(p0);
@@ -297,10 +299,6 @@ void Planning::InterpolatedPath::draw(SystemState * const state, const QColor &c
 
 bool Planning::InterpolatedPath::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const
 {
-    if (maxSpeed == -1 || maxAcceleration == -1) {
-        throw std::runtime_error("You must set maxSpeed and maxAcceleration before calling Path.evaluate()");
-    }
-
     /*
 	float linearPos;
 	float linearSpeed;
@@ -370,15 +368,77 @@ bool Planning::InterpolatedPath::evaluate(float t, Geometry2d::Point &targetPosO
 
 float Planning::InterpolatedPath::getTime(int index) const
 {
-	if (maxSpeed == -1 || maxAcceleration == -1) {
-        throw std::runtime_error("You must set maxSpeed and maxAcceleration before calling Path.evaluate()");
-    }
-
-	return Trapezoidal::getTime(length(0,index), length(), maxSpeed, maxAcceleration, startSpeed, endSpeed);
+	return times[index];
 }
 
 
 float Planning::InterpolatedPath::getTime() const
 {
 	return getTime(size()-1);
+}
+
+unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endTime) const
+{
+	if (endTime > 0 && startTime > endTime) {
+		throw invalid_argument("startTime can't be after endTime");
+	}
+
+	if (startTime<0) {
+		throw invalid_argument("startTime can't be less than zero");
+	}
+
+	int start = 0;
+	for(float t: times) {
+		start++;
+		if(t>startTime) {
+			start--;
+			break;
+		}
+	}
+	if (start!=size()) {
+		InterpolatedPath *path = new InterpolatedPath();		
+		path->times.push_back(0);
+		if (times[start]==startTime) {
+			path->points.push_back(points[start]);
+			path->vels.push_back(vels[start]);
+		} else {
+			float deltaT = (times[start] - times[start-1]);
+			float constant = (times[start+1]-startTime)/deltaT;
+			Point startPos = points[start+1]*(1-constant) + points[start]*(constant);
+			Point vi = vels[start+1]*(1-constant) + vels[start]*(constant);
+			path->points.push_back(startPos);
+			path->vels.push_back(vi);
+		}
+		Point vf;
+		Point endPos;
+		int end;
+		if (endTime < 0 || endTime>=getTime()) {
+			end = size()-1;
+			vf = vels[end];
+			endPos = points[end];
+		} else {
+			end = start;
+			while (times[end]<endTime) {
+				end++;
+			}
+			endTime = times[end];
+			vf = vels[end];
+			endPos = vels[end];
+		}
+
+		int i=start+1;
+		while (i<end) {
+			path->points.push_back(points[i]);
+			path->vels.push_back(vels[i]);
+			path->times.push_back(times[i]-startTime);
+			i++;
+		}
+		path->points.push_back(endPos);
+		path->vels.push_back(vf);
+		path->times.push_back(endTime);
+
+		return unique_ptr<Path>(path);
+	} else {
+		return unique_ptr<Path>();
+	}
 }

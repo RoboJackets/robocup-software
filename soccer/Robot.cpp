@@ -578,8 +578,6 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		addText(QString("replan: no goal"));
 
 		Planning::InterpolatedPath *newPath = new Planning::InterpolatedPath(pos);
-		newPath->maxSpeed = _motionConstraints.maxSpeed;
-		newPath->maxAcceleration = _motionConstraints.maxAcceleration;
 		setPath(newPath);
 		_path->draw(_state);
 		return;
