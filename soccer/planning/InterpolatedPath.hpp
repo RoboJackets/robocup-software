@@ -18,6 +18,10 @@ namespace Planning
 	class InterpolatedPath: public Path
 	{
 		public:
+			// Set of points in the path - used as waypoints
+			std::vector<Geometry2d::Point> points;
+			std::vector<Geometry2d::Point> vels;
+			std::vector<float> times;
 
 			/** default path is empty */
 			InterpolatedPath() {}
@@ -92,10 +96,7 @@ namespace Planning
 			 */
 			virtual bool hit(const Geometry2d::CompositeShape &shape, float startTime) const;
 
-			// Set of points in the path - used as waypoints
-			std::vector<Geometry2d::Point> points;
-			std::vector<Geometry2d::Point> vels;
-			std::vector<float> times;
+			virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = -1) const;
 
 			/**
 			 * Returns true if the path never touches an obstacle or additionally, when exitObstacles is true, if the path
@@ -146,16 +147,5 @@ namespace Planning
 			virtual float getTime() const;
 
 			static void createConfiguration(Configuration *cfg);
-
-			Geometry2d::Point vi;	//Stored velocity of the robot at the start of the path
-			Geometry2d::Point vf;	//Stored target end velocity of the robot at the end of the path
-
-
-			float startSpeed = 0; 	//Stored speed of the robot at the start of the path
-			float endSpeed = 0;		//Stored target endSpeed of the robot at teh end of hte path.
-
-			///	note: you MUST set these before calling evaluate or else it'll throw an exception
-			float maxSpeed = -1;
-			float maxAcceleration = -1;
 	};
 }

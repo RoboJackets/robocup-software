@@ -51,6 +51,13 @@ namespace Planning
 			 */
 			virtual float getTime() const=0;
 
+			/** 
+			 * Returns a subPath
+			 *
+			 * @return 	The time from start to path completion or -1 if there is no destination
+			 */
+			virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = -1) const=0;
+
 			/**
 			 * Returns the destination point of the path if it has one
 			 */
