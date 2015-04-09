@@ -64,6 +64,8 @@ class Field:
     FloorLength = Length + 2.0 * Border;
     FloorWidth = Width + 2.0 * Border;
 
+    CenterPoint = robocup.Point(0.0, Length / 2.0)
+
     OurGoalZoneShape = robocup.CompositeShape()
     OurGoalZoneShape.add_shape(robocup.Circle(robocup.Point(-GoalFlat / 2.0, 0), ArcRadius))
     OurGoalZoneShape.add_shape(robocup.Circle(robocup.Point(GoalFlat / 2.0, 0), ArcRadius))
@@ -83,6 +85,7 @@ class Field:
     TheirHalf = robocup.Rect(robocup.Point(-Width/2, Length), robocup.Point(Width/2, Length/2))
     OurHalf = robocup.Rect(robocup.Point(-Width/2, 0), robocup.Point(Width/2, Length/2))
 
+
 def setFieldConstantsFromField_Dimensions(value):
     Field.Length = value.Length()
     Field.Width = value.Width()
@@ -99,6 +102,8 @@ def setFieldConstantsFromField_Dimensions(value):
     Field.GoalFlat = value.GoalFlat()
     Field.FloorLength = value.FloorLength()
     Field.FloorWidth = value.FloorWidth()
+
+    Field.CenterPoint = robocup.Point(0.0, Field.Length / 2.0)
 
     Field.OurGoalZoneShape = robocup.CompositeShape()
     Field.OurGoalZoneShape.add_shape(robocup.Circle(robocup.Point(-Field.GoalFlat / 2.0, 0), Field.ArcRadius))
@@ -118,3 +123,4 @@ def setFieldConstantsFromField_Dimensions(value):
 
     Field.TheirHalf = robocup.Rect(robocup.Point(-Field.Width/2, Field.Length), robocup.Point(Field.Width/2, Field.Length/2))
     Field.OurHalf = robocup.Rect(robocup.Point(-Field.Width/2, 0), robocup.Point(Field.Width/2, Field.Length/2))
+

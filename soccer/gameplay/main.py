@@ -7,10 +7,11 @@ import importlib
 import traceback
 import imp
 import sys
+import os
 import constants
 
-## soccer is run from the `run` folder, so we provide a relative path to where the python files live
-GAMEPLAY_DIR = '../soccer/gameplay'
+## soccer is run from the `run` folder, so we have to make sure we use the right path to the gameplay directory
+GAMEPLAY_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
 # main init method for the python side of things
