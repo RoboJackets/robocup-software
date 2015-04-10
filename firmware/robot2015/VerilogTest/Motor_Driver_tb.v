@@ -14,10 +14,10 @@ reg [2:0] h;
 reg [`DUTY_CYCLE_WIDTH - 1 : 0] duty_cycle;
 
 
-wire [2:0] phaseH, phaseL;
+wire [2:0] phaseHInv, phaseLInv;
 
 
-Motor_Driver motorDriver (clock, duty_cycle, h, phaseH, phaseL);
+Motor_Driver motorDriver (clock, duty_cycle, h, phaseHInv, phaseLInv);
 
 initial begin
 	
