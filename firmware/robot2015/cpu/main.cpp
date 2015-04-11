@@ -3,6 +3,7 @@
 #include "commands.hpp"
 #include "logger.hpp"
 #include "radio.hpp"
+#include "CC1201.hpp"
 
 Ticker lifeLight;
 DigitalOut ledOne(LED1);
@@ -87,8 +88,7 @@ void setISRPriorities(void)
 
 	//set UART (console) interrupts to minimal priority
 	//when debugging radio and other time sensitive operations, this
-	//interrupt will need to be deferred, especially given the number of
-	//calls to printf()
+	//interrupt will need to be deferred.
 	NVIC_SetPriority(UART0_IRQn, NVIC_EncodePriority(priorityGrouping, 3, 0));
 	NVIC_SetPriority(UART1_IRQn, NVIC_EncodePriority(priorityGrouping, 3, 2));
 	NVIC_SetPriority(UART2_IRQn, NVIC_EncodePriority(priorityGrouping, 3, 2));
@@ -115,6 +115,10 @@ void initRadioThread(void)
  */
 void initConsoleRoutine(void)
 {
+	CC1201* testRadio = new CC1201(p5, p6, p7, p8, p9);
+	uint8_t* msg = (uint8_t*) "Hello, World!\0";
+	uint8_t len = 14;
+
 	if (!COMPETITION_DEPLOY)
 	{
 		initConsole();
@@ -133,8 +137,10 @@ void initConsoleRoutine(void)
 				break;
 			}
 
+			testRadio->sendData(msg, len);
+
 			//main loop heartbeat
-			wait(0.1);
+			wait(1);
 			ledTwo = !ledTwo;
 	    	}
 

@@ -58,6 +58,7 @@
 #define CCXXX1_TEST0        0x2E        // Various test settings
 
 // STROBE COMMANDS
+//(all good for 1201)
 #define CCXXX1_SRES         0x30        // Reset chip.
 #define CCXXX1_SFSTXON      0x31        // Enable and calibrate frequency synthesizer (if MCSM0.FS_AUTOCAL=1).
 #define CCXXX1_SXOFF        0x32        // Turn off crystal oscillator.
