@@ -1,6 +1,6 @@
-#include "CC1201.hpp"
-#include "CC1101-Defines.hpp"
-#include "logger.hpp"
+#include "CC1201Radio.hpp"
+
+using namespace std;
 
 CC1201::CC1201() : CommLink() {}
 
@@ -17,6 +17,7 @@ CC1201::~CC1201() {}
  */
 int32_t CC1201::sendData(uint8_t* buffer, uint8_t size)
 {
+	/*
 	// [X] - 1 - Move all values down by 1 to make room for the packet's size value.
 	// =================
 	for (int i = size; i > 0; i--)
@@ -45,6 +46,7 @@ int32_t CC1201::sendData(uint8_t* buffer, uint8_t size)
 
 	// [] - 6 - Return any error codes if necessary.
 	// =================
+	*/
 	return 0;   // success
 }
 
@@ -74,6 +76,43 @@ void CC1201::writeReg(uint8_t addr, uint8_t* buffer, uint8_t len)
 	toggle_cs();
 }
 
+/**
+ * reads a standard register
+ */
+uint8_t CC1201::readReg(uint8_t addr)
+{
+	const uint8_t DATA_BYTE = 0x00;
+	uint8_t returnVal;
+
+	if (addr >= 0x2F)
+	{
+		log(WARN, "CC1201", "readReg invalid address: %02X", addr);
+		return -1;
+	}
+
+	//addr |=   1 << 7;
+	addr &= ~(1 << 6); //should be redundant but leaving for security 
+	_spi->write(addr | CC1201_READ_SINGLE);
+	returnVal = _spi->write(DATA_BYTE);
+	return returnVal;
+}
+
+/**
+ * reads an extended register
+ */
+uint8_t CC1201::readRegExt(uint8_t addr)
+{
+	const uint8_t DATA_BYTE = 0x00;
+	uint8_t returnVal;
+
+	toggle_cs();
+	_spi->write(CC1201_EXTENDED_ACCESS_READ);
+	_spi->write(addr);
+	returnVal = _spi->write(DATA_BYTE);
+	toggle_cs();
+	return returnVal;
+}
+
 uint8_t CC1201::strobe(uint8_t addr)
 {
 	toggle_cs();
@@ -101,12 +140,45 @@ void CC1201::reset(void)
     strobe(CCXXX1_SRES);
 }
 
+
+
 int32_t CC1201::selfTest(void)
 {
-	return -1;
+	// [X] - 1 - Get the chip's version number and fail if different from what was expected.
+	_chip_version = status(CCXXX1_VERSION);
+
+	if (_chip_version != CCXXX1_EXPECTED_VERSION_NUMBER) 
+	{
+
+		// [X] - 2 - Send message over serial port if version register is not what was expected
+		// =================
+		log(FATAL, "CC1201",
+		    "FATAL ERROR\r\n"
+		    "  Wrong version number returned from chip's 'VERSION' register (Addr: 0x%02X)\r\n"
+		    "\r\n"
+		    "  Expected: 0x%02X\r\n"
+		    "  Found:    0x%02X\r\n"
+		    "\r\n"
+		    "  Troubleshooting Tips:\r\n"
+		    "    - Check that the chip is fully connected with no soldering errors\r\n"
+		    "    - Determine if chip is newer version & update firmware\r\n"
+		    , CCXXX1_VERSION, CCXXX1_EXPECTED_VERSION_NUMBER, _chip_version);
+
+		return -1;  // Negative numbers mean error occurred
+	}
+
+    	return 0;   // Success
 }
 
 bool CC1201::isConnected(void)
 {
 	return true;
+}
+
+string CC1201::modeToStr(uint8_t mode)
+{
+	switch (mode)
+	{
+		default: return "unk";
+	}
 }
