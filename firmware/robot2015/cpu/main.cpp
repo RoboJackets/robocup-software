@@ -3,7 +3,7 @@
 #include "commands.hpp"
 #include "logger.hpp"
 #include "radio.hpp"
-#include "CC1201.hpp"
+#include "CC1201Radio.hpp"
 
 Ticker lifeLight;
 DigitalOut ledOne(LED1);
@@ -115,7 +115,7 @@ void initRadioThread(void)
  */
 void initConsoleRoutine(void)
 {
-	CC1201* testRadio = new CC1201(p5, p6, p7, p8, p9);
+	CC1201* testRadio = new CC1201(p5, p6, p7, p9, p8);
 	uint8_t* msg = (uint8_t*) "Hello, World!\0";
 	uint8_t len = 14;
 
@@ -137,7 +137,17 @@ void initConsoleRoutine(void)
 				break;
 			}
 
-			testRadio->sendData(msg, len);
+			//log(INF2, "main", "TX %s", msg);
+			//testRadio->sendData(msg, len);
+			/*
+			if (testRadio->selfTest() == 0)
+			{
+				ledTwo = !ledTwo;
+			}
+			*/
+
+			printf("Version ID: %02X\r\n", testRadio->readRegExt(0x8F));
+			fflush(stdout);
 
 			//main loop heartbeat
 			wait(1);

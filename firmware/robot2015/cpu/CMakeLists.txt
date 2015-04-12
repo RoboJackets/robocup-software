@@ -4,7 +4,7 @@
 # The end result of this file is the 'robot2015' target
 # building this target ouputs an MBED-runnable file at run/robot2015.bin, which can be copied onto the MBED
 
-include_directories(drivers drivers/CC1101 drivers/CC1201)
+include_directories(drivers drivers/CC1101 drivers/CC1201 drivers/CC1201/cfg)
 include_directories(modules modules/CommLink modules/CommModule)
 include_directories(utils utils/FirmwareCheck utils/Logger utils/RTOS_Management utils/Watchdog)
 
