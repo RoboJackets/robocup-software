@@ -44,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent):
 	QMainWindow(parent)
 {
 
- 	qRegisterMetaType<QVector<int> >("QVector<int>");
+	qRegisterMetaType<QVector<int> >("QVector<int>");
 
 	_quaternion_demo = 0;
 	
@@ -484,7 +484,7 @@ void MainWindow::updateViews()
 			RobotStatusWidget *statusWidget = (RobotStatusWidget *)_ui.robotStatusList->itemWidget(item);
 
 			//	TODO: update attributes
-            // We make a copy of the robot's RadioRx package b/c the original might change
+			// We make a copy of the robot's RadioRx package b/c the original might change
 			// during the course fo this method b/c radio comms happens on a different thread. 
 			RadioRx rx(robot->radioRx());
 
@@ -531,35 +531,26 @@ void MainWindow::updateViews()
 			bool Ball_fault= ((rx.BallSenseStatus())!=1);
 			bool Dribbler_fault=!(_radioRx.motor_status_size() == 5 && _radioRx.motor_status(4) == Packet::Good);
 			QString error = "";
-    		if (Kicker_fault || Dribbler_fault|| Ball_fault)
-    		{
-        		error="Error(s):";
-    			if (Kicker_fault==true)
-    			{
-            		error=error +"Kicker, ";
-        		}
-        		if (Dribbler_fault==true)
-        		{
-           		error=error+"Dribbler, ";
-        		}  
-        		if (Ball_fault==true )
-        		{
-            		error=error+"Ball, ";
-       			} 
-    		}  
+			if (Kicker_fault || Dribbler_fault|| Ball_fault)
+			{
+				error="Error(s):";
+				if (Kicker_fault==true)
+				{
+					error=error +"Kicker, ";
+				}
+				if (Dribbler_fault==true)
+				{
+					error=error+"Dribbler, ";
+				}  
+				if (Ball_fault==true )
+				{
+					error=error+"Ball, ";
+				}
+			}
 			statusWidget->set_Errors(error);
-
-			// ball sensor
-			/**
-			bool hasBallSense = robot->ballSenseWorks();
-			statusWidget->setBallSenseFault(!hasBallSense);
-
-			//	has ball
-			statusWidget->setHasBall(robot->hasBall());
 
 			//	battery
 			//	FIXME: handle battery for real
-			**/
 			float batteryLevel = 1;
 			if (rx.has_battery()) {
 				if (rx.hardware_version() == RJ2008 || rx.hardware_version() == RJ2011) {
@@ -746,8 +737,8 @@ void MainWindow::on_actionCoords_toggled(bool state)
 
 void MainWindow::on_actionDotPatterns_toggled(bool state)
 {
-    _ui.fieldView->showDotPatterns = state;
-    _ui.fieldView->update();
+	_ui.fieldView->showDotPatterns = state;
+	_ui.fieldView->update();
 }
 
 void MainWindow::on_actionTeam_Names_toggled(bool state)
@@ -800,15 +791,15 @@ void MainWindow::on_actionUseOpponentHalf_toggled(bool value)
 void MainWindow::on_action904MHz_triggered()
 {
 	channel(0);
-    _ui.action904MHz->setChecked(true);
-    _ui.action906MHz->setChecked(false);
+	_ui.action904MHz->setChecked(true);
+	_ui.action906MHz->setChecked(false);
 }
 
 void MainWindow::on_action906MHz_triggered()
 {
 	channel(10);
-    _ui.action904MHz->setChecked(false);
-    _ui.action906MHz->setChecked(true);
+	_ui.action904MHz->setChecked(false);
+	_ui.action906MHz->setChecked(true);
 }
 
 void MainWindow::channel(int n)
@@ -1114,15 +1105,15 @@ void MainWindow::on_saveConfig_clicked()
 
 void MainWindow::setRadioChannel(RadioChannels channel)
 {
-    switch(channel)
-    {
-    case RadioChannels::MHz_904:
-        this->on_action904MHz_triggered();
-        break;
-    case RadioChannels::MHz_906:
-        this->on_action906MHz_triggered();
-        break;
-    }
+	switch(channel)
+	{
+	case RadioChannels::MHz_904:
+		this->on_action904MHz_triggered();
+		break;
+	case RadioChannels::MHz_906:
+		this->on_action906MHz_triggered();
+		break;
+	}
 }
 
 void MainWindow::on_fastHalt_clicked()
