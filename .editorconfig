@@ -1,0 +1,19 @@
+# Robocup base editorconfig
+
+root = false
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Use 4 spaces for most files
+indent_style = space
+indent_size = 4
+
+# Use 2 spaces for travis files
+[{package.json,.travis.yml}]
+indent_style = space
+indent_size = 2
+
