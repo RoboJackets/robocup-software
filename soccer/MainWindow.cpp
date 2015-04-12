@@ -531,15 +531,19 @@ void MainWindow::updateViews()
 			bool Ball_fault= ((rx.BallSenseStatus())!=1);
 			bool Dribbler_fault=!(_radioRx.motor_status_size() == 5 && _radioRx.motor_status(4) == Packet::Good);
 			QString error = "";
-    		if (Kicker_fault || Dribbler_fault|| Ball_fault){
-        	error="Error(s):";
-    			if (Kicker_fault==true){
+    		if (Kicker_fault || Dribbler_fault|| Ball_fault)
+    		{
+        		error="Error(s):";
+    			if (Kicker_fault==true)
+    			{
             		error=error +"Kicker, ";
         		}
-        		if (Dribbler_fault==true ){
+        		if (Dribbler_fault==true)
+        		{
            		error=error+"Dribbler, ";
         		}  
-        		if (Ball_fault==true ){
+        		if (Ball_fault==true )
+        		{
             		error=error+"Ball, ";
        			} 
     		}  

@@ -7,7 +7,7 @@ RobotStatusWidget::RobotStatusWidget(QWidget *parent, Qt::WindowFlags f) : QWidg
     _ui.setupUi(this);
 
     setBoardID("?\?-??");
-/**
+
     _shellID = -2;
     setShellID(-1);
 
@@ -23,7 +23,6 @@ RobotStatusWidget::RobotStatusWidget(QWidget *parent, Qt::WindowFlags f) : QWidg
     _batteryLevel = 1;
     setBatteryLevel(0.5);
     _showstopper = false;
-**/
    
 }
 int RobotStatusWidget::shellID() const {
@@ -31,15 +30,16 @@ int RobotStatusWidget::shellID() const {
 }
 
 void RobotStatusWidget::setShellID(int shellID) {
-    if (shellID != _shellID) {
+    if (shellID != _shellID)
+    {
         _shellID = shellID;
-
         _ui.robotWidget->setShellID(_shellID);
-
-        if (shellID == -1) {
+        if (shellID == -1) 
+        {
             _ui.shellID->setText(QString("?"));
         } 
-        else {
+        else 
+        {
             _ui.shellID->setText(QString("%1").arg(shellID));
         }
     }
