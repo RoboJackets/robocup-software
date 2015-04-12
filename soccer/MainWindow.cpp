@@ -1,3 +1,4 @@
+
 #include <gameplay/GameplayModule.hpp>
 #include "MainWindow.hpp"
 
@@ -9,7 +10,6 @@
 #include <joystick/Joystick.hpp>
 #include "RobotStatusWidget.hpp"
 #include "BatteryProfile.hpp"
-
 #include <QInputDialog>
 #include <QFileDialog>
 #include <QActionGroup>
@@ -438,11 +438,14 @@ void MainWindow::updateViews()
 			//	fake radio
 			bool radio = rand() % 5 != 0;
 			statusWidget->setHasRadio(radio);
-
+			// fake errors
+			QString error= "Error(s):Kicker, Dribbler, Ball, and more stuff1 and more stuff2 and more stufff3 ";
+			statusWidget->set_Errors(error);
 			//	fake ball
 			bool ball = rand() % 4 == 0;
 			statusWidget->setHasBall(ball);
-		
+
+
 
 			//	fake ball sense status
 			/**
@@ -481,9 +484,8 @@ void MainWindow::updateViews()
 			RobotStatusWidget *statusWidget = (RobotStatusWidget *)_ui.robotStatusList->itemWidget(item);
 
 			//	TODO: update attributes
-
-			//	we make a copy of the robot's radioRx packet b/c the original might change
-			//	during the course of this method b/c radio comm happens on a different thread
+            // We make a copy of the robot's RadioRx package b/c the original might change
+			// during the course fo this method b/c radio comms happens on a different thread. 
 			RadioRx rx(robot->radioRx());
 
 
@@ -524,6 +526,24 @@ void MainWindow::updateViews()
 					hasWheelFault = hasWheelFault || wheelIFault;
 				}
 			}
+
+			bool Kicker_fault=_radioRx.kicker_status() & 0x80;
+			bool Ball_fault= ((rx.BallSenseStatus())!=1);
+			bool Dribbler_fault=!(_radioRx.motor_status_size() == 5 && _radioRx.motor_status(4) == Packet::Good);
+			QString error = "";
+    		if (Kicker_fault || Dribbler_fault|| Ball_fault){
+        	error="Error(s):";
+    			if (Kicker_fault==true){
+            		error=error +"Kicker, ";
+        		}
+        		if (Dribbler_fault==true ){
+           		error=error+"Dribbler, ";
+        		}  
+        		if (Ball_fault==true ){
+            		error=error+"Ball, ";
+       			} 
+    		}  
+			statusWidget->set_Errors(error);
 
 			// ball sensor
 			/**

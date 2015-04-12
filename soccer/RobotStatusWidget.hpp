@@ -23,7 +23,7 @@ public:
 	bool Dribbler_fault() const;
 	bool Kicker_fault()const;
 	bool Ball_fault()const;
-	void set_Errors(bool Dribbler_fault,bool Kicker_fault,bool Ball_fault );
+	void set_Errors(QString error);
 	/**
 	 * @brief ID of control board (4 hex digits)
 	 */
