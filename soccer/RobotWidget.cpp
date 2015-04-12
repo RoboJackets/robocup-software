@@ -48,11 +48,11 @@ void RobotWidget::setWheelFault(int wheelIndex, bool faulty) {
     _wheelFaults[wheelIndex] = faulty;
     update();
 }
-/**
+
 void RobotWidget::setBallSenseFault(bool faulty) {
     _ballSenseFault = faulty;
 }
-**/
+
 void RobotWidget::setHasBall(bool hasBall) {
     if (hasBall != _hasBall) {
         _hasBall = hasBall;
