@@ -5,9 +5,9 @@
 ##Pin out is based on tq144_footprint.xls
 
 
-NET "phaseHInv<2>" LOC="P2";
-NET "phaseHInv<1>" LOC="P3";
-NET "phaseHInv<0>" LOC="P4";
+NET "phaseHInv<2>" LOC="P26";
+NET "phaseHInv<1>" LOC="P32";
+NET "phaseHInv<0>" LOC="P34";
 
 NET "phaseLInv<2>" LOC="P140";
 NET "phaseLInv<1>" LOC="P142";
@@ -15,8 +15,6 @@ NET "phaseLInv<0>" LOC="P143";
 
 NET "clock" LOC="P50";
 
-NET "h<2>" LOC="P98";
-NET "h<1>" LOC="P97";
-NET "h<0>" LOC="P96";
-
-
+NET "h<2>" LOC="P98" | PULLUP; #Hall Effect 1
+NET "h<1>" LOC="P96" | PULLUP; #Hall Effect 2
+NET "h<0>" LOC="P97" | PULLUP; #Hall Effect 3

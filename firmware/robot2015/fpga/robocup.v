@@ -23,8 +23,9 @@ reg [`DUTY_CYCLE_WIDTH - 1 : 0] duty_cycle = 8'hFF;
 
 
 //Motor driver IRS2336DS requires inverted phase driver input
-assign phaseHInv = ~phaseH;
+//assign phaseHInv = ~phaseH;
 assign phaseLInv = ~phaseL;
+assign phaseHInv = 3'b101; //testing if I can output...
 
 Hall_Effect_Sensor hallEffectSensor (clock, h, u, z);
 
