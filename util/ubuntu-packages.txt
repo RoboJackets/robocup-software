@@ -13,6 +13,7 @@ ccache
 qt5-default
 qttools5-dev-tools
 libqt5opengl5-dev
+libqt5svg5-dev
 
 # required for compiling gcc
 libgmp3-dev
