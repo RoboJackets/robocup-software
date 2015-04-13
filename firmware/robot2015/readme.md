@@ -32,7 +32,7 @@ Most of the configuration info is starts on page 49.  Below is a summary of the 
 * The INIT_B pins do several things.  At the start of configuration, INIT_B goes Low indicating that it is "housecleaning", meaning it's clearing its internal configuration memory.  Later on, if INIT_B goes low, it indicates a CRC check failure.
 * Three different slave modes for configuration: serial, parallel, and JTAG.  Parallel would probably be fastest since it sends 8 bits at a a time, but we don't have that many spare pins.  Serial is the simplest and will work fine, so we're going with that.
 
-* for Slave Serial Mode, set M[2:0] to <1:1:1>
+* for Slave Serial Mode, set M[2:0] to 111.
 
 * If M[2:0] pins are unconnected and HSWAP is pulled low, then it defaults to Slave-Serial configuration mode
 
