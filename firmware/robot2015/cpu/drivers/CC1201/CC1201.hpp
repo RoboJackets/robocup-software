@@ -27,6 +27,8 @@ class CC1201 : public CommLink
 		    
 		virtual bool isConnected(void);
 
+		void sendGarbage(void);
+
 		/*
 		 * lots of reads and writes
 		 */

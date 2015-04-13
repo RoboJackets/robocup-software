@@ -1,4 +1,6 @@
 #include "CC1201Radio.hpp"
+#include "mbed.h"
+#include "rtos.h"
 
 using namespace std;
 
@@ -7,10 +9,28 @@ CC1201::CC1201() : CommLink() {}
 CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intPin) :
 	CommLink(mosi, miso, sck, cs, intPin)
 {
-	strobe(CCXXX1_SRES);
+	strobe(CC1201_STROBE_SRES);
+	Thread::wait(300);
+	strobe(CC1201_STROBE_SIDLE);
+	Thread::wait(400);
 }
 
 CC1201::~CC1201() {}
+
+void CC1201::sendGarbage(void)
+{
+	strobe(CC1201_STROBE_SIDLE);
+	Thread::wait(50);
+	writeReg(CC1201_PKT_LEN, 0x1E);
+	writeReg(CC1201_PKT_CFG2, 0x00 | (1 << 1));
+	writeReg(CC1201EXT_TXFIRST, 0x00);
+	writeReg(CC1201EXT_TXLAST, 0x08);
+
+	//if (decodeState(strobe(CC1201_STROBE_SNOP)) == 0x07)
+	//	strobe(CC1201_STROBE_SFTX);
+
+	strobe(CC1201_STROBE_STX);
+}
 
 /**
  *

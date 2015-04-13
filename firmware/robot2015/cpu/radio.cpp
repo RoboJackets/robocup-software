@@ -31,20 +31,33 @@ void radioThreadHandler(void const* args)
 	char* buffer = (char*) malloc(len + 1);
 	strcpy(buffer, "Hello, World!");
 	
+	while (testRadio->decodeState(testRadio->strobe(CC1201_STROBE_SNOP)) != 0x01)
+	{
+		printf("NOP: %02X\r\n", testRadio->strobe(CC1201_STROBE_SNOP));
+	}
+	Thread::wait(100);
+	testRadio->strobe(CC1201_STROBE_SIDLE);
+	Thread::wait(100);
+
 	while(true)
 	{
-		testRadio->strobe(CC1201_STROBE_SFTX);
-		testRadio->strobe(CC1201_STROBE_SFRX);
+		
+		//testRadio->strobe(CC1201_STROBE_SFTX);
+		//testRadio->strobe(CC1201_STROBE_SFRX);
 
-		testRadio->strobe(CC1201_STROBE_SIDLE);
-		log(INF3, "radio::radioThreadHandler", "NOP Return (decoded): %02X, Marc State: %02X, Version ID: %02X\r\n", 
+		//testRadio->strobe(CC1201_STROBE_SIDLE);
+		log(INF3, "radio::radioThreadHandler", "NOP Return (decoded): %02X, Marc State: %02X", 
 			testRadio->decodeState(testRadio->strobe(CC1201_STROBE_SNOP)),
-			testRadio->readRegExt(CC1201EXT_MARCSTATE),
-			testRadio->readRegExt(CC1201EXT_PARTNUMBER));
+			testRadio->readRegExt(CC1201EXT_MARCSTATE));
+		log(INF3, "radio::radioThreadHandler", "TXFIRST: %02X, TXLAST: %02X, PKTLEN: %02X",
+			testRadio->readRegExt(CC1201EXT_TXFIRST),
+			testRadio->readRegExt(CC1201EXT_TXLAST),
+			testRadio->readReg(CC1201_PKT_LEN));
 		fflush(stdout);
 
 		log(INF2, "radio::radioThreadHandler", "Starting TX");
-		testRadio->sendData((uint8_t*) buffer, len);
+		//testRadio->sendData((uint8_t*) buffer, len);
+		testRadio->sendGarbage();		
 		log(INF2, "radio::radioThreadHandler", "TX Done.");
 
 		//Thread::wait(1);
