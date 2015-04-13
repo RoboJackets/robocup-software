@@ -19,6 +19,8 @@ MBED_DEVICES="$(ls /dev/disk/by-id/ | grep -i mbed)"
 # This prepends the directory structure to all found mbed devices
 MBED_DEVICES_PATH="$(ls /dev/disk/by-id/ | grep -i mbed | sed 's\.*\/dev/disk/by-id/&\g')"
 
+SHA2="$(sha256sum $1 | awk '{print $1}')"
+
 # errors out if no mbed devices were found
 if [ -z $MBED_DEVICES ]; then
     echo "No mbed device detected!"
@@ -39,6 +41,15 @@ for i in $MBED_DEVICES_PATH; do
     sudo mkdir -p /mnt/script/MBED
     sudo mount $i /mnt/script/MBED
     sudo cp $1 /mnt/script/MBED/
+
+
+    if [ "$SHA2" != "$(sha256sum /mnt/script/MBED/$(echo "$1" | awk 'BEGIN {FS = "/"}; {print $NF}') | awk '{print $1}')" ]; then
+        echo ERROR: Sha Hashes do not match. Exiting...
+        exit 1
+    else
+        echo Sha256sums of binary files match!
+    fi
+
     sudo umount -l /mnt/script/MBED/
     if [ $? -eq 0 ]; then
         echo Unmount successful! Do not remove mbed until write light stops blinking!
@@ -53,7 +64,7 @@ done
 
 # here's hoping the copy takes less than 5 seconds
 # TODO find a better solution...
-sleep 5
+sleep 4
 
 # restart mbed code
 MBED_SERIAL_PATH="$(ls /dev/ | grep ttyACM | sed 's\.*\/dev/&\g')"
@@ -61,7 +72,10 @@ MBED_SERIAL_PATH="$(ls /dev/ | grep ttyACM | sed 's\.*\/dev/&\g')"
 for i in $MBED_SERIAL_PATH; do
     echo Attempting reboot on $i ...
     # clear buffer, send reboot, enter
-    sudo bash -c "echo -ne '\rreboot\r' > $i"
+
+    # send break signal to all mbeds
+    sudo python3 -c "import serial; serial.Serial(\"$i\").sendBreak()"
+    # sudo bash -c "echo -ne '\rreboot\r' > $i"
 done
 
 

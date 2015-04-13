@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# abort script if something fails
+set -e
+
 BASE="$(dirname $0)/.."
 
 echo "-- Installing required homebrew packages"
@@ -15,9 +18,13 @@ sudo pip3 install -r $BASE/util/requirements3.txt
 echo "-- Disabling AppNap for simulator"
 defaults write org.robojackets.robocup.simulator NSAppSleepDisabled -bool YES
 
-# Note: you also need to install libspnav, which isn't available through homebrew
-################################################################################
-# 1: Download libspnav source from http://sourceforge.net/projects/spacenav
-# 2: Extract zip/tar.gz
-# 3: Run ./configure --disable-x11 from the extracted directory
-# 4: make; sudo make install
+echo "-- Checking for libspnav for 3d mouse support"
+SPNAV_LOC="/usr/local/include/spnav.h"
+if [ ! -f "$SPNAV_LOC" ]; then
+	echo "-- Downloading libspnav"
+	TMP_DIR=$(mktemp -d /tmp/spacenav.XXXX)
+	curl -L "http://downloads.sourceforge.net/project/spacenav/spacenav%20library%20%28SDK%29/libspnav%200.2.3/libspnav-0.2.3.tar.gz?r=&ts=1425162527&use_mirror=hivelocity" -o "$TMP_DIR/libspnav-0.2.3.tar.gz"
+	cd "$TMP_DIR"; tar -xvzf libspnav-0.2.3.tar.gz
+	echo "-- Building and installing libspnav"
+	cd "$TMP_DIR/libspnav-0.2.3"; ./configure --disable-x11; make; sudo make install
+fi
