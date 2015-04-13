@@ -10,4 +10,4 @@
 LocalFileSystem local("local");     // Create the local filesystem object
 #endif
 
-extern int initRadio(void);
+void radioThreadHandler(void const* args);

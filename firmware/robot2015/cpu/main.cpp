@@ -20,15 +20,16 @@ void initConsoleRoutine(void);
 /**
  * system entry point
  */
+
 int main(void) 
 {
 	setISRPriorities();
 	lifeLight.attach(&imAlive, 0.25);
 
 	isLogging = true;
-	rjLogLevel = INF2;
+	rjLogLevel = INF3;
 	
-	//initRadioThread();
+	Thread radioThread(radioThreadHandler);
 	initConsoleRoutine();
 }
 
@@ -103,22 +104,10 @@ void setISRPriorities(void)
 }
 
 /**
- * initializes the radio communications thread
- */
-void initRadioThread(void)
-{
-	initRadio();
-}
-
-/**
  * initializes the console
  */
 void initConsoleRoutine(void)
 {
-	CC1201* testRadio = new CC1201(p5, p6, p7, p9, p8);
-	uint8_t* msg = (uint8_t*) "Hello, World!\0";
-	uint8_t len = 14;
-
 	if (!COMPETITION_DEPLOY)
 	{
 		initConsole();
@@ -137,22 +126,10 @@ void initConsoleRoutine(void)
 				break;
 			}
 
-			//log(INF2, "main", "TX %s", msg);
-			//testRadio->sendData(msg, len);
-			/*
-			if (testRadio->selfTest() == 0)
-			{
-				ledTwo = !ledTwo;
-			}
-			*/
-
-			printf("Version ID: %02X\r\n", testRadio->readRegExt(0x8F));
-			fflush(stdout);
-
 			//main loop heartbeat
 			wait(1);
 			ledTwo = !ledTwo;
-	    	}
+	    }
 
 		//clear light for main loop (shows its complete)
 		ledTwo = false;

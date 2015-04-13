@@ -27,19 +27,35 @@ class CC1201 : public CommLink
 		    
 		virtual bool isConnected(void);
 
+		/*
+		 * lots of reads and writes
+		 */
+		//TODO move to protected when done testing
+		uint8_t strobe(uint8_t addr);
+
 		uint8_t readReg(uint8_t addr);
+
+		void readReg(uint8_t addr, uint8_t* buffer, uint8_t len);
 
 		uint8_t readRegExt(uint8_t addr);
 
-	protected:
+		void readRegExt(uint8_t addr, uint8_t* buffer, uint8_t len);
+
 		void writeReg(uint8_t addr, uint8_t value);
 
 		void writeReg(uint8_t addr, uint8_t* buffer, uint8_t len);
 
+		void writeRegExt(uint8_t addr, uint8_t value);
+
+		void writeRegExt(uint8_t addr, uint8_t* buffer, uint8_t len);
+
+		uint8_t decodeState(uint8_t nopRet);
+
+	protected:
+		
+
 	private:
 		uint8_t _chip_version;
-
-		uint8_t strobe(uint8_t);
 
 		uint8_t mode(void);
 

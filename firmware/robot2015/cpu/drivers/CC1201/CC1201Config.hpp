@@ -11,7 +11,7 @@ class CC1201Config
 		/**
  		 *
 		 */
-		static void resetConfiguration(CC1201Config* instance);
+		static CC1201Config* resetConfiguration(CC1201Config* instance);
 
 		/**
  		 * 

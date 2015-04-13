@@ -17,10 +17,9 @@ CC1201::~CC1201() {}
  */
 int32_t CC1201::sendData(uint8_t* buffer, uint8_t size)
 {
-	/*
 	// [X] - 1 - Move all values down by 1 to make room for the packet's size value.
 	// =================
-	for (int i = size; i > 0; i--)
+	for (int i = size - 1; i > 0; i--)
 		buffer[i] = buffer[i - 1];
 
 	// [X] - 2 - Place the packet's size as the array's first value.
@@ -29,24 +28,25 @@ int32_t CC1201::sendData(uint8_t* buffer, uint8_t size)
 
 	log(INF2, "CC1201", "PACKET TRANSMITTED\r\n  Bytes: %u", size);
 
+	//strobe(CC1201_STROBE
+
 	// [X] - 3 - Send the data to the CC1101. Increment the size value by 1 
 	//before doing so to account for the buffer's inserted value
 	// =================
-	writeReg(CCXXX1_TXFIFO, buffer, ++size);
+	writeReg(CC1201_TX_FIFO, buffer, size);
 
 	// [X] - 4 - Enter the TX state.
 	// =================
-	strobe(CCXXX1_STX);
+	strobe(CC1201_STROBE_STX);
 
 	// [X] - 5 - Wait until radio enters back to the RX state.
 	// =================
 	// *Note: Takes very few cycles, so might as well wait before returning 
 	//to elimate querky errors.
-	while(mode() != 0x0D);
+	//while(mode() != 0x0D);
 
 	// [] - 6 - Return any error codes if necessary.
 	// =================
-	*/
 	return 0;   // success
 }
 
@@ -54,27 +54,6 @@ int32_t CC1201::getData(uint8_t* paramOne, uint8_t* paramTwo)
 {
 	return -1;
 } 
-
-void CC1201::writeReg(uint8_t addr, uint8_t value)
-{
-	toggle_cs();
-	_spi->write(addr);
-	_spi->write(value);
-	toggle_cs();
-}
-
-void CC1201::writeReg(uint8_t addr, uint8_t* buffer, uint8_t len)
-{
-	toggle_cs();
-
-	_spi->write(addr | CCXXX1_WRITE_BURST);
-	for (uint8_t index = 0; index < len; index++)
-	{
-		_spi->write(buffer[index]);
-	}
-	
-	toggle_cs();
-}
 
 /**
  * reads a standard register
@@ -86,7 +65,7 @@ uint8_t CC1201::readReg(uint8_t addr)
 
 	if (addr >= 0x2F)
 	{
-		log(WARN, "CC1201", "readReg invalid address: %02X", addr);
+		log(WARN, "CC1201::readReg", "readReg invalid address: %02X", addr);
 		return -1;
 	}
 
@@ -96,6 +75,11 @@ uint8_t CC1201::readReg(uint8_t addr)
 	returnVal = _spi->write(DATA_BYTE);
 	return returnVal;
 }
+
+void CC1201::readReg(uint8_t addr, uint8_t* buffer, uint8_t len)
+{
+	return;
+} 
 
 /**
  * reads an extended register
@@ -113,8 +97,54 @@ uint8_t CC1201::readRegExt(uint8_t addr)
 	return returnVal;
 }
 
+void CC1201::readRegExt(uint8_t addr, uint8_t* buffer, uint8_t len)
+{
+	return;
+}
+
+void CC1201::writeReg(uint8_t addr, uint8_t value)
+{
+	toggle_cs();
+	_spi->write(addr);
+	_spi->write(value);
+	toggle_cs();
+}
+
+void CC1201::writeReg(uint8_t addr, uint8_t* buffer, uint8_t len)
+{
+	toggle_cs();
+
+	_spi->write(addr | CC1201_WRITE_BURST);
+	for (uint8_t index = 0; index < len; index++)
+	{
+		_spi->write(buffer[index]);
+	}
+	
+	toggle_cs();
+}
+
+void CC1201::writeRegExt(uint8_t addr, uint8_t value)
+{
+	toggle_cs();
+	_spi->write(CC1201_EXTENDED_ACCESS_WRITE);
+	_spi->write(addr);
+	_spi->write(value);
+	toggle_cs();
+}
+
+void CC1201::writeRegExt(uint8_t addr, uint8_t* buffer, uint8_t value)
+{
+	return;
+}
+
 uint8_t CC1201::strobe(uint8_t addr)
 {
+	if (addr > 0x3d || addr < 0x30)
+	{
+		log(WARN, "CC1201::strobe", "Invalid address: %02X", addr);
+		return -1;
+	}
+
 	toggle_cs();
 	uint8_t ret = _spi->write(addr);
 	toggle_cs();
@@ -123,56 +153,48 @@ uint8_t CC1201::strobe(uint8_t addr)
 
 uint8_t CC1201::mode(void)
 {
-    return status(CCXXX1_MARCSTATE);
+    return readRegExt(CC1201EXT_MARCSTATE);
 }
 
 uint8_t CC1201::status(uint8_t addr)
 {
-    toggle_cs();
-    _spi->write(addr | CCXXX1_READ_BURST);
-    uint8_t ret = _spi->write(0);
-    toggle_cs();
-    return ret;
+	return strobe(CC1201_STROBE_SNOP);
 }
 
 void CC1201::reset(void)
 {
-    strobe(CCXXX1_SRES);
+    strobe(CC1201_STROBE_SRES);
 }
-
-
 
 int32_t CC1201::selfTest(void)
 {
-	// [X] - 1 - Get the chip's version number and fail if different from what was expected.
-	_chip_version = status(CCXXX1_VERSION);
-
-	if (_chip_version != CCXXX1_EXPECTED_VERSION_NUMBER) 
+	_chip_version = readRegExt(CC1201EXT_PARTNUMBER);
+	if (_chip_version != CC1201_EXPECTED_PART_NUMBER)
 	{
-
-		// [X] - 2 - Send message over serial port if version register is not what was expected
-		// =================
 		log(FATAL, "CC1201",
 		    "FATAL ERROR\r\n"
-		    "  Wrong version number returned from chip's 'VERSION' register (Addr: 0x%02X)\r\n"
-		    "\r\n"
+		    "  Wrong version number returned from chip's 'PARTNUMBER' register (Addr: 0x%02X)\r\n"
 		    "  Expected: 0x%02X\r\n"
 		    "  Found:    0x%02X\r\n"
-		    "\r\n"
-		    "  Troubleshooting Tips:\r\n"
-		    "    - Check that the chip is fully connected with no soldering errors\r\n"
-		    "    - Determine if chip is newer version & update firmware\r\n"
-		    , CCXXX1_VERSION, CCXXX1_EXPECTED_VERSION_NUMBER, _chip_version);
+			"\r\n"
+		    , CC1201EXT_PARTNUMBER, CC1201_EXPECTED_PART_NUMBER, _chip_version);
 
-		return -1;  // Negative numbers mean error occurred
+		return -1;
 	}
 
-    	return 0;   // Success
+    return 0;
 }
 
 bool CC1201::isConnected(void)
 {
 	return true;
+}
+
+uint8_t CC1201::decodeState(uint8_t nopRet)
+{
+	nopRet &= ~(1 << 7);
+	nopRet >>= 4;
+	return nopRet;
 }
 
 string CC1201::modeToStr(uint8_t mode)

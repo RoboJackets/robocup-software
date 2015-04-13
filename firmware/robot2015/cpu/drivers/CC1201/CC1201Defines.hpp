@@ -79,6 +79,7 @@
 #define CC1201_SNOP             0x3D
 #define CC1201_DMA              0x3E
 #define CC1201_TX_FIFO          0x3F
+#define CC1201_RX_FIFO          0x3F
 
 //EXTENDED REGISTERS (pg 12-13/114)
 #define CC1201EXT_IF_MIX_CFG       0x00
