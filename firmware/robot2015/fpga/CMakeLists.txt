@@ -36,6 +36,10 @@ add_custom_target(fpga2015bit
     COMMENT "Using xflow to generate fpga bitstream from Verilog files"
     DEPENDS copy_ucf)
 
+# The bitstream file contains extra header information that we don't need when configuring the fpga, so we convert to the binary format
+# which can be used for configuration directly.
+# The -b flag instructs promgen to swap the bit order, which is required for slave serial mode.  See this forum post for more info:
+# http://dbaspot.com/arch/340642-spartan3e-slave-serial-daisy-chain-print.html
 add_custom_target(fpga2015bin
     ${XILINX_TOOLS_DIR}/promgen
         -w -b -p bin -u 0 ${CMAKE_CURRENT_BINARY_DIR}/robocup.bit -o ${CMAKE_CURRENT_BINARY_DIR}/robocup.bin
@@ -43,9 +47,10 @@ add_custom_target(fpga2015bin
     COMMENT "Creating bin file from bitstream"
 )
 
+# MBED tries to load the most recent .bin file as its main program, so we can't name our fpga file with a .bin extension
 add_custom_target(fpga2015nib
     cp ${CMAKE_CURRENT_BINARY_DIR}/robocup.bin ${CMAKE_CURRENT_BINARY_DIR}/robocup.nib
-    COMMENT "Copying .bin to .nib b/c .nib is a reserved extension on MBED"
+    COMMENT "Copying .bin to .nib b/c .bin is a reserved extension on MBED"
     DEPENDS fpga2015bin
 )
 
