@@ -1,7 +1,5 @@
-
 #include <gameplay/GameplayModule.hpp>
 #include "MainWindow.hpp"
-
 #include "Configuration.hpp"
 #include "QuaternionDemo.hpp"
 #include "radio/Radio.hpp"
@@ -10,6 +8,8 @@
 #include <joystick/Joystick.hpp>
 #include "RobotStatusWidget.hpp"
 #include "BatteryProfile.hpp"
+#include <Network.hpp>
+
 #include <QInputDialog>
 #include <QFileDialog>
 #include <QActionGroup>
@@ -19,7 +19,6 @@
 #include <ctime>
 
 #include <google/protobuf/descriptor.h>
-#include <Network.hpp>
 
 using namespace std;
 using namespace boost;
@@ -419,7 +418,7 @@ void MainWindow::updateViews()
 			//	TODO: set board ID
 
 
-#define DEMO_ROBOT_STATUS
+//#define DEMO_ROBOT_STATUS
 
 #ifdef DEMO_ROBOT_STATUS
 			//	set board ID
@@ -438,20 +437,18 @@ void MainWindow::updateViews()
 			//	fake radio
 			bool radio = rand() % 5 != 0;
 			statusWidget->setHasRadio(radio);
-			// fake errors
-			QString error= "Error(s):Kicker, Dribbler, Ball, and more stuff1 and more stuff2 and more stufff3 ";
-			statusWidget->set_Errors(error);
-			//	fake ball
+
+			// fake error text
+			QString error = "Kicker Fault, Dribbler Fault, Ball Sense Fault, and more stuff1 and more stuff2 and more stufff3 ";
+			statusWidget->setErrorText(error);
+
+			//	fake ball status
 			bool ball = rand() % 4 == 0;
 			statusWidget->setHasBall(ball);
 
-
-
-			//	fake ball sense status
-			/**
+			//	fake ball sense error
 			bool ballFault = rand() % 4 == 0;
 			statusWidget->setBallSenseFault(ballFault);
-			**/
 			bool hasWheelFault = false;
 			if (rand() % 4 == 0) {
 				statusWidget->setWheelFault(rand() % 4);
@@ -483,9 +480,8 @@ void MainWindow::updateViews()
 			QListWidgetItem *item = _robotStatusItemMap[robot->shell()];
 			RobotStatusWidget *statusWidget = (RobotStatusWidget *)_ui.robotStatusList->itemWidget(item);
 
-			//	TODO: update attributes
 			// We make a copy of the robot's RadioRx package b/c the original might change
-			// during the course fo this method b/c radio comms happens on a different thread. 
+			// during the course of this method b/c radio comm happens on a different thread. 
 			RadioRx rx(robot->radioRx());
 
 
@@ -498,13 +494,19 @@ void MainWindow::updateViews()
 			bool hasVision = robot->visible;
 			statusWidget->setHasVision(hasVision);
 
-			//	TODO: kicker fault
-			//	TODO: dribbler fault
+			QString errorText = "";
 
 			//	wheel faults
 			bool hasWheelFault = false;
 			if (rx.motor_status().size() == 5)
 			{
+				const char *wheelNames[] = {
+					"FR",
+					"FL",
+					"BL",
+					"BR"
+				};
+
 				//	examine status of each motor
 				for (int i = 0; i < 4; ++i)
 				{
@@ -512,10 +514,13 @@ void MainWindow::updateViews()
 					switch (rx.motor_status(i))
 					{
 						case Packet::Hall_Failure:
+							errorText += QString("Hall Fault %1, ").arg(wheelNames[i]);
 							break;
 						case Packet::Stalled:
+							errorText += QString("Stall %1, ").arg(wheelNames[i]);
 							break;
 						case Packet::Encoder_Failure:
+							errorText += QString("Encoder Failure %1, ").arg(wheelNames[i]);
 							break;
 
 						default:
@@ -527,30 +532,22 @@ void MainWindow::updateViews()
 				}
 			}
 
-			bool Kicker_fault=_radioRx.kicker_status() & 0x80;
-			bool Ball_fault= ((rx.BallSenseStatus())!=1);
-			bool Dribbler_fault=!(_radioRx.motor_status_size() == 5 && _radioRx.motor_status(4) == Packet::Good);
-			QString error = "";
-			if (Kicker_fault || Dribbler_fault|| Ball_fault)
-			{
-				error="Error(s):";
-				if (Kicker_fault==true)
-				{
-					error=error +"Kicker, ";
-				}
-				if (Dribbler_fault==true)
-				{
-					error=error+"Dribbler, ";
-				}  
-				if (Ball_fault==true )
-				{
-					error=error+"Ball, ";
-				}
-			}
-			statusWidget->set_Errors(error);
+			bool kickerFault = rx.has_kicker_status() && (rx.kicker_status() & 0x80);
+			bool ballSenseFault = rx.has_ball_sense_status() && !(rx.ball_sense_status() == Packet::NoBall || rx.ball_sense_status() == Packet::HasBall);
+			bool dribblerFault = rx.motor_status_size() == 5 && rx.motor_status(4) != Packet::Good;
+			if (kickerFault) errorText += "Kicker Fault, ";
+			if (dribblerFault) errorText += "Dribbler Fault, ";
+			if (ballSenseFault) errorText += "Ball Sense Fault, ";
+			statusWidget->setBallSenseFault(ballSenseFault);
+
+
+			if (errorText.length() > 0) errorText.remove(errorText.length() - 2, 2);	//	delete trailing ", "
+			statusWidget->setErrorText(errorText);
+
+			bool hasBall = rx.has_ball_sense_status() && rx.ball_sense_status() == Packet::HasBall;
+			statusWidget->setHasBall(hasBall);
 
 			//	battery
-			//	FIXME: handle battery for real
 			float batteryLevel = 1;
 			if (rx.has_battery()) {
 				if (rx.hardware_version() == RJ2008 || rx.hardware_version() == RJ2011) {
@@ -563,13 +560,10 @@ void MainWindow::updateViews()
 			statusWidget->setBatteryLevel(batteryLevel);
 
 
-			bool showstopper = !hasVision || !hasRadio || hasWheelFault || !hasBallSense || batteryLevel < 0.25;
+			bool showstopper = !hasVision || !hasRadio || hasWheelFault || kickerFault || ballSenseFault || dribblerFault || (batteryLevel < 0.25);
 			statusWidget->setShowstopper(showstopper);
 
 #endif
-
-			//	TODO: self needs to allow robots of duplicate shell IDs
-			//	TODO: make @visible a getter
 		}
 	}
 

@@ -20,10 +20,11 @@ public:
 	void setBlueTeam(bool blueTeam);
 	bool blueTeam() const;
 
-	bool Dribbler_fault() const;
-	bool Kicker_fault()const;
-	bool Ball_fault()const;
-	void set_Errors(QString error);
+	/**
+	 * @brief This error text is displayed in a text box
+	 */
+	void setErrorText(const QString &error);
+
 	/**
 	 * @brief ID of control board (4 hex digits)
 	 */
@@ -66,9 +67,6 @@ private:
 	bool _hasRadio;
 	bool _hasVision;
 	float _batteryLevel;
-	bool _Kicker_fault;
-	bool _Dribbler_fault;
-	bool _Ball_fault;
 	bool _showstopper;
 	QString _boardID;
 };

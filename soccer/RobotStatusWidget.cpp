@@ -1,10 +1,9 @@
 #include "RobotStatusWidget.hpp"
-#include <QString>
-#include <QLabel>
 
 
 RobotStatusWidget::RobotStatusWidget(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f) {
     _ui.setupUi(this);
+    _ui.Errors->setWordWrap(true);
 
     setBoardID("?\?-??");
 
@@ -22,35 +21,32 @@ RobotStatusWidget::RobotStatusWidget(QWidget *parent, Qt::WindowFlags f) : QWidg
 
     _batteryLevel = 1;
     setBatteryLevel(0.5);
+
     _showstopper = false;
-   
 }
+
 int RobotStatusWidget::shellID() const {
     return _shellID;
 }
 
 void RobotStatusWidget::setShellID(int shellID) {
-    if (shellID != _shellID)
-    {
+    if (shellID != _shellID) {
         _shellID = shellID;
+
         _ui.robotWidget->setShellID(_shellID);
-        if (shellID == -1) 
-        {
+        
+        if (shellID == -1) {
             _ui.shellID->setText(QString("?"));
-        } 
-        else 
-        {
+        } else {
             _ui.shellID->setText(QString("%1").arg(shellID));
         }
     }
 }
 
-void RobotStatusWidget::set_Errors(QString error){
-    _ui.Errors->setWordWrap(true);
-    _ui.Errors->setText(QString("%1").arg(error));
-     
-    
+void RobotStatusWidget::setErrorText(const QString &error){
+    _ui.Errors->setText(error);
 }
+
 void RobotStatusWidget::setBlueTeam(bool blueTeam) {
     _ui.robotWidget->setBlueTeam(blueTeam);
     _blueTeam = blueTeam;
