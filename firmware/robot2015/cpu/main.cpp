@@ -174,7 +174,7 @@ void fpgaInit() {
     //  our max physical limit is 1/8 of the fpga system clock (18.4MHz), so 18.4/8 is the max
     spi.frequency(1000000);
 
-    FILE *fp = fopen("/local/robocup.bit", "r");
+    FILE *fp = fopen("/local/robocup.nib", "r");
 
     printf("opened file: %p\r\n", fp);
 

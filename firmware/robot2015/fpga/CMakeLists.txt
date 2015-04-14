@@ -26,7 +26,7 @@ add_custom_target(copy_ucf
     COMMENT "Copying ucf file to xflow working directory")
 
 # target for synthesizing the Verilog to a bitstream file that can be used to configure the fpga
-add_custom_target(fpga2015
+add_custom_target(fpga2015bit
     ${XILINX_TOOLS_DIR}/xflow
         -wd ${CMAKE_CURRENT_BINARY_DIR}
         -p xc3s100etq144-4
@@ -36,9 +36,22 @@ add_custom_target(fpga2015
     COMMENT "Using xflow to generate fpga bitstream from Verilog files"
     DEPENDS copy_ucf)
 
+add_custom_target(fpga2015bin
+    ${XILINX_TOOLS_DIR}/promgen
+        -w -b -p bin -u 0 ${CMAKE_CURRENT_BINARY_DIR}/robocup.bit -o ${CMAKE_CURRENT_BINARY_DIR}/robocup.bin
+    DEPENDS fpga2015bit
+    COMMENT "Creating bin file from bitstream"
+)
+
+add_custom_target(fpga2015nib
+    cp ${CMAKE_CURRENT_BINARY_DIR}/robocup.bin ${CMAKE_CURRENT_BINARY_DIR}/robocup.nib
+    COMMENT "Copying .bin to .nib b/c .nib is a reserved extension on MBED"
+    DEPENDS fpga2015bin
+)
+
 # target to copy the output fpga bitstream to the mbed
 add_custom_target(fpga2015-prog
-    COMMAND ${PROJECT_SOURCE_DIR}/util/mbed-copy.sh ${CMAKE_CURRENT_BINARY_DIR}/robocup.bit
-    DEPENDS fpga2015
+    COMMAND ${PROJECT_SOURCE_DIR}/util/mbed-copy.sh ${CMAKE_CURRENT_BINARY_DIR}/robocup.nib
+    DEPENDS fpga2015nib
     COMMENT "Copies the fpga bitstream file to the mbed"
 )
