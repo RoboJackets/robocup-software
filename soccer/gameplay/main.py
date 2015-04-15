@@ -8,10 +8,11 @@ import importlib
 import traceback
 import imp
 import sys
+import os
 import constants
 
-## soccer is run from the `run` folder, so we provide a relative path to where the python files live
-GAMEPLAY_DIR = '../soccer/gameplay'
+## soccer is run from the `run` folder, so we have to make sure we use the right path to the gameplay directory
+GAMEPLAY_DIR = os.path.dirname(os.path.realpath(__file__))
 PLAYBOOKS_DIR = GAMEPLAY_DIR + '/playbooks'
 
 
@@ -41,7 +42,7 @@ def init():
         # keep in mind that @entry is a tuple
         mod_path = entry[0][1:]
         _play_registry.insert(mod_path, entry[1])
-    
+
 
     # this callback lets us do cool stuff when our python files change on disk
     def fswatch_callback(event_type, module_path):
