@@ -7,6 +7,7 @@ import tactics.behavior_sequence
 import robocup
 import constants
 import main
+import skills.angle_receive
 from enum import Enum
 
 
@@ -44,6 +45,7 @@ class OneTouchPass(play.Play):
     def reset_receive_point(self):
         pass_bhvr = self.subbehavior_with_name('pass')
         pass_bhvr.receive_point = robocup.Point(OneTouchPass.ReceiveXCoord, OneTouchPass.ReceiveYCoord)
+        pass_bhvr.skillreceiver = skills.angle_receive.PassReceive()
 
     def on_enter_passing(self):
         pass_bhvr = tactics.coordinated_pass.CoordinatedPass()
