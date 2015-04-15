@@ -26,11 +26,15 @@ namespace Planning
 			/** constructor with one path */
 			CompositePath(Path *path);
 
+			CompositePath(std::unique_ptr<Path> path);
+
 			/** 
 			 * Append the path to the end of the CompositePath 
 			 * The path passed in should not be refenced anywhere else.
 			 */
 			void append(Path *path);
+
+			void append(std::unique_ptr<Path> path);
 
 			/**
 			 * A path describes the position and velocity a robot should be at for a
@@ -42,7 +46,7 @@ namespace Planning
 			 * @param[out] 	targetVelOut The target velocity of the robot at the given time
 			 * @return 		true if the path is valid at time @t, false if you've gone past the end
 			 */
-			virtual bool evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut);
+			virtual bool evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const;
 
 			/**
 			 * Returns true if the path never touches an obstacle or additionally, when exitObstacles is true, if the path
@@ -52,7 +56,7 @@ namespace Planning
 			 * @param[in] 	start The point on the path to start checking from
 			 * @return 		true if the path is valid, false if it hits an obstacle
 			 */
-			virtual bool hit(const Geometry2d::CompositeShape &shape, float startTime = 0);
+			virtual bool hit(const Geometry2d::CompositeShape &shape, float startTime = 0) const;
 
 			/**
 			 * Draws the path
@@ -61,18 +65,25 @@ namespace Planning
 			 * @param[in] 	color The color the path should be drawn
 			 * @param[in] 	layer The layer to draw the path on
 			 */
-			virtual void draw(SystemState * const state, const QColor &color = Qt::black, const QString &layer = "Motion");
+			virtual void draw(SystemState * const state, const QColor &color = Qt::black, const QString &layer = "Motion") const;
 			
 			/** 
 			 * Estimates how long it would take for the robot to traverse the entire path
 			 *
 			 * @return 	The time from start to path completion or -1 if there is no destination
 			 */
-			virtual float getTime();
+			virtual float getTime() const;
+
+			/** 
+			 * Returns a subPath
+			 *
+			 * @return 	The time from start to path completion or -1 if there is no destination
+			 */
+			virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = -1) const;
 
 			/**
 			 * Returns the destination point of the path if it has one
 			 */
-			virtual boost::optional<Geometry2d::Point> destination();
+			virtual boost::optional<Geometry2d::Point> destination() const;
 	};
 }

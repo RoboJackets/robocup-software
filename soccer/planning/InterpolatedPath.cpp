@@ -366,6 +366,16 @@ bool Planning::InterpolatedPath::evaluate(float t, Geometry2d::Point &targetPosO
 	return true;
 }
 
+size_t Planning::InterpolatedPath::size() const
+{
+	 return points.size();
+}
+
+bool Planning::InterpolatedPath::valid() const 
+{ 
+	return !points.empty(); 
+}
+
 float Planning::InterpolatedPath::getTime(int index) const
 {
 	return times[index];
@@ -374,7 +384,11 @@ float Planning::InterpolatedPath::getTime(int index) const
 
 float Planning::InterpolatedPath::getTime() const
 {
-	return getTime(size()-1);
+	if (times.size()>0) {
+		return times.back();
+	} else {
+		return 0;
+	}
 }
 
 unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endTime) const
@@ -388,12 +402,8 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 	}
 
 	int start = 0;
-	for(float t: times) {
+	while(times[start]<startTime) {
 		start++;
-		if(t>startTime) {
-			start--;
-			break;
-		}
 	}
 	if (start!=size()) {
 		InterpolatedPath *path = new InterpolatedPath();		
@@ -403,9 +413,9 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 			path->vels.push_back(vels[start]);
 		} else {
 			float deltaT = (times[start] - times[start-1]);
-			float constant = (times[start+1]-startTime)/deltaT;
-			Point startPos = points[start+1]*(1-constant) + points[start]*(constant);
-			Point vi = vels[start+1]*(1-constant) + vels[start]*(constant);
+			float constant = (times[start]-startTime)/deltaT;
+			Point startPos = points[start]*(1-constant) + points[start-1]*(constant);
+			Point vi = vels[start]*(1-constant) + vels[start-1]*(constant);
 			path->points.push_back(startPos);
 			path->vels.push_back(vi);
 		}
@@ -421,9 +431,11 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 			while (times[end]<endTime) {
 				end++;
 			}
-			endTime = times[end];
-			vf = vels[end];
-			endPos = vels[end];
+			float deltaT = (times[end] - times[end-1]);
+			float constant = (times[end]-endTime)/deltaT;
+			//endTime = times[end];
+			vf = vels[end]*(1-constant) + vels[end-1]*(constant);
+			endPos = points[end]*(1-constant) + points[end-1]*(constant);
 		}
 
 		int i=start+1;

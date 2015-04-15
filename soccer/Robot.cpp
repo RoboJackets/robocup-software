@@ -13,7 +13,7 @@
 #include <stdexcept>
 #include <QString>
 #include <cmath>
-
+#include <utility>
 using namespace std;
 using namespace Geometry2d;
 
@@ -616,6 +616,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 		if (_path->hit(full_obstacles, timeIntoPath)) {
 			_pathInvalidated = true;
+			addText("Hit Obstacle");
 		}
 
 		//  invalidate path if current position is more than 15cm from the planned point
@@ -628,6 +629,8 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		//  TODO: This is Stupid. This should be fixed in the RRT planner or the Bezier Algorithm.
 		if (_path->destination() && (*_path->destination() - dest).mag() > 0.025) {
 			_pathInvalidated = true;
+			addText(QString().setNum((*_path->destination() - dest).mag()));
+			addText("Destination Moved");
 		}
 
 
@@ -638,11 +641,50 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	if (!_pathInvalidated) {
 		addText("Reusing path");
 	} else {
-		Planning::Path *newlyPlannedPath = _planner->run(pos, angle, vel, _motionConstraints, &full_obstacles);
+		/*
+		MotionConstraints test = _motionConstraints;
+		test.targetPos = ((*test.targetPos - pos)/2.0) + pos;
+		if (!test.targetWorldVel) {
+			test.targetWorldVel = Point(0,0);
+		}
+		*/
+		
+		Planning::Path *first = _planner->run(pos, angle, vel, _motionConstraints, &full_obstacles);
+		//unique_ptr<Planning::Path> subPath = first->subPath(0,first->getTime()/2.0);
+		//unique_ptr<Planning::Path> subPath2 = first->subPath(first->getTime()/2.0,first->getTime());
+		
+		//Planning::Path *first = _planner->run(pos, angle, vel, test, &full_obstacles);
+		//Planning::Path *second = _planner->run(*test.targetPos, angle, *test.targetWorldVel, _motionConstraints, &full_obstacles);
+		//Planning::CompositePath *composite=new Planning::CompositePath();
+		
+		/*
+		if(first) {
+			composite->append(first);
+		}
+		if (second) {
+
+			composite->append(second);
+		}
+		*/
+		/*
+		Geometry2d::Point d1,d2;
+		if(subPath) {
+			if(subPath->destination()) {
+				d1 = *subPath->destination();
+			}
+			composite->append(std::move(subPath));
+		}
+		if (subPath2) {
+			d2 = ((Planning::InterpolatedPath *)(subPath2.get()))->points.front();
+			composite->append(std::move(subPath2));
+		}
+		addText(QString().setNum((d1-d2).mag()));
+		//composite->append(second);
+		*/
 		addText("Replanning");
 		// use the newly generated path
 		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: using new RRT path" << std::endl;
-		setPath(newlyPlannedPath);
+		setPath(first);
 	}
 	_pathChangeHistory.push_back(_didSetPathThisIteration);
 
