@@ -1,5 +1,12 @@
 # Robocup base editorconfig
 
+# Editorconfig files are recursive, so if you want to add specifc rules for
+# your subdirectory, make a file like this in that directory.
+
+# Lots of configuration is supported, like max line length, and charset.
+
+# for more information look at http://editorconfig.org/
+
 root = false
 
 # Unix-style newlines with a newline ending every file
@@ -11,6 +18,7 @@ trim_trailing_whitespace = true
 # Use 4 spaces for most files
 indent_style = space
 indent_size = 4
+
 
 # Use 2 spaces for travis files
 [{package.json,.travis.yml}]
