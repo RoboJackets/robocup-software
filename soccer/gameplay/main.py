@@ -1,4 +1,5 @@
 import play_registry as play_registry_module
+import playbook
 import play
 import fs_watcher
 import class_import
@@ -11,6 +12,7 @@ import constants
 
 ## soccer is run from the `run` folder, so we provide a relative path to where the python files live
 GAMEPLAY_DIR = '../soccer/gameplay'
+PLAYBOOKS_DIR = GAMEPLAY_DIR + '/playbooks'
 
 
 # main init method for the python side of things
@@ -39,7 +41,7 @@ def init():
         # keep in mind that @entry is a tuple
         mod_path = entry[0][1:]
         _play_registry.insert(mod_path, entry[1])
-
+    
 
     # this callback lets us do cool stuff when our python files change on disk
     def fswatch_callback(event_type, module_path):
@@ -124,6 +126,10 @@ def init():
 
     _has_initialized = True
 
+#loads the specified file_name from the playbooks folder
+def load_playbook(file_name):
+    global _play_registry
+    _play_registry.load_playbook(playbook.load_from_file(PLAYBOOKS_DIR + '/' + file_name))
 
 ## Called ~60times/sec by the C++ GameplayModule
 def run():

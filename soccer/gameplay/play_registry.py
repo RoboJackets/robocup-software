@@ -46,6 +46,18 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         # note: this is a shitty way to do this - we should really only reload part of the model
         self.modelReset.emit()
 
+    def load_playbook(self, list_of_plays):
+        print(list_of_plays);
+
+        for play in list_of_plays:
+            node = self.node_for_module_path(play)
+            if node is not None:
+                node.enabled = True
+            else:
+                logging.warn("Attempt to load non-existent play " + '/'.join(play) + " from playbook.")
+
+        # note: this is a shitty way to do this - we should really only reload part of the model
+        self.modelReset.emit()
 
     def delete(self, module_path):
         node = self.node_for_module_path(module_path)
@@ -53,7 +65,7 @@ class PlayRegistry(QtCore.QAbstractItemModel):
 
         # remove any categories where this play was the only entry
         node = node.parent
-        while node.parent != None:
+        while node.parent is not None:
             if len(node.children) == 0:
                 del node.parent[node.name]
                 node = node.parent
@@ -67,13 +79,29 @@ class PlayRegistry(QtCore.QAbstractItemModel):
     # cache and calculate the score() function for each play class
     def recalculate_scores(self):
         self.root.recalculate_scores(self)
-            
-
 
     ## Get a list of all plays in the tree that are currently enabled
     def get_enabled_plays_and_scores(self):
         return [(node.play_class, node.last_score) for node in self if node.enabled]
 
+    ## Returns a list of module paths for the currently-enabled plays
+    # The module path is a list or tuple giving the path the the play's python module
+    # For example: ['testing', 'test_pivot_kick']
+    def get_enabled_plays_paths(self):
+        enabled_plays = []
+
+        for node in self:
+            if node.enabled:
+                play_path = []
+
+                curr_node = node
+                while curr_node is not None:
+                    play_path.insert(0, curr_node.name)
+                    curr_node = curr_node.parent
+
+                enabled_plays.append(play_path)
+
+        return enabled_plays
 
     # iterates over all of the Nodes registered in the tree
     def __iter__(self):
@@ -115,6 +143,8 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         category = self.root
         for module_name in module_path[:-1]:
             category = category[module_name]
+            if category is None:
+                return None
 
         for child in category.children:
             if isinstance(child, PlayRegistry.Node):
@@ -208,6 +238,7 @@ class PlayRegistry(QtCore.QAbstractItemModel):
             self._play_class = play_class
             self._enabled = False
             self._last_score = float("inf")
+            self._parent = None
 
 
         @property
@@ -216,12 +247,10 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         @parent.setter
         def parent(self, value):
             self._parent = value
-        
 
         @property
         def name(self):
             return self.play_class.__name__
-        
 
         @property
         def module_name(self):
