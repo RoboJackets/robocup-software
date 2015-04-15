@@ -46,6 +46,8 @@ Planning::InterpolatedPath* RRTPlanner::run(
 	if (start == goal)
 	{
 		path->points.push_back(start);
+		path->times.push_back(0);
+		path->vels.push_back(Geometry2d::Point(0,0));
 		return path;
 	}
 
@@ -137,6 +139,8 @@ Planning::InterpolatedPath* RRTPlanner::run(
 	{
 		// FIXME: without these two lines, an empty path is returned which causes errors down the line.
 		path->points.push_back(start);
+		path->times.push_back(0);
+		path->vels.push_back(Geometry2d::Point(0,0));
 	}
 	return path;
 }
@@ -242,7 +246,7 @@ float getTime(Planning::InterpolatedPath &path, int index, const MotionConstrain
 //TODO: Use targeted end velocity
 void RRTPlanner::cubicBezier (Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles, const MotionConstraints &motionConstraints, Geometry2d::Point vi)
 {
-	int length = path.size();
+	int length = path.points.size();
 	int curvesNum = length-1;
 	if (curvesNum <= 0) {
 		//TODO

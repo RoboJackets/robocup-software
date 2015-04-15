@@ -63,10 +63,10 @@ namespace Planning
 			float length(const Geometry2d::Point &pt) const;
 
 			/** Returns number of waypoints */
-			size_t size() const { return points.size(); }
+			size_t size() const;
 
 			/** returns true if the path has non-zero size */
-			bool valid() const { return !points.empty(); }
+			bool valid() const;
 
 			// Returns the index of the point in this path nearest to pt.
 			int nearestIndex(const Geometry2d::Point &pt) const;

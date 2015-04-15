@@ -1,16 +1,25 @@
 #include "CompositePath.hpp"
 
-
+using namespace std;
 namespace Planning
 {
+	CompositePath::CompositePath(unique_ptr<Path> path) {
+		append(std::move(path));
+	}
+
 	CompositePath::CompositePath(Path *path) {
 		append(path);
 	}
 
 	void CompositePath::append(Path *path) {
-		paths.push_back(std::unique_ptr<Path>(path));
+		append(std::unique_ptr<Path>(path));
 	}
 
+	void CompositePath::append(unique_ptr<Path> path) {
+		if (path && path->getTime()>0){
+			paths.push_back(std::move(path));
+		}
+	}
 	/**
 	 * A path describes the position and velocity a robot should be at for a
 	 * particular time interval.  This method evalates the path at a given time and
@@ -21,11 +30,15 @@ namespace Planning
 	 * @param[out] 	targetVelOut The target velocity of the robot at the given time
 	 * @return 		true if the path is valid at time @t, false if you've gone past the end
 	 */
-	bool CompositePath::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) {
+	bool CompositePath::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const 
+	{
+		if (paths.empty()) {
+			return false;
+		}
 		if (t<0) {
 			return false;
 		}
-		for (std::unique_ptr<Path> &path: paths)
+		for (const std::unique_ptr<Path> &path: paths)
 		{
 			float timeLength = path->getTime();
 			t -= timeLength;
@@ -46,19 +59,23 @@ namespace Planning
 	 * @param[in] 	start The point on the path to start checking from
 	 * @return 		true if the path is valid, false if it hits an obstacle
 	 */
-	bool CompositePath::hit(const Geometry2d::CompositeShape &shape, float startTime) {
+	bool CompositePath::hit(const Geometry2d::CompositeShape &shape, float startTime) const
+	{
+		if (paths.empty()) {
+			return false;
+		}
 		int start = 0;
-		for (std::unique_ptr<Path> &path: paths)
+		for (const std::unique_ptr<Path> &path: paths)
 		{
 			start++;
 			float timeLength = path->getTime();
 			if (timeLength == -1) {
-				return false;
+				return path->hit(shape, startTime);
 			}
 			startTime -= timeLength;
 			if (startTime<=0) {
 				startTime += timeLength;
-				if(paths[start]->hit(shape, startTime)) {
+				if (path->hit(shape, startTime)) {
 					return true;
 				}
 				break;
@@ -80,8 +97,9 @@ namespace Planning
 	 * @param[in] 	color The color the path should be drawn
 	 * @param[in] 	layer The layer to draw the path on
 	 */
-	void CompositePath::draw(SystemState * const state, const QColor &color, const QString &layer) {
-		for (std::unique_ptr<Path> &path: paths)
+	void CompositePath::draw(SystemState * const state, const QColor &color, const QString &layer) const
+	{
+		for (const std::unique_ptr<Path> &path: paths)
 		{
 			path->draw(state, color, layer);
 		}
@@ -92,9 +110,13 @@ namespace Planning
 	 *
 	 * @return 	The time from start to path completion or -1 if there is no destination
 	 */
-	float CompositePath::getTime() {
+	float CompositePath::getTime() const
+	{
+		if (paths.empty()) {
+			return 0;
+		}
 		float time = 0;
-		for (std::unique_ptr<Path> &path: paths)
+		for (const std::unique_ptr<Path> &path: paths)
 		{
 			float timeLength = path->getTime();
 			if (timeLength == -1) {
@@ -108,13 +130,18 @@ namespace Planning
 	/**
 	 * Returns the destination point of the path if it has one
 	 */
-	boost::optional<Geometry2d::Point> CompositePath::destination() {
+	boost::optional<Geometry2d::Point> CompositePath::destination() const
+	{
 		if (paths.empty()) {
 			return boost::none;
 		}
 		return paths.back()->destination();
 	}
 
+	unique_ptr<Path> CompositePath::subPath(float startTime, float endTime) const
+	{
+		throw runtime_error("Unimplemented Method CompositePath::subPath");
+	}
 
 	
 }
