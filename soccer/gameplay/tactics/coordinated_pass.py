@@ -32,10 +32,11 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         receiving = 3   # the kicker has kicked and the receiver is trying to get the ball
 
 
-    def __init__(self, receive_point=None):
+    def __init__(self, receive_point=None, skillreceiver=skills.pass_receive.PassReceive()):
         super().__init__(continuous=False)
 
         self.receive_point = receive_point
+        self.skillreceiver = skillreceiver
 
         for state in CoordinatedPass.State:
             self.add_state(state, behavior.Behavior.State.running)
@@ -49,7 +50,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         self.add_transition(CoordinatedPass.State.preparing,
             CoordinatedPass.State.kicking,
             lambda: (self.subbehavior_with_name('kicker').state == skills.pivot_kick.PivotKick.State.aimed
-                and self.subbehavior_with_name('receiver').state == skills.pass_receive.PassReceive.State.aligned),
+                and self.subbehavior_with_name('receiver').state == self.skillreceiver.State.aligned),
             'kicker and receiver ready')
 
         self.add_transition(CoordinatedPass.State.kicking,
@@ -86,7 +87,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
 
     def on_enter_running(self):
-        receiver = skills.pass_receive.PassReceive()
+        receiver = self.skillreceiver
         receiver.receive_point = self.receive_point
         self.add_subbehavior(receiver, 'receiver', required=True)
 
