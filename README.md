@@ -9,12 +9,9 @@ Also, check out our [2014 qualification video](https://www.youtube.com/watch?v=H
 
 ## The Competition
 
-The official [RoboCup site](http://robocupssl.cpe.ku.ac.th/) has more information on the competition.
-
-
-### The Basics
-
 The soccer game is played between two teams of six robots each on a field with overhead cameras.  The field vision computer processes images from the cameras and sends out (x,y) coordinates of the ball and the robots.  Each team has a laptop that accepts the data from the vision computer and uses it to strategize, then send commands to robots on the field.
+
+The official [RoboCup site](http://robocupssl.cpe.ku.ac.th/) has more information on the competition.
 
 
 ## Project Layout
