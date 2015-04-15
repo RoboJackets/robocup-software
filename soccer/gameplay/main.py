@@ -131,11 +131,6 @@ def load_playbook(file_name):
     global _play_registry
     _play_registry.load_playbook(playbook.load_from_file(PLAYBOOKS_DIR + '/' + file_name))
 
-#saves the playbook into the specified file_name in the playbooks folder
-def save_playbook(file_name):
-    global _play_registry
-    playbook.save_to_file(PLAYBOOKS_DIR + '/' + file_name, _play_registry.get_enabled_plays_paths());
-
 ## Called ~60times/sec by the C++ GameplayModule
 def run():
     global _has_initialized
