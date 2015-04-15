@@ -1,5 +1,6 @@
 var NAVTREEINDEX2 =
 {
+"class_geometry2d_1_1_line.html#a4780f317efc1077423a99223ad0e770a":[11,0,3,2,8],
 "class_geometry2d_1_1_line.html#a5cddbbea6a7b38998bd036038cb1bf39":[11,0,3,2,1],
 "class_geometry2d_1_1_line.html#a8719bc0e5b5008309c8cea92c09e22ba":[11,0,3,2,7],
 "class_geometry2d_1_1_line.html#abce9805c81f2753a672f01fa0c2df429":[11,0,3,2,4],
@@ -248,6 +249,5 @@ var NAVTREEINDEX2 =
 "class_new_referee_packet.html#a8bce4e0b812bf5c92f6b1e89ed670985":[11,0,46,0],
 "class_opponent_robot.html":[11,0,47],
 "class_opponent_robot.html#ada2f05a57d22fec57721615638fb07d1":[11,0,47,0],
-"class_our_robot.html":[11,0,48],
-"class_our_robot.html#a019e62061c483d79b3ecd88aa5f08e27":[11,0,48,36]
+"class_our_robot.html":[11,0,48]
 };

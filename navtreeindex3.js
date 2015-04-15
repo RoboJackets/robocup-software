@@ -1,5 +1,6 @@
 var NAVTREEINDEX3 =
 {
+"class_our_robot.html#a019e62061c483d79b3ecd88aa5f08e27":[11,0,48,36],
 "class_our_robot.html#a01c72bd8809afb005fdf53564f6dbf31":[11,0,48,12],
 "class_our_robot.html#a027f238b9edf1f342398730652b4ecd3":[11,0,48,11],
 "class_our_robot.html#a02faabdbe05e3d34856ff7043dc40d58":[11,0,48,50],
@@ -248,6 +249,5 @@ var NAVTREEINDEX3 =
 "class_radio.html":[11,0,54],
 "class_radio.html#a0fef8847623b5614c57bf062d64892d2":[11,0,54,4],
 "class_radio.html#a32b84cf4e9767856e482ba435c14260c":[11,0,54,7],
-"class_radio.html#a3bd06f89dc9c2836ed0f6f30caaeff5b":[11,0,54,6],
-"class_radio.html#a44a22ef706a9c15b0546afbc5b3c4c8a":[11,0,54,5]
+"class_radio.html#a3bd06f89dc9c2836ed0f6f30caaeff5b":[11,0,54,6]
 };

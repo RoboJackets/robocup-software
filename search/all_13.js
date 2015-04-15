@@ -50,7 +50,7 @@ var searchData=
   ['state',['State',['../classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff_1_1_state.html',1,'gameplay::plays::restarts::our_kickoff::OurKickoff']]],
   ['state',['State',['../classtest__fsm_1_1_my_fsm_1_1_state.html',1,'test_fsm::MyFsm']]],
   ['state',['State',['../classgameplay_1_1tactics_1_1penalty_1_1_penalty_1_1_state.html',1,'gameplay::tactics::penalty::Penalty']]],
-  ['state',['State',['../classgameplay_1_1plays_1_1testing_1_1_two_side_attack_1_1_two_side_attack_1_1_state.html',1,'gameplay::plays::testing::TwoSideAttack::TwoSideAttack']]],
+  ['state',['State',['../classgameplay_1_1plays_1_1testing_1_1two__side__attack_1_1_two_side_attack_1_1_state.html',1,'gameplay::plays::testing::two_side_attack::TwoSideAttack']]],
   ['state',['State',['../classgameplay_1_1behavior_1_1_behavior_1_1_state.html',1,'gameplay::behavior::Behavior']]],
   ['state',['State',['../classgameplay_1_1timed__behavior_1_1_timed_behavior_1_1_state.html',1,'gameplay::timed_behavior::TimedBehavior']]],
   ['statemachine',['StateMachine',['../classgameplay_1_1fsm_1_1_state_machine.html',1,'gameplay::fsm']]],

@@ -29,7 +29,7 @@ var searchData=
   ['state',['State',['../classgameplay_1_1behavior_1_1_behavior_1_1_state.html',1,'gameplay::behavior::Behavior']]],
   ['state',['State',['../classgameplay_1_1tactics_1_1positions_1_1goalie_1_1_goalie_1_1_state.html',1,'gameplay::tactics::positions::goalie::Goalie']]],
   ['state',['State',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive_1_1_state.html',1,'gameplay::skills::pass_receive::PassReceive']]],
-  ['state',['State',['../classgameplay_1_1plays_1_1testing_1_1_two_side_attack_1_1_two_side_attack_1_1_state.html',1,'gameplay::plays::testing::TwoSideAttack::TwoSideAttack']]],
+  ['state',['State',['../classgameplay_1_1plays_1_1testing_1_1two__side__attack_1_1_two_side_attack_1_1_state.html',1,'gameplay::plays::testing::two_side_attack::TwoSideAttack']]],
   ['state',['State',['../classgameplay_1_1skills_1_1line__kick_1_1_line_kick_1_1_state.html',1,'gameplay::skills::line_kick::LineKick']]],
   ['statemachine',['StateMachine',['../classgameplay_1_1fsm_1_1_state_machine.html',1,'gameplay::fsm']]],
   ['status',['Status',['../struct_processor_1_1_status.html',1,'Processor']]],

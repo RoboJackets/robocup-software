@@ -121,8 +121,8 @@ var annotated_dup =
           [ "triangle_pass", null, [
             [ "TrianglePass", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass" ]
           ] ],
-          [ "TwoSideAttack", null, [
-            [ "TwoSideAttack", "classgameplay_1_1plays_1_1testing_1_1_two_side_attack_1_1_two_side_attack.html", "classgameplay_1_1plays_1_1testing_1_1_two_side_attack_1_1_two_side_attack" ]
+          [ "two_side_attack", null, [
+            [ "TwoSideAttack", "classgameplay_1_1plays_1_1testing_1_1two__side__attack_1_1_two_side_attack.html", "classgameplay_1_1plays_1_1testing_1_1two__side__attack_1_1_two_side_attack" ]
           ] ]
         ] ],
         [ "tuning", null, [

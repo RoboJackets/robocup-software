@@ -35,7 +35,7 @@
 <area shape="rect" id="node53" href="$classgameplay_1_1plays_1_1testing_1_1test__mark_1_1_test_mark.html" title="gameplay.plays.testing.test\l_mark.TestMark" alt="" coords="1061,1514,1243,1561"/>
 <area shape="rect" id="node55" href="$classgameplay_1_1plays_1_1testing_1_1test__pivot__kick_1_1_test_pivot_kick.html" title="gameplay.plays.testing.test\l_pivot_kick.TestPivotKick" alt="" coords="1061,1583,1243,1630"/>
 <area shape="rect" id="node57" href="$classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html" title="A demo play written during a teaching session to demonstrate play&#45;writing Three robots form a triangl..." alt="" coords="1051,1653,1253,1699"/>
-<area shape="rect" id="node59" href="$classgameplay_1_1plays_1_1testing_1_1_two_side_attack_1_1_two_side_attack.html" title="gameplay.plays.testing.Two\lSideAttack.TwoSideAttack" alt="" coords="1060,1722,1244,1769"/>
+<area shape="rect" id="node59" href="$classgameplay_1_1plays_1_1testing_1_1two__side__attack_1_1_two_side_attack.html" title="gameplay.plays.testing.two\l_side_attack.TwoSideAttack" alt="" coords="1057,1722,1247,1769"/>
 <area shape="rect" id="node75" href="$classgameplay_1_1plays_1_1tuning_1_1test__jittery__motion_1_1_jitterer.html" title="gameplay.plays.tuning.test\l_jittery_motion.Jitterer" alt="" coords="759,1351,937,1398"/>
 <area shape="rect" id="node77" href="$classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_pivoter.html" title="gameplay.plays.tuning.tune\l_pivot.Pivoter" alt="" coords="757,1421,939,1467"/>
 <area shape="rect" id="node80" href="$classgameplay_1_1skills_1_1__kick_1_1___kick.html" title="this is the abstract superclass for PivotKick and LineKick " alt="" coords="756,1491,940,1520"/>

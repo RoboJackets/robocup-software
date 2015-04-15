@@ -42,6 +42,6 @@ var searchData=
   ['trianglepass',['TrianglePass',['../classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html',1,'gameplay::plays::testing::triangle_pass']]],
   ['tunefacing',['TuneFacing',['../classgameplay_1_1plays_1_1tuning_1_1tune__facing_1_1_tune_facing.html',1,'gameplay::plays::tuning::tune_facing']]],
   ['tunepivoting',['TunePivoting',['../classgameplay_1_1plays_1_1tuning_1_1tune__pivot_1_1_tune_pivoting.html',1,'gameplay::plays::tuning::tune_pivot']]],
-  ['twosideattack',['TwoSideAttack',['../classgameplay_1_1plays_1_1testing_1_1_two_side_attack_1_1_two_side_attack.html',1,'gameplay::plays::testing::TwoSideAttack']]],
+  ['twosideattack',['TwoSideAttack',['../classgameplay_1_1plays_1_1testing_1_1two__side__attack_1_1_two_side_attack.html',1,'gameplay::plays::testing::two_side_attack']]],
   ['txhandler',['TxHandler',['../class_comm_module.html#a1e4f2ca72da3c534968f45d42f56ba06',1,'CommModule::TxHandler(T *tptr, void(T::*mptr)(RTP_t *), uint8_t portNbr)'],['../class_comm_module.html#af8280c7bf530aff59f66d0728122c7be',1,'CommModule::TxHandler(void(*)(RTP_t *), uint8_t)']]]
 ];

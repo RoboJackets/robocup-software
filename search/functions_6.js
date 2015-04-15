@@ -1,6 +1,7 @@
 var searchData=
 [
   ['get_5fenabled_5fplays_5fand_5fscores',['get_enabled_plays_and_scores',['../classgameplay_1_1play__registry_1_1_play_registry.html#a9dcbd997d576bbf15908828c8683f102',1,'gameplay::play_registry::PlayRegistry']]],
+  ['get_5fenabled_5fplays_5fpaths',['get_enabled_plays_paths',['../classgameplay_1_1play__registry_1_1_play_registry.html#a74e14c7443c1defce03185c9dcb9ad28',1,'gameplay::play_registry::PlayRegistry']]],
   ['getcmdtext',['getCmdText',['../class_our_robot.html#a4170e6526e724b2bf36a06af62ea64b5',1,'OurRobot']]],
   ['getdata',['getData',['../class_c_c1101.html#a8aaa7bc5928d55b9dc5f6bbd8043fda1',1,'CC1101::getData()'],['../class_comm_link.html#a8a902ecdba1f75eff8691af245807a1e',1,'CommLink::getData()']]],
   ['getjoystickcontrolvalues',['getJoystickControlValues',['../class_gamepad_joystick.html#a5295fd0b867b599ac4310e7bf85dcc79',1,'GamepadJoystick::getJoystickControlValues()'],['../class_joystick.html#a8e9bf845ab30bc6f661ce91db1dd75be',1,'Joystick::getJoystickControlValues()'],['../class_space_nav_joystick.html#a996c864592a44377353be62dd5e6a77f',1,'SpaceNavJoystick::getJoystickControlValues()']]],
