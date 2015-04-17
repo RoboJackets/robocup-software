@@ -240,3 +240,15 @@
 #define CC1201_DMA_TXFIFO_HIGH 0x7F
 #define CC1201_DMA_RXFIFO_LOW  0x80
 #define CC1201_DMA_RXFIFO_HIGH 0xFF
+
+//TXOFF_MODE state transitions
+#define TXOFF_MODE_IDLE   0x00
+#define TXOFF_MODE_FSTXON 0x10
+#define TXOFF_MODE_TX     0x20
+#define TXOFF_MODE_RX     0x30
+
+//RXOFF_MODE state transitions 
+#define RXOFF_MODE_IDLE   0x00
+#define RXOFF_MODE_FSTXON 0x10
+#define RXOFF_MODE_TX     0x20
+#define RXOFF_MODE_RX     0x30

@@ -13,6 +13,8 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intP
 	Thread::wait(300);
 	strobe(CC1201_STROBE_SIDLE);
 	Thread::wait(400);
+
+	_spi->frequency(6000000);
 }
 
 CC1201::~CC1201() {}
@@ -72,6 +74,11 @@ int32_t CC1201::sendData(uint8_t* buffer, uint8_t size)
 
 int32_t CC1201::getData(uint8_t* paramOne, uint8_t* paramTwo)
 {
+	//log(WARN, "CC1201::getData() (virtual CommLink::getData())", "DATA GET NOT IMPLEMENTED");
+	log(INF3, "CC1201::getData", "RXFIRST: %02X, RXLAST: %02X",
+			readRegExt(CC1201EXT_RXFIRST),
+			readRegExt(CC1201EXT_RXLAST));
+	strobe(CC1201_STROBE_SFRX);
 	return -1;
 } 
 
@@ -208,6 +215,65 @@ int32_t CC1201::selfTest(void)
 bool CC1201::isConnected(void)
 {
 	return true;
+}
+
+void CC1201::powerOnReset(void)
+{
+/*
+    log(INF1, "CC1201", "Beginning Power-on-Reset routine...");
+
+    delete _spi;
+
+    // make sure chip is not selected
+    *_cs = 1;
+
+    DigitalOut *SI = new DigitalOut(_mosi_pin);
+    DigitalOut *SCK = new DigitalOut(_sck_pin);
+    DigitalIn *SO = new DigitalIn(_miso_pin);
+
+    // bring SPI lines to a defined state. Reasons are outlined in CC1101 datasheet - section 11.3
+    *SI = 0;
+    *SCK = 1;
+
+    // toggle chip select and remain in high state afterwards
+    toggle_cs();
+    toggle_cs();
+
+    // wait at least 40us
+    wait_us(45);
+
+    // pull CSn low & wait for the serial out line to go low
+    *_cs = 0;
+    while(*SO);
+
+    // cleanup everything before the mbed's SPI library calls take back over
+    delete SI;
+    delete SO;
+    delete SCK;
+
+    // reestablish the SPI bus and call the reset strobe
+    setup_spi();
+    reset();
+
+    delete _spi;
+    // wait for the SO line to go low again. Once low, reset is complete and CC1101 is in IDLE state
+    DigitalIn *SO2 = new DigitalIn(_miso_pin);
+    //while(*SO2);
+
+    // make sure chip is deselected before returning
+    *_cs = 1;
+
+    // reestablish the SPI bus for the final time after removing the DigitalIn object
+    delete SO2;
+    setup_spi();
+
+    log(INF1, "CC1201", "CC1201 Power-on-Reset complete");
+*/
+}
+
+void CC1201::ready(void)
+{
+	CommLink::ready();
 }
 
 uint8_t CC1201::decodeState(uint8_t nopRet)

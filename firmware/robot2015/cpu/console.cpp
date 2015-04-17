@@ -70,7 +70,7 @@ const string COMMAND_BREAK_MSG = "*BREAK*";
 /**
  * Serial (over USB) baud rate. Default 9600. Screen default 9600
  */
-const uint16_t BAUD_RATE = 9600;
+const uint16_t BAUD_RATE = 57600;//9600;
 
 /**
  * is a system stop requested

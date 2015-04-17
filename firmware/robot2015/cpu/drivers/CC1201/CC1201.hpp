@@ -27,7 +27,11 @@ class CC1201 : public CommLink
 		    
 		virtual bool isConnected(void);
 
+		void powerOnReset(void);
+
 		void sendGarbage(void);
+
+		void ready(void);
 
 		/*
 		 * lots of reads and writes
@@ -54,7 +58,6 @@ class CC1201 : public CommLink
 		uint8_t decodeState(uint8_t nopRet);
 
 	protected:
-		
 
 	private:
 		uint8_t _chip_version;
