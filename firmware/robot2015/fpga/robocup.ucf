@@ -5,16 +5,23 @@
 ##Pin out is based on tq144_footprint.xls
 
 
-NET "phaseHInv<2>" LOC="P26";
-NET "phaseHInv<1>" LOC="P32";
-NET "phaseHInv<0>" LOC="P34";
+NET "phaseHInv<2>" LOC="P26"; #Phase 1
+NET "phaseHInv<1>" LOC="P32"; #Phase 2
+NET "phaseHInv<0>" LOC="P34"; #Phase 3
 
-NET "phaseLInv<2>" LOC="P140";
-NET "phaseLInv<1>" LOC="P142";
-NET "phaseLInv<0>" LOC="P143";
+NET "phaseLInv<2>" LOC="P140"; #Phase 1
+NET "phaseLInv<1>" LOC="P142"; #Phase 2
+NET "phaseLInv<0>" LOC="P134"; #Phase 3
 
 NET "clock" LOC="P50";
 
 NET "h<2>" LOC="P98" | PULLUP; #Hall Effect 1
 NET "h<1>" LOC="P96" | PULLUP; #Hall Effect 2
-NET "h<0>" LOC="P97" | PULLUP; #Hall Effect 3
+NET "h<0>" LOC="P94" | PULLUP; #Hall Effect 3
+
+
+#NET "clock" TNM_NET="clock";
+#TIMESPEC "TS_SYSCLK"=PERIOD "clock" 37 ns HIGH 50 %; #EDIT to match osc time
+
+NET "clock" TNM_NET = "clock";
+TIMESPEC "TS_clock" = PERIOD "tnm_clock" 100ns; #18.432Mhz = 54.25ns 27Mhz = 37.04

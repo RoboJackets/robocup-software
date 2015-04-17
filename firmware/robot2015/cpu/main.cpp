@@ -26,14 +26,14 @@ void fpgaInit();
  */
 int main(void) 
 {
-	setISRPriorities();
+	//setISRPriorities();
 	lifeLight.attach(&imAlive, 0.25);
 
 	isLogging = true;
 	rjLogLevel = INF2;
 	
 	//initRadioThread();
-	initConsoleRoutine();
+	//initConsoleRoutine();
 
     fpgaInit();
 }
