@@ -3,6 +3,7 @@
 #include "commands.hpp"
 #include "logger.hpp"
 #include "radio.hpp"
+#include "ds2411.hpp"
 
 Ticker lifeLight;
 DigitalOut ledOne(LED1);
@@ -18,37 +19,6 @@ void setISRPriorities(void);
 void initRadioThread(void);
 void initConsoleRoutine(void);
 
-void writeByte(DigitalInOut*, char);
-char readByte(DigitalInOut* pin);
-unsigned int crc8_add(unsigned int acc, char b);
-
-const int tREC = 5;
-const int tSLOT = 65;
-const int tRSTLmin = 480;
-const int tRSTLmax = 640;
-const int tRSTLavg = 540;
-const int tPDHmin = 15;
-const int tPDHmax = 60;
-const int tPDHavg = 35;
-const int tPDLmin = 60;
-const int tPDLmax = 240;
-const int tPDLavg = 150;
-const int tFPD = 8;
-const int tMSPmin = 60;
-const int tMSPmax = 75;
-const int tMSPavg = 68;
-const int tRSTH = 480;
-const int tW0Lmin = 60;
-const int tW0Lmax = 120;
-const int tW0Lavg = 90;
-const int tW1Lmin = 5;
-const int tW1Lmax = 15;
-const int tW1Lavg = 10;
-const int tRLmin = 5;
-const int tRLmax = 15;
-const int tRLavg = 6;
-const int tMSR = 15;
-
 /**
  * system entry point
  */
@@ -62,55 +32,34 @@ int main(void)
 	printf("\033[2J");
 	printf("Communicating with ID Chip...\r\n");
 
-	// Reset signal, low for 480us
-	idPin = 0;
-	wait_us(tRSTLavg); // Trstl
-	idPin = 1;
+	DS2411_ID id;
+	DS2411_Result result = ds2411_read_id(&idPin, &id);
 
-	// wait for presence response
-	wait_us(tMSPavg); // Tmsp
-	idPin.input();
-	if(idPin == 0) {
-		wait_us(tRSTH - tMSPavg); // wait for rest of tRSTH
-
-		writeByte(&idPin, 0x33);
-
-		char family = readByte(&idPin);
-
-		char serial[6];
-		for(int i = 0; i < 6; i++)
-			serial[i] = readByte(&idPin);
-
-		char crc = readByte(&idPin);
-
-		printf("Family byte  : 0x%x\r\n", family);
+	float waitTime;
+	if(result == HANDSHAKE_FAIL) {
+		printf("Handshake failure!\r\n");
+		waitTime = 0.5;
+	}
+	else {
+		printf("Family byte  : 0x%02X\r\n", id.family);
 		
 		printf("Serial byte  : 0x");
 		for(int i = 5; i >= 0; i--)
-			printf("%x", serial[i]);
+			printf("%02X", id.serial[i]);
 
-		printf("\r\nCRC          : 0x%x \r\n", crc);
+		printf("\r\nCRC          : 0x%02X \r\n", id.crc);
 
-		unsigned int calcCRC = crc8_add(0x0, family);
-		for(int i = 0; i < 6; i++)
-			calcCRC = crc8_add(calcCRC, serial[i]);
+		printf("CRCs match?  : %d\r\n", result == CRC_MATCH);
 
-		printf("CRCs match?  : %d\r\n", calcCRC == crc);
-
-		for(int i = 0; i < 17; i++)
+		for(int i = 0; i < 18; i++)
 			printf("\n");
 
-		while(1) {
-			led = !led;
-			wait(1.0);
-		}
+		waitTime = result == CRC_MATCH ? 1.0 : 0.5;
 	}
-	else {
-		printf("Failure :(\r\n");
-		while(1) {
-			led = !led;
-			wait(0.5);
-		}
+
+	while(1) {
+		led = !led;
+		wait(waitTime);
 	}
 
 	isLogging = true;
@@ -118,68 +67,6 @@ int main(void)
 	
 	//initRadioThread();
 	initConsoleRoutine();
-}
-
-void writeOne(DigitalInOut* pin) {
-	*pin = 0;
-	wait_us(tW1Lavg);
-	*pin = 1;
-	wait_us(tSLOT);
-}
-
-void writeZero(DigitalInOut* pin) {
-	*pin = 0;
-	wait_us(tW0Lavg);
-	*pin = 1;
-	wait_us(tREC);
-}
-
-void writeByte(DigitalInOut* pin, char b) {
-	pin->output();
-
-	for(uint i = 1; i < 256; i <<= 1) {
-		if((b & i) == i)
-			writeOne(pin);
-		else
-			writeZero(pin);
-	}
-
-	printf("Sent         : 0x%x\r\n", b);
-}
-
-char readByte(DigitalInOut* pin) {
-	char value = 0;
-	for(int i = 0; i < 8; i++) {
-		pin->output();
-		*pin = 0;
-		wait_us(tRLavg);
-		*pin = 1;
-
-		wait_us(tMSR - tRLavg);
-		pin->input();
-
-		int bit = *pin;
-		value |= bit << i;
-
-		wait_us(tSLOT - tMSR);
-	}
-
-	return value;
-}
-
-unsigned int crc8_add(unsigned int acc, char byte) {
-	acc ^= byte;
-
-	for(int i = 0; i < 8; i++) {
-		if(acc & 1) {
-			acc = (acc >> 1) ^ 0x8c;
-		}
-		else {
-			acc >>= 1;
-		}
-	}
-
-	return acc;
 }
 
 /**
