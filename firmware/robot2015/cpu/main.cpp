@@ -27,37 +27,19 @@ int main(void)
 	setISRPriorities();
 	lifeLight.attach(&imAlive, 0.25);
 
-	DigitalInOut idPin(p21, PIN_OUTPUT, PullUp, 1);
-
-	printf("\033[2J");
-	printf("Communicating with ID Chip...\r\n");
-
 	DS2411_ID id;
-	DS2411_Result result = ds2411_read_id(&idPin, &id);
+	DS2411_Result result = ds2411_read_id(p21, &id, true);
 
 	float waitTime;
-	if(result == HANDSHAKE_FAIL) {
-		printf("Handshake failure!\r\n");
-		waitTime = 0.5;
+	if(result == HANDSHAKE_FAIL || result == CRC_FAIL) {
+		waitTime = 0.2;
 	}
 	else {
-		printf("Family byte  : 0x%02X\r\n", id.family);
-		
-		printf("Serial byte  : 0x");
-		for(int i = 5; i >= 0; i--)
-			printf("%02X", id.serial[i]);
-
-		printf("\r\nCRC          : 0x%02X \r\n", id.crc);
-
-		printf("CRCs match?  : %d\r\n", result == CRC_MATCH);
-
-		for(int i = 0; i < 18; i++)
-			printf("\n");
-
-		waitTime = result == CRC_MATCH ? 1.0 : 0.5;
+		waitTime = 0.5;
 	}
 
-	while(1) {
+	int count = (int)(5 / waitTime);
+	while(count--) {
 		led = !led;
 		wait(waitTime);
 	}

@@ -85,37 +85,58 @@ unsigned int crc8_add(unsigned int acc, char byte) {
 	return acc;
 }
 
-DS2411_Result ds2411_read_id(DigitalInOut* pin, DS2411_ID* id) {
+DS2411_Result ds2411_read_id(PinName pin, DS2411_ID* id, bool debug) {
+	if(debug)
+		printf("Communicating with ID Chip...\r\n");
+
+	DigitalInOut idPin(pin, PIN_OUTPUT, PullUp, 1);
+
 	// Reset signal, low for 480us
-	*pin = 0;
+	idPin = 0;
 	wait_us(tRSTL);
-	*pin = 1;
+	idPin = 1;
 
 	// Wait for presence signal
 	wait_us(tMSP);
-	pin->input();
+	idPin.input();
 
-	if(*pin == 1)
+	if(idPin == 1) {
+		if(debug)
+			printf("Handshake failure!\r\n");
+
 		return HANDSHAKE_FAIL;
+	}
 
 	wait_us(tRSTH - tMSP); // wait for rest of tRSTH
 
-	writeByte(pin, 0x33); // write Read ROM command 0x33
+	writeByte(&idPin, 0x33); // write Read ROM command 0x33
 
-	char family = readByte(pin);
+	char family = readByte(&idPin);
 
 	id->family = family;
 	unsigned int calcCRC = crc8_add(0x0, family);
 
 	for(int i = 0; i < 6; i++) {
-		char v = readByte(pin);
+		char v = readByte(&idPin);
 
 		id->serial[i] = v;
 		calcCRC = crc8_add(calcCRC, v);
 	}
 
-	char crc = readByte(pin);
+	char crc = readByte(&idPin);
 	id->crc = crc;
+
+	if(debug) {
+		printf("Family byte: 0x%02X\r\n", id->family);
+		
+		printf("Serial byte: 0x");
+		for(int i = 5; i >= 0; i--)
+			printf("%02X", id->serial[i]);
+
+		printf("\r\nCRC        : 0x%02X \r\n", id->crc);
+
+		printf("CRCs match : %s\r\n", calcCRC == crc ? "true" : "false");
+	}
 
 	return calcCRC == crc ? CRC_MATCH : CRC_FAIL;
 }
