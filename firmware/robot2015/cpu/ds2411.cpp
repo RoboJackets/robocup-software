@@ -32,11 +32,13 @@ void writeZero(DigitalInOut* pin) {
 void writeByte(DigitalInOut* pin, char b) {
 	pin->output();
 
-	for(uint i = 1; i < 256; i <<= 1) {
-		if((b & i) == i)
+	for(int i = 1; i < 256; i <<= 1) {
+		if((b & i) == i) {
 			writeOne(pin);
-		else
+		}
+		else {
 			writeZero(pin);
+		}
 	}
 }
 
@@ -46,7 +48,6 @@ void writeByte(DigitalInOut* pin, char b) {
 char readByte(DigitalInOut* pin) {
 	char value = 0;
 	for(int i = 0; i < 8; i++) {
-
 		// Signal ready to read by setting line low
 		pin->output();
 		*pin = 0;
