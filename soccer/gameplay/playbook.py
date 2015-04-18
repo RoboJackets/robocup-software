@@ -9,8 +9,8 @@ def load_from_file(playbook_file):
 
     with open(playbook_file, 'r') as f:
         for play in f:
-        	play = play.strip()
-        	if not play:
-            	plays.append(play.split('/'))
+            play = play.strip()
+            if not play:
+                plays.append(play.split('/'))
 
     return plays
