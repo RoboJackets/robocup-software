@@ -5,4 +5,4 @@ Numbering convention:
  - For 2008 Robots: numbers 0-4
  - For 2011 Robots: numbers 5-9
  
-The simulator uses 2008 robots as default when on robot revision is specified
+The simulator uses 2008 robots as default when no robot revision is specified

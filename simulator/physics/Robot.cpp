@@ -30,7 +30,7 @@ static const float robotWeight = 8*scaling;
 Robot::Robot(Environment* env, unsigned int id,  Robot::RobotRevision rev, const Geometry2d::Point& startPos) :
 	Entity(env),shell(id), _rev(rev),
 	_robotChassis(0), _robotVehicle(0), _wheelShape(0),_controller(0),
-	_brakingForce(0),_targetVel(0,0,0),_targetRot(0),
+	_targetVel(0,0,0),_targetRot(0),
 	_simEngine(env->getSimEngine())
 {
 	visibility = 100;
@@ -270,13 +270,6 @@ Packet::RadioRx Robot::radioRx() const
 	return packet;
 }
 
-void Robot::applyEngineForces() {
-	for (int wheelIndex = 0; wheelIndex < 4; wheelIndex++) {
-		_robotVehicle->applyEngineForce(_engineForce[wheelIndex], wheelIndex);
-		_robotVehicle->setBrake(_brakingForce, wheelIndex);
-	}
-}
-
 void Robot::applyEngineForces(float deltaTime) {
 	if(_targetVel.length() < SIMD_EPSILON && _targetRot == 0){
 		for(int i=0; i<4; i++){
@@ -311,7 +304,6 @@ void Robot::applyEngineForces(float deltaTime) {
 		//need to drive at max engine force to achieve target velocity
 
 		float rotVel  = (_targetRot-robotRot)*(Sim_Robot_Radius-Sim_Wheel_Width/2.f); //move to actual wheel loc
-		//printf("target rot = %5.3f\n",_targetRot);
 
 		float angVel  = rotVel/Sim_Wheel_Radius;
 
@@ -354,16 +346,9 @@ void Robot::applyEngineForces(float deltaTime) {
 
 	//apply forces
 	_robotVehicle->applyEngineForce(_engineForce[FrontLeft], FrontLeft);
-	_robotVehicle->setBrake(_brakingForce, FrontLeft);
-
 	_robotVehicle->applyEngineForce(_engineForce[FrontRight], FrontRight);
-	_robotVehicle->setBrake(_brakingForce, FrontRight);
-
 	_robotVehicle->applyEngineForce(_engineForce[BackRight], BackRight);
-	_robotVehicle->setBrake(_brakingForce, BackRight);
-
 	_robotVehicle->applyEngineForce(_engineForce[BackLeft], BackLeft);
-	_robotVehicle->setBrake(_brakingForce, BackLeft);
 }
 
 void Robot::renderWheels(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax) const {
@@ -394,27 +379,4 @@ void Robot::resetScene() {
 			_robotVehicle->updateWheelTransform(i, true);
 		}
 	}
-}
-
-void Robot::steerLeft() {
-	setEngineForce(maxEngineForce);
-	_brakingForce = 0.f;
-}
-
-void Robot::steerRight() {
-	setEngineForce(-maxEngineForce);
-	_brakingForce = 0.f;
-}
-
-void Robot::driveForward() {
-	_engineForce[0] = -maxEngineForce;
-	_engineForce[1] = maxEngineForce;
-	_engineForce[2] = maxEngineForce;
-	_engineForce[3] = -maxEngineForce;
-	_brakingForce = 0.f;
-}
-
-void Robot::driveBackward() {
-	_brakingForce = maxBreakingForce;
-	setEngineForce(0.f);
 }

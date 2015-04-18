@@ -31,45 +31,18 @@ class Environment : public QObject
 public:
 	typedef QMap<unsigned int, Robot*> RobotMap;
 
-private:
-	// IF true, the next vision frame is dropped.
-	// Automatically cleared.
-	bool _dropFrame;
+	Environment(const QString& configFile, bool sendShared_, SimEngine* engine);
 
-	RobotMap _blue;
-	RobotMap _yellow;
-	QVector<Ball*> _balls;
+	~Environment();
 
-	QString _configFile; //< filename for the config file
-
-	// This timer causes environment to be stepped on a regular basis
-	FastTimer _timer;
-
-	QUdpSocket _visionSocket;   ///< Simulated vision - can also receive commands from soccer
-	QUdpSocket _radioSocketBlue, _radioSocketYellow; ///< Connections for robots
-
-	struct timeval _lastStepTime;
-
-	// How many vision frames we've sent
-	int _frameNumber;
-
-	// How many physics steps have run since the last vision packet was sent
-	int _stepCount;
-
-	SimEngine* _simEngine;
-
-	Field* _field;
-
-public:
 	// If true, send data to the shared vision multicast address.
 	// If false, send data to the two simulated vision addresses.
 	volatile bool sendShared;
 
+	///	a value between 0 and 100 indicating how often the ball position is reported
+	///	if @ballVisibility == 99, then 1% of the time the ball position will be omitted from the sent vision packet
 	int ballVisibility;
 
-	Environment(const QString& configFile, bool sendShared_, SimEngine* engine);
-
-	~Environment();
 
 	/** initializes the timer, connects sockets */
 	void connectSockets();
@@ -99,15 +72,13 @@ public:
 	void reshapeFieldBodies();
 
 
-public:
-
-	//sets engine forces on robots before physics tick
+	///	sets engine forces on robots before physics tick
 	void preStep(float deltaTime);
 
+protected Q_SLOTS:
 	/**
 	 * Primary environment step function - called by a timer at a fixed interval
 	 */
-protected Q_SLOTS:
 	void step();
 
 public:
@@ -121,6 +92,7 @@ public:
 	SimEngine* getSimEngine() { return _simEngine; }
 
 	bool loadConfigFile();
+
 
 private:
 	static void convert_robot(const Robot *robot, SSL_DetectionRobot *out);
@@ -152,4 +124,32 @@ private:
 	// Config file handling
 	bool loadConfigFile(const QString& filename);
 	void procTeam(QDomElement e, bool blue);
+
+	// If true, the next vision frame is dropped.
+	// Automatically cleared.
+	bool _dropFrame;
+
+	RobotMap _blue;
+	RobotMap _yellow;
+	QVector<Ball*> _balls;
+
+	QString _configFile; //< filename for the config file
+
+	// This timer causes environment to be stepped on a regular basis
+	FastTimer _timer;
+
+	QUdpSocket _visionSocket;   /// Simulated vision - can also receive commands from soccer
+	QUdpSocket _radioSocketBlue, _radioSocketYellow; /// Connections for robots
+
+	struct timeval _lastStepTime;
+
+	// How many vision frames we've sent
+	int _frameNumber;
+
+	// How many physics steps have run since the last vision packet was sent
+	int _stepCount;
+
+	SimEngine* _simEngine;
+
+	Field* _field;
 };

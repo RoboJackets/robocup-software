@@ -1,14 +1,13 @@
 #pragma once
 
-/**
- * QTimer uses busy waits and eats CPU time badly.
- * This timer provides a recurring timeout() signal with much less overhead.
- */
-
 #include <QThread>
 #include <sys/types.h>
 #include <pthread.h>
 
+/**
+ * QTimer uses busy waits and eats CPU time badly.
+ * This timer provides a recurring timeout() signal with much less overhead.
+ */
 class FastTimer: public QThread
 {
     Q_OBJECT;
