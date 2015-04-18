@@ -29,6 +29,10 @@ public:
 	// assigned shell number
 	unsigned int shell;
 
+	/**
+	 * A value between 0 and 100 indicating how good visibility of the Robot is.  A value of 99 indicates that
+	 * 1% of the time this robot will be omitted from the vision packet sent back to soccer.
+	 */
 	int visibility;
 
 
@@ -43,7 +47,7 @@ public:
 	// Entity interface
 	virtual void position(float x, float y); // world coords
 
-	virtual void velocity(float x, float y, float w); // body coords
+	virtual void setTargetVelocity(float x, float y, float w); // body coords
 
 	virtual Geometry2d::Point getPosition() const;
 

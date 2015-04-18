@@ -95,22 +95,12 @@ btRigidBody* SimEngine::localCreateRigidBody(float mass,
 	if (isDynamic)
 		shape->calculateLocalInertia(mass, localInertia);
 
-	//using motionstate is recommended, it provides interpolation capabilities, and only synchronizes 'active' objects
 
-#define USE_MOTIONSTATE 1
-#ifdef USE_MOTIONSTATE
-	btDefaultMotionState* myMotionState = new btDefaultMotionState(
-			startTransform);
-
-	btRigidBody::btRigidBodyConstructionInfo cInfo(mass, myMotionState, shape,
-			localInertia);
-
+	btDefaultMotionState* myMotionState = new btDefaultMotionState(startTransform);
+	btRigidBody::btRigidBodyConstructionInfo cInfo(mass, myMotionState, shape, localInertia);
 	btRigidBody* body = new btRigidBody(cInfo);
 	body->setContactProcessingThreshold(_defaultContactProcessingThreshold);
-#else
-	btRigidBody* body = new btRigidBody(mass,0,shape,localInertia);
-	body->setWorldTransform(startTransform);
-#endif//
+
 	_dynamicsWorld->addRigidBody(body);
 
 	return body;
@@ -154,7 +144,7 @@ btScalar SimEngine::getDeltaTimeMicroseconds() {
 }
 
 btClock* SimEngine::getClock() {
-	return & _clock;
+	return &_clock;
 }
 
 void SimEngine::stepSimulation() {

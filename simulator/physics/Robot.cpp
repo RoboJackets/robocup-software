@@ -59,7 +59,7 @@ void Robot::initPhysics(const bool& blue)
 
 	// Create robot chassis
 	btConvexHullShape* convexShape = new btConvexHullShape();
-	int numPoints = 50;
+	const int numPoints = 50;
 	float mrad = asin((Sim_Robot_MouthWidth/2.f)/Sim_Robot_Radius); //angle from mouth center to corner
 	float rad_incr = 2*(M_PI-mrad)/(float)numPoints;
 	float angle = mrad;
@@ -76,9 +76,7 @@ void Robot::initPhysics(const bool& blue)
 	_simEngine->addCollisionShape((btCollisionShape*)convexShape);
 
 	// Chassis color
-	btVector3* color = new btVector3(1.f,1.f,0.5f);
-	if(blue)
-		*color = btVector3(0.f,0.f,1.f);
+	btVector3 *color = blue ? new btVector3(0.f,0.f,1.f) : new btVector3(1.f,1.f,0.5f);
 	convexShape->setUserPointer(color);
 
 	// Init spawn location of robot in engine WS
@@ -183,7 +181,7 @@ void Robot::position(float x, float y)
 	}
 }
 
-void Robot::velocity(float x, float y, float w)
+void Robot::setTargetVelocity(float x, float y, float w)
 {
 	_targetVel = btVector3(y,0,x)*scaling;
 	_targetRot = w;
@@ -231,7 +229,7 @@ void Robot::getWorldTransform(btTransform& chassisWorldTrans) const
 
 void Robot::radioTx(const Packet::RadioTx::Robot *data)
 {
-	velocity(data->body_x(),data->body_y(), data->body_w());
+	setTargetVelocity(data->body_x(),data->body_y(), data->body_w());
 	if(data->kick()){
 		_controller->prepareKick(data->kick(),data->use_chipper());
 	}

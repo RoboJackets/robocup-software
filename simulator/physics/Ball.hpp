@@ -4,16 +4,7 @@
 #include <physics/SimEngine.hpp>
 
 
-class Ball: public Entity
-{
-protected:
-	// physics components
-	btRigidBody* _ball;
-	btCollisionShape* _ballShape;
-
-	// link to SimEngine
-	SimEngine* _simEngine;
-
+class Ball: public Entity {
 public:
 	Ball(Environment* env);
 	virtual ~Ball();
@@ -26,4 +17,13 @@ public:
 	void initPhysics();
 
 	void resetScene();
+
+
+protected:
+	// physics components
+	btRigidBody* _ball;
+	btCollisionShape* _ballShape;
+
+	// link to SimEngine
+	SimEngine* _simEngine;
 };

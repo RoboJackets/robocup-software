@@ -189,13 +189,13 @@ void Environment::handleSimCommand(const Packet::SimCommand& cmd) {
 			new_w = rcmd.w();
 			if (!rcmd.has_vel())
 			{
-				robot->velocity(0.0, 0.0, new_w);
+				robot->setTargetVelocity(0.0, 0.0, new_w);
 			}
 		}
 
 		if (rcmd.has_vel())
 		{
-			robot->velocity(rcmd.vel().x(), rcmd.vel().y(), new_w);
+			robot->setTargetVelocity(rcmd.vel().x(), rcmd.vel().y(), new_w);
 		}
 	}
 

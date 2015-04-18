@@ -42,7 +42,6 @@ static void glutDisplayCallback(void) {
 	gSimpleApplication->camera()->displayCallback();
 }
 
-// SimulatorGLUTThread implementation
 
 SimulatorGLUTThread::SimulatorGLUTThread(int argc, char* argv[], const QString& configFile, bool sendShared, bool showWindow)
 : _argv(argv), _argc(argc), _env(0), _vehicle(0), _blue(false),
@@ -142,7 +141,6 @@ void SimulatorGLUTThread::keyboardCallback(unsigned char key, int x, int y) {
 	case 't':	_simEngine->setDebug(btIDebugDraw::DBG_DrawText);		          break;
 	case 'y':	_simEngine->setDebug(btIDebugDraw::DBG_DrawFeaturesText);		  break;
 	case 'a':	_simEngine->setDebug(btIDebugDraw::DBG_DrawAabb);             break;
-//	case 'c':	_simEngine->setDebug(btIDebugDraw::DBG_DrawContactPoints);    break;
 	case 'C':	_simEngine->setDebug(btIDebugDraw::DBG_DrawConstraints);      break;
 	case 'L':	_simEngine->setDebug(btIDebugDraw::DBG_DrawConstraintLimits); break;
 
@@ -326,22 +324,22 @@ void SimulatorGLUTThread::specialKeyboardUp(int key, int x, int y) {
 	switch (key) {
 	case GLUT_KEY_UP: {
 		if(_vehicle)
-			_vehicle->velocity(0,0,0);
+			_vehicle->setTargetVelocity(0,0,0);
 		break;
 	}
 	case GLUT_KEY_DOWN: {
 		if(_vehicle)
-			_vehicle->velocity(0,0,0);
+			_vehicle->setTargetVelocity(0,0,0);
 		break;
 	}
 	case GLUT_KEY_LEFT: {
 		if(_vehicle)
-			_vehicle->velocity(0,0,0);
+			_vehicle->setTargetVelocity(0,0,0);
 		break;
 	}
 	case GLUT_KEY_RIGHT: {
 		if(_vehicle)
-			_vehicle->velocity(0,0,0);
+			_vehicle->setTargetVelocity(0,0,0);
 		break;
 	}
 	default:
@@ -350,26 +348,25 @@ void SimulatorGLUTThread::specialKeyboardUp(int key, int x, int y) {
 }
 
 void SimulatorGLUTThread::specialKeyboard(int key, int x, int y) {
-	//	printf("key = %i x=%i y=%i\n",key,x,y);
 	switch (key) {
 	case GLUT_KEY_LEFT: {
 		if(_vehicle)
-			_vehicle->velocity(0,0,3);
+			_vehicle->setTargetVelocity(0,0,3);
 		break;
 	}
 	case GLUT_KEY_RIGHT: {
 		if(_vehicle)
-			_vehicle->velocity(0,0,-3);
+			_vehicle->setTargetVelocity(0,0,-3);
 		break;
 	}
 	case GLUT_KEY_UP: {
 		if(_vehicle)
-			_vehicle->velocity(3,0,0);
+			_vehicle->setTargetVelocity(3,0,0);
 		break;
 	}
 	case GLUT_KEY_DOWN: {
 		if(_vehicle)
-			_vehicle->velocity(-3,0,0);
+			_vehicle->setTargetVelocity(-3,0,0);
 		break;
 	}
 	default:
@@ -402,7 +399,6 @@ void SimulatorGLUTThread::nextVehicle() {
 void SimulatorGLUTThread::displayProfileString(int xOffset,int yStart,char* message)
 {
 	glRasterPos3f(btScalar(xOffset),btScalar(yStart),btScalar(0));
-//	GLDebugDrawString(xOffset,yStart,message);
 	GLDebugDrawStringInternal(xOffset,yStart,message,btVector3(1,1,1),true,10);
 }
 
