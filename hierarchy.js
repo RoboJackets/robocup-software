@@ -26,6 +26,7 @@ var hierarchy =
     ] ],
     [ "RobotConfig::Dribbler", "struct_robot_config_1_1_dribbler.html", null ],
     [ "gameplay.constants.Robot.Dribbler", "classgameplay_1_1constants_1_1_robot_1_1_dribbler.html", null ],
+    [ "DS2411_ID", "struct_d_s2411___i_d.html", null ],
     [ "Enum", null, [
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker.State", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker_1_1_state.html", null ],
       [ "gameplay.plays.restarts.our_kickoff.OurKickoff.State", "classgameplay_1_1plays_1_1restarts_1_1our__kickoff_1_1_our_kickoff_1_1_state.html", null ],

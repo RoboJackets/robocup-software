@@ -220,6 +220,7 @@ var NAVTREEINDEX7 =
 "dir_c5f6e4ff4314f36b41387a9347f2c16e.html":[12,0,0],
 "dir_d18fe83173263c0f5bc47ee4a8e17d61.html":[12,0,1,0,0,2,0],
 "dir_db37267b4e33893a8d121901cc481bd9.html":[12,0,2],
+"ds2411_8hpp_source.html":[12,0,1,0,0,5],
 "files.html":[12,0],
 "functions.html":[11,3,0,0],
 "functions.html":[11,3,0],
@@ -229,8 +230,8 @@ var NAVTREEINDEX7 =
 "functions_d.html":[11,3,0,4],
 "functions_e.html":[11,3,0,5],
 "functions_f.html":[11,3,0,6],
-"functions_func.html":[11,3,1,0],
 "functions_func.html":[11,3,1],
+"functions_func.html":[11,3,1,0],
 "functions_func_b.html":[11,3,1,1],
 "functions_func_c.html":[11,3,1,2],
 "functions_func_d.html":[11,3,1,3],
@@ -248,6 +249,5 @@ var NAVTREEINDEX7 =
 "functions_func_r.html":[11,3,1,15],
 "functions_func_s.html":[11,3,1,16],
 "functions_func_t.html":[11,3,1,17],
-"functions_func_u.html":[11,3,1,18],
-"functions_func_v.html":[11,3,1,19]
+"functions_func_u.html":[11,3,1,18]
 };

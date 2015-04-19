@@ -282,6 +282,7 @@ var annotated_dup =
     [ "ConfigurableImpl", "class_configurable_impl.html", "class_configurable_impl" ],
     [ "Configuration", "class_configuration.html", "class_configuration" ],
     [ "DebugQMutex", "class_debug_q_mutex.html", "class_debug_q_mutex" ],
+    [ "DS2411_ID", "struct_d_s2411___i_d.html", "struct_d_s2411___i_d" ],
     [ "ExceptionIterator", "class_exception_iterator.html", "class_exception_iterator" ],
     [ "Field_Dimensions", "struct_field___dimensions.html", "struct_field___dimensions" ],
     [ "FieldView", "class_field_view.html", "class_field_view" ],

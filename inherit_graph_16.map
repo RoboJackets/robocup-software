@@ -1,3 +1,6 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_f_i_r_filter.html" title="A basic FIR filter of variable type with float coeffs. " alt="" coords="7,5,111,35"/>
+<area shape="rect" id="node3" href="$class_field_view.html" title="class that performs drawing of log data onto the field " alt="" coords="135,5,212,35"/>
+<area shape="rect" id="node7" href="$class_referee_tab.html" title="RefereeTab" alt="" coords="128,59,219,88"/>
+<area shape="rect" id="node9" href="$class_strip_chart.html" title="StripChart" alt="" coords="133,112,213,141"/>
+<area shape="rect" id="node5" href="$class_sim_field_view.html" title="SimFieldView" alt="" coords="268,5,369,35"/>
 </map>
