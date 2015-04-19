@@ -58,35 +58,35 @@ class AngleReceive(single_robot_behavior.SingleRobotBehavior):
 
 
         self.add_transition(behavior.Behavior.State.start,
-            AngleReceive.State.aligning,
-            lambda: True,
-            'immediately')
+                AngleReceive.State.aligning,
+                lambda: True,
+                'immediately')
 
         self.add_transition(AngleReceive.State.aligning,
-            AngleReceive.State.aligned,
-            lambda: self.errors_below_thresholds() and self.is_steady() and not self.ball_kicked,
-            'steady and in position to receive')
+                AngleReceive.State.aligned,
+                lambda: self.errors_below_thresholds() and self.is_steady() and not self.ball_kicked,
+                'steady and in position to receive')
 
         self.add_transition(AngleReceive.State.aligned,
-            AngleReceive.State.aligning,
-            lambda: (not self.errors_below_thresholds() or not self.is_steady()) and not self.ball_kicked,
-            'not in receive position')
+                AngleReceive.State.aligning,
+                lambda: (not self.errors_below_thresholds() or not self.is_steady()) and not self.ball_kicked,
+                'not in receive position')
 
         for state in [AngleReceive.State.aligning, AngleReceive.State.aligned]:
             self.add_transition(state,
-                AngleReceive.State.receiving,
-                lambda: self.ball_kicked,
-                'ball kicked')
+                    AngleReceive.State.receiving,
+                    lambda: self.ball_kicked,
+                    'ball kicked')
 
-        self.add_transition(AngleReceive.State.receiving,
-            behavior.Behavior.State.completed,
-            lambda: self.robot.has_ball(),
-            'ball received!')
+            self.add_transition(AngleReceive.State.receiving,
+                    behavior.Behavior.State.completed,
+                    lambda: self.robot.has_ball(),
+                    'ball received!')
 
-        self.add_transition(AngleReceive.State.receiving,
-            behavior.Behavior.State.failed,
-            lambda: time.time() - self._ball_kick_time > AngleReceive.ReceiveTimeout,
-            'ball missed :(')
+            self.add_transition(AngleReceive.State.receiving,
+                    behavior.Behavior.State.failed,
+                    lambda: time.time() - self._ball_kick_time > AngleReceive.ReceiveTimeout,
+                    'ball missed :(')
 
 
 
@@ -119,13 +119,13 @@ class AngleReceive(single_robot_behavior.SingleRobotBehavior):
             return False
 
         return (abs(self._angle_error) < AngleReceive.FaceAngleErrorThreshold
-            and abs(self._x_error) < AngleReceive.PositionXErrorThreshold
-            and abs(self._y_error) < AngleReceive.PositionYErrorThreshold)
+                and abs(self._x_error) < AngleReceive.PositionXErrorThreshold
+                and abs(self._y_error) < AngleReceive.PositionYErrorThreshold)
 
 
     def is_steady(self):
         return (self.robot.vel.mag() < AngleReceive.SteadyMaxVel
-            and abs(self.robot.angle_vel) < AngleReceive.SteadyMaxAngleVel)
+                and abs(self.robot.angle_vel) < AngleReceive.SteadyMaxAngleVel)
 
 
     # calculates:
@@ -148,6 +148,7 @@ class AngleReceive(single_robot_behavior.SingleRobotBehavior):
         else:
             # if the ball hasn't been kicked yet, we assume it's going to go through the receive point
             self._pass_line = robocup.Line(ball.pos, self.receive_point)
+        self._kick_line = robocup.Line(self.receive_point, constants.Field.TheirGoalCenter)
 
         target_angle_rad = (ball.pos - self.robot.pos).angle()
         angle_rad = self.robot.angle
@@ -186,6 +187,7 @@ class AngleReceive(single_robot_behavior.SingleRobotBehavior):
 
         if self._pass_line != None:
             main.system_state().draw_line(self._pass_line, constants.Colors.Blue, "Pass")
+            main.system_state().draw_line(self._kick_line, constants.Colors.Blue, "Pass")
             main.system_state().draw_circle(self._target_pos, 0.03, constants.Colors.Blue, "Pass")
 
 

@@ -28,7 +28,7 @@ class Robot:
 class Ball:
     Radius = 0.0215
     Mass = 0.04593 # mass of golf ball (kg)
-    
+
 
 class Field:
     Length = 6.05
@@ -48,11 +48,11 @@ class Field:
     # Radius of the goal arcs
     ArcRadius = 0.8
 
-    # diameter of the center circle 
+    # diameter of the center circle
     CenterRadius = 0.5
     CenterDiameter = 1.0
 
-    # flat area for defense markings 
+    # flat area for defense markings
     GoalFlat = 0.35
 
     FloorLength = Length + 2.0 * Border;
@@ -73,8 +73,10 @@ class Field:
 
     TheirGoalSegment = robocup.Segment(robocup.Point(GoalWidth / 2.0, Length),
                                         robocup.Point(-GoalWidth / 2.0, Length))
+    TheirGoalCenter = robocup.Point(0 , Length)
     OurGoalSegment = robocup.Segment(robocup.Point(GoalWidth / 2.0, 0),
                                         robocup.Point(-GoalWidth / 2.0, 0))
+    OurGoalCenter = robocup.Point(0 , 0)
 
     TheirHalf = robocup.Rect(robocup.Point(-Width/2, Length), robocup.Point(Width/2, Length/2))
     OurHalf = robocup.Rect(robocup.Point(-Width/2, 0), robocup.Point(Width/2, Length/2))
