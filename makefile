@@ -68,6 +68,7 @@ base2011:
 base2011-prog:
 	cd firmware; scons base2011; sudo scons base2011-prog
 
+
 static-analysis:
 	mkdir -p build/static-analysis
 	cd build/static-analysis; scan-build cmake ../.. -Wno-dev -DSTATIC_ANALYSIS=ON && scan-build -o output make $(MAKE_FLAGS)
@@ -82,3 +83,10 @@ modernize:
 	# transformations, rather than all transformations that it's capable of.
 	# See `clang-modernize --help` for more info.
 	clang-modernize -p build -include=common,logging,simulator,soccer
+
+# run the 'uncrustify' program on the codebase, which automatically formats code according to our style config
+pretty:
+	find . -path ./build -prune -o -name "*.hpp" -o -name "*.h" -o -name "*.c" -o -name "*.cpp" -print0 | xargs -0 uncrustify -c uncrustify.cfg --replace --no-backup
+# run the 'uncrustify' program on the codebase to check its formatting.  An exit code of 0 means the codebase passed and is in accordance with the style config
+checkstyle:
+	find . -path ./build -prune -o -name "*.hpp" -o -name "*.h" -o -name "*.c" -o -name "*.cpp" -print0 | xargs -0 uncrustify -c uncrustify.cfg --check
