@@ -3,7 +3,6 @@
 #include "commands.hpp"
 #include "logger.hpp"
 #include "radio.hpp"
-#include "ds2411.hpp"
 
 const PinName ds2411_pin = p21;
 
