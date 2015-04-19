@@ -5,6 +5,8 @@
 #include "radio.hpp"
 #include "ds2411.hpp"
 
+const PinName ds2411_pin = p21;
+
 Ticker lifeLight;
 DigitalOut ledOne(LED1);
 DigitalOut ledTwo(LED2);
@@ -26,24 +28,7 @@ int main(void)
 {
 	setISRPriorities();
 	lifeLight.attach(&imAlive, 0.25);
-
-	DS2411_ID id;
-	DS2411_Result result = ds2411_read_id(p21, &id, true);
-
-	float waitTime;
-	if(result == HANDSHAKE_FAIL || result == CRC_FAIL) {
-		waitTime = 0.2;
-	}
-	else {
-		waitTime = 0.5;
-	}
-
-	int count = (int)(5 / waitTime);
-	while(count--) {
-		led = !led;
-		wait(waitTime);
-	}
-
+	
 	isLogging = true;
 	rjLogLevel = INF2;
 	

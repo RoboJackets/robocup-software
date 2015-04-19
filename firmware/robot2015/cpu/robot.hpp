@@ -198,3 +198,5 @@
 #endif
 
 #include "logger.hpp"
+
+extern const PinName ds2411_pin;

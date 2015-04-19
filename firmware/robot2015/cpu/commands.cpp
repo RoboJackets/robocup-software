@@ -4,6 +4,7 @@
 #include "reset.hpp"
 #include "LocalFileSystem.h"
 #include "git_version.hpp"
+#include "ds2411.hpp"
 
 #include <algorithm>
 
@@ -375,8 +376,12 @@ void cmd_info(const vector<string> &args)
 
     printf("Commit Author:\t%s\r\n", git_head_author);
 
-
     printf("\r\n");
+
+    DS2411_ID id;
+	ds2411_read_id(ds2411_pin, &id, true);
+
+	printf("\r\n");
 
     // Prints out a serial number, taken from the mbed forms
     // https://developer.mbed.org/forum/helloworld/topic/2048/
@@ -507,4 +512,3 @@ void cancelIterativeCommand(void)
 {
 	executingIterativeCommand = false;
 }
-
