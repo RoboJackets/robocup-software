@@ -23,7 +23,7 @@ int main(void)
 {
 	setISRPriorities();
 	lifeLight.attach(&imAlive, 0.25);
-
+	
 	isLogging = true;
 	rjLogLevel = INF2;
 
