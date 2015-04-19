@@ -239,14 +239,6 @@ void Environment::sendVision()
 	{
 		Geometry2d::Point ballPos = b->getPosition();
 
-		// bool occ;
-		// if (ballPos.x < 0)
-		// {
-		// 	occ = occluded(ballPos, cam0);
-		// } else {
-		// 	occ = occluded(ballPos, cam1);
-		// }
-
 		if ((rand() % 100) < ballVisibility)
 		{
 			SSL_DetectionBall *out = det->add_balls();
@@ -282,7 +274,7 @@ void Environment::convert_robot(const Robot *robot, SSL_DetectionRobot *out)
 	out->set_pixel_y(pos.y * 1000);
 }
 
-void Environment::addBall(Geometry2d::Point pos)
+void Environment::addBall(const Geometry2d::Point &pos)
 {
 	Ball* b = new Ball(this);
 	b->initPhysics();
@@ -383,7 +375,7 @@ Robot *Environment::robot(bool blue, int board_id) const
 	{
 		return robots.value(board_id,0);
 	} else {
-		return 0;
+		return nullptr;
 	}
 }
 

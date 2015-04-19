@@ -17,29 +17,8 @@ public:
 	bool ballSensorWorks;
 	bool chargerWorks;
 
-protected:
-	btPairCachingGhostObject* _ghostObject;
-
-	btVector3 _localMouthPos;
-
-	Robot* _parent;
-	btRigidBody* _ball;
-
-	///links to the engine
-	SimEngine *_simEngine;
-
-	/// kicker charge status
-	uint64_t _lastKicked;
-	const static uint64_t RechargeTime = 6000000; // six seconds
-
-	float _kickSpeed;
-
-	uint64_t _kick;
-	bool _chip;
-	uint64_t _dribble;
-
 public:
-	RobotBallController(Robot* robot);
+	RobotBallController(Robot *robot);
 	~RobotBallController();
 
 	void initPhysics();
@@ -73,4 +52,25 @@ public:
 
 	void prepareKick(uint64_t power, bool chip);
 	void prepareDribbler(uint64_t dribble);
+
+
+protected:
+	btPairCachingGhostObject* _ghostObject;
+
+	btVector3 _localMouthPos;
+
+	Robot* _parent;
+	btRigidBody* _ball;
+
+	SimEngine *_simEngine;
+
+	/// kicker charge status
+	uint64_t _lastKicked;
+	const static uint64_t RechargeTime = 6000000; // six seconds
+
+	float _kickSpeed;
+
+	uint64_t _kick;
+	bool _chip;
+	uint64_t _dribble;
 };

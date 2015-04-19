@@ -58,7 +58,7 @@ public:
 	const RobotMap &yellow() const { return _yellow; }
 
 	/** add a ball @ pos */
-	void addBall(Geometry2d::Point pos);
+	void addBall(const Geometry2d::Point &pos);
 
 	/** add a robot with id i to the environment @ pos */
 	void addRobot(bool blue, int id, const Geometry2d::Point& pos, Robot::RobotRevision rev);

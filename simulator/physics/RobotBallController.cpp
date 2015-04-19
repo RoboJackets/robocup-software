@@ -64,7 +64,7 @@ void RobotBallController::initPhysics()
 
 bool RobotBallController::detectBall ( btCollisionWorld* collisionWorld)
 {
-	_ball = 0;
+	_ball = nullptr;
 
 	btManifoldArray   manifoldArray;
 	btBroadphasePairArray& pairArray = _ghostObject->getOverlappingPairCache()->getOverlappingPairArray();
