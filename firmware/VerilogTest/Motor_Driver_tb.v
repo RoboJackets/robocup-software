@@ -3,8 +3,7 @@
 module Motor_Driver_tb;
 
 /*Output values to 'test.vcd' file */ 
-initial
- begin
+initial begin
     $dumpfile("test.vcd");
     $dumpvars(0,Motor_Driver_tb);
  end
