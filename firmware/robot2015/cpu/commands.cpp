@@ -379,7 +379,7 @@ void cmd_info(const vector<string> &args)
     printf("\r\n");
 
     DS2411_ID id;
-    ds2411_read_id(ds2411_pin, &id, true);
+    ds2411_read_id(RJ_DS2411_ID_CHIP, &id, true);
 
     printf("\r\n");
 

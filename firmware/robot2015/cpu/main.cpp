@@ -4,8 +4,6 @@
 #include "logger.hpp"
 #include "radio.hpp"
 
-const PinName ds2411_pin = p21;
-
 Ticker lifeLight;
 DigitalOut ledOne(LED1);
 DigitalOut ledTwo(LED2);
@@ -23,14 +21,14 @@ void initConsoleRoutine(void);
  */
 int main(void) 
 {
-    setISRPriorities();
-    lifeLight.attach(&imAlive, 0.25);
+	setISRPriorities();
+	lifeLight.attach(&imAlive, 0.25);
 
-    isLogging = true;
-    rjLogLevel = INF2;
+	isLogging = true;
+	rjLogLevel = INF2;
 
-    //initRadioThread();
-    initConsoleRoutine();
+	//initRadioThread();
+	initConsoleRoutine();
 }
 
 /**
