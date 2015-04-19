@@ -7,12 +7,12 @@ import enum
 import time
 
 
-## PassReceive accepts a receive_point as a parameter and gets setup there to catch the ball
+## AngleReceive accepts a receive_point as a parameter and gets setup there to catch the ball
 # It transitions to the 'aligned' state once it's there within its error thresholds and is steady
 # Set its 'ball_kicked' property to True to tell it to dynamically update its position based on where
 # the ball is moving and attempt to catch it.
 # It will move to the 'completed' state if it catches the ball, otherwise it will go to 'failed'.
-class PassReceive(single_robot_behavior.SingleRobotBehavior):
+class AngleReceive(single_robot_behavior.SingleRobotBehavior):
 
     ## max difference between where we should be facing and where we are facing (in radians)
     FaceAngleErrorThreshold = 8 * constants.DegreesToRadians
@@ -40,7 +40,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
 
         ## being in this state signals that we're ready for the kicker to kick
         aligned = 2
-        
+
         ## the ball's been kicked and we're adjusting based on where the ball's moving
         receiving = 3
 
@@ -53,39 +53,39 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
         self._ball_kick_time = 0
 
 
-        for state in PassReceive.State:
+        for state in AngleReceive.State:
             self.add_state(state, behavior.Behavior.State.running)
 
 
         self.add_transition(behavior.Behavior.State.start,
-            PassReceive.State.aligning,
+            AngleReceive.State.aligning,
             lambda: True,
             'immediately')
 
-        self.add_transition(PassReceive.State.aligning,
-            PassReceive.State.aligned,
+        self.add_transition(AngleReceive.State.aligning,
+            AngleReceive.State.aligned,
             lambda: self.errors_below_thresholds() and self.is_steady() and not self.ball_kicked,
             'steady and in position to receive')
 
-        self.add_transition(PassReceive.State.aligned,
-            PassReceive.State.aligning,
+        self.add_transition(AngleReceive.State.aligned,
+            AngleReceive.State.aligning,
             lambda: (not self.errors_below_thresholds() or not self.is_steady()) and not self.ball_kicked,
             'not in receive position')
 
-        for state in [PassReceive.State.aligning, PassReceive.State.aligned]:
+        for state in [AngleReceive.State.aligning, AngleReceive.State.aligned]:
             self.add_transition(state,
-                PassReceive.State.receiving,
+                AngleReceive.State.receiving,
                 lambda: self.ball_kicked,
                 'ball kicked')
 
-        self.add_transition(PassReceive.State.receiving,
+        self.add_transition(AngleReceive.State.receiving,
             behavior.Behavior.State.completed,
             lambda: self.robot.has_ball(),
             'ball received!')
 
-        self.add_transition(PassReceive.State.receiving,
+        self.add_transition(AngleReceive.State.receiving,
             behavior.Behavior.State.failed,
-            lambda: time.time() - self._ball_kick_time > PassReceive.ReceiveTimeout,
+            lambda: time.time() - self._ball_kick_time > AngleReceive.ReceiveTimeout,
             'ball missed :(')
 
 
@@ -100,7 +100,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
         self._ball_kicked = value
         if value:
             self._ball_kick_time = time.time()
-    
+
 
     ## The point that the receiver should expect the ball to hit it's mouth
     # Default: None
@@ -118,14 +118,14 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
         if self.receive_point == None:
             return False
 
-        return (abs(self._angle_error) < PassReceive.FaceAngleErrorThreshold
-            and abs(self._x_error) < PassReceive.PositionXErrorThreshold
-            and abs(self._y_error) < PassReceive.PositionYErrorThreshold)
+        return (abs(self._angle_error) < AngleReceive.FaceAngleErrorThreshold
+            and abs(self._x_error) < AngleReceive.PositionXErrorThreshold
+            and abs(self._y_error) < AngleReceive.PositionYErrorThreshold)
 
 
     def is_steady(self):
-        return (self.robot.vel.mag() < PassReceive.SteadyMaxVel
-            and abs(self.robot.angle_vel) < PassReceive.SteadyMaxAngleVel)
+        return (self.robot.vel.mag() < AngleReceive.SteadyMaxVel
+            and abs(self.robot.angle_vel) < AngleReceive.SteadyMaxAngleVel)
 
 
     # calculates:
@@ -196,7 +196,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
 
 
     def execute_receiving(self):
-        self.robot.set_dribble_speed(PassReceive.DribbleSpeed)
+        self.robot.set_dribble_speed(AngleReceive.DribbleSpeed)
 
         # don't use the move_to() command here, we need more precision, less obstacle avoidance
         pos_error = self._target_pos - self.robot.pos
