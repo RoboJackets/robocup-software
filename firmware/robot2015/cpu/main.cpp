@@ -23,14 +23,14 @@ void initConsoleRoutine(void);
  */
 int main(void) 
 {
-	setISRPriorities();
-	lifeLight.attach(&imAlive, 0.25);
-	
-	isLogging = true;
-	rjLogLevel = INF2;
-	
-	//initRadioThread();
-	initConsoleRoutine();
+    setISRPriorities();
+    lifeLight.attach(&imAlive, 0.25);
+
+    isLogging = true;
+    rjLogLevel = INF2;
+
+    //initRadioThread();
+    initConsoleRoutine();
 }
 
 /**

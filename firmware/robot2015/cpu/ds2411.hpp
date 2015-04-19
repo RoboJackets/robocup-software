@@ -10,9 +10,9 @@
 #include "mbed.h"
 
 typedef struct {
-	char family;
-	char serial[6]; // 0 = LSB, 5 = MSB
-	char crc;
+    char family;
+    char serial[6]; // 0 = LSB, 5 = MSB
+    char crc;
 } DS2411_ID;
 
 typedef enum {

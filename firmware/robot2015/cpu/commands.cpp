@@ -379,9 +379,9 @@ void cmd_info(const vector<string> &args)
     printf("\r\n");
 
     DS2411_ID id;
-	ds2411_read_id(ds2411_pin, &id, true);
+    ds2411_read_id(ds2411_pin, &id, true);
 
-	printf("\r\n");
+    printf("\r\n");
 
     // Prints out a serial number, taken from the mbed forms
     // https://developer.mbed.org/forum/helloworld/topic/2048/
