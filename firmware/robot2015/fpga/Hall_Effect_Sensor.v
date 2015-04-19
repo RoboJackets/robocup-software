@@ -24,7 +24,7 @@ always @ (posedge clock) begin
 	end else if (h == 3'b110) begin
 		u = 3'b010;
 		z = 3'b100;
-	end else if (h == 3'b101) begin
+	end else if (h == 3'b010) begin
 		u = 3'b010;
 		z = 3'b001;
 	end else if (h == 3'b011) begin
@@ -33,7 +33,7 @@ always @ (posedge clock) begin
 	end else if (h == 3'b001) begin
 		u = 3'b001;
 		z = 3'b100;
-	end else if (h == 3'b000) begin //failure state
+	end else if (h == 3'b111) begin //failure state
 		u = 3'b000;
 		z = 3'b111;	
 	end

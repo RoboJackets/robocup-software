@@ -2,6 +2,7 @@
 `include "Hall_Effect_Sensor.v"
 `include "Phase_Driver.v"
 
+
 module robocup(clock, h, phaseHInv, phaseLInv); //re-add "duty_cycle,"  as port 2 after done testing
 
 input clock;
@@ -14,10 +15,8 @@ output [2:0] phaseHInv, phaseLInv;
 wire [2:0] phaseHInv, phaseLInv, phaseH, phaseL;
 
 
-
-
 //Motor driver IRS2336DS requires inverted phase driver input
-assign phaseHInv = phaseH;
+assign phaseHInv = phaseH; //Jon's driver  doesn't need inverted outputs
 assign phaseLInv = phaseL;
 
 Hall_Effect_Sensor hallEffectSensor (clock, h, u, z);
