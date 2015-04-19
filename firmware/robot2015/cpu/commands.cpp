@@ -4,6 +4,7 @@
 #include "reset.hpp"
 #include "LocalFileSystem.h"
 #include "git_version.hpp"
+#include "ds2411.hpp"
 
 #include <algorithm>
 
@@ -375,6 +376,10 @@ void cmd_info(const vector<string> &args)
 
     printf("Commit Author:\t%s\r\n", git_head_author);
 
+    printf("\r\n");
+
+    DS2411_ID id;
+    ds2411_read_id(RJ_DS2411_ID_CHIP, &id, true);
 
     printf("\r\n");
 
@@ -507,4 +512,3 @@ void cancelIterativeCommand(void)
 {
 	executingIterativeCommand = false;
 }
-
