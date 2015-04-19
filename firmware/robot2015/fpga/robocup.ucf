@@ -15,9 +15,9 @@ NET "phaseLInv<0>" LOC="P134"; #Phase 3
 
 NET "clock" LOC="P50";
 
-NET "h<2>" LOC="P98" | PULLUP; #Hall Effect 1
-NET "h<1>" LOC="P96" | PULLUP; #Hall Effect 2
-NET "h<0>" LOC="P94" | PULLUP; #Hall Effect 3
+NET "h<2>" LOC="P98"; #| PULLDOWN; #Hall Effect 1
+NET "h<1>" LOC="P96"; #| PULLDOWN; #Hall Effect 2
+NET "h<0>" LOC="P94"; #| PULLDOWN; #Hall Effect 3
 
 
 #NET "clock" TNM_NET="clock";
