@@ -11,8 +11,6 @@ Ticker lifeLight;
 DigitalOut ledOne(LED1);
 DigitalOut ledTwo(LED2);
 
-DigitalOut led(p20, 0);
-
 /*
  * some forward declarations to make the code easier to read
  */
