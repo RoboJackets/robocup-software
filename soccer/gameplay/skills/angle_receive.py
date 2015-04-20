@@ -150,7 +150,7 @@ class AngleReceive(single_robot_behavior.SingleRobotBehavior):
             self._pass_line = robocup.Line(ball.pos, self.receive_point)
         self._kick_line = robocup.Line(self.receive_point, constants.Field.TheirGoalCenter)
 
-        target_angle_rad = (ball.pos - self.robot.pos).angle()
+        target_angle_rad = (self.get_target_point() - self.robot.pos).angle()
         angle_rad = self.robot.angle
         self._angle_error = target_angle_rad - angle_rad
 
@@ -172,6 +172,9 @@ class AngleReceive(single_robot_behavior.SingleRobotBehavior):
         self._y_error = pos_error.dot(pass_dir)
 
 
+    def get_target_point(self):
+        # Gets the point the robot will be facing when receiving the ball
+        return constants.Field.TheirGoalCenter
 
     def on_exit_start(self):
         # reset
@@ -183,7 +186,7 @@ class AngleReceive(single_robot_behavior.SingleRobotBehavior):
         self.robot.shield_from_teammates(constants.Robot.Radius * 2.0)
 
         self.recalculate()
-        self.robot.face(main.ball().pos)
+        self.robot.face(self.get_target_point())
 
         if self._pass_line != None:
             main.system_state().draw_line(self._pass_line, constants.Colors.Blue, "Pass")
