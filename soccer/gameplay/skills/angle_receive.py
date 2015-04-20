@@ -148,7 +148,7 @@ class AngleReceive(single_robot_behavior.SingleRobotBehavior):
         else:
             # if the ball hasn't been kicked yet, we assume it's going to go through the receive point
             self._pass_line = robocup.Line(ball.pos, self.receive_point)
-        self._kick_line = robocup.Line(self.receive_point, constants.Field.TheirGoalCenter)
+        self._kick_line = robocup.Line(self.robot.pos, self.get_target_point())
 
         target_angle_rad = (self.get_target_point() - self.robot.pos).angle()
         angle_rad = self.robot.angle
@@ -156,12 +156,13 @@ class AngleReceive(single_robot_behavior.SingleRobotBehavior):
 
 
         if self.ball_kicked:
-            actual_receive_point = self._pass_line.nearest_point(self.robot.pos)
+            self._target_pos = self._pass_line.nearest_point(self.robot.pos)
         else:
-            actual_receive_point = self.receive_point
+            self._target_pos = self.receive_point
 
-        pass_line_dir = (self._pass_line.get_pt(1) - self._pass_line.get_pt(0)).normalized()
-        self._target_pos = actual_receive_point + pass_line_dir * constants.Robot.Radius
+        # Code to provide slipback when receiving the ball
+        # pass_line_dir = (self._pass_line.get_pt(1) - self._pass_line.get_pt(0)).normalized()
+        # self._target_pos = actual_receive_point + pass_line_dir * constants.Robot.Radius
 
 
         # vector pointing down the pass line toward the kicker
