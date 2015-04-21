@@ -19,12 +19,16 @@ class CC1201Config
  		 * 
 		 */
 		static CC1201* loadConfiguration(CC1201Config* config, CC1201* device);
-    
-        /**
+
+		/**
+		 * 
+		 */    
+		static std::queue<std::string> configurationFaults;
+
+		/**
          *
          */
-        static CC1201Config* verifyConfiguration(CC1201Config* config, CC1201* device);
-
+        static bool verifyConfiguration(CC1201Config* config, CC1201* device);
 
 		/**
 		 * default constructor
@@ -35,10 +39,6 @@ class CC1201Config
 		 * default destructor
 		 */
 		~CC1201Config();
-
-		volatile bool hasFault = false;
-
-		volatile std::queue<std::string> configurationFaults;
 
 		/**
 		 * links a CC1201 device driver to the configuration

@@ -48,7 +48,7 @@ int32_t CC1201::sendData(uint8_t* buffer, uint8_t size)
 	// =================
 	buffer[0] = size;
 
-	log(INF2, "CC1201", "PACKET TRANSMITTED\r\n  Bytes: %u", size);
+	//log(INF2, "CC1201", "PACKET TRANSMITTED\r\n  Bytes: %u", size);
 
 	//strobe(CC1201_STROBE
 

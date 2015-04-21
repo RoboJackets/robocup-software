@@ -1,8 +1,15 @@
+#include <queue>
+#include <string>
+
 #include "CC1201Radio.hpp"
+
+using namespace std;
 
 CC1201Config::CC1201Config() {}
 
 CC1201Config::~CC1201Config() {}
+
+queue<string> CC1201Config::configurationFaults;
 
 CC1201Config* CC1201Config::resetConfiguration(CC1201Config* config)
 {
@@ -134,7 +141,7 @@ CC1201Config* CC1201Config::resetConfiguration(CC1201Config* config)
 	config->demStatus 			= SMARTRF_SETTING_DEM_STATUS;
 	config->freqoffEst1 		= SMARTRF_SETTING_FREQOFF_EST1;
 	config->freqoffEst0 		= SMARTRF_SETTING_FREQOFF_EST0;
-	config->agcGain3 			= SMARTRF_SETTING_AGC_GAIN3;
+	config->agcGain3 		 	= SMARTRF_SETTING_AGC_GAIN3;
 	config->agcGain2 			= SMARTRF_SETTING_AGC_GAIN2;
 	config->agcGain1 			= SMARTRF_SETTING_AGC_GAIN1;
 	config->agcGain0 			= SMARTRF_SETTING_AGC_GAIN0;
@@ -407,21 +414,249 @@ CC1201* CC1201Config::loadConfiguration(CC1201Config* config, CC1201* device)
 	return device;
 }
 
+/**
+ * Verifies the configuration readback of the given 1201 device against the prefered
+ * configuration settings.
+ */
 bool CC1201Config::verifyConfiguration(CC1201Config* config, CC1201* device)
 {
-    for (uint8_t reg = 0x00; reg <= 0x2F; reg++)
-    {
+	//clear faults
+	std::queue<string> empty;
+	std::swap(configurationFaults, empty);
 
+	uint8_t exp = 0x00;
+
+    for (uint8_t reg = 0x00; reg <= 0x2E; reg++)
+    {
+		switch (reg)
+		{
+			case CC1201_IOCFG3: exp = config->iocfg3; break; 
+			case CC1201_IOCFG2: exp = config->iocfg2; break; 
+			case CC1201_IOCFG1: exp = config->iocfg1; break; 
+			case CC1201_IOCFG0: exp = config->iocfg0; break; 
+			case CC1201_SYNC3: exp = config->sync3; break; 
+			case CC1201_SYNC2: exp = config->sync2; break; 
+			case CC1201_SYNC1: exp = config->sync1; break; 
+			case CC1201_SYNC0: exp = config->sync0; break; 
+			case CC1201_SYNC_CFG1: exp = config->syncCfg1; break; 
+			case CC1201_SYNC_CFG0: exp = config->syncCfg0; break; 
+			case CC1201_DEVIATION_M: exp = config->deviationM; break; 
+			case CC1201_MODCFG_DEV_E: exp = config->modcfgDevE; break; 
+			case CC1201_DCFILT_CFG: exp = config->dcfiltCfg; break; 
+			case CC1201_PREAMBLE_CFG1: exp = config->preambleCfg1; break; 
+			case CC1201_PREAMBLE_CFG0: exp = config->preambleCfg0; break; 
+			case CC1201_IQIC: exp = config->iqic; break; 
+			case CC1201_CHAN_BW: exp = config->chanBw; break; 
+			case CC1201_MDMCFG1: exp = config->mdmcfg1; break; 
+			case CC1201_MDMCFG0: exp = config->mdmcfg0; break; 
+			case CC1201_SYMBOL_RATE2: exp = config->symbolRate2; break; 
+			case CC1201_SYMBOL_RATE1: exp = config->symbolRate1; break; 
+			case CC1201_SYMBOL_RATE0: exp = config->symbolRate0; break; 
+			case CC1201_AGC_REF: exp = config->agcRef; break; 
+			case CC1201_AGC_CS_THR: exp = config->agcCsThr; break; 
+			case CC1201_AGC_GAIN_ADJUST: exp = config->agcGainAdjust; break; 
+			case CC1201_AGC_CFG3: exp = config->agcCfg3; break; 
+			case CC1201_AGC_CFG2: exp = config->agcCfg2; break; 
+			case CC1201_AGC_CFG1: exp = config->agcCfg1; break; 
+			case CC1201_AGC_CFG0: exp = config->agcCfg0; break; 
+			case CC1201_FIFO_CFG: exp = config->fifoCfg; break; 
+			case CC1201_DEV_ADDR: exp = config->devAddr; break; 
+			case CC1201_SETTLING_CFG: exp = config->settlingCfg; break; 
+			case CC1201_FS_CFG: exp = config->fsCfg; break; 
+			case CC1201_WOR_CFG1: exp = config->worCfg1; break; 
+			case CC1201_WOR_CFG0: exp = config->worCfg0; break; 
+			case CC1201_WOR_EVENT0_MSB: exp = config->worEvent0Msb; break; 
+			case CC1201_WOR_EVENT0_LSB: exp = config->worEvent0Lsb; break; 
+			case CC1201_RXDCM_TIME: exp = config->rxdcmTime; break; 
+			case CC1201_PKT_CFG2: exp = config->pktCfg2; break; 
+			case CC1201_PKT_CFG1: exp = config->pktCfg1; break; 
+			case CC1201_PKT_CFG0: exp = config->pktCfg0; break; 
+			case CC1201_RFEND_CFG1: exp = config->rfendCfg1; break; 
+			case CC1201_RFEND_CFG0: exp = config->rfendCfg0; break; 
+			case CC1201_PA_CFG1: exp = config->paCfg1; break; 
+			case CC1201_PA_CFG0: exp = config->paCfg0; break; 
+			case CC1201_ASK_CFG: exp = config->askCfg; break; 
+			case CC1201_PKT_LEN: exp = config->pktLen; break;
+			default: exp = 0x00;
+		}
+
+		if (device->readReg(reg) != exp)
+		{
+			//to_string doesn't seem to be supported by the mbed
+			char regCStr[2];
+			char valCStr[2];
+			char expCStr[2];
+			sprintf(regCStr, "%02X", reg);
+			sprintf(valCStr, "%02X", device->readReg(reg));
+			sprintf(expCStr, "%02X", exp);
+			string regStr((const char*) regCStr, 2);
+			string valStr((const char*) valCStr, 2);
+			string expStr((const char*) expCStr, 2);
+			string errorStr = ("Reg: " + regStr + ", Val: " + valStr + ", Exp: " + expStr);
+
+			log(WARN, "CC1201Config::verifyConfiguration", errorStr.c_str());
+			configurationFaults.push(errorStr);
+		}
     }
 
-    for (uint8_t extReg = 0x00; extReg <= 0xDA; extReg++)
+    for (uint8_t extReg = 0x00; extReg <= 0x90 /*0xDA*/; extReg++)
     {
+		if ((extReg >= 0x3A && extReg <= 0x63) || (extReg >= 0xA3 && extReg <= 0xFF)) //(extReg >= 0xA3 && extReg <= 0xD1) || (false))
+			continue;
+		else
+		{
+			switch (extReg)
+			{
+				case CC1201EXT_IF_MIX_CFG: exp = config->ifMixCfg; break;
+				case CC1201EXT_FREQOFF_CFG: exp = config->freqoffCfg; break;
+				case CC1201EXT_TOC_CFG: exp = config->tocCfg; break;
+				case CC1201EXT_MARC_SPARE: exp = config->marcSpare; break;
+				case CC1201EXT_ECG_CFG: exp = config->ecgCfg; break;
+				case CC1201EXT_MDMCFG2: exp = config->mdmcfg2; break;
+				case CC1201EXT_EXT_CTRL: exp = config->extCtrl; break;
+				case CC1201EXT_RCCAL_FINE: exp = config->rccalFine; break;
+				case CC1201EXT_RCCAL_COARSE: exp = config->rccalCoarse; break;
+				case CC1201EXT_RCCAL_OFFSET: exp = config->rccalOffset; break;
+				case CC1201EXT_FREQOFF1: exp = config->freqoff1; break;
+				case CC1201EXT_FREQOFF0: exp = config->freqoff0; break;
+				case CC1201EXT_FREQ2: exp = config->freq2; break;
+				case CC1201EXT_FREQ1: exp = config->freq1; break;
+				case CC1201EXT_FREQ0: exp = config->freq0; break;
+				case CC1201EXT_IF_ADC2: exp = config->ifAdc2; break;
+				case CC1201EXT_IF_ADC1: exp = config->ifAdc1; break;
+				case CC1201EXT_IF_ADC0: exp = config->ifAdc0; break;
+				case CC1201EXT_FS_DIG1: exp = config->fsDig1; break;
+				case CC1201EXT_FS_DIG0: exp = config->fsDig0; break;
+				case CC1201EXT_FS_CAL3: exp = config->fsCal3; break;
+				case CC1201EXT_FS_CAL2: exp = config->fsCal2; break;
+				case CC1201EXT_FS_CAL1: exp = config->fsCal1; break;
+				case CC1201EXT_FS_CAL0: exp = config->fsCal0; break;
+				case CC1201EXT_FS_CHP: exp = config->fsChp; break;
+				case CC1201EXT_FS_DIVTWO: exp = config->fsDivtwo; break;
+				case CC1201EXT_FS_DSM1: exp = config->fsDsm1; break;
+				case CC1201EXT_FS_DMS0: exp = config->fsDsm0; break;
+				case CC1201EXT_FS_DVC1: exp = config->fsDvc1; break;
+				case CC1201EXT_FS_DVC0: exp = config->fsDvc0; break;
+				case CC1201EXT_FS_LBI: exp = config->fsLbi; break;
+				case CC1201EXT_FS_PFD: exp = config->fsPfd; break;
+				case CC1201EXT_FS_PRE: exp = config->fsPre; break;
+				case CC1201EXT_FS_REG_DIV_CML: exp = config->fsRegDivCml; break;
+				case CC1201EXT_FS_SPARE: exp = config->fsSpare; break;
+				case CC1201EXT_FS_VCO4: exp = config->fsVco4; break;
+				case CC1201EXT_FS_VCO3: exp = config->fsVco3; break;
+				case CC1201EXT_FS_VCO2: exp = config->fsVco2; break;
+				case CC1201EXT_FS_VCO1: exp = config->fsVco1; break;
+				case CC1201EXT_FS_VCO0: exp = config->fsVco0; break;
+				case CC1201EXT_GBIAS6: exp = config->gbias6; break;
+				case CC1201EXT_GBIAS5: exp = config->gbias5; break;
+				case CC1201EXT_GBIAS4: exp = config->gbias4; break;
+				case CC1201EXT_GBIAS3: exp = config->gbias3; break;
+				case CC1201EXT_GBIAS2: exp = config->gbias2; break;
+				case CC1201EXT_GBIAS1: exp = config->gbias1; break;
+				case CC1201EXT_GBIAS0: exp = config->gbias0; break;
+				case CC1201EXT_IFAMP: exp = config->ifamp; break;
+				case CC1201EXT_LNA: exp = config->lna; break;
+				case CC1201EXT_RXMIX: exp = config->rxmix; break;
+				case CC1201EXT_XOSC5: exp = config->xosc5; break;
+				case CC1201EXT_XOSC4: exp = config->xosc4; break;
+				case CC1201EXT_XOSC3: exp = config->xosc3; break;
+				case CC1201EXT_XOSC2: exp = config->xosc2; break;
+				case CC1201EXT_XOSC1: exp = config->xosc1; break;
+				case CC1201EXT_XOSC0: exp = config->xosc0; break;
+				case CC1201EXT_ANALOG_SPARE: exp = config->analogSpare; break;
+				case CC1201EXT_PA_CFG3: exp = config->paCfg3; break;
+				case CC1201EXT_WOR_TIME1: exp = config->worTime1; break;
+				case CC1201EXT_WOR_TIME0: exp = config->worTime0; break;
+				case CC1201EXT_WOR_CAPTURE1: exp = config->worCapture1; break;
+				case CC1201EXT_WOR_CAPTURE0: exp = config->worCapture0; break;
+				case CC1201EXT_BIST: exp = config->bist; break;
+				case CC1201EXT_DCFILTOFFSET_I1: exp = config->dcfiltoffsetI1; break;
+				case CC1201EXT_DCFILTOFFSET_T0: exp = config->dcfiltoffsetI0; break;
+				case CC1201EXT_DCFILTOFFSET_Q1: exp = config->dcfiltoffsetQ1; break;
+				case CC1201EXT_DCFILTOFFSET_Q0: exp = config->dcfiltoffsetQ0; break;
+				case CC1201EXT_IQIE_I1: exp = config->iqieI1; break;
+				case CC1201EXT_IQIE_I0: exp = config->iqieI0; break;
+				case CC1201EXT_IQIE_Q1: exp = config->iqieQ1; break;
+				case CC1201EXT_IQIE_Q0: exp = config->iqieQ0; break;
+				case CC1201EXT_RSSI1: exp = config->rssi1; break;
+				case CC1201EXT_RSSI0: exp = config->rssi0; break;
+				case CC1201EXT_MARCSTATE: exp = config->marcstate; break;
+				case CC1201EXT_LQI_VAL: exp = config->lqiVal; break;
+				case CC1201EXT_PQT_SYNC_ERR: exp = config->pqtSyncErr; break;
+				case CC1201EXT_DEM_STATUS: exp = config->demStatus; break;
+				case CC1201EXT_FREQOFF_EST1: exp = config->freqoffEst1; break;
+				case CC1201EXT_FREQOFF_EST0: exp = config->freqoffEst0; break;
+				case CC1201EXT_AGC_GAIN3: exp = config->agcGain3; break;
+				case CC1201EXT_AGC_GAIN2: exp = config->agcGain2; break;
+				case CC1201EXT_AGC_GAIN1: exp = config->agcGain1; break;
+				case CC1201EXT_AGC_GAIN0: exp = config->agcGain0; break;
+				case CC1201EXT_CFM_RX_DATA_OUT: exp = config->cfmRxDataOut; break;
+				case CC1201EXT_CFM_RX_DATA_IN: exp = config->cfmTxDataIn; break;
+				case CC1201EXT_ASK_SOFT_RX_DATA: exp = config->askSoftRxData; break;
+				case CC1201EXT_RNDGEN: exp = config->rndgen; break;
+				case CC1201EXT_MAGN2: exp = config->magn2; break;
+				case CC1201EXT_MAGN1: exp = config->magn1; break;
+				case CC1201EXT_MAGN0: exp = config->magn0; break;
+				case CC1201EXT_ANG1: exp = config->ang1; break;
+				case CC1201EXT_ANG0: exp = config->ang0; break;
+				case CC1201EXT_CHFILT_I2: exp = config->chfiltI2; break;
+				case CC1201EXT_CHFILT_I1: exp = config->chfiltI1; break;
+				case CC1201EXT_CHFILT_I0: exp = config->chfiltI0; break;
+				case CC1201EXT_CHFILT_Q2: exp = config->chfiltQ2; break;
+				case CC1201EXT_CHFILT_Q1: exp = config->chfiltQ1; break;
+				case CC1201EXT_CHFILT_Q0: exp = config->chfiltQ0; break;
+				case CC1201EXT_GPIO_STATUS: exp = config->gpioStatus; break;
+				case CC1201EXT_FASCL_CTRL: exp = config->fscalCtrl; break;
+				case CC1201EXT_PHASE_ADJUST: exp = config->phaseAdjust; break;
+				case CC1201EXT_PARTNUMBER: exp = config->partnumber; break;
+				case CC1201EXT_PARTVERSION: exp = config->partversion; break;
+				case CC1201EXT_SERIAL_STATUS: exp = config->serialStatus; break;
+				case CC1201EXT_MODEM_STATUS1: exp = config->modemStatus1; break;
+				case CC1201EXT_MODEM_STATUS0: exp = config->modemStatus0; break;
+				case CC1201EXT_MARC_STATUS1: exp = config->marcStatus1; break;
+				case CC1201EXT_MARC_STATUS0: exp = config->marcStatus0; break;
+				case CC1201EXT_PA_IFAMP_TEST: exp = config->paIfampTest; break;
+				case CC1201EXT_FSRF_TEST: exp = config->fsrfTest; break;
+				case CC1201EXT_PRE_TEST: exp = config->preTest; break;
+				case CC1201EXT_PRE_OVR: exp = config->preOvr; break;
+				case CC1201EXT_ADC_TEST: exp = config->adcTest; break;
+				case CC1201EXT_DVC_TEST: exp = config->dvcTest; break;
+				case CC1201EXT_ATEST: exp = config->atest; break;
+				case CC1201EXT_ATEST_LVDS: exp = config->atestLvds; break;
+				case CC1201EXT_ATEST_MODE: exp = config->atestMode; break;
+				case CC1201EXT_XOSC_TEST1: exp = config->xoscTest1; break;
+				case CC1201EXT_XOSC_TEST0: exp = config->xoscTest0; break;
+				case CC1201EXT_AES: exp = config->aes; break;
+				case CC1201EXT_MDM_TEST: exp = config->mdmTest; break;
+				default: exp = 0x00;
+			}
 
+			if (device->readRegExt(extReg) != exp)
+			{
+				//to_string doesn't seem to be supported by the mbed
+				char regCStr[2];
+				char valCStr[2];
+				char expCStr[2];
+				sprintf(regCStr, "%02X", extReg);
+				sprintf(valCStr, "%02X", device->readRegExt(extReg));
+				sprintf(expCStr, "%02X", exp);
+				string regStr((const char*) regCStr, 2);
+				string valStr((const char*) valCStr, 2);
+				string expStr((const char*) expCStr, 2);
+				string errorStr = ("ExtReg: " + regStr + ", Val: " + valStr + ", Exp: " + expStr);
+
+				//log(WARN, "CC1201Config::verifyConfiguration", errorStr.c_str());
+				configurationFaults.push(errorStr);
+			}
+		}
     }
 
-    return false;	
+    return configurationFaults.empty();	
 }
 
+/**
+ *
+ */
 void CC1201Config::loadLinkedDevice(void)
 {
 	CC1201Config::loadConfiguration(this, this->getDeviceLink());
