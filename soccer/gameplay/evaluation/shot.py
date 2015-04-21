@@ -4,10 +4,15 @@ import robocup
 import math
 
 
-# returns a tuple (chance of shot success, best window)
-# the chance of shot success is a value from 0 to 1
+## Evaluate the chance of a shot succeeding
+#
 # @param windowing_excludes - A list of robots to exclude from the window evaluator
-# if debug is True, it draws some stuff on the field - TODO: which stuff?
+# @param pos The Point where the shot will be taken from (the ball's location)
+# @param target A Segment object specifying what we're trying to shoot at
+# @param windowing_excludes A list of robots that should not be considered obstacles to this shot
+# @param hypothetical_robot_locations A list of Points that we'll place robot obstacles at for this shot calculation
+# @param debug If True, it draws some stuff on the field - TODO: which stuff?
+# @return a tuple (chance of shot success, best window), where chance of shot success is a value between zero and one
 def eval_shot(pos, target=constants.Field.TheirGoalSegment, windowing_excludes=[], hypothetical_robot_locations=[], debug=False):
     win_eval = evaluation.window_evaluator.WindowEvaluator()
     win_eval.excluded_robots = windowing_excludes

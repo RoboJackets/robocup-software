@@ -5,8 +5,11 @@ import role_assignment
 import enum
 import robocup
 import skills
+import constants
+import skills.pivot_kick
 
-
+## This class is currently not used for anything
+# This was ported from our old C++ gameplay system and served a purpose then, but is unused now
 class Penalty(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     class State(enum.Enum):
@@ -59,14 +62,14 @@ class Penalty(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
 
     def on_enter_ready(self):
-        kick = skills.kick.Kick()
+        kick = skills.pivot_kick.PivotKick()
         self.add_subbehavior(kick, 'kick', required=True, priority=100)
 
     def on_exit_ready(self):
         self.remove_subbehavior('kick')
 
 
-    # prefer to get assigned robot closest to ball
+    ## prefer to get assigned robot closest to ball
     def role_requirements(self):
         reqs = super().role_requirements()
         if isinstance(reqs, role_assignment.RoleRequirements):

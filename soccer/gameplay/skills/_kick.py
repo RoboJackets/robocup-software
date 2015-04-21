@@ -5,7 +5,7 @@ import constants
 import main
 import role_assignment
 
-# this is the abstract superclass for PivotKick and LineKick
+## this is the abstract superclass for PivotKick and LineKick
 class _Kick(single_robot_behavior.SingleRobotBehavior):
 
     def __init__(self):
@@ -26,7 +26,7 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
         self.shot_obstacle_ignoring_robots = []
 
 
-    # if True, uses the window evaluator to choose the best place to aim at target_segment
+    ## if True, uses the window evaluator to choose the best place to aim at target_segment
     # Default: True
     @property
     def use_windowing(self):
@@ -36,7 +36,7 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
         self._use_windowing = value
 
 
-    # these params are passed to the window evaluator using setattr()
+    ## these params are passed to the window evaluator using setattr()
     # Default: {}
     @property
     def win_eval_params(self):
@@ -47,7 +47,7 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
     
 
 
-    # The thing we're trying to kick at
+    ## The thing we're trying to kick at
     # can be a Segment or a Point
     # setting this property automatically recalculates the target_aim_point
     # Default: the opponent's goal segment
@@ -60,7 +60,7 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
         self.recalculate_aim_target_point()
 
 
-    # A list of robots that the shot obstacle doesn't apply to
+    ## A list of robots that the shot obstacle doesn't apply to
     # Note: the shot obstacle already doesn't apply to the kicker, you don't have to specify that here
     # Default: []
     @property
@@ -73,14 +73,14 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
         self._shot_obstacle_ignoring_robots = value
 
 
-    # We calculate the point we're ACTUALLY going to aim at based on the target Segment/Point and other parameters
+    ## We calculate the point we're ACTUALLY going to aim at based on the target Segment/Point and other parameters
     # This is that point
     @property
     def aim_target_point(self):
         return self._aim_target_point
 
 
-    # we're aiming at a particular point on our target segment, what is this point?
+    ## we're aiming at a particular point on our target segment, what is this point?
     def recalculate_aim_target_point(self):
         if self.robot != None:
             # find the point we want to aim at
@@ -103,7 +103,7 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
                 raise AssertionError("Expected Point or Segment, found: " + str(self.target))
 
 
-    # Allows for different kicker/chipper settings, such as for
+    ## Allows for different kicker/chipper settings, such as for
     # passing with lower power.
     # Default: full power
     @property
@@ -120,7 +120,7 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
         self._chip_power = int(value)
 
 
-    # If false, uses straight kicker, if true, uses chipper (if available)
+    ## If false, uses straight kicker, if true, uses chipper (if available)
     # Default: False
     @property
     def use_chipper(self):
@@ -130,7 +130,7 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
         self._use_chipper = value
 
 
-    # If set to False, will get all ready to go, but won't kick/chip just yet
+    ## If set to False, will get all ready to go, but won't kick/chip just yet
     # Can be used to synchronize between behaviors
     # Default: True
     @property
@@ -141,7 +141,7 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
         self._enable_kick = value
 
 
-    # creates a polygon obstacle from the ball to the target
+    ## creates a polygon obstacle from the ball to the target
     # this obstacle applies to all robots except the kicker and anything specified in the excluded_robots parameter
     # NOTE: this method is not called by _kick, it's up to subclasses/superbehaviors to call it
     def add_shot_obstacle(self, excluded_robots=[]):

@@ -50,7 +50,8 @@ class FieldView : public QWidget
 		bool showRawRobots;
 		bool showRawBalls;
 		bool showCoords;
-        bool showDotPatterns;
+		bool showDotPatterns;
+		bool showTeamNames;
 		
 	protected:
 		virtual void paintEvent(QPaintEvent* e);

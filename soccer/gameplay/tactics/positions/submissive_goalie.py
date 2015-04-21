@@ -72,6 +72,7 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
 
 
         self.block_line = None
+        self._move_target = robocup.Point(0, 0)
 
 
 

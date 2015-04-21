@@ -1,8 +1,10 @@
 libprotobuf.so*
 soccsim
 simulator
+simulator.app
 vehicle_demo
 soccer
+soccer.app
 soccer_tests
 simple_logger
 log_viewer
@@ -23,5 +25,9 @@ libNxCooking.so.1
 libPhysXCore.so.1
 libPhysXLoader.so.1
 robocup.so
+robocup.dylib
+run_tests
+robot2015.bin
+test-cpp
 
 /qt_vehicle_demo

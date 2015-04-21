@@ -26,6 +26,9 @@ extern const note_t song_startup[];
 //Celebration 
 extern const note_t song_victory[];
 
+// still_alive
+extern const note_t song_still_alive[];
+
 //Anthem
 extern const note_t song_national_anthem[];
 

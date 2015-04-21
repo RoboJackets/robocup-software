@@ -18,19 +18,37 @@
 static const int Command_Rate_Limit = 40;
 static int last_out[4];
 
+static const int w0x8 = 136733; //these integers come from the trig functions of the angles of the robots' wheels, multiplied by 100000
+static const int w0y8 = 146628;
+static const int w1x8 = 166164;
+static const int w1y8 = 125214;
+static const int w2x8 = 155572;
+static const int w2y8 = 130541;
+static const int w3x8 = 143956;
+static const int w3y8 = 139016;
+static const int wfx11 = 155572;
+static const int wfy11 = 130541;
+static const int wrx11 = 122077;
+static const int wry11 = 174345;
+
 const controller_info_t *default_controller;
 
 ////////
 
 static void dumb_update()
 {
-	int wheel_command[4] =
-	{
-		-cmd_body_x - cmd_body_y + cmd_body_w,
-		-cmd_body_x + cmd_body_y + cmd_body_w,
-		cmd_body_x + cmd_body_y + cmd_body_w,
-		cmd_body_x - cmd_body_y + cmd_body_w
-	};
+	int wheel_command[4];
+	if (base2008) { //this is because integer math is faster than simply handling doubles
+		wheel_command[0] = (-cmd_body_x * w0x8 / 100000 + cmd_body_y * w0y8 / 100000) * 100000 / (w0x8 + w0y8) + cmd_body_w;
+		wheel_command[1] = (-cmd_body_x * w1x8 / 100000 - cmd_body_y * w1y8 / 100000) * 100000 / (w1x8 + w1y8) + cmd_body_w;
+		wheel_command[2] = (cmd_body_x * w2x8 / 100000 - cmd_body_y * w2y8 / 100000) * 100000 / (w2x8 + w2y8) + cmd_body_w;
+		wheel_command[3] = (cmd_body_x * w3x8 / 100000 + cmd_body_y * w3y8 / 100000) * 100000 / (w3x8 + w3y8) + cmd_body_w;
+	} else {
+		wheel_command[0] = (-cmd_body_x * wrx11 / 100000 + cmd_body_y * wry11 / 100000) * 100000 / (wrx11 + wry11) + cmd_body_w;
+		wheel_command[1] = (-cmd_body_x * wfx11 / 100000 - cmd_body_y * wfy11 / 100000) * 100000 / (wfx11 + wfy11) + cmd_body_w;
+		wheel_command[2] = (cmd_body_x * wfx11 / 100000 - cmd_body_y * wfy11 / 100000) * 100000 / (wfx11 + wfy11) + cmd_body_w;
+		wheel_command[3] = (cmd_body_x * wrx11 / 100000 + cmd_body_y * wry11 / 100000) * 100000 / (wrx11 + wry11) + cmd_body_w;
+	}
 	
 	for (int i = 0; i < 5; ++i)
 	{

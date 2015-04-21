@@ -3,12 +3,15 @@ import time
 from enum import Enum
 
 
-# allows us to easily put a time-limit on the execution of a behavior
+## TimedBehavior wraps a subbehavior and allows us to easily place a time limit on it.
+# After the specified amount of time has elapsed, the wrapped behavior is cancelled.
 class TimedBehavior(Behavior):
 
-    # having a separate timed_out state rather than just using the "failed" state from Behavior
-    # allows us to differentiate between timing out and the enclosed behavior failing
+
     class State(Enum):
+
+        ## Having a separate timed_out state rather than just using the "failed" state from Behavior
+        # allows us to differentiate between timing out and the enclosed behavior failing
         timed_out = 1
 
 

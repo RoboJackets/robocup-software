@@ -4,6 +4,7 @@ import constants
 import robocup
 import evaluation.window_evaluator
 import evaluation.shot
+import evaluation.passing
 import main
 from enum import Enum
 import math
@@ -15,11 +16,11 @@ import tactics.positions.submissive_defender
 # TODO: handle the case where the ball is invalid
 
 
-# The Defense tactic handles goalie and defender placement to defend the goal
+## The Defense tactic handles goalie and defender placement to defend the goal
 # It does lots of window and shot evaluation to figure out which 'threats' are the
 # most important to block, then assigns blocking positions to the bots
 # The old defense strategy had a goalie and two defenders that didn't coordinate with eachother
-# and tended to overlap and not get an optimal positioning - this tactic handles the coordination
+# and tended to overlap and not get an optimal positioning - this tactic handles the coordination.
 class Defense(composite_behavior.CompositeBehavior):
 
     # defender_priorities should have a length of two and contains the priorities for the two defender
@@ -52,7 +53,7 @@ class Defense(composite_behavior.CompositeBehavior):
 
 
 
-    # draws some pretty cool shit on the field if set to True
+    ## draws some pretty cool shit on the field if set to True
     # default: True
     @property
     def debug(self):
@@ -299,30 +300,9 @@ class Defense(composite_behavior.CompositeBehavior):
         # we look at potential receivers of it as threats
         if isinstance(threats[0].source, robocup.OpponentRobot):
             for opp in filter(lambda t: t.visible, potential_threats):
-                # we make a pass triangle with the far corner at the ball and the opposing side touching the receiver's mouth
-                # the side along the receiver's mouth is the 'receive_seg'
-                # we then use the window evaluator on this scenario to see if the pass is open
-                pass_angle = math.pi / 8.0
-                pass_dist = opp.pos.dist_to(main.ball().pos)
-                pass_dir = opp.pos - main.ball().pos
-                pass_perp = pass_dir.perp_ccw()
-                receive_point = opp.pos - pass_dir * constants.Robot.Radius # the mouth of the receiver
-                receive_seg_half_len = math.tan(pass_angle) * pass_dist
-                receive_seg = robocup.Segment(receive_point + pass_perp*receive_seg_half_len,
-                    receive_point + pass_perp*-receive_seg_half_len)
-
-                win_eval = evaluation.window_evaluator.WindowEvaluator()
-                win_eval.excluded_robots = [opp]
-                windows, best = win_eval.eval_pt_to_seg(main.ball().pos, receive_seg)
-
-                # this is our estimate of the likelihood of the pass succeeding
-                # value can range from zero to one
-                # we square the ratio of best to total to make it weigh more - we could raise it to higher power if we wanted
-                if best != None:
-                    pass_chance = 0.8 * (best.segment.length() / receive_seg.length())**2
-                else:
-                    # give it a small chance because the obstacles in the way could move soon and we don't want to consider it a zero threat
-                    pass_chance = 0.4
+                pass_chance = evaluation.passing.eval_pass(main.ball().pos, opp.pos, excluded_robots=[opp])
+                # give it a small chance because the obstacles in the way could move soon and we don't want to consider it a zero threatos, )
+                if pass_chance < 0.001: pass_chance = 0.4 
 
 
                 # record the threat

@@ -96,11 +96,8 @@ public:
 	/** gets a robot with id from the environment */
 	Robot *robot(bool blue, int board_id) const;
 
-signals:
-	// connect to visualization for rendering
-	void setRobotPose(bool blue, int id, const QVector3D& pos, qreal angle, const QVector3D& axis);
-	void addNewRobot(bool blue, int id);
-	void removeExistingRobot(bool blue, int id);
+	void reshapeFieldBodies();
+
 
 public:
 
@@ -114,7 +111,6 @@ protected Q_SLOTS:
 	void step();
 
 public:
-
 	//render
 	void renderScene(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax);
 

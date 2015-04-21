@@ -2,7 +2,7 @@ from play import *
 from behavior import *
 import plays.stopped
 import logging
-from PyQt4 import QtCore
+from PyQt5 import QtCore
 import main
 import evaluation.double_touch
 import tactics.positions.goalie
@@ -10,7 +10,7 @@ import role_assignment
 import traceback
 
 
-# the RootPlay is basically the python-side of the c++ GameplayModule
+## The RootPlay is basically the python-side of the c++ GameplayModule
 # it coordinates the selection of the 'actual' play and handles the goalie behavior
 class RootPlay(Play, QtCore.QObject):
 
@@ -159,7 +159,7 @@ class RootPlay(Play, QtCore.QObject):
         self.play_changed.emit(self.play.__class__.__name__ if self._play != None else "(No Play)")
 
 
-    # the c++ GameplayModule reaches through the language portal and sets this
+    ## the c++ GameplayModule reaches through the language portal and sets this
     # note that in c++, a value of -1 indicates no assigned goalie, in python we represent the same thing with None
     @property
     def goalie_id(self):
@@ -194,3 +194,7 @@ class RootPlay(Play, QtCore.QObject):
     @robots.setter
     def robots(self, robots):
         self._robots = robots if robots != None else []
+
+
+    def __str__(self):
+        return '\n'.join([str(bhvr) for bhvr in self.all_subbehaviors()])

@@ -1,10 +1,82 @@
 #!/bin/bash -e
 
+HELP_STR="Usage: ./ubuntu-setup [-y | --yes] [-n | --noclobber] [-c | --clobber] [-f | --firmware] [-nf | --nofirmware] [-h | --help]
+
+\tyes:\t\tassume no user input
+\tnoclobber:\tdont install 3rd party repositories
+\tclobber:\tInstall 3rd party repositories
+\tfirmware:\tInstall firmware repository
+\tnofirmware:\tPrevents installation of firmware deps firmware repository
+\thelp:\t\tprint this message!
+
+This script will need root privileges"
+
+# defaults!
+YES=false
+
+# if we change this to true, please put it in the below if statment, as debian already has a good version...
+if [ -z "$(cat /etc/os-release | grep -i '^NAME=.*Debian')" ]; then # dont add repositories on debian, compatability issues?
+    ADD_REPOS=true
+    FIRMWARE=true
+else
+    ADD_REPOS=false
+    FIRMWARE=false
+fi
+
+
+# parse command line args
+for i in "$@"
+do
+    case $i in
+        -y|--yes)
+            YES=true
+            ;;
+        -n|--noclobber)
+            # This option omits the addition of the 3rd party repos
+            ADD_REPOS=false
+            ;;
+        -c|--clobber)
+            # This option forces addition of the custom repos
+            ADD_REPOS=true
+            ;;
+        -f|--firmware)
+            # This option forces the addition of the firmware repositories
+            FIRMWARE=true
+            ;;
+        -nf|--nofirmware)
+            # This option turns off the addition of the firmware repositories
+            FIRMWARE=false
+            ;;
+        -h|--help)
+            echo -e "$HELP_STR"
+            exit 1
+            ;;
+        *)
+            echo "Unrecognized Option: $i"
+            echo -e "\n$HELP_STR"
+            exit 1
+            # unknown options
+            ;;
+    esac
+done
+
 # Become root
 if [ $UID -ne 0 ]; then
 	echo "-- Becoming root"
-	exec sudo $0
+	exec sudo $0 $@
 fi
+
+# add repo for backport of cmake3 from debian testing
+# TODO remove this once ubuntu ships cmake3
+if $ADD_REPOS; then
+    apt-add-repository -y ppa:packetlost/cmake
+fi
+
+if $FIRMWARE; then
+    add-apt-repository -y ppa:terry.guo/gcc-arm-embedded
+fi
+
+# apt get install cmake is taken care of by requirements
 
 apt-get update
 
@@ -17,14 +89,23 @@ echo "-- Installing udev rules"
 cp -f $BASE/util/robocup.rules /etc/udev/rules.d/
 
 echo "-- Installing required packages"
+
+# if yes option is checked, add  a -y
+ARGS=""
+if $YES; then
+    ARGS="-y"
+fi
+
+if $FIRMWARE; then
+    # This is kind of hacky and could produce unwanted side effects
+    # If the firmware switch does more things, it may be better to make a firmware-deps file!
+    ARGS="$ARGS gcc-arm-none-eabi"
+fi
+
 # install all of the packages listed in required_packages.txt
-apt-get install $(sed 's/#.*//;/^$/d' $BASE/util/required_packages.txt)
-
-# remove old version of git python
-yes | easy_install GitPython
-
-# get pip the old way
-easy_install3 pip
+apt-get install $ARGS $(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)
 
 # install python3 requirements
 pip3 install -r $BASE/util/requirements3.txt
+# install python2 requirements
+pip2 install -r $BASE/util/requirements2.txt

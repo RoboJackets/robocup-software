@@ -2,6 +2,7 @@
 
 #include "Entity.hpp"
 #include <GL/glut.h>
+#include <BulletDynamics/Dynamics/btRigidBody.h>
 
 class btTriangleIndexVertexArray;
 class SimEngine;
@@ -28,9 +29,15 @@ public:
 
 	void renderField();
 
+	void reshapeBodies();
+
 private:
 	float _x;
 	float _y;
+
+	btRigidBody *_wallBodies[4];
+	btRigidBody *_blueGoalBodies[3];
+	btRigidBody *_yellowGoalBodies[3];
 
 	// Utility functions for rendering
 	void renderVerticalLine(float x1, float z1, float x2, float z2, float height, float lineWidth);

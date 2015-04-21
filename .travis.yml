@@ -1,25 +1,24 @@
 language: cpp
-compiler: clang
+compiler: gcc
 
 submodules: false
 
+# holds github oauth token so we can push compiled doxygen documentation
+# generated with: `travis encrypt 'GIT_USERNAME="justbuchanan" GIT_EMAIL="justbuchanan@gmail.com" GH_TOKEN=######################'`
+env:
+  global:
+    secure: "L9gLcUuHMBnCeHIyecTAUR0C3FoS6HwyQzrYm50leQ4icxFNfusqDJcsOQGs9JrGucLxq8Oj+hcYJUXQLKT2iQLm0IWfji0/w5H9Ocy5GZDmw8xUvJOJjgGwKdndn+lgsvRkmTtBguz4Pyn2gkUlILKDoR4Jx6pQ4jxrJkVMEA0="
+
+
 before_install:
-  # we have to get the games PPA so we can install libbullet-dev
-  - wget -q -O - http://archive.getdeb.net/getdeb-archive.key | sudo apt-key add -
-  - sudo sh -c 'echo "deb http://archive.getdeb.net/ubuntu raring-getdeb games" >> /etc/apt/sources.list.d/getdeb.list'
+  # auto-update documentation site
+  - './autoupdate-docs-travis.sh'
+  - './util/travis-setup'
+  - export CC=gcc-4.7
+  - export CXX=g++-4.7
 
-  # we use boost python 3.3, but ubuntu12.04 (which travis uses as of now) has an older version
-  # we get around this by using 'apt-pinning' to get this package from a newer ubuntu repo
-  # see this link for more info: http://askubuntu.com/questions/103320/install-packages-from-newer-release-without-building-apt-pinning
-  - sudo sh -c 'echo "Package&colon; libboost*\\nPin&colon; release n=saucy\\nPin-Priority&colon; 990\\n" >> /etc/apt/preferences.d/robocup.pref'
-  - sudo sh -c 'echo "Package&colon; python*\\nPin&colon; release n=saucy\\nPin-Priority&colon; 990\\n" >> /etc/apt/preferences.d/robocup.pref'
-  - sudo sh -c 'echo "deb http://archive.ubuntu.com/ubuntu saucy main" > /etc/apt/sources.list.d/saucy.list'
-
-  - sudo apt-get update
-
-  - sudo ./util/ubuntu-setup
-
-script: scons && scons test
+script: make && make test-cpp && make robot2015
 
 notifications:
-  email: true
+  email: false
+

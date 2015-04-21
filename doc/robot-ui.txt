@@ -25,5 +25,5 @@ DP1: On=2008 base, Off=2011 base
 DP2: On=Disable all motors (for electronics debugging), Off=Normal operation
 DP3: On=Reload SAM-BA bootloader, Off=Normal operation
 	Set DP3 ON and power on.  Wait 10s.  Set DP3 OFF and power cycle.
-	Use "sudo scons robot-prog-samba" to reload firmware.
+	Use "make robot-prog-samba" to reload firmware.
 DP4: On=Secondary radio channel, Off=Primary radio channel

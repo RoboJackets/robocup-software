@@ -3,15 +3,15 @@
 #include <cstring>
 #include <stdio.h>
 #include <iostream>
+#include <math.h>
 
 using namespace std;
 
 
-Pid::Pid(float p, float i, float d, unsigned int windup)
+Pid::Pid(float p, float i, float d, unsigned int windup) : _oldErr()
 {
 	_windupLoc = 0;
 	_errSum = 0;
-	_oldErr = 0;
 	
 	_lastErr = 0;
 
@@ -23,38 +23,35 @@ Pid::Pid(float p, float i, float d, unsigned int windup)
 	setWindup(windup);
 }
 
-Pid::~Pid()
-{
-	if (_oldErr)
-	{
-		delete[] _oldErr;
-		_oldErr = nullptr;
-	}
-}
-
 void Pid::setWindup(unsigned int w)
 {
-	if (w > 0)
+	if (w != _windup) 
 	{
-		if (w != _windup) {
-			_windup = w;
-			_oldErr = new float[_windup];
-			memset(_oldErr, 0, sizeof(float)*_windup);
+		_windup = w;
+
+		if (w > 0)
+		{	
+			_oldErr.resize(w);
+			_errSum=0;
+			std::fill(_oldErr.begin(), _oldErr.end(), 0);
+		} else {
+			_oldErr.clear();
 		}
-	} else {
-		if (_oldErr) delete[] _oldErr;
-		_oldErr = nullptr;
 	}
 }
 
 float Pid::run(const float err)
 {
+	if (isnan(err))
+	{
+		return 0;
+	}
 	float dErr = err - _lastErr;
 	_lastErr = err;
 
 	_errSum += err;
 	
-	if (_oldErr)
+	if (_windup>0)
 	{
 		_errSum -= _oldErr[_windupLoc];
 		_oldErr[_windupLoc] = err;
@@ -67,11 +64,6 @@ float Pid::run(const float err)
 
 void Pid::clearWindup()
 {
-	if (_oldErr)
-	{
-		for (unsigned int i=0 ; i<_windup ; ++i)
-		{
-			_oldErr[i] = 0;
-		}
-	}
+	_errSum=0;
+	std::fill(_oldErr.begin(), _oldErr.end(), 0);
 }

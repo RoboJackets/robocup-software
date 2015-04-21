@@ -60,17 +60,17 @@ find_tty = Command(File('tools/find_tty.py'), File('tools/find_tty.py').srcnode(
 Depends(samba_flash, sam7)
 Depends(samba_flash, find_tty)
 
-# Update git version text which will be compiled into the firmware for the status command
-arm.Tool('textfile')
-import git
-repo = git.Repo(Dir('#').path)
-git_version = repo.head.commit.hexsha
-if repo.is_dirty():
-	git_version += ' (modified)';
-version = arm.Textfile('version.c',
-	['const char git_version[] = "@version@";', ''],
-	SUBST_DICT=(('@version@', git_version),)
-)
+# # Update git version text which will be compiled into the firmware for the status command
+# arm.Tool('textfile')
+# import pygit2
+# repo = pygit2.Repository(Dir('#').abspath)
+# git_version = str(repo.head.target)
+# if len(repo.diff('HEAD')) > 0 :
+# 	git_version += ' (modified)';
+# version = arm.Textfile('version.c',
+# 	['const char git_version[] = "@version@";', ''],
+# 	SUBST_DICT=(('@version@', git_version),)
+# )
 
 # Files to build
 robot_fw = arm_flash.Program('robocup.elf', [
@@ -84,7 +84,6 @@ robot_fw = arm_flash.Program('robocup.elf', [
 	'board_cstartup.S',
 	'board_lowlevel.c',
 	'board_memories.c',
-	version,
 	'main.c',
 	'console.c',
 	'commands.c',

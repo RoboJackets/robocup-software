@@ -34,9 +34,12 @@ static const int SimVisionPort = 9000;
 static const int LegacyRefereePort = 10001;
 static const int ProtobufRefereePort = 10003;
 
-static const int SharedVisionPort = 10002; // Kept around for legacy code
-static const int SharedVisionPortFirstHalf = 10002;
-static const int SharedVisionPortSecondHalf = 10004;
+static const int SharedVisionPort = 10002;                // Kept around for legacy code
+static const int SharedVisionPortSinglePrimary = 10002;   // Primary Single-sized field port with old Protobuf protocol
+static const int SharedVisionPortSingleSecondary = 10004; // Secondary Single-sized field port with old Protobuf protocol
+static const int SharedVisionPortDoubleOld = 10005;       // Double-sized field port with old Protobuf protocol
+static const int SharedVisionPortDoubleNew = 10006;       // Double-sized field port with new Protobuf protocol
+
 
 static const int RadioRxPort = 12000;
 static const int RadioTxPort = 13000;

@@ -11,14 +11,14 @@
 #include <multicast.hpp>
 #include <Constants.hpp>
 #include <Utils.hpp>
-#include <Joystick.hpp>
+#include <joystick/GamepadJoystick.hpp>
+#include <joystick/SpaceNavJoystick.hpp>
 #include <LogUtils.hpp>
 #include <Robot.hpp>
 
 #include <motion/MotionControl.hpp>
 #include <RobotConfig.hpp>
 
-#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
 #include <protobuf/messages_robocup_ssl_detection.pb.h>
@@ -26,7 +26,7 @@
 #include <protobuf/messages_robocup_ssl_geometry.pb.h>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
-#include <git_version.h>
+#include <git_version.hpp>
 
 REGISTER_CONFIGURABLE(Processor)
 
@@ -40,6 +40,16 @@ static const uint64_t Command_Latency = 0;
 RobotConfig *Processor::robotConfig2008;
 RobotConfig *Processor::robotConfig2011;
 std::vector<RobotStatus*> Processor::robotStatuses; ///< FIXME: verify that this is correct
+
+
+//	Joystick speed limits (for damped and non-damped mode)
+// Translation in m/s, Rotation in rad/s
+static const float JoystickRotationMaxSpeed = 4 * M_PI;
+static const float JoystickRotationMaxDampedSpeed = 1 * M_PI;
+static const float JoystickTranslationMaxSpeed = 3.0;
+static const float JoystickTranslationMaxDampedSpeed = 1.0;
+
+
 
 void Processor::createConfiguration(Configuration *cfg)
 {
@@ -66,7 +76,12 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive)
 
 	_simulation = sim;
 	_radio = 0;
-	_joystick = new Joystick();
+
+	//	joysticks
+	_joysticks.push_back(new GamepadJoystick());
+	_joysticks.push_back(new SpaceNavJoystick());
+	_dampedTranslation = true;
+	_dampedRotation = true;
 	
 	// Initialize team-space transformation
 	defendPlusX(_defendPlusX);
@@ -84,8 +99,10 @@ Processor::~Processor()
 {
 	stop();
 	
-	delete _joystick;
-	
+	for (Joystick *joy : _joysticks) {
+		delete joy;
+	}
+
 	//DEBUG - This is unnecessary, but lets us determine which one breaks.
 	//_refereeModule.reset();
 	_gameplayModule.reset();
@@ -104,7 +121,10 @@ void Processor::manualID(int value)
 {
 	QMutexLocker locker(&_loopMutex);
 	_manualID = value;
-	_joystick->reset();
+
+	for (Joystick *joy : _joysticks) {
+		joy->reset();
+	}
 }
 
 void Processor::goalieID(int value)
@@ -122,13 +142,13 @@ int Processor::goalieID()
 void Processor::dampedRotation(bool value)
 {
 	QMutexLocker locker(&_loopMutex);
-	_joystick->dampedRotation(value);
+	_dampedRotation = value;
 }
 
 void Processor::dampedTranslation(bool value)
 {
 	QMutexLocker locker(&_loopMutex);
-	_joystick->dampedTranslation(value);
+	_dampedTranslation = value;
 }
 
 /**
@@ -149,37 +169,33 @@ void Processor::blueTeam(bool value)
     }
 }
 
-/**
- * I believe this checks whether or not there is a joystick
- */
 bool Processor::joystickValid()
 {
 	QMutexLocker lock(&_loopMutex);
-	return _joystick->valid();
-}
-
-JoystickControlValues Processor::joystickControlValues() {
-	return _joystick->getJoystickControlValues();
+	for (Joystick *joy : _joysticks) {
+		if (joy->valid()) return true;
+	}
+	return false;
 }
 
 void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFrames)
 {
 	vector<BallObservation> ballObservations;
 	
-	BOOST_FOREACH(const SSL_DetectionFrame* frame, detectionFrames)
+	for (const SSL_DetectionFrame* frame : detectionFrames)
 	{
-		uint64_t time = frame->t_capture() * SecsToTimestamp;
+		Time time = frame->t_capture() * SecsToTimestamp;
 		
 		// Add ball observations
 		ballObservations.reserve(ballObservations.size() + frame->balls().size());
-		BOOST_FOREACH(const SSL_DetectionBall &ball, frame->balls())
+		for (const SSL_DetectionBall &ball : frame->balls())
 		{
 			ballObservations.push_back(BallObservation(_worldToTeam * Point(ball.x() / 1000, ball.y() / 1000), time));
 		}
 		
 		// Add robot observations
 		const RepeatedPtrField<SSL_DetectionRobot> &selfRobots = _blueTeam ? frame->robots_blue() : frame->robots_yellow();
-		BOOST_FOREACH(const SSL_DetectionRobot &robot, selfRobots)
+		for (const SSL_DetectionRobot &robot : selfRobots)
 		{
 			float angleRad = fixAngleRadians(robot.orientation() + _teamAngle);
 			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angleRad, time, frame->frame_number());
@@ -192,7 +208,7 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 		}
 		
 		const RepeatedPtrField<SSL_DetectionRobot> &oppRobots = _blueTeam ? frame->robots_yellow() : frame->robots_blue();
-		BOOST_FOREACH(const SSL_DetectionRobot &robot, oppRobots)
+		for (const SSL_DetectionRobot &robot : oppRobots)
 		{
 			float angleRad = fixAngleRadians(robot.orientation() + _teamAngle);
 			RobotObservation obs(_worldToTeam * Point(robot.x() / 1000, robot.y() / 1000), angleRad, time, frame->frame_number());
@@ -207,16 +223,17 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 	
 	_ballTracker->run(ballObservations, &_state);
 	
-	BOOST_FOREACH(Robot *robot, _state.self)
+	for (Robot *robot : _state.self)
 	{
 		robot->filter()->predict(_state.logFrame->command_time(), robot);
 	}
 	
-	BOOST_FOREACH(Robot *robot, _state.opp)
+	for (Robot *robot : _state.opp)
 	{
 		robot->filter()->predict(_state.logFrame->command_time(), robot);
 	}
 }
+
 /**
  * program loop
  */
@@ -233,7 +250,7 @@ void Processor::run()
 	//main loop
 	while (_running)
 	{
-		uint64_t startTime = timestamp();
+		Time startTime = timestamp();
 		int delta_us = startTime - curStatus.lastLoopTime;
 		_framerate = 1000000.0 / delta_us;
 		curStatus.lastLoopTime = startTime;
@@ -249,6 +266,7 @@ void Processor::run()
 		
 		// Make a new log frame
 		_state.logFrame = std::make_shared<Packet::LogFrame>();
+    _state.logFrame->set_timestamp(timestamp());
 		_state.logFrame->set_command_time(startTime + Command_Latency);
 		_state.logFrame->set_use_our_half(_useOurHalf);
 		_state.logFrame->set_use_opponent_half(_useOpponentHalf);
@@ -267,7 +285,7 @@ void Processor::run()
 			logConfig->set_simulation(_simulation);
 		}
 		
-		BOOST_FOREACH(OurRobot *robot, _state.self)
+		for (OurRobot *robot : _state.self)
 		{
 			// overall robot config
 			switch (robot->hardwareVersion())
@@ -294,7 +312,7 @@ void Processor::run()
 		vector<const SSL_DetectionFrame *> detectionFrames;
 		vector<VisionPacket *> visionPackets;
 		vision.getPackets(visionPackets);
-		BOOST_FOREACH(VisionPacket *packet, visionPackets)
+		for (VisionPacket *packet : visionPackets)
 		{
 			SSL_WrapperPacket *log = _state.logFrame->add_raw_vision();
 			log->CopyFrom(packet->wrapper);
@@ -352,7 +370,7 @@ void Processor::run()
 		
 		// Read radio reverse packets
 		_radio->receive();
-		BOOST_FOREACH(const Packet::RadioRx &rx, _radio->reversePackets())
+		for (const Packet::RadioRx &rx : _radio->reversePackets())
 		{
 			_state.logFrame->add_radio_rx()->CopyFrom(rx);
 			
@@ -372,13 +390,35 @@ void Processor::run()
 		
 		_loopMutex.lock();
 		
-		_joystick->update();
+		for (Joystick *joystick : _joysticks) {
+			joystick->update();
+		}
 		
 		runModels(detectionFrames);
-
+		for (VisionPacket *packet : visionPackets)
+		{
+			delete packet;
+		}
+		
 		// Update gamestate w/ referee data
 		_refereeModule->updateGameState(blueTeam());
 		_refereeModule->spinKickWatcher();
+
+
+		string yellowname,bluename;
+
+		if(blueTeam()){
+			bluename = _state.gameState.OurInfo.name;
+			yellowname = _state.gameState.TheirInfo.name;
+		}
+		else{
+			yellowname = _state.gameState.OurInfo.name;
+			bluename = _state.gameState.TheirInfo.name;
+		}
+
+
+		_state.logFrame->set_team_name_blue(bluename);
+		_state.logFrame->set_team_name_yellow(yellowname);
 		
 		if (_gameplayModule)
 		{
@@ -386,7 +426,7 @@ void Processor::run()
 		}
 
 		// Run velocity controllers
-		BOOST_FOREACH(OurRobot *robot, _state.self)
+		for (OurRobot *robot : _state.self)
 		{
 			if (robot->visible)
 			{
@@ -404,13 +444,13 @@ void Processor::run()
 		
 		// Debug layers
 		const QStringList &layers = _state.debugLayers();
-		BOOST_FOREACH(const QString &str, layers)
+		for (const QString &str : layers)
 		{
 			_state.logFrame->add_debug_layers(str.toStdString());
 		}
 		
-		// Our robots
-		BOOST_FOREACH(OurRobot *r, _state.self)
+		// Add our robots data to the LogFram
+		for (OurRobot *r : _state.self)
 		{
 			if (r->visible)
 			{
@@ -418,7 +458,9 @@ void Processor::run()
 				
 				Packet::LogFrame::Robot *log = _state.logFrame->add_self();
 				*log->mutable_pos() = r->pos;
-				*log->mutable_vel() = r->vel;
+				*log->mutable_world_vel() = r->vel;
+				*log->mutable_body_vel() = r->vel.rotated(2*M_PI - r->angle);
+				//*log->mutable_cmd_body_vel() = r->
 				// *log->mutable_cmd_vel() = r->cmd_vel;
 				// log->set_cmd_w(r->cmd_w);
 				log->set_shell(r->shell());
@@ -456,7 +498,7 @@ void Processor::run()
 					log->clear_quaternion();
 				}
 				
-				BOOST_FOREACH(const Packet::DebugText &t, r->robotText)
+				for (const Packet::DebugText &t : r->robotText)
 				{
 					log->add_text()->CopyFrom(t);
 				}
@@ -464,7 +506,7 @@ void Processor::run()
 		}
 		
 		// Opponent robots
-		BOOST_FOREACH(OpponentRobot *r, _state.opp)
+		for (OpponentRobot *r : _state.opp)
 		{
 			if (r->visible)
 			{
@@ -472,7 +514,8 @@ void Processor::run()
 				*log->mutable_pos() = r->pos;
 				log->set_shell(r->shell());
 				log->set_angle(r->angle);
-				*log->mutable_vel() = r->vel;
+				*log->mutable_world_vel() = r->vel;
+				*log->mutable_body_vel() = r->vel.rotated(2*M_PI - r->angle);
 			}
 		}
 		
@@ -503,7 +546,7 @@ void Processor::run()
 		////////////////
 		// Timing
 		
-		uint64_t endTime = timestamp();
+		Time endTime = timestamp();
 		int lastFrameTime = endTime - startTime;
 		if (lastFrameTime < _framePeriod)
 		{
@@ -528,7 +571,7 @@ void Processor::sendRadioData()
 	if (_state.gameState.halt())
 	{
 		// Force all motor speeds to zero
-		BOOST_FOREACH(OurRobot *r, _state.self)
+		for (OurRobot *r : _state.self)
 		{
 			Packet::RadioTx::Robot &txRobot = r->radioTx;
 			txRobot.set_body_x(0);
@@ -540,9 +583,9 @@ void Processor::sendRadioData()
 	}
 	
 	// Add RadioTx commands for visible robots and apply joystick input
-	BOOST_FOREACH(OurRobot *r, _state.self)
+	for (OurRobot *r : _state.self)
 	{
-		if (r->visible)
+		if (r->visible || _manualID == r->shell())
 		{
 			Packet::RadioTx::Robot *txRobot = tx->add_robots();
 			
@@ -551,28 +594,89 @@ void Processor::sendRadioData()
 			// number of motors.
 			txRobot->CopyFrom(r->radioTx);
 			
-			if (_manualID >= 0 && (int)r->shell() == _manualID)
+			if (r->shell() == _manualID)
 			{
-				// Drive this robot manually
-				_joystick->drive(txRobot);
+				JoystickControlValues controlVals = getJoystickControlValues();
+				applyJoystickControls(controlVals, txRobot, r);
 			}
 		}
 	}
-	
-	// Manual driving for invisible robots
-	if (_manualID >= 0 && !_state.self[_manualID]->visible && tx->robots_size() < (int)Robots_Per_Team)
-	{
-		// The manual robot wasn't found by vision/modeling but we have room for it in the packet.
-		// This allows us to drive an off-field robot for testing or to drive a robot back onto the field.
-		Packet::RadioTx::Robot *txRobot = &_state.self[_manualID]->radioTx;
-		_joystick->drive(txRobot);
-		tx->add_robots()->CopyFrom(*txRobot);
-	}
 
-	if (_radio)
-    {
+	if (_radio) {
 		_radio->send(*_state.logFrame->mutable_radio_tx());
 	}
+}
+
+void Processor::applyJoystickControls(const JoystickControlValues &controlVals, Packet::RadioTx::Robot *tx, OurRobot *robot) {
+	Geometry2d::Point translation(controlVals.translation);
+
+	//	use world coordinates if we can see the robot
+	//	otherwise default to body coordinates
+	if (robot && robot->visible) {
+		translation.rotate(-robot->angle);
+	} else {
+		//	adjust for robot coordinate system (x axis points forward through the mouth of the bot)
+		translation.rotate(-M_PI / 2.0f);
+	}
+
+	//	translation
+	tx->set_body_x(translation.x);
+	tx->set_body_y(translation.y);
+
+	//	rotation
+	tx->set_body_w(controlVals.rotation);
+
+	//	kick/chip
+	bool kick = controlVals.kick || controlVals.chip;
+	tx->set_kick_immediate(kick);
+	tx->set_kick(kick ? controlVals.kickPower : 0);
+	tx->set_use_chipper(controlVals.chip);
+
+	//	dribbler
+	tx->set_dribbler(controlVals.dribble ? controlVals.dribblerPower : 0);
+}
+
+JoystickControlValues Processor::getJoystickControlValues() {
+	//	if there's more than one joystick, we add their values
+	JoystickControlValues vals;
+	for (Joystick *joy : _joysticks) {
+		if (joy->valid()) {
+			JoystickControlValues newVals = joy->getJoystickControlValues();
+
+			if (newVals.dribble) vals.dribble = true;
+			if (newVals.kick) vals.kick = true;
+			if (newVals.chip) vals.chip = true;
+
+			vals.rotation += newVals.rotation;
+			vals.translation += newVals.translation;
+
+			vals.dribblerPower = max<double>(vals.dribblerPower, newVals.dribblerPower);
+			vals.kickPower = max<double>(vals.kickPower, newVals.kickPower);
+		}
+	}
+
+	//	keep it in range
+	vals.translation.clamp(sqrt(2.0));
+	if (vals.rotation > 1) vals.rotation = 1;
+	if (vals.rotation < -1) vals.rotation = -1;
+
+	//	scale up speeds, respecting the damping modes
+	if (_dampedTranslation) {
+		vals.translation *= JoystickTranslationMaxDampedSpeed;
+	} else {
+		vals.translation *= JoystickRotationMaxSpeed;
+	}
+	if (_dampedRotation) {
+		vals.rotation *= JoystickRotationMaxDampedSpeed;
+	} else {
+		vals.rotation *= JoystickRotationMaxSpeed;
+	}
+
+	//	scale up kicker and dribbler speeds
+	vals.dribblerPower *= 128;
+	vals.kickPower *= 255;
+
+	return vals;
 }
 
 void Processor::defendPlusX(bool value)
@@ -586,8 +690,7 @@ void Processor::defendPlusX(bool value)
 		_teamAngle = M_PI_2;
 	}
 
-	_worldToTeam = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Length / 2.0f));
-	_worldToTeam *= Geometry2d::TransformMatrix::rotate(_teamAngle);
+	recalculateWorldToTeamTransform();
 }
 
 void Processor::changeVisionChannel(int port)
@@ -601,4 +704,15 @@ void Processor::changeVisionChannel(int port)
 	vision.start();
 
 	_loopMutex.unlock();
+}
+
+void Processor::recalculateWorldToTeamTransform() {
+	_worldToTeam = Geometry2d::TransformMatrix::translate(0, Field_Dimensions::Current_Dimensions.Length() / 2.0f);
+	_worldToTeam *= Geometry2d::TransformMatrix::rotate(_teamAngle);
+}
+
+void Processor::setFieldDimensions(const Field_Dimensions &dims) {
+	Field_Dimensions::Current_Dimensions = dims;
+	recalculateWorldToTeamTransform();
+	_gameplayModule->sendFieldDimensionsToPython();
 }

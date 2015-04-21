@@ -1,2 +1,0 @@
-#!/bin/sh
-sudo tcpdump $* -s 0 -n -w `date +logs/vision-%Y%m%d-%H%M%S.log` ip dst 224.5.23.2

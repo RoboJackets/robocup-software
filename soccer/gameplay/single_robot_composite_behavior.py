@@ -4,12 +4,12 @@ import role_assignment
 import logging
 
 
-# This class is used for behaviors that apply to a single ROBOT and may have up to one subbehavior at any time
+## Behavior that applies to a single ROBOT and may have up to one subbehavior at any time
 # Most of the implementation is just checking if we have subbehaviors and calling the real method on the appropriate superclass
 # Note: The method-resolution-order in python dictates that as we have it listed below, SingleRobotBehavior methods take precedence over CompositeBehavior methods
 class SingleRobotCompositeBehavior(single_robot_behavior.SingleRobotBehavior, composite_behavior.CompositeBehavior):
 
-    # we over-ride this to enforce the rule that there can't be more than one subbehavior
+    ## we over-ride this to enforce the rule that there can't be more than one subbehavior
     def add_subbehavior(self, bhvr, name, required=True, priority=100):
         if self.has_subbehaviors():
             raise AssertionError("Attempt to add more than one subbehavior to SingleRobotCompositeBehavior")

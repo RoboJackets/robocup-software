@@ -30,12 +30,10 @@ namespace Gameplay
 	/**
 	 * @brief Coordinator of high-level logic
 	 * 
-	 * @details Its main responsibilities include:
-	 * - managing the Goalie
-	 * - maintaining a list of global field obstacles
-	 * - choosing which Play to run
-	 * - running the current play
-	 * - executing path planning for each OurRobot
+	 * @details The gameplay module has an embedded python interpreter and serves as the bridge between our python and c++ code.
+	 * The python side of things is responsible for high-level gameplay.  At each iteration of the main run loop, the GameplayModule
+	 * calls into python, which does all of the high-level planning, resulting in updated motion targets, etc for the robots.  The
+	 * GameplayModule then executes path planning for each OurRobot.
 	 */
 	class GameplayModule
 	{
@@ -51,6 +49,11 @@ namespace Gameplay
 			virtual void run();
 			
 			void setupUI();
+
+			/**
+			 * @brief Loads a playbook file to enable specified plays
+			 */
+			void loadPlaybook(const std::string &playbookFile);
 
 			void goalieID(int value);
 			int goalieID()
@@ -102,6 +105,8 @@ namespace Gameplay
 				return _playRobots;
 			}
 
+			void sendFieldDimensionsToPython();
+
 
 		protected:
 
@@ -133,8 +138,9 @@ namespace Gameplay
 			///	outside of the floor boundaries
 			std::shared_ptr<Geometry2d::Shape> _nonFloor[4];
 			
-			///	goal area
-			Geometry2d::CompositeShape _goalArea;
+			///	goal areas
+			Geometry2d::CompositeShape _ourGoalArea;
+			Geometry2d::CompositeShape _theirGoalArea;
 
 			/// utility functions
 

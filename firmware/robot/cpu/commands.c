@@ -17,7 +17,6 @@
 #include "control.h"
 #include "power.h"
 #include "main.h"
-#include "version.h"
 #include "ball_sense.h"
 #include "adc.h"
 #include "fpga.h"
@@ -237,8 +236,6 @@ static void cmd_status(int argc, const char *argv[], void *arg)
 	{
 		printf("Voltage ADC failed\n");
 	}
-	
-	printf("GIT version: %s\n", git_version);
 	
 	printf("Encoder monitor:\n");
 	for (int i = 0; i < 5; ++i)
@@ -495,7 +492,7 @@ static void cmd_stfu(int argc, const char *argv[], void *arg)
 	music_stop();
 }
 
-static const note_t *const test_songs[] = {song_startup, song_failure, song_overvoltage, song_undervoltage, song_fuse_blown, song_victory};
+static const note_t *const test_songs[] = {song_startup, song_failure, song_overvoltage, song_undervoltage, song_fuse_blown, song_victory, song_still_alive};
 #define NUM_TEST_SONGS (sizeof(test_songs) / sizeof(test_songs[0]))
 
 static void cmd_music(int argc, const char *argv[], void *arg)

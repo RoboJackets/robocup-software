@@ -1,6 +1,122 @@
 #include "TrapezoidalMotion.hpp"
 #include <math.h>
+#include <iostream>
+float Trapezoidal::getTime(
+	float distance,
+	float pathLength,
+	float maxSpeed,
+	float maxAcc,
+	float startSpeed,
+	float finalSpeed)
+{
+	//maxSpeed/=2;
+	//maxAcc/=3;
+	startSpeed = fmin(startSpeed, maxSpeed);
+	finalSpeed = fmin(finalSpeed, maxSpeed);
+	float rampUpTime = (maxSpeed - startSpeed) / maxAcc;
+	float plateauTime;
+	float rampDownTime = (finalSpeed - maxSpeed) / -maxAcc;
 
+	float rampUpDist = rampUpTime * (startSpeed + maxSpeed) / 2.0;
+	float plateauDist;
+	float rampDownDist = rampDownTime * (maxSpeed + finalSpeed) / 2.0;
+
+
+	if (rampUpDist + rampDownDist > pathLength) {
+		//	triangle case: we don't ever hit full speed
+		
+		//	calculate what max speed we actually reach (it's less than the parameter passed in)
+		//	we write an equation for pathLength given maxSpeed, then solve for maxSpeed
+		//		rampUpTime = (maxSpeed - startSpeed) / maxAcc;
+		//		rampDownTime = (finalSpeed - maxSpeed) / -maxAcc;
+		//		pathLength = (startSpeed + maxSpeed)/2*rampUpTime
+		//						+ (maxSpeed + finalSpeed)/2*rampDownTime;
+		//		//	we then solve for maxSpeed
+		// maxSpeed = sqrt(pathLength*maxAcc + startSpeed*startSpeed + finalSpeed*finalSpeed);
+		maxSpeed = sqrt((2*maxAcc*pathLength + powf(startSpeed, 2) + powf(finalSpeed, 2)) / 2.0);
+
+		rampUpTime = (maxSpeed - startSpeed) / maxAcc;
+		rampDownTime = (finalSpeed - maxSpeed) / -maxAcc;
+		rampUpDist = (startSpeed + maxSpeed) / 2.0 * rampUpTime;
+		rampDownDist = (finalSpeed + maxSpeed) / 2.0 * rampDownTime;
+
+		//	no plateau
+		plateauTime = 0;
+		plateauDist = 0;
+	} else {
+		//	trapezoid case: there's a time where we go at maxSpeed for a bit
+		plateauDist = pathLength - (rampUpDist + rampDownDist);
+		plateauTime = plateauDist / maxSpeed;
+	}
+
+	if (distance<0)
+	{
+		return 0;
+	}
+	if (distance<rampUpDist) 
+	{
+		//time calculations
+		/*
+			1/2*a*t^2 + t*v0 - d = 0
+			t = -b +- sqrt(b^2 - 4*a*c)/(2*a)
+
+		*/
+		float b = startSpeed;
+		float a = maxAcc/2.0;
+		float c = -distance;
+		float root = sqrt(b*b - 4*a*c);
+		float temp1 = (-b + root)/(2*a);
+		float temp2 = (-b - root)/(2*a);
+		if (isnan(root)) {
+			//TODO Handle this
+		}
+		if (temp1 > 0 && temp1<rampUpTime) 
+		{
+			return temp1;
+		}
+		else
+		{
+			return temp2;
+		}
+	} 
+	else if (distance<=rampUpDist + plateauDist) 
+	{
+		float position = distance-rampUpDist;
+		return rampUpTime + position/maxSpeed;
+	}
+	else if (distance<=rampUpDist + plateauDist + rampDownDist)
+	{
+		//time calculations
+		/*
+			1/2*a*t^2 + t*v0 - d = 0
+			t = -b +- sqrt(b^2 - 4*a*c)/(2*a)
+
+		*/
+		float position = distance - rampUpDist - plateauDist;
+		float b = maxSpeed;
+		float a = -maxAcc/2.0;
+		float c = -position;
+		float root = sqrt(b*b - 4*a*c);
+		float temp1 = (-b + root)/(2*a);
+		float temp2 = (-b - root)/(2*a);
+		if (isnan(root)) {
+			//std::cout<<"meh"<<std::endl;
+			//TODO Handle this case
+		}
+		if (temp1 > 0 && temp1<rampDownTime) 
+		{
+			return rampUpTime + plateauTime + temp1;
+		}
+		else
+		{
+			return rampUpTime + plateauTime +  temp2;
+		}
+	}
+	else 
+	{
+		return rampUpDist + plateauDist + rampDownDist;
+	}
+}
 
 bool TrapezoidalMotion(
 	float pathLength,

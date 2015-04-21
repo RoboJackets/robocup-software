@@ -4,9 +4,16 @@ import graphviz as gv
 import subprocess
 
 
-# generic hierarchial state machine class
+## generic hierarchial state machine class
 # states can have substates.  If the machine is in a state, then it is also implicitly in that state's parent state
 # this basically provides for polymorphism/subclassing of state machines
+#
+# There are three methods corresponding to each state:
+# * on_enter_STATE
+# * execute_STATE
+# * on_exit_STATE
+#
+# Subclasses of StateMachine can optionally implement them and they will automatically be called at the appropriate times.
 class StateMachine:
 
     def __init__(self, start_state):
@@ -22,16 +29,19 @@ class StateMachine:
         return self._start_state
 
 
+    ## Resets the FSM back into the start state
     def restart(self):
         self.transition(self.start_state)
 
 
+    ## Registers a new state (which can optionally be a substate of an existing state)
     def add_state(self, state, parent_state=None):
         if not isinstance(state, Enum):
             raise TypeError("State should be an Enum type")
         self._state_hierarchy[state] = parent_state
 
 
+    ## Runs the FSM
     # checks transition conditions for all edges leading away from the current state
     # if one evaluates to true, we transition to it
     # if more than one evaluates to true, we throw a RuntimeError
@@ -159,7 +169,7 @@ class StateMachine:
         subgraphs[None] = g
         for state in self._state_hierarchy:
             if state not in subgraphs and state in self._state_hierarchy.values():
-                sg = gv.Subgraph('cluster_' + str(cluster_index), graph_attr={'label': state.__module__ + "::" + state.name, 'style': 'dotted'})
+                sg = gv.Digraph('cluster_' + str(cluster_index), graph_attr={'label': state.__module__ + "::" + state.name, 'style': 'dotted'})
                 cluster_index += 1
 
                 subgraphs[state] = sg
@@ -174,7 +184,7 @@ class StateMachine:
 
         for state, subgraph in subgraphs.items():
             if state != None:
-                subgraphs[self._state_hierarchy[state]].extend(subgraph)
+                subgraphs[self._state_hierarchy[state]].subgraph(subgraph)
 
         for start in self._transitions:
             for end, event in self._transitions[start].items():

@@ -3,7 +3,7 @@
 .sconsign.dblite
 .scons_variables
 /build
-/downloads
+/build-scons
 .pydevproject
 /gmon.out
 *.swp
@@ -17,3 +17,6 @@
 
 # Qt Creator
 *.creator.user
+
+# IntelliJ
+.idea
