@@ -9,7 +9,7 @@ CC1201::CC1201() : CommLink() {}
 CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intPin) :
 	CommLink(mosi, miso, sck, cs, intPin)
 {
-	strobe(CC1201_STROBE_SRES);
+	reset();
 	Thread::wait(300);
 	strobe(CC1201_STROBE_SIDLE);
 	Thread::wait(400);
@@ -41,7 +41,7 @@ int32_t CC1201::sendData(uint8_t* buffer, uint8_t size)
 {
 	// [X] - 1 - Move all values down by 1 to make room for the packet's size value.
 	// =================
-	for (int i = size - 1; i > 0; i--)
+	for (int i = size; i > 0; i--)
 		buffer[i] = buffer[i - 1];
 
 	// [X] - 2 - Place the packet's size as the array's first value.
@@ -55,11 +55,16 @@ int32_t CC1201::sendData(uint8_t* buffer, uint8_t size)
 	// [X] - 3 - Send the data to the CC1101. Increment the size value by 1 
 	//before doing so to account for the buffer's inserted value
 	// =================
-	writeReg(CC1201_TX_FIFO, buffer, size);
+	writeReg(CC1201_TX_FIFO, buffer, ++size);
 
 	// [X] - 4 - Enter the TX state.
 	// =================
 	strobe(CC1201_STROBE_STX);
+	//strobe(CC1201_STROBE_SIDLE);
+	//strobe(CC1201_STROBE_SFTX);
+
+	//if (decodeState(strobe(CC1201_STROBE_SNOP)) == 7)
+	//	strobe(CC1201_STROBE_SFTX); 
 
 	// [X] - 5 - Wait until radio enters back to the RX state.
 	// =================
@@ -190,7 +195,11 @@ uint8_t CC1201::status(uint8_t addr)
 
 void CC1201::reset(void)
 {
-    strobe(CC1201_STROBE_SRES);
+    strobe(CC1201_STROBE_SIDLE);
+	toggle_cs();
+	_spi->write(CC1201_STROBE_SRES);
+	Thread::wait(500);
+	toggle_cs();
 }
 
 int32_t CC1201::selfTest(void)

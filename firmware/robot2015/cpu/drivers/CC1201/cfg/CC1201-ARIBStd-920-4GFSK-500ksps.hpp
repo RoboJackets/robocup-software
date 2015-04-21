@@ -16,10 +16,10 @@
 #define SMARTRF_SETTING_IOCFG2             0x06
 #define SMARTRF_SETTING_IOCFG1             0x30
 #define SMARTRF_SETTING_IOCFG0             0x3C
-#define SMARTRF_SETTING_SYNC3              0x93
-#define SMARTRF_SETTING_SYNC2              0x0B
-#define SMARTRF_SETTING_SYNC1              0x51
-#define SMARTRF_SETTING_SYNC0              0xDE
+#define SMARTRF_SETTING_SYNC3              0xAA //0x93
+#define SMARTRF_SETTING_SYNC2              0xAA //0x0B
+#define SMARTRF_SETTING_SYNC1              0xAA //0x51
+#define SMARTRF_SETTING_SYNC0              0xAA //0xDE
 #define SMARTRF_SETTING_SYNC_CFG1          0xA8
 #define SMARTRF_SETTING_SYNC_CFG0          0x03
 #define SMARTRF_SETTING_DEVIATION_M        0x47

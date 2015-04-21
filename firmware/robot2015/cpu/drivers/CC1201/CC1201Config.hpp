@@ -1,5 +1,7 @@
 #pragma once
 
+#include <queue>
+#include <string>
 #include "CC1201Radio.hpp"
 
 class CC1201Config
@@ -27,6 +29,10 @@ class CC1201Config
 		 * default destructor
 		 */
 		~CC1201Config();
+
+		volatile bool hasFault = false;
+
+		volatile std::queue<std::string> configurationFaults;
 
 		/**
 		 * links a CC1201 device driver to the configuration
