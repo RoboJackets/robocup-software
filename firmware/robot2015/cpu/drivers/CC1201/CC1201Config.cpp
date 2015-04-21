@@ -407,6 +407,21 @@ CC1201* CC1201Config::loadConfiguration(CC1201Config* config, CC1201* device)
 	return device;
 }
 
+bool CC1201Config::verifyConfiguration(CC1201Config* config, CC1201* device)
+{
+    for (uint8_t reg = 0x00; reg <= 0x2F; reg++)
+    {
+
+    }
+
+    for (uint8_t extReg = 0x00; extReg <= 0xDA; extReg++)
+    {
+
+    }
+
+    return false;	
+}
+
 void CC1201Config::loadLinkedDevice(void)
 {
 	CC1201Config::loadConfiguration(this, this->getDeviceLink());
