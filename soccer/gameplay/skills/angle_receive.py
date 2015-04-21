@@ -5,6 +5,7 @@ import constants
 import main
 import enum
 import time
+import skills._kick
 
 
 ## AngleReceive accepts a receive_point as a parameter and gets setup there to catch the ball
@@ -12,7 +13,8 @@ import time
 # Set its 'ball_kicked' property to True to tell it to dynamically update its position based on where
 # the ball is moving and attempt to catch it.
 # It will move to the 'completed' state if it catches the ball, otherwise it will go to 'failed'.
-class AngleReceive(single_robot_behavior.SingleRobotBehavior):
+# Kick is a single_robot_behavior, so no need to import both
+class AngleReceive(skills._kick._Kick):
 
     ## max difference between where we should be facing and where we are facing (in radians)
     FaceAngleErrorThreshold = 8 * constants.DegreesToRadians
@@ -46,7 +48,7 @@ class AngleReceive(single_robot_behavior.SingleRobotBehavior):
 
 
     def __init__(self):
-        super().__init__(continuous=False)
+        super().__init__()
 
         self.ball_kicked = False
         self._target_pos = None
@@ -180,6 +182,9 @@ class AngleReceive(single_robot_behavior.SingleRobotBehavior):
     def on_exit_start(self):
         # reset
         self.ball_kicked = False
+
+    def on_enter_receiving(self):
+        self.robot.kick(self.kick_power)
 
 
     def execute_running(self):
