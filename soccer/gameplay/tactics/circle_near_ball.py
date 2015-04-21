@@ -7,13 +7,25 @@ import role_assignment
 import robocup
 import main
 
+
+## Robots position themselves along a portion of the circle centered at the ball
 class CircleNearBall(composite_behavior.CompositeBehavior):
 
     def __init__(self):
         super().__init__(continuous=True)
-        self.add_transition(behavior.Behavior.State.start, behavior.Behavior.State.running, lambda: True, 'immediately')
-        self.add_transition(behavior.Behavior.State.running, behavior.Behavior.State.completed, lambda: self.all_subbehaviors_completed(), 'all robots reach target positions')
-        self.add_transition(behavior.Behavior.State.completed, behavior.Behavior.State.running, lambda: not self.all_subbehaviors_completed(), "robots aren't lined up")
+
+        self.add_transition(behavior.Behavior.State.start,
+            behavior.Behavior.State.running,
+            lambda: True,
+            'immediately')
+        self.add_transition(behavior.Behavior.State.running,
+            behavior.Behavior.State.completed,
+            lambda: self.all_subbehaviors_completed(),
+            'all robots reach target positions')
+        self.add_transition(behavior.Behavior.State.completed,
+            behavior.Behavior.State.running,
+            lambda: not self.all_subbehaviors_completed(),
+            "robots aren't lined up")
 
         # Define circle to circle up on
         radius = constants.Field.CenterRadius + constants.Robot.Radius + 0.01
@@ -29,8 +41,10 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
             self.add_subbehavior(skills.move.Move(pt), name="robot" + str(i), required=False, priority=6 - i)
             dirvec.rotate(robocup.Point(0,0), perRobot)
 
+
     def all_subbehaviors_completed(self):
         return all([b.behavior_state == behavior.Behavior.State.completed or b.robot == None for b in self.all_subbehaviors()])
+
 
     def execute_completed(self):
         num_robots = 0

@@ -7,7 +7,7 @@ import enum
 import evaluation
 
 
-# This module implements our observance of the double-touch rule
+## A state machine that tracks the double touch rule
 #
 # From the official rules (as of 2013):
 #   "If, after the ball enters play other than due to a forced restart, the kicker touches the ball a second
@@ -15,9 +15,6 @@ import evaluation
 #      an indirect free kick is awarded to the opposing team, the kick to be taken from the place
 #      where the infringement occurred (see Law 13)"
 #
-
-
-# A state machine that tracks the double touch rule
 class DoubleTouchTracker(fsm.StateMachine):
 
     class State(enum.Enum):
@@ -67,7 +64,7 @@ class DoubleTouchTracker(fsm.StateMachine):
         return False
 
 
-    # return the shell id of the robot that isn't allowed to touch the ball
+    ## The shell id of the robot that isn't allowed to touch the ball
     # returns None if everyone is allowed to touch
     def forbidden_ball_toucher(self):
         return self.kicker_shell_id if self.state == DoubleTouchTracker.State.kicker_forbidden else None

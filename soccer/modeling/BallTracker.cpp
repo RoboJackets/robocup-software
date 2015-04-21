@@ -19,8 +19,8 @@ static const float Distance_Limit = 0.2;
 static const float Acquisition_Match_Distance = 0.5;
 
 // Age of a track, in microseconds, at which is it dropped
-static const uint64_t Drop_Possible_Track_Time = 500000;
-static const uint64_t Drop_Real_Track_Time = 500000;
+static const Time Drop_Possible_Track_Time = 500000;
+static const Time Drop_Real_Track_Time = 500000;
 
 static const float Position_Uncertainty = 0.5;
 
@@ -96,14 +96,14 @@ void BallTracker::run(const vector< BallObservation >& obs, SystemState *state)
 	}
 #endif
 
-	uint64_t now = timestamp();
+	Time now = timestamp();
 	
 	//FIXME - What time?
-	uint64_t predictTime = now;
+	Time predictTime = now;
 	
 	// Rectangle that defines the boundaries of the field.
 	// Note that we are working in team space.
-	static const Rect field(Point(-Field_Width / 2, 0), Point(Field_Width / 2, Field_Length));
+	const Rect field(Point(-Field_Dimensions::Current_Dimensions.Width() / 2, 0), Point(Field_Dimensions::Current_Dimensions.Width() / 2, Field_Dimensions::Current_Dimensions.Length()));
 	
 	// Update the real ball
 	if (_ballFilter)

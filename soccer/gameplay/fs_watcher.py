@@ -5,6 +5,7 @@ import os.path
 import imp
 
 
+## Watches the filesytem for changes and executes any registered callbacks
 class FsWatcher(Observer):
 
     def __init__(self, path):
@@ -15,18 +16,19 @@ class FsWatcher(Observer):
         self.root_path = path
 
 
-    # the callback is passed event_type, module_path
+    ## the callback is passed event_type, module_path
     # where event_type is a string with the following possible values: 'modified', 'created', 'deleted'
     def subscribe(self, callback):
         self._subscribers.append(callback)
 
 
-    # removes a given subscriber
+    ## removes a given subscriber
     def unsubscribe(self, callback):
         idx = self._subscribers.index(callback)
         del self._subscribers[idx]
 
 
+    ## The directory to watch recursively
     @property
     def root_path(self):
         return self._root_path
@@ -39,6 +41,8 @@ class FsWatcher(Observer):
     def _notify(self, event_type, path):
         if not isinstance(path, str):
             path = path.decode('utf-8')
+
+        path = os.path.abspath(path)
 
         name, file_ext = os.path.splitext(path)
         if file_ext == '.py':

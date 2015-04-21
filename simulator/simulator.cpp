@@ -19,17 +19,21 @@ void quit(int signal)
 
 void usage(const char* prog)
 {
-	fprintf(stderr, "usage: %s [-c <config file>] [--glut] [--sv]\n", prog);
-	fprintf(stderr, "\t--help  Show usage message\n");
-	fprintf(stderr, "\t--sv    Use shared vision multicast port\n");
+	fprintf(stderr, "usage: %s [-c <config file>] [--sv]\n", prog);
+	fprintf(stderr, "\t--help      Show usage message\n");
+	fprintf(stderr, "\t--sv        Use shared vision multicast port\n");
+	fprintf(stderr, "\t--headless  Run the simulator in headless mode (without a GUI)\n");
 }
 
 int main(int argc, char* argv[])
 {
 	QApplication app(argc, argv);
 
+	Field_Dimensions::Current_Dimensions = Field_Dimensions::Single_Field_Dimensions * scaling;
+
 	QString configFile = "simulator.cfg";
 	bool sendShared = false;
+	bool headless = false;
 
 	//loop arguments and look for config file
 	for (int i=1 ; i<argc ; ++i)
@@ -57,6 +61,8 @@ int main(int argc, char* argv[])
 		{
 			usage(argv[0]);
 			return 0;
+		} else if (strcmp(argv[i], "--headless") == 0) {
+			headless = true;
 		} else {
 			printf("%s is not recognized as a valid flag\n", argv[i]);
 			return 1;
@@ -64,7 +70,7 @@ int main(int argc, char* argv[])
 	}
 
 	// create the thread for simulation
-	SimulatorGLUTThread sim_thread(argc, argv, configFile, sendShared);
+	SimulatorGLUTThread sim_thread(argc, argv, configFile, sendShared, !headless);
 
 	struct sigaction act;
 	memset(&act, 0, sizeof(act));
@@ -73,7 +79,9 @@ int main(int argc, char* argv[])
 
 	// Create and initialize GUI with environment information
 	SimulatorWindow win(sim_thread.env());
-	win.show();
+	if (!headless) {
+		win.show();
+	}
 
 	// initialize socket connections separately
 	sim_thread.env()->connectSockets();
@@ -83,8 +91,8 @@ int main(int argc, char* argv[])
 	int ret = app.exec();
 
 	// shut down sim_thread
+	sim_thread.stop();
 	sim_thread.wait();
-//	sim_thread.exit(0);
 
-	return 0;//ret;
+	return ret;
 }

@@ -7,37 +7,42 @@ import enum
 import time
 
 
-# PassReceive accepts a receive_point as a parameter and gets setup there to catch the ball
+## PassReceive accepts a receive_point as a parameter and gets setup there to catch the ball
 # It transitions to the 'aligned' state once it's there within its error thresholds and is steady
 # Set its 'ball_kicked' property to True to tell it to dynamically update its position based on where
-# the ball is moving and attempt to catch it
-# It will move to the 'completed' state if it catches the ball, otherwise it will go to 'failed'
+# the ball is moving and attempt to catch it.
+# It will move to the 'completed' state if it catches the ball, otherwise it will go to 'failed'.
 class PassReceive(single_robot_behavior.SingleRobotBehavior):
 
-    # max difference between where we should be facing and where we are facing (in radians)
+    ## max difference between where we should be facing and where we are facing (in radians)
     FaceAngleErrorThreshold = 8 * constants.DegreesToRadians
 
-    # how much we're allowed to be off in the direction of the pass line
+    ## how much we're allowed to be off in the direction of the pass line
     PositionYErrorThreshold = 0.06
 
-    # how much we're allowed to be off side-to-side from the pass line
+    ## how much we're allowed to be off side-to-side from the pass line
     PositionXErrorThreshold = 0.03
 
     DribbleSpeed = 70
 
-    # we have to be going slower than this to be considered 'steady'
+    ## we have to be going slower than this to be considered 'steady'
     SteadyMaxVel = 0.04
     SteadyMaxAngleVel = 3   # degrees / second
 
-    # after this amount of time has elapsed after the kick and we haven't received the ball, we failed :(
+    ## after this amount of time has elapsed after the kick and we haven't received the ball, we failed :(
     ReceiveTimeout = 2
 
 
 
     class State(enum.Enum):
-        aligning = 1    # we're aligning with the planned receive point
-        aligned = 2     # being in this state signals that we're ready for the kicker to kick
-        receiving = 3   # the ball's been kicked and we're adjusting based on where the ball's moving
+        ## we're aligning with the planned receive point
+        aligning = 1
+
+        ## being in this state signals that we're ready for the kicker to kick
+        aligned = 2
+        
+        ## the ball's been kicked and we're adjusting based on where the ball's moving
+        receiving = 3
 
 
     def __init__(self):
@@ -85,7 +90,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
 
 
 
-    # set this to True to let the receiver know that the pass has started and the ball's in motion
+    ## set this to True to let the receiver know that the pass has started and the ball's in motion
     # Default: False
     @property
     def ball_kicked(self):
@@ -97,7 +102,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
             self._ball_kick_time = time.time()
     
 
-    # The point that the receiver should expect the ball to hit it's mouth
+    ## The point that the receiver should expect the ball to hit it's mouth
     # Default: None
     @property
     def receive_point(self):
@@ -108,7 +113,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
         self.recalculate()
 
 
-    # returns True if we're facing the right direction and in the right position and steady
+    ## returns True if we're facing the right direction and in the right position and steady
     def errors_below_thresholds(self):
         if self.receive_point == None:
             return False
@@ -199,8 +204,8 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
         self.robot.set_world_vel(vel)
 
 
+    ## prefer a robot that's already near the receive position
     def role_requirements(self):
-        # prefer a robot that's already near the receive position
         reqs = super().role_requirements()
         if self.receive_point != None:
             reqs.destination_shape = self.receive_point

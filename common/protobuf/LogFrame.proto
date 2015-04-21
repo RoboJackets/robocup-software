@@ -87,7 +87,8 @@ message LogFrame
 	message Robot
 	{
 		required Point pos = 1;
-		required Point vel = 7;
+		required Point world_vel = 7;
+		optional Point body_vel= 16;
 		required int32 shell = 2;
 		required float angle = 3;
 		optional BallSenseStatus ball_sense_status = 4;
@@ -143,4 +144,10 @@ message LogFrame
 	//	the description of the behavior tree
 	//	should show the hierarchy of behaviors and each behavior's state
 	optional string behavior_tree = 21;
+
+	optional string team_name_yellow = 22;
+	optional string team_name_blue = 23;
+	
+	// timestamp in microseconds since epoch
+    required uint64 timestamp = 24;
 }

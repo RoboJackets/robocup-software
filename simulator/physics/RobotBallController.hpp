@@ -52,7 +52,7 @@ public:
 	}
 
 	///btActionInterface interface
-	void	debugDraw(btIDebugDraw* debugDrawer) {};
+	void debugDraw(btIDebugDraw* debugDrawer) {};
 
 	bool detectBall(btCollisionWorld* collisionWorld);
 	void dribblerStep();

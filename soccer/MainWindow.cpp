@@ -2,12 +2,12 @@
 #include <gameplay/GameplayModule.hpp>
 #include "MainWindow.hpp"
 
-#include "RefereeModule.hpp"
 #include "Configuration.hpp"
 #include "QuaternionDemo.hpp"
 #include "radio/Radio.hpp"
 #include <Utils.hpp>
 #include <Robot.hpp>
+#include <joystick/Joystick.hpp>
 
 #include <QInputDialog>
 #include <QFileDialog>
@@ -15,19 +15,19 @@
 #include <QMessageBox>
 
 #include <iostream>
-#include <boost/foreach.hpp>
-
 #include <ctime>
 
 #include <google/protobuf/descriptor.h>
 #include <Network.hpp>
-#include <Joystick.hpp>
 
 using namespace std;
 using namespace boost;
 using namespace google::protobuf;
 using namespace Packet;
 using namespace Eigen;
+
+
+const float kFastPlaybackRate = 3;
 
 // Style sheets used for live/non-live controls
 QString LiveStyle("border:2px solid transparent");
@@ -42,6 +42,9 @@ void calcMinimumWidth(QWidget *widget, QString text)
 MainWindow::MainWindow(QWidget *parent):
 	QMainWindow(parent)
 {
+
+ 	qRegisterMetaType<QVector<int> >("QVector<int>");
+
 	_quaternion_demo = 0;
 	
 	_updateCount = 0;
@@ -118,7 +121,7 @@ MainWindow::MainWindow(QWidget *parent):
 	rotateGroup->addAction(_ui.action90);
 	rotateGroup->addAction(_ui.action180);
 	rotateGroup->addAction(_ui.action270);
-	
+
 	_ui.splitter->setStretchFactor(0, 88);
 	_ui.splitter->setStretchFactor(1, 20);
 	
@@ -129,6 +132,14 @@ MainWindow::MainWindow(QWidget *parent):
 	updateTimer.setSingleShot(true);
 	connect(&updateTimer, SIGNAL(timeout()), SLOT(updateViews()));
 	updateTimer.start(30);
+
+	//	put all log playback buttons into a vector for easy access later
+	_logPlaybackButtons.push_back(_ui.logPlaybackFastBackward);
+	_logPlaybackButtons.push_back(_ui.logPlaybackBackward);
+	_logPlaybackButtons.push_back(_ui.logPlaybackPause);
+	_logPlaybackButtons.push_back(_ui.logPlaybackForward);
+	_logPlaybackButtons.push_back(_ui.logPlaybackFastForward);
+	_logPlaybackButtons.push_back(_ui.logPlaybackLive);
 }
 
 void MainWindow::configuration(Configuration* config)
@@ -154,6 +165,9 @@ void MainWindow::processor(Processor* value)
 	} else {
 		_ui.actionTeamYellow->trigger();
 	}
+
+	_ui.logHistoryLocation->setMaximum(_processor->logger().maxFrames());
+	_ui.logHistoryLocation->setTickInterval(60*60);	//	interval is ~ 1 minute
 }
 
 void MainWindow::logFileChanged()
@@ -201,10 +215,10 @@ void MainWindow::updateViews()
 		_ui.tabWidget->setTabEnabled(2, true);
 	}
 	if(manual >= 0) {
-		JoystickControlValues vals = _processor->joystickControlValues();
-		_ui.joystickBodyXLabel->setText(tr("%1").arg(vals.bodyX));
-		_ui.joystickBodyYLabel->setText(tr("%1").arg(vals.bodyY));
-		_ui.joystickBodyWLabel->setText(tr("%1").arg(vals.bodyW));
+		JoystickControlValues vals = _processor->getJoystickControlValues();
+		_ui.joystickBodyXLabel->setText(tr("%1").arg(vals.translation.x));
+		_ui.joystickBodyYLabel->setText(tr("%1").arg(vals.translation.y));
+		_ui.joystickBodyWLabel->setText(tr("%1").arg(vals.rotation));
 		_ui.joystickKickPowerLabel->setText(tr("%1").arg(vals.kickPower));
 		_ui.joystickDibblerPowerLabel->setText(tr("%1").arg(vals.dribblerPower));
 		_ui.joystickKickCheckBox->setChecked(vals.kick);
@@ -213,7 +227,7 @@ void MainWindow::updateViews()
 	}
 	
 	// Time since last update
-	uint64_t time = timestamp();
+	Time time = timestamp();
 	int delta_us = time - _lastUpdateTime;
 	_lastUpdateTime = time;
 	double framerate = 1000000.0 / delta_us;
@@ -233,17 +247,17 @@ void MainWindow::updateViews()
 		));
 	}
 	
-	// Advance log playback time
+	// Advance log history
 	int liveFrameNumber = _processor->logger().lastFrameNumber();
 	if (_live)
 	{
 		_doubleFrameNumber = liveFrameNumber;
 	} else {
-		double rate = _ui.playbackRate->value();
-		_doubleFrameNumber += rate / framerate;
+		_doubleFrameNumber += _playbackRate;
 		
 		int minFrame = _processor->logger().firstFrameNumber();
 		int maxFrame = _processor->logger().lastFrameNumber();
+
 		if (_doubleFrameNumber < minFrame)
 		{
 			_doubleFrameNumber = minFrame;
@@ -252,16 +266,26 @@ void MainWindow::updateViews()
 			_doubleFrameNumber = maxFrame;
 		}
 	}
-	
+
+	//	update history slider in ui
+	emit historyLocationChanged(_doubleFrameNumber - _processor->logger().firstFrameNumber());
+
 	// Read recent history from the log
 	_processor->logger().getFrames(frameNumber(), _history);
 	
 	// Update field view
 	_ui.fieldView->update();
-	
-	// Update log controls
-	_ui.logLive->setEnabled(!_live);
-	_ui.logStop->setEnabled(_live);
+
+
+	//	enable playback buttons based on playback rate
+	for (QPushButton *playbackBtn : _logPlaybackButtons) playbackBtn->setEnabled(true);
+	if (_live) _ui.logPlaybackLive->setEnabled(false);
+	else if (_playbackRate < -1.1) _ui.logPlaybackFastBackward->setEnabled(false);
+	else if (_playbackRate < -0.1) _ui.logPlaybackBackward->setEnabled(false);
+	else if (abs<float>(_playbackRate) < 0.01) _ui.logPlaybackPause->setEnabled(false);
+	else if (_playbackRate > 1.1) _ui.logPlaybackFastForward->setEnabled(false);
+	else if (_playbackRate > 0.1) _ui.logPlaybackForward->setEnabled(false);
+
 	
 	// Update status indicator
 	updateStatus();
@@ -292,7 +316,7 @@ void MainWindow::updateViews()
 		if (_quaternion_demo && manual >= 0 && currentFrame->radio_rx().size() && currentFrame->radio_rx(0).has_quaternion())
 		{
 			const RadioRx *manualRx = 0;
-			BOOST_FOREACH(const RadioRx &rx, currentFrame->radio_rx())
+			for (const RadioRx &rx :  currentFrame->radio_rx())
 			{
 				if ((int)rx.robot_id() == manual)
 				{
@@ -395,7 +419,7 @@ void MainWindow::updateStatus()
 	
 	// Get processing thread status
 	Processor::Status ps = _processor->status();
-	uint64_t curTime = timestamp();
+	Time curTime = timestamp();
 	
 	// Determine if we are receiving packets from an external referee
 	bool haveExternalReferee = (curTime - ps.lastRefereeTime) < 500 * 1000;
@@ -468,17 +492,6 @@ void MainWindow::updateStatus()
 		return;
 	}
 	
-	//	FIXME: this was disabled in the transition to python for high-level stuff
-	//			once that's figured out, we should re-enable this status text
-	// if (!sim && !_processor->gameplayModule()->goalie())
-	// {
-	// 	// No goalie.  Not checked in simulation because this is common during development.
-	// 	status("NO GOALIE", Status_Warning);
-	// 	return;
-	// }
-	
-	//FIXME - Can we validate or flag the playbook?
-	
 	if (!sim && !_processor->logger().recording())
 	{
 		// We should record logs during competition
@@ -545,6 +558,13 @@ void MainWindow::on_actionDotPatterns_toggled(bool state)
     _ui.fieldView->showDotPatterns = state;
     _ui.fieldView->update();
 }
+
+void MainWindow::on_actionTeam_Names_toggled(bool state)
+{
+	_ui.fieldView->showTeamNames = state;
+	_ui.fieldView->update();
+}
+
 
 void MainWindow::on_actionDefendMinusX_triggered()
 {
@@ -638,7 +658,7 @@ void MainWindow::on_actionResetField_triggered() {
 void MainWindow::on_actionStopRobots_triggered() {
 	SimCommand cmd;
 	// TODO: check that this handles threads properly
-	BOOST_FOREACH(OurRobot* robot, state()->self)
+	for (OurRobot* robot :  state()->self)
 	{
 		SimCommand::Robot *r = cmd.add_robots();
 		r->set_shell(robot->shell());
@@ -647,7 +667,7 @@ void MainWindow::on_actionStopRobots_triggered() {
 		r->mutable_vel()->set_y(0);
 		r->set_w(0);
 	}
-	BOOST_FOREACH(OpponentRobot* robot, state()->opp)
+	for (OpponentRobot* robot :  state()->opp)
 	{
 		SimCommand::Robot *r = cmd.add_robots();
 		r->set_shell(robot->shell());
@@ -718,7 +738,7 @@ void MainWindow::on_actionSeed_triggered()
 	QString text = QInputDialog::getText(this, "Set Random Seed", "Hexadecimal seed:");
 	if (!text.isNull())
 	{
-		long seed = strtol(text.toAscii(), 0, 16);
+		long seed = strtol(text.toLatin1(), 0, 16);
 		printf("seed %016lx\n", seed);
 		srand48(seed);
 	}
@@ -726,48 +746,52 @@ void MainWindow::on_actionSeed_triggered()
 
 
 // Log controls
-void MainWindow::on_playbackRate_sliderPressed()
+void MainWindow::on_logHistoryLocation_sliderMoved(int value)
 {
-	// Stop playback
+	//	update current frame
+	int minFrame = _processor->logger().firstFrameNumber();
+	int maxFrame = _processor->logger().lastFrameNumber();
+	_doubleFrameNumber = value + minFrame;
+	_doubleFrameNumber = min<double>(maxFrame, _doubleFrameNumber);
+
+	emit historyLocationChanged(_doubleFrameNumber - minFrame);
+
+	//	pause playback
 	live(false);
+	_playbackRate = 0;
 }
 
-void MainWindow::on_playbackRate_sliderMoved(int value)
-{
-	live(false);
-}
-
-void MainWindow::on_playbackRate_sliderReleased()
-{
-	// Center the slider and stop playback
-	_ui.playbackRate->setValue(0);
-}
-
-void MainWindow::on_logNext_clicked()
-{
-	on_logStop_clicked();
-	frameNumber(frameNumber() + 1);
-}
-
-void MainWindow::on_logPrev_clicked()
-{
-	on_logStop_clicked();
-	frameNumber(frameNumber() - 1);
-}
-
-void MainWindow::on_logStop_clicked()
+void MainWindow::on_logPlaybackFastBackward_clicked()
 {
 	live(false);
-	_ui.playbackRate->setValue(0);
+	_playbackRate = -kFastPlaybackRate;
 }
 
-void MainWindow::on_logFirst_clicked()
+void MainWindow::on_logPlaybackBackward_clicked()
 {
-	on_logStop_clicked();
-	frameNumber(_processor->logger().firstFrameNumber());
+	live(false);
+	_playbackRate = -1;
 }
 
-void MainWindow::on_logLive_clicked()
+void MainWindow::on_logPlaybackPause_clicked()
+{
+	live(false);
+	_playbackRate = 0;
+}
+
+void MainWindow::on_logPlaybackForward_clicked()
+{
+	live(false);
+	_playbackRate = 1;
+}
+
+void MainWindow::on_logPlaybackFastForward_clicked()
+{
+	live(false);
+	_playbackRate = kFastPlaybackRate;
+}
+
+void MainWindow::on_logPlaybackLive_clicked()
 {
 	live(true);
 }
@@ -940,16 +964,29 @@ void MainWindow::on_fastKickoffYellow_clicked()
 	_processor->refereeModule()->command = NewRefereeModuleEnums::PREPARE_KICKOFF_YELLOW;
 }
 
-void MainWindow::on_actionVisionFirst_Half_triggered()
+void MainWindow::on_actionVisionPrimary_Half_triggered()
 {
-	_processor->changeVisionChannel(SharedVisionPortFirstHalf);
-	_ui.actionVisionFirst_Half->setChecked(true);
-	_ui.actionVisionSecond_Half->setChecked(false);
+	_processor->changeVisionChannel(SharedVisionPortSinglePrimary);
+	_processor->setFieldDimensions(Field_Dimensions::Single_Field_Dimensions);
+	_ui.actionVisionPrimary_Half->setChecked(true);
+	_ui.actionVisionSecondary_Half->setChecked(false);
+	_ui.actionVisionFull_Field->setChecked(false);
 }
 
-void MainWindow::on_actionVisionSecond_Half_triggered()
+void MainWindow::on_actionVisionSecondary_Half_triggered()
 {
-	_processor->changeVisionChannel(SharedVisionPortSecondHalf);
-	_ui.actionVisionFirst_Half->setChecked(false);
-	_ui.actionVisionSecond_Half->setChecked(true);
+	_processor->changeVisionChannel(SharedVisionPortSingleSecondary);
+	_processor->setFieldDimensions(Field_Dimensions::Single_Field_Dimensions);
+	_ui.actionVisionPrimary_Half->setChecked(false);
+	_ui.actionVisionSecondary_Half->setChecked(true);
+	_ui.actionVisionFull_Field->setChecked(false);
+}
+
+void MainWindow::on_actionVisionFull_Field_triggered()
+{
+	_processor->changeVisionChannel(SharedVisionPortDoubleOld);
+	_processor->setFieldDimensions(Field_Dimensions::Double_Field_Dimensions);
+	_ui.actionVisionPrimary_Half->setChecked(false);
+	_ui.actionVisionSecondary_Half->setChecked(false);
+	_ui.actionVisionFull_Field->setChecked(true);
 }

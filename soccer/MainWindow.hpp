@@ -80,6 +80,7 @@ class MainWindow : public QMainWindow
 		void on_actionRawRobots_toggled(bool state);
 		void on_actionCoords_toggled(bool state);
         void on_actionDotPatterns_toggled(bool state);
+        void on_actionTeam_Names_toggled(bool state);
 		void on_actionTeamYellow_triggered();
 		void on_actionTeamBlue_triggered();
 		void on_manualID_currentIndexChanged(int value);
@@ -102,8 +103,9 @@ class MainWindow : public QMainWindow
 		void on_action906MHz_triggered();
 
 		/// Vision port
-		void on_actionVisionFirst_Half_triggered();
-		void on_actionVisionSecond_Half_triggered();
+		void on_actionVisionPrimary_Half_triggered();
+		void on_actionVisionSecondary_Half_triggered();
+		void on_actionVisionFull_Field_triggered();
 		
 		/// Simulator commands
 		void on_actionCenterBall_triggered();
@@ -124,14 +126,13 @@ class MainWindow : public QMainWindow
 		void on_actionSeed_triggered();
 		
 		/// Log controls
-		void on_playbackRate_sliderPressed();
-		void on_playbackRate_sliderMoved(int value);
-		void on_playbackRate_sliderReleased();
-		void on_logStop_clicked();
-		void on_logFirst_clicked();
-		void on_logPrev_clicked();
-		void on_logNext_clicked();
-		void on_logLive_clicked();
+		void on_logHistoryLocation_sliderMoved(int value);
+		void on_logPlaybackFastBackward_clicked();
+		void on_logPlaybackBackward_clicked();
+		void on_logPlaybackPause_clicked();
+		void on_logPlaybackForward_clicked();
+		void on_logPlaybackFastForward_clicked();
+		void on_logPlaybackLive_clicked();
 		
 		/// Debug layers
 		void on_debugLayers_itemChanged(QListWidgetItem *item);
@@ -149,7 +150,13 @@ class MainWindow : public QMainWindow
 		void on_fastForceStart_clicked();
 		void on_fastKickoffBlue_clicked();
 		void on_fastKickoffYellow_clicked();
-		
+
+
+	signals:
+		//	signal used to let widgets that we're viewing a different log frame now
+		int historyLocationChanged(int value);
+
+
 	private:
 		void updateStatus();
 		
@@ -184,6 +191,9 @@ class MainWindow : public QMainWindow
 		QTreeWidgetItem *_elapsedTimeItem;
 		
 		bool _live;
+
+		///	playback rate of the viewer - a value of 1 means realtime
+		double _playbackRate;
 		
 		// This is used to update some status items less frequently than the full field view
 		int _updateCount;
@@ -192,11 +202,15 @@ class MainWindow : public QMainWindow
 		// To keep rounding consistent, only access this with frameNumber().
 		double _doubleFrameNumber;
 		
-		uint64_t _lastUpdateTime;
+		Time _lastUpdateTime;
 		
 		QLabel *_currentPlay;
 		QLabel *_logFile;
 		QLabel *_viewFPS;
 		QLabel *_procFPS;
 		QLabel *_logMemory;
+
+
+		///	the play, pause, ffwd, etc buttons
+		std::vector<QPushButton *> _logPlaybackButtons;
 };

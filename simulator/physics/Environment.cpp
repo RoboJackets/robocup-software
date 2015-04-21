@@ -3,23 +3,22 @@
 #include "Ball.hpp"
 #include "Field.hpp"
 #include "Robot.hpp"
+#include <Constants.hpp>
+#include <Network.hpp>
+#include <Geometry2d/util.h>
+
+#include <protobuf/messages_robocup_ssl_detection.pb.h>
+#include <protobuf/messages_robocup_ssl_geometry.pb.h>
+#include <protobuf/messages_robocup_ssl_wrapper.pb.h>
 
 #include <QDomDocument>
 #include <QDomAttr>
 #include <QDebug>
 #include <QFile>
 #include <stdexcept>
-
-#include <protobuf/messages_robocup_ssl_detection.pb.h>
-#include <protobuf/messages_robocup_ssl_geometry.pb.h>
-#include <protobuf/messages_robocup_ssl_wrapper.pb.h>
-
 #include <iostream>
 #include <sys/time.h>
-#include <Constants.hpp>
-#include <Network.hpp>
-#include <boost/foreach.hpp>
-#include <Geometry2d/util.h>
+
 
 using namespace std;
 using namespace Geometry2d;
@@ -67,12 +66,12 @@ void Environment::connectSockets() {
 }
 
 void Environment::preStep(float deltaTime){
-	BOOST_FOREACH(Robot *robot, _yellow)
+	for (Robot *robot :  _yellow)
 	{
 		robot->applyEngineForces(deltaTime);
 	}
 
-	BOOST_FOREACH(Robot *robot, _blue)
+	for (Robot *robot :  _blue)
 	{
 		robot->applyEngineForces(deltaTime);
 	}
@@ -80,7 +79,6 @@ void Environment::preStep(float deltaTime){
 
 void Environment::step()
 {
-
 	// Check for SimCommands
 	while (_visionSocket.hasPendingDatagrams())
 	{
@@ -145,7 +143,7 @@ void Environment::handleSimCommand(const Packet::SimCommand& cmd) {
 		}
 	}
 
-	BOOST_FOREACH(const SimCommand::Robot &rcmd, cmd.robots())
+	for (const SimCommand::Robot &rcmd :  cmd.robots())
 	{
 		bool blue = rcmd.blue_team();
 		const RobotMap &team = rcmd.blue_team() ? _blue : _yellow;
@@ -183,9 +181,6 @@ void Environment::handleSimCommand(const Packet::SimCommand& cmd) {
 
 			QVector3D pos3(x, y, 0.0);
 			QVector3D axis(0.0, 0.0, 1.0);
-
-			// trigger signals
-			//emit setRobotPose(blue, robot->shell, pos3, angle, axis);
 		}
 
 		float new_w = 0.0;
@@ -221,7 +216,7 @@ void Environment::sendVision()
 	det->set_t_capture(tv.tv_sec + (double)tv.tv_usec * 1.0e-6);
 	det->set_t_sent(det->t_capture());
 
-	BOOST_FOREACH(Robot *robot, _yellow)
+	for (Robot *robot :  _yellow)
 	{
 		if ((rand() % 100) < robot->visibility)
 		{
@@ -230,7 +225,7 @@ void Environment::sendVision()
 		}
 	}
 
-	BOOST_FOREACH(Robot *robot, _blue)
+	for (Robot *robot :  _blue)
 	{
 		if ((rand() % 100) < robot->visibility)
 		{
@@ -239,10 +234,8 @@ void Environment::sendVision()
 		}
 	}
 
-	Geometry2d::Point cam0(-Field_Length / 4, 0);
-	Geometry2d::Point cam1(Field_Length / 4, 0);
 
-	BOOST_FOREACH(const Ball* b, _balls)
+	for (const Ball* b :  _balls)
 	{
 		Geometry2d::Point ballPos = b->getPosition();
 
@@ -323,10 +316,6 @@ void Environment::addRobot(bool blue, int id, const Geometry2d::Point& pos, Robo
 
 	QVector3D pos3(pos.x, pos.y, 0.0);
 	QVector3D axis(0.0, 0.0, 1.0);
-
-	// trigger signals
-	//emit addNewRobot(blue, id);
-	//emit setRobotPose(blue, id, pos3, angle, axis);
 }
 
 void Environment::removeRobot(bool blue, int id) {
@@ -369,14 +358,14 @@ bool Environment::occluded(Geometry2d::Point ball, Geometry2d::Point camera)
 	intersection.y = (ball.y - camera.y) * t + camera.y;
 
 	// Return true if the intersection point is inside any robot
-	BOOST_FOREACH(const Robot* r, _blue)
+	for (const Robot* r :  _blue)
 	{
 		if (intersection.nearPoint(r->getPosition(), Robot_Radius))
 		{
 			return true;
 		}
 	}
-	BOOST_FOREACH(const Robot* r, _yellow)
+	for (const Robot* r :  _yellow)
 	{
 		if (intersection.nearPoint(r->getPosition(), Robot_Radius))
 		{
@@ -415,8 +404,6 @@ void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx)
 			const Geometry2d::Point& pos2 = r->getPosition();
 			QVector3D pos3(pos2.x, pos2.y, 0.0);
 			QVector3D axis(0.0, 0.0, 1.0);
-
-			//emit setRobotPose(blue, r->shell, pos3, angle, axis);
 		} else {
 			printf("Commanding nonexistent robot %s:%d\n",
 					blue ? "Blue" : "Yellow",
@@ -451,26 +438,26 @@ void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx)
 
 void Environment::renderScene(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax) {
 	_field->renderField();
-	BOOST_FOREACH(Robot* r, _blue)
+	for (Robot* r :  _blue)
 	{
 		r->renderWheels(shapeDrawer, worldBoundsMin, worldBoundsMax);
 	}
-	BOOST_FOREACH(Robot* r, _yellow)
+	for (Robot* r :  _yellow)
 	{
 		r->renderWheels(shapeDrawer, worldBoundsMin, worldBoundsMax);
 	}
 }
 
 void Environment::resetScene() {
-	BOOST_FOREACH(Robot* r, _blue)
+	for (Robot* r :  _blue)
 	{
 		r->resetScene();
 	}
-	BOOST_FOREACH(Robot* r, _yellow)
+	for (Robot* r :  _yellow)
 	{
 		r->resetScene();
 	}
-	BOOST_FOREACH(Ball* b, _balls)
+	for (Ball* b :  _balls)
 	{
 		b->resetScene();
 	}
@@ -486,7 +473,7 @@ bool Environment::loadConfigFile(const QString& filename) {
 
 	if (!configFile.exists())
 	{
-		fprintf(stderr, "Configuration file %s does not exist\n", (const char *)filename.toAscii());
+		fprintf(stderr, "Configuration file %s does not exist\n", (const char *)filename.toLatin1());
 		return false;
 	}
 
@@ -570,3 +557,6 @@ void Environment::procTeam(QDomElement e, bool blue) {
 	}
 }
 
+void Environment::reshapeFieldBodies() {
+	_field->reshapeBodies();
+}

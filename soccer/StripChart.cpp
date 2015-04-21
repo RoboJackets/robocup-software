@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <protobuf/LogFrame.pb.h>
 #include <Geometry2d/Point.hpp>
+#include <Constants.hpp>
 
 #include <google/protobuf/descriptor.h>
 
@@ -20,7 +21,7 @@ StripChart::StripChart(QWidget* parent)
 	_history = 0;
 	_minValue = 0;
 	_maxValue = 1;
-	_function = 0;
+	//_function = 0;
 	autoRange = true;
 	_color = Qt::yellow;
 	
@@ -31,72 +32,124 @@ StripChart::StripChart(QWidget* parent)
 	
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	setMinimumSize(100, 100);
+
+  	setMouseTracking(true);
 }
 
 StripChart::~StripChart()
 {
-	function(0);
+	//TODO: Fix Deconstructor
+	//function(0);
 }
 
 void StripChart::function(Chart::Function* function)
 {
-	if (_function)
+	if (function)
 	{
-		delete _function;
+		_functions.append(function);
 	}
-	
-	_function = function;
 }
 
 QPointF StripChart::dataPoint(int i, float value)
 {
-	float x = i * width() / _history->size();
+	float x = width() - (i * width() / _history->size());
 	int h = height();
 	float y = h - (value - _minValue) * h / (_maxValue - _minValue);
 	return QPointF(x, y);
 }
 
+int StripChart::indexAtPoint(const QPoint &point) {
+  return (width() - point.x()) * _history->size() / width();
+}
+
 void StripChart::paintEvent(QPaintEvent* e)
 {
-	if (!_history || _history->empty() || !_function)
+	if (!_history || _history->empty() ||  _functions.isEmpty())
 	{
 		return;
 	}
 	
 	QPainter p(this);
 	
+	
+	float newMin = _minValue;
+	float newMax = _maxValue;
+
+	auto mappedCursorPos = mapFromGlobal(QCursor::pos());
+	auto highlightedIndex = rect().contains(mappedCursorPos) ? indexAtPoint(mappedCursorPos) : -1;
+
+	auto fontHeight = QFontMetrics(p.font()).height();
+	
 	// X-axis
 	p.setPen(Qt::gray);
 	QPointF x = dataPoint(0, 0);
-	p.drawLine(x, QPointF(width(), x.y()));
-	
-	p.setPen(_color);
-	QPointF last;
-	bool haveLast = false;
-	float newMin = _minValue;
-	float newMax = _maxValue;
-	for (unsigned int i = 0; i < _history->size(); ++i)
-	{
-		float v = 0;
-		if (_history->at(i) && _function->value(*_history->at(i).get(), v))
-		{
-			if (autoRange)
-			{
-				newMin = min(newMin, v);
-				newMax = max(newMax, v);
-			}
-			
-			QPointF pt = dataPoint(i, v);
-			if (haveLast)
-			{
-				p.drawLine(last, pt);
-			}
-			last = pt;
-			haveLast = true;
+	p.drawLine(x, QPointF(0, x.y()));
+
+	for (unsigned int x = 0; x < _functions.size(); x++) {
+		auto function = _functions[x];
+
+		bool haveLast = false;
+		QPointF last;
+		if (x==0) {
+			p.setPen(_color);
 		} else {
-			haveLast = false;
+			p.setPen(Qt::red);
+		}
+		for (unsigned int i = 0; i < _history->size(); ++i)
+		{
+			float v = 0;
+			if (_history->at(i) && function->value(*_history->at(i).get(), v))
+			{
+				if (autoRange)
+				{
+					newMin = min(newMin, v);
+					newMax = max(newMax, v);
+				}
+				
+				QPointF pt = dataPoint(i, v);
+
+				if (i == highlightedIndex)
+				{
+					p.drawEllipse(pt, 5, 5);
+
+					p.drawText(mappedCursorPos+QPointF(15, 0 + fontHeight*2*x), ("V: " + std::to_string(v)).c_str());
+
+					if(i > 0 && i < _history->size()-1) {
+						float v1, v2;
+
+						function->value(*_history->at(i - 1).get(), v1);
+						function->value(*_history->at(i + 1).get(), v2);
+
+						double t1 = 0.0;
+						t1 += _history->at(i-1)->timestamp();
+						t1 *= TimestampToSecs;
+						double t2 = 0.0;
+						t2 += _history->at(i+1)->timestamp();
+						t2 *= TimestampToSecs;
+
+						auto derivative = (v2 - v1) / (t2 - t1);
+
+						p.drawText(mappedCursorPos + QPointF(15, fontHeight*(1+x*2)), ("dV: " + std::to_string(derivative)).c_str());
+					}
+				}
+
+				if (haveLast)
+				{
+					p.drawLine(last, pt);
+				}
+				last = pt;
+				haveLast = true;
+			} else {
+				haveLast = false;
+			}
 		}
 	}
+
+	
+	
+
+	p.drawText(0, height()-5, std::to_string(newMin).c_str());
+	p.drawText(0, fontHeight, std::to_string(newMax).c_str());
 	
 	_minValue = newMin;
 	_maxValue = newMax;

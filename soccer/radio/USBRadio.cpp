@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <stdexcept>
 #include <boost/format.hpp>
-#include <boost/foreach.hpp>
 
 #include <QMutexLocker>
 
@@ -311,7 +310,7 @@ void USBRadio::receive()
 
 void USBRadio::handleRxData(uint8_t *buf)
 {
-	uint64_t rx_time = timestamp();
+	Time rx_time = timestamp();
 	
 	_reversePackets.push_back(RadioRx());
 	RadioRx &packet = _reversePackets.back();

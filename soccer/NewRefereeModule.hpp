@@ -2,16 +2,15 @@
 
 #include <protobuf/referee.pb.h>
 #include "TeamInfo.hpp"
+#include "GameState.hpp"
+#include "SystemState.hpp"
+#include <Utils.hpp>
 
 #include <QThread>
 #include <QMutex>
 #include <QTime>
-
 #include <vector>
-
 #include <stdint.h>
-#include "GameState.hpp"
-#include "SystemState.hpp"
 
 class QUdpSocket;
 
@@ -100,16 +99,31 @@ enum Command {
 std::string stringFromCommand(Command c);
 }
 
+
+/**
+ * @brief A packet we received over the network from ssl-refbox
+ *
+ * @details Contains the protobuf packet from the refbox and a timestamp of when we received it.
+ */
 class NewRefereePacket
 {
 public:
 	/// Local time when the packet was received
-	uint64_t receivedTime;
+	Time receivedTime;
 
 	/// protobuf message from the vision system
 	SSL_Referee wrapper;
 };
 
+/**
+ * @brief The ref module listens to a port for referee packets over the network.
+ * 
+ * @details Referee packets are sent out from the [ssl-refbox](https://github.com/Hawk777/ssl-refbox) program.
+ * You can see the [protobuf packet](https://github.com/Hawk777/ssl-refbox/blob/master/referee.proto) for full details,
+ * but the packets contains info about which stage of the game it is, team scores, yellow/red cards, etc.
+ *
+ * Each time a new packet arrives, the ref module updates the GameState object with the new information.
+ */
 class NewRefereeModule: public QThread
 {
 public:
@@ -129,8 +143,8 @@ public:
 
 	// The UNIX timestamp when the packet was sent, in microseconds.
 	// Divide by 1,000,000 to get a time_t.
-	uint64_t sent_time;
-	uint64_t received_time;
+	Time sent_time;
+	Time received_time;
 
 	// The number of microseconds left in the stage.
 	// The following stages have this value; the rest do not:
@@ -152,7 +166,7 @@ public:
 
 	// The UNIX timestamp when the command was issued, in microseconds.
 	// This value changes only when a new command is issued, not on each packet.
-	uint64_t command_timestamp;
+	Time command_timestamp;
 
 	TeamInfo yellow_info;
 	TeamInfo blue_info;

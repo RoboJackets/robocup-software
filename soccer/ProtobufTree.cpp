@@ -6,9 +6,7 @@
 #include <QDockWidget>
 #include <QMainWindow>
 #include <QTimer>
-
 #include <stdio.h>
-#include <boost/foreach.hpp>
 #include <google/protobuf/descriptor.h>
 
 using namespace std;
@@ -92,7 +90,7 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem *parent, const google::protobuf::
 			if (!hasData && item->childCount())
 			{
 				// Remove and delete children
-				BOOST_FOREACH(QTreeWidgetItem *child, item->takeChildren())
+				for (QTreeWidgetItem *child :  item->takeChildren())
 				{
 					delete child;
 				}
@@ -108,7 +106,7 @@ bool ProtobufTree::addTreeData(QTreeWidgetItem *parent, const google::protobuf::
 		}
 	}
 	
-	BOOST_FOREACH(const FieldDescriptor *field, fields)
+	for (const FieldDescriptor *field :  fields)
 	{
 		// Get the item for this field if the field has been seen before
 		QTreeWidgetItem *item;
@@ -410,7 +408,12 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e)
 	showTags->setCheckable(true);
 	showTags->setChecked(!isColumnHidden(Column_Tag));
 	
+	menu.addSeparator();
+
 	QAction *chartAction = 0;
+	QList<QAction*> chartMenuActions;
+
+	QList<QDockWidget *> dockWidgets;
 	const FieldDescriptor *field = 0;
 	if (mainWindow && item)
 	{
@@ -420,7 +423,19 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e)
 			int t = field->type();
 			if (t == FieldDescriptor::TYPE_FLOAT || t == FieldDescriptor::TYPE_DOUBLE || (t == FieldDescriptor::TYPE_MESSAGE && field->message_type()->name() == "Point"))
 			{
-				chartAction = menu.addAction("Chart");
+				
+				dockWidgets = mainWindow->findChildren<QDockWidget *>();
+				if (!dockWidgets.isEmpty()) {
+				    QMenu *chartMenu =	menu.addMenu("Chart");
+				    chartAction = chartMenu->addAction("New Chart");
+					chartMenu->addSeparator();
+				    for (int i = 0; i < dockWidgets.size(); ++i)  {
+			        	chartMenuActions.append(chartMenu->addAction(QString("Add to '%1'").arg(dockWidgets[0]->windowTitle())));
+				    }
+				} else {
+					chartAction = menu.addAction("New Chart");
+				}
+
 			}
 		}
 	}
@@ -456,6 +471,7 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e)
 			path.push_back(tag);
 			names.append(i->text(Column_Field));
 		}
+		
 		reverse(path.begin(), path.end());
 		reverse(names.begin(), names.end());
 		
@@ -473,12 +489,48 @@ void ProtobufTree::contextMenuEvent(QContextMenuEvent* e)
 			f->path = path;
 			chart->function(f);
 		}
-		
+		dock->setAttribute(Qt::WA_DeleteOnClose);
 		dock->setWidget(chart);
 		mainWindow->addDockWidget(Qt::BottomDockWidgetArea, dock);
 		if (updateTimer)
 		{
 			connect(updateTimer, SIGNAL(timeout()), chart, SLOT(update()));
+		}
+	} else if (chartMenuActions.size() > 0){
+		int i = chartMenuActions.indexOf(act);
+		if (i!=-1) {
+
+			StripChart *chart = (StripChart *)dockWidgets[i]->widget();
+			QVector<int> path;
+			QStringList names;
+			for (QTreeWidgetItem *i = item; i; i = i->parent())
+			{
+				int tag = i->data(Column_Tag, Qt::DisplayRole).toInt();
+				path.push_back(tag);
+				names.append(i->text(Column_Field));
+			}
+			
+			reverse(path.begin(), path.end());
+			reverse(names.begin(), names.end());
+			
+			dockWidgets[i]->setWindowTitle(dockWidgets[i]->windowTitle() + ", "+ names.join("."));
+			chart->history(_history);
+			
+			if (field->type() == FieldDescriptor::TYPE_MESSAGE)
+			{
+				Chart::PointMagnitude *f = new Chart::PointMagnitude;
+				f->path = path;
+				chart->function(f);
+			} else {
+				Chart::NumericField *f = new Chart::NumericField;
+				f->path = path;
+				chart->function(f);
+			}
+
+			if (updateTimer)
+			{
+				connect(updateTimer, SIGNAL(timeout()), chart, SLOT(update()));
+			}
 		}
 	}
 }

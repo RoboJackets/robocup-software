@@ -73,7 +73,7 @@ bool LogViewer::readFrames(const char *filename)
 	QFile file(filename);
 	if (!file.open(QFile::ReadOnly))
 	{
-		fprintf(stderr, "Can't open %s: %s\n", filename, (const char *)file.errorString().toAscii());
+		fprintf(stderr, "Can't open %s: %s\n", filename, (const char *)file.errorString().toLatin1());
 		return false;
 	}
 	

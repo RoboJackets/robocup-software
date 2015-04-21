@@ -181,15 +181,21 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QSlider" name="playbackRate">
+          <widget class="QSlider" name="logHistoryLocation">
            <property name="toolTip">
-            <string>Playback Speed</string>
+            <string>Location in log history</string>
            </property>
            <property name="minimum">
-            <number>-600</number>
+            <number>0</number>
            </property>
            <property name="maximum">
-            <number>600</number>
+            <number>1000000</number>
+           </property>
+           <property name="singleStep">
+            <number>1</number>
+           </property>
+           <property name="pageStep">
+            <number>100</number>
            </property>
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -197,15 +203,12 @@
            <property name="tickPosition">
             <enum>QSlider::TicksBelow</enum>
            </property>
-           <property name="tickInterval">
-            <number>600</number>
-           </property>
           </widget>
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <property name="spacing">
-            <number>0</number>
+            <number>15</number>
            </property>
            <item>
             <spacer name="horizontalSpacer">
@@ -221,18 +224,18 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="logStop">
+            <widget class="QPushButton" name="logPlaybackFastBackward">
              <property name="toolTip">
-              <string>Stop</string>
+              <string>Play log backwards quickly</string>
              </property>
              <property name="icon">
-              <iconset resource="log_icons.qrc">
-               <normaloff>:/icons/media-playback-pause.png</normaloff>:/icons/media-playback-pause.png</iconset>
+              <iconset resource="main_icons.qrc">
+               <normaloff>:/icons/fast-backward.svg</normaloff>:/icons/fast-backward.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
-               <width>32</width>
-               <height>32</height>
+               <width>20</width>
+               <height>20</height>
               </size>
              </property>
              <property name="flat">
@@ -241,18 +244,18 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="logFirst">
+            <widget class="QPushButton" name="logPlaybackBackward">
              <property name="toolTip">
-              <string>First Available Frame</string>
+              <string>Play log backwards</string>
              </property>
              <property name="icon">
-              <iconset resource="log_icons.qrc">
-               <normaloff>:/icons/media-skip-backward.png</normaloff>:/icons/media-skip-backward.png</iconset>
+              <iconset resource="main_icons.qrc">
+               <normaloff>:/icons/slow-backward.svg</normaloff>:/icons/slow-backward.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
-               <width>32</width>
-               <height>32</height>
+               <width>20</width>
+               <height>20</height>
               </size>
              </property>
              <property name="flat">
@@ -261,18 +264,18 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="logPrev">
+            <widget class="QPushButton" name="logPlaybackPause">
              <property name="toolTip">
-              <string>Previous Frame</string>
+              <string>Pause log playback</string>
              </property>
              <property name="icon">
-              <iconset resource="log_icons.qrc">
-               <normaloff>:/icons/media-seek-backward.png</normaloff>:/icons/media-seek-backward.png</iconset>
+              <iconset resource="main_icons.qrc">
+               <normaloff>:/icons/pause.svg</normaloff>:/icons/pause.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
-               <width>32</width>
-               <height>32</height>
+               <width>20</width>
+               <height>20</height>
               </size>
              </property>
              <property name="flat">
@@ -281,18 +284,21 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="logNext">
+            <widget class="QPushButton" name="logPlaybackForward">
              <property name="toolTip">
-              <string>Next Frame</string>
+              <string>Play log forwards</string>
+             </property>
+             <property name="text">
+              <string/>
              </property>
              <property name="icon">
-              <iconset resource="log_icons.qrc">
-               <normaloff>:/icons/media-seek-forward.png</normaloff>:/icons/media-seek-forward.png</iconset>
+              <iconset resource="main_icons.qrc">
+               <normaloff>:/icons/slow-forward.svg</normaloff>:/icons/slow-forward.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
-               <width>32</width>
-               <height>32</height>
+               <width>20</width>
+               <height>20</height>
               </size>
              </property>
              <property name="flat">
@@ -301,18 +307,38 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="logLive">
+            <widget class="QPushButton" name="logPlaybackFastForward">
              <property name="toolTip">
-              <string>Live</string>
+              <string>Play log forwards quickly</string>
              </property>
              <property name="icon">
-              <iconset resource="log_icons.qrc">
-               <normaloff>:/icons/media-skip-forward.png</normaloff>:/icons/media-skip-forward.png</iconset>
+              <iconset resource="main_icons.qrc">
+               <normaloff>:/icons/fast-forward.svg</normaloff>:/icons/fast-forward.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
-               <width>32</width>
-               <height>32</height>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="flat">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="logPlaybackLive">
+             <property name="toolTip">
+              <string>Show live feed</string>
+             </property>
+             <property name="icon">
+              <iconset resource="main_icons.qrc">
+               <normaloff>:/icons/live.svg</normaloff>:/icons/live.svg</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>20</width>
+               <height>20</height>
               </size>
              </property>
              <property name="flat">
@@ -655,7 +681,7 @@
         <enum>QTabWidget::East</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="treeTab">
         <property name="sizePolicy">
@@ -1202,7 +1228,7 @@
      <x>0</x>
      <y>0</y>
      <width>1080</width>
-     <height>20</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
@@ -1218,6 +1244,7 @@
     <addaction name="actionRawRobots"/>
     <addaction name="actionCoords"/>
     <addaction name="actionDotPatterns"/>
+    <addaction name="actionTeam_Names"/>
    </widget>
    <widget class="QMenu" name="menu_Field">
     <property name="title">
@@ -1234,8 +1261,9 @@
      <property name="title">
       <string>Vision Channel</string>
      </property>
-     <addaction name="actionVisionFirst_Half"/>
-     <addaction name="actionVisionSecond_Half"/>
+     <addaction name="actionVisionPrimary_Half"/>
+     <addaction name="actionVisionSecondary_Half"/>
+     <addaction name="actionVisionFull_Field"/>
     </widget>
     <addaction name="actionDefendMinusX"/>
     <addaction name="actionDefendPlusX"/>
@@ -1532,7 +1560,7 @@
     <string>Toggles display of robot shell dot patterns.</string>
    </property>
   </action>
-  <action name="actionVisionFirst_Half">
+  <action name="actionVisionPrimary_Half">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -1540,15 +1568,31 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>First Half</string>
+    <string>Primary Half</string>
    </property>
   </action>
-  <action name="actionVisionSecond_Half">
+  <action name="actionVisionSecondary_Half">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Second Half</string>
+    <string>Secondary Half</string>
+   </property>
+  </action>
+  <action name="actionVisionFull_Field">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Full Field</string>
+   </property>
+  </action>
+  <action name="actionTeam_Names">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Team Names</string>
    </property>
   </action>
  </widget>
@@ -1569,5 +1613,29 @@
   <include location="main_icons.qrc"/>
   <include location="log_icons.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>MainWindow</sender>
+   <signal>historyLocationChanged(int)</signal>
+   <receiver>logHistoryLocation</receiver>
+   <slot>setValue(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>1076</x>
+     <y>27</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>573</x>
+     <y>39</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <signal>historyLocationChanged(int)</signal>
+  <slot>on_historyLocation_sliderPressed()</slot>
+  <slot>on_historyLocation_sliderMoved(int)</slot>
+  <slot>on_historyLocation_sliderReleased()</slot>
+  <slot>on_historyLocation_sliderValueChanged(int)</slot>
+ </slots>
 </ui>

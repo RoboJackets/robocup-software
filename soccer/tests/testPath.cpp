@@ -1,6 +1,6 @@
 #include <iostream>
 #include <gtest/gtest.h>
-#include <planning/Path.hpp>
+#include <planning/InterpolatedPath.hpp>
 
 using namespace std;
 using namespace Geometry2d;
@@ -10,7 +10,7 @@ using namespace Planning;
 TEST( testPath, nearestSegment) {
 	Geometry2d::Point p0, p1(1.0, 0.0), p2(2.0, 0.0), p3(3.0, 0.0);
 
-	Planning::Path path;
+	Planning::InterpolatedPath path;
 	path.points.push_back(p0);
 	path.points.push_back(p1);
 	path.points.push_back(p2);
@@ -28,14 +28,14 @@ TEST( testPath, startFrom1 ) {
 
 	Geometry2d::Point p0, p1(1.0, 0.0), p2(2.0, 0.0), p3(3.0, 0.0);
 
-	Planning::Path path;
+	Planning::InterpolatedPath path;
 	path.points.push_back(p0);
 	path.points.push_back(p1);
 	path.points.push_back(p2);
 	path.points.push_back(p3);
 
 	// simple case - on same axis as path
-	Planning::Path act;
+	Planning::InterpolatedPath act;
 	path.startFrom(Point(-1.0, 0.0), act);
 
 	// verify
@@ -50,14 +50,14 @@ TEST( testPath, startFrom2 ) {
 
 	Geometry2d::Point p0, p1(1.0, 0.0), p2(2.0, 0.0), p3(3.0, 0.0);
 
-	Planning::Path path;
+	Planning::InterpolatedPath path;
 	path.points.push_back(p0);
 	path.points.push_back(p1);
 	path.points.push_back(p2);
 	path.points.push_back(p3);
 
 	Point pt(0.5,-1.0);
-	Planning::Path act;
+	Planning::InterpolatedPath act;
 	path.startFrom(pt, act);
 
 	// verify
@@ -72,14 +72,14 @@ TEST( testPath, startFrom3 ) {
 
 	Geometry2d::Point p0, p1(1.0, 0.0), p2(2.0, 0.0), p3(3.0, 0.0);
 
-	Planning::Path path;
+	Planning::InterpolatedPath path;
 	path.points.push_back(p0);
 	path.points.push_back(p1);
 	path.points.push_back(p2);
 	path.points.push_back(p3);
 
 	Point pt(0.5,-0.01);
-	Planning::Path act;
+	Planning::InterpolatedPath act;
 	path.startFrom(pt, act);
 
 	// verify
@@ -88,30 +88,36 @@ TEST( testPath, startFrom3 ) {
 //	EXPECT_TRUE(p1 == act.points[1]); // fails
 }
 
-TEST(Path, evaluate) {
+TEST(InterpolatedPath, evaluate) {
 	Point p0(1,1), p1(1, 2), p2(2, 2);
 
-	Path path;
+	InterpolatedPath path;
 	path.points.push_back(p0);
 	path.points.push_back(p1);
 	path.points.push_back(p2);
-
-	Configuration config;
-	path.createConfiguration(&config);
-
+	path.times.push_back(0);
+	path.times.push_back(3);
+	path.times.push_back(6);
+	path.vels.push_back(Point(0,0));
+	path.vels.push_back(p1);
+	path.vels.push_back(Point(0,0));
 	Point posOut, velOut;
 	bool pathValid;
 
+	path.maxSpeed = 2;
+	path.maxAcceleration = 2;
+
+
 	//	path should be invalid and at start state when t < 0
 	pathValid = path.evaluate(-1, posOut, velOut);
-	EXPECT_FLOAT_EQ((posOut - p0).mag(), 0);
-	EXPECT_FLOAT_EQ((velOut).mag(), 0);
+	EXPECT_FLOAT_EQ(0, (posOut - p0).mag());
+	EXPECT_FLOAT_EQ(0, (velOut).mag());
 	EXPECT_FALSE(pathValid);
 
 	//	path should be invalid and at end state when t > duration
 	pathValid = path.evaluate(1000, posOut, velOut);
-	EXPECT_FLOAT_EQ((posOut - p2).mag(), 0);
-	EXPECT_FLOAT_EQ(velOut.mag(), 0);
+	EXPECT_FLOAT_EQ(0, (posOut - p2).mag());
+	EXPECT_FLOAT_EQ(0, velOut.mag());
 	EXPECT_FALSE(pathValid);
 }
 

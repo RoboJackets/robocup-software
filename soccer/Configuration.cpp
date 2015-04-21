@@ -5,7 +5,6 @@
 
 #include <stdio.h>
 #include <assert.h>
-#include <boost/foreach.hpp>
 
 std::list<Configurable *> *Configurable::_configurables;
 
@@ -194,7 +193,7 @@ void Configuration::tree(QTreeWidget* tree)
 	connect(_tree, SIGNAL(itemChanged(QTreeWidgetItem *, int)), this, SLOT(itemChanged(QTreeWidgetItem *, int)));
 	
 	// Add items that were created before we got a tree
-	BOOST_FOREACH(ConfigItem *item, _allItems)
+	for (ConfigItem *item :  _allItems)
 	{
 		addToTree(item);
 	}
@@ -220,7 +219,7 @@ void Configuration::itemChanged(QTreeWidgetItem* item, int column)
 ConfigItem *Configuration::nameLookup(const QString& name) const
 {
 	QStringList path = name.split('/');
-	BOOST_FOREACH(ConfigItem *item, _allItems)
+	for (ConfigItem *item :  _allItems)
 	{
 		if (item->path() == path)
 		{
@@ -259,10 +258,10 @@ bool Configuration::load(const QString &filename, QString &error)
 	}
 	
 	_doc = newDoc;
-	BOOST_FOREACH(ConfigItem *item, _allItems)
+	for (ConfigItem *item :  _allItems)
 	{
 		QDomElement el = root;
-		BOOST_FOREACH(QString str, item->path())
+		for (QString str :  item->path())
 		{
 			bool isInt = false;
 			int value = str.toInt(&isInt);
@@ -309,10 +308,10 @@ bool Configuration::save(const QString &filename, QString &error)
 	
 	// Update the DOM
 	//FIXME - Remove superfluous vector elements
-	BOOST_FOREACH(ConfigItem *item, _allItems)
+	for (ConfigItem *item :  _allItems)
 	{
 		QDomElement el = root;
-		BOOST_FOREACH(QString str, item->path())
+		for (QString str :  item->path())
 		{
 			bool isInt = false;
 			int value = str.toInt(&isInt);

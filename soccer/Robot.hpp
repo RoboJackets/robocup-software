@@ -11,7 +11,7 @@
 #include <Constants.hpp>
 #include "MotionConstraints.hpp"
 #include <Utils.hpp>
-#include <planning/Path.hpp>
+#include <planning/InterpolatedPath.hpp>
 #include <planning/RRTPlanner.hpp>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
@@ -40,7 +40,7 @@ namespace Planning
 
 /**
  * @brief Contains robot motion state data
- * @details This class contains data that comes from the vision system 
+ * @details This class contains data that comes from the vision system
  * including position data and which camera this robot was seen by and
  * what time it was last seen.
  */
@@ -57,15 +57,15 @@ public:
 		// normalize angle so it's always positive
 		while (angle < 0) angle += 2.0 * M_PI;
 	}
-	
+
 	bool visible;
 	Geometry2d::Point pos;
 	Geometry2d::Point vel;
 	float angle;	///	angle in radians.  0 radians means the robot is aimed along the x-axis
 	float angleVel;	///	angular velocity in radians/sec
-	
+
 	// Time at which this estimate is valid
-	uint64_t time;
+	Time time;
 	int visionFrame;
 };
 
@@ -91,7 +91,7 @@ public:
 	{
 		return _self;
 	}
-	
+
 	/**
 	 * Get the robot's position filter.
 	 */
@@ -141,7 +141,7 @@ public:
 	~OurRobot();
 
 	void addStatusText();
-	
+
 	void addText(const QString &text, const QColor &color = Qt::white, const QString &layerPrefix = "RobotText");
 
 	// kicker readiness checks
@@ -158,7 +158,7 @@ public:
 
 	// Gets the robot quaternion.  Returns false (and does not change q) if not available.
 	boost::optional<Eigen::Quaternionf> quaternion() const;
-	
+
 	// Commands
 
 	const MotionConstraints &motionConstraints() const {
@@ -169,7 +169,7 @@ public:
 		return _motionConstraints;
 	}
 
-	const boost::optional<Planning::Path> &path() const {
+	const Planning::Path* path() const {
 		return _path;
 	}
 
@@ -188,7 +188,7 @@ public:
 	 */
 	void move(const Geometry2d::Point &goal, float endSpeed = 0);
 
-	uint64_t pathStartTime() const {
+	Time pathStartTime() const {
 		return _pathStartTime;
 	}
 
@@ -199,6 +199,11 @@ public:
 	 * See _pathChangeHistory for more info
 	 */
 	int consecutivePathChangeCount() const;
+
+	/**
+	 * Sets the angleVelocity in the robot's MotionConstraints
+	 */
+	void angleVelocity(const float angleVelocity);
 
 	/**
 	 * Sets the worldVelocity in the robot's MotionConstraints
@@ -230,7 +235,7 @@ public:
 
 	/**
 	 * KICKING/CHIPPING
-	 * 
+	 *
 	 * When we call kick() or chip(), it doesn't happen immediately.
 	 * It primes the kicker or chipper to kick at the designated power the next time
 	 * the bot senses that it has the ball.  Once this happens, we record the time
@@ -263,7 +268,7 @@ public:
 	 */
 	void unkick();
 
-	uint64_t lastKickTime() const;
+	Time lastKickTime() const;
 
 	//	checks if the bot has kicked/chipped very recently.
 	bool justKicked() {
@@ -383,7 +388,7 @@ public:
 	{
 		return _motionControl;
 	}
-	
+
 	SystemState *state() const
 	{
 		return _state;
@@ -392,7 +397,7 @@ public:
 	/**
 	 * @param age Time (in microseconds) that defines non-fresh
 	 */
-	bool rxIsFresh(uint64_t age = 500000) const;
+	bool rxIsFresh(Time age = 500000) const;
 
 	/**
 	 * @brief Starts the robot playing the fight song
@@ -405,13 +410,13 @@ public:
 
 
 	static void createConfiguration(Configuration *cfg);
-	
+
 	double distanceToChipLanding(int chipPower);
 	uint8_t chipPowerForDistance(double distance);
 
 protected:
 	MotionControl *_motionControl;
-	
+
 	SystemState *_state;
 
 	// obstacle management
@@ -423,10 +428,10 @@ protected:
 
 	Planning::RRTPlanner *_planner;	/// single-robot RRT planner
 
-	void setPath(Planning::Path path);
+	void setPath(Planning::Path *path);
 
-	boost::optional<Planning::Path> _path;	/// latest path
-	uint64_t _pathStartTime;
+	Planning::Path *_path;	/// latest path
+	Time _pathStartTime;
 
 	///	whenever the constraints for the robot path are changed, this is set to true to trigger a replan
 	bool _pathInvalidated;
@@ -447,6 +452,30 @@ protected:
 		for (size_t i=0; i<RobotMask::size(); ++i)
 			if (mask[i] > 0 && robots[i] && robots[i]->visible)
 				result.add(std::shared_ptr<Geometry2d::Shape>(new Geometry2d::Circle(robots[i]->pos, mask[i])));
+		return result;
+	}
+
+
+	/**
+	 * Only adds obstacles within the checkRadius of the passed in position
+	 * Creates a set of obstacles from a given robot team mask,
+	 * where mask values < 0 create no obstacle, and larger values
+	 * create an obstacle of a given radius
+	 *
+	 * NOTE: mask must not be set for this robot
+	 *
+	 * @param robots is the set of robots to use to create a mask - either self or opp from _state
+	 */
+	template<class ROBOT>
+	Geometry2d::CompositeShape createRobotObstacles(const std::vector<ROBOT*>& robots, const RobotMask& mask,
+				 Geometry2d::Point currentPosition, float checkRadius) const {
+		Geometry2d::CompositeShape result;
+		for (size_t i=0; i<RobotMask::size(); ++i)
+			if (mask[i] > 0 && robots[i] && robots[i]->visible) {
+				if (currentPosition.distTo(robots[i]->pos)<=checkRadius) {
+					result.add(std::shared_ptr<Geometry2d::Shape>(new Geometry2d::Circle(robots[i]->pos, mask[i])));
+				}
+			}
 		return result;
 	}
 
@@ -473,7 +502,7 @@ protected:
 	 * This causes the _pathStartTime to constantly be reset and motion control looks about zero seconds
 	 * into the planned path and sends the robot a velocity command that's really really tiny, causing
 	 * it to barely move at all.
-	 * 
+	 *
 	 * Our solution to this is to track the last N path changes in a circular buffer so we can tell if
 	 * we're hitting this scenario.  If so, we can compensate, by having motion control look further into
 	 * the path when commanding the robot.
@@ -492,8 +521,8 @@ private:
 	void _unkick();
 
 	uint32_t _lastKickerStatus;
-	uint64_t _lastKickTime;
-	uint64_t _lastChargedTime;
+	Time _lastKickTime;
+	Time _lastChargedTime;
 
 	Packet::RadioRx _radioRx;
 
