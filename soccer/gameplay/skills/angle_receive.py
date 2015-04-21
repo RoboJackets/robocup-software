@@ -3,6 +3,7 @@ import behavior
 import robocup
 import constants
 import main
+import math
 import enum
 import time
 import skills._kick
@@ -158,9 +159,16 @@ class AngleReceive(skills._kick._Kick):
 
 
         if self.ball_kicked:
-            self._target_pos = self._pass_line.nearest_point(self.robot.pos)
+            receive_before_adjust = self._pass_line.nearest_point(self.robot.pos)
         else:
-            self._target_pos = self.receive_point
+            receive_before_adjust = self.receive_point
+
+        # Make the receive point be the mouth, rather than the center of the robot.
+        # Assumes mouth of robot is at the edge.
+        actual_receive_point = receive_before_adjust + robocup.Point(\
+                constants.Robot.Radius * math.sin(self.robot.angle), \
+                constants.Robot.Radius * math.cos(self.robot.angle))
+        self._target_pos = actual_receive_point
 
         # Code to provide slipback when receiving the ball
         # pass_line_dir = (self._pass_line.get_pt(1) - self._pass_line.get_pt(0)).normalized()
