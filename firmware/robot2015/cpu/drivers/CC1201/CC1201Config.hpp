@@ -19,6 +19,12 @@ class CC1201Config
  		 * 
 		 */
 		static CC1201* loadConfiguration(CC1201Config* config, CC1201* device);
+    
+        /**
+         *
+         */
+        static CC1201Config* verifyConfiguration(CC1201Config* config, CC1201* device);
+
 
 		/**
 		 * default constructor
