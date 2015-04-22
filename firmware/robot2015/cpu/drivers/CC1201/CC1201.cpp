@@ -2,6 +2,8 @@
 #include "mbed.h"
 #include "rtos.h"
 
+extern "C" void mbed_reset();
+
 using namespace std;
 
 CC1201::CC1201() : CommLink() {}
@@ -9,12 +11,13 @@ CC1201::CC1201() : CommLink() {}
 CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intPin) :
 	CommLink(mosi, miso, sck, cs, intPin)
 {
+    //powerOnReset();
 	reset();
 	Thread::wait(300);
 	strobe(CC1201_STROBE_SIDLE);
 	Thread::wait(400);
 
-	_spi->frequency(6000000);
+	_spi->frequency(1000000);
 }
 
 CC1201::~CC1201() {}
@@ -200,6 +203,21 @@ void CC1201::reset(void)
 	_spi->write(CC1201_STROBE_SRES);
 	Thread::wait(500);
 	toggle_cs();
+    
+    /*
+    //force select chip
+    strobe(CC1201_STROBE_SIDLE);
+
+    //DigitalIn* SO = new DigitalIn(_miso_pin);
+
+    *_cs = 0;
+    _spi->write(CC1201_STROBE_SRES);
+    //while (*SO != 0);
+    //while((LPC_GPIO0->FIOPIN & (1UL << 7)) == 0 ? false : true)
+    *_cs = 1;
+
+    //delete SO;
+    */
 }
 
 int32_t CC1201::selfTest(void)
@@ -226,8 +244,57 @@ bool CC1201::isConnected(void)
 	return true;
 }
 
+uint8_t recurseCount = 0;
 void CC1201::powerOnReset(void)
 {
+    recurseCount++;
+    if (recurseCount >= 10)
+    {
+        log(SEVERE, "CC1201::reset", "cannot calibrate radio -> system reset");
+        Thread::wait(3000);
+        mbed_reset();
+    }
+
+    log(INF1, "CC1201::reset", "Beginning power on reset (POR)");
+
+    log(INF2, "CC1201::reset", "Strobe SIDLE");
+    strobe(CC1201_STROBE_SIDLE);
+    log(INF2, "CC1201::reset", "IDLE strobe OK.");
+    
+    log(INF2, "CC1201::reset", "Force CS low");
+    *_cs = 0;
+    log(INF2, "CC1201::reset", "Strobe SRES");
+    _spi->write(CC1201_STROBE_SRES);
+    log(INF2, "CC1201::reset", "dealloc SPI");
+    delete _spi;
+    log(INF2, "CC1201::reset", "(MI)SO alloc digIn");
+    DigitalIn* SO = new DigitalIn(_miso_pin);
+
+
+    log(INF2, "CC1201::reset", "wait for olliscator assertion");
+    uint8_t waitCycles = 20;    
+    while (*SO)
+    {
+        if (waitCycles == 0)
+        {
+            log(WARN, "CC1201::reset", "calibration settled assertion timeout -> retry");
+            powerOnReset();
+
+            Thread::wait(100);
+        }
+
+        waitCycles--;
+    }
+    recurseCount = 0;
+
+    log(INF2, "CC1201::reset", "dealloc digIn");
+    delete SO;
+    log(INF2, "CC1201::reset", "force CSn high");
+    *_cs = 1;
+    log(INF2, "CC1201::reset", "setup SPI");
+    setup_spi();
+    log(INF2, "CC1201::reset", "POR COMPLETE!");
+
 /*
     log(INF1, "CC1201", "Beginning Power-on-Reset routine...");
 

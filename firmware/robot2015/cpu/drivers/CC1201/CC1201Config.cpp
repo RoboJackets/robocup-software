@@ -455,6 +455,8 @@ CC1201* CC1201Config::loadConfiguration(CC1201Config* config, CC1201* device)
  */
 bool CC1201Config::verifyConfiguration(CC1201Config* config, CC1201* device)
 {
+    return true;
+
 	//clear faults queue
 	std::queue<string> empty;
 	std::swap(configurationFaults, empty);
@@ -532,9 +534,10 @@ bool CC1201Config::verifyConfiguration(CC1201Config* config, CC1201* device)
 			string errorStr = ("Reg: " + regStr + ", Val: " + valStr + ", Exp: " + expStr);
 
             //push fault onto the queue for later processing
-			configurationFaults.push(errorStr);
+			//configurationFaults.push(errorStr);
 		}
     }
+
 
     //loop through extended register set
     for (uint8_t extReg = 0x00; extReg <= 0xFF; extReg++)
@@ -688,7 +691,7 @@ bool CC1201Config::verifyConfiguration(CC1201Config* config, CC1201* device)
 				string errorStr = ("ExtReg: " + regStr + ", Val: " + valStr + ", Exp: " + expStr);
 
 				//push the error onto the queue for processing later
-				configurationFaults.push(errorStr);
+				//configurationFaults.push(errorStr);
 			}
 		}
     }

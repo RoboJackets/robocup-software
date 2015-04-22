@@ -24,7 +24,7 @@ void intTest(void)
 
 void radioThreadHandler(void const* args)
 {
-	rxInt.rise(&intTest);
+	//rxInt.rise(&intTest);
 
 	CC1201* testRadio = new CC1201(p5, p6, p7, p9, p8);
 	CC1201Config *testRadioConfig = CC1201Config::resetConfiguration(new CC1201Config());
@@ -44,9 +44,10 @@ void radioThreadHandler(void const* args)
 		{
 			log(WARN, "radio::radioThreadHandler", 
 				"Possible Corrupted State: %02X", 
-				testRadio->decodeState(testRadio->strobe(CC1201_STROBE_SNOP))); 
-			testRadio->strobe(CC1201_STROBE_SIDLE);
+				testRadio->decodeState(testRadio->strobe(CC1201_STROBE_SNOP)));
 			testRadio->strobe(CC1201_STROBE_SRES);
+			testRadio->strobe(CC1201_STROBE_SIDLE);
+            testRadio->powerOnReset();
 		}
 
 		Thread::wait(1000);
@@ -56,6 +57,9 @@ void radioThreadHandler(void const* args)
 	CC1201Config::loadConfiguration(testRadioConfig, testRadio);
 	if (CC1201Config::verifyConfiguration(testRadioConfig, testRadio) == false)
 	{
+        ledFour = !ledFour;
+        for (;;);
+
 		while (!CC1201Config::configurationFaults.empty())
 		{
 			log(WARN, "radio::radioThreadHandler", CC1201Config::configurationFaults.front().c_str());
@@ -66,23 +70,12 @@ void radioThreadHandler(void const* args)
 	{
 		log(INF1, "radio::radioThreadHandler", "radio configuration confirmed.");
 	}
-	testRadio->ready();
-	
+	//testRadio->ready();
 
 	uint8_t len = 32;
 	uint8_t dataLen = 13;
 	char* buffer = (char*) malloc(len);
 	strcpy(buffer, "Hello, World!");
-	
-	/*
-	while (testRadio->decodeState(testRadio->strobe(CC1201_STROBE_SNOP)) != 0x01)
-	{
-		printf("NOP: %02X\r\n", testRadio->strobe(CC1201_STROBE_SNOP));
-	}
-	Thread::wait(100);
-	testRadio->strobe(CC1201_STROBE_SIDLE);
-	Thread::wait(100);
-	*/
 
 	//testRadio->strobe(CC1201_STROBE_SRX);
 	testRadio->strobe(CC1201_STROBE_SIDLE);
@@ -94,9 +87,10 @@ void radioThreadHandler(void const* args)
 		//Thread::wait(1000);
 		//testRadio->strobe(CC1201_STROBE_SRX);
 
-		/*log(INF3, "radio::radioThreadHandler", "NOP Return (decoded): %02X, Marc State: %02X", 
+		log(INF3, "radio::radioThreadHandler", "NOP Return (decoded): %02X, Marc State: %02X", 
 			testRadio->decodeState(testRadio->strobe(CC1201_STROBE_SNOP)),
-			testRadio->readRegExt(CC1201EXT_MARCSTATE));*/
+			testRadio->readRegExt(CC1201EXT_PARTVERSION/*CC1201EXT_MARCSTATE*/));
+        testRadio->selfTest();
 /*
 		log(INF3, "radio::radioThreadHandler", "TXFIRST: %02X, TXLAST: %02X, PKTLEN: %02X",
 			testRadio->readRegExt(CC1201EXT_TXFIRST),
@@ -104,12 +98,15 @@ void radioThreadHandler(void const* args)
 			testRadio->readReg(CC1201_PKT_LEN));
 */
 
-		//log(INF2, "radio::radioThreadHandler", "Starting TX");
-		//testRadio->sendData((uint8_t*) buffer, dataLen);
+/*
+		log(INF2, "radio::radioThreadHandler", "Starting TX");
+		testRadio->sendData((uint8_t*) buffer, dataLen);
 		//testRadio->strobe(CC1201_STROBE_SFTX);
 		//testRadio->sendGarbage();		
-		//log(INF2, "radio::radioThreadHandler", "TX Done.");
+		log(INF2, "radio::radioThreadHandler", "TX Done.");
+*/
 
+/*
 		if (CC1201Config::verifyConfiguration(testRadioConfig, testRadio) == false)
 		{
 			log(WARN, "radio::radioThreadHandler", "radio configuration corrupted");
@@ -124,9 +121,10 @@ void radioThreadHandler(void const* args)
 		{
 			log(INF1, "radio::radioThreadHandler", "radio configuration confirmed.");
 		}
+*/
 
 		//Thread::wait(1);
 		ledThree = !ledThree;
-		Thread::wait(5000);
+		Thread::wait(1000);
 	}
 }
