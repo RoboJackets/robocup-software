@@ -340,9 +340,9 @@ void OurRobot::faceNone()
 void OurRobot::kick(float strength)
 {
 	double maxKick = *config->kicker.maxKick;
-	_kick((int)(strength/100.0*((float)maxKick)));
+	_kick(roundf(strength*((float)maxKick)));
 
-	*_cmdText << "kick(" << (float)strength << "%)\n";
+	*_cmdText << "kick(" << (float)strength*100 << "%)\n";
 }	
 /*
 TODO
@@ -367,7 +367,14 @@ void OurRobot::kickLevel(uint8_t strength)
 	*_cmdText << "kick(" << (float)strength << ")\n";
 }
 
-void OurRobot::chip(uint8_t strength)
+void OurRobot::chip(float strength)
+{
+	double maxChip = *config->kicker.maxChip;
+	_chip(roundf(strength*((float)maxChip)));
+	*_cmdText << "chip(" << (float)strength*100 << "%)\n";
+}
+
+void OurRobot::chipLevel(uint8_t strength)
 {
 	_chip(strength);
 

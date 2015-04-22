@@ -244,7 +244,7 @@ public:
 
 
 	/**
-	 * enable kick when ready at a given strength (0.0 - 100.0)
+	 * enable kick when ready at a given strength (0.0 - 1.0)
 	 */
 	void kick(float strength);
 
@@ -259,9 +259,14 @@ public:
 	//TODO void kickSpeed(float strength);
 
 	/**
-	 * enable chip when ready at a given strength
+	 * enable chip when ready at a given strength (0.0 - 1.0)
 	 */
-	void chip(uint8_t strength);
+	void chip(float strength);
+
+	/**
+	 * enable chip when ready at a given strength (0-255)
+	 */
+	void chipLevel(uint8_t strength);
 
 	/**
 	 * @brief Undoes any calls to kick() or chip().
