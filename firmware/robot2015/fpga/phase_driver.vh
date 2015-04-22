@@ -7,7 +7,7 @@
 `define MAX_COUNTER 8'hFF 		//PWM period = MAX_COUNTER * clockPeriod 
 
 `define DUTY_CYCLE_WIDTH 8 		//bits available to duty_cycle
-`define MAX_DUTY_CYCLE 8'hFF	//Vaule represeting a duty cycle of 100%
-`define DUTY_CYCLE_STEP_RES 1 	//ceil(MAX_COUNTER/(2^(duty cycle width)-1))
+`define MAX_DUTY_CYCLE 8'hFF	//Value represeting a duty cycle of 100%
+`define DUTY_CYCLE_STEP_RES 1 	//ceil(MAX_COUNTER/MAX_DUTY_CYCLE) 
 
-`endif //_phase_driver_vh_
+`endif
