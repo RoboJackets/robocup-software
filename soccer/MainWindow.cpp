@@ -136,9 +136,6 @@ MainWindow::MainWindow(QWidget *parent):
 	_logPlaybackButtons.push_back(_ui.logPlaybackForward);
 	_logPlaybackButtons.push_back(_ui.logPlaybackFastForward);
 	_logPlaybackButtons.push_back(_ui.logPlaybackLive);
-
-	_ui.splitter_2 -> setHandleWidth(30);
-	
 }
 
 void MainWindow::configuration(Configuration* config)
@@ -373,19 +370,8 @@ void MainWindow::updateViews()
 	}
 
 	_ui.refStage->setText(NewRefereeModuleEnums::stringFromStage(_processor->refereeModule()->stage).c_str());
-	QFont rsFont = _ui.refStage->font();
-	rsFont.setPointSize(9);
-	_ui.refStage->setFont(rsFont);
-
 	_ui.refCommand->setText(NewRefereeModuleEnums::stringFromCommand(_processor->refereeModule()->command).c_str());
-	QFont rcFont = _ui.refCommand->font();
-	rcFont.setPointSize(9);
-	_ui.refCommand->setFont(rcFont);
-
 	_ui.refTimeLeft->setText(tr("%1 ms").arg(_processor->refereeModule()->stage_time_left));
-	QFont rtlFont = _ui.refTimeLeft->font();
-	rtlFont.setPointSize(9);
-	_ui.refTimeLeft->setFont(rtlFont);
 
 
 	_ui.refBlueName->setText(_processor->refereeModule()->blue_info.name.c_str());
@@ -1001,12 +987,3 @@ void MainWindow::on_actionVisionFull_Field_triggered()
 	_ui.actionVisionSecondary_Half->setChecked(false);
 	_ui.actionVisionFull_Field->setChecked(true);
 }
-
-// void QSplitter::splitter2 {
-//     background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, 
-// 	stop:0 rgba(255, 255, 255, 0), 
-// 	stop:0.407273 rgba(200, 200, 200, 255), 
-// 	stop:0.4825 rgba(101, 104, 113, 235), 
-// 	stop:0.6 rgba(255, 255, 255, 0));
-//     image: url(:/images/splitter.png);
-// }
