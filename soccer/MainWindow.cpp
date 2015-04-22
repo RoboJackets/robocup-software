@@ -202,13 +202,13 @@ void MainWindow::updateViews()
 		_ui.manualID->setCurrentIndex(0);
 		_processor->manualID(-1);
 		_ui.manualID->setEnabled(false);
-		_ui.tabWidget->setTabEnabled(2, false);
+		_ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab), false);
 	} else if (!_ui.manualID->isEnabled() && _processor->joystickValid())
 	{
 		// Joystick reconnected
 		_ui.manualID->setEnabled(true);
 		_ui.joystickTab->setVisible(true);
-		_ui.tabWidget->setTabEnabled(2, true);
+		_ui.tabWidget->setTabEnabled(_ui.tabWidget->indexOf(_ui.joystickTab), true);
 	}
 	if(manual >= 0) {
 		JoystickControlValues vals = _processor->getJoystickControlValues();
