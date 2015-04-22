@@ -577,7 +577,7 @@ void MainWindow::updateViews()
 				} else if (rx.hardware_version() == RJ2015) {
 					batteryLevel = RJ2015BatteryProfile.getChargeLevel(rx.battery());
 				} else {
-					throw logic_error("No battery profile for the given robot model");
+					cerr << "Unknown hardware revision " << rx.hardware_version() << ", unable to calculate battery %" << endl;
 				}
 			}
 			statusWidget->setBatteryLevel(batteryLevel);
