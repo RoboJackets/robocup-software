@@ -24,12 +24,6 @@ class Robot:
     class Dribbler:
         MaxPower = 127
 
-    class Chipper:
-        MaxPower = 255
-
-    class Kicker:
-        MaxPower = 255
-
 
 class Ball:
     Radius = 0.0215
