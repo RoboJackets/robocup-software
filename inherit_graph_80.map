@@ -1,3 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_system_state.html" title="Holds the positions of everything on the field. " alt="" coords="5,5,104,35"/>
+<area shape="rect" id="node3" href="$classtest__constants_1_1_test_constants.html" title="test_constants.TestConstants" alt="" coords="135,5,332,35"/>
+<area shape="rect" id="node5" href="$classtest__fsm_1_1_test_fsm.html" title="test_fsm.TestFsm" alt="" coords="169,59,297,88"/>
+<area shape="rect" id="node7" href="$classtest__play__registry_1_1_test_play_registry.html" title="test_play_registry.TestPlay\lRegistry" alt="" coords="143,111,324,158"/>
+<area shape="rect" id="node9" href="$classtest__role__assignment_1_1_test_role_assignment.html" title="test_role_assignment.Test\lRoleAssignment" alt="" coords="145,181,321,227"/>
+<area shape="rect" id="node11" href="$classtest__win__eval_1_1_test_window_evaluator.html" title="test_win_eval.TestWindow\lEvaluator" alt="" coords="144,250,323,297"/>
 </map>

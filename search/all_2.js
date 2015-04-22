@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['ball',['Ball',['../classgameplay_1_1constants_1_1_ball.html',1,'gameplay::constants']]],
   ['ball',['Ball',['../class_ball.html',1,'']]],
+  ['ball',['Ball',['../classgameplay_1_1constants_1_1_ball.html',1,'gameplay::constants']]],
   ['ball_5fkicked',['ball_kicked',['../classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a99ec67224eb5573dffc4eb021d781aae',1,'gameplay::skills::pass_receive::PassReceive']]],
   ['ballfilter',['BallFilter',['../class_ball_filter.html',1,'']]],
   ['ballmatrix',['ballMatrix',['../group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a',1,'Gameplay::GameplayModule']]],

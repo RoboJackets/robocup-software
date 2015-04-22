@@ -36,7 +36,7 @@ var NAVTREEINDEX =
 "class_config_bool.html#a30221ddc558692a7b52598b963a74bc2",
 "class_geometry2d_1_1_line.html#a4780f317efc1077423a99223ad0e770a",
 "class_our_robot.html#a019e62061c483d79b3ecd88aa5f08e27",
-"class_radio.html#a44a22ef706a9c15b0546afbc5b3c4c8a",
+"class_radio.html#a32b84cf4e9767856e482ba435c14260c",
 "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window.html#a290743cd370868031f69fcc8469ab117",
 "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html#a7c9df48e9efbfb90e1f3c53aee6e5e94",
 "classgameplay_1_1skills_1_1pass__receive_1_1_pass_receive.html#a63c008516f508d2263c3ad99ef908806",

@@ -2,13 +2,12 @@ var hierarchy =
 [
     [ "_RTP_t", "struct___r_t_p__t.html", null ],
     [ "AutoName", "class_auto_name.html", null ],
-    [ "gameplay.constants.Ball", "classgameplay_1_1constants_1_1_ball.html", null ],
     [ "Ball", "class_ball.html", null ],
+    [ "gameplay.constants.Ball", "classgameplay_1_1constants_1_1_ball.html", null ],
     [ "BallFilter", "class_ball_filter.html", null ],
     [ "BallObservation", "class_ball_observation.html", null ],
     [ "BallTracker", "class_ball_tracker.html", null ],
     [ "gameplay.play_registry.PlayRegistry.Category", "classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html", null ],
-    [ "gameplay.constants.Robot.Chipper", "classgameplay_1_1constants_1_1_robot_1_1_chipper.html", null ],
     [ "RobotConfig::Chipper", "struct_robot_config_1_1_chipper.html", null ],
     [ "gameplay.constants.Colors", "classgameplay_1_1constants_1_1_colors.html", null ],
     [ "command_t", "structcommand__t.html", null ],
@@ -65,7 +64,6 @@ var hierarchy =
     ] ],
     [ "JoystickControlValues", "struct_joystick_control_values.html", null ],
     [ "RobotConfig::Kicker", "struct_robot_config_1_1_kicker.html", null ],
-    [ "gameplay.constants.Robot.Kicker", "classgameplay_1_1constants_1_1_robot_1_1_kicker.html", null ],
     [ "Geometry2d::Line", "class_geometry2d_1_1_line.html", [
       [ "Geometry2d::Segment", "class_geometry2d_1_1_segment.html", null ]
     ] ],
@@ -160,9 +158,6 @@ var hierarchy =
       [ "Geometry2d::Polygon", "class_geometry2d_1_1_polygon.html", null ],
       [ "Geometry2d::Rect", "class_geometry2d_1_1_rect.html", null ]
     ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
-    ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
         [ "gameplay.composite_behavior.CompositeBehavior", "classgameplay_1_1composite__behavior_1_1_composite_behavior.html", [
@@ -233,6 +228,9 @@ var hierarchy =
         [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
+    ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "Processor::Status", "struct_processor_1_1_status.html", null ],
     [ "SystemState", "class_system_state.html", null ],

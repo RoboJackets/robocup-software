@@ -222,16 +222,23 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:afd4e2e7b34afbe32cb27c231adcb477f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afd4e2e7b34afbe32cb27c231adcb477f"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>dribble</b> (uint8_t speed)</td></tr>
 <tr class="separator:afd4e2e7b34afbe32cb27c231adcb477f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c8589e1c0b057797582cc5ae68040f5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a1c8589e1c0b057797582cc5ae68040f5">kick</a> (uint8_t strength)</td></tr>
-<tr class="memdesc:a1c8589e1c0b057797582cc5ae68040f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">KICKING/CHIPPING.  <a href="#a1c8589e1c0b057797582cc5ae68040f5">More...</a><br /></td></tr>
-<tr class="separator:a1c8589e1c0b057797582cc5ae68040f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acfb0a511c25d2af38a9e4ef81640621d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acfb0a511c25d2af38a9e4ef81640621d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#acfb0a511c25d2af38a9e4ef81640621d">chip</a> (uint8_t strength)</td></tr>
-<tr class="memdesc:acfb0a511c25d2af38a9e4ef81640621d"><td class="mdescLeft">&#160;</td><td class="mdescRight">enable chip when ready at a given strength <br /></td></tr>
-<tr class="separator:acfb0a511c25d2af38a9e4ef81640621d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a08041f75636852ac9c9eecf9cad3b543"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a08041f75636852ac9c9eecf9cad3b543">kick</a> (float strength)</td></tr>
+<tr class="memdesc:a08041f75636852ac9c9eecf9cad3b543"><td class="mdescLeft">&#160;</td><td class="mdescRight">KICKING/CHIPPING.  <a href="#a08041f75636852ac9c9eecf9cad3b543">More...</a><br /></td></tr>
+<tr class="separator:a08041f75636852ac9c9eecf9cad3b543"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a7af7e311b88b1d594049a47139f33b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0a7af7e311b88b1d594049a47139f33b"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a0a7af7e311b88b1d594049a47139f33b">kickLevel</a> (uint8_t strength)</td></tr>
+<tr class="memdesc:a0a7af7e311b88b1d594049a47139f33b"><td class="mdescLeft">&#160;</td><td class="mdescRight">enable kick when ready at a given strength (0-255) <br /></td></tr>
+<tr class="separator:a0a7af7e311b88b1d594049a47139f33b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5db88cfc6b189c39fa00f192bdb8a2e6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#a5db88cfc6b189c39fa00f192bdb8a2e6">chip</a> (float strength)</td></tr>
+<tr class="memdesc:a5db88cfc6b189c39fa00f192bdb8a2e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">enable chip when ready at a given percentage of the currently set max chip power.  <a href="#a5db88cfc6b189c39fa00f192bdb8a2e6">More...</a><br /></td></tr>
+<tr class="separator:a5db88cfc6b189c39fa00f192bdb8a2e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb77e0c6dc791ef1ed39af425ebc0aa7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeb77e0c6dc791ef1ed39af425ebc0aa7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#aeb77e0c6dc791ef1ed39af425ebc0aa7">chipLevel</a> (uint8_t strength)</td></tr>
+<tr class="memdesc:aeb77e0c6dc791ef1ed39af425ebc0aa7"><td class="mdescLeft">&#160;</td><td class="mdescRight">enable chip when ready at a given strength (0-255) <br /></td></tr>
+<tr class="separator:aeb77e0c6dc791ef1ed39af425ebc0aa7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae69f9949b6337a7a97389ff0c6b25063"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae69f9949b6337a7a97389ff0c6b25063"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_our_robot.html#ae69f9949b6337a7a97389ff0c6b25063">unkick</a> ()</td></tr>
-<tr class="memdesc:ae69f9949b6337a7a97389ff0c6b25063"><td class="mdescLeft">&#160;</td><td class="mdescRight">Undoes any calls to <a class="el" href="class_our_robot.html#a1c8589e1c0b057797582cc5ae68040f5" title="KICKING/CHIPPING. ">kick()</a> or <a class="el" href="class_our_robot.html#acfb0a511c25d2af38a9e4ef81640621d" title="enable chip when ready at a given strength ">chip()</a>. <br /></td></tr>
+<tr class="memdesc:ae69f9949b6337a7a97389ff0c6b25063"><td class="mdescLeft">&#160;</td><td class="mdescRight">Undoes any calls to <a class="el" href="class_our_robot.html#a08041f75636852ac9c9eecf9cad3b543" title="KICKING/CHIPPING. ">kick()</a> or <a class="el" href="class_our_robot.html#a5db88cfc6b189c39fa00f192bdb8a2e6" title="enable chip when ready at a given percentage of the currently set max chip power. ...">chip()</a>. <br /></td></tr>
 <tr class="separator:ae69f9949b6337a7a97389ff0c6b25063"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a24e0845fafeab64fec2c9c38d683ceaa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a24e0845fafeab64fec2c9c38d683ceaa"></a>
 Time&#160;</td><td class="memItemRight" valign="bottom"><b>lastKickTime</b> () const </td></tr>
@@ -669,6 +676,30 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>MotionControl</b></t
 
 </div>
 </div>
+<a class="anchor" id="a5db88cfc6b189c39fa00f192bdb8a2e6"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void OurRobot::chip </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>strength</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>enable chip when ready at a given percentage of the currently set max chip power. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">strength</td><td>a value between 0 and 1 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="afb8d32e3580b30997915444bb907e262"></a>
 <div class="memitem">
 <div class="memproto">
@@ -807,14 +838,14 @@ template&lt;class ROBOT &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a1c8589e1c0b057797582cc5ae68040f5"></a>
+<a class="anchor" id="a08041f75636852ac9c9eecf9cad3b543"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">void OurRobot::kick </td>
           <td>(</td>
-          <td class="paramtype">uint8_t&#160;</td>
+          <td class="paramtype">float&#160;</td>
           <td class="paramname"><em>strength</em></td><td>)</td>
           <td></td>
         </tr>
@@ -822,7 +853,12 @@ template&lt;class ROBOT &gt; </div>
 </div><div class="memdoc">
 
 <p>KICKING/CHIPPING. </p>
-<p>When we call <a class="el" href="class_our_robot.html#a1c8589e1c0b057797582cc5ae68040f5" title="KICKING/CHIPPING. ">kick()</a> or <a class="el" href="class_our_robot.html#acfb0a511c25d2af38a9e4ef81640621d" title="enable chip when ready at a given strength ">chip()</a>, it doesn't happen immediately. It primes the kicker or chipper to kick at the designated power the next time the bot senses that it has the ball. Once this happens, we record the time of the actual kick. enable kick when ready at a given strength </p>
+<p>When we call <a class="el" href="class_our_robot.html#a08041f75636852ac9c9eecf9cad3b543" title="KICKING/CHIPPING. ">kick()</a> or <a class="el" href="class_our_robot.html#a5db88cfc6b189c39fa00f192bdb8a2e6" title="enable chip when ready at a given percentage of the currently set max chip power. ...">chip()</a>, it doesn't happen immediately. It primes the kicker or chipper to kick at the designated power the next time the bot senses that it has the ball. Once this happens, we record the time of the actual kick. enable kick when ready at a given percentage of the currently set max kick power. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">strength</td><td>a value between 0 and 1 </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -959,7 +995,7 @@ template&lt;class ROBOT &gt; </div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_our_robot.html">OurRobot</a></li>
-    <li class="footer">Generated on Wed Apr 22 2015 03:38:05 for GT RoboCup SSL by
+    <li class="footer">Generated on Wed Apr 22 2015 05:58:21 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

@@ -1,5 +1,7 @@
 var NAVTREEINDEX4 =
 {
+"class_radio.html#a32b84cf4e9767856e482ba435c14260c":[11,0,55,7],
+"class_radio.html#a3bd06f89dc9c2836ed0f6f30caaeff5b":[11,0,55,6],
 "class_radio.html#a44a22ef706a9c15b0546afbc5b3c4c8a":[11,0,55,5],
 "class_radio.html#a6d55838ff1d2d631cffcced368eba2f3":[11,0,55,10],
 "class_radio.html#a6f7eaeb68a566caa6fc22a08b5744c7a":[11,0,55,3],
@@ -232,9 +234,7 @@ var NAVTREEINDEX4 =
 "classgameplay_1_1constants_1_1_colors.html":[11,0,2,2,1],
 "classgameplay_1_1constants_1_1_field.html":[11,0,2,2,2],
 "classgameplay_1_1constants_1_1_robot.html":[11,0,2,2,3],
-"classgameplay_1_1constants_1_1_robot_1_1_chipper.html":[11,0,2,2,3,0],
-"classgameplay_1_1constants_1_1_robot_1_1_dribbler.html":[11,0,2,2,3,1],
-"classgameplay_1_1constants_1_1_robot_1_1_kicker.html":[11,0,2,2,3,2],
+"classgameplay_1_1constants_1_1_robot_1_1_dribbler.html":[11,0,2,2,3,0],
 "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html":[11,0,2,3,0,0],
 "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html#a14779411db40f3361c84cce3202de3a0":[11,0,2,3,0,0,5],
 "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html#a20a36828eaab328e9e4131bdfe0f8390":[11,0,2,3,0,0,6],

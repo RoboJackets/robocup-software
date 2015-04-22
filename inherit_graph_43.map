@@ -1,7 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$class_geometry2d_1_1_shape.html" title="The shape class provides the interface to all shapes that are subclasses. " alt="" coords="5,85,144,115"/>
-<area shape="rect" id="node3" href="$class_geometry2d_1_1_circle.html" title="Geometry2d::Circle" alt="" coords="227,5,360,35"/>
-<area shape="rect" id="node5" href="$class_geometry2d_1_1_composite_shape.html" title="A Geometry2d::CompositeShape is a Shape that is made up of other shapes. " alt="" coords="193,59,393,88"/>
-<area shape="rect" id="node7" href="$class_geometry2d_1_1_polygon.html" title="Geometry2d::Polygon" alt="" coords="220,112,367,141"/>
-<area shape="rect" id="node9" href="$class_geometry2d_1_1_rect.html" title="Geometry2d::Rect" alt="" coords="229,165,357,195"/>
+<area shape="rect" id="node3" href="$class_joystick.html" title="Used for manually controlling robots. " alt="" coords="151,32,220,61"/>
+<area shape="rect" id="node5" href="$class_gamepad_joystick.html" title="Logitecch Gamepad/Joystick used to control robots. " alt="" coords="273,5,399,35"/>
+<area shape="rect" id="node7" href="$class_space_nav_joystick.html" title="Joystick class for using a SpaceNavigator 3d mouse for controlling the robots. " alt="" coords="271,59,401,88"/>
 </map>

@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['ball',['Ball',['../classgameplay_1_1constants_1_1_ball.html',1,'gameplay::constants']]],
   ['ball',['Ball',['../class_ball.html',1,'']]],
+  ['ball',['Ball',['../classgameplay_1_1constants_1_1_ball.html',1,'gameplay::constants']]],
   ['ballfilter',['BallFilter',['../class_ball_filter.html',1,'']]],
   ['ballobservation',['BallObservation',['../class_ball_observation.html',1,'']]],
   ['balltracker',['BallTracker',['../class_ball_tracker.html',1,'']]],
