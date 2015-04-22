@@ -8,24 +8,23 @@
 namespace Planning
 {
 	/**
-	 * @brief Represents a motion path as a series of {pos, vel} pairs.
+	 * @brief Represents a motion path made up of a series of Paths.
 	 *
-	 * @details The path represents a function of position given time that the robot should follow.  A
-	 * line-segment-based path comes from the planner, then we use cubic bezier curves to interpolate
-	 * and smooth it out.  This is done via the evaulate() method.
+	 * @details The path represents a function of position given time that the robot should follow.
+	 * The path is made up of other Paths and can be made up of CompositePaths.
 	 */
 	class CompositePath: public Path
 	{
 		private:
+			//Vector of Paths
 			std::vector<std::unique_ptr<Path>> paths; 
 
 		public:
 			/** default path is empty */
 			CompositePath() {}
 
-			/** constructor with one path */
+			/** constructors with one path */
 			CompositePath(Path *path);
-
 			CompositePath(std::unique_ptr<Path> path);
 
 			/** 
@@ -33,7 +32,6 @@ namespace Planning
 			 * The path passed in should not be refenced anywhere else.
 			 */
 			void append(Path *path);
-
 			void append(std::unique_ptr<Path> path);
 
 			/**
