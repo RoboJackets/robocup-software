@@ -118,3 +118,27 @@ TEST(InterpolatedPath, evaluate) {
 	EXPECT_FALSE(pathValid);
 }
 
+//  returns a valid path containing three points and a duration of 6 seconds
+InterpolatedPath dummyPath() {
+    InterpolatedPath path;
+    path.points.push_back(Point(1,1));
+    path.points.push_back(Point(1,2));
+    path.points.push_back(Point(2,2));
+    path.times.push_back(0);
+    path.times.push_back(3);
+    path.times.push_back(6);
+    path.vels.push_back(Point(0,0));
+    path.vels.push_back(Point(1,1));
+    path.vels.push_back(Point(0,0));
+
+    return path;
+}
+TEST(InterpolatedPath, subPath) {
+    InterpolatedPath path = dummyPath();
+
+    EXPECT_THROW(path.subPath(-1, 5), invalid_argument);
+    EXPECT_THROW(path.subPath(0, 20), invalid_argument);    //  end time beyond bounds of path
+    EXPECT_THROW(path.subPath(8, 20), invalid_argument);    //  start time beyond bounds of path
+    EXPECT_THROW(path.subPath(5, -1), invalid_argument);
+}
+
