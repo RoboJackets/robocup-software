@@ -118,12 +118,11 @@ TEST(InterpolatedPath, evaluate) {
 	EXPECT_FALSE(pathValid);
 }
 
-//  returns a valid path containing three points and a duration of 6 seconds
-InterpolatedPath dummyPath() {
+TEST(InterpolatedPath, subPath) {
     InterpolatedPath path;
     path.points.push_back(Point(1,1));
     path.points.push_back(Point(1,2));
-    path.points.push_back(Point(2,2));
+    path.points.push_back(Point(1,3));
     path.times.push_back(0);
     path.times.push_back(3);
     path.times.push_back(6);
@@ -131,14 +130,17 @@ InterpolatedPath dummyPath() {
     path.vels.push_back(Point(1,1));
     path.vels.push_back(Point(0,0));
 
-    return path;
-}
-TEST(InterpolatedPath, subPath) {
-    InterpolatedPath path = dummyPath();
-
+    //  test invalid parameters to subPath()
     EXPECT_THROW(path.subPath(-1, 5), invalid_argument);
     EXPECT_THROW(path.subPath(0, 20), invalid_argument);    //  end time beyond bounds of path
     EXPECT_THROW(path.subPath(8, 20), invalid_argument);    //  start time beyond bounds of path
     EXPECT_THROW(path.subPath(5, -2), invalid_argument);
-}
 
+    //  make a subpath that cuts off one second from the start and end of the original
+    unique_ptr<Path> subPath = path.subPath(1, 5);
+    Point pMid, vMid;
+    float midTime = (5-1)/2.0;
+    bool valid = subPath->evaluate(midTime, pMid, vMid);
+    EXPECT_TRUE(valid);
+    EXPECT_FLOAT_EQ(Point(1,1).mag(), vMid.mag());   //  mid velocity of subpath should be the same as velocity of original path
+}
