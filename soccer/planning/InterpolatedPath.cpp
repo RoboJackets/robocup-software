@@ -329,13 +329,14 @@ bool Planning::InterpolatedPath::evaluate(float t, Geometry2d::Point &targetPosO
 		targetVelOut = Geometry2d::Point(0,0);
 		return false;
 	}
-	int i=0;
 	if (t<times[0])
 	{
 		targetPosOut = points[0];
 		targetVelOut = vels[0];
 		return false;
 	}
+
+    int i=0;
 	while (times[i]<=t)
 	{
 		if (times[i]==t) {
@@ -371,9 +372,9 @@ size_t Planning::InterpolatedPath::size() const
 	 return points.size();
 }
 
-bool Planning::InterpolatedPath::valid() const 
-{ 
-	return !points.empty(); 
+bool Planning::InterpolatedPath::valid() const
+{
+	return !points.empty();
 }
 
 float Planning::InterpolatedPath::getTime(int index) const
@@ -406,7 +407,7 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 		start++;
 	}
 	if (start!=size()) {
-		InterpolatedPath *path = new InterpolatedPath();		
+		InterpolatedPath *path = new InterpolatedPath();
 		path->times.push_back(0);
 		if (times[start]==startTime) {
 			path->points.push_back(points[start]);
