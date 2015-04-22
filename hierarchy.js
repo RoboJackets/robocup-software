@@ -2,11 +2,12 @@ var hierarchy =
 [
     [ "_RTP_t", "struct___r_t_p__t.html", null ],
     [ "AutoName", "class_auto_name.html", null ],
-    [ "Ball", "class_ball.html", null ],
     [ "gameplay.constants.Ball", "classgameplay_1_1constants_1_1_ball.html", null ],
+    [ "Ball", "class_ball.html", null ],
     [ "BallFilter", "class_ball_filter.html", null ],
     [ "BallObservation", "class_ball_observation.html", null ],
     [ "BallTracker", "class_ball_tracker.html", null ],
+    [ "BatteryProfile", "class_battery_profile.html", null ],
     [ "gameplay.play_registry.PlayRegistry.Category", "classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html", null ],
     [ "RobotConfig::Chipper", "struct_robot_config_1_1_chipper.html", null ],
     [ "gameplay.constants.Colors", "classgameplay_1_1constants_1_1_colors.html", null ],
@@ -91,10 +92,10 @@ var hierarchy =
       [ "Planning::InterpolatedPath", "class_planning_1_1_interpolated_path.html", null ]
     ] ],
     [ "pck_ctrl_t", "structpck__ctrl__t.html", null ],
-    [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
     [ "Pid", "class_pid.html", null ],
-    [ "Planning::Tree::Point", "class_planning_1_1_tree_1_1_point.html", null ],
+    [ "RobotConfig::PID", "struct_robot_config_1_1_p_i_d.html", null ],
     [ "Geometry2d::Point", "class_geometry2d_1_1_point.html", null ],
+    [ "Planning::Tree::Point", "class_planning_1_1_tree_1_1_point.html", null ],
     [ "Geometry2d::Pose", "class_geometry2d_1_1_pose.html", null ],
     [ "QAbstractItemModel", null, [
       [ "gameplay.play_registry.PlayRegistry", "classgameplay_1_1play__registry_1_1_play_registry.html", null ]
@@ -122,10 +123,13 @@ var hierarchy =
       [ "ProtobufTree", "class_protobuf_tree.html", null ]
     ] ],
     [ "QWidget", null, [
+      [ "BatteryWidget", "class_battery_widget.html", null ],
       [ "FieldView", "class_field_view.html", [
         [ "SimFieldView", "class_sim_field_view.html", null ]
       ] ],
       [ "RefereeTab", "class_referee_tab.html", null ],
+      [ "RobotStatusWidget", "class_robot_status_widget.html", null ],
+      [ "RobotWidget", "class_robot_widget.html", null ],
       [ "StripChart", "class_strip_chart.html", null ]
     ] ],
     [ "Radio", "class_radio.html", [

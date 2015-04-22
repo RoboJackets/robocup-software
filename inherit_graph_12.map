@@ -1,3 +1,6 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node3" href="$class_debug_q_mutex.html" title="DebugQMutex" alt="" coords="123,5,229,35"/>
+<area shape="rect" id="node1" href="$class_config_item.html" title="Base class for items in configuration: this is constructed through functions in the Configuration cla..." alt="" coords="7,59,92,88"/>
+<area shape="rect" id="node3" href="$class_config_bool.html" title="ConfigBool" alt="" coords="149,5,235,35"/>
+<area shape="rect" id="node5" href="$class_config_double.html" title="ConfigDouble" alt="" coords="141,59,243,88"/>
+<area shape="rect" id="node7" href="$class_config_int.html" title="ConfigInt" alt="" coords="155,112,229,141"/>
 </map>
