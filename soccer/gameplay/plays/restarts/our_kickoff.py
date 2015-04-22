@@ -11,8 +11,8 @@ import role_assignment
 
 class OurKickoff(play.Play):
 
-    KickPower = 127
-    ChipPower = 100
+    KickPower = 0.5
+    ChipPower = 1.0
 
 
     class State(enum.Enum):

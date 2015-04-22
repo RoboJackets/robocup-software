@@ -1,11 +1,11 @@
 #pragma once
 #include "Entity.hpp"
 #include "SimEngine.hpp"
+#include "RaycastVehicle.hpp"
 
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
 
-#include "RaycastVehicle.hpp"
 
 class Ball;
 class RobotBallController;
@@ -22,8 +22,8 @@ public:
 	};
 
 	typedef enum {
-		rev2011,
-		rev2008
+		rev2008,
+		rev2011
 	} RobotRevision;
 
 	// assigned shell number
@@ -128,17 +128,17 @@ public:
 
 	void getWorldTransform(btTransform& chassisWorldTrans) const;
 
-	void setEngineForce  (int wheelIndex, float val){
+	void setEngineForce (int wheelIndex, float val){
 		_engineForce[wheelIndex] = val;
 	}
 
-	void setEngineForce  (float val){
+	void setEngineForce (float val){
 		for(int i=0; i<4; i++){
 			_engineForce[i] = val;
 		}
 	}
 
-	void setBrakingForce (float val){
+	void setBrakingForce(float val){
 		_brakingForce = val;
 	}
 
@@ -161,5 +161,4 @@ public:
 	void steerRight();
 	void driveForward();
 	void driveBackward();
-
 };
