@@ -343,22 +343,7 @@ void OurRobot::kick(float strength)
 	_kick(roundf(strength*((float)maxKick)));
 
 	*_cmdText << "kick(" << (float)strength*100 << "%)\n";
-}	
-/*
-TODO
-void OurRobot::kickSpeed(float strength)
-{
-	double conversion = *config->kicker.speedToStrength;
-	if (conversion <= 0) {
-		throw "You can't called kick(float) without setting the conversion config";
-	}
-
-	int str = (int)(conversion * (double)strength);
-	_kick(strength);
-
-	*_cmdText << "kick(" << (float)strength << "m/s" << ")\n";
 }
-*/
 
 void OurRobot::kickLevel(uint8_t strength)
 {

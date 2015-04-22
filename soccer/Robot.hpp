@@ -254,11 +254,6 @@ public:
 	void kickLevel(unsigned char strength);
 
 	/**
-	 * enable kick when ready at a given meters/second
-	 */
-	//TODO void kickSpeed(float strength);
-
-	/**
 	 * enable chip when ready at a given strength (0.0 - 1.0)
 	 */
 	void chip(float strength);
