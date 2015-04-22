@@ -30,7 +30,7 @@ namespace Planning
 			 * starts out in an obstacle but leaves and never re-enters any obstacle.
 			 *
 			 * @param[in]	shape The obstacles on the field
-			 * @param[in] 	start The point on the path to start checking from
+			 * @param[in] 	startTime The time in the path from which to check
 			 * @return 		true if the path is valid, false if it hits an obstacle
 			 */
 			virtual bool hit(const Geometry2d::CompositeShape &shape, float startTime = 0) const=0;
@@ -49,12 +49,14 @@ namespace Planning
 			 *
 			 * @return 	The time from start to path completion or -1 if there is no destination
 			 */
-			virtual float getTime() const=0;
+			virtual float getDuration() const=0;
 
 			/** 
 			 * Returns a subPath
 			 *
-			 * @return 	The time from start to path completion or -1 if there is no destination
+			 * @param[in]	startTime The startTime for from which the subPath should be taken.
+			 * @param[in] 	endTime The endTime from which the subPath should be taken
+			 * @return 	A unique_ptr to the new subPath
 			 */
 			virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = -1) const=0;
 
