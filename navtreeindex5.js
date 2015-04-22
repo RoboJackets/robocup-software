@@ -1,6 +1,5 @@
 var NAVTREEINDEX5 =
 {
-"classgameplay_1_1evaluation_1_1window__evaluator_1_1_window.html#a290743cd370868031f69fcc8469ab117":[11,0,2,3,1,0,12],
 "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window.html#a2c2cb848b68fdb0d670578fa9524ab73":[11,0,2,3,1,0,9],
 "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window.html#a41aac31cc1749c060e83c4b60894d578":[11,0,2,3,1,0,7],
 "classgameplay_1_1evaluation_1_1window__evaluator_1_1_window.html#a43285bc9e554e271686d6601608c8860":[11,0,2,3,1,0,10],
@@ -249,5 +248,6 @@ var NAVTREEINDEX5 =
 "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html#a060c0c676e5781288e30233d4c0d538d":[11,0,2,8,3,14,0,7],
 "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html#a2b2700739fcfb30169a9af22638f0963":[11,0,2,8,3,14,0,2],
 "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html#a358290054cc5fbbd6ab5c03759ba5f11":[11,0,2,8,3,14,0,5],
-"classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html#a4c8554e4a29c62f84eae04968d9d20d6":[11,0,2,8,3,14,0,4]
+"classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html#a4c8554e4a29c62f84eae04968d9d20d6":[11,0,2,8,3,14,0,4],
+"classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html#a7c9df48e9efbfb90e1f3c53aee6e5e94":[11,0,2,8,3,14,0,1]
 };

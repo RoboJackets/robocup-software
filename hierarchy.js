@@ -118,9 +118,6 @@ var hierarchy =
       [ "Processor", "class_processor.html", null ],
       [ "VisionReceiver", "class_vision_receiver.html", null ]
     ] ],
-    [ "QTreeView", null, [
-      [ "play_config_tab.PlayConfigTab", "classplay__config__tab_1_1_play_config_tab.html", null ]
-    ] ],
     [ "QTreeWidget", null, [
       [ "ProtobufTree", "class_protobuf_tree.html", null ]
     ] ],
@@ -157,6 +154,9 @@ var hierarchy =
       [ "Geometry2d::CompositeShape", "class_geometry2d_1_1_composite_shape.html", null ],
       [ "Geometry2d::Polygon", "class_geometry2d_1_1_polygon.html", null ],
       [ "Geometry2d::Rect", "class_geometry2d_1_1_rect.html", null ]
+    ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
@@ -228,9 +228,6 @@ var hierarchy =
         [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
-    ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "Processor::Status", "struct_processor_1_1_status.html", null ],
     [ "SystemState", "class_system_state.html", null ],

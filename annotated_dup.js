@@ -245,9 +245,6 @@ var annotated_dup =
       [ "RRTPlanner", "class_planning_1_1_r_r_t_planner.html", "class_planning_1_1_r_r_t_planner" ],
       [ "Tree", "class_planning_1_1_tree.html", "class_planning_1_1_tree" ]
     ] ],
-    [ "play_config_tab", null, [
-      [ "PlayConfigTab", "classplay__config__tab_1_1_play_config_tab.html", "classplay__config__tab_1_1_play_config_tab" ]
-    ] ],
     [ "test_constants", null, [
       [ "TestConstants", "classtest__constants_1_1_test_constants.html", "classtest__constants_1_1_test_constants" ]
     ] ],
