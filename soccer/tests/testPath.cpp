@@ -154,10 +154,10 @@ TEST(InterpolatedPath, subPath) {
     EXPECT_TRUE(valid);
 
     //  the starting velocity of the subpath should be somewhere between the 0 and the velocity at the middle
-    EXPECT_GT(0, vStart.mag());
-    EXPECT_LT(Point(1,1).mag(), vStart.mag());
+    EXPECT_GT(vStart.mag(), 0);
+    EXPECT_LT(vStart.mag(), Point(1,1).mag());
 
     //  the starting position of the subpath should be somewhere between the start pos of the original path and the middle point
-    EXPECT_GT(1, pStart.y);
-    EXPECT_LT(2, pStart.x);
+    EXPECT_GT(pStart.y, 1);
+    EXPECT_LT(pStart.x, 2);
 }
