@@ -1,6 +1,6 @@
 # python requirements
 
-graphviz # make pretty graphs/diagrams
+graphviz>=0.4.2 # make pretty graphs/diagrams
 enum34
 watchdog # file-system event notifications
 munkres	# provides the 'hungarian algorithm', which we use for robot role assignment

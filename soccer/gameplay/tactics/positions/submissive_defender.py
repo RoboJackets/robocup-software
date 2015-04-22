@@ -50,7 +50,7 @@ class SubmissiveDefender(single_robot_composite_behavior.SingleRobotCompositeBeh
 
         default_pt = arc.nearest_point(robocup.Point(0, constants.Field.Length / 2.0))
 
-        target = main.ball().pos
+        target = main.ball().pos if main.ball() != None else constants.Field.CenterPoint
         if self._block_line != None:
             intersects, pt1, pt2 = self._block_line.intersects_circle(arc)
 
