@@ -6,6 +6,7 @@
 
 # Build system
 ninja-build
+jinja2 #now required for mbed py-build-tools
 cmake
 ccache
 
