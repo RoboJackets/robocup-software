@@ -393,7 +393,7 @@ void MainWindow::updateViews()
 	_ui.refYellowGoalie->setText(tr("%1").arg(_processor->refereeModule()->yellow_info.goalie));
 
 
-	//	update robot status widget
+	//	update robot status list
 	for (const OurRobot *robot : _processor->state()->self) {
 		//	a robot shows up in the status list if it's reachable via radio
 		bool shouldDisplay = robot->rxIsFresh();
@@ -420,8 +420,19 @@ void MainWindow::updateViews()
 
 			//	TODO: set board ID
 
+			//	set robot model
+			QString robotModel;
+			switch (robot->radioRx().hardware_version()) {
+				case RJ2008: robotModel = "RJ2008"; break;
+				case RJ2011: robotModel = "RJ2011"; break;
+				case RJ2015: robotModel = "RJ2015"; break;
+				default: robotModel = "Unknown Bot";
+			}
+			statusWidget->setRobotModel(robotModel);
 
-//#define DEMO_ROBOT_STATUS
+
+//	uncomment this #define to test the display of a variety of different errors
+// #define DEMO_ROBOT_STATUS
 
 #ifdef DEMO_ROBOT_STATUS
 			//	set board ID
@@ -442,7 +453,7 @@ void MainWindow::updateViews()
 			statusWidget->setHasRadio(radio);
 
 			// fake error text
-			QString error = "Kicker Fault, Dribbler Fault, Ball Sense Fault, and more stuff1 and more stuff2 and more stufff3 ";
+			QString error = "Kicker Fault, Hall Fault FR, Ball Sense Fault";
 			statusWidget->setErrorText(error);
 
 			//	fake ball status
@@ -497,60 +508,68 @@ void MainWindow::updateViews()
 			bool hasVision = robot->visible;
 			statusWidget->setHasVision(hasVision);
 
-			QString errorText = "";
+			//	build a list of errors to display in the widget
+			QStringList errorList;
 
-			//	wheel faults
-			bool hasWheelFault = false;
+			//	motor faults
+			//	each motor fault is shown as text in the error text display as well as being drawn as a red X on the graphic of a robot
+			bool hasMotorFault = false;
 			if (rx.motor_status().size() == 5)
 			{
-				const char *wheelNames[] = {
+				const char *motorNames[] = {
 					"FR",
 					"FL",
 					"BL",
-					"BR"
+					"BR",
+					"Dribbler"
 				};
 
-				//	examine status of each motor
-				for (int i = 0; i < 4; ++i)
+				//	examine status of each motor (including the dribbler)
+				for (int i = 0; i < 5; ++i)
 				{
-					bool wheelIFault = true;
+					bool motorIFault = true;
 					switch (rx.motor_status(i))
 					{
 						case Packet::Hall_Failure:
-							errorText += QString("Hall Fault %1, ").arg(wheelNames[i]);
+							errorList << QString("Hall Fault %1").arg(motorNames[i]);
 							break;
 						case Packet::Stalled:
-							errorText += QString("Stall %1, ").arg(wheelNames[i]);
+							errorList << QString("Stall %1").arg(motorNames[i]);
 							break;
 						case Packet::Encoder_Failure:
-							errorText += QString("Encoder Failure %1, ").arg(wheelNames[i]);
+							errorList << QString("Encoder Fault %1").arg(motorNames[i]);
 							break;
 
 						default:
-							wheelIFault = false;
+							motorIFault = false;
 							break;
 					}
-					statusWidget->setWheelFault(i, wheelIFault);
-					hasWheelFault = hasWheelFault || wheelIFault;
+
+					//	show wheel faults (exluding the dribbler, which is index 4)
+					if (i != 4) statusWidget->setWheelFault(i, motorIFault);
+
+					hasMotorFault = hasMotorFault || motorIFault;
+
+					//	show dribbler fault on painted robot widget
+					if (i == 4) statusWidget->setBallSenseFault(motorIFault);
 				}
 			}
 
-			bool kickerFault = rx.has_kicker_status() && (rx.kicker_status() & 0x80);
+			bool kickerFault = rx.has_kicker_status() && (rx.kicker_status() & 0x80);	//	check for kicker error code
 			bool ballSenseFault = rx.has_ball_sense_status() && !(rx.ball_sense_status() == Packet::NoBall || rx.ball_sense_status() == Packet::HasBall);
-			bool dribblerFault = rx.motor_status_size() == 5 && rx.motor_status(4) != Packet::Good;
-			if (kickerFault) errorText += "Kicker Fault, ";
-			if (dribblerFault) errorText += "Dribbler Fault, ";
-			if (ballSenseFault) errorText += "Ball Sense Fault, ";
+			if (kickerFault) errorList << "Kicker Fault";
+			if (ballSenseFault) errorList << "Ball Sense Fault";
 			statusWidget->setBallSenseFault(ballSenseFault);
 
+			//	display error text
+			statusWidget->setErrorText(errorList.join(", "));
 
-			if (errorText.length() > 0) errorText.remove(errorText.length() - 2, 2);	//	delete trailing ", "
-			statusWidget->setErrorText(errorText);
-
+			//	show the ball in the robot's mouth if it has one
 			bool hasBall = rx.has_ball_sense_status() && rx.ball_sense_status() == Packet::HasBall;
 			statusWidget->setHasBall(hasBall);
 
 			//	battery
+			//	convert battery voltage to a percentage and show it with the battery indicator
 			float batteryLevel = 1;
 			if (rx.has_battery()) {
 				if (rx.hardware_version() == RJ2008 || rx.hardware_version() == RJ2011) {
@@ -563,7 +582,8 @@ void MainWindow::updateViews()
 			statusWidget->setBatteryLevel(batteryLevel);
 
 
-			bool showstopper = !hasVision || !hasRadio || hasWheelFault || kickerFault || ballSenseFault || dribblerFault || (batteryLevel < 0.25);
+			//	if there is an error bad enough that we should get this robot off the field, alert the user through the UI that there is a "showstopper"
+			bool showstopper = !hasVision || !hasRadio || hasMotorFault || kickerFault || ballSenseFault || (batteryLevel < 0.25);
 			statusWidget->setShowstopper(showstopper);
 
 #endif

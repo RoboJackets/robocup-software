@@ -4,7 +4,7 @@
 
 
 /**
- * @brief Presents an image of a robot with errors drawn in red
+ * @brief Presents an image of a robot with errors drawn in red.  A ball is drawn in front of it if it has it.
  */
 class RobotWidget : public QWidget {
 public:

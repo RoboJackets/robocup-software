@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1262</width>
+    <width>1280</width>
     <height>888</height>
    </rect>
   </property>
@@ -666,7 +666,14 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_5">
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0,0,0,1">
+       <layout class="QVBoxLayout" name="verticalLayout_5" stretch="0,0,0,0,1">
+        <item>
+         <widget class="Line" name="line_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
         <item>
          <widget class="QWidget" name="refereePane" native="true">
           <property name="sizePolicy">
@@ -1165,7 +1172,7 @@ p, li { white-space: pre-wrap; }
            </size>
           </property>
           <property name="selectionMode">
-           <enum>QAbstractItemView::SingleSelection</enum>
+           <enum>QAbstractItemView::NoSelection</enum>
           </property>
          </widget>
         </item>
@@ -1562,7 +1569,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1262</width>
+     <width>1280</width>
      <height>19</height>
     </rect>
    </property>
