@@ -50,6 +50,11 @@ namespace Gameplay
 			
 			void setupUI();
 
+			/**
+			 * @brief Loads a playbook file to enable specified plays
+			 */
+			void loadPlaybook(const std::string &playbookFile);
+
 			void goalieID(int value);
 			int goalieID()
 			{
