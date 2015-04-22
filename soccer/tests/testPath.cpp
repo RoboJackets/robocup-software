@@ -138,9 +138,26 @@ TEST(InterpolatedPath, subPath) {
 
     //  make a subpath that cuts off one second from the start and end of the original
     unique_ptr<Path> subPath = path.subPath(1, 5);
+
     Point pMid, vMid;
     float midTime = (5-1)/2.0;
     bool valid = subPath->evaluate(midTime, pMid, vMid);
     EXPECT_TRUE(valid);
     EXPECT_FLOAT_EQ(Point(1,1).mag(), vMid.mag());   //  mid velocity of subpath should be the same as velocity of original path
+    EXPECT_FLOAT_EQ(1, pMid.x);
+    EXPECT_FLOAT_EQ(2, pMid.y);
+
+
+    //  test the subpath at t = 0
+    Point pStart, vStart;
+    valid = subPath->evaluate(0, pStart, vStart);
+    EXPECT_TRUE(valid);
+
+    //  the starting velocity of the subpath should be somewhere between the 0 and the velocity at the middle
+    EXPECT_GT(0, vStart.mag());
+    EXPECT_LT(Point(1,1).mag(), vStart.mag());
+
+    //  the starting position of the subpath should be somewhere between the start pos of the original path and the middle point
+    EXPECT_GT(1, pStart.y);
+    EXPECT_LT(2, pStart.x);
 }
