@@ -2,7 +2,6 @@ import play
 import behavior
 import skills.move
 import tactics.coordinated_pass
-import tactics.behavior_sequence
 import robocup
 import constants
 import main
@@ -35,7 +34,13 @@ class OneTouchPass(play.Play):
         self.add_transition(OneTouchPass.State.passing,
                 behavior.Behavior.State.completed,
                 lambda: self.subbehavior_with_name('pass').state == behavior.Behavior.State.completed,
-                'preparing to shoot')
+                'Touchpass completed.')
+
+
+        self.add_transition(OneTouchPass.State.passing,
+                behavior.Behavior.State.failed,
+                lambda: self.subbehavior_with_name('pass').state == behavior.Behavior.State.failed,
+                'Touchpass failed!')
 
     def reset_receive_point(self):
         pass_bhvr = self.subbehavior_with_name('pass')
