@@ -21,6 +21,7 @@ enum HardwareVersion
 	Unknown = 0;
 	RJ2008 = 1;
 	RJ2011 = 2;
+	RJ2015 = 3;
 }
 
 message Quaternion
