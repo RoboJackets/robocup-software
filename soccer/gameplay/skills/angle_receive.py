@@ -55,6 +55,9 @@ class AngleReceive(skills._kick._Kick):
         self._target_pos = None
         self._ball_kick_time = 0
 
+        self._shot_time = 0
+        self._shot_occured = None
+
 
         for state in AngleReceive.State:
             self.add_state(state, behavior.Behavior.State.running)
@@ -83,7 +86,7 @@ class AngleReceive(skills._kick._Kick):
 
             self.add_transition(AngleReceive.State.receiving,
                     behavior.Behavior.State.completed,
-                    lambda: self.robot.has_ball(),
+                    lambda: self._shot_occured,
                     'ball received!')
 
             self.add_transition(AngleReceive.State.receiving,
@@ -151,7 +154,7 @@ class AngleReceive(skills._kick._Kick):
         else:
             # if the ball hasn't been kicked yet, we assume it's going to go through the receive point
             self._pass_line = robocup.Line(ball.pos, self.receive_point)
-        self._kick_line = robocup.Line(self.robot.pos, self.get_target_point())
+        self._kick_line = robocup.Line(self.receive_point, self.get_target_point())
 
         target_angle_rad = (self.get_target_point() - self.robot.pos).angle()
         angle_rad = self.robot.angle
@@ -190,10 +193,6 @@ class AngleReceive(skills._kick._Kick):
         # reset
         self.ball_kicked = False
 
-    def on_enter_receiving(self):
-        self.robot.kick(self.kick_power)
-
-
     def execute_running(self):
         # make sure teammates don't bump into us
         self.robot.shield_from_teammates(constants.Robot.Radius * 2.0)
@@ -203,7 +202,7 @@ class AngleReceive(skills._kick._Kick):
 
         if self._pass_line != None:
             main.system_state().draw_line(self._pass_line, constants.Colors.Blue, "Pass")
-            main.system_state().draw_line(self._kick_line, constants.Colors.Blue, "Pass")
+            main.system_state().draw_line(self._kick_line, constants.Colors.Red, "Shot")
             main.system_state().draw_circle(self._target_pos, 0.03, constants.Colors.Blue, "Pass")
 
 
@@ -212,6 +211,9 @@ class AngleReceive(skills._kick._Kick):
         if self._target_pos != None:
             self.robot.move_to(self._target_pos)
 
+    def on_enter_receiving(self):
+        self.robot.kick(self.kick_power)
+        self._shot_time = self.robot.lastKickTime()
 
     def execute_receiving(self):
         self.robot.set_dribble_speed(AngleReceive.DribbleSpeed)
@@ -221,6 +223,9 @@ class AngleReceive(skills._kick._Kick):
         vel = pos_error * 3.5
         self.robot.set_world_vel(vel)
 
+        # If the shot took place, end the behavior!
+        if self._shot_time != self.robot.lastKickTime():
+            self._shot_occured = True
 
     ## prefer a robot that's already near the receive position
     def role_requirements(self):

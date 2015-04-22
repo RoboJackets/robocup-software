@@ -39,7 +39,7 @@ void translateException(NullArgumentException const& e)
 
 /**
  * NOTES FOR WRAPPER FUNCTIONS/METHODS
- * 
+ *
  * Keep in mind that pointer parameters will be be nullptr/NULL if the value
  * from python was None.  Check for this case so that we don't segfault.
  */
@@ -398,6 +398,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("set_avoid_opponents", &OurRobot_set_avoid_opponents)
 		.def("set_dribble_speed", &OurRobot::dribble)
 		.def("has_ball", &OurRobot::hasBall)
+		.def("lastKickTime", &OurRobot::lastKickTime)
 		.def("just_kicked", &OurRobot::justKicked)
 		.def("has_chipper", &OurRobot::chipper_available)
 		.def("face_none", &OurRobot::faceNone)
