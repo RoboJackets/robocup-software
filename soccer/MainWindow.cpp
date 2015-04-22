@@ -371,17 +371,20 @@ void MainWindow::updateViews()
 
 	_ui.refStage->setText(NewRefereeModuleEnums::stringFromStage(_processor->refereeModule()->stage).c_str());
 	_ui.refCommand->setText(NewRefereeModuleEnums::stringFromCommand(_processor->refereeModule()->command).c_str());
-	_ui.refTimeLeft->setText(tr("%1 ms").arg(_processor->refereeModule()->stage_time_left));
 
+	//	convert time left from ms to s and display it to two decimal places
+	_ui.refTimeLeft->setText(tr("%1 s").arg(QString::number(_processor->refereeModule()->stage_time_left / 1000.0f, 'f', 2)));
 
-	_ui.refBlueName->setText(_processor->refereeModule()->blue_info.name.c_str());
+	const char *blueName = _processor->refereeModule()->blue_info.name.c_str();
+	_ui.refBlueName->setText(strlen(blueName) == 0 ? "<Blue Team>" : blueName);
 	_ui.refBlueScore->setText(tr("%1").arg(_processor->refereeModule()->blue_info.score));
 	_ui.refBlueRedCards->setText(tr("%1").arg(_processor->refereeModule()->blue_info.red_cards));
 	_ui.refBlueYellowCards->setText(tr("%1").arg(_processor->refereeModule()->blue_info.yellow_cards));
 	_ui.refBlueTimeoutsLeft->setText(tr("%1").arg(_processor->refereeModule()->blue_info.timeouts_left));
 	_ui.refBlueGoalie->setText(tr("%1").arg(_processor->refereeModule()->blue_info.goalie));
 	
-	_ui.refYellowName->setText(_processor->refereeModule()->yellow_info.name.c_str());
+	const char *yellowName = _processor->refereeModule()->yellow_info.name.c_str();
+	_ui.refYellowName->setText(strlen(yellowName) == 0 ? "<Yellow Team>" : yellowName);
 	_ui.refYellowScore->setText(tr("%1").arg(_processor->refereeModule()->yellow_info.score));
 	_ui.refYellowRedCards->setText(tr("%1").arg(_processor->refereeModule()->yellow_info.red_cards));
 	_ui.refYellowYellowCards->setText(tr("%1").arg(_processor->refereeModule()->yellow_info.yellow_cards));
