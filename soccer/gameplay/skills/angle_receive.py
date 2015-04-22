@@ -165,10 +165,9 @@ class AngleReceive(skills._kick._Kick):
 
         # Make the receive point be the mouth, rather than the center of the robot.
         # Assumes mouth of robot is at the edge.
-        actual_receive_point = receive_before_adjust + robocup.Point(\
+        self._target_pos = receive_before_adjust + robocup.Point( \
                 constants.Robot.Radius * math.sin(self.robot.angle), \
                 constants.Robot.Radius * math.cos(self.robot.angle))
-        self._target_pos = actual_receive_point
 
         # Code to provide slipback when receiving the ball
         # pass_line_dir = (self._pass_line.get_pt(1) - self._pass_line.get_pt(0)).normalized()

@@ -1,6 +1,5 @@
 import play
 import behavior
-import skills.pivot_kick
 import skills.move
 import tactics.coordinated_pass
 import tactics.behavior_sequence
@@ -10,8 +9,10 @@ import main
 import skills.angle_receive
 from enum import Enum
 
-
-## Continually runs a coordinated pass to opposite sides of the field
+# A play to test onetouchpass, which causes a robot to pass to another one,
+# who scores on the goal as fast as possible.
+#
+# The real work is in the class that receives from coordinated_pass, angle_receive
 class OneTouchPass(play.Play):
 
     ReceiveXCoord = 1
@@ -19,7 +20,6 @@ class OneTouchPass(play.Play):
 
     class State(Enum):
         passing = 1
-        shooting = 2   # Shooting into the goal
 
     def __init__(self):
         super().__init__(continuous=False)
@@ -33,14 +33,9 @@ class OneTouchPass(play.Play):
                 'immediately')
 
         self.add_transition(OneTouchPass.State.passing,
-                OneTouchPass.State.shooting,
+                behavior.Behavior.State.completed,
                 lambda: self.subbehavior_with_name('pass').state == behavior.Behavior.State.completed,
                 'preparing to shoot')
-
-        self.add_transition(OneTouchPass.State.shooting,
-                behavior.Behavior.State.completed,
-                lambda: self.subbehavior_with_name('kick').state == behavior.Behavior.State.completed,
-                'Shooter shot')
 
     def reset_receive_point(self):
         pass_bhvr = self.subbehavior_with_name('pass')
@@ -53,16 +48,6 @@ class OneTouchPass(play.Play):
         if pass_bhvr.receive_point == None:
             self.reset_receive_point()
 
-
-    def on_enter_shooting(self):
-        kick = skills.pivot_kick.PivotKick()
-        self.add_subbehavior(kick, 'kick', required=True)
-        kick.target = constants.Field.TheirGoalSegment
-        kick.aim_params['desperate_timeout'] = 3
-
     def on_exit_passing(self):
         self.remove_subbehavior('pass')
-
-    def on_exit_shooting(self):
-        self.remove_subbehavior('kick')
 
