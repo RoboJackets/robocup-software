@@ -75,7 +75,9 @@ namespace Planning
 			/** 
 			 * Returns a subPath
 			 *
-			 * @return 	The time from start to path completion or -1 if there is no destination
+			 * @param[in]	startTime The startTime for from which the subPath should be taken.
+			 * @param[in] 	endTime The endTime from which the subPath should be taken. -1 if it should go to the end of the path.
+			 * @return 	A unique_ptr to the new subPath
 			 */
 			virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = -1) const;
 

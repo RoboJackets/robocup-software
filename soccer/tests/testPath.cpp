@@ -139,6 +139,6 @@ TEST(InterpolatedPath, subPath) {
     EXPECT_THROW(path.subPath(-1, 5), invalid_argument);
     EXPECT_THROW(path.subPath(0, 20), invalid_argument);    //  end time beyond bounds of path
     EXPECT_THROW(path.subPath(8, 20), invalid_argument);    //  start time beyond bounds of path
-    EXPECT_THROW(path.subPath(5, -1), invalid_argument);
+    EXPECT_THROW(path.subPath(5, -2), invalid_argument);
 }
 
