@@ -244,17 +244,19 @@ public:
 
 
 	/**
-	 * enable kick when ready at a given strength (0.0 - 1.0)
+	 * enable kick when ready at a given percentage of the currently set max kick power.
+	 * @param strength a value between 0 and 1
 	 */
 	void kick(float strength);
 
 	/**
 	 * enable kick when ready at a given strength (0-255)
 	 */
-	void kickLevel(unsigned char strength);
+	void kickLevel(uint8_t strength);
 
 	/**
-	 * enable chip when ready at a given strength (0.0 - 1.0)
+	 * enable chip when ready at a given percentage of the currently set max chip power.
+	 * @param strength a value between 0 and 1
 	 */
 	void chip(float strength);
 
