@@ -574,8 +574,9 @@ void MainWindow::updateViews()
 			if (rx.has_battery()) {
 				if (rx.hardware_version() == RJ2008 || rx.hardware_version() == RJ2011) {
 					batteryLevel = RJ2008BatteryProfile.getChargeLevel(rx.battery());
+				} else if (rx.hardware_version() == RJ2015) {
+					batteryLevel = RJ2015BatteryProfile.getChargeLevel(rx.battery());
 				} else {
-					//	FIXME: add battery profile for 2015 robot
 					throw logic_error("No battery profile for the given robot model");
 				}
 			}

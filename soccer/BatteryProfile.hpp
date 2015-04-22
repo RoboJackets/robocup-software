@@ -36,6 +36,6 @@ private:
 };
 
 
-//  profiles for out batteries.  See BatteryProfile.cpp for more info
+//  profiles for our batteries.  See BatteryProfile.cpp for more info
 const extern BatteryProfile RJ2008BatteryProfile;
-// const extern BatteryProfile RJ2015BatteryProfile;
+const extern BatteryProfile RJ2015BatteryProfile;
