@@ -244,14 +244,26 @@ public:
 
 
 	/**
-	 * enable kick when ready at a given strength
+	 * enable kick when ready at a given percentage of the currently set max kick power.
+	 * @param strength a value between 0 and 1
 	 */
-	void kick(uint8_t strength);
+	void kick(float strength);
 
 	/**
-	 * enable chip when ready at a given strength
+	 * enable kick when ready at a given strength (0-255)
 	 */
-	void chip(uint8_t strength);
+	void kickLevel(uint8_t strength);
+
+	/**
+	 * enable chip when ready at a given percentage of the currently set max chip power.
+	 * @param strength a value between 0 and 1
+	 */
+	void chip(float strength);
+
+	/**
+	 * enable chip when ready at a given strength (0-255)
+	 */
+	void chipLevel(uint8_t strength);
 
 	/**
 	 * @brief Undoes any calls to kick() or chip().
