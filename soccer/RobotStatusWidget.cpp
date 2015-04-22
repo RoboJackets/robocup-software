@@ -62,8 +62,16 @@ const QString &RobotStatusWidget::boardID() const {
 void RobotStatusWidget::setBoardID(const QString &boardID) {
     if (boardID != _boardID) {
         _boardID = boardID;
-        _ui.boardID->setText(QString("Board: %1").arg(boardID));
+        _ui.boardID->setText(QString("ID: %1").arg(boardID));
     }
+}
+
+QString RobotStatusWidget::robotModel() const {
+    return _ui.robotModel->text();
+}
+
+void RobotStatusWidget::setRobotModel(const QString &robotModel) {
+    _ui.robotModel->setText(robotModel);
 }
 
 void RobotStatusWidget::setWheelFault(int wheelIndex, bool faulty) {

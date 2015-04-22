@@ -43,6 +43,12 @@ public:
 	const QString &baseID() const;
 	void setBaseID(const QString &baseID);
 
+	/**
+	 * @brief A string describing the robot model (i.e. "RJ 2015")
+	 */
+	QString robotModel() const;
+	void setRobotModel(const QString &robotModel);
+
 	bool hasRadio() const;
 	void setHasRadio(bool hasRadio);
 
@@ -56,7 +62,7 @@ public:
 	 * @brief Set to true to present this robot as being in critical
 	 * status and in need of removing from the field.
 	 */
-	 void setShowstopper(bool showstopper = true);
+	void setShowstopper(bool showstopper = true);
 
 
 private:
