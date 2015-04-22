@@ -3,7 +3,6 @@
 
 RobotStatusWidget::RobotStatusWidget(QWidget *parent, Qt::WindowFlags f) : QWidget(parent, f) {
     _ui.setupUi(this);
-    _ui.Errors->setWordWrap(true);
 
     setBoardID("?\?-??");
 
@@ -44,7 +43,7 @@ void RobotStatusWidget::setShellID(int shellID) {
 }
 
 void RobotStatusWidget::setErrorText(const QString &error){
-    _ui.Errors->setText(error);
+    _ui.errorText->setText(error);
 }
 
 void RobotStatusWidget::setBlueTeam(bool blueTeam) {
@@ -63,7 +62,7 @@ const QString &RobotStatusWidget::boardID() const {
 void RobotStatusWidget::setBoardID(const QString &boardID) {
     if (boardID != _boardID) {
         _boardID = boardID;
-        _ui.boardID->setText(QString("Board ID: %1").arg(boardID));
+        _ui.boardID->setText(QString("Board: %1").arg(boardID));
     }
 }
 
