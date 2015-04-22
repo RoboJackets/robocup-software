@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1280</width>
-    <height>888</height>
+    <width>1405</width>
+    <height>902</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -1171,6 +1171,9 @@ p, li { white-space: pre-wrap; }
             <height>378</height>
            </size>
           </property>
+          <property name="styleSheet">
+           <string notr="true"> QListWidget::item { border-bottom: 1px solid gray; }</string>
+          </property>
           <property name="selectionMode">
            <enum>QAbstractItemView::NoSelection</enum>
           </property>
@@ -1195,8 +1198,8 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="minimumSize">
           <size>
-           <width>542</width>
-           <height>760</height>
+           <width>300</width>
+           <height>400</height>
           </size>
          </property>
         </widget>
@@ -1569,8 +1572,8 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1280</width>
-     <height>19</height>
+     <width>1405</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
