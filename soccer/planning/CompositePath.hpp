@@ -72,7 +72,7 @@ namespace Planning
 			 *
 			 * @return 	The time from start to path completion or -1 if there is no destination
 			 */
-			virtual float getTime() const;
+			virtual float getDuration() const;
 
 			/** 
 			 * Returns a subPath

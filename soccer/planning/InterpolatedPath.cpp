@@ -382,7 +382,7 @@ float Planning::InterpolatedPath::getTime(int index) const
 }
 
 
-float Planning::InterpolatedPath::getTime() const
+float Planning::InterpolatedPath::getDuration() const
 {
 	if (times.size()>0) {
 		return times.back();
@@ -422,7 +422,7 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 		Point vf;
 		Point endPos;
 		int end;
-		if (endTime < 0 || endTime>=getTime()) {
+		if (endTime < 0 || endTime>= getDuration()) {
 			end = size()-1;
 			vf = vels[end];
 			endPos = points[end];
