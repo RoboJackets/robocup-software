@@ -27,8 +27,6 @@ using namespace Packet;
 using namespace Eigen;
 
 
-const float kFastPlaybackRate = 3;
-
 // Style sheets used for live/non-live controls
 QString LiveStyle("border:2px solid transparent");
 QString NonLiveStyle("border:2px solid red");
@@ -42,30 +40,29 @@ void calcMinimumWidth(QWidget *widget, QString text)
 MainWindow::MainWindow(QWidget *parent):
 	QMainWindow(parent)
 {
-
 	qRegisterMetaType<QVector<int> >("QVector<int>");
 
 	_quaternion_demo = 0;
-	
+
 	_updateCount = 0;
 	_processor = 0;
 	_autoExternalReferee = true;
 	_doubleFrameNumber = -1;
-	
+
 	_lastUpdateTime = timestamp();
 	_history.resize(2 * 60);
-	
+
 	_ui.setupUi(this);
 	_ui.fieldView->history(&_history);
-	
+
 	_ui.logTree->history(&_history);
 	_ui.logTree->mainWindow = this;
 	_ui.logTree->updateTimer = &updateTimer;
-	
+
 	// Initialize live/non-live control styles
 	_live = false;
 	live(true);
-	
+
 	_currentPlay = new QLabel();
 	_currentPlay->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 	_currentPlay->setToolTip("Current Play");
@@ -73,55 +70,55 @@ MainWindow::MainWindow(QWidget *parent):
 	_currentPlay->setObjectName("current_play_name");
 	calcMinimumWidth(_currentPlay, "XXXXXXXXXXXXXXXX");
 	statusBar()->addPermanentWidget(_currentPlay);
-	
+
 	_logFile = new QLabel();
 	_logFile->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 	_logFile->setToolTip("Log File");
 	statusBar()->addPermanentWidget(_logFile);
-	
+
 	_viewFPS = new QLabel();
 	_viewFPS->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 	_viewFPS->setToolTip("Display Framerate");
 	calcMinimumWidth(_viewFPS, "View: 00.0 fps");
 	statusBar()->addPermanentWidget(_viewFPS);
-	
+
 	_procFPS = new QLabel();
 	_procFPS->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 	_procFPS->setToolTip("Processing Framerate");
 	calcMinimumWidth(_procFPS, "Proc: 00.0 fps");
 	statusBar()->addPermanentWidget(_procFPS);
-	
+
 	_logMemory = new QLabel();
 	_logMemory->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 	_logMemory->setToolTip("Log Memory Usage");
 	_logMemory->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
 	calcMinimumWidth(_logMemory, "Log: 000000/000000 000000 kiB");
 	statusBar()->addPermanentWidget(_logMemory);
-	
+
 	_frameNumberItem = new QTreeWidgetItem(_ui.logTree);
 	_frameNumberItem->setText(ProtobufTree::Column_Field, "Frame");
 	_frameNumberItem->setData(ProtobufTree::Column_Tag, Qt::DisplayRole, -2);
-	
+
 	_elapsedTimeItem = new QTreeWidgetItem(_ui.logTree);
 	_elapsedTimeItem->setText(ProtobufTree::Column_Field, "Elapsed Time");
 	_elapsedTimeItem->setData(ProtobufTree::Column_Tag, Qt::DisplayRole, -1);
-	
+
 	_ui.debugLayers->setContextMenuPolicy(Qt::CustomContextMenu);
 
 	QActionGroup *teamGroup = new QActionGroup(this);
 	teamGroup->addAction(_ui.actionTeamBlue);
 	teamGroup->addAction(_ui.actionTeamYellow);
-	
+
 	QActionGroup *goalGroup = new QActionGroup(this);
 	goalGroup->addAction(_ui.actionDefendMinusX);
 	goalGroup->addAction(_ui.actionDefendPlusX);
-	
+
 	QActionGroup *rotateGroup = new QActionGroup(this);
 	rotateGroup->addAction(_ui.action0);
 	rotateGroup->addAction(_ui.action90);
 	rotateGroup->addAction(_ui.action180);
 	rotateGroup->addAction(_ui.action270);
-	
+
 	connect(_ui.manualID, SIGNAL(currentIndexChanged(int)), this, SLOT(on_manualID_currentIndexChanged(int)));
 
 	channel(0);
@@ -131,11 +128,11 @@ MainWindow::MainWindow(QWidget *parent):
 	updateTimer.start(30);
 
 	//	put all log playback buttons into a vector for easy access later
-	_logPlaybackButtons.push_back(_ui.logPlaybackFastBackward);
-	_logPlaybackButtons.push_back(_ui.logPlaybackBackward);
+	_logPlaybackButtons.push_back(_ui.logPlaybackRewind);
+	_logPlaybackButtons.push_back(_ui.logPlaybackPrevFrame);
 	_logPlaybackButtons.push_back(_ui.logPlaybackPause);
-	_logPlaybackButtons.push_back(_ui.logPlaybackForward);
-	_logPlaybackButtons.push_back(_ui.logPlaybackFastForward);
+	_logPlaybackButtons.push_back(_ui.logPlaybackNextFrame);
+	_logPlaybackButtons.push_back(_ui.logPlaybackPlay);
 	_logPlaybackButtons.push_back(_ui.logPlaybackLive);
 }
 
@@ -149,12 +146,12 @@ void MainWindow::processor(Processor* value)
 {
 	// This should only happen once
 	assert(!_processor);
-	
+
 	_processor = value;
-	
+
 	// External referee
 	//on_externalReferee_toggled(_ui.externalReferee->isChecked());
-	
+
 	// Team
 	if (_processor->blueTeam())
 	{
@@ -182,7 +179,7 @@ void MainWindow::live(bool value)
 	if (_live != value)
 	{
 		_live = value;
-		
+
 		// Change styles for controls that can show historical data
 		_ui.fieldView->live = _live;
 		if (_live)
@@ -222,28 +219,28 @@ void MainWindow::updateViews()
 		_ui.joystickChipCheckBox->setChecked(vals.chip);
 		_ui.joystickDribblerCheckBox->setChecked(vals.dribble);
 	}
-	
+
 	// Time since last update
 	Time time = timestamp();
 	int delta_us = time - _lastUpdateTime;
 	_lastUpdateTime = time;
 	double framerate = 1000000.0 / delta_us;
-	
+
 	++_updateCount;
 	if (_updateCount == 4)
 	{
 		_updateCount = 0;
-		
+
 		_viewFPS->setText(QString("View: %1 fps").arg(framerate, 0, 'f', 1));
 		_procFPS->setText(QString("Proc: %1 fps").arg(_processor->framerate(), 0, 'f', 1));
-		
+
 		_logMemory->setText(QString("Log: %1/%2 %3 kiB").arg(
 			QString::number(_processor->logger().numFrames()),
 			QString::number(_processor->logger().maxFrames()),
 			QString::number((_processor->logger().spaceUsed() + 512) / 1024)
 		));
 	}
-	
+
 	// Advance log history
 	int liveFrameNumber = _processor->logger().lastFrameNumber();
 	if (_live)
@@ -251,7 +248,7 @@ void MainWindow::updateViews()
 		_doubleFrameNumber = liveFrameNumber;
 	} else {
 		_doubleFrameNumber += _playbackRate;
-		
+
 		int minFrame = _processor->logger().firstFrameNumber();
 		int maxFrame = _processor->logger().lastFrameNumber();
 
@@ -269,7 +266,7 @@ void MainWindow::updateViews()
 
 	// Read recent history from the log
 	_processor->logger().getFrames(frameNumber(), _history);
-	
+
 	// Update field view
 	_ui.fieldView->update();
 
@@ -277,16 +274,18 @@ void MainWindow::updateViews()
 	//	enable playback buttons based on playback rate
 	for (QPushButton *playbackBtn : _logPlaybackButtons) playbackBtn->setEnabled(true);
 	if (_live) _ui.logPlaybackLive->setEnabled(false);
-	else if (_playbackRate < -1.1) _ui.logPlaybackFastBackward->setEnabled(false);
-	else if (_playbackRate < -0.1) _ui.logPlaybackBackward->setEnabled(false);
+	else if (_playbackRate < -0.1) _ui.logPlaybackRewind->setEnabled(false);
 	else if (abs<float>(_playbackRate) < 0.01) _ui.logPlaybackPause->setEnabled(false);
-	else if (_playbackRate > 1.1) _ui.logPlaybackFastForward->setEnabled(false);
-	else if (_playbackRate > 0.1) _ui.logPlaybackForward->setEnabled(false);
+	else if (_playbackRate > 0.1) _ui.logPlaybackPlay->setEnabled(false);
 
-	
+    //  enable previous frame button based on position in the log
+    _ui.logPlaybackPrevFrame->setEnabled(_doubleFrameNumber >= 1);
+    _ui.logPlaybackNextFrame->setEnabled(!_live);
+
+
 	// Update status indicator
 	updateStatus();
-	
+
 	// Check if any debug layers have been added
 	// (layers should never be removed)
 	const std::shared_ptr<LogFrame> liveFrame = _processor->logger().lastFrame();
@@ -300,13 +299,13 @@ void MainWindow::updateViews()
 			item->setData(Qt::UserRole, i);
 			_ui.debugLayers->addItem(item);
 		}
-		
+
 		_ui.debugLayers->sortItems();
 	}
-	
+
 	// Get the frame at the log playback time
 	const std::shared_ptr<LogFrame> currentFrame = _history[0];
-	
+
 	if (currentFrame)
 	{
 		// Update the orientation demo view
@@ -339,7 +338,7 @@ void MainWindow::updateViews()
 		int elapsedMillis = (currentFrame->command_time() - _processor->firstLogTime + 500) / 1000;
 		QTime elapsedTime = QTime().addMSecs(elapsedMillis);
 		_elapsedTimeItem->setText(ProtobufTree::Column_Value, elapsedTime.toString("hh:mm:ss.zzz"));
-		
+
 		// Sort the tree by tag if items have been added
 		if (_ui.logTree->message(*currentFrame))
 		{
@@ -383,7 +382,7 @@ void MainWindow::updateViews()
 	_ui.refBlueYellowCards->setText(tr("%1").arg(_processor->refereeModule()->blue_info.yellow_cards));
 	_ui.refBlueTimeoutsLeft->setText(tr("%1").arg(_processor->refereeModule()->blue_info.timeouts_left));
 	_ui.refBlueGoalie->setText(tr("%1").arg(_processor->refereeModule()->blue_info.goalie));
-	
+
 	const char *yellowName = _processor->refereeModule()->yellow_info.name.c_str();
 	_ui.refYellowName->setText(strlen(yellowName) == 0 ? "<Yellow Team>" : yellowName);
 	_ui.refYellowScore->setText(tr("%1").arg(_processor->refereeModule()->yellow_info.score));
@@ -495,7 +494,7 @@ void MainWindow::updateViews()
 			RobotStatusWidget *statusWidget = (RobotStatusWidget *)_ui.robotStatusList->itemWidget(item);
 
 			// We make a copy of the robot's RadioRx package b/c the original might change
-			// during the course of this method b/c radio comm happens on a different thread. 
+			// during the course of this method b/c radio comm happens on a different thread.
 			RadioRx rx(robot->radioRx());
 
 
@@ -607,28 +606,28 @@ void MainWindow::updateStatus()
 	//
 	// The order of these checks is important to help debugging.
 	// More specific or unlikely problems should be tested earlier.
-	
+
 	if (!_processor)
 	{
 		status("NO PROCESSOR", Status_Fail);
 		return;
 	}
-	
+
 	// Some conditions are different in simulation
 	bool sim = _processor->simulation();
-	
+
 	// Get processing thread status
 	Processor::Status ps = _processor->status();
 	Time curTime = timestamp();
-	
+
 	// Determine if we are receiving packets from an external referee
 	bool haveExternalReferee = (curTime - ps.lastRefereeTime) < 500 * 1000;
-	
+
 	/*if (_autoExternalReferee && haveExternalReferee && !_ui.externalReferee->isChecked())
 	{
 		_ui.externalReferee->setChecked(true);
 	}*/
-	
+
 	// Is the processing thread running?
 	if (curTime - ps.lastLoopTime > 100 * 1000)
 	{
@@ -647,7 +646,7 @@ void MainWindow::updateStatus()
 		status("NO VISION", Status_Fail);
 		return;
 	}
-	
+
 	if (_processor->manualID() >= 0)
 	{
 		// Mixed auto/manual control
@@ -663,7 +662,7 @@ void MainWindow::updateStatus()
 		status("NO RADIO RX", Status_Fail);
 		return;
 	}
-	
+
 	if ((!sim || _processor->externalReferee()) && !haveExternalReferee)
 	{
 		if (_autoExternalReferee && _processor->externalReferee())
@@ -684,21 +683,21 @@ void MainWindow::updateStatus()
 		status("SIMULATION", Status_Warning);
 		return;
 	}
-	
+
 	if (!sim && !_processor->externalReferee())
 	{
 		// Competition must use external referee
 		status("INTERNAL REF", Status_Warning);
 		return;
 	}
-	
+
 	if (!sim && !_processor->logger().recording())
 	{
 		// We should record logs during competition
 		status("NOT RECORDING", Status_Warning);
 		return;
 	}
-	
+
 	status("COMPETITION", Status_OK);
 }
 
@@ -708,17 +707,17 @@ void MainWindow::status(QString text, MainWindow::StatusType status)
 	if (_ui.statusLabel->text() != text)
 	{
 		_ui.statusLabel->setText(text);
-		
+
 		switch (status)
 		{
 			case Status_OK:
 				_ui.statusLabel->setStyleSheet("background-color: #00ff00");
 				break;
-			
+
 			case Status_Warning:
 				_ui.statusLabel->setStyleSheet("background-color: #ffff00");
 				break;
-			
+
 			case Status_Fail:
 				_ui.statusLabel->setStyleSheet("background-color: #ff4040");
 				break;
@@ -961,16 +960,17 @@ void MainWindow::on_logHistoryLocation_sliderMoved(int value)
 	_playbackRate = 0;
 }
 
-void MainWindow::on_logPlaybackFastBackward_clicked()
+void MainWindow::on_logPlaybackRewind_clicked()
 {
-	live(false);
-	_playbackRate = -kFastPlaybackRate;
+    live(false);
+    _playbackRate = -1;
 }
 
-void MainWindow::on_logPlaybackBackward_clicked()
+void MainWindow::on_logPlaybackPrevFrame_clicked()
 {
 	live(false);
-	_playbackRate = -1;
+	_playbackRate = 0;
+    _doubleFrameNumber -= 1;
 }
 
 void MainWindow::on_logPlaybackPause_clicked()
@@ -979,16 +979,17 @@ void MainWindow::on_logPlaybackPause_clicked()
 	_playbackRate = 0;
 }
 
-void MainWindow::on_logPlaybackForward_clicked()
+void MainWindow::on_logPlaybackNextFrame_clicked()
+{
+    live(false);
+    _playbackRate = 0;
+    _doubleFrameNumber += 1;
+}
+
+void MainWindow::on_logPlaybackPlay_clicked()
 {
 	live(false);
 	_playbackRate = 1;
-}
-
-void MainWindow::on_logPlaybackFastForward_clicked()
-{
-	live(false);
-	_playbackRate = kFastPlaybackRate;
 }
 
 void MainWindow::on_logPlaybackLive_clicked()
@@ -1052,7 +1053,7 @@ void MainWindow::allDebugOff()
 void MainWindow::on_debugLayers_customContextMenuRequested(const QPoint& pos)
 {
 	QListWidgetItem *item = _ui.debugLayers->itemAt(pos);
-	
+
 	QMenu menu;
 	QAction *all = menu.addAction("All");
 	QAction *none = menu.addAction("None");
@@ -1062,7 +1063,7 @@ void MainWindow::on_debugLayers_customContextMenuRequested(const QPoint& pos)
 		single = menu.addAction("Only this");
 		notSingle = menu.addAction("All except this");
 	}
-	
+
 	QAction *act = menu.exec(_ui.debugLayers->mapToGlobal(pos));
 	if (act == all)
 	{
