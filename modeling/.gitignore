@@ -1,5 +1,5 @@
 *.mexw64
+*.mexmaci64
 slprj
-test
 *.autosave
 *.asv
