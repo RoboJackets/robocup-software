@@ -37,7 +37,9 @@ class SubmissiveDefender(single_robot_composite_behavior.SingleRobotCompositeBeh
 
 
     ## the line we should be on to block
-    @property 
+    # The defender assumes that the first endpoint on the line is the source of
+    # the threat it's blocking and makes an effort to face towards it
+    @property
     def block_line(self):
         return self._block_line
     @block_line.setter
@@ -50,12 +52,10 @@ class SubmissiveDefender(single_robot_composite_behavior.SingleRobotCompositeBeh
 
         default_pt = arc.nearest_point(robocup.Point(0, constants.Field.Length / 2.0))
 
-        target = main.ball().pos if main.ball() != None else constants.Field.CenterPoint
         if self._block_line != None:
             intersects, pt1, pt2 = self._block_line.intersects_circle(arc)
 
             if intersects:
-                # print("CIRCLE INTERSECTS: " + str([pt1, pt2]))
                 # choose the pt farther from the goal
                 self._move_target = max([pt1, pt2], key=lambda p: p.y)
             else:
@@ -69,7 +69,7 @@ class SubmissiveDefender(single_robot_composite_behavior.SingleRobotCompositeBeh
     @property
     def move_target(self):
         return self._move_target
-        
+
 
 
     def on_enter_marking(self):
@@ -88,6 +88,10 @@ class SubmissiveDefender(single_robot_composite_behavior.SingleRobotCompositeBeh
         if move.pos != None:
             main.system_state().draw_circle(move.pos, 0.02, constants.Colors.Green, "Mark")
             main.system_state().draw_circle(robocup.Point(0,0), self._defend_goal_radius, constants.Colors.Green, "Mark")
+
+        # make the defender face the threat it's defending against
+        if self.robot != None and self.block_line != None:
+            self.robot.face(self.block_line.get_pt(0))
 
 
     def on_exit_marking(self):
