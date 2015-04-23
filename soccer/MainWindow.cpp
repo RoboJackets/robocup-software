@@ -276,7 +276,7 @@ void MainWindow::updateViews()
 	if (_live) _ui.logPlaybackLive->setEnabled(false);
 	else if (_playbackRate < -0.1) _ui.logPlaybackRewind->setEnabled(false);
 	else if (abs<float>(_playbackRate) < 0.01) _ui.logPlaybackPause->setEnabled(false);
-	else if (_playbackRate > 0.1) _ui.logPlaybackPlay->setEnabled(false);
+	if (_playbackRate > 0.1 || _live) _ui.logPlaybackPlay->setEnabled(false);
 
     //  enable previous frame button based on position in the log
     _ui.logPlaybackPrevFrame->setEnabled(_doubleFrameNumber >= 1);
