@@ -216,8 +216,6 @@ class AngleReceive(skills._kick._Kick):
         self._shot_time = self.robot.lastKickTime()
 
     def execute_receiving(self):
-        self.robot.set_dribble_speed(AngleReceive.DribbleSpeed)
-
         # don't use the move_to() command here, we need more precision, less obstacle avoidance
         pos_error = self._target_pos - self.robot.pos
         vel = pos_error * 3.5
