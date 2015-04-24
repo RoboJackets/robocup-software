@@ -10,12 +10,13 @@ def load_from_file(playbook_file):
     with open(playbook_file, 'r') as f:
         for play in f:
             play = play.strip()
-            if not play:
+            if play:
                 plays.append(play.split('/'))
 
     return plays
 
 def save_to_file(playbook_file, list_of_plays):
     with open(playbook_file, 'w') as f:
+        import re
         for play in list_of_plays:
             f.write('/'.join(play) + '\n')
