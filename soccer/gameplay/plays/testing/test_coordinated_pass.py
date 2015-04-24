@@ -36,7 +36,9 @@ class TestCoordinatedPass(play.Play):
         pass_bhvr = self.subbehavior_with_name('pass')
 
         if pass_bhvr.is_done_running():
-            pass_bhvr.restart()
+            self.remove_subbehavior('pass')
+            pass_bhvr = tactics.coordinated_pass.CoordinatedPass()
+            self.add_subbehavior(pass_bhvr, 'pass')
             self.reset_receive_point()
 
         if pass_bhvr.receive_point == None:
