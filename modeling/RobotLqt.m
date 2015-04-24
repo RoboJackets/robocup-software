@@ -2,9 +2,9 @@
 % Linear Quadratic Tracking (LQT) controller for the robot
 classdef RobotLqt < matlab.System & matlab.system.mixin.Propagates
     
-    properties (DiscreteState)
-        u;
-    end
+%     properties (DiscreteState)
+%         u;
+%     end
     
     
     properties
@@ -120,13 +120,13 @@ classdef RobotLqt < matlab.System & matlab.system.mixin.Propagates
             
             % partial wrt X: A_1 + A_2
             
-            prevX = currVel;
-            prevXdot = [0 0 0]';
+%             prevX = currVel;
+%             prevXdot = [0 0 0]';
             
             
             % linearize model by taking derivataive
-            A_t = A_1 + A_2*prevXdot*prevX(3) + A_2*prevX*prevXdot(3);
-            B_t = B;
+%             A_t = A_1 + A_2*prevXdot*prevX(3) + A_2*prevX*prevXdot(3);
+%             B_t = B;
             
             
             
@@ -137,7 +137,21 @@ classdef RobotLqt < matlab.System & matlab.system.mixin.Propagates
             % https://math.berkeley.edu/~evans/control.course.pdf
             
             
-            u = prevU - K*(currVel - cmdVel);
+%             u = prevU - K*(currVel - cmdVel);
+
+
+            sys = ss(A, B, C, D);
+            [K, S, E] = lqi(sys, obj.Q, obj.R);
+            
+            u = -K * [currVel; cmdVel - currVel];
+            
+            
+            cmdVel
+            currVel
+            
+            K
+            
+            u
             
             
 %             [K, S, E] = lqr(A, B, obj.Q, obj.R);

@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.73"
+    ComputedModelVersion    "1.75"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -29,7 +29,7 @@ Model {
       $ObjectID		      2
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [0.0, 23.0, 1275.0, 842.0]
+      Location		      [0.0, 23.0, 1440.0, 842.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		3
@@ -53,9 +53,9 @@ Model {
 	IsActive		[1]
 	ViewObjType		"SimulinkTopLevel"
 	LoadSaveID		"0"
-	Extents			[1241.0, 672.0]
+	Extents			[1406.0, 672.0]
 	ZoomFactor		[1.0]
-	Offset			[6.8738063335404149, -24.595291042074223]
+	Offset			[6.0, -24.595291042074223]
       }
     }
   }
@@ -65,9 +65,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "justbuchanan"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Thu Apr 23 22:18:53 2015"
-  RTWModifiedTimeStamp	  351728230
-  ModelVersionFormat	  "1.%<AutoIncrement:73>"
+  LastModifiedDate	  "Fri Apr 24 15:37:14 2015"
+  RTWModifiedTimeStamp	  351790487
+  ModelVersionFormat	  "1.%<AutoIncrement:75>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -183,7 +183,7 @@ Model {
 	  $ObjectID		  8
 	  Version		  "1.14.3"
 	  StartTime		  "0.0"
-	  StopTime		  "100.0"
+	  StopTime		  "10"
 	  AbsTol		  "auto"
 	  FixedStep		  "auto"
 	  InitialStep		  "auto"
@@ -717,8 +717,8 @@ Model {
 	PropName		"Components"
       }
       Name		      "Configuration"
-      CurrentDlgPage	      "Hardware Implementation"
-      ConfigPrmDlgPosition     [ 180, 42, 1260, 770 ] 
+      CurrentDlgPage	      "Model Referencing"
+      ConfigPrmDlgPosition     [ 180, 29, 1260, 779 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -947,7 +947,7 @@ Model {
   }
   System {
     Name		    "robocup_model"
-    Location		    [0, 23, 1275, 865]
+    Location		    [0, 23, 1440, 865]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -961,7 +961,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "98"
+    SIDHighWatermark	    "99"
     Block {
       BlockType		      Sum
       Name		      "Add"
@@ -983,7 +983,7 @@ Model {
       BlockType		      Clock
       Name		      "Clock"
       SID		      "96"
-      Position		      [20, 337, 55, 373]
+      Position		      [15, 337, 50, 373]
       ZOrder		      76
       DisplayTime	      on
     }
@@ -995,9 +995,10 @@ Model {
       Position		      [755, 119, 785, 151]
       ZOrder		      77
       Floating		      off
-      Location		      [345, 247, 1033, 565]
+      Location		      [705, 129, 1393, 647]
       Open		      off
       NumInputPorts	      "1"
+      ZoomMode		      "yonly"
       List {
 	ListType		AxesTitles
 	axes1			"%<SignalLabel>"
@@ -1389,9 +1390,10 @@ Model {
       Position		      [360, 129, 390, 161]
       ZOrder		      78
       Floating		      off
-      Location		      [1111, 365, 1435, 604]
-      Open		      on
+      Location		      [333, 134, 1101, 726]
+      Open		      off
       NumInputPorts	      "1"
+      ZoomMode		      "xonly"
       List {
 	ListType		AxesTitles
 	axes1			"%<SignalLabel>"
@@ -1412,13 +1414,43 @@ Model {
     }
     Block {
       BlockType		      Scope
+      Name		      "Path Vel Scope"
+      SID		      "99"
+      Ports		      [1]
+      Position		      [500, 134, 530, 166]
+      ZOrder		      79
+      Floating		      off
+      Location		      [434, 352, 812, 708]
+      Open		      off
+      NumInputPorts	      "1"
+      ZoomMode		      "xonly"
+      List {
+	ListType		AxesTitles
+	axes1			"%<SignalLabel>"
+      }
+      List {
+	ListType		ScopeGraphics
+	FigureColor		"[0.5 0.5 0.5]"
+	AxesColor		"[0 0 0]"
+	AxesTickColor		"[1 1 1]"
+	LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	LineStyles		"-|-|-|-|-|-"
+	LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
+	MarkerStyles		"none|none|none|none|none|none"
+      }
+      ShowLegends	      off
+      SaveName		      "ScopeData6"
+      ScrollMode	      off
+    }
+    Block {
+      BlockType		      Scope
       Name		      "Pos Scope"
       SID		      "92"
       Ports		      [1]
       Position		      [1310, 264, 1340, 296]
       ZOrder		      72
       Floating		      off
-      Location		      [1, 72, 721, 864]
+      Location		      [11, 72, 731, 864]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -1609,8 +1641,18 @@ Model {
       ZOrder		      32
       SrcBlock		      "Derivative"
       SrcPort		      1
-      DstBlock		      "Add"
-      DstPort		      1
+      Points		      [32, 0]
+      Branch {
+	ZOrder			220
+	Points			[0, -60]
+	DstBlock		"Path Vel Scope"
+	DstPort			1
+      }
+      Branch {
+	ZOrder			219
+	DstBlock		"Add"
+	DstPort			1
+      }
     }
     Line {
       ZOrder		      33
@@ -1826,7 +1868,7 @@ Model {
       ZOrder		      182
       SrcBlock		      "Clock"
       SrcPort		      1
-      Points		      [3, 0; 0, -105]
+      Points		      [8, 0; 0, -105]
       DstBlock		      "Path"
       DstPort		      5
     }
