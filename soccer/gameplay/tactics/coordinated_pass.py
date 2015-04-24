@@ -32,8 +32,13 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         receiving = 3   # the kicker has kicked and the receiver is trying to get the ball
 
 
-    def __init__(self, receive_point=None, skillreceiver=skills.pass_receive.PassReceive()):
+    def __init__(self, receive_point=None, skillreceiver=None):
         super().__init__(continuous=False)
+
+        # This creates a new instance of skillreceiver every time the constructor is
+        # called (instead of pulling from a single static instance).
+        if skillreceiver == None:
+            skillreceiver = skills.pass_receive.PassReceive()
 
         self.receive_point = receive_point
         self.skillreceiver = skillreceiver
