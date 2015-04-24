@@ -233,13 +233,13 @@
             </spacer>
            </item>
            <item>
-            <widget class="QPushButton" name="logPlaybackFastBackward">
+            <widget class="QPushButton" name="logPlaybackRewind">
              <property name="toolTip">
               <string>Play log backwards quickly</string>
              </property>
              <property name="icon">
               <iconset resource="main_icons.qrc">
-               <normaloff>:/icons/fast-backward.svg</normaloff>:/icons/fast-backward.svg</iconset>
+               <normaloff>:/icons/rewind.svg</normaloff>:/icons/rewind.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -253,13 +253,13 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="logPlaybackBackward">
+            <widget class="QPushButton" name="logPlaybackPrevFrame">
              <property name="toolTip">
               <string>Play log backwards</string>
              </property>
              <property name="icon">
               <iconset resource="main_icons.qrc">
-               <normaloff>:/icons/slow-backward.svg</normaloff>:/icons/slow-backward.svg</iconset>
+               <normaloff>:/icons/prev-frame.svg</normaloff>:/icons/prev-frame.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -293,7 +293,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="logPlaybackForward">
+            <widget class="QPushButton" name="logPlaybackNextFrame">
              <property name="toolTip">
               <string>Play log forwards</string>
              </property>
@@ -302,7 +302,7 @@
              </property>
              <property name="icon">
               <iconset resource="main_icons.qrc">
-               <normaloff>:/icons/slow-forward.svg</normaloff>:/icons/slow-forward.svg</iconset>
+               <normaloff>:/icons/next-frame.svg</normaloff>:/icons/next-frame.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -316,13 +316,13 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="logPlaybackFastForward">
+            <widget class="QPushButton" name="logPlaybackPlay">
              <property name="toolTip">
               <string>Play log forwards quickly</string>
              </property>
              <property name="icon">
               <iconset resource="main_icons.qrc">
-               <normaloff>:/icons/fast-forward.svg</normaloff>:/icons/fast-forward.svg</iconset>
+               <normaloff>:/icons/play.svg</normaloff>:/icons/play.svg</iconset>
              </property>
              <property name="iconSize">
               <size>
