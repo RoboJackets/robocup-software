@@ -142,6 +142,10 @@ class MainWindow : public QMainWindow
 		void on_loadConfig_clicked();
 		void on_saveConfig_clicked();
 
+		// Playbook
+		void on_loadPlaybook_clicked();
+		void on_savePlaybook_clicked();
+
 		// Fast Ref Buttons
 		void on_fastHalt_clicked();
 		void on_fastStop_clicked();
