@@ -55,6 +55,11 @@ namespace Gameplay
 			 */
 			void loadPlaybook(const std::string &playbookFile);
 
+			/**
+			 * @brief Saves the currently enabled plays to a playbook file
+			 */
+			void savePlaybook(const std::string &playbookFile);
+
 			void goalieID(int value);
 			int goalieID()
 			{
