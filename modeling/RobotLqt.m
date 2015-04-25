@@ -96,8 +96,12 @@ classdef RobotLqt < matlab.System & matlab.system.mixin.Propagates
             C = eye(3);
             D = zeros(3, 4);    % no feed-forward
             
+            % declare lqr as extrinsic, so the code generator doesn't try
+            % to generate code for the innards of lqr
+%             coder.extrinsic('lqr');
+            
             [K, S, E] = lqr(-C*A, -C*B, obj.Q, obj.R);
-
+            
             u = -K * (cmdVel-currVel);
             
 

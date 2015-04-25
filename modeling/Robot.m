@@ -69,7 +69,7 @@ classdef Robot < matlab.System & matlab.system.mixin.CustomIcon & matlab.system.
         
         
         function [X_g, X_b_dot] = outputImpl(obj, ~, ~, ~, ~, ~)
-           X_g = obj.X_g
+           X_g = obj.X_g;
            X_b_dot = obj.X_b_dot;
         end
         
@@ -87,8 +87,6 @@ classdef Robot < matlab.System & matlab.system.mixin.CustomIcon & matlab.system.
                error('Wrong dimensions for input, should be [4, 1]') 
             end
             
-            dt;
-            
             if dt < 0
                 error('dt must be positive')
             end
@@ -103,9 +101,6 @@ classdef Robot < matlab.System & matlab.system.mixin.CustomIcon & matlab.system.
             result = xa(end, :);
             obj.X_g = result(1:3)';
             obj.X_b_dot = result(4:6)';
-            
-%             obj.X_b_dot;
-%             obj.X_g;
         end
     end
     
