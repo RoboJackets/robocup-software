@@ -2,11 +2,8 @@
 % Linear Quadratic Tracking (LQT) controller for the robot
 classdef RobotLqt < matlab.System & matlab.system.mixin.Propagates
     
-%     properties (DiscreteState)
-%         u;
-%     end
     
-    
+    % These values determine Q and R for the LQR controller
     properties
         % Translational velocity error weight
         trans_vel_weight = 1;
@@ -27,12 +24,9 @@ classdef RobotLqt < matlab.System & matlab.system.mixin.Propagates
     
     methods
         function Q = get.Q(obj)
-            Q = [obj.trans_vel_weight,                    0,                  0, 0, 0, 0;
-                                    0, obj.trans_vel_weight,                  0, 0, 0, 0;
-                                    0                     0, obj.rot_vel_weight, 0, 0, 0;
-                                    0,                    0,                  0, 1, 0, 0;
-                                    0,                    0,                  0, 0, 1, 0;
-                                    0,                    0,                  0, 0, 0, 1];
+            Q = [obj.trans_vel_weight,                    0,                  0;
+                                    0, obj.trans_vel_weight,                  0;
+                                    0                     0, obj.rot_vel_weight];
         end
        
         function R = get.R(obj)
@@ -88,80 +82,33 @@ classdef RobotLqt < matlab.System & matlab.system.mixin.Propagates
         
 
         function u = stepImpl(obj, cmdVel, currVel, A_1, A_2, B)
-            % TODO: do LQT
-
             
-            % x_b_dot_dot = A_1*x_b_dot + A_2*dPhiDt*x_b_dot + B*u
+            % Plant Equations:
+            % X = x_b_dot % state of the system is body velocity
+            % X_dot = A_1*x_b_dot + A_2*dPhiDt*x_b_dot + B*u
             % y = x_b_dot = eye(3)*x_b_dot
             
             
             % linearize by evaluating at current angular velocity
-            A = A_1 + A_2*currVel(3);
+            A = A_1 + A_2*currVel(3); % note: currVel(3) = dPhi/dt
             
             % y = Cx + Du
             C = eye(3);
             D = zeros(3, 4);    % no feed-forward
             
-            % our system is non-linear, but we linearize it to apply linear
-            % quadratic tracking
-%             sys = ss(A, B, C, D);
-            % TODO: there's an additional weighting parameter N, what does
-            % it do and do we need it?  It's omitted now, which sets it to
-            % all zeros.
-%             [K, S, e] = lqi(sys, obj.Q, obj.R);
-            
+            [K, S, E] = lqr(-C*A, -C*B, obj.Q, obj.R);
 
+            u = -K * (cmdVel-currVel);
+            
 
             % Nonlinear LQT based on this paper:
             % http://www.cs.berkeley.edu/~pabbeel/cs287-fa12/slides/LQR.pdf
-
-
-            % X_dot = A_1*X + A_2*X*X[3] + B*u
-            
-            % partial wrt X: A_1 + A_2
-            
-%             prevX = currVel;
-%             prevXdot = [0 0 0]';
-            
-            
-            % linearize model by taking derivataive
-%             A_t = A_1 + A_2*prevXdot*prevX(3) + A_2*prevX*prevXdot(3);
-%             B_t = B;
-            
-            
             
             % Here's a good explanation of Lagrange multipliers:
             % http://www.slimy.com/~steuard/teaching/tutorials/Lagrange.html
             
             % Good (but long) intro to controls and LQR/LQT:
             % https://math.berkeley.edu/~evans/control.course.pdf
-            
-            
-%             u = prevU - K*(currVel - cmdVel);
-
-
-            sys = ss(A, B, C, D);
-            [K, S, E] = lqi(sys, obj.Q, obj.R);
-            
-            u = -K * [currVel; cmdVel - currVel];
-            
-            
-            cmdVel
-            currVel
-            
-            K
-            
-            u
-            
-            
-%             [K, S, E] = lqr(A, B, obj.Q, obj.R);
-            
-%             prevU = obj.u;
-            
-%             u = prevU + K*(currVel
-            
-
-%             u = -K*cmdVel;
         end
     end
     
