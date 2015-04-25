@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.84"
+    ComputedModelVersion    "1.86"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -65,9 +65,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "justbuchanan"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sat Apr 25 15:04:10 2015"
-  RTWModifiedTimeStamp	  351875027
-  ModelVersionFormat	  "1.%<AutoIncrement:84>"
+  LastModifiedDate	  "Sat Apr 25 17:01:21 2015"
+  RTWModifiedTimeStamp	  351882075
+  ModelVersionFormat	  "1.%<AutoIncrement:86>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -183,7 +183,7 @@ Model {
 	  $ObjectID		  8
 	  Version		  "1.14.3"
 	  StartTime		  "0.0"
-	  StopTime		  "10"
+	  StopTime		  "7"
 	  AbsTol		  "auto"
 	  FixedStep		  "auto"
 	  InitialStep		  "auto"
@@ -303,7 +303,7 @@ Model {
 	  LifeSpan		  "inf"
 	  MaxStackSize		  "Inherit from target"
 	  BufferReusableBoundary  on
-	  SimCompilerOptimization "Off"
+	  SimCompilerOptimization "On"
 	  AccelVerboseBuild	  off
 	  ParallelExecutionInRapidAccelerator on
 	}
@@ -409,14 +409,14 @@ Model {
 	  ProdBitPerFloat	  32
 	  ProdBitPerDouble	  64
 	  ProdBitPerPointer	  32
-	  ProdLargestAtomicInteger "Char"
-	  ProdLargestAtomicFloat  "None"
+	  ProdLargestAtomicInteger "Long"
+	  ProdLargestAtomicFloat  "Double"
 	  ProdIntDivRoundTo	  "Undefined"
-	  ProdEndianess		  "Unspecified"
+	  ProdEndianess		  "LittleEndian"
 	  ProdWordSize		  32
 	  ProdShiftRightIntArith  on
 	  ProdLongLongMode	  off
-	  ProdHWDeviceType	  "32-bit Generic"
+	  ProdHWDeviceType	  "ARM Compatible->ARM Cortex"
 	  TargetBitPerChar	  8
 	  TargetBitPerShort	  16
 	  TargetBitPerInt	  32
@@ -717,8 +717,8 @@ Model {
 	PropName		"Components"
       }
       Name		      "Configuration"
-      CurrentDlgPage	      "Model Referencing"
-      ConfigPrmDlgPosition     [ 180, 29, 1260, 779 ] 
+      CurrentDlgPage	      "Simulation Target/Custom Code"
+      ConfigPrmDlgPosition     [ 180, 29, 1260, 801 ] 
     }
     PropName		    "ConfigurationSets"
   }
@@ -998,7 +998,7 @@ Model {
       BlockType		      Clock
       Name		      "Clock"
       SID		      "96"
-      Position		      [20, 232, 55, 268]
+      Position		      [45, 232, 80, 268]
       ZOrder		      76
       DisplayTime	      on
     }
@@ -1061,7 +1061,7 @@ Model {
       Name		      "Dynamics"
       SID		      "78"
       Ports		      [5, 2]
-      Position		      [1325, 248, 1485, 372]
+      Position		      [1325, 278, 1485, 402]
       ZOrder		      61
       System		      "Robot"
       SimulateUsing	      "Interpreted execution"
@@ -1080,7 +1080,7 @@ Model {
       BlockType		      Memory
       Name		      "Memory"
       SID		      "101"
-      Position		      [860, 580, 890, 610]
+      Position		      [860, 520, 890, 550]
       ZOrder		      81
       X0		      "-1/60"
     }
@@ -1088,7 +1088,7 @@ Model {
       BlockType		      ManualSwitch
       Name		      "Open Loop Switch"
       SID		      "107"
-      Position		      [610, 277, 640, 313]
+      Position		      [620, 277, 650, 313]
       ZOrder		      87
     }
     Block {
@@ -1211,24 +1211,25 @@ Model {
       Name		      "Params"
       SID		      "85"
       Ports		      [0, 3]
-      Position		      [861, 390, 929, 460]
+      Position		      [861, 410, 929, 480]
       ZOrder		      65
       BlockRotation	      270
       System		      "RobotParams"
       MaskType		      "RobotParams"
       MaskDisplay	      "disp('RobotParams');\nport_label('output',1,'A_1');\nport_label('output',2,'A_2');\nport_labe"
       "l('output',3,'B');\n"
-      M_bot		      "1"
-      I_bot		      "1"
+      M_bot		      "2.205"
+      I_bot		      "0.00745879949"
       g			      "2.0/7.0"
-      r			      "1"
-      L			      "0.1"
-      K_e		      "1"
-      K_t		      "1"
-      K_f		      "1"
-      I_asm		      "1"
-      V			      "1"
-      wheel_angles	      "(pi/4 + (pi/2)*(0:3))'"
+      r			      "0.0285623"
+      L			      "0.0798576"
+      Rt		      "0.464"
+      K_e		      "30.0/(380*pi)"
+      K_t		      "0.0251"
+      K_f		      "0.0001"
+      I_asm		      "2.43695253e-5"
+      V			      "18"
+      wheel_angles	      "[38*pi/180.0, 142*pi/180.0, 225*pi/180.0, 315*pi/180.0]'"
     }
     Block {
       BlockType		      SubSystem
@@ -1472,7 +1473,7 @@ Model {
       Name		      "Pos Error"
       SID		      "100"
       Ports		      [1]
-      Position		      [469, 400, 501, 430]
+      Position		      [469, 365, 501, 395]
       ZOrder		      80
       BlockRotation	      270
       BlockMirror	      on
@@ -1504,7 +1505,7 @@ Model {
       Name		      "Pos Scope"
       SID		      "92"
       Ports		      [1]
-      Position		      [1585, 264, 1615, 296]
+      Position		      [1585, 294, 1615, 326]
       ZOrder		      72
       Floating		      off
       Location		      [333, 99, 1438, 918]
@@ -1577,7 +1578,7 @@ Model {
       Name		      "Subtract1"
       SID		      "102"
       Ports		      [2, 1]
-      Position		      [915, 572, 945, 603]
+      Position		      [915, 512, 945, 543]
       ZOrder		      82
       Inputs		      "+-"
       InputSameDT	      off
@@ -1613,7 +1614,7 @@ Model {
       Name		      "Vel Scope"
       SID		      "87"
       Ports		      [1]
-      Position		      [1585, 324, 1615, 356]
+      Position		      [1585, 354, 1615, 386]
       ZOrder		      67
       Floating		      off
       Location		      [11, 72, 1451, 864]
@@ -1671,7 +1672,7 @@ Model {
       BlockType		      Constant
       Name		      "Zero Pos Correction for Open Loop"
       SID		      "105"
-      Position		      [565, 365, 595, 395]
+      Position		      [575, 365, 605, 395]
       ZOrder		      85
       BlockRotation	      270
       Value		      "[0 0 0]'"
@@ -1792,7 +1793,7 @@ Model {
       Labels		      [1, 1]
       SrcBlock		      "Subtract1"
       SrcPort		      1
-      Points		      [329, 0; 0, -305]
+      Points		      [329, 0; 0, -215]
       DstBlock		      "Dynamics"
       DstPort		      2
     }
@@ -1800,16 +1801,15 @@ Model {
       ZOrder		      72
       SrcBlock		      "Params"
       SrcPort		      1
-      Points		      [0, -48]
+      Points		      [0, -65]
       Branch {
-	ZOrder			160
-	Points			[0, -77]
+	ZOrder			386
+	Points			[0, -80]
 	DstBlock		"Controller"
 	DstPort			3
       }
       Branch {
 	ZOrder			135
-	Points			[425, 0; 0, -27]
 	DstBlock		"Dynamics"
 	DstPort			3
       }
@@ -1818,16 +1818,15 @@ Model {
       ZOrder		      73
       SrcBlock		      "Params"
       SrcPort		      2
-      Points		      [0, -37]
+      Points		      [0, -40]
       Branch {
-	ZOrder			161
-	Points			[0, -68]
+	ZOrder			385
+	Points			[0, -85]
 	DstBlock		"Controller"
 	DstPort			4
       }
       Branch {
 	ZOrder			136
-	Points			[415, 0]
 	DstBlock		"Dynamics"
 	DstPort			4
       }
@@ -1836,10 +1835,10 @@ Model {
       ZOrder		      74
       SrcBlock		      "Params"
       SrcPort		      3
-      Points		      [0, -25]
+      Points		      [0, -15]
       Branch {
-	ZOrder			162
-	Points			[0, -60]
+	ZOrder			387
+	Points			[0, -90]
 	DstBlock		"Controller"
 	DstPort			5
       }
@@ -1854,16 +1853,16 @@ Model {
       ZOrder		      93
       SrcBlock		      "Dynamics"
       SrcPort		      1
-      Points		      [32, 0]
+      Points		      [43, 0]
       Branch {
-	ZOrder			159
+	ZOrder			390
 	DstBlock		"Pos Scope"
 	DstPort			1
       }
       Branch {
 	ZOrder			146
 	Labels			[2, 1]
-	Points			[0, 259; -1128, 0; 0, -249]
+	Points			[0, 333; -1139, 0; 0, -353]
 	DstBlock		"Subtract"
 	DstPort			2
       }
@@ -1872,17 +1871,17 @@ Model {
       ZOrder		      94
       SrcBlock		      "Dynamics"
       SrcPort		      2
-      Points		      [53, 0]
+      Points		      [17, 0]
       Branch {
-	ZOrder			312
-	Points			[0, 325; -768, 0; 0, -425]
-	DstBlock		"Controller"
-	DstPort			2
-      }
-      Branch {
-	ZOrder			311
+	ZOrder			389
 	DstBlock		"Vel Scope"
 	DstPort			1
+      }
+      Branch {
+	ZOrder			312
+	Points			[0, 239; -732, 0; 0, -369]
+	DstBlock		"Controller"
+	DstPort			2
       }
     }
     Line {
@@ -1936,6 +1935,7 @@ Model {
       }
       Branch {
 	ZOrder			180
+	Points			[0, 30]
 	DstBlock		"Dynamics"
 	DstPort			1
       }
@@ -1944,7 +1944,7 @@ Model {
       ZOrder		      182
       SrcBlock		      "Clock"
       SrcPort		      1
-      Points		      [98, 0]
+      Points		      [73, 0]
       Branch {
 	ZOrder			316
 	DstBlock		"Path"
@@ -1952,7 +1952,7 @@ Model {
       }
       Branch {
 	ZOrder			314
-	Points			[0, 345; 683, 0]
+	Points			[0, 285; 683, 0]
 	Branch {
 	  ZOrder		  293
 	  Points		  [0, -29; 59, 0]
@@ -1977,7 +1977,7 @@ Model {
       ZOrder		      308
       SrcBlock		      "Open Loop Switch"
       SrcPort		      1
-      Points		      [13, 0; 0, -70]
+      Points		      [3, 0; 0, -70]
       DstBlock		      "Add"
       DstPort		      2
     }
@@ -2022,7 +2022,10 @@ Stateflow {
     firstTransition	    11
     firstJunction	    10
     viewObj		    2
+    visible		    1
     machine		    1
+    subviewS {
+    }
     ssIdHighWaterMark	    10
     decomposition	    CLUSTER_CHART
     type		    EML_CHART

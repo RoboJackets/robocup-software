@@ -5,7 +5,7 @@ classdef RobotParams < matlab.System
         % Mass of bot (Kg)
         M_bot = 1;
 
-        % Moment of inertia of bot about the z (vertical) axis throug the center of mass TODO: units
+        % Moment of inertia of bot about the z (vertical) axis through the center of mass (Kg*m^2)
         I_bot = 1;
 
         % Gear ratio of motor to wheel.  w_motor * g = w_wheel
@@ -17,13 +17,17 @@ classdef RobotParams < matlab.System
         % Distance from the center of wheel to the center of the robot (meters)
         L = 0.1;
 
-        % Resistance of motor phase (ohms)
-        R = 1;
+        % Resistance of motor from terminal to terminal (ohms)
+        Rt = 1;
 
-        % Back-emf constant of motor (TODO: units?)
-        K_e = 1;
+        % Back-emf constant of motor (V/(rad/s))
+        % Maxon lists the "Speed Constant" in rpm/V as 380
+        % invert this to get 1/380 V/rpm
+        % multiply by 60 to get 60/380 V/rps
+        % divide by 2pi to get 30/380pi V/(rad/s)
+        K_e = 30.0/(380*pi);
 
-        % Torque constant of motor (TODO: units?)
+        % Torque constant of motor (N*m/A)
         K_t = 1;
 
         % Viscous friction coefficient of wheel assembly.  Tau_friction =w_motor * K_f TODO: units?
@@ -69,7 +73,7 @@ classdef RobotParams < matlab.System
         end
 
         function A_1 = get.A_1(obj)
-            A_1 = - (obj.K_e*obj.K_t/obj.R + obj.K_f) / (obj.M_bot*obj.g^2*obj.r^2 + obj.I_asm) * eye(3);
+            A_1 = - (obj.K_e*obj.K_t/obj.Rt + obj.K_f) / (obj.M_bot*obj.g^2*obj.r^2 + obj.I_asm) * eye(3);
         end
 
         function A_2 = get.A_2(obj)
@@ -77,7 +81,7 @@ classdef RobotParams < matlab.System
         end
         
         function B = get.B(obj)
-            B = obj.g*obj.r*obj.K_t*obj.G / obj.R / (obj.M_bot*obj.g^2*obj.r^2 + obj.I_asm);
+            B = obj.g*obj.r*obj.K_t*obj.G / obj.Rt / (obj.M_bot*obj.g^2*obj.r^2 + obj.I_asm);
         end
     end
 
