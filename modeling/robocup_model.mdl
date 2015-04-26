@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.86"
+    ComputedModelVersion    "1.87"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -65,9 +65,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "justbuchanan"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sat Apr 25 17:01:21 2015"
-  RTWModifiedTimeStamp	  351882075
-  ModelVersionFormat	  "1.%<AutoIncrement:86>"
+  LastModifiedDate	  "Sat Apr 25 20:39:28 2015"
+  RTWModifiedTimeStamp	  351895118
+  ModelVersionFormat	  "1.%<AutoIncrement:87>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -855,6 +855,14 @@ Model {
       RTWStateStorageClass    "Auto"
     }
     Block {
+      BlockType		      Mux
+      Inputs		      "4"
+      DisplayOption	      "none"
+      UseBusObject	      off
+      BusObject		      "BusObject"
+      NonVirtualBus	      off
+    }
+    Block {
       BlockType		      Outport
       Port		      "1"
       OutMin		      "[]"
@@ -976,7 +984,7 @@ Model {
     ShowPageBoundaries	    off
     ZoomFactor		    "80"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "107"
+    SIDHighWatermark	    "109"
     Block {
       BlockType		      Sum
       Name		      "Add"
@@ -1045,8 +1053,8 @@ Model {
       MaskDisplay	      "disp('RobotLqt');\nport_label('input',1,'Cmd Velocity');\nport_label('input',2,'Curr. Velocit"
       "y');\nport_label('input',3,'A_1');\nport_label('input',4,'A_2');\nport_label('input',5,'B');\nport_label('output"
       "',1,'u');\n"
-      trans_vel_weight	      "1"
-      rot_vel_weight	      "1"
+      trans_vel_weight	      "10"
+      rot_vel_weight	      "0.1"
       u_weight		      "0.1"
     }
     Block {
@@ -1083,6 +1091,20 @@ Model {
       Position		      [860, 520, 890, 550]
       ZOrder		      81
       X0		      "-1/60"
+    }
+    Block {
+      BlockType		      Mux
+      Name		      "Mux"
+      SID		      "108"
+      Ports		      [2, 1]
+      Position		      [366, 675, 404, 680]
+      ZOrder		      88
+      BlockRotation	      270
+      BlockMirror	      on
+      NamePlacement	      "alternate"
+      ShowName		      off
+      Inputs		      "2"
+      DisplayOption	      "bar"
     }
     Block {
       BlockType		      ManualSwitch
@@ -1446,7 +1468,7 @@ Model {
       ZOrder		      79
       BlockRotation	      270
       Floating		      off
-      Location		      [434, 352, 1132, 828]
+      Location		      [228, 352, 1132, 828]
       Open		      off
       NumInputPorts	      "1"
       ZoomMode		      "xonly"
@@ -1508,7 +1530,7 @@ Model {
       Position		      [1585, 294, 1615, 326]
       ZOrder		      72
       Floating		      off
-      Location		      [333, 99, 1438, 918]
+      Location		      [325, 72, 1430, 864]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -1592,6 +1614,38 @@ Model {
       }
     }
     Block {
+      BlockType		      Scope
+      Name		      "Tracking"
+      SID		      "109"
+      Ports		      [1]
+      Position		      [369, 735, 401, 765]
+      ZOrder		      89
+      BlockRotation	      270
+      BlockMirror	      on
+      NamePlacement	      "alternate"
+      Floating		      off
+      Location		      [207, 141, 1423, 736]
+      Open		      off
+      NumInputPorts	      "1"
+      List {
+	ListType		AxesTitles
+	axes1			"%<SignalLabel>"
+      }
+      List {
+	ListType		ScopeGraphics
+	FigureColor		"[0.5 0.5 0.5]"
+	AxesColor		"[0 0 0]"
+	AxesTickColor		"[1 1 1]"
+	LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
+	LineStyles		"-|-|-|-|-|-"
+	LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
+	MarkerStyles		"none|none|none|none|none|none"
+      }
+      ShowLegends	      off
+      SaveName		      "ScopeData8"
+      ScrollMode	      off
+    }
+    Block {
       BlockType		      Constant
       Name		      "TransAccelLimit"
       SID		      "90"
@@ -1617,7 +1671,7 @@ Model {
       Position		      [1585, 354, 1615, 386]
       ZOrder		      67
       Floating		      off
-      Location		      [11, 72, 1451, 864]
+      Location		      [1, 72, 1441, 864]
       Open		      off
       NumInputPorts	      "1"
       ZoomMode		      "yonly"
@@ -1647,9 +1701,10 @@ Model {
       ZOrder		      75
       BlockRotation	      270
       Floating		      off
-      Location		      [150, 265, 474, 504]
+      Location		      [128, 179, 1366, 778]
       Open		      off
       NumInputPorts	      "1"
+      ZoomMode		      "yonly"
       List {
 	ListType		AxesTitles
 	axes1			"%<SignalLabel>"
@@ -1665,6 +1720,9 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
+      TimeRange		      "2.8"
+      YMin		      "3.498098859315588"
+      YMax		      "9.581749049429657"
       SaveName		      "ScopeData3"
       ScrollMode	      off
     }
@@ -1747,8 +1805,17 @@ Model {
       Branch {
 	ZOrder			128
 	Points			[0, 65]
-	DstBlock		"Subtract"
-	DstPort			1
+	Branch {
+	  ZOrder		  425
+	  DstBlock		  "Subtract"
+	  DstPort		  1
+	}
+	Branch {
+	  ZOrder		  424
+	  Points		  [-22, 0]
+	  DstBlock		  "Mux"
+	  DstPort		  1
+	}
       }
     }
     Line {
@@ -1862,9 +1929,18 @@ Model {
       Branch {
 	ZOrder			146
 	Labels			[2, 1]
-	Points			[0, 333; -1139, 0; 0, -353]
-	DstBlock		"Subtract"
-	DstPort			2
+	Points			[0, 333; -1138, 0]
+	Branch {
+	  ZOrder		  422
+	  DstBlock		  "Mux"
+	  DstPort		  2
+	}
+	Branch {
+	  ZOrder		  421
+	  Points		  [-1, 0; 0, -353]
+	  DstBlock		  "Subtract"
+	  DstPort		  2
+	}
       }
     }
     Line {
@@ -1929,14 +2005,14 @@ Model {
       SrcPort		      1
       Points		      [15, 0]
       Branch {
-	ZOrder			181
-	DstBlock		"Voltage Scope"
-	DstPort			1
-      }
-      Branch {
 	ZOrder			180
 	Points			[0, 30]
 	DstBlock		"Dynamics"
+	DstPort			1
+      }
+      Branch {
+	ZOrder			427
+	DstBlock		"Voltage Scope"
 	DstPort			1
       }
     }
@@ -1996,6 +2072,13 @@ Model {
       DstBlock		      "Open Loop Switch"
       DstPort		      2
     }
+    Line {
+      ZOrder		      426
+      SrcBlock		      "Mux"
+      SrcPort		      1
+      DstBlock		      "Tracking"
+      DstPort		      1
+    }
   }
 }
 #Finite State Machines
@@ -2022,10 +2105,7 @@ Stateflow {
     firstTransition	    11
     firstJunction	    10
     viewObj		    2
-    visible		    1
     machine		    1
-    subviewS {
-    }
     ssIdHighWaterMark	    10
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
