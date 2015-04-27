@@ -1,6 +1,9 @@
 % Contains robot hardware parameters used in the model
 classdef RobotParams < matlab.System
 
+    % Note: The default values for the below properties are garbage - if
+    % you want to set them, double-click on the RobotParams block in the
+    % Simulink block-diagram model file.
     properties
         % Mass of bot (Kg)
         M_bot = 1;
@@ -30,7 +33,7 @@ classdef RobotParams < matlab.System
         % Torque constant of motor (N*m/A)
         K_t = 1;
 
-        % Viscous friction coefficient of wheel assembly.  Tau_friction =w_motor * K_f TODO: units?
+        % Viscous friction coefficient of wheel assembly (N*m/(rad/s)).  Tau_friction = w_motor * K_f
         K_f = 1;
 
         % Moment of inertia of wheel assembly.  Tau_accel = I_asm*w_dot_motor
@@ -48,7 +51,7 @@ classdef RobotParams < matlab.System
         % Inertial matrix
         J;
 
-        % Geometry matrix
+        % Geometry matrix - maps wheel velocities to body velocity
         G;
 
         % matrices for final nonlinear state equation
@@ -77,7 +80,7 @@ classdef RobotParams < matlab.System
         end
 
         function A_2 = get.A_2(obj)
-            A_2 = - (obj.M_bot*obj.g^2*obj.r^2)/(obj.M_bot*obj.g^2*obj.r^2 + obj.I_asm) * [0, 1, 0; -1, 0, 0; 0, 0, 0];
+            A_2 = (obj.M_bot*obj.g^2*obj.r^2)/(obj.M_bot*obj.g^2*obj.r^2 + obj.I_asm) * [0, 1, 0; -1, 0, 0; 0, 0, 0];
         end
         
         function B = get.B(obj)

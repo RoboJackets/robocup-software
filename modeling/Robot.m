@@ -1,10 +1,21 @@
 
 % This class models the dynamics of a single RoboCup SSL Robot
+%
+% Robot Coordinate System
+%      +y
+%       ^
+%       |
+%       |
+% w_1/-----\w_0
+%   / mouth \
+%  |         | ---> +x
+%   \       /
+% w_2\-----/w_3
+%
 % note: a good example of custom System blocks can be found at:
 % http://www.mathworks.com/help/simulink/ug/system-design-in-simulink-using-system-objects.html
-% TODO: why nondirect?
-% We inherit from the Propagates mixin because we need the ability to
-% specify the sizes of the outputs.
+% We inherit from the Propagates mixin because the output depends on the
+% current state, not the inputs directly.
 classdef Robot < matlab.System & matlab.system.mixin.CustomIcon & matlab.system.mixin.Nondirect & matlab.system.mixin.Propagates
     
     % The state of the robot is its global location and its body velocity
@@ -93,11 +104,23 @@ classdef Robot < matlab.System & matlab.system.mixin.CustomIcon & matlab.system.
         end
         
         function updateImpl(obj, u, dt, A_1, A_2, B)
+            % Our plant equation is of the form X_dot = A*X + B*u (after
+            % linearization), so we have an equation for the system's
+            % derivative in terms of its current state and control inputs.
+            % To calculate future velocities and positions, we numerically
+            % integrate this derivative using one of MATLAB's builtin ODE
+            % solvers.  This uses a function that we've provided
+            % (calculate_bot_accel) to provide the derivative at a given
+            % time, which it integrates to get the solution.
             tspan = [0, dt];
             options = odeset;
-            
             [t, xa] = ode45(@calculate_bot_accel, tspan, [obj.X_g; obj.X_b_dot], options, obj, u, A_1, A_2, B);
             
+            % The ODE solver will run for many micro timesteps to calculate
+            % the result at the end of the macro timestep provided.  The
+            % results of all of the in-between calculations are stored in
+            % xa, so we take the last one to get the state of the system at
+            % the end of the macro timestep.
             result = xa(end, :);
             obj.X_g = result(1:3)';
             obj.X_b_dot = result(4:6)';
@@ -133,14 +156,16 @@ classdef Robot < matlab.System & matlab.system.mixin.CustomIcon & matlab.system.
 end
 
 
-
-
 % calculate X_b_dot_dot, the acceleration in the body frame
+% and X_g_dot the velocity of the robot in the global frame
 function accel = calculate_bot_accel(t, y, obj, u, A_1, A_2, B)
     X_g = y(1:3);
     X_b_dot = y(4:6);
 
+    % angle of the robot
     phi = X_g(3);
+    
+    % rotation matrix that converts from body frame to global frame
     gbR = [cos(phi), -sin(phi), 0;
            sin(phi),  cos(phi), 0;
                   0,         0, 1];
