@@ -232,9 +232,7 @@ void Robot::getWorldTransform(btTransform& chassisWorldTrans) const
 void Robot::radioTx(const Packet::RadioTx::Robot *data)
 {
 	velocity(data->body_x(),data->body_y(), data->body_w());
-	if(data->kick()){
-		_controller->prepareKick(data->kick(),data->use_chipper());
-	}
+	_controller->prepareKick(data->kick(),data->use_chipper());
 	_controller->prepareDribbler(data->dribbler());
 }
 
