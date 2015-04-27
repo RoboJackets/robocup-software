@@ -212,10 +212,12 @@ class AngleReceive(skills._kick._Kick):
             self.robot.move_to(self._target_pos)
 
     def on_enter_receiving(self):
-        self.robot.kick(self.kick_power)
         self._shot_time = self.robot.lastKickTime()
 
     def execute_receiving(self):
+        # Kick the ball!
+        self.robot.kick(self.kick_power)
+
         # don't use the move_to() command here, we need more precision, less obstacle avoidance
         pos_error = self._target_pos - self.robot.pos
         vel = pos_error * 3.5
