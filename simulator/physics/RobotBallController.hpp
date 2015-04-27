@@ -71,6 +71,11 @@ public:
 		return _lastKicked;
 	}
 
+    /**
+     * @brief Prepare to kick the ball as soon as one is detected by the "ball sensor"
+     * @param power A value from 0 to 255 indicating what proportion of the max kick power to apply.  A value of zero "unprimes" the kicker.
+     * @param chip A boolean indicating whether or not to use the chipper.  If false, just uses the regular kicker.
+     */
 	void prepareKick(uint64_t power, bool chip);
 	void prepareDribbler(uint64_t dribble);
 };
