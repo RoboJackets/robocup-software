@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.87"
+    ComputedModelVersion    "1.108"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -29,7 +29,7 @@ Model {
       $ObjectID		      2
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [0.0, 23.0, 1440.0, 842.0]
+      Location		      [1920.0, 540.0, 1440.0, 877.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		3
@@ -53,9 +53,9 @@ Model {
 	IsActive		[1]
 	ViewObjType		"SimulinkTopLevel"
 	LoadSaveID		"0"
-	Extents			[1406.0, 672.0]
-	ZoomFactor		[0.8]
-	Offset			[-38.386695384979475, -31.025768638893737]
+	Extents			[1406.0, 707.0]
+	ZoomFactor		[0.86108181995703958]
+	Offset			[13.960761957151712, -17.530093432510856]
       }
     }
   }
@@ -65,9 +65,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "justbuchanan"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sat Apr 25 20:39:28 2015"
-  RTWModifiedTimeStamp	  351895118
-  ModelVersionFormat	  "1.%<AutoIncrement:87>"
+  LastModifiedDate	  "Mon Apr 27 04:55:02 2015"
+  RTWModifiedTimeStamp	  352011298
+  ModelVersionFormat	  "1.%<AutoIncrement:108>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -887,6 +887,21 @@ Model {
       SFunctionDeploymentMode off
     }
     Block {
+      BlockType		      Saturate
+      UpperLimitSource	      "Dialog"
+      UpperLimit	      "0.5"
+      LowerLimitSource	      "Dialog"
+      LowerLimit	      "-0.5"
+      LinearizeAsGain	      on
+      ZeroCross		      on
+      SampleTime	      "-1"
+      OutMin		      "[]"
+      OutMax		      "[]"
+      OutDataTypeStr	      "Inherit: Same as input"
+      LockScale		      off
+      RndMeth		      "Floor"
+    }
+    Block {
       BlockType		      Scope
       ModelBased	      off
       TickLabels	      "OneTimeTick"
@@ -970,7 +985,7 @@ Model {
   }
   System {
     Name		    "robocup_model"
-    Location		    [0, 23, 1440, 865]
+    Location		    [1920, 540, 3360, 1417]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -982,15 +997,15 @@ Model {
     TiledPaperMargins	    [0.500000, 0.500000, 0.500000, 0.500000]
     TiledPageScale	    1
     ShowPageBoundaries	    off
-    ZoomFactor		    "80"
+    ZoomFactor		    "86"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "109"
+    SIDHighWatermark	    "120"
     Block {
       BlockType		      Sum
       Name		      "Add"
       SID		      "45"
       Ports		      [2, 1]
-      Position		      [675, 202, 705, 233]
+      Position		      [665, 202, 695, 233]
       ZOrder		      40
       InputSameDT	      off
       OutDataTypeStr	      "Inherit: Inherit via internal rule"
@@ -1006,16 +1021,16 @@ Model {
       BlockType		      Clock
       Name		      "Clock"
       SID		      "96"
-      Position		      [45, 232, 80, 268]
+      Position		      [45, 227, 90, 273]
       ZOrder		      76
       DisplayTime	      on
     }
     Block {
       BlockType		      Scope
-      Name		      "Cmd Vel"
+      Name		      "Cmd Scope"
       SID		      "97"
       Ports		      [1]
-      Position		      [914, 120, 946, 150]
+      Position		      [834, 120, 866, 150]
       ZOrder		      77
       BlockRotation	      270
       Floating		      off
@@ -1045,17 +1060,17 @@ Model {
       Name		      "Controller"
       SID		      "77"
       Ports		      [5, 1]
-      Position		      [970, 207, 1155, 313]
+      Position		      [890, 207, 1075, 313]
       ZOrder		      60
-      System		      "RobotLqt"
+      System		      "RobotLqr"
       SimulateUsing	      "Interpreted execution"
-      MaskType		      "RobotLqt"
-      MaskDisplay	      "disp('RobotLqt');\nport_label('input',1,'Cmd Velocity');\nport_label('input',2,'Curr. Velocit"
+      MaskType		      "RobotLqr"
+      MaskDisplay	      "disp('RobotLqr');\nport_label('input',1,'Cmd Velocity');\nport_label('input',2,'Curr. Velocit"
       "y');\nport_label('input',3,'A_1');\nport_label('input',4,'A_2');\nport_label('input',5,'B');\nport_label('output"
       "',1,'u');\n"
-      trans_vel_weight	      "10"
+      trans_vel_weight	      "5"
       rot_vel_weight	      "0.1"
-      u_weight		      "0.1"
+      u_weight		      "1"
     }
     Block {
       BlockType		      Derivative
@@ -1069,7 +1084,7 @@ Model {
       Name		      "Dynamics"
       SID		      "78"
       Ports		      [5, 2]
-      Position		      [1325, 278, 1485, 402]
+      Position		      [1300, 278, 1460, 402]
       ZOrder		      61
       System		      "Robot"
       SimulateUsing	      "Interpreted execution"
@@ -1088,16 +1103,16 @@ Model {
       BlockType		      Memory
       Name		      "Memory"
       SID		      "101"
-      Position		      [860, 520, 890, 550]
+      Position		      [950, 520, 980, 550]
       ZOrder		      81
-      X0		      "-1/60"
+      X0		      "-0.1"
     }
     Block {
       BlockType		      Mux
       Name		      "Mux"
       SID		      "108"
       Ports		      [2, 1]
-      Position		      [366, 675, 404, 680]
+      Position		      [366, 660, 404, 665]
       ZOrder		      88
       BlockRotation	      270
       BlockMirror	      on
@@ -1110,7 +1125,7 @@ Model {
       BlockType		      ManualSwitch
       Name		      "Open Loop Switch"
       SID		      "107"
-      Position		      [620, 277, 650, 313]
+      Position		      [605, 277, 635, 313]
       ZOrder		      87
     }
     Block {
@@ -1118,7 +1133,7 @@ Model {
       Name		      "PID Controller"
       SID		      "34"
       Ports		      [1, 1]
-      Position		      [525, 267, 565, 303]
+      Position		      [515, 267, 555, 303]
       ZOrder		      32
       LibraryVersion	      "1.354"
       SourceBlock	      "simulink/Continuous/PID Controller"
@@ -1130,8 +1145,8 @@ Model {
       IntegratorMethod	      "Forward Euler"
       FilterMethod	      "Forward Euler"
       Form		      "Parallel"
-      P			      "1"
-      I			      "1"
+      P			      "4"
+      I			      "0"
       D			      "0"
       N			      "100"
       InitialConditionSource  "internal"
@@ -1233,7 +1248,7 @@ Model {
       Name		      "Params"
       SID		      "85"
       Ports		      [0, 3]
-      Position		      [861, 410, 929, 480]
+      Position		      [781, 410, 849, 480]
       ZOrder		      65
       BlockRotation	      270
       System		      "RobotParams"
@@ -1431,29 +1446,18 @@ Model {
     Block {
       BlockType		      Scope
       Name		      "Path Scope"
-      SID		      "98"
+      SID		      "120"
       Ports		      [1]
-      Position		      [419, 135, 451, 165]
-      ZOrder		      78
+      Position		      [419, 140, 451, 170]
+      ZOrder		      100
       BlockRotation	      270
       Floating		      off
-      Location		      [333, 134, 1249, 758]
+      Location		      [188, 365, 512, 604]
       Open		      off
       NumInputPorts	      "1"
-      ZoomMode		      "xonly"
       List {
 	ListType		AxesTitles
 	axes1			"%<SignalLabel>"
-      }
-      List {
-	ListType		ScopeGraphics
-	FigureColor		"[0.5 0.5 0.5]"
-	AxesColor		"[0 0 0]"
-	AxesTickColor		"[1 1 1]"
-	LineColors		"[1 1 0;1 0 1;0 1 1;1 0 0;0 1 0;0 0 1]"
-	LineStyles		"-|-|-|-|-|-"
-	LineWidths		"[0.5 0.5 0.5 0.5 0.5 0.5]"
-	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
       SaveName		      "ScopeData5"
@@ -1468,7 +1472,7 @@ Model {
       ZOrder		      79
       BlockRotation	      270
       Floating		      off
-      Location		      [228, 352, 1132, 828]
+      Location		      [287, 202, 1191, 678]
       Open		      off
       NumInputPorts	      "1"
       ZoomMode		      "xonly"
@@ -1495,7 +1499,7 @@ Model {
       Name		      "Pos Error"
       SID		      "100"
       Ports		      [1]
-      Position		      [469, 365, 501, 395]
+      Position		      [464, 365, 496, 395]
       ZOrder		      80
       BlockRotation	      270
       BlockMirror	      on
@@ -1527,12 +1531,13 @@ Model {
       Name		      "Pos Scope"
       SID		      "92"
       Ports		      [1]
-      Position		      [1585, 294, 1615, 326]
+      Position		      [1510, 294, 1540, 326]
       ZOrder		      72
       Floating		      off
-      Location		      [325, 72, 1430, 864]
-      Open		      off
+      Location		      [176, 72, 1281, 764]
+      Open		      on
       NumInputPorts	      "1"
+      ZoomMode		      "yonly"
       List {
 	ListType		AxesTitles
 	axes1			"%<SignalLabel>"
@@ -1571,7 +1576,7 @@ Model {
       BlockType		      SignalSpecification
       Name		      "Signal Specification"
       SID		      "93"
-      Position		      [1175, 248, 1280, 272]
+      Position		      [1090, 248, 1195, 272]
       ZOrder		      73
       OutDataTypeStr	      "double"
       Dimensions	      "[4 1]"
@@ -1582,7 +1587,7 @@ Model {
       Name		      "Subtract"
       SID		      "47"
       Ports		      [2, 1]
-      Position		      [420, 267, 450, 298]
+      Position		      [415, 267, 445, 298]
       ZOrder		      42
       Inputs		      "+-"
       InputSameDT	      off
@@ -1600,7 +1605,7 @@ Model {
       Name		      "Subtract1"
       SID		      "102"
       Ports		      [2, 1]
-      Position		      [915, 512, 945, 543]
+      Position		      [1005, 512, 1035, 543]
       ZOrder		      82
       Inputs		      "+-"
       InputSameDT	      off
@@ -1616,15 +1621,15 @@ Model {
     Block {
       BlockType		      Scope
       Name		      "Tracking"
-      SID		      "109"
+      SID		      "118"
       Ports		      [1]
-      Position		      [369, 735, 401, 765]
-      ZOrder		      89
+      Position		      [369, 690, 401, 720]
+      ZOrder		      98
       BlockRotation	      270
       BlockMirror	      on
       NamePlacement	      "alternate"
       Floating		      off
-      Location		      [207, 141, 1423, 736]
+      Location		      [575, 236, 1735, 969]
       Open		      off
       NumInputPorts	      "1"
       List {
@@ -1668,10 +1673,10 @@ Model {
       Name		      "Vel Scope"
       SID		      "87"
       Ports		      [1]
-      Position		      [1585, 354, 1615, 386]
+      Position		      [1515, 354, 1545, 386]
       ZOrder		      67
       Floating		      off
-      Location		      [1, 72, 1441, 864]
+      Location		      [11, 72, 1451, 864]
       Open		      off
       NumInputPorts	      "1"
       ZoomMode		      "yonly"
@@ -1693,18 +1698,28 @@ Model {
       ScrollMode	      off
     }
     Block {
+      BlockType		      Saturate
+      Name		      "Voltage Limit"
+      SID		      "119"
+      Ports		      [1, 1]
+      Position		      [1215, 245, 1245, 275]
+      ZOrder		      99
+      InputPortMap	      "u0"
+      UpperLimit	      "18"
+      LowerLimit	      "-18"
+    }
+    Block {
       BlockType		      Scope
       Name		      "Voltage Scope"
-      SID		      "95"
+      SID		      "111"
       Ports		      [1]
-      Position		      [1284, 135, 1316, 165]
-      ZOrder		      75
+      Position		      [1269, 145, 1301, 175]
+      ZOrder		      91
       BlockRotation	      270
       Floating		      off
-      Location		      [128, 179, 1366, 778]
+      Location		      [442, 210, 1553, 797]
       Open		      off
       NumInputPorts	      "1"
-      ZoomMode		      "yonly"
       List {
 	ListType		AxesTitles
 	axes1			"%<SignalLabel>"
@@ -1720,17 +1735,14 @@ Model {
 	MarkerStyles		"none|none|none|none|none|none"
       }
       ShowLegends	      off
-      TimeRange		      "2.8"
-      YMin		      "3.498098859315588"
-      YMax		      "9.581749049429657"
       SaveName		      "ScopeData3"
       ScrollMode	      off
     }
     Block {
       BlockType		      Constant
-      Name		      "Zero Pos Correction for Open Loop"
+      Name		      "Zero Pos Correction\nfor Open Loop"
       SID		      "105"
-      Position		      [575, 365, 605, 395]
+      Position		      [560, 365, 590, 395]
       ZOrder		      85
       BlockRotation	      270
       Value		      "[0 0 0]'"
@@ -1773,13 +1785,13 @@ Model {
       SrcPort		      1
       Points		      [75, 0]
       Branch {
-	ZOrder			220
-	DstBlock		"Path Vel Scope"
+	ZOrder			538
+	DstBlock		"Add"
 	DstPort			1
       }
       Branch {
-	ZOrder			219
-	DstBlock		"Add"
+	ZOrder			537
+	DstBlock		"Path Vel Scope"
 	DstPort			1
       }
     }
@@ -1787,18 +1799,18 @@ Model {
       ZOrder		      33
       SrcBlock		      "Path"
       SrcPort		      1
-      Points		      [27, 0]
+      Points		      [5, 0]
       Branch {
-	ZOrder			335
-	Points			[38, 0]
+	ZOrder			470
+	Points			[60, 0]
 	Branch {
-	  ZOrder		  336
-	  DstBlock		  "Derivative"
+	  ZOrder		  550
+	  DstBlock		  "Path Scope"
 	  DstPort		  1
 	}
 	Branch {
-	  ZOrder		  186
-	  DstBlock		  "Path Scope"
+	  ZOrder		  549
+	  DstBlock		  "Derivative"
 	  DstPort		  1
 	}
       }
@@ -1806,13 +1818,12 @@ Model {
 	ZOrder			128
 	Points			[0, 65]
 	Branch {
-	  ZOrder		  425
+	  ZOrder		  469
 	  DstBlock		  "Subtract"
 	  DstPort		  1
 	}
 	Branch {
 	  ZOrder		  424
-	  Points		  [-22, 0]
 	  DstBlock		  "Mux"
 	  DstPort		  1
 	}
@@ -1826,13 +1837,13 @@ Model {
       SrcPort		      1
       Points		      [30, 0]
       Branch {
-	ZOrder			257
-	DstBlock		"Pos Error"
+	ZOrder			548
+	DstBlock		"PID Controller"
 	DstPort			1
       }
       Branch {
-	ZOrder			256
-	DstBlock		"PID Controller"
+	ZOrder			257
+	DstBlock		"Pos Error"
 	DstPort			1
       }
     }
@@ -1842,10 +1853,10 @@ Model {
       Labels		      [0, 0]
       SrcBlock		      "Add"
       SrcPort		      1
-      Points		      [220, 0]
+      Points		      [150, 0]
       Branch {
 	ZOrder			184
-	DstBlock		"Cmd Vel"
+	DstBlock		"Cmd Scope"
 	DstPort			1
       }
       Branch {
@@ -1860,7 +1871,7 @@ Model {
       Labels		      [1, 1]
       SrcBlock		      "Subtract1"
       SrcPort		      1
-      Points		      [329, 0; 0, -215]
+      Points		      [114, 0; 0, -215]
       DstBlock		      "Dynamics"
       DstPort		      2
     }
@@ -1920,25 +1931,25 @@ Model {
       ZOrder		      93
       SrcBlock		      "Dynamics"
       SrcPort		      1
-      Points		      [43, 0]
+      Points		      [24, 0]
       Branch {
-	ZOrder			390
+	ZOrder			541
 	DstBlock		"Pos Scope"
 	DstPort			1
       }
       Branch {
 	ZOrder			146
 	Labels			[2, 1]
-	Points			[0, 333; -1138, 0]
+	Points			[0, 333; -1094, 0]
 	Branch {
-	  ZOrder		  422
-	  DstBlock		  "Mux"
+	  ZOrder		  485
+	  Points		  [-1, 0; 0, -353]
+	  DstBlock		  "Subtract"
 	  DstPort		  2
 	}
 	Branch {
-	  ZOrder		  421
-	  Points		  [-1, 0; 0, -353]
-	  DstBlock		  "Subtract"
+	  ZOrder		  422
+	  DstBlock		  "Mux"
 	  DstPort		  2
 	}
       }
@@ -1947,15 +1958,15 @@ Model {
       ZOrder		      94
       SrcBlock		      "Dynamics"
       SrcPort		      2
-      Points		      [17, 0]
+      Points		      [9, 0]
       Branch {
-	ZOrder			389
+	ZOrder			540
 	DstBlock		"Vel Scope"
 	DstPort			1
       }
       Branch {
 	ZOrder			312
-	Points			[0, 239; -732, 0; 0, -369]
+	Points			[0, 220; -727, 0; 0, -350]
 	DstBlock		"Controller"
 	DstPort			2
       }
@@ -2000,35 +2011,13 @@ Model {
       DstPort		      1
     }
     Line {
-      ZOrder		      158
-      SrcBlock		      "Signal Specification"
-      SrcPort		      1
-      Points		      [15, 0]
-      Branch {
-	ZOrder			180
-	Points			[0, 30]
-	DstBlock		"Dynamics"
-	DstPort			1
-      }
-      Branch {
-	ZOrder			427
-	DstBlock		"Voltage Scope"
-	DstPort			1
-      }
-    }
-    Line {
       ZOrder		      182
       SrcBlock		      "Clock"
       SrcPort		      1
-      Points		      [73, 0]
+      Points		      [71, 0]
       Branch {
-	ZOrder			316
-	DstBlock		"Path"
-	DstPort			5
-      }
-      Branch {
-	ZOrder			314
-	Points			[0, 285; 683, 0]
+	ZOrder			488
+	Points			[0, 285; 765, 0]
 	Branch {
 	  ZOrder		  293
 	  Points		  [0, -29; 59, 0]
@@ -2040,6 +2029,11 @@ Model {
 	  DstBlock		  "Memory"
 	  DstPort		  1
 	}
+      }
+      Branch {
+	ZOrder			487
+	DstBlock		"Path"
+	DstPort			5
       }
     }
     Line {
@@ -2053,7 +2047,7 @@ Model {
       ZOrder		      308
       SrcBlock		      "Open Loop Switch"
       SrcPort		      1
-      Points		      [3, 0; 0, -70]
+      Points		      [9, 0; 0, -70]
       DstBlock		      "Add"
       DstPort		      2
     }
@@ -2066,18 +2060,41 @@ Model {
     }
     Line {
       ZOrder		      310
-      SrcBlock		      "Zero Pos Correction for Open Loop"
+      SrcBlock		      "Zero Pos Correction\nfor Open Loop"
       SrcPort		      1
       Points		      [0, -55]
       DstBlock		      "Open Loop Switch"
       DstPort		      2
     }
     Line {
-      ZOrder		      426
+      ZOrder		      158
+      SrcBlock		      "Signal Specification"
+      SrcPort		      1
+      DstBlock		      "Voltage Limit"
+      DstPort		      1
+    }
+    Line {
+      ZOrder		      539
       SrcBlock		      "Mux"
       SrcPort		      1
       DstBlock		      "Tracking"
       DstPort		      1
+    }
+    Line {
+      ZOrder		      542
+      SrcBlock		      "Voltage Limit"
+      SrcPort		      1
+      Points		      [35, 0]
+      Branch {
+	ZOrder			547
+	DstBlock		"Voltage Scope"
+	DstPort			1
+      }
+      Branch {
+	ZOrder			546
+	DstBlock		"Dynamics"
+	DstPort			1
+      }
     }
   }
 }
@@ -2105,7 +2122,10 @@ Stateflow {
     firstTransition	    11
     firstJunction	    10
     viewObj		    2
+    visible		    1
     machine		    1
+    subviewS {
+    }
     ssIdHighWaterMark	    10
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
@@ -2131,11 +2151,11 @@ Stateflow {
     eml {
       isEML		      1
       script		      "function pos = path(TransVelLimit, RotVelLimit, TransAccelLimit, RotAccelLimit, t)\n%#codegen\n\n"
-      "pos = [0 0 0]';\n\naccel = [TransAccelLimit 0 0]';\n\n\nrampTime = TransVelLimit/TransAccelLimit;\nflatTime = 2;"
-      "\n\n\n% ramp-up\npos = pos + 0.5*accel*min(t,rampTime)^2;\n\n% const speed\nif t > rampTime\n    vel = accel*ram"
-      "pTime;\n    pos = pos + min(t-rampTime, flatTime)*vel;\nend\n\n% ramp-down\nif t > rampTime + flatTime\n    vi ="
-      " accel*rampTime;\n    rampDownT = min(t-rampTime-flatTime, rampTime);\n    pos = pos + -0.5*accel*rampDownT^2 + "
-      "vi*rampDownT;\nend\n"
+      "pos = [0 0 0]';\n\naccel = [0 1 0]';\n\n\nrampTime = TransVelLimit/TransAccelLimit;\nflatTime = 2;\n\n\n% ramp-u"
+      "p\npos = pos + 0.5*accel*min(t,rampTime)^2;\n\n% const speed\nif t > rampTime\n    vel = accel*rampTime;\n    po"
+      "s = pos + min(t-rampTime, flatTime)*vel;\nend\n\n% ramp-down\nif t > rampTime + flatTime\n    vi = accel*rampTim"
+      "e;\n    rampDownT = min(t-rampTime-flatTime, rampTime);\n    pos = pos + -0.5*accel*rampDownT^2 + vi*rampDownT;\n"
+      "end\n"
       editorLayout	      "100 M4x1[10 5 700 500]"
     }
   }
