@@ -403,20 +403,23 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 	}
 
 	int start = 0;
-	while(times[start]<startTime) {
+	while(times[start]<=startTime) {
 		start++;
 	}
-	if (start!=size()) {
+	start--;
+	if (start>=size()) {
+		throw invalid_argument("startTime can't be more than the duration of the path.");
+	} else {
 		InterpolatedPath *path = new InterpolatedPath();
 		path->times.push_back(0);
 		if (times[start]==startTime) {
 			path->points.push_back(points[start]);
 			path->vels.push_back(vels[start]);
 		} else {
-			float deltaT = (times[start] - times[start-1]);
-			float constant = (times[start]-startTime)/deltaT;
-			Point startPos = points[start]*(1-constant) + points[start-1]*(constant);
-			Point vi = vels[start]*(1-constant) + vels[start-1]*(constant);
+			float deltaT = (times[start+1] - times[start]);
+			float constant = (times[start+1]-startTime)/deltaT;
+			Point startPos = points[start+1]*(1-constant) + points[start]*(constant);
+			Point vi = vels[start+1]*(1-constant) + vels[start]*(constant);
 			path->points.push_back(startPos);
 			path->vels.push_back(vi);
 		}
@@ -439,7 +442,7 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 			endPos = points[end]*(1-constant) + points[end-1]*(constant);
 		}
 
-		int i=start+1;
+		int i=start + 1;
 		while (i<end) {
 			path->points.push_back(points[i]);
 			path->vels.push_back(vels[i]);
@@ -451,7 +454,5 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 		path->times.push_back(endTime);
 
 		return unique_ptr<Path>(path);
-	} else {
-		return unique_ptr<Path>();
 	}
 }

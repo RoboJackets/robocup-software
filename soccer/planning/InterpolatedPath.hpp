@@ -5,6 +5,7 @@
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/CompositeShape.hpp>
 #include <Configuration.hpp>
+#include <float.h>
 
 namespace Planning
 {
@@ -100,10 +101,11 @@ namespace Planning
 			 * Returns a subPath
 			 *
 			 * @param[in]	startTime The startTime for from which the subPath should be taken.
-			 * @param[in] 	endTime The endTime from which the subPath should be taken. -1 if it should go to the end of the path.
+			 * @param[in] 	endTime The endTime from which the subPath should be taken. If it is greater than the duration fo the path, 
+			 					it should go to the end of the path.
 			 * @return 	A unique_ptr to the new subPath
 			 */
-			virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = -1) const;
+			virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = FLT_MAX) const;
 
 			/**
 			 * Returns true if the path never touches an obstacle or additionally, when exitObstacles is true, if the path
