@@ -12,6 +12,7 @@
  * 		-*ALL* registers must be exported
  */
 #include "CC1201-ARIBStd-920-4GFSK-500ksps.hpp"
+ 
 #if not defined(SMARTRF_RADIO_CC1201)
 #error "A valid Smart RF register configuration file was not loaded."
 #endif

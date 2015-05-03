@@ -8,6 +8,7 @@
 Ticker lifeLight;
 DigitalOut ledOne(LED1);
 DigitalOut ledTwo(LED2);
+Serial pcserial(USBTX, USBRX);
 
 /*
  * some forward declarations to make the code easier to read
@@ -23,6 +24,7 @@ void initConsoleRoutine(void);
 
 int main(void) 
 {
+	pcserial.baud(57600);
 	setISRPriorities();
 	lifeLight.attach(&imAlive, 0.25);
 
@@ -30,7 +32,10 @@ int main(void)
 	rjLogLevel = INF3;
 	
 	Thread radioThread(radioThreadHandler);
-	initConsoleRoutine();
+	//initConsoleRoutine();
+	while(1){
+		Thread::wait(499);
+	}
 }
 
 /**
@@ -127,7 +132,7 @@ void initConsoleRoutine(void)
 			}
 
 			//main loop heartbeat
-			wait(1);
+			Thread::wait(100);
 			ledTwo = !ledTwo;
 	    }
 

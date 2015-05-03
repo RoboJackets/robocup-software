@@ -57,7 +57,7 @@ void CommLink::setup_spi(void)
     if ((_mosi_pin != NC) & (_miso_pin != NC) & (_sck_pin != NC)) {
         _spi = new SPI(_mosi_pin, _miso_pin, _sck_pin);    // DON'T FORGET TO DELETE IN DERIVED CLASS
         _spi->format(8,0);
-        _spi->frequency(5000000);
+        _spi->frequency(1000000);
     }
 }
 
@@ -66,6 +66,7 @@ void CommLink::setup_cs(void)
 {
     if (_cs_pin != NC) {
         _cs = new DigitalOut(_cs_pin);    // DON'T FORGET TO DELETE IN DERIVED CLASS
+        *_cs = 1;    // default to active low signal
     }
 }
 

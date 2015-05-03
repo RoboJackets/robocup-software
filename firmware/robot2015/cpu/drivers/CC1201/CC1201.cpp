@@ -13,28 +13,22 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intP
 {
     //powerOnReset();
 	reset();
-	Thread::wait(300);
 	strobe(CC1201_STROBE_SIDLE);
-	Thread::wait(400);
-
-	_spi->frequency(1000000);
+	flush_rx(); flushtx();
+	Thread::wait(100);
+	selfTest();
+	//CommLink::ready();
+	log(OK, "CC1201", "CC1201 Ready!");
 }
 
-CC1201::~CC1201() {}
-
-void CC1201::sendGarbage(void)
+CC1201::~CC1201()
 {
-	strobe(CC1201_STROBE_SIDLE);
-	Thread::wait(50);
-	writeReg(CC1201_PKT_LEN, 0x1E);
-	writeReg(CC1201_PKT_CFG2, 0x00 | (1 << 1));
-	writeReg(CC1201EXT_TXFIRST, 0x00);
-	writeReg(CC1201EXT_TXLAST, 0x08);
-
-	//if (decodeState(strobe(CC1201_STROBE_SNOP)) == 0x07)
-	//	strobe(CC1201_STROBE_SFTX);
-
-	strobe(CC1201_STROBE_STX);
+	if (_spi)
+        delete _spi;
+    if (_cs)
+        delete _cs;
+    if (_int_in)
+        delete _int_in;
 }
 
 /**
@@ -53,7 +47,7 @@ int32_t CC1201::sendData(uint8_t* buffer, uint8_t size)
 
 	//log(INF2, "CC1201", "PACKET TRANSMITTED\r\n  Bytes: %u", size);
 
-	//strobe(CC1201_STROBE
+	log(WARN, "CC1201::sendData", "MARCSTATE before TX: %02X", mode());
 
 	// [X] - 3 - Send the data to the CC1101. Increment the size value by 1 
 	//before doing so to account for the buffer's inserted value
@@ -84,93 +78,135 @@ int32_t CC1201::getData(uint8_t* paramOne, uint8_t* paramTwo)
 {
 	//log(WARN, "CC1201::getData() (virtual CommLink::getData())", "DATA GET NOT IMPLEMENTED");
 	log(INF3, "CC1201::getData", "RXFIRST: %02X, RXLAST: %02X",
-			readRegExt(CC1201EXT_RXFIRST),
-			readRegExt(CC1201EXT_RXLAST));
+			readReg(CC1201EXT_RXFIRST, EXT_FLAG_ON),
+			readReg(CC1201EXT_RXLAST, EXT_FLAG_ON));
+
 	strobe(CC1201_STROBE_SFRX);
-	return -1;
+	
+	return 0xFF;
 } 
+
 
 /**
  * reads a standard register
  */
-uint8_t CC1201::readReg(uint8_t addr)
+uint8_t CC1201::readReg(uint8_t addr, bool ext_flag)
 {
-	const uint8_t DATA_BYTE = 0x00;
 	uint8_t returnVal;
 
-	if (addr >= 0x2F)
+	if ( (addr == 0x2F) & (ext_flag == EXT_FLAG_OFF) )
 	{
 		log(WARN, "CC1201::readReg", "readReg invalid address: %02X", addr);
-		return -1;
+		return 0xFF;
 	}
 
-	//addr |=   1 << 7;
-	addr &= ~(1 << 6); //should be redundant but leaving for security 
+	if (ext_flag == EXT_FLAG_ON)
+		return readRegExt(addr);
+
+	addr &= 0xBF; // Should be redundant but leaving for security. We don't want to accidently do a burst read.
+
+	toggle_cs();
 	_spi->write(addr | CC1201_READ_SINGLE);
-	returnVal = _spi->write(DATA_BYTE);
+	returnVal = _spi->write(0x00);
+	toggle_cs();
+
 	return returnVal;
 }
-
-void CC1201::readReg(uint8_t addr, uint8_t* buffer, uint8_t len)
+void CC1201::readReg(uint8_t addr, uint8_t* buffer, uint8_t len, bool ext_flag)
 {
-	return;
-} 
+	if ( (addr >= 0x2F) & (ext_flag == EXT_FLAG_OFF) )
+		return log(WARN, "CC1201::readReg", "readReg invalid address: %02X", addr);
+
+	if ( ext_flag == EXT_FLAG_ON )
+		return readRegExt(addr, buffer, len);
+
+	toggle_cs();
+	_spi->write(addr | CC1201_READ_SINGLE | CC1201_BURST);
+	for (uint8_t i = 0; i < len; i++)
+		buffer[i] = _spi->write(0x00);
+
+	toggle_cs();
+}
+
+
+void CC1201::writeReg(uint8_t addr, uint8_t value, bool ext_flag)
+{
+	addr &= 0x3F; // Don't accidently do a burst or read
+
+	if (ext_flag == EXT_FLAG_ON)
+		return writeRegExt(addr, value);
+
+	toggle_cs();
+	_spi->write(addr);
+	_spi->write(value);
+	toggle_cs();
+}
+void CC1201::writeReg(uint8_t addr, uint8_t* buffer, uint8_t len, bool ext_flag)
+{
+	addr &= 0x7F; // Don't accidently do a read
+
+	if (ext_flag == EXT_FLAG_ON)
+		return writeRegExt(addr, buffer, len);
+
+	toggle_cs();
+	_spi->write(addr | CC1201_BURST);
+	for (uint8_t i = 0; i < len; i++)
+		_spi->write(buffer[i]);
+
+	toggle_cs();
+}
+
 
 /**
  * reads an extended register
  */
 uint8_t CC1201::readRegExt(uint8_t addr)
 {
-	const uint8_t DATA_BYTE = 0x00;
+	// Only callable from readReg(), so no checks needed
 	uint8_t returnVal;
 
 	toggle_cs();
 	_spi->write(CC1201_EXTENDED_ACCESS_READ);
 	_spi->write(addr);
-	returnVal = _spi->write(DATA_BYTE);
+	returnVal = _spi->write(0x00);
 	toggle_cs();
+
 	return returnVal;
 }
-
 void CC1201::readRegExt(uint8_t addr, uint8_t* buffer, uint8_t len)
 {
-	return;
-}
-
-void CC1201::writeReg(uint8_t addr, uint8_t value)
-{
+	// Only callable from readReg(), so no checks needed
 	toggle_cs();
+	_spi->write(CC1201_EXTENDED_ACCESS_READ | CC1201_BURST);
 	_spi->write(addr);
-	_spi->write(value);
+	for (uint8_t i = 0; i < len; i++)
+		buffer[i] = _spi->write(0x00);
+
 	toggle_cs();
 }
 
-void CC1201::writeReg(uint8_t addr, uint8_t* buffer, uint8_t len)
-{
-	toggle_cs();
-
-	_spi->write(addr | CC1201_WRITE_BURST);
-	for (uint8_t index = 0; index < len; index++)
-	{
-		_spi->write(buffer[index]);
-	}
-	
-	toggle_cs();
-}
 
 void CC1201::writeRegExt(uint8_t addr, uint8_t value)
 {
+	// Only callable from writeReg(), so no checks needed
 	toggle_cs();
 	_spi->write(CC1201_EXTENDED_ACCESS_WRITE);
 	_spi->write(addr);
 	_spi->write(value);
 	toggle_cs();
 }
-
-void CC1201::writeRegExt(uint8_t addr, uint8_t* buffer, uint8_t value)
+void CC1201::writeRegExt(uint8_t addr, uint8_t* buffer, uint8_t len)
 {
-	return;
+	// Only callable from writeReg(), so no checks needed
+	toggle_cs();
+	_spi->write(CC1201_EXTENDED_ACCESS_WRITE | CC1201_BURST);
+	_spi->write(addr);
+	for (uint8_t i = 0; i < len; i++)
+		_spi->write(buffer[i]);
+
+	toggle_cs();
 }
+
 
 uint8_t CC1201::strobe(uint8_t addr)
 {
@@ -183,15 +219,21 @@ uint8_t CC1201::strobe(uint8_t addr)
 	toggle_cs();
 	uint8_t ret = _spi->write(addr);
 	toggle_cs();
+
 	return ret;
 }
 
 uint8_t CC1201::mode(void)
 {
-    return readRegExt(CC1201EXT_MARCSTATE);
+    return 0x1F & readReg(CC1201EXT_MARCSTATE, EXT_FLAG_ON);
 }
 
 uint8_t CC1201::status(uint8_t addr)
+{
+	return strobe(addr);
+}
+
+uint8_t CC1201::status(void)
 {
 	return strobe(CC1201_STROBE_SNOP);
 }
@@ -199,30 +241,25 @@ uint8_t CC1201::status(uint8_t addr)
 void CC1201::reset(void)
 {
     strobe(CC1201_STROBE_SIDLE);
+    Thread::wait(100);
+
 	toggle_cs();
 	_spi->write(CC1201_STROBE_SRES);
-	Thread::wait(500);
+	Thread::wait(600);
 	toggle_cs();
-    
-    /*
-    //force select chip
-    strobe(CC1201_STROBE_SIDLE);
 
-    //DigitalIn* SO = new DigitalIn(_miso_pin);
-
-    *_cs = 0;
-    _spi->write(CC1201_STROBE_SRES);
-    //while (*SO != 0);
-    //while((LPC_GPIO0->FIOPIN & (1UL << 7)) == 0 ? false : true)
-    *_cs = 1;
-
-    //delete SO;
-    */
+	_isInit = false;
 }
 
 int32_t CC1201::selfTest(void)
 {
-	_chip_version = readRegExt(CC1201EXT_PARTNUMBER);
+	if (_isInit)
+		return 0;
+
+	_isInit = true;
+
+	_chip_version = readReg(CC1201EXT_PARTNUMBER, EXT_FLAG_ON);
+
 	if (_chip_version != CC1201_EXPECTED_PART_NUMBER)
 	{
 		log(FATAL, "CC1201",
@@ -236,12 +273,14 @@ int32_t CC1201::selfTest(void)
 		return -1;
 	}
 
+	strobe(CC1201_STROBE_SIDLE);
+
     return 0;
 }
 
 bool CC1201::isConnected(void)
 {
-	return true;
+	return _isInit;
 }
 
 uint8_t recurseCount = 0;
@@ -251,49 +290,50 @@ void CC1201::powerOnReset(void)
     if (recurseCount >= 10)
     {
         log(SEVERE, "CC1201::reset", "cannot calibrate radio -> system reset");
-        Thread::wait(3000);
+        Thread::wait(500);
         mbed_reset();
     }
 
     log(INF1, "CC1201::reset", "Beginning power on reset (POR)");
 
-    log(INF2, "CC1201::reset", "Strobe SIDLE");
+    log(INF2, "  CC1201::reset", "Strobe SIDLE");
     strobe(CC1201_STROBE_SIDLE);
-    log(INF2, "CC1201::reset", "IDLE strobe OK.");
+    log(INF2, "  CC1201::reset", "IDLE strobe OK.");
     
-    log(INF2, "CC1201::reset", "Force CS low");
+    log(INF2, "  CC1201::reset", "Force CS low");
     *_cs = 0;
-    log(INF2, "CC1201::reset", "Strobe SRES");
+    log(INF2, "  CC1201::reset", "Strobe SRES");
     _spi->write(CC1201_STROBE_SRES);
-    log(INF2, "CC1201::reset", "dealloc SPI");
+    log(INF2, "  CC1201::reset", "dealloc SPI");
     delete _spi;
-    log(INF2, "CC1201::reset", "(MI)SO alloc digIn");
+    log(INF2, "  CC1201::reset", "(MI)SO alloc digIn");
     DigitalIn* SO = new DigitalIn(_miso_pin);
 
 
-    log(INF2, "CC1201::reset", "wait for olliscator assertion");
+    log(INF2, "  CC1201::reset", "wait for olliscator assertion");
     uint8_t waitCycles = 20;    
     while (*SO)
     {
         if (waitCycles == 0)
         {
-            log(WARN, "CC1201::reset", "calibration settled assertion timeout -> retry");
-            powerOnReset();
-
-            Thread::wait(100);
+            log(WARN, "  CC1201::reset", "calibration settled assertion timeout -> retry");
+            //powerOnReset();	// There's absolutely no need to do this. If it doesn't calibrate in 20 cycles, it will never do it successfully.
+            return;
         }
-
+        Thread::wait(100);
         waitCycles--;
     }
     recurseCount = 0;
 
-    log(INF2, "CC1201::reset", "dealloc digIn");
+    log(INF2, "  CC1201::reset", "dealloc digIn");
     delete SO;
-    log(INF2, "CC1201::reset", "force CSn high");
+    log(INF2, "  CC1201::reset", "force CSn high");
     *_cs = 1;
-    log(INF2, "CC1201::reset", "setup SPI");
+    log(INF2, "  CC1201::reset", "setup SPI");
     setup_spi();
-    log(INF2, "CC1201::reset", "POR COMPLETE!");
+    log(INF2, "  CC1201::reset", "POR COMPLETE!");
+
+    _isInit = false;
 
 /*
     log(INF1, "CC1201", "Beginning Power-on-Reset routine...");
@@ -347,16 +387,16 @@ void CC1201::powerOnReset(void)
 */
 }
 
+/*
 void CC1201::ready(void)
 {
 	CommLink::ready();
 }
+*/
 
 uint8_t CC1201::decodeState(uint8_t nopRet)
 {
-	nopRet &= ~(1 << 7);
-	nopRet >>= 4;
-	return nopRet;
+	return (nopRet >> 4) & 0x07;
 }
 
 string CC1201::modeToStr(uint8_t mode)
@@ -365,4 +405,28 @@ string CC1201::modeToStr(uint8_t mode)
 	{
 		default: return "unk";
 	}
+}
+
+
+void flush_tx(void)
+{
+	strobe(CC1201_STROBE_SFTX);
+}
+
+
+void flush_rx(void)
+{
+	strobe(CC1201_STROBE_FRX);
+}
+
+
+void calibrate(void)
+{
+	strobe(CC1201_STROBE_SCAL);
+}
+
+
+void rssi(void)
+{
+	uint8_t rssi_val = readReg(CC1201EXT_RSSI1);
 }
