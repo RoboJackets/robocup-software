@@ -55,6 +55,17 @@ class CC1201 : public CommLink
 
 		std::string modeToStr(uint8_t mode);
 
+	    // Send the command strobe to flush the TX or RX buffers on the CC1201
+	    void flush_tx(void);
+	    void flush_rx(void);
+	    void calibrate(void);
+	    void rssi(bool dummy_bool);
+	    float rssi(void);
+	    uint8_t idle(void);
+	    uint8_t rand(void);
+	    uint8_t freq_update(void);
+	    uint16_t _rssi_fnum;
+
 	protected:
 
 	private:
@@ -69,8 +80,10 @@ class CC1201 : public CommLink
 
 		void writeRegExt(uint8_t addr, uint8_t* buffer, uint8_t len);
 
-		uint8_t _chip_version;
+		uint8_t     _lqi;
+    	uint8_t     _chip_version;
 
 		bool _isInit;
+		float _rssi;
 };
 

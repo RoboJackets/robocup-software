@@ -34,7 +34,7 @@ int main(void)
 	Thread radioThread(radioThreadHandler);
 	//initConsoleRoutine();
 	while(1){
-		Thread::wait(499);
+		Thread::wait(500);
 	}
 }
 

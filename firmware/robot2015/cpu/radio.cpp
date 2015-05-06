@@ -26,21 +26,20 @@ void intTest(void)
 
 void radioThreadHandler(void const* args)
 {
-	CC1201* testRadio = new CC1201(RJ_SPI_BUS, p8);
+	CC1201* testRadio = new CC1201(RJ_SPI_BUS, p8, p9);
 	CC1201Config *testRadioConfig = CC1201Config::resetConfiguration(new CC1201Config());	// The Power On Reset takes care of clearing registers in the constructor
-	initCustomValues(testRadioConfig);
+	//initCustomValues(testRadioConfig);
 	CC1201Config::loadConfiguration(testRadioConfig, testRadio);
 	
 	while (testRadio->mode() != 0x01)
 	{
-		uint8_t current_state = testRadio->decodeState(testRadio->strobe(CC1201_STROBE_SIDLE));
-		 //= testRadio->decodeState(testRadio->status());	
+		uint8_t current_state = testRadio->decodeState(testRadio->idle());
 
 		if ( (current_state == 0x07) | (current_state == 0x06) )
 		{
-			testRadio->strobe(CC1201_STROBE_SIDLE);
-			testRadio->strobe(CC1201_STROBE_SFTX);
-			testRadio->strobe(CC1201_STROBE_SFRX);
+			testRadio->idle();
+			testRadio->flush_rx();
+			testRadio->flush_tx();
 		}
 		else if (current_state != 0x00)	// If not IDLE
 		{
@@ -55,6 +54,7 @@ void radioThreadHandler(void const* args)
 		Thread::wait(50);
 	}
 
+	/*
 	if (CC1201Config::verifyConfiguration(testRadioConfig, testRadio) == false)
 	{
         ledFour4 = !ledFour4;
@@ -62,7 +62,7 @@ void radioThreadHandler(void const* args)
 
 		while (!CC1201Config::configurationFaults.empty())
 		{
-			log(WARN, "radio::radioThreadHandler",
+			log(WARN, __FILE__,
 				CC1201Config::configurationFaults.front().c_str());
 
 			CC1201Config::configurationFaults.pop();
@@ -72,22 +72,37 @@ void radioThreadHandler(void const* args)
 	{
 		log(INF1, "radio::radioThreadHandler", "radio configuration confirmed.");
 	}
+	*/
 
+	testRadio->idle();
 
 	uint8_t buf_len = 32;
-	uint8_t dataLen = 5;
-	uint8_t buffer[] = { 1, 2, 3, 4, 5 };
+	#define BUF_LEN 5
+	uint8_t buffer[BUF_LEN*10] = { 4 };
 	//strcpy(buffer, "Hello, World!");
+	/*
 
+	for(int i=0; i<0x2F; i++)
+	{
+		log(INF1, "==Register Check==", "Addr:\t%02X\t\t\tVal:\t%02X", i, testRadio->readReg(i));
+	}
 
+	for(int i=0; i<219; i++)
+	{
+		log(INF1, "==Extended Register Check==", "Addr:\t%02X\t\t\tVal:\t%02X", i, testRadio->readReg(i, EXT_FLAG_ON));
+	}
+	*/
+	testRadio->calibrate();
 	while(true)
 	{
-		testRadio->strobe(CC1201_STROBE_SCAL);
-		Thread::wait(100);
-		log(INF1, "radio.cpp", "Sending %u bytes", dataLen);
-		testRadio->sendData(buffer, dataLen);
+		
+		//log(INF1, "radio.cpp", "Sending %u bytes", BUF_LEN);
+		testRadio->sendData(buffer, BUF_LEN*5);
 		ledThree3 = !ledThree3;
-		Thread::wait(1000);
+
+		Thread::wait(200);
+		log(INF1, "RSSI", "%u", testRadio->_rssi_fnum);
+		testRadio->calibrate();
 
 		/*
 		testRadio->strobe(CC1201_STROBE_SIDLE);

@@ -12,20 +12,26 @@
 #define SMARTRF_CC1201_H
 
 #define SMARTRF_RADIO_CC1201
-#define SMARTRF_SETTING_IOCFG3             0x06
-#define SMARTRF_SETTING_IOCFG2             0x06
-#define SMARTRF_SETTING_IOCFG1             0x30
-#define SMARTRF_SETTING_IOCFG0             0x3C
-#define SMARTRF_SETTING_SYNC3              0xAA //0x93
-#define SMARTRF_SETTING_SYNC2              0xAA //0x0B
-#define SMARTRF_SETTING_SYNC1              0xAA //0x51
-#define SMARTRF_SETTING_SYNC0              0xAA //0xDE
-#define SMARTRF_SETTING_SYNC_CFG1          0xA8
-#define SMARTRF_SETTING_SYNC_CFG0          0x03
+
+// GPIO configurations are [almost] completely independent from modulation implementations
+#define SMARTRF_SETTING_IOCFG3             0x30	// HIGHZ
+#define SMARTRF_SETTING_IOCFG2             0x30	// HIGHZ
+#define SMARTRF_SETTING_IOCFG1             0x30	// HIGHZ [used as SO for SPI when CSn is LOW]
+#define SMARTRF_SETTING_IOCFG0             0x07	// Asserted when PKT_CRC_OK is set. De-asserted at first byte read from the RX FIFO
+
+// Default sync word
+#define SMARTRF_SETTING_SYNC3              0x93
+#define SMARTRF_SETTING_SYNC2              0x0B
+#define SMARTRF_SETTING_SYNC1              0x51
+#define SMARTRF_SETTING_SYNC0              0xDE
+
+
+#define SMARTRF_SETTING_SYNC_CFG1          0xAF	// 0xA8
+#define SMARTRF_SETTING_SYNC_CFG0          0x03	// Highest sensitivity here
 #define SMARTRF_SETTING_DEVIATION_M        0x47
 #define SMARTRF_SETTING_MODCFG_DEV_E       0x2F
 #define SMARTRF_SETTING_DCFILT_CFG         0x1E
-#define SMARTRF_SETTING_PREAMBLE_CFG1      0x14
+#define SMARTRF_SETTING_PREAMBLE_CFG1      0x16	// 0x14
 #define SMARTRF_SETTING_PREAMBLE_CFG0      0x8A
 #define SMARTRF_SETTING_IQIC               0x00
 #define SMARTRF_SETTING_CHAN_BW            0x01
@@ -37,30 +43,30 @@
 #define SMARTRF_SETTING_AGC_REF            0x2F
 #define SMARTRF_SETTING_AGC_CS_THR         0x01
 #define SMARTRF_SETTING_AGC_GAIN_ADJUST    0x00
-#define SMARTRF_SETTING_AGC_CFG3           0xB1
+#define SMARTRF_SETTING_AGC_CFG3           0xB1	// 0xB1
 #define SMARTRF_SETTING_AGC_CFG2           0x60
 #define SMARTRF_SETTING_AGC_CFG1           0x12
 #define SMARTRF_SETTING_AGC_CFG0           0x84
-#define SMARTRF_SETTING_FIFO_CFG           0x00
+#define SMARTRF_SETTING_FIFO_CFG           0x80	// 0x00
 #define SMARTRF_SETTING_DEV_ADDR           0x00
 #define SMARTRF_SETTING_SETTLING_CFG       0x0B
-#define SMARTRF_SETTING_FS_CFG             0x12
+#define SMARTRF_SETTING_FS_CFG             0x02	// 0x12
 #define SMARTRF_SETTING_WOR_CFG1           0x08
 #define SMARTRF_SETTING_WOR_CFG0           0x21
 #define SMARTRF_SETTING_WOR_EVENT0_MSB     0x00
 #define SMARTRF_SETTING_WOR_EVENT0_LSB     0x00
 #define SMARTRF_SETTING_RXDCM_TIME         0x00
-#define SMARTRF_SETTING_PKT_CFG2           0x00
+#define SMARTRF_SETTING_PKT_CFG2           0x04	// 0x00
 #define SMARTRF_SETTING_PKT_CFG1           0x03
 #define SMARTRF_SETTING_PKT_CFG0           0x20
 #define SMARTRF_SETTING_RFEND_CFG1         0x0F
-#define SMARTRF_SETTING_RFEND_CFG0         0x00
-#define SMARTRF_SETTING_PA_CFG1            0x7F
+#define SMARTRF_SETTING_RFEND_CFG0         0x30	// 0x00
+#define SMARTRF_SETTING_PA_CFG1            0x7F	// 14dBm output power
 #define SMARTRF_SETTING_PA_CFG0            0x56
 #define SMARTRF_SETTING_ASK_CFG            0x0F
 #define SMARTRF_SETTING_PKT_LEN            0xFF
 #define SMARTRF_SETTING_IF_MIX_CFG         0x00
-#define SMARTRF_SETTING_FREQOFF_CFG        0x23
+#define SMARTRF_SETTING_FREQOFF_CFG        0x20	// 0x23
 #define SMARTRF_SETTING_TOC_CFG            0x0B
 #define SMARTRF_SETTING_MARC_SPARE         0x00
 #define SMARTRF_SETTING_ECG_CFG            0x00
@@ -71,18 +77,27 @@
 #define SMARTRF_SETTING_RCCAL_OFFSET       0x00
 #define SMARTRF_SETTING_FREQOFF1           0x00
 #define SMARTRF_SETTING_FREQOFF0           0x00
+
+ /*	920.5999 MHz
 #define SMARTRF_SETTING_FREQ2              0x5C
 #define SMARTRF_SETTING_FREQ1              0x0F
 #define SMARTRF_SETTING_FREQ0              0x5C
+ */
+
+// 915.99 MHz
+#define SMARTRF_SETTING_FREQ2              0x5B
+#define SMARTRF_SETTING_FREQ1              0x99
+#define SMARTRF_SETTING_FREQ0              0x5C
+
 #define SMARTRF_SETTING_IF_ADC2            0x02
 #define SMARTRF_SETTING_IF_ADC1            0xEE
 #define SMARTRF_SETTING_IF_ADC0            0x10
 #define SMARTRF_SETTING_FS_DIG1            0x04
-#define SMARTRF_SETTING_FS_DIG0            0xA3
+#define SMARTRF_SETTING_FS_DIG0            0x5F
 #define SMARTRF_SETTING_FS_CAL3            0x00
 #define SMARTRF_SETTING_FS_CAL2            0x20
 #define SMARTRF_SETTING_FS_CAL1            0x40
-#define SMARTRF_SETTING_FS_CAL0            0x0E
+#define SMARTRF_SETTING_FS_CAL0            0x00
 #define SMARTRF_SETTING_FS_CHP             0x28
 #define SMARTRF_SETTING_FS_DIVTWO          0x03
 #define SMARTRF_SETTING_FS_DSM1            0x00
@@ -112,7 +127,7 @@
 #define SMARTRF_SETTING_XOSC5              0x0E
 #define SMARTRF_SETTING_XOSC4              0xA0
 #define SMARTRF_SETTING_XOSC3              0x03
-#define SMARTRF_SETTING_XOSC2              0x04
+#define SMARTRF_SETTING_XOSC2              0x05	// 0x04
 #define SMARTRF_SETTING_XOSC1              0x03
 #define SMARTRF_SETTING_XOSC0              0x00
 #define SMARTRF_SETTING_ANALOG_SPARE       0x00
@@ -145,7 +160,7 @@
 #define SMARTRF_SETTING_CFM_RX_DATA_OUT    0x00
 #define SMARTRF_SETTING_CFM_TX_DATA_IN     0x00
 #define SMARTRF_SETTING_ASK_SOFT_RX_DATA   0x30
-#define SMARTRF_SETTING_RNDGEN             0x7F
+#define SMARTRF_SETTING_RNDGEN             0xFF	// 0x7F
 #define SMARTRF_SETTING_MAGN2              0x00
 #define SMARTRF_SETTING_MAGN1              0x00
 #define SMARTRF_SETTING_MAGN0              0x00
