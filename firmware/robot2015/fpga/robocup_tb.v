@@ -14,7 +14,7 @@ initial
 
 reg clock;
 reg [2:0] h;
-//reg [`DUTY_CYCLE_WIDTH - 1 : 0] duty_cycle;
+reg [`DUTY_CYCLE_WIDTH - 1 : 0] duty_cycle;
 
 
 wire [2:0] phaseHInv, phaseLInv;
@@ -24,7 +24,7 @@ robocup motorDriver (clock, h, phaseHInv, phaseLInv);
 
 initial begin
 	h = 3'b000;
-	//duty_cycle = 8'h80; //dutycycle
+	duty_cycle = 8'h80; //dutycycle
 	clock = 0;
 
 end

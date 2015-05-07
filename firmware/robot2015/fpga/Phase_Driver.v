@@ -64,18 +64,21 @@ input high_z;
 output pwm_high, pwm_low;
 wire pwm_high, pwm_low;
 wire h, l;
-wire deadtime;
+//wire deadtime;
 
 reg [`COUNTER_WIDTH - 1:0] counter = 0;
 
-assign deadtime  = (duty_cycle == MAX_DUTY_CYCLE || duty_cycle == 0) ? 0 : `DEAD_TIME;
+//assign deadtime  = (duty_cycle == `MAX_DUTY_CYCLE || duty_cycle == 0) ? 0 : `DEAD_TIME;
 
-assign h = (counter + deadtime < duty_cycle*`DUTY_CYCLE_STEP_RES) ? 1 : 0;
-assign h = (counter >= duty_cycle*`DUTY_CYCLE_STEP_RES && counter + deadtime < `MAX_COUNTER) ? 1 : 0;
+assign h = (counter + `DEAD_TIME < duty_cycle*`DUTY_CYCLE_STEP_RES) ? 1 : 0;
+assign l = (counter >= duty_cycle*`DUTY_CYCLE_STEP_RES && counter + `DEAD_TIME < `MAX_COUNTER) ? 1 : 0;
 
 
-assign  pwm_high = (high_z == 1) ? 0 : h;
-assign	pwm_low = (high_z == 1) ? 0 : l;
+assign  pwm_high = 	(high_z == 1) ? 0 : h;
+
+assign	pwm_low = 	(high_z == 1) ? 0 :
+					(duty_cycle == 0) ? 1 :
+					 l;
 
 
 always @(posedge clock)
