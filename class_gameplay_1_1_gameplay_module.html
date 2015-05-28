@@ -135,10 +135,12 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a0cd9f6f095d43b1896e073e0f1d9bf20"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0cd9f6f095d43b1896e073e0f1d9bf20"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>setupUI</b> ()</td></tr>
 <tr class="separator:a0cd9f6f095d43b1896e073e0f1d9bf20"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42869bcbd3c6797b8172366db7bcc770"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a42869bcbd3c6797b8172366db7bcc770"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gameplay_1_1_gameplay_module.html#a42869bcbd3c6797b8172366db7bcc770">loadPlaybook</a> (const std::string &amp;playbookFile)</td></tr>
-<tr class="memdesc:a42869bcbd3c6797b8172366db7bcc770"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads a playbook file to enable specified plays. <br /></td></tr>
-<tr class="separator:a42869bcbd3c6797b8172366db7bcc770"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aceed4fb50804b681031f6fbc25221c1c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gameplay_1_1_gameplay_module.html#aceed4fb50804b681031f6fbc25221c1c">loadPlaybook</a> (const std::string &amp;playbookFile, bool isAbsolute=false)</td></tr>
+<tr class="memdesc:aceed4fb50804b681031f6fbc25221c1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads a playbook file to enable specified plays.  <a href="#aceed4fb50804b681031f6fbc25221c1c">More...</a><br /></td></tr>
+<tr class="separator:aceed4fb50804b681031f6fbc25221c1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4fc91871d19d64b815e2778c52834e96"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_gameplay_1_1_gameplay_module.html#a4fc91871d19d64b815e2778c52834e96">savePlaybook</a> (const std::string &amp;playbookFile, bool isAbsolute=false)</td></tr>
+<tr class="memdesc:a4fc91871d19d64b815e2778c52834e96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the currently enabled plays to a playbook file If isAbsolute is false, the path is treated as relative to the playbooks directory.  <a href="#a4fc91871d19d64b815e2778c52834e96">More...</a><br /></td></tr>
+<tr class="separator:a4fc91871d19d64b815e2778c52834e96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5ecc72f993292d20715a4e401865c0c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa5ecc72f993292d20715a4e401865c0c"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>goalieID</b> (int value)</td></tr>
 <tr class="separator:aa5ecc72f993292d20715a4e401865c0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -179,6 +181,35 @@ boost::python::object&#160;</td><td class="memItemRight" valign="bottom"><a clas
 <div class="textblock"><p>Coordinator of high-level logic. </p>
 <p>The gameplay module has an embedded python interpreter and serves as the bridge between our python and c++ code. The python side of things is responsible for high-level gameplay. At each iteration of the main run loop, the <a class="el" href="class_gameplay_1_1_gameplay_module.html" title="Coordinator of high-level logic. ">GameplayModule</a> calls into python, which does all of the high-level planning, resulting in updated motion targets, etc for the robots. The <a class="el" href="class_gameplay_1_1_gameplay_module.html" title="Coordinator of high-level logic. ">GameplayModule</a> then executes path planning for each <a class="el" href="class_our_robot.html" title="A robot on our team. ">OurRobot</a>. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="aceed4fb50804b681031f6fbc25221c1c"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Gameplay::GameplayModule::loadPlaybook </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>playbookFile</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>isAbsolute</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Loads a playbook file to enable specified plays. </p>
+<p>If isAbsolute is false, the path is treated as relative to the playbooks directory. Otherwise, it is treated as an absolute path. </p>
+
+</div>
+</div>
 <a class="anchor" id="aaba424dfbce39f5f9251f4c6545e18e0"></a>
 <div class="memitem">
 <div class="memproto">
@@ -213,6 +244,35 @@ boost::python::object&#160;</td><td class="memItemRight" valign="bottom"><a clas
 
 </div>
 </div>
+<a class="anchor" id="a4fc91871d19d64b815e2778c52834e96"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Gameplay::GameplayModule::savePlaybook </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>playbookFile</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>isAbsolute</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Saves the currently enabled plays to a playbook file If isAbsolute is false, the path is treated as relative to the playbooks directory. </p>
+<p>Otherwise, it is treated as an absolute path. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>soccer/gameplay/<a class="el" href="_gameplay_module_8hpp_source.html">GameplayModule.hpp</a></li>
 <li>soccer/gameplay/GameplayModule.cpp</li>
@@ -223,7 +283,7 @@ boost::python::object&#160;</td><td class="memItemRight" valign="bottom"><a clas
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespace_gameplay.html">Gameplay</a></li><li class="navelem"><a class="el" href="class_gameplay_1_1_gameplay_module.html">GameplayModule</a></li>
-    <li class="footer">Generated on Mon Apr 27 2015 17:58:40 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu May 28 2015 04:40:46 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

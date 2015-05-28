@@ -1,5 +1,7 @@
 var NAVTREEINDEX9 =
 {
+"structrf__settings__t.html#ad2ecafb3786963ec86ddf29268b98d27":[11,0,58,10],
+"structrf__settings__t.html#ad4ddae1b0fd3b498d1d1783fe22ecf02":[11,0,58,19],
 "structrf__settings__t.html#ada5ae47fbd10b75b624ea137aec839a8":[11,0,58,8],
 "structrf__settings__t.html#adbab3332ceaf40113f35b361bda2f7ff":[11,0,58,37],
 "structrf__settings__t.html#ae112e55d0d605d881c5317af7fe44b3d":[11,0,58,2],

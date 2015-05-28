@@ -149,91 +149,94 @@ $(document).ready(function(){initNavTree('_gameplay_module_8hpp_source.html','')
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            </div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;            <span class="keywordtype">void</span> setupUI();</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            <span class="keywordtype">void</span> <a class="code" href="class_gameplay_1_1_gameplay_module.html#a42869bcbd3c6797b8172366db7bcc770">loadPlaybook</a>(<span class="keyword">const</span> std::string &amp;playbookFile);</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            <span class="keywordtype">void</span> goalieID(<span class="keywordtype">int</span> value);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            <span class="keywordtype">int</span> goalieID()</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            {</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                <span class="keywordflow">return</span> _goalieID;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;            }</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            </div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00079"></a><span class="lineno"><a class="line" href="group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a">   79</a></span>&#160;            <a class="code" href="class_geometry2d_1_1_transform_matrix.html">Geometry2d::TransformMatrix</a> <a class="code" href="group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a">ballMatrix</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="keyword">            </span>{</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                <span class="keywordflow">return</span> _ballMatrix;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            }</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;            </div>
-<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02">   88</a></span>&#160;            <a class="code" href="class_geometry2d_1_1_transform_matrix.html">Geometry2d::TransformMatrix</a> <a class="code" href="group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02">centerMatrix</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            <span class="keywordtype">void</span> <a class="code" href="class_gameplay_1_1_gameplay_module.html#aceed4fb50804b681031f6fbc25221c1c">loadPlaybook</a>(<span class="keyword">const</span> std::string &amp;playbookFile, <span class="keywordtype">bool</span> isAbsolute = <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            <span class="keywordtype">void</span> <a class="code" href="class_gameplay_1_1_gameplay_module.html#a4fc91871d19d64b815e2778c52834e96">savePlaybook</a>(<span class="keyword">const</span> std::string &amp;playbookFile, <span class="keywordtype">bool</span> isAbsolute = <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;            <span class="keywordtype">void</span> goalieID(<span class="keywordtype">int</span> value);</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            <span class="keywordtype">int</span> goalieID()</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            {</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                <span class="keywordflow">return</span> _goalieID;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            }</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            </div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
+<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a">   88</a></span>&#160;            <a class="code" href="class_geometry2d_1_1_transform_matrix.html">Geometry2d::TransformMatrix</a> <a class="code" href="group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a">ballMatrix</a>()<span class="keyword"> const</span></div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="keyword">            </span>{</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;                <span class="keywordflow">return</span> _centerMatrix;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;                <span class="keywordflow">return</span> _ballMatrix;</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;            }</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;            </div>
-<div class="line"><a name="l00097"></a><span class="lineno"><a class="line" href="group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93">   97</a></span>&#160;            <a class="code" href="class_geometry2d_1_1_transform_matrix.html">Geometry2d::TransformMatrix</a> <a class="code" href="group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93">oppMatrix</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno"><a class="line" href="group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02">   97</a></span>&#160;            <a class="code" href="class_geometry2d_1_1_transform_matrix.html">Geometry2d::TransformMatrix</a> <a class="code" href="group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02">centerMatrix</a>()<span class="keyword"> const</span></div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="keyword">            </span>{</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                <span class="keywordflow">return</span> _oppMatrix;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;                <span class="keywordflow">return</span> _centerMatrix;</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;            }</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            </div>
-<div class="line"><a name="l00103"></a><span class="lineno"><a class="line" href="class_gameplay_1_1_gameplay_module.html#a5f607fcb4fdd5fe68830769cbeb0350b">  103</a></span>&#160;            <span class="keyword">const</span> std::set&lt;OurRobot *&gt; &amp;<a class="code" href="class_gameplay_1_1_gameplay_module.html#a5f607fcb4fdd5fe68830769cbeb0350b">playRobots</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="keyword">            </span>{</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                <span class="keywordflow">return</span> _playRobots;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            }</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            <span class="keywordtype">void</span> sendFieldDimensionsToPython();</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;            boost::python::object getRootPlay();</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;            boost::python::object <a class="code" href="class_gameplay_1_1_gameplay_module.html#af79e2d81e20080376a8b4072228252d2">getMainModule</a>();</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;            </div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;            QMutex _mutex;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;            </div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;            <a class="code" href="class_system_state.html">SystemState</a> *_state;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;            </div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;            std::set&lt;OurRobot *&gt; _playRobots;</div>
+<div class="line"><a name="l00106"></a><span class="lineno"><a class="line" href="group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93">  106</a></span>&#160;            <a class="code" href="class_geometry2d_1_1_transform_matrix.html">Geometry2d::TransformMatrix</a> <a class="code" href="group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93">oppMatrix</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="keyword">            </span>{</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;                <span class="keywordflow">return</span> _oppMatrix;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;            }</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;            </div>
+<div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="class_gameplay_1_1_gameplay_module.html#a5f607fcb4fdd5fe68830769cbeb0350b">  112</a></span>&#160;            <span class="keyword">const</span> std::set&lt;OurRobot *&gt; &amp;<a class="code" href="class_gameplay_1_1_gameplay_module.html#a5f607fcb4fdd5fe68830769cbeb0350b">playRobots</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="keyword">            </span>{</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;                <span class="keywordflow">return</span> _playRobots;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;            }</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;            <span class="keywordtype">void</span> sendFieldDimensionsToPython();</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;            boost::python::object getRootPlay();</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;            boost::python::object <a class="code" href="class_gameplay_1_1_gameplay_module.html#af79e2d81e20080376a8b4072228252d2">getMainModule</a>();</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;</div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            </div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;            <a class="code" href="class_geometry2d_1_1_transform_matrix.html">Geometry2d::TransformMatrix</a> _ballMatrix;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;            <a class="code" href="class_geometry2d_1_1_transform_matrix.html">Geometry2d::TransformMatrix</a> _centerMatrix;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;            <a class="code" href="class_geometry2d_1_1_transform_matrix.html">Geometry2d::TransformMatrix</a> _oppMatrix;</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;            </div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;            std::shared_ptr&lt;Geometry2d::Polygon&gt; _ourHalf;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            std::shared_ptr&lt;Geometry2d::Polygon&gt; _opponentHalf;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;            </div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;            std::shared_ptr&lt;Geometry2d::Shape&gt; _sideObstacle;</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;            </div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;            std::shared_ptr&lt;Geometry2d::Shape&gt; _nonFloor[4];</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;            QMutex _mutex;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;            </div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;            <a class="code" href="class_system_state.html">SystemState</a> *_state;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            </div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;            std::set&lt;OurRobot *&gt; _playRobots;</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;            </div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;            <a class="code" href="class_geometry2d_1_1_transform_matrix.html">Geometry2d::TransformMatrix</a> _ballMatrix;</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;            <a class="code" href="class_geometry2d_1_1_transform_matrix.html">Geometry2d::TransformMatrix</a> _centerMatrix;</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;            <a class="code" href="class_geometry2d_1_1_transform_matrix.html">Geometry2d::TransformMatrix</a> _oppMatrix;</div>
 <div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;            </div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;            <a class="code" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> _ourGoalArea;</div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;            <a class="code" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> _theirGoalArea;</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;            <a class="code" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> globalObstacles() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;            <span class="keywordtype">int</span> _our_score_last_frame;</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;            std::shared_ptr&lt;Geometry2d::Polygon&gt; _ourHalf;</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;            std::shared_ptr&lt;Geometry2d::Polygon&gt; _opponentHalf;</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;            </div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;            std::shared_ptr&lt;Geometry2d::Shape&gt; _sideObstacle;</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;            </div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;            std::shared_ptr&lt;Geometry2d::Shape&gt; _nonFloor[4];</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;            </div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;            <a class="code" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> _ourGoalArea;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;            <a class="code" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> _theirGoalArea;</div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;            <span class="comment">// Shell ID of the robot to assign the goalie position</span></div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;            <span class="keywordtype">int</span> _goalieID;</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;            <span class="comment">//  python</span></div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;            boost::python::object _mainPyNamespace;</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    };</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;}</div>
-<div class="ttc" id="class_gameplay_1_1_gameplay_module_html_af79e2d81e20080376a8b4072228252d2"><div class="ttname"><a href="class_gameplay_1_1_gameplay_module.html#af79e2d81e20080376a8b4072228252d2">Gameplay::GameplayModule::getMainModule</a></div><div class="ttdeci">boost::python::object getMainModule()</div><div class="ttdoc">gets the instance of the main.py module that&#39;s loaded at GameplayModule </div><div class="ttdef"><b>Definition:</b> GameplayModule.cpp:372</div></div>
-<div class="ttc" id="group__matrices_html_ga8e5f8b981d9a105c2cbe489ee1144a02"><div class="ttname"><a href="group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02">Gameplay::GameplayModule::centerMatrix</a></div><div class="ttdeci">Geometry2d::TransformMatrix centerMatrix() const </div><div class="ttdoc">Center of the field. </div><div class="ttdef"><b>Definition:</b> GameplayModule.hpp:88</div></div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;            <a class="code" href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a> globalObstacles() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;            <span class="keywordtype">int</span> _our_score_last_frame;</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;            <span class="comment">// Shell ID of the robot to assign the goalie position</span></div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;            <span class="keywordtype">int</span> _goalieID;</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;            <span class="comment">//  python</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;            boost::python::object _mainPyNamespace;</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    };</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;}</div>
+<div class="ttc" id="class_gameplay_1_1_gameplay_module_html_af79e2d81e20080376a8b4072228252d2"><div class="ttname"><a href="class_gameplay_1_1_gameplay_module.html#af79e2d81e20080376a8b4072228252d2">Gameplay::GameplayModule::getMainModule</a></div><div class="ttdeci">boost::python::object getMainModule()</div><div class="ttdoc">gets the instance of the main.py module that&#39;s loaded at GameplayModule </div><div class="ttdef"><b>Definition:</b> GameplayModule.cpp:385</div></div>
+<div class="ttc" id="group__matrices_html_ga8e5f8b981d9a105c2cbe489ee1144a02"><div class="ttname"><a href="group__matrices.html#ga8e5f8b981d9a105c2cbe489ee1144a02">Gameplay::GameplayModule::centerMatrix</a></div><div class="ttdeci">Geometry2d::TransformMatrix centerMatrix() const </div><div class="ttdoc">Center of the field. </div><div class="ttdef"><b>Definition:</b> GameplayModule.hpp:97</div></div>
 <div class="ttc" id="class_our_robot_html"><div class="ttname"><a href="class_our_robot.html">OurRobot</a></div><div class="ttdoc">A robot on our team. </div><div class="ttdef"><b>Definition:</b> Robot.hpp:128</div></div>
-<div class="ttc" id="group__matrices_html_gaec847a2ad959fb0b02024a75c16a2c93"><div class="ttname"><a href="group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93">Gameplay::GameplayModule::oppMatrix</a></div><div class="ttdeci">Geometry2d::TransformMatrix oppMatrix() const </div><div class="ttdoc">Opponent&#39;s coordinates. </div><div class="ttdef"><b>Definition:</b> GameplayModule.hpp:97</div></div>
+<div class="ttc" id="group__matrices_html_gaec847a2ad959fb0b02024a75c16a2c93"><div class="ttname"><a href="group__matrices.html#gaec847a2ad959fb0b02024a75c16a2c93">Gameplay::GameplayModule::oppMatrix</a></div><div class="ttdeci">Geometry2d::TransformMatrix oppMatrix() const </div><div class="ttdoc">Opponent&#39;s coordinates. </div><div class="ttdef"><b>Definition:</b> GameplayModule.hpp:106</div></div>
 <div class="ttc" id="class_geometry2d_1_1_composite_shape_html"><div class="ttname"><a href="class_geometry2d_1_1_composite_shape.html">Geometry2d::CompositeShape</a></div><div class="ttdoc">A Geometry2d::CompositeShape is a Shape that is made up of other shapes. </div><div class="ttdef"><b>Definition:</b> CompositeShape.hpp:17</div></div>
 <div class="ttc" id="class_geometry2d_1_1_transform_matrix_html"><div class="ttname"><a href="class_geometry2d_1_1_transform_matrix.html">Geometry2d::TransformMatrix</a></div><div class="ttdef"><b>Definition:</b> TransformMatrix.hpp:14</div></div>
-<div class="ttc" id="class_gameplay_1_1_gameplay_module_html_aaba424dfbce39f5f9251f4c6545e18e0"><div class="ttname"><a href="class_gameplay_1_1_gameplay_module.html#aaba424dfbce39f5f9251f4c6545e18e0">Gameplay::GameplayModule::run</a></div><div class="ttdeci">virtual void run()</div><div class="ttdoc">runs the current play </div><div class="ttdef"><b>Definition:</b> GameplayModule.cpp:235</div></div>
-<div class="ttc" id="group__matrices_html_ga00e1ed0743457b97f3ea4391a1061f2a"><div class="ttname"><a href="group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a">Gameplay::GameplayModule::ballMatrix</a></div><div class="ttdeci">Geometry2d::TransformMatrix ballMatrix() const </div><div class="ttdoc">Centered on the ball. </div><div class="ttdef"><b>Definition:</b> GameplayModule.hpp:79</div></div>
-<div class="ttc" id="class_gameplay_1_1_gameplay_module_html_a42869bcbd3c6797b8172366db7bcc770"><div class="ttname"><a href="class_gameplay_1_1_gameplay_module.html#a42869bcbd3c6797b8172366db7bcc770">Gameplay::GameplayModule::loadPlaybook</a></div><div class="ttdeci">void loadPlaybook(const std::string &amp;playbookFile)</div><div class="ttdoc">Loads a playbook file to enable specified plays. </div><div class="ttdef"><b>Definition:</b> GameplayModule.cpp:176</div></div>
+<div class="ttc" id="class_gameplay_1_1_gameplay_module_html_aceed4fb50804b681031f6fbc25221c1c"><div class="ttname"><a href="class_gameplay_1_1_gameplay_module.html#aceed4fb50804b681031f6fbc25221c1c">Gameplay::GameplayModule::loadPlaybook</a></div><div class="ttdeci">void loadPlaybook(const std::string &amp;playbookFile, bool isAbsolute=false)</div><div class="ttdoc">Loads a playbook file to enable specified plays. </div><div class="ttdef"><b>Definition:</b> GameplayModule.cpp:176</div></div>
+<div class="ttc" id="class_gameplay_1_1_gameplay_module_html_aaba424dfbce39f5f9251f4c6545e18e0"><div class="ttname"><a href="class_gameplay_1_1_gameplay_module.html#aaba424dfbce39f5f9251f4c6545e18e0">Gameplay::GameplayModule::run</a></div><div class="ttdeci">virtual void run()</div><div class="ttdoc">runs the current play </div><div class="ttdef"><b>Definition:</b> GameplayModule.cpp:248</div></div>
+<div class="ttc" id="class_gameplay_1_1_gameplay_module_html_a4fc91871d19d64b815e2778c52834e96"><div class="ttname"><a href="class_gameplay_1_1_gameplay_module.html#a4fc91871d19d64b815e2778c52834e96">Gameplay::GameplayModule::savePlaybook</a></div><div class="ttdeci">void savePlaybook(const std::string &amp;playbookFile, bool isAbsolute=false)</div><div class="ttdoc">Saves the currently enabled plays to a playbook file If isAbsolute is false, the path is treated as r...</div><div class="ttdef"><b>Definition:</b> GameplayModule.cpp:188</div></div>
+<div class="ttc" id="group__matrices_html_ga00e1ed0743457b97f3ea4391a1061f2a"><div class="ttname"><a href="group__matrices.html#ga00e1ed0743457b97f3ea4391a1061f2a">Gameplay::GameplayModule::ballMatrix</a></div><div class="ttdeci">Geometry2d::TransformMatrix ballMatrix() const </div><div class="ttdoc">Centered on the ball. </div><div class="ttdef"><b>Definition:</b> GameplayModule.hpp:88</div></div>
 <div class="ttc" id="class_system_state_html"><div class="ttname"><a href="class_system_state.html">SystemState</a></div><div class="ttdoc">Holds the positions of everything on the field. </div><div class="ttdef"><b>Definition:</b> SystemState.hpp:56</div></div>
 <div class="ttc" id="namespace_gameplay_html"><div class="ttname"><a href="namespace_gameplay.html">Gameplay</a></div><div class="ttdoc">Higher-level logic for soccer. </div><div class="ttdef"><b>Definition:</b> GameplayModule.hpp:28</div></div>
-<div class="ttc" id="class_gameplay_1_1_gameplay_module_html_a5f607fcb4fdd5fe68830769cbeb0350b"><div class="ttname"><a href="class_gameplay_1_1_gameplay_module.html#a5f607fcb4fdd5fe68830769cbeb0350b">Gameplay::GameplayModule::playRobots</a></div><div class="ttdeci">const std::set&lt; OurRobot * &gt; &amp; playRobots() const </div><div class="ttdoc">All robots on our team that are usable by plays. </div><div class="ttdef"><b>Definition:</b> GameplayModule.hpp:103</div></div>
+<div class="ttc" id="class_gameplay_1_1_gameplay_module_html_a5f607fcb4fdd5fe68830769cbeb0350b"><div class="ttname"><a href="class_gameplay_1_1_gameplay_module.html#a5f607fcb4fdd5fe68830769cbeb0350b">Gameplay::GameplayModule::playRobots</a></div><div class="ttdeci">const std::set&lt; OurRobot * &gt; &amp; playRobots() const </div><div class="ttdoc">All robots on our team that are usable by plays. </div><div class="ttdef"><b>Definition:</b> GameplayModule.hpp:112</div></div>
 <div class="ttc" id="class_gameplay_1_1_gameplay_module_html"><div class="ttname"><a href="class_gameplay_1_1_gameplay_module.html">Gameplay::GameplayModule</a></div><div class="ttdoc">Coordinator of high-level logic. </div><div class="ttdef"><b>Definition:</b> GameplayModule.hpp:38</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
@@ -241,7 +244,7 @@ $(document).ready(function(){initNavTree('_gameplay_module_8hpp_source.html','')
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_db37267b4e33893a8d121901cc481bd9.html">soccer</a></li><li class="navelem"><a class="el" href="dir_79e278ceef58e588fa85e49d1f74b815.html">gameplay</a></li><li class="navelem"><b>GameplayModule.hpp</b></li>
-    <li class="footer">Generated on Mon Apr 27 2015 17:58:39 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu May 28 2015 04:40:44 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

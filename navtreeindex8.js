@@ -1,5 +1,7 @@
 var NAVTREEINDEX8 =
 {
+"dir_56b27209bd73555d6b548dee91279a5e.html":[12,0,0,0],
+"dir_5ace04d6cdee3ca67c78f2d3fd637bd0.html":[12,0,1,0,0,0,0],
 "dir_6119c78eeb9f70e90565579c7e982ffb.html":[12,0,2,3],
 "dir_73a45929ff8180e4f74b374130d7a92f.html":[12,0,2,2],
 "dir_79e278ceef58e588fa85e49d1f74b815.html":[12,0,2,0],
@@ -23,8 +25,8 @@ var NAVTREEINDEX8 =
 "functions_d.html":[11,3,0,4],
 "functions_e.html":[11,3,0,5],
 "functions_f.html":[11,3,0,6],
-"functions_func.html":[11,3,1],
 "functions_func.html":[11,3,1,0],
+"functions_func.html":[11,3,1],
 "functions_func_b.html":[11,3,1,1],
 "functions_func_c.html":[11,3,1,2],
 "functions_func_d.html":[11,3,1,3],
@@ -96,8 +98,8 @@ var NAVTREEINDEX8 =
 "md_doc__vision.html":[8],
 "modules.html":[9],
 "multicast_8hpp_source.html":[12,0,0,5],
-"namespace_gameplay.html":[10,0,0],
 "namespace_gameplay.html":[11,0,1],
+"namespace_gameplay.html":[10,0,0],
 "namespaces.html":[10,0],
 "pages.html":[],
 "pnvicdef_8hpp_source.html":[12,0,1,0,0,2,4],
@@ -247,7 +249,5 @@ var NAVTREEINDEX8 =
 "structrf__settings__t.html#ac54e3536606551bf8120babfa49c0674":[11,0,58,13],
 "structrf__settings__t.html#ac96a7e8860fb03b331fbe990652e3258":[11,0,58,36],
 "structrf__settings__t.html#accdf1569dcd34b8bc04316aa09e20ea3":[11,0,58,9],
-"structrf__settings__t.html#ad03d0ae4a72e3f5b994c51ff754a787a":[11,0,58,4],
-"structrf__settings__t.html#ad2ecafb3786963ec86ddf29268b98d27":[11,0,58,10],
-"structrf__settings__t.html#ad4ddae1b0fd3b498d1d1783fe22ecf02":[11,0,58,19]
+"structrf__settings__t.html#ad03d0ae4a72e3f5b994c51ff754a787a":[11,0,58,4]
 };

@@ -1,5 +1,6 @@
 var NAVTREEINDEX4 =
 {
+"class_protobuf_tree.html#aa26415d83b78d34f538f45bfcb7a7d69":[11,0,54,7],
 "class_protobuf_tree.html#aae4425d3aa59423eda14c1f17f8ea24c":[11,0,54,13],
 "class_protobuf_tree.html#abe77ca17d0f883790effb87325785268":[11,0,54,14],
 "class_protobuf_tree.html#ac78fd033bbd6f3576ed966bfab2db3b0":[11,0,54,4],
@@ -248,6 +249,5 @@ var NAVTREEINDEX4 =
 "class_watchdog.html":[11,0,77],
 "class_watchdog.html#a1ecee0323ed11b3cab65eba85dc9a933":[11,0,77,0],
 "class_watchdog.html#abdc4307039ef24cf41540de0a9809974":[11,0,77,1],
-"classes.html":[11,1],
-"classgameplay_1_1behavior_1_1_behavior.html":[11,0,2,0,0]
+"classes.html":[11,1]
 };
