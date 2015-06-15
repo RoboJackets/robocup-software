@@ -154,6 +154,8 @@ namespace Planning
 			 */
 			virtual float getDuration() const override;
 
+			virtual std::unique_ptr<Path> clone() const override;
+
 			static void createConfiguration(Configuration *cfg);
 	};
 }

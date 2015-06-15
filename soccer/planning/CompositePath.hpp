@@ -19,6 +19,12 @@ namespace Planning
 			//Vector of Paths
 			std::vector<std::unique_ptr<Path>> paths;
 
+			/**
+			 * Append the path to the end of the CompositePath
+			 * The path passed in should not be refenced anywhere else.
+			 */
+			void append(Path *path);
+
 			//Saving some variables to speed up computation
 			float duration;
 
@@ -31,10 +37,8 @@ namespace Planning
 			CompositePath(std::unique_ptr<Path> path);
 
 			/** 
-			 * Append the path to the end of the CompositePath 
-			 * The path passed in should not be refenced anywhere else.
+			 * Append the path to the end of the CompositePath
 			 */
-			void append(Path *path);
 			void append(std::unique_ptr<Path> path);
 
 			/**
@@ -89,5 +93,7 @@ namespace Planning
 			 * Returns the destination point of the path if it has one
 			 */
 			virtual boost::optional<Geometry2d::Point> destination() const override;
+
+			virtual std::unique_ptr<Path> clone() const override;
 	};
 }
