@@ -148,9 +148,9 @@ namespace Planning
 			float getTime(int index) const;
 
 			/**
-			 * Estimates how long it would take for the robot to traverse the entire path
+			 * Returns how long it would take for the entire path to be traversed
 			 *
-			 * @return 		The time from start to path completion
+			 * @return 	The time from start to path completion or FLT_MAX if it never stops
 			 */
 			virtual float getDuration() const;
 
