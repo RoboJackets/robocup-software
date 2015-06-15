@@ -346,7 +346,7 @@ bool Planning::InterpolatedPath::evaluate(float t, Geometry2d::Point &targetPosO
 		if (i==size())
 		{
 			targetPosOut = points[i-1];
-			targetVelOut = Geometry2d::Point(0,0);
+			targetVelOut = vels[i-1];
 			return false;
 		}
 	}
@@ -415,6 +415,8 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 		return this->clone();
 	}
 
+	endTime = min(endTime, getDuration());
+
 	size_t start = 0;
 	while(times[start]<=startTime) {
 		start++;
@@ -442,18 +444,18 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 		vf = vels[end];
 		endPos = points[end];
 	} else {
-		end = start;
+		end = start + 1;
 		while (times[end]<endTime) {
 			end++;
 		}
 		float deltaT = (times[end] - times[end-1]);
-		float constant = (times[end]-endTime)/deltaT;
+		float constant = (times[end] - endTime)/deltaT;
 		//endTime = times[end];
 		vf = vels[end]*(1-constant) + vels[end-1]*(constant);
 		endPos = points[end]*(1-constant) + points[end-1]*(constant);
 	}
 
-	unsigned int i=start + 1;
+	size_t i=start + 1;
 	while (i<end) {
 		path->points.push_back(points[i]);
 		path->vels.push_back(vels[i]);
@@ -462,7 +464,7 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 	}
 	path->points.push_back(endPos);
 	path->vels.push_back(vf);
-	path->times.push_back(endTime);
+	path->times.push_back(endTime - startTime);
 
 	return unique_ptr<Path>(path);
 
