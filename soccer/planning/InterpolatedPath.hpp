@@ -84,7 +84,7 @@ namespace Planning
 			void startFrom(const Geometry2d::Point& pt, Planning::InterpolatedPath& result) const;
 
 			//Returns the destination of this path (the last point in the points array)
-			virtual boost::optional<Geometry2d::Point> destination() const;
+			virtual boost::optional<Geometry2d::Point> destination() const override;
 
 			/**
 			 * Returns true if the path never touches an obstacle or additionally, when exitObstacles is true, if the path
@@ -94,17 +94,17 @@ namespace Planning
 			 * @param[in] 	start The point on the path to start checking from
 			 * @return 		true if the path is valid, false if it hits an obstacle
 			 */
-			virtual bool hit(const Geometry2d::CompositeShape &shape, float startTime) const;
+			virtual bool hit(const Geometry2d::CompositeShape &shape, float startTime) const override;
 
-			/** 
+			/**
 			 * Returns a subPath
 			 *
 			 * @param[in]	startTime The startTime for from which the subPath should be taken.
-			 * @param[in] 	endTime The endTime from which the subPath should be taken. If it is greater than the duration fo the path, 
-			 					it should go to the end of the path.
+			 * @param[in] 	endTime The endTime from which the subPath should be taken. If it is greater than the duration fo the path,
+								 it should go to the end of the path.
 			 * @return 	A unique_ptr to the new subPath
 			 */
-			virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = FLT_MAX) const;
+			virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = std::numeric_limits<float>::infinity()) const override;
 
 			/**
 			 * Returns true if the path never touches an obstacle or additionally, when exitObstacles is true, if the path
@@ -114,7 +114,7 @@ namespace Planning
 			 * @param[in] 	start The point on the path to start checking from
 			 * @return 		true if the path is valid, false if it hits an obstacle
 			 */
-			virtual void draw(SystemState  * const state, const QColor &color, const QString &layer) const;
+			virtual void draw(SystemState  * const state, const QColor &color, const QString &layer) const override;
 
 			/**
 			 * A path describes the position and velocity a robot should be at for a
@@ -126,7 +126,7 @@ namespace Planning
 			 * @param[out] 	targetVelOut The target velocity of the robot at the given time
 			 * @return 		true if the path is valid at time @t, false if you've gone past the end
 			 */
-			virtual bool evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const;
+			virtual bool evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const override;
 
 			/**
 			 * Evaluates the point and velocity of the robot at a given distance in the path.
@@ -150,9 +150,9 @@ namespace Planning
 			/**
 			 * Returns how long it would take for the entire path to be traversed
 			 *
-			 * @return 	The time from start to path completion or FLT_MAX if it never stops
+			 * @return 	The time from start to path completion or infinity if it never stops
 			 */
-			virtual float getDuration() const;
+			virtual float getDuration() const override;
 
 			static void createConfiguration(Configuration *cfg);
 	};

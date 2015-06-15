@@ -16,8 +16,16 @@ namespace Planning
 	}
 
 	void CompositePath::append(unique_ptr<Path> path) {
-		if (path && path->getDuration()>0){
-			paths.push_back(std::move(path));
+		if (duration<std::numeric_limits<float>::infinity()) {
+			float pathDuration = path->getDuration();
+			if (pathDuration > 0) {
+				duration += pathDuration;
+				paths.push_back(std::move(path));
+			} else {
+				debugThrow(invalid_argument("The path passed is invalid"));
+			}
+		} else {
+			debugThrow(runtime_error("You can't append to this path. It is already infinitely long."));
 		}
 	}
 
@@ -83,19 +91,7 @@ namespace Planning
 
 	float CompositePath::getDuration() const
 	{
-		if (paths.empty()) {
-			return 0;
-		}
-		float time = 0;
-		for (const std::unique_ptr<Path> &path: paths)
-		{
-			float timeLength = path->getDuration();
-			if (timeLength == -1) {
-				return -1;
-			}
-			time += path->getDuration();
-		}
-		return time;
+		return duration;
 	}
 	
 	boost::optional<Geometry2d::Point> CompositePath::destination() const
