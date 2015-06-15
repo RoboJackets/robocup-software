@@ -1,6 +1,7 @@
 #include <iostream>
 #include <gtest/gtest.h>
 #include <planning/InterpolatedPath.hpp>
+#include <planning/CompositePath.hpp>
 
 using namespace std;
 using namespace Geometry2d;
@@ -177,15 +178,13 @@ TEST(InterpolatedPath, subpath2) {
     path.vels.push_back(Point(0,0));
 
     vector<unique_ptr<Path>> subPaths;
-    for (int i = 0; i<6; i++) {
+    for (int i = 0; i<10; i++) {
     	subPaths.push_back(path.subPath(i, i+1));
     }
 
-    unique_ptr<Path> testPath = path.subPath(1.0);
-
 	Point pOrg, vOrg, pSub, vSub;
-    for (int i = 0; i<6; i++) {
-    	for (float j=0; j<1.0; j+=0.1) {
+    for (int i = 0; i<10; i++) {
+    	for (float j=0; j<1.0; j+=0.001) {
     		bool validOrg = path.evaluate(i + j, pOrg, vOrg);
     		bool validSub = subPaths[i]->evaluate(j, pSub, vSub);
 			EXPECT_NEAR(vOrg.x, vSub.x, 0.000001) << "i+j=" << i+j;
@@ -194,5 +193,39 @@ TEST(InterpolatedPath, subpath2) {
 			EXPECT_NEAR(pOrg.y, pSub.y, 0.00001) << "i+j=" << i+j;
     		EXPECT_EQ(validOrg, validSub) << "i+j=" << i+j;
     	}
+    }
+}
+
+TEST(CompositePath, CompositeSubPath) {
+	InterpolatedPath path;
+    path.points.push_back(Point(1,0));
+    path.points.push_back(Point(1,2));
+    path.points.push_back(Point(-2,19));
+    path.points.push_back(Point(1,6));
+    path.times.push_back(0);
+    path.times.push_back(1);
+    path.times.push_back(3);
+    path.times.push_back(10);
+    path.vels.push_back(Point(0,0));
+    path.vels.push_back(Point(-1,-1));
+    path.vels.push_back(Point(1,1));
+    path.vels.push_back(Point(0,0));
+
+    vector<unique_ptr<Path>> subPaths;
+    CompositePath compositePath;
+    for (int i = 0; i<10; i++) {
+    	compositePath.append(path.subPath(i, i+1));
+    }
+
+
+	Point pOrg, vOrg, pSub, vSub;
+	for (float i = 0; i<=10; i+=0.001) {
+		bool validOrg = path.evaluate(i, pOrg, vOrg);
+		bool validSub = compositePath.evaluate(i, pSub, vSub);
+		EXPECT_NEAR(vOrg.x, vSub.x, 0.000001) << "i=" << i;
+		EXPECT_NEAR(vOrg.y, vSub.y, 0.000001) << "i=" << i;
+		EXPECT_NEAR(pOrg.x, pSub.x, 0.000001) << "i=" << i;
+		EXPECT_NEAR(pOrg.y, pSub.y, 0.00001) << "i=" << i;
+		EXPECT_EQ(validOrg, validSub) << "i=" << i;
     }
 }
