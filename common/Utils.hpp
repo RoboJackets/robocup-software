@@ -13,10 +13,15 @@
 #include "Constants.hpp"
 #include "time.hpp"
 #include <math.h>
-
+const static bool THROW_DEBUG_EXCEPTIONS = true;
 static inline void debugThrow(std::exception exception) {
-	bool debug = true;
-	if (debug) {
+	if (THROW_DEBUG_EXCEPTIONS) {
+		throw exception;
+	}
+}
+
+static inline void debugThrow(std::invalid_argument exception) {
+	if (THROW_DEBUG_EXCEPTIONS) {
 		throw exception;
 	}
 }
@@ -29,7 +34,7 @@ static inline void debugThrow(std::exception exception) {
  */
 static inline float fixAngleRadians(float a)
 {
-	a= remainder(a, 2*M_PI);
+	a = remainder(a, 2*M_PI);
 	//cout<<"angle "<<a<<endl;
 	while (a < -M_PI) a += 2.0*M_PI;
 
