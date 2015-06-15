@@ -11,8 +11,6 @@ using namespace Geometry2d;
 
 #pragma mark InterpolatedPath
 
-
-
 Planning::InterpolatedPath::InterpolatedPath(const Geometry2d::Point& p0) {
 	points.push_back(p0);
 }
@@ -408,7 +406,7 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 
 	InterpolatedPath *path = new InterpolatedPath();
 
-	if (startTime <= getDuration()) {
+	if (startTime >= getDuration()) {
 		debugThrow(invalid_argument("startTime can't be greater than the duration of the path"));
 		return unique_ptr<Path>(path);
 	}
