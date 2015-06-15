@@ -394,15 +394,19 @@ float Planning::InterpolatedPath::getDuration() const
 
 unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endTime) const
 {
-	if (endTime > 0 && startTime > endTime) {
-		throw invalid_argument("startTime can't be after endTime");
-	}
-
 	if (startTime<0) {
 		throw invalid_argument("startTime can't be less than zero");
 	}
 
-	int start = 0;
+	if (endTime<0) {
+		throw invalid_argument("endTime can't be less than zero");
+	}
+
+	if (startTime > endTime) {
+		throw invalid_argument("startTime can't be after endTime");
+	}
+
+	size_t start = 0;
 	while(times[start]<=startTime) {
 		start++;
 	}
@@ -425,8 +429,8 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 		}
 		Point vf;
 		Point endPos;
-		int end;
-		if (endTime < 0 || endTime>= getDuration()) {
+		size_t end;
+		if (endTime>= getDuration()) {
 			end = size()-1;
 			vf = vels[end];
 			endPos = points[end];
@@ -442,7 +446,7 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 			endPos = points[end]*(1-constant) + points[end-1]*(constant);
 		}
 
-		int i=start + 1;
+		unsigned int i=start + 1;
 		while (i<end) {
 			path->points.push_back(points[i]);
 			path->vels.push_back(vels[i]);
