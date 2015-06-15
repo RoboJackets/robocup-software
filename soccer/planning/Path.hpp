@@ -4,6 +4,7 @@
 #include <SystemState.hpp>
 #include <QColor>
 #include <QString>
+#include <float.h>
 
 namespace Planning
 {
@@ -51,14 +52,15 @@ namespace Planning
 			 */
 			virtual float getDuration() const=0;
 
-			/** 
+			/**
 			 * Returns a subPath
 			 *
 			 * @param[in]	startTime The startTime for from which the subPath should be taken.
-			 * @param[in] 	endTime The endTime from which the subPath should be taken. -1 if it should go to the end of the path.
+			 * @param[in] 	endTime The endTime from which the subPath should be taken. If it is greater than the duration fo the path,
+								 it should go to the end of the path.
 			 * @return 	A unique_ptr to the new subPath
 			 */
-			virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = -1) const=0;
+			virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = FLT_MAX) const=0;
 
 			/**
 			 * Returns the destination point of the path if it has one

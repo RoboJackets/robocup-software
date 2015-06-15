@@ -5,7 +5,6 @@
 #include <Geometry2d/Segment.hpp>
 #include <Geometry2d/CompositeShape.hpp>
 #include <Configuration.hpp>
-#include <float.h>
 
 namespace Planning
 {
