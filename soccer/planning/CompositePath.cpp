@@ -104,8 +104,70 @@ namespace Planning
 
 	unique_ptr<Path> CompositePath::subPath(float startTime, float endTime) const
 	{
-		throw runtime_error("Unimplemented Method CompositePath::subPath");
+		if (startTime<0) {
+			throw invalid_argument("startTime can't be less than zero");
+		}
+
+		if (endTime<0) {
+			throw invalid_argument("endTime can't be less than zero");
+		}
+
+		if (startTime > endTime) {
+			throw invalid_argument("startTime can't be after endTime");
+		}
+
+		if (startTime >= duration) {
+			debugThrow(invalid_argument("startTime can't be greater than the duration of the path"));
+			return unique_ptr<Path>(new CompositePath());
+		}
+
+		if (startTime == 0 && endTime>=duration) {
+			return this->clone();
+		}
+
+		size_t start = 0;
+		float time = 0;
+		float lastTime = 0;
+		while (time <= startTime) {
+			lastTime = paths[start]->getDuration();
+			time += lastTime;
+			start++;
+		}
+		float firstStartTime = (time - lastTime);
+		if (time >= endTime) {
+			new CompositePath(paths[start-1]->subPath(startTime - firstStartTime, endTime - firstStartTime ));
+		} else {
+			CompositePath *path = new CompositePath(paths[start-1]->subPath(startTime - firstStartTime));
+			unique_ptr<Path> lastPath;
+			int end;
+
+			if (endTime>= duration) {
+				lastPath = paths.back()->clone();
+				end = paths.size()-1;
+			} else {
+				end = start;
+				while (time<endTime) {
+					lastTime = paths[start]->getDuration();
+					time += lastTime;
+					end++;
+				}
+				end--;
+				lastPath = paths[end]->subPath(0, endTime - (time - lastTime));
+			}
+			while (start<end) {
+				path->append(paths[start]->clone());
+				start++;
+			}
+			path->append(std::move(lastPath));
+			return unique_ptr<Path>(path);
+		}
 	}
 
-	
+	unique_ptr<Path> CompositePath::clone() const{
+		CompositePath *newPath = new CompositePath();
+		for (const unique_ptr<Path> &path: paths) {
+			newPath->append(path->clone());
+		}
+		return unique_ptr<Path>(newPath);
+	}
 }
