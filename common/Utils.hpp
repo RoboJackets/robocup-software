@@ -14,6 +14,12 @@
 #include "time.hpp"
 #include <math.h>
 
+static inline void debugThrow(std::exception exception) {
+	bool debug = true;
+	if (debug) {
+		throw exception;
+	}
+}
 
 /**
  * @brief Restricts the given angle to be between pi and -pi

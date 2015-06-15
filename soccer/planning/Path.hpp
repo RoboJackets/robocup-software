@@ -4,7 +4,7 @@
 #include <SystemState.hpp>
 #include <QColor>
 #include <QString>
-#include <float.h>
+
 
 namespace Planning
 {
@@ -48,7 +48,7 @@ namespace Planning
 			/** 
 			 * Returns how long it would take for the entire path to be traversed
 			 *
-			 * @return 	The time from start to path completion or FLT_MAX if it never stops
+			 * @return 	The time from start to path completion or infinity if it never stops
 			 */
 			virtual float getDuration() const=0;
 
@@ -60,7 +60,7 @@ namespace Planning
 								 it should go to the end of the path.
 			 * @return 	A unique_ptr to the new subPath
 			 */
-			virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = FLT_MAX) const=0;
+			virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = std::numeric_limits<float>::infinity()) const=0;
 
 			/**
 			 * Returns the destination point of the path if it has one

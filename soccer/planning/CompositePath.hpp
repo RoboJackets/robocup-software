@@ -17,7 +17,10 @@ namespace Planning
 	{
 		private:
 			//Vector of Paths
-			std::vector<std::unique_ptr<Path>> paths; 
+			std::vector<std::unique_ptr<Path>> paths;
+
+			//Saving some variables to speed up computation
+			float duration;
 
 		public:
 			/** default path is empty */
@@ -44,7 +47,7 @@ namespace Planning
 			 * @param[out] 	targetVelOut The target velocity of the robot at the given time
 			 * @return 		true if the path is valid at time @t, false if you've gone past the end
 			 */
-			virtual bool evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const;
+			virtual bool evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const override;
 
 			/**
 			 * Returns true if the path never touches an obstacle or additionally, when exitObstacles is true, if the path
@@ -54,7 +57,7 @@ namespace Planning
 			 * @param[in] 	start The point on the path to start checking from
 			 * @return 		true if the path is valid, false if it hits an obstacle
 			 */
-			virtual bool hit(const Geometry2d::CompositeShape &shape, float startTime = 0) const;
+			virtual bool hit(const Geometry2d::CompositeShape &shape, float startTime = 0) const override;
 
 			/**
 			 * Draws the path
@@ -63,27 +66,28 @@ namespace Planning
 			 * @param[in] 	color The color the path should be drawn
 			 * @param[in] 	layer The layer to draw the path on
 			 */
-			virtual void draw(SystemState * const state, const QColor &color = Qt::black, const QString &layer = "Motion") const;
+			virtual void draw(SystemState * const state, const QColor &color = Qt::black, const QString &layer = "Motion") const override;
 
 			/**
 			 * Returns how long it would take for the entire path to be traversed
 			 *
-			 * @return 	The time from start to path completion or FLT_MAX if it never stops
+			 * @return 	The time from start to path completion or infinity if it never stops
 			 */
-			virtual float getDuration() const;
+			virtual float getDuration() const override;
 
-			/** 
+			/**
 			 * Returns a subPath
 			 *
 			 * @param[in]	startTime The startTime for from which the subPath should be taken.
-			 * @param[in] 	endTime The endTime from which the subPath should be taken. -1 if it should go to the end of the path.
+			 * @param[in] 	endTime The endTime from which the subPath should be taken. If it is greater than the duration fo the path,
+								 it should go to the end of the path.
 			 * @return 	A unique_ptr to the new subPath
 			 */
-			virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = -1) const;
+			virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = std::numeric_limits<float>::infinity()) const override;
 
 			/**
 			 * Returns the destination point of the path if it has one
 			 */
-			virtual boost::optional<Geometry2d::Point> destination() const;
+			virtual boost::optional<Geometry2d::Point> destination() const override;
 	};
 }

@@ -406,57 +406,62 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 		throw invalid_argument("startTime can't be after endTime");
 	}
 
+	InterpolatedPath *path = new InterpolatedPath();
+
+	if (startTime <= getDuration()) {
+		debugThrow(invalid_argument("startTime can't be greater than the duration of the path"));
+		return unique_ptr<Path>(path);
+	}
+
 	size_t start = 0;
 	while(times[start]<=startTime) {
 		start++;
 	}
 	start--;
-	if (start>=size()) {
-		throw invalid_argument("startTime can't be more than the duration of the path.");
+
+
+	path->times.push_back(0);
+	if (times[start]==startTime) {
+		path->points.push_back(points[start]);
+		path->vels.push_back(vels[start]);
 	} else {
-		InterpolatedPath *path = new InterpolatedPath();
-		path->times.push_back(0);
-		if (times[start]==startTime) {
-			path->points.push_back(points[start]);
-			path->vels.push_back(vels[start]);
-		} else {
-			float deltaT = (times[start+1] - times[start]);
-			float constant = (times[start+1]-startTime)/deltaT;
-			Point startPos = points[start+1]*(1-constant) + points[start]*(constant);
-			Point vi = vels[start+1]*(1-constant) + vels[start]*(constant);
-			path->points.push_back(startPos);
-			path->vels.push_back(vi);
-		}
-		Point vf;
-		Point endPos;
-		size_t end;
-		if (endTime>= getDuration()) {
-			end = size()-1;
-			vf = vels[end];
-			endPos = points[end];
-		} else {
-			end = start;
-			while (times[end]<endTime) {
-				end++;
-			}
-			float deltaT = (times[end] - times[end-1]);
-			float constant = (times[end]-endTime)/deltaT;
-			//endTime = times[end];
-			vf = vels[end]*(1-constant) + vels[end-1]*(constant);
-			endPos = points[end]*(1-constant) + points[end-1]*(constant);
-		}
-
-		unsigned int i=start + 1;
-		while (i<end) {
-			path->points.push_back(points[i]);
-			path->vels.push_back(vels[i]);
-			path->times.push_back(times[i]-startTime);
-			i++;
-		}
-		path->points.push_back(endPos);
-		path->vels.push_back(vf);
-		path->times.push_back(endTime);
-
-		return unique_ptr<Path>(path);
+		float deltaT = (times[start+1] - times[start]);
+		float constant = (times[start+1]-startTime)/deltaT;
+		Point startPos = points[start+1]*(1-constant) + points[start]*(constant);
+		Point vi = vels[start+1]*(1-constant) + vels[start]*(constant);
+		path->points.push_back(startPos);
+		path->vels.push_back(vi);
 	}
+	Point vf;
+	Point endPos;
+	size_t end;
+	if (endTime>= getDuration()) {
+		end = size()-1;
+		vf = vels[end];
+		endPos = points[end];
+	} else {
+		end = start;
+		while (times[end]<endTime) {
+			end++;
+		}
+		float deltaT = (times[end] - times[end-1]);
+		float constant = (times[end]-endTime)/deltaT;
+		//endTime = times[end];
+		vf = vels[end]*(1-constant) + vels[end-1]*(constant);
+		endPos = points[end]*(1-constant) + points[end-1]*(constant);
+	}
+
+	unsigned int i=start + 1;
+	while (i<end) {
+		path->points.push_back(points[i]);
+		path->vels.push_back(vels[i]);
+		path->times.push_back(times[i]-startTime);
+		i++;
+	}
+	path->points.push_back(endPos);
+	path->vels.push_back(vf);
+	path->times.push_back(endTime);
+
+	return unique_ptr<Path>(path);
+
 }
