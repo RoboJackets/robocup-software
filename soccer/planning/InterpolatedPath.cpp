@@ -411,6 +411,10 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 		return unique_ptr<Path>(path);
 	}
 
+	if (startTime == 0 && endTime>=getDuration()) {
+		return this->clone();
+	}
+
 	size_t start = 0;
 	while(times[start]<=startTime) {
 		start++;
@@ -462,4 +466,8 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 
 	return unique_ptr<Path>(path);
 
+}
+
+unique_ptr<Path> Planning::InterpolatedPath::clone() const {
+	return unique_ptr<Path>(new InterpolatedPath(*this));
 }
