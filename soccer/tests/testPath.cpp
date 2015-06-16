@@ -219,9 +219,10 @@ TEST(CompositePath, CompositeSubPath) {
 	//Create 6 subPaths and rejoin them together into one compositePath
     CompositePath compositePath;
     float diff = 1.5;
-    for (float i = 0; i<9; i+=diff) {
+    for (float i = 0; i<7.5; i+=diff) {
     	compositePath.append(path.subPath(i, i+diff));
     }
+    compositePath.append(path.subPath(7.5));
 
     //Compare that the compositePath and origional path are mostly equal
 	for (float i = 0; i<=10; i+=0.001) {
@@ -238,13 +239,14 @@ TEST(CompositePath, CompositeSubPath) {
 	//Create 9 subPaths from the compositePaths
     vector<unique_ptr<Path>> subPaths;
 	diff = 1;
-    for (float i = 0; i<9; i+=diff) {
+    for (float i = 0; i<8; i+=diff) {
     	subPaths.push_back(compositePath.subPath(i, i + diff));
     }
+    subPaths.push_back(compositePath.subPath(8));
 	
     //Compare the subPaths of the compositePaths to the origional path and check that the results of evaluating the paths are close enough
     for (int i = 0; i<9; i++) {
-    	for (float j=0; j<1; j+=0.001) {
+    	for (float j=0; j<1; j+=0.1) {
     		Point pOrg, vOrg, pSub, vSub;
     		bool validOrg = path.evaluate(i*1 + j, pOrg, vOrg);
     		bool validSub = subPaths[i]->evaluate(j, pSub, vSub);
