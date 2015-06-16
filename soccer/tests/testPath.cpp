@@ -163,6 +163,7 @@ TEST(InterpolatedPath, subPath1) {
 }
 
 TEST(InterpolatedPath, subpath2) {
+	//Create a test path
 	InterpolatedPath path;
     path.points.push_back(Point(1,0));
     path.points.push_back(Point(1,2));
@@ -171,21 +172,24 @@ TEST(InterpolatedPath, subpath2) {
     path.times.push_back(0);
     path.times.push_back(1);
     path.times.push_back(3);
-    path.times.push_back(10);
+    path.times.push_back(9);
     path.vels.push_back(Point(0,0));
     path.vels.push_back(Point(-1,-1));
     path.vels.push_back(Point(1,1));
     path.vels.push_back(Point(0,0));
 
+    //Create 6 subPaths of length 1.5
     vector<unique_ptr<Path>> subPaths;
-    for (int i = 0; i<10; i++) {
-    	subPaths.push_back(path.subPath(i, i+1));
+    float diff = 1.5;
+    for (float i = 0; i<9; i+=diff) {
+    	subPaths.push_back(path.subPath(i, i + diff));
     }
 
+    //Compare the subPaths to the origional path and check that the results of evaluating the paths are close enough
 	Point pOrg, vOrg, pSub, vSub;
-    for (int i = 0; i<10; i++) {
-    	for (float j=0; j<1.0; j+=0.001) {
-    		bool validOrg = path.evaluate(i + j, pOrg, vOrg);
+    for (int i = 0; i<6; i++) {
+    	for (float j=0; j<1.5; j+=0.001) {
+    		bool validOrg = path.evaluate(i*1.5 + j, pOrg, vOrg);
     		bool validSub = subPaths[i]->evaluate(j, pSub, vSub);
 			EXPECT_NEAR(vOrg.x, vSub.x, 0.000001) << "i+j=" << i+j;
 			EXPECT_NEAR(vOrg.y, vSub.y, 0.000001) << "i+j=" << i+j;
@@ -197,6 +201,7 @@ TEST(InterpolatedPath, subpath2) {
 }
 
 TEST(CompositePath, CompositeSubPath) {
+	//Create a test path
 	InterpolatedPath path;
     path.points.push_back(Point(1,0));
     path.points.push_back(Point(1,2));
@@ -205,21 +210,22 @@ TEST(CompositePath, CompositeSubPath) {
     path.times.push_back(0);
     path.times.push_back(1);
     path.times.push_back(3);
-    path.times.push_back(10);
+    path.times.push_back(9);
     path.vels.push_back(Point(0,0));
     path.vels.push_back(Point(-1,-1));
     path.vels.push_back(Point(1,1));
     path.vels.push_back(Point(0,0));
 
-    vector<unique_ptr<Path>> subPaths;
+	//Create 6 subPaths and rejoin them together into one compositePath
     CompositePath compositePath;
-    for (int i = 0; i<10; i++) {
-    	compositePath.append(path.subPath(i, i+1));
+    float diff = 1.5;
+    for (float i = 0; i<9; i+=diff) {
+    	compositePath.append(path.subPath(i, i+diff));
     }
 
-
-	Point pOrg, vOrg, pSub, vSub;
+    //Compare that the compositePath and origional path are mostly equal
 	for (float i = 0; i<=10; i+=0.001) {
+		Point pOrg, vOrg, pSub, vSub;
 		bool validOrg = path.evaluate(i, pOrg, vOrg);
 		bool validSub = compositePath.evaluate(i, pSub, vSub);
 		EXPECT_NEAR(vOrg.x, vSub.x, 0.000001) << "i=" << i;
@@ -227,5 +233,26 @@ TEST(CompositePath, CompositeSubPath) {
 		EXPECT_NEAR(pOrg.x, pSub.x, 0.000001) << "i=" << i;
 		EXPECT_NEAR(pOrg.y, pSub.y, 0.00001) << "i=" << i;
 		EXPECT_EQ(validOrg, validSub) << "i=" << i;
+    }
+
+	//Create 9 subPaths from the compositePaths
+    vector<unique_ptr<Path>> subPaths;
+	diff = 1;
+    for (float i = 0; i<9; i+=diff) {
+    	subPaths.push_back(compositePath.subPath(i, i + diff));
+    }
+	
+    //Compare the subPaths of the compositePaths to the origional path and check that the results of evaluating the paths are close enough
+    for (int i = 0; i<9; i++) {
+    	for (float j=0; j<1; j+=0.001) {
+    		Point pOrg, vOrg, pSub, vSub;
+    		bool validOrg = path.evaluate(i*1 + j, pOrg, vOrg);
+    		bool validSub = subPaths[i]->evaluate(j, pSub, vSub);
+			EXPECT_NEAR(vOrg.x, vSub.x, 0.000001) << "i+j=" << i+j;
+			EXPECT_NEAR(vOrg.y, vSub.y, 0.000001) << "i+j=" << i+j;
+			EXPECT_NEAR(pOrg.x, pSub.x, 0.000001) << "i+j=" << i+j;
+			EXPECT_NEAR(pOrg.y, pSub.y, 0.00001) << "i+j=" << i+j;
+    		EXPECT_EQ(validOrg, validSub) << "i+j=" << i+j;
+    	}
     }
 }
