@@ -1,6 +1,7 @@
 #include "CompositePath.hpp"
 
 using namespace std;
+using namespace Geometry2d;
 namespace Planning
 {
 	CompositePath::CompositePath(unique_ptr<Path> path) {
@@ -29,7 +30,7 @@ namespace Planning
 		}
 	}
 
-	bool CompositePath::evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const 
+	bool CompositePath::evaluate(float t, Point &targetPosOut, Point &targetVelOut) const 
 	{
 		if (paths.empty()) {
 			return false;
@@ -47,10 +48,12 @@ namespace Planning
 				return true;
 			}
 		}
+		targetPosOut = destination().get();
+		targetVelOut = Point(0,0);
 		return false;
 	}
 
-	bool CompositePath::hit(const Geometry2d::CompositeShape &shape, float startTime) const
+	bool CompositePath::hit(const CompositeShape &shape, float startTime) const
 	{
 		if (paths.empty()) {
 			return false;
@@ -94,7 +97,7 @@ namespace Planning
 		return duration;
 	}
 	
-	boost::optional<Geometry2d::Point> CompositePath::destination() const
+	boost::optional<Point> CompositePath::destination() const
 	{
 		if (paths.empty()) {
 			return boost::none;
@@ -135,11 +138,11 @@ namespace Planning
 		}
 		float firstStartTime = (time - lastTime);
 		if (time >= endTime) {
-			new CompositePath(paths[start-1]->subPath(startTime - firstStartTime, endTime - firstStartTime ));
+			return paths[start-1]->subPath(startTime - firstStartTime, endTime - firstStartTime );
 		} else {
 			CompositePath *path = new CompositePath(paths[start-1]->subPath(startTime - firstStartTime));
 			unique_ptr<Path> lastPath;
-			int end;
+			size_t end;
 
 			if (endTime>= duration) {
 				lastPath = paths.back()->clone();
