@@ -54,12 +54,11 @@ namespace Planning
 			virtual bool evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const override;
 
 			/**
-			 * Returns true if the path never touches an obstacle or additionally, when exitObstacles is true, if the path
-			 * starts out in an obstacle but leaves and never re-enters any obstacle.
+			 * Returns true if the path hits an obstacle
 			 *
 			 * @param[in]	shape The obstacles on the field
-			 * @param[in] 	start The point on the path to start checking from
-			 * @return 		true if the path is valid, false if it hits an obstacle
+			 * @param[in] 	startTime The time on the path to start checking from
+			 * @return 		true if it hits an obstacle, otherwise false
 			 */
 			virtual bool hit(const Geometry2d::CompositeShape &shape, float startTime = 0) const override;
 
