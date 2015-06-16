@@ -439,7 +439,7 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 	Point vf;
 	Point endPos;
 	size_t end;
-	if (endTime>= getDuration()) {
+	if (endTime >= getDuration()) {
 		end = size()-1;
 		vf = vels[end];
 		endPos = points[end];
