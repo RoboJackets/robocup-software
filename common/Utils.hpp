@@ -14,13 +14,7 @@
 #include "time.hpp"
 #include <math.h>
 const static bool THROW_DEBUG_EXCEPTIONS = true;
-static inline void debugThrow(std::exception exception) {
-	if (THROW_DEBUG_EXCEPTIONS) {
-		throw exception;
-	}
-}
-
-static inline void debugThrow(std::invalid_argument exception) {
+template<typename T> static inline void debugThrow(T exception) {
 	if (THROW_DEBUG_EXCEPTIONS) {
 		throw exception;
 	}
