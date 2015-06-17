@@ -629,10 +629,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		//  TODO: This is Stupid. This should be fixed in the RRT planner or the Bezier Algorithm.
 		if (_path->destination() && (*_path->destination() - dest).mag() > 0.025) {
 			_pathInvalidated = true;
-			addText("Destination Moved");
 		}
-
-
 	}
 
 
