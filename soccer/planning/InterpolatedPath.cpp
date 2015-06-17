@@ -267,7 +267,6 @@ bool Planning::InterpolatedPath::getPoint(float distance ,Geometry2d::Point &pos
 	for (unsigned int i = 0; i < (points.size() - 1); ++i)
     {
     	Geometry2d::Point vector(points[i + 1] - points[i]);
-		//Geometry2d::Segment s(points[i], points[i+1]);
 
 		float vectorLength = vector.mag();
 		distance -= vectorLength;
