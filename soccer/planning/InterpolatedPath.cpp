@@ -368,9 +368,7 @@ namespace Planning {
 		}
 
 		if (startTime >= getDuration()) {
-			debugThrow(invalid_argument("InterpolatedPath::subPath(): startTime(" + to_string(startTime) +
-																					") can't be greater than the duration(" + to_string(getDuration()) +
-																					") of the path"));
+			debugThrow(invalid_argument("InterpolatedPath::subPath(): startTime(" + to_string(startTime) + ") can't be greater than the duration(" + to_string(getDuration()) + ") of the path"));
 			return unique_ptr<Path>(new InterpolatedPath());
 		}
 
