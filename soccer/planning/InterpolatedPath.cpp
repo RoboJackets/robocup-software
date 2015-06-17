@@ -392,6 +392,7 @@ float Planning::InterpolatedPath::getDuration() const
 
 unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endTime) const
 {
+	//Check for valid arguments
 	if (startTime<0) {
 		throw invalid_argument("startTime can't be less than zero");
 	}
@@ -404,26 +405,29 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 		throw invalid_argument("startTime can't be after endTime");
 	}
 
-	InterpolatedPath *path = new InterpolatedPath();
-
 	if (startTime >= getDuration()) {
 		debugThrow(invalid_argument("startTime can't be greater than the duration of the path"));
-		return unique_ptr<Path>(path);
+		return unique_ptr<Path>(new InterpolatedPath());
 	}
 
 	if (startTime == 0 && endTime>=getDuration()) {
 		return this->clone();
 	}
 
+
+	InterpolatedPath *path = new InterpolatedPath();
+
+	//Bound the endTime to a reasonable time.
 	endTime = min(endTime, getDuration());
 
+	//Find the first point in the vector of points which will be included in the subPath
 	size_t start = 0;
 	while(times[start]<=startTime) {
 		start++;
 	}
 	start--;
 
-
+	//Add the first points to the InterpolatedPath
 	path->times.push_back(0);
 	if (times[start]==startTime) {
 		path->points.push_back(points[start]);
@@ -436,6 +440,8 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 		path->points.push_back(startPos);
 		path->vels.push_back(vi);
 	}
+
+	//Find the last point in the InterpolatedPath
 	Point vf;
 	Point endPos;
 	size_t end;
@@ -455,6 +461,7 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 		endPos = points[end]*(1-constant) + points[end-1]*(constant);
 	}
 
+	//Add all the points in the middle
 	size_t i=start + 1;
 	while (i<end) {
 		path->points.push_back(points[i]);
@@ -462,6 +469,8 @@ unique_ptr<Path> Planning::InterpolatedPath::subPath(float startTime, float endT
 		path->times.push_back(times[i]-startTime);
 		i++;
 	}
+
+	//Add the last point
 	path->points.push_back(endPos);
 	path->vels.push_back(vf);
 	path->times.push_back(endTime - startTime);
