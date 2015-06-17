@@ -66,6 +66,9 @@ namespace Planning
 			 */
 			virtual boost::optional<Geometry2d::Point> destination() const=0;
 
+			/**
+			 * Returns a deep copy of the Path
+			 */
 			virtual std::unique_ptr<Path> clone() const=0;
 	};
 }
