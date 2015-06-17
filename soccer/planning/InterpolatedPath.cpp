@@ -352,19 +352,15 @@ namespace Planning {
 	unique_ptr<Path> InterpolatedPath::subPath(float startTime, float endTime) const {
 		//Check for valid arguments
 		if (startTime < 0) {
-			throw invalid_argument(
-					"InterpolatedPath::subPath(): startTime(" + to_string(startTime) + ") can't be less than zero");
+			throw invalid_argument("InterpolatedPath::subPath(): startTime(" + to_string(startTime) + ") can't be less than zero");
 		}
 
 		if (endTime < 0) {
-			throw invalid_argument(
-					"InterpolatedPath::subPath(): endTime(" + to_string(endTime) + ") can't be less than zero");
+			throw invalid_argument("InterpolatedPath::subPath(): endTime(" + to_string(endTime) + ") can't be less than zero");
 		}
 
 		if (startTime > endTime) {
-			throw invalid_argument(
-					"InterpolatedPath::subPath(): startTime(" + to_string(startTime) + ") can't be after endTime(" +
-					to_string(endTime) + ")");
+			throw invalid_argument("InterpolatedPath::subPath(): startTime(" + to_string(startTime) + ") can't be after endTime(" + to_string(endTime) + ")");
 		}
 
 		if (startTime >= getDuration()) {
