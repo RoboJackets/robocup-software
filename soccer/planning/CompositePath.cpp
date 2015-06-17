@@ -17,7 +17,7 @@ namespace Planning
 	}
 
 	void CompositePath::append(unique_ptr<Path> path) {
-		if (duration < std::numeric_limits<float>::infinity()) {
+		if (duration < numeric_limits<float>::infinity()) {
 			float pathDuration = path->getDuration();
 			if (pathDuration > 0) {
 				duration += pathDuration;
