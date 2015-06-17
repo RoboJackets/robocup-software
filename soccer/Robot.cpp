@@ -575,7 +575,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	// if no goal command robot to stop in place
 	if (!_motionConstraints.targetPos) {
 		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: stopped" << std::endl;
-		addText(QString("replan: no goal"));
+		addText(QString("replan: no goal"), Qt::white, "Motion");
 
 		Planning::InterpolatedPath *newPath = new Planning::InterpolatedPath(pos);
 		setPath(newPath);
@@ -604,11 +604,11 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		_path->evaluate(timeIntoPath, targetPathPos, targetVel);
 		float pathError = (targetPathPos - pos).mag();
 		//state()->drawCircle(targetPathPos, maxDist, Qt::green, "MotionControl");
-		addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
-		addText(QString("%1").arg(pathError));
+		//addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
+		//addText(QString("%1").arg(pathError));
 		if (*_motionConstraints._replan_threshold!=0 && pathError > *_motionConstraints._replan_threshold) {
 			_pathInvalidated = true;
-			addText("pathError");
+			addText("pathError" , Qt::red, "Motion");
 			//addText(pathError);
 		}
 
@@ -616,7 +616,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 		if (_path->hit(full_obstacles, timeIntoPath)) {
 			_pathInvalidated = true;
-			addText("Hit Obstacle");
+			addText("Hit Obstacle", Qt::red, "Motion");
 		}
 
 		//  invalidate path if current position is more than 15cm from the planned point
@@ -635,11 +635,11 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 	// check if goal is close to previous goal to reuse path
 	if (!_pathInvalidated) {
-		addText("Reusing path");
+		addText("Reusing path", Qt::white, "Planning");
 	} else {
 		Planning::Path *path = _planner->run(pos, angle, vel, _motionConstraints, &full_obstacles);
 		
-		addText("Replanning");
+		addText("Replanning", Qt::red, "Planning");
 		// use the newly generated path
 		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: using new RRT path" << std::endl;
 		setPath(path);
