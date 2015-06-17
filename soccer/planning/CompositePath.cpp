@@ -107,6 +107,7 @@ namespace Planning
 
 	unique_ptr<Path> CompositePath::subPath(float startTime, float endTime) const
 	{
+		//Check for valid arguments
 		if (startTime<0) {
 			throw invalid_argument("startTime can't be less than zero");
 		}
@@ -128,6 +129,7 @@ namespace Planning
 			return this->clone();
 		}
 
+		//Find the first Path in the vector of paths which will be included in the subPath
 		size_t start = 0;
 		float time = 0;
 		float lastTime = 0;
@@ -136,14 +138,20 @@ namespace Planning
 			time += lastTime;
 			start++;
 		}
+
+		//Get the time into the Path in the vector of paths which the subPath will start
 		float firstStartTime = (time - lastTime);
+
+		//If the path will only contain that one Path just return a subPath of that Path
 		if (time >= endTime) {
 			return paths[start-1]->subPath(startTime - firstStartTime, endTime - firstStartTime );
 		} else {
+			//Create a CompositePath initialized with only that first path.
 			CompositePath *path = new CompositePath(paths[start-1]->subPath(startTime - firstStartTime));
 			unique_ptr<Path> lastPath;
 			size_t end;
 
+			//Find the last Path in the vector of paths which will be included in the subPath and store it in lastPath
 			if (endTime>= duration) {
 				lastPath = paths.back()->clone();
 				end = paths.size()-1;
@@ -157,11 +165,16 @@ namespace Planning
 				end--;
 				lastPath = paths[end]->subPath(0, endTime - (time - lastTime));
 			}
+
+			//Add the ones in the middle
 			while (start<end) {
 				path->append(paths[start]->clone());
 				start++;
 			}
+
+			//Add the last one
 			path->append(std::move(lastPath));
+			
 			return unique_ptr<Path>(path);
 		}
 	}
