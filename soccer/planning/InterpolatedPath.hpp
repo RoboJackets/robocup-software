@@ -106,12 +106,11 @@ namespace Planning
 			virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = std::numeric_limits<float>::infinity()) const override;
 
 			/**
-			 * Returns true if the path never touches an obstacle or additionally, when exitObstacles is true, if the path
-			 * starts out in an obstacle but leaves and never re-enters any obstacle.
+			 * Draws the path
 			 *
-			 * @param[in]	shape The obstacles on the field
-			 * @param[in] 	start The point on the path to start checking from
-			 * @return 		true if the path is valid, false if it hits an obstacle
+			 * @param[in]	state The SystemState to draw the path on
+			 * @param[in] 	color The color the path should be drawn
+			 * @param[in] 	layer The layer to draw the path on
 			 */
 			virtual void draw(SystemState  * const state, const QColor &color, const QString &layer) const override;
 
