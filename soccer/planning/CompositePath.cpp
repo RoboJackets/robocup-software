@@ -109,19 +109,19 @@ namespace Planning
 	{
 		//Check for valid arguments
 		if (startTime<0) {
-			throw invalid_argument("startTime can't be less than zero");
+			throw invalid_argument("CompositePath::subPath(): startTime(" + to_string(startTime) + ") can't be less than zero");
 		}
 
 		if (endTime<0) {
-			throw invalid_argument("endTime can't be less than zero");
+			throw invalid_argument("CompositePath::subPath(): endTime(" + to_string(endTime) + ") can't be less than zero");
 		}
 
 		if (startTime > endTime) {
-			throw invalid_argument("startTime can't be after endTime");
+			throw invalid_argument("CompositePath::subPath(): startTime(" + to_string(startTime) + ") can't be after endTime(" + to_string(endTime) + ")");
 		}
 
 		if (startTime >= duration) {
-			debugThrow(invalid_argument("startTime can't be greater than the duration of the path"));
+			debugThrow(invalid_argument("CompositePath::subPath(): startTime(" + to_string(startTime) + ") can't be greater than the duration(" + to_string(duration) + ") of the path"));
 			return unique_ptr<Path>(new CompositePath());
 		}
 
