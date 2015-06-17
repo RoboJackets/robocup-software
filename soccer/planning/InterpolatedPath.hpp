@@ -32,6 +32,15 @@ namespace Planning
 			/** constructor from two points */
 			InterpolatedPath(const Geometry2d::Point& p0, const Geometry2d::Point& p1);
 
+			//Overried Path Methods
+			virtual boost::optional<Geometry2d::Point> destination() const override;
+			virtual bool hit(const Geometry2d::CompositeShape &shape, float startTime) const override;
+			virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = std::numeric_limits<float>::infinity()) const override;
+			virtual void draw(SystemState  * const state, const QColor &color, const QString &layer) const override;
+			virtual bool evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const override;
+			virtual float getDuration() const override;
+			virtual std::unique_ptr<Path> clone() const override;
+		
 			bool empty() const
 			{
 				return points.empty();
@@ -83,49 +92,6 @@ namespace Planning
 			// Returns a new path starting from a given point
 			void startFrom(const Geometry2d::Point& pt, Planning::InterpolatedPath& result) const;
 
-			//Returns the destination of this path (the last point in the points array)
-			virtual boost::optional<Geometry2d::Point> destination() const override;
-
-			/**
-			 * Returns true if the path hits an obstacle
-			 *
-			 * @param[in]	shape The obstacles on the field
-			 * @param[in] 	startTime The time on the path to start checking from
-			 * @return 		true if it hits an obstacle, otherwise false
-			 */
-			virtual bool hit(const Geometry2d::CompositeShape &shape, float startTime) const override;
-
-			/**
-			 * Returns a subPath
-			 *
-			 * @param[in]	startTime The startTime for from which the subPath should be taken.
-			 * @param[in] 	endTime The endTime from which the subPath should be taken. If it is greater than the duration fo the path,
-								 it should go to the end of the path.
-			 * @return 	A unique_ptr to the new subPath
-			 */
-			virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = std::numeric_limits<float>::infinity()) const override;
-
-			/**
-			 * Draws the path
-			 *
-			 * @param[in]	state The SystemState to draw the path on
-			 * @param[in] 	color The color the path should be drawn
-			 * @param[in] 	layer The layer to draw the path on
-			 */
-			virtual void draw(SystemState  * const state, const QColor &color, const QString &layer) const override;
-
-			/**
-			 * A path describes the position and velocity a robot should be at for a
-			 * particular time interval.  This method evalates the path at a given time and
-			 * returns the target position and velocity of the robot.
-			 *
-			 * @param[in] 	t Time (in seconds) since the robot started the path
-			 * @param[out] 	targetPosOut The position the robot would ideally be at at the given time
-			 * @param[out] 	targetVelOut The target velocity of the robot at the given time
-			 * @return 		true if the path is valid at time @t, false if you've gone past the end
-			 */
-			virtual bool evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const override;
-
 			/**
 			 * Evaluates the point and velocity of the robot at a given distance in the path.
 			 *
@@ -144,16 +110,5 @@ namespace Planning
 			 * @return 		the estimated time it would take for the robot to a point on the path starting from the start of the path
 			 */
 			float getTime(int index) const;
-
-			/**
-			 * Returns how long it would take for the entire path to be traversed
-			 *
-			 * @return 	The time from start to path completion or infinity if it never stops
-			 */
-			virtual float getDuration() const override;
-
-			virtual std::unique_ptr<Path> clone() const override;
-
-			static void createConfiguration(Configuration *cfg);
 	};
 }
