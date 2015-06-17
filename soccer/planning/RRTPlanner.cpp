@@ -28,29 +28,25 @@ RRTPlanner::RRTPlanner()
 	_maxIterations = 100;
 }
 
-void RRTPlanner::run(
+Planning::InterpolatedPath* RRTPlanner::run(
 		const Geometry2d::Point &start,
-		const float angle, 
+		const float angle,
 		const Geometry2d::Point &vel,
 		const MotionConstraints &motionConstraints,
-		const Geometry2d::CompositeShape *obstacles,
-		Planning::Path &path)
+		const Geometry2d::CompositeShape *obstacles)
 {
+	Planning::InterpolatedPath *path = new Planning::InterpolatedPath();
 	Geometry2d::Point goal = *motionConstraints.targetPos;
 	_motionConstraints = motionConstraints;
 	vi = vel;
-
-	//clear any old path
-	path.clear();
 
 	_obstacles = obstacles;
 
 	// Simple case: no path
 	if (start == goal)
 	{
-		path.points.push_back(start);
-		_bestPath = path;
-		return;
+		path->points.push_back(start);
+		return path;
 	}
 
 	/// Locate a non blocked goal point
@@ -135,44 +131,41 @@ void RRTPlanner::run(
 	}
 
 	//see if we found a better global path
-	makePath();
+	*path = makePath();
 
-	if (_bestPath.points.empty())
+	if (path->points.empty())
 	{
 		// FIXME: without these two lines, an empty path is returned which causes errors down the line.
-		path.points.push_back(start);
-		_bestPath = path;
-		return;
+		path->points.push_back(start);
 	}
-	
-	path = _bestPath;
+	return path;
 }
 
-void RRTPlanner::makePath()
+Planning::InterpolatedPath RRTPlanner::makePath()
 {
+	Planning::InterpolatedPath newPath;
+	newPath.maxSpeed = _motionConstraints.maxSpeed;
+	newPath.maxAcceleration = _motionConstraints.maxAcceleration;
+	
+
 	Tree::Point* p0 = _fixedStepTree0.last();
 	Tree::Point* p1 = _fixedStepTree1.last();
 
 	//sanity check
 	if (!p0 || !p1 || p0->pos != p1->pos)
 	{
-		return;
+		return newPath;
 	}
 
-	Planning::Path newPath;
+	
+	//	extract path from RRTs
+	_fixedStepTree0.addPath(newPath, p0);//add the start tree first...normal order (aka from root to p0)
+	_fixedStepTree1.addPath(newPath, p1, true);//add the goal tree in reverse (aka p1 to root)
 
-	//add the start tree first...normal order
-	//aka from root to p0
-	_fixedStepTree0.addPath(newPath, p0);
-
-	//add the goal tree in reverse
-	//aka p1 to root
-	_fixedStepTree1.addPath(newPath, p1, true);
 	newPath.vi = vi;
-	optimize(newPath, _obstacles);
+	newPath.endSpeed = _motionConstraints.endSpeed;
 
-	/// check the path against the old one
-	bool hit = (_obstacles) ? _bestPath.hit(*_obstacles) : false;
+	optimize(newPath, _obstacles);
 
 	//TODO evaluate the old path based on the closest segment
 	//and the distance to the endpoint of that segment
@@ -184,24 +177,11 @@ void RRTPlanner::makePath()
 	/// 3. start changed -- maybe (Roman)
 	/// 3. new path is better
 	/// 4. old path not valid (hits obstacles)
-	//if (_bestPath.points.empty() ||
-	//		(hit) ||
-	//		//(_bestPath.points.front() != _fixedStepTree0.start()->pos) ||
-	//		(_bestPath.points.back() != _fixedStepTree1.start()->pos) ||
-	//		(newPath.length() < _bestPath.length()))
-	//{
-		_bestPath = newPath;
-	//	return;
-	//}
-	/*
-	else 
-	{
-		_bestPath.vi = vi;
-		cubicBezier(_bestPath, _obstacles);	
-	}*/
+
+	return newPath;
 }
 
-void RRTPlanner::optimize(Planning::Path &path, const Geometry2d::CompositeShape *obstacles)
+void RRTPlanner::optimize(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles)
 {
 	unsigned int start = 0;
 
@@ -241,10 +221,6 @@ void RRTPlanner::optimize(Planning::Path &path, const Geometry2d::CompositeShape
 	// Done with the path
 	pts.push_back(path.points.back());
 	path.points = pts;
-	//quarticBezier(path, obstacles);
-	path.maxSpeed = _motionConstraints.maxSpeed;
-	path.endSpeed = _motionConstraints.endSpeed;
-	path.maxAcceleration = _motionConstraints.maxAcceleration;
 	cubicBezier(path, obstacles);
 }
 
@@ -255,27 +231,27 @@ Geometry2d::Point pow(Geometry2d::Point &p1, float i)
 
 using namespace Eigen;
 //TODO: Use targeted end velocity
-void RRTPlanner::cubicBezier (Planning::Path &path, const Geometry2d::CompositeShape *obstacles)
+void RRTPlanner::cubicBezier (Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles)
 {
 	int length = path.size();
 	int curvesNum = length-1;
 	if (curvesNum <= 0) {
-		//TODO 
+		//TODO
 		return;
 	}
 
 	//TODO: Get the actual values
 	Geometry2d::Point vf(0,0);
-	
+
 	Geometry2d::Point vi = path.vi;
 
 	vector<double> pointsX(length);
 	vector<double> pointsY(length);
 	vector<double> ks(length-1);
 	vector<double> ks2(length-1);
-	
-	
-	
+
+
+
 	for (int i=0; i<length; i++) {
 		pointsX[i] = path.points[i].x;
 		pointsY[i] = path.points[i].y;
@@ -284,10 +260,10 @@ void RRTPlanner::cubicBezier (Planning::Path &path, const Geometry2d::CompositeS
 		ks[i] = 1.0/(path.getTime(i+1)-path.getTime(i));
 		ks2[i] = ks[i]*ks[i];
 	}
-	
+
 	VectorXd solutionX = cubicBezierCalc(vi.x, vf.x, pointsX, ks, ks2);
 	VectorXd solutionY = cubicBezierCalc(vi.y, vf.y, pointsY, ks, ks2);
-	
+
 	Geometry2d::Point p0, p1, p2, p3;
 	vector<Geometry2d::Point> pts;
 	vector<Geometry2d::Point> vels;
@@ -301,23 +277,23 @@ void RRTPlanner::cubicBezier (Planning::Path &path, const Geometry2d::CompositeS
     	p3 = path.points[i+1];
     	p1 = Geometry2d::Point(solutionX(i*2),solutionY(i*2));
     	p2 = Geometry2d::Point(solutionX(i*2 + 1),solutionY(i*2 + 1));
-    	
+
     	for (int j=0; j<interpolations; j++)
     	{
     		double k = ks[i];
     		float t = (((float)j / (float)(interpolations)));
-    		Geometry2d::Point temp = pow(1.0-t, 3) * p0 + 3.0* pow(1.0-t, 2)*t*p1 + 3*(1.0-t)*pow(t, 2)*p2 
+    		Geometry2d::Point temp = pow(1.0-t, 3) * p0 + 3.0* pow(1.0-t, 2)*t*p1 + 3*(1.0-t)*pow(t, 2)*p2
     						+ pow(t, 3)*p3;
     		pts.push_back(temp);
     		t = ((float)j / (float)(interpolations))/k;
     		//3 k (-(A (-1 + k t)^2) + k t (2 C - 3 C k t + D k t) + B (1 - 4 k t + 3 k^2 t^2))
     		temp = 3*k*(-(p0*pow(-1 + k*t ,2)) + k*t*(2*p2 - 3*p2*k*t + p3*k*t) + p1*(1 - 4*k*t + 3*pow(k,2)*pow(t,2)));
     		vels.push_back(temp);
-    		times.push_back(time +  t);    		
+    		times.push_back(time +  t);
     	}
     	time+= 1.0/ks[i];
-    	
-    	
+
+
     }
     pts.push_back(path.points[length-1]);
     vels.push_back(vf);
@@ -327,15 +303,15 @@ void RRTPlanner::cubicBezier (Planning::Path &path, const Geometry2d::CompositeS
     path.times = times;
 }
 
-VectorXd RRTPlanner::cubicBezierCalc (double vi, double vf, vector<double> &points, 
+VectorXd RRTPlanner::cubicBezierCalc (double vi, double vf, vector<double> &points,
 									vector<double> &ks, vector<double> &ks2)
 {
 	int curvesNum = points.size() - 1;
 
 
-	if (curvesNum == 1) 
+	if (curvesNum == 1)
 	{
-		
+
 		VectorXd vector(2);
 		vector[0] = vi/(3.0*ks[0]) + points[0];
 		vector[1] = points[curvesNum] - vf/(3*ks[curvesNum-1]);
@@ -349,9 +325,9 @@ VectorXd RRTPlanner::cubicBezierCalc (double vi, double vf, vector<double> &poin
 		answer(0) = vi/(3.0*ks[0]) + points[0];
 		equations(1,matrixSize-1) = 1;
 		answer(1) = points[curvesNum] - vf/(3*ks[curvesNum-1]);
-		
+
 		int i = 2;
-		for (int n=0; n<curvesNum-1; n++) 
+		for (int n=0; n<curvesNum-1; n++)
 		{
 			equations(i, n*2 + 1) = ks[n];
 			equations(i, n*2 + 2) = ks[n+1];
@@ -359,18 +335,18 @@ VectorXd RRTPlanner::cubicBezierCalc (double vi, double vf, vector<double> &poin
 			i++;
 		}
 
-		
-		for (int n=0; n<curvesNum-1; n++) 
+
+		for (int n=0; n<curvesNum-1; n++)
 		{
 
 			equations(i, n*2) = ks2[n];
 			equations(i, n*2 + 1) = -2*ks2[n];
 			equations(i, n*2 + 2) = 2*ks2[n+1];
 			equations(i, n*2 + 3) = -ks2[n+1];
-			answer(i) = points[n + 1] * (ks2[n+1] - ks2[n]); 
+			answer(i) = points[n + 1] * (ks2[n+1] - ks2[n]);
 			i++;
 		}
-		
+
 		ColPivHouseholderQR<MatrixXd> solver(equations);
 		VectorXd solution = solver.solve(answer);
 		return solution;

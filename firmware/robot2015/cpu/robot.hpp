@@ -108,6 +108,8 @@
 #define RJ_FPGA_FS0             p23
 #define RJ_FPGA_FS1             p22
 
+#define RJ_DS2411_ID_CHIP       p21
+
 // This defines the mbed pin used as the `Chip Select` pin for the 16 pin I/O expander
 #define RJ_IO_EXPANDER_CS       p29
 

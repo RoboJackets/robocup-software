@@ -11,7 +11,7 @@ class OurCornerKick(play.Play):
 
     MinChipRange = 0.3
     MaxChipRange = 3.0
-    ChipperPower = constants.Robot.Chipper.MaxPower / 2.0
+    ChipperPower = 0.5
     TargetSegmentWidth = 1.5
 
 

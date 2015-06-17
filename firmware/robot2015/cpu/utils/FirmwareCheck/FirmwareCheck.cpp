@@ -1,5 +1,8 @@
 #include "FirmwareCheck.hpp"
 
+/**
+ * sets the string to the cortex firmware verison
+ */
 void firmware_version(std::string& version)
 {
     FILE *fwp = fopen("/local/MBED.HTM", "r");  // open the mbed's default file to determine the mbed firmware version

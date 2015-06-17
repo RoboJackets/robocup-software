@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Geometry2d/Point.hpp>
-#include <planning/Path.hpp>
+#include <planning/InterpolatedPath.hpp>
 #include <boost/optional.hpp>
 
 
@@ -19,7 +19,7 @@ struct MotionConstraints {
 
     /// A point on the field that the robot should use path-planning to get to
     boost::optional<Geometry2d::Point> targetPos;
-    
+
     /// Set the velocity in world coordinates directly (circumvents path planning)
     boost::optional<Geometry2d::Point> targetWorldVel;
 
@@ -28,7 +28,7 @@ struct MotionConstraints {
     /// Angle target
     ////////////////////////////////////////////////////////////////////////////////
 
-    
+
     /// Angular velocity in rad/s counterclockwise
     boost::optional<float> targetAngleVel;
 
@@ -76,4 +76,5 @@ struct MotionConstraints {
     static ConfigDouble *_max_acceleration;
     static ConfigDouble *_max_speed;
     static ConfigDouble *_max_angle_speed;
+    static ConfigDouble *_replan_threshold;
 };

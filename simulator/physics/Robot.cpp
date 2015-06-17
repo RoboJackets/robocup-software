@@ -232,9 +232,7 @@ void Robot::getWorldTransform(btTransform& chassisWorldTrans) const
 void Robot::radioTx(const Packet::RadioTx::Robot *data)
 {
 	velocity(data->body_x(),data->body_y(), data->body_w());
-	if(data->kick()){
-		_controller->prepareKick(data->kick(),data->use_chipper());
-	}
+	_controller->prepareKick(data->kick(),data->use_chipper());
 	_controller->prepareDribbler(data->dribbler());
 }
 
@@ -271,68 +269,36 @@ Packet::RadioRx Robot::radioRx() const
 }
 
 void Robot::applyEngineForces() {
-	int wheelIndex = 2;
-	_robotVehicle->applyEngineForce(_engineForce[wheelIndex], wheelIndex);
-	_robotVehicle->setBrake(_brakingForce, wheelIndex);
-	wheelIndex = 3;
-	_robotVehicle->applyEngineForce(_engineForce[wheelIndex], wheelIndex);
-	_robotVehicle->setBrake(_brakingForce, wheelIndex);
-
-	wheelIndex = 0;
-	_robotVehicle->applyEngineForce(_engineForce[wheelIndex], wheelIndex);
-	_robotVehicle->setBrake(_brakingForce, wheelIndex);
-	wheelIndex = 1;
-	_robotVehicle->applyEngineForce(_engineForce[wheelIndex], wheelIndex);
-	_robotVehicle->setBrake(_brakingForce, wheelIndex);
+	for (int wheelIndex = 0; wheelIndex < 4; wheelIndex++) {
+		_robotVehicle->applyEngineForce(_engineForce[wheelIndex], wheelIndex);
+		_robotVehicle->setBrake(_brakingForce, wheelIndex);
+	}
 }
 
 void Robot::applyEngineForces(float deltaTime) {
-
-	// use this for finite acceleration, i.e. non-instantaneous
-#define USE_ENGINE 1
-#ifdef USE_ENGINE
 	if(_targetVel.length() < SIMD_EPSILON && _targetRot == 0){
-
 		for(int i=0; i<4; i++){
 			_engineForce[i] = 0;
 		}
-
 	}else{
-		//
-
-//		btTransform worldTr = _robotChassis->getWorldTransform();
 		btQuaternion worldRot = _robotChassis->getOrientation();
-
-//		printf("WS pos = (%5.3f,%5.3f,%5.3f)\n", worldTr.getOrigin()[0],worldTr.getOrigin()[1],worldTr.getOrigin()[2]);
-//		printf("WS rot = %5.3f\n", worldRot.getAngle());
 
 		//basis vectors for robot - directions of driving two opposite wheels "forward", i.e. towards z in CS
 		//f right as in northeast, f left as in northwest
 		btVector3 forwardRightCS =  btVector3(-1,0,1).normalize(); // positive x is left b/c y is up, very tricky
 		btVector3 forwardLeftCS  =  btVector3(1,0,1).normalize();
 
-//		printf("forwardRightCS = (%5.3f,%5.3f,%5.3f)\n",forwardRightCS[0],forwardRightCS[1],forwardRightCS[2]);
-//		printf("forwardLeftCS = (%5.3f,%5.3f,%5.3f)\n",forwardLeftCS[0],forwardLeftCS[1],forwardLeftCS[2]);
-
 
 		btVector3 robotVel = _robotChassis->getLinearVelocity();
 		robotVel.setY(0);
 
-//		printf("WS velocity  = (%5.3f,%5.3f,%5.3f)\n", robotVel[0], robotVel[1], robotVel[2]);
-
 		robotVel = robotVel.rotate(worldRot.getAxis(),-worldRot.getAngle());//undo world rotation
 
-//		printf("CS velocity = (%5.3f,%5.3f,%5.3f)\n", robotVel[0], robotVel[1], robotVel[2]);
-
 		btScalar  robotRot(_robotChassis->getAngularVelocity().getY());
-
-//		printf("WS ang vel = %5.3f\n",robotRot);
 
 		//velocity delta projected onto forwardRight and forwardLeft
 		float velFR = (_targetVel-robotVel).dot(forwardRightCS) * 2;
 		float velFL = (_targetVel-robotVel).dot(forwardLeftCS) * 2;
-
-//		printf("error: %f\n",(_targetVel-robotVel).length());
 
 		float angFR = velFR/Sim_Wheel_Radius;
 		float angFL = velFL/Sim_Wheel_Radius;
@@ -396,15 +362,6 @@ void Robot::applyEngineForces(float deltaTime) {
 
 	_robotVehicle->applyEngineForce(_engineForce[BackLeft], BackLeft);
 	_robotVehicle->setBrake(_brakingForce, BackLeft);
-#else
-	btVector3 vel(_targetVel);
-	btTransform trans;
-	_robotChassis->getMotionState()->getWorldTransform(trans);
-	vel = vel.rotate(trans.getRotation().getAxis(),
-						trans.getRotation().getAngle());
-	_robotChassis->setLinearVelocity(vel);
-	_robotChassis->setAngularVelocity(btVector3(0,1,0)*_targetRot);
-#endif
 }
 
 void Robot::renderWheels(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax) const {

@@ -11,7 +11,7 @@
 #include <Constants.hpp>
 #include "MotionConstraints.hpp"
 #include <Utils.hpp>
-#include <planning/Path.hpp>
+#include <planning/InterpolatedPath.hpp>
 #include <planning/RRTPlanner.hpp>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
@@ -40,7 +40,7 @@ namespace Planning
 
 /**
  * @brief Contains robot motion state data
- * @details This class contains data that comes from the vision system 
+ * @details This class contains data that comes from the vision system
  * including position data and which camera this robot was seen by and
  * what time it was last seen.
  */
@@ -57,13 +57,13 @@ public:
 		// normalize angle so it's always positive
 		while (angle < 0) angle += 2.0 * M_PI;
 	}
-	
+
 	bool visible;
 	Geometry2d::Point pos;
 	Geometry2d::Point vel;
 	float angle;	///	angle in radians.  0 radians means the robot is aimed along the x-axis
 	float angleVel;	///	angular velocity in radians/sec
-	
+
 	// Time at which this estimate is valid
 	Time time;
 	int visionFrame;
@@ -91,7 +91,7 @@ public:
 	{
 		return _self;
 	}
-	
+
 	/**
 	 * Get the robot's position filter.
 	 */
@@ -141,7 +141,7 @@ public:
 	~OurRobot();
 
 	void addStatusText();
-	
+
 	void addText(const QString &text, const QColor &color = Qt::white, const QString &layerPrefix = "RobotText");
 
 	// kicker readiness checks
@@ -158,7 +158,7 @@ public:
 
 	// Gets the robot quaternion.  Returns false (and does not change q) if not available.
 	boost::optional<Eigen::Quaternionf> quaternion() const;
-	
+
 	// Commands
 
 	const MotionConstraints &motionConstraints() const {
@@ -169,7 +169,7 @@ public:
 		return _motionConstraints;
 	}
 
-	const boost::optional<Planning::Path> &path() const {
+	const Planning::Path* path() const {
 		return _path;
 	}
 
@@ -201,6 +201,11 @@ public:
 	int consecutivePathChangeCount() const;
 
 	/**
+	 * Sets the angleVelocity in the robot's MotionConstraints
+	 */
+	void angleVelocity(const float angleVelocity);
+
+	/**
 	 * Sets the worldVelocity in the robot's MotionConstraints
 	 */
 	void worldVelocity(const Geometry2d::Point &targetWorldVel);
@@ -230,7 +235,7 @@ public:
 
 	/**
 	 * KICKING/CHIPPING
-	 * 
+	 *
 	 * When we call kick() or chip(), it doesn't happen immediately.
 	 * It primes the kicker or chipper to kick at the designated power the next time
 	 * the bot senses that it has the ball.  Once this happens, we record the time
@@ -239,14 +244,26 @@ public:
 
 
 	/**
-	 * enable kick when ready at a given strength
+	 * enable kick when ready at a given percentage of the currently set max kick power.
+	 * @param strength a value between 0 and 1
 	 */
-	void kick(uint8_t strength);
+	void kick(float strength);
 
 	/**
-	 * enable chip when ready at a given strength
+	 * enable kick when ready at a given strength (0-255)
 	 */
-	void chip(uint8_t strength);
+	void kickLevel(uint8_t strength);
+
+	/**
+	 * enable chip when ready at a given percentage of the currently set max chip power.
+	 * @param strength a value between 0 and 1
+	 */
+	void chip(float strength);
+
+	/**
+	 * enable chip when ready at a given strength (0-255)
+	 */
+	void chipLevel(uint8_t strength);
 
 	/**
 	 * @brief Undoes any calls to kick() or chip().
@@ -368,12 +385,15 @@ public:
 	Packet::RadioRx &radioRx() {
 		return _radioRx;
 	}
+	const Packet::RadioRx &radioRx() const {
+		return _radioRx;
+	}
 
 	MotionControl *motionControl() const
 	{
 		return _motionControl;
 	}
-	
+
 	SystemState *state() const
 	{
 		return _state;
@@ -395,13 +415,13 @@ public:
 
 
 	static void createConfiguration(Configuration *cfg);
-	
+
 	double distanceToChipLanding(int chipPower);
 	uint8_t chipPowerForDistance(double distance);
 
 protected:
 	MotionControl *_motionControl;
-	
+
 	SystemState *_state;
 
 	// obstacle management
@@ -413,9 +433,9 @@ protected:
 
 	Planning::RRTPlanner *_planner;	/// single-robot RRT planner
 
-	void setPath(Planning::Path path);
+	void setPath(Planning::Path *path);
 
-	boost::optional<Planning::Path> _path;	/// latest path
+	Planning::Path *_path;	/// latest path
 	Time _pathStartTime;
 
 	///	whenever the constraints for the robot path are changed, this is set to true to trigger a replan
@@ -487,7 +507,7 @@ protected:
 	 * This causes the _pathStartTime to constantly be reset and motion control looks about zero seconds
 	 * into the planned path and sends the robot a velocity command that's really really tiny, causing
 	 * it to barely move at all.
-	 * 
+	 *
 	 * Our solution to this is to track the last N path changes in a circular buffer so we can tell if
 	 * we're hitting this scenario.  If so, we can compensate, by having motion control look further into
 	 * the path when commanding the robot.

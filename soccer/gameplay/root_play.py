@@ -194,3 +194,7 @@ class RootPlay(Play, QtCore.QObject):
     @robots.setter
     def robots(self, robots):
         self._robots = robots if robots != None else []
+
+
+    def __str__(self):
+        return '\n'.join([str(bhvr) for bhvr in self.all_subbehaviors()])
