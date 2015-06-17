@@ -20,14 +20,14 @@ namespace Planning
 		//Vector of Paths
 		std::vector<std::unique_ptr<Path>> paths;
 
+		//Saving some variables to speed up computation
+		float duration = 0.0f;
+
 		/**
 		 * Append the path to the end of the CompositePath
 		 * The path passed in should not be refenced anywhere else.
 		 */
 		void append(Path *path);
-
-		//Saving some variables to speed up computation
-		float duration;
 
 	public:
 		/** default path is empty */
