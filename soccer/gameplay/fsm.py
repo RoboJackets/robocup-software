@@ -169,7 +169,7 @@ class StateMachine:
         subgraphs[None] = g
         for state in self._state_hierarchy:
             if state not in subgraphs and state in self._state_hierarchy.values():
-                sg = gv.Subgraph('cluster_' + str(cluster_index), graph_attr={'label': state.__module__ + "::" + state.name, 'style': 'dotted'})
+                sg = gv.Digraph('cluster_' + str(cluster_index), graph_attr={'label': state.__module__ + "::" + state.name, 'style': 'dotted'})
                 cluster_index += 1
 
                 subgraphs[state] = sg
@@ -184,7 +184,7 @@ class StateMachine:
 
         for state, subgraph in subgraphs.items():
             if state != None:
-                subgraphs[self._state_hierarchy[state]].extend(subgraph)
+                subgraphs[self._state_hierarchy[state]].subgraph(subgraph)
 
         for start in self._transitions:
             for end, event in self._transitions[start].items():

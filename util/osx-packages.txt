@@ -1,0 +1,19 @@
+# This file contains a (probably incomplete) list of packages that must
+# be installed through homebrew on OS X in order to build this project.
+# In addition to these, you'll also need to install libspnav - see below.
+
+qt5
+pyqt5
+python3
+sdl
+boost
+boost-build
+boost-python --with-python3
+ccache
+cmake
+homebrew/x11/freeglut
+libusb
+freeglut
+eigen
+bullet
+protobuf

@@ -50,7 +50,7 @@ class StripChart: public QWidget
 	public:
 		StripChart(QWidget *parent = 0);
 		~StripChart();
-		
+
 		void history(const std::vector<std::shared_ptr<Packet::LogFrame> > *value)
 		{
 			_history = value;
@@ -91,7 +91,7 @@ class StripChart: public QWidget
     int indexAtPoint(const QPoint &point);
 		
 		// Chart function (see above)
-		Chart::Function *_function;
+		QList<Chart::Function *> _functions;
 		
 		float _minValue;
 		float _maxValue;

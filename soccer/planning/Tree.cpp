@@ -14,7 +14,7 @@ Tree::Point::Point(const Geometry2d::Point& p, Tree::Point* parent) :
 {
 	_parent = parent;
 	leaf = true;
-	
+
 	if (_parent)
 	{
 		_parent->children.push_back(this);
@@ -59,15 +59,15 @@ void Tree::clear()
 void Tree::init(const Geometry2d::Point& start, const Geometry2d::CompositeShape* obstacles)
 {
 	clear();
-	
+
 	_obstacles = obstacles;
-	
+
 	Point* p = new Point(start, 0);
 	_obstacles->hit(p->pos, p->hit);
 	points.push_back(p);
 }
 
-void Tree::addPath(Planning::Path &path, Point* dest, const bool rev)
+void Tree::addPath(Planning::InterpolatedPath &path, Point* dest, const bool rev)
 {
 	list<Point *> points;
 
@@ -85,7 +85,7 @@ void Tree::addPath(Planning::Path &path, Point* dest, const bool rev)
 		dest = dest->parent();
 		++n;
 	}
-	
+
 	path.points.reserve(path.points.size() + n);
 	for (Point *pt :  points)
 	{
@@ -97,7 +97,7 @@ Tree::Point* Tree::nearest(Geometry2d::Point pt)
 {
 	float bestDistance = -1;
     Point *best = 0;
-    
+
     for (Point* other :  points)
     {
         float d = (other->pos - pt).magsq();
@@ -117,7 +117,7 @@ Tree::Point* Tree::start() const
 	{
 		return 0;
 	}
-	
+
 	return points.front();
 }
 
@@ -127,7 +127,7 @@ Tree::Point* Tree::last() const
 	{
 		return 0;
 	}
-	
+
 	return points.back();
 }
 
@@ -143,10 +143,10 @@ Tree::Point* FixedStepTree::extend(Geometry2d::Point pt, Tree::Point* base)
 			return 0;
 		}
 	}
-	
+
 	Geometry2d::Point delta = pt - base->pos;
 	float d = delta.mag();
-	
+
 	Geometry2d::Point pos;
 	if (d < step)
 	{
@@ -156,9 +156,9 @@ Tree::Point* FixedStepTree::extend(Geometry2d::Point pt, Tree::Point* base)
 	{
 		pos = base->pos + delta / d * step;
 	}
-	
+
 	// Check for obstacles.
-	
+
 	// moveHit is the set of obstacles that this move touches.
 	// If this move touches any obstacles that the starting point didn't already touch,
 	// it has entered an obstacle and will be rejected.
@@ -169,7 +169,7 @@ Tree::Point* FixedStepTree::extend(Geometry2d::Point pt, Tree::Point* base)
 		// we don't store the result of set_difference.
 		try
 		{
-			set_difference(moveHit.begin(), moveHit.end(), base->hit.begin(), 
+			set_difference(moveHit.begin(), moveHit.end(), base->hit.begin(),
 				base->hit.end(), ExceptionIterator<std::shared_ptr<Geometry2d::Shape>>());
 		} catch (exception& e)
 		{
@@ -177,12 +177,12 @@ Tree::Point* FixedStepTree::extend(Geometry2d::Point pt, Tree::Point* base)
 			return 0;
 		}
 	}
-	
+
 	// Allow this point to be added to the tree
 	Point* p = new Point(pos, base);
 	_obstacles->hit(p->pos, p->hit);
 	points.push_back(p);
-	
+
 	return p;
 }
 
@@ -190,26 +190,26 @@ bool FixedStepTree::connect(Geometry2d::Point pt)
 {
 	//try to reach the goal pt
 	const unsigned int maxAttemps = 50;
-	
+
 	Point* from = 0;
-	
+
 	for (unsigned int i=0 ; i<maxAttemps ; ++i)
 	{
 		Point* newPt = extend(pt, from);
-		
+
 		//died
 		if (!newPt)
 		{
 			return false;
 		}
-		
+
 		if (newPt->pos == pt)
 		{
 			return true;
 		}
-		
+
 		from = newPt;
 	}
-	
+
 	return false;
 }

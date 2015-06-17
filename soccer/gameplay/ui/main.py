@@ -1,4 +1,3 @@
-import ui.play_config_tab
 import logging
 from PyQt5 import QtCore, QtWidgets
 import main
@@ -26,14 +25,14 @@ def setup():
     win = getMainWindow()
     if win == None: raise AssertionError("Unable to get a reference to the main window")
 
-    pcTab = ui.play_config_tab.PlayConfigTab()
-    pcTab.setObjectName('play_config')
+    pcTab = win.findChild(QtWidgets.QTreeView, 'plays')
 
-    tabs = win.findChild(QtWidgets.QTabWidget, 'tabWidget')
-    tabs.insertTab(0, pcTab, 'Plays')
-    tabs.setCurrentIndex(0)
+    # setup play config tab
+    pcTab.setModel(main.play_registry())
+    pcTab.expandAll()
+    pcTab.resizeColumnToContents(0)
 
-    logging.debug("Inserted PlayConfigTab at index zero")
+    logging.debug("Initialized PlayConfigTab")
 
     # bind the play label in the ui to the name of the current play
     play_name_label = win.findChild(QtWidgets.QLabel, 'current_play_name')
