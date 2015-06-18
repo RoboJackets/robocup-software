@@ -390,7 +390,7 @@ void cmd_info(const vector<string> &args)
     CallMe CallMe_entry=(CallMe)0x1FFF1FF1;
     CallMe_entry(Interface, Interface);
     if (!Interface[0])
-        printf("Serial Number:\t%0.8X%0.8X%0.8X%0.8X\r\n",
+        printf("Serial Number:\t%d%d%d%d\r\n",
                 Interface[1], Interface[2], Interface[3], Interface[4]);
     else
         printf("Unable to retrieve Serial Number from LPC Flash\r\n");

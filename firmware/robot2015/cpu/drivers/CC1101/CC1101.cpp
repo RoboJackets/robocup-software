@@ -291,9 +291,9 @@ void CC1101::init(void)
 
     // Set the initial offset frequency estimate
 
-    LOG("Configuring frequency offset estimate...");
+    log(INF1, "CC1101", "Configuring frequency offset estimate...");
     write_reg(CCXXX1_FSCTRL0, status(CCXXX1_FREQEST));
-    LOG("Frequency offset estimate configured");
+    log(INF1, "CC1101", "Frequency offset estimate configured");
 
     calibrate();
 
@@ -794,66 +794,4 @@ void CC1101::set_rf_settings(void)
     // 33 byte TX FIFO & 32 byte RX FIFO
     rfSettings.FIFOTHR = 0x07;
     // rfSettings.FIFOTHR = 0x0F;
-}
-
-
-// Write the setup register values to the CC1101 for configuration
-void CC1101::put_rf_settings()
-{
-#if DEBUG_MODE > 0
-    log(INF1, "CC1101", "Writing configuration registers...");
-#endif
-    write_reg(CCXXX1_IOCFG2,   rfSettings.IOCFG2);
-    write_reg(CCXXX1_IOCFG1,   rfSettings.IOCFG1);
-    write_reg(CCXXX1_IOCFG0,   rfSettings.IOCFG0);
-    write_reg(CCXXX1_FIFOTHR,  rfSettings.FIFOTHR);
-    // SYNC1
-    // SYNC0
-    write_reg(CCXXX1_PCKLEN,   rfSettings.PCKLEN);
-    write_reg(CCXXX1_PCKCTRL1, rfSettings.PCKCTRL1);
-    write_reg(CCXXX1_PCKCTRL0, rfSettings.PCKCTRL0);
-    write_reg(CCXXX1_ADDR,     rfSettings.ADDR);
-
-    write_reg(CCXXX1_CHANNR,   rfSettings.CHANNR);
-    write_reg(CCXXX1_FSCTRL1,  rfSettings.FSCTRL1);
-//    write_reg(CCXXX1_FSCTRL0,  rfSettings.FSCTRL0);
-    write_reg(CCXXX1_FREQ2,    rfSettings.FREQ2);
-
-    write_reg(CCXXX1_FREQ1,    rfSettings.FREQ1);
-    write_reg(CCXXX1_FREQ0,    rfSettings.FREQ0);
-    write_reg(CCXXX1_MDMCFG4,  rfSettings.MDMCFG4);
-    write_reg(CCXXX1_MDMCFG3,  rfSettings.MDMCFG3);
-
-    write_reg(CCXXX1_MDMCFG2,  rfSettings.MDMCFG2);
-    write_reg(CCXXX1_MDMCFG1,  rfSettings.MDMCFG1);
-    write_reg(CCXXX1_MDMCFG0,  rfSettings.MDMCFG0);
-    write_reg(CCXXX1_DEVIATN,  rfSettings.DEVIATN);
-    write_reg(CCXXX1_MCSM2 ,   rfSettings.MCSM2);
-    write_reg(CCXXX1_MCSM1 ,   rfSettings.MCSM1);
-    write_reg(CCXXX1_MCSM0 ,   rfSettings.MCSM0 );
-    write_reg(CCXXX1_FOCCFG,   rfSettings.FOCCFG);
-    write_reg(CCXXX1_BSCFG,    rfSettings.BSCFG);
-    write_reg(CCXXX1_AGCCTRL2, rfSettings.AGCCTRL2);
-    write_reg(CCXXX1_AGCCTRL1, rfSettings.AGCCTRL1);
-    write_reg(CCXXX1_AGCCTRL0, rfSettings.AGCCTRL0);
-    // WOREVT1
-    // WOREVT0
-    // WORCTRL
-    write_reg(CCXXX1_FREND1,   rfSettings.FREND1);
-    write_reg(CCXXX1_FREND0,   rfSettings.FREND0);
-    //write_reg(CCXXX1_FSCAL3,   rfSettings.FSCAL3);
-    //write_reg(CCXXX1_FSCAL2,   rfSettings.FSCAL2);
-    //write_reg(CCXXX1_FSCAL1,   rfSettings.FSCAL1);
-    //write_reg(CCXXX1_FSCAL0,   rfSettings.FSCAL0);
-    // PCCTRL1
-    // PCCTRL0
-    // FSTEST
-    // PTEST
-    // AGCTEST
-    //write_reg(CCXXX1_TEST2,    rfSettings.TEST2);
-    //write_reg(CCXXX1_TEST1,    rfSettings.TEST1);
-    //write_reg(CCXXX1_TEST0,    rfSettings.TEST0);
-#if DEBUG_MODE > 0
-    log(INF1, "CC1101", "Configurations registers ready");
-#endif
 }

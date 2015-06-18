@@ -60,7 +60,7 @@ void CommModule::txThread(void const *arg)
             // Send the packet on the active communication link
             inst->_tx_handles[p->port].call(p);
 
-            log(INF1, "Transmission:  Port: %u  Subclass: %u  Bytes: %u  Flags: SFS[%c], ACK[%c]\r\n", p->port, p->subclass, p->payload_size, (p->sfs ? 'X':' '), (p->ack ? 'X':' '));
+            log(INF1, "CommModule", "Transmission:  Port: %u  Subclass: %u  Bytes: %u  Flags: SFS[%c], ACK[%c]\r\n", p->port, p->subclass, p->payload_size, (p->sfs ? 'X':' '), (p->ack ? 'X':' '));
 
             // Release the allocated memory once data is sent
             osMailFree(inst->_txQueue, p);
@@ -180,7 +180,7 @@ void CommModule::send(RTP_t& packet)
         // =================
         osMailPut(_txQueue, p);
     } else {
-        log(WARN, "CommModule", "Failed to send %u byte packet: There is no open socket for port %u", packet.data_size, packet.port);
+        log(WARN, "CommModule", "Failed to send %u byte packet: There is no open socket for port %u", packet.payload_size, packet.port);
     }
 }
 
@@ -203,6 +203,6 @@ void CommModule::receive(RTP_t& packet)
         // =================
         osMailPut(_rxQueue, p);
     } else {
-        log(WARN, "CommModule", "Failed to receive %u byte packet: There is no open socket for port %u", packet.data_size, packet.port);
+        log(WARN, "CommModule", "Failed to receive %u byte packet: There is no open socket for port %u", packet.payload_size, packet.port);
     }
 }
