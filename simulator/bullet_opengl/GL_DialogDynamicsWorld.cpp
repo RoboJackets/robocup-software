@@ -709,7 +709,6 @@ btVector3	GL_DialogDynamicsWorld::getRayTo(int x,int y)
 
 void	GL_DialogDynamicsWorld::mouseMotionFunc(int x,int y)
 {
-
 	if (m_pickConstraint)
 	{
 		//move the constraint pivot
@@ -744,18 +743,8 @@ void	GL_DialogDynamicsWorld::mouseMotionFunc(int x,int y)
 
 	}
 
-	btScalar dx, dy;
-    dx = btScalar(x) - m_mouseOldX;
-    dy = btScalar(y) - m_mouseOldY;
-
-
-	
-
 	m_mouseOldX = x;
     m_mouseOldY = y;
-//	updateCamera();
-
-
 }
 
 
