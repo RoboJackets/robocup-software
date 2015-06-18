@@ -10,6 +10,7 @@ cmake
 ccache
 ninja
 clang
+clang-analyzer
 
 # required to compile gcc toolchain for ARM
 mpfr
