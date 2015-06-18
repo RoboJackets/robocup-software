@@ -391,41 +391,20 @@ void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx)
 			// run controls update
 			r->radioTx(&cmd);
 
-			// trigger signals to update visualization
-			float facing = r->getAngle();
-			const Geometry2d::Point& pos2 = r->getPosition();
-			QVector3D pos3(pos2.x, pos2.y, 0.0);
-			QVector3D axis(0.0, 0.0, 1.0);
+			Packet::RadioRx rx = r->radioRx();
+			rx.set_robot_id(r->shell);
+
+			// Send the RX packet
+			std::string out;
+			rx.SerializeToString(&out);
+			if(blue)
+				_radioSocketBlue.writeDatagram(&out[0], out.size(), LocalAddress, RadioRxPort + 1);
+			else
+				_radioSocketYellow.writeDatagram(&out[0], out.size(), LocalAddress, RadioRxPort);
 		} else {
-			printf("Commanding nonexistent robot %s:%d\n",
-					blue ? "Blue" : "Yellow",
-							cmd.robot_id());
+			cerr << "Commanding nonexistent robot " << (blue ? "Blue" : "Yellow") << ":" << cmd.robot_id() << endl;
 		}
-
-		Packet::RadioRx rx = r->radioRx();
-		rx.set_robot_id(r->shell);
-
-		// Send the RX packet
-		std::string out;
-		rx.SerializeToString(&out);
-		if(blue)
-			_radioSocketBlue.writeDatagram(&out[0], out.size(), LocalAddress, RadioRxPort + 1);
-		else
-			_radioSocketYellow.writeDatagram(&out[0], out.size(), LocalAddress, RadioRxPort);
 	}
-
-	// FIXME: the interface changed for this part
-	//	Robot *rev = robot(blue, tx.robot_id());
-	//	if (rev)
-	//	{
-	//		Packet::RadioRx rx = rev->radioRx();
-	//		rx.set_robot_id(tx.robot_id());
-	//
-	//		// Send the RX packet
-	//		std::string out;
-	//		rx.SerializeToString(&out);
-	//		_radioSocket[ch].writeDatagram(&out[0], out.size(), LocalAddress, RadioRxPort + ch);
-	//	}
 }
 
 void Environment::renderScene(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax) {
