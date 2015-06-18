@@ -1,60 +1,60 @@
 {
-	"folders":
-	[
-		{
-			"follow_symlinks": true,
-			"path": ".",
-			"folder_exclude_patterns": [
-				"build",
-				"sslrefbox",
-				"downloads",
-				"watchdog",
-				"firmware/external",
-				"api_docs",
-				"__pycache__",
-				"soccer/gameplay/cpp-old"
-			],
-			"file_exclude_patterns": [
-				".*"
-			]
-		}
-	],
-	"build_systems":
-	[
-		{
-			"name": "Soccer - Real",
-			"cmd": ["make"],
-			"working_dir": "${project_path}",
-			"file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
-			"variants": [
-				{
-					"working_dir": "${project_path}/run",
-					"name": "Run",
-					"cmd": ["./soccer"]
-				}
-			]
-		},
-		{
-			"name": "Soccer - Sim",
-			"cmd": ["make"],
-			"working_dir": "${project_path}",
-			"file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
-			"variants": [
-				{
-					"working_dir": "${project_path}/run",
-					"name": "Run",
-					"cmd": ["./soccer", "-sim"]
-				}
-			]
-		}
-	],
-	"settings": {
-		"tab_size": 4,
-		"translate_tabs_to_spaces": true,
-		"trim_trailing_whitespace_on_save": true,
-		"ensure_newline_at_eof_on_save": true,
+    "folders":
+    [
+        {
+            "follow_symlinks": true,
+            "path": ".",
+            "folder_exclude_patterns": [
+                "build",
+                "sslrefbox",
+                "downloads",
+                "watchdog",
+                "firmware/external",
+                "api_docs",
+                "__pycache__",
+                "soccer/gameplay/cpp-old"
+            ],
+            "file_exclude_patterns": [
+                ".*"
+            ]
+        }
+    ],
+    "build_systems":
+    [
+        {
+            "name": "Soccer - Real",
+            "cmd": ["make"],
+            "working_dir": "${project_path}",
+            "file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
+            "variants": [
+                {
+                    "working_dir": "${project_path}/run",
+                    "name": "Run",
+                    "cmd": ["./soccer"]
+                }
+            ]
+        },
+        {
+            "name": "Soccer - Sim",
+            "cmd": ["make"],
+            "working_dir": "${project_path}",
+            "file_regex": "^(..[^:]*):([0-9]+):?([0-9]+)?:? (.*)$",
+            "variants": [
+                {
+                    "working_dir": "${project_path}/run",
+                    "name": "Run",
+                    "cmd": ["./soccer", "-sim"]
+                }
+            ]
+        }
+    ],
+    "settings": {
+        "tab_size": 4,
+        "translate_tabs_to_spaces": true,
+        "trim_trailing_whitespace_on_save": true,
+        "ensure_newline_at_eof_on_save": true,
 
-		// The filesystem watcher we use to auto-reload plays doesn't work correctly when atomic_save is on
-		"atomic_save": false
-	}
+        // The filesystem watcher we use to auto-reload plays doesn't work correctly when atomic_save is on
+        "atomic_save": false
+    }
 }
