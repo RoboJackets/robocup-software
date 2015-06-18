@@ -4,7 +4,6 @@
 .scons_variables
 /build
 /build-scons
-/static-analysis
 .pydevproject
 /gmon.out
 *.swp
