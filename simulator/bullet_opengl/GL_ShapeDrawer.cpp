@@ -561,8 +561,6 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 
 		glColor3f(color.x(),color.y(), color.z());		
 
-		bool useWireframeFallback = true;
-
 		if (!(debugMode & btIDebugDraw::DBG_DrawWireframe))
 		{
 			///you can comment out any of the specific cases, and use the default
@@ -578,7 +576,6 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 					const btSphereShape* sphereShape = static_cast<const btSphereShape*>(shape);
 					float radius = sphereShape->getMargin();//radius doesn't include the margin, so draw with margin
 					drawSphere(radius,10,10);
-					useWireframeFallback = false;
 					break;
 				}
 
@@ -629,7 +626,6 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 					glEnd();
 #endif
 
-					useWireframeFallback = false;
 					break;
 				}
 
@@ -660,7 +656,6 @@ void GL_ShapeDrawer::drawOpenGL(btScalar* m, const btCollisionShape* shape, cons
 
 					glTranslatef(0.0, 0.0, -0.5*height);
 					glutSolidCone(radius,height,10,10);
-					useWireframeFallback = false;
 					break;
 
 				}
@@ -918,7 +913,6 @@ void		GL_ShapeDrawer::drawShadow(btScalar* m,const btVector3& extrusion,const bt
 	}
 	else
 	{
-	//	bool useWireframeFallback = true;
 		if (shape->isConvex())
 		{
 			ShapeCache*	sc=cache((btConvexShape*)shape);
