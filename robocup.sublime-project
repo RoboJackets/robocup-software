@@ -49,6 +49,12 @@
 		}
 	],
 	"settings": {
-		"tab_size": 4
+		"tab_size": 4,
+		"translate_tabs_to_spaces": true,
+		"trim_trailing_whitespace_on_save": true,
+		"ensure_newline_at_eof_on_save": true,
+
+		// The filesystem watcher we use to auto-reload plays doesn't work correctly when atomic_save is on
+		"atomic_save": false
 	}
 }
