@@ -13,7 +13,12 @@
 #include "Constants.hpp"
 #include "time.hpp"
 #include <math.h>
-
+const static bool THROW_DEBUG_EXCEPTIONS = true;
+template<typename T> static inline void debugThrow(T exception) {
+	if (THROW_DEBUG_EXCEPTIONS) {
+		throw exception;
+	}
+}
 
 /**
  * @brief Restricts the given angle to be between pi and -pi
@@ -23,7 +28,7 @@
  */
 static inline float fixAngleRadians(float a)
 {
-	a= remainder(a, 2*M_PI);
+	a = remainder(a, 2*M_PI);
 	//cout<<"angle "<<a<<endl;
 	while (a < -M_PI) a += 2.0*M_PI;
 
