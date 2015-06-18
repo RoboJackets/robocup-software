@@ -53,7 +53,6 @@ void	GL_Simplex1to4::calcClosest(btScalar* m)
 			if (m_simplexSolver)
 			{
 				m_simplexSolver->reset();
-				bool res;
 
 				btVector3 v;
 
@@ -61,7 +60,6 @@ void	GL_Simplex1to4::calcClosest(btScalar* m)
 				{
 					v =  tr(m_vertices[i]);
 					m_simplexSolver->addVertex(v,v,btVector3(0.f,0.f,0.f));
-					res = m_simplexSolver->closest(v);
 				}
 
 				//draw v?
@@ -73,8 +71,5 @@ void	GL_Simplex1to4::calcClosest(btScalar* m)
 				glEnd();
 				
 				glEnable(GL_LIGHTING);
-
-
 			}
-
 }
