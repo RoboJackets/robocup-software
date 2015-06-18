@@ -121,8 +121,8 @@ var annotated =
           [ "triangle_pass", null, [
             [ "TrianglePass", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass.html", "classgameplay_1_1plays_1_1testing_1_1triangle__pass_1_1_triangle_pass" ]
           ] ],
-          [ "TwoSideAttack", null, [
-            [ "TwoSideAttack", "classgameplay_1_1plays_1_1testing_1_1_two_side_attack_1_1_two_side_attack.html", "classgameplay_1_1plays_1_1testing_1_1_two_side_attack_1_1_two_side_attack" ]
+          [ "two_side_attack", null, [
+            [ "TwoSideAttack", "classgameplay_1_1plays_1_1testing_1_1two__side__attack_1_1_two_side_attack.html", "classgameplay_1_1plays_1_1testing_1_1two__side__attack_1_1_two_side_attack" ]
           ] ]
         ] ],
         [ "tuning", null, [
@@ -239,14 +239,12 @@ var annotated =
       [ "TransformMatrix", "class_geometry2d_1_1_transform_matrix.html", "class_geometry2d_1_1_transform_matrix" ]
     ] ],
     [ "Planning", null, [
+      [ "CompositePath", "class_planning_1_1_composite_path.html", "class_planning_1_1_composite_path" ],
       [ "FixedStepTree", "class_planning_1_1_fixed_step_tree.html", "class_planning_1_1_fixed_step_tree" ],
       [ "InterpolatedPath", "class_planning_1_1_interpolated_path.html", "class_planning_1_1_interpolated_path" ],
       [ "Path", "class_planning_1_1_path.html", "class_planning_1_1_path" ],
       [ "RRTPlanner", "class_planning_1_1_r_r_t_planner.html", "class_planning_1_1_r_r_t_planner" ],
       [ "Tree", "class_planning_1_1_tree.html", "class_planning_1_1_tree" ]
-    ] ],
-    [ "play_config_tab", null, [
-      [ "PlayConfigTab", "classplay__config__tab_1_1_play_config_tab.html", "classplay__config__tab_1_1_play_config_tab" ]
     ] ],
     [ "test_constants", null, [
       [ "TestConstants", "classtest__constants_1_1_test_constants.html", "classtest__constants_1_1_test_constants" ]
@@ -270,6 +268,8 @@ var annotated =
     [ "BallFilter", "class_ball_filter.html", "class_ball_filter" ],
     [ "BallObservation", "class_ball_observation.html", "class_ball_observation" ],
     [ "BallTracker", "class_ball_tracker.html", "class_ball_tracker" ],
+    [ "BatteryProfile", "class_battery_profile.html", "class_battery_profile" ],
+    [ "BatteryWidget", "class_battery_widget.html", "class_battery_widget" ],
     [ "CC1101", "class_c_c1101.html", "class_c_c1101" ],
     [ "command_t", "structcommand__t.html", "structcommand__t" ],
     [ "CommLink", "class_comm_link.html", "class_comm_link" ],
@@ -282,6 +282,7 @@ var annotated =
     [ "ConfigurableImpl", "class_configurable_impl.html", "class_configurable_impl" ],
     [ "Configuration", "class_configuration.html", "class_configuration" ],
     [ "DebugQMutex", "class_debug_q_mutex.html", "class_debug_q_mutex" ],
+    [ "DS2411_ID", "struct_d_s2411___i_d.html", "struct_d_s2411___i_d" ],
     [ "ExceptionIterator", "class_exception_iterator.html", "class_exception_iterator" ],
     [ "Field_Dimensions", "struct_field___dimensions.html", "struct_field___dimensions" ],
     [ "FieldView", "class_field_view.html", "class_field_view" ],
@@ -316,6 +317,8 @@ var annotated =
     [ "RobotObservation", "class_robot_observation.html", "class_robot_observation" ],
     [ "RobotPose", "class_robot_pose.html", "class_robot_pose" ],
     [ "RobotStatus", "class_robot_status.html", "class_robot_status" ],
+    [ "RobotStatusWidget", "class_robot_status_widget.html", "class_robot_status_widget" ],
+    [ "RobotWidget", "class_robot_widget.html", "class_robot_widget" ],
     [ "SimFieldView", "class_sim_field_view.html", "class_sim_field_view" ],
     [ "SimRadio", "class_sim_radio.html", "class_sim_radio" ],
     [ "SpaceNavJoystick", "class_space_nav_joystick.html", "class_space_nav_joystick" ],

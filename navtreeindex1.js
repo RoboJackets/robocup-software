@@ -1,5 +1,6 @@
 var NAVTREEINDEX1 =
 {
+"class_comm_module.html#a5beb2d273248e236d7d2feae90450bd4":[11,0,21,12],
 "class_comm_module.html#a744ed6f2b50122c8c52edc77183d3c96":[11,0,21,14],
 "class_comm_module.html#a8fc34ff99f70c3b3b8dcfe52119ca595":[11,0,21,1],
 "class_comm_module.html#a9f94d1f2bbc9234433ad423f6221326f":[11,0,21,13],
@@ -55,7 +56,7 @@ var NAVTREEINDEX1 =
 "class_configurable.html":[11,0,26],
 "class_configurable.html#a058f698c44e2c2fb6d4366a0fbe624f2":[11,0,26,0],
 "class_configurable.html#a3b76aa8c1b361ff9f207b5190992d257":[11,0,26,1],
-"class_configurable.html#aa9aa8dd59689402df32f318a99e3a98a":[11,0,26,2],
+"class_configurable.html#acafd69fa96cd9e17c77829ab2a2155f3":[11,0,26,2],
 "class_configurable_impl.html":[11,0,27],
 "class_configurable_impl.html#ae295ad6ae712c0d388442157dfa62801":[11,0,27,0],
 "class_configuration.html":[11,0,28],
@@ -192,8 +193,8 @@ var NAVTREEINDEX1 =
 "class_gamepad_joystick.html#a6840961fb456cd8374493702dd84b06d":[11,0,36,0],
 "class_gamepad_joystick.html#ab64b3a6f7d97b7a31e639ae907375027":[11,0,36,1],
 "class_gamepad_joystick.html#ac4de36ae979a045c4445e866adcbd335":[11,0,36,4],
+"class_gamepad_joystick.html#ae8234bf105ab2e860dd742d08519cb19":[11,0,36,5],
 "class_gamepad_joystick.html#af755f2ecd6bbfd7fd4187473995c2b25":[11,0,36,3],
-"class_gamepad_joystick.html#afee6084956c0cea061dcd292b7a6c0e3":[11,0,36,5],
 "class_gameplay_1_1_gameplay_module.html":[11,0,1,0],
 "class_gameplay_1_1_gameplay_module.html#a0cd9f6f095d43b1896e073e0f1d9bf20":[11,0,1,0,14],
 "class_gameplay_1_1_gameplay_module.html#a18e319fda79838b561d98588cd9eca80":[11,0,1,0,7],
@@ -248,6 +249,5 @@ var NAVTREEINDEX1 =
 "class_geometry2d_1_1_composite_shape.html#aa65119b15c0da1270116f7209c60b08d":[11,0,3,1,1],
 "class_geometry2d_1_1_composite_shape.html#aa9c55a0d099a5732a169239da0ecd5be":[11,0,3,1,27],
 "class_geometry2d_1_1_composite_shape.html#aaf47c71233b25c0bbecef792eab6bc73":[11,0,3,1,12],
-"class_geometry2d_1_1_composite_shape.html#aaf6c825581e1f225a81f72d003e3899a":[11,0,3,1,3],
-"class_geometry2d_1_1_composite_shape.html#abdfb138b69ced9a2009b540bbbea1dd6":[11,0,3,1,9]
+"class_geometry2d_1_1_composite_shape.html#aaf6c825581e1f225a81f72d003e3899a":[11,0,3,1,3]
 };

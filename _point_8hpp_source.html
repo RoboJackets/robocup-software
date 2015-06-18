@@ -345,14 +345,14 @@ $(document).ready(function(){initNavTree('_point_8hpp_source.html','');});
 <div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;                <span class="keywordflow">return</span> <a class="code" href="class_geometry2d_1_1_point.html#aa2a2716a3d562e5aa4771697687c7ab1">x</a> * other.<a class="code" href="class_geometry2d_1_1_point.html#a08dec353958dc87c3206346beab423cc">y</a> - <a class="code" href="class_geometry2d_1_1_point.html#a08dec353958dc87c3206346beab423cc">y</a> * other.<a class="code" href="class_geometry2d_1_1_point.html#aa2a2716a3d562e5aa4771697687c7ab1">x</a>;</div>
 <div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;            }</div>
 <div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;            </div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;            std::string toString()</div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;            {</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;            std::string toString()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;<span class="keyword">            </span>{</div>
 <div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;                std::stringstream str;</div>
 <div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;                str &lt;&lt; <span class="stringliteral">&quot;Point(&quot;</span> &lt;&lt; <a class="code" href="class_geometry2d_1_1_point.html#aa2a2716a3d562e5aa4771697687c7ab1">x</a> &lt;&lt; <span class="stringliteral">&quot;, &quot;</span> &lt;&lt; <a class="code" href="class_geometry2d_1_1_point.html#a08dec353958dc87c3206346beab423cc">y</a> &lt;&lt; <span class="stringliteral">&quot;)&quot;</span>;</div>
 <div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;                <span class="keywordflow">return</span> str.str();</div>
 <div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;            }</div>
 <div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;            <span class="keyword">friend</span> std::ostream&amp; operator&lt;&lt; (std::ostream &amp;stream, <a class="code" href="class_geometry2d_1_1_point.html#a8e0ac151ee451f036d322d24677bc691">Point</a> &amp;point) {</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;            <span class="keyword">friend</span> std::ostream&amp; operator&lt;&lt; (std::ostream &amp;stream, <span class="keyword">const</span> <a class="code" href="class_geometry2d_1_1_point.html#a8e0ac151ee451f036d322d24677bc691">Point</a> &amp;point) {</div>
 <div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;                stream &lt;&lt; point.toString();</div>
 <div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;                <span class="keywordflow">return</span> stream;</div>
 <div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;            }</div>
@@ -412,7 +412,7 @@ $(document).ready(function(){initNavTree('_point_8hpp_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_c5f6e4ff4314f36b41387a9347f2c16e.html">common</a></li><li class="navelem"><a class="el" href="dir_56b27209bd73555d6b548dee91279a5e.html">Geometry2d</a></li><li class="navelem"><b>Point.hpp</b></li>
-    <li class="footer">Generated on Thu May 28 2015 04:40:44 for GT RoboCup SSL by
+    <li class="footer">Generated on Thu Jun 18 2015 05:14:49 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

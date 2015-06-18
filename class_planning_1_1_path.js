@@ -1,7 +1,10 @@
 var class_planning_1_1_path =
 [
-    [ "destination", "class_planning_1_1_path.html#afe4b2a01beab4db0673dd6dbd1ea245d", null ],
-    [ "draw", "class_planning_1_1_path.html#a0e8f3a8f6941d6e3ecd85b17ff4be66c", null ],
-    [ "evaluate", "class_planning_1_1_path.html#a7a3d8ab544a3d43a65e8ab67684336c9", null ],
-    [ "hit", "class_planning_1_1_path.html#aba209efcf2391a2a0f62484b4f91ac58", null ]
+    [ "clone", "class_planning_1_1_path.html#a05ea5649bd6ce649ca974e50983dbc76", null ],
+    [ "destination", "class_planning_1_1_path.html#a0b9f7fee1744c7261788f7702b71eef7", null ],
+    [ "draw", "class_planning_1_1_path.html#a8a6d71132a1bc261968aa7fcbb141b1a", null ],
+    [ "evaluate", "class_planning_1_1_path.html#a9e701e94af9dc86c81986a07cac5dec5", null ],
+    [ "getDuration", "class_planning_1_1_path.html#a4886548615206bd2f95a5b2628889688", null ],
+    [ "hit", "class_planning_1_1_path.html#a42d80c8abceb3183ddfa62c749537dd2", null ],
+    [ "subPath", "class_planning_1_1_path.html#addd308038986255e995c00208a1094f5", null ]
 ];

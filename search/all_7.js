@@ -9,6 +9,7 @@ var searchData=
   ['getchargelevel',['getChargeLevel',['../class_battery_profile.html#a60890c08094cb4ad4e97ba0ac9c2c2e1',1,'BatteryProfile']]],
   ['getcmdtext',['getCmdText',['../class_our_robot.html#a4170e6526e724b2bf36a06af62ea64b5',1,'OurRobot']]],
   ['getdata',['getData',['../class_c_c1101.html#a8aaa7bc5928d55b9dc5f6bbd8043fda1',1,'CC1101::getData()'],['../class_comm_link.html#a8a902ecdba1f75eff8691af245807a1e',1,'CommLink::getData()']]],
+  ['getduration',['getDuration',['../class_planning_1_1_composite_path.html#a6ab16abe2a63f6ce12728ad15fed7fe0',1,'Planning::CompositePath::getDuration()'],['../class_planning_1_1_interpolated_path.html#abf1b044be359b99c86c395ac9216dce5',1,'Planning::InterpolatedPath::getDuration()'],['../class_planning_1_1_path.html#a4886548615206bd2f95a5b2628889688',1,'Planning::Path::getDuration()']]],
   ['getjoystickcontrolvalues',['getJoystickControlValues',['../class_gamepad_joystick.html#a5295fd0b867b599ac4310e7bf85dcc79',1,'GamepadJoystick::getJoystickControlValues()'],['../class_joystick.html#a8e9bf845ab30bc6f661ce91db1dd75be',1,'Joystick::getJoystickControlValues()'],['../class_space_nav_joystick.html#a996c864592a44377353be62dd5e6a77f',1,'SpaceNavJoystick::getJoystickControlValues()']]],
   ['getmainmodule',['getMainModule',['../class_gameplay_1_1_gameplay_module.html#af79e2d81e20080376a8b4072228252d2',1,'Gameplay::GameplayModule']]],
   ['getpackets',['getPackets',['../class_vision_receiver.html#a8e156cf20a84dd29c46ae82d6076b9e4',1,'VisionReceiver']]],

@@ -27,5 +27,6 @@ var searchData=
   ['stop',['stop',['../class_our_robot.html#ad06cbfbea4234c95cbe813e1c8910363',1,'OurRobot']]],
   ['stopped',['stopped',['../class_motion_control.html#a0d8a00158b08f848c7bd03f65f2bb2b8',1,'MotionControl']]],
   ['strobe',['strobe',['../class_c_c1101.html#a1f4b65d0800cc0979470491bf78b5f3a',1,'CC1101']]],
+  ['subpath',['subPath',['../class_planning_1_1_composite_path.html#a75f37da922b9d6ff873a082ab4084c9b',1,'Planning::CompositePath::subPath()'],['../class_planning_1_1_interpolated_path.html#aac77d5faba6a75b09f05a8f0eb3dd261',1,'Planning::InterpolatedPath::subPath()'],['../class_planning_1_1_path.html#addd308038986255e995c00208a1094f5',1,'Planning::Path::subPath()']]],
   ['subscribe',['subscribe',['../classgameplay_1_1fs__watcher_1_1_fs_watcher.html#a689edc4db365740315128625427178f8',1,'gameplay::fs_watcher::FsWatcher']]]
 ];

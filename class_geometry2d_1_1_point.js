@@ -33,8 +33,8 @@ var class_geometry2d_1_1_point =
     [ "rotate", "class_geometry2d_1_1_point.html#a6ccfeea670b14c267037f6185cb9d137", null ],
     [ "rotated", "class_geometry2d_1_1_point.html#aeab18a2ec5e60bcd00498bb29bcf3048", null ],
     [ "toQPointF", "class_geometry2d_1_1_point.html#acb2e043ceee333391ee67f19d1673f9b", null ],
-    [ "toString", "class_geometry2d_1_1_point.html#ae05dc3dd96e2257ed58d7c9fa1692726", null ],
-    [ "operator<<", "class_geometry2d_1_1_point.html#a2d2de4f6da25a09a6530c008e44c4a7c", null ],
+    [ "toString", "class_geometry2d_1_1_point.html#ac06a322bbe2369b33770278af4944f1f", null ],
+    [ "operator<<", "class_geometry2d_1_1_point.html#a64d624691f52b0539792bde65ee76164", null ],
     [ "x", "class_geometry2d_1_1_point.html#aa2a2716a3d562e5aa4771697687c7ab1", null ],
     [ "y", "class_geometry2d_1_1_point.html#a08dec353958dc87c3206346beab423cc", null ]
 ];

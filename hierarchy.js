@@ -89,6 +89,7 @@ var hierarchy =
       [ "gameplay.fs_watcher.FsWatcher", "classgameplay_1_1fs__watcher_1_1_fs_watcher.html", null ]
     ] ],
     [ "Planning::Path", "class_planning_1_1_path.html", [
+      [ "Planning::CompositePath", "class_planning_1_1_composite_path.html", null ],
       [ "Planning::InterpolatedPath", "class_planning_1_1_interpolated_path.html", null ]
     ] ],
     [ "pck_ctrl_t", "structpck__ctrl__t.html", null ],
@@ -158,9 +159,6 @@ var hierarchy =
       [ "Geometry2d::CompositeShape", "class_geometry2d_1_1_composite_shape.html", null ],
       [ "Geometry2d::Polygon", "class_geometry2d_1_1_polygon.html", null ],
       [ "Geometry2d::Rect", "class_geometry2d_1_1_rect.html", null ]
-    ] ],
-    [ "StateMachine", null, [
-      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "gameplay.fsm.StateMachine", "classgameplay_1_1fsm_1_1_state_machine.html", [
       [ "gameplay.behavior.Behavior", "classgameplay_1_1behavior_1_1_behavior.html", [
@@ -232,6 +230,9 @@ var hierarchy =
         [ "gameplay.timed_behavior.TimedBehavior", "classgameplay_1_1timed__behavior_1_1_timed_behavior.html", null ]
       ] ],
       [ "gameplay.evaluation.double_touch.DoubleTouchTracker", "classgameplay_1_1evaluation_1_1double__touch_1_1_double_touch_tracker.html", null ]
+    ] ],
+    [ "StateMachine", null, [
+      [ "test_fsm.MyFsm", "classtest__fsm_1_1_my_fsm.html", null ]
     ] ],
     [ "Processor::Status", "struct_processor_1_1_status.html", null ],
     [ "SystemState", "class_system_state.html", null ],

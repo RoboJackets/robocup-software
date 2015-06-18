@@ -19,6 +19,7 @@ var searchData=
   ['angleto',['angleTo',['../class_geometry2d_1_1_point.html#ace62e1a76e038d501c48e0435b737bbb',1,'Geometry2d::Point']]],
   ['anglevel',['angleVel',['../class_robot_pose.html#a685c05ad27d5bcc6ac58130df4219e7e',1,'RobotPose']]],
   ['anglevelocity',['angleVelocity',['../class_our_robot.html#a39e2201dd5932aa609b6f5aa7924af26',1,'OurRobot']]],
+  ['append',['append',['../class_planning_1_1_composite_path.html#aa7dbe5c31ab2a5f25fbf785fd0f173f7',1,'Planning::CompositePath']]],
   ['approachopponent',['approachOpponent',['../class_our_robot.html#afcf2cd89c218915086882fef528e2fd2',1,'OurRobot::approachOpponent(unsigned shell_id) const '],['../class_our_robot.html#a334c3de52cadfaf6af2ea8537ab1d9b2',1,'OurRobot::approachOpponent(unsigned shell_id, bool enable_approach)']]],
   ['arcradius',['ArcRadius',['../struct_field___dimensions.html#a01d05184f9c582f489d4058f42e9644f',1,'Field_Dimensions']]],
   ['area_5fmarking',['area_marking',['../classgameplay_1_1tactics_1_1positions_1_1defender_1_1_defender_1_1_state.html#aff106f198c70a1bfeebc810caa685964',1,'gameplay::tactics::positions::defender::Defender::State']]],

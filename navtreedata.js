@@ -14,8 +14,8 @@ var NAVTREE =
     [ "Namespaces", null, [
       [ "Namespace List", "namespaces.html", "namespaces" ]
     ] ],
-    [ "Classes", "annotated.html", [
-      [ "Class List", "annotated.html", "annotated_dup" ],
+    [ "Classes", null, [
+      [ "Class List", "annotated.html", "annotated" ],
       [ "Class Index", "classes.html", null ],
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
@@ -33,15 +33,15 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 ".html",
-"class_comm_module.html#a744ed6f2b50122c8c52edc77183d3c96",
-"class_geometry2d_1_1_composite_shape.html#ac9ccf9f0d42c288abb4067f2044de4ff",
-"class_new_referee_module.html#ae4e91451e394bfa95b01ed05e9978278a3bc527710f3b87ca4da1a5c6adfd4776",
-"class_protobuf_tree.html#aa26415d83b78d34f538f45bfcb7a7d69",
-"classgameplay_1_1behavior_1_1_behavior.html",
-"classgameplay_1_1plays_1_1testing_1_1stress__test_1_1_stress_test.html#a9280237844eaa490b923c88e8e18da86",
-"classgameplay_1_1skills_1_1face_1_1_face.html#ae6f7b973b0bdea6b1f9cb38bf9cb71af",
-"dir_56b27209bd73555d6b548dee91279a5e.html",
-"structrf__settings__t.html#ad2ecafb3786963ec86ddf29268b98d27"
+"class_comm_module.html#a5beb2d273248e236d7d2feae90450bd4",
+"class_geometry2d_1_1_composite_shape.html#abdfb138b69ced9a2009b540bbbea1dd6",
+"class_new_referee_module.html#ae4e91451e394bfa95b01ed05e9978278",
+"class_processor.html#afaad3140ad4f40c8f5b8d1af647b9194",
+"class_vision_receiver.html#a2386ee44bca27a45aaac4e2982766579",
+"classgameplay_1_1plays_1_1testing_1_1repeated__line__up_1_1_repeated_line_up.html#a320feb1ac07f479e096be4464896a990",
+"classgameplay_1_1skills_1_1capture_1_1_capture.html#ab2b25baee45e56ca5bca83e5f07aef08",
+"classtest__role__assignment_1_1_test_role_assignment.html#ac82c0f8291b3d51872a56bc2f50d84d3",
+"structrf__settings__t.html#a9100be6f814ca3effb41bc318a97c404"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

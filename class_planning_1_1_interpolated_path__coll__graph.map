@@ -1,4 +1,4 @@
 <map id="Planning::InterpolatedPath" name="Planning::InterpolatedPath">
-<area shape="rect" id="node2" href="$class_planning_1_1_path.html" title="Abstract class representing a motion path. " alt="" coords="273,5,380,35"/>
-<area shape="rect" id="node4" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="5,105,136,135"/>
+<area shape="rect" id="node2" href="$class_planning_1_1_path.html" title="Abstract class representing a motion path. " alt="" coords="5,111,112,140"/>
+<area shape="rect" id="node8" href="$class_geometry2d_1_1_point.html" title="Simple class to represent a point in 2d space. " alt="" coords="311,5,441,35"/>
 </map>
