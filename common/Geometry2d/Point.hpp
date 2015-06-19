@@ -358,14 +358,14 @@ namespace Geometry2d
 				return x * other.y - y * other.x;
 			}
 			
-			std::string toString()
+			std::string toString() const
 			{
 				std::stringstream str;
 				str << "Point(" << x << ", " << y << ")";
 				return str.str();
 			}
 
-			friend std::ostream& operator<< (std::ostream &stream, Point &point) {
+			friend std::ostream& operator<< (std::ostream &stream, const Point &point) {
 				stream << point.toString();
 				return stream;
 			}
