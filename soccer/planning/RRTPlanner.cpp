@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <Eigen/Dense>
 #include "RRTPlanner.hpp"
-
+#include "motion/TrapezoidalMotion.hpp"
 #include <Constants.hpp>
 #include <Utils.hpp>
 
@@ -46,6 +46,8 @@ Planning::InterpolatedPath* RRTPlanner::run(
 	if (start == goal)
 	{
 		path->points.push_back(start);
+		path->times.push_back(0);
+		path->vels.push_back(Geometry2d::Point(0,0));
 		return path;
 	}
 
@@ -137,6 +139,8 @@ Planning::InterpolatedPath* RRTPlanner::run(
 	{
 		// FIXME: without these two lines, an empty path is returned which causes errors down the line.
 		path->points.push_back(start);
+		path->times.push_back(0);
+		path->vels.push_back(Geometry2d::Point(0,0));
 	}
 	return path;
 }
@@ -144,8 +148,6 @@ Planning::InterpolatedPath* RRTPlanner::run(
 Planning::InterpolatedPath RRTPlanner::makePath()
 {
 	Planning::InterpolatedPath newPath;
-	newPath.maxSpeed = _motionConstraints.maxSpeed;
-	newPath.maxAcceleration = _motionConstraints.maxAcceleration;
 	
 
 	Tree::Point* p0 = _fixedStepTree0.last();
@@ -162,10 +164,7 @@ Planning::InterpolatedPath RRTPlanner::makePath()
 	_fixedStepTree0.addPath(newPath, p0);//add the start tree first...normal order (aka from root to p0)
 	_fixedStepTree1.addPath(newPath, p1, true);//add the goal tree in reverse (aka p1 to root)
 
-	newPath.vi = vi;
-	newPath.endSpeed = _motionConstraints.endSpeed;
-
-	optimize(newPath, _obstacles);
+	optimize(newPath, _obstacles, _motionConstraints, vi);
 
 	//TODO evaluate the old path based on the closest segment
 	//and the distance to the endpoint of that segment
@@ -181,7 +180,7 @@ Planning::InterpolatedPath RRTPlanner::makePath()
 	return newPath;
 }
 
-void RRTPlanner::optimize(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles)
+void RRTPlanner::optimize(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles, const MotionConstraints &motionConstraints, Geometry2d::Point vi)
 {
 	unsigned int start = 0;
 
@@ -204,7 +203,7 @@ void RRTPlanner::optimize(Planning::InterpolatedPath &path, const Geometry2d::Co
 	again:
 	obstacles->hit(path.points[start], hit);
 	pts.push_back(path.points[start]);
-	// [start, start + 1] is guaranteed not to have a collision because it's already in the path.
+// [start, start + 1] is guaranteed not to have a collision because it's already in the path.
 	for (unsigned int end = start + 2; end < path.points.size(); ++end)
 	{
 		std::set<shared_ptr<Geometry2d::Shape> > newHit;
@@ -221,7 +220,7 @@ void RRTPlanner::optimize(Planning::InterpolatedPath &path, const Geometry2d::Co
 	// Done with the path
 	pts.push_back(path.points.back());
 	path.points = pts;
-	cubicBezier(path, obstacles);
+	cubicBezier(path, obstacles, motionConstraints, vi);
 }
 
 Geometry2d::Point pow(Geometry2d::Point &p1, float i)
@@ -230,10 +229,15 @@ Geometry2d::Point pow(Geometry2d::Point &p1, float i)
 }
 
 using namespace Eigen;
+
+float getTime(Planning::InterpolatedPath &path, int index, const MotionConstraints &motionConstraints, float startSpeed, float endSpeed) {
+	return Trapezoidal::getTime(path.length(0,index), path.length(), motionConstraints.maxSpeed, motionConstraints.maxAcceleration, startSpeed, endSpeed);
+}
+
 //TODO: Use targeted end velocity
-void RRTPlanner::cubicBezier (Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles)
+void RRTPlanner::cubicBezier (Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles, const MotionConstraints &motionConstraints, Geometry2d::Point vi)
 {
-	int length = path.size();
+	int length = path.points.size();
 	int curvesNum = length-1;
 	if (curvesNum <= 0) {
 		//TODO
@@ -242,9 +246,6 @@ void RRTPlanner::cubicBezier (Planning::InterpolatedPath &path, const Geometry2d
 
 	//TODO: Get the actual values
 	Geometry2d::Point vf(0,0);
-
-	Geometry2d::Point vi = path.vi;
-
 	vector<double> pointsX(length);
 	vector<double> pointsY(length);
 	vector<double> ks(length-1);
@@ -256,8 +257,10 @@ void RRTPlanner::cubicBezier (Planning::InterpolatedPath &path, const Geometry2d
 		pointsX[i] = path.points[i].x;
 		pointsY[i] = path.points[i].y;
 	}
+	float startSpeed = 0;
+	float endSpeed = motionConstraints.endSpeed;
 	for (int i=0; i<curvesNum; i++) {
-		ks[i] = 1.0/(path.getTime(i+1)-path.getTime(i));
+		ks[i] = 1.0/(getTime(path, i+1, motionConstraints, startSpeed, endSpeed)-getTime(path, i, motionConstraints, startSpeed, endSpeed));
 		ks2[i] = ks[i]*ks[i];
 	}
 
