@@ -192,7 +192,7 @@ void cmd_alias(const vector<string> &args)
 		}
 	}
 
-	flush();
+	Console::Flush();
 }
 
 /**
@@ -201,7 +201,7 @@ void cmd_alias(const vector<string> &args)
 void cmd_clear(const vector<string> &args)
 {
 	printf(CLEAR_SCREEN_SEQ.c_str());
-	flush();
+	Console::Flush();
 }
 
 /**
@@ -215,7 +215,7 @@ void cmd_echo(const vector<string> &args)
 	}
 
 	printf("\r\n");
-	flush();
+	Console::Flush();
 }
 
 /**
@@ -224,7 +224,7 @@ void cmd_echo(const vector<string> &args)
  */
 void cmd_exitSys(const vector<string> &args)
 {
-	reqSysStop();
+	Console::RequestSystemStop();
 }
 
 /**
@@ -233,7 +233,7 @@ void cmd_exitSys(const vector<string> &args)
 void cmd_help(const vector<string> &args)
 {
 	printf("\nCtrl + C stops iterative commands\r\n\r\n");
-	flush();
+	Console::Flush();
 
 	//prints all commands, with details
 	if (args.size() == 0)
@@ -242,20 +242,20 @@ void cmd_help(const vector<string> &args)
 		{
 			printf("%s:\r\n",
 			       commands[i].aliases[0].c_str());
-			flush();
+			Console::Flush();
 			printf("\tDescription: %s\r\n",
 			       commands[i].description.c_str());
-			flush();
+			Console::Flush();
 			printf("\tUsage: %s\r\n",
 			       commands[i].usage.c_str());
-			flush();
+			Console::Flush();
 			printf("\tIterative: %s\r\n\r\n",
 			       commands[i].isIterative ? "true" : "false");
-			flush();
+			Console::Flush();
 		}
 
 		printf("Screen Overflow? Try \"help <command>\"\r\n\r\n");
-		flush();
+		Console::Flush();
 	}
 	//prints all commands
 	else if (args.size() == 1 && strcmp(args[0].c_str(), "--list") == 0)
@@ -277,7 +277,7 @@ void cmd_help(const vector<string> &args)
 		}
 
 		printf("\r\n");
-		flush();
+		Console::Flush();
 	}
 	//prints arguments with details
 	else
@@ -299,16 +299,16 @@ void cmd_help(const vector<string> &args)
 					//print info
 					printf("%s:\r\n",
 					       commands[i].aliases[0].c_str());
-					flush();
+					Console::Flush();
 					printf("\tDescription: %s\r\n",
 					       commands[i].description.c_str());
-					flush();
+					Console::Flush();
 					printf("\tUsage: %s\r\n",
 					       commands[i].usage.c_str());
-					flush();
+					Console::Flush();
 					printf("\tIterative: %s\r\n\r\n",
 					       commands[i].isIterative ? "true" : "false");
-					flush();
+					Console::Flush();
 				}
 			}
 
@@ -316,7 +316,7 @@ void cmd_help(const vector<string> &args)
 			if (!commandFound)
 			{
 				printf("Command \"%s\" not found.\r\n", args[argInd].c_str());
-				flush();
+				Console::Flush();
 			}
 		}
 	}
@@ -328,7 +328,7 @@ void cmd_help(const vector<string> &args)
 void cmd_ping(const vector<string> &args)
 {
 	printf("pong.\r\n");
-	flush();
+	Console::Flush();
 }
 
 /**
@@ -361,7 +361,7 @@ void cmd_ls(const vector<string> &args)
     } else {
         printf("Could not open directory!\r\n");
     }
-    flush();
+    Console::Flush();
 }
 
 
@@ -395,7 +395,7 @@ void cmd_info(const vector<string> &args)
     else
         printf("Unable to retrieve Serial Number from LPC Flash\r\n");
 
-    flush();
+    Console::Flush();
 }
 
 /**
@@ -479,7 +479,7 @@ void executeCommand(char* rawCommand)
 		if (!commandFound)
 		{
 			printf("%s\r\n", COMMAND_NOT_FOUND_MSG.c_str());
-			flush();
+			Console::Flush();
 		}
 	}
 }
