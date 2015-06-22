@@ -41,6 +41,9 @@ void reqSysStop(void);
 bool isSysStopReq(void);
 
 
+/**
+ * Manages serial-over-USB communication with the PC
+ */
 class Console
 {
 
