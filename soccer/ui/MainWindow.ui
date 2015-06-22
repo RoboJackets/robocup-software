@@ -1189,9 +1189,6 @@ p, li { white-space: pre-wrap; }
         <property name="handleWidth">
          <number>10</number>
         </property>
-        <property name="childrenCollapsible">
-         <bool>false</bool>
-        </property>
         <widget class="SimFieldView" name="fieldView" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -1238,10 +1235,16 @@ p, li { white-space: pre-wrap; }
           <layout class="QVBoxLayout" name="verticalLayout_12">
            <item>
             <widget class="QSplitter" name="splitter_2">
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
              <property name="orientation">
               <enum>Qt::Vertical</enum>
              </property>
-             <widget class="QWidget" name="layoutWidget1">
+             <property name="handleWidth">
+              <number>10</number>
+             </property>
+             <widget class="QWidget" name="">
               <layout class="QVBoxLayout" name="verticalLayout_11">
                <property name="spacing">
                 <number>2</number>
@@ -1273,7 +1276,7 @@ p, li { white-space: pre-wrap; }
                </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="layoutWidget">
+             <widget class="QWidget" name="">
               <layout class="QVBoxLayout" name="verticalLayout_10">
                <property name="spacing">
                 <number>2</number>
@@ -1295,6 +1298,40 @@ p, li { white-space: pre-wrap; }
                   <string>Plays</string>
                  </property>
                 </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_9">
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QPushButton" name="loadPlaybook">
+                   <property name="text">
+                    <string>Load</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QPushButton" name="savePlaybook">
+                   <property name="text">
+                    <string>Save</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_4">
+                   <property name="orientation">
+                    <enum>Qt::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
                </item>
                <item>
                 <widget class="QTreeView" name="plays">

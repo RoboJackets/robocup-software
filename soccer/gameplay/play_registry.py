@@ -47,8 +47,6 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         self.modelReset.emit()
 
     def load_playbook(self, list_of_plays):
-        print(list_of_plays);
-
         for play in list_of_plays:
             node = self.node_for_module_path(play)
             if node is not None:
@@ -96,7 +94,8 @@ class PlayRegistry(QtCore.QAbstractItemModel):
 
                 curr_node = node
                 while curr_node is not None:
-                    play_path.insert(0, curr_node.name)
+                    if curr_node.module_name:
+                        play_path.insert(0, curr_node.module_name)
                     curr_node = curr_node.parent
 
                 enabled_plays.append(play_path)
@@ -167,6 +166,10 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         @property
         def name(self):
             return self._name
+
+        @property
+        def module_name(self):
+            return self.name
 
 
         # Instructs all child nodes to recalculate their scores.
@@ -342,7 +345,7 @@ class PlayRegistry(QtCore.QAbstractItemModel):
         else:
             node = index.internalPointer()
             if node == None:
-                return None
+                return QtCore.QModelIndex()
             elif node.parent == None:
                 parentRow = 0
             else:

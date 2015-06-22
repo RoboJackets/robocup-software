@@ -1123,6 +1123,35 @@ void MainWindow::on_saveConfig_clicked()
 	}
 }
 
+void MainWindow::on_loadPlaybook_clicked()
+{
+	QString filename = QFileDialog::getOpenFileName(this, "Load Playbook", "../soccer/gameplay/playbooks/");
+	if (!filename.isNull())
+	{
+		try
+		{
+			_processor->gameplayModule()->loadPlaybook(filename.toStdString(), true);
+		}
+		catch(runtime_error* error) {
+			QMessageBox::critical(this, "File not found", QString("File not found: %1").arg(filename));
+		}
+	}
+}
+
+void MainWindow::on_savePlaybook_clicked()
+{
+	QString filename = QFileDialog::getSaveFileName(this, "Save Playbook", "../soccer/gameplay/playbooks/");
+	if (!filename.isNull())
+	{
+		try {
+			_processor->gameplayModule()->savePlaybook(filename.toStdString(), true);
+		}
+		catch(runtime_error* error) {
+			QMessageBox::critical(this, "File not found", QString("File not found: %1").arg(filename));
+		}
+	}
+}
+
 void MainWindow::setRadioChannel(RadioChannels channel)
 {
 	switch(channel)
