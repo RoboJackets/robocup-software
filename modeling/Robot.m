@@ -156,8 +156,8 @@ classdef Robot < matlab.System & matlab.system.mixin.CustomIcon & matlab.system.
 end
 
 
-% calculate X_b_dot_dot, the acceleration in the body frame
-% and X_g_dot the velocity of the robot in the global frame
+% Calculate X_b_dot_dot, the acceleration in the body frame,
+% and X_g_dot the velocity of the robot in the global frame.
 function accel = calculate_bot_accel(t, y, obj, u, A_1, A_2, B)
     X_g = y(1:3);
     X_b_dot = y(4:6);
@@ -170,7 +170,7 @@ function accel = calculate_bot_accel(t, y, obj, u, A_1, A_2, B)
            sin(phi),  cos(phi), 0;
                   0,         0, 1];
 
-    dPhiDt = [0 0 1]*X_b_dot;
+    dPhiDt = X_b_dot(3);
 
     X_b_dot_dot = A_1*X_b_dot + A_2*X_b_dot*dPhiDt + B*u;
     accel = [gbR*X_b_dot; X_b_dot_dot];
