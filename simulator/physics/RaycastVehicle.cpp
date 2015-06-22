@@ -125,8 +125,7 @@ void RaycastVehicle::updateWheelTransform( int wheelIndex , bool interpolatedTra
 void RaycastVehicle::resetSuspension()
 {
 
-	int i;
-	for (i=0;i<m_wheelInfo.size();	i++)
+	for (int i=0;i<m_wheelInfo.size();	i++)
 	{
 			btWheelInfo& wheel = m_wheelInfo[i];
 			wheel.m_raycastInfo.m_suspensionLength = wheel.getSuspensionRestLength();
@@ -282,17 +281,9 @@ void RaycastVehicle::updateVehicle( btScalar step )
 	// simulate suspension
 	//
 	
-	int i=0;
-	for (i=0;i<m_wheelInfo.size();i++)
-	{
-		btScalar depth; 
-		depth = rayCast( m_wheelInfo[i]);
-	}
-
 	updateSuspension(step);
-
 	
-	for (i=0;i<m_wheelInfo.size();i++)
+	for (int i = 0; i < m_wheelInfo.size(); i++)
 	{
 		//apply suspension force
 		btWheelInfo& wheel = m_wheelInfo[i];
@@ -307,7 +298,6 @@ void RaycastVehicle::updateVehicle( btScalar step )
 		btVector3 relpos = wheel.m_raycastInfo.m_contactPointWS - getRigidBody()->getCenterOfMassPosition();
 
 		getRigidBody()->applyImpulse(impulse, relpos);
-	
 	}
 	
 
@@ -315,7 +305,7 @@ void RaycastVehicle::updateVehicle( btScalar step )
 	updateFriction( step);
 
 	
-	for (i=0;i<m_wheelInfo.size();i++)
+	for (int i=0;i<m_wheelInfo.size();i++)
 	{
 		btWheelInfo& wheel = m_wheelInfo[i];
 		btVector3 relpos = wheel.m_raycastInfo.m_hardPointWS - getRigidBody()->getCenterOfMassPosition();

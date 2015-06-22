@@ -128,9 +128,16 @@ def init():
     _has_initialized = True
 
 #loads the specified file_name from the playbooks folder
-def load_playbook(file_name):
+#isAbsolute should be passed as True if the file_name is an absolute path
+def load_playbook(file_name, isAbsolute=False):
     global _play_registry
-    _play_registry.load_playbook(playbook.load_from_file(PLAYBOOKS_DIR + '/' + file_name))
+    _play_registry.load_playbook(playbook.load_from_file((PLAYBOOKS_DIR + '/' if not isAbsolute else '') + file_name))
+
+#saves the playbook into the specified file_name in the playbooks folder
+#isAbsolute should be passed as True if the file_name is an absolute path
+def save_playbook(file_name, isAbsolute=False):
+    global _play_registry
+    playbook.save_to_file((PLAYBOOKS_DIR + '/' if not isAbsolute else '') + file_name, _play_registry.get_enabled_plays_paths());
 
 ## Called ~60times/sec by the C++ GameplayModule
 def run():

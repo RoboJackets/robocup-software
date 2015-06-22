@@ -145,7 +145,6 @@ void Environment::handleSimCommand(const Packet::SimCommand& cmd) {
 
 	for (const SimCommand::Robot &rcmd :  cmd.robots())
 	{
-		bool blue = rcmd.blue_team();
 		const RobotMap &team = rcmd.blue_team() ? _blue : _yellow;
 		RobotMap::const_iterator i = team.find(rcmd.shell());
 
@@ -400,7 +399,6 @@ void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx)
 			r->radioTx(&cmd);
 
 			// trigger signals to update visualization
-			float facing = r->getAngle();
 			const Geometry2d::Point& pos2 = r->getPosition();
 			QVector3D pos3(pos2.x, pos2.y, 0.0);
 			QVector3D axis(0.0, 0.0, 1.0);
