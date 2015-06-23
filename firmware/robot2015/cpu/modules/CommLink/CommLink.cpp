@@ -57,7 +57,7 @@ void CommLink::setup_spi(void)
     if ((_mosi_pin != NC) & (_miso_pin != NC) & (_sck_pin != NC)) {
         _spi = new SPI(_mosi_pin, _miso_pin, _sck_pin);    // DON'T FORGET TO DELETE IN DERIVED CLASS
         _spi->format(8,0);
-        _spi->frequency(1000000);
+        _spi->frequency(5000000);
     }
 }
 
@@ -127,13 +127,17 @@ void CommLink::rxThread(void const *arg)
 
         // [X] - 2 - Get the received data from the external chip
         // =================
-        uint8_t rec_bytes = COMM_LINK_BUFFER_SIZE;
+        uint8_t rec_bytes = RTP_MAX_DATA_SIZE;
         RTP_t p;
 
-        if (inst->getData(p.data, &rec_bytes) ) {
-            //p.port = p.data[0] & 0xF0;
+        if (inst->getData(p.raw, &rec_bytes)) {
+            
+            // force some numbers for testing always on port 8
             p.port = 8;
-            p.subclass = p.data[0] & 0x0F;
+            p.subclass = 0;
+            
+            //p.port = p.data[0] >> 4;
+            //p.subclass = p.data[0] & 0x0F;
 
             // [X] - 3 - Write the data to the CommModule object's rxQueue
             // =================
@@ -158,7 +162,7 @@ void CommLink::ready(void)
 // Send data by calling the derived class's method for sending information
 void CommLink::sendPacket(RTP_t *p)
 {
-    sendData(p->raw, p->data_size+1);
+    sendData(p->raw, p->payload_size+1);
 }
 
 

@@ -29,6 +29,7 @@ CommModule::CommModule() :
     _rxID = osThreadCreate(&_rxDef, (void*)this);
 
     _txH_called = false;
+    _rxH_called = false;
 }
 
 
@@ -96,7 +97,7 @@ void CommModule::rxThread(void const *arg)
 
             // If there is an open socket for the port, call it
             if (std::binary_search(inst->_open_ports->begin(), inst->_open_ports->end(), p->port)) {
-                inst->_rx_handles[p->port].call();
+                inst->_rx_handles[p->port].call(p);
             }
 
             log(INF1, "CommModule", "Reception: \r\n  Port: %u\r\n  Subclass: %u", p->port, p->subclass);
@@ -120,6 +121,7 @@ void CommModule::TxHandler(void(*ptr)(RTP_t*), uint8_t portNbr)
 // Set a function to call when a packet is received
 void CommModule::RxHandler(void(*ptr)(RTP_t*), uint8_t portNbr)
 {
+    _rxH_called = true;
     ready();
     _rx_handles[portNbr].attach(ptr);
 }
@@ -131,7 +133,7 @@ void CommModule::openSocket(uint8_t portNbr)
     ready();
 
     // Don't open a socket connection until a TX callback has been set
-    if (_txH_called) {
+    if (_txH_called & _rxH_called) {
 
         // Check if the port has already been opened
         if (std::binary_search(_open_ports->begin(), _open_ports->end(), portNbr)) {
@@ -173,6 +175,7 @@ void CommModule::send(RTP_t& packet)
     // [X] - 1 - Check to make sure a socket for the port exists
     // =================
     if (std::binary_search(_open_ports->begin(), _open_ports->end(), packet.port)) {
+        packet.payload_size += 2;   // Fixup factor for header bytes
 
         // [X] - 1.1 - Allocate a block of memory for the data.
         // =================
@@ -180,17 +183,13 @@ void CommModule::send(RTP_t& packet)
 
         // [X] - 1.2 - Copy the contents into the allocated memory block
         // =================
-        p->port = packet.port;
-        p->subclass = packet.subclass;
-        p->data_size = packet.data_size;
-        for (int i=0; i<p->data_size; i++)
-            p->data[i] = packet.data[i];
+        std::memcpy(p->raw, &packet.raw, p->total_size);
 
         // [X] - 1.3 - Place the passed packet into the txQueue.
         // =================
         osMailPut(_txQueue, p);
     } else {
-        log(WARN, "CommModule", "Failed to send %u byte packet: There is no open socket for port %u", packet.data_size, packet.port);
+        log(WARN, "CommModule", "Failed to send %u byte packet: There is no open socket for port %u", packet.payload_size, packet.port);
     }
 }
 
@@ -201,6 +200,7 @@ void CommModule::receive(RTP_t& packet)
     // [X] - 1 - Check to make sure a socket for the port exists
     // =================
     if (std::binary_search(_open_ports->begin(), _open_ports->end(), packet.port)) {
+        packet.payload_size -= 2;   // Fixup factor for header bytes
 
         // [X] - 1.1 - Allocate a block of memory for the data.
         // =================
@@ -208,16 +208,12 @@ void CommModule::receive(RTP_t& packet)
 
         // [X] - 1.2 - Copy the contents into the allocated memory block
         // =================
-        p->port = packet.port;
-        p->subclass = packet.subclass;
-        p->data_size = packet.data_size;
-        for (int i=0; i<packet.data_size; i++)
-            p->data[i] = packet.data[i];
+        std::memcpy(p->raw, &packet.raw, p->total_size);
 
-        // [X] - 1.3 - Place the passed packet into the txQueue.
+        // [X] - 1.3 - Place the passed packet into the rxQueue.
         // =================
         osMailPut(_rxQueue, p);
     } else {
-        log(WARN, "CommModule", "Failed to receive %u byte packet: There is no open socket for port %u", packet.data_size, packet.port);
+        log(WARN, "CommModule", "Failed to receive %u byte packet: There is no open socket for port %u", packet.payload_size, packet.port);
     }
 }

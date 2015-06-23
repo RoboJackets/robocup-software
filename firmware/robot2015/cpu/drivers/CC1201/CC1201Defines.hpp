@@ -3,16 +3,13 @@
 //CHIP INFO
 #define CC1201_EXPECTED_PART_NUMBER 0x21
 
-//EXTENDED ACCESS BYTES
-#define CC1201_EXTENDED_ACCESS_READ  0xAF
-#define CC1201_EXTENDED_ACCESS_WRITE 0x2F
+//EXTENDED ACCESS BYTE
+#define CC1201_EXTENDED_ACCESS 		 0x2F
 
 //ACCESS MODIFIERS (pg 11/114)
 #define CC1201_BURST		0x40
-#define CC1201_WRITE_SINGLE 0x00 	
-#define CC1201_WRITE_BURST  0x40
-#define CC1201_READ_SINGLE  0x80
-#define CC1201_READ_BURST   0xC0
+#define CC1201_READ 	    0x80
+
 
 //REGISTERS (BURST AND SINGLE) (pg 11/114)
 #define CC1201_IOCFG3           0x00
@@ -62,8 +59,8 @@
 #define CC1201_PA_CFG0          0x2C
 #define CC1201_ASK_CFG          0x2D
 #define CC1201_PKT_LEN          0x2E
-#define CC1201_EXTENDED_ADDRESS 0x2F
-//REGISTER (SINGLE ONLY)
+//#define CC1201_EXTENDED_ADDRESS 0x2F
+// COMMAND STROBES
 #define CC1201_SRES             0x30
 #define CC1201_SFSTXON          0x31
 #define CC1201_SXOFF            0x32
@@ -78,6 +75,8 @@
 #define CC1201_SFTX             0x3B
 #define CC1201_SWORRST          0x3C
 #define CC1201_SNOP             0x3D
+
+
 #define CC1201_DMA              0x3E
 #define CC1201_TX_FIFO          0x3F
 #define CC1201_RX_FIFO          0x3F
@@ -185,7 +184,7 @@
 #define CC1201EXT_CHFILT_Q1        0x8A
 #define CC1201EXT_CHFILT_Q0        0x8B
 #define CC1201EXT_GPIO_STATUS      0x8C
-#define CC1201EXT_FASCL_CTRL       0x8D
+#define CC1201EXT_FSCAL_CTRL       0x8D
 #define CC1201EXT_PHASE_ADJUST     0x8E
 #define CC1201EXT_PARTNUMBER       0x8F
 #define CC1201EXT_PARTVERSION      0x90

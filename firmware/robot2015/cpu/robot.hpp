@@ -39,10 +39,10 @@
 // ** ============================= ** PIN DECLARATIONS ** ============================= **
 
 // This defines the pin used for the primary radio's `Chip Select` pin
-#define RJ_PRIMARY_RADIO_CS     p9
+#define RJ_PRIMARY_RADIO_CS     p8
 
 // This defines the pin used for the primary radio's `Interrupt` pin
-#define RJ_PRIMARY_RADIO_INT    p8
+#define RJ_PRIMARY_RADIO_INT    p9
 
 // This defines the pin used for the secondary radio's `Chip Enable` pin
 #define RJ_SECONDARY_RADIO_CE   p10

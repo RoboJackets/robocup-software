@@ -4,6 +4,7 @@
 #include <string>
 #include "CC1201Radio.hpp"
 
+
 class CC1201Config
 {
 	public:

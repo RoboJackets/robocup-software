@@ -11,6 +11,7 @@
  * 		-should be an RF studio header export
  * 		-*ALL* registers must be exported
  */
+//#include "CC1201-920-2GFSK-100ksps.hpp"
 #include "CC1201-ARIBStd-920-4GFSK-500ksps.hpp"
  
 #if not defined(SMARTRF_RADIO_CC1201)

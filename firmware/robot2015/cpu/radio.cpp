@@ -75,11 +75,16 @@ void radioThreadHandler(void const* args)
 	*/
 
 	testRadio->idle();
-
-	uint8_t buf_len = 32;
 	#define BUF_LEN 5
-	uint8_t buffer[BUF_LEN*10] = { 4 };
-	//strcpy(buffer, "Hello, World!");
+	uint8_t buffer[BUF_LEN] = { 4, 4, 4, 4, 4 };
+
+	/*
+	for (int i=0; i< BUF_LEN*10; i++)
+	{
+		buffer[i] = i;
+	}
+	*/
+
 	/*
 
 	for(int i=0; i<0x2F; i++)
@@ -92,7 +97,7 @@ void radioThreadHandler(void const* args)
 		log(INF1, "==Extended Register Check==", "Addr:\t%02X\t\t\tVal:\t%02X", i, testRadio->readReg(i, EXT_FLAG_ON));
 	}
 	*/
-	testRadio->calibrate();
+	//testRadio->calibrate();
 	while(true)
 	{
 		
@@ -100,9 +105,12 @@ void radioThreadHandler(void const* args)
 		testRadio->sendData(buffer, BUF_LEN*5);
 		ledThree3 = !ledThree3;
 
-		Thread::wait(200);
-		log(INF1, "RSSI", "%u", testRadio->_rssi_fnum);
+		Thread::wait(100);
+		testRadio->idle();
 		testRadio->calibrate();
+		Thread::wait(50);
+		log(INF1, "RSSI", "%.2f dBm", testRadio->rssi());
+		
 
 		/*
 		testRadio->strobe(CC1201_STROBE_SIDLE);

@@ -1,10 +1,10 @@
 #pragma once
 
 #include "mbed.h"
-#include "cmsis_os.h"
+//#include "cmsis_os.h"
 #include "CommLink.hpp"
-#include "RTP.hpp"
-#include "CC1101-Defines.hpp"
+//#include "RTP.hpp"
+#include "CC1201Defines.hpp"
 
 enum ext_flag_t { EXT_FLAG_OFF, EXT_FLAG_ON };
 
@@ -59,14 +59,16 @@ class CC1201 : public CommLink
 	    void flush_tx(void);
 	    void flush_rx(void);
 	    void calibrate(void);
-	    void rssi(bool dummy_bool);
+	    void rssi(uint8_t*);
 	    float rssi(void);
 	    uint8_t idle(void);
 	    uint8_t rand(void);
 	    uint8_t freq_update(void);
-	    uint16_t _rssi_fnum;
+	    float frequency(void);
+	    bool isLocked(void);
 
 	protected:
+
 
 	private:
 		
