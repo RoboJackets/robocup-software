@@ -24,8 +24,8 @@ int main(void)
 	setISRPriorities();
 	lifeLight.attach(&imAlive, 0.25);
 
-	isLogging = true;
-	rjLogLevel = INF2;
+	isLogging = false;
+	rjLogLevel = LOG_LEVEL::INFO;
 
 	//initRadioThread();
 	initConsoleRoutine();

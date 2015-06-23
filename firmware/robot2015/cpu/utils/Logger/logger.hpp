@@ -2,24 +2,16 @@
 
 #include "mbed.h"
 #include <string>
-
-#define FOREACH_LEVEL(LEVEL) \
-	LEVEL(FATAL)  \
-	LEVEL(SEVERE) \
-	LEVEL(WARN)   \
-	LEVEL(OK)     \
-	LEVEL(INF1)   \
-	LEVEL(INF2)   \
-	LEVEL(INF3)
-#define GENERATE_ENUM(ENUM) ENUM,
-#define GENERATE_STRING(STRING) #STRING,
+#include <iostream>
 
 /**
  * log levels
  */ 
-enum LOG_LEVEL
+enum class LOG_LEVEL : uint8_t
 {
-	FOREACH_LEVEL(GENERATE_ENUM)
+	INFO = 0,
+	WARN,
+	ERROR
 };
 
 /**
@@ -30,14 +22,19 @@ extern const char* LOG_LEVEL_STRING[];
 /**
  * active logging
  */
-extern volatile bool isLogging;
+extern bool isLogging;
 
 /**
  * current log level
  */
-extern volatile uint8_t rjLogLevel;
+extern LOG_LEVEL rjLogLevel;
 
 /**
- * log(level, class/file, printf args)
+ * Add log line with printf interface
  */
-extern void log(uint8_t logLevel, const char* source, const char* format, ...);
+void log(LOG_LEVEL logLevel, const char *source, const char *format, ...);
+
+/**
+ * Add log line with stream interface
+ */
+std::ostream& log(LOG_LEVEL logLevel, const char *source = "");
