@@ -12,7 +12,8 @@
  * 		-*ALL* registers must be exported
  */
 //#include "CC1201-920-2GFSK-100ksps.hpp"
-#include "CC1201-ARIBStd-920-4GFSK-500ksps.hpp"
+//#include "CC1201-ARIBStd-920-4GFSK-500ksps.hpp"
+ #include "smartrf_CC1201.h"
  
 #if not defined(SMARTRF_RADIO_CC1201)
 #error "A valid Smart RF register configuration file was not loaded."

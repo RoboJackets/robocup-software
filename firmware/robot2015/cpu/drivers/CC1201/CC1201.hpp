@@ -44,22 +44,17 @@ class CC1201 : public CommLink
 
 		uint8_t readReg(uint8_t addr, bool ext_flag_t = EXT_FLAG_OFF);
 
-		void readReg(uint8_t addr, uint8_t* buffer, uint8_t len, bool ext_flag_t = EXT_FLAG_OFF);
+		uint8_t readReg(uint8_t addr, uint8_t* buffer, uint8_t len, bool ext_flag_t = EXT_FLAG_OFF);
 
-		void writeReg(uint8_t addr, uint8_t value, bool ext_flag_t = EXT_FLAG_OFF);
+		uint8_t writeReg(uint8_t addr, uint8_t value, bool ext_flag_t = EXT_FLAG_OFF);
 
-		void writeReg(uint8_t addr, uint8_t* buffer, uint8_t len, bool ext_flag_t = EXT_FLAG_OFF);
-
-
-		uint8_t decodeState(uint8_t nopRet);
-
-		std::string modeToStr(uint8_t mode);
+		uint8_t writeReg(uint8_t addr, uint8_t* buffer, uint8_t len, bool ext_flag_t = EXT_FLAG_OFF);
 
 	    // Send the command strobe to flush the TX or RX buffers on the CC1201
 	    void flush_tx(void);
 	    void flush_rx(void);
 	    void calibrate(void);
-	    void rssi(uint8_t*);
+	    void update_rssi(void);
 	    float rssi(void);
 	    uint8_t idle(void);
 	    uint8_t rand(void);
@@ -76,11 +71,11 @@ class CC1201 : public CommLink
 
 		uint8_t readRegExt(uint8_t addr);
 
-		void readRegExt(uint8_t addr, uint8_t* buffer, uint8_t len);
+		uint8_t readRegExt(uint8_t addr, uint8_t* buffer, uint8_t len);
 
-		void writeRegExt(uint8_t addr, uint8_t value);
+		uint8_t writeRegExt(uint8_t addr, uint8_t value);
 
-		void writeRegExt(uint8_t addr, uint8_t* buffer, uint8_t len);
+		uint8_t writeRegExt(uint8_t addr, uint8_t* buffer, uint8_t len);
 
 		uint8_t     _lqi;
     	uint8_t     _chip_version;

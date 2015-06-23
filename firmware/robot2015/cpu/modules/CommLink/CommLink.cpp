@@ -162,7 +162,9 @@ void CommLink::ready(void)
 // Send data by calling the derived class's method for sending information
 void CommLink::sendPacket(RTP_t *p)
 {
-    sendData(p->raw, p->payload_size+1);
+    p->payload_size += 2;
+    uint8_t size = p->payload_size + 1;
+    sendData(p->raw, size);
 }
 
 

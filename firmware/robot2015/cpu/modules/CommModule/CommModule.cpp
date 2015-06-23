@@ -64,7 +64,7 @@ void CommModule::txThread(void const *arg)
             // Send the packet on the active communication link
             inst->_tx_handles[p->port].call(p);
 
-            log(INF1, "CommModule", "Transmission:    Port: %u    Subclass: %u", p->port, p->subclass);
+            log(INF2, "CommModule", "Transmission:    Port: %u    Subclass: %u", p->port, p->subclass);
 
             // Release the allocated memory once data is sent
             osMailFree(inst->_txQueue, p);
@@ -100,7 +100,7 @@ void CommModule::rxThread(void const *arg)
                 inst->_rx_handles[p->port].call(p);
             }
 
-            log(INF1, "CommModule", "Reception: \r\n  Port: %u\r\n  Subclass: %u", p->port, p->subclass);
+            log(INF2, "CommModule", "Reception: \r\n  Port: %u\r\n  Subclass: %u", p->port, p->subclass);
 
             // Release the allocated memory once RX callback function is called
             osMailFree(inst->_rxQueue, p);
@@ -175,7 +175,7 @@ void CommModule::send(RTP_t& packet)
     // [X] - 1 - Check to make sure a socket for the port exists
     // =================
     if (std::binary_search(_open_ports->begin(), _open_ports->end(), packet.port)) {
-        packet.payload_size += 2;   // Fixup factor for header bytes
+        //packet.payload_size += 1;   // Fixup factor for header bytes
 
         // [X] - 1.1 - Allocate a block of memory for the data.
         // =================
@@ -200,7 +200,7 @@ void CommModule::receive(RTP_t& packet)
     // [X] - 1 - Check to make sure a socket for the port exists
     // =================
     if (std::binary_search(_open_ports->begin(), _open_ports->end(), packet.port)) {
-        packet.payload_size -= 2;   // Fixup factor for header bytes
+        //packet.payload_size -= 1;   // Fixup factor for header bytes
 
         // [X] - 1.1 - Allocate a block of memory for the data.
         // =================

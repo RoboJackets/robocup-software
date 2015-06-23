@@ -27,6 +27,94 @@ Serial pcserial(USBTX, USBRX);
  }
 
 
+ std::string decode_marcstate(uint8_t b)
+ {
+ 	std::string state;
+
+ 	b = b & 0x1F;
+
+ 	switch(b){
+ 		case 0x00:
+ 		state = "SLEEP";
+ 		break;
+ 		case 0x01:
+ 		state = "IDLE";
+ 		break;
+ 		case 0x02:
+ 		state = "XOFF";
+ 		break;
+ 		case 0x03:
+ 		state = "BIAS_SETTLE_MC";
+ 		break;
+ 		case 0x04:
+ 		state = "REG_SETTLE_MC";
+ 		break;
+ 		case 0x05:
+ 		state = "MANCAL";
+ 		break;
+ 		case 0x06:
+ 		state = "BIAS_SETTLE";
+ 		break;
+ 		case 0x07:
+ 		state = "REG_SETTLE";
+ 		break;
+ 		case 0x08:
+ 		state = "STARTCAL";
+ 		break;
+ 		case 0x09:
+ 		state = "BWBOOST";
+ 		break;
+ 		case 0x0A:
+ 		state = "FS_LOCK";
+ 		break;
+ 		case 0x0B:
+ 		state = "IFADCON";
+ 		break;
+ 		case 0x0C:
+ 		state = "ENDCAL";
+ 		break;
+ 		case 0x0D:
+ 		state = "RX";
+ 		break;
+ 		case 0x0E:
+ 		state = "RX_END";
+ 		break;
+ 		case 0x0F:
+ 		state = "RXDCM";
+ 		break;
+ 		case 0x10:
+ 		state = "TXRX_SWITCH";
+ 		break;
+ 		case 0x11:
+ 		state = "RX_FIFO_ERR";
+ 		break;
+ 		case 0x12:
+ 		state = "FSTXON";
+ 		break;
+ 		case 0x13:
+ 		state = "TX";
+ 		break;
+ 		case 0x14:
+ 		state = "TX_END";
+ 		break;
+ 		case 0x15:
+ 		state = "RXTX_SWITCH";
+ 		break;
+ 		case 0x16:
+ 		state = "TX_FIFO_ERR";
+ 		break;
+ 		case 0x17:
+ 		state = "IFADCON_TXRX";
+ 		break;
+ 		default:
+ 		state = "ERROR DECODING STATE";
+ 		break;
+ 	}
+
+ 	return state;
+ }
+
+
  int main(void) 
  {
  	pcserial.baud(57600);
@@ -34,7 +122,7 @@ Serial pcserial(USBTX, USBRX);
  	lifeLight.attach(&imAlive, 0.25);
 
  	isLogging = true;
- 	rjLogLevel = OK;
+ 	rjLogLevel = INF1;
 
 	//initConsoleRoutine();
 
@@ -69,36 +157,31 @@ Serial pcserial(USBTX, USBRX);
 
  	while(1) {
 
-		dummy_packet.port = 8;
-		dummy_packet.subclass = 1;
-		dummy_packet.address = 255;
-		dummy_packet.sfs = 0;
-		dummy_packet.ack = 0;
-		dummy_packet.field_size = 6;
-		dummy_packet.payload_size = 10;
+ 		dummy_packet.port = 8;
+ 		dummy_packet.subclass = 1;
+ 		dummy_packet.address = 255;
+ 		dummy_packet.sfs = 0;
+ 		dummy_packet.ack = 0;
+ 		// dummy_packet.field_size = 6;
+ 		dummy_packet.payload_size = 10;
 
-	 	for(int i=0; i<10; i++)
+ 		for(int i=0; i<10; i++)
 	        dummy_packet.payload[i] = 0xAA; // 0b10101010
 
+	    radio_900.strobe(CC1201_STROBE_SRX);
 
-	    uint8_t rssi_regs[2];
-	    rssi_regs[0] = radio_900.readReg(0x72, EXT_FLAG_ON);
-	    rssi_regs[1] = radio_900.readReg(0x71, EXT_FLAG_ON);
-	    radio_900.rssi(rssi_regs);
 
-	    log(OK, "MAIN LOOP", "  MARCSTATE: 0x%02X\r\n  RSSI: %.1f dBm", radio_900.mode(), radio_900.rssi());
+	    std::string current_state = decode_marcstate(radio_900.mode());
+	    log(OK, "MAIN LOOP", "  STATE: %s\tRSSI: %.1f dBm", current_state.c_str(), radio_900.rssi());
+		
+		//comm.send(dummy_packet);
+	    //osDelay(100);
+	    
+	    is_locked = radio_900.isLocked();
+	    rssi_valid = gpio2;
 
-	    radio_900.calibrate();
-	    osDelay(100);
-
-	    comm.send(dummy_packet);
-
-	    for (int i=0; i<900; i++)
-	    {
-	    	osDelay(1);
-	    	is_locked = radio_900.isLocked();
-	    	rssi_valid = gpio2;
-	    }
+	    osDelay(500);
+	    radio_900.update_rssi();
 	}
 }
 

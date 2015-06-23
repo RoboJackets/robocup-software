@@ -252,3 +252,6 @@
 #define RXOFF_MODE_FSTXON 0x10
 #define RXOFF_MODE_TX     0x20
 #define RXOFF_MODE_RX     0x30
+
+#define CC1201_RX_FIFO_ERROR	0x60
+#define CC1201_TX_FIFO_ERROR	0x70

@@ -21,7 +21,7 @@
 #define SMARTRF_SETTING_IOCFG1             0x30	// HIGHZ [used as SO for SPI when CSn is LOW]
 //#define SMARTRF_SETTING_IOCFG0             0x07	// Asserted when PKT_CRC_OK is set. De-asserted at first byte read from the RX FIFO
 #define SMARTRF_SETTING_IOCFG0             0x0B	// Asserted when preamble quality threshold is reached
-// #define SMARTRF_SETTING_IOCFG0             0x0C	// Asserted when preamble is deemed to be valid
+//#define SMARTRF_SETTING_IOCFG0             0x0C	// Asserted when preamble is deemed to be valid
 // #define SMARTRF_SETTING_IOCFG0             0x0D	// RSSI calculation is valid
 // #define SMARTRF_SETTING_IOCFG0             0x11	// High if RSSI level is above threshold
  //#define SMARTRF_SETTING_IOCFG0             0x06
@@ -74,7 +74,7 @@
 #define SMARTRF_SETTING_PKT_CFG1           0x03	// FEC disabled (default); Data whitening disabled (default); PN9 sequence disabled (default); No address check (default); CRC check in RX & calculate in TX initialized to 0xFFF (default); Append status bytes to RX FIFO enabled (default)
 #define SMARTRF_SETTING_PKT_CFG0           0x20	// Variable packet length; UART mode disabled (default); UART swap bits disabled (default)
 #define SMARTRF_SETTING_RFEND_CFG1         0x0F	// RXOFF -> IDLE (default); RX timeout disabled; RX timeout qualifier continues RX mode on RX timeout if sync word has been found, or PQT is reached, or CS is asserted
-#define SMARTRF_SETTING_RFEND_CFG0         0x30	// wake-up pulses disabled (default); TXOFF mode -> RX (NOT DEFAULT); Termindate on bad packet disabled (default); Direct RX termination & antenna diversity disabled (default)
+#define SMARTRF_SETTING_RFEND_CFG0         0x00	// wake-up pulses disabled (default); TXOFF mode -> RX (NOT DEFAULT); Termindate on bad packet disabled (default); Direct RX termination & antenna diversity disabled (default)
 #define SMARTRF_SETTING_PA_CFG1            0x7F	// PA ramping and ASK/OOK enabled; 14dBm output power
 #define SMARTRF_SETTING_PA_CFG0            0x56	// first intermediate power level of 2/16 (default); Second intermediate power level of 13/16 (default); 3 symbol ramp time [CHECK UPSAMPLER_P valid values]
 #define SMARTRF_SETTING_ASK_CFG            0x0F	// Only used in ASK/OOK modes; Data filter scale bandwidth of 0.28 (0x00 - default); ASK/OOK depth of 0x0F (default)
