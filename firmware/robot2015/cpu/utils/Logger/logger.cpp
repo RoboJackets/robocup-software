@@ -26,7 +26,7 @@ DummyStream dummy;
  */
 void log(LOG_LEVEL logLevel, const char *source, const char *format, ...)
 {
-	if (isLogging && static_cast<int>(logLevel) <= static_cast<int>(rjLogLevel))
+	if (isLogging && static_cast<int>(logLevel) >= static_cast<int>(rjLogLevel))
 	{
 		va_list args;
 		va_start(args, format);
@@ -40,7 +40,7 @@ void log(LOG_LEVEL logLevel, const char *source, const char *format, ...)
 
 std::ostream& log(LOG_LEVEL logLevel, const char *source)
 {
-	if(isLogging && static_cast<int>(logLevel) <= static_cast<int>(rjLogLevel))
+	if(isLogging && static_cast<int>(logLevel) >= static_cast<int>(rjLogLevel))
 	{
 		std::ostream& res = std::cout << "[" << LOG_LEVEL_STRING[static_cast<int>(logLevel)] << "]";
 		if(source != '\0')
