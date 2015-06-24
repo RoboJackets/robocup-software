@@ -48,7 +48,7 @@ void CommModule::txThread(void const *arg)
     // Only continue past this point once at least one (1) hardware link is initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
 
-    log(INF1, "CommModule", "TX Communication Module Ready!");
+    log(LOG_LEVEL::INFO, "CommModule", "TX Communication Module Ready!");
 
     while(1) {
 
@@ -63,7 +63,7 @@ void CommModule::txThread(void const *arg)
             // Send the packet on the active communication link
             inst->_tx_handles[p->port].call(p);
 
-            log(INF1, "CommModule", "Transmission:    Port: %u    Subclass: %u", p->port, p->subclass);
+            log(LOG_LEVEL::INFO, "CommModule", "Transmission:    Port: %u    Subclass: %u", p->port, p->subclass);
 
             // Release the allocated memory once data is sent
             osMailFree(inst->_txQueue, p);
@@ -80,7 +80,7 @@ void CommModule::rxThread(void const *arg)
     // Only continue past this point once at least one (1) hardware link is initialized
     osSignalWait(COMM_MODULE_SIGNAL_START_THREAD, osWaitForever);
 
-    log(INF1, "CommModule", "RX Communication Module Ready!");
+    log(LOG_LEVEL::INFO, "CommModule", "RX Communication Module Ready!");
 
     RTP_t *p;
     osEvent  evt;
@@ -99,7 +99,7 @@ void CommModule::rxThread(void const *arg)
                 inst->_rx_handles[p->port].call();
             }
 
-            log(INF1, "CommModule", "Reception: \r\n  Port: %u\r\n  Subclass: %u", p->port, p->subclass);
+            log(LOG_LEVEL::INFO, "CommModule", "Reception: \r\n  Port: %u\r\n  Subclass: %u", p->port, p->subclass);
 
             // Release the allocated memory once RX callback function is called
             osMailFree(inst->_rxQueue, p);
@@ -135,16 +135,16 @@ void CommModule::openSocket(uint8_t portNbr)
 
         // Check if the port has already been opened
         if (std::binary_search(_open_ports->begin(), _open_ports->end(), portNbr)) {
-            log(WARN, "CommModule", "Port number %u already opened", portNbr);
+            log(LOG_LEVEL::WARN, "CommModule", "Port number %u already opened", portNbr);
         } else {
             // Add the port number to the list of active ports & keep sorted
             _open_ports->push_back(portNbr);
             std::sort(_open_ports->begin(), _open_ports->end());
-            log(INF1, "CommModule", "Port %u opened", portNbr);
+            log(LOG_LEVEL::INFO, "CommModule", "Port %u opened", portNbr);
         }
     } else {
         // TX callback function was never set
-        log(WARN, "CommModule", "Must set TX & RX callback functions before opening socket.\r\n");
+        log(LOG_LEVEL::WARN, "CommModule", "Must set TX & RX callback functions before opening socket.\r\n");
     }
 }
 
@@ -190,7 +190,8 @@ void CommModule::send(RTP_t& packet)
         // =================
         osMailPut(_txQueue, p);
     } else {
-        log(WARN, "CommModule", "Failed to send %u byte packet: There is no open socket for port %u", packet.data_size, packet.port);
+        log(LOG_LEVEL::WARN, "CommModule", "Failed to send %u byte packet: There is no open socket for port %u",
+            packet.data_size, packet.port);
     }
 }
 
@@ -218,6 +219,7 @@ void CommModule::receive(RTP_t& packet)
         // =================
         osMailPut(_rxQueue, p);
     } else {
-        log(WARN, "CommModule", "Failed to receive %u byte packet: There is no open socket for port %u", packet.data_size, packet.port);
+        log(LOG_LEVEL::WARN, "CommModule", "Failed to receive %u byte packet: There is no open socket for port %u",
+            packet.data_size, packet.port);
     }
 }
