@@ -7,7 +7,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.109"
+    ComputedModelVersion    "1.110"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -29,7 +29,7 @@ Model {
       $ObjectID		      2
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [1932.0, 12.0, 601.0, 1056.0]
+      Location		      [2887.0, 12.0, 941.0, 521.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		3
@@ -53,9 +53,9 @@ Model {
 	IsActive		[1]
 	ViewObjType		"SimulinkTopLevel"
 	LoadSaveID		"0"
-	Extents			[565.0, 920.0]
+	Extents			[905.0, 385.0]
 	ZoomFactor		[0.6]
-	Offset			[-104.31806907816599, 226.38770712385113]
+	Offset			[355.681930921834, 226.38770712385093]
       }
     }
   }
@@ -65,9 +65,9 @@ Model {
   ModifiedByFormat	  "%<Auto>"
   LastModifiedBy	  "justbuchanan"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Sun Jun 21 03:05:57 2015"
-  RTWModifiedTimeStamp	  356756734
-  ModelVersionFormat	  "1.%<AutoIncrement:109>"
+  LastModifiedDate	  "Wed Jun 24 01:16:17 2015"
+  RTWModifiedTimeStamp	  357009308
+  ModelVersionFormat	  "1.%<AutoIncrement:110>"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -970,7 +970,7 @@ Model {
   }
   System {
     Name		    "robocup_model"
-    Location		    [1932, 12, 2533, 1068]
+    Location		    [2887, 12, 3828, 533]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -1355,7 +1355,7 @@ Model {
     }
     Block {
       BlockType		      SubSystem
-      Name		      "Path"
+      Name		      "Path (sampled @ 60Hz)"
       SID		      "43"
       Ports		      [5, 1]
       Position		      [195, 153, 365, 267]
@@ -1364,10 +1364,11 @@ Model {
       ErrorFcn		      "Stateflow.Translate.translate"
       PermitHierarchicalResolution "ExplicitOnly"
       TreatAsAtomicUnit	      on
+      SystemSampleTime	      "1/60"
       RequestExecContextInheritance off
       SFBlockType	      "MATLAB Function"
       System {
-	Name			"Path"
+	Name			"Path (sampled @ 60Hz)"
 	Location		[223, 338, 826, 833]
 	Open			off
 	ModelBrowserVisibility	off
@@ -1716,7 +1717,7 @@ Model {
       BlockMirror	      on
       NamePlacement	      "alternate"
       Floating		      off
-      Location		      [966, 69, 1907, 545]
+      Location		      [1931, 39, 2872, 1065]
       Open		      on
       NumInputPorts	      "1"
       List {
@@ -1876,7 +1877,7 @@ Model {
     }
     Line {
       ZOrder		      33
-      SrcBlock		      "Path"
+      SrcBlock		      "Path (sampled @ 60Hz)"
       SrcPort		      1
       Points		      [5, 0]
       Branch {
@@ -2056,7 +2057,7 @@ Model {
       SrcBlock		      "TransVelLimit"
       SrcPort		      1
       Points		      [0, -13; -160, 0]
-      DstBlock		      "Path"
+      DstBlock		      "Path (sampled @ 60Hz)"
       DstPort		      1
     }
     Line {
@@ -2064,7 +2065,7 @@ Model {
       SrcBlock		      "RotVelLimit"
       SrcPort		      1
       Points		      [0, -31; -293, 0; 0, 141]
-      DstBlock		      "Path"
+      DstBlock		      "Path (sampled @ 60Hz)"
       DstPort		      2
     }
     Line {
@@ -2072,7 +2073,7 @@ Model {
       SrcBlock		      "TransAccelLimit"
       SrcPort		      1
       Points		      [0, -48; -424, 0; 0, 178]
-      DstBlock		      "Path"
+      DstBlock		      "Path (sampled @ 60Hz)"
       DstPort		      3
     }
     Line {
@@ -2080,7 +2081,7 @@ Model {
       SrcBlock		      "RotAccelLimit"
       SrcPort		      1
       Points		      [0, -64; -545, 0; 0, 214]
-      DstBlock		      "Path"
+      DstBlock		      "Path (sampled @ 60Hz)"
       DstPort		      4
     }
     Line {
@@ -2112,7 +2113,7 @@ Model {
       }
       Branch {
 	ZOrder			487
-	DstBlock		"Path"
+	DstBlock		"Path (sampled @ 60Hz)"
 	DstPort			5
       }
     }
@@ -2218,7 +2219,7 @@ Stateflow {
   }
   chart {
     id			    2
-    name		    "Path"
+    name		    "Path (sampled @ 60Hz)"
     windowPosition	    [422 539.941 189 413]
     viewLimits		    [0 156.75 0 153.75]
     screen		    [1 1 3600 1200 1.180555555555556]
@@ -2226,10 +2227,7 @@ Stateflow {
     firstTransition	    11
     firstJunction	    10
     viewObj		    2
-    visible		    1
     machine		    1
-    subviewS {
-    }
     ssIdHighWaterMark	    10
     decomposition	    CLUSTER_CHART
     type		    EML_CHART
@@ -2428,7 +2426,7 @@ Stateflow {
   }
   instance {
     id			    12
-    name		    "Path"
+    name		    "Path (sampled @ 60Hz)"
     machine		    1
     chart		    2
   }
