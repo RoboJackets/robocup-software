@@ -71,6 +71,10 @@ libboost-python-dev
 # for joystick
 libsdl1.2-dev
 
+# MATLAB-like open source tool - we use it for controls
+octave
+octave-control
+
 # everything else...
 build-essential
 libusb-1.0-0-dev

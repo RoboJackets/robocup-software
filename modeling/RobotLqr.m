@@ -88,9 +88,9 @@ classdef RobotLqr < matlab.System & matlab.system.mixin.Propagates
             % X_dot = A_1*x_b_dot + A_2*dPhiDt*x_b_dot + B*u
             % y = x_b_dot = eye(3)*x_b_dot
             
-            
+            dPhiDt = 0; % currVel(3)
             % linearize by evaluating at current state
-            A = A_1 + A_2*currVel(3); % note: currVel(3) = dPhi/dt
+            A = A_1 + A_2*dPhiDt; % note: currVel(3) = dPhi/dt
             
             % y = Cx + Du
             C = eye(3);
@@ -114,6 +114,12 @@ classdef RobotLqr < matlab.System & matlab.system.mixin.Propagates
             % We add this value to -K*(currVel-cmdVel) to get our final
             % control values.
             u = -K*(currVel-cmdVel) - pinv(B)*A*cmdVel;
+            A
+            B
+            obj.Q
+            obj.R
+            dPhiDt
+            K
             
             % Go here and see the info on set-points:
             % http://www.academia.edu/6945404/Undergraduate_Lecture_Notes_on_LQG_LQR_controller_design

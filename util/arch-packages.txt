@@ -49,3 +49,6 @@ libspnav
 
 # joystick library
 sdl
+
+# open-source program similar to MATLAB - we're using it for controls
+octave

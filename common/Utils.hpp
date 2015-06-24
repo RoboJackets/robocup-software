@@ -13,6 +13,7 @@
 #include "Constants.hpp"
 #include "time.hpp"
 #include <math.h>
+
 const static bool THROW_DEBUG_EXCEPTIONS = true;
 template<typename T> static inline void debugThrow(T exception) {
 	if (THROW_DEBUG_EXCEPTIONS) {

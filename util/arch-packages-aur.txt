@@ -4,5 +4,8 @@
 # compiler to build firmware for MBED
 gcc-arm-none-eabi-bin
 
+# used for generating control gains for robot
+octave-control
+
 # optional - needed if you want to use the SpaceNavigator 3d mouse to drive robots
 #spacenavd 

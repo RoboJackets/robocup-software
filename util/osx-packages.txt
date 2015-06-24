@@ -17,3 +17,6 @@ freeglut
 eigen
 bullet
 protobuf
+
+# For generating LQR control gains
+octave

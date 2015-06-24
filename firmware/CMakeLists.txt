@@ -1,3 +1,9 @@
+
+
+################################################################################
+
+
+
 # This sets up MBED all MBED libraries, then sets up the robot and base station
 # firmware, which depend on the MBED libs
 
@@ -10,7 +16,12 @@ set(PREBUILD_DEPS)
 set(CMAKE_TOOLCHAIN_FILE arm_toolchain.cmake)
 include(mbed/arm_toolchain.cmake)
 
+
 include(mbed/arm_mbed.cmake)
+
+# enable C++ exceptions
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexceptions")
+
 
 #all official libraries pulled with/by the build tools
 include(ExternalProject)
