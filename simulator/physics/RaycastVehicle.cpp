@@ -280,6 +280,10 @@ void RaycastVehicle::updateVehicle( btScalar step )
 	//
 	// simulate suspension
 	//
+
+	for (int i = 0; i < m_wheelInfo.size(); ++i) {
+		btScalar depth = rayCast(m_wheelInfo[i]);
+	}
 	
 	updateSuspension(step);
 	
