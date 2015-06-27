@@ -33,11 +33,11 @@ class TouchpassPositioner:
         if kick_point.x > 0:
             # Ball is on right side of field
             toReturn = robocup.Rect(robocup.Point(0, min(constants.Field.Length - offset_from_edge, main.ball().pos.y - 0.5)),
-                    robocup.Point(-constants.Field.Width / 2 - offset_from_edge, constants.Field.Length * 3 / 4))
+                    robocup.Point(-constants.Field.Width / 2 - offset_from_edge, min(constants.Field.Length * 3 / 4, main.ball().pos.y - 2)))
         else:
             # Ball is on left side of field
             toReturn = robocup.Rect(robocup.Point(0, min(constants.Field.Length - offset_from_edge, main.ball().pos.y - 0.5)),
-                    robocup.Point(constants.Field.Width / 2 - offset_from_edge, constants.Field.Length * 3 / 4 ))
+                    robocup.Point(constants.Field.Width / 2 - offset_from_edge, min(constants.Field.Length * 3 / 4, main.ball().pos.y - 2)))
         return toReturn
 
     def get_points_from_rect(self, rect, threshold=0.50):
