@@ -10,6 +10,7 @@ static-analysis:
 run: all
 	cd run; ./soccer
 run-sim: all
+	-pkill -f './simulator --headless'
 	cd run; ./simulator --headless &
 	cd run; ./soccer -sim
 
