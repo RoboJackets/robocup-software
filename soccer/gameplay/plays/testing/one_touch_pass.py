@@ -6,6 +6,7 @@ import robocup
 import constants
 import main
 import skills.angle_receive
+import evaluation.touchpass_positioning
 from enum import Enum
 
 # A play to test onetouchpass, which causes a robot to pass to another one,
@@ -14,8 +15,8 @@ from enum import Enum
 # The real work is in the class that receives from coordinated_pass, angle_receive
 class OneTouchPass(play.Play):
 
-    ReceiveXCoord = 1
-    ReceiveYCoord = constants.Field.Length * 5.0 / 6.0
+    tpass = evaluation.touchpass_positioning.TouchpassPositioner()
+    # tpass_execution = 0
 
     class State(Enum):
         passing = 1
@@ -44,7 +45,7 @@ class OneTouchPass(play.Play):
 
     def reset_receive_point(self):
         pass_bhvr = self.subbehavior_with_name('pass')
-        pass_bhvr.receive_point = robocup.Point(OneTouchPass.ReceiveXCoord, OneTouchPass.ReceiveYCoord)
+        pass_bhvr.receive_point, nil = OneTouchPass.tpass.eval_best_receive_point(main.ball().pos)
         pass_bhvr.skillreceiver = skills.angle_receive.AngleReceive()
 
     def on_enter_passing(self):
@@ -52,6 +53,12 @@ class OneTouchPass(play.Play):
         self.add_subbehavior(pass_bhvr, 'pass')
         if pass_bhvr.receive_point == None:
             self.reset_receive_point()
+
+    # def execute_passing(self):
+    #     OneTouchPass.tpass_execution = OneTouchPass.tpass_execution + 1
+    #     if OneTouchPass.tpass_execution > 100:
+    #         self.reset_receive_point()
+    #         OneTouchPass.tpass_execution = 0
 
     def on_exit_passing(self):
         self.remove_subbehavior('pass')
