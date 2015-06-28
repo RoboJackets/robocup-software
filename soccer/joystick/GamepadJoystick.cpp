@@ -93,7 +93,6 @@ void GamepadJoystick::update()
         if( (now - _lastKickerTime) >= Kicker_Step_Time)
         {
             _controls.kickPower = max(_controls.kickPower - 0.1, 0.0);
-            cout << _controls.kickPower << endl;
             _lastKickerTime = now;
         }
     } else if (SDL_JoystickGetButton(_joystick, 2))
@@ -101,7 +100,6 @@ void GamepadJoystick::update()
         if( (now - _lastKickerTime) >= Kicker_Step_Time)
         {
             _controls.kickPower = min(_controls.kickPower + 0.1, 1.0);
-            cout << _controls.kickPower << endl;
             _lastKickerTime = now;
         }
     } else {
@@ -153,7 +151,6 @@ void GamepadJoystick::update()
 JoystickControlValues GamepadJoystick::getJoystickControlValues()
 {
     QMutexLocker(&mutex());
-//    cout << _controls.translation.x << endl;
     return _controls;
 }
 
