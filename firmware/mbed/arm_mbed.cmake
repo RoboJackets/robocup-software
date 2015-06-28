@@ -9,7 +9,7 @@ set(PY_LIBS)
 
 # ------------------------------------------------------------------------------
 # git checkout and build location of mbed libraries
-set(PY_TOOLS_DIR ${CMAKE_CURRENT_BINARY_DIR}/mbed_lib_build_tools-base-prefix/src/mbed_lib_build_tools-base)
+set(PY_TOOLS_DIR ${CMAKE_CURRENT_BINARY_DIR}/mbed_lib_build_tools-prefix/src/mbed_lib_build_tools)
 set(MCP23017_DIR ${CMAKE_CURRENT_BINARY_DIR}/mcp23017-prefix/src/mcp23017)
 
 #library roots
@@ -87,6 +87,7 @@ SET(CMAKE_C_FLAGS "${COMMON_FLAGS} ${MBED_DEFINES} -std=gnu99")
 
 # ------------------------------------------------------------------------------
 # setup precompiled mbed files which will be needed for all projects
+MESSAGE( STATUS "mbed path: " ${MBED_PATH})
 set(MBED_OBJECTS
   ${MBED_PATH}/TARGET_${MBED_TARGET}/${TOOLCHAIN}/${MBED_STARTUP}
   ${MBED_PATH}/TARGET_${MBED_TARGET}/${TOOLCHAIN}/${MBED_SYSTEM}
