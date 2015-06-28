@@ -9,7 +9,7 @@ import skills.angle_receive
 import evaluation.touchpass_positioning
 from enum import Enum
 
-# A play to test onetouchpass, which causes a robot to pass to another one,
+## A play to test onetouchpass, which causes a robot to pass to another one,
 # who scores on the goal as fast as possible.
 #
 # The real work is in the class that receives from coordinated_pass, angle_receive

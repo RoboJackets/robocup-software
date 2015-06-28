@@ -167,11 +167,12 @@ class AngleReceive(skills._kick._Kick):
             self._pass_line = robocup.Line(ball.pos, ball.pos + ball.vel*10)
             # After kicking, apply angle calculations
             target_angle_rad = self.adjust_angle((self.get_target_point() - self.robot.pos).angle())
+            self._kick_line = robocup.Line(self.robot.pos, robocup.Point(self.robot.pos.x + math.cos(self.robot.angle) * 10, self.robot.pos.y + math.sin(self.robot.angle) * 10))
         else:
             # if the ball hasn't been kicked yet, we assume it's going to go through the receive point
             self._pass_line = robocup.Line(ball.pos, self.receive_point)
             target_angle_rad = (self.get_target_point() - self.robot.pos).angle()
-        self._kick_line = robocup.Line(self.receive_point, self.get_target_point())
+            self._kick_line = robocup.Line(self.receive_point, self.get_target_point())
 
         self._angle_facing =  target_angle_rad
         angle_rad = self.robot.angle
@@ -219,8 +220,9 @@ class AngleReceive(skills._kick._Kick):
 
         if self._pass_line != None:
             main.system_state().draw_line(self._pass_line, constants.Colors.Blue, "Pass")
-            main.system_state().draw_line(self._kick_line, constants.Colors.Red, "Shot")
             main.system_state().draw_circle(self._target_pos, 0.03, constants.Colors.Blue, "Pass")
+        if self._kick_line != None:
+            main.system_state().draw_line(self._kick_line, constants.Colors.Red, "Shot")
 
 
 
