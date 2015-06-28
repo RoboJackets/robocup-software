@@ -88,7 +88,7 @@ void CommLink::txThread(void const *arg)
     // Only continue past this point once the hardware link is initialized
     osSignalWait(COMM_LINK_SIGNAL_START_THREAD, osWaitForever);
 
-    while(1) {
+    while (true) {
         // [X] - 1 - Wait until the CommModule class sends a signal to begin operation on new data being placed in its txQueue
         // =================
         osSignalWait(COMM_LINK_SIGNAL_TX_TRIGGER, osWaitForever);
@@ -119,7 +119,7 @@ void CommLink::rxThread(void const *arg)
 
     DigitalOut rx_led(LED4, 0);
 
-    while(1) {
+    while (true) {
         // [X] - 1 - Wait until new data has arrived - this is interrupt triggered by CommLink::ISR()
         // =================
         osSignalWait(COMM_LINK_SIGNAL_RX_TRIGGER, osWaitForever);

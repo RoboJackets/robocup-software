@@ -50,7 +50,7 @@ void CommModule::txThread(void const *arg)
 
     log(LOG_LEVEL::INFO, "CommModule", "TX Communication Module Ready!");
 
-    while(1) {
+    while (true) {
 
         // When a new RTP packet is put in the tx queue, begin operations (does nothing if no new data in queue)
         osEvent evt = osMailGet(inst->_txQueue, osWaitForever);
@@ -84,7 +84,7 @@ void CommModule::rxThread(void const *arg)
 
     RTP_t *p;
     osEvent  evt;
-    while(1) {
+    while (true) {
 
         // Wait until new data is placed in the class's rxQueue from a CommLink class
         evt = osMailGet(inst->_rxQueue, osWaitForever);
