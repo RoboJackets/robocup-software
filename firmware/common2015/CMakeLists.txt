@@ -3,9 +3,6 @@ file(GLOB_RECURSE common2015_SRC
     "*.cpp"
 )
 
-message(STATUS "At common2015, mbed obj = ${MBED_OBJECTS}")
-
-
 # tell CMake that the obj files all come from the ExternalProject
 # otherwise it'll complain that the files can't be found
 foreach(mbed_obj ${MBED_OBJECTS})

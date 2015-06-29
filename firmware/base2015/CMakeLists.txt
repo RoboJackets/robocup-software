@@ -32,5 +32,5 @@ add_custom_target(base2015-prog
     arm-none-eabi-objcopy -O binary base2015_elf base2015.bin
     COMMAND ${PROJECT_SOURCE_DIR}/util/base2015-prog.sh ${PROJECT_SOURCE_DIR}/run/base2015.bin
     DEPENDS base2015
-    COMMENT "Copies the files created by base2015 into a single mbed"
+    COMMENT "Copying the base2015 firmware into a single mbed"
 )
