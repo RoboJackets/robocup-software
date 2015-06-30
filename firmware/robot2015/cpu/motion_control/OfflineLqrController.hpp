@@ -85,8 +85,9 @@ class OfflineLqrController {
     /// LQR gain matrix.
     typedef Eigen::Matrix<float, 4, 3> KType;
 
-    OfflineLqrController(const RobotModel &robotModel, const RobotModelParams &robotModelParams,
-                         const LqrLookupTable<KType> *lookupTable);
+    OfflineLqrController(const RobotModel &robotModel,
+                         const RobotModelParams &robotModelParams,
+                         const LqrLookupTable<KType> &lookupTable);
 
     /// Uses the lookup table to find the control gains, K, for the current
     /// radial speed, then calculates the optimal motor voltages using the
@@ -99,7 +100,7 @@ class OfflineLqrController {
     const RobotModel _robotModel;
     const RobotModelParams _robotModelParams;
 
-    const LqrLookupTable<KType> *_lookupTable;
+    const LqrLookupTable<KType> _lookupTable;
 
     // We calculate the constant pinv(B) once at the start, then use the
     // cached value.
