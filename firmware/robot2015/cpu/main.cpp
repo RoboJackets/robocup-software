@@ -27,7 +27,7 @@ int main(void)
 	isLogging = false;
 	rjLogLevel = LOG_LEVEL::INFO;
 
-	//initRadioThread();
+	initRadioThread();
 	initConsoleRoutine();
 }
 
@@ -117,18 +117,18 @@ void initConsoleRoutine(void)
 {
 	if (!COMPETITION_DEPLOY)
 	{
-		initConsole();
+		Console::Init();
 
-		for (;;)
+		while (true)
 		{
 			//check console communications, currently does nothing
 			//then execute any active iterative command
-			conComCheck();
+			Console::ConComCheck();
 			//execute any active iterative command
 			executeIterativeCommand();
 
 			//check if a system stop is requested
-			if (isSysStopReq() == true)
+			if (Console::IsSystemStopRequested() == true)
 			{
 				break;
 			}
@@ -136,14 +136,15 @@ void initConsoleRoutine(void)
 			//main loop heartbeat
 			wait(0.1);
 			ledTwo = !ledTwo;
-	    	}
+		}
 
 		//clear light for main loop (shows its complete)
 		ledTwo = false;
+
 	}
 	else
 	{
-		for (;;);
+		while (true);
 	}
 }
 

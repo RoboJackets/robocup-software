@@ -44,10 +44,10 @@ for i in $MBED_DEVICES_PATH; do
 
 
     if [ "$SHA2" != "$(sha256sum /mnt/script/MBED/$(echo "$1" | awk 'BEGIN {FS = "/"}; {print $NF}') | awk '{print $1}')" ]; then
-        echo ERROR: Sha Hashes do not match, copy failed. Exiting...
+        echo ERROR: Sha Hashes do not match. Exiting...
         exit 1
     else
-        echo Sha256sums of binary files match, copy successful!
+        echo Sha256sums of binary files match!
     fi
 
     sudo umount -l /mnt/script/MBED/

@@ -20,6 +20,8 @@
 // This will check the mbed's firmware for the most known up-to-date version if enabled
 #define RJ_CHECK_FIRMWARE       0
 
+#define RJ_WATCHDOG_EN          0
+
 
 // ** ============================= ** ENABLE / DISABLE ROBOT INTERFACES ** ============================= **
 

@@ -10,9 +10,8 @@ set(PY_LIBS)
 # ------------------------------------------------------------------------------
 # git checkout and build location of mbed libraries
 set(PY_TOOLS_DIR ${CMAKE_CURRENT_BINARY_DIR}/mbed_lib_build_tools-prefix/src/mbed_lib_build_tools)
-set(MCP23017_DIR ${CMAKE_CURRENT_BINARY_DIR}/mcp23017-prefix/src/mcp23017)
 
-#library roots
+# library roots
 set(MBED_PATH          ${PY_TOOLS_DIR}/build/mbed)
 set(MBED_NET_PATH      ${PY_TOOLS_DIR}/build/net/eth)
 set(MBED_RTOS_PATH     ${PY_TOOLS_DIR}/build/rtos)
@@ -87,6 +86,7 @@ SET(CMAKE_C_FLAGS "${COMMON_FLAGS} ${MBED_DEFINES} -std=gnu99")
 
 # ------------------------------------------------------------------------------
 # setup precompiled mbed files which will be needed for all projects
+# MESSAGE(STATUS "mbed path: ${MBED_PATH}")
 set(MBED_OBJECTS
   ${MBED_PATH}/TARGET_${MBED_TARGET}/${TOOLCHAIN}/${MBED_STARTUP}
   ${MBED_PATH}/TARGET_${MBED_TARGET}/${TOOLCHAIN}/${MBED_SYSTEM}
@@ -112,7 +112,6 @@ include_directories("${MBED_PATH}/TARGET_${MBED_TARGET}/${TOOLCHAIN}")
 include_directories("${MBED_PATH}/TARGET_${MBED_TARGET}/TARGET_${MBED_VENDOR}/TARGET_${MBED_FAMILY}/")
 include_directories("${MBED_PATH}/TARGET_${MBED_TARGET}/TARGET_${MBED_VENDOR}/TARGET_${MBED_FAMILY}/TARGET_${MBED_CPU}")
 
-link_directories("${MBED_PATH}/TARGET_${MBED_TARGET}/${TOOLCHAIN}")
 
 # add networking
 if(${USE_NET} STREQUAL "true")
@@ -132,7 +131,7 @@ if(${USE_NET} STREQUAL "true")
   #library dir
   set(PY_NET_LIB_DIR ${MBED_NET_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${PY_TOOLCHAIN_OPT})
   #add static
-  set(MBED_LIBS ${MBED_LIBS} ${PY_NET_LIB_DIR}/libeth.a)
+  set(MBED_LIBS ${MBED_LIBS} libeth.a)
   #add build arg to py script command
   set(PY_LIBS ${PY_LIBS} --eth)
 
@@ -176,7 +175,7 @@ if(${USE_USB} STREQUAL "true")
   set(PY_USB_LIB_DIR      ${MBED_USB_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${PY_TOOLCHAIN_OPT})
   set(PY_USB_HOST_LIB_DIR ${MBED_USB_HOST_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${PY_TOOLCHAIN_OPT})
   #add statics
-  set(MBED_LIBS ${MBED_LIBS} ${PY_USB_LIB_DIR}/libUSBDevice.a ${PY_USB_HOST_LIB_DIR}/libUSBHost.a)
+  set(MBED_LIBS ${MBED_LIBS} libUSBDevice.a libUSBHost.a)
   #add build arg to py script command
   set(PY_LIBS ${PY_LIBS} --usb --usb_host)
 endif()
@@ -189,11 +188,12 @@ if(${USE_DSP} STREQUAL "true")
   #library dir
   set(PY_DSP_LIB_DIR ${MBED_DSP_PATH}/TARGET_${MBED_TARGET}/TOOLCHAIN_${PY_TOOLCHAIN_OPT})
   #add static
-  set(MBED_LIBS ${MBED_LIBS} ${PY_DSP_LIB_DIR}/libcmsis_dsp.a ${PY_DSP_LIB_DIR}/libdsp.a)
+  set(MBED_LIBS ${MBED_LIBS} libcmsis_dsp.a libdsp.a)
   #add build arg to py script command
   set(PY_LIBS ${PY_LIBS} --dsp)
 endif()
 
-if(${BUILD_MCP23017} STREQUAL "true")
-  include_directories("${MCP23017_DIR}")
-endif()
+set(MBED_LINK_DIRS "${MBED_PATH}/TARGET_${MBED_TARGET}/${TOOLCHAIN}")
+link_directories(${MBED_LINK_DIRS})
+
+include_directories(${MBED_PATH})
