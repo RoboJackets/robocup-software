@@ -120,7 +120,7 @@ void FieldView::paintEvent(QPaintEvent* e)
 		// Turn on the new layers
 		for (int i = start; i < _layerVisible.size(); ++i)
 		{
-			_layerVisible[i] = true;
+			_layerVisible[i] = false;
 		}
 	}
 	
