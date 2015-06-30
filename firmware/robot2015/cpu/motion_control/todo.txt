@@ -7,6 +7,5 @@ Motion Control
 - how does our motion control code interface with the radio stuff?  How about threading?
 - verify pseudoInverse function in LinearAlgebra.hpp
 
-- do global search for LqrLookupTableValues.cpp and make sure it's consistent
-
 - refactor simulator to use new LQR controller
+- fix errors in RobotLqr.m
