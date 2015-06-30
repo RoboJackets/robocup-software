@@ -20,10 +20,8 @@ OfflineLqrController::OfflineLqrController(
         throw std::invalid_argument("LookupTable can't be null");
     }
 
-    // // Cache the value of pinv(B) to be used later
-    PseudoInverse(_robotModel.B, &_pinvB)
-
-#warning OfflineLqrController ctor unimplemented
+    // Cache the value of pinv(B) to be used later
+    _pinvB = PseudoInverse(_robotModel.B);
 }
 
 Eigen::Vector4f OfflineLqrController::computeControls(
