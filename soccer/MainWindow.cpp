@@ -295,7 +295,7 @@ void MainWindow::updateViews()
 		for (int i = _ui.debugLayers->count(); i < liveFrame->debug_layers_size(); ++i)
 		{
 			QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(liveFrame->debug_layers(i)));
-			item->setCheckState(Qt::Checked);
+			item->setCheckState(Qt::Unchecked);
 			item->setData(Qt::UserRole, i);
 			_ui.debugLayers->addItem(item);
 		}
