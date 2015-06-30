@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['opensocket',['openSocket',['../class_comm_module.html#abdd0add2619fc95f716fd2600a6c7cab',1,'CommModule']]],
   ['operator_21_3d',['operator!=',['../class_geometry2d_1_1_point.html#a4eba8c40e062c4932fbdec61fd75d978',1,'Geometry2d::Point']]],
   ['operator_2a',['operator*',['../class_geometry2d_1_1_point.html#a07d1485f7ee656c42b0ec1193894eba5',1,'Geometry2d::Point']]],
   ['operator_2a_3d',['operator*=',['../class_geometry2d_1_1_point.html#a0c53cdd9a83d4784f348d10ba59f09f1',1,'Geometry2d::Point']]],

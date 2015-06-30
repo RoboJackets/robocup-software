@@ -2,14 +2,11 @@ var searchData=
 [
   ['capture',['Capture',['../classgameplay_1_1skills_1_1capture_1_1_capture.html',1,'gameplay::skills::capture']]],
   ['category',['Category',['../classgameplay_1_1play__registry_1_1_play_registry_1_1_category.html',1,'gameplay::play_registry::PlayRegistry']]],
-  ['cc1101',['CC1101',['../class_c_c1101.html',1,'']]],
   ['chipper',['Chipper',['../struct_robot_config_1_1_chipper.html',1,'RobotConfig']]],
   ['circle',['Circle',['../class_geometry2d_1_1_circle.html',1,'Geometry2d']]],
   ['circlenearball',['CircleNearBall',['../classgameplay_1_1tactics_1_1circle__near__ball_1_1_circle_near_ball.html',1,'gameplay::tactics::circle_near_ball']]],
   ['colors',['Colors',['../classgameplay_1_1constants_1_1_colors.html',1,'gameplay::constants']]],
   ['command_5ft',['command_t',['../structcommand__t.html',1,'']]],
-  ['commlink',['CommLink',['../class_comm_link.html',1,'']]],
-  ['commmodule',['CommModule',['../class_comm_module.html',1,'']]],
   ['compositebehavior',['CompositeBehavior',['../classgameplay_1_1composite__behavior_1_1_composite_behavior.html',1,'gameplay::composite_behavior']]],
   ['compositepath',['CompositePath',['../class_planning_1_1_composite_path.html',1,'Planning']]],
   ['compositeshape',['CompositeShape',['../class_geometry2d_1_1_composite_shape.html',1,'Geometry2d']]],
@@ -20,5 +17,6 @@ var searchData=
   ['configurable',['Configurable',['../class_configurable.html',1,'']]],
   ['configurableimpl',['ConfigurableImpl',['../class_configurable_impl.html',1,'']]],
   ['configuration',['Configuration',['../class_configuration.html',1,'']]],
+  ['console',['Console',['../class_console.html',1,'']]],
   ['coordinatedpass',['CoordinatedPass',['../classgameplay_1_1tactics_1_1coordinated__pass_1_1_coordinated_pass.html',1,'gameplay::tactics::coordinated_pass']]]
 ];

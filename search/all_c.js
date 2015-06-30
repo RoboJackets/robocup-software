@@ -9,6 +9,5 @@ var searchData=
   ['loadplaybook',['loadPlaybook',['../class_gameplay_1_1_gameplay_module.html#aceed4fb50804b681031f6fbc25221c1c',1,'Gameplay::GameplayModule']]],
   ['localobstacles',['localObstacles',['../class_our_robot.html#ad3ccf59f3c226b40774933432ce22a70',1,'OurRobot']]],
   ['logger',['Logger',['../class_logger.html',1,'']]],
-  ['logviewer',['LogViewer',['../class_log_viewer.html',1,'']]],
-  ['lqi',['lqi',['../class_c_c1101.html#aab5bee912982884b386fa0f279d39935',1,'CC1101']]]
+  ['logviewer',['LogViewer',['../class_log_viewer.html',1,'']]]
 ];

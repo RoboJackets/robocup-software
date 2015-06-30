@@ -113,38 +113,121 @@ $(document).ready(function(){initNavTree('console_8hpp_source.html','');});
 <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#pragma once</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;</div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;</div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="comment">/*</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="comment"> * uncomment the following line to enable serial transmit and receive debugging</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="comment"> * on LED&#39;s three and four</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="comment"> *</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * comment the second line to print the command being executed upon enter key</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> * hit</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="comment"> */</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="comment">//#define DEBUG</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#define DISABLE_CMD_FEEDBACK</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">const</span> <span class="keywordtype">string</span> ENABLE_SCROLL_SEQ = <span class="stringliteral">&quot;\033[r&quot;</span>;</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">const</span> <span class="keywordtype">string</span> CLEAR_SCREEN_SEQ = <span class="stringliteral">&quot;\033[2J&quot;</span>;</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keywordtype">void</span> initConsole(<span class="keywordtype">void</span>);</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keywordtype">void</span> conComCheck(<span class="keywordtype">void</span>);</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="keywordtype">void</span> flush(<span class="keywordtype">void</span>);</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="keywordtype">void</span> reqSysStop(<span class="keywordtype">void</span>);</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="keywordtype">bool</span> isSysStopReq(<span class="keywordtype">void</span>);</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">const</span> std::string ENABLE_SCROLL_SEQ = <span class="stringliteral">&quot;\033[r&quot;</span>;</div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="keyword">const</span> std::string CLEAR_SCREEN_SEQ = <span class="stringliteral">&quot;\033[2J&quot;</span>;</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keywordtype">void</span> initConsole(<span class="keywordtype">void</span>);</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keywordtype">void</span> conComCheck(<span class="keywordtype">void</span>);</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="keywordtype">void</span> flush(<span class="keywordtype">void</span>);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keywordtype">void</span> reqSysStop(<span class="keywordtype">void</span>);</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="keywordtype">bool</span> isSysStopReq(<span class="keywordtype">void</span>);</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
+<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="class_console.html">   47</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_console.html">Console</a></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;{</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="class_console.html#a54cc0be3c6584e17e67df74da4ec6a5d">   54</a></span>&#160;  <span class="keyword">static</span> constexpr uint8_t <a class="code" href="class_console.html#a54cc0be3c6584e17e67df74da4ec6a5d">BUFFER_LENGTH</a> = 252;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno"><a class="line" href="class_console.html#af86c26d282ed7e62ee953ce821b0d968">   59</a></span>&#160;  <span class="keyword">static</span> constexpr <span class="keywordtype">char</span> <a class="code" href="class_console.html#af86c26d282ed7e62ee953ce821b0d968">NEW_LINE_CHAR</a> = 13;  <span class="comment">//ASCII CR (\r) (0x0D)</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
+<div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="class_console.html#ab0444d4cca0065f3b3509b28fc12026c">   65</a></span>&#160;  <span class="keyword">static</span> constexpr <span class="keywordtype">char</span> <a class="code" href="class_console.html#ab0444d4cca0065f3b3509b28fc12026c">BACKSPACE_FLAG_CHAR</a> = 127; <span class="comment">//ASCII DEL (0x7F)</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
+<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="class_console.html#a2c4a8170508da234b30eea81a5217c99">   71</a></span>&#160;  <span class="keyword">static</span> constexpr <span class="keywordtype">char</span> <a class="code" href="class_console.html#a2c4a8170508da234b30eea81a5217c99">BACKSPACE_REPLY_CHAR</a> = 8;   <span class="comment">//ASCII BK (\b) (0x08)</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="class_console.html#a43249dac74dabd5736dc0b5328e42751">   76</a></span>&#160;  <span class="keyword">static</span> constexpr <span class="keywordtype">char</span> <a class="code" href="class_console.html#a43249dac74dabd5736dc0b5328e42751">BACKSPACE_REPLACE_CHAR</a> = 32;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
+<div class="line"><a name="l00081"></a><span class="lineno"><a class="line" href="class_console.html#a7c54d96a6e07c64fa8cb518216c16aee">   81</a></span>&#160;  <span class="keyword">static</span> constexpr <span class="keywordtype">char</span> <a class="code" href="class_console.html#a7c54d96a6e07c64fa8cb518216c16aee">BREAK_CHAR</a> = 3;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
+<div class="line"><a name="l00086"></a><span class="lineno"><a class="line" href="class_console.html#a1591953e808f7a257b672a8254130e04">   86</a></span>&#160;  <span class="keyword">static</span> constexpr <span class="keywordtype">char</span> <a class="code" href="class_console.html#a1591953e808f7a257b672a8254130e04">ARROW_KEY_SEQUENCE_ONE</a> = 27;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  <span class="keyword">static</span> constexpr <span class="keywordtype">char</span> ARROW_KEY_SEQUENCE_TWO = 91;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
+<div class="line"><a name="l00092"></a><span class="lineno"><a class="line" href="class_console.html#ae62850691823513699bb51b20fa553e4">   92</a></span>&#160;  <span class="keyword">static</span> constexpr <span class="keywordtype">char</span> <a class="code" href="class_console.html#ae62850691823513699bb51b20fa553e4">ARROW_UP_KEY</a> = 65;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
+<div class="line"><a name="l00097"></a><span class="lineno"><a class="line" href="class_console.html#a7c0a5e21fa4a168fc2f7f56029202a73">   97</a></span>&#160;  <span class="keyword">static</span> constexpr <span class="keywordtype">char</span> <a class="code" href="class_console.html#a7c0a5e21fa4a168fc2f7f56029202a73">ARROW_DOWN_KEY</a> = 66;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
+<div class="line"><a name="l00102"></a><span class="lineno"><a class="line" href="class_console.html#aac03135af6935d26620edf616f5d1fbd">  102</a></span>&#160;  <span class="keyword">static</span> <span class="keyword">const</span> std::string <a class="code" href="class_console.html#aac03135af6935d26620edf616f5d1fbd">CONSOLE_HEADER</a>;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
+<div class="line"><a name="l00107"></a><span class="lineno"><a class="line" href="class_console.html#a3a7c9ddeec8abe6288f82f0b06bb3e92">  107</a></span>&#160;  <span class="keyword">static</span> <span class="keyword">const</span> std::string <a class="code" href="class_console.html#a3a7c9ddeec8abe6288f82f0b06bb3e92">RX_BUFFER_FULL_MSG</a>;</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
+<div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="class_console.html#a7c4c8b0bd444869286b12594dd92da3e">  112</a></span>&#160;  <span class="keyword">static</span> <span class="keyword">const</span> std::string <a class="code" href="class_console.html#a7c4c8b0bd444869286b12594dd92da3e">COMMAND_BREAK_MSG</a>;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;</div>
+<div class="line"><a name="l00117"></a><span class="lineno"><a class="line" href="class_console.html#af66997051b8b2bc90f2e3e5d84c78c0f">  117</a></span>&#160;  <span class="keyword">static</span> constexpr uint16_t <a class="code" href="class_console.html#af66997051b8b2bc90f2e3e5d84c78c0f">BAUD_RATE</a> = 9600;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;  <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="class_console.html#aaf56023eb347d2c95eda4b9a878d0699">Init</a>();</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="class_console.html#a650e706007b150c274ee5cef199b3988">ConComCheck</a>();</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;  <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="class_console.html#a8c948f8da92c34c8d02125783ce01020">Flush</a>();</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;  <span class="keyword">static</span> <span class="keywordtype">void</span> <a class="code" href="class_console.html#a7d6415b627a760650db294cd6ce16df0">RequestSystemStop</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;  <span class="keyword">static</span> <span class="keywordtype">bool</span> <a class="code" href="class_console.html#ab2d46ee79c4bf7e852abc7c8d3071b66">IsSystemStopRequested</a>(<span class="keywordtype">void</span>);</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;  <span class="comment">// Constructor is only used in init branch of Instance()</span></div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;  <a class="code" href="class_console.html">Console</a>();</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;  <span class="keyword">static</span> std::shared_ptr&lt;Console&gt;&amp; Instance();</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;  <span class="keywordtype">void</span> ClearRXBuffer();</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;  <span class="keywordtype">void</span> ClearTXBuffer();</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  <span class="keywordtype">void</span> RXCallback();</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;  <span class="keywordtype">void</span> TXCallback();</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;  <span class="keyword">static</span> std::shared_ptr&lt;Console&gt; instance;</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;  Serial pc;</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;  <span class="keywordtype">char</span> rxBuffer[<a class="code" href="class_console.html#a54cc0be3c6584e17e67df74da4ec6a5d">BUFFER_LENGTH</a>];</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;  <span class="keywordtype">char</span> txBuffer[<a class="code" href="class_console.html#a54cc0be3c6584e17e67df74da4ec6a5d">BUFFER_LENGTH</a>];</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;  <span class="keywordtype">bool</span> sysStopReq = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;  <span class="keywordtype">bool</span> flagOne = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;  <span class="keywordtype">bool</span> flagTwo = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;  uint8_t rxIndex = 0;</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;  uint8_t txIndex = 0;</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;};</div>
+<div class="ttc" id="class_console_html_a2c4a8170508da234b30eea81a5217c99"><div class="ttname"><a href="class_console.html#a2c4a8170508da234b30eea81a5217c99">Console::BACKSPACE_REPLY_CHAR</a></div><div class="ttdeci">static constexpr char BACKSPACE_REPLY_CHAR</div><div class="ttdoc">backspace reply char. </div><div class="ttdef"><b>Definition:</b> console.hpp:71</div></div>
+<div class="ttc" id="class_console_html_a7c4c8b0bd444869286b12594dd92da3e"><div class="ttname"><a href="class_console.html#a7c4c8b0bd444869286b12594dd92da3e">Console::COMMAND_BREAK_MSG</a></div><div class="ttdeci">static const std::string COMMAND_BREAK_MSG</div><div class="ttdoc">break message </div><div class="ttdef"><b>Definition:</b> console.hpp:112</div></div>
+<div class="ttc" id="class_console_html_af86c26d282ed7e62ee953ce821b0d968"><div class="ttname"><a href="class_console.html#af86c26d282ed7e62ee953ce821b0d968">Console::NEW_LINE_CHAR</a></div><div class="ttdeci">static constexpr char NEW_LINE_CHAR</div><div class="ttdoc">new line character. </div><div class="ttdef"><b>Definition:</b> console.hpp:59</div></div>
+<div class="ttc" id="class_console_html_a8c948f8da92c34c8d02125783ce01020"><div class="ttname"><a href="class_console.html#a8c948f8da92c34c8d02125783ce01020">Console::Flush</a></div><div class="ttdeci">static void Flush()</div><div class="ttdoc">flushes stdout. </div><div class="ttdef"><b>Definition:</b> console.cpp:68</div></div>
+<div class="ttc" id="class_console_html_a7c0a5e21fa4a168fc2f7f56029202a73"><div class="ttname"><a href="class_console.html#a7c0a5e21fa4a168fc2f7f56029202a73">Console::ARROW_DOWN_KEY</a></div><div class="ttdeci">static constexpr char ARROW_DOWN_KEY</div><div class="ttdoc">arrow down value, following arrow key flag </div><div class="ttdef"><b>Definition:</b> console.hpp:97</div></div>
+<div class="ttc" id="class_console_html_ab2d46ee79c4bf7e852abc7c8d3071b66"><div class="ttname"><a href="class_console.html#ab2d46ee79c4bf7e852abc7c8d3071b66">Console::IsSystemStopRequested</a></div><div class="ttdeci">static bool IsSystemStopRequested(void)</div><div class="ttdoc">returns if the main loop should break </div><div class="ttdef"><b>Definition:</b> console.cpp:209</div></div>
+<div class="ttc" id="class_console_html_ab0444d4cca0065f3b3509b28fc12026c"><div class="ttname"><a href="class_console.html#ab0444d4cca0065f3b3509b28fc12026c">Console::BACKSPACE_FLAG_CHAR</a></div><div class="ttdeci">static constexpr char BACKSPACE_FLAG_CHAR</div><div class="ttdoc">backspace flag char. </div><div class="ttdef"><b>Definition:</b> console.hpp:65</div></div>
+<div class="ttc" id="class_console_html_a7c54d96a6e07c64fa8cb518216c16aee"><div class="ttname"><a href="class_console.html#a7c54d96a6e07c64fa8cb518216c16aee">Console::BREAK_CHAR</a></div><div class="ttdeci">static constexpr char BREAK_CHAR</div><div class="ttdoc">default ETX (0x3) </div><div class="ttdef"><b>Definition:</b> console.hpp:81</div></div>
+<div class="ttc" id="class_console_html_a650e706007b150c274ee5cef199b3988"><div class="ttname"><a href="class_console.html#a650e706007b150c274ee5cef199b3988">Console::ConComCheck</a></div><div class="ttdeci">static void ConComCheck()</div><div class="ttdoc">console communications check. </div><div class="ttdef"><b>Definition:</b> console.cpp:190</div></div>
+<div class="ttc" id="class_console_html_a54cc0be3c6584e17e67df74da4ec6a5d"><div class="ttname"><a href="class_console.html#a54cc0be3c6584e17e67df74da4ec6a5d">Console::BUFFER_LENGTH</a></div><div class="ttdeci">static constexpr uint8_t BUFFER_LENGTH</div><div class="ttdoc">max buffer length. </div><div class="ttdef"><b>Definition:</b> console.hpp:54</div></div>
+<div class="ttc" id="class_console_html_ae62850691823513699bb51b20fa553e4"><div class="ttname"><a href="class_console.html#ae62850691823513699bb51b20fa553e4">Console::ARROW_UP_KEY</a></div><div class="ttdeci">static constexpr char ARROW_UP_KEY</div><div class="ttdoc">arrow up value, following arrow key flag </div><div class="ttdef"><b>Definition:</b> console.hpp:92</div></div>
+<div class="ttc" id="class_console_html_af66997051b8b2bc90f2e3e5d84c78c0f"><div class="ttname"><a href="class_console.html#af66997051b8b2bc90f2e3e5d84c78c0f">Console::BAUD_RATE</a></div><div class="ttdeci">static constexpr uint16_t BAUD_RATE</div><div class="ttdoc">Serial (over USB) baud rate. </div><div class="ttdef"><b>Definition:</b> console.hpp:117</div></div>
+<div class="ttc" id="class_console_html_a43249dac74dabd5736dc0b5328e42751"><div class="ttname"><a href="class_console.html#a43249dac74dabd5736dc0b5328e42751">Console::BACKSPACE_REPLACE_CHAR</a></div><div class="ttdeci">static constexpr char BACKSPACE_REPLACE_CHAR</div><div class="ttdoc">when the console backspaces, what does the last character become. </div><div class="ttdef"><b>Definition:</b> console.hpp:76</div></div>
+<div class="ttc" id="class_console_html"><div class="ttname"><a href="class_console.html">Console</a></div><div class="ttdoc">Manages serial-over-USB communication with the PC. </div><div class="ttdef"><b>Definition:</b> console.hpp:47</div></div>
+<div class="ttc" id="class_console_html_aaf56023eb347d2c95eda4b9a878d0699"><div class="ttname"><a href="class_console.html#aaf56023eb347d2c95eda4b9a878d0699">Console::Init</a></div><div class="ttdeci">static void Init()</div><div class="ttdoc">Console initialization routine. </div><div class="ttdef"><b>Definition:</b> console.cpp:25</div></div>
+<div class="ttc" id="class_console_html_a7d6415b627a760650db294cd6ce16df0"><div class="ttname"><a href="class_console.html#a7d6415b627a760650db294cd6ce16df0">Console::RequestSystemStop</a></div><div class="ttdeci">static void RequestSystemStop(void)</div><div class="ttdoc">requests the main loop break </div><div class="ttdef"><b>Definition:</b> console.cpp:204</div></div>
+<div class="ttc" id="class_console_html_a1591953e808f7a257b672a8254130e04"><div class="ttname"><a href="class_console.html#a1591953e808f7a257b672a8254130e04">Console::ARROW_KEY_SEQUENCE_ONE</a></div><div class="ttdeci">static constexpr char ARROW_KEY_SEQUENCE_ONE</div><div class="ttdoc">define the sequence for arrow key flags </div><div class="ttdef"><b>Definition:</b> console.hpp:86</div></div>
+<div class="ttc" id="class_console_html_a3a7c9ddeec8abe6288f82f0b06bb3e92"><div class="ttname"><a href="class_console.html#a3a7c9ddeec8abe6288f82f0b06bb3e92">Console::RX_BUFFER_FULL_MSG</a></div><div class="ttdeci">static const std::string RX_BUFFER_FULL_MSG</div><div class="ttdoc">receice buffer full error message </div><div class="ttdef"><b>Definition:</b> console.hpp:107</div></div>
+<div class="ttc" id="class_console_html_aac03135af6935d26620edf616f5d1fbd"><div class="ttname"><a href="class_console.html#aac03135af6935d26620edf616f5d1fbd">Console::CONSOLE_HEADER</a></div><div class="ttdeci">static const std::string CONSOLE_HEADER</div><div class="ttdoc">console header string. </div><div class="ttdef"><b>Definition:</b> console.hpp:102</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><a class="el" href="dir_c0c004eb35b511375354a83a9fdcdede.html">firmware</a></li><li class="navelem"><a class="el" href="dir_354b1a99ef6c04cbc0da7bd8e88ac732.html">robot2015</a></li><li class="navelem"><a class="el" href="dir_128d5102bb692abd81ad85548ed1360f.html">cpu</a></li><li class="navelem"><b>console.hpp</b></li>
-    <li class="footer">Generated on Sun Jun 28 2015 16:18:57 for GT RoboCup SSL by
+    <li class="navelem"><a class="el" href="dir_d9edf6c004b4a7ff14fe9ae7a92214ee.html">firmware</a></li><li class="navelem"><a class="el" href="dir_e2e0da30d41e8fe178a64e0346be81e9.html">robot2015</a></li><li class="navelem"><a class="el" href="dir_c26f59b61934b5bd6a1acc616c9abc91.html">cpu</a></li><li class="navelem"><b>console.hpp</b></li>
+    <li class="footer">Generated on Tue Jun 30 2015 01:06:45 for GT RoboCup SSL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

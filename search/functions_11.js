@@ -7,8 +7,6 @@ var searchData=
   ['test_5fnot_5fenough_5fbots',['test_not_enough_bots',['../classtest__role__assignment_1_1_test_role_assignment.html#ae68a418aef0c7a68d8c28d0587754802',1,'test_role_assignment::TestRoleAssignment']]],
   ['test_5fpos_5fcost',['test_pos_cost',['../classtest__role__assignment_1_1_test_role_assignment.html#ac82c0f8291b3d51872a56bc2f50d84d3',1,'test_role_assignment::TestRoleAssignment']]],
   ['threshold',['threshold',['../classgameplay_1_1skills_1_1move_1_1_move.html#a16456af0a0b1ff3a5c4a7d0d2910435c',1,'gameplay::skills::move::Move']]],
-  ['toggle_5fcs',['toggle_cs',['../class_comm_link.html#a6c2c932b2f4699c917011a4ceced43f2',1,'CommLink']]],
   ['toqpointf',['toQPointF',['../class_geometry2d_1_1_point.html#acb2e043ceee333391ee67f19d1673f9b',1,'Geometry2d::Point']]],
-  ['transform',['transform',['../class_geometry2d_1_1_line.html#a309831055a148ecdb48c5544d63eff95',1,'Geometry2d::Line']]],
-  ['txhandler',['TxHandler',['../class_comm_module.html#a1e4f2ca72da3c534968f45d42f56ba06',1,'CommModule::TxHandler(T *tptr, void(T::*mptr)(RTP_t *), uint8_t portNbr)'],['../class_comm_module.html#af8280c7bf530aff59f66d0728122c7be',1,'CommModule::TxHandler(void(*)(RTP_t *), uint8_t)']]]
+  ['transform',['transform',['../class_geometry2d_1_1_line.html#a309831055a148ecdb48c5544d63eff95',1,'Geometry2d::Line']]]
 ];
