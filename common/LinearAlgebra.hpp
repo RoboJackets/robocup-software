@@ -1,5 +1,5 @@
 #include <Eigen/Dense>
-/*
+
 /// Computes the Moore-Penrose pseudo inverse of a matrix
 /// This function was copied and slightly modified from here:
 /// http://eigen.tuxfamily.org/index.php?title=FAQ
@@ -23,4 +23,3 @@ void PseudoInverse(const M &pinvmat, M *resultOut) const {
     *resultOut = (m_matrixV * Eigen::singularValues_inv.asDiagonal() *
                Eigen::m_matrixU.transpose());
 }
-*/

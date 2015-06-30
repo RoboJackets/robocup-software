@@ -21,7 +21,7 @@ OfflineLqrController::OfflineLqrController(
     }
 
     // // Cache the value of pinv(B) to be used later
-    // PseudoInverse(_robotModel.B, &_pinvB)
+    PseudoInverse(_robotModel.B, &_pinvB)
 
 #warning OfflineLqrController ctor unimplemented
 }
