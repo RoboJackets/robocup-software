@@ -16,8 +16,10 @@ run-sim: all
 
 # Run both C++ and python unit tests
 tests: test-cpp test-python
-test-cpp:
-	cd build && cmake --target test-cpp .. && make $(MAKE_FLAGS) test-cpp && cd .. && run/test-cpp
+test-cpp: test-soccer test-firmware
+test-soccer:
+	mkdir -p build
+	cd build && cmake --target test-soccer .. && make $(MAKE_FLAGS) test-soccer && cd .. && run/test-soccer
 test-firmware:
 	mkdir -p build
 	cd build && cmake --target test-firmware .. && make $(MAKE_FLAGS) test-firmware && cd .. && run/test-firmware
