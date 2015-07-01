@@ -109,3 +109,6 @@ apt-get install $ARGS $(sed 's/#.*//;/^$/d' $BASE/util/ubuntu-packages.txt)
 pip3 install -r $BASE/util/requirements3.txt
 # install python2 requirements
 pip2 install -r $BASE/util/requirements2.txt
+
+echo "-- Updating submodules"
+git submodule update --init
