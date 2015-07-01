@@ -16,8 +16,10 @@ run-sim: all
 
 # Run both C++ and python unit tests
 tests: test-cpp test-python
-test-cpp:
-	cd build && cmake --target test-cpp .. && make $(MAKE_FLAGS) test-cpp && cd .. && run/test-cpp
+test-cpp: test-soccer
+test-soccer:
+	mkdir -p build
+	cd build && cmake --target test-soccer .. && make $(MAKE_FLAGS) test-soccer && cd .. && run/test-soccer
 test-python: all
 	cd soccer/gameplay && ./run_tests.sh
 pylint:
@@ -43,7 +45,7 @@ robot2015:
 
 robot2015-prog:
 	mkdir -p build && cd build && cmake --target robot2015-prog .. && make $(MAKE_FLAGS) robot2015-prog
-	
+
 # Base station 2015 firmware
 base2015:
 	mkdir -p build && cd build && cmake --target base2015 .. && make $(MAKE_FLAGS) base2015
