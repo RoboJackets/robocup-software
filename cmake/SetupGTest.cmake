@@ -19,4 +19,5 @@ ExternalProject_Get_Property(googletest binary_dir)
 set(GTEST_BOTH_LIBRARIES
     ${binary_dir}/libgtest.a
     ${binary_dir}/libgtest_main.a
+    pthread
 )
