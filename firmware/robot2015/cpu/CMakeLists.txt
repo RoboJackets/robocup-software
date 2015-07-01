@@ -4,13 +4,18 @@
 # The end result of this file is the 'robot2015' target
 # building this target ouputs an MBED-runnable file at run/robot2015.bin, which can be copied onto the MBED
 
+
+# set the arm toolchain
+set(CMAKE_TOOLCHAIN_FILE ../../mbed/arm_toolchain.cmake)
+include(../../mbed/arm_toolchain.cmake)
+
+
 # firmware source files
 file(GLOB_RECURSE robot2015_SRC
     "*.cpp"
 )
 
 add_executable(robot2015_elf ${robot2015_SRC})
-add_dependencies(robot2015_elf pre-build)
 target_link_libraries(robot2015_elf common2015)
 
 # the final product is the .bin file, not the elf one.  We hide this away in the build dir

@@ -9,7 +9,8 @@ set(PY_LIBS)
 
 # ------------------------------------------------------------------------------
 # git checkout and build location of mbed libraries
-set(PY_TOOLS_DIR ${CMAKE_CURRENT_BINARY_DIR}/mbed_lib_build_tools-prefix/src/mbed_lib_build_tools)
+# ExternalProject_Get_Property(PY_TOOLS_DIR )
+set(PY_TOOLS_DIR ${CMAKE_CURRENT_BINARY_DIR}/mbed/mbed_libraries-prefix/src/mbed_libraries)
 
 # library roots
 set(MBED_PATH          ${PY_TOOLS_DIR}/build/mbed)
@@ -88,11 +89,11 @@ SET(CMAKE_C_FLAGS "${COMMON_FLAGS} ${MBED_DEFINES} -std=gnu99")
 # setup precompiled mbed files which will be needed for all projects
 # MESSAGE(STATUS "mbed path: ${MBED_PATH}")
 set(MBED_OBJECTS
-  ${MBED_PATH}/TARGET_${MBED_TARGET}/${TOOLCHAIN}/${MBED_STARTUP}
-  ${MBED_PATH}/TARGET_${MBED_TARGET}/${TOOLCHAIN}/${MBED_SYSTEM}
-  ${MBED_PATH}/TARGET_${MBED_TARGET}/${TOOLCHAIN}/cmsis_nvic.o
-  ${MBED_PATH}/TARGET_${MBED_TARGET}/${TOOLCHAIN}/retarget.o
-  ${MBED_PATH}/TARGET_${MBED_TARGET}/${TOOLCHAIN}/board.o
+  ${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/${MBED_STARTUP}
+  ${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/${MBED_SYSTEM}
+  ${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/cmsis_nvic.o
+  ${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/retarget.o
+  ${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/board.o
 )
 
 # ------------------------------------------------------------------------------
@@ -102,19 +103,19 @@ set(MBED_LIBS mbed stdc++ supc++ m gcc g c nosys rdimon)
 # ------------------------------------------------------------------------------
 # linker settings
 set(CMAKE_EXE_LINKER_FLAGS "-Wl,--gc-sections -Wl,--wrap,main --specs=nano.specs  -u _printf_float -u _scanf_float")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} \"-T${MBED_PATH}/TARGET_${MBED_TARGET}/${TOOLCHAIN}/${MBED_LINK_TARGET}.ld\" -static")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} \"-T${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/${MBED_LINK_TARGET}.ld\" -static")
 
 # ------------------------------------------------------------------------------
 # mbed
 include_directories("${MBED_PATH}/")
 include_directories("${MBED_PATH}/TARGET_${MBED_TARGET}/")
-include_directories("${MBED_PATH}/TARGET_${MBED_TARGET}/${TOOLCHAIN}")
+include_directories("${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}")
 include_directories("${MBED_PATH}/TARGET_${MBED_TARGET}/TARGET_${MBED_VENDOR}/TARGET_${MBED_FAMILY}/")
 include_directories("${MBED_PATH}/TARGET_${MBED_TARGET}/TARGET_${MBED_VENDOR}/TARGET_${MBED_FAMILY}/TARGET_${MBED_CPU}")
 
 
 # add networking
-if(${USE_NET} STREQUAL "true")
+if(${MBED_USE_NET} STREQUAL "true")
   #net
   include_directories("${MBED_NET_PATH}")
   include_directories("${MBED_NET_PATH}/EthernetInterface")
@@ -139,11 +140,11 @@ if(${USE_NET} STREQUAL "true")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-literal-suffix")
 
   #force rtos
-  set(USE_RTOS true)
+  set(MBED_USE_RTOS true)
 endif()
 
 # add rtos
-if(${USE_RTOS} STREQUAL "true")
+if(${MBED_USE_RTOS} STREQUAL "true")
   include_directories("${MBED_RTOS_PATH}")
   include_directories("${MBED_RTOS_PATH}/TARGET_${MBED_CORE_GENERIC}")
 
@@ -153,7 +154,7 @@ if(${USE_RTOS} STREQUAL "true")
 endif()
 
 # add usb
-if(${USE_USB} STREQUAL "true")
+if(${MBED_USE_USB} STREQUAL "true")
   #usb
   include_directories("${MBED_USB_PATH}/USBAudio")
   include_directories("${MBED_USB_PATH}/USBDevice")
@@ -181,7 +182,7 @@ if(${USE_USB} STREQUAL "true")
 endif()
 
 # add dsp
-if(${USE_DSP} STREQUAL "true")
+if(${MBED_USE_DSP} STREQUAL "true")
   #dsp
   include_directories("${MBED_DSP_PATH}")
 
@@ -193,7 +194,7 @@ if(${USE_DSP} STREQUAL "true")
   set(PY_LIBS ${PY_LIBS} --dsp)
 endif()
 
-set(MBED_LINK_DIRS "${MBED_PATH}/TARGET_${MBED_TARGET}/${TOOLCHAIN}")
+set(MBED_LINK_DIRS "${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}")
 link_directories(${MBED_LINK_DIRS})
 
 include_directories(${MBED_PATH})
