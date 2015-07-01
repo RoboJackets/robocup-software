@@ -3,8 +3,14 @@
 set(CMAKE_TOOLCHAIN_FILE ../mbed/arm_toolchain.cmake)
 include(../mbed/arm_toolchain.cmake)
 
-file(GLOB_RECURSE common2015_SRC
-    "*.cpp"
+set(common2015_SRC
+    "drivers/CC1101/CC1101.cpp"
+    "modules/CommLink/CommLink.cpp"
+    "modules/CommModule/CommModule.cpp"
+    "utils/FirmwareCheck/FirmwareCheck.cpp"
+    "utils/Logger/logger.cpp"
+    "utils/RTOS_Management/FunctionPointerRJ.cpp"
+    "utils/RTOS_Management/ThreadHelper.cpp"
 )
 
 # tell CMake that the obj files all come from the ExternalProject

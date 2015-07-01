@@ -9,8 +9,8 @@ set(CMAKE_TOOLCHAIN_FILE ../mbed/arm_toolchain.cmake)
 include(../mbed/arm_toolchain.cmake)
 
 # firmware source files
-file(GLOB_RECURSE base2015_SRC
-    "*.cpp"
+set(base2015_SRC
+    "main.cpp"
 )
 
 add_executable(base2015_elf ${base2015_SRC})

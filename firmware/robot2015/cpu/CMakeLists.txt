@@ -11,8 +11,12 @@ include(../../mbed/arm_toolchain.cmake)
 
 
 # firmware source files
-file(GLOB_RECURSE robot2015_SRC
-    "*.cpp"
+set(robot2015_SRC
+    "commands.cpp"
+    "console.cpp"
+    "ds2411.cpp"
+    "main.cpp"
+    "radio.cpp"
 )
 
 add_executable(robot2015_elf ${robot2015_SRC})
