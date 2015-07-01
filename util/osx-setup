@@ -28,3 +28,6 @@ if [ ! -f "$SPNAV_LOC" ]; then
 	echo "-- Building and installing libspnav"
 	cd "$TMP_DIR/libspnav-0.2.3"; ./configure --disable-x11; make; sudo make install
 fi
+
+echo "-- Updating submodules"
+git submodule update --init
