@@ -62,6 +62,17 @@ include_directories("common2015/utils/Logger")
 include_directories("common2015/utils/RTOS_Management")
 include_directories("common2015/utils/Watchdog")
 
+# Add a test runner target "test-firmware"
+set(FIRMWARE_TEST_SRC
+    "common2015/ExampleTest.cpp"
+)
+add_executable(test-firmware ${FIRMWARE_TEST_SRC})
+target_link_libraries(test-firmware ${GTEST_BOTH_LIBRARIES})
+add_dependencies(test-firmware googletest)
+# Don't build the tests by default
+set_target_properties(test-firmware PROPERTIES EXCLUDE_FROM_ALL TRUE)
+
+
 # build robot and base station firmware and the library that they depend on
 add_subdirectory(mbed)
 add_subdirectory(common2015)
