@@ -9,6 +9,10 @@
 set(CMAKE_TOOLCHAIN_FILE ../../mbed/arm_toolchain.cmake)
 include(../../mbed/arm_toolchain.cmake)
 
+# Set compiler and linker flags
+set(CMAKE_CXX_FLAGS ${MBED_CMAKE_CXX_FLAGS})
+set(CMAKE_C_FLAGS ${MBED_CMAKE_C_FLAGS})
+set(CMAKE_EXE_LINKER_FLAGS ${MBED_CMAKE_EXE_LINKER_FLAGS})
 
 # firmware source files
 set(robot2015_SRC
