@@ -16,6 +16,17 @@ set(MBED_TOOLCHAIN TOOLCHAIN_GCC_ARM)
 
 # sets many variables and paths related to building for the MBED
 include(mbed/arm_mbed.cmake)
+# Note: the arm_mbed.cmake script exports flags that need to be set in each CMake
+# file used to build MBED code like so:
+# set(CMAKE_CXX_FLAGS ${MBED_CMAKE_CXX_FLAGS})
+# set(CMAKE_C_FLAGS ${MBED_CMAKE_C_FLAGS})
+# set(CMAKE_EXE_LINKER_FLAGS ${MBED_CMAKE_EXE_LINKER_FLAGS})
+
+# enable C++ exceptions
+set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -fexceptions")
+
+# enable C++11
+set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -std=c++11")
 
 # suppress -rdynamic flag
 set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")

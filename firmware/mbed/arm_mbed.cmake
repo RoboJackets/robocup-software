@@ -81,8 +81,8 @@ SET(MBED_DEFINES "${MBED_DEFINES} -DTARGET_${MBED_VENDOR}")
 SET(MBED_DEFINES "${MBED_DEFINES} -DTOOLCHAIN_GCC_ARM")
 SET(MBED_DEFINES "${MBED_DEFINES} -DTOOLCHAIN_GCC")
 
-SET(CMAKE_CXX_FLAGS "${COMMON_FLAGS} ${MBED_DEFINES} -std=gnu++0x")
-SET(CMAKE_C_FLAGS "${COMMON_FLAGS} ${MBED_DEFINES} -std=gnu99")
+SET(MBED_CMAKE_CXX_FLAGS "${COMMON_FLAGS} ${MBED_DEFINES} -std=c++11")
+SET(MBED_CMAKE_C_FLAGS "${COMMON_FLAGS} ${MBED_DEFINES} -std=gnu99")
 
 
 # ------------------------------------------------------------------------------
@@ -102,8 +102,8 @@ set(MBED_LIBS mbed stdc++ supc++ m gcc g c nosys rdimon)
 
 # ------------------------------------------------------------------------------
 # linker settings
-set(CMAKE_EXE_LINKER_FLAGS "-Wl,--gc-sections -Wl,--wrap,main --specs=nano.specs  -u _printf_float -u _scanf_float")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} \"-T${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/${MBED_LINK_TARGET}.ld\" -static")
+set(MBED_CMAKE_EXE_LINKER_FLAGS "-Wl,--gc-sections -Wl,--wrap,main --specs=nano.specs  -u _printf_float -u _scanf_float")
+set(MBED_CMAKE_EXE_LINKER_FLAGS "${MBED_CMAKE_EXE_LINKER_FLAGS} \"-T${MBED_PATH}/TARGET_${MBED_TARGET}/${MBED_TOOLCHAIN}/${MBED_LINK_TARGET}.ld\" -static")
 
 # ------------------------------------------------------------------------------
 # mbed
@@ -137,7 +137,7 @@ if(${MBED_USE_NET} STREQUAL "true")
   set(PY_LIBS ${PY_LIBS} --eth)
 
   # supress lwip warnings with 0x11
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-literal-suffix")
+  set(MBED_CMAKE_CXX_FLAGS "${MBED_CMAKE_CXX_FLAGS} -Wno-literal-suffix")
 
   #force rtos
   set(MBED_USE_RTOS true)
