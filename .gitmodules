@@ -1,3 +1,0 @@
-[submodule "firmware/urjtag"]
-	path = firmware/urjtag
-	url = git://urjtag.git.sourceforge.net/gitroot/urjtag/urjtag
