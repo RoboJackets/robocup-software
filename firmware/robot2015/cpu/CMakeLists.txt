@@ -16,6 +16,10 @@ set(robot2015_SRC
     "console.cpp"
     "ds2411.cpp"
     "main.cpp"
+    "motion_control/OfflineLqrController.cpp"
+    "motion_control/Robot2015LqrLookupTable.cpp"
+    "motion_control/RobotModel.cpp"
+    "motion_control/TunableRobotParameters.cpp"
     "radio.cpp"
 )
 
