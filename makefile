@@ -19,6 +19,7 @@ tests: test-cpp test-python
 test-cpp:
 	cd build && cmake --target test-cpp .. && make $(MAKE_FLAGS) test-cpp && cd .. && run/test-cpp
 test-firmware:
+	mkdir -p build
 	cd build && cmake --target test-firmware .. && make $(MAKE_FLAGS) test-firmware && cd .. && run/test-firmware
 test-python: all
 	cd soccer/gameplay && ./run_tests.sh
