@@ -15,7 +15,7 @@ include(mbed/arm_mbed.cmake)
 #all official libraries pulled with/by the build tools
 include(ExternalProject)
 ExternalProject_Add(mbed_lib_build_tools
-    GIT_REPOSITORY https://github.com/mbedmicro/mbed.git
+    GIT_REPOSITORY ${PROJECT_SOURCE_DIR}/third_party/mbed_lib_build_tools
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
