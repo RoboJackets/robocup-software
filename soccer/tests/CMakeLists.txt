@@ -1,17 +1,11 @@
 
-enable_testing()
-
-
+# Add a test runner target "test-cpp" to run all tests in this directory
 file(GLOB TEST_SRC "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
-add_executable(test-cpp ${TEST_SRC})
-set_target_properties(test-cpp PROPERTIES EXCLUDE_FROM_ALL TRUE)
-qt5_use_modules(test-cpp Core Widgets Xml)
-add_dependencies(test-cpp googletest)
-include_directories(${GTEST_INCLUDE_DIRS})
-target_link_libraries(test-cpp
-    ${GTEST_LIBS_DIR}/libgtest.a
-    ${GTEST_LIBS_DIR}/libgtest_main.a
-)
-target_link_libraries(test-cpp robocup)
+add_executable(test-soccer ${TEST_SRC})
+target_link_libraries(test-soccer robocup)
+qt5_use_modules(test-soccer Core Widgets Xml)
+target_link_libraries(test-soccer ${GTEST_BOTH_LIBRARIES})
+add_dependencies(test-soccer googletest)
 
-add_test(test1 test-cpp)
+# Don't build the tests by default
+set_target_properties(test-soccer PROPERTIES EXCLUDE_FROM_ALL TRUE)
