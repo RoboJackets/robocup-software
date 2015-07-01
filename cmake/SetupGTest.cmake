@@ -9,12 +9,15 @@ ExternalProject_Add(googletest
     # disable install step
     INSTALL_COMMAND ""
 )
-set_target_properties(googletest PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 # specify include dir
 ExternalProject_Get_Property(googletest source_dir)
-set(GTEST_INCLUDE_DIRS ${source_dir}/include PARENT_SCOPE)
+include_directories(${source_dir}/include)
 
 # specify link libraries
 ExternalProject_Get_Property(googletest binary_dir)
-set(GTEST_LIBS_DIR ${binary_dir} PARENT_SCOPE)
+set(GTEST_BOTH_LIBRARIES
+    ${binary_dir}/libgtest.a
+    ${binary_dir}/libgtest_main.a
+    pthread
+)
