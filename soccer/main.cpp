@@ -5,7 +5,6 @@
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <malloc.h>
 #include <assert.h>
 #include <signal.h>
 
@@ -117,15 +116,15 @@ void signal_handler(int signum) {
 void usage(const char* prog)
 {
 	fprintf(stderr, "usage: %s [options...]\n", prog);
-	fprintf(stderr, "\t-y:         run as the yellow team\n");
-	fprintf(stderr, "\t-b:         run as the blue team\n");
-	fprintf(stderr, "\t-c <file>:  specify the configuration file\n");
-	fprintf(stderr, "\t-s <seed>:  set random seed (hexadecimal)\n");
-	fprintf(stderr, "\t-pp <play>: enable named play\n");
-	fprintf(stderr, "\t-ng:        no goalie\n");
-	fprintf(stderr, "\t-sim:       use simulator\n");
-	fprintf(stderr, "\t-freq:      specify radio frequency (906 or 904)\n");
-	fprintf(stderr, "\t-nolog:     don't write log files\n");
+	fprintf(stderr, "\t-y:          run as the yellow team\n");
+	fprintf(stderr, "\t-b:          run as the blue team\n");
+	fprintf(stderr, "\t-c <file>:   specify the configuration file\n");
+	fprintf(stderr, "\t-s <seed>:   set random seed (hexadecimal)\n");
+	fprintf(stderr, "\t-pbk <file>: playbook file name as contained in 'soccer/gameplay/playbooks/'\n");
+	fprintf(stderr, "\t-ng:         no goalie\n");
+	fprintf(stderr, "\t-sim:        use simulator\n");
+	fprintf(stderr, "\t-freq:       specify radio frequency (906 or 904)\n");
+	fprintf(stderr, "\t-nolog:      don't write log files\n");
 	exit(1);
 }
 
@@ -156,11 +155,11 @@ int main (int argc, char* argv[])
 	bool blueTeam = false;
 	QString cfgFile;
 	vector<const char *> playDirs;
-	vector<QString> extraPlays;
-	bool goalie = true;
 	bool sim = false;
 	bool log = true;
     QString radioFreq;
+
+    string playbookFile;
 	
 	for (int i=1 ; i<argc; ++i)
 	{
@@ -177,10 +176,6 @@ int main (int argc, char* argv[])
 		{
 			blueTeam = true;
 		}
-		else if (strcmp(var, "-ng") == 0)
-		{
-			goalie = false;
-		}
 		else if (strcmp(var, "-sim") == 0)
 		{
 			sim = true;
@@ -193,7 +188,7 @@ int main (int argc, char* argv[])
         {
             if(i+1 >= argc)
             {
-                printf("No radio frequency specified after -freq");
+                printf("No radio frequency specified after -freq\n");
                 usage(argv[0]);
             }
 
@@ -204,7 +199,7 @@ int main (int argc, char* argv[])
 		{
 			if (i+1 >= argc)
 			{
-				printf("no config file specified after -c");
+				printf("no config file specified after -c\n");
 				usage(argv[0]);
 			}
 			
@@ -215,23 +210,22 @@ int main (int argc, char* argv[])
 		{
 			if (i+1 >= argc)
 			{
-				printf("no seed specified after -s");
+				printf("no seed specified after -s\n");
 				usage(argv[0]);
 			}
 			
 			i++;
 			seed = strtol(argv[i], 0, 16);
 		}
-		else if(strcmp(var, "-pp") == 0)
+		else if(strcmp(var, "-pbk") == 0)
 		{
-			if (i+1 >= argc)
+			if(i+1 >= argc)
 			{
-				printf("no play specified after -pp");
+				printf("no playbook file specified after -pbk\n");
 				usage(argv[0]);
 			}
-			
-			i++;
-			extraPlays.push_back(argv[i]);
+
+			playbookFile = argv[++i];
 		}
 		else
 		{
@@ -241,7 +235,7 @@ int main (int argc, char* argv[])
 	}
 
 
-	printf("Running on %s\n", sim ? "simulation" : "real hardware");
+	printf("Running on %s\n", sim ? "simulation" : "real hardware\n");
 	
 	printf("seed %016lx\n", seed);
 	srand48(seed);
@@ -300,10 +294,14 @@ int main (int argc, char* argv[])
 	win->logFileChanged();
 	
 	processor->start();
+
+	if(playbookFile.size() > 0)
+		processor->gameplayModule()->loadPlaybook(playbookFile);
 	
 	win->show();
 
 	processor->gameplayModule()->setupUI();
+
 
 	int ret = app.exec();
 	processor->stop();

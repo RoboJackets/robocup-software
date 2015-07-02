@@ -3,10 +3,14 @@ all:
 	mkdir -p build
 	cd build; cmake .. -Wno-dev && make $(MAKE_FLAGS)
 
+static-analysis:
+	mkdir -p build/static-analysis
+	cd build/static-analysis; scan-build cmake ../.. -Wno-dev -DSTATIC_ANALYSIS=ON && scan-build -o output make $(MAKE_FLAGS)
+
 run: all
 	cd run; ./soccer
 run-sim: all
-	cd run; ./simulator &
+	cd run; ./simulator --headless &
 	cd run; ./soccer -sim
 
 # Run both C++ and python unit tests
@@ -38,6 +42,13 @@ robot2015:
 
 robot2015-prog:
 	mkdir -p build && cd build && cmake --target robot2015-prog .. && make $(MAKE_FLAGS) robot2015-prog
+	
+# Base station 2015 firmware
+base2015:
+	mkdir -p build && cd build && cmake --target base2015 .. && make $(MAKE_FLAGS) base2015
+
+base2015-prog:
+	mkdir -p build && cd build && cmake --target base2015-prog .. && make $(MAKE_FLAGS) base2015-prog
 
 # Robot FPGA
 fpga2011:
