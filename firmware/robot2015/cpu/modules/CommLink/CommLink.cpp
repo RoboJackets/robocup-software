@@ -6,7 +6,12 @@ const int CommLink::TX_QUEUE_SIZE = COMM_LINK_TX_QUEUE_SIZE;
 const int CommLink::RX_QUEUE_SIZE = COMM_LINK_RX_QUEUE_SIZE;
 
 
-// Constructor
+// =================== CONSTRUCTORS ===================
+// Default constructor
+CommLink::CommLink()
+{
+}
+
 CommLink::CommLink(PinName mosi, PinName miso, PinName sck, PinName cs, PinName int_pin) :
 _txQueueHelper(),
 _rxQueueHelper()
@@ -19,7 +24,7 @@ _rxQueueHelper()
 }
 
 
-// Setup the class
+// =================== CLASS SETUP ===================
 void CommLink::setup()
 {
     // [X] - 1 - Initialize the hardware for communication.
@@ -40,7 +45,7 @@ void CommLink::setup()
 }
 
 
-// Set the class's members for storging pin information
+// =================== PIN SETUP ===================
 void CommLink::setup_pins(PinName mosi, PinName miso, PinName sck, PinName cs, PinName int_pin)
 {
     _mosi_pin = mosi;
@@ -50,8 +55,6 @@ void CommLink::setup_pins(PinName mosi, PinName miso, PinName sck, PinName cs, P
     _int_pin = int_pin;
 }
 
-
-// Setup the SPI data bus from the class's members
 void CommLink::setup_spi(void)
 {
     if ((_mosi_pin != NC) & (_miso_pin != NC) & (_sck_pin != NC)) {
@@ -61,7 +64,6 @@ void CommLink::setup_spi(void)
     }
 }
 
-// Setup the "Chip Select" pin if the class needs one
 void CommLink::setup_cs(void)
 {
     if (_cs_pin != NC) {
@@ -70,8 +72,6 @@ void CommLink::setup_cs(void)
     }
 }
 
-
-// Setup the "Interrupt" pin if the class needs one
 void CommLink::setup_interrupt(void)
 {
     if (_int_pin != NC) {
@@ -81,6 +81,7 @@ void CommLink::setup_interrupt(void)
 }
 
 
+// =================== TX/RX THREADS ===================
 // Task operations for sending data over the hardware link when a new item is placed in the queue
 void CommLink::txThread(void const *arg)
 {
@@ -118,8 +119,6 @@ void CommLink::rxThread(void const *arg)
     // Set the function to call on an interrupt trigger
     inst->_int_in->rise(inst, &CommLink::ISR);
 
-    DigitalOut rx_led(LED4, 0);
-
     while(1) {
         // [X] - 1 - Wait until new data has arrived - this is interrupt triggered by CommLink::ISR()
         // =================
@@ -145,7 +144,7 @@ void CommLink::rxThread(void const *arg)
 
             // [~] - 4 - Blink the RX LED for the hardware link
             // =================
-            rx_led = !rx_led;
+
         }
     }
 }
@@ -159,9 +158,9 @@ void CommLink::ready(void)
 }
 
 
-// Send data by calling the derived class's method for sending information
 void CommLink::sendPacket(RTP_t *p)
 {
+<<<<<<< HEAD
     p->payload_size += 2;
     uint8_t size = p->payload_size + 1;
     sendData(p->raw, size);
@@ -173,6 +172,10 @@ void CommLink::sendPacket(RTP_t *p)
 
     log(INF1, "PKT", "==========\n");
     */
+=======
+    p->payload_size = p->total_size - 1; // fixup factor for headers. Exclude the `size` byte from being counted
+    sendData(p->raw, p->total_size);
+>>>>>>> e8afee7de90b9c3bae46ce2dd918ce43a942cb99
 }
 
 
@@ -183,14 +186,12 @@ void CommLink::ISR(void)
 }
 
 
-// Toggle the state of the chip select pin
 void CommLink::toggle_cs(void)
 {
     *_cs = !*_cs;
 }
 
 
-// Inform the class of a CommModule object
 void CommLink::setModule(CommModule& com)
 {
     _comm_module = &com;

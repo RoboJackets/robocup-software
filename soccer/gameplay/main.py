@@ -1,4 +1,5 @@
 import play_registry as play_registry_module
+import playbook
 import play
 import fs_watcher
 import class_import
@@ -7,10 +8,12 @@ import importlib
 import traceback
 import imp
 import sys
+import os
 import constants
 
-## soccer is run from the `run` folder, so we provide a relative path to where the python files live
-GAMEPLAY_DIR = '../soccer/gameplay'
+## soccer is run from the `run` folder, so we have to make sure we use the right path to the gameplay directory
+GAMEPLAY_DIR = os.path.dirname(os.path.realpath(__file__))
+PLAYBOOKS_DIR = GAMEPLAY_DIR + '/playbooks'
 
 
 # main init method for the python side of things
@@ -124,6 +127,17 @@ def init():
 
     _has_initialized = True
 
+#loads the specified file_name from the playbooks folder
+#isAbsolute should be passed as True if the file_name is an absolute path
+def load_playbook(file_name, isAbsolute=False):
+    global _play_registry
+    _play_registry.load_playbook(playbook.load_from_file((PLAYBOOKS_DIR + '/' if not isAbsolute else '') + file_name))
+
+#saves the playbook into the specified file_name in the playbooks folder
+#isAbsolute should be passed as True if the file_name is an absolute path
+def save_playbook(file_name, isAbsolute=False):
+    global _play_registry
+    playbook.save_to_file((PLAYBOOKS_DIR + '/' if not isAbsolute else '') + file_name, _play_registry.get_enabled_plays_paths());
 
 ## Called ~60times/sec by the C++ GameplayModule
 def run():

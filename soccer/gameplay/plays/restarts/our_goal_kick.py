@@ -17,8 +17,8 @@ class OurGoalKick(play.Play):
     # tunable params
     MinChipRange = 0.3
     MaxChipRange = 3.0
-    KickerPower = constants.Robot.Kicker.MaxPower
-    ChipperPower = constants.Robot.Chipper.MaxPower
+    KickerPower = 1.0
+    ChipperPower = 1.0
 
 
     def __init__(self):

@@ -181,6 +181,21 @@ Serial pcserial(USBTX, USBRX);
 	    // CC1201 *should* fall into IDLE after it sends the packet. It will then calibrate right before entering the RX state strobed below.
 	    //radio_900.strobe(CC1201_STROBE_SRX);
 	}
+=======
+/**
+ * system entry point
+ */
+int main(void) 
+{
+	setISRPriorities();
+	lifeLight.attach(&imAlive, 0.25);
+
+	isLogging = false;
+	rjLogLevel = LOG_LEVEL::INFO;
+
+	initRadioThread();
+	initConsoleRoutine();
+>>>>>>> e8afee7de90b9c3bae46ce2dd918ce43a942cb99
 }
 
 /**
@@ -256,6 +271,7 @@ Serial pcserial(USBTX, USBRX);
 /**
  * initializes the console
  */
+<<<<<<< HEAD
  void initConsoleRoutine(void)
  {
  	if (!COMPETITION_DEPLOY)
@@ -267,10 +283,24 @@ Serial pcserial(USBTX, USBRX);
 			//check console communications, currently does nothing
 			//then execute any active iterative command
  			conComCheck();
+=======
+void initConsoleRoutine(void)
+{
+	if (!COMPETITION_DEPLOY)
+	{
+		Console::Init();
+
+		while (true)
+		{
+			//check console communications, currently does nothing
+			//then execute any active iterative command
+			Console::ConComCheck();
+>>>>>>> e8afee7de90b9c3bae46ce2dd918ce43a942cb99
 			//execute any active iterative command
  			executeIterativeCommand();
 
 			//check if a system stop is requested
+<<<<<<< HEAD
  			if (isSysStopReq() == true)
  			{
  				break;
@@ -288,6 +318,26 @@ Serial pcserial(USBTX, USBRX);
  	{
  		for (;;);
  	}
+=======
+			if (Console::IsSystemStopRequested() == true)
+			{
+				break;
+			}
+
+			//main loop heartbeat
+			wait(0.1);
+			ledTwo = !ledTwo;
+		}
+
+		//clear light for main loop (shows its complete)
+		ledTwo = false;
+
+	}
+	else
+	{
+		while (true);
+	}
+>>>>>>> e8afee7de90b9c3bae46ce2dd918ce43a942cb99
 }
 
 /**

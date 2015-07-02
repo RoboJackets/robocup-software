@@ -33,7 +33,7 @@ ExternalProject_Add(mbed_lib_build_tools
     BUILD_COMMAND ""
     INSTALL_COMMAND ""
     UPDATE_COMMAND ""
-)  
+)
 set(PREBUILD_DEPS ${PREBUILD_DEPS} mbed_lib_build_tools)
 
 #pull DIO breakout
@@ -47,19 +47,17 @@ if(${BUILD_MCP23017} STREQUAL "true")
         UPDATE_COMMAND ""
     )
     set(PREBUILD_DEPS ${PREBUILD_DEPS} mcp23017)
-endif() 
+endif()
 
 # don't get the external project unless it's required
-set_target_properties(mbed_lib_build_tools PROPERTIES EXCLUDE_FORM_ALL TRUE)
-
-
+set_target_properties(mbed_lib_build_tools PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 # firmware source files
 file(GLOB_RECURSE robot2015_SRC
     "*.cpp"
 )
 
-add_executable(robot2015_elf ${robot2015_SRC} ${MBED_OBJECTS})
+add_executable(robot2015_elf ${robot2015_SRC} ${CMAKE_BINARY_DIR}/common/git_version.cpp ${MBED_OBJECTS})
 target_link_libraries(robot2015_elf ${MBED_LIBS})
 
 # the final product is the .bin file, not the elf one.  We hide this away in the build dir
@@ -74,6 +72,7 @@ set_target_properties(robot2015_elf PROPERTIES EXCLUDE_FROM_ALL TRUE)
 add_custom_target(pre-build
     COMMAND python2 ${PY_TOOLS_DIR}/workspace_tools/build.py --mcu=${PY_MCU_OPT} --tool=${PY_TOOLCHAIN_OPT} ${PY_LIBS}
     DEPENDS ${PREBUILD_DEPS})
+set_target_properties(pre-build PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 # tell CMake that the obj files all come from the ExternalProject
 # otherwise it'll complain that the files can't be found
@@ -100,3 +99,9 @@ add_custom_target(robot2015-prog
     COMMENT "Copies the files created by robot2015 into a single mbed"
 )
 
+
+# See common/CMakeLists for more info on how this works
+add_custom_command(
+    OUTPUT ${CMAKE_BINARY_DIR}/common/git_version.cpp
+    DEPENDS git_version
+)

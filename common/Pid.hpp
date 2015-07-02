@@ -1,10 +1,11 @@
 #pragma once
+#include <vector>
 
 class Pid
 {
 public:
 	Pid(float p = 0, float i = 0, float d = 0, unsigned int windup = 0);
-	~Pid();
+
 
 	unsigned int windup() const { return _windup; }
 
@@ -31,5 +32,5 @@ private:
 
 	float _lastErr;
 
-	float* _oldErr;
+	std::vector<float> _oldErr;
 };

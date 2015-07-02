@@ -20,6 +20,8 @@
 // This will check the mbed's firmware for the most known up-to-date version if enabled
 #define RJ_CHECK_FIRMWARE       0
 
+#define RJ_WATCHDOG_EN          0
+
 
 // ** ============================= ** ENABLE / DISABLE ROBOT INTERFACES ** ============================= **
 
@@ -105,6 +107,8 @@
 // These two (2) pins are used for configuring the FPGA upon startup
 #define RJ_FPGA_FS0             p23
 #define RJ_FPGA_FS1             p22
+
+#define RJ_DS2411_ID_CHIP       p21
 
 // This defines the mbed pin used as the `Chip Select` pin for the 16 pin I/O expander
 #define RJ_IO_EXPANDER_CS       p29

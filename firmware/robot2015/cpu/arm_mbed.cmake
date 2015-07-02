@@ -197,11 +197,3 @@ endif()
 if(${BUILD_MCP23017} STREQUAL "true")
   include_directories("${MCP23017_DIR}")
 endif()
-
-# print all include directories
-get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
-message(STATUS "Include Directories")
-foreach(dir ${dirs})
-  message(STATUS "  ${dir}")
-endforeach()
-
