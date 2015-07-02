@@ -5,12 +5,20 @@
 #include "logger.hpp"
 #include "radio.hpp"
 
+#define READ_SPI_16	0x8000
+#define SET_ADDR( x ) ((x)<<11)
+
 LocalFileSystem local("local");
 
 
 Ticker lifeLight;
 DigitalOut ledOne(LED1);
 DigitalOut ledTwo(LED2);
+DigitalOut drv_ncs(p20,1);
+DigitalOut drv_en(p19,1);
+
+//  mosi, miso, sclk - connected to fpga
+SPI spi(p5, p6, p7);
 
 /*
  * some forward declarations to make the code easier to read
@@ -36,6 +44,49 @@ int main(void)
 	//initConsoleRoutine();
 
     fpgaInit();
+
+    spi.format(16,0);
+
+    uint16_t reg_config [2];
+    reg_config[0] = READ_SPI_16 | SET_ADDR(2) | (6<<6);
+    reg_config[1] = READ_SPI_16 | SET_ADDR(3) | (1<<5) | (1<<4);
+    
+    for (int i=0; i<2; i++)
+    	spi.write(reg_config[i]);
+
+    uint16_t reg_vals[2];
+
+    while(1)
+    {
+
+    	for (int i=0; i<2; i++)
+    		reg_vals[i] = 0x3FF & spi.write(SET_ADDR(i));
+/*
+    	bool fault = reg_vals[0]>>10;
+    	bool gvdd_uv = reg_vals[0]>>9;
+    	bool pvdd_uv = reg_vals[0]>>8;
+    	bool otsd = reg_vals[0]>>7;
+    	bool otw = reg_vals[0]>>6;
+    	bool ah_oc = reg_vals[0]>>5;
+    	bool al_oc = reg_vals[0]>>4;
+    	bool bh_oc = reg_vals[0]>>3;
+    	bool bl_oc = reg_vals[0]>>2;
+    	bool ah_oc = reg_vals[0]>>1;
+    	bool al_oc = reg_vals[0];
+    	*/
+
+/*
+    	printf("Fault:\t%u", fault);
+    	printf("GVDD_UV\t%u", gvdd_uv);
+    	printf("PVDD_UV\t%u", pvdd_uv);
+    	printf("GVDD_UV\t%u", );
+    	printf("GVDD_UV\t%u", gvdd_uv);
+    	*/
+
+    	printf("Address 0x00:\t0x%04X\r\nAddress 0x01:\t0x%04X\r\n", reg_vals[0], reg_vals[1]);
+    	wait(2);
+    }
+
 }
 
 /**
@@ -155,8 +206,6 @@ void initConsoleRoutine(void)
 }
 
 void fpgaInit() {
-    //  mosi, miso, sclk - connected to fpga
-    SPI spi(p5, p6, p7);
     DigitalOut fpgaCs(p18); //  chip select for SPI to fpga
     DigitalOut fpga_prog_b(p24);
 
@@ -190,7 +239,7 @@ void fpgaInit() {
     fclose(fp);
 
 
-    printf("got final byte from spi: %x\r\n", result);
+    printf("got final byte from spi: %x\r\n\tFPGA configured!\r\n", result);
 }
 
 /**
