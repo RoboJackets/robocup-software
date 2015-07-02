@@ -31,7 +31,7 @@ using namespace Eigen;
 QString LiveStyle("border:2px solid transparent");
 QString NonLiveStyle("border:2px solid red");
 
-std::array<QString, 2> hiddenLayers[]= {"Debug", "Rules"};
+std::vector<QString> hiddenLayers {"MotionControl", "Planning0", "Planning1", "Planning2", "Planning3", "Planning4", "Planning5", "time", "velocity"};
 
 void calcMinimumWidth(QWidget *widget, QString text)
 {
@@ -306,7 +306,7 @@ void MainWindow::updateViews()
 		for (int i = _ui.debugLayers->count(); i < liveFrame->debug_layers_size(); ++i)
 		{
 			const QString name = QString::fromStdString(liveFrame->debug_layers(i));
-			bool enabled = !std::any_of(hiddenLayers->begin(), hiddenLayers->end(), [&](QString string){return string==name;});
+			bool enabled = !std::any_of(hiddenLayers.begin(), hiddenLayers.end(), [&](QString string){return string==name;});
 			addLayer(i, name, enabled);
 		}
 
