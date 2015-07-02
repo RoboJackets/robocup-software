@@ -94,5 +94,5 @@ int main(int argc, char* argv[])
 	sim_thread.stop();
 	sim_thread.wait();
 
-	return 0;//ret;
+	return ret;
 }

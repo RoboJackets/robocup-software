@@ -28,6 +28,7 @@ robocup.so
 robocup.dylib
 run_tests
 robot2015.bin
-test-cpp
+base2015.bin
+test-*
 
 /qt_vehicle_demo

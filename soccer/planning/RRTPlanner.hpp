@@ -74,13 +74,13 @@ namespace Planning
 		/** optimize the path
 		 *  Calles the cubicBezier optimization function.
 		 */
-		void optimize(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles);
+		void optimize(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles, const MotionConstraints &motionConstraints, Geometry2d::Point vi);
 
 		/**
 		 * Uses a cubicBezier to interpolate between the points on the path and add
 		 * velocity planning
 		 */
-		void cubicBezier(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles);
+		void cubicBezier(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles, const MotionConstraints &motionConstraints, Geometry2d::Point vi);
 
 		/**
 		 * Helper function for cubicBezier() which uses Eigen matrices to solve for the

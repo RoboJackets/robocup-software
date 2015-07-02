@@ -13,8 +13,8 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
 
         self.enable_kick = True
         self.use_chipper = False
-        self.kick_power = constants.Robot.Kicker.MaxPower
-        self.chip_power = constants.Robot.Chipper.MaxPower
+        self.kick_power = 1.0
+        self.chip_power = 1.0
 
         self.use_windowing = True
         self.win_eval_params = {}
@@ -44,7 +44,7 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
     @win_eval_params.setter
     def win_eval_params(self, value):
         self._win_eval_params = value
-    
+
 
 
     ## The thing we're trying to kick at
@@ -111,13 +111,13 @@ class _Kick(single_robot_behavior.SingleRobotBehavior):
         return self._kick_power
     @kick_power.setter
     def kick_power(self, value):
-        self._kick_power = int(value)
+        self._kick_power = value
     @property
     def chip_power(self):
         return self._chip_power
     @chip_power.setter
     def chip_power(self, value):
-        self._chip_power = int(value)
+        self._chip_power = value
 
 
     ## If false, uses straight kicker, if true, uses chipper (if available)

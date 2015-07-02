@@ -32,14 +32,14 @@ void fpgaInit();
 /**
  * system entry point
  */
-int main(void) 
+int main(void)
 {
 	//setISRPriorities();
 	lifeLight.attach(&imAlive, 0.25);
 
 	isLogging = true;
-	rjLogLevel = INF2;
-	
+	rjLogLevel = LOG_LEVEL::INFO;
+
 	//initRadioThread();
 	//initConsoleRoutine();
 
@@ -50,7 +50,7 @@ int main(void)
     uint16_t reg_config [2];
     reg_config[0] = READ_SPI_16 | SET_ADDR(2) | (6<<6);
     reg_config[1] = READ_SPI_16 | SET_ADDR(3) | (1<<5) | (1<<4);
-    
+
     for (int i=0; i<2; i++)
     	spi.write(reg_config[i]);
 
@@ -90,19 +90,19 @@ int main(void)
 }
 
 /**
- * Initializes the peripheral nested vector interrupt controller (PNVIC) with 
- * appropriate values. Low values have the higest priority (with system 
+ * Initializes the peripheral nested vector interrupt controller (PNVIC) with
+ * appropriate values. Low values have the higest priority (with system
  * interrupts having negative priority). All maskable interrupts are
  * diabled; do not intialize any interrupt frameworks before this funtion is
- * called. PNVIC interrupt priorities are independent of thread and NVIC 
+ * called. PNVIC interrupt priorities are independent of thread and NVIC
  * priorities.
- * 
+ *
  * The PNVIC is independent of the NVIC responsible for system NMI's. The NVIC
  * is not accissable through the library, so in this context the NVIC functions
  * refer to the PNVIC. The configuration system for PNVIC priorities is strange
- * and different from X86. If you haven't already, look over 
- * doc/ARM-Cortex-M_Interrupt-Priorities.pdf from RJ root and the online 
- * documentation regarding Interrupt Priority Registers (IPRs) first. 
+ * and different from X86. If you haven't already, look over
+ * doc/ARM-Cortex-M_Interrupt-Priorities.pdf from RJ root and the online
+ * documentation regarding Interrupt Priority Registers (IPRs) first.
  */
 void setISRPriorities(void)
 {
@@ -121,7 +121,7 @@ void setISRPriorities(void)
 	//the rest, so the default priority is lowered globally for the
 	//table first.
 	//
-	//Consult LPC17xx.h under IRQn_Type for PNVIC ranges, this is LPC1768 
+	//Consult LPC17xx.h under IRQn_Type for PNVIC ranges, this is LPC1768
 	//specific
 	for (uint32_t IRQn = TIMER0_IRQn; IRQn <= CANActivity_IRQn; IRQn++)
 	{
@@ -175,18 +175,18 @@ void initConsoleRoutine(void)
 {
 	if (!COMPETITION_DEPLOY)
 	{
-		initConsole();
+		Console::Init();
 
-		for (;;)
+		while (true)
 		{
 			//check console communications, currently does nothing
 			//then execute any active iterative command
-			conComCheck();
+			Console::ConComCheck();
 			//execute any active iterative command
 			executeIterativeCommand();
 
 			//check if a system stop is requested
-			if (isSysStopReq() == true)
+			if (Console::IsSystemStopRequested() == true)
 			{
 				break;
 			}
@@ -194,14 +194,15 @@ void initConsoleRoutine(void)
 			//main loop heartbeat
 			wait(0.1);
 			ledTwo = !ledTwo;
-	    	}
+		}
 
 		//clear light for main loop (shows its complete)
 		ledTwo = false;
+
 	}
 	else
 	{
-		for (;;);
+		while (true);
 	}
 }
 

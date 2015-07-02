@@ -13,7 +13,7 @@
 #include <stdexcept>
 #include <QString>
 #include <cmath>
-
+#include <utility>
 using namespace std;
 using namespace Geometry2d;
 
@@ -102,8 +102,6 @@ OurRobot::~OurRobot()
 
 void OurRobot::addStatusText()
 {
-	static const char *motorNames[] = {"BL", "FL", "FR", "BR", "DR"};
-
 	const QColor statusColor(255, 32, 32);
 
 	if (!rxIsFresh())
@@ -112,56 +110,6 @@ void OurRobot::addStatusText()
 
 		// No more status is available
 		return;
-	}
-
-	// Motor status
-	if (_radioRx.motor_status().size() == 5)
-	{
-		for (int i = 0; i < 5; ++i)
-		{
-			QString error;
-			switch (_radioRx.motor_status(i))
-			{
-				case Packet::Hall_Failure:
-					error = "Hall fault";
-					break;
-
-				case Packet::Stalled:
-					error = "Stall";
-					break;
-
-				case Packet::Encoder_Failure:
-					error = "Encoder fault";
-					break;
-
-				default:
-					break;
-			}
-
-			if (!error.isNull())
-			{
-				addText(QString("%1: %2").arg(error, QString(motorNames[i])), statusColor, "Status");
-			}
-		}
-	}
-
-	if (!ballSenseWorks())
-	{
-		addText("Ball sense fault", statusColor, "Status");
-	}
-
-	if (!kickerWorks() && false)
-	{
-		addText("Kicker fault", statusColor, "Status");
-	}
-
-	if (_radioRx.has_battery())
-	{
-		float battery = _radioRx.battery();
-		if (battery <= 14.3f)
-		{
-			addText(QString("Low battery: %1V").arg(battery, 0, 'f', 1), statusColor, "Status");
-		}
 	}
 }
 
@@ -337,14 +285,29 @@ void OurRobot::faceNone()
 	*_cmdText << "faceNone()\n";
 }
 
-void OurRobot::kick(uint8_t strength)
+void OurRobot::kick(float strength)
+{
+	double maxKick = *config->kicker.maxKick;
+	_kick(roundf(strength*((float)maxKick)));
+
+	*_cmdText << "kick(" << strength*100 << "%)\n";
+}
+
+void OurRobot::kickLevel(uint8_t strength)
 {
 	_kick(strength);
 
 	*_cmdText << "kick(" << (float)strength << ")\n";
 }
 
-void OurRobot::chip(uint8_t strength)
+void OurRobot::chip(float strength)
+{
+	double maxChip = *config->kicker.maxChip;
+	_chip(roundf(strength*((float)maxChip)));
+	*_cmdText << "chip(" << strength*100 << "%)\n";
+}
+
+void OurRobot::chipLevel(uint8_t strength)
 {
 	_chip(strength);
 
@@ -575,11 +538,9 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	// if no goal command robot to stop in place
 	if (!_motionConstraints.targetPos) {
 		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: stopped" << std::endl;
-		addText(QString("replan: no goal"));
+		addText(QString("replan: no goal"), Qt::white, "Motion");
 
 		Planning::InterpolatedPath *newPath = new Planning::InterpolatedPath(pos);
-		newPath->maxSpeed = _motionConstraints.maxSpeed;
-		newPath->maxAcceleration = _motionConstraints.maxAcceleration;
 		setPath(newPath);
 		_path->draw(_state);
 		return;
@@ -602,22 +563,23 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		//float maxDist = .6;
 		Point targetPathPos;
 		Point targetVel;
-		float timeIntoPath = ((float)(timestamp() - _pathStartTime)) * TimestampToSecs + 1.0/60.0;
+		float timeIntoPath = ((float)(timestamp() - _pathStartTime)) * TimestampToSecs + 1.0f/60.0f;
 		_path->evaluate(timeIntoPath, targetPathPos, targetVel);
 		float pathError = (targetPathPos - pos).mag();
 		//state()->drawCircle(targetPathPos, maxDist, Qt::green, "MotionControl");
-		addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
-		addText(QString("%1").arg(pathError));
+		//addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
+		//addText(QString("%1").arg(pathError));
 		if (*_motionConstraints._replan_threshold!=0 && pathError > *_motionConstraints._replan_threshold) {
 			_pathInvalidated = true;
-			addText("pathError");
+			addText("pathError" , Qt::red, "Motion");
 			//addText(pathError);
 		}
 
 
 
-		if (_path->hit(full_obstacles, &targetPathPos)) {
-		_pathInvalidated = true;
+		if (_path->hit(full_obstacles, timeIntoPath)) {
+			_pathInvalidated = true;
+			addText("Hit Obstacle", Qt::red, "Motion");
 		}
 
 		//  invalidate path if current position is more than 15cm from the planned point
@@ -631,20 +593,19 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		if (_path->destination() && (*_path->destination() - dest).mag() > 0.025) {
 			_pathInvalidated = true;
 		}
-
-
 	}
 
 
 	// check if goal is close to previous goal to reuse path
 	if (!_pathInvalidated) {
-		addText("Reusing path");
+		addText("Reusing path", Qt::white, "Planning");
 	} else {
-		Planning::Path *newlyPlannedPath = _planner->run(pos, angle, vel, _motionConstraints, &full_obstacles);
-		addText("Replanning");
+		Planning::Path *path = _planner->run(pos, angle, vel, _motionConstraints, &full_obstacles);
+		
+		addText("Replanning", Qt::red, "Planning");
 		// use the newly generated path
 		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: using new RRT path" << std::endl;
-		setPath(newlyPlannedPath);
+		setPath(path);
 	}
 	_pathChangeHistory.push_back(_didSetPathThisIteration);
 
