@@ -21,7 +21,7 @@ script:
   - make
   - make test-cpp
   - make robot2015
-  - cd ./firmware/robot2015/fpga; make test #Test if Verilog code compiles
+  #  - cd ./firmware/robot2015/fpga; make test #Test if Verilog code compiles
 
 notifications:
   email: false
