@@ -23,7 +23,8 @@ Serial pcserial(USBTX, USBRX);
 
  void rx_callback(RTP_t* p)
  {
- 	log(OK, "main.cpp", "%u byte packet received!", p->payload_size);
+ 	if(p->payload_size > 0)
+ 		log(OK, "main.cpp", "%u byte packet received!", p->payload_size);
  }
 
 
@@ -138,7 +139,8 @@ Serial pcserial(USBTX, USBRX);
  	CC1201Config::loadConfiguration(radioConfig, &radio_900);
  	CC1201Config::verifyConfiguration(radioConfig, &radio_900);
 
- 	radio_900.frequency();
+ 	radio_900.freq();
+ 	radio_900.set_rssi_offset(-81);
 
 	// Create a Communication Module Object
  	CommModule comm;
@@ -156,32 +158,28 @@ Serial pcserial(USBTX, USBRX);
 	//watchdog.set(RJ_WATCHDOG_TIMER_VALUE);
 
  	while(1) {
-
  		dummy_packet.port = 8;
  		dummy_packet.subclass = 1;
  		dummy_packet.address = 255;
  		dummy_packet.sfs = 0;
  		dummy_packet.ack = 0;
- 		// dummy_packet.field_size = 6;
- 		dummy_packet.payload_size = 10;
+ 		dummy_packet.payload_size = 25;
 
- 		for(int i=0; i<10; i++)
-	        dummy_packet.payload[i] = 0xAA; // 0b10101010
-
-	    radio_900.strobe(CC1201_STROBE_SRX);
-
+ 		for(int i=0; i<25; i++)
+	        dummy_packet.payload[i] = 0x24;
 
 	    std::string current_state = decode_marcstate(radio_900.mode());
 	    log(OK, "MAIN LOOP", "  STATE: %s\tRSSI: %.1f dBm", current_state.c_str(), radio_900.rssi());
 		
-		//comm.send(dummy_packet);
-	    //osDelay(100);
-	    
+		comm.send(dummy_packet);	// As of now, the CC1201 should always be in RX and calibrated if necessary exiting this.
+
 	    is_locked = radio_900.isLocked();
 	    rssi_valid = gpio2;
 
-	    osDelay(500);
-	    radio_900.update_rssi();
+	    osDelay(600);
+
+	    // CC1201 *should* fall into IDLE after it sends the packet. It will then calibrate right before entering the RX state strobed below.
+	    //radio_900.strobe(CC1201_STROBE_SRX);
 	}
 }
 

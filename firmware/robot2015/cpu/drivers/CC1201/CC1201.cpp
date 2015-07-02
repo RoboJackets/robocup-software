@@ -18,10 +18,9 @@ CC1201::CC1201(PinName mosi, PinName miso, PinName sck, PinName cs, PinName intP
 CommLink(mosi, miso, sck, cs, intPin)
 {
     //powerOnReset();
+	_offset_reg_written = false;
 	reset();
-	idle();
-	flush_rx(); flush_tx();
-	//Thread::wait(100);
+	idle(); flush_rx(); flush_tx();
 	selfTest();
 	CommLink::ready();
 	log(OK, "CC1201", "Ready!");
@@ -42,29 +41,23 @@ CC1201::~CC1201()
 /**
  *
  */
- int32_t CC1201::sendData(uint8_t* buffer, uint8_t size)
+ int32_t CC1201::sendData(uint8_t* buf, uint8_t size)
  {
- 	freq_update();
- 	idle();
- 	strobe(CC1201_STROBE_SFTX);
-	// [X] - 1 - Move all values down by 1 to make room for the packet's size value.
+ 	//idle();
+ 	//strobe(CC1201_STROBE_SFTX);
+
+ 	log(OK, "PACKET LENGTH", "%u", size);
+
+ 	if ( size != (buf[0] + 1) )
+ 	{
+ 		log(SEVERE, "CC1201 TX", "Packet size values are inconsistent. %u bytes requested vs %u bytes in packet.", size, buf[0]);
+ 		return 1;
+ 	}
+
+
+ 	// [X] - 1 - Send the data to the CC1201.
 	// =================
-	//for (int i = size; i > 0; i--)
-		//buffer[i] = buffer[i - 1];
-
-
-	// [X] - 2 - Place the packet's size as the array's first value. Increment afterwards.
-	// =================
-	//buffer[0] = size++;
-
-
-	// [X] - 3 - Send the data to the CC1101. Increment the size value by 1 
-	//before doing so to account for the buffer's inserted value
-	// =================
- 	uint8_t device_state = writeReg(CC1201_TX_FIFO, buffer, size);
-
- 	log(INF2, "CC1201 TX", "Bytes in TX buffer: %u", readReg(CC1201EXT_NUM_TXBYTES, EXT_FLAG_ON));
- 	log(INF2, "CC1201 TX", "Payload bytes: %u", buffer[0]);
+ 	uint8_t device_state = writeReg(CC1201_TX_FIFO, buf, size);
 
 
 	// [X] - 4 - Enter the TX state.
@@ -73,22 +66,15 @@ CC1201::~CC1201()
  	{
  		log(WARN, "CC1201 FIFO", "STATE AT TX ERROR: 0x%02X", device_state);
 		flush_tx();	// flush the TX buffer & return if the FIFO is in a corrupt state
-		return 1;
+
+		// set in IDLE mode and strobe back into RX to ensure the states will fall through calibration then return
+		idle();
+		strobe(CC1201_STROBE_SRX);
+
+		return 2;
 	} else {
 		strobe(CC1201_STROBE_STX);	// Enter TX mode
 	}
-
-	
-	//while(mode() != 0x0D);
-	//log(INF1, LINE_INFO, "MARCSTATE after TX: %02X", mode());
-
-	//uint16_t freq_offset_est = readReg(CC1201EXT_FREQOFF1, EXT_FLAG_ON) << 8;
-	//freq_offset_est |= readReg(CC1201EXT_FREQOFF0, EXT_FLAG_ON);
-
-	//uint32_t freq_offset = freq_offset_est * 40000000;
-	//freq_offset = freq_offset >> 20;
-	
-	//log(INF1, LINE_INFO, "Est. Freq. Offset:\t%u Hz", freq_offset);
 
 
 	// [X] - 5 - Wait until radio enters into the TX state
@@ -96,43 +82,56 @@ CC1201::~CC1201()
 	while( mode() != 0x13 );	// While not TX mode
 
 	uint8_t bts = 1;
+
 	do {
 		bts = readReg(CC1201EXT_NUM_TXBYTES, EXT_FLAG_ON);
 	}
 	while (bts != 0);
-
-	strobe(CC1201_STROBE_SRX);
 
 	return 0;   // success
 }
 
 int32_t CC1201::getData(uint8_t* buf, uint8_t* len)
 {
-	/*
-	log(INF3, LINE_INFO, "RXFIRST: %02X, RXLAST: %02X",
-			readReg(CC1201EXT_RXFIRST, EXT_FLAG_ON),
-			readReg(CC1201EXT_RXLAST, EXT_FLAG_ON));
-	*/
+	osDelay(1);	//make sure the packet is ready. remove for production
 
-freq_update();
+	uint8_t device_state = freq_update();	// update frequency offset estimate & get the current state while at it
 
-*len = 5;
+	uint8_t num_rx_bytes = readReg(CC1201EXT_NUM_RXBYTES, EXT_FLAG_ON);
 
-for(int i=0; i<*len; i++)
-	buf[i] = i;
-
-buf[0] = 0x82;
-
-update_rssi();
-
-	/*
-	if( xx & CC1201_TX_FIFO_ERROR )
+	if ( ((*len) + 2) < num_rx_bytes )
 	{
-		flush_rx();
-		return 0xFFFFFFFF;
+		log(SEVERE, "CC1201 RX", "%u bytes in RX FIFO with passed buffer size of %u bytes. Unable to process request.", num_rx_bytes, *len);
+		return 0x01;
 	}
-	*/
-	flush_rx();
+
+	if( (device_state & CC1201_RX_FIFO_ERROR) == CC1201_RX_FIFO_ERROR )
+	{
+		flush_rx();	// flush RX FIFO buffer and place back into RX state
+		strobe(CC1201_STROBE_SRX);
+		return 0x02;
+	}
+
+	if ( readReg(CC1201EXT_NUM_TXBYTES, EXT_FLAG_ON) > 0 )
+	{
+		// This was a TX interrupt from the CC1201, not an RX
+		return 0x03;
+	}
+
+	if ( num_rx_bytes > 0 )
+	{
+		device_state = readReg(CC1201_RX_FIFO, buf, num_rx_bytes);
+		*len = num_rx_bytes;
+
+		log(INF2, "CC1201 RX", "Bytes in RX buffer: %u", num_rx_bytes);
+		log(INF2, "CC1201 RX", "Payload bytes: %u", buf[0]);
+	}
+
+	update_rssi();
+	
+	// return back to RX mode
+	strobe(CC1201_STROBE_SRX);
+
 	return 1;	// success
 } 
 
@@ -413,7 +412,7 @@ uint8_t CC1201::writeReg(uint8_t addr, uint8_t* buffer, uint8_t len, bool ext_fl
  {
  	idle();
  	strobe(CC1201_STROBE_SFTX);
- 	log(WARN, "CC1201 FIFO", "TX FIFO flushed");
+ 	log(WARN, "CC1201 RX FIFO", "%u bytes flushed from TX FIFO buffer.", readReg(CC1201EXT_NUM_TXBYTES, EXT_FLAG_ON));
  }
 
 
@@ -421,7 +420,7 @@ uint8_t CC1201::writeReg(uint8_t addr, uint8_t* buffer, uint8_t len, bool ext_fl
  {
  	idle();
  	strobe(CC1201_STROBE_SFRX);
- 	log(WARN, "CC1201 FIFO", "RX FIFO flushed");
+ 	log(WARN, "CC1201 RX FIFO", "%u bytes flushed from RX FIFO buffer.", readReg(CC1201EXT_NUM_RXBYTES, EXT_FLAG_ON));
  }
 
 
@@ -434,93 +433,95 @@ uint8_t CC1201::writeReg(uint8_t addr, uint8_t* buffer, uint8_t len, bool ext_fl
 
  void CC1201::update_rssi(void)
  {
- 	uint8_t rssi_reg[2];
-	rssi_reg[0] = readReg(CC1201EXT_RSSI0, EXT_FLAG_ON);
-	rssi_reg[1] = readReg(CC1201EXT_RSSI1, EXT_FLAG_ON);
+ 	uint8_t offset = 0;
 
- 	uint16_t rssi_val = ( (rssi_reg[1] << 4) | (rssi_reg[0] & 0x78) >> 3);
- 	rssi_val = ~(rssi_val) + 1;
- 	rssi_val = rssi_val << 4;
- 	int16_t rssi_val_s = (int16_t)rssi_val;
- 	rssi_val_s = rssi_val_s >> 4;
- 	_rssi = rssi_val_s * 0.0625 - 81;
+ 	// Only use the top MSB for simplicity. 1 dBm resolution.
+ 	if(_offset_reg_written)
+ 	{
+ 		offset = readReg(CC1201EXT_RSSI1, EXT_FLAG_ON);
+ 		_rssi = static_cast<float>((int8_t)twos_compliment(offset));
 
-	//log(INF2, LINE_INFO, "RSSI Register Val: 0x%03X", rssi_val);
+ 		log(INF3, "CC1201 RSSI", "RSSI is from device.");
+ 	} else {
+ 		_rssi = 0.0;
+ 	}
+ 	
+ 	log(INF3, LINE_INFO, "RSSI Register Val: 0x%02X", offset);
+ }
 
-/*
-	if (rssi_val & 0x400)	// if negative (this is a 2's compliment register value)
-	{
-		_rssi = (float) ((2048 - rssi_val) >> 1);
-	} else
-	{
-		_rssi = (float) (rssi_val >> 1);
-	}
-	*/
+ float CC1201::rssi(void)
+ {
+ 	return _rssi;
+ }
+
+ uint8_t CC1201::idle(void)
+ {
+ 	uint8_t status_byte = strobe(CC1201_STROBE_SIDLE);
+ 	while ( mode() != 0x01 );
+ 	return status_byte;
+ }
+
+ uint8_t CC1201::rand(void)
+ {
+ 	writeReg(CC1201EXT_RNDGEN, 0x80, EXT_FLAG_ON);
+ 	return readReg(CC1201EXT_RNDGEN, EXT_FLAG_ON);
+ }
+
+ uint8_t CC1201::freq_update(void)
+ {
+ 	return strobe(CC1201_STROBE_SAFC);
+ }
+
+ float CC1201::freq(void)
+ {
+ 	uint8_t buf[5];
+ 	uint16_t freq_offset;
+ 	uint32_t freq_base;
+ 	float freq;
+
+ 	freq_update();
+
+ 	readReg(CC1201EXT_FREQOFF1, buf, 5, EXT_FLAG_ON);
 	/*
-	if (rssi_val == 0x800)
-	{
-		_rssi = -999.0;
-	} else
-	{
-		_rssi = static_cast<float>(rssi_val - 81) / 16;	// RSSI offset value. RSSI now stored as value of dBm. 0.0625 resolution
-	}
-	*/
-	
-}
+ 	buf[0] = readReg(CC1201EXT_FREQOFF1, EXT_FLAG_ON);
+ 	buf[1] = readReg(CC1201EXT_FREQOFF0, EXT_FLAG_ON);
+ 	buf[2] = readReg(CC1201EXT_FREQ2, EXT_FLAG_ON);
+ 	buf[3] = readReg(CC1201EXT_FREQ1, EXT_FLAG_ON);
+ 	buf[4] = readReg(CC1201EXT_FREQ0, EXT_FLAG_ON);
+ 	*/
 
-float CC1201::rssi(void)
-{
-	return _rssi;
-}
+ 	freq_offset = (buf[0] << 8) | (buf[1]);
+ 	freq_offset = (~freq_offset) + 1;
+ 	freq_base = (buf[2] << 16) | (buf[3] << 8) | (buf[4]);
 
-uint8_t CC1201::idle(void)
-{
-	uint8_t status_byte = strobe(CC1201_STROBE_SIDLE);
-	while ( mode() != 0x01 );
-	return status_byte;
-}
+ 	freq = 40 * static_cast<float>((freq_base >> 16) + (freq_offset >> 18));
+ 	freq /= 4;
 
-uint8_t CC1201::rand(void)
-{
-	writeReg(CC1201EXT_RNDGEN, 0x80, EXT_FLAG_ON);
-	return readReg(CC1201EXT_RNDGEN, EXT_FLAG_ON);
-}
+ 	log(INF1, LINE_INFO, "Operating Frequency: %3.2f MHz", freq);
 
-uint8_t CC1201::freq_update(void)
-{
-	return strobe(CC1201_STROBE_SAFC);
-}
+ 	return freq;
+ }
 
-float CC1201::frequency(void)
-{
-	uint8_t buf[5];
-	uint16_t freq_offset;
-	uint32_t freq_base;
-	float freq;
-	
-	freq_update();
-	
-	//readReg(CC1201EXT_FREQOFF1, buf, 5, EXT_FLAG_ON);
-	buf[0] = readReg(CC1201EXT_FREQOFF1, EXT_FLAG_ON);
-	buf[1] = readReg(CC1201EXT_FREQOFF0, EXT_FLAG_ON);
-	buf[2] = readReg(CC1201EXT_FREQ2, EXT_FLAG_ON);
-	buf[3] = readReg(CC1201EXT_FREQ1, EXT_FLAG_ON);
-	buf[4] = readReg(CC1201EXT_FREQ0, EXT_FLAG_ON);
-
-	freq_offset = (buf[0] << 8) | (buf[1]);
-	freq_offset = (~freq_offset) + 1;
-	freq_base = (buf[2] << 16) | (buf[3] << 8) | (buf[4]);
-
-	freq = 40 * static_cast<float>((freq_base >> 16) + (freq_offset >> 18));
-	freq /= 4;
-
-	log(OK, LINE_INFO, "Operating Frequency: %3.2f MHz", freq);
-
-	return freq;
-}
-
-bool CC1201::isLocked(void)
-{
+ bool CC1201::isLocked(void)
+ {
 	// This is only valid in RX, TX, & FSTXON
-	return (readReg(CC1201EXT_FSCAL_CTRL, EXT_FLAG_ON) & 0x01);
-}
+ 	return (readReg(CC1201EXT_FSCAL_CTRL, EXT_FLAG_ON) & 0x01);
+ }
+
+ void CC1201::set_rssi_offset(int8_t offset)
+ {
+	// HAVING THIS MEANS OFFSET CAN ONLY BE SET ONCE FROM THE CLASS
+ 	if (_offset_reg_written == true )
+ 		return;
+
+ 	_offset_reg_written = true;
+
+	//uint8_t offset_c = offset;
+ 	uint8_t offset_c = twos_compliment(offset);
+ 	writeReg(CC1201_AGC_GAIN_ADJUST, offset_c);
+ }
+
+ uint8_t CC1201::twos_compliment(uint8_t val)
+ {
+ 	return -(unsigned int)val;
+ }

@@ -8,8 +8,8 @@ const int CommLink::RX_QUEUE_SIZE = COMM_LINK_RX_QUEUE_SIZE;
 
 // Constructor
 CommLink::CommLink(PinName mosi, PinName miso, PinName sck, PinName cs, PinName int_pin) :
-    _txQueueHelper(),
-    _rxQueueHelper()
+_txQueueHelper(),
+_rxQueueHelper()
 {
     static unsigned int _nbr_links = 0;
 
@@ -131,7 +131,7 @@ void CommLink::rxThread(void const *arg)
         RTP_t p;
 
         if (inst->getData(p.raw, &rec_bytes)) {
-            
+
             // force some numbers for testing always on port 8
             p.port = 8;
             p.subclass = 0;
@@ -165,6 +165,14 @@ void CommLink::sendPacket(RTP_t *p)
     p->payload_size += 2;
     uint8_t size = p->payload_size + 1;
     sendData(p->raw, size);
+
+/*
+    log(INF1, "PKT", "==========");
+    for(int i=0; i<size; i++)
+        log(INF1, "PKT", "0x%02X", p->raw[i]);
+
+    log(INF1, "PKT", "==========\n");
+    */
 }
 
 
