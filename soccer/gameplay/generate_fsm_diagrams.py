@@ -21,6 +21,9 @@ def mkdir_p(path):
 
 logging.getLogger().setLevel(logging.INFO)
 
+import main
+main.init()
+
 for behavior_type in ['skills', 'tactics', 'plays']:
     entries = class_import.recursive_import_classes('.', [behavior_type], fsm.StateMachine)
 

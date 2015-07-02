@@ -71,7 +71,7 @@ add_library(robocup SHARED ${SOCCER_SRC} ${SOCCER_UIS} ${SOCCER_RSRC})
 set_target_properties(robocup PROPERTIES PREFIX "")
 
 target_link_libraries(robocup common)
-qt5_use_modules(robocup Widgets Xml Core OpenGL Network)
+qt5_use_modules(robocup Widgets Xml Core OpenGL Network Svg)
 target_link_libraries(robocup ${LIBUSB_1_LIBRARIES})
 target_link_libraries(robocup ${Boost_LIBRARIES})
 target_link_libraries(robocup GL GLU glut)
