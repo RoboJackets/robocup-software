@@ -1,6 +1,7 @@
 `include "phase_driver.vh"
 `include "Hall_Effect_Sensor.v"
 `include "Phase_Driver.v"
+`include "git_version.vh"
 
 
 module robocup(clock, h, phaseHInv, phaseLInv); //re-add "duty_cycle,"  as port 2 after done testing
