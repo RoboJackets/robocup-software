@@ -71,9 +71,8 @@ class MainWindow : public QMainWindow
 
         QTimer updateTimer;
 
-		void addLayer(int i, QString name, bool checked);
-
 	private Q_SLOTS:
+		void addLayer(int i, QString name, bool checked);
 		void updateViews();
 
 		void on_fieldView_robotSelected(int shell);
