@@ -68,11 +68,10 @@ void OurRobot::createConfiguration(Configuration *cfg) {
 
 OurRobot::OurRobot(int shell, SystemState *state):
 	Robot(shell, true),
+	_path(),
 	_state(state),
 	_pathChangeHistory(PathChangeHistoryBufferSize)
 {
-	_path = nullptr;
-	
 	_cmdText = new std::stringstream();
 
 	resetAvoidBall();
@@ -482,14 +481,10 @@ std::shared_ptr<Geometry2d::Shape> OurRobot::createBallObstacle() const {
 
 #pragma mark Motion
 
-void OurRobot::setPath(Planning::Path *path) {
+void OurRobot::setPath(unique_ptr<Planning::Path> path) {
 	_didSetPathThisIteration = true;
 
-	if (_path) {
-		delete _path;
-	}
-
-	_path = path;
+	_path = std::move(path);
 	_pathInvalidated = false;
 	_pathStartTime = timestamp();
 }
@@ -541,7 +536,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		addText(QString("replan: no goal"), Qt::white, "Motion");
 
 		Planning::InterpolatedPath *newPath = new Planning::InterpolatedPath(pos);
-		setPath(newPath);
+		setPath(unique_ptr<Planning::Path>(newPath));
 		_path->draw(_state);
 		return;
 	}
@@ -600,12 +595,12 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	if (!_pathInvalidated) {
 		addText("Reusing path", Qt::white, "Planning");
 	} else {
-		Planning::Path *path = _planner->run(pos, angle, vel, _motionConstraints, &full_obstacles);
+		std::unique_ptr<Planning::Path> path = _planner->run(pos, angle, vel, _motionConstraints, &full_obstacles);
 		
 		addText("Replanning", Qt::red, "Planning");
 		// use the newly generated path
 		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: using new RRT path" << std::endl;
-		setPath(path);
+		setPath(std::move(path));
 	}
 	_pathChangeHistory.push_back(_didSetPathThisIteration);
 
