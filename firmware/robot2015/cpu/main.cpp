@@ -261,10 +261,10 @@ void DRV8303Init()
     printf("Configuration Values:\t%04X\t%04X\r\n", data[0], data[1]);
     for(uint8_t i=0; i<3; i++) {
         n_cs = 0;
-        data[3] = spi.write(data[i]);
+        data[2] = spi.write(data[i]);
         n_cs = ~n_cs;
     }
-    configured = 1;
+    drv_configured = 1;
 }
 
 
