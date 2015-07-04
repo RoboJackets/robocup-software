@@ -41,7 +41,7 @@ namespace Planning
 
 			///run the path ROTplanner
 			///this will always populate path to be the path we need to travel
-			Planning::InterpolatedPath* run(
+			std::unique_ptr<Path> run(
 					const Geometry2d::Point& start,
 					const float angle,
 					const Geometry2d::Point& vel,

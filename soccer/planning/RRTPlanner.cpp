@@ -28,7 +28,7 @@ RRTPlanner::RRTPlanner()
 	_maxIterations = 100;
 }
 
-Planning::InterpolatedPath* RRTPlanner::run(
+std::unique_ptr<Path> RRTPlanner::run(
 		const Geometry2d::Point &start,
 		const float angle,
 		const Geometry2d::Point &vel,
@@ -48,7 +48,7 @@ Planning::InterpolatedPath* RRTPlanner::run(
 		path->points.push_back(start);
 		path->times.push_back(0);
 		path->vels.push_back(Geometry2d::Point(0,0));
-		return path;
+		return unique_ptr<Path>(path);
 	}
 
 	/// Locate a non blocked goal point
@@ -142,7 +142,7 @@ Planning::InterpolatedPath* RRTPlanner::run(
 		path->times.push_back(0);
 		path->vels.push_back(Geometry2d::Point(0,0));
 	}
-	return path;
+	return unique_ptr<Path>(path);
 }
 
 Planning::InterpolatedPath RRTPlanner::makePath()

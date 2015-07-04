@@ -170,8 +170,13 @@ public:
 		return _motionConstraints;
 	}
 
+	/**
+	 * Returns a temporary observing pointer to the path of the robot.
+	 * This is only currently supported for legacy reasons.
+	 * Saving the pointer may lead to seg faults as it may be deleted by the Robot who owns it.
+	 */
 	const Planning::Path* path() const {
-		return _path;
+		return _path.get();
 	}
 
 	///	clears old radioTx stuff, resets robot debug text, and clears local obstacles
@@ -434,9 +439,9 @@ protected:
 
 	Planning::RRTPlanner *_planner;	/// single-robot RRT planner
 
-	void setPath(Planning::Path *path);
+	void setPath(std::unique_ptr<Planning::Path> path);
 
-	Planning::Path *_path;	/// latest path
+	std::unique_ptr<Planning::Path> _path;	/// latest path
 	Time _pathStartTime;
 
 	///	whenever the constraints for the robot path are changed, this is set to true to trigger a replan
