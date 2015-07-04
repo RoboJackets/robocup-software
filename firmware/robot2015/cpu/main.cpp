@@ -5,20 +5,45 @@
 #include "logger.hpp"
 #include "radio.hpp"
 
-#define READ_SPI_16	0x8000
-#define SET_ADDR( x ) ((x)<<11)
+#define READ_REG        (0x8000)
+#define WRITE_REG       (0x0000)
 
+#define GAIN_10         (0x00)
+#define GAIN_20         (0x01)
+#define GAIN_40         (0x02)
+#define GAIN_80         (0x03)
+
+#define SET_ADDR(x)     (((x)<<11) & 0x7800)
+#define STATUS_REG(x)   SET_ADDR(x-1)
+#define CTRL_REG(x)     SET_ADDR(+1)
+
+#define GATE_CURRENT(x) ( (x)     & 0x003)
+#define GATE_RESET(x)   (((x)<<2) & 0x004)
+#define PWM_MODE(x)     (((x)<<3) & 0x008)
+#define OC_MODE(x)      (((x)<<4) & 0x030)
+#define OC_ADJ_SET(x)   (((x)<<6) & 0x7C0)
+
+#define OCTW_SET(x)     ( (x)     & 0x003)
+#define GAIN(x)         (((x)<<2) & 0x00C)
+#define DC_CAL_CH1(x)   (((x)<<4) & 0x010)
+#define DC_CAL_CH2(x)   (((x)<<5) & 0x020)
+#define TC_OFF(x)       (((x)<<6) & 0x040)
+
+
+
+
+Serial pc(USBTX, USBRX);
 LocalFileSystem local("local");
-
-
+SPI spi(p5, p6, p7);	//  mosi, miso, sclk - connected to fpga
 Ticker lifeLight;
-DigitalOut ledOne(LED1);
-DigitalOut ledTwo(LED2);
-DigitalOut drv_ncs(p20,1);
-DigitalOut drv_en(p19,1);
 
-//  mosi, miso, sclk - connected to fpga
-SPI spi(p5, p6, p7);
+DigitalOut ledOne(LED1,1);
+DigitalOut ledTwo(LED2,0);
+DigitalOut drv_configured(LED3,0);
+
+DigitalOut n_cs(p10,1);
+DigitalOut gate_en(p15,0);
+
 
 /*
  * some forward declarations to make the code easier to read
@@ -27,7 +52,8 @@ void imAlive(void);
 void setISRPriorities(void);
 void initRadioThread(void);
 void initConsoleRoutine(void);
-void fpgaInit();
+void fpgaInit(void);
+void DRV8303Init(void);
 
 /**
  * system entry point
@@ -44,47 +70,23 @@ int main(void)
 	//initConsoleRoutine();
 
     fpgaInit();
+    DRV8303Init();
 
-    spi.format(16,0);
+	uint16_t data[3];
+	uint32_t transfer_num = 0;
 
-    uint16_t reg_config [2];
-    reg_config[0] = READ_SPI_16 | SET_ADDR(2) | (6<<6);
-    reg_config[1] = READ_SPI_16 | SET_ADDR(3) | (1<<5) | (1<<4);
+    while(1) {
+        for(uint8_t i=0; i<5; i++) {
+            n_cs = 0;
+            data[i] = spi.write(SET_ADDR(i) | READ_REG);
+            n_cs = ~n_cs;
+        }
 
-    for (int i=0; i<2; i++)
-    	spi.write(reg_config[i]);
+        printf("\r\nReading %u:\r\n", ++transfer_num);
+        for(uint8_t i=0; i<4; i++)
+            printf("    Address %u:\t%04X\r\n", i, data[i+1]);
 
-    uint16_t reg_vals[2];
-
-    while(1)
-    {
-
-    	for (int i=0; i<2; i++)
-    		reg_vals[i] = 0x3FF & spi.write(SET_ADDR(i));
-/*
-    	bool fault = reg_vals[0]>>10;
-    	bool gvdd_uv = reg_vals[0]>>9;
-    	bool pvdd_uv = reg_vals[0]>>8;
-    	bool otsd = reg_vals[0]>>7;
-    	bool otw = reg_vals[0]>>6;
-    	bool ah_oc = reg_vals[0]>>5;
-    	bool al_oc = reg_vals[0]>>4;
-    	bool bh_oc = reg_vals[0]>>3;
-    	bool bl_oc = reg_vals[0]>>2;
-    	bool ah_oc = reg_vals[0]>>1;
-    	bool al_oc = reg_vals[0];
-    	*/
-
-/*
-    	printf("Fault:\t%u", fault);
-    	printf("GVDD_UV\t%u", gvdd_uv);
-    	printf("PVDD_UV\t%u", pvdd_uv);
-    	printf("GVDD_UV\t%u", );
-    	printf("GVDD_UV\t%u", gvdd_uv);
-    	*/
-
-    	printf("Address 0x00:\t0x%04X\r\nAddress 0x01:\t0x%04X\r\n", reg_vals[0], reg_vals[1]);
-    	wait(2);
+        wait(5);
     }
 
 }
@@ -242,6 +244,29 @@ void fpgaInit() {
 
     printf("got final byte from spi: %x\r\n\tFPGA configured!\r\n", result);
 }
+
+void DRV8303Init()
+{
+    pc.baud(57600);
+    spi.format(16,1);
+    spi.frequency(1000000);
+    gate_en = 0;
+    wait(0.5);
+    gate_en = !gate_en;
+
+    uint16_t data[3];
+    data[0] = CTRL_REG(1) | OC_ADJ_SET(10) | WRITE_REG;
+    data[1] = CTRL_REG(2) | GAIN(GAIN_20) | WRITE_REG;
+
+    printf("Configuration Values:\t%04X\t%04X\r\n", data[0], data[1]);
+    for(uint8_t i=0; i<3; i++) {
+        n_cs = 0;
+        data[3] = spi.write(data[i]);
+        n_cs = ~n_cs;
+    }
+    configured = 1;
+}
+
 
 /**
  * timer interrupt based light flicker. If this stops, the code triggered
