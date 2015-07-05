@@ -268,7 +268,7 @@ void Processor::run()
 
 		// Make a new log frame
 		_state.logFrame = std::make_shared<Packet::LogFrame>();
-    _state.logFrame->set_timestamp(timestamp());
+    	_state.logFrame->set_timestamp(timestamp());
 		_state.logFrame->set_command_time(startTime + Command_Latency);
 		_state.logFrame->set_use_our_half(_useOurHalf);
 		_state.logFrame->set_use_opponent_half(_useOpponentHalf);
