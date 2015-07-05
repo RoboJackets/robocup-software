@@ -81,8 +81,9 @@ OurRobot::OurRobot(int shell, SystemState *state):
 
 	_motionControl = new MotionControl(this);
 
-	_planner = new Planning::RRTPlanner();
-	_planner->maxIterations(250);
+	Planning::RRTPlanner *rrtPlanner = new Planning::RRTPlanner();
+	rrtPlanner->maxIterations(250);
+	_planner = shared_ptr<Planning::PathPlanner>(rrtPlanner);
 
 	resetAvoidRobotRadii();
 
@@ -95,7 +96,6 @@ OurRobot::OurRobot(int shell, SystemState *state):
 OurRobot::~OurRobot()
 {
 	if (_motionControl) delete _motionControl;
-	if (_planner) delete _planner;
 	delete _cmdText;
 }
 

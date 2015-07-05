@@ -6,6 +6,7 @@
 #include <Geometry2d/CompositeShape.hpp>
 #include <planning/InterpolatedPath.hpp>
 #include <MotionConstraints.hpp>
+#include "PathPlanner.hpp"
 
 #include "Tree.hpp"
 
@@ -20,7 +21,7 @@ namespace Planning
 	 * @details There are many ways to plan paths.  This planner uses bidirectional [RRTs](http://en.wikipedia.org/wiki/Rapidly-exploring_random_tree).
 	 * You can check out our interactive RRT applet on GitHub here: https://github.com/RoboJackets/rrt.
 	 */
-	class RRTPlanner
+	class RRTPlanner: public PathPlanner
 	{
 		public:
 			RRTPlanner();
@@ -46,7 +47,7 @@ namespace Planning
 					const float angle,
 					const Geometry2d::Point& vel,
 					const MotionConstraints &motionConstraints,
-					const Geometry2d::CompositeShape* obstacles);
+					const Geometry2d::CompositeShape* obstacles) override;
 
 	protected:
 		MotionConstraints _motionConstraints;

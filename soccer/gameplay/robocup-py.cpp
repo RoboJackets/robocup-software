@@ -381,7 +381,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("__eq__", &Robot::equals)
 	;
 
-	class_<OurRobot, OurRobot *, std::shared_ptr<OurRobot>, bases<Robot> >("OurRobot", init<int, SystemState*>())
+	class_<OurRobot, OurRobot *, std::shared_ptr<OurRobot>, bases<Robot>>("OurRobot", init<int, SystemState*>())
 		.def("move_to", &OurRobot_move_to)
 		.def("set_world_vel", &OurRobot::worldVelocity)
 		.def("set_angle_vel", &OurRobot::angleVelocity)
