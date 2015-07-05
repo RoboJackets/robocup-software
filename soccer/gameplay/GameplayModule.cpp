@@ -119,7 +119,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	//
 	try {
         cout << "Initializing embedded python interpreter..." << endl;
-        
+
         //  this tells python how to load the robocup module
         //  it has to be done before Py_Initialize()
         PyImport_AppendInittab("robocup", &PyInit_robocup);
@@ -150,7 +150,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
     } catch (error_already_set) {
         PyErr_Print();
         throw new runtime_error("Unable to initialize embedded python interpreter");
-    } 
+    }
 }
 
 Gameplay::GameplayModule::~GameplayModule() {
@@ -248,7 +248,7 @@ Geometry2d::CompositeShape Gameplay::GameplayModule::globalObstacles() const {
 void Gameplay::GameplayModule::run()
 {
 	QMutexLocker lock(&_mutex);
-	
+
 	bool verbose = false;
 	if (verbose) cout << "Starting GameplayModule::run()" << endl;
 
@@ -277,7 +277,7 @@ void Gameplay::GameplayModule::run()
 
 	PyGILState_STATE state = PyGILState_Ensure(); {
 		try {
-			//	vector of shared pointers to pass to python
+			//	vector of OurRobot pointers to pass to python
 			std::vector<OurRobot *> *botVector = new std::vector<OurRobot *>();
 			for (auto itr = _playRobots.begin(); itr != _playRobots.end(); itr++) {
 				OurRobot *ourBot = *itr;
