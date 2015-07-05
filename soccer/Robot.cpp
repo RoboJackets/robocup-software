@@ -80,10 +80,8 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	_lastKickTime = 0;
 
 	_motionControl = new MotionControl(this);
-
-	Planning::RRTPlanner *rrtPlanner = new Planning::RRTPlanner();
-	rrtPlanner->maxIterations(250);
-	_planner = shared_ptr<Planning::PathPlanner>(rrtPlanner);
+	
+	_planner = make_shared<Planning::RRTPlanner>(250);
 
 	resetAvoidRobotRadii();
 

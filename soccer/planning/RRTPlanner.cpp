@@ -23,10 +23,11 @@ Geometry2d::Point Planning::randomPoint()
 	return Geometry2d::Point(x, y);
 }
 
-RRTPlanner::RRTPlanner()
-{
-	_maxIterations = 100;
-}
+RRTPlanner::RRTPlanner(): _maxIterations(100)
+{}
+
+RRTPlanner::RRTPlanner(int maxIterations): _maxIterations(maxIterations)
+{}
 
 std::unique_ptr<Path> RRTPlanner::run(
 		const Geometry2d::Point &start,
