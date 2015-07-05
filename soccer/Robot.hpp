@@ -437,7 +437,7 @@ protected:
 
 	MotionConstraints _motionConstraints;
 
-	Planning::RRTPlanner *_planner;	/// single-robot RRT planner
+	std::shared_ptr<Planning::PathPlanner> _planner;	/// single-robot RRT planner
 
 	void setPath(std::unique_ptr<Planning::Path> path);
 

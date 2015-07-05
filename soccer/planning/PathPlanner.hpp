@@ -5,7 +5,7 @@ namespace Planning
 	/**
 	 * @brief Interface for Path Planners
 	 */
-	class Path
+	class PathPlanner
 	{
 
 	public:
@@ -13,7 +13,7 @@ namespace Planning
 		/**
 		 * Virtual function which returns a planned Path following the specified MotionContraints and doesn't hit the obstacles.
 		 */
-		virtual Planning::InterpolatedPath* run(
+		virtual std::unique_ptr<Path> run(
 				const Geometry2d::Point &start,
 				const float angle,
 				const Geometry2d::Point &vel,
