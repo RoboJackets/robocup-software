@@ -5,20 +5,46 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++11")
 # Qt
 set(CMAKE_AUTOMOC ON)
 
-file(GLOB SOCCER_SRC
-    "*.cpp"
-    "config/*.cpp"
-    "gameplay/*.cpp"
-    "modeling/*.cpp"
-    "motion/*.cpp"
-    "planning/*.cpp"
-    "radio/*.cpp"
-    "joystick/*.cpp"
-    )
 
-# Exclude the two files that include a main() function - we'll add those in later for their respective executables
-list(REMOVE_ITEM SOCCER_SRC "${CMAKE_CURRENT_SOURCE_DIR}/LogViewer.cpp")
-list(REMOVE_ITEM SOCCER_SRC "${CMAKE_CURRENT_SOURCE_DIR}/main.cpp")
+# All sources for the robocup library used for the python module, soccer, and log log viewer
+# Note that main.cpp and LogViewer.cpp aren't present in this list because they're executable-specific
+set(ROBOCUP_LIB_SRC
+    "BatteryProfile.cpp"
+    "BatteryWidget.cpp"
+    "Configuration.cpp"
+    "FieldView.cpp"
+    "gameplay/GameplayModule.cpp"
+    "gameplay/robocup-py.cpp"
+    "joystick/GamepadJoystick.cpp"
+    "joystick/SpaceNavJoystick.cpp"
+    "Logger.cpp"
+    "MainWindow.cpp"
+    "modeling/BallFilter.cpp"
+    "modeling/BallTracker.cpp"
+    "modeling/RobotFilter.cpp"
+    "motion/MotionControl.cpp"
+    "motion/TrapezoidalMotion.cpp"
+    "MotionConstraints.cpp"
+    "NewRefereeModule.cpp"
+    "planning/CompositePath.cpp"
+    "planning/InterpolatedPath.cpp"
+    "planning/RRTPlanner.cpp"
+    "planning/Tree.cpp"
+    "Processor.cpp"
+    "ProtobufTree.cpp"
+    "radio/SimRadio.cpp"
+    "radio/USBRadio.cpp"
+    "RefereeTab.cpp"
+    "Robot.cpp"
+    "RobotConfig.cpp"
+    "RobotStatusWidget.cpp"
+    "RobotWidget.cpp"
+    "SimFieldView.cpp"
+    "StripChart.cpp"
+    "SystemState.cpp"
+    "VisionReceiver.cpp"
+)
+
 
 # help CMake find gl.h, glu.h, etc on OS X
 if(APPLE)
@@ -67,7 +93,7 @@ include_directories(${SDL_INCLUDE_DIRS})
 
 # Build stand-alone soccer dylib
 # This is linked into soccer and our unit tests, as well as being a python module
-add_library(robocup SHARED ${SOCCER_SRC} ${SOCCER_UIS} ${SOCCER_RSRC})
+add_library(robocup SHARED ${ROBOCUP_LIB_SRC} ${SOCCER_UIS} ${SOCCER_RSRC})
 set_target_properties(robocup PROPERTIES PREFIX "")
 
 target_link_libraries(robocup common)
@@ -113,10 +139,6 @@ qt5_use_modules(soccer Widgets Xml Core OpenGL Network Svg)
 target_link_libraries(soccer robocup)
 
 
-# Unit tests
-add_subdirectory(tests)
-
-
 # build the 'log_viewer' program
 qt5_add_resources(LOG_VIEWER_RSRC ui/log_icons.qrc)
 qt5_wrap_ui(LOG_VIEWER_UI ui/LogViewer.ui)
@@ -129,3 +151,20 @@ set(LOG_VIEWER_SRC
 add_executable(log_viewer ${LOG_VIEWER_SRC} ${LOG_VIEWER_UI} ${LOG_VIEWER_RSRC})
 qt5_use_modules(log_viewer Core Widgets OpenGL Svg)
 target_link_libraries(log_viewer common)
+
+
+# Add a test runner target "test-soccer" to run all tests in this directory
+set(SOCCER_TEST_SRC
+    "ExampleTest.cpp"
+    "motion/TrapezoidalMotionTest.cpp"
+    "planning/PathTest.cpp"
+    "${CMAKE_SOURCE_DIR}/common/PointTest.cpp"
+)
+add_executable(test-soccer ${SOCCER_TEST_SRC})
+target_link_libraries(test-soccer robocup)
+qt5_use_modules(test-soccer Core Widgets Xml)
+target_link_libraries(test-soccer ${GTEST_BOTH_LIBRARIES})
+add_dependencies(test-soccer googletest)
+
+# Don't build the tests by default
+set_target_properties(test-soccer PROPERTIES EXCLUDE_FROM_ALL TRUE)
