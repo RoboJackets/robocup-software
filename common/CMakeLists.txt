@@ -5,9 +5,20 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++11")
 add_subdirectory(protobuf)
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/protobuf")
 
+set(COMMON_SRC
+    "Field_Dimensions.cpp"
+    "Geometry2d/Circle.cpp"
+    "Geometry2d/Line.cpp"
+    "Geometry2d/Rect.cpp"
+    "Geometry2d/TransformMatrix.cpp"
+    "Geometry2d/CompositeShape.cpp"
+    "Geometry2d/Polygon.cpp"
+    "Geometry2d/Segment.cpp"
+    "multicast.cpp"
+    "Pid.cpp"
+    "Utils.cpp"
+)
 
-file(GLOB_RECURSE COMMON_SRC "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp")
-file(GLOB_RECURSE COMMON_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp")
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -15,7 +26,8 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
 # build the 'common' static library (and include our protobuf messages in it)
-add_library(common STATIC ${COMMON_SRC} git_version.cpp ${COMMON_INCLUDE})
+# add_library(common STATIC ${COMMON_SRC} git_version.cpp ${COMMON_INCLUDE})
+add_library(common STATIC ${COMMON_SRC} git_version.cpp)
 target_link_libraries(common proto_messages)
 qt5_use_modules(common Core Network)
 
