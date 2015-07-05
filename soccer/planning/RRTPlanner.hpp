@@ -25,6 +25,7 @@ namespace Planning
 	{
 		public:
 			RRTPlanner();
+			RRTPlanner(int maxIterations);
 			/**
 			 * gets the maximum number of iterations for the RRT algorithm
 			 */
