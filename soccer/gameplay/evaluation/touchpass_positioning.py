@@ -56,6 +56,17 @@ class TouchpassPositioner:
             currentx = rect.min_x()
         return outlist
 
+    ## Evaluates a single point, and returns the probability of it making it.
+    def eval_single_point(self, kick_point, receive_point):
+        if kick_point is None:
+            kick_point = main.ball().pos
+        currentChance = evaluation.passing.eval_pass(kick_point, receive_point)
+        # TODO dont only aim for center of goal. Waiting on window_evaluator returning a probability.
+        targetPoint = constants.Field.TheirGoalCenter
+        currentChance = currentChance * evaluation.passing.eval_pass(receive_point, targetPoint)
+        return currentChance
+
+
     ## Finds the best receive point for a bounce-pass.
     #
     # Takes in an initial kick point and an optional evaluation zone.
@@ -77,7 +88,7 @@ class TouchpassPositioner:
 
         for point in points:
             currentChance = evaluation.passing.eval_pass(kick_point, point)
-            # TODO dont only aim for center of goal
+            # TODO dont only aim for center of goal. Waiting on window_evaluator returning a probability.
             targetPoint = constants.Field.TheirGoalCenter
             currentChance = currentChance * evaluation.passing.eval_pass(point, targetPoint)
             if currentChance > bestChance:
@@ -85,5 +96,5 @@ class TouchpassPositioner:
                 best = point
 
         # print("BEST VALUE: " + str(best))
-        return best, targetPoint
+        return best, targetPoint, bestChance
 

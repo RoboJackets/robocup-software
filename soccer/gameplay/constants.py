@@ -20,6 +20,7 @@ class Colors:
 
 class Robot:
     Radius = 0.09
+    MaxKickSpeed = 8 # m/s
 
     class Dribbler:
         MaxPower = 127
