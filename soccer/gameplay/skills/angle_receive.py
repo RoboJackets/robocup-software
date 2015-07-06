@@ -35,10 +35,6 @@ class AngleReceive(skills._kick._Kick):
     ## after this amount of time has elapsed after the kick and we haven't received the ball, we failed :(
     ReceiveTimeout = 2
 
-    # TODO make this a real constant
-    MaxKickSpeed = 8 # m/s
-
-
     class State(enum.Enum):
         ## we're aligning with the planned receive point
         aligning = 1
@@ -48,7 +44,6 @@ class AngleReceive(skills._kick._Kick):
 
         ## the ball's been kicked and we're adjusting based on where the ball's moving
         receiving = 3
-
 
     def __init__(self):
         super().__init__()
@@ -144,7 +139,7 @@ class AngleReceive(skills._kick._Kick):
 
         rejection = math.sin(angle_diff) * ball.vel.mag()
         # print("Rejection: " + str(rejection))
-        adjust = math.asin(min(1, max(-1, rejection / AngleReceive.MaxKickSpeed)))
+        adjust = math.asin(min(1, max(-1, rejection / constants.Robot.MaxKickSpeed)))
         # print("Angles: " + str(adjust) + ", final: " + str(adjust + target_angle))
         return adjust + target_angle
 

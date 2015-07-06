@@ -16,7 +16,8 @@ from enum import Enum
 class OneTouchPass(play.Play):
 
     tpass = evaluation.touchpass_positioning.TouchpassPositioner()
-    # tpass_execution = 0
+    THRESHOLD = 0.1 # 10%
+    tpass_execution = 0
 
     class State(Enum):
         passing = 1
@@ -45,7 +46,13 @@ class OneTouchPass(play.Play):
 
     def reset_receive_point(self):
         pass_bhvr = self.subbehavior_with_name('pass')
-        pass_bhvr.receive_point, nil = OneTouchPass.tpass.eval_best_receive_point(main.ball().pos)
+        receive_pt, _, probability = OneTouchPass.tpass.eval_best_receive_point(main.ball().pos)
+        # only change if increase of beyond the threshold.
+        # print("prob: " + str(probability))
+        if pass_bhvr.receive_point == None or probability > OneTouchPass.tpass.eval_single_point(main.ball().pos, pass_bhvr.receive_point) + OneTouchPass.THRESHOLD:
+            # print("resetting")
+            pass_bhvr.receive_point = receive_pt
+
         pass_bhvr.skillreceiver = skills.angle_receive.AngleReceive()
 
     def on_enter_passing(self):
@@ -54,11 +61,11 @@ class OneTouchPass(play.Play):
         if pass_bhvr.receive_point == None:
             self.reset_receive_point()
 
-    # def execute_passing(self):
-    #     OneTouchPass.tpass_execution = OneTouchPass.tpass_execution + 1
-    #     if OneTouchPass.tpass_execution > 100:
-    #         self.reset_receive_point()
-    #         OneTouchPass.tpass_execution = 0
+    def execute_passing(self):
+        OneTouchPass.tpass_execution = OneTouchPass.tpass_execution + 1
+        if OneTouchPass.tpass_execution > 30:
+            self.reset_receive_point()
+            OneTouchPass.tpass_execution = 0
 
     def on_exit_passing(self):
         self.remove_subbehavior('pass')
