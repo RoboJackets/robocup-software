@@ -29,6 +29,8 @@ void FieldBackgroundView::setFieldOrientation(FieldOrientation orientation) {
 }
 
 void FieldBackgroundView::recalculateTransformsIfNeeded() const {
+    if (_transformsValid) return;
+
     _screenToWorld = Geometry2d::TransformMatrix();
     _screenToWorld *= Geometry2d::TransformMatrix::scale(
         fieldDimensions().FloorLength(), fieldDimensions().FloorWidth());
