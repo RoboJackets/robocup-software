@@ -1,4 +1,4 @@
-import play
+import composite_behavior
 import behavior
 import skills.move
 import tactics.coordinated_pass
@@ -9,14 +9,14 @@ import skills.angle_receive
 import evaluation.touchpass_positioning
 from enum import Enum
 
-## A play to test onetouchpass, which causes a robot to pass to another one,
+## A tactic that causes a robot to pass to another one,
 # who scores on the goal as fast as possible.
 #
-# The real work is in the class that receives from coordinated_pass, angle_receive
-class OneTouchPass(play.Play):
+# This class is supplemented by touchpass_positioning and angle_receive
+class OneTouchPass(composite_behavior.CompositeBehavior):
 
     tpass = evaluation.touchpass_positioning.TouchpassPositioner()
-    THRESHOLD = 0.1 # 10%
+    THRESHOLD = 0.15 # 15%
     tpass_execution = 0
 
     class State(Enum):
