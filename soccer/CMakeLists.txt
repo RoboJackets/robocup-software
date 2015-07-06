@@ -13,6 +13,7 @@ set(ROBOCUP_LIB_SRC
     "BatteryWidget.cpp"
     "Configuration.cpp"
     "FieldView.cpp"
+    "FieldBackgroundView.cpp"
     "gameplay/GameplayModule.cpp"
     "gameplay/robocup-py.cpp"
     "joystick/GamepadJoystick.cpp"
@@ -145,6 +146,7 @@ qt5_wrap_ui(LOG_VIEWER_UI ui/LogViewer.ui)
 set(LOG_VIEWER_SRC
     "LogViewer.cpp"
     "FieldView.cpp"
+    "FieldBackgroundView.cpp"
    	"ProtobufTree.cpp"
    	"StripChart.cpp"
 )
