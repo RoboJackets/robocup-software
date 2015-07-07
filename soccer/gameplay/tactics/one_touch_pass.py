@@ -15,15 +15,16 @@ from enum import Enum
 # This class is supplemented by touchpass_positioning and angle_receive
 class OneTouchPass(composite_behavior.CompositeBehavior):
 
-    tpass = evaluation.touchpass_positioning.TouchpassPositioner()
-    THRESHOLD = 0.15 # 15%
-    tpass_execution = 0
+    tpass = evaluation.touchpass_positioning
+    receivePointChangeThreshold = 0.15 # 15%
 
     class State(Enum):
         passing = 1
 
     def __init__(self):
         super().__init__(continuous=False)
+
+        self.tpass_iterations = 0
 
         for state in OneTouchPass.State:
             self.add_state(state, behavior.Behavior.State.running)
@@ -46,10 +47,9 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
 
     def reset_receive_point(self):
         pass_bhvr = self.subbehavior_with_name('pass')
-        OneTouchPass.tpass.ignore_robots = pass_bhvr.get_robots()
-        receive_pt, _, probability = OneTouchPass.tpass.eval_best_receive_point(main.ball().pos)
+        receive_pt, _, probability = OneTouchPass.tpass.eval_best_receive_point(main.ball().pos, None, pass_bhvr.get_robots())
         # only change if increase of beyond the threshold.
-        if pass_bhvr.receive_point == None or probability > OneTouchPass.tpass.eval_single_point(main.ball().pos, pass_bhvr.receive_point) + OneTouchPass.THRESHOLD:
+        if pass_bhvr.receive_point == None or probability > OneTouchPass.tpass.eval_single_point(main.ball().pos, pass_bhvr.receive_point, pass_bhvr.get_robots()) + OneTouchPass.receivePointChangeThreshold:
             pass_bhvr.receive_point = receive_pt
 
         pass_bhvr.skillreceiver = skills.angle_receive.AngleReceive()
@@ -61,8 +61,8 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
             self.reset_receive_point()
 
     def execute_passing(self):
-        OneTouchPass.tpass_execution = OneTouchPass.tpass_execution + 1
-        if OneTouchPass.tpass_execution > 30:
+        self.tpass_iterations = self.tpass_iterations + 1
+        if self.tpass_iterations > 30:
             self.reset_receive_point()
             OneTouchPass.tpass_execution = 0
 

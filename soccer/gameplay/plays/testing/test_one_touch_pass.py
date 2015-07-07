@@ -10,9 +10,6 @@ import main
 ## Continually runs a one_touch_pass pass tactic
 class TestOneTouchPass(play.Play):
 
-    ReceiveXCoord = 1
-    ReceiveYCoord = constants.Field.Length / 2.0 * 1.0/3.0
-
     def __init__(self):
         super().__init__(continuous=True)
 

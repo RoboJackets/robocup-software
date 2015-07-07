@@ -32,6 +32,8 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
         receiving = 3   # the kicker has kicked and the receiver is trying to get the ball
 
 
+    ## Skillreceiver is a class that will handle the receiving robot. See pass_receive and angle_receive.
+    # Using this, you can change what the receiving robot does (rather than just receiving the ball, it can pass or shoot it).
     def __init__(self, receive_point=None, skillreceiver=None):
         super().__init__(continuous=False)
 
@@ -93,6 +95,7 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
 
     def on_enter_running(self):
         receiver = self.skillreceiver
+        receiver.restart()
         receiver.receive_point = self.receive_point
         self.add_subbehavior(receiver, 'receiver', required=True)
 
