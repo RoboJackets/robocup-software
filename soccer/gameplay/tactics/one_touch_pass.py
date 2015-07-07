@@ -46,11 +46,10 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
 
     def reset_receive_point(self):
         pass_bhvr = self.subbehavior_with_name('pass')
+        OneTouchPass.tpass.ignore_robots = pass_bhvr.get_robots()
         receive_pt, _, probability = OneTouchPass.tpass.eval_best_receive_point(main.ball().pos)
         # only change if increase of beyond the threshold.
-        # print("prob: " + str(probability))
         if pass_bhvr.receive_point == None or probability > OneTouchPass.tpass.eval_single_point(main.ball().pos, pass_bhvr.receive_point) + OneTouchPass.THRESHOLD:
-            # print("resetting")
             pass_bhvr.receive_point = receive_pt
 
         pass_bhvr.skillreceiver = skills.angle_receive.AngleReceive()

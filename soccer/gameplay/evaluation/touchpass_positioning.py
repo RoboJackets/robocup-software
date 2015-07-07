@@ -12,6 +12,7 @@ class TouchpassPositioner:
 
     def __init__(self):
         self.debug = False
+        self.ignore_robots = []
 
     # Defaults to False
     # if True, uses the system state drawing methods to draw Windows
@@ -60,10 +61,10 @@ class TouchpassPositioner:
     def eval_single_point(self, kick_point, receive_point):
         if kick_point is None:
             kick_point = main.ball().pos
-        currentChance = evaluation.passing.eval_pass(kick_point, receive_point)
+        currentChance = evaluation.passing.eval_pass(kick_point, receive_point, self.ignore_robots)
         # TODO dont only aim for center of goal. Waiting on window_evaluator returning a probability.
         targetPoint = constants.Field.TheirGoalCenter
-        currentChance = currentChance * evaluation.passing.eval_pass(receive_point, targetPoint)
+        currentChance = currentChance * evaluation.passing.eval_pass(receive_point, targetPoint, self.ignore_robots)
         return currentChance
 
 
@@ -87,10 +88,10 @@ class TouchpassPositioner:
 
 
         for point in points:
-            currentChance = evaluation.passing.eval_pass(kick_point, point)
+            currentChance = evaluation.passing.eval_pass(kick_point, point, self.ignore_robots)
             # TODO dont only aim for center of goal. Waiting on window_evaluator returning a probability.
             targetPoint = constants.Field.TheirGoalCenter
-            currentChance = currentChance * evaluation.passing.eval_pass(point, targetPoint)
+            currentChance = currentChance * evaluation.passing.eval_pass(point, targetPoint, self.ignore_robots)
             if currentChance > bestChance:
                 bestChance = currentChance
                 best = point

@@ -130,6 +130,20 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
             receiver = self.subbehavior_with_name('receiver')
             kicker.shot_obstacle_ignoring_robots = [receiver.robot]
 
+    # gets robots involved with the pass
+    def get_robots(self):
+        kicker = None
+        receiver = None
+        if self.has_subbehavior_with_name('kicker'):
+            kicker = self.subbehavior_with_name('kicker')
+        if self.has_subbehavior_with_name('receiver'):
+            receiver = self.subbehavior_with_name('receiver')
+        toReturn = []
+        if receiver != None and receiver.robot != None:
+            toReturn.extend([receiver.robot])
+        if kicker != None and kicker.robot != None:
+            toReturn.extend([kicker.robot])
+        return toReturn
 
 
     def execute_preparing(self):
