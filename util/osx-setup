@@ -5,12 +5,12 @@ set -e
 
 BASE="$(dirname $0)/.."
 
-echo "-- Installing required homebrew packages"
-brew install $(sed 's/#.*//;/^$/d' $BASE/util/osx-packages.txt)
-
 #  needed for the simulator
 echo "-- Installing xquartz through homebrew cask"
 brew cask install xquartz
+
+echo "-- Installing required homebrew packages"
+brew install $(sed 's/#.*//;/^$/d' $BASE/util/osx-packages.txt)
 
 sudo pip3 install -r $BASE/util/requirements3.txt
 
