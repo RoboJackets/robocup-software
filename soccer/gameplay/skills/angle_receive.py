@@ -138,9 +138,7 @@ class AngleReceive(skills._kick._Kick):
         angle_diff = target_angle - ball_angle
 
         rejection = math.sin(angle_diff) * ball.vel.mag()
-        # print("Rejection: " + str(rejection))
         adjust = math.asin(min(1, max(-1, rejection / constants.Robot.MaxKickSpeed)))
-        # print("Angles: " + str(adjust) + ", final: " + str(adjust + target_angle))
         return adjust + target_angle
 
     # calculates:
@@ -199,7 +197,7 @@ class AngleReceive(skills._kick._Kick):
 
     def get_target_point(self):
         # Gets the point the robot will be facing when receiving the ball
-        return constants.Field.TheirGoalCenter
+        return constants.Field.TheirGoalSegment.center()
 
     def on_exit_start(self):
         # reset
