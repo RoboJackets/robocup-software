@@ -93,7 +93,7 @@ include_directories(${SDL_INCLUDE_DIRS})
 
 # Build stand-alone soccer dylib
 # This is linked into soccer and our unit tests, as well as being a python module
-add_library(robocup SHARED ${ROBOCUP_LIB_SRC} ${SOCCER_UIS} ${SOCCER_RSRC})
+add_library(robocup SHARED ${ROBOCUP_LIB_SRC} ${SOCCER_UIS} ${SOCCER_RSRC} WindowEvaluator.cpp WindowEvaluator.h)
 set_target_properties(robocup PROPERTIES PREFIX "")
 
 target_link_libraries(robocup common)
