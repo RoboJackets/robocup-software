@@ -20,8 +20,29 @@ set(robot2015_SRC
     "console.cpp"
     "ds2411.cpp"
     "main.cpp"
+    "motion_control/OfflineLqrController.cpp"
+    "motion_control/Robot2015LqrLookupTable.cpp"
+    "motion_control/RobotModel.cpp"
+    "motion_control/TunableRobotParameters.cpp"
     "radio.cpp"
 )
+
+# Generate the LQR lookup table at compile time
+include_directories(motion_control)
+get_filename_component(OUTPUT_LOOKUP_TABLE_FILE "${CMAKE_CURRENT_BINARY_DIR}/motion_control/Robot2015LqrLookupTableValues.cpp" ABSOLUTE)
+add_custom_target(lqr_lookup_table_cpp_file
+    $<TARGET_FILE:lqr-lookup-table-gen> ${OUTPUT_LOOKUP_TABLE_FILE}
+    COMMENT "Generating LQR lookup table from system model."
+    DEPENDS lqr-lookup-table-gen
+)
+add_custom_command(
+    OUTPUT ${OUTPUT_LOOKUP_TABLE_FILE}
+    DEPENDS lqr_lookup_table_cpp_file
+)
+
+# add the auto-generated lookup table to the sources list
+list(APPEND robot2015_SRC ${OUTPUT_LOOKUP_TABLE_FILE})
+
 
 add_executable(robot2015_elf ${robot2015_SRC})
 target_link_libraries(robot2015_elf common2015)

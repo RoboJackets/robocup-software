@@ -88,6 +88,8 @@ if(NOT STATIC_ANALYSIS)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ccache)
 endif()
 
+
+
 # run all the other CMakeLists files
 add_subdirectory(common)
 add_subdirectory(soccer)
