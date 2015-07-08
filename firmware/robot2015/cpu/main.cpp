@@ -15,7 +15,7 @@
 
 #define SET_ADDR(x)     (((x)<<11) & 0x7800)
 #define STATUS_REG(x)   SET_ADDR(x-1)
-#define CTRL_REG(x)     SET_ADDR(+1)
+#define CTRL_REG(x)     SET_ADDR(x+1)
 
 #define GATE_CURRENT(x) ( (x)     & 0x003)
 #define GATE_RESET(x)   (((x)<<2) & 0x004)
@@ -247,7 +247,7 @@ void fpgaInit() {
 
 void DRV8303Init()
 {
-    pc.baud(57600);
+    //pc.baud(57600);
     spi.format(16,1);
     spi.frequency(1000000);
     gate_en = 0;
