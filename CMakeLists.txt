@@ -17,6 +17,10 @@ include(SetupGTest)
 # C++ version
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
+# Build in debug mode
+# TODO: make this easier to specify when running `make` on the command-line
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+
 # Qt5
 if(APPLE)
     # look for the homebrew-installed version of Qt5
