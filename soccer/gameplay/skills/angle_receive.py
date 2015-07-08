@@ -52,7 +52,6 @@ class AngleReceive(skills._kick._Kick):
         self._target_pos = None
         self._ball_kick_time = 0
 
-        self._shot_time = 0
         self._shot_occured = None
         self._angle_facing = None
 
@@ -223,9 +222,6 @@ class AngleReceive(skills._kick._Kick):
         if self._target_pos != None:
             self.robot.move_to(self._target_pos)
 
-    def on_enter_receiving(self):
-        self._shot_time = self.robot.lastKickTime()
-
     def execute_receiving(self):
         # Kick the ball!
         self.robot.kick(self.kick_power)
@@ -236,7 +232,7 @@ class AngleReceive(skills._kick._Kick):
         self.robot.set_world_vel(vel)
 
         # If the shot took place, end the behavior!
-        if self._shot_time != self.robot.lastKickTime():
+        if self.robot.just_kicked():
             self._shot_occured = True
 
     ## prefer a robot that's already near the receive position

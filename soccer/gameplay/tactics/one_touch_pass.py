@@ -62,7 +62,7 @@ class OneTouchPass(composite_behavior.CompositeBehavior):
 
     def execute_passing(self):
         self.tpass_iterations = self.tpass_iterations + 1
-        if self.tpass_iterations > 30:
+        if self.tpass_iterations > 50:
             self.reset_receive_point()
             OneTouchPass.tpass_execution = 0
 
