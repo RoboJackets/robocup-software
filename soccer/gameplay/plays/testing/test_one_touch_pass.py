@@ -25,7 +25,5 @@ class TestOneTouchPass(play.Play):
         pass_bhvr = self.subbehavior_with_name('pass')
 
         if pass_bhvr.is_done_running():
-            self.remove_subbehavior('pass')
-            pass_bhvr = tactics.one_touch_pass.OneTouchPass()
-            self.add_subbehavior(pass_bhvr, 'pass')
+            pass_bhvr.restart()
 

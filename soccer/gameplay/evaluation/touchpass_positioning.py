@@ -11,8 +11,8 @@ import evaluation.passing
 # with the chance a shot into a goal will make it. The greatest probability is selected, and returned.
 #
 # Example usage:
-# tpos = TouchpassPositioner()
-# best_pt = tpos.evaluate(ball.pos, robot2.pos)
+# tpass = evaluation.touchpass_positioning
+# tpass.eval_best_receive_point(main.ball().pos, None, pass_bhvr.get_robots())
 
 
 ## Returns a robocup.Rect object that is the default location to be evaluated
@@ -79,7 +79,6 @@ def eval_best_receive_point(kick_point, evaluation_zone=None, ignore_robots=[]):
     best = points[0]
     bestChance = 0
 
-
     for point in points:
         currentChance = evaluation.passing.eval_pass(kick_point, point, ignore_robots)
         # TODO dont only aim for center of goal. Waiting on window_evaluator returning a probability.
@@ -90,4 +89,3 @@ def eval_best_receive_point(kick_point, evaluation_zone=None, ignore_robots=[]):
             best = point
 
     return best, targetPoint, bestChance
-
