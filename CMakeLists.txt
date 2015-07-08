@@ -14,6 +14,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/run)
 enable_testing()
 include(SetupGTest)
 
+# C++ version
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
 # Qt5
 if(APPLE)
     # look for the homebrew-installed version of Qt5
