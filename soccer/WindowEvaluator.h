@@ -39,7 +39,7 @@ public:
 
   void obstacle_range(std::vector<Window>& windows, double& t0, double& t1);
 
-  void obstacle_robot(std::vector<Window> windows, Geometry2d::Point origin, Geometry2d::Segment target, Geometry2d::Point bot_pos);
+  void obstacle_robot(std::vector<Window>& windows, Geometry2d::Point origin, Geometry2d::Segment target, Geometry2d::Point bot_pos);
 
   WindowingResult eval_pt_to_seg(Geometry2d::Point origin, Geometry2d::Segment target);
 
@@ -52,6 +52,7 @@ public:
 
 private:
   SystemState *system;
+
 };
 
 

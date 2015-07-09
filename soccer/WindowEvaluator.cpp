@@ -81,7 +81,7 @@ void WindowEvaluator::obstacle_range(vector<Window>& windows, double& t0, double
   }
 }
 
-void WindowEvaluator::obstacle_robot(vector<Window> windows, Point origin, Segment target, Point bot_pos) {
+void WindowEvaluator::obstacle_robot(vector<Window>& windows, Point origin, Segment target, Point bot_pos) {
   auto n = (bot_pos - origin).normalized();
   auto t = n.perpCCW();
   auto r = Robot_Radius + Ball_Radius;
