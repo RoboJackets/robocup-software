@@ -15,6 +15,7 @@ using namespace boost::python;
 #include <SystemState.hpp>
 #include <protobuf/LogFrame.pb.h>
 #include <Constants.hpp>
+#include <WindowEvaluator.h>
 
 #include <boost/python/exception_translator.hpp>
 #include <boost/version.hpp>
@@ -460,4 +461,27 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("FloorLength", &Field_Dimensions::FloorLength)
 		.def("FloorWidth", &Field_Dimensions::FloorWidth)
 	;
+
+	class_<Window>("Window")
+		.def_readwrite("a0", &Window::a0)
+		.def_readwrite("a1", &Window::a1)
+		.def_readwrite("t0", &Window::t0)
+		.def_readwrite("t1", &Window::t1)
+	;
+
+	class_<WindowEvaluator>("WindowEvaluator", init<SystemState*>())
+		.def_readwrite("debug", &WindowEvaluator::debug)
+		.def_readwrite("chip_enabled", &WindowEvaluator::chip_enabled)
+		.def_readwrite("max_chip_range", &WindowEvaluator::max_chip_range)
+		.def_readwrite("min_chip_range", &WindowEvaluator::min_chip_range)
+		.def_readwrite("excluded_robots", &WindowEvaluator::excluded_robots)
+		.def_readwrite("hypothetical_robot_locations", &WindowEvaluator::hypothetical_robot_locations)
+		.def("eval_pt_to_pt", &WindowEvaluator::eval_pt_to_pt)
+		.def("eval_pt_to_opp_goal", &WindowEvaluator::eval_pt_to_opp_goal)
+		.def("eval_pt_to_our_goal", &WindowEvaluator::eval_pt_to_our_goal)
+		.def("eval_pt_to_seg", &WindowEvaluator::eval_pt_to_seg)
+		.def("obstacle_range", &WindowEvaluator::obstacle_range)
+		.def("obstacle_robot", &WindowEvaluator::obstacle_robot)
+	;
+
 }
