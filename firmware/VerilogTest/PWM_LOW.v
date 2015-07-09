@@ -1,5 +1,5 @@
 
-`include "phase_driver.vh"
+`include "Phase_Driver.vh"
 
 module PWM_LOW(clock, duty_cycle, pwm);
 

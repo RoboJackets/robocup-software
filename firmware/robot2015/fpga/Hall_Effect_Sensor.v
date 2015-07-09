@@ -15,56 +15,57 @@ impedance phase for each hall state is specified in the document linked below.
 //http://www.maxonmotor.com/medias/sys_master/root/8815461662750/EC-Technology-short-and-to-the-point-14-EN-32-35.pdf?attachment=true
 --Doho*/
 
-module Hall_Effect_Sensor(clock, h, u, z);
-input clock;
-input	[2:0]	h; 	//Hall Effect sensor input
-output 	[2:0]	u; 	//High phase output
-output	[2:0]	z;	//High Impedance output
+module Hall_Effect_Sensor(
+	input clock,
+	input	[2:0]	hall, 		//Hall Effect sensor input
+	output 	[2:0]	high_phase, //High voltage phase 
+	output	[2:0]	off_phase	//High Impedance phases
+);
 
-reg	[2:0]	u = 3'b000;
-reg	[2:0]	z = 3'b111;
+reg	[2:0]	high_phase = 3'b000;
+reg	[2:0]	off_phase = 3'b111;
 
 
 always @(posedge clock)
-		case(h)
+		case(hall)
 		3'b000	: 	begin
-					u = 3'b000;
-					z = 3'b111;
+					high_phase = 3'b000;
+					off_phase = 3'b111;
 					end
 
 		3'b111	: 	begin
-					u = 3'b000;
-					z = 3'b111;
+					high_phase = 3'b000;
+					off_phase = 3'b111;
 					end
 
 		3'b101	:	begin
-					u = 3'b100;
-					z = 3'b001;
+					high_phase = 3'b100;
+					off_phase = 3'b001;
 					end
 
 		3'b100	:	begin
-					u = 3'b100;
-					z = 3'b010;
+					high_phase = 3'b100;
+					off_phase = 3'b010;
 					end
 
 		3'b110	:	begin
-					u = 3'b010;
-					z = 3'b100;
+					high_phase = 3'b010;
+					off_phase = 3'b100;
 					end
 
 		3'b010	:	begin
-					u = 3'b010;
-					z = 3'b001;
+					high_phase = 3'b010;
+					off_phase = 3'b001;
 					end
 
 		3'b011	:	begin
-					u = 3'b001;
-					z = 3'b010;
+					high_phase = 3'b001;
+					off_phase = 3'b010;
 					end
 
 		3'b001	:	begin
-					u = 3'b001;
-					z = 3'b100;
+					high_phase = 3'b001;
+					off_phase = 3'b100;
 					end
 		endcase
 

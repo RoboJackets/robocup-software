@@ -1,4 +1,4 @@
-`include "phase_driver.vh"
+`include "Phase_Driver.vh"
 
 module Phase_Driver(clock, duty_cycle, high_z, pwm_high, pwm_low);
 

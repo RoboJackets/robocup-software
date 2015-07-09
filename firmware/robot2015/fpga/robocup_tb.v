@@ -1,5 +1,5 @@
 
-`include "phase_driver.vh"
+`include "Phase_Driver.vh"
 `include "robocup.v"
 
 
@@ -17,10 +17,10 @@ reg [2:0] h;
 reg [`DUTY_CYCLE_WIDTH - 1 : 0] duty_cycle;
 
 
-wire [2:0] phaseHInv, phaseLInv;
+wire [2:0] phaseH , phaseL ;
 
 
-robocup motorDriver (clock, h, phaseHInv, phaseLInv);
+robocup motorDriver (clock, h, duty_cycle, phaseH , phaseL );
 
 initial begin
 	h = 3'b000;

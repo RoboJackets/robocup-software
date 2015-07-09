@@ -1,5 +1,5 @@
-`ifndef _phase_driver_vh_
-`define _phase_driver_vh_
+`ifndef _Phase_Driver_vh_
+`define _Phase_Driver_vh_
 
 `define DEAD_TIME 2 			//dead time in units of clock ticks
 

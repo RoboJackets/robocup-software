@@ -1,4 +1,4 @@
-`include "phase_driver.vh"
+`include "Phase_Driver.vh"
 
 /**
 This module is responsible for driving one phase of the BLDC. It generates both
@@ -49,37 +49,31 @@ side fets are turned off to ensure no shoot through occurs.
 
 The only instances where dead time is not neccessary is when the PWM signal is
 either unity/zero or the phase is set to high impedance. In these cases the fets
-are do not alternate going on and off so there is no danger of shoot through.
+do not alternate going on and off so there is no danger of shoot through.
 
 --Doho*/
 
 
 
-module Phase_Driver(clock, duty_cycle, high_z, pwm_high, pwm_low);
+module Phase_Driver(
+    input clock,
+    input [`DUTY_CYCLE_WIDTH - 1 : 0] duty_cycle,
+    input high_z,
+    output pwm_high, pwm_low
+    );
 
-input clock;
-input [`DUTY_CYCLE_WIDTH - 1 : 0] duty_cycle;
-input high_z;
-
-output pwm_high, pwm_low;
-wire pwm_high, pwm_low;
-wire h, l;
-//wire deadtime;
 
 reg [`COUNTER_WIDTH - 1:0] counter = 0;
 
-//assign deadtime  = (duty_cycle == `MAX_DUTY_CYCLE || duty_cycle == 0) ? 0 : `DEAD_TIME;
 
-assign h = (counter + `DEAD_TIME < duty_cycle*`DUTY_CYCLE_STEP_RES) ? 1 : 0;
-assign l = (counter >= duty_cycle*`DUTY_CYCLE_STEP_RES && counter + `DEAD_TIME < `MAX_COUNTER) ? 1 : 0;
-
-
-assign  pwm_high = 	(high_z == 1) ? 0 : h;
-
-assign	pwm_low = 	(high_z == 1) ? 0 :
-					(duty_cycle == 0) ? 1 :
-					 l;
-
+wire pwm_high =   (high_z ==1) ? 0 :
+                    (counter + `DEAD_TIME < duty_cycle*`DUTY_CYCLE_STEP_RES) ? 1 :
+                    0;
+wire pwm_low   =    (high_z == 1) ? 0 :
+                    (duty_cycle == 0) ? 1 :
+                    (counter >= duty_cycle*`DUTY_CYCLE_STEP_RES && 
+                        counter + `DEAD_TIME < `MAX_COUNTER) ? 1 :
+                    0;
 
 always @(posedge clock)
 begin

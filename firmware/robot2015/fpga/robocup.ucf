@@ -5,13 +5,13 @@
 ##Pin out is based on tq144_footprint.xls
 
 
-NET "phaseHInv<2>" LOC="P26"; #Phase 1
-NET "phaseHInv<1>" LOC="P32"; #Phase 2
-NET "phaseHInv<0>" LOC="P34"; #Phase 3
+NET "phaseH<2>" LOC="P26"; #Phase 1
+NET "phaseH<1>" LOC="P32"; #Phase 2
+NET "phaseH<0>" LOC="P34"; #Phase 3
 
-NET "phaseLInv<2>" LOC="P140"; #Phase 1
-NET "phaseLInv<1>" LOC="P142"; #Phase 2
-NET "phaseLInv<0>" LOC="P134"; #Phase 3
+NET "phaseL<2>" LOC="P140"; #Phase 1
+NET "phaseL<1>" LOC="P142"; #Phase 2
+NET "phaseL<0>" LOC="P134"; #Phase 3
 
 NET "clock" LOC="P50";
 

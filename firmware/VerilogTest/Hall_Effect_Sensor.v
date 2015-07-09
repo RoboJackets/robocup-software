@@ -1,4 +1,4 @@
-`include "phase_driver.vh"
+`include "Phase_Driver.vh"
 
 
 //http://www.maxonmotor.com/medias/sys_master/root/8815461662750/EC-Technology-short-and-to-the-point-14-EN-32-35.pdf?attachment=true

@@ -1,4 +1,4 @@
-`include "phase_driver.vh"
+`include "Phase_Driver.vh"
 
 module Motor_Driver_tb;
 
