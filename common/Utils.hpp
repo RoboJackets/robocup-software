@@ -1,18 +1,18 @@
-
 #pragma once
 
-#include <math.h>
-#include <sys/time.h>
-#include <stdint.h>
-#include <deque>
-#include <vector>
-#include <stdexcept>
-#include <typeinfo>
-#include <QString>
-#include "Geometry2d/Point.hpp"
 #include "Constants.hpp"
+#include "Geometry2d/Point.hpp"
 #include "time.hpp"
-#include <math.h>
+
+#include <cmath>
+#include <deque>
+#include <QString>
+#include <stdexcept>
+#include <stdint.h>
+#include <sys/time.h>
+#include <typeinfo>
+#include <vector>
+
 const static bool THROW_DEBUG_EXCEPTIONS = true;
 template<typename T> static inline void debugThrow(T exception) {
 	if (THROW_DEBUG_EXCEPTIONS) {
@@ -29,35 +29,24 @@ template<typename T> static inline void debugThrow(T exception) {
 static inline float fixAngleRadians(float a)
 {
 	a = remainder(a, 2*M_PI);
-	//cout<<"angle "<<a<<endl;
 	while (a < -M_PI) a += 2.0*M_PI;
-
 	while (a > M_PI) a -= 2.0*M_PI;
 	return a;
 }
 
 /** Checks whether or not the given ball is in the defense area. */
 static inline bool ballIsInGoalieBox(Geometry2d::Point point) {
-	if (abs(point.x) < Field_Dimensions::Current_Dimensions.GoalFlat() / 2.0f) // Ball is in center (rectangular) portion of defensive bubble
+	if (std::abs(point.x) < Field_Dimensions::Current_Dimensions.GoalFlat() / 2.0f) // Ball is in center (rectangular) portion of defensive bubble
 	{
-		if (point.y > 0 && point.y < Field_Dimensions::Current_Dimensions.ArcRadius()) {
-			return true;
-		} else {
-			return false;
-		}
-	} else if (abs(point.x) < (Field_Dimensions::Current_Dimensions.ArcRadius() + Field_Dimensions::Current_Dimensions.GoalFlat() / 2.0f)) // Ball is in one of the side (arc) portions of defensive bubble
+		return point.y > 0 && point.y < Field_Dimensions::Current_Dimensions.ArcRadius();
+	} else if (std::abs(point.x) < (Field_Dimensions::Current_Dimensions.ArcRadius() + Field_Dimensions::Current_Dimensions.GoalFlat() / 2.0f)) // Ball is in one of the side (arc) portions of defensive bubble
 	{
-		double adjusted_x = abs(point.x) - (Field_Dimensions::Current_Dimensions.GoalFlat() / 2.0f);
+		double adjusted_x = std::abs(point.x) - (Field_Dimensions::Current_Dimensions.GoalFlat() / 2.0f);
 		double max_y = sqrt( (Field_Dimensions::Current_Dimensions.ArcRadius() * Field_Dimensions::Current_Dimensions.ArcRadius()) - (adjusted_x * adjusted_x));
-		if (point.y > 0 && point.y <= max_y) {
-			return true;
-		} else {
-			return false;
-		}
+		return point.y > 0 && point.y <= max_y;
 	}
 	return false;
 }
-
 
 
 static Geometry2d::Point fromOursToTheirs(Geometry2d::Point &pt) {
@@ -74,8 +63,7 @@ static bool ballIsInTheirGoalieBox(Geometry2d::Point &pt) {
 }
 
 
-
-/** Handles saturation of a bounded value */
+/** Returns @value if it is in bounds, otherwise returns the bound it is closest to */
 template<class T>
 float clamp(T value, T min, T max)
 {
