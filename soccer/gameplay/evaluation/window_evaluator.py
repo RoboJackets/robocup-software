@@ -262,11 +262,11 @@ class WindowEvaluator:
             main.system_state().draw_line(best.segment, constants.Colors.Green, "Debug")
             main.system_state().draw_line(robocup.Line(origin, best.segment.center()), constants.Colors.Green, "Debug")
 
-        # # draw the windows if we're in debug mode
-        # if self.debug:
-        #     for w in windows:
-        #         pts = [origin, w.segment.get_pt(0), w.segment.get_pt(1)]
-        #         color = (255, 0, 0) if w == best else (0, 255, 0)
-        #         main.system_state().draw_polygon(pts, 3, color, "Windows")
+        # draw the windows if we're in debug mode
+        if self.debug:
+            for w in windows:
+                pts = [origin, w.segment.get_pt(0), w.segment.get_pt(1)]
+                color = (255, 0, 0) if w == best else (0, 255, 0)
+                main.system_state().draw_polygon(pts, color, "Windows")
 
         return windows, best
