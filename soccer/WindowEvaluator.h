@@ -22,6 +22,13 @@ public:
   double t0;
   double t1;
   Geometry2d::Segment segment;
+
+  bool operator == (const Window& other) const {
+    return a0 == other.a0
+        && a1 == other.a1
+        && t0 == other.t0
+        && t1 == other.t1;
+  }
 };
 
 using WindowingResult = std::pair<std::vector<Window>, boost::optional<Window>>;
