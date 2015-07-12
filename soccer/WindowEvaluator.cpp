@@ -90,7 +90,7 @@ void WindowEvaluator::obstacle_robot(vector<Window>& windows, Point origin, Segm
               bot_pos - n*Robot_Radius - t * r};
 
   if(debug) {
-    // main.system_state().draw_line(seg, constants.Colors.Red, "debug")
+    system->drawLine(seg, QColor{"Red"}, "Debug");
   }
 
   auto end = target.delta().magsq();
@@ -125,7 +125,7 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     return make_pair(vector<Window>{}, boost::none);
 
   if(debug) {
-    // main.system_state().draw_line(target, constants.Colors.Blue, "Debug")
+    system->drawLine(target, QColor{"Blue"},"Debug");
   }
 
   vector<Window> windows = {Window{0, end}};
@@ -135,9 +135,11 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
   vector<Robot*> bots;
 
   vector<Robot*> all_bots;
-  all_bots.insert(all_bots.end(), system->self.begin(), system->self.end());
-  all_bots.insert(all_bots.end(), system->opp.begin(), system->opp.end());
-  copy_if(all_bots.begin(), all_bots.end(), bots.begin(), [=](Robot* bot){
+
+  copy_if(system->self.begin(), system->self.end(), bots.end(), [=](Robot* bot){
+    return find(excluded_robots.begin(), excluded_robots.end(), bot) != excluded_robots.end() && bot->visible;
+  });
+  copy_if(system->opp.begin(), system->opp.end(), bots.end(), [=](Robot* bot){
     return find(excluded_robots.begin(), excluded_robots.end(), bot) != excluded_robots.end() && bot->visible;
   });
 
