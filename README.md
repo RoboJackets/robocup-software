@@ -83,3 +83,8 @@ Note: The doxygen documentation site above is updated automacally using travis-c
 
 ## Testing
 We use [gtest](https://code.google.com/p/googletest/) for unit-testing our software, which can be run by running `make tests`.  To add a test to be run with the rest of the bunch, add a new file in soccer/tests.
+
+## License
+
+This project is licensed under the Apache License v2.0.  See the [LICENSE](LICENSE) file for more information.
+
