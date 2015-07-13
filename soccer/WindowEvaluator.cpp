@@ -6,10 +6,15 @@
 #include "Constants.hpp"
 #include <algorithm>
 
+REGISTER_CONFIGURABLE(WindowEvaluator)
+
 using namespace std;
 using namespace Geometry2d;
 
 const auto longest_possible_shot = sqrt(pow(Field_Dimensions::Current_Dimensions.Length(),2) + pow(Field_Dimensions::Current_Dimensions.Width(),2));
+
+ConfigDouble* WindowEvaluator::angle_score_coefficient;
+ConfigDouble* WindowEvaluator::distance_score_coefficient;
 
 Window::Window()
     : t0(0),
@@ -27,6 +32,11 @@ Window::Window(double t0, double t1)
     a1(0),
     shot_success(0)
 {
+}
+
+void WindowEvaluator::createConfiguration(Configuration *cfg) {
+  angle_score_coefficient = new ConfigDouble(cfg, "WindowEvaluator/angleScoreCoeff", 0.7);
+  distance_score_coefficient = new ConfigDouble(cfg, "WindowEvaluator/distScoreCoeff", 0.3);
 }
 
 WindowEvaluator::WindowEvaluator(SystemState *systemState)
@@ -218,5 +228,5 @@ void WindowEvaluator::fill_shot_success(Window &window, const Point& origin) {
 
   auto distance_score = 1.0 - (shot_distance / longest_possible_shot);
 
-  window.shot_success = 0.7 * angle_score + 0.3 * distance_score;
+  window.shot_success = *angle_score_coefficient * angle_score + *distance_score_coefficient * distance_score;
 }
