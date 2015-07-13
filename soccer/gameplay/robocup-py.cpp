@@ -523,6 +523,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def_readwrite("a1", &Window::a1)
 		.def_readwrite("t0", &Window::t0)
 		.def_readwrite("t1", &Window::t1)
+		.def_readwrite("shot_success", &Window::shot_success)
 	;
 
 	class_<std::vector<Window>>("vector_Window")
