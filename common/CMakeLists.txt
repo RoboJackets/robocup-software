@@ -1,7 +1,4 @@
 
-# Compiler flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++11")
-
 add_subdirectory(protobuf)
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/protobuf")
 
