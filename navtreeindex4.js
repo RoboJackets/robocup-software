@@ -1,5 +1,6 @@
 var NAVTREEINDEX4 =
 {
+"class_robot_observation.html#aae563d9bd7b59ab6cdced4c435660cb6":[11,0,54,4],
 "class_robot_observation.html#ab1b1133ed9080ff2e2b74e67a9774ad0":[11,0,54,3],
 "class_robot_observation.html#abac3b22710efbd54270688b8ce034607":[11,0,54,2],
 "class_robot_pose.html":[11,0,55],
@@ -248,6 +249,5 @@ var NAVTREEINDEX4 =
 "classgameplay_1_1fs__watcher_1_1_fs_watcher.html#a84b65a10f6fefed8532bd18eaf9d6666":[11,0,2,4,0,6],
 "classgameplay_1_1fs__watcher_1_1_fs_watcher.html#a94a18079482b1de79e7ed4df0d37854e":[11,0,2,4,0,2],
 "classgameplay_1_1fs__watcher_1_1_fs_watcher.html#a98dab10dd43a8abdb7216a5fd7ff1b59":[11,0,2,4,0,5],
-"classgameplay_1_1fs__watcher_1_1_fs_watcher_1_1_fs_event_handler.html":[11,0,2,4,0,0],
-"classgameplay_1_1fs__watcher_1_1_fs_watcher_1_1_fs_event_handler.html#a370df2f1ed6968607618ccf6acce2a5a":[11,0,2,4,0,0,1]
+"classgameplay_1_1fs__watcher_1_1_fs_watcher_1_1_fs_event_handler.html":[11,0,2,4,0,0]
 };

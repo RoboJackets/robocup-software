@@ -1,5 +1,6 @@
 var NAVTREEINDEX8 =
 {
+"pages.html":[],
 "radio_8hpp_source.html":[12,0,1,0,0,3],
 "radio__config_8h_source.html":[12,0,2,5,2],
 "robocup-py_8hpp_source.html":[12,0,2,0,1],
