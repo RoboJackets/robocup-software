@@ -22,6 +22,7 @@ public:
   double t0;
   double t1;
   Geometry2d::Segment segment;
+  double shot_success;
 
   bool operator == (const Window& other) const {
     return a0 == other.a0
@@ -59,6 +60,8 @@ public:
 
 private:
   SystemState *system;
+
+  void fill_shot_success(Window &window, const Geometry2d::Point& origin);
 
 };
 
