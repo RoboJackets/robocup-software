@@ -9,12 +9,23 @@
 using namespace std;
 using namespace Geometry2d;
 
-Window::Window() {
+const auto longest_possible_shot = sqrt(pow(Field_Dimensions::Current_Dimensions.Length(),2) + pow(Field_Dimensions::Current_Dimensions.Width(),2));
+
+Window::Window()
+    : t0(0),
+      t1(0),
+      a0(0),
+      a1(0),
+      shot_success(0)
+{
 }
 
 Window::Window(double t0, double t1)
   : t0(t0),
-    t1(t1)
+    t1(t1),
+    a0(0),
+    a1(0),
+    shot_success(0)
 {
 }
 
@@ -168,6 +179,7 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
     w.segment = Segment{p0 + delta * w.t0, p0 + delta * w.t1};
     w.a0 = (w.segment.pt[0] - origin).angle() * RadiansToDegrees;
     w.a1 = (w.segment.pt[1] - origin).angle() * RadiansToDegrees;
+    fill_shot_success(w, origin);
   }
 
   boost::optional<Window> best{!windows.empty(), *max_element(windows.begin(),windows.end(),[](Window& a, Window& b) -> bool{
@@ -180,4 +192,31 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
   }
 
   return make_pair(windows, best);
+}
+
+void WindowEvaluator::fill_shot_success(Window &window, const Point& origin) {
+  auto shot_vector = window.segment.center() - origin;
+  auto shot_distance = shot_vector.mag();
+
+  // get the angle between the shot vector and the target segment, then normalize and positivize it
+  auto angle_between_shot_and_window = abs(shot_vector.angle() - window.segment.delta().angle());
+  while(abs(angle_between_shot_and_window) > M_PI) {
+    angle_between_shot_and_window -= M_PI;
+  }
+  angle_between_shot_and_window = abs(angle_between_shot_and_window);
+
+  // we don't care about the segment length, we care about the width of the corresponding segment perpendicular to the shot line
+  auto perp_seg_length = abs(sin(angle_between_shot_and_window)) * window.segment.length();
+
+  // the 'width' of the shot in radians
+  auto angle = abs(atan2(perp_seg_length, shot_distance));
+
+// the wider available angle the shot has, the more likely it will make it
+// the farther the shot has to travel, the more likely that defenders can block it in time
+  auto shot_angle_baseline = (M_PI / 20.0);
+  auto angle_score = min(angle / shot_angle_baseline, 1.0);
+
+  auto distance_score = 1.0 - (shot_distance / longest_possible_shot);
+
+  window.shot_success = 0.7 * angle_score + 0.3 * distance_score;
 }

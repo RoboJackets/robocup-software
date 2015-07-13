@@ -3,7 +3,7 @@ import evaluation.window_evaluator
 import robocup
 import math
 
-
+## DEPRECATED: This functionality is now included in the C++ WindowEvaluator
 ## Evaluate the chance of a shot succeeding
 #
 # @param windowing_excludes - A list of robots to exclude from the window evaluator
