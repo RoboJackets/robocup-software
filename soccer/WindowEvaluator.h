@@ -51,6 +51,8 @@ public:
 
   WindowingResult eval_pt_to_seg(Geometry2d::Point origin, Geometry2d::Segment target);
 
+  static void createConfiguration(Configuration *cfg);
+
   bool debug = false;
   bool chip_enabled = false;
   double max_chip_range = 0.3;
@@ -62,6 +64,9 @@ private:
   SystemState *system;
 
   void fill_shot_success(Window &window, const Geometry2d::Point& origin);
+
+  static ConfigDouble* angle_score_coefficient;
+  static ConfigDouble* distance_score_coefficient;
 
 };
 
