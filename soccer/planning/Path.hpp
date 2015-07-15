@@ -4,7 +4,7 @@
 #include <SystemState.hpp>
 #include <QColor>
 #include <QString>
-
+#include "MotionInstant.hpp"
 
 namespace Planning
 {
