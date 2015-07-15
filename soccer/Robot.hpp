@@ -9,13 +9,16 @@
 #include <QColor>
 #include <Eigen/Geometry>
 #include <Constants.hpp>
-#include "MotionConstraints.hpp"
 #include <Utils.hpp>
+
 #include <planning/CompositePath.hpp>
 #include <planning/InterpolatedPath.hpp>
 #include <planning/RRTPlanner.hpp>
+#include "planning/MotionConstraints.hpp"
+
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
+
 
 class SystemState;
 class RobotConfig;
