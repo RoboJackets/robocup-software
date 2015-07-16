@@ -262,8 +262,10 @@ namespace Planning {
 		return;
 	}
 
-	bool InterpolatedPath::evaluate(float t, Geometry2d::Point &targetPosOut,
-											  Geometry2d::Point &targetVelOut) const {
+	bool InterpolatedPath::evaluate(float t, MotionInstant &targetMotionInstant) const {
+		if (t<0) {
+			debugThrow(invalid_argument("A time less than 0 was entered for time t."));
+		}
 		/*
 		float linearPos;
 		float linearSpeed;
@@ -285,46 +287,37 @@ namespace Planning {
 		targetVelOut = direction * linearSpeed;
 		*/
 		if (times.size() == 0) {
-			targetPosOut = Geometry2d::Point(0, 0);
-			targetVelOut = Geometry2d::Point(0, 0);
+			targetMotionInstant = MotionInstant();
 			return false;
-		}
-		if (times.size() == 1) {
-			targetPosOut = points[0];
-			targetVelOut = Geometry2d::Point(0, 0);
+		} else if (times.size() == 1) {
+			targetMotionInstant = MotionInstant(points[0], vels[0]);
 			return false;
 		}
 		if (t < times[0]) {
-			targetPosOut = points[0];
-			targetVelOut = vels[0];
-			return false;
+			debugThrow(invalid_argument("The start time should not be less than zero"));
 		}
 
 		int i = 0;
 		while (times[i] <= t) {
 			if (times[i] == t) {
-				targetPosOut = points[i];
-				targetVelOut = vels[i];
+				targetMotionInstant = MotionInstant(points[i], vels[i]);
 				return true;
 			}
 			i++;
 			if (i == size()) {
-				targetPosOut = points[i - 1];
-				targetVelOut = vels[i - 1];
+				targetMotionInstant = MotionInstant(points[i - 1], vels[i - 1]);
 				return false;
 			}
 		}
 		float deltaT = (times[i] - times[i - 1]);
 		if (deltaT == 0) {
-			targetPosOut = points[i];
-			targetVelOut = vels[i];
+			targetMotionInstant = MotionInstant(points[i], vels[i]);
 			return true;
 		}
 		float constant = (t - times[i - 1]) / deltaT;
 
-		targetPosOut = points[i - 1] * (1 - constant) + points[i] * (constant);
-		targetVelOut = vels[i - 1] * (1 - constant) + vels[i] * (constant);
-
+		targetMotionInstant = MotionInstant(points[i - 1] * (1 - constant) + points[i] * (constant),
+											vels[i - 1] * (1 - constant) + vels[i] * (constant));
 		return true;
 	}
 

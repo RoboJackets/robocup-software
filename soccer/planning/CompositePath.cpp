@@ -22,12 +22,13 @@ namespace Planning
 		}
 	}
 
-	bool CompositePath::evaluate(float t, Point &targetPosOut, Point &targetVelOut) const 
+	bool CompositePath::evaluate(float t, MotionInstant &targetMotionInstant) const
 	{
-		if (paths.empty()) {
-			return false;
-		}
 		if (t<0) {
+			debugThrow(invalid_argument("A time less than 0 was entered for time t."));
+		}
+
+		if (paths.empty()) {
 			return false;
 		}
 		for (const std::unique_ptr<Path> &path: paths)
@@ -36,12 +37,11 @@ namespace Planning
 			t -= timeLength;
 			if (t<=0 || timeLength == -1) {
 				t += timeLength;
-				path->evaluate(t, targetPosOut, targetVelOut);
+				path->evaluate(t, targetMotionInstant);
 				return true;
 			}
 		}
-		targetPosOut = destination()->pos;
-		targetVelOut = Point(0,0);
+		targetMotionInstant = destination().get();
 		return false;
 	}
 
