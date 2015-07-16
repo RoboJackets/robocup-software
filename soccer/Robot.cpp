@@ -592,7 +592,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	if (!_pathInvalidated) {
 		addText("Reusing path", Qt::white, "Planning");
 	} else {
-		std::unique_ptr<Planning::Path> path = _planner->run(pos, angle, vel, _motionConstraints, &full_obstacles);
+		std::unique_ptr<Planning::Path> path = _planner->run(Planning::MotionInstant(pos, vel), _motionConstraints, &full_obstacles);
 		
 		addText("Replanning", Qt::red, "Planning");
 		// use the newly generated path

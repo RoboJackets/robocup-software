@@ -30,23 +30,22 @@ RRTPlanner::RRTPlanner(int maxIterations): _maxIterations(maxIterations)
 {}
 
 std::unique_ptr<Path> RRTPlanner::run(
-		const Geometry2d::Point &start,
-		const float angle,
-		const Geometry2d::Point &vel,
+		MotionInstant startInstant,
 		const MotionConstraints &motionConstraints,
 		const Geometry2d::CompositeShape *obstacles)
 {
 	Planning::InterpolatedPath *path = new Planning::InterpolatedPath();
 	Geometry2d::Point goal = *motionConstraints.targetPos;
 	_motionConstraints = motionConstraints;
-	vi = vel;
+	vi = startInstant.vel;
 
 	_obstacles = obstacles;
 
 	// Simple case: no path
-	if (start == goal)
+	if (startInstant.pos == goal)
 	{
-		path->points.push_back(start);
+		path->points.push_back(startInstant.pos);
+
 		path->times.push_back(0);
 		path->vels.push_back(Geometry2d::Point(0,0));
 		return unique_ptr<Path>(path);
@@ -103,7 +102,7 @@ std::unique_ptr<Path> RRTPlanner::run(
 		return;
 	}
 	*/
-	_fixedStepTree0.init(start, obstacles);
+	_fixedStepTree0.init(startInstant.pos, obstacles);
 	_fixedStepTree1.init(_bestGoal, obstacles);
 	_fixedStepTree0.step = _fixedStepTree1.step = .15f;
 
@@ -139,7 +138,7 @@ std::unique_ptr<Path> RRTPlanner::run(
 	if (path->points.empty())
 	{
 		// FIXME: without these two lines, an empty path is returned which causes errors down the line.
-		path->points.push_back(start);
+		path->points.push_back(startInstant.pos);
 		path->times.push_back(0);
 		path->vels.push_back(Geometry2d::Point(0,0));
 	}
