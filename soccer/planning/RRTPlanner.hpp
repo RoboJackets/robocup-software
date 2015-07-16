@@ -44,9 +44,7 @@ namespace Planning
 			///run the path ROTplanner
 			///this will always populate path to be the path we need to travel
 			std::unique_ptr<Path> run(
-					const Geometry2d::Point& start,
-					const float angle,
-					const Geometry2d::Point& vel,
+					MotionInstant startInstant,
 					const MotionConstraints &motionConstraints,
 					const Geometry2d::CompositeShape* obstacles) override;
 
