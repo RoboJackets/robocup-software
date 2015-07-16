@@ -8,14 +8,6 @@ namespace Planning
 		append(std::move(path));
 	}
 
-	CompositePath::CompositePath(Path *path) {
-		append(path);
-	}
-
-	void CompositePath::append(Path *path) {
-		append(std::unique_ptr<Path>(path));
-	}
-
 	void CompositePath::append(unique_ptr<Path> path) {
 		if (duration < numeric_limits<float>::infinity()) {
 			float pathDuration = path->getDuration();
@@ -48,7 +40,7 @@ namespace Planning
 				return true;
 			}
 		}
-		targetPosOut = destination().get();
+		targetPosOut = destination()->pos;
 		targetVelOut = Point(0,0);
 		return false;
 	}
@@ -97,7 +89,7 @@ namespace Planning
 		return duration;
 	}
 	
-	boost::optional<Point> CompositePath::destination() const
+	boost::optional<MotionInstant> CompositePath::destination() const
 	{
 		if (paths.empty()) {
 			return boost::none;

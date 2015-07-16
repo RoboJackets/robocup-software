@@ -65,7 +65,7 @@ namespace Planning
 		/**
 		 * Returns the destination point of the path if it has one
 		 */
-		virtual boost::optional<Geometry2d::Point> destination() const=0;
+		virtual boost::optional<MotionInstant> destination() const=0;
 
 		/**
 		 * Returns a deep copy of the Path

@@ -51,11 +51,11 @@ namespace Planning {
 			return points.front();
 	}
 
-	boost::optional<Geometry2d::Point> InterpolatedPath::destination() const {
+	boost::optional<MotionInstant> InterpolatedPath::destination() const {
 		if (points.empty())
 			return boost::none;
 		else
-			return points.back();
+			return MotionInstant(points.back(), vels.back());
 	}
 
 	// Returns the index of the point in this path nearest to pt.
