@@ -8,6 +8,7 @@
 #include <cmath>
 #include <stdio.h>
 #include <algorithm>
+#include "planning/MotionInstant.hpp"
 
 using namespace std;
 using namespace Geometry2d;
@@ -139,14 +140,14 @@ void MotionControl::run() {
 	//	Position control ///////////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////
 
-	Point targetVel;
+	Planning::MotionInstant target;
 
 	//	if no target position is given, we don't have a path to follow
 	if (!_robot->path()) {
 		if (!constraints.targetWorldVel) {
-			targetVel = Point(0, 0);
+			target.vel = Point(0, 0);
 		} else {
-			targetVel = constraints.targetWorldVel->rotated(-_robot->angle);
+			target.vel = constraints.targetWorldVel->rotated(-_robot->angle);
 		}
 	} else {
 		//
@@ -178,46 +179,41 @@ void MotionControl::run() {
 
 
 		//	evaluate path - where should we be right now?
-		Point targetPos;
-		bool pathValidNow = _robot->path()->evaluate(
-			timeIntoPath,
-			targetPos,
-			targetVel);
+		bool pathValidNow = _robot->path()->evaluate(timeIntoPath, target);
 		if (!pathValidNow) {
-			targetVel.x = 0;
-			targetVel.y = 0;
+			target.vel = Geometry2d::Point();
 		}
 		//	tracking error
-		Point posError = targetPos - _robot->pos;
+		Point posError = target.pos - _robot->pos;
 
 		//	acceleration factor
-		Point nextTargetVel, _;
-		_robot->path()->evaluate(timeIntoPath + 1.0/60.0, _, nextTargetVel);
-		Point acceleration = (nextTargetVel - targetVel) / 60.0f;
+		Planning::MotionInstant nextTarget;
+		_robot->path()->evaluate(timeIntoPath + 1.0 / 60.0, nextTarget);
+		Point acceleration = (nextTarget.vel - target.vel) / 60.0f;
 		Point accelFactor = acceleration * 60.0f * (*_robot->config->accelerationMultiplier);
 
-		targetVel += accelFactor;
+		target.vel += accelFactor;
 
 		//	path change boost
 		if (_robot->consecutivePathChangeCount() > 0) {
 			float boost = *_path_change_boost;
-			targetVel += acceleration * boost;
+			target.vel += acceleration * boost;
 		}
 
 		//	PID on position
-		targetVel.x += _positionXController.run(posError.x);
-		targetVel.y += _positionYController.run(posError.y);
+		target.vel.x += _positionXController.run(posError.x);
+		target.vel.y += _positionYController.run(posError.y);
 
 		//	draw target pt
-		_robot->state()->drawCircle(targetPos, .04, Qt::red, "MotionControl");
-		_robot->state()->drawLine(targetPos, targetPos + targetVel, Qt::blue, "velocity");
-		_robot->state()->drawText(QString("%1").arg(timeIntoPath), targetPos, Qt::black, "time");
+		_robot->state()->drawCircle(target.pos, .04, Qt::red, "MotionControl");
+		_robot->state()->drawLine(target.pos, target.pos + target.vel, Qt::blue, "velocity");
+		_robot->state()->drawText(QString("%1").arg(timeIntoPath), target.pos, Qt::black, "time");
 
 		//	convert from world to body coordinates
-		targetVel = targetVel.rotated(-_robot->angle);
+		target.vel = target.vel.rotated(-_robot->angle);
 	}
 
-	this->_targetBodyVel(targetVel);
+	this->_targetBodyVel(target.vel);
 }
 
 void MotionControl::stopped() {

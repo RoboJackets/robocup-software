@@ -554,11 +554,10 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		_path->draw(_state, Qt::magenta);
 
 		//float maxDist = .6;
-		Point targetPathPos;
-		Point targetVel;
+		Planning::MotionInstant target;
 		float timeIntoPath = ((float)(timestamp() - _pathStartTime)) * TimestampToSecs + 1.0f/60.0f;
-		_path->evaluate(timeIntoPath, targetPathPos, targetVel);
-		float pathError = (targetPathPos - pos).mag();
+		_path->evaluate(timeIntoPath, target);
+		float pathError = (target.pos - pos).mag();
 		//state()->drawCircle(targetPathPos, maxDist, Qt::green, "MotionControl");
 		//addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
 		//addText(QString("%1").arg(pathError));

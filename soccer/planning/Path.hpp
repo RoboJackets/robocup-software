@@ -20,12 +20,11 @@ namespace Planning
          * particular time interval.  This method evalates the path at a given time and
          * returns the target position and velocity of the robot.
          *
-         * @param[in] 	t Time (in seconds) since the robot started the path
-         * @param[out] 	targetPosOut The position the robot would ideally be at at the given time
-         * @param[out] 	targetVelOut The target velocity of the robot at the given time
+         * @param[in] 	t Time (in seconds) since the robot started the path. Throws an exception if t<0
+         * @param[out] 	targetMotionInstant The position and velocity the robot would ideally be at at the given time
          * @return 		true if the path is valid at time @t, false if you've gone past the end
          */
-		virtual bool evaluate(float t, Geometry2d::Point &targetPosOut, Geometry2d::Point &targetVelOut) const=0;
+		virtual bool evaluate(float t, MotionInstant &targetMotionInstant) const=0;
 
 		/**
 		 * Returns true if the path hits an obstacle
