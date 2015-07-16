@@ -33,7 +33,7 @@ namespace Planning
 		InterpolatedPath(const Geometry2d::Point& p0, const Geometry2d::Point& p1);
 
 		//Overried Path Methods
-		virtual boost::optional<Geometry2d::Point> destination() const override;
+		virtual boost::optional<MotionInstant> destination() const override;
 		virtual bool hit(const Geometry2d::CompositeShape &shape, float startTime) const override;
 		virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = std::numeric_limits<float>::infinity()) const override;
 		virtual void draw(SystemState  * const state, const QColor &color, const QString &layer) const override;

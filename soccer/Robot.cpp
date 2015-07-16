@@ -583,7 +583,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		//	we invalidate the path.  this situation could arise if during a previous planning, the target point
 		//	was blocked by an obstacle
 		//  TODO: This is Stupid. This should be fixed in the RRT planner or the Bezier Algorithm.
-		if (_path->destination() && (*_path->destination() - dest).mag() > 0.025) {
+		if (_path->destination() && (_path->destination()->pos - dest).mag() > 0.025) {
 			_pathInvalidated = true;
 		}
 	}

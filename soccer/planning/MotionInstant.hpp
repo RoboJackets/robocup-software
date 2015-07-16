@@ -8,6 +8,8 @@ namespace  Planning {
  */
     struct MotionInstant {
 
+        MotionInstant(Geometry2d::Point pos, Geometry2d::Point vel) : pos(pos), vel(vel) {}
+
         /// A point on the field that the robot should use path-planning to get to
         Geometry2d::Point pos;
 
