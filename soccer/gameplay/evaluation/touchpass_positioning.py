@@ -21,7 +21,7 @@ import evaluation.passing
 #
 # Takes a current ball position/initial kick position (robocup.Point)
 def generate_default_rectangle(kick_point):
-    offset_from_edge = 0.3
+    offset_from_edge = 0.5
 
     if kick_point.x > 0:
         # Ball is on right side of field
@@ -34,7 +34,7 @@ def generate_default_rectangle(kick_point):
     return toReturn
 
 ## Returns a list of robocup.Point object that represent candidate points. Takes in a robocup.Rect
-def get_points_from_rect(rect, threshold=0.50):
+def get_points_from_rect(rect, threshold=0.75):
     outlist = []
     currentx = rect.min_x()
     currenty = rect.max_y()
