@@ -31,9 +31,9 @@ class Ball:
     
 
 class Field:
-    Length = 8.09
-    Width = 6.05
-    Border = 0.25
+    Length = 9.00
+    Width = 6.00
+    Border = 0.70
 
     LineWidth = 0.01
 
@@ -42,18 +42,18 @@ class Field:
     GoalHeight = 0.160
 
     # Distance of the penalty marker from the goal line
-    PenaltyDist = 0.750
+    PenaltyDist = 1.0
     PenaltyDiam = 0.010
 
     # Radius of the goal arcs
-    ArcRadius = 0.8
+    ArcRadius = 1.0
 
     # diameter of the center circle 
     CenterRadius = 0.5
     CenterDiameter = 1.0
 
     # flat area for defense markings 
-    GoalFlat = 0.35
+    GoalFlat = 0.5
 
     FloorLength = Length + 2.0 * Border;
     FloorWidth = Width + 2.0 * Border;
