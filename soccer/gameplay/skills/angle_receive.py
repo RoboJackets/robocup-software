@@ -130,13 +130,19 @@ class AngleReceive(skills._kick._Kick):
         return (self.robot.vel.mag() < AngleReceive.SteadyMaxVel
                 and abs(self.robot.angle_vel) < AngleReceive.SteadyMaxAngleVel)
 
-    # Returns an adjusted angle with account for ball speed
+    ## Returns an adjusted angle with account for ball speed
+    #
+    # First finds the rejection, which is the X component of the ball's velocity in the reference
+    # frame of the robot, with the mouth facing the y axis. Then we calculate the angle required to
+    # offset this rejection angle (if possible).
     def adjust_angle(self, target_angle):
         ball = main.ball()
         ball_angle = (ball.vel).angle()
         angle_diff = target_angle - ball_angle
 
         rejection = math.sin(angle_diff) * ball.vel.mag()
+
+        # The min/max is to bound the value by -1 and 1.
         adjust = math.asin(min(1, max(-1, rejection / constants.Robot.MaxKickSpeed)))
         return adjust + target_angle
 
@@ -157,8 +163,12 @@ class AngleReceive(skills._kick._Kick):
         if self.ball_kicked:
             # when the ball's in motion, the line is based on the ball's velocity
             self._pass_line = robocup.Line(ball.pos, ball.pos + ball.vel*10)
+
             # After kicking, apply angle calculations
             target_angle_rad = self.adjust_angle((self.get_target_point() - self.robot.pos).angle())
+            # Removes angle adjustment
+            # target_angle_rad = (self.get_target_point() - self.robot.pos).angle()
+
             self._kick_line = robocup.Line(self.robot.pos, robocup.Point(self.robot.pos.x + math.cos(self.robot.angle) * 10, self.robot.pos.y + math.sin(self.robot.angle) * 10))
         else:
             # if the ball hasn't been kicked yet, we assume it's going to go through the receive point

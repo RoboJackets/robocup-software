@@ -76,7 +76,7 @@ def eval_best_receive_point(kick_point, evaluation_zone=None, ignore_robots=[]):
     points = get_points_from_rect(evaluation_zone)
 
     if points == None or len(points) == 0:
-        # We can't do anything!
+        # We can't do anything.
         return None
 
     best = points[0]
