@@ -203,7 +203,6 @@ void MotionControl::run() {
 		//	draw target pt
 		_robot->state()->drawCircle(target.pos, .04, Qt::red, "MotionControl");
 		_robot->state()->drawLine(target.pos, target.pos + target.vel, Qt::blue, "velocity");
-		_robot->state()->drawText(QString("%1").arg(timeIntoPath), target.pos, Qt::black, "time");
 
 		//	convert from world to body coordinates
 		target.vel = target.vel.rotated(-_robot->angle);
