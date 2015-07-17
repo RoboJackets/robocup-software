@@ -322,19 +322,6 @@ void OurRobot::_kick(uint8_t strength) {
 
 void OurRobot::_chip(uint8_t strength) {
 	uint8_t max = *config->kicker.maxChip;
-	// TODO make sure we're not about to chip over the middle line.
-	Segment robot_face_line = Segment(pos, pos + 10*Point::direction(angle * M_PI / 180.));
-	Segment mid_field_line = Segment(Point(-Field_Dimensions::Current_Dimensions.Width() /2,Field_Dimensions::Current_Dimensions.Length() /2), Point(Field_Dimensions::Current_Dimensions.Width() /2,Field_Dimensions::Current_Dimensions.Length() /2));
-	Point intersection;
-	if(robot_face_line.intersects(mid_field_line, &intersection))
-	{
-		float dist = intersection.distTo(pos);
-		int power = min(strength, chipPowerForDistance(dist));
-		if(power == 0)
-			_kick(strength);
-		else
-			strength = power;
-	}
 	radioTx.set_kick(strength > max ? max : strength);
 	radioTx.set_use_chipper(true);
 }
