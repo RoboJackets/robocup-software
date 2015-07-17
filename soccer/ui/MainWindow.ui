@@ -1244,7 +1244,7 @@ p, li { white-space: pre-wrap; }
              <property name="handleWidth">
               <number>10</number>
              </property>
-             <widget class="QWidget" name="">
+             <widget class="QWidget" name="layoutWidget">
               <layout class="QVBoxLayout" name="verticalLayout_11">
                <property name="spacing">
                 <number>2</number>
@@ -1276,7 +1276,7 @@ p, li { white-space: pre-wrap; }
                </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="">
+             <widget class="QWidget" name="layoutWidget">
               <layout class="QVBoxLayout" name="verticalLayout_10">
                <property name="spacing">
                 <number>2</number>
@@ -1617,7 +1617,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>1405</width>
-     <height>19</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
@@ -1954,7 +1954,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>Primary Half</string>
@@ -1970,6 +1970,9 @@ p, li { white-space: pre-wrap; }
   </action>
   <action name="actionVisionFull_Field">
    <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
     <bool>true</bool>
    </property>
    <property name="text">
