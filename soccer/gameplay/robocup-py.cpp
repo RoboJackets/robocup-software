@@ -267,7 +267,10 @@ boost::python::tuple WinEval_eval_pt_to_seg(WindowEvaluator *self, const Geometr
 	auto window_results = self->eval_pt_to_seg(*origin, *target);
 
 	lst.append(window_results.first);
-	lst.append(window_results.second.get());
+	if(window_results.second.is_initialized())
+		lst.append(window_results.second.get());
+	else
+		lst.append(boost::python::api::object());
 
 	return boost::python::tuple{lst};
 }
@@ -282,7 +285,10 @@ boost::python::tuple WinEval_eval_pt_to_pt(WindowEvaluator *self, const Geometry
 	auto window_results = self->eval_pt_to_pt(*origin, *target);
 
 	lst.append(window_results.first);
-	lst.append(window_results.second.get());
+	if(window_results.second.is_initialized())
+		lst.append(window_results.second.get());
+	else
+		lst.append(boost::python::api::object());
 
 	return boost::python::tuple{lst};
 }
@@ -295,7 +301,10 @@ boost::python::tuple WinEval_eval_pt_to_opp_goal(WindowEvaluator *self, const Ge
 	auto window_results = self->eval_pt_to_opp_goal(*origin);
 
 	lst.append(window_results.first);
-	lst.append(window_results.second.get());
+	if(window_results.second.is_initialized())
+		lst.append(window_results.second.get());
+	else
+		lst.append(boost::python::api::object());
 
 	return boost::python::tuple{lst};
 }
@@ -308,9 +317,16 @@ boost::python::tuple WinEval_eval_pt_to_our_goal(WindowEvaluator *self, const Ge
 	auto window_results = self->eval_pt_to_our_goal(*origin);
 
 	lst.append(window_results.first);
-	lst.append(window_results.second.get());
+	if(window_results.second.is_initialized())
+		lst.append(window_results.second.get());
+	else
+		lst.append(boost::python::api::object());
 
 	return boost::python::tuple{lst};
+}
+
+boost::python::tuple WinEval_add_excluded_robot(WindowEvaluator *self, Robot* robot) {
+	self->excluded_robots.push_back(robot);
 }
 
 /**
@@ -477,6 +493,10 @@ BOOST_PYTHON_MODULE(robocup)
 		.def_readonly("valid", &Ball::valid)
 	;
 
+	class_<std::vector<Robot*>>("vector_Robot")
+		.def(vector_indexing_suite<std::vector<Robot*>>())
+	;
+
 	class_<std::vector<OurRobot *> >("vector_OurRobot")
 		.def(vector_indexing_suite<std::vector<OurRobot *> >())
 	;
@@ -538,6 +558,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def_readwrite("min_chip_range", &WindowEvaluator::min_chip_range)
 		.def_readwrite("excluded_robots", &WindowEvaluator::excluded_robots)
 		.def_readwrite("hypothetical_robot_locations", &WindowEvaluator::hypothetical_robot_locations)
+		.def("add_excluded_robot", &WinEval_add_excluded_robot)
 		.def("eval_pt_to_pt", &WinEval_eval_pt_to_pt)
 		.def("eval_pt_to_opp_goal", &WinEval_eval_pt_to_opp_goal)
 		.def("eval_pt_to_our_goal", &WinEval_eval_pt_to_our_goal)
