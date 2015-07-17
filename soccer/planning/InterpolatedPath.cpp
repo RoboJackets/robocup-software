@@ -78,7 +78,7 @@ namespace Planning {
 		return index;
 	}
 
-	bool InterpolatedPath::hit(const Geometry2d::CompositeShape &obstacles, float startTime) const {
+	bool InterpolatedPath::hit(const Geometry2d::CompositeShape &obstacles, float &hitTime, float startTime) const {
 		size_t start = 0;
 		for (float t: times) {
 			start++;
