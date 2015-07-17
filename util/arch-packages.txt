@@ -2,12 +2,15 @@
 # python 3
 python
 python-pip
+python2
+python2-pip
 
 # Build system
 cmake
 ccache
 ninja
 clang
+clang-analyzer
 
 # required to compile gcc toolchain for ARM
 mpfr
@@ -16,6 +19,7 @@ libmpc
 
 qt5-base
 qt5-tools
+qt5-svg
 qwtplot3d
 
 python-pyqt5
@@ -42,3 +46,6 @@ glu
 
 # to drive robots with the SpaceNavigator 3d mouse
 libspnav
+
+# joystick library
+sdl

@@ -14,15 +14,6 @@ SimulatorWindow::SimulatorWindow(Environment * env, QWidget* parent):
 {
 	_ui.setupUi(this);
 
-	// renderer setup
-	//	_render = _ui.renderViewWidget;
-
-	//	// connect renderer to simulator
-	//	connect(_env, SIGNAL(addNewRobot(bool,int)), _render, SLOT(addRobot(bool,int)));
-	//	connect(_env, SIGNAL(removeExistingRobot(bool,int)), _render, SLOT(removeRobot(bool,int)));
-	//	connect(_env, SIGNAL(setRobotPose(bool,int,QVector3D,qreal,QVector3D)),
-	//			    _render, SLOT(setRobotPose(bool,int,QVector3D,qreal,QVector3D)));
-
 	// set up table
 	_model = new RobotTableModel(env);
 	_ui.robotTable->setModel(_model);

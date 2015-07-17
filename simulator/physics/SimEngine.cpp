@@ -175,6 +175,3 @@ void SimEngine::addVehicle(btActionInterface* vehicle) {
 	if (_dynamicsWorld)
 		_dynamicsWorld->addVehicle(vehicle);
 }
-
-
-

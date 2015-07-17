@@ -222,8 +222,7 @@ void MotionControl::run() {
 
 		//	draw target pt
 		_robot->state()->drawCircle(targetPos, .04, Qt::red, "MotionControl");
-		_robot->state()->drawLine(targetPos, targetPos + targetVel, Qt::blue, "velocity");
-		_robot->state()->drawText(QString("%1").arg(timeIntoPath), targetPos, Qt::black, "time");
+		_robot->state()->drawLine(targetPos, targetPos + targetVel, Qt::blue, "MotionControl");
 
 
 

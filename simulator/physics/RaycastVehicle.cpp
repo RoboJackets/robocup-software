@@ -25,13 +25,6 @@
 #define ROLLING_INFLUENCE_FIX
 
 
-btRigidBody& btActionInterface::getFixedBody()
-{
-	static btRigidBody s_fixed(0, 0,0);
-	s_fixed.setMassProps(btScalar(0.),btVector3(btScalar(0.),btScalar(0.),btScalar(0.)));
-	return s_fixed;
-}
-
 RaycastVehicle::RaycastVehicle(const btVehicleTuning& tuning,btRigidBody* chassis,	btVehicleRaycaster* raycaster )
 :m_vehicleRaycaster(raycaster),
 m_pitchControl(btScalar(0.))
@@ -52,7 +45,6 @@ void RaycastVehicle::defaultInit(const btVehicleTuning& tuning)
 	
 }
 
-	
 
 RaycastVehicle::~RaycastVehicle()
 {
@@ -62,9 +54,8 @@ RaycastVehicle::~RaycastVehicle()
 //
 // basically most of the code is general for 2 or 4 wheel vehicles, but some of it needs to be reviewed
 //
-btWheelInfo&	RaycastVehicle::addWheel( const btVector3& connectionPointCS, const btVector3& wheelDirectionCS0,const btVector3& wheelAxleCS, btScalar suspensionRestLength, btScalar wheelRadius,const btVehicleTuning& tuning, bool isFrontWheel)
+btWheelInfo& RaycastVehicle::addWheel( const btVector3& connectionPointCS, const btVector3& wheelDirectionCS0,const btVector3& wheelAxleCS, btScalar suspensionRestLength, btScalar wheelRadius,const btVehicleTuning& tuning, bool isFrontWheel)
 {
-
 	btWheelInfoConstructionInfo ci;
 
 	ci.m_chassisConnectionCS = connectionPointCS;
@@ -90,9 +81,7 @@ btWheelInfo&	RaycastVehicle::addWheel( const btVector3& connectionPointCS, const
 }
 
 
-
-
-const btTransform&	RaycastVehicle::getWheelTransformWS( int wheelIndex ) const
+const btTransform& RaycastVehicle::getWheelTransformWS( int wheelIndex ) const
 {
 	btAssert(wheelIndex < getNumWheels());
 	const btWheelInfo& wheel = m_wheelInfo[wheelIndex];
@@ -100,7 +89,7 @@ const btTransform&	RaycastVehicle::getWheelTransformWS( int wheelIndex ) const
 
 }
 
-void	RaycastVehicle::updateWheelTransform( int wheelIndex , bool interpolatedTransform)
+void RaycastVehicle::updateWheelTransform( int wheelIndex , bool interpolatedTransform)
 {
 	
 	btWheelInfo& wheel = m_wheelInfo[ wheelIndex ];
@@ -136,8 +125,7 @@ void	RaycastVehicle::updateWheelTransform( int wheelIndex , bool interpolatedTra
 void RaycastVehicle::resetSuspension()
 {
 
-	int i;
-	for (i=0;i<m_wheelInfo.size();	i++)
+	for (int i=0;i<m_wheelInfo.size();	i++)
 	{
 			btWheelInfo& wheel = m_wheelInfo[i];
 			wheel.m_raycastInfo.m_suspensionLength = wheel.getSuspensionRestLength();
@@ -292,18 +280,14 @@ void RaycastVehicle::updateVehicle( btScalar step )
 	//
 	// simulate suspension
 	//
-	
-	int i=0;
-	for (i=0;i<m_wheelInfo.size();i++)
-	{
-		btScalar depth; 
-		depth = rayCast( m_wheelInfo[i]);
+
+	for (int i = 0; i < m_wheelInfo.size(); ++i) {
+		btScalar depth = rayCast(m_wheelInfo[i]);
 	}
-
-	updateSuspension(step);
-
 	
-	for (i=0;i<m_wheelInfo.size();i++)
+	updateSuspension(step);
+	
+	for (int i = 0; i < m_wheelInfo.size(); i++)
 	{
 		//apply suspension force
 		btWheelInfo& wheel = m_wheelInfo[i];
@@ -318,7 +302,6 @@ void RaycastVehicle::updateVehicle( btScalar step )
 		btVector3 relpos = wheel.m_raycastInfo.m_contactPointWS - getRigidBody()->getCenterOfMassPosition();
 
 		getRigidBody()->applyImpulse(impulse, relpos);
-	
 	}
 	
 
@@ -326,7 +309,7 @@ void RaycastVehicle::updateVehicle( btScalar step )
 	updateFriction( step);
 
 	
-	for (i=0;i<m_wheelInfo.size();i++)
+	for (int i=0;i<m_wheelInfo.size();i++)
 	{
 		btWheelInfo& wheel = m_wheelInfo[i];
 		btVector3 relpos = wheel.m_raycastInfo.m_hardPointWS - getRigidBody()->getCenterOfMassPosition();
@@ -362,13 +345,10 @@ void RaycastVehicle::updateVehicle( btScalar step )
 		wheel.m_deltaRotation *= btScalar(0.99);//damping of rotation when not in contact
 
 	}
-
-
-
 }
 
 
-void	RaycastVehicle::setSteeringValue(btScalar steering,int wheel)
+void RaycastVehicle::setSteeringValue(btScalar steering,int wheel)
 {
 	btAssert(wheel>=0 && wheel < getNumWheels());
 
@@ -377,14 +357,13 @@ void	RaycastVehicle::setSteeringValue(btScalar steering,int wheel)
 }
 
 
-
-btScalar	RaycastVehicle::getSteeringValue(int wheel) const
+btScalar RaycastVehicle::getSteeringValue(int wheel) const
 {
 	return getWheelInfo(wheel).m_steering;
 }
 
 
-void	RaycastVehicle::applyEngineForce(btScalar force, int wheel)
+void RaycastVehicle::applyEngineForce(btScalar force, int wheel)
 {
 	btAssert(wheel>=0 && wheel < getNumWheels());
 	btWheelInfo& wheelInfo = getWheelInfo(wheel);
@@ -413,7 +392,7 @@ void RaycastVehicle::setBrake(btScalar brake,int wheelIndex)
 }
 
 
-void	RaycastVehicle::updateSuspension(btScalar deltaTime)
+void RaycastVehicle::updateSuspension(btScalar deltaTime)
 {
 	(void)deltaTime;
 
@@ -467,7 +446,6 @@ void	RaycastVehicle::updateSuspension(btScalar deltaTime)
 			wheel_info.m_wheelsSuspensionForce = btScalar(0.0);
 		}
 	}
-
 }
 
 
@@ -493,15 +471,11 @@ struct btWheelContactPoint
 		btScalar	relaxation = 1.f;
 		m_jacDiagABInv = relaxation/(denom0+denom1);
 	}
-
-
-
 };
 
-btScalar calcRollingFriction(btWheelContactPoint& contactPoint);
-btScalar calcRollingFriction(btWheelContactPoint& contactPoint)
-{
 
+btScalar calculateRollingFriction(btWheelContactPoint& contactPoint)
+{
 	btScalar j1=0.f;
 
 	const btVector3& contactPosWorld = contactPoint.m_frictionPositionWorld;
@@ -527,75 +501,70 @@ btScalar calcRollingFriction(btWheelContactPoint& contactPoint)
 
 
 //Allow omniwheels to slide sideways
-btScalar sideFrictionStiffness2 = btScalar(0.00);
-void	RaycastVehicle::updateFriction(btScalar	timeStep)
+void RaycastVehicle::updateFriction(btScalar	timeStep)
 {
+	//calculate the impulse, so that the wheels don't move sidewards
+	int numWheel = getNumWheels();
+	if (!numWheel)
+		return;
 
-		//calculate the impulse, so that the wheels don't move sidewards
-		int numWheel = getNumWheels();
-		if (!numWheel)
-			return;
+	m_forwardWS.resize(numWheel);
+	m_axle.resize(numWheel);
+	m_forwardImpulse.resize(numWheel);
+	m_sideImpulse.resize(numWheel);
+	
+	int numWheelsOnGround = 0;
 
-		m_forwardWS.resize(numWheel);
-		m_axle.resize(numWheel);
-		m_forwardImpulse.resize(numWheel);
-		m_sideImpulse.resize(numWheel);
+
+	//collapse all those loops into one!
+	for (int i=0;i<getNumWheels();i++)
+	{
+		btWheelInfo& wheelInfo = m_wheelInfo[i];
+		class btRigidBody* groundObject = (class btRigidBody*) wheelInfo.m_raycastInfo.m_groundObject;
+		if (groundObject)
+			numWheelsOnGround++;
+		m_sideImpulse[i] = btScalar(0.);
+		m_forwardImpulse[i] = btScalar(0.);
+	}
+	
+	
+	for (int i=0;i<getNumWheels();i++)
+	{
+
+		btWheelInfo& wheelInfo = m_wheelInfo[i];
+
+		class btRigidBody* groundObject = (class btRigidBody*) wheelInfo.m_raycastInfo.m_groundObject;
+
+		if (groundObject)
+		{
+
+			const btTransform& wheelTrans = getWheelTransformWS( i );
+
+			btMatrix3x3 wheelBasis0 = wheelTrans.getBasis();
+			m_axle[i] = btVector3(	
+				wheelBasis0[0][m_indexRightAxis],
+				wheelBasis0[1][m_indexRightAxis],
+				wheelBasis0[2][m_indexRightAxis]);
+			
+			const btVector3& surfNormalWS = wheelInfo.m_raycastInfo.m_contactNormalWS;
+			btScalar proj = m_axle[i].dot(surfNormalWS);
+			m_axle[i] -= surfNormalWS * proj;
+			m_axle[i] = m_axle[i].normalize();
+			
+			m_forwardWS[i] = surfNormalWS.cross(m_axle[i]);
+			m_forwardWS[i].normalize();
+
 		
-		int numWheelsOnGround = 0;
-	
+			resolveSingleBilateral(*m_chassisBody, wheelInfo.m_raycastInfo.m_contactPointWS,
+					  *groundObject, wheelInfo.m_raycastInfo.m_contactPointWS,
+					  btScalar(0.), m_axle[i],m_sideImpulse[i],timeStep);
 
-		//collapse all those loops into one!
-		for (int i=0;i<getNumWheels();i++)
-		{
-			btWheelInfo& wheelInfo = m_wheelInfo[i];
-			class btRigidBody* groundObject = (class btRigidBody*) wheelInfo.m_raycastInfo.m_groundObject;
-			if (groundObject)
-				numWheelsOnGround++;
-			m_sideImpulse[i] = btScalar(0.);
-			m_forwardImpulse[i] = btScalar(0.);
-
-		}
-	
-		{
-	
-			for (int i=0;i<getNumWheels();i++)
-			{
-
-				btWheelInfo& wheelInfo = m_wheelInfo[i];
-
-				class btRigidBody* groundObject = (class btRigidBody*) wheelInfo.m_raycastInfo.m_groundObject;
-
-				if (groundObject)
-				{
-
-					const btTransform& wheelTrans = getWheelTransformWS( i );
-
-					btMatrix3x3 wheelBasis0 = wheelTrans.getBasis();
-					m_axle[i] = btVector3(	
-						wheelBasis0[0][m_indexRightAxis],
-						wheelBasis0[1][m_indexRightAxis],
-						wheelBasis0[2][m_indexRightAxis]);
-					
-					const btVector3& surfNormalWS = wheelInfo.m_raycastInfo.m_contactNormalWS;
-					btScalar proj = m_axle[i].dot(surfNormalWS);
-					m_axle[i] -= surfNormalWS * proj;
-					m_axle[i] = m_axle[i].normalize();
-					
-					m_forwardWS[i] = surfNormalWS.cross(m_axle[i]);
-					m_forwardWS[i].normalize();
-
+			static const btScalar kSideFrictionStiffness = btScalar(0.00);
+			m_sideImpulse[i] *= kSideFrictionStiffness;
 				
-					resolveSingleBilateral(*m_chassisBody, wheelInfo.m_raycastInfo.m_contactPointWS,
-							  *groundObject, wheelInfo.m_raycastInfo.m_contactPointWS,
-							  btScalar(0.), m_axle[i],m_sideImpulse[i],timeStep);
-
-					m_sideImpulse[i] *= sideFrictionStiffness2;
-						
-				}
-				
-
-			}
 		}
+	}
+		
 
 	btScalar sideFactor = btScalar(1.);
 	btScalar fwdFactor = 0.5;
@@ -623,7 +592,7 @@ void	RaycastVehicle::updateFriction(btScalar	timeStep)
 					btScalar defaultRollingFrictionImpulse = 100.f;
 					btScalar maxImpulse = wheelInfo.m_brake ? wheelInfo.m_brake : defaultRollingFrictionImpulse;
 					btWheelContactPoint contactPt(m_chassisBody,groundObject,wheelInfo.m_raycastInfo.m_contactPointWS,m_forwardWS[wheel],maxImpulse);
-					rollingFriction = calcRollingFriction(contactPt);
+					rollingFriction = calculateRollingFriction(contactPt);
 				}
 			}
 
@@ -658,76 +627,70 @@ void	RaycastVehicle::updateFriction(btScalar	timeStep)
 					
 					m_wheelInfo[wheel].m_skidInfo *= factor;
 				}
-			} 
-
+			}
 		}
 	}
 
 	
 
-
-		if (sliding)
+	if (sliding)
+	{
+		for (int wheel = 0;wheel < getNumWheels(); wheel++)
 		{
-			for (int wheel = 0;wheel < getNumWheels(); wheel++)
+			if (m_sideImpulse[wheel] != btScalar(0.))
 			{
-				if (m_sideImpulse[wheel] != btScalar(0.))
+				if (m_wheelInfo[wheel].m_skidInfo< btScalar(1.))
 				{
-					if (m_wheelInfo[wheel].m_skidInfo< btScalar(1.))
-					{
-						m_forwardImpulse[wheel] *=	m_wheelInfo[wheel].m_skidInfo;
-						m_sideImpulse[wheel] *= m_wheelInfo[wheel].m_skidInfo;
-					}
+					m_forwardImpulse[wheel] *=	m_wheelInfo[wheel].m_skidInfo;
+					m_sideImpulse[wheel] *= m_wheelInfo[wheel].m_skidInfo;
 				}
 			}
 		}
+	}
 
-		// apply the impulses
+	// apply the impulses
+	for (int wheel = 0;wheel<getNumWheels() ; wheel++)
+	{
+		btWheelInfo& wheelInfo = m_wheelInfo[wheel];
+
+		btVector3 rel_pos = wheelInfo.m_raycastInfo.m_contactPointWS - 
+				m_chassisBody->getCenterOfMassPosition();
+
+		if (m_forwardImpulse[wheel] != btScalar(0.))
 		{
-			for (int wheel = 0;wheel<getNumWheels() ; wheel++)
-			{
-				btWheelInfo& wheelInfo = m_wheelInfo[wheel];
 
-				btVector3 rel_pos = wheelInfo.m_raycastInfo.m_contactPointWS - 
-						m_chassisBody->getCenterOfMassPosition();
+			m_chassisBody->applyImpulse(m_forwardWS[wheel]*(m_forwardImpulse[wheel]),rel_pos);
 
-				if (m_forwardImpulse[wheel] != btScalar(0.))
-				{
+		}
+		if (m_sideImpulse[wheel] != btScalar(0.))
+		{
+			class btRigidBody* groundObject = (class btRigidBody*) m_wheelInfo[wheel].m_raycastInfo.m_groundObject;
 
-					m_chassisBody->applyImpulse(m_forwardWS[wheel]*(m_forwardImpulse[wheel]),rel_pos);
+			btVector3 rel_pos2 = wheelInfo.m_raycastInfo.m_contactPointWS - 
+				groundObject->getCenterOfMassPosition();
 
-				}
-				if (m_sideImpulse[wheel] != btScalar(0.))
-				{
-					class btRigidBody* groundObject = (class btRigidBody*) m_wheelInfo[wheel].m_raycastInfo.m_groundObject;
-
-					btVector3 rel_pos2 = wheelInfo.m_raycastInfo.m_contactPointWS - 
-						groundObject->getCenterOfMassPosition();
-
-					
-					btVector3 sideImp = m_axle[wheel] * m_sideImpulse[wheel];
+			
+			btVector3 sideImp = m_axle[wheel] * m_sideImpulse[wheel];
 
 #if defined ROLLING_INFLUENCE_FIX // fix. It only worked if car's up was along Y - VT.
-					btVector3 vChassisWorldUp = getRigidBody()->getCenterOfMassTransform().getBasis().getColumn(m_indexUpAxis);
-					rel_pos -= vChassisWorldUp * (vChassisWorldUp.dot(rel_pos) * (1.f-wheelInfo.m_rollInfluence));
+			btVector3 vChassisWorldUp = getRigidBody()->getCenterOfMassTransform().getBasis().getColumn(m_indexUpAxis);
+			rel_pos -= vChassisWorldUp * (vChassisWorldUp.dot(rel_pos) * (1.f-wheelInfo.m_rollInfluence));
 #else
-					rel_pos[m_indexUpAxis] *= wheelInfo.m_rollInfluence;
+			rel_pos[m_indexUpAxis] *= wheelInfo.m_rollInfluence;
 #endif
 
-					m_chassisBody->applyImpulse(sideImp,rel_pos);
+			m_chassisBody->applyImpulse(sideImp,rel_pos);
 
-					//apply friction impulse on the ground
-					groundObject->applyImpulse(-sideImp,rel_pos2);
-				}
-			}
+			//apply friction impulse on the ground
+			groundObject->applyImpulse(-sideImp,rel_pos2);
 		}
-
+	}
 }
 
 
 
-void	RaycastVehicle::debugDraw(btIDebugDraw* debugDrawer)
+void RaycastVehicle::debugDraw(btIDebugDraw* debugDrawer)
 {
-
 	for (int v=0;v<this->getNumWheels();v++)
 	{
 		btVector3 wheelColor(0,1,1);
@@ -749,7 +712,6 @@ void	RaycastVehicle::debugDraw(btIDebugDraw* debugDrawer)
 		//debug wheels (cylinders)
 		debugDrawer->drawLine(wheelPosWS,wheelPosWS+axle,wheelColor);
 		debugDrawer->drawLine(wheelPosWS,getWheelInfo(v).m_raycastInfo.m_contactPointWS,wheelColor);
-
 	}
 }
 
@@ -777,4 +739,3 @@ void* DefaultVehicleRaycaster::castRay(const btVector3& from,const btVector3& to
 	}
 	return 0;
 }
-
