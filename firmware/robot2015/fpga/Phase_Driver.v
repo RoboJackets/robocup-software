@@ -1,4 +1,4 @@
-`include "Phase_Driver.vh"
+//`include "Phase_Driver.vh"
 
 /**
 This module is responsible for driving one phase of the BLDC. It generates both
@@ -66,14 +66,14 @@ module Phase_Driver(
 reg [`COUNTER_WIDTH - 1:0] counter = 0;
 
 
-wire pwm_high =   (high_z ==1) ? 0 :
-                    (counter + `DEAD_TIME < duty_cycle*`DUTY_CYCLE_STEP_RES) ? 1 :
-                    0;
-wire pwm_low   =    (high_z == 1) ? 0 :
-                    (duty_cycle == 0) ? 1 :
-                    (counter >= duty_cycle*`DUTY_CYCLE_STEP_RES && 
-                        counter + `DEAD_TIME < `MAX_COUNTER) ? 1 :
-                    0;
+assign pwm_high =      (high_z) ? 0 :
+                (counter + `DEAD_TIME < duty_cycle*`DUTY_CYCLE_STEP_RES) ? 1 :
+                0;
+assign pwm_low   =     (high_z) ? 0 :
+                (duty_cycle == 0) ? 1 :
+                (counter >= duty_cycle*`DUTY_CYCLE_STEP_RES && 
+                    counter + `DEAD_TIME < `MAX_COUNTER) ? 1 :
+                0;
 
 always @(posedge clock)
 begin

@@ -1,6 +1,6 @@
 
 `include "Phase_Driver.vh"
-`include "robocup.v"
+`include "Motor_Driver.v"
 
 
 module Motor_Driver_tb;
@@ -15,16 +15,17 @@ initial
 reg clock;
 reg [2:0] h;
 reg [`DUTY_CYCLE_WIDTH - 1 : 0] duty_cycle;
-
+reg dir = 0;
+wire fault;
 
 wire [2:0] phaseH , phaseL ;
 
 
-robocup motorDriver (clock, h, duty_cycle, phaseH , phaseL );
+Motor_Driver motorDriver (clock, h, duty_cycle, dir, phaseH , phaseL, fault );
 
 initial begin
 	h = 3'b000;
-	duty_cycle = 8'h80; //dutycycle
+	duty_cycle = 10'b1100000000; //dutycycle
 	clock = 0;
 
 end
