@@ -79,7 +79,7 @@ namespace Planning {
 	}
 
 	bool InterpolatedPath::hit(const Geometry2d::CompositeShape &obstacles, float startTime) const {
-		int start = 0;
+		size_t start = 0;
 		for (float t: times) {
 			start++;
 			if (t > startTime) {
@@ -93,16 +93,15 @@ namespace Planning {
 			return false;
 		}
 
-		//This code disreguards obstacles if which we start in. This the robot to move out a obstacle if it is already in one.
-		// The set of obstacles the starting point was inside of
+		//This code disregards obstacles which the robot starts in. This allows the robot to move out a obstacle if it is already in one.
 		std::set<std::shared_ptr<Geometry2d::Shape>> startHitSet;
 		obstacles.hit(points[start], startHitSet);
 
-		for (size_t i = 0; i < points.size() - 1; i++) {
+		for (size_t i = start; i < points.size() - 1; i++) {
 			std::set<std::shared_ptr<Geometry2d::Shape>> newHitSet;
 			if (obstacles.hit(Geometry2d::Segment(points[i], points[i+1]), newHitSet)) {
 				for (std::shared_ptr<Geometry2d::Shape> hit : newHitSet) {
-					//If it hits something, check if the hit was in hte origional hitSet
+					//If it hits something, check if the hit was in the origional hitSet
 					if (startHitSet.find(hit) == startHitSet.end()) {
 						return true;
 					}
