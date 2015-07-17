@@ -7,7 +7,6 @@ import skills.move
 import skills.capture
 import enum
 import tactics.coordinated_pass
-import evaluation.shot
 
 class TwoSideAttack(play.Play):
 	# Try to pass to the better target
@@ -77,8 +76,9 @@ class TwoSideAttack(play.Play):
 
 	def on_enter_passing(self):
 		# Do shot evaluation here
-		rob_0_chance = evaluation.shot.eval_shot(self.robot_points[0], windowing_excludes=self.to_exclude)
-		rob_1_chance = evaluation.shot.eval_shot(self.robot_points[1], windowing_excludes=self.to_exclude)
+		# TODO replace shot calls with WindowEvaluator calls
+		rob_0_chance = 0 #evaluation.shot.eval_shot(self.robot_points[0], windowing_excludes=self.to_exclude)
+		rob_1_chance = 0 #evaluation.shot.eval_shot(self.robot_points[1], windowing_excludes=self.to_exclude)
 
 		if rob_0_chance[0] > rob_1_chance[0]:
 			robot_pos = 0

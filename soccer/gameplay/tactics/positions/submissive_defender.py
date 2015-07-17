@@ -3,7 +3,6 @@ import behavior
 import skills.move
 import constants
 import robocup
-import evaluation.window_evaluator
 import main
 from enum import Enum
 import math

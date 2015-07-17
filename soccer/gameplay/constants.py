@@ -31,8 +31,8 @@ class Ball:
     
 
 class Field:
-    Length = 6.05
-    Width = 4.05
+    Length = 8.09
+    Width = 6.05
     Border = 0.25
 
     LineWidth = 0.01
