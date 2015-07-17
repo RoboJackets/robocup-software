@@ -30,10 +30,11 @@ namespace Planning
 		 * Returns true if the path hits an obstacle
 		 *
 		 * @param[in]	shape The obstacles on the field
+		 * @param[out]  hitTime the approximate time when the path hits an obstacle. If no obstacles are hit, behavior is undefined for the final value.
 		 * @param[in] 	startTime The time on the path to start checking from
 		 * @return 		true if it hits an obstacle, otherwise false
 		 */
-		virtual bool hit(const Geometry2d::CompositeShape &shape, float startTime = 0) const=0;
+		virtual bool hit(const Geometry2d::CompositeShape &shape, float &hitTime, float startTime) const=0;
 
 		/**
 		 * Draws the path

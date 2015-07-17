@@ -542,8 +542,8 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		}
 
 
-
-		if (_path->hit(full_obstacles, timeIntoPath)) {
+		float hitTime=0;
+		if (_path->hit(full_obstacles, hitTime, timeIntoPath)) {
 			_pathInvalidated = true;
 			addText("Hit Obstacle", Qt::red, "Motion");
 		}

@@ -37,7 +37,7 @@ namespace Planning
 		void append(std::unique_ptr<Path> path);
 
 		virtual bool evaluate(float t, MotionInstant &targetMotionInstant) const override;
-		virtual bool hit(const Geometry2d::CompositeShape &shape, float startTime = 0) const override;
+		virtual bool hit(const Geometry2d::CompositeShape &shape, float &hitTime, float startTime = 0) const override;
 		virtual void draw(SystemState * const state, const QColor &color = Qt::black, const QString &layer = "Motion") const override;
 		virtual float getDuration() const override;
 		virtual std::unique_ptr<Path> subPath(float startTime = 0, float endTime = std::numeric_limits<float>::infinity()) const override;

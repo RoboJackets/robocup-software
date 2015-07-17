@@ -104,6 +104,7 @@ namespace Planning {
 				for (std::shared_ptr<Geometry2d::Shape> hit : newHitSet) {
 					//If it hits something, check if the hit was in hte origional hitSet
 					if (startHitSet.find(hit) == startHitSet.end()) {
+						hitTime = times[i];
 						return true;
 					}
 				}
