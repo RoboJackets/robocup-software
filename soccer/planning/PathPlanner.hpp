@@ -16,6 +16,7 @@ namespace Planning
 		 */
 		virtual std::unique_ptr<Path> run(
 				MotionInstant startInstant,
+				MotionInstant endInstant,
 				const MotionConstraints &motionConstraints,
 				const Geometry2d::CompositeShape *obstacles)=0;
 

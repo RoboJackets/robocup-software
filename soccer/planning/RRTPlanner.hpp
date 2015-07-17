@@ -6,9 +6,12 @@
 #include <Geometry2d/CompositeShape.hpp>
 #include <planning/InterpolatedPath.hpp>
 #include "planning/MotionConstraints.hpp"
+#include "planning/MotionCommand.hpp"
 #include "PathPlanner.hpp"
 
 #include "Tree.hpp"
+
+
 
 namespace Planning
 {
@@ -45,6 +48,7 @@ namespace Planning
 			///this will always populate path to be the path we need to travel
 			std::unique_ptr<Path> run(
 					MotionInstant startInstant,
+					MotionInstant motionCommand,
 					const MotionConstraints &motionConstraints,
 					const Geometry2d::CompositeShape* obstacles) override;
 

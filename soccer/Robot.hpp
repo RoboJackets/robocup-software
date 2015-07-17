@@ -15,6 +15,7 @@
 #include <planning/InterpolatedPath.hpp>
 #include <planning/RRTPlanner.hpp>
 #include "planning/MotionConstraints.hpp"
+#include "planning/MotionCommand.hpp"
 
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
@@ -195,7 +196,7 @@ public:
 	 * @brief Move to a given point using the default RRT planner
 	 * @param endSpeed - the speed we should be going when we reach the end of the path
 	 */
-	void move(const Geometry2d::Point &goal, float endSpeed = 0);
+	void move(const Geometry2d::Point &goal, Geometry2d::Point endVelocity = Geometry2d::Point());
 
 	Time pathStartTime() const {
 		return _pathStartTime;
@@ -398,6 +399,10 @@ public:
 		return _radioRx;
 	}
 
+	const Planning::MotionCommand motionCommand() const {
+		return _motionCommand;
+	}
+
 	MotionControl *motionControl() const
 	{
 		return _motionControl;
@@ -438,6 +443,7 @@ protected:
 	RobotMask _self_avoid_mask, _opp_avoid_mask;  /// masks for obstacle avoidance
 	float _avoidBallRadius; /// radius of ball obstacle
 
+	Planning::MotionCommand _motionCommand;
 	MotionConstraints _motionConstraints;
 
 	std::shared_ptr<Planning::PathPlanner> _planner;	/// single-robot RRT planner
