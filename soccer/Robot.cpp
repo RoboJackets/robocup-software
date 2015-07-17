@@ -527,7 +527,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	full_obstacles.add(opp_obs);
 	full_obstacles.add(global_obstacles);
 
-	Geometry2d::Point dest = _motionCommand.getPlanningTarget().pos;
+	Planning::MotionInstant commandDestination = _motionCommand.getPlanningTarget();
 
 	// //	if this number of microseconds passes since our last path plan, we automatically replan
 	const Time kPathExpirationInterval = 10 * SecsToTimestamp;
@@ -566,10 +566,9 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 
 		//	if the destination of the current path is greater than X m away from the target destination,
-		//	we invalidate the path.  this situation could arise if during a previous planning, the target point
-		//	was blocked by an obstacle
-		//  TODO: This is Stupid. This should be fixed in the RRT planner or the Bezier Algorithm.
-		if (_path->destination() && (_path->destination()->pos - dest).mag() > 0.025) {
+		//	we invalidate the path.  this situation could arise if the path destination changed
+		if ((_path->destination()->pos - commandDestination.pos).mag() > 0.025 ||
+				(_path->destination()->vel - commandDestination.vel).mag() > 0.025) {
 			_pathInvalidated = true;
 		}
 	}
