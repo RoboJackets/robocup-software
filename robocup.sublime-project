@@ -13,7 +13,8 @@
                 "firmware/external",
                 "api_docs",
                 "__pycache__",
-                "soccer/gameplay/cpp-old"
+                "soccer/gameplay/cpp-old",
+                "third_party"
             ],
             "file_exclude_patterns": [
                 ".*"
