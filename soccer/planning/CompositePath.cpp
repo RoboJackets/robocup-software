@@ -45,33 +45,44 @@ namespace Planning
 		return false;
 	}
 
-	bool CompositePath::hit(const CompositeShape &shape, float startTime) const
+	bool CompositePath::hit(const CompositeShape &shape, float &hitTime, float startTime) const
 	{
 		if (paths.empty()) {
 			return false;
 		}
 		int start = 0;
+		float totalTime = 0;
 		for (const std::unique_ptr<Path> &path: paths)
 		{
 			start++;
 			float timeLength = path->getDuration();
-			if (timeLength == -1) {
-				return path->hit(shape, startTime);
+			if (timeLength == std::numeric_limits<float>::infinity()) {
+				if (path->hit(shape, hitTime, startTime)) {
+					hitTime += totalTime;
+					return true;
+				} else {
+					return false;
+				}
 			}
 			startTime -= timeLength;
 			if (startTime<=0) {
 				startTime += timeLength;
-				if (path->hit(shape, startTime)) {
+				if (path->hit(shape, hitTime, startTime)) {
+					hitTime += totalTime;
 					return true;
 				}
+				totalTime += timeLength;
 				break;
 			}
+			totalTime += timeLength;
 		}
 
 		for (;start<paths.size(); start++) {
-			if (paths[start]->hit(shape)) {
+			if (paths[start]->hit(shape, hitTime, 0)) {
+				hitTime += totalTime;
 				return true;
 			}
+			totalTime += paths[start]->getDuration();
 		}
 		return false;
 	}
