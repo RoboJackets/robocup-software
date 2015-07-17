@@ -4,17 +4,15 @@
 The Georgia Tech RoboJackets team competes in the annual RoboCup Small Size League (SSL) competition.  This repository contains all of the software that we run on the main field laptop and on our robots.  More information on how our software works can be found on our [documentation page](http://robojackets.github.io/robocup-software/), our [wiki](http://wiki.robojackets.org/w/RoboCup_Software) or on our [website](http://www.robojackets.org/).
 Also, check out our [2014 qualification video](https://www.youtube.com/watch?v=H3F9HexPLT0) to see our robots in action!
 
+Here is a screenshot of our 'soccer' program:
 ![Screenshot of the 'soccer' program](doc/images/soccer.png "Soccer")
 
 
 ## The Competition
 
-The official [RoboCup site](http://robocupssl.cpe.ku.ac.th/) has more information on the competition.
-
-
-### The Basics
-
 The soccer game is played between two teams of six robots each on a field with overhead cameras.  The field vision computer processes images from the cameras and sends out (x,y) coordinates of the ball and the robots.  Each team has a laptop that accepts the data from the vision computer and uses it to strategize, then send commands to robots on the field.
+
+The official [RoboCup site](http://robocupssl.cpe.ku.ac.th/) has more information on the competition.
 
 
 ## Project Layout
@@ -85,3 +83,8 @@ Note: The doxygen documentation site above is updated automacally using travis-c
 
 ## Testing
 We use [gtest](https://code.google.com/p/googletest/) for unit-testing our software, which can be run by running `make tests`.  To add a test to be run with the rest of the bunch, add a new file in soccer/tests.
+
+## License
+
+This project is licensed under the Apache License v2.0.  See the [LICENSE](LICENSE) file for more information.
+

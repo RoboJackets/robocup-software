@@ -25,9 +25,55 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 {
 	_state = state;
 
+	calculateFieldObstacles();
+
+	_goalieID = -1;
+
+
+
+	//
+	//	setup python interpreter
+	//
+	try {
+        cout << "Initializing embedded python interpreter..." << endl;
+        
+        //  this tells python how to load the robocup module
+        //  it has to be done before Py_Initialize()
+        PyImport_AppendInittab("robocup", &PyInit_robocup);
+
+
+        //	we use Py_InitializeEx(0) instead of regular Py_Initialize() so that Ctrl-C kills soccer as expected
+        Py_InitializeEx(0);
+        PyEval_InitThreads(); {
+	        object main_module((handle<>(borrowed(PyImport_AddModule("__main__")))));
+	        _mainPyNamespace = main_module.attr("__dict__");
+
+	        object robocup_module((handle<>(PyImport_ImportModule("robocup"))));
+	        _mainPyNamespace["robocup"] = robocup_module;
+
+	        //	add gameplay directory to python import path (so import XXX) will look in the right directory
+	        handle<>ignored2((PyRun_String("import sys; sys.path.append('../soccer/gameplay')",
+	            Py_file_input,
+	            _mainPyNamespace.ptr(),
+	            _mainPyNamespace.ptr())));
+
+
+	        //	instantiate the root play
+	        handle<>ignored3((PyRun_String("import main; main.init()",
+	            Py_file_input,
+	            _mainPyNamespace.ptr(),
+	            _mainPyNamespace.ptr())));
+        } PyEval_SaveThread();
+    } catch (error_already_set) {
+        PyErr_Print();
+        throw new runtime_error("Unable to initialize embedded python interpreter");
+    } 
+}
+
+void Gameplay::GameplayModule::calculateFieldObstacles() {
 	_centerMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Dimensions::Current_Dimensions.Length() / 2));
 	_oppMatrix = Geometry2d::TransformMatrix::translate(Geometry2d::Point(0, Field_Dimensions::Current_Dimensions.Length())) *
-				Geometry2d::TransformMatrix::rotate(M_PI);
+							 Geometry2d::TransformMatrix::rotate(M_PI);
 
 	//// Make an obstacle to cover the opponent's half of the field except for one robot diameter across the center line.
 	Polygon *sidePolygon = new Polygon;
@@ -77,7 +123,7 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	floorObstacle->vertices.push_back(Geometry2d::Point(x, y));
 	_nonFloor[3] = std::shared_ptr<Shape>(floorObstacle);
 
-  auto ourGoalArea = std::make_shared<Polygon>();
+	auto ourGoalArea = std::make_shared<Polygon>();
 	const float halfFlat = Field_Dimensions::Current_Dimensions.GoalFlat() /2.0;
 	const float radius = Field_Dimensions::Current_Dimensions.ArcRadius();
 	ourGoalArea->vertices.push_back(Geometry2d::Point(-halfFlat, 0));
@@ -109,48 +155,6 @@ Gameplay::GameplayModule::GameplayModule(SystemState *state):
 	_opponentHalf->vertices.push_back(Geometry2d::Point(-x, y2));
 	_opponentHalf->vertices.push_back(Geometry2d::Point(x, y2));
 	_opponentHalf->vertices.push_back(Geometry2d::Point(x, y1));
-
-	_goalieID = -1;
-
-
-
-	//
-	//	setup python interpreter
-	//
-	try {
-        cout << "Initializing embedded python interpreter..." << endl;
-        
-        //  this tells python how to load the robocup module
-        //  it has to be done before Py_Initialize()
-        PyImport_AppendInittab("robocup", &PyInit_robocup);
-
-
-        //	we use Py_InitializeEx(0) instead of regular Py_Initialize() so that Ctrl-C kills soccer as expected
-        Py_InitializeEx(0);
-        PyEval_InitThreads(); {
-	        object main_module((handle<>(borrowed(PyImport_AddModule("__main__")))));
-	        _mainPyNamespace = main_module.attr("__dict__");
-
-	        object robocup_module((handle<>(PyImport_ImportModule("robocup"))));
-	        _mainPyNamespace["robocup"] = robocup_module;
-
-	        //	add gameplay directory to python import path (so import XXX) will look in the right directory
-	        handle<>ignored2((PyRun_String("import sys; sys.path.append('../soccer/gameplay')",
-	            Py_file_input,
-	            _mainPyNamespace.ptr(),
-	            _mainPyNamespace.ptr())));
-
-
-	        //	instantiate the root play
-	        handle<>ignored3((PyRun_String("import main; main.init()",
-	            Py_file_input,
-	            _mainPyNamespace.ptr(),
-	            _mainPyNamespace.ptr())));
-        } PyEval_SaveThread();
-    } catch (error_already_set) {
-        PyErr_Print();
-        throw new runtime_error("Unable to initialize embedded python interpreter");
-    } 
 }
 
 Gameplay::GameplayModule::~GameplayModule() {
@@ -173,6 +177,29 @@ void Gameplay::GameplayModule::setupUI() {
 	} PyGILState_Release(state);
 }
 
+void Gameplay::GameplayModule::loadPlaybook(const string &playbookFile, bool isAbsolute) {
+	PyGILState_STATE state = PyGILState_Ensure();
+	try {
+		getMainModule().attr("load_playbook")(playbookFile, isAbsolute);
+	} catch (error_already_set) {
+		PyErr_Print();
+		PyGILState_Release(state);
+		throw new runtime_error("Error trying to load playbook.");
+	}
+	PyGILState_Release(state);
+}
+
+void Gameplay::GameplayModule::savePlaybook(const string &playbookFile, bool isAbsolute) {
+	PyGILState_STATE state = PyGILState_Ensure();
+	try {
+		getMainModule().attr("save_playbook")(playbookFile, isAbsolute);
+	} catch (error_already_set) {
+		PyErr_Print();
+		PyGILState_Release(state);
+		throw new runtime_error("Error trying to save playbook.");
+	}
+	PyGILState_Release(state);
+}
 
 void Gameplay::GameplayModule::goalieID(int value)
 {

@@ -50,6 +50,20 @@ namespace Gameplay
 			
 			void setupUI();
 
+			/**
+			 * @brief Loads a playbook file to enable specified plays.
+			 * If isAbsolute is false, the path is treated as relative to the
+			 * playbooks directory. Otherwise, it is treated as an absolute path.
+			 */
+			void loadPlaybook(const std::string &playbookFile, bool isAbsolute = false);
+
+			/**
+			 * @brief Saves the currently enabled plays to a playbook file
+			 * If isAbsolute is false, the path is treated as relative to the
+			 * playbooks directory. Otherwise, it is treated as an absolute path.
+			 */
+			void savePlaybook(const std::string &playbookFile, bool isAbsolute = false);
+
 			void goalieID(int value);
 			int goalieID()
 			{
@@ -101,6 +115,8 @@ namespace Gameplay
 			}
 
 			void sendFieldDimensionsToPython();
+
+			void calculateFieldObstacles();
 
 
 		protected:

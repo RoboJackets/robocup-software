@@ -1,168 +1,83 @@
+#include <stdio.h>
 #include "robot.hpp"
 #include "console.hpp"
 #include "commands.hpp"
 
 using namespace std;
 
-/**
- * max buffer length. Default 252 (three lines)
- */
-const uint8_t BUFFER_LENGTH = 252;
+const string Console::CONSOLE_HEADER = "> ";
 
-/**
- * new line character. Default '\r'
- */
-const char NEW_LINE_CHAR = 13;  //ASCII CR (\r) (0x0D)
+const string Console::RX_BUFFER_FULL_MSG = "RX BUFFER FULL";
 
-/**
- * backspace flag char. (What char does the console send when the backspace key
- * is pressed?). Default DEL
- */
-const char BACKSPACE_FLAG_CHAR = 127; //ASCII DEL (0x7F)
+const string Console::COMMAND_BREAK_MSG = "*BREAK*";
 
-/**
- * backspace reply char. (What char causes screen to delete the last 
- * character?). Default '\b'
- */
-const char BACKSPACE_REPLY_CHAR = 8;   //ASCII BK (\b) (0x08)
+shared_ptr<Console> Console::instance;
 
-/**
- * when the console backspaces, what does the last character become. Default ' '
- */
-const char BACKSPACE_REPLACE_CHAR = 32;
+Console::Console() : pc(USBTX, USBRX) { }
 
-/**
- * default ETX (0x3)
- */
-const char BREAK_CHAR = 3;
+shared_ptr<Console>& Console::Instance()
+{
+	if(instance.get() == nullptr)
+		instance.reset(new Console);
+	return instance;
+}
 
-/**
- * define the sequence for arrow key flags
- */
-const char ARROW_KEY_SEQUENCE_ONE = 27;
-const char ARROW_KEY_SEQUENCE_TWO = 91;
+void Console::Init()
+{
+	auto instance = Instance();
 
-/**
- * arrow up value, following arrow key flag
- */
-const char ARROW_UP_KEY = 65;
+	Flush();
+	printf(ENABLE_SCROLL_SEQ.c_str());
+	printf(CLEAR_SCREEN_SEQ.c_str());
+	Flush();
 
-/**
- * arrow down value, following arrow key flag
- */
-const char ARROW_DOWN_KEY = 66;
+	//clear buffers
+	instance->ClearRXBuffer();
+	instance->ClearTXBuffer();
 
-/**
- * console header string.
- */
-const string CONSOLE_HEADER = "> ";
+	//set baud rate
 
-/**
- * receice buffer full error message
- */
-const string RX_BUFFER_FULL_MSG = "RX BUFFER FULL";
+	instance->pc.baud(BAUD_RATE);
+	//attach interrupt handlers
+	instance->pc.attach(instance.get(), &Console::RXCallback, Serial::RxIrq);
+	instance->pc.attach(instance.get(), &Console::TXCallback, Serial::TxIrq);
 
-/**
- * break message
- */
-const string COMMAND_BREAK_MSG = "*BREAK*";
+	//print OK.
+	instance->pc.printf("OK.\r\n");
+	Flush();
 
-/**
- * Serial (over USB) baud rate. Default 9600. Screen default 9600
- */
-const uint16_t BAUD_RATE = 9600;
+	//reset indicces
+	instance->rxIndex = 0;
+	instance->txIndex = 0;
 
-/**
- * is a system stop requested
- */
-bool sysStopReq = false;
+	//print header
+	instance->pc.printf(CONSOLE_HEADER.c_str());
+	Flush();
+}
 
-/**
- * flags for arrow key sequences. Arroy keys aren't in ASCII so we have to
- * process the the three key sequence
- */
-bool flagOne = false;
-bool flagTwo = false;
-
-/**
- * receive buffer index
- */
-uint8_t rxIndex = 0;
-
-/**
- * transmission buffer index
- */
-uint8_t txIndex = 0;
-
-/**
- * receive buffer
- */
-char rxBuffer[BUFFER_LENGTH];
-
-/**
- * transmission buffer
- */
-char txBuffer[BUFFER_LENGTH];
-
-/**
- * serial connection
- */
-Serial pc(USBTX, USBRX);
-
-/**
- * debug leds
- */
-#if defined(DEBUG)
-DigitalOut ledThree(LED3);
-DigitalOut ledFour(LED4);
-#endif
-
-/**
- * clear recieve buffer
- */
-void clearRXBuffer(void)
+void Console::ClearRXBuffer()
 {
 	memset(rxBuffer, '\0', BUFFER_LENGTH);
 }
 
-/**
- * clear transmission buffer
- */
-void clearTXBuffer(void)
+void Console::ClearTXBuffer()
 {
 	memset(txBuffer, '\0', BUFFER_LENGTH);
 }
 
-/**
- * flushes stdout. Should be called after every putc or printf block.
- */
-#if defined(_cplusplus)
-extern "C"
-#endif
-void flush(void)
+void Console::Flush()
 {
 	fflush(stdout);
 }
 
-/**
- * Serial (over USB) receive interrupt handler.
- */
-#if defined(_cplusplus)
-extern "C"
-#endif
-void rx(void)
+void Console::RXCallback()
 {
-	//flash receive led
-	#if defined(DEBUG)
-	ledThree = !ledThree;
-	#endif
-
 	//if for some reason more than one character is in the buffer when the
 	//interrupt is called, handle them all.
 	while (pc.readable())
 	{
 		//read the char that caused the interrupt
-		char c = pc.getc();		
+		char c = pc.getc();
 
 		//clear flags if the sequence is broken
 		if (flagOne && !flagTwo && c != ARROW_KEY_SEQUENCE_TWO)
@@ -183,20 +98,15 @@ void rx(void)
 		if (rxIndex >= BUFFER_LENGTH - 1 && c != BACKSPACE_FLAG_CHAR)
 		{
 			pc.printf("%s\r\n", RX_BUFFER_FULL_MSG.c_str());
-			flush();
+			Flush();
 		}
- 		//if a new line character is sent, process the current buffer
+			//if a new line character is sent, process the current buffer
 		else if (c == NEW_LINE_CHAR)
 		{
 			//print command prior to executing
 			pc.printf("\r\n");
-			flush();
+			Flush();
 			rxBuffer[rxIndex] = '\0';
-
-			#if not defined(DISABLE_CMD_FEEDBACK)
-			pc.printf("%s\r\n", rxBuffer);
-			flush();
-			#endif
 
 			//execute rx buffer as command line
 			NVIC_DisableIRQ(UART0_IRQn);
@@ -206,9 +116,9 @@ void rx(void)
 			//clean up after command execution
 			rxIndex = 0;
 			pc.printf(CONSOLE_HEADER.c_str());
-			flush();
+			Flush();
 		}
-		//if a backspace is requested, handle it.
+			//if a backspace is requested, handle it.
 		else if (c == BACKSPACE_FLAG_CHAR && rxIndex > 0)
 		{
 			//re-terminate the string
@@ -219,9 +129,9 @@ void rx(void)
 			pc.putc(BACKSPACE_REPLY_CHAR);
 			pc.putc(BACKSPACE_REPLACE_CHAR);
 			pc.putc(BACKSPACE_REPLY_CHAR);
-			flush();
+			Flush();
 		}
-		//if a break is requested, cancel iterative commands
+			//if a break is requested, cancel iterative commands
 		else if (c == BREAK_CHAR)
 		{
 			if (isExecutingIterativeCommand())
@@ -229,20 +139,20 @@ void rx(void)
 				cancelIterativeCommand();
 				pc.printf("%s\r\n", COMMAND_BREAK_MSG.c_str());
 				pc.printf(CONSOLE_HEADER.c_str());
-				flush();
+				Flush();
 			}
 		}
-		//flag the start of an arrow key sequence
+			//flag the start of an arrow key sequence
 		else if (c == ARROW_KEY_SEQUENCE_ONE)
 		{
 			flagOne = true;
 		}
-		//continue arrow sequence
+			//continue arrow sequence
 		else if (flagOne && c == ARROW_KEY_SEQUENCE_TWO)
 		{
 			flagTwo = true;
 		}
-		//process arrow key sequence
+			//process arrow key sequence
 		else if (flagOne && flagTwo)
 		{
 			//process keys
@@ -254,77 +164,30 @@ void rx(void)
 			{
 				printf("\033D");
 			}
-			flush();
-	
+			Flush();
+
 			flagOne = false;
 			flagTwo = false;
 		}
- 		//no special character, add it to the buffer and return it to
-		//to the terminal to be visible
+			//no special character, add it to the buffer and return it to
+			//to the terminal to be visible
 		else
 		{
 			rxBuffer[rxIndex++] = c;
 			pc.putc(c);
-			flush();
+			Flush();
 		}
-	}	
+	}
 }
 
-/**
- * Serial (over USB) transmission interrupt.
- */
-#if defined(_cplusplus)
-extern "C"
-#endif
-void tx(void)
+void Console::TXCallback()
 {
-	#if defined(DEBUG)
-	ledFour = !ledFour;
-	#endif
-
 	NVIC_DisableIRQ(UART0_IRQn);
 	//handle transmission interrupts if necessary here
 	NVIC_EnableIRQ(UART0_IRQn);
 }
 
-/**
- * Console initialization routine. Attaches interrupt handlers and clears the 
- * buffers.
- */
-void initConsole(void)
-{
-	flush();
-	printf(ENABLE_SCROLL_SEQ.c_str());
-	printf(CLEAR_SCREEN_SEQ.c_str());
-	flush();
-
-	//clear buffers
-	clearRXBuffer();
-	clearTXBuffer();
-	
-	//set baud rate
-	pc.baud(BAUD_RATE);
-	//attach interrupt handlers
-	pc.attach(&rx, Serial::RxIrq);
-	pc.attach(&tx, Serial::TxIrq);
-
-	//print OK.
-	pc.printf("OK.\r\n");
-	flush();
-
-	//reset indicces
-	rxIndex = 0;
-	txIndex = 0;
-
-	//print header
-	pc.printf(CONSOLE_HEADER.c_str());
-	flush();
-}
-
-/**
- * console communications check. should be called in the main loop.
- */
-void conComCheck(void)
+void Console::ConComCheck(void)
 {
 	/*
 	 * Currently no way to check if a vbus has been disconnected or
@@ -338,19 +201,12 @@ void conComCheck(void)
 	return;		
 }
 
-/**
- * requests the main loop break
- */
-void reqSysStop(void)
+void Console::RequestSystemStop()
 {
-	sysStopReq = true;
+		Instance()->sysStopReq = true;
 }
 
-/**
- * returns if the main loop should break
- */
-bool isSysStopReq(void)
+bool Console::IsSystemStopRequested()
 {
-	return sysStopReq;
+	return Instance()->sysStopReq;
 }
-

@@ -5,8 +5,6 @@
 
 using namespace std;
 
-static const float PI = 3.14159265;
-
 
 Field::Field(Environment* env) :
 	Entity(env),_indexVertexArrays(0),_vertices(0),_simEngine(env->getSimEngine()),_x(0),_y(0)
@@ -190,7 +188,7 @@ void Field::renderField() {
 	float lineHeight = 0.002*scaling;
 	//Center circle
 	glColor4f (1.0, 1.0, 1.0, 1.0);
-	renderArc(_x,_y,0,PI*2,lineHeight,Field_Dimensions::Current_Dimensions.CenterRadius(),Field_Dimensions::Current_Dimensions.LineWidth(),360);
+	renderArc(_x,_y,0,M_PI*2,lineHeight,Field_Dimensions::Current_Dimensions.CenterRadius(),Field_Dimensions::Current_Dimensions.LineWidth(),360);
 
 	//Field Boundary Lines
 	renderVerticalLine(_x+Field_Dimensions::Current_Dimensions.Width()/2.f, _y+Field_Dimensions::Current_Dimensions.Length()/2.f, _x+Field_Dimensions::Current_Dimensions.Width()/2.f, _y-Field_Dimensions::Current_Dimensions.Length()/2.f, lineHeight, Field_Dimensions::Current_Dimensions.LineWidth());
@@ -202,12 +200,12 @@ void Field::renderField() {
 	renderHorizontalLine(_x+Field_Dimensions::Current_Dimensions.Width()/2.f,_y,_x-Field_Dimensions::Current_Dimensions.Width()/2.f,_y,lineHeight,Field_Dimensions::Current_Dimensions.LineWidth());
 
 	//Goal Arc //0 radians is in the Z direction (forward)
-	renderArc(_x-(Field_Dimensions::Current_Dimensions.GoalFlat()/2.f),_y-Field_Dimensions::Current_Dimensions.Length()/2.f,PI*3/2.f,PI*2.f,lineHeight,Field_Dimensions::Current_Dimensions.ArcRadius(),Field_Dimensions::Current_Dimensions.LineWidth()*2,90);
-	renderArc(_x+(Field_Dimensions::Current_Dimensions.GoalFlat()/2.f),_y-Field_Dimensions::Current_Dimensions.Length()/2.f,0,PI/2.f,lineHeight,Field_Dimensions::Current_Dimensions.ArcRadius(),Field_Dimensions::Current_Dimensions.LineWidth()*2,90);
+	renderArc(_x-(Field_Dimensions::Current_Dimensions.GoalFlat()/2.f),_y-Field_Dimensions::Current_Dimensions.Length()/2.f,M_PI*3/2.f,M_PI*2.f,lineHeight,Field_Dimensions::Current_Dimensions.ArcRadius(),Field_Dimensions::Current_Dimensions.LineWidth()*2,90);
+	renderArc(_x+(Field_Dimensions::Current_Dimensions.GoalFlat()/2.f),_y-Field_Dimensions::Current_Dimensions.Length()/2.f,0,M_PI/2.f,lineHeight,Field_Dimensions::Current_Dimensions.ArcRadius(),Field_Dimensions::Current_Dimensions.LineWidth()*2,90);
 	renderHorizontalLine(_x-Field_Dimensions::Current_Dimensions.GoalFlat()/2.f,_y-Field_Dimensions::Current_Dimensions.Length()/2.f+Field_Dimensions::Current_Dimensions.ArcRadius(),_x+Field_Dimensions::Current_Dimensions.GoalFlat()/2.f,_y-Field_Dimensions::Current_Dimensions.Length()/2.f+Field_Dimensions::Current_Dimensions.ArcRadius(),lineHeight, Field_Dimensions::Current_Dimensions.LineWidth());
 
-	renderArc(_x-(Field_Dimensions::Current_Dimensions.GoalFlat()/2.f),_y+Field_Dimensions::Current_Dimensions.Length()/2.f,PI,PI*3/2.f,lineHeight,Field_Dimensions::Current_Dimensions.ArcRadius(),Field_Dimensions::Current_Dimensions.LineWidth()*2,90);
-	renderArc(_x+(Field_Dimensions::Current_Dimensions.GoalFlat()/2.f),_y+Field_Dimensions::Current_Dimensions.Length()/2.f,PI/2.f,PI,lineHeight,Field_Dimensions::Current_Dimensions.ArcRadius(),Field_Dimensions::Current_Dimensions.LineWidth()*2,90);
+	renderArc(_x-(Field_Dimensions::Current_Dimensions.GoalFlat()/2.f),_y+Field_Dimensions::Current_Dimensions.Length()/2.f,M_PI,M_PI*3/2.f,lineHeight,Field_Dimensions::Current_Dimensions.ArcRadius(),Field_Dimensions::Current_Dimensions.LineWidth()*2,90);
+	renderArc(_x+(Field_Dimensions::Current_Dimensions.GoalFlat()/2.f),_y+Field_Dimensions::Current_Dimensions.Length()/2.f,M_PI/2.f,M_PI,lineHeight,Field_Dimensions::Current_Dimensions.ArcRadius(),Field_Dimensions::Current_Dimensions.LineWidth()*2,90);
 	renderHorizontalLine(_x-Field_Dimensions::Current_Dimensions.GoalFlat()/2.f,_y+Field_Dimensions::Current_Dimensions.Length()/2.f-Field_Dimensions::Current_Dimensions.ArcRadius(),_x+Field_Dimensions::Current_Dimensions.GoalFlat()/2.f,_y+Field_Dimensions::Current_Dimensions.Length()/2.f-Field_Dimensions::Current_Dimensions.ArcRadius(),lineHeight, Field_Dimensions::Current_Dimensions.LineWidth());
 
 	//Goal Area

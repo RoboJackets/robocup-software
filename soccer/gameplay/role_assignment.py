@@ -1,6 +1,7 @@
 import munkres
 import evaluation.double_touch
 import robocup
+import logging
 
 
 # TODO arbitrary cost lambda property
@@ -20,16 +21,16 @@ class RoleRequirements:
 
     def __str__(self):
         props = []
-        props += "has_ball=" + str(self.has_ball)
+        props.append("has_ball=" + str(self.has_ball))
         if self.destination_shape != None:
-            props += "pos=" + str(self.destination_shape)
-        props += "chip_pref=" + str(self.chipper_preference_weight)
+            props.append("pos=" + str(self.destination_shape))
+        props.append("chip_pref=" + str(self.chipper_preference_weight))
         if self.required_shell_id != None:
-            props += "required_id=" + str(self.required_shell_id)
+            props.append("required_id=" + str(self.required_shell_id))
         if self.previous_shell_id != None:
-            props += "prev_id=" + str(self.previous_shell_id)
-        props += "required=" + str(self.required)
-        props += "can_kick=" + str(self.require_kicking)
+            props.append("prev_id=" + str(self.previous_shell_id))
+        props.append("required=" + str(self.required))
+        props.append("can_kick=" + str(self.require_kicking))
 
         return "; ".join(props)
 
@@ -184,10 +185,19 @@ def assign_roles(robots, role_reqs):
     required_roles = [r for r in role_reqs_list if r.required]
     optional_roles = sorted([r for r in role_reqs_list if not r.required], reverse=True, key=lambda r: r.priority)
 
+
+    # logs the assignment parameters and raises an ImpossibleAssignmentError
+    def fail(errStr):
+        botsDesc = 'Robots:\n\t' + '\n\t'.join([str(bot) for bot in robots])
+        rolesDesc = 'Roles:\n\t' + '\n\t'.join([str(role) for role in role_reqs_list])
+        logging.error('Failed Assignment:\n' + botsDesc + '\n' + rolesDesc)
+        raise ImpossibleAssignmentError("No assignments possible that satisfy all constraints")
+
+
     # make sure there's enough robots
     unassigned_role_requirements = []   # roles that won't be assigned because there aren't enough bots
     if len(required_roles) > len(robots):
-        raise ImpossibleAssignmentError("More required roles than available robots")
+        fail("More required roles than available robots")
     elif len(role_reqs_list) > len(robots):
         # remove the lowest priority optional roles so we have as many bots as roles we're trying to fill
         overflow = len(role_reqs_list) - len(robots)
@@ -260,6 +270,6 @@ def assign_roles(robots, role_reqs):
 
 
     if total > MaxWeight:
-        raise ImpossibleAssignmentError("No assignments possible that satisfy all constraints")
+        fail("No assignments possible that satisfy all constraints")
 
     return results
