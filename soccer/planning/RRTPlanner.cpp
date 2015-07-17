@@ -3,11 +3,12 @@
 #include <stdlib.h>
 #include <iostream>
 #include <algorithm>
-#include <Eigen/Dense>
-#include "RRTPlanner.hpp"
-#include "motion/TrapezoidalMotion.hpp"
 #include <Constants.hpp>
 #include <Utils.hpp>
+#include <Eigen/Dense>
+
+#include "RRTPlanner.hpp"
+#include "motion/TrapezoidalMotion.hpp"
 
 
 using namespace std;
@@ -31,11 +32,12 @@ RRTPlanner::RRTPlanner(int maxIterations): _maxIterations(maxIterations)
 
 std::unique_ptr<Path> RRTPlanner::run(
 		MotionInstant startInstant,
+		MotionInstant endInstant,
 		const MotionConstraints &motionConstraints,
 		const Geometry2d::CompositeShape *obstacles)
 {
 	Planning::InterpolatedPath *path = new Planning::InterpolatedPath();
-	Geometry2d::Point goal = *motionConstraints.targetPos;
+	Geometry2d::Point goal = endInstant.pos;
 	_motionConstraints = motionConstraints;
 	vi = startInstant.vel;
 

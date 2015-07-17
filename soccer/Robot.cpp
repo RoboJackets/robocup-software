@@ -177,7 +177,7 @@ void OurRobot::stop() {
 	*_cmdText << "stop()\n";
 }
 
-void OurRobot::move(const Geometry2d::Point &goal, float endSpeed)
+void OurRobot::move(const Geometry2d::Point &goal, Geometry2d::Point endVelocity)
 {
 	if (!visible)
 		return;
@@ -185,23 +185,18 @@ void OurRobot::move(const Geometry2d::Point &goal, float endSpeed)
 	// sets flags for future movement
 	if (verbose) cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", " << goal.y << ")" << std::endl;
 
-	_motionConstraints.targetPos = goal;
-	_motionConstraints.endSpeed = endSpeed;
+	_motionCommand.setPathTarget(Planning::MotionInstant(goal, endVelocity));
 
 	//	reset conflicting motion commands
 	_motionConstraints.pivotTarget = boost::none;
-	_motionConstraints.targetWorldVel = boost::none;
 
 	*_cmdText << "move(" << goal.x << ", " << goal.y << ")\n";
-	if (endSpeed != 0) {
-		*_cmdText << "setEndSpeed(" << endSpeed << ")\n";
-	}
+	*_cmdText << "endVelocity(" << endVelocity.x << ")\n";
 }
 
 void OurRobot::worldVelocity(const Geometry2d::Point& v)
 {
-	_motionConstraints.targetPos = boost::none;
-	_motionConstraints.targetWorldVel = v;
+	_motionCommand.setWorldVel(v);
 	setPath(NULL);
 	*_cmdText << "worldVel(" << v.x << ", " << v.y << ")\n";
 }
@@ -224,11 +219,9 @@ void OurRobot::pivot(const Geometry2d::Point &pivotTarget) {
 	_motionConstraints.pivotTarget = pivotTarget;
 
 	//	reset other conflicting motion commands
-
-	setPath(NULL);
-	_motionConstraints.targetPos = boost::none;
-	_motionConstraints.targetWorldVel = boost::none;
+	_motionCommand.setWorldVel(Geometry2d::Point());
 	_motionConstraints.faceTarget = boost::none;
+	setPath(NULL);
 
 	*_cmdText << "pivot(" << pivotTarget.x << ", " << pivotTarget.y << ")\n";
 }
@@ -501,9 +494,15 @@ int OurRobot::consecutivePathChangeCount() const {
 }
 
 void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles) {
-	if (_state->gameState.state == GameState::Halt || !_motionConstraints.targetPos) {
+	// if no goal command robot to stop in place
+	if (_state->gameState.state == GameState::Halt) {
 		//	clear our history of path change times
 		_pathChangeHistory.clear();
+		setPath(nullptr);
+		return;
+	}
+
+	if (!_motionCommand.usePathPlanning()) {
 		setPath(nullptr);
 		return;
 	}
@@ -528,19 +527,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	full_obstacles.add(opp_obs);
 	full_obstacles.add(global_obstacles);
 
-	// if no goal command robot to stop in place
-	if (!_motionConstraints.targetPos) {
-		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: stopped" << std::endl;
-		addText(QString("replan: no goal"), Qt::white, "Motion");
-
-		Planning::InterpolatedPath *newPath = new Planning::InterpolatedPath(pos);
-		setPath(unique_ptr<Planning::Path>(newPath));
-		_path->draw(_state);
-		return;
-	}
-
-
-	Geometry2d::Point dest = *_motionConstraints.targetPos;
+	Geometry2d::Point dest = _motionCommand.getPlanningTarget().pos;
 
 	// //	if this number of microseconds passes since our last path plan, we automatically replan
 	const Time kPathExpirationInterval = 10 * SecsToTimestamp;
@@ -592,7 +579,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	if (!_pathInvalidated) {
 		addText("Reusing path", Qt::white, "Planning");
 	} else {
-		std::unique_ptr<Planning::Path> path = _planner->run(Planning::MotionInstant(pos, vel), _motionConstraints, &full_obstacles);
+		std::unique_ptr<Planning::Path> path = _planner->run(Planning::MotionInstant(pos, vel), _motionCommand.getPlanningTarget(), _motionConstraints, &full_obstacles);
 		
 		addText("Replanning", Qt::red, "Planning");
 		// use the newly generated path
