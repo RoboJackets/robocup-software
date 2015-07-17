@@ -14,3 +14,6 @@ yaourt -S --needed --noconfirm $(sed 's/#.*//;/^$/d' $BASE/util/arch-packages-au
 sudo pip install -r $BASE/util/requirements3.txt
 
 sudo pip2 install -r $BASE/util/requirements2.txt
+
+echo "-- Updating submodules"
+git submodule update --init

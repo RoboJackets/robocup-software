@@ -11,6 +11,7 @@
 #include <Constants.hpp>
 #include "MotionConstraints.hpp"
 #include <Utils.hpp>
+#include <planning/CompositePath.hpp>
 #include <planning/InterpolatedPath.hpp>
 #include <planning/RRTPlanner.hpp>
 #include <protobuf/RadioTx.pb.h>
@@ -244,14 +245,26 @@ public:
 
 
 	/**
-	 * enable kick when ready at a given strength
+	 * enable kick when ready at a given percentage of the currently set max kick power.
+	 * @param strength a value between 0 and 1
 	 */
-	void kick(uint8_t strength);
+	void kick(float strength);
 
 	/**
-	 * enable chip when ready at a given strength
+	 * enable kick when ready at a given strength (0-255)
 	 */
-	void chip(uint8_t strength);
+	void kickLevel(uint8_t strength);
+
+	/**
+	 * enable chip when ready at a given percentage of the currently set max chip power.
+	 * @param strength a value between 0 and 1
+	 */
+	void chip(float strength);
+
+	/**
+	 * enable chip when ready at a given strength (0-255)
+	 */
+	void chipLevel(uint8_t strength);
 
 	/**
 	 * @brief Undoes any calls to kick() or chip().
@@ -371,6 +384,9 @@ public:
 	Packet::RadioTx::Robot radioTx;
 
 	Packet::RadioRx &radioRx() {
+		return _radioRx;
+	}
+	const Packet::RadioRx &radioRx() const {
 		return _radioRx;
 	}
 

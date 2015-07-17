@@ -22,90 +22,6 @@
 
 using namespace std;
 
-////BEGIN memory debugging
-//static void *(*old_malloc_hook)(size_t, const void *) = 0;
-//static void *(*old_realloc_hook)(void *, size_t, const void *) = 0;
-//static void (*old_free_hook)(void *, const void *) = 0;
-//
-//static void *md_malloc(size_t size, const void *caller);
-//static void *md_realloc(void *ptr, size_t size, const void *caller);
-//static void md_free(void *ptr, const void *caller);
-//
-//pthread_mutex_t md_mutex = PTHREAD_MUTEX_INITIALIZER;
-//
-//volatile bool barrier = false;
-//
-//static void *md_malloc(size_t size, const void *caller)
-//{
-//	pthread_mutex_lock(&md_mutex);
-//	__malloc_hook = old_malloc_hook;
-//	__realloc_hook = old_realloc_hook;
-//	__free_hook = old_free_hook;
-//	assert(!barrier);
-//	barrier = true;
-//	void *result = malloc(size);
-//	old_malloc_hook = __malloc_hook;
-//	__malloc_hook = md_malloc;
-//	__realloc_hook = md_realloc;
-//	__free_hook = md_free;
-//	barrier = false;
-//	pthread_mutex_unlock(&md_mutex);
-//	return result;
-//}
-//
-//static void *md_realloc(void *ptr, size_t size, const void *caller)
-//{
-//	pthread_mutex_lock(&md_mutex);
-//	__malloc_hook = old_malloc_hook;
-//	__realloc_hook = old_realloc_hook;
-//	__free_hook = old_free_hook;
-//	assert(!barrier);
-//	barrier = true;
-//	assert(size < 1048576 * 100);
-//	void *result = realloc(ptr, size);
-//	__malloc_hook = md_malloc;a
-//	__realloc_hook = md_realloc;
-//	__free_hook = md_free;
-//	barrier = false;
-//	pthread_mutex_unlock(&md_mutex);
-//	return result;
-//}
-//
-//static void md_free(void *ptr, const void *caller)
-//{
-//	pthread_mutex_lock(&md_mutex);
-//	__malloc_hook = old_malloc_hook;
-//	__realloc_hook = old_realloc_hook;
-//	__free_hook = old_free_hook;
-//	assert(!barrier);
-//	barrier = true;
-//	if (!ptr)
-//	{
-//// 		printf("Free zero from %p\n", caller);
-//	} else {
-//		free(ptr);
-//	}
-//	__malloc_hook = md_malloc;
-//	__realloc_hook = md_realloc;
-//	__free_hook = md_free;
-//	barrier = false;
-//	pthread_mutex_unlock(&md_mutex);
-//}
-//
-//static void md_init_hook()
-//{
-//	old_malloc_hook = __malloc_hook;
-//	old_realloc_hook = __realloc_hook;
-//	old_free_hook = __free_hook;
-//	__malloc_hook = md_malloc;
-//	__realloc_hook = md_realloc;
-//	__free_hook = md_free;
-//	fprintf(stderr, "Memory debugging initialized: %p %p %p\n", old_malloc_hook, old_realloc_hook, old_free_hook);
-//}
-//
-//void (*__malloc_initialize_hook)(void) = md_init_hook;
-////END memory debugging
-
 
 //  we use this to catch Ctrl+C and kill the program
 void signal_handler(int signum) {
@@ -116,14 +32,15 @@ void signal_handler(int signum) {
 void usage(const char* prog)
 {
 	fprintf(stderr, "usage: %s [options...]\n", prog);
-	fprintf(stderr, "\t-y:         run as the yellow team\n");
-	fprintf(stderr, "\t-b:         run as the blue team\n");
-	fprintf(stderr, "\t-c <file>:  specify the configuration file\n");
-	fprintf(stderr, "\t-s <seed>:  set random seed (hexadecimal)\n");
-	fprintf(stderr, "\t-pp <play>: enable named play\n");
-	fprintf(stderr, "\t-sim:       use simulator\n");
-	fprintf(stderr, "\t-freq:      specify radio frequency (906 or 904)\n");
-	fprintf(stderr, "\t-nolog:     don't write log files\n");
+	fprintf(stderr, "\t-y:          run as the yellow team\n");
+	fprintf(stderr, "\t-b:          run as the blue team\n");
+	fprintf(stderr, "\t-c <file>:   specify the configuration file\n");
+	fprintf(stderr, "\t-s <seed>:   set random seed (hexadecimal)\n");
+	fprintf(stderr, "\t-pbk <file>: playbook file name as contained in 'soccer/gameplay/playbooks/'\n");
+	fprintf(stderr, "\t-ng:         no goalie\n");
+	fprintf(stderr, "\t-sim:        use simulator\n");
+	fprintf(stderr, "\t-freq:       specify radio frequency (906 or 904)\n");
+	fprintf(stderr, "\t-nolog:      don't write log files\n");
 	exit(1);
 }
 
@@ -154,11 +71,12 @@ int main (int argc, char* argv[])
 	bool blueTeam = false;
 	QString cfgFile;
 	vector<const char *> playDirs;
-	vector<QString> extraPlays;
 	bool sim = false;
 	bool log = true;
     QString radioFreq;
-	
+
+    string playbookFile;
+
 	for (int i=1 ; i<argc; ++i)
 	{
 		const char* var = argv[i];
@@ -186,7 +104,7 @@ int main (int argc, char* argv[])
         {
             if(i+1 >= argc)
             {
-                printf("No radio frequency specified after -freq");
+                printf("No radio frequency specified after -freq\n");
                 usage(argv[0]);
             }
 
@@ -197,10 +115,10 @@ int main (int argc, char* argv[])
 		{
 			if (i+1 >= argc)
 			{
-				printf("no config file specified after -c");
+				printf("no config file specified after -c\n");
 				usage(argv[0]);
 			}
-			
+
 			i++;
 			cfgFile = argv[i];
 		}
@@ -208,23 +126,22 @@ int main (int argc, char* argv[])
 		{
 			if (i+1 >= argc)
 			{
-				printf("no seed specified after -s");
+				printf("no seed specified after -s\n");
 				usage(argv[0]);
 			}
-			
+
 			i++;
 			seed = strtol(argv[i], 0, 16);
 		}
-		else if(strcmp(var, "-pp") == 0)
+		else if(strcmp(var, "-pbk") == 0)
 		{
-			if (i+1 >= argc)
+			if(i+1 >= argc)
 			{
-				printf("no play specified after -pp");
+				printf("no playbook file specified after -pbk\n");
 				usage(argv[0]);
 			}
-			
-			i++;
-			extraPlays.push_back(argv[i]);
+
+			playbookFile = argv[++i];
 		}
 		else
 		{
@@ -234,17 +151,17 @@ int main (int argc, char* argv[])
 	}
 
 
-	printf("Running on %s\n", sim ? "simulation" : "real hardware");
-	
+	printf("Running on %s\n", sim ? "simulation" : "real hardware\n");
+
 	printf("seed %016lx\n", seed);
 	srand48(seed);
-	
+
 	// Default config file name
 	if (cfgFile.isNull())
 	{
 		cfgFile = sim ? "soccer-sim.cfg" : "soccer-real.cfg";
 	}
-	
+
 	Configuration config;
 	for (Configurable *obj :  Configurable::configurables())
 	{
@@ -253,7 +170,7 @@ int main (int argc, char* argv[])
 
 	Processor *processor = new Processor(sim);
 	processor->blueTeam(blueTeam);
-	
+
 	// Load config file
 	QString error;
 	if (!config.load(cfgFile, error))
@@ -265,7 +182,7 @@ int main (int argc, char* argv[])
 	MainWindow *win = new MainWindow;
 	win->configuration(&config);
 	win->processor(processor);
-	
+
 	if (!QDir("logs").exists())
 	{
 		fprintf(stderr, "No logs/ directory - not writing log file\n");
@@ -291,18 +208,22 @@ int main (int argc, char* argv[])
     }
 
 	win->logFileChanged();
-	
+
 	processor->start();
-	
+
+	if(playbookFile.size() > 0)
+		processor->gameplayModule()->loadPlaybook(playbookFile);
+
 	win->show();
 
 	processor->gameplayModule()->setupUI();
 
+
 	int ret = app.exec();
 	processor->stop();
-	
+
 	delete win;
 	delete processor;
-	
+
 	return ret;
 }

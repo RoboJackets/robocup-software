@@ -3,22 +3,22 @@
 #include "Ball.hpp"
 #include "Field.hpp"
 #include "Robot.hpp"
+#include <Constants.hpp>
+#include <Network.hpp>
+#include <Geometry2d/util.h>
+
+#include <protobuf/messages_robocup_ssl_detection.pb.h>
+#include <protobuf/messages_robocup_ssl_geometry.pb.h>
+#include <protobuf/messages_robocup_ssl_wrapper.pb.h>
 
 #include <QDomDocument>
 #include <QDomAttr>
 #include <QDebug>
 #include <QFile>
 #include <stdexcept>
-
-#include <protobuf/messages_robocup_ssl_detection.pb.h>
-#include <protobuf/messages_robocup_ssl_geometry.pb.h>
-#include <protobuf/messages_robocup_ssl_wrapper.pb.h>
-
 #include <iostream>
 #include <sys/time.h>
-#include <Constants.hpp>
-#include <Network.hpp>
-#include <Geometry2d/util.h>
+
 
 using namespace std;
 using namespace Geometry2d;
@@ -145,7 +145,6 @@ void Environment::handleSimCommand(const Packet::SimCommand& cmd) {
 
 	for (const SimCommand::Robot &rcmd :  cmd.robots())
 	{
-		bool blue = rcmd.blue_team();
 		const RobotMap &team = rcmd.blue_team() ? _blue : _yellow;
 		RobotMap::const_iterator i = team.find(rcmd.shell());
 
@@ -181,9 +180,6 @@ void Environment::handleSimCommand(const Packet::SimCommand& cmd) {
 
 			QVector3D pos3(x, y, 0.0);
 			QVector3D axis(0.0, 0.0, 1.0);
-
-			// trigger signals
-			//emit setRobotPose(blue, robot->shell, pos3, angle, axis);
 		}
 
 		float new_w = 0.0;
@@ -237,8 +233,6 @@ void Environment::sendVision()
 		}
 	}
 
-//	Geometry2d::Point cam0(-Field_Dimensions::Current_Dimensions.Length / 4, 0);
-//	Geometry2d::Point cam1(Field_Dimensions::Current_Dimensions.Length / 4, 0);
 
 	for (const Ball* b :  _balls)
 	{
@@ -321,10 +315,6 @@ void Environment::addRobot(bool blue, int id, const Geometry2d::Point& pos, Robo
 
 	QVector3D pos3(pos.x, pos.y, 0.0);
 	QVector3D axis(0.0, 0.0, 1.0);
-
-	// trigger signals
-	//emit addNewRobot(blue, id);
-	//emit setRobotPose(blue, id, pos3, angle, axis);
 }
 
 void Environment::removeRobot(bool blue, int id) {
@@ -409,12 +399,9 @@ void Environment::handleRadioTx(bool blue, const Packet::RadioTx& tx)
 			r->radioTx(&cmd);
 
 			// trigger signals to update visualization
-			float facing = r->getAngle();
 			const Geometry2d::Point& pos2 = r->getPosition();
 			QVector3D pos3(pos2.x, pos2.y, 0.0);
 			QVector3D axis(0.0, 0.0, 1.0);
-
-			//emit setRobotPose(blue, r->shell, pos3, angle, axis);
 		} else {
 			printf("Commanding nonexistent robot %s:%d\n",
 					blue ? "Blue" : "Yellow",

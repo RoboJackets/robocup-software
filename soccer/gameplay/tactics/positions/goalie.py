@@ -148,7 +148,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         kick.aim_params['max_steady_ang_vel'] = 12
 
         # chip
-        kick.chip_power = constants.Robot.Chipper.MaxPower
+        kick.chip_power = 1.0
         kick.use_chipper = True
 
         kick.target = robocup.Segment(robocup.Point(-constants.Field.Width/2, constants.Field.Length),

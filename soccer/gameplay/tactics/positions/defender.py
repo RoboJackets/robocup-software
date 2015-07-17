@@ -158,9 +158,9 @@ class Defender(single_robot_behavior.SingleRobotBehavior):
 		facing_back_line = ( backVecRot.dot(shotVec) < 0 )
 		if not facing_back_line and self.robot.has_ball():
 			if self.robot.has_chipper():
-				self.robot.chip(255)
+				self.robot.chip(1)
 			else:
-				self.robot.kick(255)
+				self.robot.kick(1)
 
 	"""
 	TODO comment
@@ -231,9 +231,9 @@ class Defender(single_robot_behavior.SingleRobotBehavior):
 		facing_back_line = ( backVecRot.dot(shotVec) < 0 )
 		if not facing_back_line and self.robot.has_ball():
 			if self.robot.has_chipper():
-				self.robot.chip(255)
+				self.robot.chip(1)
 			else:
-				self.robot.kick(255)
+				self.robot.kick(1)
 
 	def find_robot_to_block(self):
 		target = None
