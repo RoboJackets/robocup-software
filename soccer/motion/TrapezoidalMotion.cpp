@@ -43,13 +43,14 @@ float Trapezoidal::getTime(
 		//	no plateau
 		plateauTime = 0;
 		plateauDist = 0;
+
 	} else {
 		//	trapezoid case: there's a time where we go at maxSpeed for a bit
 		plateauDist = pathLength - (rampUpDist + rampDownDist);
 		plateauTime = plateauDist / maxSpeed;
 	}
 
-	if (distance<0)
+	if (distance<=0)
 	{
 		return 0;
 	}
@@ -68,7 +69,7 @@ float Trapezoidal::getTime(
 		float temp1 = (-b + root)/(2*a);
 		float temp2 = (-b - root)/(2*a);
 		if (isnan(root)) {
-			//TODO Handle this
+			throw 1;//TODO Handle this
 		}
 		if (temp1 > 0 && temp1<rampUpTime) 
 		{

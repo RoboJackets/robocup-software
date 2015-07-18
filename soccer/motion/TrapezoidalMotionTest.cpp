@@ -4,16 +4,20 @@
 #include <motion/TrapezoidalMotion.hpp>
 #include <math.h>
 
-
 bool trapezoid1(float t, float &posOut, float &speedOut) {
-	return TrapezoidalMotion(10,	//	pathLength
-		2,	//	maxSpeed
-		1,	//	maxAcc
-		t,	//	timeIntoLap
-		0,	//	startSpeed
-		0,	//	finalSpeed
-		posOut,	//	&posOut
-		speedOut);	//	&speedOut
+	float pathLength = 10;
+	float maxSpeed = 2;
+	float maxAcc = 1;
+	float startSpeed = 0;
+	float finalSpeed = 0;
+
+	bool valid = TrapezoidalMotion(pathLength, maxSpeed, maxAcc, t,	startSpeed,	finalSpeed,	posOut,	speedOut);
+
+	if (valid) {
+		float time = Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc, startSpeed, finalSpeed);
+		EXPECT_NEAR(time, t, 0.001);
+	}
+	return valid;
 }
 
 TEST(TrapezoidalMotion, PreStart) {
@@ -48,14 +52,19 @@ TEST(TrapezoidalMotion, End) {
 //startSpeed = 0, highSpeed = 1, endSpeed = 0, average = 0.5
 //time = 4 seconds
 bool triangle1(float t, float &posOut, float &speedOut) {
-	return TrapezoidalMotion(2,	//	pathLength
-		4,			//	maxSpeed
-		0.5,		//	maxAcc
-		t,			//	timeIntoLap
-		0,			//	startSpeed
-		0,			//	finalSpeed
-		posOut,		//	&posOut
-		speedOut);	//	&speedOut
+	float pathLength = 2;
+	float maxSpeed = 4;
+	float maxAcc = 0.5;
+	float startSpeed = 0;
+	float finalSpeed = 0;
+
+	bool valid = TrapezoidalMotion(pathLength, maxSpeed, maxAcc, t,	startSpeed,	finalSpeed,	posOut,	speedOut);
+
+	if (valid) {
+		float time = Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc, startSpeed, finalSpeed);
+		EXPECT_NEAR(time, t, 0.001);
+	}
+	return valid;
 }
 
 
@@ -63,42 +72,57 @@ bool triangle1(float t, float &posOut, float &speedOut) {
 //startSpeed = 0, highSpeed = 2, endSpeed = 0
 //time = 8 seconds
 bool triangle2(float t, float &posOut, float &speedOut) {
-	return TrapezoidalMotion(8,	//	pathLength
-		4,			//	maxSpeed
-		0.5,		//	maxAcc
-		t,			//	timeIntoLap
-		0,			//	startSpeed
-		0,			//	finalSpeed
-		posOut,		//	&posOut
-		speedOut);	//	&speedOut
+	float pathLength = 8;
+	float maxSpeed = 4;
+	float maxAcc = 0.5;
+	float startSpeed = 0;
+	float finalSpeed = 0;
+
+	bool valid = TrapezoidalMotion(pathLength, maxSpeed, maxAcc, t,	startSpeed,	finalSpeed,	posOut,	speedOut);
+
+	if (valid) {
+		float time = Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc, startSpeed, finalSpeed);
+		EXPECT_NEAR(time, t, 0.001);
+	}
+	return valid;
 }
 
 //Triangle path of length 6
 //startSpeed = 1, highSpeed = 2, endSpeed = 1
 //time = 4 seconds
 bool triangle3(float t, float &posOut, float &speedOut) {
-	return TrapezoidalMotion(6,	//	pathLength
-		4,			//	maxSpeed
-		0.5,		//	maxAcc
-		t,			//	timeIntoLap
-		1,			//	startSpeed
-		1,			//	finalSpeed
-		posOut,		//	&posOut
-		speedOut);	//	&speedOut
+	float pathLength = 6;
+	float maxSpeed = 4;
+	float maxAcc = 0.5;
+	float startSpeed = 1;
+	float finalSpeed = 1;
+
+	bool valid = TrapezoidalMotion(pathLength, maxSpeed, maxAcc, t,	startSpeed,	finalSpeed,	posOut,	speedOut);
+
+	if (valid) {
+		float time = Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc, startSpeed, finalSpeed);
+		EXPECT_NEAR(time, t, 0.001);
+	}
+	return valid;
 }
 
 //Triangle path of length 6
 //startSpeed = 1, highSpeed = 2, endSpeed = 1
 //time = 4 seconds
 bool triangle4(float t, float &posOut, float &speedOut) {
-	return TrapezoidalMotion(7,	//	pathLength
-		4,			//	maxSpeed
-		0.5,		//	maxAcc
-		t,			//	timeIntoLap
-		1,			//	startSpeed
-		0,			//	finalSpeed
-		posOut,		//	&posOut
-		speedOut);	//	&speedOut
+	float pathLength = 7;
+	float maxSpeed = 4;
+	float maxAcc = 0.5;
+	float startSpeed = 1;
+	float finalSpeed = 0;
+
+	bool valid = TrapezoidalMotion(pathLength, maxSpeed, maxAcc, t,	startSpeed,	finalSpeed,	posOut,	speedOut);
+
+	if (valid) {
+		float time = Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc, startSpeed, finalSpeed);
+		EXPECT_NEAR(time, t, 0.001);
+	}
+	return valid;
 }
 
 TEST(TrapezoidalMotion, TriangleRampUp) {
