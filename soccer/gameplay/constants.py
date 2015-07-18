@@ -37,7 +37,7 @@ class Field:
 
     LineWidth = 0.01
 
-    GoalWidth = 0.700
+    GoalWidth = 1.000
     GoalDepth = 0.180
     GoalHeight = 0.160
 
