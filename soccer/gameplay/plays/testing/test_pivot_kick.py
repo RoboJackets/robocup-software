@@ -24,7 +24,7 @@ class TestPivotKick(play.Play):
             'immediately')
 
         kick = skills.pivot_kick.PivotKick()
-        kick.target = constants.Field.TheirGoalSegment
+        kick.target = constants.Field.OurGoalSegment
         kick.aim_params['desperate_timeout'] = 3
         self.add_subbehavior(kick, 'kick', required=False)
 

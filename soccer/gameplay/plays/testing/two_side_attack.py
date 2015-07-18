@@ -13,7 +13,7 @@ class TwoSideAttack(play.Play):
 	# Soccer/gameplay/evaluation/shot.py
 	# Tell where passing from and where to pass to
 	# Estimate of which shot is better
-	
+
 	class State(enum.Enum):
 		setup = 1
 		passing = 2
@@ -51,8 +51,8 @@ class TwoSideAttack(play.Play):
 			'all subbehaviors completed')
 
 		self.robot_points = [
-			robocup.Point(-constants.Field.Width/4.0, 3*constants.Field.Length/4.0),
-			robocup.Point(constants.Field.Width/4.0, 3*constants.Field.Length/4.0)
+			robocup.Point(-constants.Field.Width/4.0, 1*constants.Field.Length/4.0),
+			robocup.Point(constants.Field.Width/4.0, 1*constants.Field.Length/4.0)
 		]
 
 
@@ -91,14 +91,14 @@ class TwoSideAttack(play.Play):
 
 		self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.robot_points[robot_pos]), 'pass')
 
-		
+
 	def on_exit_passing(self):
 		self.remove_all_subbehaviors()
 
 
 	def on_enter_kicking(self):
 		kick = skills.pivot_kick.PivotKick()
-		kick.target = constants.Field.TheirGoalSegment
+		kick.target = constants.Field.OurGoalSegment
 		kick.aim_params['desperate_timeout'] = 3
 		self.add_subbehavior(kick, 'kick', required=False)
 
