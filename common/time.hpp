@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sys/time.h>
+
 
 /// type for storing time in microseconds
 typedef uint64_t Time;

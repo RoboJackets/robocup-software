@@ -10,7 +10,7 @@ set -e
 if [ "$(git rev-parse master)" = "$TRAVIS_COMMIT" ]; then
     # build doxygen from source so we can have the latest and greatest
     sudo apt-get install flex bison 
-    git clone https://github.com/doxygen/doxygen.git
+    git clone --branch Release_1_8_9_1 --depth 1 https://github.com/doxygen/doxygen.git
     cd doxygen
     ./configure
     make

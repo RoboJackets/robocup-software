@@ -24,12 +24,6 @@ class Robot:
     class Dribbler:
         MaxPower = 127
 
-    class Chipper:
-        MaxPower = 255
-
-    class Kicker:
-        MaxPower = 255
-
 
 class Ball:
     Radius = 0.0215
@@ -37,9 +31,9 @@ class Ball:
     
 
 class Field:
-    Length = 6.05
-    Width = 4.05
-    Border = 0.25
+    Length = 9.00
+    Width = 6.00
+    Border = 0.70
 
     LineWidth = 0.01
 
@@ -48,21 +42,23 @@ class Field:
     GoalHeight = 0.160
 
     # Distance of the penalty marker from the goal line
-    PenaltyDist = 0.750
+    PenaltyDist = 1.0
     PenaltyDiam = 0.010
 
     # Radius of the goal arcs
-    ArcRadius = 0.8
+    ArcRadius = 1.0
 
     # diameter of the center circle 
     CenterRadius = 0.5
     CenterDiameter = 1.0
 
     # flat area for defense markings 
-    GoalFlat = 0.35
+    GoalFlat = 0.5
 
     FloorLength = Length + 2.0 * Border;
     FloorWidth = Width + 2.0 * Border;
+
+    CenterPoint = robocup.Point(0.0, Length / 2.0)
 
     OurGoalZoneShape = robocup.CompositeShape()
     OurGoalZoneShape.add_shape(robocup.Circle(robocup.Point(-GoalFlat / 2.0, 0), ArcRadius))
@@ -83,6 +79,7 @@ class Field:
     TheirHalf = robocup.Rect(robocup.Point(-Width/2, Length), robocup.Point(Width/2, Length/2))
     OurHalf = robocup.Rect(robocup.Point(-Width/2, 0), robocup.Point(Width/2, Length/2))
 
+
 def setFieldConstantsFromField_Dimensions(value):
     Field.Length = value.Length()
     Field.Width = value.Width()
@@ -99,6 +96,8 @@ def setFieldConstantsFromField_Dimensions(value):
     Field.GoalFlat = value.GoalFlat()
     Field.FloorLength = value.FloorLength()
     Field.FloorWidth = value.FloorWidth()
+
+    Field.CenterPoint = robocup.Point(0.0, Field.Length / 2.0)
 
     Field.OurGoalZoneShape = robocup.CompositeShape()
     Field.OurGoalZoneShape.add_shape(robocup.Circle(robocup.Point(-Field.GoalFlat / 2.0, 0), Field.ArcRadius))
@@ -118,3 +117,4 @@ def setFieldConstantsFromField_Dimensions(value):
 
     Field.TheirHalf = robocup.Rect(robocup.Point(-Field.Width/2, Field.Length), robocup.Point(Field.Width/2, Field.Length/2))
     Field.OurHalf = robocup.Rect(robocup.Point(-Field.Width/2, 0), robocup.Point(Field.Width/2, Field.Length/2))
+

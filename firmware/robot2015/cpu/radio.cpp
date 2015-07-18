@@ -1,26 +1,34 @@
 #include "robot.hpp"
 #include "radio.hpp"
+#include <memory>
 
 /*
  * forward delarations
  */
 void radioThreadHandler(void const* args);
 
+std::unique_ptr<Thread> radioThread;
+
 /**
  * call to initialize radio
  */
 int initRadio(void)
 {
-	Thread radioThread(radioThreadHandler);
+	radioThread.reset(new Thread(radioThreadHandler));
 
 	return 0;
 }
 
+DigitalOut ledThree(LED3);
+DigitalOut ledFour(LED4);
+
 void radioThreadHandler(void const* args)
 {
-	for (;;)
+	while (true)
 	{
 		Thread::wait(500);
+    ledThree = !ledThree;
+    ledFour = !ledThree;
 	}
 }
 
@@ -98,7 +106,7 @@ int main()
     
     led1 = 1;
     
-    while(1) {
+    while (true) {
 
         led1 = !led1;
         

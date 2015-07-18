@@ -26,7 +26,7 @@
 #include <protobuf/messages_robocup_ssl_geometry.pb.h>
 #include <protobuf/RadioTx.pb.h>
 #include <protobuf/RadioRx.pb.h>
-#include <git_version.h>
+#include <git_version.hpp>
 
 REGISTER_CONFIGURABLE(Processor)
 
@@ -39,6 +39,7 @@ static const uint64_t Command_Latency = 0;
 
 RobotConfig *Processor::robotConfig2008;
 RobotConfig *Processor::robotConfig2011;
+RobotConfig *Processor::robotConfig2015;
 std::vector<RobotStatus*> Processor::robotStatuses; ///< FIXME: verify that this is correct
 
 
@@ -55,6 +56,7 @@ void Processor::createConfiguration(Configuration *cfg)
 {
 	robotConfig2008 = new RobotConfig(cfg, "Rev2008");
 	robotConfig2011 = new RobotConfig(cfg, "Rev2011");
+    robotConfig2015 = new RobotConfig(cfg, "Rev2015");
 
 	for (size_t s = 0; s<Num_Shells; ++s)
 	{
@@ -82,10 +84,10 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive)
 	_joysticks.push_back(new SpaceNavJoystick());
 	_dampedTranslation = true;
 	_dampedRotation = true;
-	
+
 	// Initialize team-space transformation
 	defendPlusX(_defendPlusX);
-	
+
 	QMetaObject::connectSlotsByName(this);
 
 	_ballTracker = std::make_shared<BallTracker>();
@@ -98,7 +100,7 @@ Processor::Processor(bool sim) : _loopMutex(QMutex::Recursive)
 Processor::~Processor()
 {
 	stop();
-	
+
 	for (Joystick *joy : _joysticks) {
 		delete joy;
 	}
@@ -181,18 +183,18 @@ bool Processor::joystickValid()
 void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFrames)
 {
 	vector<BallObservation> ballObservations;
-	
+
 	for (const SSL_DetectionFrame* frame : detectionFrames)
 	{
 		Time time = frame->t_capture() * SecsToTimestamp;
-		
+
 		// Add ball observations
 		ballObservations.reserve(ballObservations.size() + frame->balls().size());
 		for (const SSL_DetectionBall &ball : frame->balls())
 		{
 			ballObservations.push_back(BallObservation(_worldToTeam * Point(ball.x() / 1000, ball.y() / 1000), time));
 		}
-		
+
 		// Add robot observations
 		const RepeatedPtrField<SSL_DetectionRobot> &selfRobots = _blueTeam ? frame->robots_blue() : frame->robots_yellow();
 		for (const SSL_DetectionRobot &robot : selfRobots)
@@ -206,7 +208,7 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 				_state.self[id]->filter()->update(&obs);
 			}
 		}
-		
+
 		const RepeatedPtrField<SSL_DetectionRobot> &oppRobots = _blueTeam ? frame->robots_yellow() : frame->robots_blue();
 		for (const SSL_DetectionRobot &robot : oppRobots)
 		{
@@ -220,14 +222,14 @@ void Processor::runModels(const vector<const SSL_DetectionFrame *> &detectionFra
 			}
 		}
 	}
-	
+
 	_ballTracker->run(ballObservations, &_state);
-	
+
 	for (Robot *robot : _state.self)
 	{
 		robot->filter()->predict(_state.logFrame->command_time(), robot);
 	}
-	
+
 	for (Robot *robot : _state.opp)
 	{
 		robot->filter()->predict(_state.logFrame->command_time(), robot);
@@ -243,9 +245,9 @@ void Processor::run()
 
     // Create radio socket
     _radio = _simulation ? (Radio *)new SimRadio(_blueTeam) : (Radio *)new USBRadio();
-	
+
 	Status curStatus;
-	
+
 	bool first = true;
 	//main loop
 	while (_running)
@@ -255,36 +257,36 @@ void Processor::run()
 		_framerate = 1000000.0 / delta_us;
 		curStatus.lastLoopTime = startTime;
 		_state.timestamp = startTime;
-		
+
 		if (!firstLogTime)
 		{
 			firstLogTime = startTime;
 		}
-		
+
 		////////////////
 		// Reset
-		
+
 		// Make a new log frame
 		_state.logFrame = std::make_shared<Packet::LogFrame>();
-    _state.logFrame->set_timestamp(timestamp());
+    	_state.logFrame->set_timestamp(timestamp());
 		_state.logFrame->set_command_time(startTime + Command_Latency);
 		_state.logFrame->set_use_our_half(_useOurHalf);
 		_state.logFrame->set_use_opponent_half(_useOpponentHalf);
 		_state.logFrame->set_manual_id(_manualID);
 		_state.logFrame->set_blue_team(_blueTeam);
 		_state.logFrame->set_defend_plus_x(_defendPlusX);
-		
+
 		if (first)
 		{
 			first = false;
-			
+
 			Packet::LogConfig *logConfig = _state.logFrame->mutable_log_config();
 			logConfig->set_generator("soccer");
 			logConfig->set_git_version_hash(git_version_hash);
 			logConfig->set_git_version_dirty(git_version_dirty);
 			logConfig->set_simulation(_simulation);
 		}
-		
+
 		for (OurRobot *robot : _state.self)
 		{
 			// overall robot config
@@ -296,6 +298,8 @@ void Processor::run()
 			case Packet::RJ2011:
 				robot->config = robotConfig2011;
 				break;
+            case Packet::RJ2015:
+                robot->config = robotConfig2015;
 			case Packet::Unknown:
 				robot->config = robotConfig2011; // FIXME: defaults to 2011 robots
 				break;
@@ -307,7 +311,7 @@ void Processor::run()
 
 		////////////////
 		// Inputs
-		
+
 		// Read vision packets
 		vector<const SSL_DetectionFrame *> detectionFrames;
 		vector<VisionPacket *> visionPackets;
@@ -316,17 +320,17 @@ void Processor::run()
 		{
 			SSL_WrapperPacket *log = _state.logFrame->add_raw_vision();
 			log->CopyFrom(packet->wrapper);
-			
+
 			curStatus.lastVisionTime = packet->receivedTime;
 			if (packet->wrapper.has_detection())
 			{
 				SSL_DetectionFrame *det = packet->wrapper.mutable_detection();
-				
+
 				//FIXME - Account for network latency
 				double rt = packet->receivedTime / 1000000.0;
 				det->set_t_capture(rt - det->t_sent() + det->t_capture());
 				det->set_t_sent(rt);
-				
+
 				// Remove balls on the excluded half of the field
 				google::protobuf::RepeatedPtrField<SSL_DetectionBall> *balls = det->mutable_balls();
 				for (int i = 0; i < balls->size(); ++i)
@@ -341,14 +345,14 @@ void Processor::run()
 						--i;
 					}
 				}
-				
+
 				// Remove robots on the excluded half of the field
 				google::protobuf::RepeatedPtrField<SSL_DetectionRobot> *robots[2] =
 				{
 					det->mutable_robots_yellow(),
 					det->mutable_robots_blue()
 				};
-				
+
 				for (int team = 0; team < 2; ++team)
 				{
 					for (int i = 0; i < robots[team]->size(); ++i)
@@ -363,19 +367,19 @@ void Processor::run()
 						}
 					}
 				}
-				
+
 				detectionFrames.push_back(det);
 			}
 		}
-		
+
 		// Read radio reverse packets
 		_radio->receive();
 		for (const Packet::RadioRx &rx : _radio->reversePackets())
 		{
 			_state.logFrame->add_radio_rx()->CopyFrom(rx);
-			
+
 			curStatus.lastRadioRxTime = rx.timestamp();
-			
+
 			// Store this packet in the appropriate robot
 			unsigned int board = rx.robot_id();
 			if (board < Num_Shells)
@@ -387,19 +391,19 @@ void Processor::run()
 			}
 		}
 		_radio->clear();
-		
+
 		_loopMutex.lock();
-		
+
 		for (Joystick *joystick : _joysticks) {
 			joystick->update();
 		}
-		
+
 		runModels(detectionFrames);
 		for (VisionPacket *packet : visionPackets)
 		{
 			delete packet;
 		}
-		
+
 		// Update gamestate w/ referee data
 		_refereeModule->updateGameState(blueTeam());
 		_refereeModule->spinKickWatcher();
@@ -419,7 +423,7 @@ void Processor::run()
 
 		_state.logFrame->set_team_name_blue(bluename);
 		_state.logFrame->set_team_name_yellow(yellowname);
-		
+
 		if (_gameplayModule)
 		{
 			_gameplayModule->run();
@@ -434,28 +438,28 @@ void Processor::run()
 				{
 					robot->motionControl()->stopped();
 				} else {
-					robot->motionControl()->run();	
-				}	
+					robot->motionControl()->run();
+				}
 			}
 		}
 
 		////////////////
 		// Store logging information
-		
+
 		// Debug layers
 		const QStringList &layers = _state.debugLayers();
 		for (const QString &str : layers)
 		{
 			_state.logFrame->add_debug_layers(str.toStdString());
 		}
-		
+
 		// Add our robots data to the LogFram
 		for (OurRobot *r : _state.self)
 		{
 			if (r->visible)
 			{
 				r->addStatusText();
-				
+
 				Packet::LogFrame::Robot *log = _state.logFrame->add_self();
 				*log->mutable_pos() = r->pos;
 				*log->mutable_world_vel() = r->vel;
@@ -465,31 +469,31 @@ void Processor::run()
 				// log->set_cmd_w(r->cmd_w);
 				log->set_shell(r->shell());
 				log->set_angle(r->angle);
-				
+
 				if (r->radioRx().has_kicker_voltage())
 				{
 					log->set_kicker_voltage(r->radioRx().kicker_voltage());
 				}
-				
+
 				if (r->radioRx().has_kicker_status())
 				{
 					log->set_charged(r->radioRx().kicker_status() & 0x01);
 					log->set_kicker_works(!(r->radioRx().kicker_status() & 0x90));
 				}
-				
+
 				if (r->radioRx().has_ball_sense_status())
 				{
 					log->set_ball_sense_status(r->radioRx().ball_sense_status());
 				}
-				
+
 				if (r->radioRx().has_battery())
 				{
 					log->set_battery_voltage(r->radioRx().battery());
 				}
-				
+
 				log->mutable_motor_status()->Clear();
 				log->mutable_motor_status()->MergeFrom(r->radioRx().motor_status());
-				
+
 				if (r->radioRx().has_quaternion())
 				{
 					log->mutable_quaternion()->Clear();
@@ -497,14 +501,14 @@ void Processor::run()
 				} else {
 					log->clear_quaternion();
 				}
-				
+
 				for (const Packet::DebugText &t : r->robotText)
 				{
 					log->add_text()->CopyFrom(t);
 				}
 			}
 		}
-		
+
 		// Opponent robots
 		for (OpponentRobot *r : _state.opp)
 		{
@@ -518,7 +522,7 @@ void Processor::run()
 				*log->mutable_body_vel() = r->vel.rotated(2*M_PI - r->angle);
 			}
 		}
-		
+
 		// Ball
 		if (_state.ball.valid)
 		{
@@ -526,26 +530,26 @@ void Processor::run()
 			*log->mutable_pos() = _state.ball.pos;
 			*log->mutable_vel() = _state.ball.vel;
 		}
-		
+
 		////////////////
 		// Outputs
-		
+
 		// Send motion commands to the robots
 		sendRadioData();
 
 		// Write to the log
 		_logger.addFrame(_state.logFrame);
-		
+
 		_loopMutex.unlock();
-		
+
 		// Store processing loop status
 		_statusMutex.lock();
 		_status = curStatus;
 		_statusMutex.unlock();
-		
+
 		////////////////
 		// Timing
-		
+
 		Time endTime = timestamp();
 		int lastFrameTime = endTime - startTime;
 		if (lastFrameTime < _framePeriod)
@@ -559,14 +563,14 @@ void Processor::run()
 //			printf("Processor took too long: %d us\n", lastFrameTime);
 		}
 	}
-	
+
 	vision.stop();
 }
 
 void Processor::sendRadioData()
 {
     Packet::RadioTx *tx = _state.logFrame->mutable_radio_tx();
-	
+
 	// Halt overrides normal motion control, but not joystick
 	if (_state.gameState.halt())
 	{
@@ -581,19 +585,19 @@ void Processor::sendRadioData()
 			txRobot.set_dribbler(0);
 		}
 	}
-	
+
 	// Add RadioTx commands for visible robots and apply joystick input
 	for (OurRobot *r : _state.self)
 	{
 		if (r->visible || _manualID == r->shell())
 		{
 			Packet::RadioTx::Robot *txRobot = tx->add_robots();
-			
+
 			// Copy motor commands.
 			// Even if we are using the joystick, this sets robot_id and the
 			// number of motors.
 			txRobot->CopyFrom(r->radioTx);
-			
+
 			if (r->shell() == _manualID)
 			{
 				JoystickControlValues controlVals = getJoystickControlValues();
@@ -612,7 +616,7 @@ void Processor::applyJoystickControls(const JoystickControlValues &controlVals, 
 
 	//	use world coordinates if we can see the robot
 	//	otherwise default to body coordinates
-	if (robot && robot->visible) {
+	if (robot && robot->visible && _useFieldOrientedManualDrive) {
 		translation.rotate(-robot->angle);
 	} else {
 		//	adjust for robot coordinate system (x axis points forward through the mouth of the bot)
@@ -714,5 +718,6 @@ void Processor::recalculateWorldToTeamTransform() {
 void Processor::setFieldDimensions(const Field_Dimensions &dims) {
 	Field_Dimensions::Current_Dimensions = dims;
 	recalculateWorldToTeamTransform();
+	_gameplayModule->calculateFieldObstacles();
 	_gameplayModule->sendFieldDimensionsToPython();
 }

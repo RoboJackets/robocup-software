@@ -8,7 +8,7 @@ Each time you make tests to the codebase, you should run the test suite with `ma
 
 ## C++ Unit Tests
 
-We use the [googletest](https://code.google.com/p/googletest/) unit testing platform for our C++ code.  See the `soccer/tests` directory for our current tests.  You can run these by running the `run_tests` executable in the `run` folder after compiling the project.
+We use the [googletest](https://code.google.com/p/googletest/) unit testing platform for our C++ code.  See the `soccer/tests` directory for our current tests.  You can run these by running the `test-cpp` executable in the `run` folder after compiling the project.
 
 
 ## Python Unit Tests

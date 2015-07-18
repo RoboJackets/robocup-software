@@ -8,10 +8,16 @@
     <file>ready.svg</file>
     <file>stop.svg</file>
     <file>SoccerBall.png</file>
-    <file>media-playback-pause.png</file>
-    <file>media-seek-backward.png</file>
-    <file>media-seek-forward.png</file>
-    <file>media-skip-backward.png</file>
-    <file>media-skip-forward.png</file>
+    <file>rewind.svg</file>
+    <file>prev-frame.svg</file>
+    <file>pause.svg</file>
+    <file>next-frame.svg</file>
+    <file>play.svg</file>
+    <file>live.svg</file>
+
+    <file>vision-available.svg</file>
+    <file>vision-unavailable.svg</file>
+    <file>radio-connected.svg</file>
+    <file>radio-disconnected.svg</file>
   </qresource>
 </RCC>

@@ -13,10 +13,11 @@ RobotConfig::PID::PID(Configuration* config, QString prefix):
 }
 
 RobotConfig::Kicker::Kicker(Configuration *config, QString prefix):
-	maxKick(new ConfigDouble(config, QString("%1/maxKick").arg(prefix), 50)),
-	maxChip(new ConfigDouble(config, QString("%1/maxChip").arg(prefix), 50))
+	maxKick(new ConfigDouble(config, QString("%1/maxKick").arg(prefix), 255)),
+	maxChip(new ConfigDouble(config, QString("%1/maxChip").arg(prefix), 150))
 {
 }
+
 
 RobotConfig::Dribbler::Dribbler(Configuration *config, QString prefix):
 	multiplier(new ConfigDouble(config, QString("%1/multiplier").arg(prefix), 1.0))

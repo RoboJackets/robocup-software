@@ -98,11 +98,6 @@ public:
 
 	void reshapeFieldBodies();
 
-signals:
-	// connect to visualization for rendering
-	void setRobotPose(bool blue, int id, const QVector3D& pos, qreal angle, const QVector3D& axis);
-	void addNewRobot(bool blue, int id);
-	void removeExistingRobot(bool blue, int id);
 
 public:
 
@@ -116,7 +111,6 @@ protected Q_SLOTS:
 	void step();
 
 public:
-
 	//render
 	void renderScene(GL_ShapeDrawer* shapeDrawer, const btVector3& worldBoundsMin, const btVector3& worldBoundsMax);
 

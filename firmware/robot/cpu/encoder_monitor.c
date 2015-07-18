@@ -46,32 +46,35 @@ void encoder_monitor()
 		// 	}
 		// }
 	} else {
+        // THIS IS A HACK
+        // The below was commented out so we can run 2011 bots in 2011 mode without encoders
+
 		// 2011: Make sure the encoders work
-		for (int i = 0; i < 4; ++i)
-		{
-			int enc_min = (hall_delta[i] - Hall_Margin) * Encoder_Ticks_Per_Rev / Hall_Ticks_Per_Rev - Encoder_Margin;
-			int enc_max = (hall_delta[i] + Hall_Margin) * Encoder_Ticks_Per_Rev / Hall_Ticks_Per_Rev + Encoder_Margin;
-			if (encoder_delta[i] < enc_min || encoder_delta[i] > enc_max)
-			{
-				if (encoder_fault_counter[i] < Failure_Threshold)
-				{
-					encoder_fault_counter[i] += Count_Bad;
-				}
-			} else {
-				if (encoder_fault_counter[i] > 0)
-				{
-					encoder_fault_counter[i] -= Count_Good;
-				}
-			}
-			
-			if (encoder_fault_counter[i] >= Failure_Threshold)
-			{
-				em_err_hall[i] = hall_delta[i];
-				em_err_enc[i] = encoder_delta[i];
-				em_err_out[i] = motor_out[i];
-				
-				encoder_faults |= 1 << i;
-			}
-		}
+		// for (int i = 0; i < 4; ++i)
+		// {
+		// 	int enc_min = (hall_delta[i] - Hall_Margin) * Encoder_Ticks_Per_Rev / Hall_Ticks_Per_Rev - Encoder_Margin;
+		// 	int enc_max = (hall_delta[i] + Hall_Margin) * Encoder_Ticks_Per_Rev / Hall_Ticks_Per_Rev + Encoder_Margin;
+		// 	if (encoder_delta[i] < enc_min || encoder_delta[i] > enc_max)
+		// 	{
+		// 		if (encoder_fault_counter[i] < Failure_Threshold)
+		// 		{
+		// 			encoder_fault_counter[i] += Count_Bad;
+		// 		}
+		// 	} else {
+		// 		if (encoder_fault_counter[i] > 0)
+		// 		{
+		// 			encoder_fault_counter[i] -= Count_Good;
+		// 		}
+		// 	}
+
+		// 	if (encoder_fault_counter[i] >= Failure_Threshold)
+		// 	{
+		// 		em_err_hall[i] = hall_delta[i];
+		// 		em_err_enc[i] = encoder_delta[i];
+		// 		em_err_out[i] = motor_out[i];
+
+		// 		encoder_faults |= 1 << i;
+		// 	}
+		// }
 	}
 }
