@@ -11,8 +11,6 @@ REGISTER_CONFIGURABLE(WindowEvaluator)
 using namespace std;
 using namespace Geometry2d;
 
-const auto longest_possible_shot = sqrt(pow(Field_Dimensions::Current_Dimensions.Length(),2) + pow(Field_Dimensions::Current_Dimensions.Width(),2));
-
 ConfigDouble* WindowEvaluator::angle_score_coefficient;
 ConfigDouble* WindowEvaluator::distance_score_coefficient;
 
@@ -226,6 +224,8 @@ void WindowEvaluator::fill_shot_success(Window &window, const Point& origin) {
 // the farther the shot has to travel, the more likely that defenders can block it in time
   auto shot_angle_baseline = (M_PI / 20.0);
   auto angle_score = min(angle / shot_angle_baseline, 1.0);
+
+  float longest_possible_shot = std::sqrt(pow(Field_Dimensions::Current_Dimensions.Length(),2.0f) + pow(Field_Dimensions::Current_Dimensions.Width(),2.0f));
 
   auto distance_score = 1.0 - (shot_distance / longest_possible_shot);
 
