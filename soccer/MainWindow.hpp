@@ -86,6 +86,10 @@ class MainWindow : public QMainWindow
 		void on_manualID_currentIndexChanged(int value);
 		void on_goalieID_currentIndexChanged(int value);
 
+        void on_actionUse_Field_Oriented_Controls_toggled(bool value);
+
+		void on_actionUse_External_Referee_toggled(bool value);
+
 		/// Field side
 		void on_actionDefendPlusX_triggered();
 		void on_actionDefendMinusX_triggered();
