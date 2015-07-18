@@ -4,7 +4,7 @@ from enum import Enum
 import main
 import evaluation
 import constants
-
+import robocup
 
 class Capture(single_robot_behavior.SingleRobotBehavior):
 
@@ -48,6 +48,10 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             'ball ran away')
 
 
+        self.lastApproachTarget = None
+        self.postChangeCount = 0
+
+
     def bot_in_approach_pos(self):
         bot2ball = main.ball().pos - self.robot.pos
         ball2bot = bot2ball * -1
@@ -74,12 +78,23 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             dist = i * 0.05
             pos = main.ball().pos + approach_vec * dist
             ball_time = evaluation.ball.rev_predict(main.ball().vel, dist - Capture.CourseApproachDist) # how long will it take the ball to get there
-            bot_time = (pos - self.robot.pos).mag() * 10.0 # FIXME: evaluate trapezoid
-
+            
+            robotDist = (pos - self.robot.pos).mag()*1.0
+            bot_time = robocup.get_trapezoidal_time(
+                robotDist, 
+                robotDist,
+                2.2,
+                1,
+                self.robot.vel.mag(),
+                0)
+            #bot_time = (pos - self.robot.pos).mag() * 30.0 # FIXME: evaluate trapezoid
             # print('bot: ' + str(bot_time) + ';; ball: ' + str(ball_time))
 
             if bot_time < ball_time:
                 break
+            #if i == 50:
+            print(i)
+
 
         return pos
 
@@ -88,15 +103,27 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         # make sure teammates don't bump into us
         self.robot.shield_from_teammates(constants.Robot.Radius * 2.0)
 
+    def on_enter_course_approach(self):
+        self.lastApproachTarget == None
+        self.pastChangeCount = 11
 
     def execute_course_approach(self):
         # don't hit the ball on accident
         self.robot.set_avoid_ball_radius(Capture.CourseApproachAvoidBall)
         pos = self.find_intercept_point()
         self.robot.face(main.ball().pos)
-        if pos != None and main.ball().valid:
+
+        if self.pastChangeCount < 10 or (self.lastApproachTarget != None and (pos - self.lastApproachTarget).mag()<0.1):
+            self.pastChangeCount = self.pastChangeCount + 1
+            self.robot.move_to(self.lastApproachTarget)
+        else:    
             main.system_state().draw_circle(pos, constants.Ball.Radius, constants.Colors.White, "Capture")
             self.robot.move_to(pos)
+            self.lastApproachTarget = pos
+            self.pastChangeCount = 0;
+
+    def on_exit_course_approach(self):
+        self.lastApproachTarget == None
 
 
     def execute_fine_approach(self):
