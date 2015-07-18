@@ -50,15 +50,15 @@ WindowingResult WindowEvaluator::eval_pt_to_pt(Point origin, Point target) {
 }
 
 WindowingResult WindowEvaluator::eval_pt_to_opp_goal(Point origin) {
-  Segment their_goal{Point{Field_Dimensions::Current_Dimensions.Length(),-Field_Dimensions::Current_Dimensions.GoalWidth()/2},
-                     Point{Field_Dimensions::Current_Dimensions.Length(), Field_Dimensions::Current_Dimensions.GoalWidth()/2}};
+  Segment their_goal{Point{-Field_Dimensions::Current_Dimensions.GoalWidth()/2,Field_Dimensions::Current_Dimensions.Length()},
+                     Point{ Field_Dimensions::Current_Dimensions.GoalWidth()/2,Field_Dimensions::Current_Dimensions.Length()}};
 
   return eval_pt_to_seg(origin, their_goal);
 }
 
 WindowingResult WindowEvaluator::eval_pt_to_our_goal(Point origin) {
-  Segment our_goal{Point{0,-Field_Dimensions::Current_Dimensions.GoalWidth()/2},
-                     Point{0, Field_Dimensions::Current_Dimensions.GoalWidth()/2}};
+  Segment our_goal{Point{-Field_Dimensions::Current_Dimensions.GoalWidth()/2,0},
+                     Point{ Field_Dimensions::Current_Dimensions.GoalWidth()/2,0}};
 
   return eval_pt_to_seg(origin, our_goal);
 }
