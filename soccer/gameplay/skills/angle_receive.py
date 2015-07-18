@@ -118,7 +118,7 @@ class AngleReceive(skills._kick._Kick):
 
     ## returns True if we're facing the right direction and in the right position and steady
     def errors_below_thresholds(self):
-        if self.receive_point == None:
+        if self._target_pos == None:
             return False
 
         return (abs(self._angle_error) < AngleReceive.FaceAngleErrorThreshold
@@ -135,12 +135,17 @@ class AngleReceive(skills._kick._Kick):
     # First finds the rejection, which is the X component of the ball's velocity in the reference
     # frame of the robot, with the mouth facing the y axis. Then we calculate the angle required to
     # offset this rejection angle (if possible).
-    def adjust_angle(self, target_angle):
+    def adjust_angle(self, target_angle, ball_angle = None, ball_speed = None):
         ball = main.ball()
-        ball_angle = (ball.vel).angle()
-        angle_diff = target_angle - ball_angle
 
-        rejection = math.sin(angle_diff) * ball.vel.mag()
+        if ball_angle == None:
+            ball_angle = (ball.vel).angle()
+
+        if ball_speed == None:
+            ball_speed = ball.vel.mag()
+
+        angle_diff = target_angle - ball_angle
+        rejection = math.sin(angle_diff) * ball_speed
 
         # The min/max is to bound the value by -1 and 1.
         adjust = math.asin(min(1, max(-1, rejection / constants.Robot.MaxKickSpeed)))
@@ -173,7 +178,11 @@ class AngleReceive(skills._kick._Kick):
         else:
             # if the ball hasn't been kicked yet, we assume it's going to go through the receive point
             self._pass_line = robocup.Line(ball.pos, self.receive_point)
-            target_angle_rad = (self.get_target_point() - self.robot.pos).angle()
+            # Assume ball is kicked at max speed and is coming from the ball point to the location of our robot. Then average this with the target angle.
+            target_angle_rad = self.adjust_angle((self.get_target_point() - self.robot.pos).angle(), (self.robot.pos - main.ball().pos).angle(), constants.Robot.MaxKickSpeed)
+            # TODO make this faster by caching the .angle() part
+            target_angle_rad = (target_angle_rad + (self.get_target_point() - self.robot.pos).angle()) / 2
+
             self._kick_line = robocup.Line(self.receive_point, self.get_target_point())
 
         self._angle_facing =  target_angle_rad
@@ -200,8 +209,8 @@ class AngleReceive(skills._kick._Kick):
         pass_dir = (self._pass_line.get_pt(0) - self._pass_line.get_pt(1)).normalized()
 
         pos_error = self._target_pos - self.robot.pos
-        self._x_error = pos_error.dot(pass_dir.perp_ccw())
-        self._y_error = pos_error.dot(pass_dir)
+        self._x_error = self._target_pos.x - self.robot.pos.x
+        self._y_error = self._target_pos.y - self.robot.pos.y
 
 
     def get_target_point(self):
