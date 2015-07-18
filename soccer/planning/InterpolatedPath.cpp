@@ -98,7 +98,7 @@ namespace Planning {
 		std::set<std::shared_ptr<Geometry2d::Shape>> startHitSet;
 		obstacles.hit(points[start], startHitSet);
 
-		for (size_t i = 0; i < points.size() - 1; i++) {
+		for (size_t i = start; i < points.size() - 1; i++) {
 			std::set<std::shared_ptr<Geometry2d::Shape>> newHitSet;
 			if (obstacles.hit(Geometry2d::Segment(points[i], points[i+1]), newHitSet)) {
 				for (std::shared_ptr<Geometry2d::Shape> hit : newHitSet) {
@@ -275,12 +275,12 @@ namespace Planning {
 			endSpeed,
 			linearPos,      //  these are set by reference since C++ can't return multiple values
 			linearSpeed);   //
-	
+
 		Geometry2d::Point direction;
 		if(!getPoint(linearPos, targetPosOut, direction)) {
 			return false;
 		}
-	
+
 		targetVelOut = direction * linearSpeed;
 		*/
 		if (times.size() == 0) {
