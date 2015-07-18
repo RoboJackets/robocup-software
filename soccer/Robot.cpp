@@ -564,6 +564,12 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 			//addText(pathError);
 		}
 
+		if (isnan(targetPathPos.x) || isnan(targetPathPos.y)) {
+			_pathInvalidated = true;
+			addText("Evaulate Returned an invalid result" , Qt::red, "Motion");
+			//addText(pathError);
+		}
+
 
 
 		if (_path->hit(full_obstacles, timeIntoPath)) {
