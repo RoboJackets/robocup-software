@@ -266,6 +266,13 @@ void RRTPlanner::cubicBezier (Planning::InterpolatedPath &path, const Geometry2d
 		pointsY[i] = path.points[i].y;
 	}
 	float startSpeed = vi.mag();
+	//This is pretty hacky;
+	/*
+	if (startSpeed < 0.3) {
+		startSpeed = 0.3;
+		vi = (path.points[1] - path.points[0]).normalized()*startSpeed;
+	}
+	*/
 	float endSpeed = motionConstraints.endSpeed;
 	for (int i=0; i<curvesNum; i++) {
 		ks[i] = 1.0/(getTime(path, i+1, motionConstraints, startSpeed, endSpeed)-getTime(path, i, motionConstraints, startSpeed, endSpeed));
