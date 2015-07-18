@@ -67,7 +67,6 @@ private:
 
   static ConfigDouble* angle_score_coefficient;
   static ConfigDouble* distance_score_coefficient;
-
 };
 
 

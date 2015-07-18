@@ -495,6 +495,7 @@ BOOST_PYTHON_MODULE(robocup)
 
 	class_<std::vector<Robot*>>("vector_Robot")
 		.def(vector_indexing_suite<std::vector<Robot*>>())
+		.def("clear", &std::vector<Robot*>::clear)
 	;
 
 	class_<std::vector<OurRobot *> >("vector_OurRobot")

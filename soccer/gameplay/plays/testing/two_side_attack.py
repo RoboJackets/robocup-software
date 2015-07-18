@@ -76,9 +76,13 @@ class TwoSideAttack(play.Play):
 
 	def on_enter_passing(self):
 		# Do shot evaluation here
-		# TODO replace shot calls with WindowEvaluator calls
-		rob_0_chance = 0 #evaluation.shot.eval_shot(self.robot_points[0], windowing_excludes=self.to_exclude)
-		rob_1_chance = 0 #evaluation.shot.eval_shot(self.robot_points[1], windowing_excludes=self.to_exclude)
+		win_eval = robocup.WindowEvaluator(main.system_state())
+		for r in self.to_exclude:
+			win_eval.add_exclude_robot(r)
+		_, best = win_eval.eval_pt_to_their_goal(self.robot_points[0])
+		rob_0_chance = best.shot_success
+		_, best = win_eval.eval_pt_to_their_goal(self.robot_points[1])
+		rob_1_chance = best.shot_success
 
 		if rob_0_chance[0] > rob_1_chance[0]:
 			robot_pos = 0
