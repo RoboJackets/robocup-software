@@ -320,7 +320,7 @@ class Defense(composite_behavior.CompositeBehavior):
                     self.win_eval.add_excluded_robot(r)
                 _, threat.best_shot_window = self.win_eval.eval_pt_to_our_goal(opp.pos)
                 if threat.best_shot_window is not None:
-                    threat.shot_chance = best_shot.shot_success
+                    threat.shot_chance = threat.best_shot_window.shot_success
                 else:
                     threat.shot_chance = 0.0
 
