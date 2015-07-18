@@ -318,8 +318,8 @@ class Defense(composite_behavior.CompositeBehavior):
                 self.win_eval.excluded_robots.clear()
                 for r in map(lambda bhvr: bhvr.robot, unused_threat_handlers):
                     self.win_eval.add_excluded_robot(r)
-                _, best_shot = self.win_eval.eval_pt_to_our_goal(opp.pos)
-                if best_shot is not None:
+                _, threat.best_shot_window = self.win_eval.eval_pt_to_our_goal(opp.pos)
+                if threat.best_shot_window is not None:
                     threat.shot_chance = best_shot.shot_success
                 else:
                     threat.shot_chance = 0.0
@@ -426,10 +426,13 @@ class Defense(composite_behavior.CompositeBehavior):
 
                     self.win_eval.excluded_robots.clear()
                     _, best_window = self.win_eval.eval_pt_to_our_goal(threat.pos)
-                    chance = best_window.shot_success
+                    if best_window is not None:
+                        chance = best_window.shot_success
+                    else:
+                        chance = 0.0
 
                     main.system_state().draw_text("Shot: " + str(int(threat.shot_chance * 100.0)) + "% / " + str(int(chance*100)) + "%", shot_line.center(), constants.Colors.White, "Defense")
-                
+
                 # draw pass lines
                 if idx > 0:
                     pass_line = robocup.Segment(main.ball().pos, threat.pos)

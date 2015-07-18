@@ -72,16 +72,7 @@ std::string Point_repr(Geometry2d::Point *self) {
 }
 
 std::string Robot_repr(Robot *self) {
-	std::ostringstream ss;
-	ss << "<Robot ";
-	ss << (self->self() ? "us[" : "them[");
-	ss << self->shell();
-	ss << "], pos=";
-	ss << Point_repr(&(self->pos));
-	ss << ">";
-
-	std::string repr(ss.str());
-	return repr;
+	return self->to_string();
 }
 
 Geometry2d::Point Robot_pos(Robot *self) {
