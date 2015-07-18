@@ -28,12 +28,12 @@ void kicker_test()
 {
 	failures &= ~Fail_Kicker_Charge;
 	
-	if (base2008)
+	/*if (base2008) //2008 kicker boards are no different from 2011 kicker boards
 	{
 		// Can't tell anything
 		kicker_charge = 1;
 		return;
-	}
+	}*/
 	
 	// Make sure we can read from the kicker voltage ADC
 	fpga_read_status();
@@ -79,7 +79,7 @@ void kicker_monitor()
 {
 	// This is called after fpga_read_status() so this function may change kicker_status.
 	
-	if (base2008)
+	if (0) //base2008) ... Base 2008 kicker boards are no different from 2011 boards
 	{
 		// The only feedback we have is KDONE, which is already set
 		//FIXME - Charging timeout
