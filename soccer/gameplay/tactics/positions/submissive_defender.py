@@ -23,7 +23,7 @@ class SubmissiveDefender(single_robot_composite_behavior.SingleRobotCompositeBeh
         super().__init__(continuous=True)
         self._block_object = None
         # self._opponent_avoid_threshold = 2.0
-        self._defend_goal_radius = 1.12
+        self._defend_goal_radius = 1.4
 
         self.block_line = None
 
