@@ -110,6 +110,9 @@ void NewRefereeModule::run()
 	_running = true;
 	while(_running)
 	{
+		if(!_useExternalRef)
+			continue;
+
 		char buf[65536];
 
 		if(!socket.waitForReadyRead(500))
