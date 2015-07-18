@@ -31,12 +31,12 @@ static void dumb_update()
 		cmd_body_x + cmd_body_y + cmd_body_w,
 		cmd_body_x - cmd_body_y + cmd_body_w
 	};
-	
+
 	for (int i = 0; i < 5; ++i)
 	{
 		drive_mode[i] = DRIVE_SLOW_DECAY;
 	}
-	
+
 	for (int i = 0; i < 4; ++i)
 	{
 		//FIXME - Pretend to drive the right speed
@@ -48,7 +48,7 @@ static void dumb_update()
 		{
 			new_out = -MOTOR_MAX;
 		}
-		
+
 		int delta = new_out - last_out[i];
 		if (delta > Command_Rate_Limit)
 		{
@@ -61,6 +61,9 @@ static void dumb_update()
 		last_out[i] = motor_out[i];
 	}
 	motor_out[4] = dribble_command >> 1;
+
+    // dribbler command is reversed on 2011
+    if (!base2008) motor_out[4] *= -1;
 }
 
 ////////
@@ -86,20 +89,20 @@ static void step_init(int argc, const char *argv[])
 		step_motor = parse_int(argv[0]);
 		step_level = parse_int(argv[1]);
 	}
-	
+
 	if (argc >= 3)
 	{
 		step_threshold = parse_int(argv[2]);
 	} else {
 		step_threshold = 0;
 	}
-	
+
 	if (argc < 2 || step_motor < 0 || step_motor > 4 || step_level < -MOTOR_MAX || step_level > MOTOR_MAX)
 	{
 		printf("Usage: run step <motor 0..3> <level> [<low threshold>]\n");
 		controller = 0;
 	}
-	
+
 	step_holdoff = 0;
 	step_last_time = current_time;
 	debug_update = step_debug;
@@ -124,14 +127,14 @@ static void step_update()
 			step_level = 0;
 		}
 	}
-	
+
 	if (failed && encoder_delta[step_motor] == 0 && hall_delta[step_motor] == 0)
 	{
 		// Motor died
 		printf("Motor failed\n");
 		controller = 0;
 	}
-	
+
 	motor_out[step_motor] = step_level;
 	drive_mode[step_motor] = DRIVE_SLOW_DECAY;
 }
@@ -150,7 +153,7 @@ static void pid_init(int argc, const char *argv[])
 	{
 		last_out[i] = 0;
 	}
-	
+
 	// First three parameters are coefficients
 	int kp = 160;
 	int ki = 160;
@@ -160,11 +163,11 @@ static void pid_init(int argc, const char *argv[])
 		ki = parse_int(argv[1]);
 		kd = parse_int(argv[2]);
 	}
-	
+
 	// Find coefficients for simplified differential form
 	kpid = kp + ki + kd;
 	kp2d = kp + 2 * kd;
-	
+
 	// Next parameter is which motor to print
 	if (argc >= 4)
 	{
@@ -185,12 +188,12 @@ static void pid_update()
 		}
 		return;
 	}
-	
+
 	for (int i = 0; i < 5; ++i)
 	{
 		drive_mode[i] = DRIVE_SLOW_DECAY;
 	}
-	
+
 	//	FIXME: this assumes wheels are all at 45degrees
 	int wheel_command[4] =
 	{
@@ -199,10 +202,10 @@ static void pid_update()
 		cmd_body_x + cmd_body_y + cmd_body_w,
 		cmd_body_x - cmd_body_y + cmd_body_w
 	};
-	
+
 	const int Scale = 256;
 	const int Max_Command = MOTOR_MAX * Scale;
-	
+
 	for (int i = 0; i < 4; ++i)
 	{
 		int speed = encoder_delta[i];
@@ -222,7 +225,7 @@ static void pid_update()
 		// and is simpler to implement than the more direct form:
 		//    out = kp * error + ki * error_integral[i] + kd * delta_error
 		int delta = kpid * error - kp2d * error1[i] + kd * error2[i];
-		
+
 		// Limit the change between consecutive cycles to prevent excessive current
 		if (delta > Command_Rate_Limit * Scale)
 		{
@@ -232,13 +235,13 @@ static void pid_update()
 			delta = -Command_Rate_Limit * Scale;
 		}
 		last_out[i] += delta;
-		
+
 		// Don't accumulate output for broken motors, in case they start working
 		if ((motor_stall) & (1 << i))
 		{
 			last_out[i] = 0;
 		}
-		
+
 		// Clip to output limits
 		if (last_out[i] > Max_Command)
 		{
@@ -247,16 +250,16 @@ static void pid_update()
 		{
 			last_out[i] = -Max_Command;
 		}
-		
+
 		if (i == pd_debug)
 		{
 			printf("%04x %04x -> %08x %08x %08x -> %08x\n", wheel_command[i], speed, error, error1[i], error2[i], last_out[i]);
 		}
-		
+
 		// Shift error history
 		error2[i] = error1[i];
 		error1[i] = error;
-		
+
 		// Convert the fixed point command to the final motor command
 		motor_out[i] = (last_out[i] + Scale / 2) / Scale;
 	}
@@ -280,7 +283,7 @@ static void test_gyro_init(int argc, const char *argv[])
 		printf("Usage: run test_gyro <kp> <kd>\n");
 		controller = 0;
 	}
-	
+
 	tg_kp = parse_int(argv[0]);
 	tg_kd = parse_int(argv[1]);
 	tg_out = 0;
@@ -293,13 +296,13 @@ static void test_gyro_update()
 	{
 		drive_mode[i] = DRIVE_SLOW_DECAY;
 	}
-	
+
 	long gyro[3] = {0};
 	if (imu_aligned)
 	{
 		IMUgetGyro(gyro);
 	}
-	
+
 	int setpoint = 0;//-wheel_command[i] * 3;
 	int speed = gyro[2] >> 12;
 	int error = setpoint - speed;
@@ -312,7 +315,7 @@ static void test_gyro_update()
 	int delta_error = error - tg_last_error;
 	tg_last_error = error;
 	int delta = error * tg_kp + delta_error * tg_kd;
-	
+
 	// Limit the change between consecutive cycles to prevent excessive current
 	if (delta > Command_Rate_Limit * 256)
 	{
@@ -322,13 +325,13 @@ static void test_gyro_update()
 		delta = -Command_Rate_Limit * 256;
 	}
 	tg_out += delta;
-	
+
 	// Don't accumulate output for broken motors, in case they start working
 	if ((motor_stall) || kick_command == 0)
 	{
 		tg_out = 0;
 	}
-	
+
 	// Clip to output limits
 	static const int MAX = 40;
 	if (tg_out > MAX * 256)
@@ -338,7 +341,7 @@ static void test_gyro_update()
 	{
 		tg_out = -MAX * 256;
 	}
-	
+
 // 	printf("%5d %4d\n", speed, tg_out);
 	for (int i = 0; i < 4; ++i)
 	{
@@ -355,7 +358,7 @@ const controller_info_t controllers[] =
 	{"pid", pid_init, 0, pid_update},
 	{"step", step_init, 0, step_update},
 	{"test_gyro", test_gyro_init, 0, test_gyro_update},
-	
+
 	// End of table
 	{0, 0}
 };

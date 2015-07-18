@@ -546,6 +546,8 @@ private:
 	static ConfigDouble *_selfAvoidRadius;
 	static ConfigDouble *_oppAvoidRadius;
 	static ConfigDouble *_oppGoalieAvoidRadius;
+	static ConfigDouble *_goalChangeThreshold;
+	static ConfigDouble *_replanTimeout;
 };
 
 /**
