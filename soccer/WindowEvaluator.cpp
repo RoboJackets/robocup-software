@@ -153,13 +153,15 @@ WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
 
   vector<Robot*> bots(system->self.size() + system->opp.size());
 
-  auto end_it = copy_if(system->self.begin(), system->self.end(), bots.begin(), [&](Robot* bot){
-    return bot != nullptr && bot->visible && find(excluded_robots.begin(), excluded_robots.end(), bot) != excluded_robots.end();
-  });
+  auto filter_predicate = [&](const Robot* bot) -> bool {
+    return bot != nullptr &&
+           bot->visible &&
+           find(excluded_robots.begin(), excluded_robots.end(), bot) == excluded_robots.end();
+  };
 
-  end_it = copy_if(system->opp.begin(), system->opp.end(), end_it, [&](Robot* bot){
-    return (bot != nullptr) && bot->visible && (find(excluded_robots.begin(), excluded_robots.end(), bot) == excluded_robots.end());
-  });
+  auto end_it = copy_if(system->self.begin(), system->self.end(), bots.begin(), filter_predicate);
+
+  end_it = copy_if(system->opp.begin(), system->opp.end(), end_it, filter_predicate);
 
   bots.resize(distance(bots.begin(), end_it));
 
