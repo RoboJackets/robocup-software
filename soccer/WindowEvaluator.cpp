@@ -83,6 +83,7 @@ void WindowEvaluator::obstacle_range(vector<Window>& windows, double& t0, double
       Window w2{t1, w.t1};
       w.t1 = t0;
       iter = windows.insert(iter+1, w2);
+      iter++;
     }
     else if(t0 > w.t0 && t0 < w.t1) {
       // the obstacle covers the end of the window
@@ -106,7 +107,7 @@ void WindowEvaluator::obstacle_robot(vector<Window>& windows, Point origin, Segm
   auto r = Robot_Radius + Ball_Radius;
 
   Segment seg{bot_pos - n * Robot_Radius + t * r,
-              bot_pos - n*Robot_Radius - t * r};
+              bot_pos - n * Robot_Radius - t * r};
 
   if(debug) {
     system->drawLine(seg, QColor{"Red"}, "Debug");
