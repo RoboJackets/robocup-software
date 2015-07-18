@@ -46,6 +46,8 @@ namespace Geometry2d
 			
 			/** find the nearest point on the segment given @a p */
 			Point nearestPoint(const Point& p) const;
+
+			Point nearestPoint(const Line& l) const;
 			
 			bool intersects(const Segment &other, Point *intr = 0) const;
 			bool intersects(const Circle& circle) const;
