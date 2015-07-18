@@ -2,7 +2,6 @@ import single_robot_behavior
 import behavior
 import constants
 import robocup
-import evaluation.window_evaluator
 import main
 from enum import Enum
 import math
@@ -33,7 +32,7 @@ class Defender(single_robot_behavior.SingleRobotBehavior):
 		self._side = side
 		self._opponent_avoid_threshold = 2.0
 		self._defend_goal_radius = 0.9
-		self._win_eval = evaluation.window_evaluator.WindowEvaluator()
+		self._win_eval = robocup.WindowEvaluator(main.system_state())
 
 		self._area = robocup.Rect(robocup.Point(-constants.Field.Width/2.0, constants.Field.Length),
 			robocup.Point(constants.Field.Width/2.0, 0))

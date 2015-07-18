@@ -46,6 +46,8 @@ namespace Geometry2d
 			
 			/** find the nearest point on the segment given @a p */
 			Point nearestPoint(const Point& p) const;
+
+			Point nearestPoint(const Line& l) const;
 			
 			bool intersects(const Segment &other, Point *intr = 0) const;
 			bool intersects(const Circle& circle) const;
@@ -55,10 +57,20 @@ namespace Geometry2d
 			//	This was added to be used with python code, but is useful in c++ as well
 			std::shared_ptr<Point> intersection(const Segment &other);
 
-			std::string toString() {
+			std::string toString() const {
 				std::stringstream str;
 				str << "Line<" << pt[0] << ", " << pt[1] << ">";
 				return str.str();
+			}
+
+			friend std::ostream& operator<< (std::ostream& stream, const Segment& seg) {
+				stream << seg.toString();
+				return stream;
+			}
+
+			bool operator== (const Segment& other) const {
+				return pt[0] == other.pt[0] &&
+							 pt[1] == other.pt[1];
 			}
 	};
 }

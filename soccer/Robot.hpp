@@ -109,6 +109,25 @@ public:
 		return *this == other;
 	}
 
+	std::string to_string() const {
+		return 	std::string("<Robot ") +
+						(self() ? "us[" : "them[") +
+						std::to_string(shell()) +
+						"], pos=" +
+						pos.toString() +
+						">";
+	}
+
+	friend std::ostream& operator<< (std::ostream& stream, const Robot& robot) {
+		stream << robot.to_string();
+		return stream;
+	}
+
+	friend std::ostream& operator<< (std::ostream& stream, const Robot* robot) {
+		stream << robot->to_string();
+		return stream;
+	}
+
 private:
 	unsigned int _shell;
 	bool _self;
