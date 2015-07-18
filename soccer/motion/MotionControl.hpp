@@ -16,19 +16,19 @@ class OurRobot;
 class MotionControl {
 public:
 	MotionControl(OurRobot *robot);
-	
+
 	/**
 	 * Stops the robot.
 	 * The robot will decelerate at max acceleration until it stops.
 	 */
 	void stopped();
-	
+
 	/**
 	 * This runs PID control on the position and angle of the robot and
 	 * sets values in the robot's radioTx packet.
 	 */
 	void run();
-	
+
 
 	static void createConfiguration(Configuration *cfg);
 
@@ -51,7 +51,7 @@ private:
 	Pid _positionXController;
 	Pid _positionYController;
 	Pid _angleController;
-	
+
 	static ConfigDouble *_max_acceleration;
 	static ConfigDouble *_max_velocity;
 

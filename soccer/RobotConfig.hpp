@@ -9,10 +9,10 @@ class RobotConfig {
 public:
 	RobotConfig(Configuration *config, QString prefix);
 	~RobotConfig();
-	
+
 	struct PID {
 		PID(Configuration *config, QString prefix);
-		
+
 		ConfigDouble *p;
 		ConfigDouble *i;
 		ConfigInt *i_windup;	///	how many past errors to store.  -1 means store all
@@ -42,7 +42,7 @@ public:
 		ConfigDouble *calibrationSlope;
 		ConfigDouble *calibrationOffset;
 	};
-	
+
 	PID translation;
 	PID rotation;
 
@@ -53,6 +53,11 @@ public:
 	///	convert from real units to bot "units"
 	ConfigDouble *velMultiplier;
 	ConfigDouble *angleVelMultiplier;
+
+    // If a command velocity we're about to send is below this value in
+    // magniude, but greater than zero, we scale the velocity up to this
+    // magnitude.
+    ConfigDouble *minEffectiveVelocity;
 
 	///	we multiply this by the bot's acceleration and add this to the output targetVel
 	ConfigDouble *accelerationMultiplier;

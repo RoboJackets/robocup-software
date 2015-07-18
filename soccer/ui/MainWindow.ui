@@ -1617,7 +1617,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>1405</width>
-     <height>25</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_View">
@@ -1696,6 +1696,7 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="actionDampedRotation"/>
     <addaction name="actionDampedTranslation"/>
+    <addaction name="actionUse_Field_Oriented_Controls"/>
    </widget>
    <addaction name="menu_View"/>
    <addaction name="menu_Field"/>
@@ -1998,6 +1999,14 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Use External Referee</string>
+   </property>
+  </action>
+  <action name="actionUse_Field_Oriented_Controls">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use Field-Oriented Controls</string>
    </property>
   </action>
  </widget>
