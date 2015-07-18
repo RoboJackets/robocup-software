@@ -117,6 +117,9 @@ class Processor: public QThread
 			return _manualID;
 		}
 
+        bool useFieldOrientedManualDrive() const { return _useFieldOrientedManualDrive; }
+        void setUseFieldOrientedManualDrive(bool foc) { _useFieldOrientedManualDrive = foc; }
+
 		/**
 		 * @brief Set the shell ID of the goalie
 		 * @details The rules require us to specify at the start of a match/period which
@@ -298,6 +301,9 @@ class Processor: public QThread
 		//	joystick damping
 		bool _dampedRotation;
 		bool _dampedTranslation;
+
+        // If true, rotates robot commands from the joystick based on its orientation on the field
+        bool _useFieldOrientedManualDrive = false;
 
 		VisionReceiver vision;
 };
