@@ -21,15 +21,16 @@ import evaluation.passing
 #
 # Takes a current ball position/initial kick position (robocup.Point)
 def generate_default_rectangle(kick_point):
-    offset_from_edge = 0.5
+    offset_from_edge = 0.25
+    offset_from_ball = 0.7
 
     if kick_point.x > 0:
         # Ball is on right side of field
-        toReturn = robocup.Rect(robocup.Point(0, min(constants.Field.Length - offset_from_edge, main.ball().pos.y - 0.3)),
+        toReturn = robocup.Rect(robocup.Point(0, min(constants.Field.Length - offset_from_edge, main.ball().pos.y - offset_from_ball)),
                 robocup.Point(-constants.Field.Width / 2 + offset_from_edge, min(constants.Field.Length * 3 / 4, main.ball().pos.y - 2)))
     else:
         # Ball is on left side of field
-        toReturn = robocup.Rect(robocup.Point(0, min(constants.Field.Length - offset_from_edge, main.ball().pos.y - 0.3)),
+        toReturn = robocup.Rect(robocup.Point(0, min(constants.Field.Length - offset_from_edge, main.ball().pos.y - offset_from_ball)),
                 robocup.Point(constants.Field.Width / 2 - offset_from_edge, min(constants.Field.Length * 3 / 4, main.ball().pos.y - 2)))
     return toReturn
 
