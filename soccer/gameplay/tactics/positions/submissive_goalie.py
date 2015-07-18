@@ -88,7 +88,7 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
         if self.block_line == None:
             self._move_target = SubmissiveGoalie.RobotSegment.center()
         else:
-            self._move_target = self.block_line.line_intersection(SubmissiveGoalie.RobotSegment)
+            self._move_target = SubmissiveGoalie.RobotSegment.nearest_point_to_line(self.block_line)
 
         self._move_target.x = min(max(self._move_target.x, -SubmissiveGoalie.MaxX), SubmissiveGoalie.MaxX)
 
