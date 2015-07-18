@@ -553,10 +553,12 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		float timeIntoPath = ((float)(timestamp() - _pathStartTime)) * TimestampToSecs + 1.0f/60.0f;
 		_path->evaluate(timeIntoPath, targetPathPos, targetVel);
 		float pathError = (targetPathPos - pos).mag();
-		//state()->drawCircle(targetPathPos, maxDist, Qt::green, "MotionControl");
-		//addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
+		float replanThreshold = *_motionConstraints._replan_threshold;
+
+		state()->drawCircle(targetPathPos, replanThreshold, Qt::green, "MotionControl");
+		addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
 		//addText(QString("%1").arg(pathError));
-		if (*_motionConstraints._replan_threshold!=0 && pathError > *_motionConstraints._replan_threshold) {
+		if (*_motionConstraints._replan_threshold!=0 && pathError > replanThreshold) {
 			_pathInvalidated = true;
 			addText("pathError" , Qt::red, "Motion");
 			//addText(pathError);
@@ -578,6 +580,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		//	was blocked by an obstacle
 		//  TODO: This is Stupid. This should be fixed in the RRT planner or the Bezier Algorithm.
 		if (_path->destination() && (*_path->destination() - dest).mag() > 0.025) {
+			addText("Goal Changed", Qt::red, "Motion");
 			_pathInvalidated = true;
 		}
 	}
