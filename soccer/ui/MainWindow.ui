@@ -1220,7 +1220,7 @@ p, li { white-space: pre-wrap; }
           <enum>QTabWidget::East</enum>
          </property>
          <property name="currentIndex">
-          <number>0</number>
+          <number>4</number>
          </property>
          <widget class="QWidget" name="playsBehaviorsTab">
           <property name="sizePolicy">
@@ -1664,6 +1664,8 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionUseOpponentHalf"/>
     <addaction name="menu_Radio_channel"/>
     <addaction name="menuVision_Channel"/>
+    <addaction name="separator"/>
+    <addaction name="actionUse_External_Referee"/>
    </widget>
    <widget class="QMenu" name="menu_Simulator">
     <property name="title">
@@ -1985,6 +1987,17 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Team Names</string>
+   </property>
+  </action>
+  <action name="actionUse_External_Referee">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use External Referee</string>
    </property>
   </action>
  </widget>

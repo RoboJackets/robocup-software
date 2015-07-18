@@ -138,6 +138,10 @@ public:
 		return _kickDetectState == Kicked;
 	}
 
+	void useExternalReferee(bool value) {
+		_useExternalRef = value;
+	}
+
 	NewRefereeModuleEnums::Stage stage;
 	NewRefereeModuleEnums::Command command;
 
@@ -203,4 +207,6 @@ protected:
 
 	NewRefereeModuleEnums::Command prev_command;
 	NewRefereeModuleEnums::Stage prev_stage;
+
+	bool _useExternalRef = true;
 };
