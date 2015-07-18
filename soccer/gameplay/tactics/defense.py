@@ -50,6 +50,7 @@ class Defense(composite_behavior.CompositeBehavior):
         self.debug = True
 
         self.win_eval = robocup.WindowEvaluator(main.system_state())
+        self.win_eval.debug = True
 
 
 
@@ -318,7 +319,10 @@ class Defense(composite_behavior.CompositeBehavior):
                 for r in map(lambda bhvr: bhvr.robot, unused_threat_handlers):
                     self.win_eval.add_excluded_robot(r)
                 _, best_shot = self.win_eval.eval_pt_to_our_goal(opp.pos)
-                threat.shot_chance = best_shot.shot_success
+                if best_shot is not None:
+                    threat.shot_chance = best_shot.shot_success
+                else:
+                    threat.shot_chance = 0.0
 
                 if threat.shot_chance == 0:
                    # gve it a small chance because the shot could clear up a bit later and we don't want to consider it a zero threat
