@@ -59,11 +59,16 @@ REGISTER_CONFIGURABLE(OurRobot)
 ConfigDouble *OurRobot::_selfAvoidRadius;
 ConfigDouble *OurRobot::_oppAvoidRadius;
 ConfigDouble *OurRobot::_oppGoalieAvoidRadius;
+ConfigDouble *OurRobot::_goalChangeThreshold;
+ConfigDouble *OurRobot::_replanTimeout;
 
 void OurRobot::createConfiguration(Configuration *cfg) {
 	_selfAvoidRadius = new ConfigDouble(cfg, "PathPlanner/selfAvoidRadius", Robot_Radius);
 	_oppAvoidRadius = new ConfigDouble(cfg, "PathPlanner/oppAvoidRadius", Robot_Radius - 0.01);
 	_oppGoalieAvoidRadius = new ConfigDouble(cfg, "PathPlanner/oppGoalieAvoidRadius", Robot_Radius + 0.05);
+
+	_replanTimeout = new ConfigDouble(cfg, "PathPlanner/replanTimeout", 5);
+	_goalChangeThreshold = new ConfigDouble(cfg, "PathPlanner/goalChangeThreshold", 0.025);
 }
 
 OurRobot::OurRobot(int shell, SystemState *state):
@@ -537,7 +542,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	Geometry2d::Point dest = *_motionConstraints.targetPos;
 
 	// //	if this number of microseconds passes since our last path plan, we automatically replan
-	const Time kPathExpirationInterval = 10 * SecsToTimestamp;
+	const Time kPathExpirationInterval = *_replanTimeout * SecsToTimestamp;
 	if ((timestamp() - _pathStartTime) > kPathExpirationInterval) {
 		_pathInvalidated = true;
 	}
@@ -545,7 +550,6 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	if (!_path) {
 		_pathInvalidated = true;
 	} else {
-		_path->draw(_state, Qt::magenta);
 
 		//float maxDist = .6;
 		Point targetPathPos;
@@ -579,7 +583,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		//	we invalidate the path.  this situation could arise if during a previous planning, the target point
 		//	was blocked by an obstacle
 		//  TODO: This is Stupid. This should be fixed in the RRT planner or the Bezier Algorithm.
-		if (_path->destination() && (*_path->destination() - dest).mag() > 0.025) {
+		if (_path->destination() && (*_path->destination() - dest).mag() > *_goalChangeThreshold) {
 			addText("Goal Changed", Qt::red, "Motion");
 			_pathInvalidated = true;
 		}
@@ -596,6 +600,10 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		// use the newly generated path
 		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: using new RRT path" << std::endl;
 		setPath(path);
+	}
+
+	if (_path) {
+		_path->draw(_state, Qt::magenta);
 	}
 	_pathChangeHistory.push_back(_didSetPathThisIteration);
 
