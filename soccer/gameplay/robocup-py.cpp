@@ -15,6 +15,7 @@ using namespace boost::python;
 #include <SystemState.hpp>
 #include <protobuf/LogFrame.pb.h>
 #include <Constants.hpp>
+#include <WindowEvaluator.h>
 
 #include <boost/python/exception_translator.hpp>
 #include <boost/version.hpp>
@@ -71,16 +72,7 @@ std::string Point_repr(Geometry2d::Point *self) {
 }
 
 std::string Robot_repr(Robot *self) {
-	std::ostringstream ss;
-	ss << "<Robot ";
-	ss << (self->self() ? "us[" : "them[");
-	ss << self->shell();
-	ss << "], pos=";
-	ss << Point_repr(&(self->pos));
-	ss << ">";
-
-	std::string repr(ss.str());
-	return repr;
+	return self->to_string();
 }
 
 Geometry2d::Point Robot_pos(Robot *self) {
@@ -256,6 +248,78 @@ boost::python::list Circle_intersects_line(Geometry2d::Circle *self, const Geome
 	return lst;
 }
 
+boost::python::tuple WinEval_eval_pt_to_seg(WindowEvaluator *self, const Geometry2d::Point *origin, const Geometry2d::Segment *target) {
+	if(origin == nullptr)
+		throw NullArgumentException{"origin"};
+	if(target == nullptr)
+		throw NullArgumentException{"target"};
+	boost::python::list lst;
+
+	auto window_results = self->eval_pt_to_seg(*origin, *target);
+
+	lst.append(window_results.first);
+	if(window_results.second.is_initialized())
+		lst.append(window_results.second.get());
+	else
+		lst.append(boost::python::api::object());
+
+	return boost::python::tuple{lst};
+}
+
+boost::python::tuple WinEval_eval_pt_to_pt(WindowEvaluator *self, const Geometry2d::Point *origin, const Geometry2d::Point *target) {
+	if(origin == nullptr)
+		throw NullArgumentException{"origin"};
+	if(target == nullptr)
+		throw NullArgumentException{"target"};
+	boost::python::list lst;
+
+	auto window_results = self->eval_pt_to_pt(*origin, *target);
+
+	lst.append(window_results.first);
+	if(window_results.second.is_initialized())
+		lst.append(window_results.second.get());
+	else
+		lst.append(boost::python::api::object());
+
+	return boost::python::tuple{lst};
+}
+
+boost::python::tuple WinEval_eval_pt_to_opp_goal(WindowEvaluator *self, const Geometry2d::Point *origin) {
+	if(origin == nullptr)
+		throw NullArgumentException{"origin"};
+	boost::python::list lst;
+
+	auto window_results = self->eval_pt_to_opp_goal(*origin);
+
+	lst.append(window_results.first);
+	if(window_results.second.is_initialized())
+		lst.append(window_results.second.get());
+	else
+		lst.append(boost::python::api::object());
+
+	return boost::python::tuple{lst};
+}
+
+boost::python::tuple WinEval_eval_pt_to_our_goal(WindowEvaluator *self, const Geometry2d::Point *origin) {
+	if(origin == nullptr)
+		throw NullArgumentException{"origin"};
+	boost::python::list lst;
+
+	auto window_results = self->eval_pt_to_our_goal(*origin);
+
+	lst.append(window_results.first);
+	if(window_results.second.is_initialized())
+		lst.append(window_results.second.get());
+	else
+		lst.append(boost::python::api::object());
+
+	return boost::python::tuple{lst};
+}
+
+boost::python::tuple WinEval_add_excluded_robot(WindowEvaluator *self, Robot* robot) {
+	self->excluded_robots.push_back(robot);
+}
+
 /**
  * The code in this block wraps up c++ classes and makes them
  * accessible to python in the 'robocup' module.
@@ -420,6 +484,11 @@ BOOST_PYTHON_MODULE(robocup)
 		.def_readonly("valid", &Ball::valid)
 	;
 
+	class_<std::vector<Robot*>>("vector_Robot")
+		.def(vector_indexing_suite<std::vector<Robot*>>())
+		.def("clear", &std::vector<Robot*>::clear)
+	;
+
 	class_<std::vector<OurRobot *> >("vector_OurRobot")
 		.def(vector_indexing_suite<std::vector<OurRobot *> >())
 	;
@@ -460,4 +529,34 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("FloorLength", &Field_Dimensions::FloorLength)
 		.def("FloorWidth", &Field_Dimensions::FloorWidth)
 	;
+
+	class_<Window>("Window")
+		.def_readwrite("a0", &Window::a0)
+		.def_readwrite("a1", &Window::a1)
+		.def_readwrite("t0", &Window::t0)
+		.def_readwrite("t1", &Window::t1)
+		.def_readwrite("segment", &Window::segment)
+		.def_readwrite("shot_success", &Window::shot_success)
+	;
+
+	class_<std::vector<Window>>("vector_Window")
+		.def(vector_indexing_suite<std::vector<Window>>())
+	;
+
+	class_<WindowEvaluator>("WindowEvaluator", init<SystemState*>())
+		.def_readwrite("debug", &WindowEvaluator::debug)
+		.def_readwrite("chip_enabled", &WindowEvaluator::chip_enabled)
+		.def_readwrite("max_chip_range", &WindowEvaluator::max_chip_range)
+		.def_readwrite("min_chip_range", &WindowEvaluator::min_chip_range)
+		.def_readwrite("excluded_robots", &WindowEvaluator::excluded_robots)
+		.def_readwrite("hypothetical_robot_locations", &WindowEvaluator::hypothetical_robot_locations)
+		.def("add_excluded_robot", &WinEval_add_excluded_robot)
+		.def("eval_pt_to_pt", &WinEval_eval_pt_to_pt)
+		.def("eval_pt_to_opp_goal", &WinEval_eval_pt_to_opp_goal)
+		.def("eval_pt_to_our_goal", &WinEval_eval_pt_to_our_goal)
+		.def("eval_pt_to_seg", &WinEval_eval_pt_to_seg)
+		.def("obstacle_range", &WindowEvaluator::obstacle_range)
+		.def("obstacle_robot", &WindowEvaluator::obstacle_robot)
+	;
+
 }
