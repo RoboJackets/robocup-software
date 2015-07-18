@@ -1041,6 +1041,10 @@ void MainWindow::on_goalieID_currentIndexChanged(int value)
 	_processor->goalieID(value - 1);
 }
 
+void MainWindow::on_actionUse_External_Referee_toggled(bool value) {
+	_processor->refereeModule()->useExternalReferee(value);
+}
+
 ////////
 // Debug layer list
 
