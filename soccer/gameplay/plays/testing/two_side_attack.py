@@ -78,13 +78,13 @@ class TwoSideAttack(play.Play):
 		# Do shot evaluation here
 		win_eval = robocup.WindowEvaluator(main.system_state())
 		for r in self.to_exclude:
-			win_eval.add_exclude_robot(r)
-		_, best = win_eval.eval_pt_to_their_goal(self.robot_points[0])
+			win_eval.add_excluded_robot(r)
+		_, best = win_eval.eval_pt_to_opp_goal(self.robot_points[0])
 		rob_0_chance = best.shot_success
-		_, best = win_eval.eval_pt_to_their_goal(self.robot_points[1])
+		_, best = win_eval.eval_pt_to_opp_goal(self.robot_points[1])
 		rob_1_chance = best.shot_success
 
-		if rob_0_chance[0] > rob_1_chance[0]:
+		if rob_0_chance > rob_1_chance:
 			robot_pos = 0
 		else:
 			robot_pos = 1

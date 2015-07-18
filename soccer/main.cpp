@@ -73,9 +73,9 @@ int main (int argc, char* argv[])
 	vector<const char *> playDirs;
 	bool sim = false;
 	bool log = true;
-    QString radioFreq;
-
-    string playbookFile;
+  QString radioFreq;
+  string playbookFile;
+	bool noref = false;
 
 	for (int i=1 ; i<argc; ++i)
 	{
@@ -143,6 +143,10 @@ int main (int argc, char* argv[])
 
 			playbookFile = argv[++i];
 		}
+		else if(strcmp(var, "-noref") == 0)
+		{
+			noref = true;
+		}
 		else
 		{
 			printf("Not a valid flag: %s\n", argv[i]);
@@ -170,6 +174,7 @@ int main (int argc, char* argv[])
 
 	Processor *processor = new Processor(sim);
 	processor->blueTeam(blueTeam);
+	processor->refereeModule()->useExternalReferee(!noref);
 
 	// Load config file
 	QString error;
