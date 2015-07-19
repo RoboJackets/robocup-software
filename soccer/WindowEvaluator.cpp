@@ -111,15 +111,14 @@ void WindowEvaluator::obstacle_robot(vector<Window>& windows, Point origin, Segm
 
   if(debug) {
     system->drawLine(seg, QColor{"Red"}, "Debug");
-    system->drawLine(target, Qt::green, "Debug");
   }
 
   auto end = target.delta().magsq();
+
   array<double, 2> extent = {0, end};
 
   for(int i = 0; i < 2; i++) {
     Line edge{origin, seg.pt[i]};
-    system->drawLine(edge, Qt::blue, "Debug");
     auto d = edge.delta().magsq();
 
     Point intersect;
@@ -135,13 +134,8 @@ void WindowEvaluator::obstacle_robot(vector<Window>& windows, Point origin, Segm
     else {
       return;
     }
-    auto size_start = windows.size();
-    obstacle_range(windows, extent[0], extent[1]);
-    if(windows.size() == 0 && size_start > 0) {
-      system->drawCircle(bot_pos, Robot_Radius+0.1, Qt::red, "Debug");
-      cout << bot_pos << endl;
-    }
   }
+  obstacle_range(windows, extent[0], extent[1]);
 }
 
 WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
