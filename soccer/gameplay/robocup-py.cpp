@@ -21,6 +21,8 @@ using namespace boost::python;
 #include <boost/version.hpp>
 #include <exception>
 
+#include "motion/TrapezoidalMotion.hpp"
+
 /**
  * These functions make sure errors on the c++
  * side get passed up through python.
@@ -345,6 +347,7 @@ BOOST_PYTHON_MODULE(robocup)
 	boost::python::register_exception_translator<NullArgumentException>(&translateException);
 
 	def("fix_angle_radians", &fixAngleRadians);
+	def("get_trapezoidal_time", &Trapezoidal::getTime);
 
 	class_<Geometry2d::Point, Geometry2d::Point*>("Point", init<float, float>())
 		.def(init<const Geometry2d::Point &>())
