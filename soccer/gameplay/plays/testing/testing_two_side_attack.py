@@ -8,7 +8,7 @@ import skills.capture
 import enum
 import tactics.coordinated_pass
 
-class TwoSideAttack(play.Play):
+class TestingTwoSidedAttack(play.Play):
 	# Try to pass to the better target
 	# Soccer/gameplay/evaluation/shot.py
 	# Tell where passing from and where to pass to
@@ -29,24 +29,24 @@ class TwoSideAttack(play.Play):
 		# Kicking
 			# Pivot kick (by default attacks enemy goal)
 
-		self.add_state(TwoSideAttack.State.setup,
+		self.add_state(TestingTwoSidedAttack.State.setup,
 			behavior.Behavior.State.running)
-		self.add_state(TwoSideAttack.State.passing,
+		self.add_state(TestingTwoSidedAttack.State.passing,
 			behavior.Behavior.State.running)
-		self.add_state(TwoSideAttack.State.kicking,
+		self.add_state(TestingTwoSidedAttack.State.kicking,
 			behavior.Behavior.State.running)
 
 		# Add transitions
 		self.add_transition(behavior.Behavior.State.start,
-			TwoSideAttack.State.setup,
+			TestingTwoSidedAttack.State.setup,
 			lambda: True,
 			'immediately')
-		self.add_transition(TwoSideAttack.State.setup,
-			TwoSideAttack.State.passing,
+		self.add_transition(TestingTwoSidedAttack.State.setup,
+			TestingTwoSidedAttack.State.passing,
 			lambda: self.all_subbehaviors_completed(),
 			'all subbehaviors completed')
-		self.add_transition(TwoSideAttack.State.passing,
-			TwoSideAttack.State.kicking,
+		self.add_transition(TestingTwoSidedAttack.State.passing,
+			TestingTwoSidedAttack.State.kicking,
 			lambda: self.all_subbehaviors_completed(),
 			'all subbehaviors completed')
 
@@ -79,9 +79,9 @@ class TwoSideAttack(play.Play):
 		win_eval = robocup.WindowEvaluator(main.system_state())
 		for r in self.to_exclude:
 			win_eval.add_excluded_robot(r)
-		_, best = win_eval.eval_pt_to_opp_goal(self.robot_points[0])
+		_, best = win_eval.eval_pt_to_our_goal(self.robot_points[0])
 		rob_0_chance = best.shot_success
-		_, best = win_eval.eval_pt_to_opp_goal(self.robot_points[1])
+		_, best = win_eval.eval_pt_to_our_goal(self.robot_points[1])
 		rob_1_chance = best.shot_success
 
 		if rob_0_chance > rob_1_chance:

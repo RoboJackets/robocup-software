@@ -44,7 +44,7 @@ void RobotFilter::update(const RobotObservation* obs)
 	_estimate[s].visionFrame = obs->frameNumber;
 }
 
-void RobotFilter::predict(Time time, Robot* robot)
+void RobotFilter::predict(Time time, RobotPose* robot)
 {
 	int bestSource = -1;
 	double bestDTime = 0;
@@ -70,3 +70,4 @@ void RobotFilter::predict(Time time, Robot* robot)
 	robot->angleVel = _estimate[bestSource].angleVel;
 	robot->visible = _estimate[bestSource].visible && bestDTime < Coast_Time;
 }
+
