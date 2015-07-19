@@ -602,11 +602,22 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	} else {
 
 
-		double leadTime = *(_motionConstraints._replan_lead_time)*1000000;
+		double leadTime = *(_motionConstraints._replan_lead_time) * 1000000;
 		RobotPose predictedPose;
 
-		filter()->predict(timestamp()+leadTime, &predictedPose);
-		Planning::Path *path = _planner->run(predictedPose.pos, predictedPose.angle, vel, _motionConstraints, &full_obstacles);
+		filter()->predict(timestamp() + leadTime, &predictedPose);
+		Planning::Path * path = nullptr;
+		int count = 0;
+		while (!path) {
+			path = _planner->run(predictedPose.pos, predictedPose.angle, vel, _motionConstraints, &full_obstacles);
+			if (count>0) {
+				cout<<"PathPlanner failed "<<count<<" times"<<endl;
+			}
+			count++;
+			if (count >=50) {
+				path = new Planning::InterpolatedPath();
+			}
+		}
 		
 		addText("Replanning", Qt::red, "Planning");
 		
