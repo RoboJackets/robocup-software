@@ -21,6 +21,7 @@ class DefendPenalty(play.Play):
         lineup = tactics.line_up.LineUp(line)
         self.add_subbehavior(lineup, 'lineup')
 
+        #self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False,)
 
     @classmethod
     def score(cls):
