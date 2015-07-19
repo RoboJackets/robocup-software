@@ -86,6 +86,18 @@ void SystemState::drawPolygon(const std::vector<Geometry2d::Point>& pts, const Q
 	dbg->set_color(color(qc));
 }
 
+void SystemState::drawPolygon(const Geometry2d::Polygon& points, const QColor &qc, const QString &layer)
+{
+    const std::vector<Geometry2d::Point>& pts = points.vertices;
+    DebugPath *dbg = logFrame->add_debug_polygons();
+    dbg->set_layer(findDebugLayer(layer));
+    for (size_t i = 0; i < pts.size(); ++i)
+    {
+        *dbg->add_points() = pts[i];
+    }
+    dbg->set_color(color(qc));
+}
+
 void SystemState::drawCircle(const Geometry2d::Point& center, float radius, const QColor& qc, const QString &layer)
 {
 	DebugCircle *dbg = logFrame->add_debug_circles();
