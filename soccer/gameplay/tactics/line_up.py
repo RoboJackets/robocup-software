@@ -7,7 +7,7 @@ import constants
 
 class LineUp(composite_behavior.CompositeBehavior):
 
-    y_start = 0.15  # sometimes we have issues if we're right in the corner, so we move it up a bit
+    y_start = 1.0  # sometimes we have issues if we're right in the corner, so we move it up a bit
     DefaultLine = robocup.Segment(
         robocup.Point(-constants.Field.Width/2 + constants.Robot.Radius, constants.Robot.Radius + y_start),
         robocup.Point(-constants.Field.Width/2 + constants.Robot.Radius, (constants.Robot.Radius * 2 + 0.1 + y_start)*6))
