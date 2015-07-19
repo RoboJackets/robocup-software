@@ -610,10 +610,8 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		int count = 0;
 		while (!path) {
 			path = _planner->run(predictedPose.pos, predictedPose.angle, vel, _motionConstraints, &full_obstacles);
-			if (count>0) {
-				cout<<"PathPlanner failed "<<count<<" times"<<endl;
-			}
 			count++;
+			//TODO fix this
 			if (count >=50) {
 				path = new Planning::InterpolatedPath();
 			}
