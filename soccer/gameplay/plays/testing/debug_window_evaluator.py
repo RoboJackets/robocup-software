@@ -2,7 +2,7 @@ import play
 import behavior
 import main
 import robocup
-import evaluation
+import evaluation.window_evaluator
 import constants
 import time
 
@@ -26,12 +26,12 @@ class DebugWindowEvaluator(play.Play):
         pt = main.ball().pos
         seg = constants.Field.OurGoalSegment
 
-        # win_eval = evaluation.window_evaluator.WindowEvaluator()
-        # win_eval.debug = True
-        # start = time.time()
-        # windows,best = win_eval.eval_pt_to_seg(pt, seg)
-        # end = time.time()
-        # py_time = end - start
+        #win_eval = evaluation.window_evaluator.WindowEvaluator()
+        #win_eval.debug = True
+        #start = time.time()
+        #windows,best = win_eval.eval_pt_to_seg(pt, seg)
+        #end = time.time()
+        #py_time = end - start
 
         win_eval_cpp = robocup.WindowEvaluator(main.system_state())
         win_eval_cpp.debug = True

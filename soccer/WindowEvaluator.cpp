@@ -83,6 +83,7 @@ void WindowEvaluator::obstacle_range(vector<Window>& windows, double& t0, double
       Window w2{t1, w.t1};
       w.t1 = t0;
       iter = windows.insert(iter+1, w2);
+      iter++;
     }
     else if(t0 > w.t0 && t0 < w.t1) {
       // the obstacle covers the end of the window
@@ -106,13 +107,14 @@ void WindowEvaluator::obstacle_robot(vector<Window>& windows, Point origin, Segm
   auto r = Robot_Radius + Ball_Radius;
 
   Segment seg{bot_pos - n * Robot_Radius + t * r,
-              bot_pos - n*Robot_Radius - t * r};
+              bot_pos - n * Robot_Radius - t * r};
 
   if(debug) {
     system->drawLine(seg, QColor{"Red"}, "Debug");
   }
 
   auto end = target.delta().magsq();
+
   array<double, 2> extent = {0, end};
 
   for(int i = 0; i < 2; i++) {
@@ -132,8 +134,8 @@ void WindowEvaluator::obstacle_robot(vector<Window>& windows, Point origin, Segm
     else {
       return;
     }
-    obstacle_range(windows, extent[0], extent[1]);
   }
+  obstacle_range(windows, extent[0], extent[1]);
 }
 
 WindowingResult WindowEvaluator::eval_pt_to_seg(Point origin, Segment target) {
