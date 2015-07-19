@@ -53,24 +53,30 @@ class SubmissiveDefender(single_robot_composite_behavior.SingleRobotCompositeBeh
         default_pt = seg.center()
 
         if self._block_line != None:
-            intersections_left = arc_left.intersects_line(self._block_line)
-            intersections_right = arc_left.intersects_line(self._block_line)
-            intersections_center = seg.intersects_line(self._block_line)
-            if len(intersections_left) > 0:
-                self._move_target = max(intersections_left, key=lambda p: p.y)
-            elif len(intersections_right) > 0:
-                self._move_target = max(intersections_right, key=lambda p: p.y)
-            elif len(intersections_center) > 0:
-                self._move_target = max(intersections_center, key=lambda p: p.y)
-            else:
-                self._move_target = default_pt
+            main.system_state().draw_line(self._block_line, constants.Colors.White, "Debug")
+            main.system_state().draw_circle(self._block_line.get_pt(0), 0.1, constants.Colors.White, "Debug")
 
-            #intersects, pt1, pt2 = self._block_line.intersects_circle(arc)
-            #if intersects:
-            #    # choose the pt farther from the goal
-            #    self._move_target = max([pt1, pt2], key=lambda p: p.y)
-            #else:
-            #    self._move_target = default_pt
+            threat_point = self._block_line.get_pt(0)
+
+            intersection_center = seg.line_intersection(self._block_line)
+
+            if threat_point.x < 0:
+                intersections_left = arc_left.intersects_line(self._block_line)
+                if len(intersections_left) > 0:
+                    self._move_target = max(intersections_left, key=lambda p: p.y)
+                elif intersection_center is not None:
+                    self._move_target = intersection_center
+                else:
+                    self._move_target = default_pt
+            elif threat_point.x >= 0:
+                intersections_right = arc_right.intersects_line(self._block_line)
+                if len(intersections_right) > 0:
+                    self._move_target = max(intersections_right, key=lambda p: p.y)
+                elif intersection_center is not None:
+                    print('segment intersection!')
+                    self._move_target = intersection_center
+                else:
+                    self._move_target = default_pt
         else:
             self._move_target = default_pt
 
