@@ -51,11 +51,11 @@ vector<Point> Arc::intersects(const Line &line) const {
 
     vector<Point> results;
 
-    auto angle = _center.angleTo(a);
+    auto angle = (a - _center).angle();
     if(angle > _start_angle && angle < _end_angle) {
       results.push_back(a);
     }
-    angle = _center.angleTo(b);
+    angle = (b - _center).angle();
     if(angle > _start_angle && angle < _end_angle) {
       results.push_back(b);
     }
