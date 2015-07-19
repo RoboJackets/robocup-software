@@ -120,6 +120,19 @@ bool Segment::intersects(const Circle& circle) const
 	return false;
 }
 
+bool Segment::intersects(const Line &line, Point *intr) const {
+	Point intersection_point;
+	auto res = Line::intersects(line, &intersection_point);
+	if(res && distTo(intersection_point) == 0) {
+		if(intr != nullptr) {
+			*intr = intersection_point;
+			return true;
+		}
+	} else {
+		return false;
+	}
+}
+
 bool Segment::nearPoint(const Point &point, float threshold) const
 {
 	const Point &p1 = pt[0];
