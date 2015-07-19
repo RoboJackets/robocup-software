@@ -24,8 +24,8 @@ TEST(WindowEvaluator, eval_pt_to_seg) {
     obstacleBot->pos = Point(1, 1);
 
     Segment ourGoalSegment(
-        Point(-Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0, 0),
-        Point(Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0, 0));
+        Point(Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0, 0),
+        Point(-Field_Dimensions::Current_Dimensions.GoalWidth() / 2.0, 0));
 
     WindowEvaluator winEval(&state);
     WindowingResult result = winEval.eval_pt_to_seg(Point(1, 2), ourGoalSegment);
