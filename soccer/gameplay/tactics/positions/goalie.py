@@ -60,7 +60,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
             self.add_transition(state,
                 Goalie.State.setup_penalty,
                 lambda: main.game_state().is_their_penalty() and
-                        main.game_state().is_setup(),
+                        main.game_state().is_setup_state(),
                 "setting up for opponent penalty")
 
         for state in [s2 for s2 in non_chill_states if s2 != Goalie.State.intercept]:
