@@ -51,6 +51,7 @@ namespace Geometry2d
 			
 			bool intersects(const Segment &other, Point *intr = 0) const;
 			bool intersects(const Circle& circle) const;
+			bool intersects(const Line &line, Point *intr = 0) const;
 
 			//	Same as the segment intersection above, but returns the intersection
 			//	point or nullptr rather than returning a bool and setting an out variable

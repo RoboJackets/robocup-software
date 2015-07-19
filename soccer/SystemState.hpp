@@ -16,6 +16,7 @@
 #include <GameState.hpp>
 #include <Constants.hpp>
 #include <Utils.hpp>
+#include <Geometry2d/Arc.hpp>
 
 class RobotConfig;
 class OurRobot;
@@ -78,6 +79,8 @@ public:
 	void drawLine(const Geometry2d::Point &p0, const Geometry2d::Point &p1, const QColor &color = Qt::black, const QString &layer = QString());
 	/** @ingroup drawing_functions */
 	void drawCircle(const Geometry2d::Point &center, float radius, const QColor &color = Qt::black, const QString &layer = QString());
+	/** @ingroup drawing_functions */
+	void drawArc(const Geometry2d::Arc &arc, const QColor &color = Qt::black, const QString &layer = QString());
 	/** @ingroup drawing_functions */
     void drawPolygon(const Geometry2d::Polygon &pts, const QColor &color = Qt::black, const QString &layer = QString());
     /** @ingroup drawing_functions */
