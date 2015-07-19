@@ -3,6 +3,9 @@
 #include <Geometry2d/Point.hpp>
 #include <motion/TrapezoidalMotion.hpp>
 #include <math.h>
+#include <iostream>
+
+using namespace std;
 
 bool trapezoid1(float t, float &posOut, float &speedOut) {
 	float pathLength = 10;
@@ -47,6 +50,46 @@ TEST(TrapezoidalMotion, End) {
 	EXPECT_EQ(pathValid, false);
 }
 
+bool trapezoid2(float t, float &posOut, float &speedOut) {
+	float pathLength = 9.5;
+	float maxSpeed = 2;
+	float maxAcc = 1;
+	float startSpeed = 1;
+	float finalSpeed = 0;
+
+	bool valid = TrapezoidalMotion(pathLength, maxSpeed, maxAcc, t,	startSpeed,	finalSpeed,	posOut,	speedOut);
+
+	if (valid) {
+		float time = Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc, startSpeed, finalSpeed);
+		EXPECT_NEAR(time, t, 0.001);
+	}
+	return valid;
+}
+
+TEST(TrapezoidalMotion2, MoreTests) {
+	for (float i=0; i<6; i+=0.01) {
+		float posOut1, speedOut1, posOut2, speedOut2;
+		bool pathValid1 = trapezoid1(i+1, posOut1, speedOut1);
+		bool pathValid2 = trapezoid2(i, posOut2, speedOut2);
+		ASSERT_EQ(pathValid1, pathValid2);
+		ASSERT_NEAR(posOut1, posOut2+0.5, 0.00001);
+		ASSERT_NEAR(speedOut1, speedOut2, 0.00001);
+	}
+}
+
+TEST(TrapezoidalMotion3, MoreTests) {
+	float posOut = 1.11101;
+	float pathLength = 1.11101;
+	float maxSpeed = 2.2;
+	float maxAcc = 1;
+	float startSpeed = 0.901393;
+	float finalSpeed = 0;
+
+	float result = Trapezoidal::getTime(2.03294, 2.03294, 2.2, 1, 0.176091, 0);
+	cout<<result<<endl;
+	EXPECT_FALSE(isnan(result));
+	cout<<Trapezoidal::getTime(posOut, pathLength, maxSpeed, maxAcc, startSpeed, finalSpeed) << endl;
+}
 
 //Triangular path of length 2
 //startSpeed = 0, highSpeed = 1, endSpeed = 0, average = 0.5
@@ -141,6 +184,11 @@ TEST(TrapezoidalMotion, TriangleRampUp) {
 	EXPECT_EQ(pathValid, true);
 	EXPECT_NEAR(posOut, 2 - 0.5*0.5, 0.00001);
 	EXPECT_NEAR(speedOut, 0.5, 0.00001);
+
+	pathValid = triangle1(4, posOut, speedOut);
+	EXPECT_EQ(pathValid, false);
+	EXPECT_NEAR(posOut, 2, 0.00001);
+	EXPECT_NEAR(speedOut, 0, 0.00001);
 }
 
 TEST(TrapezoidalMotion2, TriangleRampUp) {
@@ -164,6 +212,11 @@ TEST(TrapezoidalMotion2, TriangleRampUp) {
 		ASSERT_EQ(pathValid, true);
 		ASSERT_NEAR(speedOut, 2 - i/2, 0.00001);
 	}
+
+	float i = 4;
+	pathValid = triangle2(i + 4, posOut, speedOut);
+	ASSERT_EQ(pathValid, false);
+	ASSERT_NEAR(speedOut, 2 - i/2, 0.00001);
 }
 
 TEST(TrapezoidalMotion3, TriangleRampUp) {
@@ -184,5 +237,13 @@ TEST(TrapezoidalMotion3, TriangleRampUp) {
 		ASSERT_NEAR(posOut2, posOut4 + 1, 0.00001);
 		ASSERT_NEAR(speedOut2, speedOut4, 0.00001);
 	}
+
+	float i = 6;
+	float posOut2, speedOut2, posOut4, speedOut4;
+	bool pathValid2 = triangle2(2 + i, posOut2, speedOut2);
+	bool pathValid4 = triangle4(i, posOut4, speedOut4);
+	//ASSERT_EQ(pathValid2, pathValid4);
+	ASSERT_NEAR(posOut2, posOut4 + 1, 0.00001);
+	ASSERT_NEAR(speedOut2, speedOut4, 0.00001);
 }
 
