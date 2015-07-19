@@ -1,6 +1,8 @@
 #include "TrapezoidalMotion.hpp"
 #include <math.h>
 #include <iostream>
+
+using namespace std;
 float Trapezoidal::getTime(
 	float distance,
 	float pathLength,
@@ -9,8 +11,7 @@ float Trapezoidal::getTime(
 	float startSpeed,
 	float finalSpeed)
 {
-	//maxSpeed/=2;
-	//maxAcc/=3;
+
 	startSpeed = fmin(startSpeed, maxSpeed);
 	finalSpeed = fmin(finalSpeed, maxSpeed);
 	float rampUpTime = (maxSpeed - startSpeed) / maxAcc;
@@ -43,13 +44,14 @@ float Trapezoidal::getTime(
 		//	no plateau
 		plateauTime = 0;
 		plateauDist = 0;
+
 	} else {
 		//	trapezoid case: there's a time where we go at maxSpeed for a bit
 		plateauDist = pathLength - (rampUpDist + rampDownDist);
 		plateauTime = plateauDist / maxSpeed;
 	}
 
-	if (distance<0)
+	if (distance<=0)
 	{
 		return 0;
 	}
@@ -68,7 +70,7 @@ float Trapezoidal::getTime(
 		float temp1 = (-b + root)/(2*a);
 		float temp2 = (-b - root)/(2*a);
 		if (isnan(root)) {
-			//TODO Handle this
+			throw 1;//TODO Handle this
 		}
 		if (temp1 > 0 && temp1<rampUpTime) 
 		{
@@ -84,7 +86,7 @@ float Trapezoidal::getTime(
 		float position = distance-rampUpDist;
 		return rampUpTime + position/maxSpeed;
 	}
-	else if (distance<=rampUpDist + plateauDist + rampDownDist)
+	else if (distance<rampUpDist + plateauDist + rampDownDist)
 	{
 		//time calculations
 		/*
@@ -100,7 +102,7 @@ float Trapezoidal::getTime(
 		float temp1 = (-b + root)/(2*a);
 		float temp2 = (-b - root)/(2*a);
 		if (isnan(root)) {
-			//std::cout<<"meh"<<std::endl;
+			std::cout<<"meh1111"<<std::endl;
 			//TODO Handle this case
 		}
 		if (temp1 > 0 && temp1<rampDownTime) 
@@ -114,7 +116,7 @@ float Trapezoidal::getTime(
 	}
 	else 
 	{
-		return rampUpDist + plateauDist + rampDownDist;
+		return rampUpTime + plateauTime + rampDownTime;
 	}
 }
 

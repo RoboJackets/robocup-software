@@ -169,14 +169,14 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
 	_ourGoal->addVertex(Point(-dimensions.GoalWidth()/2, -dimensions.GoalDepth()));
 	
 	_theirGoal = std::make_shared<Polygon>();
-	_ourGoal->addVertex(Point(-dimensions.GoalWidth()/2, dimensions.Length()));
-	_ourGoal->addVertex(Point(-dimensions.GoalWidth()/2 - dimensions.LineWidth(), dimensions.Length()));
-	_ourGoal->addVertex(Point(-dimensions.GoalWidth()/2 - dimensions.LineWidth(), dimensions.Length() + dimensions.GoalDepth() + dimensions.LineWidth()));
-	_ourGoal->addVertex(Point( dimensions.GoalWidth()/2 + dimensions.LineWidth(), dimensions.Length() + dimensions.GoalDepth() + dimensions.LineWidth()));
-	_ourGoal->addVertex(Point( dimensions.GoalWidth()/2 + dimensions.LineWidth(), dimensions.Length()));
-	_ourGoal->addVertex(Point( dimensions.GoalWidth()/2, dimensions.Length()));
-	_ourGoal->addVertex(Point( dimensions.GoalWidth()/2, dimensions.Length() + dimensions.GoalDepth()));
-	_ourGoal->addVertex(Point(-dimensions.GoalWidth()/2, dimensions.Length() + dimensions.GoalDepth()));
+	_theirGoal->addVertex(Point(-dimensions.GoalWidth()/2, dimensions.Length()));
+	_theirGoal->addVertex(Point(-dimensions.GoalWidth()/2 - dimensions.LineWidth(), dimensions.Length()));
+	_theirGoal->addVertex(Point(-dimensions.GoalWidth()/2 - dimensions.LineWidth(), dimensions.Length() + dimensions.GoalDepth() + dimensions.LineWidth()));
+	_theirGoal->addVertex(Point( dimensions.GoalWidth()/2 + dimensions.LineWidth(), dimensions.Length() + dimensions.GoalDepth() + dimensions.LineWidth()));
+	_theirGoal->addVertex(Point( dimensions.GoalWidth()/2 + dimensions.LineWidth(), dimensions.Length()));
+	_theirGoal->addVertex(Point( dimensions.GoalWidth()/2, dimensions.Length()));
+	_theirGoal->addVertex(Point( dimensions.GoalWidth()/2, dimensions.Length() + dimensions.GoalDepth()));
+	_theirGoal->addVertex(Point(-dimensions.GoalWidth()/2, dimensions.Length() + dimensions.GoalDepth()));
 
 }
 
@@ -376,8 +376,6 @@ void Gameplay::GameplayModule::run()
 	Geometry2d::CompositeShape obstacles_with_goals = global_obstacles;
 	obstacles_with_goals.add(_ourGoalArea);
 	obstacles_with_goals.add(_theirGoalArea);
-
-	_state->drawPolygon(_ourGoal->vertices, Qt::red, "Debug");
 
 	/// execute motion planning for each robot
 	for (OurRobot* r :  _state->self) {

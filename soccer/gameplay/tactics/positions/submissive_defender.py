@@ -75,6 +75,8 @@ class SubmissiveDefender(single_robot_composite_behavior.SingleRobotCompositeBeh
         move = skills.move.Move()
         self.add_subbehavior(move, 'move', required=False) # FIXME: priority
 
+    def execute_running(self):
+        self.robot.set_avoid_opponents(False)
 
     ## move to a position to block the 'block_line'
     # if no block_line is specified, blocks the ball
@@ -91,6 +93,9 @@ class SubmissiveDefender(single_robot_composite_behavior.SingleRobotCompositeBeh
         # make the defender face the threat it's defending against
         if self.robot != None and self.block_line != None:
             self.robot.face(self.block_line.get_pt(0))
+
+        if self.robot.has_ball():
+            self.robot.kick(0.75)
 
 
     def on_exit_marking(self):
