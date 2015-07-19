@@ -5,6 +5,7 @@ import main
 import evaluation
 import constants
 import role_assignment
+import robocup
 
 class Capture(single_robot_behavior.SingleRobotBehavior):
 
