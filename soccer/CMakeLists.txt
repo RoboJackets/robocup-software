@@ -155,6 +155,7 @@ set(SOCCER_TEST_SRC
     "ExampleTest.cpp"
     "motion/TrapezoidalMotionTest.cpp"
     "planning/PathTest.cpp"
+    "WindowEvaluatorTest.cpp"
     "${CMAKE_SOURCE_DIR}/common/PointTest.cpp"
 )
 add_executable(test-soccer ${SOCCER_TEST_SRC})
