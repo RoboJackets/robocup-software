@@ -11,6 +11,7 @@ using namespace boost::python;
 #include <Geometry2d/Circle.hpp>
 #include <Geometry2d/CompositeShape.hpp>
 #include <Geometry2d/Polygon.hpp>
+#include <Geometry2d/Arc.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
 #include <protobuf/LogFrame.pb.h>
@@ -266,6 +267,34 @@ boost::python::list Circle_intersects_line(Geometry2d::Circle *self, const Geome
 	return lst;
 }
 
+boost::python::list Arc_intersects_line(Geometry2d::Arc *self, const Geometry2d::Line *line) {
+	if(line == nullptr)
+		throw NullArgumentException{"line"};
+	boost::python::list lst;
+
+	auto intersections = self->intersects(*line);
+
+	for(auto& intersection : intersections) {
+		lst.append(intersection);
+	}
+
+	return lst;
+}
+
+boost::python::list Arc_intersects_segment(Geometry2d::Arc *self, const Geometry2d::Segment *segment) {
+	if(segment == nullptr)
+		throw NullArgumentException{"segment"};
+	boost::python::list lst;
+
+	auto intersections = self->intersects(*segment);
+
+	for(auto& intersection : intersections) {
+		lst.append(intersection);
+	}
+
+	return lst;
+}
+
 boost::python::tuple WinEval_eval_pt_to_seg(WindowEvaluator *self, const Geometry2d::Point *origin, const Geometry2d::Segment *target) {
 	if(origin == nullptr)
 		throw NullArgumentException{"origin"};
@@ -411,6 +440,11 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("intersects_line", &Circle_intersects_line)
 		.def("nearest_point", &Geometry2d::Circle::nearestPoint)
         .def("contains_point", &Geometry2d::Circle::containsPoint)
+	;
+
+	class_<Geometry2d::Arc>("Arc", init<Geometry2d::Point, float, float, float>())
+		.def("intersects_line", &Arc_intersects_line)
+		.def("intersects_segment", &Arc_intersects_segment)
 	;
 
 	class_<Geometry2d::CompositeShape, bases<Geometry2d::Shape> >("CompositeShape", init<>())
