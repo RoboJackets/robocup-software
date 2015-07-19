@@ -102,7 +102,6 @@ float Trapezoidal::getTime(
 		float temp1 = (-b + root)/(2*a);
 		float temp2 = (-b - root)/(2*a);
 		if (isnan(root)) {
-			std::cout<<"meh1111"<<std::endl;
 			//TODO Handle this case
 		}
 		if (temp1 > 0 && temp1<rampDownTime) 
