@@ -2,7 +2,7 @@ import play
 import behavior
 import robocup
 import tactics.positions.defender
-import tactics.circle_near_ball
+import tactics.stopped_plays.circle_near_ball
 import main
 
 
