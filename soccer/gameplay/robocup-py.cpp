@@ -182,6 +182,18 @@ boost::python::object Segment_segment_intersection(Geometry2d::Segment *self, Ge
 	}
 }
 
+boost::python::object Segment_line_intersection(Geometry2d::Segment *self, Geometry2d::Line *line) {
+	if(line == nullptr)
+		throw NullArgumentException{"line"};
+	Geometry2d::Point pt;
+	if(self->intersects(*line, &pt)) {
+		boost::python::object obj{pt};
+		return obj;
+	} else {
+		return boost::python::object{};
+	}
+}
+
 boost::python::object Segment_nearest_point_to_point(Geometry2d::Segment *self, Geometry2d::Point *point) {
 	if(point == nullptr)
 		throw NullArgumentException{"point"};
@@ -430,6 +442,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("dist_to", &Geometry2d::Segment::distTo)
 		.def("nearest_point_to_point", &Segment_nearest_point_to_point)
 		.def("segment_intersection", &Segment_segment_intersection)
+		.def("line_intersection", &Segment_line_intersection)
 		.def("near_point", &Geometry2d::Segment::nearPoint)
 		.def("nearest_point_to_line", &Segment_nearest_point_to_line)
 		.def("__str__", &Geometry2d::Segment::toString)
