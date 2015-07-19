@@ -56,6 +56,16 @@ class TwoSideAttack(play.Play):
             robocup.Point(constants.Field.Width / 4.0, 3 * constants.Field.Length / 4.0)
         ]
 
+    @classmethod
+    def score(cls):
+        if main.game_state().is_playing():
+            if main.ball().valid:
+                if main.ball().pos.y < constants.Field.Length / 2:
+                    return 5
+                return 15
+            return float("inf")
+        return float("inf")
+
 
     def all_subbehaviors_completed(self):
         return all([bhvr.is_done_running() for bhvr in self.all_subbehaviors()])
