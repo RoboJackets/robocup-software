@@ -6,6 +6,7 @@ import main
 import skills.move
 import skills.capture
 import enum
+import evaluation
 import tactics.coordinated_pass
 
 class TwoSideAttack(play.Play):
@@ -71,20 +72,22 @@ class TwoSideAttack(play.Play):
     def on_exit_setup(self):
         to_exclude_0 = self.subbehavior_with_name('moveA')
         to_exclude_1 = self.subbehavior_with_name('moveB')
-        self.to_exclude = [to_exclude_0.robot, to_exclude_1.robot]
+        capture = self.subbehavior_with_name('capture')
+        self.to_exclude = [to_exclude_0.robot, to_exclude_1.robot, capture.robot]
         self.remove_all_subbehaviors()
 
 
     def on_enter_passing(self):
         # Do shot evaluation here
-        # TODO evaluate passes to points on top of window evaluator
         win_eval = robocup.WindowEvaluator(main.system_state())
         for r in self.to_exclude:
             win_eval.add_excluded_robot(r)
         _, best = win_eval.eval_pt_to_opp_goal(self.robot_points[0])
-        rob_0_chance = best.shot_success
+        # TODO to_exclude is a hack
+        rob_0_chance = best.shot_success * evaluation.passing.eval_pass(self.robot_points[0], self.to_exclude[2].pos)
+
         _, best = win_eval.eval_pt_to_opp_goal(self.robot_points[1])
-        rob_1_chance = best.shot_success
+        rob_1_chance = best.shot_success * evaluation.passing.eval_pass(self.robot_points[1], self.to_exclude[2].pos)
 
         if rob_0_chance > rob_1_chance:
             robot_pos = 0
