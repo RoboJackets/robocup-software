@@ -228,6 +228,12 @@ void State_draw_circle(SystemState *self, const Geometry2d::Point *center, float
 	self->drawCircle(*center, radius, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
+void State_draw_arc(SystemState *self, const Geometry2d::Arc *arc, boost::python::tuple rgb, const std::string &layer) {
+	if(arc == nullptr)
+		throw NullArgumentException{"arc"};
+	self->drawArc(*arc, Color_from_tuple(rgb), QString::fromStdString(layer));
+}
+
 void State_draw_line(SystemState *self, const Geometry2d::Line *line, boost::python::tuple rgb, const std::string &layer) {
 	if(line == nullptr)
 		throw NullArgumentException("line");
@@ -580,6 +586,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("draw_segment", &State_draw_segment)
 		.def("draw_polygon", &State_draw_polygon)
         .def("draw_raw_polygon", &State_draw_raw_polygon)
+		.def("draw_arc", &State_draw_arc)
 	;
 
 	class_<Field_Dimensions>("Field_Dimensions")

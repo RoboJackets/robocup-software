@@ -25,7 +25,7 @@ namespace Geometry2d {
       _end_angle = end;
     }
 
-    Point center() {
+    Point center() const {
       return _center;
     }
 
@@ -33,7 +33,7 @@ namespace Geometry2d {
       _center = center;
     }
 
-    float radius() {
+    float radius() const {
       return _radius;
     }
 
@@ -41,7 +41,7 @@ namespace Geometry2d {
       _radius = radius;
     }
 
-    float start() {
+    float start() const {
       return _start_angle;
     }
 
@@ -49,7 +49,7 @@ namespace Geometry2d {
       _start_angle = start;
     }
 
-    float end() {
+    float end() const {
       return _end_angle;
     }
 
