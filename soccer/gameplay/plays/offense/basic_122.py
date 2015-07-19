@@ -56,7 +56,7 @@ class Basic122(play.Play):
 
     @classmethod
     def score(cls):
-        return 0 if main.game_state().is_playing() else float("inf")
+        return 10 if main.game_state().is_playing() else float("inf")
 
     @classmethod
     def handles_goalie(cls):
