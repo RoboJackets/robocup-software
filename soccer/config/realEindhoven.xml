@@ -203,7 +203,7 @@
   <Max_Acceleration value="0.9"/>
   <Max_Velocity value="2.3"/>
   <Max_Angle_Speed value="0.436"/>
-  <Replan_Threshold value="0.1"/>
+  <Replan_Threshold value="0.2"/>
   <Replan_Lead_Time value="0"/>
  </MotionConstraints>
  <Rev2015>
