@@ -28,7 +28,7 @@ class Robot:
 class Ball:
     Radius = 0.0215
     Mass = 0.04593 # mass of golf ball (kg)
-    
+
 
 class Field:
     Length = 9.00
@@ -48,11 +48,11 @@ class Field:
     # Radius of the goal arcs
     ArcRadius = 1.0
 
-    # diameter of the center circle 
+    # diameter of the center circle
     CenterRadius = 0.5
     CenterDiameter = 1.0
 
-    # flat area for defense markings 
+    # flat area for defense markings
     GoalFlat = 0.5
 
     FloorLength = Length + 2.0 * Border;
