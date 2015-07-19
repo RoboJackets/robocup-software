@@ -143,7 +143,7 @@ void MotionControl::run() {
 	Planning::MotionInstant target;
 
 	//	if no target position is given, we don't have a path to follow
-	if (!_robot->path() || !_robot->motionCommand().usePathPlanning()) {
+	if (!_robot->path() || _robot->motionCommand().getCommandType() == Planning::MotionCommand::WorldVel) {
 		target.vel = _robot->motionCommand().getWorldVel().rotated(-_robot->angle);
 	} else {
 		//

@@ -32,6 +32,18 @@ namespace Planning
 		/** constructor from two points */
 		InterpolatedPath(const Geometry2d::Point& p0, const Geometry2d::Point& p1);
 
+		//Adds an instant ot the end of the path for the given time
+		//time should not bet less than the last time
+		void addInstant(float time, MotionInstant instant) {
+			assert(points.size() == vels.size() && vels.size() == times.size());
+			if (!times.empty()) {
+				assert(time > times.back());
+			}
+			times.push_back(time);
+			points.push_back(instant.pos);
+			vels.push_back(instant.vel);
+		}
+
 		//Overriden Path Methods
 		virtual boost::optional<MotionInstant> destination() const override;
 		virtual bool hit(const Geometry2d::CompositeShape &shape, float &hitTime, float startTime) const override;

@@ -14,38 +14,61 @@ namespace Planning {
     class MotionCommand {
 
     public:
-        MotionCommand() : usePath(false), _targetMotionInstant(), _targetWorldVel() {};
+        enum CommandType {
+            PathTarget,
+            WorldVel,
+            DirectTarget
+        };
+
+        MotionCommand() : _commandType(WorldVel), _targetMotionInstant(), _targetWorldVel(), _directTarget(), _directEndSpeed() {};
 
         void setPathTarget(MotionInstant target) {
             _targetMotionInstant = target;
-            usePath = true;
+            _commandType = PathTarget;
         }
 
         void setWorldVel(Geometry2d::Point targetVel) {
             _targetWorldVel = targetVel;
-            usePath = false;
+            _commandType = WorldVel;
+        }
+
+        void setDirectTarget(Geometry2d::Point target, float endSpeed) {
+            _directTarget = target;
+            _directEndSpeed = endSpeed;
+            _commandType = DirectTarget;
         }
 
         MotionInstant getPlanningTarget() const {
             return _targetMotionInstant;
         }
 
+        float getDirectTarget(Geometry2d::Point &directTarget) const {
+            directTarget = _directTarget;
+            return _directEndSpeed;
+        }
+
         Geometry2d::Point getWorldVel() const {
             return _targetWorldVel;
         }
 
-        bool usePathPlanning() const {
-            return usePath;
+        CommandType getCommandType() const {
+            return _commandType;
         }
+
+
 
     private:
         /// A point on the field that the robot should use path-planning to get to
         MotionInstant _targetMotionInstant;
 
+
+        Geometry2d::Point _directTarget;
+        float _directEndSpeed;
+
         /// Set the velocity in world coordinates directly (circumvents path planning)
         Geometry2d::Point _targetWorldVel;
 
         //True when _targetPos should be used. False when worldVel override should be used
-        bool usePath;
+        CommandType _commandType;
     };
 }

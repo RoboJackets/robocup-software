@@ -14,6 +14,8 @@
 #include <QString>
 #include <cmath>
 #include <utility>
+
+#include "planning/TrapezoidalPath.hpp"
 using namespace std;
 using namespace Geometry2d;
 
@@ -174,6 +176,7 @@ void OurRobot::resetForNextIteration() {
 
 void OurRobot::resetMotionConstraints() {
 	_motionConstraints = MotionConstraints();
+	_motionCommand = Planning::MotionCommand();
 }
 
 void OurRobot::stop() {
@@ -197,6 +200,23 @@ void OurRobot::move(const Geometry2d::Point &goal, Geometry2d::Point endVelocity
 
 	*_cmdText << "move(" << goal.x << ", " << goal.y << ")\n";
 	*_cmdText << "endVelocity(" << endVelocity.x << ")\n";
+}
+
+void OurRobot::moveDirect(const Geometry2d::Point &goal, float endSpeed)
+{
+	if (!visible)
+		return;
+
+	// sets flags for future movement
+	if (verbose) cout << " in OurRobot::move(goal): adding a goal (" << goal.x << ", " << goal.y << ")" << std::endl;
+
+	_motionCommand.setDirectTarget(goal, endSpeed);
+
+	//	reset conflicting motion commands
+	_motionConstraints.pivotTarget = boost::none;
+
+	*_cmdText << "move(" << goal.x << ", " << goal.y << ")\n";
+	*_cmdText << "endSpeed(" << endSpeed << ")\n";
 }
 
 void OurRobot::worldVelocity(const Geometry2d::Point& v)
@@ -486,6 +506,9 @@ int OurRobot::consecutivePathChangeCount() const {
 }
 
 void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles) {
+	Planning::MotionCommand::CommandType lastCommandType = _lastCommandType;
+	_lastCommandType = _motionCommand.getCommandType();
+
 	// if no goal command robot to stop in place
 	if (_state->gameState.state == GameState::Halt) {
 		//	clear our history of path change times
@@ -494,10 +517,11 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		return;
 	}
 
-	if (!_motionCommand.usePathPlanning()) {
+	if (_motionCommand.getCommandType()== Planning::MotionCommand::WorldVel) {
 		setPath(nullptr);
 		return;
 	}
+
 
 	// create and visualize obstacles
 	Geometry2d::CompositeShape full_obstacles(_local_obstacles);
@@ -507,10 +531,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		self_obs = createRobotObstacles(_state->self, _self_avoid_mask, this->pos, 0.6 + this->vel.mag()),
 		opp_obs = createRobotObstacles(_state->opp, _opp_avoid_mask);
 
-	_state->drawCompositeShape(self_obs, Qt::gray, QString("self_obstacles_%1").arg(shell()));
-	_state->drawCompositeShape(opp_obs, Qt::gray, QString("opp_obstacles_%1").arg(shell()));
-	if (_state->ball.valid)
-	{
+	if (_state->ball.valid) {
 		std::shared_ptr<Geometry2d::Shape> ball_obs = createBallObstacle();
 		_state->drawShape(ball_obs, Qt::gray, QString("ball_obstacles_%1").arg(shell()));
 		full_obstacles.add(ball_obs);
@@ -519,57 +540,75 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	full_obstacles.add(opp_obs);
 	full_obstacles.add(global_obstacles);
 
-	Planning::MotionInstant commandDestination = _motionCommand.getPlanningTarget();
+	_state->drawCompositeShape(self_obs, Qt::gray, QString("self_obstacles_%1").arg(shell()));
+	_state->drawCompositeShape(opp_obs, Qt::gray, QString("opp_obstacles_%1").arg(shell()));
+	if (_path) {
+		if (lastCommandType == _motionCommand.getCommandType()) {
+			if (_motionCommand.getCommandType() == Planning::MotionCommand::PathTarget) {
 
-	// //	if this number of microseconds passes since our last path plan, we automatically replan
-	const Time kPathExpirationInterval = *_replanTimeout * SecsToTimestamp;
-	if ((timestamp() - _pathStartTime) > kPathExpirationInterval) {
-		_pathInvalidated = true;
-	}
 
-	if (!_path) {
-		_pathInvalidated = true;
+				Planning::MotionInstant commandDestination = _motionCommand.getPlanningTarget();
+
+				// //	if this number of microseconds passes since our last path plan, we automatically replan
+				const Time kPathExpirationInterval = *_replanTimeout * SecsToTimestamp;
+				if ((timestamp() - _pathStartTime) > kPathExpirationInterval) {
+					_pathInvalidated = true;
+				}
+
+				Planning::MotionInstant target;
+				float timeIntoPath = ((float) (timestamp() - _pathStartTime)) * TimestampToSecs + 1.0f / 60.0f;
+				_path->evaluate(timeIntoPath, target);
+
+				float pathError = (target.pos - pos).mag();
+				float replanThreshold = *_motionConstraints._replan_threshold;
+				state()->drawCircle(target.pos, replanThreshold, Qt::green, "MotionControl");
+				addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
+
+				if (*_motionConstraints._replan_threshold != 0 && pathError > replanThreshold) {
+					_pathInvalidated = true;
+					addText("pathError", Qt::red, "Motion");
+					//addText(pathError);
+				}
+
+
+				if (std::isnan(target.pos.x) || std::isnan(target.pos.y)) {
+					_pathInvalidated = true;
+					addText("Evaulate Returned an invalid result", Qt::red, "Motion");
+					//addText(pathError);
+				}
+
+
+				float hitTime = 0;
+				if (_path->hit(full_obstacles, hitTime, timeIntoPath)) {
+					_pathInvalidated = true;
+					addText("Hit Obstacle", Qt::red, "Motion");
+				}
+
+				//  invalidate path if current position is more than 15cm from the planned point
+
+
+
+				//	if the destination of the current path is greater than X m away from the target destination,
+				//	we invalidate the path.  this situation could arise if the path destination changed
+				if ((_path->destination()->pos - commandDestination.pos).mag() > *_goalChangeThreshold ||
+					(_path->destination()->vel - commandDestination.vel).mag() > *_goalChangeThreshold) {
+					_pathInvalidated = true;
+				}
+			} else if (_motionCommand.getCommandType() == Planning::MotionCommand::DirectTarget) {
+				Geometry2d::Point endTarget;
+				float endSpeed = _motionCommand.getDirectTarget(endTarget);
+				if ((_path->destination()->pos - endTarget).mag() > *_goalChangeThreshold ||
+					(_path->destination()->vel.mag() - endSpeed) > *_goalChangeThreshold) {
+					_pathInvalidated = true;
+				}
+			} else {
+				_pathInvalidated = true;
+			}
+		} else {
+			_pathInvalidated = true;
+		}
 	} else {
-
-		Planning::MotionInstant target;
-		float timeIntoPath = ((float)(timestamp() - _pathStartTime)) * TimestampToSecs + 1.0f/60.0f;
-		_path->evaluate(timeIntoPath, target);
-
-		float pathError = (target.pos - pos).mag();
-		float replanThreshold = *_motionConstraints._replan_threshold;
-		state()->drawCircle(target.pos, replanThreshold, Qt::green, "MotionControl");
-		addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
-
-		if (*_motionConstraints._replan_threshold!=0 && pathError > replanThreshold) {
-			_pathInvalidated = true;
-			addText("pathError" , Qt::red, "Motion");
-			//addText(pathError);
-		}
-
-
-		if (std::isnan(target.pos.x) || std::isnan(target.pos.y)) {
-			_pathInvalidated = true;
-			addText("Evaulate Returned an invalid result" , Qt::red, "Motion");
-			//addText(pathError);
-		}
-
-
-		float hitTime=0;
-		if (_path->hit(full_obstacles, hitTime, timeIntoPath)) {
-			_pathInvalidated = true;
-			addText("Hit Obstacle", Qt::red, "Motion");
-		}
-
-		//  invalidate path if current position is more than 15cm from the planned point
-
-
-
-		//	if the destination of the current path is greater than X m away from the target destination,
-		//	we invalidate the path.  this situation could arise if the path destination changed
-		if ((_path->destination()->pos - commandDestination.pos).mag() > *_goalChangeThreshold ||
-				(_path->destination()->vel - commandDestination.vel).mag() > *_goalChangeThreshold) {
-			_pathInvalidated = true;
-		}
+		_pathInvalidated = true;
 	}
 
 
@@ -584,7 +623,19 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		std::unique_ptr<Planning::Path> path = nullptr;
 		int count = 0;
 		while (!path) {
-			path = _planner->run(Planning::MotionInstant(pos, vel), _motionCommand.getPlanningTarget(), _motionConstraints, &full_obstacles);
+
+			Geometry2d::Point endTarget;
+			float endSpeed = _motionCommand.getDirectTarget(endTarget);
+			switch (_motionCommand.getCommandType()) {
+				case Planning::MotionCommand::PathTarget:
+					path = _planner->run(Planning::MotionInstant(pos, vel), _motionCommand.getPlanningTarget(), _motionConstraints, &full_obstacles);
+					break;
+				case Planning::MotionCommand::DirectTarget:
+					path = unique_ptr<Planning::Path>(new Planning::TrapezoidalPath(this->pos, this->vel.mag(), endTarget, endSpeed, _motionConstraints));
+					break;
+				default:
+					path = unique_ptr<Planning::Path>(new Planning::InterpolatedPath());
+			}
 			count++;
 			//TODO fix this
 			if (count >=50) {
