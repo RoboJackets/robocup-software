@@ -4,6 +4,7 @@ import behavior
 import role_assignment
 import constants
 import evaluation.ball
+
 import skills
 import main
 import enum
@@ -66,7 +67,7 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
         for state in non_block_states:
             self.add_transition(state,
                 SubmissiveGoalie.State.block,
-                lambda: not evaluation.ball.is_in_our_goalie_zone() and 
+                lambda: not evaluation.ball.is_in_our_goalie_zone() and
                         not evaluation.ball.is_moving_towards_our_goal(),
                 'ball not in goal or moving towards it')
 
@@ -150,7 +151,7 @@ class SubmissiveGoalie(single_robot_composite_behavior.SingleRobotCompositeBehav
     def execute_block(self):
         move = self.subbehavior_with_name('move')
         move.pos = self.move_target
-       
+
 
 
     def on_exit_block(self):

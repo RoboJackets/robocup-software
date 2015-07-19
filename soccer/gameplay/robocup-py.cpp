@@ -22,6 +22,8 @@ using namespace boost::python;
 #include <boost/version.hpp>
 #include <exception>
 
+#include "motion/TrapezoidalMotion.hpp"
+
 /**
  * These functions make sure errors on the c++
  * side get passed up through python.
@@ -41,7 +43,7 @@ void translateException(NullArgumentException const& e)
 
 /**
  * NOTES FOR WRAPPER FUNCTIONS/METHODS
- * 
+ *
  * Keep in mind that pointer parameters will be be nullptr/NULL if the value
  * from python was None.  Check for this case so that we don't segfault.
  */
@@ -261,6 +263,10 @@ void State_draw_polygon(SystemState *self, boost::python::list points, boost::py
 	self->drawPolygon(ptVec, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
+void State_draw_raw_polygon(SystemState *self, Geometry2d::Polygon points, boost::python::tuple rgb, const std::string &layer) {
+    self->drawPolygon(points, Color_from_tuple(rgb), QString::fromStdString(layer));
+}
+
 boost::python::list Circle_intersects_line(Geometry2d::Circle *self, const Geometry2d::Line *line) {
 	if(line == nullptr)
 		throw NullArgumentException("line");
@@ -384,6 +390,7 @@ BOOST_PYTHON_MODULE(robocup)
 	boost::python::register_exception_translator<NullArgumentException>(&translateException);
 
 	def("fix_angle_radians", &fixAngleRadians);
+	def("get_trapezoidal_time", &Trapezoidal::getTime);
 
 	class_<Geometry2d::Point, Geometry2d::Point*>("Point", init<float, float>())
 		.def(init<const Geometry2d::Point &>())
@@ -446,6 +453,7 @@ BOOST_PYTHON_MODULE(robocup)
 	class_<Geometry2d::Circle, bases<Geometry2d::Shape> >("Circle", init<Geometry2d::Point, float>())
 		.def("intersects_line", &Circle_intersects_line)
 		.def("nearest_point", &Geometry2d::Circle::nearestPoint)
+        .def("contains_point", &Geometry2d::Circle::containsPoint)
 	;
 
 	class_<Geometry2d::Arc>("Arc", init<Geometry2d::Point, float, float, float>())
@@ -466,7 +474,8 @@ BOOST_PYTHON_MODULE(robocup)
 	;
 
 	class_<Geometry2d::Polygon, bases<Geometry2d::Shape> >("Polygon", init<>())
-		.def("add_vertex", &Polygon_add_vertex);
+		.def("add_vertex", &Polygon_add_vertex)
+        .def("contains_point", &Geometry2d::Polygon::containsPoint)
 	;
 
 	class_<GameState>("GameState")
@@ -577,6 +586,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("draw_segment", &State_draw_segment)
 		.def("draw_polygon", &State_draw_polygon)
 		.def("draw_arc", &State_draw_arc)
+                .def("draw_raw_polygon", &State_draw_raw_polygon)
 	;
 
 	class_<Field_Dimensions>("Field_Dimensions")
