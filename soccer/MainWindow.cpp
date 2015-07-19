@@ -401,6 +401,7 @@ void MainWindow::updateViews()
 	_ui.refYellowTimeoutsLeft->setText(tr("%1").arg(_processor->refereeModule()->yellow_info.timeouts_left));
 	_ui.refYellowGoalie->setText(tr("%1").arg(_processor->refereeModule()->yellow_info.goalie));
 
+	_ui.actionUse_External_Referee->setChecked(_processor->refereeModule()->useExternalReferee());
 
 	//	update robot status list
 	for (const OurRobot *robot : _processor->state()->self) {
