@@ -17,7 +17,7 @@ class TestLineKick(play.Play):
             'immediately')
 
         kick = skills.line_kick.LineKick()
-        kick.target = constants.Field.TheirGoalSegment
+        kick.target = constants.Field.OurGoalSegment
         self.add_subbehavior(kick, 'kick', required=False)
 
     def execute_running(self):

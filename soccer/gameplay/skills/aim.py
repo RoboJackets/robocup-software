@@ -217,7 +217,7 @@ class Aim(single_robot_behavior.SingleRobotBehavior):
         self.recalculate()
 
         # slowly pivot toward the target
-        self.robot.set_max_angle_speed(6)
+        self.robot.set_max_angle_speed(4)
         self.robot.pivot(self._face_target)
         self.robot.set_dribble_speed(self.dribbler_speed)
 

@@ -78,9 +78,9 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
 	//// Make an obstacle to cover the opponent's half of the field except for one robot diameter across the center line.
 	Polygon *sidePolygon = new Polygon;
 	_sideObstacle = std::shared_ptr<Shape>(sidePolygon);
-	float x = Field_Dimensions::Current_Dimensions.Width() / 2 + Field_Dimensions::Current_Dimensions.Border();
+	float x = Field_Dimensions::Current_Dimensions.Width() / 2 + 0.3;
 	const float y1 = Field_Dimensions::Current_Dimensions.Length() / 2;
-	const float y2 = Field_Dimensions::Current_Dimensions.Length() + Field_Dimensions::Current_Dimensions.Border();
+	const float y2 = Field_Dimensions::Current_Dimensions.Length() + 0.3;
 	const float r = Field_Dimensions::Current_Dimensions.CenterRadius();
 	sidePolygon->vertices.push_back(Point(-x, y1));
 	sidePolygon->vertices.push_back(Point(-r, y1));
@@ -90,9 +90,9 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
 	sidePolygon->vertices.push_back(Point(x, y2));
 	sidePolygon->vertices.push_back(Point(-x, y2));
 
-	float y = -Field_Dimensions::Current_Dimensions.Border();
-	float deadspace = Field_Dimensions::Current_Dimensions.Border();
-	x = Field_Dimensions::Current_Dimensions.FloorWidth() /2.0f;
+	float y = -0.3;
+	float deadspace = 0.3;
+	x = Field_Dimensions::Current_Dimensions.Width() /2.0f + 0.3;
 	Polygon* floorObstacle = new Polygon;
 	floorObstacle->vertices.push_back(Point(-x, y));
 	floorObstacle->vertices.push_back(Point(-x, y-1));
@@ -100,7 +100,7 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
 	floorObstacle->vertices.push_back(Point(x, y));
 	_nonFloor[0] = std::shared_ptr<Shape>(floorObstacle);
 
-	y = Field_Dimensions::Current_Dimensions.Length() + Field_Dimensions::Current_Dimensions.Border();
+	y = Field_Dimensions::Current_Dimensions.Length() + 0.3;
 	floorObstacle = new Polygon;
 	floorObstacle->vertices.push_back(Point(-x, y));
 	floorObstacle->vertices.push_back(Point(-x, y+1));
@@ -169,14 +169,14 @@ void Gameplay::GameplayModule::calculateFieldObstacles() {
 	_ourGoal->addVertex(Point(-dimensions.GoalWidth()/2, -dimensions.GoalDepth()));
 	
 	_theirGoal = std::make_shared<Polygon>();
-	_ourGoal->addVertex(Point(-dimensions.GoalWidth()/2, dimensions.Length()));
-	_ourGoal->addVertex(Point(-dimensions.GoalWidth()/2 - dimensions.LineWidth(), dimensions.Length()));
-	_ourGoal->addVertex(Point(-dimensions.GoalWidth()/2 - dimensions.LineWidth(), dimensions.Length() + dimensions.GoalDepth() + dimensions.LineWidth()));
-	_ourGoal->addVertex(Point( dimensions.GoalWidth()/2 + dimensions.LineWidth(), dimensions.Length() + dimensions.GoalDepth() + dimensions.LineWidth()));
-	_ourGoal->addVertex(Point( dimensions.GoalWidth()/2 + dimensions.LineWidth(), dimensions.Length()));
-	_ourGoal->addVertex(Point( dimensions.GoalWidth()/2, dimensions.Length()));
-	_ourGoal->addVertex(Point( dimensions.GoalWidth()/2, dimensions.Length() + dimensions.GoalDepth()));
-	_ourGoal->addVertex(Point(-dimensions.GoalWidth()/2, dimensions.Length() + dimensions.GoalDepth()));
+	_theirGoal->addVertex(Point(-dimensions.GoalWidth()/2, dimensions.Length()));
+	_theirGoal->addVertex(Point(-dimensions.GoalWidth()/2 - dimensions.LineWidth(), dimensions.Length()));
+	_theirGoal->addVertex(Point(-dimensions.GoalWidth()/2 - dimensions.LineWidth(), dimensions.Length() + dimensions.GoalDepth() + dimensions.LineWidth()));
+	_theirGoal->addVertex(Point( dimensions.GoalWidth()/2 + dimensions.LineWidth(), dimensions.Length() + dimensions.GoalDepth() + dimensions.LineWidth()));
+	_theirGoal->addVertex(Point( dimensions.GoalWidth()/2 + dimensions.LineWidth(), dimensions.Length()));
+	_theirGoal->addVertex(Point( dimensions.GoalWidth()/2, dimensions.Length()));
+	_theirGoal->addVertex(Point( dimensions.GoalWidth()/2, dimensions.Length() + dimensions.GoalDepth()));
+	_theirGoal->addVertex(Point(-dimensions.GoalWidth()/2, dimensions.Length() + dimensions.GoalDepth()));
 
 }
 
@@ -376,8 +376,6 @@ void Gameplay::GameplayModule::run()
 	Geometry2d::CompositeShape obstacles_with_goals = global_obstacles;
 	obstacles_with_goals.add(_ourGoalArea);
 	obstacles_with_goals.add(_theirGoalArea);
-
-	_state->drawPolygon(_ourGoal->vertices, Qt::red, "Debug");
 
 	/// execute motion planning for each robot
 	for (OurRobot* r :  _state->self) {
