@@ -37,7 +37,6 @@ class DebugWindowEvaluator(play.Play):
         win_eval_cpp.debug = True
         start = time.time()
         windows,best = win_eval_cpp.eval_pt_to_seg(pt, seg)
-        print(' ')
         end = time.time()
         cpp_time = end - start
 
