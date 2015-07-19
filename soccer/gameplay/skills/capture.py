@@ -4,6 +4,7 @@ from enum import Enum
 import main
 import evaluation
 import constants
+import role_assignment
 
 
 class Capture(single_robot_behavior.SingleRobotBehavior):
@@ -110,5 +111,11 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     def role_requirements(self):
         reqs = super().role_requirements()
-        reqs.require_kicking = True
+
+        for r in role_assignment.iterate_role_requirements_tree_leaves(reqs):
+            # try to be near the ball
+            if main.ball().valid:
+                r.destination_shape = main.ball().pos
+            r.require_kicking = True
+
         return reqs

@@ -30,7 +30,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
     SteadyMaxAngleVel = 3   # degrees / second
 
     ## after this amount of time has elapsed after the kick and we haven't received the ball, we failed :(
-    ReceiveTimeout = 2
+    ReceiveTimeout = 3
 
 
 
@@ -40,7 +40,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
 
         ## being in this state signals that we're ready for the kicker to kick
         aligned = 2
-        
+
         ## the ball's been kicked and we're adjusting based on where the ball's moving
         receiving = 3
 
@@ -100,7 +100,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
         self._ball_kicked = value
         if value:
             self._ball_kick_time = time.time()
-    
+
 
     ## The point that the receiver should expect the ball to hit it's mouth
     # Default: None
