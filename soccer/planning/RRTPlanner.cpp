@@ -144,7 +144,15 @@ Planning::InterpolatedPath* RRTPlanner::run(
 	}
 	return path;
 }
+Planning::InterpolatedPath update(
+					Planning::InterpolatedPath &origionalPath, 
+					const float angle,
+					const Geometry2d::Point& vel,
+					const MotionConstraints &motionConstraints,
+					const Geometry2d::CompositeShape* obstacles) 
+{
 
+}
 Planning::InterpolatedPath RRTPlanner::makePath()
 {
 	Planning::InterpolatedPath newPath;
@@ -257,7 +265,14 @@ void RRTPlanner::cubicBezier (Planning::InterpolatedPath &path, const Geometry2d
 		pointsX[i] = path.points[i].x;
 		pointsY[i] = path.points[i].y;
 	}
-	float startSpeed = 0;
+	float startSpeed = vi.mag();
+	//This is pretty hacky;
+	/*
+	if (startSpeed < 0.3) {
+		startSpeed = 0.3;
+		vi = (path.points[1] - path.points[0]).normalized()*startSpeed;
+	}
+	*/
 	float endSpeed = motionConstraints.endSpeed;
 	for (int i=0; i<curvesNum; i++) {
 		ks[i] = 1.0/(getTime(path, i+1, motionConstraints, startSpeed, endSpeed)-getTime(path, i, motionConstraints, startSpeed, endSpeed));
