@@ -42,7 +42,7 @@ void translateException(NullArgumentException const& e)
 
 /**
  * NOTES FOR WRAPPER FUNCTIONS/METHODS
- * 
+ *
  * Keep in mind that pointer parameters will be be nullptr/NULL if the value
  * from python was None.  Check for this case so that we don't segfault.
  */
@@ -248,6 +248,10 @@ void State_draw_polygon(SystemState *self, boost::python::list points, boost::py
 	self->drawPolygon(ptVec, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
+void State_draw_raw_polygon(SystemState *self, Geometry2d::Polygon points, boost::python::tuple rgb, const std::string &layer) {
+    self->drawPolygon(points, Color_from_tuple(rgb), QString::fromStdString(layer));
+}
+
 boost::python::list Circle_intersects_line(Geometry2d::Circle *self, const Geometry2d::Line *line) {
 	if(line == nullptr)
 		throw NullArgumentException("line");
@@ -417,7 +421,8 @@ BOOST_PYTHON_MODULE(robocup)
 	;
 
 	class_<Geometry2d::Polygon, bases<Geometry2d::Shape> >("Polygon", init<>())
-		.def("add_vertex", &Polygon_add_vertex);
+		.def("add_vertex", &Polygon_add_vertex)
+        .def("contains_point", &Geometry2d::Polygon::containsPoint)
 	;
 
 	class_<GameState>("GameState")
@@ -526,6 +531,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("draw_shape", &SystemState::drawShape)
 		.def("draw_line", &State_draw_line)
 		.def("draw_polygon", &State_draw_polygon)
+        .def("draw_raw_polygon", &State_draw_raw_polygon)
 	;
 
 	class_<Field_Dimensions>("Field_Dimensions")

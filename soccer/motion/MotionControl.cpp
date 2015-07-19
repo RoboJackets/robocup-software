@@ -228,6 +228,9 @@ void MotionControl::_targetAngleVel(float angleVel) {
 	//	velocity multiplier
 	angleVel *= *_robot->config->angleVelMultiplier;
 
+    // convert units
+    angleVel = angleVel * RadiansToDegrees;
+
     // If the angular speed is very low, it won't make the robot move at all, so
     // we make sure it's above a threshold value
     float minEffectiveAngularSpeed = *_robot->config->minEffectiveAngularSpeed;
@@ -236,7 +239,7 @@ void MotionControl::_targetAngleVel(float angleVel) {
     }
 
 	//	the robot firmware still speaks degrees, so that's how we send it over
-	_robot->radioTx.set_body_w(angleVel * RadiansToDegrees);
+	_robot->radioTx.set_body_w(angleVel);
 }
 
 void MotionControl::_targetBodyVel(Point targetVel) {
