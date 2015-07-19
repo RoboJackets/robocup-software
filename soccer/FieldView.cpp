@@ -343,6 +343,32 @@ void FieldView::drawTeamSpace(QPainter& p)
 		}
 	}
 
+	// Debug arcs
+	for (const DebugArc&a : frame->debug_arcs())
+	{
+		if(a.layer() < 0 || layerVisible(a.layer()))
+		{
+			tempPen.setColor(a.color());
+			p.setPen(tempPen);
+
+			auto c = a.center();
+			auto t1 = a.start();
+			auto t2 = a.end();
+			auto R = a.radius();
+
+			QRectF rect;
+			rect.setX(-R + c.x());
+			rect.setY(-R + c.y());
+			rect.setWidth(R * 2);
+			rect.setHeight(R * 2);
+
+			t1 *= -(180 / M_PI) * 16;
+			t2 *= -(180 / M_PI) * 16;
+
+			p.drawArc(rect, t1, t2 - t1);
+		}
+	}
+
 	// Debug text
 	for (const DebugText& text :  frame->debug_texts())
 	{
