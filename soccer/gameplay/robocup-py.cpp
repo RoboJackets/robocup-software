@@ -234,6 +234,14 @@ void State_draw_line(SystemState *self, const Geometry2d::Line *line, boost::pyt
 	self->drawLine(*line, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
+void State_draw_segment(SystemState *self, const Geometry2d::Point *p0, const Geometry2d::Point *p1, boost::python::tuple rgb, const std::string &layer) {
+	if(p0 == nullptr)
+		throw NullArgumentException{"p0"};
+	if(p1 == nullptr)
+		throw NullArgumentException{"p1"};
+	self->drawLine(*p0, *p1, Color_from_tuple(rgb), QString::fromStdString(layer));
+}
+
 void State_draw_text(SystemState *self, const std::string &text, Geometry2d::Point *pos, boost::python::tuple rgb, const std::string &layer) {
 	if(pos == nullptr)
 		throw NullArgumentException("pos");
@@ -445,6 +453,10 @@ BOOST_PYTHON_MODULE(robocup)
 	class_<Geometry2d::Arc>("Arc", init<Geometry2d::Point, float, float, float>())
 		.def("intersects_line", &Arc_intersects_line)
 		.def("intersects_segment", &Arc_intersects_segment)
+		.def("center", &Geometry2d::Arc::center)
+		.def("radius", &Geometry2d::Arc::radius)
+		.def("start", &Geometry2d::Arc::start)
+		.def("end", &Geometry2d::Arc::end)
 	;
 
 	class_<Geometry2d::CompositeShape, bases<Geometry2d::Shape> >("CompositeShape", init<>())
@@ -565,6 +577,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("draw_text", &State_draw_text)
 		.def("draw_shape", &SystemState::drawShape)
 		.def("draw_line", &State_draw_line)
+		.def("draw_segment", &State_draw_segment)
 		.def("draw_polygon", &State_draw_polygon)
         .def("draw_raw_polygon", &State_draw_raw_polygon)
 	;
