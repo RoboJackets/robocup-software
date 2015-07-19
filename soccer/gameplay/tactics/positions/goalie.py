@@ -179,7 +179,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     def execute_block(self):
         opposing_kicker = evaluation.ball.opponent_with_ball()
         if opposing_kicker is not None:
-            winEval = evaluation.window_evaluator.WindowEvaluator()
+            winEval = robocup.WindowEvaluator(main.system_state())
             winEval.excluded_robots = [self.robot]
             best = winEval.eval_pt_to_our_goal(main.ball().pos)[1]
             if best is not None:

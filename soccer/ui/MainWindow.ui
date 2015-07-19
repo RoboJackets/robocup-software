@@ -1244,7 +1244,7 @@ p, li { white-space: pre-wrap; }
              <property name="handleWidth">
               <number>10</number>
              </property>
-             <widget class="QWidget" name="">
+             <widget class="QWidget" name="layoutWidget">
               <layout class="QVBoxLayout" name="verticalLayout_11">
                <property name="spacing">
                 <number>2</number>
@@ -1276,7 +1276,7 @@ p, li { white-space: pre-wrap; }
                </item>
               </layout>
              </widget>
-             <widget class="QWidget" name="">
+             <widget class="QWidget" name="layoutWidget">
               <layout class="QVBoxLayout" name="verticalLayout_10">
                <property name="spacing">
                 <number>2</number>
@@ -1664,6 +1664,8 @@ p, li { white-space: pre-wrap; }
     <addaction name="actionUseOpponentHalf"/>
     <addaction name="menu_Radio_channel"/>
     <addaction name="menuVision_Channel"/>
+    <addaction name="separator"/>
+    <addaction name="actionUse_External_Referee"/>
    </widget>
    <widget class="QMenu" name="menu_Simulator">
     <property name="title">
@@ -1694,6 +1696,7 @@ p, li { white-space: pre-wrap; }
     </property>
     <addaction name="actionDampedRotation"/>
     <addaction name="actionDampedTranslation"/>
+    <addaction name="actionUse_Field_Oriented_Controls"/>
    </widget>
    <addaction name="menu_View"/>
    <addaction name="menu_Field"/>
@@ -1954,7 +1957,7 @@ p, li { white-space: pre-wrap; }
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>Primary Half</string>
@@ -1972,6 +1975,9 @@ p, li { white-space: pre-wrap; }
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Full Field</string>
    </property>
@@ -1982,6 +1988,25 @@ p, li { white-space: pre-wrap; }
    </property>
    <property name="text">
     <string>Team Names</string>
+   </property>
+  </action>
+  <action name="actionUse_External_Referee">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use External Referee</string>
+   </property>
+  </action>
+  <action name="actionUse_Field_Oriented_Controls">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use Field-Oriented Controls</string>
    </property>
   </action>
  </widget>

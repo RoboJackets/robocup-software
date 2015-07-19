@@ -19,7 +19,6 @@ class TestDefense(play.Play):
 	def on_exit_running(self):
 		self.remove_subbehavior('defense')
 
-
 	@classmethod
 	def handles_goalie(cls):
 		return True

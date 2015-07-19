@@ -277,12 +277,12 @@ namespace Planning {
 			endSpeed,
 			linearPos,      //  these are set by reference since C++ can't return multiple values
 			linearSpeed);   //
-	
+
 		Geometry2d::Point direction;
 		if(!getPoint(linearPos, targetPosOut, direction)) {
 			return false;
 		}
-	
+
 		targetVelOut = direction * linearSpeed;
 		*/
 		if (times.size() == 0) {

@@ -59,11 +59,16 @@ REGISTER_CONFIGURABLE(OurRobot)
 ConfigDouble *OurRobot::_selfAvoidRadius;
 ConfigDouble *OurRobot::_oppAvoidRadius;
 ConfigDouble *OurRobot::_oppGoalieAvoidRadius;
+ConfigDouble *OurRobot::_goalChangeThreshold;
+ConfigDouble *OurRobot::_replanTimeout;
 
 void OurRobot::createConfiguration(Configuration *cfg) {
 	_selfAvoidRadius = new ConfigDouble(cfg, "PathPlanner/selfAvoidRadius", Robot_Radius);
 	_oppAvoidRadius = new ConfigDouble(cfg, "PathPlanner/oppAvoidRadius", Robot_Radius - 0.01);
 	_oppGoalieAvoidRadius = new ConfigDouble(cfg, "PathPlanner/oppGoalieAvoidRadius", Robot_Radius + 0.05);
+
+	_replanTimeout = new ConfigDouble(cfg, "PathPlanner/replanTimeout", 5);
+	_goalChangeThreshold = new ConfigDouble(cfg, "PathPlanner/goalChangeThreshold", 0.025);
 }
 
 OurRobot::OurRobot(int shell, SystemState *state):
@@ -80,7 +85,7 @@ OurRobot::OurRobot(int shell, SystemState *state):
 	_lastKickTime = 0;
 
 	_motionControl = new MotionControl(this);
-	
+
 	_planner = make_shared<Planning::RRTPlanner>(250);
 
 	resetAvoidRobotRadii();
@@ -517,7 +522,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	Planning::MotionInstant commandDestination = _motionCommand.getPlanningTarget();
 
 	// //	if this number of microseconds passes since our last path plan, we automatically replan
-	const Time kPathExpirationInterval = 10 * SecsToTimestamp;
+	const Time kPathExpirationInterval = *_replanTimeout * SecsToTimestamp;
 	if ((timestamp() - _pathStartTime) > kPathExpirationInterval) {
 		_pathInvalidated = true;
 	}
@@ -525,19 +530,26 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	if (!_path) {
 		_pathInvalidated = true;
 	} else {
-		_path->draw(_state, Qt::magenta);
 
-		//float maxDist = .6;
 		Planning::MotionInstant target;
 		float timeIntoPath = ((float)(timestamp() - _pathStartTime)) * TimestampToSecs + 1.0f/60.0f;
 		_path->evaluate(timeIntoPath, target);
+
 		float pathError = (target.pos - pos).mag();
-		//state()->drawCircle(targetPathPos, maxDist, Qt::green, "MotionControl");
-		//addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
-		//addText(QString("%1").arg(pathError));
-		if (*_motionConstraints._replan_threshold!=0 && pathError > *_motionConstraints._replan_threshold) {
+		float replanThreshold = *_motionConstraints._replan_threshold;
+		state()->drawCircle(target.pos, replanThreshold, Qt::green, "MotionControl");
+		addText(QString("velocity: %1 %2").arg(this->vel.x).arg(this->vel.y));
+
+		if (*_motionConstraints._replan_threshold!=0 && pathError > replanThreshold) {
 			_pathInvalidated = true;
 			addText("pathError" , Qt::red, "Motion");
+			//addText(pathError);
+		}
+
+
+		if (std::isnan(target.pos.x) || std::isnan(target.pos.y)) {
+			_pathInvalidated = true;
+			addText("Evaulate Returned an invalid result" , Qt::red, "Motion");
 			//addText(pathError);
 		}
 
@@ -549,13 +561,13 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		}
 
 		//  invalidate path if current position is more than 15cm from the planned point
-		
+
 
 
 		//	if the destination of the current path is greater than X m away from the target destination,
 		//	we invalidate the path.  this situation could arise if the path destination changed
-		if ((_path->destination()->pos - commandDestination.pos).mag() > 0.025 ||
-				(_path->destination()->vel - commandDestination.vel).mag() > 0.025) {
+		if ((_path->destination()->pos - commandDestination.pos).mag() > *_goalChangeThreshold ||
+				(_path->destination()->vel - commandDestination.vel).mag() > *_goalChangeThreshold) {
 			_pathInvalidated = true;
 		}
 	}
@@ -565,12 +577,30 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 	if (!_pathInvalidated) {
 		addText("Reusing path", Qt::white, "Planning");
 	} else {
-		std::unique_ptr<Planning::Path> path = _planner->run(Planning::MotionInstant(pos, vel), _motionCommand.getPlanningTarget(), _motionConstraints, &full_obstacles);
-		
+		double leadTime = *(_motionConstraints._replan_lead_time) * 1000000;
+		RobotPose predictedPose;
+
+		filter()->predict(timestamp() + leadTime, &predictedPose);
+		std::unique_ptr<Planning::Path> path = nullptr;
+		int count = 0;
+		while (!path) {
+			path = _planner->run(Planning::MotionInstant(pos, vel), _motionCommand.getPlanningTarget(), _motionConstraints, &full_obstacles);
+			count++;
+			//TODO fix this
+			if (count >=50) {
+				path = unique_ptr<Planning::Path>(new Planning::InterpolatedPath());
+			}
+		}
+
 		addText("Replanning", Qt::red, "Planning");
+
 		// use the newly generated path
 		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: using new RRT path" << std::endl;
 		setPath(std::move(path));
+	}
+
+	if (_path) {
+		_path->draw(_state, Qt::magenta);
 	}
 	_pathChangeHistory.push_back(_didSetPathThisIteration);
 

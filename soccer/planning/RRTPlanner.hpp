@@ -52,6 +52,16 @@ namespace Planning
 					const MotionConstraints &motionConstraints,
 					const Geometry2d::CompositeShape* obstacles) override;
 
+			/**
+			 *  Update path Appending path to the end of the path
+			 */
+			Planning::InterpolatedPath* update(
+					Planning::InterpolatedPath &origionalPath, 
+					const float angle,
+					const Geometry2d::Point& vel,
+					const MotionConstraints &motionConstraints,
+					const Geometry2d::CompositeShape* obstacles);
+
 	protected:
 		MotionConstraints _motionConstraints;
 
@@ -73,18 +83,18 @@ namespace Planning
 		 *  If the points don't match up...fail!
 		 *  The final path will be from the start of tree0
 		 *  to the start of tree1 */
-		Planning::InterpolatedPath makePath();
+		Planning::InterpolatedPath* makePath();
 
 		/** optimize the path
 		 *  Calles the cubicBezier optimization function.
 		 */
-		void optimize(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles, const MotionConstraints &motionConstraints, Geometry2d::Point vi);
+		Planning::InterpolatedPath* optimize(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles, const MotionConstraints &motionConstraints, Geometry2d::Point vi);
 
 		/**
 		 * Uses a cubicBezier to interpolate between the points on the path and add
 		 * velocity planning
 		 */
-		void cubicBezier(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles, const MotionConstraints &motionConstraints, Geometry2d::Point vi);
+		Planning::InterpolatedPath* cubicBezier(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles, const MotionConstraints &motionConstraints, Geometry2d::Point vi);
 
 		/**
 		 * Helper function for cubicBezier() which uses Eigen matrices to solve for the
