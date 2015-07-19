@@ -142,6 +142,10 @@ public:
 		_useExternalRef = value;
 	}
 
+	bool useExternalReferee() {
+		return _useExternalRef;
+	}
+
 	NewRefereeModuleEnums::Stage stage;
 	NewRefereeModuleEnums::Command command;
 
