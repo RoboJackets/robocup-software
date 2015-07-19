@@ -108,7 +108,7 @@ void MotionControl::run() {
 				targetW = -(constraints.maxAngleSpeed);
 			}
 		}
-		
+
 		/*
 		_robot->addText(QString("targetW: %1").arg(targetW));
 		_robot->addText(QString("angleError: %1").arg(angleError));
@@ -149,8 +149,8 @@ void MotionControl::run() {
 		//
 		//	Path following
 		//
-		
-		
+
+
 		//	convert from microseconds to seconds
 		float timeIntoPath = ((float)(timestamp() - _robot->pathStartTime())) * TimestampToSecs + 1.0/60.0;
 
@@ -220,8 +220,18 @@ void MotionControl::_targetAngleVel(float angleVel) {
 	//	velocity multiplier
 	angleVel *= *_robot->config->angleVelMultiplier;
 
+    // convert units
+    angleVel = angleVel * RadiansToDegrees;
+
+    // If the angular speed is very low, it won't make the robot move at all, so
+    // we make sure it's above a threshold value
+    float minEffectiveAngularSpeed = *_robot->config->minEffectiveAngularSpeed;
+    if (std::abs(angleVel) < minEffectiveAngularSpeed && std::abs(angleVel) > 0.2) {
+        angleVel = angleVel > 0 ? minEffectiveAngularSpeed : -minEffectiveAngularSpeed;
+    }
+
 	//	the robot firmware still speaks degrees, so that's how we send it over
-	_robot->radioTx.set_body_w(angleVel * RadiansToDegrees);
+	_robot->radioTx.set_body_w(angleVel);
 }
 
 void MotionControl::_targetBodyVel(Point targetVel) {
@@ -250,6 +260,13 @@ void MotionControl::_targetBodyVel(Point targetVel) {
 
 	//	velocity multiplier
 	targetVel *= *_robot->config->velMultiplier;
+
+    // if the velocity is nonzero, make sure it's not so small that the robot
+    // doesn't even move
+    float minEffectiveVelocity = *_robot->config->minEffectiveVelocity;
+    if (targetVel.mag() < minEffectiveVelocity && targetVel.mag() > 0.1) {
+        targetVel = targetVel.normalized() * minEffectiveVelocity;
+    }
 
 	//	set radioTx values
 	_robot->radioTx.set_body_x(targetVel.x);

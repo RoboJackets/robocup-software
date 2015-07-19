@@ -135,7 +135,7 @@ std::unique_ptr<Path> RRTPlanner::run(
 	}
 
 	//see if we found a better global path
-	*path = makePath();
+	path = makePath();
 
 	if (path->points.empty())
 	{
@@ -146,10 +146,18 @@ std::unique_ptr<Path> RRTPlanner::run(
 	}
 	return unique_ptr<Path>(path);
 }
-
-Planning::InterpolatedPath RRTPlanner::makePath()
+Planning::InterpolatedPath update(
+					Planning::InterpolatedPath &origionalPath, 
+					const float angle,
+					const Geometry2d::Point& vel,
+					const MotionConstraints &motionConstraints,
+					const Geometry2d::CompositeShape* obstacles) 
 {
-	Planning::InterpolatedPath newPath;
+
+}
+Planning::InterpolatedPath* RRTPlanner::makePath()
+{
+	Planning::InterpolatedPath* newPath = new Planning::InterpolatedPath();
 	
 
 	Tree::Point* p0 = _fixedStepTree0.last();
@@ -163,10 +171,10 @@ Planning::InterpolatedPath RRTPlanner::makePath()
 
 	
 	//	extract path from RRTs
-	_fixedStepTree0.addPath(newPath, p0);//add the start tree first...normal order (aka from root to p0)
-	_fixedStepTree1.addPath(newPath, p1, true);//add the goal tree in reverse (aka p1 to root)
+	_fixedStepTree0.addPath(*newPath, p0);//add the start tree first...normal order (aka from root to p0)
+	_fixedStepTree1.addPath(*newPath, p1, true);//add the goal tree in reverse (aka p1 to root)
 
-	optimize(newPath, _obstacles, _motionConstraints, vi);
+	newPath = optimize(*newPath, _obstacles, _motionConstraints, vi);
 
 	//TODO evaluate the old path based on the closest segment
 	//and the distance to the endpoint of that segment
@@ -182,14 +190,14 @@ Planning::InterpolatedPath RRTPlanner::makePath()
 	return newPath;
 }
 
-void RRTPlanner::optimize(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles, const MotionConstraints &motionConstraints, Geometry2d::Point vi)
+Planning::InterpolatedPath* RRTPlanner::optimize(Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles, const MotionConstraints &motionConstraints, Geometry2d::Point vi)
 {
 	unsigned int start = 0;
 
 	if (path.empty())
 	{
-		// Nothing to do
-		return;
+		delete &path;
+		return nullptr;
 	}
 
 	vector<Geometry2d::Point> pts;
@@ -222,7 +230,7 @@ void RRTPlanner::optimize(Planning::InterpolatedPath &path, const Geometry2d::Co
 	// Done with the path
 	pts.push_back(path.points.back());
 	path.points = pts;
-	cubicBezier(path, obstacles, motionConstraints, vi);
+	return cubicBezier(path, obstacles, motionConstraints, vi);
 }
 
 Geometry2d::Point pow(Geometry2d::Point &p1, float i)
@@ -237,13 +245,13 @@ float getTime(Planning::InterpolatedPath &path, int index, const MotionConstrain
 }
 
 //TODO: Use targeted end velocity
-void RRTPlanner::cubicBezier (Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles, const MotionConstraints &motionConstraints, Geometry2d::Point vi)
+Planning::InterpolatedPath* RRTPlanner::cubicBezier (Planning::InterpolatedPath &path, const Geometry2d::CompositeShape *obstacles, const MotionConstraints &motionConstraints, Geometry2d::Point vi)
 {
 	int length = path.points.size();
 	int curvesNum = length-1;
 	if (curvesNum <= 0) {
-		//TODO
-		return;
+		delete &path;
+		return nullptr;
 	}
 
 	//TODO: Get the actual values
@@ -259,11 +267,22 @@ void RRTPlanner::cubicBezier (Planning::InterpolatedPath &path, const Geometry2d
 		pointsX[i] = path.points[i].x;
 		pointsY[i] = path.points[i].y;
 	}
-	float startSpeed = 0;
+	float startSpeed = vi.mag();
+	//This is pretty hacky;
+	/*
+	if (startSpeed < 0.3) {
+		startSpeed = 0.3;
+		vi = (path.points[1] - path.points[0]).normalized()*startSpeed;
+	}
+	*/
 	float endSpeed = motionConstraints.endSpeed;
 	for (int i=0; i<curvesNum; i++) {
 		ks[i] = 1.0/(getTime(path, i+1, motionConstraints, startSpeed, endSpeed)-getTime(path, i, motionConstraints, startSpeed, endSpeed));
 		ks2[i] = ks[i]*ks[i];
+		if (std::isnan(ks[i])) {
+			delete &path;
+			return nullptr;
+		}
 	}
 
 	VectorXd solutionX = cubicBezierCalc(vi.x, vf.x, pointsX, ks, ks2);
@@ -306,6 +325,7 @@ void RRTPlanner::cubicBezier (Planning::InterpolatedPath &path, const Geometry2d
     path.points = pts;
     path.vels = vels;
     path.times = times;
+	return &path;
 }
 
 VectorXd RRTPlanner::cubicBezierCalc (double vi, double vf, vector<double> &points,

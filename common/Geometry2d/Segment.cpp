@@ -201,6 +201,17 @@ Point Segment::nearestPoint(const Point& p) const
     return pt[0] + v_hat * t;
 }
 
+Point Segment::nearestPoint(const Line &l) const {
+	Point intersection;
+	if(l.intersects(*this, &intersection)) {
+		return intersection;
+	} else if(l.distTo(pt[0]) < l.distTo(pt[1])) {
+		return pt[0];
+	} else {
+		return pt[1];
+	}
+}
+
 bool Segment::nearSegment(const Segment &other, float threshold) const
 {
     bool ret = other.nearPoint(pt[0], threshold) ||

@@ -64,7 +64,7 @@ namespace Geometry2d
 			 * does vector addition
 			 * adds the + operator, shorthand
 			 */
-			Point operator+(Point other) const
+			Point operator+(const Point& other) const
 			{
 				return Point(x + other.x, y + other.y);
 			}
@@ -74,7 +74,7 @@ namespace Geometry2d
 			 * does vector division, note the operator
 			 * without parameter, it is the negative
 			 */
-			Point operator/(Point other) const
+			Point operator/(const Point& other) const
 			{
 				return Point(x / other.x, y / other.y);
 			}
@@ -85,7 +85,7 @@ namespace Geometry2d
 			 * does vector subtraction, note the operator
 			 * without parameter, it is the negative
 			 */
-			Point operator-(Point other) const
+			Point operator-(const Point& other) const
 			{
 				return Point(x - other.x, y - other.y);
 			}
@@ -102,7 +102,7 @@ namespace Geometry2d
 			 * see operator+
 			 * this modifies the value instead of returning a new value
 			 */
-			Point &operator+=(Point other)
+			Point &operator+=(const Point& other)
 			{
 				x += other.x;
 				y += other.y;
@@ -114,7 +114,7 @@ namespace Geometry2d
 			 * see operator-
 			 * this modifies the value instead of returning a new value
 			 */
-			Point &operator-=(Point other)
+			Point &operator-=(const Point& other)
 			{
 				x -= other.x;
 				y -= other.y;
@@ -167,7 +167,7 @@ namespace Geometry2d
 			 * compares two points to see if both x and y are the same
 			 * adds the == operator
 			 */
-			bool operator==(Point other) const
+			bool operator==(const Point& other) const
 			{
 				return x == other.x && y == other.y;
 			}
@@ -175,7 +175,7 @@ namespace Geometry2d
 			/**
 			 * this is the negation of operator operator !=
 			 */
-			bool operator!=(Point other) const
+			bool operator!=(const Point& other) const
 			{
 				return x != other.x || y != other.y;
 			}
@@ -186,7 +186,7 @@ namespace Geometry2d
 			@param p the second point
 			@return the dot product of the two
 			*/
-			float dot(Point p) const
+			float dot(const Point& p) const
 			{
 				return x * p.x + y * p.y;
 			}
@@ -338,7 +338,7 @@ namespace Geometry2d
 			}
 			
 			/** saturates the magnitude of a vector */
-			static Geometry2d::Point saturate(Geometry2d::Point value, float max) {
+			static Geometry2d::Point saturate(const Geometry2d::Point& value, float max) {
 				float mag = value.mag();
 				if (mag > fabs(max))
 				{

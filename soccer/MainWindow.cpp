@@ -401,6 +401,7 @@ void MainWindow::updateViews()
 	_ui.refYellowTimeoutsLeft->setText(tr("%1").arg(_processor->refereeModule()->yellow_info.timeouts_left));
 	_ui.refYellowGoalie->setText(tr("%1").arg(_processor->refereeModule()->yellow_info.goalie));
 
+	_ui.actionUse_External_Referee->setChecked(_processor->refereeModule()->useExternalReferee());
 
 	//	update robot status list
 	for (const OurRobot *robot : _processor->state()->self) {
@@ -1036,9 +1037,17 @@ void MainWindow::on_manualID_currentIndexChanged(int value)
 	}
 }
 
+void MainWindow::on_actionUse_Field_Oriented_Controls_toggled(bool value) {
+    _processor->setUseFieldOrientedManualDrive(value);
+}
+
 void MainWindow::on_goalieID_currentIndexChanged(int value)
 {
 	_processor->goalieID(value - 1);
+}
+
+void MainWindow::on_actionUse_External_Referee_toggled(bool value) {
+	_processor->refereeModule()->useExternalReferee(value);
 }
 
 ////////
