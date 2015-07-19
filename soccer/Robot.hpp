@@ -217,6 +217,13 @@ public:
 	 */
 	void move(const Geometry2d::Point &goal, Geometry2d::Point endVelocity = Geometry2d::Point());
 
+
+	/**
+	 * @brief Move to a given point using the default RRT planner
+	 * @param endSpeed - the speed we should be going when we reach the end of the path
+	 */
+	void moveDirect(const Geometry2d::Point &goal, float endSpeed = 0);
+
 	Time pathStartTime() const {
 		return _pathStartTime;
 	}
@@ -463,6 +470,7 @@ protected:
 	float _avoidBallRadius; /// radius of ball obstacle
 
 	Planning::MotionCommand _motionCommand;
+	Planning::MotionCommand::CommandType _lastCommandType;
 	MotionConstraints _motionConstraints;
 
 	std::shared_ptr<Planning::PathPlanner> _planner;	/// single-robot RRT planner
@@ -470,6 +478,9 @@ protected:
 	void setPath(std::unique_ptr<Planning::Path> path);
 
 	std::unique_ptr<Planning::Path> _path;	/// latest path
+
+
+
 	Time _pathStartTime;
 
 	///	whenever the constraints for the robot path are changed, this is set to true to trigger a replan
