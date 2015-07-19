@@ -407,6 +407,7 @@ BOOST_PYTHON_MODULE(robocup)
 	class_<Geometry2d::Circle, bases<Geometry2d::Shape> >("Circle", init<Geometry2d::Point, float>())
 		.def("intersects_line", &Circle_intersects_line)
 		.def("nearest_point", &Geometry2d::Circle::nearestPoint)
+        .def("contains_point", &Geometry2d::Circle::containsPoint)
 	;
 
 	class_<Geometry2d::CompositeShape, bases<Geometry2d::Shape> >("CompositeShape", init<>())
