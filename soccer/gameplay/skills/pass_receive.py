@@ -7,6 +7,7 @@ import main
 import enum
 import math
 import time
+import role_assignment
 
 import skills.capture
 
@@ -85,15 +86,15 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                 'ball kicked')
 
         self.add_transition(PassReceive.State.receiving,
-            PassReceive.State.waiting,
+            behavior.Behavior.State.completed,
             lambda: self.robot.has_ball(),
             'ball received!')
 
-        #self.add_transition(PassReceive.State.receiving,
-        #    behavior.Behavior.State.failed,
+        self.add_transition(PassReceive.State.receiving,
+            behavior.Behavior.State.failed,
             # TODO look here
-        #    lambda: self.check_failure(),
-        #    'ball missed :(')
+            lambda: self.check_failure(),
+            'ball missed :(')
 
 
 
@@ -203,6 +204,8 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def on_enter_receiving(self):
         # Extrapolate center of robot location from kick velocity
+        self.kicked_from = main.ball().pos - (main.ball().vel / main.ball().vel.mag()) * constants.Robot.Radius * 4
+        self.kicked_vel = main.ball().vel
         capture = skills.capture.Capture()
         capture.dribbler_power = PassReceive.DribbleSpeed
         self.add_subbehavior(capture, 'capture', required=True)
@@ -215,17 +218,29 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         pass_distance = self.kicked_from.dist_to(self.robot.pos)
         offset = pass_distance * math.sin(PassReceive.MarginAngle)
+        first_kick = robocup.Point(self.kicked_from.x + constants.Robot.Radius * math.cos(math.pi / 2 + self.kicked_vel.angle()),
+            self.kicked_from.y + constants.Robot.Radius * math.sin(math.pi / 2 + self.kicked_vel.angle()))
+        second_kick = robocup.Point(self.kicked_from.x - constants.Robot.Radius * math.cos(math.pi / 2 + self.kicked_vel.angle()),
+            self.kicked_from.y - constants.Robot.Radius * math.sin(math.pi / 2 + self.kicked_vel.angle()))
+        first_receive = robocup.Point(self.robot.pos.x - offset * math.cos(math.pi / 2 + self.kicked_vel.angle()),
+            self.robot.pos.y - offset * math.sin(math.pi / 2 + self.kicked_vel.angle()))
+        second_receive = robocup.Point(self.robot.pos.x + offset * math.cos(math.pi / 2 + self.kicked_vel.angle()),
+            self.robot.pos.y + offset * math.sin(math.pi / 2 + self.kicked_vel.angle()))
 
+
+        first_segment = (first_receive - first_kick)
+        first_receive = first_segment.normalized() * (first_segment.mag() + 1)  + first_kick
+
+        second_segment = (second_receive - second_kick)
+        second_receive = second_segment.normalized() * (second_segment.mag() + 1)  + second_kick
+        
         good_area = robocup.Polygon()
-        good_area.add_vertex(robocup.Point(self.kicked_from.x + constants.Robot.Radius * math.cos(math.pi / 2 + self.kicked_vel.angle()),
-            self.kicked_from.y + constants.Robot.Radius * math.sin(math.pi / 2 + self.kicked_vel.angle())))
-        good_area.add_vertex(robocup.Point(self.kicked_from.x - constants.Robot.Radius * math.cos(math.pi / 2 + self.kicked_vel.angle()),
-            self.kicked_from.y - constants.Robot.Radius * math.sin(math.pi / 2 + self.kicked_vel.angle())))
+        good_area.add_vertex(first_kick)
+        good_area.add_vertex(second_kick)
 
-        good_area.add_vertex(robocup.Point(self.robot.pos.x - offset * math.cos(math.pi / 2 + self.kicked_vel.angle()),
-            self.robot.pos.y - offset * math.sin(math.pi / 2 + self.kicked_vel.angle())))
-        good_area.add_vertex(robocup.Point(self.robot.pos.x + offset * math.cos(math.pi / 2 + self.kicked_vel.angle()),
-            self.robot.pos.y + offset * math.sin(math.pi / 2 + self.kicked_vel.angle())))
+
+        good_area.add_vertex(first_receive)
+        good_area.add_vertex(second_receive)
 
         main.system_state().draw_raw_polygon(good_area, constants.Colors.Green, "Good Pass Area")
         return not good_area.contains_point(main.ball().pos)
@@ -242,11 +257,13 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         #self.robot.set_world_vel(vel)
 
     ## prefer a robot that's already near the receive position
-    #def role_requirements(self):
-        #reqs = super().role_requirements()
-        #if self.receive_point != None:
-        #    reqs.destination_shape = self.receive_point
-        #return reqs
+    def role_requirements(self):
+        reqs = super().role_requirements()
+        
+        if self.receive_point != None:
+            for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
+                req.destination_shape = self.receive_point
+        return reqs
 
 
     def __str__(self):
