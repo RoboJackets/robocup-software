@@ -59,7 +59,8 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
         for i in constants.Field.FieldBorders:
             tmp_point = circle_ball.intersects_line(i)
             for j in tmp_point:
-                if constants.Field.FieldRect.contains_point(j):
+                # Using near_point because of rounding errors
+                if constants.Field.FieldRect.near_point(j, 0.001):
                     intersection_points.append(j)
 
         angles = []
