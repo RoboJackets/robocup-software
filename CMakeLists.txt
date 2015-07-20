@@ -78,7 +78,7 @@ endif()
 
 # Eigen - used for linear algebra
 find_package(Eigen3 REQUIRED)
-include_directories(${EIGEN_INCLUDE_DIR})
+include_directories(SYSTEM ${EIGEN_INCLUDE_DIR})
 
 # libusb
 find_package(libusb-1.0 REQUIRED)
