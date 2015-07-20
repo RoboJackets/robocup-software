@@ -46,19 +46,36 @@ class SubmissiveDefender(single_robot_composite_behavior.SingleRobotCompositeBeh
         self._block_line = value
 
         # we move somewhere along this arc to mark our 'block_line'
-        arc = robocup.Circle(robocup.Point(0,0), self._defend_goal_radius)
-        # TODO: use the real shape instead of this arc approximation
+        arc_left = robocup.Arc(robocup.Point(-constants.Field.GoalFlat/2,0),constants.Field.ArcRadius+constants.Robot.Radius*2,math.pi/2, math.pi)
+        arc_right = robocup.Arc(robocup.Point(constants.Field.GoalFlat/2,0),constants.Field.ArcRadius+constants.Robot.Radius*2,0, math.pi/2)
+        seg = robocup.Segment(robocup.Point(-constants.Field.GoalFlat/2,constants.Field.ArcRadius+constants.Robot.Radius*2),robocup.Point(constants.Field.GoalFlat/2,constants.Field.ArcRadius+constants.Robot.Radius*2))
 
-        default_pt = arc.nearest_point(robocup.Point(0, constants.Field.Length / 2.0))
+        default_pt = seg.center()
 
         if self._block_line != None:
-            intersects, pt1, pt2 = self._block_line.intersects_circle(arc)
+            main.system_state().draw_line(self._block_line, constants.Colors.White, "Debug")
+            main.system_state().draw_circle(self._block_line.get_pt(0), 0.1, constants.Colors.White, "Debug")
 
-            if intersects:
-                # choose the pt farther from the goal
-                self._move_target = max([pt1, pt2], key=lambda p: p.y)
-            else:
-                self._move_target = default_pt
+            threat_point = self._block_line.get_pt(0)
+
+            intersection_center = seg.line_intersection(self._block_line)
+
+            if threat_point.x < 0:
+                intersections_left = arc_left.intersects_line(self._block_line)
+                if len(intersections_left) > 0:
+                    self._move_target = max(intersections_left, key=lambda p: p.y)
+                elif intersection_center is not None:
+                    self._move_target = intersection_center
+                else:
+                    self._move_target = default_pt
+            elif threat_point.x >= 0:
+                intersections_right = arc_right.intersects_line(self._block_line)
+                if len(intersections_right) > 0:
+                    self._move_target = max(intersections_right, key=lambda p: p.y)
+                elif intersection_center is not None:
+                    self._move_target = intersection_center
+                else:
+                    self._move_target = default_pt
         else:
             self._move_target = default_pt
 
@@ -84,11 +101,16 @@ class SubmissiveDefender(single_robot_composite_behavior.SingleRobotCompositeBeh
         move = self.subbehavior_with_name('move')
         move.pos = self.move_target
 
-        arc = robocup.Circle(robocup.Point(0,0), self._defend_goal_radius)
+        arc_left = robocup.Arc(robocup.Point(-constants.Field.GoalFlat/2,0),constants.Field.ArcRadius+constants.Robot.Radius*2,math.pi/2, math.pi)
+        arc_right = robocup.Arc(robocup.Point(constants.Field.GoalFlat/2,0),constants.Field.ArcRadius+constants.Robot.Radius*2,0, math.pi/2)
+        seg = robocup.Segment(robocup.Point(-constants.Field.GoalFlat/2,constants.Field.ArcRadius+constants.Robot.Radius*2),robocup.Point(constants.Field.GoalFlat/2,constants.Field.ArcRadius+constants.Robot.Radius*2))
+
 
         if move.pos != None:
             main.system_state().draw_circle(move.pos, 0.02, constants.Colors.Green, "Mark")
-            main.system_state().draw_circle(robocup.Point(0,0), self._defend_goal_radius, constants.Colors.Green, "Mark")
+            main.system_state().draw_segment(seg.get_pt(0), seg.get_pt(1), constants.Colors.Green, "Mark")
+            main.system_state().draw_arc(arc_left, constants.Colors.Green, "Mark")
+            main.system_state().draw_arc(arc_right, constants.Colors.Green, "Mark")
 
         # make the defender face the threat it's defending against
         if self.robot != None and self.block_line != None:

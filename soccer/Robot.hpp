@@ -453,6 +453,7 @@ public:
 		radioTx.set_sing(true);
 	}
 
+	bool isPenaltyKicker = false;
 
 	static void createConfiguration(Configuration *cfg);
 
@@ -485,7 +486,6 @@ protected:
 
 	///	whenever the constraints for the robot path are changed, this is set to true to trigger a replan
 	bool _pathInvalidated;
-
 
 	/**
 	 * Creates a set of obstacles from a given robot team mask,

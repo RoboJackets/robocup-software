@@ -52,16 +52,6 @@ namespace Planning
 					const MotionConstraints &motionConstraints,
 					const Geometry2d::CompositeShape* obstacles) override;
 
-			/**
-			 *  Update path Appending path to the end of the path
-			 */
-			Planning::InterpolatedPath* update(
-					Planning::InterpolatedPath &origionalPath, 
-					const float angle,
-					const Geometry2d::Point& vel,
-					const MotionConstraints &motionConstraints,
-					const Geometry2d::CompositeShape* obstacles);
-
 	protected:
 		MotionConstraints _motionConstraints;
 

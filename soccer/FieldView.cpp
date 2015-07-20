@@ -29,6 +29,7 @@ static QPen blackPen(Qt::black, 0);
 static QPen whitePen(Qt::white, 0);
 static QPen greenPen(Qt::green, 0);
 static QPen grayPen(Qt::gray, 0);
+static QPen darkRedPen(Qt::darkRed, 0);
 
 static QPen tempPen(Qt::white, 0);
 
@@ -343,6 +344,32 @@ void FieldView::drawTeamSpace(QPainter& p)
 		}
 	}
 
+	// Debug arcs
+	for (const DebugArc&a : frame->debug_arcs())
+	{
+		if(a.layer() < 0 || layerVisible(a.layer()))
+		{
+			tempPen.setColor(a.color());
+			p.setPen(tempPen);
+
+			auto c = a.center();
+			auto t1 = a.start();
+			auto t2 = a.end();
+			auto R = a.radius();
+
+			QRectF rect;
+			rect.setX(-R + c.x());
+			rect.setY(-R + c.y());
+			rect.setWidth(R * 2);
+			rect.setHeight(R * 2);
+
+			t1 *= -(180 / M_PI) * 16;
+			t2 *= -(180 / M_PI) * 16;
+
+			p.drawArc(rect, t1, t2 - t1);
+		}
+	}
+
 	// Debug text
 	for (const DebugText& text :  frame->debug_texts())
 	{
@@ -570,11 +597,17 @@ void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos
 	painter.save();
 
 	painter.translate(pos.x(), pos.y());
-	
-	if (faulty)
-	{
+
+	if(faulty) {
+		painter.save();
 		painter.setPen(redPen);
-	} else if (blueRobot)
+		painter.setBrush(QBrush{Qt::red,Qt::SolidPattern});
+		auto r = Robot_Radius + 0.025;
+		painter.drawEllipse(QPointF(0,0), r, r);
+		painter.restore();
+	}
+
+	if (blueRobot)
 	{
 		painter.setPen(bluePen);
 		painter.setBrush(Qt::blue);
@@ -592,20 +625,20 @@ void FieldView::drawRobot(QPainter& painter, bool blueRobot, int ID, QPointF pos
 	const float r = Robot_Radius;
 	painter.drawChord(QRectF(-r, -r, r * 2, r * 2), start, end);
 
-    if(showDotPatterns)
-    {
-        painter.setPen(Qt::NoPen);
-        for(int i = 0; i < 4; i++)
-        {
-            painter.setBrush(QBrush(Dot_Pattern_Colors[ID][i]));
-            QPointF center;
-            center.setX( (i >= 2) ? Dots_Small_Offset : Dots_Large_Offset );
-            center.setX( center.x() * ( (i == 1 || i == 2) ? -1 : 1 ) );
-            center.setY( (i <= 1) ? Dots_Small_Offset : Dots_Large_Offset );
-            center.setY( center.y() * ( (i <= 1) ? -1 : 1 ) );
-            painter.drawEllipse(center, Dots_Radius, Dots_Radius);
-        }
-    }
+	if(showDotPatterns)
+	{
+			painter.setPen(Qt::NoPen);
+			for(int i = 0; i < 4; i++)
+			{
+					painter.setBrush(QBrush(Dot_Pattern_Colors[ID][i]));
+					QPointF center;
+					center.setX( (i >= 2) ? Dots_Small_Offset : Dots_Large_Offset );
+					center.setX( center.x() * ( (i == 1 || i == 2) ? -1 : 1 ) );
+					center.setY( (i <= 1) ? Dots_Small_Offset : Dots_Large_Offset );
+					center.setY( center.y() * ( (i <= 1) ? -1 : 1 ) );
+					painter.drawEllipse(center, Dots_Radius, Dots_Radius);
+			}
+	}
 
 	if (hasBall)
 	{
