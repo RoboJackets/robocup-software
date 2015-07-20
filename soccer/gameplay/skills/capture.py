@@ -99,13 +99,9 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
                 1,
                 self.robot.vel.mag(),
                 0)
-            #bot_time = (pos - self.robot.pos).mag() * 30.0 # FIXME: evaluate trapezoid
-            # print('bot: ' + str(bot_time) + ';; ball: ' + str(ball_time))
 
             if bot_time < ball_time:
                 break
-            #if i == 50:
-            print(i)
 
 
         return pos
