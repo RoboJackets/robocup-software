@@ -264,7 +264,7 @@ void MotionControl::_targetBodyVel(Point targetVel) {
     // if the velocity is nonzero, make sure it's not so small that the robot
     // doesn't even move
     float minEffectiveVelocity = *_robot->config->minEffectiveVelocity;
-    if (targetVel.mag() < minEffectiveVelocity && targetVel.mag() > 0.1) {
+    if (targetVel.mag() < minEffectiveVelocity && targetVel.mag() > 0.05) {
         targetVel = targetVel.normalized() * minEffectiveVelocity;
     }
 
