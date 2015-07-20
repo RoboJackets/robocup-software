@@ -173,6 +173,8 @@ void OurRobot::resetForNextIteration() {
 	_local_obstacles.clear();
 	resetMotionConstraints();
 	_unkick();
+
+	isPenaltyKicker = false;
 }
 
 void OurRobot::resetMotionConstraints() {

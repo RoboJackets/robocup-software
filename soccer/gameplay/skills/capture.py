@@ -39,7 +39,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(Capture.State.course_approach,
             Capture.State.fine_approach,
-            lambda: self.bot_near_ball(Capture.CourseApproachDist) and main.ball().valid and not constants.Field.TheirGoalShape.contains_point(main.ball().pos),
+            lambda: self.bot_near_ball(Capture.CourseApproachDist) and main.ball().valid and (not constants.Field.TheirGoalShape.contains_point(main.ball().pos) or self.robot.is_penalty_kicker),
             'dist to ball < threshold')
 
         self.add_transition(Capture.State.fine_approach,
@@ -54,12 +54,12 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(Capture.State.fine_approach,
             Capture.State.back_off,
-            lambda: constants.Field.TheirGoalShape.contains_point(main.ball().pos),
+            lambda: not self.robot.is_penalty_kicker and constants.Field.TheirGoalShape.contains_point(main.ball().pos),
             'ball ran away')
 
         self.add_transition(Capture.State.back_off,
             behavior.Behavior.State.start,
-            lambda: bot_to_ball().mag()<BackOffDistance,
+            lambda: self.bot_to_ball().mag() < Capture.BackOffDistance,
             "backed away enough")
 
 
@@ -103,7 +103,6 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             if bot_time < ball_time:
                 break
 
-
         return pos
 
 
@@ -118,6 +117,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     def execute_course_approach(self):
         # don't hit the ball on accident
         self.robot.set_avoid_ball_radius(Capture.CourseApproachAvoidBall)
+        self.robot.is_penalty_kicker = True
         pos = self.find_intercept_point()
         self.robot.face(main.ball().pos)
 
@@ -155,3 +155,10 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             reqs.destination_shape = main.ball().pos
 
         return reqs
+
+    @property
+    def is_penalty(self):
+        return self._is_penalty
+    @is_penalty.setter
+    def is_penalty(self, value):
+        self._is_penalty = value
