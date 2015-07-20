@@ -35,6 +35,9 @@ class RoleRequirements:
 
         return "; ".join(props)
 
+    def __repr__(self):
+        return str(self)
+
 
     @property
     def destination_shape(self):
