@@ -98,8 +98,10 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
                     i = i + 1
 
             candidate_arcs.sort(key=lambda arc: arc.end() - arc.start())
-            # TODO guard for none
-            final_arc = candidate_arcs[0]
+            if len(candidate_arcs) <= 0:
+                final_arc = robocup.Arc(robocup.Point(constants.Field.Width / 4.0, constants.Field.Length / 4.0), radius, math.pi / 2, 5 * math.pi / 2)
+            else:
+                final_arc = candidate_arcs[0]
         else:
             midpoint = (circle_ball.center() + robocup.Point(radius, 0))
             if not constants.Field.FieldRect.contains_point(midpoint):
