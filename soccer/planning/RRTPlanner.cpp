@@ -144,19 +144,11 @@ Planning::InterpolatedPath* RRTPlanner::run(
 	}
 	return path;
 }
-Planning::InterpolatedPath update(
-					Planning::InterpolatedPath &origionalPath, 
-					const float angle,
-					const Geometry2d::Point& vel,
-					const MotionConstraints &motionConstraints,
-					const Geometry2d::CompositeShape* obstacles) 
-{
 
-}
 Planning::InterpolatedPath RRTPlanner::makePath()
 {
 	Planning::InterpolatedPath newPath;
-	
+
 
 	Tree::Point* p0 = _fixedStepTree0.last();
 	Tree::Point* p1 = _fixedStepTree1.last();
@@ -167,7 +159,7 @@ Planning::InterpolatedPath RRTPlanner::makePath()
 		return newPath;
 	}
 
-	
+
 	//	extract path from RRTs
 	_fixedStepTree0.addPath(newPath, p0);//add the start tree first...normal order (aka from root to p0)
 	_fixedStepTree1.addPath(newPath, p1, true);//add the goal tree in reverse (aka p1 to root)
