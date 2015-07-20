@@ -10,7 +10,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     # tunable config values
     CourseApproachErrorThresh = 0.8
-    CourseApproachDist = 0.25
+    CourseApproachDist = 0.3
     CourseApproachAvoidBall = 0.10
     DribbleSpeed = 100
     FineApproachSpeed = 0.2
@@ -137,13 +137,14 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
 
     def execute_fine_approach(self):
-        Capture.multiplier = 0.6
+        Capture.multiplier = 1.0
+
         self.robot.disable_avoid_ball()
         self.robot.set_dribble_speed(Capture.DribbleSpeed)
         self.robot.face(main.ball().pos)
 
         bot2ball = (main.ball().pos - self.robot.pos).normalized()
-        self.robot.set_world_vel(self.bot_to_ball()*Capture.multiplier + bot2ball * Capture.FineApproachSpeed/2 + main.ball().vel)
+        self.robot.set_world_vel(self.bot_to_ball()*Capture.multiplier + bot2ball * Capture.FineApproachSpeed/4 + main.ball().vel)
 
     def execute_back_off(self):
         self.robot.face(main.ball().pos)

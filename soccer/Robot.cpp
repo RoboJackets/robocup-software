@@ -222,7 +222,7 @@ void OurRobot::moveDirect(const Geometry2d::Point &goal, float endSpeed)
 void OurRobot::worldVelocity(const Geometry2d::Point& v)
 {
 	_motionCommand.setWorldVel(v);
-	setPath(NULL);
+	setPath(nullptr);
 	*_cmdText << "worldVel(" << v.x << ", " << v.y << ")\n";
 }
 
@@ -246,7 +246,7 @@ void OurRobot::pivot(const Geometry2d::Point &pivotTarget) {
 	//	reset other conflicting motion commands
 	_motionCommand.setWorldVel(Geometry2d::Point());
 	_motionConstraints.faceTarget = boost::none;
-	setPath(NULL);
+	setPath(nullptr);
 
 	*_cmdText << "pivot(" << pivotTarget.x << ", " << pivotTarget.y << ")\n";
 }
@@ -590,14 +590,14 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 
 				//	if the destination of the current path is greater than X m away from the target destination,
 				//	we invalidate the path.  this situation could arise if the path destination changed
-				if ((_path->destination()->pos - commandDestination.pos).mag() > *_goalChangeThreshold ||
+				if (!_path->destination() || (_path->destination()->pos - commandDestination.pos).mag() > *_goalChangeThreshold ||
 					(_path->destination()->vel - commandDestination.vel).mag() > *_goalChangeThreshold) {
 					_pathInvalidated = true;
 				}
 			} else if (_motionCommand.getCommandType() == Planning::MotionCommand::DirectTarget) {
 				Geometry2d::Point endTarget;
 				float endSpeed = _motionCommand.getDirectTarget(endTarget);
-				if ((_path->destination()->pos - endTarget).mag() > *_goalChangeThreshold ||
+				if (!_path->destination() || (_path->destination()->pos - endTarget).mag() > *_goalChangeThreshold ||
 					(_path->destination()->vel.mag() - endSpeed) > *_goalChangeThreshold) {
 					_pathInvalidated = true;
 				}
@@ -628,18 +628,24 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 			float endSpeed = _motionCommand.getDirectTarget(endTarget);
 			switch (_motionCommand.getCommandType()) {
 				case Planning::MotionCommand::PathTarget:
-					path = _planner->run(Planning::MotionInstant(pos, vel), _motionCommand.getPlanningTarget(), _motionConstraints, &full_obstacles);
+					path = _planner->run(Planning::MotionInstant(pos, vel), _motionCommand.getPlanningTarget(), _motionConstraints, &full_obstacles, _state);
 					break;
 				case Planning::MotionCommand::DirectTarget:
 					path = unique_ptr<Planning::Path>(new Planning::TrapezoidalPath(this->pos, this->vel.mag(), endTarget, endSpeed, _motionConstraints));
 					break;
-				default:
-					path = unique_ptr<Planning::Path>(new Planning::InterpolatedPath());
+				default:				
+					path = nullptr;
+					//path = unique_ptr<Planning::Path>(Planning::InterpolatedPath::getStandStillPath(pos));
 			}
 			count++;
 			//TODO fix this
 			if (count >=50) {
-				path = unique_ptr<Planning::Path>(new Planning::InterpolatedPath());
+				cout<<"crapp"<<endl;
+				path = nullptr;
+				break;
+				//path = unique_ptr<Planning::Path>(Planning::InterpolatedPath::getStandStillPath(pos));
+				//addText("PathPlanning Failed", Qt::red, "Motion");
+				//_path->draw(_state, Qt::magenta);
 			}
 		}
 

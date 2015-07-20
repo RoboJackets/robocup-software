@@ -72,6 +72,7 @@ namespace Planning
 		Geometry2d::Point _bestGoal;
 
 		Geometry2d::Point vi;
+		Geometry2d::Point vf;
 		///maximum number of rrt iterations to run
 		///this does not include connect attempts
 		unsigned int _maxIterations;

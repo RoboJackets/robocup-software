@@ -34,13 +34,19 @@ namespace Planning
 		TrapezoidalPath(Geometry2d::Point startPos, float startSpeed, Geometry2d::Point endPos, float endSpeed, float maxAcc, float maxSpeed) :
 				startPos(startPos), startSpeed(startSpeed), endPos(endPos), endSpeed(endSpeed),
 				pathLength((startPos - endPos).mag()), maxAcc(maxAcc), maxSpeed(maxSpeed),
-				pathDirection((endPos - startPos).normalized()){}
+				pathDirection((endPos - startPos).normalized()){
+				}
 
 		/** default path is empty */
 		TrapezoidalPath(Geometry2d::Point startPos, float startSpeed, Geometry2d::Point endPos, float endSpeed, const MotionConstraints& constraints) :
 				startPos(startPos), startSpeed(startSpeed), endPos(endPos), endSpeed(endSpeed),
 				pathLength((startPos - endPos).mag()), maxAcc(constraints.maxAcceleration), maxSpeed(constraints.maxSpeed),
-				pathDirection((endPos - startPos).normalized()){}
+				pathDirection((endPos - startPos).normalized()){
+					float minSpeed = maxSpeed/2;
+					if (startSpeed<minSpeed) {
+						startSpeed = minSpeed;
+					}
+				}
 
 		virtual bool evaluate(float time, MotionInstant &targetMotionInstant) const override {
 			float distance;
@@ -91,6 +97,7 @@ namespace Planning
 			return destination;
 		}
 		virtual std::unique_ptr<Path> clone() const override {
+			throw "This function is not implemented";
 			return std::unique_ptr<Path>(new TrapezoidalPath(startPos,startSpeed,endPos, endSpeed, maxAcc, maxSpeed));
 		}
 	};
