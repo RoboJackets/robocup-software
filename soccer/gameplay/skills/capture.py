@@ -39,7 +39,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(Capture.State.course_approach,
             Capture.State.fine_approach,
-            lambda: self.bot_near_ball(Capture.CourseApproachDist) and main.ball().valid and not constants.Field.TheirGoalShape.contains_point(main.ball().pos),
+            lambda: self.bot_near_ball(Capture.CourseApproachDist) and main.ball().valid and (not constants.Field.TheirGoalShape.contains_point(main.ball().pos) or self.is_penalty),
             'dist to ball < threshold')
 
         self.add_transition(Capture.State.fine_approach,
@@ -54,7 +54,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(Capture.State.fine_approach,
             Capture.State.back_off,
-            lambda: constants.Field.TheirGoalShape.contains_point(main.ball().pos),
+            lambda: constants.Field.TheirGoalShape.contains_point(main.ball().pos) and not self.is_penalty,
             'ball ran away')
 
         self.add_transition(Capture.State.back_off,
@@ -65,6 +65,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.lastApproachTarget = None
         self.postChangeCount = 0
+        self._is_penalty = False
 
     def bot_to_ball(self):
         return main.ball().pos - self.robot.pos
@@ -105,7 +106,6 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             if bot_time < ball_time:
                 break
             #if i == 50:
-            print(i)
 
 
         return pos
@@ -122,6 +122,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     def execute_course_approach(self):
         # don't hit the ball on accident
         self.robot.set_avoid_ball_radius(Capture.CourseApproachAvoidBall)
+        self.robot.is_penalty_kicker = True
         pos = self.find_intercept_point()
         self.robot.face(main.ball().pos)
 
@@ -159,3 +160,10 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             reqs.destination_shape = main.ball().pos
 
         return reqs
+
+    @property
+    def is_penalty(self):
+        return self._is_penalty
+    @is_penalty.setter
+    def is_penalty(self, value):
+        self._is_penalty = value

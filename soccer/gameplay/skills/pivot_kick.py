@@ -73,6 +73,8 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
         # default parameters
         self.dribbler_power = constants.Robot.Dribbler.MaxPower
         self.aim_params = {'desperate_timeout': float("inf")}
+
+        self.capture = skills.capture.Capture()
         
 
     # The speed to drive the dribbler at during aiming
@@ -122,9 +124,8 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
     def on_enter_capturing(self):
         self.remove_aim_behavior()
         self.robot.unkick()
-        capture = skills.capture.Capture()
-        capture.dribbler_power = self.dribbler_power
-        self.add_subbehavior(capture, 'capture', required=True)
+        self.capture.dribbler_power = self.dribbler_power
+        self.add_subbehavior(self.capture, 'capture', required=True)
         # FIXME: tell capture to approach from a certain direction so we're already lined up?
     def on_exit_capturing(self):
         self.remove_subbehavior('capture')
@@ -171,6 +172,8 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
 
 
     def on_exit_running(self):
+        self.robot.is_penalty_kicker = False
+        print('is penalty reset for robot ' + str(self.robot.shell_id()))
         self.remove_aim_behavior()
 
 
@@ -187,3 +190,6 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
             r.require_kicking = True
 
         return reqs
+
+    def is_penalty(self, value):
+        self.capture.is_penalty = True
