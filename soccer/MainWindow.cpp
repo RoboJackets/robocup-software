@@ -318,6 +318,14 @@ void MainWindow::updateViews()
 
 	if (currentFrame)
 	{
+		if(_firstLogTimestamp == -1)
+			_firstLogTimestamp = currentFrame->timestamp();
+		auto gametime_ms = (currentFrame->timestamp()-_firstLogTimestamp)/1000;
+		auto minutes = gametime_ms / 60000;
+		auto seconds = (gametime_ms % 60000) /  1000;
+		auto deciseconds = (gametime_ms % 1000) / 100;
+		_ui.logTime->setText(QString::fromStdString(to_string(minutes) + " : " + to_string(seconds) + "." + to_string(deciseconds)));
+
 		// Update the orientation demo view
 		if (_quaternion_demo && manual >= 0 && currentFrame->radio_rx().size() && currentFrame->radio_rx(0).has_quaternion())
 		{
