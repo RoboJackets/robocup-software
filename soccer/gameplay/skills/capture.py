@@ -4,6 +4,7 @@ from enum import Enum
 import main
 import evaluation
 import constants
+import role_assignment
 import robocup
 
 class Capture(single_robot_behavior.SingleRobotBehavior):
@@ -89,10 +90,10 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
             dist = i * 0.05
             pos = main.ball().pos + approach_vec * dist
             ball_time = evaluation.ball.rev_predict(main.ball().vel, dist) # how long will it take the ball to get there
-            
+
             robotDist = (pos - self.robot.pos).mag()*0.9
             bot_time = robocup.get_trapezoidal_time(
-                robotDist, 
+                robotDist,
                 robotDist,
                 2.2,
                 1,
@@ -127,7 +128,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         if self.pastChangeCount <=0 or (self.lastApproachTarget != None and (pos - self.lastApproachTarget).mag()<0.1):
             self.pastChangeCount = self.pastChangeCount + 1
             self.robot.move_to(self.lastApproachTarget)
-        else:    
+        else:
             main.system_state().draw_circle(pos, constants.Ball.Radius, constants.Colors.White, "Capture")
             self.robot.move_to(pos)
             self.lastApproachTarget = pos
@@ -153,4 +154,8 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     def role_requirements(self):
         reqs = super().role_requirements()
         reqs.require_kicking = True
+        # try to be near the ball
+        if main.ball().valid:
+            reqs.destination_shape = main.ball().pos
+
         return reqs
