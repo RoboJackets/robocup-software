@@ -171,7 +171,6 @@ class PivotKick(single_robot_composite_behavior.SingleRobotCompositeBehavior, sk
 
 
     def on_exit_running(self):
-        print('is penalty reset for robot ' + str(self.robot.shell_id()))
         self.remove_aim_behavior()
 
 
