@@ -321,6 +321,10 @@ boost::python::list Arc_intersects_segment(Geometry2d::Arc *self, const Geometry
 	return lst;
 }
 
+Geometry2d::Point Circle_get_center(Geometry2d::Circle *self) {
+    return self->center;
+}
+
 boost::python::tuple WinEval_eval_pt_to_seg(WindowEvaluator *self, const Geometry2d::Point *origin, const Geometry2d::Segment *target) {
 	if(origin == nullptr)
 		throw NullArgumentException{"origin"};
@@ -467,6 +471,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("intersects_line", &Circle_intersects_line)
 		.def("nearest_point", &Geometry2d::Circle::nearestPoint)
         .def("contains_point", &Geometry2d::Circle::containsPoint)
+        .def("center", &Circle_get_center)
 	;
 
 	class_<Geometry2d::Arc>("Arc", init<Geometry2d::Point, float, float, float>())
