@@ -393,7 +393,7 @@ boost::python::tuple WinEval_eval_pt_to_our_goal(WindowEvaluator *self, const Ge
 	return boost::python::tuple{lst};
 }
 
-boost::python::tuple WinEval_add_excluded_robot(WindowEvaluator *self, Robot* robot) {
+void WinEval_add_excluded_robot(WindowEvaluator *self, Robot* robot) {
 	self->excluded_robots.push_back(robot);
 }
 
@@ -472,6 +472,15 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("nearest_point", &Geometry2d::Circle::nearestPoint)
         .def("contains_point", &Geometry2d::Circle::containsPoint)
         .def("center", &Circle_get_center)
+	;
+
+	class_<Geometry2d::Arc>("Arc", init<Geometry2d::Point, float, float, float>())
+		.def("intersects_line", &Arc_intersects_line)
+		.def("intersects_segment", &Arc_intersects_segment)
+		.def("center", &Geometry2d::Arc::center)
+		.def("radius", &Geometry2d::Arc::radius)
+		.def("start", &Geometry2d::Arc::start)
+		.def("end", &Geometry2d::Arc::end)
 	;
 
 	class_<Geometry2d::Arc>("Arc", init<Geometry2d::Point, float, float, float>())
@@ -566,6 +575,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("ball_sense_works", &OurRobot::ballSenseWorks)
 		.def("kicker_works", &OurRobot::kickerWorks)
 		.def("add_local_obstacle", &OurRobot_add_local_obstacle)
+		.def_readwrite("is_penalty_kicker", &OurRobot::isPenaltyKicker)
 	;
 
 	class_<OpponentRobot, OpponentRobot *, std::shared_ptr<OpponentRobot>, bases<Robot> >("OpponentRobot", init<int>());
@@ -603,6 +613,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("draw_line", &State_draw_line)
 		.def("draw_segment", &State_draw_segment)
 		.def("draw_polygon", &State_draw_polygon)
+		.def("draw_arc", &State_draw_arc)
         .def("draw_raw_polygon", &State_draw_raw_polygon)
 		.def("draw_arc", &State_draw_arc)
 	;
