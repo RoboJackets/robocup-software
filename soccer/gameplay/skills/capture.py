@@ -39,7 +39,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(Capture.State.course_approach,
             Capture.State.fine_approach,
-            lambda: self.bot_near_ball(Capture.CourseApproachDist) and main.ball().valid and (not constants.Field.TheirGoalShape.contains_point(main.ball().pos) or self.is_penalty),
+            lambda: self.bot_near_ball(Capture.CourseApproachDist) and main.ball().valid and (not constants.Field.TheirGoalShape.contains_point(main.ball().pos) or self.robot.is_penalty_kicker),
             'dist to ball < threshold')
 
         self.add_transition(Capture.State.fine_approach,
@@ -54,18 +54,17 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(Capture.State.fine_approach,
             Capture.State.back_off,
-            lambda: constants.Field.TheirGoalShape.contains_point(main.ball().pos) and not self.is_penalty,
+            lambda: not self.robot.is_penalty_kicker and constants.Field.TheirGoalShape.contains_point(main.ball().pos),
             'ball ran away')
 
         self.add_transition(Capture.State.back_off,
             behavior.Behavior.State.start,
-            lambda: bot_to_ball().mag()<BackOffDistance,
+            lambda: self.bot_to_ball().mag() < Capture.BackOffDistance,
             "backed away enough")
 
 
         self.lastApproachTarget = None
         self.postChangeCount = 0
-        self._is_penalty = False
 
     def bot_to_ball(self):
         return main.ball().pos - self.robot.pos
