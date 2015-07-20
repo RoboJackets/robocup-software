@@ -31,7 +31,8 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
     SteadyMaxAngleVel = 3   # degrees / second
 
     MarginAngle = 0.25
-
+    StabilizationFrames = 3
+    DesperateTimeout = 5
 
     class State(enum.Enum):
         ## we're aligning with the planned receive point
@@ -52,6 +53,8 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
         self._ball_kick_time = 0
         self.kicked_from = None
         self.kicked_vel = None
+        self.stable_frame = 0
+        self.kicked_time = 0
 
 
         for state in PassReceive.State:
@@ -87,7 +90,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
         self.add_transition(PassReceive.State.receiving,
             behavior.Behavior.State.failed,
             # TODO look here
-            lambda: self.check_failure(),
+            lambda: self.check_failure() or time.time() - self.kicked_time > PassReceive.DesperateTimeout,
             'ball missed :(')
 
 
@@ -196,12 +199,18 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
         if self._target_pos != None:
             self.robot.move_to(self._target_pos)
 
-    def on_enter_receiving(self):
+    def reset_correct_location(self):
         # Extrapolate center of robot location from kick velocity
         self.kicked_from = main.ball().pos - (main.ball().vel / main.ball().vel.mag()) * constants.Robot.Radius * 4
         self.kicked_vel = main.ball().vel
 
+    def on_enter_receiving(self):
+        self.reset_correct_location()
+        self.kicked_time = time.time()
+
     def check_failure(self):
+        if self.stable_frame < PassReceive.StabilizationFrames:
+            return False
         pass_distance = self.kicked_from.dist_to(self.robot.pos)
         offset = pass_distance * math.sin(PassReceive.MarginAngle)
 
@@ -221,6 +230,10 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
 
 
     def execute_receiving(self):
+        if self.stable_frame <= PassReceive.StabilizationFrames:
+            self.stable_frame = self.stable_frame + 1
+            self.reset_correct_location()
+
         self.robot.set_dribble_speed(PassReceive.DribbleSpeed)
 
         # don't use the move_to() command here, we need more precision, less obstacle avoidance
