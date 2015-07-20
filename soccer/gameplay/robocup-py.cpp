@@ -333,6 +333,10 @@ boost::python::list Arc_intersects_segment(Geometry2d::Arc *self, const Geometry
 	return lst;
 }
 
+Geometry2d::Point Circle_get_center(Geometry2d::Circle *self) {
+    return self->center;
+}
+
 boost::python::tuple WinEval_eval_pt_to_seg(WindowEvaluator *self, const Geometry2d::Point *origin, const Geometry2d::Segment *target) {
 	if(origin == nullptr)
 		throw NullArgumentException{"origin"};
@@ -479,6 +483,16 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("intersects_line", &Circle_intersects_line)
 		.def("nearest_point", &Geometry2d::Circle::nearestPoint)
         .def("contains_point", &Geometry2d::Circle::containsPoint)
+        .def("center", &Circle_get_center)
+	;
+
+	class_<Geometry2d::Arc>("Arc", init<Geometry2d::Point, float, float, float>())
+		.def("intersects_line", &Arc_intersects_line)
+		.def("intersects_segment", &Arc_intersects_segment)
+		.def("center", &Geometry2d::Arc::center)
+		.def("radius", &Geometry2d::Arc::radius)
+		.def("start", &Geometry2d::Arc::start)
+		.def("end", &Geometry2d::Arc::end)
 	;
 
 	class_<Geometry2d::Arc>("Arc", init<Geometry2d::Point, float, float, float>())
@@ -615,6 +629,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("draw_polygon", &State_draw_polygon)
 		.def("draw_arc", &State_draw_arc)
         .def("draw_raw_polygon", &State_draw_raw_polygon)
+		.def("draw_arc", &State_draw_arc)
 	;
 
 	class_<Field_Dimensions>("Field_Dimensions")
