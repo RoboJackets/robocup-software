@@ -9,7 +9,7 @@ def is_moving_towards_our_goal():
     if main.ball().vel.mag() > 0.1:
         # see if it's moving somewhat towards our goal
         if main.ball().vel.dot(robocup.Point(0, -1)) > 0:
-            ball_path = robocup.Segment(main.ball().pos, (main.ball().pos + main.ball().vel.normalized()))
+            ball_path = robocup.Segment(main.ball().pos, (main.ball().pos + main.ball().vel.normalized()*1000))
 
             fudge_factor = constants.Robot.Radius * 2
             WiderGoalSegment = robocup.Segment(robocup.Point(constants.Field.GoalWidth / 2.0 + fudge_factor, 0),

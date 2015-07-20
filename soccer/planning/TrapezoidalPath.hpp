@@ -42,7 +42,7 @@ namespace Planning
 				startPos(startPos), startSpeed(startSpeed), endPos(endPos), endSpeed(endSpeed),
 				pathLength((startPos - endPos).mag()), maxAcc(constraints.maxAcceleration), maxSpeed(constraints.maxSpeed),
 				pathDirection((endPos - startPos).normalized()){
-					float minSpeed = maxSpeed/2;
+					float minSpeed = maxSpeed;
 					if (startSpeed<minSpeed) {
 						startSpeed = minSpeed;
 					}
