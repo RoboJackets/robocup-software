@@ -73,7 +73,6 @@ class SubmissiveDefender(single_robot_composite_behavior.SingleRobotCompositeBeh
                 if len(intersections_right) > 0:
                     self._move_target = max(intersections_right, key=lambda p: p.y)
                 elif intersection_center is not None:
-                    print('segment intersection!')
                     self._move_target = intersection_center
                 else:
                     self._move_target = default_pt

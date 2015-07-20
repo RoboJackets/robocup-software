@@ -389,7 +389,7 @@ boost::python::tuple WinEval_eval_pt_to_our_goal(WindowEvaluator *self, const Ge
 	return boost::python::tuple{lst};
 }
 
-boost::python::tuple WinEval_add_excluded_robot(WindowEvaluator *self, Robot* robot) {
+void WinEval_add_excluded_robot(WindowEvaluator *self, Robot* robot) {
 	self->excluded_robots.push_back(robot);
 }
 
@@ -599,7 +599,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("draw_segment", &State_draw_segment)
 		.def("draw_polygon", &State_draw_polygon)
 		.def("draw_arc", &State_draw_arc)
-                .def("draw_raw_polygon", &State_draw_raw_polygon)
+        .def("draw_raw_polygon", &State_draw_raw_polygon)
 	;
 
 	class_<Field_Dimensions>("Field_Dimensions")
