@@ -117,7 +117,6 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
     def execute_course_approach(self):
         # don't hit the ball on accident
         self.robot.set_avoid_ball_radius(Capture.CourseApproachAvoidBall)
-        self.robot.is_penalty_kicker = True
         pos = self.find_intercept_point()
         self.robot.face(main.ball().pos)
 
