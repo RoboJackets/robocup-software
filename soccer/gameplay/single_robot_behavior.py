@@ -36,7 +36,7 @@ class SingleRobotBehavior(behavior.Behavior):
             raise AssertionError("Invalid call to assign_roles.  Expected a tuple")
         if len(assignments) == 2:
             import robocup
-            if not isinstance(assignments[1], robocup.OurRobot):
+            if assignments[1] != None and not isinstance(assignments[1], robocup.OurRobot):
                 raise TypeError("ERROR: attempt to assign robot to a non-robot object value: " + str(assignments[1]))
             self.robot = assignments[1]
 
