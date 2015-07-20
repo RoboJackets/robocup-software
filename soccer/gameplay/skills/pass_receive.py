@@ -1,5 +1,4 @@
-import single_robot_composite_behavior
-import skills._kick
+import single_robot_behavior
 import behavior
 import robocup
 import constants
@@ -8,15 +7,13 @@ import enum
 import math
 import time
 
-import skills.capture
-
 
 ## PassReceive accepts a receive_point as a parameter and gets setup there to catch the ball
 # It transitions to the 'aligned' state once it's there within its error thresholds and is steady
 # Set its 'ball_kicked' property to True to tell it to dynamically update its position based on where
 # the ball is moving and attempt to catch it.
 # It will move to the 'completed' state if it catches the ball, otherwise it will go to 'failed'.
-class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
+class PassReceive(single_robot_behavior.SingleRobotBehavior):
 
     ## max difference between where we should be facing and where we are facing (in radians)
     FaceAngleErrorThreshold = 8 * constants.DegreesToRadians
@@ -45,8 +42,6 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
         ## the ball's been kicked and we're adjusting based on where the ball's moving
         receiving = 3
-
-        waiting = 4
 
 
     def __init__(self):
@@ -85,15 +80,15 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                 'ball kicked')
 
         self.add_transition(PassReceive.State.receiving,
-            PassReceive.State.waiting,
+            behavior.Behavior.State.completed,
             lambda: self.robot.has_ball(),
             'ball received!')
 
-        #self.add_transition(PassReceive.State.receiving,
-        #    behavior.Behavior.State.failed,
+        self.add_transition(PassReceive.State.receiving,
+            behavior.Behavior.State.failed,
             # TODO look here
-        #    lambda: self.check_failure(),
-        #    'ball missed :(')
+            lambda: self.check_failure(),
+            'ball missed :(')
 
 
 
@@ -203,16 +198,10 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
     def on_enter_receiving(self):
         # Extrapolate center of robot location from kick velocity
-        capture = skills.capture.Capture()
-        capture.dribbler_power = PassReceive.DribbleSpeed
-        self.add_subbehavior(capture, 'capture', required=True)
-
-
-    #def on_exit_receiving(self):
-
+        self.kicked_from = main.ball().pos - (main.ball().vel / main.ball().vel.mag()) * constants.Robot.Radius * 4
+        self.kicked_vel = main.ball().vel
 
     def check_failure(self):
-
         pass_distance = self.kicked_from.dist_to(self.robot.pos)
         offset = pass_distance * math.sin(PassReceive.MarginAngle)
 
@@ -232,21 +221,19 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
 
     def execute_receiving(self):
-        "test"
-
-        #self.robot.set_dribble_speed(PassReceive.DribbleSpeed)
+        self.robot.set_dribble_speed(PassReceive.DribbleSpeed)
 
         # don't use the move_to() command here, we need more precision, less obstacle avoidance
-        #pos_error = self._target_pos - self.robot.pos
-        #vel = pos_error * 3.5
-        #self.robot.set_world_vel(vel)
+        pos_error = self._target_pos - self.robot.pos
+        vel = pos_error * 3.5
+        self.robot.set_world_vel(vel)
 
     ## prefer a robot that's already near the receive position
-    #def role_requirements(self):
-        #reqs = super().role_requirements()
-        #if self.receive_point != None:
-        #    reqs.destination_shape = self.receive_point
-        #return reqs
+    def role_requirements(self):
+        reqs = super().role_requirements()
+        if self.receive_point != None:
+            reqs.destination_shape = self.receive_point
+        return reqs
 
 
     def __str__(self):
