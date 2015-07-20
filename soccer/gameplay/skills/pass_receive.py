@@ -1,5 +1,4 @@
 import single_robot_composite_behavior
-import skills._kick
 import behavior
 import robocup
 import constants
@@ -8,9 +7,7 @@ import enum
 import math
 import time
 import role_assignment
-
-import skills.capture
-
+import skills
 
 ## PassReceive accepts a receive_point as a parameter and gets setup there to catch the ball
 # It transitions to the 'aligned' state once it's there within its error thresholds and is steady
@@ -34,8 +31,9 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     SteadyMaxVel = 0.04
     SteadyMaxAngleVel = 3   # degrees / second
 
-    MarginAngle = 0.25
-
+    MarginAngle = math.pi / 18
+    StabilizationFrames = 3
+    DesperateTimeout = 5
 
     class State(enum.Enum):
         ## we're aligning with the planned receive point
@@ -47,8 +45,6 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         ## the ball's been kicked and we're adjusting based on where the ball's moving
         receiving = 3
 
-        waiting = 4
-
 
     def __init__(self):
         super().__init__(continuous=False)
@@ -58,6 +54,8 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self._ball_kick_time = 0
         self.kicked_from = None
         self.kicked_vel = None
+        self.stable_frame = 0
+        self.kicked_time = 0
 
 
         for state in PassReceive.State:
@@ -93,7 +91,7 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         self.add_transition(PassReceive.State.receiving,
             behavior.Behavior.State.failed,
             # TODO look here
-            lambda: self.check_failure(),
+            lambda: self.check_failure() or time.time() - self.kicked_time > PassReceive.DesperateTimeout,
             'ball missed :(')
 
 
@@ -202,64 +200,73 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         if self._target_pos != None:
             self.robot.move_to(self._target_pos)
 
-    def on_enter_receiving(self):
+    def reset_correct_location(self):
         # Extrapolate center of robot location from kick velocity
-        self.kicked_from = main.ball().pos - (main.ball().vel / main.ball().vel.mag()) * constants.Robot.Radius * 4
+        self.kicked_from = main.ball().pos #- (main.ball().vel / main.ball().vel.mag()) * constants.Robot.Radius * 4
         self.kicked_vel = main.ball().vel
+
+    def on_enter_receiving(self):
         capture = skills.capture.Capture()
         capture.dribbler_power = PassReceive.DribbleSpeed
         self.add_subbehavior(capture, 'capture', required=True)
 
-
-    #def on_exit_receiving(self):
-
+        self.reset_correct_location()
+        self.kicked_time = time.time()
 
     def check_failure(self):
+        if self.stable_frame < PassReceive.StabilizationFrames:
+            return False
+        offset = 0.1
+        straight_line = robocup.Point(0, 1)
+        pass_segment = self.robot.pos - self.kicked_from
+        pass_distance = pass_segment.mag() + 0.5
+        pass_dir = pass_segment.normalized()
 
-        pass_distance = self.kicked_from.dist_to(self.robot.pos)
-        offset = pass_distance * math.sin(PassReceive.MarginAngle)
-        first_kick = robocup.Point(self.kicked_from.x + constants.Robot.Radius * math.cos(math.pi / 2 + self.kicked_vel.angle()),
-            self.kicked_from.y + constants.Robot.Radius * math.sin(math.pi / 2 + self.kicked_vel.angle()))
-        second_kick = robocup.Point(self.kicked_from.x - constants.Robot.Radius * math.cos(math.pi / 2 + self.kicked_vel.angle()),
-            self.kicked_from.y - constants.Robot.Radius * math.sin(math.pi / 2 + self.kicked_vel.angle()))
-        first_receive = robocup.Point(self.robot.pos.x - offset * math.cos(math.pi / 2 + self.kicked_vel.angle()),
-            self.robot.pos.y - offset * math.sin(math.pi / 2 + self.kicked_vel.angle()))
-        second_receive = robocup.Point(self.robot.pos.x + offset * math.cos(math.pi / 2 + self.kicked_vel.angle()),
-            self.robot.pos.y + offset * math.sin(math.pi / 2 + self.kicked_vel.angle()))
+        left_kick =  robocup.Point(-offset, -offset)
+        right_kick =  robocup.Point(offset, -offset)
 
+        left_recieve = left_kick + straight_line * pass_distance;
+        right_recieve = right_kick + straight_line * pass_distance
 
-        first_segment = (first_receive - first_kick)
-        first_receive = first_segment.normalized() * (first_segment.mag() + 1)  + first_kick
+        left_recieve.rotate(left_kick, PassReceive.MarginAngle)
+        right_recieve.rotate(right_kick, -PassReceive.MarginAngle)
 
-        second_segment = (second_receive - second_kick)
-        second_receive = second_segment.normalized() * (second_segment.mag() + 1)  + second_kick
-        
+        origin = robocup.Point(0, 0)
+
+        passDirRadians = pass_dir.angle()
+        left_kick.rotate(origin, passDirRadians - math.pi/2)
+        right_kick.rotate(origin, passDirRadians - math.pi/2)
+
+        left_recieve.rotate(origin, passDirRadians - math.pi/2)
+        right_recieve.rotate(origin, passDirRadians - math.pi/2)
+
         good_area = robocup.Polygon()
-        good_area.add_vertex(first_kick)
-        good_area.add_vertex(second_kick)
+        good_area.add_vertex(self.kicked_from + left_kick)
+        good_area.add_vertex(self.kicked_from + right_kick)
 
 
-        good_area.add_vertex(first_receive)
-        good_area.add_vertex(second_receive)
+        good_area.add_vertex(self.kicked_from + right_recieve)
+        good_area.add_vertex(self.kicked_from + left_recieve)
 
         main.system_state().draw_raw_polygon(good_area, constants.Colors.Green, "Good Pass Area")
         return not good_area.contains_point(main.ball().pos)
 
 
     def execute_receiving(self):
-        "test"
+        if self.stable_frame <= PassReceive.StabilizationFrames:
+            self.stable_frame = self.stable_frame + 1
+            self.reset_correct_location()
 
-        #self.robot.set_dribble_speed(PassReceive.DribbleSpeed)
+        self.robot.set_dribble_speed(PassReceive.DribbleSpeed)
 
         # don't use the move_to() command here, we need more precision, less obstacle avoidance
-        #pos_error = self._target_pos - self.robot.pos
-        #vel = pos_error * 3.5
-        #self.robot.set_world_vel(vel)
+        pos_error = self._target_pos - self.robot.pos
+        vel = pos_error * 3.5
+        self.robot.set_world_vel(vel)
 
     ## prefer a robot that's already near the receive position
     def role_requirements(self):
         reqs = super().role_requirements()
-        
         if self.receive_point != None:
             for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
                 req.destination_shape = self.receive_point
