@@ -107,6 +107,16 @@ void SystemState::drawCircle(const Geometry2d::Point& center, float radius, cons
 	dbg->set_color(color(qc));
 }
 
+void SystemState::drawArc(const Geometry2d::Arc &arc, const QColor &qc, const QString &layer) {
+	DebugArc *dbg = logFrame->add_debug_arcs();
+	dbg->set_layer(findDebugLayer(layer));
+	*dbg->mutable_center() = arc.center();
+	dbg->set_radius(arc.radius());
+	dbg->set_start(arc.start());
+	dbg->set_end(arc.end());
+	dbg->set_color(color(qc));
+}
+
 void SystemState::drawShape(const std::shared_ptr<Geometry2d::Shape>& obs, const QColor &color, const QString &layer) {
 	std::shared_ptr<Geometry2d::Circle> circObs = std::dynamic_pointer_cast<Geometry2d::Circle>(obs);
 	std::shared_ptr<Geometry2d::Polygon> polyObs = std::dynamic_pointer_cast<Geometry2d::Polygon>(obs);

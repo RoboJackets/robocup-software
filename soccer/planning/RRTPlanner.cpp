@@ -148,19 +148,11 @@ std::unique_ptr<Path> RRTPlanner::run(
 	}
 	return unique_ptr<Path>(path);
 }
-Planning::InterpolatedPath update(
-					Planning::InterpolatedPath &origionalPath, 
-					const float angle,
-					const Geometry2d::Point& vel,
-					const MotionConstraints &motionConstraints,
-					const Geometry2d::CompositeShape* obstacles) 
-{
 
-}
 Planning::InterpolatedPath* RRTPlanner::makePath()
 {
 	Planning::InterpolatedPath* newPath = new Planning::InterpolatedPath();
-	
+
 
 	Tree::Point* p0 = _fixedStepTree0.last();
 	Tree::Point* p1 = _fixedStepTree1.last();
@@ -171,7 +163,7 @@ Planning::InterpolatedPath* RRTPlanner::makePath()
 		return newPath;
 	}
 
-	
+
 	//	extract path from RRTs
 	_fixedStepTree0.addPath(*newPath, p0);//add the start tree first...normal order (aka from root to p0)
 	_fixedStepTree1.addPath(*newPath, p1, true);//add the goal tree in reverse (aka p1 to root)
@@ -288,7 +280,10 @@ Planning::InterpolatedPath* RRTPlanner::cubicBezier (Planning::InterpolatedPath 
 	} else {
 		vi = vi.mag() * (startDirection + vi.normalized()) / 2.0 * 0.8;
 	}
+
+
 	float endSpeed = vf.mag();
+
 	for (int i=0; i<curvesNum; i++) {
 		ks[i] = 1.0/(getTime(path, i+1, motionConstraints, startSpeed, endSpeed)-getTime(path, i, motionConstraints, startSpeed, endSpeed));
 		ks2[i] = ks[i]*ks[i];

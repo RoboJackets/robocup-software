@@ -381,7 +381,7 @@ void Gameplay::GameplayModule::run()
 	for (OurRobot* r :  _state->self) {
 		if (r && r->visible) {
 			/// set obstacles for the robots
-			if (r->shell() == _goalieID)
+			if (r->shell() == _goalieID || r->isPenaltyKicker)
 				r->replanIfNeeded(global_obstacles); /// just for goalie
 			else
 				r->replanIfNeeded(obstacles_with_goals); /// all other robots

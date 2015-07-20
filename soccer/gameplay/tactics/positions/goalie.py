@@ -60,7 +60,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
             self.add_transition(state,
                 Goalie.State.setup_penalty,
                 lambda: main.game_state().is_their_penalty() and
-                        main.game_state().is_setup(),
+                        main.game_state().is_setup_state(),
                 "setting up for opponent penalty")
 
         for state in [s2 for s2 in non_chill_states if s2 != Goalie.State.intercept]:
@@ -74,6 +74,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
             self.add_transition(state,
                 Goalie.State.clear,
                 lambda: evaluation.ball.is_in_our_goalie_zone() and
+                        not main.game_state().is_their_penalty() and
                         not evaluation.ball.is_moving_towards_our_goal() and
                         evaluation.ball.opponent_with_ball() is None,
                 "ball in our goalie box, but not headed toward goal")
@@ -83,6 +84,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
                 Goalie.State.defend,
                 lambda: not evaluation.ball.is_in_our_goalie_zone() and
                         not evaluation.ball.is_moving_towards_our_goal() and
+                        not main.game_state().is_their_penalty() and
                         not self.robot_is_facing_our_goal(evaluation.ball.opponent_with_ball()),
                 'not much going on')
 
@@ -120,17 +122,17 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
 
 
     def execute_setup_penalty(self):
-        pt = robocup.Point(0, robocup.Field_PenaltyDist)
+        pt = robocup.Point(0, constants.Field.PenaltyDist)
         penalty_kicker = min(main.their_robots(), key=lambda r: (r.pos - pt).mag())
         angle_rad = penalty_kicker.angle
         shot_line = robocup.Line(penalty_kicker.pos, penalty_kicker.pos + robocup.Point.direction(angle_rad))
 
-        dest = shot_line.intersection(Goalie.RobotSegment)
+        dest = shot_line.line_intersection(Goalie.RobotSegment)
         if dest == None:
             self.robot.move_to(robocup.Point(0, constants.Robot.Radius))
         else:
             dest.x = max(-Goalie.MaxX + constants.Robot.Radius, dest.x)
-            dest.y = min(Goalie.MaxX - constants.Robot.Radius, dest.x)
+            dest.x = min(Goalie.MaxX - constants.Robot.Radius, dest.x)
         self.robot.move_to(dest)
 
 
@@ -204,7 +206,7 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         reqs = super().role_requirements()
 
         for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
-            req.required_shell_id = self.shell_id
+            req.required_shell_id = self.shell_id if self.shell_id != None else -1
 
         return reqs
 

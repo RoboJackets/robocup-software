@@ -68,13 +68,13 @@ bool Segment::intersects(const Segment &other, Point *intr) const
 	float iy = (deta * (y3 - y4) - (y1 - y2) * detb) / denom;
 
     Point ip(ix, iy);
-    
+
     Point da = delta();
     float ta = (ip - pt[0]).dot(da) / da.magsq();
-    
+
     Point db = other.delta();
     float tb = (ip - other.pt[0]).dot(db) / db.magsq();
-    
+
     if (ta < 0 || ta > 1 || tb < 0 || tb > 1)
     {
         return false;
@@ -103,11 +103,11 @@ bool Segment::intersects(const Circle& circle) const
 {
 	Point pCir(circle.center.x, circle.center.y);
 	Point delta = pt[1] - pt[0];
-	
+
 	float top = delta.x * (pCir.x - pt[0].x) + (pCir.y - pt[0].y) * delta.y;
-	
+
 	float u = fabs(top)/delta.magsq();
-	
+
 	if (u>0 && u<1)
 	{
 		float dist = distTo(pCir);
@@ -116,15 +116,30 @@ bool Segment::intersects(const Circle& circle) const
 			return true;
 		}
 	}
-	
+
 	return false;
+}
+
+bool Segment::intersects(const Line &line, Point *intr) const {
+	Point intersection_point;
+	auto res = Line::intersects(line, &intersection_point);
+	if(res && distTo(intersection_point) == 0) {
+		if(intr != nullptr) {
+			*intr = intersection_point;
+			return true;
+		} else {
+            return false;
+        }
+	} else {
+		return false;
+	}
 }
 
 bool Segment::nearPoint(const Point &point, float threshold) const
 {
 	const Point &p1 = pt[0];
 	const Point &p2 = pt[1];
-	
+
 	Point delta = p2 - p1;
 	float top = delta.x * (p1.y - point.y) - (p1.x - point.x) * delta.y;
 	float delta_magsq = delta.magsq();
@@ -185,10 +200,10 @@ Point Segment::nearestPoint(const Point& p) const
 
 	if(magsq == 0)
 		return pt[0];
-	
+
     Point v_hat = delta()/sqrt(magsq);
 	float t = v_hat.dot(p - pt[0]);
-	
+
 	if (t < 0)
 	{
 		t =0;
@@ -197,7 +212,7 @@ Point Segment::nearestPoint(const Point& p) const
 	{
 		t = magsq;
 	}
-	
+
     return pt[0] + v_hat * t;
 }
 

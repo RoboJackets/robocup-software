@@ -32,13 +32,6 @@ namespace Planning
 		/** constructor from two points */
 		InterpolatedPath(const Geometry2d::Point& p0, const Geometry2d::Point& p1);
 
-
-		static InterpolatedPath* getStandStillPath(Geometry2d::Point point) {
-			InterpolatedPath *empty = new InterpolatedPath();
-			empty->addInstant(0, MotionInstant(point, Geometry2d::Point()));
-			empty->addInstant(0.01, MotionInstant(point + Geometry2d::Point(0.01, 0.01), Geometry2d::Point()));
-		}
-
 		//Adds an instant ot the end of the path for the given time
 		//time should not bet less than the last time
 		void addInstant(float time, MotionInstant instant) {

@@ -172,6 +172,8 @@ void OurRobot::resetForNextIteration() {
 	_local_obstacles.clear();
 	resetMotionConstraints();
 	_unkick();
+
+	isPenaltyKicker = false;
 }
 
 void OurRobot::resetMotionConstraints() {
@@ -628,7 +630,7 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 			float endSpeed = _motionCommand.getDirectTarget(endTarget);
 			switch (_motionCommand.getCommandType()) {
 				case Planning::MotionCommand::PathTarget:
-					path = _planner->run(Planning::MotionInstant(pos, vel), _motionCommand.getPlanningTarget(), _motionConstraints, &full_obstacles, _state);
+					path = _planner->run(Planning::MotionInstant(pos, vel), _motionCommand.getPlanningTarget(), _motionConstraints, &full_obstacles);
 					break;
 				case Planning::MotionCommand::DirectTarget:
 					path = unique_ptr<Planning::Path>(new Planning::TrapezoidalPath(this->pos, this->vel.mag(), endTarget, endSpeed, _motionConstraints));
@@ -650,10 +652,13 @@ void OurRobot::replanIfNeeded(const Geometry2d::CompositeShape& global_obstacles
 		}
 
 		addText("Replanning", Qt::red, "Planning");
-
 		// use the newly generated path
 		if (verbose) cout << "in OurRobot::replanIfNeeded() for robot [" << shell() << "]: using new RRT path" << std::endl;
 		setPath(std::move(path));
+	}
+
+	if (_path) {
+		_path->draw(_state, Qt::magenta);
 	}
 
 	if (_path) {
