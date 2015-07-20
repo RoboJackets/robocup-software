@@ -133,7 +133,6 @@ class Goalie(single_robot_composite_behavior.SingleRobotCompositeBehavior):
         else:
             dest.x = max(-Goalie.MaxX + constants.Robot.Radius, dest.x)
             dest.x = min(Goalie.MaxX - constants.Robot.Radius, dest.x)
-            print('dest = ' + str(dest))
         self.robot.move_to(dest)
 
 
