@@ -102,7 +102,13 @@ class CoordinatedPass(composite_behavior.CompositeBehavior):
     def on_enter_preparing(self):
         kicker = skills.pivot_kick.PivotKick()
         kicker.target = self.receive_point
-        kicker.kick_power = CoordinatedPass.KickPower
+        kickpower = (main.ball().pos - self.receive_point).mag() / 8
+        if (kickpower < 0.2):
+            kickpower = 0.2
+
+        if (kickpower > 1.0):
+            kickpower = 1.0
+        kicker.kick_power = kickpower
         kicker.enable_kick = False # we'll re-enable kick once both bots are ready
 
         # we use tighter error thresholds because passing is hard
