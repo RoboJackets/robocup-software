@@ -59,6 +59,9 @@ class CompositeBehavior(behavior.Behavior):
     def all_subbehaviors(self):
         return [self._subbehavior_info[name]['behavior'] for name in self._subbehavior_info]
 
+    def all_subbehaviors_completed(self):
+        return all([bhvr.is_done_running() for bhvr in self.all_subbehaviors()])
+
 
     ## Override StateMachine.spin() so we can call spin() on subbehaviors
     def spin(self):
