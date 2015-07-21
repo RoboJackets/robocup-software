@@ -51,42 +51,44 @@ Point Line::nearestPoint(Point p) const
 bool Line::intersects(const Circle& circle, Point* p1, Point* p2) const
 {
 	//http://mathworld.wolfram.com/Circle-LineIntersection.html
-	
+
 	const float dx = pt[1].x - pt[0].x;
 	const float dy = pt[1].y - pt[0].y;
 	const float dr2 = dx*dx + dy*dy;
 	const float r = circle.radius();
-	
+
+    if (dx == 0 && dy == 0) return false;
+
 	float det = pt[0].x * pt[1].y - pt[1].x * pt[0].y;
-	
+
 	float descr = r * r * dr2 - det*det;
-	
+
 	if (descr < 0)
 	{
 		return false;
 	}
-	
+
 	float common = sqrt(descr);
-	
-	float x1 = det * dy; 
+
+	float x1 = det * dy;
 	float x2 = sign(dy) * dx * common;
-	
+
 	float y1 = -det * dx;
 	float y2 = fabs(dy) * common;
-	
+
 	if (p1)
 	{
 		float x = x1 + x2;
 		float y = y1 + y2;
 		*p1 = Point(x/dr2, y/dr2);
 	}
-	
+
 	if (p2)
 	{
 		float x = x1 - x2;
 		float y = y1 - y2;
 		*p2 = Point(x/dr2, y/dr2);
 	}
-	
+
 	return true;
 }

@@ -2,8 +2,6 @@ import composite_behavior
 import behavior
 import constants
 import robocup
-import evaluation.window_evaluator
-import evaluation.shot
 import evaluation.passing
 import main
 from enum import Enum
@@ -50,6 +48,9 @@ class Defense(composite_behavior.CompositeBehavior):
 
 
         self.debug = True
+
+        self.win_eval = robocup.WindowEvaluator(main.system_state())
+        self.win_eval.debug = True
 
 
 
@@ -224,12 +225,14 @@ class Defense(composite_behavior.CompositeBehavior):
                 hypothetical_obstacles.extend(map(lambda bhvr: bhvr.move_target, t.assigned_handlers))
 
             threat = threats[threat_index]
-            threat.shot_chance, threat.best_shot_window = evaluation.shot.eval_shot(
-                pos=threat.pos,
-                target=constants.Field.OurGoalSegment,
-                windowing_excludes=excluded_robots,
-                hypothetical_robot_locations=[],
-                debug=False)
+            self.win_eval.excluded_robots.clear()
+            for r in excluded_robots:
+                self.win_eval.add_excluded_robot(r)
+            _, threat.best_shot_window = self.win_eval.eval_pt_to_our_goal(threat.pos);
+            if threat.best_shot_window is not None:
+                threat.shot_chance = threat.best_shot_window.shot_success
+            else:
+                threat.shot_chance = 0.0
 
 
         threats = []
@@ -312,15 +315,18 @@ class Defense(composite_behavior.CompositeBehavior):
 
                 # Now we evaluate this opponent's shot on the goal
                 # exclude robots that have already been assigned to handle other threats
-                threat.shot_chance, threat.best_shot_window = evaluation.shot.eval_shot(
-                    pos=opp.pos,
-                    target=constants.Field.OurGoalSegment,
-                    windowing_excludes=map(lambda bhvr: bhvr.robot, unused_threat_handlers),
-                    debug=False)
+                self.win_eval.excluded_robots.clear()
+                for r in map(lambda bhvr: bhvr.robot, unused_threat_handlers):
+                    self.win_eval.add_excluded_robot(r)
+                _, threat.best_shot_window = self.win_eval.eval_pt_to_our_goal(opp.pos)
+                if threat.best_shot_window is not None:
+                    threat.shot_chance = threat.best_shot_window.shot_success
+                else:
+                    threat.shot_chance = 0.0
 
                 if threat.shot_chance == 0:
-                    # gve it a small chance because the shot could clear up a bit later and we don't want to consider it a zero threat
-                    threat.shot_chance = 0.2
+                   # gve it a small chance because the shot could clear up a bit later and we don't want to consider it a zero threat
+                   threat.shot_chance = 0.2
 
 
         else:
@@ -418,10 +424,15 @@ class Defense(composite_behavior.CompositeBehavior):
                     main.system_state().draw_polygon(pts, shot_color, "Defense")
                     main.system_state().draw_line(threat.best_shot_window.segment, constants.Colors.Red, "Defense")
 
-                    chance, best_window = evaluation.shot.eval_shot(threat.pos, constants.Field.OurGoalSegment)
+                    self.win_eval.excluded_robots.clear()
+                    _, best_window = self.win_eval.eval_pt_to_our_goal(threat.pos)
+                    if best_window is not None:
+                        chance = best_window.shot_success
+                    else:
+                        chance = 0.0
 
                     main.system_state().draw_text("Shot: " + str(int(threat.shot_chance * 100.0)) + "% / " + str(int(chance*100)) + "%", shot_line.center(), constants.Colors.White, "Defense")
-                
+
                 # draw pass lines
                 if idx > 0:
                     pass_line = robocup.Segment(main.ball().pos, threat.pos)

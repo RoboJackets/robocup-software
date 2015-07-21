@@ -318,6 +318,14 @@ void MainWindow::updateViews()
 
 	if (currentFrame)
 	{
+		if(_firstLogTimestamp == -1)
+			_firstLogTimestamp = currentFrame->timestamp();
+		auto gametime_ms = (currentFrame->timestamp()-_firstLogTimestamp)/1000;
+		auto minutes = gametime_ms / 60000;
+		auto seconds = (gametime_ms % 60000) /  1000;
+		auto deciseconds = (gametime_ms % 1000) / 100;
+		_ui.logTime->setText(QString::fromStdString(to_string(minutes) + " : " + to_string(seconds) + "." + to_string(deciseconds)));
+
 		// Update the orientation demo view
 		if (_quaternion_demo && manual >= 0 && currentFrame->radio_rx().size() && currentFrame->radio_rx(0).has_quaternion())
 		{
@@ -401,6 +409,7 @@ void MainWindow::updateViews()
 	_ui.refYellowTimeoutsLeft->setText(tr("%1").arg(_processor->refereeModule()->yellow_info.timeouts_left));
 	_ui.refYellowGoalie->setText(tr("%1").arg(_processor->refereeModule()->yellow_info.goalie));
 
+	_ui.actionUse_External_Referee->setChecked(_processor->refereeModule()->useExternalReferee());
 
 	//	update robot status list
 	for (const OurRobot *robot : _processor->state()->self) {

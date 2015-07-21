@@ -11,14 +11,18 @@ using namespace boost::python;
 #include <Geometry2d/Circle.hpp>
 #include <Geometry2d/CompositeShape.hpp>
 #include <Geometry2d/Polygon.hpp>
+#include <Geometry2d/Arc.hpp>
 #include <Robot.hpp>
 #include <SystemState.hpp>
 #include <protobuf/LogFrame.pb.h>
 #include <Constants.hpp>
+#include <WindowEvaluator.h>
 
 #include <boost/python/exception_translator.hpp>
 #include <boost/version.hpp>
 #include <exception>
+
+#include "motion/TrapezoidalMotion.hpp"
 
 /**
  * These functions make sure errors on the c++
@@ -71,16 +75,7 @@ std::string Point_repr(Geometry2d::Point *self) {
 }
 
 std::string Robot_repr(Robot *self) {
-	std::ostringstream ss;
-	ss << "<Robot ";
-	ss << (self->self() ? "us[" : "them[");
-	ss << self->shell();
-	ss << "], pos=";
-	ss << Point_repr(&(self->pos));
-	ss << ">";
-
-	std::string repr(ss.str());
-	return repr;
+	return self->to_string();
 }
 
 Geometry2d::Point Robot_pos(Robot *self) {
@@ -99,10 +94,22 @@ float Robot_angle_vel(Robot *self) {
 	return self->angleVel;
 }
 
+void OurRobot_move_to_end_vel(OurRobot *self, Geometry2d::Point *endPos, Geometry2d::Point *vf) {
+	if(endPos == nullptr || vf == nullptr)
+		throw NullArgumentException();
+	self->move(*endPos, *vf);
+}
+
 void OurRobot_move_to(OurRobot *self, Geometry2d::Point *to) {
 	if(to == nullptr)
 		throw NullArgumentException("to");
 	self->move(*to);
+}
+
+void OurRobot_move_to_direct(OurRobot *self, Geometry2d::Point *to) {
+	if(to == nullptr)
+		throw NullArgumentException("to");
+	self->moveDirect(*to);
 }
 
 void OurRobot_add_local_obstacle(OurRobot *self, Geometry2d::Shape *obs) {
@@ -187,6 +194,30 @@ boost::python::object Segment_segment_intersection(Geometry2d::Segment *self, Ge
 	}
 }
 
+boost::python::object Segment_line_intersection(Geometry2d::Segment *self, Geometry2d::Line *line) {
+	if(line == nullptr)
+		throw NullArgumentException{"line"};
+	Geometry2d::Point pt;
+	if(self->intersects(*line, &pt)) {
+		boost::python::object obj{pt};
+		return obj;
+	} else {
+		return boost::python::object{};
+	}
+}
+
+boost::python::object Segment_nearest_point_to_point(Geometry2d::Segment *self, Geometry2d::Point *point) {
+	if(point == nullptr)
+		throw NullArgumentException{"point"};
+	return boost::python::object{self->nearestPoint(*point)};
+}
+
+boost::python::object Segment_nearest_point_to_line(Geometry2d::Segment *self, Geometry2d::Line *line) {
+	if(line == nullptr)
+		throw NullArgumentException{"line"};
+	return boost::python::object{self->nearestPoint(*line)};
+}
+
 //	returns None or a Geometry2d::Point
 boost::python::object Line_line_intersection(Geometry2d::Line *self, Geometry2d::Line *other) {
 	if(other == nullptr)
@@ -221,10 +252,24 @@ void State_draw_circle(SystemState *self, const Geometry2d::Point *center, float
 	self->drawCircle(*center, radius, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
+void State_draw_arc(SystemState *self, const Geometry2d::Arc *arc, boost::python::tuple rgb, const std::string &layer) {
+	if(arc == nullptr)
+		throw NullArgumentException{"arc"};
+	self->drawArc(*arc, Color_from_tuple(rgb), QString::fromStdString(layer));
+}
+
 void State_draw_line(SystemState *self, const Geometry2d::Line *line, boost::python::tuple rgb, const std::string &layer) {
 	if(line == nullptr)
 		throw NullArgumentException("line");
 	self->drawLine(*line, Color_from_tuple(rgb), QString::fromStdString(layer));
+}
+
+void State_draw_segment(SystemState *self, const Geometry2d::Point *p0, const Geometry2d::Point *p1, boost::python::tuple rgb, const std::string &layer) {
+	if(p0 == nullptr)
+		throw NullArgumentException{"p0"};
+	if(p1 == nullptr)
+		throw NullArgumentException{"p1"};
+	self->drawLine(*p0, *p1, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
 void State_draw_text(SystemState *self, const std::string &text, Geometry2d::Point *pos, boost::python::tuple rgb, const std::string &layer) {
@@ -242,6 +287,10 @@ void State_draw_polygon(SystemState *self, boost::python::list points, boost::py
 	self->drawPolygon(ptVec, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
+void State_draw_raw_polygon(SystemState *self, Geometry2d::Polygon points, boost::python::tuple rgb, const std::string &layer) {
+    self->drawPolygon(points, Color_from_tuple(rgb), QString::fromStdString(layer));
+}
+
 boost::python::list Circle_intersects_line(Geometry2d::Circle *self, const Geometry2d::Line *line) {
 	if(line == nullptr)
 		throw NullArgumentException("line");
@@ -256,6 +305,110 @@ boost::python::list Circle_intersects_line(Geometry2d::Circle *self, const Geome
 	return lst;
 }
 
+boost::python::list Arc_intersects_line(Geometry2d::Arc *self, const Geometry2d::Line *line) {
+	if(line == nullptr)
+		throw NullArgumentException{"line"};
+	boost::python::list lst;
+
+	auto intersections = self->intersects(*line);
+
+	for(auto& intersection : intersections) {
+		lst.append(intersection);
+	}
+
+	return lst;
+}
+
+boost::python::list Arc_intersects_segment(Geometry2d::Arc *self, const Geometry2d::Segment *segment) {
+	if(segment == nullptr)
+		throw NullArgumentException{"segment"};
+	boost::python::list lst;
+
+	auto intersections = self->intersects(*segment);
+
+	for(auto& intersection : intersections) {
+		lst.append(intersection);
+	}
+
+	return lst;
+}
+
+Geometry2d::Point Circle_get_center(Geometry2d::Circle *self) {
+    return self->center;
+}
+
+boost::python::tuple WinEval_eval_pt_to_seg(WindowEvaluator *self, const Geometry2d::Point *origin, const Geometry2d::Segment *target) {
+	if(origin == nullptr)
+		throw NullArgumentException{"origin"};
+	if(target == nullptr)
+		throw NullArgumentException{"target"};
+	boost::python::list lst;
+
+	auto window_results = self->eval_pt_to_seg(*origin, *target);
+
+	lst.append(window_results.first);
+	if(window_results.second.is_initialized())
+		lst.append(window_results.second.get());
+	else
+		lst.append(boost::python::api::object());
+
+	return boost::python::tuple{lst};
+}
+
+boost::python::tuple WinEval_eval_pt_to_pt(WindowEvaluator *self, const Geometry2d::Point *origin, const Geometry2d::Point *target) {
+	if(origin == nullptr)
+		throw NullArgumentException{"origin"};
+	if(target == nullptr)
+		throw NullArgumentException{"target"};
+	boost::python::list lst;
+
+	auto window_results = self->eval_pt_to_pt(*origin, *target);
+
+	lst.append(window_results.first);
+	if(window_results.second.is_initialized())
+		lst.append(window_results.second.get());
+	else
+		lst.append(boost::python::api::object());
+
+	return boost::python::tuple{lst};
+}
+
+boost::python::tuple WinEval_eval_pt_to_opp_goal(WindowEvaluator *self, const Geometry2d::Point *origin) {
+	if(origin == nullptr)
+		throw NullArgumentException{"origin"};
+	boost::python::list lst;
+
+	auto window_results = self->eval_pt_to_opp_goal(*origin);
+
+	lst.append(window_results.first);
+	if(window_results.second.is_initialized())
+		lst.append(window_results.second.get());
+	else
+		lst.append(boost::python::api::object());
+
+	return boost::python::tuple{lst};
+}
+
+boost::python::tuple WinEval_eval_pt_to_our_goal(WindowEvaluator *self, const Geometry2d::Point *origin) {
+	if(origin == nullptr)
+		throw NullArgumentException{"origin"};
+	boost::python::list lst;
+
+	auto window_results = self->eval_pt_to_our_goal(*origin);
+
+	lst.append(window_results.first);
+	if(window_results.second.is_initialized())
+		lst.append(window_results.second.get());
+	else
+		lst.append(boost::python::api::object());
+
+	return boost::python::tuple{lst};
+}
+
+void WinEval_add_excluded_robot(WindowEvaluator *self, Robot* robot) {
+	self->excluded_robots.push_back(robot);
+}
+
 /**
  * The code in this block wraps up c++ classes and makes them
  * accessible to python in the 'robocup' module.
@@ -265,6 +418,7 @@ BOOST_PYTHON_MODULE(robocup)
 	boost::python::register_exception_translator<NullArgumentException>(&translateException);
 
 	def("fix_angle_radians", &fixAngleRadians);
+	def("get_trapezoidal_time", &Trapezoidal::getTime);
 
 	class_<Geometry2d::Point, Geometry2d::Point*>("Point", init<float, float>())
 		.def(init<const Geometry2d::Point &>())
@@ -302,9 +456,11 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("center", &Geometry2d::Segment::center)
 		.def("length", &Geometry2d::Segment::length)
 		.def("dist_to", &Geometry2d::Segment::distTo)
-		.def("nearest_point", &Geometry2d::Segment::nearestPoint)
+		.def("nearest_point_to_point", &Segment_nearest_point_to_point)
 		.def("segment_intersection", &Segment_segment_intersection)
+		.def("line_intersection", &Segment_line_intersection)
 		.def("near_point", &Geometry2d::Segment::nearPoint)
+		.def("nearest_point_to_line", &Segment_nearest_point_to_line)
 		.def("__str__", &Geometry2d::Segment::toString)
 	;
 
@@ -326,6 +482,26 @@ BOOST_PYTHON_MODULE(robocup)
 	class_<Geometry2d::Circle, bases<Geometry2d::Shape> >("Circle", init<Geometry2d::Point, float>())
 		.def("intersects_line", &Circle_intersects_line)
 		.def("nearest_point", &Geometry2d::Circle::nearestPoint)
+        .def("contains_point", &Geometry2d::Circle::containsPoint)
+        .def("center", &Circle_get_center)
+	;
+
+	class_<Geometry2d::Arc>("Arc", init<Geometry2d::Point, float, float, float>())
+		.def("intersects_line", &Arc_intersects_line)
+		.def("intersects_segment", &Arc_intersects_segment)
+		.def("center", &Geometry2d::Arc::center)
+		.def("radius", &Geometry2d::Arc::radius)
+		.def("start", &Geometry2d::Arc::start)
+		.def("end", &Geometry2d::Arc::end)
+	;
+
+	class_<Geometry2d::Arc>("Arc", init<Geometry2d::Point, float, float, float>())
+		.def("intersects_line", &Arc_intersects_line)
+		.def("intersects_segment", &Arc_intersects_segment)
+		.def("center", &Geometry2d::Arc::center)
+		.def("radius", &Geometry2d::Arc::radius)
+		.def("start", &Geometry2d::Arc::start)
+		.def("end", &Geometry2d::Arc::end)
 	;
 
 	class_<Geometry2d::CompositeShape, bases<Geometry2d::Shape> >("CompositeShape", init<>())
@@ -337,7 +513,8 @@ BOOST_PYTHON_MODULE(robocup)
 	;
 
 	class_<Geometry2d::Polygon, bases<Geometry2d::Shape> >("Polygon", init<>())
-		.def("add_vertex", &Polygon_add_vertex);
+		.def("add_vertex", &Polygon_add_vertex)
+        .def("contains_point", &Geometry2d::Polygon::containsPoint)
 	;
 
 	class_<GameState>("GameState")
@@ -381,8 +558,10 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("__eq__", &Robot::equals)
 	;
 
-	class_<OurRobot, OurRobot *, std::shared_ptr<OurRobot>, bases<Robot> >("OurRobot", init<int, SystemState*>())
+	class_<OurRobot, OurRobot *, bases<Robot>, boost::noncopyable>("OurRobot", init<int, SystemState*>())
 		.def("move_to", &OurRobot_move_to)
+		.def("move_to_end_vel", &OurRobot_move_to_end_vel)
+		.def("move_to_direct", &OurRobot_move_to_direct)
 		.def("set_world_vel", &OurRobot::worldVelocity)
 		.def("set_angle_vel", &OurRobot::angleVelocity)
 		.def("face", &OurRobot::face)
@@ -411,6 +590,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("ball_sense_works", &OurRobot::ballSenseWorks)
 		.def("kicker_works", &OurRobot::kickerWorks)
 		.def("add_local_obstacle", &OurRobot_add_local_obstacle)
+		.def_readwrite("is_penalty_kicker", &OurRobot::isPenaltyKicker)
 	;
 
 	class_<OpponentRobot, OpponentRobot *, std::shared_ptr<OpponentRobot>, bases<Robot> >("OpponentRobot", init<int>());
@@ -419,6 +599,11 @@ BOOST_PYTHON_MODULE(robocup)
 		.def_readonly("pos", &Ball::pos)
 		.def_readonly("vel", &Ball::vel)
 		.def_readonly("valid", &Ball::valid)
+	;
+
+	class_<std::vector<Robot*>>("vector_Robot")
+		.def(vector_indexing_suite<std::vector<Robot*>>())
+		.def("clear", &std::vector<Robot*>::clear)
 	;
 
 	class_<std::vector<OurRobot *> >("vector_OurRobot")
@@ -441,7 +626,11 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("draw_text", &State_draw_text)
 		.def("draw_shape", &SystemState::drawShape)
 		.def("draw_line", &State_draw_line)
+		.def("draw_segment", &State_draw_segment)
 		.def("draw_polygon", &State_draw_polygon)
+		.def("draw_arc", &State_draw_arc)
+        .def("draw_raw_polygon", &State_draw_raw_polygon)
+		.def("draw_arc", &State_draw_arc)
 	;
 
 	class_<Field_Dimensions>("Field_Dimensions")
@@ -461,4 +650,34 @@ BOOST_PYTHON_MODULE(robocup)
 		.def("FloorLength", &Field_Dimensions::FloorLength)
 		.def("FloorWidth", &Field_Dimensions::FloorWidth)
 	;
+
+	class_<Window>("Window")
+		.def_readwrite("a0", &Window::a0)
+		.def_readwrite("a1", &Window::a1)
+		.def_readwrite("t0", &Window::t0)
+		.def_readwrite("t1", &Window::t1)
+		.def_readwrite("segment", &Window::segment)
+		.def_readwrite("shot_success", &Window::shot_success)
+	;
+
+	class_<std::vector<Window>>("vector_Window")
+		.def(vector_indexing_suite<std::vector<Window>>())
+	;
+
+	class_<WindowEvaluator>("WindowEvaluator", init<SystemState*>())
+		.def_readwrite("debug", &WindowEvaluator::debug)
+		.def_readwrite("chip_enabled", &WindowEvaluator::chip_enabled)
+		.def_readwrite("max_chip_range", &WindowEvaluator::max_chip_range)
+		.def_readwrite("min_chip_range", &WindowEvaluator::min_chip_range)
+		.def_readwrite("excluded_robots", &WindowEvaluator::excluded_robots)
+		.def_readwrite("hypothetical_robot_locations", &WindowEvaluator::hypothetical_robot_locations)
+		.def("add_excluded_robot", &WinEval_add_excluded_robot)
+		.def("eval_pt_to_pt", &WinEval_eval_pt_to_pt)
+		.def("eval_pt_to_opp_goal", &WinEval_eval_pt_to_opp_goal)
+		.def("eval_pt_to_our_goal", &WinEval_eval_pt_to_our_goal)
+		.def("eval_pt_to_seg", &WinEval_eval_pt_to_seg)
+		.def("obstacle_range", &WindowEvaluator::obstacle_range)
+		.def("obstacle_robot", &WindowEvaluator::obstacle_robot)
+	;
+
 }

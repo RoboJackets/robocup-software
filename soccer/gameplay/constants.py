@@ -71,6 +71,14 @@ class Field:
     TheirGoalShape.add_shape(robocup.Circle(robocup.Point(GoalFlat / 2.0, Length), ArcRadius))
     TheirGoalShape.add_shape(robocup.Rect(robocup.Point(-GoalFlat / 2.0, Length), robocup.Point(GoalFlat / 2.0, Length - ArcRadius)))
 
+    FieldBorders = [
+            robocup.Line(robocup.Point(-Width / 2.0, 0), robocup.Point(-Width / 2.0, Length)),
+            robocup.Line(robocup.Point(-Width / 2.0, Length), robocup.Point(Width / 2.0, Length)),
+            robocup.Line(robocup.Point(Width / 2.0, Length), robocup.Point(Width / 2.0, 0)),
+            robocup.Line(robocup.Point(Width / 2.0, 0), robocup.Point(-Width / 2.0, 0)) ]
+
+
+    FieldRect = robocup.Rect(robocup.Point(-Width / 2.0, 0), robocup.Point(Width / 2.0, Length))
 
     TheirGoalSegment = robocup.Segment(robocup.Point(GoalWidth / 2.0, Length),
                                         robocup.Point(-GoalWidth / 2.0, Length))
