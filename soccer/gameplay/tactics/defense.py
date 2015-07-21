@@ -8,6 +8,7 @@ from enum import Enum
 import math
 import tactics.positions.submissive_goalie
 import tactics.positions.submissive_defender
+import role_assignment
 
 
 # TODO: clear free balls
@@ -62,7 +63,7 @@ class Defense(composite_behavior.CompositeBehavior):
     @debug.setter
     def debug(self, value):
         self._debug = value
-    
+
 
 
     def execute_running(self):
@@ -111,7 +112,7 @@ class Defense(composite_behavior.CompositeBehavior):
             def pos(self):
                 if self.source != None:
                     return self.source if isinstance(self.source, robocup.Point) else self.source.pos
-            
+
 
             # a list of our behaviors that will be defending against this threat
             # as of now only Defender and Goalie
@@ -132,7 +133,7 @@ class Defense(composite_behavior.CompositeBehavior):
             @ball_acquire_chance.setter
             def ball_acquire_chance(self, value):
                 self._ball_acquire_chance = value
-            
+
 
             # our estimate of the chance of this threat making its shot on the goal given that it gets/has the ball
             # NOTE: this is calculated excluding all of our robots on the field as obstacles
@@ -438,3 +439,19 @@ class Defense(composite_behavior.CompositeBehavior):
                     pass_line = robocup.Segment(main.ball().pos, threat.pos)
                     main.system_state().draw_line(pass_line, constants.Colors.Red, "Defense")
                     main.system_state().draw_text("Pass: " + str(int(threat.ball_acquire_chance * 100.0)) + "%", pass_line.center(), constants.Colors.White, "Defense")
+
+
+    def role_requirements(self):
+        reqs = super().role_requirements()
+
+        # By default, single robot behaviors prefer to use the same robot.
+        # Because we assign defense behaviors to handle threats somewhat
+        # arbitrarily, we don't care about having the same robot, we just
+        # want the closest robot to take the role.
+        for subbehavior_name in ['defender1', 'defender2']:
+            if subbehavior_name in reqs:
+                subbehavior_req_tree = reqs[subbehavior_name]
+                for r in role_assignment.iterate_role_requirements_tree_leaves(subbehavior_req_tree):
+                    r.previous_shell_id = None
+
+        return reqs
