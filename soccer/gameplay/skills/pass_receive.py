@@ -267,6 +267,9 @@ class PassReceive(single_robot_composite_behavior.SingleRobotCompositeBehavior):
     ## prefer a robot that's already near the receive position
     def role_requirements(self):
         reqs = super().role_requirements()
+        if self._target_pos != None:
+            for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
+                req.destination_shape = self._target_pos
         if self.receive_point != None:
             for req in role_assignment.iterate_role_requirements_tree_leaves(reqs):
                 req.destination_shape = self.receive_point
