@@ -50,7 +50,7 @@ class TwoSideAttack(play.Play):
 
         self.add_transition(TwoSideAttack.State.passing,
             TwoSideAttack.State.kicking,
-            lambda: self.kick_directly == True or self.all_subbehaviors_completed(),
+            lambda: self.kick_directly == True or self.temporary_behaviors_completed(),
             'all subbehaviors completed')
 
         self.add_transition(TwoSideAttack.State.kicking,
@@ -60,7 +60,7 @@ class TwoSideAttack(play.Play):
 
         self.add_transition(TwoSideAttack.State.kicking,
             behavior.Behavior.State.completed,
-            lambda: self.all_subbehaviors_completed(),
+            lambda: self.temporary_behaviors_completed(),
             'all subbehaviors completed')
 
         self.robot_points = [
@@ -72,6 +72,7 @@ class TwoSideAttack(play.Play):
         self.passRobot2 = None
         self.captureRobot = None
 
+        self.pernamentBehaviors = ['defense']
         self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
 
     @classmethod
@@ -79,10 +80,6 @@ class TwoSideAttack(play.Play):
         if main.game_state().is_playing():
             return 9
         return float("inf")
-
-
-    def all_subbehaviors_completed(self):
-        return all([bhvr.is_done_running() for bhvr in self.all_subbehaviors()])
 
 
     def on_enter_setup(self):
@@ -98,9 +95,7 @@ class TwoSideAttack(play.Play):
         self.passRobot2 = self.subbehavior_with_name('moveB').robot
         self.captureRobot = self.subbehavior_with_name('capture').robot
         self.to_exclude = [self.passRobot1, self.passRobot2, self.captureRobot]
-        self.remove_subbehavior(self.subbehavior_with_name('moveA'))
-        self.remove_subbehavior(self.subbehavior_with_name('moveB'))
-        self.remove_subbehavior(self.subbehavior_with_name('capture'))
+        self.remove_temporary_subbehaviors()
 
 
 
@@ -146,12 +141,22 @@ class TwoSideAttack(play.Play):
             self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.passRobot2.pos), 'pass')
 
 
+    def remove_temporary_subbehaviors(self):
+        for (key, value) in self.subbehaviors_by_name().items():
+            if not (key in self.pernamentBehaviors):
+                self.remove_subbehavior(key)
+
+    def temporary_behaviors_completed(self):
+        for (key, value) in self.subbehaviors_by_name().items():
+            if not (key in self.pernamentBehaviors):
+                if not value.is_done_running():
+                    return False
+        return True
+
 
     def on_exit_passing(self):
         self.kick_directly = False
-        self.remove_subbehavior(self.subbehavior_with_name('moveA'))
-        self.remove_subbehavior(self.subbehavior_with_name('moveB'))
-        self.remove_subbehavior(self.subbehavior_with_name('capture'))
+        self.remove_temporary_subbehaviors()
 
 
     def on_enter_kicking(self):
@@ -162,7 +167,7 @@ class TwoSideAttack(play.Play):
 
 
     def on_exit_kicking(self):
-        self.remove_all_subbehaviors()
+        self.remove_temporary_subbehaviors()
 
     @classmethod
     def handles_goalie(cls):
