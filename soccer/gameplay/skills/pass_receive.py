@@ -246,8 +246,7 @@ class PassReceive(single_robot_behavior.SingleRobotBehavior):
         reqs = super().role_requirements()
         if self._target_pos != None:
             reqs.destination_shape = self._target_pos
-            return reqs
-        if self.receive_point != None:
+        elif self.receive_point != None:
             reqs.destination_shape = self.receive_point
         return reqs
 
