@@ -8,6 +8,7 @@ import skills.capture
 import enum
 import evaluation
 import tactics.coordinated_pass
+import tactics.defense
 
 class TwoSideAttack(play.Play):
     # Try to pass to the better target
@@ -44,7 +45,7 @@ class TwoSideAttack(play.Play):
             'immediately')
         self.add_transition(TwoSideAttack.State.setup,
             TwoSideAttack.State.passing,
-            lambda: self.all_subbehaviors_completed(),
+            lambda: self.subbehavior_with_name('capture').is_done_running(),
             'all subbehaviors completed')
 
         self.add_transition(TwoSideAttack.State.passing,
@@ -71,14 +72,12 @@ class TwoSideAttack(play.Play):
         self.passRobot2 = None
         self.captureRobot = None
 
+        self.add_subbehavior(tactics.defense.Defense(), 'defense', required=False)
+
     @classmethod
     def score(cls):
         if main.game_state().is_playing():
-            if main.ball().valid:
-                if main.ball().pos.y < constants.Field.Length / 2:
-                    return 5
-                return 15
-            return float("inf")
+            return 9
         return float("inf")
 
 
@@ -127,9 +126,16 @@ class TwoSideAttack(play.Play):
 
         _, direct_shot = win_eval.eval_pt_to_opp_goal(self.captureRobot.pos)
 
-        if (direct_shot and direct_shot.shot_success > rob_1_chance and direct_shot.shot_success > rob_2_chance):
-            self.kick_directly = True
-            return 
+        direct_success = 0
+        if direct_shot:
+            if (self.captureRobot.pos.y < 4):
+                direct_success = direct_shot.shot_success*0.7
+            else:
+                direct_success = direct_shot.shot_success
+
+            if (direct_shot and direct_success > rob_1_chance and direct_success > rob_2_chance):
+                self.kick_directly = True
+                return 
 
         if rob_1_chance > rob_2_chance:
             self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.passRobot1.pos), 'pass')
@@ -152,3 +158,7 @@ class TwoSideAttack(play.Play):
 
     def on_exit_kicking(self):
         self.remove_all_subbehaviors()
+
+    @classmethod
+    def handles_goalie(cls):
+        return True

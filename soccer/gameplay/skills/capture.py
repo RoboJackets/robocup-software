@@ -11,7 +11,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     # tunable config values
     CourseApproachErrorThresh = 0.8
-    CourseApproachDist = 0.3
+    CourseApproachDist = 0.4
     CourseApproachAvoidBall = 0.10
     DribbleSpeed = 100
     FineApproachSpeed = 0.2
@@ -62,7 +62,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(Capture.State.back_off,
             behavior.Behavior.State.start,
-            lambda: self.bot_to_ball().mag() < Capture.BackOffDistance,
+            lambda: constants.Field.TheirGoalShape.contains_point(main.ball().pos) or self.bot_to_ball().mag() < Capture.BackOffDistance,
             "backed away enough")
 
 
@@ -157,7 +157,10 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         self.robot.face(main.ball().pos)
 
         bot2ball = (main.ball().pos - self.robot.pos).normalized()
-        self.robot.set_world_vel(self.bot_to_ball()*Capture.multiplier + bot2ball * Capture.FineApproachSpeed/4 + main.ball().vel)
+        aproach = self.bot_to_ball()*Capture.multiplier + bot2ball * Capture.FineApproachSpeed/4 + main.ball().vel
+        if (aproach.mag() > 1):
+            aproach = aproach.normalized()*1
+        self.robot.set_world_vel(aproach)
 
     def execute_back_off(self):
         self.robot.face(main.ball().pos)
