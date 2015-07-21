@@ -39,7 +39,9 @@ public:
 
   WindowEvaluator(SystemState *systemState);
 
-  WindowingResult eval_pt_to_pt(Geometry2d::Point origin, Geometry2d::Point target);
+  WindowingResult eval_pt_to_pt(Geometry2d::Point origin, Geometry2d::Point target, float targetWidth);
+
+  WindowingResult eval_pt_to_robot(Geometry2d::Point origin, Geometry2d::Point target);
 
   WindowingResult eval_pt_to_opp_goal(Geometry2d::Point origin);
 

@@ -46,8 +46,19 @@ class TwoSideAttack(play.Play):
             TwoSideAttack.State.passing,
             lambda: self.all_subbehaviors_completed(),
             'all subbehaviors completed')
+
         self.add_transition(TwoSideAttack.State.passing,
             TwoSideAttack.State.kicking,
+            lambda: self.kick_directly == True or self.all_subbehaviors_completed(),
+            'all subbehaviors completed')
+
+        self.add_transition(TwoSideAttack.State.kicking,
+            behavior.Behavior.State.completed,
+            lambda: self.kick_directly == True,
+            'all subbehaviors completed')
+
+        self.add_transition(TwoSideAttack.State.kicking,
+            behavior.Behavior.State.completed,
             lambda: self.all_subbehaviors_completed(),
             'all subbehaviors completed')
 
@@ -55,6 +66,10 @@ class TwoSideAttack(play.Play):
             robocup.Point(-constants.Field.Width / 4.0, 3 * constants.Field.Length / 4.0),
             robocup.Point(constants.Field.Width / 4.0, 3 * constants.Field.Length / 4.0)
         ]
+        self.kick_directly = False
+        self.passRobot1 = None
+        self.passRobot2 = None
+        self.captureRobot = None
 
     @classmethod
     def score(cls):
@@ -80,34 +95,51 @@ class TwoSideAttack(play.Play):
 
 
     def on_exit_setup(self):
-        to_exclude_0 = self.subbehavior_with_name('moveA')
-        to_exclude_1 = self.subbehavior_with_name('moveB')
-        capture = self.subbehavior_with_name('capture')
-        self.to_exclude = [to_exclude_0.robot, to_exclude_1.robot, capture.robot]
+        self.passRobot1 = self.subbehavior_with_name('moveA').robot
+        self.passRobot2 = self.subbehavior_with_name('moveB').robot
+        self.captureRobot = self.subbehavior_with_name('capture').robot
+        self.to_exclude = [self.passRobot1, self.passRobot2, self.captureRobot]
         self.remove_all_subbehaviors()
 
 
     def on_enter_passing(self):
+        #capture = self.subbehavior_with_name('capture')
+        #passRobot1 = self.subbehavior_with_name('moveA')
+        #passRobot2 = self.subbehavior_with_name('moveB')
+        #to_exclude = [capture.robot, passRobot1.robot, passRobot2.robot]
+
         # Do shot evaluation here
         win_eval = robocup.WindowEvaluator(main.system_state())
         for r in self.to_exclude:
             win_eval.add_excluded_robot(r)
-        _, best = win_eval.eval_pt_to_opp_goal(self.robot_points[0])
-        # TODO to_exclude is a hack
-        rob_0_chance = best.shot_success * evaluation.passing.eval_pass(self.robot_points[0], self.to_exclude[2].pos)
 
-        _, best = win_eval.eval_pt_to_opp_goal(self.robot_points[1])
-        rob_1_chance = best.shot_success * evaluation.passing.eval_pass(self.robot_points[1], self.to_exclude[2].pos)
+        _, rob_1_best_shot = win_eval.eval_pt_to_opp_goal(self.passRobot1.pos)
+        _, rob_1_best_pass = win_eval.eval_pt_to_pt(self.captureRobot.pos, self.passRobot1.pos, 0.3)
+        rob_1_chance = 0
+        if (rob_1_best_shot and rob_1_best_pass):
+            rob_1_chance = rob_1_best_pass.shot_success * rob_1_best_shot.shot_success
 
-        if rob_0_chance > rob_1_chance:
-            robot_pos = 0
+        _, rob_2_best_shot = win_eval.eval_pt_to_opp_goal(self.passRobot2.pos)
+        _, rob_2_best_pass = win_eval.eval_pt_to_pt(self.captureRobot.pos, self.passRobot2.pos, 0.3)
+        rob_2_chance = 0
+        if (rob_2_best_shot and rob_2_best_pass):
+            rob_2_chance = rob_2_best_pass.shot_success * rob_2_best_shot.shot_success
+
+        _, direct_shot = win_eval.eval_pt_to_opp_goal(self.captureRobot.pos)
+
+        if (direct_shot and direct_shot.shot_success > rob_1_chance and direct_shot.shot_success > rob_2_chance):
+            self.kick_directly = True
+            return 
+
+        if rob_1_chance > rob_2_chance:
+            self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.passRobot1.pos), 'pass')
         else:
-            robot_pos = 1
+            self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.passRobot2.pos), 'pass')
 
-        self.add_subbehavior(tactics.coordinated_pass.CoordinatedPass(self.robot_points[robot_pos]), 'pass')
 
 
     def on_exit_passing(self):
+        self.kick_directly = False
         self.remove_all_subbehaviors()
 
 
