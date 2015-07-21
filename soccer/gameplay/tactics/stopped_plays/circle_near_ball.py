@@ -11,6 +11,8 @@ import main
 ## Robots position themselves along a portion of the circle centered at the ball
 class CircleNearBall(composite_behavior.CompositeBehavior):
 
+    BackupBallLocation = robocup.Point(0, constants.Field.Length / 4.0)
+
     def __init__(self):
         super().__init__(continuous=True)
 
@@ -68,11 +70,11 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
         if len(intersection_points) > 1:
             for i in intersection_points:
                 new_angle = (i - circle_ball.center()).angle()
-                while new_angle < 0:
-                    new_angle = new_angle + math.pi * 2
-                while new_angle > math.pi * 2:
-                    new_angle = new_angle - math.pi * 2
+                new_angle = self.normalize_angle(new_angle)
                 angles.append(new_angle)
+
+            # Get angles going sequencially
+            angles.sort()
 
             counter = 1
             while counter < len(angles):
@@ -83,13 +85,11 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
             i = 0
             while i < len(candidate_arcs):
                 angle_between = candidate_arcs[i].end() - candidate_arcs[i].start()
-                while angle_between < math.pi * 2:
-                    angle_between = angle_between + math.pi * 2
-                while angle_between > math.pi * 2:
-                    angle_between = angle_between - math.pi * 2
+                angle_between = self.normalize_angle(angle_between)
+
                 angle_diff = candidate_arcs[i].start() + (angle_between) / 2.0
-                while angle_diff > math.pi * 2:
-                    angle_diff = angle_diff - math.pi * 2
+                angle_diff = self.normalize_angle(angle_diff)
+
                 midpoint = (candidate_arcs[i].center() + robocup.Point(radius, 0))
                 midpoint.rotate(candidate_arcs[i].center(), angle_diff)
                 if not constants.Field.FieldRect.contains_point(midpoint):
@@ -97,24 +97,22 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
                 else:
                     i = i + 1
 
-            candidate_arcs.sort(key=lambda arc: arc.end() - arc.start())
+            candidate_arcs.sort(key=lambda arc: self.normalize_angle(arc.end() - arc.start()), reverse=True)
+
             if len(candidate_arcs) <= 0:
-                final_arc = robocup.Arc(robocup.Point(constants.Field.Width / 4.0, constants.Field.Length / 4.0), radius, math.pi / 2, 5 * math.pi / 2)
+                final_arc = robocup.Arc(CircleNearBall.BackupBallLocation, radius, math.pi / 2, 5 * math.pi / 2)
             else:
                 final_arc = candidate_arcs[0]
         else:
             midpoint = (circle_ball.center() + robocup.Point(radius, 0))
             if not constants.Field.FieldRect.contains_point(midpoint):
-                final_arc = robocup.Arc(robocup.Point(constants.Field.Width / 4.0, constants.Field.Length / 4.0), radius, math.pi / 2, 5 * math.pi / 2)
+                final_arc = robocup.Arc(CircleNearBall.BackupBallLocation, radius, math.pi / 2, 5 * math.pi / 2)
             else:
                 final_arc = robocup.Arc(circle_ball.center(), radius, math.pi / 2, 5 * math.pi / 2)
 
-
-
-
         arc_angle = final_arc.end() - final_arc.start()
-        while arc_angle < 0:
-            arc_angle = arc_angle + math.pi * 2
+        arc_angle = self.normalize_angle(arc_angle)
+
         perRobot = arc_angle / (num_robots + 1)
 
         dirvec = robocup.Point(radius, 0)
@@ -136,6 +134,14 @@ class CircleNearBall(composite_behavior.CompositeBehavior):
     def execute_completed(self):
         self.move_around_circle()
 
+    # Makes an angle > 0, < pi * 2
+    def normalize_angle(self, angle):
+        # TODO make this O(1) and move to cpp
+        while angle > math.pi * 2:
+            angle = angle - math.pi * 2
+        while angle < 0:
+            angle = angle + math.pi * 2
+        return angle
 
     def execute_running(self):
         self.move_around_circle()
