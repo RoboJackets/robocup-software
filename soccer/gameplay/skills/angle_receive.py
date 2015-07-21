@@ -7,6 +7,7 @@ import math
 import enum
 import time
 import skills._kick
+import skills.pass_receive
 
 
 ## AngleReceive accepts a receive_point as a parameter and gets setup there to catch the ball
@@ -15,120 +16,11 @@ import skills._kick
 # the ball is moving and attempt to catch it.
 # It will move to the 'completed' state if it catches the ball, otherwise it will go to 'failed'.
 # Kick is a single_robot_behavior, so no need to import both
-class AngleReceive(skills._kick._Kick):
-
-    ## max difference between where we should be facing and where we are facing (in radians)
-    FaceAngleErrorThreshold = 8 * constants.DegreesToRadians
-
-    ## how much we're allowed to be off in the direction of the pass line
-    PositionYErrorThreshold = 0.06
-
-    ## how much we're allowed to be off side-to-side from the pass line
-    PositionXErrorThreshold = 0.03
-
-    DribbleSpeed = 70
-
-    ## we have to be going slower than this to be considered 'steady'
-    SteadyMaxVel = 0.04
-    SteadyMaxAngleVel = 3   # degrees / second
-
-    ## after this amount of time has elapsed after the kick and we haven't received the ball, we failed :(
-    ReceiveTimeout = 2
-
-    class State(enum.Enum):
-        ## we're aligning with the planned receive point
-        aligning = 1
-
-        ## being in this state signals that we're ready for the kicker to kick
-        aligned = 2
-
-        ## the ball's been kicked and we're adjusting based on where the ball's moving
-        receiving = 3
+class AngleReceive(skills.pass_receive.PassReceive):
 
     def __init__(self):
+        self.kick_power = 1
         super().__init__()
-
-        self.ball_kicked = False
-        self._target_pos = None
-        self._ball_kick_time = 0
-
-        self._shot_occured = None
-        self._angle_facing = None
-
-
-        for state in AngleReceive.State:
-            self.add_state(state, behavior.Behavior.State.running)
-
-
-        self.add_transition(behavior.Behavior.State.start,
-                AngleReceive.State.aligning,
-                lambda: True,
-                'immediately')
-
-        self.add_transition(AngleReceive.State.aligning,
-                AngleReceive.State.aligned,
-                lambda: self.errors_below_thresholds() and self.is_steady() and not self.ball_kicked,
-                'steady and in position to receive')
-
-        self.add_transition(AngleReceive.State.aligned,
-                AngleReceive.State.aligning,
-                lambda: (not self.errors_below_thresholds() or not self.is_steady()) and not self.ball_kicked,
-                'not in receive position')
-
-        for state in [AngleReceive.State.aligning, AngleReceive.State.aligned]:
-            self.add_transition(state,
-                    AngleReceive.State.receiving,
-                    lambda: self.ball_kicked,
-                    'ball kicked')
-
-            self.add_transition(AngleReceive.State.receiving,
-                    behavior.Behavior.State.completed,
-                    lambda: self._shot_occured,
-                    'ball received!')
-
-            self.add_transition(AngleReceive.State.receiving,
-                    behavior.Behavior.State.failed,
-                    lambda: time.time() - self._ball_kick_time > AngleReceive.ReceiveTimeout,
-                    'ball missed :(')
-
-
-
-    ## set this to True to let the receiver know that the pass has started and the ball's in motion
-    # Default: False
-    @property
-    def ball_kicked(self):
-        return self._ball_kicked
-    @ball_kicked.setter
-    def ball_kicked(self, value):
-        self._ball_kicked = value
-        if value:
-            self._ball_kick_time = time.time()
-
-
-    ## The point that the receiver should expect the ball to hit it's mouth
-    # Default: None
-    @property
-    def receive_point(self):
-        return self._receive_point
-    @receive_point.setter
-    def receive_point(self, value):
-        self._receive_point = value
-        self.recalculate()
-
-
-    ## returns True if we're facing the right direction and in the right position and steady
-    def errors_below_thresholds(self):
-        if self._target_pos == None:
-            return False
-
-        return (abs(self._angle_error) < AngleReceive.FaceAngleErrorThreshold
-                and abs(self._x_error) < AngleReceive.PositionXErrorThreshold
-                and abs(self._y_error) < AngleReceive.PositionYErrorThreshold)
-
-
-    def is_steady(self):
-        return (self.robot.vel.mag() < AngleReceive.SteadyMaxVel
-                and abs(self.robot.angle_vel) < AngleReceive.SteadyMaxAngleVel)
 
     ## Returns an adjusted angle with account for ball speed
     #
@@ -217,56 +109,17 @@ class AngleReceive(skills._kick._Kick):
         # Gets the point the robot will be facing when receiving the ball
         return constants.Field.TheirGoalSegment.center()
 
-    def on_exit_start(self):
-        # reset
-        self.ball_kicked = False
-
     def execute_running(self):
-        # make sure teammates don't bump into us
-        self.robot.shield_from_teammates(constants.Robot.Radius * 2.0)
+        super().execute_running()
 
-        self.recalculate()
         self.robot.face(self.robot.pos
                 + robocup.Point(math.cos(self._angle_facing), math.sin(self._angle_facing)))
-
-        if self._pass_line != None:
-            main.system_state().draw_line(self._pass_line, constants.Colors.Blue, "Pass")
-            main.system_state().draw_circle(self._target_pos, 0.03, constants.Colors.Blue, "Pass")
         if self._kick_line != None:
             main.system_state().draw_line(self._kick_line, constants.Colors.Red, "Shot")
 
-
-
-    def execute_aligning(self):
-        if self._target_pos != None:
-            self.robot.move_to(self._target_pos)
-
     def execute_receiving(self):
+        super().execute_receiving()
+
         # Kick the ball!
         self.robot.kick(self.kick_power)
 
-        # don't use the move_to() command here, we need more precision, less obstacle avoidance
-        pos_error = self._target_pos - self.robot.pos
-        vel = pos_error * 3.5
-        self.robot.set_world_vel(vel)
-
-        # If the shot took place, end the behavior!
-        if self.robot.just_kicked():
-            self._shot_occured = True
-
-    ## prefer a robot that's already near the receive position
-    def role_requirements(self):
-        reqs = super().role_requirements()
-        if self.receive_point != None:
-            reqs.destination_shape = self.receive_point
-        return reqs
-
-
-    def __str__(self):
-        desc = super().__str__()
-        if self.receive_point != None and self.robot != None:
-            desc += "\n    target_pos=" + str(self._target_pos)
-            desc += "\n    angle_err=" + str(self._angle_error)
-            desc += "\n    x_err=" + str(self._x_error)
-            desc += "\n    y_err=" + str(self._y_error)
-        return desc
