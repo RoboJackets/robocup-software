@@ -10,7 +10,7 @@ import evaluation
 import tactics.coordinated_pass
 import tactics.defense
 
-class TwoSideAttack(play.Play):
+class TwoSideCornerKick(play.Play):
     # Try to pass to the better target
     # Soccer/gameplay/evaluation/shot.py
     # Tell where passing from and where to pass to
@@ -31,34 +31,34 @@ class TwoSideAttack(play.Play):
         # Kicking
             # Pivot kick (by default attacks enemy goal)
 
-        self.add_state(TwoSideAttack.State.setup,
+        self.add_state(TwoSideCornerKick.State.setup,
             behavior.Behavior.State.running)
-        self.add_state(TwoSideAttack.State.passing,
+        self.add_state(TwoSideCornerKick.State.passing,
             behavior.Behavior.State.running)
-        self.add_state(TwoSideAttack.State.kicking,
+        self.add_state(TwoSideCornerKick.State.kicking,
             behavior.Behavior.State.running)
 
         # Add transitions
         self.add_transition(behavior.Behavior.State.start,
-            TwoSideAttack.State.setup,
+            TwoSideCornerKick.State.setup,
             lambda: True,
             'immediately')
-        self.add_transition(TwoSideAttack.State.setup,
-            TwoSideAttack.State.passing,
+        self.add_transition(TwoSideCornerKick.State.setup,
+            TwoSideCornerKick.State.passing,
             lambda: self.subbehavior_with_name('capture').is_done_running(),
             'all subbehaviors completed')
 
-        self.add_transition(TwoSideAttack.State.passing,
-            TwoSideAttack.State.kicking,
+        self.add_transition(TwoSideCornerKick.State.passing,
+            TwoSideCornerKick.State.kicking,
             lambda: self.kick_directly == True or self.all_subbehaviors_completed(),
             'all subbehaviors completed')
 
-        self.add_transition(TwoSideAttack.State.kicking,
+        self.add_transition(TwoSideCornerKick.State.kicking,
             behavior.Behavior.State.completed,
             lambda: self.kick_directly == True,
             'all subbehaviors completed')
 
-        self.add_transition(TwoSideAttack.State.kicking,
+        self.add_transition(TwoSideCornerKick.State.kicking,
             behavior.Behavior.State.completed,
             lambda: self.all_subbehaviors_completed(),
             'all subbehaviors completed')
@@ -76,9 +76,15 @@ class TwoSideAttack(play.Play):
 
     @classmethod
     def score(cls):
-        if main.game_state().is_playing():
-            return 9
-        return float("inf")
+        gs = main.game_state()
+        if gs.is_ready_state() and gs.is_our_direct() and  main.ball().pos.y > ( constants.Field.Length - 1.0 ):
+            return 1
+        else:
+            return float("inf")
+
+    @classmethod
+    def is_restart(cls):
+        return True;
 
 
     def all_subbehaviors_completed(self):
@@ -98,10 +104,7 @@ class TwoSideAttack(play.Play):
         self.passRobot2 = self.subbehavior_with_name('moveB').robot
         self.captureRobot = self.subbehavior_with_name('capture').robot
         self.to_exclude = [self.passRobot1, self.passRobot2, self.captureRobot]
-        self.remove_subbehavior(self.subbehavior_with_name('moveA'))
-        self.remove_subbehavior(self.subbehavior_with_name('moveB'))
-        self.remove_subbehavior(self.subbehavior_with_name('capture'))
-
+        self.remove_all_subbehaviors()
 
 
     def on_enter_passing(self):
@@ -149,9 +152,7 @@ class TwoSideAttack(play.Play):
 
     def on_exit_passing(self):
         self.kick_directly = False
-        self.remove_subbehavior(self.subbehavior_with_name('moveA'))
-        self.remove_subbehavior(self.subbehavior_with_name('moveB'))
-        self.remove_subbehavior(self.subbehavior_with_name('capture'))
+        self.remove_all_subbehaviors()
 
 
     def on_enter_kicking(self):
