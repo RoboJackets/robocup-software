@@ -32,6 +32,10 @@ class OurCornerKick(play.Play):
         self.kicker.max_chip_range = OurCornerKick.MaxChipRange
         self.add_subbehavior(self.kicker, 'kicker', required=True, priority=5)
 
+        # larger avoid ball radius for line kick setup so we don't run over the ball backwards
+        self.kicker.setup_ball_avoid = constants.Field.CenterRadius - constants.Robot.Radius
+        self.kicker.drive_around_dist = constants.Field.CenterRadius - constants.Robot.Radius
+
         self.center1 = skills.move.Move()
         self.add_subbehavior(self.center1, 'center1', required=False, priority=4)
 
