@@ -278,7 +278,7 @@ void State_draw_text(SystemState *self, const std::string &text, Geometry2d::Poi
 	self->drawText(QString::fromStdString(text), *pos, Color_from_tuple(rgb), QString::fromStdString(layer));
 }
 
-void State_draw_polygon(SystemState *self, boost::python::list points, boost::python::tuple rgb, const std::string &layer) {
+void State_draw_polygon(SystemState *self, const boost::python::list &points, boost::python::tuple rgb, const std::string &layer) {
 	std::vector<Geometry2d::Point> ptVec;
 	for (int i = 0; i < len(points); i++) {
 		ptVec.push_back(boost::python::extract<Geometry2d::Point>(points[i]));
