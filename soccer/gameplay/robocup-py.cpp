@@ -355,14 +355,32 @@ boost::python::tuple WinEval_eval_pt_to_seg(WindowEvaluator *self, const Geometr
 	return boost::python::tuple{lst};
 }
 
-boost::python::tuple WinEval_eval_pt_to_pt(WindowEvaluator *self, const Geometry2d::Point *origin, const Geometry2d::Point *target) {
+boost::python::tuple WinEval_eval_pt_to_robot(WindowEvaluator *self, const Geometry2d::Point *origin, const Geometry2d::Point *target) {
 	if(origin == nullptr)
 		throw NullArgumentException{"origin"};
 	if(target == nullptr)
 		throw NullArgumentException{"target"};
 	boost::python::list lst;
 
-	auto window_results = self->eval_pt_to_pt(*origin, *target);
+	auto window_results = self->eval_pt_to_robot(*origin, *target);
+
+	lst.append(window_results.first);
+	if(window_results.second.is_initialized())
+		lst.append(window_results.second.get());
+	else
+		lst.append(boost::python::api::object());
+
+	return boost::python::tuple{lst};
+}
+
+boost::python::tuple WinEval_eval_pt_to_pt(WindowEvaluator *self, const Geometry2d::Point *origin, const Geometry2d::Point *target, float targetWidth) {
+	if(origin == nullptr)
+		throw NullArgumentException{"origin"};
+	if(target == nullptr)
+		throw NullArgumentException{"target"};
+	boost::python::list lst;
+
+	auto window_results = self->eval_pt_to_pt(*origin, *target, targetWidth);
 
 	lst.append(window_results.first);
 	if(window_results.second.is_initialized())
@@ -672,6 +690,7 @@ BOOST_PYTHON_MODULE(robocup)
 		.def_readwrite("hypothetical_robot_locations", &WindowEvaluator::hypothetical_robot_locations)
 		.def("add_excluded_robot", &WinEval_add_excluded_robot)
 		.def("eval_pt_to_pt", &WinEval_eval_pt_to_pt)
+		.def("eval_pt_to_robot", &WinEval_eval_pt_to_robot)
 		.def("eval_pt_to_opp_goal", &WinEval_eval_pt_to_opp_goal)
 		.def("eval_pt_to_our_goal", &WinEval_eval_pt_to_our_goal)
 		.def("eval_pt_to_seg", &WinEval_eval_pt_to_seg)

@@ -11,12 +11,15 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     # tunable config values
     CourseApproachErrorThresh = 0.8
-    CourseApproachDist = 0.3
+    CourseApproachDist = 0.4
     CourseApproachAvoidBall = 0.10
     DribbleSpeed = 100
     FineApproachSpeed = 0.2
     BackOffDistance = 0.4
     BackOffSpeed = 0.3
+
+    InFrontOfBallCosOfAngleThreshold = 0.95
+    #InFrontOfBallDistance
 
 
     class State(Enum):
@@ -39,7 +42,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(Capture.State.course_approach,
             Capture.State.fine_approach,
-            lambda: self.bot_near_ball(Capture.CourseApproachDist) and main.ball().valid and (not constants.Field.TheirGoalShape.contains_point(main.ball().pos) or self.robot.is_penalty_kicker),
+            lambda: (self.bot_in_front_of_ball() or self.bot_near_ball(Capture.CourseApproachDist)) and main.ball().valid and (not constants.Field.TheirGoalShape.contains_point(main.ball().pos) or self.robot.is_penalty_kicker),
             'dist to ball < threshold')
 
         self.add_transition(Capture.State.fine_approach,
@@ -49,7 +52,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(Capture.State.fine_approach,
             Capture.State.course_approach,
-            lambda: not self.robot.has_ball() and (not self.bot_near_ball(Capture.CourseApproachDist * 1.5) or not main.ball().pos),
+            lambda: not (self.bot_in_front_of_ball() or self.bot_near_ball(Capture.CourseApproachDist)) and (not self.bot_near_ball(Capture.CourseApproachDist * 1.5) or not main.ball().pos),
             'ball went into goal')
 
         self.add_transition(Capture.State.fine_approach,
@@ -59,7 +62,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         self.add_transition(Capture.State.back_off,
             behavior.Behavior.State.start,
-            lambda: self.bot_to_ball().mag() < Capture.BackOffDistance,
+            lambda: constants.Field.TheirGoalShape.contains_point(main.ball().pos) or self.bot_to_ball().mag() < Capture.BackOffDistance,
             "backed away enough")
 
 
@@ -71,6 +74,16 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
     def bot_near_ball(self, distance):
         return (self.bot_to_ball().mag() < distance)
+
+    def bot_in_front_of_ball(self):
+        ball2bot = self.bot_to_ball() * -1
+        #print (ball2bot.normalized().dot(approach_vec))
+        #print ("hi")
+        #print ((ball2bot.normalized().dot(main.ball().vel.normalized())))
+        #print (((ball2bot).mag() < (evaluation.ball.predict_stop(main.ball().pos, main.ball().vel) - main.ball().pos).mag()))
+        return (ball2bot.normalized().dot(main.ball().vel) > Capture.InFrontOfBallCosOfAngleThreshold) and \
+                ((ball2bot).mag() < (evaluation.ball.predict_stop(main.ball().pos, main.ball().vel) - main.ball().pos).mag())
+
 
     # normalized vector pointing from the ball to the point the robot should get to in course_aproach
     def approach_vector(self):
@@ -86,11 +99,11 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
         # sample every 5 cm in the -approach_vector direction from the ball
         pos = None
-        for i in range(100):
+        for i in range(50):
             dist = i * 0.05
             pos = main.ball().pos + approach_vec * dist
             ball_time = evaluation.ball.rev_predict(main.ball().vel, dist) # how long will it take the ball to get there
-            robotDist = (pos - self.robot.pos).mag()*0.9
+            robotDist = (pos - self.robot.pos).mag()*0.6
             bot_time = robocup.get_trapezoidal_time(
                 robotDist,
                 robotDist,
@@ -138,13 +151,16 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
 
 
     def execute_fine_approach(self):
-        Capture.multiplier = 1.0
+        Capture.multiplier = 1.5
         self.robot.disable_avoid_ball()
         self.robot.set_dribble_speed(Capture.DribbleSpeed)
         self.robot.face(main.ball().pos)
 
         bot2ball = (main.ball().pos - self.robot.pos).normalized()
-        self.robot.set_world_vel(self.bot_to_ball()*Capture.multiplier + bot2ball * Capture.FineApproachSpeed/4 + main.ball().vel)
+        aproach = self.bot_to_ball()*Capture.multiplier + bot2ball * Capture.FineApproachSpeed/4 + main.ball().vel
+        if (aproach.mag() > 1):
+            aproach = aproach.normalized()*1
+        self.robot.set_world_vel(aproach)
 
     def execute_back_off(self):
         self.robot.face(main.ball().pos)
@@ -155,6 +171,7 @@ class Capture(single_robot_behavior.SingleRobotBehavior):
         reqs.require_kicking = True
         # try to be near the ball
         if main.ball().valid:
+            #reqs.destination_shape = evaluation.ball.predict_stop(main.ball().pos, main.ball().vel)#main.ball().pos
             reqs.destination_shape = main.ball().pos
         return reqs
 
